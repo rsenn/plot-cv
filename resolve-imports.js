@@ -96,12 +96,10 @@ class ES6Module {
   [inspectSymbol]() {
     const t = (...args) => Util.ansi.text(...args);
     let s = t(Util.className(this), 1, 31) + t(' {', 1, 36);
-    for(let prop of ['file', 'importedPosition', 'bindings'])
-      if(this[prop]) s += '\n' + t(prop.padStart(13, ' '), 1, 33) + t(': ', 1, 36) + formatProp(this[prop]);
+    for(let prop of ['file', 'importedPosition', 'bindings']) if(this[prop]) s += '\n' + t(prop.padStart(13, ' '), 1, 33) + t(': ', 1, 36) + formatProp(this[prop]);
     s += t('\n}', 1, 36);
     function formatProp(value) {
-      if(Util.isArray(value))
-        return t('[ ', 1, 36) + value.map(mod => formatProp(mod.file)).join(t(', ', 1, 36)) + t(' ]', 1, 36);
+      if(Util.isArray(value)) return t('[ ', 1, 36) + value.map(mod => formatProp(mod.file)).join(t(', ', 1, 36)) + t(' ]', 1, 36);
       return typeof value == 'string' ? t(value, 1, 32) : Util.inspect(value).replace(/\n/g, '\n  ');
     }
     return s;
@@ -156,11 +154,7 @@ class ES6Module {
       let deps = [...ES6Module.getDeps(module)];
       for(let i = 0; i < deps.length; i++) {
         //console.log('', { i, sym });
-        printModule(deps[i],
-          sym.replace(/\u251c\u2500/g, '\u2502 ').replace(/\u2514\u2500/g, '  ') +
-            ((i + 1 == deps.length ? '\u2514' : '\u251c') + '\u2500') +
-            ' '
-        );
+        printModule(deps[i], sym.replace(/\u251c\u2500/g, '\u2502 ').replace(/\u2514\u2500/g, '  ') + ((i + 1 == deps.length ? '\u2514' : '\u251c') + '\u2500') + ' ');
       }
     }
     printModule(arr[0], '');
@@ -232,8 +226,7 @@ class ES6ImportExport {
       .map(n => [ESNode.assoc(n).position, PrintAst(n)])
       .map(([p, n]) => [Util.isGenerator(position) && [...position].map(p => ES6Env.pathTransform(p)).join(':'), n]);
 
-    if(Util.isObject(position) && position.toString)
-      position = position.toString(true, (p, i) => (i == 0 ? path.relative(ES6Env.cwd, p) : p)).replace(/1;33/, '1;34');
+    if(Util.isObject(position) && position.toString) position = position.toString(true, (p, i) => (i == 0 ? path.relative(ES6Env.cwd, p) : p)).replace(/1;33/, '1;34');
     const InspectFn = ret.bindings[inspectSymbol];
     /*  console.log(Util.ansi.text(Util.ucfirst((type + '').toLowerCase()), 1, 31) + Util.ansi.text(` @ `, 1, 36),
       InspectFn ? InspectFn.call(ret.bindings) : '',
@@ -345,12 +338,7 @@ class ES6ImportExport {
 const isRequire = ([path, node]) => node instanceof CallExpression && node.callee.value == 'require';
 const isImport = ([path, node]) => node instanceof ImportDeclaration;
 const isES6Export = ([path, node]) => node.type.startsWith('Export');
-const isCJSExport = ([path, node]) =>
-  node instanceof MemberExpression &&
-  node.object instanceof Identifier &&
-  node.property instanceof Identifier &&
-  node.object.value == 'module' &&
-  node.property.value == 'exports';
+const isCJSExport = ([path, node]) => node instanceof MemberExpression && node.object instanceof Identifier && node.property instanceof Identifier && node.object.value == 'module' && node.property.value == 'exports';
 
 const getImport = ([p, n]) => {
   let r = [];
@@ -412,12 +400,7 @@ const hl = {
 };
 
 function DumpNode(node) {
-  return [
-    hl.id`path` + hl.punct`:`,
-    node2path.get(node),
-    Util.ansi.text(`node`, 1, 33) + `:`,
-    Util.toString(node, { multiline: false, depth: 4 })
-  ];
+  return [hl.id`path` + hl.punct`:`, node2path.get(node), Util.ansi.text(`node`, 1, 33) + `:`, Util.toString(node, { multiline: false, depth: 4 })];
 }
 
 function GenerateFlatMap(ast, root = [], pred = (n, p) => true, t = (p, n) => [root.concat(p).join('.'), n]) {
@@ -453,8 +436,7 @@ async function main(...args) {
 
   while(/^-/.test(args[0])) parameters.push(args.shift());
 
-  if(args.length == 0)
-    args = ['lib/geom/point.js', 'lib/geom/size.js', 'lib/geom/trbl.js', 'lib/geom/rect.js', 'lib/dom/element.js'];
+  if(args.length == 0) args = ['lib/geom/point.js', 'lib/geom/size.js', 'lib/geom/trbl.js', 'lib/geom/rect.js', 'lib/dom/element.js'];
   let r = [];
   let processed = [];
   let allImports = [];
@@ -598,9 +580,7 @@ async function main(...args) {
 
             deep.set(ast, imp[0], new Identifier(name));
 
-            let importStatement = new ImportDeclaration([new ImportSpecifier(new Identifier('default'), new Identifier(name))],
-              new Literal(source)
-            );
+            let importStatement = new ImportDeclaration([new ImportSpecifier(new Identifier('default'), new Identifier(name))], new Literal(source));
 
             // console.log('stmt:', stmt[1]);
             let assoc = Util.filterKeys(ESNode.assoc(stmt[1]), ['range', 'comments', 'position']);
@@ -681,9 +661,7 @@ async function main(...args) {
 
       //console.log('moduleImports:', moduleImports);
 
-      imports = moduleImports
-        .map(([path, node]) => [path, node, Literal.string(GetLiteral(node))])
-        .filter(([path, node, module]) => !re.name.test(module));
+      imports = moduleImports.map(([path, node]) => [path, node, Literal.string(GetLiteral(node))]).filter(([path, node, module]) => !re.name.test(module));
 
       //console.log('imports:', imports);
 
@@ -767,9 +745,7 @@ async function main(...args) {
       // console.log('exportNodes:', exportNodes);
       let exportPaths = exportNodes.map(getExport);
       //console.log('exportPaths:', exportPaths);
-      let exportEntries = exportPaths
-        .map(([path, path2]) => [path, path2, deep.get(ast, [...path])])
-        .map(([path, path2, node]) => [path, path2, node, node instanceof AssignmentExpression ? node.right : node]);
+      let exportEntries = exportPaths.map(([path, path2]) => [path, path2, deep.get(ast, [...path])]).map(([path, path2, node]) => [path, path2, node, node instanceof AssignmentExpression ? node.right : node]);
       let moduleExports = exportEntries.map(([path, path2, node, node2]) => [node != node2 ? 'default' : null, node2]);
       let exportInstances = moduleExports.map(([name, node], i) =>
         ES6ImportExport.create({
@@ -788,9 +764,7 @@ async function main(...args) {
       //  console.log('exports:',[...ES6ImportExport.exports].map(([name,list]) => [name,list.length]));
       //      console.log('exports > 1:', [...ES6ImportExport.exports].filter(([name, list]) => list.length > 1));
       let e = ES6ImportExport.exports;
-      [...e]
-        .filter(([name, list]) => list.length > 1 && name != 'default')
-        .map(([name, list]) => list.slice(1).map(node => st.remove(node)));
+      [...e].filter(([name, list]) => list.length > 1 && name != 'default').map(([name, list]) => list.slice(1).map(node => st.remove(node)));
       let defaultExports = [...flat].filter(([p, n]) => n instanceof ExportDefaultDeclaration);
       //[1].map(node => st.replace(node, node.declaration));
 
@@ -885,13 +859,10 @@ function FdReader(fd, bufferSize = 1024) {
 
 async function Prettier(file) {
   let input = filesystem.open(file, 'r');
-  let proc = childProcess('sh',
-    ['-c', `node_modules/.bin/prettier --config .prettierrc --parser babel <'${file}' | tee '${file}.prettier'`],
-    {
-      block: false,
-      stdio: [input, 'pipe', 'pipe']
-    }
-  );
+  let proc = childProcess('sh', ['-c', `node_modules/.bin/prettier --config .prettierrc --parser babel <'${file}' | tee '${file}.prettier'`], {
+    block: false,
+    stdio: [input, 'pipe', 'pipe']
+  });
   let sink = RepeaterSink(wr => proc.stdio[1].pipe(wr));
   let data = '';
   for await(let r of await sink) data += r;
@@ -933,8 +904,7 @@ function GetFile(module, position) {
 
   module = module.replace(/\?.*/g, '');
 
-  if(module.startsWith('.') && typeof file == 'string' && !path.isAbsolute(module))
-    module = path.join(path.dirname(file), module);
+  if(module.startsWith('.') && typeof file == 'string' && !path.isAbsolute(module)) module = path.join(path.dirname(file), module);
 
   try {
     if(!filesystem.exists(module)) {
@@ -965,16 +935,11 @@ function GetFromValue(...args) {
   let pathStr = p.join('.');
   let flat = GenerateFlatMap(n,
     p,
-    (n, p) =>
-      true ||
-      Util.isArray(n) ||
-      [ExportNamedDeclaration, ImportDeclaration, ObjectPattern, Literal].some(ctor => n instanceof ctor),
+    (n, p) => true || Util.isArray(n) || [ExportNamedDeclaration, ImportDeclaration, ObjectPattern, Literal].some(ctor => n instanceof ctor),
     (p, n) => [
       p,
       Object.setPrototypeOf({
-          ...Util.filterKeys(n,
-            k => n instanceof CallExpression || (k != 'type' && !(Util.isObject(n[k]) || Util.isFunction(n[k])))
-          )
+          ...Util.filterKeys(n, k => n instanceof CallExpression || (k != 'type' && !(Util.isObject(n[k]) || Util.isFunction(n[k]))))
         },
         Object.getPrototypeOf(n)
       )
@@ -1253,9 +1218,7 @@ function SearchModuleInPath(name, _from, position) {
   let fromModule = ES6Module.get(_from);
   if(!fromModule) throw new Error(`Module "${_from}" not found (${name})`, name);
   let chain = fromModule.chain;
-  throw new URIError(`Module '${name}' imported from '${_from}' not found ` + Util.toString({ name, chain }, { multiline: false }),
-    name
-  );
+  throw new URIError(`Module '${name}' imported from '${_from}' not found ` + Util.toString({ name, chain }, { multiline: false }), name);
 }
 
 function RemoveStatements(ast, statements, predicate = stmt => true) {
@@ -1321,16 +1284,7 @@ function GetDeclarations(ast, paths) {
 
 function MakeNames(prefix) {
   if(/\.(njs|es6.js|esm.js|module.js|module.ejs|js|mjs)$/.test(prefix)) return [prefix];
-  return [
-    prefix + '.njs',
-    prefix + '.es6.js',
-    prefix + '.esm.js',
-    prefix + '.module.js',
-    prefix + '.module.ejs',
-    prefix + '.js',
-    prefix + '.mjs',
-    prefix
-  ];
+  return [prefix + '.njs', prefix + '.es6.js', prefix + '.esm.js', prefix + '.module.js', prefix + '.module.ejs', prefix + '.js', prefix + '.mjs', prefix];
 }
 
 function IsPackage(dir) {

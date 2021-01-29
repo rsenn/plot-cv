@@ -73,26 +73,7 @@ function main(...args) {
     const rfds = new fd_set();
     const wfds = new fd_set();
 
-    outLen = Copy(new Uint8Array(outBuf), [
-      0xff,
-      0xff,
-      0x01,
-      0x00,
-      0x00,
-      0x01,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      ...ToDomain(domain),
-      0x00,
-      0x00,
-      0x01,
-      0x00,
-      0x01
-    ]);
+    outLen = Copy(new Uint8Array(outBuf), [0xff, 0xff, 0x01, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, ...ToDomain(domain), 0x00, 0x00, 0x01, 0x00, 0x01]);
     new DataView(outBuf).setUint16(0, outLen - 2, false);
 
     do {
@@ -190,12 +171,7 @@ function BufferToBytes(buf, offset = 0, len) {
 }
 
 function ArrayToBytes(arr, delim = ', ', bytes = 1) {
-  return ('[' +
-    arr.reduce((s, code) => (s != '' ? s + delim : '') + '0x' + ('000000000000000' + code.toString(16)).slice(-(bytes * 2)),
-      ''
-    ) +
-    ']'
-  );
+  return '[' + arr.reduce((s, code) => (s != '' ? s + delim : '') + '0x' + ('000000000000000' + code.toString(16)).slice(-(bytes * 2)), '') + ']';
 }
 
 function AvailableBytes(buf, numBytes) {
@@ -210,13 +186,7 @@ function Copy(dst, src, len) {
 }
 
 function ToDomain(str, alpha = false) {
-  return str
-    .split('.')
-    .reduce(alpha
-        ? (a, s) => a + String.fromCharCode(s.length) + s
-        : (a, s) => a.concat([s.length, ...s.split('').map(ch => ch.charCodeAt(0))]),
-      alpha ? '' : []
-    );
+  return str.split('.').reduce(alpha ? (a, s) => a + String.fromCharCode(s.length) + s : (a, s) => a.concat([s.length, ...s.split('').map(ch => ch.charCodeAt(0))]), alpha ? '' : []);
 }
 
 function Append(buf, numBytes, ...chars) {

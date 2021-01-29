@@ -193,28 +193,22 @@ export class Type {
   }
 }
 
-export async function AstDump(file, args) {
-  args = ['-Xclang', '-ast-dump=json', '-fsyntax-only', '-I.', ...args];
+export async function Compile(file, args = []) {
+  args = ['-I.', ...args];
   let child = spawn(['clang', ...args, file], {
-    //    stdin: 'inherit',
     block: false,
     stdio: ['inherit', 'pipe', 'pipe']
-    //  stderr: 'pipe'
   });
 
   let json = '',
     errors = '';
-  console.log('child:', child);
 
   if(Util.platform == 'quickjs') {
     (function () {
       let r;
       let buf = new ArrayBuffer(1024);
-      console.log('stdout:', child.stdout);
       r = filesystem.readAll(child.stdout.fd);
-      //const str = filesystem.bufferToString(buf.slice(0, r));
       json += r;
-      console.log('read:', r);
     })();
   } else {
     AcquireReader(child.stdout, async reader => {
@@ -222,7 +216,6 @@ export async function AstDump(file, args) {
       while((r = await reader.read())) {
         if(!r.done) {
           str = r.value.toString();
-          console.log('stdout:');
           json += str;
         }
       }
@@ -247,4 +240,31 @@ export async function AstDump(file, args) {
   return json;
 }
 
+export async function AstDump(file, args) {
+  return Compile(file, ['-Xclang', '-ast-dump=json', '-fsyntax-only', '-I.', ...args]);
+}
+
+export function GetLoc(node) {
+  let loc;
+  if('loc' in node) loc = node.loc;
+  else if('range' in node) loc = node.range;
+  else return null; //throw new Error(`no loc in ${tree.pathOf(node)}`);
+  if('expansionLoc' in loc) loc = loc.expansionLoc;
+  if('begin' in loc) loc = loc.begin;
+
+  if(!('offset' in loc)) return null; // throw new Error(`no offset in loc of ${node.kind} ${Util.isEmpty(loc)}`);
+  return loc;
+}
+export function GetType(node) {
+  let type;
+  if(node.type) type = node.type;
+  else if('inner' in node && node.inner.some(inner => 'name' in inner || 'type' in inner)) {
+    type = node.inner.map(inner => [inner.name, GetType(inner)]);
+    return '{ ' + type.map(([n, t]) => `${t} ${n};`).join(' ') + ' }';
+  }
+  if(typeof type != 'object') return type;
+
+  if(type.qualType) type = type.qualType;
+  return type;
+}
 export default AstDump;
