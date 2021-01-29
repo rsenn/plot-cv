@@ -117,7 +117,7 @@ export function ParamNavigator(map, index = 0) {
 
   const mod = Util.mod(map.size);
 
-  console.log('map:', map);
+  //console.log('map:', map);
 
   Util.define(this, {
     map,

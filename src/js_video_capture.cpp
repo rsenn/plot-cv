@@ -15,6 +15,28 @@ is_numeric(const std::string& s) {
   return std::all_of(s.begin(), s.end(), [](unsigned char c) { return std::isdigit(c); });
 }
 
+static bool
+js_video_capture_open(JSContext* ctx, JSVideoCaptureData* s, int argc, JSValueConst* argv) {
+  int32_t camID, apiPreference = cv::CAP_ANY;
+  cv::String filename;
+
+  filename = JS_ToCString(ctx, argv[0]);
+
+  if(argc > 1)
+    JS_ToInt32(ctx, &apiPreference, argv[1]);
+
+  if(is_numeric(filename))
+    JS_ToInt32(ctx, &camID, argv[0]);
+
+  std::cerr << "VideoCapture.open filename='" << filename << "', camID=" << camID
+            << ", apiPreference=" << apiPreference << std::endl;
+
+  if(filename.empty())
+    return s->open(camID, apiPreference);
+
+  return s->open(filename, apiPreference);
+}
+
 static JSValue
 js_video_capture_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   JSVideoCaptureData* s;
@@ -28,25 +50,8 @@ js_video_capture_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValue
   new(s) JSVideoCaptureData();
 
   if(argc > 0) {
-    int32_t camID, apiPreference = cv::CAP_ANY;
-    cv::String filename;
-
-    if(argc > 1)
-      /* if(*/ JS_ToInt32(ctx, &apiPreference, argv[1]) /*)
-           apiPreference = cv::CAP_ANY*/
-          ;
-
-    // if(JS_ToInt32(ctx, &camID, argv[0]))
-    filename = JS_ToCString(ctx, argv[0]);
-
-    if(is_numeric(filename))
-      JS_ToInt32(ctx, &camID, argv[0]);
-
-    if(filename.empty()) {
-      s->open(camID, apiPreference);
-    } else {
-      s->open(filename, apiPreference);
-    }
+    if(!js_video_capture_open(ctx, s, argc, argv))
+      return JS_EXCEPTION;
   }
 
   /* using new_target to get the prototype is necessary when the
@@ -98,16 +103,14 @@ js_video_capture_method(
     } else {
       ret = JS_EXCEPTION;
     }
-  }
-  if(magic == 1) {
+  } else if(magic == 1) {
     if(!JS_ToInt32(ctx, &propID, argv[0])) {
       JS_ToFloat64(ctx, &value, argv[1]);
 
       s->set(propID, value);
     } else
       ret = JS_EXCEPTION;
-  }
-  if(magic == 2) {
+  } else if(magic == 2) {
     std::string backend;
     try {
       backend = s->getBackendName();
@@ -115,25 +118,15 @@ js_video_capture_method(
       backend = e.msg;
     }
     ret = JS_NewString(ctx, backend.c_str());
-  }
-  if(magic == 3)
+  } else if(magic == 3) {
     ret = JS_NewBool(ctx, s->grab());
-
-  if(magic == 4)
+  } else if(magic == 4) {
     ret = JS_NewBool(ctx, s->isOpened());
-  if(magic == 5) {
-    int32_t camID, apiPreference = cv::CAP_ANY;
-    if(!JS_ToInt32(ctx, &camID, argv[0])) {
-      if(argc > 1)
-        if(JS_ToInt32(ctx, &apiPreference, argv[1]))
-          apiPreference = cv::CAP_ANY;
-
-      ret = JS_NewBool(ctx, s->open(camID, apiPreference));
-    } else
-      ret = JS_EXCEPTION;
+  } else if(magic == 5) {
+    ret = JS_NewBool(ctx, js_video_capture_open(ctx, s, argc, argv));
   }
 
-  if(magic == 6 || magic == 7) {
+  else if(magic == 6 || magic == 7) {
     JSMatData* m = js_mat_data(ctx, argv[0]);
 
     if(m == nullptr)

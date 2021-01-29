@@ -391,9 +391,9 @@ async function main(...args) {
     },
     args
   );
-  console.log('main', opts);
+  /*console.log('main', opts);
   console.log('Rect.from:', Rect.from('1,2,3,4'));
-  console.log('Rect[1,2,3,4]:', Rect.from([1, 2, 3, 4]));
+  console.log('Rect[1,2,3,4]:', Rect.from([1, 2, 3, 4]));*/
 
   const makeRainbow = steps =>
     Util.range(0, 360, 360 / steps)
@@ -402,11 +402,11 @@ async function main(...args) {
       .map(h => h.toRGBA());
 
   let win = new Window('gray', /*cv.WINDOW_AUTOSIZE | cv.WINDOW_NORMAL  |*/ cv.WINDOW_KEEPRATIO);
-  console.debug('Mouse :', { MouseEvents, MouseFlags });
+  //console.debug('Mouse :', { MouseEvents, MouseFlags });
 
   const printFlags = flags => [...Util.bitsToNames(MouseFlags)];
-  console.log('printFlags:', printFlags + '');
-  console.log('tickFrequency:', cv.getTickFrequency());
+  /*console.log('printFlags:', printFlags + '');
+  console.log('tickFrequency:', cv.getTickFrequency());*/
 
   win.setMouseCallback(function (event, x, y, flags) {
     event = Mouse.printEvent(event);
@@ -416,8 +416,9 @@ async function main(...args) {
   });
 
   console.log('Setup duration:', hr(begin));
-
-  let video = new VideoSource(...opts['@']);
+const videos = opts['input'] ?  [opts['input']] : opts['@'];
+console.log('Creating VideoSource:', videos);
+  let video = new VideoSource(...videos);
 
   //if(!video.isVideo) video.size = new Size(960, 540);
 
