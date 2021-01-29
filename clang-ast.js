@@ -239,9 +239,7 @@ export async function AstDump(file, args) {
   console.log('errors:', errors);
   let errorLines = errors.split(/\n/g).filter(line => line.trim() != '');
   errorLines = errorLines.filter(line => /error:/.test(line));
-  const numErrors =
-    [...(/^([0-9]+)\s/g.exec(errorLines.find(line => /errors\sgenerated/.test(line)) || '0') || [])][0] ||
-    errorLines.length;
+  const numErrors = [...(/^([0-9]+)\s/g.exec(errorLines.find(line => /errors\sgenerated/.test(line)) || '0') || [])][0] || errorLines.length;
 
   console.log(`numErrors: ${numErrors}`);
   if(numErrors) throw new Error(errorLines.join('\n'));

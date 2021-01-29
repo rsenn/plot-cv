@@ -126,9 +126,7 @@ Object.assign(Pipeline.prototype, {
 });
 
 function SaveConfig(configObj) {
-  return filesystem.writeFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'),
-    JSON.stringify(configObj, null, 2) + '\n'
-  );
+  return filesystem.writeFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'), JSON.stringify(configObj, null, 2) + '\n');
 }
 
 function LoadConfig() {
@@ -458,12 +456,7 @@ async function main(...args) {
     dilations: new NumericParam(config.dilations ?? 0, 0, 10),
     erosions: new NumericParam(config.erosions ?? 0, 0, 10),
     mode: new EnumParam(config.mode ?? 3, ['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL']),
-    method: new EnumParam(config.method ?? 0, [
-      'CHAIN_APPROX_NONE',
-      'CHAIN_APPROX_SIMPLE',
-      'CHAIN_APPROX_TC89_L1',
-      'CHAIN_APPROX_TC89_L189_KCOS'
-    ]),
+    method: new EnumParam(config.method ?? 0, ['CHAIN_APPROX_NONE', 'CHAIN_APPROX_SIMPLE', 'CHAIN_APPROX_TC89_L1', 'CHAIN_APPROX_TC89_L189_KCOS']),
     maskColor: new EnumParam(config.maskColor ?? false, ['OFF', 'ON']),
     lineWidth: new NumericParam(config.lineWidth ?? 1, 0, 10),
     fontThickness: new NumericParam(config.fontThickness ?? 1, 0, 10)
@@ -521,8 +514,7 @@ async function main(...args) {
           firstSize = new Size(...videoSize);
         }
 
-        if(!videoSize.equals(dst.size))
-          throw new Error(`AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`);
+        if(!videoSize.equals(dst.size)) throw new Error(`AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`);
       }),
       Grayscale,
       Processor(function Norm(src, dst) {
@@ -556,14 +548,7 @@ async function main(...args) {
         let edges = pipeline.outputOf('EdgeDetect');
         //  console.log('edges: '+edges);
 
-        cv.HoughLinesP(edges,
-          (lines = []),
-          2,
-          (+params.angleResolution * Math.PI) / 180,
-          +params.threshc,
-          +params.minLineLength,
-          +params.maxLineGap
-        );
+        cv.HoughLinesP(edges, (lines = []), 2, (+params.angleResolution * Math.PI) / 180, +params.threshc, +params.minLineLength, +params.maxLineGap);
         //console.log('lines.length', lines.length);
         //console.log('lines: '+lines.map(l => l.toString()).join(', '));
         src.copyTo(dst);
@@ -602,8 +587,7 @@ async function main(...args) {
   let size;
 
   const ClearSurface = mat => (mat.setTo([0, 0, 0, 0]), mat);
-  const MakeSurface = () =>
-    Util.once((...args) => new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)), null, ClearSurface);
+  const MakeSurface = () => Util.once((...args) => new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)), null, ClearSurface);
   const MakeComposite = Util.once(() => new Mat());
   let surface = MakeSurface();
   let keyCode,
@@ -638,9 +622,7 @@ async function main(...args) {
         keyCode = key;
         keyTime = Util.now();
         modifiers = Object.fromEntries(modifierMap(keyCode));
-        modifierList = modifierMap(keyCode).reduce((acc, [modifier, active]) => (active ? [...acc, modifier] : acc),
-          []
-        );
+        modifierList = modifierMap(keyCode).reduce((acc, [modifier, active]) => (active ? [...acc, modifier] : acc), []);
         let ch = String.fromCodePoint(keyCode & 0xff);
         console.log(`keypress [${modifierList}] 0x${(keyCode & ~0xd000).toString(16)} '${ch}'`);
       }
@@ -705,21 +687,14 @@ async function main(...args) {
         case 0xf52: /* up */
         case 0xf54: /* down */ {
           const method = keyCode & 0x1 ? 'Frames' : 'Msecs';
-          const distance =
-            (keyCode & 0x1 ? 1 : 1000) *
-            (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
+          const distance = (keyCode & 0x1 ? 1 : 1000) * (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
           const offset = keyCode & 0x2 ? +distance : -distance;
 
           //console.log('seek', { method, distance, offset });
           video['seek' + method](offset);
           let pos = video.position(method);
 
-          console.log('seek' +
-              method +
-              ' ' +
-              offset +
-              ` distance = ${distance} pos = ${pos} (${Util.roundTo(video.position('%'), 0.001)}%)`
-          );
+          console.log('seek' + method + ' ' + offset + ` distance = ${distance} pos = ${pos} (${Util.roundTo(video.position('%'), 0.001)}%)`);
           break;
         }
         default: {
@@ -762,8 +737,7 @@ async function main(...args) {
     } else {
       let ids = [...getToplevel(hier)];
 
-      let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]])
-      );
+      let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]]));
       contours.forEach((contour, i) => {
         let p = [...getParents(hier, i)];
         let color = palette[p[p.length - 1]];
@@ -871,9 +845,7 @@ async function main(...args) {
   for(let mat of Mat.list || []) {
     let stack = Mat.backtrace(mat)
       //.slice(0,-1)
-      .filter(frame =>
-          frame.functionName != '<anonymous>' && (frame.lineNumber !== undefined || /test-video/.test(frame.fileName))
-      )
+      .filter(frame => frame.functionName != '<anonymous>' && (frame.lineNumber !== undefined || /test-video/.test(frame.fileName)))
       .map(frame => frame.toString())
       .join('\n  ');
 
