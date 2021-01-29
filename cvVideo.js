@@ -140,7 +140,7 @@ export class ImageSequence {
     //console.debug(`ImageSequence.grab[${this.framePos}] ${frameFile}`);
 
     let ret = !!(this.frame = cv.imread(frameFile));
-  
+
     return ret;
   }
   retrieve(mat) {
@@ -205,14 +205,14 @@ export class VideoSource {
   );
 
   constructor(...args) {
-         console.log('VideoSource.constructor(', ...args.reduce((acc,arg) => [...acc,', ', arg], []), ')');
-if(args.length > 0) {
+    console.log('VideoSource.constructor(', ...args.reduce((acc, arg) => [...acc, ', ', arg], []), ')');
+    if(args.length > 0) {
       let [device, backend = 'ANY'] = args;
       const driverId = VideoSource.backends[backend];
       let isVideo = (args.length <= 2 && backend in VideoSource.backends) || isVideoPath(device);
 
       // if(cv.imread(args[0])) isVideo = false;
-     console.log('VideoSource', { args, backend, driverId, isVideo });
+      console.log('VideoSource', { args, backend, driverId, isVideo });
 
       if(isVideo) {
         if(typeof device == 'string' && isVideoPath(device)) if (backend == 'ANY') backend = 'FFMPEG';

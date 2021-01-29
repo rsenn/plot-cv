@@ -416,8 +416,8 @@ async function main(...args) {
   });
 
   console.log('Setup duration:', hr(begin));
-const videos = opts['input'] ?  [opts['input']] : opts['@'];
-console.log('Creating VideoSource:', videos);
+  const videos = opts['input'] ? [opts['input']] : opts['@'];
+  console.log('Creating VideoSource:', videos);
   let video = new VideoSource(...videos);
 
   //if(!video.isVideo) video.size = new Size(960, 540);
