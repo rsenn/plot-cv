@@ -244,6 +244,29 @@ export async function AstDump(file, args) {
   return Compile(file, ['-Xclang', '-ast-dump=json', '-fsyntax-only', '-I.', ...args]);
 }
 
+export function NodeType(n) {
+  return n.type
+    ? (t => {
+        let { typeAliasDeclId, ...type } = t;
+        if(typeof typeAliasDeclId == 'string') type.typeAliasDecl = idNodes.get(typeAliasDeclId);
+
+        if(Type.declarations && Type.declarations.has(t.desugaredQualType)) {
+          type = Type.declarations.get(t.desugaredQualType);
+        }
+
+        if(Util.isObject(type) && Util.isObject(type.type)) type = type.type;
+        return new Type(type);
+      })(n.type)
+    : NodeType(deep.find(ast, n => Util.isObject(n) && n.type).value);
+}
+
+export function NodeName(n, name) {
+  if(typeof name != 'string') name = '';
+  if(name == '' && n.name) name = n.name;
+  if(n.tagUsed) name = n.tagUsed + ' ' + name;
+  return name;
+}
+
 export function GetLoc(node) {
   let loc;
   if('loc' in node) loc = node.loc;
@@ -255,6 +278,7 @@ export function GetLoc(node) {
   if(!('offset' in loc)) return null; // throw new Error(`no offset in loc of ${node.kind} ${Util.isEmpty(loc)}`);
   return loc;
 }
+
 export function GetType(node) {
   let type;
   if(node.type) type = node.type;
