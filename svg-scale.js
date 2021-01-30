@@ -24,7 +24,10 @@ function readXML(filename) {
 function writeXML(filename, xml) {
   let str = toXML(xml) + '\n';
   let tempFileName = filename + '.' + prng.uint32();
-  let ret = filesystem.writeFile(tempFileName, str) > 0 && filesystem.unlink(filename) == 0 && filesystem.rename(tempFileName, filename) == 0;
+  let ret =
+    filesystem.writeFile(tempFileName, str) > 0 &&
+    filesystem.unlink(filename) == 0 &&
+    filesystem.rename(tempFileName, filename) == 0;
   if(ret) console.log(`Wrote '${filename}'.`);
   return ret;
 }
@@ -75,7 +78,9 @@ function* formatPath(path) {
         yield `${part.code} ${x},${y}`;
         break;
       case 'A':
-        yield `${part.code} ${rx} ${ry} ${xAxisRotation} ${largeArc ? 1 : 0} ${sweep ? 1 : 0} ${x},${y}`;
+        yield `${part.code} ${rx} ${ry} ${xAxisRotation} ${largeArc ? 1 : 0} ${
+          sweep ? 1 : 0
+        } ${x},${y}`;
         break;
     }
   }

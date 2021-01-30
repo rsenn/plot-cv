@@ -182,7 +182,9 @@ async function main(...args) {
                 throw new Error(message);
               }
             }
-            command.args = command.args.map(arg => (typeof arg == 'number' ? Util.roundTo(arg, 0.00001, 6) : arg));
+            command.args = command.args.map(arg =>
+              typeof arg == 'number' ? Util.roundTo(arg, 0.00001, 6) : arg
+            );
 
             return command;
           });
@@ -210,7 +212,8 @@ async function main(...args) {
 
     function hasCoord(node) {
       let keys = Object.keys(node);
-      return keys.some(key => ['x', 'y', 'cx', 'cy', 'd', 'x1', 'y1', 'x2', 'y2'].indexOf(key) != -1);
+      return keys.some(key => ['x', 'y', 'cx', 'cy', 'd', 'x1', 'y1', 'x2', 'y2'].indexOf(key) != -1
+      );
     }
     function coordKeys(node) {
       let keys = Object.keys(node);

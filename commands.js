@@ -24,7 +24,8 @@ export async function NormalizeResponse(resp) {
     let disp = headers.get('Content-Disposition');
     let type = headers.get('Content-Type');
     if(ok) {
-      if(!disp && /json/.test(type) && typeof resp.json == 'function') resp = { data: await resp.json() };
+      if(!disp && /json/.test(type) && typeof resp.json == 'function')
+        resp = { data: await resp.json() };
       else if(typeof resp.text == 'function') resp = { data: await resp.text() };
       if(disp && !resp.file) resp.file = disp.replace(/.*['"]([^"]+)['"].*/, '$1');
       if(disp && type) resp.type = type;
@@ -53,7 +54,15 @@ export async function ResponseData(resp) {
 export const FetchCached = Util.cachedFetch({
   debug: true,
   print({ cached, ok, status, redirected, statusText, type, url }, fn, ...args) {
-    console.debug(`FetchCached(${args.map((a, i) => (typeof a == 'string' ? '"' + a + '"' : i == 1 ? Util.toSource({ ...this.opts, ...a }, { colors: false, multiline: false }) : a)).join(', ')}) =`,
+    console.debug(`FetchCached(${args
+        .map((a, i) =>
+          typeof a == 'string'
+            ? '"' + a + '"'
+            : i == 1
+            ? Util.toSource({ ...this.opts, ...a }, { colors: false, multiline: false })
+            : a
+        )
+        .join(', ')}) =`,
       {
         cached,
         ok,
@@ -130,14 +139,17 @@ export const FindLayer = (name, project = window.project) => {
   return layers.find(l => l.name === name);
 };
 
-export const GetLayer = (layer, project = window.project) => FindLayer(layer.name, project) || AddLayer(layer, project);
+export const GetLayer = (layer, project = window.project) =>
+  FindLayer(layer.name, project) || AddLayer(layer, project);
 
 export const AddLayer = (layer, project = window.project) => {
   const { color, name, create, ...props } = layer;
   let layers = window.layers;
   let i = Math.max(...layers.map(l => l.i)) + 1;
 
-  let dom = create ? create(project, { ...props, 'data-layer': `${i} ${name}` }) : SVG.create('g', { i, stroke: color, ...props }, project.svgElement);
+  let dom = create
+    ? create(project, { ...props, 'data-layer': `${i} ${name}` })
+    : SVG.create('g', { i, stroke: color, ...props }, project.svgElement);
   let visible = trkl(true);
 
   visible.subscribe(value => {
@@ -232,7 +244,11 @@ export const GcodeToPolylines = (data, opts = {}) => {
   const { fill = false, color, side } = opts;
   //console.debug('GcodeToPolylines', { data, opts });
 
-  let gc = [...Util.filter(parseGcode(data), g => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args)];
+  let gc = [
+    ...Util.filter(parseGcode(data),
+      g => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args
+    )
+  ];
   let polylines = [];
   let polyline = null;
   let bb = new BBox();
@@ -268,7 +284,9 @@ export const GcodeToPolylines = (data, opts = {}) => {
       class: `gcode ${side} side`,
       color,
       'stroke-width': 0.15,
-      transform: ` translate(-0.3175,0) ` + (side == 'front' ? 'scale(-1,-1)' : 'scale(1,-1)') + ` translate(${0},${-bb.y2})  translate(0,0)`
+      transform: ` translate(-0.3175,0) ` +
+        (side == 'front' ? 'scale(-1,-1)' : 'scale(1,-1)') +
+        ` translate(${0},${-bb.y2})  translate(0,0)`
     },
     project
   ).dom;
@@ -282,7 +300,12 @@ export const GcodeToPolylines = (data, opts = {}) => {
     polylines = polylines.map(pl => Util.chunkArray(pl, 2).map(pt => new Point(...pt)));
     //console.log('polylines(4):', polylines);
     polylines = polylines.map(pl => new Polyline([]).push(...pl));
-    let inside = new Map(polylines.map((polyline2, i) => [polyline2, polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2))]));
+    let inside = new Map(polylines.map((polyline2, i) => [
+        polyline2,
+        polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2)
+        )
+      ])
+    );
     let insideOf = polylines.map((polyline, i) => [
       i,
       polylines
@@ -309,7 +332,12 @@ export const GcodeToPolylines = (data, opts = {}) => {
   }
   let ids = polylines.map((pl, i) => i).filter(i => !remove.has(i));
   let polys = [
-    ...ids.map(i => polylines[i].toSVG((...args) => args, { ...props(polylines[i], i), id: `polyline-${i}` }, grp, 0.01)),
+    ...ids.map(i =>
+      polylines[i].toSVG((...args) => args, { ...props(polylines[i], i), id: `polyline-${i}` },
+        grp,
+        0.01
+      )
+    ),
     ...paths
       .map(([i, d]) => ({
         ...props(polyline, i),
@@ -328,7 +356,9 @@ export const GcodeToPolylines = (data, opts = {}) => {
 export function GeneratePalette(numColors) {
   let ret = [];
   let base = new HSLA(Util.randInt(0, 360, prng), 100, 50).toRGBA();
-  let offsets = Util.range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360], []);
+  let offsets = Util.range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360],
+    []
+  );
   offsets = offsets.sort((a, b) => a - b);
   //offsets = Util.shuffle(offsets, prng);
   //Util.log('offsets:', offsets);

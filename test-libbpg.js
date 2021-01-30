@@ -65,7 +65,19 @@ class BPGImageInfo extends ArrayBuffer {
   get loop_count() { return new Uint8Array(this, 16, 1)[0]; }
 
   toString() {
-    const { width, height, format, has_alpha, color_space, bit_depth, premultiplied_alpha, has_w_plane, limited_range, has_animation, loop_count } = this;
+    const {
+      width,
+      height,
+      format,
+      has_alpha,
+      color_space,
+      bit_depth,
+      premultiplied_alpha,
+      has_w_plane,
+      limited_range,
+      has_animation,
+      loop_count
+    } = this;
     return `struct BPGImageInfo {\n\t.width = ${width},\n\t.height = ${height},\n\t.format = ${format},\n\t.has_alpha = ${has_alpha},\n\t.color_space = ${color_space},\n\t.bit_depth = ${bit_depth},\n\t.premultiplied_alpha = ${premultiplied_alpha},\n\t.has_w_plane = ${has_w_plane},\n\t.limited_range = ${limited_range},\n\t.has_animation = ${has_animation},\n\t.loop_count = ${loop_count}\n}`;
   }
 }
@@ -132,11 +144,19 @@ class BPGLoader extends BPGDecoder {
   }
 
   async load(buffer) {
-    if(typeof buffer == 'string') buffer = await fetch(buffer).then(response => response.arrayBuffer());
+    if(typeof buffer == 'string')
+      buffer = await fetch(buffer).then(response => response.arrayBuffer());
 
     if(!isBPG(buffer)) {
       const magic = new Uint8Array(buffer, 0, 4);
-      throw new Error(`BPGLoader.load: is not a BPG (${magic.join(', ')}) '${[...magic].map(code => (code < 32 || code >= 127 ? `\\x${('0' + code.toString(16)).slice(-2)}` : String.fromCharCode(code))).join('')}'`);
+      throw new Error(`BPGLoader.load: is not a BPG (${magic.join(', ')}) '${[...magic]
+          .map(code =>
+            code < 32 || code >= 127
+              ? `\\x${('0' + code.toString(16)).slice(-2)}`
+              : String.fromCharCode(code)
+          )
+          .join('')}'`
+      );
     }
 
     return (this.buffer = buffer).byteLength;

@@ -55,7 +55,8 @@ class Pipeline extends Function {
         mat = processor.call(self, mat, self.images[i], i);
         if(mat) self.images[i] = mat;
         self.times[i] = hr(start);
-        if(typeof callback == 'function') callback.call(self, self.images[i], i, self.processors.length);
+        if(typeof callback == 'function')
+          callback.call(self, self.images[i], i, self.processors.length);
         i++;
       }
       return mat;
@@ -126,7 +127,9 @@ Object.assign(Pipeline.prototype, {
 });
 
 function SaveConfig(configObj) {
-  return filesystem.writeFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'), JSON.stringify(configObj, null, 2) + '\n');
+  return filesystem.writeFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'),
+    JSON.stringify(configObj, null, 2) + '\n'
+  );
 }
 
 function LoadConfig() {
@@ -455,8 +458,19 @@ async function main(...args) {
     L2gradient: new NumericParam(config.L2gradient ?? 0, 0, 1),
     dilations: new NumericParam(config.dilations ?? 0, 0, 10),
     erosions: new NumericParam(config.erosions ?? 0, 0, 10),
-    mode: new EnumParam(config.mode ?? 3, ['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL']),
-    method: new EnumParam(config.method ?? 0, ['CHAIN_APPROX_NONE', 'CHAIN_APPROX_SIMPLE', 'CHAIN_APPROX_TC89_L1', 'CHAIN_APPROX_TC89_L189_KCOS']),
+    mode: new EnumParam(config.mode ?? 3, [
+      'RETR_EXTERNAL',
+      'RETR_LIST',
+      'RETR_CCOMP',
+      'RETR_TREE',
+      'RETR_FLOODFILL'
+    ]),
+    method: new EnumParam(config.method ?? 0, [
+      'CHAIN_APPROX_NONE',
+      'CHAIN_APPROX_SIMPLE',
+      'CHAIN_APPROX_TC89_L1',
+      'CHAIN_APPROX_TC89_L189_KCOS'
+    ]),
     maskColor: new EnumParam(config.maskColor ?? false, ['OFF', 'ON']),
     lineWidth: new NumericParam(config.lineWidth ?? 1, 0, 10),
     fontThickness: new NumericParam(config.fontThickness ?? 1, 0, 10)
@@ -514,7 +528,9 @@ async function main(...args) {
           firstSize = new Size(...videoSize);
         }
 
-        if(!videoSize.equals(dst.size)) throw new Error(`AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`);
+        if(!videoSize.equals(dst.size))
+          throw new Error(`AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`
+          );
       }),
       Grayscale,
       Processor(function Norm(src, dst) {
@@ -524,7 +540,13 @@ async function main(...args) {
         cv.GaussianBlur(src, dst, [+params.ksize, +params.ksize], 0, 0, cv.BORDER_REPLICATE);
       }),
       Processor(function EdgeDetect(src, dst) {
-        cv.Canny(src, dst, +params.thresh1, +params.thresh2, +params.apertureSize, +params.L2gradient);
+        cv.Canny(src,
+          dst,
+          +params.thresh1,
+          +params.thresh2,
+          +params.apertureSize,
+          +params.L2gradient
+        );
         ////console.log('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);
       }),
       Processor(function Morph(src, dst) {
@@ -548,7 +570,14 @@ async function main(...args) {
         let edges = pipeline.outputOf('EdgeDetect');
         //  console.log('edges: '+edges);
 
-        cv.HoughLinesP(edges, (lines = []), 2, (+params.angleResolution * Math.PI) / 180, +params.threshc, +params.minLineLength, +params.maxLineGap);
+        cv.HoughLinesP(edges,
+          (lines = []),
+          2,
+          (+params.angleResolution * Math.PI) / 180,
+          +params.threshc,
+          +params.minLineLength,
+          +params.maxLineGap
+        );
         //console.log('lines.length', lines.length);
         //console.log('lines: '+lines.map(l => l.toString()).join(', '));
         src.copyTo(dst);
@@ -587,7 +616,11 @@ async function main(...args) {
   let size;
 
   const ClearSurface = mat => (mat.setTo([0, 0, 0, 0]), mat);
-  const MakeSurface = () => Util.once((...args) => new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)), null, ClearSurface);
+  const MakeSurface = () =>
+    Util.once((...args) => new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)),
+      null,
+      ClearSurface
+    );
   const MakeComposite = Util.once(() => new Mat());
   let surface = MakeSurface();
   let keyCode,
@@ -622,7 +655,9 @@ async function main(...args) {
         keyCode = key;
         keyTime = Util.now();
         modifiers = Object.fromEntries(modifierMap(keyCode));
-        modifierList = modifierMap(keyCode).reduce((acc, [modifier, active]) => (active ? [...acc, modifier] : acc), []);
+        modifierList = modifierMap(keyCode).reduce((acc, [modifier, active]) => (active ? [...acc, modifier] : acc),
+          []
+        );
         let ch = String.fromCodePoint(keyCode & 0xff);
         console.log(`keypress [${modifierList}] 0x${(keyCode & ~0xd000).toString(16)} '${ch}'`);
       }
@@ -687,14 +722,21 @@ async function main(...args) {
         case 0xf52: /* up */
         case 0xf54: /* down */ {
           const method = keyCode & 0x1 ? 'Frames' : 'Msecs';
-          const distance = (keyCode & 0x1 ? 1 : 1000) * (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
+          const distance =
+            (keyCode & 0x1 ? 1 : 1000) *
+            (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
           const offset = keyCode & 0x2 ? +distance : -distance;
 
           //console.log('seek', { method, distance, offset });
           video['seek' + method](offset);
           let pos = video.position(method);
 
-          console.log('seek' + method + ' ' + offset + ` distance = ${distance} pos = ${pos} (${Util.roundTo(video.position('%'), 0.001)}%)`);
+          console.log('seek' +
+              method +
+              ' ' +
+              offset +
+              ` distance = ${distance} pos = ${pos} (${Util.roundTo(video.position('%'), 0.001)}%)`
+          );
           break;
         }
         default: {
@@ -737,20 +779,29 @@ async function main(...args) {
     } else {
       let ids = [...getToplevel(hier)];
 
-      let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]]));
+      let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]])
+      );
       contours.forEach((contour, i) => {
         let p = [...getParents(hier, i)];
         let color = palette[p[p.length - 1]];
         drawContour(over, contour, color, +params.lineWidth);
       });
     }
-    font.draw(over, video.time + ' ⏩', tPos, /*0x00ff00 ||*/ { r: 0, g: 255, b: 0, a: 255 }, +params.fontThickness);
+    font.draw(over,
+      video.time + ' ⏩',
+      tPos,
+      /*0x00ff00 ||*/ { r: 0, g: 255, b: 0, a: 255 },
+      +params.fontThickness
+    );
 
     function drawParam(param, y, color) {
       const name = paramNav.nameOf(param);
       const value = param.get() + (param.get() != (param | 0) + '' ? ` (${+param})` : '');
       const arrow = Number.isInteger(y) && paramNav.name == name ? '=>' : '  ';
-      const text = `${arrow}${name}` + (Number.isInteger(y) ? `[${param.range.join('-')}]` : '') + ` = ${value}`;
+      const text =
+        `${arrow}${name}` +
+        (Number.isInteger(y) ? `[${param.range.join('-')}]` : '') +
+        ` = ${value}`;
       color = color || { r: 0xb7, g: 0x35, b: 255, a: 255 };
       y = tPos.y - 20 - (y | 0);
       font.draw(over, text, [tPos.x, y], { r: 0, g: 0, b: 0, a: 255 }, params.fontThickness * 2);
@@ -825,7 +876,18 @@ async function main(...args) {
     //composite.release();
     //console.log("composite.release()", composite.toString());
   }
-  const { ksize, thresh1, thresh2, apertureSize, L2gradient, dilations, erosions, mode, method, lineWidth } = params;
+  const {
+    ksize,
+    thresh1,
+    thresh2,
+    apertureSize,
+    L2gradient,
+    dilations,
+    erosions,
+    mode,
+    method,
+    lineWidth
+  } = params;
   SaveConfig(Object.entries({
       frameShow,
       ksize,
@@ -845,7 +907,10 @@ async function main(...args) {
   for(let mat of Mat.list || []) {
     let stack = Mat.backtrace(mat)
       //.slice(0,-1)
-      .filter(frame => frame.functionName != '<anonymous>' && (frame.lineNumber !== undefined || /test-video/.test(frame.fileName)))
+      .filter(frame =>
+          frame.functionName != '<anonymous>' &&
+          (frame.lineNumber !== undefined || /test-video/.test(frame.fileName))
+      )
       .map(frame => frame.toString())
       .join('\n  ');
 

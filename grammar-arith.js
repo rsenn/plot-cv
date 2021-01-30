@@ -3,12 +3,15 @@ import { choice, seq, token, char, regex, option, any, many, eof, ignore, concat
 function wrap(parser, name) {
   return (str, pos) => {
     let r = parser(str, pos);
-    if(r[0] || name.startsWith('direct')) console.log('matched (' + name + ') ' + pos + ' - ' + r[2] + ": '", r[1], "'");
+    if(r[0] || name.startsWith('direct'))
+      console.log('matched (' + name + ') ' + pos + ' - ' + r[2] + ": '", r[1], "'");
     return r;
   };
 }
 function primaryExpression(...args) {
-  return wrap(choice(identifier, constant, stringLiteral, seq(token('('), expression, token(')'))), 'primaryExpression')(...args);
+  return wrap(choice(identifier, constant, stringLiteral, seq(token('('), expression, token(')'))),
+    'primaryExpression'
+  )(...args);
 }
 
 function postfixExpression(...args) {
@@ -20,11 +23,20 @@ function argumentExpressionList(...args) {
 }
 
 function unaryExpression(...args) {
-  return wrap(choice(postfixExpression, seq(token('++'), unaryExpression), seq(token('--'), unaryExpression), seq(unaryOperator, castExpression)), 'unaryExpression')(...args);
+  return wrap(choice(
+      postfixExpression,
+      seq(token('++'), unaryExpression),
+      seq(token('--'), unaryExpression),
+      seq(unaryOperator, castExpression)
+    ),
+    'unaryExpression'
+  )(...args);
 }
 
 function unaryOperator(...args) {
-  return wrap(choice(token('&'), token('*'), token('+'), token('-'), token('~'), token('!')), 'unaryOperator')(...args);
+  return wrap(choice(token('&'), token('*'), token('+'), token('-'), token('~'), token('!')),
+    'unaryOperator'
+  )(...args);
 }
 
 function castExpression(...args) {
@@ -72,15 +84,36 @@ function logicalOrExpression(...args) {
 }
 
 function conditionalExpression(...args) {
-  return wrap(choice(logicalOrExpression, seq(logicalOrExpression, token('?'), expression, token(':'), conditionalExpression)), 'conditionalExpression')(...args);
+  return wrap(choice(
+      logicalOrExpression,
+      seq(logicalOrExpression, token('?'), expression, token(':'), conditionalExpression)
+    ),
+    'conditionalExpression'
+  )(...args);
 }
 
 function assignmentExpression(...args) {
-  return wrap(choice(conditionalExpression, seq(unaryExpression, assignmentOperator, assignmentExpression)), 'assignmentExpression')(...args);
+  return wrap(choice(conditionalExpression, seq(unaryExpression, assignmentOperator, assignmentExpression)),
+    'assignmentExpression'
+  )(...args);
 }
 
 function assignmentOperator(...args) {
-  return wrap(choice(token('='), token('*='), token('/='), token('%='), token('+='), token('-='), token('<<='), token('>>='), token('&='), token('^='), token('|=')), 'assignmentOperator')(...args);
+  return wrap(choice(
+      token('='),
+      token('*='),
+      token('/='),
+      token('%='),
+      token('+='),
+      token('-='),
+      token('<<='),
+      token('>>='),
+      token('&='),
+      token('^='),
+      token('|=')
+    ),
+    'assignmentOperator'
+  )(...args);
 }
 
 function expression(...args) {

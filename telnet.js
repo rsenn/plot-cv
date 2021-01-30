@@ -218,7 +218,11 @@ function SetCursor(show) {
 
 function ReturnValue(ret, ...args) {
   const r = [-1, 0].indexOf(ret) != -1 ? ret + '' : '0x' + NumberToHex(ret, ptrSize * 2);
-  debug('%s ret = %s%s%s', args, r, ...(ret == -1 ? [' errno =', errno(), ' error =', strerror(errno())] : ['', '']));
+  debug('%s ret = %s%s%s',
+    args,
+    r,
+    ...(ret == -1 ? [' errno =', errno(), ' error =', strerror(errno())] : ['', ''])
+  );
 }
 
 function NumberToHex(n, b = 2) {
@@ -244,7 +248,10 @@ function EscapeString(str) {
 
 function BufferToArray(buf, offset, length) {
   let len,
-    arr = new Uint8Array(buf, offset !== undefined ? offset : 0, length !== undefined ? length : buf.byteLength);
+    arr = new Uint8Array(buf,
+      offset !== undefined ? offset : 0,
+      length !== undefined ? length : buf.byteLength
+    );
   //   arr = [...arr];
   if((len = arr.indexOf(0)) != -1) arr = arr.slice(0, len);
   return arr;
@@ -270,7 +277,12 @@ function ArrayToBytes(arr, delim = ', ', bytes = 1, limit = Infinity) {
     arr = arr.slice(0, len);
     if(len < arr.length) trail = `... ${arr.length - len} more bytes ...`;
   }
-  let str = arr.reduce((s, code) => (s != '' ? s + delim : '') + '0x' + ('000000000000000' + code.toString(16)).slice(-(bytes * 2)), '');
+  let str = arr.reduce((s, code) =>
+      (s != '' ? s + delim : '') +
+      '0x' +
+      ('000000000000000' + code.toString(16)).slice(-(bytes * 2)),
+    ''
+  );
   return '[' + str + trail + ']';
 }
 

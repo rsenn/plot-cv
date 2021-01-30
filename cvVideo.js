@@ -15,7 +15,11 @@ const Crop = (() => {
   };
 })();
 
-function ImageSize(src, dst, dsize, action = (name, arg1, arg2) => console.debug(`${name} ${arg1} -> ${arg2}`)) {
+function ImageSize(src,
+  dst,
+  dsize,
+  action = (name, arg1, arg2) => console.debug(`${name} ${arg1} -> ${arg2}`)
+) {
   let s,
     roi,
     f,
@@ -149,7 +153,11 @@ export class ImageSequence {
       let { size: frameSize } = frame;
       let doResize = !frameSize.equals(targetSize);
       //console.debug(`ImageSequence.retrieve[${framePos}]`, { frame, frameSize, mat, targetSize, doResize });
-      if(doResize) ImageSize(frame, mat, targetSize, (name, arg1, arg2) => console.debug(`ImageSize[${this.framePos}] ${name} ${arg1.toString()} -> ${arg2.toString()}`));
+      if(doResize)
+        ImageSize(frame, mat, targetSize, (name, arg1, arg2) =>
+          console.debug(`ImageSize[${this.framePos}] ${name} ${arg1.toString()} -> ${arg2.toString()}`
+          )
+        );
       else frame.copyTo(mat);
       //console.debug(`ImageSequence.retrieve[${framePos}]`, { mat });
       return !mat.emtpy;
@@ -161,14 +169,52 @@ export class ImageSequence {
   }
 }
 
-const isVideoPath = arg => /\.(3gp|avi|f4v|flv|m4v|m2v|mkv|mov|mp4|mpeg|mpg|ogm|vob|webm|wmv)$/i.test(arg);
+const isVideoPath = arg =>
+  /\.(3gp|avi|f4v|flv|m4v|m2v|mkv|mov|mp4|mpeg|mpg|ogm|vob|webm|wmv)$/i.test(arg);
 
 export class VideoSource {
-  static backends = Object.fromEntries(['ANY', 'VFW', 'V4L', 'V4L2', 'FIREWIRE', 'FIREWARE', 'IEEE1394', 'DC1394', 'CMU1394', 'QT', 'UNICAP', 'DSHOW', 'PVAPI', 'OPENNI', 'OPENNI_ASUS', 'ANDROID', 'XIAPI', 'AVFOUNDATION', 'GIGANETIX', 'MSMF', 'WINRT', 'INTELPERC', 'REALSENSE', 'OPENNI2', 'OPENNI2_ASUS', 'GPHOTO2', 'GSTREAMER', 'FFMPEG', 'IMAGES', 'ARAVIS', 'OPENCV_MJPEG', 'INTEL_MFX', 'XINE'].map(name => [name, cv['CAP_' + name]])
+  static backends = Object.fromEntries([
+      'ANY',
+      'VFW',
+      'V4L',
+      'V4L2',
+      'FIREWIRE',
+      'FIREWARE',
+      'IEEE1394',
+      'DC1394',
+      'CMU1394',
+      'QT',
+      'UNICAP',
+      'DSHOW',
+      'PVAPI',
+      'OPENNI',
+      'OPENNI_ASUS',
+      'ANDROID',
+      'XIAPI',
+      'AVFOUNDATION',
+      'GIGANETIX',
+      'MSMF',
+      'WINRT',
+      'INTELPERC',
+      'REALSENSE',
+      'OPENNI2',
+      'OPENNI2_ASUS',
+      'GPHOTO2',
+      'GSTREAMER',
+      'FFMPEG',
+      'IMAGES',
+      'ARAVIS',
+      'OPENCV_MJPEG',
+      'INTEL_MFX',
+      'XINE'
+    ].map(name => [name, cv['CAP_' + name]])
   );
 
   constructor(...args) {
-    console.log('VideoSource.constructor(', ...args.reduce((acc, arg) => [...acc, ', ', arg], []), ')');
+    console.log('VideoSource.constructor(',
+      ...args.reduce((acc, arg) => [...acc, ', ', arg], []),
+      ')'
+    );
     if(args.length > 0) {
       let [device, backend = 'ANY'] = args;
       const driverId = VideoSource.backends[backend];
@@ -178,7 +224,8 @@ export class VideoSource {
       console.log('VideoSource', { args, backend, driverId, isVideo });
 
       if(isVideo) {
-        if(typeof device == 'string' && isVideoPath(device)) if (backend == 'ANY') backend = 'FFMPEG';
+        if(typeof device == 'string' && isVideoPath(device))
+          if(backend == 'ANY') backend = 'FFMPEG';
 
         //console.debug('VideoSource', { device, backend, driverId, args });
 
@@ -267,8 +314,20 @@ export class VideoSource {
     return this.get('fps');
   }
 
-  dump(props = ['frame_count', 'frame_width', 'frame_height', 'fps', 'format', 'fourcc', 'backend', 'pos_frames', 'pos_msec']) {
-    return new Map(props.map(propName => [propName, this.get(propName)]).filter(([k, v]) => v !== undefined));
+  dump(props = [
+      'frame_count',
+      'frame_width',
+      'frame_height',
+      'fps',
+      'format',
+      'fourcc',
+      'backend',
+      'pos_frames',
+      'pos_msec'
+    ]
+  ) {
+    return new Map(props.map(propName => [propName, this.get(propName)]).filter(([k, v]) => v !== undefined)
+    );
   }
 
   seekFrames(relative) {
@@ -290,7 +349,8 @@ export class VideoSource {
 
   position(type = 'frames') {
     if(type.startsWith('frame')) return [this.get('pos_frames'), this.get('frame_count')];
-    if(type.startsWith('percent') || type == '%') return (this.get('pos_frames') * 100) / this.get('frame_count');
+    if(type.startsWith('percent') || type == '%')
+      return (this.get('pos_frames') * 100) / this.get('frame_count');
 
     return [(+this.get('pos_msec')).toFixed(3), this.durationMsecs];
   }

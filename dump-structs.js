@@ -71,7 +71,14 @@ async function main(...args) {
       })
     );
 
-    args = args.concat(['-D_WIN32=1', '-DWINAPI=', '-D__declspec(x)=', '-include', '/usr/x86_64-w64-mingw32/include/wtypesbase.h', '-I/usr/x86_64-w64-mingw32/include']);
+    args = args.concat([
+      '-D_WIN32=1',
+      '-DWINAPI=',
+      '-D__declspec(x)=',
+      '-include',
+      '/usr/x86_64-w64-mingw32/include/wtypesbase.h',
+      '-I/usr/x86_64-w64-mingw32/include'
+    ]);
   }
   console.log('args', { defs, includes });
   args = args.concat(defs.map(d => `-D${d}`));
@@ -102,7 +109,12 @@ async function main(...args) {
       }
 
       let tree = new Tree(ast);
-      let flat = /*tree.flat();*/ deep.flatten(ast, new Map(), (v, p) => ['inner', 'loc', 'range'].indexOf(p[p.length - 1]) == -1 && Util.isObject(v) /*&& 'kind' in v*/);
+      let flat = /*tree.flat();*/ deep.flatten(ast,
+        new Map(),
+        (v, p) =>
+          ['inner', 'loc', 'range'].indexOf(p[p.length - 1]) == -1 &&
+          Util.isObject(v) /*&& 'kind' in v*/
+      );
       let entries = [...flat];
       let locations = [];
       let l = Object.setPrototypeOf({}, { toString() {} });
@@ -185,7 +197,8 @@ function* GenerateInspectStruct(type, members, includes) {
   yield `${type} svar;`;
   yield `int main() {`;
   yield `  printf("${type} - %u\\n", sizeof(svar));`;
-  for(let member of members) yield `  printf(".${member} %u %u\\n", (char*)&svar.${member} - (char*)&svar, sizeof(svar.${member}));`;
+  for(let member of members)
+    yield `  printf(".${member} %u %u\\n", (char*)&svar.${member} - (char*)&svar, sizeof(svar.${member}));`;
   yield `  return 0;`;
   yield `}`;
 }
@@ -214,12 +227,19 @@ function* GenerateStructClass(name, [size, map]) {
     fields.push(name);
   }
   yield '';
-  yield `  toString() {\n    const { ${fields.join(', ')} } = this;\n    return \`struct ${name} {${fields.map(field => '\\n\\t.' + field + ' = ${' + field + '}').join(',')}\\n}\`;\n  }`;
+  yield `  toString() {\n    const { ${fields.join(', '
+  )} } = this;\n    return \`struct ${name} {${fields
+    .map(field => '\\n\\t.' + field + ' = ${' + field + '}')
+    .join(',')}\\n}\`;\n  }`;
   yield '}';
 }
 
 function GenerateGetSet(name, offset, size) {
-  return [`set ${name}(v) { new ${ByteLength2TypedArray(size)}(this, ${offset})[0] = ${ByteLength2Value(size)}; }`, `get ${name}() { return new ${ByteLength2TypedArray(size)}(this, ${offset})[0]; }`];
+  return [
+    `set ${name}(v) { new ${ByteLength2TypedArray(size)}(this, ${offset})[0] = ${ByteLength2Value(size
+    )}; }`,
+    `get ${name}() { return new ${ByteLength2TypedArray(size)}(this, ${offset})[0]; }`
+  ];
 }
 
 function ByteLength2TypedArray(byteLength) {

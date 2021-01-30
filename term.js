@@ -376,7 +376,21 @@ export const VWERASE = 14;
 export const VLNEXT = 15;
 export const VEOL2 = 16;
 
-const cterm = ['tcdrain', 'tcgetsid', 'tcsendbreak', 'tcsetattr', 'tcflow', 'tcsetpgrp', 'tcflush', 'tcgetattr', 'tcgetpgrp', 'cfgetospeed', 'cfsetospeed', 'cfgetispeed', 'cfsetispeed'].reduce((o, s) => {
+const cterm = [
+  'tcdrain',
+  'tcgetsid',
+  'tcsendbreak',
+  'tcsetattr',
+  'tcflow',
+  'tcsetpgrp',
+  'tcflush',
+  'tcgetattr',
+  'tcgetpgrp',
+  'cfgetospeed',
+  'cfsetospeed',
+  'cfgetispeed',
+  'cfsetispeed'
+].reduce((o, s) => {
   let fp = dlsym(RTLD_DEFAULT, s);
   if(fp == null) {
     console.log(dlerror());

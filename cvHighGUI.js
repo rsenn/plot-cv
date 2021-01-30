@@ -4,9 +4,29 @@ import { Size } from 'size';
 
 import Util from './lib/util.js';
 
-export const MouseEvents = ['EVENT_MOUSEMOVE', 'EVENT_LBUTTONDOWN', 'EVENT_RBUTTONDOWN', 'EVENT_MBUTTONDOWN', 'EVENT_LBUTTONUP', 'EVENT_RBUTTONUP', 'EVENT_MBUTTONUP', 'EVENT_LBUTTONDBLCLK', 'EVENT_RBUTTONDBLCLK', 'EVENT_MBUTTONDBLCLK', 'EVENT_MOUSEWHEEL', 'EVENT_MOUSEHWHEEL'].reduce((acc, name) => ({ ...acc, [cv[name]]: name }), {});
+export const MouseEvents = [
+  'EVENT_MOUSEMOVE',
+  'EVENT_LBUTTONDOWN',
+  'EVENT_RBUTTONDOWN',
+  'EVENT_MBUTTONDOWN',
+  'EVENT_LBUTTONUP',
+  'EVENT_RBUTTONUP',
+  'EVENT_MBUTTONUP',
+  'EVENT_LBUTTONDBLCLK',
+  'EVENT_RBUTTONDBLCLK',
+  'EVENT_MBUTTONDBLCLK',
+  'EVENT_MOUSEWHEEL',
+  'EVENT_MOUSEHWHEEL'
+].reduce((acc, name) => ({ ...acc, [cv[name]]: name }), {});
 
-export const MouseFlags = ['EVENT_FLAG_LBUTTON', 'EVENT_FLAG_RBUTTON', 'EVENT_FLAG_MBUTTON', 'EVENT_FLAG_CTRLKEY', 'EVENT_FLAG_SHIFTKEY', 'EVENT_FLAG_ALTKEY'].reduce((acc, name) => ({ ...acc, [name]: cv[name] }), {});
+export const MouseFlags = [
+  'EVENT_FLAG_LBUTTON',
+  'EVENT_FLAG_RBUTTON',
+  'EVENT_FLAG_MBUTTON',
+  'EVENT_FLAG_CTRLKEY',
+  'EVENT_FLAG_SHIFTKEY',
+  'EVENT_FLAG_ALTKEY'
+].reduce((acc, name) => ({ ...acc, [name]: cv[name] }), {});
 
 export const Mouse = {
   printEvent: (() => {
@@ -84,6 +104,14 @@ Object.assign(TextStyle.prototype, {
 
   draw(mat, text, pos, color, lineThickness, lineType) {
     const { fontFace, fontScale, thickness } = this;
-    draw.text(mat, text, pos, fontFace, fontScale, color ?? 0xffffff, lineThickness ?? thickness, lineType ?? cv.LINE_AA);
+    draw.text(mat,
+      text,
+      pos,
+      fontFace,
+      fontScale,
+      color ?? 0xffffff,
+      lineThickness ?? thickness,
+      lineType ?? cv.LINE_AA
+    );
   }
 });
