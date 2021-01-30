@@ -84,13 +84,13 @@ async function main(...args) {
   args = args.concat(defs.map(d => `-D${d}`));
   args = args.concat(includes.map(v => `-I${v}`));
 
-  console.log('Processing files:', params['@']);
 
   await processFiles(...params['@']);
 
   async function processFiles(...files) {
     for(let file of files) {
-      let json, ast;
+    console.log('Processing file:', file);
+    let json, ast;
       let outfile = path.basename(file, /\.[^./]*$/) + '.ast.json';
 
       let st = [file, outfile].map(name => filesystem.stat(name));
