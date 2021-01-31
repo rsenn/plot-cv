@@ -789,10 +789,9 @@ async function main(...args) {
             let props = [ctxt(type, 38, 5, 214), path, position].map(a =>
               a[inspectSymbol] ? a[inspectSymbol]() : a
             );
-            /*
-console.log("path:", [...path]);*/
+            /* console.log("path:", [...path]);*/
             props[1] = `[ ${props[1]} ]`;
-            console.log('props:', props);
+            //console.log('props:', props);
             const p = [38, 5, 124] || [1, 31];
             const b = [0, 37];
             props = props.reduce((acc, item) => (acc && acc.length ? [...acc, ctxt('\u066d', ...p), item] : [item]),

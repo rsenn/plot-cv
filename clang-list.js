@@ -90,23 +90,23 @@ async function main(...args) {
 
   async function processFiles(...files) {
     for(let file of files) {
-      let json, ast;
+      const start = /*await Util.now(); //*/await Util.hrtime();
+            console.log('start:', start);
+  let json, ast;
       let outfile = path.basename(file, /\.[^./]*$/) + '.ast.json';
 
       let st = [file, outfile].map(name => filesystem.stat(name));
 
       let times = st.map(stat => (stat && stat.mtime) || 0);
-
-      if(times[1] >= times[0]) {
+      let cached = times[1] >= times[0];
+      if(cached) {
         console.log('Reading cached AST from:', outfile);
         json = filesystem.readFile(outfile);
-        ast = JSON.parse(json);
       } else {
         json = await AstDump(file, args);
-        ast = JSON.parse(json);
-
-        dumpFile(outfile, JSON.stringify(ast, null, 2));
+        dumpFile(outfile, json);
       }
+      ast = await Util.instrument(Util.getPlatform() == 'quickjs' ? (await import('std')).parseExtJSON : JSON.parse)(json);
 
       let tree = new Tree(ast);
       let flat = /*tree.flat();*/ deep.flatten(ast,
