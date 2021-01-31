@@ -85,12 +85,13 @@ function scientific(value) {
 }
 const color = Util.coloring(true);
 
-const verticalRectangles = ['▮', '▯'];
-const largeSquares = ['⬛', '⬜'];
+const verticalRectangles = ['▮ ', '▯ '];
+const largeSquares = ['■', '□'];
 
-function num2color(num, square = true) {
+function num2color(num, square = false) {
   let sym = square ? largeSquares : verticalRectangles;
   let c = typeof num == 'number' ? GetColorBands(num) : num;
+  //console.log('num2color:', { num, square, sym, c });
   return c
     .map(n =>
       color.text(n ? sym[0] : color.text(sym[1], 38, 5, 236),
@@ -100,6 +101,8 @@ function num2color(num, square = true) {
     )
     .join('');
 }
+const SubstChars = str => str.replace(/\xCE\xBC/g, '\u00B5').replace(/\xCE\xA9/g, '\u2126');
+
 async function main(...args) {
   await ConsoleSetup({ colors: true, depth: Infinity, breakLength: 100 });
   await PortableFileSystem(fs => (filesystem = fs));
@@ -119,29 +122,49 @@ async function main(...args) {
   for(let doc of documents) {
     let main = doc.mainElement;
     console.log('main:', main);
-    let parts = [...(main.elements || main.parts)].map(([name, elem]) => [name, elem.value]);
+    let parts = [...(main.elements || main.parts)].map(([name, elem]) => [
+      name,
+      typeof elem.value == 'string' ? SubstChars(elem.value) : elem.value
+    ]);
+    console.log('parts', parts);
     let matchers = [
-      [/^R/, /^[0-9.]+([kKmM]Ω?|Ω)(|\/[0-9.]+W)$/],
-      [/^C/, /^[0-9.]+([pnuμm]F?|F)(|\/[0-9.]+V)$/],
-      [/^L/, /^[0-9.]+([nuμm]H?|H)$/]
+      [/^R/, /^[0-9.]+([kKmM][Ω\u03A9]?|[Ω\u03A9]?)(|\/[0-9.]+W)/],
+      [/^C/, /^[0-9.]+([pnuμm]F?|F?)(|\/[0-9.]+V)/],
+      [/^L/, /^[0-9.]+([nuμm]H?|H?)/]
     ];
+
     let nameValueMap = new Map(parts.filter(([name, value]) => matchers.some(m => m[0].test(name) && m[1].test(value)))
     );
+    console.log('nameValueMap',
+      new Map(
+        [...nameValueMap].map(([n, v]) => [
+          n,
+          v //Util.escape(v, codePoint => codePoint < 32 || codePoint > 0x7f)
+        ])
+      )
+    );
     for(let [name, value] of nameValueMap) {
+      value = value.replace(/[\u0000-\u001F\u007F-\uFFFF]/g, '');
       components[name[0]].push(value.replace(/[ΩFH]$/, '').replace(/^\./, '0.'));
     }
   }
   let histograms = {};
   let values = {};
+  console.log('components', components);
+  for(let value of [2.2, 4.7e3]) {
+    console.log(`GetColorBands(${value}, 3)`, GetColorBands(value, 2));
+  }
   for(let key in components) {
     components[key].sort();
-    let hist = Util.histogram(components[key], (item, i) => [item[1], i], new Map());
+    let hist = Util.histogram(components[key], /*(item, i) => [item[1], i],*/ new Map());
+    //console.log('hist', { hist });
     histograms[key] = new Map([...hist].sort((a, b) => b[1] - a[1]));
     values[key] = [...histograms[key]]
-      .map(([value, count]) =>
+      .map(([value, count]) => {
+        // console.log('', { key, value, count });
         //rational(value).toExponential()
-        [value || scientific(value).toString(), ValueToNumber(value), count]
-      )
+        return [value || scientific(value).toString(), ValueToNumber(value), count];
+      })
       .sort((a, b) => a[1] - b[1])
       .map(([val, rat, count]) =>
         [
@@ -159,6 +182,7 @@ async function main(...args) {
         .map(([key, list]) => `${key}:\n\t${list.join('\n\t')}`)
         .join('\n   ')
   );
+
   return;
   console.log('digit2color:', digit2color);
   for(let value of [33000, 1800, 470, 1e6, 4.7e3]) {
