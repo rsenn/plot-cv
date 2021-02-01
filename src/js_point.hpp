@@ -26,10 +26,8 @@ js_point_read(JSContext* ctx, JSValueConst point, JSPointData<T>* out) {
     y = JS_GetPropertyStr(ctx, point, "y");
   }
   if(JS_IsNumber(x) && JS_IsNumber(y)) {
-    JSPointData<double> point;
-    ret &= !JS_ToFloat64(ctx, &point.x, x);
-    ret &= !JS_ToFloat64(ctx, &point.y, y);
-    *out = point;
+    ret &= js_number_read(ctx, &out->x, x);
+    ret &= js_number_read(ctx, &out->y, y);
   } else {
     ret = 0;
   }

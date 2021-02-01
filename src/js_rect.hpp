@@ -21,12 +21,10 @@ js_rect_read(JSContext* ctx, JSValueConst rect, JSRectData<T>* out) {
     h = JS_GetPropertyStr(ctx, rect, "height");
   }
   if(JS_IsNumber(x) && JS_IsNumber(y) && JS_IsNumber(w) && JS_IsNumber(h)) {
-    JSRectData<double> rect;
-    ret &= !JS_ToFloat64(ctx, &rect.x, x);
-    ret &= !JS_ToFloat64(ctx, &rect.y, y);
-    ret &= !JS_ToFloat64(ctx, &rect.width, w);
-    ret &= !JS_ToFloat64(ctx, &rect.height, h);
-    *out = rect;
+    ret &= js_number_read(ctx, &out->x, x);
+    ret &=js_number_read(ctx, &out->y, y);
+    ret &= js_number_read(ctx, &out->width, w);
+    ret &= js_number_read(ctx, &out->height, h);
   } else {
     ret = 0;
   }

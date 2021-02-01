@@ -911,7 +911,7 @@ static JSValue
 js_cv_resize_window(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   const char* name;
   uint32_t w, h;
-  JSSizeData<double> size;
+  JSSizeData<int> size;
   name = JS_ToCString(ctx, argv[0]);
 
   if(js_size_read(ctx, argv[1], &size)) {
@@ -929,7 +929,7 @@ js_cv_resize_window(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 static JSValue
 js_cv_get_window_image_rect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   const char* name;
-  JSRectData<double> rect;
+  JSRectData<int> rect;
   name = JS_ToCString(ctx, argv[0]);
 
   rect = cv::getWindowImageRect(name);
@@ -1048,9 +1048,9 @@ js_cv_get_trackbar_pos(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
 }
 
 static JSValue
-js_cv_set_trackbar_pos(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+js_cv_set_trackbar(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   const char *name, *window;
-  int32_t pos;
+  int32_t val;
 
   name = JS_ToCString(ctx, argv[0]);
   window = JS_ToCString(ctx, argv[1]);
@@ -1058,9 +1058,14 @@ js_cv_set_trackbar_pos(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
   if(name == nullptr || window == nullptr)
     return JS_EXCEPTION;
 
-  JS_ToInt32(ctx, &pos, argv[2]);
+  JS_ToInt32(ctx, &val, argv[2]);
 
-  cv::setTrackbarPos(name, window, pos);
+  switch(magic) {
+    case 0: cv::setTrackbarPos(name, window, val); break;
+    case 1: cv::setTrackbarMin(name, window, val); break;
+    case 2: cv::setTrackbarMax(name, window, val); break;
+  }
+
   return JS_UNDEFINED;
 }
 
@@ -1391,7 +1396,9 @@ js_function_list_t js_cv_static_funcs{
     JS_CFUNC_DEF("setWindowTitle", 2, js_cv_set_window_title),
     JS_CFUNC_DEF("createTrackbar", 5, js_cv_create_trackbar),
     JS_CFUNC_DEF("getTrackbarPos", 2, js_cv_get_trackbar_pos),
-    JS_CFUNC_DEF("setTrackbarPos", 3, js_cv_set_trackbar_pos),
+    JS_CFUNC_MAGIC_DEF("setTrackbarPos", 3, js_cv_set_trackbar, 0),
+    JS_CFUNC_MAGIC_DEF("setTrackbarMin", 3, js_cv_set_trackbar, 1),
+    JS_CFUNC_MAGIC_DEF("setTrackbarMax", 3, js_cv_set_trackbar, 2),
     JS_CFUNC_DEF("getMouseWheelDelta", 1, js_cv_get_mouse_wheel_delta),
     JS_CFUNC_DEF("setMouseCallback", 2, js_cv_set_mouse_callback),
     JS_CFUNC_DEF("waitKey", 0, js_cv_wait_key),

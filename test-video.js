@@ -402,7 +402,7 @@ async function main(...args) {
       .map(hue => new HSLA(hue, 100, 50))
       .map(h => h.toRGBA());
 
-  let win = new Window('gray', /*cv.WINDOW_AUTOSIZE | cv.WINDOW_NORMAL  |*/ cv.WINDOW_KEEPRATIO);
+  let win = new Window('gray', cv.WINDOW_NORMAL  /*| cv.WINDOW_AUTOSIZE | cv.WINDOW_KEEPRATIO*/);
   //console.debug('Mouse :', { MouseEvents, MouseFlags });
 
   const printFlags = flags => [...Util.bitsToNames(MouseFlags)];
@@ -481,10 +481,13 @@ async function main(...args) {
   //console.log('paramNav.map:', paramNav.map);
   //console.log('params.mode:', dummyArray[params.mode]);
   //console.log('params.method:', dummyArray[params.method]);
+    console.log("video.size", video.size);
+    console.log("win.imageRect (1)", win.imageRect);
 
   await params.apertureSize.createTrackbar('apertureSize', win);
   await params.thresh1.createTrackbar('thresh1', win);
   await params.thresh2.createTrackbar('thresh2', win);
+    console.log("win.imageRect (2)", win.imageRect);
 
    //console.log('paramNav.param:', paramNav.param);
   //await params.apertureSize.createTrackbar('apertureSize', win);
@@ -567,7 +570,7 @@ async function main(...args) {
 
         if(+params.maskColor) {
           let edge = [dst.toString(), pipeline.images[0].toString()];
-          //console.log('edge', edge);
+           console.log('edge', edge);
 
           dst.and(pipeline.images[0]);
         }
@@ -628,7 +631,7 @@ async function main(...args) {
 
   const resizeOutput = Util.once(() => {
     let size = outputMat.size.mul(zoom);
-    win.resize(size.width, size.height);
+    win.resize(size.width, Math.floor(size.height*1.5));
   });
 
   let out = new Mat();
@@ -870,6 +873,7 @@ async function main(...args) {
     );
 
     resizeOutput();
+    console.log("win.imageRect", win.imageRect);
 
     //console.log("row 100:", [...over.row(100).values()]);
     const showOverlay = frameShow != pipeline.size - 1 || now - keyTime < 2000;
