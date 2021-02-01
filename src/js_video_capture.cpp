@@ -7,8 +7,10 @@
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module_video_capture
 #endif
 
-JSClassID js_video_capture_class_id;
+extern "C" {
 JSValue video_capture_proto = JS_UNDEFINED, video_capture_class = JS_UNDEFINED;
+JSClassID js_video_capture_class_id = 0;
+}
 
 static inline int
 is_numeric(const std::string& s) {
@@ -173,21 +175,23 @@ const JSCFunctionListEntry js_video_capture_proto_funcs[] = {
 int
 js_video_capture_init(JSContext* ctx, JSModuleDef* m) {
 
-  /* create the VideoCapture class */
-  JS_NewClassID(&js_video_capture_class_id);
-  JS_NewClass(JS_GetRuntime(ctx), js_video_capture_class_id, &js_video_capture_class);
+  if(js_video_capture_class_id == 0) {
+    /* create the VideoCapture class */
+    JS_NewClassID(&js_video_capture_class_id);
+    JS_NewClass(JS_GetRuntime(ctx), js_video_capture_class_id, &js_video_capture_class);
 
-  video_capture_proto = JS_NewObject(ctx);
-  JS_SetPropertyFunctionList(ctx,
-                             video_capture_proto,
-                             js_video_capture_proto_funcs,
-                             countof(js_video_capture_proto_funcs));
-  JS_SetClassProto(ctx, js_video_capture_class_id, video_capture_proto);
+    video_capture_proto = JS_NewObject(ctx);
+    JS_SetPropertyFunctionList(ctx,
+                               video_capture_proto,
+                               js_video_capture_proto_funcs,
+                               countof(js_video_capture_proto_funcs));
+    JS_SetClassProto(ctx, js_video_capture_class_id, video_capture_proto);
 
-  video_capture_class =
-      JS_NewCFunction2(ctx, js_video_capture_ctor, "VideoCapture", 2, JS_CFUNC_constructor, 0);
-  /* set proto.constructor and ctor.prototype */
-  JS_SetConstructor(ctx, video_capture_class, video_capture_proto);
+    video_capture_class =
+        JS_NewCFunction2(ctx, js_video_capture_ctor, "VideoCapture", 2, JS_CFUNC_constructor, 0);
+    /* set proto.constructor and ctor.prototype */
+    JS_SetConstructor(ctx, video_capture_class, video_capture_proto);
+  }
 
   if(m)
     JS_SetModuleExport(ctx, m, "VideoCapture", video_capture_class);

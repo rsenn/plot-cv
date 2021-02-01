@@ -396,8 +396,8 @@ js_get_font_scale_from_height(JSContext* ctx,
   return JS_NewFloat64(ctx, fontScale);
 }
 
-JSValue draw_proto, draw_class;
-JSClassID js_draw_class_id;
+JSValue draw_proto = JS_UNDEFINED, draw_class = JS_UNDEFINED;
+JSClassID js_draw_class_id = 0;
 
 JSClassDef js_draw_class = {
     .class_name = "Draw",
@@ -453,19 +453,21 @@ fail:
 int
 js_draw_init(JSContext* ctx, JSModuleDef* m) {
 
-  /* create the Draw class */
-  JS_NewClassID(&js_draw_class_id);
-  JS_NewClass(JS_GetRuntime(ctx), js_draw_class_id, &js_draw_class);
+  if(js_draw_class_id == 0) {
+    /* create the Draw class */
+    JS_NewClassID(&js_draw_class_id);
+    JS_NewClass(JS_GetRuntime(ctx), js_draw_class_id, &js_draw_class);
 
-  draw_proto = JS_NewObject(ctx);
-  JS_SetPropertyFunctionList(ctx, draw_proto, js_draw_proto_funcs, countof(js_draw_proto_funcs));
-  JS_SetClassProto(ctx, js_draw_class_id, draw_proto);
+    draw_proto = JS_NewObject(ctx);
+    JS_SetPropertyFunctionList(ctx, draw_proto, js_draw_proto_funcs, countof(js_draw_proto_funcs));
+    JS_SetClassProto(ctx, js_draw_class_id, draw_proto);
 
-  draw_class = JS_NewCFunction2(ctx, js_draw_ctor, "Draw", 2, JS_CFUNC_constructor, 0);
+    draw_class = JS_NewCFunction2(ctx, js_draw_ctor, "Draw", 2, JS_CFUNC_constructor, 0);
 
-  /* set proto.constructor and ctor.prototype */
-  JS_SetConstructor(ctx, draw_class, draw_proto);
-  JS_SetPropertyFunctionList(ctx, draw_class, js_draw_static_funcs, countof(js_draw_static_funcs));
+    /* set proto.constructor and ctor.prototype */
+    JS_SetConstructor(ctx, draw_class, draw_proto);
+    JS_SetPropertyFunctionList(ctx, draw_class, js_draw_static_funcs, countof(js_draw_static_funcs));
+  }
 
   if(m) {
     JS_SetModuleExportList(ctx, m, js_draw_static_funcs, countof(js_draw_static_funcs));

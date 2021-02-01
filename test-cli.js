@@ -1,12 +1,12 @@
 import Util from './lib/util.js';
-import { Rect } from 'rect';
-import { Point } from 'point';
-import { Size } from 'size';
-import { Mat } from 'mat';
-import { PointIterator } from 'point-iterator';
-import { Contour } from 'contour';
-import { Line } from 'line';
-import { Draw, drawLine, drawCircle } from 'draw';
+import { Rect } from 'rect.so';
+import { Point } from 'point.so';
+import { Size } from 'size.so';
+import { Mat } from 'mat.so';
+import { PointIterator } from 'point-iterator.so';
+import { Contour } from 'contour.so';
+import { Line } from 'line.so';
+import { Draw, drawLine, drawCircle } from 'draw.so';
 import ConsoleSetup from './lib/consoleSetup.js';
 
 import inspect from './lib/objectInspect.js';

@@ -1,20 +1,20 @@
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
-import * as draw from 'draw';
+import * as draw from 'draw.so';
 import * as std from 'std';
-import { Point } from 'point';
-import { Size } from 'size';
-import { Rect } from 'rect';
-import { Line } from 'line';
-import { TickMeter } from 'utility';
+import { Point } from 'point.so';
+import { Size } from 'size.so';
+import { Rect } from 'rect.so';
+import { Line } from 'line.so';
+import { TickMeter } from 'utility.so';
 import { VideoSource } from './cvVideo.js';
 import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './cvHighGUI.js';
 import { Alea } from './lib/alea.js';
 import { HSLA } from './lib/color.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import PortableFileSystem from './lib/filesystem.js';
-import { Mat as cvMat } from 'mat';
-import * as cv from 'cv';
+import { Mat as cvMat } from 'mat.so';
+import * as cv from 'cv.so';
 
 let prng = new Alea(Date.now());
 const hr = Util.hrtime;

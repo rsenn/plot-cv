@@ -21,8 +21,29 @@
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module_contour
 #endif
 
+extern "C" {
+JSValue contour_proto = JS_UNDEFINED, contour_class = JS_UNDEFINED;
+VISIBLE JSClassID js_contour_class_id = 0;
+}
+
 // using namespace cv;
 
+JSValue
+js_contour_new(JSContext* ctx, const JSContourData<double>& points) {
+  JSValue ret;
+  JSContourData<double>* contour;
+
+  ret = JS_NewObjectProtoClass(ctx, contour_proto, js_contour_class_id);
+  contour = js_allocate<JSContourData<double>>(ctx);
+
+  new(contour) JSContourData<double>();
+
+  contour->resize(points.size());
+  transform_points(points.cbegin(), points.cend(), contour->begin());
+
+  JS_SetOpaque(ret, contour);
+  return ret;
+};
 /*
 VISIBLE JSValue
 js_contour2i_new(JSContext* ctx, const JSContourData<int>& points) {
@@ -1083,9 +1104,6 @@ js_contour_get(JSContext* ctx, JSValueConst this_val, int magic) {
   return ret;
 }
 
-JSValue contour_proto, contour_class;
-VISIBLE JSClassID js_contour_class_id;
-
 JSClassDef js_contour_class = {
     .class_name = "Contour",
     .finalizer = js_contour_finalizer,
@@ -1163,18 +1181,23 @@ const JSCFunctionListEntry js_contour_static_funcs[] = {
 int
 js_contour_init(JSContext* ctx, JSModuleDef* m) {
 
-  /* create the Contour class */
-  JS_NewClassID(&js_contour_class_id);
-  JS_NewClass(JS_GetRuntime(ctx), js_contour_class_id, &js_contour_class);
+  if(js_contour_class_id == 0) {
+    /* create the Contour class */
+    JS_NewClassID(&js_contour_class_id);
+    JS_NewClass(JS_GetRuntime(ctx), js_contour_class_id, &js_contour_class);
 
-  contour_proto = JS_NewObject(ctx);
-  JS_SetPropertyFunctionList(ctx, contour_proto, js_contour_proto_funcs, countof(js_contour_proto_funcs));
-  JS_SetClassProto(ctx, js_contour_class_id, contour_proto);
+    contour_proto = JS_NewObject(ctx);
+    JS_SetPropertyFunctionList(ctx, contour_proto, js_contour_proto_funcs, countof(js_contour_proto_funcs));
+    JS_SetClassProto(ctx, js_contour_class_id, contour_proto);
 
-  contour_class = JS_NewCFunction2(ctx, js_contour_ctor, "Contour", 2, JS_CFUNC_constructor, 0);
-  /* set proto.constructor and ctor.prototype */
-  JS_SetConstructor(ctx, contour_class, contour_proto);
-  JS_SetPropertyFunctionList(ctx, contour_class, js_contour_static_funcs, countof(js_contour_static_funcs));
+    contour_class = JS_NewCFunction2(ctx, js_contour_ctor, "Contour", 2, JS_CFUNC_constructor, 0);
+    /* set proto.constructor and ctor.prototype */
+    JS_SetConstructor(ctx, contour_class, contour_proto);
+    JS_SetPropertyFunctionList(ctx,
+                               contour_class,
+                               js_contour_static_funcs,
+                               countof(js_contour_static_funcs));
+  }
 
   if(m)
     JS_SetModuleExport(ctx, m, "Contour", contour_class);

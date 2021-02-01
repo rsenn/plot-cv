@@ -62,4 +62,6 @@ js_rect_set(JSContext* ctx, JSValue out, double x, double y, double w, double h)
   return r;
 }
 
+extern "C" int js_rect_init(JSContext*, JSModuleDef*);
+
 #endif /* defined(JS_RECT_H) */

@@ -17,6 +17,12 @@
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module_mat
 #endif
 
+extern "C" {
+JSValue mat_proto = JS_UNDEFINED, mat_class = JS_UNDEFINED, mat_iterator_proto = JS_UNDEFINED,
+        mat_iterator_class = JS_UNDEFINED;
+JSClassID js_mat_class_id = 0, js_mat_iterator_class_id = 0;
+}
+
 static std::vector<JSMatData*> mat_list;
 static std::list<JSMatData*> mat_freed;
 
@@ -161,6 +167,10 @@ VISIBLE JSValue
 js_mat_new(JSContext* ctx, uint32_t rows, uint32_t cols, int type) {
   JSValue ret;
   JSMatData* s;
+
+  if(JS_IsUndefined(mat_proto))
+    js_mat_init(ctx, NULL);
+
   ret = JS_NewObjectProtoClass(ctx, mat_proto, js_mat_class_id);
 
   s = js_mat_track(ctx, js_allocate<cv::Mat>(ctx));
@@ -1238,9 +1248,6 @@ js_mat_iterator_dup(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   return JS_DupValue(ctx, this_val);
 }
 
-JSValue mat_proto, mat_class, mat_iterator_proto, mat_iterator_class;
-JSClassID js_mat_class_id, js_mat_iterator_class_id;
-
 JSClassDef js_mat_class = {
     .class_name = "Mat",
     .finalizer = js_mat_finalizer,
@@ -1324,34 +1331,36 @@ const JSCFunctionListEntry js_mat_static_funcs[] = {
 
 int
 js_mat_init(JSContext* ctx, JSModuleDef* m) {
-  /* create the Mat class */
-  JS_NewClassID(&js_mat_class_id);
-  JS_NewClassID(&js_mat_iterator_class_id);
-  JS_NewClass(JS_GetRuntime(ctx), js_mat_class_id, &js_mat_class);
-  JS_NewClass(JS_GetRuntime(ctx), js_mat_iterator_class_id, &js_mat_iterator_class);
+  if(js_mat_class_id == 0) {
+    /* create the Mat class */
+    JS_NewClassID(&js_mat_class_id);
+    JS_NewClassID(&js_mat_iterator_class_id);
+    JS_NewClass(JS_GetRuntime(ctx), js_mat_class_id, &js_mat_class);
+    JS_NewClass(JS_GetRuntime(ctx), js_mat_iterator_class_id, &js_mat_iterator_class);
 
-  mat_proto = JS_NewObject(ctx);
-  JS_SetPropertyFunctionList(ctx, mat_proto, js_mat_proto_funcs, countof(js_mat_proto_funcs));
-  JS_SetClassProto(ctx, js_mat_class_id, mat_proto);
+    mat_proto = JS_NewObject(ctx);
+    JS_SetPropertyFunctionList(ctx, mat_proto, js_mat_proto_funcs, countof(js_mat_proto_funcs));
+    JS_SetClassProto(ctx, js_mat_class_id, mat_proto);
 
-  mat_iterator_proto = JS_NewObject(ctx);
-  JS_SetPropertyFunctionList(ctx,
-                             mat_iterator_proto,
-                             js_mat_iterator_proto_funcs,
-                             countof(js_mat_iterator_proto_funcs));
-  JS_SetClassProto(ctx, js_mat_iterator_class_id, mat_iterator_proto);
+    mat_iterator_proto = JS_NewObject(ctx);
+    JS_SetPropertyFunctionList(ctx,
+                               mat_iterator_proto,
+                               js_mat_iterator_proto_funcs,
+                               countof(js_mat_iterator_proto_funcs));
+    JS_SetClassProto(ctx, js_mat_iterator_class_id, mat_iterator_proto);
 
-  mat_class = JS_NewCFunction2(ctx, js_mat_ctor, "Mat", 2, JS_CFUNC_constructor, 0);
-  /* set proto.constructor and ctor.prototype */
-  JS_SetConstructor(ctx, mat_class, mat_proto);
+    mat_class = JS_NewCFunction2(ctx, js_mat_ctor, "Mat", 2, JS_CFUNC_constructor, 0);
+    /* set proto.constructor and ctor.prototype */
+    JS_SetConstructor(ctx, mat_class, mat_proto);
 
-  JS_SetPropertyFunctionList(ctx, mat_class, js_mat_static_funcs, countof(js_mat_static_funcs));
+    JS_SetPropertyFunctionList(ctx, mat_class, js_mat_static_funcs, countof(js_mat_static_funcs));
 
-  JSValue g = JS_GetGlobalObject(ctx);
-  int32array_ctor = JS_GetProperty(ctx, g, JS_ATOM_Int32Array);
-  int32array_proto = JS_GetPrototype(ctx, int32array_ctor);
+    JSValue g = JS_GetGlobalObject(ctx);
+    int32array_ctor = JS_GetProperty(ctx, g, JS_ATOM_Int32Array);
+    int32array_proto = JS_GetPrototype(ctx, int32array_ctor);
 
-  JS_FreeValue(ctx, g);
+    JS_FreeValue(ctx, g);
+  }
 
   if(m)
     JS_SetModuleExport(ctx, m, "Mat", mat_class);

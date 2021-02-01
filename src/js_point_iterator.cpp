@@ -15,8 +15,8 @@
 
 extern "C" {
 
-JSValue point_iterator_proto, point_iterator_class;
-VISIBLE JSClassID js_point_iterator_class_id;
+JSValue point_iterator_proto = JS_UNDEFINED, point_iterator_class = JS_UNDEFINED;
+VISIBLE JSClassID js_point_iterator_class_id = 0;
 
 VISIBLE JSValue
 js_point_iterator_new(JSContext* ctx,
@@ -24,7 +24,6 @@ js_point_iterator_new(JSContext* ctx,
                       int magic) {
   JSPointIteratorData* it;
   JSValue iterator;
-  int class_id;
 
   iterator = JS_NewObjectProtoClass(ctx, point_iterator_proto, js_point_iterator_class_id);
   if(JS_IsException(iterator))
@@ -148,24 +147,26 @@ const JSCFunctionListEntry js_point_iterator_proto_funcs[] = {
 int
 js_point_iterator_init(JSContext* ctx, JSModuleDef* m) {
 
-  /* create the PointIterator class */
-  JS_NewClassID(&js_point_iterator_class_id);
-  JS_NewClass(JS_GetRuntime(ctx), js_point_iterator_class_id, &js_point_iterator_class);
+  if(js_point_iterator_class_id == 0) {
+    /* create the PointIterator class */
+    JS_NewClassID(&js_point_iterator_class_id);
+    JS_NewClass(JS_GetRuntime(ctx), js_point_iterator_class_id, &js_point_iterator_class);
 
-  point_iterator_proto = JS_NewObject(ctx);
-  JS_SetPropertyFunctionList(ctx,
-                             point_iterator_proto,
-                             js_point_iterator_proto_funcs,
-                             countof(js_point_iterator_proto_funcs));
-  JS_SetClassProto(ctx, js_point_iterator_class_id, point_iterator_proto);
+    point_iterator_proto = JS_NewObject(ctx);
+    JS_SetPropertyFunctionList(ctx,
+                               point_iterator_proto,
+                               js_point_iterator_proto_funcs,
+                               countof(js_point_iterator_proto_funcs));
+    JS_SetClassProto(ctx, js_point_iterator_class_id, point_iterator_proto);
 
-  point_iterator_class =
-      JS_NewCFunction2(ctx, js_point_iterator_ctor, "PointIterator", 2, JS_CFUNC_constructor, 0);
-  /* set proto.constructor and ctor.prototype */
+    point_iterator_class =
+        JS_NewCFunction2(ctx, js_point_iterator_ctor, "PointIterator", 2, JS_CFUNC_constructor, 0);
+    /* set proto.constructor and ctor.prototype */
 
-  JS_SetConstructor(ctx, point_iterator_class, point_iterator_proto);
-  // JS_SetPropertyFunctionList(ctx, point_iterator_class, js_point_iterator_static_funcs,
-  // countof(js_point_iterator_static_funcs));
+    JS_SetConstructor(ctx, point_iterator_class, point_iterator_proto);
+    // JS_SetPropertyFunctionList(ctx, point_iterator_class, js_point_iterator_static_funcs,
+    // countof(js_point_iterator_static_funcs));
+  }
 
   if(m)
     JS_SetModuleExport(ctx, m, "PointIterator", point_iterator_class);

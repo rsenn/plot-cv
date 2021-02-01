@@ -77,6 +77,7 @@ add_dependencies(quickjs-rect quickjs-point quickjs-size)
 
 add_dependencies(quickjs-contour quickjs-mat)
 
+target_link_libraries(quickjs-mat quickjs-size)
 target_link_libraries(quickjs-point-iterator quickjs-point)
 target_link_libraries(quickjs-contour quickjs-point-iterator)
 target_link_libraries(quickjs-line quickjs-point)

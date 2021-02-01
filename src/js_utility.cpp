@@ -10,7 +10,7 @@
 extern "C" {
 
 JSValue tick_meter_proto = JS_UNDEFINED, tick_meter_class = JS_UNDEFINED;
-JSClassID js_tick_meter_class_id;
+JSClassID js_tick_meter_class_id = 0;
 
 VISIBLE JSValue
 js_tick_meter_new(JSContext* ctx) {
@@ -150,20 +150,22 @@ const JSCFunctionListEntry js_tick_meter_proto_funcs[] = {
 int
 js_tick_meter_init(JSContext* ctx, JSModuleDef* m) {
 
-  /* create the TickMeter class */
-  JS_NewClassID(&js_tick_meter_class_id);
-  JS_NewClass(JS_GetRuntime(ctx), js_tick_meter_class_id, &js_tick_meter_class);
+  if(js_tick_meter_class_id == 0) {
+    /* create the TickMeter class */
+    JS_NewClassID(&js_tick_meter_class_id);
+    JS_NewClass(JS_GetRuntime(ctx), js_tick_meter_class_id, &js_tick_meter_class);
 
-  tick_meter_proto = JS_NewObject(ctx);
-  JS_SetPropertyFunctionList(ctx,
-                             tick_meter_proto,
-                             js_tick_meter_proto_funcs,
-                             countof(js_tick_meter_proto_funcs));
-  JS_SetClassProto(ctx, js_tick_meter_class_id, tick_meter_proto);
+    tick_meter_proto = JS_NewObject(ctx);
+    JS_SetPropertyFunctionList(ctx,
+                               tick_meter_proto,
+                               js_tick_meter_proto_funcs,
+                               countof(js_tick_meter_proto_funcs));
+    JS_SetClassProto(ctx, js_tick_meter_class_id, tick_meter_proto);
 
-  tick_meter_class = JS_NewCFunction2(ctx, js_tick_meter_ctor, "TickMeter", 0, JS_CFUNC_constructor, 0);
-  /* set proto.constructor and ctor.prototype */
-  JS_SetConstructor(ctx, tick_meter_class, tick_meter_proto);
+    tick_meter_class = JS_NewCFunction2(ctx, js_tick_meter_ctor, "TickMeter", 0, JS_CFUNC_constructor, 0);
+    /* set proto.constructor and ctor.prototype */
+    JS_SetConstructor(ctx, tick_meter_class, tick_meter_proto);
+  }
 
   if(m)
     JS_SetModuleExport(ctx, m, "TickMeter", tick_meter_class);

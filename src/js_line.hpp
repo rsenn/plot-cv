@@ -65,4 +65,6 @@ js_line_set(JSContext* ctx, JSValue out, T x1, T y1, T x2, T y2) {
   return r;
 }
 
+extern "C" int js_line_init(JSContext*, JSModuleDef*);
+
 #endif /* defined(JS_LINE_H) */

@@ -1,10 +1,10 @@
 /*import { Point as Point_ } from "./lib/geom/point.js";
-import { Size as } from "./lib/geom/size.js";*/ import { Contour } from 'contour';
-import { Rect } from 'rect';
-import { Point } from 'point';
-import { Size } from 'size';
-import { Mat } from 'mat';
-import { PointIterator } from 'point-iterator';
+import { Size as } from "./lib/geom/size.js";*/ import { Contour } from 'contour.so';
+import { Rect } from 'rect.so';
+import { Point } from 'point.so';
+import { Size } from 'size.so';
+import { Mat } from 'mat.so';
+import { PointIterator } from 'point-iterator.so';
 
 import { HSLA } from './lib/color/hsla.js';
 import { Line } from './lib/geom/line.js';

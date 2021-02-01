@@ -53,4 +53,6 @@ js_contours_new(JSContext* ctx, const std::vector<JSContourData<T>>& contours) {
   return ret;
 }
 
+extern "C" int js_contour_init(JSContext*, JSModuleDef*);
+
 #endif /* defined(JS_CONTOUR_H) */

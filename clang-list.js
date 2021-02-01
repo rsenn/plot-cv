@@ -31,14 +31,14 @@ Util.define(Array.prototype, {
 });
 
 const WriteBJSON = async (filename, obj) =>
-  await import('bjson').then(({ write }) => {
+  await import('bjson.so').then(({ write }) => {
     let data = write(obj);
     WriteFile(filename, data);
     return data.byteLength;
   });
 
 const ReadBJSON = async filename =>
-  await import('bjson').then(({ read }) => {
+  await import('bjson.so').then(({ read }) => {
     let data = filesystem.readFile(filename, null);
     return Util.instrument(read)(data, 0, data.byteLength);
   });

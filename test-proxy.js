@@ -1,17 +1,11 @@
-//import RecursiveObject from './lib/proxy/recursiveObject.js';
-
 import ConsoleSetup from './lib/consoleSetup.js';
+import PortableFileSystem from './lib/filesystem.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import Util from './lib/util.js';
 
-/*
-class Node extends (Util.proxyObject) {
-  constructor(root, handler) {
-    super(root, handler);
-  }
-}
-*/
+let filesystem;
+
 class Node {
   constructor(raw, path) {
     Util.define(this, { raw, path });
@@ -67,7 +61,9 @@ const proxyObject = (root, handler) => {
 };
 
 async function main() {
-  await ConsoleSetup();
+  //  await ConsoleSetup({ breakLength: 120, depth: 10 });
+  await PortableFileSystem(console.log);
+
   let str = filesystem
     .readFile('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd')
     .toString();

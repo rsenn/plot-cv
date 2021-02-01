@@ -1,8 +1,8 @@
-import { Size } from 'size';
-import { Rect } from 'rect';
-import * as cv from 'cv';
-import { Mat } from 'mat';
-import { VideoCapture } from 'video-capture';
+import { Size } from 'size.so';
+import { Rect } from 'rect.so';
+import * as cv from 'cv.so';
+import { Mat } from 'mat.so';
+import { VideoCapture } from 'video-capture.so';
 import Util from './lib/util.js';
 
 const Crop = (() => {

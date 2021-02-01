@@ -1,7 +1,6 @@
 import Util from './lib/util.js';
 import PortableFileSystem, { SEEK_SET, SEEK_END } from './lib/filesystem.js';
 import ConsoleSetup from './lib/consoleSetup.js';
-import ObjectInspect from './lib/objectInspect.js';
 
 import TinyTest, { run, assert, assertEquals } from './lib/tinyTest.js';
 

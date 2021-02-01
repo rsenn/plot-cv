@@ -12,10 +12,16 @@
 
 extern "C" {
 
+JSValue line_proto = JS_UNDEFINED, line_class = JS_UNDEFINED;
+JSClassID js_line_class_id = 0;
+
 VISIBLE JSValue
 js_line_new(JSContext* ctx, double x1, double y1, double x2, double y2) {
   JSValue ret;
   JSLineData<double>* s;
+
+  if(JS_IsUndefined(line_proto))
+    js_line_init(ctx, NULL);
 
   ret = JS_NewObjectProtoClass(ctx, line_proto, js_line_class_id);
 
@@ -257,9 +263,6 @@ js_line_from(JSContext* ctx, JSValueConst line, int argc, JSValueConst* argv) {
   return ret;
 }
 
-JSValue line_proto = JS_UNDEFINED, line_class = JS_UNDEFINED;
-JSClassID js_line_class_id;
-
 JSClassDef js_line_class = {
     .class_name = "Line",
     .finalizer = js_line_finalizer,
@@ -287,18 +290,20 @@ const JSCFunctionListEntry js_line_static_funcs[] = {JS_CFUNC_DEF("from", 1, js_
 int
 js_line_init(JSContext* ctx, JSModuleDef* m) {
 
-  /* create the Line class */
-  JS_NewClassID(&js_line_class_id);
-  JS_NewClass(JS_GetRuntime(ctx), js_line_class_id, &js_line_class);
+  if(js_line_class_id == 0) {
+    /* create the Line class */
+    JS_NewClassID(&js_line_class_id);
+    JS_NewClass(JS_GetRuntime(ctx), js_line_class_id, &js_line_class);
 
-  line_proto = JS_NewObject(ctx);
-  JS_SetPropertyFunctionList(ctx, line_proto, js_line_proto_funcs, countof(js_line_proto_funcs));
-  JS_SetClassProto(ctx, js_line_class_id, line_proto);
+    line_proto = JS_NewObject(ctx);
+    JS_SetPropertyFunctionList(ctx, line_proto, js_line_proto_funcs, countof(js_line_proto_funcs));
+    JS_SetClassProto(ctx, js_line_class_id, line_proto);
 
-  line_class = JS_NewCFunction2(ctx, js_line_ctor, "Line", 2, JS_CFUNC_constructor, 0);
-  /* set proto.constructor and ctor.prototype */
-  JS_SetConstructor(ctx, line_class, line_proto);
-  JS_SetPropertyFunctionList(ctx, line_class, js_line_static_funcs, countof(js_line_static_funcs));
+    line_class = JS_NewCFunction2(ctx, js_line_ctor, "Line", 2, JS_CFUNC_constructor, 0);
+    /* set proto.constructor and ctor.prototype */
+    JS_SetConstructor(ctx, line_class, line_proto);
+    JS_SetPropertyFunctionList(ctx, line_class, js_line_static_funcs, countof(js_line_static_funcs));
+  }
 
   if(m)
     JS_SetModuleExport(ctx, m, "Line", line_class);

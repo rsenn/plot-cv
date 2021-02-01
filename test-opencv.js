@@ -1,10 +1,10 @@
-import { Point } from 'point';
-import { Size } from 'size';
-import { Rect } from 'rect';
-import { Mat } from 'mat';
-import * as cv from 'cv';
-import { Line } from 'line';
-import { Draw, drawLine, drawCircle } from 'draw';
+import { Point } from 'point.so';
+import { Size } from 'size.so';
+import { Rect } from 'rect.so';
+import { Mat } from 'mat.so';
+import * as cv from 'cv.so';
+import { Line } from 'line.so';
+import { Draw, drawLine, drawCircle } from 'draw.so';
 import inspect from './lib/objectInspect.js';
 import path from './lib/path.js';
 import PortableFileSystem from './lib/filesystem.js';

@@ -1,3 +1,8 @@
+import { Environment, ECMAScriptParser, Printer } from './lib/ecmascript.js';
+import Util from './lib/util.js';
+import trkl from './lib/trkl.js';
+import PortableFileSystem from './lib/filesystem.js';
+
 const code = `
  let testObj = {};
 
@@ -10,11 +15,6 @@ testObj.prop1 = 'a';
 console.log('testObj.prop1', testObj.prop1);
 console.log('testValues', testValues);
  `;
-
-import { Environment, ECMAScriptParser, Printer } from './lib/ecmascript.js';
-import Util from './lib/util.js';
-import trkl from './lib/trkl.js';
-import PortableFileSystem from './lib/filesystem.js';
 
 let filesystem;
 

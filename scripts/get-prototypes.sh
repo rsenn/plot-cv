@@ -102,6 +102,7 @@ clean_args() {
 
 get_prototypes() {
   : ${PAD_ARGS=false}
+  : ${CPROTO_ARGS=-Iquickjs}
   while :; do
     case "$1" in
       -[dx] | --debug) DEBUG=true; shift ;;
@@ -137,7 +138,7 @@ get_prototypes() {
   PP=$(get_preprocessor)
   if [ -x "$PP" ]; then
      check_exec "$PP" -std=c2x &&  
-      add_arg "-E" "$PP -std=c2x" ||
+      add_arg "-E" "$PP" ||
       add_arg "-E" "$PP"
   fi
   if [ "$QUIET" = true ]; then

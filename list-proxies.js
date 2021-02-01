@@ -4,7 +4,7 @@ import proxynova from './node_modules/proxynova/index.js';
 import Util from './lib/util.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import url from 'url';
-import net from 'net';
+import net from 'net.so';
 import http from 'http';
 import https from 'https';
 import querystring from 'querystring';

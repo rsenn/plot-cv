@@ -11,10 +11,18 @@
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module_rect
 #endif
 
-extern "C" VISIBLE JSValue
+extern "C" {
+JSValue rect_proto = JS_UNDEFINED, rect_class = JS_UNDEFINED;
+JSClassID js_rect_class_id = 0;
+}
+
+VISIBLE JSValue
 js_rect_new(JSContext* ctx, double x, double y, double w, double h) {
   JSValue ret;
   JSRectData<double>* s;
+
+  if(JS_IsUndefined(rect_proto))
+    js_rect_init(ctx, NULL);
 
   ret = JS_NewObjectProtoClass(ctx, rect_proto, js_rect_class_id);
 
@@ -307,9 +315,6 @@ js_rect_from(JSContext* ctx, JSValueConst rect, int argc, JSValueConst* argv) {
   return ret;
 }
 
-JSValue rect_proto = JS_UNDEFINED, rect_class = JS_UNDEFINED;
-JSClassID js_rect_class_id;
-
 JSClassDef js_rect_class = {
     .class_name = "Rect",
     .finalizer = js_rect_finalizer,
@@ -347,18 +352,20 @@ const JSCFunctionListEntry js_rect_static_funcs[] = {JS_CFUNC_DEF("from", 1, js_
 int
 js_rect_init(JSContext* ctx, JSModuleDef* m) {
 
-  /* create the Rect class */
-  JS_NewClassID(&js_rect_class_id);
-  JS_NewClass(JS_GetRuntime(ctx), js_rect_class_id, &js_rect_class);
+  if(js_rect_class_id == 0) {
+    /* create the Rect class */
+    JS_NewClassID(&js_rect_class_id);
+    JS_NewClass(JS_GetRuntime(ctx), js_rect_class_id, &js_rect_class);
 
-  rect_proto = JS_NewObject(ctx);
-  JS_SetPropertyFunctionList(ctx, rect_proto, js_rect_proto_funcs, countof(js_rect_proto_funcs));
-  JS_SetClassProto(ctx, js_rect_class_id, rect_proto);
+    rect_proto = JS_NewObject(ctx);
+    JS_SetPropertyFunctionList(ctx, rect_proto, js_rect_proto_funcs, countof(js_rect_proto_funcs));
+    JS_SetClassProto(ctx, js_rect_class_id, rect_proto);
 
-  rect_class = JS_NewCFunction2(ctx, js_rect_ctor, "Rect", 0, JS_CFUNC_constructor, 0);
-  /* set proto.constructor and ctor.prototype */
-  JS_SetConstructor(ctx, rect_class, rect_proto);
-  JS_SetPropertyFunctionList(ctx, rect_class, js_rect_static_funcs, countof(js_rect_static_funcs));
+    rect_class = JS_NewCFunction2(ctx, js_rect_ctor, "Rect", 0, JS_CFUNC_constructor, 0);
+    /* set proto.constructor and ctor.prototype */
+    JS_SetConstructor(ctx, rect_class, rect_proto);
+    JS_SetPropertyFunctionList(ctx, rect_class, js_rect_static_funcs, countof(js_rect_static_funcs));
+  }
 
   if(m)
     JS_SetModuleExport(ctx, m, "Rect", rect_class);

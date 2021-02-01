@@ -112,7 +112,7 @@ async function main(...args) {
     let js;
     let json = JSON.stringify(xml, null, '  ');
 
-    await import('bjson')
+    await import('bjson.so')
       .then(({ read, write }) => (json = write(xml)))
       .catch(err => console.error(err));
 

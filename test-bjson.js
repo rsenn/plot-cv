@@ -11,7 +11,7 @@ import Alea from './lib/alea.js';
 import * as diff from './lib/json/diff.js';
 import inspect from './lib/objectInspect.js';
 import * as zlib from './quickjs/ffi/examples/zlib.js';
-import * as ffi from 'ffi';
+import * as ffi from 'ffi.so';
 
 let filesystem;
 let prng = new Alea().seed(Date.now());
@@ -60,7 +60,7 @@ let prng = new Alea().seed(Date.now());
 
 async function readBJSON(filename) {
   let data = filesystem.readFile(filename, null);
-  let obj = await import('bjson')
+  let obj = await import('bjson.so')
     .then(({ read }) => read(data, 0, data.byteLength))
     .catch(err => console.log(err));
   return obj;
@@ -176,7 +176,7 @@ async function main(...args) {
     let js = await readBJSON(filename);
     let json = JSON.stringify(js, null, '  ');
 
-    //   await import('bjson').then(({ read, write }) => json = write(xml)).catch(err => console.error(err));
+    //   await import('bjson.so').then(({ read, write }) => json = write(xml)).catch(err => console.error(err));
 
     WriteFile(outfile, json);
 

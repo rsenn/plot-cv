@@ -16,6 +16,11 @@ enum js_size_fit_t {
   JS_SIZE_FIT_OUTSIDE
 };
 
+extern "C" {
+JSValue size_proto = JS_UNDEFINED, size_class = JS_UNDEFINED;
+JSClassID js_size_class_id = 0;
+}
+
 template<class T>
 static inline JSSizeData<T>
 js_size_fit(const JSSizeData<T>& size, T to, js_size_fit_t mode) {
@@ -128,6 +133,9 @@ VISIBLE JSValue
 js_size_new(JSContext* ctx, double w, double h) {
   JSValue ret;
   JSSizeData<double>* s;
+
+  if(JS_IsUndefined(size_proto))
+    js_size_init(ctx, NULL);
 
   ret = JS_NewObjectProtoClass(ctx, size_proto, js_size_class_id);
 
@@ -350,9 +358,6 @@ js_size_from(JSContext* ctx, JSValueConst size, int argc, JSValueConst* argv) {
   return ret;
 }
 
-JSValue size_proto, size_class;
-JSClassID js_size_class_id;
-
 JSClassDef js_size_class = {
     .class_name = "Size",
     .finalizer = js_size_finalizer,
@@ -386,19 +391,21 @@ const JSCFunctionListEntry js_size_static_funcs[] = {JS_CFUNC_DEF("from", 1, js_
 int
 js_size_init(JSContext* ctx, JSModuleDef* m) {
 
-  /* create the Size class */
-  JS_NewClassID(&js_size_class_id);
-  JS_NewClass(JS_GetRuntime(ctx), js_size_class_id, &js_size_class);
+  if(js_size_class_id == 0) {
+    /* create the Size class */
+    JS_NewClassID(&js_size_class_id);
+    JS_NewClass(JS_GetRuntime(ctx), js_size_class_id, &js_size_class);
 
-  size_proto = JS_NewObject(ctx);
-  JS_SetPropertyFunctionList(ctx, size_proto, js_size_proto_funcs, countof(js_size_proto_funcs));
+    size_proto = JS_NewObject(ctx);
+    JS_SetPropertyFunctionList(ctx, size_proto, js_size_proto_funcs, countof(js_size_proto_funcs));
 
-  JS_SetClassProto(ctx, js_size_class_id, size_proto);
+    JS_SetClassProto(ctx, js_size_class_id, size_proto);
 
-  size_class = JS_NewCFunction2(ctx, js_size_ctor, "Size", 0, JS_CFUNC_constructor, 0);
-  /* set proto.constructor and ctor.prototype */
-  JS_SetConstructor(ctx, size_class, size_proto);
-  JS_SetPropertyFunctionList(ctx, size_class, js_size_static_funcs, countof(js_size_static_funcs));
+    size_class = JS_NewCFunction2(ctx, js_size_ctor, "Size", 0, JS_CFUNC_constructor, 0);
+    /* set proto.constructor and ctor.prototype */
+    JS_SetConstructor(ctx, size_class, size_proto);
+    JS_SetPropertyFunctionList(ctx, size_class, js_size_static_funcs, countof(js_size_static_funcs));
+  }
 
   if(m)
     JS_SetModuleExport(ctx, m, "Size", size_class);

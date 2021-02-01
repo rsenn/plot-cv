@@ -1231,8 +1231,8 @@ js_cv_bitwise(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
   return JS_UNDEFINED;
 }
 
-JSValue cv_proto, cv_class;
-JSClassID js_cv_class_id;
+JSValue cv_proto = JS_UNDEFINED, cv_class = JS_UNDEFINED;
+JSClassID js_cv_class_id = 0;
 
 void
 js_cv_finalizer(JSRuntime* rt, JSValue val) {
@@ -1818,8 +1818,8 @@ js_cv_init(JSContext* ctx, JSModuleDef* m) {
 
   /* std::cerr << "js_cv_static_funcs:" << std::endl << js_cv_static_funcs;
    std::cerr << "js_cv_static_funcs.size() = " << js_cv_static_funcs.size() << std::endl;*/
-
-  JS_SetModuleExportList(ctx, m, js_cv_static_funcs.data(), js_cv_static_funcs.size());
+  if(m)
+    JS_SetModuleExportList(ctx, m, js_cv_static_funcs.data(), js_cv_static_funcs.size());
 
   JSValue g = JS_GetGlobalObject(ctx);
   cv_class = JS_NewObject(ctx);

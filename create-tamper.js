@@ -276,7 +276,7 @@ async function main(...args) {
         const to = node.fromPath;
         const from = node.fromValue;
         node.from = new Literal(`'${to}'`);
-        console.log(`node alter ${node.position.toString()}  => '${to}'   (was '${from}' )`);
+        console.log(`node alter ${node.position /*.toString()*/}  => '${to}'   (was '${from}' )`);
         return node;
       });
 

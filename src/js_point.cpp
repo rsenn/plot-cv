@@ -22,7 +22,7 @@ std::vector<JSPointData<double>*> points;
 extern "C" {
 
 JSValue point_proto = JS_UNDEFINED;
-JSClassID js_point_class_id;
+JSClassID js_point_class_id = 0;
 
 VISIBLE JSValue
 js_point_new(JSContext* ctx, double x, double y) {
@@ -416,7 +416,7 @@ const JSCFunctionListEntry js_point_static_funcs[] = {JS_CFUNC_DEF("from", 1, js
 int
 js_point_init(JSContext* ctx, JSModuleDef* m) {
 
-  if(JS_IsUndefined(point_proto)) {
+  if(js_point_class_id == 0) {
     /* create the Point class */
     JS_NewClassID(&js_point_class_id);
     JS_NewClass(JS_GetRuntime(ctx), js_point_class_id, &js_point_class);

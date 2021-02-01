@@ -24,7 +24,7 @@ export class Param {
   }
 
   async createTrackbar(name, win) {
-    const cv = await import('cv');
+    const cv = await import('cv.so');
 
     //const winName = win+'';
     //console.debug(`createTrackbar`, { name,winName,cv});
