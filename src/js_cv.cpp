@@ -186,6 +186,57 @@ js_cv_hough_lines_p(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 }
 
 static JSValue
+js_cv_hough_circles(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  cv::Mat* image;
+  JSValueConst array;
+  int32_t method, minRadius = 0, maxRadius = 0;
+  double dp, minDist, param1 = 100, param2 = 100;
+
+  std::vector<cv::Vec3f> circles;
+  size_t i;
+
+  JSValue ret;
+  if(argc < 5)
+    return JS_EXCEPTION;
+
+  image = js_mat_data(ctx, argv[0]);
+
+  if(image == nullptr || !JS_IsArray(ctx, argv[1]))
+    return JS_EXCEPTION;
+
+  array = argv[1];
+  JS_ToInt32(ctx, &method, argv[2]);
+  JS_ToFloat64(ctx, &dp, argv[3]);
+  JS_ToFloat64(ctx, &minDist, argv[4]);
+
+  if(argc >= 6)
+    JS_ToFloat64(ctx, &param1, argv[5]);
+  if(argc >= 7)
+    JS_ToFloat64(ctx, &param2, argv[6]);
+  if(argc >= 8)
+    JS_ToInt32(ctx, &minRadius, argv[7]);
+  if(argc >= 9)
+    JS_ToInt32(ctx, &maxRadius, argv[8]);
+
+  cv::HoughCircles(*image, circles, method, dp, minDist, param1, param2, minRadius, maxRadius);
+
+  i = 0;
+  js_array_truncate(ctx, array, 0);
+
+  for(const auto& circle : circles) {
+    const float *s, *e;
+    s = &circle[0];
+    e = &circle[3];
+
+    JSValue v = js_array_from(ctx, s, e);
+
+    JS_SetPropertyUint32(ctx, array, i++, v);
+  }
+
+  return JS_UNDEFINED;
+}
+
+static JSValue
 js_cv_canny(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   cv::Mat *image, *edges;
   double threshold1, threshold2;
@@ -211,6 +262,70 @@ js_cv_canny(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv)
   // << apertureSize << " L2gradient=" << L2gradient << std::endl;
 
   cv::Canny(*image, *edges, threshold1, threshold2, apertureSize, L2gradient);
+
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_cv_good_features_to_track(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  cv::Mat *image, *corners, *mask = nullptr;
+  int32_t maxCorners, blockSize = 3, gradientSize;
+  double qualityLevel, minDistance, k = 0.04;
+  bool useHarrisDetector = false;
+  int argind;
+
+  image = js_mat_data(ctx, argv[0]);
+  corners = js_mat_data(ctx, argv[1]);
+
+  if(image == nullptr || corners == nullptr || image->empty())
+    return JS_EXCEPTION;
+
+  JS_ToInt32(ctx, &maxCorners, argv[2]);
+  JS_ToFloat64(ctx, &qualityLevel, argv[3]);
+  JS_ToFloat64(ctx, &minDistance, argv[4]);
+
+  if(argc >= 6)
+    mask = js_mat_data(ctx, argv[5]);
+
+  if(argc >= 7)
+    JS_ToInt32(ctx, &blockSize, argv[6]);
+
+  argind = 7;
+
+  if(argc > argind) {
+    if(JS_IsNumber(argv[argind])) {
+      JS_ToInt32(ctx, &gradientSize, argv[argind]);
+      argind++;
+    }
+  }
+  if(argc > argind) {
+    useHarrisDetector = JS_ToBool(ctx, argv[argind]);
+    argind++;
+  }
+  if(argc > argind)
+    JS_ToFloat64(ctx, &k, argv[argind]);
+
+  if(argind == 9)
+    cv::goodFeaturesToTrack(*image,
+                            *corners,
+                            maxCorners,
+                            qualityLevel,
+                            minDistance,
+                            mask ? *mask : cv::noArray(),
+                            blockSize,
+                            gradientSize,
+                            useHarrisDetector,
+                            k);
+  else
+    cv::goodFeaturesToTrack(*image,
+                            *corners,
+                            maxCorners,
+                            qualityLevel,
+                            minDistance,
+                            mask ? *mask : cv::noArray(),
+                            blockSize,
+                            useHarrisDetector,
+                            k);
 
   return JS_UNDEFINED;
 }
@@ -1254,7 +1369,9 @@ js_function_list_t js_cv_static_funcs{
     JS_CFUNC_DEF("GaussianBlur", 4, js_cv_gaussian_blur),
     JS_CFUNC_DEF("HoughLines", 5, js_cv_hough_lines),
     JS_CFUNC_DEF("HoughLinesP", 5, js_cv_hough_lines_p),
+    JS_CFUNC_DEF("HoughCircles", 5, js_cv_hough_circles),
     JS_CFUNC_DEF("Canny", 4, js_cv_canny),
+    JS_CFUNC_DEF("goodFeaturesToTrack", 5, js_cv_good_features_to_track),
     JS_CFUNC_DEF("imread", 1, js_cv_imread),
     JS_CFUNC_DEF("imwrite", 2, js_cv_imwrite),
     JS_CFUNC_DEF("imshow", 2, js_cv_imshow),

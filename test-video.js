@@ -442,6 +442,7 @@ async function main(...args) {
   let frameCount = video.get('frame_count');
   let { frameShow, ...config } = LoadConfig();
   console.log('frameShow:', frameShow);
+
   let contours, hier;
   let contoursDepth;
   let lines, circles;
@@ -481,8 +482,12 @@ async function main(...args) {
   //console.log('params.mode:', dummyArray[params.mode]);
   //console.log('params.method:', dummyArray[params.method]);
 
-  await params.apertureSize.createTrackbar('apertureSize', win); //console.log('paramNav.param:', paramNav.param);
-//await params.apertureSize.createTrackbar('apertureSize', win);
+  await params.apertureSize.createTrackbar('apertureSize', win);
+  await params.thresh1.createTrackbar('thresh1', win);
+  await params.thresh2.createTrackbar('thresh2', win);
+
+   //console.log('paramNav.param:', paramNav.param);
+  //await params.apertureSize.createTrackbar('apertureSize', win);
 
   //std.exit(0);
   rainbow = makeRainbow(256);
@@ -562,14 +567,14 @@ async function main(...args) {
 
         if(+params.maskColor) {
           let edge = [dst.toString(), pipeline.images[0].toString()];
-          console.log('edge', edge);
+          //console.log('edge', edge);
 
           dst.and(pipeline.images[0]);
         }
       }),
       Processor(function HoughLines(src, dst) {
-        let edges =  pipeline.outputOf('EdgeDetect');
-          //console.log('edges: '+edges);
+        let edges = pipeline.outputOf('EdgeDetect');
+        //console.log('edges: '+edges);
 
         cv.HoughLinesP(edges,
           (lines = []),
@@ -594,6 +599,7 @@ async function main(...args) {
       // let m = (outputMat || mat) ?  (outputMat || mat).dup() : null;
     }
   );
+
   console.log(`pipeline.images = `, pipeline.images.map(Util.className));
   console.log(`pipeline.images = { ` + pipeline.images.map(image => '\n  ' + image) + '\n}');
 
@@ -607,6 +613,18 @@ async function main(...args) {
   const wrapIndex = Util.mod(pipeline.size);
 
   if(frameShow === undefined) frameShow = wrapIndex(-1);
+
+  console.log(`Trackbar 'frame' frameShow=${frameShow} pipeline.size - 1 = ${pipeline.size - 1}`);
+
+  cv.createTrackbar('frame',
+    'gray',
+    frameShow,
+    pipeline.size - 1,
+    function(value, count, name, window) {
+      //console.log('Trackbar', { value, count, name, window });
+      frameShow = value;
+    }
+  );
 
   const resizeOutput = Util.once(() => {
     let size = outputMat.size.mul(zoom);

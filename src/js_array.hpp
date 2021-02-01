@@ -23,10 +23,7 @@ js_array_truncate(JSContext* ctx, const JSValueConst& arr, int64_t len) {
   if(JS_IsArray(ctx, arr)) {
     int64_t top = js_array_length(ctx, arr);
     newlen = std::min(top, len < 0 ? top + len : len);
-
-    while(--top >= newlen) {
-      JS_DeletePropertyInt64(ctx, arr, top, 0);
-    }
+    while(--top >= newlen) JS_DeletePropertyInt64(ctx, arr, top, 0);
     JS_SetPropertyStr(ctx, arr, "length", JS_NewInt64(ctx, newlen));
   }
   return newlen;
@@ -35,25 +32,30 @@ js_array_truncate(JSContext* ctx, const JSValueConst& arr, int64_t len) {
 class js_array_iterator : public std::iterator<std::input_iterator_tag, JSValue> {
 public:
   js_array_iterator(JSContext* c, const JSValueConst& a, const size_t i = 0) : ctx(c), array(&a), pos(i) {}
+
   value_type
   operator*() const {
     return JS_GetPropertyUint32(ctx, *array, pos);
   }
+
   js_array_iterator&
   operator++() {
     ++this->pos;
     return *this;
   }
+
   js_array_iterator
   operator++(int) {
     js_array_iterator temp(*this);
     ++(*this);
     return temp;
   }
+
   bool
   operator==(const js_array_iterator& rhs) {
     return array == rhs.array && pos == rhs.pos;
   }
+
   bool
   operator!=(const js_array_iterator& rhs) {
     return !operator==(rhs);
@@ -103,12 +105,12 @@ public:
   template<class Container>
   static JSValue
   from(JSContext* ctx, const Container& in) {
-    return from_sequence<typename Container::const_iterator>(ctx, in.cbegin(), in.cend());
+    return from_sequence<typename Container::const_iterator>(ctx, in.begin(), in.end());
   }
 
   static JSValue
   from_vector(JSContext* ctx, const std::vector<T>& in) {
-    return from_sequence(ctx, in.cbegin(), in.cend());
+    return from_sequence(ctx, in.begin(), in.end());
   }
 
   template<class Iterator>
@@ -178,6 +180,7 @@ public:
     }
     return n;
   }
+
   template<size_t N> static int64_t to_array(JSContext* ctx, JSValueConst arr, std::array<cv::Mat, N>& out);
 };
 
@@ -260,15 +263,13 @@ public:
       contour_type contour;
       JSValue item = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
       if((ptr = js_contour_data(ctx, item))) {
-        /*  std::transform(ptr->cbegin(),
-                         ptr->cend(),
+        /*  std::transform(ptr->begin(),
+                         ptr->end(),
                          std::back_inserter(contour),
                          [](const JSPointData<double>& point) -> JSPointData<T> {
                            return JSPointData<T>(point.x, point.y);
                          });*/
-        for(const auto& point : *ptr) {
-          contour.emplace_back(point.x, point.y);
-        }
+        for(const auto& point : *ptr) contour.emplace_back(point.x, point.y);
 
       } else {
         js_array<JSPointData<T>>::to_vector(ctx, item, contour);
@@ -295,7 +296,7 @@ public:
   template<class Container>
   static JSValue
   from(JSContext* ctx, const Container& in) {
-    return from_sequence<typename Container::const_iterator>(ctx, in.cbegin(), in.cend());
+    return from_sequence<typename Container::const_iterator>(ctx, in.begin(), in.end());
   }
 };
 
@@ -324,6 +325,7 @@ public:
     }
     return n;
   }
+
   template<size_t N> static int64_t to_array(JSContext* ctx, JSValueConst arr, std::array<cv::Mat, N>& out);
 };
 
@@ -374,12 +376,6 @@ inline int64_t
 js_array_to(JSContext* ctx, JSValueConst arr, cv::Scalar_<T>& out) {
   return js_array<T>::to_scalar(ctx, arr, out);
 }
-/*
-
-template <class IteratorType>
-struct iterator_traits {
-  typedef typename std::remove_pointer<IteratorType>::type;
-};*/
 
 template<class T>
 inline JSValue
@@ -396,7 +392,7 @@ js_array_from(JSContext* ctx, const Iterator& start, const Iterator& end) {
 template<class Container>
 inline JSValue
 js_array_from(JSContext* ctx, const Container& v) {
-  return js_array<typename Container::value_type>::from_sequence(ctx, v.cbegin(), v.cend());
+  return js_array<typename Container::value_type>::from_sequence(ctx, v.begin(), v.end());
 }
 
 class js_object {
@@ -421,7 +417,6 @@ public:
     typedef std::pair<std::string, T> entry_type;
     jsrt js(ctx);
     JSValue obj = JS_NewObject(ctx);
-    ;
 
     for(entry_type entry : in) js.set_property(obj, entry.first, js.create<T>(entry.second), JS_PROP_C_W_E);
 
