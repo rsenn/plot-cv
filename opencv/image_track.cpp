@@ -106,8 +106,9 @@ image_track::track_start(cv::VideoCapture video) {
             CamShift(backproj, trackWindow, cv::TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 10, 1));
         if(trackWindow.area() <= 1) {
           int cols = backproj.cols, rows = backproj.rows, r = (MIN(cols, rows) + 5) / 6;
-          trackWindow = cv::Rect(trackWindow.x - r, trackWindow.y - r, trackWindow.x + r, trackWindow.y + r) &
-                        cv::Rect(0, 0, cols, rows);
+          trackWindow =
+              cv::Rect(trackWindow.x - r, trackWindow.y - r, trackWindow.x + r, trackWindow.y + r) &
+              cv::Rect(0, 0, cols, rows);
         }
         ellipse(image, trackBox, cv::Scalar(0, 0, 255), 3, cv::LINE_AA);
       }

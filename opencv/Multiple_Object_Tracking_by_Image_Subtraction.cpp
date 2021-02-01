@@ -18,11 +18,14 @@ const cv::Scalar SCALAR_GREEN = cv::Scalar(0.0, 200.0, 0.0);
 const cv::Scalar SCALAR_RED = cv::Scalar(0.0, 0.0, 255.0);
 
 // function prototypes ////////////////////////////////////////////////////////////////////////////
-void matchCurrentFrameBlobsToExistingBlobs(std::vector<Blob>& existingBlobs, std::vector<Blob>& currentFrameBlobs);
+void matchCurrentFrameBlobsToExistingBlobs(std::vector<Blob>& existingBlobs,
+                                           std::vector<Blob>& currentFrameBlobs);
 void addBlobToExistingBlobs(Blob& currentFrameBlob, std::vector<Blob>& existingBlobs, int& intIndex);
 void addNewBlob(Blob& currentFrameBlob, std::vector<Blob>& existingBlobs);
 double distanceBetweenPoints(cv::Point point1, cv::Point point2);
-void drawAndShowContours(cv::Size imageSize, std::vector<std::vector<cv::Point>> contours, std::string strImageName);
+void drawAndShowContours(cv::Size imageSize,
+                         std::vector<std::vector<cv::Point>> contours,
+                         std::string strImageName);
 void drawAndShowContours(cv::Size imageSize, std::vector<Blob> blobs, std::string strImageName);
 void drawBlobInfoOnImage(std::vector<Blob>& blobs, cv::Mat& imgFrame2Copy);
 
@@ -118,7 +121,8 @@ main(int argc, char* argv[]) {
       if(possibleBlob.currentBoundingRect.area() > 100 && possibleBlob.dblCurrentAspectRatio >= 0.2 &&
          possibleBlob.dblCurrentAspectRatio <= 1.25 && possibleBlob.currentBoundingRect.width > 20 &&
          possibleBlob.currentBoundingRect.height > 20 && possibleBlob.dblCurrentDiagonalSize > 30.0 &&
-         (cv::contourArea(possibleBlob.currentContour) / (double)possibleBlob.currentBoundingRect.area()) > 0.40) {
+         (cv::contourArea(possibleBlob.currentContour) / (double)possibleBlob.currentBoundingRect.area()) >
+             0.40) {
         currentFrameBlobs.push_back(possibleBlob);
       }
     }
@@ -135,9 +139,8 @@ main(int argc, char* argv[]) {
 
     drawAndShowContours(imgThresh.size(), blobs, "imgBlobs");
 
-    imgFrame2Copy =
-        imgFrame2
-            .clone(); // get another copy of frame 2 since we changed the previous frame 2 copy in the processing above
+    imgFrame2Copy = imgFrame2.clone(); // get another copy of frame 2 since we changed the previous frame 2
+                                       // copy in the processing above
 
     drawBlobInfoOnImage(blobs, imgFrame2Copy);
 
@@ -166,15 +169,16 @@ main(int argc, char* argv[]) {
   if(chCheckForEscKey != 27) { // if the user did not press esc (i.e. we reached the end of the video)
     cv::waitKey(0);            // hold the windows open to allow the "end of video" message to show
   }
-  // note that if the user did press esc, we don't need to hold the windows open, we can simply let the program end
-  // which will close the windows
+  // note that if the user did press esc, we don't need to hold the windows open, we can simply let the
+  // program end which will close the windows
 
   return (0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
-matchCurrentFrameBlobsToExistingBlobs(std::vector<Blob>& existingBlobs, std::vector<Blob>& currentFrameBlobs) {
+matchCurrentFrameBlobsToExistingBlobs(std::vector<Blob>& existingBlobs,
+                                      std::vector<Blob>& currentFrameBlobs) {
 
   for(auto& existingBlob : existingBlobs) {
 
@@ -190,8 +194,8 @@ matchCurrentFrameBlobsToExistingBlobs(std::vector<Blob>& existingBlobs, std::vec
 
     for(unsigned int i = 0; i < existingBlobs.size(); i++) {
       if(existingBlobs[i].blnStillBeingTracked == true) {
-        double dblDistance =
-            distanceBetweenPoints(currentFrameBlob.centerPositions.back(), existingBlobs[i].predictedNextPosition);
+        double dblDistance = distanceBetweenPoints(currentFrameBlob.centerPositions.back(),
+                                                   existingBlobs[i].predictedNextPosition);
 
         if(dblDistance < dblLeastDistance) {
           dblLeastDistance = dblDistance;
@@ -256,7 +260,9 @@ distanceBetweenPoints(cv::Point point1, cv::Point point2) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
-drawAndShowContours(cv::Size imageSize, std::vector<std::vector<cv::Point>> contours, std::string strImageName) {
+drawAndShowContours(cv::Size imageSize,
+                    std::vector<std::vector<cv::Point>> contours,
+                    std::string strImageName) {
   cv::Mat image(imageSize, CV_8UC3, SCALAR_BLACK);
 
   cv::drawContours(image, contours, -1, SCALAR_WHITE, -1);

@@ -53,7 +53,7 @@ main() {
                  NULL);
   createTrackbar("Dolna wartosc progowa 2", window_name[3], &low, 255, NULL); // down treshold of binary1
   createTrackbar("Gorna wartosc progowa 2", window_name[3], &up, 255, NULL);  // up treshold of binary1
-  while(waitKey(20) != 27) {                                                  // capturing and analizing 27 fps
+  while(waitKey(20) != 27) { // capturing and analizing 27 fps
     capture >> frame;
     frame_counter++;
     if(frame_counter == 27) { // count 27 frames and increment mt(messuring time)
@@ -136,8 +136,11 @@ main() {
               Scalar(20, 40, 80),
               1,
               8);
-      drawContours(
-          drawing, contours1, i_cont1, Scalar(125, 125, 250), 2); // drawing detected contours in drawing window
+      drawContours(drawing,
+                   contours1,
+                   i_cont1,
+                   Scalar(125, 125, 250),
+                   2); // drawing detected contours in drawing window
     }
     if(i_cont2 >= 0) // analise of binary2 (hsv split 2), same as 1st
     {
@@ -155,7 +158,8 @@ main() {
            0);
       string st;
       stringstream out1;
-      out1 << "Srodek: " << boundRect2.x + boundRect2.width / 2 << "x" << boundRect2.y + boundRect2.height / 2;
+      out1 << "Srodek: " << boundRect2.x + boundRect2.width / 2 << "x"
+           << boundRect2.y + boundRect2.height / 2;
       out1 << " Szerokosc: " << boundRect2.width << " Wysokosc: " << boundRect2.height;
       szerokosc2 = boundRect2.width;
       wysokosc2 = boundRect2.height;

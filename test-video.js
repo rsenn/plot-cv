@@ -482,6 +482,7 @@ async function main(...args) {
   //console.log('params.method:', dummyArray[params.method]);
 
   await params.apertureSize.createTrackbar('apertureSize', win); //console.log('paramNav.param:', paramNav.param);
+//await params.apertureSize.createTrackbar('apertureSize', win);
 
   //std.exit(0);
   rainbow = makeRainbow(256);
@@ -567,8 +568,8 @@ async function main(...args) {
         }
       }),
       Processor(function HoughLines(src, dst) {
-        let edges = pipeline.outputOf('EdgeDetect');
-        //  console.log('edges: '+edges);
+        let edges =  pipeline.outputOf('EdgeDetect');
+          //console.log('edges: '+edges);
 
         cv.HoughLinesP(edges,
           (lines = []),

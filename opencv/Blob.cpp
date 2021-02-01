@@ -47,13 +47,13 @@ Blob::predictNextPosition(void) {
 
   } else if(numPositions == 3) {
 
-    int sumOfXChanges =
-        ((centerPositions[2].x - centerPositions[1].x) * 2) + ((centerPositions[1].x - centerPositions[0].x) * 1);
+    int sumOfXChanges = ((centerPositions[2].x - centerPositions[1].x) * 2) +
+                        ((centerPositions[1].x - centerPositions[0].x) * 1);
 
     int deltaX = (int)std::round((float)sumOfXChanges / 3.0);
 
-    int sumOfYChanges =
-        ((centerPositions[2].y - centerPositions[1].y) * 2) + ((centerPositions[1].y - centerPositions[0].y) * 1);
+    int sumOfYChanges = ((centerPositions[2].y - centerPositions[1].y) * 2) +
+                        ((centerPositions[1].y - centerPositions[0].y) * 1);
 
     int deltaY = (int)std::round((float)sumOfYChanges / 3.0);
 

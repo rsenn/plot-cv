@@ -58,7 +58,8 @@ main(int argc, char** argv) {
         if(i > 0) {
           line(image, roi_corners[i - 1], roi_corners[(i)], Scalar(0, 0, 255), 2);
           circle(image, roi_corners[i], 5, Scalar(0, 255, 0), 3);
-          putText(image, labels[i].c_str(), roi_corners[i], FONT_HERSHEY_SIMPLEX, 0.8, Scalar(255, 0, 0), 2);
+          putText(
+              image, labels[i].c_str(), roi_corners[i], FONT_HERSHEY_SIMPLEX, 0.8, Scalar(255, 0, 0), 2);
         }
       }
       imshow(windowTitle, image);
@@ -73,12 +74,16 @@ main(int argc, char** argv) {
       imshow(windowTitle, image);
       dst_corners[0].x = 0;
       dst_corners[0].y = 0;
-      dst_corners[1].x = (float)std::max(norm(roi_corners[0] - roi_corners[1]), norm(roi_corners[2] - roi_corners[3]));
+      dst_corners[1].x =
+          (float)std::max(norm(roi_corners[0] - roi_corners[1]), norm(roi_corners[2] - roi_corners[3]));
       dst_corners[1].y = 0;
-      dst_corners[2].x = (float)std::max(norm(roi_corners[0] - roi_corners[1]), norm(roi_corners[2] - roi_corners[3]));
-      dst_corners[2].y = (float)std::max(norm(roi_corners[1] - roi_corners[2]), norm(roi_corners[3] - roi_corners[0]));
+      dst_corners[2].x =
+          (float)std::max(norm(roi_corners[0] - roi_corners[1]), norm(roi_corners[2] - roi_corners[3]));
+      dst_corners[2].y =
+          (float)std::max(norm(roi_corners[1] - roi_corners[2]), norm(roi_corners[3] - roi_corners[0]));
       dst_corners[3].x = 0;
-      dst_corners[3].y = (float)std::max(norm(roi_corners[1] - roi_corners[2]), norm(roi_corners[3] - roi_corners[0]));
+      dst_corners[3].y =
+          (float)std::max(norm(roi_corners[1] - roi_corners[2]), norm(roi_corners[3] - roi_corners[0]));
       Size warped_image_size = Size(cvRound(dst_corners[2].x), cvRound(dst_corners[2].y));
       Mat H = findHomography(roi_corners, dst_corners); // get homography
       Mat warped_image;
@@ -109,7 +114,8 @@ onMouse(int event, int x, int y, int, void*) {
   // Action when left button is pressed
   if(roi_corners.size() == 4) {
     for(int i = 0; i < 4; ++i) {
-      if((event == EVENT_LBUTTONDOWN) & ((abs(roi_corners[i].x - x) < 10)) & (abs(roi_corners[i].y - y) < 10)) {
+      if((event == EVENT_LBUTTONDOWN) & ((abs(roi_corners[i].x - x) < 10)) &
+         (abs(roi_corners[i].y - y) < 10)) {
         selected_corner_index = i;
         dragging = true;
       }

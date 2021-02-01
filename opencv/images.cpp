@@ -3,8 +3,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include <iostream>
-#include <../src/polygon.h>
-#include <data.h>
+#include "../src/polygon.hpp"
+#include "../src/data.hpp"
 
 using namespace cv;
 using namespace std;

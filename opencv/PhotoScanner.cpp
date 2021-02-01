@@ -145,11 +145,10 @@ main() {
   GaussianBlur(img, img, Size(5, 5), 0, 0); //高斯滤波
 
   //获取自定义核
-  Mat element =
-      getStructuringElement(MORPH_RECT,
-                            Size(1, 1)); //第一个参数MORPH_RECT表示矩形的卷积核，当然还可以选择椭圆形的、交叉型的
-                                         //膨胀操作
-  dilate(img, img, element);             //实现过程中发现，适当的膨胀很重要
+  Mat element = getStructuringElement(
+      MORPH_RECT, Size(1, 1)); //第一个参数MORPH_RECT表示矩形的卷积核，当然还可以选择椭圆形的、交叉型的
+                               //膨胀操作
+  dilate(img, img, element);   //实现过程中发现，适当的膨胀很重要
   imshow("dilate", img);
   Canny(img, img, 30, 120, 3); //边缘提取
   imshow("get contour", img);
@@ -305,7 +304,8 @@ main() {
       cvtColor(quad, gray, cv::COLOR_RGB2GRAY);
       int blockSize = 25;
       int constValue = 10;
-      adaptiveThreshold(gray, local, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY, blockSize, constValue);
+      adaptiveThreshold(
+          gray, local, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY, blockSize, constValue);
 
       imshow("二值化", local);
 

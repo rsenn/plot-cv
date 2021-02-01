@@ -71,14 +71,26 @@ goodFeaturesToTrack_Demo(int, void*) {
   Mat copy = src.clone();
 
   /// Apply corner detection
-  goodFeaturesToTrack(
-      src_gray, corners, maxCorners, qualityLevel, minDistance, Mat(), blockSize, gradientSize, useHarrisDetector, k);
+  goodFeaturesToTrack(src_gray,
+                      corners,
+                      maxCorners,
+                      qualityLevel,
+                      minDistance,
+                      Mat(),
+                      blockSize,
+                      gradientSize,
+                      useHarrisDetector,
+                      k);
 
   /// Draw corners detected
   cout << "** Number of corners detected: " << corners.size() << endl;
   int radius = 4;
   for(size_t i = 0; i < corners.size(); i++) {
-    circle(copy, corners[i], radius, Scalar(rng.uniform(0, 255), rng.uniform(0, 256), rng.uniform(0, 256)), FILLED);
+    circle(copy,
+           corners[i],
+           radius,
+           Scalar(rng.uniform(0, 255), rng.uniform(0, 256), rng.uniform(0, 256)),
+           FILLED);
   }
 
   /// Show what you got

@@ -85,7 +85,8 @@ main(int argc, char** argv) {
   src = imread(argv[1], 1);
 
   if(src.empty()) {
-    std::cout << "failed to open image file. Make sure img exists and command is in correct format." << std::endl;
+    std::cout << "failed to open image file. Make sure img exists and command is in correct format."
+              << std::endl;
   } else {
 
     Size dsize2 = Size(round(.35 * src.cols), round(.35 * src.rows));

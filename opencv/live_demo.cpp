@@ -139,9 +139,10 @@ filterDetailEnhancement(const cv::Mat& frame8u, cv::Mat& dst) {
 
   // Generate lightness
   double meanLigtness = mean(frameLabCn[0])[0];
-  frameLabCn[0] = cBase * (layer2 - meanLigtness) + meanLigtness; // fit contrast of base (most blurred) layer
-  frameLabCn[0] += cDetails1 * detailLayer1;                      // add weighted sum of detail layers to new lightness
-  frameLabCn[0] += cDetails2 * detailLayer2;                      //
+  frameLabCn[0] =
+      cBase * (layer2 - meanLigtness) + meanLigtness; // fit contrast of base (most blurred) layer
+  frameLabCn[0] += cDetails1 * detailLayer1;          // add weighted sum of detail layers to new lightness
+  frameLabCn[0] += cDetails2 * detailLayer2;          //
 
   // Update new lightness
   cv::merge(frameLabCn, 3, frameLab);
@@ -186,11 +187,15 @@ main() {
   cv::displayOverlay("Demo", "Press Ctrl+P to show property window", 5000);
 
   // Thread trackbar
-  cv::createTrackbar("Threads", cv::String(), &g_numberOfCPUs, cv::getNumberOfCPUs(), changeNumberOfCpuCallback);
+  cv::createTrackbar(
+      "Threads", cv::String(), &g_numberOfCPUs, cv::getNumberOfCPUs(), changeNumberOfCpuCallback);
 
   // Buttons to choose different modes
-  cv::createButton(
-      "Mode Details Enhancement", changeModeCallback, (void*)filterDetailEnhancement, cv::QT_RADIOBOX, true);
+  cv::createButton("Mode Details Enhancement",
+                   changeModeCallback,
+                   (void*)filterDetailEnhancement,
+                   cv::QT_RADIOBOX,
+                   true);
   cv::createButton("Mode Stylizing", changeModeCallback, (void*)filterStylize, cv::QT_RADIOBOX, false);
   cv::createButton("Mode Blurring", changeModeCallback, (void*)filterBlurring, cv::QT_RADIOBOX, false);
   cv::createButton("Mode DoNothing", changeModeCallback, (void*)filterDoNothing, cv::QT_RADIOBOX, false);

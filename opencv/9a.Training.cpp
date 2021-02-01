@@ -83,7 +83,8 @@ main() {
           bool fromCenter = false;
           Rect2d r = selectROI("Select", frame, fromCenter, showCrosshair);
           destroyWindow("Select"); // Dong cua so sau khi da chon
-          printf("[POS] Vat mau tai x=%.0f, y=%.0f, width=%.0f, heigth=%.0f\r\n", r.x, r.y, r.width, r.height);
+          printf(
+              "[POS] Vat mau tai x=%.0f, y=%.0f, width=%.0f, heigth=%.0f\r\n", r.x, r.y, r.width, r.height);
           if((w > r.width) && (h > r.height)) { // Get smallest
             w = r.width;
             h = r.height;

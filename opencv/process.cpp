@@ -160,7 +160,8 @@ process::printTable(Table table[SEGMENTSIZE + 1]) {
 }
 
 int
-process::startOpencv(int width, int height, int mode, ParkingInfo info, std::string answer, std::string ip) {
+process::startOpencv(
+    int width, int height, int mode, ParkingInfo info, std::string answer, std::string ip) {
 
 #if FROM == CAMERA
   VideoCapture camera;
@@ -313,7 +314,8 @@ process::startOpencv(int width, int height, int mode, ParkingInfo info, std::str
 #endif // CAMERA로터 입력받는 경우
 
         if(mode & COSTTIME)
-          cout << "\t\tCost Time In the FindTexts : " << findText_t * 1000 / getTickFrequency() << "ms" << endl;
+          cout << "\t\tCost Time In the FindTexts : " << findText_t * 1000 / getTickFrequency() << "ms"
+               << endl;
 
         /* 주차 영역 번호 */
         int zoneIndex = 0;

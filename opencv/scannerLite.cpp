@@ -19,7 +19,8 @@ using namespace std;
 void
 getCanny(Mat gray, Mat& canny) {
   Mat thres;
-  double high_thres = threshold(gray, thres, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU), low_thres = high_thres * 0.5;
+  double high_thres = threshold(gray, thres, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU),
+         low_thres = high_thres * 0.5;
   cv::Canny(gray, canny, low_thres, high_thres);
 }
 

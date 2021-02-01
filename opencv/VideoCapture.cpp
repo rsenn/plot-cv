@@ -60,7 +60,9 @@ Java_org_opencv_highgui_VideoCapture_n_1VideoCapture__(JNIEnv* env, jclass) {
 //   VideoCapture::VideoCapture(int device)
 //
 
-JNIEXPORT jlong JNICALL Java_org_opencv_highgui_VideoCapture_n_1VideoCapture__I(JNIEnv* env, jclass, jint device);
+JNIEXPORT jlong JNICALL Java_org_opencv_highgui_VideoCapture_n_1VideoCapture__I(JNIEnv* env,
+                                                                                jclass,
+                                                                                jint device);
 
 JNIEXPORT jlong JNICALL
 Java_org_opencv_highgui_VideoCapture_n_1VideoCapture__I(JNIEnv* env, jclass, jint device) {
@@ -81,7 +83,10 @@ Java_org_opencv_highgui_VideoCapture_n_1VideoCapture__I(JNIEnv* env, jclass, jin
 //  double VideoCapture::get(int propId)
 //
 
-JNIEXPORT jdouble JNICALL Java_org_opencv_highgui_VideoCapture_n_1get(JNIEnv* env, jclass, jlong self, jint propId);
+JNIEXPORT jdouble JNICALL Java_org_opencv_highgui_VideoCapture_n_1get(JNIEnv* env,
+                                                                      jclass,
+                                                                      jlong self,
+                                                                      jint propId);
 
 JNIEXPORT jdouble JNICALL
 Java_org_opencv_highgui_VideoCapture_n_1get(JNIEnv* env, jclass, jlong self, jint propId) {
@@ -125,7 +130,9 @@ Java_org_opencv_highgui_VideoCapture_n_1grab(JNIEnv* env, jclass, jlong self) {
 //  bool VideoCapture::isOpened()
 //
 
-JNIEXPORT jboolean JNICALL Java_org_opencv_highgui_VideoCapture_n_1isOpened(JNIEnv* env, jclass, jlong self);
+JNIEXPORT jboolean JNICALL Java_org_opencv_highgui_VideoCapture_n_1isOpened(JNIEnv* env,
+                                                                            jclass,
+                                                                            jlong self);
 
 JNIEXPORT jboolean JNICALL
 Java_org_opencv_highgui_VideoCapture_n_1isOpened(JNIEnv* env, jclass, jlong self) {
@@ -247,7 +254,10 @@ JNIEXPORT jboolean JNICALL Java_org_opencv_highgui_VideoCapture_n_1retrieve__JJ(
                                                                                 jlong image_nativeObj);
 
 JNIEXPORT jboolean JNICALL
-Java_org_opencv_highgui_VideoCapture_n_1retrieve__JJ(JNIEnv* env, jclass, jlong self, jlong image_nativeObj) {
+Java_org_opencv_highgui_VideoCapture_n_1retrieve__JJ(JNIEnv* env,
+                                                     jclass,
+                                                     jlong self,
+                                                     jlong image_nativeObj) {
   static const char method_name[] = "highgui::VideoCapture::retrieve(Mat image)";
   try {
     LOGD("%s", method_name);

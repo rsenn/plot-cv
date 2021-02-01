@@ -74,16 +74,17 @@ drawArrows(UMat& _frame,
 
 int
 main(int argc, const char* argv[]) {
-  const char* keys = "{ h help           |                 | print help message }"
-                     "{ l left           |                 | specify left image }"
-                     "{ r right          |                 | specify right image }"
-                     "{ c camera         | 0               | enable camera capturing }"
-                     "{ v video          |                 | use video as input }"
-                     "{ o output         | pyrlk_output.jpg| specify output save path when input is images }"
-                     "{ points           | 1000            | specify points count [GoodFeatureToTrack] }"
-                     "{ min_dist         | 0               | specify minimal distance between points "
-                     "[GoodFeatureToTrack] }"
-                     "{ m cpu_mode       | false           | run without OpenCL }";
+  const char* keys =
+      "{ h help           |                 | print help message }"
+      "{ l left           |                 | specify left image }"
+      "{ r right          |                 | specify right image }"
+      "{ c camera         | 0               | enable camera capturing }"
+      "{ v video          |                 | use video as input }"
+      "{ o output         | pyrlk_output.jpg| specify output save path when input is images }"
+      "{ points           | 1000            | specify points count [GoodFeatureToTrack] }"
+      "{ min_dist         | 0               | specify minimal distance between points "
+      "[GoodFeatureToTrack] }"
+      "{ m cpu_mode       | false           | run without OpenCL }";
 
   CommandLineParser cmd(argc, argv, keys);
 

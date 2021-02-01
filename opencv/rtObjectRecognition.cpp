@@ -157,7 +157,8 @@ main() {
       extractor.compute(image, kp_image, des_image);
       matcher.knnMatch(desObject, des_image, matches, 2);
 
-      for(int i = 0; i < min(des_image.rows - 1, (int)matches.size()); i++) // THIS LOOP IS SENSITIVE TO SEGFAULTS
+      for(int i = 0; i < min(des_image.rows - 1, (int)matches.size());
+          i++) // THIS LOOP IS SENSITIVE TO SEGFAULTS
       {
         if((matches[i][0].distance < thresholdMatchingNN * (matches[i][1].distance)) &&
            ((int)matches[i].size() <= 2 && (int)matches[i].size() > 0)) {
@@ -223,8 +224,14 @@ main() {
              Scalar(0, 255, 0),
              4);
       } else {
-        putText(
-            img_matches, "", cv::Point(10, 50), FONT_HERSHEY_COMPLEX_SMALL, 3, cv::Scalar(0, 0, 250), 1, cv::LINE_AA);
+        putText(img_matches,
+                "",
+                cv::Point(10, 50),
+                FONT_HERSHEY_COMPLEX_SMALL,
+                3,
+                cv::Scalar(0, 0, 250),
+                1,
+                cv::LINE_AA);
       }
 
       // Show detected matches

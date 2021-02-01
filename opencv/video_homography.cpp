@@ -25,8 +25,10 @@ using namespace cv::xfeatures2d;
 
 static void
 help(char** av) {
-  cout << "\nThis program demonstrated the use of features2d with the Fast corner detector and brief descriptors\n"
-       << "to track planar objects by computing their homography from the key (training) image to the query (test) "
+  cout << "\nThis program demonstrated the use of features2d with the Fast corner detector and brief "
+          "descriptors\n"
+       << "to track planar objects by computing their homography from the key (training) image to the "
+          "query (test) "
           "image\n\n"
        << endl;
   cout << "usage: " << av[0] << " <video device number>\n" << endl;

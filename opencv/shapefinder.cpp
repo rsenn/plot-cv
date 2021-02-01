@@ -92,7 +92,8 @@ detect_shape() {
     approxPolyDP(Mat(contours[i]), approx, arcLength(Mat(contours[i]), true) * 0.02, true);
 
     // Skip small or non-convex objects
-    if(fabs(contourArea(contours[i])) < (img.size().height * img.size().width) / 2500 || !isContourConvex(approx)) {
+    if(fabs(contourArea(contours[i])) < (img.size().height * img.size().width) / 2500 ||
+       !isContourConvex(approx)) {
       continue;
     }
 

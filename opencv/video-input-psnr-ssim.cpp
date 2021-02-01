@@ -58,8 +58,10 @@ main(int argc, char* argv[]) {
     return -1;
   }
 
-  Size refS = Size((int)captRefrnc.get(cv::CAP_PROP_FRAME_WIDTH), (int)captRefrnc.get(cv::CAP_PROP_FRAME_HEIGHT)),
-       uTSi = Size((int)captUndTst.get(cv::CAP_PROP_FRAME_WIDTH), (int)captUndTst.get(cv::CAP_PROP_FRAME_HEIGHT));
+  Size refS = Size((int)captRefrnc.get(cv::CAP_PROP_FRAME_WIDTH),
+                   (int)captRefrnc.get(cv::CAP_PROP_FRAME_HEIGHT)),
+       uTSi = Size((int)captUndTst.get(cv::CAP_PROP_FRAME_WIDTH),
+                   (int)captUndTst.get(cv::CAP_PROP_FRAME_HEIGHT));
 
   if(refS != uTSi) {
     cout << "Inputs have different size!!! Closing." << endl;

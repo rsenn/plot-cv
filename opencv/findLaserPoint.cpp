@@ -219,7 +219,10 @@ main() {
       int sumX = 0, sumY = 0, sumCountX = 0, sumCountY = 0;
       // cout<<endl;
       for(int i = 0; i < lines.size(); i++) {
-        line(imgToMapProcCopy, cv::Point(lines[i][0], lines[i][1]), cv::Point(lines[i][2], lines[i][3]), Scalar(255));
+        line(imgToMapProcCopy,
+             cv::Point(lines[i][0], lines[i][1]),
+             cv::Point(lines[i][2], lines[i][3]),
+             Scalar(255));
         // cout<<"deltX:"<<abs(lines[i][0]-lines[i][2])<<"
         // deltY:"<<abs(lines[i][1]-lines[i][3])<<endl;
         if(abs(lines[i][0] - lines[i][2]) < 20) {

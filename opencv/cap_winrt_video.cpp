@@ -122,7 +122,8 @@ Video::initGrabber(int device, int w, int h) {
         create_task(m_capture->InitializeAsync(settings))
             .then([this]() {
               auto props = safe_cast<VideoEncodingProperties ^>(
-                  m_capture->VideoDeviceController->GetMediaStreamProperties(MediaStreamType::VideoPreview));
+                  m_capture->VideoDeviceController->GetMediaStreamProperties(
+                      MediaStreamType::VideoPreview));
 
               // for 24 bpp
               props->Subtype = MediaEncodingSubtypes::Rgb24;

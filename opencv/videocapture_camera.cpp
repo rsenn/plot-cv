@@ -45,7 +45,8 @@ main(int, char**) {
            << "    Average time per frame: "
            << cv::format("%9.2f ms", (double)(t1 - t0) * 1000.0f / (N * getTickFrequency()))
            << "    Average processing time: "
-           << cv::format("%9.2f ms", (double)(processingTime)*1000.0f / (N * getTickFrequency())) << std::endl;
+           << cv::format("%9.2f ms", (double)(processingTime)*1000.0f / (N * getTickFrequency()))
+           << std::endl;
       t0 = t1;
       processingTime = 0;
     }

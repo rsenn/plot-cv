@@ -71,7 +71,14 @@ DetectAndDisplayFaces(Mat frame, CascadeClassifier face_cascade) {
   }
 
   /* Add the text to the frame */
-  putText(frame, text, cv::Point(30, 30), FONT_HERSHEY_COMPLEX_SMALL, 0.8, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
+  putText(frame,
+          text,
+          cv::Point(30, 30),
+          FONT_HERSHEY_COMPLEX_SMALL,
+          0.8,
+          cv::Scalar(0, 0, 255),
+          1,
+          cv::LINE_AA);
 
   /* Show the image captured with green rectangles on the faces detected */
   imshow("Raspberry Pi Camera", frame);

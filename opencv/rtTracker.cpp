@@ -75,8 +75,9 @@ main(int argc, char* argv[]) {
   cap.set(CAP_PROP_FRAME_HEIGHT, 480);
   double fps = cap.get(cv::CAP_PROP_FPS); // get the frames per seconds of the video
   cout << "Frame per seconds : " << fps << endl;
-  cout << "Width : " << cap.get(CAP_PROP_FRAME_WIDTH) << endl;   // Width of the frames in the video stream.
-  cout << "Height : " << cap.get(CAP_PROP_FRAME_HEIGHT) << endl; // Height of the frames in the video stream.
+  cout << "Width : " << cap.get(CAP_PROP_FRAME_WIDTH) << endl; // Width of the frames in the video stream.
+  cout << "Height : " << cap.get(CAP_PROP_FRAME_HEIGHT)
+       << endl; // Height of the frames in the video stream.
   cout << "Frame per seconds : " << fps << endl;
   imshow("Target Object", objectImage);
   namedWindow("MyVideo", cv::WINDOW_AUTOSIZE); // create a window called "MyVideo"

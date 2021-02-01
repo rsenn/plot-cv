@@ -101,8 +101,8 @@ main(int argc, char** argv) {
   String outputUnwrappedPhasePath = parser.get<String>(9);
   String reliabilitiesPath = parser.get<String>(10);
 
-  Ptr<structured_light::SinusoidalPattern> sinus =
-      structured_light::SinusoidalPattern::create(makePtr<structured_light::SinusoidalPattern::Params>(params));
+  Ptr<structured_light::SinusoidalPattern> sinus = structured_light::SinusoidalPattern::create(
+      makePtr<structured_light::SinusoidalPattern::Params>(params));
   Ptr<phase_unwrapping::HistogramPhaseUnwrapping> phaseUnwrapping;
 
   vector<Mat> patterns;

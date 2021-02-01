@@ -223,18 +223,19 @@ createWriter(const string& backend, const string& file_name, const string& codec
 
 int
 main(int argc, char* argv[]) {
-  const string keys = "{h help usage ? |           | print help messages   }"
-                      "{m mode         |decode     | coding mode (supported: encode, decode) }"
-                      "{b backend      |default    | video backend (supported: 'gst-default', 'gst-basic', "
-                      "'gst-vaapi', 'gst-libav', "
-                      "'gst-mfx', 'ffmpeg') }"
-                      "{c codec        |h264       | codec name     (supported: 'h264', 'h265', 'mpeg2', 'mpeg4', "
-                      "'mjpeg', 'vp8') }"
-                      "{f file path    |           | path to file }"
-                      "{r resolution   |720p       | video resolution for encoding (supported: '720p', '1080p', "
-                      "'4k') }"
-                      "{fps            |30         | fix frame per second for encoding (supported: fps > 0) }"
-                      "{fast           |           | fast measure fps }";
+  const string keys =
+      "{h help usage ? |           | print help messages   }"
+      "{m mode         |decode     | coding mode (supported: encode, decode) }"
+      "{b backend      |default    | video backend (supported: 'gst-default', 'gst-basic', "
+      "'gst-vaapi', 'gst-libav', "
+      "'gst-mfx', 'ffmpeg') }"
+      "{c codec        |h264       | codec name     (supported: 'h264', 'h265', 'mpeg2', 'mpeg4', "
+      "'mjpeg', 'vp8') }"
+      "{f file path    |           | path to file }"
+      "{r resolution   |720p       | video resolution for encoding (supported: '720p', '1080p', "
+      "'4k') }"
+      "{fps            |30         | fix frame per second for encoding (supported: fps > 0) }"
+      "{fast           |           | fast measure fps }";
   CommandLineParser cmd_parser(argc, argv, keys);
   cmd_parser.about("This program measures performance of video encoding and decoding using "
                    "different backends OpenCV.");
@@ -260,7 +261,8 @@ main(int argc, char* argv[]) {
   if(mode == "decode") {
     file_name = samples::findFile(file_name);
   }
-  cout << "Mode: " << mode << ", Backend: " << backend << ", File: " << file_name << ", Codec: " << codec << endl;
+  cout << "Mode: " << mode << ", Backend: " << backend << ", File: " << file_name << ", Codec: " << codec
+       << endl;
 
   TickMeter total;
   Ptr<VideoCapture> cap;

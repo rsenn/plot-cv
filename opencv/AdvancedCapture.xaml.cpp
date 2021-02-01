@@ -191,7 +191,8 @@ AdvancedCapture::btnStartPreview_Click(Platform::Object ^ sender, Windows::UI::X
 
 void
 AdvancedCapture::lstEnumedDevices_SelectionChanged(Platform::Object ^ sender,
-                                                   Windows::UI::Xaml::Controls::SelectionChangedEventArgs ^ e) {
+                                                   Windows::UI::Xaml::Controls::SelectionChangedEventArgs ^
+                                                       e) {
   if(m_bPreviewing) {
     create_task(m_mediaCaptureMgr->StopPreviewAsync()).then([this](task<void> previewTask) {
       try {
@@ -256,10 +257,12 @@ AdvancedCapture::AddEffectToImageStream() {
      (charecteristic != Windows::Media::Capture::VideoDeviceCharacteristic::PreviewPhotoStreamsIdentical) &&
      (charecteristic != Windows::Media::Capture::VideoDeviceCharacteristic::RecordPhotoStreamsIdentical)) {
     Windows::Media::MediaProperties::IMediaEncodingProperties ^ props =
-        mediaCapture->VideoDeviceController->GetMediaStreamProperties(Windows::Media::Capture::MediaStreamType::Photo);
+        mediaCapture->VideoDeviceController->GetMediaStreamProperties(
+            Windows::Media::Capture::MediaStreamType::Photo);
     if(props->Type->Equals("Image")) {
       // Switch to a video media type instead since we can't add an effect to an image media type
-      Windows::Foundation::Collections::IVectorView<Windows::Media::MediaProperties::IMediaEncodingProperties ^> ^
+      Windows::Foundation::Collections::IVectorView<
+          Windows::Media::MediaProperties::IMediaEncodingProperties ^> ^
           supportedPropsList = mediaCapture->VideoDeviceController->GetAvailableMediaStreamProperties(
           Windows::Media::Capture::MediaStreamType::Photo);
       {
@@ -276,9 +279,10 @@ AdvancedCapture::AddEffectToImageStream() {
                     changeTypeTask.get();
                     ShowStatusMessage("Change type on photo stream successful");
                     // Now add the effect on the image pin
-                    task<void>(m_mediaCaptureMgr->AddEffectAsync(Windows::Media::Capture::MediaStreamType::Photo,
-                                                                 "OcvTransform.OcvImageManipulations",
-                                                                 nullptr))
+                    task<void>(
+                        m_mediaCaptureMgr->AddEffectAsync(Windows::Media::Capture::MediaStreamType::Photo,
+                                                          "OcvTransform.OcvImageManipulations",
+                                                          nullptr))
                         .then([this](task<void> effectTask3) {
                           try {
                             effectTask3.get();
@@ -486,15 +490,17 @@ void
 SDKSample::MediaCapture::AdvancedCapture::Button_Click(Platform::Object ^ sender,
                                                        Windows::UI::Xaml::RoutedEventArgs ^ e) {
   try {
-    create_task(m_mediaCaptureMgr->ClearEffectsAsync(Windows::Media::Capture::MediaStreamType::VideoPreview))
+    create_task(
+        m_mediaCaptureMgr->ClearEffectsAsync(Windows::Media::Capture::MediaStreamType::VideoPreview))
         .then([this](task<void> cleanTask) {
           m_bEffectAdded = true;
           int index = EffectTypeCombo->SelectedIndex;
           PropertySet ^ props = ref new PropertySet();
           props->Insert(L"{698649BE-8EAE-4551-A4CB-3EC98FBD3D86}", index);
-          create_task(m_mediaCaptureMgr->AddEffectAsync(Windows::Media::Capture::MediaStreamType::VideoPreview,
-                                                        "OcvTransform.OcvImageManipulations",
-                                                        props))
+          create_task(
+              m_mediaCaptureMgr->AddEffectAsync(Windows::Media::Capture::MediaStreamType::VideoPreview,
+                                                "OcvTransform.OcvImageManipulations",
+                                                props))
               .then([this](task<void> effectTask) {
                 try {
                   effectTask.get();
@@ -504,7 +510,8 @@ SDKSample::MediaCapture::AdvancedCapture::Button_Click(Platform::Object ^ sender
                       mediaCapture->MediaCaptureSettings->VideoDeviceCharacteristic;
 
                   ShowStatusMessage("Add effect successful to preview stream successful");
-                  if((charecteristic != Windows::Media::Capture::VideoDeviceCharacteristic::AllStreamsIdentical) &&
+                  if((charecteristic !=
+                      Windows::Media::Capture::VideoDeviceCharacteristic::AllStreamsIdentical) &&
                      (charecteristic !=
                       Windows::Media::Capture::VideoDeviceCharacteristic::PreviewRecordStreamsIdentical)) {
                     Windows::Media::MediaProperties::IMediaEncodingProperties ^ props =
@@ -512,10 +519,12 @@ SDKSample::MediaCapture::AdvancedCapture::Button_Click(Platform::Object ^ sender
                             Windows::Media::Capture::MediaStreamType::VideoRecord);
                     Windows::Media::MediaProperties::VideoEncodingProperties ^ videoEncodingProperties =
                         static_cast<Windows::Media::MediaProperties::VideoEncodingProperties ^>(props);
-                    if(!videoEncodingProperties->Subtype->Equals("H264")) { // Can't add an effect to an H264 stream
-                      task<void>(mediaCapture->AddEffectAsync(Windows::Media::Capture::MediaStreamType::VideoRecord,
-                                                              "OcvTransform.OcvImageManipulations",
-                                                              nullptr))
+                    if(!videoEncodingProperties->Subtype->Equals(
+                           "H264")) { // Can't add an effect to an H264 stream
+                      task<void>(mediaCapture->AddEffectAsync(
+                                     Windows::Media::Capture::MediaStreamType::VideoRecord,
+                                     "OcvTransform.OcvImageManipulations",
+                                     nullptr))
                           .then([this](task<void> effectTask2) {
                             try {
                               effectTask2.get();

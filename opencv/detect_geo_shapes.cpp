@@ -33,7 +33,8 @@ setLabel(Mat& im, const std::string label, std::vector<Point>& contour) {
   Rect r = boundingRect(contour);
 
   Point pt(r.x + ((r.width - text.width) / 2), r.y + ((r.height + text.height) / 2));
-  rectangle(im, pt + Point(0, baseline), pt + Point(text.width, -text.height), CV_RGB(255, 255, 255), cv::FILLED);
+  rectangle(
+      im, pt + Point(0, baseline), pt + Point(text.width, -text.height), CV_RGB(255, 255, 255), cv::FILLED);
   putText(im, label, pt, fontface, scale, CV_RGB(0, 0, 0), thickness, 8);
 }
 

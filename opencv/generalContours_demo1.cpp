@@ -59,7 +59,8 @@ thresh_callback(int, void*) {
   /// Detect edges using Threshold
   threshold(src_gray, threshold_output, thresh, 255, THRESH_BINARY);
   /// Find contours
-  findContours(threshold_output, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+  findContours(
+      threshold_output, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Approximate contours to polygons + get bounding rects and circles
   std::vector<std::vector<cv::Point>> contours_poly(contours.size());

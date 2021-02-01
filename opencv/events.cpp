@@ -92,8 +92,11 @@ SurveillancePhoto::execute_event(VideoCapture input_cap, int camera_index, strin
 
 // SurveillanceVideo member functions
 
-SurveillanceVideo::SurveillanceVideo(
-    time_t videoLen_s, time_t execution_deadline, time_t event_creation_time, string event_name, int priority)
+SurveillanceVideo::SurveillanceVideo(time_t videoLen_s,
+                                     time_t execution_deadline,
+                                     time_t event_creation_time,
+                                     string event_name,
+                                     int priority)
     : Event(execution_deadline, event_creation_time, event_name, priority) {
 
   this->videoLen_s = videoLen_s;

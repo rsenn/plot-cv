@@ -170,8 +170,9 @@ main(int argc, const char** argv) {
                          cv::TermCriteria(cv::TermCriteria::EPS | cv::TermCriteria::COUNT, 10, 1));
         if(trackWindow.area() <= 1) {
           int cols = backproj.cols, rows = backproj.rows, r = (std::min(cols, rows) + 5) / 6;
-          trackWindow = cv::Rect(trackWindow.x - r, trackWindow.y - r, trackWindow.x + r, trackWindow.y + r) &
-                        cv::Rect(0, 0, cols, rows);
+          trackWindow =
+              cv::Rect(trackWindow.x - r, trackWindow.y - r, trackWindow.x + r, trackWindow.y + r) &
+              cv::Rect(0, 0, cols, rows);
         }
 
         if(backprojMode)

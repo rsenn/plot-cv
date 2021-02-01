@@ -98,8 +98,13 @@ main() {
 
     std::cout << "Find Contours\n";
     // finding all contours in the image
-    cv::FindContours(
-        imgGrayScale, storage, &contours, sizeof(CvContour), cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+    cv::FindContours(imgGrayScale,
+                     storage,
+                     &contours,
+                     sizeof(CvContour),
+                     cv::RETR_LIST,
+                     cv::CHAIN_APPROX_SIMPLE,
+                     cv::Point(0, 0));
     std::cout << "Check\n";
     while(contours) {
 
@@ -117,7 +122,8 @@ main() {
         }
 
         // This If Statement ensures that the edges are sufficiently large enough to be detected
-        if(abs(pt[1]->x - pt[0]->x) > 10 && abs(pt[1]->x - pt[2]->x) > 10 && abs(pt[2]->x - pt[0]->x) > 10) {
+        if(abs(pt[1]->x - pt[0]->x) > 10 && abs(pt[1]->x - pt[2]->x) > 10 &&
+           abs(pt[2]->x - pt[0]->x) > 10) {
           //////////drawing lines around the triangle
           cv::line(frame, *pt[0], *pt[1], cv::Scalar(255, 0, 0), 4);
           cv::line(frame, *pt[1], *pt[2], cv::Scalar(255, 0, 0), 4);
@@ -142,10 +148,11 @@ main() {
         double fourthAngle = acos(angle(pt[0], pt[2], pt[3]));
 
         // This If Statement Ensures that the edges are sufficiently large
-        if(abs(pt[1]->x - pt[0]->x) > 10 && abs(pt[1]->x - pt[2]->x) > 10 && abs(pt[2]->x - pt[3]->x) > 10 &&
-           abs(pt[3]->x - pt[0]->x) > 10) {
+        if(abs(pt[1]->x - pt[0]->x) > 10 && abs(pt[1]->x - pt[2]->x) > 10 &&
+           abs(pt[2]->x - pt[3]->x) > 10 && abs(pt[3]->x - pt[0]->x) > 10) {
 
-          // This if statement checks the angles to see if its a rectangle or not (90 angles with 10% uncertainty)
+          // This if statement checks the angles to see if its a rectangle or not (90 angles with 10%
+          // uncertainty)
           if(firstAngle <= 1.884 && firstAngle >= 1.308 && secondAngle <= 1.884 && secondAngle >= 1.308 &&
              thirdAngle <= 1.884 && thirdAngle >= 1.308 && fourthAngle <= 1.884 && fourthAngle >= 1.308) {
             // drawing lines around the quadrilateral

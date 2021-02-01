@@ -18,7 +18,10 @@ camera_c::camera_c(QObject* parent, int width, int height, int res, int threshol
   isLearning = false;
   enabled = false;
   connect(parent, SIGNAL(snap()), this, SLOT(snap()));
-  connect(this, SIGNAL(setMarkerVisible(uint, uint, bool)), parent, SLOT(setMarkerVisible(uint, uint, bool)));
+  connect(this,
+          SIGNAL(setMarkerVisible(uint, uint, bool)),
+          parent,
+          SLOT(setMarkerVisible(uint, uint, bool)));
 
   dx = ((double)width / resolution);
   dy = ((double)height / resolution);
@@ -151,7 +154,10 @@ camera_c::shutdown(void) {
           SLOT(deleteLater()));
   // connect(((MainWindow*)parent)->lbl_imageSnap,SIGNAL(destroyed(QObject*)),this,SLOT(deleteLater()));
   connect(((MainWindow*)parent)->lbl_imageSnap, SIGNAL(destroyed(QObject*)), this->updTimer, SLOT(stop()));
-  connect(((MainWindow*)parent)->lbl_imageSnap, SIGNAL(destroyed(QObject*)), this->updTimer, SLOT(deleteLater()));
+  connect(((MainWindow*)parent)->lbl_imageSnap,
+          SIGNAL(destroyed(QObject*)),
+          this->updTimer,
+          SLOT(deleteLater()));
   connect(this->updTimer, SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater()));
 
   connect(this, SIGNAL(destroyed(QObject*)), ((MainWindow*)parent), SLOT(init()));

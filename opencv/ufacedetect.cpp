@@ -32,8 +32,12 @@ help() {
        << endl;
 }
 
-void detectAndDraw(
-    UMat& img, Mat& canvas, CascadeClassifier& cascade, CascadeClassifier& nestedCascade, double scale, bool tryflip);
+void detectAndDraw(UMat& img,
+                   Mat& canvas,
+                   CascadeClassifier& cascade,
+                   CascadeClassifier& nestedCascade,
+                   double scale,
+                   bool tryflip);
 
 string cascadeName = "../../data/haarcascades/haarcascade_frontalface_alt.xml";
 string nestedCascadeName = "../../data/haarcascades/haarcascade_eye_tree_eyeglasses.xml";
@@ -50,11 +54,12 @@ main(int argc, const char** argv) {
   CascadeClassifier cascade, nestedCascade;
   double scale;
 
-  cv::CommandLineParser parser(argc,
-                               argv,
-                               "{cascade|../../data/haarcascades/haarcascade_frontalface_alt.xml|}"
-                               "{nested-cascade|../../data/haarcascades/haarcascade_eye_tree_eyeglasses.xml|}"
-                               "{help h ||}{scale|1|}{try-flip||}{@filename||}");
+  cv::CommandLineParser parser(
+      argc,
+      argv,
+      "{cascade|../../data/haarcascades/haarcascade_frontalface_alt.xml|}"
+      "{nested-cascade|../../data/haarcascades/haarcascade_eye_tree_eyeglasses.xml|}"
+      "{help h ||}{scale|1|}{try-flip||}{@filename||}");
   if(parser.has("help")) {
     help();
     return 0;
@@ -142,8 +147,12 @@ main(int argc, const char** argv) {
 }
 
 void
-detectAndDraw(
-    UMat& img, Mat& canvas, CascadeClassifier& cascade, CascadeClassifier& nestedCascade, double scale, bool tryflip) {
+detectAndDraw(UMat& img,
+              Mat& canvas,
+              CascadeClassifier& cascade,
+              CascadeClassifier& nestedCascade,
+              double scale,
+              bool tryflip) {
   double t = 0;
   vector<Rect> faces, faces2;
   const static Scalar colors[] = {Scalar(255, 0, 0),

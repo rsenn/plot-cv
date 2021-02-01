@@ -334,7 +334,8 @@ camShiftKalman::initKalman(double interval) {
                    trackWindow.y + trackWindow.height / 2.0,
                    0,
                    0);
-  Mat transitionMatrix = (Mat_<float>(stateNum, stateNum) << 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1);
+  Mat transitionMatrix =
+      (Mat_<float>(stateNum, stateNum) << 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1);
 
   KF.init(stateNum, measureNum);
 
@@ -425,7 +426,8 @@ camShiftKalman::drawHist1d(const Mat hist, int histSize) const {
   histimg = Scalar::all(0);
   int binW = histimg.cols / histSize;
   Mat buf(1, histSize, CV_8UC3);
-  for(int i = 0; i < histSize; i++) buf.at<Vec3b>(i) = Vec3b(saturate_cast<uchar>(i * 180. / histSize), 255, 255);
+  for(int i = 0; i < histSize; i++)
+    buf.at<Vec3b>(i) = Vec3b(saturate_cast<uchar>(i * 180. / histSize), 255, 255);
   cvtColor(buf, buf, CV_HSV2BGR);
 
   for(int i = 0; i < histSize; i++) {

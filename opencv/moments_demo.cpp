@@ -70,7 +70,8 @@ thresh_callback(int, void*) {
   ///  Get the mass centers:
   std::vector<cv::Point2f> mc(contours.size());
   for(size_t i = 0; i < contours.size(); i++) {
-    mc[i] = cv::Point2f(static_cast<float>(mu[i].m10 / mu[i].m00), static_cast<float>(mu[i].m01 / mu[i].m00));
+    mc[i] =
+        cv::Point2f(static_cast<float>(mu[i].m10 / mu[i].m00), static_cast<float>(mu[i].m01 / mu[i].m00));
   }
 
   /// Draw contours
