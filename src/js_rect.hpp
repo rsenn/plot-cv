@@ -3,8 +3,9 @@
 
 #include "jsbindings.hpp"
 
+template<class T>
 static inline int
-js_rect_read(JSContext* ctx, JSValueConst rect, JSRectData<double>* out) {
+js_rect_read(JSContext* ctx, JSValueConst rect, JSRectData<T>* out) {
   int ret = 1;
   JSValue x = JS_UNDEFINED, y = JS_UNDEFINED, w = JS_UNDEFINED, h = JS_UNDEFINED;
   if(JS_IsArray(ctx, rect)) {
@@ -20,10 +21,12 @@ js_rect_read(JSContext* ctx, JSValueConst rect, JSRectData<double>* out) {
     h = JS_GetPropertyStr(ctx, rect, "height");
   }
   if(JS_IsNumber(x) && JS_IsNumber(y) && JS_IsNumber(w) && JS_IsNumber(h)) {
-    ret &= !JS_ToFloat64(ctx, &out->x, x);
-    ret &= !JS_ToFloat64(ctx, &out->y, y);
-    ret &= !JS_ToFloat64(ctx, &out->width, w);
-    ret &= !JS_ToFloat64(ctx, &out->height, h);
+    JSRectData<double> rect;
+    ret &= !JS_ToFloat64(ctx, &rect.x, x);
+    ret &= !JS_ToFloat64(ctx, &rect.y, y);
+    ret &= !JS_ToFloat64(ctx, &rect.width, w);
+    ret &= !JS_ToFloat64(ctx, &rect.height, h);
+    *out = rect;
   } else {
     ret = 0;
   }

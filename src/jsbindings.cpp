@@ -141,6 +141,21 @@ js_color_read(JSContext* ctx, JSValueConst value, JSColorData<uint8_t>* out) {
   return 0;
 }
 
+int
+js_ref(JSContext* ctx, const char* name, JSValueConst arg, JSValue value) {
+  if(JS_IsFunction(ctx, arg)) {
+    JSValueConst v = value;
+    JS_Call(ctx, arg, JS_UNDEFINED, 1, &v);
+  } else if(JS_IsArray(ctx, arg)) {
+    JS_SetPropertyUint32(ctx, arg, 0, value);
+  } else if(JS_IsObject(arg)) {
+    JS_SetPropertyStr(ctx, arg, name, value);
+  } else {
+    return 0;
+  }
+  return 1;
+}
+
 #ifdef JS_BINDINGS_INIT_MODULE
 static int
 js_bindings_init(JSContext* ctx, JSModuleDef* m) {

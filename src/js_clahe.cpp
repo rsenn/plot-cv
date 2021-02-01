@@ -51,8 +51,8 @@ js_clahe_finalizer(JSRuntime* rt, JSValue val) {
 }
 
 static JSValue
-js_clahe_method(JSContext* ctx, JSValueConst clahe, int argc, JSValueConst* argv, int magic) {
-  JSCLAHEData* s = static_cast<JSCLAHEData*>(JS_GetOpaque2(ctx, clahe, js_clahe_class_id));
+js_clahe_method(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSCLAHEData* s = static_cast<JSCLAHEData*>(JS_GetOpaque2(ctx, this_val, js_clahe_class_id));
   JSValue ret = JS_UNDEFINED;
   JSPointData<double> point = js_point_get(ctx, argv[0]);
 

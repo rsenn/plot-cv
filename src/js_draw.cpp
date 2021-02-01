@@ -378,12 +378,12 @@ js_get_font_scale_from_height(JSContext* ctx,
                               jsrt::const_value this_val,
                               int argc,
                               jsrt::const_value* argv) {
-   int32_t fontFace, pixelHeight, thickness = 1;
+  int32_t fontFace, pixelHeight, thickness = 1;
   double fontScale;
 
-    JS_ToInt32(ctx, &fontFace, argv[0]);
-    JS_ToInt32(ctx, &pixelHeight, argv[1]);
-    if(argc > 2)
+  JS_ToInt32(ctx, &fontFace, argv[0]);
+  JS_ToInt32(ctx, &pixelHeight, argv[1]);
+  if(argc > 2)
     JS_ToInt32(ctx, &thickness, argv[2]);
 
   fontScale = cv::getFontScaleFromHeight(fontFace, pixelHeight, thickness);

@@ -235,4 +235,6 @@ js_number_read<int64_t>(JSContext* ctx, JSValueConst num, int64_t* out) {
   return !JS_ToInt64(ctx, out, num);
 }
 
+int js_ref(JSContext* ctx, const char* name, JSValueConst arg, JSValue value);
+
 #endif

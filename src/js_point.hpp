@@ -13,8 +13,9 @@ js_point_create(JSContext* ctx, double x, double y) {
 
 extern "C" JSValue js_point_clone(JSContext* ctx, const JSPointData<double>& point);
 
+template<class T>
 static inline int
-js_point_read(JSContext* ctx, JSValueConst point, JSPointData<double>* out) {
+js_point_read(JSContext* ctx, JSValueConst point, JSPointData<T>* out) {
   int ret = 1;
   JSValue x = JS_UNDEFINED, y = JS_UNDEFINED;
   if(JS_IsArray(ctx, point)) {
@@ -25,8 +26,10 @@ js_point_read(JSContext* ctx, JSValueConst point, JSPointData<double>* out) {
     y = JS_GetPropertyStr(ctx, point, "y");
   }
   if(JS_IsNumber(x) && JS_IsNumber(y)) {
-    ret &= !JS_ToFloat64(ctx, &out->x, x);
-    ret &= !JS_ToFloat64(ctx, &out->y, y);
+    JSPointData<double> point;
+    ret &= !JS_ToFloat64(ctx, &point.x, x);
+    ret &= !JS_ToFloat64(ctx, &point.y, y);
+    *out = point;
   } else {
     ret = 0;
   }
@@ -39,10 +42,7 @@ js_point_read(JSContext* ctx, JSValueConst point, JSPointData<double>* out) {
 
 static inline JSPointData<double>
 js_point_get(JSContext* ctx, JSValueConst point) {
-  JSPointData<double> r; /*, *ptr;
-   if((ptr = js_point_data(ctx, point)) != nullptr)
-     r = *ptr;
-   else*/
+  JSPointData<double> r;
   js_point_read(ctx, point, &r);
   return r;
 }
