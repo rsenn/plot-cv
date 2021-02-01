@@ -105,8 +105,8 @@ function readXML(filename) {
   return xml;
 }
 
-function dumpFile(name, data) {
-  console.log('dumpFile', { name });
+function WriteFile(name, data) {
+  console.log('WriteFile', { name });
   if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
 
   let raw = filesystem.bufferFrom(data);
@@ -178,9 +178,9 @@ async function main(...args) {
 
     //   await import('bjson').then(({ read, write }) => json = write(xml)).catch(err => console.error(err));
 
-    dumpFile(outfile, json);
+    WriteFile(outfile, json);
 
-    // dumpFile(xmlfile, toXML(xmlData));
+    // WriteFile(xmlfile, toXML(xmlData));
   } catch(err) {
     console.log('error:', { err });
     throw err;

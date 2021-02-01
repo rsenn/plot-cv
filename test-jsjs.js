@@ -17,7 +17,7 @@ let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
 
 Util.callMain(main, true);
 
-function dumpFile(name, data) {
+function WriteFile(name, data) {
   if(Util.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
   filesystem.writeFile(name, data + '\n');
@@ -64,7 +64,7 @@ async function main(...args) {
       const output_file = file.replace(/.*\/?/, '').replace(/\.[^.]*$/, '') + '.es';
       const output = printAst(ast, parser.comments, printer);
       console.log('ret:', ret);
-      dumpFile(output_file, output);
+      WriteFile(output_file, output);
     } else {
       const pos = error.pos;
       console.log(pos && pos.toString ? error.pos.toString() : pos);
@@ -88,7 +88,7 @@ function finish(err) {
   }
   let lexer = parser.lexer;
   let t = [];
-  dumpFile('trace.log', parser.trace());
+  WriteFile('trace.log', parser.trace());
   if(fail) {
   }
   return !fail;

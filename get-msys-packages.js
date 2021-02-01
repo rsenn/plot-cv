@@ -72,7 +72,7 @@ async function main(...args) {
   let files = [];
   let i;
 
-  dumpFile('packages.list', packages.join('\n'));
+  WriteFile('packages.list', packages.join('\n'));
 
   let locations = packages.map(url => url.replace('https://repo.msys2.org/', ''));
   let names = locations.map(url =>
@@ -218,7 +218,7 @@ async function processUrl(url, map) {
 
 Util.callMain(main, true);
 
-function dumpFile(name, data) {
+function WriteFile(name, data) {
   if(Util.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 

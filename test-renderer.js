@@ -12,7 +12,7 @@ let filesystem;
 
 Util.colorCtor = ColoredText;
 
-function dumpFile(name, data) {
+function WriteFile(name, data) {
   if(Util.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
@@ -35,7 +35,7 @@ async function testRenderSchematic(file) {
   let outFile = file.replace(/.*\//g, '').replace(/\.[a-z]+$/, '');
 
   let outStr = renderToString(output, {}, { pretty: '  ' });
-  dumpFile(`tmp/${outFile}.schematic.svg`, outStr);
+  WriteFile(`tmp/${outFile}.schematic.svg`, outStr);
   return outStr.length;
 }
 
@@ -48,7 +48,7 @@ async function testRenderBoard(file) {
   let outFile = file.replace(/.*\//g, '').replace(/\.[a-z]+$/, '');
 
   let outStr = renderToString(output, {}, { pretty: '  ' });
-  dumpFile(`tmp/${outFile}.board.svg`, outStr);
+  WriteFile(`tmp/${outFile}.board.svg`, outStr);
   return outStr.length;
 }
 

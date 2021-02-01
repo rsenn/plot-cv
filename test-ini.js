@@ -11,7 +11,7 @@ import { toXML } from './lib/json.js';
 
 let filesystem;
 
-function dumpFile(name, data) {
+function WriteFile(name, data) {
   if(Util.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
@@ -93,7 +93,7 @@ async function main(...args) {
       Util.weakAssign(svg.attributes, {
         viewBox: new BBox(0, 0, iconSize.width, iconSize.height)
       });
-      dumpFile(svgFile, toXML(svgData));
+      WriteFile(svgFile, toXML(svgData));
 
       console.log(' :', {
         attr,
@@ -116,7 +116,7 @@ async function main(...args) {
       }
 
       const ideskEntry = makeIDeskEntry({ ...desktopEntry, Icon: iconFile });
-      dumpFile(lnkFile, ideskEntry);
+      WriteFile(lnkFile, ideskEntry);
       console.log(`Wrote '${lnkFile}'.`);
       console.log(`ideskEntry: `, ideskEntry);
       console.log(`pos:`, xy);
@@ -168,7 +168,7 @@ async function main(...args) {
 
     //console.log('out:', out);
 
-    dumpFile(filename, out);
+    WriteFile(filename, out);
   }
 
   function makeIDeskEntry({ Exec, Icon, Terminal, Type, Name, GenericName, StartupNotify }) {

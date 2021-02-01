@@ -90,7 +90,7 @@ function PrefixRemover(reOrStr, replacement = '') {
   return arg => reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), arg);
 }
 
-function dumpFile(name, data) {
+function WriteFile(name, data) {
   if(Util.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
   filesystem.writeFile(name, data + '\n');
@@ -190,7 +190,7 @@ async function main(...args) {
 /* jshint ignore:end */
 `;
 
-  dumpFile('tamper.js', script);
+  WriteFile('tamper.js', script);
 
   let success = Object.entries(processed).filter(([k, v]) => !!v).length != 0;
 
@@ -375,7 +375,7 @@ function finish(err) {
   let lexer = parser.lexer;
   let t = [];
   //console.log(parser.trace() );
-  dumpFile('trace.log', parser.trace());
+  WriteFile('trace.log', parser.trace());
   if(fail) {
     console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
   }

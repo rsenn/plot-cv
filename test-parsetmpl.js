@@ -47,7 +47,7 @@ const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" view
     <defs />
 
 */
-function dumpFile(name, data) {
+function WriteFile(name, data) {
   if(Util.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
@@ -283,7 +283,7 @@ async function main(...args) {
       const output = printAst(ast, parser.comments, printer);
       //console.log('output:', output);
 
-      dumpFile(output_file, output);
+      WriteFile(output_file, output);
     } catch(err) {
       error = err;
       console.log('error:', err);
@@ -315,7 +315,7 @@ function finish(err) {
   let lexer = parser.lexer;
   let t = [];
   console.log(parser.trace());
-  dumpFile('trace.log', parser.trace());
+  WriteFile('trace.log', parser.trace());
   if(fail) {
     console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
   }

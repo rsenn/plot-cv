@@ -104,7 +104,7 @@ async function main(...args) {
         json = await AstDump(file, args);
         ast = JSON.parse(json);
 
-        dumpFile(outfile, JSON.stringify(ast, null, 2));
+        WriteFile(outfile, JSON.stringify(ast, null, 2));
       }
 
       let tree = new Tree(ast);
@@ -596,7 +596,7 @@ async function main(...args) {
 
 Util.callMain(main, true);
 
-function dumpFile(name, data, verbose = true) {
+function WriteFile(name, data, verbose = true) {
   if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
   let ret = filesystem.writeFile(name, data);
 
@@ -605,7 +605,7 @@ function dumpFile(name, data, verbose = true) {
 
 function writeOutput(name, data) {
   let n = data.length;
-  let ret = dumpFile(name, data.join('\n'), false);
+  let ret = WriteFile(name, data.join('\n'), false);
 
   /*if(ret > 0)*/ console.log(`Wrote ${n} records to '${name}'.`);
   return ret;
@@ -632,7 +632,7 @@ function* GenerateInspectStruct(type, members, includes) {
 async function InspectStruct(type, members, includes) {
   const code = [...GenerateInspectStruct(type, members, includes)].join('\n');
   const file = `inspect-${type}-struct.c`;
-  dumpFile(file, code);
+  WriteFile(file, code);
 
   let result = await Compile(file);
 

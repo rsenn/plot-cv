@@ -24,8 +24,8 @@ const code = ` (function() { for(let [value, path] of deep.iterate(x, (v, k) => 
 
 Util.callMain(main, Util.putError);
 
-function dumpFile(name, data) {
-  console.log('dumpFile', { name, data: Util.abbreviate(Util.escape(data)) });
+function WriteFile(name, data) {
+  console.log('WriteFile', { name, data: Util.abbreviate(Util.escape(data)) });
   if(Util.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
@@ -170,7 +170,7 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
   const output = printAst(ast, parser.comments, printer);
   console.log('output:', output);
 
-  dumpFile(output_file, output);
+  WriteFile(output_file, output);
 
   function getImports() {
     const imports = [...flat].filter(([path, node]) => isRequire(node) || isImport(node));
@@ -227,7 +227,7 @@ function finish(err) {
   let lexer = parser.lexer;
   let t = [];
   console.log(parser.trace());
-  dumpFile('trace.log', parser.trace());
+  WriteFile('trace.log', parser.trace());
   if(fail) {
     console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
   }

@@ -20,9 +20,9 @@ async function main(...args) {
   console.log('Util.now():', await now());
   let obj = JSON.parse('{"a":1,"b":2}');
 
-  console.log('obj:',obj);
+  console.log('obj:', obj);
   console.log(`obj=${obj}`);
-  console.log(`{a:1,b:2}: ${{a:1,b:2}}`);
+  console.log(`{a:1,b:2}: ${{ a: 1, b: 2 }}`);
 }
 
 Util.callMain(main, true);

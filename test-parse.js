@@ -12,7 +12,7 @@ import deep from './lib/deep.js';
 
 let filesystem;
 
-function dumpFile(name, data) {
+function WriteFile(name, data) {
   if(Util.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
@@ -35,7 +35,7 @@ async function main(...args) {
   grammar.parse();
   console.log('grammar:', grammar);
 
-  dumpFile(`grammar-${basename}.js`, grammar.generate('./lib/parse/'));
+  WriteFile(`grammar-${basename}.js`, grammar.generate('./lib/parse/'));
 
   let a = [];
   for(let [name, rule] of grammar.rules) {

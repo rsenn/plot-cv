@@ -22,8 +22,8 @@ function readXML(filename) {
 
   return xml;
 }
-function dumpFile(name, data) {
-  console.log('dumpFile', { name });
+function WriteFile(name, data) {
+  console.log('WriteFile', { name });
   if(!data.endsWith('\n')) data += '\n';
 
   if(name == '-' || typeof name != 'string') {
@@ -208,7 +208,7 @@ async function main(...args) {
 
     xmlData = xml[0];
     newObj = deep.clone(xmlData);
-    dumpFile(outfile, toXML(xmlData));
+    WriteFile(outfile, toXML(xmlData));
 
     function hasCoord(node) {
       let keys = Object.keys(node);

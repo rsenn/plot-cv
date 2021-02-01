@@ -21,8 +21,8 @@ function readXML(filename) {
   //console.log('xml:', xml);
   return xml;
 }
-function dumpFile(name, data) {
-  console.log('dumpFile', { name });
+function WriteFile(name, data) {
+  console.log('WriteFile', { name });
   if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
 
   if(name == '-' || typeof name != 'string') {
@@ -116,7 +116,7 @@ async function main(...args) {
       .then(({ read, write }) => (json = write(xml)))
       .catch(err => console.error(err));
 
-    dumpFile(jsonfile, json);
+    WriteFile(jsonfile, json);
 
     let flat = tree.flat();
     let rebuilt = [];
@@ -169,8 +169,8 @@ async function main(...args) {
     }
     //console.log('newObj:', newObj);
 
-    dumpFile(outfile, js);
-    dumpFile(xmlfile, toXML(xmlData));
+    WriteFile(outfile, js);
+    WriteFile(xmlfile, toXML(xmlData));
   } catch(err) {
     let st = Util.stack(err.stack);
     // console.log(err.message, '\n', st.toString()); //st.map(f =>  Util.toString(f)));

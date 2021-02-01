@@ -30,6 +30,19 @@ Util.define(Array.prototype, {
   }
 });
 
+const WriteBJSON = async (filename, obj) =>
+  await import('bjson').then(({ write }) => {
+    let data = write(obj);
+    WriteFile(filename, data);
+    return data.byteLength;
+  });
+
+const ReadBJSON = async filename =>
+  await import('bjson').then(({ read }) => {
+    let data = filesystem.readFile(filename, null);
+    return Util.instrument(read)(data, 0, data.byteLength);
+  });
+
 async function main(...args) {
   console.log('main(', ...args, ')');
   await ConsoleSetup({ breakLength: 120, depth: 10 });
@@ -90,23 +103,52 @@ async function main(...args) {
 
   async function processFiles(...files) {
     for(let file of files) {
-      const start = /*await Util.now(); //*/await Util.hrtime();
-            console.log('start:', start);
-  let json, ast;
-      let outfile = path.basename(file, /\.[^./]*$/) + '.ast.json';
+      const start = /*await Util.now(); //*/ await Util.hrtime();
+      console.log('start:', start);
+      let json, ast;
+      let base = path.basename(file, /\.[^./]*$/);
+      let outfile = base + '.ast.json';
+      let boutfile = base + '.ast.bjson';
 
-      let st = [file, outfile].map(name => filesystem.stat(name));
-
-      let times = st.map(stat => (stat && stat.mtime) || 0);
-      let cached = times[1] >= times[0];
-      if(cached) {
-        console.log('Reading cached AST from:', outfile);
-        json = filesystem.readFile(outfile);
-      } else {
+      async function ReadAST(outfile,
+        load = f => filesystem.readFile(f),
+        save = WriteFile,
+        parse = JSON.parse
+      ) {
+        let st = [file, outfile].map(name => filesystem.stat(name));
+        let times = st.map(stat => (stat && stat.mtime) || 0);
+        let cached = times[1] >= times[0];
+        if(cached) {
+          console.log('Reading cached AST from:', outfile);
+          json = /*filesystem.readFile*/ await load(outfile);
+          ast = await parse(json);
+          return ast;
+        } /*else {
         json = await AstDump(file, args);
-        dumpFile(outfile, json);
+         save(outfile, ret);
+      }*/
       }
-      ast = await Util.instrument(Util.getPlatform() == 'quickjs' ? (await import('std')).parseExtJSON : JSON.parse)(json);
+
+      const loadFunctions = [
+        async () => await ReadAST(boutfile, ReadBJSON, WriteBJSON, a => a).catch(() => 0),
+        async () => await ReadAST(outfile).catch(() => 0),
+        async () => {
+          if((json = await AstDump(file, args))) {
+            ast = await Util.instrument(JSON.parse)(json);
+            await WriteBJSON(boutfile, ast).catch(err => {
+              console.error(err);
+              WriteFile(outfile, json);
+            });
+            return ast;
+          }
+        }
+      ];
+
+      for(let fn of loadFunctions) {
+        //console.log('fn:', fn + '');
+        if((ast = await fn())) break;
+      }
+      //console.log("ast:", ast);
 
       let tree = new Tree(ast);
       let flat = /*tree.flat();*/ deep.flatten(ast,
@@ -222,7 +264,7 @@ async function main(...args) {
 
 Util.callMain(main, true);
 
-function dumpFile(name, data, verbose = true) {
+function WriteFile(name, data, verbose = true) {
   if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
   let ret = filesystem.writeFile(name, data);
 
@@ -231,7 +273,7 @@ function dumpFile(name, data, verbose = true) {
 
 function writeOutput(name, data) {
   let n = data.length;
-  let ret = dumpFile(name, data.join('\n'), false);
+  let ret = WriteFile(name, data.join('\n'), false);
 
   /*if(ret > 0)*/ console.log(`Wrote ${n} records to '${name}'.`);
   return ret;
