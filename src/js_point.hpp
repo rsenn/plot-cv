@@ -1,15 +1,7 @@
 #ifndef JS_POINT_HPP
 #define JS_POINT_HPP
 
-/*static inline JSValue
-js_point_create(JSContext* ctx, double x, double y) {
-
-  JSValue point = js_new(ctx, "Point");
-
-  JS_SetPropertyStr(ctx, point, "x", JS_NewFloat64(ctx, x));
-  JS_SetPropertyStr(ctx, point, "y", JS_NewFloat64(ctx, y));
-  return point;
-}*/
+#include "jsbindings.hpp"
 
 extern "C" JSValue js_point_clone(JSContext* ctx, const JSPointData<double>& point);
 
@@ -26,8 +18,8 @@ js_point_read(JSContext* ctx, JSValueConst point, JSPointData<T>* out) {
     y = JS_GetPropertyStr(ctx, point, "y");
   }
   if(JS_IsNumber(x) && JS_IsNumber(y)) {
-    ret &= js_number_read(ctx, &out->x, x);
-    ret &= js_number_read(ctx, &out->y, y);
+    ret &= js_number_read(ctx, x, &out->x);
+    ret &= js_number_read(ctx, y, &out->y);
   } else {
     ret = 0;
   }

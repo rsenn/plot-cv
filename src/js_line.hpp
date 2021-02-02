@@ -21,10 +21,10 @@ js_line_read(JSContext* ctx, JSValueConst line, T* out) {
     y2 = JS_GetPropertyStr(ctx, line, "y2");
   }
   if(JS_IsNumber(x1) && JS_IsNumber(y1) && JS_IsNumber(x2) && JS_IsNumber(y2)) {
-    ret &= js_number_read(ctx, &out->arr[0], x1);
-    ret &= js_number_read(ctx, &out->arr[1], y1);
-    ret &= js_number_read(ctx, &out->arr[2], x2);
-    ret &= js_number_read(ctx, &out->arr[3], y2);
+    ret &= js_number_read(ctx, x1, &out->arr[0]);
+    ret &= js_number_read(ctx, y1, &out->arr[1]);
+    ret &= js_number_read(ctx, x2, &out->arr[2]);
+    ret &= js_number_read(ctx, y2, &out->arr[3]);
   } else {
     ret = 0;
   }

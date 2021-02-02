@@ -1,6 +1,8 @@
 #ifndef JS_SIZE_HPP
 #define JS_SIZE_HPP
 
+#include "jsbindings.hpp"
+
 template<class T>
 static inline int
 js_size_read(JSContext* ctx, JSValueConst size, JSSizeData<T>* out) {
