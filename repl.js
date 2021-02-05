@@ -177,7 +177,6 @@ export default function REPL(title = 'QuickJS') {
   function handle_byte(c) {
     if(!utf8) {
       handle_char(c);
-      f;
     } else if(utf8_state !== 0 && c >= 0x80 && c < 0xc0) {
       utf8_val = (utf8_val << 6) | (c & 0x3f);
       utf8_state--;
@@ -320,13 +319,14 @@ export default function REPL(title = 'QuickJS') {
       const start = cmd_line.length - histcmd.length - 3 - cmd.length + cursor_pos;
       let r = cmd_line.substring(start);
 
-      std.puts('\r');
+      std.puts(`\x1b[1G`);
       std.puts(cmd_line);
       std.puts('\x1b[J');
       last_cmd = cmd_line;
       term_cursor_x = start;
       last_cursor_pos = cursor_pos;
-      move_cursor(-ucs_length(r));
+      std.puts(`\x1b[${ucs_length(r)}D`);
+      //  move_cursor(-ucs_length(r));
       std.out.flush();
       return;
     } /* cursor_pos is the position in 16 bit characters inside the
@@ -390,6 +390,7 @@ export default function REPL(title = 'QuickJS') {
   function alert() {}
 
   function reverse_search() {
+    if(search == 0) cmd = '';
     search--;
     readline_cb = search_cb;
     //console.log('reverse_search', { search, cursor_pos, term_cursor_x });
@@ -397,6 +398,7 @@ export default function REPL(title = 'QuickJS') {
     return -2;
   }
   function forward_search() {
+    if(search == 0) cmd = '';
     search++;
     readline_cb = search_cb;
     //console.log('forward_search', { search, cursor_pos, term_cursor_x });
@@ -408,10 +410,11 @@ export default function REPL(title = 'QuickJS') {
     if(pattern !== null) {
       const histcmd = history[search_index];
       //console.log('search_cb', { pattern, histcmd,cmd }, history.slice(-2));
-      readline_handle_cmd(histcmd ?? '');
       search = 0;
       readline_cb = readline_handle_cmd;
       cmd = '';
+      readline_handle_cmd(histcmd ?? '');
+
       update();
     }
   }
@@ -1237,6 +1240,7 @@ export default function REPL(title = 'QuickJS') {
       std.puts('\x1b[H\x1b[J');
     } else if(cmd === 'q') {
       (thisObj.exit ?? std.exit)(0);
+      return false;
     } else if(has_jscalc && cmd === 'a') {
       algebraicMode = true;
     } else if(has_jscalc && cmd === 'n') {

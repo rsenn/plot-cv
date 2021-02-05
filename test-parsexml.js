@@ -1,8 +1,9 @@
-import parse from './lib/xml/parse.js';
+import { parse, parse2 } from './lib/xml/parse.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import PortableFileSystem from './lib/filesystem.js';
 import tXml from './lib/tXml.js';
 import { toXML } from './lib/json.js';
+import Util from './lib/util.js';
 
 async function main(...args) {
   await ConsoleSetup({ depth: 20, colors: true, breakLength: 80 });
@@ -11,10 +12,14 @@ async function main(...args) {
   let data = filesystem.readFile(args[0] ?? 'BreadboardContacts.out.xml', null);
   console.log('data:', data);
 
-  let result = parse(new Uint8Array(data));
+  // let result = parse2(Util.bufferToString(data));
+  let result = parse2(data);
+  console.log('result:', Util.typeOf(result));
+  console.log('result.length:', result.length);
+  console.log('result[0]:', result[0]);
   console.log('result:', result);
 
-  let xml = toXML(result);
+  let xml = toXML(result, { depth: Infinity, quote: '"', indent: '' });
   console.log('xml:', xml);
 }
 

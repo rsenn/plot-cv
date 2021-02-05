@@ -4,7 +4,7 @@ import { toXML } from './lib/json.js';
 import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import path from './lib/path.js';
-import { LineList, Point, Circle, Rect, Size, Line } from './lib/geom.js';
+import { LineList, Point, Circle, Rect, Size, Line, TransformationList, Rotation, Translation, Scaling, Matrix } from './lib/geom.js';
 import { Graph } from './lib/fd-graph.js';
 import ptr from './lib/json-ptr.js';
 import LogJS from './lib/log.js';
@@ -73,11 +73,11 @@ function alignItem(item) {
   let geometry = item.geometry;
   if(item.tagName == 'element') {
     let pkg = item['package'];
-    let t = item.transformation();
-    let m = t.toMatrix();
-    console.log('alignItem:', { t, m });
+    let transformation = item.transformation().filter(tr => tr.type != 'translate');
+    let matrix = transformation.toMatrix();
+    console.log('alignItem:', { transformation, matrix });
 
-    offsetPos = new Point(pkg.pads[0]);
+    offsetPos = new Point(pkg.pads[0]).transform(matrix);
     let inchPos = offsetPos.quot(2.54);
     console.log('alignItem:', { offsetPos, inchPos });
 
@@ -85,7 +85,7 @@ function alignItem(item) {
     inchPos = oldPos.quot(2.54);
 
     console.log('alignItem:', { oldPos, inchPos });
-    let padPos = new Point(0, 0).transform(m);
+    let padPos = oldPos.sum(offsetPos);
     inchPos = padPos.quot(2.54);
     console.log('alignItem:', { padPos, inchPos });
     let newPos = padPos.round(2.54).diff(offsetPos).round(0.0001, 4);
@@ -295,11 +295,17 @@ async function main(...args) {
     alignAll,
     fixValue,
     fixValues,
+    LineList,
     Point,
+    Circle,
     Rect,
     Size,
-    Circle,
-    Line
+    Line,
+    TransformationList,
+    Rotation,
+    Translation,
+    Scaling,
+    Matrix
   });
 
   console.log('REPL now');
