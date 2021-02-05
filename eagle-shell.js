@@ -95,25 +95,18 @@ function alignItem(item) {
     geometry.add(diff);
     changed = !diff.isNull();
   }
-
   if(item.tagName == 'wire') {
     let oldCoord = geometry.clone();
     let inchCoord = oldCoord.quot(2.54);
-
     //console.log('alignItem:', { oldCoord, inchCoord });
-
     let newCoord = oldCoord.clone().round(2.54);
     inchCoord = newCoord.quot(2.54);
     //console.log('alignItem:', { newCoord, inchCoord });
-
     let diff = newCoord.diff(oldCoord);
     //console.log('alignItem:', { diff });
-
     changed = !diff.isNull();
-
     geometry.add(diff);
   }
-
   if(changed) {
     console.log(item);
     /*    console.log('after:', Util.abbreviate(item.parentNode.toXML()));
@@ -161,6 +154,28 @@ function fixValue(element) {
 function fixValues(doc) {
   if(doc.type == 'brd') doc.elements.forEach(fixValue);
   else if(doc.type == 'sch') doc.parts.forEach(fixValue);
+}
+
+function coordMap(doc) {
+  let map = new Multimap();
+
+  if(doc.type == 'brd') {
+    for(let [, signal] of doc.signals) {
+      for(let wire of signal.wires) {
+        let line = new Line(wire.geometry);
+        let points = line.toPoints();
+        let [a, b] = points.map(p => new Point(p));
+
+        console.log(`signal '${signal.name}' wire #${signal.wires.indexOf(wire)}:`, points);
+        console.log(`signal '${signal.name}' wire #${signal.wires.indexOf(wire)}:`, { a, b });
+
+        map.set(a.toString(), [signal.name, wire, b]);
+        map.set(b.toString(), [signal.name, wire, a]);
+      }
+    }
+  }
+  console.log('coordMap', { map });
+  return map;
 }
 
 async function testEagle(filename) {
@@ -244,7 +259,7 @@ async function main(...args) {
     }
   });
 
-  Object.assign(globalThis, { updateMeasures, alignItem, alignAll, fixValue, fixValues, Util, LineList, Point, Circle, Rect, Size, Line, TransformationList, Rotation, Translation, Scaling, Matrix });
+  Object.assign(globalThis, { updateMeasures, alignItem, alignAll, fixValue, fixValues, coordMap, Util, LineList, Point, Circle, Rect, Size, Line, TransformationList, Rotation, Translation, Scaling, Matrix });
 
   Object.assign(globalThis, { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, Enum, HashList, Multimap, Shash, SortedMap, HashMultimap, MultiBiMap, MultiKeyMap, DenseSpatialHash2D, SpatialHash2D, HashMap, SpatialH, SpatialHash, SpatialHashMap, BoxHash });
   console.log('REPL now');
