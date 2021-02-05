@@ -36,7 +36,7 @@ async function main(...args) {
   console.log('grammar:', grammar);
 
   WriteFile(`grammar-${basename}.js`, grammar.generate('./lib/parse/'));
-/*
+  /*
   let a = [];
   for(let [name, rule] of grammar.rules) {
     a.push(rule.toCowbird(a, name));

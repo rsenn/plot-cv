@@ -34,29 +34,27 @@ async function main(...args) {
 
   for(let filename of args) {
     let src = filesystem.readFile(filename);
+    let base = path.basename(filename, /\.[^.]*$/);
 
- console.log('src:', Util.escape(src));
- const result  = gedaNetlistGrammar.geda_netlist(src, 0);
+    console.log('src:', Util.escape(src));
+    const result = gedaNetlistGrammar.geda_netlist(src, 0);
     let [done, data, pos] = result;
- console.log('result:', result);
+
+    let  [ components,nets] = data;
+
+      nets = Object.fromEntries(nets.map(net => net.flat(2)).map(([name, ...connections]) => [name,connections]));
+   console.log('nets:', nets);
+       // components = (components.map(component => component.flat(2)).map(([ name, footprint, value, ...rest]) => ({name,footprint,value})));
+        components = Object.fromEntries(components.map(component => component.flat(2)).map(([ name, footprint, value, ...rest]) => [name, [footprint,value]]));
+  console.log('components:', components);
+
+
+  let output = { components, nets };
+
+  let json = Util.toString(output, { multiline: true, depth:2, json: true, quote: '"'}); //JSON.stringify(output, null, 2);
+
+  WriteFile(base+'.json', json);
 }
-/*
-    let createMap = entries =>   new Map(entries);
-
-    let sections = data[0].reduce((acc, sdata) => {
-      console.log('sdata:', sdata);
-      return { ...acc, [sdata[0]]: createMap(sdata[1] || []) };
-    }, {});
-
-    const flat = deep.flatten(sections,
-      new Map(),
-      k => k.length > 0,
-      (k, v) => [k.slice(1), v]
-    );
-    console.log('flat:', flat);
-  }
-   */
-
 }
 
 Util.callMain(main, true);
