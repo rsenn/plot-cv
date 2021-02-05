@@ -67,26 +67,39 @@ function updateMeasures(board) {
 }
 
 function alignItem(item) {
-  console.debug('alignItem', item);
+  let changed;
+  console.log('alignItem', { item });
   let offsetPos = new Point(0, 0);
+  let geometry = item.geometry;
   if(item.tagName == 'element') {
     let pkg = item['package'];
+let t = item.transformation();
+let m = t.toMatrix();
+    console.log('alignItem:', { t, m });
 
     offsetPos = new Point(pkg.pads[0]);
+    let inchPos = offsetPos.quot(2.54);
+    console.log('alignItem:', { offsetPos, inchPos });
+
+    let oldPos = new Point(item);
+    inchPos = oldPos.quot(2.54);
+
+    console.log('alignItem:', { oldPos, inchPos });
+    let padPos = new Point(0, 0).transform(m);
+    inchPos = padPos.quot(2.54);
+    console.log('alignItem:', { padPos, inchPos });
+    let newPos = padPos.round(2.54).diff(offsetPos).round(0.0001, 4);
+
+    let diff = newPos.diff(oldPos);
+    let before = item.parentNode.toXML();
+    //console.log('geometry:', Object.entries(Object.getOwnPropertyDescriptors(geometry)).map(([name, { value }]) => [name, value && Object.getOwnPropertyDescriptors(value)]), geometry.x1);
+    inchPos = newPos.quot(2.54);
+    console.log('alignItem:', { newPos, diff, inchPos });
+
+    geometry.add(diff);
+
+    changed = !diff.isNull();
   }
-
-  let geometry = item.geometry;
-  let oldPos = geometry.clone();
-  let newPos = oldPos.sum(offsetPos).round(2.54).diff(offsetPos);
-
-  let diff = newPos.diff(oldPos);
-  let before = item.parentNode.toXML();
-  //console.log('geometry:', Object.entries(Object.getOwnPropertyDescriptors(geometry)).map(([name, { value }]) => [name, value && Object.getOwnPropertyDescriptors(value)]), geometry.x1);
-  console.log('alignItem:', { oldPos, newPos, diff });
-
-  geometry.add(diff);
-
-  let changed = !diff.isNull();
 
   if(changed) {
     console.log(item);
@@ -109,23 +122,29 @@ function alignAll(doc = globalThis.document) {
 }
 
 function fixValue(element) {
-  let { value } = element;
+  let value = element.value;
+  let newValue;
 
   switch (element.name[0]) {
     case 'R': {
-      value = value.replace(/^([0-9.]+)([mkM]?)(?:\xEF\xBF\xBD|)(.*)/, '$1$2\uCEA9$3');
+      newValue = value.replace(/^([0-9.]+)([mkM]?)(?:\xEF\xBF\xBD|\xC2\xA9|\x26\xC2*\xA9+|\u2126?[\x80-\xFF]+)([\x00-\x7F]*)/,
+        '$1$2\u2126$3'
+      );
       break;
     }
     case 'L': {
-      value = value.replace(/^([0-9.]+)\xEF\xBF\xBD(H.*)/, '$1\uCEBC$2');
+      newValue = value.replace(/^([0-9.]+)(?:[\x7F-\xFF]*\xB5|\xEF\xBF\xBD)(H.*)/, '$1\u00B5$2');
       break;
     }
     case 'C': {
-      value = value.replace(/^([0-9.]+)\xEF\xBF\xBD(F.*)/, '$1\uCEBC$2');
+      newValue = value.replace(/^([0-9.]+)(?:[\x7F-\xFF]*\xB5|\xEF\xBF\xBD)(F.*)/, '$1\u00B5$2');
       break;
     }
   }
-  element.attributes['value'] = value;
+  if(newValue && newValue != value) {
+    console.log(`element ${element} value changed from '${value}' to '${newValue}'`);
+    element.attributes['value'] = newValue;
+  }
 }
 
 function fixValues(doc) {

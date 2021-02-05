@@ -1,8 +1,10 @@
 import { Voronoi, Matrix, Point, PointList } from './lib/geom.js';
 import Util from './lib/util.js';
+import ConsoleSetup from './lib/consoleSetup.js';
 
-function main(args) {
-  let file = 'lib/geom/point.js';
+async function main(...args) {
+   await ConsoleSetup({ colors: true, depth: 6, breakLength: 80 });
+ let file = 'lib/geom/point.js';
 
   if(args.length == 0) args = ['0,0', '50,100', '100,100', '100,50'];
 
@@ -68,10 +70,10 @@ function main(args) {
   console.log('vertices:', vertices);
   let result = new PointList(vertices);
   console.log('result:', result);
+
+    console.log("matrix:", m);
+    console.log("matrix:", Matrix.identity());
+
 }
 
-try {
-  main(Util.getArgs());
-} catch(error) {
-  Util.putError(error);
-}
+Util.callMain(main, true);

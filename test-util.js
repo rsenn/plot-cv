@@ -32,15 +32,14 @@ async function main(...args) {
   console.log(`await import('os'):`, Object.keys(await import('os')));
   console.log(`await import('std'):`, await import('std').catch(err => (console.log(err), err)));
   //console.log(`await import('ffi.so'):`, await import('ffi.so'));
-  const {O_RDONLY, O_WRONLY, O_RDWR, O_APPEND, O_CREAT, O_EXCL, O_TRUNC, O_TEXT}=filesystem;
-let f = filesystem.open('test.txt', O_WRONLY|O_CREAT);
-console.log("write:",filesystem.write(f, 'test file\n'));
-filesystem.close(f);
+  const { O_RDONLY, O_WRONLY, O_RDWR, O_APPEND, O_CREAT, O_EXCL, O_TRUNC, O_TEXT } = filesystem;
+  let f = filesystem.open('test.txt', O_WRONLY | O_CREAT);
+  console.log('write:', filesystem.write(f, 'test file\n'));
+  filesystem.close(f);
 
-f = filesystem.open('test.txt', O_WRONLY|O_CREAT|O_EXCL);
-console.log("write:",filesystem.write(f, 'overwritten test file\n'));
-filesystem.close(f);
-
+  f = filesystem.open('test.txt', O_WRONLY | O_CREAT | O_EXCL);
+  console.log('write:', filesystem.write(f, 'overwritten test file\n'));
+  filesystem.close(f);
 
   Util.exit(0);
 }
