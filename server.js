@@ -180,7 +180,7 @@ async function main() {
     const gerberFile = `./tmp/${base}.${formatToExt(layers, format)}`;
     const cmd = `eagle -X -d ${format} -o "${gerberFile}" "${boardFile}" ${layers.join(' ')}`;
     console.log(`executing '${cmd}'`);
-    const child = exec(`${cmd} 2>&1`, {});
+    const child = exec(`${cmd} 2>&1 0</dev/null`, {});
     // do whatever you want with `child` here - it's a ChildProcess instance just
     // with promise-friendly `.then()` & `.catch()` functions added to it!
     let output = '';
