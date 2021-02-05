@@ -35,7 +35,12 @@ let app = express();
 expressWs(app, null, { perMessageDeflate: false });
 const p = path.join(path.dirname(process.argv[1]), '.');
 
-let mountDirs = ['data',"../an-tronics/eagle", "../insider/eagle", "../lc-meter/eagle", "../pictest/eagle"
+let mountDirs = [
+  'data',
+  '../an-tronics/eagle',
+  '../insider/eagle',
+  '../lc-meter/eagle',
+  '../pictest/eagle'
 ];
 let tmpDir = './tmp';
 
