@@ -36,17 +36,15 @@ async function main(...args) {
     let src = filesystem.readFile(filename);
     let base = path.basename(filename, /\.[^.]*$/);
 
-    console.log('src:', Util.escape(src));
+    //console.log('src:', Util.escape(src));
     const result = gedaNetlistGrammar.geda_netlist(src, 0);
     let [done, data, pos] = result;
 
     let [components, nets] = data;
 
     const findFirst = arr => {
-         for(let i = 0; i < arr.length; i++) if(arr[i] != '') return i;
+      for(let i = 0; i < arr.length; i++) if(arr[i] != '') return i;
       return arr.length;
-  /*       if(arr[0] === '') return arr.findIndex(it => it !== '');
-      return 0;*/
     };
     const findLast = (arr, start = 0) => {
       for(let i = start; i < arr.length; i++) if(arr[i] === '') return i;
@@ -58,20 +56,20 @@ async function main(...args) {
         .map(c => [[''], ...c[0]])
         .map(c => c.flat(2))
         .map(c => c.slice(findFirst(c)))
-      .map(c => c[1] !==  '' ? c :  
-          c.reduce((acc, item, idx) => {
-            if(idx % 2 == 0) acc.push(item);
-            else acc[acc.length - 1] += item;
-            return acc;
-          }, [])
+        .map(c =>
+          c[1] !== ''
+            ? c
+            : c.reduce((acc, item, idx) => {
+                if(idx % 2 == 0) acc.push(item);
+                else acc[acc.length - 1] += item;
+                return acc;
+              }, [])
         )
         .map(c => c.slice(0, findLast(c)));
-  //  console.log('components:', components.map(c => [[''], ...c[0]]).map(c=>c.flat(2)).map(c => c.slice(findFirst(c))));
-
     components = Object.fromEntries(cleanArray(components).map(([name, ...rest]) => [name, rest]));
     nets = Object.fromEntries(cleanArray(nets).map(([name, ...rest]) => [name, rest]));
-   // console.log('nets:', nets);
- console.log('components:', components);
+    console.log('nets:', nets);
+    console.log('components:', components);
 
     let output = { components, nets };
 
