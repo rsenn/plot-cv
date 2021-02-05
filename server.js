@@ -35,7 +35,7 @@ let app = express();
 expressWs(app, null, { perMessageDeflate: false });
 const p = path.join(path.dirname(process.argv[1]), '.');
 
-let mountDirs = [];
+let mountDirs = ['data'];
 let tmpDir = './tmp';
 
 async function waitChild(proc) {
@@ -47,8 +47,8 @@ async function waitChild(proc) {
 }
 
 async function runMount(dirsIterator) {
-  console.debug(`runMount ${dirsIterator}`);
   for await(let dirs of await dirsIterator) {
+    console.log(`runMount`, dirs);
     console.debug(`Mount ${dirs} to tmp/`);
 
     let proc = childProcess('./mount-tmp.sh', ['-f', ...Util.unique(dirs || [])], {
@@ -109,7 +109,13 @@ async function main() {
   let mounter = runMount(new Repeater(async (push, stop) => {
       while(true) await push(mountDirs);
     })
-  ).then(exitCode => (exitCode == 127 ? Util.exit(127) : exitCode));
+  ).then(exitCode => {
+    console.log('runMount', { exitCode });
+    if(exitCode == 127) {
+      Util.exit(127);
+    }
+    return exitCode;
+  });
 
   app.use(express.text({ type: 'application/xml', limit: '16384kb' }));
 
@@ -686,8 +692,13 @@ async function main() {
   });
 
   app.listen(port, () => {
-    //console.log(`Ready at http://127.0.0.1:${port}`);
+     console.log(`Ready at http://127.0.0.1:${port}`);
   });
 }
 
-Util.callMain(main, true);
+try {
+  await main();
+} catch(err) {
+  Util.putError(err);
+}
+//Util.callMain(main, true);
