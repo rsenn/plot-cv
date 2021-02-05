@@ -1,7 +1,6 @@
-import { parse, parse2 } from './lib/xml/parse.js';
+import { parse2 } from './lib/xml/parse.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import PortableFileSystem from './lib/filesystem.js';
-import tXml from './lib/tXml.js';
 import { toXML } from './lib/json.js';
 import Util from './lib/util.js';
 

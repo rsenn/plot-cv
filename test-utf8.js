@@ -1,8 +1,5 @@
-import parse from './lib/xml/parse.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import PortableFileSystem from './lib/filesystem.js';
-import tXml from './lib/tXml.js';
-import { toXML } from './lib/json.js';
 
 function* BytesToUTF8(bytes) {
   let state = 0,
