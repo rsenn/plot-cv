@@ -293,7 +293,13 @@ async function main(...args) {
   Util.atexit(() => {
     let hist = repl.history_get();
 
-    filesystem.writeFile(histfile, JSON.stringify(Util.unique(hist), null, 2));
+    filesystem.writeFile(histfile,
+      JSON.stringify(
+        hist.filter((item, i) => hist.lastIndexOf(item) == i),
+        null,
+        2
+      )
+    );
 
     console.log('EXIT');
   });

@@ -399,19 +399,19 @@ export default function REPL(title = 'QuickJS') {
   function forward_search() {
     search++;
     readline_cb = search_cb;
-    //console.log('reverse_search', { search, cursor_pos, term_cursor_x });
+    //console.log('forward_search', { search, cursor_pos, term_cursor_x });
     update();
     return -2;
   }
 
   function search_cb(pattern) {
     if(pattern !== null) {
+      const histcmd = history[search_index];
+      //console.log('search_cb', { pattern, histcmd,cmd }, history.slice(-2));
+      readline_handle_cmd(histcmd ?? '');
       search = 0;
       readline_cb = readline_handle_cmd;
       cmd = '';
-      const histcmd = history[search_index];
-      //console.log('search_cb', { pattern, histcmd });
-      readline_handle_cmd(histcmd ?? '');
       update();
     }
   }
@@ -460,9 +460,7 @@ export default function REPL(title = 'QuickJS') {
 
   function accept_line() {
     std.puts('\n');
-    if(search) cmd = history[search_index];
-
-    history_add(cmd);
+    history_add(search ? history[search_index] : cmd);
     //console.log('accept_line', { cmd, search }, [...history.entries()].slice(-3));
     return -1;
   }
