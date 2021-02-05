@@ -10,6 +10,7 @@ import ptr from './lib/json-ptr.js';
 import LogJS from './lib/log.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import REPL from './repl.js';
+import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, Enum, HashList, Multimap, Shash, SortedMap, HashMultimap, MultiBiMap, MultiKeyMap, DenseSpatialHash2D, SpatialHash2D, HashMap, SpatialH, SpatialHash, SpatialHashMap, BoxHash } from './lib/container.js';
 
 let filesystem;
 
@@ -139,9 +140,7 @@ function fixValue(element) {
 
   switch (element.name[0]) {
     case 'R': {
-      newValue = value.replace(/^([0-9.]+)([mkM]?)(?:\xEF\xBF\xBD|\xC2\xA9|\x26\xC2*\xA9+|\u2126?[\x80-\xFF]+)([\x00-\x7F]*)/,
-        '$1$2\u2126$3'
-      );
+      newValue = value.replace(/^([0-9.]+)([mkM]?)(?:\xEF\xBF\xBD|\xC2\xA9|\x26\xC2*\xA9+|\u2126?[\x80-\xFF]+)([\x00-\x7F]*)/, '$1$2\u2126$3');
       break;
     }
     case 'L': {
@@ -173,14 +172,7 @@ async function testEagle(filename) {
   let { board, schematic } = proj;
   const packages = {
     board: (board && board.elements && [...board.elements].map(([name, e]) => e.package)) || [],
-    schematic: (schematic &&
-        schematic.sheets &&
-        [...schematic.sheets]
-          .map(e =>
-            [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)
-          )
-          .flat()) ||
-      []
+    schematic: (schematic && schematic.sheets && [...schematic.sheets].map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)).flat()) || []
   };
   let parts = (schematic && schematic.parts) || [];
   let sheets = (schematic && schematic.sheets) || [];
@@ -231,9 +223,7 @@ async function testEagle(filename) {
   }
   let desc = proj.documents.map(doc => [doc.filename, doc.find('description')]);
   console.log('desc', desc);
-  desc = desc
-    .map(([file, e]) => [file, e && e.xpath()])
-    .map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
+  desc = desc.map(([file, e]) => [file, e && e.xpath()]).map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
   desc = new Map(desc);
   console.log('descriptions', [...Util.map(desc, ([k, v]) => [k, v])]);
   return proj;
@@ -246,81 +236,17 @@ async function main(...args) {
   const base = path.basename(Util.getArgv()[1], /\.[^.]*$/);
   const histfile = `.${base}-history`;
 
-  Object.assign(globalThis, {
-    EagleSVGRenderer,
-    SchematicRenderer,
-    BoardRenderer,
-    LibraryRenderer,
-    EagleNodeList,
-    useTrkl,
-    RAD2DEG,
-    DEG2RAD,
-    VERTICAL,
-    HORIZONTAL,
-    HORIZONTAL_VERTICAL,
-    DEBUG,
-    log,
-    setDebug,
-    PinSizes,
-    EscapeClassName,
-    UnescapeClassName,
-    LayerToClass,
-    ElementToClass,
-    ClampAngle,
-    AlignmentAngle,
-    MakeRotation,
-    EagleAlignments,
-    Alignment,
-    SVGAlignments,
-    AlignmentAttrs,
-    RotateTransformation,
-    LayerAttributes,
-    InvertY,
-    PolarToCartesian,
-    CartesianToPolar,
-    RenderArc,
-    CalculateArcRadius,
-    LinesToPath,
-    MakeCoordTransformer,
-    useAttributes,
-    EagleDocument,
-    EagleReference,
-    EagleRef,
-    makeEagleNode,
-    EagleNode,
-    Renderer,
-    EagleProject,
-    EagleElement,
-    makeEagleElement,
-    EagleElementProxy,
-    EagleNodeMap,
-    ImmutablePath,
-    DereferenceError
-  });
+  Object.assign(globalThis, { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, EagleNodeList, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, EagleDocument, EagleReference, EagleRef, makeEagleNode, EagleNode, Renderer, EagleProject, EagleElement, makeEagleElement, EagleElementProxy, EagleNodeMap, ImmutablePath, DereferenceError });
 
   Object.assign(globalThis, {
     load(filename) {
       return (globalThis.document = new EagleDocument(std.loadFile(filename)));
-    },
-    updateMeasures,
-    alignItem,
-    alignAll,
-    fixValue,
-    fixValues,
-    Util,
-    LineList,
-    Point,
-    Circle,
-    Rect,
-    Size,
-    Line,
-    TransformationList,
-    Rotation,
-    Translation,
-    Scaling,
-    Matrix
+    }
   });
 
+  Object.assign(globalThis, { updateMeasures, alignItem, alignAll, fixValue, fixValues, Util, LineList, Point, Circle, Rect, Size, Line, TransformationList, Rotation, Translation, Scaling, Matrix });
+
+  Object.assign(globalThis, { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, Enum, HashList, Multimap, Shash, SortedMap, HashMultimap, MultiBiMap, MultiKeyMap, DenseSpatialHash2D, SpatialHash2D, HashMap, SpatialH, SpatialHash, SpatialHashMap, BoxHash });
   console.log('REPL now');
 
   let repl = (globalThis.repl = new REPL(base));

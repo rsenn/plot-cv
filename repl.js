@@ -24,20 +24,18 @@
  */
 'use strip';
 
-import * as std from 'std';
-import * as os from 'os';
-
 export default function REPL(title = 'QuickJS') {
   /* add 'os' and 'std' bindings */
-  globalThis.os = os;
-  globalThis.std = std;
+  /*globalThis.os = os;
+  globalThis.std = std;*/
+  const { std, os } = globalThis;
 
   /* close global objects */
   //const { Object, String, Array, Date, Math, isFinite, parseFloat } = globalThis;
   var thisObj = this;
 
   /* XXX: use preprocessor ? */
-  var config_numcalc = typeof os.open === 'undefined';
+  var config_numcalc = false; //typeof os.open === 'undefined';
   var has_jscalc = typeof Fraction === 'function';
   var has_bignum = typeof BigFloat === 'function';
 
@@ -294,24 +292,16 @@ export default function REPL(title = 'QuickJS') {
       colorize = show_colors;
 
     if(search) {
-      const re = new RegExp((search_pattern = cmd_line.replace(/([\(\)\?\+\*])/g, '.' /*'\\$1'*/)),
-        'i'
-      );
+      const re = new RegExp((search_pattern = cmd_line.replace(/([\(\)\?\+\*])/g, '.' /*'\\$1'*/)), 'i');
       const num = search > 0 ? search - 1 : search;
       // search_index = history.findLastIndex(c => re.test(c) && --num == 0);
       let search_history = [...history.entries()].rotateLeft(history_index);
-      search_matches.splice(0,
-        search_matches.length,
-        ...search_history.filter(([i, c]) => re.test(c))
-      );
+      search_matches.splice(0, search_matches.length, ...search_history.filter(([i, c]) => re.test(c)));
       //   num = search > 0 ? search - 1 : search;
       const match = search_matches.at(num);
       const [histidx = -1, histcmd = ''] = match || [];
       const histdir = search > 0 ? 'forward' : 'reverse';
-      const histpos =
-        search < 0
-          ? search_history.indexOf(match) - search_history.length
-          : search_history.indexOf(match);
+      const histpos = search < 0 ? search_history.indexOf(match) - search_history.length : search_history.indexOf(match);
       search_index = histidx;
       let line_start = `(${histdir}-search[${histpos}])\``;
       cmd_line = `${line_start}${cmd}': ${histcmd}`;
@@ -330,11 +320,8 @@ export default function REPL(title = 'QuickJS') {
       std.out.flush();
       return;
     } /* cursor_pos is the position in 16 bit characters inside the
-           UTF-16 string 'cmd_line' */ else if(cmd_line != last_cmd
-    ) {
-      if(!colorize &&
-        last_cmd.substring(0, last_cursor_pos) == cmd_line.substring(0, last_cursor_pos)
-      ) {
+           UTF-16 string 'cmd_line' */ else if(cmd_line != last_cmd) {
+      if(!colorize && last_cmd.substring(0, last_cursor_pos) == cmd_line.substring(0, last_cursor_pos)) {
         /* optimize common case */
         std.puts(cmd_line.substring(last_cursor_pos));
       } else {
@@ -565,11 +552,7 @@ export default function REPL(title = 'QuickJS') {
     var pos = cursor_pos;
     if(cmd.length > 1 && pos > 0) {
       if(pos == cmd.length) pos--;
-      cmd =
-        cmd.substring(0, pos - 1) +
-        cmd.substring(pos, pos + 1) +
-        cmd.substring(pos - 1, pos) +
-        cmd.substring(pos + 1);
+      cmd = cmd.substring(0, pos - 1) + cmd.substring(pos, pos + 1) + cmd.substring(pos - 1, pos) + cmd.substring(pos + 1);
       cursor_pos = pos + 1;
     }
   }
@@ -581,29 +564,19 @@ export default function REPL(title = 'QuickJS') {
     var p3 = skip_word_backward(p4);
 
     if(p1 < p2 && p2 <= cursor_pos && cursor_pos <= p3 && p3 < p4) {
-      cmd =
-        cmd.substring(0, p1) +
-        cmd.substring(p3, p4) +
-        cmd.substring(p2, p3) +
-        cmd.substring(p1, p2);
+      cmd = cmd.substring(0, p1) + cmd.substring(p3, p4) + cmd.substring(p2, p3) + cmd.substring(p1, p2);
       cursor_pos = p4;
     }
   }
 
   function upcase_word() {
     var end = skip_word_forward(cursor_pos);
-    cmd =
-      cmd.substring(0, cursor_pos) +
-      cmd.substring(cursor_pos, end).toUpperCase() +
-      cmd.substring(end);
+    cmd = cmd.substring(0, cursor_pos) + cmd.substring(cursor_pos, end).toUpperCase() + cmd.substring(end);
   }
 
   function downcase_word() {
     var end = skip_word_forward(cursor_pos);
-    cmd =
-      cmd.substring(0, cursor_pos) +
-      cmd.substring(cursor_pos, end).toLowerCase() +
-      cmd.substring(end);
+    cmd = cmd.substring(0, cursor_pos) + cmd.substring(cursor_pos, end).toLowerCase() + cmd.substring(end);
   }
 
   function kill_region(start, end, dir) {
@@ -680,8 +653,7 @@ export default function REPL(title = 'QuickJS') {
           return / /;
         default: if (is_word(c)) {
             base = get_context_word(line, pos);
-            if(['true', 'false', 'null', 'this'].includes(base) || !isNaN(+base))
-              return eval(base);
+            if(['true', 'false', 'null', 'this'].includes(base) || !isNaN(+base)) return eval(base);
             obj = get_context_object(line, pos - base.length);
             if(obj === null || obj === void 0) return obj;
             if(obj === globalThis && obj[base] === void 0) return eval(base);
@@ -1046,10 +1018,7 @@ export default function REPL(title = 'QuickJS') {
       }
       if(typeof a === 'bigfloat' && eval_mode !== 'math') {
         s += 'l';
-      } else if(eval_mode !== 'std' &&
-        s.indexOf('.') < 0 &&
-        ((radix == 16 && s.indexOf('p') < 0) || (radix == 10 && s.indexOf('e') < 0))
-      ) {
+      } else if(eval_mode !== 'std' && s.indexOf('.') < 0 && ((radix == 16 && s.indexOf('p') < 0) || (radix == 10 && s.indexOf('e') < 0))) {
         /* add a decimal point so that the floating point type
                    is visible */
         s += '.0';
@@ -1088,15 +1057,7 @@ export default function REPL(title = 'QuickJS') {
           std.puts(a);
         } else if(stack.indexOf(a) >= 0) {
           std.puts('[circular]');
-        } else if(has_jscalc &&
-          (a instanceof Fraction ||
-            a instanceof Complex ||
-            a instanceof Mod ||
-            a instanceof Polynomial ||
-            a instanceof PolyMod ||
-            a instanceof RationalFunction ||
-            a instanceof Series)
-        ) {
+        } else if(has_jscalc && (a instanceof Fraction || a instanceof Complex || a instanceof Mod || a instanceof Polynomial || a instanceof PolyMod || a instanceof RationalFunction || a instanceof Series)) {
           std.puts(a.toString());
         } else {
           stack.push(a);
@@ -1187,14 +1148,7 @@ export default function REPL(title = 'QuickJS') {
         .trim()
         .split(' ');
       if(param.length === 1 && param[0] === '') {
-        std.puts('BigFloat precision=' +
-            prec +
-            ' bits (~' +
-            Math.floor(prec / log2_10) +
-            ' digits), exponent size=' +
-            expBits +
-            ' bits\n'
-        );
+        std.puts('BigFloat precision=' + prec + ' bits (~' + Math.floor(prec / log2_10) + ' digits), exponent size=' + expBits + ' bits\n');
       } else if(param[0] === 'f16') {
         prec = 11;
         expBits = 5;
@@ -1215,10 +1169,7 @@ export default function REPL(title = 'QuickJS') {
           std.puts('Invalid precision\n');
           return false;
         }
-        if(Number.isNaN(expBits1) ||
-          expBits1 < BigFloatEnv.expBitsMin ||
-          expBits1 > BigFloatEnv.expBitsMax
-        ) {
+        if(Number.isNaN(expBits1) || expBits1 < BigFloatEnv.expBitsMin || expBits1 > BigFloatEnv.expBitsMax) {
           std.puts('Invalid exponent bits\n');
           return false;
         }
@@ -1286,31 +1237,12 @@ export default function REPL(title = 'QuickJS') {
     function sel(n) {
       return n ? '*' : ' ';
     }
-    std.puts('\\h          this help\n' +
-        '\\x         ' +
-        sel(hex_mode) +
-        'hexadecimal number display\n' +
-        '\\d         ' +
-        sel(!hex_mode) +
-        'decimal number display\n' +
-        '\\t         ' +
-        sel(show_time) +
-        'toggle timing display\n' +
-        '\\clear      clear the terminal\n'
-    );
+    std.puts('\\h          this help\n' + '\\x         ' + sel(hex_mode) + 'hexadecimal number display\n' + '\\d         ' + sel(!hex_mode) + 'decimal number display\n' + '\\t         ' + sel(show_time) + 'toggle timing display\n' + '\\clear      clear the terminal\n');
     if(has_jscalc) {
-      std.puts('\\a         ' +
-          sel(algebraicMode) +
-          'algebraic mode\n' +
-          '\\n         ' +
-          sel(!algebraicMode) +
-          'numeric mode\n'
-      );
+      std.puts('\\a         ' + sel(algebraicMode) + 'algebraic mode\n' + '\\n         ' + sel(!algebraicMode) + 'numeric mode\n');
     }
     if(has_bignum) {
-      std.puts("\\p [m [e]]  set the BigFloat precision to 'm' bits\n" +
-          "\\digits n   set the BigFloat precision to 'ceil(n*log2(10))' bits\n"
-      );
+      std.puts("\\p [m [e]]  set the BigFloat precision to 'm' bits\n" + "\\digits n   set the BigFloat precision to 'ceil(n*log2(10))' bits\n");
       if(!has_jscalc) {
         std.puts('\\mode [std|math] change the running mode (current = ' + eval_mode + ')\n');
       }
@@ -1521,17 +1453,7 @@ export default function REPL(title = 'QuickJS') {
       }
     }
 
-    var js_keywords =
-      '|' +
-      'break|case|catch|continue|debugger|default|delete|do|' +
-      'else|finally|for|function|if|in|instanceof|new|' +
-      'return|switch|this|throw|try|typeof|while|with|' +
-      'class|const|enum|import|export|extends|super|' +
-      'implements|interface|let|package|private|protected|' +
-      'public|static|yield|' +
-      'undefined|null|true|false|Infinity|NaN|' +
-      'eval|arguments|' +
-      'await|';
+    var js_keywords = '|' + 'break|case|catch|continue|debugger|default|delete|do|' + 'else|finally|for|function|if|in|instanceof|new|' + 'return|switch|this|throw|try|typeof|while|with|' + 'class|const|enum|import|export|extends|super|' + 'implements|interface|let|package|private|protected|' + 'public|static|yield|' + 'undefined|null|true|false|Infinity|NaN|' + 'eval|arguments|' + 'await|';
 
     var js_no_regex = '|this|super|undefined|null|true|false|Infinity|NaN|arguments|';
     var js_types = '|void|var|';
