@@ -692,7 +692,7 @@ async function main() {
   });
 
   app.listen(port, () => {
-     console.log(`Ready at http://127.0.0.1:${port}`);
+    console.log(`Ready at http://127.0.0.1:${port}`);
   });
 }
 
