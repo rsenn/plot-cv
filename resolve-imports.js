@@ -605,13 +605,15 @@ async function main(...args) {
     let moduleImports, imports;
     // Verbose('processing:', { file, thisdir });
 
-    let { data, error, ast, parser, printer } = await ParseFile(file);
+    const result = await ParseFile(file);
+    Verbose('result:', result);
+    let { data, error, ast, parser, printer } = result;
     let flat, map;
     let st = new Tree(ast);
 
-    filesystem.writeFile(path.basename(file, /\.[^.]+$/) + '.ast.json',
-      JSON.stringify(ast, null, 2)
-    );
+    let astStr = JSON.stringify(ast, null, 2);
+    Verbose('astStr:', astStr, ast);
+    filesystem.writeFile(path.basename(file, /\.[^.]+$/) + '.ast.json', astStr);
 
     //Verbose(`${file} parsed:`, { data, error });
 
@@ -1288,7 +1290,6 @@ async function main(...args) {
         children = children.filter(([n, p]) => n instanceof MemberExpression && /^module\.exports/.test(PrintAst(n))
         );
         children = children
-
           .map(([n, p]) => [st.parentNode(n), p.slice(0, -1)])
           .filter(([n, p]) => n instanceof AssignmentExpression);
         let bindings = children
@@ -1369,14 +1370,14 @@ async function Prettier(file) {
 async function ParseFile(file) {
   let data, error, ast, flat;
   try {
-    //    data = filesystem.readFile(file);
+    data = filesystem.readFile(file);
 
-    data = await Prettier(file);
+    //data = await Prettier(file);
     // console.log('data:', Util.abbreviate(Util.escape(data + ''), 40));
     //   console.log('data:', data.length, data || Util.abbreviate(Util.escape(data + ''), 40));
 
     ECMAScriptParser.instrumentate();
-    parser = new ECMAScriptParser(data.toString(), file, false);
+    parser = new ECMAScriptParser(data.toString(), file, true);
     g.parser = parser;
     ast = parser.parseProgram();
     parser.addCommentsToNodes(ast);
