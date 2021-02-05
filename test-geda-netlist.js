@@ -40,21 +40,42 @@ async function main(...args) {
     const result = gedaNetlistGrammar.geda_netlist(src, 0);
     let [done, data, pos] = result;
 
-    let  [ components,nets] = data;
+    let [components, nets] = data;
 
-      nets = Object.fromEntries(nets.map(net => net.flat(2)).map(([name, ...connections]) => [name,connections]));
-   console.log('nets:', nets);
-       // components = (components.map(component => component.flat(2)).map(([ name, footprint, value, ...rest]) => ({name,footprint,value})));
-        components = Object.fromEntries(components.map(component => component.flat(2)).map(([ name, footprint, value, ...rest]) => [name, [footprint,value]]));
-  console.log('components:', components);
+    const findFirst = arr => {
+      if(arr[0] === '') return arr.findIndex(it => it !== '');
+      return 0;
+    };
+    const findLast = (arr, start = 0) => {
+      for(let i = start; i < arr.length; i++) if(arr[i] === '') return i;
+      return arr.length;
+    };
 
+    const cleanArray = arr =>
+      arr
+        .map(c => [[''], ...c[0]])
+        .map(c => c.flat(2))
+        .map(c => c.slice(findFirst(c)))
+        .map(c =>
+          c.reduce((acc, item, idx) => {
+            if(idx % 2 == 0) acc.push(item);
+            else acc[acc.length - 1] += item;
+            return acc;
+          }, [])
+        )
+        .map(c => c.slice(0, findLast(c)));
 
-  let output = { components, nets };
+    components = Object.fromEntries(cleanArray(components).map(([name, ...rest]) => [name, rest]));
+    nets = Object.fromEntries(cleanArray(nets).map(([name, ...rest]) => [name, rest]));
+    console.log('components:', components);
+    console.log('nets:', nets);
 
-  let json = Util.toString(output, { multiline: true, depth:2, json: true, quote: '"'}); //JSON.stringify(output, null, 2);
+    let output = { components, nets };
 
-  WriteFile(base+'.json', json);
-}
+    let json = Util.toString(output, { multiline: true, depth: 2, json: true, quote: '"' }); //JSON.stringify(output, null, 2);
+
+    WriteFile(base + '.json', json);
+  }
 }
 
 Util.callMain(main, true);
