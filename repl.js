@@ -944,6 +944,7 @@ export default function REPL(title = 'QuickJS') {
           os.setReadHandler(term_fd, null);
           return;
         default: if (
+            search &&
             [
               accept_line,
               backward_char,
@@ -953,24 +954,24 @@ export default function REPL(title = 'QuickJS') {
               backward_word,
               beginning_of_line,
               delete_char,
-      //        end_of_line,
+              //        end_of_line,
               forward_char,
               forward_word,
               kill_line,
               kill_word
             ].indexOf(fun) == -1
           ) {
-                const histcmd = history[search_index];
+            const histcmd = history[search_index];
 
-//            readline_cb = readline_handle_cmd;
+            //            readline_cb = readline_handle_cmd;
             search = 0;
-  //          cmd = histcmd;
-          std.puts(`\x1b[1G`);
-          std.puts(`\x1b[J`);
-          cursor_pos = histcmd.length;
-        readline_start(histcmd, readline_handle_cmd);
-    return;
-           // update();
+            //          cmd = histcmd;
+            std.puts(`\x1b[1G`);
+            std.puts(`\x1b[J`);
+            cursor_pos = histcmd.length;
+            readline_start(histcmd, readline_handle_cmd);
+            return;
+            // update();
           }
           break;
       }

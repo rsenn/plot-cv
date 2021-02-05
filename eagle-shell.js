@@ -68,37 +68,49 @@ function updateMeasures(board) {
 
 function alignItem(item) {
   let changed;
-  console.log('alignItem', { item });
+  // console.log('alignItem', { item });
   let offsetPos = new Point(0, 0);
   let geometry = item.geometry;
   if(item.tagName == 'element') {
     let pkg = item['package'];
     let transformation = item.transformation().filter(tr => tr.type != 'translate');
     let matrix = transformation.toMatrix();
-    console.log('alignItem:', { transformation, matrix });
-
+    //console.log('alignItem:', { transformation, matrix });
     offsetPos = new Point(pkg.pads[0]).transform(matrix);
     let inchPos = offsetPos.quot(2.54);
-    console.log('alignItem:', { offsetPos, inchPos });
-
+    // console.log('alignItem:', { offsetPos, inchPos });
     let oldPos = new Point(item);
     inchPos = oldPos.quot(2.54);
-
-    console.log('alignItem:', { oldPos, inchPos });
+    // console.log('alignItem:', { oldPos, inchPos });
     let padPos = oldPos.sum(offsetPos);
     inchPos = padPos.quot(2.54);
-    console.log('alignItem:', { padPos, inchPos });
+    // console.log('alignItem:', { padPos, inchPos });
     let newPos = padPos.round(2.54).diff(offsetPos).round(0.0001, 4);
-
     let diff = newPos.diff(oldPos);
     let before = item.parentNode.toXML();
     //console.log('geometry:', Object.entries(Object.getOwnPropertyDescriptors(geometry)).map(([name, { value }]) => [name, value && Object.getOwnPropertyDescriptors(value)]), geometry.x1);
     inchPos = newPos.quot(2.54);
-    console.log('alignItem:', { newPos, diff, inchPos });
-
+    //console.log('alignItem:', { newPos, diff, inchPos });
     geometry.add(diff);
+    changed = !diff.isNull();
+  }
+
+  if(item.tagName == 'wire') {
+    let oldCoord = geometry.clone();
+    let inchCoord = oldCoord.quot(2.54);
+
+    //console.log('alignItem:', { oldCoord, inchCoord });
+
+    let newCoord = oldCoord.clone().round(2.54);
+    inchCoord = newCoord.quot(2.54);
+    //console.log('alignItem:', { newCoord, inchCoord });
+
+    let diff = newCoord.diff(oldCoord);
+    //console.log('alignItem:', { diff });
 
     changed = !diff.isNull();
+
+    geometry.add(diff);
   }
 
   if(changed) {
@@ -295,6 +307,7 @@ async function main(...args) {
     alignAll,
     fixValue,
     fixValues,
+    Util,
     LineList,
     Point,
     Circle,
@@ -316,17 +329,11 @@ async function main(...args) {
   repl.history_set(JSON.parse(std.loadFile(histfile) || '[]'));
 
   Util.atexit(() => {
-    let hist = repl.history_get();
+    let hist = repl.history_get().filter((item, i, a) => a.lastIndexOf(item) == i);
 
-    filesystem.writeFile(histfile,
-      JSON.stringify(
-        hist.filter((item, i) => hist.lastIndexOf(item) == i),
-        null,
-        2
-      )
-    );
+    filesystem.writeFile(histfile, JSON.stringify(hist, null, 2));
 
-    console.log('EXIT');
+    console.log(`EXIT (wrote ${hist.length} history entries)`);
   });
   await repl.run();
   console.log('REPL done');
