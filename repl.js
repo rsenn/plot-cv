@@ -953,15 +953,24 @@ export default function REPL(title = 'QuickJS') {
               backward_word,
               beginning_of_line,
               delete_char,
-              end_of_line,
+      //        end_of_line,
               forward_char,
               forward_word,
               kill_line,
               kill_word
             ].indexOf(fun) == -1
           ) {
-            readline_cb = readline_handle_cmd;
+                const histcmd = history[search_index];
+
+//            readline_cb = readline_handle_cmd;
             search = 0;
+  //          cmd = histcmd;
+          std.puts(`\x1b[1G`);
+          std.puts(`\x1b[J`);
+          cursor_pos = histcmd.length;
+        readline_start(histcmd, readline_handle_cmd);
+    return;
+           // update();
           }
           break;
       }

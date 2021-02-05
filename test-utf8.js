@@ -4,8 +4,9 @@ import PortableFileSystem from './lib/filesystem.js';
 import tXml from './lib/tXml.js';
 import { toXML } from './lib/json.js';
 
-function *BytesToUTF8(bytes) {
-  let state = 0, val = 0;
+function* BytesToUTF8(bytes) {
+  let state = 0,
+    val = 0;
   for(const c of bytes) {
     if(state !== 0 && c >= 0x80 && c < 0xc0) {
       val = (val << 6) | (c & 0x3f);
@@ -21,15 +22,13 @@ function *BytesToUTF8(bytes) {
   }
 }
 
-function *CodePointsToChars(codePoints) {
-  for(let c of codePoints)
-    yield String.fromCodePoint(c);
+function* CodePointsToChars(codePoints) {
+  for(let c of codePoints) yield String.fromCodePoint(c);
 }
 
 function CodePointsToString(codePoints) {
   let s = '';
-  for(let c of codePoints)
-    s += String.fromCodePoint(c);
+  for(let c of codePoints) s += String.fromCodePoint(c);
   return s;
 }
 
@@ -63,9 +62,9 @@ async function main(...args) {
 
   console.log('result:', result);
   let g = BytesToUTF8(bytes);
-  console.log('g:',typeof g);
-  console.log('g:',g.next);
-  console.log('g:',g);
+  console.log('g:', typeof g);
+  console.log('g:', g.next);
+  console.log('g:', g);
 
   console.log('BytesToUTF8:', CodePointsToString(g));
 }
