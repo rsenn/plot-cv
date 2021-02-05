@@ -1,17 +1,46 @@
 import { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, EagleNodeList, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, EagleDocument, EagleReference, EagleRef, makeEagleNode, EagleNode, Renderer, EagleProject, EagleElement, makeEagleElement, EagleElementProxy, EagleNodeMap, ImmutablePath, DereferenceError } from './lib/eagle.js';
 import PortableFileSystem from './lib/filesystem.js';
-import { LineList, Rect } from './lib/geom.js';
 import { toXML } from './lib/json.js';
 import Util from './lib/util.js';
 import deep from './lib/deep.js';
+import path from './lib/path.js';
+import { LineList, Point, Circle, Rect, Size, Line } from './lib/geom.js';
 import { Graph } from './lib/fd-graph.js';
 import ptr from './lib/json-ptr.js';
 import LogJS from './lib/log.js';
- import ConsoleSetup from './lib/consoleSetup.js';
-  import REPL from './repl.js';
+import ConsoleSetup from './lib/consoleSetup.js';
+import REPL from './repl.js';
 
-let  filesystem;
- 
+let filesystem;
+
+Util.define(Array.prototype, {
+  findLastIndex(predicate) {
+    for(let i = this.length - 1; i >= 0; --i) {
+      const x = this[i];
+      if(predicate(x, i, this)) {
+        return i;
+      }
+    }
+    return -1;
+  },
+  rotateRight(n) {
+    this.unshift(...this.splice(n, this.length - n));
+    return this;
+  },
+  rotateLeft(n) {
+    this.push(...this.splice(0, n));
+    return this;
+  },
+  at(index) {
+    return this[Util.mod(index, this.length)];
+  },
+  get head() {
+    return this[this.length-1];
+  },
+  get tail() {
+    return this[this.length-1];
+  }
+});
 
 function updateMeasures(board) {
   if(!board) return false;
@@ -39,36 +68,30 @@ function updateMeasures(board) {
 
 function alignItem(item) {
   console.debug('alignItem', item);
+  let offsetPos = new Point(0, 0);
+  if(item.tagName == 'element') {
+    let pkg = item['package'];
+
+    offsetPos = new Point(pkg.pads[0]);
+  }
+
   let geometry = item.geometry;
   let oldPos = geometry.clone();
+  let newPos = oldPos.sum(offsetPos).round(2.54).diff(offsetPos);
 
-  let newPos = geometry.clone().round(1.27, 2);
-
-  let diff = newPos.diff(oldPos).round(0.0001, 5);
-
+  let diff = newPos.diff(oldPos);
   let before = item.parentNode.toXML();
-
   //console.log('geometry:', Object.entries(Object.getOwnPropertyDescriptors(geometry)).map(([name, { value }]) => [name, value && Object.getOwnPropertyDescriptors(value)]), geometry.x1);
+  console.log('alignItem:', { oldPos, newPos, diff });
 
   geometry.add(diff);
-
-  //geometry.y2 = 0;
 
   let changed = !diff.isNull();
 
   if(changed) {
-    console.log('before:', Util.abbreviate(before));
-    console.log('after:', Util.abbreviate(item.parentNode.toXML()));
-    //console.log('geometry:', geometry);
-    console.log('align\n',
-      item.xpath(),
-      '\n newPos:',
-      newPos,
-      '\n diff:',
-      diff,
-      '\n attr:',
-      item.raw.attributes
-    );
+    console.log(item);
+    /*    console.log('after:', Util.abbreviate(item.parentNode.toXML()));
+     console.log('align\n', item.xpath(), '\n newPos:', newPos, '\n diff:', diff, '\n attr:', item.raw.attributes);*/
   }
   return changed;
 }
@@ -84,6 +107,32 @@ function alignAll(doc = globalThis.document) {
   for(let net of signals_nets) for (let item of net.getAll('wire')) changed |= alignItem(item);
   return !!changed;
 }
+
+function fixValue(element) {
+  let { value } = element;
+
+  switch (element.name[0]) {
+    case 'R': {
+      value = value.replace(/^([0-9.]+)([mkM]?)(?:\xEF\xBF\xBD|)(.*)/, '$1$2\uCEA9$3');
+      break;
+    }
+    case 'L': {
+      value = value.replace(/^([0-9.]+)\xEF\xBF\xBD(H.*)/, '$1\uCEBC$2');
+      break;
+    }
+    case 'C': {
+      value = value.replace(/^([0-9.]+)\xEF\xBF\xBD(F.*)/, '$1\uCEBC$2');
+      break;
+    }
+  }
+  element.attributes['value'] = value;
+}
+
+function fixValues(doc) {
+  if(doc.type == 'brd') doc.elements.forEach(fixValue);
+  else if(doc.type == 'sch') doc.parts.forEach(fixValue);
+}
+
 async function testEagle(filename) {
   console.log('testEagle: ', filename);
   let proj = new EagleProject(filename, filesystem);
@@ -159,21 +208,97 @@ async function testEagle(filename) {
   return proj;
 }
 
-
-
 async function main(...args) {
-    await ConsoleSetup({ breakLength: 120, depth: 10 });
-   await PortableFileSystem(fs => (filesystem = fs));
-   Object.assign(globalThis, { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, EagleNodeList, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, EagleDocument, EagleReference, EagleRef, makeEagleNode, EagleNode, Renderer, EagleProject, EagleElement, makeEagleElement, EagleElementProxy, EagleNodeMap, ImmutablePath, DereferenceError });
+  await ConsoleSetup({ /*breakLength: 240, */ depth: 10 });
+  await PortableFileSystem(fs => (filesystem = fs));
 
-Object.assign(globalThis, {
-  load(filename) {
-return globalThis.document =    new EagleDocument(std.loadFile(filename));
-  },
-  updateMeasures, alignItem,alignAll
-});
+  const base = path.basename(Util.getArgv()[1], /\.[^.]*$/);
+  const histfile = `.${base}-history`;
 
- REPL(globalThis);
+  Object.assign(globalThis, {
+    EagleSVGRenderer,
+    SchematicRenderer,
+    BoardRenderer,
+    LibraryRenderer,
+    EagleNodeList,
+    useTrkl,
+    RAD2DEG,
+    DEG2RAD,
+    VERTICAL,
+    HORIZONTAL,
+    HORIZONTAL_VERTICAL,
+    DEBUG,
+    log,
+    setDebug,
+    PinSizes,
+    EscapeClassName,
+    UnescapeClassName,
+    LayerToClass,
+    ElementToClass,
+    ClampAngle,
+    AlignmentAngle,
+    MakeRotation,
+    EagleAlignments,
+    Alignment,
+    SVGAlignments,
+    AlignmentAttrs,
+    RotateTransformation,
+    LayerAttributes,
+    InvertY,
+    PolarToCartesian,
+    CartesianToPolar,
+    RenderArc,
+    CalculateArcRadius,
+    LinesToPath,
+    MakeCoordTransformer,
+    useAttributes,
+    EagleDocument,
+    EagleReference,
+    EagleRef,
+    makeEagleNode,
+    EagleNode,
+    Renderer,
+    EagleProject,
+    EagleElement,
+    makeEagleElement,
+    EagleElementProxy,
+    EagleNodeMap,
+    ImmutablePath,
+    DereferenceError
+  });
+
+  Object.assign(globalThis, {
+    load(filename) {
+      return (globalThis.document = new EagleDocument(std.loadFile(filename)));
+    },
+    updateMeasures,
+    alignItem,
+    alignAll,
+    fixValue,
+    fixValues,
+    Point,
+    Rect,
+    Size,
+    Circle,
+    Line
+  });
+
+  console.log('REPL now');
+
+  let repl = (globalThis.repl = new REPL(base));
+  repl.exit = Util.exit;
+
+  repl.history_set(JSON.parse(std.loadFile(histfile) || '[]'));
+
+  Util.atexit(() => {
+    let hist = repl.history_get();
+
+    filesystem.writeFile(histfile, JSON.stringify(Util.unique(hist), null, 2));
+
+    console.log('EXIT');
+  });
+  await repl.run();
+  console.log('REPL done');
 }
 
 Util.callMain(main, true);

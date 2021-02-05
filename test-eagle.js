@@ -7,7 +7,7 @@ import deep from './lib/deep.js';
 import { Graph } from './lib/fd-graph.js';
 import ptr from './lib/json-ptr.js';
 import LogJS from './lib/log.js';
- import ConsoleSetup from './lib/consoleSetup.js';
+import ConsoleSetup from './lib/consoleSetup.js';
 
 let filesystem;
 
@@ -288,8 +288,8 @@ async function testEagle(filename) {
   return proj;
 }
 async function main(...args) {
-    await ConsoleSetup({ breakLength: 120, depth: 10 });
-if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3');
+  await ConsoleSetup({ breakLength: 120, depth: 10 });
+  if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3');
   for(let arg of args) {
     //arg = arg.replace(/\.(brd|sch|lbr)$/i, '');
     try {
