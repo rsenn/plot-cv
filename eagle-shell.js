@@ -73,8 +73,8 @@ function alignItem(item) {
   let geometry = item.geometry;
   if(item.tagName == 'element') {
     let pkg = item['package'];
-let t = item.transformation();
-let m = t.toMatrix();
+    let t = item.transformation();
+    let m = t.toMatrix();
     console.log('alignItem:', { t, m });
 
     offsetPos = new Point(pkg.pads[0]);

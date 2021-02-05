@@ -3,8 +3,8 @@ import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 
 async function main(...args) {
-   await ConsoleSetup({ colors: true, depth: 6, breakLength: 80 });
- let file = 'lib/geom/point.js';
+  await ConsoleSetup({ colors: true, depth: 6, breakLength: 80 });
+  let file = 'lib/geom/point.js';
 
   if(args.length == 0) args = ['0,0', '50,100', '100,100', '100,50'];
 
@@ -71,9 +71,8 @@ async function main(...args) {
   let result = new PointList(vertices);
   console.log('result:', result);
 
-    console.log("matrix:", m);
-    console.log("matrix:", Matrix.identity());
-
+  console.log('matrix:', m);
+  console.log('matrix:', Matrix.identity());
 }
 
 Util.callMain(main, true);
