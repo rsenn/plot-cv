@@ -165,16 +165,32 @@ function coordMap(doc) {
         let points = line.toPoints();
         let [a, b] = points.map(p => new Point(p));
 
-        console.log(`signal '${signal.name}' wire #${signal.wires.indexOf(wire)}:`, points);
+        //   console.log(`signal '${signal.name}' wire #${signal.wires.indexOf(wire)}:`, points);
         console.log(`signal '${signal.name}' wire #${signal.wires.indexOf(wire)}:`, { a, b });
 
         map.set(a.toString(), [signal.name, wire, b]);
         map.set(b.toString(), [signal.name, wire, a]);
       }
     }
+    for(let element of doc.board.elements.children) {
+      let pos = new Point(element.geometry);
+      let transform = element.transformation().filter(t => t.type != 'translate');
+      console.log(`element '${element.name}':`, pos, transform);
+      let i = 0;
+      let { contactrefs } = element;
+      console.log(`contactrefs `, contactrefs);
+      for(let pad of element.pads.list) {
+        let { geometry } = pad;
+        console.log(`pad '${element.name}.${pad.name}':`, geometry);
+        let padPos = new Point(geometry);
+        let cref = contactrefs[pad.name];
+        map.set(padPos.toString(), [cref?.parentNode ?? null, element, pad /*, cref*/]);
+      }
+    }
   }
-  console.log('coordMap', { map });
-  return map;
+  globalThis.mapCoords = map;
+  //  console.log('coordMap', { map });
+  //  return map;
 }
 
 async function testEagle(filename) {

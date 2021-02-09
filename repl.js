@@ -93,6 +93,7 @@ export default function REPL(title = 'QuickJS') {
     };
   }
 
+  var running = true;
   var history = [];
   var clip_board = '';
   var prec;
@@ -134,6 +135,64 @@ export default function REPL(title = 'QuickJS') {
   /* current X position of the cursor in the terminal */
   var term_cursor_x = 0;
 
+  var readline_keys;
+  var readline_state;
+  var readline_cb;
+
+  var hex_mode = false;
+  var eval_mode = 'std';
+
+  var commands = {
+    /* command table */ '\x01': beginning_of_line /* ^A - bol */,
+    '\x02': backward_char /* ^B - backward-char */,
+    '\x03': control_c /* ^C - abort */,
+    '\x04': control_d /* ^D - delete-char or exit */,
+    '\x05': end_of_line /* ^E - eol */,
+    '\x06': forward_char /* ^F - forward-char */,
+    '\x07': abort /* ^G - bell */,
+    '\x08': backward_delete_char /* ^H - backspace */,
+    '\x09': completion /* ^I - history-search-backward */,
+    '\x0a': accept_line /* ^J - newline */,
+    '\x0b': kill_line /* ^K - delete to end of line */,
+    '\x0d': accept_line /* ^M - enter */,
+    '\x0e': next_history /* ^N - down */,
+    '\x10': previous_history /* ^P - up */,
+    '\x11': quoted_insert /* ^Q - quoted-insert */,
+    '\x12': reverse_search /* ^R - reverse-search */,
+    '\x13': forward_search /* ^S - search */,
+    '\x14': transpose_chars /* ^T - transpose */,
+    '\x18': reset /* ^X - cancel */,
+    '\x19': yank /* ^Y - yank */,
+    '\x1bOA': previous_history /* ^[OA - up */,
+    '\x1bOB': next_history /* ^[OB - down */,
+    '\x1bOC': forward_char /* ^[OC - right */,
+    '\x1bOD': backward_char /* ^[OD - left */,
+    '\x1bOF': forward_word /* ^[OF - ctrl-right */,
+    '\x1bOH': backward_word /* ^[OH - ctrl-left */,
+    '\x1b[1;5C': forward_word /* ^[[1;5C - ctrl-right */,
+    '\x1b[1;5D': backward_word /* ^[[1;5D - ctrl-left */,
+    '\x1b[1~': beginning_of_line /* ^[[1~ - bol */,
+    '\x1b[3~': delete_char /* ^[[3~ - delete */,
+    '\x1b[4~': end_of_line /* ^[[4~ - eol */,
+    '\x1b[5~': history_search_backward /* ^[[5~ - page up */,
+    '\x1b[6~': history_search_forward /* ^[[5~ - page down */,
+    '\x1b[A': previous_history /* ^[[A - up */,
+    '\x1b[B': next_history /* ^[[B - down */,
+    '\x1b[C': forward_char /* ^[[C - right */,
+    '\x1b[D': backward_char /* ^[[D - left */,
+    '\x1b[F': end_of_line /* ^[[F - end */,
+    '\x1b[H': beginning_of_line /* ^[[H - home */,
+    '\x1b\x7f': backward_kill_word /* M-C-? - backward_kill_word */,
+    '\x1bb': backward_word /* M-b - backward_word */,
+    '\x1bd': kill_word /* M-d - kill_word */,
+    '\x1bf': forward_word /* M-f - backward_word */,
+    '\x1bk': backward_kill_line /* M-k - backward_kill_line */,
+    '\x1bl': downcase_word /* M-l - downcase_word */,
+    '\x1bt': transpose_words /* M-t - transpose_words */,
+    '\x1bu': upcase_word /* M-u - upcase_word */,
+    '\x7f': backward_delete_char /* ^? - delete */
+  };
+
   function termInit() {
     var tab;
     term_fd = std.in.fileno();
@@ -169,6 +228,8 @@ export default function REPL(title = 'QuickJS') {
     l = os.read(term_fd, term_read_buf.buffer, 0, term_read_buf.length);
     for(i = 0; i < l; i++) {
       handle_byte(term_read_buf[i]);
+
+      if(!running) break;
     }
   }
 
@@ -296,13 +357,13 @@ export default function REPL(title = 'QuickJS') {
         'i'
       );
       const num = search > 0 ? search - 1 : search;
-      // search_index = history.findLastIndex(c => re.test(c) && --num == 0);
+      //search_index = history.findLastIndex(c => re.test(c) && --num == 0);
       let search_history = [...history.entries()].rotateLeft(history_index);
       search_matches.splice(0,
         search_matches.length,
         ...search_history.filter(([i, c]) => re.test(c))
       );
-      //   num = search > 0 ? search - 1 : search;
+      //num = search > 0 ? search - 1 : search;
       const match = search_matches.at(num);
       const [histidx = -1, histcmd = ''] = match || [];
       const histdir = search > 0 ? 'forward' : 'reverse';
@@ -324,7 +385,7 @@ export default function REPL(title = 'QuickJS') {
       term_cursor_x = start;
       last_cursor_pos = cursor_pos;
       std.puts(`\x1b[${ucs_length(r)}D`);
-      //  move_cursor(-ucs_length(r));
+      //move_cursor(-ucs_length(r));
       std.out.flush();
       return;
     } /* cursor_pos is the position in 16 bit characters inside the
@@ -640,6 +701,7 @@ export default function REPL(title = 'QuickJS') {
     if(last_fun === control_c) {
       std.puts('\n');
 
+      running = false;
       (thisObj.exit ?? std.exit)(0);
     } else {
       std.puts('\n(Press Ctrl-C again to quit)\n');
@@ -785,66 +847,11 @@ export default function REPL(title = 'QuickJS') {
     }
   }
 
-  var commands = {
-    /* command table */ '\x01': beginning_of_line /* ^A - bol */,
-    '\x02': backward_char /* ^B - backward-char */,
-    '\x03': control_c /* ^C - abort */,
-    '\x04': control_d /* ^D - delete-char or exit */,
-    '\x05': end_of_line /* ^E - eol */,
-    '\x06': forward_char /* ^F - forward-char */,
-    '\x07': abort /* ^G - bell */,
-    '\x08': backward_delete_char /* ^H - backspace */,
-    '\x09': completion /* ^I - history-search-backward */,
-    '\x0a': accept_line /* ^J - newline */,
-    '\x0b': kill_line /* ^K - delete to end of line */,
-    '\x0d': accept_line /* ^M - enter */,
-    '\x0e': next_history /* ^N - down */,
-    '\x10': previous_history /* ^P - up */,
-    '\x11': quoted_insert /* ^Q - quoted-insert */,
-    '\x12': reverse_search /* ^R - reverse-search */,
-    '\x13': forward_search /* ^S - search */,
-    '\x14': transpose_chars /* ^T - transpose */,
-    '\x18': reset /* ^X - cancel */,
-    '\x19': yank /* ^Y - yank */,
-    '\x1bOA': previous_history /* ^[OA - up */,
-    '\x1bOB': next_history /* ^[OB - down */,
-    '\x1bOC': forward_char /* ^[OC - right */,
-    '\x1bOD': backward_char /* ^[OD - left */,
-    '\x1bOF': forward_word /* ^[OF - ctrl-right */,
-    '\x1bOH': backward_word /* ^[OH - ctrl-left */,
-    '\x1b[1;5C': forward_word /* ^[[1;5C - ctrl-right */,
-    '\x1b[1;5D': backward_word /* ^[[1;5D - ctrl-left */,
-    '\x1b[1~': beginning_of_line /* ^[[1~ - bol */,
-    '\x1b[3~': delete_char /* ^[[3~ - delete */,
-    '\x1b[4~': end_of_line /* ^[[4~ - eol */,
-    '\x1b[5~': history_search_backward /* ^[[5~ - page up */,
-    '\x1b[6~': history_search_forward /* ^[[5~ - page down */,
-    '\x1b[A': previous_history /* ^[[A - up */,
-    '\x1b[B': next_history /* ^[[B - down */,
-    '\x1b[C': forward_char /* ^[[C - right */,
-    '\x1b[D': backward_char /* ^[[D - left */,
-    '\x1b[F': end_of_line /* ^[[F - end */,
-    '\x1b[H': beginning_of_line /* ^[[H - home */,
-    '\x1b\x7f': backward_kill_word /* M-C-? - backward_kill_word */,
-    '\x1bb': backward_word /* M-b - backward_word */,
-    '\x1bd': kill_word /* M-d - kill_word */,
-    '\x1bf': forward_word /* M-f - backward_word */,
-    '\x1bk': backward_kill_line /* M-k - backward_kill_line */,
-    '\x1bl': downcase_word /* M-l - downcase_word */,
-    '\x1bt': transpose_words /* M-t - transpose_words */,
-    '\x1bu': upcase_word /* M-u - upcase_word */,
-    '\x7f': backward_delete_char /* ^? - delete */
-  };
-
   function dupstr(str, count) {
     var res = '';
     while(count-- > 0) res += str;
     return res;
   }
-
-  var readline_keys;
-  var readline_state;
-  var readline_cb;
 
   function readline_print_prompt() {
     std.puts(prompt);
@@ -854,7 +861,10 @@ export default function REPL(title = 'QuickJS') {
   }
 
   function readline_start(defstr, cb) {
-    cmd = defstr || '';
+    let a = (defstr || '').split(/\n/g);
+    mexpr = a.slice(0, -1).join('\n');
+    cmd = a[a.length - 1];
+
     cursor_pos = cmd.length;
     history_index = history.length;
     readline_cb = cb;
@@ -881,7 +891,7 @@ export default function REPL(title = 'QuickJS') {
 
   function handle_char(c1) {
     var c;
-    // console.log("handle_char", { c1, readline_state });
+    //console.log("handle_char", { c1, readline_state });
     c = String.fromCodePoint(c1);
     switch (readline_state) {
       case 0:
@@ -921,7 +931,7 @@ export default function REPL(title = 'QuickJS') {
 
   function handle_key(keys) {
     var fun;
-    // console.log("handle_key:", keys.length, [...keys].map(k => k.charCodeAt(0)), {cmd});
+    //console.log("handle_key:", keys.length, [...keys].map(k => k.charCodeAt(0)), {cmd});
 
     if(quote_flag) {
       if(ucs_length(keys) === 1) insert(keys);
@@ -952,7 +962,7 @@ export default function REPL(title = 'QuickJS') {
               backward_word,
               beginning_of_line,
               delete_char,
-              //        end_of_line,
+              //end_of_line,
               forward_char,
               forward_word,
               kill_line,
@@ -961,15 +971,15 @@ export default function REPL(title = 'QuickJS') {
           ) {
             const histcmd = history[search_index];
 
-            //            readline_cb = readline_handle_cmd;
+            //readline_cb = readline_handle_cmd;
             search = 0;
-            //          cmd = histcmd;
+            //cmd = histcmd;
             std.puts(`\x1b[1G`);
             std.puts(`\x1b[J`);
             cursor_pos = histcmd.length;
             readline_start(histcmd, readline_handle_cmd);
             return;
-            // update();
+            //update();
           }
           break;
       }
@@ -984,9 +994,6 @@ export default function REPL(title = 'QuickJS') {
     cursor_pos = cursor_pos < 0 ? 0 : cursor_pos > cmd.length ? cmd.length : cursor_pos;
     update();
   }
-
-  var hex_mode = false;
-  var eval_mode = 'std';
 
   function number_to_string(a, radix) {
     var s;
@@ -1247,7 +1254,25 @@ export default function REPL(title = 'QuickJS') {
     } else if(cmd === 'clear') {
       std.puts('\x1b[H\x1b[J');
     } else if(cmd === 'q') {
-      (thisObj.exit ?? std.exit)(0);
+      running = false;
+      //(thisObj.exit ?? std.exit)(0);
+      return false;
+    } else if(cmd === 'i') {
+      const [, moduleName, ...exports] = expr.split(/\s+/g);
+      let done = false;
+      // console.log('import', globalThis.import);
+      import(moduleName)
+        .then(module => {
+          console.log('import', { module });
+          done = true;
+        })
+        .catch(e => {
+          console.error(moduleName + ':', e);
+          done = true;
+        });
+      while(!done) std.sleep(50);
+
+      //    console.log("handle_directive", {cmd,module,exports});
       return false;
     } else if(has_jscalc && cmd === 'a') {
       algebraicMode = true;
@@ -1369,8 +1394,8 @@ export default function REPL(title = 'QuickJS') {
   }
 
   function readline_handle_cmd(expr) {
-    //console.log('readline_handle_cmd', { expr });
-    handle_cmd(expr);
+    let ret = handle_cmd(expr);
+    console.log('readline_handle_cmd', { expr, mexpr, ret });
     cmd_readline_start();
   }
 
@@ -1379,18 +1404,18 @@ export default function REPL(title = 'QuickJS') {
 
     if(expr === null) {
       expr = '';
-      return;
+      return -1;
     }
     if(expr === '?') {
       help();
-      return;
+      return -2;
     }
     cmd = extract_directive(expr);
     if(cmd.length > 0) {
-      if(!handle_directive(cmd, expr)) return;
+      if(!handle_directive(cmd, expr)) return -3;
       expr = expr.substring(cmd.length + 1);
     }
-    if(expr === '') return;
+    if(expr === '') return -4;
 
     if(mexpr) expr = mexpr + '\n' + expr;
     colorstate = colorize_js(expr);
@@ -1398,7 +1423,7 @@ export default function REPL(title = 'QuickJS') {
     level = colorstate[1];
     if(pstate) {
       mexpr = expr;
-      return;
+      return -5;
     }
     mexpr = '';
 
@@ -1408,6 +1433,11 @@ export default function REPL(title = 'QuickJS') {
       eval_and_print(expr);
     }
     level = 0;
+
+    let histidx = history.findLastIndex(entry => expr.startsWith(entry));
+
+    history_add(history.splice(histidx, history_index - histidx).join('\n'));
+    //console.log('handle_cmd', {histidx}, history.slice(histidx));
 
     /* run the garbage collector after each command */
     std.gc();
@@ -1496,7 +1526,7 @@ export default function REPL(title = 'QuickJS') {
           if(c == ']') {
             pop_state();
           }
-          // ECMA 5: ignore '/' inside char classes
+          //ECMA 5: ignore '/' inside char classes
           continue;
         }
         if(c == '[') {
@@ -1588,12 +1618,12 @@ export default function REPL(title = 'QuickJS') {
           continue;
         case '/':
           if(i < n && str[i] == '*') {
-            // block comment
+            //block comment
             parse_block_comment();
             break;
           }
           if(i < n && str[i] == '/') {
-            // line comment
+            //line comment
             parse_line_comment();
             break;
           }
@@ -1730,6 +1760,7 @@ export default function REPL(title = 'QuickJS') {
     this.history = history;
     return this;
   }
+
   function waitRead(fd) {
     return new Promise((resolve, reject) => {
       os.setReadHandler(fd, () => {
@@ -1744,9 +1775,9 @@ export default function REPL(title = 'QuickJS') {
 
     cmd_start(title);
 
-    for(;;) {
+    do {
       await waitRead(term_fd);
       term_read_handler();
-    }
+    } while(running);
   }
 }

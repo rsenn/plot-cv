@@ -2,6 +2,8 @@ import KolorWheel from './lib/KolorWheel.js';
 import { RGBA, HSLA } from './lib/color.js';
 import Util from './lib/util.js';
 import Alea from './lib/alea.js';
+import ConsoleSetup from './lib/consoleSetup.js';
+import PortableFileSystem from './lib/filesystem.js';
 
 const prng = new Alea(Date.now());
 
@@ -179,18 +181,67 @@ const GeneratePalette = numColors => {
   });
   return ret;
 };
+function* Gradient(start, end, steps = 10) {
+  var base = new KolorWheel(start);
+  var target = base.abs(end, steps);
 
-const palette = GeneratePalette(5);
-//console.log('palette:', palette);
-//console.log('keyList.length:', keyList.length);
-
-let s = '';
-for(let i = 0; i < keyList.length; i++) {
-  //console.log(`keys[${i}]:`, keyList[i]);
-
-  for(let key of keyList[i]) {
-    if(s != '') s += ', ';
-    s += `${key}: palette[${i}]`;
-  }
+  for(var n = 0; n < steps; n++) yield target.get(n).getHex();
 }
-//console.log('const palette = ' + Util.inspect(palette, { colors: false, newline: '' }) + ';\n renderer.colors = {' + s + '};');
+// for gradient
+async function main(...args) {
+  await PortableFileSystem(fs => (filesystem = fs));
+  await ConsoleSetup({ depth: 4, breakLength: 60 });
+
+  const palette = GeneratePalette(5);
+  console.log('palette:', palette);
+  //console.log('keyList.length:', keyList.length);
+
+  let s = '';
+  for(let i = 0; i < keyList.length; i++) {
+    //console.log(`keys[${i}]:`, keyList[i]);
+
+    for(let key of keyList[i]) {
+      if(s != '') s += ', ';
+      s += `${key}: palette[${i}]`;
+    }
+  }
+  console.log('const palette = [ ' +
+      palette.map(c => c.toSource()).join(', ') +
+      ' ];\n renderer.colors = {' +
+      s +
+      '};'
+  );
+  let colors = [...Gradient('#9ceaff', '#000088', 7)].map(c => new RGBA(c));
+
+  colors = (function () {
+    let ret = [];
+    new KolorWheel([180, 100, 50]).rel(60, 0, 0, 7).each(function () {
+      ret.push(new RGBA(this.getHex()));
+    });
+    return ret;
+  })();
+
+  console.log(colors);
+  console.log(colors.map(c => c.toHSLA()));
+  console.log(colors
+      .map(c => c.hex())
+      .map(c => `"${c}"`)
+      .join(',\n')
+  );
+  console.log(new RGBA(0, 0, 255).toHSLA());
+  console.log(new RGBA('#006dcf').toHSLA());
+  console.log();
+  let rainbow = [];
+  for(let h of Util.range(0, 300, 300 / 100)) rainbow.push(new HSLA(h, 100, 60));
+
+  console.log(rainbow);
+  console.log(Util.chunkArray(
+      rainbow.map(c => c.hex()).map(c => `"${c}"`),
+      8
+    )
+      .map(a => a.join(', '))
+      .join('\n')
+  );
+}
+
+Util.callMain(main, true);
