@@ -705,6 +705,7 @@ export default function REPL(title = 'QuickJS') {
       (thisObj.exit ?? std.exit)(0);
     } else {
       std.puts('\n(Press Ctrl-C again to quit)\n');
+      cmd = '';
       readline_print_prompt();
     }
   }
@@ -1258,10 +1259,11 @@ export default function REPL(title = 'QuickJS') {
       //(thisObj.exit ?? std.exit)(0);
       return false;
     } else if(cmd === 'i') {
-      const [, moduleName, ...exports] = expr.split(/\s+/g);
-      let done = false;
-      // console.log('import', globalThis.import);
-      import(moduleName)
+      const [, ...args] = expr.split(/\s+/g);
+
+      thisObj.importModule(...args);
+     /* let done = false;
+       import(moduleName)
         .then(module => {
           console.log('import', { module });
           done = true;
@@ -1270,7 +1272,7 @@ export default function REPL(title = 'QuickJS') {
           console.error(moduleName + ':', e);
           done = true;
         });
-      while(!done) std.sleep(50);
+      while(!done) std.sleep(50);*/
 
       //    console.log("handle_directive", {cmd,module,exports});
       return false;
@@ -1395,7 +1397,7 @@ export default function REPL(title = 'QuickJS') {
 
   function readline_handle_cmd(expr) {
     let ret = handle_cmd(expr);
-    console.log('readline_handle_cmd', { expr, mexpr, ret });
+    //console.log('readline_handle_cmd', { expr, mexpr, ret });
     cmd_readline_start();
   }
 

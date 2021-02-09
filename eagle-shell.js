@@ -8,6 +8,7 @@ import { LineList, Point, Circle, Rect, Size, Line, TransformationList, Rotation
 import ConsoleSetup from './lib/consoleSetup.js';
 import REPL from './repl.js';
 import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, Enum, HashList, Multimap, Shash, SortedMap, HashMultimap, MultiBiMap, MultiKeyMap, DenseSpatialHash2D, SpatialHash2D, HashMap, SpatialH, SpatialHash, SpatialHashMap, BoxHash } from './lib/container.js';
+import * as std from 'std';
 
 let filesystem;
 
@@ -39,6 +40,23 @@ Util.define(Array.prototype, {
     return this[this.length-1];
   }
 });
+
+async function importModule(moduleName, ...args) {
+console.log('importModule', moduleName, args);
+let done = false;
+      return await import(moduleName)
+        .then(module => {
+          console.log('import', { module });
+          done = true;
+          Object.assign(globalThis, { [moduleName]: module });
+          return module;
+        })
+        .catch(e => {
+          console.error(moduleName + ':', e);
+          done = true;
+        });
+     // while(!done) std.sleep(50);
+}
 
 function updateMeasures(board) {
   if(!board) return false;
@@ -381,6 +399,7 @@ async function main(...args) {
 
   let repl = (globalThis.repl = new REPL(base));
   repl.exit = Util.exit;
+  repl.importModule = importModule;
 
   repl.history_set(JSON.parse(std.loadFile(histfile) || '[]'));
 

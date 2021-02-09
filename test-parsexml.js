@@ -8,7 +8,7 @@ async function main(...args) {
   await ConsoleSetup({ depth: 20, colors: true, breakLength: 80 });
   await PortableFileSystem();
 
-  let data = filesystem.readFile(args[0] ?? 'BreadboardContacts.out.xml', null);
+  let data = filesystem.readFile(args[0] ?? 'BreadboardContacts.out.xml', 'utf-8');
   console.log('data:', data);
 
   // let result = parse2(Util.bufferToString(data));
