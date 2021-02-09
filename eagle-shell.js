@@ -42,20 +42,20 @@ Util.define(Array.prototype, {
 });
 
 async function importModule(moduleName, ...args) {
-console.log('importModule', moduleName, args);
-let done = false;
-      return await import(moduleName)
-        .then(module => {
-          console.log('import', { module });
-          done = true;
-          Object.assign(globalThis, { [moduleName]: module });
-          return module;
-        })
-        .catch(e => {
-          console.error(moduleName + ':', e);
-          done = true;
-        });
-     // while(!done) std.sleep(50);
+  //console.log('importModule', moduleName, args);
+  let done = false;
+  return await import(moduleName)
+    .then(module => {
+      //console.log('import', { module });
+      done = true;
+      Object.assign(globalThis, { [moduleName]: module });
+      return module;
+    })
+    .catch(e => {
+      console.error(moduleName + ':', e);
+      done = true;
+    });
+  // while(!done) std.sleep(50);
 }
 
 function updateMeasures(board) {
@@ -395,7 +395,6 @@ async function main(...args) {
     SpatialHashMap,
     BoxHash
   });
-  console.log('REPL now');
 
   let repl = (globalThis.repl = new REPL(base));
   repl.exit = Util.exit;

@@ -36,7 +36,7 @@ include(CheckTypeSize)
 include(FindPkgConfig)
 
 if(ENABLE_CCACHE)
-  include("${CMAKE_CURRENT_SOURCE_DIR}/ccache.cmake")
+  include(${CMAKE_SOURCE_DIR}/cmake/ccache.cmake)
   enable_ccache()
 endif(ENABLE_CCACHE)
 
@@ -82,7 +82,7 @@ check_library_exists(json-cpp ZN4YAML6detail9node_data9reset_mapEv /usr JSON_CPP
 set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE CACHE BOOL "Build installable binaries with -Wl,-rpath=PREFIX" FORCE)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE CACHE BOOL "Add dirs in runtime search path to the install rpath" FORCE)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/opencv.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/opencv.cmake)
 
 include_directories(${OPENCV_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/opencv ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
 
@@ -262,11 +262,11 @@ option(HIGHGUI_VIEWER "Enable OpenCV highgui viewer" ON)
 option(IMGUI_VIEWER "Enable imgui viewer" OFF)
 
 if(HIGHGUI_VIEWER)
-  include(highgui-viewer.cmake)
+  include(${CMAKE_SOURCE_DIR}/cmake/highgui-viewer.cmake)
 endif(HIGHGUI_VIEWER)
 
 if(IMGUI_VIEWER)
-  include(imgui-viewer.cmake)
+  include(${CMAKE_SOURCE_DIR}/cmake/imgui-viewer.cmake)
 endif(IMGUI_VIEWER)
 
 set(QUICKJS_SOURCES_LIST "quickjs/quickjs.c;quickjs/quickjs.hpp;quickjs/libregexp.c;quickjs/libunicode.c;quickjs/cutils.c;quickjs/quickjs-libc.c;quickjs/quickjs-libc.h;quickjs/quickjs-find-module.c;quickjs/libbf.c")
@@ -300,7 +300,7 @@ option(ADDITIONAL_PROGS "Build other OpenCV programs" FALSE)
 option(QUICKJS_MODULES "Build .so modules for quickjs" ON)
 
 if(QUICKJS_MODULES)
-  include(js-bindings.cmake)
+  include(${CMAKE_SOURCE_DIR}/cmake/js-bindings.cmake)
 endif(QUICKJS_MODULES)
 #[[
 add_executable(test-dlfcn test-dlfcn.c)

@@ -1,5 +1,5 @@
 # include: OpenCV
-include(${CMAKE_CURRENT_SOURCE_DIR}/opencv.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/opencv.cmake)
 
 if(WIN32 OR MINGW)
   set(QUICKJS_LIBRARY_DIR "${quickjs_BINARY_DIR}")

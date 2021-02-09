@@ -1262,7 +1262,7 @@ export default function REPL(title = 'QuickJS') {
       const [, ...args] = expr.split(/\s+/g);
 
       thisObj.importModule(...args);
-     /* let done = false;
+      /* let done = false;
        import(moduleName)
         .then(module => {
           console.log('import', { module });
