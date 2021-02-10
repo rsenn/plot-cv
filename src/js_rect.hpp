@@ -22,7 +22,7 @@ js_rect_read(JSContext* ctx, JSValueConst rect, JSRectData<T>* out) {
   }
   if(JS_IsNumber(x) && JS_IsNumber(y) && JS_IsNumber(w) && JS_IsNumber(h)) {
     ret &= js_number_read(ctx, x, &out->x);
-    ret &=js_number_read(ctx, y, &out->y);
+    ret &= js_number_read(ctx, y, &out->y);
     ret &= js_number_read(ctx, w, &out->width);
     ret &= js_number_read(ctx, h, &out->height);
   } else {

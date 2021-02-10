@@ -839,6 +839,8 @@ js_mat_get_props(JSContext* ctx, JSValueConst this_val, int magic) {
     return JS_NewFloat64(ctx, m->total());
   else if(magic == 7)
     return js_size_new(ctx, m->cols, m->rows);
+  else if(magic == 8)
+    return JS_NewBool(ctx, m->isContinuous());
 
   return JS_UNDEFINED;
 }
@@ -1267,6 +1269,7 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("empty", js_mat_get_props, NULL, 5),
     JS_CGETSET_MAGIC_DEF("total", js_mat_get_props, NULL, 6),
     JS_CGETSET_MAGIC_DEF("size", js_mat_get_props, NULL, 7),
+    JS_CGETSET_MAGIC_DEF("continuous", js_mat_get_props, NULL, 8),
     JS_CFUNC_MAGIC_DEF("col", 1, js_mat_funcs, 0),
     JS_CFUNC_MAGIC_DEF("row", 1, js_mat_funcs, 1),
     JS_CFUNC_MAGIC_DEF("colRange", 2, js_mat_funcs, 2),

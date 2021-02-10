@@ -1,88 +1,110 @@
 cfg() {
-  if type gcc 2>/dev/null >/dev/null && type g++ 2>/dev/null >/dev/null; then
-    : ${CC:=gcc} ${CXX:=g++}
-  elif type clang 2>/dev/null >/dev/null && type clang++ 2>/dev/null >/dev/null; then
-    : ${CC:=clang} ${CXX:=clang++}
-  fi
+  ({
+    if type gcc 2>/dev/null >/dev/null && type g++ 2>/dev/null >/dev/null; then
+      : ${CC:=gcc} ${CXX:=g++}
+    elif type clang 2>/dev/null >/dev/null && type clang++ 2>/dev/null >/dev/null; then
+      : ${CC:=clang} ${CXX:=clang++}
+    fi
 
-  : ${build:=`$CC -dumpmachine | sed 's|-pc-|-|g'`}
+    : ${build:=$($CC -dumpmachine | sed 's|-pc-|-|g')}
 
-  if [ -z "$host" -a -z "$builddir" ]; then
-    host=$build
+    if [ -z "$host" -a -z "$builddir" ]; then
+      host=$build
+      case "$host" in
+      x86_64-w64-mingw32)
+        host="$host"
+        : ${builddir=build/$host}
+        ;;
+      i686-w64-mingw32)
+        host="$host"
+        : ${builddir=build/$host}
+        ;;
+      x86_64-pc-*)
+        host="$host"
+        : ${builddir=build/$host}
+        ;;
+      i686-pc-*)
+        host="$host"
+        : ${builddir=build/$host}
+        ;;
+      esac
+    fi
+
+    if false && [ -n "$host" -a -z "$prefix" ]; then
+      case "$host" in
+      x86_64-w64-mingw32) : ${prefix=/mingw64} ;;
+      i686-w64-mingw32) : ${prefix=/mingw32} ;;
+      x86_64-pc-*) : ${prefix=/usr} ;;
+      i686-pc-*) : ${prefix=/usr} ;;
+      esac
+    fi
+
+    : ${prefix:=/usr/local}
+    : ${libdir:=$prefix/lib}
+    [ -d "$libdir/$host" ] && libdir=$libdir/$host
+
+    if [ -e "$TOOLCHAIN" ]; then
+      cmakebuild=$(basename "$TOOLCHAIN" .cmake)
+      cmakebuild=${cmakebuild%.toolchain}
+      cmakebuild=${cmakebuild#toolchain-}
+      : ${builddir=build/$cmakebuild}
+    else
+      : ${builddir=build/$host}
+    fi
     case "$host" in
-      x86_64-w64-mingw32) host="$host"; : ${builddir=build/$host}; : ${prefix=/mingw64} ;;
-      i686-w64-mingw32) host="$host"; : ${builddir=build/$host}; : ${prefix=/mingw32} ;;
-      x86_64-pc-*) host="$host"; : ${builddir=build/$host}; : ${prefix=/usr} ;;
-      i686-pc-*) host="$host"; : ${builddir=build/$host}; : ${prefix=/usr} ;;
-    esac
-  fi
-
-  : ${prefix:=/usr/local}
-  : ${libdir:=$prefix/lib}
-  [ -d "$libdir/$host" ] && libdir=$libdir/$host
-
-  if [ -e "$TOOLCHAIN" ]; then
-    cmakebuild=$(basename "$TOOLCHAIN" .cmake)
-    cmakebuild=${cmakebuild%.toolchain}
-    cmakebuild=${cmakebuild#toolchain-}
-    : ${builddir=build/$cmakebuild}
-  else
-   : ${builddir=build/$host}
-  fi
-  case "$host" in
     *msys*) ;;
-    *) test -n "$builddir" && builddir=`echo $builddir | sed 's|-pc-|-|g'` ;;
-  esac
-  
-  case $(uname -o) in
-   # MSys|MSYS|Msys) SYSTEM="MSYS" ;;
-    *) SYSTEM="Unix" ;;
-  esac
+    *) test -n "$builddir" && builddir=$(echo $builddir | sed 's|-pc-|-|g') ;;
+    esac
 
-  case "$STATIC:$TYPE" in
-    YES:*|yes:*|y:*|1:*|ON:*|on:* | *:*[Ss]tatic*) set -- "$@" \
+    case $(uname -o) in
+    # MSys|MSYS|Msys) SYSTEM="MSYS" ;;
+    *) SYSTEM="Unix" ;;
+    esac
+
+    case "$STATIC:$TYPE" in
+    YES:* | yes:* | y:* | 1:* | ON:* | on:* | *:*[Ss]tatic*) set -- "$@" \
       -DBUILD_SHARED_LIBS=OFF \
       -DENABLE_PIC=OFF ;;
-  esac
+    esac
 
-  [ -n "$PKG_CONFIG_PATH" ] && echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH" 1>&2
-  [ -n "$PKG_CONFIG" ] && case "$PKG_CONFIG" in
-     */*) ;;
-     *) PKG_CONFIG=$(which "$PKG_CONFIG") ;; 
-  esac
-  : ${generator:="CodeLite - Unix Makefiles"}
+    [ -n "$PKG_CONFIG_PATH" ] && echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH" 1>&2
+    [ -n "$PKG_CONFIG" ] && case "$PKG_CONFIG" in
+    */*) ;;
+    *) PKG_CONFIG=$(which "$PKG_CONFIG") ;;
+    esac
+    : ${generator:="CodeLite - Unix Makefiles"}
 
- (mkdir -p $builddir
-  : ${relsrcdir=`realpath --relative-to "$builddir" .`}
-  : set -x
-  cd "${builddir:-.}"
-  IFS="$IFS "
- set -- -Wno-dev \
-    -G "$generator" \
-    ${prefix:+-DCMAKE_INSTALL_PREFIX="$prefix"} \
-    ${VERBOSE:+-DCMAKE_VERBOSE_MAKEFILE=${VERBOSE:-OFF}} \
-    -DCMAKE_BUILD_TYPE="${TYPE:-Debug}" \
-    -DBUILD_SHARED_LIBS=ON \
-    ${CC:+-DCMAKE_C_COMPILER="$CC"} \
-    ${CXX:+-DCMAKE_CXX_COMPILER="$CXX"} \
-    ${PKG_CONFIG:+-DPKG_CONFIG_EXECUTABLE="$PKG_CONFIG"} \
-    ${TOOLCHAIN:+-DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN"} \
-    ${CC:+-DCMAKE_C_COMPILER="$CC"} \
-    ${CXX:+-DCMAKE_CXX_COMPILER="$CXX"} \
-    ${MAKE:+-DCMAKE_MAKE_PROGRAM="$MAKE"} \
-    "$@" \
-    $relsrcdir 
-  eval "${CMAKE:-cmake} \"\$@\""
- ) 2>&1 |tee "${builddir##*/}.log"
+    mkdir -p $builddir
+    : ${relsrcdir=$(realpath --relative-to "$builddir" .)}
+    echo "Entering directory '$builddir'" 1>&2
+    : set -x
+    cd "${builddir:-.}"
+    IFS="$IFS "
+    set -- -Wno-dev \
+      -G "$generator" \
+      ${prefix:+-DCMAKE_INSTALL_PREFIX="$prefix"} \
+      ${VERBOSE:+-DCMAKE_VERBOSE_MAKEFILE=${VERBOSE:-OFF}} \
+      -DCMAKE_BUILD_TYPE="${TYPE:-Debug}" \
+      -DBUILD_SHARED_LIBS=ON \
+      ${CC:+-DCMAKE_C_COMPILER="$CC"} \
+      ${CXX:+-DCMAKE_CXX_COMPILER="$CXX"} \
+      ${PKG_CONFIG:+-DPKG_CONFIG_EXECUTABLE="$PKG_CONFIG"} \
+      ${TOOLCHAIN:+-DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN"} \
+      ${CC:+-DCMAKE_C_COMPILER="$CC"} \
+      ${CXX:+-DCMAKE_CXX_COMPILER="$CXX"} \
+      ${MAKE:+-DCMAKE_MAKE_PROGRAM="$MAKE"} \
+      "$@" \
+      $relsrcdir
+    eval "${CMAKE:-cmake} \"\$@\""
+  } 2>&1 && echo "Configured in '$builddir'" 1>&2) | tee "${builddir##*/}.log"
 }
-
 
 cfg-android() {
   (
     : ${builddir=build/android}
     cfg \
       -DCMAKE_INSTALL_PREFIX=/opt/arm-linux-androideabi/sysroot/usr \
-      -DCMAKE_VERBOSE_MAKEFILE=TRUE \
+      \
       -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN:-/opt/android-cmake/android.cmake} \
       -DANDROID_NATIVE_API_LEVEL=21 \
       -DPKG_CONFIG_EXECUTABLE=arm-linux-androideabi-pkg-config \
@@ -102,27 +124,32 @@ cfg-diet() {
     : ${libdir=/opt/diet/lib-${host%%-*}}
     : ${bindir=/opt/diet/bin-${host%%-*}}
 
-    : ${CC="diet-gcc"}
+    CC="diet-gcc"
+
     export CC
 
-    if type pkgcfg 2>/dev/null >/dev/null; then
-      export PKG_CONFIG=pkgcfg
-    elif type pkgconf 2>/dev/null >/dev/null; then
-      export PKG_CONFIG=pkgconf
+    if type pkgcfg >/dev/null; then
+      export PKG_CONFIG=$(type pkgcfg 2>&1 | sed 's,.* is ,,')
+    elif type pkg-config >/dev/null; then
+      export PKG_CONFIG=$(type pkg-config 2>&1 | sed 's,.* is ,,')
     fi
 
-    : ${PKG_CONFIG_PATH="$libdir/pkgconfig"}
-    export PKG_CONFIG_PATH
+    : ${builddir=build/${host%-*}-diet}
+    prefix=/opt/diet
 
-    builddir=build/${host%-*}-diet \
+    export builddir prefix
+    PKG_CONFIG_PATH=/opt/diet/lib-x86_64/pkgconfig:/opt/diet/lib/pkgconfig:/usr/lib/diet/lib/pkgconfig \
       cfg \
       -DCMAKE_INSTALL_PREFIX="$prefix" \
+      -DBUILD_SSL=OFF \
+      -DBUILD_SHARED_LIBS=OFF \
+      -DENABLE_SHARED=OFF \
       -DSHARED_LIBS=OFF \
-      -DCMAKE_VERBOSE_MAKEFILE=ON \
+      -DBUILD_SHARED_LIBS=OFF \
       -DCMAKE_FIND_ROOT_PATH="$prefix" \
       -DCMAKE_SYSTEM_LIBRARY_PATH="$prefix/lib-${host%%-*}" \
-      -D{CMAKE_INSTALL_LIBDIR=,INSTALL_LIB_DIR=$prefix/}"lib-${host%%-*}" \
       ${launcher:+-DCMAKE_C_COMPILER_LAUNCHER="$launcher"} \
+      -DPKG_CONFIG_EXECUTABLE="$PKG_CONFIG" \
       "$@"
   )
 }
@@ -136,8 +163,10 @@ cfg-diet64() {
     export prefix=/opt/diet
 
     builddir=build/$host \
+      PKG_CONFIG_PATH=/opt/diet/lib-x86_64/pkgconfig:/usr/lib/diet/lib-x86_64/pkgconfig \
       CC="diet-gcc" \
       cfg-diet \
+      -DCMAKE_SYSTEM_LIBRARY_PATH=/opt/diet/lib-x86_64 \
       "$@"
   )
 }
@@ -162,13 +191,16 @@ cfg-diet32() {
     fi
 
     builddir=build/$host \
-      cfg-diet "$@"
+      PKG_CONFIG_PATH=/opt/diet/lib-i386/pkgconfig:/usr/lib/diet/lib-i386/pkgconfig \
+      cfg-diet \
+      -DCMAKE_SYSTEM_LIBRARY_PATH=/opt/diet/lib-i386 \
+      "$@"
   )
 }
 
 cfg-mingw() {
   (
-    build=$(gcc -dumpmachine | sed 's|-pc-|-|g')
+    build=$(gcc -dumpmachine)
     : ${host=${build%%-*}-w64-mingw32}
     : ${prefix=/usr/$host/sys-root/mingw}
 
@@ -181,97 +213,51 @@ cfg-mingw() {
 
     export TOOLCHAIN PKG_CONFIG_PATH
 
-    VERBOSE=TRUE \
-      builddir=build/$host \
+    builddir=build/$host \
       bindir=$prefix/bin \
       libdir=$prefix/lib \
       cfg \
       "$@"
   )
 }
+cfg-mingw32() {
+  host=i686-w64-mingw32 cfg-mingw "$@"
+}
+cfg-mingw64() {
+  host=x86_64-w64-mingw32 cfg-mingw "$@"
+}
 
 cfg-emscripten() {
   (
-    build=$(cc -dumpmachine | sed 's|-pc-|-|g')
-    host=$(emcc -dumpmachine)
+    build=$(${CC:-emcc} -dumpmachine | sed 's|-pc-|-|g')
+    host=${build/-gnu/-emscriptenlibc}
     builddir=build/${host%-*}-emscripten
 
-    : ${prefix=$EMSCRIPTEN/system}
-    : ${libdir=$prefix/lib}
-    : ${bindir=$prefix/bin}
+    prefix=$(which emcc | sed 's|/emcc$|/system|')
+    libdir=$prefix/lib
+    bindir=$prefix/bin
 
     CC="emcc" \
-      CXX="em++" \
-      PKG_CONFIG_PATH="$EMSCRIPTEN/system/lib/pkgconfig" \
+      PKG_CONFIG="PKG_CONFIG_PATH=$libdir/pkgconfig pkg-config" \
       cfg \
-      -DENABLE_PIC=FALSE \
-      -DCMAKE_BUILD_TYPE=Release \
-      -DCMAKE_TOOLCHAIN_FILE="$EMSCRIPTEN/cmake/Modules/Platform/Emscripten.cmake" \
-      -DCPU_BASELINE='' \
-      -DCPU_DISPATCH='' \
-      -DCV_TRACE=OFF \
+      -DCMAKE_INSTALL_PREFIX="$prefix" \
+      -DENABLE_SHARED=OFF \
+      -DSHARED_LIBS=OFF \
       -DBUILD_SHARED_LIBS=OFF \
-      -DWITH_1394=OFF \
-      -DWITH_ADE=OFF \
-      -DWITH_VTK=OFF \
-      -DWITH_EIGEN=OFF \
-      -DWITH_FFMPEG=OFF \
-      -DWITH_GSTREAMER=OFF \
-      -DWITH_GTK=OFF \
-      -DWITH_GTK_2_X=OFF \
-      -DWITH_IPP=OFF \
-      -DWITH_JASPER=OFF \
-      -DWITH_JPEG=OFF \
-      -DWITH_WEBP=OFF \
-      -DWITH_OPENEXR=OFF \
-      -DWITH_OPENGL=OFF \
-      -DWITH_OPENVX=OFF \
-      -DWITH_OPENNI=OFF \
-      -DWITH_OPENNI2=OFF \
-      -DWITH_PNG=OFF \
-      -DWITH_TBB=OFF \
-      -DWITH_TIFF=OFF \
-      -DWITH_V4L=OFF \
-      -DWITH_OPENCL=OFF \
-      -DWITH_OPENCL_SVM=OFF \
-      -DWITH_OPENCLAMDFFT=OFF \
-      -DWITH_OPENCLAMDBLAS=OFF \
-      -DWITH_GPHOTO2=OFF \
-      -DWITH_LAPACK=OFF \
-      -DWITH_ITT=OFF \
-      -DWITH_QUIRC=OFF \
-      -DBUILD_ZLIB=ON \
-      -DBUILD_opencv_apps=OFF \
-      -DBUILD_opencv_calib3d=ON \
-      -DBUILD_opencv_dnn=ON \
-      -DBUILD_opencv_features2d=ON \
-      -DBUILD_opencv_flann=ON \
-      -DBUILD_opencv_gapi=OFF \
-      -DBUILD_opencv_ml=OFF \
-      -DBUILD_opencv_photo=ON \
-      -DBUILD_opencv_imgcodecs=OFF \
-      -DBUILD_opencv_shape=OFF \
-      -DBUILD_opencv_videoio=OFF \
-      -DBUILD_opencv_videostab=OFF \
-      -DBUILD_opencv_highgui=OFF \
-      -DBUILD_opencv_superres=OFF \
-      -DBUILD_opencv_stitching=OFF \
-      -DBUILD_opencv_java=OFF \
-      -DBUILD_opencv_java_bindings_generator=OFF \
-      -DBUILD_opencv_js=ON \
-      -DBUILD_opencv_python2=OFF \
-      -DBUILD_opencv_python3=OFF \
-      -DBUILD_opencv_python_bindings_generator=OFF \
-      -DBUILD_EXAMPLES=OFF \
-      -DBUILD_PACKAGE=OFF \
-      -DBUILD_TESTS=OFF \
-      -DBUILD_PERF_TESTS=OFF \
-      -DBUILD_DOCS=OFF \
-      -DWITH_PTHREADS_PF=OFF \
-      -DCV_ENABLE_INTRINSICS=OFF \
-      -DBUILD_WASM_INTRIN_TESTS=OFF \
-      "-DCMAKE_C_FLAGS='-s WASM=1 -s USE_PTHREADS=0 -s LLD_REPORT_UNDEFINED'" \
-      "-DCMAKE_CXX_FLAGS='-s WASM=1 -s USE_PTHREADS=0 -s LLD_REPORT_UNDEFINED'" \
+      "$@"
+  )
+}
+
+cfg-clang() {
+  (
+    build=$(cc -dumpmachine | sed 's|-pc-|-|g')
+    build=${build/-gnu/-clang}
+    : ${host=$build}
+    : ${builddir=build/$host}
+    : ${prefix=/usr/local}
+
+    CC=clang CXX=clang++ \
+      cfg \
       "$@"
   )
 }
@@ -281,14 +267,13 @@ cfg-tcc() {
     build=$(cc -dumpmachine | sed 's|-pc-|-|g')
     host=${build/-gnu/-tcc}
     builddir=build/$host
-    prefix=/usr
+    prefix=/usr/local
     includedir=/usr/lib/$build/tcc/include
     libdir=/usr/lib/$build/tcc/
     bindir=/usr/bin
 
     CC=${TCC:-tcc} \
       cfg \
-      -DCMAKE_VERBOSE_MAKEFILE=ON \
       "$@"
   )
 }
@@ -298,18 +283,19 @@ cfg-musl() {
     : ${build=$(${CC:-gcc} -dumpmachine | sed 's|-pc-|-|g')}
     : ${host=${build%-*}-musl}
 
-    : ${prefix=/usr}
-    : ${includedir=/usr/include/$host}
-    : ${libdir=/usr/lib/$host}
-    : ${bindir=/usr/bin/$host}
-
+    : ${prefix=/opt/musl}
+    : ${includedir=$prefix/include/$host}
+    : ${libdir=$prefix/lib/$host}
+    : ${bindir=$prefix/bin/$host}
     : ${builddir=build/$host}
 
-    CC=musl-gcc \
+    CC=/usr/bin/musl-gcc \
       PKG_CONFIG=musl-pkg-config \
+      PKG_CONFIG_PATH=/opt/musl/lib/pkgconfig:/usr/lib/${host%%-*}-linux-musl/pkgconfig \
       cfg \
+      -DENABLE_SHARED=OFF \
       -DSHARED_LIBS=OFF \
-      -DCMAKE_VERBOSE_MAKEFILE=ON \
+      -DBUILD_SHARED_LIBS=OFF \
       "$@"
   )
 }
@@ -320,8 +306,9 @@ cfg-musl64() {
     host=${build%%-*}-linux-musl
     host=x86_64-${host#*-}
 
-    builddir=build/$host \
-      CFLAGS="-m64" \
+    : ${builddir=build/$host}
+
+    CFLAGS="-m64" \
       cfg-musl \
       -DCMAKE_C_COMPILER="musl-gcc" \
       "$@"
@@ -333,8 +320,9 @@ cfg-musl32() {
     build=$(gcc -dumpmachine | sed 's|-pc-|-|g')
     host=$(echo "$build" | sed "s|x86_64|i686| ; s|-gnu|-musl|")
 
-    builddir=build/$host \
-      CFLAGS="-m32" \
+    : ${builddir=build/$host}
+
+    CFLAGS="-m32" \
       cfg-musl \
       -DCMAKE_C_COMPILER="musl-gcc" \
       "$@"
@@ -343,35 +331,49 @@ cfg-musl32() {
 
 cfg-msys() {
   (
-    build=$(gcc -dumpmachine | sed 's|-pc-|-|g')
+    echo "host: $host"
+    build=$(gcc -dumpmachine)
     : ${host=${build%%-*}-pc-msys}
     : ${prefix=/usr/$host/sysroot/usr}
+    echo "host: $host"
+    : ${PKG_CONFIG_PATH=/usr/${host}/sysroot/usr/lib/pkgconfig}
 
-    builddir=build/$host \
-      bindir=$prefix/bin \
+    export PKG_CONFIG_PATH
+
+    case "$host" in
+    x86_64*) TOOLCHAIN=/opt/cmake-toolchains/msys64.cmake ;;
+    *) TOOLCHAIN=/opt/cmake-toolchains/msys32.cmake ;;
+    esac
+    export TOOLCHAIN
+    echo "builddir: $builddir"
+
+    : ${builddir=build/$host}
+
+    bindir=$prefix/bin \
       libdir=$prefix/lib \
-      CC="$host-gcc" \
+      host=$host \
+      build=$build \
       cfg \
-      -DCMAKE_CROSSCOMPILING=TRUE \
       "$@"
   )
 }
 
 cfg-msys32() {
-  (
-    build=$(gcc -dumpmachine | sed 's|-pc-|-|g')
-    host=${build%%-*}-pc-msys
-    host=i686-${host#*-}
+  host=i686-pc-msys \
     cfg-msys "$@"
-  )
+}
+
+cfg-msys64() {
+  host=x86_64-pc-msys \
+    cfg-msys "$@"
 }
 
 cfg-termux() {
   (
-    builddir=build/aarch64
+    : ${builddir=build/termux}
     cfg \
       -DCMAKE_INSTALL_PREFIX=/data/data/com.termux/files/usr \
-      -DCMAKE_VERBOSE_MAKEFILE=TRUE \
+      \
       -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN:-/opt/android-cmake/android.cmake} \
       -DANDROID_NATIVE_API_LEVEL=21 \
       -DPKG_CONFIG_EXECUTABLE=arm-linux-androideabi-pkg-config \
@@ -391,8 +393,9 @@ cfg-wasm() {
     test '!' -f "$TOOLCHAIN" && TOOLCHAIN=$(find "$EMSCRIPTEN" -iname emscripten.cmake)
     test -f "$TOOLCHAIN" || unset TOOLCHAIN
     : ${prefix:="$EMSCRIPTEN"}
-    builddir=build/emscripten-wasm \
-      CC="$EMCC" \
+    : ${builddir=build/emscripten-wasm}
+
+    CC="$EMCC" \
       cfg \
       -DEMSCRIPTEN_PREFIX="$EMSCRIPTEN" \
       ${TOOLCHAIN:+-DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN"} \
@@ -408,16 +411,22 @@ cfg-tcc() {
   (
     build=$(cc -dumpmachine | sed 's|-pc-|-|g')
     host=${build/-gnu/-tcc}
-    builddir=build/$host
-    prefix=/usr
+    : ${builddir=build/$host}
+    prefix=/usr/local
     includedir=/usr/lib/$build/tcc/include
     libdir=/usr/lib/$build/tcc/
     bindir=/usr/bin
 
     CC=${TCC:-tcc} \
       cfg \
-      -DCMAKE_VERBOSE_MAKEFILE=ON \
       "$@"
+  )
+}
+
+cfg-android64() {
+  (
+    : ${builddir=build/android64}
+    cfg -DCMAKE_INSTALL_PREFIX=/opt/aarch64-linux-android64eabi/sysroot/usr -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN:-/opt/android64-cmake/android64.cmake} -DANDROID_NATIVE_API_LEVEL=21 -DPKG_CONFIG_EXECUTABLE=aarch64-linux-android64eabi-pkg-config -DCMAKE_PREFIX_PATH=/opt/aarch64-linux-android64eabi/sysroot/usr -DCMAKE_MAKE_PROGRAM=/usr/bin/make -DCMAKE_MODULE_PATH="/opt/OpenCV-3.4.1-android64-sdk/sdk/native/jni/abi-armeabi-v7a" -DOpenCV_DIR="/opt/OpenCV-3.4.1-android64-sdk/sdk/native/jni/abi-armeabi-v7a" "$@"
   )
 }
 
@@ -431,35 +440,50 @@ cfg-emscripten() {
     : ${bindir=$prefix/bin}
     : ${EMSCRIPTEN=$EMSDK/upstream/emscripten}
     export TOOLCHAIN="${EMSCRIPTEN}/cmake/Modules/Platform/Emscripten.cmake"
-    PKG_CONFIG_PATH="$(
+
+    PREFIX_PATH=$(
+      set -- /opt/*-wasm
+      IFS=";"
+      echo "$*"
+    )
+    LIBRARY_PATH=$(
+      set -- /opt/*-wasm/lib
+      IFS=";"
+      echo "$*"
+    )
+    PKG_CONFIG_PATH=$(
       set -- /opt/*-wasm/lib/pkgconfig
       IFS=":"
       echo "$*"
-    )${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
+    ) #${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}
     PKG_CONFIG_PATH="${PKG_CONFIG_PATH:+$PKG_CONFIG_PATH:}${EMSCRIPTEN}/system/lib/pkgconfig"
     export PKG_CONFIG_PATH
     echo PKG_CONFIG_PATH="${PKG_CONFIG_PATH}"
-    CC="emcc" CXX="em++" TYPE="Release" VERBOSE="TRUE" \
+    CC="emcc" CXX="em++" TYPE="Release" \
       CFLAGS="'-sWASM=1 -sUSE_PTHREADS=0 -sLLD_REPORT_UNDEFINED'" \
       CXXFLAGS="'-sWASM=1 -sUSE_PTHREADS=0 -sLLD_REPORT_UNDEFINED'" \
       CMAKE_WRAPPER="emcmake" \
       prefix=/opt/${PWD##*/}-wasm \
       cfg \
+      -DCMAKE_PREFIX_PATH="$PREFIX_PATH" \
+      -DCMAKE_LIBRARY_PATH="$LIBRARY_PATH" \
       -DENABLE_PIC=FALSE \
       "$@"
   )
 }
 
 cfg-aarch64() {
- (: ${build=$(cc -dumpmachine | sed 's|-pc-|-|g')}
-  : ${host=aarch64-${build#*-}}
-  : ${builddir=build/$host}
+  (
+    : ${build=$(cc -dumpmachine | sed 's|-pc-|-|g')}
+    : ${host=aarch64-${build#*-}}
+    : ${builddir=build/$host}
 
-  : ${prefix=/usr/aarch64-linux-gnu/sysroot/usr}
+    : ${prefix=/usr/aarch64-linux-gnu/sysroot/usr}
 
-  : ${TOOLCHAIN=/opt/cmake-toolchains/aarch64-linux-gnu.toolchain.cmake}
-  export prefix TOOLCHAIN
+    : ${TOOLCHAIN=/opt/cmake-toolchains/aarch64-linux-gnu.toolchain.cmake}
+    export prefix TOOLCHAIN
 
-  PKG_CONFIG=$(which ${host}-pkg-config) \
-  cfg "$@")
+    PKG_CONFIG=$(which ${host}-pkg-config) \
+      cfg "$@"
+  )
 }

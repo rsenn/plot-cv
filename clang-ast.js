@@ -1,4 +1,3 @@
-import PortableSpawn from './lib/spawn.js';
 import Util from './lib/util.js';
 import { AcquireReader } from './lib/stream/utils.js';
 
@@ -197,7 +196,7 @@ export class Type {
 
 export async function Compile(file, args = []) {
   args = ['-I.', ...args];
-  let child = spawn(['clang', ...args, file], {
+  let child = (globalThis.spawn || spawn)(['clang', ...args, file], {
     block: false,
     stdio: ['inherit', 'pipe', 'pipe']
   });
@@ -246,7 +245,7 @@ export async function Compile(file, args = []) {
 }
 
 export async function AstDump(file, args) {
-  return Compile(file, ['-Xclang', '-ast-dump=json', '-fsyntax-only', '-I.', ...args]);
+  return await Compile(file, ['-Xclang', '-ast-dump=json', '-fsyntax-only', '-I.', ...args]);
 }
 
 export function NodeType(n) {
@@ -296,4 +295,5 @@ export function GetType(node) {
   if(type.qualType) type = type.qualType;
   return type;
 }
-export default AstDump;
+
+//export default AstDump;
