@@ -2,6 +2,7 @@ import PortableFileSystem from './lib/filesystem.js';
 import PortableSpawn from './lib/spawn.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
+import deep from './lib/deep.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import REPL from './repl.js';
 import * as std from 'std';
@@ -102,9 +103,7 @@ async function main(...args) {
   async function Compile(file, ...args) {
     let r = await AstDump(file, [...globalThis.flags, ...args]);
     r.source = file;
-    let size = filesystem.size(r.fd) || filesystem.stat(r.file).size;
-    console.log('Compile', { r, size });
-    //r.ast = JSON.parse(r.json);
+
     return r;
   }
 
@@ -120,6 +119,7 @@ async function main(...args) {
 
   Object.assign(globalThis, {
     Tree,
+    deep,
     Compile
   });
 

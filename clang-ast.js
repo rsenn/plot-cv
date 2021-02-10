@@ -241,13 +241,36 @@ export async function SpawnCompiler(file, args = []) {
   if(numErrors) throw new Error(errorLines.join('\n'));
   console.log('errorLines:', errorLines);
 
-  let fd = filesystem.open(outputFile, filesystem.O_RDONLY);
-  return { fd, file: outputFile };
+  //let fd = filesystem.open(outputFile, filesystem.O_RDONLY);
+  return { file: outputFile };
 }
 
 export async function AstDump(file, args) {
   console.log('AstDump', { file, args });
-  return await SpawnCompiler(file, ['-Xclang', '-ast-dump=json', '-fsyntax-only', '-I.', ...args]);
+  let r = await SpawnCompiler(file, ['-Xclang', '-ast-dump=json', '-fsyntax-only', '-I.', ...args]);
+  console.log('AstDump', { r });
+
+  //r.size = (await filesystem.stat(r.file)).size;
+  return Util.lazyProperties(r, {
+    size() {
+      return filesystem.stat(this.file)?.size;
+    },
+    json() {      
+      return filesystem.readFile(this.file);
+    },
+    data() {
+      return JSON.parse(this.json);
+    },
+    types() {
+      return this.data.inner.filter(n => /(Record|Typedef|Enum)Decl/.test(n.kind));
+    },
+    functions() {
+      return this.data.inner.filter(n => /(Function)Decl/.test(n.kind));
+    },
+    variables() {
+      return this.data.inner.filter(n => /(Var)Decl/.test(n.kind));
+    }
+  });
 }
 
 export function NodeType(n) {
