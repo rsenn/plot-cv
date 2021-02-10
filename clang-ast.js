@@ -255,7 +255,7 @@ export async function AstDump(file, args) {
     size() {
       return filesystem.stat(this.file)?.size;
     },
-    json() {      
+    json() {
       return filesystem.readFile(this.file);
     },
     data() {
@@ -300,11 +300,11 @@ export function GetLoc(node) {
   let loc;
   if('loc' in node) loc = node.loc;
   else if('range' in node) loc = node.range;
-  else return null; 
+  else return null;
   if('expansionLoc' in loc) loc = loc.expansionLoc;
   if('begin' in loc) loc = loc.begin;
 
- // if(!('offset' in loc)) return null; 
+  // if(!('offset' in loc)) return null;
 
   return loc;
 }

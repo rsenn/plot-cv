@@ -78,39 +78,46 @@ function SelectLocations(node) {
 
 function LocationString(loc) {
   let file = loc.includedFrom ? loc.includedFrom.file : loc.file;
-
   if(typeof loc.line == 'number')
     return `${file ? file + ':' : ''}${loc.line}${typeof loc.col == 'number' ? ':' + loc.col : ''}`;
-
   return `${file ? file : ''}@${loc.offset}`;
 }
 
-function Table(list, pred = (n,l) => /\.c:/.test(l)) {
-  let entries = [...list].map((n,i) => [i, LocationString(GetLoc(n)), n]);
-  const colSizes = [5, 10, 12,30,12,15, 25];
-const colKeys=   [  'id','kind','name','tagUsed','previousDecl'];
-const colNames=   [ '#',...colKeys, 'location'];
-
-const outputRow = (cols,pad,sep) => cols.map((s,col) => (s + '')[`pad${col ? 'End' : 'Start'}`](colSizes[col] ?? 30, pad ?? ' ')).join(sep ?? '│ ').trimEnd();
-
-  return outputRow(colNames)+'\n'+outputRow( colNames.map(n => ''), '─', '┼─')+'\n'+
-  entries
-    .filter(([l, n]) => pred(n,l))
-    .reduce((acc,[i,l,n]) => {
-
-let row = colKeys.map(k => n[k] ?? '');
-
-row.unshift(i);
-row.push(l);
-
-     acc.push(outputRow(row));
-      return acc;
-    }, [])
-    .join('\n');
+function Table(list, pred = (n, l) => true /*/\.c:/.test(l)*/) {
+  let entries = [...list].map((n, i) => [i, LocationString(GetLoc(n)), n]);
+  const colSizes = [5, 10, 12, 30, 12, 15, 25];
+  const colKeys = ['id', 'kind', 'name', 'tagUsed', 'previousDecl'];
+  const colNames = ['#', ...colKeys, 'location'];
+  const outputRow = (cols, pad, sep) =>
+    cols
+      .map((s, col) => (s + '')[`pad${col ? 'End' : 'Start'}`](colSizes[col] ?? 30, pad ?? ' '))
+      .join(sep ?? '│ ')
+      .trimEnd();
+  return (outputRow(colNames) +
+    '\n' +
+    outputRow(colNames.map(n => ''),
+      '─',
+      '┼─'
+    ) +
+    '\n' +
+    entries
+      .filter(([i, l, n]) => pred(n, l))
+      .reduce((acc, [i, l, n]) => {
+        let row = colKeys.map(k => n[k] ?? '');
+        row.unshift(i);
+        row.push(l);
+        acc.push(outputRow(row));
+        return acc;
+      }, [])
+      .join('\n')
+  );
 }
 
 async function ASTShell(...args) {
   await ConsoleSetup({ /*breakLength: 240, */ depth: 10 });
+
+  console.options.hideKeys = ['loc', 'range'];
+
   await PortableFileSystem(fs => (filesystem = fs));
   await PortableSpawn(fn => (spawn = fn));
 
@@ -144,7 +151,6 @@ async function ASTShell(...args) {
   async function Compile(file, ...args) {
     let r = await AstDump(file, [...globalThis.flags, ...args]);
     r.source = file;
-
     return Util.lazyProperties(r, {
       tree() {
         return new Tree(this.data);
