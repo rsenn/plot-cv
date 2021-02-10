@@ -31,10 +31,10 @@ Util.define(Array.prototype, {
 });
 
 async function main(...args) {
-  console.log('main(', ...args, ')');
+  console.log('dump-structs', ...args);
   await ConsoleSetup({ breakLength: 120, depth: 10 });
   await PortableFileSystem(fs => (filesystem = fs));
-  await PortableSpawn(fn => (spawn = fn));
+  await PortableSpawn(fn => console.log('PortableSpawn', (globalThis.spawn = spawn = fn)));
 
   let params = Util.getOpt({
       output: [true, null, 'o'],

@@ -9,10 +9,12 @@ let filesystem, spawn;
 
 async function main(...args) {
   console.log('main(', ...args, ')');
-  await ConsoleSetup({ breakLength: 80 });
+  await ConsoleSetup({ breakLength: 80, depth: Infinity });
   await PortableFileSystem(fs => (filesystem = fs));
   spawn = await PortableSpawn();
-  //console.log('spawn:', spawn);
+
+  console.log('spawn:', spawn);
+
   let child = spawn(['ls', '-la' /*, 'CMakeLists.txt'*/]);
 
   console.log('test:', 234);

@@ -1,4 +1,5 @@
 import Util from './lib/util.js';
+import path from './lib/path.js';
 import { AcquireReader } from './lib/stream/utils.js';
 
 export let SIZEOF_POINTER = 8;
@@ -114,54 +115,44 @@ export class Type {
     );
     if(match) {
       switch (match[2]) {
-        case 'char': {
+        case 'char': 
           size = 1;
           break;
-        }
         case 'int8_t':
         case 'uint8_t':
-        case 'bool': {
+        case 'bool': 
           size = 1;
           break;
-        }
         case 'size_t':
         case 'ptrdiff_t':
         case 'void *':
-        case 'long': {
+        case 'long': 
           size = SIZEOF_POINTER;
           break;
-        }
         case 'float':
         case 'unsigned int':
-        case 'int': {
+        case 'int': 
           size = 4;
           break;
-        }
-        case 'long double': {
+        case 'long double': 
           size = 16;
           break;
-        }
-        case 'long long': {
+        case 'long long': 
           size = 8;
           break;
-        }
-        case 'float': {
+        case 'float': 
           size = 4;
           break;
-        }
-        case 'double': {
+        case 'double': 
           size = 8;
           break;
-        }
-        case 'void': {
+        case 'void': 
           size = 0;
           break;
-        }
+
       }
       if(size === undefined && match[2].endsWith('*')) size = SIZEOF_POINTER;
-
       if(size === undefined && (this.qualType || '').startsWith('enum ')) size = 4;
-
       if(match[3]) {
         const num = parseInt(match[3]);
         //console.log('num:', { match, size, num });
@@ -194,41 +185,49 @@ export class Type {
   }
 }
 
-export async function Compile(file, args = []) {
-  args = ['-I.', ...args];
-  let child = (globalThis.spawn || spawn)(['clang', ...args, file], {
+export async function SpawnCompiler(file, args = []) {
+  let base = path.basename(file, /\.[^.]*$/);
+  let outputFile = base + '.ast.json';
+
+  /* console.log('globalThis.spawn:', globalThis.spawn);*/
+  //  let output = filesystem.open(, filesystem.O_CREAT|filesystem.O_TRUNC|filesystem.O_WRONLY, 420);
+
+  //  args.push(`-o${outputFile}`);
+  args.push(file);
+  args.unshift('clang');
+
+  let argv = [
+    'sh',
+    '-c',
+    `exec ${args.map(p => (/ /.test(p) ? `'${p}'` : p)).join(' ')} 1>${outputFile}`
+  ];
+
+  console.log(`SpawnCompiler: ${argv.map(p => (/ /.test(p) ? `"${p}"` : p)).join(' ')}`);
+
+  let child = spawn(argv, {
     block: false,
-    stdio: ['inherit', 'pipe', 'pipe']
+    stdio: ['inherit', 'inherit', 'pipe']
   });
+  console.log('child:', child);
 
   let json = '',
     errors = '';
 
-  if(Util.platform == 'quickjs') {
+  /* if(Util.platform == 'quickjs') {
     (function () {
       let r;
       let buf = new ArrayBuffer(1024);
-      r = filesystem.readAll(child.stdout.fd);
-      json += r;
+      r = filesystem.readAll(child.stderr.fd);
+      errors += r;
     })();
   } else {
-    AcquireReader(child.stdout, async reader => {
-      let r, str;
-      while((r = await reader.read())) {
-        if(!r.done) {
-          str = r.value.toString();
-          json += str;
-        }
-      }
-    });
-
     AcquireReader(child.stderr, async reader => {
       let r;
       while((r = await reader.read())) {
         if(!r.done) errors += r.value.toString();
       }
     });
-  }
+  }*/
   console.log('child.wait():', await child.wait());
   console.log('errors:', errors);
   let errorLines = errors.split(/\n/g).filter(line => line.trim() != '');
@@ -241,11 +240,14 @@ export async function Compile(file, args = []) {
   console.log(`numErrors: ${numErrors}`);
   if(numErrors) throw new Error(errorLines.join('\n'));
   console.log('errorLines:', errorLines);
-  return json;
+
+  let fd = filesystem.open(outputFile, filesystem.O_RDONLY);
+  return { fd, file: outputFile };
 }
 
 export async function AstDump(file, args) {
-  return await Compile(file, ['-Xclang', '-ast-dump=json', '-fsyntax-only', '-I.', ...args]);
+  console.log('AstDump', { file, args });
+  return await SpawnCompiler(file, ['-Xclang', '-ast-dump=json', '-fsyntax-only', '-I.', ...args]);
 }
 
 export function NodeType(n) {

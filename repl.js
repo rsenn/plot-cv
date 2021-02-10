@@ -1348,29 +1348,32 @@ export default function REPL(title = 'QuickJS') {
   function eval_and_print(expr) {
     var result;
 
-  /*  try {*/
-      if(eval_mode === 'math') expr = '"use math"; void 0;' + expr;
-      var now = new Date().getTime();
-      /* eval as a script */
-      result = std.evalScript(expr, { backtrace_barrier: true });
-      eval_time = new Date().getTime() - now;
-      std.puts(colors[styles.result]);
-      console.log(result);
-      std.puts('\n');
-      std.puts(colors.none);
-      /* set the last result */
-      globalThis._ = result;
-      if(typeof result == 'object' &&
-        result != null &&
-        (result instanceof Promise || typeof result.then == 'function')
-      ) {
-        console.log(`Promise resolved to:`, console.config({ depth: 1 }), value);
-        result.then(value => {
-          console.log(`Promise resolved to ${Util.typeOf(value)}`);
-          globalThis._ = value;
-        });
-      }
-   /* } catch(error) {
+    /*  try {*/
+    if(eval_mode === 'math') expr = '"use math"; void 0;' + expr;
+    var now = new Date().getTime();
+    /* eval as a script */
+    result = std.evalScript(expr, { backtrace_barrier: true });
+    eval_time = new Date().getTime() - now;
+    std.puts(colors[styles.result]);
+    console.log(result);
+    std.puts('\n');
+    std.puts(colors.none);
+    /* set the last result */
+    globalThis._ = result;
+    if(typeof result == 'object' &&
+      result != null &&
+      (result instanceof Promise || typeof result.then == 'function')
+    ) {
+      result.then(value => {
+        console.log(`Promise resolved to:`,
+          Util.typeOf(value),
+          console.config({ depth: 1 }),
+          value
+        );
+        globalThis._ = value;
+      });
+    }
+    /* } catch(error) {
       std.puts(colors[styles.error_msg]);
       if(error instanceof Error) {
         console.log(error);
