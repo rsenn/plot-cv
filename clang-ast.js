@@ -300,11 +300,12 @@ export function GetLoc(node) {
   let loc;
   if('loc' in node) loc = node.loc;
   else if('range' in node) loc = node.range;
-  else return null; //throw new Error(`no loc in ${tree.pathOf(node)}`);
+  else return null; 
   if('expansionLoc' in loc) loc = loc.expansionLoc;
   if('begin' in loc) loc = loc.begin;
 
-  if(!('offset' in loc)) return null; // throw new Error(`no offset in loc of ${node.kind} ${Util.isEmpty(loc)}`);
+ // if(!('offset' in loc)) return null; 
+
   return loc;
 }
 

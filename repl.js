@@ -1355,7 +1355,7 @@ export default function REPL(title = 'QuickJS') {
       result = std.evalScript(expr, { backtrace_barrier: true });
       eval_time = new Date().getTime() - now;
       std.puts(colors[styles.result]);
-      console.log(console.config({ depth: 1, multiline: true }), result);
+      console.log(console.config({ depth: 10, multiline: true }), result);
       std.puts('\n');
       std.puts(colors.none);
       /* set the last result */

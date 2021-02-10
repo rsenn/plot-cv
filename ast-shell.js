@@ -40,7 +40,7 @@ Util.define(Array.prototype, {
   }
 });
 
-async function importModule(moduleName, ...args) {
+async function ImportModule(moduleName, ...args) {
   let done = false;
   return await import(moduleName)
     .then(module => {
@@ -54,10 +54,10 @@ async function importModule(moduleName, ...args) {
     });
 }
 
-async function run() {
+async function CommandLine() {
   let repl = (globalThis.repl = new REPL('AST'));
   repl.exit = Util.exit;
-  repl.importModule = importModule;
+  repl.importModule = ImportModule;
   repl.history_set(JSON.parse(std.loadFile(histfile) || '[]'));
   Util.atexit(() => {
     let hist = repl.history_get().filter((item, i, a) => a.lastIndexOf(item) == i);
@@ -68,7 +68,48 @@ async function run() {
   console.log('REPL done');
 }
 
-async function main(...args) {
+function SelectLocations(node) {
+  let result = deep.select(node, n =>
+    ['offset', 'line', 'file'].some(prop => n[prop] !== undefined)
+  );
+  console.log('result:', console.config({ depth: 1 }), result);
+  return result;
+}
+
+function LocationString(loc) {
+  let file = loc.includedFrom ? loc.includedFrom.file : loc.file;
+
+  if(typeof loc.line == 'number')
+    return `${file ? file + ':' : ''}${loc.line}${typeof loc.col == 'number' ? ':' + loc.col : ''}`;
+
+  return `${file ? file : ''}@${loc.offset}`;
+}
+
+function Table(list, pred = (n,l) => /\.c:/.test(l)) {
+  let entries = [...list].map((n,i) => [i, LocationString(GetLoc(n)), n]);
+  const colSizes = [5, 10, 12,30,12,15, 25];
+const colKeys=   [  'id','kind','name','tagUsed','previousDecl'];
+const colNames=   [ '#',...colKeys, 'location'];
+
+const outputRow = (cols,pad,sep) => cols.map((s,col) => (s + '')[`pad${col ? 'End' : 'Start'}`](colSizes[col] ?? 30, pad ?? ' ')).join(sep ?? '│ ').trimEnd();
+
+  return outputRow(colNames)+'\n'+outputRow( colNames.map(n => ''), '─', '┼─')+'\n'+
+  entries
+    .filter(([l, n]) => pred(n,l))
+    .reduce((acc,[i,l,n]) => {
+
+let row = colKeys.map(k => n[k] ?? '');
+
+row.unshift(i);
+row.push(l);
+
+     acc.push(outputRow(row));
+      return acc;
+    }, [])
+    .join('\n');
+}
+
+async function ASTShell(...args) {
   await ConsoleSetup({ /*breakLength: 240, */ depth: 10 });
   await PortableFileSystem(fs => (filesystem = fs));
   await PortableSpawn(fn => (spawn = fn));
@@ -104,7 +145,11 @@ async function main(...args) {
     let r = await AstDump(file, [...globalThis.flags, ...args]);
     r.source = file;
 
-    return r;
+    return Util.lazyProperties(r, {
+      tree() {
+        return new Tree(this.data);
+      }
+    });
   }
 
   Object.assign(globalThis, {
@@ -120,14 +165,19 @@ async function main(...args) {
   Object.assign(globalThis, {
     Tree,
     deep,
-    Compile
+    Compile,
+    SelectLocations,
+    LocationString,
+    Table
   });
 
+  let items = [];
   for(let source of sources) {
-    await Compile(source);
+    items.push(await Compile(source));
   }
+  globalThis.$ = items.length == 1 ? items[0] : items;
 
-  await run();
+  await CommandLine();
 }
 
-Util.callMain(main, true);
+Util.callMain(ASTShell, true);
