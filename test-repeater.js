@@ -4,40 +4,31 @@ import { InMemoryPubSub } from './lib/repeater/pubsub.js';
 
 async function main() {
   await ConsoleSetup();
-  let pushEvent;
+  let pushEvent, stopEvent;
+
   let r = new Repeater(async (push, stop) => {
-    push(null);
+    //push(null);
     pushEvent = push;
+    stopEvent = stop;
     await stop;
   });
 
-  r.next();
+  //r.next();
 
-  pushEvent('new value');
+  let loop = (async () => {
+    for await(let value of r) {
+      console.log('value:', value);
+    }
+    console.log('stopped');
+  })();
 
-  for await(let value of r) {
-    console.log('value:', value);
+  for(let num of Util.range(1, 10)) {
+    await Util.waitFor(100);
+    pushEvent(`new value #${num}`);
   }
+  stopEvent();
 
-  /*
-  let p = new InMemoryPubSub();
-
-  let subscriber = await p.subscribe('test' );
-  // let publish = await p.publish('test');
-
-  //  p.publishers['test'].push(1234);
-  await p.publish('test', 1234);
-
-  console.log('subscriber:', subscriber);
-
-  console.log('p:', p);
-
-  for await(let value of subscriber) {
-    console.log('value:', value);
-  }*/
+  await loop;
 }
-try {
-  main(Util.getArgs());
-} catch(err) {
-  console.error('error:', err);
-}
+
+Util.callMain(main, true);
