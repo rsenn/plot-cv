@@ -69,17 +69,14 @@ async function CommandLine() {
 }
 
 function SelectLocations(node) {
-  let result = deep.select(node, n =>
-    ['offset', 'line', 'file'].some(prop => n[prop] !== undefined)
-  );
+  let result = deep.select(node, n => ['offset', 'line', 'file'].some(prop => n[prop] !== undefined));
   console.log('result:', console.config({ depth: 1 }), result);
   return result;
 }
 
 function LocationString(loc) {
   let file = loc.includedFrom ? loc.includedFrom.file : loc.file;
-  if(typeof loc.line == 'number')
-    return `${file ? file + ':' : ''}${loc.line}${typeof loc.col == 'number' ? ':' + loc.col : ''}`;
+  if(typeof loc.line == 'number') return `${file ? file + ':' : ''}${loc.line}${typeof loc.col == 'number' ? ':' + loc.col : ''}`;
   return `${file ? file : ''}@${loc.offset}`;
 }
 
