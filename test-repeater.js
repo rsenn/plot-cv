@@ -1,6 +1,5 @@
 import { Repeater } from './lib/repeater/repeater.js';
 import ConsoleSetup from './lib/consoleSetup.js';
-import { InMemoryPubSub } from './lib/repeater/pubsub.js';
 
 async function main() {
   await ConsoleSetup();
