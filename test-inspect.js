@@ -30,12 +30,19 @@ async function main(...args) {
     maxArrayLength: 10,
     maxStringLength: 200,
     breakLength: winsz[0] || 80,
-    compact: 3
+    compact: 3,
+    hideKeys: ['loc','range']
   };
 
   await import(Util.getPlatform() == 'quickjs' ? 'inspect.so' : 'util').then(module => (globalThis.inspect = module.inspect)
   );
-
+const dumpObj = (obj,depth,options) => '{' +
+        Object.entries(obj)
+          .map(([k, v]) =>
+              `\n${'  '.repeat(options.depth - depth + 1)}${k}=${inspect(v, depth - 1, options)}`
+          )
+          .join(',') +
+        '}'
   console.log('main', args);
   let value = 0;
   let str =
@@ -47,15 +54,9 @@ async function main(...args) {
     c: 'prop',
     d: [...Util.range(1, 100), { x: 99, y: Infinity, z: NaN }],
     [Symbol.for('nodejs.util.inspect.custom')](depth, options) {
-      console.log('inspect', depth, Object.keys(options));
-      return ('{' +
-        Object.entries(this)
-          .map(([k, v]) =>
-              `\n${'  '.repeat(options.depth - depth + 1)}${k}=${inspect(v, depth - 1, options)}`
-          )
-          .join(',') +
-        '}'
-      );
+      const { hideKeys, ...opts } = options;
+      console.log('inspect hideKeys', hideKeys.join(','));
+      return dumpObj(this, depth,options);
     }
   };
   arr.fn = function TestFn() {};
