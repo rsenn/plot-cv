@@ -176,6 +176,7 @@ async function ASTShell(...args) {
     LocationString,
     Table
   });
+  globalThis.util = Util;
 
   let items = [];
   for(let source of sources) {

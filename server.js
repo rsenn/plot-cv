@@ -666,7 +666,7 @@ async function main() {
 
     const { body } = req;
     console.log('req.headers:', req.headers);
-    console.log('body:', body, Util.className(body), Util.toString(body));
+    console.log('body:', body, Util.className(body), Util.inspect(body));
     console.log('save body:', typeof body == 'string' ? Util.abbreviate(body, 100) : body);
     let st,
       err,

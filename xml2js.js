@@ -173,7 +173,7 @@ async function main(...args) {
     WriteFile(xmlfile, toXML(xmlData));
   } catch(err) {
     let st = Util.stack(err.stack);
-    // console.log(err.message, '\n', st.toString()); //st.map(f =>  Util.toString(f)));
+    // console.log(err.message, '\n', st.toString()); //st.map(f =>  Util.inspect(f)));
     throw err;
   }
 }

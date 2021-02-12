@@ -466,7 +466,7 @@
           !Util.isNativeFunction(p.toString)
         )
           p = p.toString();
-        else p = Util.toString(p, { multiline: false });
+        else p = Util.inspect(p, { multiline: false });
       }
 
       //  if(i > 0) a.push(',');
@@ -821,7 +821,7 @@
     };
   })();
   Util.inspect = (obj, opts = {}) =>
-    Util.toString(obj, {
+    Util.inspect(obj, {
       toString: Util.symbols.inspect,
       colors: true,
       ...opts,
@@ -1548,7 +1548,7 @@
     } while(match != null);
   });
 
-  Util.toString = (obj, opts = {}) => {
+  Util.inspect = (obj, opts = {}) => {
     const {
       quote = '"',
       multiline = true,
@@ -1563,7 +1563,7 @@
       separator = ',',
       colon = ': ',
       depth = 10
-    } = { ...Util.toString.defaultOpts, ...opts };
+    } = { ...Util.inspect.defaultOpts, ...opts };
 
     /* if(depth < 0) {
         if(Util.isArray(obj)) return `[...${obj.length}...]`;
@@ -1607,7 +1607,7 @@
         if(i > 0) print(separator, 1, 36);
         else print(padding);
         print(sep(i > 0));
-        Util.toString(obj.i, {
+        Util.inspect(obj.i, {
           ...opts,
           c,
           print,
@@ -1622,7 +1622,7 @@
 
       if(typeof inspect == 'function' &&
         !Util.isNativeFunction(inspect) &&
-        !/Util.toString/.test(inspect + '')
+        !/Util.inspect/.test(inspect + '')
       ) {
         //   if(Util.className(obj) != 'Range') console.debug('inspect:', Util.className(obj), inspect + '');
 
@@ -1661,7 +1661,7 @@
           )
             print(isMap ? `'${key}'` : key, 1, isMap ? 36 : 33);
           else
-            Util.toString(key, {
+            Util.inspect(key, {
               ...opts,
               c,
               print,
@@ -1675,7 +1675,7 @@
           if(typeof value == 'number') print(`${value}`, 1, 36);
           else if(typeof value == 'string' || value instanceof String) print(`'${value}'`, 1, 36);
           else if(typeof value == 'object')
-            Util.toString(value, {
+            Util.inspect(value, {
               ...opts,
               print,
               multiline: isMap && !(value instanceof Map) ? false : multiline,
@@ -1692,7 +1692,7 @@
 
     return out;
   };
-  Util.toString.defaultOpts = { spacing: ' ', padding: ' ' };
+  Util.inspect.defaultOpts = { spacing: ' ', padding: ' ' };
 
   Util.dump = function(name, props) {
     const args = [name];
@@ -4894,7 +4894,7 @@
         const obj = this;
 
         return (c.text(Util.fnName(proto.constructor) + ' ', 1, 31) +
-          Util.toString(props.reduce((acc, key) => {
+          Util.inspect(props.reduce((acc, key) => {
               acc.key = obj.key;
               return acc;
             }, {}),
@@ -5464,7 +5464,7 @@
       print = (returnValue, fn, ...args) => {
         let stack = Util.getCallerStack();
         (console.debug || console.log)('RETURN VAL:',
-          Util.toString(returnValue, { colors: false }),
+          Util.inspect(returnValue, { colors: false }),
           {
             fn,
             args,
@@ -5597,7 +5597,7 @@
   Object.assign(Util.consolePrinter.prototype, Util.consoleConcat.prototype, {
     print() {
       const a = [...this];
-      const i = a.map(i => Util.toString(i));
+      const i = a.map(i => Util.inspect(i));
       console.debug('a: ' + i.shift(), ...i);
       Util.consoleConcat.prototype.print.call(this, this.log);
     },
@@ -7717,7 +7717,7 @@
       return `${c.text('PointList', 1, 31)}${c.text('(', 1, 36)}${
         c.text(this.getLength(), 1, 35) + c.code(1, 36)
       }) [
-        ${this.map(({ x, y }) => Util.toString({ x, y }, { multiline: false, spacing: ' ' })).join(///*Point.prototype.toSource.call(point, { plainObj: true, colors: true })  ||*/ Util.toSource(point, {colors: true }) || point[sym]() ||
+        ${this.map(({ x, y }) => Util.inspect({ x, y }, { multiline: false, spacing: ' ' })).join(///*Point.prototype.toSource.call(point, { plainObj: true, colors: true })  ||*/ Util.toSource(point, {colors: true }) || point[sym]() ||
 
           ',\n  '
         )}

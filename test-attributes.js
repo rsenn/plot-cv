@@ -55,7 +55,7 @@ async function main(...args) {
   );
   let envMap = new Map(envEntries);
   //console.log('Environment:', Util.toSource(envEntries, { quote: '"'}).replace(/\n/g, "\\n"));
-  console.log('Environment:', Util.toString(envMap));
+  console.log('Environment:', Util.inspect(envMap));
 
   filesystem = await PortableFileSystem();
   await ConsoleSetup();

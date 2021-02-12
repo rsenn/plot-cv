@@ -92,7 +92,7 @@ async function main(...args) {
     let json = JSON.stringify(xml, null, '  ');
     let st;
     let { rdev, ino, mtime, atime } = (st = filesystem.stat(filename));
-    console.log('stat:', Util.toString(st), Object.keys(st));
+    console.log('stat:', Util.inspect(st), Object.keys(st));
     //prng = new Alea().seed((ino * 256 + rdev) ^ mtime.valueOf());
 
     console.log('prng.uint32():', prng.uint32());
@@ -213,7 +213,7 @@ async function main(...args) {
       for(let [path, color] of pal) {
         color = typeof color == 'function' ? color() : color;
         //  color = color && color.toRGBA ? color.toRGBA() : color;
-        // console.log('UpdatePalette:', newObj, path, Util.toString(color, { multiline: false }));
+        // console.log('UpdatePalette:', newObj, path, Util.inspect(color, { multiline: false }));
         let key = path.last;
         let parent = deep.get(xmlData, path.up());
         let oldValue = parent[key];
@@ -379,7 +379,7 @@ async function main(...args) {
           palette.get(idx2path[idx_or_hex]);
         console.log('changed ', [...changed].join(', '));
         colors = [...palette.entries()].map(([path, color], idx) => color);
-        /* prettier-ignore */ console.log('colors = ', Util.toString(colors.map((c) => [...c]), { multiline: false, colors: false }));
+        /* prettier-ignore */ console.log('colors = ', Util.inspect(colors.map((c) => [...c]), { multiline: false, colors: false }));
         // let idx2hex = colors.map( (color,i) =>  color.hex());
         hex2idx = Object.fromEntries(colors.map((color, i) => [color.hex(), i]));
         console.log(`hex2idx`, hex2idx);
@@ -444,7 +444,7 @@ async function main(...args) {
 
             if(Util.isObject(r) && r.index !== undefined) {
               const { value, index, distance } = r;
-              // console.log('i=', i, 'r', Util.toString({ value, index, distance }, { multiline: false }));
+              // console.log('i=', i, 'r', Util.inspect({ value, index, distance }, { multiline: false }));
 
               const nearColor = getHSLA(index) || idx2hsla[index];
               let [removedColor] = colors.splice(i, 1, nearColor);
@@ -507,7 +507,7 @@ async function main(...args) {
     filesystem.writeFile(outfile, toXML(newObj));
   } catch(err) {
     let st = Util.stack(err.stack);
-    // console.log(err.message, '\n', st.toString()); //st.map(f =>  Util.toString(f)));
+    // console.log(err.message, '\n', st.toString()); //st.map(f =>  Util.inspect(f)));
     throw err;
   }
 }

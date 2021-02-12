@@ -1416,7 +1416,7 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
       //   console.log('data:', Util.abbreviate(data, 40));
       let msg = new Message(data);
       window.msg = msg;
-      // LogJS.info('WebSocket recv: ' + Util.toString(msg));
+      // LogJS.info('WebSocket recv: ' + Util.inspect(msg));
       //console.log('WebSocket data:', msg);
       HandleMessage(msg);
       ws.dataAvailable !== 0;

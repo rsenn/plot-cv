@@ -252,7 +252,7 @@ class ES6ImportExport {
       InspectFn ? InspectFn.call(ret.bindings) : '',
       'importNode:',
       [...obj.importNode].map((n) => [node2path.get(n), PrintAst(n)]).filter(([p, c]) => c.trim() != ''),
-      ...['dir', 'relpath'].reduce((acc, n) => [...acc, Util.ansi.text(n, 38, 5, 197) + Util.ansi.text(' ', 1, 36) + (typeof ret[n] == 'string' ? Util.ansi.text(ret[n], 1, 32) : typeof InspectFn == 'function' ? InspectFn.call(ret) : Util.toString(ret[n], { multiline: false, newline: '' }).replace(/.*\)\ {/g, '')) + ' '], [])
+      ...['dir', 'relpath'].reduce((acc, n) => [...acc, Util.ansi.text(n, 38, 5, 197) + Util.ansi.text(' ', 1, 36) + (typeof ret[n] == 'string' ? Util.ansi.text(ret[n], 1, 32) : typeof InspectFn == 'function' ? InspectFn.call(ret) : Util.inspect(ret[n], { multiline: false, newline: '' }).replace(/.*\)\ {/g, '')) + ' '], [])
     );*/
     Object.assign(ret, obj);
     if(ret.file) ret.module = ES6Module.getOrCreate(ret.file, null);
@@ -330,7 +330,7 @@ class ES6ImportExport {
               toString: 'toString'
             }).replace(/\n/g, '\n  ')
             /* path: path.join('.'),*/
-            /*node: PrintAst(node) */ //Util.toString(node, { ...opts, separator: '', newline: '', depth: 0 })
+            /*node: PrintAst(node) */ //Util.inspect(node, { ...opts, separator: '', newline: '', depth: 0 })
           },
           ES6ImportExport.prototype
         ),
@@ -349,7 +349,7 @@ class ES6ImportExport {
     let obj = Util.filterOutMembers(this, x =>
       [Util.isFunction /*, Util.isObject*/].some(f => f(x))
     );
-    return Util.toString({ ...obj, __proto__: proto }, { multiline: true });
+    return Util.inspect({ ...obj, __proto__: proto }, { multiline: true });
   }
   toString() {
     //console.log('toString', ...Util.getMemberNames(this).map((p) => [p, this[p]]).map(([k, v]) => [k, v + '']).flat());
@@ -437,7 +437,7 @@ function DumpNode(node) {
     hl.id`path` + hl.punct`:`,
     node2path.get(node),
     Util.ansi.text(`node`, 1, 33) + `:`,
-    Util.toString(node, { multiline: false, depth: 4 })
+    Util.inspect(node, { multiline: false, depth: 4 })
   ];
 }
 
@@ -1694,7 +1694,7 @@ function SearchModuleInPath(name, _from, position) {
   if(!fromModule) throw new Error(`Module "${_from}" not found (${name})`, name);
   let chain = fromModule.chain;
   throw new URIError(`Module '${name}' imported from '${_from}' not found ` +
-      Util.toString({ name, chain }, { multiline: false }),
+      Util.inspect({ name, chain }, { multiline: false }),
     name
   );
 }

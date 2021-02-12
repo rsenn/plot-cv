@@ -83,7 +83,7 @@ for(let list of lists) {
   //console.log('l.xIntercept:', l.xIntercept());
   //console.log('l2.yIntercept:', l2.yIntercept());
   //console.log('l2.xIntercept:', l2.xIntercept());
-  //console.log('l.functions:' + Util.toString(l.functions(), { multiline: false }));
+  //console.log('l.functions:' + Util.inspect(l.functions(), { multiline: false }));
   //console.log('l.functions:', l.functions());
   //console.log('l.dot:', l.dot);
   //console.log('l.cross:', l.cross);

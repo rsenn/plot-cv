@@ -17,7 +17,7 @@ const printNode = node => {
   return s;
 };
 
-Util.toString.defaultOpts = {
+Util.inspect.defaultOpts = {
   spacing: '',
   separator: '\x1b[1;36m, ',
   stringColor: [1, 36],

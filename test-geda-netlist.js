@@ -73,7 +73,7 @@ async function main(...args) {
 
     let output = { components, nets };
 
-    let json = Util.toString(output, { multiline: true, depth: 2, json: true, quote: '"' }); //JSON.stringify(output, null, 2);
+    let json = Util.inspect(output, { multiline: true, depth: 2, json: true, quote: '"' }); //JSON.stringify(output, null, 2);
 
     WriteFile(base + '.json', json);
   }

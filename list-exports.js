@@ -62,7 +62,7 @@ async function main(...args) {
   console.log('test', path.dirname('/usr/bin/ls'));
   console.log('test', path.resolve('/proc/self/../ls'));
   const argDirs = [...args].map(arg => path.dirname(arg));
-  // console.log('argDirs',Util.toString(argDirs));
+  // console.log('argDirs',Util.inspect(argDirs));
 
   const dirs = [cwd].concat(argDirs);
   /*.map(p => path.resolve(p))*/ console.log('dirs=', dirs);
