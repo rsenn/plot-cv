@@ -25,13 +25,12 @@ async function main(...args) {
     customInspect: true,
     showProxy: false,
     getters: false,
-    depth: 3 /*|| Infinity*/,
-
-    maxArrayLength: 10,
+    depth: Infinity,
+    maxArrayLength: 1000,
     maxStringLength: 200,
     breakLength: winsz[0] || 80,
-    compact: 3,
-    hideKeys: ['loc', 'range']
+    compact: 2,
+    hideKeys: ['loc', 'range', Symbol.for('nodejs.util.inspect.custom')]
   };
 
   await import(Util.getPlatform() == 'quickjs' ? 'inspect.so' : 'util').then(module => (globalThis.inspect = module.inspect)
@@ -53,11 +52,17 @@ async function main(...args) {
     a: 1,
     b: true,
     c: 'prop',
-    d: [...Util.range(1, 100), { x: 99, y: Infinity, z: NaN }],
-    [Symbol.for('nodejs.util.inspect.custom')](depth, options) {
+    d: [...Util.range(1, 10), { x: 99, y: Infinity, z: NaN }],
+    /*  [Symbol.for('nodejs.util.inspect.custom')](depth, options) {
       const { hideKeys, ...opts } = options;
-      console.log('inspect hideKeys', hideKeys.join(','));
+      print('inspect hideKeys', hideKeys.join(','));
       return dumpObj(this, depth, options);
+    }, */ inspect(depth,
+      options
+    ) {
+      const { hideKeys, ...opts } = options;
+      print('inspect hideKeys ' + hideKeys.join(','));
+      return ''; //dumpObj(this, depth, options);
     }
   };
   arr.fn = function TestFn() {};
@@ -80,7 +85,12 @@ async function main(...args) {
     object: obj2,
     get value() { return value; },
     set value(v) { value = v; },
-    set v(v) { value = v; }
+    set v(v) { value = v; },
+    inspect(depth, options) {
+      const { hideKeys, ...opts } = options;
+      print('inspect hideKeys ' + hideKeys.join(','));
+      return ''; //dumpObj(this, depth, options);
+    }
   };
 
   console.log('inspect(NaN)', inspect(NaN, options));

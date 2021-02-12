@@ -11,7 +11,7 @@ async function main() {
   console.log('clearTimeout', globalThis.clearTimeout);
 
   let a = new Repeater(async (push, stop) => {
-     pushEvent = push;
+    pushEvent = push;
     stopEvent = stop;
     await stop;
   });
@@ -25,24 +25,19 @@ async function main() {
   });
 
   let c = new Repeater(async (push, stop) => {
-    for(let num of Util.range(1, 5))
-      push(`c #${num}`);
+    for(let num of Util.range(1, 5)) push(`c #${num}`);
     stop();
-  });        
-
+  });
 
   function genRepFunc(name, num, ms) {
-    return async(push,stop) => {
-        for(let n of Util.range(1, num)) {
-          await Util.waitFor(Util.randInt(ms));
-             push(`${name} #${n}`);
-           }
-    stop();
+    return async (push, stop) => {
+      for(let n of Util.range(1, num)) {
+        await Util.waitFor(Util.randInt(ms));
+        push(`${name} #${n}`);
+      }
+      stop();
     };
   }
-
-
-
 
   //a.next();
   let repeat = Repeater.merge([a, b, Repeater.zip([c, delay(200)])]);
@@ -62,11 +57,14 @@ async function main() {
 
   await loop;
 
-    let x = [ new Repeater(genRepFunc('x', 20,1000)) ,new Repeater(genRepFunc('y', 20,1000))  ,new Repeater(genRepFunc('z', 20,1000)) ];
+  let x = [
+    new Repeater(genRepFunc('x', 20, 1000)),
+    new Repeater(genRepFunc('y', 20, 1000)),
+    new Repeater(genRepFunc('z', 20, 1000))
+  ];
   let latest = Repeater.latest(x);
 
- 
-   await (async () => {
+  await (async () => {
     for await(let tuple of latest) {
       console.log('tuple:', tuple);
     }
