@@ -34,9 +34,7 @@ class PList extends Array {
   }
   inspect(options) {
     return `\x1b[1;31mPList\x1b[0m [\n  ${this.map(item =>
-      (item.inspect ? item.inspect(options) : console.inspect(item, options)).replace(/\n/g,
-        '\n    '
-      )
+      (item.inspect ? item.inspect(options) : console.inspect(item, options)).replace(/\n/g, '\n    ')
     ).join(',\n  ')}\n]`;
   }
 }
@@ -70,16 +68,12 @@ class Dict extends Array {
           '[\n    ' +
           value
             .map(item =>
-              (item.inspect ? item.inspect(options) : console.inspect(item, options)).replace(/\n/g,
-                '\n    '
-              )
+              (item.inspect ? item.inspect(options) : console.inspect(item, options)).replace(/\n/g, '\n    ')
             )
             .join(',\n    ') +
           '\n  ]';
       else
-        s += `${(value.inspect ? value.inspect(options) : console.inspect(value, options)).replace(/\n/g,
-          '\n    '
-        )}`;
+        s += `${(value.inspect ? value.inspect(options) : console.inspect(value, options)).replace(/\n/g, '\n    ')}`;
       return s;
     }).join(',\n  ')}\n}`;
   }
@@ -210,15 +204,11 @@ async function main(...args) {
     let scopes = [];
 
     if(/\.tmLanguage$/.test(file)) {
-      scopes.push(...[...pairs.values()]
-          .filter(pair => pair.key == 'name' && /\./.test(pair.value))
-          .map(pair => pair.value)
+      scopes.push(...[...pairs.values()].filter(pair => pair.key == 'name' && /\./.test(pair.value)).map(pair => pair.value)
       );
       //console.log('scopes:', scopes);
     } else {
-      let a = [...pairs.values()]
-        .filter(pair => pair.key == 'scope' && /\./.test(pair.value))
-        .map(pair => pair.value);
+      let a = [...pairs.values()].filter(pair => pair.key == 'scope' && /\./.test(pair.value)).map(pair => pair.value);
 
       scopes.push(...a
           .map(s => s.split(/,\s+/g))

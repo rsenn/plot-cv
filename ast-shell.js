@@ -69,9 +69,7 @@ async function CommandLine() {
 }
 
 function SelectLocations(node) {
-  let result = deep.select(node, n =>
-    ['offset', 'line', 'file'].some(prop => n[prop] !== undefined)
-  );
+  let result = deep.select(node, n => ['offset', 'line', 'file'].some(prop => n[prop] !== undefined));
   console.log('result:', console.config({ depth: 1 }), result);
   return result;
 }

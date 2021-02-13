@@ -35,13 +35,7 @@ let app = express();
 expressWs(app, null, { perMessageDeflate: false });
 const p = path.join(path.dirname(process.argv[1]), '.');
 
-let mountDirs = [
-  'data',
-  '../an-tronics/eagle',
-  '../insider/eagle',
-  '../lc-meter/eagle',
-  '../pictest/eagle'
-];
+let mountDirs = ['data', '../an-tronics/eagle', '../insider/eagle', '../lc-meter/eagle', '../pictest/eagle'];
 let tmpDir = './tmp';
 
 async function waitChild(proc) {
@@ -208,9 +202,7 @@ async function main() {
       if(save) {
         filename = filename || typeof save == 'string' ? save : null;
         filename = `tmp/` + filename.replace(/.*\/([^\/])*\.[^\/.]*$/g, '$1');
-        await fsPromises
-          .writeFile(filename, result.data)
-          .then(res => console.log('Wrote file:', res));
+        await fsPromises.writeFile(filename, result.data).then(res => console.log('Wrote file:', res));
       }
     } catch(error) {
       result = { error };
@@ -249,8 +241,7 @@ async function main() {
       'output-dir': './tmp/',
       ...opts
     };
-    if(opts.front == undefined && opts.back == undefined && opts.drill == undefined)
-      opts.back = gerberFile;
+    if(opts.front == undefined && opts.back == undefined && opts.drill == undefined) opts.back = gerberFile;
     let sides = [];
 
     for(let side of ['front', 'back', 'drill', 'outline'])
@@ -267,9 +258,7 @@ async function main() {
     }
 
     const params = [...Object.entries(opts)]
-      .filter(([k, v]) =>
-          typeof v == 'string' || typeof v == 'number' || (typeof v == 'boolean' && v === true)
-      )
+      .filter(([k, v]) => typeof v == 'string' || typeof v == 'number' || (typeof v == 'boolean' && v === true))
       .map(([k, v]) => `--${k}${typeof v != 'boolean' && v != '' ? '=' + v : ''}`);
     console.log('Request /gcode', { gerberFile, fetch, raw });
     //console.warn(`gerberToGcode`, Util.abbreviate(gerberFile), { gcodeFile, opts });
@@ -295,21 +284,15 @@ async function main() {
       const gcodeFile = makePath('ngc', sides[0]);
       const svgFile = makePath('svg', sides[0], 'processed');
 
-      for(let [file, to] of sides.map(side => [
-        makePath('svg', side, 'processed'),
-        makePath('svg', side)
-      ]))
+      for(let [file, to] of sides.map(side => [makePath('svg', side, 'processed'), makePath('svg', side)]))
         if(fs.existsSync(file)) fs.renameSync(file, to);
 
-      let files = sides
-        .map(side => [side, makePath('ngc', side)])
-        .filter(([side, file]) => fs.existsSync(file));
+      let files = sides.map(side => [side, makePath('ngc', side)]).filter(([side, file]) => fs.existsSync(file));
       console.log('Response /gcode', { files });
 
       let result = { code, output, cmd };
       if(fetch) {
-        for(let [side, file] of files)
-          result[side] = await (await fsPromises.readFile(file)).toString();
+        for(let [side, file] of files) result[side] = await (await fsPromises.readFile(file)).toString();
       }
       if(/*/get/i.test(req.method) || */ raw) {
         const { file } = result;
@@ -489,8 +472,7 @@ async function main() {
   app.get(/\/list-serial/, async (req, res) => {
     const list = await SerialPort.list();
 
-    res.json(list.filter(port => ['manufacturer', 'pnpId', 'vendorId', 'productId'].some(key => port[key]))
-    );
+    res.json(list.filter(port => ['manufacturer', 'pnpId', 'vendorId', 'productId'].some(key => port[key])));
   });
 
   app.ws('/serial', async (ws, req) => {
@@ -671,9 +653,7 @@ async function main() {
     let st,
       err,
       filename =
-        (req.headers['content-disposition'] || '').replace(new RegExp('.*"([^"]*)".*', 'g'),
-          '$1'
-        ) || 'output.svg';
+        (req.headers['content-disposition'] || '').replace(new RegExp('.*"([^"]*)".*', 'g'), '$1') || 'output.svg';
     filename = 'tmp/' + filename.replace(/^tmp\//, '');
     await fs.promises
       .writeFile(filename, body, { mode: 0x0180, flag: 'w' })

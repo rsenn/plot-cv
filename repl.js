@@ -353,24 +353,17 @@ export default function REPL(title = 'QuickJS') {
       colorize = show_colors;
 
     if(search) {
-      const re = new RegExp((search_pattern = cmd_line.replace(/([\(\)\?\+\*])/g, '.' /*'\\$1'*/)),
-        'i'
-      );
+      const re = new RegExp((search_pattern = cmd_line.replace(/([\(\)\?\+\*])/g, '.' /*'\\$1'*/)), 'i');
       const num = search > 0 ? search - 1 : search;
       //search_index = history.findLastIndex(c => re.test(c) && --num == 0);
       let search_history = [...history.entries()].rotateLeft(history_index);
-      search_matches.splice(0,
-        search_matches.length,
-        ...search_history.filter(([i, c]) => re.test(c))
-      );
+      search_matches.splice(0, search_matches.length, ...search_history.filter(([i, c]) => re.test(c)));
       //num = search > 0 ? search - 1 : search;
       const match = search_matches.at(num);
       const [histidx = -1, histcmd = ''] = match || [];
       const histdir = search > 0 ? 'forward' : 'reverse';
       const histpos =
-        search < 0
-          ? search_history.indexOf(match) - search_history.length
-          : search_history.indexOf(match);
+        search < 0 ? search_history.indexOf(match) - search_history.length : search_history.indexOf(match);
       search_index = histidx;
       let line_start = `(${histdir}-search[${histpos}])\``;
       cmd_line = `${line_start}${cmd}': ${histcmd}`;
@@ -391,9 +384,7 @@ export default function REPL(title = 'QuickJS') {
     } /* cursor_pos is the position in 16 bit characters inside the
            UTF-16 string 'cmd_line' */ else if(cmd_line != last_cmd
     ) {
-      if(!colorize &&
-        last_cmd.substring(0, last_cursor_pos) == cmd_line.substring(0, last_cursor_pos)
-      ) {
+      if(!colorize && last_cmd.substring(0, last_cursor_pos) == cmd_line.substring(0, last_cursor_pos)) {
         /* optimize common case */
         std.puts(cmd_line.substring(last_cursor_pos));
       } else {
@@ -625,10 +616,7 @@ export default function REPL(title = 'QuickJS') {
     if(cmd.length > 1 && pos > 0) {
       if(pos == cmd.length) pos--;
       cmd =
-        cmd.substring(0, pos - 1) +
-        cmd.substring(pos, pos + 1) +
-        cmd.substring(pos - 1, pos) +
-        cmd.substring(pos + 1);
+        cmd.substring(0, pos - 1) + cmd.substring(pos, pos + 1) + cmd.substring(pos - 1, pos) + cmd.substring(pos + 1);
       cursor_pos = pos + 1;
     }
   }
@@ -640,29 +628,19 @@ export default function REPL(title = 'QuickJS') {
     var p3 = skip_word_backward(p4);
 
     if(p1 < p2 && p2 <= cursor_pos && cursor_pos <= p3 && p3 < p4) {
-      cmd =
-        cmd.substring(0, p1) +
-        cmd.substring(p3, p4) +
-        cmd.substring(p2, p3) +
-        cmd.substring(p1, p2);
+      cmd = cmd.substring(0, p1) + cmd.substring(p3, p4) + cmd.substring(p2, p3) + cmd.substring(p1, p2);
       cursor_pos = p4;
     }
   }
 
   function upcase_word() {
     var end = skip_word_forward(cursor_pos);
-    cmd =
-      cmd.substring(0, cursor_pos) +
-      cmd.substring(cursor_pos, end).toUpperCase() +
-      cmd.substring(end);
+    cmd = cmd.substring(0, cursor_pos) + cmd.substring(cursor_pos, end).toUpperCase() + cmd.substring(end);
   }
 
   function downcase_word() {
     var end = skip_word_forward(cursor_pos);
-    cmd =
-      cmd.substring(0, cursor_pos) +
-      cmd.substring(cursor_pos, end).toLowerCase() +
-      cmd.substring(end);
+    cmd = cmd.substring(0, cursor_pos) + cmd.substring(cursor_pos, end).toLowerCase() + cmd.substring(end);
   }
 
   function kill_region(start, end, dir) {
@@ -741,8 +719,7 @@ export default function REPL(title = 'QuickJS') {
           return / /;
         default: if (is_word(c)) {
             base = get_context_word(line, pos);
-            if(['true', 'false', 'null', 'this'].includes(base) || !isNaN(+base))
-              return eval(base);
+            if(['true', 'false', 'null', 'this'].includes(base) || !isNaN(+base)) return eval(base);
             obj = get_context_object(line, pos - base.length);
             if(obj === null || obj === void 0) return obj;
             if(obj === globalThis && obj[base] === void 0) return eval(base);
@@ -1221,10 +1198,7 @@ export default function REPL(title = 'QuickJS') {
           std.puts('Invalid precision\n');
           return false;
         }
-        if(Number.isNaN(expBits1) ||
-          expBits1 < BigFloatEnv.expBitsMin ||
-          expBits1 > BigFloatEnv.expBitsMax
-        ) {
+        if(Number.isNaN(expBits1) || expBits1 < BigFloatEnv.expBitsMin || expBits1 > BigFloatEnv.expBitsMax) {
           std.puts('Invalid exponent bits\n');
           return false;
         }
@@ -1365,11 +1339,7 @@ export default function REPL(title = 'QuickJS') {
         (result instanceof Promise || typeof result.then == 'function')
       ) {
         result.then(value => {
-          console.log(`Promise resolved to:`,
-            Util.typeOf(value),
-            console.config({ depth: 1, multiline: true }),
-            value
-          );
+          console.log(`Promise resolved to:`, Util.typeOf(value), console.config({ depth: 1, multiline: true }), value);
           globalThis.$ = value;
         });
       }

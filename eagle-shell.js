@@ -223,9 +223,7 @@ async function testEagle(filename) {
     schematic: (schematic &&
         schematic.sheets &&
         [...schematic.sheets]
-          .map(e =>
-            [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)
-          )
+          .map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined))
           .flat()) ||
       []
   };

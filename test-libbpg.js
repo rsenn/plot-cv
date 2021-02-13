@@ -144,16 +144,13 @@ class BPGLoader extends BPGDecoder {
   }
 
   async load(buffer) {
-    if(typeof buffer == 'string')
-      buffer = await fetch(buffer).then(response => response.arrayBuffer());
+    if(typeof buffer == 'string') buffer = await fetch(buffer).then(response => response.arrayBuffer());
 
     if(!isBPG(buffer)) {
       const magic = new Uint8Array(buffer, 0, 4);
       throw new Error(`BPGLoader.load: is not a BPG (${magic.join(', ')}) '${[...magic]
           .map(code =>
-            code < 32 || code >= 127
-              ? `\\x${('0' + code.toString(16)).slice(-2)}`
-              : String.fromCharCode(code)
+            code < 32 || code >= 127 ? `\\x${('0' + code.toString(16)).slice(-2)}` : String.fromCharCode(code)
           )
           .join('')}'`
       );

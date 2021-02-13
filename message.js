@@ -10,9 +10,7 @@ export class Message {
 
     if(args.length == 1) {
       Object.assign(this,
-        typeof args[0] == 'string'
-          ? Message.decode(args[0])
-          : Util.filterOutMembers(args[0], v => v == undefined)
+        typeof args[0] == 'string' ? Message.decode(args[0]) : Util.filterOutMembers(args[0], v => v == undefined)
       );
     } else {
       const [body, origin, recipient, type] = args;
@@ -117,8 +115,7 @@ export class Message {
   }
   [Symbol.toStringTag]() {
     const { origin, recipient, type, body } = this;
-    return ('new Message', Util.filterOutMembers({ origin, recipient, type, body }, v => v == undefined)
-    );
+    return 'new Message', Util.filterOutMembers({ origin, recipient, type, body }, v => v == undefined);
   }
 }
 

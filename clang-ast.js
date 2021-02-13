@@ -22,10 +22,8 @@ export class Type {
       if(s.kind == 'EnumDecl' && s.name) Util.define(this, { qualType: `enum ${s.name}` });
       else {
         if(s.qualType) Util.define(this, { qualType: s.qualType });
-        if(s.desugaredQualType !== undefined)
-          Util.define(this, { desugaredQualType: s.desugaredQualType });
-        if(s.typeAliasDeclId !== undefined)
-          Util.define(this, { typeAliasDeclId: s.typeAliasDeclId });
+        if(s.desugaredQualType !== undefined) Util.define(this, { desugaredQualType: s.desugaredQualType });
+        if(s.typeAliasDeclId !== undefined) Util.define(this, { typeAliasDeclId: s.typeAliasDeclId });
       }
     } else {
       Util.define(this, { qualType: str + '' });
@@ -196,11 +194,7 @@ export async function SpawnCompiler(file, args = []) {
   args.push(file);
   args.unshift('clang');
 
-  let argv = [
-    'sh',
-    '-c',
-    `exec ${args.map(p => (/ /.test(p) ? `'${p}'` : p)).join(' ')} 1>${outputFile}`
-  ];
+  let argv = ['sh', '-c', `exec ${args.map(p => (/ /.test(p) ? `'${p}'` : p)).join(' ')} 1>${outputFile}`];
 
   console.log(`SpawnCompiler: ${argv.map(p => (/ /.test(p) ? `"${p}"` : p)).join(' ')}`);
 
@@ -233,9 +227,8 @@ export async function SpawnCompiler(file, args = []) {
   let errorLines = errors.split(/\n/g).filter(line => line.trim() != '');
   errorLines = errorLines.filter(line => /error:/.test(line));
   const numErrors =
-    [
-      ...(/^([0-9]+)\s/g.exec(errorLines.find(line => /errors\sgenerated/.test(line)) || '0') || [])
-    ][0] || errorLines.length;
+    [...(/^([0-9]+)\s/g.exec(errorLines.find(line => /errors\sgenerated/.test(line)) || '0') || [])][0] ||
+    errorLines.length;
 
   console.log(`numErrors: ${numErrors}`);
   if(numErrors) throw new Error(errorLines.join('\n'));
