@@ -22,8 +22,7 @@ async function main(...args) {
   //std.print("TEST PRINT\n");
   await ConsoleSetup({
     breakLength: 120,
-    maxStringLength: 200,
-    maxArrayLength: 20
+    maxStringLength: 200
   });
   console.log('console', Util.className(console));
   console.log('console.log', console.log);

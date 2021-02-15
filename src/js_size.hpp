@@ -29,6 +29,28 @@ js_size_read(JSContext* ctx, JSValueConst size, JSSizeData<T>* out) {
   return ret;
 }
 
+template<class T>
+static inline void
+js_size_write(JSContext* ctx, JSValueConst out, const JSSizeData<T>& in) {
+  JSValue width = js_number_new<T>(ctx, in.width);
+  JSValue height = js_number_new<T>(ctx, in.height);
+  if(JS_IsArray(ctx, out)) {
+    JS_SetPropertyUint32(ctx, out, 0, width);
+    JS_SetPropertyUint32(ctx, out, 1, height);
+
+  } else if(JS_IsObject(out)) {
+    JS_SetPropertyStr(ctx, out, "x", width);
+    JS_SetPropertyStr(ctx, out, "y", height);
+  } else if(JS_IsFunction(ctx, out)) {
+    JSValueConst args[2];
+    args[0] = width;
+    args[1] = height;
+    JS_Call(ctx, out, JS_UNDEFINED, 2, args);
+  }
+  JS_FreeValue(ctx, width);
+  JS_FreeValue(ctx, height);
+}
+
 static inline JSSizeData<double>
 js_size_get(JSContext* ctx, JSValueConst size) {
   JSSizeData<double> r = {0, 0};

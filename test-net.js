@@ -19,8 +19,7 @@ async function main(...args) {
   let begin = hr();
   await ConsoleSetup({
     breakLength: 120,
-    maxStringLength: 200,
-    maxArrayLength: 20
+    maxStringLength: 200
   });
 
   /*  function connect() {

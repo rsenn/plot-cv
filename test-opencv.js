@@ -4,7 +4,7 @@ import { Rect } from 'rect.so';
 import { Mat } from 'mat.so';
 import * as cv from 'cv.so';
 import { Line } from 'line.so';
-import { Draw, drawLine, drawCircle } from 'draw.so';
+//import { Draw, drawLine, drawCircle } from 'draw.so';
 import inspect from './lib/objectInspect.js';
 import path from './lib/path.js';
 import PortableFileSystem from './lib/filesystem.js';
@@ -28,11 +28,11 @@ function dumpMat(name, mat) {
   console.log(`${name} = Mat `,
     Object.create(
       Mat.prototype,
-      ['cols', 'rows', 'depth', 'channels'].reduce((acc, prop) => ({
+      ['cols', 'rows', 'depth', 'channels', 'total', 'elemSize', 'elemSize1', 'step'].reduce((acc, prop) => ({
           ...acc,
           [prop]: { value: mat[prop], enumerable: true }
         }),
-        {}
+        { step1: { value: mat.step1(), enumerable: true } }
       )
     )
   );
@@ -51,9 +51,9 @@ function dumpMat(name, mat) {
 
 async function main(...args) {
   await ConsoleSetup({
-    breakLength: 120,
+    breakLength: 80,
     maxStringLength: 200,
-    maxArrayLength: 20
+    maxArrayLength: 10
   });
   await PortableFileSystem(fs => (filesystem = fs));
 
@@ -70,7 +70,7 @@ async function main(...args) {
   cv.namedWindow('main', cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO);
 
   //image = cv.imread('../an-tronics/images/5.19.jpg');
-  image = cv.imread(args[0] || 'OpenOTA-board.png');
+  image = cv.imread(args[0] || 'italo-disco.png');
   //  image = cv.imread('rainbow.png');
   let labImage = new Mat();
   let rgbImage = new Mat();
@@ -119,6 +119,7 @@ async function main(...args) {
     cv.imshow('corners', corners);
   }
   detectCorners(0.04);
+  detectEdges();
 
   cv.createTrackbar('threshold', 'main', 20, 255, function(value, count, name, window) {
     //console.log('Trackbar', { value, count, name, window });
@@ -131,15 +132,36 @@ async function main(...args) {
     detectCorners(value / 100);
   });
 
-  let edges = new Mat();
-  cv.Canny(labChannels[0], edges, 10, 20);
-  cv.imwrite('canny.png', edges);
+  function detectEdges(thres1 = 10, thres2 = 20) {
+    let edges = new Mat();
+    cv.Canny(thrs_mat, edges, thres1, thres2);
+    // cv.imwrite('canny.png', edges);
 
-  let lines = [];
-  cv.HoughLinesP(edges, lines, 1, cv.CV_PI / 180, 30 /*, 30, 10*/);
+    cv.imshow('canny', edges);
+    console.log('thrs_mat:', thrs_mat + '');
+    // console.log("labImage.buffer:", labImage.buffer);
+    // console.log("labImage.array:", labImage.array);
 
-  //  console.log('lines:', lines);
-  console.log('at(0,0):', labImage.at(37, 47));
+    detectLines(edges);
+  }
+
+  function detectLines(edges) {
+    let lines = new Mat();
+    cv.HoughLinesP(edges, lines, 1, cv.CV_PI / 180, 30 /*, 30, 10*/);
+
+    let out = new Mat();
+
+    cv.cvtColor(thrs_mat, out, cv.COLOR_GRAY2BGR);
+    const buffer = lines.buffer;
+    const array = new Uint32Array(buffer);
+
+    console.log('buffer:', buffer);
+    console.log('array:', array);
+    console.log('lines:', [...lines]);
+    console.log('lines:', lines.inspect());
+    //  console.log('lines:', dumpMat(lines));
+    // console.log('at(0,0):', labImage.at(37, 47));
+  }
 
   let key;
 
@@ -149,7 +171,7 @@ async function main(...args) {
     if(key == 'q' || key == '\x1b') break;
   }
 
-  return;
+  //return;
 
   let globalThis = Util.getGlobalObject();
   const moduleNames = ['Rect', 'Point', 'Size', 'Line', 'Mat', 'Contour', 'PointIterator', 'Draw'];

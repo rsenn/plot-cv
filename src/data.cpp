@@ -198,9 +198,7 @@ applyFunction(const cv::Mat& I) {
   int m = I.rows, n = I.cols;
   cv::Mat result(m, n, CV_32F);
   for(int i = 0; i < m; i++) {
-    for(int j = 0; j < n; j++) {
-      result.at<float>(i, j) = g(I.at<float>(i, j));
-    }
+    for(int j = 0; j < n; j++) { result.at<float>(i, j) = g(I.at<float>(i, j)); }
   }
   return result;
 }

@@ -259,8 +259,7 @@ js_size_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
     double arg;
 
     js_size_fit_t fit_type = js_size_fit_t(magic - 3);
-    if(magic >= 6) {
-    }
+    if(magic >= 6) {}
 
     if(js_size_read(ctx, argv[0], &other)) {
       result = js_size_fit(size, other, fit_type);

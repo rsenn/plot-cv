@@ -214,9 +214,7 @@ public:
 
     stream << ' ' << Extras();
 
-    for(const auto& attribute : attributes) {
-      stream << ' ' << attribute;
-    }
+    for(const auto& attribute : attributes) { stream << ' ' << attribute; }
     stream << "/>";
 
     return stream.str();
@@ -265,9 +263,7 @@ protected:
   Extras() const override {
     std::ostringstream stream;
 
-    for(const auto& p : points) {
-      stream << p << " ";
-    }
+    for(const auto& p : points) { stream << p << " "; }
 
     return Attribute("points", stream.str()).ToText();
   }
@@ -345,9 +341,7 @@ protected:
     std::ostringstream stream;
     stream << "<" << Tag();
 
-    for(const auto& attribute : Attributes()) {
-      stream << ' ' << attribute;
-    }
+    for(const auto& attribute : Attributes()) { stream << ' ' << attribute; }
     stream << ">";
 
     return stream.str();
@@ -379,9 +373,7 @@ public:
     std::ostringstream stream;
     stream << StartTag() << '\n';
 
-    for(const auto& object : objects) {
-      stream << "  " << *object << '\n';
-    }
+    for(const auto& object : objects) { stream << "  " << *object << '\n'; }
 
     stream << EndTag();
 

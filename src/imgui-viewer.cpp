@@ -208,9 +208,7 @@ ImageViewer::show() {
   render();
 
   // clear resources
-  for(int i = 0; i < frames.size(); i++) {
-    delete my_textures[i];
-  }
+  for(int i = 0; i < frames.size(); i++) { delete my_textures[i]; }
 
   frame_names.clear();
   frames.clear();

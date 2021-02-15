@@ -21,6 +21,11 @@ extern "C" {
 JSValue mat_proto = JS_UNDEFINED, mat_class = JS_UNDEFINED, mat_iterator_proto = JS_UNDEFINED,
         mat_iterator_class = JS_UNDEFINED;
 JSClassID js_mat_class_id = 0, js_mat_iterator_class_id = 0;
+
+static void
+js_mat_free_func(JSRuntime* rt, void* opaque, void* ptr) {
+  static_cast<JSMatData*>(opaque)->release();
+}
 }
 
 static std::vector<JSMatData*> mat_list;
@@ -390,6 +395,33 @@ js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
       m->resize(rows, color);
     } else {
       m->resize(rows);
+    }
+  } else if(magic == 13) {
+    int32_t i = 0;
+
+    JS_ToInt32(ctx, &i, argv[0]);
+    ret = JS_NewInt64(ctx, m->step1(i));
+  } else if(magic == 14) {
+    /*
+        JSPointData<double>* ofs;
+        JSSizeData<double>* wholeSize;
+
+        if(!js_size_data(ctx, argv[0])) {
+          JS_ThrowTypeError(ctx, "argument 1 must be cv::Size");
+          ret = JS_EXCEPTION;
+        } else if(!js_point_data(ctx, argv[1])) {
+          JS_ThrowTypeError(ctx, "argument 2 must be cv::Point");
+          ret = JS_EXCEPTION;
+        } else*/
+    {
+      cv::Size wholeSize;
+      cv::Point ofs;
+      m->locateROI(wholeSize, ofs);
+      js_size_write(ctx, argv[0], wholeSize);
+      js_point_write(ctx, argv[0], ofs);
+
+      /**ofs = pt;
+       *wholeSize = sz;*/
     }
   } else {
     ret = JS_EXCEPTION;
@@ -841,6 +873,46 @@ js_mat_get_props(JSContext* ctx, JSValueConst this_val, int magic) {
     return js_size_new(ctx, m->cols, m->rows);
   else if(magic == 8)
     return JS_NewBool(ctx, m->isContinuous());
+  else if(magic == 9)
+    return JS_NewBool(ctx, m->isSubmatrix());
+  else if(magic == 10)
+    return JS_NewUint32(ctx, m->step);
+  else if(magic == 11)
+    return JS_NewUint32(ctx, m->elemSize());
+  else if(magic == 12)
+    return JS_NewUint32(ctx, m->elemSize1());
+  else if(magic == 13) {
+    size_t size = m->elemSize() * m->total();
+    uint8_t* ptr = m->ptr();
+
+    m->addref();
+    // m->addref();
+
+    return JS_NewArrayBuffer(ctx, ptr, size, &js_mat_free_func, m, TRUE);
+  } else if(magic == 13) {
+    JSValueConst global, typed_array, buffer;
+    int elem_size = m->elemSize();
+    const char* ctor;
+    global = JS_GetGlobalObject(ctx);
+
+    printf("m->type()=%x m->channels()=%x\n", m->type(), m->channels());
+    switch(m->type()) {
+      case CV_8U:
+      case CV_8S: ctor = "Uint8Array"; break;
+      case CV_16U:
+      case CV_16S: ctor = "Uint16Array"; break;
+      case CV_32S: ctor = "Int32Array"; break;
+      case CV_32F: ctor = "Float32Array"; break;
+      case CV_64F: ctor = "Float64Array"; break;
+      default:
+        JS_ThrowTypeError(ctx, "cv:Mat type=%02x channels=%02x", m->type(), m->channels());
+        return JS_EXCEPTION;
+    }
+    typed_array = JS_GetPropertyStr(ctx, global, ctor);
+    buffer = js_mat_get_props(ctx, this_val, 9);
+
+    return JS_CallConstructor(ctx, typed_array, 1, &buffer);
+  }
 
   return JS_UNDEFINED;
 }
@@ -895,6 +967,13 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 
     os << ']' /*<< std::endl*/;
   }
+  os << ' ';
+  os << (void*)m->elemSize();
+  os << "x";
+  os << (void*)m->total();
+  os << " @";
+  os << (void*)m->ptr();
+
   str = os.str();
 
   return JS_NewStringLen(ctx, str.data(), str.size());
@@ -923,7 +1002,9 @@ js_mat_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
      << " [ ";
   if(sizeStrs.size() || m->type()) {
     os << "size = " << join(sizeStrs.cbegin(), sizeStrs.cend(), "x") << ", ";
-    os << "type = CV_" << (bytes * 8) << sign << 'C' << m->channels();
+    os << "type = CV_" << (bytes * 8) << sign << 'C' << m->channels() << ", ";
+    os << "elemSize = " << m->elemSize() << ", ";
+    os << "total = " << m->total();
   } else {
     os << "empty";
   }
@@ -1270,6 +1351,12 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("total", js_mat_get_props, NULL, 6),
     JS_CGETSET_MAGIC_DEF("size", js_mat_get_props, NULL, 7),
     JS_CGETSET_MAGIC_DEF("continuous", js_mat_get_props, NULL, 8),
+    JS_CGETSET_MAGIC_DEF("submatrix", js_mat_get_props, NULL, 9),
+    JS_CGETSET_MAGIC_DEF("step", js_mat_get_props, NULL, 10),
+    JS_CGETSET_MAGIC_DEF("elemSize", js_mat_get_props, NULL, 11),
+    JS_CGETSET_MAGIC_DEF("elemSize1", js_mat_get_props, NULL, 12),
+    JS_CGETSET_MAGIC_DEF("buffer", js_mat_get_props, NULL, 13),
+    // JS_CGETSET_MAGIC_DEF("array", js_mat_get_props, NULL, 12)
     JS_CFUNC_MAGIC_DEF("col", 1, js_mat_funcs, 0),
     JS_CFUNC_MAGIC_DEF("row", 1, js_mat_funcs, 1),
     JS_CFUNC_MAGIC_DEF("colRange", 2, js_mat_funcs, 2),
@@ -1282,6 +1369,8 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("clear", 0, js_mat_funcs, 10),
     JS_CFUNC_MAGIC_DEF("reset", 0, js_mat_funcs, 11),
     JS_CFUNC_MAGIC_DEF("resize", 1, js_mat_funcs, 12),
+    JS_CFUNC_MAGIC_DEF("step1", 0, js_mat_funcs, 13),
+    JS_CFUNC_MAGIC_DEF("locateROI", 0, js_mat_funcs, 14),
 
     JS_CFUNC_MAGIC_DEF("and", 2, js_mat_expr, 0),
     JS_CFUNC_MAGIC_DEF("or", 2, js_mat_expr, 1),

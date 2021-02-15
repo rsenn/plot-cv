@@ -116,9 +116,7 @@ js_video_capture_method(
     std::string backend;
     try {
       backend = s->getBackendName();
-    } catch(const cv::Exception& e) {
-      backend = e.msg;
-    }
+    } catch(const cv::Exception& e) { backend = e.msg; }
     ret = JS_NewString(ctx, backend.c_str());
   } else if(magic == 3) {
     ret = JS_NewBool(ctx, s->grab());

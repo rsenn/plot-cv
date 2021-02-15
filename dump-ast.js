@@ -351,7 +351,6 @@ async function main(...args) {
     colors: true,
     depth: 10,
     breakLength: 138,
-    maxArrayLength: 120
   });
   await PortableFileSystem(fs => (filesystem = fs));
   await PortableChildProcess(cp => (childProcess = cp));
@@ -495,7 +494,6 @@ async function main(...args) {
       colors: true,
       depth: 4,
       breakLength: 138,
-      maxArrayLength: 300
     });
     //console.log('allf:', allf.map(([k, v]) =>   NodeToString(v, 'expansionLoc')));
     console.log('allst:',
@@ -532,7 +530,6 @@ async function main(...args) {
       colors: true,
       depth: 6,
       breakLength: 138,
-      maxArrayLength: 20
     });
     //console.log('ranges:', [...GetNodes(ast, (n, k) => n.kind != 'TranslationUnitDecl' && GetLocation(n) && !GetLocation(n).includedFrom && [undefined, null, arg].contains(GetLocation(n).file))]);
   }

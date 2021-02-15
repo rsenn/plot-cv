@@ -181,9 +181,7 @@ Polygon_<double>::delete_loop() {
     if(cut2 < cut1) {
       cut2 += L;
     }
-    for(int k = cut1; k <= cut2; k++) {
-      new_points.push_back(regular_points[k % L]);
-    }
+    for(int k = cut1; k <= cut2; k++) { new_points.push_back(regular_points[k % L]); }
     return new_points;
   } else {
     return regular_points;
@@ -306,4 +304,5 @@ Polygon_<double>::get_point(int i) {
   return regular_points.at(i);
 }
 
-template<> Polygon_<double>::~Polygon_() {}
+template<> Polygon_<double>::~Polygon_() {
+}

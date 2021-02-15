@@ -30,6 +30,29 @@ js_point_read(JSContext* ctx, JSValueConst point, JSPointData<T>* out) {
   return ret;
 }
 
+template<class T>
+static inline void
+js_point_write(JSContext* ctx, JSValueConst out, const JSPointData<T>& in) {
+  JSValue x = js_number_new<T>(ctx, in.x);
+  JSValue y = js_number_new<T>(ctx, in.y);
+
+  if(JS_IsArray(ctx, out)) {
+    JS_SetPropertyUint32(ctx, out, 0, x);
+    JS_SetPropertyUint32(ctx, out, 1, y);
+
+  } else if(JS_IsObject(out)) {
+    JS_SetPropertyStr(ctx, out, "x", x);
+    JS_SetPropertyStr(ctx, out, "y", y);
+  } else if(JS_IsFunction(ctx, out)) {
+    JSValueConst args[2];
+    args[0] = x;
+    args[1] = y;
+    JS_Call(ctx, out, JS_UNDEFINED, 2, args);
+  }
+  JS_FreeValue(ctx, x);
+  JS_FreeValue(ctx, y);
+}
+
 static inline JSPointData<double>
 js_point_get(JSContext* ctx, JSValueConst point) {
   JSPointData<double> r;

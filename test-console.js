@@ -5,7 +5,6 @@ async function main(...args) {
   await ConsoleSetup({
     breakLength: 120,
     maxStringLength: 200,
-    maxArrayLength: 20
   });
 
   let c = console;

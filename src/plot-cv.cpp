@@ -219,9 +219,7 @@ brightness_and_contrast_auto(const image_type& src, image_type& dst, float clipH
     // calculate cumulative distribution from the histogram
     std::vector<float> accumulator(histSize);
     accumulator[0] = hist.at<float>(0);
-    for(int i = 1; i < histSize; i++) {
-      accumulator[i] = accumulator[i - 1] + hist.at<float>(i);
-    }
+    for(int i = 1; i < histSize; i++) { accumulator[i] = accumulator[i - 1] + hist.at<float>(i); }
 
     // locate points that cuts at required value
     float max = accumulator.back();
@@ -623,9 +621,7 @@ jsrt::value
 contours_to_array(JSContext* ctx, const contour_vector<int>& contours) {
   JSValue ret = JS_NewArray(ctx);
   uint32_t i, n = contours.size();
-  for(i = 0; i < n; i++) {
-    JS_SetPropertyUint32(ctx, ret, i, js_contour_new<int>(ctx, contours[i]));
-  }
+  for(i = 0; i < n; i++) { JS_SetPropertyUint32(ctx, ret, i, js_contour_new<int>(ctx, contours[i])); }
   return ret;
 }
 

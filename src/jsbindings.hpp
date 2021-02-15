@@ -235,6 +235,29 @@ js_number_read<int64_t>(JSContext* ctx, JSValueConst num, int64_t* out) {
   return !JS_ToInt64(ctx, out, num);
 }
 
+template<class T>
+static inline JSValue
+js_number_new(JSContext* ctx, T num) {
+  return JS_NewFloat64(ctx, num);
+}
+
+template<>
+inline JSValue
+js_number_new<int32_t>(JSContext* ctx, int32_t num) {
+  return JS_NewInt32(ctx, num);
+}
+template<>
+inline JSValue
+js_number_new<uint32_t>(JSContext* ctx, uint32_t num) {
+  return JS_NewUint32(ctx, num);
+}
+
+template<>
+inline JSValue
+js_number_new<int64_t>(JSContext* ctx, int64_t num) {
+  return JS_NewInt64(ctx, num);
+}
+
 int js_ref(JSContext* ctx, const char* name, JSValueConst arg, JSValue value);
 
 #endif

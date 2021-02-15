@@ -140,13 +140,13 @@ js_cv_hough_lines(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
 
 static JSValue
 js_cv_hough_lines_p(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  cv::Mat* image;
+  cv::Mat *image, *lines;
   JSValueConst array;
   double rho, theta;
   int32_t threshold;
   double minLineLength = 0, maxLineGap = 0;
 
-  std::vector<cv::Vec4i> lines;
+  // std::vector<cv::Vec4i> lines;
   size_t i;
 
   double angle = 0, scale = 1;
@@ -157,8 +157,9 @@ js_cv_hough_lines_p(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
     return JS_EXCEPTION;
 
   image = js_mat_data(ctx, argv[0]);
+  lines = js_mat_data(ctx, argv[1]);
 
-  if(image == nullptr || !JS_IsArray(ctx, argv[1]))
+  if(image == nullptr || lines == nullptr)
     return JS_EXCEPTION;
 
   array = argv[1];
@@ -171,17 +172,17 @@ js_cv_hough_lines_p(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   if(argc >= 7)
     JS_ToFloat64(ctx, &maxLineGap, argv[6]);
 
-  cv::HoughLinesP(*image, lines, rho, theta, threshold, minLineLength, maxLineGap);
+  cv::HoughLinesP(*image, *lines, rho, theta, threshold, minLineLength, maxLineGap);
+  /*
+    i = 0;
+    js_array_truncate(ctx, array, 0);
 
-  i = 0;
-  js_array_truncate(ctx, array, 0);
+    for(const auto& line : lines) {
+      JSValue v = js_line_new(ctx, line[0], line[1], line[2], line[3]);
 
-  for(const auto& line : lines) {
-    JSValue v = js_line_new(ctx, line[0], line[1], line[2], line[3]);
-
-    JS_SetPropertyUint32(ctx, array, i++, v);
-  }
-
+      JS_SetPropertyUint32(ctx, array, i++, v);
+    }
+  */
   return JS_UNDEFINED;
 }
 
@@ -418,9 +419,7 @@ js_cv_split(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv)
 
   length = js_array_length(ctx, argv[1]);
 
-  for(int32_t i = 0; i < src->channels(); i++) {
-    dst.push_back(cv::Mat(src->size(), src->type() & 0x7));
-  }
+  for(int32_t i = 0; i < src->channels(); i++) { dst.push_back(cv::Mat(src->size(), src->type() & 0x7)); }
 
   // dst.resize(src->channels());
 

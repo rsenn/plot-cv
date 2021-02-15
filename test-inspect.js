@@ -26,7 +26,6 @@ async function main(...args) {
     showProxy: false,
     getters: false,
     depth: Infinity,
-    maxArrayLength: 1000,
     maxStringLength: 200,
     breakLength: winsz[0] || 80,
     compact: 2,
