@@ -42,10 +42,16 @@ Util.define(Array.prototype, {
 
 async function ImportModule(moduleName, ...args) {
   let done = false;
+  let base = path.basename(moduleName, /\.[^.]*$/);
   return await import(moduleName)
     .then(module => {
       done = true;
-      Object.assign(globalThis, { [moduleName]: module });
+      console.log('ImportModule', { moduleName, args, module });
+
+      if(!globalThis.modules) globalThis.modules = {};
+      globalThis.modules[base] = module;
+
+      Object.assign(globalThis, { ...module });
       return module;
     })
     .catch(e => {
@@ -69,9 +75,7 @@ async function CommandLine() {
 }
 
 function SelectLocations(node) {
-  let result = deep.select(node, n =>
-    ['offset', 'line', 'file'].some(prop => n[prop] !== undefined)
-  );
+  let result = deep.select(node, n => ['offset', 'line', 'file'].some(prop => n[prop] !== undefined));
   console.log('result:', console.config({ depth: 1 }), result);
   return result;
 }
@@ -133,7 +137,7 @@ function Table(list, pred = (n, l) => true /*/\.c:/.test(l)*/) {
 }
 
 async function ASTShell(...args) {
-  await ConsoleSetup({ /*breakLength: 240, */ depth: Infinity });
+  await ConsoleSetup({ /*breakLength: 240, */ customInspect: true, depth: Infinity });
 
   console.options.hideKeys = ['loc', 'range'];
 

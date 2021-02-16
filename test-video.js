@@ -55,8 +55,7 @@ class Pipeline extends Function {
         mat = processor.call(self, mat, self.images[i], i);
         if(mat) self.images[i] = mat;
         self.times[i] = hr(start);
-        if(typeof callback == 'function')
-          callback.call(self, self.images[i], i, self.processors.length);
+        if(typeof callback == 'function') callback.call(self, self.images[i], i, self.processors.length);
         i++;
       }
       return mat;
@@ -458,13 +457,7 @@ async function main(...args) {
     L2gradient: new NumericParam(config.L2gradient ?? 0, 0, 1),
     dilations: new NumericParam(config.dilations ?? 0, 0, 10),
     erosions: new NumericParam(config.erosions ?? 0, 0, 10),
-    mode: new EnumParam(config.mode ?? 3, [
-      'RETR_EXTERNAL',
-      'RETR_LIST',
-      'RETR_CCOMP',
-      'RETR_TREE',
-      'RETR_FLOODFILL'
-    ]),
+    mode: new EnumParam(config.mode ?? 3, ['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL']),
     method: new EnumParam(config.method ?? 0, [
       'CHAIN_APPROX_NONE',
       'CHAIN_APPROX_SIMPLE',
@@ -537,8 +530,7 @@ async function main(...args) {
         }
 
         if(!videoSize.equals(dst.size))
-          throw new Error(`AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`
-          );
+          throw new Error(`AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`);
       }),
       Grayscale,
       Processor(function Norm(src, dst) {
@@ -548,13 +540,7 @@ async function main(...args) {
         cv.GaussianBlur(src, dst, [+params.ksize, +params.ksize], 0, 0, cv.BORDER_REPLICATE);
       }),
       Processor(function EdgeDetect(src, dst) {
-        cv.Canny(src,
-          dst,
-          +params.thresh1,
-          +params.thresh2,
-          +params.apertureSize,
-          +params.L2gradient
-        );
+        cv.Canny(src, dst, +params.thresh1, +params.thresh2, +params.apertureSize, +params.L2gradient);
         ////console.log('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);
       }),
       Processor(function Morph(src, dst) {
@@ -618,15 +604,10 @@ async function main(...args) {
 
   console.log(`Trackbar 'frame' frameShow=${frameShow} pipeline.size - 1 = ${pipeline.size - 1}`);
 
-  cv.createTrackbar('frame',
-    'gray',
-    frameShow,
-    pipeline.size - 1,
-    function(value, count, name, window) {
-      //console.log('Trackbar', { value, count, name, window });
-      frameShow = value;
-    }
-  );
+  cv.createTrackbar('frame', 'gray', frameShow, pipeline.size - 1, function(value, count, name, window) {
+    //console.log('Trackbar', { value, count, name, window });
+    frameShow = value;
+  });
 
   const resizeOutput = Util.once(() => {
     let size = outputMat.size.mul(zoom);
@@ -638,10 +619,7 @@ async function main(...args) {
 
   const ClearSurface = mat => (mat.setTo([0, 0, 0, 0]), mat);
   const MakeSurface = () =>
-    Util.once((...args) => new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)),
-      null,
-      ClearSurface
-    );
+    Util.once((...args) => new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)), null, ClearSurface);
   const MakeComposite = Util.once(() => new Mat());
   let surface = MakeSurface();
   let keyCode,
@@ -808,21 +786,13 @@ async function main(...args) {
         drawContour(over, contour, color, +params.lineWidth);
       });
     }
-    font.draw(over,
-      video.time + ' ⏩',
-      tPos,
-      /*0x00ff00 ||*/ { r: 0, g: 255, b: 0, a: 255 },
-      +params.fontThickness
-    );
+    font.draw(over, video.time + ' ⏩', tPos, /*0x00ff00 ||*/ { r: 0, g: 255, b: 0, a: 255 }, +params.fontThickness);
 
     function drawParam(param, y, color) {
       const name = paramNav.nameOf(param);
       const value = param.get() + (param.get() != (param | 0) + '' ? ` (${+param})` : '');
       const arrow = Number.isInteger(y) && paramNav.name == name ? '=>' : '  ';
-      const text =
-        `${arrow}${name}` +
-        (Number.isInteger(y) ? `[${param.range.join('-')}]` : '') +
-        ` = ${value}`;
+      const text = `${arrow}${name}` + (Number.isInteger(y) ? `[${param.range.join('-')}]` : '') + ` = ${value}`;
       color = color || { r: 0xb7, g: 0x35, b: 255, a: 255 };
       y = tPos.y - 20 - (y | 0);
       font.draw(over, text, [tPos.x, y], { r: 0, g: 0, b: 0, a: 255 }, params.fontThickness * 2);
@@ -898,18 +868,7 @@ async function main(...args) {
     //composite.release();
     //console.log("composite.release()", composite.toString());
   }
-  const {
-    ksize,
-    thresh1,
-    thresh2,
-    apertureSize,
-    L2gradient,
-    dilations,
-    erosions,
-    mode,
-    method,
-    lineWidth
-  } = params;
+  const { ksize, thresh1, thresh2, apertureSize, L2gradient, dilations, erosions, mode, method, lineWidth } = params;
   SaveConfig(Object.entries({
       frameShow,
       ksize,
@@ -930,8 +889,7 @@ async function main(...args) {
     let stack = Mat.backtrace(mat)
       //.slice(0,-1)
       .filter(frame =>
-          frame.functionName != '<anonymous>' &&
-          (frame.lineNumber !== undefined || /test-video/.test(frame.fileName))
+          frame.functionName != '<anonymous>' && (frame.lineNumber !== undefined || /test-video/.test(frame.fileName))
       )
       .map(frame => frame.toString())
       .join('\n  ');

@@ -21,22 +21,26 @@ export class Type {
     }
 
     //    super(str);
+    let name, desugared, typeAlias, qualType;
 
     if(Util.isObject(s)) {
-      if(s.kind == 'EnumDecl' && s.name) Util.define(this, { qualType: `enum ${s.name}` });
+      if(s.kind == 'EnumDecl' && s.name) qualType = `enum ${s.name}`;
       else {
-        if(s.qualType) Util.define(this, { qualType: s.qualType });
-        if(s.desugaredQualType !== undefined)
-          Util.define(this, { desugaredQualType: s.desugaredQualType });
-        if(s.typeAliasDeclId !== undefined)
-          Util.define(this, { typeAliasDeclId: s.typeAliasDeclId });
+        if(s.qualType) qualType = s.qualType;
+        if(s.desugaredQualType !== undefined) desugared = s.desugaredQualType;
+        if(s.typeAliasDeclId !== undefined) typeAlias = s.typeAliasDeclId;
       }
     } else {
-      Util.define(this, { qualType: str + '' });
+      qualType = str + '';
     }
-    this.name = str;
-    if(s.desugaredQualType || s.qualType) this.desugared = s.desugaredQualType || s.qualType;
-    if(s.typeAliasDeclId) this.typeAlias = s.typeAliasDeclId;
+    name = str;
+    if(s.desugaredQualType || s.qualType) desugared = s.desugaredQualType || s.qualType;
+    if(s.typeAliasDeclId) typeAlias = s.typeAliasDeclId;
+
+    if(desugared === name) desugared = undefined;
+    if(qualType === name) qualType = undefined;
+
+    Util.weakAssign(this, { name, desugared, typeAlias, qualType });
   }
 
   /*  get name() {
@@ -173,12 +177,16 @@ export class Type {
     return size;
   }
 
-  toString() {
+  [Symbol.for('nodejs.util.inspect.custom')](opts = {}) {
+    const text = Util.colors.ansi(opts.colors);
+
+    return text('Type', 1, 31) + inspect(this, { ...opts });
     return this.name;
   }
-  [Symbol.for('nodejs.util.inspect.custom')]() {
+  /* toString() {
     return this.name;
   }
+
   get [Symbol.toStringTag]() {
     return `${((this.typeAlias && this.typeAlias + '/') || '') + this.name}, ${this.size}${
       (this.pointer && ', ' + this.pointer) || ''
@@ -191,7 +199,7 @@ export class Type {
   }
   valueOf() {
     return this.name;
-  }
+  }*/
 }
 
 export async function SpawnCompiler(file, args = []) {
@@ -205,11 +213,7 @@ export async function SpawnCompiler(file, args = []) {
   args.push(file);
   args.unshift('clang');
 
-  let argv = [
-    'sh',
-    '-c',
-    `exec ${args.map(p => (/ /.test(p) ? `'${p}'` : p)).join(' ')} 1>${outputFile}`
-  ];
+  let argv = ['sh', '-c', `exec ${args.map(p => (/ /.test(p) ? `'${p}'` : p)).join(' ')} 1>${outputFile}`];
 
   console.log(`SpawnCompiler: ${argv.map(p => (/ /.test(p) ? `"${p}"` : p)).join(' ')}`);
 
@@ -221,13 +225,19 @@ export async function SpawnCompiler(file, args = []) {
 
   let json = '',
     errors = '';
+  let done = false;
 
-  /* if(Util.platform == 'quickjs') {
-    (function () {
+  if(Util.platform == 'quickjs') {
+    (async function() {
       let r;
       let buf = new ArrayBuffer(1024);
-      r = filesystem.readAll(child.stderr.fd);
-      errors += r;
+
+      while(!done) {
+        await filesystem.waitRead(child.stderr.fd);
+
+        r = filesystem.read(child.stderr.fd, buf);
+        errors += filesystem.bufferToString(buf, buf.slice(0, r));
+      }
     })();
   } else {
     AcquireReader(child.stderr, async reader => {
@@ -236,15 +246,15 @@ export async function SpawnCompiler(file, args = []) {
         if(!r.done) errors += r.value.toString();
       }
     });
-  }*/
+  }
   console.log('child.wait():', await child.wait());
+  done = true;
   console.log('errors:', errors);
   let errorLines = errors.split(/\n/g).filter(line => line.trim() != '');
   errorLines = errorLines.filter(line => /error:/.test(line));
   const numErrors =
-    [
-      ...(/^([0-9]+)\s/g.exec(errorLines.find(line => /errors\sgenerated/.test(line)) || '0') || [])
-    ][0] || errorLines.length;
+    [...(/^([0-9]+)\s/g.exec(errorLines.find(line => /errors\sgenerated/.test(line)) || '0') || [])][0] ||
+    errorLines.length;
 
   console.log(`numErrors: ${numErrors}`);
   if(numErrors) throw new Error(errorLines.join('\n'));
