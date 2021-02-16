@@ -18,7 +18,7 @@ async function main(...args) {
 
   let walk = new TreeWalker(result[0]);
   console.log('walk:', walk.toString());
-   let i = 0;
+  let i = 0;
   console.log('~TreeWalker.MASK_PRIMITIVE:', TreeWalker.MASK_PRIMITIVE.toString(2));
   console.log(' TreeWalker.MASK_ALL:', TreeWalker.MASK_ALL);
   console.log(' TreeWalker.MASK_ALL:', TreeWalker.MASK_ALL.toString(2));
@@ -28,7 +28,6 @@ async function main(...args) {
   const { flags, tagMask } = walk;
   console.log(' walk', { flags, tagMask });
   while(walk.nextNode((v, k, w) => typeof v != 'object')) {
-
     console.log('type:',
       typeof walk.currentNode,
       'path:',
@@ -36,7 +35,9 @@ async function main(...args) {
       typeof walk.currentNode != 'object' ? walk.currentNode : ''
     );
     let node = walk.currentNode;
-
+ /*   if((i % 25) == 0)
+  console.log('walk:', walk.toString());
+*/
     if(typeof node == 'object') {
       console.log('object:',
         console.inspect(node, { depth: 0, colors: true }) ||
@@ -47,8 +48,6 @@ async function main(...args) {
     }
     i++;
   }
-
-  console.log('walk:', walk.toString());
 
   await import('std').then(std => std.gc());
 }
