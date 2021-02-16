@@ -27,7 +27,7 @@ async function main(...args) {
   walk.flags = 0;
   const { flags, tagMask } = walk;
   console.log(' walk', { flags, tagMask });
-  while(walk.nextNode((v, k, w) => typeof v == 'object' && v instanceof Array && v.length > 0)) {
+  while(walk.nextNode((v, k, w) => typeof v != 'object')) {
 
     console.log('type:',
       typeof walk.currentNode,
