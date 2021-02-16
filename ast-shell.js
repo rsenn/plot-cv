@@ -69,7 +69,9 @@ async function CommandLine() {
 }
 
 function SelectLocations(node) {
-  let result = deep.select(node, n => ['offset', 'line', 'file'].some(prop => n[prop] !== undefined));
+  let result = deep.select(node, n =>
+    ['offset', 'line', 'file'].some(prop => n[prop] !== undefined)
+  );
   console.log('result:', console.config({ depth: 1 }), result);
   return result;
 }
@@ -79,6 +81,25 @@ function LocationString(loc) {
   if(typeof loc.line == 'number')
     return `${file ? file + ':' : ''}${loc.line}${typeof loc.col == 'number' ? ':' + loc.col : ''}`;
   return `${file ? file : ''}@${loc.offset}`;
+}
+
+const TypeMap = Util.weakMapper(node => new Type(node));
+
+function Structs(nodes) {
+  return nodes
+    .filter(node => node.inner && node.inner.some(field => field.kind == 'FieldDecl'))
+    .map(node => [
+      node.kind,
+      ((node.tagUsed ? node.tagUsed + ' ' : '') + (node.name ?? '')).trim(),
+      new Map(
+        node.inner.map((field, i) =>
+          /Attr/.test(field.kind)
+            ? [Symbol(field.kind), field.id]
+            : [field.name || i, (field.type && new Type(field.type)) || field.kind]
+        )
+      )
+    ]);
+  /*.map(node => types(node))*/
 }
 
 function Table(list, pred = (n, l) => true /*/\.c:/.test(l)*/) {
@@ -112,7 +133,7 @@ function Table(list, pred = (n, l) => true /*/\.c:/.test(l)*/) {
 }
 
 async function ASTShell(...args) {
-  await ConsoleSetup({ /*breakLength: 240, */ depth: 10 });
+  await ConsoleSetup({ /*breakLength: 240, */ depth: Infinity });
 
   console.options.hideKeys = ['loc', 'range'];
 
@@ -172,7 +193,10 @@ async function ASTShell(...args) {
     Compile,
     SelectLocations,
     LocationString,
-    Table
+    Table,
+    Structs,
+    Type,
+    TypeMap
   });
   globalThis.util = Util;
 

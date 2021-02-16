@@ -31,11 +31,11 @@ async function main(...args) {
     console.log('type:',
       typeof walk.currentNode,
       'path:',
-      walk.currentPath.join('.')/*.replace(/\.?children\.?/g, '/')*/,
+      walk.currentPath.join('.') /*.replace(/\.?children\.?/g, '/')*/,
       typeof walk.currentNode != 'object' ? walk.currentNode : ''
     );
     let node = walk.currentNode;
- /*   if((i % 25) == 0)
+    /*   if((i % 25) == 0)
   console.log('walk:', walk.toString());
 */
     if(typeof node == 'object') {
