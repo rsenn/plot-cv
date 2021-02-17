@@ -353,17 +353,24 @@ export default function REPL(title = 'QuickJS') {
       colorize = show_colors;
 
     if(search) {
-      const re = new RegExp((search_pattern = cmd_line.replace(/([\(\)\?\+\*])/g, '.' /*'\\$1'*/)), 'i');
+      const re = new RegExp((search_pattern = cmd_line.replace(/([\(\)\?\+\*])/g, '.' /*'\\$1'*/)),
+        'i'
+      );
       const num = search > 0 ? search - 1 : search;
       //search_index = history.findLastIndex(c => re.test(c) && --num == 0);
       let search_history = [...history.entries()].rotateLeft(history_index);
-      search_matches.splice(0, search_matches.length, ...search_history.filter(([i, c]) => re.test(c)));
+      search_matches.splice(0,
+        search_matches.length,
+        ...search_history.filter(([i, c]) => re.test(c))
+      );
       //num = search > 0 ? search - 1 : search;
       const match = search_matches.at(num);
       const [histidx = -1, histcmd = ''] = match || [];
       const histdir = search > 0 ? 'forward' : 'reverse';
       const histpos =
-        search < 0 ? search_history.indexOf(match) - search_history.length : search_history.indexOf(match);
+        search < 0
+          ? search_history.indexOf(match) - search_history.length
+          : search_history.indexOf(match);
       search_index = histidx;
       let line_start = `(${histdir}-search[${histpos}])\``;
       cmd_line = `${line_start}${cmd}': ${histcmd}`;
@@ -384,7 +391,9 @@ export default function REPL(title = 'QuickJS') {
     } /* cursor_pos is the position in 16 bit characters inside the
            UTF-16 string 'cmd_line' */ else if(cmd_line != last_cmd
     ) {
-      if(!colorize && last_cmd.substring(0, last_cursor_pos) == cmd_line.substring(0, last_cursor_pos)) {
+      if(!colorize &&
+        last_cmd.substring(0, last_cursor_pos) == cmd_line.substring(0, last_cursor_pos)
+      ) {
         /* optimize common case */
         std.puts(cmd_line.substring(last_cursor_pos));
       } else {
@@ -528,6 +537,8 @@ export default function REPL(title = 'QuickJS') {
 
   function history_add(str) {
     //console.log('history_add', {str} );
+    if(typeof str == 'string') str = str.trim();
+
     if(str) {
       history.push(str);
     }
@@ -616,7 +627,10 @@ export default function REPL(title = 'QuickJS') {
     if(cmd.length > 1 && pos > 0) {
       if(pos == cmd.length) pos--;
       cmd =
-        cmd.substring(0, pos - 1) + cmd.substring(pos, pos + 1) + cmd.substring(pos - 1, pos) + cmd.substring(pos + 1);
+        cmd.substring(0, pos - 1) +
+        cmd.substring(pos, pos + 1) +
+        cmd.substring(pos - 1, pos) +
+        cmd.substring(pos + 1);
       cursor_pos = pos + 1;
     }
   }
@@ -628,19 +642,29 @@ export default function REPL(title = 'QuickJS') {
     var p3 = skip_word_backward(p4);
 
     if(p1 < p2 && p2 <= cursor_pos && cursor_pos <= p3 && p3 < p4) {
-      cmd = cmd.substring(0, p1) + cmd.substring(p3, p4) + cmd.substring(p2, p3) + cmd.substring(p1, p2);
+      cmd =
+        cmd.substring(0, p1) +
+        cmd.substring(p3, p4) +
+        cmd.substring(p2, p3) +
+        cmd.substring(p1, p2);
       cursor_pos = p4;
     }
   }
 
   function upcase_word() {
     var end = skip_word_forward(cursor_pos);
-    cmd = cmd.substring(0, cursor_pos) + cmd.substring(cursor_pos, end).toUpperCase() + cmd.substring(end);
+    cmd =
+      cmd.substring(0, cursor_pos) +
+      cmd.substring(cursor_pos, end).toUpperCase() +
+      cmd.substring(end);
   }
 
   function downcase_word() {
     var end = skip_word_forward(cursor_pos);
-    cmd = cmd.substring(0, cursor_pos) + cmd.substring(cursor_pos, end).toLowerCase() + cmd.substring(end);
+    cmd =
+      cmd.substring(0, cursor_pos) +
+      cmd.substring(cursor_pos, end).toLowerCase() +
+      cmd.substring(end);
   }
 
   function kill_region(start, end, dir) {
@@ -719,7 +743,8 @@ export default function REPL(title = 'QuickJS') {
           return / /;
         default: if (is_word(c)) {
             base = get_context_word(line, pos);
-            if(['true', 'false', 'null', 'this'].includes(base) || !isNaN(+base)) return eval(base);
+            if(['true', 'false', 'null', 'this'].includes(base) || !isNaN(+base))
+              return eval(base);
             obj = get_context_object(line, pos - base.length);
             if(obj === null || obj === void 0) return obj;
             if(obj === globalThis && obj[base] === void 0) return eval(base);
@@ -731,10 +756,51 @@ export default function REPL(title = 'QuickJS') {
     return void 0;
   }
 
+  function get_directory_entries(pathStr = '.', mask = '*') {
+    let dir, base;
+    let stat = filesystem.stat(pathStr);
+    if(stat && stat?.isDirectory() && pathStr.endsWith('/')) {
+      dir = pathStr;
+      base = '';
+    } else {
+      dir = path.dirname(pathStr);
+      base = path.basename(pathStr);
+    }
+    let expr = mask.replace(/\./g, '\\.').replace(/\*/g, '.*');
+    expr = (mask.startsWith('*') ? '' : '^') + expr + (mask.endsWith('*') ? '' : '$');
+    let re = new RegExp(expr);
+    console.log('get_directory_entries:', { dir, base, expr });
+    let entries = filesystem
+      .readdir(dir)
+      .map(entry => entry + (filesystem.stat(path.join(dir, entry))?.isDirectory() ? '/' : ''))
+      .sort((a, b) => b.endsWith('/') - a.endsWith('/') || a.localeCompare(b));
+    console.log('get_directory_entries:', { entries });
+    entries = entries.filter(entry => re.test(entry) || entry.endsWith('/'));
+    if(base != '') entries = entries.filter(entry => entry.startsWith(base));
+    console.log('get_directory_entries:', { len: entries.length });
+    return entries.map(entry => path.join(dir, entry));
+  }
+
+  function get_filename_completions(line, pos) {
+    let s = line.slice(0, pos).replace(/^\\[^ ]?\s*/, '');
+
+    //  let s = get_context_word(line, pos);
+    console.log('get_filename_completions', { line, pos, s });
+
+    let mask = '*';
+
+    if(line.startsWith('\\i')) mask = '*.(js|so)';
+    let tab = get_directory_entries(s, mask);
+    return { tab, pos: s.length, ctx: {} };
+  }
+
   function get_completions(line, pos) {
     var s, obj, ctx_obj, r, i, j, paren;
 
+    if(cmd.startsWith('\\i')) return get_filename_completions(line, pos);
+
     s = get_context_word(line, pos);
+    //    print_status('get_completions', { line, pos, cmd, word: s });
     ctx_obj = get_context_object(line, pos - s.length);
     r = [];
     /* enumerate properties from object and its prototype chain,
@@ -1198,7 +1264,10 @@ export default function REPL(title = 'QuickJS') {
           std.puts('Invalid precision\n');
           return false;
         }
-        if(Number.isNaN(expBits1) || expBits1 < BigFloatEnv.expBitsMin || expBits1 > BigFloatEnv.expBitsMax) {
+        if(Number.isNaN(expBits1) ||
+          expBits1 < BigFloatEnv.expBitsMin ||
+          expBits1 > BigFloatEnv.expBitsMax
+        ) {
           std.puts('Invalid exponent bits\n');
           return false;
         }
@@ -1235,18 +1304,17 @@ export default function REPL(title = 'QuickJS') {
     } else if(cmd === 'i') {
       const [, ...args] = expr.split(/\s+/g);
 
-      thisObj.importModule(...args);
-      /* let done = false;
-       import(moduleName)
-        .then(module => {
-          console.log('import', { module });
+      thisObj
+        .importModule(...args)
+        .catch(e => {
+          print_status(`ERROR importing:`, e);
           done = true;
         })
-        .catch(e => {
-          console.error(moduleName + ':', e);
+        .then(({ moduleName, modulePath, module }) => {
+          print_status(`imported '${moduleName}' from '${modulePath}':`, module);
           done = true;
         });
-      while(!done) std.sleep(50);*/
+      /*while(!done) std.sleep(50);*/
 
       //    console.log("handle_directive", {cmd,module,exports});
       return false;
@@ -1319,6 +1387,16 @@ export default function REPL(title = 'QuickJS') {
     }
   }
 
+  function print_status(...args) {
+    std.puts('\x1b[1S');
+    std.puts('\x1b[1F');
+    //    std.puts('\x1b[1G');
+    std.puts('\x1b[J');
+    console.log(...args);
+    readline_print_prompt();
+    update();
+  }
+
   function eval_and_print(expr) {
     var result;
 
@@ -1334,12 +1412,13 @@ export default function REPL(title = 'QuickJS') {
       std.puts(colors.none);
       /* set the last result */
       globalThis._ = result;
-      if(typeof result == 'object' &&
-        result != null &&
-        (result instanceof Promise || typeof result.then == 'function')
-      ) {
+      if(Util.isPromise(result)) {
         result.then(value => {
-          console.log(`Promise resolved to:`, Util.typeOf(value), console.config({ depth: 1, multiline: true }), value);
+          print_status(`Promise resolved to:`,
+            Util.typeOf(value),
+            console.config({ depth: 1, multiline: true }),
+            value
+          );
           globalThis.$ = value;
         });
       }
@@ -1738,7 +1817,9 @@ export default function REPL(title = 'QuickJS') {
           cmd_readline_start,
           readline_handle_cmd,
           handle_cmd,
-          colorize_js
+          colorize_js,
+          get_directory_entries,
+          get_filename_completions
         }).map(([name, value]) => [name, { value, enumerable: false }])
       )
     );

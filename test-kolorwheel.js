@@ -205,7 +205,11 @@ async function main(...args) {
       s += `${key}: palette[${i}]`;
     }
   }
-  console.log('const palette = [ ' + palette.map(c => c.toSource()).join(', ') + ' ];\n renderer.colors = {' + s + '};'
+  console.log('const palette = [ ' +
+      palette.map(c => c.toSource()).join(', ') +
+      ' ];\n renderer.colors = {' +
+      s +
+      '};'
   );
   let colors = [...Gradient('#9ceaff', '#000088', 7)].map(c => new RGBA(c));
 

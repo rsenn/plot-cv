@@ -9,7 +9,9 @@ export const serial = {
       { vendorId: 0x239a }, // Adafruit boards
       { vendorId: 0xcafe } // TinyUSB example
     ];
-    return navigator.usb.requestDevice({ filters: filters }).then(device => new serial.Port(device));
+    return navigator.usb
+      .requestDevice({ filters: filters })
+      .then(device => new serial.Port(device));
   },
   Port
 };

@@ -4,7 +4,7 @@ import ConsoleSetup from './lib/consoleSetup.js';
 async function main(...args) {
   await ConsoleSetup({
     breakLength: 120,
-    maxStringLength: 200,
+    maxStringLength: 200
   });
 
   let c = console;

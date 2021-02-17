@@ -167,7 +167,10 @@ try {
         .join('\n  |');
 
       //console.log('result:\n  ', dumps);
-      return [xpath, new Map(selected.map(({ path, value }) => [path2xpath(path).down('*'), value]))];
+      return [
+        xpath,
+        new Map(selected.map(({ path, value }) => [path2xpath(path).down('*'), value]))
+      ];
     });
 
     tags = Object.fromEntries(tags);

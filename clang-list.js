@@ -6,7 +6,7 @@ import Util from './lib/util.js';
 import path from './lib/path.js';
 import deep from './lib/deep.js';
 import Tree from './lib/tree.js';
-import { Type, Compile, AstDump, NodeType, NodeName, GetLoc, GetType } from './clang-ast.js';
+import { Type, Compile, AstDump, NodeType, NodeName, GetLoc, GetTypeStr } from './clang-ast.js';
 
 //prettier-ignore
 let filesystem, spawn;
@@ -236,7 +236,7 @@ async function main(...args) {
             n,
             n.id || tree.pathOf(n),
             n.name || n.referencedMemberDecl || Object.keys(n).filter(k => typeof n[k] == 'string'),
-            GetType(n),
+            GetTypeStr(n),
             n.kind,
             p.join('.').replace(/\.?inner\./g, '/'),
             l + ''

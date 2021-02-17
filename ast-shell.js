@@ -6,7 +6,7 @@ import deep from './lib/deep.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import REPL from './repl.js';
 import * as std from 'std';
-import { SIZEOF_POINTER, Type, AstDump, NodeType, NodeName, GetLoc, GetType } from './clang-ast.js';
+import { SIZEOF_POINTER, Type, AstDump, NodeType, NodeName, GetLoc, GetTypeStr, TypeFactory, Location } from './clang-ast.js';
 import Tree from './lib/tree.js';
 
 let filesystem, spawn, base, histfile;
@@ -15,11 +15,14 @@ Util.define(Array.prototype, {
   findLastIndex(predicate) {
     for(let i = this.length - 1; i >= 0; --i) {
       const x = this[i];
-      if(predicate(x, i, this)) {
-        return i;
-      }
+      if(predicate(x, i, this)) return i;
     }
     return -1;
+  },
+  findLast(predicate) {
+    let i;
+    if((i = this.findLastIndex(predicate)) == -1) return null;
+    return this[i];
   },
   rotateRight(n) {
     this.unshift(...this.splice(n, this.length - n));
@@ -40,24 +43,28 @@ Util.define(Array.prototype, {
   }
 });
 
-async function ImportModule(moduleName, ...args) {
+async function ImportModule(modulePath, ...args) {
   let done = false;
-  let base = path.basename(moduleName, /\.[^.]*$/);
-  return await import(moduleName)
-    .then(module => {
-      done = true;
-      console.log('ImportModule', { moduleName, args, module });
+  let moduleName = path.basename(modulePath, /\.[^.]*$/);
+  return await import(modulePath).then(module => {
+    done = true;
+    module = Object.create(null,
+      Util.getMemberNames(module, Infinity, 0).reduce(
+        (acc, item) => ({ ...acc, [item]: { value: module[item], enumerable: true } }),
+        Object.getOwnPropertyDescriptors(module)
+      )
+    );
 
-      if(!globalThis.modules) globalThis.modules = {};
-      globalThis.modules[base] = module;
+    if(!globalThis.modules) globalThis.modules = {};
+    globalThis.modules[moduleName] = module;
 
-      Object.assign(globalThis, { ...module });
-      return module;
-    })
-    .catch(e => {
-      console.error(moduleName + ':', e);
+    Object.assign(globalThis, module);
+    return { moduleName, modulePath, module };
+  });
+  /*.catch(e => {
       done = true;
-    });
+      return { moduleName, modulePath, module: e.message };
+    })*/
 }
 
 async function CommandLine() {
@@ -75,7 +82,9 @@ async function CommandLine() {
 }
 
 function SelectLocations(node) {
-  let result = deep.select(node, n => ['offset', 'line', 'file'].some(prop => n[prop] !== undefined));
+  let result = deep.select(node, n =>
+    ['offset', 'line', 'file'].some(prop => n[prop] !== undefined)
+  );
   console.log('result:', console.config({ depth: 1 }), result);
   return result;
 }
@@ -93,13 +102,13 @@ function Structs(nodes) {
   return nodes
     .filter(node => node.inner && node.inner.some(field => field.kind == 'FieldDecl'))
     .map(node => [
-      node.kind,
+      //deep.find(node, n => typeof n.line == 'number'),
+      new Location(GetLoc(node)),
       ((node.tagUsed ? node.tagUsed + ' ' : '') + (node.name ?? '')).trim(),
-      new Map(
-        node.inner.map((field, i) =>
+      new Map(node.inner.map((field, i) =>
           /Attr/.test(field.kind)
             ? [Symbol(field.kind), field.id]
-            : [field.name || i, (field.type && new Type(field.type)) || field.kind]
+            : [field.name || i, (field.type && TypeFactory(field.type)) || field.kind]
         )
       )
     ]);
@@ -137,8 +146,9 @@ function Table(list, pred = (n, l) => true /*/\.c:/.test(l)*/) {
 }
 
 async function ASTShell(...args) {
-  await ConsoleSetup({ /*breakLength: 240, */ customInspect: true, depth: Infinity });
+  await ConsoleSetup({ /*breakLength: 240, */ customInspect: true, compact: 1, depth: 1 });
 
+  console.options.compact = 1;
   console.options.hideKeys = ['loc', 'range'];
 
   await PortableFileSystem(fs => (filesystem = fs));
@@ -174,6 +184,29 @@ async function ASTShell(...args) {
   async function Compile(file, ...args) {
     let r = await AstDump(file, [...globalThis.flags, ...args]);
     r.source = file;
+
+    for(let node of r.data.inner) {
+      const { loc } = node;
+      if(loc) {
+        if(loc.file) file = loc.file;
+        else loc.file = file;
+      }
+    }
+    r.getType = function(name_or_id) {
+      const { types } = this;
+
+      let results = types.filter(name_or_id.startsWith('0x')
+          ? node => node.id == name_or_id
+          : node => node.name == name_or_id
+      );
+      let result, idx;
+      if(results.length > 1 && (idx = results.findIndex(r => r.completeDefinition)) != -1) {
+        result = results[idx];
+      } else {
+        result = results[0];
+      }
+      if(result) return TypeFactory(result, this.data);
+    };
     return Util.lazyProperties(r, {
       tree() {
         return new Tree(this.data);
@@ -188,7 +221,7 @@ async function ASTShell(...args) {
     NodeType,
     NodeName,
     GetLoc,
-    GetType
+    GetTypeStr
   });
 
   Object.assign(globalThis, {

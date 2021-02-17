@@ -263,7 +263,7 @@ function GetNameOrId(ast, [key, node], pred = id => id != '') {
   return [...names, ...ids].filter(([k, v]) => pred(v))[0];
 }
 
-function GetType(node) {
+function GetTypeStr(node) {
   if(Util.isObject(node.type)) {
     if(node.type.qualType) return node.type.qualType;
     return node.type;
@@ -275,7 +275,7 @@ function GetRecord(node) {
   if(Util.isObject(node) && Array.isArray(node.inner))
     return new Map(node.inner.map(field => [
         field.name,
-        ContainsDecls(field) ? GetRecord(field) : GetType(field) || field
+        ContainsDecls(field) ? GetRecord(field) : GetTypeStr(field) || field
       ])
     );
 }
@@ -350,7 +350,7 @@ async function main(...args) {
   await ConsoleSetup({
     colors: true,
     depth: 10,
-    breakLength: 138,
+    breakLength: 138
   });
   await PortableFileSystem(fs => (filesystem = fs));
   await PortableChildProcess(cp => (childProcess = cp));
@@ -493,7 +493,7 @@ async function main(...args) {
     await ConsoleSetup({
       colors: true,
       depth: 4,
-      breakLength: 138,
+      breakLength: 138
     });
     //console.log('allf:', allf.map(([k, v]) =>   NodeToString(v, 'expansionLoc')));
     console.log('allst:',
@@ -529,7 +529,7 @@ async function main(...args) {
     await ConsoleSetup({
       colors: true,
       depth: 6,
-      breakLength: 138,
+      breakLength: 138
     });
     //console.log('ranges:', [...GetNodes(ast, (n, k) => n.kind != 'TranslationUnitDecl' && GetLocation(n) && !GetLocation(n).includedFrom && [undefined, null, arg].contains(GetLocation(n).file))]);
   }

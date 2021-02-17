@@ -37,7 +37,9 @@ async function main(...args) {
   const dumpObj = (obj, depth, options) =>
     '{' +
     Object.entries(obj)
-      .map(([k, v]) => `\n${'  '.repeat(options.depth - depth + 1)}${k}=${inspect(v, depth - 1, options)}`)
+      .map(([k, v]) =>
+          `\n${'  '.repeat(options.depth - depth + 1)}${k}=${inspect(v, depth - 1, options)}`
+      )
       .join(',') +
     '}';
   console.log('main', args);
