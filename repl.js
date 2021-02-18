@@ -769,15 +769,15 @@ export default function REPL(title = 'QuickJS') {
     let expr = mask.replace(/\./g, '\\.').replace(/\*/g, '.*');
     expr = (mask.startsWith('*') ? '' : '^') + expr + (mask.endsWith('*') ? '' : '$');
     let re = new RegExp(expr);
-    console.log('get_directory_entries:', { dir, base, expr });
+    //console.log('get_directory_entries:', { dir, base, expr });
     let entries = filesystem
       .readdir(dir)
       .map(entry => entry + (filesystem.stat(path.join(dir, entry))?.isDirectory() ? '/' : ''))
       .sort((a, b) => b.endsWith('/') - a.endsWith('/') || a.localeCompare(b));
-    console.log('get_directory_entries:', { entries });
+    //console.log('get_directory_entries:', { entries });
     entries = entries.filter(entry => re.test(entry) || entry.endsWith('/'));
     if(base != '') entries = entries.filter(entry => entry.startsWith(base));
-    console.log('get_directory_entries:', { len: entries.length });
+    //console.log('get_directory_entries:', { len: entries.length });
     return entries.map(entry => path.join(dir, entry));
   }
 
@@ -785,7 +785,7 @@ export default function REPL(title = 'QuickJS') {
     let s = line.slice(0, pos).replace(/^\\[^ ]?\s*/, '');
 
     //  let s = get_context_word(line, pos);
-    console.log('get_filename_completions', { line, pos, s });
+    //console.log('get_filename_completions', { line, pos, s });
 
     let mask = '*';
 
@@ -1382,6 +1382,7 @@ export default function REPL(title = 'QuickJS') {
         std.puts('\\mode [std|math] change the running mode (current = ' + eval_mode + ')\n');
       }
     }
+    std.puts('\\i [module] import module\n');
     if(!config_numcalc) {
       std.puts('\\q          exit\n');
     }
@@ -1407,7 +1408,7 @@ export default function REPL(title = 'QuickJS') {
       result = std.evalScript(expr, { backtrace_barrier: true });
       eval_time = new Date().getTime() - now;
       std.puts(colors[styles.result]);
-      console.log(console.config({ depth: 10, multiline: true }), result);
+      console.log(result);
       std.puts('\n');
       std.puts(colors.none);
       /* set the last result */
@@ -1424,8 +1425,8 @@ export default function REPL(title = 'QuickJS') {
       }
     } catch(error) {
       std.puts(colors[styles.error_msg]);
-      if(error instanceof Error) {
-        console.log(error);
+      if(error instanceof Error || typeof error.message == 'string') {
+        console.log((error.type ?? Util.className(error)) + ': ' + error.message);
         if(error.stack) {
           std.puts(error.stack);
         }
@@ -1837,6 +1838,10 @@ export default function REPL(title = 'QuickJS') {
   }
 
   async function run() {
+    console.options.depth = Infinity;
+    console.options.compact = 13;
+    console.options.maxArrayLength = Infinity;
+
     termInit();
 
     cmd_start(title);

@@ -6,10 +6,11 @@ import deep from './lib/deep.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import REPL from './repl.js';
 import * as std from 'std';
-import { SIZEOF_POINTER, Type, AstDump, NodeType, NodeName, GetLoc, GetTypeStr, TypeFactory, Location } from './clang-ast.js';
+import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, NodeType, NodeName, GetLoc, GetType, GetTypeStr } from './clang-ast.js';
 import Tree from './lib/tree.js';
 
 let filesystem, spawn, base, histfile;
+let defs, includes, sources;
 
 Util.define(Array.prototype, {
   findLastIndex(predicate) {
@@ -145,6 +146,131 @@ function Table(list, pred = (n, l) => true /*/\.c:/.test(l)*/) {
   );
 }
 
+function WriteFile(name, data, verbose = true) {
+  if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
+  let ret = filesystem.writeFile(name, data);
+
+  if(verbose) console.log(`Wrote ${name}: ${ret} bytes`);
+}
+
+function* GenerateInspectStruct(type, members, includes) {
+  console.log('GenerateInspectStruct', { type, members, includes });
+  for(let include of ['stdio.h', ...includes]) yield `#include "${include}"`;
+  yield `${type} svar;`;
+  yield `int main() {`;
+  yield `  printf("${type} - %u\\n", sizeof(svar));`;
+  for(let member of members)
+    yield `  printf(".${member} %u %u\\n", (char*)&svar.${member} - (char*)&svar, sizeof(svar.${member}));`;
+  yield `  return 0;`;
+  yield `}`;
+}
+
+async function InspectStruct(decl) {
+  const include = decl.loc.file.replace(/^\/usr\/include\//, '');
+  const code = [...GenerateInspectStruct(decl.name, [...decl.members.keys()], [include])].join('\n'
+  );
+  const file = `inspect-${decl.name.replace(/\ /g, '_')}`;
+  WriteFile(file + '.c', code);
+
+  let result = await SpawnCompiler(file + '.c', ['-o', file, ...flags]);
+
+  console.log('InspectStruct', { file, result });
+  return result;
+}
+
+function RoundTo(value, align) {
+  return Math.floor((value + (align - 1)) / align) * align;
+}
+
+function MakeStructClass(decl, filename) {
+  let code = [...GenerateStructClass(decl)].join('\n');
+
+  WriteFile((filename ?? decl.name.replace(/[^A-Za-z0-9_]/g, '-')) + '.js', code);
+
+  if(!filename) return code;
+}
+
+function* GenerateStructClass(decl) {
+  let { name, size, members } = decl;
+
+  yield `class ${name.replace(/struct\s*/, '')} extends ArrayBuffer {`;
+  yield `  constructor(obj = {}) {\n    super(${size});\n    Object.assign(this, obj);\n  }`;
+  yield `  get [Symbol.toStringTag]() { return \`[${name} @ \${this} ]\`; }`;
+  let fields = [];
+  let offset = 0;
+  for(let [name, member] of members) {
+    if(/reserved/.test(name)) continue;
+
+    if(member.size == 8) offset = RoundTo(offset, 8);
+
+    yield '';
+    yield `  /* ${offset}: ${member} ${name}@${member.size} */`;
+    yield* GenerateGetSet(name,
+      offset,
+      member.size,
+      member.signed && !member.isPointer(),
+      member.isFloatingPoint()
+    ).map(line => `  ${line}`);
+    fields.push(name);
+    offset += RoundTo(member.size, 4);
+  }
+  yield '';
+  yield `  toString() {\n    const { ${fields.join(', ')} } = this;\n    return \`${name} {${[
+    ...members
+  ]
+    .map(([field, member]) =>
+        '\\n\\t.' +
+        field +
+        ' = ' +
+        (member.isPointer() ? '0x' : '') +
+        '${' +
+        field +
+        (member.isPointer() ? '.toString(16)' : '') +
+        '}'
+    )
+    .join(',')}\\n}\`;\n  }`;
+  yield '}';
+}
+
+function GenerateGetSet(name, offset, size, signed, floating) {
+  let ctor = ByteLength2TypedArray(size, signed, floating);
+  return [
+    `set ${name}(value) { new ${ctor}(this, ${offset})[0] = ${ByteLength2Value(size,
+      signed,
+      floating
+    )}; }`,
+    `get ${name}() { return new ${ctor}(this, ${offset})[0]; }`
+  ];
+}
+
+function ByteLength2TypedArray(byteLength, signed, floating) {
+  if(floating) {
+    switch (byteLength) {
+      case 4:
+        return 'Float32Array';
+      case 8:
+        return 'Float64Array';
+      default: throw new Error(`Floating point, but ${byteLength} size`);
+    }
+  }
+  switch (byteLength) {
+    case 1:
+      return signed ? 'Int8Array' : 'Uint8Array';
+    case 2:
+      return signed ? 'Int16Array' : 'Uint16Array';
+    case 4:
+      return signed ? 'Int32Array' : 'Uint32Array';
+    case 8:
+      return signed ? 'BigInt64Array' : 'BigUint64Array';
+    default: return signed ? 'Int8Array' : 'Uint8Array';
+  }
+}
+
+function ByteLength2Value(byteLength, signed, floating) {
+  if(byteLength == 8 && !floating) return 'BigInt(value)';
+  return 'value';
+}
+
 async function ASTShell(...args) {
   await ConsoleSetup({ /*breakLength: 240, */ customInspect: true, compact: 1, depth: 1 });
 
@@ -169,9 +295,9 @@ async function ASTShell(...args) {
     args
   );
 
-  let defs = params.define || [];
-  let includes = params.include || [];
-  let sources = params['@'] || [];
+  defs = params.define || [];
+  includes = params.include || [];
+  sources = params['@'] || [];
 
   Util.define(globalThis, {
     defs,
@@ -185,28 +311,39 @@ async function ASTShell(...args) {
     let r = await AstDump(file, [...globalThis.flags, ...args]);
     r.source = file;
 
-    for(let node of r.data.inner) {
-      const { loc } = node;
-      if(loc) {
-        if(loc.file) file = loc.file;
-        else loc.file = file;
-      }
-    }
-    r.getType = function(name_or_id) {
-      const { types } = this;
+    Object.assign(r, {
+      getByIdOrName(name_or_id, pred = n => true) {
+        return this.data.inner.find(name_or_id.startsWith('0x')
+            ? node => node.id == name_or_id && pred(node)
+            : node => node.name == name_or_id && pred(node)
+        );
+      },
+      getType(name_or_id) {
+        const types = this.data.inner.filter(n => /(RecordDecl|TypedefDecl|EnumDecl)/.test(n.kind));
+        let result, idx;
 
-      let results = types.filter(name_or_id.startsWith('0x')
-          ? node => node.id == name_or_id
-          : node => node.name == name_or_id
-      );
-      let result, idx;
-      if(results.length > 1 && (idx = results.findIndex(r => r.completeDefinition)) != -1) {
-        result = results[idx];
-      } else {
-        result = results[0];
+        if(typeof name_or_id == 'object' && name_or_id) {
+          result = name_or_id;
+        } else if(typeof name_or_id == 'string') {
+          let results = types.filter(name_or_id.startsWith('0x')
+              ? node => node.id == name_or_id
+              : node => node.name == name_or_id
+          );
+          if(results.length <= 1 || (idx = results.findIndex(r => r.completeDefinition)) == -1)
+            idx = 0;
+          result = results[idx];
+        } else {
+          result = types[name_or_id];
+        }
+
+        if(result) return TypeFactory(result, this.data);
+      },
+      getFunction(name_or_id) {
+        let result = this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
+
+        if(result) return new FunctionDecl(result, this.data);
       }
-      if(result) return TypeFactory(result, this.data);
-    };
+    });
     return Util.lazyProperties(r, {
       tree() {
         return new Tree(this.data);
@@ -221,7 +358,12 @@ async function ASTShell(...args) {
     NodeType,
     NodeName,
     GetLoc,
-    GetTypeStr
+    GetTypeStr,
+    WriteFile,
+    GenerateInspectStruct,
+    GenerateStructClass,
+    InspectStruct,
+    MakeStructClass
   });
 
   Object.assign(globalThis, {
@@ -232,8 +374,21 @@ async function ASTShell(...args) {
     LocationString,
     Table,
     Structs,
+    Node,
     Type,
-    TypeMap
+    RecordDecl,
+    EnumDecl,
+    TypedefDecl,
+    FunctionDecl,
+    Location,
+    TypeFactory,
+    SpawnCompiler,
+    AstDump,
+    NodeType,
+    NodeName,
+    GetLoc,
+    GetType,
+    GetTypeStr
   });
   globalThis.util = Util;
 

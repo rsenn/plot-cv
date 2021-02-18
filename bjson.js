@@ -21,8 +21,8 @@ const ReadJSON = async filename => {
 };
 
 async function main(...args) {
-  console.log('Util.getPlatform() =', Util.getPlatform());
-  console.log('main(', ...args, ')');
+  //console.log('Util.getPlatform() =', Util.getPlatform());
+  //console.log('main(', ...args, ')');
   await ConsoleSetup({ breakLength: 120, depth: 10 });
   await PortableFileSystem(fs => (filesystem = fs));
 
@@ -45,7 +45,7 @@ async function main(...args) {
   for(let arg of params['@']) {
     let base = path.basename(arg, /\.[^./]*$/);
     let binary = true;
-    let obj = await ReadBJSON(arg).catch(console.log);
+    let obj = await ReadBJSON(arg).catch(e => console.log(e));
     if(!obj) {
       obj = await ReadJSON(arg);
       binary = false;

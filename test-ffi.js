@@ -25,7 +25,7 @@ let fork = foreign('fork', 'int');
 let strcpy = foreign('strcpy', 'pointer', 'pointer', 'pointer');
 let setjmp = foreign('setjmp', 'int', 'pointer');
 let longjmp = foreign('longjmp', 'int', 'pointer', 'int');
-let printf = foreign('printf', 'int', 'string', 'pointer');
+let printf = foreign('printf', 'int', 'string', 'pointer', 'pointer');
 
 Util.define(ArrayBuffer.prototype, {
   toPointer(hint = 'string') {
@@ -121,15 +121,17 @@ async function main(...args) {
     multiline: 1,
     alignMap: true
   });
+  printf('%p %s\n', 0xdeadbeef00000000, '0xdeadbeef');
 
   console.log(getpid());
 
+  for(let [name, value] of Object.entries(ffi)) console.log(`ffi.${name}:`, value);
+  console.log(`ffi:`, ffi);
   const flagNames = Util.bitsToNames(Util.filterKeys(fcntl, /^O_/));
   let outBuf = new ArrayBuffer(256);
   let flags;
   let fd = 1;
   let newState = false;
-  console.log('ffi:', ffi);
   console.log('strdup:', strdup('BLAH').toString(16));
   console.log('dlsym_(RTLD_DEFAULT, "strdup"):', dlsym(RTLD_DEFAULT, 'strdup').toString(16));
   console.log('snprintf(outBuf, outBuf.byteLength, "%p", -1):',
@@ -218,16 +220,15 @@ async function main(...args) {
 
   let regs = new Registers();
 
-  ret = call('returnRAX', 1, 2);
+  /* ret = call('returnRAX', 1, 2);
   console.log('returnRAX() =', ret);
   ret = call('returnADDR');
   console.log('returnADDR() =', ret);
 
   ret = call('writeREGS', +toPointer(regs), +toPointer(regs), regs, regs); // setjmp(jb);
-  console.log('writeREGS() =', ret);
+  console.log('writeREGS() =', ret);*/
 
   console.log('regs =', regs.toString());
-
   //if(ret != 1337)
   // longjmp(jb, 1337);
 }

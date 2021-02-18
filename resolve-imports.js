@@ -531,7 +531,7 @@ async function main(...args) {
       return Object.defineProperties([
           GetPosition(n),
           n.type || Util.className(n),
-          st.pathOf(n),
+          /*st ? st.pathOf(n) : */ undefined,
           Util.abbreviate(Util.escape(PrintAst(n))),
           GetName(n) /*|| Symbol.for('default')*/
         ],
@@ -787,9 +787,9 @@ async function main(...args) {
           if(type) {
             path ??= st.pathOf(node);
             position ??= ESNode.assoc(node).position;
-            if(position.start) position = position.start;
+            if(position?.start) position = position.start;
             let props = [ctxt(type, 38, 5, 214), path, position].map(a =>
-              a[inspectSymbol] ? a[inspectSymbol]() : a
+              a && a[inspectSymbol] ? a[inspectSymbol]() : a
             );
             /* console.log("path:", [...path]);*/
             props[1] = `[ ${props[1]} ]`;
