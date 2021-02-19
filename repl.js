@@ -1839,7 +1839,7 @@ export default function REPL(title = 'QuickJS') {
 
   async function run() {
     console.options.depth = Infinity;
-    console.options.compact = 13;
+    console.options.compact = 2;
     console.options.maxArrayLength = Infinity;
 
     termInit();

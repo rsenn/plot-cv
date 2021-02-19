@@ -282,20 +282,26 @@ export class RecordDecl extends Type {
     if(tagUsed) this.name = tagUsed + (name ? ' ' + name : '');
     else if(name) this.name = name;
 
-    //console.log('RecordDecl', node);
-    let fields = inner?.filter(child => child.kind.endsWith('Decl'));
+    if(inner?.find(child => child.kind == 'PackedAttr'))
+      this.packed = true;
+
+    let fields = inner?.filter(child => !child.isImplicit && child.kind.endsWith('Decl'));
+   //console.log('RecordDecl', fields);
 
     if(fields)
-      this.members = new Map(fields
+      this.members = /*new Map*/(fields
           .filter(node => !node.isImplicit)
           .map(node => {
+            let name = node.name;
+            if(node.isBitfield)
+              name += ':1';
             if(node.kind == 'FieldDecl')
               return [
-                node.name,
+                name,
                 node.type?.kind ? TypeFactory(node.type, ast) : new Type(node.type, ast)
               ];
 
-            return [node.name, TypeFactory(node, ast)];
+            return [name, TypeFactory(node, ast)];
           })
       );
   }
