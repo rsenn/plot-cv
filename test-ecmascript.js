@@ -1,7 +1,7 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
-import { estree, ESNode, BlockStatement, SequenceExpression, TemplateLiteral, CallExpression, ImportDeclaration, Identifier, ObjectPattern, ArrowFunctionExpression, Program } from './lib/ecmascript/estree.js';
+import { estree, ESNode, Program, ModuleDeclaration, ModuleSpecifier, ImportDeclaration, ImportSpecifier, ImportDefaultSpecifier, ImportNamespaceSpecifier, Super, Expression, FunctionLiteral, Pattern, Identifier, Literal, RegExpLiteral, TemplateLiteral, BigIntLiteral, TaggedTemplateExpression, TemplateElement, ThisExpression, UnaryExpression, UpdateExpression, BinaryExpression, AssignmentExpression, LogicalExpression, MemberExpression, ConditionalExpression, CallExpression, DecoratorExpression, NewExpression, SequenceExpression, Statement, EmptyStatement, DebuggerStatement, LabeledStatement, BlockStatement, FunctionBody, StatementList, ExpressionStatement, Directive, ReturnStatement, ContinueStatement, BreakStatement, IfStatement, SwitchStatement, SwitchCase, WhileStatement, DoWhileStatement, ForStatement, ForInStatement, ForOfStatement, WithStatement, TryStatement, CatchClause, ThrowStatement, Declaration, ClassDeclaration, ClassBody, MethodDefinition, MetaProperty, YieldExpression, FunctionArgument, FunctionDeclaration, ArrowFunctionExpression, VariableDeclaration, VariableDeclarator, ObjectExpression, Property, ArrayExpression, JSXLiteral, AssignmentProperty, ObjectPattern, ArrayPattern, RestElement, AssignmentPattern, AwaitExpression, SpreadElement, ExportNamedDeclaration, ExportSpecifier, AnonymousDefaultExportedFunctionDeclaration, AnonymousDefaultExportedClassDeclaration, ExportDefaultDeclaration, ExportAllDeclaration } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import { Path } from './lib/json.js';
@@ -21,11 +21,11 @@ const code = ` (function() { for(let [value, path] of deep.iterate(x, (v, k) => 
 })();
 
 `;
+const inspectSymbol = Symbol.for('nodejs.util.inspect.custom');
 
 Util.callMain(main, Util.putError);
 
 function WriteFile(name, data) {
-  console.log('WriteFile', { name, data: Util.abbreviate(Util.escape(data)) });
   if(Util.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
@@ -46,12 +46,21 @@ function printAst(ast, comments, printer = globalThis.printer) {
 let files = {};
 
 async function main(...args) {
-  await ConsoleSetup({ depth: 3, breakLength: 80 });
+  await ConsoleSetup({ colors: true, depth: 10, compact: 1 });
   await PortableFileSystem(fs => (filesystem = fs));
 
-  console.log('main args =', args);
-  console.log('console.depth:', console.depth);
-  console.log('console.colors:', console.colors);
+  let params = Util.getOpt({
+      'output-ast': [true, null, 'a'],
+      'output-js': [true, null, 'o'],
+      debug: [false, null, 'x'],
+      '@': 'input'
+    },
+    args
+  );
+
+  console.log('MethodDefinition.prototype[inspectSymbol]:',
+    MethodDefinition.prototype[inspectSymbol] + ''
+  );
 
   globalThis = Util.getGlobalObject();
   Util.defineGettersSetters(globalThis, {
@@ -59,15 +68,15 @@ async function main(...args) {
   });
 
   // console.log('globalThis', globalThis);
-  console.log('globalThis.printer', globalThis.printer);
+  console.log('params', params);
 
   //await import('tty');
 
-  if(args.length == 0) args.push(null); //'./lib/ecmascript/parser.js');
-  for(let file of args) {
+  if(params['@'].length == 0) params['@'].push(null); //'./lib/ecmascript/parser.js');
+  for(let file of params['@']) {
     let error;
 
-    await Util.safeCall(processFile, file);
+    await Util.safeCall(processFile, file, params);
 
     files[file] = finish(error);
 
@@ -82,8 +91,9 @@ async function main(...args) {
   Util.exit(Number(files.length == 0));
 }
 
-async function processFile(file) {
+async function processFile(file, params) {
   let data, b, ret;
+  const { debug } = params;
   if(file == '-') file = '/dev/stdin';
   if(file && filesystem.exists(file)) data = filesystem.readFile(file);
   else {
@@ -93,24 +103,30 @@ async function processFile(file) {
   console.log('opened:', file);
   let ast, error;
   globalThis.parser = null;
-  globalThis.parser = new ECMAScriptParser(data ? data.toString() : data, file, true);
+  globalThis.parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
 
   console.log('prototypeChain:', Util.getPrototypeChain(parser));
   console.log('OK, data: ', Util.abbreviate(Util.escape(data)));
   ast = parser.parseProgram();
   parser.addCommentsToNodes(ast);
 
+  if(params['output-ast'])
+    WriteFile(params['output-ast'], JSON.stringify(ast /*.toJSON()*/, null, 2));
+
+  let node2path = new WeakMap();
+
   let flat = deep.flatten(ast,
     new Map(),
     node => node instanceof ESNode || Util.isArray(node),
     (path, value) => {
       //   path = /*path.join("."); //*/ new Path(path);
+      node2path.set(value, path);
       return [path, value];
     }
   );
   let nodeKeys = [];
 
-  await ConsoleSetup({ depth: 10, colors: true });
+  //  await ConsoleSetup({ depth: 10, colors: true });
 
   //console.log('ast', ast);
   /*
@@ -123,7 +139,6 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
 
   let node = Util.find(flat, (value, key) => path.equals(key));
  
-  let node2path = new WeakMap();
  
   for(let [path, node] of flat) {
     node2path.set(node, path);
@@ -145,7 +160,8 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
 
   // for(let [i, n] of allNodes) console.log(new ImmutablePath(node2path.get(n)), n);
 
-  const output_file = file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
+  const output_file =
+    params['output-js'] ?? file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
 
   let tree = new Tree(ast);
   console.log('tree:',
@@ -156,7 +172,7 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
 
   /*let st =
     deep.get(ast, ['body', 0, 'callee', 'expressions', 0].join('.')) || ast;*/
-  console.log('flat', flat);
+  // console.log('flat', flat);
 
   /*  let [p, n] = [...flat].find(([path, node]) => node instanceof BlockStatement);
   console.log('find:', [...p]);
@@ -166,11 +182,10 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
 
   console.log('find:', body);
 */
-  console.log('saving to:', output_file);
-  const output = printAst(ast, parser.comments, printer);
-  console.log('output:', output);
+  const code = printAst(ast, parser.comments, printer);
+  console.log('code:', Util.abbreviate(Util.escape(code)));
 
-  WriteFile(output_file, output);
+  WriteFile(output_file, code);
 
   function getImports() {
     const imports = [...flat].filter(([path, node]) => isRequire(node) || isImport(node));
@@ -204,7 +219,7 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
     console.log('importIdentifiers:', Util.unique(importIdentifiers.flat()).join(', '));
   }
 
-  await ConsoleSetup({ depth: Infinity });
+  //  await ConsoleSetup({ depth: Infinity });
   const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral);
 
   console.log('templates:', templates);
