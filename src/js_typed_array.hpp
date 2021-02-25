@@ -92,4 +92,21 @@ template<class T> struct pointer_type {
   static constexpr bool typed_array = number_type<value_type>::typed_array;
 };
 
+template<class T>
+inline std::enable_if_t<number_type<T>::typed_array, JSValue>
+js_array_from(JSContext* ctx, const T* start, const T* end) {
+  JSValue buf, global, ctor;
+  JSValueConst args[3];
+  const char* name;
+  const uint8_t *s, *e;
+  s = reinterpret_cast<const uint8_t*>(start);
+  e = reinterpret_cast<const uint8_t*>(end);
+  buf = JS_NewArrayBufferCopy(ctx, s, e - s);
+  name = number_type<T>::constructor_name();
+  global = JS_GetGlobalObject(ctx);
+  ctor = JS_GetPropertyStr(ctx, global, name);
+  args[0] = buf;
+  return JS_CallConstructor(ctx, ctor, 1, args);
+}
+
 #endif /* defined(JS_TYPED_ARRAY_HPP) */

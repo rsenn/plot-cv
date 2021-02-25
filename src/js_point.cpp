@@ -4,6 +4,7 @@
 #include "js_rect.hpp"
 #include "js_array.hpp"
 #include "js_alloc.hpp"
+#include "js_typed_array.hpp"
 #include "quickjs/cutils.h"
 #include "quickjs/quickjs.h"
 

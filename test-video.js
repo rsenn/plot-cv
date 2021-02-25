@@ -133,9 +133,9 @@ function SaveConfig(configObj) {
 }
 
 function LoadConfig() {
-  let str = filesystem.readFile(Util.getArgv()[1].replace(/\.js$/, '.config.json')).toString();
+  let str = std.loadFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'), 'utf-8');
   console.log('LoadConfig:', str);
-  return JSON.parse(str);
+  return JSON.parse(str ?? '{}');
 }
 
 function dumpMat(name, mat) {
@@ -562,7 +562,12 @@ async function main(...args) {
         cv.erode(dst, dst, structuringElement, new Point(-1, -1), +params.erosions);
       }),
       Processor(function Contours(src, dst) {
-        cv.findContours(src, (contours = []), (hier = []), cv[params.mode], cv[params.method]);
+        cv.findContours(src,
+          (contours = []),
+          h => (hier = h) /*(hier = [])*/,
+          cv[params.mode],
+          cv[params.method]
+        );
 
         //src.copyTo(dst);
         cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
@@ -576,10 +581,12 @@ async function main(...args) {
       }),
       Processor(function HoughLines(src, dst) {
         let edges = pipeline.outputOf('EdgeDetect');
-        //console.log('edges: '+edges);
+        lines = new Mat(0, 0, cv.CV_32SC4);
+        console.log('edges: ' + edges);
+        console.log('lines: ' + lines);
 
         cv.HoughLinesP(edges,
-          (lines = []),
+          lines,
           2,
           (+params.angleResolution * Math.PI) / 180,
           +params.threshc,
@@ -940,7 +947,7 @@ async function main(...args) {
   }
   console.log('props:', video.dump());
   console.log('gc:', std.gc());
-  console.log('exit:', std.exit(0));
+  //  console.log('exit:', std.exit(0));
 }
 
 Util.callMain(main, true);

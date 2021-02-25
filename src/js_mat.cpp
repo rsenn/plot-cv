@@ -180,9 +180,9 @@ js_mat_new(JSContext* ctx, uint32_t rows, uint32_t cols, int type) {
 
   s = js_mat_track(ctx, js_allocate<cv::Mat>(ctx));
 
-  if(cols > 0 && rows > 0) {
-    new(s) cv::Mat(cv::Size(cols, rows), type);
-    *s = cv::Mat::zeros(cv::Size(cols, rows), type);
+  if(cols || rows || type) {
+    new(s) cv::Mat(rows, cols, type);
+    // *s = cv::Mat::zeros(rows, cols,  type);
   } else {
     new(s) cv::Mat();
   }
@@ -206,27 +206,19 @@ js_mat_wrap(JSContext* ctx, const cv::Mat& mat) {
 
   s = js_mat_track(ctx, js_allocate<cv::Mat>(ctx));
   new(s) cv::Mat();
-
   *s = mat;
-  // s->addref();
-  //
 #ifdef DEBUG_MAT
   std::cerr << "js_mat_wrap     ";
-
   auto posList = std::find(mat_list.cbegin(), mat_list.cend(), const_cast<JSMatData*>(&mat));
   bool inList;
   if((inList = posList != mat_list.cend())) {
     std::cerr << "arg[" << (posList - mat_list.cbegin()) << "]=" << static_cast<const void*>(&mat);
-
     std::cerr << ", inList(arg)=" << (inList ? "true" : "false");
   } else {
     std::cerr << "arg=" << static_cast<const void*>(&mat);
   }
-
   js_mat_dump(s);
   std::cerr << std::endl;
-
-  js_mat_print_data(ctx, js_mat_data(s->u), 2);
 #endif
 
   JS_SetOpaque(ret, s);
@@ -939,16 +931,21 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 
   if(m->depth() == CV_8U || m->channels() > 1) {
     os << ", ";
-    const char* tstr =
-        (m->type() == CV_8UC4)
-            ? "CV_8UC4"
-            : (m->type() == CV_8UC2)
-                  ? "CV_8UC2"
-                  : (m->type() == CV_8UC3)
-                        ? "CV_8UC3"
-                        : (m->type() == CV_8UC1) ? "CV_8UC1" : (m->type() == CV_32FC1) ? "CV_32FC1" : "?";
+    const char* tstr = (m->depth() == CV_8U)
+                           ? "CV_8U"
+                           : (m->depth() == CV_8S)
+                                 ? "CV_8S"
+                                 : (m->depth() == CV_16U)
+                                       ? "CV_16U"
+                                       : (m->depth() == CV_16S)
+                                             ? "CV_16S"
+                                                       : (m->depth() == CV_32S)
+                                                         ? "CV_32S"
+                                                         : (m->depth() == CV_32F)
+                                                               ? "CV_32F"
+                                                               : (m->depth() == CV_64F) ? "CV_64F" : "?";
 
-    os << tstr << ")" /*<< std::endl*/;
+    os << tstr << 'C' << m->channels() << ")" /*<< std::endl*/;
   } else {
     os << "Mat[";
     for(y = 0; y < m->rows; y++) {
@@ -1380,8 +1377,6 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("zero", 2, js_mat_fill, 0),
     JS_CFUNC_MAGIC_DEF("one", 2, js_mat_fill, 1),
 
-    // JS_CFUNC_MAGIC_DEF("set", 3, js_mat_funcs, 7),
-    // JS_CFUNC_DEF("findContours", 0, js_mat_findcontours),
     JS_CFUNC_DEF("toString", 0, js_mat_tostring),
     JS_CFUNC_DEF("inspect", 0, js_mat_inspect),
     JS_CFUNC_DEF("at", 1, js_mat_at),

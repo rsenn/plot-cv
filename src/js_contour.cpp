@@ -31,17 +31,17 @@ static JSValue float64_array;
 // using namespace cv;
 
 JSValue
-js_contour_new(JSContext* ctx, const JSContourData<double>& points) {
+js_contour_new(JSContext* ctx, const JSContourData<double>&& points) {
   JSValue ret;
   JSContourData<double>* contour;
 
   ret = JS_NewObjectProtoClass(ctx, contour_proto, js_contour_class_id);
   contour = js_allocate<JSContourData<double>>(ctx);
 
-  new(contour) JSContourData<double>();
+  new(contour) JSContourData<double>(std::move(points));
 
-  contour->resize(points.size());
-  transform_points(points.cbegin(), points.cend(), contour->begin());
+  /*  contour->resize(points.size());
+    transform_points(points.cbegin(), points.cend(), contour->begin());*/
 
   JS_SetOpaque(ret, contour);
   return ret;

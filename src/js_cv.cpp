@@ -4,6 +4,7 @@
 #include "js_contour.hpp"
 #include "js_array.hpp"
 #include "js_alloc.hpp"
+#include "js_typed_array.hpp"
 #include "geometry.hpp"
 #include "util.hpp"
 #include "../quickjs/cutils.h"
@@ -1229,11 +1230,14 @@ js_cv_find_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   JSValue ret = JS_UNDEFINED;
   int mode = cv::RETR_TREE;
   int approx = cv::CHAIN_APPROX_SIMPLE;
+  bool hier_callback = JS_IsFunction(ctx, argv[2]);
   cv::Point offset(0, 0);
 
   JSContoursData<int> contours;
   vec4i_vector hier;
-  JSContoursData<float> poly;
+  JSContoursData<double> poly;
+
+  int32_t *hstart, *hend;
 
   cv::findContours(*m, contours, hier, mode, approx, offset);
 
@@ -1243,7 +1247,7 @@ js_cv_find_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
   poly.resize(contours.size());
 
-  transform_contours<JSContoursData<int>::const_iterator, JSContoursData<float>::iterator>(
+  transform_contours<JSContoursData<int>::const_iterator, JSContoursData<double>::iterator>(
       contours.cbegin(), contours.cend(), poly.begin());
 
   {
@@ -1251,16 +1255,28 @@ js_cv_find_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
     std::array<int32_t, 4> v;
 
     for(i = 0; i < length; i++) {
-      JS_SetPropertyUint32(ctx, argv[1], i, js_contour_new(ctx, poly[i]));
+      JS_SetPropertyUint32(ctx, argv[1], i, js_contour_new(ctx, std::move(poly[i])));
 
       v[0] = hier[i][0];
       v[1] = hier[i][1];
       v[2] = hier[i][2];
       v[3] = hier[i][3];
 
-      JS_SetPropertyUint32(ctx, argv[2], i, js_array<int32_t>::from_sequence(ctx, v.cbegin(), v.cend()));
+      if(!hier_callback)
+        JS_SetPropertyUint32(ctx, argv[2], i, js_array<int32_t>::from_sequence(ctx, v.cbegin(), v.cend()));
     }
   }
+
+  if(hier_callback) {
+    JSValueConst tarray;
+    hstart = reinterpret_cast<int32_t*>(&hier[0]);
+    hend = reinterpret_cast<int32_t*>(&hier[hier.size()]);
+
+    tarray = js_array_from(ctx, hstart, hend);
+
+    JS_Call(ctx, argv[2], JS_NULL, 1, &tarray);
+  }
+
   /*{
       JSValue hier_arr = js_vector_vec4i_to_array(ctx, hier);
       JSValue contours_obj = js_contours_new(ctx, poly);

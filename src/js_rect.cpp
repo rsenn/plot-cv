@@ -4,6 +4,7 @@
 #include "js_point.hpp"
 #include "js_alloc.hpp"
 #include "js_array.hpp"
+#include "js_typed_array.hpp"
 
 #if defined(JS_RECT_MODULE) || defined(quickjs_rect_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module

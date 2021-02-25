@@ -379,12 +379,6 @@ js_array_to(JSContext* ctx, JSValueConst arr, cv::Scalar_<T>& out) {
   return js_array<T>::to_scalar(ctx, arr, out);
 }
 
-template<class T>
-inline JSValue
-js_array_from(JSContext* ctx, const T* start, const T* end) {
-  return js_array<T>::from_sequence(ctx, start, end);
-}
-
 template<class Iterator>
 inline std::enable_if_t<Iterator::value_type, JSValue>
 js_array_from(JSContext* ctx, const Iterator& start, const Iterator& end) {
