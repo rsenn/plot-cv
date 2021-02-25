@@ -31,7 +31,9 @@ async function main(...args) {
     breakLength: 120,
     maxStringLength: 200,
     multiline: 1,
-    alignMap: true
+    alignMap: true,
+    colors: true,
+    compact: 2
   });
 
   function testPointVector() {
@@ -171,7 +173,7 @@ async function main(...args) {
 
     cv.findContours(output, contours, h => (hier = h));
 
-       console.log('cv.findContours', { contours, hier });
+    console.log('cv.findContours', { contours, hier });
 
     let obj = {
       contours,

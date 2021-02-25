@@ -11,6 +11,26 @@ import Tree from './lib/tree.js';
 
 let filesystem, spawn, base, histfile;
 let defs, includes, sources;
+let libdirs = [
+  '/lib',
+  '/lib/i386-linux-gnu',
+  '/lib/x86_64-linux-gnu',
+  '/lib32',
+  '/libx32',
+  '/usr/lib',
+  '/usr/lib/i386-linux-gnu',
+  '/usr/lib/i386-linux-gnu/i686/sse2',
+  '/usr/lib/i386-linux-gnu/sse2',
+  '/usr/lib/x86_64-linux-gnu',
+  '/usr/lib/x86_64-linux-gnu/libfakeroot',
+  '/usr/lib32',
+  '/usr/libx32',
+  '/usr/local/lib',
+  '/usr/local/lib/i386-linux-gnu',
+  '/usr/local/lib/x86_64-linux-gnu'
+];
+let libdirs32 = libdirs.filter(d => /(32$|i[0-9]86)/.test(d));
+let libdirs64 = libdirs.filter(d => !/(32$|i[0-9]86)/.test(d));
 
 Util.define(Array.prototype, {
   findLastIndex(predicate) {
@@ -80,6 +100,24 @@ async function CommandLine() {
   });
   await repl.run();
   console.log('REPL done');
+}
+
+function* DirIterator(...args) {
+  let pred = typeof args[0] != 'string' ? Util.predicate(args.shift()) : () => true;
+  for(let dir of args) {
+    let entries = os.readdir(dir)[0] ?? [];
+    for(let entry of entries.sort()) {
+      let file = path.join(dir, entry);
+      let lst = os.lstat(file)[0];
+      let st = os.stat(file)[0];
+      let is_dir = (st?.mode & os.S_IFMT) == os.S_IFDIR;
+      let is_symlink = (lst?.mode & os.S_IFMT) == os.S_IFLNK;
+
+      if(is_dir) file += '/';
+      if(!pred(entry, file, is_dir, is_symlink)) continue;
+      yield file;
+    }
+  }
 }
 
 function SelectLocations(node) {
@@ -271,6 +309,118 @@ function ByteLength2Value(byteLength, signed, floating) {
   return 'value';
 }
 
+export class FFI_Function {
+  constructor(node, prefix = '') {
+    const { name, returnType, parameters } = node;
+    this.name = name;
+    this.prefix = prefix;
+    this.returnType = returnType.ffi;
+    this.parameters = [...parameters].map(([name, type]) => [name, type.ffi]);
+  }
+
+  generateDefine(fp, lib) {
+    const { prefix, name, returnType, parameters } = this;
+    fp ??= (name, lib) => `${prefix}dlsym(${lib ?? 'RTLD_DEFAULT'}, '${name}')`;
+    let code = `'${name}', ${fp(name, lib)}, null, '${returnType}'`;
+    for(let [name, type] of parameters) {
+      code += ', ';
+      code += `'${type}'`;
+    }
+    return `${prefix}define(${code});`;
+  }
+
+  generateCall(fp, lib) {
+    const { prefix, name, returnType, parameters } = this;
+    const paramNames = parameters.map(([name, type]) => name);
+    let code = `function ${name}(${paramNames.join(', ')}) {\n`;
+    code += `  return ${prefix}call('${name}', ${paramNames.join(', ')});\n`;
+    code += `}`;
+    return code;
+  }
+  generateFunction(fp, lib) {
+    const { prefix, name, returnType, parameters } = this;
+    const paramNames = parameters.map(([name, type]) => name);
+    let code = `new Function(${paramNames.map(p => `'${p}'`).join(', ')}, `;
+
+    code += `'return ${prefix}call("${name}"${paramNames.map(p => `, ${p}`).join('')})');`;
+    return code;
+  }
+
+  compileFunction(fp, lib) {
+    let code = this.generateCall(fp, lib);
+    let fn = new Function(`return ${code}`);
+    return fn();
+  }
+}
+function FdReader(fd, bufferSize = 1024) {
+  let buf = filesystem.buffer(bufferSize);
+  return new Repeater(async (push, stop) => {
+    let ret;
+    do {
+      let r = await filesystem.waitRead(fd);
+      ret = filesystem.read(fd, buf);
+      if(ret > 0) {
+        let data = buf.slice(0, ret);
+        await push(filesystem.bufferToString(data));
+      }
+    } while(ret == bufferSize);
+    stop();
+    filesystem.close(fd);
+  });
+}
+
+export async function CommandRead(args) {
+  let child = spawn(args, {
+    block: false,
+    stdio: ['inherit', 'pipe', 'inherit']
+  });
+  let output = '';
+  let done = false;
+  let buf = new ArrayBuffer(1024);
+  if(Util.platform == 'quickjs') {
+    let { fd } = child.stdout;
+    //return await (async function() {
+    for(;;) {
+      let r;
+      await filesystem.waitRead(fd);
+      r = ReadOutput(fd);
+      if(r > 0 && r < buf.byteLength) break;
+    }
+    let result = await child.wait();
+    //console.log('child.wait():', result);
+    return output.trimEnd();
+    //})();
+  } else {
+    AcquireReader(child.stdout, async reader => {
+      let r;
+      while((r = await reader.read())) {
+        if(!r.done) errors += r.value.toString();
+      }
+    });
+  }
+  function ReadOutput(fd) {
+    let buf = new ArrayBuffer(1024);
+    let r = os.read(fd, buf, 0, buf.byteLength);
+    output += filesystem.bufferToString(buf.slice(0, r));
+    //if(r > 0) console.log('r:', r, 'output:', output.slice(-100));
+    return r;
+  }
+}
+
+export async function LibraryExports(file) {
+  console.log(`LibraryExports:`, file);
+
+  let output = await CommandRead(['/opt/diet/bin/objdump', '-T', file]);
+  output = output.replace(/.*DYNAMIC SYMBOL TABLE:\s/m, '');
+  let lines = output.split(/\n/g).filter(line => /\sBase\s/.test(line));
+  let columns = Util.colIndexes(lines[0]);
+
+  let entries = lines.map(line => Util.colSplit(line, columns).map(column => column.trimEnd()));
+entries.sort((a,b) => a[0].localeCompare(b[0]));
+
+return  entries.map(entry => entry[entry.length-1].trimStart());
+}
+
 async function ASTShell(...args) {
   await ConsoleSetup({ /*breakLength: 240, */ customInspect: true, compact: 1, depth: 1 });
 
@@ -363,7 +513,8 @@ async function ASTShell(...args) {
     GenerateInspectStruct,
     GenerateStructClass,
     InspectStruct,
-    MakeStructClass
+    MakeStructClass,
+    DirIterator
   });
 
   Object.assign(globalThis, {
@@ -388,7 +539,12 @@ async function ASTShell(...args) {
     NodeName,
     GetLoc,
     GetType,
-    GetTypeStr
+    GetTypeStr,
+    FFI_Function,
+    libdirs,
+    libdirs32,
+    libdirs64,
+    LibraryExports
   });
   globalThis.util = Util;
 

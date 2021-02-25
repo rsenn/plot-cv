@@ -33,7 +33,6 @@ return Node.node2ast.get(this);
   inspect(depth, opts = {}) {
     const text = opts.colors ? (t, ...c) => '\x1b[' + c.join(';') + 'm' + t + '\x1b[m' : t => t;
     const type = Util.className(this);
-    console.log('Node.inspect:', { type, depth, keys: Object.getOwnPropertyNames(this) });
 
     return text(type, 1, 31) + ' ' + inspect(Util.getMembers(this), depth, opts);
   }
@@ -133,8 +132,7 @@ ret.push(match[1]);
       (m) => [...m].slice(1),
       () => []
     );
-    console.log("match:", match);
-    if(match[1]) return new Type([match[0].trimEnd(), match[2]].join(''));
+     if(match[1]) return new Type([match[0].trimEnd(), match[2]].join(''));
   }
   get unsigned() {
     let str = this + '';
@@ -320,11 +318,8 @@ export class EnumDecl extends Type {
 
     this.members = new Map(constants.map(({ name, type, inner }) => {
         let value = inner ? PrintNode(inner[0]) : number;
-
         if(!isNaN(+value)) value = +value;
-
         number = typeof value == 'string' ? `${value} + 1` : value + 1;
-
         return [name, [new Type(type, ast), value]];
       })
     );
@@ -340,13 +335,8 @@ export class TypedefDecl extends Type {
 
     Util.assertEqual(inner.length, 1);
 
-    /*  if(type.kind == 'BuiltinType')
-      type = type.type;*/
-
     if(type.decl) type = type.decl;
     if(type.kind && type.kind.endsWith('Type')) type = type.type;
-
-    //console.log('TypedefDecl', { node, type });
 
     this.name = node.name;
     this.type = type.kind ? TypeFactory(type, ast) : new Type(type, ast);
@@ -365,7 +355,7 @@ export class FunctionDecl extends Node {
     let type = node.type?.qualType;
     let returnType = type.replace(/\ \(.*/, '');
 
-    console.log('parameters:', parameters);
+    // console.log('parameters:', parameters);
 
     this.returnType = new Type(returnType, ast);
     this.parameters = new Map(parameters.map(({ name, type }) => [name, new Type(type, ast)]));
@@ -377,6 +367,7 @@ export class BuiltinType extends Type {
     super(node.type, ast);
   }
 }
+
 export class PointerType extends Node {
   constructor(node, ast) {
     super(node, ast);
@@ -386,6 +377,7 @@ export class PointerType extends Node {
     this.pointee = TypeFactory(node.inner[0], ast);
   }
 }
+
 export class ConstantArrayType extends Node {
   constructor(node, ast) {
     super(node, ast);
@@ -400,13 +392,11 @@ export class ConstantArrayType extends Node {
 export class Location {
   constructor(loc) {
     const { line, col, file } = loc;
-
     Object.assign(this, { line, col, file });
   }
 
   inspect(depth, opts = {}) {
     const text = opts.colors ? (t, ...c) => '\x1b[' + c.join(';') + 'm' + t + '\x1b[m' : t => t;
-
     return text('Location', 38, 5, 111) + ' [ ' + this.toString() + ' ]';
   }
 
@@ -466,10 +456,6 @@ export async function SpawnCompiler(file, args = []) {
   let base = path.basename(file, /\.[^.]*$/);
   let outputFile = base + '.ast.json';
 
-  /* console.log('globalThis.spawn:', globalThis.spawn);*/
-  //  let output = filesystem.open(, filesystem.O_CREAT|filesystem.O_TRUNC|filesystem.O_WRONLY, 420);
-
-  //  args.push(`-o${outputFile}`);
   args.push(file);
   args.unshift('clang');
 
@@ -486,7 +472,6 @@ export async function SpawnCompiler(file, args = []) {
     block: false,
     stdio: ['inherit', 'inherit', 'pipe']
   });
-  // console.log('child:', child);
 
   let json = '',
     errors = '';
@@ -512,7 +497,6 @@ export async function SpawnCompiler(file, args = []) {
 
   if(result[1] != 0) ReadErrors(child.stderr.fd);
   done = true;
-  //
   let errorLines = errors.split(/\n/g).filter(line => line.trim() != '');
   errorLines = errorLines.filter(line => /error:/.test(line));
   const numErrors =
