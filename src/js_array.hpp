@@ -1,7 +1,7 @@
 #ifndef JS_ARRAY_HPP
 #define JS_ARRAY_HPP
 
-#include <type_traits> 
+#include <type_traits>
 
 static inline int64_t
 js_array_length(JSContext* ctx, const JSValueConst& arr) {
