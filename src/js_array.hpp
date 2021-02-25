@@ -1,7 +1,7 @@
 #ifndef JS_ARRAY_HPP
 #define JS_ARRAY_HPP
 
-#include <type_traits>
+#include <type_traits> 
 
 static inline int64_t
 js_array_length(JSContext* ctx, const JSValueConst& arr) {
@@ -115,8 +115,9 @@ public:
   }
 
   template<class Iterator>
-  static JSValue
-  from_sequence(JSContext* ctx, const Iterator& start, const Iterator& end) {
+ static  JSValue
+  from_sequence(JSContext* ctx, const Iterator& start, const Iterator& end /*,
+    typename  std::enable_if<pointer_type<Iterator>::typed_array >::type* dummy = 0*/) {
     JSValue arr = JS_NewArray(ctx);
     size_t i = 0;
     for(Iterator it = start; it != end; ++it) {
