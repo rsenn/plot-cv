@@ -416,9 +416,9 @@ export async function LibraryExports(file) {
   let columns = Util.colIndexes(lines[0]);
 
   let entries = lines.map(line => Util.colSplit(line, columns).map(column => column.trimEnd()));
-entries.sort((a,b) => a[0].localeCompare(b[0]));
+  entries.sort((a, b) => a[0].localeCompare(b[0]));
 
-return  entries.map(entry => entry[entry.length-1].trimStart());
+  return entries.map(entry => entry[entry.length - 1].trimStart());
 }
 
 async function ASTShell(...args) {
