@@ -98,15 +98,80 @@ async function main(...args) {
   //console.log("arr: ", arr);
 */
   }
-  console.log(new Map(["CV_8U", "CV_8S", "CV_16U", "CV_16S", "CV_32S", "CV_32F", "CV_64F", "CV_8UC1", "CV_8UC2", "CV_8UC3", "CV_8UC4", "CV_8SC1", "CV_8SC2", "CV_8SC3", "CV_8SC4", "CV_16UC1", "CV_16UC2", "CV_16UC3", "CV_16UC4", "CV_16SC1", "CV_16SC2", "CV_16SC3", "CV_16SC4", "CV_32SC1", "CV_32SC2", "CV_32SC3", "CV_32SC4", "CV_32FC1", "CV_32FC2", "CV_32FC3", "CV_32FC4", "CV_64FC1", "CV_64FC2", "CV_64FC3", "CV_64FC4"
-].map(n => [n, ('0000000'+cv[n].toString(16)).slice(-8)])));
+
+  function detectEdges(src, dst, thres1 = 10, thres2 = 20) {
+    cv.Canny(src, dst, thres1, thres2);
+
+    // cv.imwrite('canny.png', dst);
+
+    cv.imshow('canny', dst);
+
+    console.log('src:', src + '');
+
+    //  detectLines(dst);
+  }
+
+  let matTypes = [
+    'CV_8U',
+    'CV_8S',
+    'CV_16U',
+    'CV_16S',
+    'CV_32S',
+    'CV_32F',
+    'CV_64F',
+    'CV_8UC1',
+    'CV_8UC2',
+    'CV_8UC3',
+    'CV_8UC4',
+    'CV_8SC1',
+    'CV_8SC2',
+    'CV_8SC3',
+    'CV_8SC4',
+    'CV_16UC1',
+    'CV_16UC2',
+    'CV_16UC3',
+    'CV_16UC4',
+    'CV_16SC1',
+    'CV_16SC2',
+    'CV_16SC3',
+    'CV_16SC4',
+    'CV_32SC1',
+    'CV_32SC2',
+    'CV_32SC3',
+    'CV_32SC4',
+    'CV_32FC1',
+    'CV_32FC2',
+    'CV_32FC3',
+    'CV_32FC4',
+    'CV_64FC1',
+    'CV_64FC2',
+    'CV_64FC3',
+    'CV_64FC4'
+  ];
+  let matTypeEntries = matTypes.map(n => [n, cv[n]]);
+  console.log(new Map(matTypeEntries.map(([n, v]) => [n, ('0000000' + v.toString(16)).slice(-8)])));
+
+  console.log('mask: ',
+    matTypeEntries
+      .filter(([n, v]) => !/C[0-9]$/.test(n))
+      .reduce((acc, [n, v]) => acc | v, 0)
+      .toString(2)
+  );
+
+  let input = cv.imread('3daaffa22db97a9394054e9e9bdb6837_20170930_120917.jpg');
+  let output = new Mat();
+
+  detectEdges(input, output);
+
+  const { HIER_PREVIOUS, HIER_NEXT, HIER_PARENT, HIER_FIRSTCHILD } = cv;
+
   {
     let contours = [],
       hier;
 
-    cv.findContours(imgRaw, contours, h => (hier = h));
+    cv.findContours(output, contours, h => (hier = h));
 
-    console.log('cv.findContours', { contours, hier });
+       console.log('cv.findContours', { contours, hier });
 
     let obj = {
       contours,
@@ -130,13 +195,14 @@ async function main(...args) {
 
     console.log('contours.length=', contours.length);
     console.log('hier.length=', hier.length);
-    console.log('hier=', hier);
+    //   console.log('hier=', hier);
     console.log('obj.prev=', obj.previous(1));
     console.log('obj.next=', obj.next(1));
     console.log('obj.parent=', obj.parent(1));
     console.log('obj.firstChild=', obj.firstChild(1));
   }
 
+  return;
   globalThis.test_array = [1, 2, 3, 4, 5, 6];
   globalThis.process = function(contours, hier) {
     let areas = [];

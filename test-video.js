@@ -142,7 +142,7 @@ function dumpMat(name, mat) {
   console.log(`${name} =`,
     Object.create(
       Mat.prototype,
-      ['cols', 'rows', 'depth', 'channels', 'type'].reduce((acc, prop) => ({
+      ['cols', 'rows', 'depth', 'channels', 'type' /*, 'dims'*/].reduce((acc, prop) => ({
           ...acc,
           [prop]: { value: mat[prop], enumerable: true }
         }),
@@ -582,8 +582,7 @@ async function main(...args) {
       Processor(function HoughLines(src, dst) {
         let edges = pipeline.outputOf('EdgeDetect');
         lines = new Mat(0, 0, cv.CV_32SC4);
-        console.log('edges: ' + edges);
-        console.log('lines: ' + lines);
+        console.log('edges: ', edges);
 
         cv.HoughLinesP(edges,
           lines,
@@ -593,6 +592,8 @@ async function main(...args) {
           +params.minLineLength,
           +params.maxLineGap
         );
+        console.log('lines:', lines);
+
         //console.log('lines.length', lines.length);
         //console.log('lines: '+lines.map(l => l.toString()).join(', '));
         src.copyTo(dst);

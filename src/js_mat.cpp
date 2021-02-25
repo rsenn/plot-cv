@@ -931,20 +931,16 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 
   if(m->depth() == CV_8U || m->channels() > 1) {
     os << ", ";
-    const char* tstr = (m->depth() == CV_8U)
-                           ? "CV_8U"
-                           : (m->depth() == CV_8S)
-                                 ? "CV_8S"
-                                 : (m->depth() == CV_16U)
-                                       ? "CV_16U"
-                                       : (m->depth() == CV_16S)
-                                             ? "CV_16S"
-                                                       : (m->depth() == CV_32S)
-                                                         ? "CV_32S"
-                                                         : (m->depth() == CV_32F)
-                                                               ? "CV_32F"
-                                                               : (m->depth() == CV_64F) ? "CV_64F" : "?";
-
+    const char* tstr;
+    switch(m->depth() & 7) {
+      case CV_8U: tstr = "CV_8U"; break;
+      case CV_8S: tstr = "CV_8S"; break;
+      case CV_16U: tstr = "CV_16U"; break;
+      case CV_16S: tstr = "CV_16S"; break;
+      case CV_32S: tstr = "CV_32S"; break;
+      case CV_32F: tstr = "CV_32F"; break;
+      case CV_64F: tstr = "CV_64F"; break;
+    }
     os << tstr << 'C' << m->channels() << ")" /*<< std::endl*/;
   } else {
     os << "Mat[";
@@ -994,14 +990,15 @@ js_mat_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
   ;
 
   os << "Mat "
-     << "@ "
-     << reinterpret_cast<void*>(reinterpret_cast<char*>(m) - reinterpret_cast<char*>(get_heap_base()))
+/*     << "@ "
+     << reinterpret_cast<void*>(reinterpret_cast<char*>(m)  )*/
      << " [ ";
   if(sizeStrs.size() || m->type()) {
-    os << "size = " << join(sizeStrs.cbegin(), sizeStrs.cend(), "x") << ", ";
-    os << "type = CV_" << (bytes * 8) << sign << 'C' << m->channels() << ", ";
-    os << "elemSize = " << m->elemSize() << ", ";
-    os << "total = " << m->total();
+    os << "size: \x1b[0;33m" << join(sizeStrs.cbegin(), sizeStrs.cend(), "\x1b[m*\x1b[0;33m") << ", ";
+    os << "type: \x1b[0;33mCV_" << (bytes * 8) << sign << 'C' << m->channels() << "\x1b[m, ";
+    os << "elemSize: \x1b[0;33m" << m->elemSize() << "\x1b[m, ";
+    os << "total: \x1b[0;33m" << m->total() << "\x1b[m, ";
+    os << "dims: \x1b[0;33m" << m->dims;
   } else {
     os << "empty";
   }
@@ -1109,22 +1106,17 @@ js_mat_reshape(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
 
   if(argc >= 1) {
     std::vector<int> newshape;
-
     if(JS_IsArray(ctx, argv[0])) {
       js_array_to(ctx, argv[0], newshape);
-
       if(argc >= 2 && JS_IsNumber(argv[1])) {
         uint32_t ndims;
         JS_ToUint32(ctx, &ndims, argv[1]);
-
         if(ndims > newshape.size())
           return JS_EXCEPTION;
-
         mat = m->reshape(cn, ndims, &newshape[0]);
       } else {
         mat = m->reshape(cn, newshape);
       }
-
     } else if(JS_IsNumber(argv[0])) {
       JS_ToInt32(ctx, &rows, argv[0]);
       mat = m->reshape(cn, rows);
@@ -1149,7 +1141,6 @@ js_mat_class_func(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
 
     if(prev) {
       JSMatData const &a = *prev, &b = *mat;
-
       switch(magic) {
         case 0: result = a + b; break;
         case 1: result = a - b; break;
@@ -1159,11 +1150,9 @@ js_mat_class_func(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
         case 5: result = a | b; break;
         case 6: result = a ^ b; break;
       }
-
       prev = &result;
     } else {
       prev = mat;
-
       result = cv::Mat::zeros(mat->rows, mat->cols, mat->type());
       mat->copyTo(result);
     }
@@ -1214,12 +1203,10 @@ js_mat_class_create(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
   switch(magic) {
     case 0: {
-      //      mat = cv::Mat::zeros(size, type);
       mat = cv::Scalar::all(0);
       break;
     }
     case 1: {
-      //      mat = cv::Mat::ones(size, type);
       mat = cv::Scalar::all(1);
       break;
     }
@@ -1353,12 +1340,11 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("elemSize", js_mat_get_props, NULL, 11),
     JS_CGETSET_MAGIC_DEF("elemSize1", js_mat_get_props, NULL, 12),
     JS_CGETSET_MAGIC_DEF("buffer", js_mat_get_props, NULL, 13),
-    // JS_CGETSET_MAGIC_DEF("array", js_mat_get_props, NULL, 12)
+    JS_CGETSET_MAGIC_DEF("array", js_mat_get_props, NULL, 14),
     JS_CFUNC_MAGIC_DEF("col", 1, js_mat_funcs, 0),
     JS_CFUNC_MAGIC_DEF("row", 1, js_mat_funcs, 1),
     JS_CFUNC_MAGIC_DEF("colRange", 2, js_mat_funcs, 2),
     JS_CFUNC_MAGIC_DEF("rowRange", 2, js_mat_funcs, 3),
-    // JS_CFUNC_MAGIC_DEF("at", 1, js_mat_funcs, 4),
     JS_CFUNC_MAGIC_DEF("clone", 0, js_mat_funcs, 5),
     JS_CFUNC_MAGIC_DEF("roi", 0, js_mat_funcs, 6),
     JS_CFUNC_MAGIC_DEF("release", 0, js_mat_funcs, 8),
@@ -1451,12 +1437,10 @@ js_mat_init(JSContext* ctx, JSModuleDef* m) {
 
   if(m)
     JS_SetModuleExport(ctx, m, "Mat", mat_class);
-  /*else
-    JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), "Mat", mat_class);*/
   return 0;
 }
 
-extern "C" JSModuleDef*
+extern "C" VISIBLE JSModuleDef*
 JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JSModuleDef* m;
   m = JS_NewCModule(ctx, module_name, &js_mat_init);
@@ -1465,12 +1449,3 @@ JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JS_AddModuleExport(ctx, m, "Mat");
   return m;
 }
-
-/*
-void
-js_mat_constructor(JSContext* ctx, JSValue parent, const char* name) {
-  if(JS_IsUndefined(mat_class))
-    js_mat_init(ctx, 0);
-
-  JS_SetPropertyStr(ctx, parent, name ? name : "Mat", mat_class);
-}*/
