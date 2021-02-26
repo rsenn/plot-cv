@@ -40,16 +40,14 @@ async function main(...args) {
   await (async function IOHandler() {
     for await(let data of sock) {
       console.log('data:', data);
-if(data.length <= 9) continue;
-     let [len,json] = [...Util.splitAt(data,9)]
-let size = parseInt(len, 16);
- let message =  JSON.parse(json);
-console.log("",{size,message})
- 
+      if(data.length <= 9) continue;
+      let [len, json] = [...Util.splitAt(data, 9)];
+      let size = parseInt(len, 16);
+      let message = JSON.parse(json);
+      console.log('', { size, message });
 
-      if(message.type == 'event') 
-            handleEvent(sock, message.event);
-     }
+      if(message.type == 'event') handleEvent(sock, message.event);
+    }
   })();
 
   /*  ret = sendRequest(+sock, 'next');
@@ -127,7 +125,7 @@ function readCommand(connection) {
 }
 
 function handleEvent(connection, event) {
-  console.log('handleEvent',event);
+  console.log('handleEvent', event);
   switch (event.type) {
     case 'StoppedEvent': {
       //      sendRequest(connection, 'stackTrace');
@@ -142,11 +140,10 @@ function handleEvent(connection, event) {
 function sendMessage(sock, type, args = {}) {
   const msg = { type, ...args };
 
-  console.log('sendMessage', msg,sock);
+  console.log('sendMessage', msg, sock);
   const json = JSON.stringify(msg);
   return sock.puts(`${toHex(json.length, 8)}\n${json}`);
 }
-
 
 function getSeq(sock) {
   if(getSeq.numbers === undefined) getSeq.numbers = new Map();
@@ -158,7 +155,7 @@ function getSeq(sock) {
 }
 
 function sendRequest(sock, command, args = {}) {
-  const request = { command, seq: getSeq(sock), request: { command,  ...args } };
+  const request = { command, seq: getSeq(sock), request: { command, ...args } };
   return sendMessage(sock, 'request', request);
 }
 

@@ -169,8 +169,10 @@ export function recv(fd, buf, offset, len, flags = 0) {
 }
 
 export function send(fd, buf, offset, len, flags = 0) {
- /* if(typeof buf == 'string') buf = StringToArrayBuffer(buf);
-  else */if(typeof buf.buffer == 'object') buf = buf.buffer;
+  /* if(typeof buf == 'string') buf = StringToArrayBuffer(buf);
+  else */ if(typeof buf.buffer == 'object'
+  )
+    buf = buf.buffer;
   if(offset === undefined) offset = 0;
   if(len === undefined) len = buf.byteLength;
   return syscall.send(+fd, buf, offset, len, flags);
@@ -476,24 +478,23 @@ export class Socket {
 
   puts(s) {
     return send(this.fd, s, s.length, 0);
-     this.file.puts(s);
-     this.file.flush();
+    this.file.puts(s);
+    this.file.flush();
   }
 
   async *[Symbol.asyncIterator]() {
     let r;
 
-if(!globalThis['std']) {
-  let m = await import('std');
-  globalThis['std']=m;
-}
+    if(!globalThis['std']) {
+      let m = await import('std');
+      globalThis['std'] = m;
+    }
 
-ndelay(this.fd);
+    ndelay(this.fd);
 
     for(;;) {
       await WaitRead(this.fd);
-if(this.file == undefined)
-      this.file = std.fdopen(this.fd, 'r+');
+      if(this.file == undefined) this.file = std.fdopen(this.fd, 'r+');
 
       r = this.file.readAsString();
       console.log('SOcket[Symbol.asyncIterator]', { r });
@@ -514,12 +515,13 @@ Object.assign(Socket.prototype, {
 });
 
 function WaitRead(fd) {
-  let resolver = (() => new Promise((resolve, reject) => {
-    os.setReadHandler(fd, () => {
-      os.setReadHandler(fd, null);
-      resolve(fd);
+  let resolver = () =>
+    new Promise((resolve, reject) => {
+      os.setReadHandler(fd, () => {
+        os.setReadHandler(fd, null);
+        resolve(fd);
+      });
     });
-  }));
   if(!('os' in globalThis)) {
     let waiter = resolver;
     resolver = () =>

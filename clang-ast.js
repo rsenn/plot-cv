@@ -46,8 +46,12 @@ export class Type extends Node {
 
     if(typeof node == 'string') {
       qualType = node;
-      if(Type.declarations.has(node)) node = Type.declarations.get(node).ast;
-      else node = {};
+      if(Type.declarations.has(node)) {
+        node = Type.declarations.get(node).ast;
+      } else {
+        throw new Error(`No such type '${node}'`);
+        node = {};
+      }
     }
 
     if(node instanceof Node) {
@@ -80,22 +84,12 @@ export class Type extends Node {
     Util.weakAssign(this, { name, desugared, typeAlias, qualType });
   }
 
-  /*  get name() {
-    return this.qualType || this.desugaredQualType || this.typeAliasDeclId;
-  }*/
-
-  /* get desugared() {
-    return this.desugaredQualType || this.qualType;
-  }*/
-
-  /*  get typeAlias() {
-    return this.typeAliasDeclId;
-  }*/
   get regExp() {
     return new RegExp(`(?:${this.qualType}${this.typeAlias ? '|' + this.typeAlias : ''})`.replace(/\*/g, '\\*'),
       'g'
     );
   }
+
   get subscripts() {
     let match;
     let str = this + '';
@@ -106,6 +100,7 @@ ret.push(match[1]);
     }
     return ret;
   }
+
   isPointer() {
     let str = this + '';
     return /(\(\*\)\(|\*$)/.test(str);
@@ -132,12 +127,20 @@ ret.push(match[1]);
       (m) => [...m].slice(1),
       () => []
     );
-     if(match[1]) return new Type([match[0].trimEnd(), match[2]].join(''));
+    console.log("Type.get pointer",{str,match});
+     if(match[1]) {
+     let name = [match[0].trimEnd(), match[2]].join('');
+     if(/^const/.test(name) && !Type.declarations.has(name))
+      name = name.replace('const ', '');
+      return new Type(name);
+    }
   }
+
   get unsigned() {
     let str = this + '';
     return /(unsigned|ushort|uint|ulong)/.test(str);
   }
+
   get signed() {
     return /(^|[^n])signed/.test(this+'') || !this.unsigned;
   }
@@ -147,24 +150,32 @@ ret.push(match[1]);
   }
 
   get ffi() {
-    if(this.pointer == 'char') return 'char *';
-    if(this.size == SIZEOF_POINTER && !this.isPointer())
-      return ['', 'unsigned '][this.unsigned | 0] + 'long';
-    // if(this.size == SIZEOF_POINTER && this.unsigned) return 'size_t';
-    if(this.size == SIZEOF_POINTER / 2 && !this.unsigned) return 'int';
-    if(this.size == 4) return ['', 'u'][this.unsigned | 0] + 'int32';
-    if(this.size == 2) return ['', 'u'][this.unsigned | 0] + 'int16';
-    if(this.size == 1) return ['', 'u'][this.unsigned | 0] + 'int8';
+    const { pointer, size, unsigned,desugared } = this;
+
+    let str = this+'';
+
+for(const type of [str, desugared])
+    if(["void", "sint8", "sint16", "sint32", "sint64", "uint8", "uint16", "uint32", "uint64", "float", "double", "schar", "uchar", "sshort", "ushort", "sint", "uint", "slong", "ulong", "longdouble", "pointer", "int", "long", "short", "char", "size_t", "unsigned char", "unsigned int", "unsigned long", "void *", "char *", "string"].indexOf(type) != -1)
+      return type;
+
+    if(pointer == 'char') return 'char *';
+    if(size == SIZEOF_POINTER && !this.isPointer())
+      return ['', 'unsigned '][unsigned | 0] + 'long';
+    // if(size == SIZEOF_POINTER && unsigned) return 'size_t';
+    if(size == SIZEOF_POINTER / 2 && !unsigned) return 'int';
+    if(size == 4) return ['s', 'u'][unsigned | 0] + 'int32';
+    if(size == 2) return ['s', 'u'][unsigned | 0] + 'int16';
+    if(size == 1) return ['s', 'u'][unsigned | 0] + 'int8';
 
     if(this.isPointer()) return 'void *';
-    if(this.size > SIZEOF_POINTER) return 'void *';
-    if(this.size === 0) return 'void';
+    if(size > SIZEOF_POINTER) return 'void *';
+    if(size === 0) return 'void';
 
     if(Type.declarations.has(this + '')) {
       let decl = Type.declarations.get(this + '');
       if(decl.kind == 'EnumDecl') return 'int';
     } else {
-      throw new Error(`No ffi type '${this}' ${this.size}`);
+      throw new Error(`No ffi type '${this}' ${size}`);
     }
   }
 
@@ -267,6 +278,8 @@ ret.push(match[1]);
   }
 }
 
+Type.declarations.set('void', new Type({ name: 'void' }));
+
 function RoundTo(value, align) {
   return Math.floor((value + (align - 1)) / align) * align;
 }
@@ -351,14 +364,15 @@ export class FunctionDecl extends Node {
 
     if(node.mangledName && node.mangledName != node.name) this.mangledName = node.mangledName;
 
-    let parameters = node.inner.filter(child => child.kind == 'ParmVarDecl');
+    let parameters = node.inner?.filter(child => child.kind == 'ParmVarDecl');
     let type = node.type?.qualType;
-    let returnType = type.replace(/\ \(.*/, '');
+    let returnType = type.replace(/\s?\(.*/, '');
 
     // console.log('parameters:', parameters);
 
     this.returnType = new Type(returnType, ast);
-    this.parameters = new Map(parameters.map(({ name, type }) => [name, new Type(type, ast)]));
+    this.parameters =
+      parameters && new Map(parameters.map(({ name, type }) => [name, new Type(type, ast)]));
   }
 }
 
@@ -452,7 +466,7 @@ export function TypeFactory(node, ast) {
   return obj;
 }
 
-export async function SpawnCompiler(compiler,file, args = []) {
+export async function SpawnCompiler(compiler, file, args = []) {
   let base = path.basename(file, /\.[^.]*$/);
   let outputFile = base + '.ast.json';
 
@@ -519,9 +533,9 @@ export async function SpawnCompiler(compiler,file, args = []) {
   return { file: outputFile };
 }
 
-export async function AstDump(compiler,source, args) {
-  console.log('AstDump', { compiler,source, args });
-  let r = await SpawnCompiler(compiler,source, [
+export async function AstDump(compiler, source, args) {
+  console.log('AstDump', { compiler, source, args });
+  let r = await SpawnCompiler(compiler, source, [
     '-Xclang',
     '-ast-dump=json',
     '-fsyntax-only',

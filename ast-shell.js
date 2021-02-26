@@ -316,7 +316,7 @@ function ByteLength2Value(byteLength, signed, floating) {
   return 'value';
 }
 
-export class   {
+export class FFI_Function {
   constructor(node, prefix = '') {
     const { name, returnType, parameters } = node;
     this.name = name;
@@ -336,7 +336,7 @@ export class   {
     return `${prefix}define(${code});`;
   }
 
-  generateCall(fp, lib) {
+  generateCall() {
     const { prefix, name, returnType, parameters } = this;
     const paramNames = parameters.map(([name, type]) => name);
     let code = `function ${name}(${paramNames.join(', ')}) {\n`;
@@ -344,6 +344,17 @@ export class   {
     code += `}`;
     return code;
   }
+
+  generate(fp, lib, exp) {
+    return [
+      this.generateDefine(fp, lib),
+      '\n',
+      exp ? 'export ' : '',
+      this.generateCall(),
+      '\n'
+    ].join('');
+  }
+
   generateFunction(fp, lib) {
     const { prefix, name, returnType, parameters } = this;
     const paramNames = parameters.map(([name, type]) => name);
@@ -447,7 +458,7 @@ async function ASTShell(...args) {
       'system-includes': [false, null, 's'],
       'no-remove-empty': [false, null, 'E'],
       'output-dir': [true, null, 'd'],
-      'compiler': ['clang', null, 'c'],
+      compiler: ['clang', null, 'c'],
       '@': 'input'
     },
     args
