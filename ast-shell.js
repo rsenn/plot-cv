@@ -93,6 +93,13 @@ async function CommandLine() {
   repl.exit = Util.exit;
   repl.importModule = ImportModule;
   repl.history_set(JSON.parse(std.loadFile(histfile) || '[]'));
+  repl.directives = {
+    c(...args) {
+      console.log('c', { args });
+      return Compile(...args);
+    }
+  };
+
   Util.atexit(() => {
     let hist = repl.history_get().filter((item, i, a) => a.lastIndexOf(item) == i);
     filesystem.writeFile(histfile, JSON.stringify(hist, null, 2));
@@ -309,7 +316,7 @@ function ByteLength2Value(byteLength, signed, floating) {
   return 'value';
 }
 
-export class FFI_Function {
+export class   {
   constructor(node, prefix = '') {
     const { name, returnType, parameters } = node;
     this.name = name;
@@ -440,6 +447,7 @@ async function ASTShell(...args) {
       'system-includes': [false, null, 's'],
       'no-remove-empty': [false, null, 'E'],
       'output-dir': [true, null, 'd'],
+      'compiler': ['clang', null, 'c'],
       '@': 'input'
     },
     args
@@ -458,7 +466,7 @@ async function ASTShell(...args) {
   });
 
   async function Compile(file, ...args) {
-    let r = await AstDump(file, [...globalThis.flags, ...args]);
+    let r = await AstDump(params.compiler, file, [...globalThis.flags, ...args]);
     r.source = file;
 
     Object.assign(r, {

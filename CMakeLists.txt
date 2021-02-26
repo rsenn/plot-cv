@@ -182,7 +182,7 @@ if(F_OPT_PIC)
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fPIC")
 endif(F_OPT_PIC)
 
-if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+#if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 
   message("!!!!DEBUG MODE!!!")
   # option(USE_EFENCE "Enable electric fence" OFF)
@@ -221,7 +221,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     endif(NOT "${CMAKE_CXX_FLAGS_DEBUG}" MATCHES "-ggdb")
   endif(OPT_CXX_G_GDB)
 
-endif("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+#endif("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 
 if(DEBUG_OUTPUT)
   list(APPEND PLOTCV_DEFS DEBUG_OUTPUT=1)

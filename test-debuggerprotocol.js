@@ -37,66 +37,83 @@ async function main(...args) {
 
   console.log('Error:', Error);
 
+  await (async function IOHandler() {
+    for await(let data of sock) {
+      console.log('data:', data);
+if(data.length <= 9) continue;
+     let [len,json] = [...Util.splitAt(data,9)]
+let size = parseInt(len, 16);
+ let message =  JSON.parse(json);
+console.log("",{size,message})
+ 
+
+      if(message.type == 'event') 
+            handleEvent(sock, message.event);
+     }
+  })();
+
   /*  ret = sendRequest(+sock, 'next');
   retValue(ret);*/
 
-  const buf = new ArrayBuffer(1024);
-  const rfds = new fd_set();
-  const wfds = new fd_set();
+  console.log('debuggerprotocol', { sock, connection });
 
-  do {
-    FD_ZERO(rfds);
-    FD_ZERO(wfds);
+  function IOLoop() {
+    const buf = new ArrayBuffer(1024);
+    const rfds = new fd_set();
+    const wfds = new fd_set();
 
-    if(sock.connecting) FD_SET(+sock, wfds);
-    else FD_SET(+sock, rfds);
+    do {
+      FD_ZERO(rfds);
+      FD_ZERO(wfds);
 
-    if(connection) {
-      FD_SET(+connection, rfds);
-      FD_SET(0, rfds);
-    }
+      if(sock.connecting) FD_SET(+sock, wfds);
+      else FD_SET(+sock, rfds);
 
-    const timeout = new timeval(5, 0);
-
-    ret = select(null, rfds, null, null, timeout);
-
-    if(FD_ISSET(+sock, wfds)) {
-      connection = sock;
-    }
-
-    if(FD_ISSET(+sock, rfds)) {
-      if(listen) {
-        connection = sock.accept();
-
-        retValue(connection, 'sock.accept()');
+      if(connection) {
+        FD_SET(+connection, rfds);
+        FD_SET(0, rfds);
       }
-    }
 
-    if(FD_ISSET(+connection, rfds)) {
-      let data = ArrayBufToString(connection.read(9));
+      const timeout = new timeval(5, 0);
 
-      let length = parseInt(ArrayBufToString(data), 16);
+      ret = select(null, rfds, null, null, timeout);
 
-      if(length > 0) {
-        console.log('length:', length);
-        data = connection.read(length);
-        let message = JSON.parse(ArrayBufToString(data));
+      console.log('select', { rfds, timeout });
 
-        if(message.type == 'event') {
-          handleEvent(connection, message.event);
-        } else {
-          console.log('message:', message);
+      if(FD_ISSET(+sock, wfds)) {
+        connection = sock;
+        FD_SET(+sock, rfds);
+      }
+      if(FD_ISSET(+sock, rfds)) {
+        if(listen) {
+          connection = sock.accept();
+          retValue(connection, 'sock.accept()');
         }
-      } else {
-        connection = undefined;
       }
-    }
 
-    if(FD_ISSET(0, rfds)) {
-      readCommand(connection);
-    }
-  } while(!sock.destroyed);
-  console.log('end');
+      if(FD_ISSET(+connection, rfds)) {
+        let data = ArrayBufToString(connection.read(9));
+        let length = parseInt(ArrayBufToString(data), 16);
+        if(length > 0) {
+          console.log('length:', length);
+          data = connection.read(length);
+          let message = JSON.parse(ArrayBufToString(data));
+          if(message.type == 'event') {
+            handleEvent(connection, message.event);
+          } else {
+            console.log('message:', message);
+          }
+        } else {
+          connection = undefined;
+        }
+      }
+
+      if(FD_ISSET(0, rfds)) {
+        readCommand(connection);
+      }
+    } while(!sock.destroyed);
+    console.log('end');
+  }
 }
 
 function readCommand(connection) {
@@ -110,9 +127,13 @@ function readCommand(connection) {
 }
 
 function handleEvent(connection, event) {
+  console.log('handleEvent',event);
   switch (event.type) {
     case 'StoppedEvent': {
-      sendRequest(connection, 'stackTrace');
+      //      sendRequest(connection, 'stackTrace');
+      sendRequest(connection, 'continue');
+
+      Util.waitFor(10000).then(() => sendRequest(connection, 'pause'));
       break;
     }
   }
@@ -121,22 +142,23 @@ function handleEvent(connection, event) {
 function sendMessage(sock, type, args = {}) {
   const msg = { type, ...args };
 
-  console.log('sendMessage', msg);
+  console.log('sendMessage', msg,sock);
   const json = JSON.stringify(msg);
-  return send(+sock, `${toHex(json.length, 8)}\n${json}`);
+  return sock.puts(`${toHex(json.length, 8)}\n${json}`);
 }
 
-const seqNumbers = new WeakMap();
 
 function getSeq(sock) {
-  let num = seqNumbers.get(sock);
+  if(getSeq.numbers === undefined) getSeq.numbers = new Map();
+  const numbers = getSeq.numbers;
+  let num = numbers.get(sock);
   if(typeof num != 'number') num = 0;
-  seqNumbers.set(sock, ++num);
+  numbers.set(sock, ++num);
   return num;
 }
 
 function sendRequest(sock, command, args = {}) {
-  const request = { command, seq: getSeq(sock), ...args };
+  const request = { command, seq: getSeq(sock), request: { command,  ...args } };
   return sendMessage(sock, 'request', request);
 }
 

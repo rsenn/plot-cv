@@ -740,7 +740,7 @@ export default function REPL(title = 'QuickJS') {
         case '}':
           return {};
         case '/':
-          return / /;
+          return /\ /;
         default: if (is_word(c)) {
             base = get_context_word(line, pos);
             if(['true', 'false', 'null', 'this'].includes(base) || !isNaN(+base))
@@ -772,7 +772,10 @@ export default function REPL(title = 'QuickJS') {
     //console.log('get_directory_entries:', { dir, base, expr });
     let entries = filesystem
       .readdir(dir)
-      .map(entry => entry + (filesystem.stat(path.join(dir, entry))?.isDirectory() ? '/' : ''))
+      .map(entry => {
+        let st = filesystem.stat(path.join(dir, entry));
+        return entry + (st && st.isDirectory() ? '/' : '');
+      })
       .sort((a, b) => b.endsWith('/') - a.endsWith('/') || a.localeCompare(b));
     //console.log('get_directory_entries:', { entries });
     entries = entries.filter(entry => re.test(entry) || entry.endsWith('/'));
@@ -1216,6 +1219,7 @@ export default function REPL(title = 'QuickJS') {
   /* return true if the string after cmd can be evaluted as JS */
   function handle_directive(cmd, expr) {
     var param, prec1, expBits1;
+    const [, ...args] = expr.split(/\s+/g);
 
     if(cmd === 'h' || cmd === '?' || cmd == 'help') {
       help();
@@ -1302,8 +1306,6 @@ export default function REPL(title = 'QuickJS') {
       //(thisObj.exit ?? std.exit)(0);
       return false;
     } else if(cmd === 'i') {
-      const [, ...args] = expr.split(/\s+/g);
-
       thisObj
         .importModule(...args)
         .catch(e => {
@@ -1322,6 +1324,9 @@ export default function REPL(title = 'QuickJS') {
       algebraicMode = true;
     } else if(has_jscalc && cmd === 'n') {
       algebraicMode = false;
+    } else if(repl.directives[cmd]) {
+      const handler = repl.directives[cmd];
+      return handler.call(repl, ...args) === false ? false : true;
     } else {
       std.puts('Unknown directive: ' + cmd + '\n');
       return false;

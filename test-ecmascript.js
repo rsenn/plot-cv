@@ -57,10 +57,19 @@ async function main(...args) {
     },
     args
   );
-
-  console.log('MethodDefinition.prototype[inspectSymbol]:',
-    MethodDefinition.prototype[inspectSymbol] + ''
-  );
+  console.log(`Platform: ${Util.getPlatform()}`);
+  /*
+  if(Util.getPlatform() == 'quickjs') {
+   await import('os').then(os => {
+         console.log('os:',os);
+   os.signal(os.SIGINT, () => {
+        console.log(`Got SIGINT. (${os.SIGINT})`);
+        Util.putStack();
+        Util.exit(1);
+      });
+      console.log(`SIGINT (${os.SIGINT}) handler installed`);
+    });
+  }*/
 
   globalThis = Util.getGlobalObject();
   Util.defineGettersSetters(globalThis, {
@@ -77,12 +86,14 @@ async function main(...args) {
     let error;
 
     await Util.safeCall(processFile, file, params);
+    //    await processFile(file, params);
 
     files[file] = finish(error);
 
     if(error) {
       Util.putError(error);
-      Util.exit(1);
+      //Util.exit(1);
+      break;
     }
 
     console.log('files:', files);

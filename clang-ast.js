@@ -452,12 +452,12 @@ export function TypeFactory(node, ast) {
   return obj;
 }
 
-export async function SpawnCompiler(file, args = []) {
+export async function SpawnCompiler(compiler,file, args = []) {
   let base = path.basename(file, /\.[^.]*$/);
   let outputFile = base + '.ast.json';
 
   args.push(file);
-  args.unshift('clang');
+  args.unshift(compiler ?? 'clang');
 
   if(args.indexOf('-ast-dump=json') != -1)
     args = [
@@ -519,9 +519,9 @@ export async function SpawnCompiler(file, args = []) {
   return { file: outputFile };
 }
 
-export async function AstDump(source, args) {
-  console.log('AstDump', { source, args });
-  let r = await SpawnCompiler(source, [
+export async function AstDump(compiler,source, args) {
+  console.log('AstDump', { compiler,source, args });
+  let r = await SpawnCompiler(compiler,source, [
     '-Xclang',
     '-ast-dump=json',
     '-fsyntax-only',

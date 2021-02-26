@@ -80,7 +80,7 @@ to_string(const cv::Point_<T>& point) {
   return os.str();
 }
 
-template<class ValueT, template<typename> typename Container = std::vector, class Char = char>
+template<class ValueT, template<typename> class Container = std::vector, class Char = char>
 inline std::basic_string<Char>
 to_string(const Container<cv::Point_<ValueT>>& points) {
   typedef typename Container<cv::Point_<ValueT>>::const_iterator iterator_type;
