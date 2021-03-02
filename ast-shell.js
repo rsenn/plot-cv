@@ -8,8 +8,9 @@ import REPL from './repl.js';
 import * as std from 'std';
 import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, NodeType, NodeName, GetLoc, GetType, GetTypeStr } from './clang-ast.js';
 import Tree from './lib/tree.js';
+import * as Terminal from './terminal.js';
 
-let filesystem, spawn, base, histfile;
+let filesystem, spawn, base, cmdhist;
 let defs, includes, sources;
 let libdirs = [
   '/lib',
@@ -92,7 +93,7 @@ async function CommandLine() {
   let repl = (globalThis.repl = new REPL('AST'));
   repl.exit = Util.exit;
   repl.importModule = ImportModule;
-  repl.history_set(JSON.parse(std.loadFile(histfile) || '[]'));
+  repl.history_set(JSON.parse(std.loadFile(cmdhist) || '[]'));
   repl.directives = {
     c(...args) {
       console.log('c', { args });
@@ -101,10 +102,13 @@ async function CommandLine() {
   };
 
   Util.atexit(() => {
+    Terminal.mousetrackingDisable();
     let hist = repl.history_get().filter((item, i, a) => a.lastIndexOf(item) == i);
-    filesystem.writeFile(histfile, JSON.stringify(hist, null, 2));
+    filesystem.writeFile(cmdhist, JSON.stringify(hist, null, 2));
     console.log(`EXIT (wrote ${hist.length} history entries)`);
   });
+  Terminal.mousetrackingEnable();
+
   await repl.run();
   console.log('REPL done');
 }
@@ -189,6 +193,11 @@ function Table(list, pred = (n, l) => true /*/\.c:/.test(l)*/) {
       }, [])
       .join('\n')
   );
+}
+
+function LoadJSON(filename) {
+  let data = filesystem.readFile(filename, 'utf-8');
+  return data ? JSON.parse(data) : null;
 }
 
 function WriteFile(name, data, verbose = true) {
@@ -449,7 +458,7 @@ async function ASTShell(...args) {
   await PortableSpawn(fn => (spawn = fn));
 
   base = path.basename(Util.getArgv()[1], /\.[^.]*$/);
-  histfile = `.${base}-history`;
+  cmdhist = `.${base}-cmdhistory`;
 
   let params = Util.getOpt({
       include: [true, (a, p) => (p || []).concat([a]), 'I'],
@@ -533,7 +542,8 @@ async function ASTShell(...args) {
     GenerateStructClass,
     InspectStruct,
     MakeStructClass,
-    DirIterator
+    DirIterator,
+    Terminal
   });
 
   Object.assign(globalThis, {
@@ -567,10 +577,26 @@ async function ASTShell(...args) {
   });
   globalThis.util = Util;
 
+  const unithist = `.${base}-unithistory`;
   let items = [];
+  let hist = LoadJSON(unithist) || [];
+
+  const pushUnique = (arr, item) => {
+    if(Util.findIndex(arr, elem => deep.equals(elem, item)) === -1) {
+      arr.push(item);
+      return true;
+    }
+  };
+
   for(let source of sources) {
-    items.push(await Compile(source));
+    let item = await Compile(source);
+    if(item) {
+      pushUnique(hist, [...flags, source]);
+      items.push(item);
+    }
   }
+  WriteFile(unithist, JSON.stringify(hist, null, 2));
+
   globalThis.$ = items.length == 1 ? items[0] : items;
 
   await CommandLine();

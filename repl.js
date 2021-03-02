@@ -22,7 +22,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-'use strip';
+import * as Terminal from './terminal.js';
+
+('use strip');
 
 export default function REPL(title = 'QuickJS') {
   /* add 'os' and 'std' bindings */
@@ -33,6 +35,20 @@ export default function REPL(title = 'QuickJS') {
   /* close global objects */
   //const { Object, String, Array, Date, Math, isFinite, parseFloat } = globalThis;
   var thisObj = this;
+  var output = filesystem.stdout;
+  var input = filesystem.stdin;
+
+  const puts = filesystem.puts.bind(filesystem, output);
+  const flush = filesystem.flush.bind(filesystem, output);
+
+  /*
+  function puts(str) {
+    filesystem.puts(output, str);
+  }
+  
+  function flush() {
+   filesystem.flush(output);
+  }*/
 
   /* XXX: use preprocessor ? */
   var config_numcalc = false; //typeof os.open === 'undefined';
@@ -193,25 +209,25 @@ export default function REPL(title = 'QuickJS') {
     '\x7f': backward_delete_char /* ^? - delete */
   };
 
-  function termInit() {
+  function term_init() {
     var tab;
-    term_fd = std.in.fileno();
+    term_fd = filesystem.fileno(input);
 
     /* get the terminal size */
     term_width = 80;
-    if(os.isatty(term_fd)) {
-      if(os.ttyGetWinSize) {
-        tab = os.ttyGetWinSize(term_fd);
+    if(filesystem.isatty(term_fd)) {
+      if(Util.ttyGetWinSize) {
+        tab = Util.ttyGetWinSize(term_fd);
         if(tab) term_width = tab[0];
       }
-      if(os.ttySetRaw) {
+      if(Util.ttySetRaw) {
         /* set the TTY to raw mode */
-        os.ttySetRaw(term_fd);
+        Util.ttySetRaw(term_fd);
       }
     }
 
     /* install a Ctrl-C signal handler */
-    os.signal(os.SIGINT, sigint_handler);
+    Util.signal('SIGINT', sigint_handler);
 
     /* install a handler to read stdin */
     term_read_buf = new Uint8Array(64);
@@ -225,7 +241,7 @@ export default function REPL(title = 'QuickJS') {
 
   function term_read_handler() {
     var l, i;
-    l = os.read(term_fd, term_read_buf.buffer, 0, term_read_buf.length);
+    l = filesystem.read(term_fd, term_read_buf.buffer, 0, term_read_buf.length);
     for(i = 0; i < l; i++) {
       handle_byte(term_read_buf[i]);
 
@@ -302,14 +318,14 @@ export default function REPL(title = 'QuickJS') {
     for(j = start; j < str.length; ) {
       var style = style_names[(i = j)];
       while(++j < str.length && style_names[j] == style) continue;
-      std.puts(colors[styles[style] || 'default']);
-      std.puts(str.substring(i, j));
-      std.puts(colors['none']);
+      puts(colors[styles[style] || 'default']);
+      puts(str.substring(i, j));
+      puts(colors['none']);
     }
   }
 
   function print_csi(n, code) {
-    std.puts('\x1b[' + (n != 1 ? n : '') + code);
+    puts('\x1b[' + (n != 1 ? n : '') + code);
   }
 
   /* XXX: handle double-width characters */
@@ -318,7 +334,7 @@ export default function REPL(title = 'QuickJS') {
     if(delta > 0) {
       while(delta != 0) {
         if(term_cursor_x == term_width - 1) {
-          std.puts('\n'); /* translated to CRLF */
+          puts('\n'); /* translated to CRLF */
           term_cursor_x = 0;
           delta--;
         } else {
@@ -378,15 +394,15 @@ export default function REPL(title = 'QuickJS') {
       const start = cmd_line.length - histcmd.length - 3 - cmd.length + cursor_pos;
       let r = cmd_line.substring(start);
 
-      std.puts(`\x1b[1G`);
-      std.puts(cmd_line);
-      std.puts('\x1b[J');
+      puts(`\x1b[1G`);
+      puts(cmd_line);
+      puts('\x1b[J');
       last_cmd = cmd_line;
       term_cursor_x = start;
       last_cursor_pos = cursor_pos;
-      std.puts(`\x1b[${ucs_length(r)}D`);
+      puts(`\x1b[${ucs_length(r)}D`);
       //move_cursor(-ucs_length(r));
-      std.out.flush();
+      flush();
       return;
     } /* cursor_pos is the position in 16 bit characters inside the
            UTF-16 string 'cmd_line' */ else if(cmd_line != last_cmd
@@ -395,7 +411,7 @@ export default function REPL(title = 'QuickJS') {
         last_cmd.substring(0, last_cursor_pos) == cmd_line.substring(0, last_cursor_pos)
       ) {
         /* optimize common case */
-        std.puts(cmd_line.substring(last_cursor_pos));
+        puts(cmd_line.substring(last_cursor_pos));
       } else {
         /* goto the start of the line */
         move_cursor(-ucs_length(last_cmd.substring(0, last_cursor_pos)));
@@ -406,16 +422,16 @@ export default function REPL(title = 'QuickJS') {
           var colorstate = colorize_js(str);
           print_color_text(str, start, colorstate[2]);
         } else {
-          std.puts(cmd_line);
+          puts(cmd_line);
         }
       }
       term_cursor_x = (term_cursor_x + ucs_length(cmd_line)) % term_width;
       if(term_cursor_x == 0) {
         /* show the cursor on the next line */
-        std.puts(' \x08');
+        puts(' \x08');
       }
       /* remove the trailing characters */
-      std.puts('\x1b[J');
+      puts('\x1b[J');
       last_cmd = cmd_line;
       last_cursor_pos = cmd_line.length;
     }
@@ -425,7 +441,7 @@ export default function REPL(title = 'QuickJS') {
       move_cursor(-ucs_length(cmd_line.substring(cursor_pos, last_cursor_pos)));
     }
     last_cursor_pos = cursor_pos;
-    std.out.flush();
+    flush();
   }
 
   /* editing commands */
@@ -521,7 +537,7 @@ export default function REPL(title = 'QuickJS') {
   }
 
   function accept_line() {
-    std.puts('\n');
+    puts('\n');
     history_add(search ? history[search_index] : cmd);
     //console.log('accept_line', { cmd, search }, [...history.entries()].slice(-3));
     return -1;
@@ -611,7 +627,7 @@ export default function REPL(title = 'QuickJS') {
 
   function control_d() {
     if(cmd.length == 0) {
-      std.puts('\n');
+      puts('\n');
       return -3; /* exit read eval print loop */
     } else {
       delete_char_dir(1);
@@ -701,12 +717,12 @@ export default function REPL(title = 'QuickJS') {
 
   function control_c() {
     if(last_fun === control_c) {
-      std.puts('\n');
+      puts('\n');
 
       running = false;
       (thisObj.exit ?? std.exit)(0);
     } else {
-      std.puts('\n(Press Ctrl-C again to quit)\n');
+      puts('\n(Press Ctrl-C again to quit)\n');
       cmd = '';
       readline_print_prompt();
     }
@@ -877,7 +893,7 @@ export default function REPL(title = 'QuickJS') {
       max_width += 2;
       n_cols = Math.max(1, Math.floor((term_width + 1) / max_width));
       n_rows = Math.ceil(tab.length / n_cols);
-      std.puts('\n');
+      puts('\n');
       /* display the sorted list column-wise */
       for(row = 0; row < n_rows; row++) {
         for(col = 0; col < n_cols; col++) {
@@ -885,9 +901,9 @@ export default function REPL(title = 'QuickJS') {
           if(i >= tab.length) break;
           s = tab[i];
           if(col != n_cols - 1) s = s.padEnd(max_width);
-          std.puts(s);
+          puts(s);
         }
-        std.puts('\n');
+        puts('\n');
       }
       /* show a new prompt */
       readline_print_prompt();
@@ -901,7 +917,7 @@ export default function REPL(title = 'QuickJS') {
   }
 
   function readline_print_prompt() {
-    std.puts(prompt);
+    puts(prompt);
     term_cursor_x = ucs_length(prompt) % term_width;
     last_cmd = '';
     last_cursor_pos = 0;
@@ -940,45 +956,75 @@ export default function REPL(title = 'QuickJS') {
     var c;
     //console.log("handle_char", { c1, readline_state });
     c = String.fromCodePoint(c1);
-    switch (readline_state) {
-      case 0:
-        if(c == '\x1b') {
-          /* '^[' - ESC */
-          readline_keys = c;
-          readline_state = 1;
-        } else {
-          handle_key(c);
-        }
-        break;
-      case 1 /* '^[ */:
-        readline_keys += c;
-        if(c == '[') {
-          readline_state = 2;
-        } else if(c == 'O') {
-          readline_state = 3;
-        } else {
+
+    for(;;) {
+      switch (readline_state) {
+        case 0:
+          if(c == '\x1b') {
+            /* '^[' - ESC */
+            readline_keys = c;
+            readline_state = 1;
+          } else {
+            handle_key(c);
+          }
+          break;
+        case 1 /* '^[ */:
+          readline_keys += c;
+          if(c == '[') {
+            readline_state = 2;
+          } else if(c == 'O') {
+            readline_state = 3;
+          } else {
+            handle_key(readline_keys);
+            readline_state = 0;
+          }
+          break;
+        case 2 /* '^[[' - CSI */:
+          readline_keys += c;
+
+          if(c == '<') {
+            readline_state = 4;
+          } else if(!(c == ';' || (c >= '0' && c <= '9'))) {
+            handle_key(readline_keys);
+            readline_state = 0;
+          }
+          break;
+
+        case 3 /* '^[O' - ESC2 */:
+          readline_keys += c;
           handle_key(readline_keys);
           readline_state = 0;
-        }
-        break;
-      case 2 /* '^[[' - CSI */:
-        readline_keys += c;
-        if(!(c == ';' || (c >= '0' && c <= '9'))) {
-          handle_key(readline_keys);
-          readline_state = 0;
-        }
-        break;
-      case 3 /* '^[O' - ESC2 */:
-        readline_keys += c;
-        handle_key(readline_keys);
-        readline_state = 0;
-        break;
+          break;
+
+        case 4:
+          if(!(c == ';' || (c >= '0' && c <= '9') || c == 'M' || c == 'm')) {
+            handle_mouse(readline_keys);
+
+            readline_state = 0;
+            readline_keys = '';
+            continue;
+          } else {
+            readline_keys += c;
+          }
+
+          break;
+      }
+      break;
     }
+  }
+
+  function handle_mouse(keys) {
+    const [button, x, y, cmd] = [...Util.matchAll(/([0-9]+|[A-Za-z]+)/g, keys)]
+      .map(p => p[1])
+      .map(p => (!isNaN(+p) ? +p : p));
+    let press = cmd == 'm';
+
+    console.log('handle_mouse', inspect({ button, x, y, press }, { compact: 0 }));
   }
 
   function handle_key(keys) {
     var fun;
-    //console.log("handle_key:", keys.length, [...keys].map(k => k.charCodeAt(0)), {cmd});
+    // console.log("handle_key:", keys.length, [...keys].map(k => k.charCodeAt(0)), {cmd});
 
     if(quote_flag) {
       if(ucs_length(keys) === 1) insert(keys);
@@ -994,9 +1040,9 @@ export default function REPL(title = 'QuickJS') {
           return;
         case -3:
           /* uninstall a Ctrl-C signal handler */
-          os.signal(os.SIGINT, null);
+          Util.signal('SIGINT', null);
           /* uninstall the stdin read handler */
-          os.setReadHandler(term_fd, null);
+          filesystem.setReadHandler(term_fd, null);
           return;
         default: if (
             search &&
@@ -1021,8 +1067,8 @@ export default function REPL(title = 'QuickJS') {
             //readline_cb = readline_handle_cmd;
             search = 0;
             //cmd = histcmd;
-            std.puts(`\x1b[1G`);
-            std.puts(`\x1b[J`);
+            puts(`\x1b[1G`);
+            puts(`\x1b[J`);
             cursor_pos = histcmd.length;
             readline_start(histcmd, readline_handle_cmd);
             return;
@@ -1137,9 +1183,9 @@ export default function REPL(title = 'QuickJS') {
       type = typeof a;
       if(type === 'object') {
         if(a === null) {
-          std.puts(a);
+          puts(a);
         } else if(stack.indexOf(a) >= 0) {
-          std.puts('[circular]');
+          puts('[circular]');
         } else if(has_jscalc &&
           (a instanceof Fraction ||
             a instanceof Complex ||
@@ -1149,59 +1195,59 @@ export default function REPL(title = 'QuickJS') {
             a instanceof RationalFunction ||
             a instanceof Series)
         ) {
-          std.puts(a.toString());
+          puts(a.toString());
         } else {
           stack.push(a);
           if(Array.isArray(a)) {
             n = a.length;
-            std.puts('[ ');
+            puts('[ ');
             for(i = 0; i < n; i++) {
-              if(i !== 0) std.puts(', ');
+              if(i !== 0) puts(', ');
               if(i in a) {
                 print_rec(a[i]);
               } else {
-                std.puts('<empty>');
+                puts('<empty>');
               }
               if(i > 20) {
-                std.puts('...');
+                puts('...');
                 break;
               }
             }
-            std.puts(' ]');
+            puts(' ]');
           } else if(Object.__getClass(a) === 'RegExp') {
-            std.puts(a.toString());
+            puts(a.toString());
           } else {
             keys = Object.keys(a);
             n = keys.length;
-            std.puts('{ ');
+            puts('{ ');
             for(i = 0; i < n; i++) {
-              if(i !== 0) std.puts(', ');
+              if(i !== 0) puts(', ');
               key = keys[i];
-              std.puts(key, ': ');
+              puts(key, ': ');
               print_rec(a[key]);
             }
-            std.puts(' }');
+            puts(' }');
           }
           stack.pop(a);
         }
       } else if(type === 'string') {
         s = a.__quote();
         if(s.length > 79) s = s.substring(0, 75) + '..."';
-        std.puts(s);
+        puts(s);
       } else if(type === 'number') {
-        std.puts(number_to_string(a, hex_mode ? 16 : 10));
+        puts(number_to_string(a, hex_mode ? 16 : 10));
       } else if(type === 'bigint') {
-        std.puts(bigint_to_string(a, hex_mode ? 16 : 10));
+        puts(bigint_to_string(a, hex_mode ? 16 : 10));
       } else if(type === 'bigfloat') {
-        std.puts(bigfloat_to_string(a, hex_mode ? 16 : 10));
+        puts(bigfloat_to_string(a, hex_mode ? 16 : 10));
       } else if(type === 'bigdecimal') {
-        std.puts(a.toString() + 'm');
+        puts(a.toString() + 'm');
       } else if(type === 'symbol') {
-        std.puts(String(a));
+        puts(String(a));
       } else if(type === 'function') {
-        std.puts('function ' + a.name + '()');
+        puts('function ' + a.name + '()');
       } else {
-        std.puts(a);
+        puts(a);
       }
     }
     print_rec(a);
@@ -1240,7 +1286,7 @@ export default function REPL(title = 'QuickJS') {
         .trim()
         .split(' ');
       if(param.length === 1 && param[0] === '') {
-        std.puts('BigFloat precision=' +
+        puts('BigFloat precision=' +
             prec +
             ' bits (~' +
             Math.floor(prec / log2_10) +
@@ -1265,14 +1311,14 @@ export default function REPL(title = 'QuickJS') {
         if(param.length >= 2) expBits1 = parseInt(param[1]);
         else expBits1 = BigFloatEnv.expBitsMax;
         if(Number.isNaN(prec1) || prec1 < BigFloatEnv.precMin || prec1 > BigFloatEnv.precMax) {
-          std.puts('Invalid precision\n');
+          puts('Invalid precision\n');
           return false;
         }
         if(Number.isNaN(expBits1) ||
           expBits1 < BigFloatEnv.expBitsMin ||
           expBits1 > BigFloatEnv.expBitsMax
         ) {
-          std.puts('Invalid exponent bits\n');
+          puts('Invalid exponent bits\n');
           return false;
         }
         prec = prec1;
@@ -1283,7 +1329,7 @@ export default function REPL(title = 'QuickJS') {
       param = expr.substring(cmd.length + 1).trim();
       prec1 = Math.ceil(parseFloat(param) * log2_10);
       if(prec1 < BigFloatEnv.precMin || prec1 > BigFloatEnv.precMax) {
-        std.puts('Invalid precision\n');
+        puts('Invalid precision\n');
         return false;
       }
       prec = prec1;
@@ -1292,15 +1338,15 @@ export default function REPL(title = 'QuickJS') {
     } else if(has_bignum && cmd === 'mode') {
       param = expr.substring(cmd.length + 1).trim();
       if(param === '') {
-        std.puts('Running mode=' + eval_mode + '\n');
+        puts('Running mode=' + eval_mode + '\n');
       } else if(param === 'std' || param === 'math') {
         eval_mode = param;
       } else {
-        std.puts('Invalid mode\n');
+        puts('Invalid mode\n');
       }
       return false;
     } else if(cmd === 'clear') {
-      std.puts('\x1b[H\x1b[J');
+      puts('\x1b[H\x1b[J');
     } else if(cmd === 'q') {
       running = false;
       //(thisObj.exit ?? std.exit)(0);
@@ -1328,7 +1374,7 @@ export default function REPL(title = 'QuickJS') {
       const handler = repl.directives[cmd];
       return handler.call(repl, ...args) === false ? false : true;
     } else {
-      std.puts('Unknown directive: ' + cmd + '\n');
+      puts('Unknown directive: ' + cmd + '\n');
       return false;
     }
     return true;
@@ -1358,7 +1404,7 @@ export default function REPL(title = 'QuickJS') {
     function sel(n) {
       return n ? '*' : ' ';
     }
-    std.puts('\\h          this help\n' +
+    puts('\\h          this help\n' +
         '\\x         ' +
         sel(hex_mode) +
         'hexadecimal number display\n' +
@@ -1371,7 +1417,7 @@ export default function REPL(title = 'QuickJS') {
         '\\clear      clear the terminal\n'
     );
     if(has_jscalc) {
-      std.puts('\\a         ' +
+      puts('\\a         ' +
           sel(algebraicMode) +
           'algebraic mode\n' +
           '\\n         ' +
@@ -1380,24 +1426,24 @@ export default function REPL(title = 'QuickJS') {
       );
     }
     if(has_bignum) {
-      std.puts("\\p [m [e]]  set the BigFloat precision to 'm' bits\n" +
+      puts("\\p [m [e]]  set the BigFloat precision to 'm' bits\n" +
           "\\digits n   set the BigFloat precision to 'ceil(n*log2(10))' bits\n"
       );
       if(!has_jscalc) {
-        std.puts('\\mode [std|math] change the running mode (current = ' + eval_mode + ')\n');
+        puts('\\mode [std|math] change the running mode (current = ' + eval_mode + ')\n');
       }
     }
-    std.puts('\\i [module] import module\n');
+    puts('\\i [module] import module\n');
     if(!config_numcalc) {
-      std.puts('\\q          exit\n');
+      puts('\\q          exit\n');
     }
   }
 
   function print_status(...args) {
-    std.puts('\x1b[1S');
-    std.puts('\x1b[1F');
-    //    std.puts('\x1b[1G');
-    std.puts('\x1b[J');
+    puts('\x1b[1S');
+    puts('\x1b[1F');
+    //    puts('\x1b[1G');
+    puts('\x1b[J');
     console.log(...args);
     readline_print_prompt();
     update();
@@ -1412,10 +1458,10 @@ export default function REPL(title = 'QuickJS') {
       /* eval as a script */
       result = std.evalScript(expr, { backtrace_barrier: true });
       eval_time = new Date().getTime() - now;
-      std.puts(colors[styles.result]);
+      puts(colors[styles.result]);
       console.log(result);
-      std.puts('\n');
-      std.puts(colors.none);
+      puts('\n');
+      puts(colors.none);
       /* set the last result */
       globalThis._ = result;
       if(Util.isPromise(result)) {
@@ -1429,22 +1475,22 @@ export default function REPL(title = 'QuickJS') {
         });
       }
     } catch(error) {
-      std.puts(colors[styles.error_msg]);
+      puts(colors[styles.error_msg]);
       if(error instanceof Error || typeof error.message == 'string') {
         console.log((error.type ?? Util.className(error)) + ': ' + error.message);
         if(error.stack) {
-          std.puts(error.stack);
+          puts(error.stack);
         }
       } else {
-        std.puts('Throw: ');
+        puts('Throw: ');
         console.log(error);
       }
-      std.puts(colors.none);
+      puts(colors.none);
     }
   }
 
   function cmd_start(title) {
-    std.puts(`${title} - Type "\\h" for help\n`);
+    puts(`${title} - Type "\\h" for help\n`);
     if(has_bignum) {
       log2_10 = Math.log(10) / Math.log(2);
       prec = 113;
@@ -1751,7 +1797,7 @@ export default function REPL(title = 'QuickJS') {
       Object.fromEntries(
         Object.entries({
           run,
-          termInit,
+          term_init,
           sigint_handler,
           term_read_handler,
           handle_byte,
@@ -1835,24 +1881,28 @@ export default function REPL(title = 'QuickJS') {
 
   function waitRead(fd) {
     return new Promise((resolve, reject) => {
-      os.setReadHandler(fd, () => {
-        os.setReadHandler(fd, null);
+      filesystem.setReadHandler(fd, () => {
+        filesystem.setReadHandler(fd, null);
         resolve();
       });
     });
   }
 
   async function run() {
+
+    if(!console.options)
+      console.options= {};
+
     console.options.depth = Infinity;
     console.options.compact = 2;
     console.options.maxArrayLength = Infinity;
 
-    termInit();
+    term_init();
 
     cmd_start(title);
 
     do {
-      await waitRead(term_fd);
+      await waitRead(input);
       term_read_handler();
     } while(running);
   }
