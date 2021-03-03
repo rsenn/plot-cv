@@ -785,78 +785,62 @@ function restoreItemStates(itemStates, set = (item, value) => item.visible(value
 
 function EagleMaps(project) {
   let transformPath = p => p.replace(/\s*➟\s*/g, '/').replace(/\/([0-9]+)/g, '/[$1]');
-  let eagle2dom = [...Element.findAll('*[data-path]', project.object)].map(e => [
-    transformPath(e.getAttribute('data-path')),
-    e
+  let dom2path = [...Element.findAll('*[data-path]', project.object)].map(e => [
+    e,
+    new ImmutableXPath(transformPath(e.getAttribute('data-path')))
   ]);
-  console.debug('eagle2dom:', eagle2dom);
+  console.debug('dom2path:', dom2path);
+  dom2path = Util.mapFunction(new WeakMap(dom2path));
 
-  eagle2dom = eagle2dom
-    .map(([p, e]) => [
-      Util.tryCatch(() => project.doc.lookup(p),
-        ret => ret,
-        () => Util.tryCatch(() => new ImmutableXPath(p).apply(project.doc, true))
-      ),
-      e
-    ])
-    .filter(([eagle, dom]) => eagle && dom);
-  //eagle2dom = eagle2dom.map(([p, e]) => [p.apply(project.doc), e]);
+  let dom2eagle = node => {
+    let p;
+    if((p = dom2path(node))) return project.doc.lookup(p);
+  };
+  let eagle2dom = elem =>
+    Element.find(`[data-type=${elem.tagName}][data-name=${elem.name}]`, project.element);
+  let path2dom = p => Element.find(`[data-path='${CSS.escape(p)}']`, project.element);
 
   let mapElements = {
-    eagle: Util.unique(eagle2dom.map(([e, d]) => e)),
-    dom: Util.unique(eagle2dom.map(([e, d]) => d),
-      (a, b) => a.isSameNode(b)
-    )
+    /*    eagle: Util.unique(eagle2dom.map(([e, d]) => e)),
+    dom: Util.unique(eagle2dom.map(([e, d]) => d), (a, b) => a.isSameNode(b))*/
   };
-
-  /*
-
-   console.debug('mapElements:', mapElements);
-   console.debug('eagle2dom:', eagle2dom);
-window.mapElements=mapElements;
-window.eagle2dom=eagle2dom;
-window.dom2eagle=eagle2dom.map(([k, v]) => [v, k]);*/
-
-  //eagle2dom = eagle2dom.map(([p, r, e]) => [EagleElement.get(project.doc, p, r), e]);
-  let maps = {};
-
-  maps.eagle2dom = Util.mapFunction(new WeakMap(
-      mapElements.eagle.map(eagle => [
+  let maps = { dom2path, dom2eagle, eagle2dom, path2dom };
+  /*  maps.eagle2dom = Util.mapFunction(new WeakMap(mapElements.eagle.map(eagle => [
         eagle,
         eagle2dom.filter(([e, d]) => e === eagle).map(([e, d]) => d)
       ])
     )
   );
-  console.debug('maps.eagle2dom:', maps.eagle2dom);
-  //console.debug('new WeakMap(eagle2dom):', new Map(eagle2dom));
-  maps.dom2eagle = Util.mapFunction(new WeakMap(eagle2dom.map(([k, v]) => [v, k])));
-
+  console.debug('maps.eagle2dom:', maps.eagle2dom);*/
+  //) maps.dom2eagle = Util.mapFunction(new WeakMap(eagle2dom.map(([k, v]) => [v, k])));
   const [path2component, component2path] = project.renderer.maps.map(Util.mapFunction);
-  const { path2obj, obj2path, path2eagle, eagle2path, eagle2obj, obj2eagle } = project.doc.maps;
-
+  const {
+    /*path2obj, obj2path, */ path2eagle,
+    eagle2path /*, eagle2obj, obj2eagle */
+  } = project.doc.maps;
   const [component2eagle, eagle2component] = [
     Util.mapAdapter((key, value) =>
       value === undefined ? path2eagle(component2path(key)) : undefined
     ),
     Util.mapAdapter((key, value) =>
-      value === undefined ? path2component(eagle2path(key)) : undefined
+      value === undefined ? path2component(eagle2path(key) + '') : undefined
     )
   ];
+  Util.weakAssign(maps, { path2eagle, eagle2path, path2component, component2path });
 
-  const [component2dom, dom2component] = [
+  /* const [component2dom, dom2component] = [
     Util.mapAdapter((key, value) =>
-      value === undefined ? maps.eagle2dom(component2eagle(key)) : undefined
+      value === undefined ? eagle2dom(component2eagle(key)) : undefined
     ),
     Util.mapAdapter((key, value) =>
-      value === undefined ? eagle2component(maps.dom2eagle(key)) : undefined
+      value === undefined ? eagle2component(dom2eagle(key)) : undefined
     )
-  ];
+  ]; */
   Object.assign(maps, {
-    component2dom,
+    /*dom2component,
+ component2dom, */
     component2eagle,
     component2path,
-    dom2component,
-
     eagle2component,
     path2component
   });
@@ -2362,9 +2346,17 @@ const AppMain = (window.onload = async () => {
   window.addEventListener('pointerdown', event => {
     window.elements = [...elems].filter(e => e.tagName == 'path');
   });
+  let css = {
+    cursor: undefined,
+    'pointer-events': undefined,
+    'user-select': undefined
+  };
 
-  /*false &&*/
-  moveHandler.subscribe(function MoveEvent(event, prevEvent) {
+  //moveHandler.subscribe(MoveEvent);
+
+  touchHandler.subscribe(TouchEvent);
+
+  function MoveEvent(event, prevEvent) {
     const { x, y, clientX, clientY, index, buttons, start, type, target } = event;
     window.lastMoveEvent = event;
     event.elements = document.elementsFromPoint(x, y);
@@ -2485,14 +2477,8 @@ const AppMain = (window.onload = async () => {
         //  console.log('rects:', Util.clone(bboxes));
       }
     }
-  });
-  let css = {
-    cursor: undefined,
-    'pointer-events': undefined,
-    'user-select': undefined
-  };
-
-  touchHandler.subscribe(function TouchEvent(event) {
+  }
+  function TouchEvent(event) {
     const { x, y, index, buttons, start, type, target } = event;
     //  console.log('touchHandler', event);
     if(type.endsWith('end') || type.endsWith('up')) return cancel();
@@ -2610,8 +2596,7 @@ const AppMain = (window.onload = async () => {
       /*return*/ event.cancel();
       return false;
     }
-  });
-
+  }
   window.oncontextmenu = function(e) {
     const { x, y, index, buttons, start, type, target } = event;
     let rect = Element.rect('.transformed-element-size');

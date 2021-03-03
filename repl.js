@@ -1889,9 +1889,7 @@ export default function REPL(title = 'QuickJS') {
   }
 
   async function run() {
-
-    if(!console.options)
-      console.options= {};
+    if(!console.options) console.options = {};
 
     console.options.depth = Infinity;
     console.options.compact = 2;
