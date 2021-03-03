@@ -778,7 +778,9 @@ export function NodePrinter() {
       ConstantExpr() {}
       ConstAttr() {}
       ConstructorUsingShadowDecl() {}
-      ContinueStmt() {}
+      ContinueStmt(continue_stmt) {
+        put('break');
+      }
       ConvertVectorExpr() {}
       CStyleCastExpr(cstyle_cast_expr) {
         let type = new Type(cstyle_cast_expr.type);
@@ -806,7 +808,9 @@ export function NodePrinter() {
         }
       }
       DecltypeType() {}
-      DefaultStmt() {}
+      DefaultStmt(default_stmt) {
+        put('default:');
+      }
       DependentNameType() {}
       DependentScopeDeclRefExpr() {}
       DependentSizedArrayType() {}
@@ -814,7 +818,9 @@ export function NodePrinter() {
       DeprecatedAttr() {}
       DoStmt() {}
       ElaboratedType() {}
-      EmptyDecl() {}
+      EmptyDecl(empty_decl) {
+        if(';}'.indexOf(out[out.length - 1] ?? '\n') == -1) put(';');
+      }
       EnumConstantDecl() {}
       EnumDecl() {}
       EnumType() {}
@@ -912,7 +918,9 @@ export function NodePrinter() {
       IntegerLiteral(integer_literal) {
         put(integer_literal.value);
       }
-      LabelStmt() {}
+      LabelStmt(label_stmt) {
+        put(`${label_stmt.name}:`);
+      }
       LambdaExpr() {}
       LinkageSpecDecl() {}
       LValueReferenceType() {}
@@ -932,7 +940,6 @@ export function NodePrinter() {
         put(name);
       }
       MemberPointerType() {}
-      method() {}
       MinVectorWidthAttr() {}
       ModeAttr() {}
       NamespaceDecl() {}
