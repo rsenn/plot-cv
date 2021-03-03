@@ -45,6 +45,26 @@ const Mat =
         }
       };
 
+function Hierarchy(array) {
+  if(array instanceof Int32Array)
+    this.index = function(id) {
+      return this.array.slice(id * 4, id * 4 + 4);
+    };
+  else
+    this.index = function(id) {
+      return this.array[id];
+    };
+  this.array = array;
+}
+
+/* prettier-ignore */
+Object.assign(Hierarchy.prototype, {
+    parent(id) { const a = this.index(id); return a[cv.HIER_PARENT]; },
+    child(id) { const a = this.index(id); return a[cv.HIER_CHILD]; },
+    next(id) { const a = this.index(id); return a[cv.HIER_NEXT]; },
+    prev(id) { const a = this.index(id); return a[cv.HIER_PREV]; }
+  });
+
 class Pipeline extends Function {
   constructor(processors = [], callback) {
     let self;
@@ -281,7 +301,7 @@ function* getParents(hier, id) {
   while(id != -1) {
     yield id;
 
-    id = hier[id][cv.HIER_PARENT];
+    id = hier.parent(id);
   }
 }
 function getContourDepth(hier, id) {
@@ -582,7 +602,7 @@ async function main(...args) {
       Processor(function HoughLines(src, dst) {
         let edges = pipeline.outputOf('EdgeDetect');
         lines = new Mat(0, 0, cv.CV_32SC4);
-        console.log('edges: ', edges);
+        //console.log('edges: ', edges);
 
         cv.HoughLinesP(edges,
           lines,
@@ -592,10 +612,9 @@ async function main(...args) {
           +params.minLineLength,
           +params.maxLineGap
         );
-        console.log('lines:', lines);
+        // console.log('lines:', lines);
 
         //console.log('lines.length', lines.length);
-        //console.log('lines: '+lines.map(l => l.toString()).join(', '));
         src.copyTo(dst);
         //cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
       })
@@ -810,8 +829,15 @@ async function main(...args) {
 
       let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]])
       );
+      let hierObj = new Hierarchy(hier);
+
+      /*console.log('hier', hierObj);
+      for(let id of [2, 3, 4]) {
+        for(let method of ['next', 'prev', 'parent', 'child'])
+          console.log(`hier.${method}(${id})`, hierObj[method](id));
+      }*/
       contours.forEach((contour, i) => {
-        let p = [...getParents(hier, i)];
+        let p = [...getParents(hierObj, i)];
         let color = palette[p[p.length - 1]];
         drawContour(over, contour, color, +params.lineWidth);
       });
@@ -880,7 +906,7 @@ async function main(...args) {
     );
 
     resizeOutput();
-    console.log('win.imageRect', win.imageRect);
+    //console.log('win.imageRect', win.imageRect);
 
     //console.log("row 100:", [...over.row(100).values()]);
     const showOverlay = frameShow != pipeline.size - 1 || now - keyTime < 2000;

@@ -17,6 +17,14 @@
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module_mat
 #endif
 
+
+enum {
+  MAT_EXPR_AND = 0,
+  MAT_EXPR_OR,
+  MAT_EXPR_XOR,
+  MAT_EXPR_MUL
+};
+
 extern "C" {
 JSValue mat_proto = JS_UNDEFINED, mat_class = JS_UNDEFINED, mat_iterator_proto = JS_UNDEFINED,
         mat_iterator_class = JS_UNDEFINED;
@@ -460,43 +468,19 @@ js_mat_expr(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv,
     cv::Scalar& scalar = *reinterpret_cast<cv::Scalar*>(&color);
 
     switch(magic) {
-      case 0: {
-        out = mat & scalar;
-        break;
-      }
-      case 1: {
-        out = mat | scalar;
-        break;
-      }
-      case 2: {
-        out = mat ^ scalar;
-        break;
-      }
-      case 3: {
-        out = mat.mul(scalar, scale);
-        break;
-      }
+      case MAT_EXPR_AND: out = mat & scalar; break;
+      case MAT_EXPR_OR: out = mat | scalar; break;
+      case MAT_EXPR_XOR: out = mat ^ scalar; break;
+      case MAT_EXPR_MUL: out = mat.mul(scalar, scale); break;
     }
   } else {
-    cv::Mat& other = *o;
+    cv::Mat /*&*/ other = *o;
 
     switch(magic) {
-      case 0: {
-        out = mat & other;
-        break;
-      }
-      case 1: {
-        out = mat | other;
-        break;
-      }
-      case 2: {
-        out = mat ^ other;
-        break;
-      }
-      case 3: {
-        out = mat.mul(other, scale);
-        break;
-      }
+      case MAT_EXPR_AND: cv::bitwise_and(*src, *o, *dst); /*out = mat & other;*/ break;
+      case MAT_EXPR_OR:  cv::bitwise_or(*src, *o, *dst); /*out = mat | other;*/ break;
+      case MAT_EXPR_XOR: cv::bitwise_xor(*src, *o, *dst);/* out = mat ^ other;*/ break;
+      case MAT_EXPR_MUL: out = mat.mul(other, scale); break;
     }
   }
 
@@ -990,8 +974,8 @@ js_mat_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
   ;
 
   os << "Mat "
-/*     << "@ "
-     << reinterpret_cast<void*>(reinterpret_cast<char*>(m)  )*/
+     /*     << "@ "
+          << reinterpret_cast<void*>(reinterpret_cast<char*>(m)  )*/
      << " [ ";
   if(sizeStrs.size() || m->type()) {
     os << "size: \x1b[0;33m" << join(sizeStrs.cbegin(), sizeStrs.cend(), "\x1b[m*\x1b[0;33m") << ", ";
@@ -1355,10 +1339,10 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("step1", 0, js_mat_funcs, 13),
     JS_CFUNC_MAGIC_DEF("locateROI", 0, js_mat_funcs, 14),
 
-    JS_CFUNC_MAGIC_DEF("and", 2, js_mat_expr, 0),
-    JS_CFUNC_MAGIC_DEF("or", 2, js_mat_expr, 1),
-    JS_CFUNC_MAGIC_DEF("xor", 3, js_mat_expr, 2),
-    JS_CFUNC_MAGIC_DEF("mul", 3, js_mat_expr, 3),
+    JS_CFUNC_MAGIC_DEF("and", 2, js_mat_expr, MAT_EXPR_AND),
+    JS_CFUNC_MAGIC_DEF("or", 2, js_mat_expr, MAT_EXPR_OR),
+    JS_CFUNC_MAGIC_DEF("xor", 3, js_mat_expr, MAT_EXPR_XOR),
+    JS_CFUNC_MAGIC_DEF("mul", 3, js_mat_expr, MAT_EXPR_MUL),
 
     JS_CFUNC_MAGIC_DEF("zero", 2, js_mat_fill, 0),
     JS_CFUNC_MAGIC_DEF("one", 2, js_mat_fill, 1),
