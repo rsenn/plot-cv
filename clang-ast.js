@@ -89,17 +89,6 @@ export class Type extends Node {
       'g'
     );
   }
-
-  /*get subscripts() {
-    let match;
-    let str = this + '';
-    let ret=[];
-    while((match = /\[[0-9]+\]/g.exec(str))) 
-ret.push(match[0]);
-  
-    return ret;
-  }*/
-
   isPointer() {
     let str = this + '';
     return /(\(\*\)\(|\*$)/.test(str);
@@ -281,7 +270,7 @@ for(const type of [str, desugared])
   }*/
 
   [Symbol.toPrimitive](hint) {
-    if(hint == 'default' || hint == 'string') return this.qualType; //this+'';
+    if(hint == 'default' || hint == 'string') return this.qualType.replace(/\s+(\*+)$/, '$1'); //this+'';
     return this;
   }
 }
@@ -989,7 +978,7 @@ export function NodePrinter() {
       ReturnsNonNullAttr() {}
       ReturnStmt(return_stmt) {
         put('return ');
-        for(let inner of return_stmt.inner) printer.print(inner);
+        if(return_stmt.inner) for(let inner of return_stmt.inner) printer.print(inner);
         put(';');
       }
       ReturnsTwiceAttr() {}
@@ -1020,11 +1009,18 @@ export function NodePrinter() {
       TypedefType() {}
       TypeOfExprType() {}
       TypeTraitExpr() {}
-      UnaryExprOrTypeTraitExpr() {}
+      UnaryExprOrTypeTraitExpr(unary_expr_or_type_trait_expr) {
+        const { valueCategory, name } = unary_expr_or_type_trait_expr;
+
+        put(name);
+
+        for(let inner of unary_expr_or_type_trait_expr.inner) printer.print(inner);
+      }
       UnaryOperator(unary_operator) {
         const { valueCategory, isPostfix, opcode, canOverflow } = unary_operator;
-        put(opcode);
+        if(!isPostfix) put(opcode);
         for(let inner of unary_operator.inner) printer.print(inner);
+        if(isPostfix) put(opcode);
       }
       UnaryTransformType() {}
       UnresolvedLookupExpr() {}
