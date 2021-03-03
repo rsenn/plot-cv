@@ -13,7 +13,7 @@ export function Ruler({ handleChange, style = {}, class: className }) {
   const [value, setValue] = useState(null);
 
   /*console.log('Ruler refRuler: ', refRuler);
-  console.log('Ruler value: ', value);*/
+  //console.log('Ruler value: ', value);*/
 
   const handlers = trkl(null);
   let commands;
@@ -21,7 +21,7 @@ export function Ruler({ handleChange, style = {}, class: className }) {
   handlers.subscribe(value => {
     if(!commands && Util.isObject(value)) commands = value;
     /*console.log('trkl handlers value =', value);
-    console.log('commands =', commands);*/
+    //console.log('commands =', commands);*/
   });
 
   const pressingDown = () => commands.pressingDown();
@@ -168,7 +168,7 @@ export const Toggle = ({ className, images, fn, state, style = {}, ...props }) =
   const pushed = useTrkl(state);
   const image = images[pushed | 0];
   state.subscribe(value => {
-    console.log('Toggled:', value);
+    //console.log('Toggled:', value);
   });
   return h(Button, {
     className,
@@ -184,7 +184,7 @@ export const ButtonGroup = ({ className, images, fn, state, style = {}, ...props
   const pushed = useTrkl(state);
   const image = images[pushed | 0];
   state.subscribe(value => {
-    console.log('Toggled:', value);
+    //console.log('Toggled:', value);
   });
   return h(Button, {
     className,
@@ -738,7 +738,7 @@ export const TransformedElement = ({
   //
   if(listener && listener.subscribe)
     listener.subscribe(value => {
-     console.log('TransformedElement setValue', value);
+     //console.log('TransformedElement setValue', value);
       if(value !== undefined) setTransform(value + '');
     });*/
   let transform = useTrkl(listener);
@@ -1088,11 +1088,11 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen = trkl(false), .
 
   if(typeof button == 'function') button = button({ ref: ref, ...props });
   if(typeof overlay == 'function') overlay = overlay({ ref: oref, onMouseWheel });
-  console.log('DropDown open=', { open });
+  //console.log('DropDown open=', { open });
 
   function onMouseWheel(e) {
     const { deltaY, wheelDelta, wheelDeltaX, wheelDeltaY } = e;
-    console.log(e.type, ': ', { deltaY, wheelDelta, wheelDeltaX, wheelDeltaY });
+    //console.log(e.type, ': ', { deltaY, wheelDelta, wheelDeltaX, wheelDeltaY });
     e.stopPropagation();
     return false;
   }
@@ -1106,7 +1106,7 @@ export const Fence = ({ children, style = {}, sizeListener, aspectListener, ...p
   if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
   if(aspectListener && aspectListener.subscribe)
     aspectListener.subscribe(value => setAspect(value));
-  console.debug('Fence dimensions:', dimensions);
+  //console.debug('Fence dimensions:', dimensions);
   return h(TransformedElement,
     {
       id: 'fence',
@@ -1146,10 +1146,10 @@ export const Zoomable = ({ type = 'div', style, children, ...props }) => {
   let inner = trkl();
   const ref = el => {
     /*  if(el && typeof el.getBoundingClientRect == 'function')
-          console.log('Zoomable.container:', el.getBoundingClientRect());
+          //console.log('Zoomable.container:', el.getBoundingClientRect());
 
         if(inner())
-          console.log('Zoomable.inner:', inner().getBoundingClientRect());*/
+          //console.log('Zoomable.inner:', inner().getBoundingClientRect());*/
     setContainer(el);
   };
   return h(type,
@@ -1166,7 +1166,7 @@ export const DisplayList = ({ data, ...props }) => {
 
   let itemData = useValue(async function* () {
     for await(let item of data.repeater) {
-      console.log('DisplayList.item:', item);
+      //console.log('DisplayList.item:', item);
       yield item;
     }
   });

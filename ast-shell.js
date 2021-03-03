@@ -6,7 +6,7 @@ import deep from './lib/deep.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import REPL from './repl.js';
 import * as std from 'std';
-import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, NodeType, NodeName, GetLoc, GetType, GetTypeStr } from './clang-ast.js';
+import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter } from './clang-ast.js';
 import Tree from './lib/tree.js';
 import * as Terminal from './terminal.js';
 
@@ -100,8 +100,28 @@ async function CommandLine() {
       return Compile(...args);
     }
   };
+  repl.show = value => {
+    if(typeof value == 'object' && value != null)
+      console.log(inspect(value, { depth: 4, compact: 0, hideKeys: ['loc', 'range'] }));
+    else if(Util.isArray(value) && value[0].kind) console.log(Table(value));
+    else console.log(value);
+  };
+  let debugLog = filesystem.fopen('debug.log', 'a');
+  repl.debugLog = debugLog;
+  repl.debug = (...args) => {
+    let s = '';
+    for(let arg of args) {
+      if(s) s += ' ';
+      if(typeof arg != 'string' || arg.indexOf('\x1b') == -1)
+        s += inspect(arg, { depth: Infinity, compact: 1 });
+      else s += arg;
+    }
+    debugLog.puts(s + '\n');
+    debugLog.flush();
+  };
 
   Util.atexit(() => {
+    debugLog.close();
     Terminal.mousetrackingDisable();
     let hist = repl.history_get().filter((item, i, a) => a.lastIndexOf(item) == i);
     filesystem.writeFile(cmdhist, JSON.stringify(hist, null, 2));
@@ -168,7 +188,7 @@ function Structs(nodes) {
 function Table(list, pred = (n, l) => true /*/\.c:/.test(l)*/) {
   let entries = [...list].map((n, i) => [i, LocationString(GetLoc(n)), n]);
   const colSizes = [5, 10, 12, 30, 12, 15, 25];
-  const colKeys = ['id', 'kind', 'name', 'tagUsed', 'previousDecl'];
+  const colKeys = ['id', 'kind', 'name', 'tagUsed', 'previousDecl', 'completeDefinition'];
   const colNames = ['#', ...colKeys, 'location'];
   const outputRow = (cols, pad, sep) =>
     cols
@@ -533,6 +553,7 @@ async function ASTShell(...args) {
     SIZEOF_POINTER,
     Type,
     AstDump,
+    NodePrinter,
     NodeType,
     NodeName,
     GetLoc,

@@ -90,16 +90,15 @@ export class Type extends Node {
     );
   }
 
-  get subscripts() {
+  /*get subscripts() {
     let match;
     let str = this + '';
     let ret=[];
-    while((match = /\[([0-9]+)\]/g.exec(str))) {
-ret.push(match[1]);
-      //console.log('match:', match);
-    }
+    while((match = /\[[0-9]+\]/g.exec(str))) 
+ret.push(match[0]);
+  
     return ret;
-  }
+  }*/
 
   isPointer() {
     let str = this + '';
@@ -117,8 +116,17 @@ ret.push(match[1]);
   }
 
   get subscripts() {
-    if(this.isArray())
-      return [...Util.matchAll(/\[([0-9]*)\]/g, this+'')].map(m => +m[1]);
+    if(this.isArray()) {
+      let matches = [...Util.matchAll(/\[([0-9]*)\]/g, this+'')];
+      //console.log("matches[0].index", matches[0].index);
+      return matches.map(m => [m.index, +m[1]]);
+    }
+  }
+
+  trimSubscripts() {
+    let str = this + '';
+    let [[index]] = this.subscripts ?? [[str.length]];
+    return str.slice(0, index).trimEnd();
   }
 
   get pointer() {
@@ -244,7 +252,7 @@ for(const type of [str, desugared])
       if(size === undefined && match[2].endsWith('*')) size = SIZEOF_POINTER;
       if(size === undefined && (this.qualType || '').startsWith('enum ')) size = 4;
       if(this.isArray()) {
-        for(let subscript of this.subscripts)
+        for(let [index,subscript] of this.subscripts)
           size *= subscript;
       }
     }
@@ -279,6 +287,7 @@ for(const type of [str, desugared])
 }
 
 Type.declarations.set('void', new Type({ name: 'void' }));
+Type.declarations.set('int', new Type({ name: 'int' }));
 
 function RoundTo(value, align) {
   return Math.floor((value + (align - 1)) / align) * align;
@@ -372,7 +381,7 @@ export class FunctionDecl extends Node {
 
     this.returnType = new Type(returnType, ast);
     this.parameters =
-      parameters && new Map(parameters.map(({ name, type }) => [name, new Type(type, ast)]));
+      parameters && /*new Map*/ parameters.map(({ name, type }) => [name, new Type(type, ast)]);
   }
 }
 
@@ -682,6 +691,404 @@ export function GetTypeStr(node) {
 
   if(type.qualType) type = type.qualType;
   return type;
+}
+
+export function NodePrinter() {
+  let out = '';
+  let depth = 0;
+  let printer;
+
+  function put(str) {
+    out += str.replace(/\n/g, '\n' + '  '.repeat(depth));
+  }
+
+  printer = {
+    nodePrinter: new (class NodePrinter {
+      AbiTagAttr() {}
+      AccessSpecDecl() {}
+      AddrLabelExpr() {}
+      AliasAttr() {}
+      AlignedAttr() {}
+      AllocSizeAttr() {}
+      AlwaysInlineAttr() {}
+      ArrayInitIndexExpr() {}
+      ArrayInitLoopExpr() {}
+      ArraySubscriptExpr(array_subscript_expr) {
+        const { valueCategory } = array_subscript_expr;
+        const [array, subscript] = array_subscript_expr.inner;
+        printer.print(array);
+        put('[');
+        printer.print(subscript);
+        put(']');
+      }
+      AsmLabelAttr() {}
+      AtomicExpr() {}
+      AtomicType() {}
+      AutoType() {}
+      BinaryOperator(binary_operator) {
+        const { valueCategory, opcode } = binary_operator;
+        let [left, right] = binary_operator.inner;
+        printer.print(left);
+        put(` ${opcode} `);
+        printer.print(right);
+      }
+      BlockCommandComment() {}
+      BreakStmt(break_stmt) {
+        put('break');
+      }
+      BuiltinTemplateDecl() {}
+      BuiltinType() {}
+      CallbackAttr() {}
+      CallExpr(call_expr) {
+        let [func, ...args] = call_expr.inner ?? [];
+        printer.print(func);
+        put('(');
+        let i = 0;
+        for(let inner of args) {
+          if(i++ > 0) put(', ');
+          printer.print(inner);
+        }
+        put(')');
+      }
+      CaseStmt() {}
+      CharacterLiteral() {}
+      ClassTemplateDecl() {}
+      ClassTemplatePartialSpecializationDecl() {}
+      ClassTemplateSpecializationDecl() {}
+      ComplexType() {}
+      CompoundAssignOperator(compound_assign_operator) {
+        const { valueCategory, opcode } = compound_assign_operator;
+        let [left, right] = compound_assign_operator.inner;
+        printer.print(left);
+        put(` ${opcode} `);
+        printer.print(right);
+      }
+      CompoundLiteralExpr() {}
+      CompoundStmt(compound_stmt) {
+        depth++;
+        put('{\n');
+        let i = 0;
+        for(let inner of compound_stmt.inner) {
+          if(i++ > 0) put('}; \t\n'.indexOf(out[out.length - 1]) != -1 ? '\n' : ';\n');
+          printer.print(inner);
+        }
+        put(';');
+        depth--;
+        put('\n}');
+      }
+      ConditionalOperator(conditional_operator) {
+        const [cond, if_true, if_false] = conditional_operator.inner;
+
+        printer.print(cond);
+        put(' ? ');
+        printer.print(if_true);
+        put(' : ');
+        printer.print(if_false);
+      }
+      ConstantArrayType() {}
+      ConstantExpr() {}
+      ConstAttr() {}
+      ConstructorUsingShadowDecl() {}
+      ContinueStmt() {}
+      ConvertVectorExpr() {}
+      CStyleCastExpr(cstyle_cast_expr) {
+        let type = new Type(cstyle_cast_expr.type);
+        const { valueCategory, castKind } = cstyle_cast_expr;
+        put(`(${type})`);
+        for(let inner of cstyle_cast_expr.inner) printer.print(inner);
+      }
+      DecayedType() {}
+      DeclRefExpr(decl_ref_expr) {
+        const { type, valueCategory, referencedDecl } = decl_ref_expr;
+        put(referencedDecl.name);
+        // printer.print(referencedDecl);
+      }
+      DeclStmt(decl_stmt) {
+        let i = 0;
+        let type, baseType;
+        for(let inner of decl_stmt.inner) {
+          if(!type) {
+            type = new Type(inner.type);
+            baseType = type.trimSubscripts();
+            put(`${baseType} `);
+          }
+          if(i++ > 0) put(', ');
+          printer.print(inner, baseType);
+        }
+      }
+      DecltypeType() {}
+      DefaultStmt() {}
+      DependentNameType() {}
+      DependentScopeDeclRefExpr() {}
+      DependentSizedArrayType() {}
+      DependentTemplateSpecializationType() {}
+      DeprecatedAttr() {}
+      DoStmt() {}
+      ElaboratedType() {}
+      EmptyDecl() {}
+      EnumConstantDecl() {}
+      EnumDecl() {}
+      EnumType() {}
+      ExprWithCleanups() {}
+      FieldDecl() {}
+      FinalAttr() {}
+      FloatingLiteral(floating_literal) {
+        put(floating_literal.value);
+      }
+      FormatArgAttr() {}
+      FormatAttr() {}
+      ForStmt(for_stmt) {
+        let inner = [...for_stmt.inner];
+        let body = inner.pop();
+        let numInit = inner.findIndex(n => n.kind == undefined);
+        let init = inner.splice(0, numInit);
+        if(inner.length && inner[inner.length - 1].kind == undefined) inner.pop();
+        let incr = inner.pop();
+        let cond = inner.pop();
+        //console.log('ForStmt', console.config({depth: 4, compact: false, maxArrayLength: 5, hideKeys: ['range', 'loc'] }), { body, init, cond, incr });
+        put('for(');
+        let i = 0;
+        for(let n of init) {
+          if(i++ > 0) put(', ');
+          printer.print(n);
+        }
+        put(';');
+        if(cond.kind) {
+          put(' ');
+          printer.print(cond);
+        }
+        put(';');
+        if(incr.kind) {
+          put(' ');
+          printer.print(incr);
+        }
+        put(') ');
+        printer.print(body);
+      }
+      FriendDecl() {}
+      FullComment() {}
+      FunctionDecl(function_decl) {
+        let node = new FunctionDecl(function_decl);
+        let i = 0;
+        put(node.returnType + '\n' + function_decl.name + '(');
+        if(!function_decl.inner) console.log('FunctionDecl', function_decl);
+        for(let inner of function_decl.inner.filter(n => n.kind == 'ParmVarDecl')) {
+          if(i++ > 0) put(', ');
+          printer.print(inner);
+        }
+        put(') ');
+        for(let inner of function_decl.inner.filter(n => n.kind != 'ParmVarDecl')) {
+          printer.print(inner);
+        }
+        put('\n\n');
+        return true;
+      }
+      FunctionNoProtoType() {}
+      FunctionProtoType() {}
+      FunctionTemplateDecl() {}
+      GCCAsmStmt() {}
+      GNUInlineAttr() {}
+      GNUNullExpr() {}
+      GotoStmt() {}
+      HTMLEndTagComment() {}
+      HTMLStartTagComment() {}
+      IfStmt(if_stmt) {
+        let [cond, body] = if_stmt.inner;
+        put(`if(`);
+        printer.print(cond);
+        put(`) `);
+        printer.print(body);
+      }
+      ImplicitCastExpr(implicit_cast_expr) {
+        for(let inner of implicit_cast_expr.inner) printer.print(inner);
+      }
+      ImplicitValueInitExpr() {}
+      IncompleteArrayType() {}
+      IndirectFieldDecl() {}
+      IndirectGotoStmt() {}
+      InitListExpr(init_list_expr) {
+        const { valueCategory } = init_list_expr;
+
+        put('{ ');
+        let i = 0;
+        for(let inner of init_list_expr.inner) {
+          if(i++ > 0) put(', ');
+
+          printer.print(inner);
+        }
+        put(' }');
+      }
+      InjectedClassNameType() {}
+      InlineCommandComment() {}
+      IntegerLiteral(integer_literal) {
+        put(integer_literal.value);
+      }
+      LabelStmt() {}
+      LambdaExpr() {}
+      LinkageSpecDecl() {}
+      LValueReferenceType() {}
+      MaterializeTemporaryExpr() {}
+      MaxFieldAlignmentAttr() {}
+      MayAliasAttr() {}
+      MemberExpr(member_expr) {
+        const { valueCategory, name, isArray, referencedMemberDecl } = member_expr;
+        /*const { referencedDecl } = member_expr.inner[0];
+        put(referencedDecl.name);*/
+        for(let inner of member_expr.inner) {
+          let type = new Type(inner.type);
+
+          printer.print(inner);
+          put(type.isPointer() ? '->' : '.');
+        }
+        put(name);
+      }
+      MemberPointerType() {}
+      method() {}
+      MinVectorWidthAttr() {}
+      ModeAttr() {}
+      NamespaceDecl() {}
+      NoDebugAttr() {}
+      NoInlineAttr() {}
+      NonNullAttr() {}
+      NonTypeTemplateParmDecl() {}
+      NoThrowAttr() {}
+      NullStmt(null_stmt) {
+        put(';');
+      }
+      OffsetOfExpr() {}
+      OpaqueValueExpr() {}
+      OverrideAttr() {}
+      OwnerAttr() {}
+      PackedAttr() {}
+      PackExpansionExpr() {}
+      PackExpansionType() {}
+      ParagraphComment() {}
+      ParamCommandComment() {}
+      ParenExpr(paren_expr) {
+        const { valueCategory } = paren_expr;
+        put('(');
+        for(let inner of paren_expr.inner) printer.print(inner);
+        put(')');
+      }
+      ParenListExpr() {}
+      ParenType() {}
+      ParmVarDecl(parm_var_decl) {
+        let type = Node.get(parm_var_decl.type);
+        put((type + '').replace(/\s+\*/g, '*'));
+        if(out[out.length - 1] != ' ') put(' ');
+        put(parm_var_decl.name);
+      }
+      PointerAttr() {}
+      PointerType() {}
+      PredefinedExpr() {}
+      PureAttr() {}
+      QualType() {}
+      RecordDecl() {}
+      RecordType() {}
+      RestrictAttr() {}
+      ReturnsNonNullAttr() {}
+      ReturnStmt(return_stmt) {
+        put('return ');
+        for(let inner of return_stmt.inner) printer.print(inner);
+        put(';');
+      }
+      ReturnsTwiceAttr() {}
+      RValueReferenceType() {}
+      SentinelAttr() {}
+      ShuffleVectorExpr() {}
+      SizeOfPackExpr() {}
+      StaticAssertDecl() {}
+      StmtExpr() {}
+      StringLiteral(string_literal) {
+        put(string_literal.value);
+      }
+      SubstNonTypeTemplateParmExpr() {}
+      SubstTemplateTypeParmType() {}
+      SwitchStmt() {}
+      TargetAttr() {}
+      TemplateArgument() {}
+      TemplateSpecializationType() {}
+      TemplateTemplateParmDecl() {}
+      TemplateTypeParmDecl() {}
+      TemplateTypeParmType() {}
+      TextComment() {}
+      TParamCommandComment() {}
+      TranslationUnitDecl() {}
+      TypeAliasDecl() {}
+      TypeAliasTemplateDecl() {}
+      TypedefDecl() {}
+      TypedefType() {}
+      TypeOfExprType() {}
+      TypeTraitExpr() {}
+      UnaryExprOrTypeTraitExpr() {}
+      UnaryOperator(unary_operator) {
+        const { valueCategory, isPostfix, opcode, canOverflow } = unary_operator;
+        put(opcode);
+        for(let inner of unary_operator.inner) printer.print(inner);
+      }
+      UnaryTransformType() {}
+      UnresolvedLookupExpr() {}
+      UnresolvedMemberExpr() {}
+      UnresolvedUsingValueDecl() {}
+      UnusedAttr() {}
+      UsingDecl() {}
+      UsingDirectiveDecl() {}
+      UsingShadowDecl() {}
+      VAArgExpr() {}
+      VarDecl(var_decl, base_type) {
+        let type = new Type(var_decl.type);
+        put(var_decl.name);
+        let subscripts = (type.subscripts ?? [])
+          .map(([offset, subscript]) => `[${subscript}]`)
+          .join('');
+        if(subscripts) put(subscripts);
+        if(var_decl.inner && var_decl.inner.length) {
+          put(' = ');
+          for(let inner of var_decl.inner) printer.print(inner);
+        }
+      }
+      VarTemplateDecl() {}
+      VectorType() {}
+      VerbatimBlockComment() {}
+      VerbatimBlockLineComment() {}
+      VerbatimLineComment() {}
+      VisibilityAttr() {}
+      WarnUnusedResultAttr() {}
+      WeakAttr() {}
+      WeakRefAttr() {}
+      WhileStmt(while_stmt) {
+        let [cond, body] = while_stmt.inner;
+        put(`while(`);
+        printer.print(cond);
+        put(`) `);
+        printer.print(body);
+      }
+    })(),
+    print(node, ...args) {
+      let fn = this.nodePrinter[node.kind];
+      let oldlen = out.length;
+      if(!fn) throw new Error(`No such printer for ${node.kind}`);
+      let success = fn.call(this.nodePrinter, node, ...args);
+      if(out.length == oldlen)
+        throw new Error(`Node printer for ${node.kind} failed: ${inspect(node, {
+            depth: 6,
+            compact: 2,
+            breakLength: 80,
+            hideKeys: ['range', 'loc']
+          })}`
+        );
+
+      return out;
+    },
+    get output() {
+      return out;
+    },
+    clear() {
+      out = '';
+    }
+  };
+
+  return printer;
 }
 
 export function PrintNode(node) {

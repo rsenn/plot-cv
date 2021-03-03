@@ -212,18 +212,16 @@ export default function REPL(title = 'QuickJS') {
   function term_init() {
     var tab;
     term_fd = filesystem.fileno(input);
-
     /* get the terminal size */
     term_width = 80;
     if(filesystem.isatty(term_fd)) {
       if(Util.ttyGetWinSize) {
-        tab = Util.ttyGetWinSize(term_fd);
-        if(tab) term_width = tab[0];
+        Util.ttyGetWinSize(term_fd).then(tab => {
+          //console.log("term_init", {tab});
+          term_width = tab[0];
+        });
       }
-      if(Util.ttySetRaw) {
-        /* set the TTY to raw mode */
-        Util.ttySetRaw(term_fd);
-      }
+      if(Util.ttySetRaw) Util.ttySetRaw(term_fd);
     }
 
     /* install a Ctrl-C signal handler */
@@ -330,6 +328,8 @@ export default function REPL(title = 'QuickJS') {
 
   /* XXX: handle double-width characters */
   function move_cursor(delta) {
+    //if(isNaN(delta)) return;
+
     var i, l;
     if(delta > 0) {
       while(delta != 0) {
@@ -353,7 +353,10 @@ export default function REPL(title = 'QuickJS') {
           delta--;
           term_cursor_x = term_width - 1;
         } else {
+          // console.log("move_cursor", {delta,term_cursor_x, term_width});
           l = Math.min(delta, term_cursor_x);
+
+          if(isNaN(l)) throw new Error(`move_cursor l=${l}`);
           print_csi(l, 'D'); /* left */
           delta -= l;
           term_cursor_x -= l;
@@ -400,7 +403,9 @@ export default function REPL(title = 'QuickJS') {
       last_cmd = cmd_line;
       term_cursor_x = start;
       last_cursor_pos = cursor_pos;
-      puts(`\x1b[${ucs_length(r)}D`);
+      let nback = ucs_length(r);
+      if(isNaN(nback)) throw new Error(`update nback=${nback}`);
+      puts(`\x1b[${nback}D`);
       //move_cursor(-ucs_length(r));
       flush();
       return;
@@ -414,7 +419,12 @@ export default function REPL(title = 'QuickJS') {
         puts(cmd_line.substring(last_cursor_pos));
       } else {
         /* goto the start of the line */
-        move_cursor(-ucs_length(last_cmd.substring(0, last_cursor_pos)));
+        // console.log("last_cmd",last_cmd, last_cursor_pos);
+        const leading = last_cmd.substring(0, last_cursor_pos);
+        //console.log("leading",leading);
+        const move_x = -ucs_length(leading);
+        //console.log("move_x",move_x);
+        move_cursor(move_x);
 
         if(colorize) {
           var str = mexpr ? mexpr + '\n' + cmd_line : cmd_line;
@@ -1019,7 +1029,7 @@ export default function REPL(title = 'QuickJS') {
       .map(p => (!isNaN(+p) ? +p : p));
     let press = cmd == 'm';
 
-    console.log('handle_mouse', inspect({ button, x, y, press }, { compact: 0 }));
+    repl.debug('handle_mouse', { button, x, y, press });
   }
 
   function handle_key(keys) {
@@ -1459,7 +1469,7 @@ export default function REPL(title = 'QuickJS') {
       result = std.evalScript(expr, { backtrace_barrier: true });
       eval_time = new Date().getTime() - now;
       puts(colors[styles.result]);
-      console.log(result);
+      repl.show(result);
       puts('\n');
       puts(colors.none);
       /* set the last result */

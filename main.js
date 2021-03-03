@@ -789,7 +789,7 @@ function EagleMaps(project) {
     e,
     new ImmutableXPath(transformPath(e.getAttribute('data-path')))
   ]);
-  console.debug('dom2path:', dom2path);
+  // console.debug('dom2path:', dom2path);
   dom2path = Util.mapFunction(new WeakMap(dom2path));
 
   let dom2eagle = node => {
@@ -965,11 +965,11 @@ async function LoadDocument(project, parentElem) {
       project.renderer.grid = obj;
     });
 
-    console.log('project.renderer', project.renderer);
+    //console.log('project.renderer', project.renderer);
     let style = { width: '100%', height: '100%', position: 'relative' };
     Component = project.renderer.render(doc, null, {});
 
-    console.log('renderer.render =', Component);
+    //console.log('renderer.render =', Component);
 
     let usedLayers = [...doc.layers.list].filter(layer => layer.elements.size > 0);
 
@@ -1041,9 +1041,9 @@ async function LoadDocument(project, parentElem) {
     project.object = object;
     let rendered = object.children[0];
 
-    console.debug('LoadDocument rendered:', rendered);
-    console.debug('LoadDocument element:', element);
-    console.debug('LoadDocument  project:', project);
+    //console.debug('LoadDocument rendered:', rendered);
+    //console.debug('LoadDocument element:', element);
+    //console.debug('LoadDocument  project:', project);
 
     //path2eagle: path2obj, eagle2path: obj2path
 
