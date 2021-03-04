@@ -469,7 +469,7 @@ export async function LibraryExports(file) {
 }
 
 async function ASTShell(...args) {
-  await ConsoleSetup({ /*breakLength: 240, */ customInspect: true, compact: 1, depth: 1 });
+  await ConsoleSetup({ /*breakLength: 240, */ customInspect: true, compact: 1, depth: 1, maxArrayLength: Infinity });
 
   console.options.compact = 1;
   console.options.hideKeys = ['loc', 'range'];

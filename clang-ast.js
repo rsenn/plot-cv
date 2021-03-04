@@ -1020,7 +1020,7 @@ export function NodePrinter() {
         const { valueCategory, name } = unary_expr_or_type_trait_expr;
 
         put(name);
-
+if(unary_expr_or_type_trait_expr.inner)
         for(let inner of unary_expr_or_type_trait_expr.inner) printer.print(inner);
       }
       UnaryOperator(unary_operator) {

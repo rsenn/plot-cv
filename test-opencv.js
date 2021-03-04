@@ -70,10 +70,8 @@ async function main(...args) {
 
   console.log('line', line);
 
-
   let clahe = new CLAHE();
-    console.log('clahe', clahe);
-
+  console.log('clahe', clahe);
 
   let image;
   cv.namedWindow('main', cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO);

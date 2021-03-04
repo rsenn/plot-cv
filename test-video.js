@@ -543,7 +543,7 @@ async function main(...args) {
     for(let [size, mode, result] of results) console.debug(`${size}.${mode}(${fitSize}) = ${result}`);
   }
   std.exit(0);*/
-  let clahe = new CLAHE(4, new Size(8,8));
+  let clahe = new CLAHE(4, new Size(8, 8));
 
   let pipeline = new Pipeline([
       Processor(function AcquireFrame(src, dst) {
@@ -572,8 +572,8 @@ async function main(...args) {
       }),
       Grayscale,
       Processor(function Norm(src, dst) {
-       // clahe.setClipLimit(4);
-        clahe.apply(src,dst);
+        // clahe.setClipLimit(4);
+        clahe.apply(src, dst);
         ///cv.equalizeHist(src,dst);
         //cv.normalize(src, dst, 255, 0, cv.NORM_MINMAX);
       }),
