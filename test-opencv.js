@@ -4,6 +4,7 @@ import { Rect } from 'rect.so';
 import { Mat } from 'mat.so';
 import * as cv from 'cv.so';
 import { Line } from 'line.so';
+import { CLAHE } from 'clahe.so';
 //import { Draw, drawLine, drawCircle } from 'draw.so';
 import inspect from './lib/objectInspect.js';
 import path from './lib/path.js';
@@ -68,6 +69,11 @@ async function main(...args) {
   let line = new Line(0, 0, 50, 50);
 
   console.log('line', line);
+
+
+  let clahe = new CLAHE();
+    console.log('clahe', clahe);
+
 
   let image;
   cv.namedWindow('main', cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO);

@@ -1,5 +1,5 @@
 import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
+//import ConsoleSetup from './lib/consoleSetup.js';
 import * as draw from 'draw.so';
 import * as std from 'std';
 import { Point } from 'point.so';
@@ -15,6 +15,8 @@ import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import PortableFileSystem from './lib/filesystem.js';
 import { Mat as cvMat } from 'mat.so';
 import * as cv from 'cv.so';
+import Console from './quickjs/modules/tests/console.js';
+import { CLAHE } from 'clahe.so';
 
 let prng = new Alea(Date.now());
 const hr = Util.hrtime;
@@ -378,12 +380,14 @@ async function main(...args) {
   let running = true;
   let paused = false;
 
-  await ConsoleSetup({
+  console = new Console({ colors: true, depth: 1 });
+
+  /* await ConsoleSetup({
     breakLength: 120,
     maxStringLength: 200,
     multiline: 1,
     alignMap: true
-  });
+  });*/
   await PortableFileSystem(fs => (filesystem = fs));
 
   let opts = Util.getOpt({
@@ -407,6 +411,7 @@ async function main(...args) {
         'd'
       ],
       size: [true, null, 's'],
+      'no-trackbars': [false, null, 'T'],
       '@': 'input,driver'
     },
     args
@@ -471,7 +476,7 @@ async function main(...args) {
     thresh1: new NumericParam(config.thresh1 ?? 40, 0, 100),
     thresh2: new NumericParam(config.thresh2 ?? 90, 0, 100),
     threshc: new NumericParam(config.threshc ?? 50, 0, 100),
-    angleResolution: new NumericParam(config.angleResolution ?? 2, 0, 180),
+    angleResolution: new NumericParam(config.angleResolution ?? 2, 0.5, 180),
     minLineLength: new NumericParam(config.minLineLength ?? 30, 0, 500),
     maxLineGap: new NumericParam(config.maxLineGap ?? 10, 0, 500),
     apertureSize: new NumericParam(config.apertureSize ?? 3, 3, 7, 2),
@@ -503,10 +508,14 @@ async function main(...args) {
   console.log('video.size', video.size);
   console.log('win.imageRect (1)', win.imageRect);
 
-  await params.apertureSize.createTrackbar('apertureSize', win);
-  await params.thresh1.createTrackbar('thresh1', win);
-  await params.thresh2.createTrackbar('thresh2', win);
-  console.log('win.imageRect (2)', win.imageRect);
+  if(!opts['no-trackbars']) {
+    await params.apertureSize.createTrackbar('apertureSize', win);
+    await params.thresh1.createTrackbar('thresh1', win);
+    await params.thresh2.createTrackbar('thresh2', win);
+    console.log('win.imageRect (2)', win.imageRect);
+  }
+
+  // cv.createButton('apertureSize', arg => console.log("Button apertureSize", arg), 0, false);
 
   //console.log('paramNav.param:', paramNav.param);
   //await params.apertureSize.createTrackbar('apertureSize', win);
@@ -534,12 +543,13 @@ async function main(...args) {
     for(let [size, mode, result] of results) console.debug(`${size}.${mode}(${fitSize}) = ${result}`);
   }
   std.exit(0);*/
+  let clahe = new CLAHE(4, new Size(8,8));
 
   let pipeline = new Pipeline([
       Processor(function AcquireFrame(src, dst) {
         const dstEmpty = dst.empty;
         if(dst.empty) {
-          console.log(`AcquireFrame`, { src, dst });
+          // console.log(`AcquireFrame`, { src, dst });
 
           dst0Size = dst.size;
         }
@@ -549,7 +559,7 @@ async function main(...args) {
 
         if(videoSize === undefined || videoSize.empty) {
           videoSize = video.size.area ? video.size : dst.size;
-          console.log(`videoSize`, videoSize);
+          //console.log(`videoSize`, videoSize);
         }
 
         if(dstEmpty) {
@@ -562,7 +572,10 @@ async function main(...args) {
       }),
       Grayscale,
       Processor(function Norm(src, dst) {
-        cv.normalize(src, dst, 255, 0, cv.NORM_MINMAX);
+       // clahe.setClipLimit(4);
+        clahe.apply(src,dst);
+        ///cv.equalizeHist(src,dst);
+        //cv.normalize(src, dst, 255, 0, cv.NORM_MINMAX);
       }),
       Processor(function Blur(src, dst) {
         cv.GaussianBlur(src, dst, [+params.ksize, +params.ksize], 0, 0, cv.BORDER_REPLICATE);
@@ -594,7 +607,7 @@ async function main(...args) {
 
         if(+params.maskColor) {
           let edge = [dst.toString(), pipeline.images[0].toString()];
-          console.log('edge', edge);
+          //console.log('edge', edge);
 
           dst.and(pipeline.images[0]);
         }
@@ -645,15 +658,16 @@ async function main(...args) {
 
   console.log(`Trackbar 'frame' frameShow=${frameShow} pipeline.size - 1 = ${pipeline.size - 1}`);
 
-  cv.createTrackbar('frame',
-    'gray',
-    frameShow,
-    pipeline.size - 1,
-    function(value, count, name, window) {
-      //console.log('Trackbar', { value, count, name, window });
-      frameShow = value;
-    }
-  );
+  if(!opts['no-trackbars'])
+    cv.createTrackbar('frame',
+      'gray',
+      frameShow,
+      pipeline.size - 1,
+      function(value, count, name, window) {
+        //console.log('Trackbar', { value, count, name, window });
+        frameShow = value;
+      }
+    );
 
   const resizeOutput = Util.once(() => {
     let size = outputMat.size.mul(zoom);

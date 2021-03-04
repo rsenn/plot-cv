@@ -19,6 +19,8 @@
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module_cv
 #endif
 
+enum { DISPLAY_OVERLAY };
+
 static std::vector<cv::String> window_list;
 
 static JSValue
@@ -1035,6 +1037,57 @@ js_cv_create_trackbar(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
 }
 
 static JSValue
+js_cv_create_button(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  const char* bar_name;
+  int32_t ret, type;
+  bool initial_button_state = false;
+
+  struct Button {
+    int32_t state;
+    JSValue bar_name, type;
+    JSValueConst callback;
+    JSContext* ctx;
+  };
+  Button* userdata;
+
+  bar_name = JS_ToCString(ctx, argv[0]);
+
+  if(bar_name == nullptr)
+    return JS_EXCEPTION;
+
+  userdata = js_allocate<Button>(ctx);
+  userdata->callback = JS_DupValue(ctx, argv[1]);
+
+  JS_ToInt32(ctx, &type, argv[2]);
+  JS_ToInt32(ctx, &userdata->state, argv[3]);
+
+  userdata->bar_name = JS_NewString(ctx, bar_name);
+  userdata->type = JS_NewInt32(ctx, type);
+
+  userdata->ctx = ctx;
+
+  // initial_button_state = JS_ToBool(ctx, argv[4]);
+
+  /*JSValue str = JS_ToString(ctx, userdata->callback);
+  std::cout << "callback: " << JS_ToCString(ctx, str) << std::endl;*/
+
+  ret = cv::createButton(
+      bar_name,
+      [](int state, void* ptr) {
+        Button const& data = *static_cast<Button*>(ptr);
+        if(JS_IsFunction(data.ctx, data.callback)) {
+          JSValueConst argv[] = {JS_NewInt32(data.ctx, state), data.bar_name, data.type};
+          JS_Call(data.ctx, data.callback, JS_UNDEFINED, 3, argv);
+        }
+      },
+      userdata,
+      type,
+      initial_button_state);
+
+  return JS_NewInt32(ctx, ret);
+}
+
+static JSValue
 js_cv_get_trackbar_pos(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   const char *name, *window;
 
@@ -1350,20 +1403,42 @@ js_cv_getticks(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
 
 static JSValue
 js_cv_bitwise(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
-  std::vector<JSMatData*> v;
+  union {
+    std::array<JSMatData*, 4> arr;
+    struct {
+      JSMatData *src, *other, *dst, *mask;
+    };
+  } u;
 
-  v.resize(4);
-
-  std::transform(&argv[0], &argv[argc], v.begin(), std::bind(&js_mat_data, ctx, std::placeholders::_1));
+  std::transform(&argv[0], &argv[argc], u.arr.begin(), std::bind(&js_mat_data, ctx, std::placeholders::_1));
 
   switch(magic) {
-    case 0: cv::bitwise_and(*v[0], *v[1], *v[2], v[3] ? *v[3] : cv::noArray()); break;
-    case 1: cv::bitwise_or(*v[0], *v[1], *v[2], v[3] ? *v[3] : cv::noArray()); break;
-    case 2: cv::bitwise_xor(*v[0], *v[1], *v[2], v[3] ? *v[3] : cv::noArray()); break;
-    case 3: cv::bitwise_not(*v[0], *v[1], v[2] ? *v[2] : cv::noArray()); break;
+    case 0: cv::bitwise_and(*u.src, *u.other, *u.dst, u.mask ? *u.mask : cv::noArray()); break;
+    case 1: cv::bitwise_or(*u.src, *u.other, *u.dst, u.mask ? *u.mask : cv::noArray()); break;
+    case 2: cv::bitwise_xor(*u.src, *u.other, *u.dst, u.mask ? *u.mask : cv::noArray()); break;
+    case 3: cv::bitwise_not(*u.src, *u.other, u.dst ? *u.dst : cv::noArray()); break;
     default: return JS_EXCEPTION;
   }
   return JS_UNDEFINED;
+}
+
+static JSValue
+js_cv_gui_methods(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSValue ret = JS_UNDEFINED;
+  switch(magic) {
+    case DISPLAY_OVERLAY: {
+      const char *winname, *text;
+      int32_t delayms = 0;
+      winname = JS_ToCString(ctx, argv[0]);
+      text = JS_ToCString(ctx, argv[1]);
+      if(argc > 2)
+        JS_ToInt32(ctx, &delayms, argv[2]);
+
+      cv::displayOverlay(winname, text, delayms);
+      break;
+    }
+  }
+  return ret;
 }
 
 JSValue cv_proto = JS_UNDEFINED, cv_class = JS_UNDEFINED;
@@ -1410,6 +1485,7 @@ js_function_list_t js_cv_static_funcs{
     JS_CFUNC_DEF("setWindowProperty", 3, js_cv_set_window_property),
     JS_CFUNC_DEF("setWindowTitle", 2, js_cv_set_window_title),
     JS_CFUNC_DEF("createTrackbar", 5, js_cv_create_trackbar),
+    JS_CFUNC_DEF("createButton", 2, js_cv_create_button),
     JS_CFUNC_DEF("getTrackbarPos", 2, js_cv_get_trackbar_pos),
     JS_CFUNC_MAGIC_DEF("setTrackbarPos", 3, js_cv_set_trackbar, 0),
     JS_CFUNC_MAGIC_DEF("setTrackbarMin", 3, js_cv_set_trackbar, 1),
@@ -1435,6 +1511,7 @@ js_function_list_t js_cv_static_funcs{
     JS_CFUNC_DEF("minMaxLoc", 2, js_cv_min_max_loc),
     JS_CFUNC_DEF("addWeighted", 6, js_cv_add_weighted),
     JS_CFUNC_DEF("resize", 3, js_cv_resize),
+    JS_CFUNC_MAGIC_DEF("displayOverlay", 2, js_cv_gui_methods, DISPLAY_OVERLAY),
     JS_CFUNC_MAGIC_DEF("getTickCount", 0, js_cv_getticks, 0),
     JS_CFUNC_MAGIC_DEF("getTickFrequency", 0, js_cv_getticks, 1),
     JS_CFUNC_MAGIC_DEF("getCPUTickCount", 0, js_cv_getticks, 2),

@@ -17,13 +17,7 @@
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module_mat
 #endif
 
-
-enum {
-  MAT_EXPR_AND = 0,
-  MAT_EXPR_OR,
-  MAT_EXPR_XOR,
-  MAT_EXPR_MUL
-};
+enum { MAT_EXPR_AND = 0, MAT_EXPR_OR, MAT_EXPR_XOR, MAT_EXPR_MUL };
 
 extern "C" {
 JSValue mat_proto = JS_UNDEFINED, mat_class = JS_UNDEFINED, mat_iterator_proto = JS_UNDEFINED,
@@ -434,7 +428,7 @@ static JSValue
 js_mat_expr(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSValue ret = JS_UNDEFINED;
   JSColorData<double> color;
-  JSMatData *src, *dst, *o;
+  JSMatData *src = nullptr, *dst = nullptr, *o = nullptr;
   double scale = 1.0;
 
   if((src = js_mat_data(ctx, this_val)) == nullptr)
@@ -460,28 +454,41 @@ js_mat_expr(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv,
   }
 
   if(dst == nullptr)
+    //  return JS_UNDEFINED;
     dst = src;
 
-  cv::Mat& out = *dst;
+  //  cv::Mat& out = *dst;
+  cv::MatExpr expr;
 
   if(o == nullptr) {
     cv::Scalar& scalar = *reinterpret_cast<cv::Scalar*>(&color);
-
     switch(magic) {
-      case MAT_EXPR_AND: out = mat & scalar; break;
-      case MAT_EXPR_OR: out = mat | scalar; break;
-      case MAT_EXPR_XOR: out = mat ^ scalar; break;
-      case MAT_EXPR_MUL: out = mat.mul(scalar, scale); break;
+      case MAT_EXPR_AND: expr = mat & scalar; break;
+      case MAT_EXPR_OR: expr = mat | scalar; break;
+      case MAT_EXPR_XOR: expr = mat ^ scalar; break;
+      case MAT_EXPR_MUL: expr = mat.mul(scalar, scale); break;
     }
+    *dst = static_cast<cv::Mat>(expr);
+
   } else {
-    cv::Mat /*&*/ other = *o;
+    // cv::Mat const& other = *o;
 
     switch(magic) {
-      case MAT_EXPR_AND: cv::bitwise_and(*src, *o, *dst); /*out = mat & other;*/ break;
-      case MAT_EXPR_OR:  cv::bitwise_or(*src, *o, *dst); /*out = mat | other;*/ break;
-      case MAT_EXPR_XOR: cv::bitwise_xor(*src, *o, *dst);/* out = mat ^ other;*/ break;
-      case MAT_EXPR_MUL: out = mat.mul(other, scale); break;
+      case MAT_EXPR_AND:
+        expr = (*src) & (*o); /*cv::bitwise_and(*src, *o, *dst);*/
+        break;
+      case MAT_EXPR_OR:
+        expr = (*src) | (*o); /*cv::bitwise_or(*src, *o, *dst);*/
+        break;
+      case MAT_EXPR_XOR:
+        expr = (*src) ^ (*o); /*cv::bitwise_xor(*src, *o, *dst);*/
+        break;
+      case MAT_EXPR_MUL:
+        expr = (*src) * (*o); /**dst = mat.mul(*o, scale);*/
+        break;
     }
+
+    *dst = static_cast<cv::Mat>(expr);
   }
 
   return ret;
