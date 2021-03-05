@@ -4,11 +4,12 @@
 #include <unistd.h>
 #include <sys/mman.h>
 #include <sys/user.h>
+#include <limits.h>
 #include "quickjs.h"
 #include <cstdlib>
 
 template<class T> struct js_alloc_mmap {
-  static constexpr size_t page_size = PAGE_SIZE;
+  static size_t page_size;
   static constexpr size_t
   round_to_page_size(size_t n) {
     size_t pages = (n + (page_size - 1)) / page_size;
@@ -33,6 +34,9 @@ template<class T> struct js_alloc_mmap {
     munmap(reinterpret_cast<char*>(ptr) - offset, size);
   }
 };
+
+template<class T> size_t js_alloc_mmap<T>::page_size = ::getpagesize();
+
 
 template<class T> struct js_alloc_libc {
   static constexpr size_t size = ((sizeof(T) + 7) >> 3) << 3;
