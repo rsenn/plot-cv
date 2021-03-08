@@ -597,6 +597,7 @@ async function ASTShell(...args) {
       include: [true, (a, p) => (p || []).concat([a]), 'I'],
       define: [true, (a, p) => (p || []).concat([a]), 'D'],
       debug: [false, null, 'x'],
+      force: [false, null, 'f'],
       'system-includes': [false, null, 's'],
       'no-remove-empty': [false, null, 'E'],
       'output-dir': [true, null, 'd'],
@@ -619,7 +620,7 @@ async function ASTShell(...args) {
   });
 
   async function Compile(file, ...args) {
-    let r = await AstDump(params.compiler, file, [...globalThis.flags, ...args]);
+    let r = await AstDump(params.compiler, file, [...globalThis.flags, ...args], params.force);
     r.source = file;
 
     Object.assign(r, {

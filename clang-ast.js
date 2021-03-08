@@ -1,9 +1,19 @@
 import Util from './lib/util.js';
 import path from './lib/path.js';
 import { AcquireReader } from './lib/stream/utils.js';
-
 export let SIZEOF_POINTER = 8;
 
+function FileTime(filename) {
+  let st = filesystem.stat(filename);
+  return st.mtime ?? st.time;
+}
+
+function Newer(file, other) {
+  return FileTime(file) > FileTime(other);
+}
+function Older(file, other) {
+  return FileTime(file) < FileTime(other);
+}
 export class Node {
   static ast2node = new WeakMap();
   static node2ast = new WeakMap();
@@ -568,11 +578,11 @@ export function TypeFactory(node, ast) {
   return obj;
 }
 
-export async function SpawnCompiler(compiler, file, args = []) {
-  let base = path.basename(file, /\.[^.]*$/);
-  let outputFile = base + '.ast.json';
+export async function SpawnCompiler(compiler, input, output, args = []) {
+  let base = path.basename(input, /\.[^.]*$/);
+  let outputFile = output ?? base + '.ast.json';
 
-  args.push(file);
+  args.push(input);
   args.unshift(compiler ?? 'clang');
 
   if(args.indexOf('-ast-dump=json') != -1)
@@ -634,30 +644,43 @@ export async function SpawnCompiler(compiler, file, args = []) {
   }
 
   //let fd = filesystem.open(outputFile, filesystem.O_RDONLY);
-  return { file: outputFile };
+  return { input: outputFile };
 }
 
-export async function AstDump(compiler, source, args) {
-  console.log('AstDump', { compiler, source, args });
-  let r = await SpawnCompiler(compiler, source, [
-    '-Xclang',
-    '-ast-dump=json',
-    '-fsyntax-only',
-    '-I.',
-    ...args
-  ]);
+export async function AstDump(compiler, source, args, force) {
+  console.log('AstDump', { compiler, source, args, force });
+
+  let output = path.basename(source, /\.[^.]*$/) + '.ast.json';
+  let r;
+  if(!force && filesystem.exists(output) && Newer(output, source)) {
+    console.log(`Loading cached '${output}'...`);
+    r = { file: output };
+  } else {
+    console.log(`Compiling '${source}'...`);
+    r = await SpawnCompiler(compiler, source, output, [
+      '-Xclang',
+      '-ast-dump=json',
+      '-fsyntax-only',
+      '-I.',
+      ...args
+    ]);
+  }
+
   console.log('AstDump', { r });
 
   //r.size = (await filesystem.stat(r.file)).size;
   r = Util.lazyProperties(r, {
     size() {
-      return filesystem.stat(this.file)?.size;
+      return filesystem.stat(output)?.size;
     },
     json() {
-      return filesystem.readFile(this.file);
+      let json = filesystem.readFile(output);
+      console.log('json()', json);
+      return json;
     },
     data() {
       let data = JSON.parse(this.json);
+      console.log('data()', data);
       let file;
 
       //data.inner.forEach
