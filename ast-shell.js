@@ -3,6 +3,7 @@ import PortableSpawn from './lib/spawn.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
 import deep from './lib/deep.js';
+//import * as deep from 'deep.so';
 import ConsoleSetup from './lib/consoleSetup.js';
 import REPL from './repl.js';
 import * as std from 'std';
@@ -90,6 +91,14 @@ async function ImportModule(modulePath, ...args) {
 }
 
 async function CommandLine() {
+  let log = console.reallog;
+  let outputLog = filesystem.fopen('output.log', 'w+');
+  console.reallog = function(...args) {
+    log.call(this, ...args);
+    outputLog.puts(args.join(' '));
+    outputLog.flush();
+  };
+
   let repl = (globalThis.repl = new REPL('AST'));
   repl.exit = Util.exit;
   repl.importModule = ImportModule;
@@ -101,9 +110,9 @@ async function CommandLine() {
     }
   };
   repl.show = value => {
-    if(typeof value == 'object' && value != null)
+    if(Util.isArray(value) && value[0]?.kind) console.log(Table(value));
+    else if(typeof value == 'object' && value != null)
       console.log(inspect(value, { depth: 4, compact: 0, hideKeys: ['loc', 'range'] }));
-    else if(Util.isArray(value) && value[0].kind) console.log(Table(value));
     else console.log(value);
   };
   let debugLog = filesystem.fopen('debug.log', 'a');
@@ -112,7 +121,7 @@ async function CommandLine() {
     let s = '';
     for(let arg of args) {
       if(s) s += ' ';
-      if(typeof arg != 'string' || arg.indexOf('\x1b') == -1)
+      if(typeof arg != 'strping' || arg.indexOf('\x1b') == -1)
         s += inspect(arg, { depth: Infinity, compact: 1 });
       else s += arg;
     }
@@ -160,10 +169,14 @@ function SelectLocations(node) {
 }
 
 function LocationString(loc) {
-  let file = loc.includedFrom ? loc.includedFrom.file : loc.file;
-  if(typeof loc.line == 'number')
-    return `${file ? file + ':' : ''}${loc.line}${typeof loc.col == 'number' ? ':' + loc.col : ''}`;
-  return `${file ? file : ''}@${loc.offset}`;
+  if(typeof loc == 'object' && loc != null) {
+    let file = loc.includedFrom ? loc.includedFrom.file : loc.file;
+    if(typeof loc.line == 'number')
+      return `${file ? file + ':' : ''}${loc.line}${
+        typeof loc.col == 'number' ? ':' + loc.col : ''
+      }`;
+    return `${file ? file : ''}@${loc.offset}`;
+  }
 }
 
 const TypeMap = Util.weakMapper(node => new Type(node));
@@ -264,31 +277,47 @@ function MakeStructClass(decl, filename) {
   if(!filename) return code;
 }
 
-function* GenerateStructClass(decl) {
-  let { name, size, members } = decl;
+function* GenerateStructClass(decl, ffiPrefix = '') {
+  let name;
+  if(decl instanceof TypedefDecl) {
+    name = decl.name;
+    decl = decl.type;
+  }
 
-  yield `class ${name.replace(/struct\s*/, '')} extends ArrayBuffer {`;
+  let { size, members } = decl;
+  name ??= decl.name;
+
+  let className = name.replace(/struct\s*/, '');
+  yield `class ${className} extends ArrayBuffer {`;
   yield `  constructor(obj = {}) {\n    super(${size});\n    Object.assign(this, obj);\n  }`;
   yield `  get [Symbol.toStringTag]() { return \`[${name} @ \${this} ]\`; }`;
   let fields = [];
   let offset = 0;
+
+ // console.log('GenerateStructClass', decl);
   for(let [name, member] of members) {
     if(/reserved/.test(name)) continue;
 
     if(member.size == 8) offset = RoundTo(offset, 8);
 
     yield '';
-    yield `  /* ${offset}: ${member} ${name}@${member.size} */`;
+    let subscript = member.subscript ?? '';
+    yield `  /* ${offset}: ${member} ${name}${subscript} */`;
     yield* GenerateGetSet(name,
       offset,
       member.size,
       member.signed && !member.isPointer(),
-      member.isFloatingPoint()
+      member.isFloatingPoint(),
+      member.isPointer(),
+      ffiPrefix
     ).map(line => `  ${line}`);
     fields.push(name);
     offset += RoundTo(member.size, 4);
   }
   yield '';
+  yield `  static from(address) {\n    let ret = ${ffiPrefix}toArrayBuffer(address, ${offset});\n    return Object.setPrototypeOf(ret, ${className}.prototype);\n  }`;
+  yield '';
+
   yield `  toString() {\n    const { ${fields.join(', ')} } = this;\n    return \`${name} {${[
     ...members
   ]
@@ -306,14 +335,17 @@ function* GenerateStructClass(decl) {
   yield '}';
 }
 
-function GenerateGetSet(name, offset, size, signed, floating) {
+function GenerateGetSet(name, offset, size, signed, floating, pointer, ffiPrefix) {
   let ctor = ByteLength2TypedArray(size, signed, floating);
+  let toHex = v => v;
+  if(pointer) toHex = v => `'0x'+${v}.toString(16)`;
+
   return [
-    `set ${name}(value) { new ${ctor}(this, ${offset})[0] = ${ByteLength2Value(size,
+    `set ${name}(value) { if(typeof value == 'object') value = ${ffiPrefix}toPointer(value); new ${ctor}(this, ${offset})[0] = ${ByteLength2Value(size,
       signed,
       floating
     )}; }`,
-    `get ${name}() { return new ${ctor}(this, ${offset})[0]; }`
+    `get ${name}() { return ${toHex(`new ${ctor}(this, ${offset})[0]`)}; }`
   ];
 }
 
@@ -468,8 +500,67 @@ export async function LibraryExports(file) {
   return entries.map(entry => entry[entry.length - 1].trimStart());
 }
 
+function PrintAst(node, ast) {
+  ast ??= $.data;
+
+  let printer = NodePrinter(ast);
+  globalThis.printer = printer;
+
+  Object.defineProperties(printer, {
+    path: {
+      get() {
+        return deep.pathOf(ast, this.node);
+      }
+    }
+  });
+
+  if(Array.isArray(node)) {
+    for(let elem of node) {
+      if(printer.output) printer.put('\n');
+
+      printer(elem, ast);
+    }
+  } else {
+    printer(node, ast);
+  }
+  return printer.output;
+}
+
+function MakeFFI(node) {
+  if(Array.isArray(node)) {
+    let out = '';
+    for(let item of node) {
+      try {
+        let ret = MakeFFI(item);
+        if(typeof ret == 'string' && ret.length > 0) {
+          if(out) out += '\n';
+          out += ret;
+        }
+      } catch(error) {}
+    }
+    return out;
+  }
+  if(!(node instanceof Node)) node = TypeFactory(node, $.data);
+
+  if(typeof node == 'object' && node && node.kind == 'FunctionDecl') node = new FunctionDecl(node);
+
+  if(node instanceof FunctionDecl) {
+    let ffi = new FFI_Function(node);
+
+    return ffi.generate();
+  } else if(node instanceof RecordDecl || node instanceof TypedefDecl) {
+    let code = [...GenerateStructClass(node)].join('\n');
+    return code;
+  }
+}
+
 async function ASTShell(...args) {
-  await ConsoleSetup({ /*breakLength: 240, */ customInspect: true, compact: 1, depth: 1, maxArrayLength: Infinity });
+  await ConsoleSetup({
+    /*breakLength: 240, */ customInspect: true,
+    compact: 1,
+    depth: 1,
+    maxArrayLength: Infinity
+  });
 
   console.options.compact = 1;
   console.options.hideKeys = ['loc', 'range'];
@@ -511,6 +602,8 @@ async function ASTShell(...args) {
 
     Object.assign(r, {
       getByIdOrName(name_or_id, pred = n => true) {
+        if(typeof name_or_id == 'number') name_or_id = '0x' + name_or_id.toString(16);
+
         return this.data.inner.find(name_or_id.startsWith('0x')
             ? node => node.id == name_or_id && pred(node)
             : node => node.name == name_or_id && pred(node)
@@ -564,7 +657,9 @@ async function ASTShell(...args) {
     InspectStruct,
     MakeStructClass,
     DirIterator,
-    Terminal
+    Terminal,
+    PrintAst,
+    MakeFFI
   });
 
   Object.assign(globalThis, {
