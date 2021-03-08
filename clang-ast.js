@@ -170,9 +170,16 @@ export class Type extends Node {
   }
 }
   getPointer(ast) {
-    if(this.pointer) {
-      let node = deep.find(ast, n => typeof n == 'object' && n && n.name == this.pointer)?.value;
-      return new Type(node, ast);
+const target = this.pointer;
+
+    if(target) {
+      let node = deep.find(ast, n => typeof n == 'object' && n && n.name == target);
+   //   console.log("getPointer",node);
+   if(node) 
+      return TypeFactory(node, ast);
+
+    if(Type.declarations.has(target))
+      return Type.declarations.get(target);
     }
   }
 

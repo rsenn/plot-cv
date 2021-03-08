@@ -337,9 +337,16 @@ function GenerateGetSet(name, offset, type, ffiPrefix) {
   let ctor = ByteLength2TypedArray(size, signed, floating);
   let toHex = v => v;
   if(pointer) toHex = v => `'0x'+${v}.toString(16)`;
-  console.log('GenerateStructClass', { pointer });
 
-  return [
+let a = [];
+
+if(pointer) {
+  let {name,size, signed,desugared }= pointer;
+a.unshift(`/* ${name}${desugared ? ` (${desugared})` : ''} ${size} ${signed} */`);
+  //console.log('GenerateStructClass', { pointer });
+}
+  return [...a,
+
     `set ${name}(value) { if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = ${ffiPrefix}toPointer(value); new ${ctor}(this, ${offset})[0] = ${ByteLength2Value(size,
       signed,
       floating
