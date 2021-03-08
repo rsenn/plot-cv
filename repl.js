@@ -211,17 +211,18 @@ export default function REPL(title = 'QuickJS') {
 
   function term_init() {
     var tab;
-    term_fd = filesystem.fileno(input);
+    term_fd = input;
     /* get the terminal size */
     term_width = 80;
     if(filesystem.isatty(term_fd)) {
       if(Util.ttyGetWinSize) {
-        Util.ttyGetWinSize(term_fd).then(tab => {
-          //console.log("term_init", {tab});
+        Util.ttyGetWinSize(1).then(tab => {
+          console.log('term_init', { tab });
           term_width = tab[0];
         });
       }
       if(Util.ttySetRaw) Util.ttySetRaw(term_fd);
+      console.log('TTY setup done');
     }
 
     /* install a Ctrl-C signal handler */
@@ -239,7 +240,7 @@ export default function REPL(title = 'QuickJS') {
 
   function term_read_handler() {
     var l, i;
-    l = filesystem.read(term_fd, term_read_buf.buffer, 0, term_read_buf.length);
+    l = filesystem.read(input, term_read_buf.buffer, 0, term_read_buf.length);
     for(i = 0; i < l; i++) {
       handle_byte(term_read_buf[i]);
 
@@ -1466,7 +1467,7 @@ export default function REPL(title = 'QuickJS') {
       if(eval_mode === 'math') expr = '"use math"; void 0;' + expr;
       var now = new Date().getTime();
       /* eval as a script */
-      result = std.evalScript(expr, { backtrace_barrier: true });
+      result = (std?.evalScript ?? eval)(expr, { backtrace_barrier: true });
       eval_time = new Date().getTime() - now;
       puts(colors[styles.result]);
       repl.show(result);
@@ -1566,7 +1567,7 @@ export default function REPL(title = 'QuickJS') {
     //console.log('handle_cmd', {histidx}, history.slice(histidx));
 
     /* run the garbage collector after each command */
-    std.gc();
+    if(Util.getPlatform() == 'quickjs') std.gc();
   }
 
   function colorize_js(str) {
@@ -1910,7 +1911,8 @@ export default function REPL(title = 'QuickJS') {
     cmd_start(title);
 
     do {
-      await waitRead(input);
+      await filesystem.waitRead(input);
+
       term_read_handler();
     } while(running);
   }

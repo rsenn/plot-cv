@@ -6,7 +6,7 @@ import deep from './lib/deep.js';
 //import * as deep from 'deep.so';
 import ConsoleSetup from './lib/consoleSetup.js';
 import REPL from './repl.js';
-import * as std from 'std';
+//import * as std from 'std';
 import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter } from './clang-ast.js';
 import Tree from './lib/tree.js';
 import * as Terminal from './terminal.js';
@@ -102,7 +102,7 @@ async function CommandLine() {
   let repl = (globalThis.repl = new REPL('AST'));
   repl.exit = Util.exit;
   repl.importModule = ImportModule;
-  repl.history_set(JSON.parse(std.loadFile(cmdhist) || '[]'));
+  repl.history_set(JSON.parse(filesystem.readFile(cmdhist, 'utf-8') || '[]'));
   repl.directives = {
     c(...args) {
       console.log('c', { args });
@@ -336,16 +336,17 @@ function GenerateGetSet(name, offset, type, ffiPrefix) {
   const pointer = type.getPointer($.data);
   let ctor = ByteLength2TypedArray(size, signed, floating);
   let toHex = v => v;
-  if(pointer) toHex = v => `'0x'+${v}.toString(16)`;
+  if(type.isPointer()) toHex = v => `'0x'+${v}.toString(16)`;
 
-let a = [];
+  let a = [];
 
-if(pointer) {
-  let {name,size, signed,desugared }= pointer;
-a.unshift(`/* ${name}${desugared ? ` (${desugared})` : ''} ${size} ${signed} */`);
-  //console.log('GenerateStructClass', { pointer });
-}
-  return [...a,
+  if(pointer) {
+    let { name, size, signed, desugared } = pointer;
+    a.unshift(`/* ${name}${desugared ? ` (${desugared})` : ''} ${size} ${signed} */`);
+    console.log('GenerateStructClass', { pointer });
+  }
+  return [
+    ...a,
 
     `set ${name}(value) { if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = ${ffiPrefix}toPointer(value); new ${ctor}(this, ${offset})[0] = ${ByteLength2Value(size,
       signed,
@@ -555,7 +556,9 @@ function MakeFFI(node) {
   if(node instanceof FunctionDecl) {
     let ffi = new FFI_Function(node);
 
-    return ffi.generate();
+    let protoStr = PrintAst(node.ast, $.data).split(/\n/g)[0].replace(/\ {$/, ';');
+
+    return `/* ${protoStr} */\n` + ffi.generate();
   } else if(node instanceof RecordDecl || node instanceof TypedefDecl) {
     let code = [...GenerateStructClass(node)].join('\n');
     return code;
@@ -563,18 +566,29 @@ function MakeFFI(node) {
 }
 
 async function ASTShell(...args) {
-  await ConsoleSetup({
+  let consoleOptions = {
     /*breakLength: 240, */ customInspect: true,
     compact: 1,
     depth: 1,
     maxArrayLength: Infinity
-  });
-
+  };
+  console.options = consoleOptions;
   console.options.compact = 1;
   console.options.hideKeys = ['loc', 'range'];
-
+  await ConsoleSetup(consoleOptions);
   await PortableFileSystem(fs => (filesystem = fs));
   await PortableSpawn(fn => (spawn = fn));
+
+  const platform = Util.getPlatform();
+  console.log('platform:', platform);
+  if(platform == 'quickjs') await import('std').then(module => (globalThis.std = module));
+
+  if(platform == 'node')
+    await import('util').then(module => (globalThis.inspect = module.inspect));
+
+  (await Util.getPlatform()) == 'quickjs'
+    ? import('deep.so').then(module => (globalThis.deep = module))
+    : import('./lib/deep.js').then(module => (globalThis.deep = module['default']));
 
   base = path.basename(Util.getArgv()[1], /\.[^.]*$/);
   cmdhist = `.${base}-cmdhistory`;

@@ -1,6 +1,5 @@
 import Util from './lib/util.js';
 import path from './lib/path.js';
-import * as deep from 'deep.so';
 import { AcquireReader } from './lib/stream/utils.js';
 
 export let SIZEOF_POINTER = 8;
@@ -157,6 +156,13 @@ export class Type extends Node {
 
   get pointer() {
     let str = this + '';
+    let name;
+
+    name = str.replace(/(\*$|\(\*\))/, '');
+    if(name == str) return undefined;
+
+    return name;
+    /*
     let match = Util.if(/^([^\(\)]*)(\(?\*\)?\s*)(\(.*\)$|)/g.exec(str),
       (m) => [...m].slice(1),
       () => []
@@ -167,19 +173,17 @@ export class Type extends Node {
      if(/^const/.test(name) && !Type.declarations.has(name))
       name = name.replace('const ', '');
     return name;
-  }
+  }*/
 }
   getPointer(ast) {
-const target = this.pointer;
+    const target = this.pointer;
 
     if(target) {
       let node = deep.find(ast, n => typeof n == 'object' && n && n.name == target);
-   //   console.log("getPointer",node);
-   if(node) 
-      return TypeFactory(node, ast);
+      //   console.log("getPointer",node);
+      if(node) return TypeFactory(node, ast);
 
-    if(Type.declarations.has(target))
-      return Type.declarations.get(target);
+      if(Type.declarations.has(target)) return Type.declarations.get(target);
     }
   }
 
@@ -229,7 +233,9 @@ const target = this.pointer;
   get size() {
     if(this.isPointer()) return SIZEOF_POINTER;
 
-    const { desugared = this.qualType } = this;
+    const  desugared = this.desugared || this+'' || this.name;
+    if(desugared == 'char') return 1;
+
     const re = /(?:^|\s)_*u?int([0-9]+)(_t|)$/;
     let size, match;
     if((match = re.exec(desugared))) {
@@ -457,9 +463,13 @@ export class FunctionDecl extends Node {
     let type = node.type?.qualType;
     let returnType = type.replace(/\s?\(.*/, '');
 
-    //  console.log('FunctionDecl', { type, returnType });
+    let tmp = deep.find(ast, n => typeof n == 'object' && n && n.name == returnType);
 
-    this.returnType = new Type(returnType, ast);
+    if(tmp) returnType = tmp;
+
+    // console.log('FunctionDecl', { type, returnType,tmp });
+
+    this.returnType = returnType.kind ? TypeFactory(returnType, ast) : new Type(returnType, ast);
     this.parameters =
       parameters && /*new Map*/ parameters.map(({ name, type }) => [name, new Type(type, ast)]);
   }
@@ -585,8 +595,9 @@ export async function SpawnCompiler(compiler, file, args = []) {
 
   if(Util.platform == 'quickjs') {
     let { fd } = child.stderr;
+    console.log('child.stderr:', child.stderr);
 
-    os.setReadHandler(fd, () => {
+    filesystem.setReadHandler(child.stderr, () => {
       ReadErrors(fd);
     });
   } else {
@@ -599,9 +610,10 @@ export async function SpawnCompiler(compiler, file, args = []) {
   }
   let result = await child.wait();
   console.log('child.wait():', result);
-  os.setReadHandler(child.stderr.fd, null);
 
-  if(result[1] != 0) ReadErrors(child.stderr.fd);
+  filesystem.setReadHandler(child.stderr, null);
+
+  if(result[1] != 0) ReadErrors(child.stderr);
   done = true;
   let errorLines = errors.split(/\n/g).filter(line => line.trim() != '');
   errorLines = errorLines.filter(line => /error:/.test(line));
@@ -616,7 +628,7 @@ export async function SpawnCompiler(compiler, file, args = []) {
 
   function ReadErrors(fd) {
     let buf = new ArrayBuffer(1024);
-    let r = os.read(fd, buf, 0, buf.byteLength);
+    let r = filesystem.read(fd, buf, 0, buf.byteLength);
     errors += filesystem.bufferToString(buf.slice(0, r));
     //console.log('r:', r, 'errors:', errors.length);
   }
@@ -1096,33 +1108,29 @@ export function NodePrinter(ast) {
           put('\n');
         }
         FunctionDecl(function_decl) {
-          //    console.log('FunctionDecl', { function_decl });
-
           const { storageClass, mangledName, isImplicit, isUsed } = function_decl;
 
           let i = 0;
-          /*for(let inner of (function_decl.inner ?? []).filter(n => /Comment/.test(n.kind))) {
-            if(i++ > 0) put(' ');
-            printer.print(inner);
-          }*/
-
           if(storageClass) put(storageClass + ' ');
 
           let node = new FunctionDecl(function_decl, this.ast);
+          //console.log("FunctionDecl", node.returnType);
+          let returnType = node.returnType; //new Type(node?.ast?.returnType ?? node?.returnType, this.ast);
 
-          put(node.returnType + ' ' + function_decl.name + '(');
+          put(returnType.name + ' ' + function_decl.name + '(');
           i = 0;
           for(let inner of (function_decl.inner ?? []).filter(n => n.kind == 'ParmVarDecl')) {
             if(i++ > 0) put(', ');
             printer.print(inner);
           }
+          put(') ');
+
           i = 0;
           for(let inner of (function_decl.inner ?? []).filter(n => n.kind != 'ParmVarDecl' && !/Comment/.test(n.kind)
           )) {
             if(i++ > 0) put(' ');
             printer.print(inner);
           }
-          put(')');
           // put('');
           return true;
         }
