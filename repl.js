@@ -1468,7 +1468,7 @@ export default function REPL(title = 'QuickJS') {
       var now = new Date().getTime();
       /* eval as a script */
 
-      console.log("eval_and_print", {expr});
+      console.log('eval_and_print', { expr });
       result = (std?.evalScript ?? eval)(expr, { backtrace_barrier: true });
       eval_time = new Date().getTime() - now;
       puts(colors[styles.result]);

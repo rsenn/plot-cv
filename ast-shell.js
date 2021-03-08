@@ -109,12 +109,12 @@ async function CommandLine() {
   repl.directives = {
     c(...args) {
       //      console.log('c', { args });
-     Compile(...args);
-     return false;
+      Compile(...args);
+      return false;
     },
     l(...args) {
-     ProcessFile(...args);
-    return false;
+      ProcessFile(...args);
+      return false;
     }
   };
   repl.show = value => {
