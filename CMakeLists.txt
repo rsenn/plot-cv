@@ -13,11 +13,6 @@ set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib" CACHE PATH "Build with ins
 set(quickjs_sources_root ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
 include(${quickjs_sources_root}/defs.cmake)
 
-#[[set(quickjs_version "2020-07-05")
-set(quickjs_soversion 1)
-]]
-set(QUICKJS_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
-
 if(NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
   set(CMAKE_BUILD_TYPE "Debug")
 endif(NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
