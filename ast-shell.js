@@ -294,25 +294,20 @@ function* GenerateStructClass(decl, ffiPrefix = '') {
   let fields = [];
   let offset = 0;
 
- // console.log('GenerateStructClass', decl);
-  for(let [name, member] of members) {
+  // console.log('GenerateStructClass', decl);
+  for(let [name, type] of members) {
     if(/reserved/.test(name)) continue;
 
-    if(member.size == 8) offset = RoundTo(offset, 8);
+    if(type.size == 8) offset = RoundTo(offset, 8);
+    let desugared = type.desugared && type.desugared != type ? ` (${type.desugared})` : '';
+    let pointer = type.pointer;
 
     yield '';
-    let subscript = member.subscript ?? '';
-    yield `  /* ${offset}: ${member} ${name}${subscript} */`;
-    yield* GenerateGetSet(name,
-      offset,
-      member.size,
-      member.signed && !member.isPointer(),
-      member.isFloatingPoint(),
-      member.isPointer(),
-      ffiPrefix
-    ).map(line => `  ${line}`);
+    let subscript = type.subscript ?? '';
+    yield `  /* ${offset}: ${type}${desugared} ${name}${subscript} */`;
+    yield* GenerateGetSet(name, offset, type, ffiPrefix).map(line => `  ${line}`);
     fields.push(name);
-    offset += RoundTo(member.size, 4);
+    offset += RoundTo(type.size, 4);
   }
   yield '';
   yield `  static from(address) {\n    let ret = ${ffiPrefix}toArrayBuffer(address, ${offset});\n    return Object.setPrototypeOf(ret, ${className}.prototype);\n  }`;
@@ -335,13 +330,17 @@ function* GenerateStructClass(decl, ffiPrefix = '') {
   yield '}';
 }
 
-function GenerateGetSet(name, offset, size, signed, floating, pointer, ffiPrefix) {
+function GenerateGetSet(name, offset, type, ffiPrefix) {
+  const { size, signed } = type;
+  const floating = type.isFloatingPoint();
+  const pointer = type.getPointer($.data);
   let ctor = ByteLength2TypedArray(size, signed, floating);
   let toHex = v => v;
   if(pointer) toHex = v => `'0x'+${v}.toString(16)`;
+  console.log('GenerateStructClass', { pointer });
 
   return [
-    `set ${name}(value) { if(typeof value == 'object') value = ${ffiPrefix}toPointer(value); new ${ctor}(this, ${offset})[0] = ${ByteLength2Value(size,
+    `set ${name}(value) { if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = ${ffiPrefix}toPointer(value); new ${ctor}(this, ${offset})[0] = ${ByteLength2Value(size,
       signed,
       floating
     )}; }`,
@@ -536,7 +535,9 @@ function MakeFFI(node) {
           if(out) out += '\n';
           out += ret;
         }
-      } catch(error) {}
+      } catch(error) {
+        out += `/* ERROR: ${error.message} */`;
+      }
     }
     return out;
   }

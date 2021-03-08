@@ -161,14 +161,20 @@ export class Type extends Node {
       (m) => [...m].slice(1),
       () => []
       );
-    console.log("Type.get pointer",{str,match});
+   // console.log("Type.get pointer",{str,match});
     if(match[1]) {
      let name = [match[0].trimEnd(), match[2]].join('');
      if(/^const/.test(name) && !Type.declarations.has(name))
       name = name.replace('const ', '');
-    return new Type(name);
+    return name;
   }
 }
+  getPointer(ast) {
+    if(this.pointer) {
+      let node = deep.find(ast, n => typeof n == 'object' && n && n.name == this.pointer)?.value;
+      return new Type(node, ast);
+    }
+  }
 
   get unsigned() {
   let str = this + '';
