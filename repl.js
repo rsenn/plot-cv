@@ -209,19 +209,19 @@ export default function REPL(title = 'QuickJS') {
     '\x7f': backward_delete_char /* ^? - delete */
   };
 
-  function term_init() {
+  async function term_init() {
     var tab;
     term_fd = input;
     /* get the terminal size */
     term_width = 80;
     if(filesystem.isatty(term_fd)) {
       if(Util.ttyGetWinSize) {
-        Util.ttyGetWinSize(1).then(tab => {
+        await Util.ttyGetWinSize(1).then(tab => {
           console.log('term_init', { tab });
           term_width = tab[0];
         });
       }
-      if(Util.ttySetRaw) Util.ttySetRaw(term_fd);
+      if(Util.ttySetRaw) await Util.ttySetRaw(term_fd);
       console.log('TTY setup done');
     }
 
@@ -240,7 +240,7 @@ export default function REPL(title = 'QuickJS') {
 
   function term_read_handler() {
     var l, i;
-    l = filesystem.read(input, term_read_buf.buffer, 0, term_read_buf.length);
+    l = filesystem.read(input, term_read_buf.buffer, 0, 1);
     for(i = 0; i < l; i++) {
       handle_byte(term_read_buf[i]);
 
@@ -827,7 +827,7 @@ export default function REPL(title = 'QuickJS') {
   function get_completions(line, pos) {
     var s, obj, ctx_obj, r, i, j, paren;
 
-    if(cmd.startsWith('\\i')) return get_filename_completions(line, pos);
+    if(/\\[il]/.test(cmd)) return get_filename_completions(line, pos);
 
     s = get_context_word(line, pos);
     //    print_status('get_completions', { line, pos, cmd, word: s });
@@ -1467,6 +1467,8 @@ export default function REPL(title = 'QuickJS') {
       if(eval_mode === 'math') expr = '"use math"; void 0;' + expr;
       var now = new Date().getTime();
       /* eval as a script */
+
+      console.log("eval_and_print", {expr});
       result = (std?.evalScript ?? eval)(expr, { backtrace_barrier: true });
       eval_time = new Date().getTime() - now;
       puts(colors[styles.result]);
@@ -1906,14 +1908,14 @@ export default function REPL(title = 'QuickJS') {
     console.options.compact = 2;
     console.options.maxArrayLength = Infinity;
 
-    term_init();
+    await term_init();
 
     cmd_start(title);
 
     do {
-      await filesystem.waitRead(input);
+      await filesystem.waitRead(input.fileno());
 
-      term_read_handler();
+      await term_read_handler();
     } while(running);
   }
 }

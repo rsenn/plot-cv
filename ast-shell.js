@@ -10,7 +10,10 @@ import REPL from './repl.js';
 import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter } from './clang-ast.js';
 import Tree from './lib/tree.js';
 import * as Terminal from './terminal.js';
+import * as ECMAScript from './lib/ecmascript.js';
+import { ECMAScriptParser } from './lib/ecmascript.js';
 
+let files;
 let filesystem, spawn, base, cmdhist;
 let defs, includes, sources;
 let libdirs = [
@@ -102,17 +105,22 @@ async function CommandLine() {
   let repl = (globalThis.repl = new REPL('AST'));
   repl.exit = Util.exit;
   repl.importModule = ImportModule;
-  repl.history_set(JSON.parse(filesystem.readFile(cmdhist, 'utf-8') || '[]'));
+  repl.history_set(LoadJSON(cmdhist));
   repl.directives = {
     c(...args) {
-      console.log('c', { args });
-      return Compile(...args);
+      //      console.log('c', { args });
+     Compile(...args);
+     return false;
+    },
+    l(...args) {
+     ProcessFile(...args);
+    return false;
     }
   };
   repl.show = value => {
     if(Util.isArray(value) && value[0]?.kind) console.log(Table(value));
     else if(typeof value == 'object' && value != null)
-      console.log(inspect(value, { depth: 4, compact: 0, hideKeys: ['loc', 'range'] }));
+      console.log(inspect(value, { depth: 6, compact: 4, hideKeys: ['loc', 'range'] }));
     else console.log(value);
   };
   let debugLog = filesystem.fopen('debug.log', 'a');
@@ -122,7 +130,7 @@ async function CommandLine() {
     for(let arg of args) {
       if(s) s += ' ';
       if(typeof arg != 'strping' || arg.indexOf('\x1b') == -1)
-        s += inspect(arg, { depth: Infinity, compact: 1 });
+        s += inspect(arg, { depth: Infinity, depth: 6, compact: 4 });
       else s += arg;
     }
     debugLog.puts(s + '\n');
@@ -467,6 +475,7 @@ export async function CommandRead(args) {
     let { fd } = child.stdout;
     //return await (async function() {
     for(;;) {
+      1;
       let r;
       await filesystem.waitRead(fd);
       r = ReadOutput(fd);
@@ -507,6 +516,41 @@ export async function LibraryExports(file) {
   return entries.map(entry => entry[entry.length - 1].trimStart());
 }
 
+function ProcessFile(file, debug = true) {
+  const ext = path.extname(file);
+  let ret = null;
+  switch (ext) {
+    case '.js':
+      ret = ParseECMAScript(file, debug);
+      break;
+    case '.c':
+    case '.h':
+      ret = Compile(file, debug);
+      break;
+  }
+  return ret;
+}
+
+function ParseECMAScript(file, debug = false) {
+  let data = filesystem.readFile(file, 'utf-8');
+  let ast, error;
+  let parser;
+  globalThis.parser = parser = new ECMAScriptParser(data?.toString ? data.toString() : data,
+    file,
+    debug
+  );
+
+  globalThis.ast = ast = parser.parseProgram();
+  parser.addCommentsToNodes(ast);
+
+  globalThis.files[file] = ast;
+
+  return ast;
+}
+
+function PrintECMAScript(ast, comments, printer = new ECMAScript.Printer({ indent: 4 }, comments)) {
+  return printer.print(ast);
+}
 function PrintAst(node, ast) {
   ast ??= $.data;
 
@@ -579,6 +623,8 @@ async function ASTShell(...args) {
   await PortableFileSystem(fs => (filesystem = fs));
   await PortableSpawn(fn => (spawn = fn));
 
+  globalThis.files = files = {};
+
   const platform = Util.getPlatform();
   console.log('platform:', platform);
   if(platform == 'quickjs') await import('std').then(module => (globalThis.std = module));
@@ -622,6 +668,8 @@ async function ASTShell(...args) {
   async function Compile(file, ...args) {
     let r = await AstDump(params.compiler, file, [...globalThis.flags, ...args], params.force);
     r.source = file;
+
+    globalThis.files[file] = r;
 
     Object.assign(r, {
       getByIdOrName(name_or_id, pred = n => true) {
@@ -682,7 +730,10 @@ async function ASTShell(...args) {
     DirIterator,
     Terminal,
     PrintAst,
-    MakeFFI
+    MakeFFI,
+    ParseECMAScript,
+    PrintECMAScript,
+    ProcessFile
   });
 
   Object.assign(globalThis, {
@@ -728,7 +779,9 @@ async function ASTShell(...args) {
   };
 
   for(let source of sources) {
-    let item = await Compile(source);
+    let item;
+    if(/\.js$/.test(source)) item = ParseECMAScript(source);
+    else item = await Compile(source);
     if(item) {
       pushUnique(hist, [...flags, source]);
       items.push(item);

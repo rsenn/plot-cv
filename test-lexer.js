@@ -1,4 +1,5 @@
-import Lexer from './lib/ecmascript/lexer.js';
+//import Lexer from './lib/ecmascript/lexer.js';
+import { Lexer } from 'lexer.so';
 import ConsoleSetup from './lib/consoleSetup.js';
 import { h, Component } from './lib/dom/preactComponent.js';
 import Util from './lib/util.js';
