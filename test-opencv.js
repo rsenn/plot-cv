@@ -173,7 +173,7 @@ async function main(...args) {
   }
   detectEdges();
 
-  
+
 
   cv.createTrackbar('thres1', 'canny', 10, 300, (value, count, name, window) => {
     detectEdges(value, cv.getTrackbarPos('thres2', 'canny'));
@@ -186,8 +186,7 @@ async function main(...args) {
     detectEdges(cv.getTrackbarPos('thres1', 'canny'), value)
   );
 
-  console.log('Trackbar', { value, count, name, window });
-
+ 
   function detectLines(edges) {
     let lines = new Mat();
     cv.HoughLinesP(edges, lines, 1, cv.CV_PI / 180, 30 /*, 30, 10*/);
