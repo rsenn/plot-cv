@@ -29,15 +29,17 @@ typedef cv::VideoCapture JSVideoCaptureData;
 typedef cv::TickMeter JSTickMeterData;
 typedef cv::Ptr<cv::CLAHE> JSCLAHEData;
 
-template<class T>
-
-union JSLineData {
-  std::array<T, 4> arr;
+template<class T> union JSLineData {
+  std::array<T, 4> array;
   cv::Vec<T, 4> vec;
   cv::Scalar_<T> scalar;
   std::array<JSPointData<T>, 2> points;
   std::pair<JSPointData<T>, JSPointData<T>> pt;
+  struct {
+    T x1, y1, x2, y2;
+  };
 };
+
 template<class T> struct JSLineTraits {
   typedef std::array<T, 4> array_type;
   typedef cv::Vec<T, 4> vector_type;
@@ -269,16 +271,22 @@ js_arraybuffer_range(JSContext* ctx, JSValueConst buffer) {
   return std::ranges::subrange<uint8_t*>(ptr, ptr + size);
 }
 
+static inline size_t
+round_to(size_t num, size_t x) {
+  num /= x;
+  num *= x;
+  return num;
+}
+
 template<class T>
 static inline std::ranges::subrange<T>
 js_arraybuffer_range(JSContext* ctx, JSValueConst buffer) {
+  typedef typename std::remove_pointer<T>::type value_type;
   size_t size;
   uint8_t* byte_ptr;
-  T begin, end;
   byte_ptr = JS_GetArrayBuffer(ctx, &size, buffer);
-  begin = reinterpret_cast<T>(byte_ptr);
-  end = reinterpret_cast<T>(byte_ptr + size);
-  return std::ranges::subrange<T>(begin, end);
+  size = round_to(size, sizeof(value_type));
+  return std::ranges::subrange<T>(reinterpret_cast<T>(byte_ptr), reinterpret_cast<T>(byte_ptr + size));
 }
 
 #endif

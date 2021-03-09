@@ -3,6 +3,8 @@
 
 #include <string>
 #include <numeric>
+#include <ranges>
+
 #include <opencv2/core/core.hpp>
 
 #define COLOR_BLACK "\x1b[30m"
@@ -82,6 +84,18 @@ mat_floating(const cv::Mat& mat) {
     case CV_64F: return true;
     default: return false;
   }
+}
+
+template<class T>
+static inline std::ranges::subrange<T>
+sized_range(T ptr, size_t len) {
+  return std::ranges::subrange<T>(ptr, ptr + len);
+}
+
+template<class T>
+static inline std::ranges::subrange<T*>
+argument_range(int argc, T* argv) {
+  return std::ranges::subrange<T*>(argv, argv + argc);
 }
 
 #endif // defined(UTIL_H)

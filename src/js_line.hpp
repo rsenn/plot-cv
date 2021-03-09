@@ -9,11 +9,8 @@ js_line_read(JSContext* ctx, JSValueConst line, T* out) {
   int ret = 1;
   JSValue x1 = JS_UNDEFINED, y1 = JS_UNDEFINED, x2 = JS_UNDEFINED, y2 = JS_UNDEFINED;
   if(JS_IsArray(ctx, line)) {
-    x1 = JS_GetPropertyUint32(ctx, line, 0);
-    y1 = JS_GetPropertyUint32(ctx, line, 1);
-    x2 = JS_GetPropertyUint32(ctx, line, 2);
-    y2 = JS_GetPropertyUint32(ctx, line, 3);
-
+    js_array_to(ctx, line, out->array);
+    return 1;
   } else {
     x1 = JS_GetPropertyStr(ctx, line, "x1");
     y1 = JS_GetPropertyStr(ctx, line, "y1");
@@ -21,10 +18,10 @@ js_line_read(JSContext* ctx, JSValueConst line, T* out) {
     y2 = JS_GetPropertyStr(ctx, line, "y2");
   }
   if(JS_IsNumber(x1) && JS_IsNumber(y1) && JS_IsNumber(x2) && JS_IsNumber(y2)) {
-    ret &= js_number_read(ctx, x1, &out->arr[0]);
-    ret &= js_number_read(ctx, y1, &out->arr[1]);
-    ret &= js_number_read(ctx, x2, &out->arr[2]);
-    ret &= js_number_read(ctx, y2, &out->arr[3]);
+    ret &= js_number_read(ctx, x1, &out->array[0]);
+    ret &= js_number_read(ctx, y1, &out->array[1]);
+    ret &= js_number_read(ctx, x2, &out->array[2]);
+    ret &= js_number_read(ctx, y2, &out->array[3]);
   } else {
     ret = 0;
   }

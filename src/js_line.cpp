@@ -3,6 +3,7 @@
 #include "js_alloc.hpp"
 #include "js_line.hpp"
 #include "js_array.hpp"
+#include "util.hpp"
 
 #if defined(JS_LINE_MODULE) || defined(quickjs_line_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
@@ -26,6 +27,7 @@ js_line_new(JSContext* ctx, double x1, double y1, double x2, double y2) {
   ret = JS_NewObjectProtoClass(ctx, line_proto, js_line_class_id);
 
   s = js_allocate<JSLineData<double>>(ctx);
+
   s->vec[0] = x1;
   s->vec[1] = y1;
   s->vec[2] = x2;
@@ -40,20 +42,24 @@ js_line_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* ar
   JSLineData<double>* s;
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
+  auto args = argument_range(argc, argv);
 
   s = js_allocate<JSLineData<double>>(ctx);
   if(!s)
     return JS_EXCEPTION;
-  // new(s) JSLineData<double>();
 
-  if(JS_ToFloat64(ctx, &s->arr[0], argv[0]))
-    goto fail;
-  if(JS_ToFloat64(ctx, &s->arr[1], argv[1]))
-    goto fail;
-  if(JS_ToFloat64(ctx, &s->arr[2], argv[2]))
-    goto fail;
-  if(JS_ToFloat64(ctx, &s->arr[3], argv[3]))
-    goto fail;
+  if(std::ranges::all_of(args, JS_IsNumber)) {
+    if(JS_ToFloat64(ctx, &s->array[0], argv[0]))
+      goto fail;
+    if(JS_ToFloat64(ctx, &s->array[1], argv[1]))
+      goto fail;
+    if(JS_ToFloat64(ctx, &s->array[2], argv[2]))
+      goto fail;
+    if(JS_ToFloat64(ctx, &s->array[3], argv[3]))
+      goto fail;
+  } else if(!js_line_read(ctx, argv[0], s)) {
+    return JS_ThrowTypeError(ctx, "argument 1 is not a valid line");
+  }
   /* using new_target to get the prototype is necessary when the
      class is extended. */
   proto = JS_GetPropertyStr(ctx, new_target, "prototype");
@@ -178,7 +184,7 @@ js_line_toarray(JSContext* ctx, JSValueConst line, int argc, JSValueConst* arg) 
 
   if(!JS_IsException((ret = JS_NewArray(ctx)))) {
     int i;
-    for(i = 0; i < 4; i++) JS_SetPropertyUint32(ctx, ret, i, JS_NewFloat64(ctx, s->arr[i]));
+    for(i = 0; i < 4; i++) JS_SetPropertyUint32(ctx, ret, i, JS_NewFloat64(ctx, s->array[i]));
   }
   return ret;
 }
@@ -237,8 +243,8 @@ js_line_symbol_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValue
 }*/
 
 static JSValue
-js_line_from(JSContext* ctx, JSValueConst line, int argc, JSValueConst* argv) {
-  std::array<double, 4> array;
+js_line_from(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSLineData<double> line= {0,0,0,0};
   JSValue ret = JS_EXCEPTION;
 
   if(JS_IsString(argv[0])) {
@@ -248,18 +254,14 @@ js_line_from(JSContext* ctx, JSValueConst line, int argc, JSValueConst* argv) {
       while(!isdigit(*str) && *str != '-' && *str != '+' && !(*str == '.' && isdigit(str[1]))) str++;
       if(*str == '\0')
         break;
-      array[i] = strtod(str, &endptr);
+      line.array[i] = strtod(str, &endptr);
       str = endptr;
     }
-  } else if(JS_IsArray(ctx, argv[0])) {
-    js_array_to(ctx, argv[0], array);
-  } else {
-    JSLineData<double> line{0, 0, 0, 0};
-    js_line_read(ctx, argv[0], &line);
-    array = line.arr;
-  }
-  if(array[2] > 0 && array[3] > 0)
-    ret = js_line_new(ctx, array[0], array[1], array[2], array[3]);
+   } else {
+     js_line_read(ctx, argv[0], &line);
+   }
+  if(line.array[2] > 0 && line.array[3] > 0)
+    ret = js_line_new(ctx, line.array[0], line.array[1], line.array[2], line.array[3]);
   return ret;
 }
 
