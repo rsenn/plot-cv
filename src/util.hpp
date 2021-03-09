@@ -3,6 +3,7 @@
 
 #include <string>
 #include <numeric>
+#include <opencv2/core/core.hpp>
 
 #define COLOR_BLACK "\x1b[30m"
 #define COLOR_RED "\x1b[31m"
@@ -36,5 +37,51 @@ join(const Iterator& start, const Iterator& end, const std::string& delim) {
 }
 
 extern "C" void* get_heap_base();
+
+typedef struct JSMatSizeData {
+  uint32_t rows, cols;
+} JSMatSizeData;
+
+static inline JSMatSizeData
+mat_size(const cv::Mat& mat) {
+  JSMatSizeData ret;
+  ret.rows = mat.rows;
+  ret.cols = mat.cols;
+  return ret;
+}
+
+static inline size_t
+mat_offset(const cv::Mat& mat, uint32_t row, uint32_t col) {
+  const uchar *base, *ptr;
+
+  base = mat.ptr<uchar>();
+  ptr = mat.ptr<uchar>(row, col);
+
+  return ptr - base;
+}
+
+static inline size_t
+mat_channels(const cv::Mat& mat) {
+  return mat.elemSize() / mat.elemSize1();
+}
+
+static inline bool
+mat_signed(const cv::Mat& mat) {
+  switch(mat.type()) {
+    case CV_8S:
+    case CV_16S:
+    case CV_32S: return true;
+    default: return false;
+  }
+}
+
+static inline bool
+mat_floating(const cv::Mat& mat) {
+  switch(mat.type()) {
+    case CV_32F:
+    case CV_64F: return true;
+    default: return false;
+  }
+}
 
 #endif // defined(UTIL_H)

@@ -156,6 +156,52 @@ js_array<T>::to_scalar(JSContext* ctx, JSValueConst arr, cv::Scalar_<T>& out) {
   return n;
 }
 
+template<> class js_array<JSValue> {
+public:
+  static int64_t
+  to_vector(JSContext* ctx, JSValueConst arr, std::vector<JSValue>& out) {
+    int64_t i, n;
+    JSValue len;
+    if(!JS_IsArray(ctx, arr))
+      return -1;
+    len = JS_GetPropertyStr(ctx, arr, "length");
+    JS_ToInt64(ctx, &n, len);
+    out.reserve(out.size() + n);
+    for(i = 0; i < n; i++) {
+      JSValue value = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
+      out.push_back(value);
+    }
+    return n;
+  }
+
+  template<class Iterator>
+  static JSValue
+  from_sequence(JSContext* ctx, const Iterator& start, const Iterator& end) {
+    JSValue arr = JS_NewArray(ctx);
+    size_t i = 0;
+    for(Iterator it = start; it != end; ++it) {
+      JS_SetPropertyUint32(ctx, arr, i, *it);
+      ++i;
+    }
+    return arr;
+  }
+
+  template<size_t N> static int64_t to_array(JSContext* ctx, JSValueConst arr, std::array<JSValue, N>& out);
+};
+
+template<size_t N>
+int64_t
+js_array<JSValue>::to_array(JSContext* ctx, JSValueConst arr, std::array<JSValue, N>& out) {
+  int64_t i;
+  if(!JS_IsArray(ctx, arr))
+    return -1;
+  for(i = 0; i < N; i++) {
+    JSValue value = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
+    out[i] = value;
+  }
+  return i;
+}
+
 #include "js_point.hpp"
 
 template<class T> class js_array<JSPointData<T>> {

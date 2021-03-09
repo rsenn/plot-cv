@@ -4,10 +4,10 @@ import { Rect } from 'rect.so';
 //import { Line } from 'line.so';
 //import { Mat } from 'mat.so';
 import { Contour } from 'contour.so';
-import { cv } from 'cv.so';
+import * as cv from 'cv.so';
 import * as std from 'std';
 import { PointIterator } from 'point-iterator.so';
-import { Draw, drawLine, drawCircle } from 'draw.so';
+//import { Draw, drawLine, drawCircle } from 'draw.so';
 import inspect from './lib/objectInspect.js';
 
 //console.log('test:', inspect({ Point, Size, Rect, Mat, PointIterator, Contour }));
@@ -21,11 +21,20 @@ let filesystem;
 async function main(...args) {
   //std.print("TEST PRINT\n");
   await ConsoleSetup({
-    breakLength: 120,
-    maxStringLength: 200
+    maxStringLength: 200,
+    compact: false
   });
   console.log('console', Util.className(console));
   console.log('console.log', console.log);
+  let entries = Object.fromEntries(Object.entries(cv).filter(([k, v]) => k.startsWith('CV_')));
+  console.log(console.config({ depth: 1, compact: 1 }), entries);
+  console.log(console.config({ compact: 0 }),
+    Object.keys(entries).filter(k => /[0-9]S/.test(k))
+  );
+  console.log(console.config({ compact: 0 }),
+    Object.keys(entries).filter(k => /[0-9]F/.test(k))
+  );
+  return;
 
   await PortableFileSystem(fs => (filesystem = fs));
   console.log('start');

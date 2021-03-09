@@ -27,10 +27,24 @@ function saveMat(name, mat) {
   );
 }
 
+function WriteImage(name, mat){
+    cv.imwrite(name,mat);
+    console.log(`Wrote '${name}' (${mat.size}).`);
+}
+
 function dumpMat(name, mat) {
-  console.log(`${name} = Mat `,
+ /* console.log(`${name} = Mat { `,
+    ['cols', 'rows', 'depth', 'channels', 'total', 'elemSize', 'elemSize1', 'step']
+      .map(prop => `${prop}: ${mat[prop]}`)
+      .concat([`step1: ${mat.step1()}`])
+      .join(', ') + ' }'
+  );*/
+  console.log(`${name} =`,mat);
+  return;
+
+  console.log(`${name} = Mat { `,
     Object.create(
-      Mat.prototype,
+      Object.prototype,
       ['cols', 'rows', 'depth', 'channels', 'total', 'elemSize', 'elemSize1', 'step'].reduce((acc, prop) => ({
           ...acc,
           [prop]: { value: mat[prop], enumerable: true }
@@ -92,22 +106,22 @@ async function main(...args) {
   cv.split(labImage, labChannels);
 
   dumpMat('image', image);
-  dumpMat('labImage', labImage);
+  //dumpMat('labImage', labImage); 
 
   const x = Math.floor(image.cols / 2);
   const y = Math.floor(image.rows / 2);
-  console.log(`image.at(${x},${y})`, image.at(x, y));
+ /* console.log(`image.at(${x},${y})`, image.at(x, y));
   console.log(`image.row( ${y})`, image.row(y));
-
+*/
   const row = image.row(y);
 
-  cv.imwrite('output.png', image);
+  WriteImage('output.png', image);
 
   //  for(let channel of labChannels) cv.normalize(channel, channel, 0, 255, cv.NORM_MINMAX);
 
-  cv.imwrite('l.png', labChannels[0]);
-  cv.imwrite('a.png', labChannels[1]);
-  cv.imwrite('b.png', labChannels[2]);
+  WriteImage('l.png', labChannels[0]);
+  WriteImage('a.png', labChannels[1]);
+  WriteImage('b.png', labChannels[2]);
 
   let gray = labChannels[0];
 
@@ -162,7 +176,7 @@ async function main(...args) {
     console.log('detectEdges', { thres1, thres2 });
     let edges = new Mat();
     cv.Canny(thrs_mat, edges, thres1, thres2);
-    // cv.imwrite('canny.png', edges);
+    // WriteImage('canny.png', edges);
 
     cv.imshow('canny', edges);
     console.log('thrs_mat:', thrs_mat + '');
@@ -173,20 +187,18 @@ async function main(...args) {
   }
   detectEdges();
 
-
-
   cv.createTrackbar('thres1', 'canny', 10, 300, (value, count, name, window) => {
+    console.log('Trackbar', { value, count, name, window });
     detectEdges(value, cv.getTrackbarPos('thres2', 'canny'));
+  });
+  cv.createTrackbar('thres2', 'canny', 20, 300, (value, count, name, window) => {
     console.log('Trackbar', { value, count, name, window });
-  });  cv.createTrackbar('thres2', 'canny', 20, 300, (value, count, name, window) => {
-    detectEdges( cv.getTrackbarPos('thres1', 'canny'),value);
-    console.log('Trackbar', { value, count, name, window });
+    detectEdges(cv.getTrackbarPos('thres1', 'canny'), value);
   });
   cv.createTrackbar('thres2', 'canny', 20, 300, value =>
     detectEdges(cv.getTrackbarPos('thres1', 'canny'), value)
   );
 
- 
   function detectLines(edges) {
     let lines = new Mat();
     cv.HoughLinesP(edges, lines, 1, cv.CV_PI / 180, 30 /*, 30, 10*/);
@@ -195,14 +207,15 @@ async function main(...args) {
     let out = new Mat();
 
     cv.cvtColor(thrs_mat, out, cv.COLOR_GRAY2BGR);
-    const buffer = lines.buffer;
+    /*  const buffer = lines.buffer;
     const array = new Uint32Array(buffer);
-
-    console.log('buffer:', buffer);
-    console.log('array:', array);
-    console.log('lines:', [...array]);
-    //  console.log('lines:', dumpMat(lines));
-    // console.log('at(0,0):', labImage.at(37, 47));
+*/
+    dumpMat('lines', lines);
+    let i = 0;
+    for(let line of lines.values()) {
+      console.log(`line[${i++}]:`, line);
+      if(i == 10) break;
+    }
   }
 
   let key;

@@ -99,7 +99,7 @@ js_rect_finalizer(JSRuntime* rt, JSValue val) {
 }
 
 static JSValue
-js_rect_get_xywh(JSContext* ctx, JSValueConst this_val, int magic) {
+js_rect_get(JSContext* ctx, JSValueConst this_val, int magic) {
   JSValue ret = JS_UNDEFINED;
   JSRectData<double>* s = static_cast<JSRectData<double>*>(JS_GetOpaque2(ctx, this_val, js_rect_class_id));
   if(!s)
@@ -124,7 +124,7 @@ js_rect_get_xywh(JSContext* ctx, JSValueConst this_val, int magic) {
 }
 
 static JSValue
-js_rect_set_xywh(JSContext* ctx, JSValueConst this_val, JSValueConst val, int magic) {
+js_rect_set(JSContext* ctx, JSValueConst this_val, JSValueConst val, int magic) {
   JSRectData<double>* s = static_cast<JSRectData<double>*>(JS_GetOpaque2(ctx, this_val, js_rect_class_id));
   double v;
   if(!s)
@@ -322,14 +322,14 @@ JSClassDef js_rect_class = {
 };
 
 const JSCFunctionListEntry js_rect_proto_funcs[] = {
-    JS_CGETSET_ENUMERABLE_DEF("x", js_rect_get_xywh, js_rect_set_xywh, 0),
-    JS_CGETSET_ENUMERABLE_DEF("y", js_rect_get_xywh, js_rect_set_xywh, 1),
-    JS_CGETSET_ENUMERABLE_DEF("width", js_rect_get_xywh, js_rect_set_xywh, 2),
-    JS_CGETSET_ENUMERABLE_DEF("height", js_rect_get_xywh, js_rect_set_xywh, 3),
-    JS_CGETSET_MAGIC_DEF("x2", js_rect_get_xywh, js_rect_set_xywh, 4),
-    JS_CGETSET_MAGIC_DEF("y2", js_rect_get_xywh, js_rect_set_xywh, 5),
-    JS_CGETSET_MAGIC_DEF("point", js_rect_get_xywh, js_rect_set_xywh, 6),
-    JS_CGETSET_MAGIC_DEF("size", js_rect_get_xywh, js_rect_set_xywh, 7),
+    JS_CGETSET_ENUMERABLE_DEF("x", js_rect_get, js_rect_set, 0),
+    JS_CGETSET_ENUMERABLE_DEF("y", js_rect_get, js_rect_set, 1),
+    JS_CGETSET_ENUMERABLE_DEF("width", js_rect_get, js_rect_set, 2),
+    JS_CGETSET_ENUMERABLE_DEF("height", js_rect_get, js_rect_set, 3),
+    JS_CGETSET_MAGIC_DEF("x2", js_rect_get, js_rect_set, 4),
+    JS_CGETSET_MAGIC_DEF("y2", js_rect_get, js_rect_set, 5),
+    JS_CGETSET_MAGIC_DEF("point", js_rect_get, js_rect_set, 6),
+    JS_CGETSET_MAGIC_DEF("size", js_rect_get, js_rect_set, 7),
     JS_ALIAS_DEF("x1", "x"),
     JS_ALIAS_DEF("y1", "y"),
     JS_CFUNC_MAGIC_DEF("contains", 0, js_rect_method, 0),

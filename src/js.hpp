@@ -211,6 +211,11 @@ struct jsrt {
 
   std::string function_name(const_value fn) const;
 
+  std::string
+  class_name(const_value obj) const {
+    return function_name(get_constructor(obj));
+  }
+
   value get_global(const char* name) const;
   void set_global(const char* name, value v);
 

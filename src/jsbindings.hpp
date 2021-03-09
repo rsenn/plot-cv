@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <map>
 #include <iterator>
+#include <ranges>
 
 typedef cv::Rect2d JSRectDataD;
 typedef cv::Mat JSMatData;
@@ -259,5 +260,13 @@ js_number_new<int64_t>(JSContext* ctx, int64_t num) {
 }
 
 int js_ref(JSContext* ctx, const char* name, JSValueConst arg, JSValue value);
+
+static inline std::ranges::subrange<uint8_t*>
+js_arraybuffer_range(JSContext* ctx, JSValueConst buffer) {
+  size_t size;
+  uint8_t* ptr;
+  ptr = JS_GetArrayBuffer(ctx, &size, buffer);
+  return std::ranges::subrange<uint8_t*>(ptr, ptr + size);
+}
 
 #endif

@@ -113,7 +113,7 @@ js_size_finalizer(JSRuntime* rt, JSValue val) {
 }
 
 static JSValue
-js_size_get_wh(JSContext* ctx, JSValueConst this_val, int magic) {
+js_size_get(JSContext* ctx, JSValueConst this_val, int magic) {
   JSSizeData<double>* s = js_size_data(ctx, this_val);
   if(!s)
     return JS_EXCEPTION;
@@ -154,7 +154,7 @@ js_size_wrap(JSContext* ctx, const JSSizeData<double>& sz) {
 }
 
 static JSValue
-js_size_set_wh(JSContext* ctx, JSValueConst this_val, JSValueConst val, int magic) {
+js_size_set(JSContext* ctx, JSValueConst this_val, JSValueConst val, int magic) {
   JSSizeData<double>* s = js_size_data(ctx, this_val);
   double v;
   if(!s)
@@ -365,11 +365,11 @@ JSClassDef js_size_class = {
 };
 
 const JSCFunctionListEntry js_size_proto_funcs[] = {
-    JS_CGETSET_ENUMERABLE_DEF("width", js_size_get_wh, js_size_set_wh, 0),
-    JS_CGETSET_ENUMERABLE_DEF("height", js_size_get_wh, js_size_set_wh, 1),
-    JS_CGETSET_ENUMERABLE_DEF("aspect", js_size_get_wh, 0, 2),
-    JS_CGETSET_ENUMERABLE_DEF("empty", js_size_get_wh, 0, 3),
-    JS_CGETSET_ENUMERABLE_DEF("area", js_size_get_wh, 0, 4),
+    JS_CGETSET_ENUMERABLE_DEF("width", js_size_get, js_size_set, 0),
+    JS_CGETSET_ENUMERABLE_DEF("height", js_size_get, js_size_set, 1),
+    JS_CGETSET_ENUMERABLE_DEF("aspect", js_size_get, 0, 2),
+    JS_CGETSET_ENUMERABLE_DEF("empty", js_size_get, 0, 3),
+    JS_CGETSET_ENUMERABLE_DEF("area", js_size_get, 0, 4),
     JS_CFUNC_MAGIC_DEF("equals", 1, js_size_funcs, 0),
     JS_CFUNC_MAGIC_DEF("round", 0, js_size_funcs, 1),
     JS_CFUNC_MAGIC_DEF("toObject", 0, js_size_funcs, 2),
