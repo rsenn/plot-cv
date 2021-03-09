@@ -1,5 +1,5 @@
 import { ECMAScriptParser, Printer, PathReplacer } from './lib/ecmascript.js';
-import { ObjectPattern, ObjectExpression, ImportDeclaration, ExportNamedDeclaration, VariableDeclaration, estree, ESNode, Literal, Identifier } from './lib/ecmascript.js';
+import { ObjectPattern, ObjectExpression, ImportDeclaration, ExportNamedDeclaration, ExportDefaultDeclaration, VariableDeclaration, estree, ESNode, Literal, Identifier } from './lib/ecmascript.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import Util from './lib/util.js';
 import { ImmutablePath } from './lib/json.js';
@@ -42,6 +42,8 @@ function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments))
 async function main(...args) {
   await PortableFileSystem(fs => (filesystem = fs));
   await ConsoleSetup({ depth: 5 });
+
+  console.log('console.config', console.config);
 
   cwd = filesystem.realpath('.');
 
@@ -146,7 +148,7 @@ async function main(...args) {
 
       exports = exports.map(([p, stmt]) => [p, stmt.declarations || stmt.properties || stmt]);
 
-      console.log('exports [1]:', exports);
+      console.log('exports [1]:', console.config({ depth: 1 }), exports);
       exports = exports.map(([p, stmt]) => stmt);
 
       /*exports = exports.map(([p, stmt]) => {
@@ -187,15 +189,19 @@ async function main(...args) {
             const { declarations } = stmt.declaration;
 
             specifiers = declarations.map(({ id }) => Identifier.string(id));
-          } else if(stmt.declaration.id) {
-            specifiers = [Identifier.string(stmt.declaration.id)];
+          } else {
+            let id = Identifier.string(stmt.declaration);
+
+            if(stmt instanceof ExportDefaultDeclaration) id = `default as ${id}`;
+            specifiers = [id];
           }
         }
 
         /*        if('value' in stmt) stmt = [stmt.value];*/
+
         if(!Util.isArray(specifiers)) {
           console.error('stmt:', stmt);
-          throw new Error(`No handler for ${stmt.type}`);
+          throw new Error(`No handler for ${stmt.type} ${inspect(stmt)} `);
         }
         return [...a, ...specifiers];
       }, []);

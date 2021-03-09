@@ -985,17 +985,18 @@ js_mat_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
           << reinterpret_cast<void*>(reinterpret_cast<char*>(m)  )*/
      << " [ ";
   if(sizeStrs.size() || m->type()) {
-    os << "size: \x1b[0;33m" << join(sizeStrs.cbegin(), sizeStrs.cend(), "\x1b[m*\x1b[0;33m") << ", ";
-    os << "type: \x1b[0;33mCV_" << (bytes * 8) << sign << 'C' << m->channels() << "\x1b[m, ";
-    os << "elemSize: \x1b[0;33m" << m->elemSize() << "\x1b[m, ";
-    os << "total: \x1b[0;33m" << m->total() << "\x1b[m, ";
-    os << "dims: \x1b[0;33m" << m->dims;
+    os << "size: " COLOR_YELLOW ""
+       << join(sizeStrs.cbegin(), sizeStrs.cend(), "" COLOR_NONE "*" COLOR_YELLOW "") << "" COLOR_NONE ", ";
+    os << "type: " COLOR_YELLOW "CV_" << (bytes * 8) << sign << 'C' << m->channels() << "" COLOR_NONE ", ";
+    os << "elemSize: " COLOR_YELLOW "" << m->elemSize() << "" COLOR_NONE ", ";
+    os << "total: " COLOR_YELLOW "" << m->total() << "" COLOR_NONE ", ";
+    os << "dims: " COLOR_YELLOW "" << m->dims << "" COLOR_NONE "";
   } else {
     os << "empty";
   }
   if(m->u)
-    os << ", refcount = " << m->u->refcount;
-  os << " ]";
+    os << ", refcount: " COLOR_YELLOW "" << m->u->refcount;
+  os << "" COLOR_NONE " ]";
   str = os.str();
   return JS_NewStringLen(ctx, str.data(), str.size());
 }

@@ -2,6 +2,7 @@
 #include "js_size.hpp"
 #include "js_array.hpp"
 #include "js_alloc.hpp"
+#include "util.hpp"
 
 #if defined(JS_SIZE_MODULE) || defined(quickjs_size_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
@@ -217,7 +218,8 @@ js_size_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
     height = s->height;
   }
 
-  os << "{ width: \x1b[0;33m" << width << "\x1b[0m, height: \x1b[0;33m" << height << "\x1b[0m }";
+  os << "{ width: " COLOR_YELLOW << width << COLOR_NONE ", height: " COLOR_YELLOW << height
+     << COLOR_NONE " }";
 
   return JS_NewString(ctx, os.str().c_str());
 }

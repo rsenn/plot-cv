@@ -37,7 +37,6 @@ template<class T> struct js_alloc_mmap {
 
 template<class T> size_t js_alloc_mmap<T>::page_size = ::getpagesize();
 
-
 template<class T> struct js_alloc_libc {
   static constexpr size_t size = ((sizeof(T) + 7) >> 3) << 3;
 

@@ -5,6 +5,7 @@
 #include "js_alloc.hpp"
 #include "js_array.hpp"
 #include "js_typed_array.hpp"
+#include "util.hpp"
 
 #if defined(JS_RECT_MODULE) || defined(quickjs_rect_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
@@ -245,8 +246,9 @@ js_rect_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
     js_rect_read(ctx, this_val, &rect);
   }
 
-  os << "{ x: \x1b[0;33m" << rect.x << "\x1b[0m, y: \x1b[0;33m" << rect.y << "\x1b[0m, width: \x1b[0;33m"
-     << rect.width << "\x1b[0m, height: \x1b[0;33m" << rect.height << "\x1b[0m }";
+  os << "{ x: " COLOR_YELLOW "" << rect.x << "" COLOR_NONE ", y: " COLOR_YELLOW "" << rect.y
+     << "" COLOR_NONE ", width: " COLOR_YELLOW "" << rect.width
+     << "" COLOR_NONE ", height: " COLOR_YELLOW "" << rect.height << "" COLOR_NONE " }";
 
   return JS_NewString(ctx, os.str().c_str());
 }

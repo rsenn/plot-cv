@@ -55,13 +55,13 @@ function dumpMat(name, mat) {
 
 async function main(...args) {
   await ConsoleSetup({
-    breakLength: 80,
     maxStringLength: 200,
-    maxArrayLength: 10
+    maxArrayLength: 10,
+    compact: false
   });
   await PortableFileSystem(fs => (filesystem = fs));
 
-  console.log('cv', cv);
+  // console.log('cv', cv);
   //console.log('Object.keys(cv)', Object.keys(cv));
   console.log('Util.getMethodNames(cv)', Util.getMethodNames(cv, Infinity, 0));
   console.log('cv.HoughLines', cv.HoughLines);
@@ -74,7 +74,9 @@ async function main(...args) {
   console.log('clahe', clahe);
 
   let image;
-  cv.namedWindow('main', cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO);
+
+  for(let windowName of ['gray', 'corners', 'threshold', 'canny'])
+    cv.namedWindow(windowName, cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO);
 
   //image = cv.imread('../an-tronics/images/5.19.jpg');
   image = cv.imread(args[0] || 'italo-disco.png');
@@ -106,16 +108,39 @@ async function main(...args) {
   cv.imwrite('l.png', labChannels[0]);
   cv.imwrite('a.png', labChannels[1]);
   cv.imwrite('b.png', labChannels[2]);
+
+  let gray = labChannels[0];
+
+  cv.imshow('gray', gray);
+
   let thrs_mat = new Mat();
 
-  cv.equalizeHist(labChannels[0], labChannels[0]);
+  cv.equalizeHist(gray, gray);
 
-  function calcThreshold(min = 20) {
-    cv.threshold(labChannels[0], thrs_mat, min, 255, cv.THRESH_BINARY);
-    cv.imshow('main', thrs_mat);
+  function calcThreshold(thres = 8, max = 255, type = cv.THRESH_BINARY) {
+    cv.threshold(gray, thrs_mat, thres, max, type);
+    cv.imshow('threshold', thrs_mat);
   }
-  calcThreshold(20);
+  calcThreshold();
 
+  cv.createTrackbar('thres', 'threshold', 8, 255, value =>
+    calcThreshold(value,
+      cv.getTrackbarPos('max', 'threshold'),
+      cv.getTrackbarPos('type', 'threshold')
+    )
+  );
+  cv.createTrackbar('max', 'threshold', 255, 255, value =>
+    calcThreshold(cv.getTrackbarPos('thres', 'threshold'),
+      value,
+      cv.getTrackbarPos('type', 'threshold')
+    )
+  );
+  cv.createTrackbar('type', 'threshold', 0, 4, value =>
+    calcThreshold(cv.getTrackbarPos('thres', 'threshold'),
+      cv.getTrackbarPos('max', 'threshold'),
+      value
+    )
+  );
   let gray32 = new Mat();
   thrs_mat.convertTo(gray32, cv.CV_32FC1);
 
@@ -126,13 +151,7 @@ async function main(...args) {
     cv.imshow('corners', corners);
   }
   detectCorners(0.04);
-  detectEdges();
 
-  cv.createTrackbar('threshold', 'main', 20, 255, function(value, count, name, window) {
-    //console.log('Trackbar', { value, count, name, window });
-
-    calcThreshold(value);
-  });
   cv.createTrackbar('k', 'corners', 4, 100, function(value, count, name, window) {
     //console.log('Trackbar', { value, count, name, window });
 
@@ -140,6 +159,7 @@ async function main(...args) {
   });
 
   function detectEdges(thres1 = 10, thres2 = 20) {
+    console.log('detectEdges', { thres1, thres2 });
     let edges = new Mat();
     cv.Canny(thrs_mat, edges, thres1, thres2);
     // cv.imwrite('canny.png', edges);
@@ -151,10 +171,27 @@ async function main(...args) {
 
     detectLines(edges);
   }
+  detectEdges();
+
+  
+
+  cv.createTrackbar('thres1', 'canny', 10, 300, (value, count, name, window) => {
+    detectEdges(value, cv.getTrackbarPos('thres2', 'canny'));
+    console.log('Trackbar', { value, count, name, window });
+  });  cv.createTrackbar('thres2', 'canny', 20, 300, (value, count, name, window) => {
+    detectEdges( cv.getTrackbarPos('thres1', 'canny'),value);
+    console.log('Trackbar', { value, count, name, window });
+  });
+  cv.createTrackbar('thres2', 'canny', 20, 300, value =>
+    detectEdges(cv.getTrackbarPos('thres1', 'canny'), value)
+  );
+
+  console.log('Trackbar', { value, count, name, window });
 
   function detectLines(edges) {
     let lines = new Mat();
     cv.HoughLinesP(edges, lines, 1, cv.CV_PI / 180, 30 /*, 30, 10*/);
+    console.log('lines:', lines);
 
     let out = new Mat();
 
@@ -164,8 +201,7 @@ async function main(...args) {
 
     console.log('buffer:', buffer);
     console.log('array:', array);
-    console.log('lines:', [...lines]);
-    console.log('lines:', lines.inspect());
+    console.log('lines:', [...array]);
     //  console.log('lines:', dumpMat(lines));
     // console.log('at(0,0):', labImage.at(37, 47));
   }
