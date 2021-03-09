@@ -269,4 +269,16 @@ js_arraybuffer_range(JSContext* ctx, JSValueConst buffer) {
   return std::ranges::subrange<uint8_t*>(ptr, ptr + size);
 }
 
+template<class T>
+static inline std::ranges::subrange<T>
+js_arraybuffer_range(JSContext* ctx, JSValueConst buffer) {
+  size_t size;
+  uint8_t* byte_ptr;
+  T begin, end;
+  byte_ptr = JS_GetArrayBuffer(ctx, &size, buffer);
+  begin = reinterpret_cast<T>(byte_ptr);
+  end = reinterpret_cast<T>(byte_ptr + size);
+  return std::ranges::subrange<T>(begin, end);
+}
+
 #endif

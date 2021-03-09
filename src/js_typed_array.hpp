@@ -155,8 +155,6 @@ js_typedarray_new(JSContext* ctx,
   JSValue global, ctor, ret;
   std::string ctor_name = props.constructor_name();
 
-  std::cerr << "js_typedarray_new " << ctor_name << std::endl;
-
   std::array<JSValueConst, 3> args = {buffer, js_number_new(ctx, byteOffset), js_number_new(ctx, length)};
 
   global = JS_GetGlobalObject(ctx);
@@ -164,10 +162,7 @@ js_typedarray_new(JSContext* ctx,
   JS_FreeValue(ctx, global);
 
   auto range = js_arraybuffer_range(ctx, buffer);
-
-  std::cerr << "js_typedarray_new function " << js.function_name(ctor) << std::endl;
-  std::cerr << "js_typedarray_new buffer " << range.begin() << " - " << range.end() << std::endl;
-  std::cerr << "js_typedarray_new size " << range.size() << std::endl;
+  assert(offset + length * props.byte_size < range.size());
 
   ret = JS_CallConstructor(ctx, ctor, args.size(), &args[0]);
   JS_FreeValue(ctx, ctor);

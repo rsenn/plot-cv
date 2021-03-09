@@ -1186,6 +1186,7 @@ js_mat_buffer(JSContext* ctx, JSValueConst this_val) {
     return JS_EXCEPTION;
 
   ptr = m->ptr();
+  size = m->total() * m->elemSize();
 
   m->addref();
   // m->addref();
@@ -1293,6 +1294,7 @@ js_mat_iterator_next(
     *pdone = FALSE;
 
     channels = mat_channels(*m);
+    offset = mat_offset(*m, row, col);
 
     printf("channels=%zx row=%u col=%u dim.rows=%u dim.cols=%u\n", channels, row, col, dim.rows, dim.cols);
 

@@ -27,19 +27,19 @@ function saveMat(name, mat) {
   );
 }
 
-function WriteImage(name, mat){
-    cv.imwrite(name,mat);
-    console.log(`Wrote '${name}' (${mat.size}).`);
+function WriteImage(name, mat) {
+  cv.imwrite(name, mat);
+  console.log(`Wrote '${name}' (${mat.size}).`);
 }
 
 function dumpMat(name, mat) {
- /* console.log(`${name} = Mat { `,
+  /* console.log(`${name} = Mat { `,
     ['cols', 'rows', 'depth', 'channels', 'total', 'elemSize', 'elemSize1', 'step']
       .map(prop => `${prop}: ${mat[prop]}`)
       .concat([`step1: ${mat.step1()}`])
       .join(', ') + ' }'
   );*/
-  console.log(`${name} =`,mat);
+  console.log(`${name} =`, mat);
   return;
 
   console.log(`${name} = Mat { `,
@@ -106,11 +106,11 @@ async function main(...args) {
   cv.split(labImage, labChannels);
 
   dumpMat('image', image);
-  //dumpMat('labImage', labImage); 
+  //dumpMat('labImage', labImage);
 
   const x = Math.floor(image.cols / 2);
   const y = Math.floor(image.rows / 2);
- /* console.log(`image.at(${x},${y})`, image.at(x, y));
+  /* console.log(`image.at(${x},${y})`, image.at(x, y));
   console.log(`image.row( ${y})`, image.row(y));
 */
   const row = image.row(y);
@@ -155,8 +155,24 @@ async function main(...args) {
       value
     )
   );
+
+  let morpho = new Mat();
+
+  function calcMorphology(kernel_size) {
+    let structuringElement = cv.getStructuringElement(cv.MORPH_ELLIPSE,
+      new Size(kernel_size*2+1, kernel_size*2+1)
+    );
+
+    cv.erode(thrs_mat, morpho, structuringElement);
+    cv.imshow('morphology', morpho);
+  }
+
+  calcMorphology(3);
+
+  cv.createTrackbar('kernel_size', 'morphology', 1, 10, value => calcMorphology(value));
+
   let gray32 = new Mat();
-  thrs_mat.convertTo(gray32, cv.CV_32FC1);
+  morpho.convertTo(gray32, cv.CV_32FC1);
 
   function detectCorners(k = 0.04) {
     let corners = new Mat(gray32.rows, gray32.cols, cv.CV_32FC1);
@@ -175,7 +191,7 @@ async function main(...args) {
   function detectEdges(thres1 = 10, thres2 = 20) {
     console.log('detectEdges', { thres1, thres2 });
     let edges = new Mat();
-    cv.Canny(thrs_mat, edges, thres1, thres2);
+    cv.Canny(morpho, edges, thres1, thres2);
     // WriteImage('canny.png', edges);
 
     cv.imshow('canny', edges);
@@ -206,7 +222,7 @@ async function main(...args) {
 
     let out = new Mat();
 
-    cv.cvtColor(thrs_mat, out, cv.COLOR_GRAY2BGR);
+    cv.cvtColor(morpho, out, cv.COLOR_GRAY2BGR);
     /*  const buffer = lines.buffer;
     const array = new Uint32Array(buffer);
 */
