@@ -262,8 +262,7 @@ js_cv_canny(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv)
   if(argc >= 6)
     L2gradient = JS_ToBool(ctx, argv[5]);
 
-  std::cerr << "cv::Canny threshold1=" << threshold1 << " threshold2=" << threshold2
-            << " apertureSize=" << apertureSize << " L2gradient=" << L2gradient << std::endl;
+  //std::cerr << "cv::Canny threshold1=" << threshold1 << " threshold2=" << threshold2 << " apertureSize=" << apertureSize << " L2gradient=" << L2gradient << std::endl;
 
   cv::Canny(*image, *edges, threshold1, threshold2, apertureSize, L2gradient);
 
@@ -321,15 +320,8 @@ js_cv_good_features_to_track(JSContext* ctx, JSValueConst this_val, int argc, JS
                             useHarrisDetector,
                             k);
   else
-    cv::goodFeaturesToTrack(*image,
-                            *corners,
-                            maxCorners,
-                            qualityLevel,
-                            minDistance,
-                            mask ? *mask : cv::noArray(),
-                            blockSize,
-                            useHarrisDetector,
-                            k);
+    cv::goodFeaturesToTrack(
+        *image, *corners, maxCorners, qualityLevel, minDistance, mask ? *mask : cv::noArray(), blockSize, useHarrisDetector, k);
 
   return JS_UNDEFINED;
 }
@@ -436,9 +428,7 @@ js_cv_split(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv)
 
     cv::split(*src, dst.data());
 
-    for(int32_t i = 0; i < src->channels(); i++) {
-      JS_SetPropertyUint32(ctx, argv[1], i, js_mat_wrap(ctx, dst[i]));
-    }
+    for(int32_t i = 0; i < src->channels(); i++) { JS_SetPropertyUint32(ctx, argv[1], i, js_mat_wrap(ctx, dst[i])); }
 
     return JS_UNDEFINED;
   }
@@ -826,12 +816,7 @@ js_cv_mix_channels(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
   if(js_array_to(ctx, argv[2], fromTo) == -1)
     return JS_EXCEPTION;
 
-  cv::mixChannels(const_cast<const cv::Mat*>(srcs.data()),
-                  srcs.size(),
-                  dsts.data(),
-                  dsts.size(),
-                  fromTo.data(),
-                  fromTo.size() >> 1);
+  cv::mixChannels(const_cast<const cv::Mat*>(srcs.data()), srcs.size(), dsts.data(), dsts.size(), fromTo.data(), fromTo.size() >> 1);
 
   return JS_UNDEFINED;
 }
@@ -857,19 +842,14 @@ js_cv_min_max_loc(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
   ret = JS_NewObject(ctx);
   JS_SetPropertyStr(ctx, ret, "minVal", JS_NewFloat64(ctx, minVal));
   JS_SetPropertyStr(ctx, ret, "maxVal", JS_NewFloat64(ctx, maxVal));
+  JS_SetPropertyStr(ctx, ret, "minLoc", js_array_from(ctx, std::array<int, 2>{minLoc.x, minLoc.y})); // js_point_wrap(ctx, minLoc));
   JS_SetPropertyStr(ctx,
                     ret,
-                    "minLoc",
-                    js_array_from(ctx,
-                                  std::array<int, 2>{minLoc.x, minLoc.y})); // js_point_wrap(ctx, minLoc));
-  JS_SetPropertyStr(
-      ctx,
-      ret,
-      "maxLoc",
-      js_object::from_map(ctx,
-                          std::map<std::string, int>{
-                              std::pair<std::string, int>{"x", maxLoc.x},
-                              std::pair<std::string, int>{"y", maxLoc.y}})); // js_point_wrap(ctx, maxLoc));
+                    "maxLoc",
+                    js_object::from_map(ctx,
+                                        std::map<std::string, int>{std::pair<std::string, int>{"x", maxLoc.x},
+                                                                   std::pair<std::string, int>{"y",
+                                                                                               maxLoc.y}})); // js_point_wrap(ctx, maxLoc));
 
   return ret;
 }
@@ -1226,18 +1206,12 @@ js_cv_getperspectivetransform(JSContext* ctx, JSValueConst this_val, int argc, J
       JS_ToInt32(ctx, &solveMethod, argv[2]);
   }
 
-  std::transform(v->begin(),
-                 v->end(),
-                 std::back_inserter(a),
-                 [](const JSPointData<double>& pt) -> JSPointData<float> {
-                   return JSPointData<float>(pt.x, pt.y);
-                 });
-  std::transform(other->begin(),
-                 other->end(),
-                 std::back_inserter(b),
-                 [](const JSPointData<double>& pt) -> JSPointData<float> {
-                   return JSPointData<float>(pt.x, pt.y);
-                 });
+  std::transform(v->begin(), v->end(), std::back_inserter(a), [](const JSPointData<double>& pt) -> JSPointData<float> {
+    return JSPointData<float>(pt.x, pt.y);
+  });
+  std::transform(other->begin(), other->end(), std::back_inserter(b), [](const JSPointData<double>& pt) -> JSPointData<float> {
+    return JSPointData<float>(pt.x, pt.y);
+  });
   matrix = cv::getPerspectiveTransform(a, b /*, solveMethod*/);
 
   ret = js_mat_wrap(ctx, matrix);
@@ -1259,18 +1233,12 @@ js_cv_getaffinetransform(JSContext* ctx, JSValueConst this_val, int argc, JSValu
   if(argc > 1)
     other = static_cast<JSContourData<double>*>(JS_GetOpaque2(ctx, argv[1], js_contour_class_id));
 
-  std::transform(v->begin(),
-                 v->end(),
-                 std::back_inserter(a),
-                 [](const JSPointData<double>& pt) -> JSPointData<float> {
-                   return JSPointData<float>(pt.x, pt.y);
-                 });
-  std::transform(other->begin(),
-                 other->end(),
-                 std::back_inserter(b),
-                 [](const JSPointData<double>& pt) -> JSPointData<float> {
-                   return JSPointData<float>(pt.x, pt.y);
-                 });
+  std::transform(v->begin(), v->end(), std::back_inserter(a), [](const JSPointData<double>& pt) -> JSPointData<float> {
+    return JSPointData<float>(pt.x, pt.y);
+  });
+  std::transform(other->begin(), other->end(), std::back_inserter(b), [](const JSPointData<double>& pt) -> JSPointData<float> {
+    return JSPointData<float>(pt.x, pt.y);
+  });
   matrix = cv::getAffineTransform(a, b);
 
   ret = js_mat_wrap(ctx, matrix);
@@ -1300,8 +1268,9 @@ js_cv_find_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
   poly.resize(contours.size());
 
-  transform_contours<JSContoursData<int>::const_iterator, JSContoursData<double>::iterator>(
-      contours.cbegin(), contours.cend(), poly.begin());
+  transform_contours<JSContoursData<int>::const_iterator, JSContoursData<double>::iterator>(contours.cbegin(),
+                                                                                            contours.cend(),
+                                                                                            poly.begin());
 
   {
     size_t i, length = contours.size();

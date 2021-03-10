@@ -150,8 +150,7 @@ protected:
 
 public:
   Base(const std::string& tag) : tag(tag) {}
-  Base(const std::string& tag, const std::vector<Attribute>& attributes)
-      : tag(tag), attributes(attributes) {}
+  Base(const std::string& tag, const std::vector<Attribute>& attributes) : tag(tag), attributes(attributes) {}
 
   virtual ~Base() {}
 
@@ -166,9 +165,8 @@ public:
 
   Base&
   AddAttribute(const Attribute& attribute) {
-    auto ii = std::find_if(attributes.begin(), attributes.end(), [attribute](const auto& a) {
-      return a.Name().compare(attribute.Name()) == 0;
-    });
+    auto ii =
+        std::find_if(attributes.begin(), attributes.end(), [attribute](const auto& a) { return a.Name().compare(attribute.Name()) == 0; });
     if(ii != attributes.end()) {
       ii->Value(attribute.Value());
     } else {
@@ -229,8 +227,7 @@ public:
 class Rect : public Base {
 public:
   Rect() : Base("rect") {}
-  Rect(double x, double y, double w, double h)
-      : Base("rect", {{"x", x}, {"y", y}, {"width", w}, {"height", h}}) {}
+  Rect(double x, double y, double w, double h) : Base("rect", {{"x", x}, {"y", y}, {"width", w}, {"height", h}}) {}
   Rect(double w, double h) : Base("rect", {{"width", w}, {"height", h}}) {}
 };
 
@@ -311,8 +308,7 @@ public:
 class Circle : public Base {
 public:
   Circle() : Base("circle") {}
-  Circle(double center_x, double center_y, double radius)
-      : Base("circle", {{"cx", center_x}, {"cy", center_y}, {"r", radius}}) {}
+  Circle(double center_x, double center_y, double radius) : Base("circle", {{"cx", center_x}, {"cy", center_y}, {"r", radius}}) {}
   virtual ~Circle() override {}
 };
 
@@ -357,8 +353,7 @@ protected:
 
 public:
   GroupBase(std::string group_tag) : Base(group_tag) {}
-  GroupBase(std::string group_tag, const std::vector<Attribute>& attributes)
-      : Base(group_tag, attributes) {}
+  GroupBase(std::string group_tag, const std::vector<Attribute>& attributes) : Base(group_tag, attributes) {}
   virtual ~GroupBase() override {}
 
   template<typename T>
@@ -418,8 +413,7 @@ public:
 class Layer : public GroupBase {
 public:
   Layer() : GroupBase("g", {{"inkscape:groupmode", std::string("layer")}}) {}
-  Layer(const std::string& name)
-      : GroupBase("g", {{"inkscape:label", name}, {"inkscape:groupmode", std::string("layer")}}) {}
+  Layer(const std::string& name) : GroupBase("g", {{"inkscape:label", name}, {"inkscape:groupmode", std::string("layer")}}) {}
   virtual ~Layer() override {}
 
   friend std::ostream&

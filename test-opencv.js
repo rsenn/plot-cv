@@ -5,7 +5,7 @@ import { Mat } from 'mat.so';
 import * as cv from 'cv.so';
 import { Line } from 'line.so';
 import { CLAHE } from 'clahe.so';
-//import { Draw, drawLine, drawCircle } from 'draw.so';
+import * as draw from 'draw.so';
 import inspect from './lib/objectInspect.js';
 import path from './lib/path.js';
 import PortableFileSystem from './lib/filesystem.js';
@@ -22,9 +22,7 @@ function saveMat(name, mat) {
     let c = value;
     colors.push(c);
   }
-  filesystem.writeFile(`${name}.${ext}`,
-    `${p}\n${image.cols} ${image.rows}\n255\n${colors.flat().join('\n')}`
-  );
+  filesystem.writeFile(`${name}.${ext}`, `${p}\n${image.cols} ${image.rows}\n255\n${colors.flat().join('\n')}`);
 }
 
 function WriteImage(name, mat) {
@@ -61,8 +59,7 @@ function dumpMat(name, mat) {
   console.log(`${name}.depth`, mat.depth);
   console.log(`${name}.channels`, mat.channels);
 
-  let typeName = Object.entries(cv).filter(([name, value]) => /^CV_[0-9]/.test(name) && value == mat.type
-  );
+  let typeName = Object.entries(cv).filter(([name, value]) => /^CV_[0-9]/.test(name) && value == mat.type);
 
   console.log(`${name}.type`, typeName.length == 1 ? typeName[0][0] : mat.type);
 }
@@ -89,8 +86,7 @@ async function main(...args) {
 
   let image;
 
-  for(let windowName of ['gray', 'corners', 'threshold', 'canny'])
-    cv.namedWindow(windowName, cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO);
+  for(let windowName of ['gray', 'corners', 'threshold', 'canny']) cv.namedWindow(windowName, cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO);
 
   //image = cv.imread('../an-tronics/images/5.19.jpg');
   image = cv.imread(args[0] || 'italo-disco.png');
@@ -129,45 +125,30 @@ async function main(...args) {
 
   let thrs_mat = new Mat();
 
-  cv.equalizeHist(gray, gray);
+ // cv.equalizeHist(gray, gray);
 
-  function calcThreshold(thres = 8, max = 255, type = cv.THRESH_BINARY) {
+  function calcThreshold(thres = 8, max = 255, type = cv.THRESH_BINARY_INV) {
     cv.threshold(gray, thrs_mat, thres, max, type);
     cv.imshow('threshold', thrs_mat);
   }
   calcThreshold();
 
-  cv.createTrackbar('thres', 'threshold', 8, 255, value =>
-    calcThreshold(value,
-      cv.getTrackbarPos('max', 'threshold'),
-      cv.getTrackbarPos('type', 'threshold')
-    )
-  );
-  cv.createTrackbar('max', 'threshold', 255, 255, value =>
-    calcThreshold(cv.getTrackbarPos('thres', 'threshold'),
-      value,
-      cv.getTrackbarPos('type', 'threshold')
-    )
-  );
-  cv.createTrackbar('type', 'threshold', 0, 4, value =>
-    calcThreshold(cv.getTrackbarPos('thres', 'threshold'),
-      cv.getTrackbarPos('max', 'threshold'),
-      value
-    )
-  );
+  cv.createTrackbar('thres', 'threshold', 8, 255, value => calcThreshold(value, cv.getTrackbarPos('max', 'threshold'), cv.getTrackbarPos('type', 'threshold')));
+  cv.createTrackbar('max', 'threshold', 255, 255, value => calcThreshold(cv.getTrackbarPos('thres', 'threshold'), value, cv.getTrackbarPos('type', 'threshold')));
+  cv.createTrackbar('type', 'threshold', cv.THRESH_BINARY_INV, 4, value => calcThreshold(cv.getTrackbarPos('thres', 'threshold'), cv.getTrackbarPos('max', 'threshold'), value));
 
   let morpho = new Mat();
 
-  function calcMorphology(kernel_size) {
-    let structuringElement = cv.getStructuringElement(cv.MORPH_ELLIPSE,
-      new Size(kernel_size*2+1, kernel_size*2+1)
-    );
-
-    cv.erode(thrs_mat, morpho, structuringElement);
+  function calcMorphology(kernel_size = 1) {
+    let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS, new Size(kernel_size * 2 + 1, kernel_size * 2 + 1));
+    if(cv.getTrackbarPos('type', 'threshold') == 1) thrs_mat.xor([255, 255, 255, 0], morpho);
+    else thrs_mat.copyTo(morpho);
+    cv.erode(morpho, morpho, structuringElement);
     cv.imshow('morphology', morpho);
+    morpho.xor([255, 255, 255, 0], morpho);
   }
 
-  calcMorphology(3);
+  calcMorphology(1);
 
   cv.createTrackbar('kernel_size', 'morphology', 1, 10, value => calcMorphology(value));
 
@@ -180,9 +161,9 @@ async function main(...args) {
     corners.convertTo(corners, cv.CV_8UC1);
     cv.imshow('corners', corners);
   }
-  detectCorners(0.04);
+  detectCorners(0.24);
 
-  cv.createTrackbar('k', 'corners', 4, 100, function(value, count, name, window) {
+  cv.createTrackbar('k', 'corners', 24, 100, function(value, count, name, window) {
     //console.log('Trackbar', { value, count, name, window });
 
     detectCorners(value / 100);
@@ -198,8 +179,6 @@ async function main(...args) {
     console.log('thrs_mat:', thrs_mat + '');
     // console.log("labImage.buffer:", labImage.buffer);
     // console.log("labImage.array:", labImage.array);
-
-    detectLines(edges);
   }
   detectEdges();
 
@@ -211,29 +190,54 @@ async function main(...args) {
     console.log('Trackbar', { value, count, name, window });
     detectEdges(cv.getTrackbarPos('thres1', 'canny'), value);
   });
-  cv.createTrackbar('thres2', 'canny', 20, 300, value =>
-    detectEdges(cv.getTrackbarPos('thres1', 'canny'), value)
-  );
+  cv.createTrackbar('thres2', 'canny', 20, 300, value => detectEdges(cv.getTrackbarPos('thres1', 'canny'), value));
+  let lines = new Mat();
+  let out = new Mat();
+  let circles = [];
 
-  function detectLines(edges) {
-    let lines = new Mat();
-    cv.HoughLinesP(edges, lines, 1, cv.CV_PI / 180, 30 /*, 30, 10*/);
+  function detectLines(rho = 1, theta = cv.CV_PI / 180, threshold = 30, minLineLength = 0, maxLineGap = 0) {
+    //console.log('detectLines', { rho, theta, threshold, minLineLength, maxLineGap });
+    cv.HoughLinesP(morpho, lines, rho, theta, threshold, minLineLength, maxLineGap);
     console.log('lines:', lines);
-
-    let out = new Mat();
-
     cv.cvtColor(morpho, out, cv.COLOR_GRAY2BGR);
-    /*  const buffer = lines.buffer;
-    const array = new Uint32Array(buffer);
-*/
-    dumpMat('lines', lines);
     let i = 0;
-    for(let line of lines.values()) {
-      console.log(`line[${i++}]:`, line);
-      if(i == 10) break;
+    for(let elem of lines.values()) {
+      const line = new Line(elem);
+      draw.line(out, ...line.toPoints(), [0, 255, 0], 1, cv.LINE_AA);
+      ++i;
     }
+    lines.resize(0);
+    detectCircles();
+//    cv.imshow('lines', out);
   }
+  detectLines();
 
+  cv.createTrackbar('rho', 'lines', 0, 100, value =>
+    detectLines(value / 10 + 1, (cv.getTrackbarPos('theta', 'lines') * cv.CV_PI) / 360, cv.getTrackbarPos('threshold', 'lines'), cv.getTrackbarPos('minLineLength', 'lines'))
+  );
+  cv.createTrackbar('theta', 'lines', 2, 240, value =>
+    detectLines(cv.getTrackbarPos('rho', 'lines') / 10 + 1, (value * cv.CV_PI) / 360, cv.getTrackbarPos('threshold', 'lines'), cv.getTrackbarPos('minLineLength', 'lines'))
+  );
+  cv.createTrackbar('threshold', 'lines', 30, 100, value =>
+    detectLines(cv.getTrackbarPos('rho', 'lines') / 10 + 1, (cv.getTrackbarPos('theta', 'lines') * cv.CV_PI) / 360, value, cv.getTrackbarPos('minLineLength', 'lines'))
+  );
+  cv.createTrackbar('minLineLength', 'lines', 1, 1000, value =>
+    detectLines(cv.getTrackbarPos('rho', 'lines') / 10 + 1, (cv.getTrackbarPos('theta', 'lines') * cv.CV_PI) / 360, cv.getTrackbarPos('threshold', 'lines'), value)
+  );
+   function detectCircles(method = cv.HOUGH_GRADIENT, dp = 1, minDist = gray.rows/16, param1 = 100, param2 = 30) {
+   //  morpho.xor([255, 255, 255, 0], morpho)
+   cv.medianBlur(gray,gray,5);
+   cv.HoughCircles(gray, circles, method, dp, minDist, param1, param2, 1, 30);
+    let i = 0;
+    console.log('circles:', circles);
+    for(let [x, y, r] of circles) {
+      let p = new Point(x, y);
+      draw.circle(out, p, r, [255, 0, 255], 3, cv.LINE_AA);
+      console.log('elem:', p.toString(), r);
+    }
+    cv.imshow('lines', out);
+  }
+  detectCircles();
   let key;
 
   while((key = cv.waitKey(0))) {
@@ -246,8 +250,7 @@ async function main(...args) {
 
   let globalThis = Util.getGlobalObject();
   const moduleNames = ['Rect', 'Point', 'Size', 'Line', 'Mat', 'Contour', 'PointIterator', 'Draw'];
-  for(let moduleName of moduleNames)
-    Util.tryCatch(() => eval(`globalThis[moduleName] = ${moduleName};`));
+  for(let moduleName of moduleNames) Util.tryCatch(() => eval(`globalThis[moduleName] = ${moduleName};`));
   let ctors = new Map(moduleNames.map(name => [name, globalThis[name]]));
   console.log('globalThis:', Object.keys(globalThis));
   console.log('modules:', inspect(ctors));
@@ -320,30 +323,22 @@ async function main(...args) {
     }
     i = 0;
     for(let [key, value] of row0.entries()) {
-      console.log(`row0.entries() #${i++}`,
-        key,
-        '0x' + ('00000000' + value.toString(16)).slice(-8)
-      );
+      console.log(`row0.entries() #${i++}`, key, '0x' + ('00000000' + value.toString(16)).slice(-8));
     }
     i = 0;
     for(let [key, value] of col0.entries()) {
-      console.log(`col0.entries() #${i++}`,
-        key,
-        '0x' + ('00000000' + value.toString(16)).slice(-8)
-      );
+      console.log(`col0.entries() #${i++}`, key, '0x' + ('00000000' + value.toString(16)).slice(-8));
     }
     let range = mat.rowRange(2, 8);
     i = 0;
     for(let [[row, col], value] of range) {
-      console.log(`range[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`
-      );
+      console.log(`range[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
     }
     i = 0;
     if(globalThis.Rect) {
       let roi = mat.roi(rr);
       for(let [[row, col], value] of roi) {
-        console.log(`roi[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`
-        );
+        console.log(`roi[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
       }
       for(let r = 0; r < roi.rows; r++)
         for(let c = 0; c < roi.cols; c++) {
@@ -354,8 +349,7 @@ async function main(...args) {
     }
     i = 0;
     for(let [[row, col], value] of mat) {
-      console.log(`mat[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`
-      );
+      console.log(`mat[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
     }
     let fmat = new Mat(new Size(10, 10), Mat.CV_32FC1);
     const values = Util.repeat(fmat.rows * fmat.cols, 0.5);

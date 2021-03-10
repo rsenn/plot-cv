@@ -11,12 +11,15 @@ js_line_read(JSContext* ctx, JSValueConst line, T* out) {
   if(JS_IsArray(ctx, line)) {
     js_array_to(ctx, line, out->array);
     return 1;
-  } else {
-    x1 = JS_GetPropertyStr(ctx, line, "x1");
-    y1 = JS_GetPropertyStr(ctx, line, "y1");
-    x2 = JS_GetPropertyStr(ctx, line, "x2");
-    y2 = JS_GetPropertyStr(ctx, line, "y2");
+  } else if(js_is_iterable(ctx, line)) {
+    if(js_iterable_to(ctx, line, out->array) == 4)
+      return 1;
   }
+  x1 = JS_GetPropertyStr(ctx, line, "x1");
+  y1 = JS_GetPropertyStr(ctx, line, "y1");
+  x2 = JS_GetPropertyStr(ctx, line, "x2");
+  y2 = JS_GetPropertyStr(ctx, line, "y2");
+
   if(JS_IsNumber(x1) && JS_IsNumber(y1) && JS_IsNumber(x2) && JS_IsNumber(y2)) {
     ret &= js_number_read(ctx, x1, &out->array[0]);
     ret &= js_number_read(ctx, y1, &out->array[1]);

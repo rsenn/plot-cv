@@ -250,14 +250,9 @@ struct jsrt {
 
   const_value prototype(const_value obj) const;
 
-  void property_names(const_value obj,
-                      std::vector<const char*>& out,
-                      bool enum_only = false,
-                      bool recursive = false) const;
+  void property_names(const_value obj, std::vector<const char*>& out, bool enum_only = false, bool recursive = false) const;
 
-  std::vector<const char*> property_names(const_value obj,
-                                          bool enum_only = true,
-                                          bool recursive = true) const;
+  std::vector<const char*> property_names(const_value obj, bool enum_only = true, bool recursive = true) const;
 
   void dump_error() const;
 
@@ -677,10 +672,7 @@ jsrt::set_property(const_value obj, const jsatom& atom, value val, int flags) {
 
 template<class T>
 inline jsrt::value
-vector_to_js(jsrt& js,
-             const T& v,
-             size_t n,
-             const std::function<jsrt::value(const typename T::value_type&)>& fn) {
+vector_to_js(jsrt& js, const T& v, size_t n, const std::function<jsrt::value(const typename T::value_type&)>& fn) {
   using std::placeholders::_1;
   jsrt::value ret = js.create_array(n);
   for(uint32_t i = 0; i < n; i++) js.set_property(ret, i, fn(v[i]));

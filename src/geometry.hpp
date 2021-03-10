@@ -75,8 +75,7 @@ inline std::basic_string<Char>
 to_string(const cv::Point_<T>& point) {
   const int pad = 3;
   std::basic_ostringstream<Char> os;
-  os << "{x:" << std::setfill(' ') << std::setw(pad) << point.x << ",y:" << std::setfill(' ')
-     << std::setw(pad) << point.y << "}";
+  os << "{x:" << std::setfill(' ') << std::setw(pad) << point.x << ",y:" << std::setfill(' ') << std::setw(pad) << point.y << "}";
   return os.str();
 }
 
@@ -123,8 +122,7 @@ simplify_polyline(const std::vector<cv::Point_<T>>& points) {
   // coord_pointer(&points.data()[points.size()]), 20, output); auto end =
   // psimpl.radial_distance(coord_pointer(points.data()),
   // coord_pointer(&points.data()[points.size()]), 10, output);
-  auto end = psimpl.Opheim(
-      coord_pointer(points.data()), coord_pointer(&points.data()[points.size()]), 4, 30, output);
+  auto end = psimpl.Opheim(coord_pointer(points.data()), coord_pointer(&points.data()[points.size()]), 4, 30, output);
   size_t outn = std::distance(output, end) / 2;
 
   // logfile << "simplification 1:" << ((double)points.size() / outn) <<
@@ -149,10 +147,9 @@ angle(cv::Point_<T> pt1, cv::Point_<T> pt2, cv::Point_<T> pt0) {
 template<class To, class From>
 inline void
 convert_points(const typename point_list<From>::type& from, typename point_list<To>::type& to) {
-  std::transform(from.cbegin(),
-                 from.cend(),
-                 std::back_inserter(to),
-                 [](cv::Point_<From> p) -> cv::Point_<To> { return cv::Point_<To>(p.x, p.y); });
+  std::transform(from.cbegin(), from.cend(), std::back_inserter(to), [](cv::Point_<From> p) -> cv::Point_<To> {
+    return cv::Point_<To>(p.x, p.y);
+  });
 }
 
 template<class To, class From>

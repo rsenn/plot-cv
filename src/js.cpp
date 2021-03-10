@@ -172,11 +172,7 @@ jsrt::property_names(const_value obj, std::vector<const char*>& out, bool enum_o
   while(JS_IsObject(obj)) {
     props = nullptr;
     nprops = 0;
-    JS_GetOwnPropertyNames(ctx,
-                           &props,
-                           &nprops,
-                           obj,
-                           JS_GPN_STRING_MASK | JS_GPN_SYMBOL_MASK | (enum_only ? JS_GPN_ENUM_ONLY : 0));
+    JS_GetOwnPropertyNames(ctx, &props, &nprops, obj, JS_GPN_STRING_MASK | JS_GPN_SYMBOL_MASK | (enum_only ? JS_GPN_ENUM_ONLY : 0));
     for(uint32_t i = 0; i < nprops; i++) {
       const char* s = JS_AtomToCString(ctx, props[i].atom);
       out.push_back(s);

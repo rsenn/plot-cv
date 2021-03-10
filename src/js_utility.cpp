@@ -156,10 +156,7 @@ js_tick_meter_init(JSContext* ctx, JSModuleDef* m) {
     JS_NewClass(JS_GetRuntime(ctx), js_tick_meter_class_id, &js_tick_meter_class);
 
     tick_meter_proto = JS_NewObject(ctx);
-    JS_SetPropertyFunctionList(ctx,
-                               tick_meter_proto,
-                               js_tick_meter_proto_funcs,
-                               countof(js_tick_meter_proto_funcs));
+    JS_SetPropertyFunctionList(ctx, tick_meter_proto, js_tick_meter_proto_funcs, countof(js_tick_meter_proto_funcs));
     JS_SetClassProto(ctx, js_tick_meter_class_id, tick_meter_proto);
 
     tick_meter_class = JS_NewCFunction2(ctx, js_tick_meter_ctor, "TickMeter", 0, JS_CFUNC_constructor, 0);

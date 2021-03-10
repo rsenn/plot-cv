@@ -229,6 +229,18 @@ public:
     return n;
   }
 
+  template<class Iterator>
+  static JSValue
+  from_sequence(JSContext* ctx, const Iterator& start, const Iterator& end) {
+    JSValue arr = JS_NewArray(ctx);
+    size_t i = 0;
+    for(Iterator it = start; it != end; ++it) {
+      JS_SetPropertyUint32(ctx, arr, i, js_point_wrap(ctx, *it));
+      ++i;
+    }
+    return arr;
+  }
+
   template<size_t N> static int64_t to_array(JSContext* ctx, JSValueConst arr, std::array<cv::Mat, N>& out);
 };
 
@@ -402,37 +414,42 @@ public:
     return n;
   }
 
-  template<size_t N>
-  static int64_t to_array(JSContext* ctx, JSValueConst arr, std::array<std::vector<T>, N>& out);
+  template<size_t N> static int64_t to_array(JSContext* ctx, JSValueConst arr, std::array<std::vector<T>, N>& out);
 };
 
 template<class T>
-inline int64_t
+static inline int64_t
 js_array_to(JSContext* ctx, JSValueConst arr, std::vector<T>& out) {
   return js_array<T>::to_vector(ctx, arr, out);
 }
 
 template<class T, size_t N>
-inline int64_t
+static inline int64_t
 js_array_to(JSContext* ctx, JSValueConst arr, std::array<T, N>& out) {
   typedef js_array<T> array_type;
   return array_type::to_array(ctx, arr, out);
 }
 
 template<class T>
-inline int64_t
+static inline int64_t
 js_array_to(JSContext* ctx, JSValueConst arr, cv::Scalar_<T>& out) {
   return js_array<T>::to_scalar(ctx, arr, out);
 }
 
 template<class Iterator>
-inline std::enable_if_t<Iterator::value_type, JSValue>
+static inline std::enable_if_t<std::is_pointer<Iterator>::value, JSValue>
+js_array_from(JSContext* ctx, const Iterator& start, const Iterator& end) {
+  return js_array<typename std::remove_pointer<Iterator>::type>::from_sequence(ctx, start, end);
+}
+
+template<class Iterator>
+static inline std::enable_if_t<Iterator::value_type, JSValue>
 js_array_from(JSContext* ctx, const Iterator& start, const Iterator& end) {
   return js_array<typename Iterator::value_type>::from_sequence(ctx, start, end);
 }
 
 template<class Container>
-inline JSValue
+static inline JSValue
 js_array_from(JSContext* ctx, const Container& v) {
   return js_array<typename Container::value_type>::from_sequence(ctx, v.begin(), v.end());
 }

@@ -3,6 +3,7 @@
 #include "js_alloc.hpp"
 #include "js_line.hpp"
 #include "js_array.hpp"
+#include "js_typed_array.hpp"
 #include "util.hpp"
 
 #if defined(JS_LINE_MODULE) || defined(quickjs_line_EXPORTS)
@@ -19,45 +20,45 @@ JSClassID js_line_class_id = 0;
 VISIBLE JSValue
 js_line_new(JSContext* ctx, double x1, double y1, double x2, double y2) {
   JSValue ret;
-  JSLineData<double>* s;
+  JSLineData<double>* ln;
 
   if(JS_IsUndefined(line_proto))
     js_line_init(ctx, NULL);
 
   ret = JS_NewObjectProtoClass(ctx, line_proto, js_line_class_id);
 
-  s = js_allocate<JSLineData<double>>(ctx);
+  ln = js_allocate<JSLineData<double>>(ctx);
 
-  s->vec[0] = x1;
-  s->vec[1] = y1;
-  s->vec[2] = x2;
-  s->vec[3] = y2;
+  ln->vec[0] = x1;
+  ln->vec[1] = y1;
+  ln->vec[2] = x2;
+  ln->vec[3] = y2;
 
-  JS_SetOpaque(ret, s);
+  JS_SetOpaque(ret, ln);
   return ret;
 }
 
 static JSValue
 js_line_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
-  JSLineData<double>* s;
+  JSLineData<double>* ln;
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
-  auto args = argument_range(argc, argv);
+  auto args = argument_range(std::min(4, argc), argv);
 
-  s = js_allocate<JSLineData<double>>(ctx);
-  if(!s)
+  ln = js_allocate<JSLineData<double>>(ctx);
+  if(!ln)
     return JS_EXCEPTION;
 
-  if(std::ranges::all_of(args, JS_IsNumber)) {
-    if(JS_ToFloat64(ctx, &s->array[0], argv[0]))
+  if(argc >= 4 && std::ranges::all_of(args, JS_IsNumber)) {
+    if(JS_ToFloat64(ctx, &ln->array[0], argv[0]))
       goto fail;
-    if(JS_ToFloat64(ctx, &s->array[1], argv[1]))
+    if(JS_ToFloat64(ctx, &ln->array[1], argv[1]))
       goto fail;
-    if(JS_ToFloat64(ctx, &s->array[2], argv[2]))
+    if(JS_ToFloat64(ctx, &ln->array[2], argv[2]))
       goto fail;
-    if(JS_ToFloat64(ctx, &s->array[3], argv[3]))
+    if(JS_ToFloat64(ctx, &ln->array[3], argv[3]))
       goto fail;
-  } else if(!js_line_read(ctx, argv[0], s)) {
+  } else if(!js_line_read(ctx, argv[0], ln)) {
     return JS_ThrowTypeError(ctx, "argument 1 is not a valid line");
   }
   /* using new_target to get the prototype is necessary when the
@@ -69,10 +70,10 @@ js_line_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* ar
   JS_FreeValue(ctx, proto);
   if(JS_IsException(obj))
     goto fail;
-  JS_SetOpaque(obj, s);
+  JS_SetOpaque(obj, ln);
   return obj;
 fail:
-  js_deallocate(ctx, s);
+  js_deallocate(ctx, ln);
   JS_FreeValue(ctx, obj);
   return JS_EXCEPTION;
 }
@@ -84,77 +85,77 @@ js_line_data(JSContext* ctx, JSValueConst val) {
 
 void
 js_line_finalizer(JSRuntime* rt, JSValue val) {
-  JSLineData<double>* s = static_cast<JSLineData<double>*>(JS_GetOpaque(val, js_line_class_id));
-  /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
-  js_deallocate(rt, s);
+  JSLineData<double>* ln = static_cast<JSLineData<double>*>(JS_GetOpaque(val, js_line_class_id));
+  /* Note: 'ln' can be NULL in case JS_SetOpaque() was not called */
+  js_deallocate(rt, ln);
 }
 
 static JSValue
 js_line_get_xy12(JSContext* ctx, JSValueConst this_val, int magic) {
   JSValue ret = JS_UNDEFINED;
-  JSLineData<double>* s = static_cast<JSLineData<double>*>(JS_GetOpaque2(ctx, this_val, js_line_class_id));
-  if(!s)
+  JSLineData<double>* ln = static_cast<JSLineData<double>*>(JS_GetOpaque2(ctx, this_val, js_line_class_id));
+  if(!ln)
     ret = JS_EXCEPTION;
   else if(magic == 0)
-    ret = JS_NewFloat64(ctx, s->vec[0]);
+    ret = JS_NewFloat64(ctx, ln->vec[0]);
   else if(magic == 1)
-    ret = JS_NewFloat64(ctx, s->vec[1]);
+    ret = JS_NewFloat64(ctx, ln->vec[1]);
   else if(magic == 2)
-    ret = JS_NewFloat64(ctx, s->vec[2]);
+    ret = JS_NewFloat64(ctx, ln->vec[2]);
   else if(magic == 3)
-    ret = JS_NewFloat64(ctx, s->vec[3]);
+    ret = JS_NewFloat64(ctx, ln->vec[3]);
   return ret;
 }
 
 static JSValue
 js_line_get_ab(JSContext* ctx, JSValueConst this_val, int magic) {
   JSValue ret = JS_UNDEFINED;
-  JSLineData<double>* s = static_cast<JSLineData<double>*>(JS_GetOpaque2(ctx, this_val, js_line_class_id));
-  if(!s)
+  JSLineData<double>* ln = static_cast<JSLineData<double>*>(JS_GetOpaque2(ctx, this_val, js_line_class_id));
+  if(!ln)
     ret = JS_EXCEPTION;
   else if(magic == 0)
-    ret = js_point_new(ctx, s->vec[0], s->vec[1]);
+    ret = js_point_new(ctx, ln->vec[0], ln->vec[1]);
   else if(magic == 1)
-    ret = js_point_new(ctx, s->vec[2], s->vec[3]);
+    ret = js_point_new(ctx, ln->vec[2], ln->vec[3]);
 
   return ret;
 }
 
 static JSValue
 js_line_set_xy12(JSContext* ctx, JSValueConst this_val, JSValueConst val, int magic) {
-  JSLineData<double>* s = static_cast<JSLineData<double>*>(JS_GetOpaque2(ctx, this_val, js_line_class_id));
+  JSLineData<double>* ln = static_cast<JSLineData<double>*>(JS_GetOpaque2(ctx, this_val, js_line_class_id));
   double v;
-  if(!s)
+  if(!ln)
     return JS_EXCEPTION;
   if(JS_ToFloat64(ctx, &v, val))
     return JS_EXCEPTION;
   if(magic == 0)
-    s->vec[0] = v;
+    ln->vec[0] = v;
   else if(magic == 1)
-    s->vec[1] = v;
+    ln->vec[1] = v;
   else if(magic == 2)
-    s->vec[2] = v;
+    ln->vec[2] = v;
   else if(magic == 3)
-    s->vec[3] = v;
+    ln->vec[3] = v;
 
   return JS_UNDEFINED;
 }
 
 static JSValue
 js_line_set_ab(JSContext* ctx, JSValueConst this_val, JSValueConst val, int magic) {
-  JSLineData<double>* s = static_cast<JSLineData<double>*>(JS_GetOpaque2(ctx, this_val, js_line_class_id));
+  JSLineData<double>* ln = static_cast<JSLineData<double>*>(JS_GetOpaque2(ctx, this_val, js_line_class_id));
   JSPointData<double> pt = js_point_get(ctx, val);
 
-  if(!s)
+  if(!ln)
     return JS_EXCEPTION;
 
   if(magic == 0) {
-    s->vec[0] = pt.x;
-    s->vec[1] = pt.y;
+    ln->vec[0] = pt.x;
+    ln->vec[1] = pt.y;
 
   } else if(magic == 1) {
-    s->vec[2] = pt.x;
-    s->vec[3] = pt.y;
+    ln->vec[2] = pt.x;
+    ln->vec[3] = pt.y;
   }
 
   return JS_UNDEFINED;
@@ -162,31 +163,22 @@ js_line_set_ab(JSContext* ctx, JSValueConst this_val, JSValueConst val, int magi
 
 static JSValue
 js_line_points(JSContext* ctx, JSValueConst line, int argc, JSValueConst* argv) {
-  JSLineData<double>* s = static_cast<JSLineData<double>*>(JS_GetOpaque2(ctx, line, js_line_class_id));
-  JSValue obj = JS_EXCEPTION, p;
-  int i;
-  obj = JS_NewArray(ctx);
-  if(!JS_IsException(obj)) {
-    std::pair<JSPointData<double>, JSPointData<double>> points = s->pt;
-    JS_SetPropertyUint32(ctx, obj, 0, js_point_new(ctx, points.first.x, points.first.y));
-    JS_SetPropertyUint32(ctx, obj, 1, js_point_new(ctx, points.second.x, points.second.y));
-  }
-  return obj;
+  JSLineData<double>* ln;
+
+  if(!(ln = static_cast<JSLineData<double>*>(JS_GetOpaque2(ctx, line, js_line_class_id))))
+    return JS_EXCEPTION;
+
+  return js_array_from(ctx, ln->points);
 }
 
 static JSValue
 js_line_toarray(JSContext* ctx, JSValueConst line, int argc, JSValueConst* arg) {
-  JSLineData<double>* s;
-  JSValue ret = JS_EXCEPTION;
+  JSLineData<double>* ln;
 
-  if((s = static_cast<JSLineData<double>*>(JS_GetOpaque2(ctx, line, js_line_class_id))) == nullptr)
-    return ret;
+  if(!(ln = static_cast<JSLineData<double>*>(JS_GetOpaque2(ctx, line, js_line_class_id))))
+    return JS_EXCEPTION;
 
-  if(!JS_IsException((ret = JS_NewArray(ctx)))) {
-    int i;
-    for(i = 0; i < 4; i++) JS_SetPropertyUint32(ctx, ret, i, JS_NewFloat64(ctx, s->array[i]));
-  }
-  return ret;
+  return js_typedarray_from(ctx, ln->array);
 }
 
 static JSValue
@@ -207,7 +199,7 @@ js_call_method(JSContext* ctx, JSValue obj, const char* name, int argc, JSValueC
 
 static JSValue
 js_line_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
-  JSLineData<double>* s = static_cast<JSLineData<double>*>(JS_GetOpaque2(ctx, this_val, js_line_class_id));
+  JSLineData<double>* ln = static_cast<JSLineData<double>*>(JS_GetOpaque2(ctx, this_val, js_line_class_id));
   JSValue method, ret = JS_UNDEFINED;
 
   if(magic & JS_LINE_AS_POINTS)
@@ -244,7 +236,7 @@ js_line_symbol_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValue
 
 static JSValue
 js_line_from(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSLineData<double> line= {0,0,0,0};
+  JSLineData<double> line = {0, 0, 0, 0};
   JSValue ret = JS_EXCEPTION;
 
   if(JS_IsString(argv[0])) {
@@ -257,9 +249,9 @@ js_line_from(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
       line.array[i] = strtod(str, &endptr);
       str = endptr;
     }
-   } else {
-     js_line_read(ctx, argv[0], &line);
-   }
+  } else {
+    js_line_read(ctx, argv[0], &line);
+  }
   if(line.array[2] > 0 && line.array[3] > 0)
     ret = js_line_new(ctx, line.array[0], line.array[1], line.array[2], line.array[3]);
   return ret;

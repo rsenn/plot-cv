@@ -10,12 +10,7 @@
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module_size
 #endif
 
-enum js_size_fit_t {
-  JS_SIZE_FIT_WIDTH = 1,
-  JS_SIZE_FIT_HEIGHT = 2,
-  JS_SIZE_FIT_INSIDE,
-  JS_SIZE_FIT_OUTSIDE
-};
+enum js_size_fit_t { JS_SIZE_FIT_WIDTH = 1, JS_SIZE_FIT_HEIGHT = 2, JS_SIZE_FIT_INSIDE, JS_SIZE_FIT_OUTSIDE };
 
 extern "C" {
 JSValue size_proto = JS_UNDEFINED, size_class = JS_UNDEFINED;
@@ -218,8 +213,7 @@ js_size_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
     height = s->height;
   }
 
-  os << "{ width: " COLOR_YELLOW << width << COLOR_NONE ", height: " COLOR_YELLOW << height
-     << COLOR_NONE " }";
+  os << "{ width: " COLOR_YELLOW << width << COLOR_NONE ", height: " COLOR_YELLOW << height << COLOR_NONE " }";
 
   return JS_NewString(ctx, os.str().c_str());
 }
@@ -364,28 +358,27 @@ JSClassDef js_size_class = {
     .finalizer = js_size_finalizer,
 };
 
-const JSCFunctionListEntry js_size_proto_funcs[] = {
-    JS_CGETSET_ENUMERABLE_DEF("width", js_size_get, js_size_set, 0),
-    JS_CGETSET_ENUMERABLE_DEF("height", js_size_get, js_size_set, 1),
-    JS_CGETSET_ENUMERABLE_DEF("aspect", js_size_get, 0, 2),
-    JS_CGETSET_ENUMERABLE_DEF("empty", js_size_get, 0, 3),
-    JS_CGETSET_ENUMERABLE_DEF("area", js_size_get, 0, 4),
-    JS_CFUNC_MAGIC_DEF("equals", 1, js_size_funcs, 0),
-    JS_CFUNC_MAGIC_DEF("round", 0, js_size_funcs, 1),
-    JS_CFUNC_MAGIC_DEF("toObject", 0, js_size_funcs, 2),
-    JS_CFUNC_MAGIC_DEF("toArray", 0, js_size_funcs, 3),
-    JS_CFUNC_MAGIC_DEF("fitWidth", 0, js_size_funcs, 4),
-    JS_CFUNC_MAGIC_DEF("fitHeight", 0, js_size_funcs, 5),
-    JS_CFUNC_MAGIC_DEF("fitInside", 0, js_size_funcs, 6),
-    JS_CFUNC_MAGIC_DEF("fitOutside", 0, js_size_funcs, 7),
-    JS_CFUNC_DEF("inspect", 0, js_size_inspect),
-    JS_CFUNC_DEF("toString", 0, js_size_to_string),
-    JS_CFUNC_DEF("toSource", 0, js_size_to_source),
-    JS_CFUNC_DEF("mul", 1, js_size_mul),
-    JS_CFUNC_DEF("div", 1, js_size_div),
-    JS_ALIAS_DEF("values", "toArray"),
-    JS_CFUNC_DEF("[Symbol.iterator]", 0, js_size_symbol_iterator),
-    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Size", JS_PROP_CONFIGURABLE)};
+const JSCFunctionListEntry js_size_proto_funcs[] = {JS_CGETSET_ENUMERABLE_DEF("width", js_size_get, js_size_set, 0),
+                                                    JS_CGETSET_ENUMERABLE_DEF("height", js_size_get, js_size_set, 1),
+                                                    JS_CGETSET_ENUMERABLE_DEF("aspect", js_size_get, 0, 2),
+                                                    JS_CGETSET_ENUMERABLE_DEF("empty", js_size_get, 0, 3),
+                                                    JS_CGETSET_ENUMERABLE_DEF("area", js_size_get, 0, 4),
+                                                    JS_CFUNC_MAGIC_DEF("equals", 1, js_size_funcs, 0),
+                                                    JS_CFUNC_MAGIC_DEF("round", 0, js_size_funcs, 1),
+                                                    JS_CFUNC_MAGIC_DEF("toObject", 0, js_size_funcs, 2),
+                                                    JS_CFUNC_MAGIC_DEF("toArray", 0, js_size_funcs, 3),
+                                                    JS_CFUNC_MAGIC_DEF("fitWidth", 0, js_size_funcs, 4),
+                                                    JS_CFUNC_MAGIC_DEF("fitHeight", 0, js_size_funcs, 5),
+                                                    JS_CFUNC_MAGIC_DEF("fitInside", 0, js_size_funcs, 6),
+                                                    JS_CFUNC_MAGIC_DEF("fitOutside", 0, js_size_funcs, 7),
+                                                    JS_CFUNC_DEF("inspect", 0, js_size_inspect),
+                                                    JS_CFUNC_DEF("toString", 0, js_size_to_string),
+                                                    JS_CFUNC_DEF("toSource", 0, js_size_to_source),
+                                                    JS_CFUNC_DEF("mul", 1, js_size_mul),
+                                                    JS_CFUNC_DEF("div", 1, js_size_div),
+                                                    JS_ALIAS_DEF("values", "toArray"),
+                                                    JS_CFUNC_DEF("[Symbol.iterator]", 0, js_size_symbol_iterator),
+                                                    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Size", JS_PROP_CONFIGURABLE)};
 
 const JSCFunctionListEntry js_size_static_funcs[] = {JS_CFUNC_DEF("from", 1, js_size_from)};
 

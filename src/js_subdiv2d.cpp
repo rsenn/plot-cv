@@ -221,37 +221,35 @@ JSClassDef js_subdiv2d_class = {
     .finalizer = js_subdiv2d_finalizer,
 };
 
-const JSCFunctionListEntry js_subdiv2d_proto_funcs[] = {
-    JS_CFUNC_MAGIC_DEF("edgeDst", 1, js_subdiv2d_method, 0),
-    JS_CFUNC_MAGIC_DEF("edgeOrg", 1, js_subdiv2d_method, 1),
-    JS_CFUNC_MAGIC_DEF("findNearest", 1, js_subdiv2d_method, 2),
-    JS_CFUNC_MAGIC_DEF("getEdge", 2, js_subdiv2d_method, 3),
-    JS_CFUNC_MAGIC_DEF("getEdgeList", 1, js_subdiv2d_method, 4),
-    JS_CFUNC_MAGIC_DEF("getLeadingEdgeList", 1, js_subdiv2d_method, 5),
-    JS_CFUNC_MAGIC_DEF("getTriangleList", 1, js_subdiv2d_method, 6),
-    JS_CFUNC_MAGIC_DEF("getVertex", 1, js_subdiv2d_method, 7),
-    JS_CFUNC_MAGIC_DEF("getVoronoiFacetList", 3, js_subdiv2d_method, 8),
-    JS_CFUNC_MAGIC_DEF("initDelaunay", 1, js_subdiv2d_method, 9),
-    JS_CFUNC_MAGIC_DEF("insert", 1, js_subdiv2d_method, 10),
-    JS_CFUNC_MAGIC_DEF("locate", 3, js_subdiv2d_method, 11),
-    JS_CFUNC_MAGIC_DEF("nextEdge", 1, js_subdiv2d_method, 12),
-    JS_CFUNC_MAGIC_DEF("rotateEdge", 2, js_subdiv2d_method, 13),
-    JS_CFUNC_MAGIC_DEF("symEdge", 1, js_subdiv2d_method, 14),
-    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Subdiv2D", JS_PROP_CONFIGURABLE)};
+const JSCFunctionListEntry js_subdiv2d_proto_funcs[] = {JS_CFUNC_MAGIC_DEF("edgeDst", 1, js_subdiv2d_method, 0),
+                                                        JS_CFUNC_MAGIC_DEF("edgeOrg", 1, js_subdiv2d_method, 1),
+                                                        JS_CFUNC_MAGIC_DEF("findNearest", 1, js_subdiv2d_method, 2),
+                                                        JS_CFUNC_MAGIC_DEF("getEdge", 2, js_subdiv2d_method, 3),
+                                                        JS_CFUNC_MAGIC_DEF("getEdgeList", 1, js_subdiv2d_method, 4),
+                                                        JS_CFUNC_MAGIC_DEF("getLeadingEdgeList", 1, js_subdiv2d_method, 5),
+                                                        JS_CFUNC_MAGIC_DEF("getTriangleList", 1, js_subdiv2d_method, 6),
+                                                        JS_CFUNC_MAGIC_DEF("getVertex", 1, js_subdiv2d_method, 7),
+                                                        JS_CFUNC_MAGIC_DEF("getVoronoiFacetList", 3, js_subdiv2d_method, 8),
+                                                        JS_CFUNC_MAGIC_DEF("initDelaunay", 1, js_subdiv2d_method, 9),
+                                                        JS_CFUNC_MAGIC_DEF("insert", 1, js_subdiv2d_method, 10),
+                                                        JS_CFUNC_MAGIC_DEF("locate", 3, js_subdiv2d_method, 11),
+                                                        JS_CFUNC_MAGIC_DEF("nextEdge", 1, js_subdiv2d_method, 12),
+                                                        JS_CFUNC_MAGIC_DEF("rotateEdge", 2, js_subdiv2d_method, 13),
+                                                        JS_CFUNC_MAGIC_DEF("symEdge", 1, js_subdiv2d_method, 14),
+                                                        JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Subdiv2D", JS_PROP_CONFIGURABLE)};
 
-const JSCFunctionListEntry js_subdiv2d_static_funcs[] = {
-    JS_PROP_INT32_DEF("PTLOC_ERROR", cv::Subdiv2D::PTLOC_ERROR, 0),
-    JS_PROP_INT32_DEF("PTLOC_OUTSIDE_RECT", cv::Subdiv2D::PTLOC_OUTSIDE_RECT, 0),
-    JS_PROP_INT32_DEF("PTLOC_INSIDE", cv::Subdiv2D::PTLOC_INSIDE, 0),
-    JS_PROP_INT32_DEF("PTLOC_VERTEX", cv::Subdiv2D::PTLOC_VERTEX, 0),
+const JSCFunctionListEntry js_subdiv2d_static_funcs[] = {JS_PROP_INT32_DEF("PTLOC_ERROR", cv::Subdiv2D::PTLOC_ERROR, 0),
+                                                         JS_PROP_INT32_DEF("PTLOC_OUTSIDE_RECT", cv::Subdiv2D::PTLOC_OUTSIDE_RECT, 0),
+                                                         JS_PROP_INT32_DEF("PTLOC_INSIDE", cv::Subdiv2D::PTLOC_INSIDE, 0),
+                                                         JS_PROP_INT32_DEF("PTLOC_VERTEX", cv::Subdiv2D::PTLOC_VERTEX, 0),
 
-    JS_PROP_INT32_DEF("NEXT_AROUND_ORG", cv::Subdiv2D::NEXT_AROUND_ORG, 0),
-    JS_PROP_INT32_DEF("NEXT_AROUND_DST", cv::Subdiv2D::NEXT_AROUND_DST, 0),
-    JS_PROP_INT32_DEF("PREV_AROUND_ORG", cv::Subdiv2D::PREV_AROUND_ORG, 0),
-    JS_PROP_INT32_DEF("PREV_AROUND_DST", cv::Subdiv2D::PREV_AROUND_DST, 0),
-    JS_PROP_INT32_DEF("NEXT_AROUND_LEFT", cv::Subdiv2D::NEXT_AROUND_LEFT, 0),
-    JS_PROP_INT32_DEF("NEXT_AROUND_RIGHT", cv::Subdiv2D::NEXT_AROUND_RIGHT, 0),
-    JS_PROP_INT32_DEF("PREV_AROUND_LEFT", cv::Subdiv2D::PREV_AROUND_LEFT, 0)};
+                                                         JS_PROP_INT32_DEF("NEXT_AROUND_ORG", cv::Subdiv2D::NEXT_AROUND_ORG, 0),
+                                                         JS_PROP_INT32_DEF("NEXT_AROUND_DST", cv::Subdiv2D::NEXT_AROUND_DST, 0),
+                                                         JS_PROP_INT32_DEF("PREV_AROUND_ORG", cv::Subdiv2D::PREV_AROUND_ORG, 0),
+                                                         JS_PROP_INT32_DEF("PREV_AROUND_DST", cv::Subdiv2D::PREV_AROUND_DST, 0),
+                                                         JS_PROP_INT32_DEF("NEXT_AROUND_LEFT", cv::Subdiv2D::NEXT_AROUND_LEFT, 0),
+                                                         JS_PROP_INT32_DEF("NEXT_AROUND_RIGHT", cv::Subdiv2D::NEXT_AROUND_RIGHT, 0),
+                                                         JS_PROP_INT32_DEF("PREV_AROUND_LEFT", cv::Subdiv2D::PREV_AROUND_LEFT, 0)};
 
 int
 js_subdiv2d_init(JSContext* ctx, JSModuleDef* m) {
@@ -262,19 +260,13 @@ js_subdiv2d_init(JSContext* ctx, JSModuleDef* m) {
     JS_NewClass(JS_GetRuntime(ctx), js_subdiv2d_class_id, &js_subdiv2d_class);
 
     subdiv2d_proto = JS_NewObject(ctx);
-    JS_SetPropertyFunctionList(ctx,
-                               subdiv2d_proto,
-                               js_subdiv2d_proto_funcs,
-                               countof(js_subdiv2d_proto_funcs));
+    JS_SetPropertyFunctionList(ctx, subdiv2d_proto, js_subdiv2d_proto_funcs, countof(js_subdiv2d_proto_funcs));
     JS_SetClassProto(ctx, js_subdiv2d_class_id, subdiv2d_proto);
 
     subdiv2d_class = JS_NewCFunction2(ctx, js_subdiv2d_ctor, "Subdiv2D", 2, JS_CFUNC_constructor, 0);
     /* set proto.constructor and ctor.prototype */
     JS_SetConstructor(ctx, subdiv2d_class, subdiv2d_proto);
-    JS_SetPropertyFunctionList(ctx,
-                               subdiv2d_class,
-                               js_subdiv2d_static_funcs,
-                               countof(js_subdiv2d_static_funcs));
+    JS_SetPropertyFunctionList(ctx, subdiv2d_class, js_subdiv2d_static_funcs, countof(js_subdiv2d_static_funcs));
   }
 
   if(m)

@@ -266,8 +266,7 @@ public:
       return std::string();
 
     std::stringstream ss;
-    ss << attribute("stroke-width", translateScale(width, layout))
-       << attribute("stroke", color.toString(layout));
+    ss << attribute("stroke-width", translateScale(width, layout)) << attribute("stroke", color.toString(layout));
     return ss.str();
   }
 
@@ -318,9 +317,8 @@ public:
   std::string
   toString(Layout const& layout) const {
     std::stringstream ss;
-    ss << elemStart("circle") << attribute("cx", translateX(center.x, layout))
-       << attribute("cy", translateY(center.y, layout)) << attribute("r", translateScale(radius, layout))
-       << fill.toString(layout) << stroke.toString(layout) << emptyElemEnd();
+    ss << elemStart("circle") << attribute("cx", translateX(center.x, layout)) << attribute("cy", translateY(center.y, layout))
+       << attribute("r", translateScale(radius, layout)) << fill.toString(layout) << stroke.toString(layout) << emptyElemEnd();
     return ss.str();
   }
   void
@@ -336,20 +334,14 @@ private:
 
 class Elipse : public Shape {
 public:
-  Elipse(Point const& center,
-         double width,
-         double height,
-         Fill const& fill = Fill(),
-         Stroke const& stroke = Stroke())
+  Elipse(Point const& center, double width, double height, Fill const& fill = Fill(), Stroke const& stroke = Stroke())
       : Shape(fill, stroke), center(center), radius_width(width / 2), radius_height(height / 2) {}
   std::string
   toString(Layout const& layout) const {
     std::stringstream ss;
-    ss << elemStart("ellipse") << attribute("cx", translateX(center.x, layout))
-       << attribute("cy", translateY(center.y, layout))
-       << attribute("rx", translateScale(radius_width, layout))
-       << attribute("ry", translateScale(radius_height, layout)) << fill.toString(layout)
-       << stroke.toString(layout) << emptyElemEnd();
+    ss << elemStart("ellipse") << attribute("cx", translateX(center.x, layout)) << attribute("cy", translateY(center.y, layout))
+       << attribute("rx", translateScale(radius_width, layout)) << attribute("ry", translateScale(radius_height, layout))
+       << fill.toString(layout) << stroke.toString(layout) << emptyElemEnd();
     return ss.str();
   }
   void
@@ -366,18 +358,13 @@ private:
 
 class Rectangle : public Shape {
 public:
-  Rectangle(Point const& edge,
-            double width,
-            double height,
-            Fill const& fill = Fill(),
-            Stroke const& stroke = Stroke())
+  Rectangle(Point const& edge, double width, double height, Fill const& fill = Fill(), Stroke const& stroke = Stroke())
       : Shape(fill, stroke), edge(edge), width(width), height(height) {}
   std::string
   toString(Layout const& layout) const {
     std::stringstream ss;
-    ss << elemStart("rect") << attribute("x", translateX(edge.x, layout))
-       << attribute("y", translateY(edge.y, layout)) << attribute("width", translateScale(width, layout))
-       << attribute("height", translateScale(height, layout)) << fill.toString(layout)
+    ss << elemStart("rect") << attribute("x", translateX(edge.x, layout)) << attribute("y", translateY(edge.y, layout))
+       << attribute("width", translateScale(width, layout)) << attribute("height", translateScale(height, layout)) << fill.toString(layout)
        << stroke.toString(layout) << emptyElemEnd();
     return ss.str();
   }
@@ -400,10 +387,9 @@ public:
   std::string
   toString(Layout const& layout) const {
     std::stringstream ss;
-    ss << elemStart("line") << attribute("x1", translateX(start_point.x, layout))
-       << attribute("y1", translateY(start_point.y, layout))
-       << attribute("x2", translateX(end_point.x, layout))
-       << attribute("y2", translateY(end_point.y, layout)) << stroke.toString(layout) << emptyElemEnd();
+    ss << elemStart("line") << attribute("x1", translateX(start_point.x, layout)) << attribute("y1", translateY(start_point.y, layout))
+       << attribute("x2", translateX(end_point.x, layout)) << attribute("y2", translateY(end_point.y, layout)) << stroke.toString(layout)
+       << emptyElemEnd();
     return ss.str();
   }
   void
@@ -435,8 +421,7 @@ public:
     ss << elemStart("polygon");
 
     ss << "points=\"";
-    for(unsigned i = 0; i < points.size(); ++i)
-      ss << translateX(points[i].x, layout) << "," << translateY(points[i].y, layout) << " ";
+    for(unsigned i = 0; i < points.size(); ++i) ss << translateX(points[i].x, layout) << "," << translateY(points[i].y, layout) << " ";
     ss << "\" ";
 
     ss << fill.toString(layout) << stroke.toString(layout) << emptyElemEnd();
@@ -471,8 +456,7 @@ public:
     ss << elemStart("polyline");
 
     ss << "points=\"";
-    for(unsigned i = 0; i < points.size(); ++i)
-      ss << translateX(points[i].x, layout) << "," << translateY(points[i].y, layout) << " ";
+    for(unsigned i = 0; i < points.size(); ++i) ss << translateX(points[i].x, layout) << "," << translateY(points[i].y, layout) << " ";
     ss << "\" ";
 
     ss << fill.toString(layout) << stroke.toString(layout) << emptyElemEnd();
@@ -499,9 +483,8 @@ public:
   std::string
   toString(Layout const& layout) const {
     std::stringstream ss;
-    ss << elemStart("text") << attribute("x", translateX(origin.x, layout))
-       << attribute("y", translateY(origin.y, layout)) << fill.toString(layout) << stroke.toString(layout)
-       << font.toString(layout) << ">" << content << elemEnd("text");
+    ss << elemStart("text") << attribute("x", translateX(origin.x, layout)) << attribute("y", translateY(origin.y, layout))
+       << fill.toString(layout) << stroke.toString(layout) << font.toString(layout) << ">" << content << elemEnd("text");
     return ss.str();
   }
   void
@@ -519,9 +502,7 @@ private:
 // Sample charting class.
 class LineChart : public Shape {
 public:
-  LineChart(Dimensions margin = Dimensions(),
-            double scale = 1,
-            Stroke const& axis_stroke = Stroke(.5, Color::Purple))
+  LineChart(Dimensions margin = Dimensions(), double scale = 1, Stroke const& axis_stroke = Stroke(.5, Color::Purple))
       : axis_stroke(axis_stroke), margin(margin), scale(scale) {}
   LineChart&
   operator<<(Polyline const& polyline) {
@@ -584,8 +565,7 @@ private:
 
     // Draw the axis.
     Polyline axis(Color::Transparent, axis_stroke);
-    axis << Point(margin.width, margin.height + height) << Point(margin.width, margin.height)
-         << Point(margin.width + width, margin.height);
+    axis << Point(margin.width, margin.height + height) << Point(margin.width, margin.height) << Point(margin.width + width, margin.height);
 
     return axis.toString(layout);
   }
@@ -616,10 +596,9 @@ public:
     std::stringstream ss;
     ss << "<?xml " << attribute("version", "1.0") << attribute("standalone", "no")
        << "?>\n<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" "
-       << "\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n<svg "
-       << attribute("width", layout.dimensions.width, "px")
-       << attribute("height", layout.dimensions.height, "px")
-       << attribute("xmlns", "http://www.w3.org/2000/svg") << attribute("version", "1.1") << ">\n"
+       << "\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n<svg " << attribute("width", layout.dimensions.width, "px")
+       << attribute("height", layout.dimensions.height, "px") << attribute("xmlns", "http://www.w3.org/2000/svg")
+       << attribute("version", "1.1") << ">\n"
        << body_nodes_str << elemEnd("svg");
     return ss.str();
   }
