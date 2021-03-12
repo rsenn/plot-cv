@@ -2,6 +2,16 @@
 #define JS_SIZE_HPP
 
 #include "jsbindings.hpp"
+extern "C" {
+
+VISIBLE JSValue js_size_new(JSContext* ctx, double w, double h);
+VISIBLE JSValue js_size_wrap(JSContext* ctx, const JSSizeData<double>& size);
+VISIBLE JSSizeData<double>* js_size_data(JSContext*, JSValueConst val);
+
+int js_size_init(JSContext*, JSModuleDef* m);
+JSModuleDef* js_init_size_module(JSContext*, const char* module_name);
+void js_size_constructor(JSContext* ctx, JSValue parent, const char* name);
+}
 
 template<class T>
 static inline int

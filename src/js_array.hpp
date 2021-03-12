@@ -2,6 +2,9 @@
 #define JS_ARRAY_HPP
 
 #include <type_traits>
+#include "js_mat.hpp"
+#include "js_point.hpp"
+#include "js_contour.hpp"
 
 static inline int64_t
 js_array_length(JSContext* ctx, const JSValueConst& arr) {

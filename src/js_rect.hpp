@@ -3,6 +3,16 @@
 
 #include "jsbindings.hpp"
 
+extern "C" {
+
+VISIBLE JSRectData<double>* js_rect_data(JSContext*, JSValueConst val);
+VISIBLE JSValue js_rect_wrap(JSContext*, const JSRectData<double>&);
+int js_rect_init(JSContext*, JSModuleDef*);
+JSModuleDef* js_init_rect_module(JSContext*, const char* module_name);
+
+void js_rect_constructor(JSContext* ctx, JSValue parent, const char* name);
+}
+
 template<class T>
 static inline int
 js_rect_read(JSContext* ctx, JSValueConst rect, JSRectData<T>* out) {

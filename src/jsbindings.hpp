@@ -20,6 +20,7 @@ typedef struct {
 
 typedef cv::Rect2d JSRectDataD;
 typedef cv::Mat JSMatData;
+typedef cv::UMat JSUMatData;
 typedef cv::Size2d JSSizeDataD;
 
 template<class T> using JSPointData = cv::Point_<T>;
@@ -93,43 +94,11 @@ extern "C" {
 int js_draw_functions(JSContext* ctx, JSValue parent);
 int js_draw_init(JSContext*, JSModuleDef*);
 
-VISIBLE JSValue js_point_new(JSContext*, double x, double y);
-VISIBLE JSValue js_point_wrap(JSContext*, const JSPointData<double>&);
-VISIBLE JSPointData<double>* js_point_data(JSContext*, JSValueConst val);
-
-int js_point_init(JSContext*, JSModuleDef* m);
-void js_point_constructor(JSContext* ctx, JSValue parent, const char* name);
-
-JSModuleDef* js_init_point_module(JSContext*, const char* module_name);
-
-VISIBLE JSValue js_size_new(JSContext* ctx, double w, double h);
-VISIBLE JSValue js_size_wrap(JSContext* ctx, const JSSizeData<double>& size);
-VISIBLE JSSizeData<double>* js_size_data(JSContext*, JSValueConst val);
-
-int js_size_init(JSContext*, JSModuleDef* m);
-JSModuleDef* js_init_size_module(JSContext*, const char* module_name);
-void js_size_constructor(JSContext* ctx, JSValue parent, const char* name);
-
-VISIBLE JSRectData<double>* js_rect_data(JSContext*, JSValueConst val);
-VISIBLE JSValue js_rect_wrap(JSContext*, const JSRectData<double>&);
-int js_rect_init(JSContext*, JSModuleDef*);
-JSModuleDef* js_init_rect_module(JSContext*, const char* module_name);
-
-void js_rect_constructor(JSContext* ctx, JSValue parent, const char* name);
-
 VISIBLE JSValue js_line_new(JSContext* ctx, double x1, double y1, double x2, double y2);
 
 int js_point_iterator_init(JSContext*, JSModuleDef* m);
 JSModuleDef* js_init_point_iterator_module(JSContext*, const char* module_name);
 void js_point_iterator_constructor(JSContext* ctx, JSValue parent, const char* name);
-
-VISIBLE JSContourData<double>* js_contour_data(JSContext*, JSValueConst val);
-void js_contour_finalizer(JSRuntime* rt, JSValue val);
-
-JSValue js_contour_to_string(JSContext*, JSValueConst this_val, int argc, JSValueConst* argv);
-int js_contour_init(JSContext*, JSModuleDef*);
-JSModuleDef* js_init_contour_module(JSContext* ctx, const char* module_name);
-void js_contour_constructor(JSContext* ctx, JSValue parent, const char* name);
 
 JSModuleDef* js_init_module(JSContext* ctx, const char* module_name);
 JSModuleDef* js_init_module_point(JSContext*, const char*);

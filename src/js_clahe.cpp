@@ -1,6 +1,7 @@
 #include "jsbindings.hpp"
 #include "js_size.hpp"
 #include "js_point.hpp"
+#include "js_mat.hpp"
 #include "js_alloc.hpp"
 
 #if defined(JS_CLAHE_MODULE) || defined(quickjs_clahe_EXPORTS)

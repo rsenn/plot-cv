@@ -1,5 +1,6 @@
 #include "jsbindings.hpp"
 #include "js_point.hpp"
+#include "js_mat.hpp"
 #include "js_array.hpp"
 #include "js_rect.hpp"
 

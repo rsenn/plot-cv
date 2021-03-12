@@ -4,6 +4,16 @@
 #include "jsbindings.hpp"
 
 extern "C" JSValue js_point_clone(JSContext* ctx, const JSPointData<double>& point);
+extern "C" {
+VISIBLE JSValue js_point_new(JSContext*, double x, double y);
+VISIBLE JSValue js_point_wrap(JSContext*, const JSPointData<double>&);
+VISIBLE JSPointData<double>* js_point_data(JSContext*, JSValueConst val);
+
+int js_point_init(JSContext*, JSModuleDef* m);
+void js_point_constructor(JSContext* ctx, JSValue parent, const char* name);
+
+JSModuleDef* js_init_point_module(JSContext*, const char* module_name);
+}
 
 template<class T>
 static inline int

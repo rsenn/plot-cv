@@ -2,6 +2,11 @@
 #include "geometry.hpp"
 #include "js.hpp"
 #include "jsbindings.hpp"
+#include "js_point.hpp"
+#include "js_size.hpp"
+#include "js_rect.hpp"
+#include "js_contour.hpp"
+#include "js_mat.hpp"
 #include "quickjs/cutils.h"
 #include "quickjs/quickjs.h"
 

@@ -1,6 +1,8 @@
 #include "jsbindings.hpp"
 #include "js_size.hpp"
 #include "js_point.hpp"
+#include "js_rect.hpp"
+#include "js_mat.hpp"
 #include "js_contour.hpp"
 #include "js_array.hpp"
 #include "js_alloc.hpp"
@@ -262,7 +264,8 @@ js_cv_canny(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv)
   if(argc >= 6)
     L2gradient = JS_ToBool(ctx, argv[5]);
 
-  //std::cerr << "cv::Canny threshold1=" << threshold1 << " threshold2=" << threshold2 << " apertureSize=" << apertureSize << " L2gradient=" << L2gradient << std::endl;
+  // std::cerr << "cv::Canny threshold1=" << threshold1 << " threshold2=" << threshold2 << " apertureSize=" << apertureSize << "
+  // L2gradient=" << L2gradient << std::endl;
 
   cv::Canny(*image, *edges, threshold1, threshold2, apertureSize, L2gradient);
 

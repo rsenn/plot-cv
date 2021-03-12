@@ -1,4 +1,5 @@
 #include "jsbindings.hpp"
+#include "js_mat.hpp"
 #include "js_alloc.hpp"
 
 #if defined(JS_VIDEO_CAPTURE_MODULE) || defined(quickjs_video_capture_EXPORTS)

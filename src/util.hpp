@@ -41,8 +41,10 @@ typedef struct JSMatSizeData {
   uint32_t rows, cols;
 } JSMatSizeData;
 
+
+template<class T>
 static inline JSMatSizeData
-mat_size(const cv::Mat& mat) {
+mat_size(const T& mat) {
   JSMatSizeData ret;
   ret.rows = mat.rows;
   ret.cols = mat.cols;
@@ -59,8 +61,9 @@ mat_offset(const cv::Mat& mat, uint32_t row, uint32_t col) {
   return ptr - base;
 }
 
+template<class T>
 static inline size_t
-mat_channels(const cv::Mat& mat) {
+mat_channels(const T& mat) {
   return mat.elemSize() / mat.elemSize1();
 }
 
