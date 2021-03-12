@@ -75,7 +75,10 @@ async function ImportModule(modulePath, ...args) {
   return await import(modulePath).then(module => {
     done = true;
     module = Object.create(null,
-      Util.getMemberNames(module, Infinity, 0).reduce((acc, item) => ({ ...acc, [item]: { value: module[item], enumerable: true } }), Object.getOwnPropertyDescriptors(module))
+      Util.getMemberNames(module, Infinity, 0).reduce(
+        (acc, item) => ({ ...acc, [item]: { value: module[item], enumerable: true } }),
+        Object.getOwnPropertyDescriptors(module)
+      )
     );
 
     if(!globalThis.modules) globalThis.modules = {};
@@ -116,7 +119,8 @@ async function CommandLine() {
   };
   repl.show = value => {
     if(Util.isArray(value) && value[0]?.kind) console.log(Table(value));
-    else if(typeof value == 'object' && value != null) console.log(inspect(value, { depth: 6, compact: 4, hideKeys: ['loc', 'range'] }));
+    else if(typeof value == 'object' && value != null)
+      console.log(inspect(value, { depth: 6, compact: 4, hideKeys: ['loc', 'range'] }));
     else console.log(value);
   };
   let debugLog = filesystem.fopen('debug.log', 'a');
@@ -125,7 +129,8 @@ async function CommandLine() {
     let s = '';
     for(let arg of args) {
       if(s) s += ' ';
-      if(typeof arg != 'strping' || arg.indexOf('\x1b') == -1) s += inspect(arg, { depth: Infinity, depth: 6, compact: 4 });
+      if(typeof arg != 'strping' || arg.indexOf('\x1b') == -1)
+        s += inspect(arg, { depth: Infinity, depth: 6, compact: 4 });
       else s += arg;
     }
     debugLog.puts(s + '\n');
@@ -164,7 +169,9 @@ function* DirIterator(...args) {
 }
 
 function SelectLocations(node) {
-  let result = deep.select(node, n => ['offset', 'line', 'file'].some(prop => n[prop] !== undefined));
+  let result = deep.select(node, n =>
+    ['offset', 'line', 'file'].some(prop => n[prop] !== undefined)
+  );
   console.log('result:', console.config({ depth: 1 }), result);
   return result;
 }
@@ -172,7 +179,10 @@ function SelectLocations(node) {
 function LocationString(loc) {
   if(typeof loc == 'object' && loc != null) {
     let file = loc.includedFrom ? loc.includedFrom.file : loc.file;
-    if(typeof loc.line == 'number') return `${file ? file + ':' : ''}${loc.line}${typeof loc.col == 'number' ? ':' + loc.col : ''}`;
+    if(typeof loc.line == 'number')
+      return `${file ? file + ':' : ''}${loc.line}${
+        typeof loc.col == 'number' ? ':' + loc.col : ''
+      }`;
     return `${file ? file : ''}@${loc.offset}`;
   }
 }
@@ -186,7 +196,12 @@ function Structs(nodes) {
       //deep.find(node, n => typeof n.line == 'number'),
       new Location(GetLoc(node)),
       ((node.tagUsed ? node.tagUsed + ' ' : '') + (node.name ?? '')).trim(),
-      new Map(node.inner.map((field, i) => (/Attr/.test(field.kind) ? [Symbol(field.kind), field.id] : [field.name || i, (field.type && TypeFactory(field.type)) || field.kind])))
+      new Map(node.inner.map((field, i) =>
+          /Attr/.test(field.kind)
+            ? [Symbol(field.kind), field.id]
+            : [field.name || i, (field.type && TypeFactory(field.type)) || field.kind]
+        )
+      )
     ]);
   /*.map(node => types(node))*/
 }
@@ -239,14 +254,16 @@ function* GenerateInspectStruct(type, members, includes) {
   yield `${type} svar;`;
   yield `int main() {`;
   yield `  printf("${type} - %u\\n", sizeof(svar));`;
-  for(let member of members) yield `  printf(".${member} %u %u\\n", (char*)&svar.${member} - (char*)&svar, sizeof(svar.${member}));`;
+  for(let member of members)
+    yield `  printf(".${member} %u %u\\n", (char*)&svar.${member} - (char*)&svar, sizeof(svar.${member}));`;
   yield `  return 0;`;
   yield `}`;
 }
 
 async function InspectStruct(decl) {
   const include = decl.loc.file.replace(/^\/usr\/include\//, '');
-  const code = [...GenerateInspectStruct(decl.name, [...decl.members.keys()], [include])].join('\n');
+  const code = [...GenerateInspectStruct(decl.name, [...decl.members.keys()], [include])].join('\n'
+  );
   const file = `inspect-${decl.name.replace(/\ /g, '_')}`;
   WriteFile(file + '.c', code);
 
@@ -304,8 +321,19 @@ function* GenerateStructClass(decl, ffiPrefix = '') {
   yield `  static from(address) {\n    let ret = ${ffiPrefix}toArrayBuffer(address, ${offset});\n    return Object.setPrototypeOf(ret, ${className}.prototype);\n  }`;
   yield '';
 
-  yield `  toString() {\n    const { ${fields.join(', ')} } = this;\n    return \`${name} {${[...members]
-    .map(([field, member]) => '\\n\\t.' + field + ' = ' + (member.isPointer() ? '0x' : '') + '${' + field + (member.isPointer() ? '.toString(16)' : '') + '}')
+  yield `  toString() {\n    const { ${fields.join(', ')} } = this;\n    return \`${name} {${[
+    ...members
+  ]
+    .map(([field, member]) =>
+        '\\n\\t.' +
+        field +
+        ' = ' +
+        (member.isPointer() ? '0x' : '') +
+        '${' +
+        field +
+        (member.isPointer() ? '.toString(16)' : '') +
+        '}'
+    )
     .join(',')}\\n}\`;\n  }`;
   yield '}';
 }
@@ -394,7 +422,13 @@ export class FFI_Function {
   }
 
   generate(fp, lib, exp) {
-    return [this.generateDefine(fp, lib), '\n', exp ? 'export ' : '', this.generateCall(), '\n'].join('');
+    return [
+      this.generateDefine(fp, lib),
+      '\n',
+      exp ? 'export ' : '',
+      this.generateCall(),
+      '\n'
+    ].join('');
   }
 
   generateFunction(fp, lib) {
@@ -501,7 +535,10 @@ function ParseECMAScript(file, debug = false) {
   let data = filesystem.readFile(file, 'utf-8');
   let ast, error;
   let parser;
-  globalThis.parser = parser = new ECMAScriptParser(data?.toString ? data.toString() : data, file, debug);
+  globalThis.parser = parser = new ECMAScriptParser(data?.toString ? data.toString() : data,
+    file,
+    debug
+  );
 
   globalThis.ast = ast = parser.parseProgram();
   parser.addCommentsToNodes(ast);
@@ -592,9 +629,12 @@ async function ASTShell(...args) {
   console.log('platform:', platform);
   if(platform == 'quickjs') await import('std').then(module => (globalThis.std = module));
 
-  if(platform == 'node') await import('util').then(module => (globalThis.inspect = module.inspect));
+  if(platform == 'node')
+    await import('util').then(module => (globalThis.inspect = module.inspect));
 
-  (await Util.getPlatform()) == 'quickjs' ? import('deep.so').then(module => (globalThis.deep = module)) : import('./lib/deep.js').then(module => (globalThis.deep = module['default']));
+  (await Util.getPlatform()) == 'quickjs'
+    ? import('deep.so').then(module => (globalThis.deep = module))
+    : import('./lib/deep.js').then(module => (globalThis.deep = module['default']));
 
   base = path.basename(Util.getArgv()[1], /\.[^.]*$/);
   cmdhist = `.${base}-cmdhistory`;
@@ -635,7 +675,10 @@ async function ASTShell(...args) {
       getByIdOrName(name_or_id, pred = n => true) {
         if(typeof name_or_id == 'number') name_or_id = '0x' + name_or_id.toString(16);
 
-        return this.data.inner.find(name_or_id.startsWith('0x') ? node => node.id == name_or_id && pred(node) : node => node.name == name_or_id && pred(node));
+        return this.data.inner.find(name_or_id.startsWith('0x')
+            ? node => node.id == name_or_id && pred(node)
+            : node => node.name == name_or_id && pred(node)
+        );
       },
       getType(name_or_id) {
         const types = this.data.inner.filter(n => /(RecordDecl|TypedefDecl|EnumDecl)/.test(n.kind));
@@ -644,8 +687,12 @@ async function ASTShell(...args) {
         if(typeof name_or_id == 'object' && name_or_id) {
           result = name_or_id;
         } else if(typeof name_or_id == 'string') {
-          let results = types.filter(name_or_id.startsWith('0x') ? node => node.id == name_or_id : node => node.name == name_or_id);
-          if(results.length <= 1 || (idx = results.findIndex(r => r.completeDefinition)) == -1) idx = 0;
+          let results = types.filter(name_or_id.startsWith('0x')
+              ? node => node.id == name_or_id
+              : node => node.name == name_or_id
+          );
+          if(results.length <= 1 || (idx = results.findIndex(r => r.completeDefinition)) == -1)
+            idx = 0;
           result = results[idx];
         } else {
           result = types[name_or_id];

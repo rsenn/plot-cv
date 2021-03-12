@@ -19,6 +19,9 @@ export class Pipeline extends Function {
       }
       return mat;
     };
+    processors = processors.map(processor =>
+      processor instanceof Processor ? processor : Processor(processor)
+    );
     Util.define(self, {
       processors,
       images: new Array(processors.length),
@@ -39,7 +42,7 @@ export class Pipeline extends Function {
   getProcessor(name_or_fn) {
     let index;
     if((index = this.processors.indexOf(name_or_fn)) != -1) return this.processors[index];
-    return this.processors.find(processor => Util.fnName(processor) == name_or_fn);
+    return this.processors.find(processor => processor.name == name_or_fn);
   }
 
   processorIndex(fn) {
@@ -49,11 +52,11 @@ export class Pipeline extends Function {
 
   inputOf(processor) {
     let index = this.processorIndex(processor);
-    return this.images[index];
+    return this.processors[index].in ?? this.images[index];
   }
   outputOf(processor) {
     let index = this.processorIndex(processor);
-    return this.images[index + 1];
+    return this.processors[index].out ?? this.images[index + 1];
   }
 }
 
@@ -65,13 +68,14 @@ export function Processor(fn, ...args) {
     return mat;
   });
 
-  self = function(mat, out, i) {
-    if(!out) {
-      out = mapper(self);
-    }
+  self = function(src, dst, i) {
+    if(!dst) dst = mapper(self);
 
-    fn.call(this, mat, out, ...args);
-    return out;
+    if(!('in' in self)) self.in = src;
+    if(!('out' in self)) self.out = dst;
+
+    fn.call(this, src, dst, ...args);
+    return dst;
   };
   Util.define(self, { name: Util.fnName(fn) });
   Object.setPrototypeOf(self, Processor.prototype);

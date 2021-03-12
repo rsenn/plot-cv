@@ -68,7 +68,6 @@ Object.assign(Hierarchy.prototype, {
     prev(id) { const a = this.index(id); return a[cv.HIER_PREV]; }
   });
 
-
 function SaveConfig(configObj) {
   return filesystem.writeFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'),
     JSON.stringify(configObj, null, 2) + '\n'
@@ -76,7 +75,7 @@ function SaveConfig(configObj) {
 }
 
 function LoadConfig() {
-  let str = std.loadFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'), 'utf-8');
+  let str = filesystem.readFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'), 'utf-8');
   console.log('LoadConfig:', str);
   return JSON.parse(str ?? '{}');
 }
@@ -767,8 +766,8 @@ async function main(...args) {
       let hierObj = new Hierarchy(hier);
 
       console.log('hier', hierObj);
- 
-   /*   contours.forEach((contour, i) => {
+
+      /*   contours.forEach((contour, i) => {
         let p = [...getParents(hierObj, i)];
         let color = palette[p[p.length - 1]];
         drawContour(over, contour, color, +params.lineWidth);
