@@ -232,6 +232,7 @@ async function main(...args) {
     console.log('circles:', circles);
     for(let [x, y, r] of circles) {
       let p = new Point(x, y);
+      draw.circle(out, p, 1, [0, 100, 100], 3, cv.LINE_AA);
       draw.circle(out, p, r, [255, 0, 255], 3, cv.LINE_AA);
       console.log('elem:', p.toString(), r);
     }

@@ -131,13 +131,6 @@ int js_contour_init(JSContext*, JSModuleDef*);
 JSModuleDef* js_init_contour_module(JSContext* ctx, const char* module_name);
 void js_contour_constructor(JSContext* ctx, JSValue parent, const char* name);
 
-VISIBLE JSValue js_mat_new(JSContext*, int, int, int);
-int js_mat_init(JSContext*, JSModuleDef*);
-JSModuleDef* js_init_mat_module(JSContext* ctx, const char* module_name);
-void js_mat_constructor(JSContext* ctx, JSValue parent, const char* name);
-
-VISIBLE JSMatData* js_mat_data(JSContext* ctx, JSValueConst val);
-
 JSModuleDef* js_init_module(JSContext* ctx, const char* module_name);
 JSModuleDef* js_init_module_point(JSContext*, const char*);
 JSModuleDef* js_init_module_point_iterator(JSContext*, const char*);
