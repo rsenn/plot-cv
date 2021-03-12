@@ -1,11 +1,8 @@
 function(DUMP VAR)
   string(REGEX REPLACE "[;\n]" " " A "${ARGV}")
-  message("\nVariable dump of: ${A}\n")
-
   foreach(VAR ${ARGV})
     message("  ${VAR} = ${${VAR}}")
   endforeach(VAR ${ARGV})
-  message("")
 endfunction(DUMP VAR)
 
 function(CANONICALIZE OUTPUT_VAR STR)

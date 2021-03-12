@@ -4,17 +4,37 @@ macro(unset_all)
     unset("${VAR}" CACHE)
   endforeach(VAR ${ARGN})
 endmacro(unset_all)
+function(OPENCV_CHANGE_DIR VAR ACCESS VALUE LIST_FILE STACK)
+  string(REGEX REPLACE "/lib/.*" "" OPENCV_ROOT "${VALUE}")
+  set(OPENCV_PREFIX "${OPENCV_ROOT}" PARENT_SCOPE)
+endfunction(OPENCV_CHANGE_DIR VAR ACCESS VALUE LIST_FILE STACK)
 
 function(OPENCV_CHANGE VAR ACCESS VALUE LIST_FILE STACK)
-
-  if("${VAR}" STREQUAL "OpenCV_Dir" OR "${VAR}" STREQUAL "OPENCV_ROOT")
-    message("VAR ${VAR} changed!!!")
+ 
+      message("VAR ${VAR} changed!!!")
     unset(OPENCV_FOUND CACHE)
     unset(OPENCV_FOUND PARENT_SCOPE)
     unset(OPENCV_CHECKED CACHE)
     unset(OPENCV_CHECKED PARENT_SCOPE)
 
     unset_all(
+      OPENCV_CFLAGS
+      OPENCV_INCLUDEDIR
+      OPENCV_INCLUDE_DIRS
+      OPENCV_LDFLAGS
+      OPENCV_LIBDIR
+      OPENCV_LIBRARIES
+      OPENCV_LIBRARY_DIRS
+      OPENCV_MODULE_NAME
+      OPENCV_PREFIX
+      OPENCV_ROOT
+      OPENCV_STATIC_CFLAGS
+      OPENCV_STATIC_INCLUDE_DIRS
+      OPENCV_STATIC_LDFLAGS
+      OPENCV_STATIC_LIBRARIES
+      OPENCV_STATIC_LIBRARY_DIRS
+      OPENCV_VERSION
+      OPENCV_XFEATURES2D_HPP
       pkgcfg_lib_OPENCV_opencv_aruco
       pkgcfg_lib_OPENCV_opencv_bgsegm
       pkgcfg_lib_OPENCV_opencv_bioinspired
@@ -62,56 +82,60 @@ function(OPENCV_CHANGE VAR ACCESS VALUE LIST_FILE STACK)
       pkgcfg_lib_OPENCV_opencv_viz
       pkgcfg_lib_OPENCV_opencv_ximgproc
       pkgcfg_lib_OPENCV_opencv_xobjdetect
-      pkgcfg_lib_OPENCV_opencv_xphoto)
+      pkgcfg_lib_OPENCV_opencv_xphoto
+      pkgcfg_lib_OPENCV_opencv_alphamat
+      pkgcfg_lib_OPENCV_opencv_gapi
+      pkgcfg_lib_OPENCV_opencv_intensity_transform
+      pkgcfg_lib_OPENCV_opencv_mcc
+      pkgcfg_lib_OPENCV_opencv_rapid
+      pkgcfg_lib_OPENCV_opencv_sfm
+      pkgcfg_lib_OPENCV_opencv_xfeatures2d)
 
-  endif("${VAR}" STREQUAL "OpenCV_Dir" OR "${VAR}" STREQUAL "OPENCV_ROOT")
-endfunction(OPENCV_CHANGE VAR ACCESS VALUE LIST_FILE STACK)
+ endfunction(OPENCV_CHANGE VAR ACCESS VALUE LIST_FILE STACK)
+variable_watch(OpenCV_Dir OPENCV_CHANGE_DIR)
 variable_watch(OpenCV_Dir OPENCV_CHANGE)
-variable_watch(OPENCV_PREFIX OPENCV_CHANGE)
 
-if(NOT OPENCV_ROOT)
-  if(OPENCV_PREFIX)
-    set(OPENCV_ROOT "${OPENCV_PREFIX}")
-  endif(OPENCV_PREFIX)
+if(NOT OPENCV_PREFIX)
   if(OpenCV_Dir)
-    string(REGEX REPLACE "/lib/.*" "" OPENCV_ROOT "${OpenCV_Dir}")
+    set(OPENCV_PREFIX "${OpenCV_Dir}")
   endif(OpenCV_Dir)
-endif(NOT OPENCV_ROOT)
+endif(NOT OPENCV_PREFIX)
 
-message(STATUS "OPENCV_ROOT = ${OPENCV_ROOT}")
+dump(OPENCV_PREFIX)
 
 if(NOT OPENCV_CHECKED)
-  message(STATUS "Finding opencv library")
+  message(CHECK_START "Finding opencv library")
 
-  set(OPENCV_ROOT "${OPENCV_ROOT}" CACHE PATH "OpenCV root dir")
+  set(OPENCV_PREFIX "${OPENCV_PREFIX}" CACHE PATH "OpenCV root dir")
 
-  if(OPENCV_ROOT)
-    list(APPEND CMAKE_PREFIX_PATH "${OPENCV_ROOT}")
-    list(APPEND CMAKE_MODULE_PATH "${OPENCV_ROOT}/lib/cmake/opencv4")
-  endif(OPENCV_ROOT)
+  if(OPENCV_PREFIX)
+    list(APPEND CMAKE_PREFIX_PATH "${OPENCV_PREFIX}")
+    list(APPEND CMAKE_MODULE_PATH "${OPENCV_PREFIX}/lib/cmake/opencv4")
+  endif(OPENCV_PREFIX)
 
-  message("CMAKE_PREFIX_PATH = ${CMAKE_PREFIX_PATH}")
-  message("CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
+dump(CMAKE_PREFIX_PATH CMAKE_MODULE_PATH)
 
   if(NOT OPENCV_FOUND)
-    find_package(OpenCV PATHS
-                 "${OPENCV_ROOT}/lib/cmake/opencv4;${OPENCV_ROOT}/lib/cmake")
+    find_package(
+      OpenCV PATHS
+      "${OPENCV_PREFIX}/lib/cmake/opencv4;${OPENCV_PREFIX}/lib/cmake;${OPENCV_PREFIX}"
+    )
     # message(STATUS "OpenCV_VERSION = ${OpenCV_VERSION}")
-    dump(
-      OpenCV_LIBS
-      OpenCV_INCLUDE_DIRS
-      OpenCV_COMPUTE_CAPABILITIES
-      OpenCV_ANDROID_NATIVE_API_LEVEL
-      OpenCV_VERSION
-      OpenCV_VERSION_MAJOR
-      OpenCV_VERSION_MINOR
-      OpenCV_VERSION_PATCH
-      OpenCV_VERSION_STATUS
-      OpenCV_SHARED
-      OpenCV_INSTALL_PATH
-      OpenCV_LIB_COMPONENTS
-      OpenCV_USE_MANGLED_PATHS)
     if(OpenCV_VERSION)
+
+      set(OPENCV_VERSION "${OpenCV_VERSION}"
+          CACHE PATH "OpenCV version")  
+      set(OPENCV_LIBDIR "${OpenCV_INSTALL_PATH}/lib"
+          CACHE PATH "OpenCV library directory")
+      set(OPENCV_LINK_FLAGS "-Wl,-rpath,${OPENCV_LIBDIR} -L${OPENCV_LIBDIR}" CACHE STRING "OpenCV link flags")
+       set(OPENCV_PREFIX "${OpenCV_INSTALL_PATH}"
+          CACHE PATH "OpenCV install directory")
+      set(OPENCV_INCLUDE_DIRS "${OpenCV_INCLUDE_DIRS}"
+          CACHE PATH "OpenCV include directories")
+      set(OPENCV_LIBRARIES "${OpenCV_LIBS}" CACHE PATH "OpenCV libraries")
+
+        #dump(OpenCV_LIBS OpenCV_INCLUDE_DIRS OpenCV_VERSION OpenCV_SHARED OpenCV_INSTALL_PATH OpenCV_LIB_COMPONENTS)
+        #dump(OPENCV_PREFIX OPENCV_LIBDIR OPENCV_LINK_FLAGS OPENCV_INCLUDE_DIRS OPENCV_LIBRARIES)
       set(OPENCV_FOUND TRUE)
     endif(OpenCV_VERSION)
   endif(NOT OPENCV_FOUND)
@@ -125,67 +149,30 @@ if(NOT OPENCV_CHECKED)
     endif(OPENCV_FOUND)
   endif(NOT OPENCV_FOUND)
 
-  if(NOT OPENCV_FOUND)
-    find_package(OpenCV REQUIRED PATHS ${OPENCV_ROOT} NO_DEFAULT_PATH)
+  if(OPENCV_FOUND OR OPENCV_LIBRARIES)
 
-    if(OPENCV_FOUND)
-      message("OpenCV with find_package")
-    endif(OPENCV_FOUND)
-  endif(NOT OPENCV_FOUND)
+    link_directories(${OPENCV_LIB_DIR})
+    include_directories(${OPENCV_INCLUDE_DIRS})
 
-  if(OPENCV_FOUND OR OpenCV_LIBS)
-    if(NOT OpenCV_LIBS)
-      set(OpenCV_LIBS ${OPENCV_LIBRARIES})
-    endif(NOT OpenCV_LIBS)
-    if(NOT OpenCV_INCLUDE_DIRS)
-      set(OpenCV_INCLUDE_DIRS ${OPENCV_INCLUDE_DIRS})
-    endif(NOT OpenCV_INCLUDE_DIRS)
-    if(NOT OpenCV_INCLUDE_DIR)
-      if(OPENCV_INCLUDEDIR)
-        set(OpenCV_INCLUDE_DIR "${OPENCV_INCLUDEDIR}")
-      else(OPENCV_INCLUDEDIR)
-        list(GET OPENCV_INCLUDE_DIRS 0 OpenCV_INCLUDE_DIR)
-      endif(OPENCV_INCLUDEDIR)
+if(OPENCV_LINK_FLAGS)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OPENCV_LINK_FLAGS}")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${OPENCV_LINK_FLAGS}")
+endif(OPENCV_LINK_FLAGS)
 
-    endif(NOT OpenCV_INCLUDE_DIR)
-    if(NOT OpenCV_LIB_DIR)
-      if(NOT OPENCV_LIBRARY_DIRS)
-        set(OPENCV_LIBRARY_DIRS "")
-      endif(NOT OPENCV_LIBRARY_DIRS)
-      string(REGEX REPLACE ";.*" "" OpenCV_LIB_DIR "${OPENCV_LIBRARY_DIRS}")
-      set(OpenCV_INCLUDE_DIRS ${OPENCV_INCLUDE_DIRS})
-    endif(NOT OpenCV_LIB_DIR)
+    set(CMAKE_INSTALL_RPATH "${OPENCV_LIB_DIR}:${CMAKE_INSTALL_RPATH}")
+    set(CMAKE_BUILD_RPATH "${OPENCV_LIB_DIR}:${CMAKE_BUILD_RPATH}")
+    set(OPENCV_RESULT TRUE)
+    message(CHECK_PASS "found")
 
-    set(OPENCV_RESULT "")
-    set(OPENCV_LIBRARY_DIR "${OpenCV_LIB_DIR}")
-
-    if(OPENCV_VERSION)
-      set(OPENCV_NAME "${OPENCV_VERSION}")
-      set(OPENCV_RESULT "version: ${OPENCV_VERSION}")
-    endif(OPENCV_VERSION)
-
-    if(OpenCV_LIB_DIR)
-      if(NOT OPENCV_NAME)
-        set(OPENCV_NAME "${OpenCV_LIB_DIR}")
-      endif(NOT OPENCV_NAME)
-
-      set(OPENCV_RESULT "${OPENCV_RESULT} directory: ${OpenCV_LIB_DIR}")
-    endif(OpenCV_LIB_DIR)
-
-    link_directories(${OpenCV_LIB_DIR})
-    include_directories(${OpenCV_INCLUDE_DIRS})
-
-    set(CMAKE_INSTALL_RPATH "${OpenCV_LIB_DIR}:${CMAKE_INSTALL_RPATH}")
-    set(CMAKE_BUILD_RPATH "${OpenCV_LIB_DIR}:${CMAKE_BUILD_RPATH}")
-
-    message(STATUS "${OPENCV_RESULT}")
   else(OPENCV_FOUND OR OpenCV_LIBS)
-    message(STATUS "fail")
+    message(CHECK_FAIL "fail")
   endif(OPENCV_FOUND OR OpenCV_LIBS)
 
   if(OPENCV_FOUND)
     message("OpenCV found: ${OPENCV_PREFIX}")
-    set(OPENCV_PREFIX "${OPENCV_PREFIX}" CACHE PATH "OpenCV install prefix")
+    # set(OPENCV_PREFIX "${OPENCV_PREFIX}" CACHE PATH "OpenCV install prefix")
   endif(OPENCV_FOUND)
   set(OPENCV_CHECKED TRUE)
+
+  dump(OPENCV_FOUND OPENCV_INCLUDE_DIRS OPENCV_LIBDIR OPENCV_LINK_FLAGS OPENCV_LIBRARIES)
 endif(NOT OPENCV_CHECKED)

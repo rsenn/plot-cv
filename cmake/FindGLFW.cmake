@@ -36,18 +36,14 @@ if(WIN32)
     DOC "The directory where GLFW/glfw3.h resides")
   if(ARCH STREQUAL "x86")
     find_library(
-      GLFW_LIBRARY
-      NAMES glfw3
+      GLFW_LIBRARY NAMES glfw3
       PATHS ${GLFW_LOCATION}/lib $ENV{GLFW_LOCATION}/lib
-            $ENV{PROGRAMFILES}/GLFW/lib
-      DOC "The GLFW library")
+            $ENV{PROGRAMFILES}/GLFW/lib DOC "The GLFW library")
   else()
     find_library(
-      GLFW_LIBRARY
-      NAMES glfw3
+      GLFW_LIBRARY NAMES glfw3
       PATHS ${GLFW_LOCATION}/lib $ENV{GLFW_LOCATION}/lib
-            $ENV{PROGRAMFILES}/GLFW/lib
-      DOC "The GLFW library")
+            $ENV{PROGRAMFILES}/GLFW/lib DOC "The GLFW library")
   endif()
 endif()
 
@@ -62,14 +58,8 @@ if(${CMAKE_HOST_UNIX})
   find_library(
     GLFW_LIBRARY
     NAMES glfw3 glfw
-    PATHS ${GLFW_LOCATION}/lib
-          $ENV{GLFW_LOCATION}/lib
-          /usr/lib64
-          /usr/lib
-          /usr/local/lib64
-          /usr/local/lib
-          /sw/lib
-          /opt/local/lib
+    PATHS ${GLFW_LOCATION}/lib $ENV{GLFW_LOCATION}/lib /usr/lib64 /usr/lib
+          /usr/local/lib64 /usr/local/lib /sw/lib /opt/local/lib
           /usr/lib/x86_64-linux-gnu
     NO_DEFAULT_PATH
     DOC "The GLFW library")

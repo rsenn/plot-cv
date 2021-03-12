@@ -162,7 +162,6 @@ endif(F_OPT_PIC)
 
 #if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 
-  message("!!!!DEBUG MODE!!!")
   # option(USE_EFENCE "Enable electric fence" OFF)
   set(DEBUG_OUTPUT TRUE CACHE BOOL "Debug output" FORCE)
   set(DEBUG_MAT FALSE CACHE BOOL "Debug cv::Mat" FORCE)
@@ -239,7 +238,7 @@ function(src_program NAME SOURCES)
   string(REGEX REPLACE "/[^ ]*/" "\n  src/" "SOURCES" "${SOURCES}")
   set("${NAME}_SOURCES" ${SRCS})
 
-  message("${NAME}_SOURCES: ${SOURCES}")
+  #message("${NAME}_SOURCES: ${SOURCES}")
   add_executable(${NAME} src/${NAME}.cpp ${${NAME}_SOURCES})
   target_link_libraries(${NAME} ${ARGN})
   target_compile_definitions(${NAME} PRIVATE ${PLOTCV_DEFS})
@@ -269,7 +268,6 @@ endmacro()
 set(QUICKJS_LIBRARY quickjs)
 link_directories(${CMAKE_CURRENT_BINARY_DIR}/quickjs)
 
-message("QUICKJS_LIBRARY: ${QUICKJS_LIBRARY}")
 
 src_program(
   cli
