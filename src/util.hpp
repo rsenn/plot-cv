@@ -37,18 +37,32 @@ join(const Iterator& start, const Iterator& end, const std::string& delim) {
 
 extern "C" void* get_heap_base();
 
-typedef struct JSMatSizeData {
+typedef struct JSMatDimensions {
   uint32_t rows, cols;
-} JSMatSizeData;
-
+} JSMatDimensions;
 
 template<class T>
-static inline JSMatSizeData
-mat_size(const T& mat) {
-  JSMatSizeData ret;
+static inline JSMatDimensions
+mat_dimensions(const T& mat) {
+  JSMatDimensions ret;
   ret.rows = mat.rows;
   ret.cols = mat.cols;
   return ret;
+}
+
+static inline uint8_t*
+mat_ptr(cv::Mat& mat) {
+  return reinterpret_cast<uint8_t*>(mat.ptr());
+}
+
+static inline uint8_t*
+mat_ptr(cv::UMat& mat) {
+  cv::UMatData* u;
+
+  if((u = mat.u))
+    return reinterpret_cast<uint8_t*>(u->data);
+
+  return nullptr;
 }
 
 static inline size_t
@@ -61,14 +75,39 @@ mat_offset(const cv::Mat& mat, uint32_t row, uint32_t col) {
   return ptr - base;
 }
 
+static inline size_t
+mat_offset(const cv::UMat& mat, uint32_t row, uint32_t col) {
+  return (size_t(mat.cols) * row + col) * mat.elemSize();
+}
+
+template<class T>
+static inline T&
+mat_at(cv::Mat& mat, uint32_t row, uint32_t col) {
+  return *mat.ptr<T>(row, col);
+}
+
+template<class T>
+static inline T&
+mat_at(cv::UMat& mat, uint32_t row, uint32_t col) {
+  size_t offs = mat_offset(mat, row, col);
+  return *reinterpret_cast<T*>(mat_ptr(mat) + offs);
+}
+
+template<class T>
+static inline size_t
+mat_size(const T& mat) {
+  return mat.elemSize() * mat.total();
+}
+
 template<class T>
 static inline size_t
 mat_channels(const T& mat) {
   return mat.elemSize() / mat.elemSize1();
 }
 
+template<class T>
 static inline bool
-mat_signed(const cv::Mat& mat) {
+mat_signed(const T& mat) {
   switch(mat.type()) {
     case CV_8S:
     case CV_16S:
@@ -77,8 +116,9 @@ mat_signed(const cv::Mat& mat) {
   }
 }
 
+template<class T>
 static inline bool
-mat_floating(const cv::Mat& mat) {
+mat_floating(const T& mat) {
   switch(mat.type()) {
     case CV_32F:
     case CV_64F: return true;

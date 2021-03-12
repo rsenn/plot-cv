@@ -123,6 +123,7 @@ js_array_from(JSContext* ctx, const T* start, const T* end) {
 struct TypedArrayProps {
   TypedArrayProps(int bsize, bool sig, bool flt) : byte_size(bsize), is_signed(sig), is_floating_point(flt) {}
   TypedArrayProps(const cv::Mat& mat) : byte_size(mat.elemSize1()), is_signed(mat_signed(mat)), is_floating_point(mat_floating(mat)) {}
+  TypedArrayProps(const cv::UMat& mat) : byte_size(mat.elemSize1()), is_signed(mat_signed(mat)), is_floating_point(mat_floating(mat)) {}
 
   int byte_size;
   bool is_signed;

@@ -2,6 +2,7 @@ import { Point } from 'point.so';
 import { Size } from 'size.so';
 import { Rect } from 'rect.so';
 import { Mat } from 'mat.so';
+import { UMat } from 'umat.so';
 import * as cv from 'cv.so';
 import { Line } from 'line.so';
 import { CLAHE } from 'clahe.so';

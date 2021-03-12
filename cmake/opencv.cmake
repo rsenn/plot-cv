@@ -65,36 +65,60 @@ function(OPENCV_CHANGE VAR ACCESS VALUE LIST_FILE STACK)
       pkgcfg_lib_OPENCV_opencv_xphoto)
 
   endif("${VAR}" STREQUAL "OpenCV_Dir" OR "${VAR}" STREQUAL "OPENCV_ROOT")
-endfunction(
-  OPENCV_CHANGE
-  VAR
-  ACCESS
-  VALUE
-  LIST_FILE
-  STACK)
+endfunction(OPENCV_CHANGE VAR ACCESS VALUE LIST_FILE STACK)
 variable_watch(OpenCV_Dir OPENCV_CHANGE)
+variable_watch(OPENCV_PREFIX OPENCV_CHANGE)
 
-if(NOT OPENCV_CHECKED)
-  message(STATUS "Finding opencv library")
-  message("CMAKE_PREFIX_PATH = ${CMAKE_PREFIX_PATH}")
-  message("CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
-
+if(NOT OPENCV_ROOT)
+  if(OPENCV_PREFIX)
+    set(OPENCV_ROOT "${OPENCV_PREFIX}")
+  endif(OPENCV_PREFIX)
   if(OpenCV_Dir)
     string(REGEX REPLACE "/lib/.*" "" OPENCV_ROOT "${OpenCV_Dir}")
   endif(OpenCV_Dir)
+endif(NOT OPENCV_ROOT)
 
-  set(OPENCV_ROOT
-      "${OPENCV_ROOT}"
-      CACHE PATH "OpenCV root dir" FORCE)
+message(STATUS "OPENCV_ROOT = ${OPENCV_ROOT}")
+
+if(NOT OPENCV_CHECKED)
+  message(STATUS "Finding opencv library")
+
+  set(OPENCV_ROOT "${OPENCV_ROOT}" CACHE PATH "OpenCV root dir")
 
   if(OPENCV_ROOT)
     list(APPEND CMAKE_PREFIX_PATH "${OPENCV_ROOT}")
     list(APPEND CMAKE_MODULE_PATH "${OPENCV_ROOT}/lib/cmake/opencv4")
   endif(OPENCV_ROOT)
 
+  message("CMAKE_PREFIX_PATH = ${CMAKE_PREFIX_PATH}")
+  message("CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
+
   if(NOT OPENCV_FOUND)
-    pkg_search_module(OPENCV REQUIRED NO_CMAKE_PATH NO_CMAKE_ENVIRONMENT_PATH
-                      opencv opencv4)
+    find_package(OpenCV PATHS
+                 "${OPENCV_ROOT}/lib/cmake/opencv4;${OPENCV_ROOT}/lib/cmake")
+    # message(STATUS "OpenCV_VERSION = ${OpenCV_VERSION}")
+    dump(
+      OpenCV_LIBS
+      OpenCV_INCLUDE_DIRS
+      OpenCV_COMPUTE_CAPABILITIES
+      OpenCV_ANDROID_NATIVE_API_LEVEL
+      OpenCV_VERSION
+      OpenCV_VERSION_MAJOR
+      OpenCV_VERSION_MINOR
+      OpenCV_VERSION_PATCH
+      OpenCV_VERSION_STATUS
+      OpenCV_SHARED
+      OpenCV_INSTALL_PATH
+      OpenCV_LIB_COMPONENTS
+      OpenCV_USE_MANGLED_PATHS)
+    if(OpenCV_VERSION)
+      set(OPENCV_FOUND TRUE)
+    endif(OpenCV_VERSION)
+  endif(NOT OPENCV_FOUND)
+
+  if(NOT OPENCV_FOUND)
+    set(PKG_CONFIG_USE_CMAKE_PREFIX_PATH TRUE)
+    pkg_search_module(OPENCV REQUIRED opencv opencv4)
 
     if(OPENCV_FOUND)
       message("OpenCV with pkg_search_module")
@@ -161,9 +185,7 @@ if(NOT OPENCV_CHECKED)
 
   if(OPENCV_FOUND)
     message("OpenCV found: ${OPENCV_PREFIX}")
-    set(OPENCV_PREFIX
-        "${OPENCV_PREFIX}"
-        CACHE PATH "OpenCV install prefix" FORCE)
+    set(OPENCV_PREFIX "${OPENCV_PREFIX}" CACHE PATH "OpenCV install prefix")
   endif(OPENCV_FOUND)
   set(OPENCV_CHECKED TRUE)
 endif(NOT OPENCV_CHECKED)
