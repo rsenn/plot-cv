@@ -1265,7 +1265,7 @@ js_umat_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
     if((m = js_umat_data(ctx, it->obj)) == nullptr)
       return JS_EXCEPTION;
 
-    dim = umat_size(*m);
+    dim = mat_size(*m);
 
     /*if(!JS_IsUndefined(it->obj)) {
       if(js_umat_get_wh(ctx, &dim, it->obj))*/
@@ -1288,8 +1288,8 @@ js_umat_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
 
     *pdone = FALSE;
 
-    channels = umat_channels(*m);
-    offset = umat_offset(*m, row, col);
+    channels = mat_channels(*m);
+    offset = mat_offset(*m, row, col);
 
     // printf("channels=%zx row=%u col=%u dim.rows=%u dim.cols=%u\n", channels, row, col, dim.rows,
     // dim.cols);
