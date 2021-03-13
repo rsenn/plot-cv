@@ -106,39 +106,15 @@ async function main(...args) {
 
     nvg.BeginFrame(width, height, 1);
 
-    /*    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture2);
-
-    // Draw a textured quad
-    glBegin(GL_QUADS);
-    glTexCoord2f(0, 0);
-    glVertex3f(0, 0, 0);
-    glTexCoord2f(0, 1);
-    glVertex3f(0, 100, 0);
-    glTexCoord2f(1, 1);
-    glVertex3f(100, 100, 0);
-    glTexCoord2f(1, 0);
-    glVertex3f(100, 0, 0);
-    glEnd();*/
-
     nvg.BeginPath();
     nvg.Rect(10, 10, 200, 200);
-    nvg.StrokeColor({ r: 40, g: 80, b: 20, a: 255 });
+    nvg.StrokeColor(nvg.RGB(255, 128, 0));
+    nvg.StrokeWidth(4);
     nvg.Stroke();
-
+    nvg.FillColor(nvg.RGB(0, 0, 0));
+    nvg.Fill();
 
     nvg.EndFrame();
-/*
-    glDisable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    glPopMatrix();
-
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-
-    glMatrixMode(GL_MODELVIEW);
-    glFlush();*/
 
     window.swapBuffers();
     glfw.poll();
