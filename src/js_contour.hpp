@@ -15,15 +15,12 @@ JSValue js_contour_to_string(JSContext*, JSValueConst this_val, int argc, JSValu
 int js_contour_init(JSContext*, JSModuleDef*);
 JSModuleDef* js_init_contour_module(JSContext* ctx, const char* module_name);
 void js_contour_constructor(JSContext* ctx, JSValue parent, const char* name);
-
-
 };
 
 static inline JSContourData<double>*
 js_contour_data(JSContext* ctx, JSValueConst val) {
   return js_contour_class_id ? static_cast<JSContourData<double>*>(JS_GetOpaque2(ctx, val, js_contour_class_id)) : 0;
 }
-
 
 template<class T>
 static inline JSValue

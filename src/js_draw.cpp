@@ -1,8 +1,10 @@
 #include "jsbindings.hpp"
 #include "js_point.hpp"
 #include "js_mat.hpp"
+#include "js_umat.hpp"
 #include "js_array.hpp"
 #include "js_rect.hpp"
+#include "js_cv.hpp"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -120,6 +122,49 @@ js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
             << " thickness=" << thickness << std::endl;
 
   cv::drawContours(*dst, contours, contourIdx, *reinterpret_cast<cv::Scalar*>(&color), thickness, lineType);
+
+  std::cerr << "draw_contour() ret:" << ret << " color: " << *reinterpret_cast<cv::Scalar*>(&color) << std::endl;
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_draw_contours(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
+  JSInputOutputArray dst;
+  int i = 0, ret = -1;
+  JSContoursData<int> contours;
+  int32_t contourIdx = -1, lineType = cv::LINE_8;
+  JSColorData<double> color;
+  int thickness = 1;
+  bool antialias = true;
+
+  if(js_is_noarray((dst = js_umat_or_mat(ctx, argv[0]))))
+    return JS_EXCEPTION;
+
+  js_array_to(ctx, argv[1], contours);
+
+  js_value_to(ctx, argv[2], contourIdx);
+
+  // js_array<JSContourData<int>>::to_vector(ctx, argv[i], contours);
+
+  if(argc > i && JS_IsNumber(argv[++i])) {
+    JS_ToInt32(ctx, &contourIdx, argv[i]);
+  }
+
+  if(argc > i) {
+    js_color_read(ctx, argv[i], &color);
+    i++;
+  }
+
+  if(argc > i && js.is_number(argv[i]))
+    js.get_number(argv[i++], thickness);
+
+  if(argc > i && JS_IsNumber(argv[++i])) {
+    JS_ToInt32(ctx, &lineType, argv[i]);
+  }
+  std::cerr << "draw_contour() contours.length=" << contours.size() << " contourIdx=" << contourIdx
+            << " thickness=" << thickness << std::endl;
+
+  cv::drawContours(dst, contours, contourIdx, *reinterpret_cast<cv::Scalar*>(&color), thickness, lineType);
 
   std::cerr << "draw_contour() ret:" << ret << " color: " << *reinterpret_cast<cv::Scalar*>(&color) << std::endl;
   return JS_UNDEFINED;

@@ -88,7 +88,6 @@ js_contour_array(JSContext* ctx, JSValueConst this_val) {
   return ret;
 }
 
-
 static JSValue
 js_contour_approxpolydp(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSValue ret = JS_UNDEFINED;
@@ -355,7 +354,6 @@ fail:
   return JS_EXCEPTION;
 }
 
-
 void
 js_contour_finalizer(JSRuntime* rt, JSValue val) {
   JSContourData<double>* s;
@@ -375,7 +373,7 @@ js_contour_fitellipse(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
   double area;
   JSContourData<float> contour, ellipse;
 
-    if(!(v = js_contour_data(ctx, this_val)))
+  if(!(v = js_contour_data(ctx, this_val)))
     return JS_EXCEPTION;
 
   std::transform(v->begin(),
@@ -462,7 +460,7 @@ js_contour_intersectconvex(JSContext* ctx, JSValueConst this_val, int argc, JSVa
   bool handleNested = true;
   JSContourData<float> a, b, intersection;
 
-    if(!(v = js_contour_data(ctx, this_val)))
+  if(!(v = js_contour_data(ctx, this_val)))
     return JS_EXCEPTION;
 
   if(argc > 0) {
@@ -514,7 +512,7 @@ static JSValue
 js_contour_length(JSContext* ctx, JSValueConst this_val) {
   JSContourData<double>* v;
   JSValue ret;
-    if(!(v = js_contour_data(ctx, this_val)))
+  if(!(v = js_contour_data(ctx, this_val)))
     return JS_EXCEPTION;
   ret = JS_NewInt64(ctx, v->size());
   return ret;
@@ -527,8 +525,8 @@ js_contour_minarearect(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
   cv::RotatedRect rr;
 
   JSContourData<float> contour, minarea;
-  
-    if(!(v = js_contour_data(ctx, this_val)))
+
+  if(!(v = js_contour_data(ctx, this_val)))
     return JS_EXCEPTION;
   std::transform(v->begin(),
                  v->end(),
@@ -889,7 +887,7 @@ js_contour_toarray(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
 
   if(!(s = js_contour_data(ctx, this_val)))
     return JS_EXCEPTION;
-size = s->size();
+  size = s->size();
   ret = JS_NewArray(ctx);
 
   for(i = 0; i < size; i++) { JS_SetPropertyUint32(ctx, ret, i, js_point_clone(ctx, (*s)[i])); }
@@ -905,7 +903,7 @@ js_contour_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   int prec = 9;
   int32_t flags;
 
-  if(!(s =  js_contour_data(ctx, this_val)))
+  if(!(s = js_contour_data(ctx, this_val)))
     return JS_EXCEPTION;
 
   if(magic == 1 && !(flags & 0x100))
@@ -1131,5 +1129,4 @@ JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JS_AddModuleExport(ctx, m, "Contour");
   return m;
 }
- 
 }
