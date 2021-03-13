@@ -13,6 +13,9 @@
 #include <iterator>
 #include <ranges>
 #include <array>
+#include <algorithm>
+#include <string>
+#include <cctype>
 
 typedef struct {
   BOOL done;
@@ -349,6 +352,79 @@ js_is_iterable(JSContext* ctx, JSValueConst obj) {
     JS_FreeAtom(ctx, atom);
   }
   return ret;
+}
+
+struct ArrayBufferProps {
+  uint8_t* ptr;
+  size_t len;
+};
+
+static inline BOOL
+js_is_arraybuffer(JSContext* ctx, JSValueConst obj) {
+  JSValue arraybuffer_ctor;
+  BOOL ret = FALSE;
+  arraybuffer_ctor = js_global_get(ctx, "ArrayBuffer");
+  if(JS_IsInstanceOf(ctx, obj, arraybuffer_ctor))
+    ret = TRUE;
+  JS_FreeValue(ctx, arraybuffer_ctor);
+  return ret;
+}
+
+static inline ArrayBufferProps
+js_arraybuffer_props(JSContext* ctx, JSValueConst obj) {
+  uint8_t* ptr;
+  size_t len;
+  ptr = JS_GetArrayBuffer(ctx, &len, obj);
+  return ArrayBufferProps(ptr, len);
+}
+
+static inline std::string
+js_class_name(JSContext* ctx, JSValueConst value) {
+  JSValue proto, ctor;
+  const char* str;
+  const char* name = 0;
+  std::string ret;
+  int namelen;
+  proto = JS_GetPrototype(ctx, value);
+  ctor = JS_GetPropertyStr(ctx, proto, "constructor");
+  if((str = JS_ToCString(ctx, ctor))) {
+    if(!strncmp(str, "function ", 9)) {
+      name = str + 9;
+      namelen = strchr(str + 9, '(') - name;
+      ret = std::string(name, namelen);
+    }
+  }
+  if(!name) {
+    if(str)
+      JS_FreeCString(ctx, str);
+    if((str = JS_ToCString(ctx, JS_GetPropertyStr(ctx, ctor, "name"))))
+      ret = std::string(str);
+  }
+  if(str)
+    JS_FreeCString(ctx, str);
+  return ret;
+}
+
+static inline bool
+js_is_typedarray(JSContext* ctx, JSValueConst obj) {
+  std::string class_name = js_class_name(ctx, obj);
+  char* start = &class_name[0];
+  char* end = &class_name[class_name.size()];
+  bool is_signed = true;
+
+  if(start < end && *start == 'U') {
+    start++;
+    is_signed = false;
+    *start = toupper(*start);
+  }
+
+  char* num_start = std::find_if(start, end, &::isdigit);
+  char* num_end = std::find_if_not(num_start, end, &::isdigit);
+  char* next;
+  const auto bits = strtoul(num_start, &next, 10);
+
+  assert(next == num_end);
+  return (!strncmp(start, "Int", 3) || !strncmp(start, "Float", 5)) && !strncmp(num_end, "Array", 5) && (bits == 64 || bits == 32 || bits == 16 || bits == 8);
 }
 
 static inline JSValue

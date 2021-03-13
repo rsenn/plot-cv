@@ -3,6 +3,7 @@
 
 #include <type_traits>
 #include <cstdint>
+#include <opencv2/core/traits.hpp>
 #include "util.hpp"
 #include "jsbindings.hpp"
 
@@ -120,10 +121,11 @@ js_array_from(JSContext* ctx, const T* start, const T* end) {
   return JS_CallConstructor(ctx, ctor, 1, args);
 }
 
-struct TypedArrayProps {
-  TypedArrayProps(int bsize, bool sig, bool flt) : byte_size(bsize), is_signed(sig), is_floating_point(flt) {}
-  TypedArrayProps(const cv::Mat& mat) : byte_size(mat.elemSize1()), is_signed(mat_signed(mat)), is_floating_point(mat_floating(mat)) {}
-  TypedArrayProps(const cv::UMat& mat) : byte_size(mat.elemSize1()), is_signed(mat_signed(mat)), is_floating_point(mat_floating(mat)) {}
+struct TypedArrayType {
+  TypedArrayType(int bsize, bool sig, bool flt) : byte_size(bsize), is_signed(sig), is_floating_point(flt) {}
+  TypedArrayType(const cv::Mat& mat) : byte_size(mat.elemSize1()), is_signed(mat_signed(mat)), is_floating_point(mat_floating(mat)) {}
+  TypedArrayType(const cv::UMat& mat) : byte_size(mat.elemSize1()), is_signed(mat_signed(mat)), is_floating_point(mat_floating(mat)) {}
+  TypedArrayType(int32_t cvId) : byte_size(1 << (cvId >> 1)), is_signed(cvId < CV_32F ? cvId & 1 : 0), is_floating_point(cvId >= CV_32F) {}
 
   int byte_size;
   bool is_signed;
@@ -143,6 +145,43 @@ struct TypedArrayProps {
     os << "Array";
     return os.str();
   }
+
+  int32_t
+  id() const {
+    if(is_floating_point)
+      return int32_t(byte_size == 8 ? CV_64F : CV_32F);
+
+    switch(byte_size) {
+      case 1: return  int32_t(is_signed ? CV_8S : CV_8U);
+      case 2: return  int32_t(is_signed ? CV_16S : CV_16U);
+      case 4: return  int32_t(is_signed ? CV_32S : CV_32F);
+    }
+    return -1;
+  }
+
+  operator int32_t() const { return id(); }
+};
+
+struct TypedArrayProps {
+  size_t byte_offset, byte_length, bytes_per_element;
+  ArrayBufferProps buffer;
+
+  template<class T>
+  const T*
+  ptr() const {
+    return reinterpret_cast<T*>(buffer.ptr + byte_offset);
+  }
+  template<class T>
+  T*
+  ptr() {
+    return reinterpret_cast<T*>(buffer.ptr + byte_offset);
+  }
+
+  template<class T>
+  size_t
+  size() const {
+    return byte_length / bytes_per_element;
+  }
 };
 
 template<class T> struct TypedArrayTraits {
@@ -156,9 +195,9 @@ template<class T> struct TypedArrayTraits {
   static constexpr bool is_signed = std::is_signed<value_type>::value;
   static constexpr bool is_floating_point = std::is_floating_point<value_type>::value;
 
-  static TypedArrayProps
+  static TypedArrayType
   getProps() {
-    return TypedArrayProps(byte_size, is_signed, is_floating_point);
+    return TypedArrayType(byte_size, is_signed, is_floating_point);
   }
 };
 
@@ -178,7 +217,7 @@ js_typedarray_new(JSContext* ctx, JSValueConst buffer, uint32_t byteOffset, uint
 }
 
 static inline JSValue
-js_typedarray_new(JSContext* ctx, JSValueConst buffer, uint32_t byteOffset, uint32_t length, const TypedArrayProps& props) {
+js_typedarray_new(JSContext* ctx, JSValueConst buffer, uint32_t byteOffset, uint32_t length, const TypedArrayType& props) {
   auto range = js_arraybuffer_range(ctx, buffer);
   assert(byteOffset + length * props.byte_size < range.size());
 
@@ -245,6 +284,42 @@ template<class Container>
 static inline JSValue
 js_typedarray_from(JSContext* ctx, const Container& v, uint32_t byteOffset = 0, uint32_t length = UINT32_MAX) {
   return js_typedarray<typename Container::value_type>::from_sequence(ctx, v.begin(), v.end(), byteOffset);
+}
+
+static inline TypedArrayType
+js_typedarray_type(JSContext* ctx, JSValueConst obj) {
+  std::string class_name = js_class_name(ctx, obj);
+  char* start = &class_name[0];
+  char* end = &class_name[class_name.size()];
+  bool is_signed = true, is_floating_point = false;
+
+  if(start < end && *start == 'U') {
+    start++;
+    is_signed = false;
+    *start = toupper(*start);
+  }
+
+  char* num_start = std::find_if(start, end, &::isdigit);
+  char* num_end = std::find_if_not(num_start, end, &::isdigit);
+  char* next;
+  const auto bits = strtoul(num_start, &next, 10);
+
+  assert(next == num_end);
+  assert(bits == 8 || bits == 16 || bits == 32 || bits == 64);
+
+  is_floating_point = !strncmp(start, "Float", 5);
+
+  return TypedArrayType(bits / 8, is_signed, is_floating_point);
+}
+
+static inline TypedArrayProps
+js_typedarray_props(JSContext* ctx, JSValueConst obj) {
+  JSValue buffer;
+  size_t byte_offset, byte_length, bytes_per_element;
+
+  buffer = JS_GetTypedArrayBuffer(ctx, obj, &byte_offset, &byte_length, &bytes_per_element);
+
+  return TypedArrayProps(byte_offset, byte_length, bytes_per_element, js_arraybuffer_props(ctx, buffer));
 }
 
 #endif /* defined(JS_TYPED_ARRAY_HPP) */

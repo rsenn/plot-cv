@@ -1325,12 +1325,12 @@ js_mat_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueCon
         if(channels == 1)
           return js_mat_get(ctx, it->obj, row, col);
 
-        ret = js_typedarray_new(ctx, it->buf, offset, channels, TypedArrayProps(*m));
+        ret = js_typedarray_new(ctx, it->buf, offset, channels, TypedArrayType(*m));
         break;
       }
 
       case MAT_ITERATOR_ENTRIES: {
-        JSValue value = channels == 1 ? js_mat_get(ctx, it->obj, row, col) : js_typedarray_new(ctx, it->buf, offset, channels, TypedArrayProps(*m));
+        JSValue value = channels == 1 ? js_mat_get(ctx, it->obj, row, col) : js_typedarray_new(ctx, it->buf, offset, channels, TypedArrayType(*m));
         std::array<uint32_t, 2> pos = {row, col};
         std::array<JSValue, 2> entry = {js_array_from(ctx, pos), value};
 

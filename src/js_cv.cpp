@@ -7,6 +7,7 @@
 #include "js_array.hpp"
 #include "js_alloc.hpp"
 #include "js_typed_array.hpp"
+#include "js_cv.hpp"
 #include "geometry.hpp"
 #include "util.hpp"
 #include "../quickjs/cutils.h"
@@ -25,15 +26,6 @@
 enum { DISPLAY_OVERLAY };
 
 static std::vector<cv::String> window_list;
-
-static JSValue
-js_cv_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
-  JSValue obj = JS_UNDEFINED;
-  JSValue proto;
-  JSSizeData<double> size;
-
-  return obj;
-}
 
 static JSValue
 js_cv_gaussian_blur(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
@@ -331,12 +323,12 @@ static JSValue
 js_cv_imwrite(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
 
   const char* filename = JS_ToCString(ctx, argv[0]);
-  cv::Mat* image = js_mat_data(ctx, argv[1]);
+  cv::_InputArray image = js_cv_inputarray(ctx, argv[1]);
 
-  if(image == nullptr)
+  if(image.empty())
     return JS_EXCEPTION;
 
-  cv::imwrite(filename, *image);
+  cv::imwrite(filename, image);
 
   return JS_UNDEFINED;
 }
@@ -344,13 +336,13 @@ js_cv_imwrite(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
 static JSValue
 js_cv_imshow(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
 
-  const char* filename = JS_ToCString(ctx, argv[0]);
-  cv::Mat* image = js_mat_data(ctx, argv[1]);
+  const char* winname = JS_ToCString(ctx, argv[0]);
+  cv::_InputArray image = js_cv_inputarray(ctx, argv[1]);
 
-  if(image == nullptr)
+  if(image.empty())
     return JS_EXCEPTION;
 
-  cv::imshow(filename, *image);
+  cv::imshow(winname, image);
 
   return JS_UNDEFINED;
 }
