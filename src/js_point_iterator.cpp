@@ -38,7 +38,7 @@ js_point_iterator_new(JSContext* ctx, const std::ranges::subrange<JSPointData<do
     goto fail1;
   new(it) JSPointIteratorData();
 
-  it->magic = magic;
+  it->magic = JSPointIteratorMagic(magic);
   it->first = range.begin();
   it->second = range.end();
 

@@ -147,7 +147,7 @@ async function main(...args) {
   let poly = new Contour();
   contour.approxPolyDP(poly, contour.arcLength()*0.02);
 
- console.log("poly.length",poly.length,  [...poly.points()]);
+ console.log("poly.length",poly.length,  [...poly]);
 
 
  //if(poly.length > 10)continue;
