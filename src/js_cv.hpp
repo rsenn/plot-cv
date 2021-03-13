@@ -3,6 +3,7 @@
 
 #include <opencv2/core.hpp>
 #include "jsbindings.hpp"
+#include "js_contour.hpp"
 
 extern "C" JSClassID js_mat_class_id, js_umat_class_id, js_contour_class_id;
 
@@ -17,8 +18,10 @@ js_cv_inputoutputarray(JSContext* ctx, JSValueConst value) {
     return JSInputOutputArray(*mat);
   if((umat = static_cast<cv::UMat*>(JS_GetOpaque(value, js_umat_class_id))))
     return JSInputOutputArray(*umat);
-  if((contour = static_cast<JSContourData<double>*>(JS_GetOpaque(value, js_contour_class_id))))
-    return JSInputOutputArray(*contour);
+  if(js_contour_class_id) {
+    if((contour = static_cast<JSContourData<double>*>(JS_GetOpaque(value, js_contour_class_id))))
+      return JSInputOutputArray(cv::Mat(*contour));
+  }
 
   if(js_is_arraybuffer(ctx, value)) {
     uint8_t* ptr;

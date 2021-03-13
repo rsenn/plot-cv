@@ -55,6 +55,17 @@ js_cv_blur(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) 
 }
 
 static JSValue
+js_cv_bounding_rect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSInputArray input;
+  JSRectData<double> rect;
+
+  input = js_cv_inputoutputarray(ctx, argv[0]);
+
+  rect = cv::boundingRect(input);
+  return js_rect_wrap(ctx, rect);
+}
+
+static JSValue
 js_cv_gaussian_blur(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   cv::Mat* image;
   JSSizeData<double> size;
@@ -1487,6 +1498,7 @@ typedef std::vector<JSCFunctionListEntry> js_function_list_t;
 
 js_function_list_t js_cv_static_funcs{
     JS_CFUNC_DEF("blur", 3, js_cv_blur),
+    JS_CFUNC_DEF("boundingRect", 1, js_cv_bounding_rect),
     JS_CFUNC_DEF("GaussianBlur", 4, js_cv_gaussian_blur),
     JS_CFUNC_DEF("HoughLines", 5, js_cv_hough_lines),
     JS_CFUNC_DEF("HoughLinesP", 5, js_cv_hough_lines_p),
