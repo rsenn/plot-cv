@@ -28,6 +28,33 @@ enum { DISPLAY_OVERLAY };
 static std::vector<cv::String> window_list;
 
 static JSValue
+js_cv_blur(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  cv::Mat* image;
+  JSSizeData<int> size;
+  JSPointData<int> anchor = {-1, -1};
+  double sigmaX, sigmaY = 0;
+  cv::Mat *input, *output;
+  int32_t borderType = cv::BORDER_DEFAULT;
+
+  JSValue ret;
+
+  input = js_mat_data(ctx, argv[0]);
+  output = js_mat_data(ctx, argv[1]);
+
+  if(argc < 3 || input == nullptr || output == nullptr)
+    return JS_EXCEPTION;
+
+  size = js_size_get(ctx, argv[2]);
+
+  if(argc > 3)
+    js_point_read(ctx, argv[3], &anchor);
+
+  cv::blur(*input, *output, size, anchor);
+
+  return JS_UNDEFINED;
+}
+
+static JSValue
 js_cv_gaussian_blur(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   cv::Mat* image;
   JSSizeData<double> size;
@@ -464,9 +491,8 @@ js_cv_normalize(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 static JSValue
 js_cv_add_weighted(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSInputArray a1, a2;
-  JSOutputArray o;
 
-  cv::Mat *src1, *src2, *dst;
+  cv::Mat* dst = nullptr;
   double alpha, beta, gamma;
   int32_t dtype = -1;
 
@@ -479,12 +505,12 @@ js_cv_add_weighted(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
   /*
     src1 = js_mat_data(ctx, argv[0]);
 
-    src2 = js_mat_data(ctx, argv[2]);
-    if(argc >= 6)
-      dst = js_mat_data(ctx, argv[5]);
+    src2 = js_mat_data(ctx, argv[2]);*/
+  if(argc >= 6)
+    dst = js_mat_data(ctx, argv[5]);
 
-    if(src1 == nullptr || src2 == nullptr || dst == nullptr)
-      return JS_EXCEPTION;*/
+  if(dst == nullptr)
+    return JS_EXCEPTION;
 
   if(argc >= 2)
     JS_ToFloat64(ctx, &alpha, argv[1]);
@@ -1460,6 +1486,7 @@ JSClassDef js_cv_class = {.class_name = "cv", .finalizer = js_cv_finalizer};
 typedef std::vector<JSCFunctionListEntry> js_function_list_t;
 
 js_function_list_t js_cv_static_funcs{
+    JS_CFUNC_DEF("blur", 3, js_cv_blur),
     JS_CFUNC_DEF("GaussianBlur", 4, js_cv_gaussian_blur),
     JS_CFUNC_DEF("HoughLines", 5, js_cv_hough_lines),
     JS_CFUNC_DEF("HoughLinesP", 5, js_cv_hough_lines_p),

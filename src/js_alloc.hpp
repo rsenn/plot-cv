@@ -107,4 +107,4 @@ js_deallocate(JSRuntime* rt, T* ptr) {
   js_allocator<T>::deallocate(rt, ptr);
 }
 
-#endif /* defined(JS_ALLOC_H) */
+#endif /* defined(JS_ALLOC_HPP) */

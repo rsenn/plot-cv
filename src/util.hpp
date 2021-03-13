@@ -206,4 +206,10 @@ end(std::vector<T> const& v) {
   return &v[v.size()];
 }
 
-#endif // defined(UTIL_H)
+template<class T, class Container>
+static inline std::ranges::subrange<T>
+range(Container& c) {
+  return std::ranges::subrange<T>(reinterpret_cast<T>(begin(c)), reinterpret_cast<T>(end(c)));
+}
+
+#endif // defined(UTIL_HPP)

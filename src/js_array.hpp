@@ -500,4 +500,4 @@ public:
   }
 };
 
-#endif /* defined(JS_ARRAY_H) */
+#endif /* defined(JS_ARRAY_HPP) */

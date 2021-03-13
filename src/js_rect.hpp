@@ -77,4 +77,4 @@ js_rect_set(JSContext* ctx, JSValue out, double x, double y, double w, double h)
 
 extern "C" int js_rect_init(JSContext*, JSModuleDef*);
 
-#endif /* defined(JS_RECT_H) */
+#endif /* defined(JS_RECT_HPP) */

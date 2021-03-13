@@ -5,6 +5,7 @@
 #include "js_array.hpp"
 #include "js_typed_array.hpp"
 #include "js_alloc.hpp"
+#include "js_point_iterator.hpp"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -15,6 +16,7 @@
 #include "psimpl.hpp"
 
 #include <iomanip>
+#include <ranges>
 
 #if defined(JS_CONTOUR_MODULE) || defined(quickjs_contour_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
@@ -51,22 +53,24 @@ js_contour_new(JSContext* ctx, const JSContourData<double>&& points) {
 static JSValue
 js_contour_buffer(JSContext* ctx, JSValueConst this_val) {
   JSContourData<double>* contour;
-  JSPointData<double>*start, *end;
+  uint8_t *s, *e;
+  std::ranges::subrange<uint8_t*> r;
   JSValue ret = JS_UNDEFINED;
 
   if((contour = js_contour_data(ctx, this_val)) == nullptr)
     return ret;
 
-  start = &(*contour)[0];
-  end = start + contour->size();
-
   JSValue* valptr = static_cast<JSValue*>(js_malloc(ctx, sizeof(JSValue)));
   *valptr = JS_DupValue(ctx, this_val);
 
+  r = range<uint8_t*>(*contour);
+  /*  s = reinterpret_cast<uint8_t*>(begin(*contour));
+    e = reinterpret_cast<uint8_t*>(end(*contour));*/
+
   ret = JS_NewArrayBuffer(
       ctx,
-      reinterpret_cast<uint8_t*>(start),
-      reinterpret_cast<uint8_t*>(end) - reinterpret_cast<uint8_t*>(start),
+      r.begin(),
+      r.size(),
       [](JSRuntime* rt, void* opaque, void* ptr) {
         JS_FreeValueRT(rt, *(JSValue*)opaque);
         js_free_rt(rt, opaque);
@@ -979,40 +983,47 @@ js_contour_rect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 
 static JSValue
 js_contour_get(JSContext* ctx, JSValueConst this_val, int magic) {
-  JSContourData<double>* s = js_contour_data(ctx, this_val);
+  JSContourData<double>* contour = js_contour_data(ctx, this_val);
   JSValue ret = JS_UNDEFINED;
 
   switch(magic) {
     case 0: {
-      JSRectData<double> rect = cv::boundingRect(*s);
+      JSContourData<float> points;
+      JSRectData<float> rect;
+
+      points.resize(contour->size());
+
+      std::copy(contour->begin(), contour->end(), points.begin());
+
+      rect = cv::boundingRect(points);
 
       ret = JS_NewFloat64(ctx, (double)rect.width / rect.height);
       break;
     }
     case 1: {
-      double area = cv::contourArea(*s);
-      JSRectData<double> rect = cv::boundingRect(*s);
+      double area = cv::contourArea(*contour);
+      JSRectData<double> rect = cv::boundingRect(*contour);
 
       ret = JS_NewFloat64(ctx, area / (rect.width * rect.height));
       break;
     }
     case 2: {
-      double area = cv::contourArea(*s);
+      double area = cv::contourArea(*contour);
       JSContourData<double> hull;
-      cv::convexHull(*s, hull);
+      cv::convexHull(*contour, hull);
       double hullArea = cv::contourArea(hull);
 
       ret = JS_NewFloat64(ctx, area / cv::contourArea(hull));
       break;
     }
     case 3: {
-      double area = cv::contourArea(*s);
+      double area = cv::contourArea(*contour);
 
       ret = JS_NewFloat64(ctx, std::sqrt(4 * area / 3.14159265358979323846));
       break;
     }
     case 4: {
-      cv::RotatedRect rect = cv::fitEllipse(*s);
+      cv::RotatedRect rect = cv::fitEllipse(*contour);
 
       ret = JS_NewFloat64(ctx, rect.angle);
       break;
@@ -1030,7 +1041,7 @@ JSValue
 js_contour_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSContourData<double>* s = js_contour_data(ctx, this_val);
 
-  return js_point_iterator_new(ctx, std::make_pair(&(*s)[0], &(*s)[s->size()]), magic);
+  return js_point_iterator_new(ctx, std::make_pair(begin(*s), end(*s)), magic);
 }
 
 const JSCFunctionListEntry js_contour_proto_funcs[] = {
@@ -1042,6 +1053,7 @@ const JSCFunctionListEntry js_contour_proto_funcs[] = {
     JS_CFUNC_DEF("at", 1, js_contour_at),
     JS_CGETSET_DEF("length", js_contour_length, NULL),
     JS_CGETSET_DEF("area", js_contour_area, NULL),
+    JS_CGETSET_DEF("buffer", js_contour_buffer, NULL),
     JS_CGETSET_DEF("array", js_contour_array, NULL),
     JS_CGETSET_MAGIC_DEF("aspectRatio", js_contour_get, NULL, 0),
     JS_CGETSET_MAGIC_DEF("extent", js_contour_get, NULL, 1),
@@ -1143,38 +1155,3 @@ js_contour_constructor(JSContext* ctx, JSValue parent, const char* name) {
   JS_SetPropertyStr(ctx, parent, name ? name : "Contour", contour_class);
 }
 }
-/*
-template<>
-JSValue
-js_contour_new<float>(JSContext* ctx, const JSContourData<float>& points) {
-  JSValue ret;
-  JSContourData<double>* contour;
-
-  ret = JS_NewObjectProtoClass(ctx, contour_proto, js_contour_class_id);
-
-  contour = js_allocate<JSContourData<double>>(ctx);
-
-  contour->resize(points.size());
-
-  transform_points(points.cbegin(), points.cend(), contour->begin());
-
-  JS_SetOpaque(ret, contour);
-  return ret;
-};
-
-template<>
-JSValue
-js_contour_new<double>(JSContext* ctx, const JSContourData<double>& points) {
-  JSValue ret;
-  JSContourData<double>* contour;
-
-  ret = JS_NewObjectProtoClass(ctx, contour_proto, js_contour_class_id);
-
-  contour = js_allocate<JSContourData<double>>(ctx);
-
-  std::copy(points.cbegin(), points.cend(), std::back_inserter(*contour));
-
-  JS_SetOpaque(ret, contour);
-  return ret;
-}
-*/

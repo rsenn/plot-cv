@@ -72,4 +72,4 @@ js_size_get(JSContext* ctx, JSValueConst size) {
 
 extern "C" int js_size_init(JSContext*, JSModuleDef*);
 
-#endif /* defined(JS_SIZE_H) */
+#endif /* defined(JS_SIZE_HPP) */

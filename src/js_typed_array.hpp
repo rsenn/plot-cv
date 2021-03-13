@@ -416,6 +416,12 @@ js_typedarray_inputoutputarray(JSContext* ctx, JSValueConst obj) {
     }*/
     case TYPEDARRAY_FLOAT32: return JSInputOutputArray(props.ptr<float>(), props.size<float>());
     case TYPEDARRAY_FLOAT64: return JSInputOutputArray(props.ptr<double>(), props.size<double>());
+    default: {
+      std::string name = type.constructor_name();
+
+      JS_ThrowTypeError(ctx, "Expected TypedArray %s", name.c_str());
+      break;
+    }
   }
 
   return cv::noArray();

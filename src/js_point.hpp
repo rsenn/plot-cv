@@ -89,4 +89,4 @@ js_is_point(JSContext* ctx, JSValueConst point) {
 
 extern "C" int js_point_init(JSContext*, JSModuleDef*);
 
-#endif /* defined(JS_POINT_H) */
+#endif /* defined(JS_POINT_HPP) */
