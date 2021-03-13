@@ -46,6 +46,32 @@ typedef struct JSMatDimensions {
   operator cv::Size() const { return cv::Size(cols, rows); }
 } JSMatDimensions;
 
+static inline int
+mattype_depth(int type) {
+  return type & 0x7;
+}
+static inline int
+mattype_channels(int type) {
+  return (type >> 3) + 1;
+}
+static inline bool
+mattype_floating(int type) {
+  switch(mattype_depth(type)) {
+    case CV_32F:
+    case CV_64F: return true;
+    default: return false;
+  }
+}
+static inline bool
+mattype_signed(int type) {
+  switch(mattype_depth(type)) {
+    case CV_8S:
+    case CV_16S:
+    case CV_32S: return true;
+    default: return false;
+  }
+}
+
 template<class T>
 static inline JSMatDimensions
 mat_dimensions(const T& mat) {
@@ -105,30 +131,27 @@ mat_size(const T& mat) {
 }
 
 template<class T>
-static inline size_t
+static inline int
+mat_depth(const T& mat) {
+  return mattype_depth(mat.type());
+}
+
+template<class T>
+static inline int
 mat_channels(const T& mat) {
-  return mat.elemSize() / mat.elemSize1();
+  return mattype_channels(mat.type());
 }
 
 template<class T>
 static inline bool
 mat_signed(const T& mat) {
-  switch(mat.type()) {
-    case CV_8S:
-    case CV_16S:
-    case CV_32S: return true;
-    default: return false;
-  }
+  return mattype_signed(mat.type());
 }
 
 template<class T>
 static inline bool
 mat_floating(const T& mat) {
-  switch(mat.type()) {
-    case CV_32F:
-    case CV_64F: return true;
-    default: return false;
-  }
+  return mattype_floating(mat.type());
 }
 
 template<class T>
@@ -164,7 +187,7 @@ static inline T const*
 end(cv::Vec<T, N> const& v) {
   return &v[N];
 }
-
+/*
 template<class T>
 static inline typename T::value_type const*
 begin(const T& obj) {
@@ -186,7 +209,7 @@ static inline typename T::value_type*
 end(T& obj) {
   return obj.end();
 }
-
+*/
 template<class T>
 static inline T*
 begin(std::vector<T>& v) {
@@ -206,6 +229,24 @@ template<class T>
 static inline T const*
 end(std::vector<T> const& v) {
   return &v[v.size()];
+}
+
+static inline uint8_t*
+begin(cv::Mat& mat) {
+  return mat.ptr<uint8_t>();
+}
+static inline uint8_t*
+end(cv::Mat& mat) {
+  return mat.ptr<uint8_t>() + mat_size(mat);
+}
+
+static inline uint8_t const*
+begin(cv::Mat const& mat) {
+  return mat.ptr<uint8_t const>();
+}
+static inline uint8_t const*
+end(cv::Mat const& mat) {
+  return mat.ptr<uint8_t const>() + mat_size(mat);
 }
 
 template<class Container>

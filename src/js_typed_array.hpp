@@ -149,11 +149,12 @@ enum TypedArrayValue {
 struct TypedArrayType {
   TypedArrayType(int bsize, bool sig, bool flt) : byte_size(bsize), is_signed(sig), is_floating_point(flt) {}
   TypedArrayType(const cv::Mat& mat)
-      : byte_size(mat.elemSize1()), is_signed(mat_signed(mat)), is_floating_point(mat.type() >= CV_32F) {}
+      : byte_size(1 << (mat_depth(mat) >> 1)), is_signed(mat_signed(mat)), is_floating_point(mat_floating(mat)) {}
   TypedArrayType(const cv::UMat& mat)
-      : byte_size(mat.elemSize1()), is_signed(mat_signed(mat)), is_floating_point(mat.type() >= CV_32F) {}
+      : byte_size(1 << (mat_depth(mat) >> 1)), is_signed(mat_signed(mat)), is_floating_point(mat_floating(mat)) {}
   TypedArrayType(int32_t cvId)
-      : byte_size(1 << (cvId >> 1)), is_signed(cvId < CV_32F ? cvId & 1 : 0), is_floating_point(cvId >= CV_32F) {}
+      : byte_size(1 << (mattype_depth(cvId) >> 1)), is_signed(mattype_signed(cvId)),
+        is_floating_point(mattype_floating(cvId)) {}
   TypedArrayType(TypedArrayValue i)
       : byte_size(i & TYPEDARRAY_BITS_FIELD), is_signed(!!(i & TYPEDARRAY_SIGNED)),
         is_floating_point(!!(i & TYPEDARRAY_FLOATING_POINT)) {}

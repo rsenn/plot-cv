@@ -552,8 +552,9 @@ js_mat_get(JSContext* ctx, JSValueConst this_val, uint32_t row, uint32_t col) {
   cv::Mat* m = js_mat_data(ctx, this_val);
 
   if(m) {
-    uint32_t bytes = (1 << m->depth()) * m->channels();
+    uint32_t bytes = m->elemSize();
     size_t channels = mat_channels(*m);
+    size_t offset = mat_offset(*m, row, col);
 
     if(channels == 1) {
       switch(m->type()) {
@@ -595,8 +596,13 @@ js_mat_get(JSContext* ctx, JSValueConst this_val, uint32_t row, uint32_t col) {
         }
       }
 
-      return ret;
+    } else {
+      JSValue buffer = js_arraybuffer_from(ctx, begin(*m), end(*m));
+      TypedArrayType type(*m);
+
+      ret = js_typedarray_new(ctx, buffer, offset, channels, type);
     }
+    return ret;
   }
   return JS_UNDEFINED;
 }
