@@ -1041,7 +1041,7 @@ JSValue
 js_contour_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSContourData<double>* s = js_contour_data(ctx, this_val);
 
-  return js_point_iterator_new(ctx, std::make_pair(begin(*s), end(*s)), magic);
+  return js_point_iterator_new(ctx, std::ranges::subrange<JSPointData<double>*>(begin(*s), end(*s)), magic);
 }
 
 const JSCFunctionListEntry js_contour_proto_funcs[] = {

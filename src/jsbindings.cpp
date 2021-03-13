@@ -7,6 +7,7 @@
 #include "js_rect.hpp"
 #include "js_contour.hpp"
 #include "js_mat.hpp"
+#include "js_point_iterator.hpp"
 #include "quickjs/cutils.h"
 #include "quickjs/quickjs.h"
 

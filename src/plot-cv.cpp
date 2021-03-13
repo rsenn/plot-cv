@@ -31,6 +31,7 @@
 #include "psimpl.hpp"
 #include "auto_canny.hpp"
 #include "jsbindings.hpp"
+#include "js_point_iterator.hpp"
 #include "js_contour.hpp"
 
 using std::string;

@@ -2,6 +2,7 @@
 #include "js.hpp"
 #include "js_alloc.hpp"
 #include "js_point.hpp"
+#include "js_point_iterator.hpp"
 #include "quickjs/cutils.h"
 #include "quickjs/quickjs.h"
 
@@ -20,7 +21,7 @@ JSValue point_iterator_proto = JS_UNDEFINED, point_iterator_class = JS_UNDEFINED
 VISIBLE JSClassID js_point_iterator_class_id = 0;
 
 VISIBLE JSValue
-js_point_iterator_new(JSContext* ctx, const std::pair<JSPointData<double>*, JSPointData<double>*>& range, int magic) {
+js_point_iterator_new(JSContext* ctx, const std::ranges::subrange<JSPointData<double>*>& range, int magic) {
   JSPointIteratorData* it;
   JSValue iterator;
 
@@ -33,8 +34,8 @@ js_point_iterator_new(JSContext* ctx, const std::pair<JSPointData<double>*, JSPo
   new(it) JSPointIteratorData();
 
   it->magic = magic;
-  it->first = range.first;
-  it->second = range.second;
+  it->first = range.begin();
+  it->second = range.end();
 
   JS_SetOpaque(iterator, it);
   return iterator;
