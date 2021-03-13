@@ -23,10 +23,4 @@ js_mat_data_nothrow(JSValueConst val) {
 }
 }
 
-typedef struct JSMatIteratorData {
-  JSValue obj, buf;
-  uint32_t row, col;
-  int magic;
-} JSMatIteratorData;
-
 #endif /* defined(JS_MAT_HPP) */

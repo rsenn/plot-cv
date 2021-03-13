@@ -42,6 +42,8 @@ extern "C" void* get_heap_base();
 
 typedef struct JSMatDimensions {
   uint32_t rows, cols;
+
+  operator cv::Size() const { return cv::Size(cols, rows); }
 } JSMatDimensions;
 
 template<class T>

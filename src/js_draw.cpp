@@ -8,6 +8,7 @@
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <iostream>
 
 #include "plot-cv.hpp"
 #include "color.hpp"
@@ -134,7 +135,9 @@ js_draw_contours(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::con
   JSContoursData<int> contours;
   int32_t contourIdx = -1, lineType = cv::LINE_8;
   JSColorData<double> color;
-  int thickness = 1;
+  JSPointData<int> offset{0, 0};
+  std::vector<cv::Vec4i> hier;
+  int32_t thickness = 1, maxLevel = INT_MAX;
   bool antialias = true;
 
   if(js_is_noarray((dst = js_umat_or_mat(ctx, argv[0]))))
@@ -144,29 +147,37 @@ js_draw_contours(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::con
 
   js_value_to(ctx, argv[2], contourIdx);
 
-  // js_array<JSContourData<int>>::to_vector(ctx, argv[i], contours);
-
-  if(argc > i && JS_IsNumber(argv[++i])) {
-    JS_ToInt32(ctx, &contourIdx, argv[i]);
+  js_color_read(ctx, argv[3], &color);
+  if(argc > 4) {
+    js_value_to(ctx, argv[4], thickness);
+    if(argc > 5) {
+      js_value_to(ctx, argv[5], lineType);
+      if(argc > 6) {
+        js_array_to(ctx, argv[6], hier);
+        if(argc > 7) {
+          js_value_to(ctx, argv[7], maxLevel);
+          if(argc > 8)
+            js_point_read<int>(ctx, argv[8], &offset);
+        }
+      }
+    }
   }
 
-  if(argc > i) {
-    js_color_read(ctx, argv[i], &color);
-    i++;
-  }
+  // std::cerr << "draw_contours() contours.length=" << contours.size() << " contourIdx=" << contourIdx << " thickness="
+  // << thickness << std::endl;
 
-  if(argc > i && js.is_number(argv[i]))
-    js.get_number(argv[i++], thickness);
+  cv::drawContours(dst,
+                   contours,
+                   contourIdx,
+                   *reinterpret_cast<cv::Scalar*>(&color),
+                   thickness,
+                   lineType,
+                   argc > 6 ? JSInputOutputArray(hier) : cv::noArray(),
+                   maxLevel,
+                   offset);
 
-  if(argc > i && JS_IsNumber(argv[++i])) {
-    JS_ToInt32(ctx, &lineType, argv[i]);
-  }
-  std::cerr << "draw_contour() contours.length=" << contours.size() << " contourIdx=" << contourIdx
-            << " thickness=" << thickness << std::endl;
+  // std::cerr << "draw_contours() ret:" << ret << " color: " << *reinterpret_cast<cv::Scalar*>(&color) << std::endl;
 
-  cv::drawContours(dst, contours, contourIdx, *reinterpret_cast<cv::Scalar*>(&color), thickness, lineType);
-
-  std::cerr << "draw_contour() ret:" << ret << " color: " << *reinterpret_cast<cv::Scalar*>(&color) << std::endl;
   return JS_UNDEFINED;
 }
 
@@ -444,6 +455,7 @@ const JSCFunctionListEntry js_draw_proto_funcs[] = {
 
 const JSCFunctionListEntry js_draw_static_funcs[] = {JS_CFUNC_DEF("circle", 1, &js_draw_circle),
                                                      JS_CFUNC_DEF("contour", 1, &js_draw_contour),
+                                                     JS_CFUNC_DEF("contours", 4, &js_draw_contours),
                                                      JS_CFUNC_DEF("line", 1, &js_draw_line),
                                                      JS_CFUNC_DEF("polygon", 1, &js_draw_polygon),
                                                      JS_CFUNC_DEF("rect", 1, &js_draw_rect),

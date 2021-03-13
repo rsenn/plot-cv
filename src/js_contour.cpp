@@ -454,6 +454,25 @@ js_contour_at(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
 }
 
 static JSValue
+js_contour_getmat(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSContourData<double>* v;
+  JSMatDimensions size;
+  int32_t type;
+  cv::Mat mat;
+
+  if(!(v = js_contour_data(ctx, this_val)))
+    return JS_EXCEPTION;
+
+  size.rows = 1;
+  size.cols = v->size();
+  type = CV_64FC2;
+
+  mat = cv::Mat(cv::Size(size), type, static_cast<void*>(v->data()));
+
+  return js_mat_wrap(ctx, mat);
+}
+
+static JSValue
 js_contour_intersectconvex(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSContourData<double>*v, *other = nullptr, *ptr;
   JSValue ret = JS_UNDEFINED;
@@ -1034,6 +1053,7 @@ const JSCFunctionListEntry js_contour_proto_funcs[] = {
     JS_CFUNC_DEF("shift", 0, js_contour_shift),
     JS_CFUNC_DEF("concat", 1, js_contour_concat),
     JS_CFUNC_DEF("at", 1, js_contour_at),
+    JS_CFUNC_DEF("getMat", 0, js_contour_getmat),
     JS_CGETSET_DEF("length", js_contour_length, NULL),
     JS_CGETSET_DEF("area", js_contour_area, NULL),
     JS_CGETSET_DEF("buffer", js_contour_buffer, NULL),

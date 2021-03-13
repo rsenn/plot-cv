@@ -30,6 +30,13 @@ JSClassID js_mat_class_id = 0, js_mat_iterator_class_id = 0;
 JSValue umat_proto = JS_UNDEFINED, umat_class = JS_UNDEFINED;
 JSClassID js_umat_class_id = 0;
 
+typedef struct JSMatIteratorData {
+  JSValue obj, buf;
+  uint32_t row, col;
+  int magic;
+  TypedArrayType type;
+} JSMatIteratorData;
+
 static void
 js_mat_free_func(JSRuntime* rt, void* opaque, void* ptr) {
   static_cast<JSMatData*>(opaque)->release();
@@ -1247,7 +1254,12 @@ js_mat_array(JSContext* ctx, JSValueConst this_val) {
 JSValue
 js_mat_iterator_new(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSValue enum_obj, mat;
+  JSMatData* m;
   JSMatIteratorData* it;
+
+  if(!(m = static_cast<JSMatData*>(JS_GetOpaque(this_val, js_mat_class_id))))
+    return JS_EXCEPTION;
+
   mat = JS_DupValue(ctx, this_val);
   if(!JS_IsException(mat)) {
     enum_obj = JS_NewObjectProtoClass(ctx, mat_iterator_proto, js_mat_iterator_class_id);
@@ -1259,6 +1271,9 @@ js_mat_iterator_new(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
       it->row = 0;
       it->col = 0;
       it->magic = magic;
+      it->type = TypedArrayType(*m);
+
+      printf("js_mat_iterator_new type=%s\n", it->type.constructor_name().c_str());
 
       JS_SetOpaque(/*ctx, */ enum_obj, it);
       return enum_obj;
@@ -1273,23 +1288,16 @@ JSValue
 js_mat_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, BOOL* pdone, int magic) {
   JSMatIteratorData* it;
   JSValue ret = JS_UNDEFINED;
-
   *pdone = FALSE;
-
   it = static_cast<JSMatIteratorData*>(JS_GetOpaque(this_val, js_mat_iterator_class_id));
   if(it) {
     JSMatData* m;
     uint32_t row, col;
     size_t offset, channels;
     JSMatDimensions dim;
-
     if((m = js_mat_data(ctx, it->obj)) == nullptr)
       return JS_EXCEPTION;
-
     dim = mat_dimensions(*m);
-
-    /*if(!JS_IsUndefined(it->obj)) {
-      if(js_mat_get_wh(ctx, &dim, it->obj))*/
     row = it->row;
     col = it->col;
     if(row >= m->rows) {
@@ -1299,49 +1307,44 @@ js_mat_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueCon
       *pdone = TRUE;
       return JS_UNDEFINED;
     }
-
     if(col + 1 < dim.cols) {
       it->col = col + 1;
     } else {
       it->col = 0;
       it->row = row + 1;
     }
-
     *pdone = FALSE;
-
     channels = mat_channels(*m);
     offset = mat_offset(*m, row, col);
-
-    // printf("channels=%zx row=%u col=%u dim.rows=%u dim.cols=%u\n", channels, row, col, dim.rows,
-    // dim.cols);
-
     switch(it->magic) {
       case MAT_ITERATOR_KEYS: {
         std::array<uint32_t, 2> pos = {row, col};
         ret = js_array_from(ctx, pos);
         break;
       }
-
       case MAT_ITERATOR_VALUES: {
+        TypedArrayType type(*m);
+
+        /*   printf("js_mat_iterator_next is_signed=%d\n", type.is_signed);
+           printf("js_mat_iterator_next is_floating_point=%d\n", type.is_floating_point);
+           printf("js_mat_iterator_next byte_size=%d\n", type.byte_size);
+           printf("js_mat_iterator_next channels=%d type=%d\n", m->channels(), m->type());
+           printf("js_mat_iterator_next %s\n", type.constructor_name().c_str());*/
 
         if(channels == 1)
           return js_mat_get(ctx, it->obj, row, col);
-
-        ret = js_typedarray_new(ctx, it->buf, offset, channels, TypedArrayType(*m));
+        ret = js_typedarray_new(ctx, it->buf, offset, channels, type);
         break;
       }
-
       case MAT_ITERATOR_ENTRIES: {
         JSValue value = channels == 1 ? js_mat_get(ctx, it->obj, row, col)
                                       : js_typedarray_new(ctx, it->buf, offset, channels, TypedArrayType(*m));
         std::array<uint32_t, 2> pos = {row, col};
         std::array<JSValue, 2> entry = {js_array_from(ctx, pos), value};
-
         ret = js_array_from(ctx, entry);
         break;
       }
     }
-    /* }*/
   }
   return ret;
 }
@@ -1417,7 +1420,7 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("keys", 0, js_mat_iterator_new, MAT_ITERATOR_KEYS),
     JS_CFUNC_MAGIC_DEF("values", 0, js_mat_iterator_new, MAT_ITERATOR_VALUES),
     JS_CFUNC_MAGIC_DEF("entries", 0, js_mat_iterator_new, MAT_ITERATOR_ENTRIES),
-    JS_ALIAS_DEF("[Symbol.iterator]", "entries"),
+    JS_ALIAS_DEF("[Symbol.iterator]", "values"),
     JS_ALIAS_DEF("[Symbol.toPrimitive]", "toString"),
 
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Mat", JS_PROP_CONFIGURABLE)
