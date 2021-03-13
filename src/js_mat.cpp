@@ -1151,12 +1151,8 @@ static JSValue
 js_mat_buffer(JSContext* ctx, JSValueConst this_val) {
   JSMatData* m;
   if((m = js_mat_data(ctx, this_val))) {
-    uint8_t *s, *e;
-    s = m->ptr<uint8_t>();
-    e = s + (m->total() * m->elemSize());
-
     m->addref();
-    return js_arraybuffer_from(ctx, s, e, *(JSFreeArrayBufferDataFunc*)&js_mat_free_func, (void*)m);
+    return js_arraybuffer_from(ctx, begin(*m), end(*m), *(JSFreeArrayBufferDataFunc*)&js_mat_free_func, (void*)m);
   }
   return JS_EXCEPTION;
 }
@@ -1168,13 +1164,10 @@ js_mat_array(JSContext* ctx, JSValueConst this_val) {
 
   if((m = js_mat_data(ctx, this_val))) {
     JSValue buffer, typed_array;
-    uint8_t *s, *e;
     TypedArrayType type(*m);
     buffer = js_mat_buffer(ctx, this_val);
-    s = m->ptr<uint8_t>();
-    e = s + (m->total() * m->elemSize());
 
-    std::ranges::subrange<uint8_t*> range(s, e);
+    std::ranges::subrange<uint8_t*> range(begin(*m), end(*m));
 
     /*printf("m->rows=%i m->cols=%i m->step=%zu m->total()=%zu range.size()=%zu type.byte_size=%u size=%zu\n",
            m->rows,

@@ -237,7 +237,7 @@ begin(cv::Mat& mat) {
 }
 static inline uint8_t*
 end(cv::Mat& mat) {
-  return mat.ptr<uint8_t>(mat.rows, 0);
+  return mat.ptr<uint8_t>() + (mat.total() * mat.elemSize());
 }
 
 static inline uint8_t const*
@@ -246,7 +246,7 @@ begin(cv::Mat const& mat) {
 }
 static inline uint8_t const*
 end(cv::Mat const& mat) {
-  return mat.ptr<uint8_t const>(mat.rows, 0);
+  return mat.ptr<uint8_t const>() + (mat.total() * mat.elemSize());
 }
 
 template<class T>
