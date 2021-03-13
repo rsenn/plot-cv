@@ -77,10 +77,6 @@ template<> union JSColorData<uint8_t> {
   uint32_t u32;
 };
 
-struct JSPointIteratorData : public std::pair<JSPointData<double>*, JSPointData<double>*> {
-  int magic;
-};
-
 #if defined(_WIN32) || defined(__MINGW32__)
 #define VISIBLE __declspec(dllexport)
 #define HIDDEN

@@ -158,6 +158,8 @@ struct TypedArrayType {
       : byte_size(i & TYPEDARRAY_BITS_FIELD), is_signed(!!(i & TYPEDARRAY_SIGNED)),
         is_floating_point(!!(i & TYPEDARRAY_FLOATING_POINT)) {}
 
+  template<class T> TypedArrayType(JSContext* ctx, const T& ctor_name) { *this = js_typedarray_type(ctx, ctor_name); }
+
   int byte_size;
   bool is_signed;
   bool is_floating_point;
@@ -355,10 +357,9 @@ js_typedarray_from(JSContext* ctx, const Container& v, uint32_t byteOffset = 0, 
 }
 
 static inline TypedArrayType
-js_typedarray_type(JSContext* ctx, JSValueConst obj) {
-  std::string class_name = js_class_name(ctx, obj);
-  char* start = &class_name[0];
-  char* end = &class_name[class_name.size()];
+js_typedarray_type(const std::string& class_name) {
+  char* start = const_cast<char*>(class_name.data());
+  char* end = start + class_name.size();
   bool is_signed = true, is_floating_point = false;
 
   if(start < end && *start == 'U') {
@@ -378,6 +379,18 @@ js_typedarray_type(JSContext* ctx, JSValueConst obj) {
   is_floating_point = !strncmp(start, "Float", 5);
 
   return TypedArrayType(bits / 8, is_signed, is_floating_point);
+}
+
+static inline TypedArrayType
+js_typedarray_type(JSContext* ctx, JSValueConst obj) {
+  std::string class_name;
+
+  if(JS_IsFunction(ctx, obj))
+    class_name = js_class_name(ctx, obj);
+  else if(JS_IsString(obj))
+    js_value_to(ctx, obj, class_name);
+
+  return js_typedarray_type(class_name);
 }
 
 static inline TypedArrayProps

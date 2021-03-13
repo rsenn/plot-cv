@@ -25,6 +25,11 @@ js_point_iterator_new(JSContext* ctx, const std::ranges::subrange<JSPointData<do
   JSPointIteratorData* it;
   JSValue iterator;
 
+  if(js_point_iterator_class_id == 0)
+    js_point_iterator_init(ctx, 0);
+
+  assert(js_point_iterator_class_id);
+
   iterator = JS_NewObjectProtoClass(ctx, point_iterator_proto, js_point_iterator_class_id);
   if(JS_IsException(iterator))
     goto fail;
@@ -66,23 +71,18 @@ js_point_iterator_result(JSContext* ctx, JSValue val, BOOL done) {
 
 static JSValue
 js_point_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, BOOL* pdone, int magic) {
-  JSPointIteratorData* it = static_cast<JSPointIteratorData*>(JS_GetOpaque(this_val, js_point_iterator_class_id));
-  //  JSPointData<double>* ptr;
+  JSPointIteratorData* it;
   JSValue result;
+
+  if((it = static_cast<JSPointIteratorData*>(JS_GetOpaque(this_val, js_point_iterator_class_id))) == nullptr)
+    return JS_EXCEPTION;
+
+  //  JSPointData<double>* ptr;
   // ptr = it->first;
   *pdone = it->first == nullptr || it->second == nullptr || (it->first == it->second);
   result = *pdone ? JS_NULL : js_point_new(ctx, it->first->x, it->first->y);
   it->first++;
   return result;
-fail:
-
-  return JS_EXCEPTION;
-}
-
-static JSValue
-js_point_iterator_create(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
-
-  return JS_EXCEPTION;
 }
 
 static void
@@ -103,6 +103,11 @@ js_point_iterator_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValu
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
   assert(0);
+
+  if(js_point_iterator_class_id == 0)
+    js_point_iterator_init(ctx, 0);
+
+  assert(js_point_iterator_class_id);
 
   s = js_allocate<JSPointIteratorData>(ctx);
   if(!s)
@@ -139,8 +144,6 @@ const JSCFunctionListEntry js_point_iterator_proto_funcs[] = {
     JS_ITERATOR_NEXT_DEF("next", 0, js_point_iterator_next, 0),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "PointIterator", JS_PROP_CONFIGURABLE),
 };
-// const JSCFunctionListEntry js_point_iterator_static_funcs[] = {JS_CFUNC_MAGIC_DEF("create", 0,
-// js_point_iterator_create, 0)};
 
 int
 js_point_iterator_init(JSContext* ctx, JSModuleDef* m) {

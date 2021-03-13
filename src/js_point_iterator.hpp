@@ -18,4 +18,8 @@ int js_point_iterator_init(JSContext*, JSModuleDef* m);
 JSModuleDef* js_init_module_point_iterator(JSContext*, const char* module_name);
 }
 
+struct JSPointIteratorData : public std::pair<JSPointData<double>*, JSPointData<double>*> {
+  int magic;
+};
+
 #endif /* defined(JS_POINT_ITERATOR_HPP) */

@@ -206,6 +206,12 @@ end(std::vector<T> const& v) {
   return &v[v.size()];
 }
 
+template<class Container>
+static inline std::ranges::subrange<typename Container::value_type*>
+range(Container& c) {
+  return std::ranges::subrange<typename Container::value_type*>(begin(c), end(c));
+}
+
 template<class T, class Container>
 static inline std::ranges::subrange<T>
 range(Container& c) {

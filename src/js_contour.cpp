@@ -6,6 +6,7 @@
 #include "js_typed_array.hpp"
 #include "js_alloc.hpp"
 #include "js_point_iterator.hpp"
+#include "util.hpp"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -1041,7 +1042,7 @@ JSValue
 js_contour_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSContourData<double>* s = js_contour_data(ctx, this_val);
 
-  return js_point_iterator_new(ctx, std::ranges::subrange<JSPointData<double>*>(begin(*s), end(*s)), magic);
+  return js_point_iterator_new(ctx, range(*s), magic);
 }
 
 const JSCFunctionListEntry js_contour_proto_funcs[] = {

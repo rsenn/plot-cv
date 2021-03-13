@@ -5,8 +5,9 @@
 #include <sys/mman.h>
 #include <sys/user.h>
 #include <limits.h>
-#include "quickjs.h"
 #include <cstdlib>
+
+#include <quickjs.h>
 
 template<class T> struct js_alloc_mmap {
   static size_t page_size;
