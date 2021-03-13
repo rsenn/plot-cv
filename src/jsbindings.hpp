@@ -380,15 +380,12 @@ js_arraybuffer_props(JSContext* ctx, JSValueConst obj) {
 }
 
 static inline std::string
-js_class_name(JSContext* ctx, JSValueConst value) {
-  JSValue proto, ctor;
-  const char* str;
+js_function_name(JSContext* ctx, JSValueConst value) {
+   const char* str;
   const char* name = 0;
   std::string ret;
   int namelen;
-  proto = JS_GetPrototype(ctx, value);
-  ctor = JS_GetPropertyStr(ctx, proto, "constructor");
-  if((str = JS_ToCString(ctx, ctor))) {
+    if((str = JS_ToCString(ctx, value))) {
     if(!strncmp(str, "function ", 9)) {
       name = str + 9;
       namelen = strchr(str + 9, '(') - name;
@@ -398,11 +395,26 @@ js_class_name(JSContext* ctx, JSValueConst value) {
   if(!name) {
     if(str)
       JS_FreeCString(ctx, str);
-    if((str = JS_ToCString(ctx, JS_GetPropertyStr(ctx, ctor, "name"))))
+    if((str = JS_ToCString(ctx, JS_GetPropertyStr(ctx, value, "name"))))
       ret = std::string(str);
   }
   if(str)
     JS_FreeCString(ctx, str);
+  return ret;
+}
+
+static inline std::string
+js_class_name(JSContext* ctx, JSValueConst value) {
+  JSValue proto, ctor;
+
+  std::string ret;
+   proto = JS_GetPrototype(ctx, value);
+  ctor = JS_GetPropertyStr(ctx, proto, "constructor");
+
+  ret = js_function_name(ctx, ctor);
+  JS_FreeValue(ctx, ctor);
+  JS_FreeValue(ctx, proto);
+
   return ret;
 }
 

@@ -75,6 +75,12 @@ js_slice_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
 
   if(!(*pdone = it->ptr >= it->range.end())) {
 
+    printf("byte_pos = %zu, byte_size = %zu, num_elems = %i, increment = %zu\n",
+          size_t(it->ptr - it->range.begin()),
+           it->range.size(),
+           it->num_elems,
+           it->increment);
+
     result = js_typedarray_new(ctx, it->buffer, it->ptr - it->range.begin(), it->num_elems, it->ctor);
     it->ptr += it->increment;
   }
@@ -131,11 +137,16 @@ static void
 js_slice_iterator_finalizer(JSRuntime* rt, JSValue val) {
   JSSliceIteratorData* s;
   /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
-  if((s  = static_cast<JSSliceIteratorData*>(JS_GetOpaque(val, js_slice_iterator_class_id)))) {
-JS_FreeValueRT(rt, s->buffer);
+  if((s = static_cast<JSSliceIteratorData*>(JS_GetOpaque(val, js_slice_iterator_class_id)))) {
+    JS_FreeValueRT(rt, s->buffer);
     js_deallocate(rt, s);
   }
   JS_FreeValueRT(rt, val);
+}
+
+static JSValue
+js_slice_iterator_dup(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  return JS_DupValue(ctx, this_val);
 }
 
 JSClassDef js_slice_iterator_class = {
@@ -145,6 +156,7 @@ JSClassDef js_slice_iterator_class = {
 
 const JSCFunctionListEntry js_slice_iterator_proto_funcs[] = {
     JS_ITERATOR_NEXT_DEF("next", 0, js_slice_iterator_next, 0),
+    JS_CFUNC_DEF("[Symbol.iterator]", 0, js_slice_iterator_dup),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "SliceIterator", JS_PROP_CONFIGURABLE),
 };
 
