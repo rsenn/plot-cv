@@ -78,6 +78,11 @@ async function main(...args) {
   console.log('texture:', texture);
   console.log('texture2:', texture2);
   console.log('image.buffer:', image.buffer);
+  let imgId = nvg.CreateImage('796e7bfab61dd66b5f12c3f929f75d9c_Mhleberg_5.jpg', 0);
+
+  console.log('imgId:', imgId);
+  let imgSz = nvg.ImageSize(imgId);
+  console.log('nvg.ImageSize():', imgSz);
 
   while(true) {
     if(window.shouldClose) {
@@ -105,6 +110,18 @@ async function main(...args) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); //clears the window to the color you want.
 
     nvg.BeginFrame(width, height, 1);
+
+    let m = nvg.CurrentTransform();
+    let t = nvg.TransformTranslate([], 10, 20);
+    let s = nvg.TransformScale([], 3, 3);
+
+    let p = nvg.TransformMultiply(nvg.TransformMultiply(m, t), s);
+
+    console.log('t:', t);
+    console.log('p:', p);
+    console.log('nvg.TransformPoint:', nvg.TransformPoint(p, 40, 100));
+    let pattern = nvg.ImagePattern(0, 0, ...imgSz, 0, imgId, 1);
+    console.log('pattern:', pattern);
 
     nvg.BeginPath();
     nvg.Rect(10, 10, 200, 200);
