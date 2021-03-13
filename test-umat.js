@@ -120,7 +120,7 @@ async function main(...args) {
     const line = new Line(elem);
     const [x1, y1, x2, y2] = elem;
 
-    let angle = Math.floor(line.angle / (cv.CV_PI / 24) * 180)   % 24;
+    let angle = Math.floor((line.angle / (cv.CV_PI / 24)) * 180) % 24;
     if(Math.abs(angle) > 2) continue;
     draw.line(mat, line.a, line.b, [255, 0, 0, 255], 1, cv.LINE_AA);
     /*    console.log('line.angle:', (line.angle * 180) / Math.PI);
@@ -143,14 +143,33 @@ async function main(...args) {
     draw.circle(mat, new Point(x, y), r + 3, [0, 128, 255, 255], 5, cv.LINE_AA);
   }
   for(let contour of contours) {
-  console.log("contour.length",contour.length);
-  let poly = new Contour();
-  contour.approxPolyDP(poly, contour.arcLength()*0.02);
+    console.log('contour.length', contour.length);
+    let poly = new Contour(); 
+    contour.approxPolyDP(poly, 0.05* contour.arcLength( ));
+    let lpoly = [...poly.lines()];
+    let angles;
 
- console.log("poly.length",poly.length,  [...poly]);
+    console.log('poly.arcLength()', poly.arcLength());
+    console.log('lpoly.length',
+      lpoly.length,
+      lpoly.map(({ x1, y1, x2, y2 }) => `${x1},${y1}|${x2},${y2}`)
+    );
+    console.log('lpoly angles',
+      lpoly.length,
+      (angles = lpoly.map(l => Math.floor((l.angle * 180) / Math.PI)).map(a => a % 90))
+    );
+    console.log('lpoly slopes',
+      lpoly.length,
+      lpoly.map(l => l.slope).map(({ x, y }) => [x, y])
+    );
+    console.log('lpoly lengths',
+      lpoly.length,
+      lpoly.map(l => Math.round(l.length))
+    );
 
+  /*  if(!angles.some(a => Math.abs(a) <= 1)) continue;
 
- //if(poly.length > 10)continue;
+    if(lpoly.length > 4) continue;*/
     draw.contours(mat, contours, i, RandomColor() ?? [(i * 255) / contours.length, 0, 0, 0], 2);
     i++;
   }

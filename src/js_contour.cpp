@@ -1092,7 +1092,7 @@ const JSCFunctionListEntry js_contour_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("toString", 0, js_contour_tostring, 0),
     JS_CFUNC_MAGIC_DEF("toSource", 0, js_contour_tostring, 1),
     JS_CFUNC_MAGIC_DEF("lines", 0, js_contour_iterator, NEXT_LINE),
-    JS_CFUNC_MAGIC_DEF("points", 0, js_contour_iterator, NEXT_LINE),
+    JS_CFUNC_MAGIC_DEF("points", 0, js_contour_iterator, NEXT_POINT),
 
     JS_ALIAS_DEF("[Symbol.iterator]", "points"),
     JS_ALIAS_DEF("size", "length"),

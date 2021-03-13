@@ -116,6 +116,10 @@ fail:
   return JS_EXCEPTION;
 }
 
+static JSValue
+js_point_iterator_dup(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  return JS_DupValue(ctx, this_val);
+}
 static void
 js_point_iterator_finalizer(JSRuntime* rt, JSValue val) {
   JSPointIteratorData* s = static_cast<JSPointIteratorData*>(JS_GetOpaque(val, js_point_iterator_class_id));
@@ -134,6 +138,7 @@ JSClassDef js_point_iterator_class = {
 
 const JSCFunctionListEntry js_point_iterator_proto_funcs[] = {
     JS_ITERATOR_NEXT_DEF("next", 0, js_point_iterator_next, 0),
+    JS_CFUNC_DEF("[Symbol.iterator]", 0, js_point_iterator_dup),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "PointIterator", JS_PROP_CONFIGURABLE),
 };
 

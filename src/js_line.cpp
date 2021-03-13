@@ -146,7 +146,7 @@ js_line_get(JSContext* ctx, JSValueConst this_val, int magic) {
     }
     case PROP_ANGLE: {
       Line<double> line(ln->array);
-      return JS_NewFloat64(ctx, angle_from_moment(line.slope()));
+      return JS_NewFloat64(ctx, std::atan2(ln->x2 - ln->x1, ln->y2 - ln->y1));
     }
     case PROP_LENGTH: {
       Line<double> line(ln->array);
