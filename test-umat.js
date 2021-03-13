@@ -144,8 +144,8 @@ async function main(...args) {
   }
   for(let contour of contours) {
     console.log('contour.length', contour.length);
-    let poly = new Contour(); 
-    contour.approxPolyDP(poly, 0.05* contour.arcLength( ));
+    let poly = new Contour();
+    contour.approxPolyDP(poly, 0.05 * contour.arcLength());
     let lpoly = [...poly.lines()];
     let angles;
 
@@ -167,7 +167,7 @@ async function main(...args) {
       lpoly.map(l => Math.round(l.length))
     );
 
-  /*  if(!angles.some(a => Math.abs(a) <= 1)) continue;
+    /*  if(!angles.some(a => Math.abs(a) <= 1)) continue;
 
     if(lpoly.length > 4) continue;*/
     draw.contours(mat, contours, i, RandomColor() ?? [(i * 255) / contours.length, 0, 0, 0], 2);
