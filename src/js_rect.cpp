@@ -161,9 +161,10 @@ static JSValue
 js_rect_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSRectData<double> rect, *s;
   std::ostringstream os;
-  std::array<const char*, 3> delims = {",",
-                                       "∣" /*｜⧸⦁⎮∥∣⸾⼁❘❙⟊⍿⎸⏐｜│￨︲︱❘|｜*/,
-                                       "×" /*"𝅃🅧𝚡🅧🅇𝘹𝚡𝘹𝐱ꭗ𝐗𝑿𝅃𝅃xˣₓ⒳Ⓧⓧ✕✘✗⨉⨯⨂✖⨻⦁⋅⊗⊠∗×⨯×"*/};
+  std::array<const char*, 3> delims = {
+      ",",
+      "∣" /*｜⧸⦁⎮∥∣⸾⼁❘❙⟊⍿⎸⏐｜│￨︲︱❘|｜*/,
+      "×" /*"𝅃🅧𝚡🅧🅇𝘹𝚡𝘹𝐱ꭗ𝐗𝑿𝅃𝅃xˣₓ⒳Ⓧⓧ✕✘✗⨉⨯⨂✖⨻⦁⋅⊗⊠∗×⨯×"*/};
 
   for(size_t i = 0; i < argc; i++) { delims[i] = JS_ToCString(ctx, argv[i]); }
 
@@ -244,7 +245,8 @@ js_rect_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
     js_rect_read(ctx, this_val, &rect);
   }
 
-  os << "{ x: " COLOR_YELLOW "" << rect.x << "" COLOR_NONE ", y: " COLOR_YELLOW "" << rect.y << "" COLOR_NONE ", width: " COLOR_YELLOW "" << rect.width << "" COLOR_NONE ", height: " COLOR_YELLOW ""
+  os << "{ x: " COLOR_YELLOW "" << rect.x << "" COLOR_NONE ", y: " COLOR_YELLOW "" << rect.y
+     << "" COLOR_NONE ", width: " COLOR_YELLOW "" << rect.width << "" COLOR_NONE ", height: " COLOR_YELLOW ""
      << rect.height << "" COLOR_NONE " }";
 
   return JS_NewString(ctx, os.str().c_str());
@@ -341,7 +343,9 @@ const JSCFunctionListEntry js_rect_proto_funcs[] = {JS_CGETSET_ENUMERABLE_DEF("x
                                                     JS_CFUNC_MAGIC_DEF("round", 0, js_rect_funcs, 1),
                                                     JS_CFUNC_MAGIC_DEF("toObject", 0, js_rect_funcs, 2),
                                                     JS_CFUNC_MAGIC_DEF("toArray", 0, js_rect_funcs, 3),
-                                                    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Rect", JS_PROP_CONFIGURABLE)
+                                                    JS_PROP_STRING_DEF("[Symbol.toStringTag]",
+                                                                       "Rect",
+                                                                       JS_PROP_CONFIGURABLE)
 
 };
 const JSCFunctionListEntry js_rect_static_funcs[] = {JS_CFUNC_DEF("from", 1, js_rect_from)};

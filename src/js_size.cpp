@@ -378,7 +378,9 @@ const JSCFunctionListEntry js_size_proto_funcs[] = {JS_CGETSET_ENUMERABLE_DEF("w
                                                     JS_CFUNC_DEF("div", 1, js_size_div),
                                                     JS_ALIAS_DEF("values", "toArray"),
                                                     JS_CFUNC_DEF("[Symbol.iterator]", 0, js_size_symbol_iterator),
-                                                    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Size", JS_PROP_CONFIGURABLE)};
+                                                    JS_PROP_STRING_DEF("[Symbol.toStringTag]",
+                                                                       "Size",
+                                                                       JS_PROP_CONFIGURABLE)};
 
 const JSCFunctionListEntry js_size_static_funcs[] = {JS_CFUNC_DEF("from", 1, js_size_from)};
 

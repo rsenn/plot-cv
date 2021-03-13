@@ -121,11 +121,42 @@ js_array_from(JSContext* ctx, const T* start, const T* end) {
   return JS_CallConstructor(ctx, ctor, 1, args);
 }
 
+enum {
+  TYPEDARRAY_FLOATING_POINT = 0x80,
+  TYPEDARRAY_INTEGER = 0x00,
+  TYPEDARRAY_SIGNED = 0x40,
+  TYPEDARRAY_UNSIGNED = 0x00,
+  TYPEDARRAY_BITS_8 = 0x01,
+  TYPEDARRAY_BITS_16 = 0x02,
+  TYPEDARRAY_BITS_32 = 0x04,
+  TYPEDARRAY_BITS_64 = 0x08,
+  TYPEDARRAY_BITS_FIELD = 0x3f
+};
+
+enum TypedArrayValue {
+  TYPEDARRAY_UINT8 = TYPEDARRAY_UNSIGNED | TYPEDARRAY_BITS_8,
+  TYPEDARRAY_INT8 = TYPEDARRAY_SIGNED | TYPEDARRAY_BITS_8,
+  TYPEDARRAY_UINT16 = TYPEDARRAY_UNSIGNED | TYPEDARRAY_BITS_16,
+  TYPEDARRAY_INT16 = TYPEDARRAY_SIGNED | TYPEDARRAY_BITS_16,
+  TYPEDARRAY_UINT32 = TYPEDARRAY_UNSIGNED | TYPEDARRAY_BITS_32,
+  TYPEDARRAY_INT32 = TYPEDARRAY_SIGNED | TYPEDARRAY_BITS_32,
+  TYPEDARRAY_BIGUINT64 = TYPEDARRAY_UNSIGNED | TYPEDARRAY_BITS_64,
+  TYPEDARRAY_BIGINT64 = TYPEDARRAY_SIGNED | TYPEDARRAY_BITS_64,
+  TYPEDARRAY_FLOAT32 = TYPEDARRAY_FLOATING_POINT | TYPEDARRAY_BITS_32,
+  TYPEDARRAY_FLOAT64 = TYPEDARRAY_FLOATING_POINT | TYPEDARRAY_BITS_64
+};
+
 struct TypedArrayType {
   TypedArrayType(int bsize, bool sig, bool flt) : byte_size(bsize), is_signed(sig), is_floating_point(flt) {}
-  TypedArrayType(const cv::Mat& mat) : byte_size(mat.elemSize1()), is_signed(mat_signed(mat)), is_floating_point(mat_floating(mat)) {}
-  TypedArrayType(const cv::UMat& mat) : byte_size(mat.elemSize1()), is_signed(mat_signed(mat)), is_floating_point(mat_floating(mat)) {}
-  TypedArrayType(int32_t cvId) : byte_size(1 << (cvId >> 1)), is_signed(cvId < CV_32F ? cvId & 1 : 0), is_floating_point(cvId >= CV_32F) {}
+  TypedArrayType(const cv::Mat& mat)
+      : byte_size(mat.elemSize1()), is_signed(mat_signed(mat)), is_floating_point(mat_floating(mat)) {}
+  TypedArrayType(const cv::UMat& mat)
+      : byte_size(mat.elemSize1()), is_signed(mat_signed(mat)), is_floating_point(mat_floating(mat)) {}
+  TypedArrayType(int32_t cvId)
+      : byte_size(1 << (cvId >> 1)), is_signed(cvId < CV_32F ? cvId & 1 : 0), is_floating_point(cvId >= CV_32F) {}
+  TypedArrayType(TypedArrayValue i)
+      : byte_size(i & TYPEDARRAY_BITS_FIELD), is_signed(!!(i & TYPEDARRAY_SIGNED)),
+        is_floating_point(!!(i & TYPEDARRAY_FLOATING_POINT)) {}
 
   int byte_size;
   bool is_signed;
@@ -147,7 +178,7 @@ struct TypedArrayType {
   }
 
   int32_t
-  id() const {
+  cv_type() const {
     if(is_floating_point)
       return int32_t(byte_size == 8 ? CV_64F : CV_32F);
 
@@ -159,7 +190,12 @@ struct TypedArrayType {
     return -1;
   }
 
-  operator int32_t() const { return id(); }
+  TypedArrayValue
+  flags() const {
+    return TypedArrayValue(uint8_t(is_floating_point ? TYPEDARRAY_FLOATING_POINT : 0) |
+                           uint8_t(is_signed ? TYPEDARRAY_SIGNED : 0) | uint8_t(byte_size) & TYPEDARRAY_BITS_FIELD);
+  }
+  operator TypedArrayValue() const { return flags(); }
 };
 
 struct TypedArrayProps {
@@ -171,16 +207,36 @@ struct TypedArrayProps {
   ptr() const {
     return reinterpret_cast<T*>(buffer.ptr + byte_offset);
   }
-  template<class T>
-  T*
-  ptr() {
-    return reinterpret_cast<T*>(buffer.ptr + byte_offset);
-  }
+
+  /*  template<class T>
+    T*
+    ptr() {
+      return reinterpret_cast<T*>(buffer.ptr + byte_offset);
+    }*/
 
   template<class T>
+  int
+  size() const {
+    return byte_length / sizeof(T);
+    ;
+  }
   size_t
   size() const {
     return byte_length / bytes_per_element;
+  }
+};
+
+template<class T> struct TypedArrayRange : public TypedArrayProps {
+  TypedArrayRange(const TypedArrayProps& props) : TypedArrayProps(props) {}
+
+  const T*
+  begin() const {
+    return ptr<T>();
+  }
+
+  const T*
+  end() const {
+    return begin() + size<T>();
   }
 };
 
@@ -188,7 +244,8 @@ template<class T> struct TypedArrayTraits {
   typedef typename std::remove_cvref<T>::type value_type;
 
   static_assert(std::is_arithmetic<T>::value, "TypedArray must contain arithmetic type");
-  static_assert(sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4 || sizeof(T) == 8, "TypedArray must contain type of size 1, 2, 4 or 8");
+  static_assert(sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4 || sizeof(T) == 8,
+                "TypedArray must contain type of size 1, 2, 4 or 8");
 
   static constexpr size_t byte_size = sizeof(T);
 
@@ -202,22 +259,27 @@ template<class T> struct TypedArrayTraits {
 };
 
 static inline JSValue
-js_typedarray_new(JSContext* ctx, JSValueConst buffer, uint32_t byteOffset, uint32_t length, const char* ctor_name) {
-  JSValue global, ctor, ret;
-
+js_typedarray_new(JSContext* ctx, JSValueConst buffer, uint32_t byteOffset, uint32_t length, JSValueConst ctor) {
   std::array<JSValueConst, 3> args = {buffer, js_number_new(ctx, byteOffset), js_number_new(ctx, length)};
 
+  return JS_CallConstructor(ctx, ctor, args.size(), &args[0]);
+}
+
+static inline JSValue
+js_typedarray_new(JSContext* ctx, JSValueConst buffer, uint32_t byteOffset, uint32_t length, const char* ctor_name) {
+  JSValue global, ctor, ret;
+  std::array<JSValueConst, 3> args = {buffer, js_number_new(ctx, byteOffset), js_number_new(ctx, length)};
   global = JS_GetGlobalObject(ctx);
   ctor = JS_GetPropertyStr(ctx, global, ctor_name);
   JS_FreeValue(ctx, global);
-
-  ret = JS_CallConstructor(ctx, ctor, args.size(), &args[0]);
+  ret = js_typedarray_new(ctx, buffer, byteOffset, length, ctor);
   JS_FreeValue(ctx, ctor);
   return ret;
 }
 
 static inline JSValue
-js_typedarray_new(JSContext* ctx, JSValueConst buffer, uint32_t byteOffset, uint32_t length, const TypedArrayType& props) {
+js_typedarray_new(
+    JSContext* ctx, JSValueConst buffer, uint32_t byteOffset, uint32_t length, const TypedArrayType& props) {
   auto range = js_arraybuffer_range(ctx, buffer);
   assert(byteOffset + length * props.byte_size < range.size());
 
@@ -255,7 +317,11 @@ public:
 
   template<class Iterator>
   static JSValue
-  from_sequence(JSContext* ctx, const Iterator& start, const Iterator& end, uint32_t byteOffset = 0, uint32_t length = UINT32_MAX) {
+  from_sequence(JSContext* ctx,
+                const Iterator& start,
+                const Iterator& end,
+                uint32_t byteOffset = 0,
+                uint32_t length = UINT32_MAX) {
     JSValue buf = js_arraybuffer_from(ctx, start, end);
     uint32_t count = std::min<uint32_t>(length, end - start);
 
@@ -270,13 +336,15 @@ public:
 
 template<class Iterator>
 static inline std::enable_if_t<std::is_pointer<Iterator>::value, JSValue>
-js_typedarray_from(JSContext* ctx, const Iterator& start, const Iterator& end, uint32_t byteOffset = 0, uint32_t length = UINT32_MAX) {
+js_typedarray_from(
+    JSContext* ctx, const Iterator& start, const Iterator& end, uint32_t byteOffset = 0, uint32_t length = UINT32_MAX) {
   return js_typedarray<typename std::remove_pointer<Iterator>::type>::from_sequence(ctx, start, end, byteOffset);
 }
 
 template<class Iterator>
 static inline std::enable_if_t<Iterator::value_type, JSValue>
-js_typedarray_from(JSContext* ctx, const Iterator& start, const Iterator& end, uint32_t byteOffset = 0, uint32_t length = UINT32_MAX) {
+js_typedarray_from(
+    JSContext* ctx, const Iterator& start, const Iterator& end, uint32_t byteOffset = 0, uint32_t length = UINT32_MAX) {
   return js_typedarray<typename Iterator::value_type>::from_sequence(ctx, start, end, byteOffset);
 }
 
@@ -322,4 +390,34 @@ js_typedarray_props(JSContext* ctx, JSValueConst obj) {
   return TypedArrayProps(byte_offset, byte_length, bytes_per_element, js_arraybuffer_props(ctx, buffer));
 }
 
+static inline cv::_InputArray
+js_typedarray_inputarray(JSContext* ctx, JSValueConst obj) {
+
+  TypedArrayType type = js_typedarray_type(ctx, obj);
+  TypedArrayProps props = js_typedarray_props(ctx, obj);
+
+  switch(type.flags()) {
+    case TYPEDARRAY_UINT8: return cv::_InputArray(props.ptr<uint8_t>(), props.size<uint8_t>());
+    case TYPEDARRAY_INT8: return cv::_InputArray(props.ptr<int8_t>(), props.size<int8_t>());
+    case TYPEDARRAY_UINT16: return cv::_InputArray(props.ptr<uint16_t>(), props.size<uint16_t>());
+    case TYPEDARRAY_INT16: return cv::_InputArray(props.ptr<int16_t>(), props.size<int16_t>());
+    /*case TYPEDARRAY_UINT32: {
+      TypedArrayRange<uint32_t> range(props);
+      return std::vector<uint32_t>(range.begin(), range.end());
+    }*/
+    case TYPEDARRAY_INT32: return cv::_InputArray(props.ptr<int>(), props.size<int>());
+    /*case TYPEDARRAY_BIGUINT64: {
+      TypedArrayRange<uint64_t> range(props);
+      return std::vector<uint64_t>(range.begin(), range.end());
+    }
+    case TYPEDARRAY_BIGINT64: {
+      TypedArrayRange<int64_t> range(props);
+      return std::vector<int64_t>(range.begin(), range.end());
+    }*/
+    case TYPEDARRAY_FLOAT32: return cv::_InputArray(props.ptr<float>(), props.size<float>());
+    case TYPEDARRAY_FLOAT64: return cv::_InputArray(props.ptr<double>(), props.size<double>());
+  }
+
+  return cv::_InputArray();
+}
 #endif /* defined(JS_TYPED_ARRAY_HPP) */

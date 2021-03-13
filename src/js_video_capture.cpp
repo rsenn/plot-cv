@@ -31,7 +31,8 @@ js_video_capture_open(JSContext* ctx, JSVideoCaptureData* s, int argc, JSValueCo
   if(is_numeric(filename))
     JS_ToInt32(ctx, &camID, argv[0]);
 
-  std::cerr << "VideoCapture.open filename='" << filename << "', camID=" << camID << ", apiPreference=" << apiPreference << std::endl;
+  std::cerr << "VideoCapture.open filename='" << filename << "', camID=" << camID << ", apiPreference=" << apiPreference
+            << std::endl;
 
   if(filename.empty())
     return s->open(camID, apiPreference);
@@ -91,7 +92,8 @@ js_video_capture_finalizer(JSRuntime* rt, JSValue val) {
 
 static JSValue
 js_video_capture_method(JSContext* ctx, JSValueConst video_capture, int argc, JSValueConst* argv, int magic) {
-  JSVideoCaptureData* s = static_cast<JSVideoCaptureData*>(JS_GetOpaque2(ctx, video_capture, js_video_capture_class_id));
+  JSVideoCaptureData* s =
+      static_cast<JSVideoCaptureData*>(JS_GetOpaque2(ctx, video_capture, js_video_capture_class_id));
   JSValue ret = JS_UNDEFINED;
   int32_t propID;
   double value = 0;
@@ -177,7 +179,10 @@ js_video_capture_init(JSContext* ctx, JSModuleDef* m) {
     JS_NewClass(JS_GetRuntime(ctx), js_video_capture_class_id, &js_video_capture_class);
 
     video_capture_proto = JS_NewObject(ctx);
-    JS_SetPropertyFunctionList(ctx, video_capture_proto, js_video_capture_proto_funcs, countof(js_video_capture_proto_funcs));
+    JS_SetPropertyFunctionList(ctx,
+                               video_capture_proto,
+                               js_video_capture_proto_funcs,
+                               countof(js_video_capture_proto_funcs));
     JS_SetClassProto(ctx, js_video_capture_class_id, video_capture_proto);
 
     video_capture_class = JS_NewCFunction2(ctx, js_video_capture_ctor, "VideoCapture", 2, JS_CFUNC_constructor, 0);

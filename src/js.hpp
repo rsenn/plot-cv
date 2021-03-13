@@ -250,7 +250,8 @@ struct jsrt {
 
   const_value prototype(const_value obj) const;
 
-  void property_names(const_value obj, std::vector<const char*>& out, bool enum_only = false, bool recursive = false) const;
+  void
+  property_names(const_value obj, std::vector<const char*>& out, bool enum_only = false, bool recursive = false) const;
 
   std::vector<const char*> property_names(const_value obj, bool enum_only = true, bool recursive = true) const;
 

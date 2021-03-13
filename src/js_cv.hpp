@@ -11,6 +11,7 @@ js_cv_inputarray(JSContext* ctx, JSValueConst value) {
   cv::Mat* mat;
   cv::UMat* umat;
   JSContourData<double>* contour;
+  JSContoursData<double>* contours;
 
   if((mat = static_cast<cv::Mat*>(JS_GetOpaque(value, js_mat_class_id))))
     return cv::_InputArray(*mat);
@@ -27,11 +28,8 @@ js_cv_inputarray(JSContext* ctx, JSValueConst value) {
     return cv::_InputArray(ptr, size);
   }
 
-  if(js_is_typedarray(ctx, value)) {
-    TypedArrayProps props = js_typedarray_props(ctx, value);
-
-    return cv::_InputArray(props.ptr<float>(), props.size<float>());
-  }
+  if(js_is_typedarray(ctx, value))
+    return js_typedarray_inputarray(ctx, value);
 
   return cv::_InputArray();
 }
