@@ -5,6 +5,7 @@
 #include <ranges>
 
 extern "C" {
+enum JSPointIteratorMagic { NEXT_POINT = 0, NEXT_LINE };
 
 extern JSValue point_iterator_proto, point_iterator_class;
 extern JSClassID js_point_iterator_class_id;
@@ -19,7 +20,7 @@ JSModuleDef* js_init_module_point_iterator(JSContext*, const char* module_name);
 }
 
 struct JSPointIteratorData : public std::pair<JSPointData<double>*, JSPointData<double>*> {
-  int magic;
+  JSPointIteratorMagic magic;
 };
 
 #endif /* defined(JS_POINT_ITERATOR_HPP) */

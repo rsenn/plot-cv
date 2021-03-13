@@ -83,10 +83,7 @@ async function main(...args) {
     new Point(0, 0)
   );
   let i = 0;
-  /* for(let contour of contours) {
-    draw.contours(mat, contours, i, RandomColor() ?? [(i * 255) / contours.length, 0, 0, 0], 2);
-    i++;
-  }*/
+
   function getDepth(idx, id = cv.HIER_PARENT) {
     let parent;
     let depth = 0;
@@ -144,6 +141,18 @@ async function main(...args) {
 
   for(let [x, y, r] of circles) {
     draw.circle(mat, new Point(x, y), r + 3, [0, 128, 255, 255], 5, cv.LINE_AA);
+  }
+  for(let contour of contours) {
+  console.log("contour.length",contour.length);
+  let poly = new Contour();
+  contour.approxPolyDP(poly, contour.arcLength()*0.02);
+
+ console.log("poly.length",poly.length,  [...poly.points()]);
+
+
+ //if(poly.length > 10)continue;
+    draw.contours(mat, contours, i, RandomColor() ?? [(i * 255) / contours.length, 0, 0, 0], 2);
+    i++;
   }
   // console.log(`lines`, [...lines]);
 

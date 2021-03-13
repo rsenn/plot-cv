@@ -1041,8 +1041,10 @@ JSClassDef js_contour_class = {
 JSValue
 js_contour_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSContourData<double>* s;
+
   if(!(s = js_contour_data(ctx, this_val)))
     return JS_EXCEPTION;
+
   return js_point_iterator_new(ctx, range(*s), magic);
 }
 
@@ -1089,11 +1091,10 @@ const JSCFunctionListEntry js_contour_proto_funcs[] = {
     JS_CFUNC_DEF("toArray", 0, js_contour_toarray),
     JS_CFUNC_MAGIC_DEF("toString", 0, js_contour_tostring, 0),
     JS_CFUNC_MAGIC_DEF("toSource", 0, js_contour_tostring, 1),
-    JS_CFUNC_MAGIC_DEF("entries", 0, js_contour_iterator, 0),
-    JS_CFUNC_MAGIC_DEF("keys", 0, js_contour_iterator, 1),
-    JS_CFUNC_MAGIC_DEF("values", 0, js_contour_iterator, 2),
+    JS_CFUNC_MAGIC_DEF("lines", 0, js_contour_iterator, NEXT_LINE),
+    JS_CFUNC_MAGIC_DEF("points", 0, js_contour_iterator, NEXT_POINT),
 
-    JS_ALIAS_DEF("[Symbol.iterator]", "entries"),
+    JS_ALIAS_DEF("[Symbol.iterator]", "points"),
     JS_ALIAS_DEF("size", "length"),
     //    JS_ALIAS_DEF("[Symbol.toStringTag]", "toString"),
 

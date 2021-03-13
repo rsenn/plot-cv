@@ -61,8 +61,18 @@ js_point_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
 
   //  JSPointData<double>* ptr;
   // ptr = it->first;
-  *pdone = it->first == nullptr || it->second == nullptr || (it->first == it->second);
-  result = *pdone ? JS_NULL : js_point_new(ctx, it->first->x, it->first->y);
+  switch(it->magic) {
+    case NEXT_POINT: {
+      *pdone = it->first == nullptr || it->second == nullptr || (it->first == it->second);
+      result = *pdone ? JS_NULL : js_point_new(ctx, it->first->x, it->first->y);
+      break;
+    }
+    case NEXT_LINE: {
+      *pdone = it->first == nullptr || it->second == nullptr || (it->first + 1 >= it->second);
+      result = *pdone ? JS_NULL : js_line_new(ctx, it->first[0].x, it->first[0].y, it->first[1].x, it->first[1].y);
+      break;
+    }
+  }
   it->first++;
   return result;
 }
