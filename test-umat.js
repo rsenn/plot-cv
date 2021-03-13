@@ -83,47 +83,81 @@ async function main(...args) {
     new Point(0, 0)
   );
   let i = 0;
-  for(let contour of contours) {
-    //  console.log(`contours[${i}]`, [...contour].map(({x,y}) => ({x,y})));
-
-    let b = contour.buffer;
-    let m = contour.getMat();
-    let it = new SliceIterator(b, Float64Array, 2);
-    //console.log(`it[${i}]`, [...it].map(([x, y]) => ({ x, y })));
-    // console.log(`contour.getMat()`, [...m]);
-    //console.log(`cv::boundingRect`, contour.boundingRect());
-    // console.log(`cv::aspectRatio`, contour.aspectRatio);
+  /* for(let contour of contours) {
     draw.contours(mat, contours, i, RandomColor() ?? [(i * 255) / contours.length, 0, 0, 0], 2);
-
-    function getDepth(idx, id = cv.HIER_PARENT) {
-      let parent;
-      let depth = 0;
-      while(idx != -1) {
-        const h = hierarchy[idx];
-        depth++;
-        idx = h[id];
-      }
-      return depth;
-    }
-
-    /*console.log(`hierarchy[${i}].depth`, getDepth(i));
-    console.log(`hierarchy[${i}].index`, getDepth(i, cv.HIER_PREV));*/
     i++;
+  }*/
+  function getDepth(idx, id = cv.HIER_PARENT) {
+    let parent;
+    let depth = 0;
+    while(idx != -1) {
+      const h = hierarchy[idx];
+      depth++;
+      idx = h[id];
+    }
+    return depth;
   }
   console.log(`contours.length`, contours.length);
-   console.log('contours', contours.map(c => [...c].map(({x,y}) =>({x,y}))));
- //console.log(`hierarchy`, hierarchy);
+  // console.log('contours', contours.map(c => [...c].map(({x,y}) =>({x,y}))));
+  let lines = new Mat();
+  let circles = [];
+  let gray_inv = new Mat();
+  cv.cvtColor(gray, gray_inv, cv.COLOR_GRAY2BGR);
+
+  gray.xor([255, 255, 255, 0], gray_inv);
+  cv.blur(gray_inv, gray_inv, new Size(3, 3));
+  //cv.cvtColor(gray_inv, gray_inv, cv.COLOR_BGR2GRAY);
+  console.log(`gray_inv`, gray_inv);
+
+  const GetX = x => Math.floor(x / 5);
+  const GetY = y => Math.floor(y / 5);
+
+  cv.HoughLinesP(gray_inv, lines, 1, cv.CV_PI / 24, 40, 5, 10);
+  cv.HoughCircles(gray_inv, circles, cv.HOUGH_GRADIENT, 1, 10, 200, 80, 1, 100);
+  console.log(`circles`, circles);
+  let ygrid = Array.from({ length: Math.floor(input.rows / 5) }, () => []);
+  let xgrid = Array.from({ length: Math.floor(input.cols / 5) }, () => []);
+  console.log(`ygrid`, ygrid);
+
+  for(let elem of lines) {
+    const line = new Line(elem);
+    const [x1, y1, x2, y2] = elem;
+
+    let angle = Math.floor(line.angle / (cv.CV_PI / 24) * 180)   % 24;
+    if(Math.abs(angle) > 2) continue;
+    draw.line(mat, line.a, line.b, [255, 0, 0, 255], 1, cv.LINE_AA);
+    /*    console.log('line.angle:', (line.angle * 180) / Math.PI);
+    console.log('line.length:', line.length);*/
+
+    Util.pushUnique(ygrid[GetY(y1)], line);
+    Util.pushUnique(xgrid[GetY(x1)], line);
+    Util.pushUnique(ygrid[GetY(y2)], line);
+    Util.pushUnique(xgrid[GetY(x2)], line);
+  }
+  ygrid = ygrid.map((lines, row) => [row * 5, lines]).filter(([row, lines]) => lines.length > 1);
+
+  xgrid = xgrid.map((lines, col) => [col * 5, lines]).filter(([col, lines]) => lines.length > 1);
+
+  //for(let [x] of xgrid) draw.line(mat, new Point(x, 0), new Point(x, input.rows), [255, 0, 255, 255], 1, cv.LINE_AA);
+
+  // for(let [y] of ygrid) draw.line(mat, new Point(0, y), new Point(input.cols, y), [255, 255, 0, 255], 1, cv.LINE_AA);
+
+  for(let [x, y, r] of circles) {
+    draw.circle(mat, new Point(x, y), r + 3, [0, 128, 255, 255], 5, cv.LINE_AA);
+  }
+  // console.log(`lines`, [...lines]);
+
+  //console.log(`hierarchy`, hierarchy);
   i = 0;
- 
+
   let input2 = new Mat();
 
   input.copyTo(input2);
-    input2.xor([255,255,255,0], input2);
-  let input2u =
-  input2.getUMat(cv.ACCESS_RW);
-   console.log(`input2u`,input2u);
-cv.imshow('input2',input2u);
-   /* console.log(`input.buffer`, input.buffer);
+  input2.xor([255, 255, 255, 0], input2);
+  let input2u = input2.getUMat(cv.ACCESS_RW);
+  console.log(`input2u`, input2u);
+  cv.imshow('input2', input2u);
+  /* console.log(`input.buffer`, input.buffer);
   console.log(`input2.buffer`, input2.buffer);*/
 
   //for(let i = 0; i < 100; i++) draw.line(mat, RandomPoint(), RandomPoint(), RandomColor(), 1, cv.LINE_AA);
@@ -132,7 +166,7 @@ cv.imshow('input2',input2u);
 
   for(let m of [input, mat, out]) console.log('m', m);
 
-  cv.addWeighted(input2, 0.5,mat ,1, 0, out);
+  cv.addWeighted(input2, 0.5, mat, 1, 0, out);
 
   let umat = out.getUMat(cv.ACCESS_READ);
 

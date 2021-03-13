@@ -23,6 +23,7 @@ public:
 
   Line(const point_type& p1, const point_type& p2) : a(p1), b(p2) {}
 
+  Line(const std::array<T, 4>& arr) : a(arr[0], arr[1]), b(arr[2], arr[3]) {}
   Line(T x1, T y1, T x2, T y2) : a(x1, y1), b(x2, y2) {}
 
   T length() const;
@@ -66,10 +67,7 @@ public:
 
   double angle() const;
 
-  double
-  distance(const point_type& p) const {
-    return std::sqrt(segment_distance2(&a.x, &b.x, &p.x));
-  }
+  double distance(const cv::Point_<T>& p) const;
 
   std::pair<T, size_t> endpoint_distances(const Line<T>& l) const;
 
@@ -202,6 +200,12 @@ to_string(const cv::Point_<T>& pt, size_t n_pad = 3, char ch_pad = '0') {
 }
 
 */
+template<class T>
+double
+Line<T>::distance(const cv::Point_<T>& p) const {
+  return std::sqrt(segment_distance2(&a.x, &b.x, &p.x));
+}
+
 template<class T, class Char = char>
 inline std::string
 to_string(const Line<T>& line) {

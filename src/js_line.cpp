@@ -5,12 +5,16 @@
 #include "js_array.hpp"
 #include "js_typed_array.hpp"
 #include "util.hpp"
+#include "line.hpp"
 
 #if defined(JS_LINE_MODULE) || defined(quickjs_line_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
 #else
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module_line
 #endif
+
+enum { PROP_SLOPE = 0, PROP_PIVOT, PROP_TO, PROP_ANGLE, PROP_LENGTH };
+enum { METHOD_SWAP = 0, METHOD_AT, METHOD_INTERSECT, METHOD_ENDPOINT_DISTANCES, METHOD_DISTANCE };
 
 extern "C" {
 
@@ -29,10 +33,10 @@ js_line_new(JSContext* ctx, double x1, double y1, double x2, double y2) {
 
   ln = js_allocate<JSLineData<double>>(ctx);
 
-  ln->vec[0] = x1;
-  ln->vec[1] = y1;
-  ln->vec[2] = x2;
-  ln->vec[3] = y2;
+  ln->array[0] = x1;
+  ln->array[1] = y1;
+  ln->array[2] = x2;
+  ln->array[3] = y2;
 
   JS_SetOpaque(ret, ln);
   return ret;
@@ -97,13 +101,13 @@ js_line_get_xy12(JSContext* ctx, JSValueConst this_val, int magic) {
   if(!ln)
     ret = JS_EXCEPTION;
   else if(magic == 0)
-    ret = JS_NewFloat64(ctx, ln->vec[0]);
+    ret = JS_NewFloat64(ctx, ln->array[0]);
   else if(magic == 1)
-    ret = JS_NewFloat64(ctx, ln->vec[1]);
+    ret = JS_NewFloat64(ctx, ln->array[1]);
   else if(magic == 2)
-    ret = JS_NewFloat64(ctx, ln->vec[2]);
+    ret = JS_NewFloat64(ctx, ln->array[2]);
   else if(magic == 3)
-    ret = JS_NewFloat64(ctx, ln->vec[3]);
+    ret = JS_NewFloat64(ctx, ln->array[3]);
   return ret;
 }
 
@@ -114,11 +118,70 @@ js_line_get_ab(JSContext* ctx, JSValueConst this_val, int magic) {
   if(!ln)
     ret = JS_EXCEPTION;
   else if(magic == 0)
-    ret = js_point_new(ctx, ln->vec[0], ln->vec[1]);
+    ret = js_point_new(ctx, ln->array[0], ln->array[1]);
   else if(magic == 1)
-    ret = js_point_new(ctx, ln->vec[2], ln->vec[3]);
+    ret = js_point_new(ctx, ln->array[2], ln->array[3]);
 
   return ret;
+}
+
+static JSValue
+js_line_get(JSContext* ctx, JSValueConst this_val, int magic) {
+  JSLineData<double>* ln;
+
+  if(!(ln = static_cast<JSLineData<double>*>(JS_GetOpaque2(ctx, this_val, js_line_class_id))))
+    return JS_EXCEPTION;
+  switch(magic) {
+    case PROP_SLOPE: {
+      Line<double> line(ln->array);
+      return js_point_wrap(ctx, line.slope());
+    }
+    case PROP_PIVOT: {
+      JSPointData<double> pivot(ln->x1, ln->y1);
+      return js_point_wrap(ctx, pivot);
+    }
+    case PROP_TO: {
+      JSPointData<double> to(ln->x2, ln->y2);
+      return js_point_wrap(ctx, to);
+    }
+    case PROP_ANGLE: {
+      Line<double> line(ln->array);
+      return JS_NewFloat64(ctx, angle_from_moment(line.slope()));
+    }
+    case PROP_LENGTH: {
+      Line<double> line(ln->array);
+      return JS_NewFloat64(ctx, line.length());
+    }
+  }
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_line_set(JSContext* ctx, JSValueConst this_val, JSValueConst val, int magic) {
+  JSLineData<double>* ln;
+  double v;
+  if(!(ln = static_cast<JSLineData<double>*>(JS_GetOpaque2(ctx, this_val, js_line_class_id))))
+    return JS_EXCEPTION;
+  switch(magic) {
+    case PROP_PIVOT: {
+      JSPointData<double> pivot;
+      js_point_read(ctx, val, &pivot);
+
+      ln->x1 = pivot.x;
+      ln->y1 = pivot.y;
+      break;
+    }
+    case PROP_TO: {
+      JSPointData<double> to;
+      js_point_read(ctx, val, &to);
+
+      ln->x2 = to.x;
+      ln->y2 = to.y;
+      break;
+    }
+  }
+
+  return JS_UNDEFINED;
 }
 
 static JSValue
@@ -130,45 +193,109 @@ js_line_set_xy12(JSContext* ctx, JSValueConst this_val, JSValueConst val, int ma
   if(JS_ToFloat64(ctx, &v, val))
     return JS_EXCEPTION;
   if(magic == 0)
-    ln->vec[0] = v;
+    ln->array[0] = v;
   else if(magic == 1)
-    ln->vec[1] = v;
+    ln->array[1] = v;
   else if(magic == 2)
-    ln->vec[2] = v;
+    ln->array[2] = v;
   else if(magic == 3)
-    ln->vec[3] = v;
+    ln->array[3] = v;
 
   return JS_UNDEFINED;
 }
 
 static JSValue
 js_line_set_ab(JSContext* ctx, JSValueConst this_val, JSValueConst val, int magic) {
-  JSLineData<double>* ln = static_cast<JSLineData<double>*>(JS_GetOpaque2(ctx, this_val, js_line_class_id));
-  JSPointData<double> pt = js_point_get(ctx, val);
+  JSLineData<double>* ln;
+  JSPointData<double> pt;
 
-  if(!ln)
+  if(!(ln = static_cast<JSLineData<double>*>(JS_GetOpaque2(ctx, this_val, js_line_class_id))))
     return JS_EXCEPTION;
 
+  js_point_read(ctx, val, &pt);
+
   if(magic == 0) {
-    ln->vec[0] = pt.x;
-    ln->vec[1] = pt.y;
+    ln->array[0] = pt.x;
+    ln->array[1] = pt.y;
 
   } else if(magic == 1) {
-    ln->vec[2] = pt.x;
-    ln->vec[3] = pt.y;
+    ln->array[2] = pt.x;
+    ln->array[3] = pt.y;
   }
 
   return JS_UNDEFINED;
 }
 
 static JSValue
-js_line_points(JSContext* ctx, JSValueConst line, int argc, JSValueConst* argv) {
+js_line_points(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSLineData<double>* ln;
 
-  if(!(ln = static_cast<JSLineData<double>*>(JS_GetOpaque2(ctx, line, js_line_class_id))))
+  if(!(ln = static_cast<JSLineData<double>*>(JS_GetOpaque2(ctx, this_val, js_line_class_id))))
     return JS_EXCEPTION;
 
   return js_array_from(ctx, ln->points);
+}
+
+static JSValue
+js_line_methods(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSLineData<double>* ln;
+  JSValue ret = JS_UNDEFINED;
+  if(!(ln = static_cast<JSLineData<double>*>(JS_GetOpaque2(ctx, this_val, js_line_class_id))))
+    return JS_EXCEPTION;
+
+  switch(magic) {
+    case METHOD_SWAP: {
+      JSPointData<double> a = ln->points[0], b = ln->points[1];
+      ln->points[0] = b;
+      ln->points[1] = a;
+      ret = JS_DupValue(ctx, this_val);
+      break;
+    }
+    case METHOD_AT: {
+      double sigma;
+      JSPointData<double> p;
+      js_value_to(ctx, argv[0], sigma);
+
+      sigma = fmin(fmax(sigma, 1), 0);
+
+      p.x = ln->points[0].x * (1.0 - sigma) + ln->points[1].x * sigma;
+      p.y = ln->points[0].y * (1.0 - sigma) + ln->points[1].y * sigma;
+
+      ret = js_point_wrap(ctx, p);
+      break;
+    }
+    case METHOD_INTERSECT: {
+      std::array<double, 4> arg = js_line_get<double>(ctx, argv[0]);
+      JSPointData<double>* point = nullptr;
+
+      if(argc > 1)
+        point = js_point_data(ctx, argv[1]);
+
+      Line<double> line = Line(ln->array);
+      Line<double> other = Line(arg);
+
+      ret = JS_NewBool(ctx, line.intersect(other, point));
+      break;
+    }
+    case METHOD_ENDPOINT_DISTANCES: {
+      JSPointData<double> pt;
+      js_point_read(ctx, argv[0], &pt);
+      Line<double> line = Line(ln->array);
+      auto distances = line.endpoint_distances(pt);
+      ret = JS_NewArray(ctx);
+      JS_SetPropertyUint32(ctx, ret, 0, js_number_new(ctx, distances.first));
+      JS_SetPropertyUint32(ctx, ret, 1, js_number_new(ctx, distances.second));
+      break;
+    }
+    case METHOD_DISTANCE: {
+      cv::Point2d pt;
+      js_point_read(ctx, argv[0], &pt);
+      Line<double> line = Line(ln->array);
+      ret = js_number_new(ctx, line.distance(pt));
+      break;
+    }
+  }
+  return ret;
 }
 
 static JSValue
@@ -271,10 +398,22 @@ const JSCFunctionListEntry js_line_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("b", js_line_get_ab, js_line_set_ab, 1),
     JS_CGETSET_MAGIC_DEF("0", js_line_get_ab, js_line_set_ab, 0),
     JS_CGETSET_MAGIC_DEF("1", js_line_get_ab, js_line_set_ab, 1),
+    JS_CGETSET_MAGIC_DEF("slope", js_line_get, 0, PROP_SLOPE),
+    JS_CGETSET_MAGIC_DEF("angle", js_line_get, 0, PROP_ANGLE),
+    JS_CGETSET_MAGIC_DEF("length", js_line_get, 0, PROP_LENGTH),
+    JS_CGETSET_MAGIC_DEF("pivot", js_line_get, js_line_set, PROP_PIVOT),
+    JS_CGETSET_MAGIC_DEF("to", js_line_get, js_line_set, PROP_TO),
+    JS_CFUNC_MAGIC_DEF("swap", 0, js_line_methods, METHOD_SWAP),
+    JS_CFUNC_MAGIC_DEF("at", 1, js_line_methods, METHOD_AT),
+    JS_CFUNC_MAGIC_DEF("intersect", 1, js_line_methods, METHOD_INTERSECT),
+    JS_CFUNC_MAGIC_DEF("endpointDistances", 1, js_line_methods, METHOD_ENDPOINT_DISTANCES),
+    JS_CFUNC_MAGIC_DEF("distance", 1, js_line_methods, METHOD_DISTANCE),
     JS_CFUNC_DEF("toArray", 0, js_line_toarray),
     JS_CFUNC_MAGIC_DEF("toPoints", 0, js_line_iterator, JS_LINE_AS_POINTS),
     JS_CFUNC_MAGIC_DEF("toString", 0, js_line_iterator, JS_LINE_AS_POINTS | JS_LINE_TO_STRING),
     JS_CFUNC_MAGIC_DEF("values", 0, js_line_iterator, JS_LINE_AS_VECTOR | JS_LINE_GET_ITERATOR),
+    JS_ALIAS_DEF("start", "pivot"),
+    JS_ALIAS_DEF("end", "to"),
     JS_ALIAS_DEF("[Symbol.iterator]", "values"),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Line", JS_PROP_CONFIGURABLE),
 };

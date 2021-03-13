@@ -882,7 +882,7 @@ js_mat_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
   if(sizeStrs.size() || m->type()) {
     os << "size: " COLOR_YELLOW "" << join(sizeStrs.cbegin(), sizeStrs.cend(), "" COLOR_NONE "*" COLOR_YELLOW "")
        << "" COLOR_NONE ", ";
-    os << "type: " COLOR_YELLOW "CV_" << (bytes * 8) << sign << 'C' << m->channels() << "" COLOR_NONE ", ";
+    os << "type: " COLOR_YELLOW "CV_" << (m->elemSize1() * 8) << sign << 'C' << m->channels() << "" COLOR_NONE ", ";
     os << "elemSize: " COLOR_YELLOW "" << m->elemSize() << "" COLOR_NONE ", ";
     os << "elemSize1: " COLOR_YELLOW "" << m->elemSize1() << "" COLOR_NONE ", ";
     os << "total: " COLOR_YELLOW "" << m->total() << "" COLOR_NONE ", ";

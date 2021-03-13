@@ -176,13 +176,13 @@ js_cv_hough_lines(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
 
 static JSValue
 js_cv_hough_lines_p(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSInputOutputArray image, lines;
+  JSInputOutputArray src, dst;
   JSValueConst array;
   double rho, theta;
   int32_t threshold;
   double minLineLength = 0, maxLineGap = 0;
 
-  // std::vector<cv::Vec4i> lines;
+  std::vector<cv::Vec4i> lines;
   size_t i;
 
   double angle = 0, scale = 1;
@@ -192,10 +192,10 @@ js_cv_hough_lines_p(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   if(argc < 5)
     return JS_EXCEPTION;
 
-  image = js_umat_or_mat(ctx, argv[0]);
-  lines = js_cv_inputoutputarray(ctx, argv[1]);
+  src = js_umat_or_mat(ctx, argv[0]);
+  dst = js_cv_inputoutputarray(ctx, argv[1]);
 
-  if(js_is_noarray(image) || js_is_noarray(lines))
+  if(js_is_noarray(src) || js_is_noarray(dst))
     return JS_EXCEPTION;
 
   array = argv[1];
@@ -208,7 +208,9 @@ js_cv_hough_lines_p(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   if(argc >= 7)
     JS_ToFloat64(ctx, &maxLineGap, argv[6]);
 
-  cv::HoughLinesP(image, lines, rho, theta, threshold, minLineLength, maxLineGap);
+  cv::HoughLinesP(src, lines, rho, theta, threshold, minLineLength, maxLineGap);
+
+  cv::Mat(lines).copyTo(dst);
   /*
     i = 0;
     js_array_truncate(ctx, array, 0);
@@ -1375,12 +1377,14 @@ js_cv_find_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
 static JSValue
 js_cv_draw_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSMatData* mat;
+  JSInputOutputArray mat;
   JSContoursData<int> contours;
   JSColorData<double> color;
   int32_t contourIdx = -1, thickness = 1, lineType = cv::LINE_8;
 
-  if((mat = js_mat_data(ctx, argv[0])) == nullptr)
+  mat = js_umat_or_mat(ctx, argv[0]);
+
+  if(js_is_noarray(mat))
     return JS_EXCEPTION;
 
   if(!JS_IsArray(ctx, argv[1]))
@@ -1398,7 +1402,7 @@ js_cv_draw_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   if(argc > 5)
     JS_ToInt32(ctx, &lineType, argv[5]);
 
-  cv::drawContours(*mat, contours, contourIdx, *reinterpret_cast<cv::Scalar*>(&color), thickness, lineType);
+  cv::drawContours(mat, contours, contourIdx, *reinterpret_cast<cv::Scalar*>(&color), thickness, lineType);
   return JS_UNDEFINED;
 }
 

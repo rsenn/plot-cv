@@ -19,6 +19,7 @@ function(config_shared_module TARGET_NAME)
 endfunction(config_shared_module TARGET_NAME)
 
 set(JS_BINDINGS_COMMON src/color.hpp src/geometry.hpp src/js.hpp src/js_alloc.hpp src/js_array.hpp src/js_contour.hpp src/js_line.hpp src/js_point.hpp src/js_rect.hpp src/js_size.hpp src/js_typed_array.hpp src/jsbindings.hpp src/plot-cv.hpp src/psimpl.hpp src/util.hpp)
+set(js_line_SOURCES src/line.cpp src/line.hpp)
 
 function(make_shared_module FNAME)
   string(REGEX REPLACE "_" "-" NAME "${FNAME}")
@@ -26,7 +27,7 @@ function(make_shared_module FNAME)
 
   set(TARGET_NAME quickjs-${NAME})
 
-  add_library(${TARGET_NAME} SHARED src/js_${FNAME}.cpp src/jsbindings.cpp src/util.cpp src/js.hpp src/js.cpp ${JS_BINDINGS_COMMON})
+  add_library(${TARGET_NAME} SHARED src/js_${FNAME}.cpp ${js_${FNAME}_SOURCES} src/jsbindings.cpp src/util.cpp src/js.hpp src/js.cpp ${JS_BINDINGS_COMMON})
 
   target_link_libraries(${TARGET_NAME} ${OpenCV_LIBS})
   set_target_properties(

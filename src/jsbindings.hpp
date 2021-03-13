@@ -47,8 +47,8 @@ typedef cv::_InputOutputArray JSInputOutputArray;
 
 template<class T> union JSLineData {
   std::array<T, 4> array;
-  cv::Vec<T, 4> vec;
-  cv::Scalar_<T> scalar;
+  // cv::Vec<T, 4> vec;
+  // cv::Scalar_<T> scalar;
   std::array<JSPointData<T>, 2> points;
   std::pair<JSPointData<T>, JSPointData<T>> pt;
   struct {

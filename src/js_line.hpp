@@ -5,14 +5,15 @@
 
 template<class T>
 static inline int
-js_line_read(JSContext* ctx, JSValueConst line, T* out) {
+js_line_read(JSContext* ctx, JSValueConst line, std::array<T, 4>& out) {
   int ret = 1;
   JSValue x1 = JS_UNDEFINED, y1 = JS_UNDEFINED, x2 = JS_UNDEFINED, y2 = JS_UNDEFINED;
-  if(js_is_array_like(ctx, line)) {
-    js_array_to(ctx, line, out->array);
+  /*if(js_is_array_like(ctx, line)) {
+    js_array_to(ctx, line, out);
     return 1;
-  } else if(js_is_iterable(ctx, line)) {
-    if(js_iterable_to(ctx, line, out->array) == 4)
+  } else */
+  if(js_is_iterable(ctx, line)) {
+    if(js_iterable_to(ctx, line, out) == 4)
       return 1;
   }
   x1 = JS_GetPropertyStr(ctx, line, "x1");
@@ -21,10 +22,10 @@ js_line_read(JSContext* ctx, JSValueConst line, T* out) {
   y2 = JS_GetPropertyStr(ctx, line, "y2");
 
   if(JS_IsNumber(x1) && JS_IsNumber(y1) && JS_IsNumber(x2) && JS_IsNumber(y2)) {
-    ret &= js_number_read(ctx, x1, &out->array[0]);
-    ret &= js_number_read(ctx, y1, &out->array[1]);
-    ret &= js_number_read(ctx, x2, &out->array[2]);
-    ret &= js_number_read(ctx, y2, &out->array[3]);
+    ret &= js_number_read(ctx, x1, &out[0]);
+    ret &= js_number_read(ctx, y1, &out[1]);
+    ret &= js_number_read(ctx, x2, &out[2]);
+    ret &= js_number_read(ctx, y2, &out[3]);
   } else {
     ret = 0;
   }
@@ -40,11 +41,31 @@ js_line_read(JSContext* ctx, JSValueConst line, T* out) {
 }
 
 template<class T>
-static JSLineData<T>
+static inline int
+js_line_read(JSContext* ctx, JSValueConst line, JSLineData<T>* out) {
+  return js_line_read(ctx, line, out->array);
+}
+
+template<class T>
+static std::array<T, 4>
 js_line_get(JSContext* ctx, JSValueConst line) {
-  std::array<T, 4> r;
+  std::array<T, 4> r{0, 0, 0, 0};
   js_line_read(ctx, line, r);
-  return *reinterpret_cast<JSLineData<T>*>(r);
+  return r;
+}
+
+template<class T>
+static inline JSLineData<T>
+js_line_from(T x1, T y1, T x2, T y2) {
+  std::array<T, 4> arr{x1, y1, x2, y2};
+  return *reinterpret_cast<JSLineData<T>*>(&arr);
+}
+
+template<class T>
+static inline JSLineData<T>
+js_line_from(const JSPointData<T>& a, const JSPointData<T>& b) {
+  std::array<T, 4> arr{a.x, a.y, b.x, b.y};
+  return *reinterpret_cast<JSLineData<T>*>(&arr);
 }
 
 static inline int
