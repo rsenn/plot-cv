@@ -152,9 +152,9 @@ struct TypedArrayType {
       return int32_t(byte_size == 8 ? CV_64F : CV_32F);
 
     switch(byte_size) {
-      case 1: return  int32_t(is_signed ? CV_8S : CV_8U);
-      case 2: return  int32_t(is_signed ? CV_16S : CV_16U);
-      case 4: return  int32_t(is_signed ? CV_32S : CV_32F);
+      case 1: return int32_t(is_signed ? CV_8S : CV_8U);
+      case 2: return int32_t(is_signed ? CV_16S : CV_16U);
+      case 4: return int32_t(is_signed ? CV_32S : CV_32F);
     }
     return -1;
   }
