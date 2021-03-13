@@ -41,6 +41,10 @@ typedef cv::VideoCapture JSVideoCaptureData;
 typedef cv::TickMeter JSTickMeterData;
 typedef cv::Ptr<cv::CLAHE> JSCLAHEData;
 
+typedef cv::_InputArray JSInputArray;
+typedef cv::_OutputArray JSOutputArray;
+typedef cv::_InputOutputArray JSInputOutputArray;
+
 template<class T> union JSLineData {
   std::array<T, 4> array;
   cv::Vec<T, 4> vec;

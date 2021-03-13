@@ -390,22 +390,22 @@ js_typedarray_props(JSContext* ctx, JSValueConst obj) {
   return TypedArrayProps(byte_offset, byte_length, bytes_per_element, js_arraybuffer_props(ctx, buffer));
 }
 
-static inline cv::_InputArray
-js_typedarray_inputarray(JSContext* ctx, JSValueConst obj) {
+static inline JSInputOutputArray
+js_typedarray_inputoutputarray(JSContext* ctx, JSValueConst obj) {
 
   TypedArrayType type = js_typedarray_type(ctx, obj);
   TypedArrayProps props = js_typedarray_props(ctx, obj);
 
   switch(type.flags()) {
-    case TYPEDARRAY_UINT8: return cv::_InputArray(props.ptr<uint8_t>(), props.size<uint8_t>());
-    case TYPEDARRAY_INT8: return cv::_InputArray(props.ptr<int8_t>(), props.size<int8_t>());
-    case TYPEDARRAY_UINT16: return cv::_InputArray(props.ptr<uint16_t>(), props.size<uint16_t>());
-    case TYPEDARRAY_INT16: return cv::_InputArray(props.ptr<int16_t>(), props.size<int16_t>());
+    case TYPEDARRAY_UINT8: return JSInputOutputArray(props.ptr<uint8_t>(), props.size<uint8_t>());
+    case TYPEDARRAY_INT8: return JSInputOutputArray(props.ptr<int8_t>(), props.size<int8_t>());
+    case TYPEDARRAY_UINT16: return JSInputOutputArray(props.ptr<uint16_t>(), props.size<uint16_t>());
+    case TYPEDARRAY_INT16: return JSInputOutputArray(props.ptr<int16_t>(), props.size<int16_t>());
     /*case TYPEDARRAY_UINT32: {
       TypedArrayRange<uint32_t> range(props);
       return std::vector<uint32_t>(range.begin(), range.end());
     }*/
-    case TYPEDARRAY_INT32: return cv::_InputArray(props.ptr<int>(), props.size<int>());
+    case TYPEDARRAY_INT32: return JSInputOutputArray(props.ptr<int>(), props.size<int>());
     /*case TYPEDARRAY_BIGUINT64: {
       TypedArrayRange<uint64_t> range(props);
       return std::vector<uint64_t>(range.begin(), range.end());
@@ -414,10 +414,10 @@ js_typedarray_inputarray(JSContext* ctx, JSValueConst obj) {
       TypedArrayRange<int64_t> range(props);
       return std::vector<int64_t>(range.begin(), range.end());
     }*/
-    case TYPEDARRAY_FLOAT32: return cv::_InputArray(props.ptr<float>(), props.size<float>());
-    case TYPEDARRAY_FLOAT64: return cv::_InputArray(props.ptr<double>(), props.size<double>());
+    case TYPEDARRAY_FLOAT32: return JSInputOutputArray(props.ptr<float>(), props.size<float>());
+    case TYPEDARRAY_FLOAT64: return JSInputOutputArray(props.ptr<double>(), props.size<double>());
   }
 
-  return cv::_InputArray();
+  return cv::noArray();
 }
 #endif /* defined(JS_TYPED_ARRAY_HPP) */

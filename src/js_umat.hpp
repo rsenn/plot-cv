@@ -16,6 +16,17 @@ void js_umat_constructor(JSContext* ctx, JSValue parent, const char* name);
 
 VISIBLE JSUMatData* js_umat_data(JSContext* ctx, JSValueConst val);
 
+static inline JSInputArray
+js_umat_or_mat(JSContext* ctx, JSValueConst value) {
+  cv::Mat* mat;
+  cv::UMat* umat;
+
+  if((umat = static_cast<cv::UMat*>(JS_GetOpaque(value, js_umat_class_id))))
+    return cv::_InputArray(*umat);
+  mat = static_cast<cv::Mat*>(JS_GetOpaque2(ctx, value, js_mat_class_id));
+  return cv::_InputArray(*mat);
+}
+
 static inline JSValue
 js_umat_wrap(JSContext* ctx, const cv::UMat& umat) {
   JSValue ret;

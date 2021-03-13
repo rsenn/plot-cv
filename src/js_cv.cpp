@@ -340,7 +340,7 @@ static JSValue
 js_cv_imwrite(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
 
   const char* filename = JS_ToCString(ctx, argv[0]);
-  cv::_InputArray image = js_cv_inputarray(ctx, argv[1]);
+  cv::_InputArray image = js_cv_inputoutputarray(ctx, argv[1]);
 
   if(image.empty())
     return JS_EXCEPTION;
@@ -354,7 +354,7 @@ static JSValue
 js_cv_imshow(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
 
   const char* winname = JS_ToCString(ctx, argv[0]);
-  cv::_InputArray image = js_cv_inputarray(ctx, argv[1]);
+  cv::_InputArray image = js_cv_inputoutputarray(ctx, argv[1]);
 
   if(image.empty())
     return JS_EXCEPTION;
@@ -463,19 +463,28 @@ js_cv_normalize(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 
 static JSValue
 js_cv_add_weighted(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSInputArray a1, a2;
+  JSOutputArray o;
 
   cv::Mat *src1, *src2, *dst;
   double alpha, beta, gamma;
   int32_t dtype = -1;
 
-  src1 = js_mat_data(ctx, argv[0]);
+  a1 = js_cv_inputoutputarray(ctx, argv[0]);
+  a2 = js_cv_inputoutputarray(ctx, argv[2]);
 
-  src2 = js_mat_data(ctx, argv[2]);
-  if(argc >= 6)
-    dst = js_mat_data(ctx, argv[5]);
-
-  if(src1 == nullptr || src2 == nullptr || dst == nullptr)
+  if(js_is_noarray(a1) || js_is_noarray(a2))
     return JS_EXCEPTION;
+
+  /*
+    src1 = js_mat_data(ctx, argv[0]);
+
+    src2 = js_mat_data(ctx, argv[2]);
+    if(argc >= 6)
+      dst = js_mat_data(ctx, argv[5]);
+
+    if(src1 == nullptr || src2 == nullptr || dst == nullptr)
+      return JS_EXCEPTION;*/
 
   if(argc >= 2)
     JS_ToFloat64(ctx, &alpha, argv[1]);
@@ -487,7 +496,7 @@ js_cv_add_weighted(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
   if(argc >= 7)
     JS_ToInt32(ctx, &dtype, argv[6]);
 
-  cv::addWeighted(*src1, alpha, *src2, beta, gamma, *dst, dtype);
+  cv::addWeighted(a1, alpha, a2, beta, gamma, *dst, dtype);
   return JS_UNDEFINED;
 }
 
