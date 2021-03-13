@@ -10,19 +10,14 @@ import * as nvg from 'nanovg.so';
 function Mat2Texture(texture_cv) {
   let texture = new Uint32Array(1);
   console.log('Mat2Texture', { texture, texture_cv });
-  glGenTextures(1, texture.buffer); // Create The Texture
-  // console.log('Mat2Texture texture_cv.buffer', texture_cv.buffer);
-
+  glGenTextures(1, texture.buffer);
   glBindTexture(GL_TEXTURE_2D, texture[0]);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
   console.log('Mat2Texture texture', [...texture]);
-  /// console.log('Mat2Texture texture_cv.buffer', texture_cv.buffer);
   console.log('Mat2Texture texture_cv.size', texture_cv.size);
-
   glTexImage2D(GL_TEXTURE_2D,
     0,
     3,
@@ -34,7 +29,6 @@ function Mat2Texture(texture_cv) {
     texture_cv.buffer
   );
   console.log('Mat2Texture texture[0]', texture[0]);
-
   return texture[0];
 }
 
@@ -73,10 +67,10 @@ async function main(...args) {
   let image = cv.imread('9b16290d7d9c8f1aca810b6702070189_20170331_112428.jpg');
   let image2 = cv.imread('796e7bfab61dd66b5f12c3f929f75d9c_Mhleberg_5.jpg');
   console.log('image:', image);
-  let texture = Mat2Texture(image.clone());
+  /*let texture = Mat2Texture(image.clone());
   let texture2 = Mat2Texture(image2);
   console.log('texture:', texture);
-  console.log('texture2:', texture2);
+  console.log('texture2:', texture2);*/
   console.log('image.buffer:', image.buffer);
   let imgId = nvg.CreateImage('796e7bfab61dd66b5f12c3f929f75d9c_Mhleberg_5.jpg', 0);
 
@@ -123,12 +117,15 @@ async function main(...args) {
     let pattern = nvg.ImagePattern(0, 0, ...imgSz, 0, imgId, 1);
     console.log('pattern:', pattern);
 
+    nvg.Scale(0.4, 0.4);
+
     nvg.BeginPath();
-    nvg.Rect(10, 10, 200, 200);
+    nvg.Rect(0, 0, ...imgSz);
     nvg.StrokeColor(nvg.RGB(255, 128, 0));
     nvg.StrokeWidth(4);
     nvg.Stroke();
-    nvg.FillColor(nvg.RGB(0, 0, 0));
+    nvg.FillPaint(pattern);
+    // nvg.FillColor(nvg.RGB(0, 0, 0));
     nvg.Fill();
 
     nvg.EndFrame();
