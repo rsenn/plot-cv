@@ -2,6 +2,7 @@
 #define JSBINDINGS_HPP
 
 #include "js.hpp"
+#include "util.hpp"
 #include <quickjs/cutils.h>
 
 #include <opencv2/core/core.hpp>
@@ -81,12 +82,11 @@ struct JSPointIteratorData : public std::pair<JSPointData<double>*, JSPointData<
 #define HIDDEN __attribute__((visibility("hidden")))
 #endif
 
-#define JS_CGETSET_ENUMERABLE_DEF(prop_name, fgetter, fsetter, magic_num)                                                                  \
-  {                                                                                                                                        \
-    .name = prop_name, .prop_flags = JS_PROP_ENUMERABLE | JS_PROP_CONFIGURABLE, .def_type = JS_DEF_CGETSET_MAGIC, .magic = magic_num,      \
-    .u = {                                                                                                                                 \
-      .getset = {.get = {.getter_magic = fgetter}, .set = {.setter_magic = fsetter}}                                                       \
-    }                                                                                                                                      \
+#define JS_CGETSET_ENUMERABLE_DEF(prop_name, fgetter, fsetter, magic_num)                                                                                                                              \
+  {                                                                                                                                                                                                    \
+    .name = prop_name, .prop_flags = JS_PROP_ENUMERABLE | JS_PROP_CONFIGURABLE, .def_type = JS_DEF_CGETSET_MAGIC, .magic = magic_num, .u = {                                                           \
+      .getset = {.get = {.getter_magic = fgetter}, .set = {.setter_magic = fsetter}}                                                                                                                   \
+    }                                                                                                                                                                                                  \
   }
 
 extern "C" {
@@ -116,9 +116,8 @@ int js_video_capture_init(JSContext*, JSModuleDef*);
 
 VISIBLE JSValue js_video_capture_wrap(JSContext*, cv::VideoCapture* cap);
 
-extern "C" JSValue int32array_ctor, int32array_proto, mat_class, mat_proto, mat_iterator_proto, point_class, line_class,
-    point_iterator_class, draw_class, point_iterator_proto, point_proto, rect_class, rect_proto, size_class, size_proto, line_proto,
-    draw_proto;
+// extern "C" JSValue int32array_ctor, int32array_proto, mat_class, mat_proto, mat_iterator_proto, point_class, line_class, point_iterator_class, draw_class, point_iterator_proto, point_proto,
+// rect_class, rect_proto, size_class, size_proto, line_proto, draw_proto;
 
 VISIBLE JSValue js_point_iterator_new(JSContext* ctx, const std::pair<JSPointData<double>*, JSPointData<double>*>& range, int magic);
 VISIBLE JSValue js_mat_wrap(JSContext*, const cv::Mat& mat);
@@ -278,12 +277,7 @@ js_arraybuffer_from(JSContext* ctx, const Ptr& begin, const Ptr& end) {
 
 template<class Ptr>
 static inline JSValue
-js_arraybuffer_from(JSContext* ctx,
-                    const Ptr& begin,
-                    const Ptr& end,
-                    JSFreeArrayBufferDataFunc& free_func,
-                    void* opaque = nullptr,
-                    bool is_shared = false) {
+js_arraybuffer_from(JSContext* ctx, const Ptr& begin, const Ptr& end, JSFreeArrayBufferDataFunc& free_func, void* opaque = nullptr, bool is_shared = false) {
   const uint8_t* ptr;
   size_t len;
   ptr = reinterpret_cast<const uint8_t*>(begin);
@@ -408,6 +402,28 @@ js_value_to(JSContext* ctx, JSValueConst value, std::string& out) {
   out.assign(str, len);
   JS_FreeCString(ctx, str);
   return 1;
+}
+
+template<class T, typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type* = nullptr>
+static inline JSValue
+js_value_from(JSContext* ctx, const T& in) {
+  return js_number_new<T>(ctx, in);
+}
+
+static inline JSValue
+js_value_from(JSContext* ctx, bool in) {
+  return JS_NewBool(ctx, in);
+}
+
+static inline JSValue
+js_value_from(JSContext* ctx, const std::string& in) {
+  return JS_NewStringLen(ctx, in.data(), in.size());
+}
+
+template<class T, int N>
+static inline JSValue
+js_value_from(JSContext* ctx, const cv::Vec<T, N>& in) {
+  return js_array_from(ctx, begin(in), end(in));
 }
 
 template<class T> class js_iterable {

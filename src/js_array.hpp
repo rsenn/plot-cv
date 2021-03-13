@@ -124,7 +124,7 @@ public:
     JSValue arr = JS_NewArray(ctx);
     size_t i = 0;
     for(Iterator it = start; it != end; ++it) {
-      JSValue item = JS_NewFloat64(ctx, *it);
+      JSValue item = js_value_from(ctx, *it);
       JS_SetPropertyUint32(ctx, arr, i, item);
       ++i;
     }
@@ -415,6 +415,20 @@ public:
       JS_FreeValue(ctx, item);
     }
     return n;
+  }
+
+  template<class Iterator>
+ static  JSValue
+  from_sequence(JSContext* ctx, const Iterator& start, const Iterator& end /*,
+    typename  std::enable_if<pointer_type<Iterator>::typed_array >::type* dummy = 0*/) {
+    JSValue arr = JS_NewArray(ctx);
+    size_t i = 0;
+    for(Iterator it = start; it != end; ++it) {
+      JSValue item = js_array_from(ctx, *it);
+      JS_SetPropertyUint32(ctx, arr, i, item);
+      ++i;
+    }
+    return arr;
   }
 
   template<size_t N> static int64_t to_array(JSContext* ctx, JSValueConst arr, std::array<std::vector<T>, N>& out);

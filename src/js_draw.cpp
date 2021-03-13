@@ -115,8 +115,7 @@ js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
   if(argc > i && JS_IsNumber(argv[++i])) {
     JS_ToInt32(ctx, &lineType, argv[i]);
   }
-  std::cerr << "draw_contour() contours.length=" << contours.size() << " contourIdx=" << contourIdx << " thickness=" << thickness
-            << std::endl;
+  std::cerr << "draw_contour() contours.length=" << contours.size() << " contourIdx=" << contourIdx << " thickness=" << thickness << std::endl;
 
   cv::drawContours(*dst, contours, contourIdx, *reinterpret_cast<cv::Scalar*>(&color), thickness, lineType);
 
@@ -204,8 +203,7 @@ js_draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
     std::cerr << "drawPolygon() points: " << (points) << " color: " << to_string(color) << std::endl;
 
     // cv::fillPoly(*dptr, points, color, antialias ? cv::LINE_AA : cv::LINE_8);
-    (thickness <= 0 ? cv::fillPoly(*dst, &pts, &size, 1, color, lineType)
-                    : cv::polylines(*dst, &pts, &size, 1, true, color, thickness, lineType));
+    (thickness <= 0 ? cv::fillPoly(*dst, &pts, &size, 1, color, lineType) : cv::polylines(*dst, &pts, &size, 1, true, color, thickness, lineType));
 
     return JS_UNDEFINED;
   }

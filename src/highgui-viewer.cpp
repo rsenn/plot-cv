@@ -29,12 +29,7 @@ using std::chrono::steady_clock;
 using std::chrono::time_point;
 
 std::ofstream logfile("plot-cv.log", std::ios_base::out | std::ios_base::ate);
-std::map<std::string, bool> views{{"imgOriginal", true},
-                                  {"imgBlurred", false},
-                                  {"imgCanny", true},
-                                  {"imgGrayscale", false},
-                                  {"imgMorphology", false},
-                                  {"imgVector", true}};
+std::map<std::string, bool> views{{"imgOriginal", true}, {"imgBlurred", false}, {"imgCanny", true}, {"imgGrayscale", false}, {"imgMorphology", false}, {"imgVector", true}};
 
 std::map<std::string, std::string> trackbars;
 
@@ -78,8 +73,7 @@ trackbar_prop(int input, void* u) {
 };
 
 int
-create_trackbar(
-    const char* name, const std::string& window, int* value, int count, cv::TrackbarCallback onChange = 0, const char* caption = nullptr) {
+create_trackbar(const char* name, const std::string& window, int* value, int count, cv::TrackbarCallback onChange = 0, const char* caption = nullptr) {
   std::string barName = name;
   std::string windowName = views[window] ? window : "imgOriginal";
   if(caption == nullptr)
@@ -182,8 +176,7 @@ main(int argc, char* argv[]) {
   std::string range;
 
   std::cerr << "num files: " << arguments.size() << std::endl;
-  std::cerr << "files 0.." << end << ": " << implode(std::vector<std::string>(arguments.cbegin(), arguments.cbegin() + end), ", ", range)
-            << std::endl;
+  std::cerr << "files 0.." << end << ": " << implode(std::vector<std::string>(arguments.cbegin(), arguments.cbegin() + end), ", ", range) << std::endl;
 
   num_images = arguments.size();
 

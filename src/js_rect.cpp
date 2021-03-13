@@ -161,10 +161,9 @@ static JSValue
 js_rect_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSRectData<double> rect, *s;
   std::ostringstream os;
-  std::array<const char*, 3> delims = {
-      ",",
-      "∣" /*｜⧸⦁⎮∥∣⸾⼁❘❙⟊⍿⎸⏐｜│￨︲︱❘|｜*/,
-      "×" /*"𝅃🅧𝚡🅧🅇𝘹𝚡𝘹𝐱ꭗ𝐗𝑿𝅃𝅃xˣₓ⒳Ⓧⓧ✕✘✗⨉⨯⨂✖⨻⦁⋅⊗⊠∗×⨯×"*/};
+  std::array<const char*, 3> delims = {",",
+                                       "∣" /*｜⧸⦁⎮∥∣⸾⼁❘❙⟊⍿⎸⏐｜│￨︲︱❘|｜*/,
+                                       "×" /*"𝅃🅧𝚡🅧🅇𝘹𝚡𝘹𝐱ꭗ𝐗𝑿𝅃𝅃xˣₓ⒳Ⓧⓧ✕✘✗⨉⨯⨂✖⨻⦁⋅⊗⊠∗×⨯×"*/};
 
   for(size_t i = 0; i < argc; i++) { delims[i] = JS_ToCString(ctx, argv[i]); }
 
@@ -245,8 +244,8 @@ js_rect_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
     js_rect_read(ctx, this_val, &rect);
   }
 
-  os << "{ x: " COLOR_YELLOW "" << rect.x << "" COLOR_NONE ", y: " COLOR_YELLOW "" << rect.y << "" COLOR_NONE ", width: " COLOR_YELLOW ""
-     << rect.width << "" COLOR_NONE ", height: " COLOR_YELLOW "" << rect.height << "" COLOR_NONE " }";
+  os << "{ x: " COLOR_YELLOW "" << rect.x << "" COLOR_NONE ", y: " COLOR_YELLOW "" << rect.y << "" COLOR_NONE ", width: " COLOR_YELLOW "" << rect.width << "" COLOR_NONE ", height: " COLOR_YELLOW ""
+     << rect.height << "" COLOR_NONE " }";
 
   return JS_NewString(ctx, os.str().c_str());
 }

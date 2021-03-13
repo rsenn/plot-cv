@@ -147,9 +147,7 @@ angle(cv::Point_<T> pt1, cv::Point_<T> pt2, cv::Point_<T> pt0) {
 template<class To, class From>
 inline void
 convert_points(const typename point_list<From>::type& from, typename point_list<To>::type& to) {
-  std::transform(from.cbegin(), from.cend(), std::back_inserter(to), [](cv::Point_<From> p) -> cv::Point_<To> {
-    return cv::Point_<To>(p.x, p.y);
-  });
+  std::transform(from.cbegin(), from.cend(), std::back_inserter(to), [](cv::Point_<From> p) -> cv::Point_<To> { return cv::Point_<To>(p.x, p.y); });
 }
 
 template<class To, class From>

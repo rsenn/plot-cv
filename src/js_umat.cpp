@@ -19,21 +19,7 @@
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module_umat
 #endif
 
-enum {
-  PROP_COLS = 0,
-  PROP_ROWS,
-  PROP_CHANNELS,
-  PROP_TYPE,
-  PROP_DEPTH,
-  PROP_EMPTY,
-  PROP_TOTAL,
-  PROP_SIZE,
-  PROP_CONTINUOUS,
-  PROP_SUBMATRIX,
-  PROP_STEP,
-  PROP_ELEM_SIZE,
-  PROP_ELEM_SIZE1
-};
+enum { PROP_COLS = 0, PROP_ROWS, PROP_CHANNELS, PROP_TYPE, PROP_DEPTH, PROP_EMPTY, PROP_TOTAL, PROP_SIZE, PROP_CONTINUOUS, PROP_SUBMATRIX, PROP_STEP, PROP_ELEM_SIZE, PROP_ELEM_SIZE1 };
 
 enum {
   METHOD_COL = 0,
@@ -714,8 +700,7 @@ js_umat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* 
         if(um->type() == CV_32FC1)
           os << mat_at<float>(*um, y, x);
         else
-          os << std::setfill('0') << std::setbase(16) << std::setw(um->type() == CV_8UC4 ? 8 : um->type() == CV_8UC1 ? 2 : 6)
-             << mat_at<uint32_t>(*um, y, x);
+          os << std::setfill('0') << std::setbase(16) << std::setw(um->type() == CV_8UC4 ? 8 : um->type() == CV_8UC1 ? 2 : 6) << mat_at<uint32_t>(*um, y, x);
       }
     }
 
@@ -1086,11 +1071,11 @@ js_umat_init(JSContext* ctx, JSModuleDef* m) {
 
     JS_SetPropertyFunctionList(ctx, umat_class, js_umat_static_funcs, countof(js_umat_static_funcs));
 
-    JSValue g = JS_GetGlobalObject(ctx);
-    int32array_ctor = JS_GetProperty(ctx, g, JS_ATOM_Int32Array);
-    int32array_proto = JS_GetPrototype(ctx, int32array_ctor);
+    /*  JSValue g = JS_GetGlobalObject(ctx);
+      int32array_ctor = JS_GetProperty(ctx, g, JS_ATOM_Int32Array);
+      int32array_proto = JS_GetPrototype(ctx, int32array_ctor);
 
-    JS_FreeValue(ctx, g);
+      JS_FreeValue(ctx, g);*/
   }
 
   if(m)

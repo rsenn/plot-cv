@@ -310,19 +310,9 @@ js_cv_good_features_to_track(JSContext* ctx, JSValueConst this_val, int argc, JS
     JS_ToFloat64(ctx, &k, argv[argind]);
 
   if(argind == 9)
-    cv::goodFeaturesToTrack(*image,
-                            *corners,
-                            maxCorners,
-                            qualityLevel,
-                            minDistance,
-                            mask ? *mask : cv::noArray(),
-                            blockSize,
-                            gradientSize,
-                            useHarrisDetector,
-                            k);
+    cv::goodFeaturesToTrack(*image, *corners, maxCorners, qualityLevel, minDistance, mask ? *mask : cv::noArray(), blockSize, gradientSize, useHarrisDetector, k);
   else
-    cv::goodFeaturesToTrack(
-        *image, *corners, maxCorners, qualityLevel, minDistance, mask ? *mask : cv::noArray(), blockSize, useHarrisDetector, k);
+    cv::goodFeaturesToTrack(*image, *corners, maxCorners, qualityLevel, minDistance, mask ? *mask : cv::noArray(), blockSize, useHarrisDetector, k);
 
   return JS_UNDEFINED;
 }
@@ -651,16 +641,7 @@ js_cv_calc_hist(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
       rangePtr[i] = ranges[i].data();
     }
 
-    cv::calcHist(const_cast<const cv::Mat*>(images.data()),
-                 images.size(),
-                 channels.data(),
-                 *mask,
-                 *hist,
-                 dims,
-                 histSize.data(),
-                 rangePtr.data(),
-                 uniform,
-                 accumulate);
+    cv::calcHist(const_cast<const cv::Mat*>(images.data()), images.size(), channels.data(), *mask, *hist, dims, histSize.data(), rangePtr.data(), uniform, accumulate);
   }
   return JS_UNDEFINED;
 }
@@ -850,10 +831,7 @@ js_cv_min_max_loc(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
   JS_SetPropertyStr(ctx,
                     ret,
                     "maxLoc",
-                    js_object::from_map(ctx,
-                                        std::map<std::string, int>{std::pair<std::string, int>{"x", maxLoc.x},
-                                                                   std::pair<std::string, int>{"y",
-                                                                                               maxLoc.y}})); // js_point_wrap(ctx, maxLoc));
+                    js_object::from_map(ctx, std::map<std::string, int>{std::pair<std::string, int>{"x", maxLoc.x}, std::pair<std::string, int>{"y", maxLoc.y}})); // js_point_wrap(ctx, maxLoc));
 
   return ret;
 }
@@ -1210,12 +1188,8 @@ js_cv_getperspectivetransform(JSContext* ctx, JSValueConst this_val, int argc, J
       JS_ToInt32(ctx, &solveMethod, argv[2]);
   }
 
-  std::transform(v->begin(), v->end(), std::back_inserter(a), [](const JSPointData<double>& pt) -> JSPointData<float> {
-    return JSPointData<float>(pt.x, pt.y);
-  });
-  std::transform(other->begin(), other->end(), std::back_inserter(b), [](const JSPointData<double>& pt) -> JSPointData<float> {
-    return JSPointData<float>(pt.x, pt.y);
-  });
+  std::transform(v->begin(), v->end(), std::back_inserter(a), [](const JSPointData<double>& pt) -> JSPointData<float> { return JSPointData<float>(pt.x, pt.y); });
+  std::transform(other->begin(), other->end(), std::back_inserter(b), [](const JSPointData<double>& pt) -> JSPointData<float> { return JSPointData<float>(pt.x, pt.y); });
   matrix = cv::getPerspectiveTransform(a, b /*, solveMethod*/);
 
   ret = js_mat_wrap(ctx, matrix);
@@ -1237,12 +1211,8 @@ js_cv_getaffinetransform(JSContext* ctx, JSValueConst this_val, int argc, JSValu
   if(argc > 1)
     other = static_cast<JSContourData<double>*>(JS_GetOpaque2(ctx, argv[1], js_contour_class_id));
 
-  std::transform(v->begin(), v->end(), std::back_inserter(a), [](const JSPointData<double>& pt) -> JSPointData<float> {
-    return JSPointData<float>(pt.x, pt.y);
-  });
-  std::transform(other->begin(), other->end(), std::back_inserter(b), [](const JSPointData<double>& pt) -> JSPointData<float> {
-    return JSPointData<float>(pt.x, pt.y);
-  });
+  std::transform(v->begin(), v->end(), std::back_inserter(a), [](const JSPointData<double>& pt) -> JSPointData<float> { return JSPointData<float>(pt.x, pt.y); });
+  std::transform(other->begin(), other->end(), std::back_inserter(b), [](const JSPointData<double>& pt) -> JSPointData<float> { return JSPointData<float>(pt.x, pt.y); });
   matrix = cv::getAffineTransform(a, b);
 
   ret = js_mat_wrap(ctx, matrix);
@@ -1272,9 +1242,7 @@ js_cv_find_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
   poly.resize(contours.size());
 
-  transform_contours<JSContoursData<int>::const_iterator, JSContoursData<double>::iterator>(contours.cbegin(),
-                                                                                            contours.cend(),
-                                                                                            poly.begin());
+  transform_contours<JSContoursData<int>::const_iterator, JSContoursData<double>::iterator>(contours.cbegin(), contours.cend(), poly.begin());
 
   {
     size_t i, length = contours.size();
@@ -1975,17 +1943,7 @@ Stream&
 operator<<(Stream& s, const JSCFunctionListEntry& entry) {
   std::string name(entry.name);
   s << name << std::setw(30 - name.size()) << ' ';
-  s << "type = "
-    << (std::vector<const char*>{"CFUNC",
-                                 "CGETSET",
-                                 "CGETSET_MAGIC",
-                                 "PROP_STRING",
-                                 "PROP_INT32",
-                                 "PROP_INT64",
-                                 "PROP_DOUBLE",
-                                 "PROP_UNDEFINED",
-                                 "OBJECT",
-                                 "ALIAS"})[entry.def_type]
+  s << "type = " << (std::vector<const char*>{"CFUNC", "CGETSET", "CGETSET_MAGIC", "PROP_STRING", "PROP_INT32", "PROP_INT64", "PROP_DOUBLE", "PROP_UNDEFINED", "OBJECT", "ALIAS"})[entry.def_type]
     << ", ";
   switch(entry.def_type) {
     case JS_DEF_CGETSET_MAGIC: s << "magic = " << (unsigned int)entry.magic << ", "; break;

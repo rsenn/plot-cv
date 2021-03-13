@@ -2,6 +2,7 @@
 #define JS_UMAT_HPP
 
 #include "jsbindings.hpp"
+#include "js_alloc.hpp"
 
 extern "C" {
 
@@ -21,8 +22,9 @@ js_umat_wrap(JSContext* ctx, const cv::UMat& umat) {
   JSUMatData* s;
   ret = JS_NewObjectProtoClass(ctx, umat_proto, js_umat_class_id);
 
-  new(s) cv::UMat();
-  *s = umat;
+  s = js_allocate<cv::UMat>(ctx);
+
+  new(s) cv::UMat(umat);
 
   JS_SetOpaque(ret, s);
   return ret;

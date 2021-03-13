@@ -23,9 +23,7 @@ public:
   Matrix(const typed_type& m) : base_type(dim, dim, typeId) { init(m); }
   template<class OtherT> Matrix(const OtherT& m) : base_type(dim, dim, typeId) { init(m); }
 
-  template<class R = std::array<T, dim>> Matrix(R row0, R row1, R row2 = {0, 0, 1}) : base_type(dim, dim, typeId) {
-    init(row0, row1, row2);
-  }
+  template<class R = std::array<T, dim>> Matrix(R row0, R row1, R row2 = {0, 0, 1}) : base_type(dim, dim, typeId) { init(row0, row1, row2); }
   /**
    * @brief      { function_description }
    *

@@ -30,9 +30,7 @@
 template<class Iterator>
 static inline std::string
 join(const Iterator& start, const Iterator& end, const std::string& delim) {
-  return std::accumulate(start, end, std::string(), [&delim](const std::string& a, const std::string& b) -> std::string {
-    return a + (a.length() > 0 ? delim : "") + b;
-  });
+  return std::accumulate(start, end, std::string(), [&delim](const std::string& a, const std::string& b) -> std::string { return a + (a.length() > 0 ? delim : "") + b; });
 }
 
 extern "C" void* get_heap_base();
@@ -143,10 +141,20 @@ static inline T*
 begin(cv::Vec<T, N>& v) {
   return &v[0];
 }
-
 template<class T, int N>
 static inline T*
 end(cv::Vec<T, N>& v) {
+  return &v[N];
+}
+
+template<class T, int N>
+static inline T const*
+begin(cv::Vec<T, N> const& v) {
+  return &v[0];
+}
+template<class T, int N>
+static inline T const*
+end(cv::Vec<T, N> const& v) {
   return &v[N];
 }
 

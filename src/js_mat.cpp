@@ -484,6 +484,7 @@ js_mat_expr(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv,
 
     *dst = tmp;
   }
+
   return ret;
 }
 
@@ -886,8 +887,7 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
         if(m->type() == CV_32FC1)
           os << m->at<float>(y, x);
         else
-          os << std::setfill('0') << std::setbase(16) << std::setw(m->type() == CV_8UC4 ? 8 : m->type() == CV_8UC1 ? 2 : 6)
-             << m->at<uint32_t>(y, x);
+          os << std::setfill('0') << std::setbase(16) << std::setw(m->type() == CV_8UC4 ? 8 : m->type() == CV_8UC1 ? 2 : 6) << m->at<uint32_t>(y, x);
       }
     }
 
@@ -1330,8 +1330,7 @@ js_mat_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueCon
       }
 
       case MAT_ITERATOR_ENTRIES: {
-        JSValue value =
-            channels == 1 ? js_mat_get(ctx, it->obj, row, col) : js_typedarray_new(ctx, it->buf, offset, channels, TypedArrayProps(*m));
+        JSValue value = channels == 1 ? js_mat_get(ctx, it->obj, row, col) : js_typedarray_new(ctx, it->buf, offset, channels, TypedArrayProps(*m));
         std::array<uint32_t, 2> pos = {row, col};
         std::array<JSValue, 2> entry = {js_array_from(ctx, pos), value};
 
@@ -1465,11 +1464,11 @@ js_mat_init(JSContext* ctx, JSModuleDef* m) {
 
     JS_SetPropertyFunctionList(ctx, mat_class, js_mat_static_funcs, countof(js_mat_static_funcs));
 
-    JSValue g = JS_GetGlobalObject(ctx);
-    int32array_ctor = JS_GetProperty(ctx, g, JS_ATOM_Int32Array);
-    int32array_proto = JS_GetPrototype(ctx, int32array_ctor);
+    /*   JSValue g = JS_GetGlobalObject(ctx);
+       int32array_ctor = JS_GetProperty(ctx, g, JS_ATOM_Int32Array);
+       int32array_proto = JS_GetPrototype(ctx, int32array_ctor);
 
-    JS_FreeValue(ctx, g);
+       JS_FreeValue(ctx, g);*/
   }
 
   if(m)

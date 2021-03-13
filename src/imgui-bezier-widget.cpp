@@ -85,12 +85,8 @@ Bezier(const char* label, float P[4]) {
   RenderFrame(bb.Min, bb.Max, GetColorU32(ImGuiCol_FrameBg, 1), true, Style.FrameRounding);
 
   // background grid
-  for(int i = 0; i <= Canvas.x; i += (Canvas.x / 4)) {
-    DrawList->AddLine(ImVec2(bb.Min.x + i, bb.Min.y), ImVec2(bb.Min.x + i, bb.Max.y), GetColorU32(ImGuiCol_TextDisabled));
-  }
-  for(int i = 0; i <= Canvas.y; i += (Canvas.y / 4)) {
-    DrawList->AddLine(ImVec2(bb.Min.x, bb.Min.y + i), ImVec2(bb.Max.x, bb.Min.y + i), GetColorU32(ImGuiCol_TextDisabled));
-  }
+  for(int i = 0; i <= Canvas.x; i += (Canvas.x / 4)) { DrawList->AddLine(ImVec2(bb.Min.x + i, bb.Min.y), ImVec2(bb.Min.x + i, bb.Max.y), GetColorU32(ImGuiCol_TextDisabled)); }
+  for(int i = 0; i <= Canvas.y; i += (Canvas.y / 4)) { DrawList->AddLine(ImVec2(bb.Min.x, bb.Min.y + i), ImVec2(bb.Max.x, bb.Min.y + i), GetColorU32(ImGuiCol_TextDisabled)); }
 
   // eval curve
   ImVec2 Q[4] = {{0, 0}, {P[0], P[1]}, {P[2], P[3]}, {1, 1}};

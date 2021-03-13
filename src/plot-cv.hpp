@@ -82,8 +82,8 @@ inline std::string
 to_string(const cv::Scalar& scalar) {
   const int pad = 3;
   std::ostringstream oss;
-  oss << '[' << std::setfill(' ') << std::setw(pad) << scalar[0] << ',' << std::setfill(' ') << std::setw(pad) << scalar[1] << ','
-      << std::setfill(' ') << std::setw(pad) << scalar[2] << ',' << std::setfill(' ') << std::setw(pad) << scalar[3] << ']';
+  oss << '[' << std::setfill(' ') << std::setw(pad) << scalar[0] << ',' << std::setfill(' ') << std::setw(pad) << scalar[1] << ',' << std::setfill(' ') << std::setw(pad) << scalar[2] << ','
+      << std::setfill(' ') << std::setw(pad) << scalar[3] << ']';
   return oss.str();
 }
 
@@ -111,9 +111,7 @@ extern "C" image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, img
 void image_info(image_type img);
 std::vector<point_vector<int>> get_contours(image_type src, std::vector<cv::Vec4i>& hierarchy, int flag = CV_RETR_TREE);
 
-void svg_draw_polyline(svg::Document& doc,
-                       const point_vector<float>& contour_arg,
-                       std::function<svg::Color(const point_vector<float>&)> color_fn);
+void svg_draw_polyline(svg::Document& doc, const point_vector<float>& contour_arg, std::function<svg::Color(const point_vector<float>&)> color_fn);
 
 struct config_values {
   int morphology_kernel_size;
@@ -213,9 +211,7 @@ out_points(O& os, const point_vector<int>& pl) {
 template<class Container>
 inline void
 draw_all_lines(
-    image_type& out, const Container& lines, const std::function<int(int, size_t)>& hue = [](int index, size_t len) -> int {
-      return (index * 360 * 10 / len) % 360;
-    }) {
+    image_type& out, const Container& lines, const std::function<int(int, size_t)>& hue = [](int index, size_t len) -> int { return (index * 360 * 10 / len) % 360; }) {
   for(typename Container::const_iterator it = lines.begin(); it != lines.end(); it++) {
     size_t i = std::distance(lines.begin(), it);
     const color_type color = hsv_to_rgb(hue(i, lines.size()), 1.0, 1.0);

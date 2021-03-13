@@ -165,8 +165,7 @@ public:
 
   Base&
   AddAttribute(const Attribute& attribute) {
-    auto ii =
-        std::find_if(attributes.begin(), attributes.end(), [attribute](const auto& a) { return a.Name().compare(attribute.Name()) == 0; });
+    auto ii = std::find_if(attributes.begin(), attributes.end(), [attribute](const auto& a) { return a.Name().compare(attribute.Name()) == 0; });
     if(ii != attributes.end()) {
       ii->Value(attribute.Value());
     } else {
@@ -300,8 +299,7 @@ public:
 class Line : public Base {
 public:
   Line() : Base("line") {}
-  Line(double from_x, double from_y, double to_x, double to_y)
-      : Base("line", {{"x1", from_x}, {"y1", from_y}, {"x2", to_x}, {"y2", to_y}}) {}
+  Line(double from_x, double from_y, double to_x, double to_y) : Base("line", {{"x1", from_x}, {"y1", from_y}, {"x2", to_x}, {"y2", to_y}}) {}
   virtual ~Line() override {}
 };
 
@@ -315,8 +313,7 @@ public:
 class Ellipse : public Base {
 public:
   Ellipse() : Base("ellipse") {}
-  Ellipse(double center_x, double center_y, double radius_x, double radius_y)
-      : Base("ellipse", {{"cx", center_x}, {"cy", center_y}, {"rx", radius_x}, {"ry", radius_y}}) {}
+  Ellipse(double center_x, double center_y, double radius_x, double radius_y) : Base("ellipse", {{"cx", center_x}, {"cy", center_y}, {"rx", radius_x}, {"ry", radius_y}}) {}
   virtual ~Ellipse() override {}
 };
 

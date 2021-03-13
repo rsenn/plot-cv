@@ -66,18 +66,14 @@ public:
   }
 };
 
-extern "C" {}
+/*extern "C" {}
 
 JSValue int32array_proto, int32array_ctor;
-JSClassID int32array_class_id;
-
-JSRectData<double>* js_rect_data(JSContext* ctx, JSValue val);
-
-JSValue js_mat_wrap(JSContext* ctx, const cv::Mat& mat);
+JSClassID int32array_class_id;*/
 
 extern "C++" template<class Type> JSValue js_contour_new(JSContext* ctx, const std::vector<Type>& points);
 
-JSValue
+/*JSValue
 js_vector_vec4i_to_array(JSContext* ctx, const std::vector<cv::Vec4i>& vec) {
   JSValue ret = JS_NewArray(ctx);
   uint32_t i, j, n = vec.size();
@@ -87,7 +83,7 @@ js_vector_vec4i_to_array(JSContext* ctx, const std::vector<cv::Vec4i>& vec) {
     JS_SetPropertyUint32(ctx, ret, i, item);
   }
   return ret;
-}
+}*/
 
 int
 js_color_read(JSContext* ctx, JSValueConst color, JSColorData<double>* out) {
