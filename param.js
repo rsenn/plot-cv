@@ -4,16 +4,20 @@ import { Repeater } from './lib/repeater/repeater.js';
 const MinMax = (min, max) => value => Math.max(min, Math.min(max, value));
 
 export class Param {
-  [Symbol.toPrimitive](hint) {
-    //console.log(`Param[Symbol.toPrimitive](${hint})`);
+  /*[Symbol.toPrimitive](hint) {
+  //console.log(`Param[Symbol.toPrimitive](${hint})`);
     if(hint == 'number') return NumericParam.prototype.get.call(this);
-    else if(hint == 'string') return this.valueOf() + '';
-    else return this.valueOf();
-  }
+    else if(hint == 'string') return Param.prototype.valueOf.call(this) + '';
+    else return Param.prototype.valueOf.call(this);
+  }*/
 
   valueOf() {
-    return NumericParam.prototype.get.call(this);
+    return this.get(); //NumericParam.prototype.get.call(this);
   }
+
+  /*  toPrimitive() {
+    return this.valueOf();
+  }*/
 
   [Symbol.toStringTag]() {
     return this.toString();
@@ -26,20 +30,16 @@ export class Param {
   async createTrackbar(name, win) {
     const cv = await import('cv.so');
 
-    //const winName = win+'';
-    //console.debug(`createTrackbar`, { name,winName,cv});
-    //console.debug(`createTrackbar`, cv.createTrackbar);
-    // return new Repeater(async (push, stop) => {
     cv.createTrackbar(name, win + '', this.value, this.max, value => this.set(value));
-    // });
   }
 }
 
 export class NumericParam extends Param {
   constructor(value = 0, min = 0, max = 1, step = 1) {
     super();
-    Object.assign(this, { min, max, step });
-    Util.define(this, { value, trunc: MinMax(min, max) });
+    const clamp = MinMax(min, max);
+    this.value = clamp(value);
+    Util.define(this, { min, max, step, clamp });
   }
 
   get() {
@@ -47,8 +47,8 @@ export class NumericParam extends Param {
   }
 
   set(value) {
-    const { trunc, min, step } = this;
-    let newValue = this.trunc(min + Util.roundTo(value - min, step));
+    const { clamp, min, step } = this;
+    let newValue = this.clamp(min + Util.roundTo(value - min, step));
     //console.log(`Param.set oldValue=${this.value} new=${newValue}`);
     this.value = newValue;
   }
@@ -59,8 +59,8 @@ export class NumericParam extends Param {
   }
 
   set alpha(a) {
-    const { min, max, step, trunc } = this;
-    this.value = this.trunc(min + Util.roundTo((max - min) * a, step));
+    const { min, max, step, clamp } = this;
+    this.value = this.clamp(min + Util.roundTo((max - min) * a, step));
   }
 
   get range() {

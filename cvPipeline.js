@@ -10,13 +10,17 @@ export class Pipeline extends Function {
       let i = 0;
       for(let processor of self.processors) {
         let start = hr();
-        mat = processor.call(self, mat, self.images[i], i);
+        self.currentProcessor = i;
+
+        console.log(`Pipeline \x1b[38;5;112m#${i} \x1b[38;5;32m'${processor.name}'\x1b[m`);
+        mat = processor.call(self, mat, self.images[i]);
         if(mat) self.images[i] = mat;
         self.times[i] = hr(start);
         if(typeof callback == 'function')
           callback.call(self, self.images[i], i, self.processors.length);
         i++;
       }
+      self.currentProcessor = -1;
       return mat;
     };
     processors = processors.map(processor =>
@@ -24,6 +28,7 @@ export class Pipeline extends Function {
     );
     Util.define(self, {
       processors,
+      currentProcessor: -1,
       images: new Array(processors.length),
       callback
     });
@@ -52,11 +57,11 @@ export class Pipeline extends Function {
 
   inputOf(processor) {
     let index = this.processorIndex(processor);
-    return this.processors[index].in ?? this.images[index];
+    return this.processors[index].in ?? this.images[index - 1];
   }
   outputOf(processor) {
     let index = this.processorIndex(processor);
-    return this.processors[index].out ?? this.images[index + 1];
+    return this.processors[index].out ?? this.images[index];
   }
 }
 
@@ -69,7 +74,11 @@ export function Processor(fn, ...args) {
   });
 
   self = function(src, dst, i) {
-    if(!dst) dst = mapper(self);
+    if(dst && mapper.get(self))
+      throw new Error(`Duplicate output Mat for processor '${self.name}`);
+
+    if(dst) mapper.set(self, dst);
+    else if(!dst) dst = mapper(self);
 
     if(!('in' in self)) self.in = src;
     if(!('out' in self)) self.out = dst;

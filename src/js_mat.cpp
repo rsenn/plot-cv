@@ -44,11 +44,6 @@ typedef struct JSMatIteratorData {
   int magic;
 } JSMatIteratorData;
 
-VISIBLE JSMatData*
-js_mat_data(JSContext* ctx, JSValueConst val) {
-  return static_cast<JSMatData*>(JS_GetOpaque2(ctx, val, js_mat_class_id));
-}
-
 static inline std::vector<int>
 js_mat_sizes(const JSMatData& mat) {
   const cv::MatSize size(mat.size);
@@ -432,12 +427,10 @@ js_mat_expr(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv,
   if((src = js_mat_data(ctx, this_val)) == nullptr)
     return JS_EXCEPTION;
 
-  cv::Mat& mat = *src;
-
   if(argc < 1)
     return JS_EXCEPTION;
 
-  if((o = js_mat_data(ctx, argv[0])) == nullptr)
+  if((o = js_mat_data_nothrow(argv[0])) == nullptr)
     if(!js_color_read(ctx, argv[0], &color))
       return JS_EXCEPTION;
 
@@ -447,48 +440,50 @@ js_mat_expr(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv,
     argc--;
   }
 
-  if(argc > 1) {
+  if(argc > 1)
     dst = js_mat_data(ctx, argv[1]);
-  }
 
   if(dst == nullptr)
-    //  return JS_UNDEFINED;
     dst = src;
 
-  //  cv::Mat& out = *dst;
-  cv::MatExpr expr;
+  {
+    cv::MatExpr expr;
+    cv::Mat tmp(src->rows, src->cols, src->type());
 
-  if(o == nullptr) {
-    cv::Scalar& scalar = *reinterpret_cast<cv::Scalar*>(&color);
-    switch(magic) {
-      case MAT_EXPR_AND: expr = mat & scalar; break;
-      case MAT_EXPR_OR: expr = mat | scalar; break;
-      case MAT_EXPR_XOR: expr = mat ^ scalar; break;
-      case MAT_EXPR_MUL: expr = mat.mul(scalar, scale); break;
+    if(o == nullptr) {
+      cv::Scalar& scalar = *reinterpret_cast<cv::Scalar*>(&color);
+      cv::Mat& mat = *src;
+
+      // std::cerr << "js_mat_expr src=" << (void*)src << " dst=" << (void*)dst << " scalar=" << scalar << std::endl;
+
+      switch(magic) {
+        case MAT_EXPR_AND: expr = mat & scalar; break;
+        case MAT_EXPR_OR: expr = mat | scalar; break;
+        case MAT_EXPR_XOR: expr = mat ^ scalar; break;
+        case MAT_EXPR_MUL: expr = mat.mul(scalar, scale); break;
+      }
+      tmp = static_cast<cv::Mat>(expr);
+
+    } else {
+      switch(magic) {
+        case MAT_EXPR_AND:
+          expr = (*src) & (*o); /*cv::bitwise_and(*src, *o, *dst);*/
+          break;
+        case MAT_EXPR_OR:
+          expr = (*src) | (*o); /*cv::bitwise_or(*src, *o, *dst);*/
+          break;
+        case MAT_EXPR_XOR:
+          expr = (*src) ^ (*o); /*cv::bitwise_xor(*src, *o, *dst);*/
+          break;
+        case MAT_EXPR_MUL:
+          expr = (*src) * (*o); /**dst = mat.mul(*o, scale);*/
+          break;
+      }
+      tmp = static_cast<cv::Mat>(expr);
     }
-    *dst = static_cast<cv::Mat>(expr);
 
-  } else {
-    // cv::Mat const& other = *o;
-
-    switch(magic) {
-      case MAT_EXPR_AND:
-        expr = (*src) & (*o); /*cv::bitwise_and(*src, *o, *dst);*/
-        break;
-      case MAT_EXPR_OR:
-        expr = (*src) | (*o); /*cv::bitwise_or(*src, *o, *dst);*/
-        break;
-      case MAT_EXPR_XOR:
-        expr = (*src) ^ (*o); /*cv::bitwise_xor(*src, *o, *dst);*/
-        break;
-      case MAT_EXPR_MUL:
-        expr = (*src) * (*o); /**dst = mat.mul(*o, scale);*/
-        break;
-    }
-
-    *dst = static_cast<cv::Mat>(expr);
+    *dst = tmp;
   }
-
   return ret;
 }
 

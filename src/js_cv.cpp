@@ -11,6 +11,7 @@
 #include "util.hpp"
 #include "../quickjs/cutils.h"
 
+#include <cassert>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
@@ -198,7 +199,7 @@ js_cv_hough_circles(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   int32_t method, minRadius = 0, maxRadius = 0;
   double dp, minDist, param1 = 100, param2 = 100;
 
-  std::vector<cv::Vec3f> circles;
+  std::vector<cv::Vec<float, 4>> circles;
   size_t i;
 
   JSValue ret;
@@ -229,12 +230,9 @@ js_cv_hough_circles(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   i = 0;
   js_array_truncate(ctx, array, 0);
 
-  for(const auto& circle : circles) {
-    const float *s, *e;
-    s = &circle[0];
-    e = &circle[3];
+  for(auto& circle : circles) {
 
-    JSValue v = js_array_from(ctx, s, e);
+    JSValue v = js_array_from(ctx, begin(circle), end(circle));
 
     JS_SetPropertyUint32(ctx, array, i++, v);
   }
@@ -781,6 +779,9 @@ js_cv_median_blur(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
     return JS_EXCEPTION;
 
   JS_ToInt32(ctx, &ksize, argv[2]);
+
+  assert(ksize >= 1);
+  assert(ksize % 2 == 1);
 
   cv::medianBlur(*src, *dst, ksize);
   return JS_UNDEFINED;

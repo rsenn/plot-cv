@@ -5,6 +5,10 @@
 
 extern "C" JSValue js_point_clone(JSContext* ctx, const JSPointData<double>& point);
 extern "C" {
+
+extern JSValue point_proto, point_class;
+extern JSClassID js_point_class_id;
+
 VISIBLE JSValue js_point_new(JSContext*, double x, double y);
 VISIBLE JSValue js_point_wrap(JSContext*, const JSPointData<double>&);
 VISIBLE JSPointData<double>* js_point_data(JSContext*, JSValueConst val);

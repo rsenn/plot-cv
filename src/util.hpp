@@ -5,7 +5,7 @@
 #include <numeric>
 #include <ranges>
 
-#include <opencv2/core/core.hpp>
+#include <opencv2/core.hpp>
 
 #define COLOR_BLACK "\x1b[30m"
 #define COLOR_RED "\x1b[31m"
@@ -136,6 +136,18 @@ template<class T>
 static inline std::ranges::subrange<T*>
 argument_range(int argc, T* argv) {
   return std::ranges::subrange<T*>(argv, argv + argc);
+}
+
+template<class T, int N>
+static inline T*
+begin(cv::Vec<T, N>& v) {
+  return &v[0];
+}
+
+template<class T, int N>
+static inline T*
+end(cv::Vec<T, N>& v) {
+  return &v[N];
 }
 
 #endif // defined(UTIL_H)

@@ -3,6 +3,8 @@
 
 #include "jsbindings.hpp"
 extern "C" {
+extern JSValue size_proto, size_class;
+extern JSClassID js_size_class_id;
 
 VISIBLE JSValue js_size_new(JSContext* ctx, double w, double h);
 VISIBLE JSValue js_size_wrap(JSContext* ctx, const JSSizeData<double>& size);
