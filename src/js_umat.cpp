@@ -31,8 +31,8 @@ enum {
   PROP_CONTINUOUS,
   PROP_SUBMATRIX,
   PROP_STEP,
-  PROP_ELEM_SIZE,
-  PROP_ELEM_SIZE1
+  PROP_ELEMSIZE,
+  PROP_ELEMSIZE1
 };
 
 enum {
@@ -666,8 +666,8 @@ js_umat_get_props(JSContext* ctx, JSValueConst this_val, int magic) {
     case PROP_CONTINUOUS: return JS_NewBool(ctx, um->isContinuous());
     case PROP_SUBMATRIX: return JS_NewBool(ctx, um->isSubmatrix());
     case PROP_STEP: return JS_NewUint32(ctx, um->step);
-    case PROP_ELEM_SIZE: return JS_NewUint32(ctx, um->elemSize());
-    case PROP_ELEM_SIZE1: return JS_NewUint32(ctx, um->elemSize1());
+    case PROP_ELEMSIZE: return JS_NewUint32(ctx, um->elemSize());
+    case PROP_ELEMSIZE1: return JS_NewUint32(ctx, um->elemSize1());
   }
 
   return JS_UNDEFINED;
@@ -1033,8 +1033,8 @@ const JSCFunctionListEntry js_umat_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("continuous", js_umat_get_props, NULL, PROP_CONTINUOUS),
     JS_CGETSET_MAGIC_DEF("submatrix", js_umat_get_props, NULL, PROP_SUBMATRIX),
     JS_CGETSET_MAGIC_DEF("step", js_umat_get_props, NULL, PROP_STEP),
-    JS_CGETSET_MAGIC_DEF("elemSize", js_umat_get_props, NULL, PROP_ELEM_SIZE),
-    JS_CGETSET_MAGIC_DEF("elemSize1", js_umat_get_props, NULL, PROP_ELEM_SIZE1),
+    JS_CGETSET_MAGIC_DEF("elemSize", js_umat_get_props, NULL, PROP_ELEMSIZE),
+    JS_CGETSET_MAGIC_DEF("elemSize1", js_umat_get_props, NULL, PROP_ELEMSIZE1),
     JS_CGETSET_DEF("buffer", js_umat_buffer, NULL),
     JS_CGETSET_DEF("array", js_umat_array, NULL),
     JS_CFUNC_MAGIC_DEF("col", 1, js_umat_funcs, METHOD_COL),

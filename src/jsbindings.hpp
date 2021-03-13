@@ -286,7 +286,7 @@ js_arraybuffer_from(JSContext* ctx,
   size_t len;
   ptr = reinterpret_cast<const uint8_t*>(begin);
   len = reinterpret_cast<const uint8_t*>(end) - ptr;
-  return JS_NewArrayBuffer(ctx, ptr, len, &free_func, opaque, is_shared);
+  return JS_NewArrayBuffer(ctx, const_cast<uint8_t*>(ptr), len, &free_func, opaque, is_shared);
 }
 
 static inline JSValue

@@ -126,7 +126,7 @@ mat_at(cv::UMat& mat, uint32_t row, uint32_t col) {
 
 template<class T>
 static inline size_t
-mat_size(const T& mat) {
+mat_bytesize(const T& mat) {
   return mat.elemSize() * mat.total();
 }
 
@@ -237,7 +237,7 @@ begin(cv::Mat& mat) {
 }
 static inline uint8_t*
 end(cv::Mat& mat) {
-  return mat.ptr<uint8_t>() + mat_size(mat);
+  return mat.ptr<uint8_t>(mat.rows, 0);
 }
 
 static inline uint8_t const*
@@ -246,7 +246,13 @@ begin(cv::Mat const& mat) {
 }
 static inline uint8_t const*
 end(cv::Mat const& mat) {
-  return mat.ptr<uint8_t const>() + mat_size(mat);
+  return mat.ptr<uint8_t const>(mat.rows, 0);
+}
+
+template<class T>
+static inline std::ranges::subrange<T*>
+range(T* begin, T* end) {
+  return std::ranges::subrange<T*>(begin, end);
 }
 
 template<class Container>
