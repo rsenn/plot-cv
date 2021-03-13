@@ -7,31 +7,6 @@ import { Mat } from 'mat.so';
 import * as cv from 'cv.so';
 import * as nvg from 'nanovg.so';
 
-function Mat2Texture(texture_cv) {
-  let texture = new Uint32Array(1);
-  console.log('Mat2Texture', { texture, texture_cv });
-  glGenTextures(1, texture.buffer);
-  glBindTexture(GL_TEXTURE_2D, texture[0]);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  console.log('Mat2Texture texture', [...texture]);
-  console.log('Mat2Texture texture_cv.size', texture_cv.size);
-  glTexImage2D(GL_TEXTURE_2D,
-    0,
-    3,
-    texture_cv.cols,
-    texture_cv.rows,
-    0,
-    GL_RGB,
-    GL_UNSIGNED_BYTE,
-    texture_cv.buffer
-  );
-  console.log('Mat2Texture texture[0]', texture[0]);
-  return texture[0];
-}
-
 async function main(...args) {
   await ConsoleSetup({
     maxStringLength: 200,
@@ -39,7 +14,7 @@ async function main(...args) {
     breakLength: 100,
     compact: 0
   });
-  console.log('glfw:', glfw);
+  //console.log('glfw:', glfw);
 
   glfw.Window.hint(glfw.CONTEXT_VERSION_MAJOR, 3);
   glfw.Window.hint(glfw.CONTEXT_VERSION_MINOR, 2);
@@ -67,16 +42,13 @@ async function main(...args) {
   let image = cv.imread('9b16290d7d9c8f1aca810b6702070189_20170331_112428.jpg');
   let image2 = cv.imread('796e7bfab61dd66b5f12c3f929f75d9c_Mhleberg_5.jpg');
   console.log('image:', image);
-  /*let texture = Mat2Texture(image.clone());
-  let texture2 = Mat2Texture(image2);
-  console.log('texture:', texture);
-  console.log('texture2:', texture2);*/
   console.log('image.buffer:', image.buffer);
   let imgId = nvg.CreateImage('796e7bfab61dd66b5f12c3f929f75d9c_Mhleberg_5.jpg', 0);
 
   console.log('imgId:', imgId);
   let imgSz = nvg.ImageSize(imgId);
   console.log('nvg.ImageSize():', imgSz);
+  let i = 0;
 
   while(true) {
     if(window.shouldClose) {
@@ -85,16 +57,6 @@ async function main(...args) {
     }
     glViewport(0, 0, width, height);
 
-    /*    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-
-    glLoadIdentity();
-    glDisable(GL_LIGHTING);
-*/
     let time = +new Date() / 1000;
     let index = Math.floor((time * 360) / 30);
     let color = new HSLA(index % 360, 100, 50 + 25 * Math.sin(time * 2 * Math.PI)).toRGBA();
@@ -119,6 +81,12 @@ async function main(...args) {
 
     nvg.Scale(0.4, 0.4);
 
+    /* let  sx = Mat.cos((i % 360) * Math.PI /360);
+    let  sy = Mat.sin((i % 360) * Math.PI /360);
+
+    nvg.Translate(50+sx*50,50+sy*50);*/
+    nvg.Translate((i % 50) * 4, 0);
+
     nvg.BeginPath();
     nvg.Rect(0, 0, ...imgSz);
     nvg.StrokeColor(nvg.RGB(255, 128, 0));
@@ -132,6 +100,7 @@ async function main(...args) {
 
     window.swapBuffers();
     glfw.poll();
+    i++;
   }
 }
 Util.callMain(main, true);
