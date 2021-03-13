@@ -24,7 +24,7 @@ static inline int
 js_point_read(JSContext* ctx, JSValueConst point, JSPointData<T>* out) {
   int ret = 1;
   JSValue x = JS_UNDEFINED, y = JS_UNDEFINED;
-  if(JS_IsArray(ctx, point)) {
+  if(js_is_array_like(ctx, point)) {
     x = JS_GetPropertyUint32(ctx, point, 0);
     y = JS_GetPropertyUint32(ctx, point, 1);
   } else if(JS_IsObject(point)) {
@@ -50,7 +50,7 @@ js_point_write(JSContext* ctx, JSValueConst out, const JSPointData<T>& in) {
   JSValue x = js_number_new<T>(ctx, in.x);
   JSValue y = js_number_new<T>(ctx, in.y);
 
-  if(JS_IsArray(ctx, out)) {
+  if(js_is_array_like(ctx, out)) {
     JS_SetPropertyUint32(ctx, out, 0, x);
     JS_SetPropertyUint32(ctx, out, 1, y);
 

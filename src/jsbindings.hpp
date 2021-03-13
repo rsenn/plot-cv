@@ -355,6 +355,17 @@ js_is_iterable(JSContext* ctx, JSValueConst obj) {
   return ret;
 }
 
+static inline BOOL
+js_is_array_like(JSContext* ctx, JSValueConst obj) {
+  JSValue len;
+bool ret;
+  len = JS_GetPropertyStr(ctx, obj, "length");
+ret =JS_IsNumber(len);
+JS_FreeValue(ctx, len);
+return ret;
+}
+ 
+
 struct ArrayBufferProps {
   uint8_t* ptr;
   size_t len;

@@ -8,7 +8,7 @@ static inline int
 js_line_read(JSContext* ctx, JSValueConst line, T* out) {
   int ret = 1;
   JSValue x1 = JS_UNDEFINED, y1 = JS_UNDEFINED, x2 = JS_UNDEFINED, y2 = JS_UNDEFINED;
-  if(JS_IsArray(ctx, line)) {
+  if(js_is_array_like(ctx, line)) {
     js_array_to(ctx, line, out->array);
     return 1;
   } else if(js_is_iterable(ctx, line)) {
