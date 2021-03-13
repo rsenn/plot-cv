@@ -1,7 +1,7 @@
-import { poll, context, CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_PROFILE, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, RESIZABLE, SAMPLES, Window, Monitor } from 'glfw.so';
+import *as glfw from 'glfw.so';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
-import { glFlush, glBegin, glBindTexture, glClear, glClearColor, glEnable, glEnd, glGenTextures, glTexCoord2f, glTexParameterf, glTexImage2D, glVertex3f, glViewport, GL_COLOR_BUFFER_BIT, GL_LINEAR, GL_QUADS, GL_REPEAT, GL_RGB, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_TEXTURE_WRAP_S, GL_TEXTURE_WRAP_T, GL_UNSIGNED_BYTE, glDisable, glLoadIdentity, glMatrixMode, glOrtho, glPushMatrix, glPopMatrix, GL_LIGHTING, GL_MODELVIEW, GL_PROJECTION } from './gl.js';
+import { glFlush, glBegin, glBindTexture, glClear, glClearColor, glEnable, glEnd, glGenTextures, glTexCoord2f, glTexParameterf, glTexImage2D, glVertex3f, glViewport, GL_COLOR_BUFFER_BIT,GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT, GL_LINEAR, GL_QUADS, GL_REPEAT, GL_RGB, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_TEXTURE_WRAP_S, GL_TEXTURE_WRAP_T, GL_UNSIGNED_BYTE, glDisable, glLoadIdentity, glMatrixMode, glOrtho, glPushMatrix, glPopMatrix, GL_LIGHTING, GL_MODELVIEW, GL_PROJECTION } from './gl.js';
 import { RGBA, HSLA } from './lib/color.js';
 import { Mat } from 'mat.so';
 import * as cv from 'cv.so';
@@ -44,15 +44,20 @@ async function main(...args) {
     maxArrayLength: 10,
     breakLength: 100,
     compact: 0
-  }); Window.hint(CONTEXT_VERSION_MAJOR, 3);
-  Window.hint(CONTEXT_VERSION_MINOR, 2);
-  Window.hint(OPENGL_PROFILE, OPENGL_CORE_PROFILE);
-  Window.hint(OPENGL_FORWARD_COMPAT, true);
-  Window.hint(RESIZABLE, false);
-  Window.hint(SAMPLES, 4);
+  }); 
+   console.log("glfw:", glfw);
 
-  const window = new Window(800, 600, 'OpenGL');
-  context.current = window;
+   glfw.Window.hint(glfw.CONTEXT_VERSION_MAJOR, 3);
+  glfw.Window.hint(glfw.CONTEXT_VERSION_MINOR, 2);
+  glfw.Window.hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE);
+  glfw.Window.hint(glfw.OPENGL_FORWARD_COMPAT, true);
+  glfw.Window.hint(glfw.RESIZABLE, false);
+  glfw.Window.hint(glfw.SAMPLES, 4);
+
+  const window = new glfw.Window(800, 600, 'OpenGL');
+  glfw.context.current = window;
+
+  
 
   const { position, size } = window;
   const { width, height } = size;
@@ -60,16 +65,20 @@ async function main(...args) {
 
   console.log(`width: ${width}, height: ${height}, x: ${x}, y: ${y}`);
 
-  /* nvg.CreateGL3(0);
-
+  nvg.CreateGL3(nvg.STENCIL_STROKES|nvg.ANTIALIAS|nvg.DEBUG);
+/*
   const vg = new nvg.Paint();
 
   console.log("vg:", vg);
 */
 
   let image = cv.imread('9b16290d7d9c8f1aca810b6702070189_20170331_112428.jpg');
+  let image2 = cv.imread('796e7bfab61dd66b5f12c3f929f75d9c_Mhleberg_5.jpg');
   console.log('image:', image);
   let texture = Mat2Texture(image.clone());
+  let texture2 = Mat2Texture(image2);
+   console.log('texture:', texture);
+   console.log('texture2:', texture2);
    console.log('image.buffer:', image.buffer);
  console.log('window.shouldClose:', window.shouldClose);
 
@@ -92,7 +101,7 @@ async function main(...args) {
     //console.log("color", ...color.normalize());
 
     glClearColor(...color.normalize());
-    glClear(GL_COLOR_BUFFER_BIT); //clears the window to the color you want.
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT); //clears the window to the color you want.
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture);
