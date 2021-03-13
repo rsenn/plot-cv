@@ -148,4 +148,3 @@ cv.imshow('input2',input2u);
 }
 
 Util.callMain(main, true);
-cv
