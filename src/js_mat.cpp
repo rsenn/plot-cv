@@ -39,12 +39,6 @@ js_mat_free_func(JSRuntime* rt, void* opaque, void* ptr) {
 static std::vector<JSMatData*> mat_list;
 static std::list<JSMatData*> mat_freed;
 
-typedef struct JSMatIteratorData {
-  JSValue obj, buf;
-  uint32_t row, col;
-  int magic;
-} JSMatIteratorData;
-
 static inline std::vector<int>
 js_mat_sizes(const JSMatData& mat) {
   const cv::MatSize size(mat.size);

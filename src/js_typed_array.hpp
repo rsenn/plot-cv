@@ -389,7 +389,7 @@ js_typedarray_type(JSContext* ctx, JSValueConst obj) {
     class_name = js_function_name(ctx, obj);
   else if(JS_IsString(obj))
     js_value_to(ctx, obj, class_name);
-  else 
+  else
     class_name = js_class_name(ctx, obj);
 
   return js_typedarray_type(class_name);

@@ -381,11 +381,11 @@ js_arraybuffer_props(JSContext* ctx, JSValueConst obj) {
 
 static inline std::string
 js_function_name(JSContext* ctx, JSValueConst value) {
-   const char* str;
+  const char* str;
   const char* name = 0;
   std::string ret;
   int namelen;
-    if((str = JS_ToCString(ctx, value))) {
+  if((str = JS_ToCString(ctx, value))) {
     if(!strncmp(str, "function ", 9)) {
       name = str + 9;
       namelen = strchr(str + 9, '(') - name;
@@ -408,7 +408,7 @@ js_class_name(JSContext* ctx, JSValueConst value) {
   JSValue proto, ctor;
 
   std::string ret;
-   proto = JS_GetPrototype(ctx, value);
+  proto = JS_GetPrototype(ctx, value);
   ctor = JS_GetPropertyStr(ctx, proto, "constructor");
 
   ret = js_function_name(ctx, ctor);
