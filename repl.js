@@ -171,16 +171,16 @@ export default function REPL(title = 'QuickJS') {
     '\x0a': accept_line /* ^J - newline */,
     '\x0b': kill_line /* ^K - delete to end of line */,
     '\x0d': accept_line /* ^M - enter */,
-    '\x0e': next_history /* ^N - down */,
-    '\x10': previous_history /* ^P - up */,
+    '\x0e': history_next /* ^N - down */,
+    '\x10': history_previous /* ^P - up */,
     '\x11': quoted_insert /* ^Q - quoted-insert */,
     '\x12': reverse_search /* ^R - reverse-search */,
     '\x13': forward_search /* ^S - search */,
     '\x14': transpose_chars /* ^T - transpose */,
     '\x18': reset /* ^X - cancel */,
     '\x19': yank /* ^Y - yank */,
-    '\x1bOA': previous_history /* ^[OA - up */,
-    '\x1bOB': next_history /* ^[OB - down */,
+    '\x1bOA': history_previous /* ^[OA - up */,
+    '\x1bOB': history_next /* ^[OB - down */,
     '\x1bOC': forward_char /* ^[OC - right */,
     '\x1bOD': backward_char /* ^[OD - left */,
     '\x1bOF': forward_word /* ^[OF - ctrl-right */,
@@ -192,8 +192,8 @@ export default function REPL(title = 'QuickJS') {
     '\x1b[4~': end_of_line /* ^[[4~ - eol */,
     '\x1b[5~': history_search_backward /* ^[[5~ - page up */,
     '\x1b[6~': history_search_forward /* ^[[5~ - page down */,
-    '\x1b[A': previous_history /* ^[[A - up */,
-    '\x1b[B': next_history /* ^[[B - down */,
+    '\x1b[A': history_previous /* ^[[A - up */,
+    '\x1b[B': history_next /* ^[[B - down */,
     '\x1b[C': forward_char /* ^[[C - right */,
     '\x1b[D': backward_char /* ^[[D - left */,
     '\x1b[F': end_of_line /* ^[[F - end */,
@@ -209,6 +209,8 @@ export default function REPL(title = 'QuickJS') {
     '\x7f': backward_delete_char /* ^? - delete */
   };
 
+  var repl = this instanceof REPL ? this : {};
+
   async function term_init() {
     var tab;
     term_fd = input;
@@ -217,7 +219,7 @@ export default function REPL(title = 'QuickJS') {
     if(filesystem.isatty(term_fd)) {
       if(Util.ttyGetWinSize) {
         await Util.ttyGetWinSize(1).then(tab => {
-          console.log('term_init', { tab });
+          repl.debug('term_init', { tab });
           term_width = tab[0];
         });
       }
@@ -229,7 +231,7 @@ export default function REPL(title = 'QuickJS') {
     Util.signal('SIGINT', sigint_handler);
 
     /* install a handler to read stdin */
-    term_read_buf = new Uint8Array(64);
+    term_read_buf = new Uint8Array(1);
     //os.setReadHandler(term_fd, term_read_handler);
   }
 
@@ -240,8 +242,14 @@ export default function REPL(title = 'QuickJS') {
 
   function term_read_handler() {
     var l, i;
-    l = filesystem.read(input, term_read_buf.buffer, 0, 1);
+    const { buffer } = term_read_buf;
+    l = filesystem.read(input, buffer, 0, 1);
+
     for(i = 0; i < l; i++) {
+      repl.debug('term_read_handler', {
+        code: term_read_buf[i],
+        char: String.fromCharCode(term_read_buf[i])
+      });
       handle_byte(term_read_buf[i]);
 
       if(!running) break;
@@ -249,6 +257,7 @@ export default function REPL(title = 'QuickJS') {
   }
 
   function handle_byte(c) {
+    repl.debug('handle_byte', { c, utf8 });
     if(!utf8) {
       handle_char(c);
     } else if(utf8_state !== 0 && c >= 0x80 && c < 0xc0) {
@@ -378,10 +387,10 @@ export default function REPL(title = 'QuickJS') {
       );
       const num = search > 0 ? search - 1 : search;
       //search_index = history.findLastIndex(c => re.test(c) && --num == 0);
-      let search_history = [...history.entries()].rotateLeft(history_index);
+      let history_search = [...history.entries()].rotateLeft(history_index);
       search_matches.splice(0,
         search_matches.length,
-        ...search_history.filter(([i, c]) => re.test(c))
+        ...history_search.filter(([i, c]) => re.test(c))
       );
       //num = search > 0 ? search - 1 : search;
       const match = search_matches.at(num);
@@ -389,8 +398,8 @@ export default function REPL(title = 'QuickJS') {
       const histdir = search > 0 ? 'forward' : 'reverse';
       const histpos =
         search < 0
-          ? search_history.indexOf(match) - search_history.length
-          : search_history.indexOf(match);
+          ? history_search.indexOf(match) - history_search.length
+          : history_search.indexOf(match);
       search_index = histidx;
       let line_start = `(${histdir}-search[${histpos}])\``;
       cmd_line = `${line_start}${cmd}': ${histcmd}`;
@@ -550,7 +559,9 @@ export default function REPL(title = 'QuickJS') {
   function accept_line() {
     puts('\n');
     history_add(search ? history[search_index] : cmd);
-    //console.log('accept_line', { cmd, search }, [...history.entries()].slice(-3));
+    repl.debug('accept_line', { cmd, history_index, search, history_length: history.length },
+      [...history.entries()].slice(history_index - 3, history_index + 2)
+    );
     return -1;
   }
 
@@ -561,10 +572,13 @@ export default function REPL(title = 'QuickJS') {
   function history_get() {
     return history;
   }
+  function history_pos() {
+    return history_index;
+  }
 
   function history_add(str) {
-    //console.log('history_add', {str} );
-    if(typeof str == 'string') str = str.trim();
+    //console.log('history_add', { str });
+    str = str.trim();
 
     if(str) {
       history.push(str);
@@ -572,7 +586,20 @@ export default function REPL(title = 'QuickJS') {
     history_index = history.length;
   }
 
-  function previous_history() {
+  function num_lines(str) {
+    return str.split(/\n/g).length;
+  }
+  function last_line(str) {
+    let lines = str.split(/\n/g);
+    return lines[lines.length - 1];
+  }
+
+  function history_previous() {
+    let num_lines = cmd.split(/\n/g).length;
+
+    if(num_lines > 1) readline_clear();
+    search = 0;
+
     if(history_index > 0) {
       if(history_index == history.length) {
         history.push(cmd);
@@ -583,7 +610,12 @@ export default function REPL(title = 'QuickJS') {
     }
   }
 
-  function next_history() {
+  function history_next() {
+    let num_lines = cmd.split(/\n/g).length;
+
+    if(num_lines > 1) readline_clear();
+    search = 0;
+
     if(history_index < history.length - 1) {
       history_index++;
       cmd = history[history_index];
@@ -927,6 +959,16 @@ export default function REPL(title = 'QuickJS') {
     return res;
   }
 
+  function readline_clear() {
+    const num_lines = (cmd ?? '').split(/\n/g).length;
+
+    if(num_lines > 1) Terminal.cursorUp(num_lines - 1);
+
+    Terminal.cursorHome();
+    Terminal.eraseInDisplay();
+    readline_print_prompt();
+  }
+
   function readline_print_prompt() {
     puts(prompt);
     term_cursor_x = ucs_length(prompt) % term_width;
@@ -935,6 +977,7 @@ export default function REPL(title = 'QuickJS') {
   }
 
   function readline_start(defstr, cb) {
+    repl.debug('readline_start', { defstr, cb });
     let a = (defstr || '').split(/\n/g);
     mexpr = a.slice(0, -1).join('\n');
     cmd = a[a.length - 1];
@@ -965,7 +1008,7 @@ export default function REPL(title = 'QuickJS') {
 
   function handle_char(c1) {
     var c;
-    //console.log("handle_char", { c1, readline_state });
+    repl.debug('handle_char', { c1, readline_state, readline_keys });
     c = String.fromCodePoint(c1);
 
     for(;;) {
@@ -1035,14 +1078,16 @@ export default function REPL(title = 'QuickJS') {
 
   function handle_key(keys) {
     var fun;
-    // console.log("handle_key:", keys.length, [...keys].map(k => k.charCodeAt(0)), {cmd});
+    repl.debug('handle_key:', { keys, cmd });
 
     if(quote_flag) {
       if(ucs_length(keys) === 1) insert(keys);
       quote_flag = false;
     } else if((fun = commands[keys])) {
+      const ret = fun(keys);
+      repl.debug('handle_key', { keys, fun, ret, cmd, history_index });
       this_fun = fun;
-      switch (fun(keys)) {
+      switch (ret) {
         case -1:
           readline_cb(cmd);
           return;
@@ -1468,25 +1513,12 @@ export default function REPL(title = 'QuickJS') {
       var now = new Date().getTime();
       /* eval as a script */
 
-      console.log('eval_and_print', { expr });
       result = (std?.evalScript ?? eval)(expr, { backtrace_barrier: true });
       eval_time = new Date().getTime() - now;
       puts(colors[styles.result]);
       repl.show(result);
       puts('\n');
       puts(colors.none);
-      /* set the last result */
-      globalThis._ = result;
-      if(Util.isPromise(result)) {
-        result.then(value => {
-          print_status(`Promise resolved to:`,
-            Util.typeOf(value),
-            console.config({ depth: 1, multiline: true }),
-            value
-          );
-          globalThis.$ = value;
-        });
-      }
     } catch(error) {
       puts(colors[styles.error_msg]);
       if(error instanceof Error || typeof error.message == 'string') {
@@ -1499,6 +1531,20 @@ export default function REPL(title = 'QuickJS') {
         console.log(error);
       }
       puts(colors.none);
+    }
+
+    /* set the last result */
+    globalThis._ = repl.result = result;
+    if(Util.isPromise(result)) {
+      result.then(value => {
+        result.resolved = true;
+        print_status(`Promise resolved to:`,
+          Util.typeOf(value),
+          console.config({ depth: 1, multiline: true }),
+          value
+        );
+        globalThis.$ = value;
+      });
     }
   }
 
@@ -1529,20 +1575,20 @@ export default function REPL(title = 'QuickJS') {
   }
 
   function handle_cmd(expr) {
-    var colorstate, cmd;
-
-    if(expr === null) {
+    var colorstate, command;
+    if(expr === null || expr === '') {
       expr = '';
       return -1;
     }
+    repl.debug('handle_cmd', { expr, cmd });
     if(expr === '?') {
       help();
       return -2;
     }
-    cmd = extract_directive(expr);
-    if(cmd.length > 0) {
-      if(!handle_directive(cmd, expr)) return -3;
-      expr = expr.substring(cmd.length + 1);
+    command = extract_directive(expr);
+    if(command.length > 0) {
+      if(!handle_directive(command, expr)) return -3;
+      expr = expr.substring(command.length + 1);
     }
     if(expr === '') return -4;
 
@@ -1805,92 +1851,92 @@ export default function REPL(title = 'QuickJS') {
     return [state, level, r];
   }
 
-  if(this instanceof REPL) {
-    Object.defineProperties(this,
-      Object.fromEntries(
-        Object.entries({
-          run,
-          term_init,
-          sigint_handler,
-          term_read_handler,
-          handle_byte,
-          is_alpha,
-          is_digit,
-          is_word,
-          ucs_length,
-          is_trailing_surrogate,
-          is_balanced,
-          print_color_text,
-          print_csi,
-          move_cursor,
-          update,
-          insert,
-          quoted_insert,
-          abort,
-          alert,
-          beginning_of_line,
-          end_of_line,
-          forward_char,
-          backward_char,
-          skip_word_forward,
-          skip_word_backward,
-          forward_word,
-          backward_word,
-          accept_line,
-          history_get,
-          history_set,
-          history_add,
-          previous_history,
-          next_history,
-          history_search,
-          history_search_backward,
-          history_search_forward,
-          delete_char_dir,
-          delete_char,
-          control_d,
-          backward_delete_char,
-          transpose_chars,
-          transpose_words,
-          upcase_word,
-          downcase_word,
-          kill_region,
-          kill_line,
-          backward_kill_line,
-          kill_word,
-          backward_kill_word,
-          yank,
-          control_c,
-          reset,
-          get_context_word,
-          get_context_object,
-          get_completions,
-          completion,
-          dupstr,
-          readline_print_prompt,
-          readline_start,
-          handle_char,
-          handle_key,
-          number_to_string,
-          bigfloat_to_string,
-          bigint_to_string,
-          print,
-          extract_directive,
-          handle_directive,
-          help,
-          eval_and_print,
-          cmd_start,
-          cmd_readline_start,
-          readline_handle_cmd,
-          handle_cmd,
-          colorize_js,
-          get_directory_entries,
-          get_filename_completions
-        }).map(([name, value]) => [name, { value, enumerable: false }])
-      )
-    );
-    this.history = history;
-    return this;
-  }
+  Object.defineProperties(repl,
+    Object.fromEntries(
+      Object.entries({
+        run,
+        term_init,
+        sigint_handler,
+        term_read_handler,
+        handle_byte,
+        is_alpha,
+        is_digit,
+        is_word,
+        ucs_length,
+        is_trailing_surrogate,
+        is_balanced,
+        print_color_text,
+        print_csi,
+        move_cursor,
+        update,
+        insert,
+        quoted_insert,
+        abort,
+        alert,
+        beginning_of_line,
+        end_of_line,
+        forward_char,
+        backward_char,
+        skip_word_forward,
+        skip_word_backward,
+        forward_word,
+        backward_word,
+        accept_line,
+        history_get,
+        history_pos,
+        history_set,
+        history_add,
+        history_previous,
+        history_next,
+        history_search,
+        history_search_backward,
+        history_search_forward,
+        delete_char_dir,
+        delete_char,
+        control_d,
+        backward_delete_char,
+        transpose_chars,
+        transpose_words,
+        upcase_word,
+        downcase_word,
+        kill_region,
+        kill_line,
+        backward_kill_line,
+        kill_word,
+        backward_kill_word,
+        yank,
+        control_c,
+        reset,
+        get_context_word,
+        get_context_object,
+        get_completions,
+        completion,
+        dupstr,
+        readline_print_prompt,
+        readline_start,
+        handle_char,
+        handle_key,
+        number_to_string,
+        bigfloat_to_string,
+        bigint_to_string,
+        print,
+        extract_directive,
+        handle_directive,
+        help,
+        eval_and_print,
+        cmd_start,
+        cmd_readline_start,
+        readline_handle_cmd,
+        handle_cmd,
+        colorize_js,
+        get_directory_entries,
+        get_filename_completions
+      }).map(([name, value]) => [name, { value, enumerable: false }])
+    )
+  );
+
+  repl.history = history;
+  return this;
 
   function waitRead(fd) {
     return new Promise((resolve, reject) => {

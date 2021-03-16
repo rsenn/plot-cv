@@ -39,15 +39,20 @@ async function main(...args) {
   console.log("vg:", vg);
 */
 
-  let image = cv.imread('9b16290d7d9c8f1aca810b6702070189_20170331_112428.jpg');
-  let image2 = cv.imread('796e7bfab61dd66b5f12c3f929f75d9c_Mhleberg_5.jpg');
+  let image = cv.imread('796e7bfab61dd66b5f12c3f929f75d9c_Mhleberg_5.jpg');
+  let image2 = cv.imread('9b16290d7d9c8f1aca810b6702070189_20170331_112428.jpg');
+
+  cv.cvtColor(image2, image2, cv.CV_RGB2RGBA);
   console.log('image:', image);
   console.log('image.buffer:', image.buffer);
   let imgId = nvg.CreateImage('796e7bfab61dd66b5f12c3f929f75d9c_Mhleberg_5.jpg', 0);
-
   console.log('imgId:', imgId);
+  let img2Id = nvg.CreateImageRGBA(image2.cols, image2.rows, 0, image2.buffer);
+  console.log('img2Id:', img2Id);
+  let img2Sz = nvg.ImageSize(img2Id);
   let imgSz = nvg.ImageSize(imgId);
   console.log('nvg.ImageSize():', imgSz);
+  console.log('nvg.ImageSize():', img2Sz);
   let i = 0;
 
   while(true) {
@@ -73,11 +78,11 @@ async function main(...args) {
 
     let p = nvg.TransformMultiply(nvg.TransformMultiply(m, t), s);
 
-    console.log('t:', t);
+    /*   console.log('t:', t);
     console.log('p:', p);
-    console.log('nvg.TransformPoint:', nvg.TransformPoint(p, 40, 100));
-    let pattern = nvg.ImagePattern(0, 0, ...imgSz, 0, imgId, 1);
-    console.log('pattern:', pattern);
+    console.log('nvg.TransformPoint:', nvg.TransformPoint(p, 40, 100));*/
+    let pattern = nvg.ImagePattern(0, 0, ...img2Sz, 0, img2Id, 1);
+    // console.log('pattern:', pattern);
 
     nvg.Scale(0.4, 0.4);
 
@@ -85,7 +90,7 @@ async function main(...args) {
     let  sy = Mat.sin((i % 360) * Math.PI /360);
 
     nvg.Translate(50+sx*50,50+sy*50);*/
-    nvg.Translate((i % 50) * 4, 0);
+    nvg.Translate((i % 50) * 4, 10);
 
     nvg.BeginPath();
     nvg.Rect(0, 0, ...imgSz);

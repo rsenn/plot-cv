@@ -72,6 +72,10 @@ export function commandChar(c) {
   filesystem.flush(terminal);
 }
 
+export function cursorHome(n) {
+  putChar(terminal, '\r');
+}
+
 export function cursorUp(n) {
   commandNumberChar(n, 'A');
 }

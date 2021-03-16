@@ -96,11 +96,11 @@ async function ImportModule(modulePath, ...args) {
 async function CommandLine() {
   let log = console.reallog;
   let outputLog = filesystem.fopen('output.log', 'w+');
-  console.reallog = function(...args) {
+  /*console.reallog = function(...args) {
     log.call(this, ...args);
-    outputLog.puts(args.join(' '));
+    outputLog.puts(args.join(' ')+'\n');
     outputLog.flush();
-  };
+  };*/
 
   let repl = (globalThis.repl = new REPL('AST'));
   repl.exit = Util.exit;
@@ -119,9 +119,11 @@ async function CommandLine() {
   };
   repl.show = value => {
     if(Util.isArray(value) && value[0]?.kind) console.log(Table(value));
-    else if(typeof value == 'object' && value != null)
-      console.log(inspect(value, { depth: 6, compact: 4, hideKeys: ['loc', 'range'] }));
-    else console.log(value);
+else if(typeof value == 'string') 
+  console.log(value);
+  /*if(typeof value == 'object' && value != null)*/ else
+      console.log(inspect(value, { ...console.options, hideKeys: ['loc', 'range'] }));
+    // else console.log(value);
   };
   let debugLog = filesystem.fopen('debug.log', 'a');
   repl.debugLog = debugLog;
@@ -144,7 +146,7 @@ async function CommandLine() {
     filesystem.writeFile(cmdhist, JSON.stringify(hist, null, 2));
     console.log(`EXIT (wrote ${hist.length} history entries)`);
   });
-  Terminal.mousetrackingEnable();
+  //Terminal.mousetrackingEnable();
 
   await repl.run();
   console.log('REPL done');
@@ -248,28 +250,68 @@ function WriteFile(name, data, verbose = true) {
   if(verbose) console.log(`Wrote ${name}: ${ret} bytes`);
 }
 
-function* GenerateInspectStruct(type, members, includes) {
-  console.log('GenerateInspectStruct', { type, members, includes });
-  for(let include of ['stdio.h', ...includes]) yield `#include "${include}"`;
-  yield `${type} svar;`;
+function* GenerateInspectStruct(decl, includes) {
+  let { name, members } = decl;
+
+  includes ??= [decl.loc.file.replace(/^\/usr\/include\//, '')];
+  yield '#include <stdio.h>';
+  yield '#include <stddef.h>';
+
+  console.log('GenerateInspectStruct', { name, members, includes });
+  for(let include of includes) yield `#include "${include}"`;
+  yield `${name} svar;`;
   yield `int main() {`;
-  yield `  printf("${type} - %u\\n", sizeof(svar));`;
-  for(let member of members)
-    yield `  printf(".${member} %u %u\\n", (char*)&svar.${member} - (char*)&svar, sizeof(svar.${member}));`;
+  yield `  printf("${name} %zu\\n", sizeof(svar));`;
+  for(let [member, type] of members)
+    if((type == null || typeof type.size == 'number') && member != undefined) {
+      member = member.replace(/:.*/, '');
+      yield `  printf(".${member} %zu %zu\\n", offsetof(${name}, ${member}), sizeof(svar.${member}));`;
+    }
+
   yield `  return 0;`;
   yield `}`;
 }
 
-async function InspectStruct(decl) {
-  const include = decl.loc.file.replace(/^\/usr\/include\//, '');
-  const code = [...GenerateInspectStruct(decl.name, [...decl.members.keys()], [include])].join('\n'
-  );
-  const file = `inspect-${decl.name.replace(/\ /g, '_')}`;
-  WriteFile(file + '.c', code);
+function InspectStruct(decl) {
+  if(typeof decl == 'string') decl = $.getType(decl);
 
-  let result = await SpawnCompiler(file + '.c', ['-o', file, ...flags]);
+  const code = [...GenerateInspectStruct(decl)].join('\n');
+  //console.log('InspectStruct', { code });
+  const program = `inspect-${decl.name.replace(/\ /g, '_')}`;
+  WriteFile(program + '.c', code);
 
-  console.log('InspectStruct', { file, result });
+  let command = ['tcc', '-Os', '-w', '-o', program, program + '.c', ...flags];
+  console.log('InspectStruct', { command: command.join(' ') });
+
+  let result = os.exec(command);
+
+  if(result == 0) {
+    let [fd, stdout] = os.pipe();
+
+    os.exec([`./${program}`], { stdout });
+    let output = filesystem.readAll(fd);
+
+    let lines = output.trim().split('\n');
+    let [name, size] = (lines[0] = [...Util.splitAt(lines[0], [...lines[0]].lastIndexOf(' '))]);
+
+    name = name.replace(/^(struct|union|enum)\ /, '');
+    lines[0][0] = name;
+
+    //console.log("lines:", lines);
+    result = lines
+      .map(line => (typeof line == 'string' ? line.split(' ') : line))
+      .map(line => line.map((col, i) => (i > 0 ? +col : col)))
+      .map(([field, offset, size]) => [
+        field.replace(/:.*/, '').replace(/^\./, name + '.'),
+        offset,
+        size
+      ]);
+
+      result.toString = function(sep = ' ') {
+        return this.map(line => line.join(sep).replace('.', ' ')).join('\n');
+      };
+  }
+
   return result;
 }
 
@@ -694,6 +736,9 @@ async function ASTShell(...args) {
           if(results.length <= 1 || (idx = results.findIndex(r => r.completeDefinition)) == -1)
             idx = 0;
           result = results[idx];
+
+          if(!result && Type.declarations.has(name_or_id))
+            result = Type.declarations.get(name_or_id);
         } else {
           result = types[name_or_id];
         }
@@ -723,6 +768,7 @@ async function ASTShell(...args) {
     GetLoc,
     GetTypeStr,
     WriteFile,
+    LoadJSON,
     GenerateInspectStruct,
     GenerateStructClass,
     InspectStruct,

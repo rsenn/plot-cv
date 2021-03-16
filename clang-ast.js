@@ -46,6 +46,14 @@ export class Node {
 
     return text(type, 1, 31) + ' ' + inspect(Util.getMembers(this), depth, opts);
   }
+
+  toJSON(obj) {
+    const { kind } = this;
+    obj ??= { kind };
+    if(!obj.kind)
+      obj.kind = Util.className(this);
+    return obj;
+  }
 }
 
 export class Type extends Node {
@@ -123,7 +131,9 @@ export class Type extends Node {
       let ptr = (name ?? this + '').replace(/\*$/, '').trimEnd();
       //console.log('ptr:', ptr);
       if(ast) {
-        let node = deep.find(ast, n => typeof n == 'object' && n && n.name == ptr)?.value;
+        let node = deep.find(ast, (n, p) =>
+          p.length > 2 ? -1 : typeof n == 'object' && n && n.name == ptr
+        )?.value;
 
         if(node) new Type(node, ast);
       }
@@ -340,6 +350,11 @@ export class Type extends Node {
       return (this.qualType ?? this.desugaredQualType ?? '').replace(/\s+(\*+)$/, '$1'); //this+'';
     return this;
   }
+
+  toJSON(obj) {
+    const { qualType, size } = this;
+    return super.toJSON({ ...obj, qualType, size });
+  }
 }
 
 Type.declarations.set('void', new Type({ name: 'void' }));
@@ -373,31 +388,48 @@ export class RecordDecl extends Type {
 
     if(inner?.find(child => child.kind == 'PackedAttr')) this.packed = true;
 
-    let fields = inner?.filter(child => !child.isImplicit && child.kind.endsWith('Decl'));
+    let fields = inner?.filter(child => child.kind.endsWith('Decl'));
     //console.log('RecordDecl', fields);
 
     if(fields)
       this.members = /*new Map*/ fields
-        .filter(node => !node.isImplicit)
+        .filter(node => /*!node.isImplicit &&*/ !('parentDeclContextId' in node))
         .map(node => {
           let name = node.name;
           if(node.isBitfield) name += ':1';
-          if(node.kind == 'FieldDecl')
-            return [name, node.type?.kind ? TypeFactory(node.type, ast) : new Type(node.type, ast)];
+          if(node.kind == 'FieldDecl') {
+            let type =  new Type(node.type, ast);
 
-          return [name, TypeFactory(node, ast)];
+            if( type.desugared && type.desugared.startsWith('struct ')) {
+
+              let tmp = ast.inner.find(n => n.kind == 'RecordDecl' && n.name == /^struct./.test(n.name));
+              
+
+if(tmp) type = TypeFactory(tmp.value, ast);
+            }
+
+            return [name, /*node.type?.kind ? TypeFactory(node.type, ast) :*/type];
+          }
+
+          return [name, node.kind.startsWith('Indirect') ? null : TypeFactory(node, ast)];
         });
   }
 
   get size() {
-    return RoundTo([...this.members].reduce((acc,[name,type]) => {
-      if(Number.isFinite(type.size)) {
+    let { members = [] } = this;
+    return RoundTo([...members].reduce((acc,[name,type]) => {
+      if(Number.isFinite(type?.size)) {
             if(type.size == 8)
         acc = RoundTo(acc, 8);
       return acc + RoundTo(type.size,4);
     }
     return acc;
     }, 0), SIZEOF_POINTER);
+  }
+
+  toJSON() {
+    const { name, size, members } = this;
+    return super.toJSON({ name, size, members: members.map(([name,member]) => [name, member != null &&  member.toJSON ? member.toJSON() : member]) });
   }
 }
 
@@ -417,6 +449,10 @@ export class EnumDecl extends Type {
         return [name, [new Type(type, ast), value]];
       })
     );
+  }
+  toJSON() {
+    const { name, size, members } = this;
+    return super.toJSON({ name, size, members });
   }
 }
 
@@ -440,6 +476,10 @@ export class TypedefDecl extends Type {
 
   get size() {
     return this.type.size;
+  }
+  toJSON() {
+    const { name, size } = this;
+    return super.toJSON({ name, size });
   }
 }
 
@@ -583,14 +623,19 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
   let outputFile = output ?? base + '.ast.json';
 
   args.push(input);
-  args.unshift(compiler ?? 'clang');
 
-  if(args.indexOf('-ast-dump=json') != -1)
+  if(args.indexOf('-ast-dump=json') != -1) {
+    args.unshift(compiler ?? 'clang');
     args = [
       'sh',
       '-c',
       `exec ${args.map(p => (/\ /.test(p) ? `'${p}'` : p)).join(' ')} 1>${outputFile}`
     ];
+  } else {
+    args.unshift(outputFile);
+    args.unshift('-o');
+    args.unshift(compiler ?? 'clang');
+  }
 
   console.log(`SpawnCompiler: ${args.map(p => (/\ /.test(p) ? `"${p}"` : p)).join(' ')}`);
 
@@ -618,7 +663,7 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
       }
     });
   }
-  let result = await child.wait();
+  let result = /*await*/ child.wait();
   console.log('child.wait():', result);
 
   filesystem.setReadHandler(child.stderr, null);
@@ -644,7 +689,7 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
   }
 
   //let fd = filesystem.open(outputFile, filesystem.O_RDONLY);
-  return { input: outputFile };
+  return { input: outputFile, result };
 }
 
 export async function AstDump(compiler, source, args, force) {
@@ -675,38 +720,19 @@ export async function AstDump(compiler, source, args, force) {
     },
     json() {
       let json = filesystem.readFile(output);
-      console.log('json()', json);
       return json;
     },
     data() {
       let data = JSON.parse(this.json);
-      console.log('data()', data);
       let file;
-
-      //data.inner.forEach
-      /*deep.forEach(data, loc => {
-        if(loc && loc.offset !== undefined) {
-          if(loc.file) file = loc.file;
-          else loc.file = file;
-        }
-      });*/
-
-      //Util.instrument(async function() {
       let maxDepth = 0;
-      //for(let [loc, path] of deep.iterate(data, (n, p) =>  n && n.offset != undefined)) {
       for(let node of data.inner) {
         let loc;
-
-        //maxDepth = Math.max(maxDepth, path.length);
         if((loc = node.loc)) {
           if(loc.file) file = loc.file;
           else loc.file = file;
         }
       }
-
-      // filesystem.writeFile(this.file, JSON.stringify(data, null, 2));
-      //})();
-
       return data;
     },
     files() {
@@ -718,8 +744,6 @@ export async function AstDump(compiler, source, args, force) {
     matchFiles: null,
     nomatchFiles: /^\/usr/,
     filter(pred) {
-      /*pred = Util.predicate(pred, (node,fn) => fn(node.loc.file));
-      console.log("pred:",pred+'')*/
       return this.data.inner.filter(node =>
           ((node.loc.file !== undefined &&
             ((this.matchFiles && this.matchFiles.test(node.loc.file ?? '')) ||

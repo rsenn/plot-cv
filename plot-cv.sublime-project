@@ -140,7 +140,10 @@
 				"data"
 			],
 			"path": ".",
-		}
+		},
+		{
+			"path": "reig"
+		},
 	],
 	"settings":
 	{
