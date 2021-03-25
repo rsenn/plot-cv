@@ -37,9 +37,9 @@ async function main(...args) {
   switch (ext) {
     case '.sh': {
       let [rd, wr] = os.pipe();
-      let child = os.exec(['shparse2ast', '-o', base+'.json', file], {
-        block: true,
-      //  stdout: os.open(base + '.json', os.O_WRONLY | os.O_CREAT | os.O_TRUNC)
+      let child = os.exec(['shparse2ast', '-o', base + '.json', file], {
+        block: true
+        //  stdout: os.open(base + '.json', os.O_WRONLY | os.O_CREAT | os.O_TRUNC)
       });
 
       //   console.log('child:', child);
@@ -47,7 +47,7 @@ async function main(...args) {
       //      os.waitpid(child, 0);
 
       //input = await filesystem.readAll(rd, 1024);
-      // 
+      //
       //WriteFile(base + '.json', input);
       input = await filesystem.readFile(base + '.json', 'utf-8');
 
@@ -60,7 +60,7 @@ async function main(...args) {
     }
   }
   console.log('input:', input);
- console.log('json:', JSON.parse(input));
+  console.log('json:', JSON.parse(input));
 
   /*
   let json = args[0] ? filesystem.readFile(args[0], 'utf-8') : data2;

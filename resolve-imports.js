@@ -360,9 +360,14 @@ class ES6ImportExport {
   }
 }
 
-const isRequire = ([path, node]) =>
-  node instanceof CallExpression &&
+const isRequire = ([path, node]) => {
+ 
+//console.log("isRequire node:", node);
+
+return  (node instanceof CallExpression  || node.kind == 'CallExpression') &&
   (node.callee.value == 'require' || PrintAst(node.callee) == 'require');
+}
+
 const isImport = ([path, node]) => node instanceof ImportDeclaration;
 const isES6Export = ([path, node]) => node.type.startsWith('Export');
 /*const isCJSExport = ([path, node]) =>
@@ -466,7 +471,9 @@ function GenerateDistinctVariableDeclarations(variableDeclaration) {
 }
 
 async function main(...args) {
-  await ConsoleSetup({ colors: true, depth: 6, breakLength: 160 });
+  let consoleOpts;
+  await ConsoleSetup(consoleOpts = { colors: true, depth: 6,compact: 1,  breakLength: 80 });
+  console.options = consoleOpts;
   await PortableFileSystem(fs => (filesystem = fs));
   await PortableChildProcess(cp => (childProcess = cp));
   let params = Util.getOpt({
@@ -606,23 +613,28 @@ async function main(...args) {
     // Verbose('processing:', { file, thisdir });
 
     const result = await ParseFile(file);
-    Verbose('result:', result);
+   /// Verbose('result:', result);
     let { data, error, ast, parser, printer } = result;
     let flat, map;
     let st = new Tree(ast);
 
     let astStr = JSON.stringify(ast, null, 2);
-    Verbose('astStr:', astStr, ast);
+   // Verbose('ast:', ast);
     filesystem.writeFile(path.basename(file, /\.[^.]+$/) + '.ast.json', astStr);
 
     //Verbose(`${file} parsed:`, { data, error });
 
     function generateFlatAndMap() {
-      flat = GenerateFlatMap(ast,
+      /*flat = GenerateFlatMap(ast,
         [],
         node => node instanceof ESNode,
         (p, n) => [new ImmutablePath(p), n]
-      );
+      );*/
+        flat = deep.flatten(ast,
+    new Map(),
+    node => typeof(node) == 'object' && node != null
+  );
+//      console.log("flat:", flat);
       map = Util.mapAdapter((key, value) =>
         key !== undefined
           ? value !== undefined
@@ -637,7 +649,7 @@ async function main(...args) {
       node2path = new WeakMap([...flat].map(([path, node]) => [node, path]));
     }
 
-    try {
+    /*try*/ {
       const getRelative = filename => path.join(thisdir, filename);
 
       //Verbose('node2path:', node2path);
@@ -668,8 +680,29 @@ async function main(...args) {
 
       again: while(true) {
         generateFlatAndMap();
+    //        console.log("flat:", [...flat].map(([p,n]) => [p, n]));
 
-        moduleImports = [...flat].filter(it => isRequire(it) || isImport(it));
+//        moduleImports = [...flat];
+        moduleImports =[...flat].filter(([p,n]) => {
+
+            if(typeof n == 'object' &&  n != null )  {
+              let cl= Util.className(n);
+             if(cl == 'CallExpression') {
+              let o =PrintAst(n);
+              if(o.startsWith('require')) return true;
+             } 
+  //          let p = st.pathOf(n);
+          console.log("n:", p+'', cl);
+
+//          console.log("it:",{p,n}, Util.className(n));
+if(isRequire([p,n])) return true;
+if(isImport([p,n])) return true;
+}
+
+          return false;
+        });
+          console.log("moduleImports:", moduleImports.map(([p,n]) => [p, PrintAst(n)]));
+
         function Source(source, file, node) {
           const obj = new String(source);
           return Object.defineProperties(obj, {
@@ -700,8 +733,9 @@ async function main(...args) {
             }
           });
         }
-
-        let importEntries = moduleImports.map(([p, n]) => [n, GetImportBindings(n /*, a=> a*/)]);
+ //       Verbose(`flat:`, flat);
+        Verbose(`moduleImports:`, moduleImports);
+        let importEntries = moduleImports.map(([p, n]) => [n, GetImportBindings([n,p] /*, a=> a*/)]);
         //Verbose(`importEntries:`, importEntries);
         importEntries = new Map(importEntries.map(([node, [parent, bindings]]) => {
             //Verbose('bindings:', {n,bindings});
@@ -1032,7 +1066,7 @@ async function main(...args) {
           position,
           fromValue: GetFromValue([node, path]),
           fromPath,
-          bindings: GetImportBindings(node)
+          bindings: GetImportBindings([node,path])
         });
       });
 
@@ -1147,7 +1181,7 @@ async function main(...args) {
       output = PrintAst(ast, parser.comments, printer);
       r.push(`/*\n * concatenated ${file}\n */\n\n${output}\n`);
 
-      function GetImportBindings(node, retMap = /*(arg => arg) ||*/ arg => new Map(arg)) {
+      function GetImportBindings([node,path], retMap = /*(arg => arg) ||*/ arg => new Map(arg)) {
         if(node instanceof ImportDeclaration) {
           console.log('specifiers:', node.specifiers);
           return [
@@ -1168,21 +1202,34 @@ async function main(...args) {
           ];
         }
 
-        if(node instanceof CallExpression && PrintAst(node).startsWith('require(')) {
+//console.log("parent:", path.split('.').slice(0, -1).join('.'), path);
+let code = PrintAst(node);
+
+console.log("code:",code);
+        if((node instanceof CallExpression || node.kind == 'CallExpression') || code.startsWith('require(')) {
           let source = (node.arguments[0] && Literal.string(node.arguments[0])) || null;
-          let parent = st.parentNode(node);
+          let parentPath =  path.split('.').slice(0, -1).join('.');
+console.log("parentPath:", parentPath);
+          let parent = /*deep.get(ast, parentPath); // ??*/ flat.get(parentPath);
+
           let name = Symbol.for('default');
 
           if(parent instanceof MemberExpression) {
             name = PrintAst(parent.property);
           }
 
-          while(/*['VariableDeclarator','AssignmentExpression'].indexOf(node.type) == -1 &&*/ !parent.id
-          )
-            parent = st.parentNode(parent);
+          while( !parent.id ) {
+parentPath= parentPath.split('.').slice(0, -1).join('.');
+
+            parent = deep.get(ast,parentPath); // st.parentNode(parent);
+          }
+console.log("parent:", parent);
+
 
           if('id' in parent) {
-            if(parent.id instanceof Identifier)
+           //console.log("parent.id:", parent.id);
+           //console.log("parent.id.value:", Identifier.string(parent.id));
+ if(typeof Identifier.string(parent.id) == 'string')
               return [
                 parent,
                 retMap([[Identifier.string(parent.id) || Symbol.for('default'), [source, name]]])
@@ -1205,7 +1252,7 @@ async function main(...args) {
             }
           }
         }
-        console.log('GetImportBindings:', node);
+        console.log('GetImportBindings:', node, node.callee, node.arguments);
         throw new Error('Unhandled import bindings');
       }
 
@@ -1319,16 +1366,12 @@ async function main(...args) {
 
         throw new Error(`Unhandled export bindings: ${p} ${Util.typeOf(node)} ${PrintAst(node)}`);
       }
-    } catch(err) {
+    } /*catch(err) {
       console.error(err.message);
-      /* Util.putStack(err.stack);
-      let { node } = err;  
-      console.log('file:', file);
-      console.log('path:', st.pathOf(node));
-      console.log('node:', node);*/
+  Util.putStack(err.stack);
+    
       throw err;
-      return -1;
-    }
+     }*/
   }
 }
 
@@ -1377,7 +1420,9 @@ async function ParseFile(file) {
     //   console.log('data:', data.length, data || Util.abbreviate(Util.escape(data + ''), 40));
 
     ECMAScriptParser.instrumentate();
-    parser = new ECMAScriptParser(data.toString(), file, true);
+    const debug = await Util.getEnv('DEBUG');
+ console.log('DEBUG:', debug);
+    parser = new ECMAScriptParser(data.toString(), file, debug ?? false);
     g.parser = parser;
     ast = parser.parseProgram();
     parser.addCommentsToNodes(ast);
