@@ -210,8 +210,8 @@ export default function REPL(title = 'QuickJS') {
   };
 
   var repl = this instanceof REPL ? this : {};
- let currentCommand ='';
- 
+  let currentCommand = '';
+
   Object.defineProperties(repl, {
     cmd: {
       get() {
@@ -221,7 +221,8 @@ export default function REPL(title = 'QuickJS') {
         currentCommand = value;
       },
       enumerable: false
-    }, history: { value: history, enumerable: false }
+    },
+    history: { value: history, enumerable: false }
   });
 
   async function term_init() {
