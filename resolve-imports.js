@@ -361,12 +361,12 @@ class ES6ImportExport {
 }
 
 const isRequire = ([path, node]) => {
- 
-//console.log("isRequire node:", node);
+  //console.log("isRequire node:", node);
 
-return  (node instanceof CallExpression  || node.kind == 'CallExpression') &&
-  (node.callee.value == 'require' || PrintAst(node.callee) == 'require');
-}
+  return ((node instanceof CallExpression || node.type == 'CallExpression') &&
+    (node.callee.value == 'require' || PrintAst(node.callee) == 'require')
+  );
+};
 
 const isImport = ([path, node]) => node instanceof ImportDeclaration;
 const isES6Export = ([path, node]) => node.type.startsWith('Export');
@@ -472,7 +472,7 @@ function GenerateDistinctVariableDeclarations(variableDeclaration) {
 
 async function main(...args) {
   let consoleOpts;
-  await ConsoleSetup(consoleOpts = { colors: true, depth: 6,compact: 1,  breakLength: 80 });
+  await ConsoleSetup((consoleOpts = { colors: true, depth: 6, compact: 1, breakLength: 80 }));
   console.options = consoleOpts;
   await PortableFileSystem(fs => (filesystem = fs));
   await PortableChildProcess(cp => (childProcess = cp));
@@ -613,13 +613,13 @@ async function main(...args) {
     // Verbose('processing:', { file, thisdir });
 
     const result = await ParseFile(file);
-   /// Verbose('result:', result);
+    /// Verbose('result:', result);
     let { data, error, ast, parser, printer } = result;
     let flat, map;
     let st = new Tree(ast);
 
     let astStr = JSON.stringify(ast, null, 2);
-   // Verbose('ast:', ast);
+    // Verbose('ast:', ast);
     filesystem.writeFile(path.basename(file, /\.[^.]+$/) + '.ast.json', astStr);
 
     //Verbose(`${file} parsed:`, { data, error });
@@ -630,11 +630,8 @@ async function main(...args) {
         node => node instanceof ESNode,
         (p, n) => [new ImmutablePath(p), n]
       );*/
-        flat = deep.flatten(ast,
-    new Map(),
-    node => typeof(node) == 'object' && node != null
-  );
-//      console.log("flat:", flat);
+      flat = deep.flatten(ast, new Map(), node => typeof node == 'object' && node != null);
+      //      console.log("flat:", flat);
       map = Util.mapAdapter((key, value) =>
         key !== undefined
           ? value !== undefined
@@ -649,7 +646,7 @@ async function main(...args) {
       node2path = new WeakMap([...flat].map(([path, node]) => [node, path]));
     }
 
-    /*try*/ {
+    try {
       const getRelative = filename => path.join(thisdir, filename);
 
       //Verbose('node2path:', node2path);
@@ -680,28 +677,29 @@ async function main(...args) {
 
       again: while(true) {
         generateFlatAndMap();
-    //        console.log("flat:", [...flat].map(([p,n]) => [p, n]));
+        //        console.log("flat:", [...flat].map(([p,n]) => [p, n]));
 
-//        moduleImports = [...flat];
-        moduleImports =[...flat].filter(([p,n]) => {
-
-            if(typeof n == 'object' &&  n != null )  {
-              let cl= Util.className(n);
-             if(cl == 'CallExpression') {
-              let o =PrintAst(n);
+        //        moduleImports = [...flat];
+        moduleImports = [...flat].filter(([p, n]) => {
+          if(typeof n == 'object' && n != null) {
+            let cl = Util.className(n);
+            if(cl == 'CallExpression') {
+              let o = PrintAst(n);
               if(o.startsWith('require')) return true;
-             } 
-  //          let p = st.pathOf(n);
-          console.log("n:", p+'', cl);
+            }
+            //          let p = st.pathOf(n);
+            console.log('n:', p + '', cl);
 
-//          console.log("it:",{p,n}, Util.className(n));
-if(isRequire([p,n])) return true;
-if(isImport([p,n])) return true;
-}
+            //          console.log("it:",{p,n}, Util.className(n));
+            if(isRequire([p, n])) return true;
+            if(isImport([p, n])) return true;
+          }
 
           return false;
         });
-          console.log("moduleImports:", moduleImports.map(([p,n]) => [p, PrintAst(n)]));
+        console.log('moduleImports:',
+          moduleImports.map(([p, n]) => [p, PrintAst(n)])
+        );
 
         function Source(source, file, node) {
           const obj = new String(source);
@@ -733,9 +731,12 @@ if(isImport([p,n])) return true;
             }
           });
         }
- //       Verbose(`flat:`, flat);
+        //       Verbose(`flat:`, flat);
         Verbose(`moduleImports:`, moduleImports);
-        let importEntries = moduleImports.map(([p, n]) => [n, GetImportBindings([n,p] /*, a=> a*/)]);
+        let importEntries = moduleImports.map(([p, n]) => [
+          n,
+          GetImportBindings([n, p] /*, a=> a*/)
+        ]);
         //Verbose(`importEntries:`, importEntries);
         importEntries = new Map(importEntries.map(([node, [parent, bindings]]) => {
             //Verbose('bindings:', {n,bindings});
@@ -856,7 +857,7 @@ if(isImport([p,n])) return true;
             let source = GetFrom(imp[1], imp[0])[0];
             let name = source && Util.camelize(path.basename(source));
             if(name) deep.set(ast, imp[0], new Identifier(name));
-            else throw new Error(`From: ${imp[1].kind} ${PrintAst(imp[1])}`);
+            else throw new Error(`From: ${imp[1].type} ${PrintAst(imp[1])}`);
             let importStatement = new ImportDeclaration([new ImportSpecifier(new Identifier('default'), new Identifier(name))],
               new Literal(source)
             );
@@ -873,6 +874,7 @@ if(isImport([p,n])) return true;
         }
 
         function GetName(node) {
+          // console.log('GetName', { node });
           /* if(node.left) return GetName(node.left);
           if(node.declaration) return GetName(node.declaration);
  
@@ -883,18 +885,29 @@ if(isImport([p,n])) return true;
           }
 
           if(node.id) {
-            if(node.id instanceof Identifier) return Identifier.string(node.id);
+            if(node.id.type == 'Identifier') return Identifier.string(node.id);
             //console.log("GetName",{type: node.type});
           }
-          let parent = node.left || node.declaration || st.parentNode(node);
+          let parent = node.left || node.declaration; /*|| st.parentNode(node)*/
 
           if(parent) {
             return GetName(parent);
           } else if(node.type == 'Program') {
             return;
           }
-          console.log('GetName', { type: node.type });
-          throw new Error(`GetName ${node}`);
+          if(node.type == 'ExpressionStatement') {
+            node = node.expression;
+
+            if(node && node.type == 'AssignmentExpression') {
+              if(node.right && node.right.type == 'FunctionDeclaration') {
+                const { right } = node;
+                console.log('GetName', { right });
+                return Identifier.string(right.id);
+              }
+            }
+          }
+
+          //console.log('GetName', { type: node.type, node/*, oncode: PrintAst(node)*/ }); throw new Error(`GetName ${node.type}`);
         }
 
         function ExportName(exp) {
@@ -1066,7 +1079,7 @@ if(isImport([p,n])) return true;
           position,
           fromValue: GetFromValue([node, path]),
           fromPath,
-          bindings: GetImportBindings([node,path])
+          bindings: GetImportBindings([node, path])
         });
       });
 
@@ -1181,7 +1194,7 @@ if(isImport([p,n])) return true;
       output = PrintAst(ast, parser.comments, printer);
       r.push(`/*\n * concatenated ${file}\n */\n\n${output}\n`);
 
-      function GetImportBindings([node,path], retMap = /*(arg => arg) ||*/ arg => new Map(arg)) {
+      function GetImportBindings([node, path], retMap = /*(arg => arg) ||*/ arg => new Map(arg)) {
         if(node instanceof ImportDeclaration) {
           console.log('specifiers:', node.specifiers);
           return [
@@ -1202,14 +1215,17 @@ if(isImport([p,n])) return true;
           ];
         }
 
-//console.log("parent:", path.split('.').slice(0, -1).join('.'), path);
-let code = PrintAst(node);
+        //console.log("parent:", path.split('.').slice(0, -1).join('.'), path);
+        let code = PrintAst(node);
 
-console.log("code:",code);
-        if((node instanceof CallExpression || node.kind == 'CallExpression') || code.startsWith('require(')) {
+        console.log('code:', code);
+        if(node instanceof CallExpression ||
+          node.type == 'CallExpression' ||
+          code.startsWith('require(')
+        ) {
           let source = (node.arguments[0] && Literal.string(node.arguments[0])) || null;
-          let parentPath =  path.split('.').slice(0, -1).join('.');
-console.log("parentPath:", parentPath);
+          let parentPath = path.split('.').slice(0, -1).join('.');
+          console.log('parentPath:', parentPath);
           let parent = /*deep.get(ast, parentPath); // ??*/ flat.get(parentPath);
 
           let name = Symbol.for('default');
@@ -1218,18 +1234,17 @@ console.log("parentPath:", parentPath);
             name = PrintAst(parent.property);
           }
 
-          while( !parent.id ) {
-parentPath= parentPath.split('.').slice(0, -1).join('.');
+          while(!parent.id) {
+            parentPath = parentPath.split('.').slice(0, -1).join('.');
 
-            parent = deep.get(ast,parentPath); // st.parentNode(parent);
+            parent = deep.get(ast, parentPath); // st.parentNode(parent);
           }
-console.log("parent:", parent);
-
+          console.log('parent:', parent);
 
           if('id' in parent) {
-           //console.log("parent.id:", parent.id);
-           //console.log("parent.id.value:", Identifier.string(parent.id));
- if(typeof Identifier.string(parent.id) == 'string')
+            //console.log("parent.id:", parent.id);
+            //console.log("parent.id.value:", Identifier.string(parent.id));
+            if(typeof Identifier.string(parent.id) == 'string')
               return [
                 parent,
                 retMap([[Identifier.string(parent.id) || Symbol.for('default'), [source, name]]])
@@ -1366,12 +1381,11 @@ console.log("parent:", parent);
 
         throw new Error(`Unhandled export bindings: ${p} ${Util.typeOf(node)} ${PrintAst(node)}`);
       }
-    } /*catch(err) {
-      console.error(err.message);
-  Util.putStack(err.stack);
-    
+    } catch(err) {
+      Util.putError(err);
+
       throw err;
-     }*/
+    }
   }
 }
 
@@ -1421,7 +1435,7 @@ async function ParseFile(file) {
 
     ECMAScriptParser.instrumentate();
     const debug = await Util.getEnv('DEBUG');
- console.log('DEBUG:', debug);
+    console.log('DEBUG:', debug);
     parser = new ECMAScriptParser(data.toString(), file, debug ?? false);
     g.parser = parser;
     ast = parser.parseProgram();
