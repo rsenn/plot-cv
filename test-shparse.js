@@ -24,7 +24,7 @@ async function main(...args) {
   await PortableFileSystem();
   await PortableSpawn();
 
-  console.options = { ...consoleOpts, depth: 3, compact: 1, hideKeys: [ 'offset'] }
+  console.options = { ...consoleOpts, depth: 3, compact: 1, hideKeys: ['offset'] };
 
   let file = args[0] ?? '';
   let ext = path.extname(file);
@@ -44,13 +44,6 @@ async function main(...args) {
       });
       console.log('cmd:', cmd.join(' '));
 
-      //   console.log('child:', child);
-
-      //      os.waitpid(child, 0);
-
-      //input = await filesystem.readAll(rd, 1024);
-      //
-      //WriteFile(base + '.json', input);
       input = await filesystem.readFile(base + '.json', 'utf-8');
 
       break;
@@ -66,12 +59,6 @@ async function main(...args) {
   let json = JSON.parse(input);
 
   console.log('json:', json);
-
-  /*
-  let json = args[0] ? filesystem.readFile(args[0], 'utf-8') : data2;
-  let ast = JSON.parse(json);
-
-  console.log('ast:', ast);*/
 }
 
 Util.callMain(main, true);
