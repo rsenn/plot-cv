@@ -118,7 +118,7 @@ cfg-android() {
 
 cfg-diet() {
   (
-    : ${build=$(${CC:-gcc} -dumpmachine | sed 's|-pc-|-|g')}
+    : ${build=$(gcc -dumpmachine | sed 's|-pc-|-|g')}
     : ${host=${build/-gnu/-diet}}
     : ${prefix=/opt/diet}
     : ${libdir=/opt/diet/lib-${host%%-*}}
@@ -229,7 +229,7 @@ cfg-mingw64() {
 
 cfg-emscripten() {
   (
-    build=$(${CC:-emcc} -dumpmachine | sed 's|-pc-|-|g')
+    build=$(gcc -dumpmachine | sed 's|-pc-|-|g')
     host=${build/-gnu/-emscriptenlibc}
     builddir=build/${host%-*}-emscripten
 
@@ -280,7 +280,7 @@ cfg-tcc() {
 
 cfg-musl() {
   (
-    : ${build=$(${CC:-gcc} -dumpmachine | sed 's|-pc-|-|g')}
+    : ${build=$(gcc -dumpmachine | sed 's|-pc-|-|g')}
     : ${host=${build%-*}-musl}
 
     : ${prefix=/opt/musl}

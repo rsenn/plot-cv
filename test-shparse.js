@@ -1,11 +1,11 @@
-import REPL from './repl.js';
 import ConsoleSetup from './lib/consoleSetup.js';
+import REPL from './repl.js';
 import PortableFileSystem from './lib/filesystem.js';
 import * as Terminal from './terminal.js';
 import * as path from 'path.so';
 import PortableSpawn from './lib/spawn.js';
 
-const consoleOpts = { depth: 5, compact: 1, hideKeys: ['pos', 'line','column'] };
+const consoleOpts = { depth: Infinity, compact: 5, hideKeys: ['pos'] };
 
 const data = `[ {  "kind": "N_FUNCTION", "name": "fn", "body": [ {  "kind": "N_CMDLIST", "cmds": [ {  "kind": "N_SIMPLECMD", "bngd": 0, "args": [ {  "kind": "N_ARG", "flag": 0, "list": [ {  "kind": "N_ARGSTR", "flag": 0, "stra": "dump", "pos": "3:3" } ] }, {  "kind": "N_ARG", "flag": 0, "list": [ {  "kind": "N_ARGSTR", "flag": 0, "stra": "-t", "pos": "3:8" } ] } ] }, {  "kind": "N_SIMPLECMD", "bngd": 0, "args": [ {  "kind": "N_ARG", "flag": 0, "list": [ {  "kind": "N_ARGSTR", "flag": 0, "stra": "dump", "pos": "4:3" } ] }, {  "kind": "N_ARG", "flag": 0, "list": [ {  "kind": "N_ARGSTR", "flag": 0, "stra": "-s", "pos": "4:8" } ] } ] }, {  "kind": "N_SIMPLECMD", "bngd": 0, "args": [ {  "kind": "N_ARG", "flag": 0, "list": [ {  "kind": "N_ARGSTR", "flag": 0, "stra": "/opt/diet/bin/cat", "pos": "5:3" } ] } ] } ] } ] } ]`;
 
@@ -24,35 +24,43 @@ async function main(...args) {
   await PortableFileSystem();
   await PortableSpawn();
 
+  console.options = consoleOpts;
+
   let file = args[0] ?? '';
   let ext = path.extname(file);
-  let base = path.basename(file, ext)+'.json';
-      let input = '';
+  let base = path.basename(file, ext);
+  let input = '';
 
   console.log('ext:', ext);
+  console.log('base:', base);
 
   switch (ext) {
     case '.sh': {
       let [rd, wr] = os.pipe();
-      let child = os.exec(['shparse2ast', file], { block: false, stdout: wr });
+      let child = os.exec(['shparse2ast', '-o', base+'.json', file], {
+        block: true,
+      //  stdout: os.open(base + '.json', os.O_WRONLY | os.O_CREAT | os.O_TRUNC)
+      });
 
-      console.log('child:', child);
- 
-os.waitpid(child, 0);
+      //   console.log('child:', child);
 
-           input = await filesystem.readAll(rd, 1024);
-          console.log('input:', input);
+      //      os.waitpid(child, 0);
 
-WriteFile(base, input);
+      //input = await filesystem.readAll(rd, 1024);
+      // 
+      //WriteFile(base + '.json', input);
+      input = await filesystem.readFile(base + '.json', 'utf-8');
 
-break;
+      break;
     }
     case '.json': {
       input = await filesystem.readFile(file, 'utf-8');
-  //    break;
+      break;
+      //    break;
     }
   }
-  console.log('json:', JSON.parse(input));
+  console.log('input:', input);
+ console.log('json:', JSON.parse(input));
 
   /*
   let json = args[0] ? filesystem.readFile(args[0], 'utf-8') : data2;
