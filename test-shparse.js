@@ -24,7 +24,7 @@ async function main(...args) {
   await PortableFileSystem();
   await PortableSpawn();
 
-  console.options = consoleOpts;
+  console.options = { ...consoleOpts, depth: 3, compact: 1, hideKeys: [ 'offset'] }
 
   let file = args[0] ?? '';
   let ext = path.extname(file);
@@ -37,10 +37,12 @@ async function main(...args) {
   switch (ext) {
     case '.sh': {
       let [rd, wr] = os.pipe();
-      let child = os.exec(['shparse2ast', '-o', base + '.json', file], {
+      let cmd = ['shparse2ast', '-o', base + '.json', file];
+      let child = os.exec(cmd, {
         block: true
         //  stdout: os.open(base + '.json', os.O_WRONLY | os.O_CREAT | os.O_TRUNC)
       });
+      console.log('cmd:', cmd.join(' '));
 
       //   console.log('child:', child);
 
@@ -59,8 +61,11 @@ async function main(...args) {
       //    break;
     }
   }
-  console.log('input:', input);
-  console.log('json:', JSON.parse(input));
+  // console.log('input:', input);
+
+  let json = JSON.parse(input);
+
+  console.log('json:', json);
 
   /*
   let json = args[0] ? filesystem.readFile(args[0], 'utf-8') : data2;
