@@ -119,9 +119,8 @@ async function CommandLine() {
   };
   repl.show = value => {
     if(Util.isArray(value) && value[0]?.kind) console.log(Table(value));
-else if(typeof value == 'string') 
-  console.log(value);
-  /*if(typeof value == 'object' && value != null)*/ else
+    else if(typeof value == 'string') console.log(value);
+    /*if(typeof value == 'object' && value != null)*/ else
       console.log(inspect(value, { ...console.options, hideKeys: ['loc', 'range'] }));
     // else console.log(value);
   };
@@ -167,6 +166,22 @@ function* DirIterator(...args) {
       if(!pred(entry, file, is_dir, is_symlink)) continue;
       yield file;
     }
+  }
+}
+
+function* RecursiveDirIterator(dir, maxDepth = Infinity) {
+  for(let file of filesystem.readdir(dir)) {
+    if(['.', '..'].indexOf(file) != -1) continue;
+
+    let entry = `${dir}/${file}`;
+    let isDir = false;
+    let st = filesystem.stat(entry);
+
+    isDir = st && st.isDirectory();
+
+    yield isDir ? entry + '/' : entry;
+
+    if(maxDepth > 0 && isDir) yield* RecursiveDirIterator(entry, maxDepth - 1);
   }
 }
 
@@ -272,7 +287,7 @@ function* GenerateInspectStruct(decl, includes) {
   yield `}`;
 }
 
-function InspectStruct(decl) {
+function InspectStruct(decl, compiler = 'tcc') {
   if(typeof decl == 'string') decl = $.getType(decl);
 
   const code = [...GenerateInspectStruct(decl)].join('\n');
@@ -280,7 +295,7 @@ function InspectStruct(decl) {
   const program = `inspect-${decl.name.replace(/\ /g, '_')}`;
   WriteFile(program + '.c', code);
 
-  let command = ['tcc', '-Os', '-w', '-o', program, program + '.c', ...flags];
+  let command = [compiler, '-Os', '-w', '-o', program, program + '.c', ...flags];
   console.log('InspectStruct', { command: command.join(' ') });
 
   let result = os.exec(command);
@@ -292,24 +307,27 @@ function InspectStruct(decl) {
     let output = filesystem.readAll(fd);
 
     let lines = output.trim().split('\n');
-    let [name, size] = (lines[0] = [...Util.splitAt(lines[0], [...lines[0]].lastIndexOf(' '))]);
+    let firstLine = lines.shift();
+
+    let [name, size] = [...Util.splitAt(firstLine, [...firstLine].lastIndexOf(' '))];
 
     name = name.replace(/^(struct|union|enum)\ /, '');
-    lines[0][0] = name;
 
     //console.log("lines:", lines);
     result = lines
       .map(line => (typeof line == 'string' ? line.split(' ') : line))
-      .map(line => line.map((col, i) => (i > 0 ? +col : col)))
+      .map(line => line.map((col, i) => (isNaN(+col) ? col : +col)))
       .map(([field, offset, size]) => [
         field.replace(/:.*/, '').replace(/^\./, name + '.'),
         offset,
         size
       ]);
 
-      result.toString = function(sep = ' ') {
-        return this.map(line => line.join(sep).replace('.', ' ')).join('\n');
-      };
+    result.unshift([name, '-', '-', +size]);
+
+    result.toString = function(sep = ' ') {
+      return this.map(line => line.join(sep).replace('.', ' ')).join('\n');
+    };
   }
 
   return result;
@@ -774,6 +792,7 @@ async function ASTShell(...args) {
     InspectStruct,
     MakeStructClass,
     DirIterator,
+    RecursiveDirIterator,
     Terminal,
     PrintAst,
     MakeFFI,

@@ -50,8 +50,7 @@ export class Node {
   toJSON(obj) {
     const { kind } = this;
     obj ??= { kind };
-    if(!obj.kind)
-      obj.kind = Util.className(this);
+    if(!obj.kind) obj.kind = Util.className(this);
     return obj;
   }
 }
@@ -398,17 +397,16 @@ export class RecordDecl extends Type {
           let name = node.name;
           if(node.isBitfield) name += ':1';
           if(node.kind == 'FieldDecl') {
-            let type =  new Type(node.type, ast);
+            let type = new Type(node.type, ast);
 
-            if( type.desugared && type.desugared.startsWith('struct ')) {
+            if(type.desugared && type.desugared.startsWith('struct ')) {
+              let tmp = ast.inner.find(n => n.kind == 'RecordDecl' && n.name == /^struct./.test(n.name)
+              );
 
-              let tmp = ast.inner.find(n => n.kind == 'RecordDecl' && n.name == /^struct./.test(n.name));
-              
-
-if(tmp) type = TypeFactory(tmp.value, ast);
+              if(tmp) type = TypeFactory(tmp.value, ast);
             }
 
-            return [name, /*node.type?.kind ? TypeFactory(node.type, ast) :*/type];
+            return [name, /*node.type?.kind ? TypeFactory(node.type, ast) :*/ type];
           }
 
           return [name, node.kind.startsWith('Indirect') ? null : TypeFactory(node, ast)];
@@ -429,7 +427,14 @@ if(tmp) type = TypeFactory(tmp.value, ast);
 
   toJSON() {
     const { name, size, members } = this;
-    return super.toJSON({ name, size, members: members.map(([name,member]) => [name, member != null &&  member.toJSON ? member.toJSON() : member]) });
+    return super.toJSON({
+      name,
+      size,
+      members: members.map(([name, member]) => [
+        name,
+        member != null && member.toJSON ? member.toJSON() : member
+      ])
+    });
   }
 }
 
