@@ -64,7 +64,7 @@ async function main(...args) {
 
     let time = +new Date() / 1000;
     let index = Math.floor((time * 360) / 30);
-    let color = new HSLA(index % 360, 100, 50 + 25 * Math.sin(time * 2 * Math.PI)).toRGBA();
+    let color = new HSLA(index % 360, 100, 50 + 25 * Math.sin(time * 0.1 * Math.PI)).toRGBA();
     //console.log("color", ...color.normalize());
 
     glClearColor(...color.normalize());
@@ -90,7 +90,12 @@ async function main(...args) {
     let  sy = Mat.sin((i % 360) * Math.PI /360);
 
     nvg.Translate(50+sx*50,50+sy*50);*/
-    nvg.Translate((i % 50) * 4, 10);
+    let phi = ((i % 360) / 180) * Math.PI;
+    let vec = [Math.cos(phi), Math.sin(phi)].map(n => n * 100);
+
+    vec = vec.map(n => n + 150);
+    //    nvg.Translate((i % 50) * 4, 10);
+    nvg.Translate(...vec);
 
     nvg.BeginPath();
     nvg.Rect(0, 0, ...imgSz);
