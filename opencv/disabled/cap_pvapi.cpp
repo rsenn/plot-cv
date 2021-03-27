@@ -140,8 +140,7 @@ CvCaptureCAM_PvAPI::open(int index) {
   tPvCameraInfo camInfo;
   tPvIpSettings ipSettings;
 
-  if(PvInitialize()) {
-  }
+  if(PvInitialize()) {}
   // return false;
 
   Sleep(1000);

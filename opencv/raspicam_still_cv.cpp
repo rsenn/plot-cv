@@ -79,7 +79,8 @@ RaspiCam_Still_Cv::retrieve(cv::Mat& image) {
 }
 
 void
-RaspiCam_Still_Cv::release() {}
+RaspiCam_Still_Cv::release() {
+}
 
 /**Returns the specified VideoCapture property
  */

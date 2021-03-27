@@ -82,9 +82,7 @@ public:
     for(int i = 0; i < contours.blobs.size(); i++) {
       std::vector<ofcv::Point>& pts = contours.blobs[i].pts;
       path.moveTo(pts[0]);
-      for(int j = 0; j < pts.size(); j++) {
-        path.lineTo(pts[j]);
-      }
+      for(int j = 0; j < pts.size(); j++) { path.lineTo(pts[j]); }
     }
     return path;
   }
@@ -146,9 +144,7 @@ public:
     for(int i = 0; i < blobs.size(); i++) {
       std::vector<ofcv::Point>& pts = blobs[i].pts;
       ofPolyline line;
-      for(int j = 0; j < pts.size(); j++) {
-        line.lineTo(pts[j].x, pts[j].y);
-      }
+      for(int j = 0; j < pts.size(); j++) { line.lineTo(pts[j].x, pts[j].y); }
       lines.push_back(line);
     }
     return lines;

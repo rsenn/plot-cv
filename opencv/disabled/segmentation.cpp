@@ -74,9 +74,7 @@ main(int argc, char** argv) {
     if(!ifs.is_open())
       CV_Error(Error::StsError, "File " + file + " not found");
     std::string line;
-    while(std::getline(ifs, line)) {
-      classes.push_back(line);
-    }
+    while(std::getline(ifs, line)) { classes.push_back(line); }
   }
 
   // Open file with colors.
@@ -201,9 +199,7 @@ colorizeSegmentation(const Mat& score, Mat& segm) {
   for(int row = 0; row < rows; row++) {
     const uchar* ptrMaxCl = maxCl.ptr<uchar>(row);
     Vec3b* ptrSegm = segm.ptr<Vec3b>(row);
-    for(int col = 0; col < cols; col++) {
-      ptrSegm[col] = colors[ptrMaxCl[col]];
-    }
+    for(int col = 0; col < cols; col++) { ptrSegm[col] = colors[ptrMaxCl[col]]; }
   }
 }
 

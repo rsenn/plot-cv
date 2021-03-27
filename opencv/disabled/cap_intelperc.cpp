@@ -6,8 +6,10 @@ namespace cv {
 
 ///////////////// IntelPerCStreamBase //////////////////
 
-IntelPerCStreamBase::IntelPerCStreamBase() : m_profileIdx(-1), m_frameIdx(0), m_timeStampStartNS(0) {}
-IntelPerCStreamBase::~IntelPerCStreamBase() {}
+IntelPerCStreamBase::IntelPerCStreamBase() : m_profileIdx(-1), m_frameIdx(0), m_timeStampStartNS(0) {
+}
+IntelPerCStreamBase::~IntelPerCStreamBase() {
+}
 
 bool
 IntelPerCStreamBase::isValid() {
@@ -167,8 +169,10 @@ IntelPerCStreamBase::enumProfiles() {
 
 ///////////////// IntelPerCStreamImage //////////////////
 
-IntelPerCStreamImage::IntelPerCStreamImage() {}
-IntelPerCStreamImage::~IntelPerCStreamImage() {}
+IntelPerCStreamImage::IntelPerCStreamImage() {
+}
+IntelPerCStreamImage::~IntelPerCStreamImage() {
+}
 
 bool
 IntelPerCStreamImage::initStream(PXCSession* session) {
@@ -340,8 +344,10 @@ IntelPerCStreamImage::retrieveAsOutputArray(cv::OutputArray image) {
 
 ///////////////// IntelPerCStreamDepth //////////////////
 
-IntelPerCStreamDepth::IntelPerCStreamDepth() {}
-IntelPerCStreamDepth::~IntelPerCStreamDepth() {}
+IntelPerCStreamDepth::IntelPerCStreamDepth() {
+}
+IntelPerCStreamDepth::~IntelPerCStreamDepth() {
+}
 
 bool
 IntelPerCStreamDepth::initStream(PXCSession* session) {
@@ -470,7 +476,8 @@ VideoCapture_IntelPerC::VideoCapture_IntelPerC() : m_contextOpened(false) {
   m_contextOpened = m_imageStream.initStream(m_session);
   m_contextOpened &= m_depthStream.initStream(m_session);
 }
-VideoCapture_IntelPerC::~VideoCapture_IntelPerC() {}
+VideoCapture_IntelPerC::~VideoCapture_IntelPerC() {
+}
 
 double
 VideoCapture_IntelPerC::getProperty(int propIdx) const {

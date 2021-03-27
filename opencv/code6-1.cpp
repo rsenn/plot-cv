@@ -37,8 +37,7 @@ main() {
 
   on_trackbar(0, 0);
 
-  while(char(waitKey(1)) != 'q') {
-  }
+  while(char(waitKey(1)) != 'q') {}
 
   return 0;
 }

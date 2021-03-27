@@ -160,9 +160,7 @@ main(int argc, char* argv[]) {
   cout << "Initializing OCR engines ... ";
   int num_ocrs = 10;
   std::vector<Ptr<OCRTesseract>> ocrs;
-  for(int o = 0; o < num_ocrs; o++) {
-    ocrs.push_back(OCRTesseract::create());
-  }
+  for(int o = 0; o < num_ocrs; o++) { ocrs.push_back(OCRTesseract::create()); }
 
   cv::Mat transition_p;
   string filename = "OCRHMM_transitions_table.xml";

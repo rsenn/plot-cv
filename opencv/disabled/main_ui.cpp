@@ -88,8 +88,7 @@ main(int argc, char* argv[]) {
     grideye.init();
     haveGridEye = true;
     grideye.setMovingAverageMode(true);
-  } catch(...) {
-  }
+  } catch(...) {}
 
   cv::Mat gridEyePixels(8, 8, CV_32F);
   gridEyePixels *= 0.0;

@@ -86,18 +86,14 @@ copy_char_list(char** in, int in_count, char**& out) {
       ; // includes \0 in count
 
     out[i] = new char[char_count];
-    for(int j = 0; j < char_count; j++) {
-      out[i][j] = in[i][j];
-    }
+    for(int j = 0; j < char_count; j++) { out[i][j] = in[i][j]; }
 
   } // outer loop
 } // copy_char_count
 
 void
 delete_char_list(char**& list, int len) {
-  for(int i = 0; i < len; i++) {
-    delete list[i];
-  }
+  for(int i = 0; i < len; i++) { delete list[i]; }
   delete[] list;
 }
 

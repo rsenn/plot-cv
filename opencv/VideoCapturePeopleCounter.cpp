@@ -43,8 +43,7 @@ public:
         refLine = Line(0, refLineY, frame.cols, refLineY);
 
       // erase old contours (seen 16 frames ago)
-      unregisterPersonIf(
-          [&](const Person* p) { return frameNumber - lastFrameWherePersonWasSeen[p] > 16; });
+      unregisterPersonIf([&](const Person* p) { return frameNumber - lastFrameWherePersonWasSeen[p] > 16; });
 
       // and then process the current frame
       processFrame(frame);

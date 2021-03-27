@@ -30,9 +30,7 @@ simpleContour(const cv::Mat& currentQuery, int n = 300) {
   std::vector<cv::Point> contoursQuery;
   findContours(currentQuery, _contoursQuery, RETR_LIST, CHAIN_APPROX_NONE);
   for(size_t border = 0; border < _contoursQuery.size(); border++) {
-    for(size_t p = 0; p < _contoursQuery[border].size(); p++) {
-      contoursQuery.push_back(_contoursQuery[border][p]);
-    }
+    for(size_t p = 0; p < _contoursQuery[border].size(); p++) { contoursQuery.push_back(_contoursQuery[border][p]); }
   }
 
   // In case actual number of points is less than n
@@ -44,9 +42,7 @@ simpleContour(const cv::Mat& currentQuery, int n = 300) {
   // Uniformly sampling
   random_shuffle(contoursQuery.begin(), contoursQuery.end());
   std::vector<cv::Point> cont;
-  for(int i = 0; i < n; i++) {
-    cont.push_back(contoursQuery[i]);
-  }
+  for(int i = 0; i < n; i++) { cont.push_back(contoursQuery[i]); }
   return cont;
 }
 

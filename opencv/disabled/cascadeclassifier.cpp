@@ -198,9 +198,7 @@ main(int argc, const char* argv[]) {
     }
 
     if(!useGPU && detections_num) {
-      for(int i = 0; i < detections_num; ++i) {
-        rectangle(resized_cpu, facesBuf_cpu[i], Scalar(255));
-      }
+      for(int i = 0; i < detections_num; ++i) { rectangle(resized_cpu, facesBuf_cpu[i], Scalar(255)); }
     }
 
     if(useGPU) {

@@ -115,13 +115,9 @@ main(int argc, char** argv) {
       return -1;
     App app(args);
     app.run();
-  } catch(const Exception& e) {
+  } catch(const Exception& e) { return cout << "error: " << e.what() << endl, 1; } catch(const exception& e) {
     return cout << "error: " << e.what() << endl, 1;
-  } catch(const exception& e) {
-    return cout << "error: " << e.what() << endl, 1;
-  } catch(...) {
-    return cout << "unknown exception" << endl, 1;
-  }
+  } catch(...) { return cout << "unknown exception" << endl, 1; }
   return 0;
 }
 

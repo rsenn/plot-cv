@@ -81,8 +81,7 @@ main() {
 
   setMouseCallback("Contours", on_mouse);
 
-  while(char(waitKey(1)) != 'q') {
-  }
+  while(char(waitKey(1)) != 'q') {}
 
   return 0;
 }

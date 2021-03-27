@@ -53,9 +53,7 @@ main(int argc, char** argv) {
     std::stringstream gtStream(gtLine);
     std::string element;
     std::vector<int> elements;
-    while(std::getline(gtStream, element, ',')) {
-      elements.push_back(cvRound(std::atof(element.c_str())));
-    }
+    while(std::getline(gtStream, element, ',')) { elements.push_back(cvRound(std::atof(element.c_str()))); }
 
     if(elements.size() == 4) {
       // ground-truth is rectangle
@@ -77,9 +75,7 @@ main(int argc, char** argv) {
       // Translate x and y to rects start position
       int sx = aaRect.x;
       int sy = aaRect.y;
-      for(int i = 0; i < n; ++i) {
-        poly_points[i] = Point(elements[2 * i] - sx, elements[2 * i + 1] - sy);
-      }
+      for(int i = 0; i < n; ++i) { poly_points[i] = Point(elements[2 * i] - sx, elements[2 * i + 1] - sy); }
       cv::fillConvexPoly(mask, poly_points, Scalar(1.0), 8);
       mask.convertTo(mask, CV_32FC1);
       tracker->setInitialMask(mask);

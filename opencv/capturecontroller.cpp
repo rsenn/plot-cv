@@ -10,7 +10,8 @@
 #include <QTime>
 
 CaptureWorker::CaptureWorker(const QString& device, CaptureController* captureController, QObject* parent)
-    : QObject(parent), m_device(device), m_captureController(captureController), m_loopRunning(true) {}
+    : QObject(parent), m_device(device), m_captureController(captureController), m_loopRunning(true) {
+}
 
 void
 CaptureWorker::stop() {
@@ -24,10 +25,10 @@ CaptureWorker::doWork() {
   if(ok) {
     m_capture = new cv::VideoCapture(deviceId);
   } else {
-    m_capture = new cv::VideoCapture(
-        "rkcamsrc device=/dev/video0 io-mode=4 ! video/x-raw,format=NV12,width=640,height=480 ! "
-        "videoconvert ! appsink",
-        cv::CAP_GSTREAMER);
+    m_capture =
+        new cv::VideoCapture("rkcamsrc device=/dev/video0 io-mode=4 ! video/x-raw,format=NV12,width=640,height=480 ! "
+                             "videoconvert ! appsink",
+                             cv::CAP_GSTREAMER);
   }
   if(!m_capture->isOpened()) {
     qWarning() << "Can't capture" << m_device;
@@ -65,9 +66,12 @@ CaptureWorker::doWork() {
 }
 
 CaptureController::CaptureController(QObject* parent)
-    : QObject(parent), m_worker(nullptr), m_lock(nullptr), m_status(Status::Stopped) {}
+    : QObject(parent), m_worker(nullptr), m_lock(nullptr), m_status(Status::Stopped) {
+}
 
-CaptureController::~CaptureController() { stop(); }
+CaptureController::~CaptureController() {
+  stop();
+}
 
 const cv::Mat
 CaptureController::frameRef() const {

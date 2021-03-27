@@ -82,13 +82,9 @@ struct Settings {
 
 void loadSettings(String path, Settings& sttngs);
 
-void
-createObjectPoints(vector<Point3f>& patternCorners, Size patternSize, float squareSize, int patternType);
+void createObjectPoints(vector<Point3f>& patternCorners, Size patternSize, float squareSize, int patternType);
 
-void createProjectorObjectPoints(vector<Point2f>& patternCorners,
-                                 Size patternSize,
-                                 float squareSize,
-                                 int patternType);
+void createProjectorObjectPoints(vector<Point2f>& patternCorners, Size patternSize, float squareSize, int patternType);
 
 double calibrate(vector<vector<Point3f>> objPoints,
                  vector<vector<Point2f>> imgPoints,
@@ -104,8 +100,7 @@ void fromCamToWorld(Mat cameraMatrix,
                     vector<vector<Point2f>> imgPoints,
                     vector<vector<Point3f>>& worldPoints);
 
-void saveCalibrationResults(
-    String path, Mat camK, Mat camDistCoeffs, Mat projK, Mat projDistCoeffs, Mat fundamental);
+void saveCalibrationResults(String path, Mat camK, Mat camDistCoeffs, Mat projK, Mat projDistCoeffs, Mat fundamental);
 
 void saveCalibrationData(String path,
                          vector<Mat> T1,
@@ -163,10 +158,7 @@ main(int argc, char** argv) {
   projSettings.imageSize = Size(pattern.rows, pattern.cols);
 
   createObjectPoints(tempCam, camSettings.patternSize, camSettings.squareSize, camSettings.patternType);
-  createProjectorObjectPoints(tempProj,
-                              projSettings.patternSize,
-                              projSettings.squareSize,
-                              projSettings.patternType);
+  createProjectorObjectPoints(tempProj, projSettings.patternSize, projSettings.squareSize, projSettings.patternType);
 
   if(!cap.isOpened()) {
     cout << "Camera could not be opened" << endl;
@@ -278,8 +270,8 @@ main(int argc, char** argv) {
 
   saveCalibrationData(outputName + "_points.yml", T1, T2, projInCam, projInProj, projInCamN, projInProjN);
 
-  double rms = calibrate(
-      objectPointsCam, imagePointsCam, cameraMatrix, distCoeffs, rVecs, tVecs, camSettings.imageSize);
+  double rms =
+      calibrate(objectPointsCam, imagePointsCam, cameraMatrix, distCoeffs, rVecs, tVecs, camSettings.imageSize);
   cout << "rms = " << rms << endl;
   cout << "camera matrix = \n" << cameraMatrix << endl;
   cout << "dist coeffs = \n" << distCoeffs << endl;
@@ -315,8 +307,7 @@ main(int argc, char** argv) {
 
   cout << "stereo calibrate: \n" << fundamental << endl;
 
-  saveCalibrationResults(
-      outputName, cameraMatrix, distCoeffs, projectorMatrix, projectorDistCoeffs, fundamental);
+  saveCalibrationResults(outputName, cameraMatrix, distCoeffs, projectorMatrix, projectorDistCoeffs, fundamental);
   return 0;
 }
 
@@ -373,10 +364,7 @@ createObjectPoints(vector<Point3f>& patternCorners, Size patternSize, float squa
 }
 
 void
-createProjectorObjectPoints(vector<Point2f>& patternCorners,
-                            Size patternSize,
-                            float squareSize,
-                            int patternType) {
+createProjectorObjectPoints(vector<Point2f>& patternCorners, Size patternSize, float squareSize, int patternType) {
   switch(patternType) {
     case CHESSBOARD:
     case CIRCLES_GRID:
@@ -434,8 +422,7 @@ fromCamToWorld(Mat cameraMatrix,
 }
 
 void
-saveCalibrationResults(
-    String path, Mat camK, Mat camDistCoeffs, Mat projK, Mat projDistCoeffs, Mat fundamental) {
+saveCalibrationResults(String path, Mat camK, Mat camDistCoeffs, Mat projK, Mat projDistCoeffs, Mat fundamental) {
   FileStorage fs(path + ".yml", FileStorage::WRITE);
   fs << "camIntrinsics" << camK;
   fs << "camDistCoeffs" << camDistCoeffs;

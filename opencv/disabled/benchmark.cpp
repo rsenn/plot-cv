@@ -60,9 +60,7 @@ readGT(const string& filename, const string& omitname) {
       if(a > 0 && b > 0 && a < res.size() && b < res.size()) {
         if(a > b)
           swap(a, b);
-        for(vector<Rect2d>::iterator i = res.begin() + a; i != res.begin() + b; ++i) {
-          *i = Rect2d();
-        }
+        for(vector<Rect2d>::iterator i = res.begin() + a; i != res.begin() + b; ++i) { *i = Rect2d(); }
       }
     }
   }

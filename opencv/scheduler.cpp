@@ -28,8 +28,7 @@ Scheduler::add_event(Event* input_event) {
 
   bool element_inserted = false;
 
-  for(list<Event*>::const_iterator iterator = event_schedule.begin(), end = event_schedule.end();
-      iterator != end;
+  for(list<Event*>::const_iterator iterator = event_schedule.begin(), end = event_schedule.end(); iterator != end;
       iterator++) {
     Event* temp = *iterator;
     if(temp->get_execution_deadline() >= input_event->get_execution_deadline()) {
@@ -59,8 +58,7 @@ Scheduler::remove_event(long int eventID) {
 
   bool element_removed = false;
 
-  for(list<Event*>::const_iterator iterator = event_schedule.begin(), end = event_schedule.end();
-      iterator != end;
+  for(list<Event*>::const_iterator iterator = event_schedule.begin(), end = event_schedule.end(); iterator != end;
       iterator++) {
     Event* temp = *iterator;
     if(temp->get_eventID() == eventID) {
@@ -168,8 +166,7 @@ Scheduler::print_event_schedule() {
   int event_num = 0;
   Event* temp = NULL;
 
-  for(list<Event*>::const_iterator iterator = event_schedule.begin(), end = event_schedule.end();
-      iterator != end;
+  for(list<Event*>::const_iterator iterator = event_schedule.begin(), end = event_schedule.end(); iterator != end;
       iterator++) {
     temp = *iterator;
     cout << "E#" << event_num << endl;
@@ -227,8 +224,7 @@ Scheduler::check_overdueEvents() { // Scans event_schedule and returns the first
   time_t current_time;
   Event* temp = NULL;
 
-  for(list<Event*>::const_reverse_iterator iterator = event_schedule.rbegin();
-      iterator != event_schedule.rend();
+  for(list<Event*>::const_reverse_iterator iterator = event_schedule.rbegin(); iterator != event_schedule.rend();
       iterator++) {
 
     time(&current_time);
@@ -261,8 +257,8 @@ Scheduler::process_overdueEvents(Event* input_event) {
        input_event->get_event_priority() < 10) { // If Event is >= 30 mins past ED && Event
                                                  // priority < 10, discard without executing.
       this->remove_event(input_event->get_eventID());
-      cout << "Discarding [" << input_event->get_eventName()
-           << "] with eventID=" << input_event->get_eventID() << " due to expiration && priority < 10.\n";
+      cout << "Discarding [" << input_event->get_eventName() << "] with eventID=" << input_event->get_eventID()
+           << " due to expiration && priority < 10.\n";
 
       return 0; // Event not executed.
     } else {    // If Event not expired, execute.
@@ -271,8 +267,8 @@ Scheduler::process_overdueEvents(Event* input_event) {
       cout << "Beginning execution of [" << input_event->get_eventName()
            << "] with eventID=" << input_event->get_eventID() << "...\n";
       input_event->execute_event(this->camera, this->camera_index, this->save_directory);
-      cout << "Execution of [" << input_event->get_eventName()
-           << "] with eventID=" << input_event->get_eventID() << " has completed.\n";
+      cout << "Execution of [" << input_event->get_eventName() << "] with eventID=" << input_event->get_eventID()
+           << " has completed.\n";
 
       return 1; // Event executed.
     }
@@ -297,8 +293,8 @@ int
 Scheduler::display_camera_feed() {
 
   if(!this->camera.isOpened()) {
-    cout << "Error: Scheduler::display_camera_feed() could not access camera at camera_index= "
-         << this->camera_index << endl;
+    cout << "Error: Scheduler::display_camera_feed() could not access camera at camera_index= " << this->camera_index
+         << endl;
     return -1;
   } else {
     Mat frame;

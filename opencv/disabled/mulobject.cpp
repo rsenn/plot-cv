@@ -548,7 +548,8 @@ case4(Entity PF, Entity PR) {
 }
 
 void
-movePlayer(string balld, Entity& playerfront, Entity& playerrear, Entity& ball, Entity& goal, Serial& serial) {}
+movePlayer(string balld, Entity& playerfront, Entity& playerrear, Entity& ball, Entity& goal, Serial& serial) {
+}
 
 // void movePlayer(string balld, Entity &playerfront, Entity &playerrear, Entity &ball,Entity &goal,
 // Serial &serial) {

@@ -2060,9 +2060,7 @@ videoInput::restartDevice(int id) {
 // ----------------------------------------------------------------------
 videoInput::~videoInput() {
 
-  for(int i = 0; i < VI_MAX_CAMERAS; i++) {
-    delete VDList[i];
-  }
+  for(int i = 0; i < VI_MAX_CAMERAS; i++) { delete VDList[i]; }
   // Unitialize com
   comUnInit();
 }

@@ -321,15 +321,15 @@ DigitalCameraCapture::initContext() {
     CR(gp_list_new(&allDevices));
     CR(gp_camera_autodetect(allDevices, context));
     CR(numDevices = gp_list_count(allDevices));
-  } catch(GPhoto2Exception& e) {
-    numDevices = 0;
-  }
+  } catch(GPhoto2Exception& e) { numDevices = 0; }
 }
 
 /**
  * Search for all devices while constructing.
  */
-DigitalCameraCapture::DigitalCameraCapture() { initContext(); }
+DigitalCameraCapture::DigitalCameraCapture() {
+  initContext();
+}
 
 /**
  * @see open(int)
@@ -365,9 +365,7 @@ DigitalCameraCapture::~DigitalCameraCapture() {
     allDevices = NULL;
     gp_context_unref(context);
     context = NULL;
-  } catch(GPhoto2Exception& e) {
-    message(ERROR, "destruction error", e);
-  }
+  } catch(GPhoto2Exception& e) { message(ERROR, "destruction error", e); }
 }
 
 /**
@@ -456,9 +454,7 @@ DigitalCameraCapture::close() {
       CR(gp_widget_unref(rootWidget));
       rootWidget = NULL;
     }
-  } catch(GPhoto2Exception& e) {
-    message(ERROR, "cannot close device properly", e);
-  }
+  } catch(GPhoto2Exception& e) { message(ERROR, "cannot close device properly", e); }
 }
 
 /**
@@ -841,9 +837,7 @@ DigitalCameraCapture::findWidgetByName(const char* subName) const {
         ++it;
       }
       return (it != end) ? it->second : NULL;
-    } catch(GPhoto2Exception& e) {
-      message(WARNING, "error while searching for widget", e);
-    }
+    } catch(GPhoto2Exception& e) { message(WARNING, "error while searching for widget", e); }
   }
   return 0;
 }

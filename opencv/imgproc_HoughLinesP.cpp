@@ -16,12 +16,7 @@ main(int argc, char** argv) {
   vector<Vec4i> lines;
   HoughLinesP(dst, lines, 1, CV_PI / 180, 80, 30, 10);
   for(size_t i = 0; i < lines.size(); i++) {
-    line(color_dst,
-         Point(lines[i][0], lines[i][1]),
-         Point(lines[i][2], lines[i][3]),
-         Scalar(0, 0, 255),
-         3,
-         8);
+    line(color_dst, Point(lines[i][0], lines[i][1]), Point(lines[i][2], lines[i][3]), Scalar(0, 0, 255), 3, 8);
   }
   namedWindow("Source", 1);
   imshow("Source", src);

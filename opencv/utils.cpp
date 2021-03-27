@@ -69,16 +69,9 @@ video_mode(ERFilter* er_filter, char filename[]) {
   VideoWriter writer;
   VideoWriter original_writer;
   cap >> frame; // get 1 frame to know the frame size
-  writer.open("video_result/result/result.wmv",
-              cv::VideoWriter::fourcc('W', 'M', 'V', '2'),
-              20.0,
-              frame.size(),
-              true);
-  original_writer.open("video_result/result/input.wmv",
-                       cv::VideoWriter::fourcc('W', 'M', 'V', '2'),
-                       20.0,
-                       frame.size(),
-                       true);
+  writer.open("video_result/result/result.wmv", cv::VideoWriter::fourcc('W', 'M', 'V', '2'), 20.0, frame.size(), true);
+  original_writer.open(
+      "video_result/result/input.wmv", cv::VideoWriter::fourcc('W', 'M', 'V', '2'), 20.0, frame.size(), true);
   if(!writer.isOpened()) {
     cerr << "Could not open the output video file for write\n";
   }
@@ -167,9 +160,7 @@ video_mode(ERFilter* er_filter, char filename[]) {
       writer << result;
       std::sort(result_text.begin(), result_text.end(), [](Text a, Text b) { return a.box.y < b.box.y; });
       f_result_text << img_count;
-      for(auto it : result_text) {
-        f_result_text << "," << it.word;
-      }
+      for(auto it : result_text) { f_result_text << "," << it.word; }
       f_result_text << endl;
       ++img_count;
 
@@ -233,8 +224,7 @@ load_challenge2_test_file(Mat& src, int n) {
 
   else if(src.cols > MAX_WIDTH || src.rows > MAX_HEIGHT) {
     std::cout << n << "\t" << src.rows << "," << src.cols << "\tResize the image" << endl;
-    double resize_factor =
-        (src.rows > MAX_HEIGHT) ? (double)MAX_HEIGHT / src.rows : (double)MAX_WIDTH / src.cols;
+    double resize_factor = (src.rows > MAX_HEIGHT) ? (double)MAX_HEIGHT / src.rows : (double)MAX_WIDTH / src.cols;
 
     resize(src, src, Size(src.cols * resize_factor, src.rows * resize_factor));
     return true;
@@ -257,8 +247,7 @@ load_challenge2_training_file(Mat& src, int n) {
 
   else if(src.cols > MAX_WIDTH || src.rows > MAX_HEIGHT) {
     std::cout << n << "\t" << src.rows << "," << src.cols << "\tResize the image" << endl;
-    double resize_factor =
-        (src.rows > MAX_HEIGHT) ? (double)MAX_HEIGHT / src.rows : (double)MAX_WIDTH / src.cols;
+    double resize_factor = (src.rows > MAX_HEIGHT) ? (double)MAX_HEIGHT / src.rows : (double)MAX_WIDTH / src.cols;
 
     resize(src, src, Size(src.cols * resize_factor, src.rows * resize_factor));
     return true;
@@ -307,9 +296,7 @@ show_result(Mat& src,
     for(auto it : strong[i]) rectangle(strong_img, it->bound, Scalar(0, 255, 0));
   }
 
-  for(auto it : tracked) {
-    rectangle(tracked_img, it->bound, Scalar(255, 0, 255));
-  }
+  for(auto it : tracked) { rectangle(tracked_img, it->bound, Scalar(255, 0, 255)); }
 
   for(auto it : text) {
     /*if (abs(it.slope) > 0.05)
@@ -651,9 +638,7 @@ draw_multiple_channel(string img_name) {
     root[i] = erFilter->er_tree_extract(channel[i]);
     erFilter->non_maximum_supression(root[i], all[i], pool[i], channel[i]);
 
-    for(int j = 0; j < pool[i].size(); j++) {
-      rectangle(channel[i % 3], pool[i][j]->bound, Scalar(0));
-    }
+    for(int j = 0; j < pool[i].size(); j++) { rectangle(channel[i % 3], pool[i][j]->bound, Scalar(0)); }
   }
 
   imshow("Y", channel[0]);
@@ -679,9 +664,7 @@ output_MSER_time(string img_name) {
     start = chrono::high_resolution_clock::now();
 
     ERs root(5);
-    for(int i = 0; i < root.size(); i++) {
-      root[i] = erFilter->er_tree_extract(tmp);
-    }
+    for(int i = 0; i < root.size(); i++) { root[i] = erFilter->er_tree_extract(tmp); }
 
     end = chrono::high_resolution_clock::now();
 
@@ -689,15 +672,15 @@ output_MSER_time(string img_name) {
 
     std::cout << "pixel number: " << tmp.total();
     std::cout << "\ttime: " << chrono::duration<double>(end - start).count() * 1000 / root.size() << "ms\n";
-    fout << tmp.total() << " " << chrono::duration<double>(end - start).count() * 1000 / root.size()
-         << endl;
+    fout << tmp.total() << " " << chrono::duration<double>(end - start).count() * 1000 / root.size() << endl;
     coef += 0.01;
   }
   erFilter->er_tree_extract(input);
 }
 
 void
-output_classifier_ROC(string classifier_name, string test_file) {}
+output_classifier_ROC(string classifier_name, string test_file) {
+}
 
 void
 output_optimal_path(string img_name) {
@@ -804,9 +787,7 @@ load_gt(int n) {
   }*/
 
   vector<Vec4i> gt;
-  for(int i = 0; i < bbox.size(); i++) {
-    gt.push_back(Vec4i(bbox[i].x, bbox[i].y, bbox[i].width, bbox[i].height));
-  }
+  for(int i = 0; i < bbox.size(); i++) { gt.push_back(Vec4i(bbox[i].x, bbox[i].y, bbox[i].width, bbox[i].height)); }
 
   fin.close();
   return gt;
@@ -816,9 +797,7 @@ Vec6d
 calc_detection_rate(int n, vector<Text>& text) {
   vector<Vec4i> gt = load_gt(n);
   vector<Rect> gt_box;
-  for(int i = 0; i < gt.size(); i++) {
-    gt_box.push_back(Rect(gt[i][0], gt[i][1], gt[i][2], gt[i][3]));
-  }
+  for(int i = 0; i < gt.size(); i++) { gt_box.push_back(Rect(gt[i][0], gt[i][1], gt[i][2], gt[i][3])); }
 
   vector<bool> detected(gt_box.size());
   double tp = 0;
@@ -844,8 +823,7 @@ calc_detection_rate(int n, vector<Text>& text) {
 
 void
 calc_recall_rate() {
-  ERFilter* er_filter =
-      new ERFilter(2, 50, MAX_ER_AREA, NMS_STABILITY_T, NMS_OVERLAP_COEF, MIN_OCR_PROBABILITY);
+  ERFilter* er_filter = new ERFilter(2, 50, MAX_ER_AREA, NMS_STABILITY_T, NMS_OVERLAP_COEF, MIN_OCR_PROBABILITY);
   er_filter->stc = new CascadeBoost("er_classifier/strong.classifier");
   er_filter->wtc = new CascadeBoost("er_classifier/weak.classifier");
   er_filter->ocr = new OCR("ocr_classifier/OCR.model", OCR_IMG_L, OCR_FEATURE_L);
@@ -919,9 +897,8 @@ calc_recall_rate() {
     flat[5].insert(flat[5].end(), tracked.begin(), tracked.end());
     flat[6].resize(mser_bbox.size());
 
-    vector<vector<bool>> matches(7,
-                                 vector<bool>(gt_box.size(),
-                                              false)); // all, nms, strong, weak, classify, track
+    vector<vector<bool>> matches(7, vector<bool>(gt_box.size(),
+                                                 false)); // all, nms, strong, weak, classify, track
     vector<int> recall_count(7, 0);
     vector<int> match_count(7, 0);
 
@@ -968,16 +945,13 @@ calc_recall_rate() {
          << "    precision : " << match_count[0] / (double)flat[0].size() << endl;
     cout << "nms candidate : " << flat[1].size() << " recall : " << recall_count[1] / (double)gt_box.size()
          << "    precision : " << match_count[1] / (double)flat[1].size() << endl;
-    cout << "strong candidate : " << flat[2].size()
-         << " recall : " << recall_count[2] / (double)gt_box.size()
+    cout << "strong candidate : " << flat[2].size() << " recall : " << recall_count[2] / (double)gt_box.size()
          << "    precision : " << match_count[2] / (double)flat[2].size() << endl;
     cout << "weak candidate : " << flat[3].size() << " recall : " << recall_count[3] / (double)gt_box.size()
          << "    precision : " << match_count[3] / (double)flat[3].size() << endl;
-    cout << "classify candidate : " << flat[4].size()
-         << " recall : " << recall_count[4] / (double)gt_box.size()
+    cout << "classify candidate : " << flat[4].size() << " recall : " << recall_count[4] / (double)gt_box.size()
          << "    precision : " << match_count[4] / (double)flat[4].size() << endl;
-    cout << "track candidate : " << flat[5].size()
-         << " recall : " << recall_count[5] / (double)gt_box.size()
+    cout << "track candidate : " << flat[5].size() << " recall : " << recall_count[5] / (double)gt_box.size()
          << "    precision : " << match_count[5] / (double)flat[5].size() << endl;
     cout << "MSER candidate : " << flat[6].size() << " recall : " << recall_count[6] / (double)gt_box.size()
          << "    precision : " << match_count[6] / (double)flat[6].size() << endl
@@ -1057,8 +1031,8 @@ save_deteval_xml(vector<vector<Text>>& text, string det_name) {
 
 void
 test_best_detval() {
-  ERFilter* er_filter = new ERFilter(
-      THRESHOLD_STEP, MIN_ER_AREA, MAX_ER_AREA, NMS_STABILITY_T, NMS_OVERLAP_COEF, MIN_OCR_PROBABILITY);
+  ERFilter* er_filter =
+      new ERFilter(THRESHOLD_STEP, MIN_ER_AREA, MAX_ER_AREA, NMS_STABILITY_T, NMS_OVERLAP_COEF, MIN_OCR_PROBABILITY);
   er_filter->stc = new CascadeBoost("er_classifier/cascade1.classifier");
   er_filter->wtc = new CascadeBoost("er_classifier/weak.classifier");
   er_filter->ocr = new OCR("ocr_classifier/OCR.model", OCR_IMG_L, OCR_FEATURE_L);
@@ -1166,9 +1140,7 @@ calc_video_result() {
     string s;
 
     gt.push_back(vector<string>(0));
-    while(getline(iss, s, ',')) {
-      gt.back().push_back(s);
-    }
+    while(getline(iss, s, ',')) { gt.back().push_back(s); }
   }
 
   while(getline(f_det, line)) {
@@ -1176,9 +1148,7 @@ calc_video_result() {
     string s;
 
     det.push_back(vector<string>(0));
-    while(getline(iss, s, ',')) {
-      det.back().push_back(s);
-    }
+    while(getline(iss, s, ',')) { det.back().push_back(s); }
   }
 
   if(gt.size() != det.size()) {
@@ -1282,15 +1252,13 @@ train_detection_classifier() {
 
   end = chrono::high_resolution_clock::now();
 
-  cout << "strong training time:" << chrono::duration<double>(middle - start).count() * 1000 << " ms"
-       << endl;
+  cout << "strong training time:" << chrono::duration<double>(middle - start).count() * 1000 << " ms" << endl;
   cout << "weak training time:" << chrono::duration<double>(end - middle).count() * 1000 << " ms" << endl;
 }
 
 void
 bootstrap() {
-  ERFilter* erFilter =
-      new ERFilter(THRESHOLD_STEP, MIN_ER_AREA, MAX_ER_AREA, NMS_STABILITY_T, NMS_OVERLAP_COEF);
+  ERFilter* erFilter = new ERFilter(THRESHOLD_STEP, MIN_ER_AREA, MAX_ER_AREA, NMS_STABILITY_T, NMS_OVERLAP_COEF);
   erFilter->stc = new CascadeBoost("er_classifier/strong.classifier");
   erFilter->wtc = new CascadeBoost("er_classifier/weak.classifier");
 
@@ -1396,9 +1364,8 @@ get_lbp_data() {
 
 void
 get_ocr_data() {
-  const char* table =
-      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz&()"; // 10 num, 52 alphabet, 3
-                                                                           // symbol and 1 '\0'
+  const char* table = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz&()"; // 10 num, 52 alphabet, 3
+                                                                                           // symbol and 1 '\0'
   vector<string> font_name = {"Arial",       "Bitter",         "Calibri",      "Cambria",
                               "Coda",        "Comic_Sans_MS",  "Courier_New",  "Domine",
                               "Droid_Serif", "Fine_Ming",      "Gill_Sans",    "Francois_One",
@@ -1423,8 +1390,7 @@ get_ocr_data() {
     for(int j = 0; j < font_type.size(); j++) {
       int label = 0;
       for(int k = 0; k < category.size(); k++) {
-        string path =
-            String("res/ocr_training_data/" + font_name[i] + "/" + font_type[j] + "/" + category[k] + "/");
+        string path = String("res/ocr_training_data/" + font_name[i] + "/" + font_type[j] + "/" + category[k] + "/");
         for(int cat_it = 0; cat_it < cat_num[k]; cat_it++) {
           String filename = path + table[label] + ".jpg";
           label++;

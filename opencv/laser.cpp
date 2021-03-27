@@ -16,8 +16,7 @@ int32_t
 main(void) {
   /* Magic constants. If you want to make your own version, you have to modify these values for your
    * needs. */
-  static constexpr int32_t cam_number =
-      1; /**< The number of the camera, the 0 is the built in my computer. */
+  static constexpr int32_t cam_number = 1;      /**< The number of the camera, the 0 is the built in my computer. */
   static constexpr int32_t cam_width = 640;     /**< Width of the video's resolution. */
   static constexpr int32_t cam_height = 480;    /**< Height of the video's resolution. */
   static constexpr int32_t threshold_min = 245; /**< Minimum value of the binary threshold. */
@@ -63,8 +62,7 @@ main(void) {
       cv::threshold(video_gray, video_black_white, threshold_min, threshold_max, cv::THRESH_BINARY);
 
       /* Get contours with full hierararchy and simple approximation. */
-      cv::findContours(
-          video_black_white, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+      cv::findContours(video_black_white, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
       /* If there are no contours, skip everything, otherwise there would be an exception. */
       if(contours.size()) {
@@ -80,12 +78,9 @@ main(void) {
           if((coord_y > pixel[0]) && (coord_y < pixel[pixel.size() - 1])) {
             /* Find the place of the coordinate in the look-up table. */
             uint32_t i = 0;
-            while(coord_y > pixel[i + 1]) {
-              i++;
-            }
+            while(coord_y > pixel[i + 1]) { i++; }
             /* Calculate the value with linear interpolation. */
-            double distance =
-                cm[i] + ((coord_y - pixel[i]) * (cm[i + 1] - cm[i]) / (pixel[i + 1] - pixel[i]));
+            double distance = cm[i] + ((coord_y - pixel[i]) * (cm[i + 1] - cm[i]) / (pixel[i + 1] - pixel[i]));
 
             std::cout << "X: " << coord_x << "\tY: " << coord_y << "\tDistance: " << distance << "\n";
 

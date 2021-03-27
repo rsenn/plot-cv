@@ -66,9 +66,7 @@ main(int argc, char** argv) {
     if(!ifs.is_open())
       CV_Error(Error::StsError, "File " + file + " not found");
     std::string line;
-    while(std::getline(ifs, line)) {
-      classes.push_back(line);
-    }
+    while(std::getline(ifs, line)) { classes.push_back(line); }
   }
 
   if(!parser.check()) {

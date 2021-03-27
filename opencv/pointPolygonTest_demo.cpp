@@ -33,9 +33,7 @@ main(void) {
   vert[5] = cv::Point(5 * r / 2, static_cast<int>(1.34 * r));
 
   /// Draw it in src
-  for(int j = 0; j < 6; j++) {
-    line(src, vert[j], vert[(j + 1) % 6], Scalar(255), 3, 8);
-  }
+  for(int j = 0; j < 6; j++) { line(src, vert[j], vert[(j + 1) % 6], Scalar(255), 3, 8); }
 
   /// Get the contours
   std::vector<std::vector<cv::Point>> contours;
@@ -49,8 +47,7 @@ main(void) {
 
   for(int j = 0; j < src.rows; j++) {
     for(int i = 0; i < src.cols; i++) {
-      raw_dist.at<float>(j, i) =
-          (float)pointPolygonTest(contours[0], cv::Point2f((float)i, (float)j), true);
+      raw_dist.at<float>(j, i) = (float)pointPolygonTest(contours[0], cv::Point2f((float)i, (float)j), true);
     }
   }
 

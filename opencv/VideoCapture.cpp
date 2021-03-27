@@ -48,9 +48,7 @@ Java_org_opencv_highgui_VideoCapture_n_1VideoCapture__(JNIEnv* env, jclass) {
     LOGD("%s", method_name);
     VideoCapture* _retval_ = new VideoCapture();
     return (jlong)_retval_;
-  } catch(const std::exception& e) {
-    throwJavaException(env, &e, method_name);
-  } catch(...) {
+  } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
     throwJavaException(env, 0, method_name);
   }
   return 0;
@@ -60,9 +58,7 @@ Java_org_opencv_highgui_VideoCapture_n_1VideoCapture__(JNIEnv* env, jclass) {
 //   VideoCapture::VideoCapture(int device)
 //
 
-JNIEXPORT jlong JNICALL Java_org_opencv_highgui_VideoCapture_n_1VideoCapture__I(JNIEnv* env,
-                                                                                jclass,
-                                                                                jint device);
+JNIEXPORT jlong JNICALL Java_org_opencv_highgui_VideoCapture_n_1VideoCapture__I(JNIEnv* env, jclass, jint device);
 
 JNIEXPORT jlong JNICALL
 Java_org_opencv_highgui_VideoCapture_n_1VideoCapture__I(JNIEnv* env, jclass, jint device) {
@@ -71,9 +67,7 @@ Java_org_opencv_highgui_VideoCapture_n_1VideoCapture__I(JNIEnv* env, jclass, jin
     LOGD("%s", method_name);
     VideoCapture* _retval_ = new VideoCapture(device);
     return (jlong)_retval_;
-  } catch(const std::exception& e) {
-    throwJavaException(env, &e, method_name);
-  } catch(...) {
+  } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
     throwJavaException(env, 0, method_name);
   }
   return 0;
@@ -83,10 +77,7 @@ Java_org_opencv_highgui_VideoCapture_n_1VideoCapture__I(JNIEnv* env, jclass, jin
 //  double VideoCapture::get(int propId)
 //
 
-JNIEXPORT jdouble JNICALL Java_org_opencv_highgui_VideoCapture_n_1get(JNIEnv* env,
-                                                                      jclass,
-                                                                      jlong self,
-                                                                      jint propId);
+JNIEXPORT jdouble JNICALL Java_org_opencv_highgui_VideoCapture_n_1get(JNIEnv* env, jclass, jlong self, jint propId);
 
 JNIEXPORT jdouble JNICALL
 Java_org_opencv_highgui_VideoCapture_n_1get(JNIEnv* env, jclass, jlong self, jint propId) {
@@ -96,9 +87,7 @@ Java_org_opencv_highgui_VideoCapture_n_1get(JNIEnv* env, jclass, jlong self, jin
     VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
     double _retval_ = me->get(propId);
     return _retval_;
-  } catch(const std::exception& e) {
-    throwJavaException(env, &e, method_name);
-  } catch(...) {
+  } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
     throwJavaException(env, 0, method_name);
   }
   return 0;
@@ -118,9 +107,7 @@ Java_org_opencv_highgui_VideoCapture_n_1grab(JNIEnv* env, jclass, jlong self) {
     VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
     bool _retval_ = me->grab();
     return _retval_;
-  } catch(const std::exception& e) {
-    throwJavaException(env, &e, method_name);
-  } catch(...) {
+  } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
     throwJavaException(env, 0, method_name);
   }
   return false;
@@ -130,9 +117,7 @@ Java_org_opencv_highgui_VideoCapture_n_1grab(JNIEnv* env, jclass, jlong self) {
 //  bool VideoCapture::isOpened()
 //
 
-JNIEXPORT jboolean JNICALL Java_org_opencv_highgui_VideoCapture_n_1isOpened(JNIEnv* env,
-                                                                            jclass,
-                                                                            jlong self);
+JNIEXPORT jboolean JNICALL Java_org_opencv_highgui_VideoCapture_n_1isOpened(JNIEnv* env, jclass, jlong self);
 
 JNIEXPORT jboolean JNICALL
 Java_org_opencv_highgui_VideoCapture_n_1isOpened(JNIEnv* env, jclass, jlong self) {
@@ -142,9 +127,7 @@ Java_org_opencv_highgui_VideoCapture_n_1isOpened(JNIEnv* env, jclass, jlong self
     VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
     bool _retval_ = me->isOpened();
     return _retval_;
-  } catch(const std::exception& e) {
-    throwJavaException(env, &e, method_name);
-  } catch(...) {
+  } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
     throwJavaException(env, 0, method_name);
   }
   return false;
@@ -167,9 +150,7 @@ Java_org_opencv_highgui_VideoCapture_n_1open__JI(JNIEnv* env, jclass, jlong self
     VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
     bool _retval_ = me->open(device);
     return _retval_;
-  } catch(const std::exception& e) {
-    throwJavaException(env, &e, method_name);
-  } catch(...) {
+  } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
     throwJavaException(env, 0, method_name);
   }
   return false;
@@ -193,9 +174,7 @@ Java_org_opencv_highgui_VideoCapture_n_1read(JNIEnv* env, jclass, jlong self, jl
     Mat& image = *((Mat*)image_nativeObj);
     bool _retval_ = me->read(image);
     return _retval_;
-  } catch(const std::exception& e) {
-    throwJavaException(env, &e, method_name);
-  } catch(...) {
+  } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
     throwJavaException(env, 0, method_name);
   }
   return false;
@@ -215,9 +194,7 @@ Java_org_opencv_highgui_VideoCapture_n_1release(JNIEnv* env, jclass, jlong self)
     VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
     me->release();
     return;
-  } catch(const std::exception& e) {
-    throwJavaException(env, &e, method_name);
-  } catch(...) {
+  } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
     throwJavaException(env, 0, method_name);
   }
   return;
@@ -240,9 +217,7 @@ Java_org_opencv_highgui_VideoCapture_n_1retrieve__JJI(
     Mat& image = *((Mat*)image_nativeObj);
     bool _retval_ = me->retrieve(image, channel);
     return _retval_;
-  } catch(const std::exception& e) {
-    throwJavaException(env, &e, method_name);
-  } catch(...) {
+  } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
     throwJavaException(env, 0, method_name);
   }
   return false;
@@ -254,10 +229,7 @@ JNIEXPORT jboolean JNICALL Java_org_opencv_highgui_VideoCapture_n_1retrieve__JJ(
                                                                                 jlong image_nativeObj);
 
 JNIEXPORT jboolean JNICALL
-Java_org_opencv_highgui_VideoCapture_n_1retrieve__JJ(JNIEnv* env,
-                                                     jclass,
-                                                     jlong self,
-                                                     jlong image_nativeObj) {
+Java_org_opencv_highgui_VideoCapture_n_1retrieve__JJ(JNIEnv* env, jclass, jlong self, jlong image_nativeObj) {
   static const char method_name[] = "highgui::VideoCapture::retrieve(Mat image)";
   try {
     LOGD("%s", method_name);
@@ -265,9 +237,7 @@ Java_org_opencv_highgui_VideoCapture_n_1retrieve__JJ(JNIEnv* env,
     Mat& image = *((Mat*)image_nativeObj);
     bool _retval_ = me->retrieve(image);
     return _retval_;
-  } catch(const std::exception& e) {
-    throwJavaException(env, &e, method_name);
-  } catch(...) {
+  } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
     throwJavaException(env, 0, method_name);
   }
   return false;
@@ -288,9 +258,7 @@ Java_org_opencv_highgui_VideoCapture_n_1set(JNIEnv* env, jclass, jlong self, jin
     VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
     bool _retval_ = me->set(propId, value);
     return _retval_;
-  } catch(const std::exception& e) {
-    throwJavaException(env, &e, method_name);
-  } catch(...) {
+  } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
     throwJavaException(env, 0, method_name);
   }
   return false;
@@ -319,9 +287,7 @@ Java_org_opencv_highgui_VideoCapture_n_1getSupportedPreviewSizes(JNIEnv* env, jc
     // cv::CAP_PROP_SUPPORTED_PREVIEW_SIZES_STRING
     if(u.prop != 0.0 && u.prop != -1.0)
       return env->NewStringUTF(u.name);
-  } catch(const std::exception& e) {
-    throwJavaException(env, &e, method_name);
-  } catch(...) {
+  } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
     throwJavaException(env, 0, method_name);
   }
   return env->NewStringUTF("");

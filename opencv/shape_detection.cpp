@@ -37,11 +37,8 @@ setLabel(cv::Mat& im, const std::string label, std::vector<cv::Point>& contour) 
   cv::Rect r = cv::boundingRect(contour);
 
   cv::Point pt(r.x + ((r.width - text.width) / 2), r.y + ((r.height + text.height) / 2));
-  cv::rectangle(im,
-                pt + cv::Point(0, baseline),
-                pt + cv::Point(text.width, -text.height),
-                CV_RGB(255, 255, 255),
-                cv::FILLED);
+  cv::rectangle(
+      im, pt + cv::Point(0, baseline), pt + cv::Point(text.width, -text.height), CV_RGB(255, 255, 255), cv::FILLED);
   cv::putText(im, label, pt, fontface, scale, CV_RGB(0, 0, 0), thickness, 8);
 }
 
@@ -90,8 +87,7 @@ main() {
 
         // Get the cosines of all corners
         std::vector<double> cos;
-        for(int j = 2; j < vtc + 1; j++)
-          cos.push_back(angle(approx[j % vtc], approx[j - 2], approx[j - 1]));
+        for(int j = 2; j < vtc + 1; j++) cos.push_back(angle(approx[j % vtc], approx[j - 2], approx[j - 1]));
 
         // Sort ascending the cosine values
         std::sort(cos.begin(), cos.end());

@@ -54,16 +54,11 @@ CannyDetect() {
 
   // Get the moments
   std::vector<Moments> mu(contours.size());
-  for(int i = 0; i < contours.size(); i++) {
-    mu[i] = moments(contours[i], false);
-  }
+  for(int i = 0; i < contours.size(); i++) { mu[i] = moments(contours[i], false); }
 
   ///  Get the centroids using moments
   std::vector<cv::Point> mc(contours.size());
-  for(int i = 0; i < contours.size(); i++) {
-
-    mc[i] = cv::Point(mu[i].m10 / mu[i].m00, mu[i].m01 / mu[i].m00);
-  }
+  for(int i = 0; i < contours.size(); i++) { mc[i] = cv::Point(mu[i].m10 / mu[i].m00, mu[i].m01 / mu[i].m00); }
 
   // making the red cross using lines
   for(int i = 0; i < mc.size(); i++) {

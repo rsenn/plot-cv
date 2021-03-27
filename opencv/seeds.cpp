@@ -91,14 +91,8 @@ main(int argc, char** argv) {
     if(!init) {
       width = frame.size().width;
       height = frame.size().height;
-      seeds = createSuperpixelSEEDS(width,
-                                    height,
-                                    frame.channels(),
-                                    num_superpixels,
-                                    num_levels,
-                                    prior,
-                                    num_histogram_bins,
-                                    double_step);
+      seeds = createSuperpixelSEEDS(
+          width, height, frame.channels(), num_superpixels, num_levels, prior, num_histogram_bins, double_step);
       init = true;
     }
     cv::Mat converted;
@@ -110,9 +104,7 @@ main(int argc, char** argv) {
     result = frame;
 
     t = ((double)getTickCount() - t) / getTickFrequency();
-    printf("SEEDS segmentation took %i ms with %3i superpixels\n",
-           (int)(t * 1000),
-           seeds->getNumberOfSuperpixels());
+    printf("SEEDS segmentation took %i ms with %3i superpixels\n", (int)(t * 1000), seeds->getNumberOfSuperpixels());
 
     /* retrieve the segmentation result */
     cv::Mat labels;

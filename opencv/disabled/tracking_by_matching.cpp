@@ -208,9 +208,7 @@ main(int argc, char** argv) {
     frame = tracker->drawActiveTracks(frame);
 
     // Drawing all detected objects on a frame by BLUE COLOR
-    for(const auto& detection : detections) {
-      cv::rectangle(frame, detection.rect, cv::Scalar(255, 0, 0), 3);
-    }
+    for(const auto& detection : detections) { cv::rectangle(frame, detection.rect, cv::Scalar(255, 0, 0), 3); }
 
     // Drawing tracked detections only by RED color and print ID and detection
     // confidence level.

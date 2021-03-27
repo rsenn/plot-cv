@@ -394,9 +394,7 @@ protected:
         src = pSrcY + i * srcStep;
         dst = pDstY + i * dstStep;
 
-        for(int j = 0; j < width; j++) {
-          dst[j] = src[j];
-        }
+        for(int j = 0; j < width; j++) { dst[j] = src[j]; }
       }
     }
 

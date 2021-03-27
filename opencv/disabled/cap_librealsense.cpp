@@ -17,10 +17,10 @@ VideoCapture_LibRealsense::VideoCapture_LibRealsense(int) : mAlign(RS2_STREAM_CO
     config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_BGR8);
     config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8);
     mPipe.start(config);
-  } catch(const rs2::error&) {
-  }
+  } catch(const rs2::error&) {}
 }
-VideoCapture_LibRealsense::~VideoCapture_LibRealsense() {}
+VideoCapture_LibRealsense::~VideoCapture_LibRealsense() {
+}
 
 double
 VideoCapture_LibRealsense::getProperty(int propIdx) const {
@@ -141,9 +141,7 @@ VideoCapture_LibRealsense::grabFrame() {
 
   try {
     mData = mAlign.process(mPipe.wait_for_frames());
-  } catch(const rs2::error&) {
-    return false;
-  }
+  } catch(const rs2::error&) { return false; }
 
   return true;
 }
@@ -174,9 +172,7 @@ VideoCapture_LibRealsense::retrieveFrame(int outputType, cv::OutputArray frame) 
 
     if(_frame.get_profile().format() == RS2_FORMAT_RGB8)
       cvtColor(frame, frame, COLOR_RGB2BGR);
-  } catch(const rs2::error&) {
-    return false;
-  }
+  } catch(const rs2::error&) { return false; }
 
   return true;
 }

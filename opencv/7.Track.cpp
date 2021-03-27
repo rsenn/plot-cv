@@ -133,9 +133,7 @@ main() {
       // Ve khung chu nhat danh dau
       rectangle(image, r, Scalar(255, 0, 0), 2, 1);
       // Ve danh dau cac vi tri da dich chuyen
-      for(int i = 0; i < pt_idx; i++) {
-        circle(image, pt[i], 3, Scalar(0, 0, 255), -1);
-      }
+      for(int i = 0; i < pt_idx; i++) { circle(image, pt[i], 3, Scalar(0, 0, 255), -1); }
       if((r.x >= 0) && (r.y >= 0) && (r.x + r.width <= image.cols) && (r.y + r.height <= image.rows)) {
         if(threshold_type < 5)
           imageCrop = frame_gray(r); // Crop tu anh xam

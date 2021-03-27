@@ -46,8 +46,7 @@ main(int argc, char** argv) {
     usleep(100000);
   }
 
-  while(waitKey(1) != 27) {
-  }
+  while(waitKey(1) != 27) {}
 
   return 0;
 }

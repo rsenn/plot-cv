@@ -4,8 +4,10 @@
 
 using namespace std;
 
-Entity::Entity() {}
-Entity::~Entity() {}
+Entity::Entity() {
+}
+Entity::~Entity() {
+}
 
 Entity::Entity(string name) {
   setType(name);

@@ -376,12 +376,7 @@ processVideoBg(char* videoFilename) {
     rectangle(frame, cv::Point(10, 2), cv::Point(100, 20), cv::Scalar(255, 255, 255), -1);
     ss << capture.get(CAP_PROP_POS_FRAMES);
     string frameNumberString = ss.str();
-    putText(frame,
-            frameNumberString.c_str(),
-            cv::Point(15, 15),
-            FONT_HERSHEY_SIMPLEX,
-            0.5,
-            cv::Scalar(0, 0, 0));
+    putText(frame, frameNumberString.c_str(), cv::Point(15, 15), FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
     // show the current frame and the fg masks
     imshow("Frame", frame);
     imshow("FG Mask MOG 2", fgMaskMOG2);

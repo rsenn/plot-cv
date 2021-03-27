@@ -69,9 +69,7 @@ calibrator::calc_image_points(bool show) {
   // Calculate the object points in the object co-ordinate system (origin at top left corner)
   vector<Point3f> ob_p;
   for(int i = 0; i < height; i++) {
-    for(int j = 0; j < width; j++) {
-      ob_p.push_back(Point3f(j * side_length, i * side_length, 0.f));
-    }
+    for(int j = 0; j < width; j++) { ob_p.push_back(Point3f(j * side_length, i * side_length, 0.f)); }
   }
 
   if(show) {
@@ -108,8 +106,7 @@ calibrator::calc_image_points(bool show) {
         im_show = rim.clone();
         drawChessboardCorners(im_show, Size(width, height), r_im_p, true);
         imshow("Right Chessboard corners", im_show);
-        while(char(waitKey(1)) != ' ') {
-        }
+        while(char(waitKey(1)) != ' ') {}
       }
     } else {
       l_images.erase(l_images.begin() + i);

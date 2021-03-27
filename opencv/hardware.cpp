@@ -66,7 +66,9 @@ GPIO::GPIO(std::string pin, std::string dir) {
 /*
     When deleting a GPIO object, we unexport the pin
 */
-GPIO::~GPIO() { this->unexport_pin(); }
+GPIO::~GPIO() {
+  this->unexport_pin();
+}
 
 /*
     Export the pin with /sys/class/gpio/export

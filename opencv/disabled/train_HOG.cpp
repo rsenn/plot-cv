@@ -202,9 +202,7 @@ get_hogdescriptor_visu(const Mat& color_origImg, vector<float>& descriptorValues
       float NrUpdatesForThisCell = (float)cellUpdateCounter[celly][cellx];
 
       // compute average gradient strenghts for each gradient bin direction
-      for(int bin = 0; bin < gradientBinSize; bin++) {
-        gradientStrengths[celly][cellx][bin] /= NrUpdatesForThisCell;
-      }
+      for(int bin = 0; bin < gradientBinSize; bin++) { gradientStrengths[celly][cellx][bin] /= NrUpdatesForThisCell; }
     }
   }
 
@@ -258,9 +256,7 @@ get_hogdescriptor_visu(const Mat& color_origImg, vector<float>& descriptorValues
 
   // don't forget to free memory allocated by helper data structures!
   for(int y = 0; y < cells_in_y_dir; y++) {
-    for(int x = 0; x < cells_in_x_dir; x++) {
-      delete[] gradientStrengths[y][x];
-    }
+    for(int x = 0; x < cells_in_x_dir; x++) { delete[] gradientStrengths[y][x]; }
     delete[] gradientStrengths[y];
     delete[] cellUpdateCounter[y];
   }
@@ -321,9 +317,7 @@ draw_locations(Mat& img, const vector<Rect>& locations, const Scalar& color) {
   if(!locations.empty()) {
     vector<Rect>::const_iterator loc = locations.begin();
     vector<Rect>::const_iterator end = locations.end();
-    for(; loc != end; ++loc) {
-      rectangle(img, *loc, color, 2);
-    }
+    for(; loc != end; ++loc) { rectangle(img, *loc, color, 2); }
   }
 }
 

@@ -150,7 +150,8 @@ static_assert(sizeof(Guid) == sizeof(::_GUID), "Incorect size for Guid");
 static_assert(sizeof(__rcGUID_t) == sizeof(::_GUID), "Incorect size for __rcGUID_t");
 
 ////////////////////////////////////////////////////////////////////////////////
-inline Guid::Guid() : __a(0), __b(0), __c(0), __d(0), __e(0), __f(0), __g(0), __h(0), __i(0), __j(0), __k(0) {}
+inline Guid::Guid() : __a(0), __b(0), __c(0), __d(0), __e(0), __f(0), __g(0), __h(0), __i(0), __j(0), __k(0) {
+}
 
 inline Guid::Guid(__rcGUID_t __guid)
     : __a(reinterpret_cast<const __s_GUID&>(__guid).Data1), __b(reinterpret_cast<const __s_GUID&>(__guid).Data2),
@@ -158,9 +159,12 @@ inline Guid::Guid(__rcGUID_t __guid)
       __e(reinterpret_cast<const __s_GUID&>(__guid).Data4[1]), __f(reinterpret_cast<const __s_GUID&>(__guid).Data4[2]),
       __g(reinterpret_cast<const __s_GUID&>(__guid).Data4[3]), __h(reinterpret_cast<const __s_GUID&>(__guid).Data4[4]),
       __i(reinterpret_cast<const __s_GUID&>(__guid).Data4[5]), __j(reinterpret_cast<const __s_GUID&>(__guid).Data4[6]),
-      __k(reinterpret_cast<const __s_GUID&>(__guid).Data4[7]) {}
+      __k(reinterpret_cast<const __s_GUID&>(__guid).Data4[7]) {
+}
 
-inline Guid::operator ::__rcGUID_t() { return reinterpret_cast<__rcGUID_t>(*this); }
+inline Guid::operator ::__rcGUID_t() {
+  return reinterpret_cast<__rcGUID_t>(*this);
+}
 
 inline bool
 Guid::Equals(Guid __guidArg) {
@@ -221,7 +225,8 @@ inline Guid::Guid(unsigned int __aArg,
                   unsigned __int8 __jArg,
                   unsigned __int8 __kArg)
     : __a(__aArg), __b(__bArg), __c(__cArg), __d(__dArg), __e(__eArg), __f(__fArg), __g(__gArg), __h(__hArg),
-      __i(__iArg), __j(__jArg), __k(__kArg) {}
+      __i(__iArg), __j(__jArg), __k(__kArg) {
+}
 
 inline Guid::Guid(unsigned int __aArg, unsigned short __bArg, unsigned short __cArg, const unsigned __int8 __dArg[8])
     : __a(__aArg), __b(__bArg), __c(__cArg) {
@@ -742,9 +747,11 @@ private:
 };
 
 #ifdef _DEBUG
-DPO::DPO(void) : verbose(true) {}
+DPO::DPO(void) : verbose(true) {
+}
 
-DPO::~DPO(void) {}
+DPO::~DPO(void) {
+}
 
 DPO&
 DPO::getInstance() {
@@ -1119,7 +1126,8 @@ GetGUIDNameConstNew(const GUID& guid) {
   return NULL;
 }
 
-FormatReader::FormatReader(void) {}
+FormatReader::FormatReader(void) {
+}
 
 MediaType
 FormatReader::Read(IMFMediaType* pType) {
@@ -1146,7 +1154,8 @@ FormatReader::Read(IMFMediaType* pType) {
   return out;
 }
 
-FormatReader::~FormatReader(void) {}
+FormatReader::~FormatReader(void) {
+}
 
 #define CHECK_HR(x)                                                                                                    \
   if(FAILED(x)) {                                                                                                      \
@@ -1157,11 +1166,13 @@ ImageGrabberCallback::ImageGrabberCallback(bool synchronous)
     : m_cRef(1), ig_RIE(true), ig_Close(false), ig_Synchronous(synchronous),
       ig_hFrameReady(synchronous ? CreateEvent(NULL, FALSE, FALSE, NULL) : 0),
       ig_hFrameGrabbed(synchronous ? CreateEvent(NULL, FALSE, TRUE, NULL) : 0),
-      ig_hFinish(CreateEvent(NULL, TRUE, FALSE, NULL)) {}
+      ig_hFinish(CreateEvent(NULL, TRUE, FALSE, NULL)) {
+}
 
 ImageGrabber::ImageGrabber(unsigned int deviceID, bool synchronous)
     : ImageGrabberCallback(synchronous), ig_DeviceID(deviceID), ig_pSource(NULL), ig_pSession(NULL),
-      ig_pTopology(NULL) {}
+      ig_pTopology(NULL) {
+}
 
 ImageGrabber::~ImageGrabber(void) {
   if(ig_pSession) {
@@ -1506,10 +1517,12 @@ done:
 }
 
 void
-ImageGrabberCallback::pauseGrabbing() {}
+ImageGrabberCallback::pauseGrabbing() {
+}
 
 void
-ImageGrabberCallback::resumeGrabbing() {}
+ImageGrabberCallback::resumeGrabbing() {
+}
 
 HRESULT
 ImageGrabber::CreateTopology(IMFMediaSource* pSource, IMFActivate* pSinkActivate, IMFTopology** ppTopo) {
@@ -1616,7 +1629,9 @@ ImageGrabber::QueryInterface(REFIID riid, void** ppv) {
   return hr;
 }
 
-STDMETHODIMP_(ULONG) ImageGrabber::AddRef() { return InterlockedIncrement(&m_cRef); }
+STDMETHODIMP_(ULONG) ImageGrabber::AddRef() {
+  return InterlockedIncrement(&m_cRef);
+}
 
 STDMETHODIMP_(ULONG) ImageGrabber::Release() {
   ULONG cRef = InterlockedDecrement(&m_cRef);
@@ -2168,9 +2183,7 @@ videoDevice::checkDevice(IMFAttributes* pAttributes, IMFActivate** pDevice) {
         DebugPrintOut(L"VIDEODEVICE %i: Number of devices more than corrent number of the device \n", vd_CurrentNumber);
         hr = E_INVALIDARG;
       }
-      for(UINT32 i = 0; i < count; i++) {
-        SafeRelease(&ppDevices[i]);
-      }
+      for(UINT32 i = 0; i < count; i++) { SafeRelease(&ppDevices[i]); }
       SafeRelease(ppDevices);
     } else
       hr = E_FAIL;
@@ -2257,8 +2270,7 @@ videoDevice::initDevice() {
     if(SUCCEEDED(hr) && vd_pActivate) {
       SafeRelease(&vd_pSource);
       hr = vd_pActivate->ActivateObject(__uuidof(IMFMediaSource), (void**)&vd_pSource);
-      if(SUCCEEDED(hr)) {
-      }
+      if(SUCCEEDED(hr)) {}
       SafeRelease(&vd_pActivate);
     } else {
       DebugPrintOut(L"VIDEODEVICE %i: Device there is not \n", vd_CurrentNumber);
@@ -2766,7 +2778,8 @@ done:
   return hr;
 }
 
-videoDevices::videoDevices(void) : count(0) {}
+videoDevices::videoDevices(void) : count(0) {
+}
 
 void
 videoDevices::clearDevices() {
@@ -2775,7 +2788,9 @@ videoDevices::clearDevices() {
   vds_Devices.clear();
 }
 
-videoDevices::~videoDevices(void) { clearDevices(); }
+videoDevices::~videoDevices(void) {
+  clearDevices();
+}
 
 videoDevice*
 videoDevices::getDevice(unsigned int i) {
@@ -2879,7 +2894,9 @@ MediaType::MediaType() {
   Clear();
 }
 
-MediaType::~MediaType() { Clear(); }
+MediaType::~MediaType() {
+  Clear();
+}
 
 void
 MediaType::Clear() {
@@ -2924,7 +2941,9 @@ videoInput::updateListOfDevices() {
     DebugPrintOut(L"UPDATING: There is not any suitable video device\n");
 }
 
-videoInput::~videoInput(void) { DebugPrintOut(L"\n***** CLOSE VIDEOINPUT LIBRARY - 2013 *****\n\n"); }
+videoInput::~videoInput(void) {
+  DebugPrintOut(L"\n***** CLOSE VIDEOINPUT LIBRARY - 2013 *****\n\n");
+}
 
 IMFMediaSource*
 videoInput::getMediaSource(int deviceID) {
@@ -3857,9 +3876,12 @@ private:
   HRESULT WriteFrame(DWORD* videoFrameBuffer, const LONGLONG& rtStart, const LONGLONG& rtDuration);
 };
 
-CvVideoWriter_MSMF::CvVideoWriter_MSMF() : initiated(false) {}
+CvVideoWriter_MSMF::CvVideoWriter_MSMF() : initiated(false) {
+}
 
-CvVideoWriter_MSMF::~CvVideoWriter_MSMF() { close(); }
+CvVideoWriter_MSMF::~CvVideoWriter_MSMF() {
+  close();
+}
 
 const GUID
 CvVideoWriter_MSMF::FourCC2GUID(int fourcc) {

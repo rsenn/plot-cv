@@ -50,9 +50,7 @@ orderPoints(vector<Point> inpts, vector<Point>& ordered) {
   Point tl(lm[0]);
   Point bl(lm[1]);
   vector<pair<Point, Point>> tmp;
-  for(size_t i = 0; i < rm.size(); i++) {
-    tmp.push_back(make_pair(tl, rm[i]));
-  }
+  for(size_t i = 0; i < rm.size(); i++) { tmp.push_back(make_pair(tl, rm[i])); }
 
   sort(tmp.begin(), tmp.end(), compareDistance);
   Point tr(tmp[0].second);
@@ -191,9 +189,7 @@ main(int argc, char** argv) {
 #ifndef NDEBUG
     imwrite(getOutputFileName(image_name, "outline.jpeg"), image);
 #endif
-    for(j = 0; j < approx[i].size(); j++) {
-      approx[i][j] *= ratio;
-    }
+    for(j = 0; j < approx[i].size(); j++) { approx[i][j] *= ratio; }
 
     fourPointTransform(orig, warped, approx[i]);
 #ifndef NDEBUG

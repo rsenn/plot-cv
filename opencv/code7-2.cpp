@@ -17,10 +17,12 @@ double h_h = 0, l_h = 0, h_s = 0, l_s = 0;
 bool selected = false;
 
 void
-on_low_diff_trackbar(int, void*) {}
+on_low_diff_trackbar(int, void*) {
+}
 
 void
-on_high_diff_trackbar(int, void*) {}
+on_high_diff_trackbar(int, void*) {
+}
 
 void
 on_mouse(int event, int x, int y, int, void*) {
@@ -46,10 +48,8 @@ on_mouse(int event, int x, int y, int, void*) {
   // find the H and S range of piexels selected by floodFill
   Mat channels[3];
   split(frame_hsv, channels);
-  minMaxLoc(
-      channels[0], &l_h, &h_h, NULL, NULL, mask.rowRange(1, mask.rows - 1).colRange(1, mask.cols - 1));
-  minMaxLoc(
-      channels[1], &l_s, &h_s, NULL, NULL, mask.rowRange(1, mask.rows - 1).colRange(1, mask.cols - 1));
+  minMaxLoc(channels[0], &l_h, &h_h, NULL, NULL, mask.rowRange(1, mask.rows - 1).colRange(1, mask.cols - 1));
+  minMaxLoc(channels[1], &l_s, &h_s, NULL, NULL, mask.rowRange(1, mask.rows - 1).colRange(1, mask.cols - 1));
 }
 
 int

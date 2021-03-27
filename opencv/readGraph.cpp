@@ -128,9 +128,7 @@ detectEdgesByHoughLines(Mat mat) {
     }
   }
   std::vector<std::vector<cv::Point>> contoursDraw(contoursCleaned.size());
-  for(int i = 0; i < contoursArea.size(); i++) {
-    cv::approxPolyDP(Mat(contoursArea[i]), contoursDraw[i], 40, true);
-  }
+  for(int i = 0; i < contoursArea.size(); i++) { cv::approxPolyDP(Mat(contoursArea[i]), contoursDraw[i], 40, true); }
 
   Mat drawing = Mat::zeros(mat.size(), CV_8UC1);
   cv::drawContours(drawing, contoursDraw, -1, cv::Scalar(255), -1);

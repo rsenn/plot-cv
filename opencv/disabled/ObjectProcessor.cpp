@@ -120,9 +120,7 @@ void
 centerstring(char* a) {
   int l = strlen(a);
   int position = int((80 - 1) / 2); // Writes OBJECTPROCESSOR in the center
-  for(int i = 0; i < position; i++) {
-    cout << " ";
-  }
+  for(int i = 0; i < position; i++) { cout << " "; }
   cout << a;
 }
 

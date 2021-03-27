@@ -236,9 +236,7 @@ main(int argc, char* argv[]) {
       if(retrievedImageFlags[1] && capture.retrieve(disparityMap, CAP_OPENNI_DISPARITY_MAP)) {
         if(isColorizeDisp) {
           Mat colorDisparityMap;
-          colorizeDisparity(disparityMap,
-                            colorDisparityMap,
-                            isFixedMaxDisp ? getMaxDisparity(capture) : -1);
+          colorizeDisparity(disparityMap, colorDisparityMap, isFixedMaxDisp ? getMaxDisparity(capture) : -1);
           Mat validColorDisparityMap;
           colorDisparityMap.copyTo(validColorDisparityMap, disparityMap != 0);
           imshow("colorized disparity map", validColorDisparityMap);

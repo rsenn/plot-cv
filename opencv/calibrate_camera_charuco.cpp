@@ -212,8 +212,7 @@ main(int argc, char* argv[]) {
     waitTime = 10;
   }
 
-  Ptr<aruco::Dictionary> dictionary =
-      aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
+  Ptr<aruco::Dictionary> dictionary = aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
 
   // create charuco board object
   Ptr<aruco::CharucoBoard> charucoboard =
@@ -243,8 +242,7 @@ main(int argc, char* argv[]) {
     // interpolate charuco corners
     Mat currentCharucoCorners, currentCharucoIds;
     if(ids.size() > 0)
-      aruco::interpolateCornersCharuco(
-          corners, ids, image, charucoboard, currentCharucoCorners, currentCharucoIds);
+      aruco::interpolateCornersCharuco(corners, ids, image, charucoboard, currentCharucoCorners, currentCharucoIds);
 
     // draw results
     image.copyTo(imageCopy);
@@ -356,8 +354,8 @@ main(int argc, char* argv[]) {
                                            tvecs,
                                            calibrationFlags);
 
-  bool saveOk = saveCameraParams(
-      outputFile, imgSize, aspectRatio, calibrationFlags, cameraMatrix, distCoeffs, repError);
+  bool saveOk =
+      saveCameraParams(outputFile, imgSize, aspectRatio, calibrationFlags, cameraMatrix, distCoeffs, repError);
   if(!saveOk) {
     cerr << "Cannot save output file" << endl;
     return 0;

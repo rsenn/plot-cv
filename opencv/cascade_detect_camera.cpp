@@ -121,9 +121,7 @@ main(int argc, char** argv) {
 
 void
 drawBoxes(Mat& frame, vector<DPMDetector::ObjectDetection> ds, Scalar color, string text) {
-  for(unsigned int i = 0; i < ds.size(); i++) {
-    rectangle(frame, ds[i].rect, color, 2);
-  }
+  for(unsigned int i = 0; i < ds.size(); i++) { rectangle(frame, ds[i].rect, color, 2); }
 
   // draw text on image
   Scalar textColor(0, 0, 250);

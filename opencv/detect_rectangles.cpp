@@ -33,9 +33,7 @@ int
 main(int argc, char* argv[]) {
 
   // Initialise les parametres
-  for(int i = 2; i < argc; i++) {
-    assignArgs(argv[i]);
-  }
+  for(int i = 2; i < argc; i++) { assignArgs(argv[i]); }
 
   // Lit l'image source
   assignSource(argv[1]);
@@ -197,8 +195,7 @@ setLabel(Mat& im, const std::string label, std::vector<Point>& contour) {
   Rect r = boundingRect(contour);
 
   Point pt(r.x + ((r.width - text.width) / 2), r.y + ((r.height + text.height) / 2));
-  rectangle(
-      im, pt + Point(0, baseline), pt + Point(text.width, -text.height), CV_RGB(255, 255, 255), cv::FILLED);
+  rectangle(im, pt + Point(0, baseline), pt + Point(text.width, -text.height), CV_RGB(255, 255, 255), cv::FILLED);
   putText(im, label, pt, fontface, scale, CV_RGB(0, 0, 0), thickness, 8);
 }
 

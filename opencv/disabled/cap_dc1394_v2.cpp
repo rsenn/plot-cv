@@ -227,9 +227,7 @@ CvCaptureCAM_DC1394_v2_CPP::startCapture() {
     else if((userMode >= DC1394_VIDEO_MODE_MIN) && (userMode <= DC1394_VIDEO_MODE_MAX)) {
       // search for wanted mode, to check if camera supports it
       int j = 0;
-      while((j < (int)videoModes.num) && videoModes.modes[j] != userMode) {
-        j++;
-      }
+      while((j < (int)videoModes.num) && videoModes.modes[j] != userMode) { j++; }
 
       if((int)videoModes.modes[j] == userMode) {
         wantedMode = videoModes.modes[j];
@@ -375,9 +373,7 @@ CvCaptureCAM_DC1394_v2_CPP::close() {
     started = false;
   }
 
-  for(int i = 0; i < NIMG; i++) {
-    cvReleaseImage(&img[i]);
-  }
+  for(int i = 0; i < NIMG; i++) { cvReleaseImage(&img[i]); }
   if(frameC) {
     if(frameC->image)
       free(frameC->image);

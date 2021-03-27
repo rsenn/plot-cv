@@ -148,7 +148,8 @@ main(int argc, char** argv) {
 }
 
 void
-find_new_objects(Mat& frame, VideoCapture& cap, vector<Rect2d>& objects) {}
+find_new_objects(Mat& frame, VideoCapture& cap, vector<Rect2d>& objects) {
+}
 
 void
 get_usr_defined_objects(Mat& frame, VideoCapture& cap, vector<Rect2d>& objects) {

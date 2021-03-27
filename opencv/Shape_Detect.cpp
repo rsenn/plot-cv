@@ -98,13 +98,8 @@ main() {
 
     std::cout << "Find Contours\n";
     // finding all contours in the image
-    cv::FindContours(imgGrayScale,
-                     storage,
-                     &contours,
-                     sizeof(CvContour),
-                     cv::RETR_LIST,
-                     cv::CHAIN_APPROX_SIMPLE,
-                     cv::Point(0, 0));
+    cv::FindContours(
+        imgGrayScale, storage, &contours, sizeof(CvContour), cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
     std::cout << "Check\n";
     while(contours) {
 
@@ -117,13 +112,10 @@ main() {
       if(result->total == 3) {
         // iterating through each point
         cv::Point* pt[3];
-        for(int i = 0; i < 3; i++) {
-          pt[i] = (cv::Point*)cv::GetSeqElem(result, i);
-        }
+        for(int i = 0; i < 3; i++) { pt[i] = (cv::Point*)cv::GetSeqElem(result, i); }
 
         // This If Statement ensures that the edges are sufficiently large enough to be detected
-        if(abs(pt[1]->x - pt[0]->x) > 10 && abs(pt[1]->x - pt[2]->x) > 10 &&
-           abs(pt[2]->x - pt[0]->x) > 10) {
+        if(abs(pt[1]->x - pt[0]->x) > 10 && abs(pt[1]->x - pt[2]->x) > 10 && abs(pt[2]->x - pt[0]->x) > 10) {
           //////////drawing lines around the triangle
           cv::line(frame, *pt[0], *pt[1], cv::Scalar(255, 0, 0), 4);
           cv::line(frame, *pt[1], *pt[2], cv::Scalar(255, 0, 0), 4);
@@ -137,9 +129,7 @@ main() {
       else if(result->total == 4) {
         // iterating through each point
         cv::Point* pt[4];
-        for(int i = 0; i < 4; i++) {
-          pt[i] = (cv::Point*)cv::GetSeqElem(result, i);
-        }
+        for(int i = 0; i < 4; i++) { pt[i] = (cv::Point*)cv::GetSeqElem(result, i); }
 
         // finding angles
         double firstAngle = acos(angle(pt[0], pt[2], pt[1]));
@@ -148,8 +138,8 @@ main() {
         double fourthAngle = acos(angle(pt[0], pt[2], pt[3]));
 
         // This If Statement Ensures that the edges are sufficiently large
-        if(abs(pt[1]->x - pt[0]->x) > 10 && abs(pt[1]->x - pt[2]->x) > 10 &&
-           abs(pt[2]->x - pt[3]->x) > 10 && abs(pt[3]->x - pt[0]->x) > 10) {
+        if(abs(pt[1]->x - pt[0]->x) > 10 && abs(pt[1]->x - pt[2]->x) > 10 && abs(pt[2]->x - pt[3]->x) > 10 &&
+           abs(pt[3]->x - pt[0]->x) > 10) {
 
           // This if statement checks the angles to see if its a rectangle or not (90 angles with 10%
           // uncertainty)

@@ -57,17 +57,16 @@ winrt_startMessageLoop(std::function<void(Args...)>&& callback, Args... args) {
     callback(args...);
   });
 
-  asyncTask->Progress =
-      ref new AsyncActionProgressHandler<int>([=](IAsyncActionWithProgress<int> ^ act, int progress) {
-        int action = progress;
+  asyncTask->Progress = ref new AsyncActionProgressHandler<int>([=](IAsyncActionWithProgress<int> ^ act, int progress) {
+    int action = progress;
 
-        // these actions will be processed on the UI thread asynchronously
-        switch(action) {
-          case OPEN_CAMERA: VideoioBridge::getInstance().openCamera(); break;
-          case CLOSE_CAMERA: Video::getInstance().closeGrabber(); break;
-          case UPDATE_IMAGE_ELEMENT: VideoioBridge::getInstance().updateFrameContainer(); break;
-        }
-      });
+    // these actions will be processed on the UI thread asynchronously
+    switch(action) {
+      case OPEN_CAMERA: VideoioBridge::getInstance().openCamera(); break;
+      case CLOSE_CAMERA: Video::getInstance().closeGrabber(); break;
+      case UPDATE_IMAGE_ELEMENT: VideoioBridge::getInstance().updateFrameContainer(); break;
+    }
+  });
 }
 
 template<typename... Args>

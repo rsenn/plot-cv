@@ -116,9 +116,7 @@ thresh_callback(int, void*) {
   vector<Vec3f> circles;
 
   cvtColor(frame, frame_hsv, COLOR_BGR2HSV); // Convert the captured frame from BGR to HSV
-  inRange(frame_hsv,
-          Scalar(lowH, lowS, lowV),
-          Scalar(highH, highS, highV),
+  inRange(frame_hsv, Scalar(lowH, lowS, lowV), Scalar(highH, highS, highV),
           frame_thresh); // Threshold the image
 
   //#pragma omp task

@@ -42,11 +42,8 @@ main(int argc, char* argv[]) {
   int ex = static_cast<int>(inputVideo.get(cv::CAP_PROP_FOURCC));  // Get Codec Type- Int form
 
   // Transform from int to char via Bitwise operators
-  char EXT[] = {(char)(ex & 0XFF),
-                (char)((ex & 0XFF00) >> 8),
-                (char)((ex & 0XFF0000) >> 16),
-                (char)((ex & 0XFF000000) >> 24),
-                0};
+  char EXT[] = {
+      (char)(ex & 0XFF), (char)((ex & 0XFF00) >> 8), (char)((ex & 0XFF0000) >> 16), (char)((ex & 0XFF000000) >> 24), 0};
 
   Size S = Size((int)inputVideo.get(cv::CAP_PROP_FRAME_WIDTH), // Acquire input size
                 (int)inputVideo.get(cv::CAP_PROP_FRAME_HEIGHT));

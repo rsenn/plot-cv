@@ -38,9 +38,7 @@ Measure_Origins(Mat& src) {
   Mat img_corners;
   cvtColor(src, img_corners, COLOR_GRAY2BGR);
 
-  for(int i = 0; i < rectCorners.size(); i++) {
-    circle(img_corners, rectCorners[i], 50, Scalar(0, 0, 255), 8, 8, 0);
-  }
+  for(int i = 0; i < rectCorners.size(); i++) { circle(img_corners, rectCorners[i], 50, Scalar(0, 0, 255), 8, 8, 0); }
   namedWindow("corners", WINDOW_NORMAL);
   resizeWindow("corners", src.cols / 10, src.rows / 10);
   imshow("corners", img_corners);

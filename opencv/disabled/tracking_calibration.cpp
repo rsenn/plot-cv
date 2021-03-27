@@ -177,9 +177,7 @@ imageCallback(const sensor_msgs::ImageConstPtr& msg) {
 
     if((char)27 == (char)waitKey(1))
       ros::shutdown();
-  } catch(cv_bridge::Exception& e) {
-    ROS_ERROR("Could not convert from '%s' to '8UC3'.", msg->encoding.c_str());
-  }
+  } catch(cv_bridge::Exception& e) { ROS_ERROR("Could not convert from '%s' to '8UC3'.", msg->encoding.c_str()); }
 }
 
 int

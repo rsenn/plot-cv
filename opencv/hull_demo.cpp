@@ -61,14 +61,11 @@ thresh_callback(int, void*) {
   threshold(src_gray, threshold_output, thresh, 255, THRESH_BINARY);
 
   /// Find contours
-  findContours(
-      threshold_output, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+  findContours(threshold_output, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Find the convex hull object for each contour
   std::vector<std::vector<cv::Point>> hull(contours.size());
-  for(size_t i = 0; i < contours.size(); i++) {
-    convexHull(cv::Mat(contours[i]), hull[i], false);
-  }
+  for(size_t i = 0; i < contours.size(); i++) { convexHull(cv::Mat(contours[i]), hull[i], false); }
 
   /// Draw contours + hull results
   cv::Mat drawing = cv::Mat::zeros(threshold_output.size(), CV_8UC3);

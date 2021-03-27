@@ -131,9 +131,7 @@ rateFrame(Mat& frame) {
   Canny(edges, edges, 0, 30, 3);
 
   MatIterator_<uchar> it, end;
-  for(it = edges.begin<uchar>(), end = edges.end<uchar>(); it != end; ++it) {
-    sum += *it != 0;
-  }
+  for(it = edges.begin<uchar>(), end = edges.end<uchar>(); it != end; ++it) { sum += *it != 0; }
 
   return (double)sum / (double)size;
 }
@@ -280,8 +278,7 @@ main(int argc, char** argv) {
 
   // Get settings:
   if(GlobalArgs.verbose) {
-    if((cap.get(CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) == 0) ||
-       (cap.get(CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) == -1)) {
+    if((cap.get(CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) == 0) || (cap.get(CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) == -1)) {
       // Some VideoCapture implementations can return -1, 0.
       cout << "This is not GPHOTO2 device." << endl;
       return -2;
@@ -350,8 +347,7 @@ main(int argc, char** argv) {
 
     if((focus || GlobalArgs.measure) && GlobalArgs.verbose) {
       cout << "STATE\t" << state << endl;
-      cout << "Output from camera: " << endl
-           << (const char*)(intptr_t)cap.get(CAP_PROP_GPHOTO2_FLUSH_MSGS) << endl;
+      cout << "Output from camera: " << endl << (const char*)(intptr_t)cap.get(CAP_PROP_GPHOTO2_FLUSH_MSGS) << endl;
     }
 
     imshow(windowOriginal, frame);

@@ -95,9 +95,7 @@ main(int argc, char** argv) {
     if(faces.size() == 0) {
       cout << "No faces found in this frame" << endl;
     } else {
-      for(size_t i = 0; i < faces.size(); i++) {
-        cv::rectangle(img, faces[i], Scalar(255, 0, 0));
-      }
+      for(size_t i = 0; i < faces.size(); i++) { cv::rectangle(img, faces[i], Scalar(255, 0, 0)); }
       // vector to store the landmarks of all the faces in the image
       if(facemark->fit(img, faces, shapes)) {
         for(unsigned long i = 0; i < faces.size(); i++) {

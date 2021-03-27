@@ -33,7 +33,9 @@ cv::VideoCapture capz(0);
 bool wichLine = false;  // false=bottom, true=top
 bool isMarking = false; // is marking lines?
 
-LineMarker::LineMarker(int camIndex) { cameraIndexh = camIndex; }
+LineMarker::LineMarker(int camIndex) {
+  cameraIndexh = camIndex;
+}
 
 void
 LineMarker::chooseLine(bool top) {

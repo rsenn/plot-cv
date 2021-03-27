@@ -45,7 +45,9 @@ RaspiCam_Cv::RaspiCam_Cv() {
   _impl = new _private::Private_Impl();
   set(cv::CAP_PROP_FORMAT, CV_8UC3);
 }
-RaspiCam_Cv::~RaspiCam_Cv() { delete _impl; }
+RaspiCam_Cv::~RaspiCam_Cv() {
+  delete _impl;
+}
 
 /** Open  capturing device for video capturing
  */

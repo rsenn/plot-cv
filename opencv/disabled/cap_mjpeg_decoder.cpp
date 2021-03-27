@@ -169,9 +169,12 @@ private:
   FILE* m_f;
 };
 
-MjpegInputStream::MjpegInputStream() : m_is_valid(false), m_f(0) {}
+MjpegInputStream::MjpegInputStream() : m_is_valid(false), m_f(0) {
+}
 
-MjpegInputStream::MjpegInputStream(const String& filename) : m_is_valid(false), m_f(0) { open(filename); }
+MjpegInputStream::MjpegInputStream(const String& filename) : m_is_valid(false), m_f(0) {
+  open(filename);
+}
 
 bool
 MjpegInputStream::isOpened() const {
@@ -220,9 +223,13 @@ MjpegInputStream::tellg() {
   return ftell(m_f);
 }
 
-MjpegInputStream::operator bool() { return m_is_valid; }
+MjpegInputStream::operator bool() {
+  return m_is_valid;
+}
 
-MjpegInputStream::~MjpegInputStream() { close(); }
+MjpegInputStream::~MjpegInputStream() {
+  close();
+}
 
 MjpegInputStream& operator>>(MjpegInputStream& is, AviMainHeader& avih);
 MjpegInputStream& operator>>(MjpegInputStream& is, AviStreamHeader& strh);
@@ -358,7 +365,8 @@ protected:
 };
 
 AviMjpegStream::AviMjpegStream()
-    : m_stream_id(0), m_movi_start(0), m_movi_end(0), m_width(0), m_height(0), m_fps(0), m_is_indx_present(false) {}
+    : m_stream_id(0), m_movi_start(0), m_movi_end(0), m_width(0), m_height(0), m_fps(0), m_is_indx_present(false) {
+}
 
 size_t
 AviMjpegStream::getFramesCount() {
@@ -763,9 +771,13 @@ MotionJpegCapture::retrieveFrame(int, OutputArray output_frame) {
   return false;
 }
 
-MotionJpegCapture::~MotionJpegCapture() { close(); }
+MotionJpegCapture::~MotionJpegCapture() {
+  close();
+}
 
-MotionJpegCapture::MotionJpegCapture(const String& filename) { open(filename); }
+MotionJpegCapture::MotionJpegCapture(const String& filename) {
+  open(filename);
+}
 
 bool
 MotionJpegCapture::isOpened() const {

@@ -282,9 +282,7 @@ track_with_non_adaptive_BS(ImageInput* capture,
     loop_switch = !loop_switch;
   } // while
 
-  for(std::vector<Target*>::iterator it = targets.begin(); it != targets.end(); it++) {
-    (*it)->~Target();
-  }
+  for(std::vector<Target*>::iterator it = targets.begin(); it != targets.end(); it++) { (*it)->~Target(); }
 } // track with non-adaptive BS
 
 //@compares two grayscale images using simple background sutraction
@@ -374,9 +372,7 @@ track_with_adaptive_BS(ImageInput* capture,
   cout << "Time    = " << tot_time << endl;
   cout << "Frames  = " << frames << endl;
   cout << "t per f = " << tot_time / (double)frames << endl;
-  for(std::vector<Target*>::iterator it = targets.begin(); it != targets.end(); it++) {
-    (*it)->~Target();
-  }
+  for(std::vector<Target*>::iterator it = targets.begin(); it != targets.end(); it++) { (*it)->~Target(); }
 }
 
 //@finds movement blobs based on GMM background subtraction

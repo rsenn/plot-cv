@@ -136,9 +136,7 @@ imshowImage(const char* winname, Mat& image, VideoCapture& capture) {
         static const int pointSize = 4;
         for(int row = y; row < min(y + pointSize, image.rows); row++) {
           uchar* ptrDst = image.ptr(row) + x * 3 + 2; //+2 -> Red
-          for(int col = 0; col < min(pointSize, image.cols - x); col++, ptrDst += 3) {
-            *ptrDst = 255;
-          }
+          for(int col = 0; col < min(pointSize, image.cols - x); col++, ptrDst += 3) { *ptrDst = 255; }
         }
       }
     }
@@ -167,18 +165,14 @@ imshowIR(const char* winname, Mat& ir) {
     static const int pointSize = 4;
     for(int row = g_closedDepthPoint[0]; row < min(g_closedDepthPoint[0] + pointSize, image.rows); row++) {
       uchar* ptrDst = image.ptr(row) + g_closedDepthPoint[1] * 3 + 2; //+2 -> Red
-      for(int col = 0; col < min(pointSize, image.cols - g_closedDepthPoint[1]); col++, ptrDst += 3) {
-        *ptrDst = 255;
-      }
+      for(int col = 0; col < min(pointSize, image.cols - g_closedDepthPoint[1]); col++, ptrDst += 3) { *ptrDst = 255; }
     }
   } else {
     image.create(ir.rows, ir.cols, CV_8UC1);
     for(int row = 0; row < ir.rows; row++) {
       uchar* ptrDst = image.ptr(row);
       short* ptrSrc = (short*)ir.ptr(row);
-      for(int col = 0; col < ir.cols; col++, ptrSrc++, ptrDst++) {
-        *ptrDst = (uchar)((*ptrSrc) >> 2);
-      }
+      for(int col = 0; col < ir.cols; col++, ptrSrc++, ptrDst++) { *ptrDst = (uchar)((*ptrSrc) >> 2); }
     }
   }
 
@@ -220,9 +214,7 @@ imshowDepth(const char* winname, Mat& depth, VideoCapture& capture) {
     static const int pointSize = 4;
     for(int row = g_closedDepthPoint[0]; row < min(g_closedDepthPoint[0] + pointSize, image.rows); row++) {
       uchar* ptrDst = image.ptr(row) + g_closedDepthPoint[1] * 3 + 2; //+2 -> Red
-      for(int col = 0; col < min(pointSize, image.cols - g_closedDepthPoint[1]); col++, ptrDst += 3) {
-        *ptrDst = 255;
-      }
+      for(int col = 0; col < min(pointSize, image.cols - g_closedDepthPoint[1]); col++, ptrDst += 3) { *ptrDst = 255; }
     }
   } else {
     image.create(depth.rows, depth.cols, CV_8UC1);

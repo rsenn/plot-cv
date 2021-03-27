@@ -266,13 +266,9 @@ main(int argc, char** argv) {
       // sleep(3000);
       sleep(50);
     }
-  } catch(std::exception const& e) {
-    logLine(e.what());
-  } catch(std::string& e) {
+  } catch(std::exception const& e) { logLine(e.what()); } catch(std::string& e) {
     logLine(e);
-  } catch(const char* e) {
-    logLine(std::string(e));
-  } catch(...) {
+  } catch(const char* e) { logLine(std::string(e)); } catch(...) {
     logLine("Exception occurred");
   }
   return 0;

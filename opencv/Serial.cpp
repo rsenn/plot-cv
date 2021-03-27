@@ -13,8 +13,7 @@ using namespace std;
 #include "Serial.h"
 
 Serial::Serial(tstring& commPortName, int bitRate) {
-  commHandle =
-      CreateFile(commPortName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+  commHandle = CreateFile(commPortName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
 
   if(commHandle == INVALID_HANDLE_VALUE) {
     throw("ERROR: Could not open com port");
@@ -46,7 +45,9 @@ Serial::Serial(tstring& commPortName, int bitRate) {
   }
 }
 
-Serial::~Serial() { CloseHandle(commHandle); }
+Serial::~Serial() {
+  CloseHandle(commHandle);
+}
 
 int
 Serial::write(const char* buffer) {
@@ -90,7 +91,5 @@ void
 Serial::flush() {
   char buffer[FLUSH_BUFFSIZE];
   int numBytes = read(buffer, FLUSH_BUFFSIZE, false);
-  while(numBytes != 0) {
-    numBytes = read(buffer, FLUSH_BUFFSIZE, false);
-  }
+  while(numBytes != 0) { numBytes = read(buffer, FLUSH_BUFFSIZE, false); }
 }

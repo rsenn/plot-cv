@@ -246,9 +246,7 @@ protected:
     try {
       if(!initialized)
         loadPlugin();
-    } catch(...) {
-      CV_LOG_INFO(NULL, "Video I/O: exception during plugin loading: " << baseName_ << ". SKIP");
-    }
+    } catch(...) { CV_LOG_INFO(NULL, "Video I/O: exception during plugin loading: " << baseName_ << ". SKIP"); }
     initialized = true;
   }
   void loadPlugin();
@@ -264,9 +262,7 @@ getPluginCandidates(const std::string& baseName) {
   vector<FileSystemPath_t> paths;
   const vector<string> paths_ = getConfigurationParameterPaths("OPENCV_VIDEOIO_PLUGIN_PATH", vector<string>());
   if(paths_.size() != 0) {
-    for(size_t i = 0; i < paths_.size(); i++) {
-      paths.push_back(toFileSystemPath(paths_[i]));
-    }
+    for(size_t i = 0; i < paths_.size(); i++) { paths.push_back(toFileSystemPath(paths_[i])); }
   } else {
     FileSystemPath_t binaryLocation;
     if(getBinLocation(binaryLocation)) {
@@ -297,9 +293,7 @@ getPluginCandidates(const std::string& baseName) {
     moduleName = toFileSystemPath(plugin_expr);
     results.push_back(moduleName);
   }
-  for(const FileSystemPath_t& path : paths) {
-    results.push_back(path + L"\\" + moduleName);
-  }
+  for(const FileSystemPath_t& path : paths) { results.push_back(path + L"\\" + moduleName); }
   results.push_back(moduleName);
 #else
   CV_LOG_INFO(NULL,
@@ -510,9 +504,7 @@ PluginBackend::createCapture(int camera) const {
     if(plugin_api_)
       return PluginCapture::create(plugin_api_, std::string(),
                                    camera); //.staticCast<IVideoCapture>();
-  } catch(...) {
-    CV_LOG_DEBUG(NULL, "Video I/O: can't create camera capture: " << camera);
-  }
+  } catch(...) { CV_LOG_DEBUG(NULL, "Video I/O: can't create camera capture: " << camera); }
   return Ptr<IVideoCapture>();
 }
 
@@ -521,9 +513,7 @@ PluginBackend::createCapture(const std::string& filename) const {
   try {
     if(plugin_api_)
       return PluginCapture::create(plugin_api_, filename, 0); //.staticCast<IVideoCapture>();
-  } catch(...) {
-    CV_LOG_DEBUG(NULL, "Video I/O: can't open file capture: " << filename);
-  }
+  } catch(...) { CV_LOG_DEBUG(NULL, "Video I/O: can't open file capture: " << filename); }
   return Ptr<IVideoCapture>();
 }
 
@@ -533,9 +523,7 @@ PluginBackend::createWriter(
   try {
     if(plugin_api_)
       return PluginWriter::create(plugin_api_, filename, fourcc, fps, sz, isColor); //.staticCast<IVideoWriter>();
-  } catch(...) {
-    CV_LOG_DEBUG(NULL, "Video I/O: can't open writer: " << filename);
-  }
+  } catch(...) { CV_LOG_DEBUG(NULL, "Video I/O: can't open writer: " << filename); }
   return Ptr<IVideoWriter>();
 }
 

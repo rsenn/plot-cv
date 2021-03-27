@@ -89,9 +89,7 @@ createStraightLines(vector<Point> rectCorners, vector<Point> curveEnds, vector<V
   points.insert(points.end(), rectCorners.begin(), rectCorners.end());
   points.insert(points.end(), curveEnds.begin(), curveEnds.end());
   for(int i = 0; i < points.size(); i++) {
-    for(int j = 0; j < i; j++) {
-      straight_lines.push_back(Vec4i(points[i].x, points[i].y, points[j].x, points[j].y));
-    }
+    for(int j = 0; j < i; j++) { straight_lines.push_back(Vec4i(points[i].x, points[i].y, points[j].x, points[j].y)); }
   }
   for(int i = straight_lines.size() - 1; i >= 0; i--) {
     if(!isVorH(straight_lines[i])) {
@@ -113,12 +111,8 @@ drawStraightLines(Mat& img_all, vector<Vec4i> straight_lines) {
 
 void
 drawPoints(Mat& img_all, vector<Point> rectCorners, vector<Point> curveEnds) {
-  for(int i = 0; i < rectCorners.size(); i++) {
-    circle(img_all, rectCorners[i], 50, Scalar(0, 255, 0), 50);
-  }
-  for(int i = 0; i < curveEnds.size(); i++) {
-    circle(img_all, curveEnds[i], 50, Scalar(0, 0, 255), 50);
-  }
+  for(int i = 0; i < rectCorners.size(); i++) { circle(img_all, rectCorners[i], 50, Scalar(0, 255, 0), 50); }
+  for(int i = 0; i < curveEnds.size(); i++) { circle(img_all, curveEnds[i], 50, Scalar(0, 0, 255), 50); }
 }
 
 void
@@ -166,8 +160,7 @@ findRectCorners(Mat img_plg, vector<Vec3f> circles, vector<Point>& corners) {
   int block_size = 20;
   bool use_harris = true;
   double k = 0.04;
-  goodFeaturesToTrack(
-      img_plg, corners, max_corners, quality_level, min_distance, Mat(), block_size, use_harris, k);
+  goodFeaturesToTrack(img_plg, corners, max_corners, quality_level, min_distance, Mat(), block_size, use_harris, k);
 
   // Erase the corners that is not rectangular
   eraseCorner(corners, circles);
@@ -268,8 +261,7 @@ findCurveEnds(vector<Vec4i> linesP, vector<Vec3f> circles, vector<Point>& curveE
   curveEnds.push_back(temp[0]);
   for(int i = 1; i < temp.size(); i++) {
     double dst = sqrt((curveEnds[0].x - temp[i].x) * (curveEnds[0].x - temp[i].x) +
-                      (curveEnds[0].y - temp[i].y) *
-                          (curveEnds[0].y - temp[i].y)); // dst between 1st pt and other pts
+                      (curveEnds[0].y - temp[i].y) * (curveEnds[0].y - temp[i].y)); // dst between 1st pt and other pts
     if(dst >= circles[0][2] * 1.4) {
       curveEnds.push_back(temp[i]);
       break;
@@ -281,10 +273,8 @@ void
 extractCurve(vector<Point> contour, vector<Point> curveEnds, vector<Point>& curve) {
   //  ATTENTION: this function only work with 1 curve, which has 2 end points!
   for(int i = 0; i < contour.size(); i++) {
-    if(contour[i].x >= min(curveEnds[0].x, curveEnds[1].x) &&
-       contour[i].x <= max(curveEnds[0].x, curveEnds[1].x) &&
-       contour[i].y >= min(curveEnds[0].y, curveEnds[1].y) &&
-       contour[i].y <= max(curveEnds[0].y, curveEnds[1].y)) {
+    if(contour[i].x >= min(curveEnds[0].x, curveEnds[1].x) && contour[i].x <= max(curveEnds[0].x, curveEnds[1].x) &&
+       contour[i].y >= min(curveEnds[0].y, curveEnds[1].y) && contour[i].y <= max(curveEnds[0].y, curveEnds[1].y)) {
       curve.push_back(contour[i]);
     }
   }
@@ -301,8 +291,8 @@ isVorH(Vec4i line) {
     point1 = temp;
   } // keep point1 as the lower point and point2 as the higher point
   /* calculate cosine, cause we keep pt1 at low, the angle is between [0, pi] */
-  double cos = (point2.x - point1.x) / sqrt((point1.x - point2.x) * (point1.x - point2.x) +
-                                            (point1.y - point2.y) * (point1.y - point2.y));
+  double cos = (point2.x - point1.x) /
+               sqrt((point1.x - point2.x) * (point1.x - point2.x) + (point1.y - point2.y) * (point1.y - point2.y));
   if(abs(cos) > 0.98 || abs(cos) < 0.02)
     return true;
   else

@@ -60,7 +60,8 @@ using namespace Windows::Devices::Enumeration;
 
 #include <cap_winrt_bridge.hpp>
 
-Video::Video() {}
+Video::Video() {
+}
 
 Video&
 Video::getInstance() {
@@ -122,8 +123,7 @@ Video::initGrabber(int device, int w, int h) {
         create_task(m_capture->InitializeAsync(settings))
             .then([this]() {
               auto props = safe_cast<VideoEncodingProperties ^>(
-                  m_capture->VideoDeviceController->GetMediaStreamProperties(
-                      MediaStreamType::VideoPreview));
+                  m_capture->VideoDeviceController->GetMediaStreamProperties(MediaStreamType::VideoPreview));
 
               // for 24 bpp
               props->Subtype = MediaEncodingSubtypes::Rgb24;
@@ -298,9 +298,7 @@ Video::listDevicesTask() {
 
   // wait for async task to complete
   int count = 0;
-  while(!ready) {
-    count++;
-  }
+  while(!ready) { count++; }
 
   return true;
 }

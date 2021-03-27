@@ -69,8 +69,7 @@ objectCounter::get_markers() {
 
   count = contours.size();
   markers.create(image.rows, image.cols, CV_32SC1);
-  for(int idx = 0; idx < contours.size(); idx++)
-    drawContours(markers, contours, idx, Scalar::all(idx + 1), -1, 8);
+  for(int idx = 0; idx < contours.size(); idx++) drawContours(markers, contours, idx, Scalar::all(idx + 1), -1, 8);
 }
 
 int
@@ -122,8 +121,7 @@ main() {
 
   cout << "Counted " << count << " fruits." << endl;
 
-  while(char(waitKey(1)) != 'q') {
-  }
+  while(char(waitKey(1)) != 'q') {}
 
   return 0;
 }

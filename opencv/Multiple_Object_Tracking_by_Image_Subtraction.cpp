@@ -18,14 +18,11 @@ const cv::Scalar SCALAR_GREEN = cv::Scalar(0.0, 200.0, 0.0);
 const cv::Scalar SCALAR_RED = cv::Scalar(0.0, 0.0, 255.0);
 
 // function prototypes ////////////////////////////////////////////////////////////////////////////
-void matchCurrentFrameBlobsToExistingBlobs(std::vector<Blob>& existingBlobs,
-                                           std::vector<Blob>& currentFrameBlobs);
+void matchCurrentFrameBlobsToExistingBlobs(std::vector<Blob>& existingBlobs, std::vector<Blob>& currentFrameBlobs);
 void addBlobToExistingBlobs(Blob& currentFrameBlob, std::vector<Blob>& existingBlobs, int& intIndex);
 void addNewBlob(Blob& currentFrameBlob, std::vector<Blob>& existingBlobs);
 double distanceBetweenPoints(cv::Point point1, cv::Point point2);
-void drawAndShowContours(cv::Size imageSize,
-                         std::vector<std::vector<cv::Point>> contours,
-                         std::string strImageName);
+void drawAndShowContours(cv::Size imageSize, std::vector<std::vector<cv::Point>> contours, std::string strImageName);
 void drawAndShowContours(cv::Size imageSize, std::vector<Blob> blobs, std::string strImageName);
 void drawBlobInfoOnImage(std::vector<Blob>& blobs, cv::Mat& imgFrame2Copy);
 
@@ -109,9 +106,7 @@ main(int argc, char* argv[]) {
 
     std::vector<std::vector<cv::Point>> convexHulls(contours.size());
 
-    for(unsigned int i = 0; i < contours.size(); i++) {
-      cv::convexHull(contours[i], convexHulls[i]);
-    }
+    for(unsigned int i = 0; i < contours.size(); i++) { cv::convexHull(contours[i], convexHulls[i]); }
 
     drawAndShowContours(imgThresh.size(), convexHulls, "imgConvexHulls");
 
@@ -121,8 +116,7 @@ main(int argc, char* argv[]) {
       if(possibleBlob.currentBoundingRect.area() > 100 && possibleBlob.dblCurrentAspectRatio >= 0.2 &&
          possibleBlob.dblCurrentAspectRatio <= 1.25 && possibleBlob.currentBoundingRect.width > 20 &&
          possibleBlob.currentBoundingRect.height > 20 && possibleBlob.dblCurrentDiagonalSize > 30.0 &&
-         (cv::contourArea(possibleBlob.currentContour) / (double)possibleBlob.currentBoundingRect.area()) >
-             0.40) {
+         (cv::contourArea(possibleBlob.currentContour) / (double)possibleBlob.currentBoundingRect.area()) > 0.40) {
         currentFrameBlobs.push_back(possibleBlob);
       }
     }
@@ -130,9 +124,7 @@ main(int argc, char* argv[]) {
     drawAndShowContours(imgThresh.size(), currentFrameBlobs, "imgCurrentFrameBlobs");
 
     if(blnFirstFrame == true) {
-      for(auto& currentFrameBlob : currentFrameBlobs) {
-        blobs.push_back(currentFrameBlob);
-      }
+      for(auto& currentFrameBlob : currentFrameBlobs) { blobs.push_back(currentFrameBlob); }
     } else {
       matchCurrentFrameBlobsToExistingBlobs(blobs, currentFrameBlobs);
     }
@@ -177,8 +169,7 @@ main(int argc, char* argv[]) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
-matchCurrentFrameBlobsToExistingBlobs(std::vector<Blob>& existingBlobs,
-                                      std::vector<Blob>& currentFrameBlobs) {
+matchCurrentFrameBlobsToExistingBlobs(std::vector<Blob>& existingBlobs, std::vector<Blob>& currentFrameBlobs) {
 
   for(auto& existingBlob : existingBlobs) {
 
@@ -194,8 +185,8 @@ matchCurrentFrameBlobsToExistingBlobs(std::vector<Blob>& existingBlobs,
 
     for(unsigned int i = 0; i < existingBlobs.size(); i++) {
       if(existingBlobs[i].blnStillBeingTracked == true) {
-        double dblDistance = distanceBetweenPoints(currentFrameBlob.centerPositions.back(),
-                                                   existingBlobs[i].predictedNextPosition);
+        double dblDistance =
+            distanceBetweenPoints(currentFrameBlob.centerPositions.back(), existingBlobs[i].predictedNextPosition);
 
         if(dblDistance < dblLeastDistance) {
           dblLeastDistance = dblDistance;
@@ -260,9 +251,7 @@ distanceBetweenPoints(cv::Point point1, cv::Point point2) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
-drawAndShowContours(cv::Size imageSize,
-                    std::vector<std::vector<cv::Point>> contours,
-                    std::string strImageName) {
+drawAndShowContours(cv::Size imageSize, std::vector<std::vector<cv::Point>> contours, std::string strImageName) {
   cv::Mat image(imageSize, CV_8UC3, SCALAR_BLACK);
 
   cv::drawContours(image, contours, -1, SCALAR_WHITE, -1);

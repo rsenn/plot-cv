@@ -53,9 +53,7 @@ main(int argc, char* argv[]) {
   vector<Point2f> imagePoints(4);
 
   //-- Create 3D corners from the objectImage ( the object to be "detected" )
-  for(int i = 0; i < (int)obj_corners.size(); i++) {
-    objectPoints[i] = Point3f(obj_corners[i]);
-  }
+  for(int i = 0; i < (int)obj_corners.size(); i++) { objectPoints[i] = Point3f(obj_corners[i]); }
 
   //-- 3D object to render
   axis[0] = Point3f(0.0, 0.0, 0.0);
@@ -75,9 +73,8 @@ main(int argc, char* argv[]) {
   cap.set(CAP_PROP_FRAME_HEIGHT, 480);
   double fps = cap.get(cv::CAP_PROP_FPS); // get the frames per seconds of the video
   cout << "Frame per seconds : " << fps << endl;
-  cout << "Width : " << cap.get(CAP_PROP_FRAME_WIDTH) << endl; // Width of the frames in the video stream.
-  cout << "Height : " << cap.get(CAP_PROP_FRAME_HEIGHT)
-       << endl; // Height of the frames in the video stream.
+  cout << "Width : " << cap.get(CAP_PROP_FRAME_WIDTH) << endl;   // Width of the frames in the video stream.
+  cout << "Height : " << cap.get(CAP_PROP_FRAME_HEIGHT) << endl; // Height of the frames in the video stream.
   cout << "Frame per seconds : " << fps << endl;
   imshow("Target Object", objectImage);
   namedWindow("MyVideo", cv::WINDOW_AUTOSIZE); // create a window called "MyVideo"

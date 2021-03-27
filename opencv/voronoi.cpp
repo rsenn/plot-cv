@@ -95,9 +95,7 @@ main(int argc, char** argv) {
   // Read in the points from a text file
   std::ifstream ifs("points.txt");
   int x, y;
-  while(ifs >> x >> y) {
-    points.push_back(cv::Point2f(x, y));
-  }
+  while(ifs >> x >> y) { points.push_back(cv::Point2f(x, y)); }
 
   // Insert points into subdiv
   for(std::vector<cv::Point2f>::iterator it = points.begin(); it != points.end(); it++) {

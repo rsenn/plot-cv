@@ -61,9 +61,7 @@ void
 keypoints2points(const vector<KeyPoint>& in, vector<Point2f>& out) {
   out.clear();
   out.reserve(in.size());
-  for(size_t i = 0; i < in.size(); ++i) {
-    out.push_back(in[i].pt);
-  }
+  for(size_t i = 0; i < in.size(); ++i) { out.push_back(in[i].pt); }
 }
 
 // Takes an xy point and appends that to a keypoint structure
@@ -71,9 +69,7 @@ void
 points2keypoints(const vector<Point2f>& in, vector<KeyPoint>& out) {
   out.clear();
   out.reserve(in.size());
-  for(size_t i = 0; i < in.size(); ++i) {
-    out.push_back(KeyPoint(in[i], 1));
-  }
+  for(size_t i = 0; i < in.size(); ++i) { out.push_back(KeyPoint(in[i], 1)); }
 }
 
 // Uses computed homography H to warp original input points to new planar position

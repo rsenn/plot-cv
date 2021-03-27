@@ -398,7 +398,8 @@ protected:
 
 GStreamerCapture::GStreamerCapture()
     : duration(-1), width(-1), height(-1), fps(-1), isPosFramesSupported(false), isPosFramesEmulated(false),
-      emulatedFrameNumber(-1) {}
+      emulatedFrameNumber(-1) {
+}
 
 /*!
  * \brief CvCapture_GStreamer::close
@@ -1198,9 +1199,7 @@ public:
   virtual ~CvVideoWriter_GStreamer() CV_OVERRIDE {
     try {
       close();
-    } catch(const std::exception& e) {
-      CV_WARN("C++ exception in writer destructor: " << e.what());
-    } catch(...) {
+    } catch(const std::exception& e) { CV_WARN("C++ exception in writer destructor: " << e.what()); } catch(...) {
       CV_WARN("Unknown exception in writer destructor. Ignore");
     }
   }
@@ -1739,8 +1738,7 @@ cv_capture_open(const char* filename, int camera_index, CV_OUT CvPluginCapture* 
       *handle = (CvPluginCapture)cap;
       return CV_ERROR_OK;
     }
-  } catch(...) {
-  }
+  } catch(...) {}
   if(cap)
     delete cap;
   return CV_ERROR_FAIL;
@@ -1765,9 +1763,7 @@ cv_capture_get_prop(CvPluginCapture handle, int prop, CV_OUT double* val) {
     GStreamerCapture* instance = (GStreamerCapture*)handle;
     *val = instance->getProperty(prop);
     return CV_ERROR_OK;
-  } catch(...) {
-    return CV_ERROR_FAIL;
-  }
+  } catch(...) { return CV_ERROR_FAIL; }
 }
 
 static CvResult CV_API_CALL
@@ -1777,9 +1773,7 @@ cv_capture_set_prop(CvPluginCapture handle, int prop, double val) {
   try {
     GStreamerCapture* instance = (GStreamerCapture*)handle;
     return instance->setProperty(prop, val) ? CV_ERROR_OK : CV_ERROR_FAIL;
-  } catch(...) {
-    return CV_ERROR_FAIL;
-  }
+  } catch(...) { return CV_ERROR_FAIL; }
 }
 
 static CvResult CV_API_CALL
@@ -1789,9 +1783,7 @@ cv_capture_grab(CvPluginCapture handle) {
   try {
     GStreamerCapture* instance = (GStreamerCapture*)handle;
     return instance->grabFrame() ? CV_ERROR_OK : CV_ERROR_FAIL;
-  } catch(...) {
-    return CV_ERROR_FAIL;
-  }
+  } catch(...) { return CV_ERROR_FAIL; }
 }
 
 static CvResult CV_API_CALL
@@ -1805,9 +1797,7 @@ cv_capture_retrieve(CvPluginCapture handle, int stream_idx, cv_videoio_retrieve_
     if(instance->retrieveFrame(stream_idx, img))
       return callback(stream_idx, img.data, img.step, img.cols, img.rows, img.channels(), userdata);
     return CV_ERROR_FAIL;
-  } catch(...) {
-    return CV_ERROR_FAIL;
-  }
+  } catch(...) { return CV_ERROR_FAIL; }
 }
 
 static CvResult CV_API_CALL
@@ -1821,8 +1811,7 @@ cv_writer_open(
       *handle = (CvPluginWriter)wrt;
       return CV_ERROR_OK;
     }
-  } catch(...) {
-  }
+  } catch(...) {}
   if(wrt)
     delete wrt;
   return CV_ERROR_FAIL;
@@ -1858,9 +1847,7 @@ cv_writer_write(CvPluginWriter handle, const unsigned char* data, int step, int 
     cvInitImageHeader(&img, sz, IPL_DEPTH_8U, cn);
     cvSetData(&img, const_cast<unsigned char*>(data), step);
     return instance->writeFrame(&img) ? CV_ERROR_OK : CV_ERROR_FAIL;
-  } catch(...) {
-    return CV_ERROR_FAIL;
-  }
+  } catch(...) { return CV_ERROR_FAIL; }
 }
 
 static const OpenCV_VideoIO_Plugin_API_preview plugin_api_v0 = {{sizeof(OpenCV_VideoIO_Plugin_API_preview),

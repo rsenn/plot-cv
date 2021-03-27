@@ -29,9 +29,7 @@ load_arguments(int argc, char* argv[]) {
 
   cout << "num_arguments: " << cnt << endl;
 
-  for(int i = 0; i < cnt; i++) {
-    args[argv[(2 * i) + 1]] = argv[(2 * i) + 2];
-  }
+  for(int i = 0; i < cnt; i++) { args[argv[(2 * i) + 1]] = argv[(2 * i) + 2]; }
 
   for(auto it = args.cbegin(); it != args.cend(); it++) {
     cout << "args[\"" << it->first << "\"] = \"" << it->second << "\"\n";
@@ -92,8 +90,7 @@ detect_shape() {
     approxPolyDP(Mat(contours[i]), approx, arcLength(Mat(contours[i]), true) * 0.02, true);
 
     // Skip small or non-convex objects
-    if(fabs(contourArea(contours[i])) < (img.size().height * img.size().width) / 2500 ||
-       !isContourConvex(approx)) {
+    if(fabs(contourArea(contours[i])) < (img.size().height * img.size().width) / 2500 || !isContourConvex(approx)) {
       continue;
     }
 

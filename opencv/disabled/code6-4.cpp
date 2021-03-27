@@ -129,9 +129,7 @@ std::vector<float>
 ellipseFinder::distance(cv::Mat Q, std::vector<cv::Point> c) {
   std::vector<cv::Point> ellipse = ellipse_contour(Q);
   std::vector<float> distances;
-  for(int i = 0; i < c.size(); i++) {
-    distances.push_back(float(pointPolygonTest(ellipse, c[i], true)));
-  }
+  for(int i = 0; i < c.size(); i++) { distances.push_back(float(pointPolygonTest(ellipse, c[i], true))); }
 
   return distances;
 }
@@ -401,8 +399,7 @@ main() {
   ef.detect_ellipse();
   // ef.debug();
 
-  while(char(waitKey(1)) != 'q') {
-  }
+  while(char(waitKey(1)) != 'q') {}
 
   return 0;
 }

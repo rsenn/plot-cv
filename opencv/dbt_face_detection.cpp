@@ -1,4 +1,4 @@
-#if defined(__linux__) || defined(LINUX) || defined(__APPLE__) || defined(ANDROID) ||                      \
+#if defined(__linux__) || defined(LINUX) || defined(__APPLE__) || defined(ANDROID) ||                                  \
     (defined(_MSC_VER) && _MSC_VER >= 1800)
 
 #include <opencv2/imgproc.hpp> // Gaussian Blur
@@ -79,9 +79,7 @@ main(int, char**) {
     Detector.process(GrayFrame);
     Detector.getObjects(Faces);
 
-    for(size_t i = 0; i < Faces.size(); i++) {
-      rectangle(ReferenceFrame, Faces[i], Scalar(0, 255, 0));
-    }
+    for(size_t i = 0; i < Faces.size(); i++) { rectangle(ReferenceFrame, Faces[i], Scalar(0, 255, 0)); }
 
     imshow(WindowName, ReferenceFrame);
   } while(waitKey(30) < 0);

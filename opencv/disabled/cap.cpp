@@ -471,13 +471,20 @@ cvReleaseVideoWriter(CvVideoWriter** pwriter) {
 
 namespace cv {
 
-VideoCapture::VideoCapture() {}
+VideoCapture::VideoCapture() {
+}
 
-VideoCapture::VideoCapture(const string& filename) { open(filename); }
+VideoCapture::VideoCapture(const string& filename) {
+  open(filename);
+}
 
-VideoCapture::VideoCapture(int device) { open(device); }
+VideoCapture::VideoCapture(int device) {
+  open(device);
+}
 
-VideoCapture::~VideoCapture() { cap.release(); }
+VideoCapture::~VideoCapture() {
+  cap.release();
+}
 
 bool
 VideoCapture::open(const string& filename) {
@@ -551,7 +558,8 @@ VideoCapture::get(int propId) {
   return cvGetCaptureProperty(cap, propId);
 }
 
-VideoWriter::VideoWriter() {}
+VideoWriter::VideoWriter() {
+}
 
 VideoWriter::VideoWriter(const string& filename, int fourcc, double fps, Size frameSize, bool isColor) {
   open(filename, fourcc, fps, frameSize, isColor);
@@ -562,7 +570,9 @@ VideoWriter::release() {
   writer.release();
 }
 
-VideoWriter::~VideoWriter() { release(); }
+VideoWriter::~VideoWriter() {
+  release();
+}
 
 bool
 VideoWriter::open(const string& filename, int fourcc, double fps, Size frameSize, bool isColor) {

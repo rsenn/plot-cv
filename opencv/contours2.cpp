@@ -21,14 +21,8 @@ static void
 on_trackbar(int, void*) {
   cv::Mat cnt_img = cv::Mat::zeros(w, w, CV_8UC3);
   int _levels = levels - 3;
-  drawContours(cnt_img,
-               contours,
-               _levels <= 0 ? 3 : -1,
-               Scalar(128, 255, 255),
-               3,
-               LINE_AA,
-               hierarchy,
-               std::abs(_levels));
+  drawContours(
+      cnt_img, contours, _levels <= 0 ? 3 : -1, Scalar(128, 255, 255), 3, LINE_AA, hierarchy, std::abs(_levels));
   imshow("contours", cnt_img);
 }
 int

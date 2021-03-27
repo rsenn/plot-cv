@@ -39,9 +39,7 @@ public:
     try {
       int idx = stoi(videoCapturePath);
       videoCapture.open(idx);
-    } catch(invalid_argument ia) {
-      videoCapture.open(videoCapturePath);
-    }
+    } catch(invalid_argument ia) { videoCapture.open(videoCapturePath); }
     fps = round(videoCapture.get(CAP_PROP_FPS));
     printf("Video FPS: %d\n", fps);
     while(videoCapture.isOpened()) {
@@ -53,8 +51,7 @@ public:
       }
 
       // erase old contours (seen 16 frames ago) -- CHANGED TO 100 frames
-      unregisterPersonIf(
-          [&](const Person* p) { return frameNumber - lastFrameWherePersonWasSeen[p] > fps; });
+      unregisterPersonIf([&](const Person* p) { return frameNumber - lastFrameWherePersonWasSeen[p] > fps; });
 
       // and then process the current frame
       processFrame(frame);

@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
- 
 cv::Mat src;
 cv::Mat src_gray;
 int thresh = 100;
@@ -42,7 +41,7 @@ thresh_callback(int, void*) {
   std::vector<std::vector<cv::Point>> contours;
   std::vector<cv::Vec4i> hierarchy;
 
-std::cerr << "thres = " << thresh << std::endl;
+  std::cerr << "thres = " << thresh << std::endl;
 
   /// Detect edges using canny
   cv::Canny(src_gray, canny_output, thresh, thresh * 2, 3);

@@ -112,9 +112,7 @@ main() {
 
   // copy points to new vector for clarity
   vector<Point2f> sourcePoints;
-  for(int i = 0; i < 4; i++) {
-    sourcePoints.push_back(cornerPoints[0][i]);
-  }
+  for(int i = 0; i < 4; i++) { sourcePoints.push_back(cornerPoints[0][i]); }
 
   // align document using homography
   Mat h = findHomography(sourcePoints, targetPoints, RANSAC);

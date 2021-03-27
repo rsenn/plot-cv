@@ -36,11 +36,10 @@ const char* usage = " \nexample command line for calibration from a live feed.\n
                     "</images>\n"
                     "</opencv_storage>\n";
 
-const char* liveCaptureHelp =
-    "When the live video from camera is used as input, the following hot-keys may be used:\n"
-    "  <ESC>, 'q' - quit the program\n"
-    "  'g' - start capturing images\n"
-    "  'u' - switch undistortion on/off\n";
+const char* liveCaptureHelp = "When the live video from camera is used as input, the following hot-keys may be used:\n"
+                              "  <ESC>, 'q' - quit the program\n"
+                              "  'g' - start capturing images\n"
+                              "  'u' - switch undistortion on/off\n";
 
 static void
 help() {
@@ -107,10 +106,7 @@ computeReprojectionErrors(const vector<vector<Point3f>>& objectPoints,
 }
 
 static void
-calcChessboardCorners(Size boardSize,
-                      float squareSize,
-                      vector<Point3f>& corners,
-                      Pattern patternType = CHESSBOARD) {
+calcChessboardCorners(Size boardSize, float squareSize, vector<Point3f>& corners, Pattern patternType = CHESSBOARD) {
   corners.resize(0);
 
   switch(patternType) {
@@ -169,8 +165,8 @@ runCalibration(vector<vector<Point2f>> imagePoints,
 
   bool ok = checkRange(cameraMatrix) && checkRange(distCoeffs);
 
-  totalAvgErr = computeReprojectionErrors(
-      objectPoints, imagePoints, rvecs, tvecs, cameraMatrix, distCoeffs, reprojErrs);
+  totalAvgErr =
+      computeReprojectionErrors(objectPoints, imagePoints, rvecs, tvecs, cameraMatrix, distCoeffs, reprojErrs);
 
   return ok;
 }
@@ -302,9 +298,7 @@ runAndSave(const string& outputFilename,
                            tvecs,
                            reprojErrs,
                            totalAvgErr);
-  printf("%s. avg reprojection error = %.2f\n",
-         ok ? "Calibration succeeded" : "Calibration failed",
-         totalAvgErr);
+  printf("%s. avg reprojection error = %.2f\n", ok ? "Calibration succeeded" : "Calibration failed", totalAvgErr);
 
   if(ok)
     saveCameraParams(outputFilename,
@@ -466,29 +460,23 @@ main(int argc, char** argv) {
     bool found;
     switch(pattern) {
       case CHESSBOARD:
-        found = findChessboardCorners(view,
-                                      boardSize,
-                                      pointbuf,
-                                      CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK |
-                                          CV_CALIB_CB_NORMALIZE_IMAGE);
+        found =
+            findChessboardCorners(view,
+                                  boardSize,
+                                  pointbuf,
+                                  CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE);
         break;
       case CIRCLES_GRID: found = findCirclesGrid(view, boardSize, pointbuf); break;
-      case ASYMMETRIC_CIRCLES_GRID:
-        found = findCirclesGrid(view, boardSize, pointbuf, CALIB_CB_ASYMMETRIC_GRID);
-        break;
+      case ASYMMETRIC_CIRCLES_GRID: found = findCirclesGrid(view, boardSize, pointbuf, CALIB_CB_ASYMMETRIC_GRID); break;
       default: return fprintf(stderr, "Unknown pattern type\n"), -1;
     }
 
     // improve the found corners' coordinate accuracy
     if(pattern == CHESSBOARD && found)
-      cornerSubPix(viewGray,
-                   pointbuf,
-                   Size(11, 11),
-                   Size(-1, -1),
-                   TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+      cornerSubPix(
+          viewGray, pointbuf, Size(11, 11), Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
 
-    if(mode == CAPTURING && found &&
-       (!capture.isOpened() || clock() - prevTimestamp > delay * 1e-3 * CLOCKS_PER_SEC)) {
+    if(mode == CAPTURING && found && (!capture.isOpened() || clock() - prevTimestamp > delay * 1e-3 * CLOCKS_PER_SEC)) {
       imagePoints.push_back(pointbuf);
       prevTimestamp = clock();
       blink = capture.isOpened();

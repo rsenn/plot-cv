@@ -10,10 +10,7 @@ namespace {
 enum Pattern { CHESSBOARD, CIRCLES_GRID, ASYMMETRIC_CIRCLES_GRID };
 
 void
-calcChessboardCorners(Size boardSize,
-                      float squareSize,
-                      vector<Point3f>& corners,
-                      Pattern patternType = CHESSBOARD) {
+calcChessboardCorners(Size boardSize, float squareSize, vector<Point3f>& corners, Pattern patternType = CHESSBOARD) {
   corners.resize(0);
 
   switch(patternType) {
@@ -41,8 +38,7 @@ computeHomography(const Mat& R_1to2, const Mat& tvec_1to2, const double d_inv, c
 }
 
 void
-computeC2MC1(
-    const Mat& R1, const Mat& tvec1, const Mat& R2, const Mat& tvec2, Mat& R_1to2, Mat& tvec_1to2) {
+computeC2MC1(const Mat& R1, const Mat& tvec1, const Mat& R2, const Mat& tvec2, Mat& R_1to2, Mat& tvec_1to2) {
   // c2Mc1 = c2Mo * oMc1 = c2Mo * c1Mo.inv()
   R_1to2 = R2 * R1.t();
   tvec_1to2 = R2 * (-R1.t() * tvec1) + tvec2;
