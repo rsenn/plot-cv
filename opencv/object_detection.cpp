@@ -417,10 +417,10 @@ drawPred(int classId, float conf, int left, int top, int right, int bottom, cv::
 
   top = max(top, labelSize.height);
   cv::rectangle(frame,
-            Point(left, top - labelSize.height),
-            Point(left + labelSize.width, top + baseLine),
-            Scalar::all(255),
-            FILLED);
+                Point(left, top - labelSize.height),
+                Point(left + labelSize.width, top + baseLine),
+                Scalar::all(255),
+                FILLED);
   cv::putText(frame, label, Point(left, top), FONT_HERSHEY_SIMPLEX, 0.5, Scalar());
 }
 
