@@ -137,13 +137,13 @@
 				"*.next/*",
 				"quickjs-*",
 				"tmp",
-				"data"
+				"data",
+				"Sources/[!p][!l]*",
+				"Sources/[^p][^l]*"
 			],
+			/*"folder_include_patterns": [ "src", "opencv", "quickjs", "lib" ],*/
 			"path": ".",
-		},
-		{
-			"path": "reig",
-		},
+		}
 	],
 	"settings":
 	{

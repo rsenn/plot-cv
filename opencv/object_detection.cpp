@@ -42,9 +42,9 @@ using namespace dnn;
 float confThreshold, nmsThreshold;
 std::vector<std::string> classes;
 
-inline void preprocess(const Mat& frame, Net& net, Size inpSize, float scale, const Scalar& mean, bool swapRB);
+inline void preprocess(const Mat& frame, dnn::Net& net, Size inpSize, float scale, const Scalar& mean, bool swapRB);
 
-void postprocess(Mat& frame, const std::vector<Mat>& out, Net& net, int backend);
+void postprocess(Mat& frame, const std::vector<Mat>& out, dnn::Net& net, int backend);
 
 void drawPred(int classId, float conf, int left, int top, int right, int bottom, Mat& frame);
 
@@ -137,7 +137,7 @@ main(int argc, char** argv) {
   }
 
   // Load a model.
-  Net net = readNet(modelPath, configPath, parser.get<String>("framework"));
+  dnn::Net net = dnn::readNet(modelPath, configPath, parser.get<String>("framework"));
   int backend = parser.get<int>("backend");
   net.setPreferableBackend(backend);
   net.setPreferableTarget(parser.get<int>("target"));
@@ -230,7 +230,7 @@ main(int argc, char** argv) {
       std::string label = format("Camera: %.2f FPS", framesQueue.getFPS());
       putText(frame, label, Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0));
 
-      label = format("Network: %.2f FPS", predictionsQueue.getFPS());
+      label = format("dnn::Network: %.2f FPS", predictionsQueue.getFPS());
       putText(frame, label, Point(0, 30), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0));
 
       label = format("Skipped frames: %d", framesQueue.counter - predictionsQueue.counter);
@@ -277,14 +277,14 @@ main(int argc, char** argv) {
 }
 
 inline void
-preprocess(const Mat& frame, Net& net, Size inpSize, float scale, const Scalar& mean, bool swapRB) {
+preprocess(const Mat& frame, dnn::Net& net, Size inpSize, float scale, const Scalar& mean, bool swapRB) {
   static Mat blob;
   // Create a 4D blob from a frame.
   if(inpSize.width <= 0)
     inpSize.width = frame.cols;
   if(inpSize.height <= 0)
     inpSize.height = frame.rows;
-  blobFromImage(frame, blob, 1.0, inpSize, Scalar(), swapRB, false, CV_8U);
+  dnn::blobFromImage(frame, blob, 1.0, inpSize, Scalar(), swapRB, false, CV_8U);
 
   // Run a model.
   net.setInput(blob, "", scale, mean);
@@ -297,7 +297,7 @@ preprocess(const Mat& frame, Net& net, Size inpSize, float scale, const Scalar& 
 }
 
 void
-postprocess(Mat& frame, const std::vector<Mat>& outs, Net& net, int backend) {
+postprocess(Mat& frame, const std::vector<Mat>& outs, dnn::Net& net, int backend) {
   static std::vector<int> outLayers = net.getUnconnectedOutLayers();
   static std::string outLayerType = net.getLayer(outLayers[0])->type;
 
@@ -305,7 +305,7 @@ postprocess(Mat& frame, const std::vector<Mat>& outs, Net& net, int backend) {
   std::vector<float> confidences;
   std::vector<Rect> boxes;
   if(outLayerType == "DetectionOutput") {
-    // Network produces output blob with a shape 1x1xNx7 where N is a number of
+    // dnn::Network produces output blob with a shape 1x1xNx7 where N is a number of
     // detections and an every detection is a vector of values
     // [batchId, classId, confidence, left, top, right, bottom]
     CV_Assert(outs.size() > 0);
@@ -336,7 +336,7 @@ postprocess(Mat& frame, const std::vector<Mat>& outs, Net& net, int backend) {
     }
   } else if(outLayerType == "Region") {
     for(size_t i = 0; i < outs.size(); ++i) {
-      // Network produces output blob with a shape NxC where N is a number of
+      // dnn::Network produces output blob with a shape NxC where N is a number of
       // detected objects and C is a number of classes + 4 where the first 4
       // numbers are [center_x, center_y, width, height]
       float* data = (float*)outs[i].data;
@@ -383,7 +383,7 @@ postprocess(Mat& frame, const std::vector<Mat>& outs, Net& net, int backend) {
         localConfidences.push_back(confidences[classIndices[i]]);
       }
       std::vector<int> nmsIndices;
-      NMSBoxes(localBoxes, localConfidences, confThreshold, nmsThreshold, nmsIndices);
+      dnn::NMSBoxes(localBoxes, localConfidences, confThreshold, nmsThreshold, nmsIndices);
       for(size_t i = 0; i < nmsIndices.size(); i++) {
         size_t idx = nmsIndices[i];
         nmsBoxes.push_back(localBoxes[idx]);
