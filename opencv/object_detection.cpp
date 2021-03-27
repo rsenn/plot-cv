@@ -42,11 +42,11 @@ using namespace dnn;
 float confThreshold, nmsThreshold;
 std::vector<std::string> classes;
 
-inline void preprocess(const Mat& frame, dnn::Net& net, Size inpSize, float scale, const Scalar& mean, bool swapRB);
+inline void preprocess(const cv::Mat& frame, dnn::Net& net, Size inpSize, float scale, const Scalar& mean, bool swapRB);
 
-void postprocess(Mat& frame, const std::vector<Mat>& out, dnn::Net& net, int backend);
+void postprocess(cv::Mat& frame, const std::vector<Mat>& out, dnn::Net& net, int backend);
 
-void drawPred(int classId, float conf, int left, int top, int right, int bottom, Mat& frame);
+void drawPred(int classId, float conf, int left, int top, int right, int bottom, cv::Mat& frame);
 
 void callback(int pos, void* userdata);
 
@@ -93,21 +93,21 @@ public:
   unsigned int counter;
 
 private:
-  TickMeter tm;
+  cv::TickMeter tm;
   std::mutex mutex;
 };
 #endif // CV_CXX11
 
 int
 main(int argc, char** argv) {
-  CommandLineParser parser(argc, argv, keys);
+  cv::CommandLineParser parser(argc, argv, keys);
 
   const std::string modelName = parser.get<String>("@alias");
   const std::string zooFile = parser.get<String>("zoo");
 
   keys += genPreprocArguments(modelName, zooFile);
 
-  parser = CommandLineParser(argc, argv, keys);
+  parser = cv::CommandLineParser(argc, argv, keys);
   parser.about("Use this script to run object detection deep learning networks using OpenCV.");
   if(argc == 1 || parser.has("help")) {
     parser.printMessage();
@@ -145,12 +145,12 @@ main(int argc, char** argv) {
 
   // Create a window
   static const std::string kWinName = "Deep learning object detection in OpenCV";
-  namedWindow(kWinName, WINDOW_NORMAL);
+  cv::namedWindow(kWinName, WINDOW_NORMAL);
   int initialConf = (int)(confThreshold * 100);
-  createTrackbar("Confidence threshold, %", kWinName, &initialConf, 99, callback);
+  cv::createTrackbar("Confidence threshold, %", kWinName, &initialConf, 99, callback);
 
   // Open a video file or an image file or a camera stream.
-  VideoCapture cap;
+  cv::VideoCapture cap;
   if(parser.has("input"))
     cap.open(parser.get<String>("input"));
   else
@@ -160,9 +160,9 @@ main(int argc, char** argv) {
   bool process = true;
 
   // Frames capturing thread
-  QueueFPS<Mat> framesQueue;
+  QueueFPS<cv::Mat> framesQueue;
   std::thread framesThread([&]() {
-    Mat frame;
+    cv::Mat frame;
     while(process) {
       cap >> frame;
       if(!frame.empty())
@@ -173,20 +173,20 @@ main(int argc, char** argv) {
   });
 
   // Frames processing thread
-  QueueFPS<Mat> processedFramesQueue;
-  QueueFPS<std::vector<Mat>> predictionsQueue;
+  QueueFPS<cv::Mat> processedFramesQueue;
+  QueueFPS<std::vector<cv::Mat>> predictionsQueue;
   std::thread processingThread([&]() {
-    std::queue<AsyncArray> futureOutputs;
-    Mat blob;
+    std::queue<cv::AsyncArray> futureOutputs;
+    cv::Mat blob;
     while(process) {
       // Get a next frame
-      Mat frame;
+      cv::Mat frame;
       {
         if(!framesQueue.empty()) {
           frame = framesQueue.get();
           if(asyncNumReq) {
             if(futureOutputs.size() == asyncNumReq)
-              frame = Mat();
+              frame = cv::Mat();
           } else
             framesQueue.clear(); // Skip the rest of frames
         }
@@ -200,16 +200,16 @@ main(int argc, char** argv) {
         if(asyncNumReq) {
           futureOutputs.push(net.forwardAsync());
         } else {
-          std::vector<Mat> outs;
+          std::vector<cv::Mat> outs;
           net.forward(outs, outNames);
           predictionsQueue.push(outs);
         }
       }
 
       while(!futureOutputs.empty() && futureOutputs.front().wait_for(std::chrono::seconds(0))) {
-        AsyncArray async_out = futureOutputs.front();
+        cv::AsyncArray async_out = futureOutputs.front();
         futureOutputs.pop();
-        Mat out;
+        cv::Mat out;
         async_out.get(out);
         predictionsQueue.push({out});
       }
@@ -217,26 +217,26 @@ main(int argc, char** argv) {
   });
 
   // Postprocessing and rendering loop
-  while(waitKey(1) < 0) {
+  while(cv::waitKey(1) < 0) {
     if(predictionsQueue.empty())
       continue;
 
-    std::vector<Mat> outs = predictionsQueue.get();
-    Mat frame = processedFramesQueue.get();
+    std::vector<cv::Mat> outs = predictionsQueue.get();
+    cv::Mat frame = processedFramesQueue.get();
 
     postprocess(frame, outs, net, backend);
 
     if(predictionsQueue.counter > 1) {
-      std::string label = format("Camera: %.2f FPS", framesQueue.getFPS());
-      putText(frame, label, Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0));
+      std::string label = cv::format("Camera: %.2f FPS", framesQueue.getFPS());
+      cv::putText(frame, label, Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0));
 
-      label = format("dnn::Network: %.2f FPS", predictionsQueue.getFPS());
-      putText(frame, label, Point(0, 30), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0));
+      label = cv::format("dnn::Network: %.2f FPS", predictionsQueue.getFPS());
+      cv::putText(frame, label, Point(0, 30), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0));
 
-      label = format("Skipped frames: %d", framesQueue.counter - predictionsQueue.counter);
-      putText(frame, label, Point(0, 45), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0));
+      label = cv::format("Skipped frames: %d", framesQueue.counter - predictionsQueue.counter);
+      cv::putText(frame, label, Point(0, 45), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0));
     }
-    imshow(kWinName, frame);
+    cv::imshow(kWinName, frame);
   }
 
   process = false;
@@ -248,37 +248,37 @@ main(int argc, char** argv) {
     CV_Error(Error::StsNotImplemented, "Asynchronous forward is supported only with Inference Engine backend.");
 
   // Process frames.
-  Mat frame, blob;
-  while(waitKey(1) < 0) {
+  cv::Mat frame, blob;
+  while(cv::waitKey(1) < 0) {
     cap >> frame;
     if(frame.empty()) {
-      waitKey();
+      cv::waitKey();
       break;
     }
 
     preprocess(frame, net, Size(inpWidth, inpHeight), scale, mean, swapRB);
 
-    std::vector<Mat> outs;
+    std::vector<cv::Mat> outs;
     net.forward(outs, outNames);
 
     postprocess(frame, outs, net, backend);
 
-    // Put efficiency information.
+    // Put efficiency incv::formation.
     std::vector<double> layersTimes;
-    double freq = getTickFrequency() / 1000;
+    double freq = cv::getTickFrequency() / 1000;
     double t = net.getPerfProfile(layersTimes) / freq;
-    std::string label = format("Inference time: %.2f ms", t);
-    putText(frame, label, Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0));
+    std::string label = cv::format("Inference time: %.2f ms", t);
+    cv::putText(frame, label, Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0));
 
-    imshow(kWinName, frame);
+    cv::imshow(kWinName, frame);
   }
 #endif // CV_CXX11
   return 0;
 }
 
 inline void
-preprocess(const Mat& frame, dnn::Net& net, Size inpSize, float scale, const Scalar& mean, bool swapRB) {
-  static Mat blob;
+preprocess(const cv::Mat& frame, dnn::Net& net, Size inpSize, float scale, const Scalar& mean, bool swapRB) {
+  static cv::Mat blob;
   // Create a 4D blob from a frame.
   if(inpSize.width <= 0)
     inpSize.width = frame.cols;
@@ -290,14 +290,14 @@ preprocess(const Mat& frame, dnn::Net& net, Size inpSize, float scale, const Sca
   net.setInput(blob, "", scale, mean);
   if(net.getLayer(0)->outputNameToIndex("im_info") != -1) // Faster-RCNN or R-FCN
   {
-    resize(frame, frame, inpSize);
-    Mat imInfo = (Mat_<float>(1, 3) << inpSize.height, inpSize.width, 1.6f);
+    cv::resize(frame, frame, inpSize);
+    cv::Mat imInfo = (cv::Mat_<float>(1, 3) << inpSize.height, inpSize.width, 1.6f);
     net.setInput(imInfo, "im_info");
   }
 }
 
 void
-postprocess(Mat& frame, const std::vector<Mat>& outs, dnn::Net& net, int backend) {
+postprocess(cv::Mat& frame, const std::vector<Mat>& outs, dnn::Net& net, int backend) {
   static std::vector<int> outLayers = net.getUnconnectedOutLayers();
   static std::string outLayerType = net.getLayer(outLayers[0])->type;
 
@@ -341,10 +341,10 @@ postprocess(Mat& frame, const std::vector<Mat>& outs, dnn::Net& net, int backend
       // numbers are [center_x, center_y, width, height]
       float* data = (float*)outs[i].data;
       for(int j = 0; j < outs[i].rows; ++j, data += outs[i].cols) {
-        Mat scores = outs[i].row(j).colRange(5, outs[i].cols);
+        cv::Mat scores = outs[i].row(j).colRange(5, outs[i].cols);
         Point classIdPoint;
         double confidence;
-        minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
+        cv::minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
         if(confidence > confThreshold) {
           int centerX = (int)(data[0] * frame.cols);
           int centerY = (int)(data[1] * frame.rows);
@@ -403,25 +403,25 @@ postprocess(Mat& frame, const std::vector<Mat>& outs, dnn::Net& net, int backend
 }
 
 void
-drawPred(int classId, float conf, int left, int top, int right, int bottom, Mat& frame) {
-  rectangle(frame, Point(left, top), Point(right, bottom), Scalar(0, 255, 0));
+drawPred(int classId, float conf, int left, int top, int right, int bottom, cv::Mat& frame) {
+  cv::rectangle(frame, Point(left, top), Point(right, bottom), Scalar(0, 255, 0));
 
-  std::string label = format("%.2f", conf);
+  std::string label = cv::format("%.2f", conf);
   if(!classes.empty()) {
     CV_Assert(classId < (int)classes.size());
     label = classes[classId] + ": " + label;
   }
 
   int baseLine;
-  Size labelSize = getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
+  Size labelSize = cv::getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
 
   top = max(top, labelSize.height);
-  rectangle(frame,
+  cv::rectangle(frame,
             Point(left, top - labelSize.height),
             Point(left + labelSize.width, top + baseLine),
             Scalar::all(255),
             FILLED);
-  putText(frame, label, Point(left, top), FONT_HERSHEY_SIMPLEX, 0.5, Scalar());
+  cv::putText(frame, label, Point(left, top), FONT_HERSHEY_SIMPLEX, 0.5, Scalar());
 }
 
 void
