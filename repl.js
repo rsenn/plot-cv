@@ -580,7 +580,8 @@ export default function REPL(title = 'QuickJS') {
   }
 
   function history_set(entries) {
-    history.splice(0, history.length, ...entries);
+    if(entries)
+      history.splice(0, history.length, ...entries);
   }
 
   function history_get() {

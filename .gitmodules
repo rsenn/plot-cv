@@ -2,3 +2,7 @@
 	path = quickjs
 	url = https://github.com/rsenn/quickjs.git
 	branch = master
+[submodule "lib"]
+	path = lib
+	url = https://github.com/rsenn/libweb.git
+	branch = master
