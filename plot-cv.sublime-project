@@ -143,7 +143,10 @@
 			],
 			/*"folder_include_patterns": [ "src", "opencv", "quickjs", "lib" ],*/
 			"path": ".",
-		}
+		},
+		{
+			"path": "circuit_recognizer"
+		},
 	],
 	"settings":
 	{
