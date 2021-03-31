@@ -126,6 +126,11 @@ async function CommandLine() {
   };
   let debugLog = filesystem.fopen('debug.log', 'a');
   repl.debugLog = debugLog;
+
+  globalThis.printNode = arg => {
+    repl.show(NodePrinter($.data).print(arg));
+  };
+
   repl.debug = (...args) => {
     let s = '';
     for(let arg of args) {

@@ -502,7 +502,7 @@ export default function REPL(title = 'QuickJS') {
     if(search == 0) repl.cmd = '';
     search--;
     readline_cb = search_cb;
-    //console.log('reverse_search', { search, cursor_pos, term_cursor_x });
+    console.log('reverse_search', { search, cursor_pos, term_cursor_x });
     update();
     return -2;
   }
@@ -580,8 +580,7 @@ export default function REPL(title = 'QuickJS') {
   }
 
   function history_set(entries) {
-    if(entries)
-      history.splice(0, history.length, ...entries);
+    if(entries) history.splice(0, history.length, ...entries);
   }
 
   function history_get() {
