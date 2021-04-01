@@ -107,7 +107,7 @@ async function CommandLine() {
   repl = globalThis.repl = new REPL('AST');
   console.log('repl', repl);
 
-  repl.exit = Util.exit;
+  //repl.exit = n => std.exit(n);
   repl.importModule = ImportModule;
   repl.history_set(LoadJSON(cmdhist));
   repl.directives = {
@@ -150,9 +150,11 @@ async function CommandLine() {
   Util.atexit(() => {
     debugLog.close();
     Terminal.mousetrackingDisable();
+    // Util.ttySetRaw(repl.term_fd, false);
     let hist = repl.history_get().filter((item, i, a) => a.lastIndexOf(item) == i);
     filesystem.writeFile(cmdhist, JSON.stringify(hist, null, 2));
     console.log(`EXIT (wrote ${hist.length} history entries)`);
+    repl.exit(0);
   });
   //Terminal.mousetrackingEnable();
 
@@ -160,7 +162,6 @@ async function CommandLine() {
   /*  console.log('repl', repl);
   console.log('repl.term_init', repl.term_init);*/
 
-  repl.term_init();
 
   await repl.run();
   console.log('REPL done');
@@ -244,7 +245,7 @@ function Structs(nodes) {
 function Table(list, pred = (n, l) => true /*/\.c:/.test(l)*/) {
   let entries = [...list].map((n, i) => [i, LocationString(GetLoc(n)), n]);
   const colSizes = [5, 10, 12, 30, 12, 15, 25];
-  const colKeys = ['id', 'kind', 'name', 'tagUsed'/*, 'previousDecl', 'completeDefinition'*/];
+  const colKeys = ['id', 'kind', 'name', 'tagUsed' /*, 'previousDecl', 'completeDefinition'*/];
   const colNames = ['#', ...colKeys, 'location'];
   const outputRow = (cols, pad, sep) =>
     cols
@@ -767,7 +768,7 @@ async function ASTShell(...args) {
         );
       },
       getType(name_or_id) {
-        return GetType(name_or_id,this.data);
+        return GetType(name_or_id, this.data);
       },
       getFunction(name_or_id) {
         let result = isNode(name_or_id)

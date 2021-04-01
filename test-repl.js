@@ -7,7 +7,8 @@ let repl;
 
 async function CommandLine() {
   let repl = (globalThis.repl = new REPL('AST'));
-  repl.exit = Util.exit;
+
+  repl.exit = n => std.exit(n);
   repl.directives = {
     c(...args) {
       console.log('c', { args });
