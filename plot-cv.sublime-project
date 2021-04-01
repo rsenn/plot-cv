@@ -139,7 +139,9 @@
 				"tmp",
 				"data",
 				"Sources/[!p][!l]*",
-				"Sources/[^p][^l]*"
+				"Sources/[^p][^l]*",
+				"*/test262/*",
+				"test262"
 			],
 			/*"folder_include_patterns": [ "src", "opencv", "quickjs", "lib" ],*/
 			"path": ".",

@@ -2,6 +2,7 @@ import Util from './lib/util.js';
 import path from './lib/path.js';
 import { AcquireReader } from './lib/stream/utils.js';
 export let SIZEOF_POINTER = 8;
+export let SIZEOF_INT = 4;
 
 function FileTime(filename) {
   let st = filesystem.stat(filename);
@@ -14,12 +15,26 @@ function Newer(file, other) {
 function Older(file, other) {
   return FileTime(file) < FileTime(other);
 }
+
+function GetSubscripts(str) {
+  let matches = [...Util.matchAll(/\[([0-9]*)\]/g, str)];
+  return matches.map(m => [m.index, +m[1]]);
+}
+
+function TrimSubscripts(str, sub) {
+  let [[index]] = sub ?? GetSubscripts(str) ?? [[str.length]];
+  return str.slice(0, index).trimEnd();
+}
+
 export class Node {
   static ast2node = new WeakMap();
   static node2ast = new WeakMap();
 
   constructor(ast) {
     if(typeof ast == 'object') {
+      if('path' in ast && 'value' in ast) ast = ast.value;
+
+      //   throw new Error(`Node constructor ${inspect(ast)}`);
       Node.ast2node.set(ast, this);
       Node.node2ast.set(this, ast);
     }
@@ -60,7 +75,8 @@ export class Type extends Node {
 
   constructor(node, ast) {
     let name, desugared, typeAlias, qualType;
-    //  console.log('Type', node);
+
+    //console.log('Type', typeof node, typeof node == 'string' ? node : node.kind ?? node.name ?? node.qualType);
 
     ast ??= globalThis['$']?.data;
 
@@ -87,33 +103,58 @@ export class Type extends Node {
       const isPointer = name.endsWith('*');
 
       if(isPointer) {
-        node = { qualType: name, desugaredQualType: 'void *' };
+        node = { kind: 'CustomType', qualType: name, desugaredQualType: 'void *' };
       }
       if(!isPointer && !node) {
-        //console.log('Type', node, ast);
+        let subscripts = GetSubscripts(name);
+        name = TrimSubscripts(name, subscripts);
+        console.log('Type', { name, subscripts });
+
+node = GetType(name, ast);
+
+if(!node) {
         throw new Error(`No such type '${name}'`);
         node = {};
+      } else{
+        console.log(`Found type ${name}`, node);
       }
+      }
+    } else {
+      if('path' in node && 'value' in node) node = node.value;
     }
 
     if(node instanceof Node) {
-      console.log('Type', node);
+      //console.log('node', Util.className(node), node);
       Util.putStack();
       throw new Error();
     }
 
     super(node);
     //console.log('node:', node);
-    if(node.name) name = node.name;
 
     if(node.tagUsed && name) name = (node.tagUsed ? node.tagUsed + ' ' : '') + name;
     if(node.kind && node.kind.startsWith('Enum')) name = 'enum ' + name;
 
-    /*if(node.qualType) */ qualType ??= node.qualType;
-    if(node.desugaredQualType) desugared = node.desugaredQualType;
-    if(node.typeAliasDeclId) typeAlias = node.typeAliasDeclId;
+    let type = 'type' in node ? node.type : node;
 
-    //console.log("Type", { name, qualType, node });
+    name = type.name ?? node.name;
+    qualType = type.qualType ?? node.qualType;
+
+    desugared = type.desugaredQualType ?? node.desugaredQualType;
+    typeAlias = type.typeAliasDeclId ?? node.typeAliasDeclId;
+
+    if(node.inner && node.inner[0] && node.inner[0].kind == 'ElaboratedType') {
+      typeAlias ??= node.inner[0]?.ownedTagDecl?.id;
+
+      if(typeAlias) {
+        let alias = new Type(ast.inner.find(n => n.id == typeAlias),
+          ast
+        );
+        if(name) alias.name = name;
+        if(qualType) alias.qualType = qualType;
+        if(desugared) alias.desugared = desugared;
+      }
+    }
 
     if(desugared === qualType) desugared = undefined;
     if(name == '') name = undefined;
@@ -136,6 +177,8 @@ export class Type extends Node {
 
         if(node) new Type(node, ast);
       }
+    } else if(this.isEnum()) {
+      this.desugared = 'int';
     }
   }
 
@@ -143,6 +186,10 @@ export class Type extends Node {
     return new RegExp(`(?:${this.qualType}${this.typeAlias ? '|' + this.typeAlias : ''})`.replace(/\*/g, '\\*'),
       'g'
       );
+  }
+  isEnum() {
+    let str = this.qualType || this + '';
+    return /^enum\s/.test(str);
   }
   isPointer() {
     let str = this + '';
@@ -160,17 +207,13 @@ export class Type extends Node {
   }
 
   get subscripts() {
-    if(this.isArray()) {
-      let matches = [...Util.matchAll(/\[([0-9]*)\]/g, this+'')];
-      //console.log("matches[0].index", matches[0].index);
-      return matches.map(m => [m.index, +m[1]]);
-    }
+    if(this.isArray())
+      return GetSubscripts(this+'');
   }
 
   trimSubscripts() {
     let str = this + '';
-    let [[index]] = this.subscripts ?? [[str.length]];
-    return str.slice(0, index).trimEnd();
+    return TrimSubscripts(str);
   }
 
   get pointer() {
@@ -220,15 +263,16 @@ export class Type extends Node {
   }
 
   get ffi() {
-  const { pointer, size, unsigned,desugared } = this;
+    const {  desugared, qualType } = this;
 
-  let str = this+'';
+    let str = this+'';
+    if(str == 'char *' || qualType == 'char *'||this.pointer == 'char') return 'char *';
 
-  for(const type of [str, desugared])
-    if(["void", "sint8", "sint16", "sint32", "sint64", "uint8", "uint16", "uint32", "uint64", "float", "double", "schar", "uchar", "sshort", "ushort", "sint", "uint", "slong", "ulong", "longdouble", "pointer", "int", "long", "short", "char", "size_t", "unsigned char", "unsigned int", "unsigned long", "void *", "char *", "string"].indexOf(type) != -1)
-      return type;
+    for(const type of [str, desugared])
+      if(["void", "sint8", "sint16", "sint32", "sint64", "uint8", "uint16", "uint32", "uint64", "float", "double", "schar", "uchar", "sshort", "ushort", "sint", "uint", "slong", "ulong", "longdouble", "pointer", "int", "long", "short", "char", "size_t", "unsigned char", "unsigned int", "unsigned long", "void *", "char *", "string"].indexOf(type) != -1)
+        return type;
+const { size,unsigned } = this;
 
-    if(pointer == 'char') return 'char *';
     if(size == SIZEOF_POINTER && !this.isPointer())
       return ['', 'unsigned '][unsigned | 0] + 'long';
     // if(size == SIZEOF_POINTER && unsigned) return 'size_t';
@@ -245,12 +289,13 @@ export class Type extends Node {
       let decl = Type.declarations.get(this + '');
       if(decl.kind == 'EnumDecl') return 'int';
     } else {
-      throw new Error(`No ffi type '${this}' ${size}`);
+      throw new Error(`No ffi type '${str}' ${size} ${Util.className(this)} ${this.ast.kind}`);
     }
   }
 
   get size() {
     if(this.isPointer()) return SIZEOF_POINTER;
+    if(this.isEnum()) return SIZEOF_INT;
 
     const  desugared = this.desugared || this+'' || this.name;
     if(desugared == 'char') return 1;
@@ -266,7 +311,10 @@ export class Type extends Node {
     }
     match = /^(unsigned\s+|signed\s+|const\s+|volatile\s+|long\s+|short\s+)*([^\[]*[^ \[\]]) *\[?([^\]]*).*$/g.exec(desugared
       );
-    //console.log("match:", match);
+  /*  console.log("ast:", this.ast);
+    console.log("str:", this+'');
+    console.log("qualType:", this.qualType);
+    console.log("match:", match);*/
     if(match) {
       switch (match[2]) {
         case 'char': 
@@ -346,7 +394,9 @@ export class Type extends Node {
 
   [Symbol.toPrimitive](hint) {
     if(hint == 'default' || hint == 'string')
-      return (this.qualType ?? this.desugaredQualType ?? '').replace(/\s+(\*+)$/, '$1'); //this+'';
+      return (this.qualType ?? this.desugaredQualType ?? this?.ast?.name ?? '').replace(/\s+(\*+)$/,
+        '$1'
+      ); //this+'';
     return this;
   }
 
@@ -356,21 +406,24 @@ export class Type extends Node {
   }
 }
 
-Type.declarations.set('void', new Type({ name: 'void' }));
-Type.declarations.set('char', new Type({ name: 'char' }));
-Type.declarations.set('int', new Type({ name: 'int' }));
-Type.declarations.set('short', new Type({ name: 'short' }));
-Type.declarations.set('long', new Type({ name: 'long' }));
-Type.declarations.set('long long', new Type({ name: 'long long' }));
-Type.declarations.set('__int128', new Type({ name: '__int128' }));
-Type.declarations.set('unsigned char', new Type({ name: 'unsigned char' }));
-Type.declarations.set('unsigned int', new Type({ name: 'unsigned int' }));
-Type.declarations.set('unsigned short', new Type({ name: 'unsigned short' }));
-Type.declarations.set('unsigned long', new Type({ name: 'unsigned long' }));
-Type.declarations.set('unsigned long long', new Type({ name: 'unsigned long long' }));
-Type.declarations.set('unsigned __int128', new Type({ name: 'unsigned __int128' }));
-Type.declarations.set('float', new Type({ name: 'float' }));
-Type.declarations.set('double', new Type({ name: 'double' }));
+Type.declarations.set('void', new Type({ qualType: 'void' }));
+Type.declarations.set('char', new Type({ qualType: 'char' }));
+Type.declarations.set('int', new Type({ qualType: 'int' }));
+Type.declarations.set('short', new Type({ qualType: 'short' }));
+Type.declarations.set('long', new Type({ qualType: 'long' }));
+Type.declarations.set('long long', new Type({ qualType: 'long long' }));
+Type.declarations.set('__int128', new Type({ qualType: '__int128' }));
+Type.declarations.set('unsigned char', new Type({ qualType: 'unsigned char' }));
+Type.declarations.set('unsigned int', new Type({ qualType: 'unsigned int' }));
+Type.declarations.set('unsigned short', new Type({ qualType: 'unsigned short' }));
+Type.declarations.set('unsigned long', new Type({ qualType: 'unsigned long' }));
+Type.declarations.set('unsigned long long', new Type({ qualType: 'unsigned long long' }));
+Type.declarations.set('unsigned __int128', new Type({ qualType: 'unsigned __int128' }));
+Type.declarations.set('float', new Type({ qualType: 'float' }));
+Type.declarations.set('double', new Type({ qualType: 'double' }));
+Type.declarations.set('void *', new Type({ qualType: 'void *' }));
+Type.declarations.set('char *', new Type({ qualType: 'char *' }));
+Type.declarations.set('const char *', new Type({ qualType: 'const char *' }));
 
 function RoundTo(value, align) {
   return Math.floor((value + (align - 1)) / align) * align;
@@ -527,6 +580,22 @@ export class FunctionDecl extends Node {
     this.returnType = returnType.kind ? TypeFactory(returnType, ast) : new Type(returnType, ast);
     this.parameters =
       parameters && /*new Map*/ parameters.map(({ name, type }) => [name, new Type(type, ast)]);
+  }
+}
+
+export class VarDecl extends Node {
+  constructor(node, ast) {
+    super(node, ast);
+
+    this.name = node.name;
+
+    if(node.mangledName && node.mangledName != node.name) this.mangledName = node.mangledName;
+
+    let type = node.type?.qualType;
+
+    this.type = type.kind ? TypeFactory(type, ast) : new Type(type, ast);
+
+    console.log('VarDecl', this);
   }
 }
 
@@ -806,7 +875,7 @@ export function GetLoc(node) {
   return loc;
 }
 
-export function GetType(node, ast) {
+/*export function GetType(node, ast) {
   let type, elaborated;
 
   //  console.log('GetType', node);
@@ -827,7 +896,7 @@ export function GetType(node, ast) {
 
   type ??= node.type;
   return type;
-}
+}*/
 
 export function GetTypeStr(node) {
   let type;
@@ -1161,22 +1230,18 @@ export function NodePrinter(ast) {
         }
         FunctionDecl(function_decl) {
           const { storageClass, mangledName, isImplicit, isUsed } = function_decl;
-
           let i = 0;
           if(storageClass) put(storageClass + ' ');
-
           let node = new FunctionDecl(function_decl, this.ast);
-          //console.log("FunctionDecl", node.returnType);
-          let returnType = node.returnType; //new Type(node?.ast?.returnType ?? node?.returnType, this.ast);
-
-          put(returnType.name + ' ' + function_decl.name + '(');
+          //console.log('FunctionDecl', node.returnType);
+          let returnType = node.returnType;
+          put(returnType + ' ' + function_decl.name + '(');
           i = 0;
           for(let inner of (function_decl.inner ?? []).filter(n => n.kind == 'ParmVarDecl')) {
             if(i++ > 0) put(', ');
             printer.print(inner);
           }
           put(') ');
-
           i = 0;
           for(let inner of (function_decl.inner ?? []).filter(n => n.kind != 'ParmVarDecl' && !/Comment/.test(n.kind)
           )) {
@@ -1503,6 +1568,47 @@ export function PrintNode(node) {
   }
   if(Array.isArray(out)) out = out.join(sep);
   return out;
+}
+
+export function isNode(obj) {
+  return Util.isObject(obj) && typeof obj.kind == 'string';
+}
+
+export function GetType( name_or_id,ast) {
+  console.log("GetType:", name_or_id)
+  const types = ast.inner.filter(n => /(RecordDecl|TypedefDecl|EnumDecl)/.test(n.kind));
+  let result, idx;
+
+  if(typeof name_or_id == 'object' && name_or_id) {
+    result = name_or_id;
+  } else if(typeof name_or_id == 'string') {
+    let tagUsed,
+      wantKind = /^.*/;
+    if(/^(struct|union|enum)\s/.test(name_or_id)) {
+      tagUsed = name_or_id.replace(/\s.*/g, '');
+      name_or_id = name_or_id.substring(tagUsed.length + 1);
+    }
+    switch (tagUsed) {
+      case 'struct':
+      case 'union':
+        wantKind = /^RecordDecl/;
+        break;
+      case 'enum':
+        wantKind = /^EnumDecl/;
+        break;
+    }
+    let results = types.filter(name_or_id.startsWith('0x')
+        ? node => node.id == name_or_id && wantKind.test(node.kind)
+        : node => node.name == name_or_id && wantKind.test(node.kind)
+    );
+    if(results.length <= 1 || (idx = results.findIndex(r => r.completeDefinition)) == -1) idx = 0;
+    result = results[idx];
+
+    if(!result && Type.declarations.has(name_or_id)) result = Type.declarations.get(name_or_id);
+  } else {
+    result = types[name_or_id];
+  }
+return result;
 }
 
 //export default AstDump;

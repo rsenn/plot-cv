@@ -11,14 +11,15 @@ exec_cmd() (
 
 find_cmake_files() (
 	set -f
-	set -- ${@:-.}
+	[ $# -le 0 ] && set -- cmake quickjs quickjs/modules
+set -- "$@" -maxdepth 1
 	if [ "$TYPE" ]; then
 		case "$TYPE" in
 		'^'* | '!'*) set -- "$@" -not -type "${TYPE#?}" ;;
 		*) set -- "$@" -type "$TYPE" ;;
 		esac
 	fi
-	set -- "$@" "(" -iname CMakeLists.txt \
+	set -- "$@"  "(" -iname CMakeLists.txt \
 		-or -iname "*.cmake" \
 		")"
 	set -- "$@" -and "(" \
@@ -85,4 +86,5 @@ find_cmake() (
 
 	eval "$CMD"
 )
+
 find_cmake "$@"

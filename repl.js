@@ -226,6 +226,7 @@ export default function REPL(title = 'QuickJS') {
   });
 
   async function term_init() {
+    //   console.log("term_init");
     var tab;
     term_fd = input;
     /* get the terminal size */
@@ -246,7 +247,8 @@ export default function REPL(title = 'QuickJS') {
 
     /* install a handler to read stdin */
     term_read_buf = new Uint8Array(1);
-    //os.setReadHandler(term_fd, term_read_handler);
+    os.setReadHandler(term_fd, term_read_handler);
+    console.log('term_init');
   }
 
   function sigint_handler() {
@@ -264,7 +266,7 @@ export default function REPL(title = 'QuickJS') {
         code: term_read_buf[i],
         char: String.fromCharCode(term_read_buf[i])
       });
-      handle_byte(term_read_buf[i]);
+      handle_byte.call(repl, term_read_buf[i]);
 
       if(!running) break;
     }
@@ -1534,7 +1536,10 @@ export default function REPL(title = 'QuickJS') {
       puts('\n');
       puts(colors.none);
     } catch(error) {
-      puts(colors[styles.error_msg]);
+      puts('EXCEPTION: ' + colors[styles.error_msg]);
+
+      //      puts(error.stack+'');
+
       if(error instanceof Error || typeof error.message == 'string') {
         console.log((error.type ?? Util.className(error)) + ': ' + error.message);
         if(error.stack) {
@@ -1961,6 +1966,8 @@ export default function REPL(title = 'QuickJS') {
   }
 
   async function run() {
+    console.log('run');
+
     if(!console.options) console.options = {};
 
     console.options.depth = Infinity;

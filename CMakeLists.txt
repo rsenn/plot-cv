@@ -102,14 +102,6 @@ foreach(CXX_STANDARD c++20 c++17 c++14 c++11)
 endforeach()
 
 message("C++ standard: ${CXX_STANDARD_VALUE}")
-#[[
-check_c_compiler_flag("-Wno-deprecated-anon-enum-enum-conversion" WARN_NO_DEPRECATED_ANON_ENUM_ENUM_CONVERSION)
-if(WARN_NO_DEPRECATED_ANON_ENUM_ENUM_CONVERSION)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-deprecated-anon-enum-enum-conversion" )
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-anon-enum-enum-conversion" )
-endif(WARN_NO_DEPRECATED_ANON_ENUM_ENUM_CONVERSION)
-
-]]
 
 macro(NOWARN_FLAG FLAG)
   canonicalize(VARNAME "${FLAG}")

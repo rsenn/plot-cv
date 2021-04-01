@@ -1,4 +1,4 @@
-  import PortableFileSystem from './lib/filesystem.js';
+import PortableFileSystem from './lib/filesystem.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import PortableSpawn from './lib/spawn.js';
 import { AcquireReader } from './lib/stream/utils.js';

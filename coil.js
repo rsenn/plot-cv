@@ -2,7 +2,5 @@ import { h, Fragment, html, render, Component, useState, useEffect, useRef, useC
 import { Element } from './lib/dom.js';
 
 window.addEventListener('load', () => {
-render(h('div'), document.body);
-
- });
-
+  render(h('div'), document.body);
+});

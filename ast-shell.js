@@ -7,7 +7,7 @@ import deep from './lib/deep.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import REPL from './repl.js';
 //import * as std from 'std';
-import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter } from './clang-ast.js';
+import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, VarDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter, isNode } from './clang-ast.js';
 import Tree from './lib/tree.js';
 import * as Terminal from './terminal.js';
 import * as ECMAScript from './lib/ecmascript.js';
@@ -101,8 +101,12 @@ async function CommandLine() {
     outputLog.puts(args.join(' ')+'\n');
     outputLog.flush();
   };*/
+  console.log('outputLog', outputLog);
 
-  let repl = (globalThis.repl = new REPL('AST'));
+  let repl;
+  repl = globalThis.repl = new REPL('AST');
+  console.log('repl', repl);
+
   repl.exit = Util.exit;
   repl.importModule = ImportModule;
   repl.history_set(LoadJSON(cmdhist));
@@ -152,6 +156,12 @@ async function CommandLine() {
   });
   //Terminal.mousetrackingEnable();
 
+  repl = Util.traceProxy(repl);
+  /*  console.log('repl', repl);
+  console.log('repl.term_init', repl.term_init);*/
+
+  repl.term_init();
+
   await repl.run();
   console.log('REPL done');
 }
@@ -174,27 +184,30 @@ function* DirIterator(...args) {
   }
 }
 
-function* RecursiveDirIterator(dir, maxDepth = Infinity) {
+function* RecursiveDirIterator(dir, maxDepth = Infinity, pred = (entry, file, dir) => true) {
+  if(!dir.endsWith('/')) dir += '/';
   for(let file of filesystem.readdir(dir)) {
     if(['.', '..'].indexOf(file) != -1) continue;
-
-    let entry = `${dir}/${file}`;
+    let entry = `${dir}${file}`;
     let isDir = false;
     let st = filesystem.stat(entry);
-
     isDir = st && st.isDirectory();
-
-    yield isDir ? entry + '/' : entry;
-
-    if(maxDepth > 0 && isDir) yield* RecursiveDirIterator(entry, maxDepth - 1);
+    if(isDir) entry += '/';
+    let show = pred(entry, file, dir);
+    if(show) yield entry;
+    if(maxDepth > 0 && isDir) yield* RecursiveDirIterator(entry, maxDepth - 1, pred);
   }
+}
+
+function* IncludeAll(dir, maxDepth = Infinity, pred = entry => /\.[ch]$/.test(entry)) {
+  for(let entry of RecursiveDirIterator(dir, maxDepth, pred)) yield `#include "${entry}"`;
 }
 
 function SelectLocations(node) {
   let result = deep.select(node, n =>
     ['offset', 'line', 'file'].some(prop => n[prop] !== undefined)
   );
-  console.log('result:', console.config({ depth: 1 }), result);
+  //console.log('result:', console.config({ depth: 1 }), result);
   return result;
 }
 
@@ -231,7 +244,7 @@ function Structs(nodes) {
 function Table(list, pred = (n, l) => true /*/\.c:/.test(l)*/) {
   let entries = [...list].map((n, i) => [i, LocationString(GetLoc(n)), n]);
   const colSizes = [5, 10, 12, 30, 12, 15, 25];
-  const colKeys = ['id', 'kind', 'name', 'tagUsed', 'previousDecl', 'completeDefinition'];
+  const colKeys = ['id', 'kind', 'name', 'tagUsed'/*, 'previousDecl', 'completeDefinition'*/];
   const colNames = ['#', ...colKeys, 'location'];
   const outputRow = (cols, pad, sep) =>
     cols
@@ -264,6 +277,9 @@ function LoadJSON(filename) {
 }
 
 function WriteFile(name, data, verbose = true) {
+  if(Util.isIterator(data)) data = [...data];
+  if(Util.isArray(data)) data = data.join('\n');
+
   if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
   let ret = filesystem.writeFile(name, data);
 
@@ -463,7 +479,7 @@ export class FFI_Function {
     this.name = name;
     this.prefix = prefix;
     this.returnType = returnType.ffi;
-    this.parameters = [...parameters].map(([name, type]) => [name, type.ffi]);
+    this.parameters = [...(parameters ?? [])].map(([name, type]) => [name, type.ffi]);
   }
 
   generateDefine(fp, lib) {
@@ -616,6 +632,7 @@ function ParseECMAScript(file, debug = false) {
 function PrintECMAScript(ast, comments, printer = new ECMAScript.Printer({ indent: 4 }, comments)) {
   return printer.print(ast);
 }
+
 function PrintAst(node, ast) {
   ast ??= $.data;
 
@@ -642,19 +659,22 @@ function PrintAst(node, ast) {
   return printer.output;
 }
 
-function MakeFFI(node) {
+function MakeFFI(node, fp, lib, exp) {
   if(Array.isArray(node)) {
     let out = '';
+    let i = 0;
     for(let item of node) {
+      console.log(`MakeFFI item #${i + 1}/${node.length}`);
       try {
-        let ret = MakeFFI(item);
+        let ret = MakeFFI(item, fp, lib, exp);
         if(typeof ret == 'string' && ret.length > 0) {
           if(out) out += '\n';
           out += ret;
         }
       } catch(error) {
-        out += `/* ERROR: ${error.message} */`;
+        console.log(`ERROR item [${i}]:`, error.message);
       }
+      i++;
     }
     return out;
   }
@@ -666,8 +686,8 @@ function MakeFFI(node) {
     let ffi = new FFI_Function(node);
 
     let protoStr = PrintAst(node.ast, $.data).split(/\n/g)[0].replace(/\ {$/, ';');
-
-    return `/* ${protoStr} */\n` + ffi.generate();
+    protoStr = protoStr.replace(/^\s*extern\s+/, '');
+    return `/* ${protoStr} */\n` + ffi.generate(fp, lib, exp);
   } else if(node instanceof RecordDecl || node instanceof TypedefDecl) {
     let code = [...GenerateStructClass(node)].join('\n');
     return code;
@@ -679,14 +699,15 @@ async function ASTShell(...args) {
     /*breakLength: 240, */ customInspect: true,
     compact: 1,
     depth: 1,
-    maxArrayLength: Infinity
+    maxArrayLength: Infinity,
+    hideKeys: ['loc', 'range']
   };
-  console.options = consoleOptions;
-  console.options.compact = 1;
-  console.options.hideKeys = ['loc', 'range'];
   await ConsoleSetup(consoleOptions);
   await PortableFileSystem(fs => (filesystem = fs));
   await PortableSpawn(fn => (spawn = fn));
+  console.options = consoleOptions;
+  console.options.compact = 1;
+  console.options.hideKeys = ['loc', 'range'];
 
   globalThis.files = files = {};
 
@@ -746,32 +767,21 @@ async function ASTShell(...args) {
         );
       },
       getType(name_or_id) {
-        const types = this.data.inner.filter(n => /(RecordDecl|TypedefDecl|EnumDecl)/.test(n.kind));
-        let result, idx;
-
-        if(typeof name_or_id == 'object' && name_or_id) {
-          result = name_or_id;
-        } else if(typeof name_or_id == 'string') {
-          let results = types.filter(name_or_id.startsWith('0x')
-              ? node => node.id == name_or_id
-              : node => node.name == name_or_id
-          );
-          if(results.length <= 1 || (idx = results.findIndex(r => r.completeDefinition)) == -1)
-            idx = 0;
-          result = results[idx];
-
-          if(!result && Type.declarations.has(name_or_id))
-            result = Type.declarations.get(name_or_id);
-        } else {
-          result = types[name_or_id];
-        }
-
-        if(result) return TypeFactory(result, this.data);
+        return GetType(name_or_id,this.data);
       },
       getFunction(name_or_id) {
-        let result = this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
+        let result = isNode(name_or_id)
+          ? name_or_id
+          : this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
 
         if(result) return new FunctionDecl(result, this.data);
+      },
+      getVariable(name_or_id) {
+        let result = isNode(name_or_id)
+          ? name_or_id
+          : this.getByIdOrName(name_or_id, n => /(VarDecl)/.test(n.kind));
+
+        if(result) return new VarDecl(result, this.data);
       }
     });
     return Util.lazyProperties(r, {
@@ -798,6 +808,7 @@ async function ASTShell(...args) {
     MakeStructClass,
     DirIterator,
     RecursiveDirIterator,
+    IncludeAll,
     Terminal,
     PrintAst,
     MakeFFI,
@@ -860,7 +871,7 @@ async function ASTShell(...args) {
   WriteFile(unithist, JSON.stringify(hist, null, 2));
 
   globalThis.$ = items.length == 1 ? items[0] : items;
-
+  console.log('CommandLine');
   await CommandLine();
 }
 
