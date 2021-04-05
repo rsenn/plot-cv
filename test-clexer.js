@@ -1,19 +1,20 @@
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import tokenize from './tokenize.js';
-  import PortableFileSystem from './lib/filesystem.js';
-
+import PortableFileSystem from './lib/filesystem.js';
+const consoleOpts = { depth: Infinity, compact: 5, hideKeys: ['pos'] };
 
 async function main(...args) {
-  await ConsoleSetup({ depth: Infinity });
-     await PortableFileSystem();
+  await ConsoleSetup(consoleOpts);
 
-let code = filesystem.readFile('pa_devs.c', 'utf-8');
-console.log(Util.abbreviate(code));
+  await PortableFileSystem();
+  console.options = { ...consoleOpts, depth: 3, compact: 1, hideKeys: ['offset'] };
 
-let tokens = tokenize(code);
-console.log('tokens',tokens);;
+  let code = filesystem.readFile('pa_devs.c', 'utf-8');
+  console.log(Util.abbreviate(code));
 
+  let tokens = tokenize(code);
+  console.log('tokens', tokens);
 }
 
 Util.callMain(main, true);
