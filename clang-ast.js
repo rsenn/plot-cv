@@ -6,12 +6,12 @@ export let SIZEOF_INT = 4;
 
 function FileTime(filename) {
   let st = filesystem.stat(filename);
-console.log("FileTime",filename, st.mtime);
+  console.log('FileTime', filename, st.mtime);
   return st.mtime ?? st.time;
 }
 
 function Newer(file, other) {
-console.log("Newer", {file,other});
+  console.log('Newer', { file, other });
   return FileTime(file) > FileTime(other);
 }
 function Older(file, other) {
@@ -112,14 +112,14 @@ export class Type extends Node {
         name = TrimSubscripts(name, subscripts);
         console.log('Type', { name, subscripts });
 
-node = GetType(name, ast);
+        node = GetType(name, ast);
 
-if(!node) {
-        throw new Error(`No such type '${name}'`);
-        node = {};
-      } else{
-        console.log(`Found type ${name}`, node);
-      }
+        if(!node) {
+          throw new Error(`No such type '${name}'`);
+          node = {};
+        } else {
+          console.log(`Found type ${name}`, node);
+        }
       }
     } else {
       if('path' in node && 'value' in node) node = node.value;
@@ -772,8 +772,13 @@ export async function AstDump(compiler, source, args, force) {
   console.log('AstDump', { compiler, source, args, force });
 
   let output = path.basename(source, /\.[^.]*$/) + '.ast.json';
- let r;
-   console.log('AstDump', { output , source, exists: filesystem.exists(output), newer: Newer(output,source) });
+  let r;
+  console.log('AstDump', {
+    output,
+    source,
+    exists: filesystem.exists(output),
+    newer: Newer(output, source)
+  });
   if(!force && filesystem.exists(output) && Newer(output, source)) {
     console.log(`Loading cached '${output}'...`);
     r = { file: output };
@@ -1577,8 +1582,8 @@ export function isNode(obj) {
   return Util.isObject(obj) && typeof obj.kind == 'string';
 }
 
-export function GetType( name_or_id,ast) {
-  console.log("GetType:", name_or_id)
+export function GetType(name_or_id, ast) {
+  console.log('GetType:', name_or_id);
   const types = ast.inner.filter(n => /(RecordDecl|TypedefDecl|EnumDecl)/.test(n.kind));
   let result, idx;
 
@@ -1611,7 +1616,7 @@ export function GetType( name_or_id,ast) {
   } else {
     result = types[name_or_id];
   }
-return result;
+  return result;
 }
 
 //export default AstDump;
