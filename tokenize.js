@@ -2,1144 +2,330 @@ import tokenRules from './token-rules.js';
 import Lexer from './lib/lexer.js';
 var lexer = new Lexer();
 
-var row = 1,
-  col = 1;
+var line = 1,
+  column = 1;
 
 export function count(lexeme) {
   for(var i = 0; i < lexeme.length; i++) {
     if(lexeme[i] == '\n') {
-      row = row + 1;
-      col = 1;
+      line = line + 1;
+      column = 1;
     } else if(lexeme[i] == '\t') {
-      col = col + (4 - (col % 4));
+      column = column + (4 - (column % 4));
     } else {
-      col = col + 1;
+      column = column + 1;
     }
   }
 }
 
-export function tokenize(streamOfText) {
-  row = 1;
-  col = 1;
-  var streamOfTokens = [];
-  lexer.addRule(tokenRules['singleLineComment'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'COMMENT';
-    token['keyword'] = false;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['multiLineComment'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'COMMENT';
-    token['keyword'] = false;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['while'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'WHILE';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
+function token(tok) {
+  count(tok.lexeme);
+  return tok;
+}
 
-  lexer.addRule(tokenRules['while'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'WHILE';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['volatile'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'VOLATILE';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['void'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'VOID';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['unsigned'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'UNSIGNED';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['union'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'UNION';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['typedef'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'TYPEDEF';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['switch'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'SWITCH';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['struct'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'STRUCT';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['static'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'STATIC';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['sizeof'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'SIZEOF';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['signed'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'SIGNED';
-    token['parent'] = null;
-    token['keyword'] = true;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['short'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'SHORT';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['return'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'RETURN';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['register'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'REGISTER';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['long'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'LONG';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['int'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'INT';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['if'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'IF';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['goto'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'GOTO';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['for'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'FOR';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['float'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'FLOAT';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['extern'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'EXTERN';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['enum'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'ENUM';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['else'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'ELSE';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['double'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'DOUBLE';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['do'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'DO';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['default'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'DEFAULT';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['continue'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'CONTINUE';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['const'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'CONST';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['char'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'CHAR';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['case'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'CASE';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['break'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'BREAK';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['auto'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'AUTO';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['bool'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'BOOL';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['complex'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'COMPLEX';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['imaginary'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'IMAGINARY';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['inline'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'INLINE';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['restrict'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'RESTRICT';
-    token['keyword'] = true;
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['identifier'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'IDENTIFIER';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['hexadecimal'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'CONSTANT';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['octal'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'CONSTANT';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['decimal'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'CONSTANT';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['char_literal'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'CONSTANT';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['floatWithoutPoint'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'CONSTANT';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['floatWithNothingBeforePoint'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'CONSTANT';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['floatWithNothingAfterPoint'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'CONSTANT';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['string_literal'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'STRING_LITERAL';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['ellipsis'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'ELLIPSIS';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['right_assign'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'RIGHT_ASSIGN';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['left_assign'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'LEFT_ASSIGN';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['add_assign'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'ADD_ASSIGN';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['sub_assign'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'SUB_ASSIGN';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['mul_assign'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'MUL_ASSIGN';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['div_assign'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'DIV_ASSIGN';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['mod_assign'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'MOD_ASSIGN';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['and_assign'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'AND_ASSIGN';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['xor_assign'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'XOR_ASSIGN';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['or_assign'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'OR_ASSIGN';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['right_op'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'RIGHT_OP';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['left_op'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'LEFT_OP';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['inc_op'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'INC_OP';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['dec_op'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'DEC_OP';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['ptr_op'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'PTR_OP';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['and_op'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'AND_OP';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['or_op'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'OR_OP';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['le_op'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'LE_OP';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['ge_op'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'GE_OP';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['eq_op'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'EQ_OP';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['ne_op'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'NE_OP';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules[';'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = ';';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['{'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = '{';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['}'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = '}';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules[','], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = ',';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules[':'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = ':';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['='], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = '=';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['('], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = '(';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules[')'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = ')';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['['], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = '[';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules[']'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = ']';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['.'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = '.';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['&'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = '&';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['!'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = '!';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['~'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = '~';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['-'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = '-';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['+'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = '+';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['*'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = '*';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['/'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = '/';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['%'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = '%';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['<'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = '<';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['>'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = '>';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['^'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = '^';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['|'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = '|';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['?'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = '?';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['whitespace'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'WHITESPACE';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
-  lexer.addRule(tokenRules['unmatched'], function(lexeme) {
-    var token = {};
-    token['lexeme'] = lexeme;
-    token['row'] = row;
-    token['col'] = col;
-    token['tokenClass'] = 'UNMATCHED';
-    token['parent'] = null;
-    token['children'] = null;
-    count(lexeme);
-    return token;
-  });
+export async function* tokenize(streamOfText) {
+  line = 1;
+  column = 1;
+  lexer.addRule(tokenRules['singleLineComment'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'COMMENT', keyword: false })
+  );
+  lexer.addRule(tokenRules['multiLineComment'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'COMMENT', keyword: false })
+  );
+  lexer.addRule(tokenRules['while'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'WHILE', keyword: true })
+  );
+  lexer.addRule(tokenRules['while'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'WHILE', keyword: true })
+  );
+  lexer.addRule(tokenRules['volatile'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'VOLATILE', keyword: true })
+  );
+  lexer.addRule(tokenRules['void'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'VOID', keyword: true })
+  );
+  lexer.addRule(tokenRules['unsigned'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'UNSIGNED', keyword: true })
+  );
+  lexer.addRule(tokenRules['union'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'UNION', keyword: true })
+  );
+  lexer.addRule(tokenRules['typedef'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'TYPEDEF', keyword: true })
+  );
+  lexer.addRule(tokenRules['switch'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'SWITCH', keyword: true })
+  );
+  lexer.addRule(tokenRules['struct'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'STRUCT', keyword: true })
+  );
+  lexer.addRule(tokenRules['static'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'STATIC', keyword: true })
+  );
+  lexer.addRule(tokenRules['sizeof'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'SIZEOF', keyword: true })
+  );
+  lexer.addRule(tokenRules['signed'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'SIGNED', keyword: true })
+  );
+  lexer.addRule(tokenRules['short'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'SHORT', keyword: true })
+  );
+  lexer.addRule(tokenRules['return'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'RETURN', keyword: true })
+  );
+  lexer.addRule(tokenRules['register'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'REGISTER', keyword: true })
+  );
+  lexer.addRule(tokenRules['long'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'LONG', keyword: true })
+  );
+  lexer.addRule(tokenRules['int'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'INT', keyword: true })
+  );
+  lexer.addRule(tokenRules['if'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'IF', keyword: true })
+  );
+  lexer.addRule(tokenRules['goto'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'GOTO', keyword: true })
+  );
+  lexer.addRule(tokenRules['for'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'FOR', keyword: true })
+  );
+  lexer.addRule(tokenRules['float'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'FLOAT', keyword: true })
+  );
+  lexer.addRule(tokenRules['extern'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'EXTERN', keyword: true })
+  );
+  lexer.addRule(tokenRules['enum'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'ENUM', keyword: true })
+  );
+  lexer.addRule(tokenRules['else'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'ELSE', keyword: true })
+  );
+  lexer.addRule(tokenRules['double'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'DOUBLE', keyword: true })
+  );
+  lexer.addRule(tokenRules['do'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'DO', keyword: true })
+  );
+  lexer.addRule(tokenRules['default'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'DEFAULT', keyword: true })
+  );
+  lexer.addRule(tokenRules['continue'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'CONTINUE', keyword: true })
+  );
+  lexer.addRule(tokenRules['const'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'CONST', keyword: true })
+  );
+  lexer.addRule(tokenRules['char'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'CHAR', keyword: true })
+  );
+  lexer.addRule(tokenRules['case'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'CASE', keyword: true })
+  );
+  lexer.addRule(tokenRules['break'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'BREAK', keyword: true })
+  );
+  lexer.addRule(tokenRules['auto'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'AUTO', keyword: true })
+  );
+  lexer.addRule(tokenRules['bool'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'BOOL', keyword: true })
+  );
+  lexer.addRule(tokenRules['complex'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'COMPLEX', keyword: true })
+  );
+  lexer.addRule(tokenRules['imaginary'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'IMAGINARY', keyword: true })
+  );
+  lexer.addRule(tokenRules['inline'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'INLINE', keyword: true })
+  );
+  lexer.addRule(tokenRules['restrict'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'RESTRICT', keyword: true })
+  );
+  lexer.addRule(tokenRules['identifier'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'IDENTIFIER' })
+  );
+  lexer.addRule(tokenRules['hexadecimal'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'CONSTANT' })
+  );
+  lexer.addRule(tokenRules['octal'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'CONSTANT' })
+  );
+  lexer.addRule(tokenRules['decimal'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'CONSTANT' })
+  );
+  lexer.addRule(tokenRules['char_literal'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'CONSTANT' })
+  );
+  lexer.addRule(tokenRules['floatWithoutPoint'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'CONSTANT' })
+  );
+  lexer.addRule(tokenRules['floatWithNothingBeforePoint'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'CONSTANT' })
+  );
+  lexer.addRule(tokenRules['floatWithNothingAfterPoint'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'CONSTANT' })
+  );
+  lexer.addRule(tokenRules['string_literal'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'STRING_LITERAL' })
+  );
+  lexer.addRule(tokenRules['ellipsis'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'ELLIPSIS' })
+  );
+  lexer.addRule(tokenRules['right_assign'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'RIGHT_ASSIGN' })
+  );
+  lexer.addRule(tokenRules['left_assign'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'LEFT_ASSIGN' })
+  );
+  lexer.addRule(tokenRules['add_assign'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'ADD_ASSIGN' })
+  );
+  lexer.addRule(tokenRules['sub_assign'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'SUB_ASSIGN' })
+  );
+  lexer.addRule(tokenRules['mul_assign'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'MUL_ASSIGN' })
+  );
+  lexer.addRule(tokenRules['div_assign'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'DIV_ASSIGN' })
+  );
+  lexer.addRule(tokenRules['mod_assign'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'MOD_ASSIGN' })
+  );
+  lexer.addRule(tokenRules['and_assign'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'AND_ASSIGN' })
+  );
+  lexer.addRule(tokenRules['xor_assign'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'XOR_ASSIGN' })
+  );
+  lexer.addRule(tokenRules['or_assign'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'OR_ASSIGN' })
+  );
+  lexer.addRule(tokenRules['right_op'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'RIGHT_OP' })
+  );
+  lexer.addRule(tokenRules['left_op'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'LEFT_OP' })
+  );
+  lexer.addRule(tokenRules['inc_op'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'INC_OP' })
+  );
+  lexer.addRule(tokenRules['dec_op'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'DEC_OP' })
+  );
+  lexer.addRule(tokenRules['ptr_op'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'PTR_OP' })
+  );
+  lexer.addRule(tokenRules['and_op'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'AND_OP' })
+  );
+  lexer.addRule(tokenRules['or_op'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'OR_OP' })
+  );
+  lexer.addRule(tokenRules['le_op'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'LE_OP' })
+  );
+  lexer.addRule(tokenRules['ge_op'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'GE_OP' })
+  );
+  lexer.addRule(tokenRules['eq_op'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'EQ_OP' })
+  );
+  lexer.addRule(tokenRules['ne_op'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'NE_OP' })
+  );
+  lexer.addRule(tokenRules[';'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: ';' })
+  );
+  lexer.addRule(tokenRules['{'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: '{' })
+  );
+  lexer.addRule(tokenRules['}'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: '}' })
+  );
+  lexer.addRule(tokenRules[','], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: ',' })
+  );
+  lexer.addRule(tokenRules[':'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: ':' })
+  );
+  lexer.addRule(tokenRules['='], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: '=' })
+  );
+  lexer.addRule(tokenRules['('], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: '(' })
+  );
+  lexer.addRule(tokenRules[')'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: ')' })
+  );
+  lexer.addRule(tokenRules['['], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: '[' })
+  );
+  lexer.addRule(tokenRules[']'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: ']' })
+  );
+  lexer.addRule(tokenRules['.'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: '.' })
+  );
+  lexer.addRule(tokenRules['&'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: '&' })
+  );
+  lexer.addRule(tokenRules['!'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: '!' })
+  );
+  lexer.addRule(tokenRules['~'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: '~' })
+  );
+  lexer.addRule(tokenRules['-'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: '-' })
+  );
+  lexer.addRule(tokenRules['+'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: '+' })
+  );
+  lexer.addRule(tokenRules['*'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: '*' })
+  );
+  lexer.addRule(tokenRules['/'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: '/' })
+  );
+  lexer.addRule(tokenRules['%'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: '%' })
+  );
+  lexer.addRule(tokenRules['<'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: '<' })
+  );
+  lexer.addRule(tokenRules['>'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: '>' })
+  );
+  lexer.addRule(tokenRules['^'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: '^' })
+  );
+  lexer.addRule(tokenRules['|'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: '|' })
+  );
+  lexer.addRule(tokenRules['?'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: '?' })
+  );
+  lexer.addRule(tokenRules['whitespace'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'WHITESPACE' })
+  );
+  lexer.addRule(tokenRules['unmatched'], lexeme =>
+    token({ lexeme, loc: { line, column }, tokenClass: 'UNMATCHED' })
+  );
 
   lexer.setInput(streamOfText);
   var x = lexer.lex();
   while(x != undefined) {
     if(x.tokenClass != 'UNMATCHED' && x.tokenClass != 'WHITESPACE' && x.tokenClass != 'COMMENT') {
-      streamOfTokens.push(x);
+      yield x;
     }
     x = lexer.lex();
   }
-  return streamOfTokens;
 }
 
 export default tokenize;
