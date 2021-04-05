@@ -2,8 +2,8 @@ import PortableFileSystem from './lib/filesystem.js';
 import PortableSpawn from './lib/spawn.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
-import deep from './lib/deep.js';
-//import * as deep from 'deep.so';
+//import deep from './lib/deep.js';
+import * as deep from 'deep.so';
 import ConsoleSetup from './lib/consoleSetup.js';
 import REPL from './repl.js';
 //import * as std from 'std';
@@ -704,7 +704,7 @@ async function ASTShell(...args) {
     hideKeys: ['loc', 'range']
   };
   await ConsoleSetup(consoleOptions);
-  await PortableFileSystem(fs => (filesystem = fs));
+  await PortableFileSystem(fs => (globalThis.filesystem = filesystem = fs));
   await PortableSpawn(fn => (spawn = fn));
   console.options = consoleOptions;
   console.options.compact = 1;

@@ -1939,6 +1939,7 @@ export default function REPL(title = 'QuickJS') {
         dupstr,
         readline_print_prompt,
         readline_start,
+        readline_clear  ,
         handle_char,
         handle_key,
         number_to_string,
