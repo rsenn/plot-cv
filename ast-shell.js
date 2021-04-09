@@ -767,7 +767,9 @@ async function ASTShell(...args) {
         );
       },
       getType(name_or_id) {
-        return GetType(name_or_id, this.data);
+        let result = GetType(name_or_id, this.data);
+
+        if(result) return TypeFactory(result, this.data);
       },
       getFunction(name_or_id) {
         let result = isNode(name_or_id)

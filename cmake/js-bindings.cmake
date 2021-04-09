@@ -81,6 +81,7 @@ target_link_libraries(quickjs-cv quickjs-mat quickjs-contour quickjs-rect quickj
 target_link_libraries(quickjs-draw quickjs-mat quickjs-contour quickjs-size)
 target_link_libraries(quickjs-clahe quickjs-mat quickjs-size)
 target_link_libraries(quickjs-umat quickjs-mat)
+target_link_libraries(quickjs-subdiv2d quickjs-contour)
 
 # add_dependencies(quickjs-point-iterator quickjs-contour quickjs-mat)
 
