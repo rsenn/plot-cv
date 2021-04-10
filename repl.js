@@ -422,7 +422,7 @@ export default function REPL(title = 'QuickJS') {
           : history_search.indexOf(match);
       search_index = histidx;
       let line_start = `(${histdir}-search[${histpos}])\``;
-      cmd_line = `${line_start}${cmd}': ${histcmd}`;
+      cmd_line = `${line_start}${repl.cmd}': ${histcmd}`;
       colorize = false;
       const start = cmd_line.length - histcmd.length - 3 - repl.cmd.length + cursor_pos;
       let r = cmd_line.substring(start);

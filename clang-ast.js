@@ -1,18 +1,17 @@
 import Util from './lib/util.js';
-import path from './lib/path.js';
+import path from 'path.so';
 import { AcquireReader } from './lib/stream/utils.js';
 export let SIZEOF_POINTER = 8;
 export let SIZEOF_INT = 4;
 
 function FileTime(filename) {
   let st = filesystem.stat(filename);
-  console.log('FileTime', filename, st.mtime);
-  return st.mtime ?? st.time;
+  return st ? st.mtime ?? st.time : -1;
 }
 
-function Newer(file, other) {
-  console.log('Newer', { file, other });
-  return FileTime(file) > FileTime(other);
+function Newer(file, ...other) {
+  //console.log('Newer', { file, other });
+  return other.every(other => FileTime(file) > FileTime(other));
 }
 function Older(file, other) {
   return FileTime(file) < FileTime(other);
@@ -695,8 +694,8 @@ export function TypeFactory(node, ast) {
 }
 
 export async function SpawnCompiler(compiler, input, output, args = []) {
-  let base = path.basename(input, /\.[^.]*$/);
-  let outputFile = output ?? base + '.ast.json';
+  // console.log(`SpawnCompiler`, { compiler, input, output, args });
+  let base = path.basename(input, path.extname(input));
 
   args.push(input);
 
@@ -705,11 +704,15 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
     args = [
       'sh',
       '-c',
-      `exec ${args.map(p => (/\ /.test(p) ? `'${p}'` : p)).join(' ')} 1>${outputFile}`
+      `exec ${args.map(p => (/\ /.test(p) ? `'${p}'` : p)).join(' ')}${
+        output ? ` 1>${output}` : ''
+      }`
     ];
   } else {
-    args.unshift(outputFile);
-    args.unshift('-o');
+    if(output) {
+      args.unshift(output);
+      args.unshift('-o');
+    }
     args.unshift(compiler ?? 'clang');
   }
 
@@ -717,7 +720,7 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
 
   let child = spawn(args, {
     block: false,
-    stdio: ['inherit', 'inherit', 'pipe']
+    stdio: ['inherit', output ? 'inherit' : 'pipe', 'pipe']
   });
 
   let json = '',
@@ -726,11 +729,14 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
 
   if(Util.platform == 'quickjs') {
     let { fd } = child.stderr;
-    console.log('child.stderr:', child.stderr);
+    //console.log('SpawnCompiler child.stderr:', child.stderr);
+    //console.log('SpawnCompiler child.stdout:', child.stdout);
+    await PipeReader(child.stderr.fd, data => (errors += data ?? ''));
 
-    filesystem.setReadHandler(child.stderr, () => {
-      ReadErrors(fd);
-    });
+    if(child.stdout) {
+      output = '';
+      await PipeReader(child.stdout.fd, data => (output += data ?? ''));
+    }
   } else {
     AcquireReader(child.stderr, async reader => {
       let r;
@@ -739,12 +745,9 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
       }
     });
   }
-  let result = /*await*/ child.wait();
-  console.log('child.wait():', result);
+  let result = await child.wait();
+  //console.log('SpawnCompiler child.wait():', result);
 
-  filesystem.setReadHandler(child.stderr, null);
-
-  if(result[1] != 0) ReadErrors(child.stderr);
   done = true;
   let errorLines = errors.split(/\n/g).filter(line => line.trim() != '');
   errorLines = errorLines.filter(line => /error:/.test(line));
@@ -752,37 +755,93 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
     [
       ...(/^([0-9]+)\s/g.exec(errorLines.find(line => /errors\sgenerated/.test(line)) || '0') || [])
     ][0] || errorLines.length;
-  console.log('errors:', errors);
-  //console.log(`numErrors: ${numErrors}`);
+  //console.log('errors:', errors);
   if(numErrors) throw new Error(errorLines.join('\n'));
-  //console.log('errorLines:', errorLines);
 
-  function ReadErrors(fd) {
-    let buf = new ArrayBuffer(1024);
-    let r = filesystem.read(fd, buf, 0, buf.byteLength);
-    errors += filesystem.bufferToString(buf.slice(0, r));
-    //console.log('r:', r, 'errors:', errors.length);
+  function PipeReader(fd, callback) {
+    let ret;
+    return new Promise((resolve, reject) => {
+      os.setReadHandler(fd, () =>
+        ReadPipe(fd, data => {
+          if(data) ret = callback(data);
+          else resolve(ret);
+        })
+      );
+    });
   }
 
-  //let fd = filesystem.open(outputFile, filesystem.O_RDONLY);
-  return { input: outputFile, result };
+  function ReadPipe(fd, callback) {
+    let buf = new ArrayBuffer(1024);
+    let r = os.read(fd, buf, 0, buf.byteLength);
+    let data;
+    if(r > 0) {
+      data = filesystem.bufferToString(buf.slice(0, r));
+    } else {
+      os.setReadHandler(fd, null);
+      data = null;
+    }
+    //console.log('ReadPipe', { fd, r, data });
+    callback(data);
+  }
+  function ReadOutput(fd) {
+    let buf = new ArrayBuffer(1024);
+    let r = os.read(fd, buf, 0, buf.byteLength);
+    if(r > 0) {
+      output += filesystem.bufferToString(buf.slice(0, r));
+      //console.log('r:', r, 'output:', output.length);
+    } else {
+      os.setReadHandler(fd, null);
+    }
+  }
+  let ret = { output, result, errors: errorLines };
+  // console.log('SpawnCompiler return', ret);
+
+  return ret;
+}
+
+export async function SourceDependencies(...args) {
+  if(args.length < 3) args.unshift(params.compiler);
+
+  let [compiler, source, flags = []] = args;
+
+  console.log('SourceDependencies', { compiler, source, flags });
+  let r = await SpawnCompiler(compiler, source, null, ['-MM', '-I.', ...flags]);
+  let { output, result, errors } = (globalThis.response = r);
+  output = output.replace(/\s*\\\n\s*/g, ' ');
+  let [object, sources] = output.split(/:\s+/);
+  sources = sources.trim().split(/ /g);
+  let [compilation_unit, ...includes] = sources;
+
+  console.log('output[1]:', { compilation_unit, includes });
+
+  return sources;
 }
 
 export async function AstDump(compiler, source, args, force) {
+  compiler ??= 'clang';
   console.log('AstDump', { compiler, source, args, force });
-
   let output = path.basename(source, /\.[^.]*$/) + '.ast.json';
   let r;
+  let sources = await SourceDependencies(compiler, source, args);
+  let newer;
+  let existsAndNotEmpty = filesystem.exists(output) && filesystem.size(output) > 0;
+
+  if(existsAndNotEmpty) newer = Newer(output, ...sources);
+
   console.log('AstDump', {
     output,
     source,
-    exists: filesystem.exists(output),
-    newer: Newer(output, source)
+    sources,
+    existsAndNotEmpty,
+    newer
   });
-  if(!force && filesystem.exists(output) && Newer(output, source)) {
+  if(!force && existsAndNotEmpty && newer) {
     console.log(`Loading cached '${output}'...`);
     r = { file: output };
   } else {
+    if(filesystem.exists(output))
+      filesystem.unlink(output);
+    
     console.log(`Compiling '${source}'...`);
     r = await SpawnCompiler(compiler, source, output, [
       '-Xclang',
@@ -793,7 +852,7 @@ export async function AstDump(compiler, source, args, force) {
     ]);
   }
 
-  console.log('AstDump', { r });
+  console.log('AstDump', r);
 
   //r.size = (await filesystem.stat(r.file)).size;
   r = Util.lazyProperties(r, {

@@ -11,7 +11,7 @@ exec_cmd() (
 
 find_cmake_files() (
 	set -f
-	[ $# -le 0 ] && set -- cmake quickjs quickjs/modules
+	[ $# -le 0 ] && set -- . cmake quickjs quickjs/modules
 set -- "$@" -maxdepth 1
 	if [ "$TYPE" ]; then
 		case "$TYPE" in

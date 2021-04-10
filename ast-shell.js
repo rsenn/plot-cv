@@ -7,12 +7,13 @@ import * as deep from 'deep.so';
 import ConsoleSetup from './lib/consoleSetup.js';
 import REPL from './repl.js';
 //import * as std from 'std';
-import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, VarDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter, isNode } from './clang-ast.js';
+import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, VarDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter, isNode, SourceDependencies } from './clang-ast.js';
 import Tree from './lib/tree.js';
 import * as Terminal from './terminal.js';
 import * as ECMAScript from './lib/ecmascript.js';
 import { ECMAScriptParser } from './lib/ecmascript.js';
 
+let params;
 let files;
 let filesystem, spawn, base, cmdhist;
 let defs, includes, sources;
@@ -725,7 +726,7 @@ async function ASTShell(...args) {
   base = path.basename(Util.getArgv()[1], /\.[^.]*$/);
   cmdhist = `.${base}-cmdhistory`;
 
-  let params = Util.getOpt({
+  params = globalThis.params = Util.getOpt({
       include: [true, (a, p) => (p || []).concat([a]), 'I'],
       define: [true, (a, p) => (p || []).concat([a]), 'D'],
       debug: [false, null, 'x'],
@@ -797,6 +798,7 @@ async function ASTShell(...args) {
     SIZEOF_POINTER,
     Type,
     AstDump,
+    SourceDependencies,
     NodePrinter,
     NodeType,
     NodeName,
