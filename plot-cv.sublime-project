@@ -146,6 +146,9 @@
 			/*"folder_include_patterns": [ "src", "opencv", "quickjs", "lib" ],*/
 			"path": ".",
 		}, 
+		{
+			"path": "txiki.js"
+		},
 	],
 	"settings":
 	{
