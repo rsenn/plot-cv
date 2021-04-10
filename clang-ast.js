@@ -839,9 +839,8 @@ export async function AstDump(compiler, source, args, force) {
     console.log(`Loading cached '${output}'...`);
     r = { file: output };
   } else {
-    if(filesystem.exists(output))
-      filesystem.unlink(output);
-    
+    if(filesystem.exists(output)) filesystem.unlink(output);
+
     console.log(`Compiling '${source}'...`);
     r = await SpawnCompiler(compiler, source, output, [
       '-Xclang',
