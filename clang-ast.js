@@ -55,6 +55,29 @@ export class Node {
   get loc() {
     return new Location(GetLoc(this.ast));
   }
+  get file() {
+    const loc = this.ast.loc ?? deep.find(this.ast, (v,k) => k=='loc') ?? deep.find(t.ast, (v,k) => typeof v == 'object' && v != null && 'file' in v);
+    if(loc) return loc.file;
+  }
+
+  get range() {
+    const { range } = this.ast;
+ let loc,file;
+    if(range) {
+      let { begin,end} = range;
+      if(!('line' in begin))
+        begin.line = (loc ??= this.loc).line;
+      return [begin,end].map(r => {
+     if(!('file' in r)) 
+      r.file = file ??= this.file;
+        return new Location(r);
+      });
+    }
+      return [
+        new Location(range.begin), 
+        new Location(range.end)
+      ];
+  }
 
   inspect(depth, opts = {}) {
     const text = opts.colors ? (t, ...c) => '\x1b[' + c.join(';') + 'm' + t + '\x1b[m' : t => t;
@@ -207,6 +230,12 @@ export class Type extends Node {
     return /\[[0-9]*\]$/.test(str);
   }
 
+  arrayOf() {
+    let typeName = this.trimSubscripts();
+    return Type.declarations.get(typeName);
+
+  }
+
   get subscripts() {
     if(this.isArray())
       return GetSubscripts(this+'');
@@ -297,12 +326,23 @@ const { size,unsigned } = this;
   get size() {
     if(this.isPointer()) return SIZEOF_POINTER;
     if(this.isEnum()) return SIZEOF_INT;
+      
 
     const  desugared = this.desugared || this+'' || this.name;
     if(desugared == 'char') return 1;
 
     const re = /(?:^|\s)_*u?int([0-9]+)(_t|)$/;
     let size, match;
+
+      if(this.isArray()) {
+ size  ??= this.arrayOf()?.size;
+
+        for(let [index,subscript] of this.subscripts)
+          size *= subscript;
+      }
+
+      
+    
     if((match = re.exec(desugared))) {
       const [, bits] = match;
       if(!isNaN(+bits)) return +bits / 8;
@@ -364,10 +404,7 @@ const { size,unsigned } = this;
       }
       if(size === undefined && match[2].endsWith('*')) size = SIZEOF_POINTER;
       if(size === undefined && (this.qualType || '').startsWith('enum ')) size = 4;
-      if(this.isArray()) {
-        for(let [index,subscript] of this.subscripts)
-          size *= subscript;
-      }
+
     }
     if(size === undefined) {
       // throw new Error(`Type sizeof(${desugared}) ${this.desugaredQualType}`);
@@ -520,17 +557,21 @@ export class TypedefDecl extends Type {
     super(node, ast);
 
     let inner = (node.inner ?? []).filter(n => !/Comment/.test(n.kind));
-    let type = GetType(node, ast);
+    let type;
 
-    //console.log('type:', type);
-
+    let typeId = deep.find(inner, (v, k) => k == 'decl')?.id;
+    type = ast.inner.find(n => n.id == typeId);
+  
+   // type ??= GetType(node, ast);
     Util.assertEqual(inner.length, 1);
 
     if(type.decl) type = type.decl;
     if(type.kind && type.kind.endsWith('Type')) type = type.type;
+  //console.log('TypedefDecl.constructor', { type });
 
     this.name = node.name;
-    this.type = type.kind ? TypeFactory(type, ast) : new Type(type, ast);
+    this.type = type.kind ? TypeFactory(type, ast, false) : new Type(type, ast);
+  //console.log('TypedefDecl.constructor',     this.type);
   }
 
   get size() {
@@ -629,8 +670,8 @@ export class ConstantArrayType extends Node {
 
 export class Location {
   constructor(loc) {
-    const { line, col, file } = loc;
-    Object.assign(this, { line, col, file });
+    const { line, col, file, offset } = loc;
+    Object.assign(this, { line, col, file, offset });
   }
 
   inspect(depth, opts = {}) {
@@ -643,18 +684,27 @@ export class Location {
     if(file == undefined) return '<builtin>';
     return [file, line, col].join(':');
   }
+
+  [Symbol.toPrimitive](hint) {
+    switch (hint) {
+      case 'string':
+        return this.toString();
+      case 'number':
+      default: return this.offset;
+    }
+  }
 }
 
-export function TypeFactory(node, ast) {
+export function TypeFactory(node, ast, cache = true) {
   let obj;
 
-  // console.log('TypeFactory:', { node });
+ // console.log('TypeFactory:', { node });
 
   Util.assert(node.kind,
     `Not an AST node: ${inspect(node, { colors: false, compact: 0, depth: Infinity })}`
   );
 
-  if((obj = Type.ast2node.get(node))) return obj;
+  if(cache && (obj = Type.ast2node.get(node))) return obj;
 
   switch (node.kind) {
     case 'EnumDecl':
@@ -1641,7 +1691,7 @@ export function isNode(obj) {
 }
 
 export function GetType(name_or_id, ast) {
-  console.log('GetType:', name_or_id);
+  //console.log('GetType:', name_or_id);
   const types = ast.inner.filter(n => /(RecordDecl|TypedefDecl|EnumDecl)/.test(n.kind));
   let result, idx;
 

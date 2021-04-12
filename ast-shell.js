@@ -148,15 +148,17 @@ async function CommandLine() {
     debugLog.flush();
   };
 
-  Util.atexit(() => {
-    debugLog.close();
+  repl.cleanup = () => {
+    //debugLog.close();
     Terminal.mousetrackingDisable();
     // Util.ttySetRaw(repl.term_fd, false);
     let hist = repl.history_get().filter((item, i, a) => a.lastIndexOf(item) == i);
     filesystem.writeFile(cmdhist, JSON.stringify(hist, null, 2));
     console.log(`EXIT (wrote ${hist.length} history entries)`);
-    repl.exit(0);
-  });
+    std.exit(0);
+  };
+
+  Util.atexit(() => repl.cleanup());
   //Terminal.mousetrackingEnable();
 
   repl = Util.traceProxy(repl);
@@ -277,6 +279,13 @@ function LoadJSON(filename) {
   return data ? JSON.parse(data) : null;
 }
 
+function PrintRange(range) {
+  const [begin, end] = range;
+
+  let data = filesystem.readFile(begin.file, 'utf-8');
+  return data ? data.slice(begin, end + 1) : null;
+}
+
 function WriteFile(name, data, verbose = true) {
   if(Util.isIterator(data)) data = [...data];
   if(Util.isArray(data)) data = data.join('\n');
@@ -309,10 +318,10 @@ function* GenerateInspectStruct(decl, includes) {
   yield `}`;
 }
 
-function InspectStruct(decl, compiler = 'tcc') {
+function InspectStruct(decl, includes, compiler = 'tcc') {
   if(typeof decl == 'string') decl = $.getType(decl);
 
-  const code = [...GenerateInspectStruct(decl)].join('\n');
+  const code = [...GenerateInspectStruct(decl, includes)].join('\n');
   //console.log('InspectStruct', { code });
   const program = `inspect-${decl.name.replace(/\ /g, '_')}`;
   WriteFile(program + '.c', code);
@@ -770,7 +779,11 @@ async function ASTShell(...args) {
       getType(name_or_id) {
         let result = GetType(name_or_id, this.data);
 
-        if(result) return TypeFactory(result, this.data);
+        if(result) {
+          let type = TypeFactory(result, this.data);
+          if(type) result = type;
+        }
+        return result;
       },
       getFunction(name_or_id) {
         let result = isNode(name_or_id)
@@ -806,6 +819,7 @@ async function ASTShell(...args) {
     GetTypeStr,
     WriteFile,
     LoadJSON,
+    PrintRange,
     GenerateInspectStruct,
     GenerateStructClass,
     InspectStruct,
