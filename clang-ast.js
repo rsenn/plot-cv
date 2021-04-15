@@ -564,7 +564,7 @@ export class TypedefDecl extends Type {
 
     // type ??= GetType(node, ast);
     Util.assertEqual(inner.length, 1);
-  console.log('TypedefDecl.constructor', { typeId,type });
+    console.log('TypedefDecl.constructor', { typeId, type });
 
     if(type.decl) type = type.decl;
     if(type.kind && type.kind.endsWith('Type')) type = type.type;
@@ -614,7 +614,7 @@ export class FunctionDecl extends Node {
     let type = node.type?.qualType;
     let returnType = type.replace(/\s?\(.*/, '');
 
-   // console.log('ast:', ast);
+    // console.log('ast:', ast);
 
     let tmp = deep.find(ast ?? $.data, n => typeof n == 'object' && n && n.name == returnType);
 

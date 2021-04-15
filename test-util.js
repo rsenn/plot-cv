@@ -10,6 +10,16 @@ async function main(...args) {
   await ConsoleSetup({ breakLength: 120, depth: 10 });
   await PortableFileSystem();
 
+  function test(arg) {
+    console.log('function test', { arg });
+    return -1;
+  }
+
+  let trace = Util.trace(test);
+
+  trace('testarg');
+
+  return;
   console.log('Util.getPlatform():', Util.getPlatform());
   console.log('Util.getArgs():', Util.getArgs());
   console.log('Util.getArgv():', Util.getArgv());
