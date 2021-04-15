@@ -16,42 +16,8 @@ let filesystem;
 const testfn = () => true;
 const testtmpl = `this is\na test`;
 
-const source = `
-Object.defineProperties(Array.prototype, {
-  last: {
-    get() {
-      return this[this.length - 1];
-    }
-  },
-  at: {
-    value(index) {
-      const { length } = this;
-      return this[((index % length) + length) % length];
-    }
-  },
-  clear: {
-    value() {
-      this.splice(0, this.length);
-    }
-  },
-  findLastIndex: {
-    value(predicate) {
-      for(let i = this.length - 1; i >= 0; --i) {
-        const x = this[i];
-        if(predicate(x, i, this)) return i;
-      }
-      return -1;
-    }
-  },
-  findLast: {
-    value(predicate) {
-      let i;
-      if((i = this.findLastIndex(predicate)) == -1) return null;
-      return this[i];
-    }
-  }
-});
-`;
+const source = `console.log(...cols.map((col, i) => (col + '').replaceAll('
+', '\\n').padEnd(colSizes[i])));`;
 const inspectSymbol = Symbol.for('nodejs.util.inspect.custom');
 
 function WriteFile(name, data) {
@@ -107,14 +73,21 @@ async function main(...args) {
   });
 
   console.log('params', params);
+  const time = () => Date.now() / 1000;
 
   if(params['@'].length == 0) params['@'].push(null); //'./lib/ecmascript/parser.js');
   for(let file of params['@']) {
     let error;
 
+    const processing = Util.instrument(() => processFile(file, params));
+
+    let start = await time(),
+      end;
+    let times = [];
+    console.log('times:', times.push(await Util.now()));
     // Util.safeCall(processFile, file, params);
     try {
-      processFile(file, params); //.catch(err => console.log('processFile ERROR:', err));
+      await processing(); //.catch(err => console.log('processFile ERROR:', err));
     } catch(err) {
       console.log('ERROR:', err);
       if(err) {
@@ -122,6 +95,15 @@ async function main(...args) {
         console.log('ERROR:', err.stack);
       }
     }
+
+    end = await time();
+
+    times.push(await Util.now());
+    console.log('times:', inspect(times));
+    console.log('times:', inspect((times[1] - times[0]) * 1e-3));
+
+    console.log('times:', { start: +start, end: +end, duration: end - start });
+
     //processFile(file, params);
     files[file] = finish(error);
 
@@ -148,14 +130,13 @@ function processFile(file, params) {
     file = 'stdin';
     data = source;
   }
-  console.log('data:', data);
+   console.log('OK, data: ', Util.abbreviate(Util.escape(data)));
+
   let ast, error;
   globalThis.parser = null;
-  globalThis.parser = new ECMAScriptParser(data ? data.toString() : data, file, true);
+  globalThis.parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
 
-  console.log(' globalThis.parser.parseBlock:', globalThis.parser.parseBlock);
-  // console.log('prototypeChain:', Util.getPrototypeChain(parser));
-  console.log('OK, data: ', Util.abbreviate(Util.escape(data)));
+   // console.log('prototypeChain:', Util.getPrototypeChain(parser));
 
   try {
     ast = parser.parseProgram();
@@ -203,19 +184,16 @@ function processFile(file, params) {
     params['output-js'] ?? file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
 
   let tree = new Tree(ast);
-  console.log('tree:',
-    tree.flat(null, ([path, node]) => {
+   
+   let flat =  tree.flat(null, ([path, node]) => {
       return !Util.isPrimitive(node);
     })
-  );
+ 
   const code = printAst(ast, parser.comments, printer);
   console.log('code:', Util.abbreviate(Util.escape(code)));
 
   WriteFile(output_file, code);
-  let flat = tree.flat(null, ([path, node]) => {
-    return !Util.isPrimitive(node);
-  });
-
+  
   function getImports() {
     const imports = [...flat].filter(([path, node]) => isRequire(node) || isImport(node));
     const importStatements = imports

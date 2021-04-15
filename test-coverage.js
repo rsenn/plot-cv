@@ -71,7 +71,8 @@ function processFile(arg, re) {
       //console.log('text.length:', text.length);
       //console.log('ranges:', ranges);
       //console.log('inverted:', inverted);*/
-      //console.log('used:', used.map(u => u.toString(file).replace(/\n/g, '\\n')).join('\n'));
+      //console.log('used:', used.map(u => u.toString(file).replaceAll('
+', '\\n')).join('\n'));
       //console.log('unused:', unused.map(u => u.toString(file)).join('\n\n'));
     } catch(err) {}
   }
