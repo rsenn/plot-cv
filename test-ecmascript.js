@@ -12,18 +12,12 @@ import Tree from './lib/tree.js';
 import { ConsoleSetup } from './lib/consoleSetup.js';
 
 let filesystem;
-let globalThis;
 
 const testfn = () => true;
 const testtmpl = `this is\na test`;
 
-const code = ` (function() { for(let [value, path] of deep.iterate(x, (v, k) => /data-/.test(k[k.length - 1]))) deep.unset(x, path);
-})();
-
-`;
+const source = `console.log(...cols.map((col, i) => (col + '').replaceAll('\n', '\\n').padEnd(colSizes[i])));`;
 const inspectSymbol = Symbol.for('nodejs.util.inspect.custom');
-
-Util.callMain(main, true);
 
 function WriteFile(name, data) {
   if(Util.isArray(data)) data = data.join('\n');
@@ -39,7 +33,7 @@ function WriteFile(name, data) {
 
 function printAst(ast, comments, printer = globalThis.printer) {
   let output = printer.print(ast);
-  console.log('printAst:', Util.abbreviate(output), Util.decodeAnsi(output));
+  //console.log('printAst:', Util.abbreviate(output), Util.decodeAnsi(output));
   return output;
 }
 
@@ -52,42 +46,70 @@ async function main(...args) {
   let params = Util.getOpt({
       'output-ast': [true, null, 'a'],
       'output-js': [true, null, 'o'],
+      help: [
+        false,
+        (v, r, o) => {
+          console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
+          console.log(o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n')
+          );
+          Util.exit(0);
+        },
+        'h'
+      ],
       debug: [false, null, 'x'],
       '@': 'input'
     },
     args
   );
+
+  //  params.debug ??= true;
   console.log(`Platform: ${Util.getPlatform()}`);
-  /*
+
   if(Util.getPlatform() == 'quickjs') {
-   await import('os').then(os => {
-         console.log('os:',os);
-   os.signal(os.SIGINT, () => {
+    await import('os').then(os => {
+      console.log('os:', os);
+      os.signal(os.SIGINT, () => {
         console.log(`Got SIGINT. (${os.SIGINT})`);
         Util.putStack();
         Util.exit(1);
       });
       console.log(`SIGINT (${os.SIGINT}) handler installed`);
     });
-  }*/
+  }
 
-  globalThis = Util.getGlobalObject();
   Util.defineGettersSetters(globalThis, {
     printer: Util.once(() => new Printer({ colors: false, indent: 2 }))
   });
 
-  // console.log('globalThis', globalThis);
   console.log('params', params);
-
-  //await import('tty');
+  const time = () => Date.now() / 1000;
 
   if(params['@'].length == 0) params['@'].push(null); //'./lib/ecmascript/parser.js');
   for(let file of params['@']) {
     let error;
 
-    await Util.safeCall(processFile, file, params);
-    //    await processFile(file, params);
+    const processing = Util.instrument(() => processFile(file, params));
 
+    let start = await time(),
+      end;
+    let times = [];
+    // Util.safeCall(processFile, file, params);
+    try {
+      await processing(); //.catch(err => console.log('processFile ERROR:', err));
+    } catch(err) {
+      console.log('ERROR:', err);
+      if(err) {
+        console.log('ERROR:', err.message);
+        console.log('ERROR:', err.stack);
+      }
+    }
+
+    end = await time();
+
+    times.push(await Util.now());
+
+
+    //processFile(file, params);
     files[file] = finish(error);
 
     if(error) {
@@ -102,60 +124,53 @@ async function main(...args) {
   Util.exit(Number(files.length == 0));
 }
 
-async function processFile(file, params) {
+function processFile(file, params) {
   let data, b, ret;
   const { debug } = params;
   if(file == '-') file = '/dev/stdin';
-  if(file && filesystem.exists(file)) data = filesystem.readFile(file);
-  else {
+  if(file && filesystem.exists(file)) {
+    data = filesystem.readFile(file);
+    //console.log('opened:', file);
+  } else {
     file = 'stdin';
-    data = code;
+    data = source;
   }
-  console.log('opened:', file);
+  console.log('OK, data: ', Util.abbreviate(Util.escape(data)));
+
   let ast, error;
   globalThis.parser = null;
   globalThis.parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
 
-  console.log('prototypeChain:', Util.getPrototypeChain(parser));
-  console.log('OK, data: ', Util.abbreviate(Util.escape(data)));
-  ast = parser.parseProgram();
-  parser.addCommentsToNodes(ast);
+  // console.log('prototypeChain:', Util.getPrototypeChain(parser));
 
-  if(params['output-ast'])
-    WriteFile(params['output-ast'], JSON.stringify(ast /*.toJSON()*/, null, 2));
+  try {
+    ast = parser.parseProgram();
+  } catch(err) {
+    console.log('parseProgram token', parser.token);
+    console.log('parseProgram loc', parser.lexer.loc + '');
+    console.log('parseProgram ERROR:', err);
+    if(Util.isObject(err)) {
+      console.log('parseProgram ERROR message:', err.message);
+      console.log('parseProgram ERROR stack:', err.stack);
+    }
+  }
+
+  console.log('Parsed: ', console.config({ depth: 1 }), ast);
+
+  parser.addCommentsToNodes(ast);
 
   let node2path = new WeakMap();
 
-  let flat = deep.flatten(ast,
+  /*let flat = deep.flatten(ast,
     new Map(),
     node => node instanceof ESNode || Util.isArray(node),
     (path, value) => {
-      //   path = /*path.join("."); //*/ new Path(path);
-      node2path.set(value, path);
+       node2path.set(value, path);
       return [path, value];
     }
-  );
+  );*/
   let nodeKeys = [];
 
-  //  await ConsoleSetup({ depth: 10, colors: true });
-
-  //console.log('ast', ast);
-  /*
-console.log("find:",[...flat].find(([path,node]) => node instanceof CallExpression));
-console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpression));*/
-
-  /*  let [path, fn] = Util.find(flat, (value, key) => value instanceof ArrowFunctionExpression);
-  path = path.slice(0, path.lastIndexOf('arguments') + 1);
-  console.log('path:', path);
-
-  let node = Util.find(flat, (value, key) => path.equals(key));
- 
- 
-  for(let [path, node] of flat) {
-    node2path.set(node, path);
-    nodeKeys.push(path);
-  }
-*/
   const isRequire = node => node instanceof CallExpression && node.callee.value == 'require';
   const isImport = node => node instanceof ImportDeclaration;
 
@@ -166,35 +181,21 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
     (a, b) => a - b
   );
 
-  console.log('commentMap:', commentMap);
-  // let allNodes = nodeKeys.map((path, i) => [i, flat.get(path)]);
-
-  // for(let [i, n] of allNodes) console.log(new ImmutablePath(node2path.get(n)), n);
+  //console.log('commentMap:', commentMap);
 
   const output_file =
     params['output-js'] ?? file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
 
   let tree = new Tree(ast);
-  console.log('tree:',
-    tree.flat(null, ([path, node]) => {
-      return !Util.isPrimitive(node);
-    })
-  );
 
-  /*let st =
-    deep.get(ast, ['body', 0, 'callee', 'expressions', 0].join('.')) || ast;*/
-  // console.log('flat', flat);
+  let flat = tree.flat(null, ([path, node]) => {
+    return !Util.isPrimitive(node);
+  });
 
-  /*  let [p, n] = [...flat].find(([path, node]) => node instanceof BlockStatement);
-  console.log('find:', [...p]);
-  //console.log("find:",n);
+  WriteFile(params['output-ast'] ?? file + '.ast.json', JSON.stringify(ast /*.toJSON()*/, null, 2));
 
-  let body = deep.get(ast, p.concat(['body'])) || ast.body;
-
-  console.log('find:', body);
-*/
   const code = printAst(ast, parser.comments, printer);
-  console.log('code:', Util.abbreviate(Util.escape(code)));
+  //console.log('code:', Util.abbreviate(Util.escape(code)));
 
   WriteFile(output_file, code);
 
@@ -219,21 +220,13 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
       .map(([p, n]) => [p, n.declarations ? n.declarations : n]);
     console.log('importIdentifiers:', importIdentifiers);
 
-    /*  importIdentifiers = importIdentifiers.map(([p, n]) =>
-    n
-      .map(decl => (decl.id instanceof ObjectPattern ? decl.id.properties : [decl.id]))
-      .flat()
-      .map(n => [n.id ? n.id : n])
-      .flat()
-      .map(n => Identifier.string(n))
-  );*/
     console.log('importIdentifiers:', Util.unique(importIdentifiers.flat()).join(', '));
   }
 
   //  await ConsoleSetup({ depth: Infinity });
   const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral);
 
-  console.log('templates:', templates);
+  //console.log('templates:', templates);
 }
 
 function finish(err) {
@@ -260,3 +253,14 @@ function finish(err) {
   console.log('finish: ' + (fail ? 'error' : 'success'));
   return !fail;
 }
+
+try {
+  main(...scriptArgs.slice(1)).catch(err => console.log('ERROR:', err, err.stack));
+} catch(error) {
+  console.log('FAIL:');
+  console.log('FAIL:', error.message);
+} finally {
+  console.log('SUCCESS');
+}
+
+//Util.callMain(main, console.log);

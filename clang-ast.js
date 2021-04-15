@@ -1038,8 +1038,7 @@ export function NodePrinter(ast) {
   let printer;
 
   function put(str) {
-    out += (str ?? '').replaceAll('
-', '\n' + '  '.repeat(depth));
+    out += (str ?? '').replaceAll('\n', '\n' + '  '.repeat(depth));
   }
 
   function trim() {

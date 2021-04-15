@@ -212,8 +212,7 @@ async function processUrl(url, map) {
     else obj[key] += '\n' + data;
 
     /*    console.log(`key: ${key}`);
-      console.log(`line #${++i}:`, line.replaceAll('
-', '\\n'));*/
+      console.log(`line #${++i}:`, line.replaceAll('\n', '\\n'));*/
   }
 }
 

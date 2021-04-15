@@ -110,8 +110,7 @@ class ES6Module {
         );
       return typeof value == 'string'
         ? t(value, 1, 32)
-        : Util.inspect(value).replaceAll('
-', '\n  ');
+        : Util.inspect(value).replaceAll('\n', '\n  ');
     }
     return s;
   }
@@ -329,8 +328,7 @@ class ES6ImportExport {
             bindings: Util.inspect(bindings, {
               colors: true,
               toString: 'toString'
-            }).replaceAll('
-', '\n  ')
+            }).replaceAll('\n', '\n  ')
             /* path: path.join('.'),*/
             /*node: PrintAst(node) */ //Util.inspect(node, { ...opts, separator: '', newline: '', depth: 0 })
           },
@@ -576,8 +574,7 @@ async function main(...args) {
       : nodes;
   }
 
-  console.log(`\nModules:\n\n  ` + ES6Module.tree().replaceAll('
-', '\n  '));
+  console.log(`\nModules:\n\n  ` + ES6Module.tree().replaceAll('\n', '\n  '));
   console.log('exportMap:', exportMap);
   console.log('importMap(1):', importMap);
   /*console.log('importMap(2):',

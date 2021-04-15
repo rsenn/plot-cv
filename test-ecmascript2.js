@@ -16,8 +16,7 @@ let filesystem;
 const testfn = () => true;
 const testtmpl = `this is\na test`;
 
-const source = `console.log(...cols.map((col, i) => (col + '').replaceAll('
-', '\\n').padEnd(colSizes[i])));`;
+const source = `this.define('DecimalDigit', /[0-9]/);`;
 const inspectSymbol = Symbol.for('nodejs.util.inspect.custom');
 
 function WriteFile(name, data) {
@@ -34,7 +33,7 @@ function WriteFile(name, data) {
 
 function printAst(ast, comments, printer = globalThis.printer) {
   let output = printer.print(ast);
-  console.log('printAst:', Util.abbreviate(output), Util.decodeAnsi(output));
+  //console.log('printAst:', Util.abbreviate(output), Util.decodeAnsi(output));
   return output;
 }
 
@@ -45,6 +44,16 @@ async function main(...args) {
   await PortableFileSystem(fs => (filesystem = fs));
 
   let params = Util.getOpt({
+      help: [
+        false,
+        (v, r, o) => {
+          console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
+          console.log(o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n')
+          );
+          Util.exit(0);
+        },
+        'h'
+      ],
       'output-ast': [true, null, 'a'],
       'output-js': [true, null, 'o'],
       debug: [false, null, 'x'],
@@ -54,12 +63,10 @@ async function main(...args) {
   );
 
   //  params.debug ??= true;
-  console.log(`Platform: ${Util.getPlatform()}`);
-
+ 
   if(Util.getPlatform() == 'quickjs') {
     await import('os').then(os => {
-      console.log('os:', os);
-      os.signal(os.SIGINT, () => {
+       os.signal(os.SIGINT, () => {
         console.log(`Got SIGINT. (${os.SIGINT})`);
         Util.putStack();
         Util.exit(1);
@@ -72,8 +79,7 @@ async function main(...args) {
     printer: Util.once(() => new Printer({ colors: false, indent: 2 }))
   });
 
-  console.log('params', params);
-  const time = () => Date.now() / 1000;
+   const time = () => Date.now() / 1000;
 
   if(params['@'].length == 0) params['@'].push(null); //'./lib/ecmascript/parser.js');
   for(let file of params['@']) {
@@ -84,7 +90,6 @@ async function main(...args) {
     let start = await time(),
       end;
     let times = [];
-    console.log('times:', times.push(await Util.now()));
     // Util.safeCall(processFile, file, params);
     try {
       await processing(); //.catch(err => console.log('processFile ERROR:', err));
@@ -99,10 +104,7 @@ async function main(...args) {
     end = await time();
 
     times.push(await Util.now());
-    console.log('times:', inspect(times));
-    console.log('times:', inspect((times[1] - times[0]) * 1e-3));
 
-    console.log('times:', { start: +start, end: +end, duration: end - start });
 
     //processFile(file, params);
     files[file] = finish(error);
@@ -125,18 +127,18 @@ function processFile(file, params) {
   if(file == '-') file = '/dev/stdin';
   if(file && filesystem.exists(file)) {
     data = filesystem.readFile(file);
-    console.log('opened:', file);
+    //console.log('opened:', file);
   } else {
     file = 'stdin';
     data = source;
   }
-   console.log('OK, data: ', Util.abbreviate(Util.escape(data)));
+  console.log('OK, data: ', Util.abbreviate(Util.escape(data)));
 
   let ast, error;
   globalThis.parser = null;
   globalThis.parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
 
-   // console.log('prototypeChain:', Util.getPrototypeChain(parser));
+  // console.log('prototypeChain:', Util.getPrototypeChain(parser));
 
   try {
     ast = parser.parseProgram();
@@ -153,8 +155,7 @@ function processFile(file, params) {
   console.log('Parsed: ', console.config({ depth: 1 }), ast);
   parser.addCommentsToNodes(ast);
 
-  if(params['output-ast'])
-    WriteFile(params['output-ast'], JSON.stringify(ast /*.toJSON()*/, null, 2));
+  WriteFile(params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json', JSON.stringify(ast /*.toJSON()*/, null, 2));
 
   let node2path = new WeakMap();
 
@@ -178,22 +179,22 @@ function processFile(file, params) {
     (a, b) => a - b
   );
 
-  console.log('commentMap:', commentMap);
+  //console.log('commentMap:', commentMap);
 
   const output_file =
     params['output-js'] ?? file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
 
   let tree = new Tree(ast);
-   
-   let flat =  tree.flat(null, ([path, node]) => {
-      return !Util.isPrimitive(node);
-    })
- 
+
+  let flat = tree.flat(null, ([path, node]) => {
+    return !Util.isPrimitive(node);
+  });
+
   const code = printAst(ast, parser.comments, printer);
-  console.log('code:', Util.abbreviate(Util.escape(code)));
+  //console.log('code:', Util.abbreviate(Util.escape(code)));
 
   WriteFile(output_file, code);
-  
+
   function getImports() {
     const imports = [...flat].filter(([path, node]) => isRequire(node) || isImport(node));
     const importStatements = imports
@@ -221,7 +222,7 @@ function processFile(file, params) {
   //  await ConsoleSetup({ depth: Infinity });
   const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral);
 
-  console.log('templates:', templates);
+  //console.log('templates:', templates);
 }
 
 function finish(err) {
@@ -250,12 +251,11 @@ function finish(err) {
 }
 
 try {
-  main(...scriptArgs.slice(1)).catch(err => console.log('ERROR:', err, err.stack));
+  main(...scriptArgs.slice(1)).catch(err => console.log('ERROR:', err, err.stack)).then(() => console.log('SUCCESS')).catch(err => console.log("ERROR:", err));
 } catch(error) {
   console.log('FAIL:');
   console.log('FAIL:', error.message);
 } finally {
-  console.log('SUCCESS');
 }
 
 //Util.callMain(main, console.log);

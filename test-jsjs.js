@@ -36,8 +36,7 @@ async function main(...args) {
   for(let file of args) {
     let data, b, ret;
     data = file == '-' ? code : filesystem.readFile(file);
-    console.log(`read ${file}:`, Util.abbreviate(data).replaceAll('
-', '\\n'));
+    console.log(`read ${file}:`, Util.abbreviate(data).replaceAll('\n', '\\n'));
     let ast, error;
     globalThis.parser = new ECMAScriptParser(data, file);
     globalThis.printer = new Printer({ indent: 4 });

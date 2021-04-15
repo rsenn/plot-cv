@@ -75,8 +75,7 @@
       } else if(typeof v === 'string' || v instanceof String) {
         s = `'${v}'`;
       } else if(typeof v === 'function') {
-        s = (v + '').replaceAll('
-', '\n' + i);
+        s = (v + '').replaceAll('\n', '\n' + i);
         s = (Util.fnName(s) || 'function') + '()';
       } else if(typeof v === 'number' || typeof v === 'boolean') {
         s = `${v}`;
@@ -582,8 +581,7 @@
     const str = args
       .map(arg => (typeof arg === 'object' ? JSON.toString(arg, removeCircular) : arg))
       .join(' ')
-      .replaceAll('
-', '');
+      .replaceAll('\n', '');
   };
 
   //console.log("STR: "+str);
@@ -1684,8 +1682,7 @@
               newline: newline + '  ',
               depth: depth - 1
             });
-          else print((value + '').replaceAll('
-', sep(true)));
+          else print((value + '').replaceAll('\n', sep(true)));
           i++;
         }
 
@@ -5636,8 +5633,7 @@
           if(/color:/.test(this[0])) {
             throw new Error(`this[0] is CSS: i=${i}
           this[0] = "${this[0]}"
-          arg= ${typeof arg} "${(arg + '').replaceAll('
-', '\\n')}"`);
+          arg= ${typeof arg} "${(arg + '').replaceAll('\n', '\\n')}"`);
           }
 
           const matches = [...Util.matchAll(['%c', '%o'], arg)];
