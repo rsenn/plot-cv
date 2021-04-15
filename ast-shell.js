@@ -12,6 +12,7 @@ import Tree from './lib/tree.js';
 import * as Terminal from './terminal.js';
 import * as ECMAScript from './lib/ecmascript.js';
 import { ECMAScriptParser } from './lib/ecmascript.js';
+import { lazyInitializer } from './lib/lazyInitializer.js';
 
 let params;
 let files;
@@ -123,17 +124,21 @@ async function CommandLine() {
     }
   };
   repl.show = value => {
-    if(Util.isArray(value) && value[0]?.kind) console.log(Table(value));
+    /* try {
+      if(isNode(value)) {
+        console.log(NodePrinter($.data).print(value));
+        return;
+      }
+    } catch(err) {}*/
+    if(Util.isArray(value) && Util.isObject(value[0]) && value[0].kind) console.log(Table(value));
     else if(typeof value == 'string') console.log(value);
-    /*if(typeof value == 'object' && value != null)*/ else
-      console.log(inspect(value, { ...console.options, hideKeys: ['loc', 'range'] }));
-    // else console.log(value);
+    else console.log(inspect(value, { ...console.options, hideKeys: ['loc', 'range'] }));
   };
   let debugLog = filesystem.fopen('debug.log', 'a');
   repl.debugLog = debugLog;
 
   globalThis.printNode = arg => {
-    repl.show(NodePrinter($.data).print(arg));
+    console.log(NodePrinter($.data).print(arg));
   };
 
   repl.debug = (...args) => {
@@ -308,6 +313,7 @@ function* GenerateInspectStruct(decl, includes) {
   yield `${name} svar;`;
   yield `int main() {`;
   yield `  printf("${name} %zu\\n", sizeof(svar));`;
+
   for(let [member, type] of members)
     if((type == null || typeof type.size == 'number') && member != undefined) {
       member = member.replace(/:.*/, '');
@@ -356,9 +362,11 @@ function InspectStruct(decl, includes, compiler = 'tcc') {
 
     result.unshift([name, '-', '-', +size]);
 
-    result.toString = function(sep = ' ') {
-      return this.map(line => line.join(sep).replace('.', ' ')).join('\n');
-    };
+    Util.define(result, {
+      toString(sep = ' ') {
+        return this.map(line => line.join(sep).replace('.', ' ')).join('\n');
+      }
+    });
   }
 
   return result;
@@ -497,6 +505,7 @@ export class FFI_Function {
     fp ??= (name, lib) => `${prefix}dlsym(${lib ?? 'RTLD_DEFAULT'}, '${name}')`;
     let code = `'${name}', ${fp(name, lib)}, null, '${returnType}'`;
     for(let [name, type] of parameters) {
+      console.log('name:', name, 'type:', type);
       code += ', ';
       code += `'${type}'`;
     }
@@ -767,17 +776,27 @@ async function ASTShell(...args) {
 
     globalThis.files[file] = r;
 
-    Object.assign(r, {
-      getByIdOrName(name_or_id, pred = n => true) {
-        if(typeof name_or_id == 'number') name_or_id = '0x' + name_or_id.toString(16);
+    function nameOrIdPred(name_or_id, pred = n => true) {
+      if(typeof name_or_id == 'number') name_or_id = '0x' + name_or_id.toString(16);
+      return name_or_id instanceof RegExp
+        ? node => name_or_id.test(node.name) && pred(node)
+        : name_or_id.startsWith('0x')
+        ? node => node.id == name_or_id && pred(node)
+        : node => node.name == name_or_id && pred(node);
+    }
 
-        return this.data.inner.find(name_or_id.startsWith('0x')
-            ? node => node.id == name_or_id && pred(node)
-            : node => node.name == name_or_id && pred(node)
-        );
+    Object.assign(r, {
+      select(name_or_id, pred = n => true) {
+        return this.data.inner.filter(nameOrIdPred(name_or_id, pred));
+      },
+      getByIdOrName(name_or_id, pred = n => true) {
+        return this.data.inner.findLast(nameOrIdPred(name_or_id, pred));
       },
       getType(name_or_id) {
-        let result = GetType(name_or_id, this.data);
+        let result =
+          this.getByIdOrName(name_or_id,
+            n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind)
+          ) ?? GetType(name_or_id, this.data);
 
         if(result) {
           let type = TypeFactory(result, this.data);
@@ -865,6 +884,18 @@ async function ASTShell(...args) {
     LibraryExports
   });
   globalThis.util = Util;
+  globalThis.F = arg => $.getFunction(arg);
+  globalThis.T = arg => $.getType(arg);
+
+  Util.lazyProperty(globalThis, 'P', () => {
+    let printer = NodePrinter($.data);
+
+    return node => {
+      if('ast' in node) node = node.ast;
+      printer.clear();
+      return printer.print(node);
+    };
+  });
 
   const unithist = `.${base}-unithistory`;
   let items = [];

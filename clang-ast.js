@@ -23,8 +23,9 @@ function GetSubscripts(str) {
 }
 
 function TrimSubscripts(str, sub) {
-  let [[index]] = sub ?? GetSubscripts(str) ?? [[str.length]];
-  return str.slice(0, index).trimEnd();
+  let [subscript = [str.length]] = sub ?? GetSubscripts(str) ?? [[str.length]];
+  //console.log("subscript:",subscript);
+  return str.slice(0, subscript[0]).trimEnd();
 }
 
 export class Node {
@@ -233,7 +234,6 @@ export class Type extends Node {
   arrayOf() {
     let typeName = this.trimSubscripts();
     return Type.declarations.get(typeName);
-
   }
 
   get subscripts() {
@@ -561,17 +561,17 @@ export class TypedefDecl extends Type {
 
     let typeId = deep.find(inner, (v, k) => k == 'decl')?.id;
     type = ast.inner.find(n => n.id == typeId);
-  
-   // type ??= GetType(node, ast);
+
+    // type ??= GetType(node, ast);
     Util.assertEqual(inner.length, 1);
+  console.log('TypedefDecl.constructor', { typeId,type });
 
     if(type.decl) type = type.decl;
     if(type.kind && type.kind.endsWith('Type')) type = type.type;
-  //console.log('TypedefDecl.constructor', { type });
 
     this.name = node.name;
     this.type = type.kind ? TypeFactory(type, ast, false) : new Type(type, ast);
-  //console.log('TypedefDecl.constructor',     this.type);
+    //console.log('TypedefDecl.constructor',     this.type);
   }
 
   get size() {
@@ -610,10 +610,13 @@ export class FunctionDecl extends Node {
     if(node.mangledName && node.mangledName != node.name) this.mangledName = node.mangledName;
 
     let parameters = node.inner?.filter(child => child.kind == 'ParmVarDecl');
+    let body = node.inner?.find(child => child.kind != 'ParmVarDecl');
     let type = node.type?.qualType;
     let returnType = type.replace(/\s?\(.*/, '');
 
-    let tmp = deep.find(ast, n => typeof n == 'object' && n && n.name == returnType);
+   // console.log('ast:', ast);
+
+    let tmp = deep.find(ast ?? $.data, n => typeof n == 'object' && n && n.name == returnType);
 
     if(tmp) returnType = tmp;
 
@@ -622,6 +625,8 @@ export class FunctionDecl extends Node {
     this.returnType = returnType.kind ? TypeFactory(returnType, ast) : new Type(returnType, ast);
     this.parameters =
       parameters && /*new Map*/ parameters.map(({ name, type }) => [name, new Type(type, ast)]);
+
+    this.body = body;
   }
 }
 
@@ -698,7 +703,7 @@ export class Location {
 export function TypeFactory(node, ast, cache = true) {
   let obj;
 
- // console.log('TypeFactory:', { node });
+  // console.log('TypeFactory:', { node });
 
   Util.assert(node.kind,
     `Not an AST node: ${inspect(node, { colors: false, compact: 0, depth: Infinity })}`
@@ -1228,11 +1233,16 @@ export function NodePrinter(ast) {
           let i = 0;
           let type, baseType;
           for(let inner of decl_stmt.inner) {
-            if(!type) {
-              type = new Type(inner.type, this.ast);
-              baseType = type.trimSubscripts();
-              put(`${baseType} `);
-            }
+            try {
+              if(!type && inner.type) {
+                type = new Type(inner.type, this.ast);
+                console.log('type:', type);
+                console.log('type.typeAlias:', type.typeAlias);
+                console.log('type.trimSubscripts():', type.trimSubscripts());
+                baseType = type.trimSubscripts() ?? type.qualType;
+                put(`${baseType} `);
+              }
+            } catch(err) {}
             if(i++ > 0) put(', ');
             printer.print(inner, baseType);
           }
@@ -1351,7 +1361,7 @@ export function NodePrinter(ast) {
           let node = new FunctionDecl(function_decl, this.ast);
           //console.log('FunctionDecl', node.returnType);
           let returnType = node.returnType;
-          put(returnType + ' ' + function_decl.name + '(');
+          put(returnType + '\n' + function_decl.name + '(');
           i = 0;
           for(let inner of (function_decl.inner ?? []).filter(n => n.kind == 'ParmVarDecl')) {
             if(i++ > 0) put(', ');

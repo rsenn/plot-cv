@@ -165,8 +165,8 @@ get_prototypes() {
     set -- "$TYPE" "$FNAME" "$ARGS"
     printf "%-$((TYPE_MAXLEN))s |%${PAD_A2}s|%s\n" "$1" "$2" "$(clean_args "$3");"
   done <<<"$CPROTO_OUT" | 
-      sort -t'|' -k2 -f |
       sed "s,|,,g" >"$TEMP"
+      #sort -t'|' -k2 -f |
 
   [ "$XCLIP" = true ] && xclip -selection clipboard -in <"$TEMP"
   cat "$TEMP"

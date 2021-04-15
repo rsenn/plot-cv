@@ -53,8 +53,8 @@ function test_operators_create() {
         r.y = a.y - 1;
         return r;
       },
-      '^'(p1,p2) {
-        var r =  Math.sqrt((p1.x-p2.x)**2 + (p1.y-p2.y)**2);
+      '^'(p1, p2) {
+        var r = Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
         return r;
       }
     },
@@ -72,14 +72,13 @@ function test_operators_create() {
     }
   );
 
- 
   var a = new Vec2(10, 5);
   var b = new Vec2(110, 105);
   var r;
 
-console.log(`a * 2 + 3 * b = `, r = a * 2 + 3 * b);
-console.log(`b - a = `, b -a );
-console.log(`b ^ a = `, b ^a );
+  console.log(`a * 2 + 3 * b = `, (r = a * 2 + 3 * b));
+  console.log(`b - a = `, b - a);
+  console.log(`b ^ a = `, b ^ a);
   a++;
   r = ++a;
 }
@@ -130,8 +129,8 @@ function test_operators() {
         r.y = a.y - 1;
         return r;
       },
-      '^'(p1,p2) {
-        var r =  Math.sqrt((p1.x-p2.x)**2 + (p1.y-p2.y)**2);
+      '^'(p1, p2) {
+        var r = Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
         return r;
       }
     },
@@ -164,9 +163,9 @@ function test_operators() {
   var b = new Vec2(110, 105);
   var r;
 
-console.log(`a * 2 + 3 * b = `, r = a * 2 + 3 * b);
-console.log(`b - a = `, b -a );
-console.log(`b ^ a = `, b ^a );
+  console.log(`a * 2 + 3 * b = `, (r = a * 2 + 3 * b));
+  console.log(`b - a = `, b - a);
+  console.log(`b ^ a = `, b ^ a);
   a++;
   r = ++a;
 }

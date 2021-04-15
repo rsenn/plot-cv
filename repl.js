@@ -1541,6 +1541,7 @@ export default function REPL(title = 'QuickJS') {
       repl.puts(colors.none);
     } catch(error) {
       repl.puts('EXCEPTION: ' + colors[styles.error_msg]);
+      repl.puts(error.message + '\n');
 
       //      repl.puts(error.stack+'');
 
@@ -1977,7 +1978,7 @@ export default function REPL(title = 'QuickJS') {
 
     if(!console.options) console.options = {};
 
-    console.options.depth = Infinity;
+    console.options.depth = 2;
     console.options.compact = 2;
     console.options.maxArrayLength = Infinity;
 
