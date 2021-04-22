@@ -55,8 +55,7 @@
 			"file_exclude_patterns":
 			[
 				"tags",
-				"*.es",
-				"*.bz2",
+ 				"*.bz2",
 				"*.gz",
 				"*.txz",
 				"*.xz",
@@ -125,6 +124,8 @@
 			"folder_exclude_patterns":
 			[
 				".*",
+				"*.js",
+				"txiki.js",
 				".git",
 				".git/*",
 				"node_modules",
@@ -147,7 +148,7 @@
 			"path": ".",
 		}, 
 		{
-			"path": "txiki.js"
+			"path": "quickjs"
 		},
 	],
 	"settings":

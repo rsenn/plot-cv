@@ -28,6 +28,41 @@ function TrimSubscripts(str, sub) {
   return str.slice(0, subscript[0]).trimEnd();
 }
 
+export class List extends Array {
+  constructor(...args) {
+    super(...args);
+  }
+
+  static get [Symbol.species]() {
+    return List;
+  }
+  get [Symbol.species]() {
+    return List;
+  }
+
+  filter(callback, thisArg = null) {
+    let ret = new List();
+    let i = 0;
+    for(let elem of this) {
+      if(callback.call(thisArg, elem, i, this)) ret[i] = elem;
+      i++;
+    }
+    return ret;
+  }
+
+  get first() {
+    return this.find(elem => elem !== undefined);
+  }
+
+  entries() {
+    let ret = [];
+    for(let [i, elem] of super.entries()) {
+      if(elem) ret.push([i, elem]);
+    }
+    return ret;
+  }
+}
+
 export class Node {
   static ast2node = new WeakMap();
   static node2ast = new WeakMap();
@@ -922,11 +957,17 @@ export async function AstDump(compiler, source, args, force) {
       let file;
       let maxDepth = 0;
       for(let node of data.inner) {
-        let loc;
-        if((loc = node.loc)) {
-          if(loc.file) file = loc.file;
-          else loc.file = file;
-        }
+        let range;
+
+        const SetFile = loc => {
+          if(loc) {
+            if(loc.file) file = loc.file;
+            else loc.file = file;
+          }
+        };
+        SetFile(node.loc);
+        SetFile(node.range?.begin);
+        SetFile(node.range?.end);
       }
       return data;
     },
@@ -949,13 +990,13 @@ export async function AstDump(compiler, source, args, force) {
       );
     },
     get types() {
-      return this.filter(n => /(Record|Typedef|Enum)Decl/.test(n.kind));
+      return Object.setPrototypeOf(this.filter(n => /(Record|Typedef|Enum)Decl/.test(n.kind)), List.prototype);
     },
     get functions() {
-      return this.filter(n => /(Function)Decl/.test(n.kind));
+      return Object.setPrototypeOf(this.filter(n => /(Function)Decl/.test(n.kind)), List.prototype);;
     },
     get variables() {
-      return this.filter(n => /(Var)Decl/.test(n.kind));
+      return Object.setPrototypeOf(this.filter(n => /(Var)Decl/.test(n.kind)), List.prototype);;
     }
   });
 }

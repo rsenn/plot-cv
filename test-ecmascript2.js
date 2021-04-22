@@ -1,9 +1,9 @@
+import * as deep from 'deep';
 import { ECMAScriptParser, Lexer } from './lib/ecmascript/parser2.js';
 import { PathReplacer } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
 import { estree, ESNode, Program, ModuleDeclaration, ModuleSpecifier, ImportDeclaration, ImportSpecifier, ImportDefaultSpecifier, ImportNamespaceSpecifier, Super, Expression, FunctionLiteral, Pattern, Identifier, Literal, RegExpLiteral, TemplateLiteral, BigIntLiteral, TaggedTemplateExpression, TemplateElement, ThisExpression, UnaryExpression, UpdateExpression, BinaryExpression, AssignmentExpression, LogicalExpression, MemberExpression, ConditionalExpression, CallExpression, DecoratorExpression, NewExpression, SequenceExpression, Statement, EmptyStatement, DebuggerStatement, LabeledStatement, BlockStatement, FunctionBody, StatementList, ExpressionStatement, Directive, ReturnStatement, ContinueStatement, BreakStatement, IfStatement, SwitchStatement, SwitchCase, WhileStatement, DoWhileStatement, ForStatement, ForInStatement, ForOfStatement, WithStatement, TryStatement, CatchClause, ThrowStatement, Declaration, ClassDeclaration, ClassBody, MethodDefinition, MetaProperty, YieldExpression, FunctionArgument, FunctionDeclaration, ArrowFunctionExpression, VariableDeclaration, VariableDeclarator, ObjectExpression, Property, ArrayExpression, JSXLiteral, AssignmentProperty, ObjectPattern, ArrayPattern, RestElement, AssignmentPattern, AwaitExpression, SpreadElement, ExportNamedDeclaration, ExportSpecifier, AnonymousDefaultExportedFunctionDeclaration, AnonymousDefaultExportedClassDeclaration, ExportDefaultDeclaration, ExportAllDeclaration } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
-import deep from './lib/deep.js';
 import { Path } from './lib/json.js';
 import { SortedMap } from './lib/container/sortedMap.js';
 import PortableFileSystem from './lib/filesystem.js';
@@ -12,6 +12,9 @@ import Tree from './lib/tree.js';
 import { ConsoleSetup } from './lib/consoleSetup.js';
 
 let filesystem;
+let lexer, parser;
+
+Error.stackTraceLimit = 100;
 
 const testfn = () => true;
 const testtmpl = `this is\na test`;
@@ -40,8 +43,11 @@ function printAst(ast, comments, printer = globalThis.printer) {
 let files = {};
 
 async function main(...args) {
-  await ConsoleSetup({ colors: true, depth: 10, compact: 1 });
+  await ConsoleSetup({ colors: true, depth: 10, compact: false });
   await PortableFileSystem(fs => (filesystem = fs));
+  console.log('main', { args });
+  console.log('console.options', Object.keys(console.options));
+  console.options.compact = 3;
 
   let params = Util.getOpt({
       help: [
@@ -62,11 +68,11 @@ async function main(...args) {
     args
   );
 
-  //  params.debug ??= true;
- 
+  //params.debug ??= true;
+
   if(Util.getPlatform() == 'quickjs') {
     await import('os').then(os => {
-       os.signal(os.SIGINT, () => {
+      os.signal(os.SIGINT, () => {
         console.log(`Got SIGINT. (${os.SIGINT})`);
         Util.putStack();
         Util.exit(1);
@@ -79,13 +85,13 @@ async function main(...args) {
     printer: Util.once(() => new Printer({ colors: false, indent: 2 }))
   });
 
-   const time = () => Date.now() / 1000;
+  const time = () => Date.now() / 1000;
 
   if(params['@'].length == 0) params['@'].push(null); //'./lib/ecmascript/parser.js');
   for(let file of params['@']) {
     let error;
 
-    const processing = Util.instrument(() => processFile(file, params));
+    const processing = /*Util.instrument*/ () => processFile(file, params);
 
     let start = await time(),
       end;
@@ -93,18 +99,14 @@ async function main(...args) {
     // Util.safeCall(processFile, file, params);
     try {
       await processing(); //.catch(err => console.log('processFile ERROR:', err));
-    } catch(err) {
-      console.log('ERROR:', err);
-      if(err) {
-        console.log('ERROR:', err.message);
-        console.log('ERROR:', err.stack);
-      }
+    } catch(error) {
+      console.log('ERROR:', error.message);
+      console.log('STACK:', error.stack);
     }
 
     end = await time();
 
-    times.push(await Util.now());
-
+    times.push(Date.now());
 
     //processFile(file, params);
     files[file] = finish(error);
@@ -133,15 +135,19 @@ function processFile(file, params) {
     data = source;
   }
   console.log('OK, data: ', Util.abbreviate(Util.escape(data)));
+  ECMAScriptParser.instrumentate();
 
   let ast, error;
-  globalThis.parser = null;
-  globalThis.parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
+  globalThis.parser = parser = null;
+  globalThis.parser = parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
 
-  // console.log('prototypeChain:', Util.getPrototypeChain(parser));
+  console.log('prototypeChain:', Util.getPrototypeChain(parser));
+  console.log('parser:', parser);
+  // console.log('parser.parseProgram:', parser.parseProgram);
 
   try {
     ast = parser.parseProgram();
+    console.log('ast:', console.config({ depth: 1 }), ast);
   } catch(err) {
     console.log('parseProgram token', parser.token);
     console.log('parseProgram loc', parser.lexer.loc + '');
@@ -150,12 +156,26 @@ function processFile(file, params) {
       console.log('parseProgram ERROR message:', err.message);
       console.log('parseProgram ERROR stack:', err.stack);
     }
+    throw err;
   }
 
   console.log('Parsed: ', console.config({ depth: 1 }), ast);
+  parser.assoc(ast);
+  //console.log('parser.assocMap: ', console.config({depth: 0 }), [...parser.assoc.map.keys()]);
+
+  deep.forEach(ast,
+    (node, ptr) => {
+      const { loc } = node;
+      //console.log('node', console.config({depth: 1 }), node, loc);
+    },
+    null,
+    deep.TYPE_OBJECT
+  );
   parser.addCommentsToNodes(ast);
 
-  WriteFile(params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json', JSON.stringify(ast /*.toJSON()*/, null, 2));
+  WriteFile(params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json',
+    JSON.stringify(ast /*.toJSON()*/, null, 2)
+  );
 
   let node2path = new WeakMap();
 
@@ -239,7 +259,7 @@ function finish(err) {
     console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
   }
 
-  let lexer = parser.lexer;
+  lexer = parser.lexer;
   let t = [];
   console.log(parser.trace());
   WriteFile('trace.log', parser.trace());
@@ -250,12 +270,9 @@ function finish(err) {
   return !fail;
 }
 
-try {
-  main(...scriptArgs.slice(1)).catch(err => console.log('ERROR:', err, err.stack)).then(() => console.log('SUCCESS')).catch(err => console.log("ERROR:", err));
-} catch(error) {
-  console.log('FAIL:');
-  console.log('FAIL:', error.message);
-} finally {
-}
-
-//Util.callMain(main, console.log);
+main(...scriptArgs.slice(1))
+  .then(() => console.log('SUCCESS'))
+  .catch(error => {
+    console.log(`FAIL: ${error.message}\n${error.stack}`);
+    std.exit(1);
+  });

@@ -130,7 +130,11 @@ async function CommandLine() {
         return;
       }
     } catch(err) {}*/
-    if(Util.isArray(value) && Util.isObject(value[0]) && value[0].kind) console.log(Table(value));
+    if((Util.isArray(value) || value instanceof Array) &&
+      Util.isObject(value.first) &&
+      value.first.kind
+    )
+      console.log(Table(value));
     else if(typeof value == 'string') console.log(value);
     else console.log(inspect(value, { ...console.options, hideKeys: ['loc', 'range'] }));
   };
@@ -250,7 +254,9 @@ function Structs(nodes) {
 }
 
 function Table(list, pred = (n, l) => true /*/\.c:/.test(l)*/) {
-  let entries = [...list].map((n, i) => [i, LocationString(GetLoc(n)), n]);
+  let entries = [...list]
+    .map((n, i) => (n ? [i, LocationString(GetLoc(n)), n] : undefined))
+    .filter(e => e);
   const colSizes = [5, 10, 12, 30, 12, 15, 25];
   const colKeys = ['id', 'kind', 'name', 'tagUsed' /*, 'previousDecl', 'completeDefinition'*/];
   const colNames = ['#', ...colKeys, 'location'];
@@ -285,10 +291,25 @@ function LoadJSON(filename) {
 }
 
 function PrintRange(range) {
-  const [begin, end] = range;
+  if('range' in range) range = range.range;
+
+  const { begin, end } = range;
 
   let data = filesystem.readFile(begin.file, 'utf-8');
-  return data ? data.slice(begin, end + 1) : null;
+  return data ? data.slice(begin.offset, end.offset + (end.tokLen | 0)) : null;
+}
+
+function OverlapRange(r1, r2) {
+  const GetRange = r => [r.begin.offset, r.end.offset + (r.end.tokLen | 0)];
+  const InRange = (i, r) => i >= r[0] && i < r[1];
+
+  r1 = GetRange(r1);
+  r2 = GetRange(r2);
+
+  if(InRange(r1[0], r2) || InRange(r1[1], r2)) return true;
+  if(InRange(r2[0], r1) || InRange(r2[1], r1)) return true;
+
+  return false;
 }
 
 function WriteFile(name, data, verbose = true) {
@@ -839,6 +860,7 @@ async function ASTShell(...args) {
     WriteFile,
     LoadJSON,
     PrintRange,
+    OverlapRange,
     GenerateInspectStruct,
     GenerateStructClass,
     InspectStruct,

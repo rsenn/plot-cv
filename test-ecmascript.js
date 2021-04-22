@@ -108,7 +108,6 @@ async function main(...args) {
 
     times.push(await Util.now());
 
-
     //processFile(file, params);
     files[file] = finish(error);
 

@@ -691,6 +691,9 @@ export default function REPL(title = 'QuickJS') {
   function control_d() {
     if(repl.cmd.length == 0) {
       repl.puts('\n');
+
+      (repl.cleanup ?? std.exit)(0);
+
       return -3; /* exit read eval print loop */
     } else {
       repl.delete_char_dir(1);
@@ -783,7 +786,7 @@ export default function REPL(title = 'QuickJS') {
       repl.puts('\n');
 
       running = false;
-      (thisObj.exit ?? std.exit)(0);
+      (repl.cleanup ?? std.exit)(0);
     } else {
       repl.puts('\n(Press Ctrl-C again to quit)\n');
       repl.cmd = '';

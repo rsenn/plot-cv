@@ -25,7 +25,7 @@ async function main(...args) {
   await PortableFileSystem(fs => (filesystem = fs));
   await ConsoleSetup({ depth: 4 });
 
-  let [filename = './lib/grammars/INI.g4'] = args;
+  let [filename = './lib/grammars/bnf.g4'] = args;
   let basename = path.basename(filename, path.extname(filename));
 
   let src = filesystem.readFile(filename).toString();
