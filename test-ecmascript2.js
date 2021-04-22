@@ -43,7 +43,7 @@ function printAst(ast, comments, printer = globalThis.printer) {
 let files = {};
 
 async function main(...args) {
-  await ConsoleSetup({ colors: true, depth: 10, compact: false });
+  await ConsoleSetup({ colors: true, depth: 2, compact: false });
   await PortableFileSystem(fs => (filesystem = fs));
   console.log('main', { args });
   console.log('console.options', Object.keys(console.options));
@@ -62,24 +62,26 @@ async function main(...args) {
       ],
       'output-ast': [true, null, 'a'],
       'output-js': [true, null, 'o'],
-      debug: [false, null, 'x'],
+      debug: [
+        false,
+        function(v, r, o) {
+          const thisObj = this;
+          console.log('debug', { v, r, o, thisObj });
+        },
+        'x'
+      ],
       '@': 'input'
     },
     args
   );
 
-  //params.debug ??= true;
+  // params.debug ??= true;
 
-  if(Util.getPlatform() == 'quickjs') {
-    await import('os').then(os => {
-      os.signal(os.SIGINT, () => {
-        console.log(`Got SIGINT. (${os.SIGINT})`);
-        Util.putStack();
-        Util.exit(1);
-      });
-      console.log(`SIGINT (${os.SIGINT}) handler installed`);
-    });
-  }
+  /*await Util.signal('SIGINT', () => {
+    console.log(`Got SIGINT. (${os.SIGINT})`);
+    Util.putStack();
+    Util.exit(1);
+  }).then(() => console.log(`SIGINT (${os.SIGINT}) handler installed`));*/
 
   Util.defineGettersSetters(globalThis, {
     printer: Util.once(() => new Printer({ colors: false, indent: 2 }))
@@ -136,14 +138,14 @@ function processFile(file, params) {
   }
   console.log('OK, data: ', Util.abbreviate(Util.escape(data)));
   ECMAScriptParser.instrumentate();
+  console.log('ECMAScriptParser:', ECMAScriptParser);
 
   let ast, error;
   globalThis.parser = parser = null;
-  globalThis.parser = parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
-
-  console.log('prototypeChain:', Util.getPrototypeChain(parser));
-  console.log('parser:', parser);
-  // console.log('parser.parseProgram:', parser.parseProgram);
+  globalThis.parser = parser = new ECMAScriptParser(data ? data.toString() : data,
+    file,
+    debug ? 2 : 1
+  );
 
   try {
     ast = parser.parseProgram();
@@ -270,7 +272,7 @@ function finish(err) {
   return !fail;
 }
 
-main(...Util.getArgv().slice(1))
+main(...Util.getArgs().slice(1))
   .then(() => console.log('SUCCESS'))
   .catch(error => {
     console.log(`FAIL: ${error.message}\n${error.stack}`);

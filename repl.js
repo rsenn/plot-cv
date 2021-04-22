@@ -1798,8 +1798,8 @@ export default function REPL(title = 'QuickJS') {
       can_regex = 0;
     }
 
-    function set_style(from, to) {
-      while(r.length < from) r.push('default');
+    function set_style(_from, to) {
+      while(r.length < _from) r.push('default');
       while(r.length < to) r.push(style);
     }
 

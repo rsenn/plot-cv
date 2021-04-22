@@ -42,6 +42,7 @@ async function main(...args) {
   await ConsoleSetup({ colors: true, depth: 8, compact: 1, customInspect: false });
   // console.log('options:', { ...console.options });
   await PortableFileSystem(fs => (filesystem = fs));
+  console.log('args:', args);
 
   let params = Util.getOpt({
       'output-ast': [true, null, 'a'],
@@ -56,7 +57,14 @@ async function main(...args) {
         },
         'h'
       ],
-      debug: [false, null, 'x'],
+      debug: [
+        false,
+        function(v, r, o) {
+          const thisObj = this;
+          console.log('debug', { v, r, o, thisObj });
+        },
+        'x'
+      ],
       '@': 'input'
     },
     args
@@ -65,17 +73,11 @@ async function main(...args) {
   //  params.debug ??= true;
   console.log(`Platform: ${Util.getPlatform()}`);
 
-  if(Util.getPlatform() == 'quickjs') {
-    await import('os').then(os => {
-      console.log('os:', os);
-      os.signal(os.SIGINT, () => {
-        console.log(`Got SIGINT. (${os.SIGINT})`);
-        Util.putStack();
-        Util.exit(1);
-      });
-      console.log(`SIGINT (${os.SIGINT}) handler installed`);
-    });
-  }
+  /*await Util.signal('SIGINT', () => {
+    console.log(`Got SIGINT. (${os.SIGINT})`);
+    Util.putStack();
+    Util.exit(1);
+  }).then(() => console.log(`SIGINT (${os.SIGINT}) handler installed`));*/
 
   Util.defineGettersSetters(globalThis, {
     printer: Util.once(() => new Printer({ colors: false, indent: 2 }))
@@ -138,7 +140,7 @@ function processFile(file, params) {
 
   let ast, error;
   globalThis.parser = null;
-  globalThis.parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
+  globalThis.parser = new ECMAScriptParser(data ? data.toString() : data, file, debug ? 2 : 1);
 
   // console.log('prototypeChain:', Util.getPrototypeChain(parser));
 
@@ -253,7 +255,7 @@ function finish(err) {
   return !fail;
 }
 
-main(...Util.getArgv().slice(1))
+main(...Util.getArgs().slice(1))
   .then(() => console.log('SUCCESS'))
   .catch(error => {
     console.log(`FAIL: ${error.message}\n${error.stack}`);
