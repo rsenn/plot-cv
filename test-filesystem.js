@@ -148,7 +148,7 @@ const tests = {
 async function main(...args) {
   await ConsoleSetup({ colors: true, depth: Infinity });
   await PortableFileSystem(fs => (filesystem = fs));
-  //  Util.getGlobalObject().console = {};
+  //  globalThis.console = {};
 
   console.log('Console:', Object.getPrototypeOf(console));
   console.log('log:', Object.getPrototypeOf(console).log);

@@ -41,7 +41,7 @@ async function main(...args) {
   console.log('isBrowser:', Util.isBrowser());
   console.log('Util.copyTextToClipboard()', await Util.copyTextToClipboard('TEST'));
   // console.log('modules:', inspect({ Point, Size, Rect }));
-  let globalThis = Util.getGlobalObject();
+  let globalThis = globalThis;
   const moduleNames = ['Rect', 'Point', 'Size', 'Line', 'Mat', 'Contour', 'PointIterator', 'Draw'];
   for(let moduleName of moduleNames)
     Util.tryCatch(() => eval(`globalThis[moduleName] = ${moduleName};`));

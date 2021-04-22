@@ -56,7 +56,7 @@ const Ruler = forwardRef((props, ref) => {
     };
   };
   const removeDragGhost = () => {
-    if(!Util.getGlobalObject().window || !dragSomethingRef.current) {
+    if(!globalThis.window || !dragSomethingRef.current) {
       return;
     }
     dragSomethingRef.current.addEventListener('dragstart',

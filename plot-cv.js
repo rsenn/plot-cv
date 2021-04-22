@@ -29,7 +29,7 @@ function connect() {
 }
 
 let frame = 0;
-let g = Util.getGlobalObject();
+let g = globalThis;
 
 g.process = async function process(contours, hier, ...args) {
   //let size = new Size(imgOriginal.cols, imgOriginal.rows);

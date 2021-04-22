@@ -19,7 +19,7 @@ let node2path, flat, value, list;
 const removeModulesDir = PrefixRemover([/node_modules\//g, /^\.\//g]);
 let name;
 let parser, printer;
-const g = Util.getGlobalObject();
+const g = globalThis;
 const inspectSymbol = Symbol.for('nodejs.util.inspect.custom');
 const packages = new Map();
 

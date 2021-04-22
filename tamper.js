@@ -3017,7 +3017,7 @@
   };
 
   Util.base64 = (() => {
-    const g = Util.getGlobalObject();
+    const g = globalThis;
     return {
       encode: Util.tryFunction(utf8 => g.btoa(g.unescape(g.encodeURIComponent(utf8))),
         v => v,
@@ -4996,7 +4996,7 @@
   Util.assert = function Assert(act, message) {
     if(!act) throw new Error(format('ASSERTION_S', message));
   };
-  Util.assignGlobal = () => Util.weakAssign(Util.getGlobalObject(), Util);
+  Util.assignGlobal = () => Util.weakAssign(globalThis, Util);
 
   Util.weakMapper = function(createFn, map = new WeakMap()) {
     let self = function(obj, ...args) {

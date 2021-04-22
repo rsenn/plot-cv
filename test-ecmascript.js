@@ -1,5 +1,4 @@
-import { ECMAScriptParser, Lexer } from './lib/ecmascript/parser.js';
-import { PathReplacer } from './lib/ecmascript/lexer.js';
+import { ECMAScriptParser, Lexer, PathReplacer } from './lib/ecmascript/parser.js';
 import Printer from './lib/ecmascript/printer.js';
 import { estree, ESNode, Program, ModuleDeclaration, ModuleSpecifier, ImportDeclaration, ImportSpecifier, ImportDefaultSpecifier, ImportNamespaceSpecifier, Super, Expression, FunctionLiteral, Pattern, Identifier, Literal, RegExpLiteral, TemplateLiteral, BigIntLiteral, TaggedTemplateExpression, TemplateElement, ThisExpression, UnaryExpression, UpdateExpression, BinaryExpression, AssignmentExpression, LogicalExpression, MemberExpression, ConditionalExpression, CallExpression, DecoratorExpression, NewExpression, SequenceExpression, Statement, EmptyStatement, DebuggerStatement, LabeledStatement, BlockStatement, FunctionBody, StatementList, ExpressionStatement, Directive, ReturnStatement, ContinueStatement, BreakStatement, IfStatement, SwitchStatement, SwitchCase, WhileStatement, DoWhileStatement, ForStatement, ForInStatement, ForOfStatement, WithStatement, TryStatement, CatchClause, ThrowStatement, Declaration, ClassDeclaration, ClassBody, MethodDefinition, MetaProperty, YieldExpression, FunctionArgument, FunctionDeclaration, ArrowFunctionExpression, VariableDeclaration, VariableDeclarator, ObjectExpression, Property, ArrayExpression, JSXLiteral, AssignmentProperty, ObjectPattern, ArrayPattern, RestElement, AssignmentPattern, AwaitExpression, SpreadElement, ExportNamedDeclaration, ExportSpecifier, AnonymousDefaultExportedFunctionDeclaration, AnonymousDefaultExportedClassDeclaration, ExportDefaultDeclaration, ExportAllDeclaration } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
@@ -40,7 +39,8 @@ function printAst(ast, comments, printer = globalThis.printer) {
 let files = {};
 
 async function main(...args) {
-  await ConsoleSetup({ colors: true, depth: 10, compact: 1 });
+  await ConsoleSetup({ colors: true, depth: 8, compact: 1, customInspect: false });
+  // console.log('options:', { ...console.options });
   await PortableFileSystem(fs => (filesystem = fs));
 
   let params = Util.getOpt({
@@ -154,7 +154,7 @@ function processFile(file, params) {
     }
   }
 
-  console.log('Parsed: ', console.config({ depth: 1 }), ast);
+  console.log('Parsed: ', ast);
 
   parser.addCommentsToNodes(ast);
 
@@ -253,13 +253,9 @@ function finish(err) {
   return !fail;
 }
 
-try {
-  main(...scriptArgs.slice(1)).catch(err => console.log('ERROR:', err, err.stack));
-} catch(error) {
-  console.log('FAIL:');
-  console.log('FAIL:', error.message);
-} finally {
-  console.log('SUCCESS');
-}
-
-//Util.callMain(main, console.log);
+main(...Util.getArgv().slice(1))
+  .then(() => console.log('SUCCESS'))
+  .catch(error => {
+    console.log(`FAIL: ${error.message}\n${error.stack}`);
+    Util.exit(1);
+  });

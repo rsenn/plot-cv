@@ -270,9 +270,9 @@ function finish(err) {
   return !fail;
 }
 
-main(...scriptArgs.slice(1))
+main(...Util.getArgv().slice(1))
   .then(() => console.log('SUCCESS'))
   .catch(error => {
     console.log(`FAIL: ${error.message}\n${error.stack}`);
-    std.exit(1);
+    Util.exit(1);
   });

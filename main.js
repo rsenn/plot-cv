@@ -2718,7 +2718,7 @@ const AppMain = (window.onload = async () => {
 
   console.error('AppMain done');
 
-  //console.log(Util.getGlobalObject());
+  //console.log(globalThis);
 
   /*  for(let path of [...Element.findAll('path')]) {
     let points = new PointList([...SVG.pathIterator(path, 30, p => p.toFixed(3))]);

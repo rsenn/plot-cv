@@ -50,7 +50,7 @@ class Node {
 const inspectSymbol = Symbol.for('nodejs.util.inspect.custom');
 
 function Util(g) {
-  const globalObject = g || Util.getGlobalObject();
+  const globalObject = g || globalThis;
   globalObject.Util = Util;
   return Util;
 }
@@ -2793,7 +2793,7 @@ Util.roundTo = function(value, prec, digits, type) {
   return ret;
 };
 Util.base64 = (() => {
-  const g = Util.getGlobalObject();
+  const g = globalThis;
 
   return {
     encode: Util.tryFunction(utf8 => g.btoa(g.unescape(g.encodeURIComponent(utf8))),
@@ -4788,7 +4788,7 @@ Util.assertEqual = function assertEqual(val1, val2, message) {
     throw new AssertionFailed(Util.getCallerStack(4), message ?? `${val1} != ${val2}`);
 };
 
-Util.assignGlobal = () => Util.weakAssign(Util.getGlobalObject(), Util);
+Util.assignGlobal = () => Util.weakAssign(globalThis, Util);
 
 Util.weakMapper = function(createFn, map = new WeakMap(), hitFn) {
   let self = function(obj, ...args) {
@@ -5900,7 +5900,7 @@ Util.getHRTime = Util.memoize(() => {
       return `${Math.floor(secs)}s ${Util.roundTo(msecs, 0.001)}ms`;
     }
   }
-  Util.getGlobalObject().HighResolutionTime = HighResolutionTime;
+  globalThis.HighResolutionTime = HighResolutionTime;
 
   return Util.isAsync(now)
     ? async function hrtime(previousTimestamp) {
@@ -5945,7 +5945,7 @@ Util.lazyProperty(Util, 'hrtime', Util.getHRTime);
 Util.lazyProperty(Util,
   'now',
   (Util.getNow = () => {
-    const g = Util.getGlobalObject();
+    const g = globalThis;
     // polyfil for window.performance.now
     var performance = g.performance || {};
     var performanceNow =

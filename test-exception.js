@@ -20,7 +20,7 @@ async function main(...args) {
 
   await ConsoleSetup({ depth: 3 });
 
-  globalThis = Util.getGlobalObject();
+  globalThis = globalThis;
 
   throw new Error('This is an error');
 }
