@@ -1,4 +1,4 @@
-import { client, server, fetch } from 'net.so';
+import { client, server, fetch } from 'net';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 

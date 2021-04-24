@@ -2,7 +2,7 @@ import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import PortableFileSystem from './lib/filesystem.js';
 import path from './lib/path.js';
-import * as bjson from 'bjson.so';
+import * as bjson from 'bjson';
 
 let filesystem;
 

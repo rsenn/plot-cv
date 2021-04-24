@@ -59,9 +59,9 @@ async function main(...args) {
       ],
       debug: [
         false,
-        function(v, r, o) {
+        function(v, r, o, res) {
           const thisObj = this;
-          console.log('debug', { v, r, o, thisObj });
+          console.log('debug', { v, r, o, res, thisObj });
         },
         'x'
       ],
@@ -140,7 +140,7 @@ function processFile(file, params) {
 
   let ast, error;
   globalThis.parser = null;
-  globalThis.parser = new ECMAScriptParser(data ? data.toString() : data, file, debug ? 2 : 1);
+  globalThis.parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
 
   // console.log('prototypeChain:', Util.getPrototypeChain(parser));
 

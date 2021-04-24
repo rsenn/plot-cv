@@ -3,7 +3,7 @@ import PortableSpawn from './lib/spawn.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
 //import deep from './lib/deep.js';
-import * as deep from 'deep.so';
+import * as deep from 'deep';
 import ConsoleSetup from './lib/consoleSetup.js';
 import REPL from './repl.js';
 //import * as std from 'std';
@@ -17,7 +17,7 @@ import { lazyInitializer } from './lib/lazyInitializer.js';
 let params;
 let files;
 let filesystem, spawn, base, cmdhist;
-let defs, includes, sources;
+let defs, includes, libs, sources;
 let libdirs = [
   '/lib',
   '/lib/i386-linux-gnu',
@@ -768,6 +768,7 @@ async function ASTShell(...args) {
   params = globalThis.params = Util.getOpt({
       include: [true, (a, p) => (p || []).concat([a]), 'I'],
       define: [true, (a, p) => (p || []).concat([a]), 'D'],
+      libs: [true, (a, p) => (p || []).concat([a]), 'l'],
       debug: [false, null, 'x'],
       force: [false, null, 'f'],
       'system-includes': [false, null, 's'],
@@ -781,13 +782,14 @@ async function ASTShell(...args) {
 
   defs = params.define || [];
   includes = params.include || [];
+  libs = params.libs || [];
   sources = params['@'] || [];
 
   Util.define(globalThis, {
     defs,
-    includes,
+    includes, libs,
     get flags() {
-      return [...includes.map(v => `-I${v}`), ...defs.map(d => `-D${d}`)];
+      return [...includes.map(v => `-I${v}`), ...defs.map(d => `-D${d}`), ...libs.map(l => `-l${l}`)];
     }
   });
 
@@ -825,6 +827,7 @@ async function ASTShell(...args) {
         }
         return result;
       },
+
       getFunction(name_or_id) {
         let result = isNode(name_or_id)
           ? name_or_id

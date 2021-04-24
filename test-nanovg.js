@@ -1,11 +1,11 @@
-import * as glfw from 'glfw.so';
+import * as glfw from 'glfw';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import { glFlush, glBegin, glBindTexture, glClear, glClearColor, glEnable, glEnd, glGenTextures, glTexCoord2f, glTexParameterf, glTexImage2D, glVertex3f, glViewport, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT, GL_LINEAR, GL_QUADS, GL_REPEAT, GL_RGB, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_TEXTURE_WRAP_S, GL_TEXTURE_WRAP_T, GL_UNSIGNED_BYTE, glDisable, glLoadIdentity, glMatrixMode, glOrtho, glPushMatrix, glPopMatrix, GL_LIGHTING, GL_MODELVIEW, GL_PROJECTION } from './gl.js';
 import { RGBA, HSLA } from './lib/color.js';
-import { Mat } from 'mat.so';
-import * as cv from 'cv.so';
-import * as nvg from 'nanovg.so';
+import { Mat } from 'mat';
+import * as cv from 'cv';
+import * as nvg from 'nanovg';
 
 async function main(...args) {
   await ConsoleSetup({

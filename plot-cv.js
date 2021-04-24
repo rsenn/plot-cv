@@ -1,6 +1,6 @@
-import * as net from 'net.so';
-import { Contour } from 'contour.so';
-import { Mat } from 'mat.so';
+import * as net from 'net';
+import { Contour } from 'contour';
+import { Mat } from 'mat';
 import PortableConsole from './lib/consoleSetup.js';
 import Util from './lib/util.js';
 const { client, server, fetch } = net;

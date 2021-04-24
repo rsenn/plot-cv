@@ -1,5 +1,5 @@
 import Util from './lib/util.js';
-import { Mat } from 'mat.so';
+import { Mat } from 'mat';
 
 const hr = Util.hrtime;
 

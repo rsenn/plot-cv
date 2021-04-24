@@ -1,7 +1,7 @@
 import { strerror, Error } from 'std';
 import * as os from 'os';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './fcntl.js';
-import { errno } from 'ffi.so';
+import { errno } from 'ffi';
 import { Socket, socket, AF_INET, SOCK_STREAM, ndelay, connect, sockaddr_in, select, fd_set, timeval, FD_SET, FD_ISSET, FD_ZERO, send, recv } from './socket.js';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';

@@ -3,7 +3,7 @@ import PortableSpawn from './lib/spawn.js';
 import PortableFileSystem from './lib/filesystem.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import inspect from './lib/objectInspect.js';
-import { mmap, munmap, PROT_READ, PROT_WRITE, MAP_PRIVATE, MAP_SHARED, MAP_ANONYMOUS } from 'mmap.so';
+import { mmap, munmap, PROT_READ, PROT_WRITE, MAP_PRIVATE, MAP_SHARED, MAP_ANONYMOUS } from 'mmap';
 
 async function main(...args) {
   await ConsoleSetup({ breakLength: 80, depth: Infinity });

@@ -1,4 +1,4 @@
-import { fetch } from 'net.so';
+import { fetch } from 'net';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import { tXml, XPath } from './lib/xml.js';

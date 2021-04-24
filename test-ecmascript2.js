@@ -64,9 +64,10 @@ async function main(...args) {
       'output-js': [true, null, 'o'],
       debug: [
         false,
-        function(v, r, o) {
+        function(v, r, o, result) {
           const thisObj = this;
-          console.log('debug', { v, r, o, thisObj });
+          //          console.log('debug', { v, r, o, result,thisObj });
+          return (result.debug | 0) + 1;
         },
         'x'
       ],
@@ -75,6 +76,7 @@ async function main(...args) {
     args
   );
 
+  console.log('params.debug', params.debug);
   // params.debug ??= true;
 
   /*await Util.signal('SIGINT', () => {
@@ -142,10 +144,7 @@ function processFile(file, params) {
 
   let ast, error;
   globalThis.parser = parser = null;
-  globalThis.parser = parser = new ECMAScriptParser(data ? data.toString() : data,
-    file,
-    debug ? 2 : 1
-  );
+  globalThis.parser = parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
 
   try {
     ast = parser.parseProgram();

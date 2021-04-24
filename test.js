@@ -1,11 +1,11 @@
 import ConsoleSetup from './lib/consoleSetup.js';
-import { Contour } from 'contour.so';
-import * as cv from 'cv.so';
-import { Rect } from 'rect.so';
-import { Point } from 'point.so';
-import { Size } from 'size.so';
-import { Mat } from 'mat.so';
-import { PointIterator } from 'point-iterator.so';
+import { Contour } from 'contour';
+import * as cv from 'cv';
+import { Rect } from 'rect';
+import { Point } from 'point';
+import { Size } from 'size';
+import { Mat } from 'mat';
+import { PointIterator } from 'point-iterator';
 
 import { HSLA } from './lib/color/hsla.js';
 import { Line } from './lib/geom/line.js';

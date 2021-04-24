@@ -1,5 +1,5 @@
 import Util from './lib/util.js';
-import path from 'path.so';
+import path from 'path';
 import { AcquireReader } from './lib/stream/utils.js';
 export let SIZEOF_POINTER = 8;
 export let SIZEOF_INT = 4;
@@ -43,6 +43,12 @@ export class List extends Array {
   filter(callback, thisArg = null) {
     let ret = new List();
     let i = 0;
+
+    if(typeof callback == 'object' && callback != null && callback instanceof RegExp) {
+      var re = callback;
+      callback = elem => re.test(elem);
+    }
+
     for(let elem of this) {
       if(callback.call(thisArg, elem, i, this)) ret[i] = elem;
       i++;
@@ -58,6 +64,21 @@ export class List extends Array {
     let ret = [];
     for(let [i, elem] of super.entries()) {
       if(elem) ret.push([i, elem]);
+    }
+    return ret;
+  }
+
+  keys() {
+    let ret = [];
+    for(let [i, elem] of super.entries()) {
+      if(elem) ret.push(i);
+    }
+    return ret;
+  }
+  values() {
+    let ret = [];
+    for(let [i, elem] of super.entries()) {
+      if(elem) ret.push(elem);
     }
     return ret;
   }
@@ -117,7 +138,7 @@ export class Node {
 
   inspect(depth, opts = {}) {
     const text = opts.colors ? (t, ...c) => '\x1b[' + c.join(';') + 'm' + t + '\x1b[m' : t => t;
-    const type = Util.className(this);
+    const type = this.constructor?.name ?? Util.className(this);
 
     return text(type, 1, 31) + ' ' + inspect(Util.getMembers(this), depth, opts);
   }
@@ -456,7 +477,7 @@ const { size,unsigned } = this;
 
     if(size) props.size = size;
 
-    return text(Util.className(this), 1, 31) + ' ' + inspect(props, depth, opts);
+    return text(this.constructor?.name ?? Util.className(this), 1, 31) + ' ' + inspect(props, depth, { ...opts, compact: false });
   }
 
   /* get [Symbol.toStringTag]() {
@@ -508,8 +529,10 @@ export class RecordDecl extends Type {
 
     const { tagUsed, name, inner } = node;
 
-    if(tagUsed) this.name = tagUsed + (name ? ' ' + name : '');
-    else if(name) this.name = name;
+   /* if(tagUsed) this.name = tagUsed + (name ? ' ' + name : '');
+    else*/ if(name && name != 'struct') this.name = name;
+
+    this.name ??= NameFor(node, ast);
 
     if(inner?.find(child => child.kind == 'PackedAttr')) this.packed = true;
 
@@ -610,8 +633,9 @@ export class TypedefDecl extends Type {
   }
 
   get size() {
-    return this.type.size;
+    return this.type?.size;
   }
+  
   toJSON() {
     const { name, size } = this;
     return super.toJSON({ name, size });
@@ -999,6 +1023,25 @@ export async function AstDump(compiler, source, args, force) {
       return Object.setPrototypeOf(this.filter(n => /(Var)Decl/.test(n.kind)), List.prototype);;
     }
   });
+}
+
+export function NameFor(decl, ast = this.data) {
+  const { id } = decl;
+  let p;
+  if((p = deep.find(ast, (value, key) => key == 'ownedTagDecl' && value.id == id, deep.RETURN_PATH))
+  ) {
+    p = p.slice(0, -1);
+
+    let node = deep.get(ast, p);
+    let parent = deep.get(ast,p.slice(0,-2));
+
+    if(parent.kind == 'TypedefDecl' && parent.name)
+      return parent.name;
+
+  console.log("p:", p, "node:",node, "parent:", parent);
+
+    return node?.type?.desugaredQualType;
+  }
 }
 
 export function NodeType(n) {

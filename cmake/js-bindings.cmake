@@ -55,7 +55,6 @@ foreach(MOD ${JS_BINDINGS_SOURCES})
 
 endforeach(MOD ${JS_BINDINGS_SOURCES})
 
-
 foreach(JS_MODULE ${JS_BINDINGS_MODULES})
 
   make_shared_module(${JS_MODULE})
@@ -64,7 +63,6 @@ endforeach()
 
 string(REPLACE ";" " " MODULE_NAMES "${JS_BINDINGS_MODULES}")
 message(STATUS "Configured modules: ${MODULE_NAMES}")
-
 
 add_dependencies(quickjs-rect quickjs-point quickjs-size)
 # add_dependencies(quickjs-contour quickjs-mat quickjs-rect quickjs-point)

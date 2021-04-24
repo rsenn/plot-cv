@@ -11,7 +11,7 @@ import Alea from './lib/alea.js';
 import * as diff from './lib/json/diff.js';
 import inspect from './lib/objectInspect.js';
 import * as zlib from './quickjs/ffi/examples/zlib.js';
-import * as ffi from 'ffi.so';
+import * as ffi from 'ffi';
 
 let filesystem;
 let prng = new Alea().seed(Date.now());

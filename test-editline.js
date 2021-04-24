@@ -1,6 +1,6 @@
 import * as el from './editline.js';
 import Util from './lib/util.js';
-import * as ffi from 'ffi.so';
+import * as ffi from 'ffi';
 import ConsoleSetup from './lib/consoleSetup.js';
 
 function hex(num) {

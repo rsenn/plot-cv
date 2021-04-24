@@ -147,20 +147,18 @@
 			/*"folder_include_patterns": [ "src", "opencv", "quickjs", "lib" ],*/
 			"path": ".",
 		}, 
-		{
-			"path": "quickjs"
-		},
 	],
 	"settings":
 	{
-		/*"debug.configurations":
-		[
-		],*/
+	 
 		"sublimegdb_commandline": "gdb --interpreter=mi ${file}",
 		"sublimegdb_exec_cmd": "-exec-run",
 		"sublimegdb_i_know_how_to_use_gdb_thank_you_very_much": true,
 		"sublimegdb_workingdir": "${folder:${project_path:${file}}}",
 		"tab_size": 2,
+		"debug.configurations":
+		[
+		],
 	},
 	"debugger_configurations":
 	[

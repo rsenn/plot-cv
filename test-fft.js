@@ -1,6 +1,6 @@
 import Util from './lib/util.js';
-import { dlopen, dlsym, RTLD_NOW, RTLD_DEFAULT, toPointer } from 'ffi.so';
-import * as ffi from 'ffi.so';
+import { dlopen, dlsym, RTLD_NOW, RTLD_DEFAULT, toPointer } from 'ffi';
+import * as ffi from 'ffi';
 import * as std from 'std';
 import * as dsp from './lib/dsp/util.js';
 import FFT from './lib/dsp/fft.js';

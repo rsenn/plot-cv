@@ -1,4 +1,4 @@
-import { dlsym, define, call, RTLD_DEFAULT } from 'ffi.so';
+import { dlsym, define, call, RTLD_DEFAULT } from 'ffi';
 
 export const F_DUPFD = 0;
 export const F_GETFD = 1;

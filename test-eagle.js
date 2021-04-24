@@ -243,8 +243,9 @@ async function testEagle(filename) {
     p = p.parentNode;
   }
 */
+      console.log('proj.documents',  proj.documents);
 
-  for(let doc of proj.documents) {
+  for(let doc of Object.values(proj.documents)) {
     let changed = false;
     console.log('eagle:', Util.className(doc.find('eagle')));
 

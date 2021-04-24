@@ -1,6 +1,6 @@
-import * as cv from 'cv.so';
-import * as draw from 'draw.so';
-import { Size } from 'size.so';
+import * as cv from 'cv';
+import * as draw from 'draw';
+import { Size } from 'size';
 
 import Util from './lib/util.js';
 

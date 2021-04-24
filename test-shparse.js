@@ -2,7 +2,7 @@ import ConsoleSetup from './lib/consoleSetup.js';
 import REPL from './repl.js';
 import PortableFileSystem from './lib/filesystem.js';
 import * as Terminal from './terminal.js';
-import * as path from 'path.so';
+import * as path from 'path';
 import PortableSpawn from './lib/spawn.js';
 
 const consoleOpts = { depth: Infinity, compact: 5, hideKeys: ['pos'] };

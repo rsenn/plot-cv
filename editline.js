@@ -1,4 +1,4 @@
-import { dlopen, dlsym, RTLD_NOW, define, call } from 'ffi.so';
+import { dlopen, dlsym, RTLD_NOW, define, call } from 'ffi';
 
 const libeditline = dlopen('/usr/local/lib/libeditline.so.1', RTLD_NOW);
 

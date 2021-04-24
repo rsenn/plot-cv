@@ -1,4 +1,4 @@
-import { dlsym, define, call, RTLD_DEFAULT } from 'ffi.so';
+import { dlsym, define, call, RTLD_DEFAULT } from 'ffi';
 
 export const _IOC = (a, b, c, d) => (a << 30) | (b << 8) | c | (d << 16);
 export const _IOC_NONE = 0;
