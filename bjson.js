@@ -3,19 +3,25 @@ import ConsoleSetup from './lib/consoleSetup.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
 
-const WriteBJSON = async (filename, obj) =>
-  await import('bjson.so').then(({ write }) => {
-    let data = write(obj);
-    return WriteFile(filename, data);
-  });
+const WriteBJSON = async (filename, obj) => console.log('WriteBJSON', filename);
+await import('bjson.so').then(({ write }) => {
+  let data = write(obj);
+  return WriteFile(filename, data);
+});
+const WriteJSON = async (filename, obj) => {
+  console.log('WriteJSON', filename);
+  let json = JSON.stringify(obj, null, 2);
+  return filesystem.write(filename, json);
+};
 
-const ReadBJSON = async filename =>
-  await import('bjson.so').then(({ read }) => {
-    let data = filesystem.readFile(filename, null);
-    return read(data, 0, data.byteLength);
-  });
+const ReadBJSON = async filename => console.log('ReadBJSON', filename);
+await import('bjson.so').then(({ read }) => {
+  let data = filesystem.readFile(filename, null);
+  return read(data, 0, data.byteLength);
+});
 
 const ReadJSON = async filename => {
+  console.log('ReadJSON', filename);
   let data = filesystem.readFile(filename);
   return JSON.parse(data);
 };

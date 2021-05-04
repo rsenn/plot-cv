@@ -264,7 +264,7 @@ function Table(list, pred = (n, l) => true /*/\.c:/.test(l)*/) {
   let entries = [...list]
     .map((n, i) => (n ? [i, LocationString(GetLoc(n)), n] : undefined))
     .filter(e => e);
-  const colSizes = [5, 10, 12, 30, 12, 15, 25];
+  const colSizes = [5, 15, 12, 30, 12, 15, 25];
   const colKeys = ['id', 'kind', 'name', 'tagUsed' /*, 'previousDecl', 'completeDefinition'*/];
   const colNames = ['#', ...colKeys, 'location'];
   const outputRow = (cols, pad, sep) =>
@@ -329,10 +329,24 @@ function WriteFile(name, data, verbose = true) {
   if(verbose) console.log(`Wrote ${name}: ${ret} bytes`);
 }
 
+function ReadFile(name, verbose = true) {
+  let ret = filesystem.readFile(name, 'utf-8');
+
+  if(verbose) console.log(`Reawd ${name}: ${ret.length} bytes`);
+  return ret;
+}
+
+function WriteJSON(name, data) {
+  WriteFile(name, JSON.stringify(data, null, 2));
+}
+
 function* GenerateInspectStruct(decl, includes) {
   let { name, members } = decl;
 
   includes ??= [decl.loc.file.replace(/^\/usr\/include\//, '')];
+
+  //console.log('GenerateInspectStruct', { name, members, includes });
+
   yield '#include <stdio.h>';
   yield '#include <stddef.h>';
 
@@ -384,7 +398,6 @@ bitsize(const void* p, size_t len) {
 }
 `;
 
-  console.log('GenerateInspectStruct', { name, members, includes });
   for(let include of includes) yield `#include "${include}"`;
   yield `${name} svar;`;
   yield `int main() {`;
@@ -409,10 +422,15 @@ bitsize(const void* p, size_t len) {
 }
 
 function InspectStruct(decl, includes, compiler = 'tcc') {
-  if(typeof decl == 'string') decl = $.getType(decl);
+  if(typeof decl == 'string') {
+    let name = (/ /.test(decl) ? '' : 'struct ') + decl;
+    decl = Type.get(name, $.data);
+    decl ??= $.getType(name);
+    decl.name = name;
+  }
+  //console.log('InspectStruct',decl);
 
   const code = [...GenerateInspectStruct(decl, includes)].join('\n');
-  //console.log('InspectStruct', { code });
   const program = `inspect-${decl.name.replace(/\ /g, '_')}`;
   WriteFile(program + '.c', code);
 
@@ -747,6 +765,15 @@ function PrintECMAScript(ast, comments, printer = new ECMAScript.Printer({ inden
   return printer.print(ast);
 }
 
+function Namespaces(nodePath, ast = $.data) {
+  let ptr = new Pointer(nodePath);
+  let ptrs = ptr.chain(2);
+  let get = deep.get(ast);
+
+  let ns = ptrs.map(p => get(p)).filter(n => n.kind == 'NamespaceDecl');
+  return ns;
+}
+
 function MemberNames(members) {
   const ret = [];
   if(members.members) members = members.members;
@@ -871,6 +898,8 @@ async function ASTShell(...args) {
   /*  console.options = consoleOptions;
   console.options.compact = 1;
   console.options.hideKeys = ['loc', 'range'];*/
+  console.options.depth = 2;
+  console.options.compact = 1;
 
   globalThis.files = files = {};
 
@@ -985,7 +1014,10 @@ async function ASTShell(...args) {
     GetLoc,
     GetTypeStr,
     WriteFile,
+    WriteJSON,
+    ReadFile,
     LoadJSON,
+    ReadJSON: LoadJSON,
     PrintRange,
     OverlapRange,
     GenerateInspectStruct,
@@ -1050,6 +1082,7 @@ async function ASTShell(...args) {
     libdirs64,
     LibraryExports,
     MemberNames,
+    Namespaces,
     UnsetLoc
   });
   globalThis.util = Util;

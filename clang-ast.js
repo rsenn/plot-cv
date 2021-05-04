@@ -1086,6 +1086,12 @@ export async function AstDump(compiler, source, args, force) {
     get functions() {
       return Object.setPrototypeOf(this.filter(n => /(?:Function)Decl/.test(n.kind)), List.prototype);;
     },
+    get namespaces() {
+      return Object.setPrototypeOf(deep.select(this.data, n => 'NamespaceDecl' == n.kind, deep.RETURN_VALUE, 10), List.prototype );
+    },
+    get classes() {
+      return Object.setPrototypeOf(deep.select(this.data, n => 'CXXRecordDecl' == n.kind, deep.RETURN_VALUE, 10), List.prototype );
+    },
     get variables() {
       return Object.setPrototypeOf(this.filter(n => /(?:Var)Decl/.test(n.kind)), List.prototype);;
     }
@@ -1238,17 +1244,30 @@ export function NodePrinter(ast) {
 
         let loc = GetLoc(node);
         let location = new Location(node);
-        if(out.length == oldlen)
-          throw new Error(`Node printer for ${node.kind} failed: ${inspect(
+
+        if(loc?.line !== undefined) {
+          const { line, column } = loc;
+          this.loc = {
+            line,
+            column,
+            toString() {
+              return [line, column].filter(i => i).join(':');
+            }
+          };
+        }
+        if(out.length == oldlen) {
+          console.log('printer error', { loc, location }, this.loc);
+          throw new Error(`Node printer for ${node.kind} (${this.loc}) failed: ${inspect(
               { ...node, loc },
               {
-                depth: 6,
-                compact: 2,
+                depth: 10,
+                compact: false,
                 breakLength: 80,
                 hideKeys: ['range', 'loc']
               }
             )}`
           );
+        }
         // else console.log('out:', out);
         return out;
       }
@@ -1259,7 +1278,11 @@ export function NodePrinter(ast) {
         AbiTagAttr(abi_tag_attr) {
           put('__attribute__((__abi_tag__))');
         }
-        AccessSpecDecl() {}
+        AccessSpecDecl(access_spec_decl) {
+          const { access } = access_spec_decl;
+          //console.log("AccessSpecDecl",access_spec_decl)
+          put(access + ':');
+        }
         AddrLabelExpr() {}
         AliasAttr() {}
         AlignedAttr(aligned_attr) {
@@ -1343,15 +1366,19 @@ export function NodePrinter(ast) {
         CompoundLiteralExpr() {}
         CompoundStmt(compound_stmt) {
           depth++;
-          put('{\n');
+          put('{');
           let i = 0;
+          let offset = out.length;
           for(let inner of compound_stmt.inner ?? []) {
             if(i++ > 0) put('}; \t\n'.indexOf(out[out.length - 1]) != -1 ? '\n' : ';\n');
             printer.print(inner);
           }
-          if(out[out.length - 1] != ';') put(';');
+          console.log('CompoundStmt', { out });
+          if(out.length > offset && out[out.length - 1] != ';') put(';');
           depth--;
-          put('\n}');
+          //if(out.length > offset)
+          put('\n');
+          put('}\n');
         }
         ConditionalOperator(conditional_operator) {
           const [cond, if_true, if_false] = conditional_operator.inner;
@@ -1385,7 +1412,8 @@ export function NodePrinter(ast) {
         DecayedType() {}
         DeclRefExpr(decl_ref_expr) {
           const { type, valueCategory, referencedDecl } = decl_ref_expr;
-          put(referencedDecl.name);
+          put(referencedDecl.name ?? '<DeclRefExpr>');
+
           // printer.print(referencedDecl);
         }
         DeclStmt(decl_stmt) {
@@ -1661,7 +1689,14 @@ export function NodePrinter(ast) {
           for(let inner of paren_expr.inner) printer.print(inner);
           put(')');
         }
-        ParenListExpr() {}
+        ParenListExpr(paren_list_expr) {
+          const { type, valueCategory } = paren_list_expr;
+
+          put(`(`);
+
+          if(paren_list_expr.inner) for(let inner of paren_list_expr.inner) printer.print(inner);
+          put(`)`);
+        }
         ParenType() {}
         ParmVarDecl(parm_var_decl) {
           let type = Node.get(parm_var_decl.type);
@@ -1777,7 +1812,10 @@ export function NodePrinter(ast) {
           if(isPostfix) put(opcode);
         }
         UnaryTransformType() {}
-        UnresolvedLookupExpr() {}
+        UnresolvedLookupExpr(unresolved_lookup_expr) {
+          const { type, valueCategory, usesADL, name, lookups } = unresolved_lookup_expr;
+          put(name);
+        }
         UnresolvedMemberExpr() {}
         UnresolvedUsingValueDecl() {}
         UnusedAttr() {}
@@ -1828,6 +1866,189 @@ export function NodePrinter(ast) {
           printer.print(cond);
           put(`) `);
           printer.print(body);
+        }
+        CXXRecordDecl(cxx_record_decl) {
+          const { name, tagUsed } = cxx_record_decl;
+          depth++;
+
+          put(`${tagUsed} ${name} {\n`);
+
+          if(cxx_record_decl.inner) {
+            let i = -1;
+            for(let inner of cxx_record_decl.inner) {
+              i++;
+              if(inner.kind.endsWith('Comment') || inner.kind == 'CXXRecordDecl') continue;
+              //  console.log(`CXXRecordDecl inner[${i}]`, inner);
+              printer.print(inner);
+              put(`\n`);
+            }
+          }
+          depth--;
+          put(`\n}`);
+        }
+        CXXConstructorDecl(cxx_constructor_decl) {
+          const { name, type } = cxx_constructor_decl;
+          let i = 0,
+            param,
+            initializer;
+          let l = [...cxx_constructor_decl.inner].filter(n => n.kind && !n.kind.endsWith('Comment')
+          );
+          console.log('CXXConstructorDecl', cxx_constructor_decl);
+          put(`${name}(`);
+          while(l.length && l[0].kind == 'ParmVarDecl' && (param = l.shift())) {
+            if(param.name) {
+              if(i > 0) put(', ');
+              printer.print(param);
+              i++;
+            }
+          }
+          put(`)`);
+          depth++;
+          if(l.length && l[0].kind == 'CXXCtorInitializer') {
+            put(`\n: `);
+            i = 0;
+            while(l.length && l[0].kind == 'CXXCtorInitializer' && (initializer = l.shift())) {
+              if(i++ > 0) put('\n, ');
+              let implicit_cast = initializer.inner[0];
+
+              let member_expr = implicit_cast.inner[0];
+
+              put(member_expr.name + `(`);
+              console.log('CXXConstructorDecl', { implicit_cast, member_expr });
+
+              if(member_expr?.inner) printer.print(member_expr.inner[0]);
+
+              put(`)`);
+
+              //          printer.print(member_expr);
+            }
+          }
+          depth--;
+          //         console.log('CXXConstructorDecl', { name, l });
+
+          if(l.length) {
+            put(`\n`);
+            for(let node of l) printer.print(node);
+          } else {
+            put(`;`);
+          }
+        }
+
+        CXX11NoReturnAttr() {}
+        CXXBindTemporaryExpr() {}
+        CXXBoolLiteralExpr() {}
+        CXXCatchStmt() {}
+        CXXConstructExpr() {}
+        CXXConversionDecl() {}
+        CXXCtorInitializer(cxx_ctor_initializer) {
+          const {
+            anyInit: { name }
+          } = cxx_ctor_initializer;
+
+          put(name);
+          put(`(`);
+          if(cxx_ctor_initializer.inner)
+            for(let inner of cxx_ctor_initializer.inner) {
+              if(inner.kind.endsWith('Comment')) continue;
+              printer.print(inner ?? '');
+            }
+          put(`)`);
+        }
+        CXXDefaultArgExpr() {}
+        CXXDefaultInitExpr() {}
+        CXXDeleteExpr() {}
+        CXXDependentScopeMemberExpr(cxx_dependent_scope_member_expr) {
+          const { type, valueCategory, isArrow, member } = cxx_dependent_scope_member_expr;
+
+          // if(cxx_dependent_scope_member_expr.inner)
+          for(let inner of cxx_dependent_scope_member_expr.inner) {
+            if(inner.kind.endsWith('Comment')) continue;
+            // console.log('CXXDependentScopeMemberExpr', inner);
+            printer.print(inner);
+          }
+
+          put(`.${member}`);
+        }
+        CXXThisExpr(cxx_this_expr) {
+          const { valueCategory, isImplicit } = cxx_this_expr;
+
+          put('this');
+        }
+        CXXDestructorDecl() {}
+        CXXForRangeStmt() {}
+        CXXFunctionalCastExpr() {}
+        CXXMemberCallExpr() {}
+        CXXMethodDecl(cxx_method_decl) {
+          const {
+            name,
+            type: { qualType: functionType },
+            storageClass
+          } = cxx_method_decl;
+          const returnType = functionType.slice(0, functionType.indexOf(' ('));
+
+          console.log('CXXMethodDecl', { name, returnType });
+          let i = 0,
+            param,
+            initializer;
+          let inner = [...cxx_method_decl.inner].filter(n => n.kind && !n.kind.endsWith('Comment'));
+          if(storageClass) put(`${storageClass} `);
+          put(`${returnType}\n`);
+          put(`${name}(`);
+          while(inner[0].kind == 'ParmVarDecl' && (param = inner.shift())) {
+            if(i++ > 0) put(', ');
+            printer.print(param);
+          }
+          put(`)`);
+          console.log('CXXMethodDecl', { inner });
+          if(inner.length > 0) {
+            put(` `);
+            depth++;
+            for(let node of inner) printer.print(node);
+            depth--;
+          } else {
+            put(`;`);
+          }
+        }
+        CXXNewExpr() {}
+        CXXNoexceptExpr() {}
+        CXXNullPtrLiteralExpr() {}
+        CXXOperatorCallExpr() {}
+
+        CXXReinterpretCastExpr() {}
+        CXXScalarValueInitExpr() {}
+        CXXStaticCastExpr(cxx_static_cast_expr) {
+          const {
+            type: { qualType: typeName },
+            valueCategory,
+            castKind
+          } = cxx_static_cast_expr;
+
+          if(castKind == 'NoOp') {
+            put(`0`);
+            return;
+          }
+          console.log('CXXStaticCastExpr', cxx_static_cast_expr);
+          put(`static_cast<`);
+          put(typeName);
+          put(`>(`);
+
+          if(cxx_static_cast_expr.inner)
+            for(let inner of cxx_static_cast_expr.inner) {
+              if(inner.kind == 'DeclRefExpr' && inner.referencedDecl.name == '') continue;
+              printer.print(inner);
+            }
+          put(`)`);
+        }
+
+        CXXTemporaryObjectExpr() {}
+        CXXTryStmt() {}
+        CXXUnresolvedConstructExpr(cxx_unresolved_construct_expr) {
+          const { type, valueCategory } = cxx_unresolved_construct_expr;
+          if(cxx_unresolved_construct_expr.inner)
+            for(let inner of cxx_unresolved_construct_expr.inner) {
+              if(inner.kind.endsWith('Comment')) continue;
+              printer.print(inner);
+            }
         }
       })()
     }
@@ -1901,7 +2122,7 @@ export function GetType(name_or_id, ast = $.data) {
 
 export function GetFields(node) {
   let fields = deep
-    .select(node, (v, k) => / at /.test(v) && k == 'qualType')
+    .select(node, (v, k) => / at /.test(v) && k == 'qualType', deep.RETURN_VALUE_PATH)
     .map(([v, p]) => [v.split(/(?:\s*[()]| at )/g)[2], p.slice(0, -2)]);
 
   return fields.map(([loc, ptr]) =>
