@@ -227,8 +227,6 @@ async function testEagle(filename) {
 
   if(alignAll(board) || alignAll(schematic)) console.log('Saved:', await proj.saveTo('tmp', true));
 
-  console.log('documents', proj.documents);
-
   console.log('saved:', await proj.saveTo('tmp', true));
 
   //for(let sheet of board.get('sheet'))
@@ -243,9 +241,10 @@ async function testEagle(filename) {
     p = p.parentNode;
   }
 */
-      console.log('proj.documents',  proj.documents);
+  let documents = [board, schematic].filter(d => d);
+  console.log('documents', documents);
 
-  for(let doc of Object.values(proj.documents)) {
+  for(let doc of documents) {
     let changed = false;
     console.log('eagle:', Util.className(doc.find('eagle')));
 
@@ -277,7 +276,7 @@ async function testEagle(filename) {
     }
   }
 
-  let desc = proj.documents.map(doc => [doc.filename, doc.find('description')]);
+  let desc = documents.map(doc => [doc.filename, doc.find('description')]);
   console.log('desc', desc);
 
   desc = desc

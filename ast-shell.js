@@ -7,8 +7,9 @@ import * as deep from 'deep';
 import ConsoleSetup from './lib/consoleSetup.js';
 import REPL from './repl.js';
 //import * as std from 'std';
-import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, VarDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter, isNode, SourceDependencies } from './clang-ast.js';
+import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, VarDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter, isNode, SourceDependencies, GetTypeNode, GetFields, PathRemoveLoc } from './clang-ast.js';
 import Tree from './lib/tree.js';
+import { Pointer } from 'pointer';
 import * as Terminal from './terminal.js';
 import * as ECMAScript from './lib/ecmascript.js';
 import { ECMAScriptParser } from './lib/ecmascript.js';
@@ -63,10 +64,16 @@ Util.define(Array.prototype, {
   at(index) {
     return this[Util.mod(index, this.length)];
   },
+  get first() {
+    return this[this.length-1];
+  },
   get head() {
     return this[this.length-1];
   },
   get tail() {
+    return this[this.length-1];
+  },
+  get last() {
     return this[this.length-1];
   }
 });
@@ -150,7 +157,7 @@ async function CommandLine() {
     for(let arg of args) {
       if(s) s += ' ';
       if(typeof arg != 'strping' || arg.indexOf('\x1b') == -1)
-        s += inspect(arg, { depth: Infinity, depth: 6, compact: 4 });
+        s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
       else s += arg;
     }
     debugLog.puts(s + '\n');
@@ -329,17 +336,73 @@ function* GenerateInspectStruct(decl, includes) {
   yield '#include <stdio.h>';
   yield '#include <stddef.h>';
 
+  if(MemberNames(members).some(name => /:/.test(name)))
+    yield `
+size_t
+byte_firstnot(const void* p, size_t len, unsigned char v) {
+  const unsigned char* x;
+  for(x = p; len; len--, x++)
+    if(*x != v) break;
+  return x - (const unsigned char*)p;
+}
+size_t
+byte_lastnot(const void* p, size_t len, unsigned char v) {
+  const unsigned char* x;
+  for(x = (const unsigned char*)p + len - 1; len; len--, x--)
+    if(*x != v) break;
+  return x - (const unsigned char*)p;
+}
+size_t
+bit_firstnot(unsigned char v, unsigned char b) {
+  int i;
+  for(i = 0; i < 8; i++, v >>= 1) 
+    if((v & 1) == !b) break;
+  return i;
+}
+size_t
+bit_lastnot(unsigned char v, unsigned char b) {
+  int i;
+  for(i = 7; i >= 0; i--) 
+    if(!!(v & (1 << i)) == !b) break;
+  return i >= 0 ? i : 8;
+}
+size_t
+firstnot(const void* p, size_t len, unsigned char v) {
+ const char* x = p;
+ size_t i = byte_firstnot(p, len, v);
+ return i * 8 + bit_firstnot(x[i], v);
+}
+size_t
+lastnot(const void* p, size_t len, unsigned char v) {
+ const unsigned char* x = p;
+ size_t i = byte_lastnot(p, len, v);
+ return i * 8 + bit_lastnot(x[i], v);
+}
+size_t
+bitsize(const void* p, size_t len) {
+ return lastnot(p, len, 0xff) + 1 - firstnot(p, len, 0xff);
+}
+`;
+
   console.log('GenerateInspectStruct', { name, members, includes });
   for(let include of includes) yield `#include "${include}"`;
   yield `${name} svar;`;
   yield `int main() {`;
-  yield `  printf("${name} %zu\\n", sizeof(svar));`;
+  yield `  printf("${name} %zu\\n", sizeof(svar) * 8);`;
 
-  for(let [member, type] of members)
-    if((type == null || typeof type.size == 'number') && member != undefined) {
-      member = member.replace(/:.*/, '');
-      yield `  printf(".${member} %zu %zu\\n", offsetof(${name}, ${member}), sizeof(svar.${member}));`;
+  for(let member of MemberNames(members)) {
+    if(true /*(type == null || typeof type.size == 'number') && member != undefined*/) {
+      let field = member.replace(/:.*/, '');
+      if(/:/.test(member)) {
+        yield `
+  memset(&svar, 0xff, sizeof(svar));
+  svar.${field} = 0;
+  printf(".${field} %zu %zi\\n", firstnot(&svar, sizeof(svar), 0xff), bitsize(&svar, sizeof(svar)));`;
+      } else {
+        yield `  printf(".${field} %zu %zu\\n", offsetof(${name}, ${field}) * 8, sizeof(svar.${field}) * 8);`;
+      }
     }
+  }
 
   yield `  return 0;`;
   yield `}`;
@@ -353,7 +416,7 @@ function InspectStruct(decl, includes, compiler = 'tcc') {
   const program = `inspect-${decl.name.replace(/\ /g, '_')}`;
   WriteFile(program + '.c', code);
 
-  let command = [compiler, '-Os', '-w', '-o', program, program + '.c', ...flags];
+  let command = [compiler, '-O2', '-g', '-w', '-o', program, program + '.c', ...flags];
   console.log('InspectStruct', { command: command.join(' ') });
 
   let result = os.exec(command);
@@ -381,7 +444,18 @@ function InspectStruct(decl, includes, compiler = 'tcc') {
         size
       ]);
 
-    result.unshift([name, '-', '-', +size]);
+    let end = 0;
+    result = result.reduce((acc, line) => {
+      if(acc.length) {
+        if(end < acc.last[1] + acc.last[2]) end = acc.last[1] + acc.last[2];
+
+        if(end < line[1]) acc.push([null, end, line[1] - end]);
+      }
+      acc.push(line);
+      return acc;
+    }, []);
+
+    result.unshift([name, '-', +size]);
 
     Util.define(result, {
       toString(sep = ' ') {
@@ -673,6 +747,55 @@ function PrintECMAScript(ast, comments, printer = new ECMAScript.Printer({ inden
   return printer.print(ast);
 }
 
+function MemberNames(members) {
+  const ret = [];
+  if(members.members) members = members.members;
+
+  if(!Array.isArray(members)) {
+    for(let ptr of deep
+      .select(members, n => n.kind == 'FieldDecl' || n.name, deep.RETURN_PATH)
+      .map(path => new Pointer(path))) {
+      let ptrs = ptr.chain(2);
+      console.log('ptrs:', ptrs);
+
+      let names = ptrs.map(p => deep.get(members, [...p, 'name'], deep.NO_THROW));
+      let kinds = ptrs.map(p => deep.get(members, [...p, 'kind'], deep.NO_THROW));
+
+      console.log('kinds:', kinds);
+      console.log('names:', names);
+
+      ret.push(names.filter(name => name).join('.'));
+    }
+  } else {
+    for(let ptr of deep
+      .select(members,
+        n => Array.isArray(n) && n.length == 2 && typeof n[0] == 'string' && n[1] !== null,
+        deep.RETURN_PATH
+      )
+      .map(path => new Pointer(path))) {
+      let ptrs = ptr.chain(3);
+      //console.log('ptrs:', ptrs);
+      let names = ptrs.map(p => deep.get(members, [...p, 0]));
+
+      //console.log('names:', names);
+
+      ret.push(names.filter(name => name).join('.'));
+    }
+  }
+  return ret;
+}
+
+function UnsetLoc(node, pred = (v, p) => true) {
+  for(let [v, p] of deep.select(node,
+    (v, k) => k == 'loc' || k == 'range',
+    deep.RETURN_VALUE_PATH
+  )) {
+    console.log('UnsetLoc', { v, p });
+    if(pred(deep.get(node, [...p].slice(0, -1)), [...p].last)) deep.unset(node, p);
+  }
+  return node;
+}
+
 function PrintAst(node, ast) {
   ast ??= $.data;
 
@@ -737,17 +860,17 @@ function MakeFFI(node, fp, lib, exp) {
 async function ASTShell(...args) {
   let consoleOptions = {
     /*breakLength: 240, */ customInspect: true,
-    compact: 1,
-    depth: 1,
+    compact: false,
+    depth: Infinity,
     maxArrayLength: Infinity,
     hideKeys: ['loc', 'range']
   };
   await ConsoleSetup(consoleOptions);
   await PortableFileSystem(fs => (globalThis.filesystem = filesystem = fs));
   await PortableSpawn(fn => (spawn = fn));
-  console.options = consoleOptions;
+  /*  console.options = consoleOptions;
   console.options.compact = 1;
-  console.options.hideKeys = ['loc', 'range'];
+  console.options.hideKeys = ['loc', 'range'];*/
 
   globalThis.files = files = {};
 
@@ -787,7 +910,8 @@ async function ASTShell(...args) {
 
   Util.define(globalThis, {
     defs,
-    includes, libs,
+    includes,
+    libs,
     get flags() {
       return [...includes.map(v => `-I${v}`), ...defs.map(d => `-D${d}`), ...libs.map(l => `-l${l}`)];
     }
@@ -879,7 +1003,22 @@ async function ASTShell(...args) {
     ProcessFile
   });
 
+  Pointer.prototype.chain = function(step, limit = Infinity) {
+    let ptr = this;
+    let ret = [];
+    let len = ptr.length;
+    for(;;) {
+      if(ret.length >= limit) break;
+      ret.unshift(ptr);
+      len -= step;
+      if(len <= 0) break;
+      ptr = ptr.slice(0, -step);
+    }
+    return ret;
+  };
+
   Object.assign(globalThis, {
+    Pointer,
     Tree,
     deep,
     Compile,
@@ -902,11 +1041,16 @@ async function ASTShell(...args) {
     GetLoc,
     GetType,
     GetTypeStr,
+    GetTypeNode,
+    GetFields,
+    PathRemoveLoc,
     FFI_Function,
     libdirs,
     libdirs32,
     libdirs64,
-    LibraryExports
+    LibraryExports,
+    MemberNames,
+    UnsetLoc
   });
   globalThis.util = Util;
   globalThis.F = arg => $.getFunction(arg);

@@ -147,6 +147,9 @@
 			/*"folder_include_patterns": [ "src", "opencv", "quickjs", "lib" ],*/
 			"path": ".",
 		}, 
+		{
+			"path": "quickjs/qjs-require"
+		},
 	],
 	"settings":
 	{

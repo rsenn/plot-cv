@@ -1981,9 +1981,9 @@ export default function REPL(title = 'QuickJS') {
 
     if(!console.options) console.options = {};
 
-    console.options.depth = 2;
+    /* console.options.depth = 2;
     console.options.compact = 2;
-    console.options.maxArrayLength = Infinity;
+    console.options.maxArrayLength = Infinity;*/
 
     await repl.term_init();
     repl.cmd_start(title);
