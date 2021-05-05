@@ -9,6 +9,7 @@
 #include "js_typed_array.hpp"
 #include "js_cv.hpp"
 #include "geometry.hpp"
+#include "skeletonization.hpp"
 #include "util.hpp"
 #include "../quickjs/cutils.h"
 
@@ -570,6 +571,22 @@ js_cv_resize(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
     JS_ToInt32(ctx, &interpolation, argv[5]);
 
   cv::resize(src, dst, dsize, fx, fy, interpolation);
+
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_cv_skeletonization(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSInputOutputArray src, dst;
+  cv::Mat output;
+  src = js_umat_or_mat(ctx, argv[0]);
+  dst = js_umat_or_mat(ctx, argv[1]);
+
+  if(js_is_noarray(src) || js_is_noarray(dst))
+    return JS_EXCEPTION;
+
+  output = skeletonization(src);
+  output.copyTo(dst);
 
   return JS_UNDEFINED;
 }
@@ -1555,6 +1572,7 @@ js_function_list_t js_cv_static_funcs{
     JS_CFUNC_DEF("minMaxLoc", 2, js_cv_min_max_loc),
     JS_CFUNC_DEF("addWeighted", 6, js_cv_add_weighted),
     JS_CFUNC_DEF("resize", 3, js_cv_resize),
+    JS_CFUNC_DEF("skeletonization", 1, js_cv_skeletonization),
     JS_CFUNC_MAGIC_DEF("displayOverlay", 2, js_cv_gui_methods, DISPLAY_OVERLAY),
     JS_CFUNC_MAGIC_DEF("getTickCount", 0, js_cv_getticks, 0),
     JS_CFUNC_MAGIC_DEF("getTickFrequency", 0, js_cv_getticks, 1),

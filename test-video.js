@@ -15,7 +15,7 @@ import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import PortableFileSystem from './lib/filesystem.js';
 import { Mat as cvMat } from 'mat';
 import * as cv from 'cv';
-import Console from './quickjs/modules/tests/console.js';
+import Console from 'console';
 import { CLAHE } from 'clahe';
 import { Pipeline, Processor } from './cvPipeline.js';
 

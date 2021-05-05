@@ -71,7 +71,10 @@ function sendMany(except, msg, ...args) {
     msg = new Message(msg, ...args);
     msg = msg.data;
   }
-  return Promise.all(sockets.filter(sock => !(sock == except || sock.id == except || sock.ws == except)).map(sock => sendTo.call(this, sock, msg)));
+  return Promise.all(sockets
+      .filter(sock => !(sock == except || sock.id == except || sock.ws == except))
+      .map(sock => sendTo.call(this, sock, msg))
+  );
 }
 
 export class Socket {
@@ -108,7 +111,11 @@ export class Socket {
       const id = sockets.findIndex(s => s.id == msg.body);
       if(id != -1) {
         const sock = sockets[id];
-        return await send({ ...this.info, idle: Date.now() - this.lastMessage }, sock.id, null, 'INFO');
+        return await send({ ...this.info, idle: Date.now() - this.lastMessage },
+          sock.id,
+          null,
+          'INFO'
+        );
       }
     } else if(msg.type == 'PING') {
       return await send(msg.body, null, msg.origin, 'PONG');
@@ -174,7 +181,8 @@ export class Socket {
     s.closeConnection = async function closeConnection(reason) {
       console.debug(`[${this.id}] closeConnection:`, reason);
       await this.ws.close();
-      if(removeItem(sockets, this.ws, 'ws')) await client.sendMany(this, reason || 'closed', this.id, null, 'QUIT');
+      if(removeItem(sockets, this.ws, 'ws'))
+        await client.sendMany(this, reason || 'closed', this.id, null, 'QUIT');
     };
     s.lastMessage = Date.now();
     sockets.push(s);

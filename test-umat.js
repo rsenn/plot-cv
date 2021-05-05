@@ -21,7 +21,7 @@ async function main(...args) {
     maxStringLength: 200,
     maxArrayLength: 10,
     breakLength: 100,
-    compact: 0
+    compact: 1
   });
   let types = [
     ['CV_8U', cv.CV_8U],
