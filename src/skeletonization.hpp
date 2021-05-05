@@ -77,7 +77,12 @@ skeletonization(InputArray inputImage) {
     std::cout << "Inside skeletonization, Source empty" << std::endl;
 
   cv::Mat outputImage;
-  cv::cvtColor(inputImage, outputImage, cv::COLOR_BGR2GRAY);
+
+  if(inputImage.channels() == 1)
+    inputImage.copyTo(outputImage);
+  else
+    cv::cvtColor(inputImage, outputImage, cv::COLOR_BGR2GRAY);
+
   cv::threshold(outputImage, outputImage, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
 
   thinning(outputImage);

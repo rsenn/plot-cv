@@ -6,21 +6,26 @@ const hr = Util.hrtime;
 export class Pipeline extends Function {
   constructor(processors = [], callback) {
     let self;
-    self = function(mat) {
-      let i = 0;
-      for(let processor of self.processors) {
+    self = function(mat, end) {
+      let processors = [...self.processors.entries()];
+      if(typeof mat == 'number') {
+        end ??= mat + 1;
+        processors = processors.slice(mat, end);
+        mat = null;
+      }
+      for(let [i, processor] of processors) {
         let start = hr();
         self.currentProcessor = i;
 
         console.log(`Pipeline \x1b[38;5;112m#${i} \x1b[38;5;32m'${processor.name}'\x1b[m`);
-        mat = processor.call(self, mat, self.images[i]);
-        if(mat) self.images[i] = mat;
+        mat = processor.call(self, mat ?? self.images[i - 1], self.images[i]);
+        if(Util.isObject(mat) && mat instanceof Mat) self.images[i] = mat;
+        mat = self.images[i];
         self.times[i] = hr(start);
         if(typeof callback == 'function')
           callback.call(self, self.images[i], i, self.processors.length);
-        i++;
       }
-      self.currentProcessor = -1;
+      // self.currentProcessor = -1;
       return mat;
     };
     processors = processors.map(processor =>
@@ -34,7 +39,12 @@ export class Pipeline extends Function {
     });
     self.times = new Array(processors.length);
     return Object.setPrototypeOf(self, Pipeline.prototype);
-    //return Object.assign(self, Pipeline.prototype);
+  }
+
+  step() {
+    let { currentProcessor } = this;
+
+    return this(currentProcessor + 1);
   }
 
   get size() {
@@ -62,6 +72,14 @@ export class Pipeline extends Function {
   outputOf(processor) {
     let index = this.processorIndex(processor);
     return this.processors[index].out ?? this.images[index];
+  }
+
+  *[Symbol.iterator]() {
+    for(let i = 0; i < this.processors.length; i++) yield [this.names[i], this.images[i]];
+  }
+
+  get cache() {
+    return new Map([...this]);
   }
 }
 

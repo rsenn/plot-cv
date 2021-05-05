@@ -15,6 +15,7 @@ import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { Pipeline, Processor } from './cvPipeline.js';
+import { TickMeter } from 'utility';
 
 let filesystem;
 /*function saveMat(name, mat) {
@@ -54,16 +55,23 @@ function LoadConfig() {
   console.log('LoadConfig:', configObj);
   return configObj;
 }
- 
+
+function InspectMat(mat) {
+  const { channels, depth, type, cols, rows } = mat;
+
+  return inspect({ channels, depth, type, cols, rows });
+}
+
 async function main(...args) {
   await ConsoleSetup({
     maxStringLength: 200,
     maxArrayLength: 10,
     breakLength: 100,
-    compact: 0
+    compact: 1
   });
   await PortableFileSystem(fs => (filesystem = fs));
- 
+  let running = true;
+
   console.log('Util.getMethodNames(cv)', Util.getMethodNames(cv, Infinity, 0));
   console.log('cv.HoughLines', cv.HoughLines);
 
@@ -95,12 +103,12 @@ async function main(...args) {
     thres2: new NumericParam(config.thres2 ?? 20, 0, 300),
     thres2: new NumericParam(config.thres2 ?? 20, 0, 300),
     rho: new NumericParam(config.rho ?? 1, 1, 100),
-    theta: new NumericParam(config.theta ?? 2, 0, 240),
+    theta: new NumericParam(config.theta ?? 180, 1, 360),
     threshold: new NumericParam(config.threshold ?? 30, 0, 100),
-    minLineLength: new NumericParam(config.minLineLength ?? 0, 0, 1000),
-    maxLineGap: new NumericParam(config.maxLineGap ?? 0, 0, 1000),
+    minLineLength: new NumericParam(config.minLineLength ?? 4, 0, 1000),
+    maxLineGap: new NumericParam(config.maxLineGap ?? 30, 0, 1000),
     dp: new NumericParam(config.dp ?? 2, 0.1, 100),
-    minDist: new NumericParam(config.minDist ?? 100, 1, 1000),
+    minDist: new NumericParam(config.minDist ?? 10, 1, 1000),
     param1: new NumericParam(config.param1 ?? 200, 1, 1000),
     param2: new NumericParam(config.param2 ?? 100, 1, 1000)
   };
@@ -113,15 +121,18 @@ async function main(...args) {
         image = cv.imread(args[0] || 'italo-disco.png');
         image.copyTo(dst);
       },
+
       function Grayscale(src, dst) {
         let channels = [];
         cv.cvtColor(src, dst, cv.COLOR_BGR2Lab);
         cv.split(dst, channels);
         channels[0].copyTo(dst);
       },
+
       function Threshold(src, dst) {
         cv.threshold(src, dst, +params.thres, +params.max, +params.type);
       },
+
       function Morphology(src, dst) {
         let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS,
           new Size(+params.kernel_size * 2 + 1, +params.kernel_size * 2 + 1)
@@ -129,74 +140,90 @@ async function main(...args) {
         if(+params.type == cv.THRESH_BINARY_INV) src.xor([255, 255, 255, 0], dst);
         else src.copyTo(dst);
 
-        cv.erode(dst, dst, structuringElement);
+        cv.morphologyEx(dst, dst, cv.MORPH_ERODE, structuringElement);
+        //   cv.erode(dst, dst, structuringElement);
         console.log('dst:', dst);
         dst.xor([255, 255, 255, 0], dst);
-      },
-      function Blur(src, dst) {
-        const gray = this.outputOf('Grayscale');
 
-        cv.medianBlur(gray, dst, 5);
+        console.log('dst:', dst.channels);
       },
-      function Corners(src, dst) {
-        src.convertTo(dst, cv.CV_32FC1);
-        let corners = new Mat(dst.rows, dst.cols, cv.CV_32FC1);
-        cv.cornerHarris(dst, corners, 2, 3, +params.k);
-        corners.convertTo(corners, cv.CV_8UC1);
+
+      function Skeletonization(src, dst) {
+        cv.skeletonization(src, dst);
       },
-      function Canny(src, dst) {
-        cv.Canny(this.outputOf('Morphology'), dst, +params.thres1, +params.thres2);
-      },
+
       function HoughLinesP(src, dst) {
+        const skel = this.outputOf('Skeletonization');
         const morpho = this.outputOf('Morphology');
         let lines = new Mat();
-        cv.HoughLinesP(morpho,
+        cv.HoughLinesP(skel,
           lines,
           +params.rho,
-          +params.theta,
+          Math.PI / +params.theta,
           +params.threshold,
           +params.minLineLength,
           +params.maxLineGap
         );
         // console.log('lines:', lines);
-        cv.cvtColor(morpho, dst, cv.COLOR_GRAY2BGR);
+        cv.cvtColor(skel, dst, cv.COLOR_GRAY2BGR);
         let i = 0;
         for(let elem of lines.values()) {
           const line = new Line(elem);
           draw.line(dst, ...line.toPoints(), [0, 255, 0], 1, cv.LINE_AA);
+          draw.line(morpho, ...line.toPoints(), [0, 0, 0], 2, cv.LINE_8);
+          draw.line(skel, ...line.toPoints(), [0, 0, 0], 1, cv.LINE_8);
           ++i;
         }
+        let kern = cv.getStructuringElement(cv.MORPH_CROSS, new Size(3, 3));
+        cv.dilate(skel, skel, kern);
+        cv.erode(skel, skel, kern);
+
+        cv.dilate(morpho, morpho, kern);
+        /*   cv.erode(morpho, morpho, kern);*/
+
+        //cv.morphologyEx(skel, skel, cv.MORPH_DILATE, kern);
       },
+
       function HoughCircles(src, dst) {
-        const blur = this.outputOf('Blur');
-        let circles = [] ?? new Mat();
-        console.log('HoughCircles', { blur, circles });
-        cv.HoughCircles(blur,
-          circles,
-          cv.HOUGH_GRADIENT,
-          +params.dp,
-          +params.minDist,
-          +params.param1,
-          +params.param2,
-          0,
-          0
-        );
-        console.log('circles:', circles);
-        cv.cvtColor(this.outputOf('Grayscale'), dst, cv.COLOR_GRAY2BGR);
+        const morpho = this.outputOf('Morphology');
+        const skel = this.outputOf('Skeletonization');
+        const paramArray = [+params.dp, +params.minDist, +params.param1, +params.param2, 0, 90];
+        console.log('paramArray:', paramArray);
+
+        let circles1 = [] ?? new Mat();
+        let circles2 = [] ?? new Mat();
+        cv.HoughCircles(morpho, circles1, cv.HOUGH_GRADIENT, ...paramArray);
+        console.log('circles1:', circles1);
+        cv.HoughCircles(skel, circles2, cv.HOUGH_GRADIENT, ...paramArray);
+        console.log('circles2:', circles2);
+
+        cv.cvtColor(morpho, dst, cv.COLOR_GRAY2BGR);
+        //  this.outputOf('HoughLinesP').copyTo(dst);
+        //  cv.cvtColor(this.outputOf('Grayscale'), dst, cv.COLOR_GRAY2BGR);
         let i = 0;
-        for(let [x, y, r] of circles) {
+        for(let [x, y, r] of circles1) {
           let p = new Point(x, y);
-          draw.circle(dst, p, 1, [0, 100, 100], 3, cv.LINE_AA);
-          draw.circle(dst, p, r, [255, 0, 255], 3, cv.LINE_AA);
+          draw.circle(dst, p, r, [0, 255, 0], 1, cv.LINE_AA);
+          console.log('elem:', p.toString(), r);
+        }
+        for(let [x, y, r] of circles2) {
+          let p = new Point(x, y);
+          // draw.circle(dst, p, 9, [255, 0, 255], 2, cv.LINE_AA);
+          draw.circle(dst, p, r + 2, [255, 0, 0], 1, cv.LINE_AA);
           console.log('elem:', p.toString(), r);
         }
       }
     ],
     (mat, i, n) => {
-      if(frameShow == i) {
+      console.log('output:', InspectMat(mat));
+      cv.imshow('output', mat);
+      cv.setWindowTitle('output', `#${i}: ` + pipeline.names[i]);
+      /* if(frameShow == i) {
         outputName = pipeline.processors[frameShow].name;
         outputMat = mat;
-      }
+
+       
+      }*/
 
       // let m = (outputMat || mat) ?  (outputMat || mat).dup() : null;
     }
@@ -204,24 +231,22 @@ async function main(...args) {
 
   if(frameShow < 0) frameShow += pipeline.size;
   if(frameShow >= pipeline.size) frameShow -= pipeline.size;
-
-  pipeline();
-  console.log('frameShow', pipeline.names[frameShow], frameShow);
   SaveConfig({ frameShow, ...params });
-
-  cv.imshow('output', outputMat);
-
-  console.log('pipeline.names', pipeline.names);
-  console.log('pipeline.outputOf("Threshold")', pipeline.outputOf('Threshold'));
-
   let key;
 
-  while((key = cv.waitKey(0))) {
+  while(true) {
+    console.log('pipeline.step()', pipeline.step());
+    key = cv.waitKey(-1);
     if(key != -1) console.log('key:', key);
+
+    if(key == 8) {
+      cv.waitKey(-1);
+      pipeline.currentProcessor--;
+      console.log('pipeline.currentProcessor', pipeline.currentProcessor);
+    }
 
     if(key == 'q' || key == 113 || key == '\x1b') break;
   }
- 
 }
 
 Util.callMain(main, true);

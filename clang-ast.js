@@ -1106,9 +1106,9 @@ export async function AstDump(compiler, source, args, force) {
       );
     },
     classes() {
-      let predicate = Predicate.and(Predicate.property('kind', Predicate.equal('CXXRecordDecl')),
-        Predicate.not(Predicate.property('isImplicit', Predicate.equal(true)))
-      );
+      let predicate =
+        (Predicate.property('kind', Predicate.equal('CXXRecordDecl')),
+        Predicate.not(Predicate.property('isImplicit', Predicate.equal(true))));
       //predicate = n => 'CXXRecordDecl' == n.kind && !n.isImplicit;
       return Object.setPrototypeOf(deep.select(this.data, predicate, deep.RETURN_VALUE, 10),
         List.prototype

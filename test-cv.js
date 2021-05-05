@@ -54,7 +54,7 @@ function LoadConfig() {
   console.log('LoadConfig:', configObj);
   return configObj;
 }
- 
+
 async function main(...args) {
   await ConsoleSetup({
     maxStringLength: 200,
@@ -77,7 +77,6 @@ async function main(...args) {
   console.log('clahe', clahe);
 
   let image;
- 
 
   let globalThis = globalThis;
   const moduleNames = ['Rect', 'Point', 'Size', 'Line', 'Mat', 'Contour', 'PointIterator', 'Draw'];
