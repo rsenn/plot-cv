@@ -19,24 +19,7 @@ let params;
 let files;
 let filesystem, spawn, base, cmdhist;
 let defs, includes, libs, sources;
-let libdirs = [
-  '/lib',
-  '/lib/i386-linux-gnu',
-  '/lib/x86_64-linux-gnu',
-  '/lib32',
-  '/libx32',
-  '/usr/lib',
-  '/usr/lib/i386-linux-gnu',
-  '/usr/lib/i386-linux-gnu/i686/sse2',
-  '/usr/lib/i386-linux-gnu/sse2',
-  '/usr/lib/x86_64-linux-gnu',
-  '/usr/lib/x86_64-linux-gnu/libfakeroot',
-  '/usr/lib32',
-  '/usr/libx32',
-  '/usr/local/lib',
-  '/usr/local/lib/i386-linux-gnu',
-  '/usr/local/lib/x86_64-linux-gnu'
-];
+let libdirs = ['/lib', '/lib/i386-linux-gnu', '/lib/x86_64-linux-gnu', '/lib32', '/libx32', '/usr/lib', '/usr/lib/i386-linux-gnu', '/usr/lib/i386-linux-gnu/i686/sse2', '/usr/lib/i386-linux-gnu/sse2', '/usr/lib/x86_64-linux-gnu', '/usr/lib/x86_64-linux-gnu/libfakeroot', '/usr/lib32', '/usr/libx32', '/usr/local/lib', '/usr/local/lib/i386-linux-gnu', '/usr/local/lib/x86_64-linux-gnu'];
 let libdirs32 = libdirs.filter(d => /(32$|i[0-9]86)/.test(d));
 let libdirs64 = libdirs.filter(d => !/(32$|i[0-9]86)/.test(d));
 
@@ -84,10 +67,7 @@ async function ImportModule(modulePath, ...args) {
   return await import(modulePath).then(module => {
     done = true;
     module = Object.create(null,
-      Util.getMemberNames(module, Infinity, 0).reduce(
-        (acc, item) => ({ ...acc, [item]: { value: module[item], enumerable: true } }),
-        Object.getOwnPropertyDescriptors(module)
-      )
+      Util.getMemberNames(module, Infinity, 0).reduce((acc, item) => ({ ...acc, [item]: { value: module[item], enumerable: true } }), Object.getOwnPropertyDescriptors(module))
     );
 
     if(!globalThis.modules) globalThis.modules = {};
@@ -105,23 +85,17 @@ async function ImportModule(modulePath, ...args) {
 async function CommandLine() {
   let log = console.reallog;
   let outputLog = filesystem.fopen('output.log', 'w+');
-  /*console.reallog = function(...args) {
-    log.call(this, ...args);
-    outputLog.puts(args.join(' ')+'\n');
-    outputLog.flush();
-  };*/
+
   console.log('outputLog', outputLog);
 
   let repl;
   repl = globalThis.repl = new REPL('AST');
-  console.log('repl', repl);
+  //console.log('repl', repl);
 
-  //repl.exit = n => std.exit(n);
   repl.importModule = ImportModule;
-  repl.history_set(LoadJSON(cmdhist));
+  repl.history_set(ReadJSON(cmdhist));
   repl.directives = {
     c(...args) {
-      //      console.log('c', { args });
       Compile(...args);
       return false;
     },
@@ -131,17 +105,7 @@ async function CommandLine() {
     }
   };
   repl.show = value => {
-    /* try {
-      if(isNode(value)) {
-        console.log(NodePrinter($.data).print(value));
-        return;
-      }
-    } catch(err) {}*/
-    if((Util.isArray(value) || value instanceof Array) &&
-      Util.isObject(value.first) &&
-      value.first.kind
-    )
-      console.log(Table(value));
+    if((Util.isArray(value) || value instanceof Array) && Util.isObject(value.first) && value.first.kind) console.log(Table(value));
     else if(typeof value == 'string') console.log(value);
     else console.log(inspect(value, { ...console.options, hideKeys: ['loc', 'range'] }));
   };
@@ -156,8 +120,7 @@ async function CommandLine() {
     let s = '';
     for(let arg of args) {
       if(s) s += ' ';
-      if(typeof arg != 'strping' || arg.indexOf('\x1b') == -1)
-        s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
+      if(typeof arg != 'strping' || arg.indexOf('\x1b') == -1) s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
       else s += arg;
     }
     debugLog.puts(s + '\n');
@@ -165,9 +128,7 @@ async function CommandLine() {
   };
 
   repl.cleanup = () => {
-    //debugLog.close();
     Terminal.mousetrackingDisable();
-    // Util.ttySetRaw(repl.term_fd, false);
     let hist = repl.history_get().filter((item, i, a) => a.lastIndexOf(item) == i);
     filesystem.writeFile(cmdhist, JSON.stringify(hist, null, 2));
     console.log(`EXIT (wrote ${hist.length} history entries)`);
@@ -175,11 +136,8 @@ async function CommandLine() {
   };
 
   Util.atexit(() => repl.cleanup());
-  //Terminal.mousetrackingEnable();
 
   repl = Util.traceProxy(repl);
-  /*  console.log('repl', repl);
-  console.log('repl.term_init', repl.term_init);*/
 
   await repl.run();
   console.log('REPL done');
@@ -223,9 +181,7 @@ function* IncludeAll(dir, maxDepth = Infinity, pred = entry => /\.[ch]$/.test(en
 }
 
 function SelectLocations(node) {
-  let result = deep.select(node, n =>
-    ['offset', 'line', 'file'].some(prop => n[prop] !== undefined)
-  );
+  let result = deep.select(node, n => ['offset', 'line', 'file'].some(prop => n[prop] !== undefined));
   //console.log('result:', console.config({ depth: 1 }), result);
   return result;
 }
@@ -233,10 +189,7 @@ function SelectLocations(node) {
 function LocationString(loc) {
   if(typeof loc == 'object' && loc != null) {
     let file = loc.includedFrom ? loc.includedFrom.file : loc.file;
-    if(typeof loc.line == 'number')
-      return `${file ? file + ':' : ''}${loc.line}${
-        typeof loc.col == 'number' ? ':' + loc.col : ''
-      }`;
+    if(typeof loc.line == 'number') return `${file ? file + ':' : ''}${loc.line}${typeof loc.col == 'number' ? ':' + loc.col : ''}`;
     return `${file ? file : ''}@${loc.offset}`;
   }
 }
@@ -250,20 +203,13 @@ function Structs(nodes) {
       //deep.find(node, n => typeof n.line == 'number'),
       new Location(GetLoc(node)),
       ((node.tagUsed ? node.tagUsed + ' ' : '') + (node.name ?? '')).trim(),
-      new Map(node.inner.map((field, i) =>
-          /Attr/.test(field.kind)
-            ? [Symbol(field.kind), field.id]
-            : [field.name || i, (field.type && TypeFactory(field.type)) || field.kind]
-        )
-      )
+      new Map(node.inner.map((field, i) => (/Attr/.test(field.kind) ? [Symbol(field.kind), field.id] : [field.name || i, (field.type && TypeFactory(field.type)) || field.kind])))
     ]);
   /*.map(node => types(node))*/
 }
 
 function Table(list, pred = (n, l) => true /*/\.c:/.test(l)*/) {
-  let entries = [...list]
-    .map((n, i) => (n ? [i, LocationString(GetLoc(n)), n] : undefined))
-    .filter(e => e);
+  let entries = [...list].map((n, i) => (n ? [i, LocationString(GetLoc(n)), n] : undefined)).filter(e => e);
   const colSizes = [5, 15, 12, 30, 12, 15, 25];
   const colKeys = ['id', 'kind', 'name', 'tagUsed' /*, 'previousDecl', 'completeDefinition'*/];
   const colNames = ['#', ...colKeys, 'location'];
@@ -292,11 +238,6 @@ function Table(list, pred = (n, l) => true /*/\.c:/.test(l)*/) {
   );
 }
 
-function LoadJSON(filename) {
-  let data = filesystem.readFile(filename, 'utf-8');
-  return data ? JSON.parse(data) : null;
-}
-
 function PrintRange(range) {
   if('range' in range) range = range.range;
 
@@ -319,6 +260,39 @@ function OverlapRange(r1, r2) {
   return false;
 }
 
+function ReadFile(name, binary) {
+  let ret = filesystem.readFile(name, binary ? null : 'utf-8');
+
+  console.log(`Read ${name}: ${ret.length} bytes`);
+  return ret;
+}
+
+function ReadJSON(filename) {
+  let data = std.loadFile(filename);
+  return data ? JSON.parse(data) : null;
+}
+
+function MapFile(filename) {
+  let fd = os.open(filename, os.O_RDONLY);
+  let { size } = os.stat(filename)[0];
+  console.log(`MapFile`, { filename, fd, size });
+  let data = mmap.mmap(0, size + 10, mmap.PROT_READ, mmap.MAP_PRIVATE, fd, 0);
+  os.close(fd);
+  return data;
+}
+function ReadBJSON(filename) {
+  let fd = os.open(filename, os.O_RDONLY);
+  let { size } = os.stat(filename)[0];
+  console.log(`ReadBJSON`, { filename, fd, size });
+  let data = mmap.mmap(0, size + 10, mmap.PROT_READ, mmap.MAP_PRIVATE, fd, 0);
+  console.log(`ReadBJSON`, { data });
+  let ret = bjson.read(data, 0, size);
+
+  mmap.munmap(data);
+  os.close(fd);
+  return ret;
+}
+
 function WriteFile(name, data, verbose = true) {
   if(Util.isIterator(data)) data = [...data];
   if(Util.isArray(data)) data = data.join('\n');
@@ -329,15 +303,20 @@ function WriteFile(name, data, verbose = true) {
   if(verbose) console.log(`Wrote ${name}: ${ret} bytes`);
 }
 
-function ReadFile(name, verbose = true) {
-  let ret = filesystem.readFile(name, 'utf-8');
-
-  if(verbose) console.log(`Reawd ${name}: ${ret.length} bytes`);
-  return ret;
-}
-
 function WriteJSON(name, data) {
   WriteFile(name, JSON.stringify(data, null, 2));
+}
+
+function WriteBJSON(name, data) {
+  let buf = bjson.write(data);
+  let size = buf.byteLength;
+  let fd = os.open(name, os.O_WRONLY | os.O_CREAT | os.O_TRUNC);
+
+  let ret = os.write(fd, buf, 0, size);
+  console.log('WriteBJSON', { name, fd, size, ret });
+  os.close(fd);
+
+  return ret;
 }
 
 function* GenerateInspectStruct(decl, includes) {
@@ -456,11 +435,7 @@ function InspectStruct(decl, includes, compiler = 'tcc') {
     result = lines
       .map(line => (typeof line == 'string' ? line.split(' ') : line))
       .map(line => line.map((col, i) => (isNaN(+col) ? col : +col)))
-      .map(([field, offset, size]) => [
-        field.replace(/:.*/, '').replace(/^\./, name + '.'),
-        offset,
-        size
-      ]);
+      .map(([field, offset, size]) => [field.replace(/:.*/, '').replace(/^\./, name + '.'), offset, size]);
 
     let end = 0;
     result = result.reduce((acc, line) => {
@@ -533,20 +508,7 @@ function* GenerateStructClass(decl, ffiPrefix = '') {
   yield `  static from(address) {\n    let ret = ${ffiPrefix}toArrayBuffer(address, ${offset});\n    return Object.setPrototypeOf(ret, ${className}.prototype);\n  }`;
   yield '';
 
-  yield `  toString() {\n    const { ${fields.join(', ')} } = this;\n    return \`${name} {${[
-    ...members
-  ]
-    .map(([field, member]) =>
-        '\\n\\t.' +
-        field +
-        ' = ' +
-        (member.isPointer() ? '0x' : '') +
-        '${' +
-        field +
-        (member.isPointer() ? '.toString(16)' : '') +
-        '}'
-    )
-    .join(',')}\\n}\`;\n  }`;
+  yield `  toString() {\n    const { ${fields.join(', ')} } = this;\n    return \`${name} {${[...members].map(([field, member]) => '\\n\\t.' + field + ' = ' + (member.isPointer() ? '0x' : '') + '${' + field + (member.isPointer() ? '.toString(16)' : '') + '}').join(',')}\\n}\`;\n  }`;
   yield '}';
 }
 
@@ -565,15 +527,7 @@ function GenerateGetSet(name, offset, type, ffiPrefix) {
     a.unshift(`/* ${name}${desugared ? ` (${desugared})` : ''} ${size} ${signed} */`);
     console.log('GenerateStructClass', { pointer });
   }
-  return [
-    ...a,
-
-    `set ${name}(value) { if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = ${ffiPrefix}toPointer(value); new ${ctor}(this, ${offset})[0] = ${ByteLength2Value(size,
-      signed,
-      floating
-    )}; }`,
-    `get ${name}() { return ${toHex(`new ${ctor}(this, ${offset})[0]`)}; }`
-  ];
+  return [...a, `set ${name}(value) { if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = ${ffiPrefix}toPointer(value); new ${ctor}(this, ${offset})[0] = ${ByteLength2Value(size, signed, floating)}; }`, `get ${name}() { return ${toHex(`new ${ctor}(this, ${offset})[0]`)}; }`];
 }
 
 function ByteLength2TypedArray(byteLength, signed, floating) {
@@ -635,13 +589,7 @@ export class FFI_Function {
   }
 
   generate(fp, lib, exp) {
-    return [
-      this.generateDefine(fp, lib),
-      '\n',
-      exp ? 'export ' : '',
-      this.generateCall(),
-      '\n'
-    ].join('');
+    return [this.generateDefine(fp, lib), '\n', exp ? 'export ' : '', this.generateCall(), '\n'].join('');
   }
 
   generateFunction(fp, lib) {
@@ -748,10 +696,7 @@ function ParseECMAScript(file, debug = false) {
   let data = filesystem.readFile(file, 'utf-8');
   let ast, error;
   let parser;
-  globalThis.parser = parser = new ECMAScriptParser(data?.toString ? data.toString() : data,
-    file,
-    debug
-  );
+  globalThis.parser = parser = new ECMAScriptParser(data?.toString ? data.toString() : data, file, debug);
 
   globalThis.ast = ast = parser.parseProgram();
   parser.addCommentsToNodes(ast);
@@ -779,9 +724,7 @@ function MemberNames(members) {
   if(members.members) members = members.members;
 
   if(!Array.isArray(members)) {
-    for(let ptr of deep
-      .select(members, n => n.kind == 'FieldDecl' || n.name, deep.RETURN_PATH)
-      .map(path => new Pointer(path))) {
+    for(let ptr of deep.select(members, n => n.kind == 'FieldDecl' || n.name, deep.RETURN_PATH).map(path => new Pointer(path))) {
       let ptrs = ptr.chain(2);
       console.log('ptrs:', ptrs);
 
@@ -794,12 +737,7 @@ function MemberNames(members) {
       ret.push(names.filter(name => name).join('.'));
     }
   } else {
-    for(let ptr of deep
-      .select(members,
-        n => Array.isArray(n) && n.length == 2 && typeof n[0] == 'string' && n[1] !== null,
-        deep.RETURN_PATH
-      )
-      .map(path => new Pointer(path))) {
+    for(let ptr of deep.select(members, n => Array.isArray(n) && n.length == 2 && typeof n[0] == 'string' && n[1] !== null, deep.RETURN_PATH).map(path => new Pointer(path))) {
       let ptrs = ptr.chain(3);
       //console.log('ptrs:', ptrs);
       let names = ptrs.map(p => deep.get(members, [...p, 0]));
@@ -813,10 +751,7 @@ function MemberNames(members) {
 }
 
 function UnsetLoc(node, pred = (v, p) => true) {
-  for(let [v, p] of deep.select(node,
-    (v, k) => k == 'loc' || k == 'range',
-    deep.RETURN_VALUE_PATH
-  )) {
+  for(let [v, p] of deep.select(node, (v, k) => k == 'loc' || k == 'range', deep.RETURN_VALUE_PATH)) {
     console.log('UnsetLoc', { v, p });
     if(pred(deep.get(node, [...p].slice(0, -1)), [...p].last)) deep.unset(node, p);
   }
@@ -895,6 +830,18 @@ async function ASTShell(...args) {
   await ConsoleSetup(consoleOptions);
   await PortableFileSystem(fs => (globalThis.filesystem = filesystem = fs));
   await PortableSpawn(fn => (spawn = fn));
+
+  await import('bjson').then(module => {
+    const { read, write } = module;
+    globalThis.bjson = { read, write };
+  });
+  console.log('bjson:', globalThis.bjson);
+  await import('mmap').then(module => {
+    const { mmap, munmap, toString, PROT_READ, PROT_WRITE, PROT_EXEC, PROT_SEM, PROT_NONE, PROT_GROWSDOWN, PROT_GROWSUP, MAP_SHARED, MAP_PRIVATE, MAP_TYPE, MAP_FIXED, MAP_ANONYMOUS, MAP_GROWSDOWN, MAP_DENYWRITE, MAP_EXECUTABLE, MAP_LOCKED, MAP_NORESERVE, MAP_POPULATE, MAP_NONBLOCK, MAP_STACK } = module;
+    globalThis.mmap = { mmap, munmap, toString, PROT_READ, PROT_WRITE, PROT_EXEC, PROT_SEM, PROT_NONE, PROT_GROWSDOWN, PROT_GROWSUP, MAP_SHARED, MAP_PRIVATE, MAP_TYPE, MAP_FIXED, MAP_ANONYMOUS, MAP_GROWSDOWN, MAP_DENYWRITE, MAP_EXECUTABLE, MAP_LOCKED, MAP_NORESERVE, MAP_POPULATE, MAP_NONBLOCK, MAP_STACK };
+  });
+  console.log('mmap:', globalThis.mmap);
+
   /*  console.options = consoleOptions;
   console.options.compact = 1;
   console.options.hideKeys = ['loc', 'range'];*/
@@ -907,12 +854,9 @@ async function ASTShell(...args) {
   console.log('platform:', platform);
   if(platform == 'quickjs') await import('std').then(module => (globalThis.std = module));
 
-  if(platform == 'node')
-    await import('util').then(module => (globalThis.inspect = module.inspect));
+  if(platform == 'node') await import('util').then(module => (globalThis.inspect = module.inspect));
 
-  (await Util.getPlatform()) == 'quickjs'
-    ? import('deep.so').then(module => (globalThis.deep = module))
-    : import('./lib/deep.js').then(module => (globalThis.deep = module['default']));
+  (await Util.getPlatform()) == 'quickjs' ? import('deep.so').then(module => (globalThis.deep = module)) : import('./lib/deep.js').then(module => (globalThis.deep = module['default']));
 
   base = path.basename(Util.getArgv()[1], /\.[^.]*$/);
   cmdhist = `.${base}-cmdhistory`;
@@ -954,11 +898,7 @@ async function ASTShell(...args) {
 
     function nameOrIdPred(name_or_id, pred = n => true) {
       if(typeof name_or_id == 'number') name_or_id = '0x' + name_or_id.toString(16);
-      return name_or_id instanceof RegExp
-        ? node => name_or_id.test(node.name) && pred(node)
-        : name_or_id.startsWith('0x')
-        ? node => node.id == name_or_id && pred(node)
-        : node => node.name == name_or_id && pred(node);
+      return name_or_id instanceof RegExp ? node => name_or_id.test(node.name) && pred(node) : name_or_id.startsWith('0x') ? node => node.id == name_or_id && pred(node) : node => node.name == name_or_id && pred(node);
     }
 
     Object.assign(r, {
@@ -966,13 +906,13 @@ async function ASTShell(...args) {
         return this.data.inner.filter(nameOrIdPred(name_or_id, pred));
       },
       getByIdOrName(name_or_id, pred = n => true) {
-        return this.data.inner.findLast(nameOrIdPred(name_or_id, pred));
+        let node = this.data.inner.findLast(nameOrIdPred(name_or_id, pred));
+
+        node ??= this.classes.findLast(nameOrIdPred(name_or_id, pred));
+        return node;
       },
       getType(name_or_id) {
-        let result =
-          this.getByIdOrName(name_or_id,
-            n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind)
-          ) ?? GetType(name_or_id, this.data);
+        let result = this.getByIdOrName(name_or_id, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind)) ?? GetType(name_or_id, this.data);
 
         if(result) {
           let type = TypeFactory(result, this.data);
@@ -982,24 +922,26 @@ async function ASTShell(...args) {
       },
 
       getFunction(name_or_id) {
-        let result = isNode(name_or_id)
-          ? name_or_id
-          : this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
+        let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
 
         if(result) return new FunctionDecl(result, this.data);
       },
       getVariable(name_or_id) {
-        let result = isNode(name_or_id)
-          ? name_or_id
-          : this.getByIdOrName(name_or_id, n => /(VarDecl)/.test(n.kind));
+        let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(VarDecl)/.test(n.kind));
 
         if(result) return new VarDecl(result, this.data);
       }
     });
     return Util.lazyProperties(r, {
-      tree() {
-        return new Tree(this.data);
+      pathOf(needle) {
+        for(let [node,path] of deep.iterate(this.data, n =>  typeof n == 'object' && n != null, deep.RETURN_VALUE_PATH, 10)) {
+          if(node ===needle) return path;
+        }
+        
       }
+      /*tree() {
+        return new Tree(this.data);
+      }*/
     });
   }
 
@@ -1013,11 +955,13 @@ async function ASTShell(...args) {
     NodeName,
     GetLoc,
     GetTypeStr,
+    ReadFile,
+    MapFile,
+    ReadJSON,
+    ReadBJSON,
     WriteFile,
     WriteJSON,
-    ReadFile,
-    LoadJSON,
-    ReadJSON: LoadJSON,
+    WriteBJSON,
     PrintRange,
     OverlapRange,
     GenerateInspectStruct,
@@ -1101,7 +1045,7 @@ async function ASTShell(...args) {
 
   const unithist = `.${base}-unithistory`;
   let items = [];
-  let hist = LoadJSON(unithist) || [];
+  let hist = ReadJSON(unithist) || [];
 
   const pushUnique = (arr, item) => {
     if(Util.findIndex(arr, elem => deep.equals(elem, item)) === -1) {

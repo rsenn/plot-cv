@@ -180,11 +180,7 @@ export class Type extends Node {
         node = Type.declarations.get(name).ast;
       }
       // ast ??= globalThis['$']?.data;
-      if(ast &&
-        typeof (tmp = deep.find(ast, n => typeof n == 'object' && n && n.name == name)) ==
-          'object' &&
-        tmp != null
-      ) {
+      if(ast && typeof (tmp = deep.find(ast, n => typeof n == 'object' && n && n.name == name)) == 'object' && tmp != null) {
         //console.log('Type', tmp, name;
         tmp = 'kind' in tmp ? TypeFactory(tmp, ast) : new Type(tmp, ast);
 
@@ -264,9 +260,7 @@ export class Type extends Node {
       let ptr = (name ?? this + '').replace(/\*$/, '').trimEnd();
       //console.log('ptr:', ptr);
       if(ast) {
-        let node = deep.find(ast, (n, p) =>
-          p.length > 2 ? -1 : typeof n == 'object' && n && n.name == ptr
-        )?.value;
+        let node = deep.find(ast, (n, p) => (p.length > 2 ? -1 : typeof n == 'object' && n && n.name == ptr))?.value;
 
         if(node) new Type(node, ast);
       }
@@ -516,10 +510,7 @@ const { size,unsigned } = this;
   }*/
 
   [Symbol.toPrimitive](hint) {
-    if(hint == 'default' || hint == 'string')
-      return (this.qualType ?? this.desugaredQualType ?? this?.ast?.name ?? '').replace(/\s+(\*+)$/,
-        '$1'
-      ); //this+'';
+    if(hint == 'default' || hint == 'string') return (this.qualType ?? this.desugaredQualType ?? this?.ast?.name ?? '').replace(/\s+(\*+)$/, '$1'); //this+'';
     return this;
   }
 
@@ -531,18 +522,13 @@ const { size,unsigned } = this;
   static get(name_or_id, ast = $.data) {
     let type;
     // if(typeof name_or_id == 'string' && (type = Type.declarations.get(name_or_id))) return type;
-    let node =
-      ast.inner.find(typeof name_or_id == 'number'
-          ? node => /(?:Decl|Type)/.test(node.kind) && +node.id == name_or_id
-          : node => /(?:Decl|Type)/.test(node.kind) && node.name == name_or_id
-      ) ?? GetType(name_or_id, ast);
+    let node = ast.inner.find(typeof name_or_id == 'number' ? node => /(?:Decl|Type)/.test(node.kind) && +node.id == name_or_id : node => /(?:Decl|Type)/.test(node.kind) && node.name == name_or_id) ?? GetType(name_or_id, ast);
     if(node) {
       if(node.type) type = getTypeFromNode(node, ast);
       else type = TypeFactory(node, ast);
       if(node.name && typeof name_or_id != 'string') name_or_id = node.name;
     }
-    if(typeof name_or_id == 'string' && !Type.declarations.has(name_or_id))
-      Type.declarations.set(name_or_id, type);
+    if(typeof name_or_id == 'string' && !Type.declarations.has(name_or_id)) Type.declarations.set(name_or_id, type);
     return type;
   }
 }
@@ -602,15 +588,13 @@ export class RecordDecl extends Type {
             } else if(node.type) {
               type = new Type(node.type, ast);
               if(type.desugared && type.desugared.startsWith('struct ')) {
-                let tmp = ast.inner.find(n => n.kind == 'RecordDecl' && n.name == /^struct./.test(n.name)
-                );
+                let tmp = ast.inner.find(n => n.kind == 'RecordDecl' && n.name == /^struct./.test(n.name));
                 if(tmp) type = TypeFactory(tmp.value, ast);
               }
             }
           }
           if(type) acc.push([name, /*node.kind,*/ type]);
-          else if(name)
-            acc.push([name, node.kind.startsWith('Indirect') ? null : TypeFactory(node, ast)]);
+          else if(name) acc.push([name, node.kind.startsWith('Indirect') ? null : TypeFactory(node, ast)]);
           return acc;
           /*  return [
             name,
@@ -637,10 +621,7 @@ export class RecordDecl extends Type {
     return super.toJSON({
       name,
       size,
-      members: members.map(([name, member]) => [
-        name,
-        member != null && member.toJSON ? member.toJSON() : member
-      ])
+      members: members.map(([name, member]) => [name, member != null && member.toJSON ? member.toJSON() : member])
     });
   }
 }
@@ -749,8 +730,7 @@ export class FunctionDecl extends Node {
     // console.log('FunctionDecl', { type, returnType,tmp });
 
     this.returnType = returnType.kind ? TypeFactory(returnType, ast) : new Type(returnType, ast);
-    this.parameters =
-      parameters && /*new Map*/ parameters.map(({ name, type }) => [name, new Type(type, ast)]);
+    this.parameters = parameters && /*new Map*/ parameters.map(({ name, type }) => [name, new Type(type, ast)]);
 
     this.body = body;
   }
@@ -771,6 +751,7 @@ export class VarDecl extends Node {
     console.log('VarDecl', this);
   }
 }
+export class ClassDecl extends RecordDecl {}
 
 export class BuiltinType extends Type {
   constructor(node, ast) {
@@ -831,9 +812,7 @@ export function TypeFactory(node, ast, cache = true) {
 
   // console.log('TypeFactory:', { node });
 
-  Util.assert(node.kind,
-    `Not an AST node: ${inspect(node, { colors: false, compact: 0, depth: Infinity })}`
-  );
+  Util.assert(node.kind, `Not an AST node: ${inspect(node, { colors: false, compact: 0, depth: Infinity })}`);
 
   if(cache && (obj = Type.ast2node.get(node))) return obj;
 
@@ -862,6 +841,9 @@ export function TypeFactory(node, ast, cache = true) {
     case 'ConstantArrayType':
       obj = new ConstantArrayType(node, ast);
       break;
+    case 'CXXRecordDecl':
+      obj = new ClassDecl(node, ast);
+      break;
 
     case undefined:
       throw new Error(`Not an AST node: ${inspect(node, { colors: false, compact: 0 })}`);
@@ -882,13 +864,7 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
 
   if(args.indexOf('-ast-dump=json') != -1) {
     args.unshift(compiler ?? 'clang');
-    args = [
-      'sh',
-      '-c',
-      `exec ${args.map(p => (/\ /.test(p) ? `'${p}'` : p)).join(' ')}${
-        output ? ` 1>${output}` : ''
-      }`
-    ];
+    args = ['sh', '-c', `exec ${args.map(p => (/\ /.test(p) ? `'${p}'` : p)).join(' ')}${output ? ` 1>${output}` : ''}`];
   } else {
     if(output) {
       args.unshift(output);
@@ -932,10 +908,7 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
   done = true;
   let errorLines = errors.split(/\n/g).filter(line => line.trim() != '');
   errorLines = errorLines.filter(line => /error:/.test(line));
-  const numErrors =
-    [
-      ...(/^([0-9]+)\s/g.exec(errorLines.find(line => /errors\sgenerated/.test(line)) || '0') || [])
-    ][0] || errorLines.length;
+  const numErrors = [...(/^([0-9]+)\s/g.exec(errorLines.find(line => /errors\sgenerated/.test(line)) || '0') || [])][0] || errorLines.length;
   //console.log('errors:', errors);
   if(numErrors) throw new Error(errorLines.join('\n'));
 
@@ -985,7 +958,8 @@ export async function SourceDependencies(...args) {
 
   let [compiler, source, flags = []] = args;
 
-  console.log('SourceDependencies', { compiler, source, flags });
+  //console.log('SourceDependencies', { compiler, source, flags });
+
   let r = await SpawnCompiler(compiler, source, null, ['-MM', '-I.', ...flags]);
   let { output, result, errors } = (globalThis.response = r);
   output = output.replace(/\s*\\\n\s*/g, ' ');
@@ -993,7 +967,7 @@ export async function SourceDependencies(...args) {
   sources = sources.trim().split(/ /g);
   let [compilation_unit, ...includes] = sources;
 
-  console.log('output[1]:', { compilation_unit, includes });
+  //console.log('output[1]:', { compilation_unit, includes });
 
   return sources;
 }
@@ -1009,7 +983,7 @@ export async function AstDump(compiler, source, args, force) {
 
   if(existsAndNotEmpty) newer = Newer(output, ...sources);
 
-  console.log('AstDump', {
+  console.log('AstDump', console.config({ maxArrayLength: 4, compact: 10 }), {
     output,
     source,
     sources,
@@ -1023,13 +997,7 @@ export async function AstDump(compiler, source, args, force) {
     if(filesystem.exists(output)) filesystem.unlink(output);
 
     console.log(`Compiling '${source}'...`);
-    r = await SpawnCompiler(compiler, source, output, [
-      '-Xclang',
-      '-ast-dump=json',
-      '-fsyntax-only',
-      '-I.',
-      ...args
-    ]);
+    r = await SpawnCompiler(compiler, source, output, ['-Xclang', '-ast-dump=json', '-fsyntax-only', '-I.', ...args]);
   }
 
   console.log('AstDump', r);
@@ -1051,10 +1019,12 @@ export async function AstDump(compiler, source, args, force) {
         let range;
 
         const SetFile = loc => {
-          if(loc) {
-            if(loc.file) file = loc.file;
-            else loc.file = file;
-          }
+          try {
+            if(loc) {
+              if(loc.file) file = loc.file;
+              else loc.file = file;
+            }
+          } catch(e) {}
         };
         SetFile(node.loc);
         SetFile(node.range?.begin);
@@ -1067,42 +1037,47 @@ export async function AstDump(compiler, source, args, force) {
     }
   });
 
-  return Util.define(r, {
+  r = Util.define(r, {
     matchFiles: null,
     nomatchFiles: /^\/usr/,
     filter(pred) {
-      return this.data.inner.filter(node =>
-          ((node.loc.file !== undefined &&
-            ((this.matchFiles && this.matchFiles.test(node.loc.file ?? '')) ||
-              !this.nomatchFiles.test(node.loc.file ?? ''))) ||
-            node.isUsed) &&
-          !node.isImplicit &&
-          pred(node)
-      );
-    },
-    get types() {
-      return Object.setPrototypeOf(this.filter(n => /(?:Record|Typedef|Enum)Decl/.test(n.kind)), List.prototype);
-    },
-    get functions() {
-      return Object.setPrototypeOf(this.filter(n => /(?:Function)Decl/.test(n.kind)), List.prototype);;
-    },
-    get namespaces() {
-      return Object.setPrototypeOf(deep.select(this.data, n => 'NamespaceDecl' == n.kind, deep.RETURN_VALUE, 10), List.prototype );
-    },
-    get classes() {
-      return Object.setPrototypeOf(deep.select(this.data, n => 'CXXRecordDecl' == n.kind, deep.RETURN_VALUE, 10), List.prototype );
-    },
-    get variables() {
-      return Object.setPrototypeOf(this.filter(n => /(?:Var)Decl/.test(n.kind)), List.prototype);;
+      return this.data.inner.filter(node => ((node.loc.file !== undefined && ((this.matchFiles && this.matchFiles.test(node.loc.file ?? '')) || !this.nomatchFiles.test(node.loc.file ?? ''))) || node.isUsed) && !node.isImplicit && pred(node));
     }
   });
+  r = Util.lazyProperties(r, {
+    types() {
+      return Object.setPrototypeOf(this.filter(n => /(?:Record|Typedef|Enum)Decl/.test(n.kind)),
+        List.prototype
+      );
+    },
+    functions() {
+      return Object.setPrototypeOf(this.filter(n => /(?:Function)Decl/.test(n.kind)),
+        List.prototype
+      );
+    },
+    namespaces() {
+      return Object.setPrototypeOf(deep.select(this.data, n => 'NamespaceDecl' == n.kind, deep.RETURN_VALUE, 10),
+        List.prototype
+      );
+    },
+    classes() {
+      return Object.setPrototypeOf(deep.select(this.data, n => 'CXXRecordDecl' == n.kind && !n.isImplicit, deep.RETURN_VALUE, 10),
+        List.prototype
+      );
+    },
+    variables() {
+      return Object.setPrototypeOf(this.filter(n => /(?:Var)Decl/.test(n.kind)),
+        List.prototype
+      );
+    }
+  });
+  return r;
 }
 
 export function NameFor(decl, ast = this.data) {
   const { id } = decl;
   let p;
-  if((p = deep.find(ast, (value, key) => key == 'ownedTagDecl' && value.id == id, deep.RETURN_PATH))
-  ) {
+  if((p = deep.find(ast, (value, key) => key == 'ownedTagDecl' && value.id == id, deep.RETURN_PATH))) {
     p = p.slice(0, -1);
 
     let node = deep.get(ast, p);
@@ -1179,8 +1154,7 @@ export function GetTypeNode(node, ast = $.data) {
   for(let n = [node]; n[0]; n = n[0].inner) {
     let i;
 
-    if((i = n.find(node => /Type/.test(node.kind))))
-      if(i?.decl?.id) return ast.inner.find(node => node.id == i.decl.id);
+    if((i = n.find(node => /Type/.test(node.kind)))) if (i?.decl?.id) return ast.inner.find(node => node.id == i.decl.id);
   }
 }
 
@@ -1283,17 +1257,12 @@ export function NodePrinter(ast) {
           //console.log("AccessSpecDecl",access_spec_decl)
           put(access + ':');
         }
-        AddrLabelExpr() {}
-        AliasAttr() {}
         AlignedAttr(aligned_attr) {
           put('__attribute__((aligned))');
         }
-        AllocSizeAttr() {}
         AlwaysInlineAttr(always_inline_attr) {
           put('__attribute__((always_inline))');
         }
-        ArrayInitIndexExpr() {}
-        ArrayInitLoopExpr() {}
         ArraySubscriptExpr(array_subscript_expr) {
           const { valueCategory } = array_subscript_expr;
           const [array, subscript] = array_subscript_expr.inner;
@@ -1305,12 +1274,10 @@ export function NodePrinter(ast) {
         AsmLabelAttr(asm_label_attr) {
           put('__asm__');
         }
-        AtomicExpr() {}
-        AtomicType() {}
-        AutoType() {}
         BinaryOperator(binary_operator) {
           const { valueCategory, opcode } = binary_operator;
           let [left, right] = binary_operator.inner;
+
           printer.print(left);
           put(` ${opcode} `);
           printer.print(right);
@@ -1326,12 +1293,12 @@ export function NodePrinter(ast) {
         BreakStmt(break_stmt) {
           put('break');
         }
-        BuiltinTemplateDecl() {}
-        BuiltinType() {}
-        CallbackAttr() {}
         CallExpr(call_expr) {
+          console.log('CallExpr', call_expr);
           let [func, ...args] = call_expr.inner ?? [];
+
           printer.print(func);
+
           put('(');
           let i = 0;
           for(let inner of args) {
@@ -1352,10 +1319,6 @@ export function NodePrinter(ast) {
           const { value } = character_literal;
           put(`'${String.fromCharCode(value)}'`);
         }
-        ClassTemplateDecl() {}
-        ClassTemplatePartialSpecializationDecl() {}
-        ClassTemplateSpecializationDecl() {}
-        ComplexType() {}
         CompoundAssignOperator(compound_assign_operator) {
           const { valueCategory, opcode } = compound_assign_operator;
           let [left, right] = compound_assign_operator.inner;
@@ -1363,21 +1326,22 @@ export function NodePrinter(ast) {
           put(` ${opcode} `);
           printer.print(right);
         }
-        CompoundLiteralExpr() {}
         CompoundStmt(compound_stmt) {
           depth++;
           put('{');
           let i = 0;
           let offset = out.length;
+          if(compound_stmt?.inner?.length) put('\n');
+
           for(let inner of compound_stmt.inner ?? []) {
             if(i++ > 0) put('}; \t\n'.indexOf(out[out.length - 1]) != -1 ? '\n' : ';\n');
             printer.print(inner);
           }
-          console.log('CompoundStmt', { out });
+          //console.log('CompoundStmt', { out });
           if(out.length > offset && out[out.length - 1] != ';') put(';');
           depth--;
           //if(out.length > offset)
-          put('\n');
+          if(compound_stmt?.inner?.length) put('\n');
           put('}\n');
         }
         ConditionalOperator(conditional_operator) {
@@ -1389,7 +1353,6 @@ export function NodePrinter(ast) {
           put(' : ');
           printer.print(if_false);
         }
-        ConstantArrayType() {}
         ConstantExpr(constant_expr) {
           const { valueCategory } = constant_expr;
 
@@ -1398,18 +1361,15 @@ export function NodePrinter(ast) {
         ConstAttr(const_attr) {
           put('__attribute__((const)');
         }
-        ConstructorUsingShadowDecl() {}
         ContinueStmt(continue_stmt) {
           put('break');
         }
-        ConvertVectorExpr() {}
         CStyleCastExpr(cstyle_cast_expr) {
           let type = new Type(cstyle_cast_expr.type, this.ast);
           const { valueCategory, castKind } = cstyle_cast_expr;
           put(`(${type})`);
           for(let inner of cstyle_cast_expr.inner) printer.print(inner);
         }
-        DecayedType() {}
         DeclRefExpr(decl_ref_expr) {
           const { type, valueCategory, referencedDecl } = decl_ref_expr;
           put(referencedDecl.name ?? '<DeclRefExpr>');
@@ -1423,9 +1383,9 @@ export function NodePrinter(ast) {
             try {
               if(!type && inner.type) {
                 type = new Type(inner.type, this.ast);
-                console.log('type:', type);
-                console.log('type.typeAlias:', type.typeAlias);
-                console.log('type.trimSubscripts():', type.trimSubscripts());
+                //console.log('type:', type);
+                //console.log('type.typeAlias:', type.typeAlias);
+                //console.log('type.trimSubscripts():', type.trimSubscripts());
                 baseType = type.trimSubscripts() ?? type.qualType;
                 put(`${baseType} `);
               }
@@ -1434,14 +1394,9 @@ export function NodePrinter(ast) {
             printer.print(inner, baseType);
           }
         }
-        DecltypeType() {}
         DefaultStmt(default_stmt) {
           put('default:');
         }
-        DependentNameType() {}
-        DependentScopeDeclRefExpr() {}
-        DependentSizedArrayType() {}
-        DependentTemplateSpecializationType() {}
         DeprecatedAttr(deprecated_attr) {
           put('__attribute__((deprecated))');
         }
@@ -1453,7 +1408,6 @@ export function NodePrinter(ast) {
           printer.print(cond);
           put(`)`);
         }
-        ElaboratedType() {}
         EmptyDecl(empty_decl) {
           put('\n');
           // if(';}'.indexOf(out[out.length - 1] ?? '\n') == -1) put(';');
@@ -1484,8 +1438,6 @@ export function NodePrinter(ast) {
           }
           put('};');
         }
-        EnumType() {}
-        ExprWithCleanups() {}
         FieldDecl(field_decl) {
           let { isReferenced, name } = field_decl;
           let type = new Type(field_decl.type, this.ast);
@@ -1494,11 +1446,9 @@ export function NodePrinter(ast) {
           put(name);
           put(';');
         }
-        FinalAttr() {}
         FloatingLiteral(floating_literal) {
           put(floating_literal.value);
         }
-        FormatArgAttr() {}
         FormatAttr(format_attr) {
           put('__attribute__((format))');
         }
@@ -1530,7 +1480,6 @@ export function NodePrinter(ast) {
           put(') ');
           printer.print(body);
         }
-        FriendDecl() {}
         FullComment(full_comment) {
           put('/*');
 
@@ -1556,26 +1505,17 @@ export function NodePrinter(ast) {
           }
           put(') ');
           i = 0;
-          for(let inner of (function_decl.inner ?? []).filter(n => n.kind != 'ParmVarDecl' && !/Comment/.test(n.kind)
-          )) {
+          for(let inner of (function_decl.inner ?? []).filter(n => n.kind != 'ParmVarDecl' && !/Comment/.test(n.kind))) {
             if(i++ > 0) put(' ');
             printer.print(inner);
           }
           // put('');
           return true;
         }
-        FunctionNoProtoType() {}
-        FunctionProtoType() {}
-        FunctionTemplateDecl() {}
-        GCCAsmStmt() {}
-        GNUInlineAttr() {}
-        GNUNullExpr() {}
         GotoStmt(goto_stmt) {
           const { targetLabelDeclId } = goto_stmt;
 
-          let target = deep.find(this.ast,
-            n => typeof n == 'object' && n && n.declId == targetLabelDeclId
-          )?.value;
+          let target = deep.find(this.ast, n => typeof n == 'object' && n && n.declId == targetLabelDeclId)?.value;
           const { name } = target;
 
           put(`goto ${name}`);
@@ -1604,10 +1544,6 @@ export function NodePrinter(ast) {
         ImplicitCastExpr(implicit_cast_expr) {
           for(let inner of implicit_cast_expr.inner) printer.print(inner);
         }
-        ImplicitValueInitExpr() {}
-        IncompleteArrayType() {}
-        IndirectFieldDecl() {}
-        IndirectGotoStmt() {}
         InitListExpr(init_list_expr) {
           const { valueCategory } = init_list_expr;
 
@@ -1620,7 +1556,6 @@ export function NodePrinter(ast) {
           }
           put(' }');
         }
-        InjectedClassNameType() {}
         InlineCommandComment(inline_command_comment) {
           put(' InlineCommandComment ');
         }
@@ -1630,12 +1565,6 @@ export function NodePrinter(ast) {
         LabelStmt(label_stmt) {
           put(`${label_stmt.name}:`);
         }
-        LambdaExpr() {}
-        LinkageSpecDecl() {}
-        LValueReferenceType() {}
-        MaterializeTemporaryExpr() {}
-        MaxFieldAlignmentAttr() {}
-        MayAliasAttr() {}
         MemberExpr(member_expr) {
           const { valueCategory, name, isArray, referencedMemberDecl } = member_expr;
           /*const { referencedDecl } = member_expr.inner[0];
@@ -1648,29 +1577,15 @@ export function NodePrinter(ast) {
           }
           put(name);
         }
-        MemberPointerType() {}
-        MinVectorWidthAttr() {}
-        ModeAttr() {}
-        NamespaceDecl() {}
-        NoDebugAttr() {}
-        NoInlineAttr() {}
         NonNullAttr(non_null_attr) {
           put('__attribute__((__nonnull__))');
         }
-        NonTypeTemplateParmDecl() {}
         NoThrowAttr(no_throw_attr) {
           put('__attribute__((nothrow))');
         }
         NullStmt(null_stmt) {
           put(';');
         }
-        OffsetOfExpr() {}
-        OpaqueValueExpr() {}
-        OverrideAttr() {}
-        OwnerAttr() {}
-        PackedAttr() {}
-        PackExpansionExpr() {}
-        PackExpansionType() {}
         ParagraphComment(paragraph_comment) {
           for(let inner of paragraph_comment.inner) {
             printer.print(inner);
@@ -1697,23 +1612,27 @@ export function NodePrinter(ast) {
           if(paren_list_expr.inner) for(let inner of paren_list_expr.inner) printer.print(inner);
           put(`)`);
         }
-        ParenType() {}
         ParmVarDecl(parm_var_decl) {
-          let type = Node.get(parm_var_decl.type);
+          let {
+            name,
+            type: { qualType: type }
+          } = parm_var_decl;
+
           put((type + '').replace(/\s+\*/g, '*'));
 
-          if(parm_var_decl.name) {
+          if(name) {
             if(out[out.length - 1] != ' ') put(' ');
-            put(parm_var_decl.name);
+            put(name);
+          }
+
+          if(parm_var_decl.inner) {
+            put(` = `);
+            for(let inner of parm_var_decl.inner) printer.print(inner);
           }
         }
-        PointerAttr() {}
-        PointerType() {}
-        PredefinedExpr() {}
         PureAttr(pure_attr) {
           put('__attribute__((pure))');
         }
-        QualType() {}
         RecordDecl(record_decl) {
           const { tagUsed, name, completeDefinition, parentDeclContextId } = record_decl;
           //console.log('RecordDecl', record_decl);
@@ -1734,11 +1653,9 @@ export function NodePrinter(ast) {
             put('};');
           }
         }
-        RecordType() {}
         RestrictAttr(restrict_attr) {
           put('__restrict');
         }
-        ReturnsNonNullAttr() {}
         ReturnStmt(return_stmt) {
           put('return ');
           if(return_stmt.inner) for(let inner of return_stmt.inner) printer.print(inner);
@@ -1747,17 +1664,9 @@ export function NodePrinter(ast) {
         ReturnsTwiceAttr(returns_twice_attr) {
           put('__attribute__((returns_twice))');
         }
-        RValueReferenceType() {}
-        SentinelAttr() {}
-        ShuffleVectorExpr() {}
-        SizeOfPackExpr() {}
-        StaticAssertDecl() {}
-        StmtExpr() {}
         StringLiteral(string_literal) {
           put(string_literal.value);
         }
-        SubstNonTypeTemplateParmExpr() {}
-        SubstTemplateTypeParmType() {}
         SwitchStmt(switch_stmt) {
           let [cond, body] = switch_stmt.inner;
           put(`switch(`);
@@ -1765,23 +1674,14 @@ export function NodePrinter(ast) {
           put(`) `);
           printer.print(body);
         }
-        TargetAttr() {}
-        TemplateArgument() {}
-        TemplateSpecializationType() {}
-        TemplateTemplateParmDecl() {}
-        TemplateTypeParmDecl() {}
-        TemplateTypeParmType() {}
         TextComment(text_comment) {
           const { text } = text_comment;
 
           put(text);
         }
-        TParamCommandComment() {}
         TranslationUnitDecl(translation_unit_decl) {
           for(let inner of translation_unit_decl.inner) printer.print(inner);
         }
-        TypeAliasDecl() {}
-        TypeAliasTemplateDecl() {}
         TypedefDecl(typedef_decl) {
           const { name } = typedef_decl;
 
@@ -1795,15 +1695,11 @@ export function NodePrinter(ast) {
           put(name);
           put(';\n');
         }
-        TypedefType() {}
-        TypeOfExprType() {}
-        TypeTraitExpr() {}
         UnaryExprOrTypeTraitExpr(unary_expr_or_type_trait_expr) {
           const { valueCategory, name } = unary_expr_or_type_trait_expr;
 
           put(name);
-          if(unary_expr_or_type_trait_expr.inner)
-            for(let inner of unary_expr_or_type_trait_expr.inner) printer.print(inner);
+          if(unary_expr_or_type_trait_expr.inner) for(let inner of unary_expr_or_type_trait_expr.inner) printer.print(inner);
         }
         UnaryOperator(unary_operator) {
           const { valueCategory, isPostfix, opcode, canOverflow } = unary_operator;
@@ -1811,32 +1707,23 @@ export function NodePrinter(ast) {
           for(let inner of unary_operator.inner) printer.print(inner);
           if(isPostfix) put(opcode);
         }
-        UnaryTransformType() {}
         UnresolvedLookupExpr(unresolved_lookup_expr) {
           const { type, valueCategory, usesADL, name, lookups } = unresolved_lookup_expr;
           put(name);
         }
-        UnresolvedMemberExpr() {}
-        UnresolvedUsingValueDecl() {}
-        UnusedAttr() {}
-        UsingDecl() {}
-        UsingDirectiveDecl() {}
-        UsingShadowDecl() {}
-        VAArgExpr() {}
+        UnresolvedMemberExpr(unresolved_member_expr) {
+          const { type, valueCategory } = unresolved_member_expr;
+        }
         VarDecl(var_decl, base_type) {
           let type = new Type(var_decl.type, this.ast);
           put(var_decl.name);
-          let subscripts = (type.subscripts ?? [])
-            .map(([offset, subscript]) => `[${subscript}]`)
-            .join('');
+          let subscripts = (type.subscripts ?? []).map(([offset, subscript]) => `[${subscript}]`).join('');
           if(subscripts) put(subscripts);
           if(var_decl.inner && var_decl.inner.length) {
             put(' = ');
             for(let inner of var_decl.inner) printer.print(inner);
           }
         }
-        VarTemplateDecl() {}
-        VectorType() {}
         VerbatimBlockComment(verbatim_block_comment) {
           const { name, closeName } = verbatim_block_comment;
           //console.log('VerbatimBlockComment', verbatim_block_comment);
@@ -1851,15 +1738,12 @@ export function NodePrinter(ast) {
           put(text);
         }
 
-        VerbatimLineComment() {}
-        VisibilityAttr() {}
         WarnUnusedResultAttr(warn_unused_result_attr) {
           put('__attribute__((warn_unused_result))');
         }
         WeakAttr(weak_attr) {
           put('__attribute__((weak))');
         }
-        WeakRefAttr() {}
         WhileStmt(while_stmt) {
           let [cond, body] = while_stmt.inner;
           put(`while(`);
@@ -1867,6 +1751,114 @@ export function NodePrinter(ast) {
           put(`) `);
           printer.print(body);
         }
+
+        OverrideAttr(override_attr) {
+          put('override');
+        }
+
+        AddrLabelExpr(addr_label_expr) {}
+        AliasAttr(alias_attr) {}
+        AllocSizeAttr(alloc_size_attr) {}
+        ArrayInitIndexExpr(array_init_index_expr) {}
+        ArrayInitLoopExpr(array_init_loop_expr) {}
+        AtomicExpr(atomic_expr) {}
+        AtomicType(atomic_type) {}
+        AutoType(auto_type) {}
+        BuiltinTemplateDecl(builtin_template_decl) {}
+        BuiltinType(builtin_type) {}
+        CallbackAttr(callback_attr) {}
+        ClassTemplateDecl(class_template_decl) {}
+        ClassTemplatePartialSpecializationDecl(class_template_partial_specialization_decl) {}
+        ClassTemplateSpecializationDecl(class_template_specialization_decl) {}
+        ComplexType(complex_type) {}
+        CompoundLiteralExpr(compound_literal_expr) {}
+        ConstantArrayType(constant_array_type) {}
+        ConstructorUsingShadowDecl(constructor_using_shadow_decl) {}
+        ConvertVectorExpr(convert_vector_expr) {}
+        DecayedType(decayed_type) {}
+        DecltypeType(decltype_type) {}
+        DependentNameType(dependent_name_type) {}
+        DependentScopeDeclRefExpr(dependent_scope_decl_ref_expr) {
+          const { type, valueCategory } = dependent_scope_decl_ref_expr;
+        }
+        DependentSizedArrayType(dependent_sized_array_type) {}
+        DependentTemplateSpecializationType(dependent_template_specialization_type) {}
+        ElaboratedType(elaborated_type) {}
+        EnumType(enum_type) {}
+        ExprWithCleanups(expr_with_cleanups) {}
+        FinalAttr(final_attr) {}
+        FormatArgAttr(format_arg_attr) {}
+        FriendDecl(friend_decl) {}
+        FunctionNoProtoType(function_no_proto_type) {}
+        FunctionProtoType(function_proto_type) {}
+        FunctionTemplateDecl(function_template_decl) {}
+        GCCAsmStmt(gcc_asm_stmt) {}
+        GNUInlineAttr(gnu_inline_attr) {}
+        GNUNullExpr(gnu_null_expr) {}
+        ImplicitValueInitExpr(implicit_value_init_expr) {}
+        IncompleteArrayType(incomplete_array_type) {}
+        IndirectFieldDecl(indirect_field_decl) {}
+        IndirectGotoStmt(indirect_goto_stmt) {}
+        InjectedClassNameType(injected_class_name_type) {}
+        LambdaExpr(lambda_expr) {}
+        LinkageSpecDecl(linkage_spec_decl) {}
+        LValueReferenceType(l_value_reference_type) {}
+        MaterializeTemporaryExpr(materialize_temporary_expr) {}
+        MaxFieldAlignmentAttr(max_field_alignment_attr) {}
+        MayAliasAttr(may_alias_attr) {}
+        MemberPointerType(member_pointer_type) {}
+        MinVectorWidthAttr(min_vector_width_attr) {}
+        ModeAttr(mode_attr) {}
+        NamespaceDecl(namespace_decl) {}
+        NoDebugAttr(no_debug_attr) {}
+        NoInlineAttr(no_inline_attr) {}
+        NonTypeTemplateParmDecl(non_type_template_parm_decl) {}
+        OffsetOfExpr(offset_of_expr) {}
+        OpaqueValueExpr(opaque_value_expr) {}
+        OwnerAttr(owner_attr) {}
+        PackedAttr(packed_attr) {}
+        PackExpansionExpr(pack_expansion_expr) {}
+        PackExpansionType(pack_expansion_type) {}
+        ParenType(paren_type) {}
+        PointerAttr(pointer_attr) {}
+        PointerType(pointer_type) {}
+        PredefinedExpr(predefined_expr) {}
+        QualType(qual_type) {}
+        RecordType(record_type) {}
+        ReturnsNonNullAttr(returns_non_null_attr) {}
+        RValueReferenceType(r_value_reference_type) {}
+        SentinelAttr(sentinel_attr) {}
+        ShuffleVectorExpr(shuffle_vector_expr) {}
+        SizeOfPackExpr(size_of_pack_expr) {}
+        StaticAssertDecl(static_assert_decl) {}
+        StmtExpr(stmt_expr) {}
+        SubstNonTypeTemplateParmExpr(subst_non_type_template_parm_expr) {}
+        SubstTemplateTypeParmType(subst_template_type_parm_type) {}
+        TargetAttr(target_attr) {}
+        TemplateArgument(template_argument) {}
+        TemplateSpecializationType(template_specialization_type) {}
+        TemplateTemplateParmDecl(template_template_parm_decl) {}
+        TemplateTypeParmDecl(template_type_parm_decl) {}
+        TemplateTypeParmType(template_type_parm_type) {}
+        TParamCommandComment(t_param_command_comment) {}
+        TypeAliasDecl(type_alias_decl) {}
+        TypeAliasTemplateDecl(type_alias_template_decl) {}
+        TypedefType(typedef_type) {}
+        TypeOfExprType(type_of_expr_type) {}
+        TypeTraitExpr(type_trait_expr) {}
+        UnaryTransformType(unary_transform_type) {}
+        UnresolvedUsingValueDecl(unresolved_using_value_decl) {}
+        UnusedAttr(unused_attr) {}
+        UsingDecl(using_decl) {}
+        UsingDirectiveDecl(using_directive_decl) {}
+        UsingShadowDecl(using_shadow_decl) {}
+        VAArgExpr(va_arg_expr) {}
+        VarTemplateDecl(var_template_decl) {}
+        VectorType(vector_type) {}
+        VerbatimLineComment(verbatim_line_comment) {}
+        VisibilityAttr(visibility_attr) {}
+        WeakRefAttr(weak_ref_attr) {}
+
         CXXRecordDecl(cxx_record_decl) {
           const { name, tagUsed } = cxx_record_decl;
           depth++;
@@ -1877,7 +1869,7 @@ export function NodePrinter(ast) {
             let i = -1;
             for(let inner of cxx_record_decl.inner) {
               i++;
-              if(inner.kind.endsWith('Comment') || inner.kind == 'CXXRecordDecl') continue;
+              if(inner.kind && (inner.kind.endsWith('Comment') || inner.kind == 'CXXRecordDecl')) continue;
               //  console.log(`CXXRecordDecl inner[${i}]`, inner);
               printer.print(inner);
               put(`\n`);
@@ -1891,9 +1883,7 @@ export function NodePrinter(ast) {
           let i = 0,
             param,
             initializer;
-          let l = [...cxx_constructor_decl.inner].filter(n => n.kind && !n.kind.endsWith('Comment')
-          );
-          console.log('CXXConstructorDecl', cxx_constructor_decl);
+          let l = cxx_constructor_decl?.inner ? [...cxx_constructor_decl.inner].filter(n => n.kind && !n.kind.endsWith('Comment')) : [];
           put(`${name}(`);
           while(l.length && l[0].kind == 'ParmVarDecl' && (param = l.shift())) {
             if(param.name) {
@@ -1910,36 +1900,26 @@ export function NodePrinter(ast) {
             while(l.length && l[0].kind == 'CXXCtorInitializer' && (initializer = l.shift())) {
               if(i++ > 0) put('\n, ');
               let implicit_cast = initializer.inner[0];
+              if(implicit_cast?.inner) {
+                let member_expr = implicit_cast.inner[0];
 
-              let member_expr = implicit_cast.inner[0];
+                put(member_expr.name + `(`);
+                if(member_expr?.inner) printer.print(member_expr.inner[0]);
 
-              put(member_expr.name + `(`);
-              console.log('CXXConstructorDecl', { implicit_cast, member_expr });
-
-              if(member_expr?.inner) printer.print(member_expr.inner[0]);
-
-              put(`)`);
-
-              //          printer.print(member_expr);
+                put(`)`);
+              }
             }
           }
           depth--;
-          //         console.log('CXXConstructorDecl', { name, l });
-
           if(l.length) {
             put(`\n`);
             for(let node of l) printer.print(node);
           } else {
             put(`;`);
           }
+          put(`\n`);
         }
 
-        CXX11NoReturnAttr() {}
-        CXXBindTemporaryExpr() {}
-        CXXBoolLiteralExpr() {}
-        CXXCatchStmt() {}
-        CXXConstructExpr() {}
-        CXXConversionDecl() {}
         CXXCtorInitializer(cxx_ctor_initializer) {
           const {
             anyInit: { name }
@@ -1954,9 +1934,6 @@ export function NodePrinter(ast) {
             }
           put(`)`);
         }
-        CXXDefaultArgExpr() {}
-        CXXDefaultInitExpr() {}
-        CXXDeleteExpr() {}
         CXXDependentScopeMemberExpr(cxx_dependent_scope_member_expr) {
           const { type, valueCategory, isArrow, member } = cxx_dependent_scope_member_expr;
 
@@ -1974,32 +1951,44 @@ export function NodePrinter(ast) {
 
           put('this');
         }
-        CXXDestructorDecl() {}
-        CXXForRangeStmt() {}
-        CXXFunctionalCastExpr() {}
-        CXXMemberCallExpr() {}
+        CXXDestructorDecl(cxx_destructor_decl) {
+          const { isImplicit, name, mangledName, type, inline, explicitlyDefaulted } = cxx_destructor_decl;
+
+          let l = cxx_destructor_decl.inner ? [...cxx_destructor_decl.inner].filter(n => n.kind && !n.kind.endsWith('Comment')) : [];
+          put(`${name}(`);
+
+          put(`)`);
+
+          if(l.length) {
+            put(`\n`);
+            for(let node of l) printer.print(node);
+          } else {
+            put(`;`);
+          }
+          put(`\n`);
+        }
         CXXMethodDecl(cxx_method_decl) {
           const {
             name,
             type: { qualType: functionType },
             storageClass
           } = cxx_method_decl;
-          const returnType = functionType.slice(0, functionType.indexOf(' ('));
+          const returnType = functionType.slice(0, functionType.indexOf('('));
 
-          console.log('CXXMethodDecl', { name, returnType });
+          //  console.log('CXXMethodDecl', console.config({ depth: 10 }), cxx_method_decl);
           let i = 0,
             param,
             initializer;
-          let inner = [...cxx_method_decl.inner].filter(n => n.kind && !n.kind.endsWith('Comment'));
+          let inner = cxx_method_decl.inner ? [...cxx_method_decl.inner].filter(n => n.kind && !n.kind.endsWith('Comment')) : [];
           if(storageClass) put(`${storageClass} `);
           put(`${returnType}\n`);
           put(`${name}(`);
-          while(inner[0].kind == 'ParmVarDecl' && (param = inner.shift())) {
+          while(inner.length && inner[0].kind == 'ParmVarDecl' && (param = inner.shift())) {
             if(i++ > 0) put(', ');
             printer.print(param);
           }
           put(`)`);
-          console.log('CXXMethodDecl', { inner });
+          //console.log('CXXMethodDecl', { inner });
           if(inner.length > 0) {
             put(` `);
             depth++;
@@ -2008,14 +1997,9 @@ export function NodePrinter(ast) {
           } else {
             put(`;`);
           }
+          put(`\n`);
         }
-        CXXNewExpr() {}
-        CXXNoexceptExpr() {}
-        CXXNullPtrLiteralExpr() {}
-        CXXOperatorCallExpr() {}
 
-        CXXReinterpretCastExpr() {}
-        CXXScalarValueInitExpr() {}
         CXXStaticCastExpr(cxx_static_cast_expr) {
           const {
             type: { qualType: typeName },
@@ -2027,7 +2011,7 @@ export function NodePrinter(ast) {
             put(`0`);
             return;
           }
-          console.log('CXXStaticCastExpr', cxx_static_cast_expr);
+          //console.log('CXXStaticCastExpr', cxx_static_cast_expr);
           put(`static_cast<`);
           put(typeName);
           put(`>(`);
@@ -2040,8 +2024,6 @@ export function NodePrinter(ast) {
           put(`)`);
         }
 
-        CXXTemporaryObjectExpr() {}
-        CXXTryStmt() {}
         CXXUnresolvedConstructExpr(cxx_unresolved_construct_expr) {
           const { type, valueCategory } = cxx_unresolved_construct_expr;
           if(cxx_unresolved_construct_expr.inner)
@@ -2050,6 +2032,58 @@ export function NodePrinter(ast) {
               printer.print(inner);
             }
         }
+        CXXNewExpr(cxx_new_expr) {
+          const {
+            type: { qualType: type },
+            valueCategory,
+            isArray
+          } = cxx_new_expr;
+          console.log('CXXNewExpr', cxx_new_expr);
+
+          if(isArray) {
+            put(`new ${type.replace(/[\s*]*$/g, '')}[`);
+          } else {
+            put(`new ${type} (`);
+          }
+          printer.print(cxx_new_expr.inner[0]);
+
+          if(isArray) put(`]`);
+          else put(`)`);
+        }
+        CXXDeleteExpr(cxx_delete_expr) {
+          const {
+            type: { qualType: type },
+            valueCategory,
+            isArray,
+            isArrayAsWritten
+          } = cxx_delete_expr;
+          put(`delete `);
+
+          printer.print(cxx_delete_expr.inner[0]);
+        }
+        CXXBoolLiteralExpr(cxx_bool_literal_expr) {
+          const { type, valueCategory, value } = cxx_bool_literal_expr;
+
+          put(value ? 'true' : 'false');
+        }
+        CXX11NoReturnAttr(cxx11_no_return_attr) {}
+        CXXBindTemporaryExpr(cxx_bind_temporary_expr) {}
+        CXXCatchStmt(cxx_catch_stmt) {}
+        CXXConstructExpr(cxx_construct_expr) {}
+        CXXConversionDecl(cxx_conversion_decl) {}
+        CXXDefaultArgExpr(cxx_default_arg_expr) {}
+        CXXDefaultInitExpr(cxx_default_init_expr) {}
+        CXXForRangeStmt(cxx_for_range_stmt) {}
+        CXXFunctionalCastExpr(cxx_functional_cast_expr) {}
+        CXXMemberCallExpr(cxx_member_call_expr) {}
+
+        CXXNoexceptExpr(cxx_noexcept_expr) {}
+        CXXNullPtrLiteralExpr(cxx_null_ptr_literal_expr) {}
+        CXXOperatorCallExpr(cxx_operator_call_expr) {}
+        CXXReinterpretCastExpr(cxx_reinterpret_cast_expr) {}
+        CXXScalarValueInitExpr(cxx_scalar_value_init_expr) {}
+        CXXTemporaryObjectExpr(cxx_temporary_object_expr) {}
+        CXXTryStmt(cxx_try_stmt) {}
       })()
     }
   });
@@ -2104,12 +2138,8 @@ export function GetType(name_or_id, ast = $.data) {
           wantKind = /^EnumDecl/;
           break;
       }
-      let results = types.filter(name_or_id.startsWith('0x')
-          ? node => node.id == name_or_id && wantKind.test(node.kind)
-          : node => node.name == name_or_id && wantKind.test(node.kind)
-      );
-      if(results.length <= 1 || (idx = results.findIndex(r => r.completeDefinition)) == -1)
-        idx = 0;
+      let results = types.filter(name_or_id.startsWith('0x') ? node => node.id == name_or_id && wantKind.test(node.kind) : node => node.name == name_or_id && wantKind.test(node.kind));
+      if(results.length <= 1 || (idx = results.findIndex(r => r.completeDefinition)) == -1) idx = 0;
       result = results[idx];
 
       if(!result && Type.declarations.has(name_or_id)) result = Type.declarations.get(name_or_id);
@@ -2121,9 +2151,7 @@ export function GetType(name_or_id, ast = $.data) {
 }
 
 export function GetFields(node) {
-  let fields = deep
-    .select(node, (v, k) => / at /.test(v) && k == 'qualType', deep.RETURN_VALUE_PATH)
-    .map(([v, p]) => [v.split(/(?:\s*[()]| at )/g)[2], p.slice(0, -2)]);
+  let fields = deep.select(node, (v, k) => / at /.test(v) && k == 'qualType', deep.RETURN_VALUE_PATH).map(([v, p]) => [v.split(/(?:\s*[()]| at )/g)[2], p.slice(0, -2)]);
 
   return fields.map(([loc, ptr]) =>
     loc
