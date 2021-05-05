@@ -7,19 +7,14 @@ import { assert } from 'util';
 var worker;
 var counter;
 
-function test_worker() {
+function TestWorker() {
   new Console({
     colors: true,
-    showHidden: false,
-    showProxy: false,
-    stringBreakNewline: true,
-    maxStringLength: Infinity,
-    compact: 2,
-    numberBase: 16,
+    compact: 1,
     prefix: '\x1b[38;5;220mPARENT\x1b[0m'
   });
 
-  console.log('test_worker');
+  console.log('TestWorker');
   worker = new os.Worker('./worker.js');
 
   counter = 0;
@@ -28,7 +23,7 @@ function test_worker() {
 
 function HandleMessage(e) {
   var ev = e.data;
-  console.log('HandleMessage', e);
+  console.log('HandleMessage', ev);
   switch (ev.type) {
     case 'num':
       assert(ev.num, counter);
@@ -56,4 +51,4 @@ function HandleMessage(e) {
   }
 }
 
-test_worker();
+TestWorker();

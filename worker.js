@@ -7,11 +7,9 @@ import * as cv from 'cv';
 var parent = os.Worker.parent;
 
 function WorkerMain() {
-  globalThis.console = new Console({
+  new Console({
     colors: true,
-    stringBreakNewline: true,
-    maxStringLength: Infinity,
-    compact: 4,
+    compact: 1,
     prefix: '\x1b[38;5;128mWORKER\x1b[0m'
   });
 
@@ -29,7 +27,7 @@ WorkerMain();
 
 function HandleMessage(e) {
   var ev = e.data;
-  console.log('HandleMessage', e);
+  console.log('HandleMessage', ev);
 
   switch (ev.type) {
     case 'abort':
@@ -38,8 +36,11 @@ function HandleMessage(e) {
     case 'sab':
       /* modify the SharedArrayBuffer */
       ev.buf[2] = 10;
+      ev.buf[3] = 9;
+      ev.buf[4] = 8;
+      ev.buf[5] = 7;
+      ev.buf[6] = 6;
       parent.postMessage({ type: 'sab_done', buf: ev.buf });
       break;
   }
 }
-
