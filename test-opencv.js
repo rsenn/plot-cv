@@ -26,14 +26,13 @@ function WriteImage(name, mat) {
 
 function SaveConfig(configObj) {
   configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v]));
-
-  return filesystem.writeFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'),
-    JSON.stringify(configObj, null, 2) + '\n'
-  );
+  let file = std.open(Util.getArgv()[1].replace(/\.js$/, '.config.json'), 'w+b');
+  file.puts(JSON.stringify(configObj, null, 2) + '\n');
+  file.close();
 }
 
 function LoadConfig() {
-  let str = filesystem.readFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'), 'utf-8');
+  let str = std.loadFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'));
   let configObj = JSON.parse(str ?? '{}');
 
   configObj = Object.fromEntries(Object.entries(configObj)
