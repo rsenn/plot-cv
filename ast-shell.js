@@ -437,7 +437,7 @@ bitsize(const void* p, size_t len) {
   yield `}`;
 }
 
-function InspectStruct(decl, includes, compiler = 'gcc') {
+function InspectStruct(decl, includes, compiler = 'clang') {
   if(typeof decl == 'string') {
     let name = (/ /.test(decl) ? '' : 'struct ') + decl;
     decl = Type.get(name, $.data);
@@ -458,7 +458,7 @@ function InspectStruct(decl, includes, compiler = 'gcc') {
   if(result == 0) {
     let [fd, stdout] = os.pipe();
 
-    os.exec([`./${program}`], { stdout });
+    os.exec([(program.startsWith('/') ? '' : `./`) + program], { stdout });
     let output = filesystem.readAll(fd);
 
     let lines = output.trim().split('\n');
