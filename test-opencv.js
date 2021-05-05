@@ -198,8 +198,6 @@ async function main(...args) {
         console.log('circles2:', circles2);
 
         cv.cvtColor(morpho, dst, cv.COLOR_GRAY2BGR);
-        //  this.outputOf('HoughLinesP').copyTo(dst);
-        //  cv.cvtColor(this.outputOf('Grayscale'), dst, cv.COLOR_GRAY2BGR);
         let i = 0;
         for(let [x, y, r] of circles1) {
           let p = new Point(x, y);
@@ -208,7 +206,6 @@ async function main(...args) {
         }
         for(let [x, y, r] of circles2) {
           let p = new Point(x, y);
-          // draw.circle(dst, p, 9, [255, 0, 255], 2, cv.LINE_AA);
           draw.circle(dst, p, r + 2, [255, 0, 0], 1, cv.LINE_AA);
           console.log('elem:', p.toString(), r);
         }
@@ -221,10 +218,7 @@ async function main(...args) {
       /* if(frameShow == i) {
         outputName = pipeline.processors[frameShow].name;
         outputMat = mat;
-
-       
       }*/
-
       // let m = (outputMat || mat) ?  (outputMat || mat).dup() : null;
     }
   );
