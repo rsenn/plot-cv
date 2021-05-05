@@ -18,18 +18,6 @@ import { Pipeline, Processor } from './cvPipeline.js';
 import { TickMeter } from 'utility';
 
 let filesystem;
-/*function saveMat(name, mat) {
-  let ext = mat.channels == 1 ? 'pgm' : 'ppm';
-  let p = mat.channels == 1 ? 'P2' : 'P3';
-  let colors = [];
-  for(let [pos, value] of image) {
-    let c = value;
-    colors.push(c);
-  }
-  filesystem.writeFile(`${name}.${ext}`,
-    `${p}\n${image.cols} ${image.rows}\n255\n${colors.flat().join('\n')}`
-  );
-}*/
 
 function WriteImage(name, mat) {
   cv.imwrite(name, mat);
@@ -104,9 +92,9 @@ async function main(...args) {
     thres2: new NumericParam(config.thres2 ?? 20, 0, 300),
     rho: new NumericParam(config.rho ?? 1, 1, 100),
     theta: new NumericParam(config.theta ?? 180, 1, 360),
-    threshold: new NumericParam(config.threshold ?? 30, 0, 100),
-    minLineLength: new NumericParam(config.minLineLength ?? 4, 0, 1000),
-    maxLineGap: new NumericParam(config.maxLineGap ?? 30, 0, 1000),
+    threshold: new NumericParam(config.threshold ?? 10, 0, 100),
+    minLineLength: new NumericParam(config.minLineLength ?? 2, 0, 1000),
+    maxLineGap: new NumericParam(config.maxLineGap ?? 4, 0, 1000),
     dp: new NumericParam(config.dp ?? 2, 0.1, 100),
     minDist: new NumericParam(config.minDist ?? 10, 1, 1000),
     param1: new NumericParam(config.param1 ?? 200, 1, 1000),
@@ -114,7 +102,9 @@ async function main(...args) {
   };
 
   console.log('thres:', +params.thres);
-
+  let lineWidth = 1;
+  let lines;
+  let circles = [];
   let paramNav = new ParamNavigator(params, config.currentParam);
   let pipeline = new Pipeline([
       function AcquireFrame(src, dst) {
@@ -155,7 +145,7 @@ async function main(...args) {
       function HoughLinesP(src, dst) {
         const skel = this.outputOf('Skeletonization');
         const morpho = this.outputOf('Morphology');
-        let lines = new Mat();
+        lines = new Mat();
         cv.HoughLinesP(skel,
           lines,
           +params.rho,
@@ -169,9 +159,9 @@ async function main(...args) {
         let i = 0;
         for(let elem of lines.values()) {
           const line = new Line(elem);
-          draw.line(dst, ...line.toPoints(), [0, 255, 0], 1, cv.LINE_AA);
+          draw.line(dst, ...line.toPoints(), [255, 128, 0], lineWidth, cv.LINE_AA);
           draw.line(morpho, ...line.toPoints(), [0, 0, 0], 2, cv.LINE_8);
-          draw.line(skel, ...line.toPoints(), [0, 0, 0], 1, cv.LINE_8);
+          draw.line(skel, ...line.toPoints(), [0, 0, 0], lineWidth, cv.LINE_8);
           ++i;
         }
         let kern = cv.getStructuringElement(cv.MORPH_CROSS, new Size(3, 3));
@@ -197,17 +187,25 @@ async function main(...args) {
         cv.HoughCircles(skel, circles2, cv.HOUGH_GRADIENT, ...paramArray);
         console.log('circles2:', circles2);
 
-        cv.cvtColor(skel, dst, cv.COLOR_GRAY2BGR);
+        this.outputOf('HoughLinesP').copyTo(dst);
+
         let i = 0;
+        /*   for(let elem of lines.values()) {
+          const line = new Line(elem);
+          draw.line(dst, ...line.toPoints(), [255, 255, 0], lineWidth, cv.LINE_AA);
+          ++i;
+        }*/
         for(let [x, y, r] of circles1) {
           let p = new Point(x, y);
-          draw.circle(dst, p, r, [0, 255, 0], 1, cv.LINE_AA);
+          draw.circle(dst, p, r, [0, 255, 0], lineWidth, cv.LINE_AA);
           console.log('elem:', p.toString(), r);
+          circles.push([x, y, r]);
         }
         for(let [x, y, r] of circles2) {
           let p = new Point(x, y);
-          draw.circle(dst, p, r + 2, [255, 0, 0], 1, cv.LINE_AA);
+          draw.circle(dst, p, r + 2, [255, 0, 0], lineWidth, cv.LINE_AA);
           console.log('elem:', p.toString(), r);
+          circles.push([x, y, r]);
         }
       }
     ],
@@ -235,6 +233,7 @@ async function main(...args) {
 
     if(key == 8) {
       cv.waitKey(-1);
+
       pipeline.currentProcessor--;
       console.log('pipeline.currentProcessor', pipeline.currentProcessor);
     }
