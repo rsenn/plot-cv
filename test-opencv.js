@@ -197,7 +197,7 @@ async function main(...args) {
         cv.HoughCircles(skel, circles2, cv.HOUGH_GRADIENT, ...paramArray);
         console.log('circles2:', circles2);
 
-        cv.cvtColor(morpho, dst, cv.COLOR_GRAY2BGR);
+        cv.cvtColor(skel, dst, cv.COLOR_GRAY2BGR);
         let i = 0;
         for(let [x, y, r] of circles1) {
           let p = new Point(x, y);
