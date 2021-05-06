@@ -284,7 +284,7 @@ static inline JSValue
 js_typedarray_new(
     JSContext* ctx, JSValueConst buffer, uint32_t byteOffset, uint32_t length, const TypedArrayType& props) {
   auto range = js_arraybuffer_range(ctx, buffer);
-  assert(byteOffset + length * props.byte_size < range.size());
+  assert(byteOffset + length * props.byte_size <= range.size());
 
   return js_typedarray_new(ctx, buffer, byteOffset, length, props.constructor_name().c_str());
 }

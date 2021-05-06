@@ -11,13 +11,14 @@ export class Pipeline extends Function {
       if(typeof mat == 'number') {
         end ??= mat + 1;
         processors = processors.slice(mat, end);
-        mat = null;
       }
+      if(!(mat instanceof Mat)) mat = null;
+
       for(let [i, processor] of processors) {
         let start = hr();
         self.currentProcessor = i;
 
-        console.log(`Pipeline \x1b[38;5;112m#${i} \x1b[38;5;32m'${processor.name}'\x1b[m`);
+        //console.log(`Pipeline \x1b[38;5;112m#${i} \x1b[38;5;32m'${processor.name}'\x1b[m`);
         mat = processor.call(self, mat ?? self.images[i - 1], self.images[i]);
         if(Util.isObject(mat) && mat instanceof Mat) self.images[i] = mat;
         mat = self.images[i];
@@ -41,10 +42,19 @@ export class Pipeline extends Function {
     return Object.setPrototypeOf(self, Pipeline.prototype);
   }
 
-  step() {
+  step(direction = 1) {
     let { currentProcessor } = this;
 
-    return this(currentProcessor + 1);
+    return this(Util.mod(currentProcessor + direction, this.size));
+  }
+
+  recalc(up_to) {
+    let { currentProcessor } = this;
+    up_to ??= currentProcessor;
+    console.log(`Pipeline recalc \x1b[38;5;112m#${up_to} \x1b[38;5;32m'${this.names[up_to]}'\x1b[m`
+    );
+
+    return this(0, up_to + 1);
   }
 
   get size() {
@@ -92,7 +102,7 @@ export function Processor(fn, ...args) {
   });
 
   self = function(src, dst, i) {
-    if(dst && mapper.get(self))
+    if(dst && mapper.get(self) && dst !== mapper.get(self))
       throw new Error(`Duplicate output Mat for processor '${self.name}`);
 
     if(dst) mapper.set(self, dst);

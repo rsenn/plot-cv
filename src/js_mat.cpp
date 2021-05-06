@@ -1281,7 +1281,7 @@ js_mat_iterator_new(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
       it->magic = magic;
       it->type = TypedArrayType(*m);
 
-      printf("js_mat_iterator_new type=%s\n", it->type.constructor_name().c_str());
+      // printf("js_mat_iterator_new type=%s\n", it->type.constructor_name().c_str());
 
       JS_SetOpaque(/*ctx, */ enum_obj, it);
       return enum_obj;
@@ -1290,6 +1290,20 @@ js_mat_iterator_new(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   }
   JS_FreeValue(ctx, mat);
   return JS_EXCEPTION;
+}
+
+/*typedef struct JSMatIteratorData {
+  JSValue obj, buf;
+  uint32_t row, col;
+  int magic;
+  TypedArrayType type;
+} JSMatIteratorData;
+*/
+
+void
+js_mat_iterator_dump(JSMatIteratorData* it) {
+  std::cout << "MatIterator { row: " << it->row << ", col: " << it->col << ", magic: " << it->magic
+            << ", type: " << it->type << " }" << std::endl;
 }
 
 JSValue
@@ -1306,6 +1320,10 @@ js_mat_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueCon
     if((m = js_mat_data(ctx, it->obj)) == nullptr)
       return JS_EXCEPTION;
     dim = mat_dimensions(*m);
+
+    /*std::cout << "mat_dimensions(*m) = " << dim.cols << "x" << dim.rows << std::endl;
+    js_mat_iterator_dump(it);*/
+
     row = it->row;
     col = it->col;
     if(row >= m->rows) {
@@ -1341,6 +1359,7 @@ js_mat_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueCon
 
         if(channels == 1)
           return js_mat_get(ctx, it->obj, row, col);
+
         ret = js_typedarray_new(ctx, it->buf, offset, channels, type);
         break;
       }

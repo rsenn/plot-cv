@@ -81,7 +81,7 @@ async function main(...args) {
   let outputName, outputMat;
 
   let params = {
-    thres: new NumericParam(config.thres ?? 8, 0, 255),
+    thres: new NumericParam(config.thres ?? 64, 0, 255),
     max: new NumericParam(config.max ?? 255, 0, 255),
     type: new NumericParam(config.type ?? cv.THRESH_BINARY_INV, 0, 4),
     kernel_size: new NumericParam(config.kernel_size ?? 1, 0, 10),
@@ -131,11 +131,9 @@ async function main(...args) {
 
         cv.morphologyEx(dst, dst, cv.MORPH_ERODE, structuringElement);
         //   cv.erode(dst, dst, structuringElement);
-        console.log('dst:', dst);
-        dst.xor([255, 255, 255, 0], dst);
+         dst.xor([255, 255, 255, 0], dst);
 
-        console.log('dst:', dst.channels);
-      },
+       },
 
       function Skeletonization(src, dst) {
         cv.skeletonization(src, dst);
@@ -157,6 +155,7 @@ async function main(...args) {
         cv.cvtColor(skel, dst, cv.COLOR_GRAY2BGR);
         let i = 0;
         for(let elem of lines.values()) {
+          //console.log(`elem #${i}:`, elem);
           const line = new Line(elem);
           draw.line(dst, ...line.toPoints(), [255, 128, 0], lineWidth, cv.LINE_AA);
           draw.line(morpho, ...line.toPoints(), [0, 0, 0], 2, cv.LINE_8);
@@ -177,14 +176,13 @@ async function main(...args) {
         const morpho = this.outputOf('Morphology');
         const skel = this.outputOf('Skeletonization');
         const paramArray = [+params.dp, +params.minDist, +params.param1, +params.param2, 0, 90];
-        console.log('paramArray:', paramArray);
 
         let circles1 = [] ?? new Mat();
         let circles2 = [] ?? new Mat();
         cv.HoughCircles(morpho, circles1, cv.HOUGH_GRADIENT, ...paramArray);
-        console.log('circles1:', circles1);
+        //console.log('circles1:', circles1);
         cv.HoughCircles(skel, circles2, cv.HOUGH_GRADIENT, ...paramArray);
-        console.log('circles2:', circles2);
+        //console.log('circles2:', circles2);
 
         this.outputOf('HoughLinesP').copyTo(dst);
 
@@ -197,48 +195,108 @@ async function main(...args) {
         for(let [x, y, r] of circles1) {
           let p = new Point(x, y);
           draw.circle(dst, p, r, [0, 255, 0], lineWidth, cv.LINE_AA);
-          console.log('elem:', p.toString(), r);
-          circles.push([x, y, r]);
+           circles.push([x, y, r]);
         }
         for(let [x, y, r] of circles2) {
           let p = new Point(x, y);
           draw.circle(dst, p, r + 2, [255, 0, 0], lineWidth, cv.LINE_AA);
-          console.log('elem:', p.toString(), r);
-          circles.push([x, y, r]);
+           circles.push([x, y, r]);
         }
       }
     ],
     (mat, i, n) => {
-      console.log('output:', InspectMat(mat));
-      cv.imshow('output', mat);
-      cv.setWindowTitle('output', `#${i}: ` + pipeline.names[i]);
-      /* if(frameShow == i) {
-        outputName = pipeline.processors[frameShow].name;
-        outputMat = mat;
-      }*/
-      // let m = (outputMat || mat) ?  (outputMat || mat).dup() : null;
+      //console.log('pipeline callback', { i, n });
+      if(frameShow == i) {
+         cv.imshow('output', mat);
+        cv.setWindowTitle('output', `#${i}: ` + pipeline.names[i]);
+      }
+       
     }
   );
-
-  if(frameShow < 0) frameShow += pipeline.size;
+  frameShow = 0;
+  /*  if(frameShow < 0) frameShow += pipeline.size;
   if(frameShow >= pipeline.size) frameShow -= pipeline.size;
-  SaveConfig({ frameShow, ...params });
+*/
+
+  SaveConfig(params);
   let key;
-
+  console.log('pipeline.step()', pipeline.step());
   while(true) {
-    console.log('pipeline.step()', pipeline.step());
     key = cv.waitKey(-1);
-    if(key != -1) console.log('key:', key);
+    //if(key !== -1) console.log('key:', '0x' + key.toString(16));
 
-    if(key == 8) {
-      cv.waitKey(-1);
+    if(key === 'q' || key === 113 || key === '\x1b') break;
 
-      pipeline.currentProcessor--;
-      console.log('pipeline.currentProcessor', pipeline.currentProcessor);
+    switch (key & 0xfff) {
+      case 0x08 /* backspace */:
+        if(frameShow > 0) {
+          frameShow--;
+          pipeline.step(-1);
+        }
+        break;
+      case 0x3c /* < */:
+        paramNav.prev();
+        console.log(`Param #${paramNav.index} '${paramNav.name}' selected`);
+        break;
+      case 0x3e /* > */:
+        paramNav.next();
+        console.log(`Param #${paramNav.index} '${paramNav.name}' selected`);
+        break;
+
+      case 0x2b /* + */:
+        paramNav.param.increment();
+        console.log(`Param ${paramNav.name}: ${paramNav.param}`);
+        pipeline.recalc(frameShow);
+        break;
+
+      case 0x2d /* - */:
+      case 0x2fad /* numpad - */:
+        paramNav.param.decrement();
+        console.log(`Param ${paramNav.name}: ${paramNav.param}`);
+        pipeline.recalc(frameShow);
+        break;
+
+      case 0x31: /* 1 */
+      case 0x32: /* 2 */
+      case 0x33: /* 3 */
+      case 0x34: /* 4 */
+      case 0x35: /* 5 */
+      case 0x36: /* 6 */
+      case 0x37: /* 7 */
+      case 0x38: /* 8 */
+      case 0x39: /* 9 */
+      case 0x30 /* 0 */:
+        let v = key & 0xf || 10;
+        paramNav.param.alpha = v / 10;
+        console.log(`Param ${paramNav.name}: ${paramNav.param}`);
+        pipeline.recalc(frameShow);
+        break;
+      case 0xa7 /* § */:
+        paramNav.param.alpha = 0;
+        console.log(`Param ${paramNav.name}: ${paramNav.param}`);
+        pipeline.recalc(frameShow);
+        break;
+
+      case 0x20:
+        frameShow = Util.mod(frameShow + 1, pipeline.size);
+        console.log(`Back`, { frameShow, size: pipeline.size });
+        //frameShow = (frameShow + 1) % pipeline.size;
+        pipeline.step();
+        break;
+
+      default: {
+        break;
+      }
     }
-
-    if(key == 'q' || key == 113 || key == '\x1b') break;
   }
+  console.log('EXIT');
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1))
+  .then(() => console.log('SUCCESS'))
+  .catch(error => {
+    console.log(`FAIL: ${error.message}\n${error.stack}`);
+    std.exit(1);
+  });
+
+//Util.callMain(main, true);
