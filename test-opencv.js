@@ -18,6 +18,7 @@ import { Pipeline, Processor } from './cvPipeline.js';
 import { TickMeter } from 'utility';
 
 let filesystem;
+let basename = Util.getArgv()[1].replace(/\.js$/, '');
 
 function WriteImage(name, mat) {
   cv.imwrite(name, mat);
@@ -26,20 +27,23 @@ function WriteImage(name, mat) {
 
 function SaveConfig(configObj) {
   configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v]));
-  let file = std.open(Util.getArgv()[1].replace(/\.js$/, '.config.json'), 'w+b');
+  let file = std.open(basename + '.config.json', 'w+b');
   file.puts(JSON.stringify(configObj, null, 2) + '\n');
   file.close();
+  console.log(`Saved config to '${basename + '.config.json'}'`,
+    inspect(configObj, { compact: false })
+  );
 }
 
 function LoadConfig() {
-  let str = std.loadFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'));
+  let str = std.loadFile(basename + '.config.json');
   let configObj = JSON.parse(str ?? '{}');
 
   configObj = Object.fromEntries(Object.entries(configObj)
       .map(([k, v]) => [k, +v])
       .filter(([k, v]) => !isNaN(v))
   );
-  console.log('LoadConfig:', configObj);
+  console.log('LoadConfig:',  inspect(configObj, {compact:false}));
   return configObj;
 }
 
@@ -77,7 +81,7 @@ async function main(...args) {
 
   //image = cv.imread('../an-tronics/images/5.19.jpg');
   image = cv.imread(args[0] || 'italo-disco.png');
-  let { frameShow = 1, ...config } = LoadConfig();
+  let { frameShow = 1, paramIndex = 0, ...config } = LoadConfig();
   let outputName, outputMat;
 
   let params = {
@@ -90,11 +94,11 @@ async function main(...args) {
     thres2: new NumericParam(config.thres2 ?? 20, 0, 300),
     thres2: new NumericParam(config.thres2 ?? 20, 0, 300),
     rho: new NumericParam(config.rho ?? 1, 1, 100),
-    theta: new NumericParam(config.theta ?? 180, 1, 360),
+    theta: new NumericParam(config.theta ?? 180, 0, 360),
     threshold: new NumericParam(config.threshold ?? 10, 0, 100),
     minLineLength: new NumericParam(config.minLineLength ?? 2, 0, 1000),
     maxLineGap: new NumericParam(config.maxLineGap ?? 4, 0, 1000),
-    dp: new NumericParam(config.dp ?? 2, 0.1, 100),
+    dp: new NumericParam(config.dp ?? 2, 0, 10, 0.1),
     minDist: new NumericParam(config.minDist ?? 10, 1, 1000),
     param1: new NumericParam(config.param1 ?? 200, 1, 1000),
     param2: new NumericParam(config.param2 ?? 100, 1, 1000)
@@ -104,7 +108,7 @@ async function main(...args) {
   let lineWidth = 1;
   let lines;
   let circles = [];
-  let paramNav = new ParamNavigator(params, config.currentParam);
+  let paramNav = new ParamNavigator(params, paramIndex);
   let pipeline = new Pipeline([
       function AcquireFrame(src, dst) {
         image = cv.imread(args[0] || 'italo-disco.png');
@@ -131,9 +135,8 @@ async function main(...args) {
 
         cv.morphologyEx(dst, dst, cv.MORPH_ERODE, structuringElement);
         //   cv.erode(dst, dst, structuringElement);
-         dst.xor([255, 255, 255, 0], dst);
-
-       },
+        dst.xor([255, 255, 255, 0], dst);
+      },
 
       function Skeletonization(src, dst) {
         cv.skeletonization(src, dst);
@@ -146,7 +149,7 @@ async function main(...args) {
         cv.HoughLinesP(skel,
           lines,
           +params.rho,
-          Math.PI / +params.theta,
+          Math.PI * +params.theta / 180,
           +params.threshold,
           +params.minLineLength,
           +params.maxLineGap
@@ -195,39 +198,36 @@ async function main(...args) {
         for(let [x, y, r] of circles1) {
           let p = new Point(x, y);
           draw.circle(dst, p, r, [0, 255, 0], lineWidth, cv.LINE_AA);
-           circles.push([x, y, r]);
+          circles.push([x, y, r]);
         }
         for(let [x, y, r] of circles2) {
           let p = new Point(x, y);
           draw.circle(dst, p, r + 2, [255, 0, 0], lineWidth, cv.LINE_AA);
-           circles.push([x, y, r]);
+          circles.push([x, y, r]);
         }
       }
     ],
     (mat, i, n) => {
       //console.log('pipeline callback', { i, n });
       if(frameShow == i) {
-         cv.imshow('output', mat);
+        cv.imshow('output', mat);
         cv.setWindowTitle('output', `#${i}: ` + pipeline.names[i]);
       }
-       
     }
   );
-  frameShow = 0;
-  /*  if(frameShow < 0) frameShow += pipeline.size;
-  if(frameShow >= pipeline.size) frameShow -= pipeline.size;
-*/
+ // frameShow = config.frameShow ?? 0;
 
-  SaveConfig(params);
   let key;
-  console.log('pipeline.step()', pipeline.step());
-  while(true) {
-    key = cv.waitKey(-1);
-    //if(key !== -1) console.log('key:', '0x' + key.toString(16));
 
-    if(key === 'q' || key === 113 || key === '\x1b') break;
+  console.log(`pipeline.recalc(${frameShow})`, pipeline.recalc(frameShow));
+
+  while(true) {
+    key = cv.waitKeyEx(-1);
+
+    if(key === 'q' || key === 113 || key === '\x1b' || key === 0x100071) break;
 
     switch (key & 0xfff) {
+      case 0xf08 /* backspace */:
       case 0x08 /* backspace */:
         if(frameShow > 0) {
           frameShow--;
@@ -245,15 +245,25 @@ async function main(...args) {
 
       case 0x2b /* + */:
         paramNav.param.increment();
-        console.log(`Param ${paramNav.name}: ${paramNav.param}`);
+        console.log(`Param ${paramNav.name}: ${+paramNav.param}`);
+        pipeline/*.recalc*/(frameShow);
+        break;
+
+      case 0xfff /* DELETE */:
+      case 0x9f /* numpad DEL */:
+      case 0xf9f /* numpad DEL */:
+        paramNav.param.reset();
+        console.log(`Param ${paramNav.name}: ${inspect(paramNav.param)}`);
         pipeline.recalc(frameShow);
         break;
 
       case 0x2d /* - */:
+      case 0xad /* numpad - */:
+      case 0xfad /* numpad - */:
       case 0x2fad /* numpad - */:
         paramNav.param.decrement();
-        console.log(`Param ${paramNav.name}: ${paramNav.param}`);
-        pipeline.recalc(frameShow);
+        console.log(`Param ${paramNav.name}: ${+paramNav.param}`);
+        pipeline/*.recalc*/(frameShow);
         break;
 
       case 0x31: /* 1 */
@@ -268,12 +278,12 @@ async function main(...args) {
       case 0x30 /* 0 */:
         let v = key & 0xf || 10;
         paramNav.param.alpha = v / 10;
-        console.log(`Param ${paramNav.name}: ${paramNav.param}`);
+        console.log(`Param ${paramNav.name}: ${+paramNav.param}`);
         pipeline.recalc(frameShow);
         break;
       case 0xa7 /* § */:
         paramNav.param.alpha = 0;
-        console.log(`Param ${paramNav.name}: ${paramNav.param}`);
+        console.log(`Param ${paramNav.name}: ${+paramNav.param}`);
         pipeline.recalc(frameShow);
         break;
 
@@ -285,10 +295,14 @@ async function main(...args) {
         break;
 
       default: {
+        if(key !== -1) console.log('key:', '0x' + key.toString(16));
         break;
       }
     }
   }
+
+  SaveConfig({ frameShow, paramIndex: paramNav.index, ...params });
+
   console.log('EXIT');
 }
 

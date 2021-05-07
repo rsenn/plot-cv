@@ -1275,7 +1275,7 @@ js_mat_iterator_new(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
       it = js_allocate<JSMatIteratorData>(ctx);
 
       it->obj = mat;
-      it->buf = js_mat_buffer(ctx, this_val);
+      it->buf = m->empty() ? JS_UNDEFINED : js_mat_buffer(ctx, this_val);
       it->row = 0;
       it->col = 0;
       it->magic = magic;

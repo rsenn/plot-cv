@@ -39,7 +39,8 @@ export class NumericParam extends Param {
     super();
     const clamp = MinMax(min, max);
     this.value = clamp(value);
-    Util.define(this, { min, max, step, clamp });
+    Object.assign(this, { default: value, min, max });
+    Util.define(this, { step, clamp });
   }
 
   get() {
@@ -48,8 +49,8 @@ export class NumericParam extends Param {
 
   set(value) {
     const { clamp, min, step } = this;
-    let newValue = this.clamp(min + Util.roundTo(value - min, step));
-    //console.log(`Param.set oldValue=${this.value} new=${newValue}`);
+    let newValue = this.clamp(min + Util.roundTo(value - min, step, null, 'floor'));
+    console.log(`Param.set oldValue=${this.value} new=${newValue}`);
     this.value = newValue;
   }
 
@@ -60,7 +61,7 @@ export class NumericParam extends Param {
 
   set alpha(a) {
     const { min, max, step, clamp } = this;
-    this.value = this.clamp(min + Util.roundTo((max - min) * a, step));
+    this.value = this.clamp(min + Util.roundTo((max - min) * a, step, null, 'floor'));
   }
 
   get range() {
@@ -81,6 +82,10 @@ export class NumericParam extends Param {
   decrement() {
     let value = NumericParam.prototype.get.call(this);
     NumericParam.prototype.set.call(this, value - this.step);
+  }
+
+  reset() {
+    NumericParam.prototype.set.call(this, this.default);
   }
 }
 
