@@ -43,7 +43,7 @@ function LoadConfig() {
       .map(([k, v]) => [k, +v])
       .filter(([k, v]) => !isNaN(v))
   );
-  console.log('LoadConfig:',  inspect(configObj, {compact:false}));
+  console.log('LoadConfig:', inspect(configObj, { compact: false }));
   return configObj;
 }
 
@@ -85,23 +85,25 @@ async function main(...args) {
   let outputName, outputMat;
 
   let params = {
-    thres: new NumericParam(config.thres ?? 64, 0, 255),
-    max: new NumericParam(config.max ?? 255, 0, 255),
+    thres: new NumericParam(config.thres ?? 127, 0, 255),
     type: new NumericParam(config.type ?? cv.THRESH_BINARY_INV, 0, 4),
-    kernel_size: new NumericParam(config.kernel_size ?? 1, 0, 10),
-    k: new NumericParam(config.k ?? 24, 0, 100),
+    blur: new NumericParam(config.blur ?? 1, 1, 10,2),
+    kernel_size: new NumericParam(config.kernel_size ?? 0, 0, 9),
+  /*  k: new NumericParam(config.k ?? 24, 0, 100),
     thres1: new NumericParam(config.thres1 ?? 10, 0, 300),
     thres2: new NumericParam(config.thres2 ?? 20, 0, 300),
-    thres2: new NumericParam(config.thres2 ?? 20, 0, 300),
-    rho: new NumericParam(config.rho ?? 1, 1, 100),
-    theta: new NumericParam(config.theta ?? 180, 0, 360),
-    threshold: new NumericParam(config.threshold ?? 10, 0, 100),
-    minLineLength: new NumericParam(config.minLineLength ?? 2, 0, 1000),
-    maxLineGap: new NumericParam(config.maxLineGap ?? 4, 0, 1000),
+    thres2: new NumericParam(config.thres2 ?? 20, 0, 300),*/
+    rho: new NumericParam(config.rho ?? 1, 1, 30, 0.25),
+    theta: new NumericParam(config.theta ?? 1, 0, 90),
+    threshold: new NumericParam(config.threshold ?? 25, 0, 50),
+    minLineLength: new NumericParam(config.minLineLength ?? 3, 0, 30),
+    maxLineGap: new NumericParam(config.maxLineGap ?? 4, 0, 20),
     dp: new NumericParam(config.dp ?? 2, 0, 10, 0.1),
     minDist: new NumericParam(config.minDist ?? 10, 1, 1000),
     param1: new NumericParam(config.param1 ?? 200, 1, 1000),
-    param2: new NumericParam(config.param2 ?? 100, 1, 1000)
+    param2: new NumericParam(config.param2 ?? 100, 1, 100),
+    minRadius: new NumericParam(config.minRadius ?? 0, 1, 250),
+    maxRadius: new NumericParam(config.maxRadius ?? 200, 1, 1000),
   };
 
   console.log('thres:', +params.thres);
@@ -121,9 +123,12 @@ async function main(...args) {
         cv.split(dst, channels);
         channels[0].copyTo(dst);
       },
+  function Blur(src, dst) {
+        cv.GaussianBlur(src, dst, [+params.blur, +params.blur], 0, 0, cv.BORDER_REPLICATE);
+      },
 
       function Threshold(src, dst) {
-        cv.threshold(src, dst, +params.thres, +params.max, +params.type);
+        cv.threshold(src, dst, +params.thres, 255, +params.type);
       },
 
       function Morphology(src, dst) {
@@ -149,7 +154,7 @@ async function main(...args) {
         cv.HoughLinesP(skel,
           lines,
           +params.rho,
-          Math.PI * +params.theta / 180,
+          (Math.PI * (+params.theta || 1)) / 180,
           +params.threshold,
           +params.minLineLength,
           +params.maxLineGap
@@ -178,7 +183,7 @@ async function main(...args) {
       function HoughCircles(src, dst) {
         const morpho = this.outputOf('Morphology');
         const skel = this.outputOf('Skeletonization');
-        const paramArray = [+params.dp, +params.minDist, +params.param1, +params.param2, 0, 90];
+        const paramArray = [+params.dp || 1, +params.minDist, +params.param1, +params.param2, +params.minRadius, +params.maxRadius];
 
         let circles1 = [] ?? new Mat();
         let circles2 = [] ?? new Mat();
@@ -215,7 +220,7 @@ async function main(...args) {
       }
     }
   );
- // frameShow = config.frameShow ?? 0;
+  // frameShow = config.frameShow ?? 0;
 
   let key;
 
@@ -236,17 +241,17 @@ async function main(...args) {
         break;
       case 0x3c /* < */:
         paramNav.prev();
-        console.log(`Param #${paramNav.index} '${paramNav.name}' selected`);
+        console.log(`Param #${paramNav.index} '${paramNav.name}' selected (${+paramNav.param})`);
         break;
       case 0x3e /* > */:
         paramNav.next();
-        console.log(`Param #${paramNav.index} '${paramNav.name}' selected`);
+        console.log(`Param #${paramNav.index} '${paramNav.name}' selected (${+paramNav.param})`);
         break;
 
       case 0x2b /* + */:
         paramNav.param.increment();
         console.log(`Param ${paramNav.name}: ${+paramNav.param}`);
-        pipeline/*.recalc*/(frameShow);
+        pipeline.recalc(frameShow);
         break;
 
       case 0xfff /* DELETE */:
@@ -263,7 +268,7 @@ async function main(...args) {
       case 0x2fad /* numpad - */:
         paramNav.param.decrement();
         console.log(`Param ${paramNav.name}: ${+paramNav.param}`);
-        pipeline/*.recalc*/(frameShow);
+        pipeline.recalc(frameShow);
         break;
 
       case 0x31: /* 1 */
