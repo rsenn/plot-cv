@@ -125,8 +125,8 @@ make_filename(const string& name, int count, const string& ext, const string& di
 #endif
   );
 
-  filename << dir << "/" << name << "-" << buf << "." << std::setfill('0') << std::setw(3) << msecs << "-"
-           << std::setfill('0') << std::setw(pad) << count << "." << ext;
+  filename << dir << "/" << name << "-" << buf << "." << std::setfill('0') << std::setw(3) << msecs << "-" << std::setfill('0')
+           << std::setw(pad) << count << "." << ext;
   return filename.str();
 }
 
@@ -491,9 +491,7 @@ contour_detect(const image_type& input, image_type& drawing) {
     }
   }
   std::vector<std::vector<point_type<int>>> contoursDraw(contoursCleaned.size());
-  for(int i = 0; i < contoursArea.size(); i++) {
-    cv::approxPolyDP(cv::Mat(contoursArea[i]), contoursDraw[i], 40, true);
-  }
+  for(int i = 0; i < contoursArea.size(); i++) { cv::approxPolyDP(cv::Mat(contoursArea[i]), contoursDraw[i], 40, true); }
   //  Mat drawing = cv::Mat::zeros(mat.size(), CV_8UC3);
   cv::drawContours(drawing, contoursDraw, -1, cv::Scalar(0, 255, 0), 1);
 }
@@ -636,8 +634,7 @@ process_raster(std::function<void(std::string, cv::Mat*)> display_image, int sho
   // config.blur_kernel_size* 2 + 1), (double)config.blur_sigma * 0.01);
   // cv::edgePreservingFilter(imgGrayscale, imgBlurred, cv::NORMCONV_FILTER,
   // (double)config.blur_sigma_r * 0.01, (double)config.blur_sigma_s * 0.01);
-  cv::bilateralFilter(
-      imgGrayscale, imgBlurred, -1, (double)config.blur_sigma_r * 0.01, config.blur_kernel_size * 2 + 1);
+  cv::bilateralFilter(imgGrayscale, imgBlurred, -1, (double)config.blur_sigma_r * 0.01, config.blur_kernel_size * 2 + 1);
 
   // auto_canny(imgBlurred, imgCanny,1);
   cv::Canny(imgBlurred, imgCanny, thresh, thresh2, apertureSize);
@@ -648,8 +645,7 @@ process_raster(std::function<void(std::string, cv::Mat*)> display_image, int sho
                    imgMorphology,
                    config.morphology_operator ? cv::MORPH_DILATE : cv::MORPH_CLOSE,
                    cv::getStructuringElement(cv::MORPH_ELLIPSE,
-                                             cv::Size(config.morphology_kernel_size + 1,
-                                                      config.morphology_kernel_size + 1)));
+                                             cv::Size(config.morphology_kernel_size + 1, config.morphology_kernel_size + 1)));
 
   cv::cvtColor(imgBlurred, imgBlurred, cv::COLOR_GRAY2BGR);
   /*
@@ -801,9 +797,7 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
 
     //     sort(lines.begin(), lines.end());
 
-    transform(lines.begin(), lines.end(), back_inserter(lineLengths), [&](Line<float>& l) -> float {
-      return l.length();
-    });
+    transform(lines.begin(), lines.end(), back_inserter(lineLengths), [&](Line<float>& l) -> float { return l.length(); });
     std::cout << "Num lines: " << lines.size() << std::endl;
     float avg = accumulate(lineLengths.begin(), lineLengths.end(), 0) / lineLengths.size();
 
@@ -822,16 +816,15 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
         std::vector<LineEnd<float>> line_ends;
         std::vector<Line<float>*> adjacent_lines;
 
-        std::vector<int> adjacent =
-            filter_lines(lines.begin(), lines.end(), [&](Line<float>& l2, size_t index) -> bool {
-              size_t point_index;
-              double min_dist = line.min_distance(l2, &point_index);
-              bool intersects = line.intersect(l2);
-              bool ok = (/*intersects ||*/ min_dist < 10);
-              if(ok)
-                distances.push_back(min_dist);
-              return ok;
-            });
+        std::vector<int> adjacent = filter_lines(lines.begin(), lines.end(), [&](Line<float>& l2, size_t index) -> bool {
+          size_t point_index;
+          double min_dist = line.min_distance(l2, &point_index);
+          bool intersects = line.intersect(l2);
+          bool ok = (/*intersects ||*/ min_dist < 10);
+          if(ok)
+            distances.push_back(min_dist);
+          return ok;
+        });
 
         auto it = min_element(distances.begin(), distances.end());
         int min = *it;
@@ -927,9 +920,7 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
     logfile << "angles:";
     std::for_each(angles.begin(), angles.end(), [](const float a) { logfile << ' ' << (int)(a * 180 / M_PI); });
     logfile << std::endl;
-    draw_all_lines(imgGrayscale, filteredLines, [&](int index, size_t len) -> int {
-      return lines[index].length() * 10;
-    });
+    draw_all_lines(imgGrayscale, filteredLines, [&](int index, size_t len) -> int { return lines[index].length() * 10; });
     logfile << "Num lines: " << lines.size() << std::endl;
     logfile << "Num filteredLines: " << filteredLines.size() << std::endl;
   }
@@ -999,10 +990,9 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
   }
 
   std::vector<point_vector<int>> approxim;
-  transform(contours2.begin(),
-            contours2.end(),
-            back_inserter(approxim),
-            [](const point_vector<float>& p) -> point_vector<int> { return transform_points<int, float>(p); });
+  transform(contours2.begin(), contours2.end(), back_inserter(approxim), [](const point_vector<float>& p) -> point_vector<int> {
+    return transform_points<int, float>(p);
+  });
 
   for_each(approxim.begin(), approxim.end(), [&](const point_vector<int>& c) {
     const double length = cv::arcLength(c, false);
@@ -1034,16 +1024,13 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
   JSValue test_arr = js.get_global("test_array");
   std::vector<int32_t> num_vec;
 
-  std::transform(js.begin(test_arr),
-                 js.end(test_arr),
-                 std::back_inserter(num_vec),
-                 [&](const JSValue& test_arr) -> int32_t {
-                   int32_t num;
-                   js.get_number(test_arr, num);
-                   //  std::cerr << "array member <" << js.typestr(test_arr) << ">: " << num
-                   //  << std::endl;
-                   return num;
-                 });
+  std::transform(js.begin(test_arr), js.end(test_arr), std::back_inserter(num_vec), [&](const JSValue& test_arr) -> int32_t {
+    int32_t num;
+    js.get_number(test_arr, num);
+    //  std::cerr << "array member <" << js.typestr(test_arr) << ">: " << num
+    //  << std::endl;
+    return num;
+  });
 
   std::string str = js.to_string(test_arr);
 

@@ -6,6 +6,16 @@
 
 static size_t heap_base = 0;
 
+bool
+str_end(const std::string& str, const std::string& suffix) {
+  return str.size() >= suffix.size() && str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
+}
+
+bool
+str_end(const char* str, const char* suffix) {
+  return str_end(std::string(str), std::string(suffix));
+}
+
 void*
 get_heap_base() {
   if(!heap_base) {

@@ -317,9 +317,8 @@ public:
   std::string
   toString(Layout const& layout) const {
     std::stringstream ss;
-    ss << elemStart("circle") << attribute("cx", translateX(center.x, layout))
-       << attribute("cy", translateY(center.y, layout)) << attribute("r", translateScale(radius, layout))
-       << fill.toString(layout) << stroke.toString(layout) << emptyElemEnd();
+    ss << elemStart("circle") << attribute("cx", translateX(center.x, layout)) << attribute("cy", translateY(center.y, layout))
+       << attribute("r", translateScale(radius, layout)) << fill.toString(layout) << stroke.toString(layout) << emptyElemEnd();
     return ss.str();
   }
   void
@@ -340,10 +339,9 @@ public:
   std::string
   toString(Layout const& layout) const {
     std::stringstream ss;
-    ss << elemStart("ellipse") << attribute("cx", translateX(center.x, layout))
-       << attribute("cy", translateY(center.y, layout)) << attribute("rx", translateScale(radius_width, layout))
-       << attribute("ry", translateScale(radius_height, layout)) << fill.toString(layout) << stroke.toString(layout)
-       << emptyElemEnd();
+    ss << elemStart("ellipse") << attribute("cx", translateX(center.x, layout)) << attribute("cy", translateY(center.y, layout))
+       << attribute("rx", translateScale(radius_width, layout)) << attribute("ry", translateScale(radius_height, layout))
+       << fill.toString(layout) << stroke.toString(layout) << emptyElemEnd();
     return ss.str();
   }
   void
@@ -487,9 +485,8 @@ public:
   std::string
   toString(Layout const& layout) const {
     std::stringstream ss;
-    ss << elemStart("text") << attribute("x", translateX(origin.x, layout))
-       << attribute("y", translateY(origin.y, layout)) << fill.toString(layout) << stroke.toString(layout)
-       << font.toString(layout) << ">" << content << elemEnd("text");
+    ss << elemStart("text") << attribute("x", translateX(origin.x, layout)) << attribute("y", translateY(origin.y, layout))
+       << fill.toString(layout) << stroke.toString(layout) << font.toString(layout) << ">" << content << elemEnd("text");
     return ss.str();
   }
   void
@@ -602,9 +599,9 @@ public:
     std::stringstream ss;
     ss << "<?xml " << attribute("version", "1.0") << attribute("standalone", "no")
        << "?>\n<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" "
-       << "\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n<svg "
-       << attribute("width", layout.dimensions.width, "px") << attribute("height", layout.dimensions.height, "px")
-       << attribute("xmlns", "http://www.w3.org/2000/svg") << attribute("version", "1.1") << ">\n"
+       << "\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n<svg " << attribute("width", layout.dimensions.width, "px")
+       << attribute("height", layout.dimensions.height, "px") << attribute("xmlns", "http://www.w3.org/2000/svg")
+       << attribute("version", "1.1") << ">\n"
        << body_nodes_str << elemEnd("svg");
     return ss.str();
   }

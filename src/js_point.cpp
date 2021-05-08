@@ -306,6 +306,17 @@ js_point_to_array(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
   return js_array_from(ctx, arr.cbegin(), arr.cend());
 }
 
+static JSValue
+js_point_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSPointData<double>* s = js_point_data(ctx, this_val);
+  JSValue obj = JS_NewObjectProto(ctx, point_proto);
+
+  JS_DefinePropertyValueStr(ctx, obj, "x", JS_NewFloat64(ctx, s->x), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, obj, "y", JS_NewFloat64(ctx, s->y), JS_PROP_ENUMERABLE);
+
+  return obj;
+}
+
 static JSValue iterator_symbol = JS_UNDEFINED;
 
 static JSValue
@@ -374,7 +385,7 @@ js_point_from(JSContext* ctx, JSValueConst point, int argc, JSValueConst* argv) 
       array[i] = strtod(str, &endptr);
       str = endptr;
     }
-  } else if(JS_IsArray(ctx, argv[0])) {
+  } else if(js_is_array(ctx, argv[0])) {
     js_array_to<double, 2>(ctx, argv[0], array);
   }
   if(array[0] > 0 && array[1] > 0)
@@ -400,8 +411,6 @@ const JSCFunctionListEntry js_point_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("sub", 1, js_point_add, 1),
     JS_CFUNC_MAGIC_DEF("mul", 1, js_point_add, 2),
     JS_CFUNC_MAGIC_DEF("div", 1, js_point_add, 3),
-    /*  JS_CFUNC_DEF("mul", 1, js_point_mul),
-      JS_CFUNC_DEF("quot", 1, js_point_quot),*/
     JS_CFUNC_DEF("norm", 0, js_point_norm),
     JS_CFUNC_MAGIC_DEF("round", 0, js_point_round, 0),
     JS_CFUNC_MAGIC_DEF("floor", 0, js_point_round, 1),
@@ -431,6 +440,8 @@ js_point_init(JSContext* ctx, JSModuleDef* m) {
     /* set proto.constructor and ctor.prototype */
     JS_SetConstructor(ctx, point_class, point_proto);
     JS_SetPropertyFunctionList(ctx, point_class, js_point_static_funcs, countof(js_point_static_funcs));
+
+    js_set_inspect_method(ctx, point_proto, js_point_inspect);
   }
 
   if(m)

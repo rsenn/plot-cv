@@ -236,20 +236,14 @@ js_rect_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
 
 static JSValue
 js_rect_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSRectData<double> rect, *s;
-  std::ostringstream os;
+  JSRectData<double>* r = js_rect_data(ctx, this_val);
+  JSValue obj = JS_NewObjectProto(ctx, rect_proto);
 
-  if((s = static_cast<JSRectData<double>*>(JS_GetOpaque2(ctx, this_val, js_rect_class_id))) != nullptr) {
-    rect = *s;
-  } else {
-    js_rect_read(ctx, this_val, &rect);
-  }
-
-  os << "{ x: " COLOR_YELLOW "" << rect.x << "" COLOR_NONE ", y: " COLOR_YELLOW "" << rect.y
-     << "" COLOR_NONE ", width: " COLOR_YELLOW "" << rect.width << "" COLOR_NONE ", height: " COLOR_YELLOW ""
-     << rect.height << "" COLOR_NONE " }";
-
-  return JS_NewString(ctx, os.str().c_str());
+  JS_DefinePropertyValueStr(ctx, obj, "x", JS_NewFloat64(ctx, r->x), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, obj, "y", JS_NewFloat64(ctx, r->y), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, obj, "width", JS_NewFloat64(ctx, r->width), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, obj, "height", JS_NewFloat64(ctx, r->height), JS_PROP_ENUMERABLE);
+  return obj;
 }
 
 static JSValue
@@ -307,7 +301,7 @@ js_rect_from(JSContext* ctx, JSValueConst rect, int argc, JSValueConst* argv) {
       array[i] = strtod(str, &endptr);
       str = endptr;
     }
-  } else if(JS_IsArray(ctx, argv[0])) {
+  } else if(js_is_array(ctx, argv[0])) {
     js_array_to(ctx, argv[0], array);
   }
   if(array[2] > 0 && array[3] > 0)
@@ -338,14 +332,11 @@ const JSCFunctionListEntry js_rect_proto_funcs[] = {JS_CGETSET_ENUMERABLE_DEF("x
                                                     // JS_CFUNC_MAGIC_DEF("size", 0, js_rect_method, 5),
                                                     JS_CFUNC_DEF("toString", 0, js_rect_to_string),
                                                     JS_CFUNC_DEF("toSource", 0, js_rect_to_source),
-                                                    JS_CFUNC_DEF("inspect", 0, js_rect_inspect),
                                                     JS_CFUNC_MAGIC_DEF("equals", 1, js_rect_funcs, 0),
                                                     JS_CFUNC_MAGIC_DEF("round", 0, js_rect_funcs, 1),
                                                     JS_CFUNC_MAGIC_DEF("toObject", 0, js_rect_funcs, 2),
                                                     JS_CFUNC_MAGIC_DEF("toArray", 0, js_rect_funcs, 3),
-                                                    JS_PROP_STRING_DEF("[Symbol.toStringTag]",
-                                                                       "Rect",
-                                                                       JS_PROP_CONFIGURABLE)
+                                                    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Rect", JS_PROP_CONFIGURABLE)
 
 };
 const JSCFunctionListEntry js_rect_static_funcs[] = {JS_CFUNC_DEF("from", 1, js_rect_from)};
@@ -366,6 +357,8 @@ js_rect_init(JSContext* ctx, JSModuleDef* m) {
     /* set proto.constructor and ctor.prototype */
     JS_SetConstructor(ctx, rect_class, rect_proto);
     JS_SetPropertyFunctionList(ctx, rect_class, js_rect_static_funcs, countof(js_rect_static_funcs));
+
+    js_set_inspect_method(ctx, rect_proto, js_rect_inspect);
   }
 
   if(m)

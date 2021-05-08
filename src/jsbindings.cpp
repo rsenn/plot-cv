@@ -92,7 +92,7 @@ js_color_read(JSContext* ctx, JSValueConst color, JSColorData<double>* out) {
   std::array<double, 4> c;
   if(JS_IsObject(color)) {
     JSValue r, g, b, a;
-    if(JS_IsArray(ctx, color)) {
+    if(js_is_array(ctx, color)) {
       r = JS_GetPropertyUint32(ctx, color, 0);
       g = JS_GetPropertyUint32(ctx, color, 1);
       b = JS_GetPropertyUint32(ctx, color, 2);
@@ -146,7 +146,7 @@ js_ref(JSContext* ctx, const char* name, JSValueConst arg, JSValue value) {
   if(JS_IsFunction(ctx, arg)) {
     JSValueConst v = value;
     JS_Call(ctx, arg, JS_UNDEFINED, 1, &v);
-  } else if(JS_IsArray(ctx, arg)) {
+  } else if(js_is_array(ctx, arg)) {
     JS_SetPropertyUint32(ctx, arg, 0, value);
   } else if(JS_IsObject(arg)) {
     JS_SetPropertyStr(ctx, arg, name, value);

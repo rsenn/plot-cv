@@ -4,15 +4,14 @@ import { Rect } from 'rect';
 import { Mat } from 'mat';
 import { UMat } from 'umat';
 import * as cv from 'cv';
+import * as fs from 'fs';
+import Console from 'console';
 import { Line } from 'line';
 import { CLAHE } from 'clahe';
 import * as draw from 'draw';
-import inspect from './lib/objectInspect.js';
-import path from './lib/path.js';
-import PortableFileSystem from './lib/filesystem.js';
+import * as path from 'path';
 import RGBA from './lib/color/rgba.js';
 import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { Pipeline, Processor } from './cvPipeline.js';
 import { TickMeter } from 'utility';
@@ -53,14 +52,14 @@ function InspectMat(mat) {
   return inspect({ channels, depth, type, cols, rows });
 }
 
-async function main(...args) {
-  await ConsoleSetup({
+function main(...args) {
+  new Console({
     maxStringLength: 200,
     maxArrayLength: 10,
     breakLength: 100,
     compact: 1
   });
-  await PortableFileSystem(fs => (filesystem = fs));
+  /*  await PortableFileSystem(fs => (filesystem = fs));*/
   let running = true;
 
   console.log('Util.getMethodNames(cv)', Util.getMethodNames(cv, Infinity, 0));
@@ -81,15 +80,36 @@ async function main(...args) {
 
   //image = cv.imread('../an-tronics/images/5.19.jpg');
   image = cv.imread(args[0] || 'italo-disco.png');
-  let { frameShow = 1, paramIndex = 0, ...config } = LoadConfig();
-  let outputName, outputMat;
 
+  let resolution = image.size;
+  let scaled;
+  console.log('Symbol.inspect', Symbol.inspect);
+  console.log('resolution', resolution);
+
+  if(resolution.width > 1200) {
+    let f = 1024 / resolution.width;
+    scaled = new Size(resolution.width * f, resolution.height * f);
+  } else {
+    scaled = new Size(resolution);
+  }
+let outputRect = new Rect(0,0,resolution.width, resolution.height);
+  let outputSize = new Size(scaled.width, scaled.height+200);
+
+  let outputMat = new Mat(outputSize, cv.CV_8UC4);
+
+
+  console.log('scaled', scaled);
+
+console.log("output", outputMat(outputRect));
+
+  let { frameShow = 1, paramIndex = 0, ...config } = LoadConfig();
+    
   let params = {
-    thres: new NumericParam(config.thres ?? 127, 0, 255),
+    thres: new NumericParam(config.thres ?? 229, 0, 255),
     type: new NumericParam(config.type ?? cv.THRESH_BINARY_INV, 0, 4),
-    blur: new NumericParam(config.blur ?? 1, 1, 10,2),
+    blur: new NumericParam(config.blur ?? 1, 1, 10, 2),
     kernel_size: new NumericParam(config.kernel_size ?? 0, 0, 9),
-  /*  k: new NumericParam(config.k ?? 24, 0, 100),
+    /*  k: new NumericParam(config.k ?? 24, 0, 100),
     thres1: new NumericParam(config.thres1 ?? 10, 0, 300),
     thres2: new NumericParam(config.thres2 ?? 20, 0, 300),
     thres2: new NumericParam(config.thres2 ?? 20, 0, 300),*/
@@ -103,14 +123,28 @@ async function main(...args) {
     param1: new NumericParam(config.param1 ?? 200, 1, 1000),
     param2: new NumericParam(config.param2 ?? 100, 1, 100),
     minRadius: new NumericParam(config.minRadius ?? 0, 1, 250),
-    maxRadius: new NumericParam(config.maxRadius ?? 200, 1, 1000),
+    maxRadius: new NumericParam(config.maxRadius ?? 200, 1, 1000)
   };
-
+  let neighborhood;
+  console.log('cv.pixelNeighborhood', cv.pixelNeighborhood);
   console.log('thres:', +params.thres);
   let lineWidth = 1;
   let lines;
   let circles = [];
   let paramNav = new ParamNavigator(params, paramIndex);
+
+  let palette = new Uint32Array(256);
+
+  for(let i = 0; i < 256; i++) palette[i] = 0xff000000;
+
+  palette[0] = 0xff000000;
+  palette[1] = 0xff00ffff;
+  palette[2] = 0xff606060;
+  palette[3] = 0xffff0000;
+  palette[4] = 0xff00ff00;
+  palette[5] = 0xff0080ff;
+  palette[6] = 0xff0000ff;
+
   let pipeline = new Pipeline([
       function AcquireFrame(src, dst) {
         image = cv.imread(args[0] || 'italo-disco.png');
@@ -123,7 +157,7 @@ async function main(...args) {
         cv.split(dst, channels);
         channels[0].copyTo(dst);
       },
-  function Blur(src, dst) {
+      function Blur(src, dst) {
         cv.GaussianBlur(src, dst, [+params.blur, +params.blur], 0, 0, cv.BORDER_REPLICATE);
       },
 
@@ -145,6 +179,25 @@ async function main(...args) {
 
       function Skeletonization(src, dst) {
         cv.skeletonization(src, dst);
+      },
+
+      function PixelNeighborhood(src, dst) {
+        neighborhood = new Mat(src.size, src.type);
+        let output;
+
+        cv.pixelNeighborhood(src, neighborhood);
+        console.log('non-zero:', cv.countNonZero(neighborhood));
+        console.log('non-zero:', cv.findNonZero(neighborhood));
+        console.log('pixels:', neighborhood.size.area);
+
+        let coords = [[], ...Util.range(1, 6).map(n => cv.pixelFindValue(neighborhood, n))];
+
+        console.log('coords:', Object.fromEntries(coords.map(a => a.length).entries()));
+
+        output = cv.paletteApply(neighborhood, palette);
+        output.copyTo(dst);
+
+        cv.imwrite('neighborhood.png', output);
       },
 
       function HoughLinesP(src, dst) {
@@ -183,7 +236,14 @@ async function main(...args) {
       function HoughCircles(src, dst) {
         const morpho = this.outputOf('Morphology');
         const skel = this.outputOf('Skeletonization');
-        const paramArray = [+params.dp || 1, +params.minDist, +params.param1, +params.param2, +params.minRadius, +params.maxRadius];
+        const paramArray = [
+          +params.dp || 1,
+          +params.minDist,
+          +params.param1,
+          +params.param2,
+          +params.minRadius,
+          +params.maxRadius
+        ];
 
         let circles1 = [] ?? new Mat();
         let circles2 = [] ?? new Mat();
@@ -215,7 +275,10 @@ async function main(...args) {
     (mat, i, n) => {
       //console.log('pipeline callback', { i, n });
       if(frameShow == i) {
-        cv.imshow('output', mat);
+        mat.copyTo(outputMat(outputRect));
+
+        cv.imshow('output', outputMat);
+        cv.resizeWindow('output', outputSize.width, outputSize.height);
         cv.setWindowTitle('output', `#${i}: ` + pipeline.names[i]);
       }
     }
@@ -310,12 +373,11 @@ async function main(...args) {
 
   console.log('EXIT');
 }
-
-main(...scriptArgs.slice(1))
-  .then(() => console.log('SUCCESS'))
-  .catch(error => {
-    console.log(`FAIL: ${error.message}\n${error.stack}`);
-    std.exit(1);
-  });
-
-//Util.callMain(main, true);
+try {
+  main(...scriptArgs.slice(1));
+} catch(error) {
+  console.log(`FAIL: ${error.message}\n${error.stack}`);
+  std.exit(1);
+} finally {
+  console.log('SUCCESS');
+}

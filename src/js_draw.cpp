@@ -75,8 +75,7 @@ js_draw_circle(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const
     }
   }
 
-  cv::circle(
-      *dst, point, radius, *reinterpret_cast<cv::Scalar*>(&color), thickness < 0 ? cv::FILLED : thickness, lineType);
+  cv::circle(*dst, point, radius, *reinterpret_cast<cv::Scalar*>(&color), thickness < 0 ? cv::FILLED : thickness, lineType);
   return JS_UNDEFINED;
 }
 
@@ -99,7 +98,7 @@ js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
   if(dst == nullptr)
     return JS_EXCEPTION;
 
-  if(i == argc || !JS_IsArray(ctx, argv[++i]))
+  if(i == argc || !js_is_array(ctx, argv[++i]))
     return JS_EXCEPTION;
 
   // js_array<JSContourData<int>>::to_vector(ctx, argv[i], contours);
@@ -163,7 +162,8 @@ js_draw_contours(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::con
     }
   }
 
-  // std::cerr << "draw_contours() contours.length=" << contours.size() << " contourIdx=" << contourIdx << " thickness="
+  // std::cerr << "draw_contours() contours.length=" << contours.size() << " contourIdx=" <<
+  // contourIdx << " thickness="
   // << thickness << std::endl;
 
   cv::drawContours(dst,
@@ -176,7 +176,8 @@ js_draw_contours(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::con
                    maxLevel,
                    offset);
 
-  // std::cerr << "draw_contours() ret:" << ret << " color: " << *reinterpret_cast<cv::Scalar*>(&color) << std::endl;
+  // std::cerr << "draw_contours() ret:" << ret << " color: " <<
+  // *reinterpret_cast<cv::Scalar*>(&color) << std::endl;
 
   return JS_UNDEFINED;
 }
@@ -375,15 +376,8 @@ js_put_text(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_va
   if(argc > i)
     bottomLeftOrigin = JS_ToBool(ctx, argv[i++]);
 
-  cv::putText(*dst,
-              text,
-              point,
-              fontFace,
-              fontScale,
-              *reinterpret_cast<cv::Scalar*>(&color),
-              thickness,
-              lineType,
-              bottomLeftOrigin);
+  cv::putText(
+      *dst, text, point, fontFace, fontScale, *reinterpret_cast<cv::Scalar*>(&color), thickness, lineType, bottomLeftOrigin);
 
   return JS_UNDEFINED;
 }
@@ -415,7 +409,7 @@ js_get_text_size(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::con
 
   if(JS_IsFunction(ctx, argv[i])) {
     JS_Call(ctx, argv[i], JS_UNDEFINED, 1, const_cast<JSValueConst*>(&baselineVal));
-  } else if(JS_IsArray(ctx, argv[i])) {
+  } else if(js_is_array(ctx, argv[i])) {
     JS_SetPropertyUint32(ctx, argv[i], 0, baselineVal);
   } else if(JS_IsObject(argv[i])) {
     JS_SetPropertyStr(ctx, argv[i], "y", baselineVal);
@@ -461,9 +455,7 @@ const JSCFunctionListEntry js_draw_static_funcs[] = {JS_CFUNC_DEF("circle", 1, &
                                                      JS_CFUNC_DEF("rect", 1, &js_draw_rect),
                                                      JS_CFUNC_DEF("text", 2, &js_put_text),
                                                      JS_CFUNC_DEF("textSize", 5, &js_get_text_size),
-                                                     JS_CFUNC_DEF("fontScaleFromHeight",
-                                                                  2,
-                                                                  &js_get_font_scale_from_height)};
+                                                     JS_CFUNC_DEF("fontScaleFromHeight", 2, &js_get_font_scale_from_height)};
 
 const JSCFunctionListEntry js_draw_global_funcs[] = {
     JS_CFUNC_DEF("drawCircle", 1, &js_draw_circle),

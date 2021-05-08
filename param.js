@@ -1,5 +1,5 @@
 import Util from './lib/util.js';
-import { Repeater } from './lib/repeater/repeater.js';
+import * as cv from 'cv';
 
 const MinMax = (min, max) => value => Math.max(min, Math.min(max, value));
 
@@ -27,9 +27,7 @@ export class Param {
     return '' + this.valueOf();
   }
 
-  async createTrackbar(name, win) {
-    const cv = await import('cv.so');
-
+  createTrackbar(name, win) {
     cv.createTrackbar(name, win + '', this.value, this.max, value => this.set(value));
   }
 }

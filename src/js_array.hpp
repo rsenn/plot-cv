@@ -9,7 +9,7 @@
 static inline int64_t
 js_array_length(JSContext* ctx, const JSValueConst& arr) {
   int64_t ret = -1;
-  if(JS_IsArray(ctx, arr)) {
+  if(js_is_array(ctx, arr)) {
     uint32_t len;
     JSValue v = JS_GetPropertyStr(ctx, arr, "length");
     JS_ToUint32(ctx, &len, v);
@@ -24,7 +24,7 @@ extern "C" int JS_DeletePropertyInt64(JSContext* ctx, JSValueConst obj, int64_t 
 static inline int64_t
 js_array_truncate(JSContext* ctx, const JSValueConst& arr, int64_t len) {
   int64_t newlen = -1;
-  if(JS_IsArray(ctx, arr)) {
+  if(js_is_array(ctx, arr)) {
     int64_t top = js_array_length(ctx, arr);
     newlen = std::min(top, len < 0 ? top + len : len);
     while(--top >= newlen) JS_DeletePropertyInt64(ctx, arr, top, 0);
@@ -87,7 +87,7 @@ public:
   to_vector(JSContext* ctx, JSValueConst arr, std::vector<T>& out) {
     int64_t i, n;
     JSValue len;
-    if(!JS_IsArray(ctx, arr))
+    if(!js_is_array(ctx, arr))
       return -1;
     len = JS_GetPropertyStr(ctx, arr, "length");
     JS_ToInt64(ctx, &n, len);
@@ -159,13 +159,64 @@ js_array<T>::to_scalar(JSContext* ctx, JSValueConst arr, cv::Scalar_<T>& out) {
   return n;
 }
 
+template<> class js_array<uint32_t> {
+public:
+  static int64_t
+  to_vector(JSContext* ctx, JSValueConst arr, std::vector<uint32_t>& out) {
+    int64_t i, n;
+    JSValue len;
+    if(!js_is_array(ctx, arr))
+      return -1;
+    len = JS_GetPropertyStr(ctx, arr, "length");
+    JS_ToInt64(ctx, &n, len);
+    out.reserve(out.size() + n);
+    for(i = 0; i < n; i++) {
+      JSValue value = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
+      uint32_t u;
+      JS_ToUint32(ctx, &u, value);
+      out.push_back(u);
+    }
+    return n;
+  }
+
+  template<class Iterator>
+  static JSValue
+  from_sequence(JSContext* ctx, const Iterator& start, const Iterator& end) {
+    JSValue arr = JS_NewArray(ctx);
+    size_t i = 0;
+    for(Iterator it = start; it != end; ++it) {
+      uint32_t u = *it;
+      JS_SetPropertyUint32(ctx, arr, i, JS_NewUint32(ctx, u));
+      ++i;
+    }
+    return arr;
+  }
+
+  template<size_t N> static int64_t to_array(JSContext* ctx, JSValueConst arr, std::array<uint32_t, N>& out);
+};
+
+template<size_t N>
+int64_t
+js_array<uint32_t>::to_array(JSContext* ctx, JSValueConst arr, std::array<uint32_t, N>& out) {
+  int64_t i;
+  if(!js_is_array(ctx, arr))
+    return -1;
+  for(i = 0; i < N; i++) {
+    JSValue value = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
+    uint32_t u;
+    JS_ToUint32(ctx, &u, value);
+    out[i] = u;
+  }
+  return i;
+}
+
 template<> class js_array<JSValue> {
 public:
   static int64_t
   to_vector(JSContext* ctx, JSValueConst arr, std::vector<JSValue>& out) {
     int64_t i, n;
     JSValue len;
-    if(!JS_IsArray(ctx, arr))
+    if(!js_is_array(ctx, arr))
       return -1;
     len = JS_GetPropertyStr(ctx, arr, "length");
     JS_ToInt64(ctx, &n, len);
@@ -196,7 +247,7 @@ template<size_t N>
 int64_t
 js_array<JSValue>::to_array(JSContext* ctx, JSValueConst arr, std::array<JSValue, N>& out) {
   int64_t i;
-  if(!JS_IsArray(ctx, arr))
+  if(!js_is_array(ctx, arr))
     return -1;
   for(i = 0; i < N; i++) {
     JSValue value = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
@@ -213,7 +264,7 @@ public:
   to_vector(JSContext* ctx, JSValueConst arr, JSContourData<T>& out) {
     int64_t i, n;
     JSValue len;
-    if(!JS_IsArray(ctx, arr))
+    if(!js_is_array(ctx, arr))
       return -1;
     len = JS_GetPropertyStr(ctx, arr, "length");
     JS_ToInt64(ctx, &n, len);
@@ -253,7 +304,7 @@ public:
   to_vector(JSContext* ctx, JSValueConst arr, std::vector<double>& out) {
     int64_t i, n;
     JSValue len;
-    if(!JS_IsArray(ctx, arr))
+    if(!js_is_array(ctx, arr))
       return -1;
     len = JS_GetPropertyStr(ctx, arr, "length");
     JS_ToInt64(ctx, &n, len);
@@ -316,7 +367,7 @@ public:
   to_vector(JSContext* ctx, JSValueConst arr, std::vector<JSContourData<T>>& out) {
     int64_t i, n;
     JSValue len;
-    if(!JS_IsArray(ctx, arr))
+    if(!js_is_array(ctx, arr))
       return -1;
     len = JS_GetPropertyStr(ctx, arr, "length");
     JS_ToInt64(ctx, &n, len);
@@ -369,7 +420,7 @@ public:
   to_vector(JSContext* ctx, JSValueConst arr, std::vector<cv::Mat>& out) {
     int64_t i, n;
     JSValue len;
-    if(!JS_IsArray(ctx, arr))
+    if(!js_is_array(ctx, arr))
       return -1;
     len = JS_GetPropertyStr(ctx, arr, "length");
     JS_ToInt64(ctx, &n, len);
@@ -398,7 +449,7 @@ public:
   to_vector(JSContext* ctx, JSValueConst arr, std::vector<std::vector<T>>& out) {
     int64_t i, n;
     JSValue len;
-    if(!JS_IsArray(ctx, arr))
+    if(!js_is_array(ctx, arr))
       return -1;
     len = JS_GetPropertyStr(ctx, arr, "length");
     JS_ToInt64(ctx, &n, len);

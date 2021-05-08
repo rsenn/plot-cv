@@ -65,8 +65,8 @@ js_slice_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
 
   if(!(*pdone = it->ptr >= it->range.end())) {
 
-    // printf("byte_pos = %zu, byte_size = %zu, num_elems = %i, increment = %zu\n", size_t(it->ptr - it->range.begin()),
-    // it->range.size(), it->num_elems, it->increment);
+    // printf("byte_pos = %zu, byte_size = %zu, num_elems = %i, increment = %zu\n", size_t(it->ptr -
+    // it->range.begin()), it->range.size(), it->num_elems, it->increment);
 
     result = js_typedarray_new(ctx, it->buffer, it->ptr - it->range.begin(), it->num_elems, it->ctor);
     it->ptr += it->increment;
@@ -96,8 +96,7 @@ js_slice_iterator_constructor(JSContext* ctx, JSValueConst new_target, int argc,
   s->type = js_typedarray_type(ctx, argv[1]);
   s->range = js_arraybuffer_range(ctx, s->buffer);
   s->ptr = s->range.begin();
-  s->ctor =
-      JS_IsFunction(ctx, argv[1]) ? JS_DupValue(ctx, argv[1]) : js_global_get(ctx, s->type.constructor_name().c_str());
+  s->ctor = JS_IsFunction(ctx, argv[1]) ? JS_DupValue(ctx, argv[1]) : js_global_get(ctx, s->type.constructor_name().c_str());
 
   if(argc > 2)
     js_value_to(ctx, argv[2], num_elems);
@@ -164,8 +163,7 @@ js_slice_iterator_init(JSContext* ctx, JSModuleDef* m) {
                                countof(js_slice_iterator_proto_funcs));
     JS_SetClassProto(ctx, js_slice_iterator_class_id, slice_iterator_proto);
 
-    slice_iterator_class =
-        JS_NewCFunction2(ctx, js_slice_iterator_constructor, "SliceIterator", 2, JS_CFUNC_constructor, 0);
+    slice_iterator_class = JS_NewCFunction2(ctx, js_slice_iterator_constructor, "SliceIterator", 2, JS_CFUNC_constructor, 0);
     /* set proto.constructor and ctor.prototype */
 
     JS_SetConstructor(ctx, slice_iterator_class, slice_iterator_proto);

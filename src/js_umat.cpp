@@ -605,7 +605,7 @@ js_umat_set_to(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
   if(!um)
     return JS_EXCEPTION;
 
-  if(argc >= 1 && JS_IsArray(ctx, argv[0])) {
+  if(argc >= 1 && js_is_array(ctx, argv[0])) {
     cv::Scalar s;
     size_t n = js_array_to(ctx, argv[0], s);
 
@@ -717,8 +717,8 @@ js_umat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* 
         if(um->type() == CV_32FC1)
           os << mat_at<float>(*um, y, x);
         else
-          os << std::setfill('0') << std::setbase(16)
-             << std::setw(um->type() == CV_8UC4 ? 8 : um->type() == CV_8UC1 ? 2 : 6) << mat_at<uint32_t>(*um, y, x);
+          os << std::setfill('0') << std::setbase(16) << std::setw(um->type() == CV_8UC4 ? 8 : um->type() == CV_8UC1 ? 2 : 6)
+             << mat_at<uint32_t>(*um, y, x);
       }
     }
 
@@ -846,7 +846,7 @@ js_umat_reshape(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 
   if(argc >= 1) {
     std::vector<int> newshape;
-    if(JS_IsArray(ctx, argv[0])) {
+    if(js_is_array(ctx, argv[0])) {
       js_array_to(ctx, argv[0], newshape);
       if(argc >= 2 && JS_IsNumber(argv[1])) {
         uint32_t ndims;

@@ -613,8 +613,7 @@ public:
      polyline
   */
   OutputIterator
-  perpendicular_distance(
-      InputIterator first, InputIterator last, value_type tol, unsigned repeat, OutputIterator result) {
+  perpendicular_distance(InputIterator first, InputIterator last, value_type tol, unsigned repeat, OutputIterator result) {
     if(repeat == 1) {
       // single pass
       return perpendicular_distance(first, last, tol, result);
@@ -646,9 +645,9 @@ public:
       PolylineSimplification<DIM, value_type*, value_type*> psimpl_arrays;
 
       while(--repeat) {
-        tempCoordCount = std::distance(temp_result.get(),
-                                       psimpl_arrays.perpendicular_distance(
-                                           temp_poly.get(), temp_poly.get() + coordCount, tol, temp_result.get()));
+        tempCoordCount = std::distance(
+            temp_result.get(),
+            psimpl_arrays.perpendicular_distance(temp_poly.get(), temp_poly.get() + coordCount, tol, temp_result.get()));
 
         // check if simplification did not improved
         if(coordCount == tempCoordCount) {
@@ -1233,9 +1232,8 @@ public:
                                           : 0;
 
     // validate input
-    if(original_coordCount % DIM || original_pointCount < 2 || simplified_coordCount % DIM ||
-       simplified_pointCount < 2 || original_pointCount < simplified_pointCount ||
-       !math::equal<DIM>(original_first, simplified_first)) {
+    if(original_coordCount % DIM || original_pointCount < 2 || simplified_coordCount % DIM || simplified_pointCount < 2 ||
+       original_pointCount < simplified_pointCount || !math::equal<DIM>(original_first, simplified_first)) {
       if(valid) {
         *valid = false;
       }
@@ -1314,10 +1312,9 @@ public:
     util::scoped_array<double> errors(pointCount);
     PolylineSimplification<DIM, InputIterator, double*> ps;
 
-    diff_type errorCount =
-        std::distance(errors.get(),
-                      ps.compute_positional_errors2(
-                          original_first, original_last, simplified_first, simplified_last, errors.get(), valid));
+    diff_type errorCount = std::distance(
+        errors.get(),
+        ps.compute_positional_errors2(original_first, original_last, simplified_first, simplified_last, errors.get(), valid));
 
     std::transform(errors.get(), errors.get() + errorCount, errors.get(), &sqrtl);
 
@@ -1833,8 +1830,7 @@ compute_positional_error_statistics(ForwardIterator original_first,
                                     ForwardIterator simplified_last,
                                     bool* valid = 0) {
   PolylineSimplification<DIM, ForwardIterator, ForwardIterator> ps;
-  return ps.compute_positional_error_statistics(
-      original_first, original_last, simplified_first, simplified_last, valid);
+  return ps.compute_positional_error_statistics(original_first, original_last, simplified_first, simplified_last, valid);
 }
 
 } // namespace psimpl

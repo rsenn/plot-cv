@@ -153,8 +153,8 @@ struct TypedArrayType {
   TypedArrayType(const cv::UMat& mat)
       : byte_size(1 << (mat_depth(mat) >> 1)), is_signed(mat_signed(mat)), is_floating_point(mat_floating(mat)) {}
   TypedArrayType(int32_t cvId)
-      : byte_size(1 << (mattype_depth(cvId) >> 1)), is_signed(mattype_signed(cvId)),
-        is_floating_point(mattype_floating(cvId)) {}
+      : byte_size(1 << (mattype_depth(cvId) >> 1)), is_signed(mattype_signed(cvId)), is_floating_point(mattype_floating(cvId)) {
+  }
   TypedArrayType(TypedArrayValue i)
       : byte_size(i & TYPEDARRAY_BITS_FIELD), is_signed(!!(i & TYPEDARRAY_SIGNED)),
         is_floating_point(!!(i & TYPEDARRAY_FLOATING_POINT)) {}
@@ -281,8 +281,7 @@ js_typedarray_new(JSContext* ctx, JSValueConst buffer, uint32_t byteOffset, uint
 }
 
 static inline JSValue
-js_typedarray_new(
-    JSContext* ctx, JSValueConst buffer, uint32_t byteOffset, uint32_t length, const TypedArrayType& props) {
+js_typedarray_new(JSContext* ctx, JSValueConst buffer, uint32_t byteOffset, uint32_t length, const TypedArrayType& props) {
   auto range = js_arraybuffer_range(ctx, buffer);
   assert(byteOffset + length * props.byte_size <= range.size());
 
@@ -320,11 +319,8 @@ public:
 
   template<class Iterator>
   static JSValue
-  from_sequence(JSContext* ctx,
-                const Iterator& start,
-                const Iterator& end,
-                uint32_t byteOffset = 0,
-                uint32_t length = UINT32_MAX) {
+  from_sequence(
+      JSContext* ctx, const Iterator& start, const Iterator& end, uint32_t byteOffset = 0, uint32_t length = UINT32_MAX) {
     JSValue buf = js_arraybuffer_from(ctx, start, end);
     uint32_t count = std::min<uint32_t>(length, end - start);
 

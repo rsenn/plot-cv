@@ -202,7 +202,6 @@ if(ENABLE_LTO)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto")
 endif(ENABLE_LTO)
 
-add_subdirectory(quickjs "${CMAKE_BINARY_DIR}/quickjs")
 
 link_directories(BEFORE ${quickjs_BINARY_DIR})
 # message("quickjs_BINARY_DIR: ${quickjs_BINARY_DIR}")
@@ -250,7 +249,7 @@ link_directories(${CMAKE_CURRENT_BINARY_DIR}/quickjs)
 
 src_program(
   cli
-  "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/matrix.cpp;src/line.cpp;src/geometry.cpp;src/util.cpp;src/js.cpp;src/jsbindings.cpp;src/js_contour.cpp;src/js.cpp;src/js_draw.cpp;src/js_line.cpp;src/js_mat.cpp;src/js_point.cpp;src/js_point_iterator.cpp;src/js_rect.cpp;src/js_size.cpp;src/js_cv.cpp;src/js_video_capture.cpp"
+  "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/matrix.cpp;src/line.cpp;src/geometry.cpp;src/util.cpp;src/js.cpp;src/jsbindings.cpp;src/js_contour.cpp;src/js.cpp;src/js_draw.cpp;src/js_line.cpp;src/js_mat.cpp;src/js_point.cpp;src/js_point_iterator.cpp;src/js_rect.cpp;src/js_size.cpp;src/js_cv.cpp;src/js_video_capture.cpp;src/util.cpp"
   ${OpenCV_LIBS}
   ${QUICKJS_LIBRARY}
   pthread
@@ -268,7 +267,7 @@ target_link_libraries(test-qjs quickjs pthread dl m)
 
 target_compile_definitions(test-qjs PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${quickjs_version}" CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1 ${PLOTCV_DEFS})
 
-option(ADDITIONAL_PROGS "Build other OpenCV programs" FALSE)
+option(ADDITIONAL_PROGS "Build other OpenCV programs" OFF)
 
 # option(QUICKJS_MODULES "Build .so modules for quickjs" "${BUILD_SHARED_LIBS}")
 option(QUICKJS_MODULES "Build .so modules for quickjs" ON)
@@ -281,6 +280,11 @@ add_executable(test-dlfcn test-dlfcn.c)
 target_link_libraries(test-dlfcn dl)
 ]]
 
-# if(ADDITIONAL_PROGS)
-add_subdirectory(opencv ${CMAKE_CURRENT_BINARY_DIR}/opencv)
-# endif(ADDITIONAL_PROGS)
+option(BUILD_QUICKJS "Build QuickJS" ON)
+if(BUILD_QUICKJS)
+  add_subdirectory(quickjs "${CMAKE_BINARY_DIR}/quickjs")
+endif(BUILD_QUICKJS)
+
+if(ADDITIONAL_PROGS)
+  add_subdirectory(opencv ${CMAKE_CURRENT_BINARY_DIR}/opencv)
+endif(ADDITIONAL_PROGS)

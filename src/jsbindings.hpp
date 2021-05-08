@@ -85,12 +85,12 @@ template<> union JSColorData<uint8_t> {
 #define HIDDEN __attribute__((visibility("hidden")))
 #endif
 
-#define JS_CGETSET_ENUMERABLE_DEF(prop_name, fgetter, fsetter, magic_num)                                              \
-  {                                                                                                                    \
-    .name = prop_name, .prop_flags = JS_PROP_ENUMERABLE | JS_PROP_CONFIGURABLE, .def_type = JS_DEF_CGETSET_MAGIC,      \
-    .magic = magic_num, .u = {                                                                                         \
-      .getset = {.get = {.getter_magic = fgetter}, .set = {.setter_magic = fsetter}}                                   \
-    }                                                                                                                  \
+#define JS_CGETSET_ENUMERABLE_DEF(prop_name, fgetter, fsetter, magic_num)                                                      \
+  {                                                                                                                            \
+    .name = prop_name, .prop_flags = JS_PROP_ENUMERABLE | JS_PROP_CONFIGURABLE, .def_type = JS_DEF_CGETSET_MAGIC,              \
+    .magic = magic_num, .u = {                                                                                                 \
+      .getset = {.get = {.getter_magic = fgetter}, .set = {.setter_magic = fsetter}}                                           \
+    }                                                                                                                          \
   }
 
 extern "C" {
@@ -305,6 +305,40 @@ js_symbol_ctor(JSContext* ctx) {
 }
 
 static inline JSValue
+js_symbol_invoke_static(JSContext* ctx, const char* name, JSValueConst arg) {
+  JSValue ret;
+  JSAtom method_name = JS_NewAtom(ctx, name);
+  ret = JS_Invoke(ctx, js_symbol_ctor(ctx), method_name, 1, &arg);
+  JS_FreeAtom(ctx, method_name);
+  return ret;
+}
+
+static inline JSValue
+js_symbol_for(JSContext* ctx, const char* sym_for) {
+  JSValue key, sym;
+  JSAtom atom;
+  key = JS_NewString(ctx, sym_for);
+  sym = js_symbol_invoke_static(ctx, "for", key);
+  JS_FreeValue(ctx, key);
+  return sym;
+}
+
+static inline JSAtom
+js_symbol_for_atom(JSContext* ctx, const char* sym_for) {
+  JSValue sym = js_symbol_for(ctx, sym_for);
+  JSAtom atom = JS_ValueToAtom(ctx, sym);
+  JS_FreeValue(ctx, sym);
+  return atom;
+}
+
+static inline void
+js_set_inspect_method(JSContext* ctx, JSValueConst obj, JSCFunction* func) {
+  JSAtom inspect_symbol = js_symbol_for_atom(ctx, "quickjs.inspect.custom");
+  JS_SetProperty(ctx, obj, inspect_symbol, JS_NewCFunction(ctx, func, "inspect", 1));
+  JS_FreeAtom(ctx, inspect_symbol);
+}
+
+static inline JSValue
 js_symbol_get_static(JSContext* ctx, const char* name) {
   JSValue symbol_ctor, ret;
   symbol_ctor = js_symbol_ctor(ctx);
@@ -428,27 +462,63 @@ js_class_name(JSContext* ctx, JSValueConst value) {
   return ret;
 }
 
+static inline JSValue
+js_typedarray_prototype(JSContext* ctx) {
+  JSValue global_obj, u32_ctor, u32_proto, typedarray_proto;
+  global_obj = JS_GetGlobalObject(ctx);
+  u32_ctor = JS_GetPropertyStr(ctx, global_obj, "Uint32Array");
+  u32_proto = JS_GetPropertyStr(ctx, u32_ctor, "prototype");
+  typedarray_proto = JS_GetPrototype(ctx, u32_proto);
+  JS_FreeValue(ctx, global_obj);
+  JS_FreeValue(ctx, u32_ctor);
+  JS_FreeValue(ctx, u32_proto);
+  return typedarray_proto;
+}
+
+static inline JSValue
+js_typedarray_constructor(JSContext* ctx) {
+
+  JSValue typedarray_proto, typedarray_ctor;
+  typedarray_proto = js_typedarray_prototype(ctx);
+
+  typedarray_ctor = JS_GetPropertyStr(ctx, typedarray_proto, "constructor");
+  JS_FreeValue(ctx, typedarray_proto);
+  return typedarray_ctor;
+}
+
 static inline bool
 js_is_typedarray(JSContext* ctx, JSValueConst obj) {
-  std::string class_name = js_class_name(ctx, obj);
-  char* start = &class_name[0];
-  char* end = &class_name[class_name.size()];
-  bool is_signed = true;
+  JSValue typedarray_ctor;
+  BOOL ret;
+  typedarray_ctor = js_typedarray_constructor(ctx);
+  ret = JS_IsInstanceOf(ctx, obj, typedarray_ctor);
+  JS_FreeValue(ctx, typedarray_ctor);
+  return ret;
 
-  if(start < end && *start == 'U') {
-    start++;
-    is_signed = false;
-    *start = toupper(*start);
-  }
+  /*  std::string class_name = js_class_name(ctx, obj);
+    char* start = &class_name[0];
+    char* end = &class_name[class_name.size()];
+    bool is_signed = true;
 
-  char* num_start = std::find_if(start, end, &::isdigit);
-  char* num_end = std::find_if_not(num_start, end, &::isdigit);
-  char* next;
-  const auto bits = strtoul(num_start, &next, 10);
+    if(start < end && *start == 'U') {
+      start++;
+      is_signed = false;
+      *start = toupper(*start);
+    }
 
-  assert(next == num_end);
-  return (!strncmp(start, "Int", 3) || !strncmp(start, "Float", 5)) && !strncmp(num_end, "Array", 5) &&
-         (bits == 64 || bits == 32 || bits == 16 || bits == 8);
+    char* num_start = std::find_if(start, end, &::isdigit);
+    char* num_end = std::find_if_not(num_start, end, &::isdigit);
+    char* next;
+    const auto bits = strtoul(num_start, &next, 10);
+
+    assert(next == num_end);
+    return (!strncmp(start, "Int", 3) || !strncmp(start, "Float", 5)) && !strncmp(num_end, "Array",
+    5) && (bits == 64 || bits == 32 || bits == 16 || bits == 8);*/
+}
+
+static inline BOOL
+js_is_array(JSContext* ctx, JSValueConst obj) {
+  return JS_IsArray(ctx, obj) || js_is_typedarray(ctx, obj);
 }
 
 static inline JSValue
@@ -481,8 +551,7 @@ js_iterator_next(JSContext* ctx, JSValueConst obj) {
   return ret;
 }
 
-template<class T,
-         typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type* = nullptr>
+template<class T, typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type* = nullptr>
 static inline int
 js_value_to(JSContext* ctx, JSValueConst value, T& out) {
   return js_number_read(ctx, value, &out);
@@ -505,8 +574,7 @@ js_value_to(JSContext* ctx, JSValueConst value, std::string& out) {
   return 1;
 }
 
-template<class T,
-         typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type* = nullptr>
+template<class T, typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type* = nullptr>
 static inline JSValue
 js_value_from(JSContext* ctx, const T& in) {
   return js_number_new<T>(ctx, in);

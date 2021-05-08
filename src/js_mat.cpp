@@ -34,6 +34,21 @@ enum {
   PROP_ELEMSIZE,
   PROP_ELEMSIZE1
 };
+enum {
+  METHOD_COL = 0,
+  METHOD_ROW,
+  METHOD_COL_RANGE,
+  METHOD_ROW_RANGE,
+  METHOD_CLONE,
+  METHOD_ROI,
+  METHOD_RELEASE,
+  METHOD_DUP,
+  METHOD_CLEAR,
+  METHOD_RESET,
+  METHOD_RESIZE,
+  METHOD_STEP1,
+  METHOD_LOCATE_ROI
+};
 enum { MAT_EXPR_AND = 0, MAT_EXPR_OR, MAT_EXPR_XOR, MAT_EXPR_MUL };
 enum { MAT_ITERATOR_KEYS, MAT_ITERATOR_VALUES, MAT_ITERATOR_ENTRIES };
 extern "C" {
@@ -278,95 +293,80 @@ js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
     }
   }
 
-  if(magic == 0)
-    ret = js_mat_wrap(ctx, m->col(i));
-  else if(magic == 1)
-    ret = js_mat_wrap(ctx, m->row(i));
-  else if(magic == 2)
-    ret = js_mat_wrap(ctx, m->colRange(i, i2));
-  else if(magic == 3)
-    ret = js_mat_wrap(ctx, m->rowRange(i, i2));
-  else if(magic == 4) {
-    cv::Point p;
-
-    if(JS_IsNumber(argv[1])) {
-      p.x = i;
-      p.y = i2;
-    } else {
-      p = pt;
+  switch(magic) {
+    case METHOD_COL: {
+      ret = js_mat_wrap(ctx, m->col(i));
+      break;
     }
-    if(m->type() == CV_32FC1)
-      ret = JS_NewFloat64(ctx, (*m).at<float>(p.y, p.x));
-    else
-      ret = JS_NewInt64(ctx, (*m).at<uint32_t>(p.y, p.x));
-
-  } else if(magic == 5) {
-    ret = js_mat_wrap(ctx, m->clone());
-  } else if(magic == 6) {
-    JSRectData<double> rect = {0, 0, 0, 0};
-
-    if(argc > 0)
-      rect = js_rect_get(ctx, argv[0]);
-
-    ret = js_mat_wrap(ctx, (*m)(rect));
-
-  } else if(magic == 7) {
-    JSRectData<double> rect = {0, 0, 0, 0};
-
-    if(argc > 0)
-      rect = js_rect_get(ctx, argv[0]);
-
-    ret = js_mat_wrap(ctx, (*m)(rect));
-
-  } else if(magic == 8) {
-    m->release();
-  } else if(magic == 9) {
-    ret = js_mat_wrap(ctx, *m);
-
-  } else if(magic == 10) {
-    *m = cv::Mat::zeros(m->rows, m->cols, m->type());
-  } else if(magic == 11) {
-    *m = cv::Mat();
-  } else if(magic == 12) {
-    uint32_t rows = 0;
-    cv::Scalar color{0, 0, 0, 0};
-
-    JS_ToUint32(ctx, &rows, argv[0]);
-    if(argc > 1) {
-      js_color_read(ctx, argv[1], &color);
-      m->resize(rows, color);
-    } else {
-      m->resize(rows);
+    case METHOD_ROW: {
+      ret = js_mat_wrap(ctx, m->row(i));
+      break;
     }
-  } else if(magic == 13) {
-    int32_t i = 0;
+    case METHOD_COL_RANGE: {
+      ret = js_mat_wrap(ctx, m->colRange(i, i2));
+      break;
+    }
+    case METHOD_ROW_RANGE: {
+      ret = js_mat_wrap(ctx, m->rowRange(i, i2));
+      break;
+    }
+    case METHOD_CLONE: {
+      ret = js_mat_wrap(ctx, m->clone());
+      break;
+    }
+    case METHOD_ROI: {
+      JSRectData<double> rect = {0, 0, 0, 0};
 
-    JS_ToInt32(ctx, &i, argv[0]);
-    ret = JS_NewInt64(ctx, m->step1(i));
-  } else if(magic == 14) {
-    /*
-        JSPointData<double>* ofs;
-        JSSizeData<double>* wholeSize;
+      if(argc > 0)
+        rect = js_rect_get(ctx, argv[0]);
 
-        if(!js_size_data(ctx, argv[0])) {
-          JS_ThrowTypeError(ctx, "argument 1 must be cv::Size");
-          ret = JS_EXCEPTION;
-        } else if(!js_point_data(ctx, argv[1])) {
-          JS_ThrowTypeError(ctx, "argument 2 must be cv::Point");
-          ret = JS_EXCEPTION;
-        } else*/
-    {
+      ret = js_mat_wrap(ctx, (*m)(rect));
+      break;
+    }
+    case METHOD_RELEASE: {
+      m->release();
+      break;
+    }
+    case METHOD_DUP: {
+      ret = js_mat_wrap(ctx, *m);
+      break;
+    }
+    case METHOD_CLEAR: {
+      *m = cv::Mat::zeros(m->rows, m->cols, m->type());
+      break;
+    }
+    case METHOD_RESET: {
+      *m = cv::Mat();
+      break;
+    }
+    case METHOD_RESIZE: {
+      uint32_t rows = 0;
+      cv::Scalar color{0, 0, 0, 0};
+
+      JS_ToUint32(ctx, &rows, argv[0]);
+      if(argc > 1) {
+        js_color_read(ctx, argv[1], &color);
+        m->resize(rows, color);
+      } else {
+        m->resize(rows);
+      }
+      break;
+    }
+    case METHOD_STEP1: {
+      int32_t i = 0;
+
+      JS_ToInt32(ctx, &i, argv[0]);
+      ret = JS_NewInt64(ctx, m->step1(i));
+      break;
+    }
+    case METHOD_LOCATE_ROI: {
       cv::Size wholeSize;
       cv::Point ofs;
       m->locateROI(wholeSize, ofs);
       js_size_write(ctx, argv[0], wholeSize);
       js_point_write(ctx, argv[0], ofs);
-
-      /**ofs = pt;
-       *wholeSize = sz;*/
+      break;
     }
-  } else {
-    ret = JS_EXCEPTION;
   }
 
   return ret;
@@ -654,8 +654,8 @@ js_mat_set(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) 
 /*
 template<class T>
 typename std::enable_if<std::is_integral<T>::value, void>::type
-js_mat_vector_get(JSContext* ctx, int argc, JSValueConst* argv, std::vector<T>& output, std::vector<bool>& defined) {
-  output.resize(static_cast<size_t>(argc));
+js_mat_vector_get(JSContext* ctx, int argc, JSValueConst* argv, std::vector<T>& output,
+std::vector<bool>& defined) { output.resize(static_cast<size_t>(argc));
   defined.resize(static_cast<size_t>(argc));
   for(int i = 0; i < argc; i++) {
     uint32_t val = 0;
@@ -668,8 +668,8 @@ js_mat_vector_get(JSContext* ctx, int argc, JSValueConst* argv, std::vector<T>& 
 
 template<class T>
 typename std::enable_if<std::is_floating_point<T>::value, void>::type
-js_mat_vector_get(JSContext* ctx, int argc, JSValueConst* argv, std::vector<T>& output, std::vector<bool>& defined) {
-  output.resize(static_cast<size_t>(argc));
+js_mat_vector_get(JSContext* ctx, int argc, JSValueConst* argv, std::vector<T>& output,
+std::vector<bool>& defined) { output.resize(static_cast<size_t>(argc));
   defined.resize(static_cast<size_t>(argc));
   for(int i = 0; i < argc; i++) {
     double val = 0;
@@ -682,10 +682,9 @@ js_mat_vector_get(JSContext* ctx, int argc, JSValueConst* argv, std::vector<T>& 
 
 template<class T>
 typename std::enable_if<std::is_integral<typename T::value_type>::value, void>::type
-js_mat_vector_get(JSContext* ctx, int argc, JSValueConst* argv, std::vector<T>& output, std::vector<bool>& defined) {
-  const size_t bits = (sizeof(typename T::value_type) * 8);
-  const size_t n = T::channels;
-  output.resize(static_cast<size_t>(argc));
+js_mat_vector_get(JSContext* ctx, int argc, JSValueConst* argv, std::vector<T>& output,
+std::vector<bool>& defined) { const size_t bits = (sizeof(typename T::value_type) * 8); const size_t
+n = T::channels; output.resize(static_cast<size_t>(argc));
   defined.resize(static_cast<size_t>(argc));
   for(int i = 0; i < argc; i++) {
     double val = 0;
@@ -727,7 +726,7 @@ js_mat_set_to(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
   if(!m)
     return JS_EXCEPTION;
 
-  if(argc >= 1 && JS_IsArray(ctx, argv[0])) {
+  if(argc >= 1 && js_is_array(ctx, argv[0])) {
     cv::Scalar s;
     size_t n = js_array_to(ctx, argv[0], s);
 
@@ -840,8 +839,8 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
         if(m->type() == CV_32FC1)
           os << m->at<float>(y, x);
         else
-          os << std::setfill('0') << std::setbase(16)
-             << std::setw(m->type() == CV_8UC4 ? 8 : m->type() == CV_8UC1 ? 2 : 6) << m->at<uint32_t>(y, x);
+          os << std::setfill('0') << std::setbase(16) << std::setw(m->type() == CV_8UC4 ? 8 : m->type() == CV_8UC1 ? 2 : 6)
+             << m->at<uint32_t>(y, x);
       }
     }
 
@@ -994,7 +993,7 @@ js_mat_reshape(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
 
   if(argc >= 1) {
     std::vector<int> newshape;
-    if(JS_IsArray(ctx, argv[0])) {
+    if(js_is_array(ctx, argv[0])) {
       js_array_to(ctx, argv[0], newshape);
       if(argc >= 2 && JS_IsNumber(argv[1])) {
         uint32_t ndims;
@@ -1189,18 +1188,28 @@ js_mat_array(JSContext* ctx, JSValueConst this_val) {
 
     std::ranges::subrange<uint8_t*> range(begin(*m), end(*m));
 
-    /*printf("m->rows=%i m->cols=%i m->step=%zu m->total()=%zu range.size()=%zu type.byte_size=%u size=%zu\n",
-           m->rows,
-           m->cols,
-           size_t(m->step),
-           range.size() / type.byte_size,
-           range.size(),
+    /*printf("m->rows=%i m->cols=%i m->step=%zu m->total()=%zu range.size()=%zu type.byte_size=%u
+       size=%zu\n", m->rows, m->cols, size_t(m->step), range.size() / type.byte_size, range.size(),
            type.byte_size,
            range.size() / type.byte_size);*/
 
     return js_typedarray_new(ctx, buffer, 0, range.size() / type.byte_size, type);
   }
   return JS_EXCEPTION;
+}
+
+JSValue
+js_mat_call(JSContext* ctx, JSValueConst func_obj, JSValueConst this_val, int argc, JSValueConst* argv, int flags) {
+  JSRectData rect = {0, 0, 0, 0};
+  JSMatData* src;
+
+  if((src = js_mat_data(ctx, func_obj)) == nullptr)
+    return JS_EXCEPTION;
+
+  if(!js_rect_read(ctx, argv[0], &rect))
+    return JS_ThrowTypeError(ctx, "argument 1 expecting Rect");
+
+  return js_mat_wrap(ctx, (*src)(rect));
 }
 
 void
@@ -1302,8 +1311,8 @@ js_mat_iterator_new(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
 void
 js_mat_iterator_dump(JSMatIteratorData* it) {
-  std::cout << "MatIterator { row: " << it->row << ", col: " << it->col << ", magic: " << it->magic
-            << ", type: " << it->type << " }" << std::endl;
+  std::cout << "MatIterator { row: " << it->row << ", col: " << it->col << ", magic: " << it->magic << ", type: " << it->type
+            << " }" << std::endl;
 }
 
 JSValue
@@ -1390,6 +1399,7 @@ js_mat_iterator_dup(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 JSClassDef js_mat_class = {
     .class_name = "Mat",
     .finalizer = js_mat_finalizer,
+    .call = js_mat_call,
 };
 
 JSClassDef js_mat_iterator_class = {
@@ -1397,60 +1407,59 @@ JSClassDef js_mat_iterator_class = {
     .finalizer = js_mat_iterator_finalizer,
 };
 
-const JSCFunctionListEntry js_mat_proto_funcs[] = {
-    JS_CGETSET_MAGIC_DEF("cols", js_mat_get_props, NULL, PROP_COLS),
-    JS_CGETSET_MAGIC_DEF("rows", js_mat_get_props, NULL, PROP_ROWS),
-    JS_CGETSET_MAGIC_DEF("channels", js_mat_get_props, NULL, PROP_CHANNELS),
-    JS_CGETSET_MAGIC_DEF("type", js_mat_get_props, NULL, PROP_TYPE),
-    JS_CGETSET_MAGIC_DEF("depth", js_mat_get_props, NULL, PROP_DEPTH),
-    JS_CGETSET_MAGIC_DEF("empty", js_mat_get_props, NULL, PROP_EMPTY),
-    JS_CGETSET_MAGIC_DEF("total", js_mat_get_props, NULL, PROP_TOTAL),
-    JS_CGETSET_MAGIC_DEF("size", js_mat_get_props, NULL, PROP_SIZE),
-    JS_CGETSET_MAGIC_DEF("continuous", js_mat_get_props, NULL, PROP_CONTINUOUS),
-    JS_CGETSET_MAGIC_DEF("submatrix", js_mat_get_props, NULL, PROP_SUBMATRIX),
-    JS_CGETSET_MAGIC_DEF("step", js_mat_get_props, NULL, PROP_STEP),
-    JS_CGETSET_MAGIC_DEF("elemSize", js_mat_get_props, NULL, PROP_ELEMSIZE),
-    JS_CGETSET_MAGIC_DEF("elemSize1", js_mat_get_props, NULL, PROP_ELEMSIZE1),
-    JS_CGETSET_DEF("buffer", js_mat_buffer, NULL),
-    JS_CGETSET_DEF("array", js_mat_array, NULL),
-    JS_CFUNC_MAGIC_DEF("col", 1, js_mat_funcs, 0),
-    JS_CFUNC_MAGIC_DEF("row", 1, js_mat_funcs, 1),
-    JS_CFUNC_MAGIC_DEF("colRange", 2, js_mat_funcs, 2),
-    JS_CFUNC_MAGIC_DEF("rowRange", 2, js_mat_funcs, 3),
-    JS_CFUNC_MAGIC_DEF("clone", 0, js_mat_funcs, 5),
-    JS_CFUNC_MAGIC_DEF("roi", 0, js_mat_funcs, 6),
-    JS_CFUNC_MAGIC_DEF("release", 0, js_mat_funcs, 8),
-    JS_CFUNC_MAGIC_DEF("dup", 0, js_mat_funcs, 9),
-    JS_CFUNC_MAGIC_DEF("clear", 0, js_mat_funcs, 10),
-    JS_CFUNC_MAGIC_DEF("reset", 0, js_mat_funcs, 11),
-    JS_CFUNC_MAGIC_DEF("resize", 1, js_mat_funcs, 12),
-    JS_CFUNC_MAGIC_DEF("step1", 0, js_mat_funcs, 13),
-    JS_CFUNC_MAGIC_DEF("locateROI", 0, js_mat_funcs, 14),
+const JSCFunctionListEntry js_mat_proto_funcs[] = {JS_CGETSET_MAGIC_DEF("cols", js_mat_get_props, NULL, PROP_COLS),
+                                                   JS_CGETSET_MAGIC_DEF("rows", js_mat_get_props, NULL, PROP_ROWS),
+                                                   JS_CGETSET_MAGIC_DEF("channels", js_mat_get_props, NULL, PROP_CHANNELS),
+                                                   JS_CGETSET_MAGIC_DEF("type", js_mat_get_props, NULL, PROP_TYPE),
+                                                   JS_CGETSET_MAGIC_DEF("depth", js_mat_get_props, NULL, PROP_DEPTH),
+                                                   JS_CGETSET_MAGIC_DEF("empty", js_mat_get_props, NULL, PROP_EMPTY),
+                                                   JS_CGETSET_MAGIC_DEF("total", js_mat_get_props, NULL, PROP_TOTAL),
+                                                   JS_CGETSET_MAGIC_DEF("size", js_mat_get_props, NULL, PROP_SIZE),
+                                                   JS_CGETSET_MAGIC_DEF("continuous", js_mat_get_props, NULL, PROP_CONTINUOUS),
+                                                   JS_CGETSET_MAGIC_DEF("submatrix", js_mat_get_props, NULL, PROP_SUBMATRIX),
+                                                   JS_CGETSET_MAGIC_DEF("step", js_mat_get_props, NULL, PROP_STEP),
+                                                   JS_CGETSET_MAGIC_DEF("elemSize", js_mat_get_props, NULL, PROP_ELEMSIZE),
+                                                   JS_CGETSET_MAGIC_DEF("elemSize1", js_mat_get_props, NULL, PROP_ELEMSIZE1),
+                                                   JS_CGETSET_DEF("buffer", js_mat_buffer, NULL),
+                                                   JS_CGETSET_DEF("array", js_mat_array, NULL),
+                                                   JS_CFUNC_MAGIC_DEF("col", 1, js_mat_funcs, METHOD_COL),
+                                                   JS_CFUNC_MAGIC_DEF("row", 1, js_mat_funcs, METHOD_ROW),
+                                                   JS_CFUNC_MAGIC_DEF("colRange", 2, js_mat_funcs, METHOD_COL_RANGE),
+                                                   JS_CFUNC_MAGIC_DEF("rowRange", 2, js_mat_funcs, METHOD_ROW_RANGE),
+                                                   JS_CFUNC_MAGIC_DEF("clone", 0, js_mat_funcs, METHOD_CLONE),
+                                                   JS_CFUNC_MAGIC_DEF("roi", 0, js_mat_funcs, METHOD_ROI),
+                                                   JS_CFUNC_MAGIC_DEF("release", 0, js_mat_funcs, METHOD_RELEASE),
+                                                   JS_CFUNC_MAGIC_DEF("dup", 0, js_mat_funcs, METHOD_DUP),
+                                                   JS_CFUNC_MAGIC_DEF("clear", 0, js_mat_funcs, METHOD_CLEAR),
+                                                   JS_CFUNC_MAGIC_DEF("reset", 0, js_mat_funcs, METHOD_RESET),
+                                                   JS_CFUNC_MAGIC_DEF("resize", 1, js_mat_funcs, METHOD_RESIZE),
+                                                   JS_CFUNC_MAGIC_DEF("step1", 0, js_mat_funcs, METHOD_STEP1),
+                                                   JS_CFUNC_MAGIC_DEF("locateROI", 0, js_mat_funcs, METHOD_LOCATE_ROI),
 
-    JS_CFUNC_MAGIC_DEF("and", 2, js_mat_expr, MAT_EXPR_AND),
-    JS_CFUNC_MAGIC_DEF("or", 2, js_mat_expr, MAT_EXPR_OR),
-    JS_CFUNC_MAGIC_DEF("xor", 3, js_mat_expr, MAT_EXPR_XOR),
-    JS_CFUNC_MAGIC_DEF("mul", 3, js_mat_expr, MAT_EXPR_MUL),
+                                                   JS_CFUNC_MAGIC_DEF("and", 2, js_mat_expr, MAT_EXPR_AND),
+                                                   JS_CFUNC_MAGIC_DEF("or", 2, js_mat_expr, MAT_EXPR_OR),
+                                                   JS_CFUNC_MAGIC_DEF("xor", 3, js_mat_expr, MAT_EXPR_XOR),
+                                                   JS_CFUNC_MAGIC_DEF("mul", 3, js_mat_expr, MAT_EXPR_MUL),
 
-    JS_CFUNC_MAGIC_DEF("zero", 2, js_mat_fill, 0),
-    JS_CFUNC_MAGIC_DEF("one", 2, js_mat_fill, 1),
+                                                   JS_CFUNC_MAGIC_DEF("zero", 2, js_mat_fill, 0),
+                                                   JS_CFUNC_MAGIC_DEF("one", 2, js_mat_fill, 1),
 
-    JS_CFUNC_DEF("toString", 0, js_mat_tostring),
-    JS_CFUNC_DEF("inspect", 0, js_mat_inspect),
-    JS_CFUNC_DEF("at", 1, js_mat_at),
-    JS_CFUNC_DEF("set", 2, js_mat_set),
-    JS_CFUNC_DEF("setTo", 0, js_mat_set_to),
-    JS_CFUNC_DEF("convertTo", 2, js_mat_convert_to),
-    JS_CFUNC_DEF("copyTo", 1, js_mat_copy_to),
-    JS_CFUNC_DEF("reshape", 1, js_mat_reshape),
-    JS_CFUNC_DEF("getUMat", 1, js_mat_getumat),
-    JS_CFUNC_MAGIC_DEF("keys", 0, js_mat_iterator_new, MAT_ITERATOR_KEYS),
-    JS_CFUNC_MAGIC_DEF("values", 0, js_mat_iterator_new, MAT_ITERATOR_VALUES),
-    JS_CFUNC_MAGIC_DEF("entries", 0, js_mat_iterator_new, MAT_ITERATOR_ENTRIES),
-    JS_ALIAS_DEF("[Symbol.iterator]", "values"),
-    JS_ALIAS_DEF("[Symbol.toPrimitive]", "toString"),
+                                                   JS_CFUNC_DEF("toString", 0, js_mat_tostring),
+                                                   JS_CFUNC_DEF("inspect", 0, js_mat_inspect),
+                                                   JS_CFUNC_DEF("at", 1, js_mat_at),
+                                                   JS_CFUNC_DEF("set", 2, js_mat_set),
+                                                   JS_CFUNC_DEF("setTo", 0, js_mat_set_to),
+                                                   JS_CFUNC_DEF("convertTo", 2, js_mat_convert_to),
+                                                   JS_CFUNC_DEF("copyTo", 1, js_mat_copy_to),
+                                                   JS_CFUNC_DEF("reshape", 1, js_mat_reshape),
+                                                   JS_CFUNC_DEF("getUMat", 1, js_mat_getumat),
+                                                   JS_CFUNC_MAGIC_DEF("keys", 0, js_mat_iterator_new, MAT_ITERATOR_KEYS),
+                                                   JS_CFUNC_MAGIC_DEF("values", 0, js_mat_iterator_new, MAT_ITERATOR_VALUES),
+                                                   JS_CFUNC_MAGIC_DEF("entries", 0, js_mat_iterator_new, MAT_ITERATOR_ENTRIES),
+                                                   JS_ALIAS_DEF("[Symbol.iterator]", "values"),
+                                                   JS_ALIAS_DEF("[Symbol.toPrimitive]", "toString"),
 
-    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Mat", JS_PROP_CONFIGURABLE)
+                                                   JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Mat", JS_PROP_CONFIGURABLE)
 
 };
 
@@ -1489,10 +1498,7 @@ js_mat_init(JSContext* ctx, JSModuleDef* m) {
     JS_SetClassProto(ctx, js_mat_class_id, mat_proto);
 
     mat_iterator_proto = JS_NewObject(ctx);
-    JS_SetPropertyFunctionList(ctx,
-                               mat_iterator_proto,
-                               js_mat_iterator_proto_funcs,
-                               countof(js_mat_iterator_proto_funcs));
+    JS_SetPropertyFunctionList(ctx, mat_iterator_proto, js_mat_iterator_proto_funcs, countof(js_mat_iterator_proto_funcs));
     JS_SetClassProto(ctx, js_mat_iterator_class_id, mat_iterator_proto);
 
     mat_class = JS_NewCFunction2(ctx, js_mat_ctor, "Mat", 2, JS_CFUNC_constructor, 0);

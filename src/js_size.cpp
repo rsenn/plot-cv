@@ -198,24 +198,11 @@ js_size_to_source(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
 static JSValue
 js_size_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSSizeData<double>* s = js_size_data(ctx, this_val);
-  std::ostringstream os;
-  JSValue wv, hv;
-  double width = -1, height = -1;
+  JSValue obj = JS_NewObjectProto(ctx, size_proto);
 
-  wv = JS_GetPropertyStr(ctx, this_val, "width");
-  hv = JS_GetPropertyStr(ctx, this_val, "height");
-
-  if(JS_IsNumber(wv) && JS_IsNumber(hv)) {
-    JS_ToFloat64(ctx, &width, wv);
-    JS_ToFloat64(ctx, &height, hv);
-  } else if(s) {
-    width = s->width;
-    height = s->height;
-  }
-
-  os << "{ width: " COLOR_YELLOW << width << COLOR_NONE ", height: " COLOR_YELLOW << height << COLOR_NONE " }";
-
-  return JS_NewString(ctx, os.str().c_str());
+  JS_DefinePropertyValueStr(ctx, obj, "width", JS_NewFloat64(ctx, s->width), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, obj, "height", JS_NewFloat64(ctx, s->height), JS_PROP_ENUMERABLE);
+  return obj;
 }
 
 static JSValue
@@ -345,7 +332,7 @@ js_size_from(JSContext* ctx, JSValueConst size, int argc, JSValueConst* argv) {
       array[i] = strtod(str, &endptr);
       str = endptr;
     }
-  } else if(JS_IsArray(ctx, argv[0])) {
+  } else if(js_is_array(ctx, argv[0])) {
     js_array_to<double, 2>(ctx, argv[0], array);
   }
   if(array[0] > 0 && array[1] > 0)
@@ -371,16 +358,13 @@ const JSCFunctionListEntry js_size_proto_funcs[] = {JS_CGETSET_ENUMERABLE_DEF("w
                                                     JS_CFUNC_MAGIC_DEF("fitHeight", 0, js_size_funcs, 5),
                                                     JS_CFUNC_MAGIC_DEF("fitInside", 0, js_size_funcs, 6),
                                                     JS_CFUNC_MAGIC_DEF("fitOutside", 0, js_size_funcs, 7),
-                                                    JS_CFUNC_DEF("inspect", 0, js_size_inspect),
                                                     JS_CFUNC_DEF("toString", 0, js_size_to_string),
                                                     JS_CFUNC_DEF("toSource", 0, js_size_to_source),
                                                     JS_CFUNC_DEF("mul", 1, js_size_mul),
                                                     JS_CFUNC_DEF("div", 1, js_size_div),
                                                     JS_ALIAS_DEF("values", "toArray"),
                                                     JS_CFUNC_DEF("[Symbol.iterator]", 0, js_size_symbol_iterator),
-                                                    JS_PROP_STRING_DEF("[Symbol.toStringTag]",
-                                                                       "Size",
-                                                                       JS_PROP_CONFIGURABLE)};
+                                                    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Size", JS_PROP_CONFIGURABLE)};
 
 const JSCFunctionListEntry js_size_static_funcs[] = {JS_CFUNC_DEF("from", 1, js_size_from)};
 
@@ -401,6 +385,8 @@ js_size_init(JSContext* ctx, JSModuleDef* m) {
     /* set proto.constructor and ctor.prototype */
     JS_SetConstructor(ctx, size_class, size_proto);
     JS_SetPropertyFunctionList(ctx, size_class, js_size_static_funcs, countof(js_size_static_funcs));
+
+    js_set_inspect_method(ctx, size_proto, js_size_inspect);
   }
 
   if(m)

@@ -75,8 +75,8 @@ inline std::basic_string<Char>
 to_string(const cv::Point_<T>& point) {
   const int pad = 3;
   std::basic_ostringstream<Char> os;
-  os << "{x:" << std::setfill(' ') << std::setw(pad) << point.x << ",y:" << std::setfill(' ') << std::setw(pad)
-     << point.y << "}";
+  os << "{x:" << std::setfill(' ') << std::setw(pad) << point.x << ",y:" << std::setfill(' ') << std::setw(pad) << point.y
+     << "}";
   return os.str();
 }
 

@@ -11,6 +11,7 @@
 #include "geometry.hpp"
 #include "skeletonization.hpp"
 #include "pixel_neighborhood.hpp"
+#include "palette.hpp"
 #include "util.hpp"
 #include "../quickjs/cutils.h"
 
@@ -43,10 +44,10 @@ js_cv_blur(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) 
   JSValue ret;
 
   if(js_is_noarray((input = js_umat_or_mat(ctx, argv[0]))))
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "argument 1 not an array!");
 
   if(js_is_noarray((output = js_umat_or_mat(ctx, argv[1]))))
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "argument 2 not an array!");
 
   if(argc < 3)
     return JS_EXCEPTION;
@@ -82,8 +83,8 @@ js_cv_gaussian_blur(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   input = js_umat_or_mat(ctx, argv[0]);
   output = js_umat_or_mat(ctx, argv[1]);
 
-  if(argc < 4 || js_is_noarray(input) || js_is_noarray(output))
-    return JS_EXCEPTION;
+  if(js_is_noarray(input) || js_is_noarray(output))
+    return JS_ThrowInternalError(ctx, "argument 1 or argument 2 not an array!");
 
   size = js_size_get(ctx, argv[2]);
 
@@ -110,8 +111,8 @@ js_cv_corner_harris(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   input = js_umat_or_mat(ctx, argv[0]);
   output = js_umat_or_mat(ctx, argv[1]);
 
-  if(argc < 5 || js_is_noarray(input) || js_is_noarray(output))
-    return JS_EXCEPTION;
+  if(js_is_noarray(input) || js_is_noarray(output))
+    return JS_ThrowInternalError(ctx, "argument 1 or argument 2 not an array!");
   JS_ToInt32(ctx, &blockSize, argv[2]);
   JS_ToInt32(ctx, &ksize, argv[3]);
 
@@ -144,8 +145,8 @@ js_cv_hough_lines(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
 
   image = js_umat_or_mat(ctx, argv[0]);
 
-  if(js_is_noarray(image) || !JS_IsArray(ctx, argv[1]))
-    return JS_EXCEPTION;
+  if(js_is_noarray(image) || !js_is_array(ctx, argv[1]))
+    return JS_ThrowInternalError(ctx, "argument 1 or argument 2 not an array!");
 
   array = argv[1];
   JS_ToFloat64(ctx, &rho, argv[2]);
@@ -200,7 +201,7 @@ js_cv_hough_lines_p(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   dst = js_cv_inputoutputarray(ctx, argv[1]);
 
   if(js_is_noarray(src) || js_is_noarray(dst))
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "src or dst not an array!");
 
   array = argv[1];
   JS_ToFloat64(ctx, &rho, argv[2]);
@@ -244,8 +245,8 @@ js_cv_hough_circles(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
   image = js_umat_or_mat(ctx, argv[0]);
 
-  if(js_is_noarray(image) || !JS_IsArray(ctx, argv[1]))
-    return JS_EXCEPTION;
+  if(js_is_noarray(image) || !js_is_array(ctx, argv[1]))
+    return JS_ThrowInternalError(ctx, "argument 1 or argument 2 not an array!");
 
   array = argv[1];
   JS_ToInt32(ctx, &method, argv[2]);
@@ -287,7 +288,7 @@ js_cv_canny(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv)
   edges = js_cv_inputoutputarray(ctx, argv[1]);
 
   if(js_is_noarray(image) || js_is_noarray(edges))
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "argument 1 or argument 2 not an array!");
 
   JS_ToFloat64(ctx, &threshold1, argv[2]);
   JS_ToFloat64(ctx, &threshold2, argv[3]);
@@ -318,7 +319,7 @@ js_cv_good_features_to_track(JSContext* ctx, JSValueConst this_val, int argc, JS
   corners = js_mat_data(ctx, argv[1]);
 
   if(image == nullptr || corners == nullptr || image->empty())
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "argument 1 or argument 2 not an array!");
 
   JS_ToInt32(ctx, &maxCorners, argv[2]);
   JS_ToFloat64(ctx, &qualityLevel, argv[3]);
@@ -357,15 +358,8 @@ js_cv_good_features_to_track(JSContext* ctx, JSValueConst this_val, int argc, JS
                             useHarrisDetector,
                             k);
   else
-    cv::goodFeaturesToTrack(*image,
-                            *corners,
-                            maxCorners,
-                            qualityLevel,
-                            minDistance,
-                            mask ? *mask : cv::noArray(),
-                            blockSize,
-                            useHarrisDetector,
-                            k);
+    cv::goodFeaturesToTrack(
+        *image, *corners, maxCorners, qualityLevel, minDistance, mask ? *mask : cv::noArray(), blockSize, useHarrisDetector, k);
 
   return JS_UNDEFINED;
 }
@@ -387,7 +381,7 @@ js_cv_imwrite(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
   cv::_InputArray image = js_cv_inputoutputarray(ctx, argv[1]);
 
   if(image.empty())
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "Empty image");
 
   cv::imwrite(filename, image);
 
@@ -401,7 +395,7 @@ js_cv_imshow(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
   cv::_InputArray image = js_cv_inputoutputarray(ctx, argv[1]);
 
   if(image.empty())
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "Empty image");
 
   cv::imshow(winname, image);
 
@@ -420,7 +414,7 @@ js_cv_cvt_color(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   dst = js_umat_or_mat(ctx, argv[1]);
 
   if(js_is_noarray(src) || js_is_noarray(dst))
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "src or dst not an array!");
 
   JS_ToInt32(ctx, &code, argv[2]);
 
@@ -433,7 +427,7 @@ js_cv_cvt_color(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 
   } catch(const cv::Exception& e) {
     std::cerr << e.what() << std::endl;
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "C++ exception: %s", e.what());
   }
 
   /*after = cv::getTickCount();
@@ -454,7 +448,7 @@ js_cv_split(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv)
   src = js_mat_data(ctx, argv[0]);
 
   if(src == nullptr)
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "src not an array!");
 
   length = js_array_length(ctx, argv[1]);
 
@@ -490,7 +484,7 @@ js_cv_normalize(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   dst = js_umat_or_mat(ctx, argv[1]);
 
   if(js_is_noarray(src) || js_is_noarray(dst))
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "src or dst not an array!");
 
   if(argc >= 3)
     JS_ToFloat64(ctx, &alpha, argv[2]);
@@ -516,7 +510,7 @@ js_cv_add_weighted(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
   a2 = js_umat_or_mat(ctx, argv[2]);
 
   if(js_is_noarray(a1) || js_is_noarray(a2))
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "a1 or a2 not an array!");
 
   /*
     src1 = js_mat_data(ctx, argv[0]);
@@ -526,7 +520,7 @@ js_cv_add_weighted(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
     dst = js_umat_or_mat(ctx, argv[5]);
 
   if(js_is_noarray(dst))
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "dst not an array!");
 
   if(argc >= 2)
     JS_ToFloat64(ctx, &alpha, argv[1]);
@@ -553,7 +547,7 @@ js_cv_resize(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
   dst = js_umat_or_mat(ctx, argv[1]);
 
   if(js_is_noarray(src) || js_is_noarray(dst))
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "src or dst not an array!");
 
   if(!js_size_read(ctx, argv[2], &dsize) || dsize.width == 0 || dsize.height == 0) {
     uint32_t w, h;
@@ -584,7 +578,7 @@ js_cv_skeletonization(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
   dst = js_umat_or_mat(ctx, argv[1]);
 
   if(js_is_noarray(src) || js_is_noarray(dst))
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "src or dst not an array!");
 
   output = skeletonization(src);
   output.copyTo(dst);
@@ -593,19 +587,111 @@ js_cv_skeletonization(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
 }
 
 static JSValue
-js_cv_pixel_neighborhood(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSInputOutputArray src, dst;
+js_cv_pixel_neighborhood(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSMatData* src;
+  JSOutputArray dst;
   cv::Mat output;
-  src = js_umat_or_mat(ctx, argv[0]);
+  int count;
+
+  src = js_mat_data(ctx, argv[0]);
   dst = js_umat_or_mat(ctx, argv[1]);
 
-  if(js_is_noarray(src) || js_is_noarray(dst))
-    return JS_EXCEPTION;
+  if(src == nullptr || js_is_noarray(dst))
+    return JS_ThrowInternalError(ctx, "src or dst not an array!");
 
-  output = pixelNeighborhood(src);
+  if(argc > 2) {
+    int32_t count;
+
+    JS_ToInt32(ctx, &count, argv[2]);
+    output = magic ? pixel_neighborhood_cross_if(*src, count) : pixel_neighborhood_if(*src, count);
+  } else {
+    output = magic ? pixel_neighborhood_cross(*src) : pixel_neighborhood(*src);
+  }
+
   output.copyTo(dst);
 
   return JS_UNDEFINED;
+}
+
+static JSValue
+js_cv_pixel_find_value(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSMatData* src;
+  std::vector<cv::Point> output;
+  uint32_t value;
+
+  src = js_mat_data(ctx, argv[0]);
+
+  if(src == nullptr)
+    return JS_ThrowInternalError(ctx, "src not an array!");
+
+  JS_ToUint32(ctx, &value, argv[1]);
+  output = pixel_find_value(*src, value);
+
+  return js_array_from(ctx, output);
+}
+
+static JSValue
+js_cv_palette_apply(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSMatData* src;
+  cv::Mat output;
+  std::array<uint32_t, 256> palette;
+
+  src = js_mat_data(ctx, argv[0]);
+
+  if(src == nullptr)
+    return JS_ThrowInternalError(ctx, "src not an array!");
+
+  js_array_to(ctx, argv[1], palette);
+
+  output = palette_apply(*src, palette);
+
+  return js_mat_wrap(ctx, output);
+}
+
+enum { MAT_COUNTNONZERO = 0, MAT_FINDNONZERO, MAT_HCONCAT, MAT_VCONCAT };
+
+static JSValue
+js_cv_mat_functions(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSValue ret = JS_UNDEFINED;
+  JSInputOutputArray mat;
+  mat = js_umat_or_mat(ctx, argv[0]);
+
+  if(js_is_noarray(mat))
+    return JS_ThrowInternalError(ctx, "mat not an array!");
+
+  switch(magic) {
+    case MAT_COUNTNONZERO: {
+      ret = JS_NewInt64(ctx, cv::countNonZero(mat));
+      break;
+    }
+    case MAT_FINDNONZERO: {
+      std::vector<cv::Point> output;
+      cv::findNonZero(mat, output);
+      ret = js_array_from(ctx, output);
+      break;
+    }
+    case MAT_HCONCAT: {
+      std::vector<cv::Mat> a;
+      JSInputOutputArray dst;
+      if(js_is_noarray((dst = js_umat_or_mat(ctx, argv[1]))))
+        return JS_ThrowInternalError(ctx, "dst not an array!");
+
+      js_array_to(ctx, argv[0], a);
+      cv::hconcat(a.data(), a.size(), dst);
+      break;
+    }
+    case MAT_VCONCAT: {
+      std::vector<cv::Mat> a;
+      JSInputOutputArray dst;
+      if(js_is_noarray((dst = js_umat_or_mat(ctx, argv[1]))))
+        return JS_ThrowInternalError(ctx, "dst not an array!");
+
+      js_array_to(ctx, argv[0], a);
+      cv::vconcat(a.data(), a.size(), dst);
+      break;
+    }
+  }
+  return ret;
 }
 
 static JSValue
@@ -615,7 +701,7 @@ js_cv_equalize_hist(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   dst = js_umat_or_mat(ctx, argv[1]);
 
   if(js_is_noarray(src) || js_is_noarray(dst))
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "src or dst not an array!");
 
   cv::equalizeHist(src, dst);
   return JS_UNDEFINED;
@@ -631,7 +717,7 @@ js_cv_convert_scale_abs(JSContext* ctx, JSValueConst this_val, int argc, JSValue
   dst = js_umat_or_mat(ctx, argv[1]);
 
   if(js_is_noarray(src) || js_is_noarray(dst))
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "src or dst not an array!");
 
   if(argc >= 3)
     JS_ToFloat64(ctx, &alpha, argv[2]);
@@ -652,7 +738,7 @@ js_cv_threshold(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   dst = js_umat_or_mat(ctx, argv[1]);
 
   if(js_is_noarray(src) || js_is_noarray(dst))
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "src or dst not an array!");
 
   JS_ToFloat64(ctx, &thresh, argv[2]);
   JS_ToFloat64(ctx, &maxval, argv[3]);
@@ -672,7 +758,7 @@ js_cv_bilateral_filter(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
   dst = js_umat_or_mat(ctx, argv[1]);
 
   if(js_is_noarray(src) || js_is_noarray(dst))
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "src or dst not an array!");
 
   JS_ToInt32(ctx, &d, argv[2]);
 
@@ -755,7 +841,7 @@ js_cv_morphology(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* 
   kernel = js_cv_inputoutputarray(ctx, argv[2]);
 
   if(js_is_noarray(src) || js_is_noarray(dst) || js_is_noarray(kernel) || argc < 3)
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "src or dst or kernel not an array!");
 
   if(argc >= 4)
     if(!js_point_read(ctx, argv[3], &anchor))
@@ -769,7 +855,7 @@ js_cv_morphology(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* 
 
   if(argc >= 7) {
     std::vector<double> value;
-    if(!JS_IsArray(ctx, argv[6]))
+    if(!js_is_array(ctx, argv[6]))
       return JS_EXCEPTION;
 
     js_array_to(ctx, argv[6], value);
@@ -800,7 +886,8 @@ js_cv_morphology_ex(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   kernel = js_umat_or_mat(ctx, argv[3]);
 
   if(js_is_noarray(src) || js_is_noarray(dst) || js_is_noarray(kernel) || argc < 3)
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "src or dst or kernel not an array!");
+
   if(argc >= 5)
     if(!js_point_read(ctx, argv[4], &anchor))
       return JS_EXCEPTION;
@@ -813,7 +900,7 @@ js_cv_morphology_ex(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
   if(argc >= 8) {
     std::vector<double> value;
-    if(!JS_IsArray(ctx, argv[7]))
+    if(!js_is_array(ctx, argv[7]))
       return JS_EXCEPTION;
 
     js_array_to(ctx, argv[7], value);
@@ -854,7 +941,7 @@ js_cv_median_blur(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
   dst = js_umat_or_mat(ctx, argv[1]);
 
   if(js_is_noarray(src) || js_is_noarray(dst))
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "src or dst not an array!");
 
   JS_ToInt32(ctx, &ksize, argv[2]);
 
@@ -898,12 +985,8 @@ js_cv_mix_channels(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
   if(js_array_to(ctx, argv[2], fromTo) == -1)
     return JS_EXCEPTION;
 
-  cv::mixChannels(const_cast<const cv::Mat*>(srcs.data()),
-                  srcs.size(),
-                  dsts.data(),
-                  dsts.size(),
-                  fromTo.data(),
-                  fromTo.size() >> 1);
+  cv::mixChannels(
+      const_cast<const cv::Mat*>(srcs.data()), srcs.size(), dsts.data(), dsts.size(), fromTo.data(), fromTo.size() >> 1);
 
   return JS_UNDEFINED;
 }
@@ -939,8 +1022,7 @@ js_cv_min_max_loc(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
                     js_object::from_map(ctx,
                                         std::map<std::string, int>{
                                             std::pair<std::string, int>{"x", maxLoc.x},
-                                            std::pair<std::string, int>{"y",
-                                                                        maxLoc.y}})); // js_point_wrap(ctx, maxLoc));
+                                            std::pair<std::string, int>{"y", maxLoc.y}})); // js_point_wrap(ctx, maxLoc));
 
   return ret;
 }
@@ -1300,10 +1382,9 @@ js_cv_getperspectivetransform(JSContext* ctx, JSValueConst this_val, int argc, J
   std::transform(v->begin(), v->end(), std::back_inserter(a), [](const JSPointData<double>& pt) -> JSPointData<float> {
     return JSPointData<float>(pt.x, pt.y);
   });
-  std::transform(other->begin(),
-                 other->end(),
-                 std::back_inserter(b),
-                 [](const JSPointData<double>& pt) -> JSPointData<float> { return JSPointData<float>(pt.x, pt.y); });
+  std::transform(other->begin(), other->end(), std::back_inserter(b), [](const JSPointData<double>& pt) -> JSPointData<float> {
+    return JSPointData<float>(pt.x, pt.y);
+  });
   matrix = cv::getPerspectiveTransform(a, b /*, solveMethod*/);
 
   ret = js_mat_wrap(ctx, matrix);
@@ -1328,10 +1409,9 @@ js_cv_getaffinetransform(JSContext* ctx, JSValueConst this_val, int argc, JSValu
   std::transform(v->begin(), v->end(), std::back_inserter(a), [](const JSPointData<double>& pt) -> JSPointData<float> {
     return JSPointData<float>(pt.x, pt.y);
   });
-  std::transform(other->begin(),
-                 other->end(),
-                 std::back_inserter(b),
-                 [](const JSPointData<double>& pt) -> JSPointData<float> { return JSPointData<float>(pt.x, pt.y); });
+  std::transform(other->begin(), other->end(), std::back_inserter(b), [](const JSPointData<double>& pt) -> JSPointData<float> {
+    return JSPointData<float>(pt.x, pt.y);
+  });
   matrix = cv::getAffineTransform(a, b);
 
   ret = js_mat_wrap(ctx, matrix);
@@ -1353,7 +1433,7 @@ js_cv_find_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
   cv::findContours(*m, contours, hier, mode, approx, offset);
 
-  if(JS_IsArray(ctx, argv[1])) {
+  if(js_is_array(ctx, argv[1])) {
     js_array_truncate(ctx, argv[1], 0);
   }
 
@@ -1421,10 +1501,10 @@ js_cv_draw_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   mat = js_umat_or_mat(ctx, argv[0]);
 
   if(js_is_noarray(mat))
-    return JS_EXCEPTION;
+    return JS_ThrowInternalError(ctx, "mat not an array!");
 
-  if(!JS_IsArray(ctx, argv[1]))
-    return JS_EXCEPTION;
+  if(!js_is_array(ctx, argv[1]))
+    return JS_ThrowInternalError(ctx, "argument 2 not an array!");
 
   js_array_to(ctx, argv[1], contours);
 
@@ -1590,7 +1670,10 @@ js_function_list_t js_cv_static_funcs{
     JS_CFUNC_DEF("addWeighted", 6, js_cv_add_weighted),
     JS_CFUNC_DEF("resize", 3, js_cv_resize),
     JS_CFUNC_DEF("skeletonization", 1, js_cv_skeletonization),
-    JS_CFUNC_DEF("pixelNeighborhood", 1, js_cv_pixel_neighborhood),
+    JS_CFUNC_MAGIC_DEF("pixelNeighborhood", 2, js_cv_pixel_neighborhood, 0),
+    JS_CFUNC_MAGIC_DEF("pixelNeighborhoodCross", 2, js_cv_pixel_neighborhood, 1),
+    JS_CFUNC_DEF("pixelFindValue", 2, js_cv_pixel_find_value),
+    JS_CFUNC_DEF("paletteApply", 2, js_cv_palette_apply),
     JS_CFUNC_MAGIC_DEF("displayOverlay", 2, js_cv_gui_methods, DISPLAY_OVERLAY),
     JS_CFUNC_MAGIC_DEF("getTickCount", 0, js_cv_getticks, 0),
     JS_CFUNC_MAGIC_DEF("getTickFrequency", 0, js_cv_getticks, 1),
@@ -1599,6 +1682,10 @@ js_function_list_t js_cv_static_funcs{
     JS_CFUNC_MAGIC_DEF("bitwise_or", 3, js_cv_bitwise, 1),
     JS_CFUNC_MAGIC_DEF("bitwise_xor", 3, js_cv_bitwise, 2),
     JS_CFUNC_MAGIC_DEF("bitwise_not", 2, js_cv_bitwise, 3),
+    JS_CFUNC_MAGIC_DEF("countNonZero", 1, js_cv_mat_functions, MAT_COUNTNONZERO),
+    JS_CFUNC_MAGIC_DEF("findNonZero", 1, js_cv_mat_functions, MAT_FINDNONZERO),
+    JS_CFUNC_MAGIC_DEF("hconcat", 2, js_cv_mat_functions, MAT_HCONCAT),
+    JS_CFUNC_MAGIC_DEF("vconcat", 2, js_cv_mat_functions, MAT_VCONCAT),
     /*};
     const js_function_list_t js_cv_core_flags{*/
     JS_PROP_INT32_DEF("CV_VERSION_MAJOR", CV_VERSION_MAJOR, 0),

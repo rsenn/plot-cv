@@ -82,9 +82,9 @@ inline std::string
 to_string(const cv::Scalar& scalar) {
   const int pad = 3;
   std::ostringstream oss;
-  oss << '[' << std::setfill(' ') << std::setw(pad) << scalar[0] << ',' << std::setfill(' ') << std::setw(pad)
-      << scalar[1] << ',' << std::setfill(' ') << std::setw(pad) << scalar[2] << ',' << std::setfill(' ')
-      << std::setw(pad) << scalar[3] << ']';
+  oss << '[' << std::setfill(' ') << std::setw(pad) << scalar[0] << ',' << std::setfill(' ') << std::setw(pad) << scalar[1]
+      << ',' << std::setfill(' ') << std::setw(pad) << scalar[2] << ',' << std::setfill(' ') << std::setw(pad) << scalar[3]
+      << ']';
   return oss.str();
 }
 
@@ -145,8 +145,7 @@ extern "C" config_values config;
 
 template<class T>
 inline int
-get_largest_contour(const std::vector<std::vector<cv::Point_<T>>>& contours_un,
-                    std::vector<cv::Point_<T>>& bigContour) {
+get_largest_contour(const std::vector<std::vector<cv::Point_<T>>>& contours_un, std::vector<cv::Point_<T>>& bigContour) {
   double maxArea = 0.0;
   int largestContour = -1;
   for(size_t i = 0; i < contours_un.size(); i++) {
@@ -215,9 +214,7 @@ out_points(O& os, const point_vector<int>& pl) {
 template<class Container>
 inline void
 draw_all_lines(
-    image_type& out,
-    const Container& lines,
-    const std::function<int(int, size_t)>& hue = [](int index, size_t len) -> int {
+    image_type& out, const Container& lines, const std::function<int(int, size_t)>& hue = [](int index, size_t len) -> int {
       return (index * 360 * 10 / len) % 360;
     }) {
   for(typename Container::const_iterator it = lines.begin(); it != lines.end(); it++) {
@@ -262,9 +259,7 @@ svg_export_file(const std::vector<std::vector<cv::Point_<T>>>& contours, std::st
     return from_scalar(hsv_to_rgb(area / max_area * 360, 1, 1));
   };
 
-  std::for_each(contours.begin(),
-                contours.end(),
-                std::bind(&svg_draw_polyline, std::ref(doc), std::placeholders::_1, cfn));
+  std::for_each(contours.begin(), contours.end(), std::bind(&svg_draw_polyline, std::ref(doc), std::placeholders::_1, cfn));
   //  svg_draw_polyline(doc, contour_arg, svg::Color(255, 0, 0));
 
   doc.save();

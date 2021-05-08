@@ -237,6 +237,18 @@ js_line_points(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
 }
 
 static JSValue
+js_line_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSLineData<double>* ln = js_line_data(ctx, this_val);
+  JSValue obj = JS_NewObjectProto(ctx, line_proto);
+
+  JS_DefinePropertyValueStr(ctx, obj, "x1", JS_NewFloat64(ctx, ln->x1), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, obj, "y1", JS_NewFloat64(ctx, ln->y1), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, obj, "x2", JS_NewFloat64(ctx, ln->x2), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, obj, "y2", JS_NewFloat64(ctx, ln->y2), JS_PROP_ENUMERABLE);
+  return obj;
+}
+
+static JSValue
 js_line_methods(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSLineData<double>* ln;
   JSValue ret = JS_UNDEFINED;
@@ -436,6 +448,8 @@ js_line_init(JSContext* ctx, JSModuleDef* m) {
     /* set proto.constructor and ctor.prototype */
     JS_SetConstructor(ctx, line_class, line_proto);
     JS_SetPropertyFunctionList(ctx, line_class, js_line_static_funcs, countof(js_line_static_funcs));
+
+    js_set_inspect_method(ctx, line_proto, js_line_inspect);
   }
 
   if(m)
