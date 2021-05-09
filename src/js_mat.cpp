@@ -1022,24 +1022,24 @@ js_mat_convert_to(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
 static JSValue
 js_mat_copy_to(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSMatData* m;
-  JSMatData* output;
-  JSInputOutputArray /*output,*/ mask = cv::noArray();
+  JSOutputArray output;
+  JSInputArray /*output,*/ mask = cv::noArray();
 
   m = js_mat_data(ctx, this_val);
 
-  output = js_mat_data(ctx, argv[0]);
+  output = js_umat_or_mat(ctx, argv[0]);
   // output = js_umat_or_mat(ctx, argv[0]);
 
-  if(output == nullptr /*js_is_noarray(output)*/)
+  if(js_is_noarray(output))
     return JS_ThrowInternalError(ctx, "argument 1 not an array!");
 
   if(argc > 1)
     mask = js_umat_or_mat(ctx, argv[1]);
 
   if(!js_is_noarray(mask))
-    m->copyTo(*output, mask);
+    m->copyTo(output, mask);
   else
-    m->copyTo(*output);
+    m->copyTo(output);
 
   return JS_UNDEFINED;
 }

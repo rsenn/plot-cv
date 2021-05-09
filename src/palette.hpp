@@ -4,9 +4,12 @@
 #include <opencv2/core.hpp>
 
 template<class Pixel>
-static void
+static inline void
 palette_apply(const cv::Mat& src, JSOutputArray dst, Pixel palette[256]) {
-  cv::Mat& result = dst.getMatRef(); // cv::Mat::zeros(src.size(), CV_8UC4);
+  cv::Mat result(src.size(), CV_8UC3);
+
+  printf("result.size() = %ux%u\n", result.cols, result.rows);
+  printf("result.channels() = %u\n", result.channels());
 
   printf("src.elemSize() = %zu\n", src.elemSize());
   printf("result.elemSize() = %zu\n", result.elemSize());
@@ -20,7 +23,7 @@ palette_apply(const cv::Mat& src, JSOutputArray dst, Pixel palette[256]) {
     }
   }
 
-  //  result.copyTo(dst);
+  result.copyTo(dst.getMatRef());
 }
 
 #endif /* PALETTE_HPP */

@@ -12,7 +12,8 @@ pixel_neighborhood_default_pred(uchar value, uchar count) {
 template<class Callable>
 static cv::Mat
 pixel_neighborhood_cross_pred(const cv::Mat& mat, Callable pred) {
-  cv::Mat result = cv::Mat::zeros(mat.size(), CV_8UC1);
+  cv::Mat result(mat.size(), CV_8UC1);
+  size_t row_size = mat.ptr<uchar>(1, 0) - mat.ptr<uchar>(0, 0);
 
   for(int y = 1; y < mat.rows - 1; y++) {
     for(int x = 1; x < mat.cols - 1; x++) {
@@ -29,7 +30,7 @@ pixel_neighborhood_cross_pred(const cv::Mat& mat, Callable pred) {
 template<class Callable>
 static cv::Mat
 pixel_neighborhood_pred(const cv::Mat& mat, Callable pred) {
-  cv::Mat result = cv::Mat::zeros(mat.rows, mat.cols, CV_8UC1);
+  cv::Mat result(mat.size(), CV_8UC1);
 
   for(int y = 1; y < mat.rows - 1; y++) {
     for(int x = 1; x < mat.cols - 1; x++) {

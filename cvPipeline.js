@@ -75,6 +75,18 @@ export class Pipeline extends Function {
     return [names[currentProcessor],processors[currentProcessor]];
   }
 
+  *imageEntries() {
+    const {size,names,images} = this;
+for(let i = 0; i < size; i++) 
+  yield [names[i], images[i]];
+  }
+
+  *processorEntries() {
+    const {size,names,processors} = this;
+for(let i = 0; i < size; i++) 
+  yield [names[i], processors[i]];
+  }
+
   getName(id) {
     id = this.processorIndex(id);
     if(typeof id == 'number') return this.names[id];

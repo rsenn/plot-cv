@@ -81,6 +81,9 @@ target_link_libraries(quickjs-clahe quickjs-mat quickjs-size)
 target_link_libraries(quickjs-umat quickjs-mat)
 target_link_libraries(quickjs-subdiv2d quickjs-contour)
 
+
+target_link_libraries(quickjs-cv png)
+
 # add_dependencies(quickjs-point-iterator quickjs-contour quickjs-mat)
 
 file(

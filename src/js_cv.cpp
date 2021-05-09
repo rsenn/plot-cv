@@ -11,10 +11,12 @@
 #include "geometry.hpp"
 #include "skeletonization.hpp"
 #include "pixel_neighborhood.hpp"
+#include "png_write.hpp"
 #include "palette.hpp"
 #include "util.hpp"
 #include "../quickjs/cutils.h"
 
+#include <array>
 #include <cassert>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
@@ -383,7 +385,17 @@ js_cv_imwrite(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
   if(image.empty())
     return JS_ThrowInternalError(ctx, "Empty image");
 
-  cv::imwrite(filename, image);
+  if(image.type() == CV_8UC1 && argc > 2 && str_end(filename, ".png")) {
+
+    std::array<cv::Vec3b, 256> palette;
+
+    js_array_to(ctx, argv[2],   palette );
+
+    write_mat(filename, image.getMatRef(), palette);
+
+  } else {
+    cv::imwrite(filename, image);
+  }
 
   return JS_UNDEFINED;
 }
@@ -646,13 +658,17 @@ js_cv_palette_apply(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
   {
     cv::Mat& output = dst.getMatRef();
+    int channels = output.channels();
 
-    std::cout << "output.channels() = " << output.channels() << std::endl;
+    std::cout << "output.channels() = " << channels << std::endl;
     /*if(js_is_typedarray(ctx, argv[2])) {
       return JS_ThrowInternalError(ctx, "typed array not handled");
     } else*/
 
-    if(output.channels() == 4) {
+    if(channels == 1)
+      channels = 3;
+
+    if(channels == 4) {
       std::vector<JSColorData<uint8_t>> palette;
       std::vector<cv::Vec4b> palette4b;
       std::vector<cv::Scalar> palettesc;
@@ -666,7 +682,7 @@ js_cv_palette_apply(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
       palette_apply<cv::Vec4b>(*src, dst, &palette4b[0]);
 
-    } else if(output.channels() == 3) {
+    } else if(channels == 3) {
       std::vector<JSColorData<uint8_t>> palette;
       std::vector<cv::Vec3b> palette3b;
       std::vector<cv::Scalar> palettesc;
@@ -679,6 +695,8 @@ js_cv_palette_apply(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
       }
 
       palette_apply<cv::Vec3b>(*src, dst, &palette3b[0]);
+    } else {
+      return JS_ThrowInternalError(ctx, "output mat channels = %u", output.channels());
     }
   }
   return JS_UNDEFINED;

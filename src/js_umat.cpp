@@ -598,52 +598,28 @@ js_umat_set_vector(JSContext* ctx, JSUMatData* um, int argc, JSValueConst* argv)
 
 static JSValue
 js_umat_set_to(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSUMatData* um = js_umat_data(ctx, this_val);
+  JSUMatData* m = js_umat_data(ctx, this_val);
   uint32_t bytes;
   std::vector<bool> defined;
 
-  if(!um)
+  if(!m)
     return JS_EXCEPTION;
 
-  if(argc >= 1 && js_is_array(ctx, argv[0])) {
+  if(m->channels() == 1) {
+    double value;
+    js_value_to(ctx, argv[0], value);
+    m->setTo(cv::Scalar(value));
+
+  } else if(js_is_array(ctx, argv[0])) {
     cv::Scalar s;
     size_t n = js_array_to(ctx, argv[0], s);
-
-    // std::cerr << "Scalar [ " << s[0] << ", " << s[1] << ", " << s[2] << ", " << s[3] << " ]" <<
-    // std::endl; std::cerr << "Scalar.size() = " << n << std::endl;
-
-    if(n >= um->channels()) {
-      um->setTo(s);
+    if(n >= m->channels()) {
+      m->setTo(s);
       return JS_UNDEFINED;
     }
   }
 
-  bytes = (1 << um->depth()) * um->channels();
-  if(um->depth() == CV_16U && um->channels() > 1) {
-    if(um->channels() == 2)
-      js_umat_set_vector<cv::Vec<uint16_t, 2>>(ctx, um, argc, argv);
-    else if(um->channels() == 3)
-      js_umat_set_vector<cv::Vec<uint16_t, 3>>(ctx, um, argc, argv);
-    else if(um->channels() == 4)
-      js_umat_set_vector<cv::Vec<uint16_t, 4>>(ctx, um, argc, argv);
-  } else if(um->depth() == CV_32F) {
-    if(um->channels() == 1)
-      js_umat_set_vector<float>(ctx, um, argc, argv);
-  } else if(bytes <= sizeof(uint)) {
-    if(bytes <= 1) {
-      std::vector<uint8_t> v;
-      js_umat_vector_get(ctx, argc, argv, v, defined);
-      um->setTo(cv::InputArray(v), defined);
-    } else if(bytes <= 2) {
-      std::vector<uint16_t> v;
-      js_umat_vector_get(ctx, argc, argv, v, defined);
-      um->setTo(cv::InputArray(v), defined);
-    } else if(bytes <= 4) {
-      js_umat_set_vector<uint32_t>(ctx, um, argc, argv);
-    } else if(bytes <= 8) {
-      js_umat_set_vector<uint64_t>(ctx, um, argc, argv);
-    }
-  }
+  bytes = m->elemSize();
 
   return JS_UNDEFINED;
 }
@@ -1016,9 +992,26 @@ js_umat_array(JSContext* ctx, JSValueConst this_val) {
   return JS_CallConstructor(ctx, typed_array, 1, &buffer);
 }
 
+JSValue
+js_umat_call(JSContext* ctx, JSValueConst func_obj, JSValueConst this_val, int argc, JSValueConst* argv, int flags) {
+  cv::Rect rect = {0, 0, 0, 0};
+  JSUMatData* src;
+
+  if((src = js_umat_data(ctx, func_obj)) == nullptr)
+    return JS_EXCEPTION;
+
+  if(!js_rect_read(ctx, argv[0], &rect))
+    return JS_ThrowTypeError(ctx, "argument 1 expecting Rect");
+  // printf("js_mat_call %u,%u %ux%u\n", rect.x, rect.y, rect.width, rect.height);
+
+  cv::UMat umat = src->operator()(rect);
+  return js_umat_wrap(ctx, umat);
+}
+
 JSClassDef js_umat_class = {
     .class_name = "UMat",
     .finalizer = js_umat_finalizer,
+    .call = js_umat_call,
 };
 
 const JSCFunctionListEntry js_umat_proto_funcs[] = {

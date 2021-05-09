@@ -142,6 +142,8 @@ console.log("statusRect:", statusRect);
 */
   let statusRect = new Rect(0, resolution.height, resolution.width, 200);
 
+let statusMat = new Mat(statusRect.size, cv.CV_8UC3);
+
   console.log('statusRect:', statusRect);
 
   let [textRect, helpRect] = new Rect(statusRect.size).inset(5).vsplit(-20);
@@ -150,9 +152,9 @@ console.log("statusRect:", statusRect);
   console.log('textRect', textRect);
   console.log('helpRect:', helpRect);
 
-  let screen = new Mat(screenSize, cv.CV_8UC3);
-  let output = screen(outputRect);
-  let status = screen(statusRect);
+  let screen = new UMat(screenSize, cv.CV_8UC3);
+  //let output = screen(outputRect);
+  //let status = screen(statusRect);
 
   cv.imshow('output', screen);
   cv.moveWindow('output', 0, 0);
@@ -171,8 +173,8 @@ console.log("statusRect:", statusRect);
 
   fonts.forEach(file => draw.loadFont(file));
 
-  output.setTo([255, 255, 255]);
-  status.setTo(backgroundColor);
+/*  output.setTo([255, 255, 255]);
+  status.setTo(backgroundColor);*/
 
   let { frameShow = 1, paramIndex = 0, ...config } = LoadConfig();
 
@@ -206,7 +208,6 @@ console.log("statusRect:", statusRect);
 
   const black = [0x00, 0x00, 0x00, 0xff];
 
-  for(let i = 0; i < 256; i++) palette[i] = black;
 
   palette[0] = [0x0, 0x0, 0x0, 0xff];
   palette[1] = [0xff, 0xff, 0x0, 0xff];
@@ -215,6 +216,10 @@ console.log("statusRect:", statusRect);
   palette[4] = [0x0, 0xff, 0x0, 0xff];
   palette[5] = [0xff, 0x80, 0x0, 0xff];
   palette[6] = [0xff, 0x0, 0x0, 0xff];
+
+  for(let i = 0; i < 8; i++) palette[i] = [i & 0b100 ? 0xff : 0x00, i & 0b010 ? 0xff : 0x00, i & 0b001 ? 0xff : 0x00, 0xff];
+
+  for(let i = 8; i < 256; i++) palette[i] = black;
 
   let pipeline = new Pipeline([
       function AcquireFrame(src, dst) {
@@ -257,14 +262,12 @@ console.log("statusRect:", statusRect);
         //console.log('Skeletonization dst', this.outputOf('Skeletonization'));
       },
 
-      function PixelNeighborhood(src, dst) {
+  /*    function PixelNeighborhood(src, dst) {
         neighborhood = new Mat(src.size, cv.CV_8UC1);
         let output = new Mat(src.size, dst.type ?? src.type);
 
         cv.pixelNeighborhood(src, neighborhood);
         console.log('cv.countNonZero(neighborhood)', cv.countNonZero(neighborhood));
-
-       // console.log('palette:', console.config({ numberBase: 16, maxArrayLength: 100 }), palette);
 
         cv.paletteApply(neighborhood, output, palette);
         console.log(`output`, output);
@@ -279,30 +282,39 @@ console.log("statusRect:", statusRect);
 
         new Mat(src.size, cv.CV_8UC4).copyTo(dst);
 
-              cv.pixelNeighborhood(src, neighborhood);
-console.log(`neighborhood.at(${coords[0]})`, neighborhood.at(coords[0]));
+        cv.pixelNeighborhood(src, neighborhood);
+        console.log(`neighborhood.at(${coords[0]})`, neighborhood.at(coords[0]));
+
+        let tmp = neighborhood(new Rect(coords[0], new Size(1, 1)));
+        console.log(`tmp`, tmp);
+
+        tmp.mul(40);
+        console.log(`tmp.at(0,0)`, tmp.at(0, 0));
+
+        console.log(`neighborhood.at(${coords[0]})`, neighborhood.at(coords[0]));
+        neighborhood.mul(40);
+
+        cv.cvtColor(neighborhood, dst, cv.COLOR_GRAY2BGRA);
+      },*/
+  function PixelNeighborhood(src, dst) {
+     let neighborhood = new Mat(src.size, cv.CV_8UC1);
+
+        cv.pixelNeighborhood (src, neighborhood);
+  
+  //src.copyTo(dst);    
+       //   neighborhood.mul(40);
+  //cv.cvtColor(neighborhood, dst, cv.COLOR_GRAY2BGR);
+    
+      console.log("dst:", dst);
+
+     cv.paletteApply(neighborhood, dst, palette);
+ console.log("dst:", dst);
 
 
-let tmp = neighborhood(new Rect(coords[0], new Size(1,1)));
-console.log(`tmp`, tmp);
-//tmp.setTo(0x40);
- //cv.bitwise_or(neighborhood, 0x40, neighborhood);
- //tmp.or(0x40,tmp);
- tmp.mul(40);
-console.log(`tmp.at(0,0)`, tmp.at(0,0));
-//neighborhood.xor(0x40, neighborhood);
-console.log(`neighborhood.at(${coords[0]})`, neighborhood.at(coords[0]));
- neighborhood.mul(40);
 
-  cv.cvtColor(neighborhood, dst, cv.COLOR_GRAY2BGRA);
-        //     src.copyTo(dst);
-     /*   console.log('dst:', dst);
-        dst.clear();
+        cv.imwrite('neighborhood.png', dst);
 
-        console.log('output:', output);
-        console.log('dst:', dst);
-        dst.or(output);*/
-      },
+       },
 
       function HoughLinesP(src, dst) {
         const skel = this.outputOf('Skeletonization');
@@ -393,11 +405,11 @@ console.log(`neighborhood.at(${coords[0]})`, neighborhood.at(coords[0]));
         let mat = pipeline.getImage(i);
 
         if(mat.channels == 1) cv.cvtColor(mat, mat, cv.COLOR_GRAY2BGR);
+        //if(mat.channels == 3) cv.cvtColor(mat, mat, cv.COLOR_BGR2BGRA);
         if(mat.channels == 4) cv.cvtColor(mat, mat, cv.COLOR_BGRA2BGR);
-
-        screen(outputRect).clear();
-
-        mat.copyTo(screen(outputRect));
+/*      console.log('mat', screen);
+     
+        mat.copyTo(screen(outputRect));*/
         let processor = pipeline.getProcessor(i);
         let params = processorParams.get(processor);
 
@@ -412,12 +424,17 @@ console.log(`neighborhood.at(${coords[0]})`, neighborhood.at(coords[0]));
         //console.log('paramIndexes', paramIndexes);
 
         RedrawStatus();
+
+        cv.vconcat([mat, statusMat ], screen);
+
+RedrawWindow();
       }
     }
   );
 
   function RedrawStatus() {
     //console.log('RedrawStatus', `paramNav.index=${paramNav.index}`);
+console.log(`pipeline.images =`,new Map(pipeline.imageEntries()));
 
     let i = pipeline.currentProcessor;
     let processor = pipeline.getProcessor(i);
@@ -425,8 +442,8 @@ console.log(`neighborhood.at(${coords[0]})`, neighborhood.at(coords[0]));
 
     let srect = new Rect(statusRect.size);
 
-    draw.rect(screen(statusRect), srect, backgroundColor, cv.FILLED, true);
-    draw.rect(screen(statusRect), srect.inset(3, 0), 0, cv.FILLED, true);
+    draw.rect(statusMat, srect, backgroundColor, cv.FILLED, true);
+    draw.rect(statusMat, srect.inset(3, 0), 0, cv.FILLED, true);
 
     const inspectOptions = {
       colors: true,
@@ -444,15 +461,19 @@ console.log(`neighborhood.at(${coords[0]})`, neighborhood.at(coords[0]));
         })
         .join('');
 
-    DrawText(status(textRect), text, textColor, fontFace, fontSize);
-    DrawText(status(helpRect),
+
+
+    DrawText(statusMat(textRect), text, textColor, fontFace, fontSize);
+    DrawText(statusMat(helpRect),
       '< prev, > next, + increment, - decrement, DEL reset',
       textColor,
       fontFace,
       fontSize
     );
 
-    RedrawWindow();
+    /*statusMat.copyTo(screen(statusRect));
+
+    RedrawWindow();*/
   }
 
   function RedrawWindow() {
@@ -489,6 +510,7 @@ console.log(`neighborhood.at(${coords[0]})`, neighborhood.at(coords[0]));
   );
 
   console.log(`pipeline.recalc(${frameShow})`, pipeline.recalc(frameShow));
+
 
   while(true) {
     key = cv.waitKeyEx(-1);

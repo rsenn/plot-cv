@@ -15,6 +15,7 @@ target_compile_definitions(highgui-viewer PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="
 target_link_libraries(
   highgui-viewer ${OpenCV_LIBS} ${GLEW_SHARED_LIBRARY_RELEASE} ${GLEW_SHARED_LIBRARIES}
   quickjs
+  png
   ${LIBDL} ${LIBM} ${LIBPTHREAD})
 
 install(TARGETS highgui-viewer DESTINATION bin)

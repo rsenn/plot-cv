@@ -63,6 +63,7 @@ target_compile_definitions(imgui-viewer PRIVATE CONFIG_VERSION="${quickjs_versio
 target_link_libraries(
   imgui-viewer ${SDL2_LIBRARIES} ${OpenCV_LIBS} glfw ${OPENGL_LIBRARIES} ${GLFW_LIBRARIES} ${GLEW_LIBRARIES} ${EXTRA_LIBS}
   quickjs
+  png
   ${LIBDL} ${LIBM} ${LIBPTHREAD} GL)
 if(OpenCV_FOUND)
   target_include_directories(imgui-viewer PUBLIC ${OpenCV_INCLUDE_DIRS})
