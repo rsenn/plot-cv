@@ -1,4 +1,5 @@
 #include "jsbindings.hpp"
+#include "js_cv.hpp"
 #include "js_mat.hpp"
 #include "js_size.hpp"
 #include "js_point.hpp"
@@ -47,7 +48,8 @@ enum {
   METHOD_RESET,
   METHOD_RESIZE,
   METHOD_STEP1,
-  METHOD_LOCATE_ROI
+  METHOD_LOCATE_ROI,
+  METHOD_PTR
 };
 enum { MAT_EXPR_AND = 0, MAT_EXPR_OR, MAT_EXPR_XOR, MAT_EXPR_MUL };
 enum { MAT_ITERATOR_KEYS, MAT_ITERATOR_VALUES, MAT_ITERATOR_ENTRIES };
@@ -126,6 +128,7 @@ js_mat_track(JSContext* ctx, JSMatData* s) {
   for(const auto& ptr : deallocate) js_deallocate(ctx, ptr);
   return s;
 }
+
 VISIBLE JSValue
 js_mat_new(JSContext* ctx, uint32_t rows, uint32_t cols, int type) {
   JSValue ret;
@@ -367,6 +370,21 @@ js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
       js_point_write(ctx, argv[0], ofs);
       break;
     }
+    case METHOD_PTR: {
+      uint32_t row = 0, col = 0;
+      uchar* ptr;
+      std::ostringstream os;
+      if(argc > 0)
+        JS_ToUint32(ctx, &row, argv[0]);
+      if(argc > 1)
+        JS_ToUint32(ctx, &col, argv[1]);
+      ptr = m->ptr<uchar>(row, col);
+
+      os << static_cast<void*>(ptr);
+
+      ret = js_value_from(ctx, os.str());
+      break;
+    }
   }
 
   return ret;
@@ -376,16 +394,16 @@ static JSValue
 js_mat_expr(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSValue ret = JS_UNDEFINED;
   JSColorData<double> color;
-  JSMatData *src = nullptr, *dst = nullptr, *o = nullptr;
+  JSMatData *input = nullptr, *output = nullptr, *other = nullptr;
   double scale = 1.0;
 
-  if((src = js_mat_data(ctx, this_val)) == nullptr)
+  if((input = js_mat_data(ctx, this_val)) == nullptr)
     return JS_EXCEPTION;
 
   if(argc < 1)
     return JS_EXCEPTION;
 
-  if((o = js_mat_data_nothrow(argv[0])) == nullptr)
+  if((other = js_mat_data_nothrow(argv[0])) == nullptr)
     if(!js_color_read(ctx, argv[0], &color))
       return JS_EXCEPTION;
 
@@ -396,20 +414,20 @@ js_mat_expr(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv,
   }
 
   if(argc > 1)
-    dst = js_mat_data(ctx, argv[1]);
+    output = js_mat_data(ctx, argv[1]);
 
-  if(dst == nullptr)
-    dst = src;
+  if(output == nullptr)
+    output = input;
 
   {
     cv::MatExpr expr;
-    cv::Mat tmp(src->rows, src->cols, src->type());
+    cv::Mat tmp(input->rows, input->cols, input->type());
 
-    if(o == nullptr) {
+    if(other == nullptr) {
       cv::Scalar& scalar = *reinterpret_cast<cv::Scalar*>(&color);
-      cv::Mat& mat = *src;
+      cv::Mat& mat = *input;
 
-      // std::cerr << "js_mat_expr src=" << (void*)src << " dst=" << (void*)dst << " scalar=" <<
+      // std::cerr << "js_mat_expr input=" << (void*)input << " output=" << (void*)output << " scalar=" <<
       // scalar << std::endl;
 
       switch(magic) {
@@ -421,24 +439,32 @@ js_mat_expr(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv,
       tmp = static_cast<cv::Mat>(expr);
 
     } else {
-      switch(magic) {
-        case MAT_EXPR_AND:
-          expr = (*src) & (*o); /*cv::bitwise_and(*src, *o, *dst);*/
-          break;
-        case MAT_EXPR_OR:
-          expr = (*src) | (*o); /*cv::bitwise_or(*src, *o, *dst);*/
-          break;
-        case MAT_EXPR_XOR:
-          expr = (*src) ^ (*o); /*cv::bitwise_xor(*src, *o, *dst);*/
-          break;
-        case MAT_EXPR_MUL:
-          expr = (*src) * (*o); /**dst = mat.mul(*o, scale);*/
-          break;
-      }
-      tmp = static_cast<cv::Mat>(expr);
-    }
 
-    *dst = tmp;
+      if(input->rows != other->rows || input->cols != other->cols) {
+        ret = JS_ThrowInternalError(ctx, "Mat dimensions mismatch");
+      } else if(input->type() != other->type()) {
+        ret = JS_ThrowInternalError(ctx, "Mat type mismatch");
+      } else if(input->channels() != other->channels()) {
+        ret = JS_ThrowInternalError(ctx, "Mat channels mismatch");
+      } else {
+
+        if(input == output) {
+          switch(magic) {
+            case MAT_EXPR_AND: (*input) &= (*other); break;
+            case MAT_EXPR_OR: (*input) |= (*other); break;
+            case MAT_EXPR_XOR: (*input) ^= (*other); break;
+            case MAT_EXPR_MUL: (*input) *= (*other); break;
+          }
+        } else {
+          switch(magic) {
+            case MAT_EXPR_AND: (*output) = (*input) & (*other); break;
+            case MAT_EXPR_OR: (*output) = (*input) | (*other); break;
+            case MAT_EXPR_XOR: (*output) = (*input) ^ (*other); break;
+            case MAT_EXPR_MUL: (*output) = (*input) * (*other); break;
+          }
+        }
+      }
+    }
   }
 
   return ret;
@@ -860,40 +886,14 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 
 static JSValue
 js_mat_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  cv::Mat* m = js_mat_data(ctx, this_val);
-  int x, y;
+  JSMatData* mat = js_mat_data(ctx, this_val);
+  JSValue obj = JS_NewObjectProto(ctx, mat_proto);
 
-  std::ostringstream os;
-  std::string str;
-  int i = 0;
-  if(!m)
-    return JS_EXCEPTION;
-
-  int bytes = m->elemSize();
-  char sign = mat_floating(*m) ? 'F' : mat_signed(*m) ? 'S' : 'U';
-
-  std::vector<std::string> sizeStrs = js_mat_dimensions(*m);
-
-  os << "Mat "
-     /*     << "@ "
-          << reinterpret_cast<void*>(reinterpret_cast<char*>(m)  )*/
-     << " [ ";
-  if(sizeStrs.size() || m->type()) {
-    os << "size: " COLOR_YELLOW "" << join(sizeStrs.cbegin(), sizeStrs.cend(), "" COLOR_NONE "*" COLOR_YELLOW "")
-       << "" COLOR_NONE ", ";
-    os << "type: " COLOR_YELLOW "CV_" << (m->elemSize1() * 8) << sign << 'C' << m->channels() << "" COLOR_NONE ", ";
-    os << "elemSize: " COLOR_YELLOW "" << m->elemSize() << "" COLOR_NONE ", ";
-    os << "elemSize1: " COLOR_YELLOW "" << m->elemSize1() << "" COLOR_NONE ", ";
-    os << "total: " COLOR_YELLOW "" << m->total() << "" COLOR_NONE ", ";
-    os << "dims: " COLOR_YELLOW "" << m->dims << "" COLOR_NONE "";
-  } else {
-    os << "empty";
-  }
-  if(m->u)
-    os << ", refcount: " COLOR_YELLOW "" << m->u->refcount;
-  os << "" COLOR_NONE " ]";
-  str = os.str();
-  return JS_NewStringLen(ctx, str.data(), str.size());
+  JS_DefinePropertyValueStr(ctx, obj, "cols", JS_NewUint32(ctx, mat->cols), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, obj, "rows", JS_NewUint32(ctx, mat->rows), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, obj, "depth", JS_NewUint32(ctx, mat->depth()), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, obj, "channels", JS_NewUint32(ctx, mat->channels()), JS_PROP_ENUMERABLE);
+  return obj;
 }
 
 static JSValue
@@ -949,25 +949,25 @@ js_mat_convert_to(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
 
 static JSValue
 js_mat_copy_to(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSMatData *m = nullptr, *output = nullptr, *mask = nullptr;
+  JSMatData* m;
+  JSMatData* output;
+  JSInputOutputArray /*output,*/ mask = cv::noArray();
 
   m = js_mat_data(ctx, this_val);
+
   output = js_mat_data(ctx, argv[0]);
+  // output = js_umat_or_mat(ctx, argv[0]);
+
+  if(output == nullptr /*js_is_noarray(output)*/)
+    return JS_ThrowInternalError(ctx, "argument 1 not an array!");
 
   if(argc > 1)
-    mask = js_mat_data(ctx, argv[1]);
+    mask = js_umat_or_mat(ctx, argv[1]);
 
-  if(m == nullptr || output == nullptr)
-    return JS_EXCEPTION;
-
-  if(mask)
-    m->copyTo(*output, *mask);
+  if(!js_is_noarray(mask))
+    m->copyTo(*output, mask);
   else
     m->copyTo(*output);
-  /*if(mask)
-    m->copyTo(*output, *mask);
-  else
-    *output = *m;*/
 
   return JS_UNDEFINED;
 }
@@ -1200,7 +1200,7 @@ js_mat_array(JSContext* ctx, JSValueConst this_val) {
 
 JSValue
 js_mat_call(JSContext* ctx, JSValueConst func_obj, JSValueConst this_val, int argc, JSValueConst* argv, int flags) {
-  JSRectData rect = {0, 0, 0, 0};
+  cv::Rect rect = {0, 0, 0, 0};
   JSMatData* src;
 
   if((src = js_mat_data(ctx, func_obj)) == nullptr)
@@ -1208,8 +1208,10 @@ js_mat_call(JSContext* ctx, JSValueConst func_obj, JSValueConst this_val, int ar
 
   if(!js_rect_read(ctx, argv[0], &rect))
     return JS_ThrowTypeError(ctx, "argument 1 expecting Rect");
+  // printf("js_mat_call %u,%u %ux%u\n", rect.x, rect.y, rect.width, rect.height);
 
-  return js_mat_wrap(ctx, (*src)(rect));
+  cv::Mat mat = src->operator()(rect);
+  return js_mat_wrap(ctx, mat);
 }
 
 void
@@ -1435,6 +1437,7 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {JS_CGETSET_MAGIC_DEF("cols", 
                                                    JS_CFUNC_MAGIC_DEF("resize", 1, js_mat_funcs, METHOD_RESIZE),
                                                    JS_CFUNC_MAGIC_DEF("step1", 0, js_mat_funcs, METHOD_STEP1),
                                                    JS_CFUNC_MAGIC_DEF("locateROI", 0, js_mat_funcs, METHOD_LOCATE_ROI),
+                                                   JS_CFUNC_MAGIC_DEF("ptr", 0, js_mat_funcs, METHOD_PTR),
 
                                                    JS_CFUNC_MAGIC_DEF("and", 2, js_mat_expr, MAT_EXPR_AND),
                                                    JS_CFUNC_MAGIC_DEF("or", 2, js_mat_expr, MAT_EXPR_OR),
@@ -1445,7 +1448,6 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {JS_CGETSET_MAGIC_DEF("cols", 
                                                    JS_CFUNC_MAGIC_DEF("one", 2, js_mat_fill, 1),
 
                                                    JS_CFUNC_DEF("toString", 0, js_mat_tostring),
-                                                   JS_CFUNC_DEF("inspect", 0, js_mat_inspect),
                                                    JS_CFUNC_DEF("at", 1, js_mat_at),
                                                    JS_CFUNC_DEF("set", 2, js_mat_set),
                                                    JS_CFUNC_DEF("setTo", 0, js_mat_set_to),
@@ -1507,6 +1509,7 @@ js_mat_init(JSContext* ctx, JSModuleDef* m) {
 
     JS_SetPropertyFunctionList(ctx, mat_class, js_mat_static_funcs, countof(js_mat_static_funcs));
 
+    js_set_inspect_method(ctx, mat_proto, js_mat_inspect);
     /*   JSValue g = JS_GetGlobalObject(ctx);
        int32array_ctor = JS_GetProperty(ctx, g, JS_ATOM_Int32Array);
        int32array_proto = JS_GetPrototype(ctx, int32array_ctor);

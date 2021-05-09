@@ -105,7 +105,8 @@ Object.assign(TextStyle.prototype, {
 
   draw(mat, text, pos, color, lineThickness, lineType) {
     const { fontFace, fontScale, thickness } = this;
-    draw.text(mat,
+    const args = [
+      mat,
       text,
       pos,
       fontFace,
@@ -113,6 +114,11 @@ Object.assign(TextStyle.prototype, {
       color ?? 0xffffff,
       lineThickness ?? thickness,
       lineType ?? cv.LINE_AA
+    ];
+    console.log('TextStyle draw(',
+      ...args.reduce((acc, arg) => (acc.length ? [...acc, ',', arg] : [arg]), []),
+      ')'
     );
+    draw.text(...args);
   }
 });

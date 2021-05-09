@@ -17,14 +17,18 @@ export class Pipeline extends Function {
       for(let [i, processor] of processors) {
         let start = hr();
         self.currentProcessor = i;
-
+let args=[mat ?? self.images[i - 1], self.images[i]];
+self.invokeCallback('before', ...args);
         //console.log(`Pipeline \x1b[38;5;112m#${i} \x1b[38;5;32m'${processor.name}'\x1b[m`);
-        mat = processor.call(self, mat ?? self.images[i - 1], self.images[i]);
+        mat = processor.call(self, ...args);
+self.invokeCallback('after', ...args);
+
         if(Util.isObject(mat) && mat instanceof Mat) self.images[i] = mat;
         mat = self.images[i];
         self.times[i] = hr(start);
-        if(typeof callback == 'function')
-          callback.call(self, self.images[i], i, self.processors.length);
+
+  self.invokeCallback('callback', self.images[i],i,self.processors.length);
+
       }
       // self.currentProcessor = -1;
       return mat;
@@ -91,13 +95,19 @@ export class Pipeline extends Function {
   get cache() {
     return new Map([...this]);
   }
+
+  invokeCallback(name, ...args) {
+    if(typeof this[name] == 'function') {
+      this[name].call(this, this.currentProcessor, ...args);
+    }
+  }
 }
 
 export function Processor(fn, ...args) {
   let self;
-  let mapper = Util.weakMapper(() => {
+  let mapper = Util.weakMapper((fn, ...args) => {
     let mat = new Mat();
-    //console.debug('New Mat', mat);
+    console.log('new Mat(', ...args, ')');
     return mat;
   });
 
@@ -106,7 +116,7 @@ export function Processor(fn, ...args) {
       throw new Error(`Duplicate output Mat for processor '${self.name}`);
 
     if(dst) mapper.set(self, dst);
-    else if(!dst) dst = mapper(self);
+    else if(!dst) dst = mapper(self, src?.size, src?.type);
 
     if(!('in' in self)) self.in = src;
     if(!('out' in self)) self.out = dst;

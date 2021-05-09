@@ -443,7 +443,6 @@ async function main(...args) {
   //std.exit(0);
   rainbow = makeRainbow(256);
 
-  let outputMat, outputName;
   let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS, new Size(3, 3));
 
   let dst0Size, firstSize, videoSize;

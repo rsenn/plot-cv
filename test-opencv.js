@@ -15,6 +15,7 @@ import Util from './lib/util.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { Pipeline, Processor } from './cvPipeline.js';
 import { TickMeter } from 'utility';
+import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './cvHighGUI.js';
 
 let filesystem;
 let basename = Util.getArgv()[1].replace(/\.js$/, '');
@@ -50,6 +51,32 @@ function InspectMat(mat) {
   const { channels, depth, type, cols, rows } = mat;
 
   return inspect({ channels, depth, type, cols, rows });
+}
+
+function Accumulator(callback) {
+  let self;
+  let accu = {};
+  self = function(name, value) {
+    accu[name] = value;
+
+    if(typeof callback == 'function') callback(name, value);
+  };
+  Object.assign(self, {
+    accu,
+    entries() {
+      return Object.entries(this.accu);
+    },
+    values() {
+      return Object.values(this.accu);
+    },
+    keys() {
+      return Object.keys(this.accu);
+    },
+    *[Symbol.iterator]() {
+      for(let key in this.accu) yield [key, this.accu[key]];
+    }
+  });
+  return self;
 }
 
 function main(...args) {
@@ -92,27 +119,40 @@ function main(...args) {
   } else {
     scaled = new Size(resolution);
   }
-let outputRect = new Rect(0,0,resolution.width, resolution.height);
-  let outputSize = new Size(scaled.width, scaled.height+200);
+  let outputRect = new Rect(0, 0, resolution.width, resolution.height);
+  let statusRect = new Rect(0, resolution.height, resolution.width, 200);
+  let textRect = new Rect(statusRect.size).inset(5);
+  let screenSize = new Size(resolution.width, resolution.height + 200);
+  console.log('statusRect', statusRect);
+  console.log('textRect', textRect);
 
-  let outputMat = new Mat(outputSize, cv.CV_8UC4);
+  let screen = new Mat(screenSize, cv.CV_8UC3);
+  let output = screen(outputRect);
+  let status = screen(statusRect);
 
+  let backgroundColor = 0xd0d0d0;
+  let shadowColor = 0x404040;
+  let textColor = 0x000000;
+  let fonts = [
+    '/home/roman/.fonts/gothic.ttf',
+    '/home/roman/.fonts/gothicb.ttf',
+    '/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf'
+  ];
+  let fontFace = fonts[0];
+  let fontSize = 17;
 
-  console.log('scaled', scaled);
+  fonts.forEach(file => draw.loadFont(file));
 
-console.log("output", outputMat(outputRect));
+  output.setTo([255, 255, 255]);
+  status.setTo(backgroundColor);
 
   let { frameShow = 1, paramIndex = 0, ...config } = LoadConfig();
-    
+
   let params = {
     thres: new NumericParam(config.thres ?? 229, 0, 255),
     type: new NumericParam(config.type ?? cv.THRESH_BINARY_INV, 0, 4),
     blur: new NumericParam(config.blur ?? 1, 1, 10, 2),
     kernel_size: new NumericParam(config.kernel_size ?? 0, 0, 9),
-    /*  k: new NumericParam(config.k ?? 24, 0, 100),
-    thres1: new NumericParam(config.thres1 ?? 10, 0, 300),
-    thres2: new NumericParam(config.thres2 ?? 20, 0, 300),
-    thres2: new NumericParam(config.thres2 ?? 20, 0, 300),*/
     rho: new NumericParam(config.rho ?? 1, 1, 30, 0.25),
     theta: new NumericParam(config.theta ?? 1, 0, 90),
     threshold: new NumericParam(config.threshold ?? 25, 0, 50),
@@ -145,6 +185,22 @@ console.log("output", outputMat(outputRect));
   palette[5] = 0xff0080ff;
   palette[6] = 0xff0000ff;
 
+  DrawText(2, 0, 'Test');
+  DrawText(1, 1, 'Test');
+  DrawText(0, 2, 'Test');
+  DrawText(0, 2, 'BLAH');
+
+  function DrawText(x, y, text, color = textColor, thickness = -1) {
+    let font = new TextStyle(fontFace, fontSize, thickness);
+    let size = font.size(text);
+    let pos = new Point((size.width / text.length) * x, (size.height + 3) * (1 + y))
+      .add(textRect.x, textRect.y)
+      .add(x, y);
+    // font.draw(status, text, pos.add(1, 1), shadowColor, thickness + 1);
+    font.draw(status, text, pos, color, -1, cv.LINE_AA);
+    //draw.text(status, text, pos, fontFace, fontSize, color, -1, cv.LINE_AA);
+  }
+
   let pipeline = new Pipeline([
       function AcquireFrame(src, dst) {
         image = cv.imread(args[0] || 'italo-disco.png');
@@ -169,8 +225,10 @@ console.log("output", outputMat(outputRect));
         let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS,
           new Size(+params.kernel_size * 2 + 1, +params.kernel_size * 2 + 1)
         );
-        if(+params.type == cv.THRESH_BINARY_INV) src.xor([255, 255, 255, 0], dst);
-        else src.copyTo(dst);
+        /*  if(+params.type == cv.THRESH_BINARY_INV) src.xor([255, 255, 255, 0], dst);
+        else*/ src.copyTo(dst
+        );
+        console.log('Morphology dst', dst);
 
         cv.morphologyEx(dst, dst, cv.MORPH_ERODE, structuringElement);
         //   cv.erode(dst, dst, structuringElement);
@@ -178,7 +236,10 @@ console.log("output", outputMat(outputRect));
       },
 
       function Skeletonization(src, dst) {
+        console.log('Skeletonization src', src);
         cv.skeletonization(src, dst);
+        console.log('Skeletonization dst', dst);
+        console.log('Skeletonization dst', this.outputOf('Skeletonization'));
       },
 
       function PixelNeighborhood(src, dst) {
@@ -204,6 +265,14 @@ console.log("output", outputMat(outputRect));
         const skel = this.outputOf('Skeletonization');
         const morpho = this.outputOf('Morphology');
         lines = new Mat();
+
+        console.log('Skeletonization dst', this.outputOf('Skeletonization'));
+        if(skel.channels > 1) cv.cvtColor(skel, skel, cv.COLOR_BGR2GRAY);
+        console.log('HoughLinesP skel', skel);
+
+        if(morpho.channels > 1) cv.cvtColor(morpho, morpho, cv.COLOR_BGR2GRAY);
+        console.log('HoughLinesP morpho', morpho);
+
         cv.HoughLinesP(skel,
           lines,
           +params.rho,
@@ -213,7 +282,9 @@ console.log("output", outputMat(outputRect));
           +params.maxLineGap
         );
         // console.log('lines:', lines);
+        console.log('\x1b[1;31mskel\x1b[0m', skel);
         cv.cvtColor(skel, dst, cv.COLOR_GRAY2BGR);
+        console.log('skel', skel);
         let i = 0;
         for(let elem of lines.values()) {
           //console.log(`elem #${i}:`, elem);
@@ -244,6 +315,8 @@ console.log("output", outputMat(outputRect));
           +params.minRadius,
           +params.maxRadius
         ];
+        console.log('HoughCircles morpho', morpho);
+        console.log('HoughCircles skel', skel);
 
         let circles1 = [] ?? new Mat();
         let circles2 = [] ?? new Mat();
@@ -274,18 +347,35 @@ console.log("output", outputMat(outputRect));
     ],
     (mat, i, n) => {
       //console.log('pipeline callback', { i, n });
-      if(frameShow == i) {
-        mat.copyTo(outputMat(outputRect));
 
-        cv.imshow('output', outputMat);
-        cv.resizeWindow('output', outputSize.width, outputSize.height);
+      if(frameShow == i) {
+        let rect = new Rect(mat.size);
+        console.log('rect', rect);
+        output = screen(rect);
+
+        if(mat.channels == 1) cv.cvtColor(mat, mat, cv.COLOR_GRAY2BGR);
+
+        mat.copyTo(output);
+
+        draw.rect(screen(statusRect), new Rect(statusRect.size), backgroundColor, cv.FILLED, true);
+
+        DrawText(0, 0, `#${i}: ` + pipeline.names[i], textColor);
+
+        cv.imshow('output', screen);
+        cv.resizeWindow('output', screenSize.width, screenSize.height);
         cv.setWindowTitle('output', `#${i}: ` + pipeline.names[i]);
       }
     }
   );
-  // frameShow = config.frameShow ?? 0;
 
   let key;
+
+  let accu = paramNav.setCallback(new Accumulator((name, param) => {
+      console.log(`param '${name}' callback`, param);
+    })
+  );
+
+  console.log('accu:', [...accu]);
 
   console.log(`pipeline.recalc(${frameShow})`, pipeline.recalc(frameShow));
 

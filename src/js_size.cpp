@@ -136,8 +136,8 @@ js_size_new(JSContext* ctx, double w, double h) {
   ret = JS_NewObjectProtoClass(ctx, size_proto, js_size_class_id);
 
   s = js_allocate<JSSizeData<double>>(ctx);
-  s->width = w;
-  s->height = h;
+  s->width = w <= DBL_EPSILON ? 0 : w;
+  s->height = h <= DBL_EPSILON ? 0 : h;
 
   JS_SetOpaque(ret, s);
   return ret;
@@ -259,6 +259,50 @@ js_size_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
 }
 
 static JSValue
+js_size_add(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSSizeData<double>*s, size;
+
+  if((s = js_size_data(ctx, this_val)) == nullptr)
+    return JS_EXCEPTION;
+
+  if(js_size_read(ctx, argv[0], &size)) {
+    s->width += size.width;
+    s->height += size.height;
+  } else if(argc >= 2 && JS_IsNumber(argv[0]) && JS_IsNumber(argv[1])) {
+    double width, height;
+
+    JS_ToFloat64(ctx, &width, argv[0]);
+    JS_ToFloat64(ctx, &height, argv[1]);
+    s->width += width;
+    s->height += height;
+  }
+
+  return JS_DupValue(ctx, this_val);
+}
+
+static JSValue
+js_size_sub(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSSizeData<double>*s, size;
+
+  if((s = js_size_data(ctx, this_val)) == nullptr)
+    return JS_EXCEPTION;
+
+  if(js_size_read(ctx, argv[0], &size)) {
+    s->width -= size.width;
+    s->height -= size.height;
+  } else if(argc >= 2 && JS_IsNumber(argv[0]) && JS_IsNumber(argv[1])) {
+    double width, height;
+
+    JS_ToFloat64(ctx, &width, argv[0]);
+    JS_ToFloat64(ctx, &height, argv[1]);
+    s->width -= width;
+    s->height -= height;
+  }
+
+  return JS_DupValue(ctx, this_val);
+}
+
+static JSValue
 js_size_mul(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSSizeData<double> size, *s = js_size_data(ctx, this_val);
   double factor;
@@ -360,6 +404,8 @@ const JSCFunctionListEntry js_size_proto_funcs[] = {JS_CGETSET_ENUMERABLE_DEF("w
                                                     JS_CFUNC_MAGIC_DEF("fitOutside", 0, js_size_funcs, 7),
                                                     JS_CFUNC_DEF("toString", 0, js_size_to_string),
                                                     JS_CFUNC_DEF("toSource", 0, js_size_to_source),
+                                                    JS_CFUNC_DEF("add", 1, js_size_add),
+                                                    JS_CFUNC_DEF("sub", 1, js_size_sub),
                                                     JS_CFUNC_DEF("mul", 1, js_size_mul),
                                                     JS_CFUNC_DEF("div", 1, js_size_div),
                                                     JS_ALIAS_DEF("values", "toArray"),

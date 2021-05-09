@@ -39,8 +39,8 @@ js_point_new(JSContext* ctx, double x, double y) {
   s = js_allocate<JSPointData<double>>(ctx);
 
   new(s) JSPointData<double>();
-  s->x = x;
-  s->y = y;
+  s->x = x <= DBL_EPSILON ? 0 : x;
+  s->y = y <= DBL_EPSILON ? 0 : y;
 
   points.push_back(s);
 

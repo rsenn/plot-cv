@@ -378,7 +378,7 @@ static JSValue
 js_cv_imwrite(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
 
   const char* filename = JS_ToCString(ctx, argv[0]);
-  cv::_InputArray image = js_cv_inputoutputarray(ctx, argv[1]);
+  JSInputOutputArray image = js_cv_inputoutputarray(ctx, argv[1]);
 
   if(image.empty())
     return JS_ThrowInternalError(ctx, "Empty image");
@@ -392,7 +392,7 @@ static JSValue
 js_cv_imshow(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
 
   const char* winname = JS_ToCString(ctx, argv[0]);
-  cv::_InputArray image = js_cv_inputoutputarray(ctx, argv[1]);
+  JSInputOutputArray image = js_cv_inputoutputarray(ctx, argv[1]);
 
   if(image.empty())
     return JS_ThrowInternalError(ctx, "Empty image");
@@ -2176,6 +2176,8 @@ js_function_list_t js_cv_static_funcs{
     JS_CV_CONSTANT(IMWRITE_PAM_FORMAT_RGB_ALPHA),
 
     JS_CV_CONSTANT(FILLED),
+    JS_CV_CONSTANT(LINE_8),
+    JS_CV_CONSTANT(LINE_AA),
 };
 
 std::string

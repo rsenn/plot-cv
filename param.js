@@ -4,20 +4,11 @@ import * as cv from 'cv';
 const MinMax = (min, max) => value => Math.max(min, Math.min(max, value));
 
 export class Param {
-  /*[Symbol.toPrimitive](hint) {
-  //console.log(`Param[Symbol.toPrimitive](${hint})`);
-    if(hint == 'number') return NumericParam.prototype.get.call(this);
-    else if(hint == 'string') return Param.prototype.valueOf.call(this) + '';
-    else return Param.prototype.valueOf.call(this);
-  }*/
-
   valueOf() {
-    return this.get(); //NumericParam.prototype.get.call(this);
-  }
+    if(typeof this.callback == 'function') this.callback.call(this, this);
 
-  /*  toPrimitive() {
-    return this.valueOf();
-  }*/
+    return this.get();
+  }
 
   [Symbol.toStringTag]() {
     return this.toString();
@@ -121,7 +112,7 @@ export function ParamNavigator(map, index = 0) {
 
   const mod = Util.mod(map.size);
 
-  //console.log('map:', map);
+  console.log('map:', map);
 
   Util.define(this, {
     map,
@@ -133,6 +124,13 @@ export function ParamNavigator(map, index = 0) {
     prev() {
       this.index = mod(this.index - 1);
       // console.log('ParamNavigator index =', this.index);
+    },
+    setCallback(fn, thisObj) {
+      const { map } = this;
+      thisObj ??= this;
+
+      for(let [name, param] of map) param.callback = () => fn.call(thisObj, name, param);
+      return fn;
     }
   });
 }
