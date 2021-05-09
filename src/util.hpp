@@ -3,7 +3,6 @@
 
 #include <string>
 #include <numeric>
-#include <ranges>
 
 #include <opencv2/core.hpp>
 
@@ -154,18 +153,6 @@ mat_floating(const T& mat) {
   return mattype_floating(mat.type());
 }
 
-template<class T>
-static inline std::ranges::subrange<T>
-sized_range(T ptr, size_t len) {
-  return std::ranges::subrange<T>(ptr, ptr + len);
-}
-
-template<class T>
-static inline std::ranges::subrange<T*>
-argument_range(int argc, T* argv) {
-  return std::ranges::subrange<T*>(argv, argv + argc);
-}
-
 template<class T, int N>
 static inline T*
 begin(cv::Vec<T, N>& v) {
@@ -249,6 +236,21 @@ end(cv::Mat const& mat) {
   return mat.ptr<uint8_t const>() + (mat.total() * mat.elemSize());
 }
 
+#if CXX_STANDARD >= 20
+#include <ranges>
+
+template<class T>
+static inline std::ranges::subrange<T>
+sized_range(T ptr, size_t len) {
+  return std::ranges::subrange<T>(ptr, ptr + len);
+}
+
+template<class T>
+static inline std::ranges::subrange<T*>
+argument_range(int argc, T* argv) {
+  return std::ranges::subrange<T*>(argv, argv + argc);
+}
+
 template<class T>
 static inline std::ranges::subrange<T*>
 range(T* begin, T* end) {
@@ -266,5 +268,6 @@ static inline std::ranges::subrange<T>
 range(Container& c) {
   return std::ranges::subrange<T>(reinterpret_cast<T>(begin(c)), reinterpret_cast<T>(end(c)));
 }
+#endif
 
 #endif // defined(UTIL_HPP)

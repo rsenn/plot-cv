@@ -105,7 +105,7 @@ template<class T> struct pointer_type {
 };
 
 template<class T>
-inline std::enable_if_t<number_type<T>::typed_array, JSValue>
+inline typename std::enable_if<number_type<T>::typed_array, JSValue>::type
 js_array_from(JSContext* ctx, const T* start, const T* end) {
   JSValue buf, global, ctor;
   JSValueConst args[3];
@@ -289,7 +289,7 @@ js_typedarray_new(JSContext* ctx, JSValueConst buffer, uint32_t byteOffset, uint
 }
 
 template<class Iterator>
-static inline std::enable_if_t<std::is_pointer<Iterator>::value, void>
+static inline typename std::enable_if<std::is_pointer<Iterator>::value>::type
 js_typedarray_remain(Iterator& start, Iterator& end, uint32_t byteOffset, uint32_t& length) {
   typedef typename std::remove_pointer<Iterator>::type value_type;
 
@@ -334,14 +334,14 @@ public:
 };
 
 template<class Iterator>
-static inline std::enable_if_t<std::is_pointer<Iterator>::value, JSValue>
+static inline typename std::enable_if<std::is_pointer<Iterator>::value, JSValue>::type
 js_typedarray_from(
     JSContext* ctx, const Iterator& start, const Iterator& end, uint32_t byteOffset = 0, uint32_t length = UINT32_MAX) {
   return js_typedarray<typename std::remove_pointer<Iterator>::type>::from_sequence(ctx, start, end, byteOffset);
 }
 
 template<class Iterator>
-static inline std::enable_if_t<Iterator::value_type, JSValue>
+static inline typename std::enable_if<Iterator::value_type, JSValue>::type
 js_typedarray_from(
     JSContext* ctx, const Iterator& start, const Iterator& end, uint32_t byteOffset = 0, uint32_t length = UINT32_MAX) {
   return js_typedarray<typename Iterator::value_type>::from_sequence(ctx, start, end, byteOffset);

@@ -101,7 +101,7 @@ foreach(CXX_STANDARD c++20 c++17 c++14 c++11)
     message("CXX_STANDARD_VERSION = ${CXX_STANDARD_VERSION}")
 
     add_definitions(-D"${CXX_STANDARD_NAME}")
-    add_definitions(-DCXX_STANDRARD=${CXX_STANDARD_VERSION})
+    add_definitions(-DCXX_STANDARD=${CXX_STANDARD_VERSION})
 
     set(CXX_STANDARD_VALUE "${CXX_STANDARD}" CACHE STRING "C++ standard" FORCE)
     set(CXX_STANDARD_FLAG "-std=${CXX_STANDARD}" CACHE STRING "C++ standard argument" FORCE)

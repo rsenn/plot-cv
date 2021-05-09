@@ -93,13 +93,13 @@ function(OPENCV_CHANGE VAR ACCESS VALUE LIST_FILE STACK)
 
 endfunction(OPENCV_CHANGE VAR ACCESS VALUE LIST_FILE STACK)
 
-variable_watch(OpenCV_Dir OPENCV_CHANGE_DIR)
-variable_watch(OpenCV_Dir OPENCV_CHANGE)
+variable_watch(OpenCV_DIR OPENCV_CHANGE_DIR)
+variable_watch(OpenCV_DIR OPENCV_CHANGE)
 
 if(NOT OPENCV_PREFIX)
-  if(OpenCV_Dir)
-    set(OPENCV_PREFIX "${OpenCV_Dir}")
-  endif(OpenCV_Dir)
+  if(OpenCV_DIR)
+    set(OPENCV_PREFIX "${OpenCV_DIR}")
+  endif(OpenCV_DIR)
 endif(NOT OPENCV_PREFIX)
 
 dump(OPENCV_PREFIX)

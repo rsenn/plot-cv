@@ -600,13 +600,13 @@ js_array_to(JSContext* ctx, JSValueConst arr, cv::Scalar_<T>& out) {
 }
 
 template<class Iterator>
-static inline std::enable_if_t<std::is_pointer<Iterator>::value, JSValue>
+static inline  typename std::enable_if<std::is_pointer<Iterator>::value, JSValue>::type
 js_array_from(JSContext* ctx, const Iterator& start, const Iterator& end) {
   return js_array<typename std::remove_pointer<Iterator>::type>::from_sequence(ctx, start, end);
 }
 
 template<class Iterator>
-static inline std::enable_if_t<Iterator::value_type, JSValue>
+static inline typename   std::enable_if<Iterator::value_type, JSValue>::type
 js_array_from(JSContext* ctx, const Iterator& start, const Iterator& end) {
   return js_array<typename Iterator::value_type>::from_sequence(ctx, start, end);
 }

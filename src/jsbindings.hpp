@@ -258,19 +258,20 @@ operator<<(std::ostream& stream, const JSColorData<T>& color) {
 
 int js_ref(JSContext* ctx, const char* name, JSValueConst arg, JSValue value);
 
+static inline size_t
+round_to(size_t num, size_t x) {
+  num /= x;
+  num *= x;
+  return num;
+}
+
+#if CXX_STANDARD >= 20
 static inline std::ranges::subrange<uint8_t*>
 js_arraybuffer_range(JSContext* ctx, JSValueConst buffer) {
   size_t size;
   uint8_t* ptr;
   ptr = JS_GetArrayBuffer(ctx, &size, buffer);
   return std::ranges::subrange<uint8_t*>(ptr, ptr + size);
-}
-
-static inline size_t
-round_to(size_t num, size_t x) {
-  num /= x;
-  num *= x;
-  return num;
 }
 
 template<class T>
@@ -283,6 +284,7 @@ js_arraybuffer_range(JSContext* ctx, JSValueConst buffer) {
   size = round_to(size, sizeof(value_type));
   return std::ranges::subrange<T>(reinterpret_cast<T>(byte_ptr), reinterpret_cast<T>(byte_ptr + size));
 }
+#endif
 
 template<class Ptr>
 static inline JSValue
@@ -422,6 +424,8 @@ js_is_array_like(JSContext* ctx, JSValueConst obj) {
 struct ArrayBufferProps {
   uint8_t* ptr;
   size_t len;
+  
+  ArrayBufferProps(uint8_t* _ptr, size_t _len) : ptr(_ptr), len(_len) {}
 };
 
 static inline BOOL
