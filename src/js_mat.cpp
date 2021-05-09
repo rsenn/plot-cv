@@ -1216,9 +1216,15 @@ js_mat_call(JSContext* ctx, JSValueConst func_obj, JSValueConst this_val, int ar
 
 void
 js_mat_finalizer(JSRuntime* rt, JSValue val) {
-  JSMatData* s = static_cast<JSMatData*>(JS_GetOpaque(val, js_mat_class_id));
+  JSMatData* s;
 
-  auto it2 = std::find(mat_freed.cbegin(), mat_freed.cend(), s);
+
+  if((s = static_cast<JSMatData*>(JS_GetOpaque(val, js_mat_class_id)))) {
+      js_deallocate(rt, s);
+  }
+  return;
+
+  /*auto it2 = std::find(mat_freed.cbegin(), mat_freed.cend(), s);
   auto it = std::find(mat_list.cbegin(), mat_list.cend(), s);
 
   if(it2 != mat_freed.cend()) {
@@ -1265,9 +1271,8 @@ js_mat_finalizer(JSRuntime* rt, JSValue val) {
     js_mat_dump(s);
 #endif
     std::cerr << " ERROR: not found" << std::endl;
-  }
+  }*/
 
-  js_deallocate(rt, s);
 }
 
 JSValue

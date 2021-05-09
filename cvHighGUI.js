@@ -1,6 +1,7 @@
 import * as cv from 'cv';
 import * as draw from 'draw';
 import { Size } from 'size';
+import { Point } from 'point';
 
 import Util from './lib/util.js';
 
@@ -94,10 +95,12 @@ export function TextStyle(fontFace = cv.FONT_HERSHEY_PLAIN, fontScale = 1.0, thi
 }
 
 Object.assign(TextStyle.prototype, {
-  size(text) {
+  size(text, fn = y => {}) {
     const { fontFace, fontScale, thickness } = this;
     let baseY;
     let size = new Size(...draw.textSize(text, fontFace, fontScale, thickness, y => (baseY = y)));
+
+    fn(baseY);
 
     size.y = baseY;
     return size;
@@ -115,10 +118,64 @@ Object.assign(TextStyle.prototype, {
       lineThickness ?? thickness,
       lineType ?? cv.LINE_AA
     ];
-    console.log('TextStyle draw(',
-      ...args.reduce((acc, arg) => (acc.length ? [...acc, ',', arg] : [arg]), []),
-      ')'
-    );
+    //console.log('TextStyle draw(', ...args.reduce((acc, arg) => (acc.length ? [...acc, ',', arg] : [arg]), []), ')');
     draw.text(...args);
   }
 });
+
+const palette16 = [
+  0x000000,
+  0xa00000,
+  0x00a000,
+  0xa0a000,
+  0x0000a0,
+  0xa000a0,
+  0x00a0a0,
+  0xc0c0c0,
+  0xa0a0a0,
+  0xff0000,
+  0x00ff00,
+  0xffff00,
+  0x0000ff,
+  0xff00ff,
+  0x00ffff,
+  0xffffff
+];
+
+export function DrawText(mat, text, textColor, fontFace, fontSize = 13) {
+  //console.log(`text '${text.replace(/\n/g, '\\n')}'`);
+  let color = textColor;
+  let font = new TextStyle(fontFace, fontSize, -1);
+  let lines = [...text.matchAll(/(\x1b[^a-z]*[a-z]|\n|[^\x1b\n]*)/g)].map(m => m[0]);
+  let baseY;
+  let size = font.size('yP', y => (baseY = y));
+  let start = new Point(size.width / text.length,baseY -3);
+  let pos = new Point(start);
+  let incY = (baseY || 2) + size.height + 3;
+
+  for(let line of lines) {
+    //console.log(`line '${line.replace(/\n/g, '\\n').replace(/\x1b/g, "ESC")}'`);
+    if(line == '\n') {
+      pos.y += incY;
+      pos.x = start.x;
+      continue;
+    } else if(line.startsWith('\x1b')) {
+      let ansi = [...line.matchAll(/([0-9]+|[a-z])/g)].map(m => (isNaN(+m[0]) ? m[0] : +m[0]));
+      //console.log("ansi:", ansi);
+      if(ansi[ansi.length - 1] == 'm') {
+        let n;
+        for(let code of ansi.slice(0, -1)) {
+          if(code == 0) continue;
+          if(code == 1) n = (n | 0) + 8;
+          else if(code >= 30) n = n | 0 | (code - 30);
+        }
+        if(n === undefined) color = textColor;
+        //console.log("n:", n);1
+        else color = palette16[n];
+      }
+      continue;    }
+    size = font.size(line);
+    font.draw(mat, line, pos, color, -1, cv.LINE_AA);
+    pos.x += size.width;
+  }
+}

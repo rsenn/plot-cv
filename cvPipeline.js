@@ -17,18 +17,17 @@ export class Pipeline extends Function {
       for(let [i, processor] of processors) {
         let start = hr();
         self.currentProcessor = i;
-let args=[mat ?? self.images[i - 1], self.images[i]];
-self.invokeCallback('before', ...args);
+        let args = [mat ?? self.images[i - 1], self.images[i]];
+        self.invokeCallback('before', ...args);
         //console.log(`Pipeline \x1b[38;5;112m#${i} \x1b[38;5;32m'${processor.name}'\x1b[m`);
         mat = processor.call(self, ...args);
-self.invokeCallback('after', ...args);
+        self.invokeCallback('after', ...args);
 
         if(Util.isObject(mat) && mat instanceof Mat) self.images[i] = mat;
         mat = self.images[i];
         self.times[i] = hr(start);
-
-  self.invokeCallback('callback', self.images[i],i,self.processors.length);
-
+        if(typeof callback == 'function')
+          callback.call(self, self.images[i], i, self.processors.length);
       }
       // self.currentProcessor = -1;
       return mat;
@@ -68,15 +67,35 @@ self.invokeCallback('after', ...args);
     return this.processors.map((p) => p.name);
   }
 
-  getProcessor(name_or_fn) {
-    let index;
-    if((index = this.processors.indexOf(name_or_fn)) != -1) return this.processors[index];
-    return this.processors.find(processor => processor.name == name_or_fn);
+  get processor() {
+    return this.processors[this.currentProcessor];
   }
 
-  processorIndex(fn) {
-    if(typeof fn != 'function') fn = this.getProcessor(fn);
-    return this.processors.indexOf(fn);
+  get current() {
+    const { currentProcessor, processors,names}= this;
+    return [names[currentProcessor],processors[currentProcessor]];
+  }
+
+  getName(id) {
+    id = this.processorIndex(id);
+    if(typeof id == 'number') return this.names[id];
+  }
+
+  getProcessor(id) {
+    id = this.processorIndex(id);
+    if(typeof id == 'number') return this.processors[id];
+  }
+
+  getImage(id) {
+    id = this.processorIndex(id);
+    if(typeof id == 'number') return this.images[id];
+  }
+
+  processorIndex(id) {
+    if(typeof id == 'undefined') id = this.currentProcessor;
+    if(typeof id == 'function') id = this.processors.indexOf(id);
+    if(typeof id == 'string') id = this.names.indexOf(id);
+    return id;
   }
 
   inputOf(processor) {
@@ -98,7 +117,7 @@ self.invokeCallback('after', ...args);
 
   invokeCallback(name, ...args) {
     if(typeof this[name] == 'function') {
-      this[name].call(this, this.currentProcessor, ...args);
+      this[name].call(this, ...args);
     }
   }
 }
@@ -107,7 +126,7 @@ export function Processor(fn, ...args) {
   let self;
   let mapper = Util.weakMapper((fn, ...args) => {
     let mat = new Mat();
-    console.log('new Mat(', ...args, ')');
+    // console.log('new Mat(', ...args, ')');
     return mat;
   });
 

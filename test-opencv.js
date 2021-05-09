@@ -15,7 +15,7 @@ import Util from './lib/util.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { Pipeline, Processor } from './cvPipeline.js';
 import { TickMeter } from 'utility';
-import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './cvHighGUI.js';
+import { Window, MouseFlags, MouseEvents, Mouse, TextStyle, DrawText } from './cvHighGUI.js';
 
 let filesystem;
 let basename = Util.getArgv()[1].replace(/\.js$/, '');
@@ -53,27 +53,35 @@ function InspectMat(mat) {
   return inspect({ channels, depth, type, cols, rows });
 }
 
+function ToHex(number) {
+  if(number < 0) number = 0xffffffff + number + 1;
+  return '0x' + number.toString(16);
+}
+
 function Accumulator(callback) {
   let self;
   let accu = {};
   self = function(name, value) {
+    if(name in accu) return;
     accu[name] = value;
-
     if(typeof callback == 'function') callback(name, value);
   };
   Object.assign(self, {
     accu,
     entries() {
-      return Object.entries(this.accu);
+      return Object.entries(accu);
     },
     values() {
-      return Object.values(this.accu);
+      return Object.values(accu);
     },
     keys() {
-      return Object.keys(this.accu);
+      return Object.keys(accu);
     },
     *[Symbol.iterator]() {
-      for(let key in this.accu) yield [key, this.accu[key]];
+      for(let key in accu) yield [key, accu[key]];
+    },
+    clear() {
+      for(let key in accu) delete accu[key];
     }
   });
   return self;
@@ -84,7 +92,8 @@ function main(...args) {
     maxStringLength: 200,
     maxArrayLength: 10,
     breakLength: 100,
-    compact: 1
+    compact: 1,
+    depth: 10
   });
   /*  await PortableFileSystem(fs => (filesystem = fs));*/
   let running = true;
@@ -104,6 +113,13 @@ function main(...args) {
   /* for(let windowName of ['gray', 'corners', 'threshold', 'canny'])
     cv.namedWindow(windowName, cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO);*/
   cv.namedWindow('output', cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO);
+  let trackbar = '';
+  /*  cv.createTrackbar(trackbar, 'output', 0, 10, function(value, count, name, window) {
+    console.log('Trackbar', { value, count, name, window });
+  });
+ cv.setTrackbarMin(trackbar, 'output', 1);
+  cv.setTrackbarMax(trackbar, 'output', 9);
+  cv.setTrackbarPos(trackbar, 'output', 8);*/
 
   //image = cv.imread('../an-tronics/images/5.19.jpg');
   image = cv.imread(args[0] || 'italo-disco.png');
@@ -119,6 +135,7 @@ function main(...args) {
   } else {
     scaled = new Size(resolution);
   }
+
   let outputRect = new Rect(0, 0, resolution.width, resolution.height);
   let statusRect = new Rect(0, resolution.height, resolution.width, 200);
   let textRect = new Rect(statusRect.size).inset(5);
@@ -130,16 +147,20 @@ function main(...args) {
   let output = screen(outputRect);
   let status = screen(statusRect);
 
+  cv.imshow('output', screen);
+  cv.moveWindow('output', 0, 0);
+  cv.resizeWindow('output', screenSize.width);
+
   let backgroundColor = 0xd0d0d0;
   let shadowColor = 0x404040;
-  let textColor = 0x000000;
+  let textColor = 0xd3d7cf;
   let fonts = [
     '/home/roman/.fonts/gothic.ttf',
     '/home/roman/.fonts/gothicb.ttf',
     '/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf'
   ];
-  let fontFace = fonts[0];
-  let fontSize = 17;
+  let fontFace = fonts[2];
+  let fontSize = 14;
 
   fonts.forEach(file => draw.loadFont(file));
 
@@ -172,6 +193,7 @@ function main(...args) {
   let lines;
   let circles = [];
   let paramNav = new ParamNavigator(params, paramIndex);
+  let paramIndexes = [-1, -1];
 
   let palette = new Uint32Array(256);
 
@@ -184,22 +206,64 @@ function main(...args) {
   palette[4] = 0xff00ff00;
   palette[5] = 0xff0080ff;
   palette[6] = 0xff0000ff;
-
+  /*
   DrawText(2, 0, 'Test');
   DrawText(1, 1, 'Test');
   DrawText(0, 2, 'Test');
-  DrawText(0, 2, 'BLAH');
+  DrawText(0, 2, 'BLAH');*/
+  /* const palette16 = [
+    0x000000,
+    0xa00000,
+    0x00a000,
+    0xa0a000,
+    0x0000a0,
+    0xa000a0,
+    0x00a0a0,
+    0xc0c0c0,
+    0xa0a0a0,
+    0xff0000,
+    0x00ff00,
+    0xffff00,
+    0x0000ff,
+    0xff00ff,
+    0x00ffff,
+    0xffffff
+  ];
 
   function DrawText(x, y, text, color = textColor, thickness = -1) {
     let font = new TextStyle(fontFace, fontSize, thickness);
-    let size = font.size(text);
-    let pos = new Point((size.width / text.length) * x, (size.height + 3) * (1 + y))
+    let lines = [...text.matchAll(/(\x1b[^a-z]*[a-z]|\n|[^\x1b\n]*)/g)].map(m => m[0]);
+    let baseY;
+    let size = font.size(lines[0][0], y => (baseY = y));
+    let start = new Point((size.width / text.length) * x, (size.height + 3) * (1 + y))
       .add(textRect.x, textRect.y)
       .add(x, y);
-    // font.draw(status, text, pos.add(1, 1), shadowColor, thickness + 1);
-    font.draw(status, text, pos, color, -1, cv.LINE_AA);
-    //draw.text(status, text, pos, fontFace, fontSize, color, -1, cv.LINE_AA);
-  }
+    let pos = new Point(start);
+    let incY = (baseY || 3) + size.height + 3;
+    for(let line of lines) {
+      if(line == '\n') {
+        pos.y += incY;
+        pos.x = start.x;
+        continue;
+      } else if(line.startsWith('\x1b')) {
+        let ansi = [...line.matchAll(/([0-9]+|[a-z])/g)].map(m => (isNaN(+m[0]) ? m[0] : +m[0]));
+        if(ansi[ansi.length - 1] == 'm') {
+          let n;
+          for(let code of ansi.slice(0, -1)) {
+            if(code == 0) continue;
+            if(code == 1) n = (n | 0) + 8;
+            else if(code >= 30) n = n | 0 | (code - 30);
+          }
+          if(n === undefined) color = textColor;
+          else color = palette16[n];
+        }
+        continue;
+      }
+      size = font.size(line);
+      font.draw(status, line, pos, color, -1, cv.LINE_AA);
+      pos.x += size.width;
+    }
+  }*/
 
   let pipeline = new Pipeline([
       function AcquireFrame(src, dst) {
@@ -228,7 +292,7 @@ function main(...args) {
         /*  if(+params.type == cv.THRESH_BINARY_INV) src.xor([255, 255, 255, 0], dst);
         else*/ src.copyTo(dst
         );
-        console.log('Morphology dst', dst);
+        //console.log('Morphology dst', dst);
 
         cv.morphologyEx(dst, dst, cv.MORPH_ERODE, structuringElement);
         //   cv.erode(dst, dst, structuringElement);
@@ -236,10 +300,10 @@ function main(...args) {
       },
 
       function Skeletonization(src, dst) {
-        console.log('Skeletonization src', src);
+        //console.log('Skeletonization src', src);
         cv.skeletonization(src, dst);
-        console.log('Skeletonization dst', dst);
-        console.log('Skeletonization dst', this.outputOf('Skeletonization'));
+        //console.log('Skeletonization dst', dst);
+        //console.log('Skeletonization dst', this.outputOf('Skeletonization'));
       },
 
       function PixelNeighborhood(src, dst) {
@@ -247,13 +311,13 @@ function main(...args) {
         let output;
 
         cv.pixelNeighborhood(src, neighborhood);
-        console.log('non-zero:', cv.countNonZero(neighborhood));
-        console.log('non-zero:', cv.findNonZero(neighborhood));
-        console.log('pixels:', neighborhood.size.area);
+        //console.log('non-zero:', cv.countNonZero(neighborhood));
+        //console.log('non-zero:', cv.findNonZero(neighborhood));
+        //console.log('pixels:', neighborhood.size.area);
 
         let coords = [[], ...Util.range(1, 6).map(n => cv.pixelFindValue(neighborhood, n))];
 
-        console.log('coords:', Object.fromEntries(coords.map(a => a.length).entries()));
+        //console.log('coords:', Object.fromEntries(coords.map(a => a.length).entries()));
 
         output = cv.paletteApply(neighborhood, palette);
         output.copyTo(dst);
@@ -266,12 +330,12 @@ function main(...args) {
         const morpho = this.outputOf('Morphology');
         lines = new Mat();
 
-        console.log('Skeletonization dst', this.outputOf('Skeletonization'));
+        //console.log('Skeletonization dst', this.outputOf('Skeletonization'));
         if(skel.channels > 1) cv.cvtColor(skel, skel, cv.COLOR_BGR2GRAY);
-        console.log('HoughLinesP skel', skel);
+        //console.log('HoughLinesP skel', skel);
 
         if(morpho.channels > 1) cv.cvtColor(morpho, morpho, cv.COLOR_BGR2GRAY);
-        console.log('HoughLinesP morpho', morpho);
+        //console.log('HoughLinesP morpho', morpho);
 
         cv.HoughLinesP(skel,
           lines,
@@ -282,9 +346,9 @@ function main(...args) {
           +params.maxLineGap
         );
         // console.log('lines:', lines);
-        console.log('\x1b[1;31mskel\x1b[0m', skel);
+        //console.log('\x1b[1;31mskel\x1b[0m', skel);
         cv.cvtColor(skel, dst, cv.COLOR_GRAY2BGR);
-        console.log('skel', skel);
+        //console.log('skel', skel);
         let i = 0;
         for(let elem of lines.values()) {
           //console.log(`elem #${i}:`, elem);
@@ -315,8 +379,8 @@ function main(...args) {
           +params.minRadius,
           +params.maxRadius
         ];
-        console.log('HoughCircles morpho', morpho);
-        console.log('HoughCircles skel', skel);
+        //console.log('HoughCircles morpho', morpho);
+        //console.log('HoughCircles skel', skel);
 
         let circles1 = [] ?? new Mat();
         let circles2 = [] ?? new Mat();
@@ -345,21 +409,47 @@ function main(...args) {
         }
       }
     ],
-    (mat, i, n) => {
+    (m, i, n) => {
       //console.log('pipeline callback', { i, n });
+      let mat = pipeline.getImage(i);
+
+      let processor = pipeline.getProcessor(i);
+      let params = processorParams.get(processor);
 
       if(frameShow == i) {
         let rect = new Rect(mat.size);
-        console.log('rect', rect);
         output = screen(rect);
 
         if(mat.channels == 1) cv.cvtColor(mat, mat, cv.COLOR_GRAY2BGR);
 
         mat.copyTo(output);
 
-        draw.rect(screen(statusRect), new Rect(statusRect.size), backgroundColor, cv.FILLED, true);
+        let srect = new Rect(statusRect.size);
 
-        DrawText(0, 0, `#${i}: ` + pipeline.names[i], textColor);
+        draw.rect(screen(statusRect), srect, backgroundColor, cv.FILLED, true);
+        draw.rect(screen(statusRect), srect.inset(2, 0), 0, cv.FILLED, true);
+
+        paramNav.current = params[0];
+
+        paramIndexes[0] = paramNav.indexOf(params[0]);
+        paramIndexes[1] = paramNav.indexOf(params[params.length - 1]);
+        console.log('paramIndexes:', paramIndexes);
+        let text =
+          `#${i}: ` +
+          pipeline.names[i] +
+          `\n\n` +
+          `params:\n` +
+          params
+            .map((name, idx) => {
+              return `  ${idx + paramIndexes[0] == paramNav.index ? '\x1b[1;31m' : ''}${name.padEnd(13
+              )}\x1b[0m   ${inspect(paramNav.get(name), {
+                colors: true,
+                hideKeys: ['callback']
+              })}\n`;
+            })
+            .join('');
+
+        DrawText(status(textRect), text, textColor, fontFace, fontSize);
 
         cv.imshow('output', screen);
         cv.resizeWindow('output', screenSize.width, screenSize.height);
@@ -369,20 +459,37 @@ function main(...args) {
   );
 
   let key;
-
-  let accu = paramNav.setCallback(new Accumulator((name, param) => {
-      console.log(`param '${name}' callback`, param);
+  let paramAccumulator = paramNav.setCallback(new Accumulator((name, param) => {
+      // console.log(`param '${name}' callback`, param);
     })
   );
+  let processorParams = Util.weakMapper(processor => []);
 
-  console.log('accu:', [...accu]);
+  pipeline.before = () => paramAccumulator.clear();
+  pipeline.after = () => processorParams.set(pipeline.getProcessor(), paramAccumulator.keys());
+
+  pipeline();
+
+  delete pipeline.before;
+  delete pipeline.after;
+
+  console.log('paramNav.nameOf(params.threshold):', paramNav.nameOf(params.threshold));
+  console.log('paramNav.indexOf(params.threshold):', paramNav.indexOf(params.threshold));
+  console.log('processorParams:',
+    new Map(
+      pipeline.processors.map(processor => [
+        processor,
+        processorParams.get(processor).map(name => paramNav.get(name))
+      ])
+    )
+  );
 
   console.log(`pipeline.recalc(${frameShow})`, pipeline.recalc(frameShow));
 
   while(true) {
     key = cv.waitKeyEx(-1);
-
-    if(key === 'q' || key === 113 || key === '\x1b' || key === 0x100071) break;
+    if(key === 'q' || key === 113 || key === '\x1b' || key === 0x100071 || key === -1) break;
+    //console.log('key:', ToHex(key));
 
     switch (key & 0xfff) {
       case 0xf08 /* backspace */:
@@ -394,10 +501,16 @@ function main(...args) {
         break;
       case 0x3c /* < */:
         paramNav.prev();
+        if(paramIndexes[0] != -1 && paramNav.index < paramIndexes[0])
+          paramNav.index = paramIndexes[1];
+
         console.log(`Param #${paramNav.index} '${paramNav.name}' selected (${+paramNav.param})`);
         break;
       case 0x3e /* > */:
         paramNav.next();
+        if(paramIndexes[1] != -1 && paramNav.index > paramIndexes[1])
+          paramNav.index = paramIndexes[0];
+
         console.log(`Param #${paramNav.index} '${paramNav.name}' selected (${+paramNav.param})`);
         break;
 
@@ -447,13 +560,11 @@ function main(...args) {
 
       case 0x20:
         frameShow = Util.mod(frameShow + 1, pipeline.size);
-        console.log(`Back`, { frameShow, size: pipeline.size });
-        //frameShow = (frameShow + 1) % pipeline.size;
         pipeline.step();
         break;
 
       default: {
-        if(key !== -1) console.log('key:', '0x' + key.toString(16));
+        if(key !== -1) console.log('key:', ToHex(key));
         break;
       }
     }

@@ -95,14 +95,6 @@ js_rect_data(JSContext* ctx, JSValueConst val) {
   return static_cast<JSRectData<double>*>(JS_GetOpaque2(ctx, val, js_rect_class_id));
 }
 
-void
-js_rect_finalizer(JSRuntime* rt, JSValue val) {
-  JSRectData<double>* s = static_cast<JSRectData<double>*>(JS_GetOpaque(val, js_rect_class_id));
-  /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
-
-  s->~JSRectData<double>();
-  js_deallocate(rt, s);
-}
 
 enum { PROP_X = 0, PROP_Y, PROP_WIDTH, PROP_HEIGHT, PROP_X2, PROP_Y2, PROP_POS, PROP_SIZE };
 
@@ -449,6 +441,17 @@ js_rect_from(JSContext* ctx, JSValueConst rect, int argc, JSValueConst* argv) {
     ret = js_rect_new(ctx, array[0], array[1], array[2], array[3]);
   return ret;
 }
+
+void
+js_rect_finalizer(JSRuntime* rt, JSValue val) {
+  JSRectData<double>* s = static_cast<JSRectData<double>*>(JS_GetOpaque(val, js_rect_class_id));
+  /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
+
+ // s->~JSRectData<double>();
+  if(s)
+  js_deallocate(rt, s);
+}
+
 
 JSClassDef js_rect_class = {
     .class_name = "Rect",

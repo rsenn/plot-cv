@@ -87,13 +87,6 @@ js_line_data(JSContext* ctx, JSValueConst val) {
   return static_cast<JSLineData<double>*>(JS_GetOpaque2(ctx, val, js_line_class_id));
 }
 
-void
-js_line_finalizer(JSRuntime* rt, JSValue val) {
-  JSLineData<double>* ln = static_cast<JSLineData<double>*>(JS_GetOpaque(val, js_line_class_id));
-  /* Note: 'ln' can be NULL in case JS_SetOpaque() was not called */
-  js_deallocate(rt, ln);
-}
-
 static JSValue
 js_line_get_xy12(JSContext* ctx, JSValueConst this_val, int magic) {
   JSValue ret = JS_UNDEFINED;
@@ -394,6 +387,15 @@ js_line_from(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
   if(line.array[2] > 0 && line.array[3] > 0)
     ret = js_line_new(ctx, line.array[0], line.array[1], line.array[2], line.array[3]);
   return ret;
+}
+
+void
+js_line_finalizer(JSRuntime* rt, JSValue val) {
+  JSLineData<double>* ln;
+
+  if((ln = static_cast<JSLineData<double>*>(JS_GetOpaque(val, js_line_class_id))))
+  /* Note: 'ln' can be NULL in case JS_SetOpaque() was not called */
+    js_deallocate(rt, ln);
 }
 
 JSClassDef js_line_class = {

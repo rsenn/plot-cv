@@ -133,7 +133,7 @@ js_slice_iterator_finalizer(JSRuntime* rt, JSValue val) {
     JS_FreeValueRT(rt, s->ctor);
     js_deallocate(rt, s);
   }
-  JS_FreeValueRT(rt, val);
+  //JS_FreeValueRT(rt, val);
 }
 
 extern "C" {

@@ -118,29 +118,6 @@ js_point_diff(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
   return ret;
 }
 
-static void
-js_point_finalizer(JSRuntime* rt, JSValue val) {
-  JSPointData<double>* s = static_cast<JSPointData<double>*>(JS_GetOpaque(val, js_point_class_id));
-
-  if(s != nullptr) {
-    auto pos = std::find(points.begin(), points.end(), s);
-
-    if(pos != points.end()) {
-      points.erase(pos);
-    } else {
-      bool isObject = JS_IsObject(val);
-      bool isNumber = JS_IsNumber(val);
-      std::cerr << "isObject: " << isObject << std::endl;
-      std::cerr << "isNumber: " << isNumber << std::endl;
-    }
-    js_deallocate(rt, s);
-  }
-
-  JS_FreeValueRT(rt, val);
-
-  /*  if(points.size() == 0)
-      JS_FreeValueRT(rt, point_proto);*/
-}
 
 static JSValue
 js_point_get_xy(JSContext* ctx, JSValueConst this_val, int magic) {
@@ -391,6 +368,20 @@ js_point_from(JSContext* ctx, JSValueConst point, int argc, JSValueConst* argv) 
   if(array[0] > 0 && array[1] > 0)
     ret = js_point_new(ctx, array[0], array[1]);
   return ret;
+}
+
+static void
+js_point_finalizer(JSRuntime* rt, JSValue val) {
+  JSPointData<double>* s = static_cast<JSPointData<double>*>(JS_GetOpaque(val, js_point_class_id));
+
+  if(s != nullptr) {
+    js_deallocate(rt, s);
+  }
+
+ // JS_FreeValueRT(rt, val);
+
+  /*  if(points.size() == 0)
+      JS_FreeValueRT(rt, point_proto);*/
 }
 
 JSValue point_class = JS_UNDEFINED;

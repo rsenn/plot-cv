@@ -125,10 +125,10 @@ js_point_iterator_finalizer(JSRuntime* rt, JSValue val) {
   JSPointIteratorData* s = static_cast<JSPointIteratorData*>(JS_GetOpaque(val, js_point_iterator_class_id));
   /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
 
-  if(s != nullptr)
+  if(s != nullptr) 
     js_deallocate(rt, s);
 
-  JS_FreeValueRT(rt, val);
+  //JS_FreeValueRT(rt, val);
 }
 extern "C" {
 JSClassDef js_point_iterator_class = {

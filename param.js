@@ -145,8 +145,36 @@ Util.define(ParamNavigator.prototype, {
     const { map } = this;
     return [...map.entries()][index];
   },
+  indexOf(param) {
+    const { map } = this;
+    let i = 0;
+    for(let [name, value] of map) {
+      if(param === name || param === value) return i;
+      i++;
+    }
+    return -1;
+  },
+  nameOf(param) {
+    const { map } = this;
+    let i = 0;
+    for(let [name, value] of map) {
+      if(param === i || param === value) return name;
+      i++;
+    }
+    return -1;
+  },
+  get(name) {
+    const { map } = this;
+    return map.get(name);
+  },
   get current() {
     return this.at(this.index);
+  },
+  set current(index_or_name) {
+if(typeof index_or_name != 'number')
+  index_or_name = this.indexOf(index_or_name);
+if(index_or_name >= 0 && index_or_name < this.map.size)
+  this.index = index_or_name;
   },
   get name() {
     const { map, index } = this;

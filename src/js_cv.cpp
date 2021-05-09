@@ -616,7 +616,7 @@ js_cv_pixel_neighborhood(JSContext* ctx, JSValueConst this_val, int argc, JSValu
 static JSValue
 js_cv_pixel_find_value(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSMatData* src;
-  std::vector<cv::Point> output;
+  std::vector< JSPointData<int> > output;
   uint32_t value;
 
   src = js_mat_data(ctx, argv[0]);
@@ -665,7 +665,7 @@ js_cv_mat_functions(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
       break;
     }
     case MAT_FINDNONZERO: {
-      std::vector<cv::Point> output;
+      std::vector< JSPointData<int> > output;
       cv::findNonZero(mat, output);
       ret = js_array_from(ctx, output);
       break;
@@ -1079,7 +1079,7 @@ js_cv_resize_window(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
   cv::resizeWindow(name, w, h);
   return JS_UNDEFINED;
-}
+} 
 
 static JSValue
 js_cv_get_window_image_rect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
@@ -1608,7 +1608,7 @@ js_cv_finalizer(JSRuntime* rt, JSValue val) {
     cv::destroyWindow(name);
   }
 
-  JS_FreeValueRT(rt, val);
+ // JS_FreeValueRT(rt, val);
   // JS_FreeValueRT(rt, cv_class);
 }
 
@@ -1638,6 +1638,7 @@ js_function_list_t js_cv_static_funcs{
     JS_CFUNC_DEF("namedWindow", 1, js_cv_named_window),
     JS_CFUNC_DEF("moveWindow", 2, js_cv_move_window),
     JS_CFUNC_DEF("resizeWindow", 2, js_cv_resize_window),
+    JS_CFUNC_DEF("destroyWindow", 1, js_cv_destroy_window),
     JS_CFUNC_DEF("getWindowImageRect", 1, js_cv_get_window_image_rect),
     JS_CFUNC_DEF("getWindowProperty", 2, js_cv_get_window_property),
     JS_CFUNC_DEF("setWindowProperty", 3, js_cv_set_window_property),

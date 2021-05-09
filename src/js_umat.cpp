@@ -238,9 +238,9 @@ js_umat_finalizer(JSRuntime* rt, JSValue val) {
 
   if((um = static_cast<JSUMatData*>(JS_GetOpaque(val, js_umat_class_id)))) {
     um->release();
-  }
   js_deallocate(rt, um);
-  JS_FreeValueRT(rt, val);
+  }
+  //JS_FreeValueRT(rt, val);
 }
 
 static JSValue

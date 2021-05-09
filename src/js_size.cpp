@@ -100,13 +100,6 @@ js_size_data(JSContext* ctx, JSValueConst val) {
   return static_cast<JSSizeData<double>*>(JS_GetOpaque2(ctx, val, js_size_class_id));
 }
 
-void
-js_size_finalizer(JSRuntime* rt, JSValue val) {
-  JSSizeData<double>* s = static_cast<JSSizeData<double>*>(JS_GetOpaque(val, js_size_class_id));
-  /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
-  js_deallocate(rt, s);
-}
-
 static JSValue
 js_size_get(JSContext* ctx, JSValueConst this_val, int magic) {
   JSSizeData<double>* s = js_size_data(ctx, this_val);
@@ -382,6 +375,14 @@ js_size_from(JSContext* ctx, JSValueConst size, int argc, JSValueConst* argv) {
   if(array[0] > 0 && array[1] > 0)
     ret = js_size_new(ctx, array[0], array[1]);
   return ret;
+}
+
+void
+js_size_finalizer(JSRuntime* rt, JSValue val) {
+  JSSizeData<double>* s = static_cast<JSSizeData<double>*>(JS_GetOpaque(val, js_size_class_id));
+  /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
+ if(s)
+  js_deallocate(rt, s);
 }
 
 JSClassDef js_size_class = {
