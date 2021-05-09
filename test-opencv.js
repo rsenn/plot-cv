@@ -409,54 +409,67 @@ function main(...args) {
         }
       }
     ],
-    (m, i, n) => {
-      //console.log('pipeline callback', { i, n });
-      let mat = pipeline.getImage(i);
-
-      let processor = pipeline.getProcessor(i);
-      let params = processorParams.get(processor);
-
+    i => {
       if(frameShow == i) {
-        let rect = new Rect(mat.size);
-        output = screen(rect);
+        let mat = pipeline.getImage(i);
 
         if(mat.channels == 1) cv.cvtColor(mat, mat, cv.COLOR_GRAY2BGR);
 
-        mat.copyTo(output);
+        mat.copyTo(screen(outputRect));
+     let processor = pipeline.getProcessor(i);
+    let params = processorParams.get(processor);
 
-        let srect = new Rect(statusRect.size);
+paramNav.current = params[0];
+    console.log("paramNav.current", paramNav.current);
 
-        draw.rect(screen(statusRect), srect, backgroundColor, cv.FILLED, true);
-        draw.rect(screen(statusRect), srect.inset(2, 0), 0, cv.FILLED, true);
+    paramIndexes[0] = paramNav.indexOf(params[0]);
+    paramIndexes[1] = paramNav.indexOf(params[params.length - 1]);
+    console.log("paramIndexes", paramIndexes);
 
-        paramNav.current = params[0];
-
-        paramIndexes[0] = paramNav.indexOf(params[0]);
-        paramIndexes[1] = paramNav.indexOf(params[params.length - 1]);
-        //console.log('paramIndexes:', paramIndexes);
-        let text =
-          `#${i}: ` +
-          pipeline.names[i] +
-          `\n\n` +
-          `params:\n` +
-          params
-            .map((name, idx) => {
-              return `  ${idx + paramIndexes[0] == paramNav.index ? '\x1b[1;31m' : ''}${name.padEnd(13
-              )}\x1b[0m   ${inspect(paramNav.get(name), {
-                colors: true,
-                hideKeys: ['callback']
-              })}\n`;
-            })
-            .join('');
-
-        DrawText(status(textRect), text, textColor, fontFace, fontSize);
-
-        cv.imshow('output', screen);
-        cv.resizeWindow('output', screenSize.width, screenSize.height);
-        cv.setWindowTitle('output', `#${i}: ` + pipeline.names[i]);
-      }
+        RedrawStatus();
+       }
     }
   );
+
+  function RedrawStatus() {
+    console.log("RedrawStatus", `paramNav.index=${ paramNav.index}`);
+
+    let i = pipeline.currentProcessor;
+    let processor = pipeline.getProcessor(i);
+    let params = processorParams.get(processor);
+
+    let srect = new Rect(statusRect.size);
+
+    draw.rect(screen(statusRect), srect, backgroundColor, cv.FILLED, true);
+    draw.rect(screen(statusRect), srect.inset(2, 0), 0, cv.FILLED, true);
+
+     const inspectOptions = {
+      colors: true,
+      hideKeys: ['callback']
+    };
+    let text =
+      `#${i}: ` +
+      pipeline.names[i] +
+      `\n\n` +
+      `params:\n` +
+      params
+        .map((name, idx) => {
+          return `  ${idx + paramIndexes[0] == paramNav.index ? '\x1b[1;31m' : ''}${name.padEnd(13
+          )}\x1b[0m   ${inspect(paramNav.get(name), inspectOptions)}\n`;
+        })
+        .join('');
+
+    DrawText(status(textRect), text, textColor, fontFace, fontSize);
+
+    RedrawWindow();
+  }
+
+  function RedrawWindow() {
+    let i = pipeline.currentProcessor;
+    cv.imshow('output', screen);
+    cv.resizeWindow('output', screenSize.width, screenSize.height);
+    cv.setWindowTitle('output', `#${i}: ` + pipeline.names[i]);
+  }
 
   let key;
   let paramAccumulator = paramNav.setCallback(new Accumulator((name, param) => {
@@ -505,6 +518,7 @@ function main(...args) {
           paramNav.index = paramIndexes[1];
 
         console.log(`Param #${paramNav.index} '${paramNav.name}' selected (${+paramNav.param})`);
+        RedrawStatus();
         break;
       case 0x3e /* > */:
         paramNav.next();
@@ -512,7 +526,8 @@ function main(...args) {
           paramNav.index = paramIndexes[0];
 
         console.log(`Param #${paramNav.index} '${paramNav.name}' selected (${+paramNav.param})`);
-        break;
+              RedrawStatus();
+  break;
 
       case 0x2b /* + */:
         paramNav.param.increment();

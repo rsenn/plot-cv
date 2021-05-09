@@ -551,8 +551,10 @@ async function main(...args) {
         //cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
       })
     ],
-    (mat, i, n) => {
+    (i, n) => {
       if(frameShow == i) {
+        let mat = pipeline.getImage(i);
+
         outputName = pipeline.processors[frameShow].name;
         outputMat = mat;
       }

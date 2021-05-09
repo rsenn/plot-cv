@@ -149,7 +149,7 @@ export function DrawText(mat, text, textColor, fontFace, fontSize = 13) {
   let lines = [...text.matchAll(/(\x1b[^a-z]*[a-z]|\n|[^\x1b\n]*)/g)].map(m => m[0]);
   let baseY;
   let size = font.size('yP', y => (baseY = y));
-  let start = new Point(size.width / text.length,baseY -3);
+  let start = new Point(size.width / text.length, baseY - 3);
   let pos = new Point(start);
   let incY = (baseY || 2) + size.height + 3;
 
@@ -173,7 +173,8 @@ export function DrawText(mat, text, textColor, fontFace, fontSize = 13) {
         //console.log("n:", n);1
         else color = palette16[n];
       }
-      continue;    }
+      continue;
+    }
     size = font.size(line);
     font.draw(mat, line, pos, color, -1, cv.LINE_AA);
     pos.x += size.width;

@@ -26,8 +26,7 @@ export class Pipeline extends Function {
         if(Util.isObject(mat) && mat instanceof Mat) self.images[i] = mat;
         mat = self.images[i];
         self.times[i] = hr(start);
-        if(typeof callback == 'function')
-          callback.call(self, self.images[i], i, self.processors.length);
+        if(typeof callback == 'function') callback.call(self, i, self.processors.length);
       }
       // self.currentProcessor = -1;
       return mat;
