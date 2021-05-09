@@ -1,5 +1,4 @@
 import Util from './lib/util.js';
-//import ConsoleSetup from './lib/consoleSetup.js';
 import * as draw from 'draw';
 import * as std from 'std';
 import { Point } from 'point';
@@ -12,8 +11,8 @@ import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './cvHighGUI.j
 import { Alea } from './lib/alea.js';
 import { HSLA } from './lib/color.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
-import PortableFileSystem from './lib/filesystem.js';
 import { Mat as cvMat } from 'mat';
+import * as fs from 'fs';
 import * as cv from 'cv';
 import Console from 'console';
 import { CLAHE } from 'clahe';
@@ -25,6 +24,7 @@ let filesystem;
 let rainbow;
 let zoom = 1;
 let debug = false;
+let basename = Util.getArgv()[1].replace(/\.js$/, '');
 
 const Mat =
   debug == false
@@ -69,15 +69,25 @@ Object.assign(Hierarchy.prototype, {
   });
 
 function SaveConfig(configObj) {
-  return filesystem.writeFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'),
-    JSON.stringify(configObj, null, 2) + '\n'
+  configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v]));
+  let file = std.open(basename + '.config.json', 'w+b');
+  file.puts(JSON.stringify(configObj, null, 2) + '\n');
+  file.close();
+  console.log(`Saved config to '${basename + '.config.json'}'`,
+    inspect(configObj, { compact: false })
   );
 }
 
 function LoadConfig() {
-  let str = filesystem.readFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'), 'utf-8');
-  console.log('LoadConfig:', str);
-  return JSON.parse(str ?? '{}');
+  let str = std.loadFile(basename + '.config.json');
+  let configObj = JSON.parse(str ?? '{}');
+
+  configObj = Object.fromEntries(Object.entries(configObj)
+      .map(([k, v]) => [k, +v])
+      .filter(([k, v]) => !isNaN(v))
+  );
+  console.log('LoadConfig:', inspect(configObj, { compact: false }));
+  return configObj;
 }
 
 function dumpMat(name, mat) {
@@ -146,21 +156,6 @@ const to8bit = (() => {
     const type = cv.CV_8U | ((mat.channels - 1) << 3);
     mat.convertTo(ret, type, 255);
     return ret;
-  };
-})();
-
-const Grayscale = (() => {
-  const mapper = Util.weakMapper(() => [new Mat(), new Mat(), new Mat(), new Mat()],
-    new WeakMap(),
-    (obj, mat) => {
-      //console.log('Mat for ', obj, ' = ', mat);
-    }
-  );
-  return function Grayscale(mat) {
-    let channels = mapper(mat);
-    cv.cvtColor(mat, channels[0], cv.COLOR_BGR2Lab);
-    cv.split(channels[0], channels);
-    return channels[0];
   };
 })();
 
@@ -294,13 +289,13 @@ function Profiler(name, ticks = () => cv.getTickCount(), freq = cv.getTickFreque
   return self;
 }
 
-async function main(...args) {
+function main(...args) {
   let start;
   let begin = hr();
   let running = true;
   let paused = false;
 
-  console = new Console({ colors: true, depth: 1 });
+  console = new Console({ colors: true, depth: 1, maxArrayLength: 30 });
 
   /* await ConsoleSetup({
     breakLength: 120,
@@ -308,7 +303,6 @@ async function main(...args) {
     multiline: 1,
     alignMap: true
   });*/
-  await PortableFileSystem(fs => (filesystem = fs));
 
   let opts = Util.getOpt({
       input: [true, (file, current) => [...(current || []), file], 'i'],
@@ -390,6 +384,7 @@ async function main(...args) {
   let contours, hier;
   let contoursDepth;
   let lines, circles;
+  let outputMat, outputName;
 
   let params = {
     ksize: new NumericParam(config.ksize ?? 3, 1, 13, 2),
@@ -429,9 +424,9 @@ async function main(...args) {
   console.log('win.imageRect (1)', win.imageRect);
 
   if(!opts['no-trackbars']) {
-    await params.apertureSize.createTrackbar('apertureSize', win);
-    await params.thresh1.createTrackbar('thresh1', win);
-    await params.thresh2.createTrackbar('thresh2', win);
+    params.apertureSize.createTrackbar('apertureSize', win);
+    params.thresh1.createTrackbar('thresh1', win);
+    params.thresh2.createTrackbar('thresh2', win);
     console.log('win.imageRect (2)', win.imageRect);
   }
 
@@ -465,7 +460,7 @@ async function main(...args) {
   let clahe = new CLAHE(4, new Size(8, 8));
 
   let pipeline = new Pipeline([
-      Processor(function AcquireFrame(src, dst) {
+      /*Processor*/ function AcquireFrame(src, dst) {
         const dstEmpty = dst.empty;
         if(dst.empty) {
           // console.log(`AcquireFrame`, { src, dst });
@@ -475,6 +470,7 @@ async function main(...args) {
         /*console.log(`video`, video);
         console.log(`video.read`, video.read);*/
         video.read(dst);
+        console.log('AcquireFrame', { dst });
 
         if(videoSize === undefined || videoSize.empty) {
           videoSize = video.size.area ? video.size : dst.size;
@@ -488,18 +484,23 @@ async function main(...args) {
         if(!videoSize.equals(dst.size))
           throw new Error(`AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`
           );
-      }),
-      Grayscale,
-      Processor(function Norm(src, dst) {
-        // clahe.setClipLimit(4);
+      },
+      function Grayscale(src, dst) {
+        let channels = [];
+        cv.cvtColor(src, dst, cv.COLOR_BGR2Lab);
+        cv.split(dst, channels);
+        channels[0].copyTo(dst);
+      },
+      /*Processor*/ function Norm(src, dst) {
+        console.log('Norm', { src, dst });
         clahe.apply(src, dst);
-        ///cv.equalizeHist(src,dst);
-        //cv.normalize(src, dst, 255, 0, cv.NORM_MINMAX);
-      }),
+      },
       Processor(function Blur(src, dst) {
+        console.log('Blur', { src, dst });
         cv.GaussianBlur(src, dst, [+params.ksize, +params.ksize], 0, 0, cv.BORDER_REPLICATE);
       }),
       Processor(function EdgeDetect(src, dst) {
+        console.log('EdgeDetect', { src, dst });
         cv.Canny(src,
           dst,
           +params.thresh1,
@@ -909,4 +910,11 @@ async function main(...args) {
   //  console.log('exit:', std.exit(0));
 }
 
-Util.callMain(main, true);
+try {
+  main(...scriptArgs.slice(1));
+} catch(error) {
+  console.log(`FAIL: ${error.message}\n${error.stack}`);
+  std.exit(1);
+} finally {
+  console.log('SUCCESS');
+}

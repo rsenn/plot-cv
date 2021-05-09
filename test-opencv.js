@@ -255,13 +255,11 @@ console.log("statusRect:", statusRect);
 
         cv.pixelNeighborhood(src, neighborhood);
 
-
         let endpoints = cv.pixelFindValue(src, 1);
-       console.log('endpoints', endpoints);
+        console.log('endpoints', endpoints);
 
-    let linepoints = cv.pixelFindValue(src, 2);
-       console.log('linepoints', linepoints);
-
+        let linepoints = cv.pixelFindValue(src, 2);
+        console.log('linepoints', linepoints);
 
         cv.imwrite('neighborhood.png', neighborhood, palette);
 
@@ -300,9 +298,8 @@ console.log("statusRect:", statusRect);
           draw.line(skel, ...line.toPoints(), [0, 0, 0], lineWidth, cv.LINE_8);
           ++i;
         }
-        lines.sort((a, b) => a.y1 == b.y1 ? a.x1 - b.x1 : a.y1 - b.y1);
-          console.log(`lines`, lines);
- 
+        lines.sort((a, b) => (a.y1 == b.y1 ? a.x1 - b.x1 : a.y1 - b.y1));
+        console.log(`lines`, lines);
 
         let kern = cv.getStructuringElement(cv.MORPH_CROSS, new Size(3, 3));
         cv.dilate(skel, skel, kern);
