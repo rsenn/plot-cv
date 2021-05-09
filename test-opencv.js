@@ -416,23 +416,23 @@ function main(...args) {
         if(mat.channels == 1) cv.cvtColor(mat, mat, cv.COLOR_GRAY2BGR);
 
         mat.copyTo(screen(outputRect));
-     let processor = pipeline.getProcessor(i);
-    let params = processorParams.get(processor);
+        let processor = pipeline.getProcessor(i);
+        let params = processorParams.get(processor);
 
-paramNav.current = params[0];
-    console.log("paramNav.current", paramNav.current);
+        paramNav.current = params[0];
+        console.log('paramNav.current', paramNav.current);
 
-    paramIndexes[0] = paramNav.indexOf(params[0]);
-    paramIndexes[1] = paramNav.indexOf(params[params.length - 1]);
-    console.log("paramIndexes", paramIndexes);
+        paramIndexes[0] = paramNav.indexOf(params[0]);
+        paramIndexes[1] = paramNav.indexOf(params[params.length - 1]);
+        console.log('paramIndexes', paramIndexes);
 
         RedrawStatus();
-       }
+      }
     }
   );
 
   function RedrawStatus() {
-    console.log("RedrawStatus", `paramNav.index=${ paramNav.index}`);
+    console.log('RedrawStatus', `paramNav.index=${paramNav.index}`);
 
     let i = pipeline.currentProcessor;
     let processor = pipeline.getProcessor(i);
@@ -443,7 +443,7 @@ paramNav.current = params[0];
     draw.rect(screen(statusRect), srect, backgroundColor, cv.FILLED, true);
     draw.rect(screen(statusRect), srect.inset(2, 0), 0, cv.FILLED, true);
 
-     const inspectOptions = {
+    const inspectOptions = {
       colors: true,
       hideKeys: ['callback']
     };
@@ -526,8 +526,8 @@ paramNav.current = params[0];
           paramNav.index = paramIndexes[0];
 
         console.log(`Param #${paramNav.index} '${paramNav.name}' selected (${+paramNav.param})`);
-              RedrawStatus();
-  break;
+        RedrawStatus();
+        break;
 
       case 0x2b /* + */:
         paramNav.param.increment();
