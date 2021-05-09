@@ -3,6 +3,7 @@
 
 #include "jsbindings.hpp"
 #include "js_alloc.hpp"
+#include "js_array.hpp"
 
 extern "C" {
 
@@ -25,6 +26,27 @@ js_umat_or_mat(JSContext* ctx, JSValueConst value) {
     return JSInputOutputArray(*umat);
   if((mat = static_cast<cv::Mat*>(JS_GetOpaque(value, js_mat_class_id))))
     return JSInputOutputArray(*mat);
+  
+  return cv::noArray();
+}
+
+static inline JSInputArray
+js_input_array(JSContext* ctx, JSValueConst value) {
+  cv::Mat* mat;
+  cv::UMat* umat;
+
+  if((umat = static_cast<cv::UMat*>(JS_GetOpaque(value, js_umat_class_id))))
+    return JSInputArray(*umat);
+  if((mat = static_cast<cv::Mat*>(JS_GetOpaque(value, js_mat_class_id))))
+    return JSInputArray(*mat);
+
+  if(js_is_array(ctx, value)) {
+    std::vector<double> arr;
+    cv::Scalar scalar;
+    js_array_to(ctx, value, arr);
+    for(size_t i = 0; i < arr.size(); i++) scalar[i] = arr[i];
+    return JSInputArray(scalar);
+  }
 
   return cv::noArray();
 }

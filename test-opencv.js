@@ -137,11 +137,18 @@ function main(...args) {
   }
 
   let outputRect = new Rect(0, 0, resolution.width, resolution.height);
+  /* let statusRect = new Rect(0, resolution.height, resolution.width, 200);
+console.log("statusRect:", statusRect);
+*/
   let statusRect = new Rect(0, resolution.height, resolution.width, 200);
-  let textRect = new Rect(statusRect.size).inset(5);
+
+  console.log('statusRect:', statusRect);
+
+  let [textRect, helpRect] = new Rect(statusRect.size).inset(5).vsplit(-20);
   let screenSize = new Size(resolution.width, resolution.height + 200);
   console.log('statusRect', statusRect);
   console.log('textRect', textRect);
+  console.log('helpRect:', helpRect);
 
   let screen = new Mat(screenSize, cv.CV_8UC3);
   let output = screen(outputRect);
@@ -195,75 +202,19 @@ function main(...args) {
   let paramNav = new ParamNavigator(params, paramIndex);
   let paramIndexes = [-1, -1];
 
-  let palette = new Uint32Array(256);
+  let palette = new Array(256);
 
-  for(let i = 0; i < 256; i++) palette[i] = 0xff000000;
+  const black = [0x00, 0x00, 0x00, 0xff];
 
-  palette[0] = 0xff000000;
-  palette[1] = 0xff00ffff;
-  palette[2] = 0xff606060;
-  palette[3] = 0xffff0000;
-  palette[4] = 0xff00ff00;
-  palette[5] = 0xff0080ff;
-  palette[6] = 0xff0000ff;
-  /*
-  DrawText(2, 0, 'Test');
-  DrawText(1, 1, 'Test');
-  DrawText(0, 2, 'Test');
-  DrawText(0, 2, 'BLAH');*/
-  /* const palette16 = [
-    0x000000,
-    0xa00000,
-    0x00a000,
-    0xa0a000,
-    0x0000a0,
-    0xa000a0,
-    0x00a0a0,
-    0xc0c0c0,
-    0xa0a0a0,
-    0xff0000,
-    0x00ff00,
-    0xffff00,
-    0x0000ff,
-    0xff00ff,
-    0x00ffff,
-    0xffffff
-  ];
+  for(let i = 0; i < 256; i++) palette[i] = black;
 
-  function DrawText(x, y, text, color = textColor, thickness = -1) {
-    let font = new TextStyle(fontFace, fontSize, thickness);
-    let lines = [...text.matchAll(/(\x1b[^a-z]*[a-z]|\n|[^\x1b\n]*)/g)].map(m => m[0]);
-    let baseY;
-    let size = font.size(lines[0][0], y => (baseY = y));
-    let start = new Point((size.width / text.length) * x, (size.height + 3) * (1 + y))
-      .add(textRect.x, textRect.y)
-      .add(x, y);
-    let pos = new Point(start);
-    let incY = (baseY || 3) + size.height + 3;
-    for(let line of lines) {
-      if(line == '\n') {
-        pos.y += incY;
-        pos.x = start.x;
-        continue;
-      } else if(line.startsWith('\x1b')) {
-        let ansi = [...line.matchAll(/([0-9]+|[a-z])/g)].map(m => (isNaN(+m[0]) ? m[0] : +m[0]));
-        if(ansi[ansi.length - 1] == 'm') {
-          let n;
-          for(let code of ansi.slice(0, -1)) {
-            if(code == 0) continue;
-            if(code == 1) n = (n | 0) + 8;
-            else if(code >= 30) n = n | 0 | (code - 30);
-          }
-          if(n === undefined) color = textColor;
-          else color = palette16[n];
-        }
-        continue;
-      }
-      size = font.size(line);
-      font.draw(status, line, pos, color, -1, cv.LINE_AA);
-      pos.x += size.width;
-    }
-  }*/
+  palette[0] = [0x0, 0x0, 0x0, 0xff];
+  palette[1] = [0xff, 0xff, 0x0, 0xff];
+  palette[2] = [0x60, 0x60, 0x60, 0xff];
+  palette[3] = [0x0, 0x0, 0xff, 0xff];
+  palette[4] = [0x0, 0xff, 0x0, 0xff];
+  palette[5] = [0xff, 0x80, 0x0, 0xff];
+  palette[6] = [0xff, 0x0, 0x0, 0xff];
 
   let pipeline = new Pipeline([
       function AcquireFrame(src, dst) {
@@ -307,22 +258,42 @@ function main(...args) {
       },
 
       function PixelNeighborhood(src, dst) {
-        neighborhood = new Mat(src.size, src.type);
-        let output;
+        neighborhood = new Mat(src.size, cv.CV_8UC1);
+        let output = new Mat(src.size, dst.type ?? src.type);
 
         cv.pixelNeighborhood(src, neighborhood);
-        //console.log('non-zero:', cv.countNonZero(neighborhood));
-        //console.log('non-zero:', cv.findNonZero(neighborhood));
-        //console.log('pixels:', neighborhood.size.area);
+        console.log('cv.countNonZero(neighborhood)', cv.countNonZero(neighborhood));
 
-        let coords = [[], ...Util.range(1, 6).map(n => cv.pixelFindValue(neighborhood, n))];
+       // console.log('palette:', console.config({ numberBase: 16, maxArrayLength: 100 }), palette);
 
-        //console.log('coords:', Object.fromEntries(coords.map(a => a.length).entries()));
+        cv.paletteApply(neighborhood, output, palette);
+        console.log(`output`, output);
 
-        output = cv.paletteApply(neighborhood, palette);
-        output.copyTo(dst);
+        let coords = cv.findNonZero(neighborhood);
+        console.log(`coords`, coords);
 
         cv.imwrite('neighborhood.png', output);
+
+        cv.cvtColor(output, output, cv.COLOR_BGR2BGRA);
+        cv.imwrite('neighborhood.png', output);
+
+        new Mat(src.size, cv.CV_8UC4).copyTo(dst);
+
+              cv.pixelNeighborhood(src, neighborhood);
+console.log(`neighborhood.at(${coords[0]})`, neighborhood.at(coords[0]));
+
+cv.bitwise_or(neighborhood, 0x40, neighborhood);
+//neighborhood.xor(0x40, neighborhood);
+console.log(`neighborhood.at(${coords[0]})`, neighborhood.at(coords[0]));
+
+  cv.cvtColor(neighborhood, dst, cv.COLOR_GRAY2BGRA);
+        //     src.copyTo(dst);
+     /*   console.log('dst:', dst);
+        dst.clear();
+
+        console.log('output:', output);
+        console.log('dst:', dst);
+        dst.or(output);*/
       },
 
       function HoughLinesP(src, dst) {
@@ -414,17 +385,23 @@ function main(...args) {
         let mat = pipeline.getImage(i);
 
         if(mat.channels == 1) cv.cvtColor(mat, mat, cv.COLOR_GRAY2BGR);
+        if(mat.channels == 4) cv.cvtColor(mat, mat, cv.COLOR_BGRA2BGR);
+
+        screen(outputRect).clear();
 
         mat.copyTo(screen(outputRect));
         let processor = pipeline.getProcessor(i);
         let params = processorParams.get(processor);
 
-        paramNav.current = params[0];
-        console.log('paramNav.current', paramNav.current);
+        // console.log('paramNav.current', paramNav.current);
 
         paramIndexes[0] = paramNav.indexOf(params[0]);
         paramIndexes[1] = paramNav.indexOf(params[params.length - 1]);
-        console.log('paramIndexes', paramIndexes);
+
+        if(paramNav.index < paramIndexes[0] || paramNav.index > paramIndexes[1])
+          paramNav.current = params[0];
+
+        //console.log('paramIndexes', paramIndexes);
 
         RedrawStatus();
       }
@@ -432,7 +409,7 @@ function main(...args) {
   );
 
   function RedrawStatus() {
-    console.log('RedrawStatus', `paramNav.index=${paramNav.index}`);
+    //console.log('RedrawStatus', `paramNav.index=${paramNav.index}`);
 
     let i = pipeline.currentProcessor;
     let processor = pipeline.getProcessor(i);
@@ -441,7 +418,7 @@ function main(...args) {
     let srect = new Rect(statusRect.size);
 
     draw.rect(screen(statusRect), srect, backgroundColor, cv.FILLED, true);
-    draw.rect(screen(statusRect), srect.inset(2, 0), 0, cv.FILLED, true);
+    draw.rect(screen(statusRect), srect.inset(3, 0), 0, cv.FILLED, true);
 
     const inspectOptions = {
       colors: true,
@@ -455,11 +432,17 @@ function main(...args) {
       params
         .map((name, idx) => {
           return `  ${idx + paramIndexes[0] == paramNav.index ? '\x1b[1;31m' : ''}${name.padEnd(13
-          )}\x1b[0m   ${inspect(paramNav.get(name), inspectOptions)}\n`;
+          )}\x1b[0m   \x1b[1;36m${+paramNav.get(name)}\x1b[0m\n`;
         })
         .join('');
 
     DrawText(status(textRect), text, textColor, fontFace, fontSize);
+    DrawText(status(helpRect),
+      '< prev, > next, + increment, - decrement, DEL reset',
+      textColor,
+      fontFace,
+      fontSize
+    );
 
     RedrawWindow();
   }
@@ -512,6 +495,7 @@ function main(...args) {
           pipeline.step(-1);
         }
         break;
+      case 0xf52 /* up */:
       case 0x3c /* < */:
         paramNav.prev();
         if(paramIndexes[0] != -1 && paramNav.index < paramIndexes[0])
@@ -520,6 +504,7 @@ function main(...args) {
         console.log(`Param #${paramNav.index} '${paramNav.name}' selected (${+paramNav.param})`);
         RedrawStatus();
         break;
+      case 0xf54 /*down  */:
       case 0x3e /* > */:
         paramNav.next();
         if(paramIndexes[1] != -1 && paramNav.index > paramIndexes[1])
@@ -529,6 +514,7 @@ function main(...args) {
         RedrawStatus();
         break;
 
+      case 0xf53 /* right */:
       case 0x2b /* + */:
         paramNav.param.increment();
         console.log(`Param ${paramNav.name}: ${+paramNav.param}`);
@@ -543,6 +529,7 @@ function main(...args) {
         pipeline.recalc(frameShow);
         break;
 
+      case 0xf51 /* left */:
       case 0x2d /* - */:
       case 0xad /* numpad - */:
       case 0xfad /* numpad - */:

@@ -118,7 +118,6 @@ js_point_diff(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
   return ret;
 }
 
-
 static JSValue
 js_point_get_xy(JSContext* ctx, JSValueConst this_val, int magic) {
   JSPointData<double>* s = js_point_data(ctx, this_val);
@@ -378,7 +377,7 @@ js_point_finalizer(JSRuntime* rt, JSValue val) {
     js_deallocate(rt, s);
   }
 
- // JS_FreeValueRT(rt, val);
+  // JS_FreeValueRT(rt, val);
 
   /*  if(points.size() == 0)
       JS_FreeValueRT(rt, point_proto);*/

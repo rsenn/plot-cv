@@ -394,7 +394,7 @@ js_line_finalizer(JSRuntime* rt, JSValue val) {
   JSLineData<double>* ln;
 
   if((ln = static_cast<JSLineData<double>*>(JS_GetOpaque(val, js_line_class_id))))
-  /* Note: 'ln' can be NULL in case JS_SetOpaque() was not called */
+    /* Note: 'ln' can be NULL in case JS_SetOpaque() was not called */
     js_deallocate(rt, ln);
 }
 

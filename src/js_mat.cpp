@@ -394,6 +394,7 @@ static JSValue
 js_mat_expr(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSValue ret = JS_UNDEFINED;
   JSColorData<double> color;
+  double value = 0;
   JSMatData *input = nullptr, *output = nullptr, *other = nullptr;
   double scale = 1.0;
 
@@ -405,7 +406,7 @@ js_mat_expr(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv,
 
   if((other = js_mat_data_nothrow(argv[0])) == nullptr)
     if(!js_color_read(ctx, argv[0], &color))
-      return JS_EXCEPTION;
+      JS_ToFloat64(ctx, &value, argv[0]);
 
   if(magic == 3 && argc > 1) {
     JS_ToFloat64(ctx, &scale, argv[1]);
@@ -424,19 +425,39 @@ js_mat_expr(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv,
     cv::Mat tmp(input->rows, input->cols, input->type());
 
     if(other == nullptr) {
-      cv::Scalar& scalar = *reinterpret_cast<cv::Scalar*>(&color);
       cv::Mat& mat = *input;
 
-      // std::cerr << "js_mat_expr input=" << (void*)input << " output=" << (void*)output << " scalar=" <<
-      // scalar << std::endl;
+      if(mat.channels() == 1) {
 
-      switch(magic) {
-        case MAT_EXPR_AND: expr = mat & scalar; break;
-        case MAT_EXPR_OR: expr = mat | scalar; break;
-        case MAT_EXPR_XOR: expr = mat ^ scalar; break;
-        case MAT_EXPR_MUL: expr = mat.mul(scalar, scale); break;
+        if(mat.depth() == 0) {
+          switch(magic) {
+            case MAT_EXPR_AND: mat &= (uchar)value; break;
+            case MAT_EXPR_OR: cv::bitwise_or(mat, cv::Scalar(value, value, value, value), mat); break;
+            case MAT_EXPR_XOR: mat ^= (uchar)value; break;
+            case MAT_EXPR_MUL: mat = mat * value; break;
+          }
+        } else {
+          switch(magic) {
+            case MAT_EXPR_AND: mat &= value; break;
+            case MAT_EXPR_OR: cv::bitwise_or(mat, cv::Scalar(value, value, value, value), mat); break;
+            case MAT_EXPR_XOR: mat ^= value; break;
+            case MAT_EXPR_MUL: mat *= value; break;
+          }
+        }
+      } else {
+        cv::Scalar& scalar = *reinterpret_cast<cv::Scalar*>(&color);
+
+        // std::cerr << "js_mat_expr input=" << (void*)input << " output=" << (void*)output << " scalar=" <<
+        // scalar << std::endl;
+
+        switch(magic) {
+          case MAT_EXPR_AND: expr = mat & scalar; break;
+          case MAT_EXPR_OR: expr = mat | scalar; break;
+          case MAT_EXPR_XOR: expr = mat ^ scalar; break;
+          case MAT_EXPR_MUL: expr = mat.mul(scalar, scale); break;
+        }
+        tmp = static_cast<cv::Mat>(expr);
       }
-      tmp = static_cast<cv::Mat>(expr);
 
     } else {
 
@@ -798,27 +819,70 @@ js_mat_set_to(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
 static JSValue
 js_mat_get_props(JSContext* ctx, JSValueConst this_val, int magic) {
   cv::Mat* m;
+  JSValue ret = JS_UNDEFINED;
 
   if(!(m = js_mat_data(ctx, this_val)))
     return JS_EXCEPTION;
 
+  if(m->empty())
+    return JS_NULL;
+
   switch(magic) {
-    case PROP_COLS: return JS_NewUint32(ctx, m->cols);
-    case PROP_ROWS: return JS_NewUint32(ctx, m->rows);
-    case PROP_CHANNELS: return JS_NewUint32(ctx, m->channels());
-    case PROP_TYPE: return JS_NewUint32(ctx, m->type());
-    case PROP_DEPTH: return JS_NewUint32(ctx, m->depth());
-    case PROP_EMPTY: return JS_NewBool(ctx, m->empty());
-    case PROP_TOTAL: return JS_NewFloat64(ctx, m->total());
-    case PROP_SIZE: return js_size_new(ctx, m->cols, m->rows);
-    case PROP_CONTINUOUS: return JS_NewBool(ctx, m->isContinuous());
-    case PROP_SUBMATRIX: return JS_NewBool(ctx, m->isSubmatrix());
-    case PROP_STEP: return JS_NewUint32(ctx, m->step);
-    case PROP_ELEMSIZE: return JS_NewUint32(ctx, m->elemSize());
-    case PROP_ELEMSIZE1: return JS_NewUint32(ctx, m->elemSize1());
+    case PROP_COLS: {
+      ret = JS_NewUint32(ctx, m->cols);
+      break;
+    }
+    case PROP_ROWS: {
+      ret = JS_NewUint32(ctx, m->rows);
+      break;
+    }
+    case PROP_CHANNELS: {
+      ret = JS_NewUint32(ctx, m->channels());
+      break;
+    }
+    case PROP_TYPE: {
+      ret = JS_NewUint32(ctx, m->type());
+      break;
+    }
+    case PROP_DEPTH: {
+      ret = JS_NewUint32(ctx, m->depth());
+      break;
+    }
+    case PROP_EMPTY: {
+      ret = JS_NewBool(ctx, m->empty());
+      break;
+    }
+    case PROP_TOTAL: {
+      ret = JS_NewFloat64(ctx, m->total());
+      break;
+    }
+    case PROP_SIZE: {
+      ret = js_size_new(ctx, m->cols, m->rows);
+      break;
+    }
+    case PROP_CONTINUOUS: {
+      ret = JS_NewBool(ctx, m->isContinuous());
+      break;
+    }
+    case PROP_SUBMATRIX: {
+      ret = JS_NewBool(ctx, m->isSubmatrix());
+      break;
+    }
+    case PROP_STEP: {
+      ret = JS_NewUint32(ctx, m->step);
+      break;
+    }
+    case PROP_ELEMSIZE: {
+      ret = JS_NewUint32(ctx, m->elemSize());
+      break;
+    }
+    case PROP_ELEMSIZE1: {
+      ret = JS_NewUint32(ctx, m->elemSize1());
+      break;
+    }
   }
 
-  return JS_UNDEFINED;
+  return ret;
 }
 
 static JSValue
@@ -1218,9 +1282,8 @@ void
 js_mat_finalizer(JSRuntime* rt, JSValue val) {
   JSMatData* s;
 
-
   if((s = static_cast<JSMatData*>(JS_GetOpaque(val, js_mat_class_id)))) {
-      js_deallocate(rt, s);
+    js_deallocate(rt, s);
   }
   return;
 
@@ -1272,7 +1335,6 @@ js_mat_finalizer(JSRuntime* rt, JSValue val) {
 #endif
     std::cerr << " ERROR: not found" << std::endl;
   }*/
-
 }
 
 JSValue

@@ -608,7 +608,8 @@ js_cv_pixel_neighborhood(JSContext* ctx, JSValueConst this_val, int argc, JSValu
     output = magic ? pixel_neighborhood_cross(*src) : pixel_neighborhood(*src);
   }
 
-  output.copyTo(dst);
+  dst.getMatRef() = output;
+  //  output.copyTo();
 
   return JS_UNDEFINED;
 }
@@ -616,7 +617,7 @@ js_cv_pixel_neighborhood(JSContext* ctx, JSValueConst this_val, int argc, JSValu
 static JSValue
 js_cv_pixel_find_value(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSMatData* src;
-  std::vector< JSPointData<int> > output;
+  std::vector<JSPointData<int>> output;
   uint32_t value;
 
   src = js_mat_data(ctx, argv[0]);
@@ -633,19 +634,54 @@ js_cv_pixel_find_value(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
 static JSValue
 js_cv_palette_apply(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSMatData* src;
-  cv::Mat output;
-  std::array<uint32_t, 256> palette;
+  JSOutputArray dst;
+  std::array<uint32_t, 256> palette32;
+  std::vector<cv::Vec3b> palette;
 
   src = js_mat_data(ctx, argv[0]);
+  dst = js_umat_or_mat(ctx, argv[1]);
 
-  if(src == nullptr)
-    return JS_ThrowInternalError(ctx, "src not an array!");
+  if(src == nullptr || js_is_noarray(dst))
+    return JS_ThrowInternalError(ctx, "src or dst not an array!");
 
-  js_array_to(ctx, argv[1], palette);
+  {
+    cv::Mat& output = dst.getMatRef();
 
-  output = palette_apply(*src, palette);
+    std::cout << "output.channels() = " << output.channels() << std::endl;
+    /*if(js_is_typedarray(ctx, argv[2])) {
+      return JS_ThrowInternalError(ctx, "typed array not handled");
+    } else*/
 
-  return js_mat_wrap(ctx, output);
+    if(output.channels() == 4) {
+      std::vector<JSColorData<uint8_t>> palette;
+      std::vector<cv::Vec4b> palette4b;
+      std::vector<cv::Scalar> palettesc;
+
+      js_array_to(ctx, argv[2], palette);
+
+      for(auto& color : palette) {
+        palette4b.push_back(cv::Vec4b(color.arr[0], color.arr[1], color.arr[2], color.arr[3]));
+        palettesc.push_back(cv::Scalar(color.arr[0], color.arr[1], color.arr[2], color.arr[3]));
+      }
+
+      palette_apply<cv::Vec4b>(*src, dst, &palette4b[0]);
+
+    } else if(output.channels() == 3) {
+      std::vector<JSColorData<uint8_t>> palette;
+      std::vector<cv::Vec3b> palette3b;
+      std::vector<cv::Scalar> palettesc;
+
+      js_array_to(ctx, argv[2], palette);
+
+      for(auto& color : palette) {
+        palette3b.push_back(cv::Vec3b(color.arr[2], color.arr[1], color.arr[0]));
+        palettesc.push_back(cv::Scalar(color.arr[2], color.arr[1], color.arr[0]));
+      }
+
+      palette_apply<cv::Vec3b>(*src, dst, &palette3b[0]);
+    }
+  }
+  return JS_UNDEFINED;
 }
 
 enum { MAT_COUNTNONZERO = 0, MAT_FINDNONZERO, MAT_HCONCAT, MAT_VCONCAT };
@@ -665,7 +701,7 @@ js_cv_mat_functions(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
       break;
     }
     case MAT_FINDNONZERO: {
-      std::vector< JSPointData<int> > output;
+      std::vector<JSPointData<int>> output;
       cv::findNonZero(mat, output);
       ret = js_array_from(ctx, output);
       break;
@@ -1079,7 +1115,7 @@ js_cv_resize_window(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
   cv::resizeWindow(name, w, h);
   return JS_UNDEFINED;
-} 
+}
 
 static JSValue
 js_cv_get_window_image_rect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
@@ -1555,10 +1591,11 @@ js_cv_getticks(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
 static JSValue
 js_cv_bitwise(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
 
-  JSInputOutputArray src, other, dst, mask;
+  JSInputOutputArray src,  dst;
+  JSInputArray  other,  mask;
 
   src = js_umat_or_mat(ctx, argv[0]);
-  other = js_umat_or_mat(ctx, argv[1]);
+  other = js_input_array(ctx, argv[1]);
   dst = src;
   if(argc > 2)
     dst = js_umat_or_mat(ctx, argv[2]);
@@ -1566,13 +1603,13 @@ js_cv_bitwise(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
   mask = cv::noArray();
   if(argc > 3)
 
-    mask = js_umat_or_mat(ctx, argv[3]);
+    mask = js_input_array(ctx, argv[3]);
 
   switch(magic) {
     case 0: cv::bitwise_and(src, other, dst, mask); break;
     case 1: cv::bitwise_or(src, other, dst, mask); break;
     case 2: cv::bitwise_xor(src, other, dst, mask); break;
-    case 3: cv::bitwise_not(src, other, dst); break;
+    case 3: cv::bitwise_not(src,   dst, mask); break;
     default: return JS_EXCEPTION;
   }
   return JS_UNDEFINED;
@@ -1608,7 +1645,7 @@ js_cv_finalizer(JSRuntime* rt, JSValue val) {
     cv::destroyWindow(name);
   }
 
- // JS_FreeValueRT(rt, val);
+  // JS_FreeValueRT(rt, val);
   // JS_FreeValueRT(rt, cv_class);
 }
 

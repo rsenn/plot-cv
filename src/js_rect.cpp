@@ -95,7 +95,6 @@ js_rect_data(JSContext* ctx, JSValueConst val) {
   return static_cast<JSRectData<double>*>(JS_GetOpaque2(ctx, val, js_rect_class_id));
 }
 
-
 enum { PROP_X = 0, PROP_Y, PROP_WIDTH, PROP_HEIGHT, PROP_X2, PROP_Y2, PROP_POS, PROP_SIZE };
 
 static JSValue
@@ -298,7 +297,18 @@ js_rect_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   return obj;
 }
 
-enum { METHOD_CONTAINS = 0, METHOD_EMPTY, METHOD_AREA, METHOD_BR, METHOD_TL, METHOD_SIZE, METHOD_INSET, METHOD_OUTSET };
+enum {
+  METHOD_CONTAINS = 0,
+  METHOD_EMPTY,
+  METHOD_AREA,
+  METHOD_BR,
+  METHOD_TL,
+  METHOD_SIZE,
+  METHOD_INSET,
+  METHOD_OUTSET,
+  METHOD_HSPLIT,
+  METHOD_VSPLIT
+};
 
 static JSValue
 js_rect_method(JSContext* ctx, JSValueConst rect, int argc, JSValueConst* argv, int magic) {
@@ -398,6 +408,62 @@ js_rect_method(JSContext* ctx, JSValueConst rect, int argc, JSValueConst* argv, 
       ret = js_rect_wrap(ctx, rect);
       break;
     }
+    case METHOD_HSPLIT: {
+      std::vector<JSRectData<double>> rects;
+      double x1 = s->x, x2 = s->x + s->width;
+      auto args = argument_range(argc, argv);
+      JSRectData<double>* prev;
+      std::vector<double> breakpoints;
+      for(JSValueConst const& arg : args) {
+        double d;
+        js_value_to(ctx, arg, d);
+        if(d < 0)
+          d = s->width + d;
+        if(d > 0 && d < s->width)
+          breakpoints.push_back(d);
+      }
+      std::sort(breakpoints.begin(), breakpoints.end());
+      rects.push_back(*s);
+      prev = &rects.back();
+      for(double h : breakpoints) {
+        // printf("hsplit h=%lf\n", h);
+        prev->width = h - (prev->x - x1);
+        rects.push_back(*s);
+        rects.back().x = x1 + h;
+        prev = &rects.back();
+        prev->width = s->width - h;
+      }
+      ret = js_array_from(ctx, rects);
+      break;
+    }
+    case METHOD_VSPLIT: {
+      std::vector<JSRectData<double>> rects;
+      double y1 = s->y, y2 = s->y + s->height;
+      auto args = argument_range(argc, argv);
+      JSRectData<double>* prev;
+      std::vector<double> breakpoints;
+      for(JSValueConst const& arg : args) {
+        double d;
+        js_value_to(ctx, arg, d);
+        if(d < 0)
+          d = s->height + d;
+        if(d > 0 && d < s->height)
+          breakpoints.push_back(d);
+      }
+      std::sort(breakpoints.begin(), breakpoints.end());
+      rects.push_back(*s);
+      prev = &rects.back();
+      for(double v : breakpoints) {
+        // printf("hsplit v=%lf\n", v);
+        prev->height = v - (prev->y - y1);
+        rects.push_back(*s);
+        rects.back().y = y1 + v;
+        prev = &rects.back();
+        prev->height = s->height - v;
+      }
+      ret = js_array_from(ctx, rects);
+      break;
+    }
   }
 
   return ret;
@@ -447,11 +513,10 @@ js_rect_finalizer(JSRuntime* rt, JSValue val) {
   JSRectData<double>* s = static_cast<JSRectData<double>*>(JS_GetOpaque(val, js_rect_class_id));
   /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
 
- // s->~JSRectData<double>();
+  // s->~JSRectData<double>();
   if(s)
-  js_deallocate(rt, s);
+    js_deallocate(rt, s);
 }
-
 
 JSClassDef js_rect_class = {
     .class_name = "Rect",
@@ -475,6 +540,8 @@ const JSCFunctionListEntry js_rect_proto_funcs[] = {JS_CGETSET_ENUMERABLE_DEF("x
                                                     JS_CFUNC_MAGIC_DEF("tl", 0, js_rect_method, METHOD_TL),
                                                     JS_CFUNC_MAGIC_DEF("inset", 1, js_rect_method, METHOD_INSET),
                                                     JS_CFUNC_MAGIC_DEF("outset", 1, js_rect_method, METHOD_OUTSET),
+                                                    JS_CFUNC_MAGIC_DEF("hsplit", 1, js_rect_method, METHOD_HSPLIT),
+                                                    JS_CFUNC_MAGIC_DEF("vsplit", 1, js_rect_method, METHOD_VSPLIT),
                                                     JS_CFUNC_DEF("toString", 0, js_rect_to_string),
                                                     JS_CFUNC_DEF("toSource", 0, js_rect_to_source),
                                                     JS_CFUNC_MAGIC_DEF("equals", 1, js_rect_funcs, FUNC_EQUALS),

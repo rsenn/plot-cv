@@ -3,18 +3,24 @@
 
 #include <opencv2/core.hpp>
 
-template<class Array>
-static cv::Mat
-palette_apply(const cv::Mat& mat, Array palette) {
-  cv::Mat result = cv::Mat::zeros(mat.size(), CV_8UC4);
+template<class Pixel>
+static void
+palette_apply(const cv::Mat& src, JSOutputArray dst, Pixel palette[256]) {
+  cv::Mat& result = dst.getMatRef(); // cv::Mat::zeros(src.size(), CV_8UC4);
 
-  for(int y = 0; y < mat.rows; y++) {
-    for(int x = 0; x < mat.cols; x++) {
-      uchar index = mat.at<uchar>(y, x);
-      result.at<uint32_t>(y, x) = palette[index];
+  printf("src.elemSize() = %zu\n", src.elemSize());
+  printf("result.elemSize() = %zu\n", result.elemSize());
+  printf("result.ptr<Pixel>(0,1) - result.ptr<Pixel>(0,0) = %zu\n",
+         reinterpret_cast<uchar*>(result.ptr<Pixel>(0, 1)) - reinterpret_cast<uchar*>(result.ptr<Pixel>(0, 0)));
+
+  for(int y = 0; y < src.rows; y++) {
+    for(int x = 0; x < src.cols; x++) {
+      uchar index = src.at<uchar>(y, x);
+      result.at<Pixel>(y, x) = palette[index];
     }
   }
-  return result;
+
+  //  result.copyTo(dst);
 }
 
 #endif /* PALETTE_HPP */

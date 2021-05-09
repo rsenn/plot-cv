@@ -169,22 +169,6 @@ js_new(JSContext* ctx, const char* name) {
   return JS_NewObjectProto(ctx, js_proto(ctx, name));
 }
 
-int js_color_read(JSContext* ctx, JSValueConst color, JSColorData<double>* out);
-int js_color_read(JSContext* ctx, JSValueConst value, JSColorData<uint8_t>* out);
-
-static inline int
-js_color_read(JSContext* ctx, JSValueConst value, cv::Scalar* out) {
-  JSColorData<double> color;
-  int ret;
-  if((ret = js_color_read(ctx, value, &color))) {
-    (*out)[0] = color.arr[0];
-    (*out)[1] = color.arr[1];
-    (*out)[2] = color.arr[2];
-    (*out)[3] = color.arr[3];
-  }
-  return ret;
-}
-
 template<class T>
 static inline int
 js_number_read(JSContext* ctx, JSValueConst num, T* out) {
@@ -234,6 +218,42 @@ template<>
 inline JSValue
 js_number_new<int64_t>(JSContext* ctx, int64_t num) {
   return JS_NewInt64(ctx, num);
+}
+
+int js_color_read(JSContext* ctx, JSValueConst color, JSColorData<double>* out);
+int js_color_read(JSContext* ctx, JSValueConst value, JSColorData<uint8_t>* out);
+
+static inline int
+js_color_read(JSContext* ctx, JSValueConst value, cv::Scalar* out) {
+  JSColorData<double> color;
+  int ret;
+  if((ret = js_color_read(ctx, value, &color))) {
+    (*out)[0] = color.arr[0];
+    (*out)[1] = color.arr[1];
+    (*out)[2] = color.arr[2];
+    (*out)[3] = color.arr[3];
+  }
+  return ret;
+}
+
+template<class T>
+inline JSValue
+js_color_new(JSContext* ctx, const JSColorData<T>& color) {
+  JSValue ret = JS_NewArray(ctx);
+
+  JS_SetPropertyUint32(ctx, ret, 0, js_number_new<T>(ctx, color.arr[0]));
+  JS_SetPropertyUint32(ctx, ret, 1, js_number_new<T>(ctx, color.arr[1]));
+  JS_SetPropertyUint32(ctx, ret, 2, js_number_new<T>(ctx, color.arr[2]));
+  JS_SetPropertyUint32(ctx, ret, 3, js_number_new<T>(ctx, color.arr[3]));
+  return ret;
+}
+
+template<class T>
+std::ostream&
+operator<<(std::ostream& stream, const JSColorData<T>& color) {
+  stream << "[ " << (int)color.arr[0] << ", " << (int)color.arr[1] << ", " << (int)color.arr[2] << ", " << (int)color.arr[3]
+         << " ]";
+  return stream;
 }
 
 int js_ref(JSContext* ctx, const char* name, JSValueConst arg, JSValue value);

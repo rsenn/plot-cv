@@ -29,7 +29,7 @@ pixel_neighborhood_cross_pred(const cv::Mat& mat, Callable pred) {
 template<class Callable>
 static cv::Mat
 pixel_neighborhood_pred(const cv::Mat& mat, Callable pred) {
-  cv::Mat result = cv::Mat::zeros(mat.size(), CV_8UC1);
+  cv::Mat result = cv::Mat::zeros(mat.rows, mat.cols, CV_8UC1);
 
   for(int y = 1; y < mat.rows - 1; y++) {
     for(int x = 1; x < mat.cols - 1; x++) {
@@ -71,7 +71,7 @@ public:
   uchar
   operator()(uchar value, uchar count) {
     if(value)
-      return count == m_value ? -1 : 0;
+      return count == m_value ? 0xff : 0;
     return 0;
   }
 

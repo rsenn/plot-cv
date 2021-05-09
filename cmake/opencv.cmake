@@ -11,7 +11,7 @@ endfunction(OPENCV_CHANGE_DIR VAR ACCESS VALUE LIST_FILE STACK)
 
 function(OPENCV_CHANGE VAR ACCESS VALUE LIST_FILE STACK)
 
-  message("VAR ${VAR} changed!!!")
+  #message("VAR ${VAR} changed!!!")
   unset(OPENCV_FOUND CACHE)
   unset(OPENCV_FOUND PARENT_SCOPE)
   unset(OPENCV_CHECKED CACHE)
@@ -92,6 +92,7 @@ function(OPENCV_CHANGE VAR ACCESS VALUE LIST_FILE STACK)
     pkgcfg_lib_OPENCV_opencv_xfeatures2d)
 
 endfunction(OPENCV_CHANGE VAR ACCESS VALUE LIST_FILE STACK)
+
 variable_watch(OpenCV_Dir OPENCV_CHANGE_DIR)
 variable_watch(OpenCV_Dir OPENCV_CHANGE)
 

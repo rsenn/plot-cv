@@ -91,27 +91,27 @@ js_color_read(JSContext* ctx, JSValueConst color, JSColorData<double>* out) {
   int ret = 1;
   std::array<double, 4> c;
   if(JS_IsObject(color)) {
-    JSValue r, g, b, a;
+    JSValue v[4];
     if(js_is_array(ctx, color)) {
-      r = JS_GetPropertyUint32(ctx, color, 0);
-      g = JS_GetPropertyUint32(ctx, color, 1);
-      b = JS_GetPropertyUint32(ctx, color, 2);
-      a = JS_GetPropertyUint32(ctx, color, 3);
+      v[0] = JS_GetPropertyUint32(ctx, color, 0);
+      v[1] = JS_GetPropertyUint32(ctx, color, 1);
+      v[2] = JS_GetPropertyUint32(ctx, color, 2);
+      v[3] = JS_GetPropertyUint32(ctx, color, 3);
     } else {
-      r = JS_GetPropertyStr(ctx, color, "r");
-      g = JS_GetPropertyStr(ctx, color, "g");
-      b = JS_GetPropertyStr(ctx, color, "b");
-      a = JS_GetPropertyStr(ctx, color, "a");
+      v[0] = JS_GetPropertyStr(ctx, color, "r");
+      v[1] = JS_GetPropertyStr(ctx, color, "g");
+      v[2] = JS_GetPropertyStr(ctx, color, "b");
+      v[3] = JS_GetPropertyStr(ctx, color, "a");
     }
-    JS_ToFloat64(ctx, &c[0], b);
-    JS_ToFloat64(ctx, &c[1], g);
-    JS_ToFloat64(ctx, &c[2], r);
-    JS_ToFloat64(ctx, &c[3], a);
+    JS_ToFloat64(ctx, &c[0], v[0]);
+    JS_ToFloat64(ctx, &c[1], v[1]);
+    JS_ToFloat64(ctx, &c[2], v[2]);
+    JS_ToFloat64(ctx, &c[3], v[3]);
 
-    JS_FreeValue(ctx, r);
-    JS_FreeValue(ctx, g);
-    JS_FreeValue(ctx, b);
-    JS_FreeValue(ctx, a);
+    JS_FreeValue(ctx, v[0]);
+    JS_FreeValue(ctx, v[1]);
+    JS_FreeValue(ctx, v[2]);
+    JS_FreeValue(ctx, v[3]);
   } else if(JS_IsNumber(color)) {
     uint32_t value;
     JS_ToUint32(ctx, &value, color);
@@ -132,10 +132,10 @@ int
 js_color_read(JSContext* ctx, JSValueConst value, JSColorData<uint8_t>* out) {
   JSColorData<double> color;
   if(js_color_read(ctx, value, &color)) {
-    out->r = color.r;
-    out->g = color.g;
-    out->b = color.b;
-    out->a = color.a;
+    out->arr[0] = color.arr[0];
+    out->arr[1] = color.arr[1];
+    out->arr[2] = color.arr[2];
+    out->arr[3] = color.arr[3];
     return 1;
   }
   return 0;
