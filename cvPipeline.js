@@ -76,15 +76,13 @@ export class Pipeline extends Function {
   }
 
   *imageEntries() {
-    const {size,names,images} = this;
-for(let i = 0; i < size; i++) 
-  yield [names[i], images[i]];
+    const { size, names, images } = this;
+    for(let i = 0; i < size; i++) yield [names[i], images[i]];
   }
 
   *processorEntries() {
-    const {size,names,processors} = this;
-for(let i = 0; i < size; i++) 
-  yield [names[i], processors[i]];
+    const { size, names, processors } = this;
+    for(let i = 0; i < size; i++) yield [names[i], processors[i]];
   }
 
   getName(id) {

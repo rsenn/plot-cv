@@ -108,8 +108,6 @@ function main(...args) {
   let clahe = new CLAHE();
   console.log('clahe', clahe);
 
-  let image;
-
   /* for(let windowName of ['gray', 'corners', 'threshold', 'canny'])
     cv.namedWindow(windowName, cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO);*/
   cv.namedWindow('output', cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO);
@@ -122,7 +120,8 @@ function main(...args) {
   cv.setTrackbarPos(trackbar, 'output', 8);*/
 
   //image = cv.imread('../an-tronics/images/5.19.jpg');
-  image = cv.imread(args[0] || 'italo-disco.png');
+  let file = args[0] ?? '../an-tronics/images/fm/4tr.jpg';
+  let image = cv.imread(file);
 
   let resolution = image.size;
   let scaled;
@@ -137,12 +136,13 @@ function main(...args) {
   }
 
   let outputRect = new Rect(0, 0, resolution.width, resolution.height);
+  let outputMat = new Mat(outputRect.size, cv.CV_8UC3);
   /* let statusRect = new Rect(0, resolution.height, resolution.width, 200);
 console.log("statusRect:", statusRect);
 */
   let statusRect = new Rect(0, resolution.height, resolution.width, 200);
 
-let statusMat = new Mat(statusRect.size, cv.CV_8UC3);
+  let statusMat = new Mat(statusRect.size, cv.CV_8UC3);
 
   console.log('statusRect:', statusRect);
 
@@ -152,7 +152,7 @@ let statusMat = new Mat(statusRect.size, cv.CV_8UC3);
   console.log('textRect', textRect);
   console.log('helpRect:', helpRect);
 
-  let screen = new UMat(screenSize, cv.CV_8UC3);
+  let screen = new Mat(screenSize, cv.CV_8UC3);
   //let output = screen(outputRect);
   //let status = screen(statusRect);
 
@@ -173,7 +173,7 @@ let statusMat = new Mat(statusRect.size, cv.CV_8UC3);
 
   fonts.forEach(file => draw.loadFont(file));
 
-/*  output.setTo([255, 255, 255]);
+  /*  output.setTo([255, 255, 255]);
   status.setTo(backgroundColor);*/
 
   let { frameShow = 1, paramIndex = 0, ...config } = LoadConfig();
@@ -195,11 +195,8 @@ let statusMat = new Mat(statusRect.size, cv.CV_8UC3);
     minRadius: new NumericParam(config.minRadius ?? 0, 1, 250),
     maxRadius: new NumericParam(config.maxRadius ?? 200, 1, 1000)
   };
-  let neighborhood;
-  console.log('cv.pixelNeighborhood', cv.pixelNeighborhood);
-  console.log('thres:', +params.thres);
   let lineWidth = 1;
-  let lines;
+  let lines = [];
   let circles = [];
   let paramNav = new ParamNavigator(params, paramIndex);
   let paramIndexes = [-1, -1];
@@ -208,23 +205,16 @@ let statusMat = new Mat(statusRect.size, cv.CV_8UC3);
 
   const black = [0x00, 0x00, 0x00, 0xff];
 
-
-  palette[0] = [0x0, 0x0, 0x0, 0xff];
-  palette[1] = [0xff, 0xff, 0x0, 0xff];
+  for(let i = 0; i < 8; i++)
+    palette[i] = [i & 0b100 ? 0xff : 0x00, i & 0b010 ? 0xff : 0x00, i & 0b001 ? 0xff : 0x00, 0xff];
   palette[2] = [0x60, 0x60, 0x60, 0xff];
-  palette[3] = [0x0, 0x0, 0xff, 0xff];
-  palette[4] = [0x0, 0xff, 0x0, 0xff];
-  palette[5] = [0xff, 0x80, 0x0, 0xff];
-  palette[6] = [0xff, 0x0, 0x0, 0xff];
+  palette[3] = [0xff, 0xff, 0x0, 0xff];
 
-  for(let i = 0; i < 8; i++) palette[i] = [i & 0b100 ? 0xff : 0x00, i & 0b010 ? 0xff : 0x00, i & 0b001 ? 0xff : 0x00, 0xff];
-
-
-   for(let i = 8; i < 16; i++) palette[i] = black;
+  for(let i = 8; i < 16; i++) palette[i] = black;
 
   let pipeline = new Pipeline([
       function AcquireFrame(src, dst) {
-        image = cv.imread(args[0] || 'italo-disco.png');
+        image = cv.imread(file);
         image.copyTo(dst);
       },
 
@@ -257,107 +247,68 @@ let statusMat = new Mat(statusRect.size, cv.CV_8UC3);
       },
 
       function Skeletonization(src, dst) {
-        //console.log('Skeletonization src', src);
         cv.skeletonization(src, dst);
-        //console.log('Skeletonization dst', dst);
-        //console.log('Skeletonization dst', this.outputOf('Skeletonization'));
       },
 
-  /*    function PixelNeighborhood(src, dst) {
-        neighborhood = new Mat(src.size, cv.CV_8UC1);
-        let output = new Mat(src.size, dst.type ?? src.type);
+      function PixelNeighborhood(src, dst) {
+        let neighborhood = new Mat(src.size, cv.CV_8UC1);
 
         cv.pixelNeighborhood(src, neighborhood);
-        console.log('cv.countNonZero(neighborhood)', cv.countNonZero(neighborhood));
 
-        cv.paletteApply(neighborhood, output, palette);
-        console.log(`output`, output);
 
-        let coords = cv.findNonZero(neighborhood);
-        console.log(`coords`, coords);
+        let endpoints = cv.pixelFindValue(src, 1);
+       console.log('endpoints', endpoints);
 
-        cv.imwrite('neighborhood.png', output);
-
-        cv.cvtColor(output, output, cv.COLOR_BGR2BGRA);
-        cv.imwrite('neighborhood.png', output);
-
-        new Mat(src.size, cv.CV_8UC4).copyTo(dst);
-
-        cv.pixelNeighborhood(src, neighborhood);
-        console.log(`neighborhood.at(${coords[0]})`, neighborhood.at(coords[0]));
-
-        let tmp = neighborhood(new Rect(coords[0], new Size(1, 1)));
-        console.log(`tmp`, tmp);
-
-        tmp.mul(40);
-        console.log(`tmp.at(0,0)`, tmp.at(0, 0));
-
-        console.log(`neighborhood.at(${coords[0]})`, neighborhood.at(coords[0]));
-        neighborhood.mul(40);
-
-        cv.cvtColor(neighborhood, dst, cv.COLOR_GRAY2BGRA);
-      },*/
-  function PixelNeighborhood(src, dst) {
-     let neighborhood = new Mat(src.size, cv.CV_8UC1);
-
-        cv.pixelNeighborhood (src, neighborhood);
-  
-  //src.copyTo(dst);    
-       //   neighborhood.mul(40);
-  //cv.cvtColor(neighborhood, dst, cv.COLOR_GRAY2BGR);
-    
-      console.log("dst:", dst);
-
-     cv.paletteApply(neighborhood, dst, palette);
- console.log("dst:", dst);
-
+    let linepoints = cv.pixelFindValue(src, 2);
+       console.log('linepoints', linepoints);
 
 
         cv.imwrite('neighborhood.png', neighborhood, palette);
 
-       },
+        let im = cv.imread('neighborhood.png');
+
+        im.copyTo(dst);
+      },
 
       function HoughLinesP(src, dst) {
         const skel = this.outputOf('Skeletonization');
         const morpho = this.outputOf('Morphology');
-        lines = new Mat();
+        let output = new Mat();
 
-        //console.log('Skeletonization dst', this.outputOf('Skeletonization'));
         if(skel.channels > 1) cv.cvtColor(skel, skel, cv.COLOR_BGR2GRAY);
-        //console.log('HoughLinesP skel', skel);
 
         if(morpho.channels > 1) cv.cvtColor(morpho, morpho, cv.COLOR_BGR2GRAY);
-        //console.log('HoughLinesP morpho', morpho);
 
         cv.HoughLinesP(skel,
-          lines,
+          output,
           +params.rho,
           (Math.PI * (+params.theta || 1)) / 180,
           +params.threshold,
           +params.minLineLength,
           +params.maxLineGap
         );
-        // console.log('lines:', lines);
-        //console.log('\x1b[1;31mskel\x1b[0m', skel);
         cv.cvtColor(skel, dst, cv.COLOR_GRAY2BGR);
-        //console.log('skel', skel);
         let i = 0;
-        for(let elem of lines.values()) {
-          //console.log(`elem #${i}:`, elem);
+
+        lines.splice(0, lines.length);
+
+        for(let elem of output.values()) {
           const line = new Line(elem);
+          lines.push(line);
           draw.line(dst, ...line.toPoints(), [255, 128, 0], lineWidth, cv.LINE_AA);
           draw.line(morpho, ...line.toPoints(), [0, 0, 0], 2, cv.LINE_8);
           draw.line(skel, ...line.toPoints(), [0, 0, 0], lineWidth, cv.LINE_8);
           ++i;
         }
+        lines.sort((a, b) => a.y1 == b.y1 ? a.x1 - b.x1 : a.y1 - b.y1);
+          console.log(`lines`, lines);
+ 
+
         let kern = cv.getStructuringElement(cv.MORPH_CROSS, new Size(3, 3));
         cv.dilate(skel, skel, kern);
         cv.erode(skel, skel, kern);
 
         cv.dilate(morpho, morpho, kern);
-        /*   cv.erode(morpho, morpho, kern);*/
-
-        //cv.morphologyEx(skel, skel, cv.MORPH_DILATE, kern);
       },
 
       function HoughCircles(src, dst) {
@@ -371,24 +322,15 @@ let statusMat = new Mat(statusRect.size, cv.CV_8UC3);
           +params.minRadius,
           +params.maxRadius
         ];
-        //console.log('HoughCircles morpho', morpho);
-        //console.log('HoughCircles skel', skel);
-
         let circles1 = [] ?? new Mat();
         let circles2 = [] ?? new Mat();
         cv.HoughCircles(morpho, circles1, cv.HOUGH_GRADIENT, ...paramArray);
-        //console.log('circles1:', circles1);
         cv.HoughCircles(skel, circles2, cv.HOUGH_GRADIENT, ...paramArray);
-        //console.log('circles2:', circles2);
 
         this.outputOf('HoughLinesP').copyTo(dst);
 
         let i = 0;
-        /*   for(let elem of lines.values()) {
-          const line = new Line(elem);
-          draw.line(dst, ...line.toPoints(), [255, 255, 0], lineWidth, cv.LINE_AA);
-          ++i;
-        }*/
+
         for(let [x, y, r] of circles1) {
           let p = new Point(x, y);
           draw.circle(dst, p, r, [0, 255, 0], lineWidth, cv.LINE_AA);
@@ -403,18 +345,8 @@ let statusMat = new Mat(statusRect.size, cv.CV_8UC3);
     ],
     i => {
       if(frameShow == i) {
-        let mat = pipeline.getImage(i);
-
-        if(mat.channels == 1) cv.cvtColor(mat, mat, cv.COLOR_GRAY2BGR);
-        //if(mat.channels == 3) cv.cvtColor(mat, mat, cv.COLOR_BGR2BGRA);
-        if(mat.channels == 4) cv.cvtColor(mat, mat, cv.COLOR_BGRA2BGR);
-/*      console.log('mat', screen);
-     
-        mat.copyTo(screen(outputRect));*/
         let processor = pipeline.getProcessor(i);
         let params = processorParams.get(processor);
-
-        // console.log('paramNav.current', paramNav.current);
 
         paramIndexes[0] = paramNav.indexOf(params[0]);
         paramIndexes[1] = paramNav.indexOf(params[params.length - 1]);
@@ -422,20 +354,19 @@ let statusMat = new Mat(statusRect.size, cv.CV_8UC3);
         if(paramNav.index < paramIndexes[0] || paramNav.index > paramIndexes[1])
           paramNav.current = params[0];
 
-        //console.log('paramIndexes', paramIndexes);
+        let mat = pipeline.getImage(i);
+        if(mat.channels == 1) cv.cvtColor(mat, outputMat, cv.COLOR_GRAY2BGR);
+        else if(mat.channels == 4) cv.cvtColor(mat, outputMat, cv.COLOR_BGRA2BGR);
+        else mat.copyTo(outputMat);
 
         RedrawStatus();
-
-        cv.vconcat([mat, statusMat ], screen);
-
-RedrawWindow();
+        RedrawWindow();
       }
     }
   );
 
   function RedrawStatus() {
-    //console.log('RedrawStatus', `paramNav.index=${paramNav.index}`);
-console.log(`pipeline.images =`,new Map(pipeline.imageEntries()));
+    //console.log(`pipeline.images =`, new Map(pipeline.imageEntries()));
 
     let i = pipeline.currentProcessor;
     let processor = pipeline.getProcessor(i);
@@ -462,8 +393,6 @@ console.log(`pipeline.images =`,new Map(pipeline.imageEntries()));
         })
         .join('');
 
-
-
     DrawText(statusMat(textRect), text, textColor, fontFace, fontSize);
     DrawText(statusMat(helpRect),
       '< prev, > next, + increment, - decrement, DEL reset',
@@ -479,6 +408,7 @@ console.log(`pipeline.images =`,new Map(pipeline.imageEntries()));
 
   function RedrawWindow() {
     let i = pipeline.currentProcessor;
+    cv.vconcat([outputMat, statusMat], screen);
     cv.imshow('output', screen);
     cv.resizeWindow('output', screenSize.width, screenSize.height);
     cv.setWindowTitle('output', `#${i}: ` + pipeline.names[i]);
@@ -499,19 +429,18 @@ console.log(`pipeline.images =`,new Map(pipeline.imageEntries()));
   delete pipeline.before;
   delete pipeline.after;
 
-  console.log('paramNav.nameOf(params.threshold):', paramNav.nameOf(params.threshold));
-  console.log('paramNav.indexOf(params.threshold):', paramNav.indexOf(params.threshold));
-  console.log('processorParams:',
+  /*console.log('paramNav.nameOf(params.threshold):', paramNav.nameOf(params.threshold));
+    console.log('paramNav.indexOf(params.threshold):', paramNav.indexOf(params.threshold));*/
+  /* console.log('processorParams:',
     new Map(
       pipeline.processors.map(processor => [
         processor,
         processorParams.get(processor).map(name => paramNav.get(name))
       ])
     )
-  );
+  );*/
 
   console.log(`pipeline.recalc(${frameShow})`, pipeline.recalc(frameShow));
-
 
   while(true) {
     key = cv.waitKeyEx(-1);
@@ -534,6 +463,7 @@ console.log(`pipeline.images =`,new Map(pipeline.imageEntries()));
 
         console.log(`Param #${paramNav.index} '${paramNav.name}' selected (${+paramNav.param})`);
         RedrawStatus();
+        RedrawWindow();
         break;
       case 0xf54 /*down  */:
       case 0x3e /* > */:
@@ -543,6 +473,7 @@ console.log(`pipeline.images =`,new Map(pipeline.imageEntries()));
 
         console.log(`Param #${paramNav.index} '${paramNav.name}' selected (${+paramNav.param})`);
         RedrawStatus();
+        RedrawWindow();
         break;
 
       case 0xf53 /* right */:

@@ -386,10 +386,16 @@ js_cv_imwrite(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
     return JS_ThrowInternalError(ctx, "Empty image");
 
   if(argc > 2 && /*image.type() == CV_8UC1 &&*/ str_end(filename, ".png") && image.isMat()) {
+    double max;
 
     std::vector<JSColorData<uint8_t>> palette;
 
     js_array_to(ctx, argv[2], palette);
+
+    cv::minMaxLoc(image, nullptr, &max);
+
+    if(palette.size() < size_t(max))
+      palette.resize(size_t(max));
 
     printf("png++ write_mat '%s' [%zu]\n", filename, palette.size());
 

@@ -6,7 +6,7 @@
 #include <vector>
 
 template<class ColorType>
-void
+static inline void
 write_mat(const std::string& filename, const cv::Mat& mat, const std::vector<ColorType>& palette) {
 
   png::image<png::index_pixel> image(mat.cols, mat.rows);
@@ -24,7 +24,7 @@ write_mat(const std::string& filename, const cv::Mat& mat, const std::vector<Col
   for(png::uint_32 y = 0; y < mat.rows; ++y) {
     for(png::uint_32 x = 0; x < mat.cols; ++x) {
       auto index = mat.at<uchar>(y, x);
-      //if(index > 0) std::cout << x << "," << y << ": " << (int)index << std::endl;
+      // if(index > 0) std::cout << x << "," << y << ": " << (int)index << std::endl;
       image[y][x] = png::index_pixel(index);
     }
   }
