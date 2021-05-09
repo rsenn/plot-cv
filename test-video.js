@@ -3,6 +3,7 @@ import * as draw from 'draw';
 import * as std from 'std';
 import { Point } from 'point';
 import { Size } from 'size';
+import { Contour } from 'contour';
 import { Rect } from 'rect';
 import { Line } from 'line';
 import { TickMeter } from 'utility';
@@ -325,6 +326,7 @@ function main(...args) {
         'd'
       ],
       size: [true, null, 's'],
+      'trackbars': [false, null, 't'],
       'no-trackbars': [false, null, 'T'],
       '@': 'input,driver'
     },
@@ -423,7 +425,7 @@ function main(...args) {
   console.log('video.size', video.size);
   console.log('win.imageRect (1)', win.imageRect);
 
-  if(!opts['no-trackbars']) {
+  if(opts['trackbars']) {
     params.apertureSize.createTrackbar('apertureSize', win);
     params.thresh1.createTrackbar('thresh1', win);
     params.thresh2.createTrackbar('thresh2', win);
@@ -463,18 +465,12 @@ function main(...args) {
       /*Processor*/ function AcquireFrame(src, dst) {
         const dstEmpty = dst.empty;
         if(dst.empty) {
-          // console.log(`AcquireFrame`, { src, dst });
-
           dst0Size = dst.size;
         }
-        /*console.log(`video`, video);
-        console.log(`video.read`, video.read);*/
         video.read(dst);
-        console.log('AcquireFrame', { dst });
 
         if(videoSize === undefined || videoSize.empty) {
           videoSize = video.size.area ? video.size : dst.size;
-          //console.log(`videoSize`, videoSize);
         }
 
         if(dstEmpty) {
@@ -491,16 +487,13 @@ function main(...args) {
         cv.split(dst, channels);
         channels[0].copyTo(dst);
       },
-      /*Processor*/ function Norm(src, dst) {
-        console.log('Norm', { src, dst });
+      Processor(function Norm(src, dst) {
         clahe.apply(src, dst);
-      },
+      }),
       Processor(function Blur(src, dst) {
-        console.log('Blur', { src, dst });
         cv.GaussianBlur(src, dst, [+params.ksize, +params.ksize], 0, 0, cv.BORDER_REPLICATE);
       }),
       Processor(function EdgeDetect(src, dst) {
-        console.log('EdgeDetect', { src, dst });
         cv.Canny(src,
           dst,
           +params.thresh1,
@@ -521,6 +514,9 @@ function main(...args) {
           cv[params.mode],
           cv[params.method]
         );
+        /*console.log('contours.length', contours.length);
+        console.log('contours[0]', contours[0]);
+        console.log('contours[0].length', contours[0].length);*/
 
         //src.copyTo(dst);
         cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
@@ -580,7 +576,7 @@ function main(...args) {
 
   console.log(`Trackbar 'frame' frameShow=${frameShow} pipeline.size - 1 = ${pipeline.size - 1}`);
 
-  if(!opts['no-trackbars'])
+  if(opts['trackbars'])
     cv.createTrackbar('frame',
       'gray',
       frameShow,
@@ -724,6 +720,8 @@ function main(...args) {
           break;
         }
         default: {
+          if(keyCode !== undefined && key != -1)
+          console.log('unhandled', console.config({ numberBase: 16 }), { key, keyCode, modifiers });
           break;
         }
       }
@@ -758,7 +756,10 @@ function main(...args) {
         // console.log("line", {a,b});
         draw.line(over, line.a, line.b, { r: 255, g: 0, b: 0, a: 255 }, 2, cv.LINE_AA, 0);
       }
-    } else if(frameShow == 0) {
+    } else if(frameShow == 0 || frameShow == 7) {
+      /*console.log('contours.length', contours.length);
+      console.log('contours[0]', contours[0]);
+      console.log('contours[0].length', contours[0].length); */
       cv.drawContours(over, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
     } else {
       let ids = [...getToplevel(hier)];
@@ -767,7 +768,7 @@ function main(...args) {
       );
       let hierObj = new Hierarchy(hier);
 
-      console.log('hier', hierObj);
+      // console.log('hier', hierObj);
 
       /*   contours.forEach((contour, i) => {
         let p = [...getParents(hierObj, i)];
@@ -838,9 +839,8 @@ function main(...args) {
       +params.fontThickness
     );
 
-    resizeOutput();
-    //console.log('win.imageRect', win.imageRect);
-
+    //resizeOutput();
+ 
     //console.log("row 100:", [...over.row(100).values()]);
     const showOverlay = frameShow != pipeline.size - 1 || now - keyTime < 2000;
     if(maskRect && showOverlay) {

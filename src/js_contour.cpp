@@ -35,7 +35,24 @@ static JSValue float64_array;
 // using namespace cv;
 
 JSValue
-js_contour_new(JSContext* ctx, const JSContourData<double>&& points) {
+js_contour_new(JSContext* ctx, const JSContourData<double>& points) {
+  JSValue ret;
+  JSContourData<double>* contour;
+
+  ret = JS_NewObjectProtoClass(ctx, contour_proto, js_contour_class_id);
+  contour = js_allocate<JSContourData<double>>(ctx);
+
+  new(contour) JSContourData<double>();
+
+  contour->resize(points.size());
+  transform_points(points.cbegin(), points.cend(), contour->begin());
+
+  JS_SetOpaque(ret, contour);
+  return ret;
+}
+
+JSValue
+js_contour_move(JSContext* ctx, const JSContourData<double>&& points) {
   JSValue ret;
   JSContourData<double>* contour;
 
@@ -1019,6 +1036,20 @@ js_contour_get(JSContext* ctx, JSValueConst this_val, int magic) {
   }
   return ret;
 }
+
+static JSValue
+js_contour_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSContourData<double>* contour;
+
+  if(!(contour = js_contour_data(ctx, this_val)))
+    return JS_EXCEPTION;
+
+  JSValue obj = JS_NewObjectProto(ctx, contour_proto);
+
+  JS_DefinePropertyValueStr(ctx, obj, "length", JS_NewUint32(ctx, contour->size()), JS_PROP_ENUMERABLE);
+  return obj;
+}
+
 extern "C" {
 
 JSClassDef js_contour_class = {
@@ -1116,6 +1147,7 @@ js_contour_init(JSContext* ctx, JSModuleDef* m) {
     JS_SetConstructor(ctx, contour_class, contour_proto);
     JS_SetPropertyFunctionList(ctx, contour_class, js_contour_static_funcs, countof(js_contour_static_funcs));
   }
+  js_set_inspect_method(ctx, contour_proto, js_contour_inspect);
 
   {
     JSValue global = JS_GetGlobalObject(ctx);

@@ -1495,6 +1495,10 @@ js_cv_find_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
   cv::findContours(*m, contours, hier, mode, approx, offset);
 
+  /*printf("js_cv_find_contours contours.size() = %zu\n", contours.size());
+  if(contours.size())
+    printf("js_cv_find_contours contours.back().size() = %zu\n", contours.back().size());*/
+
   if(js_is_array(ctx, argv[1])) {
     js_array_truncate(ctx, argv[1], 0);
   }
@@ -1502,6 +1506,10 @@ js_cv_find_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   poly.resize(contours.size());
 
   transform_contours(contours.begin(), contours.end(), poly.begin());
+
+  /*printf("js_cv_find_contours poly.size() = %zu\n", poly.size());
+  if(poly.size())
+    printf("js_cv_find_contours poly.back().size() = %zu\n", poly.back().size());*/
 
   array_buffer = js_arraybuffer_from(ctx, begin(hier), end(hier));
 
@@ -1519,7 +1527,8 @@ js_cv_find_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
       v[2] = hier[i][2];
       v[3] = hier[i][3];*/
 
-      JS_SetPropertyUint32(ctx, argv[1], i, js_contour_new(ctx, std::move(poly[i])));
+      JS_SetPropertyUint32(ctx, argv[1], i, js_contour_new(ctx, poly[i]));
+
       if(!hier_callback) {
         JS_SetPropertyUint32(ctx, argv[2], i, array);
         // JS_SetPropertyUint32(ctx, argv[2], i, js_typedarray_from(ctx, v.cbegin(), v.cend()));
@@ -1569,6 +1578,10 @@ js_cv_draw_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
     return JS_ThrowInternalError(ctx, "argument 2 not an array!");
 
   js_array_to(ctx, argv[1], contours);
+
+  /*printf("js_cv_draw_contours contours.size() = %zu\n", contours.size());
+  if(contours.size())
+    printf("js_cv_draw_contours contours.back().size() = %zu\n", contours.back().size());*/
 
   JS_ToInt32(ctx, &contourIdx, argv[2]);
 
