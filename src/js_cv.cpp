@@ -1591,8 +1591,8 @@ js_cv_getticks(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
 static JSValue
 js_cv_bitwise(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
 
-  JSInputOutputArray src,  dst;
-  JSInputArray  other,  mask;
+  JSInputOutputArray src, dst;
+  JSInputArray other, mask;
 
   src = js_umat_or_mat(ctx, argv[0]);
   other = js_input_array(ctx, argv[1]);
@@ -1609,7 +1609,7 @@ js_cv_bitwise(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
     case 0: cv::bitwise_and(src, other, dst, mask); break;
     case 1: cv::bitwise_or(src, other, dst, mask); break;
     case 2: cv::bitwise_xor(src, other, dst, mask); break;
-    case 3: cv::bitwise_not(src,   dst, mask); break;
+    case 3: cv::bitwise_not(src, dst, mask); break;
     default: return JS_EXCEPTION;
   }
   return JS_UNDEFINED;

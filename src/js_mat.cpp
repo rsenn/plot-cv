@@ -404,9 +404,11 @@ js_mat_expr(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv,
   if(argc < 1)
     return JS_EXCEPTION;
 
-  if((other = js_mat_data_nothrow(argv[0])) == nullptr)
-    if(!js_color_read(ctx, argv[0], &color))
-      JS_ToFloat64(ctx, &value, argv[0]);
+  if(JS_IsNumber(argv[0])) {
+    JS_ToFloat64(ctx, &value, argv[0]);
+
+  } else if((other = js_mat_data_nothrow(argv[0])) == nullptr)
+    js_color_read(ctx, argv[0], &color);
 
   if(magic == 3 && argc > 1) {
     JS_ToFloat64(ctx, &scale, argv[1]);
@@ -773,7 +775,12 @@ js_mat_set_to(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
   if(!m)
     return JS_EXCEPTION;
 
-  if(argc >= 1 && js_is_array(ctx, argv[0])) {
+  if(m->channels() == 1) {
+    double value;
+    js_value_to(ctx, argv[0], value);
+    m->setTo(cv::Scalar(value));
+
+  } else if(js_is_array(ctx, argv[0])) {
     cv::Scalar s;
     size_t n = js_array_to(ctx, argv[0], s);
 
@@ -807,6 +814,7 @@ js_mat_set_to(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
         js_mat_vector_get(ctx, argc, argv, v, defined);
         m->setTo(cv::InputArray(v), defined);
       } else if(bytes <= 4) {
+
         js_mat_set_vector<uint32_t>(ctx, m, argc, argv);
       } else if(bytes <= 8) {
         js_mat_set_vector<uint64_t>(ctx, m, argc, argv);
@@ -1517,7 +1525,7 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {JS_CGETSET_MAGIC_DEF("cols", 
                                                    JS_CFUNC_DEF("toString", 0, js_mat_tostring),
                                                    JS_CFUNC_DEF("at", 1, js_mat_at),
                                                    JS_CFUNC_DEF("set", 2, js_mat_set),
-                                                   JS_CFUNC_DEF("setTo", 0, js_mat_set_to),
+                                                   JS_CFUNC_DEF("setTo", 1, js_mat_set_to),
                                                    JS_CFUNC_DEF("convertTo", 2, js_mat_convert_to),
                                                    JS_CFUNC_DEF("copyTo", 1, js_mat_copy_to),
                                                    JS_CFUNC_DEF("reshape", 1, js_mat_reshape),

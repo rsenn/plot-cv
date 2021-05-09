@@ -282,9 +282,17 @@ console.log("statusRect:", statusRect);
               cv.pixelNeighborhood(src, neighborhood);
 console.log(`neighborhood.at(${coords[0]})`, neighborhood.at(coords[0]));
 
-cv.bitwise_or(neighborhood, 0x40, neighborhood);
+
+let tmp = neighborhood(new Rect(coords[0], new Size(1,1)));
+console.log(`tmp`, tmp);
+//tmp.setTo(0x40);
+ //cv.bitwise_or(neighborhood, 0x40, neighborhood);
+ //tmp.or(0x40,tmp);
+ tmp.mul(40);
+console.log(`tmp.at(0,0)`, tmp.at(0,0));
 //neighborhood.xor(0x40, neighborhood);
 console.log(`neighborhood.at(${coords[0]})`, neighborhood.at(coords[0]));
+ neighborhood.mul(40);
 
   cv.cvtColor(neighborhood, dst, cv.COLOR_GRAY2BGRA);
         //     src.copyTo(dst);

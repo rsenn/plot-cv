@@ -424,7 +424,7 @@ js_is_array_like(JSContext* ctx, JSValueConst obj) {
 struct ArrayBufferProps {
   uint8_t* ptr;
   size_t len;
-  
+
   ArrayBufferProps(uint8_t* _ptr, size_t _len) : ptr(_ptr), len(_len) {}
 };
 

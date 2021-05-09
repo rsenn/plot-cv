@@ -26,7 +26,7 @@ js_umat_or_mat(JSContext* ctx, JSValueConst value) {
     return JSInputOutputArray(*umat);
   if((mat = static_cast<cv::Mat*>(JS_GetOpaque(value, js_mat_class_id))))
     return JSInputOutputArray(*mat);
-  
+
   return cv::noArray();
 }
 
