@@ -433,7 +433,7 @@ function main(...args) {
 
         paramIndexes[0] = paramNav.indexOf(params[0]);
         paramIndexes[1] = paramNav.indexOf(params[params.length - 1]);
-        console.log('paramIndexes:', paramIndexes);
+        //console.log('paramIndexes:', paramIndexes);
         let text =
           `#${i}: ` +
           pipeline.names[i] +
