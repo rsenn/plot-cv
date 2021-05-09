@@ -271,6 +271,7 @@ src_program(
   "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/matrix.cpp;src/line.cpp;src/geometry.cpp;src/util.cpp;src/js.cpp;src/jsbindings.cpp;src/js_contour.cpp;src/js.cpp;src/js_draw.cpp;src/js_line.cpp;src/js_mat.cpp;src/js_point.cpp;src/js_point_iterator.cpp;src/js_rect.cpp;src/js_size.cpp;src/js_cv.cpp;src/js_video_capture.cpp;src/util.cpp"
   ${OpenCV_LIBS}
   ${QUICKJS_LIBRARY}
+  png
   pthread
   dl
   m

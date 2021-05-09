@@ -385,11 +385,13 @@ js_cv_imwrite(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
   if(image.empty())
     return JS_ThrowInternalError(ctx, "Empty image");
 
-  if(image.type() == CV_8UC1 && argc > 2 && str_end(filename, ".png")) {
+  if(argc > 2 && /*image.type() == CV_8UC1 &&*/ str_end(filename, ".png") && image.isMat()) {
 
-    std::array<cv::Vec3b, 256> palette;
+    std::vector<JSColorData<uint8_t>> palette;
 
-    js_array_to(ctx, argv[2],   palette );
+    js_array_to(ctx, argv[2], palette);
+
+    printf("png++ write_mat '%s' [%zu]\n", filename, palette.size());
 
     write_mat(filename, image.getMatRef(), palette);
 

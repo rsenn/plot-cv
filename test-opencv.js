@@ -204,7 +204,7 @@ let statusMat = new Mat(statusRect.size, cv.CV_8UC3);
   let paramNav = new ParamNavigator(params, paramIndex);
   let paramIndexes = [-1, -1];
 
-  let palette = new Array(256);
+  let palette = new Array();
 
   const black = [0x00, 0x00, 0x00, 0xff];
 
@@ -219,7 +219,8 @@ let statusMat = new Mat(statusRect.size, cv.CV_8UC3);
 
   for(let i = 0; i < 8; i++) palette[i] = [i & 0b100 ? 0xff : 0x00, i & 0b010 ? 0xff : 0x00, i & 0b001 ? 0xff : 0x00, 0xff];
 
-  for(let i = 8; i < 256; i++) palette[i] = black;
+
+   for(let i = 8; i < 16; i++) palette[i] = black;
 
   let pipeline = new Pipeline([
       function AcquireFrame(src, dst) {
@@ -312,7 +313,7 @@ let statusMat = new Mat(statusRect.size, cv.CV_8UC3);
 
 
 
-        cv.imwrite('neighborhood.png', dst);
+        cv.imwrite('neighborhood.png', neighborhood, palette);
 
        },
 
