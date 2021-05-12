@@ -74,7 +74,7 @@ function SaveConfig(configObj) {
 
 function LoadConfig() {
   let str = std.loadFile(basename + '.config.json');
-  let configObj = JSON.parse(str ?? '{}');
+  let configObj = JSON.parse(str || '{}');
 
   configObj = Object.fromEntries(Object.entries(configObj)
       .map(([k, v]) => [k, +v])
@@ -384,33 +384,33 @@ function main(...args) {
   let outputMat, outputName;
 
   let params = {
-    ksize: new NumericParam(config.ksize ?? 3, 1, 13, 2),
-    thresh1: new NumericParam(config.thresh1 ?? 40, 0, 100),
-    thresh2: new NumericParam(config.thresh2 ?? 90, 0, 100),
-    threshc: new NumericParam(config.threshc ?? 50, 0, 100),
-    angleResolution: new NumericParam(config.angleResolution ?? 2, 0.5, 180),
-    minLineLength: new NumericParam(config.minLineLength ?? 30, 0, 500),
-    maxLineGap: new NumericParam(config.maxLineGap ?? 10, 0, 500),
-    apertureSize: new NumericParam(config.apertureSize ?? 3, 3, 7, 2),
-    L2gradient: new NumericParam(config.L2gradient ?? 0, 0, 1),
-    dilations: new NumericParam(config.dilations ?? 0, 0, 10),
-    erosions: new NumericParam(config.erosions ?? 0, 0, 10),
-    mode: new EnumParam(config.mode ?? 3, [
+    ksize: new NumericParam(config.ksize || 3, 1, 13, 2),
+    thresh1: new NumericParam(config.thresh1 || 40, 0, 100),
+    thresh2: new NumericParam(config.thresh2 || 90, 0, 100),
+    threshc: new NumericParam(config.threshc || 50, 0, 100),
+    angleResolution: new NumericParam(config.angleResolution || 2, 0.5, 180),
+    minLineLength: new NumericParam(config.minLineLength || 30, 0, 500),
+    maxLineGap: new NumericParam(config.maxLineGap || 10, 0, 500),
+    apertureSize: new NumericParam(config.apertureSize || 3, 3, 7, 2),
+    L2gradient: new NumericParam(config.L2gradient || 0, 0, 1),
+    dilations: new NumericParam(config.dilations || 0, 0, 10),
+    erosions: new NumericParam(config.erosions || 0, 0, 10),
+    mode: new EnumParam(config.mode || 3, [
       'RETR_EXTERNAL',
       'RETR_LIST',
       'RETR_CCOMP',
       'RETR_TREE',
       'RETR_FLOODFILL'
     ]),
-    method: new EnumParam(config.method ?? 0, [
+    method: new EnumParam(config.method || 0, [
       'CHAIN_APPROX_NONE',
       'CHAIN_APPROX_SIMPLE',
       'CHAIN_APPROX_TC89_L1',
       'CHAIN_APPROX_TC89_L189_KCOS'
     ]),
-    maskColor: new EnumParam(config.maskColor ?? false, ['OFF', 'ON']),
-    lineWidth: new NumericParam(config.lineWidth ?? 1, 0, 10),
-    fontThickness: new NumericParam(config.fontThickness ?? 1, 0, 10)
+    maskColor: new EnumParam(config.maskColor || false, ['OFF', 'ON']),
+    lineWidth: new NumericParam(config.lineWidth || 1, 0, 10),
+    fontThickness: new NumericParam(config.fontThickness || 1, 0, 10)
   };
   let paramNav = new ParamNavigator(params, config.currentParam);
   let dummyArray = [0, 1, 2, 3, 4, 5, 6, 7];

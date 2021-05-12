@@ -114,7 +114,7 @@ function processFile(file, params) {
     file = 'stdin';
     data = source;
   }
-  console.log('OK, data: ', Util.abbreviate(Util.escape(data)));
+  console.log(`'${file}' OK, data:`, Util.abbreviate(Util.escape(data)));
 
   let ast, error;
   globalThis.parser = null;
@@ -199,7 +199,7 @@ function finish(err) {
 }
 let error;
 try {
-  main(...Util.getArgv().slice(1));
+  main(...Util.getArgs().slice(1));
 } catch(e) {
   error = e;
 } finally {

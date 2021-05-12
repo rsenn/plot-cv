@@ -31,7 +31,7 @@ function SaveConfig(configObj) {
 
 function LoadConfig() {
   let str = std.loadFile(basename + '.config.json');
-  let configObj = JSON.parse(str ?? '{}');
+  let configObj = JSON.parse(str || '{}');
 
   configObj = Object.fromEntries(Object.entries(configObj)
       .map(([k, v]) => [k, +v])
@@ -116,7 +116,7 @@ function main(...args) {
   cv.setTrackbarPos(trackbar, 'output', 8);*/
 
   //image = cv.imread('../an-tronics/images/5.19.jpg');
-  let file = args[0] ?? '../an-tronics/images/fm/4tr.jpg';
+  let file = args[0] || '../an-tronics/images/fm/4tr.jpg';
   let image = cv.imread(file);
 
   let resolution = image.size;
@@ -172,24 +172,25 @@ console.log("statusRect:", statusRect);
   /*  output.setTo([255, 255, 255]);
   status.setTo(backgroundColor);*/
 
-  let { frameShow = 1, paramIndex = 0, ...config } = LoadConfig();
-
+let config = LoadConfig();
+  let { frameShow = 1, paramIndex = 0 } = config;
+  
   let params = {
-    thres: new NumericParam(config.thres ?? 229, 0, 255),
-    type: new NumericParam(config.type ?? cv.THRESH_BINARY_INV, 0, 4),
-    blur: new NumericParam(config.blur ?? 1, 1, 10, 2),
-    kernel_size: new NumericParam(config.kernel_size ?? 0, 0, 9),
-    rho: new NumericParam(config.rho ?? 1, 1, 30, 0.25),
-    theta: new NumericParam(config.theta ?? 1, 0, 90),
-    threshold: new NumericParam(config.threshold ?? 25, 0, 50),
-    minLineLength: new NumericParam(config.minLineLength ?? 3, 0, 30),
-    maxLineGap: new NumericParam(config.maxLineGap ?? 4, 0, 20),
-    dp: new NumericParam(config.dp ?? 2, 0, 10, 0.1),
-    minDist: new NumericParam(config.minDist ?? 10, 1, 1000),
-    param1: new NumericParam(config.param1 ?? 200, 1, 1000),
-    param2: new NumericParam(config.param2 ?? 100, 1, 100),
-    minRadius: new NumericParam(config.minRadius ?? 0, 1, 250),
-    maxRadius: new NumericParam(config.maxRadius ?? 200, 1, 1000)
+    thres: new NumericParam(config.thres || 229, 0, 255),
+    type: new NumericParam(config.type || cv.THRESH_BINARY_INV, 0, 4),
+    blur: new NumericParam(config.blur || 1, 1, 10, 2),
+    kernel_size: new NumericParam(config.kernel_size || 0, 0, 9),
+    rho: new NumericParam(config.rho || 1, 1, 30, 0.25),
+    theta: new NumericParam(config.theta || 1, 0, 90),
+    threshold: new NumericParam(config.threshold || 25, 0, 50),
+    minLineLength: new NumericParam(config.minLineLength || 3, 0, 30),
+    maxLineGap: new NumericParam(config.maxLineGap || 4, 0, 20),
+    dp: new NumericParam(config.dp || 2, 0, 10, 0.1),
+    minDist: new NumericParam(config.minDist || 10, 1, 1000),
+    param1: new NumericParam(config.param1 || 200, 1, 1000),
+    param2: new NumericParam(config.param2 || 100, 1, 100),
+    minRadius: new NumericParam(config.minRadius || 0, 1, 250),
+    maxRadius: new NumericParam(config.maxRadius || 200, 1, 1000)
   };
   let lineWidth = 1;
   let lines = [];
@@ -331,8 +332,8 @@ console.log("statusRect:", statusRect);
           +params.minRadius,
           +params.maxRadius
         ];
-        let circles1 = [] ?? new Mat();
-        let circles2 = [] ?? new Mat();
+        let circles1 = [] || new Mat();
+        let circles2 = [] || new Mat();
         cv.HoughCircles(morpho, circles1, cv.HOUGH_GRADIENT, ...paramArray);
         cv.HoughCircles(skel, circles2, cv.HOUGH_GRADIENT, ...paramArray);
 
@@ -560,6 +561,7 @@ console.log("statusRect:", statusRect);
       }
     }
   }
+
 
   SaveConfig({ frameShow, paramIndex: paramNav.index, ...params });
 
