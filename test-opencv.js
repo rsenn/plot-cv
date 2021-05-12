@@ -19,7 +19,8 @@ function WriteImage(name, mat) {
 }
 
 function SaveConfig(configObj) {
-  configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v]));
+  configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v])
+  );
   let file = std.open(basename + '.config.json', 'w+b');
   file.puts(JSON.stringify(configObj, null, 2) + '\n');
   file.close();
@@ -81,12 +82,14 @@ function Accumulator(callback) {
 }
 
 function main(...args) {
-  new Console({
-    maxStringLength: 200,
-    maxArrayLength: 10,
-    breakLength: 100,
-    compact: 1,
-    depth: 10
+  globalThis.console = new Console({
+    inspectOptions: {
+      maxStringLength: 200,
+      maxArrayLength: 10,
+      breakLength: 100,
+      compact: 1,
+      depth: 10
+    }
   });
   /*  await PortableFileSystem(fs => (filesystem = fs));*/
   let running = true;
@@ -199,7 +202,12 @@ console.log("statusRect:", statusRect);
   const black = [0x00, 0x00, 0x00, 0xff];
 
   for(let i = 0; i < 8; i++)
-    palette[i] = [i & 0x04 ? 0xff : 0x00, i & 0x02 ? 0xff : 0x00, i & 0x01 ? 0xff : 0x00, 0xff];
+    palette[i] = [
+      i & 0x04 ? 0xff : 0x00,
+      i & 0x02 ? 0xff : 0x00,
+      i & 0x01 ? 0xff : 0x00,
+      0xff
+    ];
   palette[2] = [0x60, 0x60, 0x60, 0xff];
   palette[3] = [0xff, 0xff, 0x0, 0xff];
 
@@ -218,7 +226,13 @@ console.log("statusRect:", statusRect);
         channels[0].copyTo(dst);
       },
       function Blur(src, dst) {
-        cv.GaussianBlur(src, dst, [+params.blur, +params.blur], 0, 0, cv.BORDER_REPLICATE);
+        cv.GaussianBlur(src,
+          dst,
+          [+params.blur, +params.blur],
+          0,
+          0,
+          cv.BORDER_REPLICATE
+        );
       },
 
       function Threshold(src, dst) {
@@ -286,7 +300,12 @@ console.log("statusRect:", statusRect);
         for(let elem of output.values()) {
           const line = new Line(elem);
           lines.push(line);
-          Draw.line(dst, ...line.toPoints(), [255, 128, 0], lineWidth, cv.LINE_AA);
+          Draw.line(dst,
+            ...line.toPoints(),
+            [255, 128, 0],
+            lineWidth,
+            cv.LINE_AA
+          );
           Draw.line(morpho, ...line.toPoints(), [0, 0, 0], 2, cv.LINE_8);
           Draw.line(skel, ...line.toPoints(), [0, 0, 0], lineWidth, cv.LINE_8);
           ++i;
@@ -341,12 +360,15 @@ console.log("statusRect:", statusRect);
         paramIndexes[0] = paramNav.indexOf(params[0]);
         paramIndexes[1] = paramNav.indexOf(params[params.length - 1]);
 
-        if(paramNav.index < paramIndexes[0] || paramNav.index > paramIndexes[1])
+        if(paramNav.index < paramIndexes[0] ||
+          paramNav.index > paramIndexes[1]
+        )
           paramNav.current = params[0];
 
         let mat = pipeline.getImage(i);
         if(mat.channels == 1) cv.cvtColor(mat, outputMat, cv.COLOR_GRAY2BGR);
-        else if(mat.channels == 4) cv.cvtColor(mat, outputMat, cv.COLOR_BGRA2BGR);
+        else if(mat.channels == 4)
+          cv.cvtColor(mat, outputMat, cv.COLOR_BGRA2BGR);
         else mat.copyTo(outputMat);
 
         RedrawStatus();
@@ -378,8 +400,10 @@ console.log("statusRect:", statusRect);
       `params:\n` +
       params
         .map((name, idx) => {
-          return `  ${idx + paramIndexes[0] == paramNav.index ? '\x1b[1;31m' : ''}${name.padEnd(13
-          )}\x1b[0m   \x1b[1;36m${+paramNav.get(name)}\x1b[0m\n`;
+          return `  ${
+            idx + paramIndexes[0] == paramNav.index ? '\x1b[1;31m' : ''
+          }${name.padEnd(13)}\x1b[0m   \x1b[1;36m${+paramNav.get(name
+          )}\x1b[0m\n`;
         })
         .join('');
 
@@ -412,7 +436,8 @@ console.log("statusRect:", statusRect);
   let processorParams = Util.weakMapper(processor => []);
 
   pipeline.before = () => paramAccumulator.clear();
-  pipeline.after = () => processorParams.set(pipeline.getProcessor(), paramAccumulator.keys());
+  pipeline.after = () =>
+    processorParams.set(pipeline.getProcessor(), paramAccumulator.keys());
 
   pipeline();
 
@@ -434,7 +459,13 @@ console.log("statusRect:", statusRect);
 
   while(true) {
     key = cv.waitKeyEx(-1);
-    if(key === 'q' || key === 113 || key === '\x1b' || key === 0x100071 || key === -1) break;
+    if(key === 'q' ||
+      key === 113 ||
+      key === '\x1b' ||
+      key === 0x100071 ||
+      key === -1
+    )
+      break;
     //console.log('key:', ToHex(key));
 
     switch (key & 0xfff) {
@@ -451,7 +482,10 @@ console.log("statusRect:", statusRect);
         if(paramIndexes[0] != -1 && paramNav.index < paramIndexes[0])
           paramNav.index = paramIndexes[1];
 
-        console.log(`Param #${paramNav.index} '${paramNav.name}' selected (${+paramNav.param})`);
+        console.log(`Param #${paramNav.index} '${
+            paramNav.name
+          }' selected (${+paramNav.param})`
+        );
         RedrawStatus();
         RedrawWindow();
         break;
@@ -461,7 +495,10 @@ console.log("statusRect:", statusRect);
         if(paramIndexes[1] != -1 && paramNav.index > paramIndexes[1])
           paramNav.index = paramIndexes[0];
 
-        console.log(`Param #${paramNav.index} '${paramNav.name}' selected (${+paramNav.param})`);
+        console.log(`Param #${paramNav.index} '${
+            paramNav.name
+          }' selected (${+paramNav.param})`
+        );
         RedrawStatus();
         RedrawWindow();
         break;

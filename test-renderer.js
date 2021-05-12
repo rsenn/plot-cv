@@ -40,7 +40,10 @@ async function testRenderSchematic(file) {
 }
 
 async function testRenderBoard(file) {
-  let doc = new EagleDocument(filesystem.readFile(`${file}.brd`).toString(), null, `${file}.brd`);
+  let doc = new EagleDocument(filesystem.readFile(`${file}.brd`).toString(),
+    null,
+    `${file}.brd`
+  );
   let renderer = new Renderer(doc, ReactComponent.append, debug);
 
   let output = renderer.render();
@@ -58,18 +61,23 @@ async function main(...args) {
 
   if(Util.platform == 'quickjs')
     await import('os').then(({ setTimeout, setInterval, clearInterval, clearTimeout }) => {
-      Object.assign(globalThis, {
-        setTimeout,
-        setInterval,
-        clearInterval,
-        clearTimeout
-      });
-    });
+        Object.assign(globalThis, {
+          setTimeout,
+          setInterval,
+          clearInterval,
+          clearTimeout
+        });
+      }
+    );
 
-  if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt');
+  if(args.length == 0)
+    args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt');
 
   for(let filename of args) {
-    let r = [await testRenderBoard(filename), await testRenderSchematic(filename)];
+    let r = [
+      await testRenderBoard(filename),
+      await testRenderSchematic(filename)
+    ];
     console.log('r:', r);
   }
 

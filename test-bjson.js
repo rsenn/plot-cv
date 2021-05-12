@@ -68,7 +68,13 @@ async function readBJSON(filename) {
 
 function deflate(buffer, level = 9) {
   let zstr = new zlib.z_stream();
-  let ret = zlib.deflateInit2(zstr, level, zlib.Z_DEFLATED, 15 + 16, 8, zlib.Z_DEFAULT_STRATEGY);
+  let ret = zlib.deflateInit2(zstr,
+    level,
+    zlib.Z_DEFLATED,
+    15 + 16,
+    8,
+    zlib.Z_DEFAULT_STRATEGY
+  );
   console.log('zlib.deflateInit2() =', ret);
   console.log('ffi.toPointer(buffer) =', ffi.toPointer(buffer));
   //console.log('ffi.toString(buffer) =', ffi.toString(ffi.toPointer(buffer)));
@@ -118,7 +124,8 @@ function WriteFile(name, data) {
 
   if(name == '-' || typeof name != 'string') {
     //  let stdout = filesystem.fdopen(1, 'r');
-    let buffer = data instanceof ArrayBuffer ? data : filesystem.bufferFrom(data);
+    let buffer =
+      data instanceof ArrayBuffer ? data : filesystem.bufferFrom(data);
     filesystem.write(1, buffer, 0, buffer.byteLength);
     return;
   }

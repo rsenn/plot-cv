@@ -4,12 +4,20 @@ function wrap(parser, name) {
   return (str, pos) => {
     let r = parser(str, pos);
     if(r[0] || name.startsWith('direct'))
-      console.log('matched (' + name + ') ' + pos + ' - ' + r[2] + ": '", r[1], "'");
+      console.log('matched (' + name + ') ' + pos + ' - ' + r[2] + ": '",
+        r[1],
+        "'"
+      );
     return r;
   };
 }
 function primaryExpression(...args) {
-  return wrap(choice(identifier, constant, stringLiteral, seq(token('('), expression, token(')'))),
+  return wrap(choice(
+      identifier,
+      constant,
+      stringLiteral,
+      seq(token('('), expression, token(')'))
+    ),
     'primaryExpression'
   )(...args);
 }
@@ -19,7 +27,9 @@ function postfixExpression(...args) {
 }
 
 function argumentExpressionList(...args) {
-  return wrap(seq(assignmentExpression, option()), 'argumentExpressionList')(...args);
+  return wrap(seq(assignmentExpression, option()),
+    'argumentExpressionList'
+  )(...args);
 }
 
 function unaryExpression(...args) {
@@ -34,7 +44,14 @@ function unaryExpression(...args) {
 }
 
 function unaryOperator(...args) {
-  return wrap(choice(token('&'), token('*'), token('+'), token('-'), token('~'), token('!')),
+  return wrap(choice(
+      token('&'),
+      token('*'),
+      token('+'),
+      token('-'),
+      token('~'),
+      token('!')
+    ),
     'unaryOperator'
   )(...args);
 }
@@ -44,11 +61,15 @@ function castExpression(...args) {
 }
 
 function multiplicativeExpression(...args) {
-  return wrap(seq(castExpression, option()), 'multiplicativeExpression')(...args);
+  return wrap(seq(castExpression, option()),
+    'multiplicativeExpression'
+  )(...args);
 }
 
 function additiveExpression(...args) {
-  return wrap(seq(multiplicativeExpression, option()), 'additiveExpression')(...args);
+  return wrap(seq(multiplicativeExpression, option()),
+    'additiveExpression'
+  )(...args);
 }
 
 function shiftExpression(...args) {
@@ -60,7 +81,9 @@ function relationalExpression(...args) {
 }
 
 function equalityExpression(...args) {
-  return wrap(seq(relationalExpression, option()), 'equalityExpression')(...args);
+  return wrap(seq(relationalExpression, option()),
+    'equalityExpression'
+  )(...args);
 }
 
 function andExpression(...args) {
@@ -72,28 +95,42 @@ function exclusiveOrExpression(...args) {
 }
 
 function inclusiveOrExpression(...args) {
-  return wrap(seq(exclusiveOrExpression, option()), 'inclusiveOrExpression')(...args);
+  return wrap(seq(exclusiveOrExpression, option()),
+    'inclusiveOrExpression'
+  )(...args);
 }
 
 function logicalAndExpression(...args) {
-  return wrap(seq(inclusiveOrExpression, option()), 'logicalAndExpression')(...args);
+  return wrap(seq(inclusiveOrExpression, option()),
+    'logicalAndExpression'
+  )(...args);
 }
 
 function logicalOrExpression(...args) {
-  return wrap(seq(logicalAndExpression, option()), 'logicalOrExpression')(...args);
+  return wrap(seq(logicalAndExpression, option()),
+    'logicalOrExpression'
+  )(...args);
 }
 
 function conditionalExpression(...args) {
   return wrap(choice(
       logicalOrExpression,
-      seq(logicalOrExpression, token('?'), expression, token(':'), conditionalExpression)
+      seq(logicalOrExpression,
+        token('?'),
+        expression,
+        token(':'),
+        conditionalExpression
+      )
     ),
     'conditionalExpression'
   )(...args);
 }
 
 function assignmentExpression(...args) {
-  return wrap(choice(conditionalExpression, seq(unaryExpression, assignmentOperator, assignmentExpression)),
+  return wrap(choice(
+      conditionalExpression,
+      seq(unaryExpression, assignmentOperator, assignmentExpression)
+    ),
     'assignmentExpression'
   )(...args);
 }

@@ -142,7 +142,8 @@ const arcToBezier = ({
   rx = Math.abs(rx);
   ry = Math.abs(ry);
 
-  const lambda = Math.pow(pxp, 2) / Math.pow(rx, 2) + Math.pow(pyp, 2) / Math.pow(ry, 2);
+  const lambda =
+    Math.pow(pxp, 2) / Math.pow(rx, 2) + Math.pow(pyp, 2) / Math.pow(ry, 2);
 
   if(lambda > 1) {
     rx *= Math.sqrt(lambda);
@@ -182,9 +183,30 @@ const arcToBezier = ({
   }
 
   return curves.map(curve => {
-    const { x: x1, y: y1 } = mapToEllipse(curve[0], rx, ry, cosphi, sinphi, centerx, centery);
-    const { x: x2, y: y2 } = mapToEllipse(curve[1], rx, ry, cosphi, sinphi, centerx, centery);
-    const { x, y } = mapToEllipse(curve[2], rx, ry, cosphi, sinphi, centerx, centery);
+    const { x: x1, y: y1 } = mapToEllipse(curve[0],
+      rx,
+      ry,
+      cosphi,
+      sinphi,
+      centerx,
+      centery
+    );
+    const { x: x2, y: y2 } = mapToEllipse(curve[1],
+      rx,
+      ry,
+      cosphi,
+      sinphi,
+      centerx,
+      centery
+    );
+    const { x, y } = mapToEllipse(curve[2],
+      rx,
+      ry,
+      cosphi,
+      sinphi,
+      centerx,
+      centery
+    );
 
     return { x1, y1, x2, y2, x, y };
   });

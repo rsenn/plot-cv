@@ -15,7 +15,11 @@ async function main() {
 
   const dump = () =>
     console.log('ws:',
-      Util.getKeys(ws, ['receiveDataQueue', 'receiveCallbacksQueue', 'connected'])
+      Util.getKeys(ws, [
+        'receiveDataQueue',
+        'receiveCallbacksQueue',
+        'connected'
+      ])
     );
 
   await ws.connect(url);
@@ -54,7 +58,8 @@ async function main() {
         case 'INFO': {
           console.log(`Info for '${msg.origin}':`, msg.body);
 
-          if(msg.origin == myId) ws.sendMessage({ type: 'QUIT', body: 'reason' });
+          if(msg.origin == myId)
+            ws.sendMessage({ type: 'QUIT', body: 'reason' });
 
           break;
         }

@@ -50,7 +50,20 @@ function parseStyle(styleStr) {
 
 function* formatPath(path) {
   for(let part of path) {
-    const { largeArc, relative, rx, ry, sweep, x, x1, x2, xAxisRotation, y, y1, y2 } = part;
+    const {
+      largeArc,
+      relative,
+      rx,
+      ry,
+      sweep,
+      x,
+      x1,
+      x2,
+      xAxisRotation,
+      y,
+      y1,
+      y2
+    } = part;
 
     switch (part.code.toUpperCase()) {
       case 'M':
@@ -89,7 +102,10 @@ function* formatPath(path) {
 let props = [];
 
 function flatSVG(svg) {
-  return deep.flatten(svg, new Map(), (v, p) => typeof v == 'object' && 'tagName' in v);
+  return deep.flatten(svg,
+    new Map(),
+    (v, p) => typeof v == 'object' && 'tagName' in v
+  );
 }
 
 function scaleSVG(file, size) {
@@ -117,7 +133,11 @@ function scaleSVG(file, size) {
       let styleSheet = CSS.parse(children.join('\n').trim());
       css = Util.merge(styleSheet, css);
 
-      deep.set(svg, key + '.children', ['', ...CSS.format(styleSheet).trim().split(/\n/g), '']);
+      deep.set(svg, key + '.children', [
+        '',
+        ...CSS.format(styleSheet).trim().split(/\n/g),
+        ''
+      ]);
 
       styleNodes.push(key);
       continue;
@@ -126,7 +146,9 @@ function scaleSVG(file, size) {
     }
 
     if(attributes) {
-      attributes = Util.filter(attributes, (value, key) => key.indexOf(':') == -1);
+      attributes = Util.filter(attributes,
+        (value, key) => key.indexOf(':') == -1
+      );
 
       if('style' in attributes) {
         let style = parseStyle(attributes.style);

@@ -24,7 +24,12 @@ async function main(...args) {
   await PortableFileSystem();
   await PortableSpawn();
 
-  console.options = { ...consoleOpts, depth: 3, compact: 1, hideKeys: ['offset'] };
+  console.options = {
+    ...consoleOpts,
+    depth: 3,
+    compact: 1,
+    hideKeys: ['offset']
+  };
 
   let file = args[0] ?? '';
   let ext = path.extname(file);

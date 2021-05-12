@@ -27,10 +27,20 @@ export async function* tokenize(streamOfText) {
   line = 1;
   column = 1;
   lexer.addRule(tokenRules['singleLineComment'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'COMMENT', keyword: false })
+    token({
+      lexeme,
+      loc: { line, column },
+      tokenClass: 'COMMENT',
+      keyword: false
+    })
   );
   lexer.addRule(tokenRules['multiLineComment'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'COMMENT', keyword: false })
+    token({
+      lexeme,
+      loc: { line, column },
+      tokenClass: 'COMMENT',
+      keyword: false
+    })
   );
   lexer.addRule(tokenRules['while'], lexeme =>
     token({ lexeme, loc: { line, column }, tokenClass: 'WHILE', keyword: true })
@@ -39,43 +49,93 @@ export async function* tokenize(streamOfText) {
     token({ lexeme, loc: { line, column }, tokenClass: 'WHILE', keyword: true })
   );
   lexer.addRule(tokenRules['volatile'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'VOLATILE', keyword: true })
+    token({
+      lexeme,
+      loc: { line, column },
+      tokenClass: 'VOLATILE',
+      keyword: true
+    })
   );
   lexer.addRule(tokenRules['void'], lexeme =>
     token({ lexeme, loc: { line, column }, tokenClass: 'VOID', keyword: true })
   );
   lexer.addRule(tokenRules['unsigned'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'UNSIGNED', keyword: true })
+    token({
+      lexeme,
+      loc: { line, column },
+      tokenClass: 'UNSIGNED',
+      keyword: true
+    })
   );
   lexer.addRule(tokenRules['union'], lexeme =>
     token({ lexeme, loc: { line, column }, tokenClass: 'UNION', keyword: true })
   );
   lexer.addRule(tokenRules['typedef'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'TYPEDEF', keyword: true })
+    token({
+      lexeme,
+      loc: { line, column },
+      tokenClass: 'TYPEDEF',
+      keyword: true
+    })
   );
   lexer.addRule(tokenRules['switch'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'SWITCH', keyword: true })
+    token({
+      lexeme,
+      loc: { line, column },
+      tokenClass: 'SWITCH',
+      keyword: true
+    })
   );
   lexer.addRule(tokenRules['struct'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'STRUCT', keyword: true })
+    token({
+      lexeme,
+      loc: { line, column },
+      tokenClass: 'STRUCT',
+      keyword: true
+    })
   );
   lexer.addRule(tokenRules['static'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'STATIC', keyword: true })
+    token({
+      lexeme,
+      loc: { line, column },
+      tokenClass: 'STATIC',
+      keyword: true
+    })
   );
   lexer.addRule(tokenRules['sizeof'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'SIZEOF', keyword: true })
+    token({
+      lexeme,
+      loc: { line, column },
+      tokenClass: 'SIZEOF',
+      keyword: true
+    })
   );
   lexer.addRule(tokenRules['signed'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'SIGNED', keyword: true })
+    token({
+      lexeme,
+      loc: { line, column },
+      tokenClass: 'SIGNED',
+      keyword: true
+    })
   );
   lexer.addRule(tokenRules['short'], lexeme =>
     token({ lexeme, loc: { line, column }, tokenClass: 'SHORT', keyword: true })
   );
   lexer.addRule(tokenRules['return'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'RETURN', keyword: true })
+    token({
+      lexeme,
+      loc: { line, column },
+      tokenClass: 'RETURN',
+      keyword: true
+    })
   );
   lexer.addRule(tokenRules['register'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'REGISTER', keyword: true })
+    token({
+      lexeme,
+      loc: { line, column },
+      tokenClass: 'REGISTER',
+      keyword: true
+    })
   );
   lexer.addRule(tokenRules['long'], lexeme =>
     token({ lexeme, loc: { line, column }, tokenClass: 'LONG', keyword: true })
@@ -96,7 +156,12 @@ export async function* tokenize(streamOfText) {
     token({ lexeme, loc: { line, column }, tokenClass: 'FLOAT', keyword: true })
   );
   lexer.addRule(tokenRules['extern'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'EXTERN', keyword: true })
+    token({
+      lexeme,
+      loc: { line, column },
+      tokenClass: 'EXTERN',
+      keyword: true
+    })
   );
   lexer.addRule(tokenRules['enum'], lexeme =>
     token({ lexeme, loc: { line, column }, tokenClass: 'ENUM', keyword: true })
@@ -105,16 +170,31 @@ export async function* tokenize(streamOfText) {
     token({ lexeme, loc: { line, column }, tokenClass: 'ELSE', keyword: true })
   );
   lexer.addRule(tokenRules['double'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'DOUBLE', keyword: true })
+    token({
+      lexeme,
+      loc: { line, column },
+      tokenClass: 'DOUBLE',
+      keyword: true
+    })
   );
   lexer.addRule(tokenRules['do'], lexeme =>
     token({ lexeme, loc: { line, column }, tokenClass: 'DO', keyword: true })
   );
   lexer.addRule(tokenRules['default'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'DEFAULT', keyword: true })
+    token({
+      lexeme,
+      loc: { line, column },
+      tokenClass: 'DEFAULT',
+      keyword: true
+    })
   );
   lexer.addRule(tokenRules['continue'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'CONTINUE', keyword: true })
+    token({
+      lexeme,
+      loc: { line, column },
+      tokenClass: 'CONTINUE',
+      keyword: true
+    })
   );
   lexer.addRule(tokenRules['const'], lexeme =>
     token({ lexeme, loc: { line, column }, tokenClass: 'CONST', keyword: true })
@@ -135,16 +215,36 @@ export async function* tokenize(streamOfText) {
     token({ lexeme, loc: { line, column }, tokenClass: 'BOOL', keyword: true })
   );
   lexer.addRule(tokenRules['complex'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'COMPLEX', keyword: true })
+    token({
+      lexeme,
+      loc: { line, column },
+      tokenClass: 'COMPLEX',
+      keyword: true
+    })
   );
   lexer.addRule(tokenRules['imaginary'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'IMAGINARY', keyword: true })
+    token({
+      lexeme,
+      loc: { line, column },
+      tokenClass: 'IMAGINARY',
+      keyword: true
+    })
   );
   lexer.addRule(tokenRules['inline'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'INLINE', keyword: true })
+    token({
+      lexeme,
+      loc: { line, column },
+      tokenClass: 'INLINE',
+      keyword: true
+    })
   );
   lexer.addRule(tokenRules['restrict'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'RESTRICT', keyword: true })
+    token({
+      lexeme,
+      loc: { line, column },
+      tokenClass: 'RESTRICT',
+      keyword: true
+    })
   );
   lexer.addRule(tokenRules['identifier'], lexeme =>
     token({ lexeme, loc: { line, column }, tokenClass: 'IDENTIFIER' })
@@ -321,7 +421,10 @@ export async function* tokenize(streamOfText) {
   lexer.setInput(streamOfText);
   var x = lexer.lex();
   while(x != undefined) {
-    if(x.tokenClass != 'UNMATCHED' && x.tokenClass != 'WHITESPACE' && x.tokenClass != 'COMMENT') {
+    if(x.tokenClass != 'UNMATCHED' &&
+      x.tokenClass != 'WHITESPACE' &&
+      x.tokenClass != 'COMMENT'
+    ) {
       yield x;
     }
     x = lexer.lex();

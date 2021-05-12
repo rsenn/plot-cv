@@ -54,7 +54,11 @@ async function main(...args) {
         false,
         (v, r, o) => {
           console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
-          console.log(o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n')
+          console.log(o
+              .map(([name, [arg, fn, ch]]) =>
+                  `  --${(name + ', -' + ch).padEnd(20)}`
+              )
+              .join('\n')
           );
           Util.exit(0);
         },
@@ -144,7 +148,10 @@ function processFile(file, params) {
 
   let ast, error;
   globalThis.parser = parser = null;
-  globalThis.parser = parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
+  globalThis.parser = parser = new ECMAScriptParser(data ? data.toString() : data,
+    file,
+    debug
+  );
 
   try {
     ast = parser.parseProgram();
@@ -190,7 +197,8 @@ function processFile(file, params) {
   );*/
   let nodeKeys = [];
 
-  const isRequire = node => node instanceof CallExpression && node.callee.value == 'require';
+  const isRequire = node =>
+    node instanceof CallExpression && node.callee.value == 'require';
   const isImport = node => node instanceof ImportDeclaration;
 
   let commentMap = new Map([...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
@@ -203,7 +211,8 @@ function processFile(file, params) {
   //console.log('commentMap:', commentMap);
 
   const output_file =
-    params['output-js'] ?? file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
+    params['output-js'] ??
+    file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
 
   let tree = new Tree(ast);
 
@@ -217,13 +226,18 @@ function processFile(file, params) {
   WriteFile(output_file, code);
 
   function getImports() {
-    const imports = [...flat].filter(([path, node]) => isRequire(node) || isImport(node));
+    const imports = [...flat].filter(([path, node]) => isRequire(node) || isImport(node)
+    );
     const importStatements = imports
-      .map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path))
+      .map(([path, node]) =>
+        isRequire(node) || true ? path.slice(0, 2) : path
+      )
       .map(path => [path, deep.get(ast, path)]);
 
     console.log('imports:',
-      new Map(imports.map(([path, node]) => [ESNode.assoc(node).position, node]))
+      new Map(
+        imports.map(([path, node]) => [ESNode.assoc(node).position, node])
+      )
     );
     console.log('importStatements:', importStatements);
 
@@ -237,11 +251,14 @@ function processFile(file, params) {
       .map(([p, n]) => [p, n.declarations ? n.declarations : n]);
     console.log('importIdentifiers:', importIdentifiers);
 
-    console.log('importIdentifiers:', Util.unique(importIdentifiers.flat()).join(', '));
+    console.log('importIdentifiers:',
+      Util.unique(importIdentifiers.flat()).join(', ')
+    );
   }
 
   //  await ConsoleSetup({ depth: Infinity });
-  const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral);
+  const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral
+  );
 
   //console.log('templates:', templates);
 }
@@ -257,7 +274,8 @@ function finish(err) {
 
   if(err) {
     console.log(parser.lexer.currentLine());
-    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
+    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack
+    );
   }
 
   lexer = parser.lexer;

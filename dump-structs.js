@@ -25,7 +25,8 @@ Util.define(Array.prototype, {
     return this[this.length - 1];
   },
   startsWith(start) {
-    for(let i = 0; i < start.length; i++) if(this[i] !== start[i]) return false;
+    for(let i = 0; i < start.length; i++)
+      if(this[i] !== start[i]) return false;
     return true;
   }
 });
@@ -34,7 +35,9 @@ async function main(...args) {
   console.log('dump-structs', ...args);
   await ConsoleSetup({ breakLength: 120, depth: 10 });
   await PortableFileSystem(fs => (filesystem = fs));
-  await PortableSpawn(fn => console.log('PortableSpawn', (globalThis.spawn = spawn = fn)));
+  await PortableSpawn(fn =>
+    console.log('PortableSpawn', (globalThis.spawn = spawn = fn))
+  );
 
   let params = Util.getOpt({
       output: [true, null, 'o'],
@@ -154,12 +157,19 @@ async function main(...args) {
           let indexes = new WeakMap(entries.map(([p, n], i) => [n, i]));
           let re = /(^[_P]?IMAGE_)/;
           const NoSystemIncludes = ([p, n, l]) => !/^\/usr/.test(l.file + '');
-          let mainNodes = params['system-includes'] ? entries : entries.filter(NoSystemIncludes);
+          let mainNodes = params['system-includes']
+            ? entries
+            : entries.filter(NoSystemIncludes);
 
-          let typedefs = [...Util.filter(mainNodes, ([path, decl]) => decl.kind == 'TypedefDecl')];
+          let typedefs = [
+            ...Util.filter(mainNodes,
+              ([path, decl]) => decl.kind == 'TypedefDecl'
+            )
+          ];
 
           Type.declarations = new Map([...entries]
-              .filter(([p, n]) => Util.isObject(n) && /Decl/.test(n.kind) && n.name)
+              .filter(([p, n]) => Util.isObject(n) && /Decl/.test(n.kind) && n.name
+              )
               .map(([p, n]) => [n.name, n])
           );
 
@@ -169,7 +179,8 @@ async function main(...args) {
           const names = decls => [...decls].map(([path, decl]) => decl.name);
           const declarations = decls =>
             [...decls].map(([path, decl, loc]) => [decl.name, loc.toString()]);
-          let typenames = names(typedefs.filter(([path, decl]) => re.test(decl.name)));
+          let typenames = names(typedefs.filter(([path, decl]) => re.test(decl.name))
+          );
 
           //console.log('obj:', obj);
           //console.log('typedefs:', typedefs.map(([p, n, l]) => [indexes.get(n), n.name, l.toString()]));
@@ -178,14 +189,18 @@ async function main(...args) {
           let nodes = new Map(mainNodes.filter(([p, n]) => 'kind' in n));
           let nodeTypes = [...nodes].map(([p, n]) => n.kind);
           let hist = Util.histogram(nodeTypes, new Map());
-          console.log('histogram:', new Map([...hist].sort((a, b) => a[1] - b[1])));
+          console.log('histogram:',
+            new Map([...hist].sort((a, b) => a[1] - b[1]))
+          );
 
           let offsetNodes = mainNodes.filter(([p, n]) => 'offset' in n);
 
           let namedNodes = mainNodes.filter(([p, n]) => 'name' in n);
 
           let loc_name = (namedNodes
-              .filter(([p, n]) => /Decl/.test(n.kind + '') && Util.isNumeric(p[p.length - 1]))
+              .filter(([p, n]) =>
+                  /Decl/.test(n.kind + '') && Util.isNumeric(p[p.length - 1])
+              )
               .map(([p]) => p) ||
             Util.intersect(typedefs.map(([p]) => p),
               namedNodes.map(([p]) => p)
@@ -214,23 +229,30 @@ async function main(...args) {
               l.toString()
             ]);
           console.log('loc ∩ name:', loc_name.length);
-          let idNodes = new Map([...tree.filter(node => typeof node.id == 'string' && node.id.startsWith('0x'))]
+          let idNodes = new Map([
+              ...tree.filter(node => typeof node.id == 'string' && node.id.startsWith('0x')
+              )
+            ]
               .map(([p, n]) => p)
-              .filter(p => p.indexOf('decl') == -1 && p.indexOf('ownedTagDecl') == -1)
+              .filter(p => p.indexOf('decl') == -1 && p.indexOf('ownedTagDecl') == -1
+              )
               .map(p => [p, tree.at(p)])
               .map(([p, n]) => [n.id, n])
           );
 
           console.log('names:',
             decls
-              .filter(([path, node, id, name, type, kind]) => !/ParmVar/.test(kind))
+              .filter(([path, node, id, name, type, kind]) => !/ParmVar/.test(kind)
+              )
               .map(decl =>
                 decl
                   .slice(2)
                   .map((field, i) =>
                     (Util.abbreviate(
                         field,
-                        [Infinity, Infinity, 20, Infinity, Infinity, Infinity][i]
+                        [Infinity, Infinity, 20, Infinity, Infinity, Infinity][
+                          i
+                        ]
                       ) + ''
                     ).padEnd([6, 25, 20, 20, 40, 0][i])
                   )
@@ -243,13 +265,17 @@ async function main(...args) {
                 node,
                 (n, p) => {
                   //console.log('findDecl', p);
-                  return ['ownedTagDecl', 'decl'].indexOf(p[p.length - 1]) != -1;
+                  return (['ownedTagDecl', 'decl'].indexOf(p[p.length - 1]) != -1
+                  );
                 }, []
               ) || {}
             ).value;
 
           let findType = name =>
-            deep.find(ast, (n, p) => Util.isObject(n) && n.kind && n.name == name, []).value;
+            deep.find(ast,
+              (n, p) => Util.isObject(n) && n.kind && n.name == name,
+              []
+            ).value;
 
           let nodeType = n =>
             n.type
@@ -258,11 +284,14 @@ async function main(...args) {
                   if(typeof typeAliasDeclId == 'string')
                     type.typeAliasDecl = idNodes.get(typeAliasDeclId);
 
-                  if(Type.declarations && Type.declarations.has(t.desugaredQualType)) {
+                  if(Type.declarations &&
+                    Type.declarations.has(t.desugaredQualType)
+                  ) {
                     type = Type.declarations.get(t.desugaredQualType);
                   }
 
-                  if(Util.isObject(type) && Util.isObject(type.type)) type = type.type;
+                  if(Util.isObject(type) && Util.isObject(type.type))
+                    type = type.type;
                   return new Type(type);
                 })(n.type)
               : nodeType(deep.find(ast, n => Util.isObject(n) && n.type).value);
@@ -274,10 +303,14 @@ async function main(...args) {
             return name;
           };
           let findId = id =>
-            [...tree.filter((node, path) => Util.isObject(node) && node.id == id)][0];
+            [
+              ...tree.filter((node, path) => Util.isObject(node) && node.id == id
+              )
+            ][0];
           let findIdKind = (id, kind) =>
             [
-              ...tree.filter((node, path) => Util.isObject(node) && node.id == id && node.kind == kind
+              ...tree.filter((node, path) =>
+                  Util.isObject(node) && node.id == id && node.kind == kind
               )
             ][0];
           let findNode = (id, kind, exclude) =>
@@ -294,7 +327,8 @@ async function main(...args) {
               )
               .map(({ path, value }) => [
                 path,
-                value.inner && value.inner.filter(n => /Field/.test(n.kind)).length,
+                value.inner &&
+                  value.inner.filter(n => /Field/.test(n.kind)).length,
                 value
               ])
               .filter(([p, len, n]) => len > 0)
@@ -310,13 +344,18 @@ async function main(...args) {
                     ],
                     [0, []]
                   )[1]
-                  .map(([name, type, offset, size]) => [name, [type, offset, size]])
+                  .map(([name, type, offset, size]) => [
+                    name,
+                    [type, offset, size]
+                  ])
               );
               return decls;
             }
           };
           let structSize = map =>
-            [...map].reduce((acc, [name, [type, offset, size]]) => acc + size, 0);
+            [...map].reduce((acc, [name, [type, offset, size]]) => acc + size,
+              0
+            );
           /*
       let paramDeclarations = Util.unique([...entries]
           .filter(([p, n]) => Util.isObject(n) && n.kind && n.kind.startsWith('Parm'))
@@ -344,8 +383,14 @@ async function main(...args) {
               .filter(([path, node, id, name, type, kind]) =>
                   /Typedef/.test(kind) && /(struct|union)/.test(type)
               )
-              .map(([path, node, id, name, type, kind]) => [findDecl(node), node])
-              .map(([decl, node]) => [node.name, fieldDecls(findNode(decl.id, decl.kind, decl))])
+              .map(([path, node, id, name, type, kind]) => [
+                findDecl(node),
+                node
+              ])
+              .map(([decl, node]) => [
+                node.name,
+                fieldDecls(findNode(decl.id, decl.kind, decl))
+              ])
               .filter(([name, value]) => !!value)
               .map(([name, fields]) => [name, [structSize(fields), fields]])
             /* .filter(([name, [size, value]]) => !isNaN(size))*/
@@ -355,7 +400,8 @@ async function main(...args) {
               .filter(([path, node]) => /FunctionDecl/.test(node.kind))
               .map(([path, node]) => {
                 let { name, type, inner } = node;
-                inner = inner && inner.map(sub => [nodeName(sub), nodeType(sub)]);
+                inner =
+                  inner && inner.map(sub => [nodeName(sub), nodeType(sub)]);
                 type = nodeType(node);
                 type = type + '';
                 //console.log('type:', type);
@@ -364,7 +410,11 @@ async function main(...args) {
                   //console.log("inner[0]", inner[0]);
                   if((match = inner[0][1].regExp.exec(type))) {
                     type = type
-                      .slice(0, type[match.index - 1] == '(' ? match.index - 1 : match.index)
+                      .slice(0,
+                        type[match.index - 1] == '('
+                          ? match.index - 1
+                          : match.index
+                      )
                       .trimEnd();
                   }
                 }
@@ -401,21 +451,28 @@ async function main(...args) {
             if(lib) {
               if(!libraries.has(lib)) {
                 libraries.set(lib, libname);
-                prototypeOutput.push(`const ${libname} = dlopen('${lib}', RTLD_NOW);`);
+                prototypeOutput.push(`const ${libname} = dlopen('${lib}', RTLD_NOW);`
+                );
               }
               varname = name => `dlsym(${libraries.get(lib)}, '${name}')`;
             }
             if(ret) {
-              prototypeOutput.push(`\ndefine('${name}', ${varname(name)}, null, '${ret}'${[...(params || [])]
+              prototypeOutput.push(`\ndefine('${name}', ${varname(name)}, null, '${ret}'${[
+                  ...(params || [])
+                ]
                   .map(([name, [param, offset]]) => ", '" + param.ffi + "'")
                   .join('')});`
               );
-              let paramNames = [...(params || [])].map(([name], i) => name || `arg${i}`);
+              let paramNames = [...(params || [])].map(([name], i) => name || `arg${i}`
+              );
               paramNames = paramNames.map(name =>
                 /^__/.test(name) ? name.replace(/^__/, '') : name
               );
-              prototypeOutput.push(`export function ${name}(${paramNames.join(', ')}) {
-  ${ret == 'void' ? '' : 'return '}call('${name}'${paramNames.map(n => `, ${n}`).join('')});
+              prototypeOutput.push(`export function ${name}(${paramNames.join(', '
+              )}) {
+  ${ret == 'void' ? '' : 'return '}call('${name}'${paramNames
+                .map(n => `, ${n}`)
+                .join('')});
 }
 `);
             }
@@ -442,40 +499,50 @@ async function main(...args) {
             .map(r => r.trimStart());
 
           if(prototypeOutput.length)
-            writeOutput(params.prototypeOutput ?? MakeFilename('functions'), prototypeOutput);
+            writeOutput(params.prototypeOutput ?? MakeFilename('functions'),
+              prototypeOutput
+            );
           if(structOutput.length)
-            writeOutput(params.structOutput ?? MakeFilename('structs'), structOutput);
+            writeOutput(params.structOutput ?? MakeFilename('structs'),
+              structOutput
+            );
 
           //console.log('prototypeOutput: ' + prototypeOutput.filter(p => typeof p != 'string'));
 
           let records = [...tree.filter(node => node.kind == 'RecordDecl')];
 
           let getIds = (id, exclude) =>
-            [...tree.filter((node, path) => node == id && !path.startsWith(exclude))].map(([p, n]) => p /*.join('.')*/
-            );
+            [
+              ...tree.filter((node, path) => node == id && !path.startsWith(exclude)
+              )
+            ].map(([p, n]) => p /*.join('.')*/);
 
           let recordNodes = records
             .map(([p, n]) => [
               p.join('.'),
               nodeName(n) || n.id,
               Util.if(n, p => [Util.className(p), p.kind, nodeName(p)]),
-              Util.if(tree.parentNode(tree.parentNode(tree.parentNode(n))), p => [
-                Util.className(p),
-                p.kind,
-                nodeName(p)
-              ]),
+              Util.if(
+                tree.parentNode(tree.parentNode(tree.parentNode(n))),
+                p => [Util.className(p), p.kind, nodeName(p)]
+              ),
               [n, ...tree.anchestors(n)]
-                .filter(n => !(n instanceof Array) && n.kind != 'TranslationUnitDecl')
+                .filter(n => !(n instanceof Array) && n.kind != 'TranslationUnitDecl'
+                )
                 .reduce((a, n) => [
                     ...a,
-                    ...(typeof n.tagUsed == 'string' && n.tagUsed != '' ? [n.tagUsed] : []),
+                    ...(typeof n.tagUsed == 'string' && n.tagUsed != ''
+                      ? [n.tagUsed]
+                      : []),
                     ...(typeof n.name == 'string' ? [n.name] : [])
                   ],
                   []
                 ),
 
               [...tree.anchestors(n, [...p])]
-                .filter(([p, n]) => typeof n.kind == 'string' && (/[^t]Decl/.test(n.kind) || n.name)
+                .filter(([p, n]) =>
+                    typeof n.kind == 'string' &&
+                    (/[^t]Decl/.test(n.kind) || n.name)
                 )
                 .map(([p, n]) => [p.join('.'), n.kind, n.name, n.tagUsed]),
               // getIds(n.id, p.slice(0, 2)),
@@ -483,7 +550,9 @@ async function main(...args) {
               n.inner &&
                 new Map(n.inner
                     .reduce((a, field) =>
-                        /Comment/.test(field.kind) ? a : [...a, [nodeName(field), nodeType(field)]],
+                        /Comment/.test(field.kind)
+                          ? a
+                          : [...a, [nodeName(field), nodeType(field)]],
                       []
                     )
                     .map(([name, type]) => [
@@ -510,9 +579,9 @@ async function main(...args) {
                       byteLength,
                       offset,
                       `set ${name}(v) { new ${ByteLength2TypedArray(byteLength
-                      )}(this, ${offset})[0] = ${ByteLength2Value(byteLength)}; }`,
-                      `get ${name}() { return new ${ByteLength2TypedArray(
-                        byteLength
+                      )}(this, ${offset})[0] = ${ByteLength2Value(byteLength
+                      )}; }`,
+                      `get ${name}() { return new ${ByteLength2TypedArray(byteLength
                       )}(this, ${offset})[0]; }`
                     ]
                   ]
@@ -536,9 +605,14 @@ async function main(...args) {
           ];
 
           let recordTypes = [
-            ...tree.filter((node, path) => typeof node.id == 'string' && recordIds.indexOf(node.id) != -1
+            ...tree.filter((node, path) =>
+                typeof node.id == 'string' && recordIds.indexOf(node.id) != -1
             )
-          ].map(([p, n]) => [p, getId(n.id, n).map(([p, n]) => p /*.join('.')*/), n]);
+          ].map(([p, n]) => [
+            p,
+            getId(n.id, n).map(([p, n]) => p /*.join('.')*/),
+            n
+          ]);
 
           console.log('number of nodes:', nodes.size);
           console.log('nodes with offset:', offsetNodes.length);
@@ -575,7 +649,8 @@ async function main(...args) {
           }
           function MakeFilename(className) {
             return path.join(params['output-dir'] ?? 'tmp',
-              path.basename(file || Util.scriptName(), /\.[^.\/]*$/) + `.${className}.js`
+              path.basename(file || Util.scriptName(), /\.[^.\/]*$/) +
+                `.${className}.js`
             );
           }
           //let node = deep.get(ast, p);
@@ -662,9 +737,11 @@ function* GenerateStructClass(name, [size, map]) {
 
 function GenerateGetSet(name, offset, size) {
   return [
-    `set ${name}(v) { new ${ByteLength2TypedArray(size)}(this, ${offset})[0] = ${ByteLength2Value(size
-    )}; }`,
-    `get ${name}() { return new ${ByteLength2TypedArray(size)}(this, ${offset})[0]; }`
+    `set ${name}(v) { new ${ByteLength2TypedArray(size
+    )}(this, ${offset})[0] = ${ByteLength2Value(size)}; }`,
+    `get ${name}() { return new ${ByteLength2TypedArray(
+      size
+    )}(this, ${offset})[0]; }`
   ];
 }
 

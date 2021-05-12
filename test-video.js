@@ -1,16 +1,8 @@
 import Util from './lib/util.js';
-import * as draw from 'opencv';
 import * as std from 'std';
-import { Point } from 'opencv';
-import { Size } from 'opencv';
-import { Contour } from 'opencv';
-import { Rect } from 'opencv';
-import { Line } from 'opencv';
-import { TickMeter } from 'opencv';
-import { Mat as cvMat } from 'opencv';
+import { Point, Size, Contour, Rect, Line, TickMeter, Mat, CLAHE, Draw } from 'opencv';
 import * as cv from 'opencv';
-import { CLAHE } from 'opencv';
-import { VideoSource } from './cvVideo.js';
+import VideoSource from './cvVideo.js';
 import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './cvHighGUI.js';
 import { Alea } from './lib/alea.js';
 import { HSLA } from './lib/color.js';
@@ -27,7 +19,7 @@ let zoom = 1;
 let debug = false;
 let basename = Util.getArgv()[1].replace(/\.js$/, '');
 
-const Mat =
+/*const Mat =
   debug == false
     ? cvMat
     : class Mat extends cvMat {
@@ -47,7 +39,7 @@ const Mat =
           let array = Mat.map(mat);
           return array.length ? array : null;
         }
-      };
+      };*/
 
 function Hierarchy(array) {
   if(array instanceof Int32Array)
@@ -70,7 +62,8 @@ Object.assign(Hierarchy.prototype, {
   });
 
 function SaveConfig(configObj) {
-  configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v]));
+  configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v])
+  );
   let file = std.open(basename + '.config.json', 'w+b');
   file.puts(JSON.stringify(configObj, null, 2) + '\n');
   file.close();
@@ -91,22 +84,9 @@ function LoadConfig() {
   return configObj;
 }
 
-function dumpMat(name, mat) {
-  console.log(`${name} =`,
-    Object.create(
-      Mat.prototype,
-      ['cols', 'rows', 'depth', 'channels', 'type' /*, 'dims'*/].reduce((acc, prop) => ({
-          ...acc,
-          [prop]: { value: mat[prop], enumerable: true }
-        }),
-        {}
-      )
-    )
-  );
-}
-
 function getConstants(names) {
-  return Object.fromEntries(names.map(name => [name, '0x' + cv[name].toString(16)]));
+  return Object.fromEntries(names.map(name => [name, '0x' + cv[name].toString(16)])
+  );
 }
 
 function findConstant(value, keyCond = k => /^CV/.test(k)) {
@@ -133,7 +113,7 @@ function getBitDepth(mat) {
 }
 
 const MakeMatFor = Util.weakMapper((...args) => new Mat(...args));
-
+/*
 const to32bit = (() => {
   const mapper = Util.weakMapper(() => new Mat());
   return function to32bit(mat) {
@@ -161,7 +141,12 @@ const to8bit = (() => {
 })();
 
 const getAlpha = (() => {
-  const mapper = Util.weakMapper(() => [new Mat(), new Mat(), new Mat(), new Mat()]);
+  const mapper = Util.weakMapper(() => [
+    new Mat(),
+    new Mat(),
+    new Mat(),
+    new Mat()
+  ]);
   return function getAlpha(mat) {
     let channels = mapper(mat);
     cv.split(mat, channels);
@@ -197,7 +182,7 @@ const toRGBA = (() => {
     return rgba;
   };
 })();
-
+*/
 function minMax(mat) {
   const ret = cv.minMaxLoc(mat);
   return [ret.minVal, ret.maxVal];
@@ -211,7 +196,12 @@ function modifierMap(keyCode) {
   ].map(([modifier, flag]) => [modifier, keyCode & flag ? 1 : 0]);
 }
 
-function drawContour(mat, contour, color, thickness = 1, lineType = cv.LINE_AA) {
+function drawContour(mat,
+  contour,
+  color,
+  thickness = 1,
+  lineType = cv.LINE_AA
+) {
   cv.drawContours(mat, [contour], 0, color, thickness, lineType);
 }
 
@@ -244,7 +234,10 @@ function* walkContours(hier, id) {
   }
 }
 
-function Profiler(name, ticks = () => cv.getTickCount(), freq = cv.getTickFrequency()) {
+function Profiler(name,
+  ticks = () => cv.getTickCount(),
+  freq = cv.getTickFrequency()
+) {
   let self,
     i = 0,
     prev,
@@ -342,7 +335,9 @@ function main(...args) {
       .map(hue => new HSLA(hue, 100, 50))
       .map(h => h.toRGBA());
 
-  let win = new Window('gray', cv.WINDOW_NORMAL /*| cv.WINDOW_AUTOSIZE | cv.WINDOW_KEEPRATIO*/);
+  let win = new Window('gray',
+    cv.WINDOW_NORMAL /*| cv.WINDOW_AUTOSIZE | cv.WINDOW_KEEPRATIO*/
+  );
   //console.debug('Mouse :', { MouseEvents, MouseFlags });
 
   const printFlags = flags => [...Util.bitsToNames(MouseFlags)];
@@ -440,7 +435,9 @@ function main(...args) {
   //std.exit(0);
   rainbow = makeRainbow(256);
 
-  let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS, new Size(3, 3));
+  let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS,
+    new Size(3, 3)
+  );
 
   let dst0Size, firstSize, videoSize;
 
@@ -491,7 +488,13 @@ function main(...args) {
         clahe.apply(src, dst);
       }),
       Processor(function Blur(src, dst) {
-        cv.GaussianBlur(src, dst, [+params.ksize, +params.ksize], 0, 0, cv.BORDER_REPLICATE);
+        cv.GaussianBlur(src,
+          dst,
+          [+params.ksize, +params.ksize],
+          0,
+          0,
+          cv.BORDER_REPLICATE
+        );
       }),
       Processor(function EdgeDetect(src, dst) {
         cv.Canny(src,
@@ -504,8 +507,18 @@ function main(...args) {
         ////console.log('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);
       }),
       Processor(function Morph(src, dst) {
-        cv.dilate(src, dst, structuringElement, new Point(-1, -1), +params.dilations);
-        cv.erode(dst, dst, structuringElement, new Point(-1, -1), +params.erosions);
+        cv.dilate(src,
+          dst,
+          structuringElement,
+          new Point(-1, -1),
+          +params.dilations
+        );
+        cv.erode(dst,
+          dst,
+          structuringElement,
+          new Point(-1, -1),
+          +params.erosions
+        );
       }),
       Processor(function Contours(src, dst) {
         cv.findContours(src,
@@ -561,7 +574,10 @@ function main(...args) {
   );
 
   console.log(`pipeline.images = `, pipeline.images.map(Util.className));
-  console.log(`pipeline.images = { ` + pipeline.images.map(image => '\n  ' + image) + '\n}');
+  console.log(`pipeline.images = { ` +
+      pipeline.images.map(image => '\n  ' + image) +
+      '\n}'
+  );
 
   console.log('Pipeline processor names:', pipeline.names);
   //  video.seekMsecs(5000);
@@ -574,7 +590,10 @@ function main(...args) {
 
   if(frameShow === undefined) frameShow = wrapIndex(-1);
 
-  console.log(`Trackbar 'frame' frameShow=${frameShow} pipeline.size - 1 = ${pipeline.size - 1}`);
+  console.log(`Trackbar 'frame' frameShow=${frameShow} pipeline.size - 1 = ${
+      pipeline.size - 1
+    }`
+  );
 
   if(opts['trackbars'])
     cv.createTrackbar('frame',
@@ -597,7 +616,8 @@ function main(...args) {
 
   const ClearSurface = mat => (mat.setTo([0, 0, 0, 0]), mat);
   const MakeSurface = () =>
-    Util.once((...args) => new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)),
+    Util.once((...args) =>
+        new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)),
       null,
       ClearSurface
     );
@@ -639,7 +659,10 @@ function main(...args) {
           []
         );
         let ch = String.fromCodePoint(keyCode & 0xff);
-        console.log(`keypress [${modifierList}] 0x${(keyCode & ~0xd000).toString(16)} '${ch}'`);
+        console.log(`keypress [${modifierList}] 0x${(keyCode & ~0xd000).toString(
+            16
+          )} '${ch}'`
+        );
       }
 
       switch (key & 0xfff) {
@@ -695,7 +718,9 @@ function main(...args) {
           video.se4t('pos_frames', 0);
           break;
         case 0xf57 /* end */:
-          video.set('pos_frames', video.get('frame_count') - Math.round(video.fps * 3));
+          video.set('pos_frames',
+            video.get('frame_count') - Math.round(video.fps * 3)
+          );
           break;
         case 0xf51: /* left */
         case 0xf53: /* right */
@@ -704,7 +729,13 @@ function main(...args) {
           const method = keyCode & 0x1 ? 'Frames' : 'Msecs';
           const distance =
             (keyCode & 0x1 ? 1 : 1000) *
-            (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
+            (modifiers['ctrl']
+              ? 1000
+              : modifiers['shift']
+              ? 100
+              : modifiers['alt']
+              ? 1
+              : 10);
           const offset = keyCode & 0x2 ? +distance : -distance;
 
           //console.log('seek', { method, distance, offset });
@@ -715,7 +746,9 @@ function main(...args) {
               method +
               ' ' +
               offset +
-              ` distance = ${distance} pos = ${pos} (${Util.roundTo(video.position('%'), 0.001)}%)`
+              ` distance = ${distance} pos = ${pos} (${Util.roundTo(video.position('%'),
+                0.001
+              )}%)`
           );
           break;
         }
@@ -758,17 +791,33 @@ function main(...args) {
       for(let line of lines) {
         const { a, b } = line;
         // console.log("line", {a,b});
-        Draw.line(over, line.a, line.b, { r: 255, g: 0, b: 0, a: 255 }, 2, cv.LINE_AA, 0);
+        Draw.line(over,
+          line.a,
+          line.b,
+          { r: 255, g: 0, b: 0, a: 255 },
+          2,
+          cv.LINE_AA,
+          0
+        );
       }
     } else if(frameShow == 0 || frameShow == 7) {
       /*console.log('contours.length', contours.length);
       console.log('contours[0]', contours[0]);
       console.log('contours[0].length', contours[0].length); */
-      cv.drawContours(over, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
+      cv.drawContours(over,
+        contours,
+        -1,
+        { r: 0, g: 255, b: 0, a: 255 },
+        1,
+        cv.LINE_AA
+      );
     } else {
       let ids = [...getToplevel(hier)];
 
-      let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]])
+      let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [
+          id,
+          rainbow[Math.floor((i * 256) / (ids.length - 1))]
+        ])
       );
       let hierObj = new Hierarchy(hier);
 
@@ -789,7 +838,8 @@ function main(...args) {
 
     function drawParam(param, y, color) {
       const name = paramNav.nameOf(param);
-      const value = param.get() + (param.get() != (param | 0) + '' ? ` (${+param})` : '');
+      const value =
+        param.get() + (param.get() != (param | 0) + '' ? ` (${+param})` : '');
       const arrow = Number.isInteger(y) && paramNav.name == name ? '=>' : '  ';
       const text =
         `${arrow}${name}` +
@@ -797,14 +847,19 @@ function main(...args) {
         ` = ${value}`;
       color = color || { r: 0xb7, g: 0x35, b: 255, a: 255 };
       y = tPos.y - 20 - (y | 0);
-      font.draw(over, text, [tPos.x, y], { r: 0, g: 0, b: 0, a: 255 }, params.fontThickness * 2);
+      font.draw(over,
+        text,
+        [tPos.x, y],
+        { r: 0, g: 0, b: 0, a: 255 },
+        params.fontThickness * 2
+      );
       font.draw(over, text, [tPos.x, y], color, +params.fontThickness);
     }
 
     //console.log('keyCode:', '0x' + Util.hex(keyCode & 0xff, 2));
     let elapsed = now - keyTime;
     let maskRect;
-    if((keyCode & 0b00111101) == 0b00111100 && elapsed < 2000) {
+    if((keyCode & 0x3d) == 0x3c && elapsed < 2000) {
       let { index, size } = paramNav;
       let start = 0;
       if(index > 4) {
@@ -824,7 +879,10 @@ function main(...args) {
       for(let i = size - 1; i >= start; i--) {
         const pos = x(i);
         const [name, param] = paramNav.at(pos);
-        drawParam(param, y, paramNav.index == pos && { r: 255, g: 255, b: 0, a: 255 });
+        drawParam(param,
+          y,
+          paramNav.index == pos && { r: 255, g: 255, b: 0, a: 255 }
+        );
         y += 20;
       }
     } else {
@@ -832,7 +890,8 @@ function main(...args) {
     }
 
     font.draw(over,
-      `#${frameShow + 1}/${pipeline.size}` + (outputName ? ` (${outputName})` : ''),
+      `#${frameShow + 1}/${pipeline.size}` +
+        (outputName ? ` (${outputName})` : ''),
       [5, 5 + tSize.y],
       /*0xffff00 ||*/ {
         r: 255,

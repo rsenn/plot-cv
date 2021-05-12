@@ -25,7 +25,8 @@ const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" view
 ) {
   if(!(Util.isArray(reOrStr) || Util.isIterable(reOrStr))) reOrStr = [reOrStr];
 
-  return arg => reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), arg);
+  return arg =>
+    reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), arg);
 }
 
 function WriteFile(name, data) {
@@ -35,7 +36,10 @@ function WriteFile(name, data) {
   console.log(`Wrote ${name}: ${data.length} bytes`);
 }
 
-function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments)) {
+function printAst(ast,
+  comments,
+  printer = new Printer({ indent: 4 }, comments)
+) {
   return printer.print(ast);
 }
 
@@ -146,7 +150,10 @@ async function main(...args) {
         })
       );
 
-      exports = exports.map(([p, stmt]) => [p, stmt.declarations || stmt.properties || stmt]);
+      exports = exports.map(([p, stmt]) => [
+        p,
+        stmt.declarations || stmt.properties || stmt
+      ]);
 
       console.log('exports [1]:', console.config({ depth: 1 }), exports);
       exports = exports.map(([p, stmt]) => stmt);
@@ -169,7 +176,9 @@ async function main(...args) {
       );
       console.log('exports [3]:', exports);
       //exports = exports.map(decls => decls.map(decl => (Util.isObject(decl) && 'id' in decl ? decl.id : decl)));
-      exports = exports.map(decl => (Util.isObject(decl) && 'id' in decl ? decl.id : decl));
+      exports = exports.map(decl =>
+        Util.isObject(decl) && 'id' in decl ? decl.id : decl
+      );
 
       //      exportProps =exportProps.map(ep => 'id' in ep ? ep.id.value : ep);
 
@@ -192,7 +201,8 @@ async function main(...args) {
           } else {
             let id = Identifier.string(stmt.declaration);
 
-            if(stmt instanceof ExportDefaultDeclaration) id = `default as ${id}`;
+            if(stmt instanceof ExportDefaultDeclaration)
+              id = `default as ${id}`;
             specifiers = [id];
           }
         }
@@ -228,7 +238,8 @@ async function main(...args) {
     let output = '';
     output = printAst(ast, parser.comments, printer).trim();
     if(output != '')
-      r = r.concat(`/* --- concatenated '${file}' --- */\n${output}\n`.split(/\n/g));
+      r = r.concat(`/* --- concatenated '${file}' --- */\n${output}\n`.split(/\n/g)
+      );
 
     function log(...args) {
       const assoc = args
@@ -236,7 +247,8 @@ async function main(...args) {
         .filter(assoc => !!assoc);
       //if(assoc[0]) console.log('ASSOC:', assoc[0].position.clone());
       const prefix =
-        (assoc.length == 1 && assoc[0].position && assoc[0].position.clone()) || modulePath;
+        (assoc.length == 1 && assoc[0].position && assoc[0].position.clone()) ||
+        modulePath;
       console.log(prefix.toString() + ':', ...args);
     }
     return true;
@@ -265,7 +277,8 @@ function finish(err) {
   }
   if(err) {
     console.log(parser.lexer.currentLine());
-    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
+    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack
+    );
   }
   let lexer = parser.lexer;
   let t = [];

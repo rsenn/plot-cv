@@ -12,7 +12,8 @@ var parent = os.Worker.parent;
 var configFile = 'test-opencv.config.json';
 
 function SaveConfig(configObj) {
-  configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v]));
+  configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v])
+  );
   let file = std.open(configFile, 'w+b');
   file.puts(JSON.stringify(configObj, null, 2) + '\n');
   file.close();

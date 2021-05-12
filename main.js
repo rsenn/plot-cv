@@ -167,7 +167,8 @@ config.zoomLog.subscribe(AdjustZoom);
 const add = (arr, ...items) => [...(arr ? arr : []), ...items];
 
 const useSlot = (arr, i) => [() => arr[i], v => (arr[i] = v)];
-const trklGetSet = (get, set) => value => (value !== undefined ? set(value) : get());
+const trklGetSet = (get, set) => value =>
+  value !== undefined ? set(value) : get();
 //const useTrkl = trkl => [() => trkl(), value => trkl(value)];
 
 const MouseEvents = h => ({
@@ -229,7 +230,10 @@ function DrawSVG(...args) {
   let [tag, attrs, children] = args;
   if(typeof tag == 'string') {
     // console.log('draw(', ...args, ')');
-    e = factory(tag, { stroke: c.hex(), 'stroke-width': 0.1, ...attrs }, children);
+    e = factory(tag,
+      { stroke: c.hex(), 'stroke-width': 0.1, ...attrs },
+      children
+    );
   } else if(Util.isArray(args[0])) {
     let items = args.shift();
     // document.querySelector('#main > div > div > div > svg:nth-child(2) > g');
@@ -277,13 +281,16 @@ function calcViewBox(box) {
 }
 
 function setViewBox(svgOwner, box) {
-  svgOwner = svgOwner || [...Element.findAll('svg', Element.find('#main'))].reverse()[0];
+  svgOwner =
+    svgOwner || [...Element.findAll('svg', Element.find('#main'))].reverse()[0];
   const rect = box; // instanceof BBox ? box : DrawSVG.calcViewBox(box);
   rect.y1 -= rect.y2;
   rect.x2 -= rect.x1;
   console.log('setViewBox', { svgOwner, rect, box });
   svgOwner.setAttribute('viewBox', rect.toString());
-  svgOwner.lastElementChild.setAttribute('transform', `scale(1,-1)  translate(0,${-rect.height})`);
+  svgOwner.lastElementChild.setAttribute('transform',
+    `scale(1,-1)  translate(0,${-rect.height})`
+  );
   Element.attr(svgOwner.lastElementChild.firstElementChild, {
     ...rect.toRect()
   });
@@ -295,9 +302,13 @@ const ElementToXML = (e, predicate) => {
     deep.set(x, path, value.trim().replace(/\s+/g, ' '));
   }
 
-  for(let [value, path] of deep.iterate(x, (v, k) => k[k.length - 1] == 'id' && v == 'rects'))
+  for(let [value, path] of deep.iterate(x,
+    (v, k) => k[k.length - 1] == 'id' && v == 'rects'
+  ))
     deep.unset(x, path.slice(0, -1));
-  for(let [value, path] of deep.iterate(x, (v, k) => /(^data-|^class$)/.test(k[k.length - 1])))
+  for(let [value, path] of deep.iterate(x, (v, k) =>
+    /(^data-|^class$)/.test(k[k.length - 1])
+  ))
     deep.unset(x, path);
   //console.log('x:', x);
   return Element.toString(x, { newline: '\n' });
@@ -323,9 +334,15 @@ const filesystem = {
 
 async function LoadFile(file) {
   let { url, name: filename } =
-    typeof file == 'string' ? { url: file, name: file.replace(/.*\//g, '') } : GetProject(file);
+    typeof file == 'string'
+      ? { url: file, name: file.replace(/.*\//g, '') }
+      : GetProject(file);
   LogJS.info(`LoadFile ${url}`);
-  url = /:\/\//.test(url) ? url : /^tmp\//.test(url) ? '/' + url : `/static/${filename}`;
+  url = /:\/\//.test(url)
+    ? url
+    : /^tmp\//.test(url)
+    ? '/' + url
+    : `/static/${filename}`;
   //console.log('LoadFile url=', url);
   let response = await FetchURL(url);
   console.debug('LoadFile response=', response);
@@ -359,7 +376,9 @@ async function SaveFile(filename, data, contentType) {
   return result;
 }
 
-async function SaveSVG(filename, layers = [1, 16, 20, 21, 22, 23, 25, 27, 47, 48, 51]) {
+async function SaveSVG(filename,
+  layers = [1, 16, 20, 21, 22, 23, 25, 27, 47, 48, 51]
+) {
   const { doc } = project;
   const { basename, typeName } = doc;
   if(!filename) filename = `${doc.basename}.${doc.typeName}.svg`;
@@ -380,7 +399,10 @@ async function SaveSVG(filename, layers = [1, 16, 20, 21, 22, 23, 25, 27, 47, 48
 async function LoadSVG(filename) {
   let data = await FetchURL(filename).then(ResponseData);
   let xml = tXml(data.replace(/<\?xml[^>]*>/, ''));
-  let element = Element.create('div', { style: { display: 'inline-block' } }, 'body');
+  let element = Element.create('div',
+    { style: { display: 'inline-block' } },
+    'body'
+  );
   let component = ReactComponent.fromObject(xml[0]);
   React.render(component, element);
   return element.firstElementChild;
@@ -414,7 +436,9 @@ const ModifyColors = fn => e => {
 };
 
 const FindLayer = name_or_id => {
-  for(let id of (name_or_id + '').split(/\s+/g).map(n => (isNaN(n) ? n : +n))) {
+  for(let id of (name_or_id + '')
+    .split(/\s+/g)
+    .map(n => (isNaN(n) ? n : +n))) {
     const layer = layers.find(l => l.i == id || l.name == id);
     if(layer) return layer;
   }
@@ -460,7 +484,8 @@ const maxZIndex = () =>
 const groupProps = Util.memoize(() => {
   let transform = `translate(300,-50)`;
   const prng = new Alea(234234800);
-  const randomColor = () => HSLA.random([240, -120], [100, 100], [30, 75], [1, 1], prng).hex();
+  const randomColor = () =>
+    HSLA.random([240, -120], [100, 100], [30, 75], [1, 1], prng).hex();
   return [
     { stroke: randomColor(), transform },
     { stroke: randomColor(), transform },
@@ -492,7 +517,9 @@ function DrawArc(start, end, angle) {
   console.log('angles:', angles);
   let matrices = angles.map(a => new Rotation(a).toMatrix());
 
-  let slopes = matrices.map(m => new Point(m.transform_point(line.slope)).normal());
+  let slopes = matrices.map(m =>
+    new Point(m.transform_point(line.slope)).normal()
+  );
 
   slopes[1].mul(-1);
   console.log('slopes:', slopes);
@@ -507,7 +534,8 @@ function DrawArc(start, end, angle) {
   let pivots = [middle, line.a, line.b];
   let colors = ['#EB1F00', '#F0CC11', '#34DB05', '#0078F0', '#8D1AE6'];
   let compound = ['#2E17B3', '#554D85', '#3578E6', '#E9B470', '#B35917'];
-  let palette = ['ff595e', 'ffca3a', '8ac926', '1982c4', '6a4c93'].map(hex => `#${hex}`);
+  let palette = ['ff595e', 'ffca3a', '8ac926', '1982c4', '6a4c93'].map(hex => `#${hex}`
+  );
   let rainbow = ['#E64535', '#E6AA4C', '#D0E634', '#1EE67B', '#3394E8'];
   let lines2 = [new Line(p1, center), new Line(p2, center)];
 
@@ -519,7 +547,9 @@ function DrawArc(start, end, angle) {
   console.log('norms:', norms);
   console.log('center:', center);
 
-  let range = norms.map(({ x, y }) => new Point(x * radius, y * radius).sum(center));
+  let range = norms.map(({ x, y }) =>
+    new Point(x * radius, y * radius).sum(center)
+  );
   let deg = (angle * 180) / Math.PI;
   let approx = Util.range(0, deg, 10).map(a =>
     Point.fromAngle((a * Math.PI) / 180 - angle, radius - 30)
@@ -548,7 +578,9 @@ function DrawArc(start, end, angle) {
   });
   lines2.forEach((l, i) => g('line', { ...l.toObject(), stroke: compound[i] }));
 
-  range.forEach((p, i) => b('circle', { cx: p.x, cy: p.y, r: 15, stroke: '#0ff' }));
+  range.forEach((p, i) =>
+    b('circle', { cx: p.x, cy: p.y, r: 15, stroke: '#0ff' })
+  );
   approx.forEach((p, i) =>
     b('circle', {
       cx: p.x,
@@ -580,7 +612,8 @@ function DrawArc(start, end, angle) {
 
 const DrawBinaryTree = (tree, draw = DrawSVG()) => {
   let a = [];
-  const add = (level, item) => (a[level] ? a[level].push(item) : (a[level] = [item]));
+  const add = (level, item) =>
+    a[level] ? a[level].push(item) : (a[level] = [item]);
 
   RecurseBinaryNode(tree.root);
 
@@ -600,7 +633,10 @@ const DrawBinaryTree = (tree, draw = DrawSVG()) => {
     let fx = j => j * 20 - ((nodes.length - 1) * 20) / 2;
     nodes.map((node, j) => (node.x = fx(j)));
   });
-  a.flat().forEach(item => (DrawNode(item.x, item.y, item.node), item.parent && DrawEdge(item, item.parent))
+  a.flat().forEach(item => (
+      DrawNode(item.x, item.y, item.node),
+      item.parent && DrawEdge(item, item.parent)
+    )
   );
 
   function DrawNode(x, y, node) {
@@ -653,8 +689,15 @@ DrawBinaryTree.bt = new BinaryTree(new BinaryTree.Node(
     new BinaryTree.Node(
       'H',
       new BinaryTree.Node('H',
-        new BinaryTree.Node('V', new BinaryTree.Node(6), new BinaryTree.Node(7)),
-        new BinaryTree.Node('V', new BinaryTree.Node(4), new BinaryTree.Node(5)),
+        new BinaryTree.Node(
+          'V',
+          new BinaryTree.Node(6),
+          new BinaryTree.Node(7)
+        ),
+        new BinaryTree.Node('V',
+          new BinaryTree.Node(4),
+          new BinaryTree.Node(5)
+        ),
         new BinaryTree.Node('V')
       ),
       new BinaryTree.Node(3)
@@ -716,13 +759,17 @@ function OutsetPath(path, offset, miterLimit = 2, arcTolerance = 0.01) {
   co.AddPath(path.closed ? path.slice(0, -1) : path,
     ClipperLib.JoinType[path.closed ? 'jtRound' : 'jtSquare'],
     ClipperLib.EndType[
-      path.closed ? 'etClosedLine' /*'etClosedPolygon' */ : 'etOpenSquare' || 'etOpenRound'
+      path.closed
+        ? 'etClosedLine' /*'etClosedPolygon' */
+        : 'etOpenSquare' || 'etOpenRound'
     ]
   );
   co.Execute(output, offset);
   console.log('output:', output);
   output.toPolylines = function() {
-    return this.map(p => new Polyline(p.map(({ X, Y }) => new Point(X, Y))).close());
+    return this.map(p =>
+      new Polyline(p.map(({ X, Y }) => new Point(X, Y))).close()
+    );
   };
   return output;
 }
@@ -770,7 +817,9 @@ function ClipPath(path, clip, mode = ClipperLib.ClipType.ctUnion) {
 
   cl.Execute(mode, output);
   output.toPolylines = function() {
-    return this.map(p => new Polyline(p.map(({ X, Y }) => new Point(X, Y))).close());
+    return this.map(p =>
+      new Polyline(p.map(({ X, Y }) => new Point(X, Y))).close()
+    );
   };
   return output;
 }
@@ -779,12 +828,15 @@ function saveItemStates(itemList, get = item => Util.is.on(item.visible())) {
   return itemList.map(item => [item, get(item)]);
 }
 
-function restoreItemStates(itemStates, set = (item, value) => item.visible(value ? 'yes' : 'no')) {
+function restoreItemStates(itemStates,
+  set = (item, value) => item.visible(value ? 'yes' : 'no')
+) {
   for(let [item, state] of itemStates) set(item, state);
 }
 
 function EagleMaps(project) {
-  let transformPath = p => p.replace(/\s*➟\s*/g, '/').replace(/\/([0-9]+)/g, '/[$1]');
+  let transformPath = p =>
+    p.replace(/\s*➟\s*/g, '/').replace(/\/([0-9]+)/g, '/[$1]');
   let dom2path = [...Element.findAll('*[data-path]', project.object)].map(e => [
     e,
     new ImmutableXPath(transformPath(e.getAttribute('data-path')))
@@ -797,8 +849,11 @@ function EagleMaps(project) {
     if((p = dom2path(node))) return project.doc.lookup(p);
   };
   let eagle2dom = elem =>
-    Element.find(`[data-type=${elem.tagName}][data-name=${elem.name}]`, project.element);
-  let path2dom = p => Element.find(`[data-path='${CSS.escape(p)}']`, project.element);
+    Element.find(`[data-type=${elem.tagName}][data-name=${elem.name}]`,
+      project.element
+    );
+  let path2dom = p =>
+    Element.find(`[data-path='${CSS.escape(p)}']`, project.element);
 
   let mapElements = {
     /*    eagle: Util.unique(eagle2dom.map(([e, d]) => e)),
@@ -813,7 +868,8 @@ function EagleMaps(project) {
   );
   console.debug('maps.eagle2dom:', maps.eagle2dom);*/
   //) maps.dom2eagle = Util.mapFunction(new WeakMap(eagle2dom.map(([k, v]) => [v, k])));
-  const [path2component, component2path] = project.renderer.maps.map(Util.mapFunction);
+  const [path2component, component2path] = project.renderer.maps.map(Util.mapFunction
+  );
   const {
     /*path2obj, obj2path, */ path2eagle,
     eagle2path /*, eagle2obj, obj2eagle */
@@ -826,7 +882,12 @@ function EagleMaps(project) {
       value === undefined ? path2component(eagle2path(key) + '') : undefined
     )
   ];
-  Util.weakAssign(maps, { path2eagle, eagle2path, path2component, component2path });
+  Util.weakAssign(maps, {
+    path2eagle,
+    eagle2path,
+    path2component,
+    component2path
+  });
 
   /* const [component2dom, dom2component] = [
     Util.mapAdapter((key, value) =>
@@ -850,10 +911,19 @@ function EagleMaps(project) {
 
 function* PackageNames(doc = project.doc) {
   const tokenize = Util.matchAll(/([A-Za-z]+|[0-9,]+|[^0-9A-Za-z]+)/g);
-  let packages = doc.packages && doc.packages.length ? doc.packages : [...doc.getAll('package')];
+  let packages =
+    doc.packages && doc.packages.length
+      ? doc.packages
+      : [...doc.getAll('package')];
   let names = packages
     .map(e => [e, e.getBounds()])
-    .map(([e, b]) => [e, b.width, b.height, Math.max(b.width, b.height), b.height > b.width])
+    .map(([e, b]) => [
+      e,
+      b.width,
+      b.height,
+      Math.max(b.width, b.height),
+      b.height > b.width
+    ])
     .map(([e, w, h, m, v]) => [
       e,
       e.name,
@@ -878,7 +948,8 @@ function* PackageNames(doc = project.doc) {
       )
       .indexes.reverse();
     let sIndex = tokens.findIndex(([token, index]) => token == '/');
-    let vhIndex = tokens.findIndex(([token, index]) => token == 'V' || token == 'H');
+    let vhIndex = tokens.findIndex(([token, index]) => token == 'V' || token == 'H'
+    );
     let tokIndex = vhIndex != -1 ? vhIndex - 1 : sIndex + 1;
 
     if(tokens[vhIndex]) {
@@ -888,13 +959,17 @@ function* PackageNames(doc = project.doc) {
 
     let token = tokens[tokIndex];
     let vertical = tokens[vhIndex] == 'V';
-    let number = typeof token == 'string' ? +token.replace(/[^-.0-9]/g, '') : NaN;
+    let number =
+      typeof token == 'string' ? +token.replace(/[^-.0-9]/g, '') : NaN;
     console.log('names:', { index, sIndex, vhIndex, token, vertical, number });
 
     /*  if(number != size || vertical != (orientation == 'V')) */
 
     if(token) {
-      let fromTo = [`${token}${tokens[vhIndex] || ''}`, `${size}${vertical ? 'V' : ''}`];
+      let fromTo = [
+        `${token}${tokens[vhIndex] || ''}`,
+        `${size}${vertical ? 'V' : ''}`
+      ];
       let newName = name.replace(...fromTo);
 
       yield Object.assign([name, newName, ...fromTo], {
@@ -919,7 +994,9 @@ async function LoadDocument(project, parentElem) {
   currentProj(project);
   LogJS.info(`${project.name} loaded.`);
   const topPlace = 'tPlace';
-  elementChildren = Util.memoize(() => ElementChildren(topPlace, ent => Object.fromEntries(ent)));
+  elementChildren = Util.memoize(() =>
+    ElementChildren(topPlace, ent => Object.fromEntries(ent))
+  );
   elementGeometries = Util.memoize(() =>
     ElementGeometries(topPlace, ent => Object.fromEntries(ent))
   );
@@ -945,10 +1022,14 @@ async function LoadDocument(project, parentElem) {
       console.log('Package names', names);
       let changes = names.filter(a => a[0] != a[1]);
       console.log('Commands:\n' +
-          changes.map(([oldName, newName]) => `RENAME ${oldName} ${newName};`).join('\n')
+          changes
+            .map(([oldName, newName]) => `RENAME ${oldName} ${newName};`)
+            .join('\n')
       );
       console.log('Expressions:\n' +
-          changes.map(([oldName, newName]) => `s|="${oldName}"|="${newName}"|g;`).join('\n')
+          changes
+            .map(([oldName, newName]) => `s|="${oldName}"|="${newName}"|g;`)
+            .join('\n')
       );
       return names;
     }
@@ -956,7 +1037,10 @@ async function LoadDocument(project, parentElem) {
   let Component;
 
   if(/*doc.type != 'lbr'*/ true) {
-    project.renderer = new Renderer(doc, ReactComponent.append, /* false && */ config.debugFlag());
+    project.renderer = new Renderer(doc,
+      ReactComponent.append,
+      /* false && */ config.debugFlag()
+    );
 
     config.showGrid = trkl(true);
     config.showGrid.subscribe(value => {
@@ -971,7 +1055,8 @@ async function LoadDocument(project, parentElem) {
 
     //console.log('renderer.render =', Component);
 
-    let usedLayers = [...doc.layers.list].filter(layer => layer.elements.size > 0);
+    let usedLayers = [...doc.layers.list].filter(layer => layer.elements.size > 0
+    );
 
     Timer.once(250).then(() =>
       layerList(usedLayers.map(layer => ({
@@ -1066,7 +1151,8 @@ async function LoadDocument(project, parentElem) {
       let e;
       if(props.id && (e = Element.find(`#${props.id}`))) return e;
 
-      let groupElement = Element.find('g.elements', svg) || Element.find('g.instances', svg);
+      let groupElement =
+        Element.find('g.elements', svg) || Element.find('g.instances', svg);
       transform =
         (groupElement ? groupElement.getAttribute('transform') : '') +
         (transform ? ' ' + transform : '');
@@ -1107,7 +1193,10 @@ async function LoadDocument(project, parentElem) {
       let list = [];
 
       return (tag, attr, children = []) => {
-        let e = SVG.create(tag, { ...elementDefaultAttributes, transform, ...attr }, root);
+        let e = SVG.create(tag,
+          { ...elementDefaultAttributes, transform, ...attr },
+          root
+        );
         list.push(e);
         let d = trkl.property(e, 'd');
         d.subscribe(value => e.setAttribute('d', value));
@@ -1194,7 +1283,9 @@ const GenerateVoronoi = () => {
   console.log('result:', Object.keys(result).join(', '));
   let { site, cells, edges, vertices, execTime } = result;
   console.log('cells:', cells);
-  let holes = edges.filter(e => !e.rSite).map(({ lSite, rSite, ...edge }) => new Point(lSite));
+  let holes = edges
+    .filter(e => !e.rSite)
+    .map(({ lSite, rSite, ...edge }) => new Point(lSite));
   let rlines = edges
     .filter(e => e.rSite)
     .map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
@@ -1259,7 +1350,8 @@ const GenerateVoronoi = () => {
 function PackageChildren(element, layer) {
   let children = [...element.children]
     .map((c, i) => [i, c])
-    .filter(([i, p]) => p.layer && p.layer.name == 'tPlace' && p.tagName == 'wire');
+    .filter(([i, p]) => p.layer && p.layer.name == 'tPlace' && p.tagName == 'wire'
+    );
   children.xml = children.map(([i, e]) => e.toXML()).join('\n');
   return children;
 }
@@ -1267,7 +1359,11 @@ function PackageChildren(element, layer) {
 function ElementChildren(layer = 'tPlace', rfn = ent => new Map(ent)) {
   const { elements = [] } = project.doc || {};
 
-  return rfn([...elements].map(([name, element]) => [name, PackageChildren(element, layer)]));
+  return rfn([...elements].map(([name, element]) => [
+      name,
+      PackageChildren(element, layer)
+    ])
+  );
 }
 
 function ElementGeometries(layer = 'tPlace', rfn = ent => new Map(ent)) {
@@ -1283,7 +1379,11 @@ function ElementGeometries(layer = 'tPlace', rfn = ent => new Map(ent)) {
           })
         )
       ])
-      .map(([name, lines]) => [name, lines, lines.slice().toPolygons(pts => new Polyline(pts))])
+      .map(([name, lines]) => [
+        name,
+        lines,
+        lines.slice().toPolygons(pts => new Polyline(pts))
+      ])
       .map(([name, lines, polygons]) => [name, { lines, polygons }])
   );
 }
@@ -1363,8 +1463,10 @@ function HandleMessage(msg) {
       let { frame, width, height, contours } = body;
       console.log('HandleMessage', { contours });
 
-      let lists = (typeof contours == 'string' ? contours.split(/\s*\|\s*/g) : contours).map(pointStr => new Polyline(pointStr)
-      );
+      let lists = (typeof contours == 'string'
+        ? contours.split(/\s*\|\s*/g)
+        : contours
+      ).map(pointStr => new Polyline(pointStr));
 
       window.lists = lists;
       console.log('HandleMessage', { type, width, height, frame }, lists);
@@ -1636,7 +1738,9 @@ const AppMain = (window.onload = async () => {
         file.i = i;
         trkl.bind(file, { data });
         LogJS.info(`Got file '${
-            name.replace(/.*:\/\//g, '').replace(/raw.githubusercontent.com/, 'github.com') ||
+            name
+              .replace(/.*:\/\//g, '')
+              .replace(/raw.githubusercontent.com/, 'github.com') ||
             name.replace(/.*\//g, '')
           }'`
         );
@@ -1647,11 +1751,14 @@ const AppMain = (window.onload = async () => {
         return this.name;
       };
       if(files) {
-        list = list.concat(files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i))
+        list = list.concat(files
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map((obj, i) => new File(obj, i))
         );
         let svgs = list.reduce((acc, file) => {
           if(/\.lbr$/i.test(file.name)) return acc;
-          file.svg = `${EagleDocument.baseOf(file.name)}.${EagleDocument.typeOf(file.name)}.svg`;
+          file.svg = `${EagleDocument.baseOf(file.name)}.${EagleDocument.typeOf(file.name
+          )}.svg`;
           //console.log(`file.svg = '${file.svg}'`);
           return [...acc, file.svg];
         }, []);
@@ -1682,7 +1789,8 @@ const AppMain = (window.onload = async () => {
 
   (async function() {
     while(true) {
-      await CreateWebSocket(null, null, ws => (window.socket = ws)).catch(console.error);
+      await CreateWebSocket(null, null, ws => (window.socket = ws)).catch(console.error
+      );
       await Util.waitFor(1000);
     }
   })();
@@ -1731,7 +1839,9 @@ const AppMain = (window.onload = async () => {
   const updateIfChanged = (trkl, newValue, callback) => {
     const oldValue = trkl() || [];
     console.info('updateIfChanged ', { oldValue, newValue });
-    if(!Array.prototype.every.call(oldValue, (elem, i) => newValue[i] === elem)) return false;
+    if(!Array.prototype.every.call(oldValue, (elem, i) => newValue[i] === elem)
+    )
+      return false;
     trkl(newValue);
     if(typeof callback == 'function') callback(trkl, oldValue, newValue);
     return true;
@@ -1748,7 +1858,8 @@ const AppMain = (window.onload = async () => {
     });
     config.listURL(urls);
     //    value = parts.filter(p => !/\:\/\//.test(p)).join(' ');
-    config.searchFilter(value == '' ? '*' : value.split(/\s*\|\s*/g).join(' | '));
+    config.searchFilter(value == '' ? '*' : value.split(/\s*\|\s*/g).join(' | ')
+    );
   };
 
   const Consumer = props => {
@@ -1867,10 +1978,20 @@ const AppMain = (window.onload = async () => {
   const toggle = trkl => trkl(!trkl());
   let setTo;
 
-  const Layer = ({ title, name, label, i, color, element, className, ...props }) => {
+  const Layer = ({
+    title,
+    name,
+    label,
+    i,
+    color,
+    element,
+    className,
+    ...props
+  }) => {
     let setVisible = props.visible || element.handlers.visible,
       visible = useTrkl(setVisible);
-    const isVisible = visible === true || (visible !== false && Util.is.on(visible));
+    const isVisible =
+      visible === true || (visible !== false && Util.is.on(visible));
     if(Util.isObject(element) && 'visible' in element)
       setVisible = value => (element.visible = value);
     let [solo, setSolo] = useState(null);
@@ -1887,9 +2008,10 @@ const AppMain = (window.onload = async () => {
       {
         className: classNames(className, !isVisible && 'gray'),
         id: `layer-${i}`,
-        'data-layer': `${(element && element.number) || i} ${(element && element.name) || name}`,
-        onClick: useDoubleClick(
-          e => {
+        'data-layer': `${(element && element.number) || i} ${
+          (element && element.name) || name
+        }`,
+        onClick: useDoubleClick(e => {
             let { target } = e;
 
             while(!target.hasAttribute('id') && target.parentElement)
@@ -1905,11 +2027,15 @@ const AppMain = (window.onload = async () => {
               let restoreData = solo;
 
               setSolo(null);
-              restoreItemStates(restoreData, (item, value) => item.visible(value ? 'yes' : 'no'));
+              restoreItemStates(restoreData, (item, value) =>
+                item.visible(value ? 'yes' : 'no')
+              );
 
               console.debug('restoreData:', restoreData);
             } else {
-              let saved = saveItemStates(layers, item => Util.is.on(item.visible()));
+              let saved = saveItemStates(layers, item =>
+                Util.is.on(item.visible())
+              );
               console.debug('saved:', saved);
               setSolo(saved);
               console.debug('layers:', layers);
@@ -1950,7 +2076,11 @@ const AppMain = (window.onload = async () => {
           `${i}`
         ),
         h('span', {
-            className: classNames(className, 'name', !isVisible && 'gray', solo && 'bold'),
+            className: classNames(className,
+              'name',
+              !isVisible && 'gray',
+              solo && 'bold'
+            ),
             ...props
           },
           `${name}`
@@ -1977,7 +2107,8 @@ const AppMain = (window.onload = async () => {
     add(name, component) {
       const { map } = this;
 
-      if(!ReactComponent.isComponent(component)) component = h(component, {}, []);
+      if(!ReactComponent.isComponent(component))
+        component = h(component, {}, []);
 
       map.set(name, component);
       this.update();
@@ -2007,18 +2138,19 @@ const AppMain = (window.onload = async () => {
   let sortOrder = (window.sortOrder = trkl(false));
 
   React.render(h(SlotProvider, {}, [
-      h(Panel, { className: classNames('buttons', 'no-select'), tag: 'header' }, [
-        h(Button, {
-          image: 'static/svg/browse.svg',
-          fn: e => {
-            if(e.type.endsWith('down')) {
-              //console.log('file list push', e);
-              open(!open());
+      h(Panel, { className: classNames('buttons', 'no-select'), tag: 'header' },
+        [
+          h(Button, {
+            image: 'static/svg/browse.svg',
+            fn: e => {
+              if(e.type.endsWith('down')) {
+                //console.log('file list push', e);
+                open(!open());
+              }
             }
-          }
-        }),
+          }),
 
-        /* h(Button, {
+          /* h(Button, {
           caption: 'Random',
           fn: ModifyColors(c => c.replaceAll(c => HSLA.random()))
         }),
@@ -2026,234 +2158,258 @@ const AppMain = (window.onload = async () => {
           caption: 'Invert',
           fn: ModifyColors(c => c.replaceAll(c => c.invert()))
         }),*/
-        h(DropDown, {}, []),
-        h(Button, {
-          //  caption: '↔',
-          fn: MakeFitAction(VERTICAL & 1),
-          image: 'static/svg/fit-vertical.svg'
-        }),
-        h(Button, {
-          //  caption: '↕',
-          fn: MakeFitAction(HORIZONTAL & 1),
-          image: 'static/svg/fit-horizontal.svg'
-        }),
-        h(Conditional, { signal: currentProj }, [
+          h(DropDown, {}, []),
+          h(Button, {
+            //  caption: '↔',
+            fn: MakeFitAction(VERTICAL & 1),
+            image: 'static/svg/fit-vertical.svg'
+          }),
           h(Button, {
             //  caption: '↕',
-            fn: () => config.showGrid(!config.showGrid()),
-            state: config.showGrid,
-            toggle: true,
-            image: 'static/svg/grid.svg'
+            fn: MakeFitAction(HORIZONTAL & 1),
+            image: 'static/svg/fit-horizontal.svg'
           }),
-          h(DropDown, {
-              isOpen: layersDropDown.subscribe(open => console.log('layers dropdown', { open }))
-              // into: '#portal'
-            }, [
-              props =>
-                h(Button, {
-                  ...props,
-                  toggle: true,
-                  state: layersDropDown,
-                  image: 'static/svg/layers.svg'
-                }),
-              props =>
-                h(Chooser, {
-                    ...props,
-                    className: 'layers',
-                    itemClass: 'layer',
-                    itemComponent: Layer,
-                    items: layerList
-                  }, []
+          h(Conditional, { signal: currentProj }, [
+            h(Button, {
+              //  caption: '↕',
+              fn: () => config.showGrid(!config.showGrid()),
+              state: config.showGrid,
+              toggle: true,
+              image: 'static/svg/grid.svg'
+            }),
+            h(DropDown, {
+                isOpen: layersDropDown.subscribe(open =>
+                  console.log('layers dropdown', { open })
                 )
-            ]
-          ),
-          h(Button, {
-            fn: debounceAsync(async e => {
-              /*console.log("CAM button",{e});
+                // into: '#portal'
+              }, [
+                props =>
+                  h(Button, {
+                    ...props,
+                    toggle: true,
+                    state: layersDropDown,
+                    image: 'static/svg/layers.svg'
+                  }),
+                props =>
+                  h(Chooser, {
+                      ...props,
+                      className: 'layers',
+                      itemClass: 'layer',
+                      itemComponent: Layer,
+                      items: layerList
+                    }, []
+                  )
+              ]
+            ),
+            h(Button, {
+              fn: debounceAsync(async e => {
+                /*console.log("CAM button",{e});
               if(e.type.endsWith('up')) return false;*/
-              let r;
-              project.gerber = {};
-              project.gcode = {};
-              //console.debug('CAM Button');
-              for(let side of ['back', 'front', 'drill', 'outline']) {
-                let gerber = await BoardToGerber(project, {
-                  side,
-                  [side]: true,
-                  fetch: ['drill', 'outline'].indexOf(side) != -1
-                });
+                let r;
+                project.gerber = {};
+                project.gcode = {};
+                //console.debug('CAM Button');
+                for(let side of ['back', 'front', 'drill', 'outline']) {
+                  let gerber = await BoardToGerber(project, {
+                    side,
+                    [side]: true,
+                    fetch: ['drill', 'outline'].indexOf(side) != -1
+                  });
 
-                if(gerber) {
-                  console.debug(`project.gerber['${side}'] =`, gerber);
-                  project.gerber[side] = gerber;
-                  if(gerber && gerber.data) {
-                    gerber.cmds = await GerberParser.parse(gerber.data);
-                    gerber.unit = gerber.cmds.find(i => i.prop == 'units');
+                  if(gerber) {
+                    console.debug(`project.gerber['${side}'] =`, gerber);
+                    project.gerber[side] = gerber;
+                    if(gerber && gerber.data) {
+                      gerber.cmds = await GerberParser.parse(gerber.data);
+                      gerber.unit = gerber.cmds.find(i => i.prop == 'units');
 
-                    gerber.points = gerber.cmds
-                      .filter(i => i.coord)
-                      .map(({ coord }) => new Point(coord.x, coord.y));
+                      gerber.points = gerber.cmds
+                        .filter(i => i.coord)
+                        .map(({ coord }) => new Point(coord.x, coord.y));
+                    }
+                    console.debug('BoardToGerber side =',
+                      side,
+                      ' file =',
+                      gerber.file
+                    );
                   }
-                  console.debug('BoardToGerber side =', side, ' file =', gerber.file);
                 }
-              }
-              const sides = /*Object.fromEntries*/ [
-                'back',
-                'front',
-                'drill',
-                'outline'
-              ].map(side => [side, project.gerber[side].file]);
-              console.debug('  sides = ', sides);
-              console.debug('  project = ', project);
-              let allGcode = {};
-              for(let [side, file] of sides) {
-                let gcode = await GerberToGcode(project, {
-                  side,
-                  file,
-                  nog64: true,
-                  'fill-outline': true,
-                  voronoi: true,
-                  /*'zero-start': true,*/ nog81: true
-                });
-                allGcode[side] = gcode;
-                //project.gcode[side] = gcode.data && gcode.data.data ? gcode.data.data : gcode.data;
-              }
-              console.debug('GerberToGcode allGcode = ', allGcode);
-              let bbox;
-              for(let side of ['outline', 'back', 'front', 'drill']) {
-                try {
-                  let gerber = project.gerber[side];
-                  let data = allGcode[side];
-                  let file = gerber.file || allGcode.data.files[side];
-                  console.debug('GerberToGcode  ', { gerber, data, file });
+                const sides = /*Object.fromEntries*/ [
+                  'back',
+                  'front',
+                  'drill',
+                  'outline'
+                ].map(side => [side, project.gerber[side].file]);
+                console.debug('  sides = ', sides);
+                console.debug('  project = ', project);
+                let allGcode = {};
+                for(let [side, file] of sides) {
+                  let gcode = await GerberToGcode(project, {
+                    side,
+                    file,
+                    nog64: true,
+                    'fill-outline': true,
+                    voronoi: true,
+                    /*'zero-start': true,*/ nog81: true
+                  });
+                  allGcode[side] = gcode;
+                  //project.gcode[side] = gcode.data && gcode.data.data ? gcode.data.data : gcode.data;
+                }
+                console.debug('GerberToGcode allGcode = ', allGcode);
+                let bbox;
+                for(let side of ['outline', 'back', 'front', 'drill']) {
+                  try {
+                    let gerber = project.gerber[side];
+                    let data = allGcode[side];
+                    let file = gerber.file || allGcode.data.files[side];
+                    console.debug('GerberToGcode  ', { gerber, data, file });
 
-                  if(data) {
-                    let gc = { data, file };
+                    if(data) {
+                      let gc = { data, file };
 
-                    if(side != 'drill') {
-                      let processed = file.replace(/\.ngc$/, '.svg');
-                      console.debug('processed', processed);
-                      gc.svg = await FetchURL(processed).then(ResponseData);
-                      let pos;
+                      if(side != 'drill') {
+                        let processed = file.replace(/\.ngc$/, '.svg');
+                        console.debug('processed', processed);
+                        gc.svg = await FetchURL(processed).then(ResponseData);
+                        let pos;
 
-                      if(gc.svg) {
-                        if((pos = gc.svg.indexOf('<svg ')) != -1) gc.svg = gc.svg.substring(pos);
+                        if(gc.svg) {
+                          if((pos = gc.svg.indexOf('<svg ')) != -1)
+                            gc.svg = gc.svg.substring(pos);
 
-                        if(side == 'outline') {
-                          console.debug('outline', gc.svg);
-                          let xmlData = tXml(gc.svg);
-                          let svgPath = Util.tail(xmlData[0].children).children[0];
-                          let points = SVG.pathToPoints(svgPath.attributes);
-                          console.debug('points:', points);
-                          bbox = new Rect(new BBox().update(points)).round(0.001);
-                          console.debug('bbox:', bbox);
-
-                          continue;
-                        }
-                        //  console.debug('gc.svg ',gc.svg );
-                        let layer = GetLayer({
-                          name: makeLayerName('processed', side),
-                          'data-filename': processed,
-                          create: (project, props = {}) => {
-                            let g = SVG.create('g',
-                              { innerHTML: gc.svg, ...props },
-                              project.svgElement
+                          if(side == 'outline') {
+                            console.debug('outline', gc.svg);
+                            let xmlData = tXml(gc.svg);
+                            let svgPath = Util.tail(xmlData[0].children)
+                              .children[0];
+                            let points = SVG.pathToPoints(svgPath.attributes);
+                            console.debug('points:', points);
+                            bbox = new Rect(new BBox().update(points)).round(0.001
                             );
-                            g.innerHTML = gc.svg;
-                            if(g.firstElementChild && g.firstElementChild.tagName == 'svg') {
-                              let svg = g.firstElementChild;
-                              ['width', 'height', 'xmlns', 'xmlns:xlink', 'version'].forEach(a =>
-                                svg.removeAttribute(a)
-                              );
-                              svg.setAttribute('viewBox', bbox);
-                            }
-                            Element.findAll('path', g)
-                              .filter(e => e.style['fill-opacity'] == 1)
-                              .forEach(e => (e.style.display = 'none'));
+                            console.debug('bbox:', bbox);
 
-                            ['fill', 'stroke'].forEach(name =>
-                              Element.findAll(`[style*="${name}:"]`, g).forEach(e => {
-                                const value = e.style[name];
-                                if(value != 'rgb(0, 0, 0)' && value != 'none') {
-                                  e.setAttribute(name, value);
-                                  e.style.removeProperty(name);
-                                }
-                              })
-                            );
-
-                            return g;
+                            continue;
                           }
-                        });
-                        /*
+                          //  console.debug('gc.svg ',gc.svg );
+                          let layer = GetLayer({
+                            name: makeLayerName('processed', side),
+                            'data-filename': processed,
+                            create: (project, props = {}) => {
+                              let g = SVG.create('g',
+                                { innerHTML: gc.svg, ...props },
+                                project.svgElement
+                              );
+                              g.innerHTML = gc.svg;
+                              if(g.firstElementChild &&
+                                g.firstElementChild.tagName == 'svg'
+                              ) {
+                                let svg = g.firstElementChild;
+                                [
+                                  'width',
+                                  'height',
+                                  'xmlns',
+                                  'xmlns:xlink',
+                                  'version'
+                                ].forEach(a => svg.removeAttribute(a));
+                                svg.setAttribute('viewBox', bbox);
+                              }
+                              Element.findAll('path', g)
+                                .filter(e => e.style['fill-opacity'] == 1)
+                                .forEach(e => (e.style.display = 'none'));
+
+                              ['fill', 'stroke'].forEach(name =>
+                                Element.findAll(`[style*="${name}:"]`,
+                                  g
+                                ).forEach(e => {
+                                  const value = e.style[name];
+                                  if(value != 'rgb(0, 0, 0)' &&
+                                    value != 'none'
+                                  ) {
+                                    e.setAttribute(name, value);
+                                    e.style.removeProperty(name);
+                                  }
+                                })
+                              );
+
+                              return g;
+                            }
+                          });
+                          /*
                       layer.sublayers = Util.histogram(Element.walk(layer.dom, (e, acc) => (e.tagName.endsWith('g') ? acc : [...acc, e]), []),
                         e => e.getAttribute('style'),
                         new Map(),
                         () => new Set()
                       );*/
+                        }
                       }
+
+                      console.debug('GerberToGcode side =',
+                        side,
+                        ' gc =',
+                        gc.file,
+                        ' svg =',
+                        Util.abbreviate(gc.svg)
+                      );
                     }
-
-                    console.debug('GerberToGcode side =',
-                      side,
-                      ' gc =',
-                      gc.file,
-                      ' svg =',
-                      Util.abbreviate(gc.svg)
-                    );
+                  } catch(e) {
+                    Util.putError(e);
                   }
-                } catch(e) {
-                  Util.putError(e);
                 }
-              }
-              gcode(project.gcode);
+                gcode(project.gcode);
 
-              function makeLayerName(name, side) {
-                const prefix = side == 'front' ? 't-' : side == 'back' ? 'b-' : '';
-                return Util.camelize(prefix + path.basename(name, /\.[^.]+$/).replace(new RegExp(`_${side}`), '')
-                );
-              }
-            }, 100),
-            'data-tooltip': 'Generate Gerber RS274-X CAM data',
-            image: 'static/svg/cnc-obrabeni.svg'
-          })
-        ]),
-
-        h(Conditional, { signal: gcode }, [
-          h(Button, {
-            fn: () => {
-              const colors = {
-                front: 'hsl(300,100%,70%)',
-                back: 'hsl(230,100%,70%)'
-              };
-              for(let side of ['back', 'front']) {
-                let gc = project.gcode[side];
-                if(gc) {
-                  console.debug(`${side} gcode gc =`, gc);
-                  GcodeToPolylines(gc.data, {
-                    fill: false,
-                    color: colors[side],
-                    side
-                  });
+                function makeLayerName(name, side) {
+                  const prefix =
+                    side == 'front' ? 't-' : side == 'back' ? 'b-' : '';
+                  return Util.camelize(prefix +
+                      path
+                        .basename(name, /\.[^.]+$/)
+                        .replace(new RegExp(`_${side}`), '')
+                  );
                 }
-              }
-            },
-            'data-tooltip': 'Create Voronoi diagram',
-            image: 'static/svg/voronoi.svg'
-          })
-        ]),
-        h(Toggle, {
-          state: sortOrder,
-          images: ['static/svg/sort-asc.svg', 'static/svg/sort-desc.svg']
-        }),
-        h(DynamicLabel, {
-          className: 'vcenter pad-lr',
-          caption: documentTitle
-        }),
-        h(DynamicLabel, {
-          className: 'vcenter pad-lr',
-          caption: documentSize
-        }),
-        h(Consumer, {})
-      ]),
+              }, 100),
+              'data-tooltip': 'Generate Gerber RS274-X CAM data',
+              image: 'static/svg/cnc-obrabeni.svg'
+            })
+          ]),
+
+          h(Conditional, { signal: gcode }, [
+            h(Button, {
+              fn: () => {
+                const colors = {
+                  front: 'hsl(300,100%,70%)',
+                  back: 'hsl(230,100%,70%)'
+                };
+                for(let side of ['back', 'front']) {
+                  let gc = project.gcode[side];
+                  if(gc) {
+                    console.debug(`${side} gcode gc =`, gc);
+                    GcodeToPolylines(gc.data, {
+                      fill: false,
+                      color: colors[side],
+                      side
+                    });
+                  }
+                }
+              },
+              'data-tooltip': 'Create Voronoi diagram',
+              image: 'static/svg/voronoi.svg'
+            })
+          ]),
+          h(Toggle, {
+            state: sortOrder,
+            images: ['static/svg/sort-asc.svg', 'static/svg/sort-desc.svg']
+          }),
+          h(DynamicLabel, {
+            className: 'vcenter pad-lr',
+            caption: documentTitle
+          }),
+          h(DynamicLabel, {
+            className: 'vcenter pad-lr',
+            caption: documentSize
+          }),
+          h(Consumer, {})
+        ]
+      ),
 
       /*  h('div', { style: { display: 'inline-flex', flexFlow: 'row', alignItems: 'stretch', height: '100px', padding: '10px' } }, [
         h(ColorWheel, {}),
@@ -2285,9 +2441,12 @@ const AppMain = (window.onload = async () => {
         listTag: 'nav',
         files: projects,
         onActive: open,
-        onChange: debounceAsync(async (e, p, i) => await ChooseDocument(p, i), 5000, {
-          leading: true
-        }),
+        onChange: debounceAsync(async (e, p, i) => await ChooseDocument(p, i),
+          5000,
+          {
+            leading: true
+          }
+        ),
         filter: config.searchFilter,
         showSearch,
         changeInput,
@@ -2295,9 +2454,10 @@ const AppMain = (window.onload = async () => {
         sortCompare: (a, b) => {
           let nameA = a.name,
             nameB = b.name;
-         // console.log('sortCompare', { nameA, nameB });
+          // console.log('sortCompare', { nameA, nameB });
 
-          let extA = path.extname(nameA), extB=path.extname(nameB);
+          let extA = path.extname(nameA),
+            extB = path.extname(nameB);
 
           if(extA == '.lbr' && extB != '.lbr') return -1;
           if(extA != '.lbr' && extB == '.lbr') return 1;
@@ -2309,20 +2469,22 @@ const AppMain = (window.onload = async () => {
       }),
 
       h(CrossHair, { ...crosshair }),
-      h(FloatingPanel, { onSize: config.logSize, className: 'no-select', id: 'console' }, [
-        /*h(div, {}, [ */ h(Logger, {}),
-        h(Dumper, {}),
-        h(Commander, {
-          onCommand: cmdStr => {
-            let fn = new Function(`return ${cmdStr};`);
+      h(FloatingPanel, { onSize: config.logSize, className: 'no-select', id: 'console' },
+        [
+          /*h(div, {}, [ */ h(Logger, {}),
+          h(Dumper, {}),
+          h(Commander, {
+            onCommand: cmdStr => {
+              let fn = new Function(`return ${cmdStr};`);
 
-            //console.log('Command:', cmdStr);
-            LogJS.info(`> ${cmdStr}`);
-            let result = fn();
-            LogJS.info(`= ${Util.toSource(result)}`);
-          }
-        }) /*])*/
-      ]),
+              //console.log('Command:', cmdStr);
+              LogJS.info(`> ${cmdStr}`);
+              let result = fn();
+              LogJS.info(`= ${Util.toSource(result)}`);
+            }
+          }) /*])*/
+        ]
+      ),
       h(Slot, { name: 'layers' }),
       h(Conditional, { signal: wantAuthorization },
         h(AuthorizationDialog, { onAuth: config.credentials })
@@ -2370,7 +2532,17 @@ const AppMain = (window.onload = async () => {
   touchHandler.subscribe(TouchEvent);
 
   function MoveEvent(event, prevEvent) {
-    const { x, y, clientX, clientY, index, buttons, start, type, target } = event;
+    const {
+      x,
+      y,
+      clientX,
+      clientY,
+      index,
+      buttons,
+      start,
+      type,
+      target
+    } = event;
     window.lastMoveEvent = event;
     event.elements = document.elementsFromPoint(x, y);
     function* WalkUp(e) {
@@ -2409,14 +2581,17 @@ const AppMain = (window.onload = async () => {
           () => ''
         )(Element.walkUp(
             e,
-            (e, depth) => !e.classList.value.startsWith('aspect') && e.classList.value
+            (e, depth) =>
+              !e.classList.value.startsWith('aspect') && e.classList.value
           )
         )
       ])
     );
     Util.removeIf(event.classes, classes => classes == '');
     Util.removeIf(event.elements, e => e.tagName == 'polyline');
-    Util.removeIf(event.elements, e => !(event.classes.has(e) || event.colors.has(e)));
+    Util.removeIf(event.elements,
+      e => !(event.classes.has(e) || event.colors.has(e))
+    );
     const group =
       project &&
       project.makeGroup &&
@@ -2431,7 +2606,9 @@ const AppMain = (window.onload = async () => {
       });
 
     if(prevEvent && group) {
-      let u = Util.union(prevEvent.elements, event.elements, (a, b) => a.isSameNode(b));
+      let u = Util.union(prevEvent.elements, event.elements, (a, b) =>
+        a.isSameNode(b)
+      );
       let [remove, add] = Util.difference(prevEvent.elements,
         event.elements,
         (a, b) => a.findIndex(Node.prototype.isSameNode, b) != -1
@@ -2440,13 +2617,17 @@ const AppMain = (window.onload = async () => {
       //  console.log('difference:', [remove,add], 'union:', u);
       //  console.log('add:', add);
 
-      const bboxes = new Map(add.map(e => [e, new Rect(e.getBBox ? e.getBBox() : e.getBoundingClientRect())])
+      const bboxes = new Map(add.map(e => [
+          e,
+          new Rect(e.getBBox ? e.getBBox() : e.getBoundingClientRect())
+        ])
       );
 
       for(let [e, rect] of bboxes) {
         let transforms =
           Element.walkUp(e, (p, d, set, stop) =>
-            p.parentElement == null || p.parentElement.isSameNode(p.ownerSVGElement)
+            p.parentElement == null ||
+            p.parentElement.isSameNode(p.ownerSVGElement)
               ? stop()
               : p.hasAttribute('transform') && set(p.getAttribute('transform'))
           ) || [];
@@ -2517,10 +2698,14 @@ const AppMain = (window.onload = async () => {
             p
           ]);
           let edge = corners.sort((a, b) => a[1] - b[1])[0];
-          window.resize = resize = Element.resizeRelative(box, null, edge[0] ? -1 : 1, size => {
-            //    console.log('resizeRelative:', { elemId, size });
-            if(elemId == 'console') config.logSize(size);
-          });
+          window.resize = resize = Element.resizeRelative(box,
+            null,
+            edge[0] ? -1 : 1,
+            size => {
+              //    console.log('resizeRelative:', { elemId, size });
+              if(elemId == 'console') config.logSize(size);
+            }
+          );
           box.style.cursor = `nwse-resize`;
           //console.log('RESIZE:', { resize, box, corners, edge });
           return true;
@@ -2532,7 +2717,9 @@ const AppMain = (window.onload = async () => {
       const id = box && box.getAttribute('id');
 
       if(id == 'console') {
-        const rects = [true, false].map(border => Element.rect(box, { border }));
+        const rects = [true, false].map(border =>
+          Element.rect(box, { border })
+        );
         let p = new Point(start.x + x, start.y + y);
         //console.log('', p);
         const inside = rects.map(r => r.inside(p));
@@ -2550,7 +2737,8 @@ const AppMain = (window.onload = async () => {
       }
       if(box) {
         let translation = new Translation();
-        let transformList = new TransformationList([translation]).concat(transform());
+        let transformList = new TransformationList([translation]).concat(transform()
+        );
 
         let setStyle = Util.once(() =>
           Element.setCSS(box, {
@@ -2614,7 +2802,8 @@ const AppMain = (window.onload = async () => {
     const { x, y, index, buttons, start, type, target } = event;
     let rect = Element.rect('.transformed-element-size');
     let cons = Element.rect('#console');
-    if(rect && cons) if (rect.inside(event) && !cons.inside(event)) return true;
+    if(rect && cons)
+      if(rect.inside(event) && !cons.inside(event)) return true;
     if(e.shiftKey && e.altKey) return true;
     //console.log('oncontextmenu',  event);
     return false;
@@ -2724,7 +2913,10 @@ const AppMain = (window.onload = async () => {
     const wheelPos = -event.deltaY.toFixed(2);
     let zoomVal = config.zoomLog();
 
-    zoomVal = altKey || ctrlKey || shiftKey ? 0 : Util.clamp(-100, 300, zoomVal + wheelPos * 0.1);
+    zoomVal =
+      altKey || ctrlKey || shiftKey
+        ? 0
+        : Util.clamp(-100, 300, zoomVal + wheelPos * 0.1);
     config.zoomLog(zoomVal);
     AdjustZoom();
   });

@@ -2,7 +2,12 @@ import ConsoleSetup from './lib/consoleSetup.js';
 import PortableFileSystem from './lib/filesystem.js';
 import parse from 'bash-parser';
 
-const consoleOpts = { colors: true, depth: Infinity, compact: 5, hideKeys: ['pos'] };
+const consoleOpts = {
+  colors: true,
+  depth: Infinity,
+  compact: 5,
+  hideKeys: ['pos']
+};
 
 async function main(...args) {
   await ConsoleSetup();

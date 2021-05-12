@@ -4,7 +4,11 @@ import Util from './lib/util.js';
 import { ImmutablePath, PathMapper, toXML, TreeObserver } from './lib/json.js';
 import { ImmutableXPath, parseXPath, XMLIterator } from './lib/xml.js';
 
-const inspect = (arg, depth = 10, colors = true, breakLength = Number.Infinity) =>
+const inspect = (arg,
+  depth = 10,
+  colors = true,
+  breakLength = Number.Infinity
+) =>
   util.inspect(arg, {
     depth,
     breakLength,
@@ -32,7 +36,10 @@ const CH = 'children';
 try {
   function main(...args) {
     let str = filesystem
-      .readFile(args.length ? args[0] : '../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd')
+      .readFile(args.length
+          ? args[0]
+          : '../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd'
+      )
       .toString();
     let xml = tXml(str)[0];
     const mapper = new PathMapper(xml, parseXPath);
@@ -41,7 +48,8 @@ try {
     const obj2path = observer.getField('path');
     const obj2type = observer.getField('type');
     const path2xpath = path => {
-      if(!(path instanceof ImmutablePath)) path = new ImmutablePath(path, true);
+      if(!(path instanceof ImmutablePath))
+        path = new ImmutablePath(path, true);
       return path;
     };
 
@@ -134,18 +142,33 @@ try {
       let q = new RegExp('(.)*');
       path = obj2path(value);
 
-      let dumps = selected.map(({ path, value }) => [new ImmutablePath(path, true), value]);
+      let dumps = selected.map(({ path, value }) => [
+        new ImmutablePath(path, true),
+        value
+      ]);
 
       dumps = dumps.map(([p, v]) => [ImmutableXPath.from(p, xml), v]);
 
       dumps = dumps.map(([p, v]) => [
         p,
         v,
-        p.offset((o, i, p) => !(/(\[|board$|sheets$)/.test(o) || p[i + 1] == 'attributes'))
+        p.offset((o, i, p) =>
+            !(/(\[|board$|sheets$)/.test(o) || p[i + 1] == 'attributes')
+        )
       ]);
 
-      dumps = dumps.map(([p, v, o]) => [p.slice(o - 2), p.slice(0, o - 2), v, o]);
-      dumps = dumps.map(([p, s, v, o]) => [p, s, `children: ${v.children.length}`, `offset: ${o}`]);
+      dumps = dumps.map(([p, v, o]) => [
+        p.slice(o - 2),
+        p.slice(0, o - 2),
+        v,
+        o
+      ]);
+      dumps = dumps.map(([p, s, v, o]) => [
+        p,
+        s,
+        `children: ${v.children.length}`,
+        `offset: ${o}`
+      ]);
       dumps = dumps.map(([p, s, v, o]) => [p, s, v, p.toRegExp()]);
 
       dumps = dumps
@@ -169,7 +192,8 @@ try {
       //console.log('result:\n  ', dumps);
       return [
         xpath,
-        new Map(selected.map(({ path, value }) => [path2xpath(path).down('*'), value]))
+        new Map(selected.map(({ path, value }) => [path2xpath(path).down('*'), value])
+        )
       ];
     });
 

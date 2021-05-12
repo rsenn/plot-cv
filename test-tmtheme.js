@@ -34,9 +34,10 @@ class PList extends Array {
   }
   inspect(options) {
     return `\x1b[1;31mPList\x1b[0m [\n  ${this.map(item =>
-      (item.inspect ? item.inspect(options) : console.inspect(item, options)).replace(/\n/g,
-        '\n    '
-      )
+      (item.inspect
+        ? item.inspect(options)
+        : console.inspect(item, options)
+      ).replace(/\n/g, '\n    ')
     ).join(',\n  ')}\n]`;
   }
 }
@@ -48,7 +49,9 @@ class Pair {
 
   inspect(options) {
     const { key, value } = this;
-    return `\x1b[1;31mPair \x1b[1;33m${key}\x1b[0m => ${console.inspect(value, options)}`;
+    return `\x1b[1;31mPair \x1b[1;33m${key}\x1b[0m => ${console.inspect(value,
+      options
+    )}`;
   }
 
   [Symbol.iterator]() {
@@ -70,16 +73,18 @@ class Dict extends Array {
           '[\n    ' +
           value
             .map(item =>
-              (item.inspect ? item.inspect(options) : console.inspect(item, options)).replace(/\n/g,
-                '\n    '
-              )
+              (item.inspect
+                ? item.inspect(options)
+                : console.inspect(item, options)
+              ).replace(/\n/g, '\n    ')
             )
             .join(',\n    ') +
           '\n  ]';
       else
-        s += `${(value.inspect ? value.inspect(options) : console.inspect(value, options)).replace(/\n/g,
-          '\n    '
-        )}`;
+        s += `${(value.inspect
+          ? value.inspect(options)
+          : console.inspect(value, options)
+        ).replace(/\n/g, '\n    ')}`;
       return s;
     }).join(',\n  ')}\n}`;
   }
@@ -155,7 +160,9 @@ function Object2Element(object, path = []) {
         const entry = object[i];
         const entryType = Util.typeOf(entry);
         //console.log('Object2Element Dict', { entryType, entry });
-        if(entryType == 'Pair' || (entry instanceof Array && entry.length == 2)) {
+        if(entryType == 'Pair' ||
+          (entry instanceof Array && entry.length == 2)
+        ) {
           const [key, value] = entry;
           children.push({ tagName: 'key', children: [key] });
           children.push(Object2Element(value, path.concat([key])));
@@ -205,7 +212,8 @@ async function main(...args) {
     //  console.log('xml:', xml);
     console.log('file:', file);
     let st = new Tree(objs);
-    let pairs = st.flat(([, node]) => Util.isObject(node) && node instanceof Pair);
+    let pairs = st.flat(([, node]) => Util.isObject(node) && node instanceof Pair
+    );
 
     let scopes = [];
 

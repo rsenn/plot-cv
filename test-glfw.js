@@ -68,7 +68,10 @@ async function main(...args) {
 
     let time = +new Date() / 1000;
     let index = Math.floor((time * 360) / 30);
-    let color = new HSLA(index % 360, 100, 50 + 25 * Math.sin(time * 2 * Math.PI)).toRGBA();
+    let color = new HSLA(index % 360,
+      100,
+      50 + 25 * Math.sin(time * 2 * Math.PI)
+    ).toRGBA();
     //console.log("color", ...color.normalize());
 
     glClearColor(...color.normalize());

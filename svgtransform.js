@@ -108,7 +108,9 @@ async function main(...args) {
       positioned.add(node);
 
       let matrices = acc.toMatrices();
-      let matrix = matrices.reduce((acc, m) => acc.multiply(m), Matrix.identity());
+      let matrix = matrices.reduce((acc, m) => acc.multiply(m),
+        Matrix.identity()
+      );
       let path = new Path(tree.pathOf(node));
       let parentNode = tree.parentNode(node);
 
@@ -120,8 +122,11 @@ async function main(...args) {
         case 'circle': {
           let { cx, cy, r } = node.attributes;
 
-          let { x, y } = new Point(+cx, +cy).transform(matrix).round(0.00001, 6);
-          let radius = new Size(+r, +r).transform(matrix).round(0.00001, 6).width;
+          let { x, y } = new Point(+cx, +cy)
+            .transform(matrix)
+            .round(0.00001, 6);
+          let radius = new Size(+r, +r).transform(matrix).round(0.00001, 6)
+            .width;
 
           console.log('transform circle', { x, y, radius });
 
@@ -158,19 +163,29 @@ async function main(...args) {
               }
               case 'H': {
                 const h = command.args;
-                command.args = h.map(arg => new Point(+arg, 0).transform(matrix).x);
+                command.args = h.map(arg => new Point(+arg, 0).transform(matrix).x
+                );
                 break;
               }
               case 'V': {
                 const v = command.args;
-                command.args = v.map(arg => new Point(+arg, 0).transform(matrix).y);
+                command.args = v.map(arg => new Point(+arg, 0).transform(matrix).y
+                );
                 break;
               }
               case 'A': {
                 const [rx, ry, angle, largeArc, arcSweep, x, y] = command.args;
                 let s = new Size(+rx, +ry).transform(matrix);
                 let p = new Point(+x, +y).transform(matrix);
-                command.args = [s.width, s.height, angle, largeArc, arcSweep, p.x, p.y];
+                command.args = [
+                  s.width,
+                  s.height,
+                  angle,
+                  largeArc,
+                  arcSweep,
+                  p.x,
+                  p.y
+                ];
                 break;
               }
               case 'Z': {
@@ -212,7 +227,8 @@ async function main(...args) {
 
     function hasCoord(node) {
       let keys = Object.keys(node);
-      return keys.some(key => ['x', 'y', 'cx', 'cy', 'd', 'x1', 'y1', 'x2', 'y2'].indexOf(key) != -1
+      return keys.some(key =>
+          ['x', 'y', 'cx', 'cy', 'd', 'x1', 'y1', 'x2', 'y2'].indexOf(key) != -1
       );
     }
     function coordKeys(node) {

@@ -178,9 +178,16 @@ export function send(fd, buf, offset, len, flags = 0) {
   return syscall.send(+fd, buf, offset, len, flags);
 }
 
-export function select(nfds, readfds = null, writefds = null, exceptfds = null, timeout = null) {
+export function select(nfds,
+  readfds = null,
+  writefds = null,
+  exceptfds = null,
+  timeout = null
+) {
   if(!(typeof nfds == 'number')) {
-    let maxfd = Math.max(...[readfds, writefds, exceptfds].filter(s => s instanceof fd_set).map(s => s.maxfd)
+    let maxfd = Math.max(...[readfds, writefds, exceptfds]
+        .filter(s => s instanceof fd_set)
+        .map(s => s.maxfd)
     );
     nfds = maxfd + 1;
   }
@@ -188,11 +195,21 @@ export function select(nfds, readfds = null, writefds = null, exceptfds = null, 
 }
 
 export function getsockopt(sockfd, level, optname, optval, optlen) {
-  return syscall.getsockopt(sockfd, level, optname, optval, optlen || optval.byteLength);
+  return syscall.getsockopt(sockfd,
+    level,
+    optname,
+    optval,
+    optlen || optval.byteLength
+  );
 }
 
 export function setsockopt(sockfd, level, optname, optval, optlen) {
-  return syscall.setsockopt(sockfd, level, optname, optval, optlen || optval.byteLength);
+  return syscall.setsockopt(sockfd,
+    level,
+    optname,
+    optval,
+    optlen || optval.byteLength
+  );
 }
 
 export class timeval extends ArrayBuffer {
@@ -350,7 +367,8 @@ export function FD_ZERO(fd, set) {
 
 export class Socket {
   constructor(proto = IPPROTO_IP) {
-    this.type = [IPPROTO_UDP, SOCK_DGRAM].indexOf(proto) != -1 ? SOCK_DGRAM : SOCK_STREAM;
+    this.type =
+      [IPPROTO_UDP, SOCK_DGRAM].indexOf(proto) != -1 ? SOCK_DGRAM : SOCK_STREAM;
     this.fd = socket(this.family, this.type, proto);
     this.remote = new sockaddr_in(this.family);
     this.local = new sockaddr_in(this.family);
@@ -410,7 +428,8 @@ export class Socket {
     if(addr != undefined) this.localAddress = addr;
     if(port != undefined) this.localPort = port;
     setsockopt(this.fd, SOL_SOCKET, SO_REUSEADDR, new socklen_t(1));
-    if((ret = bind(this.fd, this.local, this.local.byteLength)) == -1) this.errno = syscall.errno;
+    if((ret = bind(this.fd, this.local, this.local.byteLength)) == -1)
+      this.errno = syscall.errno;
     return ret;
   }
 
@@ -449,7 +468,8 @@ export class Socket {
 
   write(buf, offset, len) {
     let ret;
-    if((ret = write(this.fd, buf, offset, len)) == -1) this.errno = syscall.errno;
+    if((ret = write(this.fd, buf, offset, len)) == -1)
+      this.errno = syscall.errno;
     return ret;
   }
 

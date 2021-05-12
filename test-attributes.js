@@ -50,7 +50,9 @@ async function main(...args) {
     'VISUAL',
     'WINDOW'
   ];
-  let envEntries = Util.chunkArray(await Promise.all(varNames.reduce((acc, n) => [...acc, n, Util.getEnv(n)], [])),
+  let envEntries = Util.chunkArray(await Promise.all(
+      varNames.reduce((acc, n) => [...acc, n, Util.getEnv(n)], [])
+    ),
     2
   );
   let envMap = new Map(envEntries);

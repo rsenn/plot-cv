@@ -4,7 +4,10 @@ function wrap(parser, name) {
   return (str, pos) => {
     let r = parser(str, pos);
     if(r[0] || name.startsWith('direct'))
-      console.log('matched (' + name + ') ' + pos + ' - ' + r[2] + ": '", r[1], "'");
+      console.log('matched (' + name + ') ' + pos + ' - ' + r[2] + ": '",
+        r[1],
+        "'"
+      );
     return r;
   };
 }
@@ -13,11 +16,15 @@ function ini(...args) {
 }
 
 function section(...args) {
-  return wrap(seq(section_header, option(WS), any(key_value)), 'section')(...args);
+  return wrap(seq(section_header, option(WS), any(key_value)),
+    'section'
+  )(...args);
 }
 
 function section_header(...args) {
-  return wrap(seq(LBRACK, section_header_title, RBRACK), 'section_header')(...args);
+  return wrap(seq(LBRACK, section_header_title, RBRACK),
+    'section_header'
+  )(...args);
 }
 
 function section_header_title(...args) {

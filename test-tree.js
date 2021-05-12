@@ -43,7 +43,9 @@ async function main(...args) {
 
   console.log('tree.pathOf():', tree.pathOf(treeObj.b[3].haha));
   console.log('tree.at():', tree.at(['b', 3, 'haha']));
-  console.log('tree.parentNode():', tree.parentNode(tree.parentNode(treeObj.b[3].haha)));
+  console.log('tree.parentNode():',
+    tree.parentNode(tree.parentNode(treeObj.b[3].haha))
+  );
   console.log('tree.push():', tree.push(treeObj.b[3]['*'], 9, 8, 7));
   console.log('tree.keyOf():', tree.keyOf(treeObj.b[3]));
   console.log('treeObj:', treeObj);
