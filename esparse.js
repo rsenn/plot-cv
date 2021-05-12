@@ -6,6 +6,7 @@ import deep from './lib/deep.js';
 import Tree from './lib/tree.js';
 import { Console } from 'console';
 import * as fs from 'fs';
+import * as path from 'path';
 import { inspect } from 'util';
 
 const testfn = () => true;
@@ -175,7 +176,7 @@ function processFile(file, params) {
   //console.log('commentMap:', commentMap);
 
   const output_file =
-    params['output-js'] ?? file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
+    params['output-js'] ?? path.basename(file, path.extname(file)) + '.es';
 
   let tree = new Tree(ast);
 
@@ -183,7 +184,7 @@ function processFile(file, params) {
     return !Util.isPrimitive(node);
   });
 
-  WriteFile(params['output-ast'] ?? file + '.ast.json', JSON.stringify(ast /*.toJSON()*/, null, 2));
+  WriteFile(params['output-ast'] ?? path.basename(file, path.extname(file)) + '.ast.json', JSON.stringify(ast /*.toJSON()*/, null, 2));
 }
 
 function finish(err) {
