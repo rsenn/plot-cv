@@ -6,12 +6,10 @@
 #include <opencv2/imgproc.hpp>
 
 #include <vector>
-#include <iomanip>
 #include <fstream>
 #include <ctime>
 #include <unistd.h>
 #include <sys/time.h>
-#include <sys/stat.h>
 #include <unistd.h>
 #include <functional>
 #include <chrono>
@@ -20,6 +18,7 @@
 #include "color.hpp"
 #include "js.hpp"
 #include "geometry.hpp"
+#include "util.hpp"
 
 typedef std::vector<int> ref_list;
 typedef cv::Mat image_type;

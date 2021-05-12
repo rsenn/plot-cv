@@ -1,13 +1,13 @@
-import { Point } from 'point';
-import { Size } from 'size';
-import { Rect } from 'rect';
+import { Point } from 'opencv';
+import { Size } from 'opencv';
+import { Rect } from 'opencv';
 //import { Line } from 'line.so';
 //import { Mat } from 'mat.so';
-import { Contour } from 'contour';
-import * as cv from 'cv';
+import { Contour } from 'opencv';
+import * as cv from 'opencv';
 import * as std from 'std';
-import { PointIterator } from 'point-iterator';
-//import { Draw, drawLine, drawCircle } from 'draw.so';
+import { PointIterator } from 'opencv';
+//import { Draw, drawLine, drawCircle } from 'Draw.so';
 import inspect from './lib/objectInspect.js';
 
 //console.log('test:', inspect({ Point, Size, Rect, Mat, PointIterator, Contour }));

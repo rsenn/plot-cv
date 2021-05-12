@@ -6,18 +6,12 @@
 
 #include <opencv2/imgproc.hpp>
 
-#if defined(JS_SUBDIV2D_MODULE) || defined(quickjs_subdiv2d_EXPORTS)
-#define JS_INIT_MODULE /*VISIBLE*/ js_init_module
-#else
-#define JS_INIT_MODULE /*VISIBLE*/ js_init_module_subdiv2d
-#endif
-
 extern "C" {
 JSValue subdiv2d_proto = JS_UNDEFINED, subdiv2d_class = JS_UNDEFINED;
 JSClassID js_subdiv2d_class_id = 0;
 }
 
-VISIBLE JSValue
+JSValue
 js_subdiv2d_new(JSContext* ctx, JSRectData<int>* rect = nullptr) {
   JSValue ret;
   cv::Subdiv2D* s;
@@ -45,7 +39,7 @@ js_subdiv2d_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst
   return js_subdiv2d_new(ctx, argc > 0 ? &rect : nullptr);
 }
 
-VISIBLE cv::Subdiv2D*
+cv::Subdiv2D*
 js_subdiv2d_data(JSContext* ctx, JSValueConst val) {
   return static_cast<cv::Subdiv2D*>(JS_GetOpaque2(ctx, val, js_subdiv2d_class_id));
 }
@@ -254,7 +248,7 @@ const JSCFunctionListEntry js_subdiv2d_static_funcs[] = {
     JS_PROP_INT32_DEF("NEXT_AROUND_RIGHT", cv::Subdiv2D::NEXT_AROUND_RIGHT, 0),
     JS_PROP_INT32_DEF("PREV_AROUND_LEFT", cv::Subdiv2D::PREV_AROUND_LEFT, 0)};
 
-int
+extern "C" int
 js_subdiv2d_init(JSContext* ctx, JSModuleDef* m) {
 
   if(js_subdiv2d_class_id == 0) {
@@ -285,6 +279,12 @@ js_subdiv2d_constructor(JSContext* ctx, JSValue parent, const char* name) {
 
   JS_SetPropertyStr(ctx, parent, name ? name : "Subdiv2D", subdiv2d_class);
 }
+
+#if defined(JS_SUBDIV2D_MODULE)
+#define JS_INIT_MODULE /*VISIBLE*/ js_init_module
+#else
+#define JS_INIT_MODULE /*VISIBLE*/ js_init_module_subdiv2d
+#endif
 
 extern "C" JSModuleDef*
 JS_INIT_MODULE(JSContext* ctx, const char* module_name) {

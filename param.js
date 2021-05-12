@@ -1,5 +1,5 @@
 import Util from './lib/util.js';
-import * as cv from 'cv';
+import * as cv from 'opencv';
 
 const MinMax = (min, max) => value => Math.max(min, Math.min(max, value));
 

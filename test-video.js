@@ -1,22 +1,22 @@
 import Util from './lib/util.js';
-import * as draw from 'draw';
+import * as draw from 'opencv';
 import * as std from 'std';
-import { Point } from 'point';
-import { Size } from 'size';
-import { Contour } from 'contour';
-import { Rect } from 'rect';
-import { Line } from 'line';
-import { TickMeter } from 'utility';
+import { Point } from 'opencv';
+import { Size } from 'opencv';
+import { Contour } from 'opencv';
+import { Rect } from 'opencv';
+import { Line } from 'opencv';
+import { TickMeter } from 'opencv';
+import { Mat as cvMat } from 'opencv';
+import * as cv from 'opencv';
+import { CLAHE } from 'opencv';
 import { VideoSource } from './cvVideo.js';
 import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './cvHighGUI.js';
 import { Alea } from './lib/alea.js';
 import { HSLA } from './lib/color.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
-import { Mat as cvMat } from 'mat';
 import * as fs from 'fs';
-import * as cv from 'cv';
 import Console from 'console';
-import { CLAHE } from 'clahe';
 import { Pipeline, Processor } from './cvPipeline.js';
 
 let prng = new Alea(Date.now());
@@ -758,7 +758,7 @@ function main(...args) {
       for(let line of lines) {
         const { a, b } = line;
         // console.log("line", {a,b});
-        draw.line(over, line.a, line.b, { r: 255, g: 0, b: 0, a: 255 }, 2, cv.LINE_AA, 0);
+        Draw.line(over, line.a, line.b, { r: 255, g: 0, b: 0, a: 255 }, 2, cv.LINE_AA, 0);
       }
     } else if(frameShow == 0 || frameShow == 7) {
       /*console.log('contours.length', contours.length);
@@ -848,8 +848,8 @@ function main(...args) {
     //console.log("row 100:", [...over.row(100).values()]);
     const showOverlay = frameShow != pipeline.size - 1 || now - keyTime < 2000;
     if(maskRect && showOverlay) {
-      draw.rect(out, maskRect, [0, 0, 0, 255], -1);
-      draw.rect(out, maskRect, [255, 255, 255, 255], 1);
+      Draw.rect(out, maskRect, [0, 0, 0, 255], -1);
+      Draw.rect(out, maskRect, [255, 255, 255, 255], 1);
     }
     //let mask = toBGR(getAlpha(over));
     let composite = MakeMatFor(showOutput);
@@ -860,7 +860,7 @@ function main(...args) {
 
     cv.addWeighted(out, 1, over, showOverlay ? 1 : 0, 0, composite);
     if(maskRect && showOverlay) {
-      draw.rect(composite, maskRect, [255, 255, 255, 255], 1);
+      Draw.rect(composite, maskRect, [255, 255, 255, 255], 1);
     }
 
     win.show(composite);

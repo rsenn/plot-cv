@@ -1,7 +1,7 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import PortableFileSystem from './lib/filesystem.js';
 import ConsoleSetup from './lib/consoleSetup.js';
-import Lexer, { PathReplacer, Position, Range } from './lib/ecmascript/lexer.js';
+import Lexer, { PathReplacer, Location, Range } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
 import { Token } from './lib/ecmascript/token.js';
 import estree, { ImportSpecifier, VariableDeclaration, VariableDeclarator, ModuleSpecifier, ImportDeclaration, ExportNamedDeclaration, ExportDefaultDeclaration, ExportAllDeclaration, Identifier, MemberExpression, ESNode, CallExpression, ObjectPattern, ArrayPattern, Literal, AssignmentExpression, ExpressionStatement, ClassDeclaration, AssignmentProperty } from './lib/ecmascript/estree.js';
@@ -1468,7 +1468,7 @@ function GetPosition(node) {
   }
   if(position.start) position = position.start;
 
-  //   if(Util.typeOf(position) == 'Position')  return [...position].slice(0,2).join(':');
+  //   if(Util.typeOf(position) == 'Location')  return [...position].slice(0,2).join(':');
   return position;
 }
 

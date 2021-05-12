@@ -1,20 +1,13 @@
-import { Point } from 'point';
-import { Size } from 'size';
-import { Rect } from 'rect';
-import { Mat } from 'mat';
-import { UMat } from 'umat';
-import * as cv from 'cv';
+import { Point, Size, Rect, Mat, UMat, Line, CLAHE, TickMeter, Draw } from 'opencv';
+import * as cv from 'opencv';
 import * as fs from 'fs';
 import Console from 'console';
-import { Line } from 'line';
-import { CLAHE } from 'clahe';
-import * as draw from 'draw';
+//import * as draw from 'draw';
 import * as path from 'path';
 import RGBA from './lib/color/rgba.js';
 import Util from './lib/util.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { Pipeline, Processor } from './cvPipeline.js';
-import { TickMeter } from 'utility';
 import { Window, MouseFlags, MouseEvents, Mouse, TextStyle, DrawText } from './cvHighGUI.js';
 
 let filesystem;
@@ -171,7 +164,7 @@ console.log("statusRect:", statusRect);
   let fontFace = fonts[2];
   let fontSize = 14;
 
-  fonts.forEach(file => draw.loadFont(file));
+  fonts.forEach(file => Draw.loadFont(file));
 
   /*  output.setTo([255, 255, 255]);
   status.setTo(backgroundColor);*/
@@ -206,7 +199,7 @@ console.log("statusRect:", statusRect);
   const black = [0x00, 0x00, 0x00, 0xff];
 
   for(let i = 0; i < 8; i++)
-    palette[i] = [i & 0b100 ? 0xff : 0x00, i & 0b010 ? 0xff : 0x00, i & 0b001 ? 0xff : 0x00, 0xff];
+    palette[i] = [i & 0x04 ? 0xff : 0x00, i & 0x02 ? 0xff : 0x00, i & 0x01 ? 0xff : 0x00, 0xff];
   palette[2] = [0x60, 0x60, 0x60, 0xff];
   palette[3] = [0xff, 0xff, 0x0, 0xff];
 
@@ -293,9 +286,9 @@ console.log("statusRect:", statusRect);
         for(let elem of output.values()) {
           const line = new Line(elem);
           lines.push(line);
-          draw.line(dst, ...line.toPoints(), [255, 128, 0], lineWidth, cv.LINE_AA);
-          draw.line(morpho, ...line.toPoints(), [0, 0, 0], 2, cv.LINE_8);
-          draw.line(skel, ...line.toPoints(), [0, 0, 0], lineWidth, cv.LINE_8);
+          Draw.line(dst, ...line.toPoints(), [255, 128, 0], lineWidth, cv.LINE_AA);
+          Draw.line(morpho, ...line.toPoints(), [0, 0, 0], 2, cv.LINE_8);
+          Draw.line(skel, ...line.toPoints(), [0, 0, 0], lineWidth, cv.LINE_8);
           ++i;
         }
         lines.sort((a, b) => (a.y1 == b.y1 ? a.x1 - b.x1 : a.y1 - b.y1));
@@ -330,12 +323,12 @@ console.log("statusRect:", statusRect);
 
         for(let [x, y, r] of circles1) {
           let p = new Point(x, y);
-          draw.circle(dst, p, r, [0, 255, 0], lineWidth, cv.LINE_AA);
+          Draw.circle(dst, p, r, [0, 255, 0], lineWidth, cv.LINE_AA);
           circles.push([x, y, r]);
         }
         for(let [x, y, r] of circles2) {
           let p = new Point(x, y);
-          draw.circle(dst, p, r + 2, [255, 0, 0], lineWidth, cv.LINE_AA);
+          Draw.circle(dst, p, r + 2, [255, 0, 0], lineWidth, cv.LINE_AA);
           circles.push([x, y, r]);
         }
       }
@@ -371,8 +364,8 @@ console.log("statusRect:", statusRect);
 
     let srect = new Rect(statusRect.size);
 
-    draw.rect(statusMat, srect, backgroundColor, cv.FILLED, true);
-    draw.rect(statusMat, srect.inset(3, 0), 0, cv.FILLED, true);
+    Draw.rect(statusMat, srect, backgroundColor, cv.FILLED, true);
+    Draw.rect(statusMat, srect.inset(3, 0), 0, cv.FILLED, true);
 
     const inspectOptions = {
       colors: true,

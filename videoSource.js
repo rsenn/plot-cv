@@ -1,6 +1,6 @@
-import * as cv from 'cv';
-import { Mat } from 'mat';
-import { VideoCapture } from 'video-capture';
+import * as cv from 'opencv';
+import { Mat } from 'opencv';
+import { VideoCapture } from 'opencv';
 import Util from './lib/util.js';
 
 export class ImageSequence {

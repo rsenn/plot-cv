@@ -1,7 +1,5 @@
-import * as cv from 'cv';
-import * as draw from 'draw';
-import { Size } from 'size';
-import { Point } from 'point';
+import * as cv from 'opencv';
+import { Size, Point, Draw } from 'opencv';
 
 import Util from './lib/util.js';
 
@@ -98,7 +96,7 @@ Object.assign(TextStyle.prototype, {
   size(text, fn = y => {}) {
     const { fontFace, fontScale, thickness } = this;
     let baseY;
-    let size = new Size(...draw.textSize(text, fontFace, fontScale, thickness, y => (baseY = y)));
+    let size = new Size(...Draw.textSize(text, fontFace, fontScale, thickness, y => (baseY = y)));
 
     fn(baseY);
 
@@ -119,7 +117,7 @@ Object.assign(TextStyle.prototype, {
       lineType ?? cv.LINE_AA
     ];
     //console.log('TextStyle draw(', ...args.reduce((acc, arg) => (acc.length ? [...acc, ',', arg] : [arg]), []), ')');
-    draw.text(...args);
+    Draw.text(...args);
   }
 });
 

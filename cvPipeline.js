@@ -1,5 +1,5 @@
 import Util from './lib/util.js';
-import { Mat } from 'mat';
+import { Mat } from 'opencv';
 
 const hr = Util.hrtime;
 

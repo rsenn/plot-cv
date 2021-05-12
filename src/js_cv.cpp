@@ -24,12 +24,6 @@
 
 #define JS_CV_CONSTANT(name) JS_PROP_INT32_DEF(#name, cv::name, 0)
 
-#if defined(JS_CV_MODULE) || defined(quickjs_cv_EXPORTS)
-#define JS_INIT_MODULE /*VISIBLE*/ js_init_module
-#else
-#define JS_INIT_MODULE /*VISIBLE*/ js_init_module_cv
-#endif
-
 enum { DISPLAY_OVERLAY };
 
 static std::vector<cv::String> window_list;
@@ -2322,7 +2316,7 @@ operator<<(Stream& s, const std::vector<Item>& vector) {
   return s;
 }
 
-int
+extern "C" int
 js_cv_init(JSContext* ctx, JSModuleDef* m) {
 
   /* std::cerr << "js_cv_static_funcs:" << std::endl << js_cv_static_funcs;
@@ -2344,13 +2338,24 @@ js_cv_init(JSContext* ctx, JSModuleDef* m) {
   return 0;
 }
 
+extern "C" void
+js_cv_export(JSContext* ctx, JSModuleDef* m) {
+  JS_AddModuleExportList(ctx, m, js_cv_static_funcs.data(), js_cv_static_funcs.size());
+  JS_AddModuleExport(ctx, m, "default");
+}
+
+#if defined(JS_CV_MODULE)
+#define JS_INIT_MODULE /*VISIBLE*/ js_init_module
+#else
+#define JS_INIT_MODULE /*VISIBLE*/ js_init_module_cv
+#endif
+
 extern "C" JSModuleDef*
 JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JSModuleDef* m;
   m = JS_NewCModule(ctx, module_name, &js_cv_init);
   if(!m)
     return NULL;
-  JS_AddModuleExportList(ctx, m, js_cv_static_funcs.data(), js_cv_static_funcs.size());
-  JS_AddModuleExport(ctx, m, "default");
+  js_cv_export(ctx, m);
   return m;
 }

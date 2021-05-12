@@ -3,7 +3,7 @@
 #include "js_point.hpp"
 #include "js_mat.hpp"
 #include "js_alloc.hpp"
- 
+
 JSValue clahe_proto = JS_UNDEFINED, clahe_class = JS_UNDEFINED;
 JSClassID js_clahe_class_id;
 
@@ -31,7 +31,7 @@ js_clahe_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* a
   return js_clahe_new(ctx, clipLimit, tileGridSize);
 }
 
-VISIBLE JSCLAHEData*
+JSCLAHEData*
 js_clahe_data(JSContext* ctx, JSValueConst val) {
   return static_cast<JSCLAHEData*>(JS_GetOpaque2(ctx, val, js_clahe_class_id));
 }
@@ -106,7 +106,7 @@ const JSCFunctionListEntry js_clahe_proto_funcs[] = {JS_CFUNC_MAGIC_DEF("apply",
                                                      JS_CFUNC_MAGIC_DEF("setTilesGridSize", 0, js_clahe_method, 5),
                                                      JS_PROP_STRING_DEF("[Symbol.toStringTag]", "CLAHE", JS_PROP_CONFIGURABLE)};
 
-int
+extern "C" int
 js_clahe_init(JSContext* ctx, JSModuleDef* m) {
 
   /* create the CLAHE class */

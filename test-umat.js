@@ -1,13 +1,13 @@
-import { Point } from 'point';
-import { Size } from 'size';
-import { Rect } from 'rect';
-import { Mat } from 'mat';
-import { UMat } from 'umat';
-import * as cv from 'cv';
-import { Line } from 'line';
-import { Contour } from 'contour';
-import { SliceIterator } from 'slice-iterator';
-import * as draw from 'draw';
+import { Point } from 'opencv';
+import { Size } from 'opencv';
+import { Rect } from 'opencv';
+import { Mat } from 'opencv';
+import { UMat } from 'opencv';
+import * as cv from 'opencv';
+import { Line } from 'opencv';
+import { Contour } from 'opencv';
+import { SliceIterator } from 'opencv';
+import * as draw from 'opencv';
 import RGBA from './lib/color/rgba.js';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
@@ -122,7 +122,7 @@ async function main(...args) {
 
     let angle = Math.floor((line.angle / (cv.CV_PI / 24)) * 180) % 24;
     if(Math.abs(angle) > 2) continue;
-    draw.line(mat, line.a, line.b, [255, 0, 0, 255], 1, cv.LINE_AA);
+    Draw.line(mat, line.a, line.b, [255, 0, 0, 255], 1, cv.LINE_AA);
     /*    console.log('line.angle:', (line.angle * 180) / Math.PI);
     console.log('line.length:', line.length);*/
 
@@ -135,12 +135,12 @@ async function main(...args) {
 
   xgrid = xgrid.map((lines, col) => [col * 5, lines]).filter(([col, lines]) => lines.length > 1);
 
-  //for(let [x] of xgrid) draw.line(mat, new Point(x, 0), new Point(x, input.rows), [255, 0, 255, 255], 1, cv.LINE_AA);
+  //for(let [x] of xgrid) Draw.line(mat, new Point(x, 0), new Point(x, input.rows), [255, 0, 255, 255], 1, cv.LINE_AA);
 
-  // for(let [y] of ygrid) draw.line(mat, new Point(0, y), new Point(input.cols, y), [255, 255, 0, 255], 1, cv.LINE_AA);
+  // for(let [y] of ygrid) Draw.line(mat, new Point(0, y), new Point(input.cols, y), [255, 255, 0, 255], 1, cv.LINE_AA);
 
   for(let [x, y, r] of circles) {
-    draw.circle(mat, new Point(x, y), r + 3, [0, 128, 255, 255], 5, cv.LINE_AA);
+    Draw.circle(mat, new Point(x, y), r + 3, [0, 128, 255, 255], 5, cv.LINE_AA);
   }
   for(let contour of contours) {
     console.log('contour.length', contour.length);
@@ -170,7 +170,7 @@ async function main(...args) {
     /*  if(!angles.some(a => Math.abs(a) <= 1)) continue;
 
     if(lpoly.length > 4) continue;*/
-    draw.contours(mat, contours, i, RandomColor() ?? [(i * 255) / contours.length, 0, 0, 0], 2);
+    Draw.contours(mat, contours, i, RandomColor() ?? [(i * 255) / contours.length, 0, 0, 0], 2);
     i++;
   }
   // console.log(`lines`, [...lines]);
@@ -188,7 +188,7 @@ async function main(...args) {
   /* console.log(`input.buffer`, input.buffer);
   console.log(`input2.buffer`, input2.buffer);*/
 
-  //for(let i = 0; i < 100; i++) draw.line(mat, RandomPoint(), RandomPoint(), RandomColor(), 1, cv.LINE_AA);
+  //for(let i = 0; i < 100; i++) Draw.line(mat, RandomPoint(), RandomPoint(), RandomColor(), 1, cv.LINE_AA);
 
   let out = new Mat(size, cv.CV_8UC3);
 

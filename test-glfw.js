@@ -3,8 +3,8 @@ import Util from './lib/util.js';
 
 import { glFlush, glBegin, glBindTexture, glClear, glClearColor, glEnable, glEnd, glGenTextures, glTexCoord2f, glTexParameterf, glTexImage2D, glVertex3f, glViewport, GL_COLOR_BUFFER_BIT, GL_LINEAR, GL_QUADS, GL_REPEAT, GL_RGB, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_TEXTURE_WRAP_S, GL_TEXTURE_WRAP_T, GL_UNSIGNED_BYTE, glDisable, glLoadIdentity, glMatrixMode, glOrtho, glPushMatrix, glPopMatrix, GL_LIGHTING, GL_MODELVIEW, GL_PROJECTION } from './gl.js';
 import { RGBA, HSLA } from './lib/color.js';
-import { Mat } from 'mat';
-import { imread } from 'cv';
+import { Mat } from 'opencv';
+import { imread } from 'opencv';
 
 function Mat2Texture(texture_cv) {
   let texture = new Uint32Array(1);
