@@ -2,7 +2,8 @@
 #define PNG_WRITE_HPP
 
 #include <opencv2/core.hpp>
-#include <png++/png.hpp>
+//#include <png++/png.hpp>
+#include "pngpp/png.hpp"
 #include <vector>
 
 template<class ColorType>

@@ -6,3 +6,6 @@
 	path = lib
 	url = https://github.com/rsenn/libweb.git
 	branch = master
+[submodule "pngpp"]
+	path = pngpp
+	url = https://github.com/usagi/pngpp

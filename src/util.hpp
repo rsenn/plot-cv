@@ -3,6 +3,9 @@
 
 #include <string>
 #include <numeric>
+#include <iostream>
+#include <iomanip>
+#include <sys/stat.h>
 
 #include <opencv2/core.hpp>
 
@@ -28,6 +31,46 @@
 
 bool str_end(const char* str, const char* suffix);
 bool str_end(const std::string& str, const std::string& suffix);
+
+std::string to_string(const cv::Scalar& scalar);
+
+std::string make_filename(const std::string& name, int count, const std::string& ext, const std::string& dir = "tmp");
+
+inline int32_t
+get_mtime(const char* filename) {
+#if __STDC_VERSION__ >= 201710L
+  return std::filesystem::last_write_time(filename);
+#else
+  struct stat st;
+  if(stat(filename, &st) != -1) {
+    uint32_t ret = st.st_mtime;
+    return ret;
+  }
+#endif
+  return -1;
+}
+
+template<class Char, class Value>
+inline std::ostream&
+operator<<(std::ostream& os, const std::vector<Value>& c) {
+  typedef typename std::vector<Value>::const_iterator iterator_type;
+  iterator_type end = c.end();
+  for(iterator_type it = c.begin(); it != end; ++it) {
+    os << ' ';
+    os << to_string(*it);
+  }
+  return os;
+}
+
+inline std::string
+to_string(const cv::Scalar& scalar) {
+  const int pad = 3;
+  std::ostringstream oss;
+  oss << '[' << std::setfill(' ') << std::setw(pad) << scalar[0] << ',' << std::setfill(' ') << std::setw(pad) << scalar[1]
+      << ',' << std::setfill(' ') << std::setw(pad) << scalar[2] << ',' << std::setfill(' ') << std::setw(pad) << scalar[3]
+      << ']';
+  return oss.str();
+}
 
 template<class Iterator>
 static inline std::string

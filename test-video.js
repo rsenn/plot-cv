@@ -326,7 +326,7 @@ function main(...args) {
         'd'
       ],
       size: [true, null, 's'],
-      'trackbars': [false, null, 't'],
+      trackbars: [false, null, 't'],
       'no-trackbars': [false, null, 'T'],
       '@': 'input,driver'
     },
@@ -721,7 +721,11 @@ function main(...args) {
         }
         default: {
           if(keyCode !== undefined && key != -1)
-          console.log('unhandled', console.config({ numberBase: 16 }), { key, keyCode, modifiers });
+            console.log('unhandled', console.config({ numberBase: 16 }), {
+              key,
+              keyCode,
+              modifiers
+            });
           break;
         }
       }
@@ -840,7 +844,7 @@ function main(...args) {
     );
 
     //resizeOutput();
- 
+
     //console.log("row 100:", [...over.row(100).values()]);
     const showOverlay = frameShow != pipeline.size - 1 || now - keyTime < 2000;
     if(maskRect && showOverlay) {

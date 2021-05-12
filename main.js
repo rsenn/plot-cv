@@ -2292,6 +2292,19 @@ const AppMain = (window.onload = async () => {
         showSearch,
         changeInput,
         focusSearch,
+        sortCompare: (a, b) => {
+          let nameA = a.name,
+            nameB = b.name;
+         // console.log('sortCompare', { nameA, nameB });
+
+          let extA = path.extname(nameA), extB=path.extname(nameB);
+
+          if(extA == '.lbr' && extB != '.lbr') return -1;
+          if(extA != '.lbr' && extB == '.lbr') return 1;
+          console.log('sortCompare', { extA, extB });
+
+          return nameA.localeCompare(nameB);
+        },
         currentInput: currentSearch
       }),
 

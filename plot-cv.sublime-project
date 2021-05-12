@@ -148,7 +148,10 @@
 			"path": ".",
 		}, 
 		{
-			"path": "quickjs/qjs-require"
+			"path": "quickjs/qjs-require",
+		},
+		{
+			"path": "quickjs"
 		},
 	],
 	"settings":

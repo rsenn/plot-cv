@@ -487,6 +487,7 @@ export const Chooser = ({
   itemComponent = Overlay,
   itemFilter,
   items,
+  sortCompare,
   onChange = () => {},
   onPush = () => {},
   ...props
@@ -534,7 +535,9 @@ export const Chooser = ({
   const pred = name =>
     !reList.every(c => !c.every(re => re.test(name))) && plus.every(re => re.test(name));
   const other = list.filter(({ name }) => !pred(name)).map(i => i.name);
-  const children = list
+  const displayList = [...list].sort(sortCompare);
+  console.log('displayList', { displayList, sortCompare });
+  const children = displayList
     .filter(({ name }) => pred(name))
     .map((value, key) => {
       let { name, description /*= ''*/, i, title, number, data, ...item } = value;
