@@ -22,8 +22,7 @@ function GLFW(...args) {
   for(let [prop, value] of hints) Window.hint(prop, value);
 
   let window = (glfw.context.current = new Window(resolution.width, resolution.height, 'OpenGL'));
-  let size = new glfw.Size(window.size);
-  let position = new glfw.Position(window.position);
+  let { size, position } = window;
   nvg.CreateGL3(nvg.STENCIL_STROKES | nvg.ANTIALIAS | nvg.DEBUG);
   return Object.assign(this, { resolution, window, size, position });
 }
@@ -43,13 +42,13 @@ function main(...args) {
   const { width, height } = size;
   const { x, y } = position;
 
-
   Object.assign(window, {
     handleKey(charCode) {
       let char = String.fromCodePoint(charCode);
       //console.log(`handleKey`, { charCode,char });
-    }, handleCharMods(char, mods) {
-      console.log(`handleCharMods`, {char, mods});
+    },
+    handleCharMods(char, mods) {
+      console.log(`handleCharMods`, { char, mods });
     },
     handleMouseButton(button, action, mods) {
       //console.log(`handleMouseButton`, { button, action, mods });
@@ -66,20 +65,21 @@ function main(...args) {
   mat.setTo([11, 22, 33, 255]);
   //cv.rectangle(mat, new glfw.Position(0,0), new glfw.Position(800,600), [255,0,0,0],4, cv.LINE_8);
   cv.line(mat,
-    new glfw.Position(10, 10),
-    new glfw.Position(size.width - 10, size.height - 10),
+    new Point(10, 10),
+    new Point(size.width - 10, size.height - 10),
     [255, 255, 0, 255],
     4,
     cv.LINE_AA
   );
   cv.line(mat,
-    new glfw.Position(size.width - 10, 10),
-    new glfw.Position(10, size.height - 10),
+    new Point(size.width - 10, 10),
+    new Point(10, size.height - 10),
     [255, 0, 0, 255],
     4,
     cv.LINE_AA
   );
 
+  console.log('glfw.Position', glfw.Position);
   console.log('mat:', mat);
   console.log('mat.size:', mat.size);
 
@@ -130,8 +130,8 @@ function main(...args) {
 
     let pattern = nvg.ImagePattern(0, 0, ...img2Sz, 0, img2Id, 1);
 
-    let center = new glfw.Position(...size.div(2));
-    let imgSz_2 = img2Sz.mul(-0.5);
+    let center = new glfw.Position(size.width / 2, size.height / 2);
+    let imgSz_2 = new glfw.Position(img2Sz.width * -0.5, img2Sz.height * -0.5);
     /*console.log("size",size);
   console.log("center",center);
   console.log("img2Sz",img2Sz);
@@ -150,8 +150,7 @@ function main(...args) {
     let vec = [Math.cos(phi), Math.sin(phi)].map(n => n * 100);
 
     DrawImage(img2Id, vec);
-
-    nvg.Translate(...imgSz_2.mul(-1));
+    nvg.Translate(imgSz_2.width * -1, imgSz_2.height * -1);
     DrawCircle(new glfw.Position(0, 0), 40);
 
     nvg.Restore();
