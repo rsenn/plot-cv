@@ -1,5 +1,5 @@
 # include: OpenCV
-include(${CMAKE_SOURCE_DIR}/cmake/opencv.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/opencv.cmake)
 
 if(WIN32 OR MINGW)
   set(QUICKJS_LIBRARY_DIR "${quickjs_BINARY_DIR}")
@@ -18,8 +18,8 @@ function(config_shared_module TARGET_NAME)
   endif(QUICKJS_MODULE_CFLAGS)
 endfunction(config_shared_module TARGET_NAME)
 
-set(JS_BINDINGS_COMMON src/color.hpp src/geometry.hpp src/js.hpp src/js_alloc.hpp src/js_array.hpp src/js_contour.hpp src/js_line.hpp src/js_point.hpp src/js_rect.hpp src/js_size.hpp src/js_typed_array.hpp src/jsbindings.hpp src/plot-cv.hpp src/psimpl.hpp src/util.hpp)
-set(js_line_SOURCES src/line.cpp src/line.hpp)
+set(JS_BINDINGS_COMMON qjs-opencv/geometry.hpp qjs-opencv/js_alloc.hpp qjs-opencv/js_array.hpp qjs-opencv/js_contour.hpp qjs-opencv/js_line.hpp qjs-opencv/js_point.hpp qjs-opencv/js_rect.hpp qjs-opencv/js_size.hpp qjs-opencv/js_typed_array.hpp qjs-opencv/jsbindings.hpp qjs-opencv/psimpl.hpp qjs-opencv/util.hpp)
+set(js_line_SOURCES qjs-opencv/line.cpp qjs-opencv/line.hpp)
 
 function(make_shared_module FNAME)
   string(REGEX REPLACE "_" "-" NAME "${FNAME}")
@@ -27,14 +27,14 @@ function(make_shared_module FNAME)
 
   set(TARGET_NAME quickjs-${NAME})
 
-  add_library(${TARGET_NAME} SHARED src/js_${FNAME}.cpp ${js_${FNAME}_SOURCES} src/jsbindings.cpp src/util.cpp src/js.hpp src/js.cpp ${JS_BINDINGS_COMMON})
+  add_library(${TARGET_NAME} SHARED qjs-opencv/js_${FNAME}.cpp ${js_${FNAME}_SOURCES} qjs-opencv/jsbindings.cpp qjs-opencv/util.cpp ${JS_BINDINGS_COMMON})
 
   target_link_libraries(${TARGET_NAME} ${OpenCV_LIBS})
   set_target_properties(
     ${TARGET_NAME}
     PROPERTIES PREFIX "" # BUILD_RPATH "${OPENCV_LIBRARY_DIRS}:${CMAKE_CURRENT_BINARY_DIR}"
                RPATH "${OPENCV_LIBRARY_DIRS}:${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/quickjs" OUTPUT_NAME "${NAME}" # COMPILE_FLAGS "-fvisibility=hidden"
-               BUILD_RPATH "${CMAKE_BINARY_DIR}:${CMAKE_CURRENT_BINARY_DIR}:${CMAKE_BINARY_DIR}/quickjs:${CMAKE_CURRENT_BINARY_DIR}/quickjs")
+               BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR}:${CMAKE_CURRENT_BINARY_DIR}:${CMAKE_CURRENT_BINARY_DIR}/quickjs:${CMAKE_CURRENT_BINARY_DIR}/quickjs")
   target_compile_definitions(${TARGET_NAME} PRIVATE JS_${UNAME}_MODULE=1 CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" ${PLOTCV_DEFS})
   install(TARGETS ${TARGET_NAME} DESTINATION lib/quickjs PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 
@@ -46,7 +46,7 @@ function(make_shared_module FNAME)
   endif()
 endfunction()
 
-file(GLOB JS_BINDINGS_SOURCES ${CMAKE_SOURCE_DIR}/src/js_*.cpp)
+file(GLOB JS_BINDINGS_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/qjs-opencv/js_*.cpp)
 
 foreach(MOD ${JS_BINDINGS_SOURCES})
   string(REGEX REPLACE "\\.cpp" "" MOD "${MOD}")
@@ -91,13 +91,13 @@ file(
   JS_BINDINGS_SOURCES
   src/color.cpp
   src/data.cpp
-  src/geometry.cpp
+  qjs-opencv/geometry.cpp
   # src/js.cpp
-  src/jsbindings.cpp
+  qjs-opencv/jsbindings.cpp
   # src/plot-cv.cpp
   src/js_*.cpp
   src/js.cpp
-  src/line.cpp
+  qjs-opencv/line.cpp
   src/matrix.cpp
   src/polygon.cpp
   src/*.h

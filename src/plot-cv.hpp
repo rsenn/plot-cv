@@ -17,8 +17,8 @@
 
 #include "color.hpp"
 #include "js.hpp"
-#include "geometry.hpp"
-#include "util.hpp"
+#include "../qjs-opencv/geometry.hpp"
+#include "../qjs-opencv/util.hpp"
 
 typedef std::vector<int> ref_list;
 typedef cv::Mat image_type;

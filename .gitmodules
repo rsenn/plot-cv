@@ -9,3 +9,7 @@
 [submodule "pngpp"]
 	path = pngpp
 	url = https://github.com/usagi/pngpp
+[submodule "qjs-opencv"]
+	path = qjs-opencv
+	url = https://github.com/rsenn/qjs-opencv.git
+	branch = main

@@ -1,6 +1,6 @@
 #include "js.hpp"
-#include "jsbindings.hpp"
-#include "util.hpp"
+#include "../qjs-opencv/jsbindings.hpp"
+#include "../qjs-opencv/util.hpp"
 #include <cstring>
 #include <iostream>
 #include <cstring>

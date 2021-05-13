@@ -1,5 +1,5 @@
 #include "matrix.hpp"
-#include "line.hpp"
+#include "../qjs-opencv/line.hpp"
 #include "plot-cv.hpp"
 
 std::string

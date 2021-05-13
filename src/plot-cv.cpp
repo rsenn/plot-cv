@@ -22,17 +22,17 @@
 
 #include "color.hpp"
 #include "data.hpp"
-#include "geometry.hpp"
+#include "../qjs-opencv/geometry.hpp"
 #include "js.hpp"
-#include "line.hpp"
+#include "../qjs-opencv/line.hpp"
 #include "matrix.hpp"
 #include "plot-cv.hpp"
 #include "polygon.hpp"
-#include "psimpl.hpp"
+#include "../qjs-opencv/psimpl.hpp"
 #include "auto_canny.hpp"
-#include "jsbindings.hpp"
-#include "js_point_iterator.hpp"
-#include "js_contour.hpp"
+#include "../qjs-opencv/jsbindings.hpp"
+#include "../qjs-opencv/js_point_iterator.hpp"
+#include "../qjs-opencv/js_contour.hpp"
 
 using std::string;
 using std::chrono::duration;
