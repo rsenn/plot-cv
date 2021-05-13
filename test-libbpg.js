@@ -201,7 +201,8 @@ class BPGLoader extends BPGDecoder {
     let data = this.malloc(lineSize);
     let ret = bpg_decoder_get_line(handle, data);
     if(ret < 0) throw new Error(`bpg_decoder_get_line ret=${ret}`);
-    if(BPGLoader.HeapU8 == null) BPGLoader.HeapU8 = BPGLoader.Module.HEAPU8.buffer;
+    if(BPGLoader.HeapU8 == null)
+      BPGLoader.HeapU8 = BPGLoader.Module.HEAPU8.buffer;
     let array = new Uint8Array(BPGLoader.HeapU8, data, lineSize);
     this.free(data);
     return array;

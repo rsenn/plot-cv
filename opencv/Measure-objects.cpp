@@ -121,8 +121,7 @@ main() {
            0);
       string s; // stream to put in text in window
       stringstream out;
-      out << "Srodek: " << boundRect1.x + boundRect1.width / 2
-          << "x" // information about rectangles' width and height in ppi
+      out << "Srodek: " << boundRect1.x + boundRect1.width / 2 << "x" // information about rectangles' width and height in ppi
           << boundRect1.y + boundRect1.height / 2;
       out << " Szerokosc: " << boundRect1.width << " Wysokosc: " << boundRect1.height;
       szerokosc1 = boundRect1.width; // width
@@ -136,10 +135,7 @@ main() {
               Scalar(20, 40, 80),
               1,
               8);
-      drawContours(drawing,
-                   contours1,
-                   i_cont1,
-                   Scalar(125, 125, 250),
+      drawContours(drawing, contours1, i_cont1, Scalar(125, 125, 250),
                    2); // drawing detected contours in drawing window
     }
     if(i_cont2 >= 0) // analise of binary2 (hsv split 2), same as 1st
@@ -188,8 +184,8 @@ main() {
             1,
             8);
     stream_to_file << "Czas: " << mt_seconds << " s. Klatka: " // puting dimensions in mm to stream_to_file
-                   << frame_counter << " Obiekt 1: " << szerokosc1 << " x " << wysokosc1
-                   << " mm. Obiekt 2: " << szerokosc2 << " x " << wysokosc2 << " mm\n";
+                   << frame_counter << " Obiekt 1: " << szerokosc1 << " x " << wysokosc1 << " mm. Obiekt 2: " << szerokosc2
+                   << " x " << wysokosc2 << " mm\n";
     string_to_file = stream_to_file.str();
     stream_to_file.flush();
     imshow(window_name[1], drawing);

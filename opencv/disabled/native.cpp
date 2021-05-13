@@ -128,8 +128,7 @@ engine_handle_cmd(android_app* app, int32_t cmd) {
           engine->capture->set(cv::CAP_PROP_FRAME_HEIGHT, camera_resolution.height);
         }
 
-        float scale =
-            std::min((float)view_width / camera_resolution.width, (float)view_height / camera_resolution.height);
+        float scale = std::min((float)view_width / camera_resolution.width, (float)view_height / camera_resolution.height);
 
         if(ANativeWindow_setBuffersGeometry(
                app->window, (int)(view_width / scale), int(view_height / scale), WINDOW_FORMAT_RGBA_8888) < 0) {
@@ -197,12 +196,8 @@ android_main(android_app* app) {
 
       char buffer[256];
       sprintf(buffer, "Display performance: %dx%d @ %.3f", drawing_frame.cols, drawing_frame.rows, fps);
-      cv::putText(drawing_frame,
-                  std::string(buffer),
-                  cv::Point(8, 64),
-                  cv::FONT_HERSHEY_COMPLEX_SMALL,
-                  1,
-                  cv::Scalar(0, 255, 0, 255));
+      cv::putText(
+          drawing_frame, std::string(buffer), cv::Point(8, 64), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(0, 255, 0, 255));
       engine_draw_frame(&engine, drawing_frame);
     }
 

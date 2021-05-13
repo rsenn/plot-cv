@@ -94,8 +94,7 @@ drawObject(Entity anEntity, cv::Mat& frame) {
               1,
               1,
               Scalar(0, 255, 0));
-  cv::putText(
-      frame, anEntity.getType(), cv::Point(anEntity.getXPos(), anEntity.getYPos() - 30), 1, 2, anEntity.getColor());
+  cv::putText(frame, anEntity.getType(), cv::Point(anEntity.getXPos(), anEntity.getYPos() - 30), 1, 2, anEntity.getColor());
 }
 void
 morphOps(cv::Mat& thresh) {
@@ -501,9 +500,7 @@ myFunc(cv::Mat& cameraFeed, Entity& playerfront, Entity& playerrear, Entity& bal
   inRange(HSV, playerfront.getHSVmin(), playerfront.getHSVmax(),
           threshold); // enter the range of hsv for the object
   morphOps(threshold);
-  trackFilteredObject(playerfront,
-                      threshold,
-                      HSV,
+  trackFilteredObject(playerfront, threshold, HSV,
                       cameraFeed); // passes the object to the tracking function //playerrear
   cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
   inRange(HSV, playerrear.getHSVmin(), playerrear.getHSVmax(),

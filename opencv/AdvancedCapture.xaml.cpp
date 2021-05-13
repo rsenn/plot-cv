@@ -75,8 +75,8 @@ AdvancedCapture::OnNavigatedTo(NavigationEventArgs ^ e) {
   rootPage = MainPage::Current;
 
   m_orientationChangedEventToken = Windows::Graphics::Display::DisplayProperties::OrientationChanged +=
-      ref new Windows::Graphics::Display::DisplayPropertiesEventHandler(
-          this, &AdvancedCapture::DisplayProperties_OrientationChanged);
+      ref new Windows::Graphics::Display::DisplayPropertiesEventHandler(this,
+                                                                        &AdvancedCapture::DisplayProperties_OrientationChanged);
 }
 
 void
@@ -111,9 +111,9 @@ void
 AdvancedCapture::Failed(Windows::Media::Capture::MediaCapture ^ currentCaptureObject,
                         Windows::Media::Capture::MediaCaptureFailedEventArgs ^ currentFailure) {
   String ^ message = "Fatal error" + currentFailure->Message;
-  create_task(Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::High,
-                                   ref new Windows::UI::Core::DispatchedHandler(
-                                       [this, message]() { ShowStatusMessage(message); })));
+  create_task(
+      Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::High,
+                           ref new Windows::UI::Core::DispatchedHandler([this, message]() { ShowStatusMessage(message); })));
 }
 
 void
@@ -151,8 +151,7 @@ AdvancedCapture::btnStartDevice_Click(Platform::Object ^ sender, Windows::UI::Xa
         EnableButton(true, "TakePhoto");
         ShowStatusMessage("Device initialized successful");
         EffectTypeCombo->IsEnabled = true;
-        mediaCapture->Failed +=
-            ref new Windows::Media::Capture::MediaCaptureFailedEventHandler(this, &AdvancedCapture::Failed);
+        mediaCapture->Failed += ref new Windows::Media::Capture::MediaCaptureFailedEventHandler(this, &AdvancedCapture::Failed);
       } catch(Exception ^ e) { ShowExceptionMessage(e); }
     });
   } catch(Platform::Exception ^ e) { ShowExceptionMessage(e); }
@@ -352,15 +351,14 @@ AdvancedCapture::ReencodePhotoAsync(Windows::Storage::StorageFile ^ tempStorageF
       .then([state](Windows::Storage::Streams::IRandomAccessStream ^ stream) {
         state->OutputStream = stream;
         state->OutputStream->Size = 0;
-        return Windows::Graphics::Imaging::BitmapEncoder::CreateForTranscodingAsync(state->OutputStream,
-                                                                                    state->Decoder);
+        return Windows::Graphics::Imaging::BitmapEncoder::CreateForTranscodingAsync(state->OutputStream, state->Decoder);
       })
       .then([state, photoRotation](Windows::Graphics::Imaging::BitmapEncoder ^ encoder) {
         state->Encoder = encoder;
         auto properties = ref new Windows::Graphics::Imaging::BitmapPropertySet();
         properties->Insert("System.Photo.Orientation",
-                           ref new Windows::Graphics::Imaging::BitmapTypedValue(
-                               (unsigned short)photoRotation, Windows::Foundation::PropertyType::UInt16));
+                           ref new Windows::Graphics::Imaging::BitmapTypedValue((unsigned short)photoRotation,
+                                                                                Windows::Foundation::PropertyType::UInt16));
         return create_task(state->Encoder->BitmapProperties->SetPropertiesAsync(properties));
       })
       .then([state]() { return state->Encoder->FlushAsync(); })
@@ -381,8 +379,7 @@ AdvancedCapture::GetCurrentPhotoRotation() {
   bool counterclockwiseRotation = m_bReversePreviewRotation;
 
   if(m_bRotateVideoOnOrientationChange) {
-    return PhotoRotationLookup(Windows::Graphics::Display::DisplayProperties::CurrentOrientation,
-                               counterclockwiseRotation);
+    return PhotoRotationLookup(Windows::Graphics::Display::DisplayProperties::CurrentOrientation, counterclockwiseRotation);
   } else {
     return Windows::Storage::FileProperties::PhotoOrientation::Normal;
   }
@@ -399,8 +396,7 @@ AdvancedCapture::PrepareForVideoRecording() {
 
   if(m_bRotateVideoOnOrientationChange) {
     mediaCapture->SetRecordRotation(
-        VideoRotationLookup(Windows::Graphics::Display::DisplayProperties::CurrentOrientation,
-                            counterclockwiseRotation));
+        VideoRotationLookup(Windows::Graphics::Display::DisplayProperties::CurrentOrientation, counterclockwiseRotation));
   } else {
     mediaCapture->SetRecordRotation(Windows::Media::Capture::VideoRotation::None);
   }
@@ -419,8 +415,7 @@ AdvancedCapture::DisplayProperties_OrientationChanged(Platform::Object ^ sender)
 
   if(m_bRotateVideoOnOrientationChange) {
     mediaCapture->SetPreviewRotation(
-        VideoRotationLookup(Windows::Graphics::Display::DisplayProperties::CurrentOrientation,
-                            counterclockwiseRotation));
+        VideoRotationLookup(Windows::Graphics::Display::DisplayProperties::CurrentOrientation, counterclockwiseRotation));
   } else {
     mediaCapture->SetPreviewRotation(Windows::Media::Capture::VideoRotation::None);
   }
@@ -452,8 +447,7 @@ Windows::Media::Capture::VideoRotation
 AdvancedCapture::VideoRotationLookup(Windows::Graphics::Display::DisplayOrientations displayOrientation,
                                      bool counterclockwise) {
   switch(displayOrientation) {
-    case Windows::Graphics::Display::DisplayOrientations::Landscape:
-      return Windows::Media::Capture::VideoRotation::None;
+    case Windows::Graphics::Display::DisplayOrientations::Landscape: return Windows::Media::Capture::VideoRotation::None;
 
     case Windows::Graphics::Display::DisplayOrientations::Portrait:
       return (counterclockwise) ? Windows::Media::Capture::VideoRotation::Clockwise270Degrees
@@ -471,8 +465,7 @@ AdvancedCapture::VideoRotationLookup(Windows::Graphics::Display::DisplayOrientat
 }
 
 void
-SDKSample::MediaCapture::AdvancedCapture::Button_Click(Platform::Object ^ sender,
-                                                       Windows::UI::Xaml::RoutedEventArgs ^ e) {
+SDKSample::MediaCapture::AdvancedCapture::Button_Click(Platform::Object ^ sender, Windows::UI::Xaml::RoutedEventArgs ^ e) {
   try {
     create_task(m_mediaCaptureMgr->ClearEffectsAsync(Windows::Media::Capture::MediaStreamType::VideoPreview))
         .then([this](task<void> cleanTask) {
@@ -493,8 +486,7 @@ SDKSample::MediaCapture::AdvancedCapture::Button_Click(Platform::Object ^ sender
 
                   ShowStatusMessage("Add effect successful to preview stream successful");
                   if((charecteristic != Windows::Media::Capture::VideoDeviceCharacteristic::AllStreamsIdentical) &&
-                     (charecteristic !=
-                      Windows::Media::Capture::VideoDeviceCharacteristic::PreviewRecordStreamsIdentical)) {
+                     (charecteristic != Windows::Media::Capture::VideoDeviceCharacteristic::PreviewRecordStreamsIdentical)) {
                     Windows::Media::MediaProperties::IMediaEncodingProperties ^ props =
                         mediaCapture->VideoDeviceController->GetMediaStreamProperties(
                             Windows::Media::Capture::MediaStreamType::VideoRecord);

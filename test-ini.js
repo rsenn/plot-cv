@@ -38,7 +38,8 @@ async function main(...args) {
     //console.log('src:', src);
     let [done, data, pos] = INIGrammar.ini(src, 0);
 
-    let createMap = entries => /*Object.fromEntries(entries) ||*/ new Map(entries);
+    let createMap = entries =>
+      /*Object.fromEntries(entries) ||*/ new Map(entries);
 
     let sections = data[0].reduce((acc, sdata) => {
       console.log('sdata:', sdata);
@@ -59,11 +60,16 @@ async function main(...args) {
       console.log("Desktop Entry:",  { Exec, Icon, Terminal, Type, Name, GenericName, StartupNotify });*/
       //     let r = Rect.bind(new Rect(), { x: () => pos.x, y: () => pos.y, width: () => size.width, height: () => size.height });
       const lnkFile =
-        '/home/roman/mnt/lexy/.idesktop/' + path.basename(filename, '.desktop') + '.lnk';
+        '/home/roman/mnt/lexy/.idesktop/' +
+        path.basename(filename, '.desktop') +
+        '.lnk';
 
       const svgFile =
-        '/home/roman/mnt/ubuntu/' + desktopEntry.Icon.replace(/\.[a-z]*$/, '') + '.svg';
-      const iconFile = '/home/lexy/.logos/' + path.basename(svgFile, '.svg') + '.png';
+        '/home/roman/mnt/ubuntu/' +
+        desktopEntry.Icon.replace(/\.[a-z]*$/, '') +
+        '.svg';
+      const iconFile =
+        '/home/lexy/.logos/' + path.basename(svgFile, '.svg') + '.png';
       console.log(' :', { svgFile, iconFile });
       let svgData = tXml(filesystem.readFile(svgFile));
 
@@ -83,7 +89,10 @@ async function main(...args) {
       );
       iconSize = viewBox.size; //new Size(viewBox.width, viewBox.height);
       iconAspect = iconSize.aspect();
-      const scale = iconAspect > 1 ? size.width / iconSize.width : size.height / iconSize.height;
+      const scale =
+        iconAspect > 1
+          ? size.width / iconSize.width
+          : size.height / iconSize.height;
       newSize = iconSize.prod(scale, scale);
 
       const { width, height } = newSize.prod(5, 5).round();
@@ -126,7 +135,9 @@ async function main(...args) {
       count++;
     } else if(sections.FILE_INFO) {
       let file_keys = sections.FILE_INFO.keys();
-      let file_sections = Object.keys(sections).filter(name => /FILE/.test(name));
+      let file_sections = Object.keys(sections).filter(name =>
+        /FILE/.test(name)
+      );
 
       let files = [];
       for(let key of file_keys) {
@@ -144,7 +155,9 @@ async function main(...args) {
 
       let filenames = files.map(f => f.FILE_INFO);
 
-      files = files.filter(file => !/.*(buffer|comparator|lcd|format|ds18b20|hd44).*/.test(file.FILE_INFO)
+      files = files.filter(file =>
+          !/.*(buffer|comparator|lcd|format|ds18b20|hd44).*/.test(file.FILE_INFO
+          )
       );
 
       //console.log('data:', file_sections);
@@ -171,7 +184,15 @@ async function main(...args) {
     WriteFile(filename, out);
   }
 
-  function makeIDeskEntry({ Exec, Icon, Terminal, Type, Name, GenericName, StartupNotify }) {
+  function makeIDeskEntry({
+    Exec,
+    Icon,
+    Terminal,
+    Type,
+    Name,
+    GenericName,
+    StartupNotify
+  }) {
     return `table Icon
   Caption: ${Name}
   ToolTip.Caption: ${GenericName}

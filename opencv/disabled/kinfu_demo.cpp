@@ -417,8 +417,7 @@ main(int argc, char** argv) {
 
     int64 newTime = getTickCount();
     putText(rendered,
-            cv::format("FPS: %2d press R to reset, P to pause, Q to quit",
-                       (int)(getTickFrequency() / (newTime - prevTime))),
+            cv::format("FPS: %2d press R to reset, P to pause, Q to quit", (int)(getTickFrequency() / (newTime - prevTime))),
             Point(0, rendered.rows - 1),
             FONT_HERSHEY_SIMPLEX,
             0.5,

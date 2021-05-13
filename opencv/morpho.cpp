@@ -49,8 +49,7 @@ main(int, char** argv) {
                  Morphology_Operations);
 
   /// Create Trackbar to select kernel type
-  createTrackbar(
-      "Element:\n 0: Rect - 1: Cross - 2: Ellipse", window_name, &morph_elem, max_elem, Morphology_Operations);
+  createTrackbar("Element:\n 0: Rect - 1: Cross - 2: Ellipse", window_name, &morph_elem, max_elem, Morphology_Operations);
 
   /// Create Trackbar to choose kernel size
   createTrackbar("Kernel size:\n 2n +1", window_name, &morph_size, max_kernel_size, Morphology_Operations);
@@ -71,8 +70,7 @@ Morphology_Operations(int, void*) {
   // Since MORPH_X : 2,3,4,5 and 6
   int operation = morph_operator + 2;
 
-  Mat element =
-      getStructuringElement(morph_elem, Size(2 * morph_size + 1, 2 * morph_size + 1), Point(morph_size, morph_size));
+  Mat element = getStructuringElement(morph_elem, Size(2 * morph_size + 1, 2 * morph_size + 1), Point(morph_size, morph_size));
 
   /// Apply the specified morphology operation
   morphologyEx(src, dst, operation, element);

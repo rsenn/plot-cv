@@ -132,12 +132,7 @@ scan(String file, bool debug = true) {
          2,
          cv::LINE_AA);
     line(img_proc, verticals[0]._p1, verticals[0]._p2, Scalar(255, 0, 0), 2, cv::LINE_AA);
-    line(img_proc,
-         verticals[verticals.size() - 1]._p1,
-         verticals[verticals.size() - 1]._p2,
-         Scalar(255, 0, 0),
-         2,
-         cv::LINE_AA);
+    line(img_proc, verticals[verticals.size() - 1]._p1, verticals[verticals.size() - 1]._p2, Scalar(255, 0, 0), 2, cv::LINE_AA);
   }
 
   /* perspective transformation */

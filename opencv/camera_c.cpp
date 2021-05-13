@@ -13,8 +13,7 @@ using namespace cv;
 QElapsedTimer telapsed;
 
 camera_c::camera_c(QObject* parent, int width, int height, int res, int threshold, int thresholdZone)
-    : parent(parent), width(width), height(height), resolution(res), threshold(threshold),
-      thresholdZone(thresholdZone) {
+    : parent(parent), width(width), height(height), resolution(res), threshold(threshold), thresholdZone(thresholdZone) {
   isLearning = false;
   enabled = false;
   connect(parent, SIGNAL(snap()), this, SLOT(snap()));

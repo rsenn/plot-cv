@@ -7,7 +7,9 @@ export { blah as test };
 let obj = {
   className: typeof itemClass == 'function'
       ? itemClass(value)
-      : classNames(itemClass || className + '-item', (name + '').replace(/.*\./, '')),
+      : classNames(itemClass || className + '-item',
+          (name + '').replace(/.*\./, '')
+        ),
   active: i == active,
   onPush: pushHandler(i),
   label: name.replace(/.*\//, ''),

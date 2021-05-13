@@ -281,8 +281,7 @@ main(int argc, char** argv) {
       cout << "This is not GPHOTO2 device." << endl;
       return -2;
     }
-    cout << "List of camera settings: " << endl
-         << (const char*)(intptr_t)cap.get(CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) << endl;
+    cout << "List of camera settings: " << endl << (const char*)(intptr_t)cap.get(CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) << endl;
     cap.set(CAP_PROP_GPHOTO2_COLLECT_MSGS, true);
   }
 

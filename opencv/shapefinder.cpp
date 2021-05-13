@@ -122,13 +122,8 @@ detect_shape() {
 
       if(isSquare && args["-s"] == "square" || !isSquare && args["-s"] == "rectangle") {
         cout << "top_x = " << top_x << endl;
-        rectangle(output,
-                  Point(bottom_x, bottom_y),
-                  Point(top_x, top_y),
-                  Scalar(rgb_color[2], rgb_color[1], rgb_color[0]),
-                  3,
-                  8,
-                  0);
+        rectangle(
+            output, Point(bottom_x, bottom_y), Point(top_x, top_y), Scalar(rgb_color[2], rgb_color[1], rgb_color[0]), 3, 8, 0);
         found_shape = true;
       }
     } else {

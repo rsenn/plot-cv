@@ -68,7 +68,8 @@ function alignAll(doc) {
   for(let item of items) changed |= alignItem(item);
   let signals_nets = doc.getAll(/(signals|nets)/);
   //console.log('signals_nets:', signals_nets);
-  for(let net of signals_nets) for (let item of net.getAll('wire')) changed |= alignItem(item);
+  for(let net of signals_nets)
+    for(let item of net.getAll('wire')) changed |= alignItem(item);
   return !!changed;
 }
 
@@ -101,12 +102,14 @@ function num2color(num, square = false) {
     )
     .join('');
 }
-const SubstChars = str => str.replace(/\xCE\xBC/g, '\u00B5').replace(/\xCE\xA9/g, '\u2126');
+const SubstChars = str =>
+  str.replace(/\xCE\xBC/g, '\u00B5').replace(/\xCE\xA9/g, '\u2126');
 
 async function main(...args) {
   await ConsoleSetup({ colors: true, depth: Infinity, breakLength: 100 });
   await PortableFileSystem(fs => (filesystem = fs));
-  if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt2.brd');
+  if(args.length == 0)
+    args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt2.brd');
   args = Util.unique(args);
   for(let arg of args) {
     let data = filesystem.readFile(arg);
@@ -133,7 +136,9 @@ async function main(...args) {
       [/^L/, /^[0-9.]+([nuμm]H?|H?)/]
     ];
 
-    let nameValueMap = new Map(parts.filter(([name, value]) => matchers.some(m => m[0].test(name) && m[1].test(value)))
+    let nameValueMap = new Map(parts.filter(([name, value]) =>
+        matchers.some(m => m[0].test(name) && m[1].test(value))
+      )
     );
     console.log('nameValueMap',
       new Map(
@@ -145,7 +150,8 @@ async function main(...args) {
     );
     for(let [name, value] of nameValueMap) {
       value = value.replace(/[\u0000-\u001F\u007F-\uFFFF]/g, '');
-      components[name[0]].push(value.replace(/[ΩFH]$/, '').replace(/^\./, '0.'));
+      components[name[0]].push(value.replace(/[ΩFH]$/, '').replace(/^\./, '0.')
+      );
     }
   }
   let histograms = {};
@@ -156,14 +162,20 @@ async function main(...args) {
   }
   for(let key in components) {
     components[key].sort();
-    let hist = Util.histogram(components[key], /*(item, i) => [item[1], i],*/ new Map());
+    let hist = Util.histogram(components[key],
+      /*(item, i) => [item[1], i],*/ new Map()
+    );
     //console.log('hist', { hist });
     histograms[key] = new Map([...hist].sort((a, b) => b[1] - a[1]));
     values[key] = [...histograms[key]]
       .map(([value, count]) => {
         // console.log('', { key, value, count });
         //rational(value).toExponential()
-        return [value || scientific(value).toString(), ValueToNumber(value), count];
+        return [
+          value || scientific(value).toString(),
+          ValueToNumber(value),
+          count
+        ];
       })
       .sort((a, b) => a[1] - b[1])
       .map(([val, rat, count]) =>

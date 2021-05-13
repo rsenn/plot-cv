@@ -83,8 +83,7 @@ main(int argc, char** argv) {
   vector<Mat> pattern;
   graycode->generate(pattern);
 
-  cout << pattern.size() << " pattern images + 2 images for shadows mask computation to acquire with both cameras"
-       << endl;
+  cout << pattern.size() << " pattern images + 2 images for shadows mask computation to acquire with both cameras" << endl;
 
   // Generate the all-white and all-black images needed for shadows mask computation
   Mat white;
@@ -144,8 +143,7 @@ main(int argc, char** argv) {
 
       cout << "zoom cam 1: " << cap1.get(CAP_PROP_ZOOM) << endl << "zoom cam 2: " << cap2.get(CAP_PROP_ZOOM) << endl;
 
-      cout << "focus cam 1: " << cap1.get(CAP_PROP_FOCUS) << endl
-           << "focus cam 2: " << cap2.get(CAP_PROP_FOCUS) << endl;
+      cout << "focus cam 1: " << cap1.get(CAP_PROP_FOCUS) << endl << "focus cam 2: " << cap2.get(CAP_PROP_FOCUS) << endl;
 
       cout << "Press enter to save the photo or an other key to re-acquire the photo" << endl;
 

@@ -88,8 +88,8 @@ main(int argc, char* argv[]) {
       std::stringstream ss;
       ss << std::setfill('0') << std::setw(3) << image_number;
       if(!save_pgm_image(image,
-                         std::string(TRAINING_DIR) + "positive/" + subject_name + "/" + TRAINING_FILENAME_PREFIX +
-                             ss.str() + ".pgm")) {
+                         std::string(TRAINING_DIR) + "positive/" + subject_name + "/" + TRAINING_FILENAME_PREFIX + ss.str() +
+                             ".pgm")) {
         exit(1);
       }
 

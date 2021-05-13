@@ -1281,11 +1281,8 @@ videoInput::setFormat(int deviceNumber, int format) {
       }
 
       IAMAnalogVideoDecoder* pVideoDec = NULL;
-      hr = VDList[deviceNumber]->pCaptureGraph->FindInterface(NULL,
-                                                              &MEDIATYPE_Video,
-                                                              VDList[deviceNumber]->pVideoInputFilter,
-                                                              IID_IAMAnalogVideoDecoder,
-                                                              (void**)&pVideoDec);
+      hr = VDList[deviceNumber]->pCaptureGraph->FindInterface(
+          NULL, &MEDIATYPE_Video, VDList[deviceNumber]->pVideoInputFilter, IID_IAMAnalogVideoDecoder, (void**)&pVideoDec);
 
       // in case the settings window some how freed them first
       if(VDList[deviceNumber]->pVideoInputFilter)
@@ -1891,10 +1888,8 @@ videoInput::setVideoSettingCamera(int deviceID, long Property, long lValue, long
   IAMCameraControl* pIAMCameraControl;
   if(isDeviceSetup(deviceID)) {
     HRESULT hr;
-    hr = getDevice(&VDList[deviceID]->pVideoInputFilter,
-                   deviceID,
-                   VDList[deviceID]->wDeviceName,
-                   VDList[deviceID]->nDeviceName);
+    hr =
+        getDevice(&VDList[deviceID]->pVideoInputFilter, deviceID, VDList[deviceID]->wDeviceName, VDList[deviceID]->nDeviceName);
 
     char propStr[16];
     getCameraPropertyAsString(Property, propStr);
@@ -2442,8 +2437,7 @@ videoInput::getCameraPropertyAsString(int prop, char* propertyAsString) {
 
 //-------------------------------------------------------------------------------------------
 static void
-findClosestSizeAndSubtype(
-    videoDevice* VD, int widthIn, int heightIn, int& widthOut, int& heightOut, GUID& mediatypeOut) {
+findClosestSizeAndSubtype(videoDevice* VD, int widthIn, int heightIn, int& widthOut, int& heightOut, GUID& mediatypeOut) {
   HRESULT hr;
 
   // find perfect match or closest size
@@ -2985,8 +2979,7 @@ videoInput::getDevice(IBaseFilter** gottaFilter, int deviceId, WCHAR* wDeviceNam
 
   // Create the System Device Enumerator.
   ICreateDevEnum* pSysDevEnum = NULL;
-  HRESULT hr =
-      CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void**)&pSysDevEnum);
+  HRESULT hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void**)&pSysDevEnum);
   if(FAILED(hr)) {
     return hr;
   }
@@ -3334,8 +3327,7 @@ VideoCapture_DShow::setProperty(int propIdx, double propVal) {
   if(handled) {
     // a stream setting
     if(m_width > 0 && m_height > 0) {
-      if(m_width != g_VI.getWidth(m_index) ||
-         m_height != g_VI.getHeight(m_index)) { //|| fourcc != VI.getFourcc(index) )
+      if(m_width != g_VI.getWidth(m_index) || m_height != g_VI.getHeight(m_index)) { //|| fourcc != VI.getFourcc(index) )
         int fps = static_cast<int>(g_VI.getFPS(m_index));
         g_VI.stopDevice(m_index);
         g_VI.setIdealFramerate(m_index, fps);
@@ -3370,8 +3362,7 @@ VideoCapture_DShow::setProperty(int propIdx, double propVal) {
     case cv::CAP_PROP_MONOCHROME:
     case cv::CAP_PROP_WHITE_BALANCE_BLUE_U:
     case cv::CAP_PROP_BACKLIGHT:
-    case cv::CAP_PROP_GAIN:
-      return g_VI.setVideoSettingFilter(m_index, g_VI.getVideoPropertyFromCV(propIdx), (long)propVal);
+    case cv::CAP_PROP_GAIN: return g_VI.setVideoSettingFilter(m_index, g_VI.getVideoPropertyFromCV(propIdx), (long)propVal);
   }
 
   // camera properties
@@ -3382,8 +3373,7 @@ VideoCapture_DShow::setProperty(int propIdx, double propVal) {
     case cv::CAP_PROP_ZOOM:
     case cv::CAP_PROP_EXPOSURE:
     case cv::CAP_PROP_IRIS:
-    case cv::CAP_PROP_FOCUS:
-      return g_VI.setVideoSettingCamera(m_index, g_VI.getCameraPropertyFromCV(propIdx), (long)propVal);
+    case cv::CAP_PROP_FOCUS: return g_VI.setVideoSettingCamera(m_index, g_VI.getCameraPropertyFromCV(propIdx), (long)propVal);
   }
 
   return false;

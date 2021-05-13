@@ -66,14 +66,21 @@ async function main(...args) {
               }, [])
         )
         .map(c => c.slice(0, findLast(c)));
-    components = Object.fromEntries(cleanArray(components).map(([name, ...rest]) => [name, rest]));
-    nets = Object.fromEntries(cleanArray(nets).map(([name, ...rest]) => [name, rest]));
+    components = Object.fromEntries(cleanArray(components).map(([name, ...rest]) => [name, rest])
+    );
+    nets = Object.fromEntries(cleanArray(nets).map(([name, ...rest]) => [name, rest])
+    );
     console.log('nets:', nets);
     console.log('components:', components);
 
     let output = { components, nets };
 
-    let json = Util.inspect(output, { multiline: true, depth: 2, json: true, quote: '"' }); //JSON.stringify(output, null, 2);
+    let json = Util.inspect(output, {
+      multiline: true,
+      depth: 2,
+      json: true,
+      quote: '"'
+    }); //JSON.stringify(output, null, 2);
 
     WriteFile(base + '.json', json);
   }

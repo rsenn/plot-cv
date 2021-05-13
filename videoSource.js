@@ -1,6 +1,6 @@
-import * as cv from 'cv';
-import { Mat } from 'mat';
-import { VideoCapture } from 'video-capture';
+import * as cv from 'opencv';
+import { Mat } from 'opencv';
+import { VideoCapture } from 'opencv';
 import Util from './lib/util.js';
 
 export class ImageSequence {
@@ -61,7 +61,8 @@ export class ImageSequence {
 }
 
 const isVideoPath = arg =>
-  /\.(3gp|avi|f4v|flv|m4v|m2v|mkv|mov|mp4|mpeg|mpg|ogm|vob|webm|wmv)$/i.test(arg);
+  /\.(3gp|avi|f4v|flv|m4v|m2v|mkv|mov|mp4|mpeg|mpg|ogm|vob|webm|wmv)$/i.test(arg
+  );
 
 export class VideoSource {
   static backends = Object.fromEntries([
@@ -162,7 +163,8 @@ export class VideoSource {
 
   get(prop) {
     const { cap } = this;
-    if(cap && typeof cap.get == 'function') return this.cap.get(this.propId(prop));
+    if(cap && typeof cap.get == 'function')
+      return this.cap.get(this.propId(prop));
   }
 
   set(prop, value) {
@@ -196,7 +198,9 @@ export class VideoSource {
       'pos_msec'
     ]
   ) {
-    return new Map(props.map(propName => [propName, this.get(propName)]).filter(([k, v]) => v !== undefined)
+    return new Map(props
+        .map(propName => [propName, this.get(propName)])
+        .filter(([k, v]) => v !== undefined)
     );
   }
 
@@ -218,7 +222,8 @@ export class VideoSource {
   }
 
   position(type = 'frames') {
-    if(type.startsWith('frame')) return [this.get('pos_frames'), this.get('frame_count')];
+    if(type.startsWith('frame'))
+      return [this.get('pos_frames'), this.get('frame_count')];
     if(type.startsWith('percent') || type == '%')
       return (this.get('pos_frames') * 100) / this.get('frame_count');
 

@@ -25,7 +25,10 @@ async function main(...args) {
 
   let data = /* code ||*/ filesystem.readFile(file).toString();
 
-  let parser = new ECMAScriptParser(data, code ? args[0].replace(/.*\//g, '') : file, true);
+  let parser = new ECMAScriptParser(data,
+    code ? args[0].replace(/.*\//g, '') : file,
+    true
+  );
   let ast = parser.parseProgram();
   let printer = new Printer({ indent: 2 });
 
@@ -58,7 +61,9 @@ async function main(...args) {
   let output = printer.print(ast);
 
   let outputFile = 'output.es';
-  console.log(`wrote '${outputFile}'`, await filesystem.writeFile('output.es', output));
+  console.log(`wrote '${outputFile}'`,
+    await filesystem.writeFile('output.es', output)
+  );
 }
 
 Util.callMain(main, true);

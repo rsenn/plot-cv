@@ -1,8 +1,5 @@
-import { Size } from 'size';
-import { Rect } from 'rect';
-import * as cv from 'cv';
-import { Mat } from 'mat';
-import { VideoCapture } from 'video-capture';
+import { Mat, VideoCapture, Size, Rect } from 'opencv';
+import * as cv from 'opencv';
 import Util from './lib/util.js';
 
 const Crop = (() => {
@@ -155,7 +152,9 @@ export class ImageSequence {
       //console.debug(`ImageSequence.retrieve[${framePos}]`, { frame, frameSize, mat, targetSize, doResize });
       if(doResize)
         ImageSize(frame, mat, targetSize, (name, arg1, arg2) =>
-          console.debug(`ImageSize[${this.framePos}] ${name} ${arg1.toString()} -> ${arg2.toString()}`
+          console.debug(`ImageSize[${
+              this.framePos
+            }] ${name} ${arg1.toString()} -> ${arg2.toString()}`
           )
         );
       else frame.copyTo(mat);
@@ -170,7 +169,8 @@ export class ImageSequence {
 }
 
 const isVideoPath = arg =>
-  /\.(3gp|avi|f4v|flv|m4v|m2v|mkv|mov|mp4|mpeg|mpg|ogm|vob|webm|wmv)$/i.test(arg);
+  /\.(3gp|avi|f4v|flv|m4v|m2v|mkv|mov|mp4|mpeg|mpg|ogm|vob|webm|wmv)$/i.test(arg
+  );
 
 export class VideoSource {
   static backends = Object.fromEntries([
@@ -218,7 +218,9 @@ export class VideoSource {
     if(args.length > 0) {
       let [device, backend = 'ANY'] = args;
       const driverId = VideoSource.backends[backend];
-      let isVideo = (args.length <= 2 && backend in VideoSource.backends) || isVideoPath(device);
+      let isVideo =
+        (args.length <= 2 && backend in VideoSource.backends) ||
+        isVideoPath(device);
 
       // if(cv.imread(args[0])) isVideo = false;
       console.log('VideoSource', { args, backend, driverId, isVideo });
@@ -291,12 +293,14 @@ export class VideoSource {
 
   get(prop) {
     const { cap } = this;
-    if(cap && typeof cap.get == 'function') return this.cap.get(this.propId(prop));
+    if(cap && typeof cap.get == 'function')
+      return this.cap.get(this.propId(prop));
   }
 
   set(prop, value) {
     const { cap } = this;
-    if(cap && typeof cap.set == 'function') return this.cap.set(this.propId(prop), value);
+    if(cap && typeof cap.set == 'function')
+      return this.cap.set(this.propId(prop), value);
   }
 
   get backend() {
@@ -326,7 +330,9 @@ export class VideoSource {
       'pos_msec'
     ]
   ) {
-    return new Map(props.map(propName => [propName, this.get(propName)]).filter(([k, v]) => v !== undefined)
+    return new Map(props
+        .map(propName => [propName, this.get(propName)])
+        .filter(([k, v]) => v !== undefined)
     );
   }
 
@@ -348,7 +354,8 @@ export class VideoSource {
   }
 
   position(type = 'frames') {
-    if(type.startsWith('frame')) return [this.get('pos_frames'), this.get('frame_count')];
+    if(type.startsWith('frame'))
+      return [this.get('pos_frames'), this.get('frame_count')];
     if(type.startsWith('percent') || type == '%')
       return (this.get('pos_frames') * 100) / this.get('frame_count');
 

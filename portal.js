@@ -24,7 +24,8 @@ export class Portal extends Component {
   componentWillUnmount() {
     this.renderLayer(false);
     this.isMounted = false;
-    if(this.remote && this.remote.parentNode) this.remote.parentNode.removeChild(this.remote);
+    if(this.remote && this.remote.parentNode)
+      this.remote.parentNode.removeChild(this.remote);
   }
 
   findNode(node) {
@@ -43,7 +44,8 @@ export class Portal extends Component {
       this.into = this.findNode(this.props.into);
     }
 
-    this.remote = render((h(PortalProxy, { context: this.context }), (show && this.props.children) || null),
+    this.remote = render((h(PortalProxy, { context: this.context }),
+      (show && this.props.children) || null),
       this.into,
       this.remote
     );

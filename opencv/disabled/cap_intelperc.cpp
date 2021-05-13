@@ -247,8 +247,7 @@ IntelPerCStreamImage::getProperty(int propIdx) const {
       if(!m_device.IsValid())
         return 0.0;
       float fret = 0.0f;
-      if(PXC_STATUS_NO_ERROR ==
-         m_device->QueryProperty(PXCCapture::Device::PROPERTY_COLOR_BACK_LIGHT_COMPENSATION, &fret))
+      if(PXC_STATUS_NO_ERROR == m_device->QueryProperty(PXCCapture::Device::PROPERTY_COLOR_BACK_LIGHT_COMPENSATION, &fret))
         return (double)fret;
       return 0.0;
     } break;
@@ -270,20 +269,17 @@ IntelPerCStreamImage::setProperty(int propIdx, double propVal) {
     case cv::CAP_PROP_BRIGHTNESS: {
       if(!m_device.IsValid())
         return false;
-      return (PXC_STATUS_NO_ERROR ==
-              m_device->SetProperty(PXCCapture::Device::PROPERTY_COLOR_BRIGHTNESS, (float)propVal));
+      return (PXC_STATUS_NO_ERROR == m_device->SetProperty(PXCCapture::Device::PROPERTY_COLOR_BRIGHTNESS, (float)propVal));
     } break;
     case cv::CAP_PROP_CONTRAST: {
       if(!m_device.IsValid())
         return false;
-      return (PXC_STATUS_NO_ERROR ==
-              m_device->SetProperty(PXCCapture::Device::PROPERTY_COLOR_CONTRAST, (float)propVal));
+      return (PXC_STATUS_NO_ERROR == m_device->SetProperty(PXCCapture::Device::PROPERTY_COLOR_CONTRAST, (float)propVal));
     } break;
     case cv::CAP_PROP_SATURATION: {
       if(!m_device.IsValid())
         return false;
-      return (PXC_STATUS_NO_ERROR ==
-              m_device->SetProperty(PXCCapture::Device::PROPERTY_COLOR_SATURATION, (float)propVal));
+      return (PXC_STATUS_NO_ERROR == m_device->SetProperty(PXCCapture::Device::PROPERTY_COLOR_SATURATION, (float)propVal));
     } break;
     case cv::CAP_PROP_HUE: {
       if(!m_device.IsValid())
@@ -298,8 +294,7 @@ IntelPerCStreamImage::setProperty(int propIdx, double propVal) {
     case cv::CAP_PROP_SHARPNESS: {
       if(!m_device.IsValid())
         return false;
-      return (PXC_STATUS_NO_ERROR ==
-              m_device->SetProperty(PXCCapture::Device::PROPERTY_COLOR_SHARPNESS, (float)propVal));
+      return (PXC_STATUS_NO_ERROR == m_device->SetProperty(PXCCapture::Device::PROPERTY_COLOR_SHARPNESS, (float)propVal));
     } break;
     case cv::CAP_PROP_GAIN: {
       if(!m_device.IsValid())
@@ -315,8 +310,7 @@ IntelPerCStreamImage::setProperty(int propIdx, double propVal) {
     case cv::CAP_PROP_EXPOSURE: {
       if(!m_device.IsValid())
         return false;
-      return (PXC_STATUS_NO_ERROR ==
-              m_device->SetProperty(PXCCapture::Device::PROPERTY_COLOR_EXPOSURE, (float)propVal));
+      return (PXC_STATUS_NO_ERROR == m_device->SetProperty(PXCCapture::Device::PROPERTY_COLOR_EXPOSURE, (float)propVal));
     } break;
       // Add image stream specific properties
   }

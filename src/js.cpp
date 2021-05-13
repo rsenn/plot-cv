@@ -1,4 +1,6 @@
 #include "js.hpp"
+#include "../qjs-opencv/jsbindings.hpp"
+#include "../qjs-opencv/util.hpp"
 #include <cstring>
 #include <iostream>
 #include <cstring>
@@ -137,7 +139,7 @@ jsrt::to_str(const_value val) {
     ret = "Boolean";
   else if(JS_IsString(val))
     ret = "String";
-  else if(JS_IsArray(ctx, val))
+  else if(js_is_array(ctx, val))
     ret = "Array";
   else if(JS_IsObject(val))
     ret = "Object";
@@ -332,7 +334,7 @@ jsrt::eval_file(const char* filename, int module) {
     exit(1);
   }
   if(module < 0)
-    module = (has_suffix(filename, ".mjs") || JS_DetectModule((const char*)buf, buf_len));
+    module = (str_end(filename, ".mjs") || JS_DetectModule((const char*)buf, buf_len));
 
   eval_flags = module ? JS_EVAL_TYPE_MODULE : JS_EVAL_TYPE_GLOBAL;
 

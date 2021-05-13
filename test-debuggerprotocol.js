@@ -196,7 +196,8 @@ function ArrayBufToHex(buf, numBytes = 8) {
   if(typeof buf == 'object' && buf != null && buf instanceof ArrayBuffer) {
     let arr = MakeArray(buf, numBytes);
     return arr.reduce((s, code) =>
-        (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
+        (s != '' ? s + ' ' : '') +
+        ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
       ''
     );
   }

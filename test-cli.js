@@ -1,12 +1,12 @@
 import Util from './lib/util.js';
-import { Rect } from 'rect';
-import { Point } from 'point';
-import { Size } from 'size';
-import { Mat } from 'mat';
-import { PointIterator } from 'point-iterator';
-import { Contour } from 'contour';
-import { Line } from 'line';
-import { Draw, drawLine, drawCircle } from 'draw';
+import { Rect } from 'opencv';
+import { Point } from 'opencv';
+import { Size } from 'opencv';
+import { Mat } from 'opencv';
+import { PointIterator } from 'opencv';
+import { Contour } from 'opencv';
+import { Line } from 'opencv';
+import { Draw, drawLine, drawCircle } from 'opencv';
 import ConsoleSetup from './lib/consoleSetup.js';
 
 import inspect from './lib/objectInspect.js';
@@ -41,7 +41,12 @@ async function main(...args) {
 
   let ct1 = new Contour();
   let ct2 = new Contour();
-  let pl1 = [new Point(0, 0), new Point(40, 0), new Point(40, 20), new Point(0, 20)];
+  let pl1 = [
+    new Point(0, 0),
+    new Point(40, 0),
+    new Point(40, 20),
+    new Point(0, 20)
+  ];
   let pl2 = pl1.map(({ x, y }) => new Point(x + 100, y + 50));
   console.log('pl1:', pl1);
   console.log('pl2:', pl2);

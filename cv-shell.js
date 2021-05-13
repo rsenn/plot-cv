@@ -106,7 +106,9 @@ async function main(...args) {
   repl.history_set(JSON.parse(std.loadFile(histfile) || '[]'));
 
   Util.atexit(() => {
-    let hist = repl.history_get().filter((item, i, a) => a.lastIndexOf(item) == i);
+    let hist = repl
+      .history_get()
+      .filter((item, i, a) => a.lastIndexOf(item) == i);
 
     filesystem.writeFile(histfile, JSON.stringify(hist, null, 2));
 

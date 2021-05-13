@@ -108,8 +108,7 @@ Tracker::process(const Mat frame, Stats& stats) {
     drawBoundingBox(frame_with_bb, new_bb);
   }
   Mat res;
-  drawMatches(
-      first_frame, inliers1, frame_with_bb, inliers2, inlier_matches, res, Scalar(255, 0, 0), Scalar(255, 0, 0));
+  drawMatches(first_frame, inliers1, frame_with_bb, inliers2, inlier_matches, res, Scalar(255, 0, 0), Scalar(255, 0, 0));
   return res;
 }
 } // namespace example

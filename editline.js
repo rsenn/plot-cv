@@ -9,9 +9,15 @@ export const prompt_len = dlsym('prompt_len', libeditline);
 export const rl_attempted_completion_function = dlsym('rl_attempted_completion_function',
   libeditline
 );
-export const rl_attempted_completion_over = dlsym('rl_attempted_completion_over', libeditline);
-export const rl_completion_entry_function = dlsym('rl_completion_entry_function', libeditline);
-export const rl_deprep_term_function = dlsym('rl_deprep_term_function', libeditline);
+export const rl_attempted_completion_over = dlsym('rl_attempted_completion_over',
+  libeditline
+);
+export const rl_completion_entry_function = dlsym('rl_completion_entry_function',
+  libeditline
+);
+export const rl_deprep_term_function = dlsym('rl_deprep_term_function',
+  libeditline
+);
 export const rl_end = dlsym('rl_end', libeditline);
 export const rl_eof = dlsym('rl_eof', libeditline);
 export const rl_erase = dlsym('rl_erase', libeditline);
@@ -26,7 +32,9 @@ export const rl_mark = dlsym('rl_mark', libeditline);
 export const rl_meta_chars = dlsym('rl_meta_chars', libeditline);
 export const rl_outstream = dlsym('rl_outstream', libeditline);
 export const rl_point = dlsym('rl_point', libeditline);
-export const rl_prep_term_function = dlsym('rl_prep_term_function', libeditline);
+export const rl_prep_term_function = dlsym('rl_prep_term_function',
+  libeditline
+);
 export const rl_prompt = dlsym('rl_prompt', libeditline);
 export const rl_quit = dlsym('rl_quit', libeditline);
 export const rl_readline_name = dlsym('rl_readline_name', libeditline);
@@ -38,7 +46,9 @@ function el_find_word() {
 }
 
 /* void el_print_columns(int ac, char** av)  */
-define('el_print_columns', dlsym('el_print_columns', libeditline), null, 'void', 'int', 'void *');
+define('el_print_columns', dlsym('el_print_columns',
+  libeditline
+), null, 'void', 'int', 'void *');
 function el_print_columns(ac, av) {
   return call('el_print_columns', ac, av);
 }
@@ -56,7 +66,9 @@ function el_del_char() {
 }
 
 /* enum el_status_t el_bind_key(int key, el_keymap_func_t* func)  */
-define('el_bind_key', dlsym('el_bind_key', libeditline), null, 'int', 'int', 'void *');
+define('el_bind_key', dlsym('el_bind_key',
+  libeditline
+), null, 'int', 'int', 'void *');
 function el_bind_key(key, func) {
   return call('el_bind_key', key, func);
 }
@@ -82,13 +94,17 @@ function el_prev_hist() {
 }
 
 /* char* rl_complete(char* token, int* match)  */
-define('rl_complete', dlsym('rl_complete', libeditline), null, 'char *', 'char *', 'void *');
+define('rl_complete', dlsym('rl_complete',
+  libeditline
+), null, 'char *', 'char *', 'void *');
 function rl_complete(token, match) {
   return call('rl_complete', token, match);
 }
 
 /* int rl_list_possib(char* token, char*** av)  */
-define('rl_list_possib', dlsym('rl_list_possib', libeditline), null, 'int', 'char *', 'void *');
+define('rl_list_possib', dlsym('rl_list_possib',
+  libeditline
+), null, 'int', 'char *', 'void *');
 function rl_list_possib(token, av) {
   return call('rl_list_possib', token, av);
 }
@@ -116,7 +132,9 @@ function rl_initialize() {
 }
 
 /* void rl_reset_terminal(const char* terminal_name)  */
-define('rl_reset_terminal', dlsym('rl_reset_terminal', libeditline), null, 'void', 'void *');
+define('rl_reset_terminal', dlsym('rl_reset_terminal',
+  libeditline
+), null, 'void', 'void *');
 function rl_reset_terminal(terminal_name) {
   return call('rl_reset_terminal', terminal_name);
 }
@@ -134,37 +152,49 @@ function rl_save_prompt() {
 }
 
 /* void rl_restore_prompt()  */
-define('rl_restore_prompt', dlsym('rl_restore_prompt', libeditline), null, 'void');
+define('rl_restore_prompt', dlsym('rl_restore_prompt',
+  libeditline
+), null, 'void');
 function rl_restore_prompt() {
   return call('rl_restore_prompt');
 }
 
 /* void rl_set_prompt(const char* prompt)  */
-define('rl_set_prompt', dlsym('rl_set_prompt', libeditline), null, 'void', 'void *');
+define('rl_set_prompt', dlsym('rl_set_prompt',
+  libeditline
+), null, 'void', 'void *');
 function rl_set_prompt(prompt) {
   return call('rl_set_prompt', prompt);
 }
 
 /* void rl_clear_message()  */
-define('rl_clear_message', dlsym('rl_clear_message', libeditline), null, 'void');
+define('rl_clear_message', dlsym('rl_clear_message',
+  libeditline
+), null, 'void');
 function rl_clear_message() {
   return call('rl_clear_message');
 }
 
 /* void rl_forced_update_display()  */
-define('rl_forced_update_display', dlsym('rl_forced_update_display', libeditline), null, 'void');
+define('rl_forced_update_display', dlsym('rl_forced_update_display',
+  libeditline
+), null, 'void');
 function rl_forced_update_display() {
   return call('rl_forced_update_display');
 }
 
 /* void rl_prep_terminal(int meta_flag)  */
-define('rl_prep_terminal', dlsym('rl_prep_terminal', libeditline), null, 'void', 'int');
+define('rl_prep_terminal', dlsym('rl_prep_terminal',
+  libeditline
+), null, 'void', 'int');
 function rl_prep_terminal(meta_flag) {
   return call('rl_prep_terminal', meta_flag);
 }
 
 /* void rl_deprep_terminal()  */
-define('rl_deprep_terminal', dlsym('rl_deprep_terminal', libeditline), null, 'void');
+define('rl_deprep_terminal', dlsym('rl_deprep_terminal',
+  libeditline
+), null, 'void');
 function rl_deprep_terminal() {
   return call('rl_deprep_terminal');
 }
@@ -176,19 +206,25 @@ function rl_getc() {
 }
 
 /* int rl_insert_text(const char* text)  */
-define('rl_insert_text', dlsym('rl_insert_text', libeditline), null, 'int', 'void *');
+define('rl_insert_text', dlsym('rl_insert_text',
+  libeditline
+), null, 'int', 'void *');
 function rl_insert_text(text) {
   return call('rl_insert_text', text);
 }
 
 /* int rl_refresh_line(int ignore1, int ignore2)  */
-define('rl_refresh_line', dlsym('rl_refresh_line', libeditline), null, 'int', 'int', 'int');
+define('rl_refresh_line', dlsym('rl_refresh_line',
+  libeditline
+), null, 'int', 'int', 'int');
 function rl_refresh_line(ignore1, ignore2) {
   return call('rl_refresh_line', ignore1, ignore2);
 }
 
 /* rl_getc_func_t* rl_set_getc_func(rl_getc_func_t* func)  */
-define('rl_set_getc_func', dlsym('rl_set_getc_func', libeditline), null, 'void *', 'void *');
+define('rl_set_getc_func', dlsym('rl_set_getc_func',
+  libeditline
+), null, 'void *', 'void *');
 function rl_set_getc_func(func) {
   return call('rl_set_getc_func', func);
 }
@@ -218,7 +254,9 @@ function rl_callback_handler_install(prompt, lhandler) {
 }
 
 /* void rl_callback_read_char()  */
-define('rl_callback_read_char', dlsym('rl_callback_read_char', libeditline), null, 'void');
+define('rl_callback_read_char', dlsym('rl_callback_read_char',
+  libeditline
+), null, 'void');
 function rl_callback_read_char() {
   return call('rl_callback_read_char');
 }

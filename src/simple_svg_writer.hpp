@@ -415,8 +415,7 @@ public:
 class Layer : public GroupBase {
 public:
   Layer() : GroupBase("g", {{"inkscape:groupmode", std::string("layer")}}) {}
-  Layer(const std::string& name)
-      : GroupBase("g", {{"inkscape:label", name}, {"inkscape:groupmode", std::string("layer")}}) {}
+  Layer(const std::string& name) : GroupBase("g", {{"inkscape:label", name}, {"inkscape:groupmode", std::string("layer")}}) {}
   virtual ~Layer() override {}
 
   friend std::ostream&

@@ -1246,9 +1246,7 @@ CvVideoWriter_GStreamer::close_() {
       bus.attach(gst_element_get_bus(pipeline));
       if(bus) {
         GSafePtr<GstMessage> msg;
-        msg.attach(gst_bus_timed_pop_filtered(bus,
-                                              GST_CLOCK_TIME_NONE,
-                                              (GstMessageType)(GST_MESSAGE_ERROR | GST_MESSAGE_EOS)));
+        msg.attach(gst_bus_timed_pop_filtered(bus, GST_CLOCK_TIME_NONE, (GstMessageType)(GST_MESSAGE_ERROR | GST_MESSAGE_EOS)));
         if(!msg || GST_MESSAGE_TYPE(msg.get()) == GST_MESSAGE_ERROR) {
           CV_WARN("Error during VideoWriter finalization");
           handleMessage(pipeline);
@@ -1347,8 +1345,7 @@ CvVideoWriter_GStreamer::filenameToMimetype(const char* filename) {
  *
  */
 bool
-CvVideoWriter_GStreamer::open(
-    const std::string& filename, int fourcc, double fps, const cv::Size& frameSize, bool is_color) {
+CvVideoWriter_GStreamer::open(const std::string& filename, int fourcc, double fps, const cv::Size& frameSize, bool is_color) {
   // check arguments
   CV_Assert(!filename.empty());
   CV_Assert(fps > 0);
@@ -1874,9 +1871,7 @@ static const OpenCV_VideoIO_Plugin_API_preview plugin_api_v0 = {{sizeof(OpenCV_V
 } // namespace cv
 
 const OpenCV_VideoIO_Plugin_API_preview*
-opencv_videoio_plugin_init_v0(int requested_abi_version,
-                              int requested_api_version,
-                              void* /*reserved=NULL*/) CV_NOEXCEPT {
+opencv_videoio_plugin_init_v0(int requested_abi_version, int requested_api_version, void* /*reserved=NULL*/) CV_NOEXCEPT {
   if(requested_abi_version != 0)
     return NULL;
   if(requested_api_version != 0)

@@ -1,18 +1,19 @@
 /* Worker code for test_worker.js */
 import * as std from 'std';
 import * as os from 'os';
-import * as cv from 'cv';
+import * as cv from 'opencv';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { Console } from 'console';
 import { Pipeline, Processor } from './cvPipeline.js';
-import { TickMeter } from 'utility';
+import { TickMeter } from 'opencv';
 
 var parent = os.Worker.parent;
 
 var configFile = 'test-opencv.config.json';
 
 function SaveConfig(configObj) {
-  configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v]));
+  configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v])
+  );
   let file = std.open(configFile, 'w+b');
   file.puts(JSON.stringify(configObj, null, 2) + '\n');
   file.close();

@@ -103,8 +103,7 @@ ovxDemo(std::string inputPath, UserMemoryMode mode) {
     } else { // if (mode == MAP_TO_VX)
       // create vx_image based on user data, no copying required
       output = cv::Mat(height, width, CV_8U, cv::Scalar(0));
-      ivxResult =
-          Image::createFromHandle(context, Image::matTypeToFormat(CV_8U), Image::createAddressing(output), output.data);
+      ivxResult = Image::createFromHandle(context, Image::matTypeToFormat(CV_8U), Image::createAddressing(output), output.data);
     }
 
     Graph graph = createProcessingGraph(ivxImage, ivxResult);

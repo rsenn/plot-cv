@@ -1,1 +1,2 @@
-console.log(...cols.map((col, i) => (col + '').replaceAll('\n', '\\n').padEnd(colSizes[i])));
+if(!/\//.test(r)) r = './' + r;
+let { frameShow = 1, paramIndex = 0 } = config;

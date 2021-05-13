@@ -1181,8 +1181,7 @@ TEST(FarnebackOpticalFlow) {
     for(int fastPyramids = 0; fastPyramids < 2; ++fastPyramids) {
       for(int useGaussianBlur = 0; useGaussianBlur < 2; ++useGaussianBlur) {
 
-        SUBTEST << "dataset=" << datasets[i] << ", fastPyramids=" << fastPyramids
-                << ", useGaussianBlur=" << useGaussianBlur;
+        SUBTEST << "dataset=" << datasets[i] << ", fastPyramids=" << fastPyramids << ", useGaussianBlur=" << useGaussianBlur;
         Mat frame0 = imread(abspath(datasets[i] + "1.png"), IMREAD_GRAYSCALE);
         Mat frame1 = imread(abspath(datasets[i] + "2.png"), IMREAD_GRAYSCALE);
         if(frame0.empty())

@@ -99,8 +99,8 @@ main(int argc, char** argv) {
   cout << "\n--> Press 'q' to quit. \n\n" << endl;
 
   /* print the width and height of the frame, check this is set up the same on the receive side */
-  cout << "\n--> Transferring  (" << img0.cols << "x" << img0.rows << ")  images to the:  " << server_ip << ":"
-       << server_port << endl;
+  cout << "\n--> Transferring  (" << img0.cols << "x" << img0.rows << ")  images to the:  " << server_ip << ":" << server_port
+       << endl;
 
   /* Didn't compile with the namedwindow options because we don't have GTK.
   cv::namedWindow("stream_client", cv::WINDOW_AUTOSIZE);
@@ -126,8 +126,8 @@ main(int argc, char** argv) {
     // chekc the speed by calculating the mean speed of all iterations
     AvrgTime.first += ((double)getTickCount() - tick) / getTickFrequency();
     AvrgTime.second++;
-    cout << "\rTime detection=" << 1000 * AvrgTime.first / AvrgTime.second
-         << " milliseconds nmarkers=" << TheMarkers.size() << std::flush;
+    cout << "\rTime detection=" << 1000 * AvrgTime.first / AvrgTime.second << " milliseconds nmarkers=" << TheMarkers.size()
+         << std::flush;
 
     // print marker info and draw the markers in image
     TheInputImage.copyTo(TheInputImageCopy);

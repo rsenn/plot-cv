@@ -28,8 +28,7 @@ Scheduler::add_event(Event* input_event) {
 
   bool element_inserted = false;
 
-  for(list<Event*>::const_iterator iterator = event_schedule.begin(), end = event_schedule.end(); iterator != end;
-      iterator++) {
+  for(list<Event*>::const_iterator iterator = event_schedule.begin(), end = event_schedule.end(); iterator != end; iterator++) {
     Event* temp = *iterator;
     if(temp->get_execution_deadline() >= input_event->get_execution_deadline()) {
       continue;
@@ -58,8 +57,7 @@ Scheduler::remove_event(long int eventID) {
 
   bool element_removed = false;
 
-  for(list<Event*>::const_iterator iterator = event_schedule.begin(), end = event_schedule.end(); iterator != end;
-      iterator++) {
+  for(list<Event*>::const_iterator iterator = event_schedule.begin(), end = event_schedule.end(); iterator != end; iterator++) {
     Event* temp = *iterator;
     if(temp->get_eventID() == eventID) {
       event_schedule.erase(iterator);
@@ -166,8 +164,7 @@ Scheduler::print_event_schedule() {
   int event_num = 0;
   Event* temp = NULL;
 
-  for(list<Event*>::const_iterator iterator = event_schedule.begin(), end = event_schedule.end(); iterator != end;
-      iterator++) {
+  for(list<Event*>::const_iterator iterator = event_schedule.begin(), end = event_schedule.end(); iterator != end; iterator++) {
     temp = *iterator;
     cout << "E#" << event_num << endl;
     cout << "E_ADDR=" << temp << endl;
@@ -224,8 +221,7 @@ Scheduler::check_overdueEvents() { // Scans event_schedule and returns the first
   time_t current_time;
   Event* temp = NULL;
 
-  for(list<Event*>::const_reverse_iterator iterator = event_schedule.rbegin(); iterator != event_schedule.rend();
-      iterator++) {
+  for(list<Event*>::const_reverse_iterator iterator = event_schedule.rbegin(); iterator != event_schedule.rend(); iterator++) {
 
     time(&current_time);
 
@@ -264,8 +260,8 @@ Scheduler::process_overdueEvents(Event* input_event) {
     } else {    // If Event not expired, execute.
       cout << "Removing event with eventID=" << input_event->get_eventID() << "..." << endl;
       this->remove_event(input_event->get_eventID());
-      cout << "Beginning execution of [" << input_event->get_eventName()
-           << "] with eventID=" << input_event->get_eventID() << "...\n";
+      cout << "Beginning execution of [" << input_event->get_eventName() << "] with eventID=" << input_event->get_eventID()
+           << "...\n";
       input_event->execute_event(this->camera, this->camera_index, this->save_directory);
       cout << "Execution of [" << input_event->get_eventName() << "] with eventID=" << input_event->get_eventID()
            << " has completed.\n";
@@ -293,8 +289,7 @@ int
 Scheduler::display_camera_feed() {
 
   if(!this->camera.isOpened()) {
-    cout << "Error: Scheduler::display_camera_feed() could not access camera at camera_index= " << this->camera_index
-         << endl;
+    cout << "Error: Scheduler::display_camera_feed() could not access camera at camera_index= " << this->camera_index << endl;
     return -1;
   } else {
     Mat frame;
@@ -355,10 +350,8 @@ Scheduler::scheduler_execution_cycle() {
     this->responder->set_colour_detected(true);
   }
 
-  secondary_cascade_return_pkg pkg = this->frame_processor->frame_humanface_analysis(frame_temp,
-                                                                                     this->camera_index,
-                                                                                     this->save_directory,
-                                                                                     this->camera_index);
+  secondary_cascade_return_pkg pkg =
+      this->frame_processor->frame_humanface_analysis(frame_temp, this->camera_index, this->save_directory, this->camera_index);
   int cascade_detection_code = pkg.ret_val;
 
   if(cascade_detection_code == 2) {

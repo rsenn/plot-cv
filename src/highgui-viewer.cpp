@@ -1,8 +1,8 @@
 #include "plot-cv.hpp"
 #include "color.hpp"
 #include "js.hpp"
-#include "line.hpp"
-#include "geometry.hpp"
+#include "../qjs-opencv/line.hpp"
+#include "../qjs-opencv/geometry.hpp"
 #include "matrix.hpp"
 
 #include <opencv2/core.hpp>
@@ -89,13 +89,11 @@ create_trackbar(const char* name,
   if(caption == nullptr)
     caption = name;
   trackbars[barName] = caption;
-  return cv::createTrackbar(
-      caption, windowName, value, count, onChange, const_cast<void*>(static_cast<const void*>(name)));
+  return cv::createTrackbar(caption, windowName, value, count, onChange, const_cast<void*>(static_cast<const void*>(name)));
 }
 
 int
-create_trackbar(
-    const char* name, const std::string& window, int* value, int count, cv::TrackbarCallback onChange, int propId) {
+create_trackbar(const char* name, const std::string& window, int* value, int count, cv::TrackbarCallback onChange, int propId) {
   std::string barName = name;
   std::string windowName = views[window] ? window : "imgOriginal";
   trackbars[barName] = name;
@@ -189,8 +187,7 @@ main(int argc, char* argv[]) {
 
   std::cerr << "num files: " << arguments.size() << std::endl;
   std::cerr << "files 0.." << end << ": "
-            << implode(std::vector<std::string>(arguments.cbegin(), arguments.cbegin() + end), ", ", range)
-            << std::endl;
+            << implode(std::vector<std::string>(arguments.cbegin(), arguments.cbegin() + end), ", ", range) << std::endl;
 
   num_images = arguments.size();
 
@@ -274,8 +271,7 @@ main(int argc, char* argv[]) {
   create_trackbar(
       "morphology_kernel_size", "imgMorphology", &config.morphology_kernel_size, 2, trackbar, "Morphology kernel size");
   create_trackbar("morphology_enable", "imgMorphology", &morphology_enable, 1, trackbar, "Morphology enable");
-  create_trackbar(
-      "morphology_operator", "imgMorphology", &config.morphology_operator, 3, trackbar, "Morphology operator");
+  create_trackbar("morphology_operator", "imgMorphology", &config.morphology_operator, 3, trackbar, "Morphology operator");
   create_trackbar("blur_sigma", "imgBlurred", &config.blur_sigma, 300, trackbar, "blur sigma");
   create_trackbar("blur_kernel_size", "imgBlurred", &config.blur_kernel_size, 2, trackbar, "Blur kernel size");
   create_trackbar("hough_rho", "imgVector", &config.hough_rho, 10, trackbar, "Hough rho");

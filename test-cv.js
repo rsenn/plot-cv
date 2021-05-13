@@ -1,12 +1,12 @@
-import { Point } from 'point';
-import { Size } from 'size';
-import { Rect } from 'rect';
-import { Mat } from 'mat';
-import { UMat } from 'umat';
-import * as cv from 'cv';
-import { Line } from 'line';
-import { CLAHE } from 'clahe';
-import * as draw from 'draw';
+import { Point } from 'opencv';
+import { Size } from 'opencv';
+import { Rect } from 'opencv';
+import { Mat } from 'opencv';
+import { UMat } from 'opencv';
+import * as cv from 'opencv';
+import { Line } from 'opencv';
+import { CLAHE } from 'opencv';
+import * as draw from 'opencv';
 import inspect from './lib/objectInspect.js';
 import path from './lib/path.js';
 import PortableFileSystem from './lib/filesystem.js';
@@ -36,7 +36,8 @@ function WriteImage(name, mat) {
 }
 
 function SaveConfig(configObj) {
-  configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v]));
+  configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v])
+  );
 
   return filesystem.writeFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'),
     JSON.stringify(configObj, null, 2) + '\n'
@@ -44,7 +45,9 @@ function SaveConfig(configObj) {
 }
 
 function LoadConfig() {
-  let str = filesystem.readFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'), 'utf-8');
+  let str = filesystem.readFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'),
+    'utf-8'
+  );
   let configObj = JSON.parse(str ?? '{}');
 
   configObj = Object.fromEntries(Object.entries(configObj)
@@ -79,7 +82,16 @@ async function main(...args) {
   let image;
 
   let globalThis = globalThis;
-  const moduleNames = ['Rect', 'Point', 'Size', 'Line', 'Mat', 'Contour', 'PointIterator', 'Draw'];
+  const moduleNames = [
+    'Rect',
+    'Point',
+    'Size',
+    'Line',
+    'Mat',
+    'Contour',
+    'PointIterator',
+    'Draw'
+  ];
   for(let moduleName of moduleNames)
     Util.tryCatch(() => eval(`globalThis[moduleName] = ${moduleName};`));
   let ctors = new Map(moduleNames.map(name => [name, globalThis[name]]));
@@ -169,26 +181,34 @@ async function main(...args) {
     let range = mat.rowRange(2, 8);
     i = 0;
     for(let [[row, col], value] of range) {
-      console.log(`range[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`
+      console.log(`range[${i++}] row=${row} col=${col} value=0x${(
+          '00000000' + value.toString(16)
+        ).slice(-8)}`
       );
     }
     i = 0;
     if(globalThis.Rect) {
       let roi = mat.roi(rr);
       for(let [[row, col], value] of roi) {
-        console.log(`roi[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`
+        console.log(`roi[${i++}] row=${row} col=${col} value=0x${(
+            '00000000' + value.toString(16)
+          ).slice(-8)}`
         );
       }
       for(let r = 0; r < roi.rows; r++)
         for(let c = 0; c < roi.cols; c++) {
           const v = 0x7f000000 | ((r << 16) | c);
-          console.log(`roi.set(${r},${c},0x${v.toString(16)})`, roi.set(r, c, v));
+          console.log(`roi.set(${r},${c},0x${v.toString(16)})`,
+            roi.set(r, c, v)
+          );
         }
       roi.setTo(...Util.repeat(4 * 5, 0xffffffff));
     }
     i = 0;
     for(let [[row, col], value] of mat) {
-      console.log(`mat[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`
+      console.log(`mat[${i++}] row=${row} col=${col} value=0x${(
+          '00000000' + value.toString(16)
+        ).slice(-8)}`
       );
     }
     let fmat = new Mat(new Size(10, 10), Mat.CV_32FC1);
@@ -200,7 +220,11 @@ async function main(...args) {
     }
   }
   if(globalThis.Line) {
-    let ll = [new Line(0, 0, 50, 50), new Line(50, 50, 50, 75), new Line(50, 75, 100, 75)];
+    let ll = [
+      new Line(0, 0, 50, 50),
+      new Line(50, 50, 50, 75),
+      new Line(50, 75, 100, 75)
+    ];
     for(let line of ll) {
       console.log('line:', line.x1, line.y1, line.x2, line.y2);
       const { a, b } = line;
@@ -217,7 +241,9 @@ async function main(...args) {
         [...line.toPoints()].map(p => Util.className(p))
       );
       console.log('toString(): ', line.toString());
-      console.log('new Line(50,50,320-50,240-25): ', new Line(50, 50, 320 - 50, 240 - 25));
+      console.log('new Line(50,50,320-50,240-25): ',
+        new Line(50, 50, 320 - 50, 240 - 25)
+      );
       let [x1, y1, x2, y2] = arr;
       console.log(`Line{${x1},${y1} ${x2},${y2}}`);
       for(let num of line) {

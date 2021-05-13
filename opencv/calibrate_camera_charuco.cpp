@@ -324,14 +324,8 @@ main(int argc, char* argv[]) {
   for(int i = 0; i < nFrames; i++) {
     // interpolate using camera parameters
     Mat currentCharucoCorners, currentCharucoIds;
-    aruco::interpolateCornersCharuco(allCorners[i],
-                                     allIds[i],
-                                     allImgs[i],
-                                     charucoboard,
-                                     currentCharucoCorners,
-                                     currentCharucoIds,
-                                     cameraMatrix,
-                                     distCoeffs);
+    aruco::interpolateCornersCharuco(
+        allCorners[i], allIds[i], allImgs[i], charucoboard, currentCharucoCorners, currentCharucoIds, cameraMatrix, distCoeffs);
 
     allCharucoCorners.push_back(currentCharucoCorners);
     allCharucoIds.push_back(currentCharucoIds);
@@ -344,18 +338,10 @@ main(int argc, char* argv[]) {
   }
 
   // calibrate camera using charuco
-  repError = aruco::calibrateCameraCharuco(allCharucoCorners,
-                                           allCharucoIds,
-                                           charucoboard,
-                                           imgSize,
-                                           cameraMatrix,
-                                           distCoeffs,
-                                           rvecs,
-                                           tvecs,
-                                           calibrationFlags);
+  repError = aruco::calibrateCameraCharuco(
+      allCharucoCorners, allCharucoIds, charucoboard, imgSize, cameraMatrix, distCoeffs, rvecs, tvecs, calibrationFlags);
 
-  bool saveOk =
-      saveCameraParams(outputFile, imgSize, aspectRatio, calibrationFlags, cameraMatrix, distCoeffs, repError);
+  bool saveOk = saveCameraParams(outputFile, imgSize, aspectRatio, calibrationFlags, cameraMatrix, distCoeffs, repError);
   if(!saveOk) {
     cerr << "Cannot save output file" << endl;
     return 0;

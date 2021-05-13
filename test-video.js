@@ -1,22 +1,14 @@
 import Util from './lib/util.js';
-//import ConsoleSetup from './lib/consoleSetup.js';
-import * as draw from 'draw';
 import * as std from 'std';
-import { Point } from 'point';
-import { Size } from 'size';
-import { Rect } from 'rect';
-import { Line } from 'line';
-import { TickMeter } from 'utility';
-import { VideoSource } from './cvVideo.js';
+import { Point, Size, Contour, Rect, Line, TickMeter, Mat, CLAHE, Draw } from 'opencv';
+import * as cv from 'opencv';
+import VideoSource from './cvVideo.js';
 import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './cvHighGUI.js';
 import { Alea } from './lib/alea.js';
 import { HSLA } from './lib/color.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
-import PortableFileSystem from './lib/filesystem.js';
-import { Mat as cvMat } from 'mat';
-import * as cv from 'cv';
+import * as fs from 'fs';
 import Console from 'console';
-import { CLAHE } from 'clahe';
 import { Pipeline, Processor } from './cvPipeline.js';
 
 let prng = new Alea(Date.now());
@@ -25,8 +17,9 @@ let filesystem;
 let rainbow;
 let zoom = 1;
 let debug = false;
+let basename = Util.getArgv()[1].replace(/\.js$/, '');
 
-const Mat =
+/*const Mat =
   debug == false
     ? cvMat
     : class Mat extends cvMat {
@@ -46,7 +39,7 @@ const Mat =
           let array = Mat.map(mat);
           return array.length ? array : null;
         }
-      };
+      };*/
 
 function Hierarchy(array) {
   if(array instanceof Int32Array)
@@ -69,33 +62,31 @@ Object.assign(Hierarchy.prototype, {
   });
 
 function SaveConfig(configObj) {
-  return filesystem.writeFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'),
-    JSON.stringify(configObj, null, 2) + '\n'
+  configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v])
+  );
+  let file = std.open(basename + '.config.json', 'w+b');
+  file.puts(JSON.stringify(configObj, null, 2) + '\n');
+  file.close();
+  console.log(`Saved config to '${basename + '.config.json'}'`,
+    inspect(configObj, { compact: false })
   );
 }
 
 function LoadConfig() {
-  let str = filesystem.readFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'), 'utf-8');
-  console.log('LoadConfig:', str);
-  return JSON.parse(str ?? '{}');
-}
+  let str = std.loadFile(basename + '.config.json');
+  let configObj = JSON.parse(str || '{}');
 
-function dumpMat(name, mat) {
-  console.log(`${name} =`,
-    Object.create(
-      Mat.prototype,
-      ['cols', 'rows', 'depth', 'channels', 'type' /*, 'dims'*/].reduce((acc, prop) => ({
-          ...acc,
-          [prop]: { value: mat[prop], enumerable: true }
-        }),
-        {}
-      )
-    )
+  configObj = Object.fromEntries(Object.entries(configObj)
+      .map(([k, v]) => [k, +v])
+      .filter(([k, v]) => !isNaN(v))
   );
+  console.log('LoadConfig:', inspect(configObj, { compact: false }));
+  return configObj;
 }
 
 function getConstants(names) {
-  return Object.fromEntries(names.map(name => [name, '0x' + cv[name].toString(16)]));
+  return Object.fromEntries(names.map(name => [name, '0x' + cv[name].toString(16)])
+  );
 }
 
 function findConstant(value, keyCond = k => /^CV/.test(k)) {
@@ -122,7 +113,7 @@ function getBitDepth(mat) {
 }
 
 const MakeMatFor = Util.weakMapper((...args) => new Mat(...args));
-
+/*
 const to32bit = (() => {
   const mapper = Util.weakMapper(() => new Mat());
   return function to32bit(mat) {
@@ -149,23 +140,13 @@ const to8bit = (() => {
   };
 })();
 
-const Grayscale = (() => {
-  const mapper = Util.weakMapper(() => [new Mat(), new Mat(), new Mat(), new Mat()],
-    new WeakMap(),
-    (obj, mat) => {
-      //console.log('Mat for ', obj, ' = ', mat);
-    }
-  );
-  return function Grayscale(mat) {
-    let channels = mapper(mat);
-    cv.cvtColor(mat, channels[0], cv.COLOR_BGR2Lab);
-    cv.split(channels[0], channels);
-    return channels[0];
-  };
-})();
-
 const getAlpha = (() => {
-  const mapper = Util.weakMapper(() => [new Mat(), new Mat(), new Mat(), new Mat()]);
+  const mapper = Util.weakMapper(() => [
+    new Mat(),
+    new Mat(),
+    new Mat(),
+    new Mat()
+  ]);
   return function getAlpha(mat) {
     let channels = mapper(mat);
     cv.split(mat, channels);
@@ -201,7 +182,7 @@ const toRGBA = (() => {
     return rgba;
   };
 })();
-
+*/
 function minMax(mat) {
   const ret = cv.minMaxLoc(mat);
   return [ret.minVal, ret.maxVal];
@@ -215,7 +196,12 @@ function modifierMap(keyCode) {
   ].map(([modifier, flag]) => [modifier, keyCode & flag ? 1 : 0]);
 }
 
-function drawContour(mat, contour, color, thickness = 1, lineType = cv.LINE_AA) {
+function drawContour(mat,
+  contour,
+  color,
+  thickness = 1,
+  lineType = cv.LINE_AA
+) {
   cv.drawContours(mat, [contour], 0, color, thickness, lineType);
 }
 
@@ -248,7 +234,10 @@ function* walkContours(hier, id) {
   }
 }
 
-function Profiler(name, ticks = () => cv.getTickCount(), freq = cv.getTickFrequency()) {
+function Profiler(name,
+  ticks = () => cv.getTickCount(),
+  freq = cv.getTickFrequency()
+) {
   let self,
     i = 0,
     prev,
@@ -294,13 +283,13 @@ function Profiler(name, ticks = () => cv.getTickCount(), freq = cv.getTickFreque
   return self;
 }
 
-async function main(...args) {
+function main(...args) {
   let start;
   let begin = hr();
   let running = true;
   let paused = false;
 
-  console = new Console({ colors: true, depth: 1 });
+  console = new Console({ colors: true, depth: 1, maxArrayLength: 30 });
 
   /* await ConsoleSetup({
     breakLength: 120,
@@ -308,7 +297,6 @@ async function main(...args) {
     multiline: 1,
     alignMap: true
   });*/
-  await PortableFileSystem(fs => (filesystem = fs));
 
   let opts = Util.getOpt({
       input: [true, (file, current) => [...(current || []), file], 'i'],
@@ -331,6 +319,7 @@ async function main(...args) {
         'd'
       ],
       size: [true, null, 's'],
+      trackbars: [false, null, 't'],
       'no-trackbars': [false, null, 'T'],
       '@': 'input,driver'
     },
@@ -346,7 +335,9 @@ async function main(...args) {
       .map(hue => new HSLA(hue, 100, 50))
       .map(h => h.toRGBA());
 
-  let win = new Window('gray', cv.WINDOW_NORMAL /*| cv.WINDOW_AUTOSIZE | cv.WINDOW_KEEPRATIO*/);
+  let win = new Window('gray',
+    cv.WINDOW_NORMAL /*| cv.WINDOW_AUTOSIZE | cv.WINDOW_KEEPRATIO*/
+  );
   //console.debug('Mouse :', { MouseEvents, MouseFlags });
 
   const printFlags = flags => [...Util.bitsToNames(MouseFlags)];
@@ -390,35 +381,36 @@ async function main(...args) {
   let contours, hier;
   let contoursDepth;
   let lines, circles;
+  let outputMat, outputName;
 
   let params = {
-    ksize: new NumericParam(config.ksize ?? 3, 1, 13, 2),
-    thresh1: new NumericParam(config.thresh1 ?? 40, 0, 100),
-    thresh2: new NumericParam(config.thresh2 ?? 90, 0, 100),
-    threshc: new NumericParam(config.threshc ?? 50, 0, 100),
-    angleResolution: new NumericParam(config.angleResolution ?? 2, 0.5, 180),
-    minLineLength: new NumericParam(config.minLineLength ?? 30, 0, 500),
-    maxLineGap: new NumericParam(config.maxLineGap ?? 10, 0, 500),
-    apertureSize: new NumericParam(config.apertureSize ?? 3, 3, 7, 2),
-    L2gradient: new NumericParam(config.L2gradient ?? 0, 0, 1),
-    dilations: new NumericParam(config.dilations ?? 0, 0, 10),
-    erosions: new NumericParam(config.erosions ?? 0, 0, 10),
-    mode: new EnumParam(config.mode ?? 3, [
+    ksize: new NumericParam(config.ksize || 3, 1, 13, 2),
+    thresh1: new NumericParam(config.thresh1 || 40, 0, 100),
+    thresh2: new NumericParam(config.thresh2 || 90, 0, 100),
+    threshc: new NumericParam(config.threshc || 50, 0, 100),
+    angleResolution: new NumericParam(config.angleResolution || 2, 0.5, 180),
+    minLineLength: new NumericParam(config.minLineLength || 30, 0, 500),
+    maxLineGap: new NumericParam(config.maxLineGap || 10, 0, 500),
+    apertureSize: new NumericParam(config.apertureSize || 3, 3, 7, 2),
+    L2gradient: new NumericParam(config.L2gradient || 0, 0, 1),
+    dilations: new NumericParam(config.dilations || 0, 0, 10),
+    erosions: new NumericParam(config.erosions || 0, 0, 10),
+    mode: new EnumParam(config.mode || 3, [
       'RETR_EXTERNAL',
       'RETR_LIST',
       'RETR_CCOMP',
       'RETR_TREE',
       'RETR_FLOODFILL'
     ]),
-    method: new EnumParam(config.method ?? 0, [
+    method: new EnumParam(config.method || 0, [
       'CHAIN_APPROX_NONE',
       'CHAIN_APPROX_SIMPLE',
       'CHAIN_APPROX_TC89_L1',
       'CHAIN_APPROX_TC89_L189_KCOS'
     ]),
-    maskColor: new EnumParam(config.maskColor ?? false, ['OFF', 'ON']),
-    lineWidth: new NumericParam(config.lineWidth ?? 1, 0, 10),
-    fontThickness: new NumericParam(config.fontThickness ?? 1, 0, 10)
+    maskColor: new EnumParam(config.maskColor || false, ['OFF', 'ON']),
+    lineWidth: new NumericParam(config.lineWidth || 1, 0, 10),
+    fontThickness: new NumericParam(config.fontThickness || 1, 0, 10)
   };
   let paramNav = new ParamNavigator(params, config.currentParam);
   let dummyArray = [0, 1, 2, 3, 4, 5, 6, 7];
@@ -428,10 +420,10 @@ async function main(...args) {
   console.log('video.size', video.size);
   console.log('win.imageRect (1)', win.imageRect);
 
-  if(!opts['no-trackbars']) {
-    await params.apertureSize.createTrackbar('apertureSize', win);
-    await params.thresh1.createTrackbar('thresh1', win);
-    await params.thresh2.createTrackbar('thresh2', win);
+  if(opts['trackbars']) {
+    params.apertureSize.createTrackbar('apertureSize', win);
+    params.thresh1.createTrackbar('thresh1', win);
+    params.thresh2.createTrackbar('thresh2', win);
     console.log('win.imageRect (2)', win.imageRect);
   }
 
@@ -443,8 +435,9 @@ async function main(...args) {
   //std.exit(0);
   rainbow = makeRainbow(256);
 
-  let outputMat, outputName;
-  let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS, new Size(3, 3));
+  let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS,
+    new Size(3, 3)
+  );
 
   let dst0Size, firstSize, videoSize;
 
@@ -466,20 +459,15 @@ async function main(...args) {
   let clahe = new CLAHE(4, new Size(8, 8));
 
   let pipeline = new Pipeline([
-      Processor(function AcquireFrame(src, dst) {
+      /*Processor*/ function AcquireFrame(src, dst) {
         const dstEmpty = dst.empty;
         if(dst.empty) {
-          // console.log(`AcquireFrame`, { src, dst });
-
           dst0Size = dst.size;
         }
-        /*console.log(`video`, video);
-        console.log(`video.read`, video.read);*/
         video.read(dst);
 
         if(videoSize === undefined || videoSize.empty) {
           videoSize = video.size.area ? video.size : dst.size;
-          //console.log(`videoSize`, videoSize);
         }
 
         if(dstEmpty) {
@@ -489,16 +477,24 @@ async function main(...args) {
         if(!videoSize.equals(dst.size))
           throw new Error(`AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`
           );
-      }),
-      Grayscale,
+      },
+      function Grayscale(src, dst) {
+        let channels = [];
+        cv.cvtColor(src, dst, cv.COLOR_BGR2Lab);
+        cv.split(dst, channels);
+        channels[0].copyTo(dst);
+      },
       Processor(function Norm(src, dst) {
-        // clahe.setClipLimit(4);
         clahe.apply(src, dst);
-        ///cv.equalizeHist(src,dst);
-        //cv.normalize(src, dst, 255, 0, cv.NORM_MINMAX);
       }),
       Processor(function Blur(src, dst) {
-        cv.GaussianBlur(src, dst, [+params.ksize, +params.ksize], 0, 0, cv.BORDER_REPLICATE);
+        cv.GaussianBlur(src,
+          dst,
+          [+params.ksize, +params.ksize],
+          0,
+          0,
+          cv.BORDER_REPLICATE
+        );
       }),
       Processor(function EdgeDetect(src, dst) {
         cv.Canny(src,
@@ -511,8 +507,18 @@ async function main(...args) {
         ////console.log('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);
       }),
       Processor(function Morph(src, dst) {
-        cv.dilate(src, dst, structuringElement, new Point(-1, -1), +params.dilations);
-        cv.erode(dst, dst, structuringElement, new Point(-1, -1), +params.erosions);
+        cv.dilate(src,
+          dst,
+          structuringElement,
+          new Point(-1, -1),
+          +params.dilations
+        );
+        cv.erode(dst,
+          dst,
+          structuringElement,
+          new Point(-1, -1),
+          +params.erosions
+        );
       }),
       Processor(function Contours(src, dst) {
         cv.findContours(src,
@@ -521,6 +527,9 @@ async function main(...args) {
           cv[params.mode],
           cv[params.method]
         );
+        /*console.log('contours.length', contours.length);
+        console.log('contours[0]', contours[0]);
+        console.log('contours[0].length', contours[0].length);*/
 
         //src.copyTo(dst);
         cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
@@ -552,8 +561,10 @@ async function main(...args) {
         //cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
       })
     ],
-    (mat, i, n) => {
+    (i, n) => {
       if(frameShow == i) {
+        let mat = pipeline.getImage(i);
+
         outputName = pipeline.processors[frameShow].name;
         outputMat = mat;
       }
@@ -563,7 +574,10 @@ async function main(...args) {
   );
 
   console.log(`pipeline.images = `, pipeline.images.map(Util.className));
-  console.log(`pipeline.images = { ` + pipeline.images.map(image => '\n  ' + image) + '\n}');
+  console.log(`pipeline.images = { ` +
+      pipeline.images.map(image => '\n  ' + image) +
+      '\n}'
+  );
 
   console.log('Pipeline processor names:', pipeline.names);
   //  video.seekMsecs(5000);
@@ -576,9 +590,12 @@ async function main(...args) {
 
   if(frameShow === undefined) frameShow = wrapIndex(-1);
 
-  console.log(`Trackbar 'frame' frameShow=${frameShow} pipeline.size - 1 = ${pipeline.size - 1}`);
+  console.log(`Trackbar 'frame' frameShow=${frameShow} pipeline.size - 1 = ${
+      pipeline.size - 1
+    }`
+  );
 
-  if(!opts['no-trackbars'])
+  if(opts['trackbars'])
     cv.createTrackbar('frame',
       'gray',
       frameShow,
@@ -599,7 +616,8 @@ async function main(...args) {
 
   const ClearSurface = mat => (mat.setTo([0, 0, 0, 0]), mat);
   const MakeSurface = () =>
-    Util.once((...args) => new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)),
+    Util.once((...args) =>
+        new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)),
       null,
       ClearSurface
     );
@@ -641,7 +659,10 @@ async function main(...args) {
           []
         );
         let ch = String.fromCodePoint(keyCode & 0xff);
-        console.log(`keypress [${modifierList}] 0x${(keyCode & ~0xd000).toString(16)} '${ch}'`);
+        console.log(`keypress [${modifierList}] 0x${(keyCode & ~0xd000).toString(
+            16
+          )} '${ch}'`
+        );
       }
 
       switch (key & 0xfff) {
@@ -697,7 +718,9 @@ async function main(...args) {
           video.se4t('pos_frames', 0);
           break;
         case 0xf57 /* end */:
-          video.set('pos_frames', video.get('frame_count') - Math.round(video.fps * 3));
+          video.set('pos_frames',
+            video.get('frame_count') - Math.round(video.fps * 3)
+          );
           break;
         case 0xf51: /* left */
         case 0xf53: /* right */
@@ -706,7 +729,13 @@ async function main(...args) {
           const method = keyCode & 0x1 ? 'Frames' : 'Msecs';
           const distance =
             (keyCode & 0x1 ? 1 : 1000) *
-            (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
+            (modifiers['ctrl']
+              ? 1000
+              : modifiers['shift']
+              ? 100
+              : modifiers['alt']
+              ? 1
+              : 10);
           const offset = keyCode & 0x2 ? +distance : -distance;
 
           //console.log('seek', { method, distance, offset });
@@ -717,11 +746,19 @@ async function main(...args) {
               method +
               ' ' +
               offset +
-              ` distance = ${distance} pos = ${pos} (${Util.roundTo(video.position('%'), 0.001)}%)`
+              ` distance = ${distance} pos = ${pos} (${Util.roundTo(video.position('%'),
+                0.001
+              )}%)`
           );
           break;
         }
         default: {
+          if(keyCode !== undefined && key != -1)
+            console.log('unhandled', console.config({ numberBase: 16 }), {
+              key,
+              keyCode,
+              modifiers
+            });
           break;
         }
       }
@@ -754,18 +791,37 @@ async function main(...args) {
       for(let line of lines) {
         const { a, b } = line;
         // console.log("line", {a,b});
-        draw.line(over, line.a, line.b, { r: 255, g: 0, b: 0, a: 255 }, 2, cv.LINE_AA, 0);
+        Draw.line(over,
+          line.a,
+          line.b,
+          { r: 255, g: 0, b: 0, a: 255 },
+          2,
+          cv.LINE_AA,
+          0
+        );
       }
-    } else if(frameShow == 0) {
-      cv.drawContours(over, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
+    } else if(frameShow == 0 || frameShow == 7) {
+      /*console.log('contours.length', contours.length);
+      console.log('contours[0]', contours[0]);
+      console.log('contours[0].length', contours[0].length); */
+      cv.drawContours(over,
+        contours,
+        -1,
+        { r: 0, g: 255, b: 0, a: 255 },
+        1,
+        cv.LINE_AA
+      );
     } else {
       let ids = [...getToplevel(hier)];
 
-      let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]])
+      let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [
+          id,
+          rainbow[Math.floor((i * 256) / (ids.length - 1))]
+        ])
       );
       let hierObj = new Hierarchy(hier);
 
-      console.log('hier', hierObj);
+      // console.log('hier', hierObj);
 
       /*   contours.forEach((contour, i) => {
         let p = [...getParents(hierObj, i)];
@@ -782,7 +838,8 @@ async function main(...args) {
 
     function drawParam(param, y, color) {
       const name = paramNav.nameOf(param);
-      const value = param.get() + (param.get() != (param | 0) + '' ? ` (${+param})` : '');
+      const value =
+        param.get() + (param.get() != (param | 0) + '' ? ` (${+param})` : '');
       const arrow = Number.isInteger(y) && paramNav.name == name ? '=>' : '  ';
       const text =
         `${arrow}${name}` +
@@ -790,14 +847,19 @@ async function main(...args) {
         ` = ${value}`;
       color = color || { r: 0xb7, g: 0x35, b: 255, a: 255 };
       y = tPos.y - 20 - (y | 0);
-      font.draw(over, text, [tPos.x, y], { r: 0, g: 0, b: 0, a: 255 }, params.fontThickness * 2);
+      font.draw(over,
+        text,
+        [tPos.x, y],
+        { r: 0, g: 0, b: 0, a: 255 },
+        params.fontThickness * 2
+      );
       font.draw(over, text, [tPos.x, y], color, +params.fontThickness);
     }
 
     //console.log('keyCode:', '0x' + Util.hex(keyCode & 0xff, 2));
     let elapsed = now - keyTime;
     let maskRect;
-    if((keyCode & 0b00111101) == 0b00111100 && elapsed < 2000) {
+    if((keyCode & 0x3d) == 0x3c && elapsed < 2000) {
       let { index, size } = paramNav;
       let start = 0;
       if(index > 4) {
@@ -817,7 +879,10 @@ async function main(...args) {
       for(let i = size - 1; i >= start; i--) {
         const pos = x(i);
         const [name, param] = paramNav.at(pos);
-        drawParam(param, y, paramNav.index == pos && { r: 255, g: 255, b: 0, a: 255 });
+        drawParam(param,
+          y,
+          paramNav.index == pos && { r: 255, g: 255, b: 0, a: 255 }
+        );
         y += 20;
       }
     } else {
@@ -825,7 +890,8 @@ async function main(...args) {
     }
 
     font.draw(over,
-      `#${frameShow + 1}/${pipeline.size}` + (outputName ? ` (${outputName})` : ''),
+      `#${frameShow + 1}/${pipeline.size}` +
+        (outputName ? ` (${outputName})` : ''),
       [5, 5 + tSize.y],
       /*0xffff00 ||*/ {
         r: 255,
@@ -836,14 +902,13 @@ async function main(...args) {
       +params.fontThickness
     );
 
-    resizeOutput();
-    //console.log('win.imageRect', win.imageRect);
+    //resizeOutput();
 
     //console.log("row 100:", [...over.row(100).values()]);
     const showOverlay = frameShow != pipeline.size - 1 || now - keyTime < 2000;
     if(maskRect && showOverlay) {
-      draw.rect(out, maskRect, [0, 0, 0, 255], -1);
-      draw.rect(out, maskRect, [255, 255, 255, 255], 1);
+      Draw.rect(out, maskRect, [0, 0, 0, 255], -1);
+      Draw.rect(out, maskRect, [255, 255, 255, 255], 1);
     }
     //let mask = toBGR(getAlpha(over));
     let composite = MakeMatFor(showOutput);
@@ -854,7 +919,7 @@ async function main(...args) {
 
     cv.addWeighted(out, 1, over, showOverlay ? 1 : 0, 0, composite);
     if(maskRect && showOverlay) {
-      draw.rect(composite, maskRect, [255, 255, 255, 255], 1);
+      Draw.rect(composite, maskRect, [255, 255, 255, 255], 1);
     }
 
     win.show(composite);
@@ -908,4 +973,11 @@ async function main(...args) {
   //  console.log('exit:', std.exit(0));
 }
 
-Util.callMain(main, true);
+try {
+  main(...scriptArgs.slice(1));
+} catch(error) {
+  console.log(`FAIL: ${error.message}\n${error.stack}`);
+  std.exit(1);
+} finally {
+  console.log('SUCCESS');
+}

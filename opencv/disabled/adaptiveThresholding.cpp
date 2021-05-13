@@ -62,8 +62,8 @@ adaptiveThreshold(unsigned char* input, unsigned char* bin) {
       count = (x2 - x1) * (y2 - y1);
 
       // I(x,y)=s(x2,y2)-s(x1,y2)-s(x2,y1)+s(x1,x1)
-      sum = integralImg[y2 * IMAGE_WIDTH + x2] - integralImg[y1 * IMAGE_WIDTH + x2] -
-            integralImg[y2 * IMAGE_WIDTH + x1] + integralImg[y1 * IMAGE_WIDTH + x1];
+      sum = integralImg[y2 * IMAGE_WIDTH + x2] - integralImg[y1 * IMAGE_WIDTH + x2] - integralImg[y2 * IMAGE_WIDTH + x1] +
+            integralImg[y1 * IMAGE_WIDTH + x1];
 
       if((long)(input[index] * count) < (long)(sum * (1.0 - T)))
         bin[index] = 0;

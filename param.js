@@ -1,23 +1,14 @@
 import Util from './lib/util.js';
-import { Repeater } from './lib/repeater/repeater.js';
+import * as cv from 'opencv';
 
 const MinMax = (min, max) => value => Math.max(min, Math.min(max, value));
 
 export class Param {
-  /*[Symbol.toPrimitive](hint) {
-  //console.log(`Param[Symbol.toPrimitive](${hint})`);
-    if(hint == 'number') return NumericParam.prototype.get.call(this);
-    else if(hint == 'string') return Param.prototype.valueOf.call(this) + '';
-    else return Param.prototype.valueOf.call(this);
-  }*/
-
   valueOf() {
-    return this.get(); //NumericParam.prototype.get.call(this);
-  }
+    if(typeof this.callback == 'function') this.callback.call(this, this);
 
-  /*  toPrimitive() {
-    return this.valueOf();
-  }*/
+    return this.get();
+  }
 
   [Symbol.toStringTag]() {
     return this.toString();
@@ -27,10 +18,10 @@ export class Param {
     return '' + this.valueOf();
   }
 
-  async createTrackbar(name, win) {
-    const cv = await import('cv.so');
-
-    cv.createTrackbar(name, win + '', this.value, this.max, value => this.set(value));
+  createTrackbar(name, win) {
+    cv.createTrackbar(name, win + '', this.value, this.max, value =>
+      this.set(value)
+    );
   }
 }
 
@@ -49,7 +40,8 @@ export class NumericParam extends Param {
 
   set(value) {
     const { clamp, min, step } = this;
-    let newValue = this.clamp(min + Util.roundTo(value - min, step, null, 'floor'));
+    let newValue = this.clamp(min + Util.roundTo(value - min, step, null, 'floor')
+    );
     console.log(`Param.set oldValue=${this.value} new=${newValue}`);
     this.value = newValue;
   }
@@ -123,7 +115,7 @@ export function ParamNavigator(map, index = 0) {
 
   const mod = Util.mod(map.size);
 
-  //console.log('map:', map);
+  // console.log('map:', map);
 
   Util.define(this, {
     map,
@@ -135,6 +127,14 @@ export function ParamNavigator(map, index = 0) {
     prev() {
       this.index = mod(this.index - 1);
       // console.log('ParamNavigator index =', this.index);
+    },
+    setCallback(fn, thisObj) {
+      const { map } = this;
+      thisObj ??= this;
+
+      for(let [name, param] of map)
+        param.callback = () => fn.call(thisObj, name, param);
+      return fn;
     }
   });
 }
@@ -149,8 +149,36 @@ Util.define(ParamNavigator.prototype, {
     const { map } = this;
     return [...map.entries()][index];
   },
+  indexOf(param) {
+    const { map } = this;
+    let i = 0;
+    for(let [name, value] of map) {
+      if(param === name || param === value) return i;
+      i++;
+    }
+    return -1;
+  },
+  nameOf(param) {
+    const { map } = this;
+    let i = 0;
+    for(let [name, value] of map) {
+      if(param === i || param === value) return name;
+      i++;
+    }
+    return -1;
+  },
+  get(name) {
+    const { map } = this;
+    return map.get(name);
+  },
   get current() {
     return this.at(this.index);
+  },
+  set current(index_or_name) {
+if(typeof index_or_name != 'number')
+  index_or_name = this.indexOf(index_or_name);
+if(index_or_name >= 0 && index_or_name < this.map.size)
+  this.index = index_or_name;
   },
   get name() {
     const { map, index } = this;

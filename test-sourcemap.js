@@ -22,7 +22,10 @@ async function main(...args) {
     ];
   console.log('args:', args);
   for(let arg of args) {
-    let map = SourceMap.fromMapFileComment(`//# sourceMappingURL=${arg} \r\n`, '.', filesystem);
+    let map = SourceMap.fromMapFileComment(`//# sourceMappingURL=${arg} \r\n`,
+      '.',
+      filesystem
+    );
 
     console.log('map.toBase64():', map.toBase64());
     console.log('map.toComment():', map.toComment());

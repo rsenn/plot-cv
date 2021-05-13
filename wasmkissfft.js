@@ -23,8 +23,13 @@ var ENVIRONMENT_IS_NODE = false;
 var ENVIRONMENT_IS_SHELL = false;
 ENVIRONMENT_IS_WEB = typeof window === 'object';
 ENVIRONMENT_IS_WORKER = typeof importScripts === 'function';
-ENVIRONMENT_IS_NODE = typeof process === 'object' && typeof require === 'function' && !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_WORKER;
-ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIRONMENT_IS_WORKER;
+ENVIRONMENT_IS_NODE =
+  typeof process === 'object' &&
+  typeof require === 'function' &&
+  !ENVIRONMENT_IS_WEB &&
+  !ENVIRONMENT_IS_WORKER;
+ENVIRONMENT_IS_SHELL =
+  !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIRONMENT_IS_WORKER;
 var scriptDirectory = '';
 function locateFile(path) {
   if(Module['locateFile']) {
@@ -146,8 +151,18 @@ if(ENVIRONMENT_IS_NODE) {
   };
 } else {
 }
-var out = Module['print'] || (typeof console !== 'undefined' ? console.log.bind(console) : typeof print !== 'undefined' ? print : null);
-var err = Module['printErr'] || (typeof printErr !== 'undefined' ? printErr : (typeof console !== 'undefined' && console.warn.bind(console)) || out);
+var out =
+  Module['print'] ||
+  (typeof console !== 'undefined'
+    ? console.log.bind(console)
+    : typeof print !== 'undefined'
+    ? print
+    : null);
+var err =
+  Module['printErr'] ||
+  (typeof printErr !== 'undefined'
+    ? printErr
+    : (typeof console !== 'undefined' && console.warn.bind(console)) || out);
 for(key in moduleOverrides) {
   if(moduleOverrides.hasOwnProperty(key)) {
     Module[key] = moduleOverrides[key];
@@ -200,7 +215,9 @@ function Pointer_stringify(ptr, length) {
     var MAX_CHUNK = 1024;
     var curr;
     while(length > 0) {
-      curr = String.fromCharCode.apply(String, HEAPU8.subarray(ptr, ptr + Math.min(length, MAX_CHUNK)));
+      curr = String.fromCharCode.apply(String,
+        HEAPU8.subarray(ptr, ptr + Math.min(length, MAX_CHUNK))
+      );
       ret = ret ? ret + curr : curr;
       ptr += MAX_CHUNK;
       length -= MAX_CHUNK;
@@ -209,7 +226,8 @@ function Pointer_stringify(ptr, length) {
   }
   return UTF8ToString(ptr);
 }
-var UTF8Decoder = typeof TextDecoder !== 'undefined' ? new TextDecoder('utf8') : undefined;
+var UTF8Decoder =
+  typeof TextDecoder !== 'undefined' ? new TextDecoder('utf8') : undefined;
 function UTF8ArrayToString(u8Array, idx) {
   var endPtr = idx;
   while(u8Array[endPtr]) ++endPtr;
@@ -243,7 +261,13 @@ function UTF8ArrayToString(u8Array, idx) {
             u0 = ((u0 & 3) << 24) | (u1 << 18) | (u2 << 12) | (u3 << 6) | u4;
           } else {
             u5 = u8Array[idx++] & 63;
-            u0 = ((u0 & 1) << 30) | (u1 << 24) | (u2 << 18) | (u3 << 12) | (u4 << 6) | u5;
+            u0 =
+              ((u0 & 1) << 30) |
+              (u1 << 24) |
+              (u2 << 18) |
+              (u3 << 12) |
+              (u4 << 6) |
+              u5;
           }
         }
       }
@@ -259,7 +283,8 @@ function UTF8ArrayToString(u8Array, idx) {
 function UTF8ToString(ptr) {
   return UTF8ArrayToString(HEAPU8, ptr);
 }
-var UTF16Decoder = typeof TextDecoder !== 'undefined' ? new TextDecoder('utf-16le') : undefined;
+var UTF16Decoder =
+  typeof TextDecoder !== 'undefined' ? new TextDecoder('utf-16le') : undefined;
 var WASM_PAGE_SIZE = 65536;
 var ASMJS_PAGE_SIZE = 16777216;
 var MIN_TOTAL_MEMORY = 16777216;
@@ -289,7 +314,10 @@ var DYNAMIC_BASE, DYNAMICTOP_PTR;
 STATIC_BASE = STATICTOP = STACK_BASE = STACKTOP = STACK_MAX = DYNAMIC_BASE = DYNAMICTOP_PTR = 0;
 staticSealed = false;
 function abortOnCannotGrowMemory() {
-  abort('Cannot enlarge memory arrays. Either (1) compile with  -s TOTAL_MEMORY=X  with X higher than the current value ' + TOTAL_MEMORY + ', (2) compile with  -s ALLOW_MEMORY_GROWTH=1  which allows increasing the size at runtime, or (3) if you want malloc to return NULL (0) instead of this abort, compile with  -s ABORTING_MALLOC=0 ');
+  abort('Cannot enlarge memory arrays. Either (1) compile with  -s TOTAL_MEMORY=X  with X higher than the current value ' +
+      TOTAL_MEMORY +
+      ', (2) compile with  -s ALLOW_MEMORY_GROWTH=1  which allows increasing the size at runtime, or (3) if you want malloc to return NULL (0) instead of this abort, compile with  -s ABORTING_MALLOC=0 '
+  );
 }
 if(!Module['reallocBuffer'])
   Module['reallocBuffer'] = function(size) {
@@ -322,7 +350,9 @@ function enlargeMemory() {
     if(TOTAL_MEMORY <= 536870912) {
       TOTAL_MEMORY = alignUp(2 * TOTAL_MEMORY, PAGE_MULTIPLE);
     } else {
-      TOTAL_MEMORY = Math.min(alignUp((3 * TOTAL_MEMORY + 2147483648) / 4, PAGE_MULTIPLE), LIMIT);
+      TOTAL_MEMORY = Math.min(alignUp((3 * TOTAL_MEMORY + 2147483648) / 4, PAGE_MULTIPLE),
+        LIMIT
+      );
     }
   }
   var replacement = Module['reallocBuffer'](TOTAL_MEMORY);
@@ -336,7 +366,8 @@ function enlargeMemory() {
 }
 var byteLength;
 try {
-  byteLength = Function.prototype.call.bind(Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, 'byteLength').get);
+  byteLength = Function.prototype.call.bind(Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, 'byteLength').get
+  );
   byteLength(new ArrayBuffer(4));
 } catch(e) {
   byteLength = function(buffer) {
@@ -345,12 +376,22 @@ try {
 }
 var TOTAL_STACK = Module['TOTAL_STACK'] || 5242880;
 var TOTAL_MEMORY = Module['TOTAL_MEMORY'] || 16777216;
-if(TOTAL_MEMORY < TOTAL_STACK) err('TOTAL_MEMORY should be larger than TOTAL_STACK, was ' + TOTAL_MEMORY + '! (TOTAL_STACK=' + TOTAL_STACK + ')');
+if(TOTAL_MEMORY < TOTAL_STACK)
+  err('TOTAL_MEMORY should be larger than TOTAL_STACK, was ' +
+      TOTAL_MEMORY +
+      '! (TOTAL_STACK=' +
+      TOTAL_STACK +
+      ')'
+  );
 if(Module['buffer']) {
   buffer = Module['buffer'];
 } else {
-  if(typeof WebAssembly === 'object' && typeof WebAssembly.Memory === 'function') {
-    Module['wasmMemory'] = new WebAssembly.Memory({ initial: TOTAL_MEMORY / WASM_PAGE_SIZE });
+  if(typeof WebAssembly === 'object' &&
+    typeof WebAssembly.Memory === 'function'
+  ) {
+    Module['wasmMemory'] = new WebAssembly.Memory({
+      initial: TOTAL_MEMORY / WASM_PAGE_SIZE
+    });
     buffer = Module['wasmMemory'].buffer;
   } else {
     buffer = new ArrayBuffer(TOTAL_MEMORY);
@@ -389,7 +430,8 @@ var runtimeInitialized = false;
 var runtimeExited = false;
 function preRun() {
   if(Module['preRun']) {
-    if(typeof Module['preRun'] == 'function') Module['preRun'] = [Module['preRun']];
+    if(typeof Module['preRun'] == 'function')
+      Module['preRun'] = [Module['preRun']];
     while(Module['preRun'].length) {
       addOnPreRun(Module['preRun'].shift());
     }
@@ -410,7 +452,8 @@ function exitRuntime() {
 }
 function postRun() {
   if(Module['postRun']) {
-    if(typeof Module['postRun'] == 'function') Module['postRun'] = [Module['postRun']];
+    if(typeof Module['postRun'] == 'function')
+      Module['postRun'] = [Module['postRun']];
     while(Module['postRun'].length) {
       addOnPostRun(Module['postRun'].shift());
     }
@@ -456,7 +499,9 @@ Module['preloadedImages'] = {};
 Module['preloadedAudios'] = {};
 var dataURIPrefix = 'data:application/octet-stream;base64,';
 function isDataURI(filename) {
-  return String.prototype.startsWith ? filename.startsWith(dataURIPrefix) : filename.indexOf(dataURIPrefix) === 0;
+  return String.prototype.startsWith
+    ? filename.startsWith(dataURIPrefix)
+    : filename.indexOf(dataURIPrefix) === 0;
 }
 function integrateWasmJS() {
   var wasmTextFile = 'wasmkissfft.wast';
@@ -472,12 +517,18 @@ function integrateWasmJS() {
     asmjsCodeFile = locateFile(asmjsCodeFile);
   }
   var wasmPageSize = 64 * 1024;
-  var info = { global: null, env: null, asm2wasm: asm2wasmImports, parent: Module };
+  var info = {
+    global: null,
+    env: null,
+    asm2wasm: asm2wasmImports,
+    parent: Module
+  };
   var exports = null;
   function mergeMemory(newBuffer) {
     var oldBuffer = Module['buffer'];
     if(newBuffer.byteLength < oldBuffer.byteLength) {
-      err('the new buffer in mergeMemory is smaller than the previous one. in native wasm, we should grow memory here');
+      err('the new buffer in mergeMemory is smaller than the previous one. in native wasm, we should grow memory here'
+      );
     }
     var oldView = new Int8Array(oldBuffer);
     var newView = new Int8Array(newBuffer);
@@ -503,7 +554,10 @@ function integrateWasmJS() {
     }
   }
   function getBinaryPromise() {
-    if(!Module['wasmBinary'] && (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) && typeof fetch === 'function') {
+    if(!Module['wasmBinary'] &&
+      (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) &&
+      typeof fetch === 'function'
+    ) {
       return fetch(wasmBinaryFile, { credentials: 'same-origin' })
         .then(function (response) {
           if(!response['ok']) {
@@ -562,8 +616,14 @@ function integrateWasmJS() {
           abort(reason);
         });
     }
-    if(!Module['wasmBinary'] && typeof WebAssembly.instantiateStreaming === 'function' && !isDataURI(wasmBinaryFile) && typeof fetch === 'function') {
-      WebAssembly.instantiateStreaming(fetch(wasmBinaryFile, { credentials: 'same-origin' }), info)
+    if(!Module['wasmBinary'] &&
+      typeof WebAssembly.instantiateStreaming === 'function' &&
+      !isDataURI(wasmBinaryFile) &&
+      typeof fetch === 'function'
+    ) {
+      WebAssembly.instantiateStreaming(fetch(wasmBinaryFile, { credentials: 'same-origin' }),
+        info
+      )
         .then(receiveInstantiatedSource)
         .catch(function (reason) {
           err('wasm streaming compile failed: ' + reason);
@@ -609,7 +669,9 @@ function integrateWasmJS() {
       var TABLE_SIZE = Module['wasmTableSize'];
       if(TABLE_SIZE === undefined) TABLE_SIZE = 1024;
       var MAX_TABLE_SIZE = Module['wasmMaxTableSize'];
-      if(typeof WebAssembly === 'object' && typeof WebAssembly.Table === 'function') {
+      if(typeof WebAssembly === 'object' &&
+        typeof WebAssembly.Table === 'function'
+      ) {
         if(MAX_TABLE_SIZE !== undefined) {
           env['table'] = new WebAssembly.Table({
             initial: TABLE_SIZE,
@@ -617,7 +679,10 @@ function integrateWasmJS() {
             element: 'anyfunc'
           });
         } else {
-          env['table'] = new WebAssembly.Table({ initial: TABLE_SIZE, element: 'anyfunc' });
+          env['table'] = new WebAssembly.Table({
+            initial: TABLE_SIZE,
+            element: 'anyfunc'
+          });
         }
       } else {
         env['table'] = new Array(TABLE_SIZE);
@@ -760,7 +825,8 @@ function _emscripten_memcpy_big(dest, src, num) {
   return dest;
 }
 function ___setErrNo(value) {
-  if(Module['___errno_location']) HEAP32[Module['___errno_location']() >> 2] = value;
+  if(Module['___errno_location'])
+    HEAP32[Module['___errno_location']() >> 2] = value;
   return value;
 }
 __ATEXIT__.push(flush_NO_FILESYSTEM);
@@ -795,7 +861,9 @@ Module['asm'] = asm;
 var ___errno_location = (Module['___errno_location'] = function() {
   return Module['asm']['___errno_location'].apply(null, arguments);
 });
-var _emscripten_replace_memory = (Module['_emscripten_replace_memory'] = function() {
+var _emscripten_replace_memory = (Module[
+  '_emscripten_replace_memory'
+] = function() {
   return Module['asm']['_emscripten_replace_memory'].apply(null, arguments);
 });
 var _fflush = (Module['_fflush'] = function() {
@@ -816,7 +884,9 @@ var _kiss_fft_alloc = (Module['_kiss_fft_alloc'] = function() {
 var _kiss_fft_cleanup = (Module['_kiss_fft_cleanup'] = function() {
   return Module['asm']['_kiss_fft_cleanup'].apply(null, arguments);
 });
-var _kiss_fft_next_fast_size = (Module['_kiss_fft_next_fast_size'] = function() {
+var _kiss_fft_next_fast_size = (Module[
+  '_kiss_fft_next_fast_size'
+] = function() {
   return Module['asm']['_kiss_fft_next_fast_size'].apply(null, arguments);
 });
 var _kiss_fft_stride = (Module['_kiss_fft_stride'] = function() {
@@ -910,13 +980,16 @@ function abort(what) {
 }
 Module['abort'] = abort;
 if(Module['preInit']) {
-  if(typeof Module['preInit'] == 'function') Module['preInit'] = [Module['preInit']];
+  if(typeof Module['preInit'] == 'function')
+    Module['preInit'] = [Module['preInit']];
   while(Module['preInit'].length > 0) {
     Module['preInit'].pop()();
   }
 }
 run();
-if(typeof window === 'object' && (typeof ENVIRONMENT_IS_PTHREAD === 'undefined' || !ENVIRONMENT_IS_PTHREAD)) {
+if(typeof window === 'object' &&
+  (typeof ENVIRONMENT_IS_PTHREAD === 'undefined' || !ENVIRONMENT_IS_PTHREAD)
+) {
   function emrun_register_handlers() {
     var emrun_num_post_messages_in_flight = 0;
     var emrun_should_close_itself = false;
@@ -937,31 +1010,46 @@ if(typeof window === 'object' && (typeof ENVIRONMENT_IS_PTHREAD === 'undefined' 
       ++emrun_num_post_messages_in_flight;
       http.onreadystatechange = function() {
         if(http.readyState == 4) {
-          if(--emrun_num_post_messages_in_flight == 0 && emrun_should_close_itself) postExit('^exit^' + EXITSTATUS);
+          if(--emrun_num_post_messages_in_flight == 0 &&
+            emrun_should_close_itself
+          )
+            postExit('^exit^' + EXITSTATUS);
         }
       };
       http.open('POST', 'stdio.html', true);
       http.send(msg);
     }
-    if(document.URL.search('localhost') != -1 || document.URL.search(':6931/') != -1) {
+    if(document.URL.search('localhost') != -1 ||
+      document.URL.search(':6931/') != -1
+    ) {
       var emrun_http_sequence_number = 1;
       var prevPrint = out;
       var prevErr = err;
       function emrun_exit() {
-        if(emrun_num_post_messages_in_flight == 0) postExit('^exit^' + EXITSTATUS);
+        if(emrun_num_post_messages_in_flight == 0)
+          postExit('^exit^' + EXITSTATUS);
         else emrun_should_close_itself = true;
       }
       Module['addOnExit'](emrun_exit);
       out = function emrun_print(text) {
-        post('^out^' + emrun_http_sequence_number++ + '^' + encodeURIComponent(text));
+        post('^out^' +
+            emrun_http_sequence_number++ +
+            '^' +
+            encodeURIComponent(text)
+        );
         prevPrint(text);
       };
       err = function emrun_printErr(text) {
-        post('^err^' + emrun_http_sequence_number++ + '^' + encodeURIComponent(text));
+        post('^err^' +
+            emrun_http_sequence_number++ +
+            '^' +
+            encodeURIComponent(text)
+        );
         prevErr(text);
       };
       post('^pageload^');
     }
   }
-  if(typeof Module !== 'undefined' && typeof document !== 'undefined') emrun_register_handlers();
+  if(typeof Module !== 'undefined' && typeof document !== 'undefined')
+    emrun_register_handlers();
 }

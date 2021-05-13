@@ -120,13 +120,35 @@ readFrame(AppData* data) {
 
       if(frame_finished) {
         if(!data->conv_ctx) {
-          data->conv_ctx =
-              sws_getContext(data->codec_ctx->width, data->codec_ctx->height, data->codec_ctx->pix_fmt, data->codec_ctx->width, data->codec_ctx->height, PIX_FMT_RGB24, SWS_BICUBIC, NULL, NULL, NULL);
+          data->conv_ctx = sws_getContext(data->codec_ctx->width,
+                                          data->codec_ctx->height,
+                                          data->codec_ctx->pix_fmt,
+                                          data->codec_ctx->width,
+                                          data->codec_ctx->height,
+                                          PIX_FMT_RGB24,
+                                          SWS_BICUBIC,
+                                          NULL,
+                                          NULL,
+                                          NULL);
         }
 
-        sws_scale(data->conv_ctx, data->av_frame->data, data->av_frame->linesize, 0, data->codec_ctx->height, data->gl_frame->data, data->gl_frame->linesize);
+        sws_scale(data->conv_ctx,
+                  data->av_frame->data,
+                  data->av_frame->linesize,
+                  0,
+                  data->codec_ctx->height,
+                  data->gl_frame->data,
+                  data->gl_frame->linesize);
 
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, data->codec_ctx->width, data->codec_ctx->height, GL_RGB, GL_UNSIGNED_BYTE, data->gl_frame->data[0]);
+        glTexSubImage2D(GL_TEXTURE_2D,
+                        0,
+                        0,
+                        0,
+                        data->codec_ctx->width,
+                        data->codec_ctx->height,
+                        GL_RGB,
+                        GL_UNSIGNED_BYTE,
+                        data->gl_frame->data[0]);
       }
     }
 
@@ -325,7 +347,8 @@ main(int argc, char* argv[]) {
 
   glGenBuffers(1, &data.vert_buf);
   glBindBuffer(GL_ARRAY_BUFFER, data.vert_buf);
-  float quad[20] = {-1.0f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f};
+  float quad[20] = {-1.0f, 1.0f,  0.0f, 0.0f, 0.0f, -1.0f, -1.0f, 0.0f, 0.0f, 1.0f,
+                    1.0f,  -1.0f, 0.0f, 1.0f, 1.0f, 1.0f,  1.0f,  0.0f, 1.0f, 0.0f};
   glBufferData(GL_ARRAY_BUFFER, sizeof(quad), quad, GL_STATIC_DRAW);
   glVertexAttribPointer(data.attribs[VERTICES], 3, GL_FLOAT, GL_FALSE, 20, BUFFER_OFFSET(0));
   glEnableVertexAttribArray(data.attribs[VERTICES]);

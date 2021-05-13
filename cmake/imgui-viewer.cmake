@@ -3,9 +3,8 @@ project(imgui-viewer)
 set(CMAKE_CXX_STANDARD 14)
 ]]
 
-include(${CMAKE_SOURCE_DIR}/cmake/FindGLFW.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindGLFW.cmake)
 # include: OpenCV
-include(${CMAKE_SOURCE_DIR}/cmake/opencv.cmake)
 
 # glfw
 include(FindPkgConfig)
@@ -39,7 +38,7 @@ endif(APPLE)
 if(WIN32)
   # nothing now
 endif(WIN32)
-include(${CMAKE_SOURCE_DIR}/cmake/sdl2-config.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/sdl2-config.cmake)
 
 if(ANDROID)
   add_definitions(-DIMGUI_IMPL_OPENGL_ES2=1)
@@ -56,14 +55,11 @@ set(QUICKJS_SOURCES ${quickjs_sources})
 add_definitions(-D_GNU_SOURCE=1)
 
 # Main
-add_executable(imgui-viewer src/imgui-viewer.cpp imgui/imgui.cpp imgui/imgui_draw.cpp imgui/imgui_widgets.cpp imgui/imgui_impl_sdl.cpp imgui/imgui_impl_opengl3.cpp imgui/libs/gl3w/GL/gl3w.c ${IMGUI_VIEWER_SOURCES} )
+add_executable(imgui-viewer src/imgui-viewer.cpp imgui/imgui.cpp imgui/imgui_draw.cpp imgui/imgui_widgets.cpp imgui/imgui_impl_sdl.cpp imgui/imgui_impl_opengl3.cpp imgui/libs/gl3w/GL/gl3w.c ${IMGUI_VIEWER_SOURCES})
 target_compile_definitions(imgui-viewer PRIVATE CONFIG_VERSION="${quickjs_version}" CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1 ${PLOTCV_DEFS})
 
 # link
-target_link_libraries(
-  imgui-viewer ${SDL2_LIBRARIES} ${OpenCV_LIBS} glfw ${OPENGL_LIBRARIES} ${GLFW_LIBRARIES} ${GLEW_LIBRARIES} ${EXTRA_LIBS}
-  quickjs
-  ${LIBDL} ${LIBM} ${LIBPTHREAD} GL)
+target_link_libraries(imgui-viewer ${SDL2_LIBRARIES} ${QUICKJS_OPENCV_A} ${OpenCV_LIBS} glfw ${OPENGL_LIBRARIES} ${GLFW_LIBRARIES} ${GLEW_LIBRARIES} ${EXTRA_LIBS} quickjs png ${LIBDL} ${LIBM} ${LIBPTHREAD} GL)
 if(OpenCV_FOUND)
   target_include_directories(imgui-viewer PUBLIC ${OpenCV_INCLUDE_DIRS})
   target_link_libraries(imgui-viewer ${OpenCV_LIBS})

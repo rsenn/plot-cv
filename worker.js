@@ -2,7 +2,7 @@
 import * as std from 'std';
 import * as os from 'os';
 import { Console } from 'console';
-import * as cv from 'cv';
+import * as cv from 'opencv';
 
 var parent = os.Worker.parent;
 

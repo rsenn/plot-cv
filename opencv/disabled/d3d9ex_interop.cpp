@@ -71,8 +71,7 @@ public:
       return -1;
     }
 
-    r = m_pD3D9DevEx->CreateOffscreenPlainSurface(
-        m_width, m_height, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pSurface, NULL);
+    r = m_pD3D9DevEx->CreateOffscreenPlainSurface(m_width, m_height, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pSurface, NULL);
     if(FAILED(r)) {
       std::cerr << "Can't create surface for result" << std::endl;
       return -1;

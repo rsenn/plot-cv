@@ -114,9 +114,7 @@ main(int argc, char** argv) {
   draw_delaunay(img, subdiv, delaunay_color);
 
   // Draw points
-  for(std::vector<cv::Point2f>::iterator it = points.begin(); it != points.end(); it++) {
-    draw_point(img, *it, points_color);
-  }
+  for(std::vector<cv::Point2f>::iterator it = points.begin(); it != points.end(); it++) { draw_point(img, *it, points_color); }
 
   // Allocate space for Voronoi Diagram
   cv::Mat img_voronoi = Mat::zeros(img.rows, img.cols, CV_8UC3);

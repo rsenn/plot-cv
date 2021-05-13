@@ -1,11 +1,11 @@
 import ConsoleSetup from './lib/consoleSetup.js';
-import { Contour } from 'contour';
-import * as cv from 'cv';
-import { Rect } from 'rect';
-import { Point } from 'point';
-import { Size } from 'size';
-import { Mat } from 'mat';
-import { PointIterator } from 'point-iterator';
+import { Contour } from 'opencv';
+import * as cv from 'opencv';
+import { Rect } from 'opencv';
+import { Point } from 'opencv';
+import { Size } from 'opencv';
+import { Mat } from 'opencv';
+import { PointIterator } from 'opencv';
 
 import { HSLA } from './lib/color/hsla.js';
 import { Line } from './lib/geom/line.js';
@@ -151,7 +151,13 @@ async function main(...args) {
     'CV_64FC4'
   ];
   let matTypeEntries = matTypes.map(n => [n, cv[n]]);
-  console.log(new Map(matTypeEntries.map(([n, v]) => [n, ('0000000' + v.toString(16)).slice(-8)])));
+  console.log(new Map(
+      matTypeEntries.map(([n, v]) => [
+        n,
+        ('0000000' + v.toString(16)).slice(-8)
+      ])
+    )
+  );
 
   console.log('mask: ',
     matTypeEntries

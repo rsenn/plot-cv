@@ -1,6 +1,6 @@
 import * as net from 'net';
-import { Contour } from 'contour';
-import { Mat } from 'mat';
+import { Contour } from 'opencv';
+import { Mat } from 'opencv';
 import PortableConsole from './lib/consoleSetup.js';
 import Util from './lib/util.js';
 const { client, server, fetch } = net;
@@ -70,7 +70,10 @@ g.process = async function process(contours, hier, ...args) {
     time,
     contours: contours
       .filter(c => c.length >= 4)
-      .map(c => c.toString(Contour.FORMAT_NOBRACKET | Contour.FORMAT_SPACE | Contour.FORMAT_01))
+      .map(c =>
+        c.toString(Contour.FORMAT_NOBRACKET | Contour.FORMAT_SPACE | Contour.FORMAT_01
+        )
+      )
       .join('|')
   };
   let body = JSON.stringify(data);

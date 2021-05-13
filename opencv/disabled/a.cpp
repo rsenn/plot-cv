@@ -189,8 +189,7 @@ main() {
 
     dilate(matProcessed, matProcessed, getStructuringElement(MORPH_ELLIPSE, Size(morph_pixel, morph_pixel)));
 
-    HoughCircles(
-        matProcessed, v3fCircles, cv::HOUGH_GRADIENT, acc_res, min_dis, high_thres, low_thres, min_rad, max_rad);
+    HoughCircles(matProcessed, v3fCircles, cv::HOUGH_GRADIENT, acc_res, min_dis, high_thres, low_thres, min_rad, max_rad);
 
     for(int i = 0; i < v3fCircles.size(); i++) {
 
@@ -245,24 +244,9 @@ main() {
       stringstream j;
       j << fixed << setprecision(2) << Jarak;
       S_Jarak = j.str();
-      putText(matOriginal,
-              S_Jarak,
-              Point(x_center, (y_center + 10)),
-              FONT_HERSHEY_SIMPLEX,
-              .7,
-              Scalar(255, 0, 0),
-              2,
-              8,
-              false);
-      putText(matOriginal,
-              "cm",
-              Point((x_center + 80), (y_center + 10)),
-              FONT_HERSHEY_PLAIN,
-              .7,
-              Scalar(255, 0, 0),
-              1,
-              8,
-              false);
+      putText(matOriginal, S_Jarak, Point(x_center, (y_center + 10)), FONT_HERSHEY_SIMPLEX, .7, Scalar(255, 0, 0), 2, 8, false);
+      putText(
+          matOriginal, "cm", Point((x_center + 80), (y_center + 10)), FONT_HERSHEY_PLAIN, .7, Scalar(255, 0, 0), 1, 8, false);
 
       stringstream x;
       x << x_center;

@@ -175,8 +175,7 @@ main(int argc, char* argv[]) {
 
       int warpFlags = cv::INTER_LINEAR; //| cv::WARP_FILL_OUTLIERS;
 
-      cv::warpAffine(
-          diff, diffWarped, M, colorized_resized.size(), warpFlags, cv::BORDER_CONSTANT, cv::Scalar::all(128));
+      cv::warpAffine(diff, diffWarped, M, colorized_resized.size(), warpFlags, cv::BORDER_CONSTANT, cv::Scalar::all(128));
 
       cv::cvtColor(diffWarped, diffWarped, CV_GRAY2RGBA);
 

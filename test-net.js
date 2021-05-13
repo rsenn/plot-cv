@@ -1,12 +1,12 @@
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import { client, server, fetch } from 'net';
-import { Contour } from 'contour';
-import * as cv from 'cv';
-import { Point } from 'point';
-import { PointIterator } from 'point-iterator';
-import { VideoCapture } from 'video-capture';
-import { Mat } from 'mat';
+import { Contour } from 'opencv';
+import * as cv from 'opencv';
+import { Point } from 'opencv';
+import { PointIterator } from 'opencv';
+import { VideoCapture } from 'opencv';
+import { Mat } from 'opencv';
 import { PointList } from './lib/geom.js';
 import { Alea } from './lib/alea.js';
 import * as os from 'os';
@@ -82,7 +82,8 @@ async function main(...args) {
 
   let contours = Util.repeat(4, () => randContour());
   let contourStr = contours.map(c =>
-    c.toString(Contour.FORMAT_NOBRACKET | Contour.FORMAT_SPACE | Contour.FORMAT_01)
+    c.toString(Contour.FORMAT_NOBRACKET | Contour.FORMAT_SPACE | Contour.FORMAT_01
+    )
   );
   let body;
   body = JSON.stringify({ contours: contourStr, frame: 0, width, height });

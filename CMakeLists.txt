@@ -29,10 +29,15 @@ include(CheckCXXCompilerFlag)
 include(CheckLibraryExists)
 include(CheckTypeSize)
 include(FindPkgConfig)
-include(${CMAKE_SOURCE_DIR}/cmake/functions.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Functions.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindQuickJS.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/OpenCV.cmake)
+
+find_quickjs()
+find_opencv()
 
 if(ENABLE_CCACHE)
-  include(${CMAKE_SOURCE_DIR}/cmake/ccache.cmake)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CCache.cmake)
   enable_ccache()
 endif(ENABLE_CCACHE)
 
@@ -71,14 +76,12 @@ if(HAVE_LIBDL)
 endif(HAVE_LIBDL)
 
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH};${CMAKE_INSTALL_PREFIX}/lib;${CMAKE_INSTALL_PREFIX}/lib/quickjs")
-set(CMAKE_BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR};${CMAKE_BINARY_DIR}")
+set(CMAKE_BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR};${CMAKE_CURRENT_BINARY_DIR}")
 
 check_library_exists(json-cpp ZN4YAML6detail9node_data9reset_mapEv /usr JSON_CPP)
 
 set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE CACHE BOOL "Build installable binaries with -Wl,-rpath=PREFIX" FORCE)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE CACHE BOOL "Add dirs in runtime search path to the install rpath" FORCE)
-
-include(${CMAKE_SOURCE_DIR}/cmake/opencv.cmake)
 
 include_directories(${OPENCV_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/opencv ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
 
@@ -88,6 +91,15 @@ foreach(CXX_STANDARD c++20 c++17 c++14 c++11)
   check_cxx_compiler_flag("-std=${CXX_STANDARD}" CXX_STANDARD_${CXX_STANDARD_NUM})
   set(CMAKE_REQUIRED_QUIET FALSE)
   if(CXX_STANDARD_${CXX_STANDARD_NUM})
+    string(REGEX REPLACE "\\+" "x" CXX_STANDARD_NAME "${CXX_STANDARD_VALUE}")
+    string(TOUPPER "${CXX_STANDARD_NAME}" CXX_STANDARD_NAME)
+    string(REGEX REPLACE "CXX" "" CXX_STANDARD_VERSION "${CXX_STANDARD_NAME}")
+    message("CXX_STANDARD_NAME = ${CXX_STANDARD_NAME}")
+    message("CXX_STANDARD_VERSION = ${CXX_STANDARD_VERSION}")
+
+    add_definitions(-D"${CXX_STANDARD_NAME}")
+    add_definitions(-DCXX_STANDARD=${CXX_STANDARD_VERSION})
+
     set(CXX_STANDARD_VALUE "${CXX_STANDARD}" CACHE STRING "C++ standard" FORCE)
     set(CXX_STANDARD_FLAG "-std=${CXX_STANDARD}" CACHE STRING "C++ standard argument" FORCE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_STANDARD_FLAG}")
@@ -202,14 +214,17 @@ if(ENABLE_LTO)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto")
 endif(ENABLE_LTO)
 
-add_subdirectory(quickjs "${CMAKE_BINARY_DIR}/quickjs")
-
 link_directories(BEFORE ${quickjs_BINARY_DIR})
 # message("quickjs_BINARY_DIR: ${quickjs_BINARY_DIR}")
 
 # if(HAVE_EFENCE) if(USE_EFENCE) set(ELECTRICFENCE_LIBRARY efence) endif(USE_EFENCE) endif(HAVE_EFENCE)
 
-link_directories("${CMAKE_BINARY_DIR}/quickjs")
+set(QUICKJS_OPENCV_A "${QUICKJS_LIBRARY_DIR}/opencv.a")
+
+link_directories("${CMAKE_CURRENT_BINARY_DIR}/quickjs" "${QUICKJS_LIBRARY_DIR}")
+
+set(QUICKJS_OPENCV_A "${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv/opencv.a" CACHE FILEPATH "qjs-opencv module" FORCE)
+add_subdirectory(qjs-opencv "${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv")
 
 function(src_program NAME SOURCES)
   foreach(SRC ${SOURCES})
@@ -231,11 +246,11 @@ option(HIGHGUI_VIEWER "Enable OpenCV highgui viewer" ON)
 option(IMGUI_VIEWER "Enable imgui viewer" OFF)
 
 if(HIGHGUI_VIEWER)
-  include(${CMAKE_SOURCE_DIR}/cmake/highgui-viewer.cmake)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/highgui-viewer.cmake)
 endif(HIGHGUI_VIEWER)
 
 if(IMGUI_VIEWER)
-  include(${CMAKE_SOURCE_DIR}/cmake/imgui-viewer.cmake)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/imgui-viewer.cmake)
 endif(IMGUI_VIEWER)
 
 set(QUICKJS_SOURCES_LIST "quickjs/quickjs.c;quickjs/quickjs.hpp;quickjs/libregexp.c;quickjs/libunicode.c;quickjs/cutils.c;quickjs/quickjs-libc.c;quickjs/quickjs-libc.h;quickjs/quickjs-find-module.c;quickjs/libbf.c")
@@ -250,9 +265,10 @@ link_directories(${CMAKE_CURRENT_BINARY_DIR}/quickjs)
 
 src_program(
   cli
-  "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/matrix.cpp;src/line.cpp;src/geometry.cpp;src/util.cpp;src/js.cpp;src/jsbindings.cpp;src/js_contour.cpp;src/js.cpp;src/js_draw.cpp;src/js_line.cpp;src/js_mat.cpp;src/js_point.cpp;src/js_point_iterator.cpp;src/js_rect.cpp;src/js_size.cpp;src/js_cv.cpp;src/js_video_capture.cpp"
+  "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/matrix.cpp;qjs-opencv/line.cpp;qjs-opencv/geometry.cpp;qjs-opencv/util.cpp;src/js.cpp;qjs-opencv/jsbindings.cpp;qjs-opencv/js_contour.cpp;src/js.cpp;qjs-opencv/js_draw.cpp;qjs-opencv/js_line.cpp;qjs-opencv/js_mat.cpp;qjs-opencv/js_point.cpp;qjs-opencv/js_point_iterator.cpp;qjs-opencv/js_rect.cpp;qjs-opencv/js_size.cpp;qjs-opencv/js_cv.cpp;qjs-opencv/js_video_capture.cpp;qjs-opencv/util.cpp"
   ${OpenCV_LIBS}
   ${QUICKJS_LIBRARY}
+  png
   pthread
   dl
   m
@@ -261,6 +277,7 @@ src_program(
 )
 
 target_compile_definitions(cli PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${quickjs_version}" CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM CONFIG_CHECK_JSVALUE ${PLOTCV_DEFS})
+target_link_libraries(cli ${QUICKJS_OPENCV_A})
 
 add_executable(test-qjs test-qjs.c)
 
@@ -268,19 +285,24 @@ target_link_libraries(test-qjs quickjs pthread dl m)
 
 target_compile_definitions(test-qjs PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${quickjs_version}" CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1 ${PLOTCV_DEFS})
 
-option(ADDITIONAL_PROGS "Build other OpenCV programs" FALSE)
+option(ADDITIONAL_PROGS "Build other OpenCV programs" OFF)
 
 # option(QUICKJS_MODULES "Build .so modules for quickjs" "${BUILD_SHARED_LIBS}")
 option(QUICKJS_MODULES "Build .so modules for quickjs" ON)
 
 if(QUICKJS_MODULES)
-  include(${CMAKE_SOURCE_DIR}/cmake/js-bindings.cmake)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/JSBindings.cmake)
 endif(QUICKJS_MODULES)
 #[[
 add_executable(test-dlfcn test-dlfcn.c)
 target_link_libraries(test-dlfcn dl)
 ]]
 
-# if(ADDITIONAL_PROGS)
-add_subdirectory(opencv ${CMAKE_CURRENT_BINARY_DIR}/opencv)
-# endif(ADDITIONAL_PROGS)
+option(BUILD_QUICKJS "Build QuickJS" ON)
+if(BUILD_QUICKJS)
+  add_subdirectory(quickjs "${CMAKE_CURRENT_BINARY_DIR}/quickjs")
+endif(BUILD_QUICKJS)
+
+if(ADDITIONAL_PROGS)
+  add_subdirectory(opencv ${CMAKE_CURRENT_BINARY_DIR}/opencv)
+endif(ADDITIONAL_PROGS)

@@ -191,8 +191,8 @@ read(const FileNode& node, Settings& x, const Settings& default_value = Settings
 
 enum { DETECTION = 0, CAPTURING = 1, CALIBRATED = 2 };
 
-bool runCalibrationAndSave(
-    Settings& s, Size imageSize, Mat& cameraMatrix, Mat& distCoeffs, vector<vector<Point2f>> imagePoints);
+bool
+runCalibrationAndSave(Settings& s, Size imageSize, Mat& cameraMatrix, Mat& distCoeffs, vector<vector<Point2f>> imagePoints);
 
 int
 main(int argc, char* argv[]) {
@@ -248,11 +248,10 @@ main(int argc, char* argv[]) {
     bool found;
     switch(s.calibrationPattern) { // Find feature points on the input format
       case Settings::CHESSBOARD:
-        found =
-            findChessboardCorners(view,
-                                  s.boardSize,
-                                  pointBuf,
-                                  CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE);
+        found = findChessboardCorners(view,
+                                      s.boardSize,
+                                      pointBuf,
+                                      CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE);
         break;
       case Settings::CIRCLES_GRID: found = findCirclesGrid(view, s.boardSize, pointBuf); break;
       case Settings::ASYMMETRIC_CIRCLES_GRID:
@@ -266,8 +265,7 @@ main(int argc, char* argv[]) {
       if(s.calibrationPattern == Settings::CHESSBOARD) {
         Mat viewGray;
         cvtColor(view, viewGray, COLOR_BGR2GRAY);
-        cornerSubPix(
-            viewGray, pointBuf, Size(11, 11), Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+        cornerSubPix(viewGray, pointBuf, Size(11, 11), Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
       }
 
       if(mode == CAPTURING && // For camera only take new samples after delay time
@@ -385,8 +383,7 @@ calcBoardCornerPositions(Size boardSize,
     case Settings::CHESSBOARD:
     case Settings::CIRCLES_GRID:
       for(int i = 0; i < boardSize.height; ++i)
-        for(int j = 0; j < boardSize.width; ++j)
-          corners.push_back(Point3f(float(j * squareSize), float(i * squareSize), 0));
+        for(int j = 0; j < boardSize.width; ++j) corners.push_back(Point3f(float(j * squareSize), float(i * squareSize), 0));
       break;
 
     case Settings::ASYMMETRIC_CIRCLES_GRID:
@@ -421,21 +418,14 @@ runCalibration(Settings& s,
   objectPoints.resize(imagePoints.size(), objectPoints[0]);
 
   // Find intrinsic and extrinsic camera parameters
-  double rms = calibrateCamera(objectPoints,
-                               imagePoints,
-                               imageSize,
-                               cameraMatrix,
-                               distCoeffs,
-                               rvecs,
-                               tvecs,
-                               s.flag | CV_CALIB_FIX_K4 | CV_CALIB_FIX_K5);
+  double rms = calibrateCamera(
+      objectPoints, imagePoints, imageSize, cameraMatrix, distCoeffs, rvecs, tvecs, s.flag | CV_CALIB_FIX_K4 | CV_CALIB_FIX_K5);
 
   cout << "Re-projection error reported by calibrateCamera: " << rms << endl;
 
   bool ok = checkRange(cameraMatrix) && checkRange(distCoeffs);
 
-  totalAvgErr =
-      computeReprojectionErrors(objectPoints, imagePoints, rvecs, tvecs, cameraMatrix, distCoeffs, reprojErrs);
+  totalAvgErr = computeReprojectionErrors(objectPoints, imagePoints, rvecs, tvecs, cameraMatrix, distCoeffs, reprojErrs);
 
   return ok;
 }
@@ -520,8 +510,7 @@ saveCameraParams(Settings& s,
 }
 
 bool
-runCalibrationAndSave(
-    Settings& s, Size imageSize, Mat& cameraMatrix, Mat& distCoeffs, vector<vector<Point2f>> imagePoints) {
+runCalibrationAndSave(Settings& s, Size imageSize, Mat& cameraMatrix, Mat& distCoeffs, vector<vector<Point2f>> imagePoints) {
   vector<Mat> rvecs, tvecs;
   vector<float> reprojErrs;
   double totalAvgErr = 0;

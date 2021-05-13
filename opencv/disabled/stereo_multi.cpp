@@ -442,8 +442,8 @@ main(int argc, char** argv) {
     const double multiStreamTime = tm.getTimeMilli();
 
     cout << "| " << setw(5) << i << " | " << setw(8) << setprecision(1) << fixed << gpu0Time << " | " << setw(8)
-         << setprecision(1) << fixed << gpu1Time << " | " << setw(15) << setprecision(1) << fixed << multiThreadTime
-         << " | " << setw(15) << setprecision(1) << fixed << multiStreamTime << " |" << endl;
+         << setprecision(1) << fixed << gpu1Time << " | " << setw(15) << setprecision(1) << fixed << multiThreadTime << " | "
+         << setw(15) << setprecision(1) << fixed << multiStreamTime << " |" << endl;
 
     resize(disparityGpu0, disparityGpu0Show, Size(1024, 768), 0, 0, INTER_AREA);
     resize(disparityGpu1, disparityGpu1Show, Size(1024, 768), 0, 0, INTER_AREA);

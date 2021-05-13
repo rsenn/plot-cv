@@ -73,12 +73,8 @@ VideoCapture_LibRealsense::getDepthGeneratorProperty(int propIdx) const {
     case CAP_PROP_FRAME_HEIGHT: propValue = static_cast<double>(profile.height()); break;
     case CAP_PROP_FPS: propValue = static_cast<double>(profile.fps()); break;
     case CAP_PROP_INTELPERC_DEPTH_SATURATION_VALUE: propValue = static_cast<double>(sensor.get_depth_scale()); break;
-    case CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_HORZ:
-      propValue = static_cast<double>(profile.get_intrinsics().fx);
-      break;
-    case CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_VERT:
-      propValue = static_cast<double>(profile.get_intrinsics().fy);
-      break;
+    case CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_HORZ: propValue = static_cast<double>(profile.get_intrinsics().fx); break;
+    case CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_VERT: propValue = static_cast<double>(profile.get_intrinsics().fy); break;
   }
 
   return propValue;
@@ -117,12 +113,8 @@ VideoCapture_LibRealsense::getCommonProperty(int propIdx) const {
     case CAP_PROP_FRAME_HEIGHT:
     case CAP_PROP_FPS: propValue = getDepthGeneratorProperty(propIdx); break;
     case CAP_PROP_INTELPERC_DEPTH_SATURATION_VALUE: propValue = static_cast<double>(sensor.get_depth_scale()); break;
-    case CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_HORZ:
-      propValue = static_cast<double>(profile.get_intrinsics().fx);
-      break;
-    case CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_VERT:
-      propValue = static_cast<double>(profile.get_intrinsics().fy);
-      break;
+    case CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_HORZ: propValue = static_cast<double>(profile.get_intrinsics().fx); break;
+    case CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_VERT: propValue = static_cast<double>(profile.get_intrinsics().fy); break;
   }
 
   return propValue;

@@ -18,14 +18,11 @@ std::vector<Cvcv::Point> maskFromTemplate(const std::vector<cv::linemod::Templat
                                           cv::Mat& mask,
                                           cv::Mat& dst);
 
-void templateConvexHull(const std::vector<cv::linemod::Template>& templates,
-                        int num_modalities,
-                        cv::Point offset,
-                        cv::Size size,
-                        cv::Mat& dst);
+void templateConvexHull(
+    const std::vector<cv::linemod::Template>& templates, int num_modalities, cv::Point offset, cv::Size size, cv::Mat& dst);
 
-void drawResponse(
-    const std::vector<cv::linemod::Template>& templates, int num_modalities, cv::Mat& dst, cv::Point offset, int T);
+void
+drawResponse(const std::vector<cv::linemod::Template>& templates, int num_modalities, cv::Mat& dst, cv::Point offset, int T);
 
 cv::Mat displayQuantized(const cv::Mat& quantized);
 
@@ -412,8 +409,7 @@ filterPlane(IplImage* ap_depth, std::vector<IplImage*>& a_masks, std::vector<Cvc
   for(int l_i = 0; l_i < (int)l_chain_std::vector.size(); ++l_i) {
     lp_src_3Dpts[l_i].x = l_chain_std::vector[l_i].x;
     lp_src_3Dpts[l_i].y = l_chain_std::vector[l_i].y;
-    lp_src_3Dpts[l_i].z =
-        CV_IMAGE_ELEM(ap_depth, unsigned short, cvRound(lp_src_3Dpts[l_i].y), cvRound(lp_src_3Dpts[l_i].x));
+    lp_src_3Dpts[l_i].z = CV_IMAGE_ELEM(ap_depth, unsigned short, cvRound(lp_src_3Dpts[l_i].y), cvRound(lp_src_3Dpts[l_i].x));
     // CV_IMAGE_ELEM(lp_mask,unsigned char,(int)lp_src_3Dpts[l_i].Y,(int)lp_src_3Dpts[l_i].X)=255;
   }
   // cv_show_image(lp_mask,"hallo2");
@@ -499,8 +495,8 @@ filterPlane(IplImage* ap_depth, std::vector<IplImage*>& a_masks, std::vector<Cvc
 
   for(int l_r = 0; l_r < l_h; ++l_r) {
     for(int l_c = 0; l_c < l_w; ++l_c) {
-      float l_dist = (float)(l_n[0] * lp_dst_3Dpts[l_ind].x + l_n[1] * lp_dst_3Dpts[l_ind].y +
-                             lp_dst_3Dpts[l_ind].z * l_n[2] + l_n[3]);
+      float l_dist =
+          (float)(l_n[0] * lp_dst_3Dpts[l_ind].x + l_n[1] * lp_dst_3Dpts[l_ind].y + lp_dst_3Dpts[l_ind].z * l_n[2] + l_n[3]);
 
       ++l_ind;
 
@@ -659,11 +655,8 @@ displayQuantized(const cv::Mat& quantized) {
 
 // Adapted from cv_line_template::convex_hull
 void
-templateConvexHull(const std::vector<cv::linemod::Template>& templates,
-                   int num_modalities,
-                   cv::Point offset,
-                   cv::Size size,
-                   cv::Mat& dst) {
+templateConvexHull(
+    const std::vector<cv::linemod::Template>& templates, int num_modalities, cv::Point offset, cv::Size size, cv::Mat& dst) {
   std::vector<cv::Point> points;
   for(int m = 0; m < num_modalities; ++m) {
     for(int i = 0; i < (int)templates[m].features.size(); ++i) {
@@ -682,8 +675,7 @@ templateConvexHull(const std::vector<cv::linemod::Template>& templates,
 }
 
 void
-drawResponse(
-    const std::vector<cv::linemod::Template>& templates, int num_modalities, cv::Mat& dst, cv::Point offset, int T) {
+drawResponse(const std::vector<cv::linemod::Template>& templates, int num_modalities, cv::Mat& dst, cv::Point offset, int T) {
   static const cv::Scalar COLORS[5] = {
       CV_RGB(0, 0, 255), CV_RGB(0, 255, 0), CV_RGB(255, 255, 0), CV_RGB(255, 140, 0), CV_RGB(255, 0, 0)};
 

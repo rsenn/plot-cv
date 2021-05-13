@@ -386,11 +386,8 @@ drawPred(int classId, float conf, int left, int top, int right, int bottom, Mat&
   Size labelSize = getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
 
   top = max(top, labelSize.height);
-  rectangle(frame,
-            Point(left, top - labelSize.height),
-            Point(left + labelSize.width, top + baseLine),
-            Scalar::all(255),
-            FILLED);
+  rectangle(
+      frame, Point(left, top - labelSize.height), Point(left + labelSize.width, top + baseLine), Scalar::all(255), FILLED);
   putText(frame, label, Point(left, top), FONT_HERSHEY_SIMPLEX, 0.5, Scalar());
 }
 

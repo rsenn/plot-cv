@@ -241,9 +241,7 @@ main(int argc, char** argv) {
       message = thisNodeType + " " + thisNodeName;
       strcpy(buffer, message.c_str());
       int data_len = message.length();
-      do {
-        rc = MQTTAsync_send(client, topic3, data_len, buffer, opts.qos, 0, &pub_opts);
-      } while(rc != MQTTASYNC_SUCCESS);
+      do { rc = MQTTAsync_send(client, topic3, data_len, buffer, opts.qos, 0, &pub_opts); } while(rc != MQTTASYNC_SUCCESS);
       cout << "log:" << message << endl;
       camNodeMode = SYNCHRONOUS;
       ifGetAreyouok = false;
@@ -271,9 +269,7 @@ main(int argc, char** argv) {
         string message = thisNodeType + " " + thisNodeName + " " + timeNowStream.str();
         strcpy(buffer, message.c_str());
         int data_len = message.length();
-        do {
-          rc = MQTTAsync_send(client, topic2, data_len, buffer, opts.qos, 0, &pub_opts);
-        } while(rc != MQTTASYNC_SUCCESS);
+        do { rc = MQTTAsync_send(client, topic2, data_len, buffer, opts.qos, 0, &pub_opts); } while(rc != MQTTASYNC_SUCCESS);
         cout << "timeNowStream.str():" << timeNowStream.str() << endl;
         cout << "log:" << message << endl;
         needFoundCentroid = false;
@@ -306,9 +302,7 @@ main(int argc, char** argv) {
 
       strcpy(buffer, message.c_str());
       int data_len = message.length();
-      do {
-        rc = MQTTAsync_send(client, topic5, data_len, buffer, opts.qos, 0, &pub_opts);
-      } while(rc != MQTTASYNC_SUCCESS);
+      do { rc = MQTTAsync_send(client, topic5, data_len, buffer, opts.qos, 0, &pub_opts); } while(rc != MQTTASYNC_SUCCESS);
     }
   }
 

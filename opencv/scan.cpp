@@ -158,8 +158,7 @@ mat_to_bitmap(JNIEnv* env, Mat& src, bool needPremultiplyAlpha, jobject bitmap_c
                                          "createBitmap",
                                          "(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;");
 
-  jobject bitmap =
-      env->CallStaticObjectMethod(java_bitmap_class, mid, src.size().width, src.size().height, bitmap_config);
+  jobject bitmap = env->CallStaticObjectMethod(java_bitmap_class, mid, src.size().width, src.size().height, bitmap_config);
   AndroidBitmapInfo info;
   void* pixels = 0;
 

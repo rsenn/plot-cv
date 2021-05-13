@@ -90,9 +90,7 @@ process(Mat* srcdst,
 
   NCV_SKIP_COND_BEGIN
 
-  for(Ncv32u i = 0; i < (Ncv32u)srcdst->rows; i++) {
-    memcpy(h_src.ptr() + i * h_src.stride(), srcdst->ptr(i), srcdst->cols);
-  }
+  for(Ncv32u i = 0; i < (Ncv32u)srcdst->rows; i++) { memcpy(h_src.ptr() + i * h_src.stride(), srcdst->ptr(i), srcdst->cols); }
 
   ncvStat = h_src.copySolid(d_src, 0);
   ncvAssertReturnNcvStat(ncvStat);
@@ -105,25 +103,25 @@ process(Mat* srcdst,
   roi.height = d_src.height();
 
   Ncv32u numDetections;
-  ncvStat = ncvDetectObjectsMultiScale_device(d_src,
-                                              roi,
-                                              d_rects,
-                                              numDetections,
-                                              haar,
-                                              h_haarStages,
-                                              d_haarStages,
-                                              d_haarNodes,
-                                              d_haarFeatures,
-                                              haar.ClassifierSize,
-                                              (bFilterRects || bLargestFace) ? 4 : 0,
-                                              1.2f,
-                                              1,
-                                              (bLargestFace ? NCVPipeObjDet_FindLargestObject : 0) |
-                                                  NCVPipeObjDet_VisualizeInPlace,
-                                              gpuAllocator,
-                                              cpuAllocator,
-                                              devProp,
-                                              0);
+  ncvStat =
+      ncvDetectObjectsMultiScale_device(d_src,
+                                        roi,
+                                        d_rects,
+                                        numDetections,
+                                        haar,
+                                        h_haarStages,
+                                        d_haarStages,
+                                        d_haarNodes,
+                                        d_haarFeatures,
+                                        haar.ClassifierSize,
+                                        (bFilterRects || bLargestFace) ? 4 : 0,
+                                        1.2f,
+                                        1,
+                                        (bLargestFace ? NCVPipeObjDet_FindLargestObject : 0) | NCVPipeObjDet_VisualizeInPlace,
+                                        gpuAllocator,
+                                        cpuAllocator,
+                                        devProp,
+                                        0);
   ncvAssertReturnNcvStat(ncvStat);
   ncvAssertCUDAReturn(cudaStreamSynchronize(0), NCV_CUDA_ERROR);
 
@@ -133,9 +131,7 @@ process(Mat* srcdst,
   ncvAssertReturnNcvStat(ncvStat);
   ncvAssertCUDAReturn(cudaStreamSynchronize(0), NCV_CUDA_ERROR);
 
-  for(Ncv32u i = 0; i < (Ncv32u)srcdst->rows; i++) {
-    memcpy(srcdst->ptr(i), h_src.ptr() + i * h_src.stride(), srcdst->cols);
-  }
+  for(Ncv32u i = 0; i < (Ncv32u)srcdst->rows; i++) { memcpy(srcdst->ptr(i), h_src.ptr() + i * h_src.stride(), srcdst->cols); }
 
   NCV_SKIP_COND_END
 
@@ -270,9 +266,7 @@ main(int argc, const char** argv) {
                     devProp);
   ncvAssertPrintReturn(ncvStat == NCV_SUCCESS, "Error in memory counting pass", -1);
 
-  NCVMemStackAllocator gpuAllocator(NCVMemoryTypeDevice,
-                                    gpuCounter.maxSize(),
-                                    static_cast<Ncv32u>(devProp.textureAlignment));
+  NCVMemStackAllocator gpuAllocator(NCVMemoryTypeDevice, gpuCounter.maxSize(), static_cast<Ncv32u>(devProp.textureAlignment));
   ncvAssertPrintReturn(gpuAllocator.isInitialized(), "Error creating GPU memory allocator", -1);
   NCVMemStackAllocator cpuAllocator(NCVMemoryTypeHostPinned,
                                     cpuCounter.maxSize(),

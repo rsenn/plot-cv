@@ -249,8 +249,7 @@ init(Handle<Object> exports) {
   exports->Set(String::NewFromUtf8(isolate, "Open"), FunctionTemplate::New(isolate, Open)->GetFunction());
   exports->Set(String::NewFromUtf8(isolate, "Close"), FunctionTemplate::New(isolate, Close)->GetFunction());
   exports->Set(String::NewFromUtf8(isolate, "IsOpen"), FunctionTemplate::New(isolate, IsOpen)->GetFunction());
-  exports->Set(String::NewFromUtf8(isolate, "GetPreviewSize"),
-               FunctionTemplate::New(isolate, GetPreviewSize)->GetFunction());
+  exports->Set(String::NewFromUtf8(isolate, "GetPreviewSize"), FunctionTemplate::New(isolate, GetPreviewSize)->GetFunction());
 }
 
 std::string

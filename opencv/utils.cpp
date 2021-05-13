@@ -70,8 +70,7 @@ video_mode(ERFilter* er_filter, char filename[]) {
   VideoWriter original_writer;
   cap >> frame; // get 1 frame to know the frame size
   writer.open("video_result/result/result.wmv", cv::VideoWriter::fourcc('W', 'M', 'V', '2'), 20.0, frame.size(), true);
-  original_writer.open(
-      "video_result/result/input.wmv", cv::VideoWriter::fourcc('W', 'M', 'V', '2'), 20.0, frame.size(), true);
+  original_writer.open("video_result/result/input.wmv", cv::VideoWriter::fourcc('W', 'M', 'V', '2'), 20.0, frame.size(), true);
   if(!writer.isOpened()) {
     cerr << "Could not open the output video file for write\n";
   }
@@ -330,13 +329,8 @@ show_result(Mat& src,
     // cv::FILLED); putText(result_img, "Text", Point(it.box.tl().x, it.box.tl().y-4),
     // FONT_HERSHEY_COMPLEX_SMALL, 1, Scalar(255, 255, 255), 1);
     circle(result_img, Point(it.box.tl().x + 5, it.box.tl().y - 12), 10, Scalar(30, 30, 200), cv::FILLED);
-    putText(result_img,
-            "T",
-            Point(it.box.tl().x - 2, it.box.tl().y - 5),
-            FONT_HERSHEY_COMPLEX_SMALL,
-            1,
-            Scalar(255, 255, 255),
-            1);
+    putText(
+        result_img, "T", Point(it.box.tl().x - 2, it.box.tl().y - 5), FONT_HERSHEY_COMPLEX_SMALL, 1, Scalar(255, 255, 255), 1);
 #else
     Size text_size = getTextSize(it.word, FONT_HERSHEY_COMPLEX_SMALL, 1, 1, 0);
     rectangle(result_img,
@@ -1005,8 +999,8 @@ save_deteval_xml(vector<vector<Text>>& text, string det_name) {
         << "<imageName>img_" << i << ".jpg</imageName>" << endl;
     fgt << "\t\t<taggedRectangles>" << endl;
     for(int j = 0; j < gt.size(); j++) {
-      fgt << "\t\t\t<taggedRectangle x=\"" << gt[j][0] << "\" y=\"" << gt[j][1] << "\" width=\"" << gt[j][2]
-          << "\" height=\"" << gt[j][3] << "\" offset=\"0\" />" << endl;
+      fgt << "\t\t\t<taggedRectangle x=\"" << gt[j][0] << "\" y=\"" << gt[j][1] << "\" width=\"" << gt[j][2] << "\" height=\""
+          << gt[j][3] << "\" offset=\"0\" />" << endl;
     }
     fgt << "\t\t</taggedRectangles>" << endl;
     fgt << "\t</image>" << endl;
@@ -1017,9 +1011,8 @@ save_deteval_xml(vector<vector<Text>>& text, string det_name) {
          << "<imageName>img_" << i << ".jpg</imageName>" << endl;
     fdet << "\t\t<taggedRectangles>" << endl;
     for(int j = 0; j < text[i - 1].size(); j++) {
-      fdet << "\t\t\t<taggedRectangle x=\"" << text[i - 1][j].box.x << "\" y=\"" << text[i - 1][j].box.y
-           << "\" width=\"" << text[i - 1][j].box.width << "\" height=\"" << text[i - 1][j].box.height
-           << "\" offset=\"0\" />" << endl;
+      fdet << "\t\t\t<taggedRectangle x=\"" << text[i - 1][j].box.x << "\" y=\"" << text[i - 1][j].box.y << "\" width=\""
+           << text[i - 1][j].box.width << "\" height=\"" << text[i - 1][j].box.height << "\" offset=\"0\" />" << endl;
     }
     fdet << "\t\t</taggedRectangles>" << endl;
     fdet << "\t</image>" << endl;
@@ -1434,12 +1427,8 @@ train_ocr_model() {
   int probability_estimates = 1;
   int cost = 512;
   double gamma = 0.0078125;
-  snprintf(cmd,
-           sizeof(cmd),
-           "svm-train -b %d -c %d -g %f training/OCR.data training/OCR.model",
-           probability_estimates,
-           cost,
-           gamma);
+  snprintf(
+      cmd, sizeof(cmd), "svm-train -b %d -c %d -g %f training/OCR.data training/OCR.model", probability_estimates, cost, gamma);
   cout << cmd << endl;
   system(cmd);
 }

@@ -199,9 +199,8 @@ track_and_identify(int argc, char** argv) {
   setMouseCallback("Object Tracker", userMouse,
                    0); // User can draw inside of the Object tracker box display
 
-  cv::Mat frame, hsv, hue, mask, hist,
-      histimg = cv::Mat::zeros(400, 640, CV_8UC3),
-      backproj; // setting up the matrix holding the colors and frames of histrogram image
+  cv::Mat frame, hsv, hue, mask, hist, histimg = cv::Mat::zeros(400, 640, CV_8UC3),
+                                       backproj; // setting up the matrix holding the colors and frames of histrogram image
   bool pause = false;
 
   for(;;) {
@@ -229,8 +228,7 @@ track_and_identify(int argc, char** argv) {
 
         if(inputWindowSize < 0) {
           // Object has been selected by user, set up CAMShift search properties once
-          cv::Mat roi(hue, boundingbox),
-              maskroi(mask, boundingbox); // creating a matrix that will hold the bounding box
+          cv::Mat roi(hue, boundingbox), maskroi(mask, boundingbox); // creating a matrix that will hold the bounding box
           calcHist(&roi, 1, 0, maskroi, hist, 1, &hue_size, &phranges);
           normalize(hist, hist, 0, 255, NORM_MINMAX);
           cv::Mat image_save = image(boundingbox).clone(); // savind the image of the bounding box from the roi
@@ -244,8 +242,7 @@ track_and_identify(int argc, char** argv) {
           histimg = Scalar::all(0);
           int binW = histimg.cols / hue_size;
           cv::Mat buf(1, hue_size, CV_8UC3);
-          for(int i = 0; i < hue_size; i++)
-            buf.at<Vec3b>(i) = Vec3b(saturate_cast<uchar>(i * 180. / hue_size), 255, 255);
+          for(int i = 0; i < hue_size; i++) buf.at<Vec3b>(i) = Vec3b(saturate_cast<uchar>(i * 180. / hue_size), 255, 255);
           cvtColor(buf, buf, COLOR_HSV2BGR);
 
           for(int i = 0; i < hue_size; i++) {
@@ -324,8 +321,7 @@ track_and_identify(int argc, char** argv) {
     exit(-1);
   }
   // GoogLeNet accepts only specific sized RGB-images
-  cv::Mat inputBlob =
-      blobFromImage(img, 1, Size(224, 224), Scalar(104, 117, 123)); // Convert cv::Mat to batch of images
+  cv::Mat inputBlob = blobFromImage(img, 1, Size(224, 224), Scalar(104, 117, 123)); // Convert cv::Mat to batch of images
   cv::Mat prob;
   cv::TickMeter t;
   for(int i = 0; i < 10; i++) { // setting # of iterations for blob dnn method recognition
@@ -347,8 +343,8 @@ track_and_identify(int argc, char** argv) {
   cout << "Probability: " << classProb * 100 << "%"
        << endl; // It also determines the probability of that object being the detected correctly
   // The time it took to detected the correct item
-  cout << "Time: " << (double)t.getTimeMilli() / t.getCounter() << " ms (average from " << t.getCounter()
-       << " iterations)" << endl;
+  cout << "Time: " << (double)t.getTimeMilli() / t.getCounter() << " ms (average from " << t.getCounter() << " iterations)"
+       << endl;
 }
 // Declearing variables for the contour program
 cv::Mat src;
@@ -434,17 +430,9 @@ contour_figure(int, void*) {
   cv::Mat drawing = cv::Mat::zeros(canny_output.size(),
                                    CV_8UC3); // stores the output of canny to the columns of cv::Mat
   for(size_t i = 0; i < contours.size(); i++) {
-    Scalar color = Scalar(rng.uniform(0, 255),
-                          rng.uniform(0, 255),
-                          rng.uniform(0, 255)); // changes scalar colours based on various edges
-    drawContours(drawing,
-                 contours,
-                 (int)i,
-                 color,
-                 2,
-                 8,
-                 hierarchy,
-                 0,
+    Scalar color =
+        Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255)); // changes scalar colours based on various edges
+    drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0,
                  cv::Point()); // adds colours while also drawing the
     // contour lines
   }

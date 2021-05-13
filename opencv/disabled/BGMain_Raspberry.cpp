@@ -58,8 +58,7 @@ int col_count = 0;
 int grid_width = 0; //格子的宽高
 int grid_height = 0;
 
-int image_fliped_direc =
-    -2; //定义原始图像翻转的形式，默认不进行翻转，如果检测到位-2则不执行翻转处理，因为小于0都会进行翻转
+int image_fliped_direc = -2; //定义原始图像翻转的形式，默认不进行翻转，如果检测到位-2则不执行翻转处理，因为小于0都会进行翻转
 
 void DrawRectangle(cv::Mat& img, cv::Rect box);
 void on_MouseHandle(int event, int x, int y, int flags, void* param);
@@ -283,8 +282,7 @@ main(int argc, char** argv) {
       // 循环遍历所有的部分
       for(unsigned int i = 0; i < contours.size(); i++) {
         approxPolyDP(cv::Mat(contours[i]), contours_poly[i], 3, true); //用指定精度逼近多边形曲线
-        for(std::vector<cv::Point>::const_iterator itp = contours_poly[i].begin(); itp != contours_poly[i].end();
-            itp++) {
+        for(std::vector<cv::Point>::const_iterator itp = contours_poly[i].begin(); itp != contours_poly[i].end(); itp++) {
           setGridStatus(itp->x, itp->y, grid_array);
         }
       }
