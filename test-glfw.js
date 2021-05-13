@@ -6,11 +6,12 @@ import { RGBA, HSLA } from './lib/color.js';
 import { Mat, imread } from 'opencv';
 
 function Mat2Texture(texture_cv) {
-   console.log('texture_cv', texture_cv);
- let texture = new Uint32Array(1);
+  console.log('texture_cv', texture_cv);
+  const { buffer } = texture_cv;
+  console.log('texture_cv.buffer', buffer);
+  let texture = new Uint32Array(1);
   console.log('texture', texture);
   glGenTextures(1, texture.buffer); // Create The Texture
-  console.log('texture_cv.buffer', texture_cv.buffer);
 
   glBindTexture(GL_TEXTURE_2D, texture[0]);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -26,7 +27,7 @@ function Mat2Texture(texture_cv) {
     0,
     GL_RGB,
     GL_UNSIGNED_BYTE,
-    texture_cv.buffer
+    buffer
   );
   return texture[0];
 }
@@ -48,15 +49,23 @@ function main(...args) {
   const { position, size } = window;
   const { width, height } = size;
   const { x, y } = position;
+  let textures = [];
 
   console.log(`width: ${width}, height: ${height}, x: ${x}, y: ${y}`);
-  console.log('args[0]:', args[0]);
 
-  let image = imread(args[0] ?? '9b16290d7d9c8f1aca810b6702070189_20170331_112428.jpg');
-  console.log('image:', image);
-  //  console.log('image.buffer:', image.buffer);
-  let texture = Mat2Texture(image);
-  console.log('texture', texture);
+  while(args.length > 0) {
+    console.log('args[0]:', args[0]);
+
+    let image = imread(args[0] ?? '9b16290d7d9c8f1aca810b6702070189_20170331_112428.jpg');
+    console.log('image:', image);
+    console.log('image.buffer:', image.buffer);
+    let texture = Mat2Texture(image);
+
+    args.shift();
+    textures.push(texture);
+  }
+  Util.shuffle(textures);
+  console.log('textures', textures);
 
   while(!window.shouldClose) {
     glViewport(0, 0, width, height);
@@ -80,7 +89,7 @@ function main(...args) {
     glClear(GL_COLOR_BUFFER_BIT); //clears the window to the color you want.
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    glBindTexture(GL_TEXTURE_2D, textures[0]);
 
     // Draw a textured quad
     glBegin(GL_QUADS);

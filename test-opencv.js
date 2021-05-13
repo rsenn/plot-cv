@@ -2,19 +2,49 @@ import { Point, Size, Rect, Mat, UMat, Line, CLAHE, TickMeter, Draw } from 'open
 import * as cv from 'opencv';
 import * as fs from 'fs';
 import Console from 'console';
-//import * as draw from 'draw';
 import * as path from 'path';
 import RGBA from './lib/color/rgba.js';
 import Util from './lib/util.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { Pipeline, Processor } from './cvPipeline.js';
 import { Window, MouseFlags, MouseEvents, Mouse, TextStyle, DrawText } from './cvHighGUI.js';
+import * as nvg from 'nanovg';
+import * as glfw from 'glfw';
 
 let basename = Util.getArgv()[1].replace(/\.js$/, '');
+
+function GLFW(...args) {
+  let resolution, window, size, position;
+
+  resolution = new Size(...args);
+  const { Window } = glfw;
+  const hints = [
+    [glfw.CONTEXT_VERSION_MAJOR, 3],
+    [glfw.CONTEXT_VERSION_MINOR, 2],
+    [glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE],
+    [glfw.OPENGL_FORWARD_COMPAT, true],
+    [glfw.RESIZABLE, false],
+    [glfw.SAMPLES, 4]
+  ];
+
+  for(let [prop, value] of hints) Window.hint(prop, value);
+
+  window = new Window(resolution.width, resolution.height, 'OpenGL');
+  glfw.context.current = window;
+  this.context = glfw.context;
+  size = new Size(window.size);
+  position = new Point(window.position);
+  const rect = new Rect(...position, ...size);
+  console.log(`GLFW`, rect);
+  nvg.CreateGL3(nvg.STENCIL_STROKES | nvg.ANTIALIAS | nvg.DEBUG);
+  return Object.assign(this, { resolution, window, size, position });
+}
+
 function WriteImage(name, mat) {
   cv.imwrite(name, mat);
   console.log("Wrote '" + name + "' (" + mat.size + ').');
 }
+
 function SaveConfig(configObj) {
   configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v]));
   let file = std.open(basename + '.config.json', 'w+b');
@@ -24,6 +54,7 @@ function SaveConfig(configObj) {
     inspect(configObj, { compact: false })
   );
 }
+
 function LoadConfig() {
   let str = std.loadFile(basename + '.config.json');
   let configObj = JSON.parse(str || '{}');
@@ -34,14 +65,17 @@ function LoadConfig() {
   console.log('LoadConfig:', inspect(configObj, { compact: false }));
   return configObj;
 }
+
 function InspectMat(mat) {
   const { channels, depth, type, cols, rows } = mat;
   return inspect({ channels, depth, type, cols, rows });
 }
+
 function ToHex(number) {
   if(number < 0) number = 0xffffffff + number + 1;
   return '0x' + number.toString(16);
 }
+
 function Accumulator(callback) {
   let self;
   let accu = {};
@@ -70,6 +104,7 @@ function Accumulator(callback) {
   });
   return self;
 }
+
 function main(...args) {
   globalThis.console = new Console({
     inspectOptions: {
@@ -81,8 +116,10 @@ function main(...args) {
     }
   });
   let running = true;
+
   console.log('Util.getMethodNames(cv)', Util.getMethodNames(cv, Infinity, 0));
   console.log('cv.HoughLines', cv.HoughLines);
+
   let line = new Line(0, 0, 50, 50);
   console.log('line', line);
   let clahe = new CLAHE();
@@ -101,6 +138,7 @@ function main(...args) {
   } else {
     scaled = new Size(resolution);
   }
+
   let outputRect = new Rect(0, 0, resolution.width, resolution.height);
   let outputMat = new Mat(outputRect.size, cv.CV_8UC3);
   let statusRect = new Rect(0, resolution.height, resolution.width, 200);
@@ -112,6 +150,10 @@ function main(...args) {
   console.log('textRect', textRect);
   console.log('helpRect:', helpRect);
   let screen = new Mat(screenSize, cv.CV_8UC3);
+
+  let gfx = new GLFW(1024, 600);
+  console.log('gfx:', gfx);
+
   cv.imshow('output', screen);
   cv.moveWindow('output', 0, 0);
   cv.resizeWindow('output', screenSize.width);

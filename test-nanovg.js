@@ -1,58 +1,92 @@
 import * as glfw from 'glfw';
 import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 import { glFlush, glBegin, glBindTexture, glClear, glClearColor, glEnable, glEnd, glGenTextures, glTexCoord2f, glTexParameterf, glTexImage2D, glVertex3f, glViewport, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT, GL_LINEAR, GL_QUADS, GL_REPEAT, GL_RGB, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_TEXTURE_WRAP_S, GL_TEXTURE_WRAP_T, GL_UNSIGNED_BYTE, glDisable, glLoadIdentity, glMatrixMode, glOrtho, glPushMatrix, glPopMatrix, GL_LIGHTING, GL_MODELVIEW, GL_PROJECTION } from './gl.js';
 import { RGBA, HSLA } from './lib/color.js';
-import { Mat } from 'opencv';
+import { Mat, Size, Point, Rect } from 'opencv';
 import * as cv from 'opencv';
 import * as nvg from 'nanovg';
+import Console from 'console';
 
-async function main(...args) {
-  await ConsoleSetup({
-    maxStringLength: 200,
-    maxArrayLength: 10,
-    breakLength: 100,
-    compact: 0
+function GLFW(...args) {
+  let resolution = new Size(...args);
+  const { Window } = glfw;
+  const hints = [
+    [glfw.CONTEXT_VERSION_MAJOR, 3],
+    [glfw.CONTEXT_VERSION_MINOR, 2],
+    [glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE],
+    [glfw.OPENGL_FORWARD_COMPAT, true],
+    [glfw.RESIZABLE, false],
+    [glfw.SAMPLES, 4]
+  ];
+
+  for(let [prop, value] of hints) Window.hint(prop, value);
+
+  let window = (glfw.context.current = new Window(resolution.width, resolution.height, 'OpenGL'));
+  let size = new Size(window.size);
+  let position = new Point(window.position);
+  nvg.CreateGL3(nvg.STENCIL_STROKES | nvg.ANTIALIAS | nvg.DEBUG);
+  return Object.assign(this, { resolution, window, size, position });
+}
+
+function main(...args) {
+  globalThis.console = new Console({
+    inspectOptions: {
+      maxStringLength: 200,
+      maxArrayLength: 10,
+      breakLength: 100,
+      compact: 1,
+      depth: 10
+    }
   });
-  //console.log('glfw:', glfw);
 
-  glfw.Window.hint(glfw.CONTEXT_VERSION_MAJOR, 3);
-  glfw.Window.hint(glfw.CONTEXT_VERSION_MINOR, 2);
-  glfw.Window.hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE);
-  glfw.Window.hint(glfw.OPENGL_FORWARD_COMPAT, true);
-  glfw.Window.hint(glfw.RESIZABLE, false);
-  glfw.Window.hint(glfw.SAMPLES, 4);
-
-  const window = new glfw.Window(800, 600, 'OpenGL');
-  glfw.context.current = window;
-
-  const { position, size } = window;
+  const { position, size, window } = new GLFW(1280, 900);
   const { width, height } = size;
   const { x, y } = position;
 
   console.log(`width: ${width}, height: ${height}, x: ${x}, y: ${y}`);
 
-  nvg.CreateGL3(nvg.STENCIL_STROKES | nvg.ANTIALIAS | nvg.DEBUG);
-  /*
-  const vg = new nvg.Paint();
+  let mat = new Mat(size, cv.CV_8UC4);
 
-  console.log("vg:", vg);
-*/
+  mat.setTo([11, 22, 33, 255]);
+  //cv.rectangle(mat, new Point(0,0), new Point(800,600), [255,0,0,0],4, cv.LINE_8);
+  cv.line(mat,
+    new Point(10, 10),
+    new Point(size.width - 10, size.height - 10),
+    [255, 255, 0, 255],
+    4,
+    cv.LINE_AA
+  );
+  cv.line(mat,
+    new Point(size.width - 10, 10),
+    new Point(10, size.height - 10),
+    [255, 0, 0, 255],
+    4,
+    cv.LINE_AA
+  );
 
-  let image = cv.imread('796e7bfab61dd66b5f12c3f929f75d9c_Mhleberg_5.jpg');
-  let image2 = cv.imread('9b16290d7d9c8f1aca810b6702070189_20170331_112428.jpg');
+  console.log('mat:', mat);
+  console.log('mat.size:', mat.size);
 
-  cv.cvtColor(image2, image2, cv.CV_RGB2RGBA);
-  console.log('image:', image);
-  console.log('image.buffer:', image.buffer);
-  let imgId = nvg.CreateImage('796e7bfab61dd66b5f12c3f929f75d9c_Mhleberg_5.jpg', 0);
+  let image2 = cv.imread('Architektur.png');
+
+  //image2.copyTo(mat);
+
+  console.log('mat:', mat);
+  console.log('mat.elemSize', mat.elemSize);
+  let { buffer } = mat;
+  console.log('mat.buffer:', buffer);
+  let pixels;
+  console.log('mat.buffer.byteLength/mat.elemSize:', (pixels = buffer.byteLength / mat.elemSize));
+  console.log('pixels / mat.cols', pixels / mat.cols);
+
+  let imgId = nvg.CreateImageRGBA(mat.cols, mat.rows, 0, mat.buffer);
+  let img2Id = nvg.CreateImage('Muehleberg.png', 0);
   console.log('imgId:', imgId);
-  let img2Id = nvg.CreateImageRGBA(image2.cols, image2.rows, 0, image2.buffer);
   console.log('img2Id:', img2Id);
   let img2Sz = nvg.ImageSize(img2Id);
   let imgSz = nvg.ImageSize(imgId);
-  console.log('nvg.ImageSize():', imgSz);
-  console.log('nvg.ImageSize():', img2Sz);
+  console.log('nvg.ImageSize(img2Id)', img2Sz + '');
+  console.log('nvg.ImageSize(imgId)', imgSz + '');
   let i = 0;
 
   while(true) {
@@ -81,7 +115,7 @@ async function main(...args) {
     /*   console.log('t:', t);
     console.log('p:', p);
     console.log('nvg.TransformPoint:', nvg.TransformPoint(p, 40, 100));*/
-    let pattern = nvg.ImagePattern(0, 0, ...img2Sz, 0, img2Id, 1);
+    let pattern = nvg.ImagePattern(0, 0, ...img2Sz, 0, imgId, 1);
     // console.log('pattern:', pattern);
 
     nvg.Scale(0.4, 0.4);
@@ -113,4 +147,12 @@ async function main(...args) {
     i++;
   }
 }
-Util.callMain(main, true);
+
+try {
+  main(...scriptArgs.slice(1));
+} catch(error) {
+  console.log(`FAIL: ${error.message}\n${error.stack}`);
+  std.exit(1);
+} finally {
+  console.log('SUCCESS');
+}
