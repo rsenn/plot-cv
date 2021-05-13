@@ -159,13 +159,10 @@ function main(...args) {
   let pipeline = new Pipeline([
       function AcquireFrame(src, dst) {
         image = cv.imread(file);
-        console.log('AcquireFrame', { image });
         image.copyTo(dst);
-        console.log('AcquireFrame', { dst });
       },
       function Grayscale(src, dst) {
         let channels = [];
-        console.log('Grayscale', { src });
         cv.cvtColor(src, dst, cv.COLOR_BGR2Lab);
         cv.split(dst, channels);
         channels[0].copyTo(dst);
