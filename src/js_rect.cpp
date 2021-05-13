@@ -463,18 +463,17 @@ js_rect_method(JSContext* ctx, JSValueConst rect, int argc, JSValueConst* argv, 
   return ret;
 }
 
-static JSValue iterator_symbol = JS_UNDEFINED;
+static JSAtom iterator_symbol;
 
 static JSValue
 js_rect_symbol_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSValue arr, iter;
-  jsrt js(ctx);
   arr = js_rect_funcs(ctx, this_val, argc, argv, 3);
 
-  if(JS_IsUndefined(iterator_symbol))
-    iterator_symbol = js.get_symbol("iterator");
+  if(iterator_symbol == 0)
+    iterator_symbol = js_symbol_atom(ctx, "iterator");
 
-  if(!JS_IsFunction(ctx, (iter = js.get_property(arr, iterator_symbol))))
+  if(!JS_IsFunction(ctx, (iter = JS_GetProperty(ctx, arr, iterator_symbol))))
     return JS_EXCEPTION;
   return JS_Call(ctx, iter, arr, 0, argv);
 }
@@ -573,6 +572,11 @@ js_rect_init(JSContext* ctx, JSModuleDef* m) {
   return 0;
 }
 
+extern "C" VISIBLE void
+js_rect_export(JSContext* ctx, JSModuleDef* m) {
+  JS_AddModuleExport(ctx, m, "Rect");
+}
+
 void
 js_rect_constructor(JSContext* ctx, JSValue parent, const char* name) {
   if(JS_IsUndefined(rect_class))
@@ -582,9 +586,9 @@ js_rect_constructor(JSContext* ctx, JSValue parent, const char* name) {
 }
 
 #ifdef JS_RECT_MODULE
-#define JS_INIT_MODULE /*VISIBLE*/ js_init_module
+#define JS_INIT_MODULE VISIBLE js_init_module
 #else
-#define JS_INIT_MODULE /*VISIBLE*/ js_init_module_rect
+#define JS_INIT_MODULE js_init_module_rect
 #endif
 
 extern "C" JSModuleDef*
@@ -593,6 +597,6 @@ JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   m = JS_NewCModule(ctx, module_name, &js_rect_init);
   if(!m)
     return NULL;
-  JS_AddModuleExport(ctx, m, "Rect");
+  js_rect_export(ctx, m);
   return m;
 }

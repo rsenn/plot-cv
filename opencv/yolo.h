@@ -37,15 +37,7 @@ private:
   void drawPred(int classId, float conf, int left, int top, int right, int bottom, cv::Mat& frame);
 };
 
-Net_config yolo_nets[4] = {
-    {0.5, 0.4, 416, 416, "coco.names", "yolov3.cfg", "yolov3.weights", "yolov3"},
-    {0.5, 0.4, 608, 608, "coco.names", "yolov4.cfg", "yolov4.weights", "yolov4"},
-    {0.5,
-     0.4,
-     320,
-     320,
-     "coco.names",
-     "yolo-fastest-xl.cfg",
-     "yolo-fastest-xl.weights",
-     "yolo-fastest"},
-    {0.5, 0.4, 320, 320, "coco.names", "csdarknet53s-panet-spp.cfg", "yolobile.weights", "yolobile"}};
+Net_config yolo_nets[4] = {{0.5, 0.4, 416, 416, "coco.names", "yolov3.cfg", "yolov3.weights", "yolov3"},
+                           {0.5, 0.4, 608, 608, "coco.names", "yolov4.cfg", "yolov4.weights", "yolov4"},
+                           {0.5, 0.4, 320, 320, "coco.names", "yolo-fastest-xl.cfg", "yolo-fastest-xl.weights", "yolo-fastest"},
+                           {0.5, 0.4, 320, 320, "coco.names", "csdarknet53s-panet-spp.cfg", "yolobile.weights", "yolobile"}};

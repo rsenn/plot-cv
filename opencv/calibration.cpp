@@ -113,8 +113,7 @@ calcChessboardCorners(Size boardSize, float squareSize, vector<Point3f>& corners
     case CHESSBOARD:
     case CIRCLES_GRID:
       for(int i = 0; i < boardSize.height; i++)
-        for(int j = 0; j < boardSize.width; j++)
-          corners.push_back(Point3f(float(j * squareSize), float(i * squareSize), 0));
+        for(int j = 0; j < boardSize.width; j++) corners.push_back(Point3f(float(j * squareSize), float(i * squareSize), 0));
       break;
 
     case ASYMMETRIC_CIRCLES_GRID:
@@ -152,21 +151,14 @@ runCalibration(vector<vector<Point2f>> imagePoints,
 
   objectPoints.resize(imagePoints.size(), objectPoints[0]);
 
-  double rms = calibrateCamera(objectPoints,
-                               imagePoints,
-                               imageSize,
-                               cameraMatrix,
-                               distCoeffs,
-                               rvecs,
-                               tvecs,
-                               flags | CV_CALIB_FIX_K4 | CV_CALIB_FIX_K5);
+  double rms = calibrateCamera(
+      objectPoints, imagePoints, imageSize, cameraMatrix, distCoeffs, rvecs, tvecs, flags | CV_CALIB_FIX_K4 | CV_CALIB_FIX_K5);
   ///*|CV_CALIB_FIX_K3*/|CV_CALIB_FIX_K4|CV_CALIB_FIX_K5);
   printf("RMS error reported by calibrateCamera: %g\n", rms);
 
   bool ok = checkRange(cameraMatrix) && checkRange(distCoeffs);
 
-  totalAvgErr =
-      computeReprojectionErrors(objectPoints, imagePoints, rvecs, tvecs, cameraMatrix, distCoeffs, reprojErrs);
+  totalAvgErr = computeReprojectionErrors(objectPoints, imagePoints, rvecs, tvecs, cameraMatrix, distCoeffs, reprojErrs);
 
   return ok;
 }
@@ -460,11 +452,10 @@ main(int argc, char** argv) {
     bool found;
     switch(pattern) {
       case CHESSBOARD:
-        found =
-            findChessboardCorners(view,
-                                  boardSize,
-                                  pointbuf,
-                                  CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE);
+        found = findChessboardCorners(view,
+                                      boardSize,
+                                      pointbuf,
+                                      CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE);
         break;
       case CIRCLES_GRID: found = findCirclesGrid(view, boardSize, pointbuf); break;
       case ASYMMETRIC_CIRCLES_GRID: found = findCirclesGrid(view, boardSize, pointbuf, CALIB_CB_ASYMMETRIC_GRID); break;
@@ -473,8 +464,7 @@ main(int argc, char** argv) {
 
     // improve the found corners' coordinate accuracy
     if(pattern == CHESSBOARD && found)
-      cornerSubPix(
-          viewGray, pointbuf, Size(11, 11), Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+      cornerSubPix(viewGray, pointbuf, Size(11, 11), Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
 
     if(mode == CAPTURING && found && (!capture.isOpened() || clock() - prevTimestamp > delay * 1e-3 * CLOCKS_PER_SEC)) {
       imagePoints.push_back(pointbuf);

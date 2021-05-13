@@ -61,8 +61,8 @@ getOrientation(const std::vector<cv::Point>& pts, cv::Mat& img) {
   PCA pca_analysis(data_pts, cv::Mat(), CV_PCA_DATA_AS_ROW);
 
   // Store the center of the object
-  cv::Point cntr = cv::Point(static_cast<int>(pca_analysis.mean.at<double>(0, 0)),
-                             static_cast<int>(pca_analysis.mean.at<double>(0, 1)));
+  cv::Point cntr =
+      cv::Point(static_cast<int>(pca_analysis.mean.at<double>(0, 0)), static_cast<int>(pca_analysis.mean.at<double>(0, 1)));
 
   // Store the eigenvalues and eigenstd::vectors
   std::vector<cv::Point2d> eigen_vecs(2);

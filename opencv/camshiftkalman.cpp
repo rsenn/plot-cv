@@ -293,13 +293,7 @@ camShiftKalman::track() {
 
       Mat image;
       currentFrame.copyTo(image);
-      putText(image,
-              "Target Lost",
-              Point(image.rows / 2, image.cols / 4),
-              cv::FONT_HERSHEY_PLAIN,
-              2.0,
-              Scalar(0, 0, 255),
-              2);
+      putText(image, "Target Lost", Point(image.rows / 2, image.cols / 4), cv::FONT_HERSHEY_PLAIN, 2.0, Scalar(0, 0, 255), 2);
       imshow(winName, image);
     } else
       drawTrackResult();
@@ -331,10 +325,8 @@ camShiftKalman::initKalman(double interval) {
   const int stateNum = 4;
   const int measureNum = 2;
 
-  Mat statePost = (Mat_<float>(stateNum, 1) << trackWindow.x + trackWindow.width / 2.0,
-                   trackWindow.y + trackWindow.height / 2.0,
-                   0,
-                   0);
+  Mat statePost =
+      (Mat_<float>(stateNum, 1) << trackWindow.x + trackWindow.width / 2.0, trackWindow.y + trackWindow.height / 2.0, 0, 0);
   Mat transitionMatrix = (Mat_<float>(stateNum, stateNum) << 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1);
 
   KF.init(stateNum, measureNum);
@@ -431,12 +423,8 @@ camShiftKalman::drawHist1d(const Mat hist, int histSize) const {
 
   for(int i = 0; i < histSize; i++) {
     int val = saturate_cast<int>(hist.at<float>(i) * histimg.rows / 255);
-    rectangle(histimg,
-              Point(i * binW, histimg.rows),
-              Point((i + 1) * binW, histimg.rows - val),
-              Scalar(buf.at<Vec3b>(i)),
-              -1,
-              8);
+    rectangle(
+        histimg, Point(i * binW, histimg.rows), Point((i + 1) * binW, histimg.rows - val), Scalar(buf.at<Vec3b>(i)), -1, 8);
   }
 
   return histimg;

@@ -68,20 +68,12 @@ static int m = 2;
 ImageOutput* video_out;
 
 void set_background(string back_name, bool background_is_video, cv::Mat& grayBackground, bool& use_static_back);
-void track_with_non_adaptive_BS(ImageInput* capture,
-                                cv::Mat& grayBackground,
-                                bool use_static_back,
-                                double& total_targets,
-                                int& count_LR,
-                                int& count_RL);
+void track_with_non_adaptive_BS(
+    ImageInput* capture, cv::Mat& grayBackground, bool use_static_back, double& total_targets, int& count_LR, int& count_RL);
 void do_non_adaptive_BS(cv::Mat& grayImage1, cv::Mat& grayImage2, bool debugMode, cv::Mat& thresholdImage);
 
-void track_with_adaptive_BS(ImageInput* capture,
-                            cv::Mat& grayBackground,
-                            bool use_static_back,
-                            double& total_targets,
-                            int& count_LR,
-                            int& count_RL);
+void track_with_adaptive_BS(
+    ImageInput* capture, cv::Mat& grayBackground, bool use_static_back, double& total_targets, int& count_LR, int& count_RL);
 void do_adaptive_BS(Ptr<BackgroundSubtractorMOG2> subtractor, cv::Mat& image, bool debugMode, cv::Mat& thresholdImage);
 void search_for_movement(cv::Mat& thresholdImage,
                          cv::Mat& display,
@@ -216,12 +208,8 @@ set_background(string back_name, bool background_is_video, cv::Mat& grayBackgrou
 }
 
 void
-track_with_non_adaptive_BS(ImageInput* capture,
-                           cv::Mat& grayBackground,
-                           bool use_static_back,
-                           double& total_targets,
-                           int& count_LR,
-                           int& count_RL) {
+track_with_non_adaptive_BS(
+    ImageInput* capture, cv::Mat& grayBackground, bool use_static_back, double& total_targets, int& count_LR, int& count_RL) {
   bool debugMode = false;
   bool trackingEnabled = false;
   bool pause = false;
@@ -312,12 +300,8 @@ do_non_adaptive_BS(cv::Mat& grayImage1, cv::Mat& grayImage2, bool debugMode, cv:
 // track objects through video using GMM background subtraction
 // TODO do we actually want gray images for this version?
 void
-track_with_adaptive_BS(ImageInput* capture,
-                       cv::Mat& grayBackground,
-                       bool use_static_back,
-                       double& total_targets,
-                       int& count_LR,
-                       int& count_RL) {
+track_with_adaptive_BS(
+    ImageInput* capture, cv::Mat& grayBackground, bool use_static_back, double& total_targets, int& count_LR, int& count_RL) {
   bool debugMode = false;
   bool trackingEnabled = false;
   bool pause = false;

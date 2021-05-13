@@ -210,8 +210,7 @@ detectFaces(vector<cv::Mat>& faceROIImages,
     }
 
     // Detect nose
-    noseCascade.detectMultiScale(
-        faceROIGrey, nose, 1.1, 5, cv::CASCADE_SCALE_IMAGE, cv::Size(10, 10), cv::Size(200, 200));
+    noseCascade.detectMultiScale(faceROIGrey, nose, 1.1, 5, cv::CASCADE_SCALE_IMAGE, cv::Size(10, 10), cv::Size(200, 200));
 
     // Draw a rectangle around the nose
     if(nose.size() == 1 && !trainingMode) {
@@ -406,14 +405,8 @@ main(int argc, char** argv) {
       // Call the detect faces function asynchronously
       if(!futureFacesRunning) {
         // Detect faces
-        futureFaces = async(launch::async,
-                            detectFaces,
-                            ref(faceROIImages),
-                            frame.clone(),
-                            faceCascade,
-                            eyeCascade,
-                            noseCascade,
-                            trainingMode);
+        futureFaces = async(
+            launch::async, detectFaces, ref(faceROIImages), frame.clone(), faceCascade, eyeCascade, noseCascade, trainingMode);
 
         // Set the future faces running flag to true
         futureFacesRunning = true;
@@ -481,9 +474,7 @@ main(int argc, char** argv) {
 
         // Use the face recognizer model to perform the face recognition prediction
         if(faceRecognizerLabelNames.size() >= 2) {
-          faceRecognizerModel->predict(faceROIImageGrey,
-                                       faceRecognizerPredictionLabel,
-                                       faceRecognizerPredictionConfidence);
+          faceRecognizerModel->predict(faceROIImageGrey, faceRecognizerPredictionLabel, faceRecognizerPredictionConfidence);
           faceRecognizerPredictionLabelName = faceRecognizerLabelNames[faceRecognizerPredictionLabel - 1];
 
           // Add the prediction image name text
@@ -503,8 +494,7 @@ main(int argc, char** argv) {
           textSize = cv::getTextSize(text, font, fontSizeSmall, fontLineThickness, &textBaseline);
           cv::putText(frame,
                       text,
-                      cv::Point(textMargin,
-                                faceROIImageHeight + imageMargin + (textMargin * 2) + (textSize.height * 2)),
+                      cv::Point(textMargin, faceROIImageHeight + imageMargin + (textMargin * 2) + (textSize.height * 2)),
                       font,
                       fontSizeSmall,
                       fontColour,
@@ -516,8 +506,7 @@ main(int argc, char** argv) {
           textSize = cv::getTextSize(text, font, fontSizeSmall, fontLineThickness, &textBaseline);
           cv::putText(frame,
                       text,
-                      cv::Point(textMargin,
-                                faceROIImageHeight + imageMargin + (textMargin * 3) + (textSize.height * 3)),
+                      cv::Point(textMargin, faceROIImageHeight + imageMargin + (textMargin * 3) + (textSize.height * 3)),
                       font,
                       fontSizeSmall,
                       fontColour,
@@ -529,8 +518,7 @@ main(int argc, char** argv) {
           textSize = cv::getTextSize(text, font, fontSizeSmall, fontLineThickness, &textBaseline);
           cv::putText(frame,
                       text,
-                      cv::Point(textMargin,
-                                faceROIImageHeight + imageMargin + (textMargin * 4) + (textSize.height * 4)),
+                      cv::Point(textMargin, faceROIImageHeight + imageMargin + (textMargin * 4) + (textSize.height * 4)),
                       font,
                       fontSizeSmall,
                       fontColour,

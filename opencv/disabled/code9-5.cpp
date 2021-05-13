@@ -80,16 +80,14 @@ calibrator::calc_image_points(bool show) {
   for(int i = 0; i < l_images.size(); i++) {
     Mat lim = l_images[i], rim = r_images[i];
     vector<Point2f> l_im_p, r_im_p;
-    bool l_pattern_found =
-        findChessboardCorners(lim,
-                              Size(width, height),
-                              l_im_p,
-                              CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE + CALIB_CB_FAST_CHECK);
-    bool r_pattern_found =
-        findChessboardCorners(rim,
-                              Size(width, height),
-                              r_im_p,
-                              CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE + CALIB_CB_FAST_CHECK);
+    bool l_pattern_found = findChessboardCorners(lim,
+                                                 Size(width, height),
+                                                 l_im_p,
+                                                 CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE + CALIB_CB_FAST_CHECK);
+    bool r_pattern_found = findChessboardCorners(rim,
+                                                 Size(width, height),
+                                                 r_im_p,
+                                                 CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE + CALIB_CB_FAST_CHECK);
     if(l_pattern_found && r_pattern_found) {
       object_points.push_back(ob_p);
       Mat gray;
@@ -180,8 +178,7 @@ rectifier::rectifier(string filename, Size image_size) {
   fs["T"] >> T;
   fs.release();
 
-  if(l_cameraMatrix.empty() || r_cameraMatrix.empty() || l_distCoeffs.empty() || r_distCoeffs.empty() || R.empty() ||
-     T.empty())
+  if(l_cameraMatrix.empty() || r_cameraMatrix.empty() || l_distCoeffs.empty() || r_distCoeffs.empty() || R.empty() || T.empty())
     cout << "Rectifier: Loading of files not successful" << endl;
 
   // Calculate transforms for rectifying images

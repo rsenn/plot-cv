@@ -70,21 +70,15 @@ main() {
       int yeniy = yeksen / alan;
 
       if(eskix >= 0 && eskiy >= 0 && yenix >= 0 && yeniy >= 0) { // lokasyonlar sıfırdan büyükse
-        stringstream convert, convert2; // ekrana basma için gerekli tür dönüşümleri yapılıyor
+        stringstream convert, convert2;                          // ekrana basma için gerekli tür dönüşümleri yapılıyor
         convert << yenix;
         string x = convert.str();
         convert2 << yeniy;
         string y = convert2.str();
 
         // görüntünün orta noktasına hesaplanan lokasyonlar yazdırılıyor
-        putText(yeniFrame,
-                x + "," + y,
-                cvPoint(yenix, yeniy),
-                FONT_HERSHEY_COMPLEX_SMALL,
-                0.8,
-                cvScalar(0, 0, 0),
-                1,
-                cv::LINE_AA);
+        putText(
+            yeniFrame, x + "," + y, cvPoint(yenix, yeniy), FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0, 0, 0), 1, cv::LINE_AA);
       }
 
       // yeni lokasyonlar güncelleniyor
@@ -92,14 +86,8 @@ main() {
       eskiy = yeniy;
     }
 
-    putText(yeniFrame,
-            " MAHSERIN 3 ATLISI ",
-            cvPoint(2, 20),
-            FONT_HERSHEY_COMPLEX_SMALL,
-            0.8,
-            cvScalar(255, 0, 0),
-            1,
-            cv::LINE_AA);
+    putText(
+        yeniFrame, " MAHSERIN 3 ATLISI ", cvPoint(2, 20), FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(255, 0, 0), 1, cv::LINE_AA);
 
     imshow("gomuluRenkAlgilama", yeniFrame);
 

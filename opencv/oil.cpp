@@ -70,14 +70,7 @@ main(int argc, char* argv[]) {
   namedWindow(p.winName);
   addSlider("DynRatio", p.winName, 1, 127, p.dynRatio, &p.dynRatio, TrackSlider, &p);
   addSlider("Size", p.winName, 1, 100, p.size, &p.size, TrackSlider, &p);
-  addSlider("ColorSpace",
-            p.winName,
-            0,
-            static_cast<int>(colorSpace.size() - 1),
-            p.colorSpace,
-            &p.colorSpace,
-            TrackSlider,
-            &p);
+  addSlider("ColorSpace", p.winName, 0, static_cast<int>(colorSpace.size() - 1), p.colorSpace, &p.colorSpace, TrackSlider, &p);
   while(waitKey(20) != 27) {
     v >> p.img;
     imshow("Original", p.img);

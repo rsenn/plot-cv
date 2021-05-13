@@ -12,7 +12,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 //#include "plot-cv.hpp"
-#include "color.hpp"
+//#include "color.hpp"
 #include "geometry.hpp"
 #include "psimpl.hpp"
 
@@ -329,7 +329,6 @@ js_contour_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValu
 
   if(argc > 0) {
     int i;
-    // jsrt js(ctx);
 
     for(i = 0; i < argc; i++) {
       JSPointData<double> p;
@@ -1155,10 +1154,15 @@ js_contour_init(JSContext* ctx, JSModuleDef* m) {
   return 0;
 }
 
+extern "C" VISIBLE void
+js_contour_export(JSContext* ctx, JSModuleDef* m) {
+  JS_AddModuleExport(ctx, m, "Contour");
+}
+
 #if defined(JS_CONTOUR_MODULE)
-#define JS_INIT_MODULE /*VISIBLE*/ js_init_module
+#define JS_INIT_MODULE VISIBLE js_init_module
 #else
-#define JS_INIT_MODULE /*VISIBLE*/ js_init_module_contour
+#define JS_INIT_MODULE js_init_module_contour
 #endif
 
 JSModuleDef*
@@ -1167,7 +1171,7 @@ JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   m = JS_NewCModule(ctx, module_name, &js_contour_init);
   if(!m)
     return NULL;
-  JS_AddModuleExport(ctx, m, "Contour");
+  js_contour_export(ctx, m);
   return m;
 }
 }

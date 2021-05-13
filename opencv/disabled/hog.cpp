@@ -347,15 +347,8 @@ App::run() {
         putText(img_to_show, "Mode: GPU", Point(5, 25), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
       else
         putText(img_to_show, "Mode: CPU", Point(5, 25), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
-      putText(img_to_show,
-              "FPS (HOG only): " + hogWorkFps(),
-              Point(5, 65),
-              FONT_HERSHEY_SIMPLEX,
-              1.,
-              Scalar(255, 100, 0),
-              2);
-      putText(
-          img_to_show, "FPS (total): " + workFps(), Point(5, 105), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
+      putText(img_to_show, "FPS (HOG only): " + hogWorkFps(), Point(5, 65), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
+      putText(img_to_show, "FPS (total): " + workFps(), Point(5, 105), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
       imshow("opencv_gpu_hog", img_to_show);
 
       if(args.src_is_video || args.src_is_camera)
@@ -365,8 +358,7 @@ App::run() {
 
       if(args.write_video) {
         if(!video_writer.isOpened()) {
-          video_writer.open(
-              args.dst_video, CV_FOURCC('x', 'v', 'i', 'd'), args.dst_video_fps, img_to_show.size(), true);
+          video_writer.open(args.dst_video, CV_FOURCC('x', 'v', 'i', 'd'), args.dst_video_fps, img_to_show.size(), true);
           if(!video_writer.isOpened())
             throw std::runtime_error("can't create video writer");
         }

@@ -165,10 +165,9 @@ correctFocus(bool lastSucceeded, FocusState& state, double rate) {
       state.step = static_cast<int>(static_cast<double>(state.step) * 0.75);
       state.lastDirectionChange = 0;
     } else if((rate + epsylon < state.rateMax) &&
-              ((state.lastDirectionChange > 3) ||
-               ((state.step < (state.minFocusStep * 1.5)) &&
-                state.stepToLastMax > state.step))) { // I've done 3 steps (or I'm finishing)
-                                                      // without improvement, go back to max.
+              ((state.lastDirectionChange > 3) || ((state.step < (state.minFocusStep * 1.5)) &&
+                                                   state.stepToLastMax > state.step))) { // I've done 3 steps (or I'm finishing)
+                                                                                         // without improvement, go back to max.
       state.direction = state.stepToLastMax >= 0 ? 1 : -1;
       state.step = static_cast<int>(static_cast<double>(state.step) * 0.75);
       int stepToMax = abs(state.stepToLastMax);
@@ -283,8 +282,7 @@ main(int argc, char** argv) {
       cout << "This is not GPHOTO2 device." << endl;
       return -2;
     }
-    cout << "List of camera settings: " << endl
-         << (const char*)(intptr_t)cap.get(CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) << endl;
+    cout << "List of camera settings: " << endl << (const char*)(intptr_t)cap.get(CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) << endl;
     cap.set(CAP_PROP_GPHOTO2_COLLECT_MSGS, true);
   }
 

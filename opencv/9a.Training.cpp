@@ -92,20 +92,11 @@ main() {
           if((r.x - 20 >= 0) && (r.y - 20 >= 0) && (r.x + 20 <= frame.cols) && (r.y + 20 <= frame.rows)) {
             Rect2d cr(r.x - 20, r.y - 20, r.width + 40, r.height + 40);
             imageCrop = frame(cr);
-            snprintf(lineText,
-                     256,
-                     "echo \"pos/pos_%d.jpg 1 20 20 %.0f %.0f\" >> ./data/info.txt",
-                     count_pos,
-                     r.width,
-                     r.height);
+            snprintf(
+                lineText, 256, "echo \"pos/pos_%d.jpg 1 20 20 %.0f %.0f\" >> ./data/info.txt", count_pos, r.width, r.height);
           } else {
             imageCrop = frame(r);
-            snprintf(lineText,
-                     256,
-                     "echo \"pos/pos_%d.jpg 1 0 0 %.0f %.0f\" >> ./data/info.txt",
-                     count_pos,
-                     r.width,
-                     r.height);
+            snprintf(lineText, 256, "echo \"pos/pos_%d.jpg 1 0 0 %.0f %.0f\" >> ./data/info.txt", count_pos, r.width, r.height);
           }
           imwrite(path, imageCrop);
           system(lineText);

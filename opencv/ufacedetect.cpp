@@ -32,8 +32,8 @@ help() {
        << endl;
 }
 
-void detectAndDraw(
-    UMat& img, Mat& canvas, CascadeClassifier& cascade, CascadeClassifier& nestedCascade, double scale, bool tryflip);
+void
+detectAndDraw(UMat& img, Mat& canvas, CascadeClassifier& cascade, CascadeClassifier& nestedCascade, double scale, bool tryflip);
 
 string cascadeName = "../../data/haarcascades/haarcascade_frontalface_alt.xml";
 string nestedCascadeName = "../../data/haarcascades/haarcascade_eye_tree_eyeglasses.xml";

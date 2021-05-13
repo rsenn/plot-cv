@@ -53,9 +53,7 @@ main() {
 
     // Draw the contours
     cv::Mat contourImage = framecv::Mat.clone();
-    for(size_t idx = 0; idx < contours.size(); idx++) {
-      cv::drawContours(contourImage, contours, idx, cv::Scalar(255, 0, 0));
-    }
+    for(size_t idx = 0; idx < contours.size(); idx++) { cv::drawContours(contourImage, contours, idx, cv::Scalar(255, 0, 0)); }
 
     cv::imshow("video", contourImage);
     cvWaitKey(40);

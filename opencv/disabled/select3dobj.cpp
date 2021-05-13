@@ -102,8 +102,7 @@ calcChessboardCorners(Size boardSize, float squareSize, vector<Point3f>& corners
   corners.resize(0);
 
   for(int i = 0; i < boardSize.height; i++)
-    for(int j = 0; j < boardSize.width; j++)
-      corners.push_back(Point3f(float(j * squareSize), float(i * squareSize), 0));
+    for(int j = 0; j < boardSize.width; j++) corners.push_back(Point3f(float(j * squareSize), float(i * squareSize), 0));
 }
 
 static Point3f
@@ -277,11 +276,8 @@ select3DBox(const string& windowname,
 }
 
 static bool
-readModelViews(const string& filename,
-               vector<Point3f>& box,
-               vector<string>& imagelist,
-               vector<Rect>& roiList,
-               vector<Vec6f>& poseList) {
+readModelViews(
+    const string& filename, vector<Point3f>& box, vector<string>& imagelist, vector<Rect>& roiList, vector<Vec6f>& poseList) {
   imagelist.resize(0);
   roiList.resize(0);
   poseList.resize(0);

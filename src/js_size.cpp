@@ -332,18 +332,17 @@ js_size_div(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv)
   return ret;
 }
 
-static JSValue iterator_symbol = JS_UNDEFINED;
+static JSAtom iterator_symbol;
 
 static JSValue
 js_size_symbol_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSValue arr, iter;
-  jsrt js(ctx);
   arr = js_size_funcs(ctx, this_val, argc, argv, 3);
 
-  if(JS_IsUndefined(iterator_symbol))
-    iterator_symbol = js.get_symbol("iterator");
+  if(iterator_symbol == 0)
+    iterator_symbol = js_symbol_atom(ctx, "iterator");
 
-  if(!JS_IsFunction(ctx, (iter = js.get_property(arr, iterator_symbol))))
+  if(!JS_IsFunction(ctx, (iter = JS_GetProperty(ctx, arr, iterator_symbol))))
     return JS_EXCEPTION;
   return JS_Call(ctx, iter, arr, 0, argv);
 }
@@ -437,6 +436,11 @@ js_size_init(JSContext* ctx, JSModuleDef* m) {
   return 0;
 }
 
+extern "C" VISIBLE void
+js_size_export(JSContext* ctx, JSModuleDef* m) {
+  JS_AddModuleExport(ctx, m, "Size");
+}
+
 void
 js_size_constructor(JSContext* ctx, JSValue parent, const char* name) {
   if(JS_IsUndefined(size_class))
@@ -446,9 +450,9 @@ js_size_constructor(JSContext* ctx, JSValue parent, const char* name) {
 }
 
 #ifdef JS_SIZE_MODULE
-#define JS_INIT_MODULE /*VISIBLE*/ js_init_module
+#define JS_INIT_MODULE VISIBLE js_init_module
 #else
-#define JS_INIT_MODULE /*VISIBLE*/ js_init_module_size
+#define JS_INIT_MODULE js_init_module_size
 #endif
 
 extern "C" JSModuleDef*
@@ -457,6 +461,6 @@ JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   m = JS_NewCModule(ctx, module_name, &js_size_init);
   if(!m)
     return NULL;
-  JS_AddModuleExport(ctx, m, "Size");
+  js_size_export(ctx, m);
   return m;
 }

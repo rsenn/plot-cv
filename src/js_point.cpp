@@ -1,5 +1,4 @@
 #include "jsbindings.hpp"
-#include "js.hpp"
 #include "js_point.hpp"
 #include "js_rect.hpp"
 #include "js_mat.hpp"
@@ -287,18 +286,17 @@ js_point_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* 
   return obj;
 }
 
-static JSValue iterator_symbol = JS_UNDEFINED;
+static JSAtom iterator_symbol;
 
 static JSValue
 js_point_symbol_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSValue arr, iter;
-  jsrt js(ctx);
   arr = js_point_to_array(ctx, this_val, argc, argv);
 
-  if(JS_IsUndefined(iterator_symbol))
-    iterator_symbol = js.get_symbol("iterator");
+  if(iterator_symbol == 0)
+    iterator_symbol = js_symbol_atom(ctx, "iterator");
 
-  if(!JS_IsFunction(ctx, (iter = js.get_property(arr, iterator_symbol))))
+  if(!JS_IsFunction(ctx, (iter = JS_GetProperty(ctx, arr, iterator_symbol))))
     return JS_EXCEPTION;
   return JS_Call(ctx, iter, arr, 0, argv);
 }
@@ -443,10 +441,15 @@ js_point_constructor(JSContext* ctx, JSValue parent, const char* name) {
   JS_SetPropertyStr(ctx, parent, name ? name : "Point", point_class);
 }
 
+extern "C" VISIBLE void
+js_point_export(JSContext* ctx, JSModuleDef* m) {
+  JS_AddModuleExport(ctx, m, "Point");
+}
+
 #if defined(JS_POINT_MODULE)
-#define JS_INIT_MODULE /*VISIBLE*/ js_init_module
+#define JS_INIT_MODULE VISIBLE js_init_module
 #else
-#define JS_INIT_MODULE /*VISIBLE*/ js_init_module_point
+#define JS_INIT_MODULE js_init_module_point
 #endif
 
 JSModuleDef*
@@ -455,7 +458,7 @@ JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   m = JS_NewCModule(ctx, module_name, &js_point_init);
   if(!m)
     return NULL;
-  JS_AddModuleExport(ctx, m, "Point");
+  js_point_export(ctx, m);
   return m;
 }
 }

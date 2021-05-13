@@ -183,8 +183,7 @@ main(int argc, const char* argv[]) {
       // cascade_gpu.visualizeInPlace = true;
       cascade_gpu.findLargestObject = findLargestObject;
 
-      detections_num =
-          cascade_gpu.detectMultiScale(resized_gpu, facesBuf_gpu, 1.2, (filterRects || findLargestObject) ? 4 : 0);
+      detections_num = cascade_gpu.detectMultiScale(resized_gpu, facesBuf_gpu, 1.2, (filterRects || findLargestObject) ? 4 : 0);
       facesBuf_gpu.colRange(0, detections_num).download(faces_downloaded);
     } else {
       Size minSize = cascade_gpu.getClassifierSize();
@@ -204,9 +203,7 @@ main(int argc, const char* argv[]) {
     if(useGPU) {
       resized_gpu.download(resized_cpu);
 
-      for(int i = 0; i < detections_num; ++i) {
-        rectangle(resized_cpu, faces_downloaded.ptr<cv::Rect>()[i], Scalar(255));
-      }
+      for(int i = 0; i < detections_num; ++i) { rectangle(resized_cpu, faces_downloaded.ptr<cv::Rect>()[i], Scalar(255)); }
     }
 
     tm.stop();
@@ -219,8 +216,8 @@ main(int argc, const char* argv[]) {
     if((filterRects || findLargestObject) && detections_num > 0) {
       Rect* faceRects = useGPU ? faces_downloaded.ptr<Rect>() : &facesBuf_cpu[0];
       for(int i = 0; i < min(detections_num, 2); ++i) {
-        cout << ", [" << setw(4) << faceRects[i].x << ", " << setw(4) << faceRects[i].y << ", " << setw(4)
-             << faceRects[i].width << ", " << setw(4) << faceRects[i].height << "]";
+        cout << ", [" << setw(4) << faceRects[i].x << ", " << setw(4) << faceRects[i].y << ", " << setw(4) << faceRects[i].width
+             << ", " << setw(4) << faceRects[i].height << "]";
       }
     }
     cout << endl;

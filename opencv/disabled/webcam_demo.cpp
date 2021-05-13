@@ -60,8 +60,7 @@ public:
                std::vector<std::vector<string>>& _words,
                std::vector<std::vector<float>>& _confidences,
                std::vector<Ptr<T>>& _ocrs)
-      : detections(_detections), outputs(_outputs), boxes(_boxes), words(_words), confidences(_confidences),
-        ocrs(_ocrs) {}
+      : detections(_detections), outputs(_outputs), boxes(_boxes), words(_words), confidences(_confidences), ocrs(_ocrs) {}
 
   virtual void
   operator()(const cv::Range& r) const CV_OVERRIDE {
@@ -195,14 +194,12 @@ main(int argc, char* argv[]) {
 
     switch(REGION_TYPE) {
       case 0: // ERStats
-        parallel_for_(cv::Range(0, (int)channels.size()),
-                      Parallel_extractCSER(channels, regions, er_filters1, er_filters2));
+        parallel_for_(cv::Range(0, (int)channels.size()), Parallel_extractCSER(channels, regions, er_filters1, er_filters2));
         break;
       case 1: // MSER
         std::vector<std::vector<cv::Point>> contours;
         std::vector<Rect> bboxes;
-        Ptr<MSER> mser =
-            MSER::create(21, (int)(0.00002 * gray.cols * gray.rows), (int)(0.05 * gray.cols * gray.rows), 1, 0.7);
+        Ptr<MSER> mser = MSER::create(21, (int)(0.00002 * gray.cols * gray.rows), (int)(0.05 * gray.cols * gray.rows), 1, 0.7);
         mser->detectRegions(gray, contours, bboxes);
 
         // Convert the output of MSER to suitable input for the grouping/recognition algorithms
@@ -294,8 +291,7 @@ main(int argc, char* argv[]) {
           continue;
         words_detection.push_back(words[i][j]);
         rectangle(out_img, boxes[i][j].tl(), boxes[i][j].br(), Scalar(255, 0, 255), 3);
-        Size word_size =
-            getTextSize(words[i][j], FONT_HERSHEY_SIMPLEX, (double)scale_font, (int)(3 * scale_font), NULL);
+        Size word_size = getTextSize(words[i][j], FONT_HERSHEY_SIMPLEX, (double)scale_font, (int)(3 * scale_font), NULL);
         rectangle(out_img,
                   boxes[i][j].tl() - cv::Point(3, word_size.height + 3),
                   boxes[i][j].tl() + cv::Point(word_size.width, 0),
@@ -314,13 +310,8 @@ main(int argc, char* argv[]) {
     t_all = ((double)getTickCount() - t_all) * 1000 / getTickFrequency();
     int text_thickness = 1 + (out_img.rows / 500);
     string fps_info = format("%2.1f Fps. %dx%d", (float)(1000 / t_all), frame.cols, frame.rows);
-    putText(out_img,
-            fps_info,
-            cv::Point(10, out_img.rows - 5),
-            FONT_HERSHEY_DUPLEX,
-            scale_font,
-            Scalar(255, 0, 0),
-            text_thickness);
+    putText(
+        out_img, fps_info, cv::Point(10, out_img.rows - 5), FONT_HERSHEY_DUPLEX, scale_font, Scalar(255, 0, 0), text_thickness);
     putText(out_img,
             region_types_str[REGION_TYPE],
             cv::Point((int)(out_img.cols * 0.5), out_img.rows - (int)(bottom_bar_height / 1.5)),

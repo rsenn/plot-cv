@@ -100,13 +100,12 @@ printStreamProperties(VideoCapture& capture) {
   cout << "Depth stream." << endl;
   cout << "  Low confidence value = "
        << capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_INTELPERC_DEPTH_LOW_CONFIDENCE_VALUE) << endl;
-  cout << "  Saturation value = "
-       << capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_INTELPERC_DEPTH_SATURATION_VALUE) << endl;
+  cout << "  Saturation value = " << capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_INTELPERC_DEPTH_SATURATION_VALUE)
+       << endl;
   cout << "  Confidence threshold = "
        << capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_INTELPERC_DEPTH_CONFIDENCE_THRESHOLD) << endl;
-  cout << "  Focal length = ("
-       << capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_HORZ) << ", "
-       << capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_VERT) << ")" << endl;
+  cout << "  Focal length = (" << capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_HORZ)
+       << ", " << capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_VERT) << ")" << endl;
   cout << "Depth streams profiles:" << endl;
   for(size_t i = 0; i < profilesCount; i++) {
     capture.set(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_INTELPERC_PROFILE_IDX, (double)i);

@@ -87,14 +87,8 @@ main() {
           case 2: octaveS = '2'; break;
           default: break;
         }
-        putText(interestPointObject,
-                octaveS,
-                kpObject[i].pt,
-                FONT_HERSHEY_COMPLEX_SMALL,
-                1,
-                cv::Scalar(0, 0, 250),
-                1,
-                cv::LINE_AA);
+        putText(
+            interestPointObject, octaveS, kpObject[i].pt, FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(0, 0, 250), 1, cv::LINE_AA);
       }
     }
     imshow("Good Matches", interestPointObject);
@@ -223,8 +217,7 @@ main() {
              Scalar(0, 255, 0),
              4);
       } else {
-        putText(
-            img_matches, "", cv::Point(10, 50), FONT_HERSHEY_COMPLEX_SMALL, 3, cv::Scalar(0, 0, 250), 1, cv::LINE_AA);
+        putText(img_matches, "", cv::Point(10, 50), FONT_HERSHEY_COMPLEX_SMALL, 3, cv::Scalar(0, 0, 250), 1, cv::LINE_AA);
       }
 
       // Show detected matches

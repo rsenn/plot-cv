@@ -113,10 +113,7 @@ main(int argc, const char** argv) {
       if(trackObject) {
         int _vmin = vmin, _vmax = vmax;
 
-        cv::inRange(hsv,
-                    cv::Scalar(0, smin, std::min(_vmin, _vmax)),
-                    cv::Scalar(180, 256, std::max(_vmin, _vmax)),
-                    mask);
+        cv::inRange(hsv, cv::Scalar(0, smin, std::min(_vmin, _vmax)), cv::Scalar(180, 256, std::max(_vmin, _vmax)), mask);
 
         int fromTo[2] = {0, 0};
         hue.create(hsv.size(), hsv.depth());
@@ -138,8 +135,7 @@ main(int argc, const char** argv) {
           histimg = cv::Scalar::all(0);
           int binW = histimg.cols / hsize;
           cv::Mat buf(1, hsize, CV_8UC3);
-          for(int i = 0; i < hsize; i++)
-            buf.at<cv::Vec3b>(i) = cv::Vec3b(cv::saturate_cast<uchar>(i * 180. / hsize), 255, 255);
+          for(int i = 0; i < hsize; i++) buf.at<cv::Vec3b>(i) = cv::Vec3b(cv::saturate_cast<uchar>(i * 180. / hsize), 255, 255);
           cv::cvtColor(buf, buf, cv::COLOR_HSV2BGR);
 
           {
@@ -165,13 +161,11 @@ main(int argc, const char** argv) {
         cv::bitwise_and(backproj, mask, backproj);
 
         cv::RotatedRect trackBox =
-            cv::CamShift(backproj,
-                         trackWindow,
-                         cv::TermCriteria(cv::TermCriteria::EPS | cv::TermCriteria::COUNT, 10, 1));
+            cv::CamShift(backproj, trackWindow, cv::TermCriteria(cv::TermCriteria::EPS | cv::TermCriteria::COUNT, 10, 1));
         if(trackWindow.area() <= 1) {
           int cols = backproj.cols, rows = backproj.rows, r = (std::min(cols, rows) + 5) / 6;
-          trackWindow = cv::Rect(trackWindow.x - r, trackWindow.y - r, trackWindow.x + r, trackWindow.y + r) &
-                        cv::Rect(0, 0, cols, rows);
+          trackWindow =
+              cv::Rect(trackWindow.x - r, trackWindow.y - r, trackWindow.x + r, trackWindow.y + r) & cv::Rect(0, 0, cols, rows);
         }
 
         if(backprojMode)

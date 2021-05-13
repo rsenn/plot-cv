@@ -101,8 +101,7 @@ main(int argc, char** argv) {
       Rect r = boundingRect(contours[i]);
       int radius = r.width / 2;
 
-      if(std::abs(1 - ((double)r.width / r.height)) <= 0.2 &&
-         std::abs(1 - (area / (CV_PI * std::pow(radius, 2.0)))) <= 0.2)
+      if(std::abs(1 - ((double)r.width / r.height)) <= 0.2 && std::abs(1 - (area / (CV_PI * std::pow(radius, 2.0)))) <= 0.2)
         setLabel(img_dest, "CIR", contours[i]);
     }
   }

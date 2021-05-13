@@ -153,19 +153,13 @@ public:
       return;
     CV_Assert(image.depth() == CV_8U);
 
-    icvWriteFrame_FFMPEG_p(ffmpegWriter,
-                           (const uchar*)image.getMat().ptr(),
-                           (int)image.step(),
-                           image.cols(),
-                           image.rows(),
-                           image.channels(),
-                           0);
+    icvWriteFrame_FFMPEG_p(
+        ffmpegWriter, (const uchar*)image.getMat().ptr(), (int)image.step(), image.cols(), image.rows(), image.channels(), 0);
   }
   virtual bool
   open(const cv::String& filename, int fourcc, double fps, cv::Size frameSize, bool isColor) {
     close();
-    ffmpegWriter =
-        icvCreateVideoWriter_FFMPEG_p(filename.c_str(), fourcc, fps, frameSize.width, frameSize.height, isColor);
+    ffmpegWriter = icvCreateVideoWriter_FFMPEG_p(filename.c_str(), fourcc, fps, frameSize.width, frameSize.height, isColor);
     return ffmpegWriter != 0;
   }
 
@@ -197,8 +191,7 @@ protected:
 } // namespace
 
 cv::Ptr<cv::IVideoWriter>
-cvCreateVideoWriter_FFMPEG_proxy(
-    const std::string& filename, int fourcc, double fps, const cv::Size& frameSize, bool isColor) {
+cvCreateVideoWriter_FFMPEG_proxy(const std::string& filename, int fourcc, double fps, const cv::Size& frameSize, bool isColor) {
   cv::Ptr<CvVideoWriter_FFMPEG_proxy> writer =
       cv::makePtr<CvVideoWriter_FFMPEG_proxy>(filename, fourcc, fps, frameSize, isColor != 0);
   if(writer && writer->isOpened())
@@ -365,9 +358,7 @@ static const OpenCV_VideoIO_Plugin_API_preview plugin_api_v0 = {{sizeof(OpenCV_V
 } // namespace cv
 
 const OpenCV_VideoIO_Plugin_API_preview*
-opencv_videoio_plugin_init_v0(int requested_abi_version,
-                              int requested_api_version,
-                              void* /*reserved=NULL*/) CV_NOEXCEPT {
+opencv_videoio_plugin_init_v0(int requested_abi_version, int requested_api_version, void* /*reserved=NULL*/) CV_NOEXCEPT {
   if(requested_abi_version != 0)
     return NULL;
   if(requested_api_version != 0)

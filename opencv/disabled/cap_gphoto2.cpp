@@ -230,12 +230,12 @@ private:
 /**
  * \brief Check if gPhoto2 function ends successfully. If not, throw an exception.
  */
-#define CR(GPHOTO2_FUN)                                                                                                \
-  do {                                                                                                                 \
-    int r_0629c47b758;                                                                                                 \
-    if((r_0629c47b758 = (GPHOTO2_FUN)) < GP_OK) {                                                                      \
-      throw GPhoto2Exception(#GPHOTO2_FUN, r_0629c47b758);                                                             \
-    };                                                                                                                 \
+#define CR(GPHOTO2_FUN)                                                                                                        \
+  do {                                                                                                                         \
+    int r_0629c47b758;                                                                                                         \
+    if((r_0629c47b758 = (GPHOTO2_FUN)) < GP_OK) {                                                                              \
+      throw GPhoto2Exception(#GPHOTO2_FUN, r_0629c47b758);                                                                     \
+    };                                                                                                                         \
   } while(0)
 
 /**

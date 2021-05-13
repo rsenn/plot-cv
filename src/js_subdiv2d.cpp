@@ -6,6 +6,8 @@
 
 #include <opencv2/imgproc.hpp>
 
+extern "C" VISIBLE int js_subdiv2d_init(JSContext*, JSModuleDef*);
+
 extern "C" {
 JSValue subdiv2d_proto = JS_UNDEFINED, subdiv2d_class = JS_UNDEFINED;
 JSClassID js_subdiv2d_class_id = 0;
@@ -272,6 +274,11 @@ js_subdiv2d_init(JSContext* ctx, JSModuleDef* m) {
   return 0;
 }
 
+extern "C" VISIBLE void
+js_subdiv2d_export(JSContext* ctx, JSModuleDef* m) {
+  JS_AddModuleExport(ctx, m, "Subdiv2D");
+}
+
 void
 js_subdiv2d_constructor(JSContext* ctx, JSValue parent, const char* name) {
   if(JS_IsUndefined(subdiv2d_class))
@@ -281,9 +288,9 @@ js_subdiv2d_constructor(JSContext* ctx, JSValue parent, const char* name) {
 }
 
 #if defined(JS_SUBDIV2D_MODULE)
-#define JS_INIT_MODULE /*VISIBLE*/ js_init_module
+#define JS_INIT_MODULE VISIBLE js_init_module
 #else
-#define JS_INIT_MODULE /*VISIBLE*/ js_init_module_subdiv2d
+#define JS_INIT_MODULE js_init_module_subdiv2d
 #endif
 
 extern "C" JSModuleDef*
@@ -292,6 +299,6 @@ JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   m = JS_NewCModule(ctx, module_name, &js_subdiv2d_init);
   if(!m)
     return NULL;
-  JS_AddModuleExport(ctx, m, "Subdiv2D");
+  js_subdiv2d_export(ctx, m);
   return m;
 }

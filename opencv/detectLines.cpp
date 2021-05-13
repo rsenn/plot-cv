@@ -235,8 +235,8 @@ bool
 isNearCircle(Point corner, vector<Vec3f> circles) {
   bool flag = false;
   for(int i = 0; i < circles.size(); i++) {
-    double dist = sqrt((corner.x - circles[i][0]) * (corner.x - circles[i][0]) +
-                       (corner.y - circles[i][1]) * (corner.y - circles[i][1]));
+    double dist =
+        sqrt((corner.x - circles[i][0]) * (corner.x - circles[i][0]) + (corner.y - circles[i][1]) * (corner.y - circles[i][1]));
     if(dist <= circles[i][2] * 1.1) {
       flag = true;
     }

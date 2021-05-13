@@ -94,11 +94,7 @@ main(int argc, char* argv[]) {
 
   printf("Average FPS: %.2f\n", (processed * 1000000) / (float)TIMEDIFF(totstart));
   printf("Processed: %d, Dropped: %d\n", processed, framecount - processed);
-  printf("DEPTH: %d, WIDTH: %d, HEIGHT: %d, IW: %d\n",
-         image.depth(),
-         image.cols,
-         image.rows,
-         static_cast<int>(image.step));
+  printf("DEPTH: %d, WIDTH: %d, HEIGHT: %d, IW: %d\n", image.depth(), image.cols, image.rows, static_cast<int>(image.step));
   // sleep_for(milliseconds(300));
 
   // bcm_host_deinit();

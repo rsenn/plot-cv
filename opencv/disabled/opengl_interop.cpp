@@ -45,8 +45,7 @@ class GLWinApp : public WinApp {
 public:
   enum MODE { MODE_CPU = 0, MODE_GPU };
 
-  GLWinApp(int width, int height, std::string& window_name, cv::VideoCapture& cap)
-      : WinApp(width, height, window_name) {
+  GLWinApp(int width, int height, std::string& window_name, cv::VideoCapture& cap) : WinApp(width, height, window_name) {
     m_shutdown = false;
     m_use_buffer = false;
     m_demo_processing = true;
@@ -195,8 +194,7 @@ public:
       int y = 0;
 
       buf[0] = 0;
-      sprintf_s(
-          buf, sizeof(buf) - 1, "Mode: %s OpenGL %s", m_modeStr[mode].c_str(), use_buffer() ? "buffer" : "texture");
+      sprintf_s(buf, sizeof(buf) - 1, "Mode: %s OpenGL %s", m_modeStr[mode].c_str(), use_buffer() ? "buffer" : "texture");
       ::TextOut(hDC, 0, y, buf, (int)strlen(buf));
 
       y += tm.tmHeight;

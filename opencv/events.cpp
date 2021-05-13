@@ -49,10 +49,7 @@ Event::get_event_priority() {
 
 // SurveillancePhoto member functions
 
-SurveillancePhoto::SurveillancePhoto(time_t execution_deadline,
-                                     time_t event_creation_time,
-                                     string event_name,
-                                     int priority)
+SurveillancePhoto::SurveillancePhoto(time_t execution_deadline, time_t event_creation_time, string event_name, int priority)
     : Event(execution_deadline, event_creation_time, event_name, priority) {
   cout << "SurveillancePhoto Event successfully created...\n";
 }

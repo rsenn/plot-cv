@@ -94,11 +94,8 @@ double calibrate(vector<vector<Point3f>> objPoints,
                  vector<Mat>& t,
                  Size imgSize);
 
-void fromCamToWorld(Mat cameraMatrix,
-                    vector<Mat> rV,
-                    vector<Mat> tV,
-                    vector<vector<Point2f>> imgPoints,
-                    vector<vector<Point3f>>& worldPoints);
+void fromCamToWorld(
+    Mat cameraMatrix, vector<Mat> rV, vector<Mat> tV, vector<vector<Point2f>> imgPoints, vector<vector<Point3f>>& worldPoints);
 
 void saveCalibrationResults(String path, Mat camK, Mat camDistCoeffs, Mat projK, Mat projDistCoeffs, Mat fundamental);
 
@@ -270,8 +267,7 @@ main(int argc, char** argv) {
 
   saveCalibrationData(outputName + "_points.yml", T1, T2, projInCam, projInProj, projInCamN, projInProjN);
 
-  double rms =
-      calibrate(objectPointsCam, imagePointsCam, cameraMatrix, distCoeffs, rVecs, tVecs, camSettings.imageSize);
+  double rms = calibrate(objectPointsCam, imagePointsCam, cameraMatrix, distCoeffs, rVecs, tVecs, camSettings.imageSize);
   cout << "rms = " << rms << endl;
   cout << "camera matrix = \n" << cameraMatrix << endl;
   cout << "dist coeffs = \n" << distCoeffs << endl;
@@ -379,11 +375,8 @@ createProjectorObjectPoints(vector<Point2f>& patternCorners, Size patternSize, f
 }
 
 void
-fromCamToWorld(Mat cameraMatrix,
-               vector<Mat> rV,
-               vector<Mat> tV,
-               vector<vector<Point2f>> imgPoints,
-               vector<vector<Point3f>>& worldPoints) {
+fromCamToWorld(
+    Mat cameraMatrix, vector<Mat> rV, vector<Mat> tV, vector<vector<Point2f>> imgPoints, vector<vector<Point3f>>& worldPoints) {
   int s = (int)rV.size();
   Mat invK64, invK;
   invK64 = cameraMatrix.inv();

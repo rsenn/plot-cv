@@ -202,11 +202,10 @@ CvCaptureCAM_DC1394_v2_CPP::startCapture() {
                                           ? DC1394_ISO_SPEED_100
                                           : isoSpeed <= 200
                                                 ? DC1394_ISO_SPEED_200
-                                                : isoSpeed <= 400
-                                                      ? DC1394_ISO_SPEED_400
-                                                      : isoSpeed <= 800 ? DC1394_ISO_SPEED_800
-                                                                        : isoSpeed == 1600 ? DC1394_ISO_SPEED_1600
-                                                                                           : DC1394_ISO_SPEED_3200);
+                                                : isoSpeed <= 400 ? DC1394_ISO_SPEED_400
+                                                                  : isoSpeed <= 800 ? DC1394_ISO_SPEED_800
+                                                                                    : isoSpeed == 1600 ? DC1394_ISO_SPEED_1600
+                                                                                                       : DC1394_ISO_SPEED_3200);
   }
 
   // should a specific mode be used
@@ -480,17 +479,17 @@ CvCaptureCAM_DC1394_v2_CPP::getProperty(int propId) const {
       CV_LOG_WARNING(NULL, "cap_dc1394: rectification support has been removed from videoio module");
       return 0;
     case cv::CAP_PROP_WHITE_BALANCE_BLUE_U:
-      if(dc1394_feature_whitebalance_get_value(
-             dcCam,
-             &fs.feature[DC1394_FEATURE_WHITE_BALANCE - DC1394_FEATURE_MIN].BU_value,
-             &fs.feature[DC1394_FEATURE_WHITE_BALANCE - DC1394_FEATURE_MIN].RV_value) == DC1394_SUCCESS)
+      if(dc1394_feature_whitebalance_get_value(dcCam,
+                                               &fs.feature[DC1394_FEATURE_WHITE_BALANCE - DC1394_FEATURE_MIN].BU_value,
+                                               &fs.feature[DC1394_FEATURE_WHITE_BALANCE - DC1394_FEATURE_MIN].RV_value) ==
+         DC1394_SUCCESS)
         return feature_set.feature[DC1394_FEATURE_WHITE_BALANCE - DC1394_FEATURE_MIN].BU_value;
       break;
     case cv::CAP_PROP_WHITE_BALANCE_RED_V:
-      if(dc1394_feature_whitebalance_get_value(
-             dcCam,
-             &fs.feature[DC1394_FEATURE_WHITE_BALANCE - DC1394_FEATURE_MIN].BU_value,
-             &fs.feature[DC1394_FEATURE_WHITE_BALANCE - DC1394_FEATURE_MIN].RV_value) == DC1394_SUCCESS)
+      if(dc1394_feature_whitebalance_get_value(dcCam,
+                                               &fs.feature[DC1394_FEATURE_WHITE_BALANCE - DC1394_FEATURE_MIN].BU_value,
+                                               &fs.feature[DC1394_FEATURE_WHITE_BALANCE - DC1394_FEATURE_MIN].RV_value) ==
+         DC1394_SUCCESS)
         return feature_set.feature[DC1394_FEATURE_WHITE_BALANCE - DC1394_FEATURE_MIN].RV_value;
       break;
     case cv::CAP_PROP_GUID:

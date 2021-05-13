@@ -1,5 +1,4 @@
 #include "jsbindings.hpp"
-#include "js.hpp"
 #include "js_alloc.hpp"
 #include "js_point.hpp"
 #include "js_point_iterator.hpp"
@@ -166,10 +165,15 @@ js_point_iterator_init(JSContext* ctx, JSModuleDef* m) {
   return 0;
 }
 
+extern "C" VISIBLE void
+js_point_iterator_export(JSContext* ctx, JSModuleDef* m) {
+  JS_AddModuleExport(ctx, m, "PointIterator");
+}
+
 #if defined(JS_POINT_ITERATOR_MODULE)
-#define JS_INIT_MODULE /*VISIBLE*/ js_init_module
+#define JS_INIT_MODULE VISIBLE js_init_module
 #else
-#define JS_INIT_MODULE /*VISIBLE*/ js_init_module_point_iterator
+#define JS_INIT_MODULE js_init_module_point_iterator
 #endif
 
 JSModuleDef*
@@ -178,7 +182,7 @@ JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   m = JS_NewCModule(ctx, module_name, &js_point_iterator_init);
   if(!m)
     return NULL;
-  JS_AddModuleExport(ctx, m, "PointIterator");
+  js_point_iterator_export(ctx, m);
   return m;
 }
 

@@ -104,8 +104,7 @@ main() {
     while(contours) {
 
       // obtain a sequence of points of contour, pointed by the variable 'contour'
-      result = cv::ApproxPoly(
-          contours, sizeof(CvContour), storage, CV_POLY_APPROX_DP, cvContourPerimeter(contours) * 0.02, 0);
+      result = cv::ApproxPoly(contours, sizeof(CvContour), storage, CV_POLY_APPROX_DP, cvContourPerimeter(contours) * 0.02, 0);
 
       // Triangle Detection
       // if there are 3  vertices  in the contour(It should be a triangle)

@@ -146,12 +146,8 @@ main(int argc, char* argv[]) {
               FONT_HERSHEY_SIMPLEX,
               0.5,
               Scalar(0, 0, 255));
-      putText(frameMatches,
-              "Press esc to quit.",
-              Point(frameMatches.cols - 180, 40),
-              FONT_HERSHEY_SIMPLEX,
-              0.5,
-              Scalar(0, 0, 255));
+      putText(
+          frameMatches, "Press esc to quit.", Point(frameMatches.cols - 180, 40), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255));
 
       imshow("Matches GMS", frameMatches);
       int c = waitKey(30);

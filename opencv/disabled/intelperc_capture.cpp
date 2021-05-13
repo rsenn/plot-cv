@@ -109,8 +109,7 @@ printStreamProperties(VideoCapture& capture) {
        << capture.get(cv::CAP_INTELPERC_DEPTH_GENERATOR | cv::CAP_PROP_INTELPERC_DEPTH_CONFIDENCE_THRESHOLD) << endl;
   cout << "  Focal length = ("
        << capture.get(cv::CAP_INTELPERC_DEPTH_GENERATOR | cv::CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_HORZ) << ", "
-       << capture.get(cv::CAP_INTELPERC_DEPTH_GENERATOR | cv::CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_VERT) << ")"
-       << endl;
+       << capture.get(cv::CAP_INTELPERC_DEPTH_GENERATOR | cv::CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_VERT) << ")" << endl;
   cout << "Depth streams profiles:" << endl;
   for(size_t i = 0; i < profilesCount; i++) {
     capture.set(cv::CAP_INTELPERC_DEPTH_GENERATOR | cv::CAP_PROP_INTELPERC_PROFILE_IDX, (double)i);
@@ -180,10 +179,8 @@ imshowIR(const char* winname, Mat& ir) {
 }
 static void
 imshowDepth(const char* winname, Mat& depth, VideoCapture& capture) {
-  short lowValue =
-      (short)capture.get(cv::CAP_INTELPERC_DEPTH_GENERATOR | cv::CAP_PROP_INTELPERC_DEPTH_LOW_CONFIDENCE_VALUE);
-  short saturationValue =
-      (short)capture.get(cv::CAP_INTELPERC_DEPTH_GENERATOR | cv::CAP_PROP_INTELPERC_DEPTH_SATURATION_VALUE);
+  short lowValue = (short)capture.get(cv::CAP_INTELPERC_DEPTH_GENERATOR | cv::CAP_PROP_INTELPERC_DEPTH_LOW_CONFIDENCE_VALUE);
+  short saturationValue = (short)capture.get(cv::CAP_INTELPERC_DEPTH_GENERATOR | cv::CAP_PROP_INTELPERC_DEPTH_SATURATION_VALUE);
 
   Mat image;
   if(g_showClosedPoint) {
@@ -247,15 +244,13 @@ main(int argc, char* argv[]) {
     printStreamProperties(capture);
 
   if(-1 != g_imageStreamProfileIdx) {
-    if(!capture.set(cv::CAP_INTELPERC_IMAGE_GENERATOR | cv::CAP_PROP_INTELPERC_PROFILE_IDX,
-                    (double)g_imageStreamProfileIdx)) {
+    if(!capture.set(cv::CAP_INTELPERC_IMAGE_GENERATOR | cv::CAP_PROP_INTELPERC_PROFILE_IDX, (double)g_imageStreamProfileIdx)) {
       cerr << "Can not setup a image stream." << endl;
       return -1;
     }
   }
   if(-1 != g_depthStreamProfileIdx) {
-    if(!capture.set(cv::CAP_INTELPERC_DEPTH_GENERATOR | cv::CAP_PROP_INTELPERC_PROFILE_IDX,
-                    (double)g_depthStreamProfileIdx)) {
+    if(!capture.set(cv::CAP_INTELPERC_DEPTH_GENERATOR | cv::CAP_PROP_INTELPERC_PROFILE_IDX, (double)g_depthStreamProfileIdx)) {
       cerr << "Can not setup a depth stream." << endl;
       return -1;
     }

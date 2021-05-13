@@ -31,8 +31,7 @@ get_svm_detector(const Ptr<SVM>& svm, vector<float>& hog_detector) {
   double rho = svm->getDecisionFunction(0, alpha, svidx);
 
   CV_Assert(alpha.total() == 1 && svidx.total() == 1 && sv_total == 1);
-  CV_Assert((alpha.type() == CV_64F && alpha.at<double>(0) == 1.) ||
-            (alpha.type() == CV_32F && alpha.at<float>(0) == 1.f));
+  CV_Assert((alpha.type() == CV_64F && alpha.at<double>(0) == 1.) || (alpha.type() == CV_32F && alpha.at<float>(0) == 1.f));
   CV_Assert(sv.type() == CV_32F);
   hog_detector.clear();
 
@@ -132,8 +131,7 @@ get_hogdescriptor_visu(const Mat& color_origImg, vector<float>& descriptorValues
 
   int cellSize = 8;
   int gradientBinSize = 9;
-  float radRangeForOneBin =
-      (float)(CV_PI / (float)gradientBinSize); // dividing 180 into 9 bins, how large (in rad) is one bin?
+  float radRangeForOneBin = (float)(CV_PI / (float)gradientBinSize); // dividing 180 into 9 bins, how large (in rad) is one bin?
 
   // prepare data structure: 9 orientation / gradient strenghts for each cell
   int cells_in_x_dir = DIMX / cellSize;
@@ -394,8 +392,7 @@ main(int argc, char** argv) {
   if(pos_dir.empty() || pos.empty() || neg_dir.empty() || neg.empty()) {
     cout << "Wrong number of parameters." << endl
          << "Usage: " << argv[0] << " --pd=pos_dir -p=pos.lst --nd=neg_dir -n=neg.lst" << endl
-         << "example: " << argv[0] << " --pd=/INRIA_dataset/ -p=Train/pos.lst --nd=/INRIA_dataset/ -n=Train/neg.lst"
-         << endl;
+         << "example: " << argv[0] << " --pd=/INRIA_dataset/ -p=Train/pos.lst --nd=/INRIA_dataset/ -n=Train/neg.lst" << endl;
     exit(-1);
   }
   load_images(pos_dir, pos, pos_lst);

@@ -132,8 +132,7 @@ main(int argc, char* argv[]) {
   bool retrievedImageFlags[6];
   string filename;
   bool isVideoReading;
-  parseCommandLine(
-      argc, argv, isColorizeDisp, isFixedMaxDisp, imageMode, retrievedImageFlags, filename, isVideoReading);
+  parseCommandLine(argc, argv, isColorizeDisp, isFixedMaxDisp, imageMode, retrievedImageFlags, filename, isVideoReading);
 
   cout << "Device opening ..." << endl;
   VideoCapture capture;

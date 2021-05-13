@@ -164,8 +164,8 @@ main(int argc, char** argv) {
       // chekc the speed by calculating the mean speed of all iterations
       AvrgTime.first += ((double)getTickCount() - tick) / getTickFrequency();
       AvrgTime.second++;
-      cout << "\rTime detection=" << 1000 * AvrgTime.first / AvrgTime.second
-           << " milliseconds nmarkers=" << TheMarkers.size() << std::flush;
+      cout << "\rTime detection=" << 1000 * AvrgTime.first / AvrgTime.second << " milliseconds nmarkers=" << TheMarkers.size()
+           << std::flush;
 
       // print marker info and draw the markers in image
       TheInputImage.copyTo(TheInputImageCopy);

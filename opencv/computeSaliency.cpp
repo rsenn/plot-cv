@@ -48,12 +48,11 @@ using namespace std;
 using namespace cv;
 using namespace saliency;
 
-static const char* keys = {
-    "{@saliency_algorithm | | Saliency algorithm "
-    "<saliencyAlgorithmType.[saliencyAlgorithmTypeSubType]> }"
-    "{@video_name      | | video name            }"
-    "{@start_frame     |1| Start frame           }"
-    "{@training_path   |ObjectnessTrainedModel| Path of the folder containing the trained files}"};
+static const char* keys = {"{@saliency_algorithm | | Saliency algorithm "
+                           "<saliencyAlgorithmType.[saliencyAlgorithmTypeSubType]> }"
+                           "{@video_name      | | video name            }"
+                           "{@start_frame     |1| Start frame           }"
+                           "{@training_path   |ObjectnessTrainedModel| Path of the folder containing the trained files}"};
 
 static void
 help() {

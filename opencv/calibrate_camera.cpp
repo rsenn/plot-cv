@@ -212,8 +212,7 @@ main(int argc, char* argv[]) {
   Ptr<aruco::Dictionary> dictionary = aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
 
   // create board object
-  Ptr<aruco::GridBoard> gridboard =
-      aruco::GridBoard::create(markersX, markersY, markerLength, markerSeparation, dictionary);
+  Ptr<aruco::GridBoard> gridboard = aruco::GridBoard::create(markersX, markersY, markerLength, markerSeparation, dictionary);
   Ptr<aruco::Board> board = gridboard.staticCast<aruco::Board>();
 
   // collected frames for calibration
@@ -297,8 +296,7 @@ main(int argc, char* argv[]) {
                                          tvecs,
                                          calibrationFlags);
 
-  bool saveOk =
-      saveCameraParams(outputFile, imgSize, aspectRatio, calibrationFlags, cameraMatrix, distCoeffs, repError);
+  bool saveOk = saveCameraParams(outputFile, imgSize, aspectRatio, calibrationFlags, cameraMatrix, distCoeffs, repError);
 
   if(!saveOk) {
     cerr << "Cannot save output file" << endl;
