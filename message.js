@@ -89,15 +89,11 @@ export class Message {
     //console.log('Message.encode',{body,recipient,origin, type});
     let r = encodeBody(body) || '';
 
-    const prepend = plain
-      ? str => (r = str + (r != '' ? ' ' : '') + r)
-      : str => (r = str + r);
+    const prepend = plain ? str => (r = str + (r != '' ? ' ' : '') + r) : str => (r = str + r);
 
     const insertField = plain
       ? (str, code) => prepend((code == Message.SENDER_ID ? ':' : '') + str)
-      : (str, code) =>
-          prepend((r = String.fromCodePoint(code) + str + String.fromCodePoint(code))
-          );
+      : (str, code) => prepend((r = String.fromCodePoint(code) + str + String.fromCodePoint(code)));
 
     if(recipient) r = insertField(recipient, Message.RECIPIENT_ID);
     r = insertField(type || 'x', Message.TYPE_ID);
@@ -121,11 +117,7 @@ export class Message {
   }
   [Symbol.toStringTag]() {
     const { origin, recipient, type, body } = this;
-    return ('new Message',
-      Util.filterOutMembers(
-        { origin, recipient, type, body },
-        v => v == undefined
-      )
+    return ('new Message', Util.filterOutMembers({ origin, recipient, type, body }, v => v == undefined)
     );
   }
 }

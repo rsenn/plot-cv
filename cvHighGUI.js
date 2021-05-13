@@ -1,14 +1,6 @@
 import * as cv from 'opencv';
 import { Size, Point, Draw } from 'opencv';
-
-const BitsToNames = (flags, map = (name, flag) => name) => {
-  const entries = [...Object.entries(flags)];
-
-  return function* (value) {
-    for(let [name, flag] of entries)
-      if(value & flag && (value & flag) == flag) yield map(name, flag);
-  };
-};
+import { BitsToNames } from './cvUtils.js';
 
 export const MouseEvents = [
   'EVENT_MOUSEMOVE',

@@ -21,20 +21,13 @@ function debug(fmt, ...args) {
 
 function main(...args) {
   if(/^-o/.test(args[0])) {
-    let arg =
-      args[0].length == 2
-        ? (args.shift(), args.shift())
-        : args.shift().slice(2);
+    let arg = args[0].length == 2 ? (args.shift(), args.shift()) : args.shift().slice(2);
     log = open(arg, 'a+');
   } else {
     log = open('debug.log', 'w+');
   }
 
-  debug('%s started (%s) [%s]',
-    scriptArgs[0].replace(/.*\//g, ''),
-    args,
-    new Date().toISOString()
-  );
+  debug('%s started (%s) [%s]', scriptArgs[0].replace(/.*\//g, ''), args, new Date().toISOString());
 
   const resolvConf = loadFile('/etc/resolv.conf');
   const servers = resolvConf
@@ -156,16 +149,11 @@ function main(...args) {
 }
 
 function ReturnValue(ret, ...args) {
-  const r =
-    [-1, 0].indexOf(ret) != -1
-      ? ret + ''
-      : '0x' + NumberToHex(ret, ptrSize * 2);
+  const r = [-1, 0].indexOf(ret) != -1 ? ret + '' : '0x' + NumberToHex(ret, ptrSize * 2);
   debug('%s ret = %s%s%s',
     args,
     r,
-    ...(ret == -1
-      ? [' errno =', errno(), ' error =', strerror(errno())]
-      : ['', ''])
+    ...(ret == -1 ? [' errno =', errno(), ' error =', strerror(errno())] : ['', ''])
   );
 }
 
@@ -203,9 +191,7 @@ function BufferToArray(buf, offset, length) {
 }
 
 function BufferToString(buf, offset, length) {
-  return BufferToArray(buf, offset, length).reduce((s, code) => s + String.fromCharCode(code),
-    ''
-  );
+  return BufferToArray(buf, offset, length).reduce((s, code) => s + String.fromCharCode(code), '');
 }
 
 function BufferToBytes(buf, offset = 0, len) {
@@ -234,8 +220,7 @@ function AvailableBytes(buf, numBytes) {
 
 function Copy(dst, src, len) {
   if(len === undefined) len = src.length;
-  if(dst.length < len)
-    throw new RangeError(`dst.length (${dst.length}) < len (${len})`);
+  if(dst.length < len) throw new RangeError(`dst.length (${dst.length}) < len (${len})`);
   for(let i = 0; i < len; i++) dst[i] = src[i];
   return len;
 }
@@ -245,16 +230,13 @@ function ToDomain(str, alpha = false) {
     .split('.')
     .reduce(alpha
         ? (a, s) => a + String.fromCharCode(s.length) + s
-        : (a, s) =>
-            a.concat([s.length, ...s.split('').map(ch => ch.charCodeAt(0))]),
+        : (a, s) => a.concat([s.length, ...s.split('').map(ch => ch.charCodeAt(0))]),
       alpha ? '' : []
     );
 }
 
 function Append(buf, numBytes, ...chars) {
-  let n = chars.reduce((a, c) => (typeof c == 'number' ? a + 1 : a + c.length),
-    0
-  );
+  let n = chars.reduce((a, c) => (typeof c == 'number' ? a + 1 : a + c.length), 0);
   if(AvailableBytes(buf, numBytes) < n) buf = CloneBuf(buf, numBytes + n);
   let a = new Uint8Array(buf, numBytes, n);
   let p = 0;

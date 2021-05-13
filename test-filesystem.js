@@ -31,9 +31,7 @@ const tests = {
     assertEquals(filesystem.bufferToString(buffer2), 'abcdefg\n');
   },
   'filesystem.mkdir': () => {
-    assert(!(filesystem.mkdir(tmpdir, 0o1777) < 0),
-      `mkdir("${tmpdir}", 0o1777) < 0`
-    );
+    assert(!(filesystem.mkdir(tmpdir, 0o1777) < 0), `mkdir("${tmpdir}", 0o1777) < 0`);
   },
   'filesystem.exists': () => {
     assert(filesystem.exists(tmpdir));
@@ -93,9 +91,7 @@ const tests = {
     assertEquals(filesystem.getcwd(), tmpdir);
   },
   'filesystem.readdir': () => {
-    assertEquals(filesystem.readdir('.').sort().join(','),
-      '.,..,file,link,rdwr,wrf'
-    );
+    assertEquals(filesystem.readdir('.').sort().join(','), '.,..,file,link,rdwr,wrf');
   },
   'filesystem.rename': () => {
     assertEquals(filesystem.rename('link', 'link2'), 0);

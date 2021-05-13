@@ -30,24 +30,20 @@ let importMap = {};
 Util.define(Array.prototype, {
   startsWith(other) {
     if(other.length > this.length) return false;
-    for(let i = 0; i < other.length; i++)
-      if(this[i] !== other[i]) return false;
+    for(let i = 0; i < other.length; i++) if(this[i] !== other[i]) return false;
     return true;
   },
   endsWith(other) {
     let offset = this.length - other.length;
     if(offset < 0) return false;
-    for(let i = 0; i < other.length; i++)
-      if(this[i + offset] !== other[i]) return false;
+    for(let i = 0; i < other.length; i++) if(this[i + offset] !== other[i]) return false;
     return true;
   },
   removeStart(other) {
     return this.slice(this.startsWith(other) ? other.length : 0);
   },
   removeEnd(other) {
-    return this.slice(0,
-      this.endsWith(other) ? this.length - other.length : this.length
-    );
+    return this.slice(0, this.endsWith(other) ? this.length - other.length : this.length);
   }
 });
 
@@ -60,8 +56,7 @@ class ES6Module {
   static create(file, from, position) {
     let mod = new ES6Module();
     mod.file = file;
-    if(position || from)
-      Util.define(mod, { importedFrom: position ? position : from });
+    if(position || from) Util.define(mod, { importedFrom: position ? position : from });
     if(ES6Module.root == null) ES6Module.root = mod;
     ES6Module.moduleList.add(mod);
     return mod;
@@ -105,11 +100,7 @@ class ES6Module {
     let s = t(Util.className(this), 1, 31) + t(' {', 1, 36);
     for(let prop of ['file', 'importedPosition', 'bindings'])
       if(this[prop])
-        s +=
-          '\n' +
-          t(prop.padStart(13, ' '), 1, 33) +
-          t(': ', 1, 36) +
-          formatProp(this[prop]);
+        s += '\n' + t(prop.padStart(13, ' '), 1, 33) + t(': ', 1, 36) + formatProp(this[prop]);
     s += t('\n}', 1, 36);
     function formatProp(value) {
       if(Util.isArray(value))
@@ -174,9 +165,7 @@ class ES6Module {
       for(let i = 0; i < deps.length; i++) {
         //console.log('', { i, sym });
         printModule(deps[i],
-          sym
-            .replace(/\u251c\u2500/g, '\u2502 ')
-            .replace(/\u2514\u2500/g, '  ') +
+          sym.replace(/\u251c\u2500/g, '\u2502 ').replace(/\u2514\u2500/g, '  ') +
             ((i + 1 == deps.length ? '\u2514' : '\u251c') + '\u2500') +
             ' '
         );
@@ -190,8 +179,7 @@ const IMPORT = 1;
 const EXPORT = 2;
 
 class ES6Env {
-  static getCwd = Util.memoize(() => filesystem.realpath('.') || path.resolve('.')
-  );
+  static getCwd = Util.memoize(() => filesystem.realpath('.') || path.resolve('.'));
   static get cwd() {
     return ES6Env.getCwd();
   }
@@ -216,17 +204,14 @@ class ES6ImportExport {
   static create(obj) {
     let ret = new ES6ImportExport();
     let nodeClass = Util.className(obj.node);
-    let code = Util.memoize(() => '' + Util.decamelize(nodeClass) + ' ' + PrintAst(obj.node)
-    )();
+    let code = Util.memoize(() => '' + Util.decamelize(nodeClass) + ' ' + PrintAst(obj.node))();
     let p, n;
     p = obj.path.slice(0, 2);
     n = p.apply(obj.ast, true);
     code = PrintAst(n);
     if(obj.node instanceof ESNode) n = obj.node;
     else p = obj.node;
-    let type = [/(import|require)/i, /exports?[^a-z]/i].filter(re =>
-      re.test(code)
-    );
+    let type = [/(import|require)/i, /exports?[^a-z]/i].filter(re => re.test(code));
     type = type.map(re => [...re.exec(code)]).map(([m]) => m);
     type = type.map(m => m + '');
     type = (Util.isArray(type) && type[0]) || type;
@@ -254,8 +239,7 @@ class ES6ImportExport {
       .map(p => deep.get(obj.ast, p))
       .map(n => [ESNode.assoc(n).position, PrintAst(n)])
       .map(([p, n]) => [
-        Util.isGenerator(position) &&
-          [...position].map(p => ES6Env.pathTransform(p)).join(':'),
+        Util.isGenerator(position) && [...position].map(p => ES6Env.pathTransform(p)).join(':'),
         n
       ]);
 
@@ -272,10 +256,7 @@ class ES6ImportExport {
     );*/
     Object.assign(ret, obj);
     if(ret.file) ret.module = ES6Module.getOrCreate(ret.file, null);
-    if(ret.fromPath)
-      ret.fromModule = ES6Module.getOrCreate(ret.fromPath,
-        position || ret.file
-      );
+    if(ret.fromPath) ret.fromModule = ES6Module.getOrCreate(ret.fromPath, position || ret.file);
 
     ES6ImportExport.importExportList.add(ret);
 
@@ -329,25 +310,13 @@ class ES6ImportExport {
         //console.log('impExp.bindings:', impExp.bindings);
 
         if(Util.isIterable(impExp.bindings))
-          for(const entry of impExp.bindings)
-            if(entry && entry.length) ret.push(entry);
+          for(const entry of impExp.bindings) if(entry && entry.length) ret.push(entry);
       }
     }
     return Util.accumulate(ret);
   }
   [inspectSymbol]() {
-    let {
-      type,
-      position,
-      bindings,
-      path,
-      node,
-      file,
-      from,
-      fromPath,
-      module,
-      relpath
-    } = this;
+    let { type, position, bindings, path, node, file, from, fromPath, module, relpath } = this;
     const opts = { colors: true, colon: ': ', multiline: false, quote: '' };
     if(Util.isIterator(position))
       position = [...position].map(p => ES6Env.pathTransform(p)).join(':');
@@ -403,16 +372,11 @@ const isImport = ([path, node]) => node instanceof ImportDeclaration;
 const isES6Export = ([path, node]) => node.type.startsWith('Export');
 /*const isCJSExport = ([path, node]) =>
   node instanceof MemberExpression &&   PrintAst(node).startsWith('module.exports');*/
-const isCJSExport = ([path, node]) =>
-  node.left && PrintAst(node.left).startsWith('module.exports'); // node instanceof MemberExpression &&   PrintAst(node).startsWith('module.exports');
+const isCJSExport = ([path, node]) => node.left && PrintAst(node.left).startsWith('module.exports'); // node instanceof MemberExpression &&   PrintAst(node).startsWith('module.exports');
 
 const getImport = ([p, n]) => {
   let r = [];
-  if(n instanceof CallExpression &&
-    Util.isObject(n) &&
-    n.callee &&
-    n.callee.value == 'require'
-  ) {
+  if(n instanceof CallExpression && Util.isObject(n) && n.callee && n.callee.value == 'require') {
     let idx = p.lastIndexOf('init');
     let start = idx != -1 ? idx + 1 : p.length;
     let end = p.length;
@@ -426,9 +390,7 @@ const getImport = ([p, n]) => {
     r.push(imp);
   } /* if(!(n instanceof ImportDeclaration))*/ else {
     let source = p.concat(['source']);
-    for(let [node, path] of deep.iterate(n,
-      v => v instanceof ModuleSpecifier
-    )) {
+    for(let [node, path] of deep.iterate(n, v => v instanceof ModuleSpecifier)) {
       const name = p.concat([...path, 'name']);
       const alias = p.concat([...path, 'as']);
       r.push([source, alias, name]);
@@ -455,9 +417,7 @@ function PrefixRemover(reOrStr, replacement = '') {
   if(!(Util.isArray(reOrStr) || Util.isIterable(reOrStr))) reOrStr = [reOrStr];
 
   return arg =>
-    reOrStr.reduce((acc, re, i) => acc.replace(re, replacement),
-      typeof arg == 'string' ? arg : ''
-    );
+    reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), typeof arg == 'string' ? arg : '');
 }
 
 function DumpFile(name, data) {
@@ -467,10 +427,7 @@ function DumpFile(name, data) {
   console.log(`Wrote ${name}: ${data.length} bytes`);
 }
 
-function PrintAst(ast,
-  comments,
-  printer = new Printer({ indent: 4 }, comments)
-) {
+function PrintAst(ast, comments, printer = new Printer({ indent: 4 }, comments)) {
   return printer.print(ast);
 }
 
@@ -515,8 +472,7 @@ function GenerateDistinctVariableDeclarations(variableDeclaration) {
 
 async function main(...args) {
   let consoleOpts;
-  await ConsoleSetup((consoleOpts = { colors: true, depth: 6, compact: 1, breakLength: 80 })
-  );
+  await ConsoleSetup((consoleOpts = { colors: true, depth: 6, compact: 1, breakLength: 80 }));
   console.options = consoleOpts;
   await PortableFileSystem(fs => (filesystem = fs));
   await PortableChildProcess(cp => (childProcess = cp));
@@ -589,10 +545,7 @@ async function main(...args) {
         {
           inspectSymbol: {
             value() {
-              let arr = this.reduce((acc, item) => [
-                  ...acc,
-                  (item[inspectSymbol] ?? item.toString).call(item)
-                ],
+              let arr = this.reduce((acc, item) => [...acc, (item[inspectSymbol] ?? item.toString).call(item)],
                 []
               );
               let [pos, type, path, node, id] = arr;
@@ -616,11 +569,8 @@ async function main(...args) {
     return n;
   }
   function FriendlyPrintNodes(nodes) {
-    return /*n nodes instanceof ESNode ? FriendlyPrintNode(nodes):*/ Array.isArray(nodes
-    )
-      ? nodes.map(n =>
-          Array.isArray(n) ? FriendlyPrintNodes(n) : FriendlyPrintNode(n)
-        )
+    return /*n nodes instanceof ESNode ? FriendlyPrintNode(nodes):*/ Array.isArray(nodes)
+      ? nodes.map(n => (Array.isArray(n) ? FriendlyPrintNodes(n) : FriendlyPrintNode(n)))
       : nodes;
   }
 
@@ -647,8 +597,7 @@ async function main(...args) {
     let b, ret;
     if(!name) {
       name = file;
-      if(/\/(src|index)[^/]*$/.test(name))
-        name = name.replace(/(src\/|index)[^/]*$/g, '');
+      if(/\/(src|index)[^/]*$/.test(name)) name = name.replace(/(src\/|index)[^/]*$/g, '');
 
       name = path.basename(name).replace(/\.[ce]?[tj]s$/, '');
     }
@@ -681,10 +630,7 @@ async function main(...args) {
         node => node instanceof ESNode,
         (p, n) => [new ImmutablePath(p), n]
       );*/
-      flat = deep.flatten(ast,
-        new Map(),
-        node => typeof node == 'object' && node != null
-      );
+      flat = deep.flatten(ast, new Map(), node => typeof node == 'object' && node != null);
       //      console.log("flat:", flat);
       map = Util.mapAdapter((key, value) =>
         key !== undefined
@@ -694,8 +640,7 @@ async function main(...args) {
               : deep.set(ast, [...key], value)
             : deep.get(ast, [...key])
           : (function* () {
-              for(let [key, value] of flat.entries())
-                yield [key, key.apply(ast, true)];
+              for(let [key, value] of flat.entries()) yield [key, key.apply(ast, true)];
             })()
       );
       node2path = new WeakMap([...flat].map(([path, node]) => [node, path]));
@@ -761,11 +706,7 @@ async function main(...args) {
           return Object.defineProperties(obj, {
             path: {
               get: Util.once(function () {
-                let ret =
-                  SearchModuleInPath(source,
-                    file,
-                    ESNode.assoc(node).position
-                  ) || source;
+                let ret = SearchModuleInPath(source, file, ESNode.assoc(node).position) || source;
                 delete this.path;
                 this.path = ret;
                 return ret;
@@ -800,18 +741,10 @@ async function main(...args) {
         importEntries = new Map(importEntries.map(([node, [parent, bindings]]) => {
             //Verbose('bindings:', {n,bindings});
             bindings ??= [];
-            bindings = [...bindings].map(([name, binding]) => [
-              name,
-              binding /*.concat([n])*/
-            ]);
+            bindings = [...bindings].map(([name, binding]) => [name, binding /*.concat([n])*/]);
             bindings = bindings.map(([name, [source, imp /*, node*/]]) => [
               name,
-              [
-                source,
-                typeof imp == 'symbol' ? Symbol.keyFor(imp) : imp,
-                node,
-                parent
-              ]
+              [source, typeof imp == 'symbol' ? Symbol.keyFor(imp) : imp, node, parent]
             ]);
             let assoc = ESNode.assoc(node) || ESNode.assoc(parent);
 
@@ -856,11 +789,7 @@ async function main(...args) {
                     value() {
                       const [source, imported, node, path, position] = this;
                       //console.log("position", {file,line,column});
-                      return [
-                        source,
-                        imported,
-                        PrintNode(node, path, position)
-                      ].join(', ');
+                      return [source, imported, PrintNode(node, path, position)].join(', ');
                     }
                   }
 
@@ -882,10 +811,7 @@ async function main(...args) {
         Verbose(`importEntries[${Util.size(importEntries)}]:`, importEntries);
 
         importMap[file] = Object.fromEntries([...importEntries].reduce(
-            (acc, [n, bindings]) => /*(Array.isArray(bindings) ?*/ [
-              ...acc,
-              ...bindings
-            ] /*: acc)*/,
+            (acc, [n, bindings]) => /*(Array.isArray(bindings) ?*/ [...acc, ...bindings] /*: acc)*/,
             []
           )
         );
@@ -905,18 +831,12 @@ async function main(...args) {
             //console.log('props:', props);
             const p = [38, 5, 124] || [1, 31];
             const b = [0, 37];
-            props = props.reduce((acc, item) =>
-                acc && acc.length
-                  ? [...acc, ctxt('\u066d', ...p), item]
-                  : [item],
+            props = props.reduce((acc, item) => (acc && acc.length ? [...acc, ctxt('\u066d', ...p), item] : [item]),
               []
             );
-            return [
-              ctxt('Node', 38, 5, 198),
-              ctxt(`{`, ...b),
-              ...props,
-              ctxt(`}`, ...b)
-            ].reduce((acc, item) => (acc ? acc + ' ' + item : item), '');
+            return [ctxt('Node', 38, 5, 198), ctxt(`{`, ...b), ...props, ctxt(`}`, ...b)].reduce((acc, item) => (acc ? acc + ' ' + item : item),
+              ''
+            );
           }
           return node;
         }
@@ -961,8 +881,7 @@ async function main(...args) {
           */ if(node.property
           ) {
             let str = PrintAst(node);
-            if(/^module.exports/.test(str))
-              return str.replace(/^module\.exports\.?/, '');
+            if(/^module.exports/.test(str)) return str.replace(/^module\.exports\.?/, '');
           }
 
           if(node.id) {
@@ -993,18 +912,14 @@ async function main(...args) {
 
         function ExportName(exp) {
           if(exp.type)
-            exp =
-              PrintAst(exp).replace(/^module.exports\.?/, '') ||
-              Symbol.for('default');
+            exp = PrintAst(exp).replace(/^module.exports\.?/, '') || Symbol.for('default');
           if(typeof exp == 'symbol') return Symbol.keyFor(exp);
           if(typeof exp == 'string') return exp;
           console.log('exp:', exp);
         }
         function ExportSymbol(exp) {
           if(exp.type)
-            exp =
-              PrintAst(exp).replace(/^module.exports\.?/, '') ||
-              Symbol.for('default');
+            exp = PrintAst(exp).replace(/^module.exports\.?/, '') || Symbol.for('default');
           if(exp == 'default') exp = Symbol.for('default');
           return exp;
         }
@@ -1061,10 +976,7 @@ async function main(...args) {
                   []
                 )*/
               .map(n => [n, GetName(n) || [n.type]])
-              .map(([n, name]) => [
-                FriendlyPrintNode(n),
-                name /* || Symbol.for('default')*/
-              ])
+              .map(([n, name]) => [FriendlyPrintNode(n), name /* || Symbol.for('default')*/])
               .find(([n, name]) => name !== null && name !== undefined)
           ])
         );
@@ -1102,8 +1014,7 @@ async function main(...args) {
           //Verbose('ast.body:', ast.body);
           let importStatements = moduleImports.map(([, imp]) => imp);
           //Verbose('importStatements:', importStatements);
-          let declPaths = Util.unique(importStatements.map(stmt => stmt.toString())
-          );
+          let declPaths = Util.unique(importStatements.map(stmt => stmt.toString()));
 
           let declStatements = declPaths
             .map(p => p.split(/\./g))
@@ -1111,8 +1022,7 @@ async function main(...args) {
             .map(p => [p, deep.get(ast, p)])
             .filter(([path, stmt]) => stmt instanceof VariableDeclaration);
 
-          let declCounts = Math.max(...declStatements.map(([p, n]) => n.declarations.length)
-          );
+          let declCounts = Math.max(...declStatements.map(([p, n]) => n.declarations.length));
 
           if(declCounts > 1 && declStatements.length > 0) {
             for(let [path, stmt] of declStatements.reverse()) {
@@ -1128,8 +1038,7 @@ async function main(...args) {
         break;
       }
 
-      const useStrict = map.filter(([key, node]) =>
-          node instanceof Literal && /use strict/.test(node.value)
+      const useStrict = map.filter(([key, node]) => node instanceof Literal && /use strict/.test(node.value)
       );
       useStrict.forEach(([path, node]) => deep.unset(ast, path));
       // Verbose('importNodes:', importNodes);
@@ -1190,9 +1099,7 @@ async function main(...args) {
 
       //Verbose(`imports XXX:`, imports.map(imp => fromMap.get(imp.node)));
 
-      let remove = imports
-        .filter(imp => fromMap.get(imp.node))
-        .map((imp, idx) => [idx, imp]);
+      let remove = imports.filter(imp => fromMap.get(imp.node)).map((imp, idx) => [idx, imp]);
 
       remove = remove.filter(([idx, imp]) => !IsBuiltinModule(imp.fromPath));
       //Verbose(`remove:`, remove.map(([idx, imp]) => imp.fromPath));
@@ -1202,17 +1109,14 @@ async function main(...args) {
          deep.set(ast, [...path], new ExpressionStatement(new Literal(`"removed ${PrintAst(node).replace(/;$/, '')}"`)));
       });*/
 
-      let recurseImports = Util.unique(remove.map(([idx, imp]) => imp || imports[idx])
-      );
+      let recurseImports = Util.unique(remove.map(([idx, imp]) => imp || imports[idx]));
       let recursePaths = recurseImports.map(imp => [
         ES6Env.cwd,
         GetFromPath([imp.path, imp.node], file),
         imp.node
       ]);
       //Verbose(`recursePaths [${depth}]:`, recursePaths.map(p => p[1]));
-      let recurseFiles = recursePaths.map(paths =>
-        path.relative(...paths.slice(0, 2))
-      );
+      let recurseFiles = recursePaths.map(paths => path.relative(...paths.slice(0, 2)));
 
       //Verbose(`recurseFiles [${depth}]:`, recurseFiles);
       recurseFiles = recurseFiles.filter(f => processed.indexOf(f) == -1);
@@ -1233,8 +1137,7 @@ async function main(...args) {
         }
       }
 
-      let exportNodes = [...flat].filter(entry => isCJSExport(entry) || isES6Export(entry)
-      );
+      let exportNodes = [...flat].filter(entry => isCJSExport(entry) || isES6Export(entry));
       exportNodes = exportNodes
         .map(([p, n]) => (n instanceof MemberExpression ? p.slice(0, -1) : p))
         .map(p => [p, deep.get(ast, [...p])]);
@@ -1252,18 +1155,8 @@ async function main(...args) {
       //Verbose('exportPaths:', exportPaths);
       let exportEntries = exportPaths
         .map(([path, path2]) => [path, path2, deep.get(ast, [...path])])
-        .map(([p, p2, n]) => [
-          p,
-          p2,
-          n,
-          n instanceof ExpressionStatement ? n.expression : n
-        ])
-        .map(([p, p2, n]) => [
-          p,
-          p2,
-          n,
-          n instanceof AssignmentExpression ? n.right : n
-        ]);
+        .map(([p, p2, n]) => [p, p2, n, n instanceof ExpressionStatement ? n.expression : n])
+        .map(([p, p2, n]) => [p, p2, n, n instanceof AssignmentExpression ? n.right : n]);
 
       let moduleExports = exportEntries.map(([path, path2, node, node2]) => [
         node != node2 ? 'default' : null,
@@ -1289,8 +1182,7 @@ async function main(...args) {
       [...e]
         .filter(([name, list]) => list.length > 1 && name != 'default')
         .map(([name, list]) => list.slice(1).map(node => st.remove(node)));
-      let defaultExports = [...flat].filter(([p, n]) => n instanceof ExportDefaultDeclaration
-      );
+      let defaultExports = [...flat].filter(([p, n]) => n instanceof ExportDefaultDeclaration);
       //[1].map(node => st.replace(node, node.declaration));
 
       defaultExports.forEach(([p, n]) => st.replace(n, n.declaration));
@@ -1302,9 +1194,7 @@ async function main(...args) {
       output = PrintAst(ast, parser.comments, printer);
       r.push(`/*\n * concatenated ${file}\n */\n\n${output}\n`);
 
-      function GetImportBindings([node, path],
-        retMap = /*(arg => arg) ||*/ arg => new Map(arg)
-      ) {
+      function GetImportBindings([node, path], retMap = /*(arg => arg) ||*/ arg => new Map(arg)) {
         if(node instanceof ImportDeclaration) {
           console.log('specifiers:', node.specifiers);
           return [
@@ -1333,12 +1223,10 @@ async function main(...args) {
           node.type == 'CallExpression' ||
           code.startsWith('require(')
         ) {
-          let source =
-            (node.arguments[0] && Literal.string(node.arguments[0])) || null;
+          let source = (node.arguments[0] && Literal.string(node.arguments[0])) || null;
           let parentPath = path.split('.').slice(0, -1).join('.');
           console.log('parentPath:', parentPath);
-          let parent = /*deep.get(ast, parentPath); // ??*/ flat.get(parentPath
-          );
+          let parent = /*deep.get(ast, parentPath); // ??*/ flat.get(parentPath);
 
           let name = Symbol.for('default');
 
@@ -1359,12 +1247,7 @@ async function main(...args) {
             if(typeof Identifier.string(parent.id) == 'string')
               return [
                 parent,
-                retMap([
-                  [
-                    Identifier.string(parent.id) || Symbol.for('default'),
-                    [source, name]
-                  ]
-                ])
+                retMap([[Identifier.string(parent.id) || Symbol.for('default'), [source, name]]])
               ];
 
             if(parent.id.properties) {
@@ -1433,9 +1316,7 @@ async function main(...args) {
               //   Verbose("declarations:", declaration.declarations);
               return new Map(declaration.declarations.map(({ id, init }) => {
                   if(id instanceof ArrayPattern) {
-                    const ids = id.elements.map(prop =>
-                      Identifier.string(prop.key)
-                    );
+                    const ids = id.elements.map(prop => Identifier.string(prop.key));
                     const values = init.elements;
 
                     let ret = Util.zip([ids, values]);
@@ -1450,11 +1331,7 @@ async function main(...args) {
 
           if(node.specifiers) {
             //Verbose("node.specifiers:", node.specifiers);
-            return new Map(node.specifiers.map(spec => [
-                Identifier.string(spec.exported),
-                spec
-              ])
-            );
+            return new Map(node.specifiers.map(spec => [Identifier.string(spec.exported), spec]));
           }
           //  return new Map(node.specifiers.map(({ local, imported }) => [local, imported].map(Identifier.string)));1
         } else if(node instanceof ExportDefaultDeclaration) {
@@ -1468,15 +1345,11 @@ async function main(...args) {
         if(node instanceof AssignmentExpression) {
           const { left, right } = node;
 
-          if(left instanceof MemberExpression &&
-            PrintAst(left).startsWith('module.exports')
-          )
+          if(left instanceof MemberExpression && PrintAst(left).startsWith('module.exports'))
             return new Map([['default', right]]);
         }
         let children = [...deep.iterate(node, n => n && n instanceof ESNode)];
-        children = children.filter(([n, p]) =>
-            n instanceof MemberExpression &&
-            /^module\.exports/.test(PrintAst(n))
+        children = children.filter(([n, p]) => n instanceof MemberExpression && /^module\.exports/.test(PrintAst(n))
         );
         children = children
           .map(([n, p]) => [st.parentNode(n), p.slice(0, -1)])
@@ -1489,10 +1362,7 @@ async function main(...args) {
             Util.escape(/*Util.abbreviate*/ PrintAst(n)),
             n,
             new Map([
-              ...st.anchestors(n,
-                n =>
-                  n.type && n.type != 'Program' && [st.pathOf(n), PrintAst(n)]
-              )
+              ...st.anchestors(n, n => n.type && n.type != 'Program' && [st.pathOf(n), PrintAst(n)])
             ])
           ]);
         if(Util.size(bindings))
@@ -1509,10 +1379,7 @@ async function main(...args) {
         //    Verbose('GetExportBindings:', { children});
         //q;
 
-        throw new Error(`Unhandled export bindings: ${p} ${Util.typeOf(node)} ${PrintAst(
-            node
-          )}`
-        );
+        throw new Error(`Unhandled export bindings: ${p} ${Util.typeOf(node)} ${PrintAst(node)}`);
       }
     } catch(err) {
       Util.putError(err);
@@ -1577,8 +1444,7 @@ async function ParseFile(file) {
     console.log('err:', err);
     error = err;
   } finally {
-    if(!ast)
-      if(error === undefined) error = new Error(`No ast for file '${file}'`);
+    if(!ast) if (error === undefined) error = new Error(`No ast for file '${file}'`);
   }
   if(error) throw error;
   printer = new Printer({ indent: 4 });
@@ -1591,9 +1457,7 @@ function GetPosition(node) {
 
   let position = (assoc ?? {}).position?.start;
   if(!position) {
-    const nodesWithPosition = [
-      ...deep.iterate(node, (v, p) => v && v instanceof ESNode)
-    ]
+    const nodesWithPosition = [...deep.iterate(node, (v, p) => v && v instanceof ESNode)]
       .map(([n, p]) => [Util.typeOf(n), ESNode.assoc(n).position, n])
       .filter(([type, pos, n]) => pos);
     let [posNode] = nodesWithPosition;
@@ -1610,17 +1474,11 @@ function GetPosition(node) {
 
 function GetFile(module, position) {
   let r;
-  let file =
-    Util.isObject(position) && typeof position.file == 'string'
-      ? position.file
-      : position;
+  let file = Util.isObject(position) && typeof position.file == 'string' ? position.file : position;
   if(position instanceof Range) position = position.start;
   // console.log('GetFile', { module, position, file }, Util.className(position));
   module = module.replace(/\?.*/g, '');
-  if(module.startsWith('.') &&
-    typeof file == 'string' &&
-    !path.isAbsolute(module)
-  )
+  if(module.startsWith('.') && typeof file == 'string' && !path.isAbsolute(module))
     module = path.join(path.dirname(file), module);
   try {
     if(!filesystem.exists(module)) {
@@ -1646,8 +1504,7 @@ function GetFromValue(...args) {
   let [p, n] = args[0] instanceof ESNode ? args.reverse() : args;
   if(!p || (!('length' in p) && typeof p != 'string'))
     throw new Error('No path:' + p + ' node:' + PrintAst(n));
-  if(!n || !(n instanceof ESNode))
-    throw new Error('No node:' + n + ' path:' + p);
+  if(!n || !(n instanceof ESNode)) throw new Error('No node:' + n + ' path:' + p);
   if(!(n instanceof ESNode)) n = deep.get(ast, n);
   let pathStr = p.join('.');
   let flat = GenerateFlatMap(n,
@@ -1673,9 +1530,7 @@ function GetFromValue(...args) {
   let literals = [...flat.entries()].filter(([p, n]) => n instanceof Literal);
   let paths = literals.map(([p, n]) => flat.get(p).value);
   if(paths) {
-    let v = paths.map(n =>
-      n.replace(/^[\u0027\u0022\u0060](.*)[\u0027\u0022\u0060]$/g, '$1')
-    )[0];
+    let v = paths.map(n => n.replace(/^[\u0027\u0022\u0060](.*)[\u0027\u0022\u0060]$/g, '$1'))[0];
     if(v) {
       return v;
     }
@@ -1752,9 +1607,7 @@ function Finish(err) {
   }
   if(err) {
     console.log(parser.lexer.currentLine());
-    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n',
-      err.stack
-    );
+    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n', err.stack);
   }
   let lexer = parser.lexer;
   let t = [];
@@ -1818,9 +1671,7 @@ function GetMain(dir) {
     names.unshift(main);
   }
   // console.log("GetMain",{dir,name,names});
-  let indexes = names.reduce((arr, name) => (name ? [...arr, ...MakeNames(name)] : arr),
-    []
-  );
+  let indexes = names.reduce((arr, name) => (name ? [...arr, ...MakeNames(name)] : arr), []);
   //console.log("GetMain",{indexes});
   for(let index of indexes) {
     let file = path.join(dir, index);
@@ -1852,9 +1703,7 @@ function FindModule(relpath) {
 
     if(!CheckExists(module)) {
       module = null;
-      let entries = ReaddirRecursive(relpath).filter(name =>
-        /\.js$/.test(name)
-      );
+      let entries = ReaddirRecursive(relpath).filter(name => /\.js$/.test(name));
       if(entries.length == 1) module = path.join(relpath, entries[0]);
     }
   } else if(st.isFile()) {
@@ -1885,8 +1734,7 @@ function SearchModuleInPath(name, _from, position) {
   let names = [name, ...MakeNames(name)];
   let searchDirs = isRelative ? [thisdir] : [thisdir, ...search.path];
   for(let dir of searchDirs) {
-    let searchFor =
-      dir.endsWith('node_modules') && !/\//.test(name) ? [name] : names;
+    let searchFor = dir.endsWith('node_modules') && !/\//.test(name) ? [name] : names;
     for(let module of searchFor) {
       let modPath = path.join(dir, module);
       let p;
@@ -1902,8 +1750,7 @@ function SearchModuleInPath(name, _from, position) {
     }
   }
   let fromModule = ES6Module.get(_from);
-  if(!fromModule)
-    throw new Error(`Module "${_from}" not found (${name})`, name);
+  if(!fromModule) throw new Error(`Module "${_from}" not found (${name})`, name);
   let chain = fromModule.chain;
   throw new URIError(`Module '${name}' imported from '${_from}' not found ` +
       Util.inspect({ name, chain }, { multiline: false }),
@@ -1975,8 +1822,7 @@ function GetDeclarations(ast, paths) {
 }
 
 function MakeNames(prefix) {
-  if(/\.(njs|es6.js|esm.js|module.js|module.ejs|js|mjs)$/.test(prefix))
-    return [prefix];
+  if(/\.(njs|es6.js|esm.js|module.js|module.ejs|js|mjs)$/.test(prefix)) return [prefix];
   return [
     prefix + '.njs',
     prefix + '.es6.js',
@@ -2037,8 +1883,7 @@ function MakeSearch(dirs) {
     for(let alias in aliases) {
       let module = path.join(path.dirname(p), aliases[alias]);
       if(!filesystem.exists(module))
-        throw new Error(`No such module alias from '${alias}' to '${aliases[alias]}'`
-        );
+        throw new Error(`No such module alias from '${alias}' to '${aliases[alias]}'`);
       let file = FindModule(module);
       let st = filesystem.stat(file);
       acc.set(alias, file);

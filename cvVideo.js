@@ -212,7 +212,7 @@ export class VideoSource {
       ')'
     );
     if(args.length > 0) {
-      let [device, backend = 'ANY'] = args;
+      let [device, backend = 'ANY', loop = true] = args;
       const driverId = VideoSource.backends[backend];
       let isVideo = (args.length <= 2 && backend in VideoSource.backends) || isVideoPath(device);
 
@@ -230,6 +230,7 @@ export class VideoSource {
         this.fromImages(args);
       }
       this.isVideo = true;
+      this.doLoop = loop;
     }
   }
 
@@ -248,10 +249,23 @@ export class VideoSource {
 
     this.read = function(mat) {
       const { cap } = this;
+      const lastFrame = this.get('CAP_PROP_FRAME_COUNT') - 1;
       if(!mat) mat = new Mat();
-      if(!cap.read(mat)) return null;
 
-      //console.debug('VideoSource.read', { cap, mat });
+      for(;;) {
+        const ok = cap.read(mat);
+        //if(!ok) mat = null;
+
+        if(!ok && this.get('CAP_PROP_POS_FRAMES') == lastFrame) {
+          if(this.doLoop) {
+            this.set('CAP_PROP_POS_FRAMES', 0);
+            continue;
+          }
+        }
+
+        //console.debug('VideoSource.read', {cap, mat, framePos: this.get('CAP_PROP_POS_FRAMES'), frameCount: this.get('CAP_PROP_FRAME_COUNT') });
+        break;
+      }
 
       return mat;
     };

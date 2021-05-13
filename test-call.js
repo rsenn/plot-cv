@@ -8,9 +8,7 @@ class Callable extends Function {
 
     super(...(isFunction ? [] : args));
 
-    let obj = isFunction
-      ? Object.setPrototypeOf(args.shift(), Callable.prototype)
-      : this;
+    let obj = isFunction ? Object.setPrototypeOf(args.shift(), Callable.prototype) : this;
 
     return obj;
   }

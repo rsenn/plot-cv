@@ -61,7 +61,7 @@ export class Pipeline extends Function {
     return this.processors.length;
   }
   get names() {
-    return this.processors.map((p) => p.functionName ?? p.name);
+    return this.processors.map((p) => p.functionName ?? p.fnName ?? p.name);
   }
 
   get processor() {
@@ -151,13 +151,16 @@ export function Processor(fn, ...args) {
     fn.call(this, src, dst, ...args);
     return dst;
   };
-  Object.assign(self, { functionName: fn.name });
+  Object.assign(self, { fnName: fn.name });
   Object.setPrototypeOf(self, Processor.prototype);
   return self;
 }
 Object.setPrototypeOf(Processor.prototype, Function.prototype);
-Object.assign(Pipeline.prototype, {
-  setName(name) {
-    this.pipelineName = name;
+Object.assign(Processor.prototype, {
+  set functionName(name) {
+    this.fnName = name;
+  },
+  get functionName() {
+    return this.fnName;
   }
 });

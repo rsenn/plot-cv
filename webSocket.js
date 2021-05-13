@@ -30,8 +30,7 @@ const sendBuf = client => {
       return;
     }
 
-    if(!(args.length == 0 && typeof msg == 'string'))
-      msg = new Message(msg, ...args);
+    if(!(args.length == 0 && typeof msg == 'string')) msg = new Message(msg, ...args);
     if(msg instanceof Message) msg = msg.data;
     console.debug(`[${this.id}] send '${msg}'`);
     lines.push(msg);
@@ -50,8 +49,7 @@ function sendTo(sock, msg, ...args) {
     return sendTo(sock, lines.join('\n'));
   }
 
-  if(!(args.length == 0 && typeof msg == 'string'))
-    msg = new Message(msg, ...args);
+  if(!(args.length == 0 && typeof msg == 'string')) msg = new Message(msg, ...args);
   if(msg instanceof Message) msg = msg.data;
 
   const { writable } = this || { writable: true };
@@ -74,15 +72,13 @@ function sendMany(except, msg, ...args) {
     msg = msg.data;
   }
   return Promise.all(sockets
-      .filter(sock => !(sock == except || sock.id == except || sock.ws == except)
-      )
+      .filter(sock => !(sock == except || sock.id == except || sock.ws == except))
       .map(sock => sendTo.call(this, sock, msg))
   );
 }
 
 export class Socket {
-  static map = Util.weakMapper((ws, info, client) => new Socket(ws, info, client)
-  );
+  static map = Util.weakMapper((ws, info, client) => new Socket(ws, info, client));
   handlers = new Map();
 
   constructor(ws, info, props) {

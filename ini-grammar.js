@@ -12,15 +12,11 @@ function ini(...args) {
 }
 
 function section(...args) {
-  return wrap(seq(section_header, option(WS), any(key_value)),
-    'section'
-  )(...args);
+  return wrap(seq(section_header, option(WS), any(key_value)), 'section')(...args);
 }
 
 function section_header(...args) {
-  return wrap(seq(LBRACK, section_header_title, RBRACK),
-    'section_header'
-  )(...args);
+  return wrap(seq(LBRACK, section_header_title, RBRACK), 'section_header')(...args);
 }
 
 function section_header_title(...args) {

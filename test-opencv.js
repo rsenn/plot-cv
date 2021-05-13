@@ -9,6 +9,7 @@ import Util from './lib/util.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { Pipeline, Processor } from './cvPipeline.js';
 import { Window, MouseFlags, MouseEvents, Mouse, TextStyle, DrawText } from './cvHighGUI.js';
+
 let basename = Util.getArgv()[1].replace(/\.js$/, '');
 function WriteImage(name, mat) {
   cv.imwrite(name, mat);

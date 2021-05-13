@@ -40,15 +40,12 @@ async function main(...args) {
 */
 
   let image = cv.imread('796e7bfab61dd66b5f12c3f929f75d9c_Mhleberg_5.jpg');
-  let image2 = cv.imread('9b16290d7d9c8f1aca810b6702070189_20170331_112428.jpg'
-  );
+  let image2 = cv.imread('9b16290d7d9c8f1aca810b6702070189_20170331_112428.jpg');
 
   cv.cvtColor(image2, image2, cv.CV_RGB2RGBA);
   console.log('image:', image);
   console.log('image.buffer:', image.buffer);
-  let imgId = nvg.CreateImage('796e7bfab61dd66b5f12c3f929f75d9c_Mhleberg_5.jpg',
-    0
-  );
+  let imgId = nvg.CreateImage('796e7bfab61dd66b5f12c3f929f75d9c_Mhleberg_5.jpg', 0);
   console.log('imgId:', imgId);
   let img2Id = nvg.CreateImageRGBA(image2.cols, image2.rows, 0, image2.buffer);
   console.log('img2Id:', img2Id);
@@ -67,10 +64,7 @@ async function main(...args) {
 
     let time = +new Date() / 1000;
     let index = Math.floor((time * 360) / 30);
-    let color = new HSLA(index % 360,
-      100,
-      50 + 25 * Math.sin(time * 0.1 * Math.PI)
-    ).toRGBA();
+    let color = new HSLA(index % 360, 100, 50 + 25 * Math.sin(time * 0.1 * Math.PI)).toRGBA();
     //console.log("color", ...color.normalize());
 
     glClearColor(...color.normalize());

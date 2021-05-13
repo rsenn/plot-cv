@@ -82,8 +82,7 @@ async function main(...args) {
 
   let contours = Util.repeat(4, () => randContour());
   let contourStr = contours.map(c =>
-    c.toString(Contour.FORMAT_NOBRACKET | Contour.FORMAT_SPACE | Contour.FORMAT_01
-    )
+    c.toString(Contour.FORMAT_NOBRACKET | Contour.FORMAT_SPACE | Contour.FORMAT_01)
   );
   let body;
   body = JSON.stringify({ contours: contourStr, frame: 0, width, height });

@@ -58,9 +58,7 @@ async function testVoronoi(filename) {
   let { site, cells, edges, vertices, execTime } = result;
   //console.log('cells:', cells);
 
-  let holes = edges
-    .filter(e => !e.rSite)
-    .map(({ lSite, rSite, ...edge }) => new Point(lSite));
+  let holes = edges.filter(e => !e.rSite).map(({ lSite, rSite, ...edge }) => new Point(lSite));
   let rlines = edges
     .filter(e => e.rSite)
     .map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
@@ -131,11 +129,7 @@ async function testVoronoi(filename) {
     )
   ];
 
-  const svg = [
-    'svg',
-    { viewBox: bb.toString() },
-    [['defs'], ...lines, ...circles, ...polylines]
-  ];
+  const svg = ['svg', { viewBox: bb.toString() }, [['defs'], ...lines, ...circles, ...polylines]];
 
   //console.log('factory:', factory);
   const svgFile = toXML(factory(...svg));
@@ -144,8 +138,7 @@ async function testVoronoi(filename) {
 }
 (() => {
   let args = Util.getArgs();
-  if(args.length == 0)
-    args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd');
+  if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd');
   for(let arg of args) {
     try {
       let project = testVoronoi(arg);

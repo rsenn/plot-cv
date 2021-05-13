@@ -19,9 +19,7 @@ export class Param {
   }
 
   createTrackbar(name, win) {
-    cv.createTrackbar(name, win + '', this.value, this.max, value =>
-      this.set(value)
-    );
+    cv.createTrackbar(name, win + '', this.value, this.max, value => this.set(value));
   }
 }
 
@@ -40,8 +38,7 @@ export class NumericParam extends Param {
 
   set(value) {
     const { clamp, min, step } = this;
-    let newValue = this.clamp(min + Util.roundTo(value - min, step, null, 'floor')
-    );
+    let newValue = this.clamp(min + Util.roundTo(value - min, step, null, 'floor'));
     console.log(`Param.set oldValue=${this.value} new=${newValue}`);
     this.value = newValue;
   }
@@ -132,8 +129,7 @@ export function ParamNavigator(map, index = 0) {
       const { map } = this;
       thisObj ??= this;
 
-      for(let [name, param] of map)
-        param.callback = () => fn.call(thisObj, name, param);
+      for(let [name, param] of map) param.callback = () => fn.call(thisObj, name, param);
       return fn;
     }
   });

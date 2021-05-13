@@ -71,10 +71,7 @@ function main(...args) {
   console.log('info:', info);
   console.log('args:', args);
 
-  let ptr = sf_open(args[0] || '/opt/games/endless-sky/sounds/hyperdrive.wav',
-    SFM_READ,
-    info
-  );
+  let ptr = sf_open(args[0] || '/opt/games/endless-sky/sounds/hyperdrive.wav', SFM_READ, info);
   console.log('info: ' + info.toString());
 
   let rate = info.samplerate;

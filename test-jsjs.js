@@ -23,10 +23,7 @@ function WriteFile(name, data) {
   filesystem.writeFile(name, data + '\n');
 }
 
-function printAst(ast,
-  comments,
-  printer = new Printer({ indent: 4 }, comments)
-) {
+function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments)) {
   return printer.print(ast);
 }
 
@@ -53,9 +50,7 @@ async function main(...args) {
       parser.addCommentsToNodes(ast);
       let imports = [
         ...deep.iterate(ast,
-          node =>
-            node instanceof CallExpression &&
-            /console.log/.test(printer.print(node))
+          node => node instanceof CallExpression && /console.log/.test(printer.print(node))
         )
       ].map(([node, path]) => node);
     } catch(err) {
@@ -66,8 +61,7 @@ async function main(...args) {
 
     files[file] = finish(error);
     if(!error) {
-      const output_file =
-        file.replace(/.*\/?/, '').replace(/\.[^.]*$/, '') + '.es';
+      const output_file = file.replace(/.*\/?/, '').replace(/\.[^.]*$/, '') + '.es';
       const output = printAst(ast, parser.comments, printer);
       console.log('ret:', ret);
       WriteFile(output_file, output);

@@ -22,18 +22,11 @@ function debug(fmt, ...args) {
 
 function main(...args) {
   if(/^-o/.test(args[0])) {
-    let arg =
-      args[0].length == 2
-        ? (args.shift(), args.shift())
-        : args.shift().slice(2);
+    let arg = args[0].length == 2 ? (args.shift(), args.shift()) : args.shift().slice(2);
     log = open(arg, 'a+');
   }
 
-  debug('%s started (%s) [%s]',
-    scriptArgs[0].replace(/.*\//g, ''),
-    args,
-    new Date().toISOString()
-  );
+  debug('%s started (%s) [%s]', scriptArgs[0].replace(/.*\//g, ''), args, new Date().toISOString());
 
   const SetupTerm = Once(() => {
     //ttySetRaw(STDIN_FILENO);
@@ -86,9 +79,7 @@ function main(...args) {
   const Send = (a, n) => {
     const b = a instanceof ArrayBuffer ? a : StringToBuffer(a);
     if(n === undefined) n = b.byteLength;
-    debug('Send -> %s',
-      a instanceof ArrayBuffer ? Dump(b, n, 40) : EscapeString(a)
-    );
+    debug('Send -> %s', a instanceof ArrayBuffer ? Dump(b, n, 40) : EscapeString(a));
     return sock.write(b, 0, n);
   };
   debug('errnos: %s', Object.entries(errnos));
@@ -197,10 +188,7 @@ function main(...args) {
           //err.printf("char '%c'\n", chars[i]);
           switch (chars[i]) {
             case 0x11: {
-              out.printf([/*'\x1bc\x1b[?1000l',*/ '\x1b[?25h', '\r\n', 'Exited\n'].join(
-                  ''
-                )
-              );
+              out.printf([/*'\x1bc\x1b[?1000l',*/ '\x1b[?25h', '\r\n', 'Exited\n'].join(''));
               exit(1);
               break;
             }
@@ -229,16 +217,11 @@ function SetCursor(show) {
 }
 
 function ReturnValue(ret, ...args) {
-  const r =
-    [-1, 0].indexOf(ret) != -1
-      ? ret + ''
-      : '0x' + NumberToHex(ret, ptrSize * 2);
+  const r = [-1, 0].indexOf(ret) != -1 ? ret + '' : '0x' + NumberToHex(ret, ptrSize * 2);
   debug('%s ret = %s%s%s',
     args,
     r,
-    ...(ret == -1
-      ? [' errno =', errno(), ' error =', strerror(errno())]
-      : ['', ''])
+    ...(ret == -1 ? [' errno =', errno(), ' error =', strerror(errno())] : ['', ''])
   );
 }
 
@@ -257,8 +240,7 @@ function EscapeString(str) {
     else if(code == 0x0d) r += '\\r';
     else if(code == 0x09) r += '\\t';
     else if(code <= 3) r += '\\0';
-    else if(code < 32 || code >= 128)
-      r += `\\${('00' + code.toString(8)).slice(-3)}`;
+    else if(code < 32 || code >= 128) r += `\\${('00' + code.toString(8)).slice(-3)}`;
     else r += str[i];
   }
   return r;
@@ -276,19 +258,13 @@ function BufferToArray(buf, offset, length) {
 }
 
 function BufferToString(buf, offset, length) {
-  return BufferToArray(buf, offset, length).reduce((s, code) => s + String.fromCharCode(code),
-    ''
-  );
+  return BufferToArray(buf, offset, length).reduce((s, code) => s + String.fromCharCode(code), '');
 }
 
 function BufferToBytes(buf, offset = 0, len, limit = Infinity) {
   len = typeof len == 'numer' ? len : buf.byteLength;
   offset = typeof offset == 'numer' ? offset : 0;
-  return ArrayToBytes(new Uint8Array(buf, offset, len),
-    undefined,
-    undefined,
-    limit
-  );
+  return ArrayToBytes(new Uint8Array(buf, offset, len), undefined, undefined, limit);
 }
 
 function ArrayToBytes(arr, delim = ', ', bytes = 1, limit = Infinity) {
@@ -315,9 +291,7 @@ function AvailableBytes(buf, numBytes) {
 }
 
 function Append(buf, numBytes, ...chars) {
-  let n = chars.reduce((a, c) => (typeof c == 'number' ? a + 1 : a + c.length),
-    0
-  );
+  let n = chars.reduce((a, c) => (typeof c == 'number' ? a + 1 : a + c.length), 0);
   if(AvailableBytes(buf, numBytes) < n) buf = CloneBuf(buf, numBytes + n);
   let a = new Uint8Array(buf, numBytes, n);
   let p = 0;
@@ -334,11 +308,7 @@ function Append(buf, numBytes, ...chars) {
 }
 
 function Dump(buf, numBytes, limit = Infinity) {
-  return BufferToBytes(numBytes !== undefined ? buf.slice(0, numBytes) : buf,
-    0,
-    undefined,
-    limit
-  );
+  return BufferToBytes(numBytes !== undefined ? buf.slice(0, numBytes) : buf, 0, undefined, limit);
 }
 
 function CloneBuf(buf, newLen) {

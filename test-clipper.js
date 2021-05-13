@@ -12,8 +12,7 @@ const d2 =
 
 const data = new PointList(SVG.pathParse(d).filter(({ x, y }) => x !== undefined && y !== undefined)
 );
-const data2 = new PointList(parse(d2).filter(({ x, y }) => x !== undefined && y !== undefined)
-);
+const data2 = new PointList(parse(d2).filter(({ x, y }) => x !== undefined && y !== undefined));
 
 function testOffset() {
   const path = data2.map(({ x, y }) => new ClipperLib.DoublePoint(x, y));
@@ -26,10 +25,7 @@ function testOffset() {
 
   const offset = new ClipperLib.ClipperOffset();
   const outer = new ClipperLib.Paths();
-  offset.AddPath(path,
-    ClipperLib.JoinType.jtRound,
-    ClipperLib.EndType.etOpenRound
-  );
+  offset.AddPath(path, ClipperLib.JoinType.jtRound, ClipperLib.EndType.etOpenRound);
 
   offset.Execute(outer, 1);
 
@@ -78,8 +74,7 @@ function testShape() {
     miterLimit: 2.0,
     roundPrecision: 0.25
   });
-  let points = new PointList(outset.paths[0].map(({ X, Y }) => new Point(X, Y))
-  );
+  let points = new PointList(outset.paths[0].map(({ X, Y }) => new Point(X, Y)));
 
   /*  let inset = shape.offset(-10, {
     jointType: 'jtSquare',
