@@ -15,7 +15,7 @@ let basename = Util.getArgv()[1].replace(/\.js$/, '');
 
 function WriteImage(name, mat) {
   cv.imwrite(name, mat);
-  console.log(`Wrote '${name}' (${mat.size}).`);
+  console.log("Wrote '" + name + "' (" + mat.size + ').');
 }
 
 function SaveConfig(configObj) {
@@ -24,7 +24,7 @@ function SaveConfig(configObj) {
   let file = std.open(basename + '.config.json', 'w+b');
   file.puts(JSON.stringify(configObj, null, 2) + '\n');
   file.close();
-  console.log(`Saved config to '${basename + '.config.json'}'`,
+  console.log("Saved config to '" + basename + '.config.json' + "'",
     inspect(configObj, { compact: false })
   );
 }
@@ -172,9 +172,9 @@ console.log("statusRect:", statusRect);
   /*  output.setTo([255, 255, 255]);
   status.setTo(backgroundColor);*/
 
-let config = LoadConfig();
+  let config = LoadConfig();
   let { frameShow = 1, paramIndex = 0 } = config;
-  
+
   let params = {
     thres: new NumericParam(config.thres || 229, 0, 255),
     type: new NumericParam(config.type || cv.THRESH_BINARY_INV, 0, 4),
@@ -561,7 +561,6 @@ let config = LoadConfig();
       }
     }
   }
-
 
   SaveConfig({ frameShow, paramIndex: paramNav.index, ...params });
 

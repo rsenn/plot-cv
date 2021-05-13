@@ -119,10 +119,14 @@ export const Overlay = ({
     )
   );
   if(typeof title == 'string' && title.length > 0) props.title = title;
-  if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
+  if(typeof tooltip == 'string' && tooltip.length > 0)
+    props['data-tooltip'] = tooltip;
   return h('div',
     {
-      className: classNames(className, pushed && 'pushed', active ? 'active' : 'inactive'),
+      className: classNames(className,
+        pushed && 'pushed',
+        active ? 'active' : 'inactive'
+      ),
       ...props,
       ...events
     },
@@ -130,7 +134,12 @@ export const Overlay = ({
   );
 };
 
-export const Container = ({ className = 'panel', tag = 'div', children, ...props }) => {
+export const Container = ({
+  className = 'panel',
+  tag = 'div',
+  children,
+  ...props
+}) => {
   // useCallback(() => console.debug('re-render panel'));
   return h(tag, { className, ...props }, children);
 };
@@ -142,7 +151,8 @@ export const Button = allProps => {
     image,
     fn,
     state,
-    onPush = state => (state && typeof fn == 'function' ? fn(state) : undefined),
+    onPush = state =>
+      state && typeof fn == 'function' ? fn(state) : undefined,
     style = {},
     ...props
   } = allProps;
@@ -164,7 +174,14 @@ export const Button = allProps => {
   });
 };
 
-export const Toggle = ({ className, images, fn, state, style = {}, ...props }) => {
+export const Toggle = ({
+  className,
+  images,
+  fn,
+  state,
+  style = {},
+  ...props
+}) => {
   const pushed = useTrkl(state);
   const image = images[pushed | 0];
   state.subscribe(value => {
@@ -180,7 +197,14 @@ export const Toggle = ({ className, images, fn, state, style = {}, ...props }) =
   });
 };
 
-export const ButtonGroup = ({ className, images, fn, state, style = {}, ...props }) => {
+export const ButtonGroup = ({
+  className,
+  images,
+  fn,
+  state,
+  style = {},
+  ...props
+}) => {
   const pushed = useTrkl(state);
   const image = images[pushed | 0];
   state.subscribe(value => {
@@ -200,7 +224,14 @@ export const ButtonGroup = ({ className, images, fn, state, style = {}, ...props
   <${Overlay} className="button" text=${caption} onPush=${state => (state ? fn(state) : undefined)} ${...props} />
 `;
 */
-export const FloatingPanel = ({ children, className, onSize, onHide, style = {}, ...props }) => {
+export const FloatingPanel = ({
+  children,
+  className,
+  onSize,
+  onHide,
+  style = {},
+  ...props
+}) => {
   const [ref, { x, y, width, height }] = useDimensions();
 
   //console.log('FloatingPanel.dimensions:', { x, y, width, height });
@@ -210,7 +241,8 @@ export const FloatingPanel = ({ children, className, onSize, onHide, style = {},
 
   let noUpdate = false;
 
-  const hasOnSize = typeof onSize == 'function' && typeof onSize.subscribe == 'function';
+  const hasOnSize =
+    typeof onSize == 'function' && typeof onSize.subscribe == 'function';
 
   function updateSize(value) {
     if(!noUpdate) setSize(value);
@@ -224,11 +256,15 @@ export const FloatingPanel = ({ children, className, onSize, onHide, style = {},
     const tmpSize = onSize();
     noUpdate = true;
     // if(tmpSize.width != width || tmpSize.height != height)
-    if(Util.isObject(tmpSize) && (tmpSize.width === undefined || tmpSize.height === undefined))
-      if(width !== undefined && height !== undefined) onSize({ width, height });
+    if(Util.isObject(tmpSize) &&
+      (tmpSize.width === undefined || tmpSize.height === undefined)
+    )
+      if(width !== undefined && height !== undefined)
+        onSize({ width, height });
     noUpdate = false;
   }
-  const hasOnHide = typeof onHide == 'function' && typeof onHide.subscribe == 'function';
+  const hasOnHide =
+    typeof onHide == 'function' && typeof onHide.subscribe == 'function';
 
   function updateHide(value) {
     setHidden(value);
@@ -257,9 +293,17 @@ export const FloatingPanel = ({ children, className, onSize, onHide, style = {},
   );
 };
 
-export const Label = ({ className, text, title, tooltip, children, ...props }) => {
+export const Label = ({
+  className,
+  text,
+  title,
+  tooltip,
+  children,
+  ...props
+}) => {
   if(typeof title == 'string' && title.length > 0) props.title = title;
-  if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
+  if(typeof tooltip == 'string' && tooltip.length > 0)
+    props['data-tooltip'] = tooltip;
   return h('div',
     { className: classNames('caption', className), ...props },
     (text ? [text] : []).concat(children)
@@ -274,9 +318,18 @@ export const DynamicLabel = ({ caption, title, children, ...props }) => {
   return h(Label, { ...props, text }, []);
 };
 
-export const Item = ({ className = 'item', title, tooltip, label, icon, children, ...props }) => {
+export const Item = ({
+  className = 'item',
+  title,
+  tooltip,
+  label,
+  icon,
+  children,
+  ...props
+}) => {
   if(typeof title == 'string' && title.length > 0) props.title = title;
-  if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
+  if(typeof tooltip == 'string' && tooltip.length > 0)
+    props['data-tooltip'] = tooltip;
 
   return h(Overlay, { className, ...props }, h(Label, { text: icon }, label));
 };
@@ -372,19 +425,33 @@ export const Conditional = ({
   signal,
   ...props
 }) => {
-  const [show, setShown] = useState(initialState !== undefined ? initialState : signal());
+  const [show, setShown] = useState(initialState !== undefined ? initialState : signal()
+  );
 
   if(signal) signal.subscribe(value => setShown(value));
 
-  return show ? h(component, { className, ...props }, children) : h(Fragment, {});
+  return show
+    ? h(component, { className, ...props }, children)
+    : h(Fragment, {});
 };
 
-export const ShowHide = ({ initialState, component, className, children, signal, ...props }) => {
-  const [hidden, setHidden] = useState(initialState !== undefined ? initialState : !signal());
+export const ShowHide = ({
+  initialState,
+  component,
+  className,
+  children,
+  signal,
+  ...props
+}) => {
+  const [hidden, setHidden] = useState(initialState !== undefined ? initialState : !signal()
+  );
 
   if(signal) signal.subscribe(value => setHidden(!value));
 
-  return h(component, { className: classNames(className, hidden && 'hidden'), ...props }, children);
+  return h(component,
+    { className: classNames(className, hidden && 'hidden'), ...props },
+    children
+  );
 };
 
 export const EditBox = ({
@@ -494,7 +561,9 @@ export const Chooser = ({
 }) => {
   const [active, setActive] = useState(-1);
   const [filter, setFilter] = useState('*');
-  const [list, setList] = /*useState(items);*/ trkl.is(items) ? useState(items()) : [items];
+  const [list, setList] = /*useState(items);*/ trkl.is(items)
+    ? useState(items())
+    : [items];
 
   if(trkl.is(items)) items.subscribe(setList);
 
@@ -514,7 +583,11 @@ export const Chooser = ({
   const list2re = list =>
     list
       .map(part =>
-        Util.tryCatch(() => new RegExp(part.trim().replace(/\./g, '\\.').replace(/\*/g, '.*'), 'i'))
+        Util.tryCatch(() =>
+            new RegExp(part.trim().replace(/\./g, '\\.').replace(/\*/g, '.*'),
+              'i'
+            )
+        )
       )
       .filter(r => r !== null);
   const bar = html``;
@@ -523,7 +596,8 @@ export const Chooser = ({
     .replace(/\+/, ' +')
     .split(/\s+/g)
     .filter(p => !/:\/\//.test(p));
-  const plus = list2re(preFilter.filter(p => p.startsWith('+')).map(p => p.replace(/\+/g, '')));
+  const plus = list2re(preFilter.filter(p => p.startsWith('+')).map(p => p.replace(/\+/g, ''))
+  );
   const rest = preFilter.filter(p => !p.startsWith('+')).join(' ');
   //console.log('filter', { plus, rest });
   const reList = rest
@@ -533,14 +607,23 @@ export const Chooser = ({
     .map(p => list2re(p.split(/\s\s*/g)));
   //Sconsole.debug('regex:', ...reList);
   const pred = name =>
-    !reList.every(c => !c.every(re => re.test(name))) && plus.every(re => re.test(name));
+    !reList.every(c => !c.every(re => re.test(name))) &&
+    plus.every(re => re.test(name));
   const other = list.filter(({ name }) => !pred(name)).map(i => i.name);
   const displayList = [...list].sort(sortCompare);
   console.log('displayList', { displayList, sortCompare });
   const children = displayList
     .filter(({ name }) => pred(name))
     .map((value, key) => {
-      let { name, description /*= ''*/, i, title, number, data, ...item } = value;
+      let {
+        name,
+        description /*= ''*/,
+        i,
+        title,
+        number,
+        data,
+        ...item
+      } = value;
       data = data || number;
       i = i === undefined ? number : i;
       //console.log(`Chooser item #${i}:`, { keys: Object.keys(item), data });
@@ -550,7 +633,9 @@ export const Chooser = ({
         i,
         className: typeof itemClass == 'function'
             ? itemClass(value)
-            : classNames(itemClass || className + '-item', (name + '').replace(/.*\./, '')),
+            : classNames(itemClass || className + '-item',
+                (name + '').replace(/.*\./, '')
+              ),
         active: i == active,
         onPush: pushHandler(i),
         label: name.replace(new RegExp('.*/'), ''),
@@ -626,7 +711,8 @@ export const FileList = ({
       tag: listTag,
       className: 'list',
       itemComponent: File,
-      itemClass: item => classNames('file', 'hcenter', item.name.replace(/.*\./g, '')),
+      itemClass: item =>
+        classNames('file', 'hcenter', item.name.replace(/.*\./g, '')),
       itemFilter: filter,
       items,
       tooltip: ToolTipFn,
@@ -637,9 +723,14 @@ export const FileList = ({
 };
 
 export const Panel = ({ className, children, ...props }) =>
-  h(Container, { className: classNames('panel', className), ...props }, children);
+  h(Container, { className: classNames('panel', className), ...props },
+    children
+  );
 
-export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className }, children) =>
+export const WrapInAspectBox = (enable,
+  { width = '100%', aspect = 1, className },
+  children
+) =>
   enable
     ? h(SizedAspectRatioBox,
         {
@@ -748,7 +839,9 @@ export const TransformedElement = ({
   return h(type,
     {
       id,
-      className: classNames('transformed-element', className && className + '-size'),
+      className: classNames('transformed-element',
+        className && className + '-size'
+      ),
       style: {
         position: 'relative',
         ...style,
@@ -782,7 +875,9 @@ export const Slider = ({
     onChange(target.value);
   };
   label = label || name;
-  let dim = length ? { [orient == 'horizontal' ? 'width' : 'height']: length } : {};
+  let dim = length
+    ? { [orient == 'horizontal' ? 'width' : 'height']: length }
+    : {};
 
   return h('div',
     {
@@ -1055,7 +1150,12 @@ export const MoveCursor = props =>
     ]
   );
 
-export const DropDown = ({ children, into /* = 'body'*/, isOpen = trkl(false), ...props }) => {
+export const DropDown = ({
+  children,
+  into /* = 'body'*/,
+  isOpen = trkl(false),
+  ...props
+}) => {
   let [button, overlay] = ReactComponent.toChildArray(children);
   const [open, setOpen] = useState(isOpen());
   isOpen.subscribe(value => setOpen(value));
@@ -1090,7 +1190,8 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen = trkl(false), .
   useEvent('mousedown', event);
 
   if(typeof button == 'function') button = button({ ref: ref, ...props });
-  if(typeof overlay == 'function') overlay = overlay({ ref: oref, onMouseWheel });
+  if(typeof overlay == 'function')
+    overlay = overlay({ ref: oref, onMouseWheel });
   //console.log('DropDown open=', { open });
 
   function onMouseWheel(e) {
@@ -1100,13 +1201,23 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen = trkl(false), .
     return false;
   }
 
-  return h(Fragment, {}, open ? [button, into ? h(Portal, { into }, overlay) : overlay] : button);
+  return h(Fragment,
+    {},
+    open ? [button, into ? h(Portal, { into }, overlay) : overlay] : button
+  );
 };
 
-export const Fence = ({ children, style = {}, sizeListener, aspectListener, ...props }) => {
+export const Fence = ({
+  children,
+  style = {},
+  sizeListener,
+  aspectListener,
+  ...props
+}) => {
   const [dimensions, setDimensions] = useState(sizeListener());
   const [aspect, setAspect] = useState(aspectListener());
-  if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
+  if(sizeListener && sizeListener.subscribe)
+    sizeListener.subscribe(value => setDimensions(value));
   if(aspectListener && aspectListener.subscribe)
     aspectListener.subscribe(value => setAspect(value));
   //console.debug('Fence dimensions:', dimensions);
@@ -1131,7 +1242,13 @@ export const Fence = ({ children, style = {}, sizeListener, aspectListener, ...p
 };
 
 export const Zoomable = ({ type = 'div', style, children, ...props }) => {
-  const { transform, panZoomHandlers, setContainer, setPan, setZoom } = usePanZoom({
+  const {
+    transform,
+    panZoomHandlers,
+    setContainer,
+    setPan,
+    setZoom
+  } = usePanZoom({
     zoomSensitivity: 0.001,
     minZoom: 1,
     initialZoom: 4,

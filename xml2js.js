@@ -27,7 +27,8 @@ function WriteFile(name, data) {
 
   if(name == '-' || typeof name != 'string') {
     //  let stdout = filesystem.fdopen(1, 'r');
-    let buffer = data instanceof ArrayBuffer ? data : filesystem.bufferFrom(data);
+    let buffer =
+      data instanceof ArrayBuffer ? data : filesystem.bufferFrom(data);
     filesystem.write(1, buffer, 0, buffer.byteLength);
     return;
   }
@@ -88,7 +89,9 @@ async function main(...args) {
       if(key == 'children') {
         let { children } = parentNode;
         delete parentNode.children;
-        Object.assign(parentNode, children.length ? { ...parentNode, children } : parentNode);
+        Object.assign(parentNode,
+          children.length ? { ...parentNode, children } : parentNode
+        );
       }
 
       /*  if(key == 'tagName') {
@@ -122,16 +125,18 @@ async function main(...args) {
     let rebuilt = [];
 
     if(include) {
-      let pred = Util.predicate(`(<${include}[ \\t>/].*|.*\\s${include}=)`, (arg, pred) => {
-        const { tagName, children, ...attributes } = arg;
-        let node = { tagName, attributes };
-        let str = toXML(node);
+      let pred = Util.predicate(`(<${include}[ \\t>/].*|.*\\s${include}=)`,
+        (arg, pred) => {
+          const { tagName, children, ...attributes } = arg;
+          let node = { tagName, attributes };
+          let str = toXML(node);
 
-        if(pred(str)) {
-          // console.log('pred:', { str, pred: pred.valueOf() });
-          return true;
+          if(pred(str)) {
+            // console.log('pred:', { str, pred: pred.valueOf() });
+            return true;
+          }
         }
-      });
+      );
 
       let output = [];
       newObj = [];

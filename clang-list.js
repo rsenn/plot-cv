@@ -25,7 +25,8 @@ Util.define(Array.prototype, {
     return this[this.lengtGh - 1];
   },
   startsWith(start) {
-    for(let i = 0; i < start.length; i++) if(this[i] !== start[i]) return false;
+    for(let i = 0; i < start.length; i++)
+      if(this[i] !== start[i]) return false;
     return true;
   }
 });
@@ -130,7 +131,8 @@ async function main(...args) {
       }
 
       const loadFunctions = [
-        async () => await ReadAST(boutfile, ReadBJSON, WriteBJSON, a => a).catch(() => 0),
+        async () =>
+          await ReadAST(boutfile, ReadBJSON, WriteBJSON, a => a).catch(() => 0),
         async () => await ReadAST(outfile).catch(() => 0),
         async () => {
           if((json = await AstDump(file, args))) {
@@ -198,7 +200,11 @@ async function main(...args) {
         let entries = [...flat];
         let mainNodes = sysinc ? entries : entries.filter(NoSystemIncludes);
 
-        let typedefs = [...Util.filter(mainNodes, ([path, decl]) => decl.kind == 'TypedefDecl')];
+        let typedefs = [
+          ...Util.filter(mainNodes,
+            ([path, decl]) => decl.kind == 'TypedefDecl'
+          )
+        ];
 
         const names = decls => [...decls].map(([path, decl]) => decl.name);
         const declarations = decls =>
@@ -207,7 +213,9 @@ async function main(...args) {
         if(params.debug) {
           let nodeTypes = [...nodes].map(([p, n]) => n.kind);
           let hist = Util.histogram(nodeTypes, new Map());
-          console.log('histogram:', new Map([...hist].sort((a, b) => a[1] - b[1])));
+          console.log('histogram:',
+            new Map([...hist].sort((a, b) => a[1] - b[1]))
+          );
         }
 
         let namedNodes = mainNodes.filter(([p, n]) => 'name' in n);
@@ -235,7 +243,9 @@ async function main(...args) {
             p,
             n,
             n.id || tree.pathOf(n),
-            n.name || n.referencedMemberDecl || Object.keys(n).filter(k => typeof n[k] == 'string'),
+            n.name ||
+              n.referencedMemberDecl ||
+              Object.keys(n).filter(k => typeof n[k] == 'string'),
             GetTypeStr(n),
             n.kind,
             p.join('.').replace(/\.?inner\./g, '/'),
@@ -249,8 +259,10 @@ async function main(...args) {
           const line = decl
             .slice(2)
             .map((field, i) =>
-              (Util.abbreviate(field, [Infinity, Infinity, 20, Infinity, Infinity, Infinity][i]) +
-                ''
+              (Util.abbreviate(
+                  field,
+                  [Infinity, Infinity, 20, Infinity, Infinity, Infinity][i]
+                ) + ''
               ).padEnd([6, 25, 20, 20, 40, 0][i])
             )
             .join(' ');

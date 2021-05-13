@@ -21,7 +21,9 @@ class Node {
     return node.attributes && node.attributes.length > 0
       ? Array.from(node.attributes).reduce((acc, attr) => ({
             ...acc,
-            [attr.name]: isNaN(parseFloat(attr.value)) ? attr.value : parseFloat(attr.value)
+            [attr.name]: isNaN(parseFloat(attr.value))
+              ? attr.value
+              : parseFloat(attr.value)
           }),
           {}
         )
@@ -29,7 +31,8 @@ class Node {
   }
 
   static *map(map, propFn) {
-    if(!propFn && 'getPropertyValue' in map) propFn = k => [k, map.getPropertyValue(k)];
+    if(!propFn && 'getPropertyValue' in map)
+      propFn = k => [k, map.getPropertyValue(k)];
 
     if(!propFn && typeof map.item == 'function')
       propFn = (k, i) => {
@@ -82,9 +85,15 @@ Util.formatAnnotatedObject = function(subject, o) {
   if(typeof subject == 'number') return subject;
   if(subject != null && subject.y2 !== undefined)
     return `rect[${spacing}${subject.x}${separator}${subject.y} | ${subject.x2}${separator}${subject.y2} (${subject.w}x${subject.h}) ]`;
-  if(Util.isObject(subject) && 'map' in subject && typeof subject.map == 'function')
-    return `[${nl}${subject.map(i => Util.formatAnnotatedObject(i, opts)).join(separator + nl)}]`;
-  if(typeof subject === 'string' || subject instanceof String) return `'${subject}'`;
+  if(Util.isObject(subject) &&
+    'map' in subject &&
+    typeof subject.map == 'function'
+  )
+    return `[${nl}${subject
+      .map(i => Util.formatAnnotatedObject(i, opts))
+      .join(separator + nl)}]`;
+  if(typeof subject === 'string' || subject instanceof String)
+    return `'${subject}'`;
   let longest = '';
   let r = [];
   for(let k in subject) {
@@ -107,14 +116,19 @@ Util.formatAnnotatedObject = function(subject, o) {
         s =
           depth <= 0
             ? `Array(${v.length})`
-            : `[ ${v.map(item => Util.formatAnnotatedObject(item, opts)).join(', ')} ]`;
+            : `[ ${v
+                .map(item => Util.formatAnnotatedObject(item, opts))
+                .join(', ')} ]`;
       } catch(err) {
         s = `[${v}]`;
       }
     } else if(v && v.toSource !== undefined) {
       s = v.toSource();
     } else if(opts.depth >= 0) {
-      s = s.length > maxlen ? `[Object ${Util.objName(v)}]` : Util.formatAnnotatedObject(v, opts);
+      s =
+        s.length > maxlen
+          ? `[Object ${Util.objName(v)}]`
+          : Util.formatAnnotatedObject(v, opts);
     } else {
       let c = Util.className(v);
       let t = Util.ucfirst(typeof v);
@@ -124,7 +138,9 @@ Util.formatAnnotatedObject = function(subject, o) {
     if(s == '') s = typeof v;
     r.push([k, s]);
   }
-  let padding = x => indent + (opts.newline != '' ? Util.pad(x, longest.length, spacing) : spacing);
+  let padding = x =>
+    indent +
+    (opts.newline != '' ? Util.pad(x, longest.length, spacing) : spacing);
   let j = separator + spacing;
   if(r.length > 6) {
     nl = opts.newline + i;
@@ -253,7 +269,8 @@ Util.setter = target => {
       let obj = target;
       if(!self.fn) {
         if(typeof obj == 'object' && obj !== null) {
-          if(typeof obj.set == 'function') self.fn = (key, value) => obj.set(key, value);
+          if(typeof obj.set == 'function')
+            self.fn = (key, value) => obj.set(key, value);
         }
       }
       if(!self.fn) self.fn = (key, value) => ((obj[key] = value), obj);
@@ -299,7 +316,8 @@ Util.adder = target => {
   function ChooseFn(a, o) {
     if(!self.fn) {
       if(typeof target == 'object' && target !== null) {
-        if(typeof target.add == 'function') self.fn = (obj, arg) => (obj.add(arg), undefined);
+        if(typeof target.add == 'function')
+          self.fn = (obj, arg) => (obj.add(arg), undefined);
         else if(typeof target.push == 'function')
           self.fn = (obj, arg) => (obj.push(arg), undefined);
       }
@@ -307,12 +325,15 @@ Util.adder = target => {
     let isNum = Util.isNumeric(a);
     //console.debug('ChooseFn', { a, o, f: self.fn });
     if(!self.fn) {
-      if(typeof o == 'string') self.fn = (obj, arg) => (obj == '' ? '' : obj + ', ') + arg;
+      if(typeof o == 'string')
+        self.fn = (obj, arg) => (obj == '' ? '' : obj + ', ') + arg;
       else if(typeof o == 'number')
         self.fn = (num, arg) => (typeof num == 'number' ? num : 0) + +arg;
       else if(a)
         self.fn = (obj, arg) =>
-          (obj || (isNum || typeof arg == 'number' ? 0 : '')) + isNum ? +arg : ',' + arg;
+          (obj || (isNum || typeof arg == 'number' ? 0 : '')) + isNum
+            ? +arg
+            : ',' + arg;
     }
   }
 };
@@ -415,7 +436,8 @@ Util.throttle = (f, t, thisObj) => {
   };
 };
 Util.debounce = (func, wait, options = {}) => {
-  if(!Number.isFinite(wait)) throw new TypeError('Expected `wait` to be a finite number');
+  if(!Number.isFinite(wait))
+    throw new TypeError('Expected `wait` to be a finite number');
   let id, args, ctx, timestamp, r;
   const { leading, thisObj } = options;
   if(null == wait) wait = 100;
@@ -461,7 +483,8 @@ Util.debounce = (func, wait, options = {}) => {
 };
 
 Util.debounceAsync = (fn, wait, options = {}) => {
-  if(!Number.isFinite(wait)) throw new TypeError('Expected `wait` to be a finite number');
+  if(!Number.isFinite(wait))
+    throw new TypeError('Expected `wait` to be a finite number');
   let r,
     id,
     resolveList = [];
@@ -499,7 +522,12 @@ Util.debounceAsync = (fn, wait, options = {}) => {
   };
 };*/
 Util.getGlobalObject = Util.memoize(arg => {
-  const retfn = typeof arg == 'function' ? arg : typeof arg == 'string' ? g => g[arg] : g => g;
+  const retfn =
+    typeof arg == 'function'
+      ? arg
+      : typeof arg == 'string'
+      ? g => g[arg]
+      : g => g;
 
   return Util.tryCatch(() => global,
     retfn,
@@ -516,7 +544,8 @@ Util.getGlobalObject = Util.memoize(arg => {
 });
 
 Util.isDebug = Util.memoize(() => {
-  if(process !== undefined && process.env.NODE_ENV === 'production') return false;
+  if(process !== undefined && process.env.NODE_ENV === 'production')
+    return false;
   return true;
 });
 
@@ -532,7 +561,9 @@ Util.log = (...args) => {
     location = stack[0].getLocation();
   }
   let locationStr = location.toString(true);
-  let c = [(locationStr[inspectSymbol] || locationStr.toString).call(locationStr)];
+  let c = [
+    (locationStr[inspectSymbol] || locationStr.toString).call(locationStr)
+  ];
   c.push(' ');
   let filters = Util.log.filters;
   filters.map(f => f.test(locationStr));
@@ -540,10 +571,14 @@ Util.log = (...args) => {
   console.log('log', { args, c });
   Util.putStack();
   args = args.reduce((a, p, i) => {
-    if(Util.isObject(p) && p[Util.log.methodName]) p = p[Util.log.methodName]();
+    if(Util.isObject(p) && p[Util.log.methodName])
+      p = p[Util.log.methodName]();
     else if(Util.isObject(p) && p[inspectSymbol]) p = p[inspectSymbol]();
     else if(typeof p != 'string') {
-      if(Util.isObject(p) && typeof p.toString == 'function' && !Util.isNativeFunction(p.toString))
+      if(Util.isObject(p) &&
+        typeof p.toString == 'function' &&
+        !Util.isNativeFunction(p.toString)
+      )
         p = p.toString();
       else p = Util.inspect(p, { multiline: false });
     }
@@ -563,7 +598,9 @@ Object.defineProperty(Util.log, 'methodName', {
 
 Util.log.filters = [/.*/];
 Util.log.setFilters = function(args) {
-  this.filters = [...args].map(arg => (arg instanceof RegExp ? arg : new RegExp(arg)));
+  this.filters = [...args].map(arg =>
+    arg instanceof RegExp ? arg : new RegExp(arg)
+  );
 };
 Util.log.getFilters = function() {
   return this.filters;
@@ -596,7 +633,8 @@ Util.toSource = function(arg, opts = {}) {
       Util.toSource(item, { ...opts, c, print });
     }
     print(']', 1, 36);
-  } else if(typeof arg == 'number' || arg === undefined || arg === null) print(arg, 1, 35);
+  } else if(typeof arg == 'number' || arg === undefined || arg === null)
+    print(arg, 1, 35);
   else if(typeof arg == 'string') print(`${quote}${arg}${quote}`, 1, 36);
   else if(arg && arg.x !== undefined && arg.y !== undefined) {
     print('[', 1, 36);
@@ -639,7 +677,9 @@ Util.debug = function(message) {
     return value;
   };
   args
-    .map(arg => (typeof arg === 'object' ? JSON.toString(arg, removeCircular) : arg))
+    .map(arg =>
+      typeof arg === 'object' ? JSON.toString(arg, removeCircular) : arg
+    )
     .join(' ')
     .replace(/\n/g, '');
   //console.log("STR: "+str);
@@ -667,7 +707,8 @@ Util.className = function(obj) {
       proto = obj.prototype;
     } catch(err) {}
   }
-  if(Util.isObject(proto) && 'constructor' in proto) return Util.functionName(proto.constructor);
+  if(Util.isObject(proto) && 'constructor' in proto)
+    return Util.functionName(proto.constructor);
 };
 Util.unwrapComponent = function(c) {
   for(;;) {
@@ -743,7 +784,10 @@ Util.bitGroups = function(num, bpp, minLen) {
     r.push(num & m);
     num /= m + 1;
   }
-  while(r.length > 0 && r[r.length - 1] == 0 /* && Util.mod(r.length *bpp, 8) > 0*/) r.pop();
+  while(r.length > 0 &&
+    r[r.length - 1] == 0 /* && Util.mod(r.length *bpp, 8) > 0*/
+  )
+    r.pop();
   while(r.length < minLen) r.push(0);
   return r;
 };
@@ -813,7 +857,9 @@ Util.set = function(obj, prop, value) {
   return set(prop, value);
 };
 
-Util.get = Util.curry((obj, prop) => (obj instanceof Map ? obj.get(prop) : obj[prop]));
+Util.get = Util.curry((obj, prop) =>
+  obj instanceof Map ? obj.get(prop) : obj[prop]
+);
 Util.symbols = (() => {
   const {
     asyncIterator,
@@ -883,7 +929,9 @@ Util.draw = (arr, n = 1, rnd = Util.rng) => {
   return n == 1 ? r[0] : r;
 };
 Util.is = function(what, ...pred) {
-  let fnlist = pred.map(type => (Util.isConstructor(type) ? what instanceof type : this.is[type]));
+  let fnlist = pred.map(type =>
+    Util.isConstructor(type) ? what instanceof type : this.is[type]
+  );
   //console.debug('fnlist:', fnlist);
   return fnlist.every(fn => fn(what));
 };
@@ -921,7 +969,9 @@ Util.abbreviate = function(str, max = 40, suffix = '...') {
   max = +max;
   if(isNaN(max)) max = Infinity;
   if(Util.isArray(str)) {
-    return Array.prototype.slice.call(str, 0, Math.min(str.length, max)).concat([suffix]);
+    return Array.prototype.slice
+      .call(str, 0, Math.min(str.length, max))
+      .concat([suffix]);
   }
   if(typeof str != 'string' || !Number.isFinite(max) || max < 0) return str;
   str = '' + str;
@@ -991,7 +1041,8 @@ Util.memoizedProperties = (obj, methods) => {
 };
 Util.copyWhole = (dst, ...args) => {
   let chain = [];
-  for(let src of args) chain = chain.concat(Util.getPrototypeChain(src).reverse());
+  for(let src of args)
+    chain = chain.concat(Util.getPrototypeChain(src).reverse());
   //console.debug('chain:', ...chain);
   for(let obj of chain) Util.define(dst, obj);
   return dst;
@@ -1006,7 +1057,8 @@ Util.extend = (...args) => {
   if(typeof args[0] == 'boolean') deep = args.shift();
 
   let result = args[0];
-  if(Util.isUnextendable(result)) throw new Error('extendee must be an object');
+  if(Util.isUnextendable(result))
+    throw new Error('extendee must be an object');
   let extenders = args.slice(1);
   let len = extenders.length;
   for(let i = 0; i < len; i++) {
@@ -1017,7 +1069,9 @@ Util.extend = (...args) => {
         if(deep && Util.isCloneable(value)) {
           let base = Array.isArray(value) ? [] : {};
           result[key] = Util.extend(true,
-            result.hasOwnProperty(key) && !Util.isUnextendable(result[key]) ? result[key] : base,
+            result.hasOwnProperty(key) && !Util.isUnextendable(result[key])
+              ? result[key]
+              : base,
             value
           );
         } else {
@@ -1029,9 +1083,11 @@ Util.extend = (...args) => {
   return result;
 };
 
-Util.isCloneable = obj => Array.isArray(obj) || {}.toString.call(obj) == '[object Object]';
+Util.isCloneable = obj =>
+  Array.isArray(obj) || {}.toString.call(obj) == '[object Object]';
 
-Util.isUnextendable = val => !val || (typeof val != 'object' && typeof val != 'function');
+Util.isUnextendable = val =>
+  !val || (typeof val != 'object' && typeof val != 'function');
 
 /*
 Util.extend = (obj, ...args) => {
@@ -1091,7 +1147,11 @@ Util.defineGetterSetter = (obj, key, g, s, enumerable = false) =>
   });
 Util.defineGettersSetters = (obj, gettersSetters) => {
   for(let name in gettersSetters)
-    Util.defineGetterSetter(obj, name, gettersSetters[name], gettersSetters[name]);
+    Util.defineGetterSetter(obj,
+      name,
+      gettersSetters[name],
+      gettersSetters[name]
+    );
 };
 
 Util.extendArray = function(arr = Array.prototype) {
@@ -1354,7 +1414,8 @@ Util.div = Util.curry((a, b) => a / b);
 Util.xor = Util.curry((a, b) => a ^ b);
 Util.or = Util.curry((a, b) => a | b);
 Util.and = Util.curry((a, b) => a & b);
-Util.mod = (a, b) => (typeof b == 'number' ? ((a % b) + b) % b : n => ((n % a) + a) % a);
+Util.mod = (a, b) =>
+  typeof b == 'number' ? ((a % b) + b) % b : n => ((n % a) + a) % a;
 Util.pow = Util.curry((a, b) => Math.pow(a, b));
 
 /*Util.define(String.prototype,
@@ -1398,7 +1459,10 @@ Util.find = function(arr, value, prop = 'id') {
       return false;
     };
   } else {
-    pred = typeof prop == 'function' ? obj => prop(value, obj) : obj => obj[prop] == value;
+    pred =
+      typeof prop == 'function'
+        ? obj => prop(value, obj)
+        : obj => obj[prop] == value;
   }
   if(typeof arr.find == 'function') return arr.find(pred);
   if(!arr[Symbol.iterator] && typeof arr.entries == 'function') {
@@ -1434,7 +1498,8 @@ Util.match = function(arg, pred) {
     }, []);
   } else if(Util.isMap(arg)) {
     //console.log('Util.match ', { arg });
-    return [...arg.keys()].reduce((acc, key) => (match(arg.get(key), key, arg) ? acc.set(key, arg.get(key)) : acc),
+    return [...arg.keys()].reduce((acc, key) =>
+        match(arg.get(key), key, arg) ? acc.set(key, arg.get(key)) : acc,
       new Map()
     );
   }
@@ -1461,7 +1526,8 @@ Util.injectProps = function(options) {
   }
 }*/
 
-Util.greatestCommonDenominator = (a, b) => (b ? Util.greatestCommonDenominator(b, a % b) : a);
+Util.greatestCommonDenominator = (a, b) =>
+  b ? Util.greatestCommonDenominator(b, a % b) : a;
 
 Util.leastCommonMultiple = (n1, n2) => {
   //Find the gcd first
@@ -1473,7 +1539,9 @@ Util.leastCommonMultiple = (n1, n2) => {
 Util.matchAll = Util.curry(function* (re, str) {
   let match;
   re =
-    re instanceof RegExp ? re : new RegExp(Util.isArray(re) ? '(' + re.join('|') + ')' : re, 'g');
+    re instanceof RegExp
+      ? re
+      : new RegExp(Util.isArray(re) ? '(' + re.join('|') + ')' : re, 'g');
   do {
     if((match = re.exec(str))) yield match;
   } while(match != null);
@@ -1518,7 +1586,8 @@ Util.inspect = function(obj, opts = {}) {
     print(obj + '', 1, 36);
   } else if(typeof obj == 'undefined' || obj === null) {
     print(obj + '', 1, 35);
-  } else if(typeof obj == 'function' /*|| obj instanceof Function || Util.className(obj) == 'Function'*/
+  } else if(typeof obj ==
+    'function' /*|| obj instanceof Function || Util.className(obj) == 'Function'*/
   ) {
     obj = '' + obj;
     //  if(!multiline)
@@ -1565,7 +1634,8 @@ Util.inspect = function(obj, opts = {}) {
       let keys = isMap ? obj.keys() : Object.getOwnPropertyNames(obj);
       //console.debug("keys:", keys);
 
-      if(Object.getPrototypeOf(obj) !== Object.prototype) print(Util.className(obj) + ' ', 1, 31);
+      if(Object.getPrototypeOf(obj) !== Object.prototype)
+        print(Util.className(obj) + ' ', 1, 31);
       isMap
         ? print(`(${obj.size}) {${sep(true)}`, 1, 36)
         : print('{' + (sep(true) || padding), 1, 36);
@@ -1577,14 +1647,22 @@ Util.inspect = function(obj, opts = {}) {
         if(i > 0) print(separator + sep(true), 36);
         if(typeof key == 'symbol') print(key.toString(), 1, 32);
         else if(Util.isObject(key) && typeof key[toString] == 'function')
-          print(isMap ? `'${key[toString]()}'` : json ? `"${key.toString()}"` : key[toString](),
+          print(isMap
+              ? `'${key[toString]()}'`
+              : json
+              ? `"${key.toString()}"`
+              : key[toString](),
             1,
             isMap ? 36 : 33
           );
         else if(typeof key == 'string' ||
           (!isMap && Util.isObject(key) && typeof key.toString == 'function')
         )
-          print(json ? `"${key.toString()}"` : isMap || /(-)/.test(key) ? `'${key}'` : key,
+          print(json
+              ? `"${key.toString()}"`
+              : isMap || /(-)/.test(key)
+              ? `'${key}'`
+              : key,
             1,
             isMap ? 36 : 33
           );
@@ -1653,7 +1731,10 @@ Util.lcfirst = function(str) {
 };
 Util.typeOf = v => {
   let type = typeof v;
-  if(type == 'object' && v != null && Object.getPrototypeOf(v) != Object.prototype)
+  if(type == 'object' &&
+    v != null &&
+    Object.getPrototypeOf(v) != Object.prototype
+  )
     type = Util.className(v);
   else type = Util.ucfirst(type);
   return type;
@@ -1680,7 +1761,10 @@ Util.decamelize = function(str, separator = '-') {
         .toLowerCase()
     : str;
 };
-Util.ifThenElse = function(pred = value => !!value, _then = () => {}, _else = () => {}) {
+Util.ifThenElse = function(pred = value => !!value,
+  _then = () => {},
+  _else = () => {}
+) {
   return function(value) {
     let result = pred(value);
     let ret = result ? _then(value) : _else(value);
@@ -1688,12 +1772,21 @@ Util.ifThenElse = function(pred = value => !!value, _then = () => {}, _else = ()
   };
 };
 Util.if = (value, _then, _else, pred) =>
-  Util.ifThenElse(pred || (v => !!v), _then || (() => value), _else || (() => value))(value);
+  Util.ifThenElse(pred || (v => !!v),
+    _then || (() => value),
+    _else || (() => value)
+  )(value);
 
 Util.ifElse = (value, _else, pred) =>
-  Util.ifThenElse(pred || (v => !!v), () => value, _else ? () => _else : () => value)(value);
+  Util.ifThenElse(pred || (v => !!v),
+    () => value,
+    _else ? () => _else : () => value
+  )(value);
 Util.ifThen = (value, _then, pred) =>
-  Util.ifThenElse(pred || (v => !!v), _then ? () => _then : () => value, () => value)(value);
+  Util.ifThenElse(pred || (v => !!v),
+    _then ? () => _then : () => value,
+    () => value
+  )(value);
 
 Util.transform = Util.curry(function* (fn, arr) {
   for(let item of arr) yield fn(item);
@@ -1788,10 +1881,12 @@ Util.isString = function(v) {
  * @param      {<type>}   v       { parameter_description }
  * @return     {boolean}  True if the specified v is numeric, False otherwise.
  */
-Util.isNumeric = v => /^[-+]?(0x|0b|0o|)[0-9]*\.?[0-9]+(|[Ee][-+]?[0-9]+)$/.test(v + '');
+Util.isNumeric = v =>
+  /^[-+]?(0x|0b|0o|)[0-9]*\.?[0-9]+(|[Ee][-+]?[0-9]+)$/.test(v + '');
 
 Util.isUndefined = arg => arg === undefined;
-Util.isObject = obj => !(obj === null) && { object: obj, function: obj }[typeof obj];
+Util.isObject = obj =>
+  !(obj === null) && { object: obj, function: obj }[typeof obj];
 Util.isPrimitive = obj =>
   !(obj === null) &&
   obj !== false &&
@@ -1799,7 +1894,9 @@ Util.isPrimitive = obj =>
   { number: obj, string: obj, boolean: obj, undefined: obj }[typeof obj];
 Util.isFunction = arg => {
   if(arg !== undefined)
-    return typeof arg == 'function' || !!(arg && arg.constructor && arg.call && arg.apply);
+    return (typeof arg == 'function' ||
+      !!(arg && arg.constructor && arg.call && arg.apply)
+    );
 
   /*
   let fn = arg => Util.isFunction(arg);
@@ -1811,19 +1908,26 @@ Util.not = fn =>
     return !fn(...args);
   };
 Util.isAsync = fn =>
-  typeof fn == 'function' && /^[\n]*async/.test(fn + '') /*|| fn() instanceof Promise*/;
+  typeof fn == 'function' &&
+  /^[\n]*async/.test(fn + '') /*|| fn() instanceof Promise*/;
 
 Util.isArrowFunction = fn =>
-  (Util.isFunction(fn) && !('prototype' in fn)) || /\ =>\ /.test(('' + fn).replace(/\n.*/g, ''));
+  (Util.isFunction(fn) && !('prototype' in fn)) ||
+  /\ =>\ /.test(('' + fn).replace(/\n.*/g, ''));
 
 Util.isEmptyString = v => Util.isString(v) && (v == '' || v.length == 0);
 
 Util.isEmpty = (...args) => {
   function empty(v) {
-    if(typeof v == 'object' && !!v && v.constructor == Object && Object.keys(v).length == 0)
+    if(typeof v == 'object' &&
+      !!v &&
+      v.constructor == Object &&
+      Object.keys(v).length == 0
+    )
       return true;
     if(!v || v === null) return true;
-    if(typeof v == 'object' && v.length !== undefined && v.length === 0) return true;
+    if(typeof v == 'object' && v.length !== undefined && v.length === 0)
+      return true;
     return false;
   }
   return args.length ? empty(args[0]) : empty;
@@ -1848,7 +1952,8 @@ Util.hasProps = function(obj, props) {
 };
 Util.validatePassword = function(value) {
   return (value.length > 7 &&
-    new RegExp('^(?![d]+$)(?![a-zA-Z]+$)(?![!#$%^&*]+$)[da-zA-Z!#$ %^&*]').test(value) &&
+    new RegExp('^(?![d]+$)(?![a-zA-Z]+$)(?![!#$%^&*]+$)[da-zA-Z!#$ %^&*]').test(value
+    ) &&
     !/\s/.test(value)
   );
 };
@@ -2108,7 +2213,9 @@ Util.accMul = function(arg1, arg2) {
   try {
     m += s2.split('.')[1].length;
   } catch(e) {}
-  return (Number(s1.replace('.', '')) * Number(s2.replace('.', ''))) / Math.pow(10, m);
+  return ((Number(s1.replace('.', '')) * Number(s2.replace('.', ''))) /
+    Math.pow(10, m)
+  );
 };
 Util.dateFormatter = function(date, formate) {
   const year = date.getFullYear();
@@ -2132,9 +2239,16 @@ Util.dateFormatter = function(date, formate) {
 };
 Util.numberFormatter = function(numStr) {
   let numSplit = numStr.split('.');
-  return numSplit[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',').concat(`.${numSplit[1]}`);
+  return numSplit[0]
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    .concat(`.${numSplit[1]}`);
 };
-Util.searchObject = function(object, matchCallback, currentPath, result, searched) {
+Util.searchObject = function(object,
+  matchCallback,
+  currentPath,
+  result,
+  searched
+) {
   currentPath = currentPath || '';
   result = result || [];
   searched = searched || [];
@@ -2189,7 +2303,9 @@ Util.getURL = Util.memoize((req = {}) =>
 
       () => {
         let proto =
-          Util.tryCatch(() => (process.env.NODE_ENV === 'production' ? 'https' : null)) || 'http';
+          Util.tryCatch(() =>
+            process.env.NODE_ENV === 'production' ? 'https' : null
+          ) || 'http';
         let port =
           Util.tryCatch(() =>
             process.env.PORT
@@ -2205,7 +2321,9 @@ Util.getURL = Util.memoize((req = {}) =>
           'localhost';
         if(req && req.headers && req.headers.host !== undefined)
           host = req.headers.host.replace(/:.*/, '');
-        else Util.tryCatch(() => process.env.HOST !== undefined && (host = process.env.HOST));
+        else
+          Util.tryCatch(() => process.env.HOST !== undefined && (host = process.env.HOST)
+          );
         if(req.url !== undefined) return req.url;
         const url = `${proto}://${host}:${port}`;
         return url;
@@ -2233,17 +2351,21 @@ Util.parseQuery = function(url = Util.getURL()) {
 Util.encodeQuery = function(data) {
   const ret = [];
   for(let d in data)
-    if(data[d] !== undefined) ret.push(`${encodeURIComponent(d)}=${encodeURIComponent(data[d])}`);
+    if(data[d] !== undefined)
+      ret.push(`${encodeURIComponent(d)}=${encodeURIComponent(data[d])}`);
   return ret.join('&');
 };
 Util.parseURL = function(href = this.getURL()) {
   //console.debug('href:', href);
-  const matches = new RegExp('^([^:]+://)?([^/:]*)(:[0-9]*)?(/?.*)?', 'g').exec(href);
+  const matches = new RegExp('^([^:]+://)?([^/:]*)(:[0-9]*)?(/?.*)?', 'g').exec(href
+  );
   const [all, proto, host, port, location = ''] = matches;
   //console.debug('matches:', matches);
   if(!matches) return null;
   const argstr =
-    location.indexOf('?') != -1 ? location.replace(/^[^?]*\?/, '') : ''; /* + "&test=1"*/
+    location.indexOf('?') != -1
+      ? location.replace(/^[^?]*\?/, '')
+      : ''; /* + "&test=1"*/
   const pmatches =
     typeof argstr === 'string'
       ? argstr
@@ -2301,7 +2423,8 @@ Util.numberFromURL = function(url, fn) {
   if(!isNaN(nr) && typeof fn === 'function') fn(nr);
   return nr;
 };
-Util.tryPromise = fn => new Promise((resolve, reject) => Util.tryCatch(fn, resolve, reject));
+Util.tryPromise = fn =>
+  new Promise((resolve, reject) => Util.tryCatch(fn, resolve, reject));
 
 Util.tryFunction = (fn, resolve = a => a, reject = () => null) => {
   if(typeof resolve != 'function') {
@@ -2345,7 +2468,8 @@ Util.putError = err => {
   (console.info || console.log)('Util.putError ', e);
   let s = Util.stack(err.stack);
 
-  (console.error || console.log)('ERROR:\n' + err.message + '\nstack:\n' + s.toString());
+  (console.error || console.log)('ERROR:\n' + err.message + '\nstack:\n' + s.toString()
+  );
 };
 Util.putStack = (stack = new Util.stack().slice(3)) => {
   stack = stack instanceof Util.stack ? stack : Util.stack(stack);
@@ -2356,7 +2480,8 @@ Util.putStack = (stack = new Util.stack().slice(3)) => {
 
 Util.trap = (() => {
   Error.stackTraceLimit = 100;
-  return fn => /* prettier-ignore */ Util.tryFunction(fn, ret => ret, Util.putError);
+  return fn =>
+    /* prettier-ignore */ Util.tryFunction(fn, ret => ret, Util.putError);
 })();
 
 Util.tryPredicate = (fn, defaultRet) =>
@@ -2383,9 +2508,15 @@ Util.isBrowser = function() {
 Util.waitFor = async function waitFor(msecs) {
   if(!globalThis.setTimeout) {
     await import('os').then(({ setTimeout, clearTimeout, setInterval, clearInterval }) => {
-      //console.log('', { setTimeout, clearTimeout, setInterval, clearInterval });
-      Object.assign(globalThis, { setTimeout, clearTimeout, setInterval, clearInterval });
-    });
+        //console.log('', { setTimeout, clearTimeout, setInterval, clearInterval });
+        Object.assign(globalThis, {
+          setTimeout,
+          clearTimeout,
+          setInterval,
+          clearInterval
+        });
+      }
+    );
   }
   if(msecs <= 0) return;
 
@@ -2416,15 +2547,22 @@ Util.uniquePred = (cmp = null) =>
     : (el, i, arr) => arr.indexOf(el) == i;
 
 Util.unique = (arr, cmp) => arr.filter(Util.uniquePred(cmp));
-Util.allEqual = (arr, cmp = (a, b) => a == b) => arr.every((e, i, a) => cmp(e, a[0]));
+Util.allEqual = (arr, cmp = (a, b) => a == b) =>
+  arr.every((e, i, a) => cmp(e, a[0]));
 
 Util.zip = a =>
-  a.reduce((a, b) => (a.length > b.length ? a : b), []).map((_, i) => a.map(arr => arr[i]));
+  a
+    .reduce((a, b) => (a.length > b.length ? a : b), [])
+    .map((_, i) => a.map(arr => arr[i]));
 
 Util.histogram = (...args) => {
   let arr = args.shift();
   const t = typeof args[0] == 'function' ? args.shift() : (k, v) => k;
-  let [out = new Map(), initVal = () => 0 /* new Set()*/, setVal = v => v] = args;
+  let [
+    out = new Map(),
+    initVal = () => 0 /* new Set()*/,
+    setVal = v => v
+  ] = args;
 
   const set = /*Util.isObject(out) && typeof out.set == 'function' ? (k, v) => out.set(k, v) :*/ Util.setter(out
   );
@@ -2432,7 +2570,10 @@ Util.histogram = (...args) => {
   Object.getPrototypeOf(out) !== Object.prototype ? out.constructor : null;
   let tmp;
 
-  if(Util.isObject(arr) && !Array.isArray(arr) && typeof arr.entries == 'function')
+  if(Util.isObject(arr) &&
+    !Array.isArray(arr) &&
+    typeof arr.entries == 'function'
+  )
     arr = arr.entries();
   arr = [...arr];
   arr.map((it, i) => [i, it]);
@@ -2475,7 +2616,9 @@ Util.concat = function* (...args) {
   }
 };
 Util.distinct = function(arr) {
-  return Array.prototype.filter.call(arr, (value, index, me) => me.indexOf(value) === index);
+  return Array.prototype.filter.call(arr,
+    (value, index, me) => me.indexOf(value) === index
+  );
 };
 Util.rangeMinMax = function(arr, field) {
   const numbers = [...arr].map(obj => obj[field]);
@@ -2532,7 +2675,8 @@ Util.isIterable = obj => {
   } catch(err) {}
   return false;
 };
-Util.isNativeFunction = Util.tryFunction(x => typeof x == 'function' && /^[^\n]*\[(native\ code|[a-z\ ]*)\]/.test(x + '')
+Util.isNativeFunction = Util.tryFunction(x =>
+    typeof x == 'function' && /^[^\n]*\[(native\ code|[a-z\ ]*)\]/.test(x + '')
 );
 
 Util.isConstructor = x => {
@@ -2651,7 +2795,8 @@ Util.entriesToObj = function(arr) {
 Util.isDate = function(d) {
   return (d instanceof Date ||
     (typeof d == 'string' &&
-      /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]T[0-9][0-9]:[0-9][0-9]:[0-9][0-9]/.test(d))
+      /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]T[0-9][0-9]:[0-9][0-9]:[0-9][0-9]/.test(d
+      ))
   );
 };
 Util.parseDate = function(d) {
@@ -2737,7 +2882,8 @@ Util.randInt = (...args) => {
 };
 Util.randStr = (len, charset, rnd = Util.rng) => {
   let o = '';
-  if(!charset) charset = '_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  if(!charset)
+    charset = '_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
   while(--len >= 0) {
     o += charset[Math.round(rnd() * (charset.length - 1))];
@@ -2776,7 +2922,8 @@ Util.roundFunction = (prec, digits, type) => {
 
   return function(value) {
     let ret = fn(value / prec) * prec;
-    if(typeof digits == 'number' && digits >= 1 && digits <= 100) ret = +ret.toFixed(digits);
+    if(typeof digits == 'number' && digits >= 1 && digits <= 100)
+      ret = +ret.toFixed(digits);
     return ret;
   };
 };
@@ -2789,7 +2936,8 @@ Util.roundTo = function(value, prec, digits, type) {
   let ret = prec > Number.EPSILON ? fn(value / prec) * prec : value;
 
   if(digits == 0) ret = Math[type](ret);
-  else if(typeof digits == 'number' && digits >= 1 && digits <= 100) ret = +ret.toFixed(digits);
+  else if(typeof digits == 'number' && digits >= 1 && digits <= 100)
+    ret = +ret.toFixed(digits);
   return ret;
 };
 Util.base64 = (() => {
@@ -2833,7 +2981,8 @@ Util.isArray =
       obj instanceof Array
     );
   };
-Util.isArrayLike = obj => typeof obj == 'object' && obj !== null && 'length' in obj;
+Util.isArrayLike = obj =>
+  typeof obj == 'object' && obj !== null && 'length' in obj;
 
 Util.equals = function(a, b) {
   if(Util.isArray(a) && Util.isArray(b)) {
@@ -2877,10 +3026,13 @@ Util.size = (...args) => {
   return size(args[0]);
 };
 Util.isMap = function(obj) {
-  return (obj && obj.get !== undefined && obj.keys !== undefined) || obj instanceof Map;
+  return ((obj && obj.get !== undefined && obj.keys !== undefined) ||
+    obj instanceof Map
+  );
 };
 Util.effectiveDeviceWidth = function() {
-  let deviceWidth = window.orientation == 0 ? window.screen.width : window.screen.height;
+  let deviceWidth =
+    window.orientation == 0 ? window.screen.width : window.screen.height;
   //iOS returns available pixels, Android returns pixels / pixel ratio
   //http://www.quirksmode.org/blog/archives/2012/07/more_about_devi.html
   if(navigator.userAgent.indexOf('Android') >= 0 && window.devicePixelRatio) {
@@ -2998,7 +3150,9 @@ Util.numbersConvert = function(str) {
   return str
     .split('')
     .map((ch, i) =>
-      new RegExp('[ :,./]').test(ch) ? ch : String.fromCharCode((str.charCodeAt(i) & 0x0f) + 0x30)
+      new RegExp('[ :,./]').test(ch)
+        ? ch
+        : String.fromCharCode((str.charCodeAt(i) & 0x0f) + 0x30)
     )
     .join('');
 };
@@ -3047,14 +3201,17 @@ Util.removeEqual = function(a, b) {
 
   return c;
 };
-Util.clear = obj => (typeof obj.splice == 'function' ? obj.splice(0, obj.length) : obj.clear());
+Util.clear = obj =>
+  typeof obj.splice == 'function' ? obj.splice(0, obj.length) : obj.clear();
 
-Util.remove = (arr, item) => Util.removeIf(arr, (other, i, arr) => item === other);
+Util.remove = (arr, item) =>
+  Util.removeIf(arr, (other, i, arr) => item === other);
 Util.removeIf = function(arr, pred) {
   let count = 0;
   if(Util.isObject(arr) && typeof arr.splice == 'function') {
     let idx;
-    for(count = 0; (idx = arr.findIndex(pred)) != -1; count++) arr.splice(idx, idx + 1);
+    for(count = 0; (idx = arr.findIndex(pred)) != -1; count++)
+      arr.splice(idx, idx + 1);
   } else {
     for(let [key, value] of arr) {
       if(pred(value, key, arr)) {
@@ -3098,7 +3255,9 @@ Util.indexByPath = function(o, p) {
 };
 
 Util.pushUnique = (arr, ...args) =>
-  args.reduce((acc, item) => (arr.indexOf(item) == -1 ? (arr.push(item), acc + 1) : acc), 0);
+  args.reduce((acc, item) => (arr.indexOf(item) == -1 ? (arr.push(item), acc + 1) : acc),
+    0
+  );
 
 Util.insertSorted = function(arr, item, cmp = (a, b) => b - a) {
   let i = 0,
@@ -3145,13 +3304,16 @@ Util.keyIterator = obj => {
 
 Util.entryIterator = obj => {
   let it;
-  if(typeof obj.entries == 'function' && Util.isIterator((it = obj.entries()))) {
+  if(typeof obj.entries == 'function' &&
+    Util.isIterator((it = obj.entries()))
+  ) {
     return it;
   } else if(Util.isArray(obj)) {
     return Array.prototype.entries.call(obj);
   } else if('length' in obj) {
     return (function* () {
-      for(let key of Array.prototype[Symbol.iterator].call(obj)) yield [key, obj[key]];
+      for(let key of Array.prototype[Symbol.iterator].call(obj))
+        yield [key, obj[key]];
     })();
   }
 };
@@ -3219,12 +3381,15 @@ Util.mapAdapter = getSetFunction => {
     }
   };
   let tmp = getSetFunction();
-  if(Util.isIterable(tmp) || Util.isPromise(tmp)) r.keys = () => getSetFunction();
+  if(Util.isIterable(tmp) || Util.isPromise(tmp))
+    r.keys = () => getSetFunction();
 
-  if(getSetFunction[Symbol.iterator]) r.entries = getSetFunction[Symbol.iterator];
+  if(getSetFunction[Symbol.iterator])
+    r.entries = getSetFunction[Symbol.iterator];
   else {
     let g = getSetFunction();
-    if(Util.isIterable(g) || Util.isGenerator(g)) r.entries = () => getSetFunction();
+    if(Util.isIterable(g) || Util.isGenerator(g))
+      r.entries = () => getSetFunction();
   }
 
   return Util.mapFunction(r);
@@ -3257,12 +3422,16 @@ Util.mapFunction = map => {
   })(map);
 
   if(map instanceof Map ||
-    (Util.isObject(map) && typeof map.get == 'function' && typeof map.set == 'function')
+    (Util.isObject(map) &&
+      typeof map.get == 'function' &&
+      typeof map.set == 'function')
   ) {
     fn.set = (key, value) => (map.set(key, value), (k, v) => fn(k, v));
     fn.get = key => map.get(key);
   } else if(map instanceof Cache ||
-    (Util.isObject(map) && typeof map.match == 'function' && typeof map.put == 'function')
+    (Util.isObject(map) &&
+      typeof map.match == 'function' &&
+      typeof map.put == 'function')
   ) {
     fn.set = (key, value) => (map.put(key, value), (k, v) => fn(k, v));
     fn.get = key => map.match(key);
@@ -3281,7 +3450,8 @@ Util.mapFunction = map => {
     let oldValue = this.get(key);
     let newValue = fn(oldValue, key);
     if(oldValue != newValue) {
-      if(newValue === undefined && typeof map.delete == 'function') map.delete(key);
+      if(newValue === undefined && typeof map.delete == 'function')
+        map.delete(key);
       else this.set(key, newValue);
     }
     return newValue;
@@ -3299,7 +3469,11 @@ Util.mapFunction = map => {
     };
     fn[Symbol.iterator] = fn.entries;
     fn[inspectSymbol] = function() {
-      return new Map(this.map(([key, value]) => [Util.isArray(key) ? key.join('.') : key, value]));
+      return new Map(this.map(([key, value]) => [
+          Util.isArray(key) ? key.join('.') : key,
+          value
+        ])
+      );
     };
   } else if(typeof map.keys == 'function') {
     if(Util.isAsync(map.keys) || Util.isPromise(map.keys())) {
@@ -3334,7 +3508,8 @@ Util.mapFunction = map => {
       return Util.mapFunction(new Map(
           (function* () {
             let i = 0;
-            for(let [key, value] of fn.entries()) if(pred([key, value], i++)) yield [key, value];
+            for(let [key, value] of fn.entries())
+              if(pred([key, value], i++)) yield [key, value];
           })()
         )
       );
@@ -3365,7 +3540,8 @@ Util.mapWrapper = (map, toKey = key => key, fromKey = key => key) => {
   let fn = Util.mapFunction(map);
   fn.set = (key, value) => (map.set(toKey(key), value), (k, v) => fn(k, v));
   fn.get = key => map.get(toKey(key));
-  if(typeof map.keys == 'function') fn.keys = () => [...map.keys()].map(fromKey);
+  if(typeof map.keys == 'function')
+    fn.keys = () => [...map.keys()].map(fromKey);
   if(typeof map.entries == 'function')
     fn.entries = function* () {
       for(let [key, value] of map.entries()) yield [fromKey(key), value];
@@ -3375,7 +3551,8 @@ Util.mapWrapper = (map, toKey = key => key, fromKey = key => key) => {
       for(let value of map.values()) yield value;
     };
   if(typeof map.has == 'function') fn.has = key => map.has(toKey(key));
-  if(typeof map.delete == 'function') fn.delete = key => map.delete(toKey(key));
+  if(typeof map.delete == 'function')
+    fn.delete = key => map.delete(toKey(key));
 
   fn.map = (m => {
     while(Util.isFunction(m) && m.map !== undefined) m = m.map;
@@ -3409,7 +3586,8 @@ Util.mapCombinator = (forward, backward) => {
 
 Util.predicate = (fn_or_regex, pred) => {
   let fn = fn_or_regex;
-  if(typeof fn_or_regex == 'string') fn_or_regex = new RegExp(`^${fn_or_regex}$`);
+  if(typeof fn_or_regex == 'string')
+    fn_or_regex = new RegExp(`^${fn_or_regex}$`);
   if(fn_or_regex instanceof RegExp) {
     fn = arg => fn_or_regex.test(arg + '');
     fn.valueOf = function() {
@@ -3428,7 +3606,10 @@ Util.every = predicates => {
   return value => predicates.every(pred => pred(value));
 };
 
-Util.iterateMembers = function* (obj, predicate = (name, depth, obj, proto) => true, depth = 0) {
+Util.iterateMembers = function* (obj,
+  predicate = (name, depth, obj, proto) => true,
+  depth = 0
+) {
   let pred = Util.predicate(predicate);
   const proto = Object.getPrototypeOf(obj);
 
@@ -3436,12 +3617,15 @@ Util.iterateMembers = function* (obj, predicate = (name, depth, obj, proto) => t
   for(let name of Object.getOwnPropertyNames(obj)) {
     if(pred(name, depth, obj)) yield name;
   }
-  for(let symbol of Object.getOwnPropertySymbols(obj)) if(pred(symbol, depth, obj)) yield symbol;
+  for(let symbol of Object.getOwnPropertySymbols(obj))
+    if(pred(symbol, depth, obj)) yield symbol;
   if(proto) yield* Util.iterateMembers(proto, predicate, depth + 1);
 };
 
-Util.and = (...predicates) => (...args) => predicates.every(pred => pred(...args));
-Util.or = (...predicates) => (...args) => predicates.some(pred => pred(...args));
+Util.and = (...predicates) => (...args) =>
+  predicates.every(pred => pred(...args));
+Util.or = (...predicates) => (...args) =>
+  predicates.some(pred => pred(...args));
 
 Util.members = Util.curry((pred, obj) =>
   Util.unique([...Util.iterateMembers(obj, Util.tryPredicate(pred))])
@@ -3450,7 +3634,8 @@ Util.members = Util.curry((pred, obj) =>
 Util.memberNameFilter = (depth = 1, start = 0) =>
   Util.and((m, l, o) => start <= l && l < depth + start,
     (m, l, o) =>
-      typeof m != 'string' || ['caller', 'callee', 'constructor', 'arguments'].indexOf(m) == -1,
+      typeof m != 'string' ||
+      ['caller', 'callee', 'constructor', 'arguments'].indexOf(m) == -1,
     (name, depth, obj, proto) => obj != Object.prototype
   );
 
@@ -3473,9 +3658,10 @@ Util.getMemberNames = (obj, ...args) => {
 Util.getMemberEntries = (obj, ...args) =>
   Util.getMemberNames(obj, ...args).map(name => [name, obj[name]]);
 
-Util.objectReducer = (filterFn, accFn = (a, m, o) => ({ ...a, [m]: o[m] }), accu = {}) => (obj,
-  ...args
-) =>
+Util.objectReducer = (filterFn,
+  accFn = (a, m, o) => ({ ...a, [m]: o[m] }),
+  accu = {}
+) => (obj, ...args) =>
   Util.members(filterFn(...args), obj).reduce(Util.tryFunction(
       (a, m) => accFn(a, m, obj),
       (r, a, m) => r,
@@ -3501,13 +3687,17 @@ Util.incrementer = (incFn = (c, n, self) => (self.count = c + n)) => {
   return self;
 };
 
-Util.mapReducer = (setFn, filterFn = (key, value) => true, mapObj = new Map()) => {
+Util.mapReducer = (setFn,
+  filterFn = (key, value) => true,
+  mapObj = new Map()
+) => {
   setFn = setFn || Util.setter(mapObj);
   let fn;
   let next = Util.tryFunction(() => mapObj);
   fn = function ReduceIntoMap(arg, acc = mapObj) {
     if(Util.isObject(arg) && typeof arg.reduce == 'function')
-      return arg.reduce((acc, arg) => (Util.isArray(arg) ? arg : Util.members(arg)).reduce(reducer, acc),
+      return arg.reduce((acc, arg) =>
+          (Util.isArray(arg) ? arg : Util.members(arg)).reduce(reducer, acc),
         self.map
       );
     let c = Util.counter();
@@ -3519,10 +3709,12 @@ Util.mapReducer = (setFn, filterFn = (key, value) => true, mapObj = new Map()) =
 
 Util.getMembers = Util.objectReducer(Util.memberNameFilter);
 
-Util.getMemberDescriptors = Util.objectReducer(Util.memberNameFilter, (a, m, o) => ({
-  ...a,
-  [m]: Object.getOwnPropertyDescriptor(o, m)
-}));
+Util.getMemberDescriptors = Util.objectReducer(Util.memberNameFilter,
+  (a, m, o) => ({
+    ...a,
+    [m]: Object.getOwnPropertyDescriptor(o, m)
+  })
+);
 
 Util.methodNameFilter = (depth = 1, start = 0) =>
   Util.and((m, l, o) =>
@@ -3538,10 +3730,12 @@ Util.getMethodNames = (obj, depth = 1, start = 0) =>
 
 Util.getMethods = Util.objectReducer(Util.methodNameFilter);
 
-Util.getMethodDescriptors = Util.objectReducer(Util.methodNameFilter, (a, m, o) => ({
-  ...a,
-  [m]: Object.getOwnPropertyDescriptor(o, m)
-}));
+Util.getMethodDescriptors = Util.objectReducer(Util.methodNameFilter,
+  (a, m, o) => ({
+    ...a,
+    [m]: Object.getOwnPropertyDescriptor(o, m)
+  })
+);
 
 Util.inherit = (dst, src, depth = 1) => {
   for(let k of Util.getMethodNames(src, depth)) dst[k] = src[k];
@@ -3571,20 +3765,24 @@ Util.inherits =
           ctor.prototype.constructor = ctor;
         }
       };
-Util.bindMethods = (obj, methods) => Util.bindMethodsTo({}, obj, methods || obj);
+Util.bindMethods = (obj, methods) =>
+  Util.bindMethodsTo({}, obj, methods || obj);
 Util.bindMethodsTo = function(dest, obj, methods) {
   if(Util.isArray(methods)) {
-    for(let name of methods) if(typeof obj[name] == 'function') dest[name] = obj[name].bind(obj);
+    for(let name of methods)
+      if(typeof obj[name] == 'function') dest[name] = obj[name].bind(obj);
     return dest;
   }
   let names = Util.getMethodNames(methods);
   console.log('names:', names);
 
   for(let name of names)
-    if(typeof methods[name] == 'function') dest[name] = methods[name].bind(obj);
+    if(typeof methods[name] == 'function')
+      dest[name] = methods[name].bind(obj);
   return dest;
 };
-Util.getConstructor = obj => obj.constructor || Object.getPrototypeOf(obj).constructor;
+Util.getConstructor = obj =>
+  obj.constructor || Object.getPrototypeOf(obj).constructor;
 Util.getPrototypeChain = function(obj, fn = p => p) {
   let ret = [];
   let proto;
@@ -3597,7 +3795,8 @@ Util.getPrototypeChain = function(obj, fn = p => p) {
 
   return ret;
 };
-Util.getObjectChain = (obj, fn = p => p) => [fn(obj)].concat(Util.getPrototypeChain(obj, fn));
+Util.getObjectChain = (obj, fn = p => p) =>
+  [fn(obj)].concat(Util.getPrototypeChain(obj, fn));
 
 Util.getPropertyDescriptors = function(obj) {
   return Util.getObjectChain(obj, p => Object.getOwnPropertyDescriptors(p));
@@ -3610,7 +3809,8 @@ Util.weakAssign = function(...args) {
   let obj = args.shift();
   args.forEach(other => {
     for(let key in other) {
-      if(obj[key] === undefined && other[key] !== undefined) obj[key] = other[key];
+      if(obj[key] === undefined && other[key] !== undefined)
+        obj[key] = other[key];
     }
   });
   return obj;
@@ -3658,7 +3858,8 @@ Util.exception = function Exception(...args) {
 Util.define(Util.exception.prototype, {
     toString(color = false) {
       const { message, stack, proto } = this;
-      return `${Util.fnName((proto && proto.constructor) || this.constructor)}: ${message}
+      return `${Util.fnName((proto && proto.constructor) || this.constructor
+      )}: ${message}
 Stack:${Util.stack.prototype.toString.call(stack, color, stack.columnWidths)}`;
     }, [Symbol.toStringTag]() {
       return this.toString(false);
@@ -3671,7 +3872,9 @@ Stack:${Util.stack.prototype.toString.call(stack, color, stack.columnWidths)}`;
 Util.location = function Location(...args) {
   console.log('Util.location(', ...args, ')');
   let ret =
-    this instanceof Util.location ? this : Object.setPrototypeOf({}, Util.location.prototype);
+    this instanceof Util.location
+      ? this
+      : Object.setPrototypeOf({}, Util.location.prototype);
   if(args.length == 3) {
     const [fileName, lineNumber, columnNumber, functionName] = args;
     Object.assign(ret, { fileName, lineNumber, columnNumber, functionName });
@@ -3701,7 +3904,9 @@ Util.define(Util.location.prototype, {
     const c = /*color ? (t, color) => text.write(t, color) :*/ t => (text += t);
     const palette = Util.location.palettes[Util.isBrowser() ? 1 : 0];
     if(functionName)
-      c(functionName.replace(/\s*\[.*/g, '').replace(/^Function\./, '') + ' ', palette[1]);
+      c(functionName.replace(/\s*\[.*/g, '').replace(/^Function\./, '') + ' ',
+        palette[1]
+      );
 
     c(fileName, palette[0]);
     c(':', palette[1]);
@@ -3727,11 +3932,18 @@ Util.define(Util.location.prototype, {
 
 Util.stackFrame = function StackFrame(frame) {
   //   console.debug('Util.stackFrame', frame, frame.getFunctionName, frame.getFileName);
-  ['methodName', 'functionName', 'fileName', 'lineNumber', 'columnNumber', 'typeName'].forEach(prop => {
-      let fn = 'get' + Util.ucfirst(prop);
-      if(frame[prop] === undefined && typeof frame[fn] == 'function') frame[prop] = frame[fn]();
-    }
-  );
+  [
+    'methodName',
+    'functionName',
+    'fileName',
+    'lineNumber',
+    'columnNumber',
+    'typeName'
+  ].forEach(prop => {
+    let fn = 'get' + Util.ucfirst(prop);
+    if(frame[prop] === undefined && typeof frame[fn] == 'function')
+      frame[prop] = frame[fn]();
+  });
   if(Util.colorCtor) frame.colorCtor = Util.colorCtor;
 
   return Object.setPrototypeOf(frame, Util.stackFrame.prototype);
@@ -3759,7 +3971,10 @@ Util.define(Util.stackFrame, {
 });
 Util.memoizedProperties(Util.stackFrame, {
   propertyMap() {
-    return this.methodNames.map(method => [method, Util.lcfirst(method.replace(/^get/, ''))]);
+    return this.methodNames.map(method => [
+      method,
+      Util.lcfirst(method.replace(/^get/, ''))
+    ]);
   }
 });
 
@@ -3767,7 +3982,9 @@ Util.define(Util.stackFrame.prototype, {
     getFunction() {
       if(this.isConstructor) return this.functionName + '.constructor';
 
-      return this.typeName ? `${this.typeName}.${this.methodName}` : this.functionName;
+      return this.typeName
+        ? `${this.typeName}.${this.methodName}`
+        : this.functionName;
     },
     getMethodName() {
       return this.methodName;
@@ -3801,18 +4018,35 @@ Util.define(Util.stackFrame.prototype, {
       const { columnWidths = [0, 0, 0, 0], stripUrl } = opts;
 
       let text = color && this.colorCtor ? new this.colorCtor() : '';
-      const c = color && this.colorCtor ? (t, color) => text.write(t, color) : t => (text += t);
-      let { functionName, methodName, typeName, fileName, lineNumber, columnNumber } = this;
+      const c =
+        color && this.colorCtor
+          ? (t, color) => text.write(t, color)
+          : t => (text += t);
+      let {
+        functionName,
+        methodName,
+        typeName,
+        fileName,
+        lineNumber,
+        columnNumber
+      } = this;
       //  console.log('toString:', { functionName, methodName, typeName, fileName, lineNumber, columnNumber });
       if(stripUrl && typeof fileName == 'string')
-        fileName = fileName.replace(typeof stripUrl == 'string' ? stripUrl : /.*:\/\/[^\/]*\//, '');
+        fileName = fileName.replace(typeof stripUrl == 'string' ? stripUrl : /.*:\/\/[^\/]*\//,
+          ''
+        );
       let colonList = [fileName, lineNumber, columnNumber]
         .map(p => ('' + p == 'undefined' ? undefined : p))
-        .filter(p => p !== undefined && p != 'undefined' && ['number', 'string'].indexOf(typeof p) != -1
+        .filter(p =>
+            p !== undefined &&
+            p != 'undefined' &&
+            ['number', 'string'].indexOf(typeof p) != -1
         )
         .join(':');
       let columns = [
-        typeof this.getFunction == 'function' ? this.getFunction() : this.function,
+        typeof this.getFunction == 'function'
+          ? this.getFunction()
+          : this.function,
         colonList
       ];
       columns = columns.map((f, i) =>
@@ -3828,7 +4062,10 @@ Util.define(Util.stackFrame.prototype, {
     }, [Symbol.toStringTag]() {
       return this.toString(false);
     }, [inspectSymbol](...args) {
-      return Util.stackFrame.prototype.toString.call(this, true, this.columnWidths);
+      return Util.stackFrame.prototype.toString.call(this,
+        true,
+        this.columnWidths
+      );
     }
   },
   true
@@ -3864,7 +4101,8 @@ Util.stack = function Stack(stack, offset) {
     //console.log('stack', stack + '');
     stack = [...stack].map(frame =>
       propertyMap
-        .filter(([m, p]) => typeof frame[m] == 'function' && frame[m]() !== undefined)
+        .filter(([m, p]) => typeof frame[m] == 'function' && frame[m]() !== undefined
+        )
         .reduce((acc, [method, property]) => ({
             ...acc,
             get [property]() {
@@ -3918,7 +4156,9 @@ Util.stack = function Stack(stack, offset) {
         : frame
     );
     stack = stack.map(frame =>
-      Util.isArray(frame) ? (frame.length < 2 ? ['', ...frame] : frame).slice(0, 2) : frame
+      Util.isArray(frame)
+        ? (frame.length < 2 ? ['', ...frame] : frame).slice(0, 2)
+        : frame
     );
     stack = stack.map(([func, file]) => [
       func,
@@ -3929,7 +4169,11 @@ Util.stack = function Stack(stack, offset) {
     ]);
     stack = stack.map(([func, file]) => [
       func,
-      file.length >= 3 ? file : file.length >= 2 ? ['', ...file] : ['', '', ...file]
+      file.length >= 3
+        ? file
+        : file.length >= 2
+        ? ['', ...file]
+        : ['', '', ...file]
     ]);
     stack = stack.map(([func, [columnNumber, lineNumber, ...file]]) => ({
       functionName: func.replace(/Function\.Util/, 'Util'),
@@ -3974,7 +4218,9 @@ Util.stack = function Stack(stack, offset) {
   return stack;
 };
 
-Util.stack.prototype = Object.assign(Util.stack.prototype, Util.getMethods(new Array(), 1, 1));
+Util.stack.prototype = Object.assign(Util.stack.prototype,
+  Util.getMethods(new Array(), 1, 1)
+);
 Object.defineProperty(Util.stack, Symbol.species, { get: () => Util.stack });
 Object.defineProperty(Util.stack.prototype, Symbol.species, {
   get: () => Util.stack
@@ -3997,7 +4243,9 @@ Util.stack.prototype = Object.assign(Util.stack.prototype, {
     return Util.stack.prototype.toString.call(this);
   }, [inspectSymbol](...args) {
     const { columnWidths } = this;
-    return '\n' + this.map(f => f.toString(!Util.isBrowser(), { columnWidths })).join('\n');
+    return ('\n' +
+      this.map(f => f.toString(!Util.isBrowser(), { columnWidths })).join('\n')
+    );
   },
   getFunctionName() {
     return this.functionName;
@@ -4019,7 +4267,9 @@ Object.defineProperties(Util.stack.prototype, {
       // console.log('this:', [...this]);
       return this.reduce((a, f) =>
           ['getFunction'].map((fn, i) =>
-            Math.max(a[i], ((typeof f[fn] == 'function' ? f[fn]() : '') + '').length)
+            Math.max(a[i],
+              ((typeof f[fn] == 'function' ? f[fn]() : '') + '').length
+            )
           ),
         [0, 0, 0, 0]
       );
@@ -4043,7 +4293,9 @@ Util.getCallerFile = function(position = 2) {
   let stack = Util.getCallerStack();
   if(stack !== null && typeof stack === 'object') {
     const frame = stack[position];
-    return frame ? `${frame.getFileName()}:${frame.getLineNumber()}` : undefined;
+    return frame
+      ? `${frame.getFileName()}:${frame.getLineNumber()}`
+      : undefined;
   }
 };
 Util.getCallerFunction = function(position = 2) {
@@ -4067,7 +4319,8 @@ Util.getCallerFunctionNames = function(position = 2) {
     for(let i = 0; stack[i]; i++) {
       const frame = stack[i];
       const method = frame.getMethodName();
-      ret.push(method ? frame.getFunction() + '.' + method : frame.getFunctionName());
+      ret.push(method ? frame.getFunction() + '.' + method : frame.getFunctionName()
+      );
     }
     return ret;
   }
@@ -4096,7 +4349,8 @@ Util.getCallers = function(index = 1, num = Number.MAX_SAFE_INTEGER, stack) {
 Util.getStackFrames = function(offset = 2) {
   let frames = Util.getCallerStack(0);
   frames = frames.map(frame => {
-    if(Object.getPrototypeOf(frame) !== Util.stackFrame.prototype) frame = Util.stackFrame(frame);
+    if(Object.getPrototypeOf(frame) !== Util.stackFrame.prototype)
+      frame = Util.stackFrame(frame);
     return frame;
   });
 
@@ -4127,14 +4381,18 @@ Util.flatTree = function(tree, addOutput) {
   const ret = [];
   if(!addOutput) addOutput = arg => ret.push(arg);
   addOutput(Util.filterKeys(tree, key => key !== 'children'));
-  if(typeof tree.children == 'object' && tree.children !== null && tree.children.length)
+  if(typeof tree.children == 'object' &&
+    tree.children !== null &&
+    tree.children.length
+  )
     for(let child of tree.children) Util.flatTree(child, addOutput);
   return ret;
 };
 Util.traverseTree = function(tree, fn, depth = 0, parent = null) {
   fn(tree, depth, parent);
   if(Util.isObject(tree.children) && tree.children.length > 0)
-    for(let child of tree.children) Util.traverseTree(child, fn, depth + 1, tree);
+    for(let child of tree.children)
+      Util.traverseTree(child, fn, depth + 1, tree);
 };
 
 Util.walkTree = function(node, pred, t, depth = 0, parent = null) {
@@ -4161,11 +4419,13 @@ Util.walkTree = function(node, pred, t, depth = 0, parent = null) {
 };
 
 Util.isPromise = function(obj) {
-  return (Boolean(obj) && typeof obj.then === 'function') || obj instanceof Promise;
+  return ((Boolean(obj) && typeof obj.then === 'function') || obj instanceof Promise
+  );
 };
 
 /* eslint-disable no-use-before-define */
-if(typeof setImmediate !== 'function') var setImmediate = fn => setTimeout(fn, 0);
+if(typeof setImmediate !== 'function')
+  var setImmediate = fn => setTimeout(fn, 0);
 Util.next = function(iter, observer, prev = undefined) {
   let item;
   try {
@@ -4193,9 +4453,14 @@ Util.getImageAverageColor = function(imageElement, options) {
   }
   options = options || {};
   const settings = {
-    tooDark: (options.tooDark || 0.03) * 255 * 3 /* How dark is too dark for a pixel */,
-    tooLight: (options.tooLight || 0.97) * 255 * 3 /*How light is too light for a pixel */,
-    tooAlpha: (options.tooAlpha || 0.1) * 255 /*How transparent is too transparent for a pixel */
+    tooDark: (options.tooDark || 0.03) *
+      255 *
+      3 /* How dark is too dark for a pixel */,
+    tooLight: (options.tooLight || 0.97) *
+      255 *
+      3 /*How light is too light for a pixel */,
+    tooAlpha: (options.tooAlpha || 0.1) *
+      255 /*How transparent is too transparent for a pixel */
   };
   const w = imageElement.width;
   let h = imageElement.height;
@@ -4357,10 +4622,14 @@ Util.decodeHTMLEntities = function(text) {
     nbsp: ' ',
     quot: '"'
   };
-  return text.replace(new RegExp('&([^;]+);', 'gm'), (match, entity) => entities[entity] || match);
+  return text.replace(new RegExp('&([^;]+);', 'gm'),
+    (match, entity) => entities[entity] || match
+  );
 };
 Util.encodeHTMLEntities = (str, charset = '\u00A0-\u9999<>&') =>
-  str.replace(new RegExp(`[${charset}](?!#)`, 'gim'), i => '&#' + i.charCodeAt(0) + ';');
+  str.replace(new RegExp(`[${charset}](?!#)`, 'gim'),
+    i => '&#' + i.charCodeAt(0) + ';'
+  );
 
 Util.stripAnsi = function(str) {
   return (str + '').replace(new RegExp('\x1b[[(?);]{0,2}(;?[0-9])*.', 'g'), '');
@@ -4444,7 +4713,8 @@ Util.constructApply = (constructor, array) => {
 };
 
 Util.immutable = args => {
-  const argsType = typeof args === 'object' && Util.isArray(args) ? 'array' : 'object';
+  const argsType =
+    typeof args === 'object' && Util.isArray(args) ? 'array' : 'object';
   const errorText =
     argsType === 'array'
       ? "Error! You can't change elements of this array"
@@ -4492,13 +4762,16 @@ Util.partial = function partial(fn /*, arg1, arg2 etc */) {
     let derivedArgs = [];
     for(let i = 0; i < partialArgs.length; i++) {
       let thisPartialArg = partialArgs[i];
-      derivedArgs[i] = thisPartialArg === undefined ? args.shift() : thisPartialArg;
+      derivedArgs[i] =
+        thisPartialArg === undefined ? args.shift() : thisPartialArg;
     }
     return fn.apply(this, derivedArgs.concat(args));
   };
 };
 
-Util.clamp = Util.curry((min, max, value) => Math.max(min, Math.min(max, value)));
+Util.clamp = Util.curry((min, max, value) =>
+  Math.max(min, Math.min(max, value))
+);
 
 Util.coloring = (useColor = true) =>
   !useColor
@@ -4567,7 +4840,8 @@ Util.coloring = (useColor = true) =>
         concat(...args) {
           let out = args.shift() || [''];
           for(let arg of args) {
-            if(Util.isArray(arg) && typeof arg[0] == 'string') out[0] += arg.shift();
+            if(Util.isArray(arg) && typeof arg[0] == 'string')
+              out[0] += arg.shift();
             else if(Util.isObject(arg)) {
               out.push(arg);
               continue;
@@ -4687,12 +4961,15 @@ Util.defineInspect = (proto, ...props) => {
 Util.inRange = Util.curry((a, b, value) => value >= a && value <= b);
 
 Util.bindProperties = (proxy, target, props, gen) => {
-  if(props instanceof Array) props = Object.fromEntries(props.map(name => [name, name]));
+  if(props instanceof Array)
+    props = Object.fromEntries(props.map(name => [name, name]));
   const [propMap, propNames] = Util.isArray(props)
     ? [props.reduce((acc, name) => ({ ...acc, [name]: name }), {}), props]
     : [props, Object.keys(props)];
 
-  if(!gen) gen = p => v => (v === undefined ? target[propMap[p]] : (target[propMap[p]] = v));
+  if(!gen)
+    gen = p => v =>
+      v === undefined ? target[propMap[p]] : (target[propMap[p]] = v);
   const propGetSet = propNames
     .map(k => [k, propMap[k]])
 
@@ -4700,7 +4977,8 @@ Util.bindProperties = (proxy, target, props, gen) => {
         ...a,
         [k]: Util.isFunction(v)
           ? (...args) => v.call(target, k, ...args)
-          : (gen && gen(k)) || ((...args) => (args.length > 0 ? (target[k] = args[0]) : target[k]))
+          : (gen && gen(k)) ||
+            ((...args) => (args.length > 0 ? (target[k] = args[0]) : target[k]))
       }),
       {}
     );
@@ -4781,11 +5059,16 @@ Util.assert = function assert(val, message) {
     message ??= val + '';
     val = val();
   }
-  if(!val) throw new AssertionFailed(Util.getCallerStack(4), message ?? `val == ${val}`);
+  if(!val)
+    throw new AssertionFailed(Util.getCallerStack(4),
+      message ?? `val == ${val}`
+    );
 };
 Util.assertEqual = function assertEqual(val1, val2, message) {
   if(val1 != val2)
-    throw new AssertionFailed(Util.getCallerStack(4), message ?? `${val1} != ${val2}`);
+    throw new AssertionFailed(Util.getCallerStack(4),
+      message ?? `${val1} != ${val2}`
+    );
 };
 
 Util.assignGlobal = () => Util.weakAssign(globalThis, Util);
@@ -4819,7 +5102,8 @@ Util.merge = function(...args) {
 */
     ret = new Map();
 
-    for(let arg of args) for (let [key, value] of Util.entries(arg)) ret.set(key, value);
+    for(let arg of args)
+      for(let [key, value] of Util.entries(arg)) ret.set(key, value);
   } else {
     ret = args.reduce((acc, arg) => ({ ...acc, ...arg }), {});
   }
@@ -4901,16 +5185,21 @@ Util.toPlainObject = obj =>
 Util.toBuiltinObject = obj =>
   Array.isArray(obj)
     ? obj.map(Util.toBuiltinObject)
-    : Util.toPlainObjectT(obj, v => (Util.isObject(v) ? Util.toBuiltinObject(v) : v));
+    : Util.toPlainObjectT(obj, v =>
+        Util.isObject(v) ? Util.toBuiltinObject(v) : v
+      );
 
 Util.toPlainObjectT = (obj, t = (v, n) => v) =>
-  [...Object.getOwnPropertyNames(obj)].reduce((acc, k) => ({ ...acc, [k]: t(obj[k], k) }), {});
+  [...Object.getOwnPropertyNames(obj)].reduce((acc, k) => ({ ...acc, [k]: t(obj[k], k) }),
+    {}
+  );
 
 Util.timer = msecs => {
   let ret, id, createdTime, startTime, stopTime, endTime, res, delay, timer;
   createdTime = new Date();
   const remaining = () => {
-    let r = startTime + msecs - (typeof stopTime == 'number' ? stopTime : new Date());
+    let r =
+      startTime + msecs - (typeof stopTime == 'number' ? stopTime : new Date());
     return r >= 0 ? r : 0;
   };
   const finish = callback => {
@@ -4933,7 +5222,10 @@ Util.timer = msecs => {
     endTime = new Date(now + msecs);
     stopTime = undefined;
     id = setTimeout(() => {
-      finish(typeof tmr.callback == 'function' ? (...args) => tmr.callback(...args) : () => {});
+      finish(typeof tmr.callback == 'function'
+          ? (...args) => tmr.callback(...args)
+          : () => {}
+      );
       log(`finish`, tmr);
     }, msecs);
     log('start', tmr);
@@ -5035,7 +5327,8 @@ Util.wrapGenerator = fn =>
     : fn;
 
 Util.wrapGeneratorMethods = obj => {
-  for(let name of Util.getMethodNames(obj, 1, 0)) obj[name] = Util.wrapGenerator(obj[name]);
+  for(let name of Util.getMethodNames(obj, 1, 0))
+    obj[name] = Util.wrapGenerator(obj[name]);
   return obj;
 };
 
@@ -5045,10 +5338,12 @@ Util.decorateIterable = (proto, generators = false) => {
       for(let [i, item] of this.entries()) fn.call(thisArg, item, i, this);
     },
     *map(fn, thisArg) {
-      for(let [i, item] of this.entries()) yield fn.call(thisArg, item, i, this);
+      for(let [i, item] of this.entries())
+        yield fn.call(thisArg, item, i, this);
     },
     *filter(pred, thisArg) {
-      for(let [i, item] of this.entries()) if(pred.call(thisArg, item, i, this)) yield item;
+      for(let [i, item] of this.entries())
+        if(pred.call(thisArg, item, i, this)) yield item;
     },
     findIndex(pred, thisArg) {
       for(let [i, item] of this.entries()) if(pred(item, i, this)) return i;
@@ -5059,14 +5354,17 @@ Util.decorateIterable = (proto, generators = false) => {
     },
     find(pred, thisArg) {
       let idx = this.findIndex(pred, thisArg);
-      if(idx != -1) return typeof this.item == 'function' ? this.item(idx) : this[idx];
+      if(idx != -1)
+        return typeof this.item == 'function' ? this.item(idx) : this[idx];
     },
     every(pred, thisArg) {
-      for(let [i, item] of this.entries()) if(!pred(item, i++, this)) return false;
+      for(let [i, item] of this.entries())
+        if(!pred(item, i++, this)) return false;
       return true;
     },
     some(pred, thisArg) {
-      for(let [i, item] of this.entries()) if(pred(item, i, this)) return true;
+      for(let [i, item] of this.entries())
+        if(pred(item, i, this)) return true;
       return false;
     },
     reduce(fn, accu) {
@@ -5141,7 +5439,13 @@ Util.cacheAdapter = (st, defaultOpts = {}) => {
   };
 };
 Util.cachedFetch = (allOpts = {}) => {
-  let { cache = 'fetch', fetch = Util.getGlobalObject('fetch'), debug, print, ...opts } = allOpts;
+  let {
+    cache = 'fetch',
+    fetch = Util.getGlobalObject('fetch'),
+    debug,
+    print,
+    ...opts
+  } = allOpts;
   const storage = Util.cacheAdapter(cache);
   const baseURL = Util.memoize(() => Util.makeURL({ location: '' }));
 
@@ -5174,7 +5478,8 @@ Util.cachedFetch = (allOpts = {}) => {
         response.cached = true;
       }
     } catch(err) {
-      throw new Error(`CachedFetch: ` + (request.url || request) + ' ' + err.message);
+      throw new Error(`CachedFetch: ` + (request.url || request) + ' ' + err.message
+      );
     }
     return response;
   };
@@ -5195,7 +5500,8 @@ Util.proxyObject = (root, handler) => {
       new Proxy(value, {
         get(target, key) {
           let prop = value[key];
-          if(Util.isObject(prop) || Util.isArray(prop)) return new node([...path, key]);
+          if(Util.isObject(prop) || Util.isArray(prop))
+            return new node([...path, key]);
           return handler && handler.get ? handler.get(prop, key) : prop;
         }
       })
@@ -5265,7 +5571,8 @@ Util.getOpt = (options = {}, args) => {
   if(!(options instanceof Array)) options = Object.entries(options);
   const findOpt = arg =>
     options.find(([optname, option]) =>
-        (Array.isArray(option) ? option.indexOf(arg) != -1 : false) || arg == optname
+        (Array.isArray(option) ? option.indexOf(arg) != -1 : false) ||
+        arg == optname
     );
   let [, params] = options.find(opt => opt[0] == '@') || [];
   if(typeof params == 'string') params = params.split(',');
@@ -5330,7 +5637,9 @@ Util.getOpt = (options = {}, args) => {
 Util.getEnv = async varName =>
   Util.tryCatch(() => process.env,
     async e => e[varName],
-    () => Util.tryCatch(async () => await import('std').then(std => std.getenv(varName)))
+    () =>
+      Util.tryCatch(async () => await import('std').then(std => std.getenv(varName))
+      )
   );
 Util.getEnvVars = async () =>
   Util.tryCatch(() => process.env,
@@ -5352,11 +5661,16 @@ Util.getEnvVars = async () =>
                 stdio: [null, 'pipe']
               });
               let data = '\n';
-              for await(let output of await filesystem.asyncReader(proc.stdout))
+              for await(let output of await filesystem.asyncReader(proc.stdout
+              ))
                 data += filesystem.bufferToString(output);
-              let matches = [...Util.matchAll(/(^|\n)[A-Za-z_][A-Za-z0-9_]*=.*/gm, data)];
+              let matches = [
+                ...Util.matchAll(/(^|\n)[A-Za-z_][A-Za-z0-9_]*=.*/gm, data)
+              ];
               let indexes = matches.map(match => match.index);
-              let ranges = indexes.reduce((acc, idx, i, a) => [...acc, [idx + 1, a[i + 1]]], []);
+              let ranges = indexes.reduce((acc, idx, i, a) => [...acc, [idx + 1, a[i + 1]]],
+                []
+              );
               let vars = ranges
                 .map(r => data.substring(...r))
                 .map(line => {
@@ -5379,13 +5693,15 @@ Util.safeFunction = (fn, trapExceptions, thisObj) => {
         return fn.call(this || thisObj, ...args);
       };
   if(trapExceptions) {
-    const handleException = typeof trapExceptions == 'function' ? trapExceptions : Util.putError;
+    const handleException =
+      typeof trapExceptions == 'function' ? trapExceptions : Util.putError;
     Error.stackTraceLimit = Infinity;
     exec = Util.tryFunction(exec, //async (...args) => { Error.stackTraceLimit=Infinity;  return await exec(...args); },
       a => a,
       error => {
         if(Util.isObject(error)) {
-          if(error.stack !== undefined) error.stack = new Util.stack(error.stack);
+          if(error.stack !== undefined)
+            error.stack = new Util.stack(error.stack);
           handleException(error);
         }
       }
@@ -5396,8 +5712,10 @@ Util.safeFunction = (fn, trapExceptions, thisObj) => {
 Util.safeCall = (fn, ...args) => Util.safeApply(fn, args);
 Util.safeApply = (fn, args = []) => Util.safeFunction(fn, true)(...args);
 Util.signal = (sig, fn) => {
-  if(typeof globalThis.os?.signal == 'function') return globalThis.os.signal(sig, fn);
-  if(Util.getPlatform() == 'quickjs') return import('os').then(({ signal }) => signal(sig.fn));
+  if(typeof globalThis.os?.signal == 'function')
+    return globalThis.os.signal(sig, fn);
+  if(Util.getPlatform() == 'quickjs')
+    return import('os').then(({ signal }) => signal(sig.fn));
 };
 Util.exit = exitCode => {
   const { callExitHandlers } = Util;
@@ -5435,7 +5753,8 @@ Util.callMain = async (fn, trapExceptions) =>
         Util.signal(15, callExitHandlers);
       });
 
-      if(Util.getPlatform() == 'quickjs') await import('std').then(module => module.gc());
+      if(Util.getPlatform() == 'quickjs')
+        await import('std').then(module => module.gc());
 
       let ret = await fn(...args);
       await callExitHandlers(ret);
@@ -5499,7 +5818,9 @@ Util.callMain.handlers = [];
 Util.replaceAll = (needles, haystack) => {
   return Util.entries(needles)
     .map(([re, str]) => [typeof re == 'string' ? new RegExp(re, 'g') : re, str])
-    .reduce((acc, [match, replacement]) => acc.replace(match, replacement), haystack);
+    .reduce((acc, [match, replacement]) => acc.replace(match, replacement),
+      haystack
+    );
 };
 
 Util.escape = (str, pred = codePoint => codePoint < 32 || codePoint > 0xff) => {
@@ -5534,7 +5855,10 @@ Util.consolePrinter = function ConsolePrinter(log = console.log) {
   delete self.length;
 
   Object.setPrototypeOf(self,
-    Util.extend(Util.consolePrinter.prototype, Util.getMethods(Object.getPrototypeOf(self), 1, 0))
+    Util.extend(
+      Util.consolePrinter.prototype,
+      Util.getMethods(Object.getPrototypeOf(self), 1, 0)
+    )
   );
   self.splice(0, self.length, '');
   self.log = (...args) => log(...args);
@@ -5652,14 +5976,18 @@ Object.assign(Util.consolePrinter.prototype, Util.consoleConcat.prototype, {
       } else {
         this[0] += arg;
         if(/color:/.test(this[0])) {
-          throw new Error(`this[0] is CSS: i=${i}\nthis[0] = "${this[0]}"\narg= ${typeof arg} "${(
-              arg + ''
-            ).replace(/\n/g, '\\n')}"`
+          throw new Error(`this[0] is CSS: i=${i}\nthis[0] = "${
+              this[0]
+            }"\narg= ${typeof arg} "${(arg + '').replace(/\n/g, '\\n')}"`
           );
         }
 
         const matches = [...Util.matchAll(['%c', '%o'], arg)];
-        console.debug('matches.length:', matches.length, ' args.length:', args.length);
+        console.debug('matches.length:',
+          matches.length,
+          ' args.length:',
+          args.length
+        );
 
         if(matches.length > 0) {
           const styles = args.splice(0, matches.length);
@@ -5719,12 +6047,14 @@ Util.isatty = async fd => {
   return ret;
 };
 Util.ttyGetWinSize = (fd = 1) => {
-  if(Util.getPlatform() == 'quickjs') return import('os').then(m => m.ttyGetWinSize(fd));
+  if(Util.getPlatform() == 'quickjs')
+    return import('os').then(m => m.ttyGetWinSize(fd));
   const stream = process[['stdin', 'stdout', 'stderr'][fd] ?? 'stdout'];
   return stream?.getWindowSize?.();
 };
 Util.ttySetRaw = (fd = 0, mode = true) => {
-  if(Util.getPlatform() == 'quickjs') return import('os').then(m => m.ttySetRaw(fd));
+  if(Util.getPlatform() == 'quickjs')
+    return import('os').then(m => m.ttySetRaw(fd));
   const stream = process[['stdin', 'stdout', 'stderr'][fd] ?? 'stdin'];
   return stream?.setRawMode?.(mode);
 };
@@ -5925,7 +6255,8 @@ Util.lazyProperty(Util, 'animationFrame', () => {
   const { now } = Util;
 
   return (minDelay = 0) => {
-    if(minDelay <= 0) return new Promise(resolve => requestAnimationFrame(resolve));
+    if(minDelay <= 0)
+      return new Promise(resolve => requestAnimationFrame(resolve));
     const start = now();
 
     return new Promise(resolve => {
@@ -6002,7 +6333,9 @@ Util.formatColumns = a => {
 
   // console.debug(maxWidth);
 
-  return a.map(row => row.map((col, j) => (col + '').padEnd(maxWidth[j])).join(' ')).join('\n');
+  return a
+    .map(row => row.map((col, j) => (col + '').padEnd(maxWidth[j])).join(' '))
+    .join('\n');
 };
 
 Util.getPlatform = () =>
@@ -6065,7 +6398,9 @@ Util.instrument = (fn,
               .map(arg => (typeof arg == 'string' ? `'${Util.escape(Util.abbreviate(arg))}'` : arg))
               .join(', ')}]`
           : '') +*/
-        (ret !== undefined ? ` {= ${Util.abbreviate(Util.escape(ret + ''))}}` : '') +
+        (ret !== undefined
+          ? ` {= ${Util.abbreviate(Util.escape(ret + ''))}}`
+          : '') +
         ` timing: ${duration.toFixed(3)}ms`
     ),
   logInterval = 0 //1000
@@ -6328,10 +6663,13 @@ Point$1.prototype.neg = function() {
   return this;
 };
 Point$1.prototype.distanceSquared = function(other = { x: 0, y: 0 }) {
-  return (other.y - this.y) * (other.y - this.y) + (other.x - this.x) * (other.x - this.x);
+  return ((other.y - this.y) * (other.y - this.y) +
+    (other.x - this.x) * (other.x - this.x)
+  );
 };
 Point$1.prototype.distance = function(other = { x: 0, y: 0 }) {
-  return Math.sqrt(Point$1.prototype.distanceSquared.call(this, Point$1(other)));
+  return Math.sqrt(Point$1.prototype.distanceSquared.call(this, Point$1(other))
+  );
 };
 Point$1.prototype.equals = function(other) {
   let { x, y } = this;
@@ -6400,7 +6738,14 @@ Util$1.defineGetter(Point$1.prototype, Symbol.iterator, function() {
 };
 */ Point$1.prototype.toString = function(opts = {}
 ) {
-  const { precision = 0.001, unit = '', separator = ',', left = '', right = '', pad = 0 } = opts;
+  const {
+    precision = 0.001,
+    unit = '',
+    separator = ',',
+    left = '',
+    right = '',
+    pad = 0
+  } = opts;
   let x = Util$1.roundTo(this.x, precision);
   let y = Util$1.roundTo(this.y, precision);
   if(pad > 0) {
@@ -6410,9 +6755,8 @@ Util$1.defineGetter(Point$1.prototype, Symbol.iterator, function() {
     if(x[0] != '-') x = ' ' + x;
   }
   //console.debug("toString", {x,y}, {pad});
-  return `${left}${(x + '').padStart(pad, ' ')}${unit}${separator}${(y + '').padEnd(pad,
-    ' '
-  )}${unit}${right}`;
+  return `${left}${(x + '').padStart(pad, ' ')}${unit}${separator}${(y + ''
+  ).padEnd(pad, ' ')}${unit}${right}`;
 };
 Util$1.defineGetterSetter(Point$1.prototype,
   Symbol.toStringTag,
@@ -6437,7 +6781,8 @@ Point$1.prototype.toSource = function(opts = {}) {
   if(asArray) return `[${x},${y}]`;
   if(plainObj) return `{x:${x},y:${y}}`;
 
-  return `${c(showNew ? 'new ' : '')}${c('Point')}${c('(')}${c(x)}${c(',')}${c(y)}${c(')')}`;
+  return `${c(showNew ? 'new ' : '')}${c('Point')}${c('(')}${c(x)}${c(',')}${c(y
+  )}${c(')')}`;
 };
 
 /*Point.prototype.toSource = function() {
@@ -6449,7 +6794,9 @@ Point$1.prototype.toObject = function(proto = Point$1.prototype) {
   Object.setPrototypeOf(obj, proto);
   return obj;
 };
-Point$1.prototype.toCSS = function(precision = 0.001, edges = ['left', 'top']) {
+Point$1.prototype.toCSS = function(precision = 0.001,
+  edges = ['left', 'top']
+) {
   return {
     [edges[0]]: Util$1.roundTo(this.x, precision) + 'px',
     [edges[1]]: Util$1.roundTo(this.y, precision) + 'px'
@@ -6496,9 +6843,11 @@ Point$1.prototype.normal = function() {
   return new Point$1({ x: this.x / d, y: this.y / d });
 };
 
-Point$1.fromString = str => new Point$1(...str.split(/[^-.0-9]+/g).map(n => +n));
+Point$1.fromString = str =>
+  new Point$1(...str.split(/[^-.0-9]+/g).map(n => +n));
 Point$1.move = (point, x, y) => Point$1.prototype.move.call(point, x, y);
-Point$1.angle = (point, other, deg = false) => Point$1.prototype.angle.call(point, other, deg);
+Point$1.angle = (point, other, deg = false) =>
+  Point$1.prototype.angle.call(point, other, deg);
 Point$1.inside = (point, rect) => Point$1.prototype.inside.call(point, rect);
 Point$1.sub = (point, other) => Point$1.prototype.sub.call(point, other);
 Point$1.prod = (a, b) => Point$1.prototype.prod.call(a, b);
@@ -6523,7 +6872,8 @@ for(let name of [
   'sum',
   'distance'
 ]) {
-  Point$1[name] = (point, ...args) => Point$1.prototype[name].call(Point$1(point), ...args);
+  Point$1[name] = (point, ...args) =>
+    Point$1.prototype[name].call(Point$1(point), ...args);
 }
 Point$1.interpolate = (p1, p2, a) => {
   a = Util$1.clamp(0, 1, a);
@@ -6550,8 +6900,12 @@ Point$1.bind = (...args) => {
   if(p == null) p = keys;
   //console.debug('Point.bind', { keys, o, p });
   const { x, y } =
-    (Util$1.isArray(p) && p.reduce((acc, name, i) => ({ ...acc, [keys[i]]: name }), {})) || p;
-  return Object.setPrototypeOf(Util$1.bindProperties({}, o, { x, y }), Point$1.prototype);
+    (Util$1.isArray(p) &&
+      p.reduce((acc, name, i) => ({ ...acc, [keys[i]]: name }), {})) ||
+    p;
+  return Object.setPrototypeOf(Util$1.bindProperties({}, o, { x, y }),
+    Point$1.prototype
+  );
 };
 
 Util$1.defineGetter(Point$1, Symbol.species, function() {
@@ -6564,7 +6918,10 @@ Util$1.defineGetter(ImmutablePoint, Symbol.species, () => ImmutablePoint);
 function Size(arg) {
   let obj = this instanceof Size ? this : {};
   let args = [...arguments];
-  if(args.length == 1 && Util$1.isObject(args[0]) && args[0].length !== undefined) {
+  if(args.length == 1 &&
+    Util$1.isObject(args[0]) &&
+    args[0].length !== undefined
+  ) {
     args = args[0];
     arg = args[0];
   }
@@ -6583,7 +6940,9 @@ function Size(arg) {
       obj.height = arg.bottom - arg.top;
     }
   } else {
-    while(typeof arg == 'object' && (arg instanceof Array || 'length' in arg)) {
+    while(typeof arg == 'object' &&
+      (arg instanceof Array || 'length' in arg)
+    ) {
       args = [...arg];
       arg = args[0];
     }
@@ -6592,8 +6951,10 @@ function Size(arg) {
       let h = args.shift();
       if(typeof w == 'object' && 'baseVal' in w) w = w.baseVal.value;
       if(typeof h == 'object' && 'baseVal' in h) h = h.baseVal.value;
-      obj.width = typeof w == 'number' ? w : parseFloat(w.replace(/[^-.0-9]*$/, ''));
-      obj.height = typeof h == 'number' ? h : parseFloat(h.replace(/[^-.0-9]*$/, ''));
+      obj.width =
+        typeof w == 'number' ? w : parseFloat(w.replace(/[^-.0-9]*$/, ''));
+      obj.height =
+        typeof h == 'number' ? h : parseFloat(h.replace(/[^-.0-9]*$/, ''));
       Object.defineProperty(obj, 'units', {
         value: {
           width: typeof w == 'number' ? 'px' : w.replace(obj.width.toString(), ''),
@@ -6616,7 +6977,8 @@ Size.prototype.width = NaN;
 Size.prototype.height = NaN;
 Size.prototype.units = null;
 
-Size.prototype.convertUnits = function(w = 'window' in global ? window : null) {
+Size.prototype.convertUnits = function(w = 'window' in global ? window : null
+) {
   if(w === null) return this;
   const view = {
     vw: w.innerWidth,
@@ -6645,7 +7007,8 @@ Size.prototype.toCSS = function(units) {
       ? { width: units, height: units }
       : units || this.units || { width: 'px', height: 'px' };
   if(this.width !== undefined) ret.width = this.width + (units.width || 'px');
-  if(this.height !== undefined) ret.height = this.height + (units.height || 'px');
+  if(this.height !== undefined)
+    ret.height = this.height + (units.height || 'px');
   return ret;
 };
 Size.prototype.transform = function(m) {
@@ -6706,7 +7069,11 @@ Size.prototype.prod = function(...args) {
 };
 Size.prototype.mul = function(...args) {
   for(let f of getOther(args)) {
-    const o = isSize(f) ? f : isPoint(f) ? { width: f.x, height: f.y } : { width: f, height: f };
+    const o = isSize(f)
+      ? f
+      : isPoint(f)
+      ? { width: f.x, height: f.y }
+      : { width: f, height: f };
     this.width *= o.width;
     this.height *= o.height;
   }
@@ -6733,7 +7100,10 @@ Size.prototype.round = function(precision = 1, digits, type) {
 };
 Size.prototype.bounds = function(other) {
   [Math.min(this.width, other.width), Math.max(this.width, other.width)];
-  let h = [Math.min(this.height, other.height), Math.max(this.height, other.height)];
+  let h = [
+    Math.min(this.height, other.height),
+    Math.max(this.height, other.height)
+  ];
 
   let scale = h / this.height;
   this.mul(scale);
@@ -6770,7 +7140,9 @@ Size.prototype.fitFactors = function(other) {
 Size.prototype.toString = function(opts = {}) {
   const { unit = '', separator = ' \u2715 ', left = '', right = '' } = opts;
   const { width, height, units = { width: unit, height: unit } } = this;
-  return `${left}${width}${(Util$1.isObject(units) && units.width) || unit}${separator}${height}${
+  return `${left}${width}${
+    (Util$1.isObject(units) && units.width) || unit
+  }${separator}${height}${
     (Util$1.isObject(units) && units.height) || unit
   }${right}`;
 };
@@ -6807,12 +7179,16 @@ Size.bind = (...args) => {
 
 for(let method of Util$1.getMethodNames(Size.prototype))
   if(method != 'toString')
-    Size[method] = (size, ...args) => Size.prototype[method].call(size || new Size(size), ...args);
+    Size[method] = (size, ...args) =>
+      Size.prototype[method].call(size || new Size(size), ...args);
 
 const isSize = o =>
   o &&
   ((o.width !== undefined && o.height !== undefined) ||
-    (o.x !== undefined && o.x2 !== undefined && o.y !== undefined && o.y2 !== undefined) ||
+    (o.x !== undefined &&
+      o.x2 !== undefined &&
+      o.y !== undefined &&
+      o.y2 !== undefined) ||
     (o.left !== undefined &&
       o.right !== undefined &&
       o.top !== undefined &&
@@ -6831,7 +7207,8 @@ for(let name of [
   'quot',
   'div'
 ]) {
-  Size[name] = (size, ...args) => Size.prototype[name].call(size || new Size(size), ...args);
+  Size[name] = (size, ...args) =>
+    Size.prototype[name].call(size || new Size(size), ...args);
 }
 
 Util$1.defineGetter(Size, Symbol.species, function() {
@@ -6854,7 +7231,12 @@ class BBox {
   }
 
   static create(arg) {
-    if(isRect(arg)) return new BBox(rect.x, rect.y, rect.x + rect.width, rect.y + rect.height);
+    if(isRect(arg))
+      return new BBox(rect.x,
+        rect.y,
+        rect.x + rect.width,
+        rect.y + rect.height
+      );
 
     if(Util$1.isArray(arg) || Util$1.isIterable(arg)) return BBox.of(...arg);
   }
@@ -6907,11 +7289,23 @@ class BBox {
         this.updateList(Object.values(arg.objects), offset);
       } else {
         if(arg.x2 !== undefined && arg.y2 != undefined)
-          this.updateXY(arg.x2, arg.y2, 0, name => (this.objects[name] = obj || arg));
+          this.updateXY(arg.x2,
+            arg.y2,
+            0,
+            name => (this.objects[name] = obj || arg)
+          );
         if(arg.x1 !== undefined && arg.y1 != undefined)
-          this.updateXY(arg.x1, arg.y1, 0, name => (this.objects[name] = obj || arg));
+          this.updateXY(arg.x1,
+            arg.y1,
+            0,
+            name => (this.objects[name] = obj || arg)
+          );
         if(arg.x !== undefined && arg.y != undefined)
-          this.updateXY(arg.x, arg.y, offset, name => (this.objects[name] = obj || arg));
+          this.updateXY(arg.x,
+            arg.y,
+            offset,
+            name => (this.objects[name] = obj || arg)
+          );
       }
     }
 
@@ -7049,7 +7443,8 @@ class BBox {
   }
 
   static from(iter, tp = p => p) {
-    if(typeof iter == 'object' && iter[Symbol.iterator]) iter = iter[Symbol.iterator]();
+    if(typeof iter == 'object' && iter[Symbol.iterator])
+      iter = iter[Symbol.iterator]();
 
     let r = new BBox();
     let result = iter.next();
@@ -7077,7 +7472,8 @@ class BBox {
   }
 }
 const isBBox = (bbox, testFn = (prop, name, obj) => name in obj) =>
-  Util$1.isObject(bbox) && ['x1', 'y1', 'x2', 'y2'].every(n => testFn(bbox[n], n, bbox));
+  Util$1.isObject(bbox) &&
+  ['x1', 'y1', 'x2', 'y2'].every(n => testFn(bbox[n], n, bbox));
 
 function Line(...args) {
   if(!new.target) if (args[0] instanceof Line) return args[0];
@@ -7096,7 +7492,8 @@ function Line(...args) {
 
   if(obj === null) obj = Object.create(Line.prototype);
 
-  if(Object.getPrototypeOf(obj) !== Line.prototype) Object.setPrototypeOf(obj, Line.prototype);
+  if(Object.getPrototypeOf(obj) !== Line.prototype)
+    Object.setPrototypeOf(obj, Line.prototype);
 
   //if(!('a' in obj) || !('b' in obj)) throw new Error('no a/b prop');
   if(arg &&
@@ -7117,7 +7514,10 @@ function Line(...args) {
     obj.y1 = args[0].y;
     obj.x2 = args[1].x;
     obj.y2 = args[1].y;
-  } else if(arg && arg.length >= 4 && arg.slice(0, 4).every(arg => !isNaN(+arg))) {
+  } else if(arg &&
+    arg.length >= 4 &&
+    arg.slice(0, 4).every(arg => !isNaN(+arg))
+  ) {
     const [x1, y1, x2, y2] = arg.map(a => +a);
     obj.x1 = x1;
     obj.y1 = y1;
@@ -7126,9 +7526,15 @@ function Line(...args) {
   } else;
 
   if(!('a' in obj) || obj.a === undefined)
-    Object.defineProperty(obj, 'a', { value: new Point$1(obj.x1, obj.y1), enumerable: false });
+    Object.defineProperty(obj, 'a', {
+      value: new Point$1(obj.x1, obj.y1),
+      enumerable: false
+    });
   if(!('b' in obj) || obj.b === undefined)
-    Object.defineProperty(obj, 'b', { value: new Point$1(obj.x2, obj.y2), enumerable: false });
+    Object.defineProperty(obj, 'b', {
+      value: new Point$1(obj.x2, obj.y2),
+      enumerable: false
+    });
 
   if(!isLine(obj));
 
@@ -7138,7 +7544,8 @@ function Line(...args) {
 }
 
 const isLine = obj =>
-  (Util$1.isObject(obj) && ['x1', 'y1', 'x2', 'y2'].every(prop => obj[prop] !== undefined)) ||
+  (Util$1.isObject(obj) &&
+    ['x1', 'y1', 'x2', 'y2'].every(prop => obj[prop] !== undefined)) ||
   ['a', 'b'].every(prop => isPoint(obj[prop]));
 
 /*
@@ -7152,7 +7559,9 @@ Line.prototype.intersect = function(other) {
   if(ma - mb < Number.EPSILON) return undefined;
   return new Point$1({
     x: (ma * this[0].x - mb * other[0].x + other[0].y - this[0].y) / (ma - mb),
-    y: (ma * mb * (other[0].x - this[0].x) + mb * this[0].y - ma * other[0].y) / (mb - ma)
+    y:
+      (ma * mb * (other[0].x - this[0].x) + mb * this[0].y - ma * other[0].y) /
+      (mb - ma)
   });
 };
 
@@ -7356,19 +7765,31 @@ Line.prototype.points = function() {
   return [a, b];
 };
 
-Line.prototype[Symbol.for('nodejs.util.inspect.custom')] = function(n, options = {}) {
+Line.prototype[Symbol.for('nodejs.util.inspect.custom')] = function(n,
+  options = {}
+) {
   const { x1, y1, x2, y2 } = this;
   return 'Line ' + Util$1.inspect({ x1, y1, x2, y2 }, options) + ' }';
 };
 Line.prototype.toString = function(opts = {}) {
   let { separator = ', ', brackets, pad = 6, ...options } = opts;
 
-  if(typeof brackets != 'function') brackets = brackets ? s => `[ ${s} ]` : s => s;
+  if(typeof brackets != 'function')
+    brackets = brackets ? s => `[ ${s} ]` : s => s;
 
   const { x1, y1, x2, y2 } = this;
-  return (brackets(Point$1.toString(this.a || Point$1(x1, y1), { ...options, /*separator,*/ pad: 0 })) +
+  return (brackets(
+      Point$1.toString(this.a || Point$1(x1, y1), {
+        ...options,
+        /*separator,*/ pad: 0
+      })
+    ) +
     separator +
-    brackets(Point$1.toString(this.b || Point$1(x2, y2), { ...options, /*separator,*/ pad: 0 }))
+    brackets(Point$1.toString(this.b || Point$1(x2, y2), {
+        ...options,
+        /*separator,*/ pad: 0
+      })
+    )
   );
 };
 Line.prototype.toSource = function() {
@@ -7482,13 +7903,16 @@ Line.prototype.every = function(pred) {
   return pred(this.a) && pred(this.b);
 };
 Line.prototype.includes = function(point) {
-  return (Point$1.prototype.equals.call(this.a, point) || Point$1.prototype.equals.call(this.b, point)
+  return (Point$1.prototype.equals.call(this.a, point) ||
+    Point$1.prototype.equals.call(this.b, point)
   );
 };
 Line.prototype.equals = function(...args) {
   let other = Line(...args);
-  if(Point$1.equals(this.a, other.a) && Point$1.equals(this.b, other.b)) return 1;
-  if(Point$1.equals(this.a, other.b) && Point$1.equals(this.b, other.a)) return -1;
+  if(Point$1.equals(this.a, other.a) && Point$1.equals(this.b, other.b))
+    return 1;
+  if(Point$1.equals(this.a, other.b) && Point$1.equals(this.b, other.a))
+    return -1;
   return 0;
 };
 Line.prototype.indexOf = function(point) {
@@ -7545,19 +7969,25 @@ for(let name of [
   'distanceToPointSquared',
   'distanceToPoint'
 ]) {
-  Line[name] = (line, ...args) => Line.prototype[name].call(line || new Line(line), ...args);
+  Line[name] = (line, ...args) =>
+    Line.prototype[name].call(line || new Line(line), ...args);
 }
 
 Util$1.defineInspect(Line.prototype, 'x1', 'y1', 'x2', 'y2');
 
-Line.a = Util$1.memoize(line => Point$1.bind(line, ['x1', 'y1']), new WeakMap());
-Line.b = Util$1.memoize(line => Point$1.bind(line, ['x2', 'y2']), new WeakMap());
+Line.a = Util$1.memoize(line => Point$1.bind(line, ['x1', 'y1']),
+  new WeakMap()
+);
+Line.b = Util$1.memoize(line => Point$1.bind(line, ['x2', 'y2']),
+  new WeakMap()
+);
 Line.from = obj => {
   let l = new Line(obj);
 
   for(let extra of ['curve', 'width']) {
     if(typeof obj[extra] == 'number') l[extra] = obj[extra];
-    else if(typeof obj[extra] == 'string' && !isNaN(+obj[extra])) l[extra] = +obj[extra];
+    else if(typeof obj[extra] == 'string' && !isNaN(+obj[extra]))
+      l[extra] = +obj[extra];
   }
   return l;
 };
@@ -7598,7 +8028,8 @@ function Rect(arg) {
   let args = arg instanceof Array ? arg : [...arguments];
 
   if(typeof args[0] == 'number') arg = args;
-  else if(Util$1.isObject(args[0]) && args[0].length !== undefined) arg = args.shift();
+  else if(Util$1.isObject(args[0]) && args[0].length !== undefined)
+    arg = args.shift();
 
   ['x', 'y', 'width', 'height'].forEach(field => {
     if(typeof obj[field] != 'number') obj[field] = 0;
@@ -7635,7 +8066,10 @@ function Rect(arg) {
     obj.y = parseFloat(arg.y);
     obj.width = parseFloat(arg.width);
     obj.height = parseFloat(arg.height);
-  } else if(arg && arg.length >= 4 && arg.slice(0, 4).every(arg => !isNaN(parseFloat(arg)))) {
+  } else if(arg &&
+    arg.length >= 4 &&
+    arg.slice(0, 4).every(arg => !isNaN(parseFloat(arg)))
+  ) {
     let x = arg.shift();
     let y = arg.shift();
     let w = arg.shift();
@@ -7644,7 +8078,10 @@ function Rect(arg) {
     obj.y = typeof y === 'number' ? y : parseFloat(y);
     obj.width = typeof w === 'number' ? w : parseFloat(w);
     obj.height = typeof h === 'number' ? h : parseFloat(h);
-  } else if(arg && arg.length >= 2 && arg.slice(0, 2).every(arg => !isNaN(parseFloat(arg)))) {
+  } else if(arg &&
+    arg.length >= 2 &&
+    arg.slice(0, 2).every(arg => !isNaN(parseFloat(arg)))
+  ) {
     obj.x = 0;
     obj.y = 0;
     obj.width = typeof arg[0] === 'number' ? arg[0] : parseFloat(arg[0]);
@@ -7716,9 +8153,14 @@ Rect.prototype.toSource = function(opts = {}) {
   const { color = true } = opts;
   const c = Util$1.coloring(color);
   const { x, y, width, height } = this;
-  return c.concat(c.text('new', 1, 31), c.text('Rect', 1, 33), `(${x},${y},${width},${height})`);
+  return c.concat(c.text('new', 1, 31),
+    c.text('Rect', 1, 33),
+    `(${x},${y},${width},${height})`
+  );
 };
-Rect.prototype[Symbol.for('nodejs.util.inspect.custom')] = function(n, opts = {}) {
+Rect.prototype[Symbol.for('nodejs.util.inspect.custom')] = function(n,
+  opts = {}
+) {
   const { color = true } = opts;
   const c = Util$1.coloring(color);
   return (c.text('Rect', 1, 31) +
@@ -7842,7 +8284,9 @@ Rect.prototype.points = function(ctor = items => Array.from(items)) {
 };
 Rect.prototype.toCSS = Rect.toCSS;
 Rect.prototype.equals = function(...args) {
-  return Point$1.prototype.equals.call(this, ...args) && Size.prototype.equals.call(this, ...args);
+  return (Point$1.prototype.equals.call(this, ...args) &&
+    Size.prototype.equals.call(this, ...args)
+  );
 };
 Rect.prototype.scale = function(factor) {
   let width = this.width * factor;
@@ -7866,7 +8310,8 @@ Rect.prototype.div = function(...args) {
   return this;
 };
 Rect.prototype.outset = function(trbl) {
-  if(typeof trbl == 'number') trbl = { top: trbl, right: trbl, bottom: trbl, left: trbl };
+  if(typeof trbl == 'number')
+    trbl = { top: trbl, right: trbl, bottom: trbl, left: trbl };
   this.x -= trbl.left;
   this.y -= trbl.top;
   this.width += trbl.left + trbl.right;
@@ -7875,7 +8320,9 @@ Rect.prototype.outset = function(trbl) {
 };
 Rect.prototype.inset = function(trbl) {
   if(typeof trbl == 'number') trbl = new TRBL(trbl, trbl, trbl, trbl);
-  if(trbl.left + trbl.right < this.width && trbl.top + trbl.bottom < this.height) {
+  if(trbl.left + trbl.right < this.width &&
+    trbl.top + trbl.bottom < this.height
+  ) {
     this.x += trbl.left;
     this.y += trbl.top;
     this.width -= trbl.left + trbl.right;
@@ -7889,8 +8336,12 @@ Rect.prototype.inside = function(point) {
 Rect.CONTAIN = 16;
 Rect.COVER = 32;
 
-Rect.prototype.fit = function(other, align = Align.CENTER | Align.MIDDLE | Rect.CONTAIN) {
-  let factors = Size.prototype.fitFactors.call(this, new Size(other)).sort((a, b) => a - b);
+Rect.prototype.fit = function(other,
+  align = Align.CENTER | Align.MIDDLE | Rect.CONTAIN
+) {
+  let factors = Size.prototype.fitFactors
+    .call(this, new Size(other))
+    .sort((a, b) => a - b);
   // console.log('Rect.prototype.fit:', this, ...factors, { factors, other, align });
 
   let rects = factors.reduce((acc, factor) => {
@@ -8032,16 +8483,21 @@ Rect.prototype[Symbol.iterator] = function* () {
 };
 
 Rect.isBBox = rect =>
-  !(rect instanceof Rect) && ['x1', 'x2', 'y1', 'y2'].every(prop => prop in rect);
-Rect.assign = (to, rect) => Object.assign(to, new Rect(rect).toObject(Rect.isBBox(to)));
-Rect.align = (rect, align_to, a = 0) => Rect.prototype.align.call(rect, align_to, a);
+  !(rect instanceof Rect) &&
+  ['x1', 'x2', 'y1', 'y2'].every(prop => prop in rect);
+Rect.assign = (to, rect) =>
+  Object.assign(to, new Rect(rect).toObject(Rect.isBBox(to)));
+Rect.align = (rect, align_to, a = 0) =>
+  Rect.prototype.align.call(rect, align_to, a);
 Rect.toCSS = rect => Rect.prototype.toCSS.call(rect);
 
-Rect.round = (rect, ...args) => Rect.assign(rect, new Rect(rect).round(...args));
+Rect.round = (rect, ...args) =>
+  Rect.assign(rect, new Rect(rect).round(...args));
 Rect.inset = (rect, trbl) => Rect.assign(rect, new Rect(rect).inset(trbl));
 Rect.outset = (rect, trbl) => Rect.assign(rect, new Rect(rect).outset(trbl));
 
-Rect.center = rect => new Point$1(rect.x + rect.width / 2, rect.y + rect.height / 2);
+Rect.center = rect =>
+  new Point$1(rect.x + rect.width / 2, rect.y + rect.height / 2);
 Rect.bind = rect => {
   new Rect();
 };
@@ -8083,7 +8539,8 @@ for(let name of [
   'toPoints',
   'equals'
 ]) {
-  Rect[name] = (rect, ...args) => Rect.prototype[name].call(rect || new Rect(rect), ...args);
+  Rect[name] = (rect, ...args) =>
+    Rect.prototype[name].call(rect || new Rect(rect), ...args);
 }
 
 Rect.toSource = (rect, opts = {}) => {
@@ -8102,13 +8559,17 @@ Rect.bind = (...args) => {
   return proxy;
 };
 
-Rect.scale = Util$1.curry((rect, sx, sy) => Matrix.scale(sx, sy).transform_rect(rect));
+Rect.scale = Util$1.curry((rect, sx, sy) =>
+  Matrix.scale(sx, sy).transform_rect(rect)
+);
 Rect.resize = Util$1.curry((rect, width, height) => {
   rect.width = width;
   rect.height = height;
   return rect;
 });
-Rect.translate = Util$1.curry((rect, x, y) => Matrix.translate(f, f).transform_rect(rect));
+Rect.translate = Util$1.curry((rect, x, y) =>
+  Matrix.translate(f, f).transform_rect(rect)
+);
 
 for(let f of ['scale', 'resize', 'translate']) {
   Rect.prototype[f] = function(...args) {
@@ -8120,7 +8581,8 @@ for(let f of ['scale', 'resize', 'translate']) {
 Util$1.defineInspect(Rect.prototype, 'x', 'y', 'width', 'height');
 
 const isRect = (rect, testFn = (prop, name, obj) => name in obj) =>
-  Util$1.isObject(rect) && ['x', 'y', 'width', 'height'].every(n => testFn(rect[n], n, rect));
+  Util$1.isObject(rect) &&
+  ['x', 'y', 'width', 'height'].every(n => testFn(rect[n], n, rect));
 
 Util$1.defineGetter(Rect, Symbol.species, function() {
   return this;
@@ -8134,7 +8596,13 @@ Util$1.defineGetter(ImmutableRect, Symbol.species, () => ImmutableRect);
 
 Rect.prototype.toString = function(opts = {}) {
   if(typeof opts == 'string') opts = { separator: opts };
-  const { precision = 0.001, unit = '', separator = ' ', left = '', right = '' } = opts;
+  const {
+    precision = 0.001,
+    unit = '',
+    separator = ' ',
+    left = '',
+    right = ''
+  } = opts;
   let { x, y, width, height } = this;
   let props = [x, y, width, height];
   return left + props.map(p => p + unit).join(' ') + right;
@@ -8159,8 +8627,10 @@ function TRBL(arg) {
   } else if(arg) {
     if(args.length > 1) arg = args;
 
-    if(typeof arg === 'string') arg = [...arg.matchAll(/^[0-9.]+(|px|em|rem|pt|cm|mm)$/g)];
-    else if(arg.length == 4) arg = arg.map(v => parseInt(v.replace(/[a-z]*$/g, '')));
+    if(typeof arg === 'string')
+      arg = [...arg.matchAll(/^[0-9.]+(|px|em|rem|pt|cm|mm)$/g)];
+    else if(arg.length == 4)
+      arg = arg.map(v => parseInt(v.replace(/[a-z]*$/g, '')));
 
     ret.top = arg[0];
     ret.right = arg[1];
@@ -8195,7 +8665,11 @@ TRBL.neg = (trbl = undefined) => ({
 });
 
 TRBL.prototype.isNaN = function() {
-  return isNaN(this.top) || isNaN(this.right) || isNaN(this.bottom) || isNaN(this.left);
+  return (isNaN(this.top) ||
+    isNaN(this.right) ||
+    isNaN(this.bottom) ||
+    isNaN(this.left)
+  );
 };
 Object.defineProperty(TRBL.prototype, 'inset', {
   get() {
@@ -8251,7 +8725,8 @@ TRBL.union = (trbl, other) => ({
   left: other.left < trbl.left ? other.left : trbl.left
 });
 
-TRBL.toRect = trbl => new Rect(trbl.left, trbl.top, trbl.right - trbl.left, trbl.bottom - trbl.top);
+TRBL.toRect = trbl =>
+  new Rect(trbl.left, trbl.top, trbl.right - trbl.left, trbl.bottom - trbl.top);
 
 TRBL.prototype.toString = function(unit = 'px') {
   return ('' +
@@ -8340,7 +8815,9 @@ class Element extends Node {
 
   static create(...args) {
     let { tagName, ns, children, ...props } =
-      typeof args[0] == 'object' ? args.shift() : { tagName: args.shift(), ...args.shift() };
+      typeof args[0] == 'object'
+        ? args.shift()
+        : { tagName: args.shift(), ...args.shift() };
     let parent = args.shift();
     parent = typeof parent == 'string' ? Element.find(parent) : parent;
 
@@ -8361,7 +8838,8 @@ class Element extends Node {
         e.setAttribute(k, value);
       }
     }
-    if(children && children.length) children.forEach(obj => Element.create(obj, e));
+    if(children && children.length)
+      children.forEach(obj => Element.create(obj, e));
 
     if(parent && parent.appendChild) parent.appendChild(e);
     return e;
@@ -8434,7 +8912,8 @@ class Element extends Node {
 
   static *iterator(elem, predicate = (e, d, r) => true, getProp) {
     if(getProp == 'node')
-      getProp = (obj, prop) => obj[prop.replace(/Element$/, 'Node').replace(/Element/, '')];
+      getProp = (obj, prop) =>
+        obj[prop.replace(/Element$/, 'Node').replace(/Element/, '')];
 
     if(!getProp) getProp = (obj, prop) => obj[prop];
     if(typeof elem == 'string') elem = Element.find(elem);
@@ -8451,7 +8930,9 @@ class Element extends Node {
             if(!(elem = getProp(elem, 'parentElement'))) break;
             depth--;
           } while(depth > 0 && !getProp(elem, 'nextElementSibling'));
-          return elem && elem != root ? getProp(elem, 'nextElementSibling') : null;
+          return elem && elem != root
+            ? getProp(elem, 'nextElementSibling')
+            : null;
         })();
     }
   }
@@ -8459,7 +8940,10 @@ class Element extends Node {
   static *childIterator(elem, element = true) {
     element = element ? 'Element' : '';
     if(elem['first' + element + 'Child']) {
-      for(let c = elem['first' + element + 'Child']; c; c = c['next' + element + 'Sibling'])
+      for(let c = elem['first' + element + 'Child'];
+        c;
+        c = c['next' + element + 'Sibling']
+      )
         yield c;
     } else {
       let children = [...elem.children];
@@ -8503,20 +8987,29 @@ class Element extends Node {
     }
 
     let attributes =
-      (opts ? opts.namespaceURI : document.body.namespaceURI) != elem.namespaceURI
+      (opts ? opts.namespaceURI : document.body.namespaceURI) !=
+      elem.namespaceURI
         ? { ns: elem.namespaceURI }
         : {};
     let a = 'length' in elem.attributes ? Element.attr(elem) : elem.attributes;
     for(let key in a) attributes[key] = '' + a[key];
     return {
-      tagName: /[a-z]/.test(elem.tagName) ? elem.tagName : elem.tagName.toLowerCase(),
+      tagName: /[a-z]/.test(elem.tagName)
+        ? elem.tagName
+        : elem.tagName.toLowerCase(),
       ...attributes,
       ...(l.length > 0 ? { children: l } : {})
     };
   }
 
   static toCommand(elem, opts = {}) {
-    let { parent = '', varName, recursive = true, cmd = 'Element.create', quote = "'" } = opts;
+    let {
+      parent = '',
+      varName,
+      recursive = true,
+      cmd = 'Element.create',
+      quote = "'"
+    } = opts;
     let o = Element.toObject(elem, { children: false });
     let s = '';
     let { tagName, ns, children, ...attributes } = o;
@@ -8573,12 +9066,16 @@ class Element extends Node {
   static attr(e, attrs_or_name) {
     const elem = typeof e === 'string' ? Element.find(e) : e;
     //console.log('Element.attr', { elem, attrs_or_name });
-    if(!Util$1.isArray(attrs_or_name) && typeof attrs_or_name === 'object' && elem) {
+    if(!Util$1.isArray(attrs_or_name) &&
+      typeof attrs_or_name === 'object' &&
+      elem
+    ) {
       for(let key in attrs_or_name) {
         const name = Util$1.decamelize(key, '-');
         const value = attrs_or_name[key];
         /*        console.log('attr(', elem, ', ', { name, key, value, }, ')')
-         */ if(key.startsWith('on') && !/svg/.test(elem.namespaceURI)) elem[key] = value;
+         */ if(key.startsWith('on') && !/svg/.test(elem.namespaceURI))
+          elem[key] = value;
         else if(elem.setAttribute) elem.setAttribute(name, value);
         else elem[key] = value;
       }
@@ -8599,7 +9096,8 @@ class Element extends Node {
     }
     let ret = attrs_or_name.reduce((acc, name) => {
       const key = /*Util.camelize*/ name;
-      const value = elem && elem.getAttribute ? elem.getAttribute(name) : elem[key];
+      const value =
+        elem && elem.getAttribute ? elem.getAttribute(name) : elem[key];
       acc[key] = /^-?[0-9]*\.[0-9]\+$/.test(value) ? parseFloat(value) : value;
       return acc;
     }, {});
@@ -8654,7 +9152,9 @@ class Element extends Node {
     let r = TRBL.toRect(bb);
     if(relative) relative_to = e.parentElement;
 
-    if(relative_to && relative_to !== null /*&& Element.isElement(relative_to)*/) {
+    if(relative_to &&
+      relative_to !== null /*&& Element.isElement(relative_to)*/
+    ) {
       const off = Element.rect(relative_to);
       r.x -= off.x;
       r.y -= off.y;
@@ -8696,7 +9196,8 @@ class Element extends Node {
     const position = element.style && element.style.position;
 
     /*|| rect.position || "relative"*/
-    const pelement = position == 'fixed' ? e.documentElement || document.body : e.parentNode;
+    const pelement =
+      position == 'fixed' ? e.documentElement || document.body : e.parentNode;
     const prect = Element.rect(pelement, { round: false });
     //Rect.align(rect, prect, anchor);
 
@@ -8764,7 +9265,8 @@ class Element extends Node {
       y = Element.position(element, edges).y
     } = new Point$1(rest);
     let to = { x, y };
-    let position = rest.shift() || Element.getCSS(element, 'position') || 'relative';
+    let position =
+      rest.shift() || Element.getCSS(element, 'position') || 'relative';
     let off;
     //console.log('Element.move ', { element, to, position });
     const getValue = prop => {
@@ -8901,9 +9403,14 @@ class Element extends Node {
   static getTRBL(element, prefix = '') {
     if(typeof element == 'string') element = Element.find(element);
 
-    const names = ['Top', 'Right', 'Bottom', 'Left'].map(pos => prefix + (prefix == '' ? pos.toLowerCase() : pos + (prefix == 'border' ? 'Width' : ''))
+    const names = ['Top', 'Right', 'Bottom', 'Left'].map(pos =>
+        prefix +
+        (prefix == ''
+          ? pos.toLowerCase()
+          : pos + (prefix == 'border' ? 'Width' : ''))
     );
-    const getCSS = prefix == '' ? () => ({}) : Util$1.memoize(() => Element.getCSS(element));
+    const getCSS =
+      prefix == '' ? () => ({}) : Util$1.memoize(() => Element.getCSS(element));
 
     let entries = names.map(prop => [
       Util$1.decamelize(prop).split('-'),
@@ -8930,7 +9437,8 @@ class Element extends Node {
   static setCSS(element, prop, value) {
     if(typeof element == 'string') element = Element.find(element);
     if(!isElement(element)) return false;
-    if(typeof prop == 'string' && typeof value == 'string') prop = { [prop]: value };
+    if(typeof prop == 'string' && typeof value == 'string')
+      prop = { [prop]: value };
 
     //console.log("Element.setCSS ", { element, prop });
 
@@ -8939,16 +9447,19 @@ class Element extends Node {
       const propName = Util$1.decamelize(key);
       if(typeof value == 'function') {
         if('subscribe' in value) {
-          value.subscribe = newval => element.style.setProperty(propName, newval);
+          value.subscribe = newval =>
+            element.style.setProperty(propName, newval);
           value = value();
         }
       }
       if(element.style) {
         if(value !== undefined) {
-          if(element.style.setProperty) element.style.setProperty(propName, value);
+          if(element.style.setProperty)
+            element.style.setProperty(propName, value);
           else element.style[Util$1.camelize(propName)] = value;
         } else {
-          if(element.style.removeProperty) element.style.removeProperty(propName);
+          if(element.style.removeProperty)
+            element.style.removeProperty(propName);
           else delete element.style[Util$1.camelize(propName)];
         }
       }
@@ -8963,7 +9474,9 @@ class Element extends Node {
     const d = document !== undefined ? document : global.document;
     // console.log('Element.getCSS ', { element,property });
 
-    let parent = Util$1.isObject(element) ? element.parentElement || element.parentNode : null;
+    let parent = Util$1.isObject(element)
+      ? element.parentElement || element.parentNode
+      : null;
 
     let style;
 
@@ -9043,7 +9556,9 @@ class Element extends Node {
     ))
       path =
         '/' +
-        (e.namespaceURI != ns ? e.namespaceURI.replace(/.*\//g, '') + ':' : '') +
+        (e.namespaceURI != ns
+          ? e.namespaceURI.replace(/.*\//g, '') + ':'
+          : '') +
         Element.unique(e) +
         path;
 
@@ -9072,8 +9587,12 @@ class Element extends Node {
     let str = '';
     function dumpElem(child, accu, root, depth) {
       const rect = Rect.round(Element.rect(child, elem));
-      accu += '  '.repeat((depth > 0 ? depth : 0) + 1) + ' ' + Element.xpath(child, child);
-      [...child.attributes].forEach(attr => (accu += ' ' + attr.name + "='" + attr.value + "'"));
+      accu +=
+        '  '.repeat((depth > 0 ? depth : 0) + 1) +
+        ' ' +
+        Element.xpath(child, child);
+      [...child.attributes].forEach(attr => (accu += ' ' + attr.name + "='" + attr.value + "'")
+      );
       if(Rect.area(rect) > 0) accu += ' ' + Rect.toString(rect);
       ['margin', 'border', 'padding'].forEach(name => {
         let trbl = Element.getTRBL(elem, 'margin');
@@ -9129,7 +9648,8 @@ class Element extends Node {
     if(use_id && elem.id && elem.id.length) return name + `[@id='${elem.id}']`;
 
     const classNames = [...elem.classList]; //String(elem.className).split(new RegExp("/[ \t]/"));
-    if(classNames.length > 0) return name + `[@class='${elem.classList.value}']`;
+    if(classNames.length > 0)
+      return name + `[@class='${elem.classList.value}']`;
     /*
     for(let i = 0; i < classNames.length; i++) {
       let res = document.getElementsByClassName(classNames[i]);
@@ -9170,7 +9690,8 @@ class Element extends Node {
       };
     }
 
-    if(!delegate.setcss) delegate.setcss = (elem, css) => Object.assign(elem.style, css); //Element.setCSS(elem, css);
+    if(!delegate.setcss)
+      delegate.setcss = (elem, css) => Object.assign(elem.style, css); //Element.setCSS(elem, css);
 
     delegate.bound_factory = (tag, attr = {}, parent = null) => {
       if(typeof tag == 'object') {
@@ -9194,7 +9715,8 @@ class Element extends Node {
       if(innerHTML) elem.innerHTML += innerHTML;
       if(className && elem) {
         if(elem.classList) elem.classList.add(className);
-        else if(elem.attributes.class) elem.attributes.class.value += ' ' + className;
+        else if(elem.attributes.class)
+          elem.attributes.class.value += ' ' + className;
       }
       for(let k in props) delegate.setattr(elem, k, props[k]);
 
@@ -9265,7 +9787,8 @@ class Element extends Node {
 */
   static transition(element, css, time, easing = 'linear', callback = null) {
     let args = [...arguments];
-    const e = typeof element === 'string' ? Element.find(args.shift()) : args.shift();
+    const e =
+      typeof element === 'string' ? Element.find(args.shift()) : args.shift();
     let a = [];
     const t = typeof time == 'number' ? `${time}ms` : time;
     let ctx = { e, t, from: {}, to: {}, css };
@@ -9278,7 +9801,9 @@ class Element extends Node {
     for(let prop in css) {
       const name = Util$1.decamelize(prop);
       a.push(`${name} ${t} ${easing}`);
-      ctx.from[prop] = e.style.getProperty ? e.style.getProperty(name) : e.style[prop];
+      ctx.from[prop] = e.style.getProperty
+        ? e.style.getProperty(name)
+        : e.style[prop];
       ctx.to[name] = css[prop];
     }
     const tlist = a.join(', ');
@@ -9308,7 +9833,8 @@ class Element extends Node {
 
       cancel = () => ctx.cancel();
 
-      if(e.style && e.style.setProperty) e.style.setProperty('transition', tlist);
+      if(e.style && e.style.setProperty)
+        e.style.setProperty('transition', tlist);
       else e.style.transition = tlist;
 
       Object.assign(e.style, css);
@@ -9355,7 +9881,9 @@ class Element extends Node {
           .catch(err =>
             reject(err !== undefined
                 ? err
-                : new DOMException('The request is not allowed', 'NotAllowedError')
+                : new DOMException('The request is not allowed',
+                    'NotAllowedError'
+                  )
             )
           );
       }
@@ -9381,12 +9909,15 @@ class Element extends Node {
         w.d.body.removeChild(e);
       } catch(err) {}
       if(ok) resolve(ok);
-      else reject(new DOMException('The request is not allowed', 'NotAllowedError'));
+      else
+        reject(new DOMException('The request is not allowed', 'NotAllowedError')
+        );
     });
 
   static *children(elem, tfn = e => e) {
     if(typeof elem == 'string') elem = Element.find(elem);
-    for(let e = elem.firstElementChild; e; e = e.nextElementSibling) yield tfn(e);
+    for(let e = elem.firstElementChild; e; e = e.nextElementSibling)
+      yield tfn(e);
   }
 
   static *recurse(elem, tfn = e => e) {
@@ -9450,7 +9981,8 @@ function __extends(d, b) {
   function __() {
     this.constructor = d;
   }
-  d.prototype = b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
+  d.prototype =
+    b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
 }
 
 /** @class */ (function () {
@@ -9497,7 +10029,8 @@ function __extends(d, b) {
     this.arr = [];
     this.full = false;
     if(capacity <= 0) {
-      throw new RangeError('SlidingBuffer capacity cannot be less than or equal to zero');
+      throw new RangeError('SlidingBuffer capacity cannot be less than or equal to zero'
+      );
     }
   }
   Object.defineProperty(SlidingBuffer.prototype, 'empty', {
@@ -9527,7 +10060,8 @@ function __extends(d, b) {
     this.arr = [];
     this.full = false;
     if(capacity <= 0) {
-      throw new RangeError('DroppingBuffer capacity cannot be less than or equal to zero');
+      throw new RangeError('DroppingBuffer capacity cannot be less than or equal to zero'
+      );
     }
   }
   Object.defineProperty(DroppingBuffer.prototype, 'empty', {
@@ -9572,7 +10106,9 @@ function __extends(d, b) {
 
 function gotClassPrototype(name, protoFn) {
   let ctor = Util$1.getGlobalObject()[name];
-  return (Util$1.isConstructor(ctor) && ctor.prototype && typeof ctor.prototype[protoFn] == 'function'
+  return (Util$1.isConstructor(ctor) &&
+    ctor.prototype &&
+    typeof ctor.prototype[protoFn] == 'function'
   );
 }
 (gotClassPrototype('ReadableStream', 'getReader') &&
@@ -9622,7 +10158,8 @@ function gotClassPrototype(name, protoFn) {
             };
 
             function addListeners() {
-              for(let eventName in listeners) stream.addListener(eventName, listeners[eventName]);
+              for(let eventName in listeners)
+                stream.addListener(eventName, listeners[eventName]);
             }
             function removeListeners() {
               for(let eventName in listeners)
@@ -9751,7 +10288,16 @@ const O_CLOEXEC = 0x00200000;
 
 function QuickJSFileSystem(std, os) {
   let errno = 0;
-  const { O_RDONLY, O_WRONLY, O_RDWR, O_APPEND, O_CREAT, O_EXCL, O_TRUNC, O_TEXT } = os;
+  const {
+    O_RDONLY,
+    O_WRONLY,
+    O_RDWR,
+    O_APPEND,
+    O_CREAT,
+    O_EXCL,
+    O_TRUNC,
+    O_TEXT
+  } = os;
   std.Error;
 
   if(globalThis.os === undefined) globalThis.os = os;
@@ -9910,7 +10456,9 @@ function QuickJSFileSystem(std, os) {
       let buf, bytes;
 
       {
-        let fd = this.open(filename, O_WRONLY | O_CREAT | (overwrite ? O_TRUNC : O_EXCL));
+        let fd = this.open(filename,
+          O_WRONLY | O_CREAT | (overwrite ? O_TRUNC : O_EXCL)
+        );
         //console.log('writeFile', filename, data, fd, res.errno);
         if(fd >= 0) {
           buf = typeof data == 'string' ? StringToArrayBuffer(data) : data;
@@ -10012,7 +10560,10 @@ function QuickJSFileSystem(std, os) {
 
     fileno(file) {
       if(typeof file == 'number') return file;
-      if(typeof file == 'object' && file != null && typeof file.fileno == 'function')
+      if(typeof file == 'object' &&
+        file != null &&
+        typeof file.fileno == 'function'
+      )
         return file.fileno();
     },
     get stdin() {
@@ -10164,7 +10715,8 @@ function NodeJSFileSystem(fs, tty, process) {
       return BufferToString(buf, encoding);
     },
     fileno(file) {
-      if(typeof file == 'object' && file !== null && 'fd' in file) return file.fd;
+      if(typeof file == 'object' && file !== null && 'fd' in file)
+        return file.fd;
       if(typeof file == 'number') return file;
     },
     open(filename, flags = 'r', mode = 0o644) {
@@ -10178,8 +10730,10 @@ function NodeJSFileSystem(fs, tty, process) {
         return fd;
       }
       let ret;
-      if(flags[0] == 'r') ret = fs.createReadStream(filename, { fd, flags, mode });
-      else if(flags[0] == 'w') ret = fs.createWriteStream(filename, { fd, flags, mode });
+      if(flags[0] == 'r')
+        ret = fs.createReadStream(filename, { fd, flags, mode });
+      else if(flags[0] == 'w')
+        ret = fs.createWriteStream(filename, { fd, flags, mode });
       return Object.assign(ret, { fd, flags, mode });
     },
     close(file) {
@@ -10229,7 +10783,8 @@ function NodeJSFileSystem(fs, tty, process) {
     write(file, data, offset, length) {
       let fd = this.fileno(file);
 
-      if(length === undefined && data.length !== undefined) length = data.length;
+      if(length === undefined && data.length !== undefined)
+        length = data.length;
 
       return CatchError(() => fs.writeSync(fd, data, offset, length));
     },
@@ -10485,7 +11040,8 @@ function BrowserFileSystem(TextDecoderStream, TransformStream, WritableStream) {
         .then(response =>
           writable
             ? response.json()
-            : response.body && (stream = response.body).pipeThrough(new TextDecoderStream())
+            : response.body &&
+              (stream = response.body).pipeThrough(new TextDecoderStream())
         )
         .catch(err => err);
       return send ? writable : promise;
@@ -10559,7 +11115,8 @@ function ArrayBufferSize(buf) {
 function StringToArrayBuffer(str, bytes = 1) {
   const buf = new ArrayBuffer(str.length * bytes);
   const view = new CharWidth[bytes](buf);
-  for(let i = 0, strLen = str.length; i < strLen; i++) view[i] = str.codePointAt(i);
+  for(let i = 0, strLen = str.length; i < strLen; i++)
+    view[i] = str.codePointAt(i);
   return buf;
 }
 function CopyToArrayBuffer(str, buf, offset, bytes = 1) {
@@ -10580,7 +11137,10 @@ async function CreatePortableFileSystem(ctor, ...args) {
 async function GetPortableFileSystem() {
   let fs, err;
   try {
-    fs = await CreatePortableFileSystem(QuickJSFileSystem, await import('std'), await import('os'));
+    fs = await CreatePortableFileSystem(QuickJSFileSystem,
+      await import('std'),
+      await import('os')
+    );
   } catch(error) {
     err = error;
   }
@@ -10842,7 +11402,10 @@ function QuickJSChildProcess(fs, std, os) {
           let termSig = status & 0x7f;
           numerr(ret);
           /*if(termSig == 0) resolve(exitCode);
-          else*/ resolve([exitCode, termSig]);
+          else*/ resolve([
+            exitCode,
+            termSig
+          ]);
         });
       };
       obj.kill = function(signum = SIGTERM) {
@@ -10891,7 +11454,9 @@ function NodeJSChildProcess(fs, tty, child_process) {
 
     if(stdio) {
       opts.stdio = stdio.map(strm =>
-        typeof strm == 'object' && strm != null && typeof strm.fd == 'number' ? strm.fd : strm
+        typeof strm == 'object' && strm != null && typeof strm.fd == 'number'
+          ? strm.fd
+          : strm
       );
     }
     //  console.log('child', { command, args, opts });
@@ -10914,7 +11479,10 @@ function NodeJSChildProcess(fs, tty, child_process) {
   };
 }
 
-function BrowserChildProcess(TextDecoderStream, TransformStream, WritableStream) {
+function BrowserChildProcess(TextDecoderStream,
+  TransformStream,
+  WritableStream
+) {
   return function(command, args = [], options = {}) {};
 }
 
@@ -10937,7 +11505,11 @@ async function GetPortableChildProcess(set = (cp, fs, std, os) => true) {
   }
   err = null;
   try {
-    a = [await import('fs'), await import('tty'), await import('child_process')];
+    a = [
+      await import('fs'),
+      await import('tty'),
+      await import('child_process')
+    ];
     fs = await CreatePortableChildProcess(NodeJSChildProcess, ...a);
   } catch(error) {
     err = error;
@@ -11060,13 +11632,16 @@ EventEmitter.prototype.emit = function(...argList) {
 
   // If there is no 'error' event listener then throw.
   if(type === 'error') {
-    if(!this.events.error || (isObject(this.events.error) && !this.events.error.length)) {
+    if(!this.events.error ||
+      (isObject(this.events.error) && !this.events.error.length)
+    ) {
       er = argList[1];
       if(er instanceof Error) {
         throw er; // Unhandled 'error' event
       } else {
         // At least give some kind of context to the user
-        let err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
+        let err = new Error('Uncaught, unspecified "error" event. (' + er + ')'
+        );
         err.context = er;
         throw err;
       }
@@ -11107,7 +11682,8 @@ EventEmitter.prototype.emit = function(...argList) {
 EventEmitter.prototype.addListener = function(type, listener) {
   let m;
 
-  if(!Util$1.isFunction(listener)) throw TypeError('listener must be a function');
+  if(!Util$1.isFunction(listener))
+    throw TypeError('listener must be a function');
 
   if(!this.events) this.events = {};
 
@@ -11160,7 +11736,8 @@ EventEmitter.prototype.addListener = function(type, listener) {
 EventEmitter.prototype.on = EventEmitter.prototype.addListener;
 
 EventEmitter.prototype.once = function(type, listener) {
-  if(!Util$1.isFunction(listener)) throw TypeError('listener must be a function');
+  if(!Util$1.isFunction(listener))
+    throw TypeError('listener must be a function');
 
   let fired = false;
 
@@ -11183,7 +11760,8 @@ EventEmitter.prototype.once = function(type, listener) {
 EventEmitter.prototype.removeListener = function(type, listener) {
   let list, position, length, i;
 
-  if(!Util$1.isFunction(listener)) throw TypeError('listener must be a function');
+  if(!Util$1.isFunction(listener))
+    throw TypeError('listener must be a function');
 
   if(!this.events || !this.events[type]) return this;
 
@@ -11191,12 +11769,16 @@ EventEmitter.prototype.removeListener = function(type, listener) {
   length = list.length;
   position = -1;
 
-  if(list === listener || (Util$1.isFunction(list.listener) && list.listener === listener)) {
+  if(list === listener ||
+    (Util$1.isFunction(list.listener) && list.listener === listener)
+  ) {
     delete this.events[type];
     if(this.events.removeListener) this.emit('removeListener', type, listener);
   } else if(isObject(list)) {
     for(i = length; i-- > 0; ) {
-      if(list[i] === listener || (list[i].listener && list[i].listener === listener)) {
+      if(list[i] === listener ||
+        (list[i].listener && list[i].listener === listener)
+      ) {
         position = i;
         break;
       }
@@ -11246,7 +11828,8 @@ EventEmitter.prototype.removeAllListeners = function(type) {
     this.removeListener(type, listeners);
   } else if(listeners) {
     // LIFO order
-    while(listeners.length) this.removeListener(type, listeners[listeners.length - 1]);
+    while(listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
   }
   delete this.events[type];
 
@@ -11283,7 +11866,8 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-if(!globalThis.filesystem) PortableFileSystem(/*instance => (filesystem = instance)*/);
+if(!globalThis.filesystem)
+  PortableFileSystem(/*instance => (filesystem = instance)*/);
 
 const WritableStream =
   Util$1.getGlobalObject().WritableStream ||
@@ -11328,7 +11912,11 @@ const WritableStream =
       let result = this.length < this.highWaterMark;
       this.needDrain = !result;
       cb =
-        cb || (r => this.emit('data', r > 0 && r < chunk.byteLength ? chunk.slice(0, r) : chunk));
+        cb ||
+        (r =>
+          this.emit('data',
+            r > 0 && r < chunk.byteLength ? chunk.slice(0, r) : chunk
+          ));
       /* const { pos, length, writing } =this;
     console.log('write:',  { pos, length, writing });*/
 
@@ -11345,7 +11933,8 @@ const WritableStream =
     }
 
     _write(chunk, encoding, cb) {
-      if(this.fd === undefined) return this.once('open', () => this._write(chunk, encoding, cb));
+      if(this.fd === undefined)
+        return this.once('open', () => this._write(chunk, encoding, cb));
       //  console.log("filesystem.write(",this.fd, chunk, 0, chunk.byteLength, ")");
       let bytesWrite = filesystem.write(this.fd, chunk, 0, chunk.byteLength);
       // console.log("bytesWrite:",bytesWrite);
@@ -11361,7 +11950,10 @@ const WritableStream =
     clearBuffer() {
       let buf = this.buffers.shift();
       if(buf) {
-        this._write(buf.chunk, buf.encoding, () => (buf.cb && buf.cb(), this.clearBuffer()));
+        this._write(buf.chunk,
+          buf.encoding,
+          () => (buf.cb && buf.cb(), this.clearBuffer())
+        );
       } else {
         if(this.needDrain) {
           this.needDrain = false;
@@ -11393,14 +11985,16 @@ var writableStream$1 = /*#__PURE__*/ Object.freeze({
 // Methods on the transform stream controller object
 
 function TransformStreamCloseReadable(transformStream) {
-  if(transformStream._errored === true) throw new TypeError('TransformStream is already errored');
+  if(transformStream._errored === true)
+    throw new TypeError('TransformStream is already errored');
   if(transformStream._readableClosed === true)
     throw new TypeError('Readable side is already closed');
   TransformStreamCloseReadableInternal(transformStream);
 }
 
 function TransformStreamEnqueueToReadable(transformStream, chunk) {
-  if(transformStream._errored === true) throw new TypeError('TransformStream is already errored');
+  if(transformStream._errored === true)
+    throw new TypeError('TransformStream is already errored');
 
   if(transformStream._readableClosed === true)
     throw new TypeError('Readable side is already closed');
@@ -11430,7 +12024,8 @@ function TransformStreamEnqueueToReadable(transformStream, chunk) {
 }
 
 function TransformStreamError(transformStream, e) {
-  if(transformStream._errored === true) throw new TypeError('TransformStream is already errored');
+  if(transformStream._errored === true)
+    throw new TypeError('TransformStream is already errored');
   TransformStreamErrorInternal(transformStream, e);
 }
 
@@ -11443,17 +12038,22 @@ function TransformStreamCloseReadableInternal(transformStream) {
 }
 
 function TransformStreamErrorIfNeeded(transformStream, e) {
-  if(transformStream._errored === false) TransformStreamErrorInternal(transformStream, e);
+  if(transformStream._errored === false)
+    TransformStreamErrorInternal(transformStream, e);
 }
 
 function TransformStreamErrorInternal(transformStream, e) {
   transformStream._errored = true;
   transformStream._storedError = e;
   if(transformStream._writableDone === false)
-    WritableStreamDefaultControllerError(transformStream._writableController, e);
+    WritableStreamDefaultControllerError(transformStream._writableController,
+      e
+    );
 
   if(transformStream._readableClosed === false)
-    ReadableStreamDefaultControllerError(transformStream._readableController, e);
+    ReadableStreamDefaultControllerError(transformStream._readableController,
+      e
+    );
 }
 
 // Used for preventing the next write() call on TransformStreamSink until there
@@ -11506,7 +12106,8 @@ function TransformStreamTransform(transformStream, chunk) {
 function IsTransformStreamDefaultController(x) {
   if(!typeIsObject(x)) return false;
 
-  if(!Object.prototype.hasOwnProperty.call(x, '_controlledTransformStream')) return false;
+  if(!Object.prototype.hasOwnProperty.call(x, '_controlledTransformStream'))
+    return false;
 
   return true;
 }
@@ -11514,7 +12115,8 @@ function IsTransformStreamDefaultController(x) {
 function IsTransformStream(x) {
   if(!typeIsObject(x)) return false;
 
-  if(!Object.prototype.hasOwnProperty.call(x, '_transformStreamController')) return false;
+  if(!Object.prototype.hasOwnProperty.call(x, '_transformStreamController'))
+    return false;
 
   return true;
 }
@@ -11528,7 +12130,9 @@ class TransformStreamSink {
   start(c) {
     const transformStream = this._transformStream;
     transformStream._writableController = c;
-    return this._startPromise.then(() => TransformStreamReadableReadyPromise(transformStream));
+    return this._startPromise.then(() =>
+      TransformStreamReadableReadyPromise(transformStream)
+    );
   }
 
   write(chunk) {
@@ -11539,15 +12143,18 @@ class TransformStreamSink {
   abort() {
     const transformStream = this._transformStream;
     transformStream._writableDone = true;
-    TransformStreamErrorInternal(transformStream, new TypeError('Writable side aborted'));
+    TransformStreamErrorInternal(transformStream,
+      new TypeError('Writable side aborted')
+    );
   }
 
   close() {
     const transformStream = this._transformStream;
     transformStream._writableDone = true;
-    const flushPromise = PromiseInvokeOrNoop(transformStream._transformer, 'flush', [
-      transformStream._transformStreamController
-    ]);
+    const flushPromise = PromiseInvokeOrNoop(transformStream._transformer,
+      'flush',
+      [transformStream._transformStreamController]
+    );
     // Return a promise that is fulfilled with undefined on success.
     return flushPromise
       .then(() => {
@@ -11595,7 +12202,9 @@ class TransformStreamSource {
   cancel() {
     const transformStream = this._transformStream;
     transformStream._readableClosed = true;
-    TransformStreamErrorInternal(transformStream, new TypeError('Readable side canceled'));
+    TransformStreamErrorInternal(transformStream,
+      new TypeError('Readable side canceled')
+    );
   }
 }
 
@@ -11674,7 +12283,8 @@ const TransformStream$1 =
       this._backpressureChangePromise = undefined;
       this._backpressureChangePromise_resolve = undefined;
 
-      this._transformStreamController = new TransformStreamDefaultController(this);
+      this._transformStreamController = new TransformStreamDefaultController(this
+      );
 
       let startPromise_resolve;
       const startPromise = new Promise(resolve => {
@@ -11689,7 +12299,8 @@ const TransformStream$1 =
 
       this._writable = new WritableStream(sink, writableStrategy);
 
-      const desiredSize = ReadableStreamDefaultControllerGetDesiredSize(this._readableController);
+      const desiredSize = ReadableStreamDefaultControllerGetDesiredSize(this._readableController
+      );
       // Set _backpressure based on desiredSize. As there is no read() at this point, we can just interpret
       // desiredSize being non-positive as backpressure.
       TransformStreamSetBackpressure(this, desiredSize <= 0);
@@ -11757,7 +12368,8 @@ function WritableStreamDefaultControllerError(controller, e) {
 // Helper functions for the TransformStream.
 
 function streamBrandCheckException(name) {
-  return new TypeError(`TransformStream.prototype.${name} can only be used on a TransformStream`);
+  return new TypeError(`TransformStream.prototype.${name} can only be used on a TransformStream`
+  );
 }
 
 function typeIsObject(x) {

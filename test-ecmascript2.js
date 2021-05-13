@@ -1,17 +1,16 @@
-import * as deep from 'deep';
 import { ECMAScriptParser, Lexer } from './lib/ecmascript/parser2.js';
-import { PathReplacer } from './lib/ecmascript/lexer.js';
+import { PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
 import { estree, ESNode, Program, ModuleDeclaration, ModuleSpecifier, ImportDeclaration, ImportSpecifier, ImportDefaultSpecifier, ImportNamespaceSpecifier, Super, Expression, FunctionLiteral, Pattern, Identifier, Literal, RegExpLiteral, TemplateLiteral, BigIntLiteral, TaggedTemplateExpression, TemplateElement, ThisExpression, UnaryExpression, UpdateExpression, BinaryExpression, AssignmentExpression, LogicalExpression, MemberExpression, ConditionalExpression, CallExpression, DecoratorExpression, NewExpression, SequenceExpression, Statement, EmptyStatement, DebuggerStatement, LabeledStatement, BlockStatement, FunctionBody, StatementList, ExpressionStatement, Directive, ReturnStatement, ContinueStatement, BreakStatement, IfStatement, SwitchStatement, SwitchCase, WhileStatement, DoWhileStatement, ForStatement, ForInStatement, ForOfStatement, WithStatement, TryStatement, CatchClause, ThrowStatement, Declaration, ClassDeclaration, ClassBody, MethodDefinition, MetaProperty, YieldExpression, FunctionArgument, FunctionDeclaration, ArrowFunctionExpression, VariableDeclaration, VariableDeclarator, ObjectExpression, Property, ArrayExpression, JSXLiteral, AssignmentProperty, ObjectPattern, ArrayPattern, RestElement, AssignmentPattern, AwaitExpression, SpreadElement, ExportNamedDeclaration, ExportSpecifier, AnonymousDefaultExportedFunctionDeclaration, AnonymousDefaultExportedClassDeclaration, ExportDefaultDeclaration, ExportAllDeclaration } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import { Path } from './lib/json.js';
 import { SortedMap } from './lib/container/sortedMap.js';
-import PortableFileSystem from './lib/filesystem.js';
 import { ImmutablePath } from './lib/json.js';
 import Tree from './lib/tree.js';
-import { ConsoleSetup } from './lib/consoleSetup.js';
+import * as fs from 'fs';
+import * as deep from 'deep';
+import { Console } from 'console';
 
-let filesystem;
 let lexer, parser;
 
 Error.stackTraceLimit = 100;
@@ -29,7 +28,7 @@ function WriteFile(name, data) {
   data = data.trim();
 
   if(data != '') {
-    filesystem.writeFile(name, data + '\n');
+    fs.writeFileSync(name, data + '\n');
     console.log(`Wrote ${name}: ${data.length} bytes`);
   }
 }
@@ -42,10 +41,20 @@ function printAst(ast, comments, printer = globalThis.printer) {
 
 let files = {};
 
-async function main(...args) {
-  await ConsoleSetup({ colors: true, depth: 2, compact: false });
-  await PortableFileSystem(fs => (filesystem = fs));
-  console.log('main', { args });
+function main(...args) {
+  console.log('main', args);
+  globalThis.console = new Console({
+    stdout: process.stdout,
+    inspectOptions: {
+      colors: true,
+      depth: 8,
+      maxArrayLength: 100,
+      compact: 3,
+      customInspect: true
+    }
+  });
+  console.log('console.options', console.options);
+
   console.log('console.options', Object.keys(console.options));
   console.options.compact = 3;
 
@@ -82,12 +91,7 @@ async function main(...args) {
 
   console.log('params.debug', params.debug);
   // params.debug ??= true;
-
-  /*await Util.signal('SIGINT', () => {
-    console.log(`Got SIGINT. (${os.SIGINT})`);
-    Util.putStack();
-    Util.exit(1);
-  }).then(() => console.log(`SIGINT (${os.SIGINT}) handler installed`));*/
+  if(params.debug) ECMAScriptParser.instrumentate();
 
   Util.defineGettersSetters(globalThis, {
     printer: Util.once(() => new Printer({ colors: false, indent: 2 }))
@@ -96,25 +100,24 @@ async function main(...args) {
   const time = () => Date.now() / 1000;
 
   if(params['@'].length == 0) params['@'].push(null); //'./lib/ecmascript/parser.js');
+  console.log(`params['@']`, params['@']);
   for(let file of params['@']) {
     let error;
 
     const processing = /*Util.instrument*/ () => processFile(file, params);
 
-    let start = await time(),
-      end;
-    let times = [];
     // Util.safeCall(processFile, file, params);
     try {
-      await processing(); //.catch(err => console.log('processFile ERROR:', err));
+      processing(); //.catch(err => console.log('processFile ERROR:', err));
     } catch(error) {
-      console.log('ERROR:', error.message);
-      console.log('STACK:', error.stack);
+      if(error) {
+        console.log('ERROR:', error?.message);
+        console.log('STACK:', error?.stack);
+      } else {
+        console.log('ERROR:', error);
+      }
+      if(error !== null) throw error;
     }
-
-    end = await time();
-
-    times.push(Date.now());
 
     //processFile(file, params);
     files[file] = finish(error);
@@ -135,9 +138,9 @@ function processFile(file, params) {
   let data, b, ret;
   const { debug } = params;
   if(file == '-') file = '/dev/stdin';
-  if(file && filesystem.exists(file)) {
-    data = filesystem.readFile(file);
-    //console.log('opened:', file);
+  if(file && fs.existsSync(file)) {
+    data = fs.readFileSync(file, 'utf8');
+    console.log('opened:', file);
   } else {
     file = 'stdin';
     data = source;
@@ -159,26 +162,35 @@ function processFile(file, params) {
   } catch(err) {
     console.log('parseProgram token', parser.token);
     console.log('parseProgram loc', parser.lexer.loc + '');
-    console.log('parseProgram ERROR:', err);
-    if(Util.isObject(err)) {
-      console.log('parseProgram ERROR message:', err.message);
-      console.log('parseProgram ERROR stack:', err.stack);
+
+    if(err !== null) {
+      console.log('parseProgram ERROR message:', err?.message);
+      console.log('parseProgram ERROR stack:',
+        (err.stack + '')
+          .split(/\n/g)
+          .filter(line => !/at (esfactory|call \(native\))/.test(line))
+          .join('\n')
+      );
+      Util.exit(1);
+      throw err;
+    } else {
+      console.log('parseProgram ERROR:', err);
+      throw new Error(`parseProgram`);
     }
-    throw err;
   }
 
   console.log('Parsed: ', console.config({ depth: 1 }), ast);
-  parser.assoc(ast);
-  //console.log('parser.assocMap: ', console.config({depth: 0 }), [...parser.assoc.map.keys()]);
+  /* parser.assoc(ast);
+  console.log('parser.assocMap: ', console.config({depth: 0 }), [...parser.assoc.map.keys()]);*/
 
-  deep.forEach(ast,
+  /*  deep.forEach(ast,
     (node, ptr) => {
       const { loc } = node;
       //console.log('node', console.config({depth: 1 }), node, loc);
     },
     null,
     deep.TYPE_OBJECT
-  );
+  );*/
   parser.addCommentsToNodes(ast);
 
   WriteFile(params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json',
@@ -186,15 +198,6 @@ function processFile(file, params) {
   );
 
   let node2path = new WeakMap();
-
-  /*let flat = deep.flatten(ast,
-    new Map(),
-    node => node instanceof ESNode || Util.isArray(node),
-    (path, value) => {
-       node2path.set(value, path);
-      return [path, value];
-    }
-  );*/
   let nodeKeys = [];
 
   const isRequire = node =>
@@ -221,40 +224,8 @@ function processFile(file, params) {
   });
 
   const code = printAst(ast, parser.comments, printer);
-  //console.log('code:', Util.abbreviate(Util.escape(code)));
 
   WriteFile(output_file, code);
-
-  function getImports() {
-    const imports = [...flat].filter(([path, node]) => isRequire(node) || isImport(node)
-    );
-    const importStatements = imports
-      .map(([path, node]) =>
-        isRequire(node) || true ? path.slice(0, 2) : path
-      )
-      .map(path => [path, deep.get(ast, path)]);
-
-    console.log('imports:',
-      new Map(
-        imports.map(([path, node]) => [ESNode.assoc(node).position, node])
-      )
-    );
-    console.log('importStatements:', importStatements);
-
-    const importedFiles = imports.map(([pos, node]) =>
-      Identifier.string(node.source || node.arguments[0])
-    );
-    console.log('importedFiles:', importedFiles);
-
-    let importIdentifiers = importStatements
-      .map(([p, n]) => [p, n.identifiers ? n.identifiers : n])
-      .map(([p, n]) => [p, n.declarations ? n.declarations : n]);
-    console.log('importIdentifiers:', importIdentifiers);
-
-    console.log('importIdentifiers:',
-      Util.unique(importIdentifiers.flat()).join(', ')
-    );
-  }
 
   //  await ConsoleSetup({ depth: Infinity });
   const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral
@@ -289,9 +260,17 @@ function finish(err) {
   return !fail;
 }
 
-main(...Util.getArgs().slice(1))
-  .then(() => console.log('SUCCESS'))
-  .catch(error => {
+let error;
+try {
+  main(...Util.getArgs().slice(1));
+} catch(e) {
+  error = e;
+} finally {
+  if(error) {
     console.log(`FAIL: ${error.message}\n${error.stack}`);
+    console.log('FAIL');
     Util.exit(1);
-  });
+  } else {
+    console.log('SUCCESS');
+  }
+}

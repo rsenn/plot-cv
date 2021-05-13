@@ -45,7 +45,10 @@ export class List extends Array {
     let ret = new List();
     let i = 0;
 
-    if(typeof callback == 'object' && callback != null && callback instanceof RegExp) {
+    if(typeof callback == 'object' &&
+      callback != null &&
+      callback instanceof RegExp
+    ) {
       var re = callback;
       callback = elem => re.test(elem);
     }
@@ -159,7 +162,9 @@ export class Node {
   }
 }
 
-const getTypeFromNode = Util.memoize((node, ast) => new Type(node.type, ast), new WeakMap());
+const getTypeFromNode = Util.memoize((node, ast) => new Type(node.type, ast),
+  new WeakMap()
+);
 
 export class Type extends Node {
   static declarations = new Map();
@@ -182,8 +187,9 @@ export class Type extends Node {
       }
       // ast ??= globalThis['$']?.data;
       if(ast &&
-        typeof (tmp = deep.find(ast, n => typeof n == 'object' && n && n.name == name)) ==
-          'object' &&
+        typeof (tmp = deep.find(ast,
+          n => typeof n == 'object' && n && n.name == name
+        )) == 'object' &&
         tmp != null
       ) {
         //console.log('Type', tmp, name;
@@ -195,7 +201,11 @@ export class Type extends Node {
       const isPointer = name.endsWith('*');
 
       if(isPointer) {
-        node = { kind: 'CustomType', qualType: name, desugaredQualType: 'void *' };
+        node = {
+          kind: 'CustomType',
+          qualType: name,
+          desugaredQualType: 'void *'
+        };
       }
       if(!isPointer && !node) {
         let subscripts = GetSubscripts(name);
@@ -224,7 +234,8 @@ export class Type extends Node {
     super(node);
     //console.log('node:', node);
 
-    if(node.tagUsed && name) name = (node.tagUsed ? node.tagUsed + ' ' : '') + name;
+    if(node.tagUsed && name)
+      name = (node.tagUsed ? node.tagUsed + ' ' : '') + name;
     if(node.kind && node.kind.startsWith('Enum')) name = 'enum ' + name;
 
     let type = 'type' in node ? node.type : node;
@@ -254,7 +265,8 @@ export class Type extends Node {
     if(name) {
       if(!Type.declarations.has(name)) Type.declarations.set(name, this);
     } else if(qualType) {
-      if(!Type.declarations.has(qualType)) Type.declarations.set(qualType, this);
+      if(!Type.declarations.has(qualType))
+        Type.declarations.set(qualType, this);
     }
 
     if(typeAlias) typeAlias = +typeAlias;
@@ -340,7 +352,9 @@ export class Type extends Node {
     const target = this.pointer;
 
     if(target) {
-      let node = deep.find(ast, n => typeof n == 'object' && n && n.name == target);
+      let node = deep.find(ast,
+        n => typeof n == 'object' && n && n.name == target
+      );
       //   console.log("getPointer",node);
       if(node) return TypeFactory(node, ast);
 
@@ -518,9 +532,11 @@ const { size,unsigned } = this;
 
   [Symbol.toPrimitive](hint) {
     if(hint == 'default' || hint == 'string')
-      return (this.qualType ?? this.desugaredQualType ?? this?.ast?.name ?? '').replace(/\s+(\*+)$/,
-        '$1'
-      ); //this+'';
+      return (this.qualType ??
+        this.desugaredQualType ??
+        this?.ast?.name ??
+        ''
+      ).replace(/\s+(\*+)$/, '$1'); //this+'';
     return this;
   }
 
@@ -557,10 +573,16 @@ Type.declarations.set('long long', new Type({ qualType: 'long long' }));
 Type.declarations.set('__int128', new Type({ qualType: '__int128' }));
 Type.declarations.set('unsigned char', new Type({ qualType: 'unsigned char' }));
 Type.declarations.set('unsigned int', new Type({ qualType: 'unsigned int' }));
-Type.declarations.set('unsigned short', new Type({ qualType: 'unsigned short' }));
+Type.declarations.set('unsigned short',
+  new Type({ qualType: 'unsigned short' })
+);
 Type.declarations.set('unsigned long', new Type({ qualType: 'unsigned long' }));
-Type.declarations.set('unsigned long long', new Type({ qualType: 'unsigned long long' }));
-Type.declarations.set('unsigned __int128', new Type({ qualType: 'unsigned __int128' }));
+Type.declarations.set('unsigned long long',
+  new Type({ qualType: 'unsigned long long' })
+);
+Type.declarations.set('unsigned __int128',
+  new Type({ qualType: 'unsigned __int128' })
+);
 Type.declarations.set('float', new Type({ qualType: 'float' }));
 Type.declarations.set('double', new Type({ qualType: 'double' }));
 Type.declarations.set('void *', new Type({ qualType: 'void *' }));
@@ -594,16 +616,20 @@ export class RecordDecl extends Type {
           if(kind.endsWith('FieldDecl')) {
             if(node?.type?.qualType && / at /.test(node.type.qualType)) {
               let loc = node.type.qualType.split(/(?:\s*[()]| at )/g)[2];
-              let [file, line, column] = loc.split(/:/g).map(i => (!isNaN(+i) ? +i : i));
+              let [file, line, column] = loc
+                .split(/:/g)
+                .map(i => (!isNaN(+i) ? +i : i));
 
-              let typePath = PathRemoveLoc(deep.find(inner, n => n.line == line, deep.RETURN_PATH));
+              let typePath = PathRemoveLoc(deep.find(inner, n => n.line == line, deep.RETURN_PATH)
+              );
               let typeNode = deep.get(inner, typePath);
               type = TypeFactory(typeNode, ast);
               //  console.log('loc:', { kind, file, line, column, typeNode});
             } else if(node.type) {
               type = new Type(node.type, ast);
               if(type.desugared && type.desugared.startsWith('struct ')) {
-                let tmp = ast.inner.find(n => n.kind == 'RecordDecl' && n.name == /^struct./.test(n.name)
+                let tmp = ast.inner.find(n =>
+                    n.kind == 'RecordDecl' && n.name == /^struct./.test(n.name)
                 );
                 if(tmp) type = TypeFactory(tmp.value, ast);
               }
@@ -611,7 +637,10 @@ export class RecordDecl extends Type {
           }
           if(type) acc.push([name, /*node.kind,*/ type]);
           else if(name)
-            acc.push([name, node.kind.startsWith('Indirect') ? null : TypeFactory(node, ast)]);
+            acc.push([
+              name,
+              node.kind.startsWith('Indirect') ? null : TypeFactory(node, ast)
+            ]);
           return acc;
           /*  return [
             name,
@@ -652,7 +681,8 @@ export class EnumDecl extends Type {
 
     if(node.name) this.name = `enum ${node.name}`;
 
-    let constants = node.inner.filter(child => child.kind == 'EnumConstantDecl');
+    let constants = node.inner.filter(child => child.kind == 'EnumConstantDecl'
+    );
     let number = 1;
 
     this.members = new Map(constants.map(({ name, type, inner }) => {
@@ -734,7 +764,8 @@ export class FunctionDecl extends Node {
 
     this.name = node.name;
 
-    if(node.mangledName && node.mangledName != node.name) this.mangledName = node.mangledName;
+    if(node.mangledName && node.mangledName != node.name)
+      this.mangledName = node.mangledName;
 
     let parameters = node.inner?.filter(child => child.kind == 'ParmVarDecl');
     let body = node.inner?.find(child => child.kind != 'ParmVarDecl');
@@ -743,15 +774,23 @@ export class FunctionDecl extends Node {
 
     // console.log('ast:', ast);
 
-    let tmp = deep.find(ast ?? $.data, n => typeof n == 'object' && n && n.name == returnType);
+    let tmp = deep.find(ast ?? $.data,
+      n => typeof n == 'object' && n && n.name == returnType
+    );
 
     if(tmp) returnType = tmp;
 
     // console.log('FunctionDecl', { type, returnType,tmp });
 
-    this.returnType = returnType.kind ? TypeFactory(returnType, ast) : new Type(returnType, ast);
+    this.returnType = returnType.kind
+      ? TypeFactory(returnType, ast)
+      : new Type(returnType, ast);
     this.parameters =
-      parameters && /*new Map*/ parameters.map(({ name, type }) => [name, new Type(type, ast)]);
+      parameters &&
+      /*new Map*/ parameters.map(({ name, type }) => [
+        name,
+        new Type(type, ast)
+      ]);
 
     this.body = body;
   }
@@ -763,7 +802,8 @@ export class VarDecl extends Node {
 
     this.name = node.name;
 
-    if(node.mangledName && node.mangledName != node.name) this.mangledName = node.mangledName;
+    if(node.mangledName && node.mangledName != node.name)
+      this.mangledName = node.mangledName;
 
     let type = node.type?.qualType;
 
@@ -808,7 +848,9 @@ export class Location {
   }
 
   inspect(depth, opts = {}) {
-    const text = opts.colors ? (t, ...c) => '\x1b[' + c.join(';') + 'm' + t + '\x1b[m' : t => t;
+    const text = opts.colors
+      ? (t, ...c) => '\x1b[' + c.join(';') + 'm' + t + '\x1b[m'
+      : t => t;
     return text('Location', 38, 5, 111) + ' [ ' + this.toString() + ' ]';
   }
 
@@ -834,7 +876,11 @@ export function TypeFactory(node, ast, cache = true) {
   // console.log('TypeFactory:', { node });
 
   Util.assert(node.kind,
-    `Not an AST node: ${inspect(node, { colors: false, compact: 0, depth: Infinity })}`
+    `Not an AST node: ${inspect(node, {
+      colors: false,
+      compact: 0,
+      depth: Infinity
+    })}`
   );
 
   if(cache && (obj = Type.ast2node.get(node))) return obj;
@@ -869,7 +915,8 @@ export function TypeFactory(node, ast, cache = true) {
       break;
 
     case undefined:
-      throw new Error(`Not an AST node: ${inspect(node, { colors: false, compact: 0 })}`);
+      throw new Error(`Not an AST node: ${inspect(node, { colors: false, compact: 0 })}`
+      );
       break;
 
     default: throw new Error(`No such kind of AST node: ${node.kind}`);
@@ -902,7 +949,8 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
     args.unshift(compiler ?? 'clang');
   }
 
-  console.log(`SpawnCompiler: ${args.map(p => (/\ /.test(p) ? `"${p}"` : p)).join(' ')}`);
+  console.log(`SpawnCompiler: ${args.map(p => (/\ /.test(p) ? `"${p}"` : p)).join(' ')}`
+  );
 
   let child = spawn(args, {
     block: false,
@@ -939,7 +987,8 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
   errorLines = errorLines.filter(line => /error:/.test(line));
   const numErrors =
     [
-      ...(/^([0-9]+)\s/g.exec(errorLines.find(line => /errors\sgenerated/.test(line)) || '0') || [])
+      ...(/^([0-9]+)\s/g.exec(errorLines.find(line => /errors\sgenerated/.test(line)) || '0'
+      ) || [])
     ][0] || errorLines.length;
   //console.log('errors:', errors);
   if(numErrors) throw new Error(errorLines.join('\n'));
@@ -1011,7 +1060,8 @@ export async function AstDump(compiler, source, args, force) {
   let r;
   let sources = await SourceDependencies(compiler, source, args);
   let newer;
-  let existsAndNotEmpty = filesystem.exists(output) && filesystem.size(output) > 0;
+  let existsAndNotEmpty =
+    filesystem.exists(output) && filesystem.size(output) > 0;
 
   if(existsAndNotEmpty) newer = Newer(output, ...sources);
 
@@ -1071,7 +1121,8 @@ export async function AstDump(compiler, source, args, force) {
       return data;
     },
     files() {
-      return Util.unique(this.data.inner.map(n => n.loc.file).filter(file => file != undefined));
+      return Util.unique(this.data.inner.map(n => n.loc.file).filter(file => file != undefined)
+      );
     }
   });
 
@@ -1101,7 +1152,12 @@ export async function AstDump(compiler, source, args, force) {
       );
     },
     namespaces() {
-      return Object.setPrototypeOf(deep.select(this.data, n => 'NamespaceDecl' == n.kind, deep.RETURN_VALUE, 10),
+      return Object.setPrototypeOf(deep.select(
+          this.data,
+          n => 'NamespaceDecl' == n.kind,
+          deep.RETURN_VALUE,
+          10
+        ),
         List.prototype
       );
     },
@@ -1126,7 +1182,11 @@ export async function AstDump(compiler, source, args, force) {
 export function NameFor(decl, ast = this.data) {
   const { id } = decl;
   let p;
-  if((p = deep.find(ast, (value, key) => key == 'ownedTagDecl' && value.id == id, deep.RETURN_PATH))
+  if((p = deep.find(
+      ast,
+      (value, key) => key == 'ownedTagDecl' && value.id == id,
+      deep.RETURN_PATH
+    ))
   ) {
     p = p.slice(0, -1);
 
@@ -1145,7 +1205,8 @@ export function NodeType(n) {
   return n.type
     ? (t => {
         let { typeAliasDeclId, ...type } = t;
-        if(typeof typeAliasDeclId == 'string') type.typeAliasDecl = idNodes.get(typeAliasDeclId);
+        if(typeof typeAliasDeclId == 'string')
+          type.typeAliasDecl = idNodes.get(typeAliasDeclId);
 
         if(Type.declarations && Type.declarations.has(t.desugaredQualType)) {
           type = Type.declarations.get(t.desugaredQualType);
@@ -1212,7 +1273,9 @@ export function GetTypeNode(node, ast = $.data) {
 export function GetTypeStr(node) {
   let type;
   if(node.type) type = node.type;
-  else if('inner' in node && node.inner.some(inner => 'name' in inner || 'type' in inner)) {
+  else if('inner' in node &&
+    node.inner.some(inner => 'name' in inner || 'type' in inner)
+  ) {
     type = node.inner.map(inner => [inner.name, GetTypeStr(inner)]);
     return '{ ' + type.map(([n, t]) => `${t} ${n};`).join(' ') + ' }';
   }
@@ -1385,7 +1448,8 @@ export function NodePrinter(ast) {
           if(compound_stmt?.inner?.length) put('\n');
 
           for(let inner of compound_stmt.inner ?? []) {
-            if(i++ > 0) put('}; \t\n'.indexOf(out[out.length - 1]) != -1 ? '\n' : ';\n');
+            if(i++ > 0)
+              put('}; \t\n'.indexOf(out[out.length - 1]) != -1 ? '\n' : ';\n');
             printer.print(inner);
           }
           //console.log('CompoundStmt', { out });
@@ -1508,7 +1572,8 @@ export function NodePrinter(ast) {
           let body = inner.pop();
           let numInit = inner.findIndex(n => n.kind == undefined);
           let init = inner.splice(0, numInit);
-          if(inner.length && inner[inner.length - 1].kind == undefined) inner.pop();
+          if(inner.length && inner[inner.length - 1].kind == undefined)
+            inner.pop();
           let incr = inner.pop();
           let cond = inner.pop();
           //console.log('ForStmt', console.config({depth: 4, compact: false, maxArrayLength: 5, hideKeys: ['range', 'loc'] }), { body, init, cond, incr });
@@ -1542,7 +1607,12 @@ export function NodePrinter(ast) {
           put('\n');
         }
         FunctionDecl(function_decl) {
-          const { storageClass, mangledName, isImplicit, isUsed } = function_decl;
+          const {
+            storageClass,
+            mangledName,
+            isImplicit,
+            isUsed
+          } = function_decl;
           let i = 0;
           if(storageClass) put(storageClass + ' ');
           let node = new FunctionDecl(function_decl, this.ast);
@@ -1550,7 +1620,8 @@ export function NodePrinter(ast) {
           let returnType = node.returnType;
           put(returnType + '\n' + function_decl.name + '(');
           i = 0;
-          for(let inner of (function_decl.inner ?? []).filter(n => n.kind == 'ParmVarDecl')) {
+          for(let inner of (function_decl.inner ?? []).filter(n => n.kind == 'ParmVarDecl'
+          )) {
             if(i++ > 0) put(', ');
             printer.print(inner);
           }
@@ -1620,7 +1691,12 @@ export function NodePrinter(ast) {
           put(`${label_stmt.name}:`);
         }
         MemberExpr(member_expr) {
-          const { valueCategory, name, isArray, referencedMemberDecl } = member_expr;
+          const {
+            valueCategory,
+            name,
+            isArray,
+            referencedMemberDecl
+          } = member_expr;
           /*const { referencedDecl } = member_expr.inner[0];
         put(referencedDecl.name);*/
           for(let inner of member_expr.inner) {
@@ -1663,7 +1739,8 @@ export function NodePrinter(ast) {
 
           put(`(`);
 
-          if(paren_list_expr.inner) for(let inner of paren_list_expr.inner) printer.print(inner);
+          if(paren_list_expr.inner)
+            for(let inner of paren_list_expr.inner) printer.print(inner);
           put(`)`);
         }
         ParmVarDecl(parm_var_decl) {
@@ -1688,7 +1765,12 @@ export function NodePrinter(ast) {
           put('__attribute__((pure))');
         }
         RecordDecl(record_decl) {
-          const { tagUsed, name, completeDefinition, parentDeclContextId } = record_decl;
+          const {
+            tagUsed,
+            name,
+            completeDefinition,
+            parentDeclContextId
+          } = record_decl;
           //console.log('RecordDecl', record_decl);
           put(tagUsed);
           if(name) {
@@ -1712,7 +1794,8 @@ export function NodePrinter(ast) {
         }
         ReturnStmt(return_stmt) {
           put('return ');
-          if(return_stmt.inner) for(let inner of return_stmt.inner) printer.print(inner);
+          if(return_stmt.inner)
+            for(let inner of return_stmt.inner) printer.print(inner);
           put(';');
         }
         ReturnsTwiceAttr(returns_twice_attr) {
@@ -1754,16 +1837,28 @@ export function NodePrinter(ast) {
 
           put(name);
           if(unary_expr_or_type_trait_expr.inner)
-            for(let inner of unary_expr_or_type_trait_expr.inner) printer.print(inner);
+            for(let inner of unary_expr_or_type_trait_expr.inner)
+              printer.print(inner);
         }
         UnaryOperator(unary_operator) {
-          const { valueCategory, isPostfix, opcode, canOverflow } = unary_operator;
+          const {
+            valueCategory,
+            isPostfix,
+            opcode,
+            canOverflow
+          } = unary_operator;
           if(!isPostfix) put(opcode);
           for(let inner of unary_operator.inner) printer.print(inner);
           if(isPostfix) put(opcode);
         }
         UnresolvedLookupExpr(unresolved_lookup_expr) {
-          const { type, valueCategory, usesADL, name, lookups } = unresolved_lookup_expr;
+          const {
+            type,
+            valueCategory,
+            usesADL,
+            name,
+            lookups
+          } = unresolved_lookup_expr;
           put(name);
         }
         UnresolvedMemberExpr(unresolved_member_expr) {
@@ -1825,7 +1920,8 @@ export function NodePrinter(ast) {
         BuiltinType(builtin_type) {}
         CallbackAttr(callback_attr) {}
         ClassTemplateDecl(class_template_decl) {}
-        ClassTemplatePartialSpecializationDecl(class_template_partial_specialization_decl) {}
+        ClassTemplatePartialSpecializationDecl(class_template_partial_specialization_decl
+        ) {}
         ClassTemplateSpecializationDecl(class_template_specialization_decl) {}
         ComplexType(complex_type) {}
         CompoundLiteralExpr(compound_literal_expr) {}
@@ -1839,7 +1935,8 @@ export function NodePrinter(ast) {
           const { type, valueCategory } = dependent_scope_decl_ref_expr;
         }
         DependentSizedArrayType(dependent_sized_array_type) {}
-        DependentTemplateSpecializationType(dependent_template_specialization_type) {}
+        DependentTemplateSpecializationType(dependent_template_specialization_type
+        ) {}
         ElaboratedType(elaborated_type) {}
         EnumType(enum_type) {}
         ExprWithCleanups(expr_with_cleanups) {}
@@ -1926,7 +2023,10 @@ export function NodePrinter(ast) {
             let i = -1;
             for(let inner of cxx_record_decl.inner) {
               i++;
-              if(inner.kind && (inner.kind.endsWith('Comment') || inner.kind == 'CXXRecordDecl'))
+              if(inner.kind &&
+                (inner.kind.endsWith('Comment') ||
+                  inner.kind == 'CXXRecordDecl')
+              )
                 continue;
               //  console.log(`CXXRecordDecl inner[${i}]`, inner);
               printer.print(inner);
@@ -1942,10 +2042,14 @@ export function NodePrinter(ast) {
             param,
             initializer;
           let l = cxx_constructor_decl?.inner
-            ? [...cxx_constructor_decl.inner].filter(n => n.kind && !n.kind.endsWith('Comment'))
+            ? [...cxx_constructor_decl.inner].filter(n => n.kind && !n.kind.endsWith('Comment')
+              )
             : [];
           put(`${name}(`);
-          while(l.length && l[0].kind == 'ParmVarDecl' && (param = l.shift())) {
+          while(l.length &&
+            l[0].kind == 'ParmVarDecl' &&
+            (param = l.shift())
+          ) {
             if(param.name) {
               if(i > 0) put(', ');
               printer.print(param);
@@ -1957,7 +2061,10 @@ export function NodePrinter(ast) {
           if(l.length && l[0].kind == 'CXXCtorInitializer') {
             put(`\n: `);
             i = 0;
-            while(l.length && l[0].kind == 'CXXCtorInitializer' && (initializer = l.shift())) {
+            while(l.length &&
+              l[0].kind == 'CXXCtorInitializer' &&
+              (initializer = l.shift())
+            ) {
               if(i++ > 0) put('\n, ');
               let implicit_cast = initializer.inner[0];
               if(implicit_cast?.inner) {
@@ -1995,7 +2102,12 @@ export function NodePrinter(ast) {
           put(`)`);
         }
         CXXDependentScopeMemberExpr(cxx_dependent_scope_member_expr) {
-          const { type, valueCategory, isArrow, member } = cxx_dependent_scope_member_expr;
+          const {
+            type,
+            valueCategory,
+            isArrow,
+            member
+          } = cxx_dependent_scope_member_expr;
 
           // if(cxx_dependent_scope_member_expr.inner)
           for(let inner of cxx_dependent_scope_member_expr.inner) {
@@ -2022,7 +2134,8 @@ export function NodePrinter(ast) {
           } = cxx_destructor_decl;
 
           let l = cxx_destructor_decl.inner
-            ? [...cxx_destructor_decl.inner].filter(n => n.kind && !n.kind.endsWith('Comment'))
+            ? [...cxx_destructor_decl.inner].filter(n => n.kind && !n.kind.endsWith('Comment')
+              )
             : [];
           put(`${name}(`);
 
@@ -2049,12 +2162,16 @@ export function NodePrinter(ast) {
             param,
             initializer;
           let inner = cxx_method_decl.inner
-            ? [...cxx_method_decl.inner].filter(n => n.kind && !n.kind.endsWith('Comment'))
+            ? [...cxx_method_decl.inner].filter(n => n.kind && !n.kind.endsWith('Comment')
+              )
             : [];
           if(storageClass) put(`${storageClass} `);
           put(`${returnType}\n`);
           put(`${name}(`);
-          while(inner.length && inner[0].kind == 'ParmVarDecl' && (param = inner.shift())) {
+          while(inner.length &&
+            inner[0].kind == 'ParmVarDecl' &&
+            (param = inner.shift())
+          ) {
             if(i++ > 0) put(', ');
             printer.print(param);
           }
@@ -2089,7 +2206,10 @@ export function NodePrinter(ast) {
 
           if(cxx_static_cast_expr.inner)
             for(let inner of cxx_static_cast_expr.inner) {
-              if(inner.kind == 'DeclRefExpr' && inner.referencedDecl.name == '') continue;
+              if(inner.kind == 'DeclRefExpr' &&
+                inner.referencedDecl.name == ''
+              )
+                continue;
               printer.print(inner);
             }
           put(`)`);
@@ -2192,7 +2312,9 @@ export function GetType(name_or_id, ast = $.data) {
   if(typeof name_or_id == 'object' && name_or_id) {
     result = name_or_id;
   } else {
-    const types = ast.inner.filter(n => /(?:RecordDecl|TypedefDecl|EnumDecl)/.test(n.kind));
+    const types = ast.inner.filter(n =>
+      /(?:RecordDecl|TypedefDecl|EnumDecl)/.test(n.kind)
+    );
     if(typeof name_or_id == 'string') {
       let tagUsed,
         wantKind = /^.*/;
@@ -2213,11 +2335,14 @@ export function GetType(name_or_id, ast = $.data) {
           ? node => node.id == name_or_id && wantKind.test(node.kind)
           : node => node.name == name_or_id && wantKind.test(node.kind)
       );
-      if(results.length <= 1 || (idx = results.findIndex(r => r.completeDefinition)) == -1)
+      if(results.length <= 1 ||
+        (idx = results.findIndex(r => r.completeDefinition)) == -1
+      )
         idx = 0;
       result = results[idx];
 
-      if(!result && Type.declarations.has(name_or_id)) result = Type.declarations.get(name_or_id);
+      if(!result && Type.declarations.has(name_or_id))
+        result = Type.declarations.get(name_or_id);
     } else {
       result = types[name_or_id];
     }
@@ -2227,7 +2352,10 @@ export function GetType(name_or_id, ast = $.data) {
 
 export function GetFields(node) {
   let fields = deep
-    .select(node, (v, k) => / at /.test(v) && k == 'qualType', deep.RETURN_VALUE_PATH)
+    .select(node,
+      (v, k) => / at /.test(v) && k == 'qualType',
+      deep.RETURN_VALUE_PATH
+    )
     .map(([v, p]) => [v.split(/(?:\s*[()]| at )/g)[2], p.slice(0, -2)]);
 
   return fields.map(([loc, ptr]) =>

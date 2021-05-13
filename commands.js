@@ -26,10 +26,13 @@ export async function NormalizeResponse(resp) {
     if(ok) {
       if(!disp && /json/.test(type) && typeof resp.json == 'function')
         resp = { data: await resp.json() };
-      else if(typeof resp.text == 'function') resp = { data: await resp.text() };
-      if(disp && !resp.file) resp.file = disp.replace(/.*['"]([^"]+)['"].*/, '$1');
+      else if(typeof resp.text == 'function')
+        resp = { data: await resp.text() };
+      if(disp && !resp.file)
+        resp.file = disp.replace(/.*['"]([^"]+)['"].*/, '$1');
       if(disp && type) resp.type = type;
-      if(resp.file) if (!/tmp\//.test(resp.file)) resp.file = 'tmp/' + resp.file;
+      if(resp.file)
+        if(!/tmp\//.test(resp.file)) resp.file = 'tmp/' + resp.file;
     } else {
       console.info('resp:', resp);
       resp = { ...resp, error: resp.statusText };
@@ -53,13 +56,18 @@ export async function ResponseData(resp) {
 
 export const FetchCached = Util.cachedFetch({
   debug: true,
-  print({ cached, ok, status, redirected, statusText, type, url }, fn, ...args) {
+  print({ cached, ok, status, redirected, statusText, type, url },
+    fn,
+    ...args
+  ) {
     console.debug(`FetchCached(${args
         .map((a, i) =>
           typeof a == 'string'
             ? '"' + a + '"'
             : i == 1
-            ? Util.toSource({ ...this.opts, ...a }, { colors: false, multiline: false })
+            ? Util.toSource({ ...this.opts, ...a },
+                { colors: false, multiline: false }
+              )
             : a
         )
         .join(', ')}) =`,
@@ -119,7 +127,12 @@ export async function ListProjects(opts = {}) {
     if(response) response = JSON.parse(response);*/
     if(Util.isObject(response)) response = response.data;
   } else {
-    response = await GithubListContents(url, null, null, '\\.(brd|sch|lbr)$', opts);
+    response = await GithubListContents(url,
+      null,
+      null,
+      '\\.(brd|sch|lbr)$',
+      opts
+    );
 
     //console.log('GithubListContents response:', response);
     if(Util.isArray(response)) {
@@ -154,7 +167,9 @@ export const AddLayer = (layer, project = window.project) => {
 
   visible.subscribe(value => {
     //console.warn(`layer ${name} visible=${value}`);
-    value ? dom.style.removeProperty('display') : dom.style.setProperty('display', 'none');
+    value
+      ? dom.style.removeProperty('display')
+      : dom.style.setProperty('display', 'none');
   });
   layer = { i, name, color, visible, dom };
   window.layers = [...layers, layer];
@@ -167,11 +182,13 @@ export async function BoardToGerber(proj, opts = { fetch: true }) {
   let params = { ...opts, board: proj.name, raw: false },
     response,
     result;
-  response = await FetchURL(`/gerber/${opts.side ? '?side=' + opts.side : ''}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(params)
-  })
+  response = await FetchURL(`/gerber/${opts.side ? '?side=' + opts.side : ''}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params)
+    }
+  )
     .then(NormalizeResponse)
     .catch(error => ({ error }));
   //console.debug('FetchURL response =', response);
@@ -183,7 +200,8 @@ export async function BoardToGerber(proj, opts = { fetch: true }) {
   result.data = response.data.data;
 
   if((opts.fetch || !gerber[opts.side].data) && response.file) {
-    response = await FetchCached(`static/${r.file.replace(/^\.\//, '')}`).then(ResponseData);
+    response = await FetchCached(`static/${r.file.replace(/^\.\//, '')}`).then(ResponseData
+    );
     //console.debug('FetchURL response =', response);
     if(response) result.data = response;
   }
@@ -226,7 +244,8 @@ export async function GerberToGcode(project, allOpts = {}) {
     }
   }
   if((opts.fetch || typeof result.data != 'string') && result.file) {
-    response = await FetchCached(`static/${response.file.replace(/^\.\//, '')}`).then(ResponseData);
+    response = await FetchCached(`static/${response.file.replace(/^\.\//, '')}`
+    ).then(ResponseData);
     //console.debug('GerberToGcode result =', result);
     if(response.data) result.data = response.data;
   }
@@ -234,7 +253,8 @@ export async function GerberToGcode(project, allOpts = {}) {
   //  console.debug('GerberToGcode result =', result);
   if(!result.data)
     Util.lazyProperty(result, 'data', async () => {
-      let response = await FetchCached(`static/${response.file}`).then(ResponseData);
+      let response = await FetchCached(`static/${response.file}`).then(ResponseData
+      );
       return response;
     });
   return result;
@@ -297,12 +317,17 @@ export const GcodeToPolylines = (data, opts = {}) => {
     //console.log('polylines(2):', polylines);
     polylines = polylines.map(pl => geom.simplify(pl, 0.02, true));
     //console.log('polylines(3):', polylines);
-    polylines = polylines.map(pl => Util.chunkArray(pl, 2).map(pt => new Point(...pt)));
+    polylines = polylines.map(pl =>
+      Util.chunkArray(pl, 2).map(pt => new Point(...pt))
+    );
     //console.log('polylines(4):', polylines);
     polylines = polylines.map(pl => new Polyline([]).push(...pl));
     let inside = new Map(polylines.map((polyline2, i) => [
         polyline2,
-        polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2)
+        polylines.filter((polyline, j) =>
+            polyline !== polyline2 &&
+            i !== j &&
+            Polyline.inside(polyline, polyline2)
         )
       ])
     );
@@ -310,12 +335,16 @@ export const GcodeToPolylines = (data, opts = {}) => {
       i,
       polylines
         .map((polyline2, j) => [inside.get(polyline2).length, j, polyline2])
-        .filter(([n, j, polyline2]) => i !== j && inside.get(polyline2).indexOf(polyline) != -1)
+        .filter(([n, j, polyline2]) =>
+            i !== j && inside.get(polyline2).indexOf(polyline) != -1
+        )
         .sort(([a], [b]) => a - b)
     ]);
     //console.log('GcodeToPolylines insideOf:', insideOf);
     let holes = polylines.map((polyline, i) => new Set());
-    insideOf.filter(([i, list]) => list.length == 1).map(([i, list]) => holes[list[0][1]].add(i));
+    insideOf
+      .filter(([i, list]) => list.length == 1)
+      .map(([i, list]) => holes[list[0][1]].add(i));
     //console.log('GcodeToPolylines holes:', holes);
     let remove = new Set();
     for(let [i, inner] of holes.entries()) {
@@ -356,7 +385,10 @@ export const GcodeToPolylines = (data, opts = {}) => {
 export function GeneratePalette(numColors) {
   let ret = [];
   let base = new HSLA(Util.randInt(0, 360, prng), 100, 50).toRGBA();
-  let offsets = Util.range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360],
+  let offsets = Util.range(1, numColors).reduce((acc, i) => [
+      ...acc,
+      ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360
+    ],
     []
   );
   offsets = offsets.sort((a, b) => a - b);
@@ -406,7 +438,8 @@ export async function GetCache(match = /.*/) {
   for(let request of await cache.keys()) {
     let response = await cache.match(request);
     let time = Date.parse(response.headers.get('date')) / 1000;
-    let headers = new Map(Util.map(response.headers.keys(), k => [k, response.headers.get(k)]));
+    let headers = new Map(Util.map(response.headers.keys(), k => [k, response.headers.get(k)])
+    );
     delete response.headers;
     let methods = Util.bindMethods(Util.getMethods(response), response);
 

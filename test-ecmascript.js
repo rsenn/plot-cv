@@ -5,12 +5,10 @@ import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import { Path } from './lib/json.js';
 import { SortedMap } from './lib/container/sortedMap.js';
-import PortableFileSystem from './lib/filesystem.js';
 import { ImmutablePath } from './lib/json.js';
 import Tree from './lib/tree.js';
-import { ConsoleSetup } from './lib/consoleSetup.js';
-
-let filesystem;
+import { Console } from 'console';
+import * as fs from 'fs';
 
 const testfn = () => true;
 const testtmpl = `this is\na test`;
@@ -25,7 +23,7 @@ function WriteFile(name, data) {
   data = data.trim();
 
   if(data != '') {
-    filesystem.writeFile(name, data + '\n');
+    fs.writeFileSync(name, data + '\n');
     console.log(`Wrote ${name}: ${data.length} bytes`);
   }
 }
@@ -39,15 +37,19 @@ function printAst(ast, comments, printer = globalThis.printer) {
 let files = {};
 
 async function main(...args) {
-  await ConsoleSetup({
-    colors: true,
-    depth: 8,
-    compact: 1,
-    customInspect: false
+  console.log('main', args);
+  globalThis.console = new Console({
+    stdout: process.stdout,
+    inspectOptions: {
+      colors: true,
+      depth: 1,
+      maxArrayLength: 10,
+      compact: 3,
+      customInspect: true,
+      hideKeys: ['range', 'loc']
+    }
   });
-  // console.log('options:', { ...console.options });
-  await PortableFileSystem(fs => (filesystem = fs));
-  console.log('args:', args);
+  console.log('console.options', console.options);
 
   let params = Util.getOpt({
       'output-ast': [true, null, 'a'],
@@ -99,11 +101,8 @@ async function main(...args) {
   for(let file of params['@']) {
     let error;
 
-    const processing = Util.instrument(() => processFile(file, params));
+    const processing = () => processFile(file, params);
 
-    let start = await time(),
-      end;
-    let times = [];
     // Util.safeCall(processFile, file, params);
     try {
       await processing(); //.catch(err => console.log('processFile ERROR:', err));
@@ -115,12 +114,8 @@ async function main(...args) {
       }
     }
 
-    end = await time();
-
-    times.push(await Util.now());
-
     //processFile(file, params);
-    files[file] = finish(error);
+    // files[file] = finish(error);
 
     if(error) {
       Util.putError(error);
@@ -138,13 +133,14 @@ function processFile(file, params) {
   let data, b, ret;
   const { debug } = params;
   if(file == '-') file = '/dev/stdin';
-  if(file && filesystem.exists(file)) {
-    data = filesystem.readFile(file);
-    //console.log('opened:', file);
+  if(file && fs.existsSync(file)) {
+    data = fs.readFileSync(file, 'utf8');
+    console.log('opened:', file);
   } else {
     file = 'stdin';
     data = source;
   }
+  console.log('OK, data: ', data);
   console.log('OK, data: ', Util.abbreviate(Util.escape(data)));
 
   let ast, error;

@@ -1,5 +1,5 @@
-import { ECMAScriptParser, PathReplacer } from './lib/ecmascript/parser.js';
-import Printer from './lib/ecmascript/printer.js';
+import { ECMAScriptParser } from './lib/ecmascript/parser2.js';
+import { Printer, PathReplacer } from './lib/ecmascript.js';
 import { ESNode, ImportDeclaration, CallExpression } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import deep from './lib/deep.js';
@@ -197,6 +197,7 @@ function finish(err) {
   console.log('finish: ' + (fail ? 'error' : 'success'));
   return !fail;
 }
+
 let error;
 try {
   main(...Util.getArgs().slice(1));

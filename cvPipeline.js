@@ -26,7 +26,8 @@ export class Pipeline extends Function {
         if(Util.isObject(mat) && mat instanceof Mat) self.images[i] = mat;
         mat = self.images[i];
         self.times[i] = hr(start);
-        if(typeof callback == 'function') callback.call(self, i, self.processors.length);
+        if(typeof callback == 'function')
+          callback.call(self, i, self.processors.length);
       }
       // self.currentProcessor = -1;
       return mat;
@@ -117,7 +118,8 @@ export class Pipeline extends Function {
   }
 
   *[Symbol.iterator]() {
-    for(let i = 0; i < this.processors.length; i++) yield [this.names[i], this.images[i]];
+    for(let i = 0; i < this.processors.length; i++)
+      yield [this.names[i], this.images[i]];
   }
 
   get cache() {

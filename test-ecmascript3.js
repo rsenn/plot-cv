@@ -5,11 +5,11 @@ import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import { Path } from './lib/json.js';
 import { SortedMap } from './lib/container/sortedMap.js';
-import PortableFileSystem from './lib/filesystem.js';
+import PortableFileSystem from './lib/fs.js';
 import { ImmutablePath } from './lib/json.js';
 import Tree from './lib/tree.js';
 import { ConsoleSetup } from './lib/consoleSetup.js';
-let filesystem;
+let fs;
 const testfn = () => true;
 const testtmpl = `this is\na test`;
 const source = `console.log(...cols.map((col, i) => (col + '').replaceAll('\n', '\\n').padEnd(colSizes[i])));`;
@@ -19,7 +19,7 @@ function WriteFile(name, data) {
   if(typeof data != 'string') data = '' + data;
   data = data.trim();
   if(data != '') {
-    filesystem.writeFile(name, data + '\n');
+    fs.writeFile(name, data + '\n');
     console.log(`Wrote${name}${data.length}bytes`);
   }
 }
@@ -35,7 +35,7 @@ async function main(...args) {
     compact: 1,
     customInspect: false
   });
-  await PortableFileSystem(fs => (filesystem = fs));
+  await PortableFileSystem(fs => (fs = fs));
   let params = Util.getOpt({
       ['output-ast']: [true, null, 'a'],
       ['output-js']: [true, null, 'o'],
@@ -112,8 +112,8 @@ function processFile(file, params) {
   let data, b, ret;
   const { debug } = params;
   if(file == '-') file = '/dev/stdin';
-  if(file && filesystem.exists(file)) {
-    data = filesystem.readFile(file);
+  if(file && fs.exists(file)) {
+    data = fs.readFile(file);
   } else {
     file = 'stdin';
     data = source;
