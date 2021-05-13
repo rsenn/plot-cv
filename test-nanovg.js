@@ -8,7 +8,7 @@ import * as nvg from 'nanovg';
 import Console from 'console';
 
 function GLFW(...args) {
-  let resolution = new Size(...args);
+  let resolution = new glfw.Size(...args);
   const { Window } = glfw;
   const hints = [
     [glfw.CONTEXT_VERSION_MAJOR, 3],
@@ -22,8 +22,8 @@ function GLFW(...args) {
   for(let [prop, value] of hints) Window.hint(prop, value);
 
   let window = (glfw.context.current = new Window(resolution.width, resolution.height, 'OpenGL'));
-  let size = new Size(window.size);
-  let position = new Point(window.position);
+  let size = new glfw.Size(window.size);
+  let position = new glfw.Position(window.position);
   nvg.CreateGL3(nvg.STENCIL_STROKES | nvg.ANTIALIAS | nvg.DEBUG);
   return Object.assign(this, { resolution, window, size, position });
 }
@@ -43,22 +43,38 @@ function main(...args) {
   const { width, height } = size;
   const { x, y } = position;
 
+
+  Object.assign(window, {
+    handleKey(charCode) {
+      let char = String.fromCodePoint(charCode);
+      //console.log(`handleKey`, { charCode,char });
+    }, handleCharMods(char, mods) {
+      console.log(`handleCharMods`, {char, mods});
+    },
+    handleMouseButton(button, action, mods) {
+      //console.log(`handleMouseButton`, { button, action, mods });
+    },
+    handleCursorPos(x, y) {
+      //console.log(`handleCursorPos`, { x, y });
+    }
+  });
+
   console.log(`width: ${width}, height: ${height}, x: ${x}, y: ${y}`);
 
   let mat = new Mat(size, cv.CV_8UC4);
 
   mat.setTo([11, 22, 33, 255]);
-  //cv.rectangle(mat, new Point(0,0), new Point(800,600), [255,0,0,0],4, cv.LINE_8);
+  //cv.rectangle(mat, new glfw.Position(0,0), new glfw.Position(800,600), [255,0,0,0],4, cv.LINE_8);
   cv.line(mat,
-    new Point(10, 10),
-    new Point(size.width - 10, size.height - 10),
+    new glfw.Position(10, 10),
+    new glfw.Position(size.width - 10, size.height - 10),
     [255, 255, 0, 255],
     4,
     cv.LINE_AA
   );
   cv.line(mat,
-    new Point(size.width - 10, 10),
-    new Point(10, size.height - 10),
+    new glfw.Position(size.width - 10, 10),
+    new glfw.Position(10, size.height - 10),
     [255, 0, 0, 255],
     4,
     cv.LINE_AA
@@ -83,8 +99,8 @@ function main(...args) {
   let img2Id = nvg.CreateImage('Muehleberg.png', 0);
   console.log('imgId:', imgId);
   console.log('img2Id:', img2Id);
-  let img2Sz = new Size(nvg.ImageSize(img2Id));
-  let imgSz = new Size(nvg.ImageSize(imgId));
+  let img2Sz = new glfw.Size(nvg.ImageSize(img2Id));
+  let imgSz = new glfw.Size(nvg.ImageSize(imgId));
   console.log('nvg.ImageSize(img2Id)', img2Sz + '');
   console.log('nvg.ImageSize(imgId)', imgSz + '');
   let i = 0;
@@ -114,7 +130,7 @@ function main(...args) {
 
     let pattern = nvg.ImagePattern(0, 0, ...img2Sz, 0, img2Id, 1);
 
-    let center = new Point(...size.div(2));
+    let center = new glfw.Position(...size.div(2));
     let imgSz_2 = img2Sz.mul(-0.5);
     /*console.log("size",size);
   console.log("center",center);
@@ -127,29 +143,31 @@ function main(...args) {
 
     //
     nvg.Translate(...center);
-    nvg.Scale(0.6, 0.6);
+    nvg.Scale(0.5, 0.5);
     nvg.Translate(...imgSz_2);
 
     let phi = ((i % 360) / 180) * Math.PI;
     let vec = [Math.cos(phi), Math.sin(phi)].map(n => n * 100);
 
-    //    vec = vec.map(n => n + 150);
-    nvg.Translate(...vec);
-
-    nvg.BeginPath();
-    nvg.Rect(0, 0, ...imgSz);
-    nvg.StrokeColor(nvg.RGB(255, 128, 0));
-    nvg.StrokeWidth(4);
-    nvg.Stroke();
-    nvg.FillPaint(pattern);
-    nvg.Fill();
+    DrawImage(img2Id, vec);
 
     nvg.Translate(...imgSz_2.mul(-1));
-    DrawCircle(new Point(0, 0), 40);
+    DrawCircle(new glfw.Position(0, 0), 40);
 
     nvg.Restore();
 
     DrawCircle(center, 100);
+
+    function DrawImage(image, pos) {
+      const size = nvg.ImageSize(image);
+      nvg.Save();
+      if(pos) nvg.Translate(...pos);
+      nvg.BeginPath();
+      nvg.Rect(0, 0, ...size);
+      nvg.FillPaint(nvg.ImagePattern(0, 0, ...size, 0, image, 1));
+      nvg.Fill();
+      nvg.Restore();
+    }
 
     function DrawCircle(pos, radius) {
       nvg.Save();
