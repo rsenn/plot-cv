@@ -27,9 +27,7 @@ function extractRanges(ranges, text) {
       pos: lineColumn(start, text),
       code: text.substring(start, end),
       toString(filename) {
-        return `${filename}:${this.pos.toString()}\n${Util.abbreviate(this.code,
-          100
-        )}`;
+        return `${filename}:${this.pos.toString()}\n${Util.abbreviate(this.code, 100)}`;
       }
     });
   }

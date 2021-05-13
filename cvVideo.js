@@ -1,12 +1,11 @@
 import { Mat, VideoCapture, Size, Rect } from 'opencv';
 import * as cv from 'opencv';
-import Util from './lib/util.js';
+import { WeakMapper, Modulo, WeakAssign, BindMethods, FindKey } from './cvUtils.js';
 
 const Crop = (() => {
-  const mapper = Util.weakMapper(() => new Mat());
+  const mapper = WeakMapper(() => new Mat());
   return function Crop(mat, rect) {
     let tmp = mapper(mat);
-
     mat.roi(rect).copyTo(tmp);
     return tmp;
   };
@@ -90,7 +89,7 @@ export class ImageSequence {
         return imgs.index;
       },
       set pos_frames(value) {
-        imgs.index = Util.mod(value, images.length);
+        imgs.index = Modulo(value, images.length);
       },
       get pos_msec() {
         const { pos_frames, fps } = this;
@@ -152,9 +151,7 @@ export class ImageSequence {
       //console.debug(`ImageSequence.retrieve[${framePos}]`, { frame, frameSize, mat, targetSize, doResize });
       if(doResize)
         ImageSize(frame, mat, targetSize, (name, arg1, arg2) =>
-          console.debug(`ImageSize[${
-              this.framePos
-            }] ${name} ${arg1.toString()} -> ${arg2.toString()}`
+          console.debug(`ImageSize[${this.framePos}] ${name} ${arg1.toString()} -> ${arg2.toString()}`
           )
         );
       else frame.copyTo(mat);
@@ -169,8 +166,7 @@ export class ImageSequence {
 }
 
 const isVideoPath = arg =>
-  /\.(3gp|avi|f4v|flv|m4v|m2v|mkv|mov|mp4|mpeg|mpg|ogm|vob|webm|wmv)$/i.test(arg
-  );
+  /\.(3gp|avi|f4v|flv|m4v|m2v|mkv|mov|mp4|mpeg|mpg|ogm|vob|webm|wmv)$/i.test(arg);
 
 export class VideoSource {
   static backends = Object.fromEntries([
@@ -216,11 +212,9 @@ export class VideoSource {
       ')'
     );
     if(args.length > 0) {
-      let [device, backend = 'ANY'] = args;
+      let [device, backend = 'ANY', loop = true] = args;
       const driverId = VideoSource.backends[backend];
-      let isVideo =
-        (args.length <= 2 && backend in VideoSource.backends) ||
-        isVideoPath(device);
+      let isVideo = (args.length <= 2 && backend in VideoSource.backends) || isVideoPath(device);
 
       // if(cv.imread(args[0])) isVideo = false;
       console.log('VideoSource', { args, backend, driverId, isVideo });
@@ -236,6 +230,7 @@ export class VideoSource {
         this.fromImages(args);
       }
       this.isVideo = true;
+      this.doLoop = loop;
     }
   }
 
@@ -254,10 +249,23 @@ export class VideoSource {
 
     this.read = function(mat) {
       const { cap } = this;
+      const lastFrame = this.get('CAP_PROP_FRAME_COUNT') - 1;
       if(!mat) mat = new Mat();
-      if(!cap.read(mat)) return null;
 
-      //console.debug('VideoSource.read', { cap, mat });
+      for(;;) {
+        const ok = cap.read(mat);
+        //if(!ok) mat = null;
+
+        if(!ok && this.get('CAP_PROP_POS_FRAMES') == lastFrame) {
+          if(this.doLoop) {
+            this.set('CAP_PROP_POS_FRAMES', 0);
+            continue;
+          }
+        }
+
+        //console.debug('VideoSource.read', {cap, mat, framePos: this.get('CAP_PROP_POS_FRAMES'), frameCount: this.get('CAP_PROP_FRAME_COUNT') });
+        break;
+      }
 
       return mat;
     };
@@ -266,7 +274,7 @@ export class VideoSource {
       if(!mat) mat = new Mat();
       if(cap.retrieve(mat)) return mat;
     };
-    Util.weakAssign(this, Util.bindMethods(this.cap, VideoCapture.prototype));
+    WeakAssign(this, BindMethods(this.cap, VideoCapture.prototype));
   }
 
   fromImages(...args) {
@@ -281,7 +289,7 @@ export class VideoSource {
       return prop;
     };
 
-    Util.define(this, Util.bindMethods(this.cap, ImageSequence.prototype));
+    Object.assign(this, BindMethods(this.cap, ImageSequence.prototype));
 
     // this.size = new Size(1280, 720);
 
@@ -293,14 +301,12 @@ export class VideoSource {
 
   get(prop) {
     const { cap } = this;
-    if(cap && typeof cap.get == 'function')
-      return this.cap.get(this.propId(prop));
+    if(cap && typeof cap.get == 'function') return this.cap.get(this.propId(prop));
   }
 
   set(prop, value) {
     const { cap } = this;
-    if(cap && typeof cap.set == 'function')
-      return this.cap.set(this.propId(prop), value);
+    if(cap && typeof cap.set == 'function') return this.cap.set(this.propId(prop), value);
   }
 
   get backend() {
@@ -310,7 +316,7 @@ export class VideoSource {
 
     if(typeof this.get == 'function') {
       const id = this.get('BACKEND');
-      return Util.findKey(VideoSource.backends, id);
+      return FindKey(VideoSource.backends, id);
     }
   }
 
@@ -330,9 +336,7 @@ export class VideoSource {
       'pos_msec'
     ]
   ) {
-    return new Map(props
-        .map(propName => [propName, this.get(propName)])
-        .filter(([k, v]) => v !== undefined)
+    return new Map(props.map(propName => [propName, this.get(propName)]).filter(([k, v]) => v !== undefined)
     );
   }
 
@@ -354,8 +358,7 @@ export class VideoSource {
   }
 
   position(type = 'frames') {
-    if(type.startsWith('frame'))
-      return [this.get('pos_frames'), this.get('frame_count')];
+    if(type.startsWith('frame')) return [this.get('pos_frames'), this.get('frame_count')];
     if(type.startsWith('percent') || type == '%')
       return (this.get('pos_frames') * 100) / this.get('frame_count');
 
@@ -379,12 +382,12 @@ export class VideoSource {
 
     let ms, s, m, h;
 
-    ms = Util.mod(pos, 1000);
+    ms = Modulo(pos, 1000);
     s = pos / 1000;
     m = Math.floor(s / 60);
-    s = Util.mod(s, 60);
+    s = Modulo(s, 60);
     h = Math.floor(m / 60);
-    m = Util.mod(m, 60);
+    m = Modulo(m, 60);
     h = Math.floor(h);
 
     const pad = (i, n, frac) => {

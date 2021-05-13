@@ -32,8 +32,7 @@ const palette = CreatePalette();
 const paletteHSL = CreatePaletteHSL();
 /*const paletteX = palette.map(color => color.hex());
 const palette32 = Uint32Array.from(palette, c => +c);*/
-const pixels = Array.from({ length: h + 2 }).map((v, i) => new Uint8ClampedArray(buffer, i * w, w)
-);
+const pixels = Array.from({ length: h + 2 }).map((v, i) => new Uint8ClampedArray(buffer, i * w, w));
 const { context } = crosskit;
 const image = context.createImageData(w, h);
 
@@ -54,8 +53,7 @@ Object.assign(globalThis, {
 
 async function Loop() {
   const delay = 1000 / fps;
-  const log = (t, name) =>
-    globalThis.doLog && console.log(`${name} timing: ${t.toFixed(3)}ms`);
+  const log = (t, name) => globalThis.doLog && console.log(`${name} timing: ${t.toFixed(3)}ms`);
   const fire = Util.instrument(Fire, log);
   const redraw = Util.instrument(Redraw, log);
 
@@ -149,10 +147,7 @@ function CreatePaletteHSL() {
     const range = breakpoints[hue] - 1 - breakpoints[hue - 1];
     //console.log("hue:", {i,hue, range});
 
-    colors[i] = HSLA.blend(hues[hue - 1],
-      hues[hue],
-      (i - breakpoints[hue - 1]) / range
-    ).toRGBA();
+    colors[i] = HSLA.blend(hues[hue - 1], hues[hue], (i - breakpoints[hue - 1]) / range).toRGBA();
   }
   return colors;
 }
@@ -182,11 +177,9 @@ function MouseHandler(e) {
 
   console.log(`${e.type} @ ${x},${y}`);
 
-  if(/(down|start)$/.test(type))
-    rc = pixels[y][x] > 0x30 ? 0 : RandomByte() | 0x80;
+  if(/(down|start)$/.test(type)) rc = pixels[y][x] > 0x30 ? 0 : RandomByte() | 0x80;
 
-  for(let ty = y - 1; ty < y + 1; ty++)
-    for(let tx = x - 1; tx < x + 1; tx++) pixels[ty][tx] = rc;
+  for(let ty = y - 1; ty < y + 1; ty++) for (let tx = x - 1; tx < x + 1; tx++) pixels[ty][tx] = rc;
 
   pixels[y + 1][x] = rc;
 }
@@ -195,9 +188,7 @@ async function* MouseIterator() {
   for(;;) {
     yield await once(element, 'mousedown', 'touchstart');
 
-    for await(let event of streamify(['mouseup', 'mousemove', 'touchend', 'touchmove'],
-      element
-    )) {
+    for await(let event of streamify(['mouseup', 'mousemove', 'touchend', 'touchmove'], element)) {
       yield event;
       if(/(up|end)$/.test(event.type)) break;
     }

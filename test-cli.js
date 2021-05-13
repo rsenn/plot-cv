@@ -41,12 +41,7 @@ async function main(...args) {
 
   let ct1 = new Contour();
   let ct2 = new Contour();
-  let pl1 = [
-    new Point(0, 0),
-    new Point(40, 0),
-    new Point(40, 20),
-    new Point(0, 20)
-  ];
+  let pl1 = [new Point(0, 0), new Point(40, 0), new Point(40, 20), new Point(0, 20)];
   let pl2 = pl1.map(({ x, y }) => new Point(x + 100, y + 50));
   console.log('pl1:', pl1);
   console.log('pl2:', pl2);

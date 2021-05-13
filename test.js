@@ -151,13 +151,7 @@ async function main(...args) {
     'CV_64FC4'
   ];
   let matTypeEntries = matTypes.map(n => [n, cv[n]]);
-  console.log(new Map(
-      matTypeEntries.map(([n, v]) => [
-        n,
-        ('0000000' + v.toString(16)).slice(-8)
-      ])
-    )
-  );
+  console.log(new Map(matTypeEntries.map(([n, v]) => [n, ('0000000' + v.toString(16)).slice(-8)])));
 
   console.log('mask: ',
     matTypeEntries

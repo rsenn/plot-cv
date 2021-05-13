@@ -13,34 +13,13 @@ function foreign(name, ret, ...args) {
 }
 
 let getpid = foreign('getpid', 'int');
-let select = foreign('select',
-  'int',
-  'buffer',
-  'buffer',
-  'buffer',
-  'buffer',
-  'buffer'
-);
+let select = foreign('select', 'int', 'buffer', 'buffer', 'buffer', 'buffer', 'buffer');
 let sprintf = foreign('sprintf', 'int', 'buffer', 'string', 'void *');
 let strdup = foreign('strdup', 'void *', 'string');
 let dlopen_ = foreign('dlopen', 'void *', 'string', 'int');
 let dlsym_ = foreign('dlsym', 'void *', 'string');
-let snprintf = foreign('snprintf',
-  'int',
-  'buffer',
-  'size_t',
-  'string',
-  'void *'
-);
-let mmap = foreign('mmap',
-  'ulong',
-  'pointer',
-  'size_t',
-  'int',
-  'int',
-  'int',
-  'size_t'
-);
+let snprintf = foreign('snprintf', 'int', 'buffer', 'size_t', 'string', 'void *');
+let mmap = foreign('mmap', 'ulong', 'pointer', 'size_t', 'int', 'int', 'int', 'size_t');
 let munmap = foreign('munmap', 'void', 'ulong', 'ulong');
 let fork = foreign('fork', 'int');
 let strcpy = foreign('strcpy', 'pointer', 'pointer', 'pointer');
@@ -146,8 +125,7 @@ async function main(...args) {
 
   console.log(getpid());
 
-  for(let [name, value] of Object.entries(ffi))
-    console.log(`ffi.${name}:`, value);
+  for(let [name, value] of Object.entries(ffi)) console.log(`ffi.${name}:`, value);
   console.log(`ffi:`, ffi);
   const flagNames = Util.bitsToNames(Util.filterKeys(fcntl, /^O_/));
   let outBuf = new ArrayBuffer(256);
@@ -155,9 +133,7 @@ async function main(...args) {
   let fd = 1;
   let newState = false;
   console.log('strdup:', strdup('BLAH').toString(16));
-  console.log('dlsym_(RTLD_DEFAULT, "strdup"):',
-    dlsym(RTLD_DEFAULT, 'strdup').toString(16)
-  );
+  console.log('dlsym_(RTLD_DEFAULT, "strdup"):', dlsym(RTLD_DEFAULT, 'strdup').toString(16));
   console.log('snprintf(outBuf, outBuf.byteLength, "%p", -1):',
     snprintf(outBuf, outBuf.byteLength, '%p', 0x7fffffffffffffff)
   );
@@ -190,9 +166,7 @@ async function main(...args) {
 
   let u8 = new Uint8Array([0x41, 0x42, 0x43, 0x44, 0]);
 
-  console.log('u8.buffer.toPointer().toString():',
-    u8.buffer.toPointer().toString()
-  );
+  console.log('u8.buffer.toPointer().toString():', u8.buffer.toPointer().toString());
   // const ptr = u8.buffer.toPointer();
   const ptr = ffi.toPointer(u8.buffer);
   console.log('ptr:', ptr);
@@ -202,9 +176,7 @@ async function main(...args) {
   console.log('select:', toHex(select(4, rfds, wfds, efds, t)));
   console.log('toHex:', toHex(1, 8));
   console.log('toHex:', [...Util.partition(toHex(1, 8), 2)]);
-  console.log('BigUint64Array.BYTES_PER_ELEMENT:',
-    BigUint64Array.BYTES_PER_ELEMENT1
-  );
+  console.log('BigUint64Array.BYTES_PER_ELEMENT:', BigUint64Array.BYTES_PER_ELEMENT1);
   let out = new ArrayBuffer(100);
   console.log('sprintf:', sprintf(out, '%p', rfds));
   console.log('out:', MakeArray(out, 1).toString());
@@ -217,13 +189,7 @@ async function main(...args) {
 
   let base_addr = 0x7f0000000000 - 1024;
 
-  let area = mmap((0x2000000 || 0x7f0000000000) - 8192,
-    8192,
-    0x7,
-    0x02 | MAP_ANONYMOUS,
-    -1,
-    0
-  );
+  let area = mmap((0x2000000 || 0x7f0000000000) - 8192, 8192, 0x7, 0x02 | MAP_ANONYMOUS, -1, 0);
   console.log('area:', area.toString(16));
   let fp = dlsym(RTLD_DEFAULT, 'strchr');
   console.log('fp:', fp.toString(16));
@@ -284,8 +250,7 @@ function StringToHex(str, bytes = 1) {
 function StringToArrayBuffer(str, bytes = 1) {
   const buf = new ArrayBuffer(str.length * bytes);
   const view = new Uint8Array(buf);
-  for(let i = 0, strLen = str.length; i < strLen; i++)
-    view[i] = str.charCodeAt(i);
+  for(let i = 0, strLen = str.length; i < strLen; i++) view[i] = str.charCodeAt(i);
   return buf;
 }
 
@@ -308,9 +273,7 @@ function MakeArray(buf, numBytes) {
       default: return new Uint8Array(buf);
     }
   } catch(error) {
-    console.error(`MakeArray(${Util.className(buf)}[${buf.byteLength}], ${numBytes}): ${
-        error.message
-      }`
+    console.error(`MakeArray(${Util.className(buf)}[${buf.byteLength}], ${numBytes}): ${error.message}`
     );
   }
 }
@@ -318,8 +281,7 @@ function MakeArray(buf, numBytes) {
 function ArrayBufToHex(buf, numBytes = 8) {
   let arr = MakeArray(buf, numBytes);
   return arr.reduce((s, code) =>
-      (s != '' ? s + ' ' : '') +
-      ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
+      (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
     ''
   );
 }

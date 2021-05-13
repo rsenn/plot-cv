@@ -17,8 +17,7 @@ function FileReader(path, bufferSize = 1024) {
   let buf = filesystem.buffer(bufferSize);
   return new Repeater(async (push, stop) => {
     let ret;
-    while((ret = filesystem.read(file, buf)) > 0)
-      await push(buf.slice(0, ret));
+    while((ret = filesystem.read(file, buf)) > 0) await push(buf.slice(0, ret));
     filesystem.close(file);
   });
 }

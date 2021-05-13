@@ -3,6 +3,7 @@ import { ObjectPattern, ObjectExpression, ImportDeclaration, ExportNamedDeclarat
 import ConsoleSetup from './lib/consoleSetup.js';
 import Util from './lib/util.js';
 import { ImmutablePath } from './lib/json.js';
+import Tree from './lib/tree.js';
 import deep from './lib/deep.js';
 import path from './lib/path.js';
 import { SortedMap } from './lib/container/sortedMap.js';
@@ -20,8 +21,7 @@ const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" view
   replacement = ''
 ) {
   if(!(Util.isArray(reOrStr) || Util.isIterable(reOrStr))) reOrStr = [reOrStr];
-  return arg =>
-    reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), arg);
+  return arg => reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), arg);
 }
 function WriteFile(name, data) {
   if(Util.isArray(data)) data = data.join('\n');
@@ -29,10 +29,7 @@ function WriteFile(name, data) {
   filesystem.writeFile(name, data + '\n');
   console.log(`Wrote ${name}: ${data.length} bytes`);
 }
-function printAst(ast,
-  comments,
-  printer = new Printer({ indent: 4 }, comments)
-) {
+function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments)) {
   return printer.print(ast);
 }
 async function main(...args) {
@@ -98,11 +95,8 @@ async function main(...args) {
     try {
       ast = parser.parseProgram();
       parser.addCommentsToNodes(ast);
-      let flat = deep.flatten(ast,
-        new Map(),
-        node => node instanceof ESNode,
-        (path, value) => [path, value]
-      );
+      let tree = new Tree(ast);
+      let flat = tree.flat(null, ([path, node]) => typeof node == 'object' && node != null);
       //log(`keys==`, [...flat].map(([k,v]) => [k.join('.'), Util.className(v)]));
       let exports = [...flat.entries()].filter(([key, value]) =>
         /^Export.*Declaration/.test(value.type)
@@ -123,10 +117,7 @@ async function main(...args) {
           return [position + '', value];
         })
       );
-      exports = exports.map(([p, stmt]) => [
-        p,
-        stmt.declarations || stmt.properties || stmt
-      ]);
+      exports = exports.map(([p, stmt]) => [p, stmt.declarations || stmt.properties || stmt]);
       console.log('exports [1]:', console.config({ depth: 1 }), exports);
       exports = exports.map(([p, stmt]) => stmt);
       /*exports = exports.map(([p, stmt]) => {
@@ -147,9 +138,7 @@ async function main(...args) {
       );
       console.log('exports [3]:', exports);
       //exports = exports.map(decls => decls.map(decl => (Util.isObject(decl) && 'id' in decl ? decl.id : decl)));
-      exports = exports.map(decl =>
-        Util.isObject(decl) && 'id' in decl ? decl.id : decl
-      );
+      exports = exports.map(decl => (Util.isObject(decl) && 'id' in decl ? decl.id : decl));
       //      exportProps =exportProps.map(ep => 'id' in ep ? ep.id.value : ep);
       log(`exports==`, exports);
       let exportProps = exports.reduce((a, stmt) => {
@@ -167,8 +156,7 @@ async function main(...args) {
             specifiers = declarations.map(({ id }) => Identifier.string(id));
           } else {
             let id = Identifier.string(stmt.declaration);
-            if(stmt instanceof ExportDefaultDeclaration)
-              id = `default as ${id}`;
+            if(stmt instanceof ExportDefaultDeclaration) id = `default as ${id}`;
             specifiers = [id];
           }
         }
@@ -196,16 +184,14 @@ async function main(...args) {
     let output = '';
     output = printAst(ast, parser.comments, printer).trim();
     if(output != '')
-      r = r.concat(`/* --- concatenated '${file}' --- */\n${output}\n`.split(/\n/g)
-      );
+      r = r.concat(`/* --- concatenated '${file}' --- */\n${output}\n`.split(/\n/g));
     function log(...args) {
       const assoc = args
         .map(arg => arg instanceof ESNode && ESNode.assoc(arg))
         .filter(assoc => !!assoc);
       //if(assoc[0]) console.log('ASSOC:', assoc[0].position.clone());
       const prefix =
-        (assoc.length == 1 && assoc[0].position && assoc[0].position.clone()) ||
-        modulePath;
+        (assoc.length == 1 && assoc[0].position && assoc[0].position.clone()) || modulePath;
       console.log(prefix.toString() + ':', ...args);
     }
     return true;
@@ -232,8 +218,7 @@ function finish(err) {
   }
   if(err) {
     console.log(parser.lexer.currentLine());
-    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack
-    );
+    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
   }
   let lexer = parser.lexer;
   let t = [];

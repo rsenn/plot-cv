@@ -23,33 +23,29 @@ class NodeList {
 const proxyObject = (root, handler) => {
   const ptr = path => path.reduce((a, i) => a[i], root);
   const nodes = Util.weakMapper((value, path) =>
-      new Proxy(handler && handler.construct ? handler.construct(value, path) : value,
-        {
-          get(target, key) {
-            let prop = value[key];
+      new Proxy(handler && handler.construct ? handler.construct(value, path) : value, {
+        get(target, key) {
+          let prop = value[key];
 
-            //console.log('get ', { key, prop });
+          //console.log('get ', { key, prop });
 
-            if(key == 'attributes') return prop;
+          if(key == 'attributes') return prop;
 
-            if(key !== 'attributes' &&
-              (Util.isObject(prop) || Util.isArray(prop))
-            )
-              return new node([...path, key]);
+          if(key !== 'attributes' && (Util.isObject(prop) || Util.isArray(prop)))
+            return new node([...path, key]);
 
-            return handler && handler.get ? handler.get(prop, key) : prop;
-          },
-          ownKeys(target) {
-            if('attributes' in value) {
-              //console.log('ownKeys', Object.keys(value.attributes));
+          return handler && handler.get ? handler.get(prop, key) : prop;
+        },
+        ownKeys(target) {
+          if('attributes' in value) {
+            //console.log('ownKeys', Object.keys(value.attributes));
 
-              return Object.keys(value.attributes);
-            }
-
-            return Reflect.keys(target);
+            return Object.keys(value.attributes);
           }
+
+          return Reflect.keys(target);
         }
-      )
+      })
   );
 
   function node(path) {
@@ -78,9 +74,7 @@ async function main() {
   let p = proxyObject(xml[0], {
     construct(value, path) {
       //console.log('construct', { value, path });
-      return 'tagName' in value
-        ? new Node(value, path)
-        : new NodeList(value, path);
+      return 'tagName' in value ? new Node(value, path) : new NodeList(value, path);
     }
   });
   //console.log('obj', p);

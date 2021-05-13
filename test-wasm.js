@@ -40,9 +40,7 @@ let importObject = {
 
 (async () => {
   //Instantiate the Wasm module with an implicit compilation step.
-  const { instance, module } = await WebAssembly.instantiate(bytes,
-    importObject
-  );
+  const { instance, module } = await WebAssembly.instantiate(bytes, importObject);
 
   //console.log(instance.exports.addTwo(8, 5));
 })();

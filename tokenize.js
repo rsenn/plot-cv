@@ -421,10 +421,7 @@ export async function* tokenize(streamOfText) {
   lexer.setInput(streamOfText);
   var x = lexer.lex();
   while(x != undefined) {
-    if(x.tokenClass != 'UNMATCHED' &&
-      x.tokenClass != 'WHITESPACE' &&
-      x.tokenClass != 'COMMENT'
-    ) {
+    if(x.tokenClass != 'UNMATCHED' && x.tokenClass != 'WHITESPACE' && x.tokenClass != 'COMMENT') {
       yield x;
     }
     x = lexer.lex();

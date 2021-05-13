@@ -60,14 +60,8 @@ async function main(...args) {
   let { width, height } = size;
   let mat = new Mat(input.size, cv.CV_8UC3);
   let thresh = 100;
-  const RandomPoint = () =>
-    new Point(Util.randInt(0, width - 1), Util.randInt(0, height - 1));
-  const RandomColor = () => [
-    Util.randInt(0, 255),
-    Util.randInt(0, 255),
-    Util.randInt(0, 255),
-    255
-  ];
+  const RandomPoint = () => new Point(Util.randInt(0, width - 1), Util.randInt(0, height - 1));
+  const RandomColor = () => [Util.randInt(0, 255), Util.randInt(0, 255), Util.randInt(0, 255), 255];
 
   let gray = new Mat();
   cv.cvtColor(input, gray, cv.COLOR_BGR2GRAY);
@@ -137,13 +131,9 @@ async function main(...args) {
     Util.pushUnique(ygrid[GetY(y2)], line);
     Util.pushUnique(xgrid[GetY(x2)], line);
   }
-  ygrid = ygrid
-    .map((lines, row) => [row * 5, lines])
-    .filter(([row, lines]) => lines.length > 1);
+  ygrid = ygrid.map((lines, row) => [row * 5, lines]).filter(([row, lines]) => lines.length > 1);
 
-  xgrid = xgrid
-    .map((lines, col) => [col * 5, lines])
-    .filter(([col, lines]) => lines.length > 1);
+  xgrid = xgrid.map((lines, col) => [col * 5, lines]).filter(([col, lines]) => lines.length > 1);
 
   //for(let [x] of xgrid) Draw.line(mat, new Point(x, 0), new Point(x, input.rows), [255, 0, 255, 255], 1, cv.LINE_AA);
 
@@ -166,9 +156,7 @@ async function main(...args) {
     );
     console.log('lpoly angles',
       lpoly.length,
-      (angles = lpoly
-        .map(l => Math.floor((l.angle * 180) / Math.PI))
-        .map(a => a % 90))
+      (angles = lpoly.map(l => Math.floor((l.angle * 180) / Math.PI)).map(a => a % 90))
     );
     console.log('lpoly slopes',
       lpoly.length,
@@ -182,12 +170,7 @@ async function main(...args) {
     /*  if(!angles.some(a => Math.abs(a) <= 1)) continue;
 
     if(lpoly.length > 4) continue;*/
-    Draw.contours(mat,
-      contours,
-      i,
-      RandomColor() ?? [(i * 255) / contours.length, 0, 0, 0],
-      2
-    );
+    Draw.contours(mat, contours, i, RandomColor() ?? [(i * 255) / contours.length, 0, 0, 0], 2);
     i++;
   }
   // console.log(`lines`, [...lines]);

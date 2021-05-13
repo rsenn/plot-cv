@@ -56,10 +56,7 @@ function WriteFile(name, data) {
   console.log(`Wrote ${name}: ${data.length} bytes`);
 }
 
-function printAst(ast,
-  comments,
-  printer = new Printer({ indent: 4 }, comments)
-) {
+function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments)) {
   return printer.print(ast);
 }
 
@@ -96,8 +93,7 @@ function transformTagged(node) {
       if(propName) nextProp();
 
       if(children) {
-        children = children.filter(part => typeof part != 'string' || !isSpace(part)
-        );
+        children = children.filter(part => typeof part != 'string' || !isSpace(part));
 
         if(children.length) r.push(children);
 
@@ -168,8 +164,7 @@ function transformTagged(node) {
             nextProp();
             continue;
           } else if(inProps && str[i] == '=') {
-            if('\'`"'.indexOf(str[i + 1]) != -1)
-              value = [(inValue = str[++i])];
+            if('\'`"'.indexOf(str[i + 1]) != -1) value = [(inValue = str[++i])];
             else inValue = ' \r\n\t';
             continue;
           } else if(inProps && propName == '' && str[i] == '/') {
@@ -237,10 +232,7 @@ async function main(...args) {
     console.log(`opened '${file}':`, Util.abbreviate(data));
     let ast, error;
 
-    globalThis.parser = new ECMAScriptParser(data ? data.toString() : code,
-      file,
-      false
-    );
+    globalThis.parser = new ECMAScriptParser(data ? data.toString() : code, file, false);
     globalThis.printer = new Printer({ indent: 4 });
     console.log('OK');
 
@@ -265,9 +257,7 @@ async function main(...args) {
         node2path.set(node, path);
         nodeKeys.push(path);
       }
-      let commentMap = new Map([
-          ...parser.comments
-        ].map(({ comment, text, node, pos, len, ...item }) => [
+      let commentMap = new Map([...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
           pos * 10 - 1,
           { comment, pos, len, node: posMap.keyOf(node) }
         ]),
@@ -276,8 +266,7 @@ async function main(...args) {
 
       console.log('commentMap:', commentMap);
 
-      const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral
-      );
+      const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral);
       const taggedTemplates = templates.filter(([path, node]) => path[path.length - 1] == 'arguments'
       );
       const taggedCalls = taggedTemplates.map(([path, node]) => [
@@ -290,8 +279,7 @@ async function main(...args) {
         taggedCalls.map(([path, node]) => transformTagged(node))
       );
 
-      const output_file =
-        file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
+      const output_file = file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
       const output = printAst(ast, parser.comments, printer);
       //console.log('output:', output);
 
@@ -321,8 +309,7 @@ function finish(err) {
 
   if(err) {
     console.log(parser.lexer.currentLine());
-    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack
-    );
+    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
   }
 
   let lexer = parser.lexer;

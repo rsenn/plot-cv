@@ -1,7 +1,6 @@
 import * as cv from 'opencv';
 import { Size, Point, Draw } from 'opencv';
-
-import Util from './lib/util.js';
+import { BitsToNames } from './cvUtils.js';
 
 export const MouseEvents = [
   'EVENT_MOUSEMOVE',
@@ -32,9 +31,7 @@ export const Mouse = {
     return event => MouseEvents[event].replace(/EVENT_/, '');
   })(),
   printFlags: (() => {
-    const toks = Util.bitsToNames(MouseFlags, name =>
-      name.replace(/EVENT_FLAG_/, '')
-    );
+    const toks = BitsToNames(MouseFlags, name => name.replace(/EVENT_FLAG_/, ''));
 
     return flags => [...toks(flags)];
   })()
@@ -90,10 +87,7 @@ export class Window {
   }
 }
 
-export function TextStyle(fontFace = cv.FONT_HERSHEY_PLAIN,
-  fontScale = 1.0,
-  thickness = 1
-) {
+export function TextStyle(fontFace = cv.FONT_HERSHEY_PLAIN, fontScale = 1.0, thickness = 1) {
   Object.assign(this, { fontFace, fontScale, thickness });
 }
 
@@ -101,8 +95,7 @@ Object.assign(TextStyle.prototype, {
   size(text, fn = y => {}) {
     const { fontFace, fontScale, thickness } = this;
     let baseY;
-    let size = new Size(...Draw.textSize(text, fontFace, fontScale, thickness, y => (baseY = y))
-    );
+    let size = new Size(...Draw.textSize(text, fontFace, fontScale, thickness, y => (baseY = y)));
 
     fn(baseY);
 
@@ -150,8 +143,7 @@ export function DrawText(mat, text, textColor, fontFace, fontSize = 13) {
   //console.log(`text '${text.replace(/\n/g, '\\n')}'`);
   let color = textColor;
   let font = new TextStyle(fontFace, fontSize, -1);
-  let lines = [...text.matchAll(/(\x1b[^a-z]*[a-z]|\n|[^\x1b\n]*)/g)].map(m => m[0]
-  );
+  let lines = [...text.matchAll(/(\x1b[^a-z]*[a-z]|\n|[^\x1b\n]*)/g)].map(m => m[0]);
   let baseY;
   let size = font.size('yP', y => (baseY = y));
   let start = new Point(size.width / text.length, baseY - 3);
@@ -165,9 +157,7 @@ export function DrawText(mat, text, textColor, fontFace, fontSize = 13) {
       pos.x = start.x;
       continue;
     } else if(line.startsWith('\x1b')) {
-      let ansi = [...line.matchAll(/([0-9]+|[a-z])/g)].map(m =>
-        isNaN(+m[0]) ? m[0] : +m[0]
-      );
+      let ansi = [...line.matchAll(/([0-9]+|[a-z])/g)].map(m => (isNaN(+m[0]) ? m[0] : +m[0]));
       //console.log("ansi:", ansi);
       if(ansi[ansi.length - 1] == 'm') {
         let n;

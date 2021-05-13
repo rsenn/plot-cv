@@ -89,9 +89,7 @@ function alignItem(item) {
   let geometry = item.geometry;
   if(item.tagName == 'element') {
     let pkg = item['package'];
-    let transformation = item
-      .transformation()
-      .filter(tr => tr.type != 'translate');
+    let transformation = item.transformation().filter(tr => tr.type != 'translate');
     let matrix = transformation.toMatrix();
     //console.log('alignItem:', { transformation, matrix });
     offsetPos = new Point(pkg.pads[0]).transform(matrix);
@@ -140,8 +138,7 @@ function alignAll(doc = globalThis.document) {
   for(let item of items) changed |= alignItem(item);
   let signals_nets = doc.getAll(/(signals|nets)/);
   //console.log('signals_nets:', signals_nets);
-  for(let net of signals_nets)
-    for(let item of net.getAll('wire')) changed |= alignItem(item);
+  for(let net of signals_nets) for (let item of net.getAll('wire')) changed |= alignItem(item);
   return !!changed;
 }
 
@@ -157,21 +154,16 @@ function fixValue(element) {
       break;
     }
     case 'L': {
-      newValue = value.replace(/^([0-9.]+)(?:[\x7F-\xFF]*\xB5|\xEF\xBF\xBD)(H.*)/,
-        '$1\u00B5$2'
-      );
+      newValue = value.replace(/^([0-9.]+)(?:[\x7F-\xFF]*\xB5|\xEF\xBF\xBD)(H.*)/, '$1\u00B5$2');
       break;
     }
     case 'C': {
-      newValue = value.replace(/^([0-9.]+)(?:[\x7F-\xFF]*\xB5|\xEF\xBF\xBD)(F.*)/,
-        '$1\u00B5$2'
-      );
+      newValue = value.replace(/^([0-9.]+)(?:[\x7F-\xFF]*\xB5|\xEF\xBF\xBD)(F.*)/, '$1\u00B5$2');
       break;
     }
   }
   if(newValue && newValue != value) {
-    console.log(`element ${element} value changed from '${value}' to '${newValue}'`
-    );
+    console.log(`element ${element} value changed from '${value}' to '${newValue}'`);
     element.attributes['value'] = newValue;
   }
 }
@@ -192,8 +184,7 @@ function coordMap(doc) {
         let [a, b] = points.map(p => new Point(p));
 
         //   console.log(`signal '${signal.name}' wire #${signal.wires.indexOf(wire)}:`, points);
-        console.log(`signal '${signal.name}' wire #${signal.wires.indexOf(wire)}:`, { a, b }
-        );
+        console.log(`signal '${signal.name}' wire #${signal.wires.indexOf(wire)}:`, { a, b });
 
         map.set(a.toString(), [signal.name, wire, b]);
         map.set(b.toString(), [signal.name, wire, a]);
@@ -201,9 +192,7 @@ function coordMap(doc) {
     }
     for(let element of doc.board.elements.children) {
       let pos = new Point(element.geometry);
-      let transform = element
-        .transformation()
-        .filter(t => t.type != 'translate');
+      let transform = element.transformation().filter(t => t.type != 'translate');
       console.log(`element '${element.name}':`, pos, transform);
       let i = 0;
       let { contactrefs } = element;
@@ -213,11 +202,7 @@ function coordMap(doc) {
         console.log(`pad '${element.name}.${pad.name}':`, geometry);
         let padPos = new Point(geometry);
         let cref = contactrefs[pad.name];
-        map.set(padPos.toString(), [
-          cref?.parentNode ?? null,
-          element,
-          pad /*, cref*/
-        ]);
+        map.set(padPos.toString(), [cref?.parentNode ?? null, element, pad /*, cref*/]);
       }
     }
   }
@@ -234,17 +219,12 @@ async function testEagle(filename) {
   console.log('proj.documents', proj.documents);
   let { board, schematic } = proj;
   const packages = {
-    board: (board &&
-        board.elements &&
-        [...board.elements].map(([name, e]) => e.package)) ||
-      [],
+    board: (board && board.elements && [...board.elements].map(([name, e]) => e.package)) || [],
     schematic: (schematic &&
         schematic.sheets &&
         [...schematic.sheets]
           .map(e =>
-            [...e.instances]
-              .map(([name, i]) => i.part.device.package)
-              .filter(p => p !== undefined)
+            [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)
           )
           .flat()) ||
       []
@@ -271,8 +251,7 @@ async function testEagle(filename) {
   }
   console.log('proj.board', proj.board);
   if(proj.board) updateMeasures(proj.board);
-  if(alignAll(board) || alignAll(schematic))
-    console.log('Saved:', await proj.saveTo('tmp', true));
+  if(alignAll(board) || alignAll(schematic)) console.log('Saved:', await proj.saveTo('tmp', true));
   console.log('documents', proj.documents);
   console.log('saved:', await proj.saveTo('tmp', true));
   for(let doc of proj.documents) {
@@ -301,10 +280,7 @@ async function testEagle(filename) {
   console.log('desc', desc);
   desc = desc
     .map(([file, e]) => [file, e && e.xpath()])
-    .map(([file, xpath]) => [
-      file,
-      xpath && xpath.toCode('', { spacing: '', function: true })
-    ]);
+    .map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
   desc = new Map(desc);
   console.log('descriptions', [...Util.map(desc, ([k, v]) => [k, v])]);
   return proj;
@@ -427,9 +403,7 @@ async function main(...args) {
   repl.history_set(JSON.parse(std.loadFile(histfile) || '[]'));
 
   Util.atexit(() => {
-    let hist = repl
-      .history_get()
-      .filter((item, i, a) => a.lastIndexOf(item) == i);
+    let hist = repl.history_get().filter((item, i, a) => a.lastIndexOf(item) == i);
 
     filesystem.writeFile(histfile, JSON.stringify(hist, null, 2));
 

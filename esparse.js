@@ -48,11 +48,7 @@ function main(...args) {
         false,
         (v, r, o) => {
           console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
-          console.log(o
-              .map(([name, [arg, fn, ch]]) =>
-                  `  --${(name + ', -' + ch).padEnd(20)}`
-              )
-              .join('\n')
+          console.log(o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n')
           );
           Util.exit(0);
         },
@@ -118,10 +114,7 @@ function processFile(file, params) {
 
   let ast, error;
   globalThis.parser = null;
-  globalThis.parser = new ECMAScriptParser(data ? data.toString() : data,
-    file,
-    debug
-  );
+  globalThis.parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
 
   try {
     ast = parser.parseProgram();
@@ -150,8 +143,7 @@ function processFile(file, params) {
 
   let nodeKeys = [];
 
-  const isRequire = node =>
-    node instanceof CallExpression && node.callee.value == 'require';
+  const isRequire = node => node instanceof CallExpression && node.callee.value == 'require';
   const isImport = node => node instanceof ImportDeclaration;
 
   let commentMap = new Map([...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
@@ -163,11 +155,9 @@ function processFile(file, params) {
 
   //console.log('commentMap:', commentMap);
 
-  const output_file =
-    params['output-js'] ?? path.basename(file, path.extname(file)) + '.es';
+  const output_file = params['output-js'] ?? path.basename(file, path.extname(file)) + '.es';
 
-  WriteFile(params['output-ast'] ??
-      path.basename(file, path.extname(file)) + '.ast.json',
+  WriteFile(params['output-ast'] ?? path.basename(file, path.extname(file)) + '.ast.json',
     JSON.stringify(ast /*.toJSON()*/, null, 2)
   );
 }
@@ -183,8 +173,7 @@ function finish(err) {
 
   if(err) {
     console.log(parser.lexer.currentLine());
-    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack
-    );
+    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
   }
 
   let lexer = parser.lexer;

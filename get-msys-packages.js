@@ -74,9 +74,7 @@ async function main(...args) {
 
   WriteFile('packages.list', packages.join('\n'));
 
-  let locations = packages.map(url =>
-    url.replace('https://repo.msys2.org/', '')
-  );
+  let locations = packages.map(url => url.replace('https://repo.msys2.org/', ''));
   let names = locations.map(url =>
     url.replace(/(.*)(-[^-.]+)(\.pkg\..*)/g, '$1|$2|$3').split(/\|/g)
   );
@@ -92,26 +90,15 @@ async function main(...args) {
       ver = null;
     }
 
-    let re = new RegExp(arg.startsWith('/') ? name + '-' + (ver || 'r?[0-9]') : arg,
-      'gi'
-    );
+    let re = new RegExp(arg.startsWith('/') ? name + '-' + (ver || 'r?[0-9]') : arg, 'gi');
     let matches = [...Util.filter(names, item => re.test(item[0]))];
     let pkgs = matches.map(loc => 'https://repo.msys2.org/' + loc.join(''));
     /*console.log("re:", re+'');
 console.log("matches:", matches);*/
     if(pkgs.length == 0 || packages.length == pkgs.length) {
-      console.log('re =',
-        re,
-        ' pkgs.length =',
-        pkgs.length,
-        ' pacakges.length =',
-        packages.length
-      );
+      console.log('re =', re, ' pkgs.length =', pkgs.length, ' pacakges.length =', packages.length);
       pkgs = Util.filter(packages,
-        (re = new RegExp(
-          arg.startsWith('/') ? name + '-[a-z]+-' + (ver || 'r?[0-9]') : arg,
-          'gi'
-        ))
+        (re = new RegExp(arg.startsWith('/') ? name + '-[a-z]+-' + (ver || 'r?[0-9]') : arg, 'gi'))
       );
       if(pkgs.length == 0 || packages.length == pkgs.length) {
         console.log('re =',
@@ -123,8 +110,7 @@ console.log("matches:", matches);*/
         );
         console.error(`Number of packages ${pkgs.length} when matching ${re}`);
         continue;
-        throw new Error(`Number of packages ${pkgs.length} when matching ${re}`
-        );
+        throw new Error(`Number of packages ${pkgs.length} when matching ${re}`);
       }
     }
     for(let pkg of pkgs) {
@@ -211,9 +197,7 @@ async function processUrl(url, map) {
     } else if(!key && pkg !== null) {
       pkg = null;
       continue;
-    } else if(!key &&
-      (pkg === null || (typeof pkg == 'string' && pkg.length))
-    ) {
+    } else if(!key && (pkg === null || (typeof pkg == 'string' && pkg.length))) {
       obj = null;
       pkg = line.trim();
       continue;

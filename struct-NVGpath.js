@@ -46,18 +46,7 @@ class NVGpath extends ArrayBuffer {
   get convex() { return new Int32Array(this, 48)[0]; }
 
   toString() {
-    const {
-      first,
-      count,
-      closed,
-      nbevel,
-      fill,
-      nfill,
-      stroke,
-      nstroke,
-      winding,
-      convex
-    } = this;
+    const { first, count, closed, nbevel, fill, nfill, stroke, nstroke, winding, convex } = this;
     return `struct NVGpath {\n\t.first = ${first},\n\t.count = ${count},\n\t.closed = ${closed},\n\t.nbevel = ${nbevel},\n\t.fill = 0x${fill.toString(16
     )},\n\t.nfill = ${nfill},\n\t.stroke = 0x${stroke.toString(16
     )},\n\t.nstroke = ${nstroke},\n\t.winding = ${winding},\n\t.convex = ${convex}\n}`;
