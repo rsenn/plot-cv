@@ -1,5 +1,5 @@
 import { ECMAScriptParser, ECMAScriptInterpreter } from './lib/ecmascript.js';
-import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
+import Lexer, { PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
 import { CallExpression } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';

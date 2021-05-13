@@ -9,56 +9,47 @@ import Util from './lib/util.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { Pipeline, Processor } from './cvPipeline.js';
 import { Window, MouseFlags, MouseEvents, Mouse, TextStyle, DrawText } from './cvHighGUI.js';
-
-let filesystem;
 let basename = Util.getArgv()[1].replace(/\.js$/, '');
-
 function WriteImage(name, mat) {
   cv.imwrite(name, mat);
   console.log("Wrote '" + name + "' (" + mat.size + ').');
 }
-
 function SaveConfig(configObj) {
-  configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v])
-  );
+  configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v]));
   let file = std.open(basename + '.config.json', 'w+b');
   file.puts(JSON.stringify(configObj, null, 2) + '\n');
   file.close();
-  console.log("Saved config to '" + basename + '.config.json' + "'",
+  console.log(
+    "Saved config to '" + basename + '.config.json' + "'",
     inspect(configObj, { compact: false })
   );
 }
-
 function LoadConfig() {
   let str = std.loadFile(basename + '.config.json');
   let configObj = JSON.parse(str || '{}');
-
-  configObj = Object.fromEntries(Object.entries(configObj)
+  configObj = Object.fromEntries(
+    Object.entries(configObj)
       .map(([k, v]) => [k, +v])
       .filter(([k, v]) => !isNaN(v))
   );
   console.log('LoadConfig:', inspect(configObj, { compact: false }));
   return configObj;
 }
-
 function InspectMat(mat) {
   const { channels, depth, type, cols, rows } = mat;
-
   return inspect({ channels, depth, type, cols, rows });
 }
-
 function ToHex(number) {
-  if(number < 0) number = 0xffffffff + number + 1;
+  if (number < 0) number = 0xffffffff + number + 1;
   return '0x' + number.toString(16);
 }
-
 function Accumulator(callback) {
   let self;
   let accu = {};
-  self = function(name, value) {
-    if(name in accu) return;
+  self = function (name, value) {
+    if (name in accu) return;
     accu[name] = value;
-    if(typeof callback == 'function') callback(name, value);
+    if (typeof callback == 'function') callback(name, value);
   };
   Object.assign(self, {
     accu,
@@ -72,15 +63,14 @@ function Accumulator(callback) {
       return Object.keys(accu);
     },
     *[Symbol.iterator]() {
-      for(let key in accu) yield [key, accu[key]];
+      for (let key in accu) yield [key, accu[key]];
     },
     clear() {
-      for(let key in accu) delete accu[key];
+      for (let key in accu) delete accu[key];
     }
   });
   return self;
 }
-
 function main(...args) {
   globalThis.console = new Console({
     inspectOptions: {
@@ -91,71 +81,41 @@ function main(...args) {
       depth: 10
     }
   });
-  /*  await PortableFileSystem(fs => (filesystem = fs));*/
   let running = true;
-
   console.log('Util.getMethodNames(cv)', Util.getMethodNames(cv, Infinity, 0));
   console.log('cv.HoughLines', cv.HoughLines);
-
   let line = new Line(0, 0, 50, 50);
-
   console.log('line', line);
-
   let clahe = new CLAHE();
   console.log('clahe', clahe);
-
-  /* for(let windowName of ['gray', 'corners', 'threshold', 'canny'])
-    cv.namedWindow(windowName, cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO);*/
   cv.namedWindow('output', cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO);
   let trackbar = '';
-  /*  cv.createTrackbar(trackbar, 'output', 0, 10, function(value, count, name, window) {
-    console.log('Trackbar', { value, count, name, window });
-  });
- cv.setTrackbarMin(trackbar, 'output', 1);
-  cv.setTrackbarMax(trackbar, 'output', 9);
-  cv.setTrackbarPos(trackbar, 'output', 8);*/
-
-  //image = cv.imread('../an-tronics/images/5.19.jpg');
   let file = args[0] || '../an-tronics/images/fm/4tr.jpg';
   let image = cv.imread(file);
-
   let resolution = image.size;
   let scaled;
   console.log('Symbol.inspect', Symbol.inspect);
   console.log('resolution', resolution);
-
-  if(resolution.width > 1200) {
+  if (resolution.width > 1200) {
     let f = 1024 / resolution.width;
     scaled = new Size(resolution.width * f, resolution.height * f);
   } else {
     scaled = new Size(resolution);
   }
-
   let outputRect = new Rect(0, 0, resolution.width, resolution.height);
   let outputMat = new Mat(outputRect.size, cv.CV_8UC3);
-  /* let statusRect = new Rect(0, resolution.height, resolution.width, 200);
-console.log("statusRect:", statusRect);
-*/
   let statusRect = new Rect(0, resolution.height, resolution.width, 200);
-
   let statusMat = new Mat(statusRect.size, cv.CV_8UC3);
-
   console.log('statusRect:', statusRect);
-
   let [textRect, helpRect] = new Rect(statusRect.size).inset(5).vsplit(-20);
   let screenSize = new Size(resolution.width, resolution.height + 200);
   console.log('statusRect', statusRect);
   console.log('textRect', textRect);
   console.log('helpRect:', helpRect);
-
   let screen = new Mat(screenSize, cv.CV_8UC3);
-  //let output = screen(outputRect);
-  //let status = screen(statusRect);
-
   cv.imshow('output', screen);
   cv.moveWindow('output', 0, 0);
   cv.resizeWindow('output', screenSize.width);
-
   let backgroundColor = 0xd0d0d0;
   let shadowColor = 0x404040;
   let textColor = 0xd3d7cf;
@@ -166,15 +126,9 @@ console.log("statusRect:", statusRect);
   ];
   let fontFace = fonts[2];
   let fontSize = 14;
-
-  fonts.forEach(file => Draw.loadFont(file));
-
-  /*  output.setTo([255, 255, 255]);
-  status.setTo(backgroundColor);*/
-
+  fonts.forEach((file) => Draw.loadFont(file));
   let config = LoadConfig();
   let { frameShow = 1, paramIndex = 0 } = config;
-
   let params = {
     thres: new NumericParam(config.thres || 229, 0, 255),
     type: new NumericParam(config.type || cv.THRESH_BINARY_INV, 0, 4),
@@ -197,29 +151,19 @@ console.log("statusRect:", statusRect);
   let circles = [];
   let paramNav = new ParamNavigator(params, paramIndex);
   let paramIndexes = [-1, -1];
-
   let palette = new Array();
-
   const black = [0x00, 0x00, 0x00, 0xff];
-
-  for(let i = 0; i < 8; i++)
-    palette[i] = [
-      i & 0x04 ? 0xff : 0x00,
-      i & 0x02 ? 0xff : 0x00,
-      i & 0x01 ? 0xff : 0x00,
-      0xff
-    ];
+  for (let i = 0; i < 8; i++)
+    palette[i] = [i & 0x04 ? 0xff : 0x00, i & 0x02 ? 0xff : 0x00, i & 0x01 ? 0xff : 0x00, 0xff];
   palette[2] = [0x60, 0x60, 0x60, 0xff];
   palette[3] = [0xff, 0xff, 0x0, 0xff];
-
-  for(let i = 8; i < 16; i++) palette[i] = black;
-
-  let pipeline = new Pipeline([
+  for (let i = 8; i < 16; i++) palette[i] = black;
+  let pipeline = new Pipeline(
+    [
       function AcquireFrame(src, dst) {
         image = cv.imread(file);
         image.copyTo(dst);
       },
-
       function Grayscale(src, dst) {
         let channels = [];
         cv.cvtColor(src, dst, cv.COLOR_BGR2Lab);
@@ -227,65 +171,42 @@ console.log("statusRect:", statusRect);
         channels[0].copyTo(dst);
       },
       function Blur(src, dst) {
-        cv.GaussianBlur(src,
-          dst,
-          [+params.blur, +params.blur],
-          0,
-          0,
-          cv.BORDER_REPLICATE
-        );
+        cv.GaussianBlur(src, dst, [+params.blur, +params.blur], 0, 0, cv.BORDER_REPLICATE);
       },
-
       function Threshold(src, dst) {
         cv.threshold(src, dst, +params.thres, 255, +params.type);
       },
-
       function Morphology(src, dst) {
-        let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS,
+        let structuringElement = cv.getStructuringElement(
+          cv.MORPH_CROSS,
           new Size(+params.kernel_size * 2 + 1, +params.kernel_size * 2 + 1)
         );
-        /*  if(+params.type == cv.THRESH_BINARY_INV) src.xor([255, 255, 255, 0], dst);
-        else*/ src.copyTo(dst
-        );
-        //console.log('Morphology dst', dst);
-
+        src.copyTo(dst);
         cv.morphologyEx(dst, dst, cv.MORPH_ERODE, structuringElement);
-        //   cv.erode(dst, dst, structuringElement);
         dst.xor([255, 255, 255, 0], dst);
       },
-
       function Skeletonization(src, dst) {
         cv.skeletonization(src, dst);
       },
-
       function PixelNeighborhood(src, dst) {
         let neighborhood = new Mat(src.size, cv.CV_8UC1);
-
         cv.pixelNeighborhood(src, neighborhood);
-
         let endpoints = cv.pixelFindValue(src, 1);
         console.log('endpoints', endpoints);
-
         let linepoints = cv.pixelFindValue(src, 2);
         console.log('linepoints', linepoints);
-
         cv.imwrite('neighborhood.png', neighborhood, palette);
-
         let im = cv.imread('neighborhood.png');
-
         im.copyTo(dst);
       },
-
       function HoughLinesP(src, dst) {
         const skel = this.outputOf('Skeletonization');
         const morpho = this.outputOf('Morphology');
         let output = new Mat();
-
-        if(skel.channels > 1) cv.cvtColor(skel, skel, cv.COLOR_BGR2GRAY);
-
-        if(morpho.channels > 1) cv.cvtColor(morpho, morpho, cv.COLOR_BGR2GRAY);
-
-        cv.HoughLinesP(skel,
+        if (skel.channels > 1) cv.cvtColor(skel, skel, cv.COLOR_BGR2GRAY);
+        if (morpho.channels > 1) cv.cvtColor(morpho, morpho, cv.COLOR_BGR2GRAY);
+        cv.HoughLinesP(
+          skel,
           output,
           +params.rho,
           (Math.PI * (+params.theta || 1)) / 180,
@@ -295,32 +216,22 @@ console.log("statusRect:", statusRect);
         );
         cv.cvtColor(skel, dst, cv.COLOR_GRAY2BGR);
         let i = 0;
-
         lines.splice(0, lines.length);
-
-        for(let elem of output.values()) {
+        for (let elem of output.values()) {
           const line = new Line(elem);
           lines.push(line);
-          Draw.line(dst,
-            ...line.toPoints(),
-            [255, 128, 0],
-            lineWidth,
-            cv.LINE_AA
-          );
+          Draw.line(dst, ...line.toPoints(), [255, 128, 0], lineWidth, cv.LINE_AA);
           Draw.line(morpho, ...line.toPoints(), [0, 0, 0], 2, cv.LINE_8);
           Draw.line(skel, ...line.toPoints(), [0, 0, 0], lineWidth, cv.LINE_8);
           ++i;
         }
         lines.sort((a, b) => (a.y1 == b.y1 ? a.x1 - b.x1 : a.y1 - b.y1));
         console.log(`lines`, lines);
-
         let kern = cv.getStructuringElement(cv.MORPH_CROSS, new Size(3, 3));
         cv.dilate(skel, skel, kern);
         cv.erode(skel, skel, kern);
-
         cv.dilate(morpho, morpho, kern);
       },
-
       function HoughCircles(src, dst) {
         const morpho = this.outputOf('Morphology');
         const skel = this.outputOf('Skeletonization');
@@ -336,60 +247,45 @@ console.log("statusRect:", statusRect);
         let circles2 = [] || new Mat();
         cv.HoughCircles(morpho, circles1, cv.HOUGH_GRADIENT, ...paramArray);
         cv.HoughCircles(skel, circles2, cv.HOUGH_GRADIENT, ...paramArray);
-
         this.outputOf('HoughLinesP').copyTo(dst);
-
         let i = 0;
-
-        for(let [x, y, r] of circles1) {
+        for (let [x, y, r] of circles1) {
           let p = new Point(x, y);
           Draw.circle(dst, p, r, [0, 255, 0], lineWidth, cv.LINE_AA);
           circles.push([x, y, r]);
         }
-        for(let [x, y, r] of circles2) {
+        for (let [x, y, r] of circles2) {
           let p = new Point(x, y);
           Draw.circle(dst, p, r + 2, [255, 0, 0], lineWidth, cv.LINE_AA);
           circles.push([x, y, r]);
         }
       }
     ],
-    i => {
-      if(frameShow == i) {
+    (i) => {
+      if (frameShow == i) {
         let processor = pipeline.getProcessor(i);
         let params = processorParams.get(processor);
-
         paramIndexes[0] = paramNav.indexOf(params[0]);
         paramIndexes[1] = paramNav.indexOf(params[params.length - 1]);
-
-        if(paramNav.index < paramIndexes[0] ||
-          paramNav.index > paramIndexes[1]
-        )
+        if (paramNav.index < paramIndexes[0] || paramNav.index > paramIndexes[1])
           paramNav.current = params[0];
-
         let mat = pipeline.getImage(i);
-        if(mat.channels == 1) cv.cvtColor(mat, outputMat, cv.COLOR_GRAY2BGR);
-        else if(mat.channels == 4)
-          cv.cvtColor(mat, outputMat, cv.COLOR_BGRA2BGR);
+        if (mat.channels == 1) cv.cvtColor(mat, outputMat, cv.COLOR_GRAY2BGR);
+        else if (mat.channels == 4) cv.cvtColor(mat, outputMat, cv.COLOR_BGRA2BGR);
         else mat.copyTo(outputMat);
-
         RedrawStatus();
         RedrawWindow();
       }
     }
   );
-
   function RedrawStatus() {
     //console.log(`pipeline.images =`, new Map(pipeline.imageEntries()));
-
     let i = pipeline.currentProcessor;
     let processor = pipeline.getProcessor(i);
     let params = processorParams.get(processor);
-
     let srect = new Rect(statusRect.size);
-
     Draw.rect(statusMat, srect, backgroundColor, cv.FILLED, true);
     Draw.rect(statusMat, srect.inset(3, 0), 0, cv.FILLED, true);
-
     const inspectOptions = {
       colors: true,
       hideKeys: ['callback']
@@ -401,26 +297,20 @@ console.log("statusRect:", statusRect);
       `params:\n` +
       params
         .map((name, idx) => {
-          return `  ${
-            idx + paramIndexes[0] == paramNav.index ? '\x1b[1;31m' : ''
-          }${name.padEnd(13)}\x1b[0m   \x1b[1;36m${+paramNav.get(name
-          )}\x1b[0m\n`;
+          return `  ${idx + paramIndexes[0] == paramNav.index ? '\x1b[1;31m' : ''}${name.padEnd(
+            13
+          )}\x1b[0m   \x1b[1;36m${+paramNav.get(name)}\x1b[0m\n`;
         })
         .join('');
-
     DrawText(statusMat(textRect), text, textColor, fontFace, fontSize);
-    DrawText(statusMat(helpRect),
+    DrawText(
+      statusMat(helpRect),
       '< prev, > next, + increment, - decrement, DEL reset',
       textColor,
       fontFace,
       fontSize
     );
-
-    /*statusMat.copyTo(screen(statusRect));
-
-    RedrawWindow();*/
   }
-
   function RedrawWindow() {
     let i = pipeline.currentProcessor;
     cv.vconcat([outputMat, statusMat], screen);
@@ -428,51 +318,26 @@ console.log("statusRect:", statusRect);
     cv.resizeWindow('output', screenSize.width, screenSize.height);
     cv.setWindowTitle('output', `#${i}: ` + pipeline.names[i]);
   }
-
   let key;
-  let paramAccumulator = paramNav.setCallback(new Accumulator((name, param) => {
+  let paramAccumulator = paramNav.setCallback(
+    new Accumulator((name, param) => {
       // console.log(`param '${name}' callback`, param);
     })
   );
-  let processorParams = Util.weakMapper(processor => []);
-
+  let processorParams = Util.weakMapper((processor) => []);
   pipeline.before = () => paramAccumulator.clear();
-  pipeline.after = () =>
-    processorParams.set(pipeline.getProcessor(), paramAccumulator.keys());
-
+  pipeline.after = () => processorParams.set(pipeline.getProcessor(), paramAccumulator.keys());
   pipeline();
-
   delete pipeline.before;
   delete pipeline.after;
-
-  /*console.log('paramNav.nameOf(params.threshold):', paramNav.nameOf(params.threshold));
-    console.log('paramNav.indexOf(params.threshold):', paramNav.indexOf(params.threshold));*/
-  /* console.log('processorParams:',
-    new Map(
-      pipeline.processors.map(processor => [
-        processor,
-        processorParams.get(processor).map(name => paramNav.get(name))
-      ])
-    )
-  );*/
-
   console.log(`pipeline.recalc(${frameShow})`, pipeline.recalc(frameShow));
-
-  while(true) {
+  while (true) {
     key = cv.waitKeyEx(-1);
-    if(key === 'q' ||
-      key === 113 ||
-      key === '\x1b' ||
-      key === 0x100071 ||
-      key === -1
-    )
-      break;
-    //console.log('key:', ToHex(key));
-
+    if (key === 'q' || key === 113 || key === '\x1b' || key === 0x100071 || key === -1) break;
     switch (key & 0xfff) {
       case 0xf08 /* backspace */:
       case 0x08 /* backspace */:
-        if(frameShow > 0) {
+        if (frameShow > 0) {
           frameShow--;
           pipeline.step(-1);
         }
@@ -480,37 +345,27 @@ console.log("statusRect:", statusRect);
       case 0xf52 /* up */:
       case 0x3c /* < */:
         paramNav.prev();
-        if(paramIndexes[0] != -1 && paramNav.index < paramIndexes[0])
+        if (paramIndexes[0] != -1 && paramNav.index < paramIndexes[0])
           paramNav.index = paramIndexes[1];
-
-        console.log(`Param #${paramNav.index} '${
-            paramNav.name
-          }' selected (${+paramNav.param})`
-        );
+        console.log(`Param #${paramNav.index} '${paramNav.name}' selected (${+paramNav.param})`);
         RedrawStatus();
         RedrawWindow();
         break;
       case 0xf54 /*down  */:
       case 0x3e /* > */:
         paramNav.next();
-        if(paramIndexes[1] != -1 && paramNav.index > paramIndexes[1])
+        if (paramIndexes[1] != -1 && paramNav.index > paramIndexes[1])
           paramNav.index = paramIndexes[0];
-
-        console.log(`Param #${paramNav.index} '${
-            paramNav.name
-          }' selected (${+paramNav.param})`
-        );
+        console.log(`Param #${paramNav.index} '${paramNav.name}' selected (${+paramNav.param})`);
         RedrawStatus();
         RedrawWindow();
         break;
-
       case 0xf53 /* right */:
       case 0x2b /* + */:
         paramNav.param.increment();
         console.log(`Param ${paramNav.name}: ${+paramNav.param}`);
         pipeline.recalc(frameShow);
         break;
-
       case 0xfff /* DELETE */:
       case 0x9f /* numpad DEL */:
       case 0xf9f /* numpad DEL */:
@@ -518,7 +373,6 @@ console.log("statusRect:", statusRect);
         console.log(`Param ${paramNav.name}: ${inspect(paramNav.param)}`);
         pipeline.recalc(frameShow);
         break;
-
       case 0xf51 /* left */:
       case 0x2d /* - */:
       case 0xad /* numpad - */:
@@ -528,7 +382,6 @@ console.log("statusRect:", statusRect);
         console.log(`Param ${paramNav.name}: ${+paramNav.param}`);
         pipeline.recalc(frameShow);
         break;
-
       case 0x31: /* 1 */
       case 0x32: /* 2 */
       case 0x33: /* 3 */
@@ -549,26 +402,22 @@ console.log("statusRect:", statusRect);
         console.log(`Param ${paramNav.name}: ${+paramNav.param}`);
         pipeline.recalc(frameShow);
         break;
-
       case 0x20:
         frameShow = Util.mod(frameShow + 1, pipeline.size);
         pipeline.step();
         break;
-
       default: {
-        if(key !== -1) console.log('key:', ToHex(key));
+        if (key !== -1) console.log('key:', ToHex(key));
         break;
       }
     }
   }
-
   SaveConfig({ frameShow, paramIndex: paramNav.index, ...params });
-
   console.log('EXIT');
 }
 try {
   main(...scriptArgs.slice(1));
-} catch(error) {
+} catch (error) {
   console.log(`FAIL: ${error.message}\n${error.stack}`);
   std.exit(1);
 } finally {
