@@ -115,7 +115,7 @@ function main(...args) {
     /*   console.log('t:', t);
     console.log('p:', p);
     console.log('nvg.TransformPoint:', nvg.TransformPoint(p, 40, 100));*/
-    let pattern = nvg.ImagePattern(0, 0, ...img2Sz, 0, imgId, 1);
+    let pattern = nvg.ImagePattern(0, 0, ...img2Sz, 0, img2Id, 1);
     // console.log('pattern:', pattern);
 
     nvg.Scale(0.4, 0.4);
