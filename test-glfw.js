@@ -6,7 +6,8 @@ import { RGBA, HSLA } from './lib/color.js';
 import { Mat, imread } from 'opencv';
 
 function Mat2Texture(texture_cv) {
-  let texture = new Uint32Array(1);
+   console.log('texture_cv', texture_cv);
+ let texture = new Uint32Array(1);
   console.log('texture', texture);
   glGenTextures(1, texture.buffer); // Create The Texture
   console.log('texture_cv.buffer', texture_cv.buffer);
