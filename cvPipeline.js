@@ -1,7 +1,6 @@
-import Util from './lib/util.js';
 import { Mat } from 'opencv';
-
-const hr = Util.hrtime;
+import { isObject } from 'util';
+import { WeakMapper, Modulo } from './cvUtils.js';
 
 export class Pipeline extends Function {
   constructor(processors = [], callback) {
@@ -15,19 +14,17 @@ export class Pipeline extends Function {
       if(!(mat instanceof Mat)) mat = null;
 
       for(let [i, processor] of processors) {
-        let start = hr();
         self.currentProcessor = i;
         let args = [mat ?? self.images[i - 1], self.images[i]];
         self.invokeCallback('before', ...args);
         //console.log(`Pipeline \x1b[38;5;112m#${i} \x1b[38;5;32m'${processor.name}'\x1b[m`);
         mat = processor.call(self, ...args);
         self.invokeCallback('after', ...args);
+        console.log(`Pipeline`, { i, mat, isObj: isObject(mat) });
 
-        if(Util.isObject(mat) && mat instanceof Mat) self.images[i] = mat;
+        if(isObject(mat) && mat instanceof Mat) self.images[i] = mat;
         mat = self.images[i];
-        self.times[i] = hr(start);
-        if(typeof callback == 'function')
-          callback.call(self, i, self.processors.length);
+        if(typeof callback == 'function') callback.call(self, i, self.processors.length);
       }
       // self.currentProcessor = -1;
       return mat;
@@ -35,7 +32,7 @@ export class Pipeline extends Function {
     processors = processors.map(processor =>
       processor instanceof Processor ? processor : Processor(processor)
     );
-    Util.define(self, {
+    Object.assign(self, {
       processors,
       currentProcessor: -1,
       images: new Array(processors.length),
@@ -48,7 +45,7 @@ export class Pipeline extends Function {
   step(direction = 1) {
     let { currentProcessor } = this;
 
-    return this(Util.mod(currentProcessor + direction, this.size));
+    return this(Modulo(currentProcessor + direction, this.size));
   }
 
   recalc(up_to) {
@@ -64,7 +61,7 @@ export class Pipeline extends Function {
     return this.processors.length;
   }
   get names() {
-    return this.processors.map((p) => p.name);
+    return this.processors.map((p) => p.functionName ?? p.name);
   }
 
   get processor() {
@@ -114,12 +111,12 @@ export class Pipeline extends Function {
   }
   outputOf(processor) {
     let index = this.processorIndex(processor);
+    console.log('outputOf', { index, processor, names: this.names });
     return this.processors[index].out ?? this.images[index];
   }
 
   *[Symbol.iterator]() {
-    for(let i = 0; i < this.processors.length; i++)
-      yield [this.names[i], this.images[i]];
+    for(let i = 0; i < this.processors.length; i++) yield [this.names[i], this.images[i]];
   }
 
   get cache() {
@@ -135,7 +132,7 @@ export class Pipeline extends Function {
 
 export function Processor(fn, ...args) {
   let self;
-  let mapper = Util.weakMapper((fn, ...args) => {
+  let mapper = WeakMapper((fn, ...args) => {
     let mat = new Mat();
     // console.log('new Mat(', ...args, ')');
     return mat;
@@ -154,13 +151,13 @@ export function Processor(fn, ...args) {
     fn.call(this, src, dst, ...args);
     return dst;
   };
-  Util.define(self, { name: Util.fnName(fn) });
+  Object.assign(self, { functionName: fn.name });
   Object.setPrototypeOf(self, Processor.prototype);
   return self;
 }
 Object.setPrototypeOf(Processor.prototype, Function.prototype);
 Object.assign(Pipeline.prototype, {
   setName(name) {
-    this.name = name;
+    this.pipelineName = name;
   }
 });
