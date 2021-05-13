@@ -19,16 +19,7 @@ function Mat2Texture(texture_cv) {
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-  glTexImage2D(GL_TEXTURE_2D,
-    0,
-    3,
-    texture_cv.cols,
-    texture_cv.rows,
-    0,
-    GL_RGB,
-    GL_UNSIGNED_BYTE,
-    buffer
-  );
+  glTexImage2D(GL_TEXTURE_2D, 0, 3, texture_cv.cols, texture_cv.rows, 0, GL_RGB, GL_UNSIGNED_BYTE, buffer);
   return texture[0];
 }
 

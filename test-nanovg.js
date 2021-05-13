@@ -33,8 +33,8 @@ function main(...args) {
     inspectOptions: {
       maxStringLength: 200,
       maxArrayLength: 10,
-      breakLength: 100,
-      compact: 1,
+      breakLength: Infinity,
+      compact: 2,
       depth: 10
     }
   });
@@ -49,20 +49,8 @@ function main(...args) {
 
   mat.setTo([11, 22, 33, 255]);
   //cv.rectangle(mat, new Point(0,0), new Point(800,600), [255,0,0,0],4, cv.LINE_8);
-  cv.line(mat,
-    new Point(10, 10),
-    new Point(size.width - 10, size.height - 10),
-    [255, 255, 0, 255],
-    4,
-    cv.LINE_AA
-  );
-  cv.line(mat,
-    new Point(size.width - 10, 10),
-    new Point(10, size.height - 10),
-    [255, 0, 0, 255],
-    4,
-    cv.LINE_AA
-  );
+  cv.line(mat, new Point(10, 10), new Point(size.width - 10, size.height - 10), [255, 255, 0, 255], 4, cv.LINE_AA);
+  cv.line(mat, new Point(size.width - 10, 10), new Point(10, size.height - 10), [255, 0, 0, 255], 4, cv.LINE_AA);
 
   console.log('mat:', mat);
   console.log('mat.size:', mat.size);
@@ -83,8 +71,8 @@ function main(...args) {
   let img2Id = nvg.CreateImage('Muehleberg.png', 0);
   console.log('imgId:', imgId);
   console.log('img2Id:', img2Id);
-  let img2Sz = nvg.ImageSize(img2Id);
-  let imgSz = nvg.ImageSize(imgId);
+  let img2Sz = new Size(nvg.ImageSize(img2Id));
+  let imgSz = new Size(nvg.ImageSize(imgId));
   console.log('nvg.ImageSize(img2Id)', img2Sz + '');
   console.log('nvg.ImageSize(imgId)', imgSz + '');
   let i = 0;
@@ -112,23 +100,28 @@ function main(...args) {
 
     let p = nvg.TransformMultiply(nvg.TransformMultiply(m, t), s);
 
-    /*   console.log('t:', t);
-    console.log('p:', p);
-    console.log('nvg.TransformPoint:', nvg.TransformPoint(p, 40, 100));*/
     let pattern = nvg.ImagePattern(0, 0, ...img2Sz, 0, img2Id, 1);
-    // console.log('pattern:', pattern);
 
-    nvg.Scale(0.4, 0.4);
+    let center = new Point(...size.div(2));
+    let imgSz_2 = img2Sz.mul(-0.5);
+    /*console.log("size",size);
+  console.log("center",center);
+  console.log("img2Sz",img2Sz);
+  console.log("img2Sz.mul(-1)",img2Sz.mul(-1));
+  console.log("img2Sz.div(2)",img2Sz.div(2));
+   console.log("imgSz_2",imgSz_2);*/
 
-    /* let  sx = Mat.cos((i % 360) * Math.PI /360);
-    let  sy = Mat.sin((i % 360) * Math.PI /360);
+    nvg.Save();
 
-    nvg.Translate(50+sx*50,50+sy*50);*/
+    //
+    nvg.Translate(...center);
+    nvg.Scale(0.6, 0.6);
+    nvg.Translate(...imgSz_2);
+
     let phi = ((i % 360) / 180) * Math.PI;
     let vec = [Math.cos(phi), Math.sin(phi)].map(n => n * 100);
 
-    vec = vec.map(n => n + 150);
-    //    nvg.Translate((i % 50) * 4, 10);
+    //    vec = vec.map(n => n + 150);
     nvg.Translate(...vec);
 
     nvg.BeginPath();
@@ -137,8 +130,27 @@ function main(...args) {
     nvg.StrokeWidth(4);
     nvg.Stroke();
     nvg.FillPaint(pattern);
-    // nvg.FillColor(nvg.RGB(0, 0, 0));
     nvg.Fill();
+
+    nvg.Translate(...imgSz_2.mul(-1));
+    DrawCircle(new Point(0, 0), 40);
+
+    nvg.Restore();
+
+    DrawCircle(center, 100);
+
+    function DrawCircle(pos, radius) {
+      nvg.Save();
+      nvg.Translate(...pos);
+      nvg.BeginPath();
+      nvg.StrokeColor(nvg.RGB(255, 255, 255));
+      nvg.StrokeWidth(5);
+      nvg.FillColor(nvg.RGBA(255, 0, 0, 96));
+      nvg.Circle(0, 0, radius);
+      nvg.Fill();
+      nvg.Stroke();
+      nvg.Restore();
+    }
 
     nvg.EndFrame();
 
