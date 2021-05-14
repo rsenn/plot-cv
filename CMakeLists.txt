@@ -219,12 +219,13 @@ link_directories(BEFORE ${quickjs_BINARY_DIR})
 
 # if(HAVE_EFENCE) if(USE_EFENCE) set(ELECTRICFENCE_LIBRARY efence) endif(USE_EFENCE) endif(HAVE_EFENCE)
 
-set(QUICKJS_OPENCV_A "${QUICKJS_LIBRARY_DIR}/opencv.a")
-
 link_directories("${CMAKE_CURRENT_BINARY_DIR}/quickjs" "${QUICKJS_LIBRARY_DIR}")
 
-set(QUICKJS_OPENCV_A "${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv/opencv.a" CACHE FILEPATH "qjs-opencv module" FORCE)
 add_subdirectory(qjs-opencv "${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv")
+add_library(qjs-opencv-a STATIC IMPORTED GLOBAL)
+set_target_properties(qjs-opencv-a PROPERTIES IMPORTED_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv/opencv.a")
+
+set(QUICKJS_OPENCV_A qjs-opencv-a)
 
 function(src_program NAME SOURCES)
   foreach(SRC ${SOURCES})
