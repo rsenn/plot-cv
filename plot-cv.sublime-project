@@ -151,7 +151,10 @@
 			"path": "quickjs/qjs-require",
 		},
 		{
-			"path": "quickjs"
+			"path": "quickjs",
+		},
+		{
+			"path": "LBD_Descriptor"
 		},
 	],
 	"settings":

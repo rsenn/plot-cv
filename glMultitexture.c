@@ -111,9 +111,11 @@ main() {
 
   // Load textures
   GLuint textures[2];
-  glGenTextures(2, textures);rHG
+  glGenTextures(2, textures);
+  rHG
 
-  int width, height;
+      int width,
+      height;
   unsigned char* image;
 
   glActiveTexture(GL_TEXTURE0);

@@ -1,3 +1,5 @@
+import filesystem from 'fs';
+
 const ESC = '\x1b';
 
 Object.defineProperty(globalThis, 'terminal', {
