@@ -98,7 +98,7 @@ function Proxy(obj) {
       p[prop] = v;
     }
   }
-  const propNames = ['protocol', 'ip', 'port', 'country', 'source'];
+  const propNames = [/*'protocol',*/ 'ip', 'port', 'country', 'source'];
   let i = propNames.findIndex(prop => p[prop] === undefined);
   if(i != -1) {
     throw new Error(`Property '${propNames[i]}' missing on: ` + Util.toSource(p));
@@ -155,7 +155,7 @@ Proxy.prototype[Symbol.for('nodejs.util.inspect.custom')] = function() {
   const coloring = Util.coloring(!Util.isBrowser());
 };
 
-async function main(country = 'de') {
+async function main(...args) {
   await ConsoleSetup({ depth: 2, breakLength: 120 });
   /*let sock = await new TCPSocket('178.238.229.236', 80);
   await AcquireWriter(sock, w => w.write('CONNECT github.com:443 HTTP/1.1\r\n\r\n'));
@@ -167,31 +167,44 @@ async function main(country = 'de') {
   /*let h = await new HTTPRequest('http://www.google.com', '178.238.229.236', 80);
   console.log('h:', h);
   Util.exit(0);*/
-  console.log(`Searching proxies in country '${country}'`);
+
+  let params = Util.getOpt({
+      output: [true, null, 'o'],
+      '@': 'input'
+    },
+    args
+  );
+
+  const countries = params['@'].join(',').split(/[^A-Za-z0-9]+/g);
+  //let  country = countries[0];
+
   const proxies = [
     new Repeater(async (push, stop) => {
-      try {
-        const proxyList = new ProxyList();
-        for(const p of await proxyList.getByCountryCode(country.toUpperCase())) {
-          let proxy = new Proxy({ source: 'free-proxy', ...p });
-          await proxy.ping().then(push).catch(console.log);
-          /*  let check = await Check(proxy);
+      for(let country of countries) {
+        console.log(`Searching proxies in country '${country}'`);
+        try {
+          const proxyList = new ProxyList();
+          for(const p of await proxyList.getByCountryCode(country.toUpperCase())) {
+            let proxy = new Proxy({ source: 'free-proxy', ...p });
+            await proxy.ping().then(push).catch(console.log);
+            /*  let check = await Check(proxy);
           console.log('\nPROXY:', proxy, check, '\n');
           push(proxy);*/
+          }
+        } catch(error) {
+          stop(new Error(error));
         }
-      } catch(error) {
-        stop(new Error(error));
       }
     }),
     new Repeater(async (push, stop) => {
-      proxynova([country], 1000, async (err, proxies) => {
+      proxynova([...countries], 1000, async (err, proxies) => {
         for(let p of proxies) await new Proxy(p).ping().then(push).catch(console.log);
       });
     }),
 
     new Repeater(async (push, stop) => {
       ProxyLists.getProxies({
-        countries: [country],
+        countries: [...countries],
         requestQueue: {
           concurrency: 5,
           delay: 50
@@ -254,9 +267,9 @@ async function main(country = 'de') {
         console.log(proxy.toString());
         //  let response = await Check(proxy);
 
-        await writeResults(results, 'txt');
-        await writeResults(results, 'sh');
-        await writeResults(results, 'json');
+        await writeResults(results, 'txt', params.output ?? 'proxies');
+        await writeResults(results, 'sh', params.output ?? 'proxies');
+        await writeResults(results, 'json', params.output ?? 'proxies');
       }
     } catch(err) {
       console.log('ERROR:', err); // TimeoutError: 1000 ms elapsed

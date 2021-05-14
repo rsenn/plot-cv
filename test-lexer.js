@@ -16,7 +16,7 @@ const Code = `
 
 (async arg => {
   await ConsoleSetup();
-  let data = Code || (await fs.readFile(arg || './lib/ecmascript/parser.js'));
+  let data = Code || (await fs.readFileSync(arg || './lib/ecmascript/parser.js'));
   console.log('data:', data);
 
   let lexer = new Lexer(data.toString());

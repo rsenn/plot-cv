@@ -23,6 +23,7 @@
  * THE SOFTWARE.
  */
 import * as Terminal from './terminal.js';
+import fs from 'fs';
 
 ('use strip');
 
@@ -35,19 +36,19 @@ export default function REPL(title = 'QuickJS') {
   /* close global objects */
   //const { Object, String, Array, Date, Math, isFinite, parseFloat } = globalThis;
   var thisObj = this;
-  var output = filesystem.stdout;
-  var input = filesystem.stdin;
+  var output = fs.stdout;
+  var input = fs.stdin;
 
   const puts = str => output.puts(str);
   const flush = () => output.flush();
 
   /*
   function puts(str) {
-    filesystem.repl.puts(output, str);
+    fs.repl.puts(output, str);
   }
   
   function flush() {
-   filesystem.repl.flush(output);
+   fs.repl.flush(output);
   }*/
 
   /* XXX: use preprocessor ? */
@@ -233,7 +234,7 @@ export default function REPL(title = 'QuickJS') {
     this.term_fd = input.fileno();
     /* get the terminal size */
     term_width = 80;
-    if(filesystem.isatty(this.term_fd)) {
+    if(fs.isatty(this.term_fd)) {
       if(Util.ttyGetWinSize) {
         await Util.ttyGetWinSize(1).then(tab => {
           repl.debug('term_init', { tab });
@@ -840,7 +841,7 @@ export default function REPL(title = 'QuickJS') {
 
   function get_directory_entries(pathStr = '.', mask = '*') {
     let dir, base;
-    let stat = filesystem.stat(pathStr);
+    let stat = fs.stat(pathStr);
     if(stat && stat?.isDirectory() && pathStr.endsWith('/')) {
       dir = pathStr;
       base = '';
@@ -852,10 +853,10 @@ export default function REPL(title = 'QuickJS') {
     expr = (mask.startsWith('*') ? '' : '^') + expr + (mask.endsWith('*') ? '' : '$');
     let re = new RegExp(expr);
     //repl.debug('get_directory_entries:', { dir, base, expr });
-    let entries = filesystem
+    let entries = fs
       .readdir(dir)
       .map(entry => {
-        let st = filesystem.stat(path.join(dir, entry));
+        let st = fs.stat(path.join(dir, entry));
         return entry + (st && st.isDirectory() ? '/' : '');
       })
       .sort((a, b) => b.endsWith('/') - a.endsWith('/') || a.localeCompare(b));
@@ -1131,7 +1132,7 @@ export default function REPL(title = 'QuickJS') {
           /* uninstall a Ctrl-C signal handler */
           Util.signal('SIGINT', null);
           /* uninstall the stdin read handler */
-          filesystem.setReadHandler(this.term_fd, null);
+          fs.setReadHandler(this.term_fd, null);
           return;
         default: if (
             search &&
@@ -1979,8 +1980,8 @@ export default function REPL(title = 'QuickJS') {
 
   function waitRead(fd) {
     return new Promise((resolve, reject) => {
-      filesystem.setReadHandler(fd, () => {
-        filesystem.setReadHandler(fd, null);
+      fs.setReadHandler(fd, () => {
+        fs.setReadHandler(fd, null);
         resolve();
       });
     });
@@ -1999,7 +2000,7 @@ export default function REPL(title = 'QuickJS') {
     repl.cmd_start(title);
 
     do {
-      await filesystem.repl.waitRead(input.fileno());
+      await fs.waitRead(input.fileno());
 
       await repl.term_read_handler();
     } while(running);

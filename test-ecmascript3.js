@@ -109,7 +109,7 @@ function processFile(file, params) {
   const { debug } = params;
   if(file == '-') file = '/dev/stdin';
   if(file && fs.exists(file)) {
-    data = fs.readFile(file);
+    data = fs.readFileSync(file);
   } else {
     file = 'stdin';
     data = source;

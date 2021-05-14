@@ -5,7 +5,7 @@ import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import Tree from './lib/tree.js';
 import { Console } from 'console';
-import * as fs from 'fs';
+import fs from 'fs';
 import * as path from 'path';
 import { inspect } from 'util';
 

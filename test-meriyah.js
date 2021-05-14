@@ -1,7 +1,7 @@
 import { parseScript } from 'meriyah';
 import Util from './lib/util.js';
 import { Console } from 'console';
-import * as fs from 'fs';
+import fs from 'fs';
 import * as path from 'path';
 
 function main(...args) {

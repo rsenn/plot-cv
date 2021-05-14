@@ -1,6 +1,6 @@
 import { Point, Size, Rect, Mat, UMat, Line, CLAHE, TickMeter, Draw } from 'opencv';
 import * as cv from 'opencv';
-import * as fs from 'fs';
+import fs from 'fs';
 import Console from 'console';
 import * as path from 'path';
 import RGBA from './lib/color/rgba.js';
@@ -151,8 +151,8 @@ function main(...args) {
   console.log('helpRect:', helpRect);
   let screen = new Mat(screenSize, cv.CV_8UC3);
 
-  let gfx = new GLFW(1024, 600);
-  console.log('gfx:', gfx);
+  /*let gfx = new GLFW(1024, 600);
+  console.log('gfx:', gfx);*/
 
   cv.imshow('output', screen);
   cv.moveWindow('output', 0, 0);
@@ -322,8 +322,9 @@ function main(...args) {
     let processor = pipeline.getProcessor(i);
     let params = processorParams.get(processor);
     let srect = new Rect(statusRect.size);
-    Draw.rect(statusMat, srect, backgroundColor, cv.FILLED, true);
-    Draw.rect(statusMat, srect.inset(3, 0), 0, cv.FILLED, true);
+
+    cv.rectangle(statusMat, srect, backgroundColor, cv.FILLED, true);
+    cv.rectangle(statusMat, srect.inset(3, 0), 0, cv.FILLED, true);
     const inspectOptions = {
       colors: true,
       hideKeys: ['callback']

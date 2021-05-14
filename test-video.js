@@ -4,7 +4,7 @@ import VideoSource from './cvVideo.js';
 import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './cvHighGUI.js';
 import { HSLA } from './lib/color.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
-import * as fs from 'fs';
+import fs from 'fs';
 import Console from 'console';
 import { Pipeline, Processor } from './cvPipeline.js';
 import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Define, Once, GetOpt, RoundTo, Range } from './cvUtils.js';

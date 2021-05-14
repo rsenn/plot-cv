@@ -8,7 +8,7 @@ import { SortedMap } from './lib/container/sortedMap.js';
 import { ImmutablePath } from './lib/json.js';
 import Tree from './lib/tree.js';
 import { Console } from 'console';
-import * as fs from 'fs';
+import fs from 'fs';
 
 const testfn = () => true;
 const testtmpl = `this is\na test`;
