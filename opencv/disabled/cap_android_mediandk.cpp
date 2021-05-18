@@ -12,7 +12,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
-#include <android/log.h>
+#include <android/cv::log.h>
 
 #include "media/NdkMediaCodec.h"
 #include "media/NdkMediaExtractor.h"
@@ -22,7 +22,7 @@
 #define COLOR_FormatYUV420Planar 19
 #define COLOR_FormatYUV420SemiPlanar 21
 
-using namespace cv;
+//using namespace cv;
 
 #define TAG "NativeCodec"
 #define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, TAG, __VA_ARGS__)
@@ -40,8 +40,8 @@ deleter_AMediaCodec(AMediaCodec* codec) {
 }
 
 static inline void
-deleter_AMediaFormat(AMediaFormat* format) {
-  AMediaFormat_delete(format);
+deleter_AMediaFormat(AMediaFormat* cv::format) {
+  AMediaFormat_delete(cv::format);
 }
 
 class AndroidMediaNdkCapture : public IVideoCapture {
@@ -110,9 +110,9 @@ public:
         } else if(bufferIndex == AMEDIACODEC_INFO_OUTPUT_BUFFERS_CHANGED) {
           LOGV("output buffers changed");
         } else if(bufferIndex == AMEDIACODEC_INFO_OUTPUT_FORMAT_CHANGED) {
-          auto format = AMediaCodec_getOutputFormat(mediaCodec.get());
-          LOGV("format changed to: %s", AMediaFormat_toString(format));
-          AMediaFormat_delete(format);
+          auto cv::format = AMediaCodec_getOutputFormat(mediaCodec.get());
+          LOGV("cv::format changed to: %s", AMediaFormat_toString(format));
+          AMediaFormat_delete(cv::format);
         } else if(bufferIndex == AMEDIACODEC_INFO_TRY_AGAIN_LATER) {
           LOGV("no output buffer right now");
         } else {
@@ -145,13 +145,13 @@ public:
     if(buffer.empty()) {
       return false;
     }
-    Mat yuv(frameHeight + frameHeight / 2, frameWidth, CV_8UC1, buffer.data());
+    cv::Mat yuv(frameHeight + frameHeight / 2, frameWidth, CV_8UC1, buffer.data());
     if(colorFormat == COLOR_FormatYUV420Planar) {
       cv::cvtColor(yuv, out, cv::COLOR_YUV2BGR_YV12);
     } else if(colorFormat == COLOR_FormatYUV420SemiPlanar) {
       cv::cvtColor(yuv, out, cv::COLOR_YUV2BGR_NV21);
     } else {
-      LOGE("Unsupported video format: %d", colorFormat);
+      LOGE("Unsupported video cv::format: %d", colorFormat);
       return false;
     }
     return true;
@@ -193,7 +193,7 @@ public:
     media_status_t err = AMediaExtractor_setDataSourceFd(mediaExtractor.get(), fd, 0, statBuffer.st_size);
     close(fd);
     if(err != AMEDIA_OK) {
-      LOGV("setDataSource error: %d", err);
+      LOGV("setDataSource cv::error: %d", err);
       return false;
     }
 
@@ -201,20 +201,20 @@ public:
 
     LOGV("input has %d tracks", numtracks);
     for(int i = 0; i < numtracks; i++) {
-      auto format =
+      auto cv::format =
           std::shared_ptr<AMediaFormat>(AMediaExtractor_getTrackFormat(mediaExtractor.get(), i), deleter_AMediaFormat);
-      if(!format) {
+      if(!cv::format) {
         continue;
       }
-      const char* s = AMediaFormat_toString(format.get());
-      LOGV("track %d format: %s", i, s);
+      const char* s = AMediaFormat_toString(cv::format.get());
+      LOGV("track %d cv::format: %s", i, s);
       const char* mime;
-      if(!AMediaFormat_getString(format.get(), AMEDIAFORMAT_KEY_MIME, &mime)) {
+      if(!AMediaFormat_getString(cv::format.get(), AMEDIAFORMAT_KEY_MIME, &mime)) {
         LOGV("no mime type");
       } else if(!strncmp(mime, "video/", 6)) {
         int32_t trackWidth, trackHeight;
-        AMediaFormat_getInt32(format.get(), AMEDIAFORMAT_KEY_WIDTH, &trackWidth);
-        AMediaFormat_getInt32(format.get(), AMEDIAFORMAT_KEY_HEIGHT, &trackHeight);
+        AMediaFormat_getInt32(cv::format.get(), AMEDIAFORMAT_KEY_WIDTH, &trackWidth);
+        AMediaFormat_getInt32(cv::format.get(), AMEDIAFORMAT_KEY_HEIGHT, &trackHeight);
         LOGV("width (track): %d", trackWidth);
         LOGV("height (track): %d", trackHeight);
         if(AMediaExtractor_selectTrack(mediaExtractor.get(), i) != AMEDIA_OK) {
@@ -224,7 +224,7 @@ public:
         if(!mediaCodec) {
           continue;
         }
-        if(AMediaCodec_configure(mediaCodec.get(), format.get(), NULL, NULL, 0) != AMEDIA_OK) {
+        if(AMediaCodec_configure(mediaCodec.get(), cv::format.get(), NULL, NULL, 0) != AMEDIA_OK) {
           continue;
         }
         sawInputEOS = false;

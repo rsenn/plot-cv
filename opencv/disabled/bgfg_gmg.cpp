@@ -8,7 +8,7 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
 
-using namespace cv;
+//using namespace cv;
 
 static void
 help() {
@@ -33,7 +33,7 @@ main(int argc, char** argv) {
 
   initModule_video();
   setUseOptimized(true);
-  setNumThreads(8);
+  cv::setNumThreads(8);
 
   Ptr<BackgroundSubtractorGMG> fgbg = Algorithm::create<BackgroundSubtractorGMG>("BackgroundSubtractor.GMG");
   if(fgbg.empty()) {
@@ -44,20 +44,20 @@ main(int argc, char** argv) {
   fgbg->set("initializationFrames", 20);
   fgbg->set("decisionThreshold", 0.7);
 
-  VideoCapture cap;
+  cv::VideoCapture cap;
   if(argc > 1)
     cap.open(argv[1]);
   else
     cap.open(0);
 
   if(!cap.isOpened()) {
-    std::cerr << "Cannot read video. Try moving video file to sample directory." << std::endl;
+    std::cerr << "Cannot cv::read video. Try moving video file to sample directory." << std::endl;
     return -1;
   }
 
-  Mat frame, fgmask, segm;
+  cv::Mat frame, fgmask, segm;
 
-  namedWindow("FG Segmentation", WINDOW_NORMAL);
+  cv::namedWindow("FG Segmentation", WINDOW_NORMAL);
 
   for(;;) {
     cap >> frame;
@@ -68,11 +68,11 @@ main(int argc, char** argv) {
     (*fgbg)(frame, fgmask);
 
     frame.copyTo(segm);
-    add(frame, Scalar(100, 100, 0), segm, fgmask);
+    cv::add(frame, cv::Scalar(100, 100, 0), segm, fgmask);
 
-    imshow("FG Segmentation", segm);
+    cv::imshow("FG Segmentation", segm);
 
-    int c = waitKey(30);
+    int c = cv::waitKey(30);
     if(c == 'q' || c == 'Q' || (c & 255) == 27)
       break;
   }

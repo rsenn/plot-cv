@@ -25,7 +25,7 @@ CaptureWorker::doWork() {
   if(ok) {
     m_capture = new cv::VideoCapture(deviceId);
   } else {
-    m_capture = new cv::VideoCapture("rkcamsrc device=/dev/video0 io-mode=4 ! video/x-raw,format=NV12,width=640,height=480 ! "
+    m_capture = new cv::VideoCapture("rkcamsrc device=/dev/video0 io-mode=4 ! video/x-raw,cv::format=NV12,width=640,height=480 ! "
                                      "videoconvert ! appsink",
                                      cv::CAP_GSTREAMER);
   }
@@ -53,8 +53,8 @@ CaptureWorker::doWork() {
     }
     m_captureController->m_lock->unlock();
     emit frameReady();
-    CVMatSurfaceSource::imshow("main", m_frame);
-    // qDebug() << "imshow" << m_frame.cols << m_frame.rows << m_frame.size;
+    CVMatSurfaceSource::cv::imshow("main", m_frame);
+    // qDebug() << "cv::imshow" << m_frame.cols << m_frame.rows << m_frame.size;
     qDebug() << QTime::currentTime();
 
     if(isVideoFile)

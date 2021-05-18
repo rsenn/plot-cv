@@ -30,7 +30,7 @@ flush_capture_buffer(cv::VideoCapture& capture) {
 }
 
 /*
-    Returns an instance of the default camera as a VideoCapture object
+    Returns an instance of the default camera as a cv::VideoCapture object
     or exits on failure.
 
     Open the default camera
@@ -85,7 +85,7 @@ GPIO::export_pin() {
   exportgpio.close();
 
   if(!exportgpio) {
-    std::cerr << "Error: Failed to export GPIO" << this->pin << "." << std::endl;
+    std::cerr << "cv::Error: Failed to export GPIO" << this->pin << "." << std::endl;
     exit(-1);
   }
 }
@@ -104,7 +104,7 @@ GPIO::unexport_pin() {
   unexportgpio.close();
 
   if(!unexportgpio) {
-    std::cerr << "Error: Failed to unexport GPIO" << this->pin << "." << std::endl;
+    std::cerr << "cv::Error: Failed to unexport GPIO" << this->pin << "." << std::endl;
     exit(-1);
   }
 }
@@ -124,8 +124,8 @@ GPIO::set_dir(std::string dir) {
   setgpiodir.close();
 
   if(!setgpiodir) {
-    // Issue: This throws a false error even on success
-    // std::cerr << "Error: Failed to set GPIO" << this->pin << " direction." << std::endl;
+    // Issue: This throws a false cv::error even on success
+    // std::cerr << "cv::Error: Failed to set GPIO" << this->pin << " direction." << std::endl;
     // exit(-1);
   }
 }
@@ -144,7 +144,7 @@ GPIO::set_value(std::string value) {
   setgpiovalue.close();
 
   if(!setgpiovalue) {
-    std::cerr << "Error: Failed to set GPIO" << this->pin << " value." << std::endl;
+    std::cerr << "cv::Error: Failed to set GPIO" << this->pin << " value." << std::endl;
     exit(-1);
   }
 }
@@ -164,7 +164,7 @@ GPIO::read_value() {
   getgpiovalue.close();
 
   if(!getgpiovalue) {
-    std::cerr << "Error: Failed to get GPIO" << this->pin << " value." << std::endl;
+    std::cerr << "cv::Error: Failed to get GPIO" << this->pin << " value." << std::endl;
     exit(-1);
   }
 

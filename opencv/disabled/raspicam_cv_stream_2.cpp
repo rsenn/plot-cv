@@ -15,14 +15,14 @@
 
 #include <raspicam/raspicam_cv.h>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 void
 printusage() {
   cout << "Usage:\n";
   cout << "  ./raspicam_cv_stream /var/www/output.mjpeg";
-  cout << "\twill write stream file at given location\n";
+  cout << "\twill cv::write stream file at given location\n";
   cout << endl;
 }
 
@@ -37,7 +37,7 @@ init_raspicam(void) {
   // Open camera
   cout << "Opening Camera..." << endl;
   if(!Camera.open()) {
-    cerr << "Error opening the camera" << endl;
+    cerr << "cv::Error opening the camera" << endl;
     return -1;
   }
   // Start capture
@@ -83,7 +83,7 @@ main(int argc, char** argv) {
 
   int camIndex = 0;
   for(int i = 0; i < 5; i++) {
-    VideoCapture tmpCap(i);
+    cv::VideoCapture tmpCap(i);
     if(tmpCap.isOpened()) {
       camIndex = i;
       tmpCap.release();
@@ -95,7 +95,7 @@ main(int argc, char** argv) {
 
   camIndex = 0;
   /*
-    VideoCapture cap(camIndex);
+    cv::VideoCapture cap(camIndex);
 
     if (!cap.isOpened()){
         cout<<"ERROR: /dev/video"<<camIndex<<" fails to open!\n";
@@ -119,10 +119,10 @@ main(int argc, char** argv) {
   double fps;
   // fps counter end
 
-  Mat foreground;
+  cv::Mat foreground;
 
-  //  if (displayWindows) namedWindow("Source",1);
-  //  if (displayWindows && doBGS) namedWindow("Background Subtraction", 1);
+  //  if (displayWindows) cv::namedWindow("Source",1);
+  //  if (displayWindows && doBGS) cv::namedWindow("Background Subtraction", 1);
 
   //  unsigned int codec_id = CV_FOURCC('D','I','V','X');
   int codec_id = CV_FOURCC('D', 'I', 'V', 'X');
@@ -132,9 +132,9 @@ main(int argc, char** argv) {
   //  codec_id = CV_FOURCC('U','2','6','3');
 
   // quit if ESC is pressed
-  //    while((waitKey(10) & 255) != 27)
-  VideoWriter outputVideo;
-  Size S = Size((int)imgSizeX, (int)imgSizeY);
+  //    while((cv::waitKey(10) & 255) != 27)
+  cv::VideoWriter outputVideo;
+  cv::Size S = cv::Size((int)imgSizeX, (int)imgSizeY);
 
   /*
       union { int v; char c[5];} uEx ;
@@ -147,14 +147,14 @@ main(int argc, char** argv) {
   const string NAME = "a.avi";
   double out_fps = 30;
 
-  Mat gray;
+  cv::Mat gray;
 
   while(1) {
     if(counter == 0) {
       time(&start);
     }
-    Mat output;
-    Mat frame;
+    cv::Mat output;
+    cv::Mat frame;
     //        cap >> frame; // get a new frame from camera
 
     Camera.grab();
@@ -165,8 +165,8 @@ main(int argc, char** argv) {
     else
       printf("Retrieved image! (%ix%i)\n", frame.cols, frame.rows);
 
-    Mat frameResized;
-    resize(frame, frameResized, Size(imgSizeX, imgSizeY));
+    cv::Mat frameResized;
+    cv::resize(frame, frameResized, cv::Size(imgSizeX, imgSizeY));
 
     output = frameResized;
 
@@ -174,21 +174,21 @@ main(int argc, char** argv) {
             if (output.type() != CV_8UC1)
             {
 
-                cvtColor(output, gray, cv::COLOR_BGR2GRAY);
+                cv::cvtColor(output, gray, cv::COLOR_BGR2GRAY);
 
                 output = gray;
             }
     */
-    //        if (displayWindows) imshow("Output to sent", output);
+    //        if (displayWindows) cv::imshow("Output to sent", output);
 
     /*
                 // original worked..
-                VideoWriter outStream(outFile, codec_id, \
-                            2, Size(imgSizeX, imgSizeY), isOutputColored);
+                cv::VideoWriter outStream(outFile, codec_id, \
+                            2, cv::Size(imgSizeX, imgSizeY), isOutputColored);
                 if (outStream.isOpened()){
-                    outStream.write(output);
+                    outStream.cv::write(output);
                 } else {
-                    cout<<"ERROR: Can't write to "<<outFile<<"!\n";
+                    cout<<"ERROR: Can't cv::write to "<<outFile<<"!\n";
                     return -1;
                 }
     */
@@ -196,7 +196,7 @@ main(int argc, char** argv) {
     outputVideo.open(NAME, codec_id, out_fps, S, true);
 
     if(!outputVideo.isOpened()) {
-      cout << "Could not open the output video for write: " << NAME << endl;
+      cout << "Could not open the output video for cv::write: " << NAME << endl;
       return -1;
     }
 

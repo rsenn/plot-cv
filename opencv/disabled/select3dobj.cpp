@@ -17,13 +17,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 const char* helphelp = "\nThis program's purpose is to collect data sets of an object and its segmentation mask.\n"
                        "\n"
                        "It shows how to use a calibrated camera together with a calibration pattern to\n"
-                       "compute the homography of the plane the calibration pattern is on. It also shows grabCut\n"
+                       "compute the homography of the plane the calibration pattern is on. It also shows cv::grabCut\n"
                        "segmentation etc.\n"
                        "\n"
                        "select3dobj -w <board_width> -h <board_height> [-s <square_size>]\n"
@@ -34,7 +34,7 @@ const char* helphelp = "\nThis program's purpose is to collect data sets of an o
                        " [-s <square_size>]            Optional measure of chessboard squares in meters\n"
                        " -i <camera_intrinsics_filename> Camera matrix .yml file from calibration.cpp\n"
                        " -o <output_prefix>        Prefix the output segmentation images with this\n"
-                       " [video_filename/cameraId]  If present, read from that video file or that ID\n"
+                       " [video_filename/cameraId]  If present, cv::read from that video file or that ID\n"
                        "\n"
                        "Using a camera's intrinsics (from calibrating a camera -- see calibration.cpp) and an\n"
                        "image of the object sitting on a planar surface with a calibration pattern of\n"
@@ -47,8 +47,8 @@ const char* helphelp = "\nThis program's purpose is to collect data sets of an o
                        "The actions one can use while the program is running are:\n"
                        "\n"
                        "  Select object as 3D box with the mouse.\n"
-                       "   First draw one line on the plane to outline the projection of that object on the plane\n"
-                       "    Then extend that line into a box to encompass the projection of that object onto the "
+                       "   First draw one cv::line on the plane to outline the projection of that object on the plane\n"
+                       "    Then extend that cv::line into a box to encompass the projection of that object onto the "
                        "plane\n"
                        "    The use the mouse again to extend the box upwards from the plane to encase the object.\n"
                        "  Then use the following commands\n"
@@ -68,7 +68,7 @@ struct MouseEvent {
     event = -1;
     buttonState = 0;
   }
-  Point pt;
+  cv::Point pt;
   int event;
   int buttonState;
 };
@@ -77,13 +77,13 @@ static void
 onMouse(int event, int x, int y, int flags, void* userdata) {
   MouseEvent* data = (MouseEvent*)userdata;
   data->event = event;
-  data->pt = Point(x, y);
+  data->pt = cv::Point(x, y);
   data->buttonState = flags;
 }
 
 static bool
-readCameraMatrix(const string& filename, Mat& cameraMatrix, Mat& distCoeffs, Size& calibratedImageSize) {
-  FileStorage fs(filename, FileStorage::READ);
+readCameraMatrix(const string& filename, cv::Mat& cameraMatrix, cv::Mat& distCoeffs, cv::Size& calibratedImageSize) {
+  cv::FileStorage fs(filename, cv::FileStorage::READ);
   fs["image_width"] >> calibratedImageSize.width;
   fs["image_height"] >> calibratedImageSize.height;
   fs["distortion_coefficients"] >> distCoeffs;
@@ -98,16 +98,16 @@ readCameraMatrix(const string& filename, Mat& cameraMatrix, Mat& distCoeffs, Siz
 }
 
 static void
-calcChessboardCorners(Size boardSize, float squareSize, vector<Point3f>& corners) {
-  corners.resize(0);
+calcChessboardCorners(cv::Size boardSize, float squareSize, vector<Point3f>& corners) {
+  corners.cv::resize(0);
 
   for(int i = 0; i < boardSize.height; i++)
     for(int j = 0; j < boardSize.width; j++) corners.push_back(Point3f(float(j * squareSize), float(i * squareSize), 0));
 }
 
 static Point3f
-image2plane(Point2f imgpt, const Mat& R, const Mat& tvec, const Mat& cameraMatrix, double Z) {
-  Mat R1 = R.clone();
+image2plane(cv::Point2f imgpt, const cv::Mat& R, const cv::Mat& tvec, const cv::Mat& cameraMatrix, double Z) {
+  cv::Mat R1 = R.clone();
   R1.col(2) = R1.col(2) * Z + tvec;
   Mat_<double> v = (cameraMatrix * R1).inv() * (Mat_<double>(3, 1) << imgpt.x, imgpt.y, 1);
   double iw = fabs(v(2, 0)) > DBL_EPSILON ? 1. / v(2, 0) : 0;
@@ -115,20 +115,20 @@ image2plane(Point2f imgpt, const Mat& R, const Mat& tvec, const Mat& cameraMatri
 }
 
 static Rect
-extract3DBox(const Mat& frame,
-             Mat& shownFrame,
-             Mat& selectedObjFrame,
-             const Mat& cameraMatrix,
-             const Mat& rvec,
-             const Mat& tvec,
+extract3DBox(const cv::Mat& frame,
+             cv::Mat& shownFrame,
+             cv::Mat& selectedObjFrame,
+             const cv::Mat& cameraMatrix,
+             const cv::Mat& rvec,
+             const cv::Mat& tvec,
              const vector<Point3f>& box,
              int nobjpt,
              bool runExtraSegmentation) {
-  selectedObjFrame = Mat::zeros(frame.size(), frame.type());
+  selectedObjFrame = cv::Mat::zeros(frame.size(), frame.type());
   if(nobjpt == 0)
-    return Rect();
+    return cv::Rect();
   vector<Point3f> objpt;
-  vector<Point2f> imgpt;
+  vector<cv::Point2f> imgpt;
 
   objpt.push_back(box[0]);
   if(nobjpt > 1)
@@ -140,42 +140,42 @@ extract3DBox(const Mat& frame,
   if(nobjpt > 3)
     for(int i = 0; i < 4; i++) objpt.push_back(Point3f(objpt[i].x, objpt[i].y, box[3].z));
 
-  projectPoints(Mat(objpt), rvec, tvec, cameraMatrix, Mat(), imgpt);
+  cv::projectPoints(cv::Mat(objpt), rvec, tvec, cameraMatrix, cv::Mat(), imgpt);
 
   if(shownFrame.data) {
     if(nobjpt == 1)
-      circle(shownFrame, imgpt[0], 3, Scalar(0, 255, 0), -1, cv::LINE_AA);
+      cv::circle(shownFrame, imgpt[0], 3, cv::Scalar(0, 255, 0), -1, cv::LINE_AA);
     else if(nobjpt == 2) {
-      circle(shownFrame, imgpt[0], 3, Scalar(0, 255, 0), -1, cv::LINE_AA);
-      circle(shownFrame, imgpt[1], 3, Scalar(0, 255, 0), -1, cv::LINE_AA);
-      line(shownFrame, imgpt[0], imgpt[1], Scalar(0, 255, 0), 3, cv::LINE_AA);
+      cv::circle(shownFrame, imgpt[0], 3, cv::Scalar(0, 255, 0), -1, cv::LINE_AA);
+      cv::circle(shownFrame, imgpt[1], 3, cv::Scalar(0, 255, 0), -1, cv::LINE_AA);
+      cv::line(shownFrame, imgpt[0], imgpt[1], cv::Scalar(0, 255, 0), 3, cv::LINE_AA);
     } else if(nobjpt == 3)
       for(int i = 0; i < 4; i++) {
-        circle(shownFrame, imgpt[i], 3, Scalar(0, 255, 0), -1, cv::LINE_AA);
-        line(shownFrame, imgpt[i], imgpt[(i + 1) % 4], Scalar(0, 255, 0), 3, cv::LINE_AA);
+        cv::circle(shownFrame, imgpt[i], 3, cv::Scalar(0, 255, 0), -1, cv::LINE_AA);
+        cv::line(shownFrame, imgpt[i], imgpt[(i + 1) % 4], cv::Scalar(0, 255, 0), 3, cv::LINE_AA);
       }
     else
       for(int i = 0; i < 8; i++) {
-        circle(shownFrame, imgpt[i], 3, Scalar(0, 255, 0), -1, cv::LINE_AA);
-        line(shownFrame, imgpt[i], imgpt[(i + 1) % 4 + (i / 4) * 4], Scalar(0, 255, 0), 3, cv::LINE_AA);
-        line(shownFrame, imgpt[i], imgpt[i % 4], Scalar(0, 255, 0), 3, cv::LINE_AA);
+        cv::circle(shownFrame, imgpt[i], 3, cv::Scalar(0, 255, 0), -1, cv::LINE_AA);
+        cv::line(shownFrame, imgpt[i], imgpt[(i + 1) % 4 + (i / 4) * 4], cv::Scalar(0, 255, 0), 3, cv::LINE_AA);
+        cv::line(shownFrame, imgpt[i], imgpt[i % 4], cv::Scalar(0, 255, 0), 3, cv::LINE_AA);
       }
   }
 
   if(nobjpt <= 2)
-    return Rect();
-  vector<Point> hull;
-  convexHull(Mat_<Point>(Mat(imgpt)), hull);
-  Mat selectedObjMask = Mat::zeros(frame.size(), CV_8U);
-  fillConvexPoly(selectedObjMask, &hull[0], (int)hull.size(), Scalar::all(255), 8, 0);
-  Rect roi = boundingRect(Mat(hull)) & Rect(Point(), frame.size());
+    return cv::Rect();
+  vector<cv::Point> hull;
+  cv::convexHull(Mat_<cv::Point>(cv::Mat(imgpt)), hull);
+  cv::Mat selectedObjMask = cv::Mat::zeros(frame.size(), CV_8U);
+  cv::fillConvexPoly(selectedObjMask, &hull[0], (int)hull.size(), cv::Scalar::all(255), 8, 0);
+  cv::Rect roi = cv::boundingRect(cv::Mat(hull)) & cv::Rect(cv::Point(), frame.size());
 
   if(runExtraSegmentation) {
-    selectedObjMask = Scalar::all(GC_BGD);
-    fillConvexPoly(selectedObjMask, &hull[0], (int)hull.size(), Scalar::all(GC_PR_FGD), 8, 0);
-    Mat bgdModel, fgdModel;
-    grabCut(frame, selectedObjMask, roi, bgdModel, fgdModel, 3, GC_INIT_WITH_RECT + GC_INIT_WITH_MASK);
-    bitwise_and(selectedObjMask, Scalar::all(1), selectedObjMask);
+    selectedObjMask = cv::Scalar::all(GC_BGD);
+    cv::fillConvexPoly(selectedObjMask, &hull[0], (int)hull.size(), cv::Scalar::all(GC_PR_FGD), 8, 0);
+    cv::Mat bgdModel, fgdModel;
+    cv::grabCut(frame, selectedObjMask, roi, bgdModel, fgdModel, 3, GC_INIT_WITH_RECT + GC_INIT_WITH_MASK);
+    cv::bitwise_and(selectedObjMask, cv::Scalar::all(1), selectedObjMask);
   }
 
   frame.copyTo(selectedObjFrame, selectedObjMask);
@@ -185,22 +185,22 @@ extract3DBox(const Mat& frame,
 static int
 select3DBox(const string& windowname,
             const string& selWinName,
-            const Mat& frame,
-            const Mat& cameraMatrix,
-            const Mat& rvec,
-            const Mat& tvec,
+            const cv::Mat& frame,
+            const cv::Mat& cameraMatrix,
+            const cv::Mat& rvec,
+            const cv::Mat& tvec,
             vector<Point3f>& box) {
   const float eps = 1e-3f;
   MouseEvent mouse;
 
-  setMouseCallback(windowname, onMouse, &mouse);
+  cv::setMouseCallback(windowname, onMouse, &mouse);
   vector<Point3f> tempobj(8);
-  vector<Point2f> imgpt(4), tempimg(8);
-  vector<Point> temphull;
+  vector<cv::Point2f> imgpt(4), tempimg(8);
+  vector<cv::Point> temphull;
   int nobjpt = 0;
-  Mat R, selectedObjMask, selectedObjFrame, shownFrame;
-  Rodrigues(rvec, R);
-  box.resize(4);
+  cv::Mat R, selectedObjMask, selectedObjFrame, shownFrame;
+  cv::Rodrigues(rvec, R);
+  box.cv::resize(4);
 
   for(;;) {
     float Z = 0.f;
@@ -208,17 +208,17 @@ select3DBox(const string& windowname,
     int npt = nobjpt;
 
     if((mouse.event == cv::EVENT_LBUTTONDOWN || mouse.event == cv::EVENT_LBUTTONUP || dragging) && nobjpt < 4) {
-      Point2f m = mouse.pt;
+      cv::Point2f m = mouse.pt;
 
       if(nobjpt < 2)
         imgpt[npt] = m;
       else {
-        tempobj.resize(1);
+        tempobj.cv::resize(1);
         int nearestIdx = npt - 1;
         if(nobjpt == 3) {
           nearestIdx = 0;
           for(int i = 1; i < npt; i++)
-            if(norm(m - imgpt[i]) < norm(m - imgpt[nearestIdx]))
+            if(cv::norm(m - imgpt[i]) < cv::norm(m - imgpt[nearestIdx]))
               nearestIdx = i;
         }
 
@@ -229,10 +229,10 @@ select3DBox(const string& windowname,
         } else
           tempobj[0] = Point3f(box[nearestIdx].x, box[nearestIdx].y, 1.f);
 
-        projectPoints(Mat(tempobj), rvec, tvec, cameraMatrix, Mat(), tempimg);
+        cv::projectPoints(cv::Mat(tempobj), rvec, tvec, cameraMatrix, cv::Mat(), tempimg);
 
-        Point2f a = imgpt[nearestIdx], b = tempimg[0], d1 = b - a, d2 = m - a;
-        float n1 = (float)norm(d1), n2 = (float)norm(d2);
+        cv::Point2f a = imgpt[nearestIdx], b = tempimg[0], d1 = b - a, d2 = m - a;
+        float n1 = (float)cv::norm(d1), n2 = (float)norm(d2);
         if(n1 * n2 < eps)
           imgpt[npt] = a;
         else {
@@ -243,7 +243,7 @@ select3DBox(const string& windowname,
       box[npt] = image2plane(imgpt[npt], R, tvec, cameraMatrix, npt < 3 ? 0 : Z);
 
       if((npt == 0 && mouse.event == cv::EVENT_LBUTTONDOWN) ||
-         (npt > 0 && norm(box[npt] - box[npt - 1]) > eps && mouse.event == cv::EVENT_LBUTTONUP)) {
+         (npt > 0 && cv::norm(box[npt] - box[npt - 1]) > eps && mouse.event == cv::EVENT_LBUTTONUP)) {
         nobjpt++;
         if(nobjpt < 4) {
           imgpt[nobjpt] = imgpt[nobjpt - 1];
@@ -259,10 +259,10 @@ select3DBox(const string& windowname,
 
     frame.copyTo(shownFrame);
     extract3DBox(frame, shownFrame, selectedObjFrame, cameraMatrix, rvec, tvec, box, npt, false);
-    imshow(windowname, shownFrame);
-    imshow(selWinName, selectedObjFrame);
+    cv::imshow(windowname, shownFrame);
+    cv::imshow(selWinName, selectedObjFrame);
 
-    int c = waitKey(30);
+    int c = cv::waitKey(30);
     if((c & 255) == 27) {
       nobjpt = 0;
     }
@@ -277,28 +277,28 @@ select3DBox(const string& windowname,
 
 static bool
 readModelViews(
-    const string& filename, vector<Point3f>& box, vector<string>& imagelist, vector<Rect>& roiList, vector<Vec6f>& poseList) {
-  imagelist.resize(0);
-  roiList.resize(0);
-  poseList.resize(0);
-  box.resize(0);
+    const string& filename, vector<Point3f>& box, vector<string>& imagelist, vector<cv::Rect>& roiList, vector<Vec6f>& poseList) {
+  imagelist.cv::resize(0);
+  roiList.cv::resize(0);
+  poseList.cv::resize(0);
+  box.cv::resize(0);
 
-  FileStorage fs(filename, FileStorage::READ);
+  cv::FileStorage fs(filename, cv::FileStorage::READ);
   if(!fs.isOpened())
     return false;
   fs["box"] >> box;
 
-  FileNode all = fs["views"];
-  if(all.type() != FileNode::SEQ)
+  cv::FileNode all = fs["views"];
+  if(all.type() != cv::FileNode::SEQ)
     return false;
-  FileNodeIterator it = all.begin(), it_end = all.end();
+  cv::FileNodeIterator it = all.begin(), it_end = all.end();
 
   for(; it != it_end; ++it) {
-    FileNode n = *it;
+    cv::FileNode n = *it;
     imagelist.push_back((string)n["image"]);
-    FileNode nr = n["rect"];
-    roiList.push_back(Rect((int)nr[0], (int)nr[1], (int)nr[2], (int)nr[3]));
-    FileNode np = n["pose"];
+    cv::FileNode nr = n["rect"];
+    roiList.push_back(cv::Rect((int)nr[0], (int)nr[1], (int)nr[2], (int)nr[3]));
+    cv::FileNode np = n["pose"];
     poseList.push_back(Vec6f((float)np[0], (float)np[1], (float)np[2], (float)np[3], (float)np[4], (float)np[5]));
   }
 
@@ -309,9 +309,9 @@ static bool
 writeModelViews(const string& filename,
                 const vector<Point3f>& box,
                 const vector<string>& imagelist,
-                const vector<Rect>& roiList,
+                const vector<cv::Rect>& roiList,
                 const vector<Vec6f>& poseList) {
-  FileStorage fs(filename, FileStorage::WRITE);
+  cv::FileStorage fs(filename, cv::FileStorage::WRITE);
   if(!fs.isOpened())
     return false;
 
@@ -326,7 +326,7 @@ writeModelViews(const string& filename,
   CV_Assert(nviews == roiList.size() && nviews == poseList.size());
 
   for(i = 0; i < nviews; i++) {
-    Rect r = roiList[i];
+    cv::Rect r = roiList[i];
     Vec6f p = poseList[i];
 
     fs << "{"
@@ -343,14 +343,14 @@ writeModelViews(const string& filename,
 
 static bool
 readStringList(const string& filename, vector<string>& l) {
-  l.resize(0);
-  FileStorage fs(filename, FileStorage::READ);
+  l.cv::resize(0);
+  cv::FileStorage fs(filename, cv::FileStorage::READ);
   if(!fs.isOpened())
     return false;
-  FileNode n = fs.getFirstTopLevelNode();
-  if(n.type() != FileNode::SEQ)
+  cv::FileNode n = fs.getFirstTopLevelNode();
+  if(n.type() != cv::FileNode::SEQ)
     return false;
-  FileNodeIterator it = n.begin(), it_end = n.end();
+  cv::FileNodeIterator it = n.begin(), it_end = n.end();
   for(; it != it_end; ++it) l.push_back((string)*it);
   return true;
 }
@@ -375,7 +375,7 @@ main(int argc, char** argv) {
   const char* outprefix = 0;
   const char* inputName = 0;
   int cameraId = 0;
-  Size boardSize;
+  cv::Size boardSize;
   double squareSize = 1;
   vector<string> imageList;
 
@@ -420,11 +420,11 @@ main(int argc, char** argv) {
     return 0;
   }
 
-  Mat cameraMatrix, distCoeffs;
-  Size calibratedImageSize;
+  cv::Mat cameraMatrix, distCoeffs;
+  cv::Size calibratedImageSize;
   readCameraMatrix(intrinsicsFilename, cameraMatrix, distCoeffs, calibratedImageSize);
 
-  VideoCapture capture;
+  cv::VideoCapture capture;
   if(inputName) {
     if(!readStringList(inputName, imageList) && !capture.open(inputName)) {
       fprintf(stderr, "The input file could not be opened\n");
@@ -453,17 +453,17 @@ main(int argc, char** argv) {
       outbarename = outprefix;
   }
 
-  Mat frame, shownFrame, selectedObjFrame, mapxy;
+  cv::Mat frame, shownFrame, selectedObjFrame, mapxy;
 
-  namedWindow("View", 1);
-  namedWindow("Selected Object", 1);
-  setMouseCallback("View", onMouse, 0);
+  cv::namedWindow("View", 1);
+  cv::namedWindow("Selected Object", 1);
+  cv::setMouseCallback("View", onMouse, 0);
   bool boardFound = false;
 
-  string indexFilename = format("%s_index.yml", outprefix);
+  string indexFilename = cv::format("%s_index.yml", outprefix);
 
   vector<string> capturedImgList;
-  vector<Rect> roiList;
+  vector<cv::Rect> roiList;
   vector<Vec6f> poseList;
   vector<Point3f> box, boardPoints;
 
@@ -475,10 +475,10 @@ main(int argc, char** argv) {
   puts(screen_help);
 
   for(int i = 0;; i++) {
-    Mat frame0;
+    cv::Mat frame0;
     if(!imageList.empty()) {
       if(i < (int)imageList.size())
-        frame0 = imread(string(imageList[i]), 1);
+        frame0 = cv::imread(string(imageList[i]), 1);
     } else
       capture >> frame0;
     if(!frame0.data)
@@ -494,21 +494,21 @@ main(int argc, char** argv) {
         cameraMatrix.at<double>(1, 1) *= sy;
         cameraMatrix.at<double>(1, 2) *= sy;
       }
-      Mat dummy;
-      initUndistortRectifyMap(cameraMatrix, distCoeffs, Mat(), cameraMatrix, frame0.size(), CV_32FC2, mapxy, dummy);
-      distCoeffs = Mat::zeros(5, 1, CV_64F);
+      cv::Mat dummy;
+      cv::initUndistortRectifyMap(cameraMatrix, distCoeffs, cv::Mat(), cameraMatrix, frame0.size(), CV_32FC2, mapxy, dummy);
+      distCoeffs = cv::Mat::zeros(5, 1, CV_64F);
     }
-    remap(frame0, frame, mapxy, Mat(), INTER_LINEAR);
-    vector<Point2f> foundBoardCorners;
-    boardFound = findChessboardCorners(frame, boardSize, foundBoardCorners);
+    cv::remap(frame0, frame, mapxy, cv::Mat(), INTER_LINEAR);
+    vector<cv::Point2f> foundBoardCorners;
+    boardFound = cv::findChessboardCorners(frame, boardSize, foundBoardCorners);
 
-    Mat rvec, tvec;
+    cv::Mat rvec, tvec;
     if(boardFound)
-      solvePnP(Mat(boardPoints), Mat(foundBoardCorners), cameraMatrix, distCoeffs, rvec, tvec, false);
+      cv::solvePnP(cv::Mat(boardPoints), cv::Mat(foundBoardCorners), cameraMatrix, distCoeffs, rvec, tvec, false);
 
     frame.copyTo(shownFrame);
-    drawChessboardCorners(shownFrame, boardSize, Mat(foundBoardCorners), boardFound);
-    selectedObjFrame = Mat::zeros(frame.size(), frame.type());
+    cv::drawChessboardCorners(shownFrame, boardSize, cv::Mat(foundBoardCorners), boardFound);
+    selectedObjFrame = cv::Mat::zeros(frame.size(), frame.type());
 
     if(boardFound && grabNext) {
       if(box.empty()) {
@@ -518,7 +518,7 @@ main(int argc, char** argv) {
       }
 
       if(!box.empty()) {
-        Rect r = extract3DBox(frame, shownFrame, selectedObjFrame, cameraMatrix, rvec, tvec, box, 4, true);
+        cv::Rect r = extract3DBox(frame, shownFrame, selectedObjFrame, cameraMatrix, rvec, tvec, box, 4, true);
         if(r.area()) {
           const int maxFrameIdx = 10000;
           char path[1000];
@@ -533,13 +533,13 @@ main(int argc, char** argv) {
             printf("Can not save the image as %s<...>.jpg", outprefix);
             break;
           }
-          imwrite(path, selectedObjFrame(r));
+          cv::imwrite(path, selectedObjFrame(r));
 
           capturedImgList.push_back(string(path));
           roiList.push_back(r);
 
           float p[6];
-          Mat RV(3, 1, CV_32F, p), TV(3, 1, CV_32F, p + 3);
+          cv::Mat RV(3, 1, CV_32F, p), TV(3, 1, CV_32F, p + 3);
           rvec.convertTo(RV, RV.type());
           tvec.convertTo(TV, TV.type());
           poseList.push_back(Vec6f(p[0], p[1], p[2], p[3], p[4], p[5]));
@@ -548,9 +548,9 @@ main(int argc, char** argv) {
       grabNext = !imageList.empty();
     }
 
-    imshow("View", shownFrame);
-    imshow("Selected Object", selectedObjFrame);
-    int c = waitKey(imageList.empty() && !box.empty() ? 30 : 300);
+    cv::imshow("View", shownFrame);
+    cv::imshow("Selected Object", selectedObjFrame);
+    int c = cv::waitKey(imageList.empty() && !box.empty() ? 30 : 300);
     if(c == 'q' || c == 'Q')
       break;
     if(c == '\r' || c == '\n')

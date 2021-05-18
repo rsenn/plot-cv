@@ -4,7 +4,7 @@
  *  Created on: Feb 16, 2013
  *      Author: Alec Robinson
  *
- * Allows a user to select pixels samples and have similar pixels detected.
+ * Allows a user to select pixels cv::samples and have similar pixels detected.
  * Also will now find the centers of various shapes.
  *
  */
@@ -19,7 +19,7 @@
 #include <time.h>
 #include <stdio.h>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 bool findblobs = false;
@@ -36,15 +36,15 @@ bool findcenter = true;
 
 void my_mouse_callback(int event, int x, int y, int flags, void* param);
 
-VideoCapture capturen;
-Mat frame;    // mat of the original image
-Mat newframe; // mat of the threshholded (threshheld?) image
-Mat newerframe;
+cv::VideoCapture capturen;
+cv::Mat frame;    // mat of the original image
+cv::Mat newframe; // mat of the threshholded (threshheld?) image
+cv::Mat newerframe;
 ofstream outfile;
 namespace {
 
 void
-blobfind(Mat& theimage, int b, int g, int r, float& x, float& y) {
+blobfind(cv::Mat& theimage, int b, int g, int r, float& x, float& y) {
   int xrunning = 0, yrunning = 0;
   int found = 0;
 
@@ -185,18 +185,18 @@ blobfind(Mat& theimage, int b, int g, int r, float& x, float& y) {
 
 void
 targetinginit() {
-  cout << "Left click to collect samples, right click to clear them.\n";
+  cout << "Left click to collect cv::samples, right click to clear them.\n";
   cout << "'c' to toggle center finding.\n";
-  cout << "Press q to quit, but only if you really mean it.\n";
+  cout << "Press q to quit, but only if you really cv::mean it.\n";
 
   outfile.open("bgrout.txt", ios::trunc);
 
   std::string arg = "0";
-  VideoCapture capture(arg);
+  cv::VideoCapture capture(arg);
   if(!capture.isOpened())
     capture.open(atoi(arg.c_str()));
   capture.set(cv::CAP_PROP_FRAME_WIDTH,
-              240); // this line and the following line is necessary only for the raspberry pi.
+              240); // this cv::line and the following cv::line is necessary only for the raspberry pi.
                     // if you were to delete these on the pi, you would get timeout errors
   capture.set(cv::CAP_PROP_FRAME_HEIGHT, 320);
   if(!capture.isOpened()) {
@@ -204,8 +204,8 @@ targetinginit() {
   }
   capturen = capture;
 
-  namedWindow("Original Image", cv::WINDOW_KEEPRATIO);
-  namedWindow("Threshold Image", cv::WINDOW_KEEPRATIO);
+  cv::namedWindow("Original Image", cv::WINDOW_KEEPRATIO);
+  cv::namedWindow("Threshold Image", cv::WINDOW_KEEPRATIO);
 
   cvCreateTrackbar("Threshold", "Threshold Image", &thresh, 200, NULL);
 }
@@ -256,18 +256,18 @@ targetingprocess() {
       }
     }
 
-    erode(newframe, newerframe, Mat());
-    dilate(newerframe, newerframe, Mat());
-    erode(newerframe, newerframe, Mat());
-    erode(newerframe, newerframe, Mat());
-    dilate(newerframe, newerframe, Mat());
-    dilate(newerframe, newerframe, Mat());
-    dilate(newerframe, newerframe, Mat());
-    dilate(newerframe, newerframe, Mat());
-    dilate(newerframe, newerframe, Mat());
-    dilate(newerframe, newerframe, Mat());
-    dilate(newerframe, newerframe, Mat());
-    dilate(newerframe, newerframe, Mat());
+    cv::erode(newframe, newerframe, cv::Mat());
+    cv::dilate(newerframe, newerframe, cv::Mat());
+    cv::erode(newerframe, newerframe, cv::Mat());
+    cv::erode(newerframe, newerframe, cv::Mat());
+    cv::dilate(newerframe, newerframe, cv::Mat());
+    cv::dilate(newerframe, newerframe, cv::Mat());
+    cv::dilate(newerframe, newerframe, cv::Mat());
+    cv::dilate(newerframe, newerframe, cv::Mat());
+    cv::dilate(newerframe, newerframe, cv::Mat());
+    cv::dilate(newerframe, newerframe, cv::Mat());
+    cv::dilate(newerframe, newerframe, cv::Mat());
+    cv::dilate(newerframe, newerframe, cv::Mat());
 
     float topx, topy, bottomx1, bottomy1, bottomx2, bottomy2;
 
@@ -276,28 +276,28 @@ targetingprocess() {
       // blobfind(newerframe, 240, 0, 0, bottomx1, bottomy1);
       // blobfind(newerframe, 0, 0, 240, bottomx2, bottomy2);
 
-      ellipse(newerframe, Point(topy, topx), Size(22, 22), 360, 0, 360, Scalar(102, 0, 255), 5, 2);
+      cv::ellipse(newerframe, cv::Point(topy, topx), cv::Size(22, 22), 360, 0, 360, cv::Scalar(102, 0, 255), 5, 2);
 
-      ellipse(frame, Point(topy, topx), Size(22, 22), 360, 0, 360, Scalar(102, 0, 255), 5, 2);
+      cv::ellipse(frame, cv::Point(topy, topx), cv::Size(22, 22), 360, 0, 360, cv::Scalar(102, 0, 255), 5, 2);
 
-      ellipse(newerframe, Point(bottomy1, bottomx1), Size(22, 22), 360, 0, 360, Scalar(0, 208, 255), 5, 2);
+      cv::ellipse(newerframe, cv::Point(bottomy1, bottomx1), cv::Size(22, 22), 360, 0, 360, cv::Scalar(0, 208, 255), 5, 2);
 
-      ellipse(frame, Point(bottomy1, bottomx1), Size(22, 22), 360, 0, 360, Scalar(0, 208, 255), 5, 2);
+      cv::ellipse(frame, cv::Point(bottomy1, bottomx1), cv::Size(22, 22), 360, 0, 360, cv::Scalar(0, 208, 255), 5, 2);
 
-      ellipse(newerframe, Point(bottomy2, bottomx2), Size(22, 22), 360, 0, 360, Scalar(0, 55, 255), 5, 2);
+      cv::ellipse(newerframe, cv::Point(bottomy2, bottomx2), cv::Size(22, 22), 360, 0, 360, cv::Scalar(0, 55, 255), 5, 2);
 
-      ellipse(frame, Point(bottomy2, bottomx2), Size(22, 22), 360, 0, 360, Scalar(0, 55, 255), 5, 2);
+      cv::ellipse(frame, cv::Point(bottomy2, bottomx2), cv::Size(22, 22), 360, 0, 360, cv::Scalar(0, 55, 255), 5, 2);
     }
 
-    imshow("Threshold Image", newerframe);
+    cv::imshow("Threshold Image", newerframe);
     capturen >> frame;
 
-    imshow("Original Image", frame);
+    cv::imshow("Original Image", frame);
     auto ipl = frame;
     cvSetMouseCallback("Original Image", my_mouse_callback,
                        reinterpret_cast<void*>(&ipl)); // get mouse input
 
-    char key = (char)waitKey(5); // get keyboard input
+    char key = (char)cv::waitKey(5); // get keyboard input
     if(key == 'q')
       break;
     if(key == 'b')

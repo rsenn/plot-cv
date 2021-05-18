@@ -7,7 +7,7 @@
 #include <camera.h>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 /*
 //------Globals-----NOT BEING USED
@@ -21,7 +21,7 @@ using namespace cv;
 ////Line marking window name
 //string lineMarkerName = "Line marker";
 
-//Mat img, workingImage;
+//cv::Mat img, workingImage;
 //string draft = "draft.jpg";
 
 ////While the program is running, the webcam is always on
@@ -63,35 +63,35 @@ MainWindow::on_comboBox_currentIndexChanged(int index) {
 //    if  ( event == EVENT_LBUTTONDOWN )
 //    {
 //        //sets upper line
-//        img = imread(draft);
+//        img = cv::imread(draft);
 //        aLine templine(0, y, img.size().width, y);
-//        templine.drawaLine(img, Scalar(0, 0, 255));
-//        imshow(lineMarkerName, img);
+//        templine.drawaLine(img, cv::Scalar(0, 0, 255));
+//        cv::imshow(lineMarkerName, img);
 //        markedLines.setLine(1,templine);
 //    }
 //    else if  ( event == EVENT_RBUTTONDOWN )
 //    {
 //        //sets bottom line
-//        img = imread(draft);
+//        img = cv::imread(draft);
 //        aLine templine(0, y, img.size().width, y);
-//        templine.drawaLine(img, Scalar(0, 0, 255));
-//        imshow(lineMarkerName, img);
+//        templine.drawaLine(img, cv::Scalar(0, 0, 255));
+//        cv::imshow(lineMarkerName, img);
 //        markedLines.setLine(0,templine);
 //    }
 //    else if  ( event == EVENT_MBUTTONDOWN )
 //    {
 //        //take another picture
-//        destroyWindow(lineMarkerName);
+//        cv::destroyWindow(lineMarkerName);
 //    }
 //    else if ( event == EVENT_MOUSEMOVE )
 //    {
 //        //draws mouse line
-//        img = imread(draft);
+//        img = cv::imread(draft);
 //        aLine templine(0, y, img.size().width, y);
-//        templine.drawaLine(img, Scalar(0, 255, 255));
-//        if (markedLines.hasBottom()){markedLines.set[0].drawaLine(img, Scalar(0, 255, 0));}
-//        if (markedLines.hasTop()){markedLines.set[1].drawaLine(img, Scalar(255, 0, 0));}
-//        imshow(lineMarkerName, img);
+//        templine.drawaLine(img, cv::Scalar(0, 255, 255));
+//        if (markedLines.hasBottom()){markedLines.set[0].drawaLine(img, cv::Scalar(0, 255, 0));}
+//        if (markedLines.hasTop()){markedLines.set[1].drawaLine(img, cv::Scalar(255, 0, 0));}
+//        cv::imshow(lineMarkerName, img);
 //    }
 //}
 
@@ -102,27 +102,27 @@ MainWindow::on_comboBox_currentIndexChanged(int index) {
 //    markedLines = zeroSet;
 
 //    // Read image from file
-//    img = imread(draft);
+//    img = cv::imread(draft);
 
-//    //if fail to read the image
+//    //if fail to cv::read the image
 //    if ( workingImage.empty() )
 //    {
-//        cout << "Error loading the image" << endl;
+//        cout << "cv::Error loading the image" << endl;
 //        //return -1;
 //    }
 
 //    //Create a window
-//    namedWindow(lineMarkerName, 1);
+//    cv::namedWindow(lineMarkerName, 1);
 
 //    //set the callback function for any mouse event
-//    setMouseCallback(lineMarkerName, onMouse, NULL);
+//    cv::setMouseCallback(lineMarkerName, onMouse, NULL);
 
 //    //show the image
-//    imshow(lineMarkerName, img);
+//    cv::imshow(lineMarkerName, img);
 
 //    // Wait until user press some key
-//    waitKey(0);
+//    cv::waitKey(0);
 //    //Vai chamar o método de cálculo com markedLines como parâmetro
 //    cout<<"Linha inferior: "<<markedLines.set[0].p1.y<<" Linha superior:
-//    "<<markedLines.set[1].p1.y<<endl; destroyWindow(lineMarkerName);
+//    "<<markedLines.set[1].p1.y<<endl; cv::destroyWindow(lineMarkerName);
 //}

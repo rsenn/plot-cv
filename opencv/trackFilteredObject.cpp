@@ -26,7 +26,7 @@
 
 #include <trackFilteredObject.hpp>
 using namespace std;
-using namespace cv;
+//using namespace cv;
 void static on_trackbar(int, void*) {
   // This function gets called whenever a
   // trackbar position is changed
@@ -62,7 +62,7 @@ trackFiliteredObject::getRange() {
 }
 
 void
-trackFiliteredObject::Multiple_inRanage(cv::Mat& hsv, cv::Mat& threshold, int arguments) {
+trackFiliteredObject::Multiple_inRanage(cv::Mat& hsv, cv::Mat& cv::threshold, int arguments) {
 
   switch(arguments) {
     case default_value:
@@ -72,7 +72,7 @@ trackFiliteredObject::Multiple_inRanage(cv::Mat& hsv, cv::Mat& threshold, int ar
       S_MAX = 256;
       V_MIN = 0;
       V_MAX = 256;
-      // cv::inRange(hsv,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX), threshold);
+      // cv::inRange(hsv,cv::Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX), cv::threshold);
       break;
     case morring:
       H_MIN = 17;
@@ -81,7 +81,7 @@ trackFiliteredObject::Multiple_inRanage(cv::Mat& hsv, cv::Mat& threshold, int ar
       S_MAX = 256;
       V_MIN = 36;
       V_MAX = 170;
-      // cv::inRange(hsv, Scalar(17,150,36), Scalar(256,256,170), threshold);
+      // cv::inRange(hsv, cv::Scalar(17,150,36), cv::Scalar(256,256,170), cv::threshold);
       break;
     case morring_pi:
       H_MIN = 26;
@@ -108,7 +108,7 @@ trackFiliteredObject::Multiple_inRanage(cv::Mat& hsv, cv::Mat& threshold, int ar
       S_MAX = 256;
       V_MIN = 113;
       V_MAX = 240;
-      // cv::inRange(hsv, Scalar(24,84,113), Scalar(80,256,240), threshold);
+      // cv::inRange(hsv, cv::Scalar(24,84,113), cv::Scalar(80,256,240), cv::threshold);
       break;
     case night2: break;
 
@@ -125,36 +125,36 @@ trackFiliteredObject::drawObject(int x, int y, cv::Mat& frame) {
   // added 'if' and 'else' statements to prevent
   // memory errors from writing off the screen (ie. (-25,-25) is not within the window!)
 
-  circle(frame, cv::Point(x, y), 20, Scalar(0, 255, 0), 2);
+  cv::circle(frame, cv::Point(x, y), 20, cv::Scalar(0, 255, 0), 2);
   if(y - 25 > 0)
-    line(frame, cv::Point(x, y), cv::Point(x, y - 25), Scalar(0, 255, 0), 2);
+    cv::line(frame, cv::Point(x, y), cv::Point(x, y - 25), cv::Scalar(0, 255, 0), 2);
   else
-    line(frame, cv::Point(x, y), cv::Point(x, 0), Scalar(0, 255, 0), 2);
+    cv::line(frame, cv::Point(x, y), cv::Point(x, 0), cv::Scalar(0, 255, 0), 2);
   if(y + 25 < FRAME_HEIGHT)
-    line(frame, cv::Point(x, y), cv::Point(x, y + 25), Scalar(0, 255, 0), 2);
+    cv::line(frame, cv::Point(x, y), cv::Point(x, y + 25), cv::Scalar(0, 255, 0), 2);
   else
-    line(frame, cv::Point(x, y), cv::Point(x, FRAME_HEIGHT), Scalar(0, 255, 0), 2);
+    cv::line(frame, cv::Point(x, y), cv::Point(x, FRAME_HEIGHT), cv::Scalar(0, 255, 0), 2);
   if(x - 25 > 0)
-    line(frame, cv::Point(x, y), cv::Point(x - 25, y), Scalar(0, 255, 0), 2);
+    cv::line(frame, cv::Point(x, y), cv::Point(x - 25, y), cv::Scalar(0, 255, 0), 2);
   else
-    line(frame, cv::Point(x, y), cv::Point(0, y), Scalar(0, 255, 0), 2);
+    cv::line(frame, cv::Point(x, y), cv::Point(0, y), cv::Scalar(0, 255, 0), 2);
   if(x + 25 < FRAME_WIDTH)
-    line(frame, cv::Point(x, y), cv::Point(x + 25, y), Scalar(0, 255, 0), 2);
+    cv::line(frame, cv::Point(x, y), cv::Point(x + 25, y), cv::Scalar(0, 255, 0), 2);
   else
-    line(frame, cv::Point(x, y), cv::Point(FRAME_WIDTH, y), Scalar(0, 255, 0), 2);
+    cv::line(frame, cv::Point(x, y), cv::Point(FRAME_WIDTH, y), cv::Scalar(0, 255, 0), 2);
 
-  putText(frame, intToString(x) + "," + intToString(y), cv::Point(x, y + 30), 1, 1, Scalar(0, 255, 0), 2);
+  cv::putText(frame, intToString(x) + "," + intToString(y), cv::Point(x, y + 30), 1, 1, cv::Scalar(0, 255, 0), 2);
 }
 void
-trackFiliteredObject::trackObjcet(int& x, int& y, cv::Mat threshold, cv::Mat& cameraFeed) {
+trackFiliteredObject::trackObjcet(int& x, int& y, cv::Mat cv::threshold, cv::Mat& cameraFeed) {
   cv::Mat temp;
-  threshold.copyTo(temp);
+  cv::threshold.copyTo(temp);
   // these two std::vectors need for output findcontours
   std::vector<std::vector<cv::Point>> contours;
-  std::vector<Vec4i> hierarchy;
+  std::vector<cv::Vec4i> hierarchy;
   // find contours of filtered image using Opencv find Contours function
-  findContours(temp, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE);
-  // use moments method to find our filtered object
+  cv::findContours(temp, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE);
+  // use cv::moments method to find our filtered object
   double refArea = 0;
   bool objectFound = false;
   if(hierarchy.size() > 0) {
@@ -163,7 +163,7 @@ trackFiliteredObject::trackObjcet(int& x, int& y, cv::Mat threshold, cv::Mat& ca
     if(numObjects < MAX_NUM_OBJECTS) {
       for(int index = 0; index >= 0; index = hierarchy[index][0]) {
 
-        Moments moment = moments((cv::Mat)contours[index]);
+        cv::Moments moment = cv::moments((cv::Mat)contours[index]);
         double area = moment.m00;
 
         // if the area is less than 20 px by 20px then it is probably just noise
@@ -177,7 +177,7 @@ trackFiliteredObject::trackObjcet(int& x, int& y, cv::Mat threshold, cv::Mat& ca
           objectFound = true;
           refArea = area;
         } else if(area > MAX_OBJECT_AREA) {
-          putText(cameraFeed, "Tracking TOO CLOSE!", cv::Point(0, 50), 2, 1, Scalar(0, 0, 255), 2);
+          cv::putText(cameraFeed, "Tracking TOO CLOSE!", cv::Point(0, 50), 2, 1, cv::Scalar(0, 0, 255), 2);
           cout << "TOO CLOSE" << endl;
           objectFound = false;
         } else
@@ -185,8 +185,8 @@ trackFiliteredObject::trackObjcet(int& x, int& y, cv::Mat threshold, cv::Mat& ca
       }
       // let user know you found an object
       if(objectFound == true) {
-        putText(cameraFeed, "Tracking Object", cv::Point(0, 50), 2, 1, Scalar(0, 255, 0), 2);
-        // write x,y in object
+        cv::putText(cameraFeed, "Tracking Object", cv::Point(0, 50), 2, 1, cv::Scalar(0, 255, 0), 2);
+        // cv::write x,y in object
         writeXY(x, y);
 
         // draw object location on screen
@@ -194,14 +194,14 @@ trackFiliteredObject::trackObjcet(int& x, int& y, cv::Mat threshold, cv::Mat& ca
       }
 
     } else
-      putText(cameraFeed, "TOO MUCH NOISE! ADJUST FILTER", cv::Point(0, 50), 1, 2, Scalar(0, 0, 255), 2);
+      cv::putText(cameraFeed, "TOO MUCH NOISE! ADJUST FILTER", cv::Point(0, 50), 1, 2, cv::Scalar(0, 0, 255), 2);
   }
 }
 void
 trackFiliteredObject::createTrackbars() {
   // create window for trackbars
 
-  namedWindow(trackbarWindowName, 0);
+  cv::namedWindow(trackbarWindowName, 0);
   // create memory to store trackbar name on window
   char TrackbarName[50];
   sprintf(TrackbarName, "H_MIN", H_MIN);
@@ -215,30 +215,30 @@ trackFiliteredObject::createTrackbars() {
   // moved(eg.H_LOW), the max value the trackbar can move (eg. H_HIGH), and the function that is
   // called whenever the trackbar is moved(eg. on_trackbar)
   //                                  ---->    ---->     ---->
-  createTrackbar("H_MIN", trackbarWindowName, &H_MIN, H_MAX, on_trackbar);
-  createTrackbar("H_MAX", trackbarWindowName, &H_MAX, H_MAX, on_trackbar);
-  createTrackbar("S_MIN", trackbarWindowName, &S_MIN, S_MAX, on_trackbar);
-  createTrackbar("S_MAX", trackbarWindowName, &S_MAX, S_MAX, on_trackbar);
-  createTrackbar("V_MIN", trackbarWindowName, &V_MIN, V_MAX, on_trackbar);
-  createTrackbar("V_MAX", trackbarWindowName, &V_MAX, V_MAX, on_trackbar);
+  cv::createTrackbar("H_MIN", trackbarWindowName, &H_MIN, H_MAX, on_trackbar);
+  cv::createTrackbar("H_MAX", trackbarWindowName, &H_MAX, H_MAX, on_trackbar);
+  cv::createTrackbar("S_MIN", trackbarWindowName, &S_MIN, S_MAX, on_trackbar);
+  cv::createTrackbar("S_MAX", trackbarWindowName, &S_MAX, S_MAX, on_trackbar);
+  cv::createTrackbar("V_MIN", trackbarWindowName, &V_MIN, V_MAX, on_trackbar);
+  cv::createTrackbar("V_MAX", trackbarWindowName, &V_MAX, V_MAX, on_trackbar);
 }
 /*Morphological operations*/
 void
 trackFiliteredObject::morphOps(cv::Mat& thresh) {
-  // create structuring element that will be used to "dilate" and "erod" image.
+  // create structuring element that will be used to "cv::dilate" and "erod" image.
   // the element chosen here is a 3px by 3px rectangle
-  cv::Mat erodeElement = getStructuringElement(MORPH_RECT, Size(3, 3));
-  // dilate with larger element so make sure object is nicely visable
-  cv::Mat dilateElement = getStructuringElement(MORPH_RECT, Size(8, 8));
+  cv::Mat erodeElement = cv::getStructuringElement(MORPH_RECT, cv::Size(3, 3));
+  // cv::dilate with larger element so make sure object is nicely visable
+  cv::Mat dilateElement = cv::getStructuringElement(MORPH_RECT, cv::Size(8, 8));
 
-  erode(thresh, thresh, erodeElement);
-  erode(thresh, thresh, erodeElement);
+  cv::erode(thresh, thresh, erodeElement);
+  cv::erode(thresh, thresh, erodeElement);
 
-  dilate(thresh, thresh, dilateElement);
-  dilate(thresh, thresh, dilateElement);
+  cv::dilate(thresh, thresh, dilateElement);
+  cv::dilate(thresh, thresh, dilateElement);
 }
 #ifdef __unix
-/*in order to read H,S,V value*/
+/*in order to cv::read H,S,V value*/
 void
 trackFiliteredObject::test_hsv(raspicam::RaspiCam_Cv video) {
   // cv::namedWindow("image");
@@ -254,18 +254,18 @@ trackFiliteredObject::test_hsv(raspicam::RaspiCam_Cv video) {
     frame.copyTo(image_frame);
     cv::cvtColor(image_frame, hsv, cv::COLOR_BGR2HSV);
 
-    Multiple_inRanage(hsv, threshold, morring_pi);
-    cv::inRange(hsv, Scalar(H_MIN, S_MIN, V_MIN), Scalar(H_MAX, S_MAX, V_MAX), threshold);
+    Multiple_inRanage(hsv, cv::threshold, morring_pi);
+    cv::inRange(hsv, cv::Scalar(H_MIN, S_MIN, V_MIN), cv::Scalar(H_MAX, S_MAX, V_MAX), cv::threshold);
 
     if(useMorphOps)
-      morphOps(threshold);
+      morphOps(cv::threshold);
 
     if(track)
-      trackObjcet(x, y, threshold, image_frame);
+      trackObjcet(x, y, cv::threshold, image_frame);
 
-    // imshow("image", image_frame);
-    imshow("testing on HSV", threshold);
-    imshow("camerafeed", image_frame);
+    // cv::imshow("image", image_frame);
+    cv::imshow("testing on HSV", cv::threshold);
+    cv::imshow("camerafeed", image_frame);
 
     char c = (char)cv::waitKey(1000 / 15.0);
     if(c == 27)
@@ -274,7 +274,7 @@ trackFiliteredObject::test_hsv(raspicam::RaspiCam_Cv video) {
 }
 
 #elif __APPLE__
-/*in order to read H,S,V value*/
+/*in order to cv::read H,S,V value*/
 void
 trackFiliteredObject::test_hsv(cv::VideoCapture video) {
   cv::namedWindow("image");
@@ -290,18 +290,18 @@ trackFiliteredObject::test_hsv(cv::VideoCapture video) {
     frame.copyTo(image_frame);
     cv::cvtColor(image_frame, hsv, cv::COLOR_BGR2HSV);
 
-    Multiple_inRanage(hsv, threshold, night);
-    cv::inRange(hsv, Scalar(H_MIN, S_MIN, V_MIN), Scalar(H_MAX, S_MAX, V_MAX), threshold);
+    Multiple_inRanage(hsv, cv::threshold, night);
+    cv::inRange(hsv, cv::Scalar(H_MIN, S_MIN, V_MIN), cv::Scalar(H_MAX, S_MAX, V_MAX), cv::threshold);
 
     if(useMorphOps)
-      morphOps(threshold);
+      morphOps(cv::threshold);
 
     if(track)
-      trackObjcet(x, y, threshold, image_frame);
+      trackObjcet(x, y, cv::threshold, image_frame);
 
-    // imshow("image", image_frame);
-    imshow("testing on HSV", threshold);
-    imshow("camerafeed", image_frame);
+    // cv::imshow("image", image_frame);
+    cv::imshow("testing on HSV", cv::threshold);
+    cv::imshow("camerafeed", image_frame);
 
     char c = (char)cv::waitKey(1000 / 15.0);
     if(c == 27)

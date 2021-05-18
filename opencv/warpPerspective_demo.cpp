@@ -4,7 +4,7 @@
 #include <opencv2/calib3d.hpp>
 #include <iostream>
 using namespace std;
-using namespace cv;
+//using namespace cv;
 static void
 help(char** argv) {
   // print a welcome message, and the OpenCV version
@@ -21,11 +21,11 @@ help(char** argv) {
        << endl;
 }
 static void onMouse(int event, int x, int y, int, void*);
-Mat warping(Mat image, Size warped_image_size, vector<Point2f> srcPoints, vector<Point2f> dstPoints);
-String windowTitle = "Perspective Transformation Demo";
-String labels[4] = {"TL", "TR", "BR", "BL"};
-vector<Point2f> roi_corners;
-vector<Point2f> dst_corners(4);
+cv::Mat warping(Mat image, cv::Size warped_image_size, vector<cv::Point2f> srcPoints, vector<Point2f> dstPoints);
+cv::String windowTitle = "Perspective Transformation Demo";
+cv::String labels[4] = {"TL", "TR", "BR", "BL"};
+vector<cv::Point2f> roi_corners;
+vector<cv::Point2f> dst_corners(4);
 int roiIndex = 0;
 bool dragging;
 int selected_corner_index = 0;
@@ -33,60 +33,60 @@ bool validation_needed = true;
 int
 main(int argc, char** argv) {
   help(argv);
-  CommandLineParser parser(argc, argv, "{@input| right.jpg |}");
+  cv::CommandLineParser parser(argc, argv, "{@input| right.jpg |}");
   string filename = parser.get<string>("@input");
-  Mat original_image = imread(filename);
-  Mat image;
+  cv::Mat original_image = cv::imread(filename);
+  cv::Mat image;
   float original_image_cols = (float)original_image.cols;
   float original_image_rows = (float)original_image.rows;
-  roi_corners.push_back(Point2f((float)(original_image_cols / 1.70), (float)(original_image_rows / 4.20)));
-  roi_corners.push_back(Point2f((float)(original_image.cols / 1.15), (float)(original_image.rows / 3.32)));
-  roi_corners.push_back(Point2f((float)(original_image.cols / 1.33), (float)(original_image.rows / 1.10)));
-  roi_corners.push_back(Point2f((float)(original_image.cols / 1.93), (float)(original_image.rows / 1.36)));
-  namedWindow(windowTitle, WINDOW_NORMAL);
-  namedWindow("Warped Image", WINDOW_AUTOSIZE);
-  moveWindow("Warped Image", 20, 20);
-  moveWindow(windowTitle, 330, 20);
-  setMouseCallback(windowTitle, onMouse, 0);
+  roi_corners.push_back(cv::Point2f((float)(original_image_cols / 1.70), (float)(original_image_rows / 4.20)));
+  roi_corners.push_back(cv::Point2f((float)(original_image.cols / 1.15), (float)(original_image.rows / 3.32)));
+  roi_corners.push_back(cv::Point2f((float)(original_image.cols / 1.33), (float)(original_image.rows / 1.10)));
+  roi_corners.push_back(cv::Point2f((float)(original_image.cols / 1.93), (float)(original_image.rows / 1.36)));
+  cv::namedWindow(windowTitle, WINDOW_NORMAL);
+  cv::namedWindow("Warped Image", cv::WINDOW_AUTOSIZE);
+  cv::moveWindow("Warped Image", 20, 20);
+  cv::moveWindow(windowTitle, 330, 20);
+  cv::setMouseCallback(windowTitle, onMouse, 0);
   bool endProgram = false;
   while(!endProgram) {
     if(validation_needed & (roi_corners.size() < 4)) {
       validation_needed = false;
       image = original_image.clone();
       for(size_t i = 0; i < roi_corners.size(); ++i) {
-        circle(image, roi_corners[i], 5, Scalar(0, 255, 0), 3);
+        cv::circle(image, roi_corners[i], 5, cv::Scalar(0, 255, 0), 3);
         if(i > 0) {
-          line(image, roi_corners[i - 1], roi_corners[(i)], Scalar(0, 0, 255), 2);
-          circle(image, roi_corners[i], 5, Scalar(0, 255, 0), 3);
-          putText(image, labels[i].c_str(), roi_corners[i], FONT_HERSHEY_SIMPLEX, 0.8, Scalar(255, 0, 0), 2);
+          cv::line(image, roi_corners[i - 1], roi_corners[(i)], cv::Scalar(0, 0, 255), 2);
+          cv::circle(image, roi_corners[i], 5, cv::Scalar(0, 255, 0), 3);
+          cv::putText(image, labels[i].c_str(), roi_corners[i], FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(255, 0, 0), 2);
         }
       }
-      imshow(windowTitle, image);
+      cv::imshow(windowTitle, image);
     }
     if(validation_needed & (roi_corners.size() == 4)) {
       image = original_image.clone();
       for(int i = 0; i < 4; ++i) {
-        line(image, roi_corners[i], roi_corners[(i + 1) % 4], Scalar(0, 0, 255), 2);
-        circle(image, roi_corners[i], 5, Scalar(0, 255, 0), 3);
-        putText(image, labels[i].c_str(), roi_corners[i], FONT_HERSHEY_SIMPLEX, 0.8, Scalar(255, 0, 0), 2);
+        cv::line(image, roi_corners[i], roi_corners[(i + 1) % 4], cv::Scalar(0, 0, 255), 2);
+        cv::circle(image, roi_corners[i], 5, cv::Scalar(0, 255, 0), 3);
+        cv::putText(image, labels[i].c_str(), roi_corners[i], FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(255, 0, 0), 2);
       }
-      imshow(windowTitle, image);
+      cv::imshow(windowTitle, image);
       dst_corners[0].x = 0;
       dst_corners[0].y = 0;
-      dst_corners[1].x = (float)std::max(norm(roi_corners[0] - roi_corners[1]), norm(roi_corners[2] - roi_corners[3]));
+      dst_corners[1].x = (float)std::max(cv::norm(roi_corners[0] - roi_corners[1]), cv::norm(roi_corners[2] - roi_corners[3]));
       dst_corners[1].y = 0;
-      dst_corners[2].x = (float)std::max(norm(roi_corners[0] - roi_corners[1]), norm(roi_corners[2] - roi_corners[3]));
-      dst_corners[2].y = (float)std::max(norm(roi_corners[1] - roi_corners[2]), norm(roi_corners[3] - roi_corners[0]));
+      dst_corners[2].x = (float)std::max(cv::norm(roi_corners[0] - roi_corners[1]), cv::norm(roi_corners[2] - roi_corners[3]));
+      dst_corners[2].y = (float)std::max(cv::norm(roi_corners[1] - roi_corners[2]), cv::norm(roi_corners[3] - roi_corners[0]));
       dst_corners[3].x = 0;
-      dst_corners[3].y = (float)std::max(norm(roi_corners[1] - roi_corners[2]), norm(roi_corners[3] - roi_corners[0]));
-      Size warped_image_size = Size(cvRound(dst_corners[2].x), cvRound(dst_corners[2].y));
-      Mat H = findHomography(roi_corners, dst_corners); // get homography
-      Mat warped_image;
-      warpPerspective(original_image, warped_image, H,
+      dst_corners[3].y = (float)std::max(cv::norm(roi_corners[1] - roi_corners[2]), cv::norm(roi_corners[3] - roi_corners[0]));
+      cv::Size warped_image_size = cv::Size(cvRound(dst_corners[2].x), cvRound(dst_corners[2].y));
+      cv::Mat H = cv::findHomography(roi_corners, dst_corners); // get homography
+      cv::Mat warped_image;
+      cv::warpPerspective(original_image, warped_image, H,
                       warped_image_size); // do perspective transformation
-      imshow("Warped Image", warped_image);
+      cv::imshow("Warped Image", warped_image);
     }
-    char c = (char)waitKey(10);
+    char c = (char)cv::waitKey(10);
     if((c == 'q') | (c == 'Q') | (c == 27)) {
       endProgram = true;
     }
@@ -98,8 +98,8 @@ main(int argc, char** argv) {
       roi_corners.erase(roi_corners.begin());
     }
     if((c == 'i') | (c == 'I')) {
-      swap(roi_corners[0], roi_corners[1]);
-      swap(roi_corners[2], roi_corners[3]);
+      cv::swap(roi_corners[0], roi_corners[1]);
+      cv::swap(roi_corners[2], roi_corners[3]);
     }
   }
   return 0;
@@ -115,7 +115,7 @@ onMouse(int event, int x, int y, int, void*) {
       }
     }
   } else if(event == EVENT_LBUTTONDOWN) {
-    roi_corners.push_back(Point2f((float)x, (float)y));
+    roi_corners.push_back(cv::Point2f((float)x, (float)y));
     validation_needed = true;
   }
   // Action when left button is released

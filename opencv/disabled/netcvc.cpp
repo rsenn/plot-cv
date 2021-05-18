@@ -16,15 +16,15 @@
 #include "videoSender.cpp"
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
-VideoCapture capture;
-Mat raw, img0, convertedColour;
-Mat resizedImage;
+cv::VideoCapture capture;
+cv::Mat raw, img0, convertedColour;
+cv::Mat resizedImage;
 
-// rows by cols. We resize our image before sending it over.
-extern Size resizeSize;
-extern Mat img1, img2;
+// rows by cols. We cv::resize our image before sending it over.
+extern cv::Size resizeSize;
+extern cv::Mat img1, img2;
 extern int is_data_ready;
 extern int clientSock;
 extern char* server_ip;
@@ -57,15 +57,15 @@ main(int argc, char** argv) {
   server_port = atoi(argv[2]);
 
   capture >> raw;
-  resize(raw, convertedColour, resizeSize);
-  cvtColor(convertedColour, img0, COLOR_BGR2HLS);
-  // cvtColor(InputArray src, OutputArray dst, int code)
+  cv::resize(raw, convertedColour, resizeSize);
+  cv::cvtColor(convertedColour, img0, COLOR_BGR2HLS);
+  // cv::cvtColor(InputArray src, OutputArray dst, int code)
 
   // Image processing goes here?
-  // GaussianBlur(img0, img0, Size(7,7), 1.5, 1.5);
-  // Canny(img0, img0, 0, 30, 3);
+  // cv::GaussianBlur(img0, img0, cv::Size(7,7), 1.5, 1.5);
+  // cv::Canny(img0, img0, 0, 30, 3);
 
-  img1 = Mat::zeros(img0.rows, img0.cols, CV_8UC1);
+  img1 = cv::Mat::zeros(img0.rows, img0.cols, CV_8UC1);
   cout << "Image has " << img0.cols << " width  " << img0.rows << "height \n";
 
   // run the streaming client as a separate thread
@@ -79,26 +79,26 @@ main(int argc, char** argv) {
   cout << "\n--> Transferring  (" << img0.cols << "x" << img0.rows << ")  images to the:  " << server_ip << ":" << server_port
        << endl;
 
-  namedWindow("stream_client", cv::WINDOW_AUTOSIZE);
-  flip(img0, img0, 1);
-  cvtColor(img0, img1, cv::COLOR_BGR2GRAY);
+  cv::namedWindow("stream_client", cv::WINDOW_AUTOSIZE);
+  cv::flip(img0, img0, 1);
+  cv::cvtColor(img0, img1, cv::COLOR_BGR2GRAY);
 
   while(key != 'q') {
     /* get a frame from camera */
     // capture >> img0;
     capture >> raw;
-    resize(raw, img0, resizeSize);
+    cv::resize(raw, img0, resizeSize);
     if(img0.empty())
       break;
 
     pthread_mutex_lock(&amutex);
 
-    flip(img0, img0, 1);
-    cvtColor(img0, img1, cv::COLOR_BGR2GRAY);
+    cv::flip(img0, img0, 1);
+    cv::cvtColor(img0, img1, cv::COLOR_BGR2GRAY);
 
     // Example image processing goes here?
-    GaussianBlur(img1, img1, Size(7, 7), 1.5, 1.5);
-    Canny(img1, img1, 0, 30, 3);
+    cv::GaussianBlur(img1, img1, cv::Size(7, 7), 1.5, 1.5);
+    cv::Canny(img1, img1, 0, 30, 3);
 
     is_data_ready = 1;
 
@@ -106,8 +106,8 @@ main(int argc, char** argv) {
 
     /*also display the video here on client */
 
-    imshow("stream_client", img0);
-    key = waitKey(30);
+    cv::imshow("stream_client", img0);
+    key = cv::waitKey(30);
   }
 
   /* user has pressed 'q', terminate the streaming client */
@@ -116,7 +116,7 @@ main(int argc, char** argv) {
   }
 
   /* free memory */
-  destroyWindow("stream_client");
+  cv::destroyWindow("stream_client");
   quit("\n--> NULL", 0);
   return 0;
 }

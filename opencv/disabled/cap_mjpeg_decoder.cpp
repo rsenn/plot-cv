@@ -60,11 +60,11 @@ const uint32_t AVIX_CC = CV_FOURCC('A', 'V', 'I', 'X');
 const uint32_t JUNK_CC = CV_FOURCC('J', 'U', 'N', 'K');
 const uint32_t INFO_CC = CV_FOURCC('I', 'N', 'F', 'O');
 
-String fourccToString(uint32_t fourcc);
+cv::String fourccToString(uint32_t fourcc);
 
 String
 fourccToString(uint32_t fourcc) {
-  return format("%c%c%c%c", fourcc & 255, (fourcc >> 8) & 255, (fourcc >> 16) & 255, (fourcc >> 24) & 255);
+  return cv::format("%c%c%c%c", fourcc & 255, (fourcc >> 8) & 255, (fourcc >> 16) & 255, (fourcc >> 24) & 255);
 }
 
 #ifndef DWORD
@@ -154,15 +154,15 @@ struct RiffList {
 class MjpegInputStream {
 public:
   MjpegInputStream();
-  MjpegInputStream(const String& filename);
+  MjpegInputStream(const cv::String& filename);
   ~MjpegInputStream();
-  MjpegInputStream& read(char*, uint64_t);
+  MjpegInputStream& cv::read(char*, uint64_t);
   MjpegInputStream& seekg(uint64_t);
   uint64_t tellg();
   bool isOpened() const;
-  bool open(const String& filename);
+  bool open(const cv::String& filename);
   void close();
-  operator bool();
+  cv::operator bool();
 
 private:
   bool m_is_valid;
@@ -172,7 +172,7 @@ private:
 MjpegInputStream::MjpegInputStream() : m_is_valid(false), m_f(0) {
 }
 
-MjpegInputStream::MjpegInputStream(const String& filename) : m_is_valid(false), m_f(0) {
+MjpegInputStream::MjpegInputStream(const cv::String& filename) : m_is_valid(false), m_f(0) {
   open(filename);
 }
 
@@ -182,7 +182,7 @@ MjpegInputStream::isOpened() const {
 }
 
 bool
-MjpegInputStream::open(const String& filename) {
+MjpegInputStream::open(const cv::String& filename) {
   close();
 
   m_f = fopen(filename.c_str(), "rb");
@@ -203,7 +203,7 @@ MjpegInputStream::close() {
 }
 
 MjpegInputStream&
-MjpegInputStream::read(char* buf, uint64_t count) {
+MjpegInputStream::cv::read(char* buf, uint64_t count) {
   if(isOpened()) {
     m_is_valid = (count == fread((void*)buf, 1, (size_t)count, m_f));
   }
@@ -223,7 +223,7 @@ MjpegInputStream::tellg() {
   return ftell(m_f);
 }
 
-MjpegInputStream::operator bool() {
+MjpegInputStream::cv::operator bool() {
   return m_is_valid;
 }
 
@@ -231,46 +231,46 @@ MjpegInputStream::~MjpegInputStream() {
   close();
 }
 
-MjpegInputStream& operator>>(MjpegInputStream& is, AviMainHeader& avih);
-MjpegInputStream& operator>>(MjpegInputStream& is, AviStreamHeader& strh);
-MjpegInputStream& operator>>(MjpegInputStream& is, BitmapInfoHeader& bmph);
-MjpegInputStream& operator>>(MjpegInputStream& is, RiffList& riff_list);
-MjpegInputStream& operator>>(MjpegInputStream& is, RiffChunk& riff_chunk);
-MjpegInputStream& operator>>(MjpegInputStream& is, AviIndex& idx1);
+MjpegInputStream& cv::operator>>(MjpegInputStream& is, AviMainHeader& avih);
+MjpegInputStream& cv::operator>>(MjpegInputStream& is, AviStreamHeader& strh);
+MjpegInputStream& cv::operator>>(MjpegInputStream& is, BitmapInfoHeader& bmph);
+MjpegInputStream& cv::operator>>(MjpegInputStream& is, RiffList& riff_list);
+MjpegInputStream& cv::operator>>(MjpegInputStream& is, RiffChunk& riff_chunk);
+MjpegInputStream& cv::operator>>(MjpegInputStream& is, AviIndex& idx1);
 
 MjpegInputStream&
-operator>>(MjpegInputStream& is, AviMainHeader& avih) {
-  is.read((char*)(&avih), sizeof(AviMainHeader));
+cv::operator>>(MjpegInputStream& is, AviMainHeader& avih) {
+  is.cv::read((char*)(&avih), sizeof(AviMainHeader));
   return is;
 }
 
 MjpegInputStream&
-operator>>(MjpegInputStream& is, AviStreamHeader& strh) {
-  is.read((char*)(&strh), sizeof(AviStreamHeader));
+cv::operator>>(MjpegInputStream& is, AviStreamHeader& strh) {
+  is.cv::read((char*)(&strh), sizeof(AviStreamHeader));
   return is;
 }
 
 MjpegInputStream&
-operator>>(MjpegInputStream& is, BitmapInfoHeader& bmph) {
-  is.read((char*)(&bmph), sizeof(BitmapInfoHeader));
+cv::operator>>(MjpegInputStream& is, BitmapInfoHeader& bmph) {
+  is.cv::read((char*)(&bmph), sizeof(BitmapInfoHeader));
   return is;
 }
 
 MjpegInputStream&
-operator>>(MjpegInputStream& is, RiffList& riff_list) {
-  is.read((char*)(&riff_list), sizeof(riff_list));
+cv::operator>>(MjpegInputStream& is, RiffList& riff_list) {
+  is.cv::read((char*)(&riff_list), sizeof(riff_list));
   return is;
 }
 
 MjpegInputStream&
-operator>>(MjpegInputStream& is, RiffChunk& riff_chunk) {
-  is.read((char*)(&riff_chunk), sizeof(riff_chunk));
+cv::operator>>(MjpegInputStream& is, RiffChunk& riff_chunk) {
+  is.cv::read((char*)(&riff_chunk), sizeof(riff_chunk));
   return is;
 }
 
 MjpegInputStream&
-operator>>(MjpegInputStream& is, AviIndex& idx1) {
-  is.read((char*)(&idx1), sizeof(idx1));
+cv::operator>>(MjpegInputStream& is, AviIndex& idx1) {
+  is.cv::read((char*)(&idx1), sizeof(idx1));
   return is;
 }
 
@@ -282,7 +282,7 @@ RIFF ('AVI '
             'avih'(<Main AVI Header>)
             LIST ('strl'
                   'strh'(<Stream header>)
-                  'strf'(<Stream format>)
+                  'strf'(<Stream cv::format>)
                   [ 'strd'(<Additional header data>) ]
                   [ 'strn'(<Stream name>) ]
                   [ 'indx'(<Odml index data>) ]
@@ -654,9 +654,9 @@ public:
   getCaptureDomain() {
     return CAP_ANY;
   } // Return the type of the capture object: CAP_VFW, etc...
-  MotionJpegCapture(const String&);
+  MotionJpegCapture(const cv::String&);
 
-  bool open(const String&);
+  bool open(const cv::String&);
   void close();
 
 protected:
@@ -670,7 +670,7 @@ protected:
   frame_list m_mjpeg_frames;
 
   frame_iterator m_frame_iterator;
-  Mat m_current_frame;
+  cv::Mat m_current_frame;
 
   // frame width/height and fps could be different for
   // each frame/stream. At the moment we suppose that they
@@ -733,9 +733,9 @@ MotionJpegCapture::readFrame(frame_iterator it) {
   std::vector<char> result;
 
   result.reserve(chunk.m_size);
-  result.resize(chunk.m_size);
+  result.cv::resize(chunk.m_size);
 
-  m_file_stream.read(&(result[0]), chunk.m_size); // result.data() failed with MSVS2008
+  m_file_stream.cv::read(&(result[0]), chunk.m_size); // result.data() failed with MSVS2008
 
   return result;
 }
@@ -775,7 +775,7 @@ MotionJpegCapture::~MotionJpegCapture() {
   close();
 }
 
-MotionJpegCapture::MotionJpegCapture(const String& filename) {
+MotionJpegCapture::MotionJpegCapture(const cv::String& filename) {
   open(filename);
 }
 
@@ -791,7 +791,7 @@ MotionJpegCapture::close() {
 }
 
 bool
-MotionJpegCapture::open(const String& filename) {
+MotionJpegCapture::open(const cv::String& filename) {
   close();
 
   m_file_stream.open(filename);
@@ -840,7 +840,7 @@ MotionJpegCapture::parseRiff(MjpegInputStream& in_str) {
 }
 
 Ptr<IVideoCapture>
-createMotionJpegCapture(const String& filename) {
+createMotionJpegCapture(const cv::String& filename) {
   Ptr<MotionJpegCapture> mjdecoder(new MotionJpegCapture(filename));
   if(mjdecoder->isOpened())
     return mjdecoder;

@@ -5,10 +5,10 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
-Mat frame_hsv, frame, mask;
+cv::Mat frame_hsv, frame, mask;
 MatND hist; // 2D histogram
 int conn = 4, val = 255, flags = conn + (val << 8) + CV_FLOODFILL_MASK_ONLY;
 
@@ -26,24 +26,24 @@ on_mouse(int event, int x, int y, int, void*) {
   selected = true;
 
   // floodFill
-  Point p(x, y);
-  mask = Scalar::all(0);
-  floodFill(frame, mask, p, Scalar(255, 255, 255), 0, Scalar(10, 10, 10), Scalar(10, 10, 10), flags);
-  Mat _mask = mask.rowRange(1, mask.rows - 1).colRange(1, mask.cols - 1);
+  cv::Point p(x, y);
+  mask = cv::Scalar::all(0);
+  cv::floodFill(frame, mask, p, cv::Scalar(255, 255, 255), 0, cv::Scalar(10, 10, 10), cv::Scalar(10, 10, 10), flags);
+  cv::Mat _mask = mask.rowRange(1, mask.rows - 1).colRange(1, mask.cols - 1);
 
   // number of bins in the histogram for each channel
   int histSize[] = {50, 50}, channels[] = {0, 1};
 
-  // calculate and normalize histogram
-  calcHist(&frame_hsv, 1, channels, _mask, hist, 2, histSize, ranges);
-  normalize(hist, hist, 0, 255, NORM_MINMAX, -1, Mat());
+  // calculate and cv::normalize histogram
+  cv::calcHist(&frame_hsv, 1, channels, _mask, hist, 2, histSize, ranges);
+  cv::normalize(hist, hist, 0, 255, NORM_MINMAX, -1, cv::Mat());
 }
 
 int
 main() {
-  // Create a VideoCapture object to read from video file
+  // Create a cv::VideoCapture object to cv::read from video file
   // 0 is the ID of the built-in laptop camera, change if you want to use other camera
-  VideoCapture cap(0);
+  cv::VideoCapture cap(0);
 
   // check if the file was opened properly
   if(!cap.isOpened()) {
@@ -51,12 +51,12 @@ main() {
     return -1;
   }
 
-  namedWindow("Video");
-  namedWindow("Backprojection");
+  cv::namedWindow("Video");
+  cv::namedWindow("Backprojection");
 
-  setMouseCallback("Video", on_mouse);
+  cv::setMouseCallback("Video", on_mouse);
 
-  while(char(waitKey(1)) != 'q' && cap.isOpened()) {
+  while(char(cv::waitKey(1)) != 'q' && cap.isOpened()) {
     cap >> frame;
     if(!selected)
       mask.create(frame.rows + 2, frame.cols + 2, CV_8UC1);
@@ -65,17 +65,17 @@ main() {
       cout << "Video over" << endl;
       break;
     }
-    cvtColor(frame, frame_hsv, cv::COLOR_BGR2HSV);
+    cv::cvtColor(frame, frame_hsv, cv::COLOR_BGR2HSV);
 
     // backproject on the HSV image
-    Mat frame_backprojected = Mat::zeros(frame.size(), CV_8UC1);
+    cv::Mat frame_backprojected = cv::Mat::zeros(frame.size(), CV_8UC1);
     if(selected) {
       int channels[] = {0, 1};
-      calcBackProject(&frame_hsv, 1, channels, hist, frame_backprojected, ranges);
+      cv::calcBackProject(&frame_hsv, 1, channels, hist, frame_backprojected, ranges);
     }
 
-    imshow("Video", frame);
-    imshow("Backprojection", frame_backprojected);
+    cv::imshow("Video", frame);
+    cv::imshow("Backprojection", frame_backprojected);
   }
 
   return 0;

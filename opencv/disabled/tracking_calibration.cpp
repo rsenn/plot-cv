@@ -11,7 +11,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 string path = ros::package::getPath("rpi_object_tracking");
@@ -99,29 +99,29 @@ imageCallback(const sensor_msgs::ImageConstPtr& msg) {
 
     if(!getROI) {
       if(!sampling && !saveROI) {
-        imshow("frame", frame);
+        cv::imshow("frame", frame);
       } else if(sampling && !saveROI) {
-        rectangle(frame, cv::Point(x_start, y_start), cv::Point(x_end, y_end), Scalar(0, 255, 0), 2);
-        imshow("frame", frame);
+        cv::rectangle(frame, cv::Point(x_start, y_start), cv::Point(x_end, y_end), cv::Scalar(0, 255, 0), 2);
+        cv::imshow("frame", frame);
       } else if(saveROI) {
-        rectangle(frame, cv::Point(x_start, y_start), cv::Point(x_end, y_end), Scalar(0, 255, 0), 2);
-        imshow("frame", frame);
+        cv::rectangle(frame, cv::Point(x_start, y_start), cv::Point(x_end, y_end), cv::Scalar(0, 255, 0), 2);
+        cv::imshow("frame", frame);
 
         cv::Mat roi = frame(Range(y_start, y_end), Range(x_start, x_end));
         cv::Mat hsvRoi, splitHsv[3];
-        cvtColor(roi, hsvRoi, COLOR_BGR2HSV);
-        split(hsvRoi, splitHsv);
-        minMaxLoc(splitHsv[0], &lower[0], &upper[0]);
-        minMaxLoc(splitHsv[1], &lower[1], &upper[1]);
-        minMaxLoc(splitHsv[2], &lower[2], &upper[2]);
+        cv::cvtColor(roi, hsvRoi, COLOR_BGR2HSV);
+        cv::split(hsvRoi, splitHsv);
+        cv::minMaxLoc(splitHsv[0], &lower[0], &upper[0]);
+        cv::minMaxLoc(splitHsv[1], &lower[1], &upper[1]);
+        cv::minMaxLoc(splitHsv[2], &lower[2], &upper[2]);
 
-        setTrackbarPos("H Low", "trackbar", (int)lower[0]);
-        setTrackbarPos("S Low", "trackbar", (int)lower[1]);
-        setTrackbarPos("V Low", "trackbar", (int)lower[2]);
+        cv::setTrackbarPos("H Low", "trackbar", (int)lower[0]);
+        cv::setTrackbarPos("S Low", "trackbar", (int)lower[1]);
+        cv::setTrackbarPos("V Low", "trackbar", (int)lower[2]);
 
-        setTrackbarPos("H Up", "trackbar", (int)upper[0]);
-        setTrackbarPos("S Up", "trackbar", (int)upper[1]);
-        setTrackbarPos("V Up", "trackbar", (int)upper[2]);
+        cv::setTrackbarPos("H Up", "trackbar", (int)upper[0]);
+        cv::setTrackbarPos("S Up", "trackbar", (int)upper[1]);
+        cv::setTrackbarPos("V Up", "trackbar", (int)upper[2]);
 
         saveROI = false;
         getROI = true;
@@ -132,46 +132,46 @@ imageCallback(const sensor_msgs::ImageConstPtr& msg) {
         upper[i] = (double)intUp[i];
       }
 
-      cvtColor(frame, hsv, COLOR_BGR2HSV);
-      inRange(hsv, Scalar(lower[0], lower[1], lower[2]), Scalar(upper[0], upper[1], upper[2]), mask);
-      erode(mask, mask, 0, cv::Point(-1, -1), 2);
-      dilate(mask, mask, 0, cv::Point(-1, -1), 2);
-      morphologyEx(mask, mask, MORPH_CLOSE, kernel);
+      cv::cvtColor(frame, hsv, COLOR_BGR2HSV);
+      cv::inRange(hsv, cv::Scalar(lower[0], lower[1], lower[2]), cv::Scalar(upper[0], upper[1], upper[2]), mask);
+      cv::erode(mask, mask, 0, cv::Point(-1, -1), 2);
+      cv::dilate(mask, mask, 0, cv::Point(-1, -1), 2);
+      cv::morphologyEx(mask, mask, MORPH_CLOSE, kernel);
 
       // Find Contours
       cv::Mat maskColone = mask.clone();
       std::vector<std::vector<cv::Point>> cnts;
-      findContours(maskColone, cnts, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+      cv::findContours(maskColone, cnts, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 
       // Drawing
       if(cnts.size() > 0) {
-        Moments M;
+        cv::Moments M;
         cv::Point2f center;
         float radius;
         int largest_area = 0;
         int largest_contour_index = 0;
 
         for(int i = 0; i < cnts.size(); i++) {
-          double a = contourArea(cnts[i], false);
+          double a = cv::contourArea(cnts[i], false);
           if(a > largest_area) {
             largest_area = a;
             largest_contour_index = i;
           }
         }
 
-        minEnclosingCircle(cnts[largest_contour_index], center, radius);
-        M = moments(cnts[largest_contour_index]);
+        cv::minEnclosingCircle(cnts[largest_contour_index], center, radius);
+        M = cv::moments(cnts[largest_contour_index]);
 
         if(radius > 0) {
-          circle(frame, center, int(radius), Scalar(0, 255, 0), 2);
+          cv::circle(frame, center, int(radius), cv::Scalar(0, 255, 0), 2);
         }
       }
 
-      imshow("mask", mask);
-      imshow("frame", frame);
+      cv::imshow("mask", mask);
+      cv::imshow("frame", frame);
     }
 
-    if((char)27 == (char)waitKey(1))
+    if((char)27 == (char)cv::waitKey(1))
       ros::shutdown();
   } catch(cv_bridge::Exception& e) { ROS_ERROR("Could not convert from '%s' to '8UC3'.", msg->encoding.c_str()); }
 }
@@ -190,20 +190,20 @@ main(int argc, char* argv[]) {
     intUp[i] = Upper[i];
   }
 
-  namedWindow("frame");
-  namedWindow("mask");
-  namedWindow("trackbar", cv::WINDOW_FREERATIO);
-  setMouseCallback("frame", leftClick);
+  cv::namedWindow("frame");
+  cv::namedWindow("mask");
+  cv::namedWindow("trackbar", cv::WINDOW_FREERATIO);
+  cv::setMouseCallback("frame", leftClick);
 
-  createTrackbar("H Low", "trackbar", &intLow[0], 255, on_trackbar);
-  createTrackbar("S Low", "trackbar", &intLow[1], 255, on_trackbar);
-  createTrackbar("V Low", "trackbar", &intLow[2], 255, on_trackbar);
+  cv::createTrackbar("H Low", "trackbar", &intLow[0], 255, on_trackbar);
+  cv::createTrackbar("S Low", "trackbar", &intLow[1], 255, on_trackbar);
+  cv::createTrackbar("V Low", "trackbar", &intLow[2], 255, on_trackbar);
 
-  createTrackbar("H Up", "trackbar", &intUp[0], 255, on_trackbar);
-  createTrackbar("S Up", "trackbar", &intUp[1], 255, on_trackbar);
-  createTrackbar("V Up", "trackbar", &intUp[2], 255, on_trackbar);
+  cv::createTrackbar("H Up", "trackbar", &intUp[0], 255, on_trackbar);
+  cv::createTrackbar("S Up", "trackbar", &intUp[1], 255, on_trackbar);
+  cv::createTrackbar("V Up", "trackbar", &intUp[2], 255, on_trackbar);
 
   ros::spin();
-  destroyAllWindows();
+  cv::destroyAllWindows();
   return 0;
 }

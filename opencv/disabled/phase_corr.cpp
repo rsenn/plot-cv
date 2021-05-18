@@ -2,17 +2,17 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 
-using namespace cv;
+//using namespace cv;
 
 int
 main(int, char*[]) {
-  VideoCapture video(0);
-  Mat frame, curr, prev, curr64f, prev64f, hann;
+  cv::VideoCapture video(0);
+  cv::Mat frame, curr, prev, curr64f, prev64f, hann;
   int key = 0;
 
   do {
     video >> frame;
-    cvtColor(frame, curr, COLOR_RGB2GRAY);
+    cv::cvtColor(frame, curr, cv::COLOR_RGB2GRAY);
 
     if(prev.empty()) {
       prev = curr.clone();
@@ -26,14 +26,14 @@ main(int, char*[]) {
     double radius = cv::sqrt(shift.x * shift.x + shift.y * shift.y);
 
     if(radius > 5) {
-      // draw a circle and line indicating the shift direction...
-      Point center(curr.cols >> 1, curr.rows >> 1);
+      // draw a cv::circle and cv::line indicating the shift direction...
+      cv::Point center(curr.cols >> 1, curr.rows >> 1);
       cv::circle(frame, center, (int)radius, cv::Scalar(0, 255, 0), 3, cv::LINE_AA);
-      cv::line(frame, center, Point(center.x + (int)shift.x, center.y + (int)shift.y), cv::Scalar(0, 255, 0), 3, cv::LINE_AA);
+      cv::line(frame, center, cv::Point(center.x + (int)shift.x, center.y + (int)shift.y), cv::Scalar(0, 255, 0), 3, cv::LINE_AA);
     }
 
-    imshow("phase shift", frame);
-    key = waitKey(2);
+    cv::imshow("phase shift", frame);
+    key = cv::waitKey(2);
 
     prev = curr.clone();
   } while((char)key != 27); // Esc to exit...

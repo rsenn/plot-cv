@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 static void
@@ -26,17 +26,17 @@ help() {
 }
 
 static void
-colorizeDisparity(const Mat& gray, Mat& rgb, double maxDisp = -1.f, float S = 1.f, float V = 1.f) {
+colorizeDisparity(const cv::Mat& gray, cv::Mat& rgb, double maxDisp = -1.f, float S = 1.f, float V = 1.f) {
   CV_Assert(!gray.empty());
   CV_Assert(gray.type() == CV_8UC1);
 
   if(maxDisp <= 0) {
     maxDisp = 0;
-    minMaxLoc(gray, 0, &maxDisp);
+    cv::minMaxLoc(gray, 0, &maxDisp);
   }
 
   rgb.create(gray.size(), CV_8UC3);
-  rgb = Scalar::all(0);
+  rgb = cv::Scalar::all(0);
   if(maxDisp < 1)
     return;
 
@@ -76,7 +76,7 @@ colorizeDisparity(const Mat& gray, Mat& rgb, double maxDisp = -1.f, float S = 1.
 }
 
 static float
-getMaxDisparity(VideoCapture& capture) {
+getMaxDisparity(cv::VideoCapture& capture) {
   const int minDistance = 400;                                               // mm
   float b = (float)capture.get(cv::CAP_OPENNI_DEPTH_GENERATOR_BASELINE);     // mm
   float F = (float)capture.get(cv::CAP_OPENNI_DEPTH_GENERATOR_FOCAL_LENGTH); // pixels
@@ -153,16 +153,16 @@ parseCommandLine(int argc,
           CV_Error(CV_StsBadArg, "Incorrect length of -m argument string");
         int val = atoi(mask.c_str());
 
-        int l = 100000, r = 10000, sum = 0;
+        int l = 100000, r = 10000, cv::sum = 0;
         for(int j = 0; j < 5; j++) {
           retrievedImageFlags[j] = ((val % l) / r) == 0 ? false : true;
           l /= 10;
           r /= 10;
           if(retrievedImageFlags[j])
-            sum++;
+            cv::sum++;
         }
 
-        if(sum == 0) {
+        if(cv::sum == 0) {
           cout << "No one output image is selected." << endl;
           exit(0);
         }
@@ -170,7 +170,7 @@ parseCommandLine(int argc,
         filename = argv[++i];
         isFileReading = true;
       } else {
-        cout << "Unsupported command line argument: " << argv[i] << "." << endl;
+        cout << "Unsupported command cv::line argument: " << argv[i] << "." << endl;
         exit(-1);
       }
     }
@@ -191,7 +191,7 @@ main(int argc, char* argv[]) {
   parseCommandLine(argc, argv, isColorizeDisp, isFixedMaxDisp, imageMode, retrievedImageFlags, filename, isVideoReading);
 
   cout << "Device opening ..." << endl;
-  VideoCapture capture;
+  cv::VideoCapture capture;
   if(isVideoReading)
     capture.open(filename);
   else
@@ -241,11 +241,11 @@ main(int argc, char* argv[]) {
   }
 
   for(;;) {
-    Mat depthMap;
-    Mat validDepthMap;
-    Mat disparityMap;
-    Mat bgrImage;
-    Mat grayImage;
+    cv::Mat depthMap;
+    cv::Mat validDepthMap;
+    cv::Mat disparityMap;
+    cv::Mat bgrImage;
+    cv::Mat grayImage;
 
     if(!capture.grab()) {
       cout << "Can not grab images." << endl;
@@ -253,34 +253,34 @@ main(int argc, char* argv[]) {
     } else {
       if(retrievedImageFlags[0] && capture.retrieve(depthMap, cv::CAP_OPENNI_DEPTH_MAP)) {
         const float scaleFactor = 0.05f;
-        Mat show;
+        cv::Mat show;
         depthMap.convertTo(show, CV_8UC1, scaleFactor);
-        imshow("depth map", show);
+        cv::imshow("depth map", show);
       }
 
       if(retrievedImageFlags[1] && capture.retrieve(disparityMap, cv::CAP_OPENNI_DISPARITY_MAP)) {
         if(isColorizeDisp) {
-          Mat colorDisparityMap;
+          cv::Mat colorDisparityMap;
           colorizeDisparity(disparityMap, colorDisparityMap, isFixedMaxDisp ? getMaxDisparity(capture) : -1);
-          Mat validColorDisparityMap;
+          cv::Mat validColorDisparityMap;
           colorDisparityMap.copyTo(validColorDisparityMap, disparityMap != 0);
-          imshow("colorized disparity map", validColorDisparityMap);
+          cv::imshow("colorized disparity map", validColorDisparityMap);
         } else {
-          imshow("original disparity map", disparityMap);
+          cv::imshow("original disparity map", disparityMap);
         }
       }
 
       if(retrievedImageFlags[2] && capture.retrieve(validDepthMap, cv::CAP_OPENNI_VALID_DEPTH_MASK))
-        imshow("valid depth mask", validDepthMap);
+        cv::imshow("valid depth mask", validDepthMap);
 
       if(retrievedImageFlags[3] && capture.retrieve(bgrImage, cv::CAP_OPENNI_BGR_IMAGE))
-        imshow("rgb image", bgrImage);
+        cv::imshow("rgb image", bgrImage);
 
       if(retrievedImageFlags[4] && capture.retrieve(grayImage, cv::CAP_OPENNI_GRAY_IMAGE))
-        imshow("gray image", grayImage);
+        cv::imshow("gray image", grayImage);
     }
 
-    if(waitKey(30) >= 0)
+    if(cv::waitKey(30) >= 0)
       break;
   }
 

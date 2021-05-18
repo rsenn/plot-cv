@@ -5,7 +5,7 @@
 #include <set>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 cv::Point2f center(0, 0);
 
@@ -73,7 +73,7 @@ IsBadLine(int a, int b) {
 }
 
 bool
-x_sort(const Point2f& m1, const Point2f& m2) {
+x_sort(const cv::Point2f& m1, const cv::Point2f& m2) {
   return m1.x < m2.x;
 }
 
@@ -81,7 +81,7 @@ x_sort(const Point2f& m1, const Point2f& m2) {
 void
 sortCorners(std::vector<cv::Point2f>& corners, cv::Point2f center) {
   std::vector<cv::Point2f> top, bot;
-  vector<Point2f> backup = corners;
+  vector<cv::Point2f> backup = corners;
 
   sort(corners.begin(), corners.end(), x_sort); //注意先按x的大小给4个点排序
 
@@ -94,7 +94,7 @@ sortCorners(std::vector<cv::Point2f>& corners, cv::Point2f center) {
   corners.clear();
 
   if(top.size() == 2 && bot.size() == 2) {
-    cout << "log" << endl;
+    cout << "cv::log" << endl;
     cv::Point2f tl = top[0].x > top[1].x ? top[1] : top[0];
     cv::Point2f tr = top[0].x > top[1].x ? top[0] : top[1];
     cv::Point2f bl = bot[0].x > bot[1].x ? bot[1] : bot[0];
@@ -130,40 +130,40 @@ CalcDstSize(const vector<cv::Point2f>& corners) {
 int
 main() {
   // ------------------------CHANGE img PATH HERE---------------------------//
-  Mat src = imread("D:\\MY_Code_Project\\workshop\\Project1\\src\\p3.png");
+  cv::Mat src = cv::imread("D:\\MY_Code_Project\\workshop\\Project1\\src\\p3.png");
   //-------------------------CHANGE img PATH HERE---------------------------//
-  imshow("src img", src);
-  Mat source = src.clone();
+  cv::imshow("src img", src);
+  cv::Mat source = src.clone();
 
-  Mat bkup = src.clone();
+  cv::Mat bkup = src.clone();
 
-  Mat img = src.clone();
-  cvtColor(img, img, cv::COLOR_RGB2GRAY); //二值化
-  imshow("gray", img);
-  // equalizeHist(img, img);
-  // imshow("equal", img);
-  GaussianBlur(img, img, Size(5, 5), 0, 0); //高斯滤波
+  cv::Mat img = src.clone();
+  cv::cvtColor(img, img, cv::COLOR_RGB2GRAY); //二值化
+  cv::imshow("gray", img);
+  // cv::equalizeHist(img, img);
+  // cv::imshow("equal", img);
+  cv::GaussianBlur(img, img, cv::Size(5, 5), 0, 0); //高斯滤波
 
   //获取自定义核
-  Mat element =
-      getStructuringElement(MORPH_RECT, Size(1, 1)); //第一个参数MORPH_RECT表示矩形的卷积核，当然还可以选择椭圆形的、交叉型的
+  cv::Mat element =
+      cv::getStructuringElement(MORPH_RECT, cv::Size(1, 1)); //第一个参数MORPH_RECT表示矩形的卷积核，当然还可以选择椭圆形的、交叉型的
                                                      //膨胀操作
-  dilate(img, img, element);                         //实现过程中发现，适当的膨胀很重要
-  imshow("dilate", img);
-  Canny(img, img, 30, 120, 3); //边缘提取
-  imshow("get contour", img);
+  cv::dilate(img, img, element);                         //实现过程中发现，适当的膨胀很重要
+  cv::imshow("cv::dilate", img);
+  cv::Canny(img, img, 30, 120, 3); //边缘提取
+  cv::imshow("get contour", img);
 
-  vector<vector<Point>> contours;
-  vector<vector<Point>> f_contours;
+  vector<vector<cv::Point>> contours;
+  vector<vector<cv::Point>> f_contours;
   std::vector<cv::Point> approx2;
   //注意第5个参数为cv::RETR_EXTERNAL，只检索外框
-  findContours(img, f_contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE); //找轮廓
+  cv::findContours(img, f_contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE); //找轮廓
 
   //求出面积最大的轮廓
   int max_area = 0;
   int index;
   for(int i = 0; i < f_contours.size(); i++) {
-    double tmparea = fabs(contourArea(f_contours[i]));
+    double tmparea = fabs(cv::contourArea(f_contours[i]));
     if(tmparea > max_area) {
       index = i;
       max_area = tmparea;
@@ -173,16 +173,16 @@ main() {
 
   cout << contours.size() << endl; //因为我写的是找出最外层轮廓，所以理论上只有一个轮廓
 
-  vector<Point> tmp = contours[0];
+  vector<cv::Point> tmp = contours[0];
 
   for(int line_type = 1; line_type <= 3; line_type++) {
     cout << "line_type: " << line_type << endl;
-    Mat black = img.clone();
+    cv::Mat black = img.clone();
     black.setTo(0);
-    drawContours(black, contours, 0, Scalar(255), line_type); //注意线的厚度，不要选择太细的
-    imshow("show contour", black);
+    cv::drawContours(black, contours, 0, cv::Scalar(255), line_type); //注意线的厚度，不要选择太细的
+    cv::imshow("show contour", black);
 
-    std::vector<Vec4i> lines;
+    std::vector<cv::Vec4i> lines;
     std::vector<cv::Point2f> corners;
     std::vector<cv::Point2f> approx;
 
@@ -194,7 +194,7 @@ main() {
       lines.clear();
       corners.clear();
       approx.clear();
-      center = Point2f(0, 0);
+      center = cv::Point2f(0, 0);
 
       cv::HoughLinesP(black, lines, 1, CV_PI / 180, para, 30, 10);
 
@@ -268,7 +268,7 @@ main() {
       cv::circle(bkup, corners[2], 3, CV_RGB(0, 0, 255), -1);
       cv::circle(bkup, corners[3], 3, CV_RGB(255, 255, 255), -1);
       cv::circle(bkup, center, 3, CV_RGB(255, 0, 255), -1);
-      imshow("backup", bkup);
+      cv::imshow("backup", bkup);
       cout << "corners size" << corners.size() << endl;
       // cv::waitKey();
 
@@ -295,18 +295,18 @@ main() {
       cv::Mat transmtx = cv::getPerspectiveTransform(corners, quad_pts);
       cv::warpPerspective(source, quad, transmtx, quad.size());
 
-      imshow("find", bkup);
+      cv::imshow("find", bkup);
       cv::imshow("quadrilateral", quad);
 
       /*二值化*/
 
-      Mat local, gray;
-      cvtColor(quad, gray, cv::COLOR_RGB2GRAY);
+      cv::Mat local, gray;
+      cv::cvtColor(quad, gray, cv::COLOR_RGB2GRAY);
       int blockSize = 25;
       int constValue = 10;
-      adaptiveThreshold(gray, local, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY, blockSize, constValue);
+      cv::adaptiveThreshold(gray, local, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY, blockSize, constValue);
 
-      imshow("二值化", local);
+      cv::imshow("二值化", local);
 
       cv::waitKey();
       return 0;
@@ -314,5 +314,5 @@ main() {
   }
 
   cout << "can not transform!" << endl;
-  waitKey();
+  cv::waitKey();
 }

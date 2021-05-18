@@ -110,7 +110,7 @@ AdvancedCapture::ScenarioReset() {
 void
 AdvancedCapture::Failed(Windows::Media::Capture::MediaCapture ^ currentCaptureObject,
                         Windows::Media::Capture::MediaCaptureFailedEventArgs ^ currentFailure) {
-  String ^ message = "Fatal error" + currentFailure->Message;
+  cv::String ^ message = "Fatal cv::error" + currentFailure->Message;
   create_task(
       Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::High,
                            ref new Windows::UI::Core::DispatchedHandler([this, message]() { ShowStatusMessage(message); })));
@@ -213,14 +213,14 @@ AdvancedCapture::EnumerateWebcamsAsync() {
 
     EnumedDeviceList2->Items->Clear();
 
-    task<DeviceInformationCollection ^>(DeviceInformation::FindAllAsync(DeviceClass::VideoCapture))
+    task<DeviceInformationCollection ^>(DeviceInformation::FindAllAsync(DeviceClass::cv::VideoCapture))
         .then([this](task<DeviceInformationCollection ^> findTask) {
           try {
             m_devInfoCollection = findTask.get();
-            if(m_devInfoCollection == nullptr || m_devInfoCollection->Size == 0) {
+            if(m_devInfoCollection == nullptr || m_devInfoCollection->cv::Size == 0) {
               ShowStatusMessage("No WebCams found.");
             } else {
-              for(unsigned int i = 0; i < m_devInfoCollection->Size; i++) {
+              for(unsigned int i = 0; i < m_devInfoCollection->cv::Size; i++) {
                 auto devInfo = m_devInfoCollection->GetAt(i);
                 EnumedDeviceList2->Items->Append(devInfo->Name);
               }
@@ -245,16 +245,16 @@ AdvancedCapture::AddEffectToImageStream() {
     Windows::Media::MediaProperties::IMediaEncodingProperties ^ props =
         mediaCapture->VideoDeviceController->GetMediaStreamProperties(Windows::Media::Capture::MediaStreamType::Photo);
     if(props->Type->Equals("Image")) {
-      // Switch to a video media type instead since we can't add an effect to an image media type
+      // Switch to a video media type instead since we can't cv::add an effect to an image media type
       Windows::Foundation::Collections::IVectorView<Windows::Media::MediaProperties::IMediaEncodingProperties ^> ^
           supportedPropsList = mediaCapture->VideoDeviceController->GetAvailableMediaStreamProperties(
           Windows::Media::Capture::MediaStreamType::Photo);
       {
         unsigned int i = 0;
-        while(i < supportedPropsList->Size) {
+        while(i < supportedPropsList->cv::Size) {
           Windows::Media::MediaProperties::IMediaEncodingProperties ^ props = supportedPropsList->GetAt(i);
 
-          String ^ s = props->Type;
+          cv::String ^ s = props->Type;
           if(props->Type->Equals("Video")) {
             task<void>(mediaCapture->VideoDeviceController->SetMediaStreamPropertiesAsync(
                            Windows::Media::Capture::MediaStreamType::Photo, props))
@@ -262,7 +262,7 @@ AdvancedCapture::AddEffectToImageStream() {
                   try {
                     changeTypeTask.get();
                     ShowStatusMessage("Change type on photo stream successful");
-                    // Now add the effect on the image pin
+                    // Now cv::add the effect on the image pin
                     task<void>(m_mediaCaptureMgr->AddEffectAsync(Windows::Media::Capture::MediaStreamType::Photo,
                                                                  "OcvTransform.OcvImageManipulations",
                                                                  nullptr))
@@ -311,7 +311,7 @@ AdvancedCapture::AddEffectToImageStream() {
 }
 
 void
-AdvancedCapture::ShowStatusMessage(Platform::String ^ text) {
+AdvancedCapture::ShowStatusMessage(Platform::cv::String ^ text) {
   rootPage->NotifyUser(text, NotifyType::StatusMessage);
 }
 
@@ -321,7 +321,7 @@ AdvancedCapture::ShowExceptionMessage(Platform::Exception ^ ex) {
 }
 
 void
-AdvancedCapture::EnableButton(bool enabled, String ^ name) {
+AdvancedCapture::EnableButton(bool enabled, cv::String ^ name) {
   if(name->Equals("StartDevice")) {
     btnStartDevice2->IsEnabled = enabled;
   } else if(name->Equals("StartPreview")) {
@@ -350,7 +350,7 @@ AdvancedCapture::ReencodePhotoAsync(Windows::Storage::StorageFile ^ tempStorageF
       })
       .then([state](Windows::Storage::Streams::IRandomAccessStream ^ stream) {
         state->OutputStream = stream;
-        state->OutputStream->Size = 0;
+        state->OutputStream->cv::Size = 0;
         return Windows::Graphics::Imaging::BitmapEncoder::CreateForTranscodingAsync(state->OutputStream, state->Decoder);
       })
       .then([state, photoRotation](Windows::Graphics::Imaging::BitmapEncoder ^ encoder) {
@@ -492,7 +492,7 @@ SDKSample::MediaCapture::AdvancedCapture::Button_Click(Platform::Object ^ sender
                             Windows::Media::Capture::MediaStreamType::VideoRecord);
                     Windows::Media::MediaProperties::VideoEncodingProperties ^ videoEncodingProperties =
                         static_cast<Windows::Media::MediaProperties::VideoEncodingProperties ^>(props);
-                    if(!videoEncodingProperties->Subtype->Equals("H264")) { // Can't add an effect to an H264 stream
+                    if(!videoEncodingProperties->Subtype->Equals("H264")) { // Can't cv::add an effect to an H264 stream
                       task<void>(mediaCapture->AddEffectAsync(Windows::Media::Capture::MediaStreamType::VideoRecord,
                                                               "OcvTransform.OcvImageManipulations",
                                                               nullptr))

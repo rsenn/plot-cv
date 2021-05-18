@@ -8,14 +8,14 @@
 #include "opencv2/highgui/highgui.hpp"
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 bool help_showed = false;
 
 class Args {
 public:
   Args();
-  static Args read(int argc, char** argv);
+  static Args cv::read(int argc, char** argv);
 
   string src;
   bool src_is_video;
@@ -62,7 +62,7 @@ public:
   string message() const;
 
 private:
-  App operator=(App&);
+  App cv::operator=(App&);
 
   Args args;
   bool running;
@@ -88,10 +88,10 @@ printHelp() {
        << "\nUsage: hog_gpu\n"
        << "  (<image>|--video <vide>|--camera <camera_id>) # frames source\n"
        << "  [--make_gray <true/false>] # convert image to gray one or not\n"
-       << "  [--resize_src <true/false>] # do resize of the source image or not\n"
+       << "  [--resize_src <true/false>] # do cv::resize of the source image or not\n"
        << "  [--width <int>] # resized image width\n"
        << "  [--height <int>] # resized image height\n"
-       << "  [--hit_threshold <double>] # classifying plane distance threshold (0.0 usually)\n"
+       << "  [--hit_threshold <double>] # classifying plane distance cv::threshold (0.0 usually)\n"
        << "  [--scale <double>] # HOG window scale factor\n"
        << "  [--nlevels <int>] # max number of HOG window scales\n"
        << "  [--win_width <int>] # width of the window (48 or 64)\n"
@@ -99,7 +99,7 @@ printHelp() {
        << "  [--win_stride_height <int>] # distance by OY axis between neighbour wins\n"
        << "  [--gr_threshold <int>] # merging similar rects constant\n"
        << "  [--gamma_correct <int>] # do gamma correction or not\n"
-       << "  [--write_video <bool>] # write video or not\n"
+       << "  [--write_video <bool>] # cv::write video or not\n"
        << "  [--dst_video <path>] # output video path\n"
        << "  [--dst_video_fps <double>] # output video fps\n";
   help_showed = true;
@@ -110,13 +110,13 @@ main(int argc, char** argv) {
   try {
     if(argc < 2)
       printHelp();
-    Args args = Args::read(argc, argv);
+    Args args = Args::cv::read(argc, argv);
     if(help_showed)
       return -1;
     App app(args);
     app.run();
-  } catch(const Exception& e) { return cout << "error: " << e.what() << endl, 1; } catch(const exception& e) {
-    return cout << "error: " << e.what() << endl, 1;
+  } catch(const Exception& e) { return cout << "cv::error: " << e.what() << endl, 1; } catch(const exception& e) {
+    return cout << "cv::error: " << e.what() << endl, 1;
   } catch(...) { return cout << "unknown exception" << endl, 1; }
   return 0;
 }
@@ -149,7 +149,7 @@ Args::Args() {
 }
 
 Args
-Args::read(int argc, char** argv) {
+Args::cv::read(int argc, char** argv) {
   Args args;
   for(int i = 1; i < argc; i++) {
     if(string(argv[i]) == "--make_gray")
@@ -209,8 +209,8 @@ App::App(const Args& s) {
        << "\tg - convert image to gray or not\n"
        << "\t1/q - increase/decrease HOG scale\n"
        << "\t2/w - increase/decrease levels count\n"
-       << "\t3/e - increase/decrease HOG group threshold\n"
-       << "\t4/r - increase/decrease hit threshold\n"
+       << "\t3/e - increase/decrease HOG group cv::threshold\n"
+       << "\t4/r - increase/decrease hit cv::threshold\n"
        << endl;
 
   use_gpu = true;
@@ -231,11 +231,11 @@ App::App(const Args& s) {
   cout << "Scale: " << scale << endl;
   if(args.resize_src)
     cout << "Resized source: (" << args.width << ", " << args.height << ")\n";
-  cout << "Group threshold: " << gr_threshold << endl;
+  cout << "Group cv::threshold: " << gr_threshold << endl;
   cout << "Levels number: " << nlevels << endl;
   cout << "Win width: " << args.win_width << endl;
   cout << "Win stride: (" << args.win_stride_width << ", " << args.win_stride_height << ")\n";
-  cout << "Hit threshold: " << hit_threshold << endl;
+  cout << "Hit cv::threshold: " << hit_threshold << endl;
   cout << "Gamma correction: " << gamma_corr << endl;
   cout << endl;
 }
@@ -245,33 +245,33 @@ App::run() {
   running = true;
   cv::VideoWriter video_writer;
 
-  Size win_size(args.win_width, args.win_width * 2); //(64, 128) or (48, 96)
-  Size win_stride(args.win_stride_width, args.win_stride_height);
+  cv::Size win_size(args.win_width, args.win_width * 2); //(64, 128) or (48, 96)
+  cv::Size win_stride(args.win_stride_width, args.win_stride_height);
 
   // Create HOG descriptors and detectors here
   vector<float> detector;
-  if(win_size == Size(64, 128))
-    detector = cv::gpu::HOGDescriptor::getPeopleDetector64x128();
+  if(win_size == cv::Size(64, 128))
+    detector = cv::gpu::cv::HOGDescriptor::getPeopleDetector64x128();
   else
-    detector = cv::gpu::HOGDescriptor::getPeopleDetector48x96();
+    detector = cv::gpu::cv::HOGDescriptor::getPeopleDetector48x96();
 
-  cv::gpu::HOGDescriptor gpu_hog(win_size,
-                                 Size(16, 16),
-                                 Size(8, 8),
-                                 Size(8, 8),
+  cv::gpu::cv::HOGDescriptor gpu_hog(win_size,
+                                 cv::Size(16, 16),
+                                 cv::Size(8, 8),
+                                 cv::Size(8, 8),
                                  9,
-                                 cv::gpu::HOGDescriptor::DEFAULT_WIN_SIGMA,
+                                 cv::gpu::cv::HOGDescriptor::DEFAULT_WIN_SIGMA,
                                  0.2,
                                  gamma_corr,
-                                 cv::gpu::HOGDescriptor::DEFAULT_NLEVELS);
+                                 cv::gpu::cv::HOGDescriptor::DEFAULT_NLEVELS);
   cv::HOGDescriptor cpu_hog(win_size,
-                            Size(16, 16),
-                            Size(8, 8),
-                            Size(8, 8),
+                            cv::Size(16, 16),
+                            cv::Size(8, 8),
+                            cv::Size(8, 8),
                             9,
                             1,
                             -1,
-                            HOGDescriptor::L2Hys,
+                            cv::HOGDescriptor::L2Hys,
                             0.2,
                             gamma_corr,
                             cv::HOGDescriptor::DEFAULT_NLEVELS);
@@ -279,8 +279,8 @@ App::run() {
   cpu_hog.setSVMDetector(detector);
 
   while(running) {
-    VideoCapture vc;
-    Mat frame;
+    cv::VideoCapture vc;
+    cv::Mat frame;
 
     if(args.src_is_video) {
       vc.open(args.src.c_str());
@@ -296,29 +296,29 @@ App::run() {
       }
       vc >> frame;
     } else {
-      frame = imread(args.src);
+      frame = cv::imread(args.src);
       if(frame.empty())
         throw runtime_error(string("can't open image file: " + args.src));
     }
 
-    Mat img_aux, img, img_to_show;
+    cv::Mat img_aux, img, img_to_show;
     gpu::GpuMat gpu_img;
 
     // Iterate over all frames
     while(running && !frame.empty()) {
       workBegin();
 
-      // Change format of the image
+      // Change cv::format of the image
       if(make_gray)
-        cvtColor(frame, img_aux, cv::COLOR_BGR2GRAY);
+        cv::cvtColor(frame, img_aux, cv::COLOR_BGR2GRAY);
       else if(use_gpu)
-        cvtColor(frame, img_aux, CV_BGR2BGRA);
+        cv::cvtColor(frame, img_aux, CV_BGR2BGRA);
       else
         frame.copyTo(img_aux);
 
       // Resize image
       if(args.resize_src)
-        resize(img_aux, img, Size(args.width, args.height));
+        cv::resize(img_aux, img, cv::Size(args.width, args.height));
       else
         img = img_aux;
       img_to_show = img;
@@ -326,30 +326,30 @@ App::run() {
       gpu_hog.nlevels = nlevels;
       cpu_hog.nlevels = nlevels;
 
-      vector<Rect> found;
+      vector<cv::Rect> found;
 
       // Perform HOG classification
       hogWorkBegin();
       if(use_gpu) {
         gpu_img.upload(img);
-        gpu_hog.detectMultiScale(gpu_img, found, hit_threshold, win_stride, Size(0, 0), scale, gr_threshold);
+        gpu_hog.detectMultiScale(gpu_img, found, hit_threshold, win_stride, cv::Size(0, 0), scale, gr_threshold);
       } else
-        cpu_hog.detectMultiScale(img, found, hit_threshold, win_stride, Size(0, 0), scale, gr_threshold);
+        cpu_hog.detectMultiScale(img, found, hit_threshold, win_stride, cv::Size(0, 0), scale, gr_threshold);
       hogWorkEnd();
 
       // Draw positive classified windows
       for(size_t i = 0; i < found.size(); i++) {
-        Rect r = found[i];
-        rectangle(img_to_show, r.tl(), r.br(), CV_RGB(0, 255, 0), 3);
+        cv::Rect r = found[i];
+        cv::rectangle(img_to_show, r.tl(), r.br(), CV_RGB(0, 255, 0), 3);
       }
 
       if(use_gpu)
-        putText(img_to_show, "Mode: GPU", Point(5, 25), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
+        cv::putText(img_to_show, "Mode: GPU", cv::Point(5, 25), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
       else
-        putText(img_to_show, "Mode: CPU", Point(5, 25), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
-      putText(img_to_show, "FPS (HOG only): " + hogWorkFps(), Point(5, 65), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
-      putText(img_to_show, "FPS (total): " + workFps(), Point(5, 105), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
-      imshow("opencv_gpu_hog", img_to_show);
+        cv::putText(img_to_show, "Mode: CPU", cv::Point(5, 25), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
+      cv::putText(img_to_show, "FPS (HOG only): " + hogWorkFps(), cv::Point(5, 65), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
+      cv::putText(img_to_show, "FPS (total): " + workFps(), cv::Point(5, 105), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
+      cv::imshow("opencv_gpu_hog", img_to_show);
 
       if(args.src_is_video || args.src_is_camera)
         vc >> frame;
@@ -364,14 +364,14 @@ App::run() {
         }
 
         if(make_gray)
-          cvtColor(img_to_show, img, cv::COLOR_GRAY2BGR);
+          cv::cvtColor(img_to_show, img, cv::COLOR_GRAY2BGR);
         else
-          cvtColor(img_to_show, img, CV_BGRA2BGR);
+          cv::cvtColor(img_to_show, img, CV_BGRA2BGR);
 
         video_writer << img;
       }
 
-      handleKey((char)waitKey(3));
+      handleKey((char)cv::waitKey(3));
     }
   }
 }
@@ -410,21 +410,21 @@ App::handleKey(char key) {
       break;
     case '3':
       gr_threshold++;
-      cout << "Group threshold: " << gr_threshold << endl;
+      cout << "Group cv::threshold: " << gr_threshold << endl;
       break;
     case 'e':
     case 'E':
       gr_threshold = max(0, gr_threshold - 1);
-      cout << "Group threshold: " << gr_threshold << endl;
+      cout << "Group cv::threshold: " << gr_threshold << endl;
       break;
     case '4':
       hit_threshold += 0.25;
-      cout << "Hit threshold: " << hit_threshold << endl;
+      cout << "Hit cv::threshold: " << hit_threshold << endl;
       break;
     case 'r':
     case 'R':
       hit_threshold = max(0.0, hit_threshold - 0.25);
-      cout << "Hit threshold: " << hit_threshold << endl;
+      cout << "Hit cv::threshold: " << hit_threshold << endl;
       break;
     case 'c':
     case 'C':
@@ -436,13 +436,13 @@ App::handleKey(char key) {
 
 inline void
 App::hogWorkBegin() {
-  hog_work_begin = getTickCount();
+  hog_work_begin = cv::getTickCount();
 }
 
 inline void
 App::hogWorkEnd() {
-  int64 delta = getTickCount() - hog_work_begin;
-  double freq = getTickFrequency();
+  int64 delta = cv::getTickCount() - hog_work_begin;
+  double freq = cv::getTickFrequency();
   hog_work_fps = freq / delta;
 }
 
@@ -455,13 +455,13 @@ App::hogWorkFps() const {
 
 inline void
 App::workBegin() {
-  work_begin = getTickCount();
+  work_begin = cv::getTickCount();
 }
 
 inline void
 App::workEnd() {
-  int64 delta = getTickCount() - work_begin;
-  double freq = getTickFrequency();
+  int64 delta = cv::getTickCount() - work_begin;
+  double freq = cv::getTickFrequency();
   work_fps = freq / delta;
 }
 

@@ -97,12 +97,12 @@ Video::initGrabber(int device, int w, int h) {
 
   m_deviceID = device;
 
-  create_task(DeviceInformation::FindAllAsync(DeviceClass::VideoCapture))
+  create_task(DeviceInformation::FindAllAsync(DeviceClass::cv::VideoCapture))
       .then([this](task<DeviceInformationCollection ^> findTask) {
         m_devices = findTask.get();
 
         // got selected device?
-        if((unsigned)m_deviceID >= m_devices.Get()->Size) {
+        if((unsigned)m_deviceID >= m_devices.Get()->cv::Size) {
           OutputDebugStringA("Video::initGrabber - no video device found\n");
           return false;
         }
@@ -169,7 +169,7 @@ Video::_GrabFrameAsync(::Media::CaptureFrameGrabber ^ frameGrabber) {
             if(bFlipImageX) {
               std::lock_guard<std::mutex> lock(VideoioBridge::getInstance().inputBufferMutex);
 
-              // ptr to input Mat data array
+              // ptr to input cv::Mat data array
               auto buf = VideoioBridge::getInstance().backInputPtr;
 
               for(unsigned int row = 0; row < height; row++) {
@@ -190,7 +190,7 @@ Video::_GrabFrameAsync(::Media::CaptureFrameGrabber ^ frameGrabber) {
             } else {
               std::lock_guard<std::mutex> lock(VideoioBridge::getInstance().inputBufferMutex);
 
-              // ptr to input Mat data array
+              // ptr to input cv::Mat data array
               auto buf = VideoioBridge::getInstance().backInputPtr;
 
               for(unsigned int row = 0; row < height; row++) {
@@ -227,7 +227,7 @@ Video::_GrabFrameAsync(::Media::CaptureFrameGrabber ^ frameGrabber) {
           task_continuation_context::use_current());
 }
 
-// copy from input Mat to output WBM
+// copy from input cv::Mat to output WBM
 // must be on UI thread
 void
 Video::CopyOutput() {
@@ -279,12 +279,12 @@ Video::listDevicesTask() {
 
   auto settings = ref new MediaCaptureInitializationSettings();
 
-  create_task(DeviceInformation::FindAllAsync(DeviceClass::VideoCapture))
+  create_task(DeviceInformation::FindAllAsync(DeviceClass::cv::VideoCapture))
       .then([this, &ready](task<DeviceInformationCollection ^> findTask) {
         m_devices = findTask.get();
 
         // TODO: collect device data
-        // for (size_t i = 0; i < m_devices->Size; i++)
+        // for (size_t i = 0; i < m_devices->cv::Size; i++)
         // {
         //   .. deviceInfo;
         //   auto d = m_devices->GetAt(i);

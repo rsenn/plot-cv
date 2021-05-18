@@ -9,18 +9,18 @@
 //#define DEBUG
 
 void
-Measure_Origins(Mat& src) {
+Measure_Origins(cv::Mat& src) {
 
   // get The exterior contour
-  vector<Point> contour;
-  Mat edged;
+  vector<cv::Point> contour;
+  cv::Mat edged;
   getExteriorContour(src, contour);
-  Rect box = boundingRect(Mat(contour));
-  vector<Point2f> rectCorners(4);
-  rectCorners[0] = Point2f(box.x, box.y);
-  rectCorners[1] = Point2f(box.x + box.width, box.y);
-  rectCorners[2] = Point2f(box.x, box.y + box.height);
-  rectCorners[3] = Point2f(box.x + box.width, box.y + box.height);
+  cv::Rect box = cv::boundingRect(cv::Mat(contour));
+  vector<cv::Point2f> rectCorners(4);
+  rectCorners[0] = cv::Point2f(box.x, box.y);
+  rectCorners[1] = cv::Point2f(box.x + box.width, box.y);
+  rectCorners[2] = cv::Point2f(box.x, box.y + box.height);
+  rectCorners[3] = cv::Point2f(box.x + box.width, box.y + box.height);
 
 #ifdef DEBUG
   cout << "Box axis:" << endl;
@@ -35,13 +35,13 @@ Measure_Origins(Mat& src) {
 #endif
 
   // draw corners
-  Mat img_corners;
-  cvtColor(src, img_corners, COLOR_GRAY2BGR);
+  cv::Mat img_corners;
+  cv::cvtColor(src, img_corners, cv::COLOR_GRAY2BGR);
 
-  for(int i = 0; i < rectCorners.size(); i++) { circle(img_corners, rectCorners[i], 50, Scalar(0, 0, 255), 8, 8, 0); }
-  namedWindow("corners", WINDOW_NORMAL);
-  resizeWindow("corners", src.cols / 10, src.rows / 10);
-  imshow("corners", img_corners);
-  imwrite("./output/corners.jpg", img_corners);
-  waitKey(0);
+  for(int i = 0; i < rectCorners.size(); i++) { cv::circle(img_corners, rectCorners[i], 50, cv::Scalar(0, 0, 255), 8, 8, 0); }
+  cv::namedWindow("corners", WINDOW_NORMAL);
+  cv::resizeWindow("corners", src.cols / 10, src.rows / 10);
+  cv::imshow("corners", img_corners);
+  cv::imwrite("./output/corners.jpg", img_corners);
+  cv::waitKey(0);
 }

@@ -9,7 +9,7 @@ Original Comments:
 ML:This set of files adds support for firevre and usb cameras.
 First it tries to install a firewire camera,
 if that fails it tries a v4l/USB camera
-It has been tested with the motempl sample program
+It has been tested with the cv::motempl sample program
 
 First Patch:  August 24, 2004 Travis Wood   TravisOCV@tkwood.com
 For Release:  OpenCV-Linux Beta4  opencv-0.9.6
@@ -19,7 +19,7 @@ Problems?     Post your questions at answers.opencv.org,
               Submit your fixes at https://github.com/opencv/opencv/
 Patched Comments:
 
-TW: The cv cam utils that came with the initial release of OpenCV for LINUX Beta4
+TW: The cv cam cv::utils that came with the initial release of OpenCV for LINUX Beta4
 were not working.  I have rewritten them so they work for me. At the same time, trying
 to keep the original code as ML wrote it as unchanged as possible.  No one likes to debug
 someone elses code, so I resisted changes as much as possible.  I have tried to keep the
@@ -85,7 +85,7 @@ For Release:  OpenCV-Linux Beta4 Opencv-0.9.6
    using SetProperty.
  - image size can be changed by two subsequent calls to SetProperty (for width and height)
  - bug fix: if the image size changes, realloc the new image only when it is grabbed
- - issue errors only when necessary, fix error message formatting.
+ - issue errors only when necessary, fix cv::error message formatting.
 
 Fourth Patch: Sept 7, 2005 Csaba Kertesz sign@freemail.hu
 For Release:  OpenCV-Linux Beta5 OpenCV-0.9.7
@@ -305,7 +305,7 @@ struct CvCaptureCAM_V4L CV_FINAL : public CvCapture {
   int deviceHandle;
   int bufferIndex;
   bool FirstCapture;
-  String deviceName;
+  cv::String deviceName;
 
   IplImage frame;
 
@@ -624,7 +624,7 @@ CvCaptureCAM_V4L::initCapture() {
   }
 
   if(!autosetup_capture_mode_v4l2()) {
-    fprintf(stderr, "VIDEOIO ERROR: V4L2: Pixel format of incoming image is unsupported by OpenCV\n");
+    fprintf(stderr, "VIDEOIO ERROR: V4L2: Pixel cv::format of incoming image is unsupported by OpenCV\n");
     return false;
   }
 
@@ -648,7 +648,7 @@ CvCaptureCAM_V4L::initCapture() {
     return false;
 
   if(!createBuffers()) {
-    /* free capture, and returns an error code */
+    /* free capture, and returns an cv::error code */
     releaseBuffers();
     return false;
   }
@@ -795,7 +795,7 @@ CvCaptureCAM_V4L::open(const char* _deviceName) {
   frame_allocated = false;
   deviceName = _deviceName;
   returnFrame = true;
-  normalizePropRange = utils::getConfigurationParameterBool("OPENCV_VIDEOIO_V4L_RANGE_NORMALIZED", false);
+  normalizePropRange = cv::utils::getConfigurationParameterBool("OPENCV_VIDEOIO_V4L_RANGE_NORMALIZED", false);
   channelNumber = -1;
   bufferIndex = -1;
 
@@ -819,7 +819,7 @@ CvCaptureCAM_V4L::read_frame_v4l2() {
         return false;
       continue;
     }
-    /* display the error and stop processing */
+    /* display the cv::error and stop processing */
     returnFrame = false;
     perror("VIDIOC_DQBUF");
     return false;
@@ -885,7 +885,7 @@ CvCaptureCAM_V4L::grabFrame() {
     }
 
     if(!streaming(true)) {
-      /* error enabling the stream */
+      /* cv::error enabling the stream */
       perror("VIDIOC_STREAMON");
       return false;
     }
@@ -990,8 +990,8 @@ move_411_block(int yTL, int yTR, int yBL, int yBR, int u, int v, int /*rowPixels
 // A plane of V values    1       2
 //                        3       4
 //
-// The U1/V1 samples correspond to the ABCD pixels.
-//     U2/V2 samples correspond to the EFGH pixels.
+// The U1/V1 cv::samples correspond to the ABCD pixels.
+//     U2/V2 cv::samples correspond to the EFGH pixels.
 //
 /* Converts from planar YUV411P to RGB24. */
 /* [FD] untested... */
@@ -1048,7 +1048,7 @@ bayer2rgb24(long int WIDTH, long int HEIGHT, unsigned char* src, unsigned char* 
           *scanpt++ = (*(rawpt - 1) + *(rawpt + 1) + *(rawpt + WIDTH) + *(rawpt - WIDTH)) / 4;                         /* G */
           *scanpt++ = *rawpt;                                                                                          /* B */
         } else {
-          /* first line or left column */
+          /* first cv::line or left column */
           *scanpt++ = *(rawpt + WIDTH + 1);                  /* R */
           *scanpt++ = (*(rawpt + 1) + *(rawpt + WIDTH)) / 2; /* G */
           *scanpt++ = *rawpt;                                /* B */
@@ -1060,7 +1060,7 @@ bayer2rgb24(long int WIDTH, long int HEIGHT, unsigned char* src, unsigned char* 
           *scanpt++ = *rawpt;                                    /* G */
           *scanpt++ = (*(rawpt - 1) + *(rawpt + 1)) / 2;         /* B */
         } else {
-          /* first line or right column */
+          /* first cv::line or right column */
           *scanpt++ = *(rawpt + WIDTH); /* R */
           *scanpt++ = *rawpt;           /* G */
           *scanpt++ = *(rawpt - 1);     /* B */
@@ -1074,7 +1074,7 @@ bayer2rgb24(long int WIDTH, long int HEIGHT, unsigned char* src, unsigned char* 
           *scanpt++ = *rawpt;                                    /* G */
           *scanpt++ = (*(rawpt + WIDTH) + *(rawpt - WIDTH)) / 2; /* B */
         } else {
-          /* bottom line or left column */
+          /* bottom cv::line or left column */
           *scanpt++ = *(rawpt + 1);     /* R */
           *scanpt++ = *rawpt;           /* G */
           *scanpt++ = *(rawpt - WIDTH); /* B */
@@ -1086,7 +1086,7 @@ bayer2rgb24(long int WIDTH, long int HEIGHT, unsigned char* src, unsigned char* 
           *scanpt++ = (*(rawpt - 1) + *(rawpt + 1) + *(rawpt - WIDTH) + *(rawpt + WIDTH)) / 4;                         /* G */
           *scanpt++ = (*(rawpt - WIDTH - 1) + *(rawpt - WIDTH + 1) + *(rawpt + WIDTH - 1) + *(rawpt + WIDTH + 1)) / 4; /* B */
         } else {
-          /* bottom line or right column */
+          /* bottom cv::line or right column */
           *scanpt++ = *rawpt;                                /* R */
           *scanpt++ = (*(rawpt - 1) + *(rawpt - WIDTH)) / 2; /* G */
           *scanpt++ = *(rawpt - WIDTH - 1);                  /* B */
@@ -1120,7 +1120,7 @@ sgbrg2rgb24(long int WIDTH, long int HEIGHT, unsigned char* src, unsigned char* 
           *scanpt++ = *(rawpt);                                  /* G */
           *scanpt++ = (*(rawpt - WIDTH) + *(rawpt + WIDTH)) / 2; /* B */
         } else {
-          /* first line or left column */
+          /* first cv::line or left column */
 
           *scanpt++ = *(rawpt + 1);     /* R */
           *scanpt++ = *(rawpt);         /* G */
@@ -1132,7 +1132,7 @@ sgbrg2rgb24(long int WIDTH, long int HEIGHT, unsigned char* src, unsigned char* 
           *scanpt++ = (*(rawpt - 1) + *(rawpt + 1) + *(rawpt - WIDTH) + *(rawpt + WIDTH)) / 4;                         /* G */
           *scanpt++ = (*(rawpt - WIDTH - 1) + *(rawpt - WIDTH + 1) + *(rawpt + WIDTH - 1) + *(rawpt + WIDTH + 1)) / 4; /* B */
         } else {
-          /* first line or right column */
+          /* first cv::line or right column */
 
           *scanpt++ = *(rawpt);                              /* R */
           *scanpt++ = (*(rawpt - 1) + *(rawpt + WIDTH)) / 2; /* G */
@@ -1147,7 +1147,7 @@ sgbrg2rgb24(long int WIDTH, long int HEIGHT, unsigned char* src, unsigned char* 
           *scanpt++ = (*(rawpt - 1) + *(rawpt + 1) + *(rawpt - WIDTH) + *(rawpt + WIDTH)) / 4;                         /* G */
           *scanpt++ = *(rawpt);                                                                                        /* B */
         } else {
-          /* bottom line or left column */
+          /* bottom cv::line or left column */
 
           *scanpt++ = *(rawpt - WIDTH + 1);                  /* R */
           *scanpt++ = (*(rawpt + 1) + *(rawpt - WIDTH)) / 2; /* G */
@@ -1160,7 +1160,7 @@ sgbrg2rgb24(long int WIDTH, long int HEIGHT, unsigned char* src, unsigned char* 
           *scanpt++ = *(rawpt);                                  /* G */
           *scanpt++ = (*(rawpt - 1) + *(rawpt + 1)) / 2;         /* B */
         } else {
-          /* bottom line or right column */
+          /* bottom cv::line or right column */
 
           *scanpt++ = (*(rawpt - WIDTH)); /* R */
           *scanpt++ = *(rawpt);           /* G */
@@ -1360,7 +1360,7 @@ CvCaptureCAM_V4L::convertToRgb(const Buffer& currentBuffer) {
       return;
     default: break;
   }
-  // Converted by cvtColor or imdecode
+  // Converted by cv::cvtColor or imdecode
   cv::Mat destination(imageSize, CV_8UC3, frame.imageData);
   switch(palette) {
     case V4L2_PIX_FMT_YVU420:
@@ -1386,7 +1386,7 @@ CvCaptureCAM_V4L::convertToRgb(const Buffer& currentBuffer) {
 #ifdef HAVE_JPEG
     case V4L2_PIX_FMT_MJPEG:
     case V4L2_PIX_FMT_JPEG:
-      cv::imdecode(Mat(1, currentBuffer.buffer.bytesused, CV_8U, currentBuffer.start), IMREAD_COLOR, &destination);
+      cv::imdecode(cv::Mat(1, currentBuffer.buffer.bytesused, CV_8U, currentBuffer.start), cv::IMREAD_COLOR, &destination);
       return;
 #endif
     case V4L2_PIX_FMT_YUYV:
@@ -1399,16 +1399,16 @@ CvCaptureCAM_V4L::convertToRgb(const Buffer& currentBuffer) {
     case V4L2_PIX_FMT_Y16: {
       cv::Mat temp(imageSize, CV_8UC1, buffers[MAX_V4L_BUFFERS].start);
       cv::Mat(imageSize, CV_16UC1, currentBuffer.start).convertTo(temp, CV_8U, 1.0 / 256);
-      cv::cvtColor(temp, destination, COLOR_GRAY2BGR);
+      cv::cvtColor(temp, destination, cv::COLOR_GRAY2BGR);
       return;
     }
     case V4L2_PIX_FMT_Y10: {
       cv::Mat temp(imageSize, CV_8UC1, buffers[MAX_V4L_BUFFERS].start);
       cv::Mat(imageSize, CV_16UC1, currentBuffer.start).convertTo(temp, CV_8U, 1.0 / 4);
-      cv::cvtColor(temp, destination, COLOR_GRAY2BGR);
+      cv::cvtColor(temp, destination, cv::COLOR_GRAY2BGR);
       return;
     }
-    case V4L2_PIX_FMT_GREY: cv::cvtColor(cv::Mat(imageSize, CV_8UC1, currentBuffer.start), destination, COLOR_GRAY2BGR); break;
+    case V4L2_PIX_FMT_GREY: cv::cvtColor(cv::Mat(imageSize, CV_8UC1, currentBuffer.start), destination, cv::COLOR_GRAY2BGR); break;
     case V4L2_PIX_FMT_BGR24:
     default:
       memcpy((char*)frame.imageData,
@@ -1428,7 +1428,7 @@ capPropertyName(int prop) {
     case cv::CAP_PROP_FRAME_HEIGHT: return "height";
     case cv::CAP_PROP_FRAME_WIDTH: return "width";
     case cv::CAP_PROP_CONVERT_RGB: return "convert_rgb";
-    case cv::CAP_PROP_FORMAT: return "format";
+    case cv::CAP_PROP_FORMAT: return "cv::format";
     case cv::CAP_PROP_MODE: return "mode";
     case cv::CAP_PROP_FOURCC: return "fourcc";
     case cv::CAP_PROP_AUTO_EXPOSURE: return "auto_exposure";
@@ -1576,7 +1576,7 @@ CvCaptureCAM_V4L::icvControl(__u32 v4l2id, int& value, bool isSet) const {
                 "VIDIOC_QUERYMENU).");
         break;
       case ERANGE: fprintf(stderr, "The struct v4l2_control value is out of bounds."); break;
-      case EACCES: fprintf(stderr, "Attempt to set a read-only control or to get a write-only control."); break;
+      case EACCES: fprintf(stderr, "Attempt to set a cv::read-only control or to get a cv::write-only control."); break;
 #endif
       default: perror(isSet ? "VIDIOC_S_CTRL" : "VIDIOC_G_CTRL"); break;
     }

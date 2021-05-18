@@ -37,12 +37,12 @@ the use of this software, even if advised of the possibility of such damage.
 */
 
 #include <opencv2/highgui.hpp>
-#include <opencv2/aruco/charuco.hpp>
+#include <opencv2/cv::aruco/charuco.hpp>
 #include <vector>
 #include <iostream>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 namespace {
 const char* about = "Detect ChArUco markers";
@@ -66,8 +66,8 @@ const char* keys = "{sl       |       | Square side length (in meters) }"
 /**
  */
 static bool
-readCameraParameters(string filename, Mat& camMatrix, Mat& distCoeffs) {
-  FileStorage fs(filename, FileStorage::READ);
+readCameraParameters(string filename, cv::Mat& camMatrix, cv::Mat& distCoeffs) {
+  cv::FileStorage fs(filename, cv::FileStorage::READ);
   if(!fs.isOpened())
     return false;
   fs["camera_matrix"] >> camMatrix;
@@ -78,8 +78,8 @@ readCameraParameters(string filename, Mat& camMatrix, Mat& distCoeffs) {
 /**
  */
 static bool
-readDetectorParameters(string filename, Ptr<aruco::DetectorParameters>& params) {
-  FileStorage fs(filename, FileStorage::READ);
+readDetectorParameters(string filename, Ptr<cv::aruco::DetectorParameters>& params) {
+  cv::FileStorage fs(filename, cv::FileStorage::READ);
   if(!fs.isOpened())
     return false;
   fs["adaptiveThreshWinSizeMin"] >> params->adaptiveThreshWinSizeMin;
@@ -109,7 +109,7 @@ readDetectorParameters(string filename, Ptr<aruco::DetectorParameters>& params) 
  */
 int
 main(int argc, char* argv[]) {
-  CommandLineParser parser(argc, argv, keys);
+  cv::CommandLineParser parser(argc, argv, keys);
   parser.about(about);
 
   if(argc < 4) {
@@ -125,7 +125,7 @@ main(int argc, char* argv[]) {
   bool autoScale = parser.has("as");
   float autoScaleFactor = autoScale ? parser.get<float>("as") : 1.f;
 
-  Ptr<aruco::DetectorParameters> detectorParams = aruco::DetectorParameters::create();
+  Ptr<cv::aruco::DetectorParameters> detectorParams = cv::aruco::DetectorParameters::create();
   if(parser.has("dp")) {
     bool readOk = readDetectorParameters(parser.get<string>("dp"), detectorParams);
     if(!readOk) {
@@ -135,10 +135,10 @@ main(int argc, char* argv[]) {
   }
 
   int camId = parser.get<int>("ci");
-  String video;
+  cv::String video;
 
   if(parser.has("v")) {
-    video = parser.get<String>("v");
+    video = parser.get<cv::String>("v");
   }
 
   if(!parser.check()) {
@@ -146,9 +146,9 @@ main(int argc, char* argv[]) {
     return 0;
   }
 
-  Ptr<aruco::Dictionary> dictionary = aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
+  Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
 
-  Mat camMatrix, distCoeffs;
+  cv::Mat camMatrix, distCoeffs;
   if(estimatePose) {
     bool readOk = readCameraParameters(parser.get<string>("c"), camMatrix, distCoeffs);
     if(!readOk) {
@@ -157,7 +157,7 @@ main(int argc, char* argv[]) {
     }
   }
 
-  VideoCapture inputVideo;
+  cv::VideoCapture inputVideo;
   int waitTime;
   if(!video.empty()) {
     inputVideo.open(video);
@@ -171,43 +171,43 @@ main(int argc, char* argv[]) {
   int totalIterations = 0;
 
   while(inputVideo.grab()) {
-    Mat image, imageCopy;
+    cv::Mat image, imageCopy;
     inputVideo.retrieve(image);
 
-    double tick = (double)getTickCount();
+    double tick = (double)cv::getTickCount();
 
     vector<int> markerIds;
-    vector<Vec4i> diamondIds;
-    vector<vector<Point2f>> markerCorners, rejectedMarkers, diamondCorners;
-    vector<Vec3d> rvecs, tvecs;
+    vector<cv::Vec4i> diamondIds;
+    vector<vector<cv::Point2f>> markerCorners, rejectedMarkers, diamondCorners;
+    vector<cv::Vec3d> rvecs, tvecs;
 
     // detect markers
-    aruco::detectMarkers(image, dictionary, markerCorners, markerIds, detectorParams, rejectedMarkers);
+    cv::aruco::detectMarkers(image, dictionary, markerCorners, markerIds, detectorParams, rejectedMarkers);
 
     // detect diamonds
     if(markerIds.size() > 0)
-      aruco::detectCharucoDiamond(
+      cv::aruco::detectCharucoDiamond(
           image, markerCorners, markerIds, squareLength / markerLength, diamondCorners, diamondIds, camMatrix, distCoeffs);
 
     // estimate diamond pose
     if(estimatePose && diamondIds.size() > 0) {
       if(!autoScale) {
-        aruco::estimatePoseSingleMarkers(diamondCorners, squareLength, camMatrix, distCoeffs, rvecs, tvecs);
+        cv::aruco::estimatePoseSingleMarkers(diamondCorners, squareLength, camMatrix, distCoeffs, rvecs, tvecs);
       } else {
         // if autoscale, extract square size from last diamond id
         for(unsigned int i = 0; i < diamondCorners.size(); i++) {
           float autoSquareLength = autoScaleFactor * float(diamondIds[i].val[3]);
-          vector<vector<Point2f>> currentCorners;
-          vector<Vec3d> currentRvec, currentTvec;
+          vector<vector<cv::Point2f>> currentCorners;
+          vector<cv::Vec3d> currentRvec, currentTvec;
           currentCorners.push_back(diamondCorners[i]);
-          aruco::estimatePoseSingleMarkers(currentCorners, autoSquareLength, camMatrix, distCoeffs, currentRvec, currentTvec);
+          cv::aruco::estimatePoseSingleMarkers(currentCorners, autoSquareLength, camMatrix, distCoeffs, currentRvec, currentTvec);
           rvecs.push_back(currentRvec[0]);
           tvecs.push_back(currentTvec[0]);
         }
       }
     }
 
-    double currentTime = ((double)getTickCount() - tick) / getTickFrequency();
+    double currentTime = ((double)cv::getTickCount() - tick) / cv::getTickFrequency();
     totalTime += currentTime;
     totalIterations++;
     if(totalIterations % 30 == 0) {
@@ -218,22 +218,22 @@ main(int argc, char* argv[]) {
     // draw results
     image.copyTo(imageCopy);
     if(markerIds.size() > 0)
-      aruco::drawDetectedMarkers(imageCopy, markerCorners);
+      cv::aruco::drawDetectedMarkers(imageCopy, markerCorners);
 
     if(showRejected && rejectedMarkers.size() > 0)
-      aruco::drawDetectedMarkers(imageCopy, rejectedMarkers, noArray(), Scalar(100, 0, 255));
+      cv::aruco::drawDetectedMarkers(imageCopy, rejectedMarkers, cv::noArray(), cv::Scalar(100, 0, 255));
 
     if(diamondIds.size() > 0) {
-      aruco::drawDetectedDiamonds(imageCopy, diamondCorners, diamondIds);
+      cv::aruco::drawDetectedDiamonds(imageCopy, diamondCorners, diamondIds);
 
       if(estimatePose) {
         for(unsigned int i = 0; i < diamondIds.size(); i++)
-          aruco::drawAxis(imageCopy, camMatrix, distCoeffs, rvecs[i], tvecs[i], squareLength * 0.5f);
+          cv::aruco::drawAxis(imageCopy, camMatrix, distCoeffs, rvecs[i], tvecs[i], squareLength * 0.5f);
       }
     }
 
-    imshow("out", imageCopy);
-    char key = (char)waitKey(waitTime);
+    cv::imshow("out", imageCopy);
+    char key = (char)cv::waitKey(waitTime);
     if(key == 27)
       break;
   }

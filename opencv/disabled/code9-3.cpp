@@ -6,20 +6,20 @@
 #include "Config.h"
 #include <iomanip>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 int
 main() {
-  VideoCapture capr(1), capl(2);
+  cv::VideoCapture capr(1), capl(2);
   // reduce frame size
   capl.set(cv::CAP_PROP_FRAME_HEIGHT, 240);
   capl.set(cv::CAP_PROP_FRAME_WIDTH, 320);
   capr.set(cv::CAP_PROP_FRAME_HEIGHT, 240);
   capr.set(cv::CAP_PROP_FRAME_WIDTH, 320);
 
-  namedWindow("Left");
-  namedWindow("Right");
+  cv::namedWindow("Left");
+  cv::namedWindow("Right");
 
   cout << "Press 'c' to capture ..." << endl;
 
@@ -30,26 +30,26 @@ main() {
     capl.grab();
     capr.grab();
     // execute the heavier decoding operations
-    Mat framel, framer;
+    cv::Mat framel, framer;
     capl.retrieve(framel);
     capr.retrieve(framer);
 
     if(framel.empty() || framer.empty())
       break;
 
-    imshow("Left", framel);
-    imshow("Right", framer);
+    cv::imshow("Left", framel);
+    cv::imshow("Right", framer);
     if(choice == 'c') {
       // save files at proper locations if user presses 'c'
       stringstream l_name, r_name;
       l_name << "left" << setw(4) << setfill('0') << count << ".jpg";
       r_name << "right" << setw(4) << setfill('0') << count << ".jpg";
-      imwrite(string(LEFT_FOLDER) + l_name.str(), framel);
-      imwrite(string(RIGHT_FOLDER) + r_name.str(), framer);
+      cv::imwrite(string(LEFT_FOLDER) + l_name.str(), framel);
+      cv::imwrite(string(RIGHT_FOLDER) + r_name.str(), framer);
       cout << "Saved set " << count << endl;
       count++;
     }
-    choice = char(waitKey(1));
+    choice = char(cv::waitKey(1));
   }
   capl.release();
   capr.release();

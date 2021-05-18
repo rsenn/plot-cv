@@ -4,25 +4,25 @@
 
 #include <cstdio>
 
-using namespace cv;
+//using namespace cv;
 
 /** Function Headers */
-void detectAndDisplay(Mat frame);
+void detectAndDisplay(cv::Mat frame);
 
 /** Global variables */
 constexpr auto face_cascade_name = "haarcascade_frontalface_alt.xml";
 constexpr auto window_name = "Capture - Face detection";
-CascadeClassifier face_cascade;
+cv::CascadeClassifier face_cascade;
 
 /** @function main */
 int
 main(void) {
-  Mat frame;
+  cv::Mat frame;
 
   //-- 1. Load the cascades
 
   if(!face_cascade.load(face_cascade_name)) {
-    printf("--(!)Error loading face cascade\n");
+    printf("--(!)cv::Error loading cv::face cascade\n");
     return -1;
   };
 
@@ -31,10 +31,10 @@ main(void) {
   while(1) {
 
     // Workaround
-    // OpenCV's VideoCapture works for USB cameras but Raspberry Pi CSI Camera Interface
+    // OpenCV's cv::VideoCapture works for USB cameras but Raspberry Pi CSI Camera Interface
     // still finding better solution ...
     system("/opt/vc/bin/raspistill -w 400 -h 300 --quality 50 --timeout 10 --output /tmp/result.jpg");
-    frame = imread("/tmp/result.jpg");
+    frame = cv::imread("/tmp/result.jpg");
 
     if(frame.empty()) {
       printf(" --(!) No captured frame -- Break!");
@@ -45,7 +45,7 @@ main(void) {
 
     detectAndDisplay(frame);
 
-    int c = waitKey(10);
+    int c = cv::waitKey(10);
 
     if((char)c == 27) {
       break;
@@ -57,30 +57,30 @@ main(void) {
 
 /** @function detectAndDisplay */
 void
-detectAndDisplay(Mat frame) {
-  std::vector<Rect> faces;
-  Mat frame_gray;
+detectAndDisplay(cv::Mat frame) {
+  std::vector<cv::Rect> faces;
+  cv::Mat frame_gray;
 
-  cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
-  equalizeHist(frame_gray, frame_gray);
+  cv::cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
+  cv::equalizeHist(frame_gray, frame_gray);
 
   //-- Detect faces
-  face_cascade.detectMultiScale(frame_gray, faces, 1.1, 2, 0 | CASCADE_SCALE_IMAGE, Size(30, 30));
+  face_cascade.detectMultiScale(frame_gray, faces, 1.1, 2, 0 | CASCADE_SCALE_IMAGE, cv::Size(30, 30));
 
   for(size_t i = 0; i < faces.size(); i++) {
-    const Point center(faces[i].x + faces[i].width / 2, faces[i].y + faces[i].height / 2);
+    const cv::Point center(faces[i].x + faces[i].width / 2, faces[i].y + faces[i].height / 2);
 
-    ellipse(frame, // image
+    cv::ellipse(frame, // image
             center,
-            Size(faces[i].width / 2, faces[i].height / 2), // axes
+            cv::Size(faces[i].width / 2, faces[i].height / 2), // axes
             0,                                             // angle
             0,
             360,                 // startAngle, endAngle
-            Scalar(255, 0, 255), // color
+            cv::Scalar(255, 0, 255), // color
             4,
             8,
             0); // thickness, lineType, shift
 
-    Mat faceROI = frame_gray(faces[i]);
+    cv::Mat faceROI = frame_gray(faces[i]);
   }
 }

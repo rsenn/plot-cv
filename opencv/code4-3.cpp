@@ -4,13 +4,13 @@
 
 #include <opencv2/opencv.hpp>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 int
 main() {
-  // Create a VideoCapture object to read from video file
-  VideoCapture cap("video.mp4");
+  // Create a cv::VideoCapture object to cv::read from video file
+  cv::VideoCapture cap("video.mp4");
 
   // check if the file was opened properly
   if(!cap.isOpened()) {
@@ -18,18 +18,18 @@ main() {
     return -1;
   }
 
-  namedWindow("Video");
+  cv::namedWindow("Video");
 
   // Play the video in a loop till it ends
-  while(char(waitKey(1)) != 'q' && cap.isOpened()) {
-    Mat frame;
+  while(char(cv::waitKey(1)) != 'q' && cap.isOpened()) {
+    cv::Mat frame;
     cap >> frame;
     // Check if the video is over
     if(frame.empty()) {
       cout << "Video over" << endl;
       break;
     }
-    imshow("Video", frame);
+    cv::imshow("Video", frame);
   }
 
   return 0;

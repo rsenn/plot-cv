@@ -7,15 +7,15 @@
 #include "backend.hpp"
 #include "plugin_api.hpp"
 
-#include "opencv2/core/utils/filesystem.hpp"
-#include "opencv2/core/utils/configuration.private.hpp"
+#include "opencv2/core/cv::utils/filesystem.hpp"
+#include "opencv2/core/cv::utils/configuration.private.hpp"
 #include "opencv2/core/private.hpp"
 #include "videoio_registry.hpp"
 
 //==================================================================================================
 // Dynamic backend implementation
 
-#include "opencv2/core/utils/logger.hpp"
+#include "opencv2/core/cv::utils/logger.hpp"
 #include <sstream>
 using namespace std;
 
@@ -36,14 +36,14 @@ typedef std::wstring FileSystemPath_t;
 static FileSystemPath_t
 toFileSystemPath(const std::string& p) {
   FileSystemPath_t result;
-  result.resize(p.size());
+  result.cv::resize(p.size());
   for(size_t i = 0; i < p.size(); i++) result[i] = (wchar_t)p[i];
   return result;
 }
 static std::string
 toPrintablePath(const FileSystemPath_t& p) {
   std::string result;
-  result.resize(p.size());
+  result.cv::resize(p.size());
   for(size_t i = 0; i < p.size(); i++) {
     wchar_t ch = p[i];
     if((int)ch >= ' ' && (int)ch < 128)
@@ -173,7 +173,7 @@ private:
 
 private:
   DynamicLib(const DynamicLib&);
-  DynamicLib& operator=(const DynamicLib&);
+  DynamicLib& cv::operator=(const DynamicLib&);
 };
 
 //============================
@@ -203,7 +203,7 @@ public:
         plugin_api_ = NULL;
         return;
       }
-      // TODO Preview: add compatibility API/ABI checks
+      // TODO Preview: cv::add compatibility API/ABI checks
       CV_LOG_INFO(NULL, "Video I/O: loaded plugin '" << plugin_api_->api_header.api_description << "'");
     } else {
       CV_LOG_INFO(NULL,
@@ -252,8 +252,8 @@ protected:
 
 static std::vector<FileSystemPath_t>
 getPluginCandidates(const std::string& baseName) {
-  using namespace cv::utils;
-  using namespace cv::utils::fs;
+//  using namespace cv::utils;
+//  using namespace cv::utils::fs;
   const string baseName_l = toLowerCase(baseName);
   const string baseName_u = toUpperCase(baseName);
   const FileSystemPath_t baseName_l_fs = toFileSystemPath(baseName_l);
@@ -294,12 +294,12 @@ getPluginCandidates(const std::string& baseName) {
   results.push_back(moduleName);
 #else
   CV_LOG_INFO(NULL,
-              "VideoIO pluigin (" << baseName << "): glob is '" << plugin_expr << "', " << paths.size() << " location(s)");
+              "VideoIO pluigin (" << baseName << "): cv::glob is '" << plugin_expr << "', " << paths.size() << " location(s)");
   for(const string& path : paths) {
     if(path.empty())
       continue;
     vector<string> candidates;
-    cv::glob(utils::fs::join(path, plugin_expr), candidates);
+    cv::glob(cv::utils::fs::join(path, plugin_expr), candidates);
     CV_LOG_INFO(NULL, "    - " << path << ": " << candidates.size());
     copy(candidates.begin(), candidates.end(), back_inserter(results));
   }
@@ -474,12 +474,12 @@ public:
     return writer_ != NULL; // TODO always true
   }
   void
-  write(cv::InputArray arr) CV_OVERRIDE {
+  cv::write(cv::InputArray arr) CV_OVERRIDE {
     cv::Mat img = arr.getMat();
     CV_DbgAssert(writer_);
     CV_Assert(plugin_api_->Writer_write);
     if(CV_ERROR_OK != plugin_api_->Writer_write(writer_, img.data, (int)img.step[0], img.cols, img.rows, img.channels())) {
-      CV_LOG_DEBUG(NULL, "Video I/O: Can't write frame by plugin '" << plugin_api_->api_header.api_description << "'");
+      CV_LOG_DEBUG(NULL, "Video I/O: Can't cv::write frame by plugin '" << plugin_api_->api_header.api_description << "'");
     }
     // TODO return bool result?
   }

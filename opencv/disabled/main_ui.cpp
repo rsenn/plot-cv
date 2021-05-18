@@ -133,7 +133,7 @@ main(int argc, char* argv[]) {
     cv::resize(colorized, colorized_resized, mergedViewSize, 0.0, 0.0, cv::INTER_CUBIC);
 
     if(haveRGBCamera) {
-      bool newFrame = cap.read(cameraFrame);
+      bool newFrame = cap.cv::read(cameraFrame);
 
       cv::resize(cameraFrame, cameraFrame, viewFinderSize, 0.0, 0.0, cv::INTER_NEAREST);
 

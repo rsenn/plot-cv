@@ -6,10 +6,10 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/objdetect.hpp>
-#include <opencv2/face/mace.hpp>
+#include <opencv2/cv::face/mace.hpp>
 #include <iostream>
-using namespace cv;
-using namespace cv::face;
+//using namespace cv;
+//using namespace cv::face;
 using namespace std;
 
 enum STATE { NEUTRAL, RECORD, PREDICT };
@@ -23,10 +23,10 @@ const char* help = "press 'r' to record images. once N trainimages were recorded
 
 int
 main(int argc, char** argv) {
-  CommandLineParser parser(argc,
+  cv::CommandLineParser parser(argc,
                            argv,
                            "{ help h usage ? ||     show this help message }"
-                           "{ cascade c      ||     (required) path to a cascade file for face detection }"
+                           "{ cascade c      ||     (required) path to a cascade file for cv::face detection }"
                            "{ pre p          ||     load a pretrained mace filter file, saved from previous session  "
                            "(e.g. my.xml.gz) }"
                            "{ num n          |50|   num train images }"
@@ -35,16 +35,16 @@ main(int argc, char** argv) {
                            "                     (random convolute images seeded with the crc of this)\n"
                            "                     users will get prompted to guess the secrect, additional to the image. "
                            "}");
-  String cascade = parser.get<String>("cascade");
+  cv::String cascade = parser.get<String>("cascade");
   if(parser.has("help") || cascade.empty()) {
     parser.printMessage();
     return 1;
   } else {
     cout << help << endl;
   }
-  String defname = "mace.xml.gz";
-  String pre = parser.get<String>("pre");
-  String two = parser.get<String>("twofactor");
+  cv::String defname = "mace.xml.gz";
+  cv::String pre = parser.get<String>("pre");
+  cv::String two = parser.get<String>("twofactor");
   int N = parser.get<int>("num");
   int Z = parser.get<int>("size");
   int state = NEUTRAL;
@@ -65,27 +65,27 @@ main(int argc, char** argv) {
     }
   }
 
-  CascadeClassifier head(cascade);
+  cv::CascadeClassifier head(cascade);
   if(head.empty()) {
     cerr << "loading the cascade failed !" << endl;
     return -2;
   }
 
-  VideoCapture cap(0);
+  cv::VideoCapture cap(0);
   if(!cap.isOpened()) {
-    cerr << "VideoCapture could not be opened !" << endl;
+    cerr << "cv::VideoCapture could not be opened !" << endl;
     return -3;
   }
 
-  vector<Mat> train_img;
+  vector<cv::Mat> train_img;
   while(1) {
-    Mat frame;
+    cv::Mat frame;
     cap >> frame;
 
-    vector<Rect> rects;
+    vector<cv::Rect> rects;
     head.detectMultiScale(frame, rects);
     if(rects.size() > 0) {
-      Scalar col = Scalar(0, 120, 0);
+      cv::Scalar col = cv::Scalar(0, 120, 0);
 
       if(state == RECORD) {
         if(train_img.size() >= size_t(N)) {
@@ -95,7 +95,7 @@ main(int argc, char** argv) {
         } else {
           train_img.push_back(frame(rects[0]).clone());
         }
-        col = Scalar(200, 0, 0);
+        col = cv::Scalar(200, 0, 0);
       }
 
       if(state == PREDICT) {
@@ -109,19 +109,19 @@ main(int argc, char** argv) {
         }
         bool same = mace->same(frame(rects[0]));
         if(same)
-          col = Scalar(0, 220, 220);
+          col = cv::Scalar(0, 220, 220);
         else
-          col = Scalar(60, 60, 60);
+          col = cv::Scalar(60, 60, 60);
         if(!two.empty()) {
           cout << (same ? "accepted." : "denied.") << endl;
         }
       }
 
-      rectangle(frame, rects[0], col, 2);
+      cv::rectangle(frame, rects[0], col, 2);
     }
 
-    imshow("MACE", frame);
-    int k = waitKey(10);
+    cv::imshow("MACE", frame);
+    int k = cv::waitKey(10);
     switch(k) {
       case -1: break;
       case 27: return 0;

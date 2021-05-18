@@ -54,7 +54,7 @@ main(int argc, char* argv[]) {
 
   auto totstart = steady_clock::now();
   cv::Mat image, out;
-  // FILE *fp = fopen("log.txt", "w");
+  // FILE *fp = fopen("cv::log.txt", "w");
 
 #if(CV_MAJOR_VERSION < 3)
   GLThreshold t(capture.get(cv::CAP_PROP_FRAME_WIDTH), capture.get(cv::CAP_PROP_FRAME_HEIGHT));

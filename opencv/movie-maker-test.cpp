@@ -6,7 +6,7 @@
 #include <opencv2/highgui.hpp>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 int
 nonEmptyFrames(string movieFileName) {
@@ -14,7 +14,7 @@ nonEmptyFrames(string movieFileName) {
   cv::VideoCapture movieReader(movieFileName);
   int n = 0;
   while(1) {
-    movieReader.read(mat);
+    movieReader.cv::read(mat);
     if(mat.empty()) {
       break;
     }
@@ -30,10 +30,10 @@ SCENARIO("Can make a movie") {
   string filename("./live.avi");
   EventBus<EventImageCaptured> capturedImageEventBus;
 
-  Mat mat1, mat2, mat3;
-  mat1 = imread(string(PATH_TO_TEST_DATA).append("/abc-a.png"));
-  mat2 = imread(string(PATH_TO_TEST_DATA).append("/abc-b.png"));
-  mat3 = imread(string(PATH_TO_TEST_DATA).append("/abc-c.png"));
+  cv::Mat mat1, mat2, mat3;
+  mat1 = cv::imread(string(PATH_TO_TEST_DATA).append("/abc-a.png"));
+  mat2 = cv::imread(string(PATH_TO_TEST_DATA).append("/abc-b.png"));
+  mat3 = cv::imread(string(PATH_TO_TEST_DATA).append("/abc-c.png"));
 
   GIVEN("An initialized movie maker") {
     MovieMaker movieMaker(filename, 10.0);

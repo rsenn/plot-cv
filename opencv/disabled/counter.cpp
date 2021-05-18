@@ -38,14 +38,14 @@
 #define MIN_ALIVE 5
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
-// our sensitivity value to be used in the threshold() function
+// our sensitivity value to be used in the cv::threshold() function
 static double MAX_DIST_SQD = 6000000; // maximum distance between to centers to consider it one object
 static int SENSITIVITY_VALUE_1 = 200; // values for cleaning noise out of difference images
 static int SENSITIVITY_VALUE_2 = 50;
-// size of blur used to smooth the image to remove possible noise and
-// increase the size of the object we are trying to track. (Much like dilate and erode)
+// size of cv::blur used to smooth the image to remove possible noise and
+// increase the size of the object we are trying to track. (Much like cv::dilate and cv::erode)
 static int BLUR_SIZE_1 = 200;
 static int BLUR_SIZE_2 = 200;
 static double MIN_OBJ_AREA = 1000;
@@ -149,7 +149,7 @@ main(int argc, char** argv) {
     exit(1);
   }
 
-  Size S = Size((int)capture->get(cv::CAP_PROP_FRAME_WIDTH), (int)capture->get(cv::CAP_PROP_FRAME_HEIGHT));
+  cv::Size S = cv::Size((int)capture->get(cv::CAP_PROP_FRAME_WIDTH), (int)capture->get(cv::CAP_PROP_FRAME_HEIGHT));
   video_out = new ImageOutput();
   if(!video_out->setup(REMOTE, name_list, S, num_videos))
     exit(1);
@@ -197,11 +197,11 @@ set_background(string back_name, bool background_is_video, cv::Mat& grayBackgrou
   else if(background_is_video)
     get_background(back_name, grayBackground);
   else
-    grayBackground = imread(back_name);
+    grayBackground = cv::imread(back_name);
 
-  // cvtColor(grayBackground, grayBackground, COLOR_BGR2GRAY);
+  // cv::cvtColor(grayBackground, grayBackground, COLOR_BGR2GRAY);
   if(use_static_back && grayBackground.empty()) {
-    cout << "ERROR: Could not read background image" << endl;
+    cout << "ERROR: Could not cv::read background image" << endl;
     getchar();
     exit(1);
   }
@@ -232,16 +232,16 @@ track_with_non_adaptive_BS(
   std::vector<Target*> targets;
   cv::Mat thresholdImage;
 
-  success = capture->read(frame1);
+  success = capture->cv::read(frame1);
   if(!success) {
-    cout << endl << "ERROR: frame 1 failed to be read" << endl;
+    cout << endl << "ERROR: frame 1 failed to be cv::read" << endl;
     getchar();
     exit(1);
   }
-  cvtColor(frame1, grayImage1, COLOR_BGR2GRAY);
-  success = capture->read(frame2);
+  cv::cvtColor(frame1, grayImage1, COLOR_BGR2GRAY);
+  success = capture->cv::read(frame2);
   if(!success) {
-    cout << endl << "ERROR: frame 2 failed to be read" << endl;
+    cout << endl << "ERROR: frame 2 failed to be cv::read" << endl;
     getchar();
     exit(1);
   }
@@ -249,7 +249,7 @@ track_with_non_adaptive_BS(
   while(success) {
     // cout << "new frame" << endl;
 
-    cvtColor(frame2, grayImage2, COLOR_BGR2GRAY);
+    cv::cvtColor(frame2, grayImage2, COLOR_BGR2GRAY);
     if(use_static_back)
       do_non_adaptive_BS(grayBackground, grayImage2, debugMode, thresholdImage);
     else
@@ -264,9 +264,9 @@ track_with_non_adaptive_BS(
 
     if(!use_static_back) {
       frame2.copyTo(frame1);
-      cvtColor(frame1, grayImage1, COLOR_BGR2GRAY);
+      cv::cvtColor(frame1, grayImage1, COLOR_BGR2GRAY);
     }
-    success = capture->read(frame2);
+    success = capture->cv::read(frame2);
     loop_switch = !loop_switch;
   } // while
 
@@ -281,11 +281,11 @@ do_non_adaptive_BS(cv::Mat& grayImage1, cv::Mat& grayImage2, bool debugMode, cv:
   cv::Mat differenceImage, blurImage, firstThreshold;
   int diff = 0, thresh = 1, final = 2; // TODO maybe define these more universally
 
-  absdiff(grayImage1, grayImage2, differenceImage);
-  threshold(differenceImage, firstThreshold, SENSITIVITY_VALUE_1, 255, THRESH_BINARY);
+  cv::absdiff(grayImage1, grayImage2, differenceImage);
+  cv::threshold(differenceImage, firstThreshold, SENSITIVITY_VALUE_1, 255, THRESH_BINARY);
 
-  blur(firstThreshold, blurImage, Size(BLUR_SIZE_1, BLUR_SIZE_1));
-  threshold(blurImage, thresholdImage, SENSITIVITY_VALUE_2, 255, THRESH_BINARY);
+  cv::blur(firstThreshold, blurImage, cv::Size(BLUR_SIZE_1, BLUR_SIZE_1));
+  cv::threshold(blurImage, thresholdImage, SENSITIVITY_VALUE_2, 255, THRESH_BINARY);
 
   if(debugMode) {
     mat_list[diff] = differenceImage;
@@ -323,14 +323,14 @@ track_with_adaptive_BS(
   cout << "Debug:    " << ((debugMode) ? "Enabled" : "Disabled") << endl;
   cout << endl;
 
-  Ptr<BackgroundSubtractorMOG2> subtractor = createBackgroundSubtractorMOG2();
+  Ptr<BackgroundSubtractorMOG2> subtractor = cv::createBackgroundSubtractorMOG2();
   cv::Mat frame, image;
   cv::Mat thresholdImage;
   std::vector<Target*> targets;
 
-  success = capture->read(frame);
+  success = capture->cv::read(frame);
   if(!success) {
-    cout << endl << "ERROR: frame failed to be read" << endl;
+    cout << endl << "ERROR: frame failed to be cv::read" << endl;
     getchar();
     exit(1);
   }
@@ -347,7 +347,7 @@ track_with_adaptive_BS(
     char c = video_out->output_track_frame(frame);
     interpret_input(c, debugMode, trackingEnabled, pause);
 
-    success = capture->read(frame);
+    success = capture->cv::read(frame);
     loop_switch = !loop_switch;
     tot_time += double(clock() - start_t) / CLOCKS_PER_SEC;
     frames++;
@@ -368,17 +368,17 @@ do_adaptive_BS(Ptr<BackgroundSubtractorMOG2> subtractor, cv::Mat& image, bool de
   int diff = 0, thresh = 1, final = 2; // TODO maybe define these more universally
 
   subtractor->apply(image, differenceImage);
-  // blur(differenceImage, blurImage, Size(BLUR_SIZE_1, BLUR_SIZE_1));
-  threshold(differenceImage, firstThreshold, SENSITIVITY_VALUE_1, 255, THRESH_BINARY);
+  // cv::blur(differenceImage, blurImage, cv::Size(BLUR_SIZE_1, BLUR_SIZE_1));
+  cv::threshold(differenceImage, firstThreshold, SENSITIVITY_VALUE_1, 255, THRESH_BINARY);
 
   // TODO determine if this is useful
-  blur(firstThreshold, blurImage, Size(BLUR_SIZE_2, BLUR_SIZE_2));
+  cv::blur(firstThreshold, blurImage, cv::Size(BLUR_SIZE_2, BLUR_SIZE_2));
   // TODO paramertize %
   // TODO figure out if this is actually better
   // dynamic_threshold(blurImage, thresholdImage, 0.5, debugMode);
-  threshold(blurImage, thresholdImage, SENSITIVITY_VALUE_2, 255, THRESH_BINARY);
+  cv::threshold(blurImage, thresholdImage, SENSITIVITY_VALUE_2, 255, THRESH_BINARY);
 
-  // TODO maybe add blur image
+  // TODO maybe cv::add cv::blur image
   if(debugMode) {
     mat_list[diff] = differenceImage;
     mat_list[thresh] = firstThreshold;
@@ -392,7 +392,7 @@ do_adaptive_BS(Ptr<BackgroundSubtractorMOG2> subtractor, cv::Mat& image, bool de
   }
 }
 
-//@identifies objects based on threshold image and previous objects
+//@identifies objects based on cv::threshold image and previous objects
 //@
 void
 search_for_movement(cv::Mat& thresholdImage,
@@ -410,7 +410,7 @@ search_for_movement(cv::Mat& thresholdImage,
   cv::Mat temp;
   Rect2d temp_rect;
   std::vector<Rect2d> obj_rects;
-  std::vector<Vec4i> hierarchy;
+  std::vector<cv::Vec4i> hierarchy;
   std::vector<Object> objects;
   Object* prev_obj = NULL;
   Target* temp_target;
@@ -420,9 +420,9 @@ search_for_movement(cv::Mat& thresholdImage,
 
   thresholdImage.copyTo(temp);
 
-  findContours(temp, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+  cv::findContours(temp, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
   for(std::vector<std::vector<cv::Point>>::iterator it_0 = contours.begin(); it_0 != contours.end(); it_0++) {
-    temp_rect = boundingRect(*it_0);
+    temp_rect = cv::boundingRect(*it_0);
     obj_area = temp_rect.area();
 
     if(obj_area >= MIN_OBJ_AREA) {
@@ -466,13 +466,13 @@ search_for_movement(cv::Mat& thresholdImage,
   }
   draw_centers(targets, display);
   draw_rectangles(obj_rects, display);
-  line(display, cv::Point(mid_row, 0), cv::Point(mid_row, display.cols), Scalar(0, 255, 0), 2, 1);
+  cv::line(display, cv::Point(mid_row, 0), cv::Point(mid_row, display.cols), cv::Scalar(0, 255, 0), 2, 1);
 
 } // search for movement
 
 //@perform thresholding in a dynamic manner
 //@params input_image     - the difference image you want to threshold
-//				threshold_image - the output threshold image
+//				threshold_image - the output cv::threshold image
 //        percent_peak    - percent of histogram peak value at which to cut off
 //@pre input_image is a grayscale image of type CV_8U
 // TODO probably not actually useful
@@ -491,7 +491,7 @@ dynamic_threshold(cv::Mat& input_image, cv::Mat& threshold_image, float percent_
   int k = 0;
   int thresh = 30;
 
-  calcHist(&input_image, 1, 0, cv::Mat(), hist, 1, &hist_size, &hist_range, uniform, accumulate);
+  cv::calcHist(&input_image, 1, 0, cv::Mat(), hist, 1, &hist_size, &hist_range, uniform, accumulate);
 
   for(int i = 1; i < hist_size; i++) {
     if(cvRound(hist.at<float>(i)) > hist_peak_val) {
@@ -504,7 +504,7 @@ dynamic_threshold(cv::Mat& input_image, cv::Mat& threshold_image, float percent_
   k = hist_peak;
   while(cvRound(hist.at<float>(k)) > percent_of_peak) k++;
   thresh = k;
-  threshold(input_image, threshold_image, thresh, 255, THRESH_BINARY);
+  cv::threshold(input_image, threshold_image, thresh, 255, THRESH_BINARY);
 
   if(debugMode && !(REMOTE)) { // OUTPUT
     // TODO we probably don't need this anymore
@@ -513,23 +513,23 @@ dynamic_threshold(cv::Mat& input_image, cv::Mat& threshold_image, float percent_
     int hist_w = 512;
     int hist_h = 400;
     int bin_w = cvRound((double)hist_w / hist_size);
-    cv::Mat histImage(hist_h, hist_w, CV_8UC3, Scalar(0, 0, 0));
-    normalize(hist, hist, 0, histImage.rows, NORM_MINMAX, -1, cv::Mat());
+    cv::Mat histImage(hist_h, hist_w, CV_8UC3, cv::Scalar(0, 0, 0));
+    cv::normalize(hist, hist, 0, histImage.rows, NORM_MINMAX, -1, cv::Mat());
     for(int i = 1; i < hist_size; i++) {
-      line(histImage,
+      cv::line(histImage,
            cv::Point(bin_w * (i - 1), hist_h - cvRound(hist.at<float>(i - 1))),
            cv::Point(bin_w * (i), hist_h - cvRound(hist.at<float>(i))),
-           Scalar(255, 0, 0),
+           cv::Scalar(255, 0, 0),
            2,
            8,
            0);
     }
 
-    namedWindow("Histogram", cv::WINDOW_NORMAL);
-    imshow("Histogram", histImage);
-    resizeWindow("Histogram", 512, 384);
+    cv::namedWindow("Histogram", cv::WINDOW_NORMAL);
+    cv::imshow("Histogram", histImage);
+    cv::resizeWindow("Histogram", 512, 384);
   } else {
-    destroyWindow("Histogram");
+    cv::destroyWindow("Histogram");
   }
 
 } // dynamic_threshold
@@ -568,7 +568,7 @@ is_center_crossed(const Object& obj_a, const Object& obj_b, double middle) {
 
 \*****************************************************************************/
 
-//@parse command line parameters to use as settings for the program
+//@parse command cv::line parameters to use as settings for the program
 // TODO update with new options (already implemented in the file version)
 void
 get_settings_inline(int argc, char** argv, string& vid_name, string& back_name) {
@@ -591,8 +591,8 @@ get_settings_inline(int argc, char** argv, string& vid_name, string& back_name) 
     MIN_OBJ_AREA = char_to_int(argv[6]);
 }
 
-//@read file to get  proper settings and file names
-// TODO dynamic threshold setting (maybe not)
+//@cv::read file to get  proper settings and file names
+// TODO dynamic cv::threshold setting (maybe not)
 // TODO tracking algo
 void
 get_settings_file(int argc, char** argv, string& vid_name, string& back_name, char& bs_type) {
@@ -668,7 +668,7 @@ interpret_input(char c, bool& debugMode, bool& trackingEnabled, bool& pause) {
   if(pause == true) {
     while(wait) {
       // stay in this loop until
-      c2 = waitKey(10);
+      c2 = cv::waitKey(10);
       switch(c2) {
         case 112: // p is for unpause
           pause = false;
@@ -688,7 +688,7 @@ interpret_input(char c, bool& debugMode, bool& trackingEnabled, bool& pause) {
 void
 draw_rectangles(std::vector<Rect2d>& obj_rects, cv::Mat& display) {
   for(unsigned j = 0; j < obj_rects.size(); j++) {
-    rectangle(display, obj_rects[j], Scalar(255, 0, 0), 2, 1); // draw rectangle around object
+    cv::rectangle(display, obj_rects[j], cv::Scalar(255, 0, 0), 2, 1); // draw cv::rectangle around object
     // int mid_x = obj_rects[j].x + (obj_rects[j].width / 2);  // was this important?
     // int mid_y = obj_rects[j].y - (obj_rects[j].height / 2);
   }
@@ -701,9 +701,9 @@ draw_centers(std::vector<Target*>& targets, cv::Mat& display) {
   cv::Point2d temp_pt;
   for(std::vector<Target*>::iterator it = targets.begin(); it != targets.end(); it++) {
     (*it)->prev_obj.get_center(temp_pt);
-    circle(display, temp_pt, 5, Scalar(0, 0, 255), 2, 1);
-    // circle( display, temp_pt, MAX_DIST_SQD, Scalar( 0, 255, 255 ), 2, 1 );
-    putText(display, "Object: " + int_to_str((*it)->get_id_num()), temp_pt, 1, 1, Scalar(255, 0, 0), 2);
+    cv::circle(display, temp_pt, 5, cv::Scalar(0, 0, 255), 2, 1);
+    // cv::circle( display, temp_pt, MAX_DIST_SQD, cv::Scalar( 0, 255, 255 ), 2, 1 );
+    cv::putText(display, "Object: " + int_to_str((*it)->get_id_num()), temp_pt, 1, 1, cv::Scalar(255, 0, 0), 2);
   }
 }
 

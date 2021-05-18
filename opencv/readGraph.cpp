@@ -1,18 +1,18 @@
 #include <opencv2/opencv.hpp>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 void
-showReducedImage(string title, Mat img) {
-  Mat temp;
-  resize(img, temp, Size(), 0.3, 0.3, cv::INTER_AREA);
+showReducedImage(string title, cv::Mat img) {
+  cv::Mat temp;
+  cv::resize(img, temp, cv::Size(), 0.3, 0.3, cv::INTER_AREA);
 
-  imshow(title, temp);
+  cv::imshow(title, temp);
 }
 
 static double
-angle(Point pt1, Point pt2, Point pt0) {
+angle(cv::Point pt1, cv::Point pt2, cv::Point pt0) {
   double dx1 = pt1.x - pt0.x;
   double dy1 = pt1.y - pt0.y;
   double dx2 = pt2.x - pt0.x;
@@ -21,47 +21,47 @@ angle(Point pt1, Point pt2, Point pt0) {
 }
 
 void
-find_squares(Mat& image, vector<vector<Point>>& squares) {
-  // blur will enhance edge detection
-  Mat blurred(image);
-  medianBlur(image, blurred, 9);
+find_squares(cv::Mat& image, vector<vector<cv::Point>>& squares) {
+  // cv::blur will enhance edge detection
+  cv::Mat blurred(image);
+  cv::medianBlur(image, blurred, 9);
 
-  Mat gray0(blurred.size(), CV_8U), gray;
-  vector<vector<Point>> contours;
+  cv::Mat gray0(blurred.size(), CV_8U), gray;
+  vector<vector<cv::Point>> contours;
 
   // find squares in every color plane of the image
   for(int c = 0; c < image.channels(); c++) {
     int ch[] = {c, 0};
-    mixChannels(&blurred, 1, &gray0, 1, ch, 1);
+    cv::mixChannels(&blurred, 1, &gray0, 1, ch, 1);
 
-    // try several threshold levels
+    // try several cv::threshold levels
     const int threshold_level = 2;
     for(int l = 0; l < threshold_level; l++) {
-      // Use Canny instead of zero threshold level!
-      // Canny helps to catch squares with gradient shading
+      // Use cv::Canny instead of zero cv::threshold level!
+      // cv::Canny helps to catch squares with gradient shading
       if(l == 0) {
-        Canny(gray0, gray, 10, 20, 3); //
+        cv::Canny(gray0, gray, 10, 20, 3); //
 
         // Dilate helps to remove potential holes between edge segments
-        dilate(gray, gray, Mat(), Point(-1, -1));
+        cv::dilate(gray, gray, cv::Mat(), cv::Point(-1, -1));
       } else {
         gray = gray0 >= (l + 1) * 255 / threshold_level;
       }
 
       // Find contours and store them in a list
-      findContours(gray, contours, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE);
+      cv::findContours(gray, contours, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE);
 
       // Test contours
-      vector<Point> approx;
+      vector<cv::Point> approx;
       for(size_t i = 0; i < contours.size(); i++) {
         // approximate contour with accuracy proportional
         // to the contour perimeter
-        approxPolyDP(Mat(contours[i]), approx, arcLength(Mat(contours[i]), true) * 0.02, true);
+        cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(Mat(contours[i]), true) * 0.02, true);
 
         // Note: absolute value of an area is used because
         // area may be positive or negative - in accordance with the
         // contour orientation
-        if(approx.size() == 4 && fabs(contourArea(Mat(approx))) > 1000 && isContourConvex(Mat(approx))) {
+        if(approx.size() == 4 && fabs(cv::contourArea(cv::Mat(approx))) > 1000 && cv::isContourConvex(Mat(approx))) {
           double maxCosine = 0;
 
           for(int j = 2; j < 5; j++) {
@@ -79,22 +79,22 @@ find_squares(Mat& image, vector<vector<Point>>& squares) {
 
 // the function draws all the squares in the image
 static void
-drawSquares(Mat& image, const vector<vector<Point>>& squares) {
+drawSquares(cv::Mat& image, const vector<vector<cv::Point>>& squares) {
   for(size_t i = 0; i < squares.size(); i++) {
-    const Point* p = &squares[i][0];
+    const cv::Point* p = &squares[i][0];
 
     int n = (int)squares[i].size();
     // dont detect the border
     if(p->x > 3 && p->y > 3)
-      polylines(image, &p, &n, 1, true, Scalar(0, 255, 0), 3, LINE_AA);
+      cv::polylines(image, &p, &n, 1, true, cv::Scalar(0, 255, 0), 3, cv::LINE_AA);
   }
 
   showReducedImage("squares", image);
-  waitKey(0);
+  cv::waitKey(0);
 }
 
 void
-detectEdgesByHoughLines(Mat mat) {
+detectEdgesByHoughLines(cv::Mat mat) {
   cv::cvtColor(mat, mat, cv::COLOR_BGR2GRAY);
   cv::GaussianBlur(mat, mat, cv::Size(3, 3), 0);
   cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Point(9, 9));
@@ -128,24 +128,24 @@ detectEdgesByHoughLines(Mat mat) {
     }
   }
   std::vector<std::vector<cv::Point>> contoursDraw(contoursCleaned.size());
-  for(int i = 0; i < contoursArea.size(); i++) { cv::approxPolyDP(Mat(contoursArea[i]), contoursDraw[i], 40, true); }
+  for(int i = 0; i < contoursArea.size(); i++) { cv::approxPolyDP(cv::Mat(contoursArea[i]), contoursDraw[i], 40, true); }
 
-  Mat drawing = Mat::zeros(mat.size(), CV_8UC1);
+  cv::Mat drawing = cv::Mat::zeros(mat.size(), CV_8UC1);
   cv::drawContours(drawing, contoursDraw, -1, cv::Scalar(255), -1);
 
-  imshow("lines", drawing);
-  waitKey(0);
+  cv::imshow("lines", drawing);
+  cv::waitKey(0);
 }
 
 void
-fill_Holes(Mat image) {
-  Mat gray;
-  cvtColor(image, gray, cv::COLOR_BGR2GRAY);
+fill_Holes(cv::Mat image) {
+  cv::Mat gray;
+  cv::cvtColor(image, gray, cv::COLOR_BGR2GRAY);
 
   cv::Mat image_thresh;
   cv::threshold(gray, image_thresh, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
 
-  // Loop through the border pixels and if they're black, floodFill from there
+  // Loop through the border pixels and if they're black, cv::floodFill from there
   cv::Mat mask;
   image_thresh.copyTo(mask);
   for(int i = 0; i < mask.cols; i++) {
@@ -184,42 +184,42 @@ fill_Holes(Mat image) {
 }
 
 void
-findDocumentEdges(Mat img) {
+findDocumentEdges(cv::Mat img) {
 
-  Mat tmp;
-  resize(img, tmp, Size(), 0.3, 0.3);
+  cv::Mat tmp;
+  cv::resize(img, tmp, cv::Size(), 0.3, 0.3);
 
   detectEdgesByHoughLines(tmp);
 }
 
 void
-findGraphValues(Mat graph) {
-  vector<vector<Point>> cnts;
+findGraphValues(cv::Mat graph) {
+  vector<vector<cv::Point>> cnts;
 
-  vector<Vec4i> hierarchy;
+  vector<cv::Vec4i> hierarchy;
 
   cout << "computing contours " << endl;
 
-  Mat thresh;
-  threshold(graph.clone(), thresh, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
+  cv::Mat thresh;
+  cv::threshold(graph.clone(), thresh, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
 
-  showReducedImage("threshold", thresh);
+  showReducedImage("cv::threshold", thresh);
 
-  findContours(graph.clone(), cnts, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, Point(0, 0));
+  cv::findContours(graph.clone(), cnts, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   // draw contours
-  Mat cntImg = Mat::zeros(graph.size(), CV_8UC1);
+  cv::Mat cntImg = cv::Mat::zeros(graph.size(), CV_8UC1);
 
-  for(int i = 0; i < cnts.size(); i++) drawContours(cntImg, cnts, i, Scalar(255));
+  for(int i = 0; i < cnts.size(); i++) cv::drawContours(cntImg, cnts, i, cv::Scalar(255));
 
   showReducedImage("contours", cntImg);
-  waitKey(0);
+  cv::waitKey(0);
 }
 
 vector<float>
-findUniqueValues(const Mat& input, bool sort = false) {
+findUniqueValues(const cv::Mat& input, bool sort = false) {
   if(input.channels() > 1 || input.type() != CV_32F) {
-    cerr << "unique !!! Only works with CV_32F 1-channel Mat" << endl;
+    cerr << "unique !!! Only works with CV_32F 1-channel cv::Mat" << endl;
     return vector<float>();
   }
 
@@ -241,24 +241,24 @@ findUniqueValues(const Mat& input, bool sort = false) {
 }
 
 bool
-findKMeansClusters(Mat img, int k) {
-  vector<Mat> imgRGB;
-  split(img, imgRGB);
+findKMeansClusters(cv::Mat img, int k) {
+  vector<cv::Mat> imgRGB;
+  cv::split(img, imgRGB);
 
   int n = img.rows * img.cols;
-  Mat img3xN(n, 3, CV_8U);
+  cv::Mat img3xN(n, 3, CV_8U);
 
   for(int i = 0; i != 3; ++i) imgRGB[i].reshape(1, n).copyTo(img3xN.col(i));
 
   img3xN.convertTo(img3xN, CV_32F);
 
-  Mat bestLabels;
-  kmeans(img3xN, k, bestLabels, TermCriteria(), 10, KMEANS_RANDOM_CENTERS);
+  cv::Mat bestLabels;
+  cv::kmeans(img3xN, k, bestLabels, TermCriteria(), 10, KMEANS_RANDOM_CENTERS);
 
   bestLabels = bestLabels.reshape(0, img.rows);
-  convertScaleAbs(bestLabels, bestLabels, int(255 / k));
+  cv::convertScaleAbs(bestLabels, bestLabels, int(255 / k));
 
-  Mat labelImg;
+  cv::Mat labelImg;
   bestLabels.convertTo(labelImg, CV_32F);
 
   cout << "finding unique values: " << endl;
@@ -269,10 +269,10 @@ findKMeansClusters(Mat img, int k) {
 
   for(int i = 0; i < uniqueValues.size(); i++) cout << uniqueValues[i] << endl;
 
-  vector<Mat> labels;
+  vector<cv::Mat> labels;
 
   for(int i = 0; i < k; i++) {
-    Mat tmp = Mat::zeros(bestLabels.size(), CV_8UC1);
+    cv::Mat tmp = cv::Mat::zeros(bestLabels.size(), CV_8UC1);
     labels.push_back(tmp);
   }
 
@@ -290,7 +290,7 @@ findKMeansClusters(Mat img, int k) {
     showReducedImage(winName, labels[i]);
   }
 
-  waitKey(0);
+  cv::waitKey(0);
 
   int userLabel = -1;
   cout << "choose label image corresponding to graph values " << endl;
@@ -306,10 +306,10 @@ findKMeansClusters(Mat img, int k) {
   cout << "showing selected label image: " << endl;
 
   showReducedImage("selected", labels[userLabel]);
-  waitKey(0);
+  cv::waitKey(0);
 
-  cout << "write selected to file" << endl;
-  imwrite("selected.jpg", labels[userLabel]);
+  cout << "cv::write selected to file" << endl;
+  cv::imwrite("selected.jpg", labels[userLabel]);
 
   /*cout << "want to proceed?y/n" << endl;
   string userChoice = "";
@@ -327,7 +327,7 @@ findKMeansClusters(Mat img, int k) {
 
   /*
     showReducedImage("result", bestLabels);
-      waitKey();
+      cv::waitKey();
   */
   return true;
 }
@@ -337,12 +337,12 @@ main(int argc, char** argv) {
   if(argc < 3)
     cout << "use case: test_project.exe <path/to/image> <no of clusters> " << endl;
 
-  // read image
-  Mat input = imread(argv[1]);
+  // cv::read image
+  cv::Mat input = cv::imread(argv[1]);
 
   showReducedImage("input", input);
 
-  waitKey(0);
+  cv::waitKey(0);
 
   // find document edges
   findDocumentEdges(input.clone());
@@ -352,11 +352,11 @@ main(int argc, char** argv) {
 
   // cout << "no of clusters: " << k << endl;
 
-  // Mat hsv;
-  // cvtColor(input, hsv, cv::COLOR_BGR2HSV);
+  // cv::Mat hsv;
+  // cv::cvtColor(input, hsv, cv::COLOR_BGR2HSV);
 
   // showReducedImage("hsv", hsv);
-  // waitKey(0);
+  // cv::waitKey(0);
 
   // cout << "finding color clusters" << endl;
 

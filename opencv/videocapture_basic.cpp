@@ -1,6 +1,6 @@
 /**
   @file videocapture_basic.cpp
-  @brief A very basic sample for using VideoCapture and VideoWriter
+  @brief A very basic sample for using cv::VideoCapture and VideoWriter
   @author PkLab.net
   @date Aug 24, 2016
 */
@@ -9,14 +9,14 @@
 #include <iostream>
 #include <stdio.h>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 int
 main(int, char**) {
-  Mat frame;
+  cv::Mat frame;
   //--- INITIALIZE VIDEOCAPTURE
-  VideoCapture cap;
+  cv::VideoCapture cap;
   // open the default camera using default API
   cap.open(0);
   // OR advance usage: select any API backend
@@ -34,17 +34,17 @@ main(int, char**) {
   cout << "Start grabbing" << endl << "Press any key to terminate" << endl;
   for(;;) {
     // wait for a new frame from camera and store it into 'frame'
-    cap.read(frame);
+    cap.cv::read(frame);
     // check if we succeeded
     if(frame.empty()) {
       cerr << "ERROR! blank frame grabbed\n";
       break;
     }
     // show live and wait for a key with timeout long enough to show images
-    imshow("Live", frame);
-    if(waitKey(5) >= 0)
+    cv::imshow("Live", frame);
+    if(cv::waitKey(5) >= 0)
       break;
   }
-  // the camera will be deinitialized automatically in VideoCapture destructor
+  // the camera will be deinitialized automatically in cv::VideoCapture destructor
   return 0;
 }

@@ -1,6 +1,6 @@
 /**
  * @file videocapture_starter.cpp
- * @brief A starter sample for using OpenCV VideoCapture with capture devices, video files or image
+ * @brief A starter sample for using OpenCV cv::VideoCapture with capture devices, video files or image
  * sequences easy as CV_PI right?
  *
  *  Created on: Nov 23, 2010
@@ -17,7 +17,7 @@
 #include <iostream>
 #include <stdio.h>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 // hide the local functions in an anon namespace
@@ -46,21 +46,21 @@ help(char** av) {
 }
 
 int
-process(VideoCapture& capture) {
+process(cv::VideoCapture& capture) {
   int n = 0;
   char filename[200];
   string window_name = "video | q or esc to quit";
   cout << "press space to save a picture. q or esc to quit" << endl;
-  namedWindow(window_name, WINDOW_KEEPRATIO); // resizable window;
-  Mat frame;
+  cv::namedWindow(window_name, WINDOW_KEEPRATIO); // resizable window;
+  cv::Mat frame;
 
   for(;;) {
     capture >> frame;
     if(frame.empty())
       break;
 
-    imshow(window_name, frame);
-    char key = (char)waitKey(30); // delay N millis, usually long enough to display and capture input
+    cv::imshow(window_name, frame);
+    char key = (char)cv::waitKey(30); // delay N millis, usually long enough to display and capture input
 
     switch(key) {
       case 'q':
@@ -69,7 +69,7 @@ process(VideoCapture& capture) {
         return 0;
       case ' ': // Save an image
         sprintf(filename, "filename%.3d.jpg", n++);
-        imwrite(filename, frame);
+        cv::imwrite(filename, frame);
         cout << "Saved " << filename << endl;
         break;
       default: break;
@@ -91,7 +91,7 @@ main(int ac, char** av) {
     help(av);
     return 1;
   }
-  VideoCapture capture(arg); // try to open string, this will attempt to open it as a video file or image sequence
+  cv::VideoCapture capture(arg); // try to open string, this will attempt to open it as a video file or image sequence
   if(!capture.isOpened())    // if this fails, try to open as a video camera, through the use of an
                              // integer param
     capture.open(atoi(arg.c_str()));

@@ -6,14 +6,14 @@
 #include "cvconfig.h"
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 #ifdef HAVE_IPP_A
 #include "opencv2/core/ippasync.hpp"
 
 #define CHECK_STATUS(STATUS, NAME)                                                                                             \
   if(STATUS != HPP_STATUS_NO_ERROR) {                                                                                          \
-    printf("%s error %d\n", NAME, STATUS);                                                                                     \
+    printf("%s cv::error %d\n", NAME, STATUS);                                                                                     \
     if(virtMatrix) {                                                                                                           \
       hppStatus delSts = hppiDeleteVirtualMatrices(accel, virtMatrix);                                                         \
       CHECK_DEL_STATUS(delSts, "hppiDeleteVirtualMatrices");                                                                   \
@@ -27,7 +27,7 @@ using namespace cv;
 
 #define CHECK_DEL_STATUS(STATUS, NAME)                                                                                         \
   if(STATUS != HPP_STATUS_NO_ERROR) {                                                                                          \
-    printf("%s error %d\n", NAME, STATUS);                                                                                     \
+    printf("%s cv::error %d\n", NAME, STATUS);                                                                                     \
     return -1;                                                                                                                 \
   }
 
@@ -36,7 +36,7 @@ using namespace cv;
 static void
 help() {
   printf("\nThis program shows how to use the conversion for IPP Async.\n"
-         "This example uses the Sobel filter.\n"
+         "This example uses the cv::Sobel filter.\n"
          "You can use cv::Sobel or hppiSobel.\n"
          "Usage: \n"
          "./ipp_async_sobel [--camera]=<use camera,if this key is present>, \n"
@@ -53,9 +53,9 @@ int
 main(int argc, const char** argv) {
   help();
 
-  VideoCapture cap;
-  CommandLineParser parser(argc, argv, keys);
-  Mat image, gray, result;
+  cv::VideoCapture cap;
+  cv::CommandLineParser parser(argc, argv, keys);
+  cv::Mat image, gray, result;
 
 #ifdef HAVE_IPP_A
 
@@ -105,13 +105,13 @@ main(int argc, const char** argv) {
     if(image.empty())
       break;
 
-    cvtColor(image, gray, COLOR_BGR2GRAY);
+    cv::cvtColor(image, gray, COLOR_BGR2GRAY);
 
     result.create(image.rows, image.cols, CV_8U);
 
-    double execTime = (double)getTickCount();
+    double execTime = (double)cv::getTickCount();
 
-    // convert Mat to hppiMatrix
+    // convert cv::Mat to hppiMatrix
     src = hpp::getHpp(gray, accel);
     dst = hpp::getHpp(result, accel);
 
@@ -125,14 +125,14 @@ main(int argc, const char** argv) {
     sts = hppWait(accel, HPP_TIME_OUT_INFINITE);
     CHECK_STATUS(sts, "hppWait");
 
-    execTime = ((double)getTickCount() - execTime) * 1000. / getTickFrequency();
+    execTime = ((double)cv::getTickCount() - execTime) * 1000. / cv::getTickFrequency();
 
     printf("Time : %0.3fms\n", execTime);
 
-    imshow("image", image);
-    imshow("rez", result);
+    cv::imshow("image", image);
+    cv::imshow("rez", result);
 
-    waitKey(15);
+    cv::waitKey(15);
 
     sts = hppiFreeMatrix(src);
     CHECK_DEL_STATUS(sts, "hppiFreeMatrix");
@@ -142,7 +142,7 @@ main(int argc, const char** argv) {
   }
 
   if(!useCamera)
-    waitKey(0);
+    cv::waitKey(0);
 
   if(virtMatrix) {
     sts = hppiDeleteVirtualMatrices(accel, virtMatrix);

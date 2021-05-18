@@ -8,17 +8,17 @@
 #include <opencv2/opencv.hpp>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 // Function declarations
-void drawAxis(cv::Mat&, cv::Point, cv::Point, Scalar, const float);
+void drawAxis(cv::Mat&, cv::Point, cv::Point, cv::Scalar, const float);
 double getOrientation(const std::vector<cv::Point>&, cv::Mat&);
 
 /**
  * @function drawAxis
  */
 void
-drawAxis(cv::Mat& img, cv::Point p, cv::Point q, Scalar colour, const float scale = 0.2) {
+drawAxis(cv::Mat& img, cv::Point p, cv::Point q, cv::Scalar colour, const float scale = 0.2) {
   //! [visualization1]
   double angle;
   double hypotenuse;
@@ -30,16 +30,16 @@ drawAxis(cv::Mat& img, cv::Point p, cv::Point q, Scalar colour, const float scal
   // Here we lengthen the arrow by a factor of scale
   q.x = (int)(p.x - scale * hypotenuse * cos(angle));
   q.y = (int)(p.y - scale * hypotenuse * sin(angle));
-  line(img, p, q, colour, 1, cv::LINE_AA);
+  cv::line(img, p, q, colour, 1, cv::LINE_AA);
 
   // create the arrow hooks
   p.x = (int)(q.x + 9 * cos(angle + CV_PI / 4));
   p.y = (int)(q.y + 9 * sin(angle + CV_PI / 4));
-  line(img, p, q, colour, 1, cv::LINE_AA);
+  cv::line(img, p, q, colour, 1, cv::LINE_AA);
 
   p.x = (int)(q.x + 9 * cos(angle - CV_PI / 4));
   p.y = (int)(q.y + 9 * sin(angle - CV_PI / 4));
-  line(img, p, q, colour, 1, cv::LINE_AA);
+  cv::line(img, p, q, colour, 1, cv::LINE_AA);
   //! [visualization1]
 }
 
@@ -62,7 +62,7 @@ getOrientation(const std::vector<cv::Point>& pts, cv::Mat& img) {
 
   // Store the center of the object
   cv::Point cntr =
-      cv::Point(static_cast<int>(pca_analysis.mean.at<double>(0, 0)), static_cast<int>(pca_analysis.mean.at<double>(0, 1)));
+      cv::Point(static_cast<int>(pca_analysis.cv::mean.at<double>(0, 0)), static_cast<int>(pca_analysis.mean.at<double>(0, 1)));
 
   // Store the eigenvalues and eigenstd::vectors
   std::vector<cv::Point2d> eigen_vecs(2);
@@ -77,13 +77,13 @@ getOrientation(const std::vector<cv::Point>& pts, cv::Mat& img) {
   //! [pca]
   //! [visualization]
   // Draw the principal components
-  circle(img, cntr, 3, Scalar(255, 0, 255), 2);
+  cv::circle(img, cntr, 3, cv::Scalar(255, 0, 255), 2);
   cv::Point p1 = cntr + 0.02 * cv::Point(static_cast<int>(eigen_vecs[0].x * eigen_val[0]),
                                          static_cast<int>(eigen_vecs[0].y * eigen_val[0]));
   cv::Point p2 = cntr - 0.02 * cv::Point(static_cast<int>(eigen_vecs[1].x * eigen_val[1]),
                                          static_cast<int>(eigen_vecs[1].y * eigen_val[1]));
-  drawAxis(img, cntr, p1, Scalar(0, 255, 0), 1);
-  drawAxis(img, cntr, p2, Scalar(255, 255, 0), 5);
+  drawAxis(img, cntr, p1, cv::Scalar(0, 255, 0), 1);
+  drawAxis(img, cntr, p2, cv::Scalar(255, 255, 0), 5);
 
   double angle = atan2(eigen_vecs[0].y, eigen_vecs[0].x); // orientation in radians
   //! [visualization]
@@ -98,8 +98,8 @@ int
 main(int, char** argv) {
   //! [pre-process]
   // Load image
-  //    cv::Mat src = imread("pca_test1.jpg");
-  cv::Mat src = imread(argv[1]);
+  //    cv::Mat src = cv::imread("pca_test1.jpg");
+  cv::Mat src = cv::imread(argv[1]);
 
   // Check if image is loaded successfully
   if(!src.data || src.empty()) {
@@ -107,39 +107,39 @@ main(int, char** argv) {
     return EXIT_FAILURE;
   }
 
-  imshow("src", src);
+  cv::imshow("src", src);
 
   // Convert image to grayscale
   cv::Mat gray;
-  cvtColor(src, gray, COLOR_BGR2GRAY);
+  cv::cvtColor(src, gray, COLOR_BGR2GRAY);
 
   // Convert image to binary
   cv::Mat bw;
-  threshold(gray, bw, 50, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
+  cv::threshold(gray, bw, 50, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
   //! [pre-process]
 
   //! [contours]
   // Find all the contours in the thresholded image
-  std::vector<Vec4i> hierarchy;
+  std::vector<cv::Vec4i> hierarchy;
   std::vector<std::vector<cv::Point>> contours;
-  findContours(bw, contours, hierarchy, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
+  cv::findContours(bw, contours, hierarchy, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
 
   for(size_t i = 0; i < contours.size(); ++i) {
     // Calculate the area of each contour
-    double area = contourArea(contours[i]);
+    double area = cv::contourArea(contours[i]);
     // Ignore contours that are too small or too large
     if(area < 1e2 || 1e5 < area)
       continue;
 
     // Draw each contour only for visualisation purposes
-    drawContours(src, contours, static_cast<int>(i), Scalar(0, 0, 255), 2, 8, hierarchy, 0);
+    cv::drawContours(src, contours, static_cast<int>(i), cv::Scalar(0, 0, 255), 2, 8, hierarchy, 0);
     // Find the orientation of each shape
     getOrientation(contours[i], src);
   }
   //! [contours]
 
-  imshow("output", src);
+  cv::imshow("output", src);
 
-  waitKey(0);
+  cv::waitKey(0);
   return 0;
 }

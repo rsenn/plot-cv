@@ -40,13 +40,13 @@
  //M*/
 
 #include <opencv2/core/utility.hpp>
-#include <opencv2/saliency.hpp>
+#include <opencv2/cv::saliency.hpp>
 #include <opencv2/highgui.hpp>
 #include <iostream>
 
 using namespace std;
-using namespace cv;
-using namespace saliency;
+//using namespace cv;
+using namespace cv::saliency;
 
 static const char* keys = {"{@saliency_algorithm | | Saliency algorithm "
                            "<saliencyAlgorithmType.[saliencyAlgorithmTypeSubType]> }"
@@ -66,12 +66,12 @@ help() {
 int
 main(int argc, char** argv) {
 
-  CommandLineParser parser(argc, argv, keys);
+  cv::CommandLineParser parser(argc, argv, keys);
 
-  String saliency_algorithm = parser.get<String>(0);
-  String video_name = parser.get<String>(1);
+  cv::String saliency_algorithm = parser.get<String>(0);
+  cv::String video_name = parser.get<String>(1);
   int start_frame = parser.get<int>(2);
-  String training_path = parser.get<String>(3);
+  cv::String training_path = parser.get<String>(3);
 
   if(saliency_algorithm.empty() || video_name.empty()) {
     help();
@@ -79,7 +79,7 @@ main(int argc, char** argv) {
   }
 
   // open the capture
-  VideoCapture cap;
+  cv::VideoCapture cap;
   cap.open(video_name);
   cap.set(CAP_PROP_POS_FRAMES, start_frame);
 
@@ -91,13 +91,13 @@ main(int argc, char** argv) {
     return -1;
   }
 
-  Mat frame;
+  cv::Mat frame;
 
   // instantiates the specific Saliency
   Ptr<Saliency> saliencyAlgorithm;
 
-  Mat binaryMap;
-  Mat image;
+  cv::Mat binaryMap;
+  cv::Mat image;
 
   cap >> frame;
   if(frame.empty()) {
@@ -107,25 +107,25 @@ main(int argc, char** argv) {
   frame.copyTo(image);
 
   if(saliency_algorithm.find("SPECTRAL_RESIDUAL") == 0) {
-    Mat saliencyMap;
+    cv::Mat saliencyMap;
     saliencyAlgorithm = StaticSaliencySpectralResidual::create();
     if(saliencyAlgorithm->computeSaliency(image, saliencyMap)) {
       StaticSaliencySpectralResidual spec;
       spec.computeBinaryMap(saliencyMap, binaryMap);
 
-      imshow("Saliency Map", saliencyMap);
-      imshow("Original Image", image);
-      imshow("Binary Map", binaryMap);
-      waitKey(0);
+      cv::imshow("Saliency Map", saliencyMap);
+      cv::imshow("Original Image", image);
+      cv::imshow("Binary Map", binaryMap);
+      cv::waitKey(0);
     }
 
   } else if(saliency_algorithm.find("FINE_GRAINED") == 0) {
-    Mat saliencyMap;
+    cv::Mat saliencyMap;
     saliencyAlgorithm = StaticSaliencyFineGrained::create();
     if(saliencyAlgorithm->computeSaliency(image, saliencyMap)) {
-      imshow("Saliency Map", saliencyMap);
-      imshow("Original Image", image);
-      waitKey(0);
+      cv::imshow("Saliency Map", saliencyMap);
+      cv::imshow("Original Image", image);
+      cv::waitKey(0);
     }
 
   } else if(saliency_algorithm.find("BING") == 0) {
@@ -137,7 +137,7 @@ main(int argc, char** argv) {
 
     else {
       saliencyAlgorithm = ObjectnessBING::create();
-      vector<Vec4i> saliencyMap;
+      vector<cv::Vec4i> saliencyMap;
       saliencyAlgorithm.dynamicCast<ObjectnessBING>()->setTrainingPath(training_path);
       saliencyAlgorithm.dynamicCast<ObjectnessBING>()->setBBResDir("Results");
 
@@ -146,18 +146,18 @@ main(int argc, char** argv) {
         std::cout << "Objectness done " << ndet << std::endl;
         // The result are sorted by objectness. We only use the first maxd boxes here.
         int maxd = 7, step = 255 / maxd, jitter = 9; // jitter to seperate single rects
-        Mat draw = image.clone();
+        cv::Mat draw = image.clone();
         for(int i = 0; i < std::min(maxd, ndet); i++) {
-          Vec4i bb = saliencyMap[i];
-          Scalar col = Scalar(((i * step) % 255), 50, 255 - ((i * step) % 255));
-          Point off(theRNG().uniform(-jitter, jitter), theRNG().uniform(-jitter, jitter));
-          rectangle(draw, Point(bb[0] + off.x, bb[1] + off.y), Point(bb[2] + off.x, bb[3] + off.y), col, 2);
-          rectangle(draw, Rect(20, 20 + i * 10, 10, 10), col, -1); // mini temperature scale
+          cv::Vec4i bb = saliencyMap[i];
+          cv::Scalar col = cv::Scalar(((i * step) % 255), 50, 255 - ((i * step) % 255));
+          cv::Point off(cv::theRNG().uniform(-jitter, jitter), cv::theRNG().uniform(-jitter, jitter));
+          cv::rectangle(draw, cv::Point(bb[0] + off.x, bb[1] + off.y), cv::Point(bb[2] + off.x, bb[3] + off.y), col, 2);
+          cv::rectangle(draw, cv::Rect(20, 20 + i * 10, 10, 10), col, -1); // mini temperature scale
         }
-        imshow("BING", draw);
-        waitKey();
+        cv::imshow("BING", draw);
+        cv::waitKey();
       } else {
-        std::cout << "No saliency found for " << video_name << std::endl;
+        std::cout << "No cv::saliency found for " << video_name << std::endl;
       }
     }
 
@@ -174,16 +174,16 @@ main(int argc, char** argv) {
         if(frame.empty()) {
           return 0;
         }
-        cvtColor(frame, frame, COLOR_BGR2GRAY);
+        cv::cvtColor(frame, frame, COLOR_BGR2GRAY);
 
-        Mat saliencyMap;
+        cv::Mat saliencyMap;
         saliencyAlgorithm->computeSaliency(frame, saliencyMap);
 
-        imshow("image", frame);
-        imshow("saliencyMap", saliencyMap * 255);
+        cv::imshow("image", frame);
+        cv::imshow("saliencyMap", saliencyMap * 255);
       }
 
-      char c = (char)waitKey(2);
+      char c = (char)cv::waitKey(2);
       if(c == 'q')
         break;
       if(c == 'p')

@@ -65,7 +65,7 @@ References:
 #include <string>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 using namespace xfeatures2d;
 
 void printHelpMessage(void);
@@ -89,7 +89,7 @@ of images taken from webcam if available.
 int
 main(int argc, char** argv) {
   // define variables
-  Mat frame, signature, result;
+  cv::Mat frame, signature, result;
   int initSampleCount = 2000;
   int initSeedCount = 400;
   int grayscaleBitsPerPixel = 4;
@@ -131,15 +131,15 @@ main(int argc, char** argv) {
   pctSignatures->setGrayscaleBits(grayscaleBitsPerPixel);
 
   // open video capture device
-  VideoCapture videoCapture;
+  cv::VideoCapture videoCapture;
   if(!videoCapture.open(0)) {
     cerr << "Unable to open the first video capture device with ID = 0!" << endl;
     return 1;
   }
 
   // Create windows for display.
-  namedWindow("Source", WINDOW_AUTOSIZE);
-  namedWindow("Result", WINDOW_AUTOSIZE);
+  cv::namedWindow("Source", cv::WINDOW_AUTOSIZE);
+  cv::namedWindow("Result", cv::WINDOW_AUTOSIZE);
 
   // run drawing loop
   for(;;) {
@@ -148,12 +148,12 @@ main(int argc, char** argv) {
       break; // end of video stream
 
     pctSignatures->computeSignature(frame, signature);
-    PCTSignatures::drawSignature(Mat::zeros(frame.size(), frame.type()), signature, result);
+    PCTSignatures::drawSignature(cv::Mat::zeros(frame.size(), frame.type()), signature, result);
 
-    imshow("Source", frame); // Show our images inside the windows.
-    imshow("Result", result);
+    cv::imshow("Source", frame); // Show our images inside the windows.
+    cv::imshow("Result", result);
 
-    if(waitKey(1) == 27)
+    if(cv::waitKey(1) == 27)
       break; // stop videocapturing by pressing ESC
   }
 

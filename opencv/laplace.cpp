@@ -7,13 +7,13 @@
 #include <stdio.h>
 #include <iostream>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 static void
 help() {
   cout << "\nThis program demonstrates Laplace point/edge detection using OpenCV function "
-          "Laplacian()\n"
+          "cv::Laplacian()\n"
           "It captures from the camera of your choice: 0, 1, ... default 0\n"
           "Call:\n"
           "./laplace [camera #, default 0]\n"
@@ -25,7 +25,7 @@ int smoothType = CV_GAUSSIAN;
 
 int
 main(int argc, char** argv) {
-  VideoCapture cap;
+  cv::VideoCapture cap;
   help();
 
   if(argc == 1 || (argc == 2 && strlen(argv[1]) == 1 && isdigit(argv[1][0])))
@@ -48,30 +48,30 @@ main(int argc, char** argv) {
     return -1;
   }
 
-  namedWindow("Laplacian", 0);
-  createTrackbar("Sigma", "Laplacian", &sigma, 15, 0);
+  cv::namedWindow("cv::Laplacian", 0);
+  cv::createTrackbar("Sigma", "cv::Laplacian", &sigma, 15, 0);
 
-  Mat smoothed, laplace, result;
+  cv::Mat smoothed, laplace, result;
 
   for(;;) {
-    Mat frame;
+    cv::Mat frame;
     cap >> frame;
     if(frame.empty())
       break;
 
     int ksize = (sigma * 5) | 1;
     if(smoothType == CV_GAUSSIAN)
-      GaussianBlur(frame, smoothed, Size(ksize, ksize), sigma, sigma);
+      cv::GaussianBlur(frame, smoothed, cv::Size(ksize, ksize), sigma, sigma);
     else if(smoothType == CV_BLUR)
-      blur(frame, smoothed, Size(ksize, ksize));
+      cv::blur(frame, smoothed, cv::Size(ksize, ksize));
     else
-      medianBlur(frame, smoothed, ksize);
+      cv::medianBlur(frame, smoothed, ksize);
 
-    Laplacian(smoothed, laplace, CV_16S, 5);
-    convertScaleAbs(laplace, result, (sigma + 1) * 0.25);
-    imshow("Laplacian", result);
+    cv::Laplacian(smoothed, laplace, CV_16S, 5);
+    cv::convertScaleAbs(laplace, result, (sigma + 1) * 0.25);
+    cv::imshow("cv::Laplacian", result);
 
-    int c = waitKey(30);
+    int c = cv::waitKey(30);
     if(c == ' ')
       smoothType = smoothType == CV_GAUSSIAN ? CV_BLUR : smoothType == CV_BLUR ? CV_MEDIAN : CV_GAUSSIAN;
     if(c == 'q' || c == 'Q' || (c & 255) == 27)

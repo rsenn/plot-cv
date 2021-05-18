@@ -52,7 +52,7 @@
 #include "precomp.hpp"
 #include "opencv2/imgcodecs.hpp"
 
-#include "opencv2/core/utils/filesystem.hpp"
+#include "opencv2/core/cv::utils/filesystem.hpp"
 
 #if 0
 #define CV_WARN(message)
@@ -73,7 +73,7 @@ public:
     grabbedInOpen = false;
   }
   CvCapture_Images() { init(); }
-  CvCapture_Images(const String& _filename) {
+  CvCapture_Images(const cv::String& _filename) {
     init();
     open(_filename);
   }
@@ -89,7 +89,7 @@ public:
     return cv::CAP_IMAGES;
   }
 
-  bool open(const String&);
+  bool open(const cv::String&);
   void close();
 
 protected:
@@ -98,7 +98,7 @@ protected:
   unsigned firstframe; // number of first frame
   unsigned length;     // length of sequence
 
-  Mat frame;
+  cv::Mat frame;
   bool grabbedInOpen;
 };
 
@@ -119,7 +119,7 @@ CvCapture_Images::grabFrame() {
     return !frame.empty();
   }
 
-  frame = imread(filename, IMREAD_UNCHANGED);
+  frame = cv::imread(filename, IMREAD_UNCHANGED);
   if(!frame.empty())
     currentframe++;
 
@@ -209,9 +209,9 @@ icvExtractPattern(const std::string& filename, unsigned* offset) {
       CV_Assert(pos < len);
       if(filename.find('%', pos) == std::string::npos)
         return filename; // no more patterns
-      CV_Error_(Error::StsBadArg, ("CAP_IMAGES: invalid multiple patterns: %s", filename.c_str()));
+      CV_Error_(cv::Error::StsBadArg, ("CAP_IMAGES: invalid multiple patterns: %s", filename.c_str()));
     }
-    CV_Error_(Error::StsBadArg, ("CAP_IMAGES: error, expected '0?[1-9][du]' pattern, got: %s", filename.c_str()));
+    CV_Error_(cv::Error::StsBadArg, ("CAP_IMAGES: cv::error, expected '0?[1-9][du]' pattern, got: %s", filename.c_str()));
   } else { // no pattern filename was given - extract the pattern
     pos = filename.rfind('/');
 #ifdef _WIN32
@@ -226,7 +226,7 @@ icvExtractPattern(const std::string& filename, unsigned* offset) {
     while(pos < len && !isdigit(filename[pos])) pos++;
 
     if(pos == len) {
-      CV_Error_(Error::StsBadArg, ("CAP_IMAGES: can't find starting number (in the name of file): %s", filename.c_str()));
+      CV_Error_(cv::Error::StsBadArg, ("CAP_IMAGES: can't find starting number (in the name of file): %s", filename.c_str()));
     }
 
     std::string::size_type pos0 = pos;
@@ -271,7 +271,7 @@ CvCapture_Images::open(const std::string& _filename) {
   // determine the length of the sequence
   for(length = 0;;) {
     cv::String filename = cv::format(filename_pattern.c_str(), (int)(offset + length));
-    if(!utils::fs::exists(filename)) {
+    if(!cv::utils::fs::exists(filename)) {
       if(length == 0 && offset == 0) { // allow starting with 0 or 1
         offset++;
         continue;
@@ -280,7 +280,7 @@ CvCapture_Images::open(const std::string& _filename) {
     }
 
     if(!haveImageReader(filename)) {
-      CV_LOG_INFO(NULL, "CAP_IMAGES: Stop scanning. Can't read image file: " << filename);
+      CV_LOG_INFO(NULL, "CAP_IMAGES: Stop scanning. Can't cv::read image file: " << filename);
       break;
     }
 
@@ -397,7 +397,7 @@ CvVideoWriter_Images::setProperty(int id, double value) {
 }
 
 Ptr<IVideoWriter>
-create_Images_writer(const std::string& filename, int, double, const Size&, bool) {
+create_Images_writer(const std::string& filename, int, double, const cv::Size&, bool) {
   CvVideoWriter_Images* writer = new CvVideoWriter_Images;
 
   try {

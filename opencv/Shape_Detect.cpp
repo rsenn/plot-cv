@@ -4,7 +4,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
-using namespace cv;
+//using namespace cv;
 
 // finds the angles for shape detection Status: Good to go
 double angle(cv::Point* pt1, cv::Point* pt2, cv::Point* pt0);
@@ -12,7 +12,7 @@ double angle(cv::Point* pt1, cv::Point* pt2, cv::Point* pt0);
 // This is for color filtering Status: Doesn't Work Yet
 IplImage* GetThresholdedImage(IplImage* imgHSV);
 
-// flag definitions 1: HSV color filtering; 2: Canny Edge Detect; 3: HSV Filter with canny filtering;
+// flag definitions 1: HSV color filtering; 2: cv::Canny Edge Detect; 3: HSV Filter with canny filtering;
 ////Change these values to get what you need
 int flag = 1;
 
@@ -73,17 +73,17 @@ main() {
       std::cout << "Check\n";
 
       // This thresholds the grayscale image to be tested on
-      std::cout << "Canny Threshold Image\n";
+      std::cout << "cv::Canny Threshold Image\n";
       // cv::Threshold(imgGrayScale,imgGrayScale,100,255,cv::THRESH_BINARY | cv::THRESH_OTSU);
       cv::Canny(imgGrayScale, imgGrayScale, 200, 400, 3);
       std::cout << "Check\n";
     }
     if(flag == 3) {
-      std::cout << "HSV Canny Flag Active\n";
+      std::cout << "HSV cv::Canny Flag Active\n";
       std::cout << "HSV Color Filter\n";
       imgGrayScale = GetThresholdedImage(frame);
       std::cout << "Check\n";
-      std::cout << "Canny Threshold Image\n";
+      std::cout << "cv::Canny Threshold Image\n";
       // cv::Threshold(imgGrayScale,imgGrayScale,100,255,cv::THRESH_BINARY | cv::THRESH_OTSU);
       cv::Canny(imgGrayScale, imgGrayScale, 100, 100, 3);
       std::cout << "Check\n";
@@ -140,7 +140,7 @@ main() {
         if(abs(pt[1]->x - pt[0]->x) > 10 && abs(pt[1]->x - pt[2]->x) > 10 && abs(pt[2]->x - pt[3]->x) > 10 &&
            abs(pt[3]->x - pt[0]->x) > 10) {
 
-          // This if statement checks the angles to see if its a rectangle or not (90 angles with 10%
+          // This if statement checks the angles to see if its a cv::rectangle or not (90 angles with 10%
           // uncertainty)
           if(firstAngle <= 1.884 && firstAngle >= 1.308 && secondAngle <= 1.884 && secondAngle >= 1.308 &&
              thirdAngle <= 1.884 && thirdAngle >= 1.308 && fourthAngle <= 1.884 && fourthAngle >= 1.308) {

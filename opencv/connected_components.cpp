@@ -4,7 +4,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 cv::Mat img;
@@ -15,9 +15,9 @@ on_trackbar(int, void*) {
   cv::Mat bw = threshval < 128 ? (img < threshval) : (img > threshval);
 
   std::vector<std::vector<cv::Point>> contours;
-  std::vector<Vec4i> hierarchy;
+  std::vector<cv::Vec4i> hierarchy;
 
-  findContours(bw, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE);
+  cv::findContours(bw, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE);
 
   cv::Mat dst = cv::Mat::zeros(img.size(), CV_8UC3);
 
@@ -26,12 +26,12 @@ on_trackbar(int, void*) {
     // draw each connected component with its own random color
     int idx = 0;
     for(; idx >= 0; idx = hierarchy[idx][0]) {
-      Scalar color((rand() & 255), (rand() & 255), (rand() & 255));
-      drawContours(dst, contours, idx, color, cv::FILLED, 8, hierarchy);
+      cv::Scalar color((rand() & 255), (rand() & 255), (rand() & 255));
+      cv::drawContours(dst, contours, idx, color, cv::FILLED, 8, hierarchy);
     }
   }
 
-  imshow("Connected Components", dst);
+  cv::imshow("Connected Components", dst);
 }
 
 static void
@@ -48,22 +48,22 @@ const char* keys = {"{1| |stuff.jpg|image for converting to a grayscale}"};
 int
 main(int argc, const char** argv) {
   help();
-  CommandLineParser parser(argc, argv, keys);
+  cv::CommandLineParser parser(argc, argv, keys);
   string inputImage = parser.get<string>("1");
-  img = imread(inputImage.c_str(), 0);
+  img = cv::imread(inputImage.c_str(), 0);
 
   if(img.empty()) {
-    cout << "Could not read input image file: " << inputImage << endl;
+    cout << "Could not cv::read input image file: " << inputImage << endl;
     return -1;
   }
 
-  namedWindow("Image", 1);
-  imshow("Image", img);
+  cv::namedWindow("Image", 1);
+  cv::imshow("Image", img);
 
-  namedWindow("Connected Components", 1);
-  createTrackbar("Threshold", "Connected Components", &threshval, 255, on_trackbar);
+  cv::namedWindow("Connected Components", 1);
+  cv::createTrackbar("Threshold", "Connected Components", &threshval, 255, on_trackbar);
   on_trackbar(threshval, 0);
 
-  waitKey(0);
+  cv::waitKey(0);
   return 0;
 }

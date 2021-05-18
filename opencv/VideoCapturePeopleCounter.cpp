@@ -16,7 +16,7 @@ public:
   VideoCapturePeopleCounterDelegate* delegate;
 
   VideoCapturePeopleCounter(const string& videoCapturePath) {
-    this->backgroundSubstractor = createBackgroundSubtractorMOG2();
+    this->backgroundSubstractor = cv::createBackgroundSubtractorMOG2();
     this->videoCapturePath = videoCapturePath;
   }
 
@@ -34,10 +34,10 @@ public:
   void
   start() {
     cv::Mat frame;
-    VideoCapture videoCapture(videoCapturePath);
+    cv::VideoCapture videoCapture(videoCapturePath);
 
     while(videoCapture.isOpened()) {
-      if(!videoCapture.read(frame))
+      if(!videoCapture.cv::read(frame))
         break;
       if(++frameNumber == 1)
         refLine = Line(0, refLineY, frame.cols, refLineY);
@@ -118,21 +118,21 @@ private:
   }
 
   bool
-  isPersonCrossingTheRefLine(const Person* person, Line line, int* direction = NULL) {
+  isPersonCrossingTheRefLine(const Person* person, Line cv::line, int* direction = NULL) {
     for(int i = 0; i < linesCrossedByPerson[person].size(); i++) {
-      if(line == linesCrossedByPerson[person][i]) {
+      if(cv::line == linesCrossedByPerson[person][i]) {
         return false;
       }
     }
 
     if(person->trace.size() > 2) {
       for(int i = 0; i < person->trace.size() - 2; i++) {
-        if(intersect(person->trace[i], person->trace[i + 1], line.start, line.end)) {
+        if(intersect(person->trace[i], person->trace[i + 1], cv::line.start, cv::line.end)) {
           if(direction != NULL) {
-            *direction = person->trace[i].y > line.start.y ? LINE_DIRECTION_UP : LINE_DIRECTION_DOWN;
+            *direction = person->trace[i].y > cv::line.start.y ? LINE_DIRECTION_UP : LINE_DIRECTION_DOWN;
           }
 
-          linesCrossedByPerson[person].push_back(line);
+          linesCrossedByPerson[person].push_back(cv::line);
           return true;
         }
       }
@@ -149,20 +149,20 @@ private:
     backgroundSubstractor->apply(frame, tempFrame);
 
     // binarize frame
-    threshold(tempFrame, tempFrame, 128, 255, THRESH_BINARY);
+    cv::threshold(tempFrame, tempFrame, 128, 255, THRESH_BINARY);
 
     // morph ops
-    morphologyEx(tempFrame, tempFrame, MORPH_OPEN, cv::Mat(8, 8, CV_8UC1, Scalar(1)));
-    morphologyEx(tempFrame, tempFrame, MORPH_CLOSE, cv::Mat(8, 8, CV_8UC1, cv::Scalar(1)));
+    cv::morphologyEx(tempFrame, tempFrame, MORPH_OPEN, cv::Mat(8, 8, CV_8UC1, cv::Scalar(1)));
+    cv::morphologyEx(tempFrame, tempFrame, MORPH_CLOSE, cv::Mat(8, 8, CV_8UC1, cv::Scalar(1)));
 
     // find contours
     std::vector<std::vector<cv::Point>> contours;
-    std::vector<Vec4i> hierarchy;
-    findContours(tempFrame, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+    std::vector<cv::Vec4i> hierarchy;
+    cv::findContours(tempFrame, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 
     // foreach identified person contour
     for(int i = 0; i < contours.size(); ++i) {
-      if(contourArea(contours[i]) > PERSON_MIN_CONTOUR_AREA) {
+      if(cv::contourArea(contours[i]) > PERSON_MIN_CONTOUR_AREA) {
         Person* person = registerPerson(contours[i]);
 
         if(delegate != NULL) {

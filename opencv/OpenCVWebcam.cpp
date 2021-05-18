@@ -1,11 +1,11 @@
 #include <opencv2/opencv.hpp>
 
-using namespace cv;
+//using namespace cv;
 
 int
 main(int argc, char** argv) {
   // Create new video capture.
-  VideoCapture cap;
+  cv::VideoCapture cap;
 
   // If video capture not opened return.
   if(!cap.open(0)) {
@@ -14,7 +14,7 @@ main(int argc, char** argv) {
 
   while(1) {
     // Create new frame.
-    Mat frame;
+    cv::Mat frame;
 
     // Capture data into frame.
     cap >> frame;
@@ -25,10 +25,10 @@ main(int argc, char** argv) {
     }
 
     // Display captured image.
-    imshow("this is you, smile! :)", frame);
+    cv::imshow("this is you, smile! :)", frame);
 
     // Stop capture by pressing key 10 ( ESC )
-    if(waitKey(10) == 27)
+    if(cv::waitKey(10) == 27)
       break;
   }
 

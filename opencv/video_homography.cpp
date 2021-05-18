@@ -20,8 +20,8 @@
 #include <vector>
 
 using namespace std;
-using namespace cv;
-using namespace cv::xfeatures2d;
+//using namespace cv;
+//using namespace cv::xfeatures2d;
 
 static void
 help(char** av) {
@@ -43,22 +43,22 @@ void
 drawMatchesRelative(const vector<KeyPoint>& train,
                     const vector<KeyPoint>& query,
                     std::vector<cv::DMatch>& matches,
-                    Mat& img,
+                    cv::Mat& img,
                     const vector<unsigned char>& mask = vector<unsigned char>()) {
   for(int i = 0; i < (int)matches.size(); i++) {
     if(mask.empty() || mask[i]) {
-      Point2f pt_new = query[matches[i].queryIdx].pt;
-      Point2f pt_old = train[matches[i].trainIdx].pt;
+      cv::Point2f pt_new = query[matches[i].queryIdx].pt;
+      cv::Point2f pt_old = train[matches[i].trainIdx].pt;
 
-      cv::line(img, pt_new, pt_old, Scalar(125, 255, 125), 1);
-      cv::circle(img, pt_new, 2, Scalar(255, 0, 125), 1);
+      cv::line(img, pt_new, pt_old, cv::Scalar(125, 255, 125), 1);
+      cv::circle(img, pt_new, 2, cv::Scalar(255, 0, 125), 1);
     }
   }
 }
 
 // Takes a descriptor and turns it into an xy point
 void
-keypoints2points(const vector<KeyPoint>& in, vector<Point2f>& out) {
+keypoints2points(const vector<KeyPoint>& in, vector<cv::Point2f>& out) {
   out.clear();
   out.reserve(in.size());
   for(size_t i = 0; i < in.size(); ++i) { out.push_back(in[i].pt); }
@@ -66,7 +66,7 @@ keypoints2points(const vector<KeyPoint>& in, vector<Point2f>& out) {
 
 // Takes an xy point and appends that to a keypoint structure
 void
-points2keypoints(const vector<Point2f>& in, vector<KeyPoint>& out) {
+points2keypoints(const vector<cv::Point2f>& in, vector<KeyPoint>& out) {
   out.clear();
   out.reserve(in.size());
   for(size_t i = 0; i < in.size(); ++i) { out.push_back(KeyPoint(in[i], 1)); }
@@ -74,12 +74,12 @@ points2keypoints(const vector<Point2f>& in, vector<KeyPoint>& out) {
 
 // Uses computed homography H to warp original input points to new planar position
 void
-warpKeypoints(const Mat& H, const vector<KeyPoint>& in, vector<KeyPoint>& out) {
-  vector<Point2f> pts;
+warpKeypoints(const cv::Mat& H, const vector<KeyPoint>& in, vector<KeyPoint>& out) {
+  vector<cv::Point2f> pts;
   keypoints2points(in, pts);
-  vector<Point2f> pts_w(pts.size());
-  Mat m_pts_w(pts_w);
-  perspectiveTransform(Mat(pts), m_pts_w, H);
+  vector<cv::Point2f> pts_w(pts.size());
+  cv::Mat m_pts_w(pts_w);
+  perspectiveTransform(cv::Mat(pts), m_pts_w, H);
   points2keypoints(pts_w, out);
 }
 
@@ -89,7 +89,7 @@ matches2points(const vector<KeyPoint>& train,
                const vector<KeyPoint>& query,
                const std::vector<cv::DMatch>& matches,
                std::vector<cv::Point2f>& pts_train,
-               std::vector<Point2f>& pts_query) {
+               std::vector<cv::Point2f>& pts_query) {
 
   pts_train.clear();
   pts_query.clear();
@@ -108,8 +108,8 @@ matches2points(const vector<KeyPoint>& train,
 }
 
 void
-resetH(Mat& H) {
-  H = Mat::eye(3, 3, CV_32FC1);
+resetH(cv::Mat& H) {
+  H = cv::Mat::eye(3, 3, CV_32FC1);
 }
 } // namespace
 
@@ -123,7 +123,7 @@ main(int ac, char** av) {
 
   Ptr<BriefDescriptorExtractor> brief = BriefDescriptorExtractor::create(32);
 
-  VideoCapture capture;
+  cv::VideoCapture capture;
   capture.open(atoi(av[1]));
   if(!capture.isOpened()) {
     help(av);
@@ -136,30 +136,30 @@ main(int ac, char** av) {
   cout << "l : makes the reference frame new every frame" << endl;
   cout << "q or escape: quit" << endl;
 
-  Mat frame;
+  cv::Mat frame;
 
   vector<DMatch> matches;
 
   BFMatcher desc_matcher(brief->defaultNorm());
 
-  vector<Point2f> train_pts, query_pts;
+  vector<cv::Point2f> train_pts, query_pts;
   vector<KeyPoint> train_kpts, query_kpts;
   vector<unsigned char> match_mask;
 
-  Mat gray;
+  cv::Mat gray;
 
   bool ref_live = true;
 
-  Mat train_desc, query_desc;
+  cv::Mat train_desc, query_desc;
   Ptr<FastFeatureDetector> detector = FastFeatureDetector::create(10, true);
 
-  Mat H_prev = Mat::eye(3, 3, CV_32FC1);
+  cv::Mat H_prev = cv::Mat::eye(3, 3, CV_32FC1);
   for(;;) {
     capture >> frame;
     if(frame.empty())
       break;
 
-    cvtColor(frame, gray, COLOR_RGB2GRAY);
+    cv::cvtColor(frame, gray, cv::COLOR_RGB2GRAY);
 
     detector->detect(gray, query_kpts);           // Find interest points
     brief->compute(gray, query_kpts, query_desc); // Compute brief descriptors at each keypoint location
@@ -169,15 +169,15 @@ main(int ac, char** av) {
       vector<KeyPoint> test_kpts;
       warpKeypoints(H_prev.inv(), query_kpts, test_kpts);
 
-      // Mat mask = windowedMatchingMask(test_kpts, train_kpts, 25, 25);
-      desc_matcher.match(query_desc, train_desc, matches, Mat());
-      drawKeypoints(frame, test_kpts, frame, Scalar(255, 0, 0), DrawMatchesFlags::DRAW_OVER_OUTIMG);
+      // cv::Mat mask = windowedMatchingMask(test_kpts, train_kpts, 25, 25);
+      desc_matcher.match(query_desc, train_desc, matches, cv::Mat());
+      drawKeypoints(frame, test_kpts, frame, cv::Scalar(255, 0, 0), DrawMatchesFlags::DRAW_OVER_OUTIMG);
 
       matches2points(train_kpts, query_kpts, matches, train_pts, query_pts);
 
       if(matches.size() > 5) {
-        Mat H = findHomography(train_pts, query_pts, RANSAC, 4, match_mask);
-        if(countNonZero(Mat(match_mask)) > 15) {
+        cv::Mat H = cv::findHomography(train_pts, query_pts, RANSAC, 4, match_mask);
+        if(cv::countNonZero(cv::Mat(match_mask)) > 15) {
           H_prev = H;
         } else
           resetH(H_prev);
@@ -186,19 +186,19 @@ main(int ac, char** av) {
         resetH(H_prev);
 
     } else {
-      H_prev = Mat::eye(3, 3, CV_32FC1);
-      Mat out;
+      H_prev = cv::Mat::eye(3, 3, CV_32FC1);
+      cv::Mat out;
       drawKeypoints(gray, query_kpts, out);
       frame = out;
     }
 
-    imshow("frame", frame);
+    cv::imshow("frame", frame);
 
     if(ref_live) {
       train_kpts = query_kpts;
       query_desc.copyTo(train_desc);
     }
-    char key = (char)waitKey(2);
+    char key = (char)cv::waitKey(2);
     switch(key) {
       case 'l':
         ref_live = true;

@@ -6,21 +6,21 @@
 #include <cstdio>
 #include <iostream>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 static void
 help() {
-  cout << "\nThis program demonstrates the famous watershed segmentation algorithm in OpenCV: "
-          "watershed()\n"
+  cout << "\nThis program demonstrates the famous cv::watershed segmentation algorithm in OpenCV: "
+          "cv::watershed()\n"
           "Usage:\n"
-          "./watershed [image_name -- default is fruits.jpg]\n"
+          "./cv::watershed [image_name -- default is fruits.jpg]\n"
        << endl;
 
   cout << "Hot keys: \n"
           "\tESC - quit the program\n"
           "\tr - restore the original image\n"
-          "\tw or SPACE - run watershed segmentation algorithm\n"
+          "\tw or SPACE - run cv::watershed segmentation algorithm\n"
           "\t\t(before running it, *roughly* mark the areas to segment on the image)\n"
           "\t  (before that, roughly outline several markers on the image)\n";
 }
@@ -39,79 +39,79 @@ onMouse(int event, int x, int y, int flags, void*) {
     cv::Point pt(x, y);
     if(prevPt.x < 0)
       prevPt = pt;
-    line(markerMask, prevPt, pt, Scalar::all(255), 5, 8, 0);
-    line(img, prevPt, pt, Scalar::all(255), 5, 8, 0);
+    cv::line(markerMask, prevPt, pt, cv::Scalar::all(255), 5, 8, 0);
+    cv::line(img, prevPt, pt, cv::Scalar::all(255), 5, 8, 0);
     prevPt = pt;
-    imshow("image", img);
+    cv::imshow("image", img);
   }
 }
 
 int
 main(int argc, char** argv) {
   char* filename = argc >= 2 ? argv[1] : (char*)"fruits.jpg";
-  cv::Mat img0 = imread(filename, 1), imgGray;
+  cv::Mat img0 = cv::imread(filename, 1), imgGray;
 
   if(img0.empty()) {
-    cout << "Couldn'g open image " << filename << ". Usage: watershed <image_name>\n";
+    cout << "Couldn'g open image " << filename << ". Usage: cv::watershed <image_name>\n";
     return 0;
   }
   help();
-  namedWindow("image", 1);
+  cv::namedWindow("image", 1);
 
   img0.copyTo(img);
-  cvtColor(img, markerMask, COLOR_BGR2GRAY);
-  cvtColor(markerMask, imgGray, COLOR_GRAY2BGR);
-  markerMask = Scalar::all(0);
-  imshow("image", img);
-  setMouseCallback("image", onMouse, 0);
+  cv::cvtColor(img, markerMask, COLOR_BGR2GRAY);
+  cv::cvtColor(markerMask, imgGray, cv::COLOR_GRAY2BGR);
+  markerMask = cv::Scalar::all(0);
+  cv::imshow("image", img);
+  cv::setMouseCallback("image", onMouse, 0);
 
   for(;;) {
-    int c = waitKey(0);
+    int c = cv::waitKey(0);
 
     if((char)c == 27)
       break;
 
     if((char)c == 'r') {
-      markerMask = Scalar::all(0);
+      markerMask = cv::Scalar::all(0);
       img0.copyTo(img);
-      imshow("image", img);
+      cv::imshow("image", img);
     }
 
     if((char)c == 'w' || (char)c == ' ') {
       int i, j, compCount = 0;
       std::vector<std::vector<cv::Point>> contours;
-      std::vector<Vec4i> hierarchy;
+      std::vector<cv::Vec4i> hierarchy;
 
-      findContours(markerMask, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE);
+      cv::findContours(markerMask, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE);
 
       if(contours.empty())
         continue;
       cv::Mat markers(markerMask.size(), CV_32S);
-      markers = Scalar::all(0);
+      markers = cv::Scalar::all(0);
       int idx = 0;
       for(; idx >= 0; idx = hierarchy[idx][0], compCount++)
-        drawContours(markers, contours, idx, Scalar::all(compCount + 1), -1, 8, hierarchy, INT_MAX);
+        cv::drawContours(markers, contours, idx, cv::Scalar::all(compCount + 1), -1, 8, hierarchy, INT_MAX);
 
       if(compCount == 0)
         continue;
 
       std::vector<Vec3b> colorTab;
       for(i = 0; i < compCount; i++) {
-        int b = theRNG().uniform(0, 255);
-        int g = theRNG().uniform(0, 255);
-        int r = theRNG().uniform(0, 255);
+        int b = cv::theRNG().uniform(0, 255);
+        int g = cv::theRNG().uniform(0, 255);
+        int r = cv::theRNG().uniform(0, 255);
 
         colorTab.push_back(Vec3b((uchar)b, (uchar)g, (uchar)r));
       }
 
-      double t = (double)getTickCount();
-      watershed(img0, markers);
-      t = (double)getTickCount() - t;
-      printf("execution time = %gms\n", t * 1000. / getTickFrequency());
+      double t = (double)cv::getTickCount();
+      cv::watershed(img0, markers);
+      t = (double)cv::getTickCount() - t;
+      printf("execution time = %gms\n", t * 1000. / cv::getTickFrequency());
 
       cv::Mat wshed(markers.size(), CV_8UC3);
 
-      // paint the watershed image
+      // paint the cv::watershed image
       for(i = 0; i < markers.rows; i++)
         for(j = 0; j < markers.cols; j++) {
           int index = markers.at<int>(i, j);
@@ -124,7 +124,7 @@ main(int argc, char** argv) {
         }
 
       wshed = wshed * 0.5 + imgGray * 0.5;
-      imshow("watershed transform", wshed);
+      cv::imshow("cv::watershed transform", wshed);
     }
   }
 

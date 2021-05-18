@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////////
-// Sample illustrating the use of the VideoCapture  //
+// Sample illustrating the use of the cv::VideoCapture  //
 // interface in combination with PvAPI interface    //
 //                                                  //
 // Succesfully tested on Prosilica and Manta series //
@@ -27,24 +27,24 @@
 #include <opencv2/videoio.hpp>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 int
 main() {
   // Capturing multiple AVT cameras can be done by simply initiating
   // two VideoCaptures after eachother.
-  VideoCapture camera1(0 + cv::CAP_PVAPI);
-  VideoCapture camera2(0 + cv::CAP_PVAPI);
-  Mat frame1, frame2;
+  cv::VideoCapture camera1(0 + cv::CAP_PVAPI);
+  cv::VideoCapture camera2(0 + cv::CAP_PVAPI);
+  cv::Mat frame1, frame2;
 
   for(;;) {
     camera1 >> frame1;
     camera2 >> frame2;
 
-    imshow("camera 1 frame", frame1);
-    imshow("camera 2 frame", frame2);
+    cv::imshow("camera 1 frame", frame1);
+    cv::imshow("camera 2 frame", frame2);
 
-    int key = waitKey(10);
+    int key = cv::waitKey(10);
     if(key == 27) {
       break;
     }

@@ -5,15 +5,15 @@
 #include <opencv2/opencv.hpp>
 #include <time.h>
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 int
 main(int argc, char* argv[]) {
-  VideoCapture cap(1);
+  cv::VideoCapture cap(1);
   cap.set(CAP_PROP_FPS, 60);
   cv::Mat src, hsv, threshold_blue;
   std::vector<std::vector<cv::Point>> contours;
-  std::vector<Vec4i> hierarchy;
+  std::vector<cv::Vec4i> hierarchy;
   short int old_i = 0;
   cv::Point2f center;
   float radius;
@@ -46,19 +46,19 @@ main(int argc, char* argv[]) {
     ros::param::getCached("pid_kd_pitch", kd_pitch);
     cap >> src;
     hsv = src.clone();
-    cvtColor(hsv, hsv, cv::COLOR_BGR2HSV);
+    cv::cvtColor(hsv, hsv, cv::COLOR_BGR2HSV);
     if(!hsv.empty()) {
-      inRange(hsv, Scalar(105, 114, 0), Scalar(120, 255, 255), threshold_blue);
+      cv::inRange(hsv, cv::Scalar(105, 114, 0), cv::Scalar(120, 255, 255), threshold_blue);
       if(!threshold_blue.empty()) {
-        findContours(threshold_blue, contours, hierarchy, cv::RETR_TREE, CHAIN_APPROX_NONE, cv::Point(0, 0));
+        cv::findContours(threshold_blue, contours, hierarchy, cv::RETR_TREE, CHAIN_APPROX_NONE, cv::Point(0, 0));
         if(!contours.empty()) {
           for(int i = 0; i < contours.size(); i++) {
             if(hierarchy[i][0] == -1) {
               if(hierarchy[i][1] == -1) {
                 if(hierarchy[i][2] != -1) {
                   if(hierarchy[i][3] != -1) {
-                    line(src, cv::Point(300, 240), cv::Point(340, 240), Scalar(0, 255, 0), 3);
-                    line(src, cv::Point(320, 220), cv::Point(320, 260), Scalar(0, 255, 0), 3);
+                    cv::line(src, cv::Point(300, 240), cv::Point(340, 240), cv::Scalar(0, 255, 0), 3);
+                    cv::line(src, cv::Point(320, 220), cv::Point(320, 260), cv::Scalar(0, 255, 0), 3);
                     old_i = i;
                     ifExist = true;
                   }
@@ -67,7 +67,7 @@ main(int argc, char* argv[]) {
             }
           }
           if(ifExist) {
-            minEnclosingCircle(contours[old_i], center, radius);
+            cv::minEnclosingCircle(contours[old_i], center, radius);
             if(!contours[old_i].empty()) {
               if(radius <= 11) {
                 error_x = center.x - 320.0;
@@ -87,7 +87,7 @@ main(int argc, char* argv[]) {
             error_x = contours[0][0].x - 320.0;
             error_y = 240.0 - contours[0][0].y;
           }
-          line(src, center, center, Scalar(0, 0, 255), 10);
+          cv::line(src, center, center, cv::Scalar(0, 0, 255), 10);
           ifExist = false;
         }
       }

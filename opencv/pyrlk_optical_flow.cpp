@@ -6,11 +6,11 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
-#include <opencv2/core/ocl.hpp>
+#include <opencv2/core/cv::ocl.hpp>
 #include <opencv2/video/video.hpp>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 typedef unsigned char uchar;
 #define LOOP_NUM 10
@@ -19,30 +19,30 @@ int64 work_end = 0;
 
 static void
 workBegin() {
-  work_begin = getTickCount();
+  work_begin = cv::getTickCount();
 }
 static void
 workEnd() {
-  work_end += (getTickCount() - work_begin);
+  work_end += (cv::getTickCount() - work_begin);
 }
 static double
 getTime() {
-  return work_end * 1000. / getTickFrequency();
+  return work_end * 1000. / cv::getTickFrequency();
 }
 
 static void
-drawArrows(UMat& _frame,
-           const vector<Point2f>& prevPts,
-           const vector<Point2f>& nextPts,
+drawArrows(cv::UMat& _frame,
+           const vector<cv::Point2f>& prevPts,
+           const vector<cv::Point2f>& nextPts,
            const vector<uchar>& status,
-           Scalar line_color = Scalar(0, 0, 255)) {
-  Mat frame = _frame.getMat(ACCESS_WRITE);
+           cv::Scalar line_color = cv::Scalar(0, 0, 255)) {
+  cv::Mat frame = _frame.getMat(ACCESS_WRITE);
   for(size_t i = 0; i < prevPts.size(); ++i) {
     if(status[i]) {
       int line_thickness = 1;
 
-      Point p = prevPts[i];
-      Point q = nextPts[i];
+      cv::Point p = prevPts[i];
+      cv::Point q = nextPts[i];
 
       double angle = atan2((double)p.y - q.y, (double)p.x - q.x);
 
@@ -55,19 +55,19 @@ drawArrows(UMat& _frame,
       q.x = (int)(p.x - 3 * hypotenuse * cos(angle));
       q.y = (int)(p.y - 3 * hypotenuse * sin(angle));
 
-      // Now we draw the main line of the arrow.
-      line(frame, p, q, line_color, line_thickness);
+      // Now we draw the main cv::line of the arrow.
+      cv::line(frame, p, q, line_color, line_thickness);
 
       // Now draw the tips of the arrow. I do some scaling so that the
-      // tips look proportional to the main line of the arrow.
+      // tips look proportional to the main cv::line of the arrow.
 
       p.x = (int)(q.x + 9 * cos(angle + CV_PI / 4));
       p.y = (int)(q.y + 9 * sin(angle + CV_PI / 4));
-      line(frame, p, q, line_color, line_thickness);
+      cv::line(frame, p, q, line_color, line_thickness);
 
       p.x = (int)(q.x + 9 * cos(angle - CV_PI / 4));
       p.y = (int)(q.y + 9 * sin(angle - CV_PI / 4));
-      line(frame, p, q, line_color, line_thickness);
+      cv::line(frame, p, q, line_color, line_thickness);
     }
   }
 }
@@ -85,7 +85,7 @@ main(int argc, const char* argv[]) {
                      "[GoodFeatureToTrack] }"
                      "{ m cpu_mode       | false           | run without OpenCL }";
 
-  CommandLineParser cmd(argc, argv, keys);
+  cv::CommandLineParser cmd(argc, argv, keys);
 
   if(cmd.has("help")) {
     cout << "Usage: pyrlk_optical_flow [options]" << endl;
@@ -103,10 +103,10 @@ main(int argc, const char* argv[]) {
   double minDist = cmd.get<double>("min_dist");
   int inputName = cmd.get<int>("c");
 
-  UMat frame0;
-  imread(fname0, cv::IMREAD_GRAYSCALE).copyTo(frame0);
-  UMat frame1;
-  imread(fname1, cv::IMREAD_GRAYSCALE).copyTo(frame1);
+  cv::UMat frame0;
+  cv::imread(fname0, cv::IMREAD_GRAYSCALE).copyTo(frame0);
+  cv::UMat frame1;
+  cv::imread(fname1, cv::IMREAD_GRAYSCALE).copyTo(frame1);
 
   vector<cv::Point2f> pts(points);
   vector<cv::Point2f> nextPts(points);
@@ -116,10 +116,10 @@ main(int argc, const char* argv[]) {
   cout << "Points count : " << points << endl << endl;
 
   if(frame0.empty() || frame1.empty()) {
-    VideoCapture capture;
-    UMat frame, frameCopy;
-    UMat frame0Gray, frame1Gray;
-    UMat ptr0, ptr1;
+    cv::VideoCapture capture;
+    cv::UMat frame, frameCopy;
+    cv::UMat frame0Gray, frame1Gray;
+    cv::UMat ptr0, ptr1;
 
     if(vdofile.empty())
       capture.open(inputName);
@@ -139,52 +139,52 @@ main(int argc, const char* argv[]) {
 
     cout << "In capture ..." << endl;
     for(int i = 0;; i++) {
-      if(!capture.read(frame))
+      if(!capture.cv::read(frame))
         break;
 
       if(i == 0) {
         frame.copyTo(frame0);
-        cvtColor(frame0, frame0Gray, COLOR_BGR2GRAY);
+        cv::cvtColor(frame0, frame0Gray, COLOR_BGR2GRAY);
       } else {
         if(i % 2 == 1) {
           frame.copyTo(frame1);
-          cvtColor(frame1, frame1Gray, COLOR_BGR2GRAY);
+          cv::cvtColor(frame1, frame1Gray, COLOR_BGR2GRAY);
           ptr0 = frame0Gray;
           ptr1 = frame1Gray;
         } else {
           frame.copyTo(frame0);
-          cvtColor(frame0, frame0Gray, COLOR_BGR2GRAY);
+          cv::cvtColor(frame0, frame0Gray, COLOR_BGR2GRAY);
           ptr0 = frame1Gray;
           ptr1 = frame0Gray;
         }
 
         pts.clear();
-        goodFeaturesToTrack(ptr0, pts, points, 0.01, 0.0);
+        cv::goodFeaturesToTrack(ptr0, pts, points, 0.01, 0.0);
         if(pts.size() == 0)
           continue;
-        calcOpticalFlowPyrLK(ptr0, ptr1, pts, nextPts, status, err);
+        cv::calcOpticalFlowPyrLK(ptr0, ptr1, pts, nextPts, status, err);
 
         if(i % 2 == 1)
           frame1.copyTo(frameCopy);
         else
           frame0.copyTo(frameCopy);
-        drawArrows(frameCopy, pts, nextPts, status, Scalar(255, 0, 0));
-        imshow("PyrLK [Sparse]", frameCopy);
+        drawArrows(frameCopy, pts, nextPts, status, cv::Scalar(255, 0, 0));
+        cv::imshow("PyrLK [Sparse]", frameCopy);
       }
-      char key = (char)waitKey(10);
+      char key = (char)cv::waitKey(10);
 
       if(key == 27)
         break;
       else if(key == 'm' || key == 'M') {
-        ocl::setUseOpenCL(!cv::ocl::useOpenCL());
-        cout << "Switched to " << (ocl::useOpenCL() ? "OpenCL" : "CPU") << " mode\n";
+        cv::ocl::setUseOpenCL(!cv::ocl::useOpenCL());
+        cout << "Switched to " << (cv::ocl::useOpenCL() ? "OpenCL" : "CPU") << " mode\n";
       }
     }
     capture.release();
   } else {
   nocamera:
     if(cmd.has("cpu_mode")) {
-      ocl::setUseOpenCL(false);
+      cv::ocl::setUseOpenCL(false);
       std::cout << "OpenCL was disabled" << std::endl;
     }
     for(int i = 0; i <= LOOP_NUM; i++) {
@@ -192,8 +192,8 @@ main(int argc, const char* argv[]) {
       if(i > 0)
         workBegin();
 
-      goodFeaturesToTrack(frame0, pts, points, 0.01, minDist);
-      calcOpticalFlowPyrLK(frame0, frame1, pts, nextPts, status, err);
+      cv::goodFeaturesToTrack(frame0, pts, points, 0.01, minDist);
+      cv::calcOpticalFlowPyrLK(frame0, frame1, pts, nextPts, status, err);
 
       if(i > 0 && i <= LOOP_NUM)
         workEnd();
@@ -203,14 +203,14 @@ main(int argc, const char* argv[]) {
 
         cout << getTime() / LOOP_NUM << " ms" << endl;
 
-        drawArrows(frame0, pts, nextPts, status, Scalar(255, 0, 0));
-        imshow("PyrLK [Sparse]", frame0);
-        imwrite(outfile, frame0);
+        drawArrows(frame0, pts, nextPts, status, cv::Scalar(255, 0, 0));
+        cv::imshow("PyrLK [Sparse]", frame0);
+        cv::imwrite(outfile, frame0);
       }
     }
   }
 
-  waitKey();
+  cv::waitKey();
 
   return EXIT_SUCCESS;
 }

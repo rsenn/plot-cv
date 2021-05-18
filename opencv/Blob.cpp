@@ -16,7 +16,7 @@ Blob::Blob(std::vector<cv::Point> _contour) {
 
   centerPositions.push_back(currentCenter);
 
-  dblCurrentDiagonalSize = sqrt(pow(currentBoundingRect.width, 2) + pow(currentBoundingRect.height, 2));
+  dblCurrentDiagonalSize = sqrt(cv::pow(currentBoundingRect.width, 2) + cv::pow(currentBoundingRect.height, 2));
 
   dblCurrentAspectRatio = (float)currentBoundingRect.width / (float)currentBoundingRect.height;
 

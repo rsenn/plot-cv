@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 // Draw a single point
@@ -48,7 +48,7 @@ draw_voronoi(cv::Mat& img, cv::Subdiv2D& subdiv) {
   std::vector<vector<cv::Point>> ifacets(1);
 
   for(size_t i = 0; i < facets.size(); i++) {
-    ifacet.resize(facets[i].size());
+    ifacet.cv::resize(facets[i].size());
     for(size_t j = 0; j < facets[i].size(); j++) ifacet[j] = facets[i][j];
 
     cv::Scalar color;
@@ -77,7 +77,7 @@ main(int argc, char** argv) {
   cv::Scalar delaunay_color(255, 255, 255), points_color(0, 0, 255);
 
   // Read in the image.
-  cv::Mat img = imread("image.jpg");
+  cv::Mat img = cv::imread("image.jpg");
 
   // Keep a copy around
   cv::Mat img_orig = img.clone();
@@ -117,7 +117,7 @@ main(int argc, char** argv) {
   for(std::vector<cv::Point2f>::iterator it = points.begin(); it != points.end(); it++) { draw_point(img, *it, points_color); }
 
   // Allocate space for Voronoi Diagram
-  cv::Mat img_voronoi = Mat::zeros(img.rows, img.cols, CV_8UC3);
+  cv::Mat img_voronoi = cv::Mat::zeros(img.rows, img.cols, CV_8UC3);
 
   // Draw Voronoi diagram
   draw_voronoi(img_voronoi, subdiv);

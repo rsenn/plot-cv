@@ -7,24 +7,24 @@
 #include <iomanip>
 
 #include "stats.h" // Stats structure definition
-#include "utils.h" // Drawing and printing functions
+#include "cv::utils.h" // Drawing and printing functions
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
-const double akaze_thresh = 3e-4;   // AKAZE detection threshold set to locate about 1000 keypoints
+const double akaze_thresh = 3e-4;   // AKAZE detection cv::threshold set to locate about 1000 keypoints
 const double ransac_thresh = 2.5f;  // RANSAC inlier threshold
 const double nn_match_ratio = 0.8f; // Nearest-neighbour matching ratio
 const int bb_min_inliers = 100;     // Minimal number of inliers to draw bounding box
 const int stats_update_period = 10; // On-screen statistics are updated every 10 frames
 
 namespace example {
-class Tracker {
+class cv::Tracker {
 public:
-  Tracker(Ptr<Feature2D> _detector, Ptr<DescriptorMatcher> _matcher) : detector(_detector), matcher(_matcher) {}
+  cv::Tracker(Ptr<Feature2D> _detector, Ptr<DescriptorMatcher> _matcher) : detector(_detector), matcher(_matcher) {}
 
-  void setFirstFrame(const Mat frame, vector<Point2f> bb, string title, Stats& stats);
-  Mat process(const Mat frame, Stats& stats);
+  void setFirstFrame(const cv::Mat frame, vector<cv::Point2f> bb, string title, Stats& stats);
+  cv::Mat process(const cv::Mat frame, Stats& stats);
   Ptr<Feature2D>
   getDetector() {
     return detector;
@@ -33,15 +33,15 @@ public:
 protected:
   Ptr<Feature2D> detector;
   Ptr<DescriptorMatcher> matcher;
-  Mat first_frame, first_desc;
+  cv::Mat first_frame, first_desc;
   vector<KeyPoint> first_kp;
-  vector<Point2f> object_bb;
+  vector<cv::Point2f> object_bb;
 };
 
 void
-Tracker::setFirstFrame(const Mat frame, vector<Point2f> bb, string title, Stats& stats) {
+cv::Tracker::setFirstFrame(const cv::Mat frame, vector<cv::Point2f> bb, string title, Stats& stats) {
   cv::Point* ptMask = new cv::Point[bb.size()];
-  const Point* ptContain = {&ptMask[0]};
+  const cv::Point* ptContain = {&ptMask[0]};
   int iSize = static_cast<int>(bb.size());
   for(size_t i = 0; i < bb.size(); i++) {
     ptMask[i].x = static_cast<int>(bb[i].x);
@@ -53,16 +53,16 @@ Tracker::setFirstFrame(const Mat frame, vector<Point2f> bb, string title, Stats&
   detector->detectAndCompute(first_frame, matMask, first_kp, first_desc);
   stats.keypoints = (int)first_kp.size();
   drawBoundingBox(first_frame, bb);
-  putText(first_frame, title, Point(0, 60), FONT_HERSHEY_PLAIN, 5, Scalar::all(0), 4);
+  cv::putText(first_frame, title, cv::Point(0, 60), FONT_HERSHEY_PLAIN, 5, cv::Scalar::all(0), 4);
   object_bb = bb;
   delete[] ptMask;
 }
 
 Mat
-Tracker::process(const Mat frame, Stats& stats) {
+cv::Tracker::process(const cv::Mat frame, Stats& stats) {
   vector<KeyPoint> kp;
-  Mat desc;
-  detector->detectAndCompute(frame, noArray(), kp, desc);
+  cv::Mat desc;
+  detector->detectAndCompute(frame, cv::noArray(), kp, desc);
   stats.keypoints = (int)kp.size();
 
   vector<vector<DMatch>> matches;
@@ -76,16 +76,16 @@ Tracker::process(const Mat frame, Stats& stats) {
   }
   stats.matches = (int)matched1.size();
 
-  Mat inlier_mask, homography;
+  cv::Mat inlier_mask, homography;
   vector<KeyPoint> inliers1, inliers2;
   vector<DMatch> inlier_matches;
   if(matched1.size() >= 4) {
-    homography = findHomography(Points(matched1), Points(matched2), RANSAC, ransac_thresh, inlier_mask);
+    homography = cv::findHomography(Points(matched1), Points(matched2), RANSAC, ransac_thresh, inlier_mask);
   }
 
   if(matched1.size() < 4 || homography.empty()) {
-    Mat res;
-    hconcat(first_frame, frame, res);
+    cv::Mat res;
+    cv::hconcat(first_frame, frame, res);
     stats.inliers = 0;
     stats.ratio = 0;
     return res;
@@ -101,14 +101,14 @@ Tracker::process(const Mat frame, Stats& stats) {
   stats.inliers = (int)inliers1.size();
   stats.ratio = stats.inliers * 1.0 / stats.matches;
 
-  vector<Point2f> new_bb;
+  vector<cv::Point2f> new_bb;
   perspectiveTransform(object_bb, new_bb, homography);
-  Mat frame_with_bb = frame.clone();
+  cv::Mat frame_with_bb = frame.clone();
   if(stats.inliers >= bb_min_inliers) {
     drawBoundingBox(frame_with_bb, new_bb);
   }
-  Mat res;
-  drawMatches(first_frame, inliers1, frame_with_bb, inliers2, inlier_matches, res, Scalar(255, 0, 0), Scalar(255, 0, 0));
+  cv::Mat res;
+  drawMatches(first_frame, inliers1, frame_with_bb, inliers2, inlier_matches, res, cv::Scalar(255, 0, 0), cv::Scalar(255, 0, 0));
   return res;
 }
 } // namespace example
@@ -126,7 +126,7 @@ main(int argc, char** argv) {
   std::stringstream ssFormat;
   ssFormat << atoi(argv[1]);
 
-  VideoCapture video_in;
+  cv::VideoCapture video_in;
   if(video_name.compare(ssFormat.str()) == 0) { // test str==str(num)
     video_in.open(atoi(argv[1]));
   } else {
@@ -143,17 +143,17 @@ main(int argc, char** argv) {
   akaze->setThreshold(akaze_thresh);
   Ptr<ORB> orb = ORB::create();
   Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create("BruteForce-Hamming");
-  example::Tracker akaze_tracker(akaze, matcher);
-  example::Tracker orb_tracker(orb, matcher);
+  example::cv::Tracker akaze_tracker(akaze, matcher);
+  example::cv::Tracker orb_tracker(orb, matcher);
 
-  Mat frame;
+  cv::Mat frame;
   video_in >> frame;
-  namedWindow(video_name, WINDOW_NORMAL);
+  cv::namedWindow(video_name, WINDOW_NORMAL);
   cv::resizeWindow(video_name, frame.cols, frame.rows);
 
   cout << "Please select a bounding box, and press any key to continue." << endl;
-  vector<Point2f> bb;
-  cv::Rect2d uBox = selectROI(video_name, frame);
+  vector<cv::Point2f> bb;
+  cv::Rect2d uBox = cv::selectROI(video_name, frame);
   bb.push_back(cv::Point2f(static_cast<float>(uBox.x), static_cast<float>(uBox.y)));
   bb.push_back(cv::Point2f(static_cast<float>(uBox.x + uBox.width), static_cast<float>(uBox.y)));
   bb.push_back(cv::Point2f(static_cast<float>(uBox.x + uBox.width), static_cast<float>(uBox.y + uBox.height)));
@@ -163,7 +163,7 @@ main(int argc, char** argv) {
   orb_tracker.setFirstFrame(frame, bb, "ORB", stats);
 
   Stats akaze_draw_stats, orb_draw_stats;
-  Mat akaze_res, orb_res, res_frame;
+  cv::Mat akaze_res, orb_res, res_frame;
   int i = 0;
   for(;;) {
     i++;
@@ -190,7 +190,7 @@ main(int argc, char** argv) {
     drawStatistics(orb_res, orb_draw_stats);
     vconcat(akaze_res, orb_res, res_frame);
     cv::imshow(video_name, res_frame);
-    if(waitKey(1) == 27)
+    if(cv::waitKey(1) == 27)
       break; // quit on ESC button
   }
   akaze_stats /= i - 1;

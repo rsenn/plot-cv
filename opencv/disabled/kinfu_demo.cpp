@@ -12,8 +12,8 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/rgbd/kinfu.hpp>
 
-using namespace cv;
-using namespace cv::kinfu;
+//using namespace cv;
+//using namespace cv::kinfu;
 using namespace std;
 
 #ifdef HAVE_OPENCV_VIZ
@@ -28,7 +28,7 @@ readDepth(std::string fileList) {
 
   fstream file(fileList);
   if(!file.is_open())
-    throw std::runtime_error("Failed to read depth list");
+    throw std::runtime_error("Failed to cv::read depth list");
 
   std::string dir;
   size_t slashIdx = fileList.rfind('/');
@@ -57,7 +57,7 @@ struct DepthWriter {
     dir = fileList.substr(0, slashIdx);
 
     if(!file.is_open())
-      throw std::runtime_error("Failed to write depth list");
+      throw std::runtime_error("Failed to cv::write depth list");
 
     file << "# depth maps saved from device" << endl;
     file << "# useless_number filename" << endl;
@@ -65,11 +65,11 @@ struct DepthWriter {
 
   void
   append(InputArray _depth) {
-    Mat depth = _depth.getMat();
+    cv::Mat depth = _depth.getMat();
     string depthFname = cv::format("%04d.png", count);
     string fullDepthFname = dir + '/' + depthFname;
-    if(!imwrite(fullDepthFname, depth))
-      throw std::runtime_error("Failed to write depth to file " + fullDepthFname);
+    if(!cv::imwrite(fullDepthFname, depth))
+      throw std::runtime_error("Failed to cv::write depth to file " + fullDepthFname);
     file << count++ << " " << depthFname << endl;
   }
 
@@ -79,7 +79,7 @@ struct DepthWriter {
 };
 
 namespace Kinect2Params {
-static const Size frameSize = Size(512, 424);
+static const cv::Size frameSize = cv::Size(512, 424);
 // approximate values, no guarantee to be correct
 static const float focal = 366.1f;
 static const float cx = 258.2f;
@@ -95,36 +95,36 @@ public:
 
   DepthSource(int cam) : DepthSource("", cam) {}
 
-  DepthSource(String fileListName) : DepthSource(fileListName, -1) {}
+  DepthSource(cv::String fileListName) : DepthSource(fileListName, -1) {}
 
-  DepthSource(String fileListName, int cam)
+  DepthSource(cv::String fileListName, int cam)
       : depthFileList(fileListName.empty() ? vector<string>() : readDepth(fileListName)), frameIdx(0), undistortMap1(),
         undistortMap2() {
     if(cam >= 0) {
-      vc = VideoCapture(VideoCaptureAPIs::CAP_OPENNI2 + cam);
+      vc = cv::VideoCapture(VideoCaptureAPIs::CAP_OPENNI2 + cam);
       if(vc.isOpened()) {
         sourceType = Type::DEPTH_KINECT2;
       } else {
-        vc = VideoCapture(VideoCaptureAPIs::CAP_REALSENSE + cam);
+        vc = cv::VideoCapture(VideoCaptureAPIs::CAP_REALSENSE + cam);
         if(vc.isOpened()) {
           sourceType = Type::DEPTH_REALSENSE;
         }
       }
     } else {
-      vc = VideoCapture();
+      vc = cv::VideoCapture();
       sourceType = Type::DEPTH_KINECT2_LIST;
     }
   }
 
   UMat
   getDepth() {
-    UMat out;
+    cv::UMat out;
     if(!vc.isOpened()) {
       if(frameIdx < depthFileList.size()) {
-        Mat f = cv::imread(depthFileList[frameIdx++], IMREAD_ANYDEPTH);
+        cv::Mat f = cv::imread(depthFileList[frameIdx++], IMREAD_ANYDEPTH);
         f.copyTo(out);
       } else {
-        return UMat();
+        return cv::UMat();
       }
     } else {
       vc.grab();
@@ -138,12 +138,12 @@ public:
 
       // workaround for Kinect 2
       if(sourceType == Type::DEPTH_KINECT2) {
-        out = out(Rect(Point(), Kinect2Params::frameSize));
+        out = out(cv::Rect(cv::Point(), Kinect2Params::frameSize));
 
-        UMat outCopy;
-        // linear remap adds gradient between valid and invalid pixels
+        cv::UMat outCopy;
+        // linear cv::remap adds gradient between valid and invalid pixels
         // which causes garbage, use nearest instead
-        remap(out, outCopy, undistortMap1, undistortMap2, cv::INTER_NEAREST);
+        cv::remap(out, outCopy, undistortMap1, undistortMap2, cv::INTER_NEAREST);
 
         cv::flip(outCopy, out, 1);
       }
@@ -168,7 +168,7 @@ public:
       // it's recommended to calibrate sensor to obtain its intrinsics
       float fx, fy, cx, cy;
       float depthFactor = 1000.f;
-      Size frameSize;
+      cv::Size frameSize;
       if(sourceType == Type::DEPTH_KINECT2) {
         fx = fy = Kinect2Params::focal;
         cx = Kinect2Params::cx;
@@ -187,7 +187,7 @@ public:
         cx = w / 2 - 0.5f;
         cy = h / 2 - 0.5f;
 
-        frameSize = Size(w, h);
+        frameSize = cv::Size(w, h);
       }
 
       Matx33f camMatrix = Matx33f(fx, 0, cx, 0, fy, cy, 0, 0, 1);
@@ -214,7 +214,7 @@ public:
         distCoeffs(1) = Kinect2Params::k2;
         distCoeffs(4) = Kinect2Params::k3;
 
-        initUndistortRectifyMap(
+        cv::initUndistortRectifyMap(
             camMatrix, distCoeffs, cv::noArray(), camMatrix, frameSize, CV_16SC2, undistortMap1, undistortMap2);
       }
     }
@@ -222,8 +222,8 @@ public:
 
   vector<string> depthFileList;
   size_t frameIdx;
-  VideoCapture vc;
-  UMat undistortMap1, undistortMap2;
+  cv::VideoCapture vc;
+  cv::UMat undistortMap1, undistortMap2;
   Type sourceType;
 };
 
@@ -243,10 +243,10 @@ pauseCallback(const viz::MouseEvent& me, void* args) {
      me.type == viz::MouseEvent::Type::MouseScrollUp) {
     PauseCallbackArgs pca = *((PauseCallbackArgs*)(args));
     viz::Viz3d window(vizWindowName);
-    UMat rendered;
+    cv::UMat rendered;
     pca.kf.render(rendered, window.getViewerPose().matrix);
-    imshow("render", rendered);
-    waitKey(1);
+    cv::imshow("render", rendered);
+    cv::waitKey(1);
   }
 }
 #endif
@@ -258,7 +258,7 @@ static const char* keys = {"{help h usage ? | | print this message   }"
                            " in coarse mode points and normals are displayed }"
                            "{idle   | | Do not run KinFu, just display depth frames }"
                            "{record | | Write depth frames to specified file list"
-                           " (the same format as for the 'depth' key) }"};
+                           " (the same cv::format as for the 'depth' key) }"};
 
 static const std::string message = "\nThis demo uses live depth input or RGB-D dataset taken from"
                                    "\nhttps://vision.in.tum.de/data/datasets/rgbd-dataset"
@@ -270,7 +270,7 @@ main(int argc, char** argv) {
   bool idle = false;
   string recordPath;
 
-  CommandLineParser parser(argc, argv, keys);
+  cv::CommandLineParser parser(argc, argv, keys);
   parser.about(message);
 
   if(!parser.check()) {
@@ -287,7 +287,7 @@ main(int argc, char** argv) {
     coarse = true;
   }
   if(parser.has("record")) {
-    recordPath = parser.get<String>("record");
+    recordPath = parser.get<cv::String>("record");
   }
   if(parser.has("idle")) {
     idle = true;
@@ -295,7 +295,7 @@ main(int argc, char** argv) {
 
   Ptr<DepthSource> ds;
   if(parser.has("depth"))
-    ds = makePtr<DepthSource>(parser.get<String>("depth"));
+    ds = makePtr<DepthSource>(parser.get<cv::String>("depth"));
   else
     ds = makePtr<DepthSource>(parser.get<int>("camera"));
 
@@ -340,13 +340,13 @@ main(int argc, char** argv) {
   bool pause = false;
 #endif
 
-  UMat rendered;
-  UMat points;
-  UMat normals;
+  cv::UMat rendered;
+  cv::UMat points;
+  cv::UMat normals;
 
-  int64 prevTime = getTickCount();
+  int64 prevTime = cv::getTickCount();
 
-  for(UMat frame = ds->getDepth(); !frame.empty(); frame = ds->getDepth()) {
+  for(cv::UMat frame = ds->getDepth(); !frame.empty(); frame = ds->getDepth()) {
     if(depthWriter)
       depthWriter->append(frame);
 
@@ -360,14 +360,14 @@ main(int argc, char** argv) {
         window.showWidget("cloud", cloudWidget);
         window.showWidget("normals", cloudNormals);
 
-        Vec3d volSize = kf->getParams().voxelSize * Vec3d(kf->getParams().volumeDims);
-        window.showWidget("cube", viz::WCube(Vec3d::all(0), volSize), kf->getParams().volumePose);
+        cv::Vec3d volSize = kf->getParams().voxelSize * cv::Vec3d(kf->getParams().volumeDims);
+        window.showWidget("cube", viz::WCube(cv::Vec3d::all(0), volSize), kf->getParams().volumePose);
         PauseCallbackArgs pca(*kf);
         window.registerMouseCallback(pauseCallback, (void*)&pca);
         window.showWidget("text",
                           viz::WText(cv::String("Move camera in this window. "
                                                 "Close the window or press Q to resume"),
-                                     Point()));
+                                     cv::Point()));
         window.spin();
         window.removeWidget("text");
         window.removeWidget("cloud");
@@ -379,11 +379,11 @@ main(int argc, char** argv) {
     } else
 #endif
     {
-      UMat cvt8;
+      cv::UMat cvt8;
       float depthFactor = params->depthFactor;
-      convertScaleAbs(frame, cvt8, 0.25 * 256. / depthFactor);
+      cv::convertScaleAbs(frame, cvt8, 0.25 * 256. / depthFactor);
       if(!idle) {
-        imshow("depth", cvt8);
+        cv::imshow("depth", cvt8);
 
         if(!kf->update(frame)) {
           kf->reset();
@@ -402,8 +402,8 @@ main(int argc, char** argv) {
           }
 
           // window.showWidget("worldAxes", viz::WCoordinateSystem());
-          Vec3d volSize = kf->getParams().voxelSize * kf->getParams().volumeDims;
-          window.showWidget("cube", viz::WCube(Vec3d::all(0), volSize), kf->getParams().volumePose);
+          cv::Vec3d volSize = kf->getParams().voxelSize * kf->getParams().volumeDims;
+          window.showWidget("cube", viz::WCube(cv::Vec3d::all(0), volSize), kf->getParams().volumePose);
           window.setViewerPose(kf->getPose());
           window.spinOnce(1, true);
         }
@@ -415,18 +415,18 @@ main(int argc, char** argv) {
       }
     }
 
-    int64 newTime = getTickCount();
-    putText(rendered,
-            cv::format("FPS: %2d press R to reset, P to pause, Q to quit", (int)(getTickFrequency() / (newTime - prevTime))),
-            Point(0, rendered.rows - 1),
+    int64 newTime = cv::getTickCount();
+    cv::putText(rendered,
+            cv::format("FPS: %2d press R to reset, P to pause, Q to quit", (int)(cv::getTickFrequency() / (newTime - prevTime))),
+            cv::Point(0, rendered.rows - 1),
             FONT_HERSHEY_SIMPLEX,
             0.5,
-            Scalar(0, 255, 255));
+            cv::Scalar(0, 255, 255));
     prevTime = newTime;
 
-    imshow("render", rendered);
+    cv::imshow("render", rendered);
 
-    int c = waitKey(1);
+    int c = cv::waitKey(1);
     switch(c) {
       case 'r':
         if(!idle)

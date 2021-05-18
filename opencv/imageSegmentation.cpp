@@ -1,6 +1,6 @@
 /**
  * @function Watershed_and_Distance_Transform.cpp
- * @brief Sample code showing how to segment overlapping objects using Laplacian filtering, in
+ * @brief Sample code showing how to segment overlapping objects using cv::Laplacian filtering, in
  * addition to Watershed and Distance Transformation
  * @author OpenCV Team
  */
@@ -11,20 +11,20 @@
 #include <iostream>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 int
 main(int, char** argv) {
   //! [load_image]
   // Load the image
-  cv::Mat src = imread(argv[1]);
+  cv::Mat src = cv::imread(argv[1]);
 
   // Check if everything was fine
   if(!src.data)
     return -1;
 
   // Show source image
-  imshow("Source Image", src);
+  cv::imshow("Source Image", src);
   //! [load_image]
 
   //! [black_bg]
@@ -41,7 +41,7 @@ main(int, char** argv) {
   }
 
   // Show output image
-  imshow("Black Background Image", src);
+  cv::imshow("Black Background Image", src);
   //! [black_bg]
 
   //! [sharp]
@@ -52,12 +52,12 @@ main(int, char** argv) {
   // do the laplacian filtering as it is
   // well, we need to convert everything in something more deeper then CV_8U
   // because the kernel has some negative values,
-  // and we can expect in general to have a Laplacian image with negative values
+  // and we can expect in general to have a cv::Laplacian image with negative values
   // BUT a 8bits unsigned int (the one we are working with) can contain values from 0 to 255
   // so the possible negative number will be truncated
   cv::Mat imgLaplacian;
   cv::Mat sharp = src; // copy source image to another temporary one
-  filter2D(sharp, imgLaplacian, CV_32F, kernel);
+  cv::filter2D(sharp, imgLaplacian, CV_32F, kernel);
   src.convertTo(sharp, CV_32F);
   cv::Mat imgResult = sharp - imgLaplacian;
 
@@ -65,8 +65,8 @@ main(int, char** argv) {
   imgResult.convertTo(imgResult, CV_8UC3);
   imgLaplacian.convertTo(imgLaplacian, CV_8UC3);
 
-  // imshow( "Laplace Filtered Image", imgLaplacian );
-  imshow("New Sharped Image", imgResult);
+  // cv::imshow( "Laplace Filtered Image", imgLaplacian );
+  cv::imshow("New Sharped Image", imgResult);
   //! [sharp]
 
   src = imgResult; // copy back
@@ -74,71 +74,71 @@ main(int, char** argv) {
   //! [bin]
   // Create binary image from source image
   cv::Mat bw;
-  cvtColor(src, bw, cv::COLOR_BGR2GRAY);
-  threshold(bw, bw, 40, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
-  imshow("Binary Image", bw);
+  cv::cvtColor(src, bw, cv::COLOR_BGR2GRAY);
+  cv::threshold(bw, bw, 40, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
+  cv::imshow("Binary Image", bw);
   //! [bin]
 
   //! [dist]
   // Perform the distance transform algorithm
   cv::Mat dist;
-  distanceTransform(bw, dist, CV_DIST_L2, 3);
+  cv::distanceTransform(bw, dist, CV_DIST_L2, 3);
 
   // Normalize the distance image for range = {0.0, 1.0}
-  // so we can visualize and threshold it
-  normalize(dist, dist, 0, 1., NORM_MINMAX);
-  imshow("Distance Transform Image", dist);
+  // so we can visualize and cv::threshold it
+  cv::normalize(dist, dist, 0, 1., NORM_MINMAX);
+  cv::imshow("Distance Transform Image", dist);
   //! [dist]
 
   //! [peaks]
   // Threshold to obtain the peaks
   // This will be the markers for the foreground objects
-  threshold(dist, dist, .4, 1., cv::THRESH_BINARY);
+  cv::threshold(dist, dist, .4, 1., cv::THRESH_BINARY);
 
   // Dilate a bit the dist image
   cv::Mat kernel1 = cv::Mat::ones(3, 3, CV_8UC1);
-  dilate(dist, dist, kernel1);
-  imshow("Peaks", dist);
+  cv::dilate(dist, dist, kernel1);
+  cv::imshow("Peaks", dist);
   //! [peaks]
 
   //! [seeds]
   // Create the CV_8U version of the distance image
-  // It is needed for findContours()
+  // It is needed for cv::findContours()
   cv::Mat dist_8u;
   dist.convertTo(dist_8u, CV_8U);
 
   // Find total markers
   std::vector<std::vector<cv::Point>> contours;
-  findContours(dist_8u, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+  cv::findContours(dist_8u, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
-  // Create the marker image for the watershed algorithm
+  // Create the marker image for the cv::watershed algorithm
   cv::Mat markers = cv::Mat::zeros(dist.size(), CV_32SC1);
 
   // Draw the foreground markers
   for(size_t i = 0; i < contours.size(); i++)
-    drawContours(markers, contours, static_cast<int>(i), Scalar::all(static_cast<int>(i) + 1), -1);
+    cv::drawContours(markers, contours, static_cast<int>(i), cv::Scalar::all(static_cast<int>(i) + 1), -1);
 
   // Draw the background marker
-  circle(markers, cv::Point(5, 5), 3, CV_RGB(255, 255, 255), -1);
-  imshow("Markers", markers * 10000);
+  cv::circle(markers, cv::Point(5, 5), 3, CV_RGB(255, 255, 255), -1);
+  cv::imshow("Markers", markers * 10000);
   //! [seeds]
 
-  //! [watershed]
-  // Perform the watershed algorithm
-  watershed(src, markers);
+  //! [cv::watershed]
+  // Perform the cv::watershed algorithm
+  cv::watershed(src, markers);
 
   cv::Mat mark = cv::Mat::zeros(markers.size(), CV_8UC1);
   markers.convertTo(mark, CV_8UC1);
-  bitwise_not(mark, mark);
-  //    imshow("Markers_v2", mark); // uncomment this if you want to see how the mark
+  cv::bitwise_not(mark, mark);
+  //    cv::imshow("Markers_v2", mark); // uncomment this if you want to see how the mark
   // image looks like at that point
 
   // Generate random colors
   std::vector<Vec3b> colors;
   for(size_t i = 0; i < contours.size(); i++) {
-    int b = theRNG().uniform(0, 255);
-    int g = theRNG().uniform(0, 255);
-    int r = theRNG().uniform(0, 255);
+    int b = cv::theRNG().uniform(0, 255);
+    int g = cv::theRNG().uniform(0, 255);
+    int r = cv::theRNG().uniform(0, 255);
 
     colors.push_back(Vec3b((uchar)b, (uchar)g, (uchar)r));
   }
@@ -158,9 +158,9 @@ main(int, char** argv) {
   }
 
   // Visualize the final image
-  imshow("Final Result", dst);
-  //! [watershed]
+  cv::imshow("Final Result", dst);
+  //! [cv::watershed]
 
-  waitKey(0);
+  cv::waitKey(0);
   return 0;
 }

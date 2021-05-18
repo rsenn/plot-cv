@@ -8,12 +8,12 @@
 #include <fcntl.h>
 #include <qelapsedtimer.h>
 
-using namespace cv;
+//using namespace cv;
 
 QElapsedTimer telapsed;
 
-camera_c::camera_c(QObject* parent, int width, int height, int res, int threshold, int thresholdZone)
-    : parent(parent), width(width), height(height), resolution(res), threshold(threshold), thresholdZone(thresholdZone) {
+camera_c::camera_c(QObject* parent, int width, int height, int res, int cv::threshold, int thresholdZone)
+    : parent(parent), width(width), height(height), resolution(res), cv::threshold(threshold), thresholdZone(thresholdZone) {
   isLearning = false;
   enabled = false;
   connect(parent, SIGNAL(snap()), this, SLOT(snap()));
@@ -26,8 +26,8 @@ camera_c::camera_c(QObject* parent, int width, int height, int res, int threshol
 void
 camera_c::init() {
   // NEEDED ON RASPI : sud
-  capture = new VideoCapture(0);
-  // VideoCapture cap(0); // open the default camera
+  capture = new cv::VideoCapture(0);
+  // cv::VideoCapture cap(0); // open the default camera
   if(!capture->isOpened()) { // check if we succeeded
     qDebug() << "camera not found";
     exit(0);
@@ -121,7 +121,7 @@ camera_c::update(void) {
         cv::absdiff(imageSnap, image, buf);
 
         imageDiff = buf.clone();
-        cv::threshold(imageDiff, imageDiff, threshold, 255, cv::THRESH_BINARY_INV);
+        cv::threshold(imageDiff, imageDiff, cv::threshold, 255, cv::THRESH_BINARY_INV);
         cv::cvtColor(imageDiff, imageDiff, cv::COLOR_BGR2GRAY);
         checkZones();
 
@@ -199,8 +199,8 @@ camera_c::checkZones(void) {
 int
 camera_c::getZoneValue(int X, int Y) {
   int val;
-  Mat subDiff = imageDiff(Rect(dx * X, dy * Y, dx, dy));
-  Scalar tempVal = mean(subDiff);
+  cv::Mat subDiff = imageDiff(cv::Rect(dx * X, dy * Y, dx, dy));
+  cv::Scalar tempVal = cv::mean(subDiff);
   val = (int)tempVal.val[0];
 
   return val;
@@ -210,7 +210,7 @@ void
 camera_c::startLearning(void) {
   isLearning = true;
 
-  detectedZone.resize(resolution, std::vector<bool>(resolution, false));
+  detectedZone.cv::resize(resolution, std::vector<bool>(resolution, false));
 }
 
 void

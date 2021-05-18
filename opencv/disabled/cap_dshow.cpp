@@ -324,16 +324,16 @@ interface ISampleGrabber : public IUnknown {
 static bool gs_verbose = true;
 
 static void
-DebugPrintOut(const char* format, ...) {
+DebugPrintOut(const char* cv::format, ...) {
   if(gs_verbose) {
     va_list args;
-    va_start(args, format);
+    va_start(args, cv::format);
     if(::IsDebuggerPresent()) {
       CHAR szMsg[512];
-      ::StringCbVPrintfA(szMsg, sizeof(szMsg), format, args);
+      ::StringCbVPrintfA(szMsg, sizeof(szMsg), cv::format, args);
       ::OutputDebugStringA(szMsg);
     } else {
-      vprintf(format, args);
+      vprintf(cv::format, args);
     }
     va_end(args);
   }
@@ -499,7 +499,7 @@ public:
   // see #defines above for available formats - eg VI_NTSC_M or VI_PAL_B
   // should be called after setupDevice
   // can be called multiple times
-  bool setFormat(int deviceNumber, int format);
+  bool setFormat(int deviceNumber, int cv::format);
 
   // Tells you when a new frame has arrived - you should call this if you have specified
   // setAutoReconnectOnFreeze to true
@@ -507,7 +507,7 @@ public:
 
   bool isDeviceSetup(int deviceID) const;
 
-  // Returns the pixels - flipRedAndBlue toggles RGB/BGR flipping - and you can flip the image too
+  // Returns the pixels - flipRedAndBlue toggles RGB/BGR flipping - and you can cv::flip the image too
   unsigned char* getPixels(int deviceID, bool flipRedAndBlue = true, bool flipImage = false);
 
   // Or pass in a buffer for getPixels to fill returns true if successful.
@@ -791,7 +791,7 @@ videoDevice::videoDevice() {
 void
 videoDevice::setSize(int w, int h) {
   if(sizeSet) {
-    DebugPrintOut("SETUP: Error device size should not be set more than once\n");
+    DebugPrintOut("SETUP: cv::Error device size should not be set more than once\n");
   } else {
     width = w;
     height = h;
@@ -1253,21 +1253,21 @@ videoInput::setupDevice(int deviceNumber, int w, int h, int _connection) {
 }
 
 // ----------------------------------------------------------------------
-// Setup the default video format of the device
+// Setup the default video cv::format of the device
 // Must be called after setup!
 // See #define formats in header file (eg VI_NTSC_M )
 //
 // ----------------------------------------------------------------------
 
 bool
-videoInput::setFormat(int deviceNumber, int format) {
+videoInput::setFormat(int deviceNumber, int cv::format) {
   if(deviceNumber >= VI_MAX_CAMERAS || !VDList[deviceNumber]->readyToCapture)
     return false;
 
   bool returnVal = false;
 
-  if(format >= 0 && format < VI_NUM_FORMATS) {
-    VDList[deviceNumber]->formatType = formatTypes[format];
+  if(cv::format >= 0 && cv::format < VI_NUM_FORMATS) {
+    VDList[deviceNumber]->formatType = formatTypes[cv::format];
     VDList[deviceNumber]->specificFormat = true;
 
     if(VDList[deviceNumber]->specificFormat) {
@@ -1291,14 +1291,14 @@ videoInput::setFormat(int deviceNumber, int format) {
         VDList[deviceNumber]->pVideoInputFilter = NULL;
 
       if(FAILED(hr)) {
-        DebugPrintOut("SETUP: couldn't set requested format\n");
+        DebugPrintOut("SETUP: couldn't set requested cv::format\n");
       } else {
         long lValue = 0;
         hr = pVideoDec->get_AvailableTVFormats(&lValue);
         if(SUCCEEDED(hr) && (lValue & VDList[deviceNumber]->formatType)) {
           hr = pVideoDec->put_TVFormat(VDList[deviceNumber]->formatType);
           if(FAILED(hr)) {
-            DebugPrintOut("SETUP: couldn't set requested format\n");
+            DebugPrintOut("SETUP: couldn't set requested cv::format\n");
           } else {
             returnVal = true;
           }
@@ -1674,7 +1674,7 @@ videoInput::getVideoSettingFilter(int deviceID,
 
   hr = getDevice(&VD->pVideoInputFilter, deviceID, VD->wDeviceName, VD->nDeviceName);
   if(FAILED(hr)) {
-    DebugPrintOut("setVideoSetting - getDevice Error\n");
+    DebugPrintOut("setVideoSetting - getDevice cv::Error\n");
     return false;
   }
 
@@ -1682,7 +1682,7 @@ videoInput::getVideoSettingFilter(int deviceID,
 
   hr = VD->pVideoInputFilter->QueryInterface(IID_IAMVideoProcAmp, (void**)&pAMVideoProcAmp);
   if(FAILED(hr)) {
-    DebugPrintOut("setVideoSetting - QueryInterface Error\n");
+    DebugPrintOut("setVideoSetting - QueryInterface cv::Error\n");
     if(VD->pVideoInputFilter)
       VD->pVideoInputFilter->Release();
     if(VD->pVideoInputFilter)
@@ -1782,7 +1782,7 @@ videoInput::setVideoSettingFilter(int deviceID, long Property, long lValue, long
 
   hr = getDevice(&VD->pVideoInputFilter, deviceID, VD->wDeviceName, VD->nDeviceName);
   if(FAILED(hr)) {
-    DebugPrintOut("setVideoSetting - getDevice Error\n");
+    DebugPrintOut("setVideoSetting - getDevice cv::Error\n");
     return false;
   }
 
@@ -1790,7 +1790,7 @@ videoInput::setVideoSettingFilter(int deviceID, long Property, long lValue, long
 
   hr = VD->pVideoInputFilter->QueryInterface(IID_IAMVideoProcAmp, (void**)&pAMVideoProcAmp);
   if(FAILED(hr)) {
-    DebugPrintOut("setVideoSetting - QueryInterface Error\n");
+    DebugPrintOut("setVideoSetting - QueryInterface cv::Error\n");
     if(VD->pVideoInputFilter)
       VD->pVideoInputFilter->Release();
     if(VD->pVideoInputFilter)
@@ -1819,7 +1819,7 @@ videoInput::setVideoSettingFilter(int deviceID, long Property, long lValue, long
   if(useDefaultValue) {
     pAMVideoProcAmp->Set(Property, Default, VideoProcAmp_Flags_Auto);
   } else {
-    // Perhaps add a check that lValue and Flags are within the range aquired from GetRange above
+    // Perhaps cv::add a check that lValue and Flags are within the range aquired from GetRange above
     pAMVideoProcAmp->Set(Property, lValue, Flags);
   }
 
@@ -1897,7 +1897,7 @@ videoInput::setVideoSettingCamera(int deviceID, long Property, long lValue, long
     DebugPrintOut("Setting video setting %s.\n", propStr);
     hr = VDList[deviceID]->pVideoInputFilter->QueryInterface(IID_IAMCameraControl, (void**)&pIAMCameraControl);
     if(FAILED(hr)) {
-      DebugPrintOut("Error\n");
+      DebugPrintOut("cv::Error\n");
       if(VDList[deviceID]->pVideoInputFilter)
         VDList[deviceID]->pVideoInputFilter->Release();
       if(VDList[deviceID]->pVideoInputFilter)
@@ -1921,7 +1921,7 @@ videoInput::setVideoSettingCamera(int deviceID, long Property, long lValue, long
       if(useDefaultValue) {
         pIAMCameraControl->Set(Property, Default, CameraControl_Flags_Auto);
       } else {
-        // Perhaps add a check that lValue and Flags are within the range aquired from GetRange
+        // Perhaps cv::add a check that lValue and Flags are within the range aquired from GetRange
         // above
         pIAMCameraControl->Set(Property, lValue, Flags);
       }
@@ -1955,7 +1955,7 @@ videoInput::getVideoSettingCamera(int deviceID,
 
   hr = getDevice(&VD->pVideoInputFilter, deviceID, VD->wDeviceName, VD->nDeviceName);
   if(FAILED(hr)) {
-    DebugPrintOut("setVideoSetting - getDevice Error\n");
+    DebugPrintOut("setVideoSetting - getDevice cv::Error\n");
     return false;
   }
 
@@ -1963,7 +1963,7 @@ videoInput::getVideoSettingCamera(int deviceID,
 
   hr = VD->pVideoInputFilter->QueryInterface(IID_IAMCameraControl, (void**)&pIAMCameraControl);
   if(FAILED(hr)) {
-    DebugPrintOut("setVideoSetting - QueryInterface Error\n");
+    DebugPrintOut("setVideoSetting - QueryInterface cv::Error\n");
     if(VD->pVideoInputFilter)
       VD->pVideoInputFilter->Release();
     if(VD->pVideoInputFilter)
@@ -2021,7 +2021,7 @@ videoInput::restartDevice(int id) {
     int tmpH = VDList[id]->height;
 
     bool bFormat = VDList[id]->specificFormat;
-    long format = VDList[id]->formatType;
+    long cv::format = VDList[id]->formatType;
 
     int nReconnect = VDList[id]->nFramesForReconnect;
     bool bReconnect = VDList[id]->autoReconnect;
@@ -2036,9 +2036,9 @@ videoInput::restartDevice(int id) {
     }
 
     if(setupDevice(id, tmpW, tmpH, conn)) {
-      // reapply the format - ntsc / pal etc
+      // reapply the cv::format - ntsc / pal etc
       if(bFormat) {
-        setFormat(id, format);
+        setFormat(id, cv::format);
       }
       if(bReconnect) {
         setAutoReconnectOnFreeze(id, true, nReconnect);
@@ -2450,7 +2450,7 @@ findClosestSizeAndSubtype(videoDevice* VD, int widthIn, int heightIn, int& width
   hr = VD->streamConf->GetNumberOfCapabilities(&iCount, &iSize);
 
   if(iSize == sizeof(VIDEO_STREAM_CONFIG_CAPS)) {
-    // For each format type RGB24 YUV2 etc
+    // For each cv::format type RGB24 YUV2 etc
     for(int iFormat = 0; iFormat < iCount; iFormat++) {
       VIDEO_STREAM_CONFIG_CAPS scc;
       AM_MEDIA_TYPE* pmtConfig;
@@ -2513,7 +2513,7 @@ findClosestSizeAndSubtype(videoDevice* VD, int widthIn, int heightIn, int& width
         }
 
         // otherwise lets see if this filters closest size is the closest
-        // available. the closest size is determined by the sum difference
+        // available. the closest size is determined by the cv::sum difference
         // of the widths and heights
         else if(abs(widthIn - tempW) + abs(heightIn - tempH) < abs(widthIn - nearW) + abs(heightIn - nearH)) {
           nearW = tempW;
@@ -2616,7 +2616,7 @@ videoInput::start(int deviceID, videoDevice* VD) {
   // Create the Filter Graph Manager.
   hr = CoCreateInstance(CLSID_FilterGraph, 0, CLSCTX_INPROC_SERVER, IID_IGraphBuilder, (void**)&VD->pGraph);
   if(FAILED(hr)) {
-    DebugPrintOut("ERROR - Could not add the graph builder!\n");
+    DebugPrintOut("ERROR - Could not cv::add the graph builder!\n");
     stopDevice(deviceID);
     return hr;
   }
@@ -2711,9 +2711,9 @@ videoInput::start(int deviceID, videoDevice* VD) {
     DebugPrintOut("SETUP: Default Format is set to %ix%i\n", currentWidth, currentHeight);
 
     char guidStr[8];
-    // try specified format and size
+    // try specified cv::format and size
     getMediaSubtypeAsString(VD->tryVideoType, guidStr);
-    DebugPrintOut("SETUP: trying specified format %s @ %ix%i\n", guidStr, VD->tryWidth, VD->tryHeight);
+    DebugPrintOut("SETUP: trying specified cv::format %s @ %ix%i\n", guidStr, VD->tryWidth, VD->tryHeight);
 
     if(setSizeAndSubtype(VD, VD->tryWidth, VD->tryHeight, VD->tryVideoType)) {
       VD->setSize(VD->tryWidth, VD->tryHeight);
@@ -2725,7 +2725,7 @@ videoInput::start(int deviceID, videoDevice* VD) {
 
         getMediaSubtypeAsString(mediaSubtypes[i], guidStr);
 
-        DebugPrintOut("SETUP: trying format %s @ %ix%i\n", guidStr, VD->tryWidth, VD->tryHeight);
+        DebugPrintOut("SETUP: trying cv::format %s @ %ix%i\n", guidStr, VD->tryWidth, VD->tryHeight);
         if(setSizeAndSubtype(VD, VD->tryWidth, VD->tryHeight, mediaSubtypes[i])) {
           VD->setSize(VD->tryWidth, VD->tryHeight);
           VD->videoType = mediaSubtypes[i];
@@ -2778,7 +2778,7 @@ videoInput::start(int deviceID, videoDevice* VD) {
 
   hr = VD->pGraph->AddFilter(VD->pGrabberF, L"Sample Grabber");
   if(FAILED(hr)) {
-    DebugPrintOut("Could not add Sample Grabber - AddFilter()\n");
+    DebugPrintOut("Could not cv::add Sample Grabber - AddFilter()\n");
     stopDevice(deviceID);
     return hr;
   }
@@ -2846,7 +2846,7 @@ videoInput::start(int deviceID, videoDevice* VD) {
 
   hr = VD->pGraph->AddFilter(VD->pDestFilter, L"NullRenderer");
   if(FAILED(hr)) {
-    DebugPrintOut("ERROR: Could not add filter - NullRenderer\n");
+    DebugPrintOut("ERROR: Could not cv::add filter - NullRenderer\n");
     stopDevice(deviceID);
     return hr;
   }
@@ -3238,7 +3238,7 @@ VideoCapture_DShow::getProperty(int propIdx) const {
   long min_value, max_value, stepping_delta, current_value, flags, defaultValue;
 
   switch(propIdx) {
-    // image format properties
+    // image cv::format properties
     case cv::CAP_PROP_FRAME_WIDTH: return g_VI.getWidth(m_index);
     case cv::CAP_PROP_FRAME_HEIGHT: return g_VI.getHeight(m_index);
     case cv::CAP_PROP_FOURCC: return g_VI.getFourcc(m_index);
@@ -3385,7 +3385,7 @@ VideoCapture_DShow::grabFrame() {
 }
 bool
 VideoCapture_DShow::retrieveFrame(int, OutputArray frame) {
-  frame.create(Size(g_VI.getWidth(m_index), g_VI.getHeight(m_index)), CV_8UC3);
+  frame.create(cv::Size(g_VI.getWidth(m_index), g_VI.getHeight(m_index)), CV_8UC3);
   cv::Mat mat = frame.getMat();
   return g_VI.getPixels(m_index, mat.ptr(), false, true);
 }

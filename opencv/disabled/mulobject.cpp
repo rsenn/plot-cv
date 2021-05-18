@@ -2,7 +2,7 @@
 #include "objecttracking.h"
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 TCHAR* myChar = "COM7";
 tstring commPortName(myChar);
 Serial serial(commPortName, 9600);
@@ -52,7 +52,7 @@ void
 createTrackbars() {
   // create window for trackbars
 
-  namedWindow(trackbarWindowName, 0);
+  cv::namedWindow(trackbarWindowName, 0);
   // create memory to store trackbar name on window
   char TrackbarName[50];
   sprintf_s(TrackbarName, "H_MIN", H_MIN);
@@ -66,12 +66,12 @@ createTrackbars() {
   // moved(eg.H_LOW), the max value the trackbar can move (eg. H_HIGH), and the function that is
   // called whenever the trackbar is moved(eg. on_trackbar)
   //                                  ---->    ---->     ---->
-  createTrackbar("H_MIN", trackbarWindowName, &H_MIN, H_MAX, on_trackbar);
-  createTrackbar("H_MAX", trackbarWindowName, &H_MAX, H_MAX, on_trackbar);
-  createTrackbar("S_MIN", trackbarWindowName, &S_MIN, S_MAX, on_trackbar);
-  createTrackbar("S_MAX", trackbarWindowName, &S_MAX, S_MAX, on_trackbar);
-  createTrackbar("V_MIN", trackbarWindowName, &V_MIN, V_MAX, on_trackbar);
-  createTrackbar("V_MAX", trackbarWindowName, &V_MAX, V_MAX, on_trackbar);
+  cv::createTrackbar("H_MIN", trackbarWindowName, &H_MIN, H_MAX, on_trackbar);
+  cv::createTrackbar("H_MAX", trackbarWindowName, &H_MAX, H_MAX, on_trackbar);
+  cv::createTrackbar("S_MIN", trackbarWindowName, &S_MIN, S_MAX, on_trackbar);
+  cv::createTrackbar("S_MAX", trackbarWindowName, &S_MAX, S_MAX, on_trackbar);
+  cv::createTrackbar("V_MIN", trackbarWindowName, &V_MIN, V_MAX, on_trackbar);
+  cv::createTrackbar("V_MAX", trackbarWindowName, &V_MAX, V_MAX, on_trackbar);
 }
 // void drawObject(std::vector<Entity> theEntities, cv::Mat &frame) {
 //
@@ -80,7 +80,7 @@ createTrackbars() {
 // cv::Scalar(0, 0,
 // 255));     cv::putText(frame, intToString(theEntities.at(i).getXPos()) + " , " +
 // intToString(theEntities.at(i).getXPos()), cv::Point(theEntities.at(i).getXPos(),
-// theEntities.at(i).getYPos() + 20), 1,  1, Scalar(0, 255, 0));     cv::putText(frame,
+// theEntities.at(i).getYPos() + 20), 1,  1, cv::Scalar(0, 255, 0));     cv::putText(frame,
 // theEntities.at(i).getType(), cv::Point(theEntities.at(i).getXPos(),  theEntities.at(i).getYPos()
 // - 30), 1, 2, theEntities.at(i).getColor());
 //  }
@@ -93,36 +93,36 @@ drawObject(Entity anEntity, cv::Mat& frame) {
               cv::Point(anEntity.getXPos(), anEntity.getYPos() + 20),
               1,
               1,
-              Scalar(0, 255, 0));
+              cv::Scalar(0, 255, 0));
   cv::putText(frame, anEntity.getType(), cv::Point(anEntity.getXPos(), anEntity.getYPos() - 30), 1, 2, anEntity.getColor());
 }
 void
 morphOps(cv::Mat& thresh) {
 
-  // create structuring element that will be used to "dilate" and "erode" image.
+  // create structuring element that will be used to "cv::dilate" and "cv::erode" image.
   // the element chosen here is a 3px by 3px rectangle
 
-  cv::Mat erodeElement = getStructuringElement(MORPH_RECT, Size(3, 3));
-  // dilate with larger element so make sure object is nicely visible
-  cv::Mat dilateElement = getStructuringElement(MORPH_RECT, Size(8, 8));
+  cv::Mat erodeElement = cv::getStructuringElement(MORPH_RECT, cv::Size(3, 3));
+  // cv::dilate with larger element so make sure object is nicely visible
+  cv::Mat dilateElement = cv::getStructuringElement(MORPH_RECT, cv::Size(8, 8));
 
-  erode(thresh, thresh, erodeElement);
-  erode(thresh, thresh, erodeElement);
+  cv::erode(thresh, thresh, erodeElement);
+  cv::erode(thresh, thresh, erodeElement);
 
-  dilate(thresh, thresh, dilateElement);
-  dilate(thresh, thresh, dilateElement);
+  cv::dilate(thresh, thresh, dilateElement);
+  cv::dilate(thresh, thresh, dilateElement);
 }
-// void trackFilteredObject(cv::Mat threshold, cv::Mat HSV, cv::Mat &cameraFeed) {
+// void trackFilteredObject(cv::Mat cv::threshold, cv::Mat HSV, cv::Mat &cameraFeed) {
 //  std::vector <Entity> entities;
 //
 //  cv::Mat temp;
-//  threshold.copyTo(temp);
+//  cv::threshold.copyTo(temp);
 //  //these two std::vectors needed for output of findContours
 //  std::vector<std::vector<cv::Point>> contours;
-//  std::vector<Vec4i> hierarchy;
-//  //find contours of filtered image using openCV findContours function
-//  findContours(temp, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE);
-//  //use moments method to find our filtered object
+//  std::vector<cv::Vec4i> hierarchy;
+//  //find contours of filtered image using openCV cv::findContours function
+//  cv::findContours(temp, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE);
+//  //use cv::moments method to find our filtered object
 //  double refArea = 0;
 //  bool objectFound = false;
 //  if (hierarchy.size() > 0) {
@@ -131,7 +131,7 @@ morphOps(cv::Mat& thresh) {
 //    if (numObjects<MAX_NUM_OBJECTS) {
 //      for (int index = 0; index >= 0; index = hierarchy[index][0]) {
 //
-//        Moments moment = moments((cv::Mat)contours[index]);
+//        cv::Moments moment = cv::moments((cv::Mat)contours[index]);
 //        double area = moment.m00;
 //
 //        //if the area is less than 20 px by 20px then it is probably just noise
@@ -161,23 +161,23 @@ morphOps(cv::Mat& thresh) {
 //      }
 //
 //    }
-//    else putText(cameraFeed, "TOO MUCH NOISE! ADJUST FILTER", cv::Point(0, 50), 1, 2, Scalar(0, 0,
+//    else cv::putText(cameraFeed, "TOO MUCH NOISE! ADJUST FILTER", cv::Point(0, 50), 1, 2, cv::Scalar(0, 0,
 // 255), 2);
 //  }
 //}
 
 void
-trackFilteredObject(Entity& anEntity, cv::Mat threshold, cv::Mat HSV, cv::Mat& cameraFeed) {
+trackFilteredObject(Entity& anEntity, cv::Mat cv::threshold, cv::Mat HSV, cv::Mat& cameraFeed) {
   /*std::vector <Entity> entities;*/ // std::vector of entities that are passed
 
   cv::Mat temp;
-  threshold.copyTo(temp);
+  cv::threshold.copyTo(temp);
   // these two std::vectors needed for output of findContours
   std::vector<std::vector<cv::Point>> contours;
-  std::vector<Vec4i> hierarchy;
-  // find contours of filtered image using openCV findContours function
-  findContours(temp, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE);
-  // use moments method to find our filtered object
+  std::vector<cv::Vec4i> hierarchy;
+  // find contours of filtered image using openCV cv::findContours function
+  cv::findContours(temp, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE);
+  // use cv::moments method to find our filtered object
   double refArea = 0;
   bool objectFound = false;
   if(hierarchy.size() > 0) {
@@ -186,7 +186,7 @@ trackFilteredObject(Entity& anEntity, cv::Mat threshold, cv::Mat HSV, cv::Mat& c
     if(numObjects < MAX_NUM_OBJECTS) {
       for(int index = 0; index >= 0; index = hierarchy[index][0]) {
 
-        Moments moment = moments((cv::Mat)contours[index]);
+        cv::Moments moment = cv::moments((cv::Mat)contours[index]);
         double area = moment.m00;
 
         // if the area is less than 20 px by 20px then it is probably just noise
@@ -214,7 +214,7 @@ trackFilteredObject(Entity& anEntity, cv::Mat threshold, cv::Mat HSV, cv::Mat& c
       }
 
     } else
-      putText(cameraFeed, "TOO MUCH NOISE! ADJUST FILTER", cv::Point(0, 50), 1, 2, Scalar(0, 0, 255), 2);
+      cv::putText(cameraFeed, "TOO MUCH NOISE! ADJUST FILTER", cv::Point(0, 50), 1, 2, cv::Scalar(0, 0, 255), 2);
   }
 }
 
@@ -226,14 +226,14 @@ main(int argc, char* argv[]) {
 
   // cv::Matrix to store each frame of the webcam feed
   cv::Mat cameraFeed;
-  cv::Mat threshold;
+  cv::Mat cv::threshold;
   cv::Mat HSV;
 
   if(calibrationMode) {
     // create slider bars for HSV filtering
     createTrackbars();
   }
-  VideoCapture capture;
+  cv::VideoCapture capture;
   // video capture object to acquire webcam feed
   capture.open(1);
 
@@ -248,23 +248,23 @@ main(int argc, char* argv[]) {
   while(1) {
     // store image to matrix
     // convert frame from BGR to HSV colorspace
-    /*cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);*/
-    capture.read(cameraFeed);
+    /*cv::cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);*/
+    capture.cv::read(cameraFeed);
     if(calibrationMode == true) {
     }
     //  //if in calibration mode, we track objects based on the HSV slider values.
-    //  cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
-    //  inRange(HSV, Scalar(H_MIN, S_MIN, V_MIN), Scalar(H_MAX, S_MAX, V_MAX), threshold);
-    //  morphOps(threshold);
-    //  /*imshow(windowName2, threshold);*/
-    //  trackFilteredObject(threshold, HSV, cameraFeed);
+    //  cv::cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
+    //  cv::inRange(HSV, cv::Scalar(H_MIN, S_MIN, V_MIN), cv::Scalar(H_MAX, S_MAX, V_MAX), cv::threshold);
+    //  morphOps(cv::threshold);
+    //  /*cv::imshow(windowName2, cv::threshold);*/
+    //  trackFilteredObject(cv::threshold, HSV, cameraFeed);
     //}
     else {
       Entity playerfront("playerfront"), playerrear("playerrear"), ball("ball"), goal("goal");
-      while(waitKey(33) != 27) {
+      while(cv::waitKey(33) != 27) {
         myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-        capture.read(cameraFeed);
-        imshow(windowName, cameraFeed);
+        capture.cv::read(cameraFeed);
+        cv::imshow(windowName, cameraFeed);
       }
       cout << "Ball X: " << ball.getXPos() << " Ball Y: " << ball.getYPos() << " Player X: " << playerfront.getXPos()
            << " Player Y: " << playerfront.getYPos() << endl;
@@ -277,44 +277,44 @@ main(int argc, char* argv[]) {
         while(playerrear.getXPos() != playerfront.getXPos() && playerrear.getYPos() < playerfront.getYPos()) {
           if(case1(playerfront, playerrear) || case2(playerfront, playerrear)) {
             myData("L", serial);
-            capture.read(cameraFeed);
+            capture.cv::read(cameraFeed);
             myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-            imshow(windowName, cameraFeed);
+            cv::imshow(windowName, cameraFeed);
           } else {
             myData("R", serial);
-            capture.read(cameraFeed);
+            capture.cv::read(cameraFeed);
             myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-            imshow(windowName, cameraFeed);
+            cv::imshow(windowName, cameraFeed);
           }
-          waitKey(33);
+          cv::waitKey(33);
         }
         while(playerfront.getYPos() > ball.getYPos()) {
           myData("F", serial);
-          capture.read(cameraFeed);
+          capture.cv::read(cameraFeed);
           myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-          imshow(windowName, cameraFeed);
-          waitKey(33);
+          cv::imshow(windowName, cameraFeed);
+          cv::waitKey(33);
         }
         while(playerfront.getYPos() != playerrear.getYPos() && playerfront.getXPos() > playerrear.getXPos()) {
-          waitKey(33);
+          cv::waitKey(33);
           if(case1(playerfront, playerrear) || case4(playerfront, playerrear)) {
             myData("R", serial);
-            capture.read(cameraFeed);
+            capture.cv::read(cameraFeed);
             myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-            imshow(windowName, cameraFeed);
+            cv::imshow(windowName, cameraFeed);
           } else {
             myData("L", serial);
-            capture.read(cameraFeed);
+            capture.cv::read(cameraFeed);
             myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-            imshow(windowName, cameraFeed);
+            cv::imshow(windowName, cameraFeed);
           }
         }
         while(playerfront.getXPos() > ball.getXPos()) {
-          waitKey(33);
+          cv::waitKey(33);
           myData("F", serial);
-          capture.read(cameraFeed);
+          capture.cv::read(cameraFeed);
           myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-          imshow(windowName, cameraFeed);
+          cv::imshow(windowName, cameraFeed);
         }
       }
 
@@ -327,47 +327,47 @@ main(int argc, char* argv[]) {
         // == car's rear x  go forward until ball's y coordinate == car's y coordinate  stop
         {
           while(playerrear.getXPos() != playerfront.getXPos() && playerrear.getYPos() > playerfront.getYPos()) {
-            waitKey(33);
+            cv::waitKey(33);
             if(case1(playerfront, playerrear) || case2(playerfront, playerrear)) {
               myData("R", serial);
-              capture.read(cameraFeed);
+              capture.cv::read(cameraFeed);
               myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-              imshow(windowName, cameraFeed);
+              cv::imshow(windowName, cameraFeed);
             } else {
               myData("L", serial);
-              capture.read(cameraFeed);
+              capture.cv::read(cameraFeed);
               myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-              imshow(windowName, cameraFeed);
+              cv::imshow(windowName, cameraFeed);
             }
           }
         }
         while(playerfront.getYPos() < ball.getYPos()) {
-          waitKey(33);
+          cv::waitKey(33);
           myData("F", serial);
-          capture.read(cameraFeed);
+          capture.cv::read(cameraFeed);
           myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-          imshow(windowName, cameraFeed);
+          cv::imshow(windowName, cameraFeed);
         }
         while(playerfront.getYPos() != playerrear.getYPos() && playerfront.getXPos() > playerrear.getXPos()) {
-          waitKey(33);
+          cv::waitKey(33);
           if(case1(playerfront, playerrear) || case4(playerfront, playerrear)) {
             myData("R", serial);
-            capture.read(cameraFeed);
+            capture.cv::read(cameraFeed);
             myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-            imshow(windowName, cameraFeed);
+            cv::imshow(windowName, cameraFeed);
           } else {
             myData("L", serial);
-            capture.read(cameraFeed);
+            capture.cv::read(cameraFeed);
             myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-            imshow(windowName, cameraFeed);
+            cv::imshow(windowName, cameraFeed);
           }
         }
         while(playerfront.getXPos() > ball.getXPos()) {
-          waitKey(33);
+          cv::waitKey(33);
           myData("F", serial);
-          capture.read(cameraFeed);
+          capture.cv::read(cameraFeed);
           myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-          imshow(windowName, cameraFeed);
+          cv::imshow(windowName, cameraFeed);
         }
       }
       // if direction is southeast x and y both are increased until they match
@@ -379,46 +379,46 @@ main(int argc, char* argv[]) {
         // == car's rear x  go forward until ball's y coordinate == car's y coordinate  stop
         {
           while(playerrear.getXPos() != playerfront.getXPos() && playerrear.getYPos() > playerfront.getYPos()) {
-            waitKey(33);
+            cv::waitKey(33);
             if(case1(playerfront, playerrear) || case2(playerfront, playerrear)) {
               myData("R", serial);
-              capture.read(cameraFeed);
+              capture.cv::read(cameraFeed);
               myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-              imshow(windowName, cameraFeed);
+              cv::imshow(windowName, cameraFeed);
             } else {
               myData("L", serial);
-              capture.read(cameraFeed);
+              capture.cv::read(cameraFeed);
               myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-              imshow(windowName, cameraFeed);
+              cv::imshow(windowName, cameraFeed);
             }
           }
           while(playerfront.getYPos() < ball.getYPos()) {
-            waitKey(33);
+            cv::waitKey(33);
             myData("F", serial);
-            capture.read(cameraFeed);
+            capture.cv::read(cameraFeed);
             myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-            imshow(windowName, cameraFeed);
+            cv::imshow(windowName, cameraFeed);
           }
           while(playerfront.getYPos() != playerrear.getYPos() && playerfront.getXPos() < playerrear.getXPos()) {
-            waitKey(33);
+            cv::waitKey(33);
             if(case1(playerfront, playerrear) || case4(playerfront, playerrear)) {
               myData("L", serial);
-              capture.read(cameraFeed);
+              capture.cv::read(cameraFeed);
               myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-              imshow(windowName, cameraFeed);
+              cv::imshow(windowName, cameraFeed);
             } else {
               myData("R", serial);
-              capture.read(cameraFeed);
+              capture.cv::read(cameraFeed);
               myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-              imshow(windowName, cameraFeed);
+              cv::imshow(windowName, cameraFeed);
             }
           }
           while(playerfront.getXPos() < ball.getXPos()) {
-            waitKey(33);
+            cv::waitKey(33);
             myData("F", serial);
-            capture.read(cameraFeed);
+            capture.cv::read(cameraFeed);
             myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-            imshow(windowName, cameraFeed);
+            cv::imshow(windowName, cameraFeed);
           }
         }
       }
@@ -431,60 +431,60 @@ main(int argc, char* argv[]) {
         // == car's rear x  go forward until ball's y coordinate == car's y coordinate  stop
         {
           while(playerrear.getXPos() != playerfront.getXPos() && playerrear.getYPos() < playerfront.getYPos()) {
-            waitKey(33);
+            cv::waitKey(33);
             if(case1(playerfront, playerrear) || case2(playerfront, playerrear)) {
               myData("L", serial);
-              capture.read(cameraFeed);
+              capture.cv::read(cameraFeed);
               myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-              imshow(windowName, cameraFeed);
+              cv::imshow(windowName, cameraFeed);
             } else {
               myData("R", serial);
-              capture.read(cameraFeed);
+              capture.cv::read(cameraFeed);
               myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-              imshow(windowName, cameraFeed);
+              cv::imshow(windowName, cameraFeed);
             }
           }
           while(playerfront.getYPos() > ball.getYPos()) {
-            waitKey(33);
+            cv::waitKey(33);
             myData("F", serial);
-            capture.read(cameraFeed);
+            capture.cv::read(cameraFeed);
             myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-            imshow(windowName, cameraFeed);
+            cv::imshow(windowName, cameraFeed);
           }
           while(playerfront.getYPos() != playerrear.getYPos() && playerfront.getXPos() < playerrear.getXPos()) {
-            waitKey(33);
+            cv::waitKey(33);
             if(case1(playerfront, playerrear) || case2(playerfront, playerrear)) {
               myData("L", serial);
-              capture.read(cameraFeed);
+              capture.cv::read(cameraFeed);
               myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-              imshow(windowName, cameraFeed);
+              cv::imshow(windowName, cameraFeed);
             } else {
               myData("R", serial);
-              capture.read(cameraFeed);
+              capture.cv::read(cameraFeed);
               myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-              imshow(windowName, cameraFeed);
+              cv::imshow(windowName, cameraFeed);
             }
           }
           while(playerfront.getXPos() < ball.getXPos()) {
-            waitKey(33);
+            cv::waitKey(33);
             myData("F", serial);
-            capture.read(cameraFeed);
+            capture.cv::read(cameraFeed);
             myFunc(cameraFeed, playerfront, playerrear, ball, goal);
-            imshow(windowName, cameraFeed);
+            cv::imshow(windowName, cameraFeed);
           }
         }
       }
-      imshow(windowName, cameraFeed);
+      cv::imshow(windowName, cameraFeed);
     }
 
     // show frames
-    // imshow(windowName2,threshold);
+    // cv::imshow(windowName2,cv::threshold);
 
-    // imshow(windowName1,HSV);
+    // cv::imshow(windowName1,HSV);
 
     // delay 30ms so that screen can refresh.
-    // image will not appear without this waitKey() command
-    if(waitKey(30) == 27)
+    // image will not appear without this cv::waitKey() command
+    if(cv::waitKey(30) == 27)
       break;
   }
   myData("E", serial);
@@ -493,34 +493,34 @@ main(int argc, char* argv[]) {
 
 void
 myFunc(cv::Mat& cameraFeed, Entity& playerfront, Entity& playerrear, Entity& ball, Entity& goal) {
-  cv::Mat HSV, threshold;
+  cv::Mat HSV, cv::threshold;
   // name the entity
   // playerfront
-  cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
-  inRange(HSV, playerfront.getHSVmin(), playerfront.getHSVmax(),
-          threshold); // enter the range of hsv for the object
-  morphOps(threshold);
-  trackFilteredObject(playerfront, threshold, HSV,
+  cv::cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
+  cv::inRange(HSV, playerfront.getHSVmin(), playerfront.getHSVmax(),
+          cv::threshold); // enter the range of hsv for the object
+  morphOps(cv::threshold);
+  trackFilteredObject(playerfront, cv::threshold, HSV,
                       cameraFeed); // passes the object to the tracking function //playerrear
-  cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
-  inRange(HSV, playerrear.getHSVmin(), playerrear.getHSVmax(),
-          threshold); // enter the range of hsv for the object
-  morphOps(threshold);
-  trackFilteredObject(playerrear, threshold, HSV,
+  cv::cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
+  cv::inRange(HSV, playerrear.getHSVmin(), playerrear.getHSVmax(),
+          cv::threshold); // enter the range of hsv for the object
+  morphOps(cv::threshold);
+  trackFilteredObject(playerrear, cv::threshold, HSV,
                       cameraFeed); // passes the object to the tracking function
   // ball
-  cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
-  inRange(HSV, goal.getHSVmin(), goal.getHSVmax(),
-          threshold); // enter the range of hsv for the object
-  morphOps(threshold);
-  trackFilteredObject(goal, threshold, HSV,
+  cv::cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
+  cv::inRange(HSV, goal.getHSVmin(), goal.getHSVmax(),
+          cv::threshold); // enter the range of hsv for the object
+  morphOps(cv::threshold);
+  trackFilteredObject(goal, cv::threshold, HSV,
                       cameraFeed); // passes the object to the tracking function
   // goal
-  cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
-  inRange(HSV, ball.getHSVmin(), ball.getHSVmax(),
-          threshold); // enter the range of hsv for the object
-  morphOps(threshold);
-  trackFilteredObject(ball, threshold, HSV,
+  cv::cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
+  cv::inRange(HSV, ball.getHSVmin(), ball.getHSVmax(),
+          cv::threshold); // enter the range of hsv for the object
+  morphOps(cv::threshold);
+  trackFilteredObject(ball, cv::threshold, HSV,
                       cameraFeed); // passes the object to the tracking function
 }
 bool
@@ -564,31 +564,31 @@ movePlayer(string balld, Entity& playerfront, Entity& playerrear, Entity& ball, 
 // playerrear.getYPos()<10)))
 //    {
 //      myData("L", serial);
-//      capture.read(cameraFeed);
+//      capture.cv::read(cameraFeed);
 //      myFunc(&cameraFeed, playerfront, playerrear, ball, goal);
-//      imshow(windowName2, cameraFeed);
+//      cv::imshow(windowName2, cameraFeed);
 //    }
 //    while (!(playerrear.getXPos() == ball.getXPos()))
 //    {
 //      myData("F", serial);
-//      capture.read(cameraFeed);
+//      capture.cv::read(cameraFeed);
 //      myFunc(&cameraFeed,  playerfront, playerrear, ball, goal);
-//      imshow(windowName2, cameraFeed);
+//      cv::imshow(windowName2, cameraFeed);
 //    }
 //    while (!((playerrear.getYPos() - playerfront.getYPos() > 0) && (playerfront.getXPos() -
 // playerrear.getXPos()<10)))
 //    {
 //      myData("R", serial);
-//      capture.read(cameraFeed);
+//      capture.cv::read(cameraFeed);
 //      myFunc(&cameraFeed,  playerfront, playerrear, ball, goal);
-//      imshow(windowName2, cameraFeed);
+//      cv::imshow(windowName2, cameraFeed);
 //    }
 //    while (!(playerfront.getYPos() == ball.getYPos() - 5))
 //    {
 //      myData("F", serial);
-//      capture.read(cameraFeed);
+//      capture.cv::read(cameraFeed);
 //      myFunc(&cameraFeed,  playerfront, playerrear, ball, goal);
-//      imshow(windowName2, cameraFeed);
+//      cv::imshow(windowName2, cameraFeed);
 //
 //    }
 //  }
@@ -606,26 +606,26 @@ movePlayer(string balld, Entity& playerfront, Entity& playerrear, Entity& ball, 
 //    //stop
 //    if (!((playerrear.getXPos() - playerfront.getXPos() > 0) && (playerfront.getYPos() -
 // playerrear.getYPos()<10))) {       myData("L", serial);
-//      //capture.read(cameraFeed);
+//      //capture.cv::read(cameraFeed);
 //      //myFunc(&cameraFeed,  playerfront, playerrear, ball, goal);
 //
 //    }
 //    while (!(playerrear.getXPos() == ball.getXPos())) {
 //      myData("F", serial);
-//      capture.read(cameraFeed);
+//      capture.cv::read(cameraFeed);
 //      myFunc(&cameraFeed,  playerfront, playerrear, ball, goal);
-//      imshow(windowName2, cameraFeed);
+//      cv::imshow(windowName2, cameraFeed);
 //    }
 //    while (!((playerfront.getYPos() - playerrear.getYPos() > 0) && (playerfront.getXPos() -
-// playerrear.getXPos()<10))) {       myData("L", serial);       capture.read(cameraFeed);
-// myFunc(&cameraFeed,  playerfront,  playerrear, ball, goal);       imshow(windowName2,
+// playerrear.getXPos()<10))) {       myData("L", serial);       capture.cv::read(cameraFeed);
+// myFunc(&cameraFeed,  playerfront,  playerrear, ball, goal);       cv::imshow(windowName2,
 // cameraFeed);
 //    }
 //    while (!(playerfront.getYPos() == ball.getYPos() - 5)) {
 //      myData("F", serial);
-//      capture.read(cameraFeed);
+//      capture.cv::read(cameraFeed);
 //      myFunc(&cameraFeed,  playerfront, playerrear, ball, goal);
-//      imshow(windowName2, cameraFeed);
+//      cv::imshow(windowName2, cameraFeed);
 //    }
 //  }
 //  //if direction is southeast x and y both are increased until they match
@@ -642,26 +642,26 @@ movePlayer(string balld, Entity& playerfront, Entity& playerrear, Entity& ball, 
 //    //go forward until ball's y coordinate == car's y coordinate
 //    //stop
 //    while (!((playerfront.getXPos() - playerrear.getXPos() > 0) && (playerfront.getYPos() ==
-// playerrear.getYPos()))) {       myData("R", serial);       capture.read(cameraFeed);
+// playerrear.getYPos()))) {       myData("R", serial);       capture.cv::read(cameraFeed);
 // myFunc(&cameraFeed,  playerfront,
-// playerrear, ball, goal);       imshow(windowName2, cameraFeed);
+// playerrear, ball, goal);       cv::imshow(windowName2, cameraFeed);
 //    }
 //    while (!(playerrear.getXPos() == ball.getXPos())) {
 //      myData("F", serial);
-//      capture.read(cameraFeed);
+//      capture.cv::read(cameraFeed);
 //      myFunc(&cameraFeed,  playerfront, playerrear, ball, goal);
-//      imshow(windowName2, cameraFeed);
+//      cv::imshow(windowName2, cameraFeed);
 //    }
 //    while (!((playerfront.getYPos() - playerrear.getYPos() > 0) && (playerfront.getXPos() ==
-// playerrear.getXPos()))) {       myData("R", serial);       capture.read(cameraFeed);
+// playerrear.getXPos()))) {       myData("R", serial);       capture.cv::read(cameraFeed);
 // myFunc(&cameraFeed,  playerfront,
-// playerrear, ball, goal);       imshow(windowName2, cameraFeed);
+// playerrear, ball, goal);       cv::imshow(windowName2, cameraFeed);
 //    }
 //    while (!(playerfront.getYPos() == ball.getYPos() - 5)) {
 //      myData("F", serial);
-//      capture.read(cameraFeed);
+//      capture.cv::read(cameraFeed);
 //      myFunc(&cameraFeed,  playerfront, playerrear, ball, goal);
-//      imshow(windowName2, cameraFeed);
+//      cv::imshow(windowName2, cameraFeed);
 //    }
 //  }
 //  //if direction is northeast x is increased and y is decreased until they match
@@ -678,26 +678,26 @@ movePlayer(string balld, Entity& playerfront, Entity& playerrear, Entity& ball, 
 //    //go forward until ball's y coordinate == car's y coordinate
 //    //stop
 //    while (!((playerfront.getXPos() - playerrear.getXPos() > 0) && (playerfront.getYPos() ==
-// playerrear.getYPos()))) {       myData("R", serial);       capture.read(cameraFeed);
+// playerrear.getYPos()))) {       myData("R", serial);       capture.cv::read(cameraFeed);
 // myFunc(&cameraFeed,  playerfront,
-// playerrear, ball, goal);       imshow(windowName2, cameraFeed);
+// playerrear, ball, goal);       cv::imshow(windowName2, cameraFeed);
 //    }
 //    while (!(playerrear.getXPos() == ball.getXPos())) {
 //      myData("F", serial);
-//      capture.read(cameraFeed);
+//      capture.cv::read(cameraFeed);
 //      myFunc(&cameraFeed,  playerfront, playerrear, ball, goal);
-//      imshow(windowName2, cameraFeed);
+//      cv::imshow(windowName2, cameraFeed);
 //    }
 //    while (!((playerrear.getYPos() - playerfront.getYPos() > 0) && (playerfront.getXPos() ==
-// playerrear.getXPos()))) {       myData("L", serial);       capture.read(cameraFeed);
+// playerrear.getXPos()))) {       myData("L", serial);       capture.cv::read(cameraFeed);
 // myFunc(&cameraFeed,  playerfront,
-// playerrear, ball, goal);       imshow(windowName2, cameraFeed);
+// playerrear, ball, goal);       cv::imshow(windowName2, cameraFeed);
 //    }
 //    while (!(playerfront.getYPos() == ball.getYPos() - 5)) {
 //      myData("F", serial);
-//      capture.read(cameraFeed);
+//      capture.cv::read(cameraFeed);
 //      myFunc(&cameraFeed,  playerfront, playerrear, ball, goal);
-//      imshow(windowName2, cameraFeed);
+//      cv::imshow(windowName2, cameraFeed);
 //    }
 //  }
 //}

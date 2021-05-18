@@ -1,5 +1,5 @@
 // Yannick Verdie 2010
-// --- Please read help() below: ---
+// --- Please cv::read help() below: ---
 
 #include <iostream>
 #include <vector>
@@ -20,7 +20,7 @@
 #endif
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 static void
 help() {
@@ -112,15 +112,15 @@ initPOSIT(std::vector<Cvcv::Point3D32f>* modelcv::Points) {
 
 static void
 foundCorners(std::vector<Cvcv::Point2D32f>* srcImagecv::Points, const cv::Mat& source, cv::Mat& grayImage) {
-  cvtColor(source, grayImage, COLOR_RGB2GRAY);
-  GaussianBlur(grayImage, grayImage, Size(11, 11), 0, 0);
-  normalize(grayImage, grayImage, 0, 255, NORM_MINMAX);
-  threshold(grayImage, grayImage, 26, 255, THRESH_BINARY_INV); // 25
+  cv::cvtColor(source, grayImage, cv::COLOR_RGB2GRAY);
+  cv::GaussianBlur(grayImage, grayImage, cv::Size(11, 11), 0, 0);
+  cv::normalize(grayImage, grayImage, 0, 255, NORM_MINMAX);
+  cv::threshold(grayImage, grayImage, 26, 255, THRESH_BINARY_INV); // 25
 
   cv::Mat MgrayImage = grayImage;
   std::vector<std::vector<cv::Point>> contours;
-  std::vector<Vec4i> hierarchy;
-  findContours(MgrayImage, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
+  std::vector<cv::Vec4i> hierarchy;
+  cv::findContours(MgrayImage, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
 
   cv::Point p;
   std::vector<Cvcv::Point2D32f> srcImagecv::Points_temp(4, cvcv::Point2D32f(0, 0));
@@ -172,8 +172,8 @@ foundCorners(std::vector<Cvcv::Point2D32f>* srcImagecv::Points, const cv::Mat& s
     stringstream ss;
     for(size_t i = 0; i < srcImagecv::Points_temp.size(); i++) {
       ss << i;
-      circle(Msource, srcImagecv::Points->at(i), 5, Scalar(0, 0, 255));
-      putText(Msource, ss.str(), srcImagecv::Points->at(i), FONT_HERSHEY_SIMPLEX, 1, Scalar(0, 0, 255));
+      cv::circle(Msource, srcImagecv::Points->at(i), 5, cv::Scalar(0, 0, 255));
+      cv::putText(Msource, ss.str(), srcImagecv::Points->at(i), FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 0, 255));
       ss.str("");
 
       // new coordinate system in the middle of the frame and reversed (camera coordinate system)
@@ -203,7 +203,7 @@ main(void) {
   help();
 
   string fileName = "cube4.avi";
-  VideoCapture video(fileName);
+  cv::VideoCapture video(fileName);
   if(!video.isOpened()) {
     cerr << "Video file " << fileName << " could not be opened" << endl;
     return EXIT_FAILURE;
@@ -212,11 +212,11 @@ main(void) {
   cv::Mat source, grayImage;
   video >> source;
 
-  namedWindow("Original", WINDOW_AUTOSIZE | cv::WINDOW_FREERATIO);
-  namedWindow("POSIT", WINDOW_OPENGL | cv::WINDOW_FREERATIO);
-  resizeWindow("POSIT", source.cols, source.rows);
+  cv::namedWindow("Original", cv::WINDOW_AUTOSIZE | cv::WINDOW_FREERATIO);
+  cv::namedWindow("POSIT", WINDOW_OPENGL | cv::WINDOW_FREERATIO);
+  cv::resizeWindow("POSIT", source.cols, source.rows);
 
-  displayOverlay("POSIT",
+  cv::displayOverlay("POSIT",
                  "We lost the 4 corners' detection quite often (the red circles disappear).\n"
                  "This demo is only to illustrate how to use OpenGL callback.\n"
                  " -- Press ESC to exit.",
@@ -237,12 +237,12 @@ main(void) {
   CvTermCriteria criteria = cvTermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 100, 1e-4f);
   std::vector<Cvcv::Point2D32f> srcImagecv::Points(4, cvcv::Point2D32f(0, 0));
 
-  while(waitKey(33) != 27) {
+  while(cv::waitKey(33) != 27) {
     video >> source;
     if(source.empty())
       break;
 
-    imshow("Original", source);
+    cv::imshow("Original", source);
 
     foundCorners(&srcImagecv::Points, source, grayImage);
     cvPOSIT(positObject, &srcImagecv::Points[0], FOCAL_LENGTH, criteria, rotation_matrix, translation_std::vector);
@@ -255,7 +255,7 @@ main(void) {
   }
 
   setOpenGlDrawCallback("POSIT", NULL, NULL);
-  destroyAllWindows();
+  cv::destroyAllWindows();
   cvReleasePOSITObject(&positObject);
 
   delete[] rotation_matrix;

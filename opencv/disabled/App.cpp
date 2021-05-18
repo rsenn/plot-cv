@@ -59,9 +59,9 @@ public:
     float ratio = landscape ? float(bg.height) / bg.width : float(bg.width) / bg.height;
 
     if(landscape) {
-      bg.resize(600, 600 * ratio);
+      bg.cv::resize(600, 600 * ratio);
     } else {
-      bg.resize(600 * ratio, 600);
+      bg.cv::resize(600 * ratio, 600);
     }
   }
 
@@ -76,9 +76,9 @@ public:
     rgb.setFromPixels(img.getPixelsRef());
     grey = rgb;
     grey.brightnessContrast(0, .5);
-    // grey.threshold(5);
+    // grey.cv::threshold(5);
     grey.mirror(true, false);
-    contours.findContours(grey, 10, img.width * img.height / 2, 200, true);
+    contours.cv::findContours(grey, 10, img.width * img.height / 2, 200, true);
     for(int i = 0; i < contours.blobs.size(); i++) {
       std::vector<ofcv::Point>& pts = contours.blobs[i].pts;
       path.moveTo(pts[0]);
@@ -143,9 +143,9 @@ public:
     std::vector<ofPolyline> lines;
     for(int i = 0; i < blobs.size(); i++) {
       std::vector<ofcv::Point>& pts = blobs[i].pts;
-      ofPolyline line;
-      for(int j = 0; j < pts.size(); j++) { line.lineTo(pts[j].x, pts[j].y); }
-      lines.push_back(line);
+      ofPolyline cv::line;
+      for(int j = 0; j < pts.size(); j++) { cv::line.lineTo(pts[j].x, pts[j].y); }
+      lines.push_back(cv::line);
     }
     return lines;
   }
@@ -155,7 +155,7 @@ public:
     for(int i = 0; i < m.getNumIndices() / 2; i++) {
       ofIndexType& first = m.getIndices()[i];
       ofIndexType& last = m.getIndices()[m.getNumIndices() - 1 - i];
-      swap(first, last);
+      cv::swap(first, last);
     }
   }
 

@@ -1,19 +1,19 @@
 #include <opencv2/opencv.hpp>
 #include <unistd.h>
-using namespace cv;
+//using namespace cv;
 
 Mat
-cameraCapture(VideoCapture& cap) {
-  Mat img;
+cameraCapture(cv::VideoCapture& cap) {
+  cv::Mat img;
   cap >> img;
-  Mat img_filtered = Mat::zeros(img.size(), img.type());
-  medianBlur(img, img_filtered, 5);
+  cv::Mat img_filtered = cv::Mat::zeros(img.size(), img.type());
+  cv::medianBlur(img, img_filtered, 5);
   return img_filtered;
 }
 
 int
 main(int argc, char** argv) {
-  VideoCapture cap;
+  cv::VideoCapture cap;
 
   double k = 0.9;
 
@@ -21,23 +21,23 @@ main(int argc, char** argv) {
     return 0;
   }
 
-  Mat ref = cameraCapture(cap);
+  cv::Mat ref = cameraCapture(cap);
 
   while(true) {
 
-    Mat current = cameraCapture(cap);
+    cv::Mat current = cameraCapture(cap);
 
-    Mat diff = Mat::zeros(ref.size(), ref.type());
-    absdiff(ref, current, diff);
-    threshold(diff, diff, 20, 1, THRESH_BINARY);
-    float different_pixels = sum(diff)[0];
+    cv::Mat diff = cv::Mat::zeros(ref.size(), ref.type());
+    cv::absdiff(ref, current, diff);
+    cv::threshold(diff, diff, 20, 1, THRESH_BINARY);
+    float different_pixels = cv::sum(diff)[0];
     std::cout << "Detected " << different_pixels << " different pixels";
 
-    // imshow("Current", current);
+    // cv::imshow("Current", current);
     if(different_pixels > 100) {
       std::cout << "   [Intruder alert!!]" << std::endl;
-      imshow("Intruder", current);
-      waitKey(1);
+      cv::imshow("Intruder", current);
+      cv::waitKey(1);
     } else {
       std::cout << std::endl;
     }
@@ -46,7 +46,7 @@ main(int argc, char** argv) {
     usleep(100000);
   }
 
-  while(waitKey(1) != 27) {}
+  while(cv::waitKey(1) != 27) {}
 
   return 0;
 }

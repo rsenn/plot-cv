@@ -4,7 +4,7 @@
 #include <jni.h>
 #include <sys/time.h>
 #include <time.h>
-#include <android/log.h>
+#include <android/cv::log.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -87,9 +87,9 @@ engine_draw_frame(Engine* engine, const cv::Mat& frame) {
       memset(pixels, 0, left_indent * sizeof(int32_t));
       memset(pixels + left_indent + frame.cols, 0, (buffer.stride - frame.cols - left_indent) * sizeof(int32_t));
     }
-    int32_t* line = pixels + left_indent;
+    int32_t* cv::line = pixels + left_indent;
     size_t line_size = frame.cols * 4 * sizeof(unsigned char);
-    memcpy(line, frame.ptr<unsigned char>(yy), line_size);
+    memcpy(cv::line, frame.ptr<unsigned char>(yy), line_size);
     // go to next line
     pixels += buffer.stride;
   }
@@ -132,7 +132,7 @@ engine_handle_cmd(android_app* app, int32_t cmd) {
 
         if(ANativeWindow_setBuffersGeometry(
                app->window, (int)(view_width / scale), int(view_height / scale), WINDOW_FORMAT_RGBA_8888) < 0) {
-          LOGE("Cannot set pixel format!");
+          LOGE("Cannot set pixel cv::format!");
           return;
         }
 

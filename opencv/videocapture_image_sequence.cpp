@@ -4,17 +4,17 @@
 
 #include <iostream>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 static void
 help(char** argv) {
-  cout << "\nThis sample shows you how to read a sequence of images using the VideoCapture "
+  cout << "\nThis sample shows you how to cv::read a sequence of images using the cv::VideoCapture "
           "interface.\n"
        << "Usage: " << argv[0] << " <image_mask> (example mask: example_%02d.jpg)\n"
-       << "Image mask defines the name variation for the input images that have to be read as a "
+       << "Image mask defines the name variation for the input images that have to be cv::read as a "
           "sequence. \n"
-       << "Using the mask example_%02d.jpg will read in images labeled as 'example_00.jpg', "
+       << "Using the mask example_%02d.jpg will cv::read in images labeled as 'example_00.jpg', "
           "'example_01.jpg', etc."
        << endl;
 }
@@ -29,15 +29,15 @@ main(int argc, char** argv) {
     return 1;
   }
 
-  VideoCapture sequence(first_file);
+  cv::VideoCapture sequence(first_file);
 
   if(!sequence.isOpened()) {
     cerr << "Failed to open the image sequence!\n" << endl;
     return 1;
   }
 
-  Mat image;
-  namedWindow("Image sequence | press ESC to close", 1);
+  cv::Mat image;
+  cv::namedWindow("Image sequence | press ESC to close", 1);
 
   for(;;) {
     // Read in image from sequence
@@ -49,9 +49,9 @@ main(int argc, char** argv) {
       break;
     }
 
-    imshow("Image sequence | press ESC to close", image);
+    cv::imshow("Image sequence | press ESC to close", image);
 
-    if(waitKey(500) == 27)
+    if(cv::waitKey(500) == 27)
       break;
   }
 

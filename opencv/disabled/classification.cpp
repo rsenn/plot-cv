@@ -1,7 +1,7 @@
 #include <fstream>
 #include <sstream>
 
-#include <opencv2/dnn.hpp>
+#include <opencv2/cv::dnn.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 
@@ -27,21 +27,21 @@ std::string keys = "{ help  h     | | Print help message. }"
                    "2: OpenCL fp16 (half-float precision), "
                    "3: VPU }";
 
-using namespace cv;
-using namespace dnn;
+//using namespace cv;
+using namespace cv::dnn;
 
 std::vector<std::string> classes;
 
 int
 main(int argc, char** argv) {
-  CommandLineParser parser(argc, argv, keys);
+  cv::CommandLineParser parser(argc, argv, keys);
 
-  const std::string modelName = parser.get<String>("@alias");
-  const std::string zooFile = parser.get<String>("zoo");
+  const std::string modelName = parser.get<cv::String>("@alias");
+  const std::string zooFile = parser.get<cv::String>("zoo");
 
   keys += genPreprocArguments(modelName, zooFile);
 
-  parser = CommandLineParser(argc, argv, keys);
+  parser = cv::CommandLineParser(argc, argv, keys);
   parser.about("Use this script to run classification deep learning networks using OpenCV.");
   if(argc == 1 || parser.has("help")) {
     parser.printMessage();
@@ -49,24 +49,24 @@ main(int argc, char** argv) {
   }
 
   float scale = parser.get<float>("scale");
-  Scalar mean = parser.get<Scalar>("mean");
+  cv::Scalar cv::mean = parser.get<Scalar>("mean");
   bool swapRB = parser.get<bool>("rgb");
   int inpWidth = parser.get<int>("width");
   int inpHeight = parser.get<int>("height");
-  String model = findFile(parser.get<String>("model"));
-  String config = findFile(parser.get<String>("config"));
-  String framework = parser.get<String>("framework");
+  cv::String model = findFile(parser.get<String>("model"));
+  cv::String config = findFile(parser.get<String>("config"));
+  cv::String framework = parser.get<String>("framework");
   int backendId = parser.get<int>("backend");
   int targetId = parser.get<int>("target");
 
   // Open file with classes names.
   if(parser.has("classes")) {
-    std::string file = parser.get<String>("classes");
+    std::string file = parser.get<cv::String>("classes");
     std::ifstream ifs(file.c_str());
     if(!ifs.is_open())
-      CV_Error(Error::StsError, "File " + file + " not found");
-    std::string line;
-    while(std::getline(ifs, line)) { classes.push_back(line); }
+      CV_Error(cv::Error::StsError, "File " + file + " not found");
+    std::string cv::line;
+    while(std::getline(ifs, cv::line)) { classes.push_back(line); }
   }
 
   if(!parser.check()) {
@@ -83,55 +83,55 @@ main(int argc, char** argv) {
 
   // Create a window
   static const std::string kWinName = "Deep learning image classification in OpenCV";
-  namedWindow(kWinName, WINDOW_NORMAL);
+  cv::namedWindow(kWinName, WINDOW_NORMAL);
 
   //! [Open a video file or an image file or a camera stream]
-  VideoCapture cap;
+  cv::VideoCapture cap;
   if(parser.has("input"))
-    cap.open(parser.get<String>("input"));
+    cap.open(parser.get<cv::String>("input"));
   else
     cap.open(0);
   //! [Open a video file or an image file or a camera stream]
 
   // Process frames.
-  Mat frame, blob;
-  while(waitKey(1) < 0) {
+  cv::Mat frame, blob;
+  while(cv::waitKey(1) < 0) {
     cap >> frame;
     if(frame.empty()) {
-      waitKey();
+      cv::waitKey();
       break;
     }
 
     //! [Create a 4D blob from a frame]
-    blobFromImage(frame, blob, scale, Size(inpWidth, inpHeight), mean, swapRB, false);
+    blobFromImage(frame, blob, scale, cv::Size(inpWidth, inpHeight), cv::mean, swapRB, false);
     //! [Create a 4D blob from a frame]
 
     //! [Set input blob]
     net.setInput(blob);
     //! [Set input blob]
     //! [Make forward pass]
-    Mat prob = net.forward();
+    cv::Mat prob = net.forward();
     //! [Make forward pass]
 
     //! [Get a class with a highest score]
-    Point classIdPoint;
+    cv::Point classIdPoint;
     double confidence;
-    minMaxLoc(prob.reshape(1, 1), 0, &confidence, 0, &classIdPoint);
+    cv::minMaxLoc(prob.reshape(1, 1), 0, &confidence, 0, &classIdPoint);
     int classId = classIdPoint.x;
     //! [Get a class with a highest score]
 
     // Put efficiency information.
     std::vector<double> layersTimes;
-    double freq = getTickFrequency() / 1000;
+    double freq = cv::getTickFrequency() / 1000;
     double t = net.getPerfProfile(layersTimes) / freq;
-    std::string label = format("Inference time: %.2f ms", t);
-    putText(frame, label, Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0));
+    std::string label = cv::format("Inference time: %.2f ms", t);
+    cv::putText(frame, label, cv::Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0));
 
     // Print predicted class.
-    label = format("%s: %.4f", (classes.empty() ? format("Class #%d", classId).c_str() : classes[classId].c_str()), confidence);
-    putText(frame, label, Point(0, 40), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0));
+    label = cv::format("%s: %.4f", (classes.empty() ? cv::format("Class #%d", classId).c_str() : classes[classId].c_str()), confidence);
+    cv::putText(frame, label, cv::Point(0, 40), FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0));
 
-    imshow(kWinName, frame);
+    cv::imshow(kWinName, frame);
   }
   return 0;
 }

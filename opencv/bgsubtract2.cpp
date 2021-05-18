@@ -12,13 +12,13 @@
 #include <time.h>
 #include <limits.h>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 void
 printusage() {
   cout << "Usage:\n";
-  cout << "  ./bgsubtract2 /var/www/output.mjpeg			will write at given location\n";
+  cout << "  ./bgsubtract2 /var/www/output.mjpeg			will cv::write at given location\n";
   cout << "  ./bgsubtract2 /var/www/output.mjpeg -bgs		showing background subtraction\n";
   cout << endl;
 }
@@ -50,7 +50,7 @@ main(int argc, char** argv) {
 
   int camIndex = 0;
   for(int i = 0; i < 5; i++) {
-    VideoCapture tmpCap(i);
+    cv::VideoCapture tmpCap(i);
     if(tmpCap.isOpened()) {
       camIndex = i;
       tmpCap.release();
@@ -61,7 +61,7 @@ main(int argc, char** argv) {
   }
 
   camIndex = 0;
-  VideoCapture cap(camIndex);
+  cv::VideoCapture cap(camIndex);
 
   if(!cap.isOpened()) {
     cout << "ERROR: /dev/video" << camIndex << " fails to open!\n";
@@ -84,11 +84,11 @@ main(int argc, char** argv) {
   double fps;
   // fps counter end
 
-  Mat foreground;
+  cv::Mat foreground;
 
   if(displayWindows)
-    namedWindow("Source", 1);
-  //	if (displayWindows && doBGS) namedWindow("Background Subtraction", 1);
+    cv::namedWindow("Source", 1);
+  //	if (displayWindows && doBGS) cv::namedWindow("Background Subtraction", 1);
 
   unsigned int codec_id = CV_FOURCC('D', 'I', 'V', 'X');
   codec_id = CV_FOURCC('M', 'J', 'P', 'G');
@@ -97,39 +97,39 @@ main(int argc, char** argv) {
   //	codec_id = CV_FOURCC('U','2','6','3');
 
   // quit if ESC is pressed
-  while((waitKey(10) & 255) != 27) {
+  while((cv::waitKey(10) & 255) != 27) {
     if(counter == 0) {
       time(&start);
     }
-    Mat output;
-    Mat frame;
+    cv::Mat output;
+    cv::Mat frame;
     cap >> frame; // get a new frame from camera
 
-    Mat frameResized;
-    resize(frame, frameResized, Size(imgSizeX, imgSizeY));
+    cv::Mat frameResized;
+    cv::resize(frame, frameResized, cv::Size(imgSizeX, imgSizeY));
 
     output = frameResized;
-    Mat gray;
+    cv::Mat gray;
     cv::cvtColor(output, gray, cv::COLOR_BGR2GRAY);
 
     output = gray;
 
     if(displayWindows)
-      imshow("Output to sent", output);
+      cv::imshow("Output to sent", output);
 
     isOutputColored = false;
     if(writeOut) {
 
       // DON'T mind the following warning
-      // OpenCV: FFMPEG: tag 0x47504a4d/'MJPG' is not supported with codec id 8 and format 'mjpeg /
+      // OpenCV: FFMPEG: tag 0x47504a4d/'MJPG' is not supported with codec id 8 and cv::format 'mjpeg /
       // raw MJPEG video' it should work anyways = after running mjpg_streamer and show it on
       // another pc via javascript
 
-      VideoWriter outStream(outFile, codec_id, 2, Size(imgSizeX, imgSizeY), isOutputColored);
+      cv::VideoWriter outStream(outFile, codec_id, 2, cv::Size(imgSizeX, imgSizeY), isOutputColored);
       if(outStream.isOpened()) {
-        outStream.write(output);
+        outStream.cv::write(output);
       } else {
-        cout << "ERROR: Can't write to " << outFile << "!\n";
+        cout << "ERROR: Can't cv::write to " << outFile << "!\n";
         return -1;
       }
     }

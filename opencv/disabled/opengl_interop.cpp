@@ -1,5 +1,5 @@
 /*
-// Sample demonstrating interoperability of OpenCV UMat with OpenGL texture.
+// Sample demonstrating interoperability of OpenCV cv::UMat with OpenGL texture.
 // At first, the data obtained from video file or camera and placed onto
 // OpenGL texture, following mapping of this OpenGL texture to OpenCV UMat
 // and call cv::Blur function. The result is mapped back to OpenGL texture
@@ -21,7 +21,7 @@
 
 #include "opencv2/core.hpp"
 #include "opencv2/core/opengl.hpp"
-#include "opencv2/core/ocl.hpp"
+#include "opencv2/core/cv::ocl.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/videoio.hpp"
 
@@ -137,7 +137,7 @@ public:
     m_hDC = GetDC(m_hWnd);
 
     if(setup_pixel_format() != 0) {
-      std::cerr << "Can't setup pixel format" << std::endl;
+      std::cerr << "Can't setup pixel cv::format" << std::endl;
       return -1;
     }
 
@@ -154,7 +154,7 @@ public:
     glViewport(0, 0, m_width, m_height);
 
     if(cv::ocl::haveOpenCL()) {
-      (void)cv::ogl::ocl::initializeContextFromGL();
+      (void)cv::ogl::cv::ocl::initializeContextFromGL();
     }
 
     m_oclDevName = cv::ocl::useOpenCL() ? cv::ocl::Context::getDefault().device(0).name() : (char*)"No OpenCL device";
@@ -164,7 +164,7 @@ public:
 
   int
   get_frame(cv::ogl::Texture2D& texture, cv::ogl::Buffer& buffer, bool do_buffer) {
-    if(!m_cap.read(m_frame_bgr))
+    if(!m_cap.cv::read(m_frame_bgr))
       return -1;
 
     cv::cvtColor(m_frame_bgr, m_frame_rgba, CV_RGB2RGBA);
@@ -318,7 +318,7 @@ protected:
       texture.copyTo(m);
 
     if(m_demo_processing) {
-      // blur texture image with OpenCV on CPU
+      // cv::blur texture image with OpenCV on CPU
       cv::blur(m, m, cv::Size(15, 15), cv::Point(-7, -7));
     }
 
@@ -342,7 +342,7 @@ protected:
       cv::ogl::convertFromGLTexture2D(texture, u);
 
     if(m_demo_processing) {
-      // blur texture image with OpenCV on GPU with OpenCL
+      // cv::blur texture image with OpenCV on GPU with OpenCL
       cv::blur(u, u, cv::Size(15, 15), cv::Point(-7, -7));
     }
 
@@ -459,7 +459,7 @@ static const char* keys = {"{c camera | true  | use camera or not}"
                            "{f file   |       | movie file name  }"
                            "{h help   | false | print help info  }"};
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 int

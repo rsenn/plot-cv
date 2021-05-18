@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 static void
@@ -28,27 +28,27 @@ help() {
 }
 
 static void
-colorizeDisparity(const Mat& gray, Mat& rgb, double maxDisp = -1.f) {
+colorizeDisparity(const cv::Mat& gray, cv::Mat& rgb, double maxDisp = -1.f) {
   CV_Assert(!gray.empty());
   CV_Assert(gray.type() == CV_8UC1);
 
   if(maxDisp <= 0) {
     maxDisp = 0;
-    minMaxLoc(gray, 0, &maxDisp);
+    cv::minMaxLoc(gray, 0, &maxDisp);
   }
 
   rgb.create(gray.size(), CV_8UC3);
-  rgb = Scalar::all(0);
+  rgb = cv::Scalar::all(0);
   if(maxDisp < 1)
     return;
 
-  Mat tmp;
-  convertScaleAbs(gray, tmp, 255.f / maxDisp);
-  applyColorMap(tmp, rgb, COLORMAP_JET);
+  cv::Mat tmp;
+  cv::convertScaleAbs(gray, tmp, 255.f / maxDisp);
+  cv::applyColorMap(tmp, rgb, COLORMAP_JET);
 }
 
 static float
-getMaxDisparity(VideoCapture& capture) {
+getMaxDisparity(cv::VideoCapture& capture) {
   const int minDistance = 400;                                           // mm
   float b = (float)capture.get(CAP_OPENNI_DEPTH_GENERATOR_BASELINE);     // mm
   float F = (float)capture.get(CAP_OPENNI_DEPTH_GENERATOR_FOCAL_LENGTH); // pixels
@@ -135,7 +135,7 @@ main(int argc, char* argv[]) {
   parseCommandLine(argc, argv, isColorizeDisp, isFixedMaxDisp, imageMode, retrievedImageFlags, filename, isVideoReading);
 
   cout << "Device opening ..." << endl;
-  VideoCapture capture;
+  cv::VideoCapture capture;
   if(isVideoReading)
     capture.open(filename);
   else {
@@ -160,7 +160,7 @@ main(int argc, char* argv[]) {
       // The following modes are only supported by the Xtion Pro Live
       case 3: modeRes = capture.set(CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CAP_OPENNI_QVGA_30HZ); break;
       case 4: modeRes = capture.set(CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CAP_OPENNI_QVGA_60HZ); break;
-      default: CV_Error(Error::StsBadArg, "Unsupported image mode property.\n");
+      default: CV_Error(cv::Error::StsBadArg, "Unsupported image mode property.\n");
     }
     if(!modeRes)
       cout << "\nThis image mode is not supported by the device, the default value "
@@ -214,12 +214,12 @@ main(int argc, char* argv[]) {
   }
 
   for(;;) {
-    Mat depthMap;
-    Mat validDepthMap;
-    Mat disparityMap;
-    Mat bgrImage;
-    Mat grayImage;
-    Mat irImage;
+    cv::Mat depthMap;
+    cv::Mat validDepthMap;
+    cv::Mat disparityMap;
+    cv::Mat bgrImage;
+    cv::Mat grayImage;
+    cv::Mat irImage;
 
     if(!capture.grab()) {
       cout << "Can not grab images." << endl;
@@ -227,40 +227,40 @@ main(int argc, char* argv[]) {
     } else {
       if(retrievedImageFlags[0] && capture.retrieve(depthMap, CAP_OPENNI_DEPTH_MAP)) {
         const float scaleFactor = 0.05f;
-        Mat show;
+        cv::Mat show;
         depthMap.convertTo(show, CV_8UC1, scaleFactor);
-        imshow("depth map", show);
+        cv::imshow("depth map", show);
       }
 
       if(retrievedImageFlags[1] && capture.retrieve(disparityMap, CAP_OPENNI_DISPARITY_MAP)) {
         if(isColorizeDisp) {
-          Mat colorDisparityMap;
+          cv::Mat colorDisparityMap;
           colorizeDisparity(disparityMap, colorDisparityMap, isFixedMaxDisp ? getMaxDisparity(capture) : -1);
-          Mat validColorDisparityMap;
+          cv::Mat validColorDisparityMap;
           colorDisparityMap.copyTo(validColorDisparityMap, disparityMap != 0);
-          imshow("colorized disparity map", validColorDisparityMap);
+          cv::imshow("colorized disparity map", validColorDisparityMap);
         } else {
-          imshow("original disparity map", disparityMap);
+          cv::imshow("original disparity map", disparityMap);
         }
       }
 
       if(retrievedImageFlags[2] && capture.retrieve(validDepthMap, CAP_OPENNI_VALID_DEPTH_MASK))
-        imshow("valid depth mask", validDepthMap);
+        cv::imshow("valid depth mask", validDepthMap);
 
       if(retrievedImageFlags[3] && capture.retrieve(bgrImage, CAP_OPENNI_BGR_IMAGE))
-        imshow("rgb image", bgrImage);
+        cv::imshow("rgb image", bgrImage);
 
       if(retrievedImageFlags[4] && capture.retrieve(grayImage, CAP_OPENNI_GRAY_IMAGE))
-        imshow("gray image", grayImage);
+        cv::imshow("gray image", grayImage);
 
       if(retrievedImageFlags[5] && capture.retrieve(irImage, CAP_OPENNI_IR_IMAGE)) {
-        Mat ir8;
+        cv::Mat ir8;
         irImage.convertTo(ir8, CV_8U, 256.0 / 3500, 0.0);
-        imshow("IR image", ir8);
+        cv::imshow("IR image", ir8);
       }
     }
 
-    if(waitKey(30) >= 0)
+    if(cv::waitKey(30) >= 0)
       break;
   }
 

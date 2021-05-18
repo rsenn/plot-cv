@@ -8,7 +8,7 @@
 
 #include <Blob.h>
 
-#define SHOW_STEPS // un-comment or comment this line to show steps or not
+#define SHOW_STEPS // un-comment or comment this cv::line to show steps or not
 
 // global variables ///////////////////////////////////////////////////////////////////////////////
 const cv::Scalar SCALAR_BLACK = cv::Scalar(0.0, 0.0, 0.0);
@@ -40,19 +40,19 @@ main(int argc, char* argv[]) {
   capVideo.open(argv[1] ? argv[1] : "768x576.avi");
 
   if(!capVideo.isOpened()) {                                           // if unable to open video file
-    std::cout << "error reading video file" << std::endl << std::endl; // show error message
-    getchar();  // it may be necessary to change or remove this line if not using Windows
+    std::cout << "cv::error reading video file" << std::endl << std::endl; // show cv::error message
+    getchar();  // it may be necessary to change or remove this cv::line if not using Windows
     return (0); // and exit program
   }
 
   if(capVideo.get(cv::CAP_PROP_FRAME_COUNT) < 2) {
-    std::cout << "error: video file must have at least two frames";
+    std::cout << "cv::error: video file must have at least two frames";
     getchar();
     return (0);
   }
 
-  capVideo.read(imgFrame1);
-  capVideo.read(imgFrame2);
+  capVideo.cv::read(imgFrame1);
+  capVideo.cv::read(imgFrame2);
 
   char chCheckForEscKey = 0;
 
@@ -110,8 +110,8 @@ main(int argc, char* argv[]) {
 
     drawAndShowContours(imgThresh.size(), convexHulls, "imgConvexHulls");
 
-    for(auto& convexHull : convexHulls) {
-      Blob possibleBlob(convexHull);
+    for(auto& cv::convexHull : convexHulls) {
+      Blob possibleBlob(cv::convexHull);
 
       if(possibleBlob.currentBoundingRect.area() > 100 && possibleBlob.dblCurrentAspectRatio >= 0.2 &&
          possibleBlob.dblCurrentAspectRatio <= 1.25 && possibleBlob.currentBoundingRect.width > 20 &&
@@ -138,7 +138,7 @@ main(int argc, char* argv[]) {
 
     cv::imshow("imgFrame2Copy", imgFrame2Copy);
 
-    // cv::waitKey(0);                 // uncomment this line to go frame by frame for debugging
+    // cv::waitKey(0);                 // uncomment this cv::line to go frame by frame for debugging
 
     // now we prepare for the next iteration
 
@@ -147,7 +147,7 @@ main(int argc, char* argv[]) {
     imgFrame1 = imgFrame2.clone(); // move frame 1 up to where frame 2 is
 
     if((capVideo.get(cv::CAP_PROP_POS_FRAMES) + 1) < capVideo.get(cv::CAP_PROP_FRAME_COUNT)) {
-      capVideo.read(imgFrame2);
+      capVideo.cv::read(imgFrame2);
     } else {
       std::cout << "end of video\n";
       break;
@@ -246,7 +246,7 @@ distanceBetweenPoints(cv::Point point1, cv::Point point2) {
   int intX = abs(point1.x - point2.x);
   int intY = abs(point1.y - point2.y);
 
-  return (sqrt(pow(intX, 2) + pow(intY, 2)));
+  return (sqrt(cv::pow(intX, 2) + cv::pow(intY, 2)));
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

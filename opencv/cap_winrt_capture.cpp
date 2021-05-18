@@ -99,7 +99,7 @@ winrt_onVisibilityChanged(bool visible) {
 
 void
 winrt_imshow() {
-  VideoioBridge::getInstance().imshow();
+  VideoioBridge::getInstance().cv::imshow();
 }
 
 void
@@ -139,7 +139,7 @@ VideoCapture_WinRT::grabFrame() {
 }
 
 // should be called on the image processing thread after grabFrame
-// see VideoCapture::read
+// see cv::VideoCapture::read
 bool
 VideoCapture_WinRT::retrieveFrame(int channel, cv::OutputArray outArray) {
   if(!started) {

@@ -19,8 +19,8 @@ main(void) {
   static constexpr int32_t cam_number = 1;      /**< The number of the camera, the 0 is the built in my computer. */
   static constexpr int32_t cam_width = 640;     /**< Width of the video's resolution. */
   static constexpr int32_t cam_height = 480;    /**< Height of the video's resolution. */
-  static constexpr int32_t threshold_min = 245; /**< Minimum value of the binary threshold. */
-  static constexpr int32_t threshold_max = 255; /**< Maximum value of the binary threshold. */
+  static constexpr int32_t threshold_min = 245; /**< Minimum value of the binary cv::threshold. */
+  static constexpr int32_t threshold_max = 255; /**< Maximum value of the binary cv::threshold. */
 
   /* Look-up table for linear interpolation. If you want to make your own version, you have to
    * re-measure these values.
@@ -40,14 +40,14 @@ main(void) {
   cap.set(cv::CAP_PROP_FRAME_WIDTH, cam_width);
   cap.set(cv::CAP_PROP_FRAME_HEIGHT, cam_height);
 
-  /* If there is a error while opening, abort. */
+  /* If there is a cv::error while opening, abort. */
   if(!cap.isOpened()) {
     std::cerr << "No camera detected!\n";
     return -1;
   }
 
   /* Create the window. */
-  namedWindow("Laser rangefinder", cv::WINDOW_AUTOSIZE);
+  cv::namedWindow("Laser rangefinder", cv::WINDOW_AUTOSIZE);
 
   while(true) {
     try {
@@ -56,7 +56,7 @@ main(void) {
       std::vector<cv::Vec4i> hierarchy;
 
       /* Get a new frame from the camera, convert it to grayscale, then make into black&white with
-       * binary threshold. */
+       * binary cv::threshold. */
       cap >> video;
       cv::cvtColor(video, video_gray, cv::COLOR_RGB2GRAY);
       cv::threshold(video_gray, video_black_white, threshold_min, threshold_max, cv::THRESH_BINARY);
@@ -66,7 +66,7 @@ main(void) {
 
       /* If there are no contours, skip everything, otherwise there would be an exception. */
       if(contours.size()) {
-        /* Get moments. */
+        /* Get cv::moments. */
         cv::Moments m = cv::moments(contours[0]);
         /* Protection from divison by zero. */
         if(m.m00 > 0.0) {
@@ -84,7 +84,7 @@ main(void) {
 
             std::cout << "X: " << coord_x << "\tY: " << coord_y << "\tDistance: " << distance << "\n";
 
-            /* Draw a circle on the laser and put a text with the distance on it. */
+            /* Draw a cv::circle on the laser and put a text with the distance on it. */
             cv::circle(video, cv::Point(coord_x, coord_y), 5, cv::Scalar(0, 0, 0), 1, 8);
             cv::putText(video,
                         std::to_string(distance),
@@ -97,14 +97,14 @@ main(void) {
         }
       }
       /* Show the picture. */
-      imshow("Laser rangefinder", video);
+      cv::imshow("Laser rangefinder", video);
 
       /* Press any key to exit. */
       if(cv::waitKey(30) >= 0) {
         break;
       }
     }
-    /* Write out if there is an error. */
+    /* Write out if there is an cv::error. */
     catch(std::exception& e) {
       std::cerr << e.what() << "\n";
     }

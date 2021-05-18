@@ -1,7 +1,7 @@
 /*
- * @ Brief: this function takes in a Mat image and returns the exterior contour of object
+ * @ Brief: this function takes in a cv::Mat image and returns the exterior contour of object
  * @ Description:
- *   Binarize -> dilate -> edge -> findContour -> select contour that has largest area
+ *   Binarize -> cv::dilate -> edge -> findContour -> select contour that has largest area
  */
 
 #include <getExteriorContour.hpp>
@@ -9,53 +9,53 @@
 // #define DEBUG_EXTERIOR
 
 bool
-cmpArea(vector<Point> a, vector<Point> b) {
-  double i = fabs(contourArea(Mat(a)));
-  double j = fabs(contourArea(Mat(b)));
+cmpArea(vector<cv::Point> a, vector<Point> b) {
+  double i = fabs(cv::contourArea(cv::Mat(a)));
+  double j = fabs(cv::contourArea(cv::Mat(b)));
   return (i > j);
 }
 
 void
-getExteriorContour(Mat src, vector<Point>& contour) {
+getExteriorContour(cv::Mat src, vector<cv::Point>& contour) {
 
   /* parameters */
   int dil = 13;
 
   // binarize image
-  Mat image_bin;
-  threshold(src, image_bin, 0, 255, 8);
+  cv::Mat image_bin;
+  cv::threshold(src, image_bin, 0, 255, 8);
 #ifdef DEBUG_EXTERIOR
-  namedWindow("image_bin", WINDOW_NORMAL);
-  resizeWindow("image_bin", src.cols / 10, src.rows / 10);
-  imshow("image_bin", image_bin);
-  waitKey(0);
+  cv::namedWindow("image_bin", WINDOW_NORMAL);
+  cv::resizeWindow("image_bin", src.cols / 10, src.rows / 10);
+  cv::imshow("image_bin", image_bin);
+  cv::waitKey(0);
 #endif
 
   // dilated binary image
-  Mat image_dil;
-  Mat element = getStructuringElement(MORPH_RECT, Size(dil, dil));
-  dilate(image_bin, image_dil, element);
+  cv::Mat image_dil;
+  cv::Mat element = cv::getStructuringElement(MORPH_RECT, cv::Size(dil, dil));
+  cv::dilate(image_bin, image_dil, element);
 #ifdef DEBUG_EXTERIOR
-  namedWindow("image_dil", WINDOW_NORMAL);
-  resizeWindow("image_dil", src.cols / 10, src.rows / 10);
-  imshow("image_dil", image_dil);
-  waitKey(0);
+  cv::namedWindow("image_dil", WINDOW_NORMAL);
+  cv::resizeWindow("image_dil", src.cols / 10, src.rows / 10);
+  cv::imshow("image_dil", image_dil);
+  cv::waitKey(0);
 #endif
 
   // edge detection
-  Mat edged;
-  Canny(image_dil, edged, 100, 220);
+  cv::Mat edged;
+  cv::Canny(image_dil, edged, 100, 220);
 #ifdef DEBUG_EXTERIOR
-  namedWindow("edged", WINDOW_NORMAL);
-  resizeWindow("edged", src.cols / 10, src.rows / 10);
-  imshow("edged", edged);
-  waitKey(0);
+  cv::namedWindow("edged", WINDOW_NORMAL);
+  cv::resizeWindow("edged", src.cols / 10, src.rows / 10);
+  cv::imshow("edged", edged);
+  cv::waitKey(0);
 #endif
 
   // find all contours
-  vector<vector<Point>> contours;
-  vector<Vec4i> hierarchy;
-  findContours(edged, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_NONE, Point(0, 0));
+  vector<vector<cv::Point>> contours;
+  vector<cv::Vec4i> hierarchy;
+  cv::findContours(edged, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_NONE, cv::Point(0, 0));
 
   // Sort by area
   sort(contours.begin(), contours.end(), cmpArea);

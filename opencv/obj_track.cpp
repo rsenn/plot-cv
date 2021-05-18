@@ -13,13 +13,13 @@
 #include <opencv2/video.hpp>
 //#include <opencv2/cv.hpp>
 #include <opencv2/core.hpp>
-#include <opencv2/core/ocl.hpp>
+#include <opencv2/core/cv::ocl.hpp>
 #include <opencv2/core/utility.hpp>
 
 // C
 #include <stdio.h>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 // initial min and max HSV filter values.
 // these will be changed using trackbars
@@ -48,7 +48,7 @@ void processVideoBg(char* videoFilename);
 void trackObjectloop();
 void createTrackbars();
 void morphOps(cv::Mat& thresh);
-void trackFilteredObject(int& x, int& y, cv::Mat threshold, cv::Mat& cameraFeed);
+void trackFilteredObject(int& x, int& y, cv::Mat cv::threshold, cv::Mat& cameraFeed);
 void backFilter();
 void backFilterImageBased();
 
@@ -81,7 +81,7 @@ backFilterImageBased() {
   string file = "source.avi";
   int m = true ? M_MOG2 : M_KNN;
 
-  VideoCapture cap;
+  cv::VideoCapture cap;
   if(useCamera)
     cap.open(0);
   else
@@ -93,17 +93,17 @@ backFilterImageBased() {
   }
 
   cv::Mat frame, fgmask, fgimg;
-  cv::Mat bgImg = imread("bgimg.jpg");
+  cv::Mat bgImg = cv::imread("bgimg.jpg");
   cap >> frame;
   fgimg.create(frame.size(), frame.type());
-  Ptr<BackgroundSubtractorKNN> knn = createBackgroundSubtractorKNN();
-  Ptr<BackgroundSubtractorMOG2> mog2 = createBackgroundSubtractorMOG2();
-  resize(bgImg, bgImg, frame.size());
+  Ptr<BackgroundSubtractorKNN> knn = cv::createBackgroundSubtractorKNN();
+  Ptr<BackgroundSubtractorMOG2> mog2 = cv::createBackgroundSubtractorMOG2();
+  cv::resize(bgImg, bgImg, frame.size());
 
-  namedWindow("Params", WINDOW_NORMAL);
-  createTrackbar("medianBlur", "Params", &medianBlurStrng, 35);
-  createTrackbar("PrevBlur", "Params", &BlurStrng, 10);
-  createTrackbar("PostBlur", "Params", &SecondBlurStrng, 10);
+  cv::namedWindow("Params", WINDOW_NORMAL);
+  cv::createTrackbar("cv::medianBlur", "Params", &medianBlurStrng, 35);
+  cv::createTrackbar("PrevBlur", "Params", &BlurStrng, 10);
+  cv::createTrackbar("PostBlur", "Params", &SecondBlurStrng, 10);
 
   switch(m) {
     case M_KNN: knn->apply(frame, fgmask); break;
@@ -116,7 +116,7 @@ backFilterImageBased() {
     if(frame.empty())
       break;
 
-    int64 start = getTickCount();
+    int64 start = cv::getTickCount();
 
     // update the model
     switch(m) {
@@ -125,30 +125,30 @@ backFilterImageBased() {
       case M_MOG2: mog2->apply(frame, fgmask); break;
     }
     // Filter model
-    medianBlur(fgmask, fgmask, nearestEvenInt(medianBlurStrng));
-    blur(fgmask, fgmask, Size(BlurStrng + 1, BlurStrng + 1));
+    cv::medianBlur(fgmask, fgmask, nearestEvenInt(medianBlurStrng));
+    cv::blur(fgmask, fgmask, cv::Size(BlurStrng + 1, BlurStrng + 1));
     cv::threshold(fgmask, fgmask, 250, 255, cv::THRESH_BINARY);
-    blur(fgmask, fgmask, Size(SecondBlurStrng + 1, SecondBlurStrng + 1));
+    cv::blur(fgmask, fgmask, cv::Size(SecondBlurStrng + 1, SecondBlurStrng + 1));
 
-    double fps = getTickFrequency() / (getTickCount() - start);
+    double fps = cv::getTickFrequency() / (cv::getTickCount() - start);
     std::cout << "FPS : " << fps << std::endl;
     std::cout << fgimg.size() << std::endl;
-    fgimg.setTo(Scalar::all(0));
+    fgimg.setTo(cv::Scalar::all(0));
     bgImg.copyTo(fgimg);
     frame.copyTo(fgimg, fgmask);
 
-    imshow("image", frame);
-    imshow("foreground mask", fgmask);
-    imshow("foreground image", fgimg);
+    cv::imshow("image", frame);
+    cv::imshow("foreground mask", fgmask);
+    cv::imshow("foreground image", fgimg);
 
-    char key = (char)waitKey(30);
+    char key = (char)cv::waitKey(30);
 
     switch(key) {
       case 27: running = false; break;
       case 'm':
       case 'M':
-        ocl::setUseOpenCL(!ocl::useOpenCL());
-        cout << "Switched to " << (ocl::useOpenCL() ? "OpenCL enabled" : "CPU") << " mode\n";
+        cv::ocl::setUseOpenCL(!ocl::useOpenCL());
+        cout << "Switched to " << (cv::ocl::useOpenCL() ? "OpenCL enabled" : "CPU") << " mode\n";
         break;
     }
   }
@@ -157,15 +157,15 @@ backFilterImageBased() {
 void
 backFilter() {
   // create GUI windows
-  namedWindow("Frame");
-  namedWindow("FG Mask MOG 2");
+  cv::namedWindow("Frame");
+  cv::namedWindow("FG Mask MOG 2");
 
   // create Background Subtractor objects
-  pMOG2 = createBackgroundSubtractorMOG2(); // MOG2 approach
+  pMOG2 = cv::createBackgroundSubtractorMOG2(); // MOG2 approach
   processVideoBg(sourceVideo);
 
   // destroy GUI windows
-  destroyAllWindows();
+  cv::destroyAllWindows();
 }
 
 void
@@ -178,14 +178,14 @@ trackObjectloop() {
   cv::Mat cameraFeed;
   // matrix storage for HSV image
   cv::Mat HSV;
-  // matrix storage for binary threshold image
-  cv::Mat threshold;
+  // matrix storage for binary cv::threshold image
+  cv::Mat cv::threshold;
   // x and y values for the location of the object
   int x = 0, y = 0;
   // create slider bars for HSV filtering
   createTrackbars();
   // video capture object to acquire webcam feed
-  VideoCapture capture;
+  cv::VideoCapture capture;
   // open capture object at location zero (default location for webcam)
   capture.open(0);
   // set height and width of capture frame
@@ -195,30 +195,30 @@ trackObjectloop() {
   // all of our operations will be performed within this loop
   while(1) {
     // store image to matrix
-    capture.read(cameraFeed);
+    capture.cv::read(cameraFeed);
     // convert frame from BGR to HSV colorspace
-    cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
+    cv::cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
     // filter HSV image between values and store filtered image to
-    // threshold matrix
-    inRange(HSV, Scalar(H_MIN, S_MIN, V_MIN), Scalar(H_MAX, S_MAX, V_MAX), threshold);
+    // cv::threshold matrix
+    cv::inRange(HSV, cv::Scalar(H_MIN, S_MIN, V_MIN), cv::Scalar(H_MAX, S_MAX, V_MAX), cv::threshold);
     // perform morphological operations on thresholded image to eliminate noise
     // and emphasize the filtered object(s)
     if(useMorphOps)
-      morphOps(threshold);
+      morphOps(cv::threshold);
     // pass in thresholded frame to our object tracking function
     // this function will return the x and y coordinates of the
     // filtered object
     if(trackObjects)
-      trackFilteredObject(x, y, threshold, cameraFeed);
+      trackFilteredObject(x, y, cv::threshold, cameraFeed);
 
     // show frames
-    imshow(windowName2, threshold);
-    imshow(windowName, cameraFeed);
-    imshow(windowName1, HSV);
+    cv::imshow(windowName2, cv::threshold);
+    cv::imshow(windowName, cameraFeed);
+    cv::imshow(windowName1, HSV);
 
     // delay 30ms so that screen can refresh.
-    // image will not appear without this waitKey() command
-    waitKey(30);
+    // image will not appear without this cv::waitKey() command
+    cv::waitKey(30);
   }
 }
 
@@ -237,7 +237,7 @@ void
 createTrackbars() {
   // create window for trackbars
 
-  namedWindow(trackbarWindowName, 0);
+  cv::namedWindow(trackbarWindowName, 0);
   // create memory to store trackbar name on window
   char TrackbarName[50];
   sprintf(TrackbarName, "H_MIN", H_MIN);
@@ -251,12 +251,12 @@ createTrackbars() {
   // moved(eg.H_LOW), the max value the trackbar can move (eg. H_HIGH), and the function that is
   // called whenever the trackbar is moved(eg. on_trackbar)
   //                                  ---->    ---->     ---->
-  createTrackbar("H_MIN", trackbarWindowName, &H_MIN, H_MAX, on_trackbar);
-  createTrackbar("H_MAX", trackbarWindowName, &H_MAX, H_MAX, on_trackbar);
-  createTrackbar("S_MIN", trackbarWindowName, &S_MIN, S_MAX, on_trackbar);
-  createTrackbar("S_MAX", trackbarWindowName, &S_MAX, S_MAX, on_trackbar);
-  createTrackbar("V_MIN", trackbarWindowName, &V_MIN, V_MAX, on_trackbar);
-  createTrackbar("V_MAX", trackbarWindowName, &V_MAX, V_MAX, on_trackbar);
+  cv::createTrackbar("H_MIN", trackbarWindowName, &H_MIN, H_MAX, on_trackbar);
+  cv::createTrackbar("H_MAX", trackbarWindowName, &H_MAX, H_MAX, on_trackbar);
+  cv::createTrackbar("S_MIN", trackbarWindowName, &S_MIN, S_MAX, on_trackbar);
+  cv::createTrackbar("S_MAX", trackbarWindowName, &S_MAX, S_MAX, on_trackbar);
+  cv::createTrackbar("V_MIN", trackbarWindowName, &V_MIN, V_MAX, on_trackbar);
+  cv::createTrackbar("V_MAX", trackbarWindowName, &V_MAX, V_MAX, on_trackbar);
 }
 void
 drawObject(int x, int y, cv::Mat& frame) {
@@ -268,53 +268,53 @@ drawObject(int x, int y, cv::Mat& frame) {
   // added 'if' and 'else' statements to prevent
   // memory errors from writing off the screen (ie. (-25,-25) is not within the window!)
 
-  circle(frame, cv::Point(x, y), 20, Scalar(0, 255, 0), 2);
+  cv::circle(frame, cv::Point(x, y), 20, cv::Scalar(0, 255, 0), 2);
   if(y - 25 > 0)
-    line(frame, cv::Point(x, y), cv::Point(x, y - 25), Scalar(0, 255, 0), 2);
+    cv::line(frame, cv::Point(x, y), cv::Point(x, y - 25), cv::Scalar(0, 255, 0), 2);
   else
-    line(frame, cv::Point(x, y), cv::Point(x, 0), Scalar(0, 255, 0), 2);
+    cv::line(frame, cv::Point(x, y), cv::Point(x, 0), cv::Scalar(0, 255, 0), 2);
   if(y + 25 < FRAME_HEIGHT)
-    line(frame, cv::Point(x, y), cv::Point(x, y + 25), Scalar(0, 255, 0), 2);
+    cv::line(frame, cv::Point(x, y), cv::Point(x, y + 25), cv::Scalar(0, 255, 0), 2);
   else
-    line(frame, cv::Point(x, y), cv::Point(x, FRAME_HEIGHT), Scalar(0, 255, 0), 2);
+    cv::line(frame, cv::Point(x, y), cv::Point(x, FRAME_HEIGHT), cv::Scalar(0, 255, 0), 2);
   if(x - 25 > 0)
-    line(frame, cv::Point(x, y), cv::Point(x - 25, y), Scalar(0, 255, 0), 2);
+    cv::line(frame, cv::Point(x, y), cv::Point(x - 25, y), cv::Scalar(0, 255, 0), 2);
   else
-    line(frame, cv::Point(x, y), cv::Point(0, y), Scalar(0, 255, 0), 2);
+    cv::line(frame, cv::Point(x, y), cv::Point(0, y), cv::Scalar(0, 255, 0), 2);
   if(x + 25 < FRAME_WIDTH)
-    line(frame, cv::Point(x, y), cv::Point(x + 25, y), Scalar(0, 255, 0), 2);
+    cv::line(frame, cv::Point(x, y), cv::Point(x + 25, y), cv::Scalar(0, 255, 0), 2);
   else
-    line(frame, cv::Point(x, y), cv::Point(FRAME_WIDTH, y), Scalar(0, 255, 0), 2);
+    cv::line(frame, cv::Point(x, y), cv::Point(FRAME_WIDTH, y), cv::Scalar(0, 255, 0), 2);
 
-  putText(frame, intToString(x) + "," + intToString(y), cv::Point(x, y + 30), 1, 1, Scalar(0, 255, 0), 2);
+  cv::putText(frame, intToString(x) + "," + intToString(y), cv::Point(x, y + 30), 1, 1, cv::Scalar(0, 255, 0), 2);
 }
 void
 morphOps(cv::Mat& thresh) {
 
-  // create structuring element that will be used to "dilate" and "erode" image.
+  // create structuring element that will be used to "cv::dilate" and "cv::erode" image.
   // the element chosen here is a 3px by 3px rectangle
 
-  cv::Mat erodeElement = getStructuringElement(MORPH_RECT, Size(3, 3));
-  // dilate with larger element so make sure object is nicely visible
-  cv::Mat dilateElement = getStructuringElement(MORPH_RECT, Size(8, 8));
+  cv::Mat erodeElement = cv::getStructuringElement(MORPH_RECT, cv::Size(3, 3));
+  // cv::dilate with larger element so make sure object is nicely visible
+  cv::Mat dilateElement = cv::getStructuringElement(MORPH_RECT, cv::Size(8, 8));
 
-  erode(thresh, thresh, erodeElement);
-  erode(thresh, thresh, erodeElement);
+  cv::erode(thresh, thresh, erodeElement);
+  cv::erode(thresh, thresh, erodeElement);
 
-  dilate(thresh, thresh, dilateElement);
-  dilate(thresh, thresh, dilateElement);
+  cv::dilate(thresh, thresh, dilateElement);
+  cv::dilate(thresh, thresh, dilateElement);
 }
 void
-trackFilteredObject(int& x, int& y, cv::Mat threshold, cv::Mat& cameraFeed) {
+trackFilteredObject(int& x, int& y, cv::Mat cv::threshold, cv::Mat& cameraFeed) {
 
   cv::Mat temp;
-  threshold.copyTo(temp);
+  cv::threshold.copyTo(temp);
   // these two std::vectors needed for output of findContours
   std::vector<std::vector<cv::Point>> contours;
-  std::vector<Vec4i> hierarchy;
-  // find contours of filtered image using openCV findContours function
-  findContours(temp, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE);
-  // use moments method to find our filtered object
+  std::vector<cv::Vec4i> hierarchy;
+  // find contours of filtered image using openCV cv::findContours function
+  cv::findContours(temp, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE);
+  // use cv::moments method to find our filtered object
   double refArea = 0;
   bool objectFound = false;
   if(hierarchy.size() > 0) {
@@ -323,7 +323,7 @@ trackFilteredObject(int& x, int& y, cv::Mat threshold, cv::Mat& cameraFeed) {
     if(numObjects < MAX_NUM_OBJECTS) {
       for(int index = 0; index >= 0; index = hierarchy[index][0]) {
 
-        Moments moment = moments((cv::Mat)contours[index]);
+        cv::Moments moment = cv::moments((cv::Mat)contours[index]);
         double area = moment.m00;
 
         // if the area is less than 20 px by 20px then it is probably just noise
@@ -340,13 +340,13 @@ trackFilteredObject(int& x, int& y, cv::Mat threshold, cv::Mat& cameraFeed) {
       }
       // let user know you found an object
       if(objectFound == true) {
-        putText(cameraFeed, "Tracking Object", cv::Point(0, 50), 2, 1, Scalar(0, 255, 0), 2);
+        cv::putText(cameraFeed, "Tracking Object", cv::Point(0, 50), 2, 1, cv::Scalar(0, 255, 0), 2);
         // draw object location on screen
         drawObject(x, y, cameraFeed);
       }
 
     } else
-      putText(cameraFeed, "TOO MUCH NOISE! ADJUST FILTER", cv::Point(0, 50), 1, 2, Scalar(0, 0, 255), 2);
+      cv::putText(cameraFeed, "TOO MUCH NOISE! ADJUST FILTER", cv::Point(0, 50), 1, 2, cv::Scalar(0, 0, 255), 2);
   }
 }
 /**
@@ -355,33 +355,33 @@ trackFilteredObject(int& x, int& y, cv::Mat threshold, cv::Mat& cameraFeed) {
 void
 processVideoBg(char* videoFilename) {
   // create the capture object
-  VideoCapture capture(videoFilename);
+  cv::VideoCapture capture(videoFilename);
   if(!capture.isOpened()) {
-    // error in opening the video input
+    // cv::error in opening the video input
     cerr << "Unable to open video file: " << videoFilename << endl;
     exit(EXIT_FAILURE);
   }
-  // read input data. ESC or 'q' for quitting
+  // cv::read input data. ESC or 'q' for quitting
   while((char)keyboard != 'q' && (char)keyboard != 27) {
-    // read the current frame
-    if(!capture.read(frame)) {
-      cerr << "Unable to read next frame." << endl;
+    // cv::read the current frame
+    if(!capture.cv::read(frame)) {
+      cerr << "Unable to cv::read next frame." << endl;
       cerr << "Exiting..." << endl;
       exit(EXIT_FAILURE);
     }
     // update the background model
     pMOG2->apply(frame, fgMaskMOG2);
-    // get the frame number and write it on the current frame
+    // get the frame number and cv::write it on the current frame
     stringstream ss;
-    rectangle(frame, cv::Point(10, 2), cv::Point(100, 20), cv::Scalar(255, 255, 255), -1);
+    cv::rectangle(frame, cv::Point(10, 2), cv::Point(100, 20), cv::Scalar(255, 255, 255), -1);
     ss << capture.get(CAP_PROP_POS_FRAMES);
     string frameNumberString = ss.str();
-    putText(frame, frameNumberString.c_str(), cv::Point(15, 15), FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
+    cv::putText(frame, frameNumberString.c_str(), cv::Point(15, 15), FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
     // show the current frame and the fg masks
-    imshow("Frame", frame);
-    imshow("FG Mask MOG 2", fgMaskMOG2);
+    cv::imshow("Frame", frame);
+    cv::imshow("FG Mask MOG 2", fgMaskMOG2);
     // get the input from the keyboard
-    keyboard = waitKey(30);
+    keyboard = cv::waitKey(30);
   }
   // delete capture object
   capture.release();

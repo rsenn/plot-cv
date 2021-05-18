@@ -3,10 +3,10 @@
 #include <test-config.h>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 SCENARIO("Can make a video stream") {
-  Mat mat;
+  cv::Mat mat;
   string pathToImagesFolder = PATH_TO_TEST_DATA;
   pathToImagesFolder.append("/3-images");
 
@@ -15,27 +15,27 @@ SCENARIO("Can make a video stream") {
 
     WHEN("Fed with some images") {
 
-      mat = imread(string(pathToImagesFolder).append("/abc-a.png"), cv::LOAD_IMAGE_COLOR);
-      Size size = mat.size();
+      mat = cv::imread(string(pathToImagesFolder).append("/abc-a.png"), cv::LOAD_IMAGE_COLOR);
+      cv::Size size = mat.size();
       videoStreamWriter.openStream(mat);
-      mat = imread(string(pathToImagesFolder).append("/abc-b.png"), cv::LOAD_IMAGE_COLOR);
+      mat = cv::imread(string(pathToImagesFolder).append("/abc-b.png"), cv::LOAD_IMAGE_COLOR);
       videoStreamWriter.addImage(mat);
-      mat = imread(string(pathToImagesFolder).append("/abc-c.png"), cv::LOAD_IMAGE_COLOR);
+      mat = cv::imread(string(pathToImagesFolder).append("/abc-c.png"), cv::LOAD_IMAGE_COLOR);
       videoStreamWriter.addImage(mat);
 
       videoStreamWriter.closeStream();
 
       THEN("Can make a readable video with all of them") {
-        VideoCapture videoCapture(videoStreamWriter.getFileName());
+        cv::VideoCapture videoCapture(videoStreamWriter.getFileName());
 
-        REQUIRE(videoCapture.read(mat) == true);
+        REQUIRE(videoCapture.cv::read(mat) == true);
         REQUIRE(mat.size() == size);
-        REQUIRE(videoCapture.read(mat) == true);
+        REQUIRE(videoCapture.cv::read(mat) == true);
         REQUIRE(mat.size() == size);
-        REQUIRE(videoCapture.read(mat) == true);
+        REQUIRE(videoCapture.cv::read(mat) == true);
         REQUIRE(mat.size() == size);
 
-        REQUIRE(videoCapture.read(mat) == false);
+        REQUIRE(videoCapture.cv::read(mat) == false);
 
         videoCapture.release();
       }

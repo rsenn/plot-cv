@@ -4,7 +4,7 @@
  *  Created on: Feb 11, 2013
  *      Author: Alec Robinson
  *
- * Allows a user to select pixels samples and have similar pixels detected.
+ * Allows a user to select pixels cv::samples and have similar pixels detected.
  * Also will now find the centers of various shapes.
  *
  */
@@ -14,7 +14,7 @@
 #include <vector>
 #include <stdio.h>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 bool editcurrent = false; // is true just after the user selects a pixel. when true, the program
@@ -76,17 +76,17 @@ help(char** av) {
 }
 
 int
-process(VideoCapture& capture) {
+process(cv::VideoCapture& capture) {
 
-  namedWindow("Original Image", cv::WINDOW_KEEPRATIO);
-  namedWindow("Threshold Image", cv::WINDOW_KEEPRATIO);
-  Mat frame;    // mat of the original image
-  Mat newframe; // mat of the threshholded (threshheld?) image
+  cv::namedWindow("Original Image", cv::WINDOW_KEEPRATIO);
+  cv::namedWindow("Threshold Image", cv::WINDOW_KEEPRATIO);
+  cv::Mat frame;    // mat of the original image
+  cv::Mat newframe; // mat of the threshholded (threshheld?) image
 
   cvCreateTrackbar("Threshold", "Threshold Image", &thresh, 100, NULL);
   for(;;) {
 
-    capture >> newframe; // I'm not certain I actually need this line anymore
+    capture >> newframe; // I'm not certain I actually need this cv::line anymore
 
     if(editcurrent) { // reads the rgb of the newly selected pixel
       int z = currentpix - 1;
@@ -136,21 +136,21 @@ process(VideoCapture& capture) {
       } // average the y
       runningx = 0;
       runningy = 0;
-      Point thecenter = Point(avrgy, avrgx);
-      ellipse(newframe, thecenter, Size(20, 20), 0, 0, 360, Scalar(255, 0, 238), 2, 8); // draw circle
+      cv::Point thecenter = cv::Point(avrgy, avrgx);
+      cv::ellipse(newframe, thecenter, cv::Size(20, 20), 0, 0, 360, cv::Scalar(255, 0, 238), 2, 8); // draw circle
     }
-    imshow("Threshold Image", newframe);
+    cv::imshow("Threshold Image", newframe);
     capture >> frame;
     if(findcenter) {
-      Point thecenter = Point(avrgy, avrgx);
-      ellipse(frame, thecenter, Size(20, 20), 0, 0, 360, Scalar(255, 0, 238), 2, 8);
+      cv::Point thecenter = cv::Point(avrgy, avrgx);
+      cv::ellipse(frame, thecenter, cv::Size(20, 20), 0, 0, 360, cv::Scalar(255, 0, 238), 2, 8);
     }
 
-    imshow("Original Image", frame);
+    cv::imshow("Original Image", frame);
     IplImage ipl = frame;
     cvSetMouseCallback("Original Image", my_mouse_callback, (void*)&ipl); // get mouse input
 
-    char key = (char)waitKey(5); // get keyboard input
+    char key = (char)cv::waitKey(5); // get keyboard input
     if(key == 'q')
       break;
     if(key == 'c') {
@@ -173,16 +173,16 @@ main(int ac, char** av) {
     return 1;
   }
 
-  cout << "Left click to collect samples, right click to clear them.\n";
+  cout << "Left click to collect cv::samples, right click to clear them.\n";
   cout << "'c' to toggle center finding.\n";
-  cout << "Press q to quit, but only if you really mean it.\n";
+  cout << "Press q to quit, but only if you really cv::mean it.\n";
 
   std::string arg = av[1];
-  VideoCapture capture(arg);
+  cv::VideoCapture capture(arg);
   if(!capture.isOpened())
     capture.open(atoi(arg.c_str()));
   capture.set(cv::CAP_PROP_FRAME_WIDTH,
-              240); // this line and the following line is necessary only for the raspberry pi.
+              240); // this cv::line and the following cv::line is necessary only for the raspberry pi.
                     // if you were to delete these on the pi, you would get timeout errors
   capture.set(cv::CAP_PROP_FRAME_HEIGHT, 320);
   if(!capture.isOpened()) {

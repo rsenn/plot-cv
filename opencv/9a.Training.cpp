@@ -18,12 +18,12 @@ mau, chap nhan sai 1 mau -> ty le 0.005
 
 #include <stdlib.h>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 int
 main() {
-  VideoCapture cap(0);
+  cv::VideoCapture cap(0);
   // Thiet lap do phan giai o 1.3MP
   cap.set(CAP_PROP_FRAME_WIDTH, 1280);
   cap.set(CAP_PROP_FRAME_HEIGHT, 1024);
@@ -45,12 +45,12 @@ main() {
   printf("- Nhan 'p' de luu anh potive.\r\n");
   printf("- Nhan 'c' de ket thuc.\r\n\r\n");
   //------------------------------------------
-  namedWindow("Camera", WINDOW_NORMAL);
-  resizeWindow("Camera", 400, 400);
+  cv::namedWindow("Camera", WINDOW_NORMAL);
+  cv::resizeWindow("Camera", 400, 400);
   //------------------------------------------
-  Mat frame;
-  Mat gray_img;
-  Mat imageCrop;
+  cv::Mat frame;
+  cv::Mat gray_img;
+  cv::Mat imageCrop;
   char path[32];      // Mang luu duong dan file
   char lineText[256]; // Mang chua thong tin anh positive de luu vao info.txt
   float w = 100000, h = 100000;
@@ -61,28 +61,28 @@ main() {
       printf("ERROR: khong the bat hinh\r\n");
       break;
     }
-    imshow("Camera", frame);
-    char c = waitKey(1); // doc nut nhan tu ban phim
+    cv::imshow("Camera", frame);
+    char c = cv::waitKey(1); // doc nut nhan tu ban phim
     if(c == 'c')
       break;
     else {
       switch(c) {
         case 'n':
           snprintf(path, 32, "./data/neg/neg_%d.jpg", count_neg);
-          cvtColor(frame, gray_img, COLOR_BGR2GRAY);
-          equalizeHist(gray_img, gray_img);
-          imwrite(path, gray_img);
+          cv::cvtColor(frame, gray_img, COLOR_BGR2GRAY);
+          cv::equalizeHist(gray_img, gray_img);
+          cv::imwrite(path, gray_img);
           count_neg++;
           printf("[NEG] Da luu %d hinh negative vao thu muc ./data/neg/\r\n", count_neg);
           break;
         case 'p':
-          namedWindow("Select", WINDOW_NORMAL);
-          resizeWindow("Select", 800, 600);
+          cv::namedWindow("Select", WINDOW_NORMAL);
+          cv::resizeWindow("Select", 800, 600);
           // Select ROI
           bool showCrosshair = false;
           bool fromCenter = false;
-          Rect2d r = selectROI("Select", frame, fromCenter, showCrosshair);
-          destroyWindow("Select"); // Dong cua so sau khi da chon
+          Rect2d r = cv::selectROI("Select", frame, fromCenter, showCrosshair);
+          cv::destroyWindow("Select"); // Dong cua so sau khi da chon
           printf("[POS] Vat mau tai x=%.0f, y=%.0f, width=%.0f, heigth=%.0f\r\n", r.x, r.y, r.width, r.height);
           if((w > r.width) && (h > r.height)) { // Get smallest
             w = r.width;
@@ -98,7 +98,7 @@ main() {
             imageCrop = frame(r);
             snprintf(lineText, 256, "echo \"pos/pos_%d.jpg 1 0 0 %.0f %.0f\" >> ./data/info.txt", count_pos, r.width, r.height);
           }
-          imwrite(path, imageCrop);
+          cv::imwrite(path, imageCrop);
           system(lineText);
           count_pos++;
           printf("[POS] Da luu %d hinh positive vao thu muc ./data/pos/\r\n", count_pos);
@@ -108,7 +108,7 @@ main() {
   }
   printf("Tat camera\r\n");
   cap.release(); // Giai phong camera
-  destroyAllWindows();
+  cv::destroyAllWindows();
   printf("[NEG] Dang tao file danh sach...\r\n");
   system("find ./data/neg/ -name '*.jpg' > ./data/bg.txt");
   printf("[NEG] File danh sach hinh negative tai duong dan ./data/bg.txt\r\n");

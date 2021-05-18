@@ -1,5 +1,5 @@
 #include <opencv2/core/utility.hpp>
-#include <opencv2/core/ocl.hpp>
+#include <opencv2/core/cv::ocl.hpp>
 #include <opencv2/video/tracking.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/videoio.hpp>
@@ -46,8 +46,8 @@ onMouse(int event, int x, int y, int, void*) {
 
 static void
 help() {
-  std::cout << "\nThis is a demo that shows mean-shift based tracking using Transparent API\n"
-               "You select a color objects such as your face and it tracks it.\n"
+  std::cout << "\nThis is a demo that shows cv::mean-shift based tracking using Transparent API\n"
+               "You select a color objects such as your cv::face and it tracks it.\n"
                "This reads from video camera (0 by default, or the camera number the user enters\n"
                "Usage: \n"
                "   ./camshiftdemo [camera number]\n";
@@ -88,11 +88,11 @@ main(int argc, const char** argv) {
   }
 
   cv::namedWindow("Histogram", cv::WINDOW_NORMAL);
-  cv::namedWindow("CamShift Demo", cv::WINDOW_NORMAL);
-  cv::setMouseCallback("CamShift Demo", onMouse);
-  cv::createTrackbar("Vmin", "CamShift Demo", &vmin, 256);
-  cv::createTrackbar("Vmax", "CamShift Demo", &vmax, 256);
-  cv::createTrackbar("Smin", "CamShift Demo", &smin, 256);
+  cv::namedWindow("cv::CamShift Demo", cv::WINDOW_NORMAL);
+  cv::setMouseCallback("cv::CamShift Demo", onMouse);
+  cv::createTrackbar("Vmin", "cv::CamShift Demo", &vmin, 256);
+  cv::createTrackbar("Vmax", "cv::CamShift Demo", &vmax, 256);
+  cv::createTrackbar("Smin", "cv::CamShift Demo", &smin, 256);
 
   cv::Mat frame, histimg(200, 320, CV_8UC3, cv::Scalar::all(0));
   cv::UMat hsv, hist, hue, mask, backproj;
@@ -184,7 +184,7 @@ main(int argc, const char** argv) {
       cv::bitwise_not(roi, roi);
     }
 
-    cv::imshow("CamShift Demo", image);
+    cv::imshow("cv::CamShift Demo", image);
     if(showHist)
       cv::imshow("Histogram", histimg);
 

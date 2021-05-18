@@ -4,57 +4,57 @@
 #include <math.h>
 #include <iostream>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 bool
 compareContourAreas(std::vector<cv::Point> contour1, std::vector<cv::Point> contour2) {
-  double i = fabs(contourArea(cv::Mat(contour1)));
-  double j = fabs(contourArea(cv::Mat(contour2)));
+  double i = fabs(cv::contourArea(cv::Mat(contour1)));
+  double j = fabs(cv::contourArea(cv::Mat(contour2)));
   return (i > j);
 }
 
 bool
-compareXCords(Point p1, Point p2) {
+compareXCords(cv::Point p1, cv::Point p2) {
   return (p1.x < p2.x);
 }
 
 bool
-compareYCords(Point p1, Point p2) {
+compareYCords(cv::Point p1, cv::Point p2) {
   return (p1.y < p2.y);
 }
 
 bool
-compareDistance(pair<Point, Point> p1, pair<Point, Point> p2) {
-  return (norm(p1.first - p1.second) < norm(p2.first - p2.second));
+compareDistance(pair<cv::Point, cv::Point> p1, pair<Point, cv::Point> p2) {
+  return (cv::norm(p1.first - p1.second) < cv::norm(p2.first - p2.second));
 }
 
 double
-_distance(Point p1, Point p2) {
+_distance(cv::Point p1, cv::Point p2) {
   return sqrt(((p1.x - p2.x) * (p1.x - p2.x)) + ((p1.y - p2.y) * (p1.y - p2.y)));
 }
 
 void
-resizeToHeight(Mat src, Mat& dst, int height) {
-  Size s = Size(src.cols * (height / double(src.rows)), height);
-  resize(src, dst, s, cv::INTER_AREA);
+resizeToHeight(cv::Mat src, cv::Mat& dst, int height) {
+  cv::Size s = cv::Size(src.cols * (height / double(src.rows)), height);
+  cv::resize(src, dst, s, cv::INTER_AREA);
 }
 
 void
-orderPoints(vector<Point> inpts, vector<Point>& ordered) {
+orderPoints(vector<cv::Point> inpts, vector<Point>& ordered) {
   sort(inpts.begin(), inpts.end(), compareXCords);
-  vector<Point> lm(inpts.begin(), inpts.begin() + 2);
-  vector<Point> rm(inpts.end() - 2, inpts.end());
+  vector<cv::Point> lm(inpts.begin(), inpts.begin() + 2);
+  vector<cv::Point> rm(inpts.end() - 2, inpts.end());
 
   sort(lm.begin(), lm.end(), compareYCords);
-  Point tl(lm[0]);
-  Point bl(lm[1]);
-  vector<pair<Point, Point>> tmp;
+  cv::Point tl(lm[0]);
+  cv::Point bl(lm[1]);
+  vector<pair<cv::Point, cv::Point>> tmp;
   for(size_t i = 0; i < rm.size(); i++) { tmp.push_back(make_pair(tl, rm[i])); }
 
   sort(tmp.begin(), tmp.end(), compareDistance);
-  Point tr(tmp[0].second);
-  Point br(tmp[1].second);
+  cv::Point tr(tmp[0].second);
+  cv::Point br(tmp[1].second);
 
   ordered.push_back(tl);
   ordered.push_back(tr);
@@ -63,8 +63,8 @@ orderPoints(vector<Point> inpts, vector<Point>& ordered) {
 }
 
 void
-fourPointTransform(Mat src, Mat& dst, vector<Point> pts) {
-  vector<Point> ordered_pts;
+fourPointTransform(cv::Mat src, cv::Mat& dst, vector<cv::Point> pts) {
+  vector<cv::Point> ordered_pts;
   orderPoints(pts, ordered_pts);
 
   double wa = _distance(ordered_pts[2], ordered_pts[3]);
@@ -75,30 +75,30 @@ fourPointTransform(Mat src, Mat& dst, vector<Point> pts) {
   double hb = _distance(ordered_pts[0], ordered_pts[3]);
   double mh = max(ha, hb);
 
-  Point2f src_[] = {
-      Point2f(ordered_pts[0].x, ordered_pts[0].y),
-      Point2f(ordered_pts[1].x, ordered_pts[1].y),
-      Point2f(ordered_pts[2].x, ordered_pts[2].y),
-      Point2f(ordered_pts[3].x, ordered_pts[3].y),
+  cv::Point2f src_[] = {
+      cv::Point2f(ordered_pts[0].x, ordered_pts[0].y),
+      cv::Point2f(ordered_pts[1].x, ordered_pts[1].y),
+      cv::Point2f(ordered_pts[2].x, ordered_pts[2].y),
+      cv::Point2f(ordered_pts[3].x, ordered_pts[3].y),
   };
-  Point2f dst_[] = {Point2f(0, 0), Point2f(mw - 1, 0), Point2f(mw - 1, mh - 1), Point2f(0, mh - 1)};
-  Mat m = getPerspectiveTransform(src_, dst_);
-  warpPerspective(src, dst, m, Size(mw, mh));
+  cv::Point2f dst_[] = {Point2f(0, 0), cv::Point2f(mw - 1, 0), cv::Point2f(mw - 1, mh - 1), Point2f(0, mh - 1)};
+  cv::Mat m = cv::getPerspectiveTransform(src_, dst_);
+  cv::warpPerspective(src, dst, m, cv::Size(mw, mh));
 }
 
 void
-preProcess(Mat src, Mat& dst) {
+preProcess(cv::Mat src, cv::Mat& dst) {
   cv::Mat imageGrayed;
   cv::Mat imageOpen, imageClosed, imageBlurred;
 
-  cvtColor(src, imageGrayed, cv::COLOR_BGR2GRAY);
+  cv::cvtColor(src, imageGrayed, cv::COLOR_BGR2GRAY);
 
   cv::Mat structuringElmt = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(4, 4));
-  morphologyEx(imageGrayed, imageOpen, cv::MORPH_OPEN, structuringElmt);
-  morphologyEx(imageOpen, imageClosed, cv::MORPH_CLOSE, structuringElmt);
+  cv::morphologyEx(imageGrayed, imageOpen, cv::MORPH_OPEN, structuringElmt);
+  cv::morphologyEx(imageOpen, imageClosed, cv::MORPH_CLOSE, structuringElmt);
 
-  GaussianBlur(imageClosed, imageBlurred, Size(7, 7), 0);
-  Canny(imageBlurred, dst, 75, 100);
+  cv::GaussianBlur(imageClosed, imageBlurred, cv::Size(7, 7), 0);
+  cv::Canny(imageBlurred, dst, 75, 100);
 }
 
 string
@@ -126,64 +126,64 @@ int
 main(int argc, char** argv) {
 
   static const char* const keys = "{ @image |<none>| }";
-  CommandLineParser parser(argc, argv, keys);
+  cv::CommandLineParser parser(argc, argv, keys);
 
   if(!parser.has("@image")) {
     parser.printMessage();
     return -1;
   }
 
-  string image_name(parser.get<String>("@image"));
-  Mat image = imread(image_name);
+  string image_name(parser.get<cv::String>("@image"));
+  cv::Mat image = cv::imread(image_name);
   if(image.empty()) {
-    printf("Cannot read image file: %s\n", image_name.c_str());
+    printf("Cannot cv::read image file: %s\n", image_name.c_str());
     return -1;
   }
 
   double ratio = image.rows / 500.0;
-  Mat orig = image.clone();
+  cv::Mat orig = image.clone();
   resizeToHeight(image, image, 500);
 
-  Mat gray, edged, warped;
+  cv::Mat gray, edged, warped;
   preProcess(image, edged);
 #ifndef NDEBUG
-  imwrite(getOutputFileName(image_name, "edged"), edged);
+  cv::imwrite(getOutputFileName(image_name, "edged"), edged);
 #endif
 
-  vector<vector<Point>> contours;
-  vector<Vec4i> hierarchy;
-  vector<vector<Point>> approx;
-  findContours(edged, contours, hierarchy, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE);
+  vector<vector<cv::Point>> contours;
+  vector<cv::Vec4i> hierarchy;
+  vector<vector<cv::Point>> approx;
+  cv::findContours(edged, contours, hierarchy, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE);
 
-  approx.resize(contours.size());
+  approx.cv::resize(contours.size());
   size_t i, j;
   for(i = 0; i < contours.size(); i++) {
-    double peri = arcLength(contours[i], true);
-    approxPolyDP(contours[i], approx[i], 0.02 * peri, true);
+    double peri = cv::arcLength(contours[i], true);
+    cv::approxPolyDP(contours[i], approx[i], 0.02 * peri, true);
   }
   sort(approx.begin(), approx.end(), compareContourAreas);
 
   for(i = 0; i < approx.size(); i++) {
-    drawContours(image, approx, i, Scalar(255, 255, 0), 2);
+    cv::drawContours(image, approx, i, cv::Scalar(255, 255, 0), 2);
     if(approx[i].size() == 4) {
       break;
     }
   }
 
   if(i < approx.size()) {
-    drawContours(image, approx, i, Scalar(0, 255, 0), 2);
+    cv::drawContours(image, approx, i, cv::Scalar(0, 255, 0), 2);
 #ifndef NDEBUG
-    imwrite(getOutputFileName(image_name, "outline"), image);
+    cv::imwrite(getOutputFileName(image_name, "outline"), image);
 #endif
     for(j = 0; j < approx[i].size(); j++) { approx[i][j] *= ratio; }
 
     fourPointTransform(orig, warped, approx[i]);
 #ifndef NDEBUG
-    imwrite(getOutputFileName(image_name, "flat"), warped);
+    cv::imwrite(getOutputFileName(image_name, "flat"), warped);
 #endif
-    cvtColor(warped, warped, cv::COLOR_BGR2GRAY, 1);
-    adaptiveThreshold(warped, warped, 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 9, 15);
-    GaussianBlur(warped, warped, Size(3, 3), 0);
-    imwrite(getOutputFileName(image_name, "scanned"), warped);
+    cv::cvtColor(warped, warped, cv::COLOR_BGR2GRAY, 1);
+    cv::adaptiveThreshold(warped, warped, 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 9, 15);
+    cv::GaussianBlur(warped, warped, cv::Size(3, 3), 0);
+    cv::imwrite(getOutputFileName(image_name, "scanned"), warped);
   }
 }

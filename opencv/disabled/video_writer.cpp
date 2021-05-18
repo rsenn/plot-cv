@@ -46,7 +46,7 @@ main(int argc, const char* argv[]) {
     }
 
     if(!writer.isOpened()) {
-      std::cout << "Frame Size : " << frame.cols << "x" << frame.rows << std::endl;
+      std::cout << "Frame cv::Size : " << frame.cols << "x" << frame.rows << std::endl;
 
       std::cout << "Open CPU Writer" << std::endl;
 
@@ -67,13 +67,13 @@ main(int argc, const char* argv[]) {
 
     tm.reset();
     tm.start();
-    writer.write(frame);
+    writer.cv::write(frame);
     tm.stop();
     cpu_times.push_back(tm.getTimeMilli());
 
     tm.reset();
     tm.start();
-    d_writer.write(d_frame);
+    d_writer.cv::write(d_frame);
     tm.stop();
     gpu_times.push_back(tm.getTimeMilli());
   }

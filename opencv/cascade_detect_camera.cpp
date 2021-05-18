@@ -40,7 +40,7 @@
 // Author: Jiaolong Xu <jiaolongxu AT gmail.com>
 //M*/
 
-#include <opencv2/dpm.hpp>
+#include <opencv2/cv::dpm.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
@@ -50,8 +50,8 @@
 #include <stdio.h>
 #include <iostream>
 
-using namespace cv;
-using namespace cv::dpm;
+//using namespace cv;
+//using namespace cv::dpm;
 using namespace std;
 
 static void
@@ -63,13 +63,13 @@ help() {
        << endl;
 }
 
-void drawBoxes(Mat& frame, vector<DPMDetector::ObjectDetection> ds, Scalar color, string text);
+void drawBoxes(cv::Mat& frame, vector<DPMDetector::ObjectDetection> ds, cv::Scalar color, string text);
 
 int
 main(int argc, char** argv) {
   const char* keys = {"{@model_path    | | Path of the DPM cascade model}"};
 
-  CommandLineParser parser(argc, argv, keys);
+  cv::CommandLineParser parser(argc, argv, keys);
   string model_path(parser.get<string>(0));
 
   if(model_path.empty()) {
@@ -80,7 +80,7 @@ main(int argc, char** argv) {
   cv::Ptr<DPMDetector> detector = DPMDetector::create(vector<string>(1, model_path));
 
   // use web camera
-  VideoCapture capture(0);
+  cv::VideoCapture capture(0);
   capture.set(cv::CAP_PROP_FRAME_WIDTH, 320);
   capture.set(cv::CAP_PROP_FRAME_HEIGHT, 240);
 
@@ -89,30 +89,30 @@ main(int argc, char** argv) {
     return -1;
   }
 
-  Mat frame;
-  namedWindow("DPM Cascade Detection", 1);
+  cv::Mat frame;
+  cv::namedWindow("DPM Cascade Detection", 1);
   // the color of the rectangle
-  Scalar color(0, 255, 255); // yellow
+  cv::Scalar color(0, 255, 255); // yellow
 
-  while(capture.read(frame)) {
+  while(capture.cv::read(frame)) {
     vector<DPMDetector::ObjectDetection> ds;
 
-    Mat image;
+    cv::Mat image;
     frame.copyTo(image);
 
-    double t = (double)getTickCount();
+    double t = (double)cv::getTickCount();
     // detection
     detector->detect(image, ds);
     // compute frame per second (fps)
-    t = ((double)getTickCount() - t) / getTickFrequency(); // elapsed time
+    t = ((double)cv::getTickCount() - t) / cv::getTickFrequency(); // elapsed time
 
     // draw boxes
-    string text = format("%0.1f fps", 1.0 / t);
+    string text = cv::format("%0.1f fps", 1.0 / t);
     drawBoxes(frame, ds, color, text);
 
-    imshow("DPM Cascade Detection", frame);
+    cv::imshow("DPM Cascade Detection", frame);
 
-    if(waitKey(30) >= 0)
+    if(cv::waitKey(30) >= 0)
       break;
   }
 
@@ -120,10 +120,10 @@ main(int argc, char** argv) {
 }
 
 void
-drawBoxes(Mat& frame, vector<DPMDetector::ObjectDetection> ds, Scalar color, string text) {
-  for(unsigned int i = 0; i < ds.size(); i++) { rectangle(frame, ds[i].rect, color, 2); }
+drawBoxes(cv::Mat& frame, vector<DPMDetector::ObjectDetection> ds, cv::Scalar color, string text) {
+  for(unsigned int i = 0; i < ds.size(); i++) { cv::rectangle(frame, ds[i].rect, color, 2); }
 
   // draw text on image
-  Scalar textColor(0, 0, 250);
-  putText(frame, text, Point(10, 50), FONT_HERSHEY_PLAIN, 2, textColor, 2);
+  cv::Scalar textColor(0, 0, 250);
+  cv::putText(frame, text, cv::Point(10, 50), FONT_HERSHEY_PLAIN, 2, textColor, 2);
 }

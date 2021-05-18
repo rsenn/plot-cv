@@ -126,7 +126,7 @@ bool
 CvCaptureCAM_XIMEA::_open() {
 #define HandleXiResult(res)                                                                                                    \
   if(res != XI_OK)                                                                                                             \
-    goto error;
+    goto cv::error;
   int width = 0;
   int height = 0;
   int isColor = 0;
@@ -145,7 +145,7 @@ CvCaptureCAM_XIMEA::_open() {
   HandleXiResult(mvret);
 
   if(isColor) { // for color cameras
-    // default image format RGB24
+    // default image cv::format RGB24
     mvret = xiSetParamInt(hmv, XI_PRM_IMAGE_DATA_FORMAT, XI_RGB24);
     HandleXiResult(mvret);
 
@@ -156,7 +156,7 @@ CvCaptureCAM_XIMEA::_open() {
     // allocate frame buffer for RGB24 image
     frame = cvCreateImage(cvSize(width, height), IPL_DEPTH_8U, 3);
   } else { // for mono cameras
-    // default image format MONO8
+    // default image cv::format MONO8
     mvret = xiSetParamInt(hmv, XI_PRM_IMAGE_DATA_FORMAT, XI_MONO8);
     HandleXiResult(mvret);
 
@@ -170,11 +170,11 @@ CvCaptureCAM_XIMEA::_open() {
   mvret = xiStartAcquisition(hmv);
   if(mvret != XI_OK) {
     errMsg("StartAcquisition XI_DEVICE failed", mvret);
-    goto error;
+    goto cv::error;
   }
   return true;
 
-error:
+cv::error:
   errMsg("Open XI_DEVICE failed", mvret);
   xiCloseDevice(hmv);
   hmv = NULL;
@@ -209,7 +209,7 @@ CvCaptureCAM_XIMEA::grabFrame() {
   }
 
   if(mvret != XI_OK) {
-    errMsg("Error during GetImage", mvret);
+    errMsg("cv::Error during GetImage", mvret);
     return false;
   }
 
@@ -220,7 +220,7 @@ CvCaptureCAM_XIMEA::grabFrame() {
 
 IplImage*
 CvCaptureCAM_XIMEA::retrieveFrame(int) {
-  // update cvImage after format has changed
+  // update cvImage after cv::format has changed
   resetCvImage();
 
   // copy pixel data
@@ -268,7 +268,7 @@ CvCaptureCAM_XIMEA::resetCvImage() {
       if(frame->depth != IPL_DEPTH_8U || frame->nChannels != 4)
         do_reset = true;
     } break;
-    default: errMsg("CvCaptureCAM_XIMEA::resetCvImage ERROR: Unknown format.", XI_NOT_SUPPORTED_DATA_FORMAT); return;
+    default: errMsg("CvCaptureCAM_XIMEA::resetCvImage ERROR: Unknown cv::format.", XI_NOT_SUPPORTED_DATA_FORMAT); return;
   }
 
   if(do_reset) {
@@ -284,7 +284,7 @@ CvCaptureCAM_XIMEA::resetCvImage() {
       case XI_RGB24:
       case XI_RGB_PLANAR: frame = cvCreateImage(cvSize(image.width, image.height), IPL_DEPTH_8U, 3); break;
       case XI_RGB32: frame = cvCreateImage(cvSize(image.width, image.height), IPL_DEPTH_8U, 4); break;
-      default: errMsg("CvCaptureCAM_XIMEA::resetCvImage ERROR: Unknown format.", XI_NOT_SUPPORTED_DATA_FORMAT); return;
+      default: errMsg("CvCaptureCAM_XIMEA::resetCvImage ERROR: Unknown cv::format.", XI_NOT_SUPPORTED_DATA_FORMAT); return;
     }
   }
   cvZero(frame);
@@ -998,7 +998,7 @@ CvCaptureCAM_XIMEA::setProperty(int property_id, double value) {
   }
 
   if(stat != XI_OK) {
-    // report error on parameter setting
+    // report cv::error on parameter setting
     errMsg("CvCaptureCAM_XIMEA::setProperty, xiSetParam", stat);
     setProp_result = false;
   }
@@ -1669,36 +1669,36 @@ CvCaptureCAM_XIMEA::errMsg(const char* msg, int errNum) const {
 
     case XI_OK: error_message = "Function call succeeded"; break;
     case XI_INVALID_HANDLE: error_message = "Invalid handle"; break;
-    case XI_READREG: error_message = "Register read error"; break;
-    case XI_WRITEREG: error_message = "Register write error"; break;
-    case XI_FREE_RESOURCES: error_message = "Freeing resiurces error"; break;
-    case XI_FREE_CHANNEL: error_message = "Freeing channel error"; break;
-    case XI_FREE_BANDWIDTH: error_message = "Freeing bandwidth error"; break;
-    case XI_READBLK: error_message = "Read block error"; break;
-    case XI_WRITEBLK: error_message = "Write block error"; break;
+    case XI_READREG: error_message = "Register cv::read cv::error"; break;
+    case XI_WRITEREG: error_message = "Register cv::write cv::error"; break;
+    case XI_FREE_RESOURCES: error_message = "Freeing resiurces cv::error"; break;
+    case XI_FREE_CHANNEL: error_message = "Freeing channel cv::error"; break;
+    case XI_FREE_BANDWIDTH: error_message = "Freeing bandwidth cv::error"; break;
+    case XI_READBLK: error_message = "Read block cv::error"; break;
+    case XI_WRITEBLK: error_message = "Write block cv::error"; break;
     case XI_NO_IMAGE: error_message = "No image"; break;
     case XI_TIMEOUT: error_message = "Timeout"; break;
     case XI_INVALID_ARG: error_message = "Invalid arguments supplied"; break;
     case XI_NOT_SUPPORTED: error_message = "Not supported"; break;
-    case XI_ISOCH_ATTACH_BUFFERS: error_message = "Attach buffers error"; break;
+    case XI_ISOCH_ATTACH_BUFFERS: error_message = "Attach buffers cv::error"; break;
     case XI_GET_OVERLAPPED_RESULT: error_message = "Overlapped result"; break;
-    case XI_MEMORY_ALLOCATION: error_message = "Memory allocation error"; break;
+    case XI_MEMORY_ALLOCATION: error_message = "Memory allocation cv::error"; break;
     case XI_DLLCONTEXTISNULL: error_message = "DLL context is NULL"; break;
     case XI_DLLCONTEXTISNONZERO: error_message = "DLL context is non zero"; break;
     case XI_DLLCONTEXTEXIST: error_message = "DLL context exists"; break;
     case XI_TOOMANYDEVICES: error_message = "Too many devices connected"; break;
-    case XI_ERRORCAMCONTEXT: error_message = "Camera context error"; break;
+    case XI_ERRORCAMCONTEXT: error_message = "Camera context cv::error"; break;
     case XI_UNKNOWN_HARDWARE: error_message = "Unknown hardware"; break;
     case XI_INVALID_TM_FILE: error_message = "Invalid TM file"; break;
     case XI_INVALID_TM_TAG: error_message = "Invalid TM tag"; break;
     case XI_INCOMPLETE_TM: error_message = "Incomplete TM"; break;
-    case XI_BUS_RESET_FAILED: error_message = "Bus reset error"; break;
+    case XI_BUS_RESET_FAILED: error_message = "Bus reset cv::error"; break;
     case XI_NOT_IMPLEMENTED: error_message = "Not implemented"; break;
     case XI_SHADING_TOOBRIGHT: error_message = "Shading too bright"; break;
     case XI_SHADING_TOODARK: error_message = "Shading too dark"; break;
     case XI_TOO_LOW_GAIN: error_message = "Gain is too low"; break;
     case XI_INVALID_BPL: error_message = "Invalid bad pixel list"; break;
-    case XI_BPL_REALLOC: error_message = "Bad pixel list realloc error"; break;
+    case XI_BPL_REALLOC: error_message = "Bad pixel list realloc cv::error"; break;
     case XI_INVALID_PIXEL_LIST: error_message = "Invalid pixel list"; break;
     case XI_INVALID_FFS: error_message = "Invalid Flash File System"; break;
     case XI_INVALID_PROFILE: error_message = "Invalid profile"; break;
@@ -1706,13 +1706,13 @@ CvCaptureCAM_XIMEA::errMsg(const char* msg, int errNum) const {
     case XI_INVALID_BUFFER: error_message = "Invalid buffer"; break;
     case XI_INVALID_DATA: error_message = "Invalid data"; break;
     case XI_TGBUSY: error_message = "Timing generator is busy"; break;
-    case XI_IO_WRONG: error_message = "Wrong operation open/write/read/close"; break;
+    case XI_IO_WRONG: error_message = "Wrong operation open/cv::write/cv::read/close"; break;
     case XI_ACQUISITION_ALREADY_UP: error_message = "Acquisition already started"; break;
     case XI_OLD_DRIVER_VERSION: error_message = "Old version of device driver installed to the system."; break;
-    case XI_GET_LAST_ERROR: error_message = "To get error code please call GetLastError function."; break;
+    case XI_GET_LAST_ERROR: error_message = "To get cv::error code please call GetLastError function."; break;
     case XI_CANT_PROCESS: error_message = "Data can't be processed"; break;
     case XI_ACQUISITION_STOPED: error_message = "Acquisition has been stopped. It should be started before GetImage."; break;
-    case XI_ACQUISITION_STOPED_WERR: error_message = "Acquisition has been stopped with error."; break;
+    case XI_ACQUISITION_STOPED_WERR: error_message = "Acquisition has been stopped with cv::error."; break;
     case XI_INVALID_INPUT_ICC_PROFILE: error_message = "Input ICC profile missed or corrupted"; break;
     case XI_INVALID_OUTPUT_ICC_PROFILE: error_message = "Output ICC profile missed or corrupted"; break;
     case XI_DEVICE_NOT_READY: error_message = "Device not ready to operate"; break;
@@ -1737,16 +1737,16 @@ CvCaptureCAM_XIMEA::errMsg(const char* msg, int errNum) const {
     case XI_BUFFER_TOO_SMALL: error_message = "Input buffer too small"; break;
     case XI_NOT_SUPPORTED_PARAM: error_message = "Parameter info not supported"; break;
     case XI_NOT_SUPPORTED_PARAM_INFO: error_message = "Parameter info not supported"; break;
-    case XI_NOT_SUPPORTED_DATA_FORMAT: error_message = "Data format not supported"; break;
+    case XI_NOT_SUPPORTED_DATA_FORMAT: error_message = "Data cv::format not supported"; break;
     case XI_READ_ONLY_PARAM: error_message = "Read only parameter"; break;
     case XI_BANDWIDTH_NOT_SUPPORTED: error_message = "This camera does not support currently available bandwidth"; break;
     case XI_INVALID_FFS_FILE_NAME: error_message = "FFS file selector is invalid or NULL"; break;
     case XI_FFS_FILE_NOT_FOUND: error_message = "FFS file not found"; break;
-    case XI_PROC_OTHER_ERROR: error_message = "Processing error - other"; break;
-    case XI_PROC_PROCESSING_ERROR: error_message = "Error while image processing."; break;
-    case XI_PROC_INPUT_FORMAT_UNSUPPORTED: error_message = "Input format is not supported for processing."; break;
-    case XI_PROC_OUTPUT_FORMAT_UNSUPPORTED: error_message = "Output format is not supported for processing."; break;
-    default: error_message = "Unknown error value";
+    case XI_PROC_OTHER_ERROR: error_message = "Processing cv::error - other"; break;
+    case XI_PROC_PROCESSING_ERROR: error_message = "cv::Error while image processing."; break;
+    case XI_PROC_INPUT_FORMAT_UNSUPPORTED: error_message = "Input cv::format is not supported for processing."; break;
+    case XI_PROC_OUTPUT_FORMAT_UNSUPPORTED: error_message = "Output cv::format is not supported for processing."; break;
+    default: error_message = "Unknown cv::error value";
   }
 
 #if defined _WIN32

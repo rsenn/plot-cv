@@ -14,7 +14,7 @@
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * the rights to use, copy, modify, cv::merge, publish, distribute, sublicense,
  * and/or sell copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following conditions:
 
@@ -49,7 +49,7 @@
 #include <ctime>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 int count_exit_1;
 int count_exit_2;
@@ -59,10 +59,10 @@ int count_exit_4;
 //@wait for user to select objects to track
 //@pre
 //@post objects has one or more objecst in it or the program exits
-void get_usr_defined_objects(Mat& frame, VideoCapture& cap, vector<Rect2d>& objects);
+void get_usr_defined_objects(cv::Mat& frame, cv::VideoCapture& cap, vector<Rect2d>& objects);
 
 //@
-void find_new_objects(Mat& frame, VideoCapture& cap, vector<Rect2d>& objects);
+void find_new_objects(cv::Mat& frame, cv::VideoCapture& cap, vector<Rect2d>& objects);
 
 //@
 void count_objects();
@@ -81,19 +81,19 @@ main(int argc, char** argv) {
   if(argc > 2)
     trackingAlg = argv[2]; // user
 
-  MultiTracker trackers(trackingAlg); // tracker
+  cv::MultiTracker trackers(trackingAlg); // tracker
   vector<Rect2d> objects;             // container for obj being tracked
 
   // get video
   // TODO make it video or camera
   std::string video = argv[1];
-  VideoCapture cap(video);
+  cv::VideoCapture cap(video);
 
-  Mat frame;
+  cv::Mat frame;
 
   get_usr_defined_objects(frame, cap, objects);
   // initialize the tracker
-  trackers.add(frame, objects);
+  trackers.cv::add(frame, objects);
 
   count_exit_1 = 0;
   count_exit_2 = 0;
@@ -118,7 +118,7 @@ main(int argc, char** argv) {
     //  - establish lcation - remove obj if off screen
     //  - count direction
     for(unsigned i = 0; i < trackers.objects.size(); i++) {
-      rectangle(frame, trackers.objects[i], Scalar(255, 0, 0), 2, 1); // draw rectangle around object
+      cv::rectangle(frame, trackers.objects[i], cv::Scalar(255, 0, 0), 2, 1); // draw cv::rectangle around object
       int mid_x = trackers.objects[i].x + (trackers.objects[i].width / 2);
       int mid_y = trackers.objects[i].y - (trackers.objects[i].height / 2);
 
@@ -139,22 +139,22 @@ main(int argc, char** argv) {
     }
 
     // show image with the tracked object
-    imshow("tracker", frame);
+    cv::imshow("tracker", frame);
 
     // quit on ESC button
-    if((waitKey(1) == 27) || (trackers.objects.size() < 1))
+    if((cv::waitKey(1) == 27) || (trackers.objects.size() < 1))
       break;
   }
 }
 
 void
-find_new_objects(Mat& frame, VideoCapture& cap, vector<Rect2d>& objects) {
+find_new_objects(cv::Mat& frame, cv::VideoCapture& cap, vector<Rect2d>& objects) {
 }
 
 void
-get_usr_defined_objects(Mat& frame, VideoCapture& cap, vector<Rect2d>& objects) {
+get_usr_defined_objects(cv::Mat& frame, cv::VideoCapture& cap, vector<Rect2d>& objects) {
   cap >> frame;
-  selectROI("tracker", frame, objects);
+  cv::selectROI("tracker", frame, objects);
   if(objects.size() < 1)
     exit(1);
 }

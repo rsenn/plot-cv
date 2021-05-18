@@ -1,14 +1,14 @@
 
 #include <iostream>
 #include <opencv2/core.hpp>
-#include <opencv2/core/ocl.hpp>
+#include <opencv2/core/cv::ocl.hpp>
 #include <opencv2/core/utility.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 Ptr<CLAHE> pFilter;
@@ -18,9 +18,9 @@ int cliplimit;
 static void
 TSize_Callback(int pos, void* /*data*/) {
   if(pos == 0)
-    pFilter->setTilesGridSize(Size(1, 1));
+    pFilter->setTilesGridSize(cv::Size(1, 1));
   else
-    pFilter->setTilesGridSize(Size(tilesize, tilesize));
+    pFilter->setTilesGridSize(cv::Size(tilesize, tilesize));
 }
 
 static void
@@ -45,28 +45,28 @@ main(int argc, char** argv) {
 
   string infile = cmd.get<string>("i"), outfile = cmd.get<string>("o");
   int camid = cmd.get<int>("c");
-  VideoCapture capture;
+  cv::VideoCapture capture;
 
-  namedWindow("CLAHE");
-  createTrackbar("Tile Size", "CLAHE", &tilesize, 32, (TrackbarCallback)TSize_Callback);
-  createTrackbar("Clip Limit", "CLAHE", &cliplimit, 20, (TrackbarCallback)Clip_Callback);
+  cv::namedWindow("CLAHE");
+  cv::createTrackbar("Tile cv::Size", "CLAHE", &tilesize, 32, (TrackbarCallback)TSize_Callback);
+  cv::createTrackbar("Clip Limit", "CLAHE", &cliplimit, 20, (TrackbarCallback)Clip_Callback);
 
-  UMat frame, outframe;
+  cv::UMat frame, outframe;
 
   int cur_clip;
-  Size cur_tilesize;
-  pFilter = createCLAHE();
+  cv::Size cur_tilesize;
+  pFilter = cv::createCLAHE();
 
   cur_clip = (int)pFilter->getClipLimit();
   cur_tilesize = pFilter->getTilesGridSize();
-  setTrackbarPos("Tile Size", "CLAHE", cur_tilesize.width);
-  setTrackbarPos("Clip Limit", "CLAHE", cur_clip);
+  cv::setTrackbarPos("Tile cv::Size", "CLAHE", cur_tilesize.width);
+  cv::setTrackbarPos("Clip Limit", "CLAHE", cur_clip);
 
   if(!infile.empty()) {
     infile = infile;
-    imread(infile).copyTo(frame);
+    cv::imread(infile).copyTo(frame);
     if(frame.empty()) {
-      cout << "error read image: " << infile << endl;
+      cout << "cv::error cv::read image: " << infile << endl;
       return EXIT_FAILURE;
     }
   } else
@@ -79,27 +79,27 @@ main(int argc, char** argv) {
 
   for(;;) {
     if(capture.isOpened())
-      capture.read(frame);
+      capture.cv::read(frame);
     else
-      imread(infile).copyTo(frame);
+      cv::imread(infile).copyTo(frame);
     if(frame.empty()) {
-      waitKey();
+      cv::waitKey();
       break;
     }
 
-    cvtColor(frame, frame, COLOR_BGR2GRAY);
+    cv::cvtColor(frame, frame, COLOR_BGR2GRAY);
     pFilter->apply(frame, outframe);
 
-    imshow("CLAHE", outframe);
+    cv::imshow("CLAHE", outframe);
 
-    char key = (char)waitKey(3);
+    char key = (char)cv::waitKey(3);
     if(key == 'o')
-      imwrite(outfile, outframe);
+      cv::imwrite(outfile, outframe);
     else if(key == 27)
       break;
     else if(key == 'm') {
-      ocl::setUseOpenCL(!cv::ocl::useOpenCL());
-      cout << "Switched to " << (ocl::useOpenCL() ? "OpenCL enabled" : "CPU") << " mode\n";
+      cv::ocl::setUseOpenCL(!cv::ocl::useOpenCL());
+      cout << "Switched to " << (cv::ocl::useOpenCL() ? "OpenCL enabled" : "CPU") << " mode\n";
     }
   }
   return EXIT_SUCCESS;

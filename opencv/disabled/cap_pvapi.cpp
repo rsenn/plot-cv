@@ -190,7 +190,7 @@ CvCaptureCAM_PvAPI::open(int index) {
 
     return startCapture();
   }
-  fprintf(stderr, "Error cannot open camera\n");
+  fprintf(stderr, "cv::Error cannot open camera\n");
   return false;
 }
 
@@ -283,7 +283,7 @@ CvCaptureCAM_PvAPI::getProperty(int property_id) const {
 
 bool
 CvCaptureCAM_PvAPI::setProperty(int property_id, double value) {
-  tPvErr error;
+  tPvErr cv::error;
 
   switch(property_id) {
     case cv::CAP_PROP_FRAME_WIDTH: {
@@ -349,48 +349,48 @@ CvCaptureCAM_PvAPI::setProperty(int property_id, double value) {
       break;
     case cv::CAP_PROP_PVAPI_FRAMESTARTTRIGGERMODE:
       if(value == 0)
-        error = PvAttrEnumSet(Camera.Handle, "FrameStartTriggerMode", "Freerun");
+        cv::error = PvAttrEnumSet(Camera.Handle, "FrameStartTriggerMode", "Freerun");
       else if(value == 1)
-        error = PvAttrEnumSet(Camera.Handle, "FrameStartTriggerMode", "SyncIn1");
+        cv::error = PvAttrEnumSet(Camera.Handle, "FrameStartTriggerMode", "SyncIn1");
       else if(value == 2)
-        error = PvAttrEnumSet(Camera.Handle, "FrameStartTriggerMode", "SyncIn2");
+        cv::error = PvAttrEnumSet(Camera.Handle, "FrameStartTriggerMode", "SyncIn2");
       else if(value == 3)
-        error = PvAttrEnumSet(Camera.Handle, "FrameStartTriggerMode", "FixedRate");
+        cv::error = PvAttrEnumSet(Camera.Handle, "FrameStartTriggerMode", "FixedRate");
       else if(value == 4)
-        error = PvAttrEnumSet(Camera.Handle, "FrameStartTriggerMode", "Software");
+        cv::error = PvAttrEnumSet(Camera.Handle, "FrameStartTriggerMode", "Software");
       else
-        error = ePvErrOutOfRange;
-      if(error == ePvErrSuccess)
+        cv::error = ePvErrOutOfRange;
+      if(cv::error == ePvErrSuccess)
         break;
       else
         return false;
     case cv::CAP_PROP_PVAPI_DECIMATIONHORIZONTAL:
       if(value >= 1 && value <= 8)
-        error = PvAttrUint32Set(Camera.Handle, "DecimationHorizontal", value);
+        cv::error = PvAttrUint32Set(Camera.Handle, "DecimationHorizontal", value);
       else
-        error = ePvErrOutOfRange;
-      if(error == ePvErrSuccess)
+        cv::error = ePvErrOutOfRange;
+      if(cv::error == ePvErrSuccess)
         break;
       else
         return false;
     case cv::CAP_PROP_PVAPI_DECIMATIONVERTICAL:
       if(value >= 1 && value <= 8)
-        error = PvAttrUint32Set(Camera.Handle, "DecimationVertical", value);
+        cv::error = PvAttrUint32Set(Camera.Handle, "DecimationVertical", value);
       else
-        error = ePvErrOutOfRange;
-      if(error == ePvErrSuccess)
+        cv::error = ePvErrOutOfRange;
+      if(cv::error == ePvErrSuccess)
         break;
       else
         return false;
     case cv::CAP_PROP_PVAPI_BINNINGX:
-      error = PvAttrUint32Set(Camera.Handle, "BinningX", value);
-      if(error == ePvErrSuccess)
+      cv::error = PvAttrUint32Set(Camera.Handle, "BinningX", value);
+      if(cv::error == ePvErrSuccess)
         break;
       else
         return false;
     case cv::CAP_PROP_PVAPI_BINNINGY:
-      error = PvAttrUint32Set(Camera.Handle, "BinningY", value);
-      if(error == ePvErrSuccess)
+      cv::error = PvAttrUint32Set(Camera.Handle, "BinningY", value);
+      if(cv::error == ePvErrSuccess)
         break;
       else
         return false;
@@ -463,7 +463,7 @@ CvCaptureCAM_PvAPI::startCapture() {
   }
 
   if(PvAttrEnumSet(Camera.Handle, "FrameStartTriggerMode", "Freerun") != ePvErrSuccess) {
-    fprintf(stderr, "Error setting PvAPI trigger to \"Freerun\"");
+    fprintf(stderr, "cv::Error setting PvAPI trigger to \"Freerun\"");
     return false;
   }
 

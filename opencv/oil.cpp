@@ -1,16 +1,16 @@
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
-#include <opencv2/xphoto.hpp>
-#include <opencv2/xphoto/oilpainting.hpp>
+#include <opencv2/cv::xphoto.hpp>
+#include <opencv2/cv::xphoto/oilpainting.hpp>
 #include <iostream>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 static void TrackSlider(int, void*);
-static void addSlider(String sliderName,
-                      String windowName,
+static void addSlider(cv::String sliderName,
+                      cv::String windowName,
                       int minSlider,
                       int maxSlider,
                       int valDefault,
@@ -20,14 +20,14 @@ static void addSlider(String sliderName,
 vector<int> colorSpace = {COLOR_BGR2GRAY, COLOR_BGR2HSV, COLOR_BGR2YUV, COLOR_BGR2XYZ};
 
 struct OilImage {
-  String winName = "Oil painting";
+  cv::String winName = "Oil painting";
   int size;
   int dynRatio;
   int colorSpace;
-  Mat img;
+  cv::Mat img;
 };
 
-const String keys = "{Help h usage ? help  |     | Print this message   }"
+const cv::String keys = "{Help h usage ? help  |     | Print this message   }"
                     "{v                    | 0   | video index }"
                     "{a                    | 700   | API index }"
                     "{s                    | 10   | neighbouring size }"
@@ -37,13 +37,13 @@ const String keys = "{Help h usage ? help  |     | Print this message   }"
 
 int
 main(int argc, char* argv[]) {
-  CommandLineParser parser(argc, argv, keys);
+  cv::CommandLineParser parser(argc, argv, keys);
 
   if(parser.has("help")) {
     parser.printMessage();
     return 0;
   }
-  String filename = parser.get<String>(0);
+  cv::String filename = parser.get<String>(0);
   OilImage p;
   p.dynRatio = parser.get<int>("d");
   p.size = parser.get<int>("s");
@@ -53,56 +53,56 @@ main(int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
   if(!filename.empty()) {
-    p.img = imread(filename);
+    p.img = cv::imread(filename);
     if(p.img.empty()) {
       std::cout << "Check file path!\n";
       return EXIT_FAILURE;
     }
-    Mat dst;
-    xphoto::oilPainting(p.img, dst, p.size, p.dynRatio, colorSpace[p.colorSpace]);
-    imshow("oil painting effect", dst);
-    waitKey();
+    cv::Mat dst;
+    cv::xphoto::oilPainting(p.img, dst, p.size, p.dynRatio, colorSpace[p.colorSpace]);
+    cv::imshow("oil painting effect", dst);
+    cv::waitKey();
     return 0;
   }
-  VideoCapture v(parser.get<int>("v") + parser.get<int>("a"));
+  cv::VideoCapture v(parser.get<int>("v") + parser.get<int>("a"));
   v >> p.img;
   p.winName = "Oil Painting";
-  namedWindow(p.winName);
+  cv::namedWindow(p.winName);
   addSlider("DynRatio", p.winName, 1, 127, p.dynRatio, &p.dynRatio, TrackSlider, &p);
-  addSlider("Size", p.winName, 1, 100, p.size, &p.size, TrackSlider, &p);
+  addSlider("cv::Size", p.winName, 1, 100, p.size, &p.size, TrackSlider, &p);
   addSlider("ColorSpace", p.winName, 0, static_cast<int>(colorSpace.size() - 1), p.colorSpace, &p.colorSpace, TrackSlider, &p);
-  while(waitKey(20) != 27) {
+  while(cv::waitKey(20) != 27) {
     v >> p.img;
-    imshow("Original", p.img);
+    cv::imshow("Original", p.img);
     TrackSlider(0, &p);
-    waitKey(10);
+    cv::waitKey(10);
   }
   return 0;
 }
 
 void
-addSlider(String sliderName,
-          String windowName,
+addSlider(cv::String sliderName,
+          cv::String windowName,
           int minSlider,
           int maxSlider,
           int valDefault,
           int* valSlider,
           void (*f)(int, void*),
           void* r) {
-  createTrackbar(sliderName, windowName, valSlider, 1, f, r);
-  setTrackbarMin(sliderName, windowName, minSlider);
-  setTrackbarMax(sliderName, windowName, maxSlider);
-  setTrackbarPos(sliderName, windowName, valDefault);
+  cv::createTrackbar(sliderName, windowName, valSlider, 1, f, r);
+  cv::setTrackbarMin(sliderName, windowName, minSlider);
+  cv::setTrackbarMax(sliderName, windowName, maxSlider);
+  cv::setTrackbarPos(sliderName, windowName, valDefault);
 }
 
 void
 TrackSlider(int, void* r) {
   OilImage* p = (OilImage*)r;
-  Mat dst;
+  cv::Mat dst;
   p->img = p->img / p->dynRatio;
   p->img = p->img * p->dynRatio;
-  xphoto::oilPainting(p->img, dst, p->size, p->dynRatio, colorSpace[p->colorSpace]);
+  cv::xphoto::oilPainting(p->img, dst, p->size, p->dynRatio, colorSpace[p->colorSpace]);
   if(!dst.empty()) {
-    imshow(p->winName, dst);
+    cv::imshow(p->winName, dst);
   }
 }

@@ -11,7 +11,7 @@
 #include "NCVHaarObjectDetection.hpp"
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 #if defined(__arm__)
 int
@@ -25,23 +25,23 @@ const Size2i preferredVideoFrameSize(640, 480);
 const string wndTitle = "NVIDIA Computer Vision :: Haar Classifiers Cascade";
 
 static void
-matPrint(Mat& img, int lineOffsY, Scalar fontColor, const string& ss) {
+matPrint(cv::Mat& img, int lineOffsY, cv::Scalar fontColor, const string& ss) {
   int fontFace = FONT_HERSHEY_DUPLEX;
   double fontScale = 0.8;
   int fontThickness = 2;
-  Size fontSize = cv::getTextSize("T[]", fontFace, fontScale, fontThickness, 0);
+  cv::Size fontSize = cv::getTextSize("T[]", fontFace, fontScale, fontThickness, 0);
 
-  Point org;
+  cv::Point org;
   org.x = 1;
   org.y = 3 * fontSize.height * (lineOffsY + 1) / 2;
-  putText(img, ss, org, fontFace, fontScale, CV_RGB(0, 0, 0), 5 * fontThickness / 2, 16);
-  putText(img, ss, org, fontFace, fontScale, fontColor, fontThickness, 16);
+  cv::putText(img, ss, org, fontFace, fontScale, CV_RGB(0, 0, 0), 5 * fontThickness / 2, 16);
+  cv::putText(img, ss, org, fontFace, fontScale, fontColor, fontThickness, 16);
 }
 
 static void
-displayState(Mat& canvas, bool bHelp, bool bGpu, bool bLargestFace, bool bFilter, double fps) {
-  Scalar fontColorRed = CV_RGB(255, 0, 0);
-  Scalar fontColorNV = CV_RGB(118, 185, 0);
+displayState(cv::Mat& canvas, bool bHelp, bool bGpu, bool bLargestFace, bool bFilter, double fps) {
+  cv::Scalar fontColorRed = CV_RGB(255, 0, 0);
+  cv::Scalar fontColorNV = CV_RGB(118, 185, 0);
 
   ostringstream ss;
   ss << "FPS = " << setprecision(1) << fixed << fps;
@@ -62,7 +62,7 @@ displayState(Mat& canvas, bool bHelp, bool bGpu, bool bLargestFace, bool bFilter
 }
 
 static NCVStatus
-process(Mat* srcdst,
+process(cv::Mat* srcdst,
         Ncv32u width,
         Ncv32u height,
         NcvBool bFilterRects,
@@ -157,12 +157,12 @@ main(int argc, const char** argv) {
 
   NCVStatus ncvStat;
   NcvBool bQuit = false;
-  VideoCapture capture;
+  cv::VideoCapture capture;
   Size2i frameSize;
 
   // open content source
-  Mat image = imread(inputName);
-  Mat frame;
+  cv::Mat image = cv::imread(inputName);
+  cv::Mat frame;
   if(!image.empty()) {
     frameSize.width = image.cols;
     frameSize.height = image.rows;
@@ -189,8 +189,8 @@ main(int argc, const char** argv) {
   NcvBool bFilterRects = true;
   NcvBool bHelpScreen = false;
 
-  CascadeClassifier classifierOpenCV;
-  ncvAssertPrintReturn(classifierOpenCV.load(cascadeName) != 0, "Error (in OpenCV) opening classifier", -1);
+  cv::CascadeClassifier classifierOpenCV;
+  ncvAssertPrintReturn(classifierOpenCV.load(cascadeName) != 0, "cv::Error (in OpenCV) opening classifier", -1);
 
   int devId;
   ncvAssertCUDAReturn(cudaGetDevice(&devId), -1);
@@ -206,39 +206,39 @@ main(int argc, const char** argv) {
   //==============================================================================
 
   NCVMemNativeAllocator gpuCascadeAllocator(NCVMemoryTypeDevice, static_cast<Ncv32u>(devProp.textureAlignment));
-  ncvAssertPrintReturn(gpuCascadeAllocator.isInitialized(), "Error creating cascade GPU allocator", -1);
+  ncvAssertPrintReturn(gpuCascadeAllocator.isInitialized(), "cv::Error creating cascade GPU allocator", -1);
   NCVMemNativeAllocator cpuCascadeAllocator(NCVMemoryTypeHostPinned, static_cast<Ncv32u>(devProp.textureAlignment));
-  ncvAssertPrintReturn(cpuCascadeAllocator.isInitialized(), "Error creating cascade CPU allocator", -1);
+  ncvAssertPrintReturn(cpuCascadeAllocator.isInitialized(), "cv::Error creating cascade CPU allocator", -1);
 
   Ncv32u haarNumStages, haarNumNodes, haarNumFeatures;
   ncvStat = ncvHaarGetClassifierSize(cascadeName, haarNumStages, haarNumNodes, haarNumFeatures);
-  ncvAssertPrintReturn(ncvStat == NCV_SUCCESS, "Error reading classifier size (check the file)", -1);
+  ncvAssertPrintReturn(ncvStat == NCV_SUCCESS, "cv::Error reading classifier size (check the file)", -1);
 
   NCVVectorAlloc<HaarStage64> h_haarStages(cpuCascadeAllocator, haarNumStages);
-  ncvAssertPrintReturn(h_haarStages.isMemAllocated(), "Error in cascade CPU allocator", -1);
+  ncvAssertPrintReturn(h_haarStages.isMemAllocated(), "cv::Error in cascade CPU allocator", -1);
   NCVVectorAlloc<HaarClassifierNode128> h_haarNodes(cpuCascadeAllocator, haarNumNodes);
-  ncvAssertPrintReturn(h_haarNodes.isMemAllocated(), "Error in cascade CPU allocator", -1);
+  ncvAssertPrintReturn(h_haarNodes.isMemAllocated(), "cv::Error in cascade CPU allocator", -1);
   NCVVectorAlloc<HaarFeature64> h_haarFeatures(cpuCascadeAllocator, haarNumFeatures);
 
-  ncvAssertPrintReturn(h_haarFeatures.isMemAllocated(), "Error in cascade CPU allocator", -1);
+  ncvAssertPrintReturn(h_haarFeatures.isMemAllocated(), "cv::Error in cascade CPU allocator", -1);
 
   HaarClassifierCascadeDescriptor haar;
   ncvStat = ncvHaarLoadFromFile_host(cascadeName, haar, h_haarStages, h_haarNodes, h_haarFeatures);
-  ncvAssertPrintReturn(ncvStat == NCV_SUCCESS, "Error loading classifier", -1);
+  ncvAssertPrintReturn(ncvStat == NCV_SUCCESS, "cv::Error loading classifier", -1);
 
   NCVVectorAlloc<HaarStage64> d_haarStages(gpuCascadeAllocator, haarNumStages);
-  ncvAssertPrintReturn(d_haarStages.isMemAllocated(), "Error in cascade GPU allocator", -1);
+  ncvAssertPrintReturn(d_haarStages.isMemAllocated(), "cv::Error in cascade GPU allocator", -1);
   NCVVectorAlloc<HaarClassifierNode128> d_haarNodes(gpuCascadeAllocator, haarNumNodes);
-  ncvAssertPrintReturn(d_haarNodes.isMemAllocated(), "Error in cascade GPU allocator", -1);
+  ncvAssertPrintReturn(d_haarNodes.isMemAllocated(), "cv::Error in cascade GPU allocator", -1);
   NCVVectorAlloc<HaarFeature64> d_haarFeatures(gpuCascadeAllocator, haarNumFeatures);
-  ncvAssertPrintReturn(d_haarFeatures.isMemAllocated(), "Error in cascade GPU allocator", -1);
+  ncvAssertPrintReturn(d_haarFeatures.isMemAllocated(), "cv::Error in cascade GPU allocator", -1);
 
   ncvStat = h_haarStages.copySolid(d_haarStages, 0);
-  ncvAssertPrintReturn(ncvStat == NCV_SUCCESS, "Error copying cascade to GPU", -1);
+  ncvAssertPrintReturn(ncvStat == NCV_SUCCESS, "cv::Error copying cascade to GPU", -1);
   ncvStat = h_haarNodes.copySolid(d_haarNodes, 0);
-  ncvAssertPrintReturn(ncvStat == NCV_SUCCESS, "Error copying cascade to GPU", -1);
+  ncvAssertPrintReturn(ncvStat == NCV_SUCCESS, "cv::Error copying cascade to GPU", -1);
   ncvStat = h_haarFeatures.copySolid(d_haarFeatures, 0);
-  ncvAssertPrintReturn(ncvStat == NCV_SUCCESS, "Error copying cascade to GPU", -1);
+  ncvAssertPrintReturn(ncvStat == NCV_SUCCESS, "cv::Error copying cascade to GPU", -1);
 
   //==============================================================================
   //
@@ -247,9 +247,9 @@ main(int argc, const char** argv) {
   //==============================================================================
 
   NCVMemStackAllocator gpuCounter(static_cast<Ncv32u>(devProp.textureAlignment));
-  ncvAssertPrintReturn(gpuCounter.isInitialized(), "Error creating GPU memory counter", -1);
+  ncvAssertPrintReturn(gpuCounter.isInitialized(), "cv::Error creating GPU memory counter", -1);
   NCVMemStackAllocator cpuCounter(static_cast<Ncv32u>(devProp.textureAlignment));
-  ncvAssertPrintReturn(cpuCounter.isInitialized(), "Error creating CPU memory counter", -1);
+  ncvAssertPrintReturn(cpuCounter.isInitialized(), "cv::Error creating CPU memory counter", -1);
 
   ncvStat = process(NULL,
                     frameSize.width,
@@ -264,14 +264,14 @@ main(int argc, const char** argv) {
                     gpuCounter,
                     cpuCounter,
                     devProp);
-  ncvAssertPrintReturn(ncvStat == NCV_SUCCESS, "Error in memory counting pass", -1);
+  ncvAssertPrintReturn(ncvStat == NCV_SUCCESS, "cv::Error in memory counting pass", -1);
 
   NCVMemStackAllocator gpuAllocator(NCVMemoryTypeDevice, gpuCounter.maxSize(), static_cast<Ncv32u>(devProp.textureAlignment));
-  ncvAssertPrintReturn(gpuAllocator.isInitialized(), "Error creating GPU memory allocator", -1);
+  ncvAssertPrintReturn(gpuAllocator.isInitialized(), "cv::Error creating GPU memory allocator", -1);
   NCVMemStackAllocator cpuAllocator(NCVMemoryTypeHostPinned,
                                     cpuCounter.maxSize(),
                                     static_cast<Ncv32u>(devProp.textureAlignment));
-  ncvAssertPrintReturn(cpuAllocator.isInitialized(), "Error creating CPU memory allocator", -1);
+  ncvAssertPrintReturn(cpuAllocator.isInitialized(), "cv::Error creating CPU memory allocator", -1);
 
   printf("Initialized for frame size [%dx%d]\n", frameSize.width, frameSize.height);
 
@@ -281,12 +281,12 @@ main(int argc, const char** argv) {
   //
   //==============================================================================
 
-  namedWindow(wndTitle, 1);
-  Mat frameDisp;
+  cv::namedWindow(wndTitle, 1);
+  cv::Mat frameDisp;
 
   do {
-    Mat gray;
-    cvtColor((image.empty() ? frame : image), gray, cv::COLOR_BGR2GRAY);
+    cv::Mat gray;
+    cv::cvtColor((image.empty() ? frame : image), gray, cv::COLOR_BGR2GRAY);
 
     //
     // process
@@ -319,25 +319,25 @@ main(int argc, const char** argv) {
                         gpuAllocator,
                         cpuAllocator,
                         devProp);
-      ncvAssertPrintReturn(ncvStat == NCV_SUCCESS, "Error in memory counting pass", -1);
+      ncvAssertPrintReturn(ncvStat == NCV_SUCCESS, "cv::Error in memory counting pass", -1);
     } else {
-      vector<Rect> rectsOpenCV;
+      vector<cv::Rect> rectsOpenCV;
 
       classifierOpenCV.detectMultiScale(gray,
                                         rectsOpenCV,
                                         1.2f,
                                         bFilterRects ? 4 : 0,
                                         (bLargestObject ? cv::HAAR_FIND_BIGGEST_OBJECT : 0) | cv::CASCADE_SCALE_IMAGE,
-                                        Size(minSize.width, minSize.height));
+                                        cv::Size(minSize.width, minSize.height));
 
-      for(size_t rt = 0; rt < rectsOpenCV.size(); ++rt) rectangle(gray, rectsOpenCV[rt], Scalar(255));
+      for(size_t rt = 0; rt < rectsOpenCV.size(); ++rt) cv::rectangle(gray, rectsOpenCV[rt], cv::Scalar(255));
     }
 
     avgTime = (Ncv32f)ncvEndQueryTimerMs(timer);
 
-    cvtColor(gray, frameDisp, cv::COLOR_GRAY2BGR);
+    cv::cvtColor(gray, frameDisp, cv::COLOR_GRAY2BGR);
     displayState(frameDisp, bHelpScreen, bUseGPU, bLargestObject, bFilterRects, 1000.0f / avgTime);
-    imshow(wndTitle, frameDisp);
+    cv::imshow(wndTitle, frameDisp);
 
     // handle input
     switch(cvWaitKey(3)) {

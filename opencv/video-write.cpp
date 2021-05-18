@@ -1,20 +1,20 @@
 #include <iostream> // for standard I/O
 #include <string>   // for strings
 
-#include <opencv2/core/core.hpp>       // Basic OpenCV structures (Mat)
+#include <opencv2/core/core.hpp>       // Basic OpenCV structures (cv::Mat)
 #include <opencv2/highgui/highgui.hpp> // Video write
 #include <opencv2/videoio.hpp>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 static void
 help() {
   cout << "------------------------------------------------------------------------------" << endl
-       << "This program shows how to write video files." << endl
+       << "This program shows how to cv::write video files." << endl
        << "You can extract the R or G or B color channel of the input video." << endl
        << "Usage:" << endl
-       << "./video-write inputvideoName [ R | G | B] [Y | N]" << endl
+       << "./video-cv::write inputvideoName [ R | G | B] [Y | N]" << endl
        << "------------------------------------------------------------------------------" << endl
        << endl;
 }
@@ -31,7 +31,7 @@ main(int argc, char* argv[]) {
   const string source = argv[1];                // the source file name
   const bool askOutputType = argv[3][0] == 'Y'; // If false it will use the inputs codec type
 
-  VideoCapture inputVideo(source); // Open input
+  cv::VideoCapture inputVideo(source); // Open input
   if(!inputVideo.isOpened()) {
     cout << "Could not open the input video: " << source << endl;
     return -1;
@@ -45,17 +45,17 @@ main(int argc, char* argv[]) {
   char EXT[] = {
       (char)(ex & 0XFF), (char)((ex & 0XFF00) >> 8), (char)((ex & 0XFF0000) >> 16), (char)((ex & 0XFF000000) >> 24), 0};
 
-  Size S = Size((int)inputVideo.get(cv::CAP_PROP_FRAME_WIDTH), // Acquire input size
+  cv::Size S = cv::Size((int)inputVideo.get(cv::CAP_PROP_FRAME_WIDTH), // Acquire input size
                 (int)inputVideo.get(cv::CAP_PROP_FRAME_HEIGHT));
 
-  VideoWriter outputVideo; // Open the output
+  cv::VideoWriter outputVideo; // Open the output
   if(askOutputType)
     outputVideo.open(NAME, ex = -1, inputVideo.get(cv::CAP_PROP_FPS), S, true);
   else
     outputVideo.open(NAME, ex, inputVideo.get(cv::CAP_PROP_FPS), S, true);
 
   if(!outputVideo.isOpened()) {
-    cout << "Could not open the output video for write: " << source << endl;
+    cout << "Could not open the output video for cv::write: " << source << endl;
     return -1;
   }
 
@@ -69,21 +69,21 @@ main(int argc, char* argv[]) {
     case 'G': channel = 1; break;
     case 'B': channel = 0; break;
   }
-  Mat src, res;
-  vector<Mat> spl;
+  cv::Mat src, res;
+  vector<cv::Mat> spl;
 
   for(;;) {            // Show the image captured in the window and repeat
     inputVideo >> src; // read
     if(src.empty())
       break; // check if at end
 
-    split(src, spl); // process - extract only the correct channel
+    cv::split(src, spl); // process - extract only the correct channel
     for(int i = 0; i < 3; ++i)
       if(i != channel)
-        spl[i] = Mat::zeros(S, spl[0].type());
-    merge(spl, res);
+        spl[i] = cv::Mat::zeros(S, spl[0].type());
+    cv::merge(spl, res);
 
-    // outputVideo.write(res); //save or
+    // outputVideo.cv::write(res); //save or
     outputVideo << res;
   }
 

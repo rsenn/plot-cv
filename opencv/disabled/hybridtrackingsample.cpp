@@ -22,19 +22,19 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
-Mat frame, image;
-Rect selection;
-Point origin;
+cv::Mat frame, image;
+cv::Rect selection;
+cv::Point origin;
 bool selectObject = false;
 int trackObject = 0;
 int live = 1;
 
 static void
-drawRectangle(Mat* img, Rect win) {
-  rectangle(*img, Point(win.x, win.y), Point(win.x + win.width, win.y + win.height), Scalar(0, 255, 0), 2, cv::LINE_AA);
+drawRectangle(cv::Mat* img, cv::Rect win) {
+  cv::rectangle(*img, cv::Point(win.x, win.y), cv::Point(win.x + win.width, win.y + win.height), cv::Scalar(0, 255, 0), 2, cv::LINE_AA);
 }
 
 static void
@@ -44,13 +44,13 @@ onMouse(int event, int x, int y, int, void*) {
     selection.y = MIN(y, origin.y);
     selection.width = std::abs(x - origin.x);
     selection.height = std::abs(y - origin.y);
-    selection &= Rect(0, 0, image.cols, image.rows);
+    selection &= cv::Rect(0, 0, image.cols, image.rows);
   }
 
   switch(event) {
     case cv::EVENT_LBUTTONDOWN:
-      origin = Point(x, y);
-      selection = Rect(x, y, 0, 0);
+      origin = cv::Point(x, y);
+      selection = cv::Rect(x, y, 0, 0);
       selectObject = true;
       break;
     case cv::EVENT_LBUTTONUP:
@@ -74,7 +74,7 @@ main(int argc, char** argv) {
   }
 
   FILE* f = 0;
-  VideoCapture cap;
+  cv::VideoCapture cap;
   char test_file[20] = "";
 
   if(strcmp(argv[1], "live") != 0) {
@@ -101,7 +101,7 @@ main(int argc, char** argv) {
   // motion model params
   params.motion_model = CvMotionModel::LOW_PASS_FILTER;
   params.low_pass_gain = 0.1f;
-  // mean shift params
+  // cv::mean shift params
   params.ms_tracker_weight = 0.8f;
   params.ms_params.tracking_type = CvMeanShiftTrackerParams::HS;
   // feature tracking params
@@ -112,9 +112,9 @@ main(int argc, char** argv) {
   HybridTracker tracker(params);
   char img_file[20] = "seqG/0001.png";
   char img_file_num[10];
-  namedWindow("Win", 1);
+  cv::namedWindow("Win", 1);
 
-  setMouseCallback("Win", onMouse, 0);
+  cv::setMouseCallback("Win", onMouse, 0);
 
   int i = 0;
   float w[4];
@@ -129,15 +129,15 @@ main(int argc, char** argv) {
       int values_read = fscanf(f, "%d %f %f %f %f\n", &i, &w[0], &w[1], &w[2], &w[3]);
       CV_Assert(values_read == 5);
       sprintf(img_file, "seqG/%04d.png", i);
-      image = imread(img_file, cv::LOAD_IMAGE_COLOR);
+      image = cv::imread(img_file, cv::LOAD_IMAGE_COLOR);
       if(image.empty())
         break;
       selection =
-          Rect(cvRound(w[0] * image.cols), cvRound(w[1] * image.rows), cvRound(w[2] * image.cols), cvRound(w[3] * image.rows));
+          cv::Rect(cvRound(w[0] * image.cols), cvRound(w[1] * image.rows), cvRound(w[2] * image.cols), cvRound(w[3] * image.rows));
     }
 
     sprintf(img_file_num, "Frame: %d", i);
-    putText(image, img_file_num, Point(10, image.rows - 20), FONT_HERSHEY_PLAIN, 0.75, Scalar(255, 255, 255));
+    cv::putText(image, img_file_num, cv::Point(10, image.rows - 20), FONT_HERSHEY_PLAIN, 0.75, cv::Scalar(255, 255, 255));
     if(!image.empty()) {
 
       if(trackObject < 0) {
@@ -151,16 +151,16 @@ main(int argc, char** argv) {
       }
 
       if(selectObject && selection.width > 0 && selection.height > 0) {
-        Mat roi(image, selection);
-        bitwise_not(roi, roi);
+        cv::Mat roi(image, selection);
+        cv::bitwise_not(roi, roi);
       }
 
       drawRectangle(
           &image,
-          Rect(cvRound(w[0] * image.cols), cvRound(w[1] * image.rows), cvRound(w[2] * image.cols), cvRound(w[3] * image.rows)));
-      imshow("Win", image);
+          cv::Rect(cvRound(w[0] * image.cols), cvRound(w[1] * image.rows), cvRound(w[2] * image.cols), cvRound(w[3] * image.rows)));
+      cv::imshow("Win", image);
 
-      waitKey(100);
+      cv::waitKey(100);
     } else
       i = 0;
   }

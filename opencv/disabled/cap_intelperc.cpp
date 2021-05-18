@@ -439,7 +439,7 @@ IntelPerCStreamDepth::retrieveUVAsOutputArray(cv::OutputArray image) {
 }
 bool
 IntelPerCStreamDepth::validProfile(const PXCCapture::VideoStream::ProfileInfo& pinfo) {
-  return (PXCImage::COLOR_FORMAT_DEPTH == pinfo.imageInfo.format);
+  return (PXCImage::COLOR_FORMAT_DEPTH == pinfo.imageInfo.cv::format);
 }
 bool
 IntelPerCStreamDepth::retriveFrame(int type, int planeIdx, cv::OutputArray frame) {

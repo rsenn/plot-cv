@@ -5,7 +5,7 @@ Scheduler::Scheduler(int input_camera_index,
                      string cascade_path,
                      string cascade_name,
                      string nested_cascade_name,
-                     VideoCapture camera) {
+                     cv::VideoCapture camera) {
 
   this->scheduler_resolution = 1000; // 1000ms default execution cycle delay.
   this->camera_index = input_camera_index;
@@ -68,7 +68,7 @@ Scheduler::remove_event(long int eventID) {
   }
 
   if(!element_removed) {
-    cout << "Error: Attempt to remove Event from Scheduler->event_schedule failed due to no "
+    cout << "cv::Error: Attempt to remove Event from Scheduler->event_schedule failed due to no "
             "matching eventID found. \n";
     return -1;
   }
@@ -226,7 +226,7 @@ Scheduler::check_overdueEvents() { // Scans event_schedule and returns the first
     time(&current_time);
 
     if(current_time <= -1) {
-      cout << "Error: check_overdueEvents() could not retrieve system time. \n";
+      cout << "cv::Error: check_overdueEvents() could not retrieve system time. \n";
       return NULL;
     }
 
@@ -289,26 +289,26 @@ int
 Scheduler::display_camera_feed() {
 
   if(!this->camera.isOpened()) {
-    cout << "Error: Scheduler::display_camera_feed() could not access camera at camera_index= " << this->camera_index << endl;
+    cout << "cv::Error: Scheduler::display_camera_feed() could not access camera at camera_index= " << this->camera_index << endl;
     return -1;
   } else {
-    Mat frame;
+    cv::Mat frame;
     string window_name = "Camera Feed: camera_index= " + this->camera_index;
-    namedWindow(window_name, cv::WINDOW_AUTOSIZE);
+    cv::namedWindow(window_name, cv::WINDOW_AUTOSIZE);
 
     while(1) {
-      if(!this->camera.read(frame)) {
-        cout << "Error: Scheduler::display_camera_feed() could not read frame from camera at "
+      if(!this->camera.cv::read(frame)) {
+        cout << "cv::Error: Scheduler::display_camera_feed() could not cv::read frame from camera at "
                 "camera_index= "
              << this->camera_index << endl;
         return -1;
       } else {
-        imshow(window_name, frame);
+        cv::imshow(window_name, frame);
       }
 
-      if(waitKey(30) == 27) {
+      if(cv::waitKey(30) == 27) {
         cout << "Exiting camera feed. Returning to main menu. \n";
-        destroyAllWindows();
+        cv::destroyAllWindows();
         return 0;
       }
     }
@@ -317,7 +317,7 @@ Scheduler::display_camera_feed() {
   return 0;
 }
 
-VideoCapture*
+cv::VideoCapture*
 Scheduler::get_camera() {
 
   return &this->camera;
@@ -326,15 +326,15 @@ Scheduler::get_camera() {
 int
 Scheduler::scheduler_execution_cycle() {
 
-  Mat frame_temp;
+  cv::Mat frame_temp;
 
   if(!this->camera.isOpened()) {
     cout << "Camera at index: " << camera_index << " failed to open. \n";
     this->camera.release();
-    this->camera.~VideoCapture();
+    this->camera.~cv::VideoCapture();
     return -1;
   } else {
-    this->camera.read(frame_temp);
+    this->camera.cv::read(frame_temp);
   }
 
   /*Execution stage1: Check event_schedule for overdue events*/
@@ -343,7 +343,7 @@ Scheduler::scheduler_execution_cycle() {
   /*Execution stage1: complete*/
 
   // Execution stage2: Run enabled frame analyzing functions
-  this->camera.read(frame_temp);
+  this->camera.cv::read(frame_temp);
 
   int colour_analysis_code = this->frame_processor->frame_colour_analysis(frame_temp, this->camera_index);
   if(colour_analysis_code == 1) {

@@ -19,8 +19,8 @@
 #include "opencv2/gpu/gpu.hpp"
 
 using namespace std;
-using namespace cv;
-using namespace cv::gpu;
+//using namespace cv;
+//using namespace cv::gpu;
 
 ///////////////////////////////////////////////////////////
 // Thread
@@ -111,7 +111,7 @@ public:
   explicit StereoSingleGpu(int deviceId = 0);
   ~StereoSingleGpu();
 
-  void compute(const Mat& leftFrame, const Mat& rightFrame, Mat& disparity);
+  void compute(const cv::Mat& leftFrame, const cv::Mat& rightFrame, cv::Mat& disparity);
 
 private:
   int deviceId_;
@@ -135,7 +135,7 @@ StereoSingleGpu::~StereoSingleGpu() {
 }
 
 void
-StereoSingleGpu::compute(const Mat& leftFrame, const Mat& rightFrame, Mat& disparity) {
+StereoSingleGpu::compute(const cv::Mat& leftFrame, const cv::Mat& rightFrame, cv::Mat& disparity) {
   gpu::setDevice(deviceId_);
   d_leftFrame.upload(leftFrame);
   d_rightFrame.upload(rightFrame);
@@ -152,7 +152,7 @@ public:
   StereoMultiGpuThread();
   ~StereoMultiGpuThread();
 
-  void compute(const Mat& leftFrame, const Mat& rightFrame, Mat& disparity);
+  void compute(const cv::Mat& leftFrame, const cv::Mat& rightFrame, cv::Mat& disparity);
 
 private:
   GpuMat d_leftFrames[2];
@@ -162,9 +162,9 @@ private:
 
   struct StereoLaunchData {
     int deviceId;
-    Mat leftFrame;
-    Mat rightFrame;
-    Mat disparity;
+    cv::Mat leftFrame;
+    cv::Mat rightFrame;
+    cv::Mat disparity;
     GpuMat* d_leftFrame;
     GpuMat* d_rightFrame;
     GpuMat* d_disparity;
@@ -197,11 +197,11 @@ StereoMultiGpuThread::~StereoMultiGpuThread() {
 }
 
 void
-StereoMultiGpuThread::compute(const Mat& leftFrame, const Mat& rightFrame, Mat& disparity) {
+StereoMultiGpuThread::compute(const cv::Mat& leftFrame, const cv::Mat& rightFrame, cv::Mat& disparity) {
   disparity.create(leftFrame.size(), CV_8UC1);
 
   // Split input data onto two parts for each GPUs.
-  // We add small border for each part,
+  // We cv::add small border for each part,
   // because original algorithm doesn't calculate disparity on image borders.
   // With such padding we will get output in the middle of final result.
 
@@ -297,15 +297,15 @@ StereoMultiGpuStream::compute(const CudaMem& leftFrame, const CudaMem& rightFram
   disparity.create(leftFrame.size(), CV_8UC1);
 
   // Split input data onto two parts for each GPUs.
-  // We add small border for each part,
+  // We cv::add small border for each part,
   // because original algorithm doesn't calculate disparity on image borders.
   // With such padding we will get output in the middle of final result.
 
-  Mat leftFrameHdr = leftFrame.createMatHeader();
-  Mat rightFrameHdr = rightFrame.createMatHeader();
-  Mat disparityHdr = disparity.createMatHeader();
-  Mat disparityPart0 = disparityHdr.rowRange(0, leftFrame.rows / 2);
-  Mat disparityPart1 = disparityHdr.rowRange(leftFrame.rows / 2, leftFrame.rows);
+  cv::Mat leftFrameHdr = leftFrame.createMatHeader();
+  cv::Mat rightFrameHdr = rightFrame.createMatHeader();
+  cv::Mat disparityHdr = disparity.createMatHeader();
+  cv::Mat disparityPart0 = disparityHdr.rowRange(0, leftFrame.rows / 2);
+  cv::Mat disparityPart1 = disparityHdr.rowRange(leftFrame.rows / 2, leftFrame.rows);
 
   gpu::setDevice(0);
   streams[0]->enqueueUpload(leftFrameHdr.rowRange(0, leftFrame.rows / 2 + 32), d_leftFrames[0]);
@@ -353,8 +353,8 @@ main(int argc, char** argv) {
     printShortCudaDeviceInfo(i);
   }
 
-  VideoCapture leftVideo(argv[1]);
-  VideoCapture rightVideo(argv[2]);
+  cv::VideoCapture leftVideo(argv[1]);
+  cv::VideoCapture rightVideo(argv[2]);
 
   if(!leftVideo.isOpened()) {
     cerr << "Can't open " << argv[1] << " video file" << endl;
@@ -371,7 +371,7 @@ main(int argc, char** argv) {
   cout << "It splits input into two parts and processes them separately on different GPUs." << endl;
   cout << endl;
 
-  Mat leftFrame, rightFrame;
+  cv::Mat leftFrame, rightFrame;
   CudaMem leftGrayFrame, rightGrayFrame;
 
   StereoSingleGpu gpu0Alg(0);
@@ -379,15 +379,15 @@ main(int argc, char** argv) {
   StereoMultiGpuThread multiThreadAlg;
   StereoMultiGpuStream multiStreamAlg;
 
-  Mat disparityGpu0;
-  Mat disparityGpu1;
-  Mat disparityMultiThread;
+  cv::Mat disparityGpu0;
+  cv::Mat disparityGpu1;
+  cv::Mat disparityMultiThread;
   CudaMem disparityMultiStream;
 
-  Mat disparityGpu0Show;
-  Mat disparityGpu1Show;
-  Mat disparityMultiThreadShow;
-  Mat disparityMultiStreamShow;
+  cv::Mat disparityGpu0Show;
+  cv::Mat disparityGpu1Show;
+  cv::Mat disparityMultiThreadShow;
+  cv::Mat disparityMultiStreamShow;
 
   TickMeter tm;
 
@@ -410,8 +410,8 @@ main(int argc, char** argv) {
     leftGrayFrame.create(leftFrame.size(), CV_8UC1);
     rightGrayFrame.create(leftFrame.size(), CV_8UC1);
 
-    cvtColor(leftFrame, leftGrayFrame.createMatHeader(), COLOR_BGR2GRAY);
-    cvtColor(rightFrame, rightGrayFrame.createMatHeader(), COLOR_BGR2GRAY);
+    cv::cvtColor(leftFrame, leftGrayFrame.createMatHeader(), COLOR_BGR2GRAY);
+    cv::cvtColor(rightFrame, rightGrayFrame.createMatHeader(), COLOR_BGR2GRAY);
 
     tm.reset();
     tm.start();
@@ -445,17 +445,17 @@ main(int argc, char** argv) {
          << setprecision(1) << fixed << gpu1Time << " | " << setw(15) << setprecision(1) << fixed << multiThreadTime << " | "
          << setw(15) << setprecision(1) << fixed << multiStreamTime << " |" << endl;
 
-    resize(disparityGpu0, disparityGpu0Show, Size(1024, 768), 0, 0, INTER_AREA);
-    resize(disparityGpu1, disparityGpu1Show, Size(1024, 768), 0, 0, INTER_AREA);
-    resize(disparityMultiThread, disparityMultiThreadShow, Size(1024, 768), 0, 0, INTER_AREA);
-    resize(disparityMultiStream.createMatHeader(), disparityMultiStreamShow, Size(1024, 768), 0, 0, INTER_AREA);
+    cv::resize(disparityGpu0, disparityGpu0Show, cv::Size(1024, 768), 0, 0, INTER_AREA);
+    cv::resize(disparityGpu1, disparityGpu1Show, cv::Size(1024, 768), 0, 0, INTER_AREA);
+    cv::resize(disparityMultiThread, disparityMultiThreadShow, cv::Size(1024, 768), 0, 0, INTER_AREA);
+    cv::resize(disparityMultiStream.createMatHeader(), disparityMultiStreamShow, cv::Size(1024, 768), 0, 0, INTER_AREA);
 
-    imshow("disparityGpu0", disparityGpu0Show);
-    imshow("disparityGpu1", disparityGpu1Show);
-    imshow("disparityMultiThread", disparityMultiThreadShow);
-    imshow("disparityMultiStream", disparityMultiStreamShow);
+    cv::imshow("disparityGpu0", disparityGpu0Show);
+    cv::imshow("disparityGpu1", disparityGpu1Show);
+    cv::imshow("disparityMultiThread", disparityMultiThreadShow);
+    cv::imshow("disparityMultiStream", disparityMultiStreamShow);
 
-    const int key = waitKey(30) & 0xff;
+    const int key = cv::waitKey(30) & 0xff;
     if(key == 27)
       break;
   }

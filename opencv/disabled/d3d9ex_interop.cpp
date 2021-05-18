@@ -1,8 +1,8 @@
 /*
-// Sample demonstrating interoperability of OpenCV UMat with Direct X surface
+// Sample demonstrating interoperability of OpenCV cv::UMat with Direct X surface
 // At first, the data obtained from video file or camera and
 // placed onto Direct X surface,
-// following mapping of this Direct X surface to OpenCV UMat and call cv::Blur
+// following mapping of this Direct X surface to OpenCV cv::UMat and call cv::Blur
 // function. The result is mapped back to Direct X surface and rendered through
 // Direct X API.
 */
@@ -12,7 +12,7 @@
 
 #include "opencv2/core.hpp"
 #include "opencv2/core/directx.hpp"
-#include "opencv2/core/ocl.hpp"
+#include "opencv2/core/cv::ocl.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/videoio.hpp"
 
@@ -21,7 +21,7 @@
 #pragma comment(lib, "d3d9.lib")
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 class D3D9ExWinApp : public D3DSample {
 public:
@@ -79,7 +79,7 @@ public:
 
     // initialize OpenCL context of OpenCV lib from DirectX
     if(cv::ocl::haveOpenCL()) {
-      m_oclCtx = cv::directx::ocl::initializeContextFromDirect3DDevice9(m_pD3D9DevEx);
+      m_oclCtx = cv::directx::cv::ocl::initializeContextFromDirect3DDevice9(m_pD3D9DevEx);
     }
 
     m_oclDevName = cv::ocl::useOpenCL() ? cv::ocl::Context::getDefault().device(0).name() : "No OpenCL device";
@@ -92,7 +92,7 @@ public:
   get_surface(LPDIRECT3DSURFACE9* ppSurface) {
     HRESULT r;
 
-    if(!m_cap.read(m_frame_bgr))
+    if(!m_cap.cv::read(m_frame_bgr))
       return -1;
 
     cv::cvtColor(m_frame_bgr, m_frame_rgba, CV_BGR2BGRA);
@@ -153,7 +153,7 @@ public:
           cv::Mat m(m_height, m_width, CV_8UC4, memDesc.pBits, memDesc.Pitch);
 
           if(m_demo_processing) {
-            // blur D3D9 surface with OpenCV on CPU
+            // cv::blur D3D9 surface with OpenCV on CPU
             cv::blur(m, m, cv::Size(15, 15), cv::Point(-7, -7));
           }
 
@@ -172,7 +172,7 @@ public:
           cv::directx::convertFromDirect3DSurface9(pSurface, u);
 
           if(m_demo_processing) {
-            // blur D3D9 surface with OpenCV on GPU with OpenCL
+            // cv::blur D3D9 surface with OpenCV on GPU with OpenCL
             cv::blur(u, u, cv::Size(15, 15), cv::Point(-7, -7));
           }
 
@@ -188,7 +188,7 @@ public:
       print_info(pSurface, m_mode, m_timer.time(Timer::UNITS::MSEC), m_oclDevName);
 
       // traditional DX render pipeline:
-      //   BitBlt surface to backBuffer and flip backBuffer to frontBuffer
+      //   BitBlt surface to backBuffer and cv::flip backBuffer to frontBuffer
       r = m_pD3D9DevEx->StretchRect(pSurface, NULL, m_pBackBuffer, NULL, D3DTEXF_NONE);
       if(FAILED(r)) {
         return -1;
@@ -236,7 +236,7 @@ public:
 
       y += tm.tmHeight;
       buf[0] = 0;
-      sprintf(buf, m_demo_processing ? "blur frame" : "copy frame");
+      sprintf(buf, m_demo_processing ? "cv::blur frame" : "copy frame");
       ::TextOut(hDC, 0, y, buf, (int)strlen(buf));
 
       y += tm.tmHeight;

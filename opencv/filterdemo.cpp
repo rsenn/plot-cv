@@ -43,11 +43,11 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
-#include <opencv2/ximgproc.hpp>
+#include <opencv2/cv::ximgproc.hpp>
 
 #include <stdio.h>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 int
@@ -56,11 +56,11 @@ main(int argc, const char** argv) {
   float sigma = 0.02f;
   int rows0 = 480;
   int niters = 10;
-  Mat frame, src, dst;
+  cv::Mat frame, src, dst;
 
   const char* window_name = "Anisodiff : Exponential Flux";
 
-  VideoCapture cap;
+  cv::VideoCapture cap;
   if(argc > 1)
     cap.open(argv[1]);
   else
@@ -72,10 +72,10 @@ main(int argc, const char** argv) {
   }
 
   // Create a window
-  namedWindow(window_name, 1);
+  cv::namedWindow(window_name, 1);
 
   // create a toolbar
-  createTrackbar("No. of time steps", window_name, &niters, 30, 0);
+  cv::createTrackbar("No. of time steps", window_name, &niters, 30, 0);
 
   for(;;) {
     cap >> frame;
@@ -85,16 +85,16 @@ main(int argc, const char** argv) {
     if(frame.rows <= rows0)
       src = frame;
     else
-      resize(frame, src, Size(cvRound(480. * frame.cols / frame.rows), 480), 0, 0, INTER_LINEAR_EXACT);
+      cv::resize(frame, src, cv::Size(cvRound(480. * frame.cols / frame.rows), 480), 0, 0, INTER_LINEAR_EXACT);
 
-    float t = (float)getTickCount();
-    ximgproc::anisotropicDiffusion(src, dst, alpha, sigma, niters);
-    t = (float)getTickCount() - t;
-    printf("time: %.1fms\n", t * 1000. / getTickFrequency());
-    imshow(window_name, dst);
+    float t = (float)cv::getTickCount();
+    cv::ximgproc::anisotropicDiffusion(src, dst, alpha, sigma, niters);
+    t = (float)cv::getTickCount() - t;
+    printf("time: %.1fms\n", t * 1000. / cv::getTickFrequency());
+    cv::imshow(window_name, dst);
 
     // Wait for a key stroke; the same function arranges events processing
-    char c = (char)waitKey(30);
+    char c = (char)cv::waitKey(30);
     if(c >= 0)
       break;
   }

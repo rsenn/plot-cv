@@ -8,38 +8,38 @@
 #include <boost/filesystem.hpp>
 #include "Config.h"
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 using namespace boost::filesystem3;
 
 class calibrator {
 private:
   string l_path, r_path;
-  vector<Mat> l_images, r_images;
-  Mat l_cameraMatrix, l_distCoeffs, r_cameraMatrix, r_distCoeffs;
+  vector<cv::Mat> l_images, r_images;
+  cv::Mat l_cameraMatrix, l_distCoeffs, r_cameraMatrix, r_distCoeffs;
   bool show_chess_corners;
   float side_length;
   int width, height;
-  vector<vector<Point2f>> l_image_points, r_image_points;
+  vector<vector<cv::Point2f>> l_image_points, r_image_points;
   vector<vector<Point3f>> object_points;
-  Mat R, T, E, F;
+  cv::Mat R, T, E, F;
 
 public:
   calibrator(string, string, float, int, int);
   void calc_image_points(bool);
   bool calibrate();
   void save_info(string);
-  Size get_image_size();
+  cv::Size get_image_size();
 };
 
 class rectifier {
 private:
-  Mat map_l1, map_l2, map_r1, map_r2; // pixel maps for rectification
+  cv::Mat map_l1, map_l2, map_r1, map_r2; // pixel maps for rectification
   string path;
 
 public:
-  rectifier(string, Size);   // constructor
-  void show_rectified(Size); // function to show live rectified feed from stereo camera
+  rectifier(string, cv::Size);   // constructor
+  void show_rectified(cv::Size); // function to show live rectified feed from stereo camera
 };
 
 calibrator::calibrator(string _l_path, string _r_path, float _side_length, int _width, int _height) {
@@ -56,7 +56,7 @@ calibrator::calibrator(string _l_path, string _r_path, float _side_length, int _
     string l_filename = l_path + im_name;
     im_name.replace(im_name.begin(), im_name.begin() + 4, string("right"));
     string r_filename = r_path + im_name;
-    Mat lim = imread(l_filename), rim = imread(r_filename);
+    cv::Mat lim = cv::imread(l_filename), rim = cv::imread(r_filename);
     if(!lim.empty() && !rim.empty()) {
       l_images.push_back(lim);
       r_images.push_back(rim);
@@ -73,38 +73,38 @@ calibrator::calc_image_points(bool show) {
   }
 
   if(show) {
-    namedWindow("Left Chessboard corners");
-    namedWindow("Right Chessboard corners");
+    cv::namedWindow("Left Chessboard corners");
+    cv::namedWindow("Right Chessboard corners");
   }
 
   for(int i = 0; i < l_images.size(); i++) {
-    Mat lim = l_images[i], rim = r_images[i];
-    vector<Point2f> l_im_p, r_im_p;
-    bool l_pattern_found = findChessboardCorners(lim,
-                                                 Size(width, height),
+    cv::Mat lim = l_images[i], rim = r_images[i];
+    vector<cv::Point2f> l_im_p, r_im_p;
+    bool l_pattern_found = cv::findChessboardCorners(lim,
+                                                 cv::Size(width, height),
                                                  l_im_p,
                                                  CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE + CALIB_CB_FAST_CHECK);
-    bool r_pattern_found = findChessboardCorners(rim,
-                                                 Size(width, height),
+    bool r_pattern_found = cv::findChessboardCorners(rim,
+                                                 cv::Size(width, height),
                                                  r_im_p,
                                                  CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE + CALIB_CB_FAST_CHECK);
     if(l_pattern_found && r_pattern_found) {
       object_points.push_back(ob_p);
-      Mat gray;
-      cvtColor(lim, gray, cv::COLOR_BGR2GRAY);
-      cornerSubPix(gray, l_im_p, Size(5, 5), Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
-      cvtColor(rim, gray, cv::COLOR_BGR2GRAY);
-      cornerSubPix(gray, r_im_p, Size(5, 5), Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+      cv::Mat gray;
+      cv::cvtColor(lim, gray, cv::COLOR_BGR2GRAY);
+      cv::cornerSubPix(gray, l_im_p, cv::Size(5, 5), cv::Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+      cv::cvtColor(rim, gray, cv::COLOR_BGR2GRAY);
+      cv::cornerSubPix(gray, r_im_p, cv::Size(5, 5), cv::Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
       l_image_points.push_back(l_im_p);
       r_image_points.push_back(r_im_p);
       if(show) {
-        Mat im_show = lim.clone();
-        drawChessboardCorners(im_show, Size(width, height), l_im_p, true);
-        imshow("Left Chessboard corners", im_show);
+        cv::Mat im_show = lim.clone();
+        cv::drawChessboardCorners(im_show, cv::Size(width, height), l_im_p, true);
+        cv::imshow("Left Chessboard corners", im_show);
         im_show = rim.clone();
-        drawChessboardCorners(im_show, Size(width, height), r_im_p, true);
-        imshow("Right Chessboard corners", im_show);
-        while(char(waitKey(1)) != ' ') {}
+        cv::drawChessboardCorners(im_show, cv::Size(width, height), r_im_p, true);
+        cv::imshow("Right Chessboard corners", im_show);
+        while(char(cv::waitKey(1)) != ' ') {}
       }
     } else {
       l_images.erase(l_images.begin() + i);
@@ -116,19 +116,19 @@ calibrator::calc_image_points(bool show) {
 bool
 calibrator::calibrate() {
   string filename = DATA_FOLDER + string("left_cam_calib.xml");
-  FileStorage fs(filename, FileStorage::READ);
+  cv::FileStorage fs(filename, cv::FileStorage::READ);
   fs["cameraMatrix"] >> l_cameraMatrix;
   fs["distCoeffs"] >> l_distCoeffs;
   fs.release();
 
   filename = DATA_FOLDER + string("right_cam_calib.xml");
-  fs.open(filename, FileStorage::READ);
+  fs.open(filename, cv::FileStorage::READ);
   fs["cameraMatrix"] >> r_cameraMatrix;
   fs["distCoeffs"] >> r_distCoeffs;
   fs.release();
 
   if(!l_cameraMatrix.empty() && !l_distCoeffs.empty() && !r_cameraMatrix.empty() && !r_distCoeffs.empty()) {
-    double rms = stereoCalibrate(object_points,
+    double rms = cv::stereoCalibrate(object_points,
                                  l_image_points,
                                  r_image_points,
                                  l_cameraMatrix,
@@ -140,7 +140,7 @@ calibrator::calibrate() {
                                  T,
                                  E,
                                  F);
-    cout << "Calibrated stereo camera with a RMS error of " << rms << endl;
+    cout << "Calibrated stereo camera with a RMS cv::error of " << rms << endl;
     return true;
   } else
     return false;
@@ -148,7 +148,7 @@ calibrator::calibrate() {
 
 void
 calibrator::save_info(string filename) {
-  FileStorage fs(filename, FileStorage::WRITE);
+  cv::FileStorage fs(filename, cv::FileStorage::WRITE);
   fs << "l_cameraMatrix" << l_cameraMatrix;
   fs << "r_cameraMatrix" << r_cameraMatrix;
   fs << "l_distCoeffs" << l_distCoeffs;
@@ -166,10 +166,10 @@ calibrator::get_image_size() {
   return l_images[0].size();
 }
 
-rectifier::rectifier(string filename, Size image_size) {
+rectifier::rectifier(string filename, cv::Size image_size) {
   // Read individal camera calibration information from saved XML file
-  Mat l_cameraMatrix, l_distCoeffs, r_cameraMatrix, r_distCoeffs, R, T;
-  FileStorage fs(filename, FileStorage::READ);
+  cv::Mat l_cameraMatrix, l_distCoeffs, r_cameraMatrix, r_distCoeffs, R, T;
+  cv::FileStorage fs(filename, cv::FileStorage::READ);
   fs["l_cameraMatrix"] >> l_cameraMatrix;
   fs["l_distCoeffs"] >> l_distCoeffs;
   fs["r_cameraMatrix"] >> r_cameraMatrix;
@@ -182,14 +182,14 @@ rectifier::rectifier(string filename, Size image_size) {
     cout << "Rectifier: Loading of files not successful" << endl;
 
   // Calculate transforms for rectifying images
-  Mat Rl, Rr, Pl, Pr, Q;
+  cv::Mat Rl, Rr, Pl, Pr, Q;
   stereoRectify(l_cameraMatrix, l_distCoeffs, r_cameraMatrix, r_distCoeffs, image_size, R, T, Rl, Rr, Pl, Pr, Q);
 
   // Calculate pixel maps for efficient rectification of images via lookup tables
-  initUndistortRectifyMap(l_cameraMatrix, l_distCoeffs, Rl, Pl, image_size, CV_16SC2, map_l1, map_l2);
-  initUndistortRectifyMap(r_cameraMatrix, r_distCoeffs, Rr, Pr, image_size, CV_16SC2, map_r1, map_r2);
+  cv::initUndistortRectifyMap(l_cameraMatrix, l_distCoeffs, Rl, Pl, image_size, CV_16SC2, map_l1, map_l2);
+  cv::initUndistortRectifyMap(r_cameraMatrix, r_distCoeffs, Rr, Pr, image_size, CV_16SC2, map_r1, map_r2);
 
-  fs.open(filename, FileStorage::APPEND);
+  fs.open(filename, cv::FileStorage::APPEND);
   fs << "Rl" << Rl;
   fs << "Rr" << Rr;
   fs << "Pl" << Pl;
@@ -203,22 +203,22 @@ rectifier::rectifier(string filename, Size image_size) {
 }
 
 void
-rectifier::show_rectified(Size image_size) {
-  VideoCapture capr(1), capl(2);
+rectifier::show_rectified(cv::Size image_size) {
+  cv::VideoCapture capr(1), capl(2);
   // reduce frame size
   capl.set(cv::CAP_PROP_FRAME_HEIGHT, image_size.height);
   capl.set(cv::CAP_PROP_FRAME_WIDTH, image_size.width);
   capr.set(cv::CAP_PROP_FRAME_HEIGHT, image_size.height);
   capr.set(cv::CAP_PROP_FRAME_WIDTH, image_size.width);
 
-  destroyAllWindows();
-  namedWindow("Combo");
-  while(char(waitKey(1)) != 'q') {
+  cv::destroyAllWindows();
+  cv::namedWindow("Combo");
+  while(char(cv::waitKey(1)) != 'q') {
     // grab raw frames first
     capl.grab();
     capr.grab();
     // decode later so the grabbed frames are less apart in time
-    Mat framel, framel_rect, framer, framer_rect;
+    cv::Mat framel, framel_rect, framer, framer_rect;
     capl.retrieve(framel);
     capr.retrieve(framer);
 
@@ -226,18 +226,18 @@ rectifier::show_rectified(Size image_size) {
       break;
 
     // Remap images by pixel maps to rectify
-    remap(framel, framel_rect, map_l1, map_l2, INTER_LINEAR);
-    remap(framer, framer_rect, map_r1, map_r2, INTER_LINEAR);
+    cv::remap(framel, framel_rect, map_l1, map_l2, INTER_LINEAR);
+    cv::remap(framer, framer_rect, map_r1, map_r2, INTER_LINEAR);
 
     // Make a larger image containing the left and right rectified images side-by-side
-    Mat combo(image_size.height, 2 * image_size.width, CV_8UC3);
+    cv::Mat combo(image_size.height, 2 * image_size.width, CV_8UC3);
     framel_rect.copyTo(combo(Range::all(), Range(0, image_size.width)));
     framer_rect.copyTo(combo(Range::all(), Range(image_size.width, 2 * image_size.width)));
 
     // Draw horizontal red lines in the combo image to make comparison easier
-    for(int y = 0; y < combo.rows; y += 20) line(combo, Point(0, y), Point(combo.cols, y), Scalar(0, 0, 255));
+    for(int y = 0; y < combo.rows; y += 20) cv::line(combo, cv::Point(0, y), cv::Point(combo.cols, y), cv::Scalar(0, 0, 255));
 
-    imshow("Combo", combo);
+    cv::imshow("Combo", combo);
   }
   capl.release();
   capr.release();
@@ -251,10 +251,10 @@ main() {
   calib.calc_image_points(true);
   bool done = calib.calibrate();
   if(!done) cout << "Stereo Calibration not successful because individial calibration matrices could
-  not be read" << endl; calib.save_info(filename); Size image_size = calib.get_image_size();
+  not be cv::read" << endl; calib.save_info(filename); cv::Size image_size = calib.get_image_size();
   */
 
-  Size image_size(320, 240);
+  cv::Size image_size(320, 240);
   rectifier rec(filename, image_size);
   rec.show_rectified(image_size);
 

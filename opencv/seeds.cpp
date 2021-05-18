@@ -3,14 +3,14 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/core/utility.hpp>
 
-#include <opencv2/ximgproc.hpp>
+#include <opencv2/cv::ximgproc.hpp>
 
 #include <ctype.h>
 #include <stdio.h>
 #include <iostream>
 
-using namespace cv;
-using namespace cv::ximgproc;
+//using namespace cv;
+//using namespace cv::ximgproc;
 using namespace std;
 
 void trackbarChanged(int pos, void* data);
@@ -39,7 +39,7 @@ trackbarChanged(int, void*) {
 
 int
 main(int argc, char** argv) {
-  VideoCapture cap;
+  cv::VideoCapture cap;
   cv::Mat input_image;
   bool use_video_capture = false;
   help();
@@ -48,7 +48,7 @@ main(int argc, char** argv) {
     cap.open(argc == 2 ? argv[1][0] - '0' : 0);
     use_video_capture = true;
   } else if(argc >= 2) {
-    input_image = imread(argv[1]);
+    input_image = cv::imread(argv[1]);
   }
 
   if(use_video_capture) {
@@ -61,17 +61,17 @@ main(int argc, char** argv) {
     return -1;
   }
 
-  namedWindow(window_name, 0);
+  cv::namedWindow(window_name, 0);
   int num_iterations = 4;
   int prior = 2;
   bool double_step = false;
   int num_superpixels = 400;
   int num_levels = 4;
   int num_histogram_bins = 5;
-  createTrackbar("Number of Superpixels", window_name, &num_superpixels, 1000, trackbarChanged);
-  createTrackbar("Smoothing Prior", window_name, &prior, 5, trackbarChanged);
-  createTrackbar("Number of Levels", window_name, &num_levels, 10, trackbarChanged);
-  createTrackbar("Iterations", window_name, &num_iterations, 12, 0);
+  cv::createTrackbar("Number of Superpixels", window_name, &num_superpixels, 1000, trackbarChanged);
+  cv::createTrackbar("Smoothing Prior", window_name, &prior, 5, trackbarChanged);
+  cv::createTrackbar("Number of Levels", window_name, &num_levels, 10, trackbarChanged);
+  cv::createTrackbar("Iterations", window_name, &num_iterations, 12, 0);
 
   cv::Mat result, mask;
   Ptr<SuperpixelSEEDS> seeds;
@@ -96,14 +96,14 @@ main(int argc, char** argv) {
       init = true;
     }
     cv::Mat converted;
-    cvtColor(frame, converted, COLOR_BGR2HSV);
+    cv::cvtColor(frame, converted, COLOR_BGR2HSV);
 
-    double t = (double)getTickCount();
+    double t = (double)cv::getTickCount();
 
     seeds->iterate(converted, num_iterations);
     result = frame;
 
-    t = ((double)getTickCount() - t) / getTickFrequency();
+    t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
     printf("SEEDS segmentation took %i ms with %3i superpixels\n", (int)(t * 1000), seeds->getNumberOfSuperpixels());
 
     /* retrieve the segmentation result */
@@ -112,15 +112,15 @@ main(int argc, char** argv) {
 
     /* get the contours for displaying */
     seeds->getLabelContourMask(mask, false);
-    result.setTo(Scalar(0, 0, 255), mask);
+    result.setTo(cv::Scalar(0, 0, 255), mask);
 
     /* display output */
     switch(display_mode) {
       case 0: // superpixel contours
-        imshow(window_name, result);
+        cv::imshow(window_name, result);
         break;
       case 1: // mask
-        imshow(window_name, mask);
+        cv::imshow(window_name, mask);
         break;
       case 2: { // labels array
         // use the last x bit to determine the color. Note that this does not
@@ -128,11 +128,11 @@ main(int argc, char** argv) {
         const int num_label_bits = 2;
         labels &= (1 << num_label_bits) - 1;
         labels *= 1 << (16 - num_label_bits);
-        imshow(window_name, labels);
+        cv::imshow(window_name, labels);
       } break;
     }
 
-    int c = waitKey(1);
+    int c = cv::waitKey(1);
     if((c & 255) == 'q' || c == 'Q' || (c & 255) == 27)
       break;
     else if((c & 255) == ' ')

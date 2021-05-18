@@ -15,8 +15,8 @@
 #include <iostream>
 
 using namespace std;
-using namespace cv;
-using namespace cv::text;
+//using namespace cv;
+//using namespace cv::text;
 
 // ERStat extraction is done in parallel for different channels
 class Parallel_extractCSER : public cv::ParallelLoopBody {
@@ -34,13 +34,13 @@ public:
       : channels(_channels), regions(_regions), er_filter1(_er_filter1), er_filter2(_er_filter2) {}
 
   virtual void
-  operator()(const cv::Range& r) const CV_OVERRIDE {
+  cv::operator()(const cv::Range& r) const CV_OVERRIDE {
     for(int c = r.start; c < r.end; c++) {
       er_filter1[c]->run(channels[c], regions[c]);
       er_filter2[c]->run(channels[c], regions[c]);
     }
   }
-  Parallel_extractCSER& operator=(const Parallel_extractCSER& a);
+  Parallel_extractCSER& cv::operator=(const Parallel_extractCSER& a);
 };
 
 // OCR recognition is done in parallel for different detections
@@ -48,7 +48,7 @@ template<class T> class Parallel_OCR : public cv::ParallelLoopBody {
 private:
   std::vector<cv::Mat>& detections;
   std::vector<string>& outputs;
-  std::vector<std::vector<Rect>>& boxes;
+  std::vector<std::vector<cv::Rect>>& boxes;
   std::vector<std::vector<string>>& words;
   std::vector<std::vector<float>>& confidences;
   std::vector<Ptr<T>>& ocrs;
@@ -56,19 +56,19 @@ private:
 public:
   Parallel_OCR(std::vector<cv::Mat>& _detections,
                std::vector<string>& _outputs,
-               std::vector<std::vector<Rect>>& _boxes,
+               std::vector<std::vector<cv::Rect>>& _boxes,
                std::vector<std::vector<string>>& _words,
                std::vector<std::vector<float>>& _confidences,
                std::vector<Ptr<T>>& _ocrs)
       : detections(_detections), outputs(_outputs), boxes(_boxes), words(_words), confidences(_confidences), ocrs(_ocrs) {}
 
   virtual void
-  operator()(const cv::Range& r) const CV_OVERRIDE {
+  cv::operator()(const cv::Range& r) const CV_OVERRIDE {
     for(int c = r.start; c < r.end; c++) {
       ocrs[c % ocrs.size()]->run(detections[c], outputs[c], &boxes[c], &words[c], &confidences[c], OCR_LEVEL_WORD);
     }
   }
-  Parallel_OCR& operator=(const Parallel_OCR& a);
+  Parallel_OCR& cv::operator=(const Parallel_OCR& a);
 };
 
 // Discard wrongly recognised strings
@@ -85,7 +85,7 @@ const char* keys = {"{@input   | 0 | camera index or video file name}"
 // Perform text detection and recognition from webcam or video
 int
 main(int argc, char* argv[]) {
-  CommandLineParser parser(argc, argv, keys);
+  cv::CommandLineParser parser(argc, argv, keys);
 
   cout << "A demo program of End-to-end Scene Text Detection and Recognition using webcam or video." << endl << endl;
   cout << "  Keys:  " << endl;
@@ -96,12 +96,12 @@ main(int argc, char* argv[]) {
   cout << "  Press 'ESC' to exit." << endl << endl;
   parser.printMessage();
 
-  VideoCapture cap;
+  cv::VideoCapture cap;
   cv::Mat frame, image, gray, out_img;
-  String input = parser.get<String>("@input");
-  String image_file_name = parser.get<String>("image");
+  cv::String input = parser.get<String>("@input");
+  cv::String image_file_name = parser.get<String>("image");
   if(image_file_name != "") {
-    image = imread(image_file_name);
+    image = cv::imread(image_file_name);
     if(image.empty()) {
       cout << "\nunable to open " << image_file_name << "\nprogram terminated!\n";
       return 1;
@@ -123,21 +123,21 @@ main(int argc, char* argv[]) {
 
     cout << " Done!" << endl;
 
-    cap.read(frame);
+    cap.cv::read(frame);
   }
 
-  namedWindow("recognition", WINDOW_NORMAL);
-  imshow("recognition", frame);
-  waitKey(1);
+  cv::namedWindow("recognition", WINDOW_NORMAL);
+  cv::imshow("recognition", frame);
+  cv::waitKey(1);
 
   bool downsize = false;
   int REGION_TYPE = 1;
   int GROUPING_ALGORITHM = 0;
   int RECOGNITION = 0;
 
-  String region_types_str[2] = {"ERStats", "MSER"};
-  String grouping_algorithms_str[2] = {"exhaustive_search", "multioriented"};
-  String recognitions_str[2] = {"Tesseract", "NM_chain_features + KNN"};
+  cv::String region_types_str[2] = {"ERStats", "MSER"};
+  cv::String grouping_algorithms_str[2] = {"exhaustive_search", "multioriented"};
+  cv::String recognitions_str[2] = {"Tesseract", "NM_chain_features + KNN"};
 
   std::vector<cv::Mat> channels;
   std::vector<std::vector<ERStat>> regions(2); // two channels
@@ -163,7 +163,7 @@ main(int argc, char* argv[]) {
 
   cv::Mat transition_p;
   string filename = "OCRHMM_transitions_table.xml";
-  FileStorage fs(filename, FileStorage::READ);
+  cv::FileStorage fs(filename, cv::FileStorage::READ);
   fs["transition_probabilities"] >> transition_p;
   fs.release();
   cv::Mat emission_p = cv::Mat::eye(62, 62, CV_64FC1);
@@ -177,13 +177,13 @@ main(int argc, char* argv[]) {
   cout << " Done!" << endl;
 
   while(true) {
-    double t_all = (double)getTickCount();
+    double t_all = (double)cv::getTickCount();
 
     if(downsize)
-      resize(frame, frame, Size(320, 240), 0, 0, INTER_LINEAR_EXACT);
+      cv::resize(frame, frame, cv::Size(320, 240), 0, 0, INTER_LINEAR_EXACT);
 
     /*Text Detection*/
-    cvtColor(frame, gray, COLOR_BGR2GRAY);
+    cv::cvtColor(frame, gray, COLOR_BGR2GRAY);
     // Extract channels to be processed individually
     channels.clear();
     channels.push_back(gray);
@@ -198,7 +198,7 @@ main(int argc, char* argv[]) {
         break;
       case 1: // MSER
         std::vector<std::vector<cv::Point>> contours;
-        std::vector<Rect> bboxes;
+        std::vector<cv::Rect> bboxes;
         Ptr<MSER> mser = MSER::create(21, (int)(0.00002 * gray.cols * gray.rows), (int)(0.05 * gray.cols * gray.rows), 1, 0.7);
         mser->detectRegions(gray, contours, bboxes);
 
@@ -210,7 +210,7 @@ main(int argc, char* argv[]) {
 
     // Detect character groups
     std::vector<std::vector<Vec2i>> nm_region_groups;
-    std::vector<Rect> nm_boxes;
+    std::vector<cv::Rect> nm_boxes;
     switch(GROUPING_ALGORITHM) {
       case 0: // exhaustive_search
         erGrouping(frame, channels, regions, nm_region_groups, nm_boxes, ERGROUPING_ORIENTATION_HORIZ);
@@ -230,7 +230,7 @@ main(int argc, char* argv[]) {
     /*Text Recognition (OCR)*/
 
     int bottom_bar_height = out_img.rows / 7;
-    copyMakeBorder(frame, out_img, 0, bottom_bar_height, 0, 0, BORDER_CONSTANT, Scalar(150, 150, 150));
+    cv::copyMakeBorder(frame, out_img, 0, bottom_bar_height, 0, 0, BORDER_CONSTANT, cv::Scalar(150, 150, 150));
     float scale_font = (float)(bottom_bar_height / 85.0);
     std::vector<string> words_detection;
     float min_confidence1 = 0.f, min_confidence2 = 0.f;
@@ -243,16 +243,16 @@ main(int argc, char* argv[]) {
     std::vector<cv::Mat> detections;
 
     for(int i = 0; i < (int)nm_boxes.size(); i++) {
-      rectangle(out_img, nm_boxes[i].tl(), nm_boxes[i].br(), Scalar(255, 255, 0), 3);
+      cv::rectangle(out_img, nm_boxes[i].tl(), nm_boxes[i].br(), cv::Scalar(255, 255, 0), 3);
 
       cv::Mat group_img = cv::Mat::zeros(frame.rows + 2, frame.cols + 2, CV_8UC1);
       er_draw(channels, regions, nm_region_groups[i], group_img);
       group_img(nm_boxes[i]).copyTo(group_img);
-      copyMakeBorder(group_img, group_img, 15, 15, 15, 15, BORDER_CONSTANT, Scalar(0));
+      cv::copyMakeBorder(group_img, group_img, 15, 15, 15, 15, BORDER_CONSTANT, cv::Scalar(0));
       detections.push_back(group_img);
     }
     std::vector<string> outputs((int)detections.size());
-    std::vector<std::vector<Rect>> boxes((int)detections.size());
+    std::vector<std::vector<cv::Rect>> boxes((int)detections.size());
     std::vector<std::vector<string>> words((int)detections.size());
     std::vector<std::vector<float>> confidences((int)detections.size());
 
@@ -290,66 +290,66 @@ main(int argc, char* argv[]) {
            ((words[i][j].size() < 4) && (confidences[i][j] < min_confidence2)) || isRepetitive(words[i][j]))
           continue;
         words_detection.push_back(words[i][j]);
-        rectangle(out_img, boxes[i][j].tl(), boxes[i][j].br(), Scalar(255, 0, 255), 3);
-        Size word_size = getTextSize(words[i][j], FONT_HERSHEY_SIMPLEX, (double)scale_font, (int)(3 * scale_font), NULL);
-        rectangle(out_img,
+        cv::rectangle(out_img, boxes[i][j].tl(), boxes[i][j].br(), cv::Scalar(255, 0, 255), 3);
+        cv::Size word_size = cv::getTextSize(words[i][j], FONT_HERSHEY_SIMPLEX, (double)scale_font, (int)(3 * scale_font), NULL);
+        cv::rectangle(out_img,
                   boxes[i][j].tl() - cv::Point(3, word_size.height + 3),
                   boxes[i][j].tl() + cv::Point(word_size.width, 0),
-                  Scalar(255, 0, 255),
+                  cv::Scalar(255, 0, 255),
                   -1);
-        putText(out_img,
+        cv::putText(out_img,
                 words[i][j],
                 boxes[i][j].tl() - cv::Point(1, 1),
                 FONT_HERSHEY_SIMPLEX,
                 scale_font,
-                Scalar(255, 255, 255),
+                cv::Scalar(255, 255, 255),
                 (int)(3 * scale_font));
       }
     }
 
-    t_all = ((double)getTickCount() - t_all) * 1000 / getTickFrequency();
+    t_all = ((double)cv::getTickCount() - t_all) * 1000 / cv::getTickFrequency();
     int text_thickness = 1 + (out_img.rows / 500);
-    string fps_info = format("%2.1f Fps. %dx%d", (float)(1000 / t_all), frame.cols, frame.rows);
-    putText(
-        out_img, fps_info, cv::Point(10, out_img.rows - 5), FONT_HERSHEY_DUPLEX, scale_font, Scalar(255, 0, 0), text_thickness);
-    putText(out_img,
+    string fps_info = cv::format("%2.1f Fps. %dx%d", (float)(1000 / t_all), frame.cols, frame.rows);
+    cv::putText(
+        out_img, fps_info, cv::Point(10, out_img.rows - 5), FONT_HERSHEY_DUPLEX, scale_font, cv::Scalar(255, 0, 0), text_thickness);
+    cv::putText(out_img,
             region_types_str[REGION_TYPE],
             cv::Point((int)(out_img.cols * 0.5), out_img.rows - (int)(bottom_bar_height / 1.5)),
             FONT_HERSHEY_DUPLEX,
             scale_font,
-            Scalar(255, 0, 0),
+            cv::Scalar(255, 0, 0),
             text_thickness);
-    putText(out_img,
+    cv::putText(out_img,
             grouping_algorithms_str[GROUPING_ALGORITHM],
             cv::Point((int)(out_img.cols * 0.5), out_img.rows - ((int)(bottom_bar_height / 3) + 4)),
             FONT_HERSHEY_DUPLEX,
             scale_font,
-            Scalar(255, 0, 0),
+            cv::Scalar(255, 0, 0),
             text_thickness);
-    putText(out_img,
+    cv::putText(out_img,
             recognitions_str[RECOGNITION],
             cv::Point((int)(out_img.cols * 0.5), out_img.rows - 5),
             FONT_HERSHEY_DUPLEX,
             scale_font,
-            Scalar(255, 0, 0),
+            cv::Scalar(255, 0, 0),
             text_thickness);
 
-    imshow("recognition", out_img);
+    cv::imshow("recognition", out_img);
 
-    if((image_file_name == "") && !cap.read(frame)) {
+    if((image_file_name == "") && !cap.cv::read(frame)) {
       cout << "Capturing ended! press any key to exit." << endl;
-      waitKey();
+      cv::waitKey();
       return 0;
     }
 
-    int key = waitKey(30); // wait for a key press
+    int key = cv::waitKey(30); // wait for a key press
 
     switch(key) {
       case 27: // ESC
         cout << "ESC key pressed and exited." << endl;
         return 0;
       case 32: // SPACE
-        imwrite("recognition_alt.jpg", out_img);
+        cv::imwrite("recognition_alt.jpg", out_img);
         break;
       case 103: //'g'
         GROUPING_ALGORITHM = (GROUPING_ALGORITHM + 1) % 2;
@@ -408,13 +408,13 @@ er_draw(std::vector<cv::Mat>& channels,
     if(er.parent != NULL) { // deprecate the root region
       int newMaskVal = 255;
       int flags = 4 + (newMaskVal << 8) + FLOODFILL_FIXED_RANGE + FLOODFILL_MASK_ONLY;
-      floodFill(channels[group[r][0]],
+      cv::floodFill(channels[group[r][0]],
                 segmentation,
                 cv::Point(er.pixel % channels[group[r][0]].cols, er.pixel / channels[group[r][0]].cols),
-                Scalar(255),
+                cv::Scalar(255),
                 0,
-                Scalar(er.level),
-                Scalar(0),
+                cv::Scalar(er.level),
+                cv::Scalar(0),
                 flags);
     }
   }

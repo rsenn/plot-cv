@@ -9,7 +9,7 @@
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * the rights to use, copy, modify, cv::merge, publish, distribute, sublicense,
  * and/or sell copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following conditions:
 
@@ -32,7 +32,7 @@
 #include <useful_functions.h>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 /************************************** utilities **************************************/
 int
@@ -99,24 +99,24 @@ delete_char_list(char**& list, int len) {
 
 //@displays window or crashes program (not really in use)
 void
-display_window(string name, Mat& img, bool wait /*= false*/) {
+display_window(string name, cv::Mat& img, bool wait /*= false*/) {
   if(img.empty()) {
     cout << "Could not open or find the image" << std::endl;
     exit(1);
   }
-  imshow(name, img);
-  resizeWindow(name, 512, 384);
-  waitKey(1);
+  cv::imshow(name, img);
+  cv::resizeWindow(name, 512, 384);
+  cv::waitKey(1);
   if(wait)
-    waitKey();
+    cv::waitKey();
 }
 
 /******************************* average for background ********************************/
 
 void
-get_background(string vid_name, Mat& avg_frame) {
-  Mat next_frame;
-  VideoCapture capture;
+get_background(string vid_name, cv::Mat& avg_frame) {
+  cv::Mat next_frame;
+  cv::VideoCapture capture;
   int frame_count = 0;
   bool success;
 
@@ -128,35 +128,35 @@ get_background(string vid_name, Mat& avg_frame) {
     exit(1);
   }
 
-  success = capture.read(avg_frame);
+  success = capture.cv::read(avg_frame);
   avg_frame.convertTo(avg_frame, CV_32F);
   if(!success) {
-    cout << endl << "ERROR: next frame failed to be read" << endl;
+    cout << endl << "ERROR: next frame failed to be cv::read" << endl;
     exit(1);
   }
   frame_count++;
-  cvtColor(avg_frame, avg_frame, COLOR_BGR2GRAY);
+  cv::cvtColor(avg_frame, avg_frame, COLOR_BGR2GRAY);
 
   // display_window("Average", avg_frame);
 
-  success = capture.read(next_frame);
+  success = capture.cv::read(next_frame);
   next_frame.convertTo(next_frame, CV_32F);
   if(!success) {
-    cout << endl << "ERROR: next frame failed to be read" << endl;
+    cout << endl << "ERROR: next frame failed to be cv::read" << endl;
     exit(1);
   }
 
   while(success) {
     // cout << "frame: " << frame_count << endl;
     frame_count++;
-    cvtColor(next_frame, next_frame, COLOR_BGR2GRAY);
+    cv::cvtColor(next_frame, next_frame, COLOR_BGR2GRAY);
 
     // avg_frame = ( ((frame_count-1)*avg_frame) + next_frame) / frame_count;
     avg_frame = avg_frame + next_frame;
 
     // display_window("Average", avg_frame);
 
-    success = capture.read(next_frame);
+    success = capture.cv::read(next_frame);
     next_frame.convertTo(next_frame, CV_32F);
   } // inner while loop
   avg_frame = avg_frame / frame_count;

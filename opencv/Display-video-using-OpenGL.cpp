@@ -12,13 +12,13 @@
 #include <opencv2/videoio.hpp>
 #include <opencv2/core/opengl.hpp>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 GLfloat angle = 0.0;
 GLuint texture;
-VideoCapture camera;
-Mat frame;
+cv::VideoCapture camera;
+cv::Mat frame;
 
 int w = 500;
 int h = 500;
@@ -125,7 +125,7 @@ main(int argc, char** argv) {
   std::string winname = "Video on OpenGL"
                         ""
                         "";
-  namedWindow(winname, WINDOW_OPENGL);
+  cv::namedWindow(winname, WINDOW_OPENGL);
   cv::moveWindow(winname, 50, 50);
   cv::setOpenGlContext(winname);
 
@@ -140,7 +140,7 @@ main(int argc, char** argv) {
   setOpenGlDrawCallback(winname, withOpengl);
 
   // Display
-  while(waitKey(500) != 'q') {
+  while(cv::waitKey(500) != 'q') {
     camera >> frame;
     cv::rotate(frame, frame, cv::ROTATE_180);
     loadFrameTexture();
@@ -152,6 +152,6 @@ main(int argc, char** argv) {
   glDisable(GL_TEXTURE_2D);
 
   // Destroy windows
-  destroyWindow(winname);
+  cv::destroyWindow(winname);
   return 0;
 }

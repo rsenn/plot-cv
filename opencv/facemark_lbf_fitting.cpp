@@ -42,7 +42,7 @@ Mentor: Delia Passalacqua
  * facemark_lbf_fitting ../face_cascade.xml ../LBF.model ../video.mp4
  *
  * note: do not forget to provide the LBF_MODEL and DETECTOR_MODEL
- * the model are available at opencv_contrib/modules/face/data/
+ * the model are available at opencv_contrib/modules/cv::face/data/
  *--------------------------------------------------*/
 
 #include <stdio.h>
@@ -51,22 +51,22 @@ Mentor: Delia Passalacqua
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
-#include <opencv2/face.hpp>
+#include <opencv2/cv::face.hpp>
 
 using namespace std;
-using namespace cv;
-using namespace cv::face;
+//using namespace cv;
+//using namespace cv::face;
 
-static bool myDetector(InputArray image, OutputArray ROIs, CascadeClassifier* face_cascade);
-static bool parseArguments(int argc, char** argv, String& cascade, String& model, String& video);
+static bool myDetector(InputArray image, OutputArray ROIs, cv::CascadeClassifier* face_cascade);
+static bool parseArguments(int argc, char** argv, cv::String& cascade, cv::String& model, cv::String& video);
 
 int
 main(int argc, char** argv) {
-  String cascade_path, model_path, images_path, video_path;
+  cv::String cascade_path, model_path, images_path, video_path;
   if(!parseArguments(argc, argv, cascade_path, model_path, video_path))
     return -1;
 
-  CascadeClassifier face_cascade;
+  cv::CascadeClassifier face_cascade;
   face_cascade.load(cascade_path);
 
   FacemarkLBF::Params params;
@@ -77,92 +77,92 @@ main(int argc, char** argv) {
   facemark->setFaceDetector((FN_FaceDetector)myDetector, &face_cascade);
   facemark->loadModel(params.model_filename.c_str());
 
-  VideoCapture capture(video_path);
-  Mat frame;
+  cv::VideoCapture capture(video_path);
+  cv::Mat frame;
 
   if(!capture.isOpened()) {
-    printf("Error when reading vide\n");
+    printf("cv::Error when reading vide\n");
     return 0;
   }
 
-  Mat img;
-  String text;
+  cv::Mat img;
+  cv::String text;
   char buff[255];
   double fittime;
   int nfaces;
-  std::vector<Rect> rects, rects_scaled;
-  std::vector<std::vector<Point2f>> landmarks;
-  CascadeClassifier cc(params.cascade_face.c_str());
-  namedWindow("w", 1);
+  std::vector<cv::Rect> rects, rects_scaled;
+  std::vector<std::vector<cv::Point2f>> landmarks;
+  cv::CascadeClassifier cc(params.cascade_face.c_str());
+  cv::namedWindow("w", 1);
   for(;;) {
     capture >> frame;
     if(frame.empty())
       break;
 
-    double __time__ = (double)getTickCount();
+    double __time__ = (double)cv::getTickCount();
 
     float scale = (float)(400.0 / frame.cols);
-    resize(frame, img, Size((int)(frame.cols * scale), (int)(frame.rows * scale)), 0, 0, INTER_LINEAR_EXACT);
+    cv::resize(frame, img, cv::Size((int)(frame.cols * scale), (int)(frame.rows * scale)), 0, 0, INTER_LINEAR_EXACT);
 
     facemark->getFaces(img, rects);
     rects_scaled.clear();
 
     for(int j = 0; j < (int)rects.size(); j++) {
-      rects_scaled.push_back(Rect(
+      rects_scaled.push_back(cv::Rect(
           (int)(rects[j].x / scale), (int)(rects[j].y / scale), (int)(rects[j].width / scale), (int)(rects[j].height / scale)));
     }
     rects = rects_scaled;
     fittime = 0;
     nfaces = (int)rects.size();
     if(rects.size() > 0) {
-      double newtime = (double)getTickCount();
+      double newtime = (double)cv::getTickCount();
 
       facemark->fit(frame, rects, landmarks);
 
-      fittime = ((getTickCount() - newtime) / getTickFrequency());
+      fittime = ((cv::getTickCount() - newtime) / cv::getTickFrequency());
       for(int j = 0; j < (int)rects.size(); j++) {
-        landmarks[j] = Mat(Mat(landmarks[j]));
-        drawFacemarks(frame, landmarks[j], Scalar(0, 0, 255));
+        landmarks[j] = cv::Mat(Mat(landmarks[j]));
+        drawFacemarks(frame, landmarks[j], cv::Scalar(0, 0, 255));
       }
     }
 
-    double fps = (getTickFrequency() / (getTickCount() - __time__));
+    double fps = (cv::getTickFrequency() / (cv::getTickCount() - __time__));
     sprintf(buff, "faces: %i %03.2f fps, fit:%03.0f ms", nfaces, fps, fittime * 1000);
     text = buff;
-    putText(frame, text, Point(20, 40), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 2, 8);
+    cv::putText(frame, text, cv::Point(20, 40), FONT_HERSHEY_PLAIN, 2.0, cv::Scalar::all(255), 2, 8);
 
-    imshow("w", frame);
-    waitKey(1); // waits to display frame
+    cv::imshow("w", frame);
+    cv::waitKey(1); // waits to display frame
   }
-  waitKey(0); // key press to close window
+  cv::waitKey(0); // key press to close window
 }
 
 bool
-myDetector(InputArray image, OutputArray faces, CascadeClassifier* face_cascade) {
-  Mat gray;
+myDetector(InputArray image, OutputArray faces, cv::CascadeClassifier* face_cascade) {
+  cv::Mat gray;
 
   if(image.channels() > 1)
-    cvtColor(image, gray, COLOR_BGR2GRAY);
+    cv::cvtColor(image, gray, COLOR_BGR2GRAY);
   else
     gray = image.getMat().clone();
 
-  equalizeHist(gray, gray);
+  cv::equalizeHist(gray, gray);
 
-  std::vector<Rect> faces_;
-  face_cascade->detectMultiScale(gray, faces_, 1.4, 2, CASCADE_SCALE_IMAGE, Size(30, 30));
-  Mat(faces_).copyTo(faces);
+  std::vector<cv::Rect> faces_;
+  face_cascade->detectMultiScale(gray, faces_, 1.4, 2, CASCADE_SCALE_IMAGE, cv::Size(30, 30));
+  cv::Mat(faces_).copyTo(faces);
   return true;
 }
 
 bool
-parseArguments(int argc, char** argv, String& cascade, String& model, String& video) {
-  const String keys = "{ @c cascade         |      | (required) path to the cascade model file for the face "
+parseArguments(int argc, char** argv, cv::String& cascade, cv::String& model, cv::String& video) {
+  const cv::String keys = "{ @c cascade         |      | (required) path to the cascade model file for the cv::face "
                       "detector }"
                       "{ @m model           |      | (required) path to the trained model }"
                       "{ @v video           |      | (required) path input video}"
                       "{ help h usage ?     |      | facemark_lbf_fitting -cascade -model -video [-t]\n"
                       " example: facemark_lbf_fitting ../face_cascade.xml ../LBF.model ../video.mp4}";
-  CommandLineParser parser(argc, argv, keys);
+  cv::CommandLineParser parser(argc, argv, keys);
   parser.about("hello");
 
   if(parser.has("help")) {
@@ -170,9 +170,9 @@ parseArguments(int argc, char** argv, String& cascade, String& model, String& vi
     return false;
   }
 
-  cascade = String(parser.get<String>("cascade"));
-  model = String(parser.get<string>("model"));
-  video = String(parser.get<string>("video"));
+  cascade = cv::String(parser.get<String>("cascade"));
+  model = cv::String(parser.get<string>("model"));
+  video = cv::String(parser.get<string>("video"));
 
   if(cascade.empty() || model.empty() || video.empty()) {
     std::cerr << "one or more required arguments are not found" << '\n';

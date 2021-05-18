@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
-using namespace cv;
+//using namespace cv;
 using namespace std;
 /// Global variables
 
@@ -37,24 +37,24 @@ void
 CannyDetect() {
   std::vector<std::vector<cv::Point>> contours;
   // Reduce noise with a kernel for better detection
-  blur(src_gray, detected_edges, Size(3, 3));
-  std::vector<Vec4i> hierarchy;
+  cv::blur(src_gray, detected_edges, cv::Size(3, 3));
+  std::vector<cv::Vec4i> hierarchy;
 
-  // Running the Canny detector
-  Canny(detected_edges, detected_edges, lowThreshold, lowThreshold * ratio, kernel_size);
+  // Running the cv::Canny detector
+  cv::Canny(detected_edges, detected_edges, lowThreshold, lowThreshold * ratio, kernel_size);
   // finding contours
-  findContours(detected_edges, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE, cv::Point(0, 0));
+  cv::findContours(detected_edges, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE, cv::Point(0, 0));
   // converting image from grayscale to coloured
-  cvtColor(detected_edges, detected_edges, cv::COLOR_GRAY2BGR);
+  cv::cvtColor(detected_edges, detected_edges, cv::COLOR_GRAY2BGR);
 
-  // add the detected edges on top of the image with partial visibility
+  // cv::add the detected edges on top of the image with partial visibility
   addWeighted(src, 1.0, detected_edges, 0.5, 0.0, dst);
 
-  // Getting centres fo each contour using moments and centres
+  // Getting centres fo each contour using cv::moments and centres
 
   // Get the moments
-  std::vector<Moments> mu(contours.size());
-  for(int i = 0; i < contours.size(); i++) { mu[i] = moments(contours[i], false); }
+  std::vector<cv::Moments> mu(contours.size());
+  for(int i = 0; i < contours.size(); i++) { mu[i] = cv::moments(contours[i], false); }
 
   ///  Get the centroids using moments
   std::vector<cv::Point> mc(contours.size());
@@ -63,18 +63,18 @@ CannyDetect() {
   // making the red cross using lines
   for(int i = 0; i < mc.size(); i++) {
 
-    line(dst, cv::Point(mc[i].x - 6, mc[i].y), cv::Point(mc[i].x + 6, mc[i].y), Scalar(0, 0, 255), 1, 8, 0);
-    line(dst, cv::Point(mc[i].x, mc[i].y - 6), cv::Point(mc[i].x, mc[i].y + 6), Scalar(0, 0, 255), 1, 8, 0);
+    cv::line(dst, cv::Point(mc[i].x - 6, mc[i].y), cv::Point(mc[i].x + 6, mc[i].y), cv::Scalar(0, 0, 255), 1, 8, 0);
+    cv::line(dst, cv::Point(mc[i].x, mc[i].y - 6), cv::Point(mc[i].x, mc[i].y + 6), cv::Scalar(0, 0, 255), 1, 8, 0);
   }
 
-  imshow(window_name, dst);
+  cv::imshow(window_name, dst);
 }
 
 /** @function main */
 int
 main(int argc, char** argv) {
   // Load the image
-  src = imread("../jellyfish.jpg");
+  src = cv::imread("../jellyfish.jpg");
 
   if(!src.data) {
     return -1;
@@ -84,16 +84,16 @@ main(int argc, char** argv) {
   dst.create(src.size(), src.type());
 
   /// Convert the image to grayscale
-  cvtColor(src, src_gray, cv::COLOR_BGR2GRAY);
+  cv::cvtColor(src, src_gray, cv::COLOR_BGR2GRAY);
 
   /// Create a window
-  namedWindow(window_name, cv::WINDOW_AUTOSIZE);
+  cv::namedWindow(window_name, cv::WINDOW_AUTOSIZE);
 
-  // The threshold of detecting edges of the jellyfish
+  // The cv::threshold of detecting edges of the jellyfish
   lowThreshold = 90;
   // do a canny detection of the edges
   CannyDetect();
-  waitKey(0);
+  cv::waitKey(0);
 
   return 0;
 }

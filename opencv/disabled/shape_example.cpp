@@ -11,7 +11,7 @@
 #include <string>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 static void
 help() {
@@ -28,14 +28,14 @@ static std::vector<cv::Point>
 simpleContour(const cv::Mat& currentQuery, int n = 300) {
   std::vector<std::vector<cv::Point>> _contoursQuery;
   std::vector<cv::Point> contoursQuery;
-  findContours(currentQuery, _contoursQuery, RETR_LIST, CHAIN_APPROX_NONE);
+  cv::findContours(currentQuery, _contoursQuery, RETR_LIST, CHAIN_APPROX_NONE);
   for(size_t border = 0; border < _contoursQuery.size(); border++) {
     for(size_t p = 0; p < _contoursQuery[border].size(); p++) { contoursQuery.push_back(_contoursQuery[border][p]); }
   }
 
   // In case actual number of points is less than n
   int dummy = 0;
-  for(int add = (int)contoursQuery.size() - 1; add < n; add++) {
+  for(int cv::add = (int)contoursQuery.size() - 1; cv::add < n; cv::add++) {
     contoursQuery.push_back(contoursQuery[dummy++]); // adding dummy values
   }
 
@@ -66,29 +66,29 @@ main(int argc, char** argv) {
   }
   cv::Ptr<cv::ShapeContextDistanceExtractor> mysc = cv::createShapeContextDistanceExtractor();
 
-  Size sz2Sh(300, 300);
+  cv::Size sz2Sh(300, 300);
   stringstream queryName;
   queryName << path << indexQuery << ".png";
-  cv::Mat query = imread(queryName.str(), IMREAD_GRAYSCALE);
+  cv::Mat query = cv::imread(queryName.str(), IMREAD_GRAYSCALE);
   cv::Mat queryToShow;
-  resize(query, queryToShow, sz2Sh);
-  imshow("QUERY", queryToShow);
-  moveWindow("TEST", 0, 0);
+  cv::resize(query, queryToShow, sz2Sh);
+  cv::imshow("QUERY", queryToShow);
+  cv::moveWindow("TEST", 0, 0);
   std::vector<cv::Point> contQuery = simpleContour(query);
   int bestcv::Match = 0;
   float bestDis = FLT_MAX;
   for(int ii = 1; ii <= 20; ii++) {
     if(ii == indexQuery)
       continue;
-    waitKey(30);
+    cv::waitKey(30);
     stringstream iiname;
     iiname << path << ii << ".png";
     cout << "name: " << iiname.str() << endl;
-    cv::Mat iiIm = imread(iiname.str(), 0);
+    cv::Mat iiIm = cv::imread(iiname.str(), 0);
     cv::Mat iiToShow;
-    resize(iiIm, iiToShow, sz2Sh);
-    imshow("TEST", iiToShow);
-    moveWindow("TEST", sz2Sh.width + 50, 0);
+    cv::resize(iiIm, iiToShow, sz2Sh);
+    cv::imshow("TEST", iiToShow);
+    cv::moveWindow("TEST", sz2Sh.width + 50, 0);
     std::vector<cv::Point> contii = simpleContour(iiIm);
     float dis = mysc->computeDistance(contQuery, contii);
     if(dis < bestDis) {
@@ -97,14 +97,14 @@ main(int argc, char** argv) {
     }
     std::cout << " distance between " << queryName.str() << " and " << iiname.str() << " is: " << dis << std::endl;
   }
-  destroyWindow("TEST");
+  cv::destroyWindow("TEST");
   stringstream bestname;
   bestname << path << bestcv::Match << ".png";
-  cv::Mat iiIm = imread(bestname.str(), 0);
+  cv::Mat iiIm = cv::imread(bestname.str(), 0);
   cv::Mat bestToShow;
-  resize(iiIm, bestToShow, sz2Sh);
-  imshow("BEST MATCH", bestToShow);
-  moveWindow("BEST MATCH", sz2Sh.width + 50, 0);
+  cv::resize(iiIm, bestToShow, sz2Sh);
+  cv::imshow("BEST MATCH", bestToShow);
+  cv::moveWindow("BEST MATCH", sz2Sh.width + 50, 0);
 
   return 0;
 }

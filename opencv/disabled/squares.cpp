@@ -11,12 +11,12 @@
 #include <math.h>
 #include <string.h>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 static void
 help() {
-  cout << "\nA program using pyramid scaling, Canny, contours, contour simpification and\n"
+  cout << "\nA program using pyramid scaling, cv::Canny, contours, contour simpification and\n"
           "memory storage (it's got it all folks) to find\n"
           "squares in a list of images pic1-6.png\n"
           "Returns sequence of squares detected on the image.\n"
@@ -52,34 +52,34 @@ findSquares(const cv::Mat& image, std::vector<std::vector<cv::Point>>& squares) 
   cv::Mat pyr, timg, gray0(image.size(), CV_8U), gray;
 
   // down-scale and upscale the image to filter out the noise
-  pyrDown(image, pyr, Size(image.cols / 2, image.rows / 2));
+  pyrDown(image, pyr, cv::Size(image.cols / 2, image.rows / 2));
   pyrUp(pyr, timg, image.size());
   std::vector<std::vector<cv::Point>> contours;
 
   // find squares in every color plane of the image
   for(int c = 0; c < 3; c++) {
     int ch[] = {c, 0};
-    mixChannels(&timg, 1, &gray0, 1, ch, 1);
+    cv::mixChannels(&timg, 1, &gray0, 1, ch, 1);
 
-    // try several threshold levels
+    // try several cv::threshold levels
     for(int l = 0; l < N; l++) {
-      // hack: use Canny instead of zero threshold level.
-      // Canny helps to catch squares with gradient shading
+      // hack: use cv::Canny instead of zero cv::threshold level.
+      // cv::Canny helps to catch squares with gradient shading
       if(l == 0) {
-        // apply Canny. Take the upper threshold from slider
+        // apply cv::Canny. Take the upper cv::threshold from slider
         // and set the lower to 0 (which forces edges merging)
-        Canny(gray0, gray, 0, thresh, 5);
-        // dilate canny output to remove potential
+        cv::Canny(gray0, gray, 0, thresh, 5);
+        // cv::dilate canny output to remove potential
         // holes between edge segments
-        dilate(gray, gray, cv::Mat(), cv::Point(-1, -1));
+        cv::dilate(gray, gray, cv::Mat(), cv::Point(-1, -1));
       } else {
-        // apply threshold if l!=0:
+        // apply cv::threshold if l!=0:
         //     tgray(x,y) = gray(x,y) < (l+1)*255/N ? 255 : 0
         gray = gray0 >= (l + 1) * 255 / N;
       }
 
       // find contours and store them all as a list
-      findContours(gray, contours, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE);
+      cv::findContours(gray, contours, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE);
 
       std::vector<cv::Point> approx;
 
@@ -87,7 +87,7 @@ findSquares(const cv::Mat& image, std::vector<std::vector<cv::Point>>& squares) 
       for(size_t i = 0; i < contours.size(); i++) {
         // approximate contour with accuracy proportional
         // to the contour perimeter
-        approxPolyDP(cv::Mat(contours[i]), approx, arcLength(cv::Mat(contours[i]), true) * 0.02, true);
+        cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true) * 0.02, true);
 
         // square contours should have 4 vertices after approximation
         // relatively large area (to filter out noisy contours)
@@ -95,7 +95,7 @@ findSquares(const cv::Mat& image, std::vector<std::vector<cv::Point>>& squares) 
         // Note: absolute value of an area is used because
         // area may be positive or negative - in accordance with the
         // contour orientation
-        if(approx.size() == 4 && fabs(contourArea(cv::Mat(approx))) > 1000 && isContourConvex(cv::Mat(approx))) {
+        if(approx.size() == 4 && fabs(cv::contourArea(cv::Mat(approx))) > 1000 && cv::isContourConvex(cv::Mat(approx))) {
           double maxCosine = 0;
 
           for(int j = 2; j < 5; j++) {
@@ -105,7 +105,7 @@ findSquares(const cv::Mat& image, std::vector<std::vector<cv::Point>>& squares) 
           }
 
           // if cosines of all angles are small
-          // (all angles are ~90 degree) then write quandrange
+          // (all angles are ~90 degree) then cv::write quandrange
           // vertices to resultant sequence
           if(maxCosine < 0.3)
             squares.push_back(approx);
@@ -121,21 +121,21 @@ drawSquares(cv::Mat& image, const std::vector<std::vector<cv::Point>>& squares) 
   for(size_t i = 0; i < squares.size(); i++) {
     const cv::Point* p = &squares[i][0];
     int n = (int)squares[i].size();
-    polylines(image, &p, &n, 1, true, Scalar(0, 255, 0), 3, cv::LINE_AA);
+    cv::polylines(image, &p, &n, 1, true, cv::Scalar(0, 255, 0), 3, cv::LINE_AA);
   }
 
-  imshow(wndname, image);
+  cv::imshow(wndname, image);
 }
 
 int
 main(int /*argc*/, char** /*argv*/) {
   static const char* names[] = {"pic1.png", "pic2.png", "pic3.png", "pic4.png", "pic5.png", "pic6.png", 0};
   help();
-  namedWindow(wndname, 1);
+  cv::namedWindow(wndname, 1);
   std::vector<std::vector<cv::Point>> squares;
 
   for(int i = 0; names[i] != 0; i++) {
-    cv::Mat image = imread(names[i], 1);
+    cv::Mat image = cv::imread(names[i], 1);
     if(image.empty()) {
       cout << "Couldn't load " << names[i] << endl;
       continue;
@@ -144,7 +144,7 @@ main(int /*argc*/, char** /*argv*/) {
     findSquares(image, squares);
     drawSquares(image, squares);
 
-    int c = waitKey();
+    int c = cv::waitKey();
     if((char)c == 27)
       break;
   }

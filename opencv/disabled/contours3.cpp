@@ -10,7 +10,7 @@
 // Get thresholded image in HSV format
 IplImage*
 GetThresholdedImageHSV(IplImage* img) {
-  // Create an HSV format image from image passed
+  // Create an HSV cv::format image from image passed
   IplImage* imgHSV = cvCreateImage(cvGetSize(img), 8, 3);
 
   cvCvtColor(img, imgHSV, cv::COLOR_BGR2HSV);

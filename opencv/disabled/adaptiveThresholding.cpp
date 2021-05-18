@@ -11,10 +11,10 @@
 #define T (0.15f)
 
 void
-adaptiveThreshold(unsigned char* input, unsigned char* bin) {
+cv::adaptiveThreshold(unsigned char* input, unsigned char* bin) {
   unsigned long* integralImg = 0;
   int i, j;
-  long sum = 0;
+  long cv::sum = 0;
   int count = 0;
   int index;
   int x1, y1, x2, y2;
@@ -25,16 +25,16 @@ adaptiveThreshold(unsigned char* input, unsigned char* bin) {
 
   for(i = 0; i < IMAGE_WIDTH; i++) {
     // reset this column sum
-    sum = 0;
+    cv::sum = 0;
 
     for(j = 0; j < IMAGE_HEIGHT; j++) {
       index = j * IMAGE_WIDTH + i;
 
-      sum += input[index];
+      cv::sum += input[index];
       if(i == 0)
-        integralImg[index] = sum;
+        integralImg[index] = cv::sum;
       else
-        integralImg[index] = integralImg[index - 1] + sum;
+        integralImg[index] = integralImg[index - 1] + cv::sum;
     }
   }
 
@@ -62,10 +62,10 @@ adaptiveThreshold(unsigned char* input, unsigned char* bin) {
       count = (x2 - x1) * (y2 - y1);
 
       // I(x,y)=s(x2,y2)-s(x1,y2)-s(x2,y1)+s(x1,x1)
-      sum = integralImg[y2 * IMAGE_WIDTH + x2] - integralImg[y1 * IMAGE_WIDTH + x2] - integralImg[y2 * IMAGE_WIDTH + x1] +
+      cv::sum = integralImg[y2 * IMAGE_WIDTH + x2] - integralImg[y1 * IMAGE_WIDTH + x2] - integralImg[y2 * IMAGE_WIDTH + x1] +
             integralImg[y1 * IMAGE_WIDTH + x1];
 
-      if((long)(input[index] * count) < (long)(sum * (1.0 - T)))
+      if((long)(input[index] * count) < (long)(cv::sum * (1.0 - T)))
         bin[index] = 0;
       else
         bin[index] = 255;
@@ -87,7 +87,7 @@ main(int argc, char** argv) {
   cvNamedWindow("Input", 1);
   cvNamedWindow("Output", 1);
 
-  adaptiveThreshold((unsigned char*)cvFrame->imageData, (unsigned char*)binImg->imageData);
+  cv::adaptiveThreshold((unsigned char*)cvFrame->imageData, (unsigned char*)binImg->imageData);
 
   cvShowImage("Input", cvFrame);
   cvShowImage("Output", binImg);

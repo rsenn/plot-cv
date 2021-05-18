@@ -4,7 +4,7 @@ int
 Configuration_Manager::init_scheduler() {
 
   int camera_index;
-  VideoCapture camera_uninit;
+  cv::VideoCapture camera_uninit;
   string event_save_dir;
   string cascade_path;
   string primary_cascade_name;
@@ -12,7 +12,7 @@ Configuration_Manager::init_scheduler() {
   ifstream config_file("/home/pi/surveillance_proj/configuration.txt");
 
   if(!config_file.is_open()) {
-    cout << "Error: Configuration_Manager::init_scheduler() could not open configuration file. \n";
+    cout << "cv::Error: Configuration_Manager::init_scheduler() could not open configuration file. \n";
     return -1;
   } else {
     cout << "Reading default configuration for Configuration_Manager::init_scheduler()... \n";
@@ -36,7 +36,7 @@ Configuration_Manager::init_scheduler() {
 
   for(unsigned int i = 0; i < this->camera_indexes_in_use.size(); i++) {
     if(camera_index == camera_indexes_in_use[i]) {
-      cout << "Error: Configuration_Manager::init_scheduler() tried to initialize camera that is "
+      cout << "cv::Error: Configuration_Manager::init_scheduler() tried to initialize camera that is "
               "already in use. \n";
       return -1;
     }
@@ -45,7 +45,7 @@ Configuration_Manager::init_scheduler() {
   cout << "Initializing camera at camera_index=" << camera_index << "...\n";
 
   if(!camera_uninit.open(camera_index)) {
-    cout << "Error: Configuration_Manager::init_scheduler() failed to open camera at camera_index=" << camera_index << ".\n";
+    cout << "cv::Error: Configuration_Manager::init_scheduler() failed to open camera at camera_index=" << camera_index << ".\n";
     cout << "Returning to main menu." << endl;
     return -1;
   } else {
@@ -80,7 +80,7 @@ Configuration_Manager::scheduler_manager() {
       cout << "Scheduler_" << selection << " successfully selected.\n";
     }
   } else {
-    cout << "Error: Scheduler selection out of range. Returning to menu.\n";
+    cout << "cv::Error: Scheduler selection out of range. Returning to menu.\n";
     return 0;
   }
 
@@ -231,7 +231,7 @@ Configuration_Manager::configure_image_processor(Scheduler* input_sched) {
         if(cascade_choice >= 0 && cascade_choice < this->cascade_files_size) {
           temp_proc->set_cascade_name(this->cascade_files[cascade_choice]);
         } else {
-          cout << "Error: Selection out of range, returning to menu. \n";
+          cout << "cv::Error: Selection out of range, returning to menu. \n";
         }
         break;
 
@@ -250,7 +250,7 @@ Configuration_Manager::configure_image_processor(Scheduler* input_sched) {
         if(cascade_choice >= 0 && cascade_choice < this->cascade_files_size) {
           temp_proc->set_nested_cascade_name(this->cascade_files[cascade_choice]);
         } else {
-          cout << "Error: Selection out of range, returning to menu. \n";
+          cout << "cv::Error: Selection out of range, returning to menu. \n";
         }
 
         break;
@@ -364,7 +364,7 @@ Configuration_Manager::select_camera_feed() {
       case('1'):
 
         if(!(this->get_scheduler_list_size() > 0)) {
-          cout << "Error: Configuration_Manager::select_camera_feed() detected 0 active schedulers "
+          cout << "cv::Error: Configuration_Manager::select_camera_feed() detected 0 active schedulers "
                   "\n";
           return -1;
         } else {
@@ -398,39 +398,39 @@ int
 Configuration_Manager::display_all_feeds() {
 
   if(this->get_scheduler_list_size() <= 0) {
-    cout << "Error: Configuration_Manager::display_all_feeds() detected 0 active feeds. \n";
+    cout << "cv::Error: Configuration_Manager::display_all_feeds() detected 0 active feeds. \n";
     return -1;
   }
 
-  vector<VideoCapture*> cameras;
-  vector<String> windows;
+  vector<cv::VideoCapture*> cameras;
+  vector<cv::String> windows;
   string window_name_temp;
   Scheduler* scheduler_temp;
-  Mat frame_temp;
+  cv::Mat frame_temp;
 
   for(unsigned int i = 0; i < this->scheduler_list.size(); i++) { // Gather camera info
     scheduler_temp = this->get_scheduler(i);
     cameras.push_back(scheduler_temp->get_camera());
     window_name_temp = "Feed From Camera_" + scheduler_temp->get_camera_index();
     windows.push_back(window_name_temp);
-    namedWindow(window_name_temp, cv::WINDOW_AUTOSIZE);
+    cv::namedWindow(window_name_temp, cv::WINDOW_AUTOSIZE);
   }
 
   while(1) {                                           // Read frames and update windows until exit signal
     for(unsigned int i = 0; i < cameras.size(); i++) { // Read frame from each camera and update it's window
-      if(!cameras.at(i)->read(frame_temp)) {
-        cout << "Error: Configuration_Manager::display_all_feeds() could not read frame from "
+      if(!cameras.at(i)->cv::read(frame_temp)) {
+        cout << "cv::Error: Configuration_Manager::display_all_feeds() could not cv::read frame from "
                 "Scheduler_"
              << i << "'s camera. \n";
         return -1;
       } else {
-        imshow(windows.at(i), frame_temp);
+        cv::imshow(windows.at(i), frame_temp);
       }
     }
 
-    if(waitKey(30) == 27) {
+    if(cv::waitKey(30) == 27) {
       cout << "Exiting camera feeds. Returning to main menu. \n";
-      destroyAllWindows();
+      cv::destroyAllWindows();
       return 0;
     }
   }

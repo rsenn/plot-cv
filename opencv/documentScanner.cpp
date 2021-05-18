@@ -20,16 +20,16 @@
 #include <iostream>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
-Mat image, mask, bgdModel, fgdModel, result, resultGrey;
+cv::Mat image, mask, bgdModel, fgdModel, result, resultGrey;
 int width, height;
-Rect rect;
+cv::Rect rect;
 
 /*
  * Name:         angle
  * Purpose:      Find the angle between three points
- * Arguments:    Point pt1, pt2, pt0
+ * Arguments:    cv::Point pt1, pt2, pt0
  * Outputs:      none
  * Modifies:     none
  * Returns:      double
@@ -38,7 +38,7 @@ Rect rect;
  * Notes:        based on samples_2cpp_2squares_8cpp-example.html#a20
  */
 static double
-angle(Point pt1, Point pt2, Point pt0) {
+angle(cv::Point pt1, cv::Point pt2, cv::Point pt0) {
   double dx1 = pt1.x - pt0.x;
   double dy1 = pt1.y - pt0.y;
   double dx2 = pt2.x - pt0.x;
@@ -49,32 +49,32 @@ angle(Point pt1, Point pt2, Point pt0) {
 int
 main() {
   string filename = "./scanned-form.jpg";
-  image = imread(filename, IMREAD_COLOR);
+  image = cv::imread(filename, cv::IMREAD_COLOR);
   width = image.size().width;
   height = image.size().height;
-  namedWindow("result", WINDOW_NORMAL);
-  rect = Rect(Point(30, 100), Point(width - 30, height - 30));
+  cv::namedWindow("result", WINDOW_NORMAL);
+  rect = cv::Rect(cv::Point(30, 100), cv::Point(width - 30, height - 30));
   mask.create(image.size(), CV_8UC1);
 
   // separate bg from fg;
-  grabCut(image, mask, rect, bgdModel, fgdModel, 1, GC_INIT_WITH_RECT);
+  cv::grabCut(image, mask, rect, bgdModel, fgdModel, 1, GC_INIT_WITH_RECT);
   mask = mask & 1;
   image.copyTo(result, mask);
 
   // process image for contour detection
-  cvtColor(result, resultGrey, COLOR_BGR2GRAY);
+  cv::cvtColor(result, resultGrey, COLOR_BGR2GRAY);
   int thresh = 20;
-  Mat canny_output;
-  Canny(resultGrey, canny_output, thresh, thresh * 2);
+  cv::Mat canny_output;
+  cv::Canny(resultGrey, canny_output, thresh, thresh * 2);
 
   // find contours
-  vector<vector<Point>> contours, cornerPoints;
-  vector<Point> approx;
-  findContours(canny_output, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+  vector<vector<cv::Point>> contours, cornerPoints;
+  vector<cv::Point> approx;
+  cv::findContours(canny_output, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
   for(size_t i = 0; i < contours.size(); i++) {
-    approxPolyDP(contours[i], approx, arcLength(contours[i], true) * 0.02, true);
+    cv::approxPolyDP(contours[i], approx, cv::arcLength(contours[i], true) * 0.02, true);
 
-    if(approx.size() == 4 && fabs(contourArea(approx)) > 1000 && isContourConvex(approx)) {
+    if(approx.size() == 4 && fabs(cv::contourArea(approx)) > 1000 && cv::isContourConvex(approx)) {
       double maxCosine = 0;
       for(int j = 2; j < 5; j++) {
         double cosine = fabs(angle(approx[j % 4], approx[j - 2], approx[j - 1]));
@@ -87,7 +87,7 @@ main() {
   }
   // order points by y value
   for(int i = 0; i < cornerPoints[0].size() - 1; i++) {
-    Point temp = cornerPoints[0][i];
+    cv::Point temp = cornerPoints[0][i];
     if(cornerPoints[0][i].y > cornerPoints[0][i + 1].y) {
       cornerPoints[0][i] = cornerPoints[0][i + 1];
       cornerPoints[0][i + 1] = temp;
@@ -95,32 +95,32 @@ main() {
   }
   // order top points
   if(cornerPoints[0][0].x > cornerPoints[0][1].x) {
-    Point temp = cornerPoints[0][0];
+    cv::Point temp = cornerPoints[0][0];
     cornerPoints[0][0] = cornerPoints[0][1];
     cornerPoints[0][1] = temp;
   }
   // order bottom points
   if(cornerPoints[0][3].x < cornerPoints[0][4].x) {
-    Point temp = cornerPoints[0][3];
+    cv::Point temp = cornerPoints[0][3];
     cornerPoints[0][3] = cornerPoints[0][4];
     cornerPoints[0][3] = temp;
   }
 
   // create correctly sized document template given 500px width
-  Mat alignedDoc(647, 500, CV_8UC3, Scalar(126, 0, 255));
-  vector<Point2f> targetPoints = {Point(0, 0), Point(500, 0), Point(500, 647), Point(0, 647)};
+  cv::Mat alignedDoc(647, 500, CV_8UC3, cv::Scalar(126, 0, 255));
+  vector<cv::Point2f> targetPoints = {cv::Point(0, 0), cv::Point(500, 0), cv::Point(500, 647), cv::Point(0, 647)};
 
   // copy points to new vector for clarity
-  vector<Point2f> sourcePoints;
+  vector<cv::Point2f> sourcePoints;
   for(int i = 0; i < 4; i++) { sourcePoints.push_back(cornerPoints[0][i]); }
 
   // align document using homography
-  Mat h = findHomography(sourcePoints, targetPoints, RANSAC);
-  warpPerspective(image, alignedDoc, h, alignedDoc.size());
+  cv::Mat h = cv::findHomography(sourcePoints, targetPoints, RANSAC);
+  cv::warpPerspective(image, alignedDoc, h, alignedDoc.size());
 
   // display result image
-  imshow("result", alignedDoc);
-  waitKey(0);
+  cv::imshow("result", alignedDoc);
+  cv::waitKey(0);
 
   return 0;
 }

@@ -59,17 +59,17 @@
 // Please obvserve, that jumbo frames are required when high fps & 16bit data is selected.
 // (camera, switches/routers and the computer this software is running on)
 //
-// Basic usage: VideoCapture cap(CAP_ARAVIS + <camera id>);
+// Basic usage: cv::VideoCapture cap(CAP_ARAVIS + <camera id>);
 //
 // Supported properties:
-//  read/write
+//  cv::read/write
 //      CAP_PROP_AUTO_EXPOSURE(0|1)
 //      CAP_PROP_EXPOSURE(t), t in seconds
 //      CAP_PROP_GAIN(g), g >=0 or -1 for automatic control if CAP_PROP_AUTO_EXPOSURE is true
 //      CAP_PROP_FPS(f)
 //      CAP_PROP_FOURCC(type)
 //      CAP_PROP_BUFFERSIZE(n)
-//  read only:
+//  cv::read only:
 //      CAP_PROP_POS_MSEC
 //      CAP_PROP_FRAME_WIDTH
 //      CAP_PROP_FRAME_HEIGHT
@@ -343,7 +343,7 @@ CvCaptureCAM_Aravis::autoExposureControl(IplImage* image) {
 
   cv::Mat m = cv::cvarrToMat(image);
 
-  // calc mean value for luminance or green channel
+  // calc cv::mean value for luminance or green channel
   double brightness = cv::mean(m)[image->nChannels > 1 ? 1 : 0];
   if(brightness < 1)
     brightness = 1;
@@ -367,7 +367,7 @@ CvCaptureCAM_Aravis::autoExposureControl(IplImage* image) {
     double ev, ng = 0;
 
     if(gainAvailable && autoGain) {
-      ev = log(d / dmid) / log(2);
+      ev = cv::log(d / dmid) / cv::log(2);
       ng = CLIP(gain + ev, gainMin, gainMax);
 
       if(ng < gain) {

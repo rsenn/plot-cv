@@ -17,7 +17,7 @@
 #include <samples_utility.hpp>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 int
 main(int argc, char** argv) {
@@ -40,7 +40,7 @@ main(int argc, char** argv) {
 
   // create the tracker
   //! [create]
-  MultiTracker trackers;
+  cv::MultiTracker trackers;
   //! [create]
 
   // container of the tracked objects
@@ -50,15 +50,15 @@ main(int argc, char** argv) {
 
   // set input video
   std::string video = argv[1];
-  VideoCapture cap(video);
+  cv::VideoCapture cap(video);
 
-  Mat frame;
+  cv::Mat frame;
 
   // get bounding box
   cap >> frame;
   //! [selectmulti]
-  vector<Rect> ROIs;
-  selectROIs("tracker", frame, ROIs);
+  vector<cv::Rect> ROIs;
+  cv::selectROIs("tracker", frame, ROIs);
   //! [selectmulti]
 
   // quit when the tracked object(s) is not provided
@@ -67,13 +67,13 @@ main(int argc, char** argv) {
 
   // initialize the tracker
   //! [init]
-  std::vector<Ptr<Tracker>> algorithms;
+  std::vector<Ptr<cv::Tracker>> algorithms;
   for(size_t i = 0; i < ROIs.size(); i++) {
     algorithms.push_back(createTrackerByName(trackingAlg));
     objects.push_back(ROIs[i]);
   }
 
-  trackers.add(algorithms, frame, objects);
+  trackers.cv::add(algorithms, frame, objects);
   //! [init]
 
   // do the tracking
@@ -94,14 +94,14 @@ main(int argc, char** argv) {
     //! [result]
     // draw the tracked object
     for(unsigned i = 0; i < trackers.getObjects().size(); i++)
-      rectangle(frame, trackers.getObjects()[i], Scalar(255, 0, 0), 2, 1);
+      cv::rectangle(frame, trackers.getObjects()[i], cv::Scalar(255, 0, 0), 2, 1);
     //! [result]
 
     // show image with the tracked object
-    imshow("tracker", frame);
+    cv::imshow("tracker", frame);
 
     // quit on ESC button
-    if(waitKey(1) == 27)
+    if(cv::waitKey(1) == 27)
       break;
   }
 }

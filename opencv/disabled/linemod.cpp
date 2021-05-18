@@ -70,14 +70,14 @@ help() {
          "Place your object on a planar, featureless surface. With the mouse,\n"
          "frame it in the 'color' window and right click to learn a first template.\n"
          "Then press 'l' to enter online learning mode, and move the camera around.\n"
-         "When the match score falls between 90-95%% the demo will add a new template.\n\n"
+         "When the match score falls between 90-95%% the demo will cv::add a new template.\n\n"
          "Keys:\n"
          "\t h   -- This help page\n"
          "\t l   -- Toggle online learning\n"
          "\t m   -- Toggle printing match result\n"
          "\t t   -- Toggle printing timings\n"
          "\t w   -- Write learned templates to disk\n"
-         "\t [ ] -- Adjust matching threshold: '[' down,  ']' up\n"
+         "\t [ ] -- Adjust matching cv::threshold: '[' down,  ']' up\n"
          "\t q   -- Quit\n\n");
 }
 
@@ -115,7 +115,7 @@ static cv::Ptr<cv::linemod::Detector>
 readLinemod(const std::string& filename) {
   cv::Ptr<cv::linemod::Detector> detector = new cv::linemod::Detector;
   cv::FileStorage fs(filename, cv::FileStorage::READ);
-  detector->read(fs.root());
+  detector->cv::read(fs.root());
 
   cv::FileNode fn = fs["classes"];
   for(cv::FileNodeIterator i = fn.begin(), iend = fn.end(); i != iend; ++i) detector->readClass(*i);
@@ -126,7 +126,7 @@ readLinemod(const std::string& filename) {
 static void
 writeLinemod(const cv::Ptr<cv::linemod::Detector>& detector, const std::string& filename) {
   cv::FileStorage fs(filename, cv::FileStorage::WRITE);
-  detector->write(fs);
+  detector->cv::write(fs);
 
   std::vector<std::string> ids = detector->classIds();
   fs << "classes"
@@ -286,7 +286,7 @@ main(int argc, char* argv[]) {
 
           cv::imshow("mask", depth_mask);
 
-          // If pretty sure (but not TOO sure), add new template
+          // If pretty sure (but not TOO sure), cv::add new template
           if(learning_lower_bound < m.similarity && m.similarity < learning_upper_bound) {
             extract_timer.start();
             int template_id = detector->addTemplate(sources, m.class_id, depth_mask);
@@ -336,15 +336,15 @@ main(int argc, char* argv[]) {
       case '[':
         // decrement threshold
         matching_threshold = std::max(matching_threshold - 1, -100);
-        printf("New threshold: %d\n", matching_threshold);
+        printf("New cv::threshold: %d\n", matching_threshold);
         break;
       case ']':
         // increment threshold
         matching_threshold = std::min(matching_threshold + 1, +100);
-        printf("New threshold: %d\n", matching_threshold);
+        printf("New cv::threshold: %d\n", matching_threshold);
         break;
       case 'w':
-        // write model to disk
+        // cv::write model to disk
         writeLinemod(detector, filename);
         printf("Wrote detector and templates to %s\n", filename.c_str());
         break;
@@ -356,7 +356,7 @@ main(int argc, char* argv[]) {
 
 static void
 reprojectcv::Points(const std::vector<cv::Point3d>& proj, std::vector<cv::Point3d>& real, double f) {
-  real.resize(proj.size());
+  real.cv::resize(proj.size());
   double f_inv = 1.0 / f;
 
   for(int i = 0; i < (int)proj.size(); ++i) {

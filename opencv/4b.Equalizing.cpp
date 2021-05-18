@@ -5,43 +5,43 @@
 
 #include <time.h>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 int
 main() {
-  VideoCapture cap(0);
+  cv::VideoCapture cap(0);
   if(!cap.isOpened()) {
     printf("ERROR: khong the mo camera\r\n");
     return -1;
   }
-  namedWindow("Camera", WINDOW_NORMAL);
-  resizeWindow("Camera", 300, 300);
-  namedWindow("GRAY", WINDOW_NORMAL);
-  resizeWindow("GRAY", 300, 300);
-  namedWindow("Equalizing", WINDOW_NORMAL);
-  resizeWindow("Equalizing", 300, 300);
+  cv::namedWindow("Camera", WINDOW_NORMAL);
+  cv::resizeWindow("Camera", 300, 300);
+  cv::namedWindow("GRAY", WINDOW_NORMAL);
+  cv::resizeWindow("GRAY", 300, 300);
+  cv::namedWindow("Equalizing", WINDOW_NORMAL);
+  cv::resizeWindow("Equalizing", 300, 300);
   while(1) {
-    Mat frame;
+    cv::Mat frame;
     cap >> frame;
     if(frame.empty()) {
       printf("ERROR: khong the bat hinh\r\n");
       return -1;
     }
     /*--- Chuyen ve thang xam -----------------------*/
-    Mat frame_gray;
-    cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
+    cv::Mat frame_gray;
+    cv::cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
     /*---- Equalizing Histogram ---------------------*/
-    Mat frame_result;
-    equalizeHist(frame_gray, frame_result);
+    cv::Mat frame_result;
+    cv::equalizeHist(frame_gray, frame_result);
     /*-----------------------------------------------*/
-    imshow("Camera", frame);
-    imshow("GRAY", frame_gray);
-    imshow("Equalizing", frame_result);
-    waitKey(1);
+    cv::imshow("Camera", frame);
+    cv::imshow("GRAY", frame_gray);
+    cv::imshow("Equalizing", frame_result);
+    cv::waitKey(1);
   }
   printf("Tat camera\r\n");
   cap.release();
-  destroyAllWindows();
+  cv::destroyAllWindows();
   return 0;
 }

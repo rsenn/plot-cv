@@ -1,4 +1,4 @@
-#include <../inc/utils.h>
+#include <../inc/cv::utils.h>
 
 // info funciton
 void
@@ -28,14 +28,14 @@ print_result(int img_count, vector<double> avg_time) {
 
 int
 image_mode(ERFilter* er_filter, char filename[]) {
-  Mat src = imread(filename);
+  cv::Mat src = cv::imread(filename);
 
   if(src.empty()) {
     cerr << "ERROR! Unable to open the image file\n";
     return -1;
   }
 
-  Mat result;
+  cv::Mat result;
 
   ERs root;
   vector<ERs> all;
@@ -47,35 +47,35 @@ image_mode(ERFilter* er_filter, char filename[]) {
 
   vector<double> times = er_filter->text_detect(src, root, all, pool, strong, weak, tracked, result_text);
   show_result(src, result, result_text, times, tracked, strong, weak, all, pool);
-  waitKey(0);
+  cv::waitKey(0);
 
   return 0;
 }
 
 int
 video_mode(ERFilter* er_filter, char filename[]) {
-  VideoCapture cap;
+  cv::VideoCapture cap;
   if(filename != nullptr)
-    cap = VideoCapture(filename);
+    cap = cv::VideoCapture(filename);
   else
-    cap = VideoCapture(0);
+    cap = cv::VideoCapture(0);
 
   if(!cap.isOpened()) {
     cerr << "ERROR! Unable to open camera or video file\n";
     return -1;
   }
 
-  Mat frame;
-  VideoWriter writer;
-  VideoWriter original_writer;
+  cv::Mat frame;
+  cv::VideoWriter writer;
+  cv::VideoWriter original_writer;
   cap >> frame; // get 1 frame to know the frame size
   writer.open("video_result/result/result.wmv", cv::VideoWriter::fourcc('W', 'M', 'V', '2'), 20.0, frame.size(), true);
   original_writer.open("video_result/result/input.wmv", cv::VideoWriter::fourcc('W', 'M', 'V', '2'), 20.0, frame.size(), true);
   if(!writer.isOpened()) {
-    cerr << "Could not open the output video file for write\n";
+    cerr << "Could not open the output video file for cv::write\n";
   }
 
-  Mat result;
+  cv::Mat result;
   static vector<Text> result_text;
   int key = -1;
 
@@ -89,7 +89,7 @@ video_mode(ERFilter* er_filter, char filename[]) {
   for(;;) {
     ERs tracked_vec;
     ERs root_vec;
-    vector<Mat> channel_vec;
+    vector<cv::Mat> channel_vec;
 
     for(int n = 0; n < frame_count; n++) {
       cap >> frame;
@@ -97,8 +97,8 @@ video_mode(ERFilter* er_filter, char filename[]) {
       if(frame.empty())
         break;
 
-      Mat Ycrcb;
-      vector<Mat> channel;
+      cv::Mat Ycrcb;
+      vector<cv::Mat> channel;
       er_filter->compute_channels(frame, Ycrcb, channel);
 
       if(n == frame_count / 2)
@@ -152,7 +152,7 @@ video_mode(ERFilter* er_filter, char filename[]) {
 
       show_result(frame, result, result_text);
 
-      // write file
+      // cv::write file
       char buf[60];
       std::sprintf(buf, "video_result/result/%d.jpg", img_count);
       cv::imwrite(buf, result);
@@ -164,7 +164,7 @@ video_mode(ERFilter* er_filter, char filename[]) {
       ++img_count;
 
       // check key press
-      key = waitKey(1);
+      key = cv::waitKey(1);
       if(key >= 0)
         break;
     }
@@ -211,10 +211,10 @@ video_mode(ERFilter* er_filter, char filename[]) {
 
 // Runtime Functions
 bool
-load_challenge2_test_file(Mat& src, int n) {
+load_challenge2_test_file(cv::Mat& src, int n) {
   char filename[50];
   sprintf(filename, "res/ICDAR2015_test/img_%d.jpg", n);
-  src = imread(filename, cv::IMREAD_UNCHANGED);
+  src = cv::imread(filename, cv::IMREAD_UNCHANGED);
 
   if(src.empty()) {
     std::cout << n << "\tFail to open" << filename << endl;
@@ -225,7 +225,7 @@ load_challenge2_test_file(Mat& src, int n) {
     std::cout << n << "\t" << src.rows << "," << src.cols << "\tResize the image" << endl;
     double resize_factor = (src.rows > MAX_HEIGHT) ? (double)MAX_HEIGHT / src.rows : (double)MAX_WIDTH / src.cols;
 
-    resize(src, src, Size(src.cols * resize_factor, src.rows * resize_factor));
+    cv::resize(src, src, cv::Size(src.cols * resize_factor, src.rows * resize_factor));
     return true;
   }
 
@@ -234,10 +234,10 @@ load_challenge2_test_file(Mat& src, int n) {
 }
 
 bool
-load_challenge2_training_file(Mat& src, int n) {
+load_challenge2_training_file(cv::Mat& src, int n) {
   char filename[50];
   sprintf(filename, "res/ICDAR2015_training/%d.jpg", n);
-  src = imread(filename, cv::IMREAD_UNCHANGED);
+  src = cv::imread(filename, cv::IMREAD_UNCHANGED);
 
   if(src.empty()) {
     std::cout << n << "\tFail to open" << filename << endl;
@@ -248,7 +248,7 @@ load_challenge2_training_file(Mat& src, int n) {
     std::cout << n << "\t" << src.rows << "," << src.cols << "\tResize the image" << endl;
     double resize_factor = (src.rows > MAX_HEIGHT) ? (double)MAX_HEIGHT / src.rows : (double)MAX_WIDTH / src.cols;
 
-    resize(src, src, Size(src.cols * resize_factor, src.rows * resize_factor));
+    cv::resize(src, src, cv::Size(src.cols * resize_factor, src.rows * resize_factor));
     return true;
   }
 
@@ -257,11 +257,11 @@ load_challenge2_training_file(Mat& src, int n) {
 }
 
 void
-load_video_thread(VideoCapture& cap, Mat frame, Mat result, vector<Text>* text, int* key) {
+load_video_thread(cv::VideoCapture& cap, cv::Mat frame, cv::Mat result, vector<Text>* text, int* key) {
   for(;;) {
     cap >> frame;
     show_result(frame, result, *text);
-    *key = waitKey(1);
+    *key = cv::waitKey(1);
     if(*key >= 0)
       break;
   }
@@ -270,8 +270,8 @@ load_video_thread(VideoCapture& cap, Mat frame, Mat result, vector<Text>* text, 
 }
 
 void
-show_result(Mat& src,
-            Mat& result_img,
+show_result(cv::Mat& src,
+            cv::Mat& result_img,
             vector<Text>& text,
             vector<double> times,
             ERs tracked,
@@ -279,70 +279,70 @@ show_result(Mat& src,
             vector<ERs> weak,
             vector<ERs> all,
             vector<ERs> pool) {
-  Mat all_img = src.clone();
-  Mat pool_img = src.clone();
-  Mat strong_img = src.clone();
-  Mat weak_img = src.clone();
-  Mat tracked_img = src.clone();
+  cv::Mat all_img = src.clone();
+  cv::Mat pool_img = src.clone();
+  cv::Mat strong_img = src.clone();
+  cv::Mat weak_img = src.clone();
+  cv::Mat tracked_img = src.clone();
   result_img = src.clone();
   for(int i = 0; i < pool.size(); i++) {
-    for(auto it : all[i]) rectangle(all_img, it->bound, Scalar(255, 0, 0));
+    for(auto it : all[i]) cv::rectangle(all_img, it->bound, cv::Scalar(255, 0, 0));
 
-    for(auto it : pool[i]) rectangle(pool_img, it->bound, Scalar(255, 0, 0));
+    for(auto it : pool[i]) cv::rectangle(pool_img, it->bound, cv::Scalar(255, 0, 0));
 
-    for(auto it : weak[i]) rectangle(weak_img, it->bound, Scalar(0, 0, 255));
+    for(auto it : weak[i]) cv::rectangle(weak_img, it->bound, cv::Scalar(0, 0, 255));
 
-    for(auto it : strong[i]) rectangle(strong_img, it->bound, Scalar(0, 255, 0));
+    for(auto it : strong[i]) cv::rectangle(strong_img, it->bound, cv::Scalar(0, 255, 0));
   }
 
-  for(auto it : tracked) { rectangle(tracked_img, it->bound, Scalar(255, 0, 255)); }
+  for(auto it : tracked) { cv::rectangle(tracked_img, it->bound, cv::Scalar(255, 0, 255)); }
 
   for(auto it : text) {
     /*if (abs(it.slope) > 0.05)
     {
-        vector<Point> points;
+        vector<cv::Point> points;
         for (auto it_er : it.ers)
         {
-            points.push_back(Point(it_er->bound.x, it_er->bound.y));
-            points.push_back(Point(it_er->bound.br().x, it_er->bound.br().y));
-            points.push_back(Point(it_er->bound.x, it_er->bound.br().y));
-            points.push_back(Point(it_er->bound.br().x, it_er->bound.y));
+            points.push_back(cv::Point(it_er->bound.x, it_er->bound.y));
+            points.push_back(cv::Point(it_er->bound.br().x, it_er->bound.br().y));
+            points.push_back(cv::Point(it_er->bound.x, it_er->bound.br().y));
+            points.push_back(cv::Point(it_er->bound.br().x, it_er->bound.y));
         }
 
-        RotatedRect ro_rect = minAreaRect(points);
-        Point2f vertices[4];
+        cv::RotatedRect ro_rect = cv::minAreaRect(points);
+        cv::Point2f vertices[4];
         ro_rect.points(vertices);
         for (int i = 0; i < 4; i++)
-            line(result_img, vertices[i], vertices[(i + 1) % 4], Scalar(0, 255, 255), 2);
+            cv::line(result_img, vertices[i], vertices[(i + 1) % 4], cv::Scalar(0, 255, 255), 2);
     }
 
     else
     {
-        rectangle(result_img, it.box, Scalar(0, 255, 255), 2);
+        cv::rectangle(result_img, it.box, cv::Scalar(0, 255, 255), 2);
     }*/
-    rectangle(result_img, it.box, Scalar(0, 255, 255), 2);
+    cv::rectangle(result_img, it.box, cv::Scalar(0, 255, 255), 2);
   }
 
   for(auto it : text) {
 #ifndef DO_OCR
-    // rectangle(result_img, Rect(it.box.tl().x, it.box.tl().y-20, 53, 19), Scalar(30, 30, 200),
-    // cv::FILLED); putText(result_img, "Text", Point(it.box.tl().x, it.box.tl().y-4),
-    // FONT_HERSHEY_COMPLEX_SMALL, 1, Scalar(255, 255, 255), 1);
-    circle(result_img, Point(it.box.tl().x + 5, it.box.tl().y - 12), 10, Scalar(30, 30, 200), cv::FILLED);
-    putText(
-        result_img, "T", Point(it.box.tl().x - 2, it.box.tl().y - 5), FONT_HERSHEY_COMPLEX_SMALL, 1, Scalar(255, 255, 255), 1);
+    // cv::rectangle(result_img, cv::Rect(it.box.tl().x, it.box.tl().y-20, 53, 19), cv::Scalar(30, 30, 200),
+    // cv::FILLED); cv::putText(result_img, "Text", cv::Point(it.box.tl().x, it.box.tl().y-4),
+    // FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255, 255, 255), 1);
+    cv::circle(result_img, cv::Point(it.box.tl().x + 5, it.box.tl().y - 12), 10, cv::Scalar(30, 30, 200), cv::FILLED);
+    cv::putText(
+        result_img, "T", cv::Point(it.box.tl().x - 2, it.box.tl().y - 5), FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255, 255, 255), 1);
 #else
-    Size text_size = getTextSize(it.word, FONT_HERSHEY_COMPLEX_SMALL, 1, 1, 0);
-    rectangle(result_img,
-              Rect(it.box.tl().x, it.box.tl().y - 20, text_size.width, text_size.height + 5),
-              Scalar(30, 30, 200, 0),
+    cv::Size text_size = cv::getTextSize(it.word, FONT_HERSHEY_COMPLEX_SMALL, 1, 1, 0);
+    cv::rectangle(result_img,
+              cv::Rect(it.box.tl().x, it.box.tl().y - 20, text_size.width, text_size.height + 5),
+              cv::Scalar(30, 30, 200, 0),
               cv::FILLED);
-    putText(result_img,
+    cv::putText(result_img,
             it.word,
-            Point(it.box.tl().x, it.box.tl().y - 4),
+            cv::Point(it.box.tl().x, it.box.tl().y - 4),
             FONT_HERSHEY_COMPLEX_SMALL,
             1,
-            Scalar(0xff, 0xff, 0xff),
+            cv::Scalar(0xff, 0xff, 0xff),
             1);
 #endif
   }
@@ -377,26 +377,26 @@ show_result(Mat& src,
   if(!tracked.empty())
     cv::imshow("tracked", tracked_img);
   cv::imshow("result", result_img);
-  waitKey(1);
+  cv::waitKey(1);
 
 #ifdef IMAGE_MODE
   if(!all.empty())
-    imwrite("all.png", all_img);
+    cv::imwrite("all.png", all_img);
   if(!pool.empty())
-    imwrite("pool.png", pool_img);
+    cv::imwrite("pool.png", pool_img);
   if(!weak.empty())
-    imwrite("weak.png", weak_img);
+    cv::imwrite("weak.png", weak_img);
   if(!strong.empty())
-    imwrite("strong.png", strong_img);
+    cv::imwrite("strong.png", strong_img);
   if(!tracked.empty())
-    imwrite("tracked.png", tracked_img);
-  imwrite("result.png", result_img);
-  waitKey(0);
+    cv::imwrite("tracked.png", tracked_img);
+  cv::imwrite("result.png", result_img);
+  cv::waitKey(0);
 #endif
 }
 
 void
-draw_FPS(Mat& src, double time) {
+draw_FPS(cv::Mat& src, double time) {
   static int counter = 0;
   static double avg_time = 0;
   static char fps_text[20];
@@ -410,23 +410,23 @@ draw_FPS(Mat& src, double time) {
   avg_time += time;
   ++counter;
 
-  putText(src, fps_text, Point(10, 25), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 255, 0), 2);
+  cv::putText(src, fps_text, cv::Point(10, 25), FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 0), 2);
 }
 
 // Testing Functions
 void
 draw_linear_time_MSER(string img_name) {
-  Mat input = imread(img_name);
+  cv::Mat input = cv::imread(img_name);
 
   int pixel_reset_counter = 600;
   int pixel_count = 0;
-  VideoWriter writer;
+  cv::VideoWriter writer;
   // writer.open("Linear time MSER.avi", CV_FOURCC('M', 'J', 'P', 'G'), 30, input.size());
   writer.open("Linear time MSER.wmv", cv::VideoWriter::fourcc('W', 'M', 'V', '2'), 30, input.size());
 
-  Mat color = Mat::zeros(input.rows, input.cols, CV_8UC3);
-  Mat gray;
-  cvtColor(input, gray, COLOR_BGR2GRAY);
+  cv::Mat color = cv::Mat::zeros(input.rows, input.cols, CV_8UC3);
+  cv::Mat gray;
+  cv::cvtColor(input, gray, COLOR_BGR2GRAY);
   const int width = gray.cols;
   const int height = gray.rows;
   const int highest_level = 255 + 1;
@@ -533,9 +533,9 @@ step_3:
     color.at<uchar>(y, x * 3 + 2) = current_level;*/
     pixel_count++;
     if(pixel_count % pixel_reset_counter == 0) {
-      imshow("Linear time MSER", color);
+      cv::imshow("Linear time MSER", color);
       writer << color;
-      waitKey(1);
+      cv::waitKey(1);
     }
 
     //!< 6. Pop the heap of boundary pixels. If the heap is empty, we are done. If the
@@ -543,7 +543,7 @@ step_3:
     if(priority == highest_level) {
       delete[] pixel_accessible;
       writer.release();
-      waitKey(0);
+      cv::waitKey(0);
       return;
     }
 
@@ -615,44 +615,44 @@ step_3:
 void
 draw_multiple_channel(string img_name) {
   ERFilter* erFilter = new ERFilter(1, MIN_ER_AREA, MAX_ER_AREA, NMS_STABILITY_T, NMS_OVERLAP_COEF);
-  Mat input = imread(img_name);
+  cv::Mat input = cv::imread(img_name);
 
-  Mat Ycrcb;
-  vector<Mat> channel;
+  cv::Mat Ycrcb;
+  vector<cv::Mat> channel;
   erFilter->compute_channels(input, Ycrcb, channel);
 
   ERs root;
   vector<ERs> all;
   vector<ERs> pool;
-  root.resize(channel.size());
-  all.resize(channel.size());
-  pool.resize(channel.size());
+  root.cv::resize(channel.size());
+  all.cv::resize(channel.size());
+  pool.cv::resize(channel.size());
 
   for(int i = 0; i < channel.size(); i++) {
     root[i] = erFilter->er_tree_extract(channel[i]);
     erFilter->non_maximum_supression(root[i], all[i], pool[i], channel[i]);
 
-    for(int j = 0; j < pool[i].size(); j++) { rectangle(channel[i % 3], pool[i][j]->bound, Scalar(0)); }
+    for(int j = 0; j < pool[i].size(); j++) { cv::rectangle(channel[i % 3], pool[i][j]->bound, cv::Scalar(0)); }
   }
 
-  imshow("Y", channel[0]);
-  imshow("Cr", channel[1]);
-  imshow("Cb", channel[2]);
-  imwrite("Y.jpg", channel[0]);
-  imwrite("Cr.jpg", channel[1]);
-  imwrite("Cb.jpg", channel[2]);
-  waitKey(0);
+  cv::imshow("Y", channel[0]);
+  cv::imshow("Cr", channel[1]);
+  cv::imshow("Cb", channel[2]);
+  cv::imwrite("Y.jpg", channel[0]);
+  cv::imwrite("Cr.jpg", channel[1]);
+  cv::imwrite("Cb.jpg", channel[2]);
+  cv::waitKey(0);
 }
 
 void
 output_MSER_time(string img_name) {
   fstream fout = fstream("time.txt", fstream::out);
   ERFilter* erFilter = new ERFilter(1, 100, 1.0E7, NMS_STABILITY_T, NMS_OVERLAP_COEF);
-  Mat input = imread(img_name, IMREAD_GRAYSCALE);
+  cv::Mat input = cv::imread(img_name, IMREAD_GRAYSCALE);
   double coef = 0.181;
-  Mat tmp;
+  cv::Mat tmp;
   while(tmp.total() <= 1.0E7) {
-    resize(input, tmp, Size(), coef, coef);
+    cv::resize(input, tmp, cv::Size(), coef, coef);
 
     chrono::high_resolution_clock::time_point start, end;
     start = chrono::high_resolution_clock::now();
@@ -678,9 +678,9 @@ output_classifier_ROC(string classifier_name, string test_file) {
 
 void
 output_optimal_path(string img_name) {
-  Mat src = imread("img_1.jpg");
-  Mat Ycrcb;
-  vector<Mat> channel;
+  cv::Mat src = cv::imread("img_1.jpg");
+  cv::Mat Ycrcb;
+  vector<cv::Mat> channel;
 
   ERs root, tracked;
   vector<ERs> all, pool, strong, weak;
@@ -689,11 +689,11 @@ output_optimal_path(string img_name) {
 
   er_filter.compute_channels(src, Ycrcb, channel);
 
-  root.resize(channel.size());
-  all.resize(channel.size());
-  pool.resize(channel.size());
-  strong.resize(channel.size());
-  weak.resize(channel.size());
+  root.cv::resize(channel.size());
+  all.cv::resize(channel.size());
+  pool.cv::resize(channel.size());
+  strong.cv::resize(channel.size());
+  weak.cv::resize(channel.size());
 
 #pragma omp parallel for
   for(int i = 0; i < channel.size(); i++) {
@@ -706,19 +706,19 @@ output_optimal_path(string img_name) {
   er_filter.er_ocr(tracked, channel, text);
 }
 
-vector<Vec4i>
+vector<cv::Vec4i>
 load_gt(int n) {
   char filename[50];
   sprintf(filename, "res/ICDAR2015_test_GT/gt_img_%d.txt", n);
   fstream fin(filename, fstream::in);
   if(!fin.is_open()) {
-    std::cout << "Error: Ground Truth file " << n << " is not opened!!" << endl;
-    return vector<Vec4i>();
+    std::cout << "cv::Error: Ground Truth file " << n << " is not opened!!" << endl;
+    return vector<cv::Vec4i>();
   }
 
   char picname[50];
   sprintf(picname, "res/ICDAR2015_test/img_%d.jpg", n);
-  Mat src = imread(picname, cv::IMREAD_UNCHANGED);
+  cv::Mat src = cv::imread(picname, cv::IMREAD_UNCHANGED);
 
   vector<string> data;
   while(!fin.eof()) {
@@ -740,11 +740,11 @@ load_gt(int n) {
     resize_factor = (src.rows > MAX_HEIGHT) ? (double)MAX_HEIGHT / src.rows : (double)MAX_WIDTH / src.cols;
   }
 
-  // convert string numbers to bounding box, format as shown below
+  // convert string numbers to bounding box, cv::format as shown below
   // 0 0 100 100 HAHA
   // first 2 numbers represent the coordinate of top left point
   // last 2 numbers represent the coordinate of bottom right point
-  vector<Rect> bbox;
+  vector<cv::Rect> bbox;
   for(int i = 0; i < data.size(); i += 5) {
     int x1 = stoi(data[i]);
     int y1 = stoi(data[i + 1]);
@@ -756,10 +756,10 @@ load_gt(int n) {
     x2 *= resize_factor;
     y2 *= resize_factor;
 
-    bbox.push_back(Rect(Point(x1, y1), Point(x2, y2)));
+    bbox.push_back(cv::Rect(cv::Point(x1, y1), cv::Point(x2, y2)));
   }
 
-  // merge the bounding box that could in the same group
+  // cv::merge the bounding box that could in the same group
   /*for (int i = 0; i < bbox.size(); i++)
   {
       for (int j = i+1; j < bbox.size(); j++)
@@ -773,15 +773,15 @@ load_gt(int n) {
               int y1 = min(bbox[i].y, bbox[j].y);
               int x2 = max(bbox[i].br().x, bbox[j].br().x);
               int y2 = max(bbox[i].br().y, bbox[j].br().y);
-              bbox[i] = Rect(Point(x1, y1), Point(x2, y2));
+              bbox[i] = cv::Rect(cv::Point(x1, y1), cv::Point(x2, y2));
               bbox.erase(bbox.begin() + j);
               j--;
           }
       }
   }*/
 
-  vector<Vec4i> gt;
-  for(int i = 0; i < bbox.size(); i++) { gt.push_back(Vec4i(bbox[i].x, bbox[i].y, bbox[i].width, bbox[i].height)); }
+  vector<cv::Vec4i> gt;
+  for(int i = 0; i < bbox.size(); i++) { gt.push_back(cv::Vec4i(bbox[i].x, bbox[i].y, bbox[i].width, bbox[i].height)); }
 
   fin.close();
   return gt;
@@ -789,16 +789,16 @@ load_gt(int n) {
 
 Vec6d
 calc_detection_rate(int n, vector<Text>& text) {
-  vector<Vec4i> gt = load_gt(n);
-  vector<Rect> gt_box;
-  for(int i = 0; i < gt.size(); i++) { gt_box.push_back(Rect(gt[i][0], gt[i][1], gt[i][2], gt[i][3])); }
+  vector<cv::Vec4i> gt = load_gt(n);
+  vector<cv::Rect> gt_box;
+  for(int i = 0; i < gt.size(); i++) { gt_box.push_back(cv::Rect(gt[i][0], gt[i][1], gt[i][2], gt[i][3])); }
 
   vector<bool> detected(gt_box.size());
   double tp = 0;
   for(int i = 0; i < gt_box.size(); i++) {
     for(int j = 0; j < text.size(); j++) {
-      Rect overlap = gt_box[i] & text[j].box;
-      Rect union_box = gt_box[i] | text[j].box;
+      cv::Rect overlap = gt_box[i] & text[j].box;
+      cv::Rect union_box = gt_box[i] | text[j].box;
 
       if((double)overlap.area() / union_box.area() > 0.3) {
         detected[i] = true;
@@ -832,13 +832,13 @@ calc_recall_rate() {
   vector<int> candidate_vec(7, 0);
 
   for(int n = 100; n <= 328; n++) {
-    Mat src;
-    Mat result;
+    cv::Mat src;
+    cv::Mat result;
     if(!load_challenge2_training_file(src, n))
       continue;
 
-    Mat Ycrcb;
-    vector<Mat> channel;
+    cv::Mat Ycrcb;
+    vector<cv::Mat> channel;
     er_filter->compute_channels(src, Ycrcb, channel);
 
     ERs root(channel.size());
@@ -848,8 +848,8 @@ calc_recall_rate() {
     vector<ERs> weak(channel.size());
     ERs tracked;
 
-    vector<vector<Point>> regions;
-    vector<Rect> mser_bbox;
+    vector<vector<cv::Point>> regions;
+    vector<cv::Rect> mser_bbox;
     ms->detectRegions(Ycrcb, regions, mser_bbox);
 
 #pragma omp parallel for
@@ -862,14 +862,14 @@ calc_recall_rate() {
 
     er_filter->er_track(strong, weak, tracked, channel, Ycrcb);
 
-    vector<Rect> gt_box;
+    vector<cv::Rect> gt_box;
     char buf[60];
     sprintf(buf, "res/ICDAR2015_training_GT/%d_GT.txt", n);
 
     ifstream infile(buf);
-    string line;
-    while(getline(infile, line)) {
-      istringstream iss(line);
+    string cv::line;
+    while(getline(infile, cv::line)) {
+      istringstream iss(cv::line);
 
       int d0, d1, d2, d3, d4, d5, d6, d7, d8, d9;
       if(!(iss >> d0 >> d1 >> d2 >> d3 >> d4 >> d5 >> d6 >> d7 >> d8)) {
@@ -877,7 +877,7 @@ calc_recall_rate() {
         continue;
       }
 
-      gt_box.push_back(Rect(Point(d5, d6), Point(d7, d8)));
+      gt_box.push_back(cv::Rect(cv::Point(d5, d6), cv::Point(d7, d8)));
     }
 
     // flatten each stage output
@@ -889,7 +889,7 @@ calc_recall_rate() {
     flat[4].insert(flat[4].end(), flat[2].begin(), flat[2].end());
     flat[4].insert(flat[4].end(), flat[3].begin(), flat[3].end());
     flat[5].insert(flat[5].end(), tracked.begin(), tracked.end());
-    flat[6].resize(mser_bbox.size());
+    flat[6].cv::resize(mser_bbox.size());
 
     vector<vector<bool>> matches(7, vector<bool>(gt_box.size(),
                                                  false)); // all, nms, strong, weak, classify, track
@@ -989,7 +989,7 @@ save_deteval_xml(vector<vector<Text>>& text, string det_name) {
   fdet << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl << "<tagset>" << endl;
 
   for(int i = 1; i <= 233; i++) {
-    vector<Vec4i> gt = load_gt(i);
+    vector<cv::Vec4i> gt = load_gt(i);
     if(gt.empty())
       continue;
 
@@ -1039,8 +1039,8 @@ test_best_detval() {
 
       vector<vector<Text>> det_text;
       for(int n = 1; n <= 233; n++) {
-        Mat src;
-        Mat result;
+        cv::Mat src;
+        cv::Mat result;
         if(!load_challenge2_test_file(src, n))
           continue;
 
@@ -1124,20 +1124,20 @@ calc_video_result() {
   fstream f_gt("video_result/result3/gt.txt", fstream::in);
   fstream f_det("video_result/result3/det.txt", fstream::in);
 
-  string line;
+  string cv::line;
   vector<vector<string>> gt;
   vector<vector<string>> det;
 
-  while(getline(f_gt, line)) {
-    istringstream iss(line);
+  while(getline(f_gt, cv::line)) {
+    istringstream iss(cv::line);
     string s;
 
     gt.push_back(vector<string>(0));
     while(getline(iss, s, ',')) { gt.back().push_back(s); }
   }
 
-  while(getline(f_det, line)) {
-    istringstream iss(line);
+  while(getline(f_det, cv::line)) {
+    istringstream iss(cv::line);
     string s;
 
     det.push_back(vector<string>(0));
@@ -1226,7 +1226,7 @@ train_detection_classifier() {
   AdaBoost* adb2 = new CascadeBoost(AdaBoost::REAL, AdaBoost::DECISION_STUMP, Ftarget2, f2, d2);
 
   std::cout << "Training text detection classifier, " << endl
-            << "log are saved to \"training/detection_training_log.txt\", " << endl
+            << "cv::log are saved to \"training/detection_training_log.txt\", " << endl
             << "this would take serval minutes(depends on target false postive rate)" << endl;
   freopen("training/detection_training_log.txt", "w", stdout);
 
@@ -1265,7 +1265,7 @@ bootstrap() {
             pic);
 
     ERs all, pool, strong, weak;
-    Mat input = imread(filename, IMREAD_GRAYSCALE);
+    cv::Mat input = cv::imread(filename, IMREAD_GRAYSCALE);
     if(input.empty())
       continue;
 
@@ -1276,14 +1276,14 @@ bootstrap() {
     for(auto it : strong) {
       char imgname[30];
       sprintf(imgname, "res/tmp1/%d_%d.jpg", pic, i);
-      imwrite(imgname, input(it->bound));
+      cv::imwrite(imgname, input(it->bound));
       i++;
     }
 
     for(auto it : weak) {
       char imgname[30];
       sprintf(imgname, "res/tmp1/%d_%d.jpg", pic, i);
-      imwrite(imgname, input(it->bound));
+      cv::imwrite(imgname, input(it->bound));
       i++;
     }
 
@@ -1307,7 +1307,7 @@ get_lbp_data() {
   ERFilter erFilter(THRESHOLD_STEP, MIN_ER_AREA, MAX_ER_AREA, NMS_STABILITY_T, NMS_OVERLAP_COEF);
 
   /*
-   *  We will normalize the image to 24x24, and split it into 4 12x12 blocks.
+   *  We will cv::normalize the image to 24x24, and cv::split it into 4 12x12 blocks.
    *  After that, we extract LBP histogram of each block. Therefore the dimension of
    *  feature vector is 1024(256*4), and have range of value from 0 to 144(12*12)
    */
@@ -1319,7 +1319,7 @@ get_lbp_data() {
     char filename[MAX_FILE_PATH];
     sprintf(filename, "res/pos/%d.jpg", pic);
 
-    Mat input = imread(filename, IMREAD_GRAYSCALE);
+    cv::Mat input = cv::imread(filename, IMREAD_GRAYSCALE);
     if(input.empty())
       continue;
 
@@ -1340,7 +1340,7 @@ get_lbp_data() {
     char filename[MAX_FILE_PATH];
     sprintf(filename, "res/neg/%d.jpg", pic);
 
-    Mat input = imread(filename, IMREAD_GRAYSCALE);
+    cv::Mat input = cv::imread(filename, IMREAD_GRAYSCALE);
     if(input.empty())
       continue;
 
@@ -1373,7 +1373,7 @@ get_ocr_data() {
 
   cout << "Get OCR data" << endl;
   fstream fout = fstream("training/OCR.data", fstream::out);
-  Mat feature;
+  cv::Mat feature;
   vector<int> labels;
 
   ERFilter erFilter(THRESHOLD_STEP, MIN_ER_AREA, MAX_ER_AREA, NMS_STABILITY_T, NMS_OVERLAP_COEF);
@@ -1383,12 +1383,12 @@ get_ocr_data() {
     for(int j = 0; j < font_type.size(); j++) {
       int label = 0;
       for(int k = 0; k < category.size(); k++) {
-        string path = String("res/ocr_training_data/" + font_name[i] + "/" + font_type[j] + "/" + category[k] + "/");
+        string path = cv::String("res/ocr_training_data/" + font_name[i] + "/" + font_type[j] + "/" + category[k] + "/");
         for(int cat_it = 0; cat_it < cat_num[k]; cat_it++) {
-          String filename = path + table[label] + ".jpg";
+          cv::String filename = path + table[label] + ".jpg";
           label++;
 
-          Mat img = imread(filename, IMREAD_GRAYSCALE);
+          cv::Mat img = cv::imread(filename, IMREAD_GRAYSCALE);
 
           if(!img.empty())
             cout << filename << " done!" << endl;
@@ -1399,8 +1399,8 @@ get_ocr_data() {
 
           fout << label - 1;
 
-          Mat ocr_img;
-          threshold(255 - img, ocr_img, 200, 255, cv::THRESH_BINARY);
+          cv::Mat ocr_img;
+          cv::threshold(255 - img, ocr_img, 200, 255, cv::THRESH_BINARY);
           erFilter.ocr->rotate_mat(ocr_img, ocr_img, 0, true);
           erFilter.ocr->ARAN(ocr_img, ocr_img, OCR_IMG_L);
 
@@ -1471,7 +1471,7 @@ levenshtein_distance(string str1, string str2) {
     for(j = 1; j < size2; j++) {
       int x = cost[i - 1][j] + DELETE_COST;
       int y = cost[i][j - 1] + INSERT_COST;
-      // if str1(i-1) != str2(j-1), add the replace cost
+      // if str1(i-1) != str2(j-1), cv::add the replace cost
       // we are comparing str1[i-1] and str2[j-1] since
       // the array index starts from 0
       int z = cost[i - 1][j - 1] + (str1[i - 1] != str2[j - 1]) * REPLACE_COST;

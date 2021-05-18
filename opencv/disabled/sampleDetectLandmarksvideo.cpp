@@ -1,4 +1,4 @@
-#include "opencv2/face.hpp"
+#include "opencv2/cv::face.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/imgproc.hpp"
@@ -9,39 +9,39 @@
 #include <string>
 
 using namespace std;
-using namespace cv;
-using namespace cv::face;
+//using namespace cv;
+//using namespace cv::face;
 
 static bool
-myDetector(InputArray image, OutputArray faces, CascadeClassifier* face_cascade) {
-  Mat gray;
+myDetector(InputArray image, OutputArray faces, cv::CascadeClassifier* face_cascade) {
+  cv::Mat gray;
 
   if(image.channels() > 1)
-    cvtColor(image, gray, COLOR_BGR2GRAY);
+    cv::cvtColor(image, gray, COLOR_BGR2GRAY);
   else
     gray = image.getMat().clone();
 
-  equalizeHist(gray, gray);
+  cv::equalizeHist(gray, gray);
 
-  std::vector<Rect> faces_;
-  face_cascade->detectMultiScale(gray, faces_, 1.4, 2, CASCADE_SCALE_IMAGE, Size(30, 30));
-  Mat(faces_).copyTo(faces);
+  std::vector<cv::Rect> faces_;
+  face_cascade->detectMultiScale(gray, faces_, 1.4, 2, CASCADE_SCALE_IMAGE, cv::Size(30, 30));
+  cv::Mat(faces_).copyTo(faces);
   return true;
 }
 
 int
 main(int argc, char** argv) {
   // Give the path to the directory containing all the files containing data
-  CommandLineParser parser(argc,
+  cv::CommandLineParser parser(argc,
                            argv,
-                           "{ help h usage ?    |      | give the following arguments in following format }"
+                           "{ help h usage ?    |      | give the following arguments in following cv::format }"
                            "{ model_filename f  |      | (required) path to binary file storing the trained model which "
                            "is to be loaded "
                            "[example - /data/file.dat]}"
-                           "{ video v           |      | (required) path to video in which face landmarks have to be "
+                           "{ video v           |      | (required) path to video in which cv::face landmarks have to be "
                            "detected.[example - "
                            "/data/video.avi] }"
-                           "{ face_cascade c    |      | Path to the face cascade xml file which you want to use as a "
+                           "{ face_cascade c    |      | Path to the cv::face cascade xml file which you want to use as a "
                            "detector}");
   // Read in the input arguments
   if(parser.has("help")) {
@@ -67,13 +67,13 @@ main(int argc, char** argv) {
     cerr << "The name of the cascade classifier to be loaded to detect faces is not found" << endl;
     return -1;
   }
-  VideoCapture cap(video);
+  cv::VideoCapture cap(video);
   if(!cap.isOpened()) {
     cerr << "Video cannot be loaded. Give correct path" << endl;
     return -1;
   }
-  // pass the face cascade xml file which you want to pass as a detector
-  CascadeClassifier face_cascade;
+  // pass the cv::face cascade xml file which you want to pass as a detector
+  cv::CascadeClassifier face_cascade;
   face_cascade.load(cascade_name);
   FacemarkKazemi::Params params;
   Ptr<FacemarkKazemi> facemark = FacemarkKazemi::create(params);
@@ -81,20 +81,20 @@ main(int argc, char** argv) {
   facemark->loadModel(filename);
   cout << "Loaded model" << endl;
   // vector to store the faces detected in the image
-  vector<Rect> faces;
-  vector<vector<Point2f>> shapes;
-  Mat img;
+  vector<cv::Rect> faces;
+  vector<vector<cv::Point2f>> shapes;
+  cv::Mat img;
   while(1) {
     faces.clear();
     shapes.clear();
     cap >> img;
     // Detect faces in the current image
-    resize(img, img, Size(600, 600), 0, 0, INTER_LINEAR_EXACT);
+    cv::resize(img, img, cv::Size(600, 600), 0, 0, INTER_LINEAR_EXACT);
     facemark->getFaces(img, faces);
     if(faces.size() == 0) {
       cout << "No faces found in this frame" << endl;
     } else {
-      for(size_t i = 0; i < faces.size(); i++) { cv::rectangle(img, faces[i], Scalar(255, 0, 0)); }
+      for(size_t i = 0; i < faces.size(); i++) { cv::rectangle(img, faces[i], cv::Scalar(255, 0, 0)); }
       // vector to store the landmarks of all the faces in the image
       if(facemark->fit(img, faces, shapes)) {
         for(unsigned long i = 0; i < faces.size(); i++) {
@@ -102,9 +102,9 @@ main(int argc, char** argv) {
         }
       }
     }
-    namedWindow("Detected_shape");
-    imshow("Detected_shape", img);
-    if(waitKey(1) >= 0)
+    cv::namedWindow("Detected_shape");
+    cv::imshow("Detected_shape", img);
+    if(cv::waitKey(1) >= 0)
       break;
   }
   return 0;

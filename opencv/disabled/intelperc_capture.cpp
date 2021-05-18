@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 static bool g_printStreamSetting = false;
@@ -66,7 +66,7 @@ parseCMDLine(int argc, char* argv[]) {
       } else if(0 == strcmp(argv[i], "--show-closed")) {
         g_showClosedPoint = true;
       } else {
-        cout << "Unsupported command line argument: " << argv[i] << "." << endl;
+        cout << "Unsupported command cv::line argument: " << argv[i] << "." << endl;
         exit(-1);
       }
     }
@@ -78,7 +78,7 @@ parseCMDLine(int argc, char* argv[]) {
 }
 
 static void
-printStreamProperties(VideoCapture& capture) {
+printStreamProperties(cv::VideoCapture& capture) {
   size_t profilesCount = (size_t)capture.get(cv::CAP_INTELPERC_IMAGE_GENERATOR | cv::CAP_PROP_INTELPERC_PROFILE_COUNT);
   cout << "Image stream." << endl;
   cout << "  Brightness = " << capture.get(cv::CAP_INTELPERC_IMAGE_GENERATOR | cv::CAP_PROP_BRIGHTNESS) << endl;
@@ -105,7 +105,7 @@ printStreamProperties(VideoCapture& capture) {
        << capture.get(cv::CAP_INTELPERC_DEPTH_GENERATOR | cv::CAP_PROP_INTELPERC_DEPTH_LOW_CONFIDENCE_VALUE) << endl;
   cout << "  Saturation value = "
        << capture.get(cv::CAP_INTELPERC_DEPTH_GENERATOR | cv::CAP_PROP_INTELPERC_DEPTH_SATURATION_VALUE) << endl;
-  cout << "  Confidence threshold = "
+  cout << "  Confidence cv::threshold = "
        << capture.get(cv::CAP_INTELPERC_DEPTH_GENERATOR | cv::CAP_PROP_INTELPERC_DEPTH_CONFIDENCE_THRESHOLD) << endl;
   cout << "  Focal length = ("
        << capture.get(cv::CAP_INTELPERC_DEPTH_GENERATOR | cv::CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_HORZ) << ", "
@@ -122,9 +122,9 @@ printStreamProperties(VideoCapture& capture) {
 }
 
 static void
-imshowImage(const char* winname, Mat& image, VideoCapture& capture) {
+imshowImage(const char* winname, cv::Mat& image, cv::VideoCapture& capture) {
   if(g_showClosedPoint) {
-    Mat uvMap;
+    cv::Mat uvMap;
     if(capture.retrieve(uvMap, cv::CAP_INTELPERC_UVDEPTH_MAP)) {
       float* uvmap = (float*)uvMap.ptr() + 2 * (g_closedDepthPoint[0] * uvMap.cols + g_closedDepthPoint[1]);
       int x = (int)((*uvmap) * image.cols);
@@ -140,11 +140,11 @@ imshowImage(const char* winname, Mat& image, VideoCapture& capture) {
       }
     }
   }
-  imshow(winname, image);
+  cv::imshow(winname, image);
 }
 static void
-imshowIR(const char* winname, Mat& ir) {
-  Mat image;
+imshowIR(const char* winname, cv::Mat& ir) {
+  cv::Mat image;
   if(g_showClosedPoint) {
     image.create(ir.rows, ir.cols, CV_8UC3);
     for(int row = 0; row < ir.rows; row++) {
@@ -175,14 +175,14 @@ imshowIR(const char* winname, Mat& ir) {
     }
   }
 
-  imshow(winname, image);
+  cv::imshow(winname, image);
 }
 static void
-imshowDepth(const char* winname, Mat& depth, VideoCapture& capture) {
+imshowDepth(const char* winname, cv::Mat& depth, cv::VideoCapture& capture) {
   short lowValue = (short)capture.get(cv::CAP_INTELPERC_DEPTH_GENERATOR | cv::CAP_PROP_INTELPERC_DEPTH_LOW_CONFIDENCE_VALUE);
   short saturationValue = (short)capture.get(cv::CAP_INTELPERC_DEPTH_GENERATOR | cv::CAP_PROP_INTELPERC_DEPTH_SATURATION_VALUE);
 
-  Mat image;
+  cv::Mat image;
   if(g_showClosedPoint) {
     image.create(depth.rows, depth.cols, CV_8UC3);
     for(int row = 0; row < depth.rows; row++) {
@@ -226,14 +226,14 @@ imshowDepth(const char* winname, Mat& depth, VideoCapture& capture) {
       }
     }
   }
-  imshow(winname, image);
+  cv::imshow(winname, image);
 }
 
 int
 main(int argc, char* argv[]) {
   parseCMDLine(argc, argv);
 
-  VideoCapture capture;
+  cv::VideoCapture capture;
   capture.open(cv::CAP_INTELPERC);
   if(!capture.isOpened()) {
     cerr << "Can not open a capture object." << endl;
@@ -272,9 +272,9 @@ main(int argc, char* argv[]) {
 
   int frame = 0;
   for(;; frame++) {
-    Mat bgrImage;
-    Mat depthImage;
-    Mat irImage;
+    cv::Mat bgrImage;
+    cv::Mat depthImage;
+    cv::Mat irImage;
 
     if(!capture.grab()) {
       cout << "Can not grab images." << endl;
@@ -300,7 +300,7 @@ main(int argc, char* argv[]) {
       cout << "Image frame: " << capture.get(cv::CAP_INTELPERC_IMAGE_GENERATOR | cv::CAP_PROP_POS_MSEC)
            << ", Depth(IR) frame: " << capture.get(cv::CAP_INTELPERC_DEPTH_GENERATOR | cv::CAP_PROP_POS_MSEC) << endl;
     }
-    if(waitKey(30) >= 0)
+    if(cv::waitKey(30) >= 0)
       break;
   }
 

@@ -2,8 +2,8 @@
 // Example:
 //    ./shapefinder -i square -s square -c #FF0000 -o img.png
 //    args  description
-//    -i    input image. (eg. circle, rectangle, square, multiple)
-//    -s    shape to detect. (eg. circle, rectangle, square)
+//    -i    input image. (eg. cv::circle, cv::rectangle, square, multiple)
+//    -s    shape to detect. (eg. cv::circle, cv::rectangle, square)
 //    -c    color. (eg. #FF0000, FF0000)
 //    -o    output image. (img.png)
 
@@ -57,7 +57,7 @@ detect_shape() {
   string file_directory = "rsc/" + args["-i"] + ".ppm";
   cout << "Reading image: " << file_directory << endl;
 
-  Mat img = imread(file_directory);
+  cv::Mat img = cv::imread(file_directory);
   if(img.empty()) {
     return false;
   }
@@ -65,32 +65,32 @@ detect_shape() {
   // cout << "Image data: " << img << endl;
 
   // Creates a grayscale version of the image.
-  Mat gray;
-  cvtColor(img, gray, cv::COLOR_BGR2GRAY);
+  cv::Mat gray;
+  cv::cvtColor(img, gray, cv::COLOR_BGR2GRAY);
 
-  Mat edges;
+  cv::Mat edges;
 
   // Using otsu thresholding to get low & high value.
-  double high = threshold(gray, edges, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
+  double high = cv::threshold(gray, edges, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
   double low = 0.5 * high;
   // Creates an image that contains edges based on the grayscale image.
-  Canny(gray, edges, low, high);
+  cv::Canny(gray, edges, low, high);
 
   // Find contours
-  vector<vector<Point>> contours;
-  findContours(edges.clone(), contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+  vector<vector<cv::Point>> contours;
+  cv::findContours(edges.clone(), contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
-  Mat output = img.clone();
+  cv::Mat output = img.clone();
 
   for(int i = 0; i < contours.size(); i++) {
     cout << i << endl;
-    vector<Point> approx;
+    vector<cv::Point> approx;
     // Approximate contour with accuracy proportional
     // to the contour perimeter
-    approxPolyDP(Mat(contours[i]), approx, arcLength(Mat(contours[i]), true) * 0.02, true);
+    cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(Mat(contours[i]), true) * 0.02, true);
 
     // Skip small or non-convex objects
-    if(fabs(contourArea(contours[i])) < (img.size().height * img.size().width) / 2500 || !isContourConvex(approx)) {
+    if(fabs(cv::contourArea(contours[i])) < (img.size().height * img.size().width) / 2500 || !cv::isContourConvex(approx)) {
       continue;
     }
 
@@ -120,39 +120,39 @@ detect_shape() {
         isSquare = false;
       }
 
-      if(isSquare && args["-s"] == "square" || !isSquare && args["-s"] == "rectangle") {
+      if(isSquare && args["-s"] == "square" || !isSquare && args["-s"] == "cv::rectangle") {
         cout << "top_x = " << top_x << endl;
-        rectangle(
-            output, Point(bottom_x, bottom_y), Point(top_x, top_y), Scalar(rgb_color[2], rgb_color[1], rgb_color[0]), 3, 8, 0);
+        cv::rectangle(
+            output, cv::Point(bottom_x, bottom_y), cv::Point(top_x, top_y), cv::Scalar(rgb_color[2], rgb_color[1], rgb_color[0]), 3, 8, 0);
         found_shape = true;
       }
     } else {
       vector<Vec3f> circles;
 
       // Apply the Hough Transform to find the circles
-      HoughCircles(gray, circles, cv::HOUGH_GRADIENT, 1, gray.rows / 8, 200, 100, 0, 0);
+      cv::HoughCircles(gray, circles, cv::HOUGH_GRADIENT, 1, gray.rows / 8, 200, 100, 0, 0);
 
       // Draw the circles detected
       for(size_t i = 0; i < circles.size(); i++) {
-        Point center = Point(cvRound(circles[i][0]), cvRound(circles[i][1]));
+        cv::Point center = cv::Point(cvRound(circles[i][0]), cvRound(circles[i][1]));
         int radius = cvRound(circles[i][2]) + (cvRound(circles[i][2]) / 10);
 
-        if(args["-s"] == "circle") {
-          // circle outline
-          circle(output, center, radius, Scalar(rgb_color[2], rgb_color[1], rgb_color[0]), 3, 8, 0);
+        if(args["-s"] == "cv::circle") {
+          // cv::circle outline
+          cv::circle(output, center, radius, cv::Scalar(rgb_color[2], rgb_color[1], rgb_color[0]), 3, 8, 0);
           found_shape = true;
         }
       }
     }
   }
 
-  namedWindow("output", WINDOW_NORMAL);
-  imshow("output", output);
+  cv::namedWindow("output", WINDOW_NORMAL);
+  cv::imshow("output", output);
 
-  imwrite(args["-o"], output);
+  cv::imwrite(args["-o"], output);
 
-  waitKey(0);
-  destroyAllWindows();
+  cv::waitKey(0);
+  cv::destroyAllWindows();
 
   free(rgb_color);
   return found_shape;

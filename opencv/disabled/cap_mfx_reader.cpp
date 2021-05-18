@@ -8,11 +8,11 @@
 #include "opencv2/imgproc/hal/hal.hpp"
 #include "cap_interface.hpp"
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 inline bool
-hasExtension(const String& filename, const String& ext) {
+hasExtension(const cv::String& filename, const cv::String& ext) {
   if(filename.size() <= ext.size())
     return false;
   const size_t diff = filename.size() - ext.size();
@@ -21,7 +21,7 @@ hasExtension(const String& filename, const String& ext) {
 }
 
 inline mfxU32
-determineCodecId(const String& filename) {
+determineCodecId(const cv::String& filename) {
   if(hasExtension(filename, ".h264") || hasExtension(filename, ".264"))
     return MFX_CODEC_AVC;
   else if(hasExtension(filename, ".mp2") || hasExtension(filename, ".mpeg2"))
@@ -62,8 +62,8 @@ VideoCapture_IntelMFX::VideoCapture_IntelMFX(const cv::String& filename)
   // Read some content from file
 
   bs = new ReadBitstream(filename.c_str());
-  if(!bs->read()) {
-    MSG(cerr << "MFX: Failed to read bitstream" << endl);
+  if(!bs->cv::read()) {
+    MSG(cerr << "MFX: Failed to cv::read bitstream" << endl);
     return;
   }
 
@@ -153,7 +153,7 @@ VideoCapture_IntelMFX::grabFrame() {
         DBG(cout << "Frame ready to retrieve" << endl);
         return true;
       } else {
-        MSG(cerr << "MFX: Sync error: " << res << endl);
+        MSG(cerr << "MFX: Sync cv::error: " << res << endl);
         return false;
       }
     } else if(res == MFX_ERR_MORE_DATA) {
@@ -168,13 +168,13 @@ VideoCapture_IntelMFX::grabFrame() {
           continue;
         }
       } else {
-        bool read_res = bs->read();
+        bool read_res = bs->cv::read();
         if(!read_res) {
           // failed to read
-          MSG(cerr << "MFX: Bitstream read failure" << endl);
+          MSG(cerr << "MFX: Bitstream cv::read failure" << endl);
           return false;
         } else {
-          DBG(cout << "Bitstream read success" << endl);
+          DBG(cout << "Bitstream cv::read success" << endl);
           continue;
         }
       }
@@ -210,7 +210,7 @@ VideoCapture_IntelMFX::retrieveFrame(int, OutputArray out) {
   const int rows = info.CropH;
 
   out.create(rows, cols, CV_8UC3);
-  Mat res = out.getMat();
+  cv::Mat res = out.getMat();
 
   hal::cvtTwoPlaneYUVtoBGR(data.Y, data.UV, data.Pitch, res.data, res.step, cols, rows, 3, false, 0);
 

@@ -10,20 +10,20 @@
 #include <boost/filesystem.hpp>
 #include "Config.h"
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 using namespace boost::filesystem3;
 
 class categorizer {
 private:
-  map<string, Mat> templates, objects, positive_data,
+  map<string, cv::Mat> templates, objects, positive_data,
       negative_data;               // maps from category names to data
-  multimap<string, Mat> train_set; // training images, mapped by category name
+  multimap<string, cv::Mat> train_set; // training images, mapped by category name
   map<string, CvSVM> svms;         // trained SVMs, mapped by category name
   vector<string> category_names;   // names of the categories found in TRAIN_FOLDER
   int categories;                  // number of categories
   int clusters;                    // number of clusters for SURF features to build vocabulary
-  Mat vocab;                       // vocabulary
+  cv::Mat vocab;                       // vocabulary
 
   // Feature detectors and descriptor extractors
   Ptr<FeatureDetector> featureDetector;
@@ -41,7 +41,7 @@ public:
   categorizer(int);              // constructor
   void build_vocab();            // function to build the BOW vocabulary
   void train_classifiers();      // function to train the one-vs-all SVM classifiers for all categories
-  void categorize(VideoCapture); // function to perform real-time object categorization on camera frames
+  void categorize(cv::VideoCapture); // function to perform real-time object categorization on camera frames
 };
 
 string
@@ -63,13 +63,13 @@ categorizer::categorizer(int _clusters) {
   // Organize the object templates by category
   // Boost::filesystem directory iterator
   for(directory_iterator i(TEMPLATE_FOLDER), end_iter; i != end_iter; i++) {
-    // Prepend full path to the file name so we can imread() it
+    // Prepend full path to the file name so we can cv::imread() it
     string filename = string(TEMPLATE_FOLDER) + i->path().filename().string();
     // Get category name by removing extension from name of file
     string category = remove_extension(i->path().filename().string());
-    Mat im = imread(filename), templ_im;
+    cv::Mat im = cv::imread(filename), templ_im;
     objects[category] = im;
-    cvtColor(im, templ_im, cv::COLOR_BGR2GRAY);
+    cv::cvtColor(im, templ_im, cv::COLOR_BGR2GRAY);
     templates[category] = templ_im;
   }
   cout << "Initialized" << endl;
@@ -93,8 +93,8 @@ categorizer::make_train_set() {
     else {
       // File name with path
       string filename = string(TRAIN_FOLDER) + category + string("/") + (i->path()).filename().string();
-      // Make a pair of string and Mat to insert into multimap
-      pair<string, Mat> p(category, imread(filename, cv::LOAD_IMAGE_GRAYSCALE));
+      // Make a pair of string and cv::Mat to insert into multimap
+      pair<string, cv::Mat> p(category, cv::imread(filename, cv::LOAD_IMAGE_GRAYSCALE));
       train_set.insert(p);
     }
   }
@@ -106,11 +106,11 @@ categorizer::make_train_set() {
 void
 categorizer::make_pos_neg() {
   // Iterate through the whole training set of images
-  for(multimap<string, Mat>::iterator i = train_set.begin(); i != train_set.end(); i++) {
+  for(multimap<string, cv::Mat>::iterator i = train_set.begin(); i != train_set.end(); i++) {
     // Category name is the first element of each entry in train_set
     string category = (*i).first;
     // Training image is the second elemnt
-    Mat im = (*i).second, feat;
+    cv::Mat im = (*i).second, feat;
 
     // Detect keypoints, get the image BOW descriptor
     vector<KeyPoint> kp;
@@ -118,7 +118,7 @@ categorizer::make_pos_neg() {
     bowDescriptorExtractor->compute(im, kp, feat);
 
     // Mats to hold the positive and negative training data for current category
-    Mat pos, neg;
+    cv::Mat pos, neg;
     for(int cat_index = 0; cat_index < categories; cat_index++) {
       string check_category = category_names[cat_index];
       // Add BOW feature as positive sample for current category ...
@@ -140,24 +140,24 @@ categorizer::make_pos_neg() {
 
 void
 categorizer::build_vocab() {
-  // Mat to hold SURF descriptors for all templates
-  Mat vocab_descriptors;
+  // cv::Mat to hold SURF descriptors for all templates
+  cv::Mat vocab_descriptors;
   // For each template, extract SURF descriptors and pool them into vocab_descriptors
-  for(map<string, Mat>::iterator i = templates.begin(); i != templates.end(); i++) {
+  for(map<string, cv::Mat>::iterator i = templates.begin(); i != templates.end(); i++) {
     vector<KeyPoint> kp;
-    Mat templ = (*i).second, desc;
+    cv::Mat templ = (*i).second, desc;
     featureDetector->detect(templ, kp);
     descriptorExtractor->compute(templ, kp, desc);
     vocab_descriptors.push_back(desc);
   }
 
   // Add the descriptors to the BOW trainer to cluster
-  bowtrainer->add(vocab_descriptors);
+  bowtrainer->cv::add(vocab_descriptors);
   // cluster the SURF descriptors
   vocab = bowtrainer->cluster();
 
   // Save the vocabulary
-  FileStorage fs(DATA_FOLDER "vocab.xml", FileStorage::WRITE);
+  cv::FileStorage fs(DATA_FOLDER "vocab.xml", cv::FileStorage::WRITE);
   fs << "vocabulary" << vocab;
   fs.release();
 
@@ -169,17 +169,17 @@ categorizer::train_classifiers() {
   // Set the vocabulary for the BOW descriptor extractor
   bowDescriptorExtractor->setVocabulary(vocab);
   // Extract BOW descriptors for all training images and organize them into positive and negative
-  // samples for each category
+  // cv::samples for each category
   make_pos_neg();
 
   for(int i = 0; i < categories; i++) {
     string category = category_names[i];
 
     // Postive training data has labels 1
-    Mat train_data = positive_data[category], train_labels = Mat::ones(train_data.rows, 1, CV_32S);
+    cv::Mat train_data = positive_data[category], train_labels = cv::Mat::ones(train_data.rows, 1, CV_32S);
     // Negative training data has labels 0
     train_data.push_back(negative_data[category]);
-    Mat m = Mat::zeros(negative_data[category].rows, 1, CV_32S);
+    cv::Mat m = cv::Mat::zeros(negative_data[category].rows, 1, CV_32S);
     train_labels.push_back(m);
 
     // Train SVM!
@@ -194,20 +194,20 @@ categorizer::train_classifiers() {
 }
 
 void
-categorizer::categorize(VideoCapture cap) {
+categorizer::categorize(cv::VideoCapture cap) {
   cout << "Starting to categorize objects" << endl;
-  namedWindow("Image");
+  cv::namedWindow("Image");
 
-  while(char(waitKey(1)) != 'q') {
-    Mat frame, frame_g;
+  while(char(cv::waitKey(1)) != 'q') {
+    cv::Mat frame, frame_g;
     cap >> frame;
-    imshow("Image", frame);
+    cv::imshow("Image", frame);
 
-    cvtColor(frame, frame_g, cv::COLOR_BGR2GRAY);
+    cv::cvtColor(frame, frame_g, cv::COLOR_BGR2GRAY);
 
     // Extract frame BOW descriptor
     vector<KeyPoint> kp;
-    Mat test;
+    cv::Mat test;
     featureDetector->detect(frame_g, kp);
     bowDescriptorExtractor->compute(frame_g, kp, test);
 
@@ -227,7 +227,7 @@ categorizer::categorize(VideoCapture cap) {
     // cout << endl;
 
     // Pull up the object template for the detected category and show it in a separate window
-    imshow("Detected object", objects[predicted_category]);
+    cv::imshow("Detected object", objects[predicted_category]);
   }
 }
 
@@ -239,8 +239,8 @@ main() {
   c.build_vocab();
   c.train_classifiers();
 
-  VideoCapture cap(0);
-  namedWindow("Detected object");
+  cv::VideoCapture cap(0);
+  cv::namedWindow("Detected object");
   c.categorize(cap);
   return 0;
 }

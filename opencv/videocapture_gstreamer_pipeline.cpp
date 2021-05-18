@@ -7,7 +7,7 @@
 #include <map>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 //================================================================================
 
@@ -16,29 +16,29 @@ inline typename M::mapped_type
 getValue(const M& dict, const typename M::key_type& key, const string& errorMessage) {
   typename M::const_iterator it = dict.find(key);
   if(it == dict.end()) {
-    CV_Error(Error::StsBadArg, errorMessage);
+    CV_Error(cv::Error::StsBadArg, errorMessage);
   }
   return it->second;
 }
 
-inline map<string, Size>
+inline map<string, cv::Size>
 sizeByResolution() {
-  map<string, Size> res;
-  res["720p"] = Size(1280, 720);
-  res["1080p"] = Size(1920, 1080);
-  res["4k"] = Size(3840, 2160);
+  map<string, cv::Size> res;
+  res["720p"] = cv::Size(1280, 720);
+  res["1080p"] = cv::Size(1920, 1080);
+  res["4k"] = cv::Size(3840, 2160);
   return res;
 }
 
 inline map<string, int>
 fourccByCodec() {
   map<string, int> res;
-  res["h264"] = VideoWriter::fourcc('H', '2', '6', '4');
-  res["h265"] = VideoWriter::fourcc('H', 'E', 'V', 'C');
-  res["mpeg2"] = VideoWriter::fourcc('M', 'P', 'E', 'G');
-  res["mpeg4"] = VideoWriter::fourcc('M', 'P', '4', '2');
-  res["mjpeg"] = VideoWriter::fourcc('M', 'J', 'P', 'G');
-  res["vp8"] = VideoWriter::fourcc('V', 'P', '8', '0');
+  res["h264"] = cv::VideoWriter::fourcc('H', '2', '6', '4');
+  res["h265"] = cv::VideoWriter::fourcc('H', 'E', 'V', 'C');
+  res["mpeg2"] = cv::VideoWriter::fourcc('M', 'P', 'E', 'G');
+  res["mpeg4"] = cv::VideoWriter::fourcc('M', 'P', '4', '2');
+  res["mjpeg"] = cv::VideoWriter::fourcc('M', 'J', 'P', 'G');
+  res["vp8"] = cv::VideoWriter::fourcc('V', 'P', '8', '0');
   return res;
 }
 
@@ -141,80 +141,80 @@ containerByName(const string& name) {
 
 //================================================================================
 
-inline Ptr<VideoCapture>
+inline Ptr<cv::VideoCapture>
 createCapture(const string& backend, const string& file_name, const string& codec) {
   if(backend == "gst-default") {
     cout << "Created GStreamer capture ( " << file_name << " )" << endl;
-    return makePtr<VideoCapture>(file_name, CAP_GSTREAMER);
+    return makePtr<cv::VideoCapture>(file_name, CAP_GSTREAMER);
   } else if(backend.find("gst") == 0) {
-    ostringstream line;
-    line << "filesrc location=\"" << file_name << "\"";
-    line << " ! ";
-    line << getValue(demuxPluginByContainer(), containerByName(file_name), "Invalid container");
-    line << " ! ";
+    ostringstream cv::line;
+    cv::line << "filesrc location=\"" << file_name << "\"";
+    cv::line << " ! ";
+    cv::line << getValue(demuxPluginByContainer(), containerByName(file_name), "Invalid container");
+    cv::line << " ! ";
     if(backend.find("basic") == 4)
-      line << "decodebin";
+      cv::line << "decodebin";
     else if(backend.find("vaapi") == 4)
-      line << "vaapidecodebin";
+      cv::line << "vaapidecodebin";
     else if(backend.find("libav") == 4)
-      line << getValue(libavDecodeElementByCodec(), codec, "Invalid codec");
+      cv::line << getValue(libavDecodeElementByCodec(), codec, "Invalid codec");
     else if(backend.find("mfx") == 4)
-      line << getValue(mfxDecodeElementByCodec(), codec, "Invalid or unsupported codec");
+      cv::line << getValue(mfxDecodeElementByCodec(), codec, "Invalid or unsupported codec");
     else
-      return Ptr<VideoCapture>();
-    line << " ! videoconvert n-threads=" << getNumThreads();
-    line << " ! appsink sync=false";
-    cout << "Created GStreamer capture  ( " << line.str() << " )" << endl;
-    return makePtr<VideoCapture>(line.str(), CAP_GSTREAMER);
+      return Ptr<cv::VideoCapture>();
+    cv::line << " ! videoconvert n-threads=" << cv::getNumThreads();
+    cv::line << " ! appsink sync=false";
+    cout << "Created GStreamer capture  ( " << cv::line.str() << " )" << endl;
+    return makePtr<cv::VideoCapture>(cv::line.str(), CAP_GSTREAMER);
   } else if(backend == "ffmpeg") {
     cout << "Created FFmpeg capture ( " << file_name << " )" << endl;
-    return makePtr<VideoCapture>(file_name, CAP_FFMPEG);
+    return makePtr<cv::VideoCapture>(file_name, CAP_FFMPEG);
   }
-  return Ptr<VideoCapture>();
+  return Ptr<cv::VideoCapture>();
 }
 
-inline Ptr<VideoCapture>
-createSynthSource(Size sz, unsigned fps) {
-  ostringstream line;
-  line << "videotestsrc pattern=smpte";
-  line << " ! video/x-raw";
-  line << ",width=" << sz.width << ",height=" << sz.height;
+inline Ptr<cv::VideoCapture>
+createSynthSource(cv::Size sz, unsigned fps) {
+  ostringstream cv::line;
+  cv::line << "videotestsrc pattern=smpte";
+  cv::line << " ! video/x-raw";
+  cv::line << ",width=" << sz.width << ",height=" << sz.height;
   if(fps > 0)
-    line << ",framerate=" << fps << "/1";
-  line << " ! appsink sync=false";
-  cout << "Created synthetic video source ( " << line.str() << " )" << endl;
-  return makePtr<VideoCapture>(line.str(), CAP_GSTREAMER);
+    cv::line << ",framerate=" << fps << "/1";
+  cv::line << " ! appsink sync=false";
+  cout << "Created synthetic video source ( " << cv::line.str() << " )" << endl;
+  return makePtr<cv::VideoCapture>(cv::line.str(), CAP_GSTREAMER);
 }
 
-inline Ptr<VideoWriter>
-createWriter(const string& backend, const string& file_name, const string& codec, Size sz, unsigned fps) {
+inline Ptr<cv::VideoWriter>
+createWriter(const string& backend, const string& file_name, const string& codec, cv::Size sz, unsigned fps) {
   if(backend == "gst-default") {
-    cout << "Created GStreamer writer ( " << file_name << ", FPS=" << fps << ", Size=" << sz << ")" << endl;
-    return makePtr<VideoWriter>(file_name, CAP_GSTREAMER, getValue(fourccByCodec(), codec, "Invalid codec"), fps, sz, true);
+    cout << "Created GStreamer writer ( " << file_name << ", FPS=" << fps << ", cv::Size=" << sz << ")" << endl;
+    return makePtr<cv::VideoWriter>(file_name, CAP_GSTREAMER, getValue(fourccByCodec(), codec, "Invalid codec"), fps, sz, true);
   } else if(backend.find("gst") == 0) {
-    ostringstream line;
-    line << "appsrc ! videoconvert n-threads=" << getNumThreads() << " ! ";
+    ostringstream cv::line;
+    cv::line << "appsrc ! videoconvert n-threads=" << cv::getNumThreads() << " ! ";
     if(backend.find("basic") == 4)
-      line << getValue(defaultEncodeElementByCodec(), codec, "Invalid codec");
+      cv::line << getValue(defaultEncodeElementByCodec(), codec, "Invalid codec");
     else if(backend.find("vaapi") == 4)
-      line << getValue(VAAPIEncodeElementByCodec(), codec, "Invalid codec");
+      cv::line << getValue(VAAPIEncodeElementByCodec(), codec, "Invalid codec");
     else if(backend.find("libav") == 4)
-      line << getValue(libavEncodeElementByCodec(), codec, "Invalid codec");
+      cv::line << getValue(libavEncodeElementByCodec(), codec, "Invalid codec");
     else if(backend.find("mfx") == 4)
-      line << getValue(mfxEncodeElementByCodec(), codec, "Invalid codec");
+      cv::line << getValue(mfxEncodeElementByCodec(), codec, "Invalid codec");
     else
-      return Ptr<VideoWriter>();
-    line << " ! ";
-    line << getValue(muxPluginByContainer(), containerByName(file_name), "Invalid container");
-    line << " ! ";
-    line << "filesink location=\"" << file_name << "\"";
-    cout << "Created GStreamer writer ( " << line.str() << " )" << endl;
-    return makePtr<VideoWriter>(line.str(), CAP_GSTREAMER, 0, fps, sz, true);
+      return Ptr<cv::VideoWriter>();
+    cv::line << " ! ";
+    cv::line << getValue(muxPluginByContainer(), containerByName(file_name), "Invalid container");
+    cv::line << " ! ";
+    cv::line << "filesink location=\"" << file_name << "\"";
+    cout << "Created GStreamer writer ( " << cv::line.str() << " )" << endl;
+    return makePtr<cv::VideoWriter>(cv::line.str(), CAP_GSTREAMER, 0, fps, sz, true);
   } else if(backend == "ffmpeg") {
-    cout << "Created FFMpeg writer ( " << file_name << ", FPS=" << fps << ", Size=" << sz << " )" << endl;
-    return makePtr<VideoWriter>(file_name, CAP_FFMPEG, getValue(fourccByCodec(), codec, "Invalid codec"), fps, sz, true);
+    cout << "Created FFMpeg writer ( " << file_name << ", FPS=" << fps << ", cv::Size=" << sz << " )" << endl;
+    return makePtr<cv::VideoWriter>(file_name, CAP_FFMPEG, getValue(fourccByCodec(), codec, "Invalid codec"), fps, sz, true);
   }
-  return Ptr<VideoWriter>();
+  return Ptr<cv::VideoWriter>();
 }
 
 //================================================================================
@@ -233,7 +233,7 @@ main(int argc, char* argv[]) {
                       "'4k') }"
                       "{fps            |30         | fix frame per second for encoding (supported: fps > 0) }"
                       "{fast           |           | fast measure fps }";
-  CommandLineParser cmd_parser(argc, argv, keys);
+  cv::CommandLineParser cmd_parser(argc, argv, keys);
   cmd_parser.about("This program measures performance of video encoding and decoding using "
                    "different backends OpenCV.");
   if(cmd_parser.has("help")) {
@@ -256,13 +256,13 @@ main(int argc, char* argv[]) {
     return -1;
   }
   if(mode == "decode") {
-    file_name = samples::findFile(file_name);
+    file_name = cv::samples::findFile(file_name);
   }
   cout << "Mode: " << mode << ", Backend: " << backend << ", File: " << file_name << ", Codec: " << codec << endl;
 
   TickMeter total;
-  Ptr<VideoCapture> cap;
-  Ptr<VideoWriter> wrt;
+  Ptr<cv::VideoCapture> cap;
+  Ptr<cv::VideoWriter> wrt;
   try {
     if(mode == "decode") {
       cap = createCapture(backend, file_name, codec);
@@ -275,7 +275,7 @@ main(int argc, char* argv[]) {
         return -4;
       }
     } else if(mode == "encode") {
-      Size sz = getValue(sizeByResolution(), resolution, "Invalid resolution");
+      cv::Size sz = getValue(sizeByResolution(), resolution, "Invalid resolution");
       cout << "FPS: " << fix_fps << ", Frame size: " << sz << endl;
       cap = createSynthSource(sz, fix_fps);
       wrt = createWriter(backend, file_name, codec, sz, fix_fps);
@@ -294,8 +294,8 @@ main(int argc, char* argv[]) {
   }
 
   TickMeter tick;
-  Mat frame;
-  Mat element;
+  cv::Mat frame;
+  cv::Mat element;
   total.start();
   while(true) {
     if(mode == "decode") {

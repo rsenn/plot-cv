@@ -12,7 +12,7 @@
  *--------------------------------------------------*/
 
 /* after the OpenCV libary is installed
- * please uncomment the the line below and re-compile this code
+ * please uncomment the the cv::line below and re-compile this code
  * to enable high precission of fps computation
  */
 //#define HAVE_OPENCV
@@ -35,7 +35,7 @@
 #define GREEN "\033[32m" /* Green */
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 int
 main(int argc, char** argv) {
@@ -62,45 +62,45 @@ main(int argc, char** argv) {
 
   // for showing the speed
   double fps;
-  String text;
+  cv::String text;
   char buffer[50];
 
   // set the default tracking algorithm
-  String trackingAlg = "KCF";
+  cv::String trackingAlg = "KCF";
 
   // set the tracking algorithm from parameter
   if(argc > 2)
     trackingAlg = argv[2];
 
   // create the tracker
-  MultiTracker trackers;
+  cv::MultiTracker trackers;
 
   // container of the tracked objects
-  vector<Rect> ROIs;
+  vector<cv::Rect> ROIs;
   vector<Rect2d> objects;
 
   // set input video
-  String video = argv[1];
-  VideoCapture cap(video);
+  cv::String video = argv[1];
+  cv::VideoCapture cap(video);
 
-  Mat frame;
+  cv::Mat frame;
 
   // get bounding box
   cap >> frame;
-  selectROIs("tracker", frame, ROIs);
+  cv::selectROIs("tracker", frame, ROIs);
 
   // quit when the tracked object(s) is not provided
   if(ROIs.size() < 1)
     return 0;
 
-  std::vector<Ptr<Tracker>> algorithms;
+  std::vector<Ptr<cv::Tracker>> algorithms;
   for(size_t i = 0; i < ROIs.size(); i++) {
     algorithms.push_back(createTrackerByName(trackingAlg));
     objects.push_back(ROIs[i]);
   }
 
   // initialize the tracker
-  trackers.add(algorithms, frame, objects);
+  trackers.cv::add(algorithms, frame, objects);
 
   // do the tracking
   printf(GREEN "Start the tracking process, press ESC to quit.\n" RESET);
@@ -136,18 +136,18 @@ main(int argc, char** argv) {
 
     // draw the tracked object
     for(unsigned i = 0; i < trackers.getObjects().size(); i++)
-      rectangle(frame, trackers.getObjects()[i], Scalar(255, 0, 0), 2, 1);
+      cv::rectangle(frame, trackers.getObjects()[i], cv::Scalar(255, 0, 0), 2, 1);
 
     // draw the processing speed
     sprintf(buffer, "speed: %.0f fps", fps);
     text = buffer;
-    putText(frame, text, Point(20, 20), FONT_HERSHEY_PLAIN, 1, Scalar(255, 255, 255));
+    cv::putText(frame, text, cv::Point(20, 20), FONT_HERSHEY_PLAIN, 1, cv::Scalar(255, 255, 255));
 
     // show image with the tracked object
-    imshow("tracker", frame);
+    cv::imshow("tracker", frame);
 
     // quit on ESC button
-    if(waitKey(1) == 27)
+    if(cv::waitKey(1) == 27)
       break;
   }
 }

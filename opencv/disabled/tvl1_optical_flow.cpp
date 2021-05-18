@@ -2,7 +2,7 @@
 #include <vector>
 #include <iomanip>
 
-#include "opencv2/core/ocl.hpp"
+#include "opencv2/core/cv::ocl.hpp"
 #include "opencv2/core/utility.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/videoio.hpp"
@@ -10,7 +10,7 @@
 #include "opencv2/video.hpp"
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 typedef unsigned char uchar;
 #define LOOP_NUM 10
@@ -19,15 +19,15 @@ int64 work_end = 0;
 
 static void
 workBegin() {
-  work_begin = getTickCount();
+  work_begin = cv::getTickCount();
 }
 static void
 workEnd() {
-  work_end += (getTickCount() - work_begin);
+  work_end += (cv::getTickCount() - work_begin);
 }
 static double
 getTime() {
-  return work_end * 1000. / getTickFrequency();
+  return work_end * 1000. / cv::getTickFrequency();
 }
 
 template<typename T>
@@ -44,7 +44,7 @@ mapValue(T x, T a, T b, T c, T d) {
 }
 
 static void
-getFlowField(const Mat& u, const Mat& v, Mat& flowField) {
+getFlowField(const cv::Mat& u, const cv::Mat& v, cv::Mat& flowField) {
   float maxDisplacement = 1.0f;
 
   for(int i = 0; i < u.rows; ++i) {
@@ -86,7 +86,7 @@ main(int argc, const char* argv[]) {
                      "{ m cpu_mode |                 | run without OpenCL }"
                      "{ v video    |                 | use video as input }";
 
-  CommandLineParser cmd(argc, argv, keys);
+  cv::CommandLineParser cmd(argc, argv, keys);
 
   if(cmd.has("help")) {
     cout << "Usage: pyrlk_optical_flow [options]" << endl;
@@ -103,22 +103,22 @@ main(int argc, const char* argv[]) {
   bool useCamera = cmd.get<bool>("c");
   int inputName = cmd.get<int>("c");
 
-  UMat frame0, frame1;
-  imread(fname0, cv::IMREAD_GRAYSCALE).copyTo(frame0);
-  imread(fname1, cv::IMREAD_GRAYSCALE).copyTo(frame1);
+  cv::UMat frame0, frame1;
+  cv::imread(fname0, cv::IMREAD_GRAYSCALE).copyTo(frame0);
+  cv::imread(fname1, cv::IMREAD_GRAYSCALE).copyTo(frame1);
   cv::Ptr<cv::DenseOpticalFlow> alg = cv::createOptFlow_DualTVL1();
 
-  UMat flow;
-  Mat show_flow;
-  vector<UMat> flow_vec;
+  cv::UMat flow;
+  cv::Mat show_flow;
+  vector<cv::UMat> flow_vec;
   if(frame0.empty() || frame1.empty())
     useCamera = true;
 
   if(useCamera) {
-    VideoCapture capture;
-    UMat frame, frameCopy;
-    UMat frame0Gray, frame1Gray;
-    UMat ptr0, ptr1;
+    cv::VideoCapture capture;
+    cv::UMat frame, frameCopy;
+    cv::UMat frame0Gray, frame1Gray;
+    cv::UMat ptr0, ptr1;
 
     if(vdofile.empty())
       capture.open(inputName);
@@ -135,42 +135,42 @@ main(int argc, const char* argv[]) {
 
     cout << "In capture ..." << endl;
     for(int i = 0;; i++) {
-      if(!capture.read(frame))
+      if(!capture.cv::read(frame))
         break;
 
       if(i == 0) {
         frame.copyTo(frame0);
-        cvtColor(frame0, frame0Gray, COLOR_BGR2GRAY);
+        cv::cvtColor(frame0, frame0Gray, COLOR_BGR2GRAY);
       } else {
         if(i % 2 == 1) {
           frame.copyTo(frame1);
-          cvtColor(frame1, frame1Gray, COLOR_BGR2GRAY);
+          cv::cvtColor(frame1, frame1Gray, COLOR_BGR2GRAY);
           ptr0 = frame0Gray;
           ptr1 = frame1Gray;
         } else {
           frame.copyTo(frame0);
-          cvtColor(frame0, frame0Gray, COLOR_BGR2GRAY);
+          cv::cvtColor(frame0, frame0Gray, COLOR_BGR2GRAY);
           ptr0 = frame1Gray;
           ptr1 = frame0Gray;
         }
 
         alg->calc(ptr0, ptr1, flow);
-        split(flow, flow_vec);
+        cv::split(flow, flow_vec);
 
         if(i % 2 == 1)
           frame1.copyTo(frameCopy);
         else
           frame0.copyTo(frameCopy);
         getFlowField(flow_vec[0].getMat(ACCESS_READ), flow_vec[1].getMat(ACCESS_READ), show_flow);
-        imshow("tvl1 optical flow field", show_flow);
+        cv::imshow("tvl1 optical flow field", show_flow);
       }
 
-      char key = (char)waitKey(10);
+      char key = (char)cv::waitKey(10);
       if(key == 27)
         break;
       else if(key == 'm' || key == 'M') {
-        ocl::setUseOpenCL(!cv::ocl::useOpenCL());
-        cout << "Switched to " << (ocl::useOpenCL() ? "OpenCL" : "CPU") << " mode\n";
+        cv::ocl::setUseOpenCL(!cv::ocl::useOpenCL());
+        cout << "Switched to " << (cv::ocl::useOpenCL() ? "OpenCL" : "CPU") << " mode\n";
       }
     }
 
@@ -178,7 +178,7 @@ main(int argc, const char* argv[]) {
   } else {
   nocamera:
     if(cmd.has("cpu_mode")) {
-      ocl::setUseOpenCL(false);
+      cv::ocl::setUseOpenCL(false);
       std::cout << "OpenCL was disabled" << std::endl;
     }
     for(int i = 0; i <= LOOP_NUM; i++) {
@@ -188,7 +188,7 @@ main(int argc, const char* argv[]) {
         workBegin();
 
       alg->calc(frame0, frame1, flow);
-      split(flow, flow_vec);
+      cv::split(flow, flow_vec);
 
       if(i > 0 && i <= LOOP_NUM)
         workEnd();
@@ -201,13 +201,13 @@ main(int argc, const char* argv[]) {
         cout << getTime() / LOOP_NUM << " ms" << endl;
 
         getFlowField(flow_vec[0].getMat(ACCESS_READ), flow_vec[1].getMat(ACCESS_READ), show_flow);
-        imshow("PyrLK [Sparse]", show_flow);
-        imwrite(outpath, show_flow);
+        cv::imshow("PyrLK [Sparse]", show_flow);
+        cv::imwrite(outpath, show_flow);
       }
     }
   }
 
-  waitKey();
+  cv::waitKey();
 
   return EXIT_SUCCESS;
 }

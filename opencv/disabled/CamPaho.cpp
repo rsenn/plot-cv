@@ -19,11 +19,11 @@
 #include <sys/time.h>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 #define topic1 "control"
 #define topic2 "sync"
 #define topic3 "hello"
-#define topic4 "log"
+#define topic4 "cv::log"
 #define topic5 "cam"
 #if defined(WIN32)
 #define sleep Sleep
@@ -40,8 +40,8 @@ int
 messageArrived(void* context, char* topicName, int topicLen, MQTTAsync_message* message) {
   if(opts.showtopics)
     printf("messageArrive at %s:\n", topicName);
-  string line((char*)message->payload);
-  stringstream messageStream(line);
+  string cv::line((char*)message->payload);
+  stringstream messageStream(cv::line);
   switch(topicByString.at(topicName)) {
     case HELLO: {
       string helloVerb;
@@ -117,7 +117,7 @@ onConnect(void* context, MQTTAsync_successData* response) {
 #define HSVWEIGHT(x, y) (inputImage.at<Vec3b>(x, y)[0] + inputImage.at<Vec3b>(x, y)[1] + inputImage.at<Vec3b>(x, y)[2])
 #define HSVCONDITION(x, y) (HSVWEIGHT(x, y) > 90)
 void
-floodFillStack(Mat& inputImage, int x, int y, vector<pair<int, int>>& domain) {
+floodFillStack(cv::Mat& inputImage, int x, int y, vector<pair<int, int>>& domain) {
   std::stack<std::pair<int, int>> target;
   int rowNumber = inputImage.rows;
   int colNumber = inputImage.cols;
@@ -145,14 +145,14 @@ floodFillStack(Mat& inputImage, int x, int y, vector<pair<int, int>>& domain) {
 }
 
 void
-findCentroid(Mat& inputImage,
+findCentroid(cv::Mat& inputImage,
              vector<vector<pair<int, int>>>& domain,
              const int& domainNumber,
              vector<pair<double, double>>& centroid) {
 
   int colNumber = inputImage.cols;
   int rowNumber = inputImage.rows;
-  Mat copyImage = inputImage.clone();
+  cv::Mat copyImage = inputImage.clone();
   vector<pair<int, int>> tempvector;
   int k = 0;
   for(int i = 0; i < rowNumber; i++) {
@@ -230,7 +230,7 @@ main(int argc, char** argv) {
     usleep(10000L);
 #endif
 
-  VideoCapture capture1(0);
+  cv::VideoCapture capture1(0);
   cout << "Camera initialized." << endl;
   buffer = (char*)malloc(4096);
 
@@ -242,7 +242,7 @@ main(int argc, char** argv) {
       strcpy(buffer, message.c_str());
       int data_len = message.length();
       do { rc = MQTTAsync_send(client, topic3, data_len, buffer, opts.qos, 0, &pub_opts); } while(rc != MQTTASYNC_SUCCESS);
-      cout << "log:" << message << endl;
+      cout << "cv::log:" << message << endl;
       camNodeMode = SYNCHRONOUS;
       ifGetAreyouok = false;
     } else if(needFoundCentroid) {
@@ -256,11 +256,11 @@ main(int argc, char** argv) {
         // cout << "timeNow:" << timeNow << endl;
         capture1.retrieve(oriImage);
         if(!oriImage.empty()) {
-          // resize(oriImage, oriImage, Size(640, 480), 0, 0, cv::INTER_LINEAR);
+          // cv::resize(oriImage, oriImage, cv::Size(640, 480), 0, 0, cv::INTER_LINEAR);
           findCentroid(oriImage, region, Number_of_regions, centroid);
           if(centroid.size() > 0) {
             timeNowStream << timeNow;
-            waitKey(30);
+            cv::waitKey(30);
             break;
           }
         }
@@ -271,7 +271,7 @@ main(int argc, char** argv) {
         int data_len = message.length();
         do { rc = MQTTAsync_send(client, topic2, data_len, buffer, opts.qos, 0, &pub_opts); } while(rc != MQTTASYNC_SUCCESS);
         cout << "timeNowStream.str():" << timeNowStream.str() << endl;
-        cout << "log:" << message << endl;
+        cout << "cv::log:" << message << endl;
         needFoundCentroid = false;
       }
     } else {
@@ -284,8 +284,8 @@ main(int argc, char** argv) {
       region.clear();
       findCentroid(oriImage, region, Number_of_regions, centroid);
       // if (!oriImage.empty())
-      //    imshow("oriImage", oriImage);
-      // waitKey(100);
+      //    cv::imshow("oriImage", oriImage);
+      // cv::waitKey(100);
       stringstream timeString;
       timeString << timeNow;
       stringstream xString, yString;

@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-using namespace cv;
+//using namespace cv;
 
 /// Global variables
 
@@ -21,7 +21,7 @@ cv::Mat dst, detected_edges;
 cv::Mat final;
 cv::Mat canny_output, alpha;
 std::vector<std::vector<cv::Point>> contours;
-std::vector<Vec4i> hierarchy;
+std::vector<cv::Vec4i> hierarchy;
 
 int edgeThresh = 1;
 int lowThreshold = 99;
@@ -37,15 +37,15 @@ int fill = 4;
 void
 doCanny() {
   /// Detect edges using canny
-  Canny(src_gray, canny_output, lowThreshold, lowThreshold * 2, 3);
+  cv::Canny(src_gray, canny_output, lowThreshold, lowThreshold * 2, 3);
   /// Find contours
-  findContours(canny_output, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+  cv::findContours(canny_output, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Draw contours
   final = cv::Mat::zeros(canny_output.size(), CV_8UC4);
   for(int i = 0; i < contours.size(); i++) {
-    Scalar color = Scalar(blue, green, red);
-    drawContours(final, contours, i, color, fill, 8, hierarchy, 2, cv::Point());
+    cv::Scalar color = cv::Scalar(blue, green, red);
+    cv::drawContours(final, contours, i, color, fill, 8, hierarchy, 2, cv::Point());
   }
 
   // Set the Alpha channel to get transparent background
@@ -68,13 +68,13 @@ doCanny() {
   }
 
   /// Show in a window
-  imshow(window_name, final);
+  cv::imshow(window_name, final);
   // printf("\nB: %d, G: %d, R: %d, CHANneLS: %d \n", blue, green, red, final.channels());
 }
 
 /**
  * @function CannyThreshold
- * @brief Trackbar callback - Canny thresholds input with a ratio 1:3
+ * @brief Trackbar callback - cv::Canny thresholds input with a ratio 1:3
  */
 void
 CannyThreshold(int, void*) {
@@ -82,7 +82,7 @@ CannyThreshold(int, void*) {
 }
 
 /**
- * @brief Select R callback - Canny thresholds input with a ratio 1:3
+ * @brief Select R callback - cv::Canny thresholds input with a ratio 1:3
  */
 void
 setColorRGR(int, void*) {
@@ -93,7 +93,7 @@ setColorRGR(int, void*) {
 void
 saveImage(int, void*) {
   if(save == 1) {
-    imwrite("out.png", final);
+    cv::imwrite("out.png", final);
   }
 }
 
@@ -101,7 +101,7 @@ saveImage(int, void*) {
 int
 main(int argc, char** argv) {
   /// Load an image
-  src = imread(argv[1]);
+  src = cv::imread(argv[1]);
 
   if(!src.data) {
     return -1;
@@ -111,28 +111,28 @@ main(int argc, char** argv) {
   dst.create(src.size(), src.type());
 
   /// Convert the image to grayscale
-  cvtColor(src, src_gray, cv::COLOR_BGR2GRAY);
+  cv::cvtColor(src, src_gray, cv::COLOR_BGR2GRAY);
 
   /// Create a window
-  namedWindow(window_name, cv::WINDOW_AUTOSIZE);
+  cv::namedWindow(window_name, cv::WINDOW_AUTOSIZE);
 
   /// Create a Trackbar for user to enter threshold
-  createTrackbar("Min Threshold:", window_name, &lowThreshold, max_lowThreshold, CannyThreshold);
+  cv::createTrackbar("Min Threshold:", window_name, &lowThreshold, max_lowThreshold, CannyThreshold);
 
   // RGB Trackbars
-  createTrackbar("RED:", window_name, &red, maxRGB, setColorRGR);
-  createTrackbar("GREEN:", window_name, &green, maxRGB, setColorRGR);
-  createTrackbar("BLUE:", window_name, &blue, maxRGB, setColorRGR);
-  createTrackbar("FILL:", window_name, &fill, maxRGB, setColorRGR); // Fill contour
+  cv::createTrackbar("RED:", window_name, &red, maxRGB, setColorRGR);
+  cv::createTrackbar("GREEN:", window_name, &green, maxRGB, setColorRGR);
+  cv::createTrackbar("BLUE:", window_name, &blue, maxRGB, setColorRGR);
+  cv::createTrackbar("FILL:", window_name, &fill, maxRGB, setColorRGR); // Fill contour
 
   // Save Button
-  createTrackbar("SAVE", window_name, &save, 1, saveImage);
+  cv::createTrackbar("SAVE", window_name, &save, 1, saveImage);
 
   /// Show the image
   CannyThreshold(0, 0);
 
   /// Wait until user exit program by pressing a key
-  waitKey(0);
+  cv::waitKey(0);
 
   return 0;
 }

@@ -9,19 +9,19 @@
 #include <stdlib.h>
 #include <simple_svg_1.0.0.hpp>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
-Mat src;
-Mat src_gray;
-Mat resize_img;
+cv::Mat src;
+cv::Mat src_gray;
+cv::Mat resize_img;
 int thresh = 100;
 int max_thresh = 255;
 RNG rng(12345);
 int largestContour = -1;
 double max_svg_width = 1200; // pixels
 double max_svg_height = 900; // pixels
-vector<Point> bigContour;
+vector<cv::Point> bigContour;
 
 bool showDiagnostics = false;
 bool showWindow = false;
@@ -32,10 +32,10 @@ void thresh_callback(int, void*);
 // finds the largest contour and stores the bigContour and stores it index which are both global
 // variables.
 void
-filter_contours(vector<vector<Point>> contours_un) {
+filter_contours(vector<vector<cv::Point>> contours_un) {
   double maxArea = 0.0;
   for(int i = 0; i < contours_un.size(); i++) {
-    double area = contourArea(contours_un[i]);
+    double area = cv::contourArea(contours_un[i]);
     if(showDiagnostics) {
       std::cout << "Area: " + to_string(area) + "Index: " + to_string(i) << std::endl;
     }
@@ -48,7 +48,7 @@ filter_contours(vector<vector<Point>> contours_un) {
 }
 
 void
-export_svg(vector<Point> contour_arg, string output_file) {
+export_svg(vector<cv::Point> contour_arg, string output_file) {
 
   svg::Dimensions dimensions(max_svg_width, max_svg_height);
   svg::Document doc(output_file, svg::Layout(dimensions, svg::Layout::TopLeft));
@@ -56,7 +56,7 @@ export_svg(vector<Point> contour_arg, string output_file) {
   svg::LineChart chart(5.0);
   svg::Polyline polyline(svg::Stroke(1, svg::Color(255, 0, 0)));
   for(int i = 0; i < contour_arg.size(); i++) {
-    svg::Point temp = svg::Point(contour_arg.at(i).x, contour_arg.at(i).y);
+    svg::cv::Point temp = svg::Point(contour_arg.at(i).x, contour_arg.at(i).y);
     polyline << temp;
   }
   doc << polyline;
@@ -82,25 +82,25 @@ main(int argc, char** argv) {
 
   /// Load source image and convert it to gray
 
-  src = imread(argv[1], 1);
+  src = cv::imread(argv[1], 1);
 
   if(src.empty()) {
-    std::cout << "failed to open image file. Make sure img exists and command is in correct format." << std::endl;
+    std::cout << "failed to open image file. Make sure img exists and command is in correct cv::format." << std::endl;
   } else {
 
-    Size dsize2 = Size(round(.35 * src.cols), round(.35 * src.rows));
-    resize(src, resize_img, dsize2);
+    cv::Size dsize2 = cv::Size(round(.35 * src.cols), round(.35 * src.rows));
+    cv::resize(src, resize_img, dsize2);
 
     src = resize_img;
-    /// Convert image to gray and blur it
-    cvtColor(src, src_gray, cv::COLOR_BGR2GRAY);
-    blur(src_gray, src_gray, Size(3, 3));
+    /// Convert image to gray and cv::blur it
+    cv::cvtColor(src, src_gray, cv::COLOR_BGR2GRAY);
+    cv::blur(src_gray, src_gray, cv::Size(3, 3));
 
     /// Create Window
     char* source_window = "Source";
     if(showWindow) {
-      namedWindow(source_window, cv::WINDOW_AUTOSIZE);
-      imshow(source_window, src);
+      cv::namedWindow(source_window, cv::WINDOW_AUTOSIZE);
+      cv::imshow(source_window, src);
     }
     thresh_callback(0, 0);
     export_svg(bigContour, "contour.svg");
@@ -115,35 +115,35 @@ main(int argc, char** argv) {
 /** @function thresh_callback */
 void
 thresh_callback(int, void*) {
-  Mat canny_output;
-  vector<vector<Point>> contours;
-  vector<Vec4i> hierarchy;
+  cv::Mat canny_output;
+  vector<vector<cv::Point>> contours;
+  vector<cv::Vec4i> hierarchy;
 
   /// Detect edges using canny
-  Canny(src_gray, canny_output, thresh, thresh * 2, 3);
+  cv::Canny(src_gray, canny_output, thresh, thresh * 2, 3);
   /// Find contours
-  findContours(canny_output, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, Point(0, 0));
+  cv::findContours(canny_output, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Draw contours
   filter_contours(contours);
   if(showDiagnostics) {
     std::cout << "largest Contour Index: " + to_string(largestContour) << std::endl;
-    std::cout << "largest Contour Area: " + to_string(contourArea(bigContour)) << std::endl;
+    std::cout << "largest Contour Area: " + to_string(cv::contourArea(bigContour)) << std::endl;
   }
-  Mat drawing = Mat::zeros(canny_output.size(), CV_8UC3);
-  Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-  drawContours(drawing, contours, largestContour, color, 2, 8, hierarchy, 0, Point());
+  cv::Mat drawing = cv::Mat::zeros(canny_output.size(), CV_8UC3);
+  cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
+  cv::drawContours(drawing, contours, largestContour, color, 2, 8, hierarchy, 0, cv::Point());
 
   if(showDiagnostics) {
     for(int i = 0; i < contours.size(); i++) {
-      Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-      drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, Point());
+      cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
+      cv::drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, cv::Point());
     }
   }
 
   /// Show in a window
   if(showWindow) {
-    namedWindow("Contours", cv::WINDOW_AUTOSIZE);
-    imshow("Contours", drawing);
+    cv::namedWindow("Contours", cv::WINDOW_AUTOSIZE);
+    cv::imshow("Contours", drawing);
   }
 }

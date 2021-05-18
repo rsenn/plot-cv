@@ -4,11 +4,11 @@
 #include <iostream>
 
 #ifdef HAVE_OPENCV_DNN
-#include <opencv2/dnn.hpp>
+#include <opencv2/cv::dnn.hpp>
 
 using namespace std;
-using namespace cv;
-using namespace cv::tbm;
+//using namespace cv;
+//using namespace cv::tbm;
 
 static const char* keys = {"{video_name       | | video name                       }"
                            "{start_frame      |0| Start frame                      }"
@@ -23,7 +23,7 @@ help() {
           " detector is used to detect objects on frames, \n"
           "matching is used to find correspondences between new detections and tracked objects.\n"
           "Detection is made by DNN detection network every `--frame_step` frame.\n"
-          "Point a .prototxt file of the network as the parameter `--detector_model`, and a "
+          "cv::Point a .prototxt file of the network as the parameter `--detector_model`, and a "
           ".caffemodel file"
           " as the parameter `--detector_weights`.\n"
           "(As an example of such detection network is a popular MobileNet_SSD network trained on "
@@ -51,33 +51,33 @@ cv::Ptr<ITrackerByMatching> createTrackerByMatchingWithFastDescriptor();
 
 class DnnObjectDetector {
 public:
-  DnnObjectDetector(const String& net_caffe_model_path,
-                    const String& net_caffe_weights_path,
+  DnnObjectDetector(const cv::String& net_caffe_model_path,
+                    const cv::String& net_caffe_weights_path,
                     int desired_class_id = -1,
                     float confidence_threshold = 0.2,
                     // the following parameters are default for popular MobileNet_SSD caffe model
-                    const String& net_input_name = "data",
-                    const String& net_output_name = "detection_out",
+                    const cv::String& net_input_name = "data",
+                    const cv::String& net_output_name = "detection_out",
                     double net_scalefactor = 0.007843,
-                    const Size& net_size = Size(300, 300),
-                    const Scalar& net_mean = Scalar(127.5, 127.5, 127.5),
+                    const cv::Size& net_size = cv::Size(300, 300),
+                    const cv::Scalar& net_mean = cv::Scalar(127.5, 127.5, 127.5),
                     bool net_swapRB = false)
       : desired_class_id(desired_class_id), confidence_threshold(confidence_threshold), net_input_name(net_input_name),
         net_output_name(net_output_name), net_scalefactor(net_scalefactor), net_size(net_size), net_mean(net_mean),
         net_swapRB(net_swapRB) {
-    net = dnn::readNetFromCaffe(net_caffe_model_path, net_caffe_weights_path);
+    net = cv::dnn::readNetFromCaffe(net_caffe_model_path, net_caffe_weights_path);
     if(net.empty())
-      CV_Error(Error::StsError, "Cannot read Caffe net");
+      CV_Error(cv::Error::StsError, "Cannot cv::read Caffe net");
   }
   TrackedObjects
   detect(const cv::Mat& frame, int frame_idx) {
-    Mat resized_frame;
-    resize(frame, resized_frame, net_size);
-    Mat inputBlob = cv::dnn::blobFromImage(resized_frame, net_scalefactor, net_size, net_mean, net_swapRB);
+    cv::Mat resized_frame;
+    cv::resize(frame, resized_frame, net_size);
+    cv::Mat inputBlob = cv::dnn::blobFromImage(resized_frame, net_scalefactor, net_size, net_mean, net_swapRB);
 
     net.setInput(inputBlob, net_input_name);
-    Mat detection = net.forward(net_output_name);
-    Mat detection_as_mat(detection.size[2], detection.size[3], CV_32F, detection.ptr<float>());
+    cv::Mat detection = net.forward(net_output_name);
+    cv::Mat detection_as_mat(detection.size[2], detection.size[3], CV_32F, detection.ptr<float>());
 
     TrackedObjects res;
     for(int i = 0; i < detection_as_mat.rows; i++) {
@@ -88,7 +88,7 @@ public:
       int x_right = static_cast<int>(detection_as_mat.at<float>(i, 5) * frame.cols);
       int y_top = static_cast<int>(detection_as_mat.at<float>(i, 6) * frame.rows);
 
-      Rect cur_rect(x_left, y_bottom, (x_right - x_left), (y_top - y_bottom));
+      cv::Rect cur_rect(x_left, y_bottom, (x_right - x_left), (y_top - y_bottom));
 
       if(cur_confidence < confidence_threshold)
         continue;
@@ -96,7 +96,7 @@ public:
         continue;
 
       // clipping by frame size
-      cur_rect = cur_rect & Rect(Point(), frame.size());
+      cur_rect = cur_rect & cv::Rect(cv::Point(), frame.size());
       if(cur_rect.empty())
         continue;
 
@@ -110,11 +110,11 @@ private:
   cv::dnn::Net net;
   int desired_class_id;
   float confidence_threshold;
-  String net_input_name;
-  String net_output_name;
+  cv::String net_input_name;
+  cv::String net_output_name;
   double net_scalefactor;
-  Size net_size;
-  Scalar net_mean;
+  cv::Size net_size;
+  cv::Scalar net_mean;
   bool net_swapRB;
 };
 
@@ -135,14 +135,14 @@ createTrackerByMatchingWithFastDescriptor() {
 }
 int
 main(int argc, char** argv) {
-  CommandLineParser parser(argc, argv, keys);
+  cv::CommandLineParser parser(argc, argv, keys);
   cv::Ptr<ITrackerByMatching> tracker = createTrackerByMatchingWithFastDescriptor();
 
-  String video_name = parser.get<String>("video_name");
+  cv::String video_name = parser.get<String>("video_name");
   int start_frame = parser.get<int>("start_frame");
   int frame_step = parser.get<int>("frame_step");
-  String detector_model = parser.get<String>("detector_model");
-  String detector_weights = parser.get<String>("detector_weights");
+  cv::String detector_model = parser.get<String>("detector_model");
+  cv::String detector_weights = parser.get<String>("detector_weights");
   int desired_class_id = parser.get<int>("desired_class_id");
 
   if(video_name.empty() || detector_model.empty() || detector_weights.empty()) {
@@ -151,7 +151,7 @@ main(int argc, char** argv) {
   }
 
   // open the capture
-  VideoCapture cap;
+  cv::VideoCapture cap;
   cap.open(video_name);
   cap.set(CAP_PROP_POS_FRAMES, start_frame);
 
@@ -167,15 +167,15 @@ main(int argc, char** argv) {
   // Otherwise, set your own parameters (net_mean, net_scalefactor, etc).
   DnnObjectDetector detector(detector_model, detector_weights, desired_class_id);
 
-  Mat frame;
-  namedWindow("Tracking by Matching", 1);
+  cv::Mat frame;
+  cv::namedWindow("Tracking by Matching", 1);
 
   int frame_counter = -1;
   int64 time_total = 0;
   bool paused = false;
   for(;;) {
     if(paused) {
-      char c = (char)waitKey(30);
+      char c = (char)cv::waitKey(30);
       if(c == 'p')
         paused = !paused;
       if(c == 'q')
@@ -193,7 +193,7 @@ main(int argc, char** argv) {
     if(frame_counter % frame_step != 0)
       continue;
 
-    int64 frame_time = getTickCount();
+    int64 frame_time = cv::getTickCount();
 
     TrackedObjects detections = detector.detect(frame, frame_counter);
 
@@ -201,7 +201,7 @@ main(int argc, char** argv) {
     uint64_t cur_timestamp = static_cast<uint64_t>(1000.0 / 30 * frame_counter);
     tracker->process(frame, detections, cur_timestamp);
 
-    frame_time = getTickCount() - frame_time;
+    frame_time = cv::getTickCount() - frame_time;
     time_total += frame_time;
 
     // Drawing colored "worms" (tracks).
@@ -218,16 +218,16 @@ main(int argc, char** argv) {
       cv::putText(frame, text, detection.rect.tl(), cv::FONT_HERSHEY_COMPLEX, 1.0, cv::Scalar(0, 0, 255), 3);
     }
 
-    imshow("Tracking by Matching", frame);
+    cv::imshow("Tracking by Matching", frame);
 
-    char c = (char)waitKey(2);
+    char c = (char)cv::waitKey(2);
     if(c == 'q')
       break;
     if(c == 'p')
       paused = !paused;
   }
 
-  double s = frame_counter / (time_total / getTickFrequency());
+  double s = frame_counter / (time_total / cv::getTickFrequency());
   printf("FPS: %f\n", s);
 
   return 0;

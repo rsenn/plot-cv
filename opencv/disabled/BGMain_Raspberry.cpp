@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 bool isLeftSideDetected = false; // 摄像头视角的左边三分之一区域是否被触发
 bool isMiddleSideDetected = false;
@@ -36,7 +36,7 @@ int g_medianBlurThresh = 7;
 int g_medianBlurGridThresh = 1;
 int g_medianBlurMaxThresh = 30;
 RNG g_rng(123456);
-Rect g_rectangle;
+cv::Rect g_rectangle;
 bool g_bDrawingBox = false; //是否进行绘制
 bool showOutput = true;
 int modeGrid2 = false;      //格子使用动点检测方法
@@ -78,31 +78,31 @@ on_ContoursChangeHalf(int, void*) {
   saveConfig();
 }
 
-double preStartTime = getTickCount();
-double preStopTime = getTickCount();
+double preStartTime = cv::getTickCount();
+double preStopTime = cv::getTickCount();
 bool hasMotorStopped = false;
 void
 startMotor(int pinNum) {
-  if((getTickCount() - preStartTime) / getTickFrequency() * 1000 >= 1000 || hasMotorStopped) {
+  if((cv::getTickCount() - preStartTime) / cv::getTickFrequency() * 1000 >= 1000 || hasMotorStopped) {
     cout << "--启动电机" << endl;
     hasMotorStopped = false;
     char str[20] = {0};
-    sprintf(str, "gpio -g write %d 1", pinNum);
+    sprintf(str, "gpio -g cv::write %d 1", pinNum);
     system(str);
-    preStartTime = getTickCount();
+    preStartTime = cv::getTickCount();
   }
-  preStopTime = getTickCount();
+  preStopTime = cv::getTickCount();
 }
 
 void
 stopMotor(int pinNum) {
-  if((getTickCount() - preStopTime) / getTickFrequency() * 1000 >= 1000) {
+  if((cv::getTickCount() - preStopTime) / cv::getTickFrequency() * 1000 >= 1000) {
     cout << "--停止电机" << endl;
     hasMotorStopped = true;
     char str[20] = {0};
-    sprintf(str, "gpio -g write %d 0", pinNum);
+    sprintf(str, "gpio -g cv::write %d 0", pinNum);
     system(str);
-    preStopTime = getTickCount();
+    preStopTime = cv::getTickCount();
   }
 }
 
@@ -195,7 +195,7 @@ main(int argc, char** argv) {
   cout << "Running:" << endl;
   cout << "\t1.配置文件路径: config/VideoCapture_config.xml" << endl;
 
-  VideoCapture capture(CAMERA_NUM);
+  cv::VideoCapture capture(CAMERA_NUM);
   if(!capture.isOpened()) {
     cerr << "--打开摄像头错误，请检查，重试" << endl;
     // sleep(3);
@@ -215,21 +215,21 @@ main(int argc, char** argv) {
       capture.set(cv::CAP_PROP_GAIN, camera_GAIN);
     }
     while(1) {
-      double t = (double)getTickCount();
+      double t = (double)cv::getTickCount();
       capture >> g_srcImage;
       if(g_srcImage.empty()) {
         cout << "frame empty, exit" << endl;
         break;
       }
       if(image_fliped_direc != -2) { //如果原始图像需要进行翻转
-        flip(g_srcImage, g_srcImage_fliped, image_fliped_direc);
+        cv::flip(g_srcImage, g_srcImage_fliped, image_fliped_direc);
         g_srcImage = g_srcImage_fliped; //将翻转之后的图像替换原始图像
       }
       if(showOutput) {
         if(!hasInitedSrcWindow) { //如果还没有初始化显示窗口
-          namedWindow(WINDOW_SRC, WINDOW_AUTOSIZE);
-          setMouseCallback(WINDOW_SRC, on_MouseHandle, (void*)&g_srcImage); //设置鼠标操作回调函数
-          createTrackbar("contous", WINDOW_SRC, &g_medianBlurGridThresh, g_medianBlurMaxThresh, on_ContoursChange);
+          cv::namedWindow(WINDOW_SRC, cv::WINDOW_AUTOSIZE);
+          cv::setMouseCallback(WINDOW_SRC, on_MouseHandle, (void*)&g_srcImage); //设置鼠标操作回调函数
+          cv::createTrackbar("contous", WINDOW_SRC, &g_medianBlurGridThresh, g_medianBlurMaxThresh, on_ContoursChange);
           on_ContoursChange(0, 0);
           hasInitedSrcWindow = true;
         }
@@ -245,7 +245,7 @@ main(int argc, char** argv) {
           }
           int x2 = RIGHT_BOTTOM_X;
           int y2 = y1;
-          line(g_srcImage, cv::Point(x1, y1), cv::Point(x2, y2), Scalar(0, 255, 255), 1);
+          cv::line(g_srcImage, cv::Point(x1, y1), cv::Point(x2, y2), cv::Scalar(0, 255, 255), 1);
         }
         for(int j = 0; j < col_count + 1; j++) {
           int x1 = LEFT_TOP_X + j * grid_width + 1;
@@ -255,7 +255,7 @@ main(int argc, char** argv) {
           int y1 = LEFT_TOP_Y;
           int x2 = x1;
           int y2 = RIGHT_BOTTOM_Y;
-          line(g_srcImage, cv::Point(x1, y1), cv::Point(x2, y2), Scalar(0, 255, 255), 1);
+          cv::line(g_srcImage, cv::Point(x1, y1), cv::Point(x2, y2), cv::Scalar(0, 255, 255), 1);
         }
       }
 
@@ -265,23 +265,23 @@ main(int argc, char** argv) {
                    img_bkgmodel); // by default, it shows automatically the foreground mask image
 
       // 1.对前景移动物体进行滤波,中值滤波
-      medianBlur(img_mask, g_filterImage, g_medianBlurGridThresh);
+      cv::medianBlur(img_mask, g_filterImage, g_medianBlurGridThresh);
 
       // 找出运动物体轮廓
       std::vector<std::vector<cv::Point>> contours;
-      std::vector<Vec4i> hierarchy;
-      findContours(g_filterImage, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+      std::vector<cv::Vec4i> hierarchy;
+      cv::findContours(g_filterImage, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
       // 多边形逼近轮廓+获取矩形和圆形边界框
       std::vector<std::vector<cv::Point>> contours_poly(contours.size());
-      std::vector<Rect> boundRect(contours.size());
+      std::vector<cv::Rect> boundRect(contours.size());
       std::vector<cv::Point2f> center(contours.size());
       std::vector<float> radius(contours.size());
 
       int grid_array[100][100] = {0}; //定义存储格子值的数组，最大100格子精度
       // 循环遍历所有的部分
       for(unsigned int i = 0; i < contours.size(); i++) {
-        approxPolyDP(cv::Mat(contours[i]), contours_poly[i], 3, true); //用指定精度逼近多边形曲线
+        cv::approxPolyDP(cv::Mat(contours[i]), contours_poly[i], 3, true); //用指定精度逼近多边形曲线
         for(std::vector<cv::Point>::const_iterator itp = contours_poly[i].begin(); itp != contours_poly[i].end(); itp++) {
           setGridStatus(itp->x, itp->y, grid_array);
         }
@@ -305,7 +305,7 @@ main(int argc, char** argv) {
               cv::Point p0;
               p0.x = x + grid_width / 2;
               p0.y = y + grid_height / 2;
-              circle(g_srcImage, p0, 5, Scalar(0, 0, 255), -1);
+              cv::circle(g_srcImage, p0, 5, cv::Scalar(0, 0, 255), -1);
             }
           }
         }
@@ -324,18 +324,18 @@ main(int argc, char** argv) {
       // cv::Mat drawing = cv::Mat::zeros(g_filterImage.size(), CV_8UC3);
       // for (int unsigned i = 0; i<contours.size(); i++)
       //{
-      //	Scalar color = Scalar(g_rng.uniform(0, 255), g_rng.uniform(0, 255), g_rng.uniform(0,
-      // 255));//设置随机颜色 	drawContours(drawing, contours_poly, i, color, 1, 8,
-      // std::vector<Vec4i>(), 0, cv::Point());//绘制轮廓
+      //	cv::Scalar color = cv::Scalar(g_rng.uniform(0, 255), g_rng.uniform(0, 255), g_rng.uniform(0,
+      // 255));//设置随机颜色 	cv::drawContours(drawing, contours_poly, i, color, 1, 8,
+      // std::vector<cv::Vec4i>(), 0, cv::Point());//绘制轮廓
       //}
 
       if(showOutput) {
-        imshow(WINDOW_SRC, g_srcImage); // 显示经过处理之后的彩色图像
-        // namedWindow(WINDOW_DEST, WINDOW_AUTOSIZE);
-        // imshow(WINDOW_DEST, drawing);
+        cv::imshow(WINDOW_SRC, g_srcImage); // 显示经过处理之后的彩色图像
+        // cv::namedWindow(WINDOW_DEST, cv::WINDOW_AUTOSIZE);
+        // cv::imshow(WINDOW_DEST, drawing);
       }
 
-      t = ((double)getTickCount() - t) / getTickFrequency();
+      t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
       if(showOutput) {
         cout << "--time= " << t * 1000 << " ms" << endl;
       }
@@ -378,20 +378,20 @@ main(int argc, char** argv) {
         break;
       }
       if(image_fliped_direc != -2) { //如果原始图像需要进行翻转
-        flip(g_srcImage, g_srcImage_fliped, image_fliped_direc);
+        cv::flip(g_srcImage, g_srcImage_fliped, image_fliped_direc);
         g_srcImage = g_srcImage_fliped; //将翻转之后的图像替换原始图像
       }
       if(showOutput) {
         if(!hasInitedSrcWindow) { //如果还没有初始化显示窗口
-          namedWindow(WINDOW_SRC, WINDOW_AUTOSIZE);
-          setMouseCallback(WINDOW_SRC, on_MouseHandle, (void*)&g_srcImage); //设置鼠标操作回调函数
-          createTrackbar("contous", WINDOW_SRC, &histMinValue, g_medianBlurMaxThresh, on_ContoursChangeHalf);
+          cv::namedWindow(WINDOW_SRC, cv::WINDOW_AUTOSIZE);
+          cv::setMouseCallback(WINDOW_SRC, on_MouseHandle, (void*)&g_srcImage); //设置鼠标操作回调函数
+          cv::createTrackbar("contous", WINDOW_SRC, &histMinValue, g_medianBlurMaxThresh, on_ContoursChangeHalf);
           on_ContoursChangeHalf(0, 0);
           hasInitedSrcWindow = true;
         }
         if(g_bDrawingBox)
           DrawRectangle(g_srcImage, g_rectangle); //当进行绘制的标识符为真，则进行绘制
-        imshow(WINDOW_SRC, g_srcImage);
+        cv::imshow(WINDOW_SRC, g_srcImage);
       }
       if(readPicCount <= 99) {
         readPicCount++;
@@ -399,28 +399,28 @@ main(int argc, char** argv) {
         continue;
       } else if(readPicCount == 100) {
         readPicCount++;
-        cvtColor(g_srcImage, hsvImage_base,
+        cv::cvtColor(g_srcImage, hsvImage_base,
                  COLOR_BGR2HSV); //【3】 将图像由BGR色彩空间转换到 HSV色彩空间
         hsvImage_halfDown =
-            hsvImage_base(Rect(LEFT_TOP_X, LEFT_TOP_Y, RIGHT_BOTTOM_X - LEFT_TOP_X, RIGHT_BOTTOM_Y - LEFT_TOP_Y));
+            hsvImage_base(cv::Rect(LEFT_TOP_X, LEFT_TOP_Y, RIGHT_BOTTOM_X - LEFT_TOP_X, RIGHT_BOTTOM_Y - LEFT_TOP_Y));
         if(showOutput) { //显示部分框选画面
-          imshow("ROI", hsvImage_halfDown);
+          cv::imshow("ROI", hsvImage_halfDown);
         }
         cout << "--复制初始图像到模板图像中" << endl;
         hsvImage_base_template = hsvImage_halfDown.clone();
       } else {
         //【3】 将图像由BGR色彩空间转换到 HSV色彩空间
-        cvtColor(g_srcImage, hsvImage_base, COLOR_BGR2HSV);
+        cv::cvtColor(g_srcImage, hsvImage_base, COLOR_BGR2HSV);
 
         //【4】创建包含基准图像下半部的半身图像(HSV格式)
         //从原始图像中提取感兴趣的区域，每帧图像与模板区域进行比较
         hsvImage_halfDown =
-            hsvImage_base(Rect(LEFT_TOP_X, LEFT_TOP_Y, RIGHT_BOTTOM_X - LEFT_TOP_X, RIGHT_BOTTOM_Y - LEFT_TOP_Y));
+            hsvImage_base(cv::Rect(LEFT_TOP_X, LEFT_TOP_Y, RIGHT_BOTTOM_X - LEFT_TOP_X, RIGHT_BOTTOM_Y - LEFT_TOP_Y));
         if(showOutput) { //显示部分框选画面
-          imshow("ROI", hsvImage_halfDown);
+          cv::imshow("ROI", hsvImage_halfDown);
         }
         // 【5】分别计算基准图像，半身基准图像的HSV直方图:
-        calcHist(&hsvImage_base_template,
+        cv::calcHist(&hsvImage_base_template,
                  1,
                  channels,
                  cv::Mat(),
@@ -430,10 +430,10 @@ main(int argc, char** argv) {
                  ranges,
                  true,
                  false); //计算模板图像的直方图
-        normalize(baseHist, baseHist, 0, 1, NORM_MINMAX, -1, cv::Mat());
+        cv::normalize(baseHist, baseHist, 0, 1, NORM_MINMAX, -1, cv::Mat());
 
-        calcHist(&hsvImage_halfDown, 1, channels, cv::Mat(), halfDownHist, 2, histSize, ranges, true, false);
-        normalize(halfDownHist, halfDownHist, 0, 1, NORM_MINMAX, -1, cv::Mat());
+        cv::calcHist(&hsvImage_halfDown, 1, channels, cv::Mat(), halfDownHist, 2, histSize, ranges, true, false);
+        cv::normalize(halfDownHist, halfDownHist, 0, 1, NORM_MINMAX, -1, cv::Mat());
 
         //【6】按顺序使用第一种对比标准将基准图像的直方图与其余各直方图进行对比:
         //进行图像直方图的对比
@@ -518,7 +518,7 @@ on_MouseHandle(int event, int x, int y, int flags, void* param) {
     //左键按下消息
     case EVENT_LBUTTONDOWN: {
       g_bDrawingBox = true;
-      g_rectangle = Rect(x, y, 0, 0); //记录起始点
+      g_rectangle = cv::Rect(x, y, 0, 0); //记录起始点
     } break;
 
     //左键抬起消息

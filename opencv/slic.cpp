@@ -3,14 +3,14 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/core/utility.hpp>
 
-#include <opencv2/ximgproc.hpp>
+#include <opencv2/cv::ximgproc.hpp>
 
 #include <ctype.h>
 #include <stdio.h>
 #include <iostream>
 
-using namespace cv;
-using namespace cv::ximgproc;
+//using namespace cv;
+//using namespace cv::ximgproc;
 using namespace std;
 
 static const char* window_name = "SLIC Superpixels";
@@ -22,7 +22,7 @@ static const char* keys = "{h help      | | help menu}"
 
 int
 main(int argc, char** argv) {
-  CommandLineParser cmd(argc, argv, keys);
+  cv::CommandLineParser cmd(argc, argv, keys);
   if(cmd.has("help")) {
     cmd.about("This program demonstrates SLIC superpixels using OpenCV class SuperpixelSLIC.\n"
               "If no image file is supplied, try to open a webcam.\n"
@@ -31,7 +31,7 @@ main(int argc, char** argv) {
     return 0;
   }
   int capture = cmd.get<int>("camera");
-  String img_file = cmd.get<String>("image");
+  cv::String img_file = cmd.get<String>("image");
   int algorithm = cmd.get<int>("algorithm");
   int region_size = 50;
   int ruler = 30;
@@ -39,7 +39,7 @@ main(int argc, char** argv) {
   int num_iterations = 3;
   bool use_video_capture = img_file.empty();
 
-  VideoCapture cap;
+  cv::VideoCapture cap;
   cv::Mat input_image;
 
   if(use_video_capture) {
@@ -48,19 +48,19 @@ main(int argc, char** argv) {
       return -1;
     }
   } else {
-    input_image = imread(img_file);
+    input_image = cv::imread(img_file);
     if(input_image.empty()) {
       cout << "Could not open image..." << img_file << "\n";
       return -1;
     }
   }
 
-  namedWindow(window_name, 0);
-  createTrackbar("Algorithm", window_name, &algorithm, 2, 0);
-  createTrackbar("Region size", window_name, &region_size, 200, 0);
-  createTrackbar("Ruler", window_name, &ruler, 100, 0);
-  createTrackbar("Connectivity", window_name, &min_element_size, 100, 0);
-  createTrackbar("Iterations", window_name, &num_iterations, 12, 0);
+  cv::namedWindow(window_name, 0);
+  cv::createTrackbar("Algorithm", window_name, &algorithm, 2, 0);
+  cv::createTrackbar("Region size", window_name, &region_size, 200, 0);
+  cv::createTrackbar("Ruler", window_name, &ruler, 100, 0);
+  cv::createTrackbar("Connectivity", window_name, &min_element_size, 100, 0);
+  cv::createTrackbar("Iterations", window_name, &num_iterations, 12, 0);
 
   cv::Mat result, mask;
   int display_mode = 0;
@@ -77,30 +77,30 @@ main(int argc, char** argv) {
 
     result = frame;
     cv::Mat converted;
-    cvtColor(frame, converted, COLOR_BGR2HSV);
+    cv::cvtColor(frame, converted, COLOR_BGR2HSV);
 
-    double t = (double)getTickCount();
+    double t = (double)cv::getTickCount();
 
     Ptr<SuperpixelSLIC> slic = createSuperpixelSLIC(converted, algorithm + SLIC, region_size, float(ruler));
     slic->iterate(num_iterations);
     if(min_element_size > 0)
       slic->enforceLabelConnectivity(min_element_size);
 
-    t = ((double)getTickCount() - t) / getTickFrequency();
+    t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
     cout << "SLIC" << (algorithm ? 'O' : ' ') << " segmentation took " << (int)(t * 1000) << " ms with "
          << slic->getNumberOfSuperpixels() << " superpixels" << endl;
 
     // get the contours for displaying
     slic->getLabelContourMask(mask, true);
-    result.setTo(Scalar(0, 0, 255), mask);
+    result.setTo(cv::Scalar(0, 0, 255), mask);
 
     // display output
     switch(display_mode) {
       case 0: // superpixel contours
-        imshow(window_name, result);
+        cv::imshow(window_name, result);
         break;
       case 1: // mask
-        imshow(window_name, mask);
+        cv::imshow(window_name, mask);
         break;
       case 2: { // labels array
         // use the last x bit to determine the color. Note that this does not
@@ -111,12 +111,12 @@ main(int argc, char** argv) {
         const int num_label_bits = 2;
         labels &= (1 << num_label_bits) - 1;
         labels *= 1 << (16 - num_label_bits);
-        imshow(window_name, labels);
+        cv::imshow(window_name, labels);
         break;
       }
     }
 
-    int c = waitKey(1) & 0xff;
+    int c = cv::waitKey(1) & 0xff;
     if(c == 'q' || c == 'Q' || c == 27)
       break;
     else if(c == ' ')

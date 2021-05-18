@@ -29,7 +29,7 @@ uv_loop_t* loop;
 struct TMessage {
   Persistent<Function> callBack;
   cv::VideoCapture* capture;
-  bool resize;
+  bool cv::resize;
   int32_t width, height;
   bool window;
   std::string codec;
@@ -88,9 +88,9 @@ CameraOpen(uv_work_t* req) {
     msg->window = message->window;
 
     // Capture Frame From WebCam
-    message->capture->read(tmp);
+    message->capture->cv::read(tmp);
 
-    if(message->resize) {
+    if(message->cv::resize) {
       cv::Size size = cv::Size(message->width, message->height);
       cv::resize(tmp, rsz, size);
       msg->frame = rsz;
@@ -111,7 +111,7 @@ CameraOpen(uv_work_t* req) {
     compression_parameters[1] = 85;
 
     // Encode to jpg
-    if(message->resize) {
+    if(message->cv::resize) {
       cv::imencode(message->codec, rsz, msg->image, compression_parameters);
     } else {
       cv::imencode(message->codec, tmp, msg->image, compression_parameters);
@@ -153,8 +153,8 @@ GetPreviewSize(const FunctionCallbackInfo<Value>& args) {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
   Local<Object> obj = Object::New(isolate);
-  obj->Set(String::NewFromUtf8(isolate, "width"), Integer::New(isolate, preview_width));
-  obj->Set(String::NewFromUtf8(isolate, "height"), Integer::New(isolate, preview_height));
+  obj->Set(cv::String::NewFromUtf8(isolate, "width"), Integer::New(isolate, preview_width));
+  obj->Set(cv::String::NewFromUtf8(isolate, "height"), Integer::New(isolate, preview_height));
   args.GetReturnValue().Set(obj);
 }
 
@@ -169,7 +169,7 @@ Open(const FunctionCallbackInfo<Value>& args) {
   m_brk = 1;
   if(!args[0]->IsFunction()) {
     isolate->ThrowException(
-        Exception::TypeError(String::NewFromUtf8(isolate, "First argument must be frame callback function")));
+        Exception::TypeError(cv::String::NewFromUtf8(isolate, "First argument must be frame callback function")));
     return;
   }
 
@@ -182,23 +182,23 @@ Open(const FunctionCallbackInfo<Value>& args) {
   if(args.Length() == 2) {
     // Second parameter is parameters, which contains on Json object having width and height
     if(!args[1]->IsObject()) {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Second argument must be object")));
+      isolate->ThrowException(Exception::TypeError(cv::String::NewFromUtf8(isolate, "Second argument must be object")));
       return;
     }
     Local<Object> params = args[1]->ToObject();
-    if(params->Has(String::NewFromUtf8(isolate, "width"))) {
-      message->width = params->Get(String::NewFromUtf8(isolate, "width"))->Int32Value();
-      message->height = params->Get(String::NewFromUtf8(isolate, "height"))->Int32Value();
+    if(params->Has(cv::String::NewFromUtf8(isolate, "width"))) {
+      message->width = params->Get(cv::String::NewFromUtf8(isolate, "width"))->Int32Value();
+      message->height = params->Get(cv::String::NewFromUtf8(isolate, "height"))->Int32Value();
     }
-    if(params->Has(String::NewFromUtf8(isolate, "window"))) {
-      message->window = params->Get(String::NewFromUtf8(isolate, "window"))->BooleanValue();
+    if(params->Has(cv::String::NewFromUtf8(isolate, "window"))) {
+      message->window = params->Get(cv::String::NewFromUtf8(isolate, "window"))->BooleanValue();
     }
-    if(params->Has(String::NewFromUtf8(isolate, "codec"))) {
-      Local<String> val = params->Get(String::NewFromUtf8(isolate, "codec"))->ToString();
+    if(params->Has(cv::String::NewFromUtf8(isolate, "codec"))) {
+      Local<cv::String> val = params->Get(String::NewFromUtf8(isolate, "codec"))->ToString();
       message->codec = stringValue(val);
     }
-    if(params->Has(String::NewFromUtf8(isolate, "input"))) {
-      Local<Value> input = params->Get(String::NewFromUtf8(isolate, "input"));
+    if(params->Has(cv::String::NewFromUtf8(isolate, "input"))) {
+      Local<Value> input = params->Get(cv::String::NewFromUtf8(isolate, "input"));
       if(!input->IsNumber()) {
         inputString = stringValue(input);
       }
@@ -227,7 +227,7 @@ Open(const FunctionCallbackInfo<Value>& args) {
   uv_async_init(loop, &async, (uv_async_cb)updateAsync);
   uv_queue_work(loop, req, CameraOpen, (uv_after_work_cb)CameraClose);
 
-  args.GetReturnValue().Set(String::NewFromUtf8(isolate, "ok"));
+  args.GetReturnValue().Set(cv::String::NewFromUtf8(isolate, "ok"));
 }
 
 void
@@ -239,17 +239,17 @@ Close(const FunctionCallbackInfo<Value>& args) {
   uv_loop_close(loop);
   uv_close((uv_handle_t*)&async, NULL);
   cv::destroyWindow("Preview");
-  args.GetReturnValue().Set(String::NewFromUtf8(isolate, "ok"));
+  args.GetReturnValue().Set(cv::String::NewFromUtf8(isolate, "ok"));
 }
 
 void
 init(Handle<Object> exports) {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
-  exports->Set(String::NewFromUtf8(isolate, "Open"), FunctionTemplate::New(isolate, Open)->GetFunction());
-  exports->Set(String::NewFromUtf8(isolate, "Close"), FunctionTemplate::New(isolate, Close)->GetFunction());
-  exports->Set(String::NewFromUtf8(isolate, "IsOpen"), FunctionTemplate::New(isolate, IsOpen)->GetFunction());
-  exports->Set(String::NewFromUtf8(isolate, "GetPreviewSize"), FunctionTemplate::New(isolate, GetPreviewSize)->GetFunction());
+  exports->Set(cv::String::NewFromUtf8(isolate, "Open"), FunctionTemplate::New(isolate, Open)->GetFunction());
+  exports->Set(cv::String::NewFromUtf8(isolate, "Close"), FunctionTemplate::New(isolate, Close)->GetFunction());
+  exports->Set(cv::String::NewFromUtf8(isolate, "IsOpen"), FunctionTemplate::New(isolate, IsOpen)->GetFunction());
+  exports->Set(cv::String::NewFromUtf8(isolate, "GetPreviewSize"), FunctionTemplate::New(isolate, GetPreviewSize)->GetFunction());
 }
 
 std::string

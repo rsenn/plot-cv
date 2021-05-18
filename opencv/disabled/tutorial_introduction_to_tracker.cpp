@@ -6,7 +6,7 @@
 #include <cstring>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 int
 main(int argc, char** argv) {
@@ -25,18 +25,18 @@ main(int argc, char** argv) {
   // declares all required variables
   //! [vars]
   Rect2d roi;
-  Mat frame;
+  cv::Mat frame;
   //! [vars]
 
   // create a tracker object
   //! [create]
-  Ptr<Tracker> tracker = TrackerKCF::create();
+  Ptr<cv::Tracker> tracker = cv::TrackerKCF::create();
   //! [create]
 
   // set input video
   //! [setvideo]
   std::string video = argv[1];
-  VideoCapture cap(video);
+  cv::VideoCapture cap(video);
   //! [setvideo]
 
   // get bounding box
@@ -44,7 +44,7 @@ main(int argc, char** argv) {
   cap >> frame;
   //! [getframe]
   //! [selectroi]
-  roi = selectROI("tracker", frame);
+  roi = cv::selectROI("tracker", frame);
   //! [selectroi]
 
   // quit if ROI was not selected
@@ -73,14 +73,14 @@ main(int argc, char** argv) {
 
     //! [visualization]
     // draw the tracked object
-    rectangle(frame, roi, Scalar(255, 0, 0), 2, 1);
+    cv::rectangle(frame, roi, cv::Scalar(255, 0, 0), 2, 1);
 
     // show image with the tracked object
-    imshow("tracker", frame);
+    cv::imshow("tracker", frame);
     //! [visualization]
 
     // quit on ESC button
-    if(waitKey(1) == 27)
+    if(cv::waitKey(1) == 27)
       break;
   }
 

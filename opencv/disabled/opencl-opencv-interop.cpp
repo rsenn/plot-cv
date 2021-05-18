@@ -22,14 +22,14 @@
 #include <CL/cl.h>
 #endif
 
-#include <opencv2/core/ocl.hpp>
+#include <opencv2/core/cv::ocl.hpp>
 #include <opencv2/core/utility.hpp>
 #include <opencv2/video.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 namespace opencl {
 
@@ -82,7 +82,7 @@ private:
     if(CL_SUCCESS != res)
       throw std::runtime_error(std::string("clGetPlatformInfo failed"));
 
-    buf.resize(psize);
+    buf.cv::resize(psize);
     res = clGetPlatformInfo(id, param, psize, buf, 0);
     if(CL_SUCCESS != res)
       throw std::runtime_error(std::string("clGetPlatformInfo failed"));
@@ -268,7 +268,7 @@ private:
     if(0 == size)
       return CL_SUCCESS;
 
-    value.resize(size / sizeof(T));
+    value.cv::resize(size / sizeof(T));
 
     res = clGetDeviceInfo(id, param, size, &value[0], 0);
     if(CL_SUCCESS != res)
@@ -286,7 +286,7 @@ private:
     if(CL_SUCCESS != res)
       throw std::runtime_error(std::string("clGetDeviceInfo failed"));
 
-    value.resize(size + 1);
+    value.cv::resize(size + 1);
 
     res = clGetDeviceInfo(id, param, size, &value[0], 0);
     if(CL_SUCCESS != res)
@@ -417,7 +417,7 @@ private:
 
 class App {
 public:
-  App(CommandLineParser& cmd);
+  App(cv::CommandLineParser& cmd);
   ~App();
 
   int initOpenCL();
@@ -458,7 +458,7 @@ public:
 protected:
   bool
   nextFrame(cv::Mat& frame) {
-    return m_cap.read(frame);
+    return m_cap.cv::read(frame);
   }
   void handleKey(char key);
   void timerStart();
@@ -496,7 +496,7 @@ private:
   cl_event m_event;
 };
 
-App::App(CommandLineParser& cmd) {
+App::App(cv::CommandLineParser& cmd) {
   cout << "\nPress ESC to exit\n" << endl;
   cout << "\n      'p' to toggle ON/OFF processing\n" << endl;
   cout << "\n       SPACE to switch between OpenCL buffer/image\n" << endl;
@@ -580,7 +580,7 @@ App::initOpenCL() {
   if(CL_SUCCESS != res)
     return -1;
 
-  m_platform_ids.resize(num_entries);
+  m_platform_ids.cv::resize(num_entries);
 
   res = clGetPlatformIDs(num_entries, &m_platform_ids[0], 0);
   if(CL_SUCCESS != res)
@@ -806,8 +806,8 @@ App::process_frame_with_open_cl(cv::Mat& frame, bool use_buffer, cl_mem* mem_obj
 }
 
 // this function is an example of interoperability between OpenCL buffer
-// and OpenCV UMat objects. It converts (without copying data) OpenCL buffer
-// to OpenCV UMat and then do blur on these data
+// and OpenCV cv::UMat objects. It converts (without copying data) OpenCL buffer
+// to OpenCV cv::UMat and then do cv::blur on these data
 int
 App::process_cl_buffer_with_opencv(cl_mem buffer, size_t step, int rows, int cols, int type, cv::UMat& u) {
   cv::ocl::convertFromBuffer(buffer, step, rows, cols, type, u);
@@ -827,8 +827,8 @@ App::process_cl_buffer_with_opencv(cl_mem buffer, size_t step, int rows, int col
 }
 
 // this function is an example of interoperability between OpenCL image
-// and OpenCV UMat objects. It converts OpenCL image
-// to OpenCV UMat and then do blur on these data
+// and OpenCV cv::UMat objects. It converts OpenCL image
+// to OpenCV cv::UMat and then do cv::blur on these data
 int
 App::process_cl_image_with_opencv(cl_mem image, cv::UMat& u) {
   cv::ocl::convertFromImage(image, u);
@@ -859,7 +859,7 @@ App::run() {
   if(0 != initVideoSource())
     return -1;
 
-  Mat img_to_show;
+  cv::Mat img_to_show;
 
   // set running state until ESC pressed
   setRunning(true);
@@ -876,7 +876,7 @@ App::run() {
   while(isRunning() && nextFrame(m_frame)) {
     cv::cvtColor(m_frame, m_frameGray, COLOR_BGR2GRAY);
 
-    UMat uframe;
+    cv::UMat uframe;
 
     // work
     timerStart();
@@ -897,17 +897,17 @@ App::run() {
 
     uframe.copyTo(img_to_show);
 
-    putText(
-        img_to_show, "Version : " + m_platformInfo.Version(), Point(5, 30), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
-    putText(img_to_show, "Name : " + m_platformInfo.Name(), Point(5, 60), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
-    putText(img_to_show, "Device : " + m_deviceInfo.Name(), Point(5, 90), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
+    cv::putText(
+        img_to_show, "Version : " + m_platformInfo.Version(), cv::Point(5, 30), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
+    cv::putText(img_to_show, "Name : " + m_platformInfo.Name(), cv::Point(5, 60), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
+    cv::putText(img_to_show, "Device : " + m_deviceInfo.Name(), cv::Point(5, 90), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
     cv::String memtype = useBuffer() ? "buffer" : "image";
-    putText(img_to_show, "interop with OpenCL " + memtype, Point(5, 120), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
-    putText(img_to_show, "Time : " + timeStr() + " msec", Point(5, 150), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
+    cv::putText(img_to_show, "interop with OpenCL " + memtype, cv::Point(5, 120), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
+    cv::putText(img_to_show, "Time : " + timeStr() + " msec", cv::Point(5, 150), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
 
-    imshow("opencl_interop", img_to_show);
+    cv::imshow("opencl_interop", img_to_show);
 
-    handleKey((char)waitKey(3));
+    handleKey((char)cv::waitKey(3));
   }
 
   return 0;
@@ -929,12 +929,12 @@ App::handleKey(char key) {
 
 inline void
 App::timerStart() {
-  m_t0 = getTickCount();
+  m_t0 = cv::getTickCount();
 }
 
 inline void
 App::timerEnd() {
-  m_t1 = getTickCount();
+  m_t1 = cv::getTickCount();
   int64 delta = m_t1 - m_t0;
   m_time = (delta / m_frequency) * 1000; // units msec
 }
@@ -952,7 +952,7 @@ main(int argc, char** argv) {
                      "{ camera c    | -1       | use camera as input }"
                      "{ video  v    |          | use video as input }";
 
-  CommandLineParser cmd(argc, argv, keys);
+  cv::CommandLineParser cmd(argc, argv, keys);
   if(cmd.has("help")) {
     cmd.printMessage();
     return EXIT_SUCCESS;
@@ -965,12 +965,12 @@ main(int argc, char** argv) {
   }
 
   catch(const cv::Exception& e) {
-    cout << "error: " << e.what() << endl;
+    cout << "cv::error: " << e.what() << endl;
     return 1;
   }
 
   catch(const std::exception& e) {
-    cout << "error: " << e.what() << endl;
+    cout << "cv::error: " << e.what() << endl;
     return 1;
   }
 

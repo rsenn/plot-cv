@@ -1,12 +1,12 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <opencv2/dnn.hpp>
+#include <opencv2/cv::dnn.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 
-using namespace cv;
-using namespace dnn;
+//using namespace cv;
+using namespace cv::dnn;
 using namespace std;
 
 struct Net_config {

@@ -16,7 +16,7 @@
 #include <opencv2/cvv/final_show.hpp>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 template<class T>
 std::string
@@ -37,7 +37,7 @@ main(int argc, char** argv) {
                      "{ width W         |  0| camera resolution width. leave at 0 to use defaults }"
                      "{ height H        |  0| camera resolution height. leave at 0 to use defaults }";
 
-  CommandLineParser parser(argc, argv, keys);
+  cv::CommandLineParser parser(argc, argv, keys);
   if(parser.has("help")) {
     parser.printMessage();
     return 0;
@@ -48,7 +48,7 @@ main(int argc, char** argv) {
   // setup video capture
   cv::VideoCapture capture(0);
   if(!capture.isOpened()) {
-    std::cout << "Could not open VideoCapture" << std::endl;
+    std::cout << "Could not open cv::VideoCapture" << std::endl;
     return 1;
   }
 
@@ -100,7 +100,7 @@ main(int argc, char** argv) {
       // remove worst (as defined by match distance) bestRatio quantile
       double bestRatio = 0.8;
       std::sort(matches.begin(), matches.end());
-      matches.resize(int(bestRatio * matches.size()));
+      matches.cv::resize(int(bestRatio * matches.size()));
       printf("%d: best matches size=%zd\n", imgId, matches.size());
       std::string bestMatchIdString{"best " + toString(bestRatio) + " matches "};
       bestMatchIdString += toString(imgId - 1) + "<->" + toString(imgId);

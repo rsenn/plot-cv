@@ -6,7 +6,7 @@
 #include "../src/polygon.hpp"
 #include "../src/data.hpp"
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 const float STEP = 5;
@@ -28,33 +28,33 @@ onMouse1(int event, int x, int y, int foo, void* p) {
 
 int
 main() {
-  // cv::Mat A=imread("../segmentation.png");
-  // cv::Mat A = imread("test-images/pieuvre.jpg");
-  // cv::Mat A = imread("test-images/eiffel.jpg");
-  cv::Mat A = imread("test-images/starfish.jpg");
-  namedWindow(WIN_NAME);
-  imshow(WIN_NAME, A);
+  // cv::Mat A=cv::imread("../segmentation.png");
+  // cv::Mat A = cv::imread("test-images/pieuvre.jpg");
+  // cv::Mat A = cv::imread("test-images/eiffel.jpg");
+  cv::Mat A = cv::imread("test-images/starfish.jpg");
+  cv::namedWindow(WIN_NAME);
+  cv::imshow(WIN_NAME, A);
   Data* D = new Data(A);
   bool modifyPolygon = true;
-  imshow("gGradient", float2byte(D->gGradient));
-  imshow("gx", float2byte(D->gx));
-  imshow("gy", float2byte(D->gy));
+  cv::imshow("gGradient", float2byte(D->gGradient));
+  cv::imshow("gx", float2byte(D->gx));
+  cv::imshow("gy", float2byte(D->gy));
   cout << "Gradient computing done, please define polygon." << endl;
-  imshow(WIN_NAME, float2byte(D->image));
-  setMouseCallback(WIN_NAME, onMouse1, D);
-  waitKey();
+  cv::imshow(WIN_NAME, float2byte(D->image));
+  cv::setMouseCallback(WIN_NAME, onMouse1, D);
+  cv::waitKey();
   cout << "Polygon definition is over" << endl;
-  setMouseCallback(WIN_NAME, NULL, NULL);
+  cv::setMouseCallback(WIN_NAME, NULL, NULL);
   cv::Mat Imcloned;
   // force ballon:
   while(true) {
     cout << "Gradient descent ...";
     D->draw_next_step(STEP, D->image.clone(), mode);
-    waitKey();
+    cv::waitKey();
     D->find_contour(STEP, mode);
     // cout << "found contour" << endl;
     D->polygon.draw_polygon(D->image.clone());
-    waitKey();
+    cv::waitKey();
     cout << "Done." << endl;
   }
   return 0;
@@ -63,7 +63,7 @@ main() {
 cv::Mat
 float2byte(const cv::Mat& If) {
   double minVal, maxVal;
-  minMaxLoc(If, &minVal, &maxVal);
+  cv::minMaxLoc(If, &minVal, &maxVal);
   cv::Mat Ib;
   If.convertTo(Ib, CV_8U, 255.0 / (maxVal - minVal), -minVal * 255.0 / (maxVal - minVal));
   return Ib;

@@ -38,9 +38,9 @@
 #include <opencv2/core/utility.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
-#include <opencv2/ximgproc.hpp>
-// using namespace cv;
-using namespace cv::ximgproc;
+#include <opencv2/cv::ximgproc.hpp>
+//// using namespace cv;
+//using namespace cv::ximgproc;
 
 #include <iostream>
 using namespace std;
@@ -89,7 +89,7 @@ filterBlurring(const cv::Mat& frame, cv::Mat& dst) {
 // stylizing filter
 void
 filterStylize(const cv::Mat& frame, cv::Mat& dst) {
-  // blur frame
+  // cv::blur frame
   cv::Mat filtered;
   cv::ximgproc::dtFilter(frame, frame, filtered, g_sigmaSpatial, g_sigmaColor, DTF_NC);
 
@@ -102,12 +102,12 @@ filterStylize(const cv::Mat& frame, cv::Mat& dst) {
   cv::Sobel(filteredGray, gradX, CV_32F, 1, 0, 3, 1.0 / 255);
   cv::Sobel(filteredGray, gradY, CV_32F, 0, 1, 3, 1.0 / 255);
 
-  // compute magnitude of gradient and fit it accordingly the gamma parameter
+  // compute cv::magnitude of gradient and fit it accordingly the gamma parameter
   cv::Mat gradMagnitude;
   cv::magnitude(gradX, gradY, gradMagnitude);
   cv::pow(gradMagnitude, g_edgesGamma / 100.0, gradMagnitude);
 
-  // multiply a blurred frame to the value inversely proportional to the magnitude
+  // cv::multiply a blurred frame to the value inversely proportional to the magnitude
   cv::Mat multiplier = 1.0 / (1.0 + gradMagnitude);
   cv::cvtColor(multiplier, multiplier, cv::COLOR_GRAY2BGR);
   cv::multiply(filtered, multiplier, dst, 1, dst.type());
@@ -138,9 +138,9 @@ filterDetailEnhancement(const cv::Mat& frame8u, cv::Mat& dst) {
   double cDetails2 = 2.0 - g_detailsLevel / 100.0;
 
   // Generate lightness
-  double meanLigtness = mean(frameLabCn[0])[0];
+  double meanLigtness = cv::mean(frameLabCn[0])[0];
   frameLabCn[0] = cBase * (layer2 - meanLigtness) + meanLigtness; // fit contrast of base (most blurred) layer
-  frameLabCn[0] += cDetails1 * detailLayer1;                      // add weighted sum of detail layers to new lightness
+  frameLabCn[0] += cDetails1 * detailLayer1;                      // cv::add weighted cv::sum of detail layers to new lightness
   frameLabCn[0] += cDetails2 * detailLayer2;                      //
 
   // Update new lightness
@@ -161,7 +161,7 @@ changeNumberOfCpuCallback(int count, void*) {
   g_numberOfCPUs = count;
 }
 
-// divide screen on two parts: srcFrame and processed Frame
+// cv::divide screen on two parts: srcFrame and processed Frame
 void
 splitScreen(const cv::Mat& rawFrame, cv::Mat& outputFrame, cv::Mat& srcFrame, cv::Mat& processedFrame) {
   int h = rawFrame.rows;

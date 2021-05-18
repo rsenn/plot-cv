@@ -5,11 +5,11 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/core/core.hpp>
-#include <opencv2/dnn.hpp>
+#include <opencv2/cv::dnn.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
-using namespace cv;
-using namespace cv::dnn;
+//using namespace cv;
+//using namespace cv::dnn;
 
 #include <cstdlib>
 #include <fstream>
@@ -22,18 +22,18 @@ using namespace std;
 /* Please refer to credits
 Find best class for the blob (i. e. class with maximal probability) */
 void
-getMaxClass(dnn::Blob& probBlob, int* classId, double* classProb) {
-  Mat probMat = probBlob.matRefConst(); // reshape the blob to 1x1000 matrix
-  Point classNumber;
+getMaxClass(cv::dnn::Blob& probBlob, int* classId, double* classProb) {
+  cv::Mat probMat = probBlob.matRefConst(); // reshape the blob to 1x1000 matrix
+  cv::Point classNumber;
 
-  minMaxLoc(probMat, NULL, classProb, NULL, &classNumber);
+  cv::minMaxLoc(probMat, NULL, classProb, NULL, &classNumber);
   *classId = classNumber.x;
 }
 
 /* Please refer to credits */
-std::vector<String>
+std::vector<cv::String>
 readClassNames(const char* filename) {
-  std::vector<String> classNames;
+  std::vector<cv::String> classNames;
   std::ifstream fp(filename);
   if(!fp.is_open()) {
     std::cerr << "File with classes labels not found: " << filename << std::endl;
@@ -50,13 +50,13 @@ readClassNames(const char* filename) {
 }
 
 void
-texte(Mat& image, const String& txt, int x, int y) {
-  putText(image, txt, Point(x, y), FONT_HERSHEY_SIMPLEX, 0.65, Scalar(0, 0, 255), 1, 25);
+texte(cv::Mat& image, const cv::String& txt, int x, int y) {
+  cv::putText(image, txt, cv::Point(x, y), FONT_HERSHEY_SIMPLEX, 0.65, cv::Scalar(0, 0, 255), 1, 25);
 }
 
 int
 main() {
-  Mat matImg;       // A matricial image
+  cv::Mat matImg;       // A matricial image
   char key;         // Keyboard input
   int classId;      // Class ID for the CNN
   double classProb; // Prediction probability
@@ -67,13 +67,13 @@ main() {
 
   initModule(); // Required if OpenCV is built as static libs
 
-  String modelTxt = "models/bvlc_googlenet/bvlc_googlenet.prototxt";
-  String modelBin = "models/bvlc_googlenet/bvlc_googlenet.caffemodel";
+  cv::String modelTxt = "models/bvlc_googlenet/bvlc_googlenet.prototxt";
+  cv::String modelBin = "models/bvlc_googlenet/bvlc_googlenet.caffemodel";
 
   //! [Create the importer of Caffe model]
-  Ptr<dnn::Importer> importer;
+  Ptr<cv::dnn::Importer> importer;
   try { // Try to import Caffe GoogleNet model
-    importer = dnn::createCaffeImporter(modelTxt, modelBin);
+    importer = cv::dnn::createCaffeImporter(modelTxt, modelBin);
   } catch(const cv::Exception& err) { // Importer can throw errors, we will catch them
     std::cerr << err.msg << std::endl;
   }
@@ -87,12 +87,12 @@ main() {
   }
 
   // Initialization of CNN net from CAFFE files
-  dnn::Net net;
+  cv::dnn::Net net;
   importer->populateNet(net);
   importer.release();
 
   // Initialization of the video camera flow
-  VideoCapture capture;
+  cv::VideoCapture capture;
   capture.open(CAMERA_TO_USE);
 
   if(!capture.isOpened()) { // Test l'ouverture du flux vidéo
@@ -101,23 +101,23 @@ main() {
   }
 
   // Initialization of the window which will contains the picture
-  namedWindow("Window", WINDOW_NORMAL); // Créé une fenêtre
+  cv::namedWindow("Window", WINDOW_NORMAL); // Créé une fenêtre
 
   // While the key pressed is not q (for quit)
   while(key != 'q' && key != 'Q') {
 
     // Get the next frame received
-    capture.read(matImg);
+    capture.cv::read(matImg);
 
     // AlexNet CNN network only accepts 224x224 pictures
-    resize(matImg, matImg, Size(224, 224));
-    dnn::Blob inputBlob = dnn::Blob::fromImages(matImg);
+    cv::resize(matImg, matImg, cv::Size(224, 224));
+    cv::dnn::Blob inputBlob = cv::dnn::Blob::fromImages(matImg);
     net.setBlob(".data", inputBlob);
     net.forward();                        // We launch the CNN
-    dnn::Blob prob = net.getBlob("prob"); // Retrieve the final prob
+    cv::dnn::Blob prob = net.getBlob("prob"); // Retrieve the final prob
 
     getMaxClass(prob, &classId, &classProb); // Retrieve the final prob
-    std::vector<String> classNames = readClassNames("models/synset_words.txt");
+    std::vector<cv::String> classNames = readClassNames("models/synset_words.txt");
 
     s1 = classNames.at(classId);
     s2 = "Probabilite " + std::to_string(classProb * 100) + " %";
@@ -125,7 +125,7 @@ main() {
     texte(matImg, s1, 0, 15);
     texte(matImg, s2, 0, 35);
 
-    imshow("Window", matImg);
+    cv::imshow("Window", matImg);
 
     key = cvWaitKey(10);
   }

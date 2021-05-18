@@ -1,4 +1,4 @@
-// Program to write video from default amera device to file
+// Program to cv::write video from default amera device to file
 // Author: Samarth Manoj Brahmbhatt, University of Pennsylvania
 
 #include <opencv2/opencv.hpp>
@@ -6,13 +6,13 @@
 #include <opencv2/core/cvdef.h>
 #include <opencv2/videoio/legacy/constants_c.h>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 int
 main() {
   // 0 is the ID of the built-in laptop camera, change if you want to use other camera
-  VideoCapture cap(0);
+  cv::VideoCapture cap(0);
   // check if the file was opened properly
   if(!cap.isOpened()) {
     cout << "Capture could not be opened succesfully" << endl;
@@ -20,26 +20,26 @@ main() {
   }
 
   // Get size of frames
-  Size S = Size((int)cap.get(cv::CAP_PROP_FRAME_WIDTH), (int)cap.get(cv::CAP_PROP_FRAME_HEIGHT));
+  cv::Size S = cv::Size((int)cap.get(cv::CAP_PROP_FRAME_WIDTH), (int)cap.get(cv::CAP_PROP_FRAME_HEIGHT));
 
   // Make a video writer object and initialize it
-  VideoWriter put("output.mpg", CV_FOURCC('M', 'P', 'E', 'G'), 30, S);
+  cv::VideoWriter put("output.mpg", CV_FOURCC('M', 'P', 'E', 'G'), 30, S);
   if(!put.isOpened()) {
     cout << "File could not be created for writing. Check permissions" << endl;
     return -1;
   }
-  namedWindow("Video");
+  cv::namedWindow("Video");
 
   // Play the video in a loop till it ends
-  while(char(waitKey(1)) != 'q' && cap.isOpened()) {
-    Mat frame;
+  while(char(cv::waitKey(1)) != 'q' && cap.isOpened()) {
+    cv::Mat frame;
     cap >> frame;
     // Check if the video is over
     if(frame.empty()) {
       cout << "Video over" << endl;
       break;
     }
-    imshow("Video", frame);
+    cv::imshow("Video", frame);
     put << frame;
   }
 

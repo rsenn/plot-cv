@@ -6,7 +6,7 @@
 #include <string>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 static void
 help(char** argv) {
@@ -21,21 +21,21 @@ help(char** argv) {
 }
 
 static void
-refineSegments(const Mat& img, Mat& mask, Mat& dst) {
+refineSegments(const cv::Mat& img, cv::Mat& mask, cv::Mat& dst) {
   int niters = 3;
 
-  vector<vector<Point>> contours;
-  vector<Vec4i> hierarchy;
+  vector<vector<cv::Point>> contours;
+  vector<cv::Vec4i> hierarchy;
 
-  Mat temp;
+  cv::Mat temp;
 
-  dilate(mask, temp, Mat(), Point(-1, -1), niters);
-  erode(temp, temp, Mat(), Point(-1, -1), niters * 2);
-  dilate(temp, temp, Mat(), Point(-1, -1), niters);
+  cv::dilate(mask, temp, cv::Mat(), cv::Point(-1, -1), niters);
+  cv::erode(temp, temp, cv::Mat(), cv::Point(-1, -1), niters * 2);
+  cv::dilate(temp, temp, cv::Mat(), cv::Point(-1, -1), niters);
 
-  findContours(temp, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
+  cv::findContours(temp, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
 
-  dst = Mat::zeros(img.size(), CV_8UC3);
+  dst = cv::Mat::zeros(img.size(), CV_8UC3);
 
   if(contours.size() == 0)
     return;
@@ -46,23 +46,23 @@ refineSegments(const Mat& img, Mat& mask, Mat& dst) {
   double maxArea = 0;
 
   for(; idx >= 0; idx = hierarchy[idx][0]) {
-    const vector<Point>& c = contours[idx];
-    double area = fabs(contourArea(Mat(c)));
+    const vector<cv::Point>& c = contours[idx];
+    double area = fabs(cv::contourArea(cv::Mat(c)));
     if(area > maxArea) {
       maxArea = area;
       largestComp = idx;
     }
   }
-  Scalar color(0, 0, 255);
-  drawContours(dst, contours, largestComp, color, FILLED, LINE_8, hierarchy);
+  cv::Scalar color(0, 0, 255);
+  cv::drawContours(dst, contours, largestComp, color, FILLED, cv::LINE_8, hierarchy);
 }
 
 int
 main(int argc, char** argv) {
-  VideoCapture cap;
+  cv::VideoCapture cap;
   bool update_bg_model = true;
 
-  CommandLineParser parser(argc, argv, "{help h||}{@input||}");
+  cv::CommandLineParser parser(argc, argv, "{help h||}{@input||}");
   if(parser.has("help")) {
     help(argv);
     return 0;
@@ -71,25 +71,25 @@ main(int argc, char** argv) {
   if(input.empty())
     cap.open(0);
   else
-    cap.open(samples::findFileOrKeep(input));
+    cap.open(cv::samples::findFileOrKeep(input));
 
   if(!cap.isOpened()) {
     printf("\nCan not open camera or video file\n");
     return -1;
   }
 
-  Mat tmp_frame, bgmask, out_frame;
+  cv::Mat tmp_frame, bgmask, out_frame;
 
   cap >> tmp_frame;
   if(tmp_frame.empty()) {
-    printf("can not read data from the video source\n");
+    printf("can not cv::read data from the video source\n");
     return -1;
   }
 
-  namedWindow("video", 1);
-  namedWindow("segmented", 1);
+  cv::namedWindow("video", 1);
+  cv::namedWindow("segmented", 1);
 
-  Ptr<BackgroundSubtractorMOG2> bgsubtractor = createBackgroundSubtractorMOG2();
+  Ptr<BackgroundSubtractorMOG2> bgsubtractor = cv::createBackgroundSubtractorMOG2();
   bgsubtractor->setVarThreshold(10);
 
   for(;;) {
@@ -98,9 +98,9 @@ main(int argc, char** argv) {
       break;
     bgsubtractor->apply(tmp_frame, bgmask, update_bg_model ? -1 : 0);
     refineSegments(tmp_frame, bgmask, out_frame);
-    imshow("video", tmp_frame);
-    imshow("segmented", out_frame);
-    char keycode = (char)waitKey(30);
+    cv::imshow("video", tmp_frame);
+    cv::imshow("segmented", out_frame);
+    char keycode = (char)cv::waitKey(30);
     if(keycode == 27)
       break;
     if(keycode == ' ') {

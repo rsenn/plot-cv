@@ -1,7 +1,7 @@
 // Copyright 2018 Grayson Pike
 
 /*
-    Command line utility to capture positive training images for a given
+    Command cv::line utility to capture positive training images for a given
     subject using the Camera Module. When running, enter any key to take
     a picture or 'q' to quit. Positive images for this subject are stored
     in DIRECTORY/<subject_name>
@@ -26,14 +26,14 @@
 #include "config.hpp"
 
 /*
-    Returns subject name from command line arguments or exits on failure
+    Returns subject name from command cv::line arguments or exits on failure
 */
 std::string
 get_subject_name(int argc, char* argv[]) {
 
   std::string model_name;
   if(argc != 2) {
-    std::cout << "Error: Correct usage: ./capture_positives <subject_name>" << std::endl;
+    std::cout << "cv::Error: Correct usage: ./capture_positives <subject_name>" << std::endl;
     exit(1);
   } else {
     return argv[1];
@@ -69,17 +69,17 @@ main(int argc, char* argv[]) {
     // Convert image to grayscale
     cv::cvtColor(image, image, cv::COLOR_RGB2GRAY);
 
-    // Detect coordinates of a face, if any
+    // Detect coordinates of a cv::face, if any
     std::vector<cv::Rect> face_regions = detect_faces(image);
 
-    // If only one face was found, perform recognition on it
+    // If only one cv::face was found, perform recognition on it
     if(face_regions.size() != 1) {
 
-      std::cout << "Error: Detected " << face_regions.size() << " faces." << std::endl;
+      std::cout << "cv::Error: Detected " << face_regions.size() << " faces." << std::endl;
 
     } else {
 
-      std::cout << "Successfuly found a face. Saving positive image... " << std::flush;
+      std::cout << "Successfuly found a cv::face. Saving positive image... " << std::flush;
 
       // Crop image to only face
       image = image(face_regions[0]);

@@ -2,11 +2,11 @@
 #include <opencv2/highgui.hpp>
 #include <math.h>
 #include <iostream>
-using namespace cv;
+//using namespace cv;
 using namespace std;
 static void
 help() {
-  cout << "\nThis program illustrates the use of findContours and drawContours\n"
+  cout << "\nThis program illustrates the use of cv::findContours and cv::drawContours\n"
        << "The original image is put up along with the image of drawn contours\n"
        << "Usage:\n"
        << "./contours2\n"
@@ -16,13 +16,13 @@ help() {
 const int w = 500;
 int levels = 3;
 std::vector<std::vector<cv::Point>> contours;
-std::vector<Vec4i> hierarchy;
+std::vector<cv::Vec4i> hierarchy;
 static void
 on_trackbar(int, void*) {
   cv::Mat cnt_img = cv::Mat::zeros(w, w, CV_8UC3);
   int _levels = levels - 3;
-  drawContours(cnt_img, contours, _levels <= 0 ? 3 : -1, Scalar(128, 255, 255), 3, LINE_AA, hierarchy, std::abs(_levels));
-  imshow("contours", cnt_img);
+  cv::drawContours(cnt_img, contours, _levels <= 0 ? 3 : -1, cv::Scalar(128, 255, 255), 3, cv::LINE_AA, hierarchy, std::abs(_levels));
+  cv::imshow("contours", cnt_img);
 }
 int
 main(int argc, char** argv) {
@@ -36,12 +36,12 @@ main(int argc, char** argv) {
   for(int i = 0; i < 6; i++) {
     int dx = (i % 2) * 250 - 30;
     int dy = (i / 2) * 150;
-    const Scalar white = Scalar(255);
-    const Scalar black = Scalar(0);
+    const cv::Scalar white = cv::Scalar(255);
+    const cv::Scalar black = cv::Scalar(0);
     if(i == 0) {
       for(int j = 0; j <= 10; j++) {
         double angle = (j + 5) * CV_PI / 21;
-        line(img,
+        cv::line(img,
              cv::Point(cvRound(dx + 100 + j * 10 - 80 * cos(angle)), cvRound(dy + 100 - 90 * sin(angle))),
              cv::Point(cvRound(dx + 100 + j * 10 - 30 * cos(angle)), cvRound(dy + 100 - 30 * sin(angle))),
              white,
@@ -50,29 +50,29 @@ main(int argc, char** argv) {
              0);
       }
     }
-    ellipse(img, cv::Point(dx + 150, dy + 100), Size(100, 70), 0, 0, 360, white, -1, 8, 0);
-    ellipse(img, cv::Point(dx + 115, dy + 70), Size(30, 20), 0, 0, 360, black, -1, 8, 0);
-    ellipse(img, cv::Point(dx + 185, dy + 70), Size(30, 20), 0, 0, 360, black, -1, 8, 0);
-    ellipse(img, cv::Point(dx + 115, dy + 70), Size(15, 15), 0, 0, 360, white, -1, 8, 0);
-    ellipse(img, cv::Point(dx + 185, dy + 70), Size(15, 15), 0, 0, 360, white, -1, 8, 0);
-    ellipse(img, cv::Point(dx + 115, dy + 70), Size(5, 5), 0, 0, 360, black, -1, 8, 0);
-    ellipse(img, cv::Point(dx + 185, dy + 70), Size(5, 5), 0, 0, 360, black, -1, 8, 0);
-    ellipse(img, cv::Point(dx + 150, dy + 100), Size(10, 5), 0, 0, 360, black, -1, 8, 0);
-    ellipse(img, cv::Point(dx + 150, dy + 150), Size(40, 10), 0, 0, 360, black, -1, 8, 0);
-    ellipse(img, cv::Point(dx + 27, dy + 100), Size(20, 35), 0, 0, 360, white, -1, 8, 0);
-    ellipse(img, cv::Point(dx + 273, dy + 100), Size(20, 35), 0, 0, 360, white, -1, 8, 0);
+    cv::ellipse(img, cv::Point(dx + 150, dy + 100), cv::Size(100, 70), 0, 0, 360, white, -1, 8, 0);
+    cv::ellipse(img, cv::Point(dx + 115, dy + 70), cv::Size(30, 20), 0, 0, 360, black, -1, 8, 0);
+    cv::ellipse(img, cv::Point(dx + 185, dy + 70), cv::Size(30, 20), 0, 0, 360, black, -1, 8, 0);
+    cv::ellipse(img, cv::Point(dx + 115, dy + 70), cv::Size(15, 15), 0, 0, 360, white, -1, 8, 0);
+    cv::ellipse(img, cv::Point(dx + 185, dy + 70), cv::Size(15, 15), 0, 0, 360, white, -1, 8, 0);
+    cv::ellipse(img, cv::Point(dx + 115, dy + 70), cv::Size(5, 5), 0, 0, 360, black, -1, 8, 0);
+    cv::ellipse(img, cv::Point(dx + 185, dy + 70), cv::Size(5, 5), 0, 0, 360, black, -1, 8, 0);
+    cv::ellipse(img, cv::Point(dx + 150, dy + 100), cv::Size(10, 5), 0, 0, 360, black, -1, 8, 0);
+    cv::ellipse(img, cv::Point(dx + 150, dy + 150), cv::Size(40, 10), 0, 0, 360, black, -1, 8, 0);
+    cv::ellipse(img, cv::Point(dx + 27, dy + 100), cv::Size(20, 35), 0, 0, 360, white, -1, 8, 0);
+    cv::ellipse(img, cv::Point(dx + 273, dy + 100), cv::Size(20, 35), 0, 0, 360, white, -1, 8, 0);
   }
   // show the faces
-  namedWindow("image", 1);
-  imshow("image", img);
+  cv::namedWindow("image", 1);
+  cv::imshow("image", img);
   // Extract the contours so that
   std::vector<std::vector<cv::Point>> contours0;
-  findContours(img, contours0, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
-  contours.resize(contours0.size());
-  for(size_t k = 0; k < contours0.size(); k++) approxPolyDP(cv::Mat(contours0[k]), contours[k], 3, true);
-  namedWindow("contours", 1);
-  createTrackbar("levels+3", "contours", &levels, 7, on_trackbar);
+  cv::findContours(img, contours0, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+  contours.cv::resize(contours0.size());
+  for(size_t k = 0; k < contours0.size(); k++) cv::approxPolyDP(cv::Mat(contours0[k]), contours[k], 3, true);
+  cv::namedWindow("contours", 1);
+  cv::createTrackbar("levels+3", "contours", &levels, 7, on_trackbar);
   on_trackbar(0, 0);
-  waitKey();
+  cv::waitKey();
   return 0;
 }

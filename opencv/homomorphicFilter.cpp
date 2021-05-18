@@ -53,7 +53,7 @@ homomorphic(const cv::Mat& src) {
 
   // apply inverse FFT
   cv::Mat ifftimg;
-  idft(fftimg, ifftimg, CV_HAL_DFT_REAL_OUTPUT);
+  cv::idft(fftimg, ifftimg, CV_HAL_DFT_REAL_OUTPUT);
 
   cv::Mat expimg;
   cv::exp(ifftimg, expimg);
@@ -62,7 +62,7 @@ homomorphic(const cv::Mat& src) {
   hlsimg[0] = cv::Mat(expimg, cv::Rect(0, 0, src.cols, src.rows));
   hlsimg[0].convertTo(hlsimg[0], CV_8U);
 
-  merge(&hlsimg[0], 3, img);
+  cv::merge(&hlsimg[0], 3, img);
   cv::cvtColor(img, final, cv::COLOR_HLS2BGR);
   return final;
 }
@@ -74,13 +74,13 @@ fft(const cv::Mat& src, cv::Mat& dst) {
   src.convertTo(logimg, CV_32F);
   cv::log(logimg + 1, logimg);
 
-  // resize to optimal fft size
+  // cv::resize to optimal fft size
   cv::Mat padded;
   int m = cv::getOptimalDFTSize(src.rows);
   int n = cv::getOptimalDFTSize(src.cols);
   cv::copyMakeBorder(logimg, padded, 0, m - logimg.rows, 0, n - logimg.cols, cv::BORDER_CONSTANT, cv::Scalar::all(0));
 
-  // add imaginary column to mat and apply fft
+  // cv::add imaginary column to mat and apply fft
   cv::Mat plane[] = {cv::Mat_<float>(padded), cv::Mat::zeros(padded.size(), CV_32F)};
   cv::Mat imgComplex;
   cv::merge(plane, 2, imgComplex);
@@ -97,8 +97,8 @@ butterworth(const cv::Mat& img, int d0, int n, int high, int low) {
 
   for(int i = 0; i < img.rows; i++) {
     for(int j = 0; j < img.cols; j++) {
-      double radius = sqrt(pow(i - cx, 2) + pow(j - cy, 2));
-      single.at<float>(i, j) = ((upper - lower) * (1 / pow(d0 / radius, 2 * n))) + lower;
+      double radius = sqrt(cv::pow(i - cx, 2) + cv::pow(j - cy, 2));
+      single.at<float>(i, j) = ((upper - lower) * (1 / cv::pow(d0 / radius, 2 * n))) + lower;
     }
   }
   return single;

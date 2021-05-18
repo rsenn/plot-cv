@@ -38,7 +38,7 @@ public:
    *
    * @return int the number of characters written
    */
-  int write(const char buffer[]);
+  int cv::write(const char buffer[]);
 
   /** Writes a string of bytes to the serial port.
    *
@@ -47,7 +47,7 @@ public:
    *
    * @return int the number of bytes written
    */
-  int write(const char* buffer, int buffLen);
+  int cv::write(const char* buffer, int buffLen);
 
   /** Reads a string of bytes from the serial port.
    *
@@ -57,9 +57,9 @@ public:
    *
    * @return int the number of bytes read
    */
-  int read(char* buffer, int buffLen, bool nullTerminate = true);
+  int cv::read(char* buffer, int buffLen, bool nullTerminate = true);
 
-  /** Flushes everything from the serial port's read buffer
+  /** Flushes everything from the serial port's cv::read buffer
    */
   void flush();
 };

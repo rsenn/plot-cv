@@ -4,16 +4,16 @@
 #include <opencv2/videoio.hpp>
 #include <iostream>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
-void drawText(Mat& image);
+void drawText(cv::Mat& image);
 
 int
 main() {
   cout << "Built with OpenCV " << CV_VERSION << endl;
-  Mat image;
-  VideoCapture capture;
+  cv::Mat image;
+  cv::VideoCapture capture;
   capture.open(0);
   if(capture.isOpened()) {
     cout << "Capture is opened" << endl;
@@ -22,28 +22,28 @@ main() {
       if(image.empty())
         break;
       drawText(image);
-      imshow("Sample", image);
-      if(waitKey(10) >= 0)
+      cv::imshow("Sample", image);
+      if(cv::waitKey(10) >= 0)
         break;
     }
   } else {
     cout << "No capture" << endl;
-    image = Mat::zeros(480, 640, CV_8UC1);
+    image = cv::Mat::zeros(480, 640, CV_8UC1);
     drawText(image);
-    imshow("Sample", image);
-    waitKey(0);
+    cv::imshow("Sample", image);
+    cv::waitKey(0);
   }
   return 0;
 }
 
 void
-drawText(Mat& image) {
-  putText(image,
+drawText(cv::Mat& image) {
+  cv::putText(image,
           "Hello OpenCV",
-          Point(20, 50),
+          cv::Point(20, 50),
           FONT_HERSHEY_COMPLEX,
-          1,                     // font face and scale
-          Scalar(255, 255, 255), // white
+          1,                     // font cv::face and scale
+          cv::Scalar(255, 255, 255), // white
           1,
-          LINE_AA); // line thickness and type
+          cv::LINE_AA); // cv::line thickness and type
 }

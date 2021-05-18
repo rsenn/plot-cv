@@ -50,7 +50,7 @@
 #include <opencv2/calib3d.hpp>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 static const char* keys = {"{@camSettingsPath | | Path of camera calibration file}"
                            "{@projSettingsPath | | Path of projector settings}"
@@ -73,86 +73,86 @@ enum calibrationPattern { CHESSBOARD, CIRCLES_GRID, ASYMETRIC_CIRCLES_GRID };
 struct Settings {
   Settings();
   int patternType;
-  Size patternSize;
-  Size subpixelSize;
-  Size imageSize;
+  cv::Size patternSize;
+  cv::Size subpixelSize;
+  cv::Size imageSize;
   float squareSize;
   int nbrOfFrames;
 };
 
-void loadSettings(String path, Settings& sttngs);
+void loadSettings(cv::String path, Settings& sttngs);
 
-void createObjectPoints(vector<Point3f>& patternCorners, Size patternSize, float squareSize, int patternType);
+void createObjectPoints(vector<Point3f>& patternCorners, cv::Size patternSize, float squareSize, int patternType);
 
-void createProjectorObjectPoints(vector<Point2f>& patternCorners, Size patternSize, float squareSize, int patternType);
+void createProjectorObjectPoints(vector<cv::Point2f>& patternCorners, cv::Size patternSize, float squareSize, int patternType);
 
 double calibrate(vector<vector<Point3f>> objPoints,
-                 vector<vector<Point2f>> imgPoints,
-                 Mat& cameraMatrix,
-                 Mat& distCoeffs,
-                 vector<Mat>& r,
-                 vector<Mat>& t,
-                 Size imgSize);
+                 vector<vector<cv::Point2f>> imgPoints,
+                 cv::Mat& cameraMatrix,
+                 cv::Mat& distCoeffs,
+                 vector<cv::Mat>& r,
+                 vector<cv::Mat>& t,
+                 cv::Size imgSize);
 
 void fromCamToWorld(
-    Mat cameraMatrix, vector<Mat> rV, vector<Mat> tV, vector<vector<Point2f>> imgPoints, vector<vector<Point3f>>& worldPoints);
+    cv::Mat cameraMatrix, vector<Mat> rV, vector<Mat> tV, vector<vector<cv::Point2f>> imgPoints, vector<vector<Point3f>>& worldPoints);
 
-void saveCalibrationResults(String path, Mat camK, Mat camDistCoeffs, Mat projK, Mat projDistCoeffs, Mat fundamental);
+void saveCalibrationResults(cv::String path, cv::Mat camK, cv::Mat camDistCoeffs, cv::Mat projK, cv::Mat projDistCoeffs, cv::Mat fundamental);
 
-void saveCalibrationData(String path,
-                         vector<Mat> T1,
-                         vector<Mat> T2,
-                         vector<Mat> ptsProjCam,
-                         vector<Mat> ptsProjProj,
-                         vector<Mat> ptsProjCamN,
-                         vector<Mat> ptsProjProjN);
+void saveCalibrationData(cv::String path,
+                         vector<cv::Mat> T1,
+                         vector<cv::Mat> T2,
+                         vector<cv::Mat> ptsProjCam,
+                         vector<cv::Mat> ptsProjProj,
+                         vector<cv::Mat> ptsProjCamN,
+                         vector<cv::Mat> ptsProjProjN);
 
-void normalize(const Mat& pts, const int& dim, Mat& normpts, Mat& T);
+void cv::normalize(const cv::Mat& pts, const int& dim, cv::Mat& normpts, cv::Mat& T);
 
-void fromVectorToMat(vector<Point2f> v, Mat& pts);
+void fromVectorToMat(vector<cv::Point2f> v, cv::Mat& pts);
 
-void fromMatToVector(Mat pts, vector<Point2f>& v);
+void fromMatToVector(cv::Mat pts, vector<cv::Point2f>& v);
 
 int
 main(int argc, char** argv) {
-  VideoCapture cap(CAP_PVAPI);
-  Mat frame;
+  cv::VideoCapture cap(CAP_PVAPI);
+  cv::Mat frame;
 
   int nbrOfValidFrames = 0;
 
-  vector<vector<Point2f>> imagePointsCam, imagePointsProj, PointsInProj, imagePointsProjN, pointsInProjN;
+  vector<vector<cv::Point2f>> imagePointsCam, imagePointsProj, PointsInProj, imagePointsProjN, pointsInProjN;
   vector<vector<Point3f>> objectPointsCam, worldPointsProj;
   vector<Point3f> tempCam;
-  vector<Point2f> tempProj;
-  vector<Mat> T1, T2;
-  vector<Mat> projInProj, projInCam;
-  vector<Mat> projInProjN, projInCamN;
+  vector<cv::Point2f> tempProj;
+  vector<cv::Mat> T1, T2;
+  vector<cv::Mat> projInProj, projInCam;
+  vector<cv::Mat> projInProjN, projInCamN;
 
-  vector<Mat> rVecs, tVecs, projectorRVecs, projectorTVecs;
-  Mat cameraMatrix, distCoeffs, projectorMatrix, projectorDistCoeffs;
-  Mat pattern;
-  vector<Mat> images;
+  vector<cv::Mat> rVecs, tVecs, projectorRVecs, projectorTVecs;
+  cv::Mat cameraMatrix, distCoeffs, projectorMatrix, projectorDistCoeffs;
+  cv::Mat pattern;
+  vector<cv::Mat> images;
 
   Settings camSettings, projSettings;
 
-  CommandLineParser parser(argc, argv, keys);
+  cv::CommandLineParser parser(argc, argv, keys);
 
-  String camSettingsPath = parser.get<String>(0);
-  String projSettingsPath = parser.get<String>(1);
-  String patternPath = parser.get<String>(2);
-  String outputName = parser.get<String>(3);
+  cv::String camSettingsPath = parser.get<String>(0);
+  cv::String projSettingsPath = parser.get<String>(1);
+  cv::String patternPath = parser.get<String>(2);
+  cv::String outputName = parser.get<String>(3);
 
   if(camSettingsPath.empty() || projSettingsPath.empty() || patternPath.empty() || outputName.empty()) {
     help();
     return -1;
   }
 
-  pattern = imread(patternPath);
+  pattern = cv::imread(patternPath);
 
   loadSettings(camSettingsPath, camSettings);
   loadSettings(projSettingsPath, projSettings);
 
-  projSettings.imageSize = Size(pattern.rows, pattern.cols);
+  projSettings.imageSize = cv::Size(pattern.rows, pattern.cols);
 
   createObjectPoints(tempCam, camSettings.patternSize, camSettings.squareSize, camSettings.patternType);
   createProjectorObjectPoints(tempProj, projSettings.patternSize, projSettings.squareSize, projSettings.patternType);
@@ -163,59 +163,59 @@ main(int argc, char** argv) {
   }
   cap.set(CAP_PROP_PVAPI_PIXELFORMAT, CAP_PVAPI_PIXELFORMAT_BAYER8);
 
-  namedWindow("pattern", WINDOW_NORMAL);
-  setWindowProperty("pattern", WND_PROP_FULLSCREEN, WINDOW_FULLSCREEN);
+  cv::namedWindow("pattern", WINDOW_NORMAL);
+  cv::setWindowProperty("pattern", WND_PROP_FULLSCREEN, WINDOW_FULLSCREEN);
 
-  namedWindow("camera view", WINDOW_NORMAL);
+  cv::namedWindow("camera view", WINDOW_NORMAL);
 
-  imshow("pattern", pattern);
+  cv::imshow("pattern", pattern);
   cout << "Press any key when ready" << endl;
-  waitKey(0);
+  cv::waitKey(0);
 
   while(nbrOfValidFrames < camSettings.nbrOfFrames) {
     cap >> frame;
     if(frame.data) {
-      Mat color;
-      cvtColor(frame, color, COLOR_BayerBG2BGR);
+      cv::Mat color;
+      cv::cvtColor(frame, color, COLOR_BayerBG2BGR);
       if(camSettings.imageSize.height == 0 || camSettings.imageSize.width == 0) {
-        camSettings.imageSize = Size(frame.rows, frame.cols);
+        camSettings.imageSize = cv::Size(frame.rows, frame.cols);
       }
 
       bool foundProj, foundCam;
 
-      vector<Point2f> projPointBuf;
-      vector<Point2f> camPointBuf;
+      vector<cv::Point2f> projPointBuf;
+      vector<cv::Point2f> camPointBuf;
 
-      imshow("camera view", color);
+      cv::imshow("camera view", color);
       if(camSettings.patternType == CHESSBOARD && projSettings.patternType == CHESSBOARD) {
         int calibFlags = CALIB_CB_ADAPTIVE_THRESH;
 
-        foundCam = findChessboardCorners(color, camSettings.patternSize, camPointBuf, calibFlags);
+        foundCam = cv::findChessboardCorners(color, camSettings.patternSize, camPointBuf, calibFlags);
 
-        foundProj = findChessboardCorners(color, projSettings.patternSize, projPointBuf, calibFlags);
+        foundProj = cv::findChessboardCorners(color, projSettings.patternSize, projPointBuf, calibFlags);
 
         if(foundCam && foundProj) {
-          Mat gray;
-          cvtColor(color, gray, COLOR_BGR2GRAY);
+          cv::Mat gray;
+          cv::cvtColor(color, gray, COLOR_BGR2GRAY);
           cout << "found pattern" << endl;
-          Mat projCorners, camCorners;
-          cornerSubPix(gray,
+          cv::Mat projCorners, camCorners;
+          cv::cornerSubPix(gray,
                        camPointBuf,
                        camSettings.subpixelSize,
-                       Size(-1, -1),
+                       cv::Size(-1, -1),
                        TermCriteria(TermCriteria::COUNT + TermCriteria::EPS, 30, 0.1));
 
-          cornerSubPix(gray,
+          cv::cornerSubPix(gray,
                        projPointBuf,
                        projSettings.subpixelSize,
-                       Size(-1, -1),
+                       cv::Size(-1, -1),
                        TermCriteria(TermCriteria::COUNT + TermCriteria::EPS, 30, 0.1));
 
-          drawChessboardCorners(gray, camSettings.patternSize, camPointBuf, foundCam);
-          drawChessboardCorners(gray, projSettings.patternSize, projPointBuf, foundProj);
+          cv::drawChessboardCorners(gray, camSettings.patternSize, camPointBuf, foundCam);
+          cv::drawChessboardCorners(gray, projSettings.patternSize, projPointBuf, foundProj);
 
-          imshow("camera view", gray);
-          char c = (char)waitKey(0);
+          cv::imshow("camera view", gray);
+          char c = (char)cv::waitKey(0);
           if(c == 10) {
             cout << "saving pattern #" << nbrOfValidFrames << " for calibration" << endl;
             ostringstream name;
@@ -228,14 +228,14 @@ main(int argc, char** argv) {
             PointsInProj.push_back(tempProj);
             images.push_back(frame);
 
-            Mat ptsProjProj, ptsProjCam;
-            Mat ptsProjProjN, ptsProjCamN;
-            Mat TProjProj, TProjCam;
-            vector<Point2f> ptsProjProjVec;
-            vector<Point2f> ptsProjCamVec;
+            cv::Mat ptsProjProj, ptsProjCam;
+            cv::Mat ptsProjProjN, ptsProjCamN;
+            cv::Mat TProjProj, TProjCam;
+            vector<cv::Point2f> ptsProjProjVec;
+            vector<cv::Point2f> ptsProjCamVec;
 
             fromVectorToMat(tempProj, ptsProjProj);
-            normalize(ptsProjProj, 2, ptsProjProjN, TProjProj);
+            cv::normalize(ptsProjProj, 2, ptsProjProjN, TProjProj);
             fromMatToVector(ptsProjProjN, ptsProjProjVec);
             pointsInProjN.push_back(ptsProjProjVec);
             T2.push_back(TProjProj);
@@ -243,7 +243,7 @@ main(int argc, char** argv) {
             projInProjN.push_back(ptsProjProjN);
 
             fromVectorToMat(projPointBuf, ptsProjCam);
-            normalize(ptsProjCam, 2, ptsProjCamN, TProjCam);
+            cv::normalize(ptsProjCam, 2, ptsProjCamN, TProjCam);
             fromMatToVector(ptsProjCamN, ptsProjCamVec);
             imagePointsProjN.push_back(ptsProjCamVec);
             T1.push_back(TProjCam);
@@ -258,8 +258,8 @@ main(int argc, char** argv) {
           }
         } else {
           cout << "no pattern found, move board and press any key" << endl;
-          imshow("camera view", frame);
-          waitKey(0);
+          cv::imshow("camera view", frame);
+          cv::waitKey(0);
         }
       }
     }
@@ -286,9 +286,9 @@ main(int argc, char** argv) {
   cout << "projector matrix = \n" << projectorMatrix << endl;
   cout << "projector dist coeffs = \n" << distCoeffs << endl;
 
-  Mat stereoR, stereoT, essential, fundamental;
-  Mat RCam, RProj, PCam, PProj, Q;
-  rms = stereoCalibrate(worldPointsProj,
+  cv::Mat stereoR, stereoT, essential, fundamental;
+  cv::Mat RCam, RProj, PCam, PProj, Q;
+  rms = cv::stereoCalibrate(worldPointsProj,
                         imagePointsProj,
                         PointsInProj,
                         cameraMatrix,
@@ -309,15 +309,15 @@ main(int argc, char** argv) {
 
 Settings::Settings() {
   patternType = CHESSBOARD;
-  patternSize = Size(13, 9);
-  subpixelSize = Size(11, 11);
+  patternSize = cv::Size(13, 9);
+  subpixelSize = cv::Size(11, 11);
   squareSize = 50;
   nbrOfFrames = 25;
 }
 
 void
-loadSettings(String path, Settings& sttngs) {
-  FileStorage fsInput(path, FileStorage::READ);
+loadSettings(cv::String path, Settings& sttngs) {
+  cv::FileStorage fsInput(path, cv::FileStorage::READ);
 
   fsInput["PatternWidth"] >> sttngs.patternSize.width;
   fsInput["PatternHeight"] >> sttngs.patternSize.height;
@@ -331,21 +331,21 @@ loadSettings(String path, Settings& sttngs) {
 
 double
 calibrate(vector<vector<Point3f>> objPoints,
-          vector<vector<Point2f>> imgPoints,
-          Mat& cameraMatrix,
-          Mat& distCoeffs,
-          vector<Mat>& r,
-          vector<Mat>& t,
-          Size imgSize) {
+          vector<vector<cv::Point2f>> imgPoints,
+          cv::Mat& cameraMatrix,
+          cv::Mat& distCoeffs,
+          vector<cv::Mat>& r,
+          vector<cv::Mat>& t,
+          cv::Size imgSize) {
   int calibFlags = 0;
 
-  double rms = calibrateCamera(objPoints, imgPoints, imgSize, cameraMatrix, distCoeffs, r, t, calibFlags);
+  double rms = cv::calibrateCamera(objPoints, imgPoints, imgSize, cameraMatrix, distCoeffs, r, t, calibFlags);
 
   return rms;
 }
 
 void
-createObjectPoints(vector<Point3f>& patternCorners, Size patternSize, float squareSize, int patternType) {
+createObjectPoints(vector<Point3f>& patternCorners, cv::Size patternSize, float squareSize, int patternType) {
   switch(patternType) {
     case CHESSBOARD:
     case CIRCLES_GRID:
@@ -360,13 +360,13 @@ createObjectPoints(vector<Point3f>& patternCorners, Size patternSize, float squa
 }
 
 void
-createProjectorObjectPoints(vector<Point2f>& patternCorners, Size patternSize, float squareSize, int patternType) {
+createProjectorObjectPoints(vector<cv::Point2f>& patternCorners, cv::Size patternSize, float squareSize, int patternType) {
   switch(patternType) {
     case CHESSBOARD:
     case CIRCLES_GRID:
       for(int i = 1; i <= patternSize.height; ++i) {
         for(int j = 1; j <= patternSize.width; ++j) {
-          patternCorners.push_back(Point2f(float(j * squareSize), float(i * squareSize)));
+          patternCorners.push_back(cv::Point2f(float(j * squareSize), float(i * squareSize)));
         }
       }
       break;
@@ -376,33 +376,33 @@ createProjectorObjectPoints(vector<Point2f>& patternCorners, Size patternSize, f
 
 void
 fromCamToWorld(
-    Mat cameraMatrix, vector<Mat> rV, vector<Mat> tV, vector<vector<Point2f>> imgPoints, vector<vector<Point3f>>& worldPoints) {
+    cv::Mat cameraMatrix, vector<Mat> rV, vector<Mat> tV, vector<vector<cv::Point2f>> imgPoints, vector<vector<Point3f>>& worldPoints) {
   int s = (int)rV.size();
-  Mat invK64, invK;
+  cv::Mat invK64, invK;
   invK64 = cameraMatrix.inv();
   invK64.convertTo(invK, CV_32F);
 
   for(int i = 0; i < s; ++i) {
-    Mat r, t, rMat;
+    cv::Mat r, t, rMat;
     rV[i].convertTo(r, CV_32F);
     tV[i].convertTo(t, CV_32F);
 
-    Rodrigues(r, rMat);
-    Mat transPlaneToCam = rMat.inv() * t;
+    cv::Rodrigues(r, rMat);
+    cv::Mat transPlaneToCam = rMat.inv() * t;
 
     vector<Point3f> wpTemp;
     int s2 = (int)imgPoints[i].size();
     for(int j = 0; j < s2; ++j) {
-      Mat coords(3, 1, CV_32F);
+      cv::Mat coords(3, 1, CV_32F);
       coords.at<float>(0, 0) = imgPoints[i][j].x;
       coords.at<float>(1, 0) = imgPoints[i][j].y;
       coords.at<float>(2, 0) = 1.0f;
 
-      Mat worldPtCam = invK * coords;
-      Mat worldPtPlane = rMat.inv() * worldPtCam;
+      cv::Mat worldPtCam = invK * coords;
+      cv::Mat worldPtPlane = rMat.inv() * worldPtCam;
 
       float scale = transPlaneToCam.at<float>(2) / worldPtPlane.at<float>(2);
-      Mat worldPtPlaneReproject = scale * worldPtPlane - transPlaneToCam;
+      cv::Mat worldPtPlaneReproject = scale * worldPtPlane - transPlaneToCam;
 
       Point3f pt;
       pt.x = worldPtPlaneReproject.at<float>(0);
@@ -415,8 +415,8 @@ fromCamToWorld(
 }
 
 void
-saveCalibrationResults(String path, Mat camK, Mat camDistCoeffs, Mat projK, Mat projDistCoeffs, Mat fundamental) {
-  FileStorage fs(path + ".yml", FileStorage::WRITE);
+saveCalibrationResults(cv::String path, cv::Mat camK, cv::Mat camDistCoeffs, cv::Mat projK, cv::Mat projDistCoeffs, cv::Mat fundamental) {
+  cv::FileStorage fs(path + ".yml", cv::FileStorage::WRITE);
   fs << "camIntrinsics" << camK;
   fs << "camDistCoeffs" << camDistCoeffs;
   fs << "projIntrinsics" << projK;
@@ -426,14 +426,14 @@ saveCalibrationResults(String path, Mat camK, Mat camDistCoeffs, Mat projK, Mat 
 }
 
 void
-saveCalibrationData(String path,
-                    vector<Mat> T1,
-                    vector<Mat> T2,
-                    vector<Mat> ptsProjCam,
-                    vector<Mat> ptsProjProj,
-                    vector<Mat> ptsProjCamN,
-                    vector<Mat> ptsProjProjN) {
-  FileStorage fs(path + ".yml", FileStorage::WRITE);
+saveCalibrationData(cv::String path,
+                    vector<cv::Mat> T1,
+                    vector<cv::Mat> T2,
+                    vector<cv::Mat> ptsProjCam,
+                    vector<cv::Mat> ptsProjProj,
+                    vector<cv::Mat> ptsProjCamN,
+                    vector<cv::Mat> ptsProjProjN) {
+  cv::FileStorage fs(path + ".yml", cv::FileStorage::WRITE);
 
   int size = (int)T1.size();
   fs << "size" << size;
@@ -451,31 +451,31 @@ saveCalibrationData(String path,
 }
 
 void
-normalize(const Mat& pts, const int& dim, Mat& normpts, Mat& T) {
+cv::normalize(const cv::Mat& pts, const int& dim, cv::Mat& normpts, cv::Mat& T) {
   float averagedist = 0;
   float scale = 0;
 
   // centroid
 
-  Mat centroid(dim, 1, CV_32F);
-  Scalar tmp;
+  cv::Mat centroid(dim, 1, CV_32F);
+  cv::Scalar tmp;
 
   if(normpts.empty()) {
-    normpts = Mat(pts.rows, pts.cols, CV_32F);
+    normpts = cv::Mat(pts.rows, pts.cols, CV_32F);
   }
 
   for(int i = 0; i < dim; ++i) {
-    tmp = mean(pts.row(i));
+    tmp = cv::mean(pts.row(i));
     centroid.at<float>(i, 0) = (float)tmp[0];
-    subtract(pts.row(i), centroid.at<float>(i, 0), normpts.row(i));
+    cv::subtract(pts.row(i), centroid.at<float>(i, 0), normpts.row(i));
   }
 
   // average distance
 
-  Mat ptstmp;
+  cv::Mat ptstmp;
   for(int i = 0; i < normpts.cols; ++i) {
     ptstmp = normpts.col(i);
-    averagedist = averagedist + (float)norm(ptstmp);
+    averagedist = averagedist + (float)cv::norm(ptstmp);
   }
   averagedist = averagedist / normpts.cols;
   scale = (float)(sqrt(static_cast<float>(dim)) / averagedist);
@@ -490,7 +490,7 @@ normalize(const Mat& pts, const int& dim, Mat& normpts, Mat& T) {
 }
 
 void
-fromVectorToMat(vector<Point2f> v, Mat& pts) {
+fromVectorToMat(vector<cv::Point2f> v, cv::Mat& pts) {
   int nbrOfPoints = (int)v.size();
 
   if(pts.empty())
@@ -503,11 +503,11 @@ fromVectorToMat(vector<Point2f> v, Mat& pts) {
 }
 
 void
-fromMatToVector(Mat pts, vector<Point2f>& v) {
+fromMatToVector(cv::Mat pts, vector<cv::Point2f>& v) {
   int nbrOfPoints = pts.cols;
 
   for(int i = 0; i < nbrOfPoints; ++i) {
-    Point2f temp;
+    cv::Point2f temp;
     temp.x = pts.at<float>(0, i);
     temp.y = pts.at<float>(1, i);
     v.push_back(temp);

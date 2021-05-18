@@ -1,4 +1,4 @@
-#define LOG_TAG "org.opencv.highgui.VideoCapture"
+#define LOG_TAG "org.opencv.highgui.cv::VideoCapture"
 #include <common.h>
 
 #include <opencv2/opencv_modules.hpp>
@@ -6,7 +6,7 @@
 
 #include <opencv2/highgui/highgui_c.h>
 #include <opencv2/highgui/highgui.hpp>
-using namespace cv;
+//using namespace cv;
 
 /// throw java exception
 static void
@@ -36,17 +36,17 @@ throwJavaException(JNIEnv* env, const std::exception* e, const char* method) {
 extern "C" {
 
 //
-//   VideoCapture::VideoCapture()
+//   cv::VideoCapture::VideoCapture()
 //
 
 JNIEXPORT jlong JNICALL Java_org_opencv_highgui_VideoCapture_n_1VideoCapture__(JNIEnv* env, jclass);
 
 JNIEXPORT jlong JNICALL
 Java_org_opencv_highgui_VideoCapture_n_1VideoCapture__(JNIEnv* env, jclass) {
-  static const char method_name[] = "highgui::VideoCapture::VideoCapture()";
+  static const char method_name[] = "highgui::cv::VideoCapture::VideoCapture()";
   try {
     LOGD("%s", method_name);
-    VideoCapture* _retval_ = new VideoCapture();
+    cv::VideoCapture* _retval_ = new cv::VideoCapture();
     return (jlong)_retval_;
   } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
     throwJavaException(env, 0, method_name);
@@ -55,17 +55,17 @@ Java_org_opencv_highgui_VideoCapture_n_1VideoCapture__(JNIEnv* env, jclass) {
 }
 
 //
-//   VideoCapture::VideoCapture(int device)
+//   cv::VideoCapture::VideoCapture(int device)
 //
 
 JNIEXPORT jlong JNICALL Java_org_opencv_highgui_VideoCapture_n_1VideoCapture__I(JNIEnv* env, jclass, jint device);
 
 JNIEXPORT jlong JNICALL
 Java_org_opencv_highgui_VideoCapture_n_1VideoCapture__I(JNIEnv* env, jclass, jint device) {
-  static const char method_name[] = "highgui::VideoCapture::VideoCapture(int device)";
+  static const char method_name[] = "highgui::cv::VideoCapture::VideoCapture(int device)";
   try {
     LOGD("%s", method_name);
-    VideoCapture* _retval_ = new VideoCapture(device);
+    cv::VideoCapture* _retval_ = new cv::VideoCapture(device);
     return (jlong)_retval_;
   } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
     throwJavaException(env, 0, method_name);
@@ -74,17 +74,17 @@ Java_org_opencv_highgui_VideoCapture_n_1VideoCapture__I(JNIEnv* env, jclass, jin
 }
 
 //
-//  double VideoCapture::get(int propId)
+//  double cv::VideoCapture::get(int propId)
 //
 
 JNIEXPORT jdouble JNICALL Java_org_opencv_highgui_VideoCapture_n_1get(JNIEnv* env, jclass, jlong self, jint propId);
 
 JNIEXPORT jdouble JNICALL
 Java_org_opencv_highgui_VideoCapture_n_1get(JNIEnv* env, jclass, jlong self, jint propId) {
-  static const char method_name[] = "highgui::VideoCapture::get(int propId)";
+  static const char method_name[] = "highgui::cv::VideoCapture::get(int propId)";
   try {
     LOGD("%s", method_name);
-    VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
+    cv::VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
     double _retval_ = me->get(propId);
     return _retval_;
   } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
@@ -94,17 +94,17 @@ Java_org_opencv_highgui_VideoCapture_n_1get(JNIEnv* env, jclass, jlong self, jin
 }
 
 //
-//  bool VideoCapture::grab()
+//  bool cv::VideoCapture::grab()
 //
 
 JNIEXPORT jboolean JNICALL Java_org_opencv_highgui_VideoCapture_n_1grab(JNIEnv* env, jclass, jlong self);
 
 JNIEXPORT jboolean JNICALL
 Java_org_opencv_highgui_VideoCapture_n_1grab(JNIEnv* env, jclass, jlong self) {
-  static const char method_name[] = "highgui::VideoCapture::grab()";
+  static const char method_name[] = "highgui::cv::VideoCapture::grab()";
   try {
     LOGD("%s", method_name);
-    VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
+    cv::VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
     bool _retval_ = me->grab();
     return _retval_;
   } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
@@ -114,17 +114,17 @@ Java_org_opencv_highgui_VideoCapture_n_1grab(JNIEnv* env, jclass, jlong self) {
 }
 
 //
-//  bool VideoCapture::isOpened()
+//  bool cv::VideoCapture::isOpened()
 //
 
 JNIEXPORT jboolean JNICALL Java_org_opencv_highgui_VideoCapture_n_1isOpened(JNIEnv* env, jclass, jlong self);
 
 JNIEXPORT jboolean JNICALL
 Java_org_opencv_highgui_VideoCapture_n_1isOpened(JNIEnv* env, jclass, jlong self) {
-  static const char method_name[] = "highgui::VideoCapture::isOpened()";
+  static const char method_name[] = "highgui::cv::VideoCapture::isOpened()";
   try {
     LOGD("%s", method_name);
-    VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
+    cv::VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
     bool _retval_ = me->isOpened();
     return _retval_;
   } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
@@ -134,17 +134,17 @@ Java_org_opencv_highgui_VideoCapture_n_1isOpened(JNIEnv* env, jclass, jlong self
 }
 
 //
-//  bool VideoCapture::open(int device)
+//  bool cv::VideoCapture::open(int device)
 //
 
 JNIEXPORT jboolean JNICALL Java_org_opencv_highgui_VideoCapture_n_1open__JI(JNIEnv* env, jclass, jlong self, jint device);
 
 JNIEXPORT jboolean JNICALL
 Java_org_opencv_highgui_VideoCapture_n_1open__JI(JNIEnv* env, jclass, jlong self, jint device) {
-  static const char method_name[] = "highgui::VideoCapture::open(int device)";
+  static const char method_name[] = "highgui::cv::VideoCapture::open(int device)";
   try {
     LOGD("%s", method_name);
-    VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
+    cv::VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
     bool _retval_ = me->open(device);
     return _retval_;
   } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
@@ -154,19 +154,19 @@ Java_org_opencv_highgui_VideoCapture_n_1open__JI(JNIEnv* env, jclass, jlong self
 }
 
 //
-//  bool VideoCapture::read(Mat image)
+//  bool cv::VideoCapture::cv::read(cv::Mat image)
 //
 
 JNIEXPORT jboolean JNICALL Java_org_opencv_highgui_VideoCapture_n_1read(JNIEnv* env, jclass, jlong self, jlong image_nativeObj);
 
 JNIEXPORT jboolean JNICALL
 Java_org_opencv_highgui_VideoCapture_n_1read(JNIEnv* env, jclass, jlong self, jlong image_nativeObj) {
-  static const char method_name[] = "highgui::VideoCapture::read(Mat image)";
+  static const char method_name[] = "highgui::cv::VideoCapture::cv::read(cv::Mat image)";
   try {
     LOGD("%s", method_name);
-    VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
-    Mat& image = *((Mat*)image_nativeObj);
-    bool _retval_ = me->read(image);
+    cv::VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
+    cv::Mat& image = *((Mat*)image_nativeObj);
+    bool _retval_ = me->cv::read(image);
     return _retval_;
   } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
     throwJavaException(env, 0, method_name);
@@ -175,17 +175,17 @@ Java_org_opencv_highgui_VideoCapture_n_1read(JNIEnv* env, jclass, jlong self, jl
 }
 
 //
-//  void VideoCapture::release()
+//  void cv::VideoCapture::release()
 //
 
 JNIEXPORT void JNICALL Java_org_opencv_highgui_VideoCapture_n_1release(JNIEnv* env, jclass, jlong self);
 
 JNIEXPORT void JNICALL
 Java_org_opencv_highgui_VideoCapture_n_1release(JNIEnv* env, jclass, jlong self) {
-  static const char method_name[] = "highgui::VideoCapture::release()";
+  static const char method_name[] = "highgui::cv::VideoCapture::release()";
   try {
     LOGD("%s", method_name);
-    VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
+    cv::VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
     me->release();
     return;
   } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
@@ -195,7 +195,7 @@ Java_org_opencv_highgui_VideoCapture_n_1release(JNIEnv* env, jclass, jlong self)
 }
 
 //
-//  bool VideoCapture::retrieve(Mat image, int channel = 0)
+//  bool cv::VideoCapture::retrieve(cv::Mat image, int channel = 0)
 //
 
 JNIEXPORT jboolean JNICALL
@@ -203,11 +203,11 @@ Java_org_opencv_highgui_VideoCapture_n_1retrieve__JJI(JNIEnv* env, jclass, jlong
 
 JNIEXPORT jboolean JNICALL
 Java_org_opencv_highgui_VideoCapture_n_1retrieve__JJI(JNIEnv* env, jclass, jlong self, jlong image_nativeObj, jint channel) {
-  static const char method_name[] = "highgui::VideoCapture::retrieve(Mat image, int channel)";
+  static const char method_name[] = "highgui::cv::VideoCapture::retrieve(cv::Mat image, int channel)";
   try {
     LOGD("%s", method_name);
-    VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
-    Mat& image = *((Mat*)image_nativeObj);
+    cv::VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
+    cv::Mat& image = *((Mat*)image_nativeObj);
     bool _retval_ = me->retrieve(image, channel);
     return _retval_;
   } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
@@ -223,11 +223,11 @@ JNIEXPORT jboolean JNICALL Java_org_opencv_highgui_VideoCapture_n_1retrieve__JJ(
 
 JNIEXPORT jboolean JNICALL
 Java_org_opencv_highgui_VideoCapture_n_1retrieve__JJ(JNIEnv* env, jclass, jlong self, jlong image_nativeObj) {
-  static const char method_name[] = "highgui::VideoCapture::retrieve(Mat image)";
+  static const char method_name[] = "highgui::cv::VideoCapture::retrieve(cv::Mat image)";
   try {
     LOGD("%s", method_name);
-    VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
-    Mat& image = *((Mat*)image_nativeObj);
+    cv::VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
+    cv::Mat& image = *((Mat*)image_nativeObj);
     bool _retval_ = me->retrieve(image);
     return _retval_;
   } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
@@ -237,7 +237,7 @@ Java_org_opencv_highgui_VideoCapture_n_1retrieve__JJ(JNIEnv* env, jclass, jlong 
 }
 
 //
-//  bool VideoCapture::set(int propId, double value)
+//  bool cv::VideoCapture::set(int propId, double value)
 //
 
 JNIEXPORT jboolean JNICALL
@@ -245,10 +245,10 @@ Java_org_opencv_highgui_VideoCapture_n_1set(JNIEnv* env, jclass, jlong self, jin
 
 JNIEXPORT jboolean JNICALL
 Java_org_opencv_highgui_VideoCapture_n_1set(JNIEnv* env, jclass, jlong self, jint propId, jdouble value) {
-  static const char method_name[] = "highgui::VideoCapture::set(int propId, double value)";
+  static const char method_name[] = "highgui::cv::VideoCapture::set(int propId, double value)";
   try {
     LOGD("%s", method_name);
-    VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
+    cv::VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
     bool _retval_ = me->set(propId, value);
     return _retval_;
   } catch(const std::exception& e) { throwJavaException(env, &e, method_name); } catch(...) {
@@ -258,23 +258,23 @@ Java_org_opencv_highgui_VideoCapture_n_1set(JNIEnv* env, jclass, jlong self, jin
 }
 
 //
-//  string VideoCapture::getSupportedPreviewSizes(...)
+//  string cv::VideoCapture::getSupportedPreviewSizes(...)
 //
 
 JNIEXPORT jstring JNICALL Java_org_opencv_highgui_VideoCapture_n_1getSupportedPreviewSizes(JNIEnv* env, jclass, jlong self);
 
 JNIEXPORT jstring JNICALL
 Java_org_opencv_highgui_VideoCapture_n_1getSupportedPreviewSizes(JNIEnv* env, jclass, jlong self) {
-  static const char method_name[] = "highgui::VideoCapture::getSupportedPreviewSizes(...)";
+  static const char method_name[] = "highgui::cv::VideoCapture::getSupportedPreviewSizes(...)";
   try {
     LOGD("%s", method_name);
-    VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
+    cv::VideoCapture* me = (VideoCapture*)self; // TODO: check for NULL
     union {
       double prop;
       const char* name;
     } u;
     u.prop = me->get(cv::CAP_PROP_SUPPORTED_PREVIEW_SIZES_STRING);
-    // VideoCapture::get can return 0.0 or -1.0 if it doesn't support
+    // cv::VideoCapture::get can return 0.0 or -1.0 if it doesn't support
     // cv::CAP_PROP_SUPPORTED_PREVIEW_SIZES_STRING
     if(u.prop != 0.0 && u.prop != -1.0)
       return env->NewStringUTF(u.name);
@@ -286,14 +286,14 @@ Java_org_opencv_highgui_VideoCapture_n_1getSupportedPreviewSizes(JNIEnv* env, jc
 
 //
 //  native support for java finalize()
-//  static void VideoCapture::n_delete( __int64 self )
+//  static void cv::VideoCapture::n_delete( __int64 self )
 //
 
 JNIEXPORT void JNICALL Java_org_opencv_highgui_VideoCapture_n_1delete(JNIEnv*, jclass, jlong self);
 
 JNIEXPORT void JNICALL
 Java_org_opencv_highgui_VideoCapture_n_1delete(JNIEnv*, jclass, jlong self) {
-  delete(VideoCapture*)self;
+  delete(cv::VideoCapture*)self;
 }
 
 } // extern "C"

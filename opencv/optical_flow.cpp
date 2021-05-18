@@ -5,7 +5,7 @@
 #include <opencv2/videoio.hpp>
 #include <opencv2/video.hpp>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 int
@@ -17,7 +17,7 @@ main(int argc, char** argv) {
                        "slow_traffic_small.mp4";
   const string keys = "{ h help |      | print this help message }"
                       "{ @image |<none>| path to image file }";
-  CommandLineParser parser(argc, argv, keys);
+  cv::CommandLineParser parser(argc, argv, keys);
   parser.about(about);
   if(parser.has("help")) {
     parser.printMessage();
@@ -29,64 +29,64 @@ main(int argc, char** argv) {
     return 0;
   }
 
-  VideoCapture capture(filename);
+  cv::VideoCapture capture(filename);
   if(!capture.isOpened()) {
-    // error in opening the video input
+    // cv::error in opening the video input
     cerr << "Unable to open file!" << endl;
     return 0;
   }
 
   // Create some random colors
-  vector<Scalar> colors;
+  vector<cv::Scalar> colors;
   RNG rng;
   for(int i = 0; i < 100; i++) {
     int r = rng.uniform(0, 256);
     int g = rng.uniform(0, 256);
     int b = rng.uniform(0, 256);
-    colors.push_back(Scalar(r, g, b));
+    colors.push_back(cv::Scalar(r, g, b));
   }
 
-  Mat old_frame, old_gray;
-  vector<Point2f> p0, p1;
+  cv::Mat old_frame, old_gray;
+  vector<cv::Point2f> p0, p1;
 
   // Take first frame and find corners in it
   capture >> old_frame;
-  cvtColor(old_frame, old_gray, COLOR_BGR2GRAY);
-  goodFeaturesToTrack(old_gray, p0, 100, 0.3, 7, Mat(), 7, false, 0.04);
+  cv::cvtColor(old_frame, old_gray, COLOR_BGR2GRAY);
+  cv::goodFeaturesToTrack(old_gray, p0, 100, 0.3, 7, cv::Mat(), 7, false, 0.04);
 
   // Create a mask image for drawing purposes
-  Mat mask = Mat::zeros(old_frame.size(), old_frame.type());
+  cv::Mat mask = cv::Mat::zeros(old_frame.size(), old_frame.type());
 
   while(true) {
-    Mat frame, frame_gray;
+    cv::Mat frame, frame_gray;
 
     capture >> frame;
     if(frame.empty())
       break;
-    cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
+    cv::cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
 
     // calculate optical flow
     vector<uchar> status;
     vector<float> err;
     TermCriteria criteria = TermCriteria((TermCriteria::COUNT) + (TermCriteria::EPS), 10, 0.03);
-    calcOpticalFlowPyrLK(old_gray, frame_gray, p0, p1, status, err, Size(15, 15), 2, criteria);
+    cv::calcOpticalFlowPyrLK(old_gray, frame_gray, p0, p1, status, err, cv::Size(15, 15), 2, criteria);
 
-    vector<Point2f> good_new;
+    vector<cv::Point2f> good_new;
     for(uint i = 0; i < p0.size(); i++) {
       // Select good points
       if(status[i] == 1) {
         good_new.push_back(p1[i]);
         // draw the tracks
-        line(mask, p1[i], p0[i], colors[i], 2);
-        circle(frame, p1[i], 5, colors[i], -1);
+        cv::line(mask, p1[i], p0[i], colors[i], 2);
+        cv::circle(frame, p1[i], 5, colors[i], -1);
       }
     }
-    Mat img;
-    add(frame, mask, img);
+    cv::Mat img;
+    cv::add(frame, mask, img);
 
-    imshow("Frame", img);
+    cv::imshow("Frame", img);
 
-    int keyboard = waitKey(30);
+    int keyboard = cv::waitKey(30);
     if(keyboard == 'q' || keyboard == 27)
       break;
 

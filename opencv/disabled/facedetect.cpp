@@ -4,7 +4,7 @@
 #include <iostream>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 static void
 help() {
@@ -15,11 +15,11 @@ help() {
           "It's most known use is for faces.\n"
           "Usage:\n"
           "./facedetect [--cascade=<cascade_path> this is the primary trained classifier such as "
-          "frontal face]\n"
+          "frontal cv::face]\n"
           "   [--nested-cascade[=nested_cascade_path this an optional secondary classifier such as "
           "eyes]]\n"
           "   [--scale=<image scale greater or equal to 1, try 1.3 for example>]\n"
-          "   [--try-flip]\n"
+          "   [--try-cv::flip]\n"
           "   [filename|camera_index]\n\n"
           "see facedetect.cmd for one call:\n"
           "./facedetect --cascade=\"../../data/haarcascades/haarcascade_frontalface_alt.xml\" "
@@ -31,18 +31,18 @@ help() {
        << endl;
 }
 
-void detectAndDraw(Mat& img, CascadeClassifier& cascade, CascadeClassifier& nestedCascade, double scale, bool tryflip);
+void detectAndDraw(cv::Mat& img, cv::CascadeClassifier& cascade, cv::CascadeClassifier& nestedCascade, double scale, bool tryflip);
 
 string cascadeName;
 string nestedCascadeName;
 
 int
 main(int argc, const char** argv) {
-  VideoCapture capture;
-  Mat frame, image;
+  cv::VideoCapture capture;
+  cv::Mat frame, image;
   string inputName;
   bool tryflip;
-  CascadeClassifier cascade, nestedCascade;
+  cv::CascadeClassifier cascade, nestedCascade;
   double scale;
 
   cv::CommandLineParser parser(argc,
@@ -50,7 +50,7 @@ main(int argc, const char** argv) {
                                "{help h||}"
                                "{cascade|../../data/haarcascades/haarcascade_frontalface_alt.xml|}"
                                "{nested-cascade|../../data/haarcascades/haarcascade_eye_tree_eyeglasses.xml|}"
-                               "{scale|1|}{try-flip||}{@filename||}");
+                               "{scale|1|}{try-cv::flip||}{@filename||}");
   if(parser.has("help")) {
     help();
     return 0;
@@ -60,7 +60,7 @@ main(int argc, const char** argv) {
   scale = parser.get<double>("scale");
   if(scale < 1)
     scale = 1;
-  tryflip = parser.has("try-flip");
+  tryflip = parser.has("try-cv::flip");
   inputName = parser.get<string>("@filename");
   if(!parser.check()) {
     parser.printErrors();
@@ -78,15 +78,15 @@ main(int argc, const char** argv) {
     if(!capture.open(camera))
       cout << "Capture from camera #" << camera << " didn't work" << endl;
   } else if(inputName.size()) {
-    image = imread(inputName, 1);
+    image = cv::imread(inputName, 1);
     if(image.empty()) {
       if(!capture.open(inputName))
-        cout << "Could not read " << inputName << endl;
+        cout << "Could not cv::read " << inputName << endl;
     }
   } else {
-    image = imread("../data/lena.jpg", 1);
+    image = cv::imread("../data/lena.jpg", 1);
     if(image.empty())
-      cout << "Couldn't read ../data/lena.jpg" << endl;
+      cout << "Couldn't cv::read ../data/lena.jpg" << endl;
   }
 
   if(capture.isOpened()) {
@@ -97,21 +97,21 @@ main(int argc, const char** argv) {
       if(frame.empty())
         break;
 
-      Mat frame1 = frame.clone();
+      cv::Mat frame1 = frame.clone();
       detectAndDraw(frame1, cascade, nestedCascade, scale, tryflip);
 
-      char c = (char)waitKey(10);
+      char c = (char)cv::waitKey(10);
       if(c == 27 || c == 'q' || c == 'Q')
         break;
     }
   } else {
-    cout << "Detecting face(s) in " << inputName << endl;
+    cout << "Detecting cv::face(s) in " << inputName << endl;
     if(!image.empty()) {
       detectAndDraw(image, cascade, nestedCascade, scale, tryflip);
-      waitKey(0);
+      cv::waitKey(0);
     } else if(!inputName.empty()) {
       /* assume it is a text file containing the
-      list of the image filenames to be processed - one per line */
+      list of the image filenames to be processed - one per cv::line */
       FILE* f = fopen(inputName.c_str(), "rt");
       if(f) {
         char buf[1000 + 1];
@@ -120,14 +120,14 @@ main(int argc, const char** argv) {
           while(len > 0 && isspace(buf[len - 1])) len--;
           buf[len] = '\0';
           cout << "file " << buf << endl;
-          image = imread(buf, 1);
+          image = cv::imread(buf, 1);
           if(!image.empty()) {
             detectAndDraw(image, cascade, nestedCascade, scale, tryflip);
-            char c = (char)waitKey(0);
+            char c = (char)cv::waitKey(0);
             if(c == 27 || c == 'q' || c == 'Q')
               break;
           } else {
-            cerr << "Aw snap, couldn't read image " << buf << endl;
+            cerr << "Aw snap, couldn't cv::read image " << buf << endl;
           }
         }
         fclose(f);
@@ -139,25 +139,25 @@ main(int argc, const char** argv) {
 }
 
 void
-detectAndDraw(Mat& img, CascadeClassifier& cascade, CascadeClassifier& nestedCascade, double scale, bool tryflip) {
+detectAndDraw(cv::Mat& img, cv::CascadeClassifier& cascade, cv::CascadeClassifier& nestedCascade, double scale, bool tryflip) {
   double t = 0;
-  vector<Rect> faces, faces2;
-  const static Scalar colors[] = {Scalar(255, 0, 0),
-                                  Scalar(255, 128, 0),
-                                  Scalar(255, 255, 0),
-                                  Scalar(0, 255, 0),
-                                  Scalar(0, 128, 255),
-                                  Scalar(0, 255, 255),
-                                  Scalar(0, 0, 255),
-                                  Scalar(255, 0, 255)};
-  Mat gray, smallImg;
+  vector<cv::Rect> faces, faces2;
+  const static cv::Scalar colors[] = {Scalar(255, 0, 0),
+                                  cv::Scalar(255, 128, 0),
+                                  cv::Scalar(255, 255, 0),
+                                  cv::Scalar(0, 255, 0),
+                                  cv::Scalar(0, 128, 255),
+                                  cv::Scalar(0, 255, 255),
+                                  cv::Scalar(0, 0, 255),
+                                  cv::Scalar(255, 0, 255)};
+  cv::Mat gray, smallImg;
 
-  cvtColor(img, gray, COLOR_BGR2GRAY);
+  cv::cvtColor(img, gray, COLOR_BGR2GRAY);
   double fx = 1 / scale;
-  resize(gray, smallImg, Size(), fx, fx, INTER_LINEAR);
-  equalizeHist(smallImg, smallImg);
+  cv::resize(gray, smallImg, cv::Size(), fx, fx, INTER_LINEAR);
+  cv::equalizeHist(smallImg, smallImg);
 
-  t = (double)getTickCount();
+  t = (double)cv::getTickCount();
   cascade.detectMultiScale(smallImg,
                            faces,
                            1.1,
@@ -166,9 +166,9 @@ detectAndDraw(Mat& img, CascadeClassifier& cascade, CascadeClassifier& nestedCas
                                //|CASCADE_FIND_BIGGEST_OBJECT
                                //|CASCADE_DO_ROUGH_SEARCH
                                | CASCADE_SCALE_IMAGE,
-                           Size(30, 30));
+                           cv::Size(30, 30));
   if(tryflip) {
-    flip(smallImg, smallImg, 1);
+    cv::flip(smallImg, smallImg, 1);
     cascade.detectMultiScale(smallImg,
                              faces2,
                              1.1,
@@ -177,19 +177,19 @@ detectAndDraw(Mat& img, CascadeClassifier& cascade, CascadeClassifier& nestedCas
                                  //|CASCADE_FIND_BIGGEST_OBJECT
                                  //|CASCADE_DO_ROUGH_SEARCH
                                  | CASCADE_SCALE_IMAGE,
-                             Size(30, 30));
-    for(vector<Rect>::const_iterator r = faces2.begin(); r != faces2.end(); ++r) {
-      faces.push_back(Rect(smallImg.cols - r->x - r->width, r->y, r->width, r->height));
+                             cv::Size(30, 30));
+    for(vector<cv::Rect>::const_iterator r = faces2.begin(); r != faces2.end(); ++r) {
+      faces.push_back(cv::Rect(smallImg.cols - r->x - r->width, r->y, r->width, r->height));
     }
   }
-  t = (double)getTickCount() - t;
-  printf("detection time = %g ms\n", t * 1000 / getTickFrequency());
+  t = (double)cv::getTickCount() - t;
+  printf("detection time = %g ms\n", t * 1000 / cv::getTickFrequency());
   for(size_t i = 0; i < faces.size(); i++) {
-    Rect r = faces[i];
-    Mat smallImgROI;
-    vector<Rect> nestedObjects;
-    Point center;
-    Scalar color = colors[i % 8];
+    cv::Rect r = faces[i];
+    cv::Mat smallImgROI;
+    vector<cv::Rect> nestedObjects;
+    cv::Point center;
+    cv::Scalar color = colors[i % 8];
     int radius;
 
     double aspect_ratio = (double)r.width / r.height;
@@ -197,9 +197,9 @@ detectAndDraw(Mat& img, CascadeClassifier& cascade, CascadeClassifier& nestedCas
       center.x = cvRound((r.x + r.width * 0.5) * scale);
       center.y = cvRound((r.y + r.height * 0.5) * scale);
       radius = cvRound((r.width + r.height) * 0.25 * scale);
-      circle(img, center, radius, color, 3, 8, 0);
+      cv::circle(img, center, radius, color, 3, 8, 0);
     } else
-      rectangle(img,
+      cv::rectangle(img,
                 cvPoint(cvRound(r.x * scale), cvRound(r.y * scale)),
                 cvPoint(cvRound((r.x + r.width - 1) * scale), cvRound((r.y + r.height - 1) * scale)),
                 color,
@@ -218,14 +218,14 @@ detectAndDraw(Mat& img, CascadeClassifier& cascade, CascadeClassifier& nestedCas
                                        //|CASCADE_DO_ROUGH_SEARCH
                                        //|CASCADE_DO_CANNY_PRUNING
                                        | CASCADE_SCALE_IMAGE,
-                                   Size(30, 30));
+                                   cv::Size(30, 30));
     for(size_t j = 0; j < nestedObjects.size(); j++) {
-      Rect nr = nestedObjects[j];
+      cv::Rect nr = nestedObjects[j];
       center.x = cvRound((r.x + nr.x + nr.width * 0.5) * scale);
       center.y = cvRound((r.y + nr.y + nr.height * 0.5) * scale);
       radius = cvRound((nr.width + nr.height) * 0.25 * scale);
-      circle(img, center, radius, color, 3, 8, 0);
+      cv::circle(img, center, radius, color, 3, 8, 0);
     }
   }
-  imshow("result", img);
+  cv::imshow("result", img);
 }

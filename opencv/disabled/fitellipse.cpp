@@ -1,10 +1,10 @@
 /********************************************************************************
  *
  *
- *  This program is demonstration for ellipse fitting. Program finds
+ *  This program is demonstration for cv::ellipse fitting. Program finds
  *  contours and approximate it by ellipses.
  *
- *  Trackbar specify threshold parametr.
+ *  Trackbar specify cv::threshold parametr.
  *
  *  White lines is contours. Red lines is fitting ellipses.
  *
@@ -18,13 +18,13 @@
 #include <opencv2/imgproc/types_c.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 // static void help()
 // {
 //     cout <<
-//             "\nThis program is demonstration for ellipse fitting. The program finds\n"
+//             "\nThis program is demonstration for cv::ellipse fitting. The program finds\n"
 //             "contours and approximate it by ellipses.\n"
 //             "Call:\n"
 //             "./fitellipse [image_name -- Default stuff.jpg]\n" << endl;
@@ -39,21 +39,21 @@ void processImage(int, void*);
 int
 main(int argc, char** argv) {
   const char* filename = argc == 2 ? argv[1] : (char*)"stuff.jpg";
-  image = imread(filename, 0);
+  image = cv::imread(filename, 0);
   if(image.empty()) {
     cout << "Couldn't open image " << filename << "\nUsage: fitellipse <image_name>\n";
     return 0;
   }
 
-  imshow("source", image);
-  namedWindow("result", 1);
+  cv::imshow("source", image);
+  cv::namedWindow("result", 1);
 
   // Create toolbars. HighGUI use.
-  createTrackbar("threshold", "result", &sliderPos, 255, processImage);
+  cv::createTrackbar("cv::threshold", "result", &sliderPos, 255, processImage);
   processImage(0, 0);
 
   // Wait for a key stroke; the same function arranges events processing
-  waitKey();
+  cv::waitKey();
   return 0;
 }
 
@@ -64,7 +64,7 @@ processImage(int /*h*/, void*) {
   std::vector<std::vector<cv::Point>> contours;
   cv::Mat bimage = image >= sliderPos;
 
-  findContours(bimage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
+  cv::findContours(bimage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
 
   cv::Mat cimage = cv::Mat::zeros(bimage.size(), CV_8UC3);
 
@@ -75,18 +75,18 @@ processImage(int /*h*/, void*) {
 
     cv::Mat pointsf;
     cv::Mat(contours[i]).convertTo(pointsf, CV_32F);
-    RotatedRect box = fitEllipse(pointsf);
+    cv::RotatedRect box = cv::fitEllipse(pointsf);
 
     if(MAX(box.size.width, box.size.height) > MIN(box.size.width, box.size.height) * 30)
       continue;
-    drawContours(cimage, contours, (int)i, Scalar::all(255), 1, 8);
+    cv::drawContours(cimage, contours, (int)i, cv::Scalar::all(255), 1, 8);
 
-    ellipse(cimage, box, Scalar(0, 0, 255), 1, cv::LINE_AA);
-    ellipse(cimage, box.center, box.size * 0.5f, box.angle, 0, 360, Scalar(0, 255, 255), 1, cv::LINE_AA);
+    cv::ellipse(cimage, box, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
+    cv::ellipse(cimage, box.center, box.size * 0.5f, box.angle, 0, 360, cv::Scalar(0, 255, 255), 1, cv::LINE_AA);
     cv::Point2f vtx[4];
     box.points(vtx);
-    for(int j = 0; j < 4; j++) line(cimage, vtx[j], vtx[(j + 1) % 4], Scalar(0, 255, 0), 1, cv::LINE_AA);
+    for(int j = 0; j < 4; j++) cv::line(cimage, vtx[j], vtx[(j + 1) % 4], cv::Scalar(0, 255, 0), 1, cv::LINE_AA);
   }
 
-  imshow("result", cimage);
+  cv::imshow("result", cimage);
 }

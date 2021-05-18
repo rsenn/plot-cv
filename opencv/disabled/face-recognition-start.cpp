@@ -52,7 +52,7 @@ getDistance(int triggerGpioPin, int echoGpioPin) {
   return distance * 100;
 }
 
-// ##### Define the function to load the face detection cascade files
+// ##### Define the function to load the cv::face detection cascade files
 bool
 loadCascadeFiles(string openCVCascadePath,
                  cv::CascadeClassifier& faceCascade,
@@ -63,37 +63,37 @@ loadCascadeFiles(string openCVCascadePath,
   string eyeCascadeFile = openCVCascadePath + "haarcascade_eye.xml";
   string noseCascadeFile = openCVCascadePath + "haarcascade_mcs_nose.xml";
 
-  // Load face cascade
-  cout << "Loading face cascade..." << endl;
+  // Load cv::face cascade
+  cout << "Loading cv::face cascade..." << endl;
   if(!faceCascade.load(faceCascadeFile)) {
-    cerr << "Error loading face cascade!" << endl;
+    cerr << "cv::Error loading cv::face cascade!" << endl;
     return false;
   }
 
   // Load eye cascade
   cout << "Loading eye cascade..." << endl;
   if(!eyeCascade.load(eyeCascadeFile)) {
-    cerr << "Error loading eye cascade!" << endl;
+    cerr << "cv::Error loading eye cascade!" << endl;
     return false;
   }
 
   // Load nose cascade
   cout << "Loading nose cascade..." << endl;
   if(!noseCascade.load(noseCascadeFile)) {
-    cerr << "Error loading nose cascade!" << endl;
+    cerr << "cv::Error loading nose cascade!" << endl;
     return false;
   }
 
   return true;
 }
 
-// ##### Define the function to load the face recognizer training images
+// ##### Define the function to load the cv::face recognizer training images
 bool
 loadFaceRecognizerTrainingImages(string openCVFaceRecognizerImagesPath,
                                  vector<cv::Mat>& faceRecognizerImages,
                                  vector<int>& faceRecognizerLabels,
                                  vector<string>& faceRecognizerLabelNames) {
-  // Initialise variables for loading of training face image files
+  // Initialise variables for loading of training cv::face image files
   DIR* dir;
   dirent* pdir;
   vector<string> faceImageFilenames;
@@ -104,7 +104,7 @@ loadFaceRecognizerTrainingImages(string openCVFaceRecognizerImagesPath,
   vector<string>::iterator findIterator;
   int index;
 
-  // Read in the face recognizer image filenames
+  // Read in the cv::face recognizer image filenames
   dir = opendir(openCVFaceRecognizerImagesPath.c_str());
   while((pdir = readdir(dir))) {
     faceImageFilename = pdir->d_name;
@@ -116,12 +116,12 @@ loadFaceRecognizerTrainingImages(string openCVFaceRecognizerImagesPath,
     }
   }
 
-  // Read in the face recognizer images
+  // Read in the cv::face recognizer images
   for(size_t i = 0; i < faceImageFilenames.size(); i++) {
     faceImageFilename = faceImageFilenames[i];
-    cout << "Loading face recognizer images and labels..." << faceImageFilename << endl;
+    cout << "Loading cv::face recognizer images and labels..." << faceImageFilename << endl;
 
-    // Load the face image and add to array
+    // Load the cv::face image and cv::add to array
     faceRecognizerImageLoad = cv::imread(openCVFaceRecognizerImagesPath + faceImageFilename, cv::LOAD_IMAGE_GRAYSCALE);
     cv::resize(faceRecognizerImageLoad, faceRecognizerImageLoad, cv::Size(100, 100));
     faceRecognizerImages.push_back(faceRecognizerImageLoad);
@@ -141,7 +141,7 @@ loadFaceRecognizerTrainingImages(string openCVFaceRecognizerImagesPath,
     }
   }
 
-  // Output the face recognizer labels and label names
+  // Output the cv::face recognizer labels and label names
   for(size_t i = 0; i < faceRecognizerLabels.size(); i++) {
     cout << "Face Recognizer Label..." << faceRecognizerLabels[i] << endl;
   }
@@ -152,7 +152,7 @@ loadFaceRecognizerTrainingImages(string openCVFaceRecognizerImagesPath,
   return true;
 }
 
-// ##### Define the method to perform the face detection
+// ##### Define the method to perform the cv::face detection
 void
 detectFaces(vector<cv::Mat>& faceROIImages,
             cv::Mat frame,
@@ -170,7 +170,7 @@ detectFaces(vector<cv::Mat>& faceROIImages,
   int lineThickness = 1;
   int lineType = cv::LINE_AA; // 8, 4 or cv::LINE_AA
 
-  // Convert frame to grayscale, normalize the brightness, and increase the contrast
+  // Convert frame to grayscale, cv::normalize the brightness, and increase the contrast
   cv::cvtColor(frame, frameGrey, cv::COLOR_BGR2GRAY);
   cv::equalizeHist(frameGrey, frameGrey);
 
@@ -179,11 +179,11 @@ detectFaces(vector<cv::Mat>& faceROIImages,
 
   // Loop through each face
   for(size_t i = 0; i < faces.size(); i++) {
-    // Get the face region of interest
+    // Get the cv::face region of interest
     faceROI = frame(faces[i]);
     faceROIGrey = frameGrey(faces[i]);
 
-    // Draw a rectangle around the face
+    // Draw a cv::rectangle around the face
     // cv::Point topLeft(faces[i].x, faces[i].y);
     // cv::Point bottomRight(faces[i].x + faces[i].width, faces[i].y + faces[i].height);
     // cv::rectangle(faceROI, topLeft, bottomRight , cv::Scalar(255, 255, 255), lineThickness,
@@ -192,7 +192,7 @@ detectFaces(vector<cv::Mat>& faceROIImages,
     // Detect eyes
     eyeCascade.detectMultiScale(faceROIGrey, eyes, 1.1, 5, cv::CASCADE_SCALE_IMAGE, cv::Size(10, 10), cv::Size(50, 50));
 
-    // Draw an ellipse around each eye
+    // Draw an cv::ellipse around each eye
     if(eyes.size() == 2 && !trainingMode) {
       for(size_t j = 0; j < 2; j++) {
         cv::Point center(eyes[j].x + eyes[j].width * 0.5, eyes[j].y + eyes[j].height * 0.5);
@@ -212,7 +212,7 @@ detectFaces(vector<cv::Mat>& faceROIImages,
     // Detect nose
     noseCascade.detectMultiScale(faceROIGrey, nose, 1.1, 5, cv::CASCADE_SCALE_IMAGE, cv::Size(10, 10), cv::Size(200, 200));
 
-    // Draw a rectangle around the nose
+    // Draw a cv::rectangle around the nose
     if(nose.size() == 1 && !trainingMode) {
       // cv::Point center(nose[0].x + nose[0].width * 0.5, nose[0].y + nose[0].height * 0.5);
       // cv::ellipse(faceROI, center, cv::Size(nose[0].width * 0.5, nose[0].height * 0.5), 0, 0,
@@ -222,7 +222,7 @@ detectFaces(vector<cv::Mat>& faceROIImages,
       cv::rectangle(faceROI, topLeft, bottomRight, cv::Scalar(255, 150, 0), lineThickness, lineType, 0);
     }
 
-    // Add to the face ROI images array
+    // Add to the cv::face ROI images array
     if(eyes.size() == 2 && nose.size() == 1) {
       faceROIImages.push_back(faceROI);
     }
@@ -276,7 +276,7 @@ main(int argc, char** argv) {
   future<void> futureFaces;
   future_status futureStatus;
 
-  // Initialise the face ROI objects
+  // Initialise the cv::face ROI objects
   vector<cv::Mat> faceROIImages;
   cv::Mat faceROIImage, faceROIImageGrey;
   int faceROIImageWidth = 100;
@@ -287,7 +287,7 @@ main(int argc, char** argv) {
   int lineThickness = 2;
   int lineType = cv::LINE_AA; // 8, 4 or cv::LINE_AA
 
-  // Initialise the face recognizer objects
+  // Initialise the cv::face recognizer objects
   string faceImageFilename;
   vector<cv::Mat> faceRecognizerImages;
   vector<int> faceRecognizerLabels;
@@ -307,7 +307,7 @@ main(int argc, char** argv) {
   int echoGpioPin = 24;
   double distanceToObject = 0.0;
 
-  // Check the input arguments and set the face recognition mode
+  // Check the input arguments and set the cv::face recognition mode
   if(argc >= 2) {
     if(string(argv[1]) == "TRUE") {
       faceRecognitionMode = true;
@@ -325,23 +325,23 @@ main(int argc, char** argv) {
     cv::namedWindow("Video", 1);
   }
 
-  // Load the face detection cascade files
+  // Load the cv::face detection cascade files
   loadCascadeFiles(openCVCascadePath, faceCascade, eyeCascade, noseCascade);
 
-  // Load in the face recognizer training images
+  // Load in the cv::face recognizer training images
   loadFaceRecognizerTrainingImages(openCVFaceRecognizerImagesPath,
                                    faceRecognizerImages,
                                    faceRecognizerLabels,
                                    faceRecognizerLabelNames);
 
-  // Create a face recognizer and train it on the given images
+  // Create a cv::face recognizer and train it on the given images
   if(faceRecognizerLabelNames.size() >= 2) {
-    cout << "Training face recognizer..." << endl;
+    cout << "Training cv::face recognizer..." << endl;
     try {
       faceRecognizerModel = cv::createFisherFaceRecognizer();
       faceRecognizerModel->train(faceRecognizerImages, faceRecognizerLabels);
     } catch(cv::Exception ex) {
-      cerr << "Error training face recognizer!..." << ex.msg << endl;
+      cerr << "cv::Error training cv::face recognizer!..." << ex.msg << endl;
       return -1;
     }
   }
@@ -365,7 +365,7 @@ main(int argc, char** argv) {
   // Open camera
   cout << "Opening camera..." << endl;
   if(!camera.open()) {
-    cerr << "Error opening camera!" << endl;
+    cerr << "cv::Error opening camera!" << endl;
     return -1;
   }
   cout << "Camera opened successfully..." << endl;
@@ -400,7 +400,7 @@ main(int argc, char** argv) {
     // Flip the image around both x and y-axis
     cv::flip(frame, frame, -1);
 
-    // Run the face detection if input argument is TRUE
+    // Run the cv::face detection if input argument is TRUE
     if(faceRecognitionMode) {
       // Call the detect faces function asynchronously
       if(!futureFacesRunning) {
@@ -424,14 +424,14 @@ main(int argc, char** argv) {
         futureFacesRunning = false;
       }
 
-      // Check if there are some face ROI images returned
+      // Check if there are some cv::face ROI images returned
       if(faceROIImages.size() > 0) {
         cout << "Face(s) detected..." << faceROIImages.size() << endl;
 
-        // Retrieve the first face ROI image into the objects and resize
+        // Retrieve the first cv::face ROI image into the objects and resize
         cv::resize(faceROIImages[0], faceROIImage, cv::Size(faceROIImageWidth, faceROIImageHeight));
 
-        // Get the face ROI timestamp formatted char
+        // Get the cv::face ROI timestamp formatted char
         faceROITimestamp = time(NULL);
         strftime(faceROITimestampFormatted,
                  sizeof(faceROITimestampFormatted),
@@ -439,7 +439,7 @@ main(int argc, char** argv) {
                  localtime(&faceROITimestamp));
 
         if(trainingMode && trainingFaceImageCounter < maxTrainingFaceImages) {
-          // Add to the training face image counter
+          // Add to the training cv::face image counter
           trainingFaceImageCounter += 1;
 
           // Get the timestamp formatted char
@@ -449,7 +449,7 @@ main(int argc, char** argv) {
                    "%d%m%Y%H%M%S",
                    localtime(&trainingFilenameTimestamp));
 
-          // Write the training face image to jpg file
+          // Write the training cv::face image to jpg file
           faceImageFilename = trainingLabel + "_" + trainingFilenameTimestampFormatted + ".jpg";
           cv::imwrite(openCVFaceRecognizerImagesPath + faceImageFilename, faceROIImage);
         }
@@ -458,21 +458,21 @@ main(int argc, char** argv) {
         faceROIImages.clear();
       }
 
-      // Check if the face ROI image is not empty
+      // Check if the cv::face ROI image is not empty
       if(!faceROIImage.empty()) {
-        // Draw the rectangle background
+        // Draw the cv::rectangle background
         cv::Point topLeft(imageMargin, imageMargin);
         cv::Point bottomRight(faceROIImageWidth + imageMargin, faceROIImageHeight + imageMargin);
         cv::rectangle(frame, topLeft, bottomRight, cv::Scalar(255, 255, 255), lineThickness, lineType, 0);
 
-        // Copy the face ROI image into the frame
+        // Copy the cv::face ROI image into the frame
         faceROIImage.copyTo(frame(cv::Rect(imageMargin, imageMargin, faceROIImage.cols, faceROIImage.rows)));
 
-        // Convert face ROI image to grayscale, normalize the brightness, and increase the contrast
+        // Convert cv::face ROI image to grayscale, cv::normalize the brightness, and increase the contrast
         cv::cvtColor(faceROIImage, faceROIImageGrey, cv::COLOR_BGR2GRAY);
         cv::equalizeHist(faceROIImageGrey, faceROIImageGrey);
 
-        // Use the face recognizer model to perform the face recognition prediction
+        // Use the cv::face recognizer model to perform the cv::face recognition prediction
         if(faceRecognizerLabelNames.size() >= 2) {
           faceRecognizerModel->predict(faceROIImageGrey, faceRecognizerPredictionLabel, faceRecognizerPredictionConfidence);
           faceRecognizerPredictionLabelName = faceRecognizerLabelNames[faceRecognizerPredictionLabel - 1];
@@ -501,7 +501,7 @@ main(int argc, char** argv) {
                       fontLineThickness,
                       fontLineType);
 
-          // Add the face ROI timestamp text
+          // Add the cv::face ROI timestamp text
           text = "Date: " + string(faceROITimestampFormatted).substr(0, 10);
           textSize = cv::getTextSize(text, font, fontSizeSmall, fontLineThickness, &textBaseline);
           cv::putText(frame,
@@ -513,7 +513,7 @@ main(int argc, char** argv) {
                       fontLineThickness,
                       fontLineType);
 
-          // Add the face ROI timestamp text
+          // Add the cv::face ROI timestamp text
           text = "Time: " + string(faceROITimestampFormatted).substr(11, 8);
           textSize = cv::getTextSize(text, font, fontSizeSmall, fontLineThickness, &textBaseline);
           cv::putText(frame,
@@ -528,7 +528,7 @@ main(int argc, char** argv) {
       }
     }
 
-    // Add the face recognition mode text
+    // Add the cv::face recognition mode text
     if(faceRecognitionMode) {
       text = "Face Recognition Mode: ON";
       textSize = cv::getTextSize(text, font, fontSizeLarge, fontLineThickness, &textBaseline);

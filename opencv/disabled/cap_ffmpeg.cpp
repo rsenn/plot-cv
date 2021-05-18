@@ -42,7 +42,7 @@
 #include "precomp.hpp"
 
 #if !defined(HAVE_FFMPEG)
-#error "Build configuration error"
+#cv::error "Build configuration cv::error"
 #endif
 
 #include <string>
@@ -148,7 +148,7 @@ public:
   }
 
   virtual void
-  write(cv::InputArray image) CV_OVERRIDE {
+  cv::write(cv::InputArray image) CV_OVERRIDE {
     if(!ffmpegWriter)
       return;
     CV_Assert(image.depth() == CV_8U);
@@ -278,7 +278,7 @@ cv_capture_retrieve(CvPluginCapture handle, int stream_idx, cv_videoio_retrieve_
     return CV_ERROR_FAIL;
   try {
     CvCapture_FFMPEG_proxy* instance = (CvCapture_FFMPEG_proxy*)handle;
-    Mat img;
+    cv::Mat img;
     // TODO: avoid unnecessary copying
     if(instance->retrieveFrame(stream_idx, img))
       return callback(stream_idx, img.data, img.step, img.cols, img.rows, img.channels(), userdata);
@@ -289,7 +289,7 @@ cv_capture_retrieve(CvPluginCapture handle, int stream_idx, cv_videoio_retrieve_
 static CvResult CV_API_CALL
 cv_writer_open(
     const char* filename, int fourcc, double fps, int width, int height, int isColor, CV_OUT CvPluginWriter* handle) {
-  Size sz(width, height);
+  cv::Size sz(width, height);
   CvVideoWriter_FFMPEG_proxy* wrt = 0;
   try {
     wrt = new CvVideoWriter_FFMPEG_proxy(filename, fourcc, fps, sz, isColor != 0);
@@ -328,8 +328,8 @@ cv_writer_write(CvPluginWriter handle, const unsigned char* data, int step, int 
     return CV_ERROR_FAIL;
   try {
     CvVideoWriter_FFMPEG_proxy* instance = (CvVideoWriter_FFMPEG_proxy*)handle;
-    Mat img(Size(width, height), CV_MAKETYPE(CV_8U, cn), const_cast<uchar*>(data), step);
-    instance->write(img);
+    cv::Mat img(cv::Size(width, height), CV_MAKETYPE(CV_8U, cn), const_cast<uchar*>(data), step);
+    instance->cv::write(img);
     return CV_ERROR_OK;
   } catch(...) { return CV_ERROR_FAIL; }
 }

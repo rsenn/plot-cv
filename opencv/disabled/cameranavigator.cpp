@@ -1,5 +1,5 @@
 #include "ros/ros.h"
-#include "std_msgs/String.h"
+#include "std_msgs/cv::String.h"
 #include "wheels/wheels_status.h"
 #include "wheels/cmd_get_one_wheel_status.h"
 #include "wheels/cmd_set_car_direction_speed.h"
@@ -52,16 +52,16 @@ FindLineCenter(raspicam::RaspiCam_Cv& Camera, int32_t nTick, int32_t& nCenterX, 
     }
 
 #if THRESHOLDIMAGE
-    // printf("threshold image\n");
+    // printf("cv::threshold image\n");
     cv::threshold(roiImg, roiImg, thVal, 255, cv::THRESH_BINARY);
-    // printf("bitwise_not image\n");
+    // printf("cv::bitwise_not image\n");
     cv::bitwise_not(roiImg, roiImg); // negative image
 
     erodeElmt = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
     dilateElmt = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5));
-    // printf("erode image\n");
+    // printf("cv::erode image\n");
     cv::erode(roiImg, roiImg, erodeElmt);
-    // printf("dilate image\n");
+    // printf("cv::dilate image\n");
     cv::dilate(roiImg, roiImg, dilateElmt);
 #endif
 #if TESTROI
@@ -80,7 +80,7 @@ FindLineCenter(raspicam::RaspiCam_Cv& Camera, int32_t nTick, int32_t& nCenterX, 
     }
 #endif
 #if !TESTROI
-    // printf("findContours image\n");
+    // printf("cv::findContours image\n");
     cv::findContours(roiImg, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
     int nMaxAreaContourIndex = -1;
     float fMaxArea = 0.f;
@@ -197,9 +197,9 @@ main(int argc, char** argv) {
 
   /**
    * The ros::init() function needs to see argc and argv so that it can perform
-   * any ROS arguments and name remapping that were provided at the command line.
+   * any ROS arguments and name remapping that were provided at the command cv::line.
    * For programmatic remappings you can use a different version of init() which takes
-   * remappings directly, but for most command-line programs, passing argc and argv is
+   * remappings directly, but for most command-cv::line programs, passing argc and argv is
    * the easiest way to do it.  The third argument to init() is the name of the node.
    *
    * You must call one of the versions of ros::init() before using any other
@@ -222,7 +222,7 @@ main(int argc, char** argv) {
   cout << "Connecting to camera" << endl;
 
   if(!Camera.open()) {
-    cerr << "Error opening camera" << endl;
+    cerr << "cv::Error opening camera" << endl;
     return -1;
   }
   cout << "Connected to camera =" << Camera.getId() << endl;

@@ -9,17 +9,17 @@
 #include <iostream>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 // TODO: do normalization ala Kalal's assessment protocol for TLD
 
-static const Scalar gtColor = Scalar(0, 255, 0);
+static const cv::Scalar gtColor = cv::Scalar(0, 255, 0);
 
 static Scalar
 getNextColor() {
   const int num = 6;
-  static Scalar colors[num] = {
-      Scalar(160, 0, 0), Scalar(0, 0, 160), Scalar(0, 160, 160), Scalar(160, 160, 0), Scalar(160, 0, 160), Scalar(20, 50, 160)};
+  static cv::Scalar colors[num] = {
+      cv::Scalar(160, 0, 0), cv::Scalar(0, 0, 160), cv::Scalar(0, 160, 160), cv::Scalar(160, 160, 0), cv::Scalar(160, 0, 160), Scalar(20, 50, 160)};
   static int id = 0;
   return colors[id < num ? id++ : num - 1];
 }
@@ -30,7 +30,7 @@ readGT(const string& filename, const string& omitname) {
   {
     ifstream input(filename.c_str());
     if(!input.is_open())
-      CV_Error(Error::StsError, "Failed to open file");
+      CV_Error(cv::Error::StsError, "Failed to open file");
     while(input) {
       Rect2d one;
       input >> one.x;
@@ -48,14 +48,14 @@ readGT(const string& filename, const string& omitname) {
   if(!omitname.empty()) {
     ifstream input(omitname.c_str());
     if(!input.is_open())
-      CV_Error(Error::StsError, "Failed to open file");
+      CV_Error(cv::Error::StsError, "Failed to open file");
     while(input) {
       unsigned int a = 0, b = 0;
       input >> a >> b;
       input.ignore(numeric_limits<std::streamsize>::max(), '\n');
       if(a > 0 && b > 0 && a < res.size() && b < res.size()) {
         if(a > b)
-          swap(a, b);
+          cv::swap(a, b);
         for(vector<Rect2d>::iterator i = res.begin() + a; i != res.begin() + b; ++i) { *i = Rect2d(); }
       }
     }
@@ -83,14 +83,14 @@ struct AlgoWrap {
     Overlap_0_5,
   };
 
-  Ptr<Tracker> tracker;
+  Ptr<cv::Tracker> tracker;
   bool lastRes;
   Rect2d lastBox;
   State lastState;
 
   // visual
   string name;
-  Scalar color;
+  cv::Scalar color;
 
   // results
   int numTotal;       // frames passed to tracker
@@ -102,12 +102,12 @@ struct AlgoWrap {
   vector<int> auc;    // number of frames for each overlap percent
 
   void
-  eval(const Mat& frame, const Rect2d& gtBox, bool isVerbose) {
+  eval(const cv::Mat& frame, const Rect2d& gtBox, bool isVerbose) {
     // RUN
     lastBox = Rect2d();
-    int64 frameTime = getTickCount();
+    int64 frameTime = cv::getTickCount();
     lastRes = tracker->update(frame, lastBox);
-    frameTime = getTickCount() - frameTime;
+    frameTime = cv::getTickCount() - frameTime;
 
     // RESULTS
     double intersectArea = (gtBox & lastBox).area();
@@ -135,9 +135,9 @@ struct AlgoWrap {
   }
 
   void
-  draw(Mat& image, const Point& textPoint) const {
+  draw(cv::Mat& image, const cv::Point& textPoint) const {
     if(lastRes)
-      rectangle(image, lastBox, color, 2, LINE_8);
+      cv::rectangle(image, lastBox, color, 2, cv::LINE_8);
     string suf;
     switch(lastState) {
       case AlgoWrap::NotFound: suf = " X"; break;
@@ -145,21 +145,21 @@ struct AlgoWrap {
       case AlgoWrap::Overlap_0: suf = " +"; break;
       case AlgoWrap::Overlap_0_5: suf = " ++"; break;
     }
-    putText(image, name + suf, textPoint, FONT_HERSHEY_PLAIN, 1, color, 1, LINE_AA);
+    cv::putText(image, name + suf, textPoint, FONT_HERSHEY_PLAIN, 1, color, 1, cv::LINE_AA);
   }
 
   // calculates "lost track ratio" curve - row of values growing from 0 to 1
   // number of elements is LTRC_COUNT + 2
   Mat
   getLTRC() const {
-    Mat t, res;
-    Mat(auc).convertTo(t, CV_64F); // integral does not support CV_32S input
+    cv::Mat t, res;
+    cv::Mat(auc).convertTo(t, CV_64F); // integral does not support CV_32S input
     integral(t.t(), res, CV_64F);  // t is a column of values
     return res.row(1) / (double)numTotal;
   }
 
   void
-  plotLTRC(Mat& img) const {
+  plotLTRC(cv::Mat& img) const {
     Ptr<plot::Plot2d> p_ = plot::Plot2d::create(getLTRC());
     p_->render(img);
   }
@@ -185,13 +185,13 @@ struct AlgoWrap {
     out << setw(20) << "f-measure" << setw(20) << f * 100 << "%" << endl;
     out << setw(20) << "AUC" << setw(20) << calcAUC() << endl;
 
-    double s = (timeTotal / getTickFrequency()) / numTotal;
+    double s = (timeTotal / cv::getTickFrequency()) / numTotal;
     out << setw(20) << "Performance" << setw(20) << s * 1000 << " ms/frame" << setw(20) << 1 / s << " fps" << endl;
   }
 };
 
 inline ostream&
-operator<<(ostream& out, const AlgoWrap& w) {
+cv::operator<<(ostream& out, const AlgoWrap& w) {
   w.stat(out);
   return out;
 }
@@ -224,14 +224,14 @@ int
 main(int argc, char** argv) {
   const string keys = "{help h||show help}"
                       "{video||video file to process}"
-                      "{gt||ground truth file (each line describes rectangle in format: '<x>,<y>,<w>,<h>')}"
+                      "{gt||ground truth file (each cv::line describes cv::rectangle in cv::format: '<x>,<y>,<w>,<h>')}"
                       "{start|0|starting frame}"
                       "{num|0|frame number (0 for all)}"
-                      "{omit||file with omit ranges (each line describes occluded frames: '<start> <end>')}"
+                      "{omit||file with omit ranges (each cv::line describes occluded frames: '<start> <end>')}"
                       "{plot|false|plot LTR curves at the end}"
                       "{v|false|print each frame info}"
                       "{@algos||comma-separated algorithm names}";
-  CommandLineParser p(argc, argv, keys);
+  cv::CommandLineParser p(argc, argv, keys);
   if(p.has("help")) {
     p.printMessage();
     return 0;
@@ -252,29 +252,29 @@ main(int argc, char** argv) {
   cout << "Reading GT from " << gtFile << " ... ";
   vector<Rect2d> gt = readGT(gtFile, omitFile);
   if(gt.empty())
-    CV_Error(Error::StsError, "Failed to read GT file");
+    CV_Error(cv::Error::StsError, "Failed to cv::read GT file");
   cout << gt.size() << " boxes" << endl;
 
   cout << "Opening video " << videoFile << " ... ";
-  VideoCapture cap;
+  cv::VideoCapture cap;
   cap.open(videoFile);
   if(!cap.isOpened())
-    CV_Error(Error::StsError, "Failed to open video file");
+    CV_Error(cv::Error::StsError, "Failed to open video file");
   cap.set(CAP_PROP_POS_FRAMES, startFrame);
   cout << "at frame " << startFrame << endl;
 
   // INIT
   vector<AlgoWrap> algos = initAlgorithms(algList);
-  Mat frame, image;
+  cv::Mat frame, image;
   cap >> frame;
   for(vector<AlgoWrap>::iterator i = algos.begin(); i != algos.end(); ++i) i->tracker->init(frame, gt[0]);
 
   // DRAW
   {
-    namedWindow(window, WINDOW_AUTOSIZE);
+    cv::namedWindow(window, cv::WINDOW_AUTOSIZE);
     frame.copyTo(image);
-    rectangle(image, gt[0], gtColor, 2, LINE_8);
-    imshow(window, image);
+    cv::rectangle(image, gt[0], gtColor, 2, cv::LINE_8);
+    cv::imshow(window, image);
   }
 
   bool paused = false;
@@ -294,19 +294,19 @@ main(int argc, char** argv) {
       for(vector<AlgoWrap>::iterator i = algos.begin(); i != algos.end(); ++i) i->eval(frame, gt[frameId], isVerbose);
       // DRAW
       {
-        Point textPoint(1, 16);
+        cv::Point textPoint(1, 16);
         frame.copyTo(image);
-        rectangle(image, gt[frameId], gtColor, 2, LINE_8);
-        putText(image, "GROUND TRUTH", textPoint, FONT_HERSHEY_PLAIN, 1, gtColor, 1, LINE_AA);
+        cv::rectangle(image, gt[frameId], gtColor, 2, cv::LINE_8);
+        cv::putText(image, "GROUND TRUTH", textPoint, FONT_HERSHEY_PLAIN, 1, gtColor, 1, cv::LINE_AA);
         for(vector<AlgoWrap>::iterator i = algos.begin(); i != algos.end(); ++i) {
           textPoint.y += 14;
           i->draw(image, textPoint);
         }
-        imshow(window, image);
+        cv::imshow(window, image);
       }
     }
 
-    char c = (char)waitKey(1);
+    char c = (char)cv::waitKey(1);
     if(c == 'q') {
       cout << "Done - manual exit" << endl;
       break;
@@ -323,12 +323,12 @@ main(int argc, char** argv) {
   for(vector<AlgoWrap>::iterator i = algos.begin(); i != algos.end(); ++i) cout << "==========" << endl << *i << endl;
 
   if(doPlot) {
-    Mat img(300, 300, CV_8UC3);
+    cv::Mat img(300, 300, CV_8UC3);
     for(vector<AlgoWrap>::iterator i = algos.begin(); i != algos.end(); ++i) {
       i->plotLTRC(img);
-      imshow("LTR curve for " + i->name, img);
+      cv::imshow("LTR curve for " + i->name, img);
     }
-    waitKey(0);
+    cv::waitKey(0);
   }
 
   return 0;

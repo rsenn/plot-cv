@@ -4,7 +4,7 @@
 #include "communication_api/serverapi.h"
 #include <iostream>
 #include <memory>
-#include <opencv2/bgsegm.hpp>
+#include <opencv2/cv::bgsegm.hpp>
 #include <QCoreApplication>
 using cv::BackgroundSubtractor;
 using cv::namedWindow;
@@ -24,11 +24,11 @@ main(int argc, char* argv[]) {
 
   //
   if(argc < 4) {
-    cout << "Input Error" << endl;
+    cout << "Input cv::Error" << endl;
     return 1;
   }
   /* Open video file */
-  VideoCapture systemCapture;
+  cv::VideoCapture systemCapture;
   QString captureSource{argv[1]};
   if(captureSource == "video")
     systemCapture.open(argv[2]);
@@ -53,8 +53,8 @@ main(int argc, char* argv[]) {
   std::cout << "Press 'q' to quit..." << std::endl;
 
   Ptr<BackgroundSubtractorMOG> backgroundSuctractor{createBackgroundSubtractorMOG(200, 5, 0.7, 15)};
-  Mat img_input{};
-  // namedWindow("BGS", cv::WINDOW_NORMAL);
+  cv::Mat img_input{};
+  // cv::namedWindow("BGS", cv::WINDOW_NORMAL);
   int captureFPS{static_cast<int>(systemCapture.get(cv::CAP_PROP_FPS))};
   while(1) {
     systemCapture >> img_input;

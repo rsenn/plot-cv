@@ -52,7 +52,7 @@
 #include <xine.h>
 #include <xine/xineutils.h>
 
-using namespace cv;
+//using namespace cv;
 
 class XINECapture : public IVideoCapture {
   // method call table
@@ -60,7 +60,7 @@ class XINECapture : public IVideoCapture {
   xine_stream_t* stream;
   xine_video_port_t* vo_port;
   xine_video_frame_t xine_frame;
-  Size size;
+  cv::Size size;
   int frame_number;
   double frame_rate;     // fps
   double frame_duration; // ms
@@ -132,7 +132,7 @@ public:
     if(!xine_get_next_video_frame(vo_port, &xine_frame))
       return false;
 
-    size = Size(xine_frame.width, xine_frame.height);
+    size = cv::Size(xine_frame.width, xine_frame.height);
 
     xine_free_video_frame(vo_port, &xine_frame);
     xine_frame.data = 0;
@@ -172,17 +172,17 @@ public:
       return false;
 
     bool res = false;
-    Mat frame_bgr;
+    cv::Mat frame_bgr;
 
     switch(xine_frame.colorspace) {
-      case XINE_IMGFMT_YV12: { // actual format seems to be I420 (or IYUV)
-        Mat frame(Size(xine_frame.width, xine_frame.height * 3 / 2), CV_8UC1, xine_frame.data);
+      case XINE_IMGFMT_YV12: { // actual cv::format seems to be I420 (or IYUV)
+        cv::Mat frame(cv::Size(xine_frame.width, xine_frame.height * 3 / 2), CV_8UC1, xine_frame.data);
         cv::cvtColor(frame, out, cv::COLOR_YUV2BGR_I420);
         res = true;
       } break;
 
       case XINE_IMGFMT_YUY2: {
-        Mat frame(Size(xine_frame.width, xine_frame.height), CV_8UC2, xine_frame.data);
+        cv::Mat frame(cv::Size(xine_frame.width, xine_frame.height), CV_8UC2, xine_frame.data);
         cv::cvtColor(frame, out, cv::COLOR_YUV2BGR_YUY2);
         res = true;
       } break;
@@ -235,7 +235,7 @@ protected:
       return true;
     } else if(f > frame_number) {
       // if the requested position is behind out actual position,
-      // we just need to read the remaining amount of frames until we are there.
+      // we just need to cv::read the remaining amount of frames until we are there.
       for(; frame_number < f; frame_number++) {
         // un-increment framenumber grabbing failed
         if(!xine_get_next_video_frame(vo_port, &xine_frame)) {
@@ -250,7 +250,7 @@ protected:
       // start reading frames from the beginning.
       // reset stream, should also work with non-seekable input
       xine_play(stream, 0, 0);
-      // read frames until we are at the requested frame
+      // cv::read frames until we are at the requested frame
       for(frame_number = 0; frame_number < f; frame_number++) {
         // un-increment last framenumber if grabbing failed
         if(!xine_get_next_video_frame(vo_port, &xine_frame)) {

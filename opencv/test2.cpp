@@ -3,36 +3,36 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 int thresh = 100;
-Mat source;
+cv::Mat source;
 
 void threshold_callback(int, void*);
-void setLabel(Mat&, const std::string, std::vector<Point>&);
+void setLabel(cv::Mat&, const std::string, std::vector<cv::Point>&);
 string intToString(int);
 
 int
 main(int argc, char* argv[]) {
   // load image
-  source = imread(argv[1]);
+  source = cv::imread(argv[1]);
 
   if(!source.data) {
     cerr << "Problem loading image!!!" << endl;
     return EXIT_FAILURE;
   }
 
-  cvtColor(source, source, cv::COLOR_BGR2GRAY);
+  cv::cvtColor(source, source, cv::COLOR_BGR2GRAY);
 
-  namedWindow("Source", cv::WINDOW_AUTOSIZE);
-  imshow("Source", source);
+  cv::namedWindow("Source", cv::WINDOW_AUTOSIZE);
+  cv::imshow("Source", source);
 
-  createTrackbar(" Threshold:", "Source", &thresh, 255, threshold_callback);
+  cv::createTrackbar(" Threshold:", "Source", &thresh, 255, threshold_callback);
 
   threshold_callback(0, 0);
 
-  waitKey(0);
+  cv::waitKey(0);
   return (0);
 }
 
@@ -40,40 +40,40 @@ main(int argc, char* argv[]) {
 void
 threshold_callback(int, void*) {
 
-  Mat morph;
-  Mat source2 = source.clone();
+  cv::Mat morph;
+  cv::Mat source2 = source.clone();
 
   // morphological closing with a column filter : retain only large vertical edges
-  Mat morphKernelV = getStructuringElement(MORPH_RECT, Size(1, 10));
-  // Mat morphKernelV = getStructuringElement( MORPH_RECT, Size( 2*10 + 1, 2*10+1 ), Point( 10, 10 ) );
-  morphologyEx(source2, morph, MORPH_CLOSE, morphKernelV);
+  cv::Mat morphKernelV = cv::getStructuringElement(MORPH_RECT, cv::Size(1, 10));
+  // cv::Mat morphKernelV = cv::getStructuringElement( MORPH_RECT, cv::Size( 2*10 + 1, 2*10+1 ), cv::Point( 10, 10 ) );
+  cv::morphologyEx(source2, morph, MORPH_CLOSE, morphKernelV);
 
-  Mat bwV;
+  cv::Mat bwV;
   // binarize: will contain only large vertical edges
-  threshold(morph, bwV, 100, 255.0, cv::THRESH_BINARY | cv::THRESH_OTSU);
+  cv::threshold(morph, bwV, 100, 255.0, cv::THRESH_BINARY | cv::THRESH_OTSU);
 
   // morphological closing with a row filter : retain only large horizontal edges
-  Mat morphKernelH = getStructuringElement(MORPH_RECT, Size(10, 1));
-  // Mat morphKernelH = getStructuringElement( MORPH_RECT, Size( 2*10 + 1, 2*10+1 ), Point( 10, 10 ) );
-  morphologyEx(source2, morph, MORPH_CLOSE, morphKernelH);
+  cv::Mat morphKernelH = cv::getStructuringElement(MORPH_RECT, cv::Size(10, 1));
+  // cv::Mat morphKernelH = cv::getStructuringElement( MORPH_RECT, cv::Size( 2*10 + 1, 2*10+1 ), cv::Point( 10, 10 ) );
+  cv::morphologyEx(source2, morph, MORPH_CLOSE, morphKernelH);
 
-  Mat bwH;
+  cv::Mat bwH;
   // binarize: will contain only large horizontal edges
-  threshold(morph, bwH, 100, 255.0, cv::THRESH_BINARY | cv::THRESH_OTSU);
+  cv::threshold(morph, bwH, 100, 255.0, cv::THRESH_BINARY | cv::THRESH_OTSU);
 
   // combine the vertical and horizontal edges
-  Mat bw = bwV & bwH;
-  threshold(bw, bw, 75, 255.0, cv::THRESH_BINARY_INV);
-  imshow("fooo", bw);
+  cv::Mat bw = bwV & bwH;
+  cv::threshold(bw, bw, 75, 255.0, cv::THRESH_BINARY_INV);
+  cv::imshow("fooo", bw);
 
   // just for illustration
-  Mat rgb;
-  cvtColor(source, rgb, cv::COLOR_GRAY2BGR);
+  cv::Mat rgb;
+  cv::cvtColor(source, rgb, cv::COLOR_GRAY2BGR);
 
   // find contours
-  vector<vector<Point>> contours;
-  vector<Vec4i> hierarchy;
-  findContours(bw, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_NONE, Point(0, 0));
+  vector<vector<cv::Point>> contours;
+  vector<cv::Vec4i> hierarchy;
+  cv::findContours(bw, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_NONE, cv::Point(0, 0));
   // filter contours by area to obtain boxes
   double area_min = 315;
   double area_max = 375;
@@ -81,44 +81,44 @@ threshold_callback(int, void*) {
   double area = 0;
   int compt = 0;
   for(int idx = 0; idx >= 0; idx = hierarchy[idx][0]) {
-    area = contourArea(contours[idx]);
-    Rect rect = boundingRect(contours[idx]);
+    area = cv::contourArea(contours[idx]);
+    cv::Rect rect = cv::boundingRect(contours[idx]);
     // if (rect.width > 17 && rect.height > 17 && area > area_min && area < area_max)
     if(rect.width > 17 && rect.height > 17) {
       compt++;
-      drawContours(rgb, contours, idx, Scalar(0, 0, 255), 2, 8, hierarchy);
+      cv::drawContours(rgb, contours, idx, cv::Scalar(0, 0, 255), 2, 8, hierarchy);
       string checkbox_label = intToString(rect.y);
       setLabel(rgb, checkbox_label, contours[idx]);
-      // take bounding rectangle. better to use filled countour as a mask
-      // to extract the rectangle because then you won't get any stray elements
+      // take bounding cv::rectangle. better to use filled countour as a mask
+      // to extract the cv::rectangle because then you won't get any stray elements
       // cout << " rect: (" << rect.x << ", " << rect.y << ") " << rect.width << " x " << rect.height <<
       // endl;
-      Mat imRect(source, rect);
+      cv::Mat imRect(source, rect);
     }
   }
   // cout << compt << endl;
 
   /// Show in a window
-  namedWindow("Contours", cv::WINDOW_AUTOSIZE);
-  imshow("Contours", rgb);
+  cv::namedWindow("Contours", cv::WINDOW_AUTOSIZE);
+  cv::imshow("Contours", rgb);
 }
 
 /**
  * Helper function to display text in the center of a contour
  */
 void
-setLabel(Mat& im, const std::string label, std::vector<Point>& contour) {
+setLabel(cv::Mat& im, const std::string label, std::vector<cv::Point>& contour) {
   double scale = 0.4;
   int baseline = 0;
   int fontface = FONT_HERSHEY_SIMPLEX;
   int thickness = 1;
 
-  Size text = getTextSize(label, fontface, scale, thickness, &baseline);
-  Rect r = boundingRect(contour);
+  cv::Size text = cv::getTextSize(label, fontface, scale, thickness, &baseline);
+  cv::Rect r = cv::boundingRect(contour);
 
-  Point pt(r.x + ((r.width - text.width) / 2), r.y + ((r.height + text.height) / 2));
-  rectangle(im, pt + Point(0, baseline), pt + Point(text.width, -text.height), CV_RGB(255, 255, 255), cv::FILLED);
-  putText(im, label, pt, fontface, scale, CV_RGB(0, 0, 0), thickness, 8);
+  cv::Point pt(r.x + ((r.width - text.width) / 2), r.y + ((r.height + text.height) / 2));
+  cv::rectangle(im, pt + cv::Point(0, baseline), pt + cv::Point(text.width, -text.height), CV_RGB(255, 255, 255), cv::FILLED);
+  cv::putText(im, label, pt, fontface, scale, CV_RGB(0, 0, 0), thickness, 8);
 }
 
 string

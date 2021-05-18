@@ -88,7 +88,7 @@ RaspiCam_Cv::retrieve(cv::Mat& image) {
   _impl->retrieve(image.ptr<uchar>(0));
 }
 
-/**Returns the specified VideoCapture property
+/**Returns the specified cv::VideoCapture property
  */
 
 double
@@ -118,7 +118,7 @@ RaspiCam_Cv::get(int propId) {
   };
 }
 
-/**Sets a property in the VideoCapture.
+/**Sets a property in the cv::VideoCapture.
  */
 
 bool
@@ -137,7 +137,7 @@ RaspiCam_Cv::set(int propId, double value) {
         _impl->setFormat(RASPICAM_FORMAT_BGR);
         imgFormat = value;
       } else
-        res = false; // error int format
+        res = false; // cv::error int format
       return res;
     } break;
     case cv::CAP_PROP_MODE: // nothing to  do yet

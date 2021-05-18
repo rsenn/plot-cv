@@ -19,15 +19,15 @@
 
 #include <boost/atomic.hpp>
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
-VideoCapture cap;
-Mat img, showimg;
-HOGDescriptor hog;
-deque<Mat> imgs;
+cv::VideoCapture cap;
+cv::Mat img, showimg;
+cv::HOGDescriptor hog;
+deque<cv::Mat> imgs;
 
 size_t i, j;
-boost::lockfree::spsc_queue<Mat, boost::lockfree::capacity<1024>>
+boost::lockfree::spsc_queue<cv::Mat, boost::lockfree::capacity<1024>>
     spsc_queue; /* spsc_queue用于图像的缓存，因为获取图像和处理图像都有较大的延时，所以采用生产者消费者模式，生产者即为一个专门处理获取图像的线程，消费者即为对图像处理的线程
                  */
 
@@ -40,7 +40,7 @@ boost::lockfree::spsc_queue<Mat, boost::lockfree::capacity<1024>>
 void
 producer(void) {
   while(true) {
-    cap.read(img);        /* 获取图像 */
+    cap.cv::read(img);        /* 获取图像 */
     spsc_queue.push(img); /* 加入到缓存队列中 */
   }
 }
@@ -57,11 +57,11 @@ void
 consumer(void) {
 
   while(true) {
-    vector<Rect> found, found_filtered;
+    vector<cv::Rect> found, found_filtered;
     spsc_queue.pop(showimg);
-    hog.detectMultiScale(showimg, found, 0, Size(4, 4), Size(0, 0), 1.05, 2);
+    hog.detectMultiScale(showimg, found, 0, cv::Size(4, 4), cv::Size(0, 0), 1.05, 2);
     for(i = 0; i < found.size(); i++) {
-      Rect r = found[i];
+      cv::Rect r = found[i];
       for(j = 0; j < found.size(); j++)
         if(j != i && (r & found[j]) == r)
           break;
@@ -69,15 +69,15 @@ consumer(void) {
         found_filtered.push_back(r);
     }
     for(i = 0; i < found_filtered.size(); i++) {
-      Rect r = found_filtered[i];
+      cv::Rect r = found_filtered[i];
       r.x += cvRound(r.width * 0.1);
       r.width = cvRound(r.width * 0.8);
       r.y += cvRound(r.height * 0.06);
       r.height = cvRound(r.height * 0.9);
-      rectangle(showimg, r.tl(), r.br(), cv::Scalar(0, 255, 0), 1);
+      cv::rectangle(showimg, r.tl(), r.br(), cv::Scalar(0, 255, 0), 1);
     }
-    imshow("1", showimg);
-    waitKey(5);
+    cv::imshow("1", showimg);
+    cv::waitKey(5);
   }
 }
 
@@ -99,7 +99,7 @@ load_lear_model(const char* model_file) {
 
   char version_buffer[10];
   if(!fread(&version_buffer, sizeof(char), 10, modelfl)) {
-    cout << "Unable to read version" << endl;
+    cout << "Unable to cv::read version" << endl;
     return detector;
   }
 
@@ -107,10 +107,10 @@ load_lear_model(const char* model_file) {
     cout << "Version of model-file does not match version of svm_classify!" << endl;
     return detector;
   }
-  // read version number
+  // cv::read version number
   int version = 0;
   if(!fread(&version, sizeof(int), 1, modelfl)) {
-    cout << "Unable to read version number" << endl;
+    cout << "Unable to cv::read version number" << endl;
     return detector;
   }
 

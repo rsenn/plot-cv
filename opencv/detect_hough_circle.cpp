@@ -10,7 +10,7 @@
 #include <fstream>
 // #include <mysql.h>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 const int ITERATOR = 1;
@@ -30,19 +30,19 @@ const char* TABLE = "hough_circles";
 ofstream text;
 
 Mat
-applyFilters(Mat& img) {
-  Mat var_img;
-  cvtColor(img, var_img, cv::COLOR_BGR2GRAY);
-  Canny(var_img, var_img, 50, 150, 3);
-  GaussianBlur(var_img, var_img, Size(9, 9), 2, 2);
+applyFilters(cv::Mat& img) {
+  cv::Mat var_img;
+  cv::cvtColor(img, var_img, cv::COLOR_BGR2GRAY);
+  cv::Canny(var_img, var_img, 50, 150, 3);
+  cv::GaussianBlur(var_img, var_img, cv::Size(9, 9), 2, 2);
 
   return var_img;
 }
 
 vector<Vec3f>
-getCircles(Mat& img) {
+getCircles(cv::Mat& img) {
   vector<Vec3f> circles;
-  HoughCircles(img, circles, cv::HOUGH_GRADIENT, 1, img.rows / 8, 2, 32.0, 10, 30);
+  cv::HoughCircles(img, circles, cv::HOUGH_GRADIENT, 1, img.rows / 8, 2, 32.0, 10, 30);
   return circles;
 }
 
@@ -51,36 +51,36 @@ getCenterCoordinates(vector<Vec3f> circles) {
   for(size_t i = 0; i < circles.size(); i++) {
     int radius = cvRound(circles[i][2]);
     if(radius >= MIN_RADIUS && radius <= MAX_RADIUS)
-      return Point(cvRound(circles[i][0]), cvRound(circles[i][1]));
+      return cv::Point(cvRound(circles[i][0]), cvRound(circles[i][1]));
   }
-  return Point(0, 0);
+  return cv::Point(0, 0);
 }
 
 Point
-rightCircle(Mat& img) {
+rightCircle(cv::Mat& img) {
   int width = img.cols;
-  Rect roi(width - 150, 0, 150, 150);
-  Mat sub_img = img(roi);
-  Mat gray = applyFilters(sub_img);
+  cv::Rect roi(width - 150, 0, 150, 150);
+  cv::Mat sub_img = img(roi);
+  cv::Mat gray = applyFilters(sub_img);
   vector<Vec3f> circles = getCircles(gray);
   if(circles.size() <= 0)
-    return Point(0, 0);
-  Point center = getCenterCoordinates(circles);
+    return cv::Point(0, 0);
+  cv::Point center = getCenterCoordinates(circles);
   center.x += width - 150;
-  return Point(center.x, center.y);
+  return cv::Point(center.x, center.y);
 }
 
 Point
-leftCircle(Mat& img) {
-  Rect roi(0, 0, 150, 150);
+leftCircle(cv::Mat& img) {
+  cv::Rect roi(0, 0, 150, 150);
 
-  Mat sub_img = img(roi);
-  Mat gray = applyFilters(sub_img);
+  cv::Mat sub_img = img(roi);
+  cv::Mat gray = applyFilters(sub_img);
   vector<Vec3f> circles = getCircles(gray);
   if(circles.size() <= 0)
-    return Point(0, 0);
-  Point center = getCenterCoordinates(circles);
-  return Point(center.x, center.y);
+    return cv::Point(0, 0);
+  cv::Point center = getCenterCoordinates(circles);
+  return cv::Point(center.x, center.y);
 }
 
 bool
@@ -106,14 +106,14 @@ fullPath(string dir, string filename) {
 }
 
 bool
-pointIsNull(Point p) {
+pointIsNull(cv::Point p) {
   return ((p.x == 0) && (p.y == 0));
 }
 
 void
-detectCirclesFromImage(Mat& img) {
-  Point left = leftCircle(img);
-  Point right = rightCircle(img);
+detectCirclesFromImage(cv::Mat& img) {
+  cv::Point left = leftCircle(img);
+  cv::Point right = rightCircle(img);
 
   if(pointIsNull(left) || pointIsNull(right))
     text << "\n";
@@ -173,14 +173,14 @@ main(int argc, char** argv) {
         if(!isGraphicFile(filename))
           continue;
         string img_full_path = fullPath(folder, filename);
-        Mat img = imread(img_full_path, 1);
+        cv::Mat img = cv::imread(img_full_path, 1);
         text << filename;
         detectCirclesFromImage(img);
       }
     }
   } else {
     if(isGraphicFile(argv[1])) {
-      Mat img = imread(argv[1], 1);
+      cv::Mat img = cv::imread(argv[1], 1);
       text << argv[1];
       detectCirclesFromImage(img);
     }

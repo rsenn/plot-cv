@@ -116,7 +116,7 @@ struct Guid {
 public:
   Guid();
   Guid(__rcGUID_t);
-  operator ::__rcGUID_t();
+  cv::operator ::__rcGUID_t();
   bool Equals(Guid __guidArg);
   bool Equals(__rcGUID_t __guidArg);
   Guid(unsigned int __aArg,
@@ -162,7 +162,7 @@ inline Guid::Guid(__rcGUID_t __guid)
       __k(reinterpret_cast<const __s_GUID&>(__guid).Data4[7]) {
 }
 
-inline Guid::operator ::__rcGUID_t() {
+inline Guid::cv::operator ::__rcGUID_t() {
   return reinterpret_cast<__rcGUID_t>(*this);
 }
 
@@ -177,7 +177,7 @@ Guid::Equals(__rcGUID_t __guidArg) {
 }
 
 inline bool
-operator==(Guid __aArg, Guid __bArg) {
+cv::operator==(Guid __aArg, Guid __bArg) {
   auto __a = reinterpret_cast<unsigned long*>(&__aArg);
   auto __b = reinterpret_cast<unsigned long*>(&__bArg);
 
@@ -185,12 +185,12 @@ operator==(Guid __aArg, Guid __bArg) {
 }
 
 inline bool
-operator!=(Guid __aArg, Guid __bArg) {
+cv::operator!=(Guid __aArg, Guid __bArg) {
   return !(__aArg == __bArg);
 }
 
 inline bool
-operator<(Guid __aArg, Guid __bArg) {
+cv::operator<(Guid __aArg, Guid __bArg) {
   auto __a = reinterpret_cast<unsigned long*>(&__aArg);
   auto __b = reinterpret_cast<unsigned long*>(&__bArg);
 
@@ -290,7 +290,7 @@ class DPO {
 public:
   ~DPO(void);
   static DPO& getInstance();
-  void printOut(const wchar_t* format, ...);
+  void printOut(const wchar_t* cv::format, ...);
   void setVerbose(bool state);
   bool verbose;
 
@@ -406,7 +406,7 @@ protected:
   RawImage* ig_RIOut;
 
 private:
-  ImageGrabberCallback& operator=(const ImageGrabberCallback&); // Declared to fix compilation warning.
+  ImageGrabberCallback& cv::operator=(const ImageGrabberCallback&); // Declared to fix compilation warning.
 };
 
 #ifdef HAVE_WINRT
@@ -488,7 +488,7 @@ private:
                         IMFTopologyNode** ppNode);
   HRESULT AddOutputNode(IMFTopology* pTopology, IMFActivate* pActivate, DWORD dwId, IMFTopologyNode** ppNode);
 
-  ImageGrabber& operator=(const ImageGrabber&); // Declared to fix comiplation error.
+  ImageGrabber& cv::operator=(const ImageGrabber&); // Declared to fix comiplation cv::error.
 };
 
 /// Class for controlling of thread of the grabbing raw data from video device
@@ -550,9 +550,9 @@ struct CamParametrs {
   Parametr Focus;
 };
 
-typedef std::wstring String;
+typedef std::wstring cv::String;
 typedef std::vector<int> vectorNum;
-typedef std::map<String, vectorNum> SUBTYPEMap;
+typedef std::map<cv::String, vectorNum> SUBTYPEMap;
 typedef std::map<UINT64, SUBTYPEMap> FrameRateMap;
 typedef void (*emergensyStopEventCallback)(int, void*);
 
@@ -670,7 +670,7 @@ private:
   Media_Foundation(void);
 };
 
-/// The only visiable class for controlling of video devices in format singelton
+/// The only visiable class for controlling of video devices in cv::format singelton
 class videoInput {
 public:
   virtual ~videoInput(void);
@@ -701,7 +701,7 @@ public:
   wchar_t* getNameVideoDevice(int deviceID);
   // Getting interface MediaSource for Media Foundation from videodevice with deviceID
   IMFMediaSource* getMediaSource(int deviceID);
-  // Getting format with id, which is supported by videodevice with deviceID
+  // Getting cv::format with id, which is supported by videodevice with deviceID
   MediaType getFormat(int deviceID, int unsigned id);
   // Checking of existence of the suitable video devices
   bool isDevicesAcceable();
@@ -750,24 +750,24 @@ DPO::getInstance() {
 }
 
 void
-DPO::printOut(const wchar_t* format, ...) {
+DPO::printOut(const wchar_t* cv::format, ...) {
   if(verbose) {
     int i = 0;
     wchar_t* p = NULL;
     va_list args;
-    va_start(args, format);
+    va_start(args, cv::format);
     if(::IsDebuggerPresent()) {
       WCHAR szMsg[512];
-      ::StringCchVPrintfW(szMsg, sizeof(szMsg) / sizeof(szMsg[0]), format, args);
+      ::StringCchVPrintfW(szMsg, sizeof(szMsg) / sizeof(szMsg[0]), cv::format, args);
       ::OutputDebugStringW(szMsg);
     } else {
-      if(wcscmp(format, L"%i")) {
+      if(wcscmp(cv::format, L"%i")) {
         i = va_arg(args, int);
       }
-      if(wcscmp(format, L"%s")) {
+      if(wcscmp(cv::format, L"%s")) {
         p = va_arg(args, wchar_t*);
       }
-      wprintf(format, i, p);
+      wprintf(cv::format, i, p);
     }
     va_end(args);
   }
@@ -1833,7 +1833,7 @@ Media_Foundation::buildListOfDevices() {
   HRESULT hr = S_OK;
 #ifdef HAVE_WINRT
   videoDevices* vDs = &videoDevices::getInstance();
-  hr = vDs->initDevices(WRL_ENUM_GET(_DeviceClass, DeviceClass, VideoCapture));
+  hr = vDs->initDevices(WRL_ENUM_GET(_DeviceClass, DeviceClass, cv::VideoCapture));
 #else
   _ComPtr<IMFAttributes> pAttributes = NULL;
   CoInitialize(NULL);
@@ -2105,7 +2105,7 @@ videoDevice::checkDevice(_DeviceClass devClass, DEFINE_TASK<void>* pTask, MAKE_W
       pVector = CREATE_TASK DEFINE_RET_TYPE(MAKE_WRL_REF(_VectorView<MAKE_WRL_REF(_DeviceInformation)>))(pAction).get();
       UINT32 count = 0;
       if(SUCCEEDED(hr))
-        WRL_PROP_GET(pVector, Size, count, hr)
+        WRL_PROP_GET(pVector, cv::Size, count, hr)
       if(SUCCEEDED(hr) && count > 0) {
         for(UINT32 i = 0; i < count; i++) {
           MAKE_WRL_OBJ(_IDeviceInformation) pDevice;
@@ -2176,7 +2176,7 @@ videoDevice::initDevice() {
     HRESULT hr;
     DEFINE_TASK<void> pTask;
     MAKE_WRL_OBJ(_IDeviceInformation) pDevInfo;
-    hr = checkDevice(WRL_ENUM_GET(_DeviceClass, DeviceClass, VideoCapture), &pTask, REF_WRL_OBJ(pDevInfo));
+    hr = checkDevice(WRL_ENUM_GET(_DeviceClass, DeviceClass, cv::VideoCapture), &pTask, REF_WRL_OBJ(pDevInfo));
     if(SUCCEEDED(hr))
       pTask.wait();
     if(SUCCEEDED(hr)) {
@@ -2344,8 +2344,8 @@ videoDevice::getMediaSource() {
 }
 int
 videoDevice::findType(unsigned int size, unsigned int frameRate) {
-  // For required frame size look for the suitable video format.
-  // If not found, get the format for the largest available frame size.
+  // For required frame size look for the suitable video cv::format.
+  // If not found, get the cv::format for the largest available frame size.
   FrameRateMap FRM;
   std::map<UINT64, FrameRateMap>::const_iterator fmt;
   fmt = vd_CaptureFormats.find(size);
@@ -2382,7 +2382,7 @@ videoDevice::findType(unsigned int size, unsigned int frameRate) {
   if(STMMax.empty())
     STMMax = FRM.begin()->second;
 
-  // Check if there are any format types on the list.
+  // Check if there are any cv::format types on the list.
   if(STMMax.empty())
     return -1;
 
@@ -2406,7 +2406,7 @@ videoDevice::buildLibraryofTypes() {
       framerate = (*i).MF_MT_FRAME_RATE_NUMERATOR / (*i).MF_MT_FRAME_RATE_DENOMINATOR;
       FrameRateMap FRM = vd_CaptureFormats[size];
       SUBTYPEMap STM = FRM[framerate];
-      String subType((*i).pMF_MT_SUBTYPEName);
+      cv::String subType((*i).pMF_MT_SUBTYPEName);
       vectorNum VN = STM[subType];
       VN.push_back(count);
       STM[subType] = VN;
@@ -2686,7 +2686,7 @@ videoDevice::enumerateCaptureFormats(MAKE_WRL_REF(_MediaCapture) pSource) {
   if(FAILED(hr))
     return hr;
   UINT32 count;
-  WRL_PROP_GET(pVector, Size, count, hr)
+  WRL_PROP_GET(pVector, cv::Size, count, hr)
   if(FAILED(hr))
     return hr;
   for(UINT32 i = 0; i < count; i++) {
@@ -2788,7 +2788,7 @@ videoDevices::initDevices(_DeviceClass devClass) {
       MAKE_WRL_OBJ(_VectorView<MAKE_WRL_REF(_DeviceInformation)>)
       pVector = CREATE_TASK DEFINE_RET_TYPE(MAKE_WRL_REF(_VectorView<MAKE_WRL_REF(_DeviceInformation)>))(pAction).get();
       if(SUCCEEDED(hr))
-        WRL_PROP_GET(pVector, Size, count, hr)
+        WRL_PROP_GET(pVector, cv::Size, count, hr)
       if(SUCCEEDED(hr) && count > 0) {
         for(UINT32 i = 0; i < count; i++) {
           videoDevice* vd = new videoDevice;
@@ -3497,7 +3497,7 @@ CvCaptureCAM_MSMF::retrieveFrame(int) {
 
 double
 CvCaptureCAM_MSMF::getProperty(int property_id) {
-  // image format proprrties
+  // image cv::format proprrties
   switch(property_id) {
     case cv::CAP_PROP_FRAME_WIDTH: return VI.getWidth(index);
     case cv::CAP_PROP_FRAME_HEIGHT: return VI.getHeight(index);
@@ -3660,7 +3660,7 @@ CvCaptureFile_MSMF::setProperty(int property_id, double value) {
 
 double
 CvCaptureFile_MSMF::getProperty(int property_id) {
-  // image format proprrties
+  // image cv::format proprrties
   switch(property_id) {
     case cv::CAP_PROP_FRAME_WIDTH: return captureFormats[captureFormatIndex].width;
     case cv::CAP_PROP_FRAME_HEIGHT: return captureFormats[captureFormatIndex].height;
@@ -4071,7 +4071,7 @@ CvVideoWriter_MSMF::WriteFrame(DWORD* videoFrameBuffer, const LONGLONG& Start, c
     hr = buffer->SetCurrentLength(cbBuffer);
   }
 
-  // Create a media sample and add the buffer to the sample.
+  // Create a media sample and cv::add the buffer to the sample.
   if(SUCCEEDED(hr)) {
     hr = MFCreateSample(&sample);
   }

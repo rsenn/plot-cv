@@ -8,7 +8,7 @@
 
 #include <Tensile.h>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 cv::Mat
@@ -27,9 +27,9 @@ run(Tensile* obj, int count) {
   cout << endl << "Frame: " << count << endl;
   obj->printMassCenters(mc, contours); // print mass centers
 
-  // waitKey(0);
+  // cv::waitKey(0);
 
-  for(int i = 0; i < contours.size(); i++) circle(original, mc[i], 1, CV_RGB(255, 0, 0), 3, 8, 0);
+  for(int i = 0; i < contours.size(); i++) cv::circle(original, mc[i], 1, CV_RGB(255, 0, 0), 3, 8, 0);
 
   return original;
 }
@@ -37,19 +37,19 @@ run(Tensile* obj, int count) {
 int
 main() {
 
-  VideoCapture capture("C:/Users/Jameson/Desktop/data/specvid.avi");
+  cv::VideoCapture capture("C:/Users/Jameson/Desktop/data/specvid.avi");
   Tensile* object = new Tensile(capture.get(cv::CAP_PROP_FRAME_COUNT));
 
   cv::Mat currentFrame;
 
-  namedWindow("Contour", WINDOW_AUTOSIZE);
+  cv::namedWindow("Contour", cv::WINDOW_AUTOSIZE);
 
   for(int i = 0; i < object->getFrameNumber() - 1; i++) {
     capture >> currentFrame;
     object->setCurrentFrame(currentFrame);
 
-    imshow("Contour", run(object, i));
-    waitKey(10);
+    cv::imshow("Contour", run(object, i));
+    cv::waitKey(10);
   }
 
   cout << endl << endl << "total amount of frames: " << object->getFrameNumber() << endl << endl;

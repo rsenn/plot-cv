@@ -14,7 +14,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 string input_image_path;
 string face_cascade_path, eye_cascade_path;
@@ -36,7 +36,7 @@ main(int argc, char** argv) {
   face_cascade_path = argv[2];
   eye_cascade_path = argv[3];
 
-  cv::Mat_<Vec3b> image_BGR = imread(input_image_path);
+  cv::Mat_<Vec3b> image_BGR = cv::imread(input_image_path);
 
   // Detect faces and eyebrows in image
   EyebrowROI eyebrow_detector(image_BGR, face_cascade_path, eye_cascade_path);
@@ -47,10 +47,10 @@ main(int argc, char** argv) {
   cv::Mat_<uchar> image_exp = exponentialTransform(CRTransform(eyebrows_roi[0]));
   cv::Mat_<uchar> image_binary = binaryThresholding(image_exp, returnImageStats(image_exp));
 
-  // A clone image is required because findContours() modifies the input image
+  // A clone image is required because cv::findContours() modifies the input image
   cv::Mat image_binary_clone = image_binary.clone();
   std::vector<std::vector<cv::Point>> contours;
-  findContours(image_binary_clone, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
+  cv::findContours(image_binary_clone, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
 
   // Initialize blank image (for drawing contours)
   cv::Mat_<uchar> image_contour(image_binary.size());
@@ -59,17 +59,17 @@ main(int argc, char** argv) {
   }
 
   // Draw largest contour on the blank image
-  cout << "Size of the contour image: " << image_contour.rows << " X " << image_contour.cols << "\n";
+  cout << "cv::Size of the contour image: " << image_contour.rows << " X " << image_contour.cols << "\n";
   int largest_contour_idx = returnLargestContourIndex(contours);
   for(int i = 0; i < contours[largest_contour_idx].size(); ++i) {
     cv::Point_<int> pt = contours[largest_contour_idx][i];
     image_contour.at<uchar>(pt.y, pt.x) = 255;
   }
 
-  imshow("Binary-Image", image_binary);
-  imshow("Contour", image_contour);
+  cv::imshow("Binary-Image", image_binary);
+  cv::imshow("Contour", image_contour);
 
-  waitKey(0);
+  cv::waitKey(0);
   return 0;
 }
 
@@ -86,7 +86,7 @@ CRTransform(const cv::Mat& image) {
 cv::Mat_<uchar>
 exponentialTransform(const cv::Mat_<uchar>& image) {
   std::vector<int> exponential_transform(256, 0);
-  for(int i = 0; i < 256; ++i) exponential_transform[i] = round(exp((i * log(255)) / 255));
+  for(int i = 0; i < 256; ++i) exponential_transform[i] = round(cv::exp((i * cv::log(255)) / 255));
 
   cv::Mat_<uchar> image_exp(image.size());
   for(int i = 0; i < image.rows; ++i) {
@@ -97,22 +97,22 @@ exponentialTransform(const cv::Mat_<uchar>& image) {
 
 pair<double, double>
 returnImageStats(const cv::Mat_<uchar>& image) {
-  double mean = 0.0, std_dev = 0.0;
+  double cv::mean = 0.0, std_dev = 0.0;
   int total_pixels = (image.rows * image.cols);
 
   int intensity_sum = 0;
   for(int i = 0; i < image.rows; ++i) {
     for(int j = 0; j < image.cols; ++j) intensity_sum += image.at<uchar>(i, j);
   }
-  mean = (double)intensity_sum / total_pixels;
+  cv::mean = (double)intensity_sum / total_pixels;
 
   int sum_sq = 0;
   for(int i = 0; i < image.rows; ++i) {
-    for(int j = 0; j < image.cols; ++j) sum_sq += ((image.at<uchar>(i, j) - mean) * (image.at<uchar>(i, j) - mean));
+    for(int j = 0; j < image.cols; ++j) sum_sq += ((image.at<uchar>(i, j) - cv::mean) * (image.at<uchar>(i, j) - cv::mean));
   }
   std_dev = sqrt((double)sum_sq / total_pixels);
 
-  return make_pair(mean, std_dev);
+  return make_pair(cv::mean, std_dev);
 }
 
 cv::Mat_<uchar>
@@ -120,10 +120,10 @@ binaryThresholding(const cv::Mat_<uchar>& image, const pair<double, double>& sta
   cv::Mat_<uchar> image_binary(image.size());
 
   double Z = 0.9;
-  double threshold = stats.first + (Z * stats.second);
+  double cv::threshold = stats.first + (Z * stats.second);
   for(int i = 0; i < image.rows; ++i) {
     for(int j = 0; j < image.cols; ++j) {
-      if(image.at<uchar>(i, j) >= threshold + numeric_limits<double>::epsilon())
+      if(image.at<uchar>(i, j) >= cv::threshold + numeric_limits<double>::epsilon())
         image_binary.at<uchar>(i, j) = 255;
       else
         image_binary.at<uchar>(i, j) = 0;

@@ -7,9 +7,9 @@
 #include <samples_utility.hpp>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
-static const char* keys = {"{@tracker_algorithm | | Tracker algorithm }"
+static const char* keys = {"{@tracker_algorithm | | cv::Tracker algorithm }"
                            "{@video_name      | | video name        }"
                            "{@start_frame     |0| Start frame       }"
                            "{@bounding_frame  |0,0,0,0| Initial bounding frame}"};
@@ -31,10 +31,10 @@ help() {
 
 int
 main(int argc, char** argv) {
-  CommandLineParser parser(argc, argv, keys);
+  cv::CommandLineParser parser(argc, argv, keys);
 
-  String tracker_algorithm = parser.get<String>(0);
-  String video_name = parser.get<String>(1);
+  cv::String tracker_algorithm = parser.get<String>(0);
+  cv::String video_name = parser.get<String>(1);
   int start_frame = parser.get<int>(2);
 
   if(tracker_algorithm.empty() || video_name.empty()) {
@@ -45,11 +45,11 @@ main(int argc, char** argv) {
   int coords[4] = {0, 0, 0, 0};
   bool initBoxWasGivenInCommandLine = false;
   {
-    String initBoundingBox = parser.get<String>(3);
+    cv::String initBoundingBox = parser.get<String>(3);
     for(size_t npos = 0, pos = 0, ctr = 0; ctr < 4; ctr++) {
       npos = initBoundingBox.find_first_of(',', pos);
       if(npos == string::npos && ctr < 3) {
-        printf("bounding box should be given in format \"x1,y1,x2,y2\",where x's and y's are "
+        printf("bounding box should be given in cv::format \"x1,y1,x2,y2\",where x's and y's are "
                "integer coordinates of "
                "opposed corners of bdd box\n");
         printf("got: %s\n", initBoundingBox.substr(pos, string::npos).c_str());
@@ -58,7 +58,7 @@ main(int argc, char** argv) {
       }
       int num = atoi(initBoundingBox.substr(pos, (ctr == 3) ? (string::npos) : (npos - pos)).c_str());
       if(num <= 0) {
-        printf("bounding box should be given in format \"x1,y1,x2,y2\",where x's and y's are "
+        printf("bounding box should be given in cv::format \"x1,y1,x2,y2\",where x's and y's are "
                "integer coordinates of "
                "opposed corners of bdd box\n");
         printf("got: %s\n", initBoundingBox.substr(pos, npos - pos).c_str());
@@ -74,7 +74,7 @@ main(int argc, char** argv) {
   }
 
   // open the capture
-  VideoCapture cap;
+  cv::VideoCapture cap;
   cap.open(video_name);
   cap.set(CAP_PROP_POS_FRAMES, start_frame);
 
@@ -86,17 +86,17 @@ main(int argc, char** argv) {
     return -1;
   }
 
-  Mat frame;
-  namedWindow("Tracking API", 1);
+  cv::Mat frame;
+  cv::namedWindow("Tracking API", 1);
 
-  Mat image;
+  cv::Mat image;
   Rect2d boundingBox;
   bool paused = false;
 
   // instantiates the specific Tracker
-  Ptr<Tracker> tracker = createTrackerByName(tracker_algorithm);
+  Ptr<cv::Tracker> tracker = createTrackerByName(tracker_algorithm);
   if(!tracker) {
-    cout << "***Error in the instantiation of the tracker...***\n";
+    cout << "***cv::Error in the instantiation of the tracker...***\n";
     return -1;
   }
 
@@ -108,16 +108,16 @@ main(int argc, char** argv) {
     boundingBox.y = coords[1];
     boundingBox.width = std::abs(coords[2] - coords[0]);
     boundingBox.height = std::abs(coords[3] - coords[1]);
-    printf("bounding box with vertices (%d,%d) and (%d,%d) was given in command line\n",
+    printf("bounding box with vertices (%d,%d) and (%d,%d) was given in command cv::line\n",
            coords[0],
            coords[1],
            coords[2],
            coords[3]);
-    rectangle(image, boundingBox, Scalar(255, 0, 0), 2, 1);
+    cv::rectangle(image, boundingBox, cv::Scalar(255, 0, 0), 2, 1);
   } else
-    boundingBox = selectROI("Tracking API", image);
+    boundingBox = cv::selectROI("Tracking API", image);
 
-  imshow("Tracking API", image);
+  cv::imshow("Tracking API", image);
 
   bool initialized = false;
   int frameCounter = 0;
@@ -141,26 +141,26 @@ main(int argc, char** argv) {
         }
         initialized = true;
       } else if(initialized) {
-        int64 frameTime = getTickCount();
+        int64 frameTime = cv::getTickCount();
         // updates the tracker
         if(tracker->update(frame, boundingBox)) {
-          rectangle(image, boundingBox, Scalar(255, 0, 0), 2, 1);
+          cv::rectangle(image, boundingBox, cv::Scalar(255, 0, 0), 2, 1);
         }
-        frameTime = getTickCount() - frameTime;
+        frameTime = cv::getTickCount() - frameTime;
         timeTotal += frameTime;
       }
-      imshow("Tracking API", image);
+      cv::imshow("Tracking API", image);
       frameCounter++;
     }
 
-    char c = (char)waitKey(2);
+    char c = (char)cv::waitKey(2);
     if(c == 'q')
       break;
     if(c == 'p')
       paused = !paused;
   }
 
-  double s = frameCounter / (timeTotal / getTickFrequency());
+  double s = frameCounter / (timeTotal / cv::getTickFrequency());
   printf("FPS: %f\n", s);
 
   return 0;

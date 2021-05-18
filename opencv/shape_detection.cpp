@@ -44,8 +44,8 @@ setLabel(cv::Mat& im, const std::string label, std::vector<cv::Point>& contour) 
 int
 main() {
   cv::Mat src = cv::imread("images/shps.jpg");
-  // cv::Mat src = cv::imread("F:/ITUNOM 2019/shape_datasets/quarter-circle/4__120.jpg");
-  // cv::Mat src = cv::imread("F:/ITUNOM 2019/old shape datasets/dtsts/quarter-circle/Adsýz.png");
+  // cv::Mat src = cv::imread("F:/ITUNOM 2019/shape_datasets/quarter-cv::circle/4__120.jpg");
+  // cv::Mat src = cv::imread("F:/ITUNOM 2019/old shape datasets/dtsts/quarter-cv::circle/Adsýz.png");
 
   if(src.empty())
     return -1;
@@ -57,7 +57,7 @@ main() {
   cv::Mat gray;
   cv::cvtColor(blurred, gray, cv::COLOR_BGR2GRAY);
 
-  // Use Canny instead of threshold to catch squares with gradient shading
+  // Use cv::Canny instead of cv::threshold to catch squares with gradient shading
   cv::Mat bw;
   cv::Canny(gray, bw, 80, 120);
 
@@ -104,7 +104,7 @@ main() {
           setLabel(dst, "SQR", contours[i]);
         }
 
-        // rectangle
+        // cv::rectangle
         else if(vtc == 4 && mincos >= -0.15 && maxcos <= 0.15)
           setLabel(dst, "RECT", contours[i]);
 
@@ -120,7 +120,7 @@ main() {
         else if(vtc == 5 && mincos >= -0.85 && maxcos <= 0.6)
           setLabel(dst, "SEMI-CIRCLE", contours[i]);
 
-        // quarter-circle
+        // quarter-cv::circle
         else if(vtc == 5 && mincos >= -1 && maxcos <= 0.6)
           setLabel(dst, "QUARTER-CIRCLE", contours[i]);
 
@@ -128,11 +128,11 @@ main() {
         else if(vtc == 6 && mincos >= -0.7 && maxcos <= -0.3)
           setLabel(dst, "HEXA", contours[i]);
 
-        // semi-circle
+        // semi-cv::circle
         else if(vtc == 6 && mincos >= -0.85 && maxcos <= 0.6)
           setLabel(dst, "SEMI-CIRCLE", contours[i]);
 
-        // quarter-circle
+        // quarter-cv::circle
         else if(vtc == 6 && mincos >= -1 && maxcos <= 0.6)
           setLabel(dst, "QUARTER-CIRCLE", contours[i]);
 
@@ -140,13 +140,13 @@ main() {
         else if(vtc == 7)
           setLabel(dst, "HEPTA", contours[i]);
 
-        // octagon or circle
+        // octagon or cv::circle
         else if(vtc == 8) {
-          // circle
+          // cv::circle
           double area = cv::contourArea(contours[i]);
           cv::Rect r = cv::boundingRect(contours[i]);
           int radius = r.width / 2;
-          if(std::abs(1 - ((double)r.width / r.height)) <= 0.2 && std::abs(1 - (area / (CV_PI * std::pow(radius, 2)))) <= 0.2) {
+          if(std::abs(1 - ((double)r.width / r.height)) <= 0.2 && std::abs(1 - (area / (CV_PI * std::cv::pow(radius, 2)))) <= 0.2) {
             setLabel(dst, "CIR", contours[i]);
           }
 
@@ -157,7 +157,7 @@ main() {
       }
     }
 
-    // For the non-convex shapes and circle
+    // For the non-convex shapes and cv::circle
     else if(std::fabs(cv::contourArea(contours[i])) > 100) {
       if(vtc == 4)
         setLabel(dst, "QUADRANGULAR", contours[i]);

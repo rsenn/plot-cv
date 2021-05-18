@@ -6,7 +6,7 @@
 #include <iomanip>
 #include <vector>
 
-#include <opencv2/core/ocl.hpp>
+#include <opencv2/core/cv::ocl.hpp>
 #include <opencv2/core/utility.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/videoio.hpp>
@@ -14,32 +14,32 @@
 #include <opencv2/video.hpp>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 static Mat
 getVisibleFlow(InputArray flow) {
-  vector<UMat> flow_vec;
-  split(flow, flow_vec);
-  UMat magnitude, angle;
-  cartToPolar(flow_vec[0], flow_vec[1], magnitude, angle, true);
-  magnitude.convertTo(magnitude, CV_32F, 0.2);
-  vector<UMat> hsv_vec;
+  vector<cv::UMat> flow_vec;
+  cv::split(flow, flow_vec);
+  cv::UMat cv::magnitude, angle;
+  cv::cartToPolar(flow_vec[0], flow_vec[1], cv::magnitude, angle, true);
+  cv::magnitude.convertTo(magnitude, CV_32F, 0.2);
+  vector<cv::UMat> hsv_vec;
   hsv_vec.push_back(angle);
-  hsv_vec.push_back(UMat::ones(angle.size(), angle.type()));
-  hsv_vec.push_back(magnitude);
-  UMat hsv;
-  merge(hsv_vec, hsv);
-  Mat img;
-  cvtColor(hsv, img, COLOR_HSV2BGR);
+  hsv_vec.push_back(cv::UMat::ones(angle.size(), angle.type()));
+  hsv_vec.push_back(cv::magnitude);
+  cv::UMat hsv;
+  cv::merge(hsv_vec, hsv);
+  cv::Mat img;
+  cv::cvtColor(hsv, img, COLOR_HSV2BGR);
   return img;
 }
 
 static Size
-fitSize(const Size& sz, const Size& bounds) {
+fitSize(const cv::Size& sz, const cv::Size& bounds) {
   CV_Assert(!sz.empty());
   if(sz.width > bounds.width || sz.height > bounds.height) {
     double scale = std::min((double)bounds.width / sz.width, (double)bounds.height / sz.height);
-    return Size(cvRound(sz.width * scale), cvRound(sz.height * scale));
+    return cv::Size(cvRound(sz.width * scale), cvRound(sz.height * scale));
   }
   return sz;
 }
@@ -51,8 +51,8 @@ main(int argc, const char* argv[]) {
                      "{ a algorithm | fb | algorithm (supported: 'fb', 'dis')}"
                      "{ m cpu      |     | run without OpenCL }"
                      "{ v video    |     | use video as input }"
-                     "{ o original |     | use original frame size (do not resize to 640x480)}";
-  CommandLineParser parser(argc, argv, keys);
+                     "{ o original |     | use original frame size (do not cv::resize to 640x480)}";
+  cv::CommandLineParser parser(argc, argv, keys);
   parser.about("This sample demonstrates using of dense optical flow algorithms.");
   if(parser.has("help")) {
     parser.printMessage();
@@ -68,7 +68,7 @@ main(int argc, const char* argv[]) {
     return 1;
   }
 
-  VideoCapture cap;
+  cv::VideoCapture cap;
   if(filename.empty())
     cap.open(camera);
   else
@@ -80,56 +80,56 @@ main(int argc, const char* argv[]) {
 
   Ptr<DenseOpticalFlow> alg;
   if(algorithm == "fb")
-    alg = FarnebackOpticalFlow::create();
+    alg = cv::FarnebackOpticalFlow::create();
   else if(algorithm == "dis")
-    alg = DISOpticalFlow::create(DISOpticalFlow::PRESET_FAST);
+    alg = cv::DISOpticalFlow::create(DISOpticalFlow::PRESET_FAST);
   else {
     cout << "Invalid algorithm: " << algorithm << endl;
     return 3;
   }
 
-  ocl::setUseOpenCL(!useCPU);
+  cv::ocl::setUseOpenCL(!useCPU);
 
   cout << "Press 'm' to toggle CPU/GPU processing mode" << endl;
   cout << "Press ESC or 'q' to exit" << endl;
 
-  UMat prevFrame, frame, input_frame, flow;
+  cv::UMat prevFrame, frame, input_frame, flow;
   for(;;) {
-    if(!cap.read(input_frame) || input_frame.empty()) {
+    if(!cap.cv::read(input_frame) || input_frame.empty()) {
       cout << "Finished reading: empty frame" << endl;
       break;
     }
-    Size small_size = fitSize(input_frame.size(), Size(640, 480));
+    cv::Size small_size = fitSize(input_frame.size(), cv::Size(640, 480));
     if(!useOriginalSize && small_size != input_frame.size())
-      resize(input_frame, frame, small_size);
+      cv::resize(input_frame, frame, small_size);
     else
       frame = input_frame;
-    cvtColor(frame, frame, COLOR_BGR2GRAY);
-    imshow("frame", frame);
+    cv::cvtColor(frame, frame, COLOR_BGR2GRAY);
+    cv::imshow("frame", frame);
     if(!prevFrame.empty()) {
-      int64 t = getTickCount();
+      int64 t = cv::getTickCount();
       alg->calc(prevFrame, frame, flow);
-      t = getTickCount() - t;
+      t = cv::getTickCount() - t;
       {
-        Mat img = getVisibleFlow(flow);
+        cv::Mat img = getVisibleFlow(flow);
         ostringstream buf;
         buf << "Algo: " << algorithm << " | "
             << "Mode: " << (useCPU ? "CPU" : "GPU") << " | "
-            << "FPS: " << fixed << setprecision(1) << (getTickFrequency() / (double)t);
-        putText(img, buf.str(), Point(10, 30), FONT_HERSHEY_PLAIN, 2.0, Scalar(0, 0, 255), 2, LINE_AA);
-        imshow("Dense optical flow field", img);
+            << "FPS: " << fixed << setprecision(1) << (cv::getTickFrequency() / (double)t);
+        cv::putText(img, buf.str(), cv::Point(10, 30), FONT_HERSHEY_PLAIN, 2.0, cv::Scalar(0, 0, 255), 2, cv::LINE_AA);
+        cv::imshow("Dense optical flow field", img);
       }
     }
     frame.copyTo(prevFrame);
 
     // interact with user
-    const char key = (char)waitKey(30);
+    const char key = (char)cv::waitKey(30);
     if(key == 27 || key == 'q') { // ESC
       cout << "Exit requested" << endl;
       break;
     } else if(key == 'm') {
       useCPU = !useCPU;
-      ocl::setUseOpenCL(!useCPU);
+      cv::ocl::setUseOpenCL(!useCPU);
       cout << "Set processing mode to: " << (useCPU ? "CPU" : "GPU") << endl;
     }
   }

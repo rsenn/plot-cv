@@ -12,24 +12,24 @@ Entity::~Entity() {
 Entity::Entity(string name) {
   setType(name);
   if(name == "playerfront") { // predefined HSV values for automatic detection
-    setHSVmin(Scalar(0, 140, 240));
-    setHSVmax(Scalar(11, 181, 256));
-    setColor(Scalar(0, 0, 255));
+    setHSVmin(cv::Scalar(0, 140, 240));
+    setHSVmax(cv::Scalar(11, 181, 256));
+    setColor(cv::Scalar(0, 0, 255));
   }
   if(name == "playerrear") { // predefined HSV values for automatic detection
-    setHSVmin(Scalar(37, 72, 221));
-    setHSVmax(Scalar(117, 117, 256));
-    setColor(Scalar(255, 0, 0));
+    setHSVmin(cv::Scalar(37, 72, 221));
+    setHSVmax(cv::Scalar(117, 117, 256));
+    setColor(cv::Scalar(255, 0, 0));
   }
   if(name == "ball") { // predefined HSV values for automatic detection
-    setHSVmin(Scalar(11, 96, 217));
-    setHSVmax(Scalar(26, 255, 255));
-    setColor(Scalar(0, 255, 125));
+    setHSVmin(cv::Scalar(11, 96, 217));
+    setHSVmax(cv::Scalar(26, 255, 255));
+    setColor(cv::Scalar(0, 255, 125));
   }
   if(name == "goal") { // predefined HSV values for automatic detection
-    setHSVmin(Scalar(32, 72, 158));
-    setHSVmax(Scalar(40, 163, 223));
-    setColor(Scalar(0, 255, 0));
+    setHSVmin(cv::Scalar(32, 72, 158));
+    setHSVmax(cv::Scalar(40, 163, 223));
+    setColor(cv::Scalar(0, 255, 0));
   }
 }
 
@@ -61,12 +61,12 @@ Entity::getHSVmax() {
 }
 
 void
-Entity::setHSVmin(Scalar min) { // setters for HSV min and max values
+Entity::setHSVmin(cv::Scalar min) { // setters for HSV min and max values
   Entity::HSVmin = min;
 }
 
 void
-Entity::setHSVmax(Scalar max) {
+Entity::setHSVmax(cv::Scalar max) {
   Entity::HSVmax = max;
 }
 

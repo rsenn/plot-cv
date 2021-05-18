@@ -5,29 +5,29 @@
 #include <iostream>
 // #include <string>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
-Mat source, source_gray, debug_image;
+cv::Mat source, source_gray, debug_image;
 int width = 1, height = 1, thin = 0, total_rectangles = 0, thresh = 200;
-Rect zone(0, 0, 0, 0);
-vector<Rect> rectangles;
+cv::Rect zone(0, 0, 0, 0);
+vector<cv::Rect> rectangles;
 bool debug_mode = false, count_black = false;
 
-Mat createBinaryImage(Mat, Mat);
-Mat keepLines(string);
-Rect reduceRectangleSelection(Rect);
-Rect buildZone(const char*);
+cv::Mat createBinaryImage(Mat, cv::Mat);
+cv::Mat keepLines(string);
+cv::Rect reduceRectangleSelection(Rect);
+cv::Rect buildZone(const char*);
 string intToString(int);
-vector<Rect> findRectangles(Mat);
+vector<cv::Rect> findRectangles(cv::Mat);
 void assignArgs(char*);
 void assignSource(string);
-void drawDebugImage(int, Rect, vector<vector<Point>>, int, vector<Vec4i>);
-void setLabel(Mat&, const std::string, std::vector<Point>&);
-void split(const string&, char, vector<string>&);
+void drawDebugImage(int, cv::Rect, vector<vector<cv::Point>>, int, vector<cv::Vec4i>);
+void setLabel(cv::Mat&, const std::string, std::vector<cv::Point>&);
+void cv::split(const string&, char, vector<string>&);
 
 // ./bin/detect_rectangles [nom de l'image] w=[largeur] h=[hauteur] s=[épaisseur] nb=[nombre de rectangles]
-// t=[threshold]
+// t=[cv::threshold]
 // ./bin/detect_rectangles mon-image.jpg w=20 h=30 s=3 nb=12 debug=true
 int
 main(int argc, char* argv[]) {
@@ -39,12 +39,12 @@ main(int argc, char* argv[]) {
   assignSource(argv[1]);
 
   // Créer une image contenant uniquement les lignes horizontales
-  Mat horizontal_image = keepLines("horizontal");
+  cv::Mat horizontal_image = keepLines("horizontal");
   // Créer une image contenant uniquement les lignes verticales
-  Mat vertical_image = keepLines("vertical");
+  cv::Mat vertical_image = keepLines("vertical");
 
   // Combine les 2 images précédentes pour ne garder que les rectangles
-  Mat binary_image = createBinaryImage(horizontal_image, vertical_image);
+  cv::Mat binary_image = createBinaryImage(horizontal_image, vertical_image);
 
   // Initialize l'image utilisée dans le mode debug
   if(debug_mode)
@@ -59,17 +59,17 @@ main(int argc, char* argv[]) {
 
   for(size_t i = 0; i < count_rectangles; i++) {
     compt++;
-    Rect rect = rectangles[i];
+    cv::Rect rect = rectangles[i];
     rect = reduceRectangleSelection(rect);
-    Mat source_check(source, rect);
-    cvtColor(source_check, source_check, cv::COLOR_RGB2GRAY);
-    Mat checkbox(source_gray, rect);
-    threshold(checkbox, checkbox, 180, 255, cv::THRESH_BINARY);
+    cv::Mat source_check(source, rect);
+    cv::cvtColor(source_check, source_check, cv::COLOR_RGB2GRAY);
+    cv::Mat checkbox(source_gray, rect);
+    cv::threshold(checkbox, checkbox, 180, 255, cv::THRESH_BINARY);
     int total_pixels = checkbox.rows * checkbox.cols;
-    int black_pixels = total_pixels - countNonZero(checkbox);
+    int black_pixels = total_pixels - cv::countNonZero(checkbox);
     int absolute_x = zone.tl().x + rect.tl().x;
     int absolute_y = zone.tl().y + rect.tl().y;
-    Point absolute(absolute_x, absolute_y);
+    cv::Point absolute(absolute_x, absolute_y);
 
     if(count_black) {
       if(debug_mode) {
@@ -93,8 +93,8 @@ main(int argc, char* argv[]) {
       int missing_rectangles = total_rectangles - count_rectangles;
       cout << "Attention : " << missing_rectangles << " rectangles n'ont pas été trouvé." << endl;
     }
-    namedWindow("Contours", cv::WINDOW_NORMAL);
-    imshow("Contours", debug_image);
+    cv::namedWindow("Contours", cv::WINDOW_NORMAL);
+    cv::imshow("Contours", debug_image);
   } else {
     if(total_rectangles == 0) {
       cout << return_string.str() << endl;
@@ -103,29 +103,29 @@ main(int argc, char* argv[]) {
     }
   }
 
-  waitKey(0);
+  cv::waitKey(0);
   return (0);
 }
 
 Rect
-reduceRectangleSelection(Rect rect) {
-  return Rect(rect.tl().x + thin, rect.tl().y + thin, rect.width - thin, rect.height - thin);
+reduceRectangleSelection(cv::Rect rect) {
+  return cv::Rect(rect.tl().x + thin, rect.tl().y + thin, rect.width - thin, rect.height - thin);
 }
 
-vector<Rect>
-findRectangles(Mat binary_image) {
-  vector<Rect> boxes;
-  vector<vector<Point>> contours;
-  vector<Vec4i> hierarchy;
+vector<cv::Rect>
+findRectangles(cv::Mat binary_image) {
+  vector<cv::Rect> boxes;
+  vector<vector<cv::Point>> contours;
+  vector<cv::Vec4i> hierarchy;
 
-  findContours(binary_image, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_NONE, Point(0, 0));
+  cv::findContours(binary_image, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_NONE, cv::Point(0, 0));
 
   double expected_area = width * height;
   double max_area = expected_area + expected_area * 0.2;
   int compt = 0;
   for(int idx = 0; idx >= 0; idx = hierarchy[idx][0]) {
-    double area = contourArea(contours[idx]);
-    Rect rect = boundingRect(contours[idx]);
+    double area = cv::contourArea(contours[idx]);
+    cv::Rect rect = cv::boundingRect(contours[idx]);
 
     if(hierarchy[idx][3] < 0 && rect.width >= width && rect.height >= height && area <= max_area) {
       compt++;
@@ -142,8 +142,8 @@ findRectangles(Mat binary_image) {
 
 // Draw each rectangles with its number on debug mode image
 void
-drawDebugImage(int compt, Rect rect, vector<vector<Point>> contours, int idx, vector<Vec4i> hierarchy) {
-  rectangle(debug_image, rect.tl(), rect.br(), Scalar(0, 0, 255), 1, 8, 0);
+drawDebugImage(int compt, cv::Rect rect, vector<vector<cv::Point>> contours, int idx, vector<cv::Vec4i> hierarchy) {
+  cv::rectangle(debug_image, rect.tl(), rect.br(), cv::Scalar(0, 0, 255), 1, 8, 0);
   string checkbox_label = intToString(compt);
   setLabel(debug_image, checkbox_label, contours[idx]);
 }
@@ -159,44 +159,44 @@ checkDebugMode(const char* arg) {
 
 // Combined horizontal and vertical image in order to create the binary image
 Mat
-createBinaryImage(Mat horizontal, Mat vertical) {
-  Mat binary_image = horizontal & vertical;
-  threshold(binary_image, binary_image, 75, 255.0, cv::THRESH_BINARY_INV);
+createBinaryImage(cv::Mat horizontal, cv::Mat vertical) {
+  cv::Mat binary_image = horizontal & vertical;
+  cv::threshold(binary_image, binary_image, 75, 255.0, cv::THRESH_BINARY_INV);
   return binary_image;
 }
 
 Mat
 keepLines(string dimension_type) {
-  Mat morph, bin;
+  cv::Mat morph, bin;
 
-  Size size;
+  cv::Size size;
   if(dimension_type == "horizontal") {
-    size = Size(width, 1);
+    size = cv::Size(width, 1);
   } else {
-    size = Size(1, height);
+    size = cv::Size(1, height);
   }
 
-  Mat morph_kernel = getStructuringElement(MORPH_RECT, size);
-  morphologyEx(source_gray, morph, MORPH_CLOSE, morph_kernel);
-  threshold(morph, bin, thresh, 255, cv::THRESH_BINARY);
-  // threshold(morph, bin, 100, 255.0, cv::THRESH_BINARY | cv::THRESH_OTSU);
+  cv::Mat morph_kernel = cv::getStructuringElement(MORPH_RECT, size);
+  cv::morphologyEx(source_gray, morph, MORPH_CLOSE, morph_kernel);
+  cv::threshold(morph, bin, thresh, 255, cv::THRESH_BINARY);
+  // cv::threshold(morph, bin, 100, 255.0, cv::THRESH_BINARY | cv::THRESH_OTSU);
 
   return bin;
 }
 
 void
-setLabel(Mat& im, const std::string label, std::vector<Point>& contour) {
+setLabel(cv::Mat& im, const std::string label, std::vector<cv::Point>& contour) {
   double scale = 0.3;
   int baseline = 0;
   int fontface = FONT_HERSHEY_SIMPLEX;
   int thickness = 1;
 
-  Size text = getTextSize(label, fontface, scale, thickness, &baseline);
-  Rect r = boundingRect(contour);
+  cv::Size text = cv::getTextSize(label, fontface, scale, thickness, &baseline);
+  cv::Rect r = cv::boundingRect(contour);
 
-  Point pt(r.x + ((r.width - text.width) / 2), r.y + ((r.height + text.height) / 2));
-  rectangle(im, pt + Point(0, baseline), pt + Point(text.width, -text.height), CV_RGB(255, 255, 255), cv::FILLED);
-  putText(im, label, pt, fontface, scale, CV_RGB(0, 0, 0), thickness, 8);
+  cv::Point pt(r.x + ((r.width - text.width) / 2), r.y + ((r.height + text.height) / 2));
+  cv::rectangle(im, pt + cv::Point(0, baseline), pt + cv::Point(text.width, -text.height), CV_RGB(255, 255, 255), cv::FILLED);
+  cv::putText(im, label, pt, fontface, scale, CV_RGB(0, 0, 0), thickness, 8);
 }
 
 string
@@ -211,7 +211,7 @@ intToString(int number) {
 
 void
 assignSource(string filename) {
-  source = imread(filename);
+  source = cv::imread(filename);
   if(!source.data) {
     cerr << "Problem loading image !" << endl;
     exit(EXIT_FAILURE);
@@ -220,13 +220,13 @@ assignSource(string filename) {
   if(zone.width != 0 && zone.height != 0) {
     source = source(zone);
   }
-  cvtColor(source, source_gray, cv::COLOR_BGR2GRAY);
+  cv::cvtColor(source, source_gray, cv::COLOR_BGR2GRAY);
 }
 
 void
 assignArgs(char* argv) {
   vector<string> v;
-  split(argv, '=', v);
+  cv::split(argv, '=', v);
 
   if(v[0] == "w") {
     sscanf(v[1].c_str(), "%d", &width);
@@ -253,18 +253,18 @@ Rect
 buildZone(const char* argv) {
   vector<string> v;
   int x = 0, y = 0, w = 0, h = 0;
-  split(argv, ',', v);
+  cv::split(argv, ',', v);
   sscanf(v[0].c_str(), "%d", &x);
   sscanf(v[1].c_str(), "%d", &y);
   sscanf(v[2].c_str(), "%d", &w);
   sscanf(v[3].c_str(), "%d", &h);
 
-  Rect rect(x, y, w, h);
+  cv::Rect rect(x, y, w, h);
   return rect;
 }
 
 void
-split(const string& s, char c, vector<string>& v) {
+cv::split(const string& s, char c, vector<string>& v) {
   string::size_type i = 0;
   string::size_type j = s.find(c);
 

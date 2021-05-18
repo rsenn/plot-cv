@@ -69,7 +69,7 @@ main(int argc, char* argv[]) {
 
   auto totstart = steady_clock::now();
   cv::Mat image;
-  // FILE *fp = fopen("log.txt", "w");
+  // FILE *fp = fopen("cv::log.txt", "w");
 
   for(int i = 0; i < framecount; i++) {
     capture >> image;

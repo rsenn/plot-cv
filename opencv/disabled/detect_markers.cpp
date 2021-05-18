@@ -37,11 +37,11 @@ the use of this software, even if advised of the possibility of such damage.
 */
 
 #include <opencv2/highgui.hpp>
-#include <opencv2/aruco.hpp>
+#include <opencv2/cv::aruco.hpp>
 #include <iostream>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 namespace {
 const char* about = "Basic marker detection";
@@ -64,7 +64,7 @@ const char* keys = "{d        |       | dictionary: DICT_4X4_50=0, DICT_4X4_100=
  */
 static bool
 readCameraParameters(string filename, cv::Mat& camcv::Matrix, cv::Mat& distCoeffs) {
-  FileStorage fs(filename, FileStorage::READ);
+  cv::FileStorage fs(filename, cv::FileStorage::READ);
   if(!fs.isOpened())
     return false;
   fs["camera_matrix"] >> camcv::Matrix;
@@ -75,8 +75,8 @@ readCameraParameters(string filename, cv::Mat& camcv::Matrix, cv::Mat& distCoeff
 /**
  */
 static bool
-readDetectorParameters(string filename, Ptr<aruco::DetectorParameters>& params) {
-  FileStorage fs(filename, FileStorage::READ);
+readDetectorParameters(string filename, Ptr<cv::aruco::DetectorParameters>& params) {
+  cv::FileStorage fs(filename, cv::FileStorage::READ);
   if(!fs.isOpened())
     return false;
   fs["adaptiveThreshWinSizeMin"] >> params->adaptiveThreshWinSizeMin;
@@ -106,7 +106,7 @@ readDetectorParameters(string filename, Ptr<aruco::DetectorParameters>& params) 
  */
 int
 main(int argc, char* argv[]) {
-  CommandLineParser parser(argc, argv, keys);
+  cv::CommandLineParser parser(argc, argv, keys);
   parser.about(about);
 
   if(argc < 2) {
@@ -119,7 +119,7 @@ main(int argc, char* argv[]) {
   bool estimatePose = parser.has("c");
   float markerLength = parser.get<float>("l");
 
-  Ptr<aruco::DetectorParameters> detectorParams = aruco::DetectorParameters::create();
+  Ptr<cv::aruco::DetectorParameters> detectorParams = cv::aruco::DetectorParameters::create();
   if(parser.has("dp")) {
     bool readOk = readDetectorParameters(parser.get<string>("dp"), detectorParams);
     if(!readOk) {
@@ -129,7 +129,7 @@ main(int argc, char* argv[]) {
   }
 
   if(parser.has("refine")) {
-    // override cornerRefinementMethod read from config file
+    // override cornerRefinementMethod cv::read from config file
     detectorParams->cornerRefinementMethod = parser.get<int>("refine");
   }
   std::cout << "Corner refinement method (0: None, 1: Subpixel, 2:contour, 3: AprilTag 2): "
@@ -137,9 +137,9 @@ main(int argc, char* argv[]) {
 
   int camId = parser.get<int>("ci");
 
-  String video;
+  cv::String video;
   if(parser.has("v")) {
-    video = parser.get<String>("v");
+    video = parser.get<cv::String>("v");
   }
 
   if(!parser.check()) {
@@ -147,7 +147,7 @@ main(int argc, char* argv[]) {
     return 0;
   }
 
-  Ptr<aruco::Dictionary> dictionary = aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
+  Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
 
   cv::Mat camcv::Matrix, distCoeffs;
   if(estimatePose) {
@@ -158,7 +158,7 @@ main(int argc, char* argv[]) {
     }
   }
 
-  VideoCapture inputVideo;
+  cv::VideoCapture inputVideo;
   int waitTime;
   if(!video.empty()) {
     inputVideo.open(video);
@@ -175,18 +175,18 @@ main(int argc, char* argv[]) {
     cv::Mat image, imageCopy;
     inputVideo.retrieve(image);
 
-    double tick = (double)getTickCount();
+    double tick = (double)cv::getTickCount();
 
     std::vector<int> ids;
     std::vector<std::vector<cv::Point2f>> corners, rejected;
-    std::vector<Vec3d> rvecs, tvecs;
+    std::vector<cv::Vec3d> rvecs, tvecs;
 
     // detect markers and estimate pose
-    aruco::detectMarkers(image, dictionary, corners, ids, detectorParams, rejected);
+    cv::aruco::detectMarkers(image, dictionary, corners, ids, detectorParams, rejected);
     if(estimatePose && ids.size() > 0)
-      aruco::estimatePoseSingleMarkers(corners, markerLength, camcv::Matrix, distCoeffs, rvecs, tvecs);
+      cv::aruco::estimatePoseSingleMarkers(corners, markerLength, camcv::Matrix, distCoeffs, rvecs, tvecs);
 
-    double currentTime = ((double)getTickCount() - tick) / getTickFrequency();
+    double currentTime = ((double)cv::getTickCount() - tick) / cv::getTickFrequency();
     totalTime += currentTime;
     totalIterations++;
     if(totalIterations % 30 == 0) {
@@ -197,19 +197,19 @@ main(int argc, char* argv[]) {
     // draw results
     image.copyTo(imageCopy);
     if(ids.size() > 0) {
-      aruco::drawDetectedMarkers(imageCopy, corners, ids);
+      cv::aruco::drawDetectedMarkers(imageCopy, corners, ids);
 
       if(estimatePose) {
         for(unsigned int i = 0; i < ids.size(); i++)
-          aruco::drawAxis(imageCopy, camcv::Matrix, distCoeffs, rvecs[i], tvecs[i], markerLength * 0.5f);
+          cv::aruco::drawAxis(imageCopy, camcv::Matrix, distCoeffs, rvecs[i], tvecs[i], markerLength * 0.5f);
       }
     }
 
     if(showRejected && rejected.size() > 0)
-      aruco::drawDetectedMarkers(imageCopy, rejected, noArray(), Scalar(100, 0, 255));
+      cv::aruco::drawDetectedMarkers(imageCopy, rejected, cv::noArray(), cv::Scalar(100, 0, 255));
 
-    imshow("out", imageCopy);
-    char key = (char)waitKey(waitTime);
+    cv::imshow("out", imageCopy);
+    char key = (char)cv::waitKey(waitTime);
     if(key == 27)
       break;
   }

@@ -7,10 +7,10 @@
 #include "samples_utility.hpp"
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 // prototype of the functino for feature extractor
-void sobelExtractor(const Mat img, const Rect roi, Mat& feat);
+void sobelExtractor(const cv::Mat img, const cv::Rect roi, cv::Mat& feat);
 
 int
 main(int argc, char** argv) {
@@ -26,11 +26,11 @@ main(int argc, char** argv) {
 
   // declares all required variables
   Rect2d roi;
-  Mat frame;
+  cv::Mat frame;
 
   //! [param]
-  TrackerKCF::Params param;
-  param.desc_pca = TrackerKCF::GRAY | TrackerKCF::CN;
+  cv::TrackerKCF::Params param;
+  param.desc_pca = cv::TrackerKCF::GRAY | cv::TrackerKCF::CN;
   param.desc_npca = 0;
   param.compress_feature = true;
   param.compressed_size = 2;
@@ -38,7 +38,7 @@ main(int argc, char** argv) {
 
   // create a tracker object
   //! [create]
-  Ptr<TrackerKCF> tracker = TrackerKCF::create(param);
+  Ptr<cv::TrackerKCF> tracker = cv::TrackerKCF::create(param);
   //! [create]
 
   //! [setextractor]
@@ -47,11 +47,11 @@ main(int argc, char** argv) {
 
   // set input video
   std::string video = argv[1];
-  VideoCapture cap(video);
+  cv::VideoCapture cap(video);
 
   // get bounding box
   cap >> frame;
-  roi = selectROI("tracker", frame);
+  roi = cv::selectROI("tracker", frame);
 
   // quit if ROI was not selected
   if(roi.width == 0 || roi.height == 0)
@@ -74,13 +74,13 @@ main(int argc, char** argv) {
     tracker->update(frame, roi);
 
     // draw the tracked object
-    rectangle(frame, roi, Scalar(255, 0, 0), 2, 1);
+    cv::rectangle(frame, roi, cv::Scalar(255, 0, 0), 2, 1);
 
     // show image with the tracked object
-    imshow("tracker", frame);
+    cv::imshow("tracker", frame);
 
     // quit on ESC button
-    if(waitKey(1) == 27)
+    if(cv::waitKey(1) == 27)
       break;
   }
 
@@ -88,10 +88,10 @@ main(int argc, char** argv) {
 }
 
 void
-sobelExtractor(const Mat img, const Rect roi, Mat& feat) {
-  Mat sobel[2];
-  Mat patch;
-  Rect region = roi;
+sobelExtractor(const cv::Mat img, const cv::Rect roi, cv::Mat& feat) {
+  cv::Mat sobel[2];
+  cv::Mat patch;
+  cv::Rect region = roi;
 
   //! [insideimage]
   // extract patch inside the image
@@ -114,28 +114,28 @@ sobelExtractor(const Mat img, const Rect roi, Mat& feat) {
   //! [insideimage]
 
   patch = img(region).clone();
-  cvtColor(patch, patch, COLOR_BGR2GRAY);
+  cv::cvtColor(patch, patch, COLOR_BGR2GRAY);
 
   //! [padding]
-  // add some padding to compensate when the patch is outside image border
+  // cv::add some padding to compensate when the patch is outside image border
   int addTop, addBottom, addLeft, addRight;
   addTop = region.y - roi.y;
   addBottom = (roi.height + roi.y > img.rows ? roi.height + roi.y - img.rows : 0);
   addLeft = region.x - roi.x;
   addRight = (roi.width + roi.x > img.cols ? roi.width + roi.x - img.cols : 0);
 
-  copyMakeBorder(patch, patch, addTop, addBottom, addLeft, addRight, BORDER_REPLICATE);
+  cv::copyMakeBorder(patch, patch, addTop, addBottom, addLeft, addRight, BORDER_REPLICATE);
   //! [padding]
 
   //! [sobel]
-  Sobel(patch, sobel[0], CV_32F, 1, 0, 1);
-  Sobel(patch, sobel[1], CV_32F, 0, 1, 1);
+  cv::Sobel(patch, sobel[0], CV_32F, 1, 0, 1);
+  cv::Sobel(patch, sobel[1], CV_32F, 0, 1, 1);
 
-  merge(sobel, 2, feat);
+  cv::merge(sobel, 2, feat);
   //! [sobel]
 
   //! [postprocess]
   feat.convertTo(feat, CV_64F);
-  feat = feat / 255.0 - 0.5; // normalize to range -0.5 .. 0.5
+  feat = feat / 255.0 - 0.5; // cv::normalize to range -0.5 .. 0.5
   //! [postprocess]
 }

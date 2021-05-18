@@ -1,7 +1,7 @@
 #include "image.h"
 #include <geometry_msgs/Twist.h>
 unsigned int my_FPS = 60;
-VideoCapture cap(0);
+cv::VideoCapture cap(0);
 ros::Subscriber l_sub;
 int efrt_roll, efrt_pitch;
 bool f_line = 0;
@@ -13,7 +13,7 @@ main(int argc, char** argv) {
   cap.set(CAP_PROP_FPS, my_FPS);
   ros::init(argc, argv, "Image");
   ros::NodeHandle nh;
-  pub = nh.advertise<geometry_msgs::Point>("circle_center_data", 10);
+  pub = nh.advertise<geometry_msgs::cv::Point>("circle_center_data", 10);
   sub = nh.subscribe("stepflag", 10, callback);
   l_sub = nh.subscribe("custom/rc/input", 10, draw_line);
   /*if(argc>1){
@@ -30,8 +30,8 @@ main(int argc, char** argv) {
 
     ros::spinOnce();
     rate.sleep();
-    imshow("Video", frame);
-    waitKey(1);
+    cv::imshow("Video", frame);
+    cv::waitKey(1);
   }
 }
 //-----------------------------------------------------------------------------------
@@ -41,30 +41,30 @@ main(int argc, char** argv) {
 void
 FindCircle() {
   vector<Vec3f> circles;
-  cvtColor(frame, dst, COLOR_BGR2GRAY);
-  GaussianBlur(dst, dst, Size(5, 5), 1.3, 1.3);
-  HoughCircles(dst, circles, cv::HOUGH_GRADIENT, 2, 50, 200, 100, 0, 320); // 30
+  cv::cvtColor(frame, dst, COLOR_BGR2GRAY);
+  cv::GaussianBlur(dst, dst, cv::Size(5, 5), 1.3, 1.3);
+  cv::HoughCircles(dst, circles, cv::HOUGH_GRADIENT, 2, 50, 200, 100, 0, 320); // 30
   if(circles.size() > 0)
     f_line = 1;
   for(int i = 0; i < circles.size(); i++) {
-    Point center(circles[i][0],
+    cv::Point center(circles[i][0],
                  circles[i][1]); // declare variable that are two integer type variables(x,y).
-    Point g_center(circles[i][0], circles[i][1]);
+    cv::Point g_center(circles[i][0], circles[i][1]);
     if(f_line == true) {
-      line(frame,
-           Point(g_center),
-           Point((g_center.x + efrt_roll), (g_center.y + efrt_pitch)),
-           Scalar(0, 0, 255),
+      cv::line(frame,
+           cv::Point(g_center),
+           cv::Point((g_center.x + efrt_roll), (g_center.y + efrt_pitch)),
+           cv::Scalar(0, 0, 255),
            5,
            cv::LINE_AA);
-      // line(frame, g_center, (g_center[0][0], (g_center[0][1] + efrt_pitch)), Scalar(0, 0, 255),
+      // cv::line(frame, g_center, (g_center[0][0], (g_center[0][1] + efrt_pitch)), cv::Scalar(0, 0, 255),
       // 5, cv::LINE_AA);
       f_line = 0;
     }
     radius = cvRound(circles[i][2]); // rounding the data number before assign to radius.
-    circle(frame, center, radius, Scalar(0, 0, 255), 1, 8,
-           0); // drawing a circle and the circle is solid
-    circle(frame, center, 1, Scalar(0, 255, 0), 1, 8, 0);
+    cv::circle(frame, center, radius, cv::Scalar(0, 0, 255), 1, 8,
+           0); // drawing a cv::circle and the cv::circle is solid
+    cv::circle(frame, center, 1, cv::Scalar(0, 255, 0), 1, 8, 0);
 
     ROS_INFO("Center X: [%i] , Y: [%i] ", center.x, center.y);
     msg.x = center.x;

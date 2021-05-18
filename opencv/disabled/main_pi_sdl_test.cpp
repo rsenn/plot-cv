@@ -30,7 +30,7 @@ bool quit_flag = false;
 bool
 init_opencv() {
   if(!capture.open(0)) {
-    std::cerr << "error: capture.open() failed..." << std::endl;
+    std::cerr << "cv::error: capture.open() failed..." << std::endl;
     exit(-1);
   }
   capture.set(cv::CAP_PROP_FRAME_WIDTH, 640);
@@ -81,14 +81,14 @@ process_image() {
 bool
 init_sdl() {
   if(SDL_Init(SDL_INIT_VIDEO) < 0) {
-    std::cerr << "error: SDL_Init() failed..." << std::endl;
+    std::cerr << "cv::error: SDL_Init() failed..." << std::endl;
     return false;
   }
   SDL_ShowCursor(SDL_DISABLE);
 
   screen = SDL_SetVideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 24, SDL_FULLSCREEN | SDL_DOUBLEBUF | SDL_HWSURFACE);
   if(screen == NULL) {
-    std::cerr << "error: SDL_SetVideoMode() failed..." << std::endl;
+    std::cerr << "cv::error: SDL_SetVideoMode() failed..." << std::endl;
     exit(EXIT_FAILURE);
   }
 
@@ -96,7 +96,7 @@ init_sdl() {
       (void*)result_img.data, result_img.cols, result_img.rows, 24, result_img.cols * 3, 0xff0000, 0x00ff00, 0x0000ff, 0);
 
   if(result_img_surface == NULL) {
-    std::cerr << "error: SDL_CreateRGBSurfaceFrom() failed..." << std::endl;
+    std::cerr << "cv::error: SDL_CreateRGBSurfaceFrom() failed..." << std::endl;
   }
 
   return true;

@@ -9,8 +9,8 @@ YOLO::YOLO(Net_config config) {
   strcpy(this->netname, config.netname.c_str());
 
   ifstream ifs(config.classesFile.c_str());
-  string line;
-  while(getline(ifs, line)) this->classes.push_back(line);
+  string cv::line;
+  while(getline(ifs, cv::line)) this->classes.push_back(line);
 
   this->net = readNetFromDarknet(config.modelConfiguration, config.modelWeights);
   this->net.setPreferableBackend(DNN_BACKEND_OPENCV);
@@ -19,11 +19,11 @@ YOLO::YOLO(Net_config config) {
 
 void
 YOLO::postprocess(cv::Mat& frame,
-                  const vector<Mat>& outs) // Remove the bounding boxes with low confidence using non-maxima suppression
+                  const vector<cv::Mat>& outs) // Remove the bounding boxes with low confidence using non-maxima suppression
 {
   vector<int> classIds;
   vector<float> confidences;
-  vector<Rect> boxes;
+  vector<cv::Rect> boxes;
 
   for(size_t i = 0; i < outs.size(); ++i) {
     // Scan through all the bounding boxes output from the network and keep only the
@@ -32,7 +32,7 @@ YOLO::postprocess(cv::Mat& frame,
     float* data = (float*)outs[i].data;
     for(int j = 0; j < outs[i].rows; ++j, data += outs[i].cols) {
       cv::Mat scores = outs[i].row(j).colRange(5, outs[i].cols);
-      Point classIdPoint;
+      cv::Point classIdPoint;
       double confidence;
       // Get the value and location of the maximum score
       cv::minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
@@ -46,7 +46,7 @@ YOLO::postprocess(cv::Mat& frame,
 
         classIds.push_back(classIdPoint.x);
         confidences.push_back((float)confidence);
-        boxes.push_back(Rect(left, top, width, height));
+        boxes.push_back(cv::Rect(left, top, width, height));
       }
     }
   }
@@ -57,7 +57,7 @@ YOLO::postprocess(cv::Mat& frame,
   NMSBoxes(boxes, confidences, this->confThreshold, this->nmsThreshold, indices);
   for(size_t i = 0; i < indices.size(); ++i) {
     int idx = indices[i];
-    Rect box = boxes[idx];
+    cv::Rect box = boxes[idx];
     this->drawPred(classIds[idx], confidences[idx], box.x, box.y, box.x + box.width, box.y + box.height, frame);
   }
 }
@@ -72,7 +72,7 @@ YOLO::drawPred(int classId,
                cv::Mat& frame) // Draw the predicted bounding box
 {
   // Draw a cv::rectangle displaying the bounding box
-  cv::rectangle(frame, Point(left, top), Point(right, bottom), Scalar(0, 0, 255), 3);
+  cv::rectangle(frame, cv::Point(left, top), cv::Point(right, bottom), cv::Scalar(0, 0, 255), 3);
 
   // Get the label for the class name and its confidence
   string label = cv::format("%.2f", conf);
@@ -83,17 +83,17 @@ YOLO::drawPred(int classId,
 
   // Display the label at the top of the bounding box
   int baseLine;
-  Size labelSize = cv::getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
+  cv::Size labelSize = cv::getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
   top = max(top, labelSize.height);
-  // cv::rectangle(frame, Point(left, top - int(1.5 * labelSize.height)), Point(left + int(1.5 * labelSize.width), top +
-  // baseLine), Scalar(0, 255, 0), FILLED);
-  cv::putText(frame, label, Point(left, top), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0, 255, 0), 1);
+  // cv::rectangle(frame, cv::Point(left, top - int(1.5 * labelSize.height)), cv::Point(left + int(1.5 * labelSize.width), top +
+  // baseLine), cv::Scalar(0, 255, 0), FILLED);
+  cv::putText(frame, label, cv::Point(left, top), FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(0, 255, 0), 1);
 }
 
 void
 YOLO::detect(cv::Mat& frame) {
   cv::Mat blob;
-  blobFromImage(frame, blob, 1 / 255.0, Size(this->inpWidth, this->inpHeight), Scalar(0, 0, 0), true, false);
+  blobFromImage(frame, blob, 1 / 255.0, cv::Size(this->inpWidth, this->inpHeight), cv::Scalar(0, 0, 0), true, false);
   this->net.setInput(blob);
   vector<cv::Mat> outs;
   this->net.forward(outs, this->net.getUnconnectedOutLayersNames());
@@ -103,8 +103,8 @@ YOLO::detect(cv::Mat& frame) {
   double freq = cv::getTickFrequency() / 1000;
   double t = net.getPerfProfile(layersTimes) / freq;
   string label = cv::format("%s Inference time : %.2f ms", this->netname, t);
-  cv::putText(frame, label, Point(0, 30), FONT_HERSHEY_SIMPLEX, 1, Scalar(0, 0, 255), 2);
-  // imwrite(cv::format("%s_out.jpg", this->netname), frame);
+  cv::putText(frame, label, cv::Point(0, 30), FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 0, 255), 2);
+  // cv::imwrite(cv::format("%s_out.jpg", this->netname), frame);
 }
 
 int

@@ -5,7 +5,7 @@
 #include <opencv2/video.hpp>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 static void
 help() {
@@ -14,7 +14,7 @@ help() {
 
 int
 main(int argc, char** argv) {
-  VideoCapture cap;
+  cv::VideoCapture cap;
 
   if(argc < 2) {
     help();
@@ -27,42 +27,42 @@ main(int argc, char** argv) {
     return -1;
   }
 
-  Mat prevgray, gray, rgb, frame;
-  Mat flow, flow_uv[2];
-  Mat mag, ang;
-  Mat hsv_split[3], hsv;
+  cv::Mat prevgray, gray, rgb, frame;
+  cv::Mat flow, flow_uv[2];
+  cv::Mat mag, ang;
+  cv::Mat hsv_split[3], hsv;
   char ret;
 
-  namedWindow("flow", 1);
-  namedWindow("orig", 1);
+  cv::namedWindow("flow", 1);
+  cv::namedWindow("orig", 1);
 
-  Ptr<DenseOpticalFlow> algorithm = DISOpticalFlow::create(DISOpticalFlow::PRESET_MEDIUM);
+  Ptr<DenseOpticalFlow> algorithm = cv::DISOpticalFlow::create(DISOpticalFlow::PRESET_MEDIUM);
 
   while(true) {
     cap >> frame;
     if(frame.empty())
       break;
 
-    cvtColor(frame, gray, COLOR_BGR2GRAY);
+    cv::cvtColor(frame, gray, COLOR_BGR2GRAY);
 
     if(!prevgray.empty()) {
       algorithm->calc(prevgray, gray, flow);
-      split(flow, flow_uv);
-      multiply(flow_uv[1], -1, flow_uv[1]);
-      cartToPolar(flow_uv[0], flow_uv[1], mag, ang, true);
-      normalize(mag, mag, 0, 1, NORM_MINMAX);
+      cv::split(flow, flow_uv);
+      cv::multiply(flow_uv[1], -1, flow_uv[1]);
+      cv::cartToPolar(flow_uv[0], flow_uv[1], mag, ang, true);
+      cv::normalize(mag, mag, 0, 1, NORM_MINMAX);
       hsv_split[0] = ang;
       hsv_split[1] = mag;
-      hsv_split[2] = Mat::ones(ang.size(), ang.type());
-      merge(hsv_split, 3, hsv);
-      cvtColor(hsv, rgb, COLOR_HSV2BGR);
-      imshow("flow", rgb);
-      imshow("orig", frame);
+      hsv_split[2] = cv::Mat::ones(ang.size(), ang.type());
+      cv::merge(hsv_split, 3, hsv);
+      cv::cvtColor(hsv, rgb, COLOR_HSV2BGR);
+      cv::imshow("flow", rgb);
+      cv::imshow("orig", frame);
     }
 
-    if((ret = (char)waitKey(20)) > 0)
+    if((ret = (char)cv::waitKey(20)) > 0)
       break;
-    std::swap(prevgray, gray);
+    std::cv::swap(prevgray, gray);
   }
 
   return 0;

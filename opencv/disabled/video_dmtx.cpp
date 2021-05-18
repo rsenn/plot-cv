@@ -15,7 +15,7 @@
 #include <vector>
 #include <stdio.h>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 // hide the local functions in an anon namespace
@@ -36,30 +36,30 @@ help(char** av) {
        << "Generate a datamatrix from  from http://datamatrix.kaywa.com/  \n"
        << "  NOTE: This only handles strings of len 3 or less\n"
        << "  Resize the screen to be large enough for your camera to see, and it should find an "
-          "read it.\n\n"
+          "cv::read it.\n\n"
        << endl;
 }
 
 int
-process(VideoCapture& capture) {
+process(cv::VideoCapture& capture) {
   int n = 0;
   char filename[200];
   string window_name = "video | q or esc to quit";
   cout << "press space to save a picture. q or esc to quit" << endl;
-  namedWindow(window_name, cv::WINDOW_KEEPRATIO); // resizable window;
-  Mat frame;
+  cv::namedWindow(window_name, cv::WINDOW_KEEPRATIO); // resizable window;
+  cv::Mat frame;
   for(;;) {
     capture >> frame;
     if(frame.empty())
       break;
     cv::Mat gray;
-    cv::cvtColor(frame, gray, COLOR_RGB2GRAY);
+    cv::cvtColor(frame, gray, cv::COLOR_RGB2GRAY);
     vector<string> codes;
-    Mat corners;
+    cv::Mat corners;
     findDataMatrix(gray, codes, corners);
     drawDataMatrixCodes(frame, codes, corners);
-    imshow(window_name, frame);
-    char key = (char)waitKey(5); // delay N millis, usually long enough to display and capture input
+    cv::imshow(window_name, frame);
+    char key = (char)cv::waitKey(5); // delay N millis, usually long enough to display and capture input
     switch(key) {
       case 'q':
       case 'Q':
@@ -67,7 +67,7 @@ process(VideoCapture& capture) {
         return 0;
       case ' ': // Save an image
         sprintf(filename, "filename%.3d.jpg", n++);
-        imwrite(filename, frame);
+        cv::imwrite(filename, frame);
         cout << "Saved " << filename << endl;
         break;
       default: break;
@@ -86,7 +86,7 @@ main(int ac, char** av) {
     return 1;
   }
   std::string arg = av[1];
-  VideoCapture capture(arg); // try to open string, this will attempt to open it as a video file
+  cv::VideoCapture capture(arg); // try to open string, this will attempt to open it as a video file
   if(!capture.isOpened())    // if this fails, try to open as a video camera, through the use of an
                              // integer param
     capture.open(atoi(arg.c_str()));

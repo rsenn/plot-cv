@@ -19,7 +19,7 @@
 #include <opencv2/xfeatures2d/nonfree.hpp>
 
 // Name spaces used
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 int
@@ -29,27 +29,27 @@ main() {
   double t; // timing variable
 
   // load training image
-  Mat object = imread("C:/School/Image Processing/book.jpg");
+  cv::Mat object = cv::imread("C:/School/Image Processing/book.jpg");
   if(!object.data) {
     cout << "Can't open image";
     return -1;
   }
-  namedWindow("Good Matches", cv::WINDOW_AUTOSIZE);
+  cv::namedWindow("Good Matches", cv::WINDOW_AUTOSIZE);
 
   // SURF Detector, and descriptor parameters
   int minHess = 3000;
   vector<KeyPoint> kpObject, kpImage;
-  Mat desObject, desImage;
+  cv::Mat desObject, desImage;
 
   // Performance measures calculations for report
   if(testing) {
     cout << object.rows << " " << object.cols << endl;
 
     // calculate integral image
-    Mat iObject;
+    cv::Mat iObject;
     cv::integral(object, iObject);
-    imshow("Good Matches", iObject);
-    imwrite("C:/School/Image Processing/IntegralImage.jpg", iObject);
+    cv::imshow("Good Matches", iObject);
+    cv::imwrite("C:/School/Image Processing/IntegralImage.jpg", iObject);
     cv::waitKey(0);
 
     // calculate number of interest points, computation time as f(minHess)
@@ -60,26 +60,26 @@ main() {
     file.open("C:/School/Image Processing/TimingC.csv", std::ofstream::out);
     for(int i = 0; i < 20; i++) {
       minH = minHessVector[i];
-      t = (double)getTickCount();
+      t = (double)cv::getTickCount();
       SurfFeatureDetector detector(minH);
       detector.detect(object, kpObject);
-      t = ((double)getTickCount() - t) / getTickFrequency();
+      t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
       file << minHess << "," << kpObject.size() << "," << t << ",";
       cout << t << " " << kpObject.size() << " " << desObject.size() << endl;
 
-      t = (double)getTickCount();
+      t = (double)cv::getTickCount();
       SurfDescriptorExtractor extractor;
       extractor.compute(object, kpObject, desObject);
-      t = ((double)getTickCount() - t) / getTickFrequency();
+      t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
       file << t << endl;
     }
     file.close();
 
     // Display keypoints on training image
-    Mat interestPointObject = object;
+    cv::Mat interestPointObject = object;
     for(unsigned int i = 0; i < kpObject.size(); i++) {
       if(kpObject[i].octave) {
-        circle(interestPointObject, kpObject[i].pt, kpObject[i].size, 0);
+        cv::circle(interestPointObject, kpObject[i].pt, kpObject[i].size, 0);
         string octaveS;
         switch(kpObject[i].octave) {
           case 0: octaveS = "0"; break;
@@ -87,12 +87,12 @@ main() {
           case 2: octaveS = '2'; break;
           default: break;
         }
-        putText(
+        cv::putText(
             interestPointObject, octaveS, kpObject[i].pt, FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(0, 0, 250), 1, cv::LINE_AA);
       }
     }
-    imshow("Good Matches", interestPointObject);
-    imwrite("C:/School/Image Processing/bookIP2.jpg", interestPointObject);
+    cv::imshow("Good Matches", interestPointObject);
+    cv::imwrite("C:/School/Image Processing/bookIP2.jpg", interestPointObject);
     cv::waitKey(0);
   }
 
@@ -105,12 +105,12 @@ main() {
   FlannBasedMatcher matcher;
 
   // Initialize video and display window
-  VideoCapture cap(1); // camera 1 is webcam
+  cv::VideoCapture cap(1); // camera 1 is webcam
   if(!cap.isOpened())
     return -1;
 
   // Object corner points for plotting box
-  vector<Point2f> obj_corners(4);
+  vector<cv::Point2f> obj_corners(4);
   obj_corners[0] = cv::Point(0, 0);
   obj_corners[1] = cv::Point(object.cols, 0);
   obj_corners[2] = cv::Point(object.cols, object.rows);
@@ -129,23 +129,23 @@ main() {
     cout << thresholdGoodMatches << endl;
 
     if(true) {
-      t = (double)getTickCount();
+      t = (double)cv::getTickCount();
     }
 
     while(escapeKey != 'q') {
       frameCount++;
-      Mat frame;
-      Mat image;
+      cv::Mat frame;
+      cv::Mat image;
       cap >> frame;
-      cvtColor(frame, image, cv::COLOR_RGB2GRAY);
+      cv::cvtColor(frame, image, cv::COLOR_RGB2GRAY);
 
-      Mat des_image, img_matches, H;
+      cv::Mat des_image, img_matches, H;
       vector<KeyPoint> kp_image;
       vector<vector<DMatch>> matches;
       vector<DMatch> good_matches;
-      vector<Point2f> obj;
-      vector<Point2f> scene;
-      vector<Point2f> scene_corners(4);
+      vector<cv::Point2f> obj;
+      vector<cv::Point2f> scene;
+      vector<cv::Point2f> scene_corners(4);
 
       detector.detect(image, kp_image);
       extractor.compute(image, kp_image, des_image);
@@ -160,7 +160,7 @@ main() {
       }
 
       // if (good_matches.size()<1)
-      //	good_matches.resize(0,cv::DMatch);
+      //	good_matches.cv::resize(0,cv::DMatch);
 
       // Draw only "good" matches
       drawMatches(object,
@@ -169,15 +169,15 @@ main() {
                   kp_image,
                   good_matches,
                   img_matches,
-                  Scalar::all(-1),
-                  Scalar::all(-1),
+                  cv::Scalar::all(-1),
+                  cv::Scalar::all(-1),
                   vector<char>(),
                   DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
 
       if(good_matches.size() >= thresholdGoodMatches) {
 
         // Display that the object is found
-        putText(img_matches,
+        cv::putText(img_matches,
                 "Object Found",
                 cv::Point(10, 50),
                 FONT_HERSHEY_COMPLEX_SMALL,
@@ -191,39 +191,39 @@ main() {
           scene.push_back(kp_image[good_matches[i].trainIdx].pt);
         }
 
-        H = findHomography(obj, scene, cv::RANSAC);
+        H = cv::findHomography(obj, scene, cv::RANSAC);
 
         perspectiveTransform(obj_corners, scene_corners, H);
 
         // Draw lines between the corners (the mapped object in the scene image )
-        line(img_matches,
-             scene_corners[0] + Point2f(object.cols, 0),
-             scene_corners[1] + Point2f(object.cols, 0),
-             Scalar(0, 255, 0),
+        cv::line(img_matches,
+             scene_corners[0] + cv::Point2f(object.cols, 0),
+             scene_corners[1] + cv::Point2f(object.cols, 0),
+             cv::Scalar(0, 255, 0),
              4);
-        line(img_matches,
-             scene_corners[1] + Point2f(object.cols, 0),
-             scene_corners[2] + Point2f(object.cols, 0),
-             Scalar(0, 255, 0),
+        cv::line(img_matches,
+             scene_corners[1] + cv::Point2f(object.cols, 0),
+             scene_corners[2] + cv::Point2f(object.cols, 0),
+             cv::Scalar(0, 255, 0),
              4);
-        line(img_matches,
-             scene_corners[2] + Point2f(object.cols, 0),
-             scene_corners[3] + Point2f(object.cols, 0),
-             Scalar(0, 255, 0),
+        cv::line(img_matches,
+             scene_corners[2] + cv::Point2f(object.cols, 0),
+             scene_corners[3] + cv::Point2f(object.cols, 0),
+             cv::Scalar(0, 255, 0),
              4);
-        line(img_matches,
-             scene_corners[3] + Point2f(object.cols, 0),
-             scene_corners[0] + Point2f(object.cols, 0),
-             Scalar(0, 255, 0),
+        cv::line(img_matches,
+             scene_corners[3] + cv::Point2f(object.cols, 0),
+             scene_corners[0] + cv::Point2f(object.cols, 0),
+             cv::Scalar(0, 255, 0),
              4);
       } else {
-        putText(img_matches, "", cv::Point(10, 50), FONT_HERSHEY_COMPLEX_SMALL, 3, cv::Scalar(0, 0, 250), 1, cv::LINE_AA);
+        cv::putText(img_matches, "", cv::Point(10, 50), FONT_HERSHEY_COMPLEX_SMALL, 3, cv::Scalar(0, 0, 250), 1, cv::LINE_AA);
       }
 
       // Show detected matches
-      imshow("Good Matches", img_matches);
+      cv::imshow("Good Matches", img_matches);
       escapeKey = cv::waitKey(10);
-      // imwrite("C:/School/Image Processing/bookIP3.jpg", img_matches);
+      // cv::imwrite("C:/School/Image Processing/bookIP3.jpg", img_matches);
 
       if(frameCount > 10)
         escapeKey = 'q';
@@ -231,7 +231,7 @@ main() {
 
     // average frames per second
     if(true) {
-      t = ((double)getTickCount() - t) / getTickFrequency();
+      t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
       cout << t << " " << frameCount / t << endl;
       cv::waitKey(0);
     }

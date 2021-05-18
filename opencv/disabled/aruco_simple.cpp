@@ -29,12 +29,12 @@ or implied, of Rafael Muñoz Salinas.
 #include <cmath>
 #include <fstream>
 #include <sstream>
-#include <aruco.h>
-#include <aruco/cvdrawingutils.h>
+#include <cv::aruco.h>
+#include <cv::aruco/cvdrawingutils.h>
 #include <opencv2/highgui/highgui.hpp>
 using namespace std;
-using namespace cv;
-using namespace aruco;
+//using namespace cv;
+using namespace cv::aruco;
 
 int fontFace = FONT_HERSHEY_SCRIPT_SIMPLEX;
 
@@ -43,12 +43,12 @@ string TheIntrinsicFile;
 float TheMarkerSize = -1;
 int ThePyrDownLevel;
 MarkerDetector MDetector;
-VideoCapture TheVideoCapturer;
+cv::VideoCapture TheVideoCapturer;
 vector<Marker> TheMarkers;
-Mat TheInputImage, TheInputImageCopy;
+cv::Mat TheInputImage, TheInputImageCopy;
 CameraParameters TheCameraParameters;
 void cvTackBarEvents(int pos, void*);
-bool readCameraParameters(string TheIntrinsicFile, CameraParameters& CP, Size size);
+bool readCameraParameters(string TheIntrinsicFile, CameraParameters& CP, cv::Size size);
 
 pair<double, double> AvrgTime(0, 0); // determines the average time required for detection
 double ThresParam1, ThresParam2;
@@ -101,7 +101,7 @@ main(int argc, char** argv) {
     }
     // parse arguments
 
-    // read from camera or from  file
+    // cv::read from camera or from  file
     if(TheInputVideo.find("live") != string::npos) {
       int vIdx = 0;
       // check if the :idx is here
@@ -121,13 +121,13 @@ main(int argc, char** argv) {
       return -1;
     }
 
-    // read first image to get the dimensions
+    // cv::read first image to get the dimensions
     TheVideoCapturer >> TheInputImage;
 
-    // read camera parameters if passed
+    // cv::read camera parameters if passed
     if(TheIntrinsicFile != "") {
       TheCameraParameters.readFromXMLFile(TheIntrinsicFile);
-      TheCameraParameters.resize(TheInputImage.size());
+      TheCameraParameters.cv::resize(TheInputImage.size());
     }
     // Configure other parameters
     if(ThePyrDownLevel > 0)
@@ -158,11 +158,11 @@ main(int argc, char** argv) {
       // copy image
 
       index++;                              // number of images captured
-      double tick = (double)getTickCount(); // for checking the speed
+      double tick = (double)cv::getTickCount(); // for checking the speed
       // Detection of markers in the image passed
       MDetector.detect(TheInputImage, TheMarkers, TheCameraParameters, TheMarkerSize);
-      // chekc the speed by calculating the mean speed of all iterations
-      AvrgTime.first += ((double)getTickCount() - tick) / getTickFrequency();
+      // chekc the speed by calculating the cv::mean speed of all iterations
+      AvrgTime.first += ((double)cv::getTickCount() - tick) / cv::getTickFrequency();
       AvrgTime.second++;
       cout << "\rTime detection=" << 1000 * AvrgTime.first / AvrgTime.second << " milliseconds nmarkers=" << TheMarkers.size()
            << std::flush;
@@ -174,13 +174,13 @@ main(int argc, char** argv) {
         // Each element of the marker array is a marker, and the first four elements of the marker
         // give the corners as xy coordinates.  xy 0 is at the top left of the screen.  Print each
         // of the four corners. cout<<endl<<TheMarkers[i];
-        circle(TheInputImageCopy, TheMarkers[i][0], 10, Scalar(0, 255, 0));
-        cv::putText(TheInputImageCopy, "0", TheMarkers[i][0], fontFace, 0.8, Scalar::all(255));
+        cv::circle(TheInputImageCopy, TheMarkers[i][0], 10, cv::Scalar(0, 255, 0));
+        cv::putText(TheInputImageCopy, "0", TheMarkers[i][0], fontFace, 0.8, cv::Scalar::all(255));
 
-        circle(TheInputImageCopy, TheMarkers[i][1], 10, Scalar(0, 255, 0));
-        cv::putText(TheInputImageCopy, "1", TheMarkers[i][1], fontFace, 0.8, Scalar::all(255));
+        cv::circle(TheInputImageCopy, TheMarkers[i][1], 10, cv::Scalar(0, 255, 0));
+        cv::putText(TheInputImageCopy, "1", TheMarkers[i][1], fontFace, 0.8, cv::Scalar::all(255));
 
-        TheMarkers[i].draw(TheInputImageCopy, Scalar(0, 0, 255), 1);
+        TheMarkers[i].draw(TheInputImageCopy, cv::Scalar(0, 0, 255), 1);
       }
       if(TheMarkers.size() != 0)
         cout << endl;
@@ -213,7 +213,7 @@ main(int argc, char** argv) {
         }
 
         cout << " centre " << centre << " rotation " << rotation << endl;
-        circle(TheInputImageCopy, centre, 10, Scalar(0, 255, 0));
+        cv::circle(TheInputImageCopy, centre, 10, cv::Scalar(0, 255, 0));
 
         sep = first - second;
         cout << first << second << sep << endl;
@@ -228,12 +228,12 @@ main(int argc, char** argv) {
         separation = (2.5 * 960) / sep.x;
       }
 
-      cv::putText(TheInputImageCopy, "test", Point(400, 400), fontFace, 1.0, Scalar::all(255));
+      cv::putText(TheInputImageCopy, "test", cv::Point(400, 400), fontFace, 1.0, cv::Scalar::all(255));
 
       // print other rectangles that contains no valid markers
       /*
       for (unsigned int i=0;i<MDetector.getCandidates().size();i++) {
-          aruco::Marker m( MDetector.getCandidates()[i],999);
+          cv::aruco::Marker m( MDetector.getCandidates()[i],999);
           m.draw(TheInputImageCopy,cv::Scalar(255,0,0));
       }
       */
@@ -279,10 +279,10 @@ cvTackBarEvents(int pos, void*) {
   // recompute
   MDetector.detect(TheInputImage, TheMarkers, TheCameraParameters);
   TheInputImage.copyTo(TheInputImageCopy);
-  for(unsigned int i = 0; i < TheMarkers.size(); i++) TheMarkers[i].draw(TheInputImageCopy, Scalar(0, 0, 255), 1);
+  for(unsigned int i = 0; i < TheMarkers.size(); i++) TheMarkers[i].draw(TheInputImageCopy, cv::Scalar(0, 0, 255), 1);
   // print other rectangles that contains no valid markers
   /*for (unsigned int i=0;i<MDetector.getCandidates().size();i++) {
-      aruco::Marker m( MDetector.getCandidates()[i],999);
+      cv::aruco::Marker m( MDetector.getCandidates()[i],999);
       m.draw(TheInputImageCopy,cv::Scalar(255,0,0));
   }*/
 

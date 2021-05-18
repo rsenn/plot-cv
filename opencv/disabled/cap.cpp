@@ -396,7 +396,7 @@ cvCreateFileCapture(const char* filename) {
 
 /**
  * Videowriter dispatching method: it tries to find the first
- * API that can write a given stream.
+ * API that can cv::write a given stream.
  */
 CV_IMPL CvVideoWriter*
 cvCreateVideoWriter(const char* filename, int fourcc, double fps, CvSize frameSize, int is_color) {
@@ -471,23 +471,23 @@ cvReleaseVideoWriter(CvVideoWriter** pwriter) {
 
 namespace cv {
 
-VideoCapture::VideoCapture() {
+cv::VideoCapture::VideoCapture() {
 }
 
-VideoCapture::VideoCapture(const string& filename) {
+cv::VideoCapture::VideoCapture(const string& filename) {
   open(filename);
 }
 
-VideoCapture::VideoCapture(int device) {
+cv::VideoCapture::VideoCapture(int device) {
   open(device);
 }
 
-VideoCapture::~VideoCapture() {
+cv::VideoCapture::~VideoCapture() {
   cap.release();
 }
 
 bool
-VideoCapture::open(const string& filename) {
+cv::VideoCapture::open(const string& filename) {
   if(isOpened())
     release();
   cap = cvCreateFileCapture(filename.c_str());
@@ -495,7 +495,7 @@ VideoCapture::open(const string& filename) {
 }
 
 bool
-VideoCapture::open(int device) {
+cv::VideoCapture::open(int device) {
   if(isOpened())
     release();
   cap = cvCreateCameraCapture(device);
@@ -503,38 +503,38 @@ VideoCapture::open(int device) {
 }
 
 bool
-VideoCapture::isOpened() const {
+cv::VideoCapture::isOpened() const {
   return !cap.empty();
 }
 
 void
-VideoCapture::release() {
+cv::VideoCapture::release() {
   cap.release();
 }
 
 bool
-VideoCapture::grab() {
+cv::VideoCapture::grab() {
   return cvGrabFrame(cap) != 0;
 }
 
 bool
-VideoCapture::retrieve(Mat& image, int channel) {
+cv::VideoCapture::retrieve(cv::Mat& image, int channel) {
   IplImage* _img = cvRetrieveFrame(cap, channel);
   if(!_img) {
     image.release();
     return false;
   }
   if(_img->origin == IPL_ORIGIN_TL)
-    Mat(_img).copyTo(image);
+    cv::Mat(_img).copyTo(image);
   else {
-    Mat temp(_img);
-    flip(temp, image, 0);
+    cv::Mat temp(_img);
+    cv::flip(temp, image, 0);
   }
   return true;
 }
 
 bool
-VideoCapture::read(Mat& image) {
+cv::VideoCapture::cv::read(cv::Mat& image) {
   if(grab())
     retrieve(image);
   else
@@ -542,58 +542,58 @@ VideoCapture::read(Mat& image) {
   return !image.empty();
 }
 
-VideoCapture&
-VideoCapture::operator>>(Mat& image) {
-  read(image);
+cv::VideoCapture&
+cv::VideoCapture::cv::operator>>(cv::Mat& image) {
+  cv::read(image);
   return *this;
 }
 
 bool
-VideoCapture::set(int propId, double value) {
+cv::VideoCapture::set(int propId, double value) {
   return cvSetCaptureProperty(cap, propId, value) != 0;
 }
 
 double
-VideoCapture::get(int propId) {
+cv::VideoCapture::get(int propId) {
   return cvGetCaptureProperty(cap, propId);
 }
 
-VideoWriter::VideoWriter() {
+cv::VideoWriter::VideoWriter() {
 }
 
-VideoWriter::VideoWriter(const string& filename, int fourcc, double fps, Size frameSize, bool isColor) {
+cv::VideoWriter::VideoWriter(const string& filename, int fourcc, double fps, cv::Size frameSize, bool isColor) {
   open(filename, fourcc, fps, frameSize, isColor);
 }
 
 void
-VideoWriter::release() {
+cv::VideoWriter::release() {
   writer.release();
 }
 
-VideoWriter::~VideoWriter() {
+cv::VideoWriter::~VideoWriter() {
   release();
 }
 
 bool
-VideoWriter::open(const string& filename, int fourcc, double fps, Size frameSize, bool isColor) {
+cv::VideoWriter::open(const string& filename, int fourcc, double fps, cv::Size frameSize, bool isColor) {
   writer = cvCreateVideoWriter(filename.c_str(), fourcc, fps, frameSize, isColor);
   return isOpened();
 }
 
 bool
-VideoWriter::isOpened() const {
+cv::VideoWriter::isOpened() const {
   return !writer.empty();
 }
 
 void
-VideoWriter::write(const Mat& image) {
+cv::VideoWriter::cv::write(const cv::Mat& image) {
   IplImage _img = image;
   cvWriteFrame(writer, &_img);
 }
 
-VideoWriter&
-VideoWriter::operator<<(const Mat& image) {
-  write(image);
+cv::VideoWriter&
+cv::VideoWriter::cv::operator<<(const cv::Mat& image) {
+  cv::write(image);
   return *this;
 }
 

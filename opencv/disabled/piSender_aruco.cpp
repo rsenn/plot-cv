@@ -11,18 +11,18 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-#include <aruco/aruco.h>
+#include <cv::aruco/aruco.h>
 
 #include "videoSender.h"
 #include "videoSender.cpp"
 
 using namespace std;
-using namespace cv;
-using namespace aruco;
+//using namespace cv;
+using namespace cv::aruco;
 
 // rows by cols.
-extern Size resizeSize;
-extern Mat img1, img2;
+extern cv::Size resizeSize;
+extern cv::Mat img1, img2;
 extern int is_data_ready;
 extern int clientSock;
 extern char* server_ip;
@@ -33,14 +33,14 @@ extern pthread_mutex_t amutex;
 raspicam::RaspiCam_Cv Camera;
 cv::Mat image, img0, convertedColour, resizedImage;
 
-// Globals for aruco are below.
+// Globals for cv::aruco are below.
 MarkerDetector MDetector;
-VideoCapture TheVideoCapturer;
+cv::VideoCapture TheVideoCapturer;
 vector<Marker> TheMarkers;
 pair<double, double> AvrgTime(0, 0); // determines the average time required for detection
 double ThresParam1, ThresParam2;
 
-Mat TheInputImage, TheInputImageCopy;
+cv::Mat TheInputImage, TheInputImageCopy;
 CameraParameters TheCameraParameters;
 
 int waitTime = 0;
@@ -65,7 +65,7 @@ main(int argc, char** argv) {
   server_ip = argv[1];
   server_port = atoi(argv[2]);
 
-  // Setup aruco marker detection.
+  // Setup cv::aruco marker detection.
 
   MDetector.getThresholdParams(ThresParam1, ThresParam2);
   MDetector.setCornerRefinementMethod(MarkerDetector::SUBPIX);
@@ -78,7 +78,7 @@ main(int argc, char** argv) {
   // Open camera
   cout << "Opening Camera..." << endl;
   if(!Camera.open()) {
-    cerr << "Error opening the camera" << endl;
+    cerr << "cv::Error opening the camera" << endl;
     return -1;
   }
   cout << "sleeping on startup because camera is slow to respond when first started?. Please wait." << '\n';
@@ -104,8 +104,8 @@ main(int argc, char** argv) {
 
   /* Didn't compile with the namedwindow options because we don't have GTK.
   cv::namedWindow("stream_client", cv::WINDOW_AUTOSIZE);
-                  flip(img0, img0, 1);
-                  cvtColor(img0, img1, cv::COLOR_BGR2GRAY);
+                  cv::flip(img0, img0, 1);
+                  cv::cvtColor(img0, img1, cv::COLOR_BGR2GRAY);
 
   */
 
@@ -120,11 +120,11 @@ main(int argc, char** argv) {
     pthread_mutex_lock(&amutex);
 
     imagesAnalysed++;                     // number of images captured
-    double tick = (double)getTickCount(); // for checking the speed
+    double tick = (double)cv::getTickCount(); // for checking the speed
     // Detection of markers in the image passed
     MDetector.detect(TheInputImage, TheMarkers, TheCameraParameters, TheMarkerSize);
-    // chekc the speed by calculating the mean speed of all iterations
-    AvrgTime.first += ((double)getTickCount() - tick) / getTickFrequency();
+    // chekc the speed by calculating the cv::mean speed of all iterations
+    AvrgTime.first += ((double)cv::getTickCount() - tick) / cv::getTickFrequency();
     AvrgTime.second++;
     cout << "\rTime detection=" << 1000 * AvrgTime.first / AvrgTime.second << " milliseconds nmarkers=" << TheMarkers.size()
          << std::flush;
@@ -136,13 +136,13 @@ main(int argc, char** argv) {
       // Each element of the marker array is a marker, and the first four elements of the marker
       // give the corners as xy coordinates.  xy 0 is at the top left of the screen.  Print each of
       // the four corners. cout<<endl<<TheMarkers[i];
-      circle(TheInputImageCopy, TheMarkers[i][0], 10, Scalar(0, 255, 0));
-      cv::putText(TheInputImageCopy, "0", TheMarkers[i][0], fontFace, 0.8, Scalar::all(255));
+      cv::circle(TheInputImageCopy, TheMarkers[i][0], 10, cv::Scalar(0, 255, 0));
+      cv::putText(TheInputImageCopy, "0", TheMarkers[i][0], fontFace, 0.8, cv::Scalar::all(255));
 
-      circle(TheInputImageCopy, TheMarkers[i][1], 10, Scalar(0, 255, 0));
-      cv::putText(TheInputImageCopy, "1", TheMarkers[i][1], fontFace, 0.8, Scalar::all(255));
+      cv::circle(TheInputImageCopy, TheMarkers[i][1], 10, cv::Scalar(0, 255, 0));
+      cv::putText(TheInputImageCopy, "1", TheMarkers[i][1], fontFace, 0.8, cv::Scalar::all(255));
 
-      TheMarkers[i].draw(TheInputImageCopy, Scalar(0, 0, 255), 1);
+      TheMarkers[i].draw(TheInputImageCopy, cv::Scalar(0, 0, 255), 1);
     }
     if(TheMarkers.size() != 0)
       cout << endl;
@@ -155,7 +155,7 @@ main(int argc, char** argv) {
     pthread_mutex_unlock(&amutex);
     usleep(1000); // sleep before sending next frame.
 
-    // imshow("stream_client", img0);
+    // cv::imshow("stream_client", img0);
     // key = cv::waitKey(30);
   }
 

@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 cv::Mat src;
@@ -29,21 +29,21 @@ void thresh_callback(int, void*);
 int
 main(int, char** argv) {
   /// Load source image and convert it to gray
-  src = imread(argv[1], 1);
+  src = cv::imread(argv[1], 1);
 
-  /// Convert image to gray and blur it
-  cvtColor(src, src_gray, COLOR_BGR2GRAY);
-  blur(src_gray, src_gray, Size(3, 3));
+  /// Convert image to gray and cv::blur it
+  cv::cvtColor(src, src_gray, COLOR_BGR2GRAY);
+  cv::blur(src_gray, src_gray, cv::Size(3, 3));
 
   /// Create Window
   const char* source_window = "Source";
-  namedWindow(source_window, WINDOW_AUTOSIZE);
-  imshow(source_window, src);
+  cv::namedWindow(source_window, cv::WINDOW_AUTOSIZE);
+  cv::imshow(source_window, src);
 
-  createTrackbar(" Threshold:", "Source", &thresh, max_thresh, thresh_callback);
+  cv::createTrackbar(" Threshold:", "Source", &thresh, max_thresh, thresh_callback);
   thresh_callback(0, 0);
 
-  waitKey(0);
+  cv::waitKey(0);
   return (0);
 }
 
@@ -54,39 +54,39 @@ void
 thresh_callback(int, void*) {
   cv::Mat threshold_output;
   std::vector<std::vector<cv::Point>> contours;
-  std::vector<Vec4i> hierarchy;
+  std::vector<cv::Vec4i> hierarchy;
 
   /// Detect edges using Threshold
-  threshold(src_gray, threshold_output, thresh, 255, THRESH_BINARY);
+  cv::threshold(src_gray, threshold_output, thresh, 255, THRESH_BINARY);
   /// Find contours
-  findContours(threshold_output, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+  cv::findContours(threshold_output, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Find the rotated rectangles and ellipses for each contour
-  std::vector<RotatedRect> minRect(contours.size());
-  std::vector<RotatedRect> minEllipse(contours.size());
+  std::vector<cv::RotatedRect> minRect(contours.size());
+  std::vector<cv::RotatedRect> minEllipse(contours.size());
 
   for(size_t i = 0; i < contours.size(); i++) {
-    minRect[i] = minAreaRect(cv::Mat(contours[i]));
+    minRect[i] = cv::minAreaRect(cv::Mat(contours[i]));
     if(contours[i].size() > 5) {
-      minEllipse[i] = fitEllipse(cv::Mat(contours[i]));
+      minEllipse[i] = cv::fitEllipse(cv::Mat(contours[i]));
     }
   }
 
   /// Draw contours + rotated rects + ellipses
   cv::Mat drawing = cv::Mat::zeros(threshold_output.size(), CV_8UC3);
   for(size_t i = 0; i < contours.size(); i++) {
-    Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
+    cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
     // contour
-    drawContours(drawing, contours, (int)i, color, 1, 8, std::vector<Vec4i>(), 0, cv::Point());
+    cv::drawContours(drawing, contours, (int)i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
     // ellipse
-    ellipse(drawing, minEllipse[i], color, 2, 8);
+    cv::ellipse(drawing, minEllipse[i], color, 2, 8);
     // rotated rectangle
     cv::Point2f rect_points[4];
     minRect[i].points(rect_points);
-    for(int j = 0; j < 4; j++) line(drawing, rect_points[j], rect_points[(j + 1) % 4], color, 1, 8);
+    for(int j = 0; j < 4; j++) cv::line(drawing, rect_points[j], rect_points[(j + 1) % 4], color, 1, 8);
   }
 
   /// Show in a window
-  namedWindow("Contours", WINDOW_AUTOSIZE);
-  imshow("Contours", drawing);
+  cv::namedWindow("Contours", cv::WINDOW_AUTOSIZE);
+  cv::imshow("Contours", drawing);
 }

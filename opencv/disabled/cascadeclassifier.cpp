@@ -12,8 +12,8 @@
 #include "opencv2/gpu/gpu.hpp"
 
 using namespace std;
-using namespace cv;
-using namespace cv::gpu;
+//using namespace cv;
+//using namespace cv::gpu;
 
 static void
 help() {
@@ -29,38 +29,38 @@ template<class T>
 void
 convertAndResize(const T& src, T& gray, T& resized, double scale) {
   if(src.channels() == 3) {
-    cvtColor(src, gray, cv::COLOR_BGR2GRAY);
+    cv::cvtColor(src, gray, cv::COLOR_BGR2GRAY);
   } else {
     gray = src;
   }
 
-  Size sz(cvRound(gray.cols * scale), cvRound(gray.rows * scale));
+  cv::Size sz(cvRound(gray.cols * scale), cvRound(gray.rows * scale));
 
   if(scale != 1) {
-    resize(gray, resized, sz);
+    cv::resize(gray, resized, sz);
   } else {
     resized = gray;
   }
 }
 
 static void
-matPrint(Mat& img, int lineOffsY, Scalar fontColor, const string& ss) {
+matPrint(cv::Mat& img, int lineOffsY, cv::Scalar fontColor, const string& ss) {
   int fontFace = FONT_HERSHEY_DUPLEX;
   double fontScale = 0.8;
   int fontThickness = 2;
-  Size fontSize = cv::getTextSize("T[]", fontFace, fontScale, fontThickness, 0);
+  cv::Size fontSize = cv::getTextSize("T[]", fontFace, fontScale, fontThickness, 0);
 
-  Point org;
+  cv::Point org;
   org.x = 1;
   org.y = 3 * fontSize.height * (lineOffsY + 1) / 2;
-  putText(img, ss, org, fontFace, fontScale, CV_RGB(0, 0, 0), 5 * fontThickness / 2, 16);
-  putText(img, ss, org, fontFace, fontScale, fontColor, fontThickness, 16);
+  cv::putText(img, ss, org, fontFace, fontScale, CV_RGB(0, 0, 0), 5 * fontThickness / 2, 16);
+  cv::putText(img, ss, org, fontFace, fontScale, fontColor, fontThickness, 16);
 }
 
 static void
-displayState(Mat& canvas, bool bHelp, bool bGpu, bool bLargestFace, bool bFilter, double fps) {
-  Scalar fontColorRed = CV_RGB(255, 0, 0);
-  Scalar fontColorNV = CV_RGB(118, 185, 0);
+displayState(cv::Mat& canvas, bool bHelp, bool bGpu, bool bLargestFace, bool bFilter, double fps) {
+  cv::Scalar fontColorRed = CV_RGB(255, 0, 0);
+  cv::Scalar fontColorNV = CV_RGB(118, 185, 0);
 
   ostringstream ss;
   ss << "FPS = " << setprecision(1) << fixed << fps;
@@ -128,16 +128,16 @@ main(int argc, const char* argv[]) {
     return cerr << "ERROR: Could not load cascade classifier \"" << cascadeName << "\"" << endl, help(), -1;
   }
 
-  CascadeClassifier cascade_cpu;
+  cv::CascadeClassifier cascade_cpu;
   if(!cascade_cpu.load(cascadeName)) {
     return cerr << "ERROR: Could not load cascade classifier \"" << cascadeName << "\"" << endl, help(), -1;
   }
 
-  VideoCapture capture;
-  Mat image;
+  cv::VideoCapture capture;
+  cv::Mat image;
 
   if(isInputImage) {
-    image = imread(inputName);
+    image = cv::imread(inputName);
     CV_Assert(!image.empty());
   } else if(isInputVideo) {
     capture.open(inputName);
@@ -147,10 +147,10 @@ main(int argc, const char* argv[]) {
     CV_Assert(capture.isOpened());
   }
 
-  namedWindow("result", 1);
+  cv::namedWindow("result", 1);
 
-  Mat frame, frame_cpu, gray_cpu, resized_cpu, faces_downloaded, frameDisp;
-  vector<Rect> facesBuf_cpu;
+  cv::Mat frame, frame_cpu, gray_cpu, resized_cpu, faces_downloaded, frameDisp;
+  vector<cv::Rect> facesBuf_cpu;
 
   GpuMat frame_gpu, gray_gpu, resized_gpu, facesBuf_gpu;
 
@@ -186,7 +186,7 @@ main(int argc, const char* argv[]) {
       detections_num = cascade_gpu.detectMultiScale(resized_gpu, facesBuf_gpu, 1.2, (filterRects || findLargestObject) ? 4 : 0);
       facesBuf_gpu.colRange(0, detections_num).download(faces_downloaded);
     } else {
-      Size minSize = cascade_gpu.getClassifierSize();
+      cv::Size minSize = cascade_gpu.getClassifierSize();
       cascade_cpu.detectMultiScale(resized_cpu,
                                    facesBuf_cpu,
                                    1.2,
@@ -197,13 +197,13 @@ main(int argc, const char* argv[]) {
     }
 
     if(!useGPU && detections_num) {
-      for(int i = 0; i < detections_num; ++i) { rectangle(resized_cpu, facesBuf_cpu[i], Scalar(255)); }
+      for(int i = 0; i < detections_num; ++i) { cv::rectangle(resized_cpu, facesBuf_cpu[i], cv::Scalar(255)); }
     }
 
     if(useGPU) {
       resized_gpu.download(resized_cpu);
 
-      for(int i = 0; i < detections_num; ++i) { rectangle(resized_cpu, faces_downloaded.ptr<cv::Rect>()[i], Scalar(255)); }
+      for(int i = 0; i < detections_num; ++i) { cv::rectangle(resized_cpu, faces_downloaded.ptr<cv::Rect>()[i], cv::Scalar(255)); }
     }
 
     tm.stop();
@@ -214,7 +214,7 @@ main(int argc, const char* argv[]) {
     cout << setfill(' ') << setprecision(2);
     cout << setw(6) << fixed << fps << " FPS, " << detections_num << " det";
     if((filterRects || findLargestObject) && detections_num > 0) {
-      Rect* faceRects = useGPU ? faces_downloaded.ptr<Rect>() : &facesBuf_cpu[0];
+      cv::Rect* faceRects = useGPU ? faces_downloaded.ptr<Rect>() : &facesBuf_cpu[0];
       for(int i = 0; i < min(detections_num, 2); ++i) {
         cout << ", [" << setw(4) << faceRects[i].x << ", " << setw(4) << faceRects[i].y << ", " << setw(4) << faceRects[i].width
              << ", " << setw(4) << faceRects[i].height << "]";
@@ -222,11 +222,11 @@ main(int argc, const char* argv[]) {
     }
     cout << endl;
 
-    cvtColor(resized_cpu, frameDisp, cv::COLOR_GRAY2BGR);
+    cv::cvtColor(resized_cpu, frameDisp, cv::COLOR_GRAY2BGR);
     displayState(frameDisp, helpScreen, useGPU, findLargestObject, filterRects, fps);
-    imshow("result", frameDisp);
+    cv::imshow("result", frameDisp);
 
-    char key = (char)waitKey(5);
+    char key = (char)cv::waitKey(5);
     if(key == 27) {
       break;
     }

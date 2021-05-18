@@ -1,8 +1,8 @@
 /*
-// Sample demonstrating interoperability of OpenCV UMat with Direct X surface
+// Sample demonstrating interoperability of OpenCV cv::UMat with Direct X surface
 // At first, the data obtained from video file or camera and
 // placed onto Direct X surface,
-// following mapping of this Direct X surface to OpenCV UMat and call cv::Blur
+// following mapping of this Direct X surface to OpenCV cv::UMat and call cv::Blur
 // function. The result is mapped back to Direct X surface and rendered through
 // Direct X API.
 */
@@ -12,7 +12,7 @@
 
 #include "opencv2/core.hpp"
 #include "opencv2/core/directx.hpp"
-#include "opencv2/core/ocl.hpp"
+#include "opencv2/core/cv::ocl.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/videoio.hpp"
 
@@ -21,7 +21,7 @@
 #pragma comment(lib, "d3d11.lib")
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 class D3D11WinApp : public D3DSample {
 public:
@@ -46,7 +46,7 @@ public:
     scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // use 32-bit color
     scd.BufferDesc.Width = m_width;                     // set the back buffer width
     scd.BufferDesc.Height = m_height;                   // set the back buffer height
-    scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;  // how swap chain is to be used
+    scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;  // how cv::swap chain is to be used
     scd.OutputWindow = m_hWnd;                          // the window to be used
     scd.SampleDesc.Count = 1;                           // how many multisamples
     scd.Windowed = TRUE;                                // windowed/full-screen mode
@@ -166,7 +166,7 @@ public:
 
     // initialize OpenCL context of OpenCV lib from DirectX
     if(cv::ocl::haveOpenCL()) {
-      m_oclCtx = cv::directx::ocl::initializeContextFromD3D11Device(m_pD3D11Dev);
+      m_oclCtx = cv::directx::cv::ocl::initializeContextFromD3D11Device(m_pD3D11Dev);
     }
 
     m_oclDevName = cv::ocl::useOpenCL() ? cv::ocl::Context::getDefault().device(0).name() : "No OpenCL device";
@@ -179,7 +179,7 @@ public:
   get_surface(ID3D11Texture2D** ppSurface, bool use_nv12) {
     HRESULT r;
 
-    if(!m_cap.read(m_frame_bgr))
+    if(!m_cap.cv::read(m_frame_bgr))
       return -1;
 
     if(use_nv12) {
@@ -246,12 +246,12 @@ public:
           cv::Mat m(m_height, m_width, CV_8UC4, mappedTex.pData, (int)mappedTex.RowPitch);
 
           if(m_demo_processing) {
-            // blur data from D3D11 surface with OpenCV on CPU
+            // cv::blur data from D3D11 surface with OpenCV on CPU
             cv::blur(m, m, cv::Size(15, 15), cv::Point(-7, -7));
           }
 
           cv::String strMode = cv::format("mode: %s", m_modeStr[MODE_CPU].c_str());
-          cv::String strProcessing = m_demo_processing ? "blur frame" : "copy frame";
+          cv::String strProcessing = m_demo_processing ? "cv::blur frame" : "copy frame";
           cv::String strTime = cv::format("time: %4.1f msec", m_timer.time(Timer::UNITS::MSEC));
           cv::String strDevName = cv::format("OpenCL device: %s", m_oclDevName.c_str());
 
@@ -273,12 +273,12 @@ public:
           cv::directx::convertFromD3D11Texture2D(pSurface, u);
 
           if(m_demo_processing) {
-            // blur data from D3D11 surface with OpenCV on GPU with OpenCL
+            // cv::blur data from D3D11 surface with OpenCV on GPU with OpenCL
             cv::blur(u, u, cv::Size(15, 15), cv::Point(-7, -7));
           }
 
           cv::String strMode = cv::format("mode: %s", m_modeStr[mode].c_str());
-          cv::String strProcessing = m_demo_processing ? "blur frame" : "copy frame";
+          cv::String strProcessing = m_demo_processing ? "cv::blur frame" : "copy frame";
           cv::String strTime = cv::format("time: %4.1f msec", m_timer.time(Timer::UNITS::MSEC));
           cv::String strDevName = cv::format("OpenCL device: %s", m_oclDevName.c_str());
 
@@ -335,7 +335,7 @@ public:
       m_timer.stop();
 
       // traditional DX render pipeline:
-      //   BitBlt surface to backBuffer and flip backBuffer to frontBuffer
+      //   BitBlt surface to backBuffer and cv::flip backBuffer to frontBuffer
       m_pD3D11Ctx->CopyResource(m_pBackBuffer, pSurface);
 
       // present the back buffer contents to the display

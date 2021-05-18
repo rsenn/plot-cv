@@ -8,7 +8,7 @@
 #include "samples_utility.hpp"
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 int
 main(int argc, char** argv) {
@@ -24,32 +24,32 @@ main(int argc, char** argv) {
   }
 
   // create the tracker
-  Ptr<TrackerCSRT> tracker = TrackerCSRT::create();
+  Ptr<cv::TrackerCSRT> tracker = cv::TrackerCSRT::create();
 
   // const char* param_file_path = "/home/amuhic/Workspace/3_dip/params.yml";
-  // FileStorage fs(params_file_path, FileStorage::WRITE);
-  // tracker->write(fs);
-  // FileStorage fs(param_file_path, FileStorage::READ);
-  // tracker->read( fs.root());
+  // cv::FileStorage fs(params_file_path, cv::FileStorage::WRITE);
+  // tracker->cv::write(fs);
+  // cv::FileStorage fs(param_file_path, cv::FileStorage::READ);
+  // tracker->cv::read( fs.root());
 
   // set input video
   std::string video = argv[1];
-  VideoCapture cap(video);
-  // and read first frame
-  Mat frame;
+  cv::VideoCapture cap(video);
+  // and cv::read first frame
+  cv::Mat frame;
   cap >> frame;
 
   // target bounding box
   Rect2d roi;
   if(argc > 2) {
-    // read first line of ground-truth file
+    // cv::read first cv::line of ground-truth file
     std::string groundtruthPath = argv[2];
     std::ifstream gtIfstream(groundtruthPath.c_str());
     std::string gtLine;
     getline(gtIfstream, gtLine);
     gtIfstream.close();
 
-    // parse the line by elements
+    // parse the cv::line by elements
     std::stringstream gtStream(gtLine);
     std::string element;
     std::vector<int> elements;
@@ -69,14 +69,14 @@ main(int argc, char** argv) {
       // create mask from polygon and set it to the tracker
       cv::Rect aaRect = cv::Rect(xMin, yMin, xMax - xMin, yMax - yMin);
       cout << aaRect.size() << endl;
-      Mat mask = Mat::zeros(aaRect.size(), CV_8UC1);
+      cv::Mat mask = cv::Mat::zeros(aaRect.size(), CV_8UC1);
       const int n = 4;
       std::vector<cv::Point> poly_points(n);
       // Translate x and y to rects start position
       int sx = aaRect.x;
       int sy = aaRect.y;
-      for(int i = 0; i < n; ++i) { poly_points[i] = Point(elements[2 * i] - sx, elements[2 * i + 1] - sy); }
-      cv::fillConvexPoly(mask, poly_points, Scalar(1.0), 8);
+      for(int i = 0; i < n; ++i) { poly_points[i] = cv::Point(elements[2 * i] - sx, elements[2 * i + 1] - sy); }
+      cv::fillConvexPoly(mask, poly_points, cv::Scalar(1.0), 8);
       mask.convertTo(mask, CV_32FC1);
       tracker->setInitialMask(mask);
     } else {
@@ -85,7 +85,7 @@ main(int argc, char** argv) {
 
   } else {
     // second argument is not given - user selects target
-    roi = selectROI("tracker", frame, true, false);
+    roi = cv::selectROI("tracker", frame, true, false);
   }
 
   // quit if ROI was not selected
@@ -118,16 +118,16 @@ main(int argc, char** argv) {
 
     if(!isfound) {
       cout << "The target has been lost...\n";
-      waitKey(0);
+      cv::waitKey(0);
       return 0;
     }
 
     // draw the tracked object and show the image
-    rectangle(frame, roi, Scalar(255, 0, 0), 2, 1);
-    imshow("tracker", frame);
+    cv::rectangle(frame, roi, cv::Scalar(255, 0, 0), 2, 1);
+    cv::imshow("tracker", frame);
 
     // quit on ESC button
-    if(waitKey(1) == 27)
+    if(cv::waitKey(1) == 27)
       break;
   }
 

@@ -9,26 +9,26 @@
 #include <opencv2/imgproc/types_c.h>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 int
 main() {
-  namedWindow("Hello");
+  cv::namedWindow("Hello");
 
-  VideoCapture cap(0);
+  cv::VideoCapture cap(0);
   cap.set(cv::CAP_PROP_FRAME_WIDTH, 320);
   cap.set(cv::CAP_PROP_FRAME_HEIGHT, 240);
 
-  Mat im, im_g;
+  cv::Mat im, im_g;
   double time = 0;
   unsigned int frames = 0;
-  while(char(waitKey(1)) != 'q') {
-    double t0 = getTickCount();
+  while(char(cv::waitKey(1)) != 'q') {
+    double t0 = cv::getTickCount();
     cap >> im;
-    cvtColor(im, im_g, cv::COLOR_BGR2GRAY);
+    cv::cvtColor(im, im_g, cv::COLOR_BGR2GRAY);
     frames++;
-    imshow("Hello", im_g);
-    time += (getTickCount() - t0) / getTickFrequency();
+    cv::imshow("Hello", im_g);
+    time += (cv::getTickCount() - t0) / cv::getTickFrequency();
     cout << frames / time << " fps" << endl;
   }
 

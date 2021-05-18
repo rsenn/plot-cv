@@ -14,10 +14,10 @@ main(int argc, char* argv[]) {
   CV_Assert(cap.isOpened());
 
   cv::GMat in;
-  cv::GMat vga = cv::gapi::resize(in, cv::Size(), 0.5, 0.5);
+  cv::GMat vga = cv::gapi::cv::resize(in, cv::Size(), 0.5, 0.5);
   cv::GMat gray = cv::gapi::BGR2Gray(vga);
-  cv::GMat blurred = cv::gapi::blur(gray, cv::Size(5, 5));
-  cv::GMat edges = cv::gapi::Canny(blurred, 32, 128, 3);
+  cv::GMat blurred = cv::gapi::cv::blur(gray, cv::Size(5, 5));
+  cv::GMat edges = cv::gapi::cv::Canny(blurred, 32, 128, 3);
   cv::GMat b, g, r;
   std::tie(b, g, r) = cv::gapi::split3(vga);
   cv::GMat out = cv::gapi::merge3(b, g | edges, r);
@@ -25,11 +25,11 @@ main(int argc, char* argv[]) {
 
   cv::Mat input_frame;
   cv::Mat output_frame;
-  CV_Assert(cap.read(input_frame));
+  CV_Assert(cap.cv::read(input_frame));
   do {
     ac.apply(input_frame, output_frame);
     cv::imshow("output", output_frame);
-  } while(cap.read(input_frame) && cv::waitKey(30) < 0);
+  } while(cap.cv::read(input_frame) && cv::waitKey(30) < 0);
 
   return 0;
 }

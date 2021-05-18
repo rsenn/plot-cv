@@ -8,11 +8,11 @@
 #include "opencv2/imgproc.hpp"
 #include <iostream>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 /// Global variables
-Mat src, src_gray;
+cv::Mat src, src_gray;
 
 int maxCorners = 10;
 int maxTrackbar = 25;
@@ -29,26 +29,26 @@ void goodFeaturesToTrack_Demo(int, void*);
 int
 main(int argc, char** argv) {
   /// Load source image and convert it to gray
-  CommandLineParser parser(argc, argv, "{@input | pic3.png | input image}");
-  src = imread(samples::findFile(parser.get<String>("@input")));
+  cv::CommandLineParser parser(argc, argv, "{@input | pic3.png | input image}");
+  src = cv::imread(cv::samples::findFile(parser.get<cv::String>("@input")));
   if(src.empty()) {
     cout << "Could not open or find the image!\n" << endl;
     cout << "Usage: " << argv[0] << " <Input image>" << endl;
     return -1;
   }
-  cvtColor(src, src_gray, COLOR_BGR2GRAY);
+  cv::cvtColor(src, src_gray, COLOR_BGR2GRAY);
 
   /// Create Window
-  namedWindow(source_window);
+  cv::namedWindow(source_window);
 
   /// Create Trackbar to set the number of corners
-  createTrackbar("Max corners:", source_window, &maxCorners, maxTrackbar, goodFeaturesToTrack_Demo);
+  cv::createTrackbar("Max corners:", source_window, &maxCorners, maxTrackbar, goodFeaturesToTrack_Demo);
 
-  imshow(source_window, src);
+  cv::imshow(source_window, src);
 
   goodFeaturesToTrack_Demo(0, 0);
 
-  waitKey();
+  cv::waitKey();
   return 0;
 }
 
@@ -60,7 +60,7 @@ void
 goodFeaturesToTrack_Demo(int, void*) {
   /// Parameters for Shi-Tomasi algorithm
   maxCorners = MAX(maxCorners, 1);
-  vector<Point2f> corners;
+  vector<cv::Point2f> corners;
   double qualityLevel = 0.01;
   double minDistance = 10;
   int blockSize = 3, gradientSize = 3;
@@ -68,30 +68,30 @@ goodFeaturesToTrack_Demo(int, void*) {
   double k = 0.04;
 
   /// Copy the source image
-  Mat copy = src.clone();
+  cv::Mat copy = src.clone();
 
   /// Apply corner detection
-  goodFeaturesToTrack(
-      src_gray, corners, maxCorners, qualityLevel, minDistance, Mat(), blockSize, gradientSize, useHarrisDetector, k);
+  cv::goodFeaturesToTrack(
+      src_gray, corners, maxCorners, qualityLevel, minDistance, cv::Mat(), blockSize, gradientSize, useHarrisDetector, k);
 
   /// Draw corners detected
   cout << "** Number of corners detected: " << corners.size() << endl;
   int radius = 4;
   for(size_t i = 0; i < corners.size(); i++) {
-    circle(copy, corners[i], radius, Scalar(rng.uniform(0, 255), rng.uniform(0, 256), rng.uniform(0, 256)), FILLED);
+    cv::circle(copy, corners[i], radius, cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 256), rng.uniform(0, 256)), FILLED);
   }
 
   /// Show what you got
-  namedWindow(source_window);
-  imshow(source_window, copy);
+  cv::namedWindow(source_window);
+  cv::imshow(source_window, copy);
 
   /// Set the needed parameters to find the refined corners
-  Size winSize = Size(5, 5);
-  Size zeroZone = Size(-1, -1);
+  cv::Size winSize = cv::Size(5, 5);
+  cv::Size zeroZone = cv::Size(-1, -1);
   TermCriteria criteria = TermCriteria(TermCriteria::EPS + TermCriteria::COUNT, 40, 0.001);
 
   /// Calculate the refined corner locations
-  cornerSubPix(src_gray, corners, winSize, zeroZone, criteria);
+  cv::cornerSubPix(src_gray, corners, winSize, zeroZone, criteria);
 
   /// Write them down
   for(size_t i = 0; i < corners.size(); i++) {

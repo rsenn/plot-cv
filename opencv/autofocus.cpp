@@ -36,7 +36,7 @@
 #include <opencv2/videoio/legacy/constants_c.h>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 const char* windowOriginal = "Captured preview";
 const int FOCUS_STEP = 1024;
@@ -67,7 +67,7 @@ struct FocusState {
 };
 
 static ostream&
-operator<<(ostream& os, FocusState& state) {
+cv::operator<<(ostream& os, FocusState& state) {
   return os << "RATE=" << state.rate << "\tSTEP=" << state.step * state.direction
             << "\tLast change=" << state.lastDirectionChange << "\tstepToLastMax=" << state.stepToLastMax;
 }
@@ -86,7 +86,7 @@ createInitialState() {
 }
 
 static void
-focusDriveEnd(VideoCapture& cap, int direction) {
+focusDriveEnd(cv::VideoCapture& cap, int direction) {
   while(cap.set(CAP_PROP_ZOOM, (double)MAX_FOCUS_STEP * direction))
     ;
 }
@@ -96,7 +96,7 @@ focusDriveEnd(VideoCapture& cap, int direction) {
  * and I don't want to make any assumptions about it.
  */
 static int
-findMinFocusStep(VideoCapture& cap, unsigned int startWith, int direction) {
+findMinFocusStep(cv::VideoCapture& cap, unsigned int startWith, int direction) {
   int lStep, rStep;
   lStep = 0;
   rStep = startWith;
@@ -122,18 +122,18 @@ findMinFocusStep(VideoCapture& cap, unsigned int startWith, int direction) {
  * Rate frame from 0/blury/ to 1/sharp/.
  */
 static double
-rateFrame(Mat& frame) {
-  unsigned long int sum = 0;
+rateFrame(cv::Mat& frame) {
+  unsigned long int cv::sum = 0;
   unsigned long int size = frame.cols * frame.rows;
-  Mat edges;
-  cvtColor(frame, edges, cv::COLOR_BGR2GRAY);
-  GaussianBlur(edges, edges, Size(7, 7), 1.5, 1.5);
-  Canny(edges, edges, 0, 30, 3);
+  cv::Mat edges;
+  cv::cvtColor(frame, edges, cv::COLOR_BGR2GRAY);
+  cv::GaussianBlur(edges, edges, cv::Size(7, 7), 1.5, 1.5);
+  cv::Canny(edges, edges, 0, 30, 3);
 
   MatIterator_<uchar> it, end;
-  for(it = edges.begin<uchar>(), end = edges.end<uchar>(); it != end; ++it) { sum += *it != 0; }
+  for(it = edges.begin<uchar>(), end = edges.end<uchar>(); it != end; ++it) { cv::sum += *it != 0; }
 
-  return (double)sum / (double)size;
+  return (double)cv::sum / (double)size;
 }
 
 static int
@@ -185,7 +185,7 @@ correctFocus(bool lastSucceeded, FocusState& state, double rate) {
 
 static void
 showHelp(const char* pName, bool welcomeMsg) {
-  cout << "This program demonstrates usage of gPhoto2 VideoCapture.\n\n"
+  cout << "This program demonstrates usage of gPhoto2 cv::VideoCapture.\n\n"
           "With OpenCV build without gPhoto2 library support it will "
           "do nothing special, just capture.\n\n"
           "Simple implementation of autofocus is based on edges detection.\n"
@@ -261,24 +261,24 @@ main(int argc, char** argv) {
     showHelp(argv[0], false);
     return -1;
   }
-  VideoCapture cap(GlobalArgs.deviceName);
+  cv::VideoCapture cap(GlobalArgs.deviceName);
   if(!cap.isOpened()) {
     cout << "Cannot find device " << GlobalArgs.deviceName << endl;
     showHelp(argv[0], false);
     return -1;
   }
 
-  VideoWriter videoWriter;
-  Mat frame;
+  cv::VideoWriter videoWriter;
+  cv::Mat frame;
   FocusState state = createInitialState();
   bool focus = true;
   bool lastSucceeded = true;
-  namedWindow(windowOriginal, 1);
+  cv::namedWindow(windowOriginal, 1);
 
   // Get settings:
   if(GlobalArgs.verbose) {
     if((cap.get(CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) == 0) || (cap.get(CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) == -1)) {
-      // Some VideoCapture implementations can return -1, 0.
+      // Some cv::VideoCapture implementations can return -1, 0.
       cout << "This is not GPHOTO2 device." << endl;
       return -2;
     }
@@ -288,9 +288,9 @@ main(int argc, char** argv) {
 
   cap.set(CAP_PROP_GPHOTO2_PREVIEW, true);
   cap.set(CAP_PROP_VIEWFINDER, true);
-  cap >> frame; // To check PREVIEW output Size.
+  cap >> frame; // To check PREVIEW output cv::Size.
   if(!GlobalArgs.output.empty()) {
-    Size S = Size((int)cap.get(CAP_PROP_FRAME_WIDTH), (int)cap.get(CAP_PROP_FRAME_HEIGHT));
+    cv::Size S = cv::Size((int)cap.get(CAP_PROP_FRAME_WIDTH), (int)cap.get(CAP_PROP_FRAME_HEIGHT));
     int fourCC = CV_FOURCC('M', 'J', 'P', 'G');
     videoWriter.open(GlobalArgs.output, fourCC, GlobalArgs.fps, S, true);
     if(!videoWriter.isOpened()) {
@@ -348,8 +348,8 @@ main(int argc, char** argv) {
       cout << "Output from camera: " << endl << (const char*)(intptr_t)cap.get(CAP_PROP_GPHOTO2_FLUSH_MSGS) << endl;
     }
 
-    imshow(windowOriginal, frame);
-    switch(key = static_cast<char>(waitKey(30))) {
+    cv::imshow(windowOriginal, frame);
+    switch(key = static_cast<char>(cv::waitKey(30))) {
       case 'k': // focus out
         cap.set(CAP_PROP_ZOOM, 100);
         break;

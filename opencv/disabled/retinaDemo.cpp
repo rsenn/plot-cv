@@ -13,10 +13,10 @@
 
 static void
 help(std::string errorMessage) {
-  std::cout << "Program init error : " << errorMessage << std::endl;
+  std::cout << "Program init cv::error : " << errorMessage << std::endl;
   std::cout << "\nProgram call procedure : retinaDemo [processing mode] [Optional : media target] "
                "[Optional LAST "
-               "parameter: \"log\" to activate retina log sampling]"
+               "parameter: \"cv::log\" to activate retina cv::log sampling]"
             << std::endl;
   std::cout << "\t[processing mode] :" << std::endl;
   std::cout << "\t -image : for still image processing" << std::endl;
@@ -26,16 +26,16 @@ help(std::string errorMessage) {
                "the target to process"
             << std::endl;
   std::cout << "\t leave empty if processing video stream coming from a connected video device" << std::endl;
-  std::cout << "\t[Optional : activate retina log sampling] : an optional last parameter can be "
+  std::cout << "\t[Optional : activate retina cv::log sampling] : an optional last parameter can be "
                "specified for retina "
-               "spatial log sampling"
+               "spatial cv::log sampling"
             << std::endl;
-  std::cout << "\t set \"log\" without quotes to activate this sampling, output frame size will be "
+  std::cout << "\t set \"cv::log\" without quotes to activate this sampling, output frame size will be "
                "divided by 4"
             << std::endl;
   std::cout << "\nExamples:" << std::endl;
   std::cout << "\t-Image processing : ./retinaDemo -image lena.jpg" << std::endl;
-  std::cout << "\t-Image processing with log sampling : ./retinaDemo -image lena.jpg log" << std::endl;
+  std::cout << "\t-Image processing with cv::log sampling : ./retinaDemo -image lena.jpg cv::log" << std::endl;
   std::cout << "\t-Video processing : ./retinaDemo -video myMovie.mp4" << std::endl;
   std::cout << "\t-Live video processing : ./retinaDemo -video" << std::endl;
   std::cout << "\nPlease start again with new parameters" << std::endl;
@@ -88,7 +88,7 @@ main(int argc, char* argv[]) {
     return -1;
   }
 
-  bool useLogSampling = !strcmp(argv[argc - 1], "log"); // check if user wants retina log sampling processing
+  bool useLogSampling = !strcmp(argv[argc - 1], "cv::log"); // check if user wants retina cv::log sampling processing
 
   std::string inputMediaType = argv[1];
 
@@ -130,7 +130,7 @@ main(int argc, char* argv[]) {
     // wanna test
     cv::Ptr<cv::Retina> myRetina;
 
-    // if the last parameter is 'log', then activate log sampling (favour foveal vision and
+    // if the last parameter is 'cv::log', then activate cv::log sampling (favour foveal vision and
     // subsamples peripheral vision)
     if(useLogSampling) {
       myRetina = new cv::Retina(inputFrame.size(), true, cv::RETINA_COLOR_BAYER, true, 2.0, 10.0);
@@ -139,7 +139,7 @@ main(int argc, char* argv[]) {
 
     // save default retina parameters file in order to let you see this and maybe modify it and
     // reload using method "setup"
-    myRetina->write("RetinaDefaultParameters.xml");
+    myRetina->cv::write("RetinaDefaultParameters.xml");
 
     // load parameters if file exists
     myRetina->setup("RetinaSpecificParameters.xml");
@@ -166,7 +166,7 @@ main(int argc, char* argv[]) {
       cv::imshow("Retina Magno", retinaOutput_magno);
       cv::waitKey(10);
     }
-  } catch(cv::Exception e) { std::cerr << "Error using Retina : " << e.what() << std::endl; }
+  } catch(cv::Exception e) { std::cerr << "cv::Error using Retina : " << e.what() << std::endl; }
 
   // Program end message
   std::cout << "Retina demo end" << std::endl;

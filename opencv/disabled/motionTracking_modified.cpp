@@ -10,18 +10,18 @@
 #include <stdlib.h>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
-// our sensitivity value to be used in the threshold() function
+// our sensitivity value to be used in the cv::threshold() function
 static int SENSITIVITY_VALUE = 50; // original 20
-// size of blur used to smooth the image to remove possible noise and
-// increase the size of the object we are trying to track. (Much like dilate and erode)
+// size of cv::blur used to smooth the image to remove possible noise and
+// increase the size of the object we are trying to track. (Much like cv::dilate and cv::erode)
 static int BLUR_SIZE = 200; // original 10
 static double MIN_OBJ_AREA = 1000;
 // we'll have just one object to search for
 // and keep track of its position.
 int theObject[2] = {0, 0};
-// Rect objectBoundingRectangle = Rect(0,0,0,0);
+// cv::Rect objectBoundingRectangle = cv::Rect(0,0,0,0);
 
 void searchForMovement(cv::Mat thresholdImage, cv::Mat& cameraFeed);
 int char_to_int(char* c);
@@ -41,14 +41,14 @@ main(int argc, char** argv) {
   // set up the matrices that we will need
   // the two frames we will be comparing
   cv::Mat frame1, frame2;
-  // their grayscale images (needed for absdiff() function)
+  // their grayscale images (needed for cv::absdiff() function)
   cv::Mat grayImage1, grayImage2;
   // resulting difference image
   cv::Mat differenceImage;
-  // thresholded difference image (for use in findContours() function)
+  // thresholded difference image (for use in cv::findContours() function)
   cv::Mat thresholdImage;
   // video capture object.
-  VideoCapture capture;
+  cv::VideoCapture capture;
   // if frame reads work or fail
   bool success;
 
@@ -66,7 +66,7 @@ main(int argc, char** argv) {
   if(argc > 4)
     MIN_OBJ_AREA = char_to_int(argv[4]);
 
-  namedWindow("Frame1", cv::WINDOW_NORMAL);
+  cv::namedWindow("Frame1", cv::WINDOW_NORMAL);
 
   while(1) {
 
@@ -78,18 +78,18 @@ main(int argc, char** argv) {
       return -1;
     }
 
-    // read first frame
-    success = capture.read(frame1);
+    // cv::read first frame
+    success = capture.cv::read(frame1);
     if(!success) {
-      cout << endl << "ERROR: frame 1 failed to be read" << endl;
+      cout << endl << "ERROR: frame 1 failed to be cv::read" << endl;
       exit(1);
     }
     // convert frame1 to gray scale for frame differencing
-    cvtColor(frame1, grayImage1, COLOR_BGR2GRAY);
+    cv::cvtColor(frame1, grayImage1, COLOR_BGR2GRAY);
     // copy second frame
-    success = capture.read(frame2);
+    success = capture.cv::read(frame2);
     if(!success) {
-      cout << endl << "ERROR: frame 2 failed to be read" << endl;
+      cout << endl << "ERROR: frame 2 failed to be cv::read" << endl;
       exit(1);
     }
 
@@ -97,42 +97,42 @@ main(int argc, char** argv) {
     while(success) {
 
       // convert frame2 to gray scale for frame differencing
-      cvtColor(frame2, grayImage2, COLOR_BGR2GRAY);
+      cv::cvtColor(frame2, grayImage2, COLOR_BGR2GRAY);
 
       // perform frame differencing with the sequential images. This will output an "intensity
-      // image" do not confuse this with a threshold image, we will need to perform thresholding
+      // image" do not confuse this with a cv::threshold image, we will need to perform thresholding
       // afterwards.
-      absdiff(grayImage1, grayImage2, differenceImage);
-      // threshold intensity image at a given sensitivity value
-      threshold(differenceImage, thresholdImage, SENSITIVITY_VALUE, 255, THRESH_BINARY);
+      cv::absdiff(grayImage1, grayImage2, differenceImage);
+      // cv::threshold intensity image at a given sensitivity value
+      cv::threshold(differenceImage, thresholdImage, SENSITIVITY_VALUE, 255, THRESH_BINARY);
       if(debugMode) {
-        // show the difference image and threshold image
-        namedWindow("Difference Image", cv::WINDOW_NORMAL);
-        imshow("Difference Image", differenceImage);
-        resizeWindow("Difference Image", 512, 384);
-        namedWindow("Threshold Image", cv::WINDOW_NORMAL);
-        imshow("Threshold Image", thresholdImage);
-        resizeWindow("Threshold Image", 512, 384);
+        // show the difference image and cv::threshold image
+        cv::namedWindow("Difference Image", cv::WINDOW_NORMAL);
+        cv::imshow("Difference Image", differenceImage);
+        cv::resizeWindow("Difference Image", 512, 384);
+        cv::namedWindow("Threshold Image", cv::WINDOW_NORMAL);
+        cv::imshow("Threshold Image", thresholdImage);
+        cv::resizeWindow("Threshold Image", 512, 384);
       } else {
         // if not in debug mode, destroy the windows so we don't see them anymore
-        destroyWindow("Difference Image");
-        destroyWindow("Threshold Image");
+        cv::destroyWindow("Difference Image");
+        cv::destroyWindow("Threshold Image");
       }
-      // use blur() to smooth the image, remove possible noise and
-      // increase the size of the object we are trying to track. (Much like dilate and erode)
-      blur(thresholdImage, thresholdImage, Size(BLUR_SIZE, BLUR_SIZE));
+      // use cv::blur() to smooth the image, remove possible noise and
+      // increase the size of the object we are trying to track. (Much like cv::dilate and cv::erode)
+      cv::blur(thresholdImage, thresholdImage, cv::Size(BLUR_SIZE, BLUR_SIZE));
 
-      // threshold again to obtain binary image from blur output
-      threshold(thresholdImage, thresholdImage, SENSITIVITY_VALUE, 255, THRESH_BINARY);
+      // cv::threshold again to obtain binary image from cv::blur output
+      cv::threshold(thresholdImage, thresholdImage, SENSITIVITY_VALUE, 255, THRESH_BINARY);
 
       if(debugMode) {
-        // show the threshold image after it's been "blurred"
-        namedWindow("Final Threshold Image", cv::WINDOW_NORMAL);
-        imshow("Final Threshold Image", thresholdImage);
-        resizeWindow("Final Threshold Image", 512, 384);
+        // show the cv::threshold image after it's been "blurred"
+        cv::namedWindow("Final Threshold Image", cv::WINDOW_NORMAL);
+        cv::imshow("Final Threshold Image", thresholdImage);
+        cv::resizeWindow("Final Threshold Image", 512, 384);
       } else {
         // if not in debug mode, destroy the windows so we don't see them anymore
-        destroyWindow("Final Threshold Image");
+        cv::destroyWindow("Final Threshold Image");
       }
 
       // if tracking enabled, search for contours in our thresholded image
@@ -141,13 +141,13 @@ main(int argc, char** argv) {
       }
 
       // show our captured frame
-      imshow("Frame1", frame1);
-      resizeWindow("Frame1", 512, 384);
+      cv::imshow("Frame1", frame1);
+      cv::resizeWindow("Frame1", 512, 384);
       // check to see if a button has been pressed.
       // this 10ms delay is necessary for proper operation of this program
       // if removed, frames will not have enough time to referesh and a blank
       // image will appear.
-      switch(waitKey(10)) {
+      switch(cv::waitKey(10)) {
         case 1048603:
           // case 27: //'esc' key has been pressed, exit program.
           return 0;
@@ -174,7 +174,7 @@ main(int argc, char** argv) {
             cout << "Code paused, press 'p' again to resume" << endl;
             while(pause == true) {
               // stay in this loop until
-              switch(waitKey()) {
+              switch(cv::waitKey()) {
                 // a switch statement inside a switch statement? Mind blown.
                 case 1048688:
                   // case 112:
@@ -189,9 +189,9 @@ main(int argc, char** argv) {
 
       frame2.copyTo(frame1);
       // convert frame1 to gray scale for frame differencing
-      cvtColor(frame1, grayImage1, COLOR_BGR2GRAY);
+      cv::cvtColor(frame1, grayImage1, COLOR_BGR2GRAY);
       // copy second frame
-      success = capture.read(frame2);
+      success = capture.cv::read(frame2);
     } // inner while loop
 
     // release the capture before re-opening and looping again.
@@ -213,15 +213,15 @@ searchForMovement(cv::Mat thresholdImage, cv::Mat& cameraFeed) {
   thresholdImage.copyTo(temp);
 
   std::vector<std::vector<cv::Point>> contours;
-  std::vector<Vec4i> hierarchy;
+  std::vector<cv::Vec4i> hierarchy;
 
   // retrieves external contours
-  findContours(temp, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+  cv::findContours(temp, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
   if(contours.size() > 0) {
     i = contours.size() - 1;
     do {
-      temp_rect = boundingRect(contours.at(i));
+      temp_rect = cv::boundingRect(contours.at(i));
       obj_area = temp_rect.area();
 
       if(obj_area >= MIN_OBJ_AREA) {
@@ -234,7 +234,7 @@ searchForMovement(cv::Mat thresholdImage, cv::Mat& cameraFeed) {
   }
 
   for(unsigned j = 0; j < obj_rects.size(); j++) {
-    rectangle(cameraFeed, obj_rects[j], Scalar(255, 0, 0), 2, 1); // draw rectangle around object
+    cv::rectangle(cameraFeed, obj_rects[j], cv::Scalar(255, 0, 0), 2, 1); // draw cv::rectangle around object
     int mid_x = obj_rects[j].x + (obj_rects[j].width / 2);
     int mid_y = obj_rects[j].y - (obj_rects[j].height / 2);
   }

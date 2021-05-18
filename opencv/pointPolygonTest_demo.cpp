@@ -1,6 +1,6 @@
 /**
  * @function pointPolygonTest_demo.cpp
- * @brief Demo code to use the pointPolygonTest function...fairly easy
+ * @brief Demo code to use the cv::pointPolygonTest function...fairly easy
  * @author OpenCV team
  */
 
@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 /**
@@ -20,7 +20,7 @@ int
 main(void) {
   /// Create an image
   const int r = 100;
-  cv::Mat src = cv::Mat::zeros(Size(4 * r, 4 * r), CV_8UC1);
+  cv::Mat src = cv::Mat::zeros(cv::Size(4 * r, 4 * r), CV_8UC1);
 
   /// Create a sequence of points to make a contour:
   std::vector<cv::Point2f> vert(6);
@@ -33,27 +33,27 @@ main(void) {
   vert[5] = cv::Point(5 * r / 2, static_cast<int>(1.34 * r));
 
   /// Draw it in src
-  for(int j = 0; j < 6; j++) { line(src, vert[j], vert[(j + 1) % 6], Scalar(255), 3, 8); }
+  for(int j = 0; j < 6; j++) { cv::line(src, vert[j], vert[(j + 1) % 6], cv::Scalar(255), 3, 8); }
 
   /// Get the contours
   std::vector<std::vector<cv::Point>> contours;
-  std::vector<Vec4i> hierarchy;
+  std::vector<cv::Vec4i> hierarchy;
   cv::Mat src_copy = src.clone();
 
-  findContours(src_copy, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+  cv::findContours(src_copy, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
 
   /// Calculate the distances to the contour
   cv::Mat raw_dist(src.size(), CV_32FC1);
 
   for(int j = 0; j < src.rows; j++) {
     for(int i = 0; i < src.cols; i++) {
-      raw_dist.at<float>(j, i) = (float)pointPolygonTest(contours[0], cv::Point2f((float)i, (float)j), true);
+      raw_dist.at<float>(j, i) = (float)cv::pointPolygonTest(contours[0], cv::Point2f((float)i, (float)j), true);
     }
   }
 
   double minVal;
   double maxVal;
-  minMaxLoc(raw_dist, &minVal, &maxVal, 0, 0, cv::Mat());
+  cv::minMaxLoc(raw_dist, &minVal, &maxVal, 0, 0, cv::Mat());
   minVal = abs(minVal);
   maxVal = abs(maxVal);
 
@@ -76,11 +76,11 @@ main(void) {
 
   /// Create Window and show your results
   const char* source_window = "Source";
-  namedWindow(source_window, WINDOW_AUTOSIZE);
-  imshow(source_window, src);
-  namedWindow("Distance", WINDOW_AUTOSIZE);
-  imshow("Distance", drawing);
+  cv::namedWindow(source_window, cv::WINDOW_AUTOSIZE);
+  cv::imshow(source_window, src);
+  cv::namedWindow("Distance", cv::WINDOW_AUTOSIZE);
+  cv::imshow("Distance", drawing);
 
-  waitKey(0);
+  cv::waitKey(0);
   return (0);
 }

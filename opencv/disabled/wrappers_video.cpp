@@ -36,19 +36,19 @@ createProcessingGraph(ivx::Image& inputImage, ivx::Image& outputImage) {
   vx_uint32 threshCannyMax = 192;
   Threshold threshCanny = Threshold::createRange(context, VX_TYPE_UINT8, threshCannyMin, threshCannyMax);
 
-  ivx::Scalar alpha = ivx::Scalar::create<VX_TYPE_FLOAT32>(context, 0.5);
+  ivx::cv::Scalar alpha = ivx::Scalar::create<VX_TYPE_FLOAT32>(context, 0.5);
 
   // Sequence of some image operations
   Node::create(graph, VX_KERNEL_COLOR_CONVERT, inputImage, yuv);
-  Node::create(graph, VX_KERNEL_CHANNEL_EXTRACT, yuv, ivx::Scalar::create<VX_TYPE_ENUM>(context, VX_CHANNEL_Y), gray);
+  Node::create(graph, VX_KERNEL_CHANNEL_EXTRACT, yuv, ivx::cv::Scalar::create<VX_TYPE_ENUM>(context, VX_CHANNEL_Y), gray);
   // node can also be added in function-like style
   nodes::gaussian3x3(graph, gray, smoothed);
   Node::create(graph,
                VX_KERNEL_CANNY_EDGE_DETECTOR,
                smoothed,
                threshCanny,
-               ivx::Scalar::create<VX_TYPE_INT32>(context, 3),
-               ivx::Scalar::create<VX_TYPE_ENUM>(context, VX_NORM_L2),
+               ivx::cv::Scalar::create<VX_TYPE_INT32>(context, 3),
+               ivx::cv::Scalar::create<VX_TYPE_ENUM>(context, VX_NORM_L2),
                cannied);
   Node::create(graph, VX_KERNEL_ACCUMULATE_WEIGHTED, gray, alpha, halfImg);
   Node::create(graph, VX_KERNEL_ACCUMULATE_WEIGHTED, cannied, alpha, halfCanny);
@@ -56,7 +56,7 @@ createProcessingGraph(ivx::Image& inputImage, ivx::Image& outputImage) {
                VX_KERNEL_ADD,
                halfImg,
                halfCanny,
-               ivx::Scalar::create<VX_TYPE_ENUM>(context, VX_CONVERT_POLICY_SATURATE),
+               ivx::cv::Scalar::create<VX_TYPE_ENUM>(context, VX_CONVERT_POLICY_SATURATE),
                outputImage);
 
   graph.verify();
@@ -66,11 +66,11 @@ createProcessingGraph(ivx::Image& inputImage, ivx::Image& outputImage) {
 
 int
 ovxDemo(std::string inputPath, UserMemoryMode mode) {
-  using namespace cv;
+//  using namespace cv;
   using namespace ivx;
 
-  Mat frame;
-  VideoCapture vc(inputPath);
+  cv::Mat frame;
+  cv::VideoCapture vc(inputPath);
   if(!vc.isOpened())
     return -1;
 
@@ -96,7 +96,7 @@ ovxDemo(std::string inputPath, UserMemoryMode mode) {
 
     Image ivxResult;
 
-    Mat output;
+    cv::Mat output;
     if(mode == COPY || mode == MAP) {
       // we will copy or map data from vx_image to cv::Mat
       ivxResult = ivx::Image::create(context, width, height, VX_DF_IMAGE_U8);
@@ -136,8 +136,8 @@ ovxDemo(std::string inputPath, UserMemoryMode mode) {
       }
 
       // here output goes
-      imshow("press q to quit", output);
-      if((char)waitKey(1) == 'q')
+      cv::imshow("press q to quit", output);
+      if((char)cv::waitKey(1) == 'q')
         stop = true;
 
 #ifdef VX_VERSION_1_1
@@ -147,11 +147,11 @@ ovxDemo(std::string inputPath, UserMemoryMode mode) {
       }
 #endif
 
-      // this line is unnecessary since unmapping is done on destruction of patch
+      // this cv::line is unnecessary since unmapping is done on destruction of patch
       // resultPatch.unmap();
 
       // grab next frame
-      Mat temp = frame;
+      cv::Mat temp = frame;
       vc >> frame;
       if(frame.empty())
         stop = true;
@@ -161,7 +161,7 @@ ovxDemo(std::string inputPath, UserMemoryMode mode) {
       }
     }
 
-    destroyAllWindows();
+    cv::destroyAllWindows();
 
 #ifdef VX_VERSION_1_1
     if(mode != COPY) {
@@ -173,10 +173,10 @@ ovxDemo(std::string inputPath, UserMemoryMode mode) {
     }
 #endif
   } catch(const ivx::RuntimeError& e) {
-    std::cerr << "Error: code = " << e.status() << ", message = " << e.what() << std::endl;
+    std::cerr << "cv::Error: code = " << e.status() << ", message = " << e.what() << std::endl;
     return e.status();
   } catch(const ivx::WrapperError& e) {
-    std::cerr << "Error: message = " << e.what() << std::endl;
+    std::cerr << "cv::Error: message = " << e.what() << std::endl;
     return -1;
   }
 

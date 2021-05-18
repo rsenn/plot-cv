@@ -37,12 +37,12 @@ the use of this software, even if advised of the possibility of such damage.
 */
 
 #include <opencv2/highgui.hpp>
-#include <opencv2/aruco.hpp>
+#include <opencv2/cv::aruco.hpp>
 #include <vector>
 #include <iostream>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 namespace {
 const char* about = "Pose estimation using a ArUco Planar Grid board";
@@ -65,8 +65,8 @@ const char* keys = "{w        |       | Number of squares in X direction }"
 /**
  */
 static bool
-readCameraParameters(string filename, Mat& camMatrix, Mat& distCoeffs) {
-  FileStorage fs(filename, FileStorage::READ);
+readCameraParameters(string filename, cv::Mat& camMatrix, cv::Mat& distCoeffs) {
+  cv::FileStorage fs(filename, cv::FileStorage::READ);
   if(!fs.isOpened())
     return false;
   fs["camera_matrix"] >> camMatrix;
@@ -77,8 +77,8 @@ readCameraParameters(string filename, Mat& camMatrix, Mat& distCoeffs) {
 /**
  */
 static bool
-readDetectorParameters(string filename, Ptr<aruco::DetectorParameters>& params) {
-  FileStorage fs(filename, FileStorage::READ);
+readDetectorParameters(string filename, Ptr<cv::aruco::DetectorParameters>& params) {
+  cv::FileStorage fs(filename, cv::FileStorage::READ);
   if(!fs.isOpened())
     return false;
   fs["adaptiveThreshWinSizeMin"] >> params->adaptiveThreshWinSizeMin;
@@ -108,7 +108,7 @@ readDetectorParameters(string filename, Ptr<aruco::DetectorParameters>& params) 
  */
 int
 main(int argc, char* argv[]) {
-  CommandLineParser parser(argc, argv, keys);
+  cv::CommandLineParser parser(argc, argv, keys);
   parser.about(about);
 
   if(argc < 7) {
@@ -125,7 +125,7 @@ main(int argc, char* argv[]) {
   bool refindStrategy = parser.has("rs");
   int camId = parser.get<int>("ci");
 
-  Mat camMatrix, distCoeffs;
+  cv::Mat camMatrix, distCoeffs;
   if(parser.has("c")) {
     bool readOk = readCameraParameters(parser.get<string>("c"), camMatrix, distCoeffs);
     if(!readOk) {
@@ -134,7 +134,7 @@ main(int argc, char* argv[]) {
     }
   }
 
-  Ptr<aruco::DetectorParameters> detectorParams = aruco::DetectorParameters::create();
+  Ptr<cv::aruco::DetectorParameters> detectorParams = cv::aruco::DetectorParameters::create();
   if(parser.has("dp")) {
     bool readOk = readDetectorParameters(parser.get<string>("dp"), detectorParams);
     if(!readOk) {
@@ -142,11 +142,11 @@ main(int argc, char* argv[]) {
       return 0;
     }
   }
-  detectorParams->cornerRefinementMethod = aruco::CORNER_REFINE_SUBPIX; // do corner refinement in markers
+  detectorParams->cornerRefinementMethod = cv::aruco::CORNER_REFINE_SUBPIX; // do corner refinement in markers
 
-  String video;
+  cv::String video;
   if(parser.has("v")) {
-    video = parser.get<String>("v");
+    video = parser.get<cv::String>("v");
   }
 
   if(!parser.check()) {
@@ -154,9 +154,9 @@ main(int argc, char* argv[]) {
     return 0;
   }
 
-  Ptr<aruco::Dictionary> dictionary = aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
+  Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
 
-  VideoCapture inputVideo;
+  cv::VideoCapture inputVideo;
   int waitTime;
   if(!video.empty()) {
     inputVideo.open(video);
@@ -169,35 +169,35 @@ main(int argc, char* argv[]) {
   float axisLength = 0.5f * ((float)min(markersX, markersY) * (markerLength + markerSeparation) + markerSeparation);
 
   // create board object
-  Ptr<aruco::GridBoard> gridboard = aruco::GridBoard::create(markersX, markersY, markerLength, markerSeparation, dictionary);
-  Ptr<aruco::Board> board = gridboard.staticCast<aruco::Board>();
+  Ptr<cv::aruco::GridBoard> gridboard = cv::aruco::GridBoard::create(markersX, markersY, markerLength, markerSeparation, dictionary);
+  Ptr<cv::aruco::Board> board = gridboard.staticCast<aruco::Board>();
 
   double totalTime = 0;
   int totalIterations = 0;
 
   while(inputVideo.grab()) {
-    Mat image, imageCopy;
+    cv::Mat image, imageCopy;
     inputVideo.retrieve(image);
 
-    double tick = (double)getTickCount();
+    double tick = (double)cv::getTickCount();
 
     vector<int> ids;
-    vector<vector<Point2f>> corners, rejected;
-    Vec3d rvec, tvec;
+    vector<vector<cv::Point2f>> corners, rejected;
+    cv::Vec3d rvec, tvec;
 
     // detect markers
-    aruco::detectMarkers(image, dictionary, corners, ids, detectorParams, rejected);
+    cv::aruco::detectMarkers(image, dictionary, corners, ids, detectorParams, rejected);
 
     // refind strategy to detect more markers
     if(refindStrategy)
-      aruco::refineDetectedMarkers(image, board, corners, ids, rejected, camMatrix, distCoeffs);
+      cv::aruco::refineDetectedMarkers(image, board, corners, ids, rejected, camMatrix, distCoeffs);
 
     // estimate board pose
     int markersOfBoardDetected = 0;
     if(ids.size() > 0)
-      markersOfBoardDetected = aruco::estimatePoseBoard(corners, ids, board, camMatrix, distCoeffs, rvec, tvec);
+      markersOfBoardDetected = cv::aruco::estimatePoseBoard(corners, ids, board, camMatrix, distCoeffs, rvec, tvec);
 
-    double currentTime = ((double)getTickCount() - tick) / getTickFrequency();
+    double currentTime = ((double)cv::getTickCount() - tick) / cv::getTickFrequency();
     totalTime += currentTime;
     totalIterations++;
     if(totalIterations % 30 == 0) {
@@ -208,17 +208,17 @@ main(int argc, char* argv[]) {
     // draw results
     image.copyTo(imageCopy);
     if(ids.size() > 0) {
-      aruco::drawDetectedMarkers(imageCopy, corners, ids);
+      cv::aruco::drawDetectedMarkers(imageCopy, corners, ids);
     }
 
     if(showRejected && rejected.size() > 0)
-      aruco::drawDetectedMarkers(imageCopy, rejected, noArray(), Scalar(100, 0, 255));
+      cv::aruco::drawDetectedMarkers(imageCopy, rejected, cv::noArray(), cv::Scalar(100, 0, 255));
 
     if(markersOfBoardDetected > 0)
-      aruco::drawAxis(imageCopy, camMatrix, distCoeffs, rvec, tvec, axisLength);
+      cv::aruco::drawAxis(imageCopy, camMatrix, distCoeffs, rvec, tvec, axisLength);
 
-    imshow("out", imageCopy);
-    char key = (char)waitKey(waitTime);
+    cv::imshow("out", imageCopy);
+    char key = (char)cv::waitKey(waitTime);
     if(key == 27)
       break;
   }

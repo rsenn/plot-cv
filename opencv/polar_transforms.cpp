@@ -2,7 +2,7 @@
 #include <opencv2/highgui.hpp>
 #include <iostream>
 
-using namespace cv;
+//using namespace cv;
 
 static void
 help(void) {
@@ -13,12 +13,12 @@ help(void) {
 
 int
 main(int argc, char** argv) {
-  VideoCapture capture;
-  Mat log_polar_img, lin_polar_img, recovered_log_polar, recovered_lin_polar_img;
+  cv::VideoCapture capture;
+  cv::Mat log_polar_img, lin_polar_img, recovered_log_polar, recovered_lin_polar_img;
 
   help();
 
-  CommandLineParser parser(argc, argv, "{@input|0|}");
+  cv::CommandLineParser parser(argc, argv, "{@input|0|}");
   std::string arg = parser.get<std::string>("@input");
 
   if(arg.size() == 1 && isdigit(arg[0]))
@@ -33,42 +33,42 @@ main(int argc, char** argv) {
     return -1;
   }
 
-  namedWindow("Linear-Polar", WINDOW_AUTOSIZE);
-  namedWindow("Log-Polar", WINDOW_AUTOSIZE);
-  namedWindow("Recovered Linear-Polar", WINDOW_AUTOSIZE);
-  namedWindow("Recovered Log-Polar", WINDOW_AUTOSIZE);
+  cv::namedWindow("Linear-Polar", cv::WINDOW_AUTOSIZE);
+  cv::namedWindow("Log-Polar", cv::WINDOW_AUTOSIZE);
+  cv::namedWindow("Recovered Linear-Polar", cv::WINDOW_AUTOSIZE);
+  cv::namedWindow("Recovered Log-Polar", cv::WINDOW_AUTOSIZE);
 
-  moveWindow("Linear-Polar", 20, 20);
-  moveWindow("Log-Polar", 700, 20);
-  moveWindow("Recovered Linear-Polar", 20, 350);
-  moveWindow("Recovered Log-Polar", 700, 350);
+  cv::moveWindow("Linear-Polar", 20, 20);
+  cv::moveWindow("Log-Polar", 700, 20);
+  cv::moveWindow("Recovered Linear-Polar", 20, 350);
+  cv::moveWindow("Recovered Log-Polar", 700, 350);
 
   for(;;) {
-    Mat frame;
+    cv::Mat frame;
     capture >> frame;
 
     if(frame.empty())
       break;
 
-    Point2f center((float)frame.cols / 2, (float)frame.rows / 2);
+    cv::Point2f center((float)frame.cols / 2, (float)frame.rows / 2);
     double radius = (double)frame.cols / 4;
-    double M = (double)frame.cols / log(radius);
+    double M = (double)frame.cols / cv::log(radius);
 
-    logPolar(frame, log_polar_img, center, M, INTER_LINEAR + WARP_FILL_OUTLIERS);
-    linearPolar(frame, lin_polar_img, center, radius, INTER_LINEAR + WARP_FILL_OUTLIERS);
+    cv::logPolar(frame, log_polar_img, center, M, INTER_LINEAR + WARP_FILL_OUTLIERS);
+    cv::linearPolar(frame, lin_polar_img, center, radius, INTER_LINEAR + WARP_FILL_OUTLIERS);
 
-    logPolar(log_polar_img, recovered_log_polar, center, M, WARP_INVERSE_MAP + INTER_LINEAR);
-    linearPolar(lin_polar_img, recovered_lin_polar_img, center, radius, WARP_INVERSE_MAP + INTER_LINEAR + WARP_FILL_OUTLIERS);
+    cv::logPolar(log_polar_img, recovered_log_polar, center, M, WARP_INVERSE_MAP + INTER_LINEAR);
+    cv::linearPolar(lin_polar_img, recovered_lin_polar_img, center, radius, WARP_INVERSE_MAP + INTER_LINEAR + WARP_FILL_OUTLIERS);
 
-    imshow("Log-Polar", log_polar_img);
-    imshow("Linear-Polar", lin_polar_img);
-    imshow("Recovered Linear-Polar", recovered_lin_polar_img);
-    imshow("Recovered Log-Polar", recovered_log_polar);
+    cv::imshow("Log-Polar", log_polar_img);
+    cv::imshow("Linear-Polar", lin_polar_img);
+    cv::imshow("Recovered Linear-Polar", recovered_lin_polar_img);
+    cv::imshow("Recovered Log-Polar", recovered_log_polar);
 
-    if(waitKey(10) >= 0)
+    if(cv::waitKey(10) >= 0)
       break;
   }
 
-  waitKey(0);
+  cv::waitKey(0);
   return 0;
 }

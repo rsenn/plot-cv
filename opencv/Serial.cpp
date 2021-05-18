@@ -50,7 +50,7 @@ Serial::~Serial() {
 }
 
 int
-Serial::write(const char* buffer) {
+Serial::cv::write(const char* buffer) {
   DWORD numWritten;
   WriteFile(commHandle, buffer, strlen(buffer), &numWritten, NULL);
 
@@ -58,7 +58,7 @@ Serial::write(const char* buffer) {
 }
 
 int
-Serial::write(const char* buffer, int buffLen) {
+Serial::cv::write(const char* buffer, int buffLen) {
   DWORD numWritten;
   WriteFile(commHandle, buffer, buffLen, &numWritten, NULL);
 
@@ -66,7 +66,7 @@ Serial::write(const char* buffer, int buffLen) {
 }
 
 int
-Serial::read(char* buffer, int buffLen, bool nullTerminate) {
+Serial::cv::read(char* buffer, int buffLen, bool nullTerminate) {
   DWORD numRead;
   if(nullTerminate) {
     --buffLen;
@@ -90,6 +90,6 @@ Serial::read(char* buffer, int buffLen, bool nullTerminate) {
 void
 Serial::flush() {
   char buffer[FLUSH_BUFFSIZE];
-  int numBytes = read(buffer, FLUSH_BUFFSIZE, false);
-  while(numBytes != 0) { numBytes = read(buffer, FLUSH_BUFFSIZE, false); }
+  int numBytes = cv::read(buffer, FLUSH_BUFFSIZE, false);
+  while(numBytes != 0) { numBytes = cv::read(buffer, FLUSH_BUFFSIZE, false); }
 }

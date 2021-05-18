@@ -16,7 +16,7 @@
 #include "samples_utility.hpp"
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 int
 main(int argc, char** argv) {
@@ -31,17 +31,17 @@ main(int argc, char** argv) {
   }
 
   // create the tracker
-  Ptr<Tracker> tracker = TrackerKCF::create();
+  Ptr<cv::Tracker> tracker = cv::TrackerKCF::create();
 
   // set input video
   std::string video = argv[1];
-  VideoCapture cap(video);
+  cv::VideoCapture cap(video);
 
-  Mat frame;
+  cv::Mat frame;
 
   // get bounding box
   cap >> frame;
-  Rect2d roi = selectROI("tracker", frame, true, false);
+  Rect2d roi = cv::selectROI("tracker", frame, true, false);
 
   // quit if ROI was not selected
   if(roi.width == 0 || roi.height == 0)
@@ -64,18 +64,18 @@ main(int argc, char** argv) {
     bool isfound = tracker->update(frame, roi);
     if(!isfound) {
       cout << "The target has been lost...\n";
-      waitKey(0);
+      cv::waitKey(0);
       return 0;
     }
 
     // draw the tracked object
-    rectangle(frame, roi, Scalar(255, 0, 0), 2, 1);
+    cv::rectangle(frame, roi, cv::Scalar(255, 0, 0), 2, 1);
 
     // show image with the tracked object
-    imshow("tracker", frame);
+    cv::imshow("tracker", frame);
 
     // quit on ESC button
-    if(waitKey(1) == 27)
+    if(cv::waitKey(1) == 27)
       break;
   }
 }

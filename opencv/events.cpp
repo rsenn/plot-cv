@@ -1,6 +1,6 @@
 #include </home/pi/surveillance_proj/events.h>
 
-using namespace cv;
+//using namespace cv;
 // Event base class member functions
 
 Event::Event(time_t execution_deadline, time_t event_creation_time, string event_name, int priority) {
@@ -55,18 +55,18 @@ SurveillancePhoto::SurveillancePhoto(time_t execution_deadline, time_t event_cre
 }
 
 int
-SurveillancePhoto::execute_event(VideoCapture input_cap, int camera_index, string save_directory) {
+SurveillancePhoto::execute_event(cv::VideoCapture input_cap, int camera_index, string save_directory) {
 
   if(!input_cap.isOpened()) {
     cout << "Camera at index: " << camera_index << " failed to open...\n";
-    waitKey(0);
+    cv::waitKey(0);
     return -1;
   } else {
-    Mat frame;
-    bool read_success = input_cap.read(frame);
+    cv::Mat frame;
+    bool read_success = input_cap.cv::read(frame);
 
     if(!read_success) {
-      cout << "Error reading frame from camera: " << camera_index << endl;
+      cout << "cv::Error reading frame from camera: " << camera_index << endl;
       return -1;
     } else {
       save_directory += this->get_eventName();
@@ -75,10 +75,10 @@ SurveillancePhoto::execute_event(VideoCapture input_cap, int camera_index, strin
       compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
       compression_params.push_back(100);
 
-      bool write_success = imwrite(save_directory, frame, compression_params);
+      bool write_success = cv::imwrite(save_directory, frame, compression_params);
 
       if(!write_success) {
-        cout << "Error saving frame to: " << save_directory << endl;
+        cout << "cv::Error saving frame to: " << save_directory << endl;
         return -1;
       }
     }
@@ -98,7 +98,7 @@ SurveillanceVideo::SurveillanceVideo(
 }
 
 int
-SurveillanceVideo::execute_event(VideoCapture input_cap, int camera_index, string save_directory) {
+SurveillanceVideo::execute_event(cv::VideoCapture input_cap, int camera_index, string save_directory) {
 
   if(!input_cap.isOpened()) {
     cout << "Camera at index: " << camera_index << " failed to open. \n";
@@ -106,19 +106,19 @@ SurveillanceVideo::execute_event(VideoCapture input_cap, int camera_index, strin
   } else {
     double dWidth = input_cap.get(cv::CAP_PROP_FRAME_WIDTH);
     double dHeight = input_cap.get(cv::CAP_PROP_FRAME_HEIGHT);
-    Size frameSize(static_cast<int>(dWidth), static_cast<int>(dHeight));
+    cv::Size frameSize(static_cast<int>(dWidth), static_cast<int>(dHeight));
     save_directory += this->get_eventName();
     save_directory += ".avi";
-    VideoWriter oVideoWriter(save_directory, CV_FOURCC('P', 'I', 'M', '1'), 20, frameSize, true);
+    cv::VideoWriter oVideoWriter(save_directory, CV_FOURCC('P', 'I', 'M', '1'), 20, frameSize, true);
 
     if(!oVideoWriter.isOpened()) {
-      cout << "Failed to initilize VideoWriter at directory: " << save_directory << endl;
+      cout << "Failed to initilize cv::VideoWriter at directory: " << save_directory << endl;
       oVideoWriter.release();
-      oVideoWriter.~VideoWriter();
+      oVideoWriter.~cv::VideoWriter();
       return -1;
     } else {
 
-      Mat frame;
+      cv::Mat frame;
       bool success;
       time_t start_time;
       time_t current_time;
@@ -127,20 +127,20 @@ SurveillanceVideo::execute_event(VideoCapture input_cap, int camera_index, strin
 
       while(difftime(current_time, start_time) <= this->videoLen_s) {
         time(&current_time);
-        success = input_cap.read(frame);
+        success = input_cap.cv::read(frame);
 
         if(!success) {
-          cout << "Error: Failed to read frame from camera at index: " << camera_index << endl;
+          cout << "cv::Error: Failed to cv::read frame from camera at index: " << camera_index << endl;
           oVideoWriter.release();
-          oVideoWriter.~VideoWriter();
+          oVideoWriter.~cv::VideoWriter();
           return -1;
         } else {
-          oVideoWriter.write(frame);
+          oVideoWriter.cv::write(frame);
         }
       }
 
       oVideoWriter.release();
-      oVideoWriter.~VideoWriter();
+      oVideoWriter.~cv::VideoWriter();
     }
   }
 

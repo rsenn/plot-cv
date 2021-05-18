@@ -18,7 +18,7 @@ main(int argc, char** argv) {
   /// Load source image and convert it to gray
   src = cv::imread(argv[1], 1);
 
-  /// Convert image to gray and blur it
+  /// Convert image to gray and cv::blur it
   cv::cvtColor(src, src_gray, cv::COLOR_BGR2GRAY);
   cv::blur(src_gray, src_gray, cv::Size(3, 3));
 
@@ -27,7 +27,7 @@ main(int argc, char** argv) {
   cv::namedWindow(source_window, cv::WINDOW_AUTOSIZE);
   cv::imshow(source_window, src);
 
-  cv::createTrackbar(" Canny thresh:", "Source", &thresh, max_thresh, thresh_callback);
+  cv::createTrackbar(" cv::Canny thresh:", "Source", &thresh, max_thresh, thresh_callback);
   thresh_callback(0, 0);
 
   cv::waitKey(0);
@@ -52,7 +52,7 @@ thresh_callback(int, void*) {
   cv::Mat drawing = cv::Mat::zeros(canny_output.size(), CV_8UC3);
   for(size_t i = 0; i < contours.size(); i++) {
     cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-    drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, cv::Point());
+    cv::drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, cv::Point());
   }
 
   /// Show in a window

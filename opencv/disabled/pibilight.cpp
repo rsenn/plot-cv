@@ -17,9 +17,9 @@
 #include <fcntl.h>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
-string logFilePrefix = "/home/pi/pibilight/log/";
+string logFilePrefix = "/home/pi/pibilight/cv::log/";
 string logFileName;
 bool logCreated = false;
 int cameraFD;
@@ -36,20 +36,20 @@ string loopbackDevice = "/dev/video0";
 
 unsigned char* outBuffer;
 
-VideoCapture cap;
+cv::VideoCapture cap;
 
-Mat currentImage;
-Mat processedImage;
-Mat undistortedTemp;
-Mat bgraImg;
-Mat yuyvImg;
+cv::Mat currentImage;
+cv::Mat processedImage;
+cv::Mat undistortedTemp;
+cv::Mat bgraImg;
+cv::Mat yuyvImg;
 
-Mat cameraMatrix, distortionCoefficients;
+cv::Mat cameraMatrix, distortionCoefficients;
 
-Point2f sourcePoints[4];
-Point2f destinationPoints[4];
+cv::Point2f sourcePoints[4];
+cv::Point2f destinationPoints[4];
 
-Mat perspTransform;
+cv::Mat perspTransform;
 
 bool
 createLogFile() {
@@ -57,7 +57,7 @@ createLogFile() {
   char timeStr[100];
   strftime(timeStr, sizeof(timeStr), "%Y-%m-%d_%H-%M", localtime(&currentTime));
   logFileName = timeStr;
-  logFileName.append(".log");
+  logFileName.append(".cv::log");
 
   ofstream outfile(logFilePrefix + logFileName);
   outfile << "Log created on " << string(timeStr) << endl << flush;
@@ -67,22 +67,22 @@ createLogFile() {
 }
 
 void
-logLine(string line) {
+logLine(string cv::line) {
   if(!logCreated) {
     logCreated = createLogFile();
   }
 
   ofstream file;
   file.open(logFilePrefix + logFileName, ios_base::app);
-  file << line << endl;
+  file << cv::line << endl;
   file.close();
 
-  cout << line << endl;
+  cout << cv::line << endl;
 }
 
 void
 loadConfig() {
-  FileStorage configFile(CONFIG_FILE, FileStorage::READ);
+  cv::FileStorage configFile(CONFIG_FILE, cv::FileStorage::READ);
 
   if(!configFile["width"].empty()) {
     width = (int)configFile["width"];
@@ -102,27 +102,27 @@ loadConfig() {
 
   bufferSize = outWidth * outHeight * 2;
 
-  destinationPoints[0] = Point2f{0, 0};
-  destinationPoints[1] = Point2f{(float)outWidth - 1, 0};
-  destinationPoints[2] = Point2f{0, (float)outHeight - 1};
-  destinationPoints[3] = Point2f{(float)outWidth - 1, (float)outHeight - 1};
+  destinationPoints[0] = cv::Point2f{0, 0};
+  destinationPoints[1] = cv::Point2f{(float)outWidth - 1, 0};
+  destinationPoints[2] = cv::Point2f{0, (float)outHeight - 1};
+  destinationPoints[3] = cv::Point2f{(float)outWidth - 1, (float)outHeight - 1};
 
   configFile["camera_matrix"] >> cameraMatrix;
   configFile["distortion_coefficients"] >> distortionCoefficients;
 
-  Mat tempSourcePoints;
+  cv::Mat tempSourcePoints;
   configFile["corner_points"] >> tempSourcePoints;
-  sourcePoints[0] = Point2f{tempSourcePoints.at<float>(0, 0), tempSourcePoints.at<float>(0, 1)};
-  sourcePoints[1] = Point2f{tempSourcePoints.at<float>(1, 0), tempSourcePoints.at<float>(1, 1)};
-  sourcePoints[2] = Point2f{tempSourcePoints.at<float>(2, 0), tempSourcePoints.at<float>(2, 1)};
-  sourcePoints[3] = Point2f{tempSourcePoints.at<float>(3, 0), tempSourcePoints.at<float>(3, 1)};
+  sourcePoints[0] = cv::Point2f{tempSourcePoints.at<float>(0, 0), tempSourcePoints.at<float>(0, 1)};
+  sourcePoints[1] = cv::Point2f{tempSourcePoints.at<float>(1, 0), tempSourcePoints.at<float>(1, 1)};
+  sourcePoints[2] = cv::Point2f{tempSourcePoints.at<float>(2, 0), tempSourcePoints.at<float>(2, 1)};
+  sourcePoints[3] = cv::Point2f{tempSourcePoints.at<float>(3, 0), tempSourcePoints.at<float>(3, 1)};
 
   // cout << "0" << sourcePoints[0] << endl;
   // cout << "1" << sourcePoints[1] << endl;
   // cout << "2" << sourcePoints[2] << endl;
   // cout << "3" << sourcePoints[3] << endl;
 
-  perspTransform = getPerspectiveTransform(sourcePoints, destinationPoints);
+  perspTransform = cv::getPerspectiveTransform(sourcePoints, destinationPoints);
 
   // cout << "Dist:" << distortionCoefficients << endl;
   // cout << "CMat:" << cameraMatrix << endl;
@@ -146,7 +146,7 @@ openCamera() {
 void
 captureImage() {
   // wait for a new frame from camera and store it into 'frame'
-  cap.read(currentImage);
+  cap.cv::read(currentImage);
   // check if we succeeded
   if(currentImage.empty()) {
     throw("ERROR! blank frame grabbed");
@@ -163,7 +163,7 @@ void
 initOutput() {
   outputFD = open(loopbackDevice.c_str(), O_WRONLY);
   if(outputFD == -1) {
-    throw("Error Opening Output device");
+    throw("cv::Error Opening Output device");
     return;
   }
 
@@ -203,7 +203,7 @@ initOutput() {
 void
 outputImage() {
   // Convert to YUYV
-  cvtColor(processedImage, bgraImg, CV_BGR2BGRA);
+  cv::cvtColor(processedImage, bgraImg, CV_BGR2BGRA);
 
   if(yuyvImg.empty()) {
     yuyvImg.create(bgraImg.rows, bgraImg.cols, CV_8UC2);
@@ -211,7 +211,7 @@ outputImage() {
 
   int res = libyuv::ARGBToYUY2(bgraImg.data, bgraImg.cols * 4, yuyvImg.data, outWidth * 2, bgraImg.cols, bgraImg.rows);
 
-  if(write(outputFD, yuyvImg.ptr(), bufferSize) == -1) {
+  if(cv::write(outputFD, yuyvImg.ptr(), bufferSize) == -1) {
     throw("Write to output");
     return;
   }
@@ -222,7 +222,7 @@ processImage() {
   // Undistort the image by distortion coefficients
   // if(!cameraMatrix.empty())
   // {
-  //   undistort(currentImage, undistortedTemp, cameraMatrix, distortionCoefficients);
+  //   cv::undistort(currentImage, undistortedTemp, cameraMatrix, distortionCoefficients);
   // }
   // else
   // {
@@ -232,8 +232,8 @@ processImage() {
   // Perspective Transformation
   if(!perspTransform.empty()) {
     // cout << perspTransform << endl;
-    // warpPerspective(undistortedTemp, processedImage, perspTransform, Size{width, height});
-    warpPerspective(currentImage, processedImage, perspTransform, Size{outWidth, outHeight});
+    // cv::warpPerspective(undistortedTemp, processedImage, perspTransform, cv::Size{width, height});
+    cv::warpPerspective(currentImage, processedImage, perspTransform, cv::Size{outWidth, outHeight});
   } else {
     processedImage = undistortedTemp;
   }
@@ -255,10 +255,10 @@ main(int argc, char** argv) {
     // Perform the operation
     while(true) {
       captureImage();
-      // imwrite("image.png", currentImage);
+      // cv::imwrite("image.png", currentImage);
 
       processImage();
-      // imwrite("processed.png", processedImage);
+      // cv::imwrite("processed.png", processedImage);
 
       // currentImage.copyTo(processedImage);
       outputImage();

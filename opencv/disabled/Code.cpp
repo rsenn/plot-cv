@@ -15,12 +15,12 @@
 #define ml2 3
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
-void detectAndDisplay(Mat frame);
+void detectAndDisplay(cv::Mat frame);
 
-String stop_cascade_name = "cascade.xml";
-CascadeClassifier stop_cascade;
+cv::String stop_cascade_name = "cascade.xml";
+cv::CascadeClassifier stop_cascade;
 string window_name = "Capture - Stop detection";
 int fps = 60;
 
@@ -69,18 +69,18 @@ left() {
 int low = 18, high = 135, thresholdd = 100, thresholdp = 2, linelength = 50, maxlinegap = 200, bin_threshold = 80;
 
 void
-detectAndDisplay(Mat frame) {
-  std::vector<Rect> faces;
-  Mat frame_gray;
+detectAndDisplay(cv::Mat frame) {
+  std::vector<cv::Rect> faces;
+  cv::Mat frame_gray;
 
-  cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
-  equalizeHist(frame_gray, frame_gray);
+  cv::cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
+  cv::equalizeHist(frame_gray, frame_gray);
 
-  face_cascade.detectMultiScale(frame_gray, faces, 1.1, 2, 0 | cv::CASCADE_SCALE_IMAGE, Size(10, 10));
+  face_cascade.detectMultiScale(frame_gray, faces, 1.1, 2, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(10, 10));
   for(size_t i = 0; i < faces.size(); i++) {
-    Point center(faces[i].x + faces[i].width / 2, faces[i].y + faces[i].height / 2);
-    ellipse(frame, center, Size(faces[i].width / 2, faces[i].height / 2), 0, 0, 360, Scalar(255, 0, 255), 2, 8, 0);
-    imwrite("stop1.jpg", frame);
+    cv::Point center(faces[i].x + faces[i].width / 2, faces[i].y + faces[i].height / 2);
+    cv::ellipse(frame, center, cv::Size(faces[i].width / 2, faces[i].height / 2), 0, 0, 360, cv::Scalar(255, 0, 255), 2, 8, 0);
+    cv::imwrite("stop1.jpg", frame);
     stop();
     delay(5000);
   }
@@ -89,37 +89,37 @@ detectAndDisplay(Mat frame) {
 int
 main() {
   s();
-  Mat img1, ROI, grey, binary, dil, erod, blur, cany;
+  cv::Mat img1, ROI, grey, binary, dil, erod, cv::blur, cany;
   face_cascade.load(face_cascade_name);
-  vector<Vec4i> lines;
-  vector<Point> buf(3);
+  vector<cv::Vec4i> lines;
+  vector<cv::Point> buf(3);
 
-  VideoCapture cap(0);
+  cv::VideoCapture cap(0);
   while(1) {
 
     cap >> img1;
 
     int height = (img1.rows / 2), width = (img1.cols);
-    Rect r(0, height, width, height - 1);
+    cv::Rect r(0, height, width, height - 1);
     ROI = img1(r);
-    cvtColor(ROI, grey, cv::COLOR_RGB2GRAY);
-    threshold(grey, binary, bin_threshold, 255, THRESH_BINARY);
-    dilate(binary, dil, Mat(), Point(-1, -1), 1);
-    erode(dil, erod, Mat(), Point(-1, -1), 5);
-    Canny(erod, cany, low, high);
-      HoughLinesP(cany, lines, 1, 3.14 / 180, thresholdp, linelength, maxli HoughLinesP(cany, lines, 1, 3.14 / 180, thresholdp, linelength, maxlinegap);
+    cv::cvtColor(ROI, grey, cv::COLOR_RGB2GRAY);
+    cv::threshold(grey, binary, bin_threshold, 255, THRESH_BINARY);
+    cv::dilate(binary, dil, cv::Mat(), cv::Point(-1, -1), 1);
+    cv::erode(dil, erod, cv::Mat(), cv::Point(-1, -1), 5);
+    cv::Canny(erod, cany, low, high);
+      cv::HoughLinesP(cany, lines, 1, 3.14 / 180, thresholdp, linelength, maxli cv::HoughLinesP(cany, lines, 1, 3.14 / 180, thresholdp, linelength, maxlinegap);
     if(lines.size()) {
       for(size_t i = 0; i < lines.size(); i++) {
-        Vec4i l = lines[i];
-        line(ROI, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0, 0, 255), 10);
+        cv::Vec4i l = lines[i];
+        cv::line(ROI, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]), cv::Scalar(0, 0, 255), 10);
       }
     }
 
-    buf[0] = Point(10, ROI.rows - 10);
-    buf[1] = Point(630, ROI.rows - 10);
+    buf[0] = cv::Point(10, ROI.rows - 10);
+    buf[1] = cv::Point(630, ROI.rows - 10);
 
-    LineIterator it(ROI, Point(320, ROI.rows - 10), Point(0, ROI.rows - 10), 8);
-    LineIterator it2(ROI, Point(320, ROI.rows - 10), Point(640, ROI.rows - 10), 8);
+    LineIterator it(ROI, cv::Point(320, ROI.rows - 10), cv::Point(0, ROI.rows - 10), 8);
+    LineIterator it2(ROI, cv::Point(320, ROI.rows - 10), cv::Point(640, ROI.rows - 10), 8);
 
     for(int i = 0; i < it.count; i++, ++it) {
       Vec3b val1 = ROI.at<Vec3b>(it.pos());
@@ -138,9 +138,9 @@ main() {
     }
     buf[2].x = (buf[0].x + buf[1].x) / 2;
     buf[2].y = (buf[0].y + buf[1].y) / 2;
-    line(ROI, Point(ROI.cols / 2, 0), Point(ROI.cols / 2, ROI.rows - 10), Scalar(0, 255, 0), 1);
-    line(ROI, Point(0, ROI.rows - 10), Point(640, ROI.rows - 10), Scalar(0, 255, 0), 1);
-    line(ROI, buf[2], buf[2], Scalar(255, 0, 0), 10);
+    cv::line(ROI, cv::Point(ROI.cols / 2, 0), cv::Point(ROI.cols / 2, ROI.rows - 10), cv::Scalar(0, 255, 0), 1);
+    cv::line(ROI, cv::Point(0, ROI.rows - 10), cv::Point(640, ROI.rows - 10), cv::Scalar(0, 255, 0), 1);
+    cv::line(ROI, buf[2], buf[2], cv::Scalar(255, 0, 0), 10);
     pid_t pid = fork();
     if(pid == 0) {
       if(buf[2].x > 320) {
@@ -157,7 +157,7 @@ main() {
       exit(0);
     }
 
-    waitKey(10);
+    cv::waitKey(10);
   }
 
   return 0;

@@ -1,19 +1,19 @@
 #include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp> // Canny()
+#include <opencv2/imgproc.hpp> // cv::Canny()
 #include <iostream>
 
-using namespace cv;
+//using namespace cv;
 using std::cerr;
 using std::cout;
 using std::endl;
 
 int
 main(int, char**) {
-  Mat frame;
+  cv::Mat frame;
   cout << "Opening camera..." << endl;
-  VideoCapture capture(0); // open the first camera
+  cv::VideoCapture capture(0); // open the first camera
   if(!capture.isOpened()) {
     cerr << "ERROR: Can't initialize camera capture" << endl;
     return 1;
@@ -31,7 +31,7 @@ main(int, char**) {
   int64 t0 = cv::getTickCount();
   int64 processingTime = 0;
   for(;;) {
-    capture >> frame; // read the next frame from camera
+    capture >> frame; // cv::read the next frame from camera
     if(frame.empty()) {
       cerr << "ERROR: Can't grab camera frame." << endl;
       break;
@@ -41,23 +41,23 @@ main(int, char**) {
       const int N = 10;
       int64 t1 = cv::getTickCount();
       cout << "Frames captured: " << cv::format("%5lld", (long long int)nFrames)
-           << "    Average FPS: " << cv::format("%9.1f", (double)getTickFrequency() * N / (t1 - t0))
-           << "    Average time per frame: " << cv::format("%9.2f ms", (double)(t1 - t0) * 1000.0f / (N * getTickFrequency()))
+           << "    Average FPS: " << cv::format("%9.1f", (double)cv::getTickFrequency() * N / (t1 - t0))
+           << "    Average time per frame: " << cv::format("%9.2f ms", (double)(t1 - t0) * 1000.0f / (N * cv::getTickFrequency()))
            << "    Average processing time: "
-           << cv::format("%9.2f ms", (double)(processingTime)*1000.0f / (N * getTickFrequency())) << std::endl;
+           << cv::format("%9.2f ms", (double)(processingTime)*1000.0f / (N * cv::getTickFrequency())) << std::endl;
       t0 = t1;
       processingTime = 0;
     }
     if(!enableProcessing) {
-      imshow("Frame", frame);
+      cv::imshow("Frame", frame);
     } else {
       int64 tp0 = cv::getTickCount();
-      Mat processed;
+      cv::Mat processed;
       cv::Canny(frame, processed, 400, 1000, 5);
       processingTime += cv::getTickCount() - tp0;
-      imshow("Frame", processed);
+      cv::imshow("Frame", processed);
     }
-    int key = waitKey(1);
+    int key = cv::waitKey(1);
     if(key == 27 /*ESC*/)
       break;
     if(key == 32 /*SPACE*/) {

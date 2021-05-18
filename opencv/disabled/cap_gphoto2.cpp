@@ -68,7 +68,7 @@ public:
     return gp_result_as_string(result);
   }
   friend std::ostream&
-  operator<<(std::ostream& ostream, GPhoto2Exception& e) {
+  cv::operator<<(std::ostream& ostream, GPhoto2Exception& e) {
     return ostream << e.method << ": " << e.what();
   }
 };
@@ -132,7 +132,7 @@ public:
 
   DigitalCameraCapture();
   DigitalCameraCapture(int index);
-  DigitalCameraCapture(const String& deviceName);
+  DigitalCameraCapture(const cv::String& deviceName);
   virtual ~DigitalCameraCapture();
 
   virtual bool isOpened() const;
@@ -171,7 +171,7 @@ protected:
   // Selected device
   bool opened;
   Camera* camera = NULL;
-  Mat frame;
+  cv::Mat frame;
 
   // Properties
   CameraWidget* rootWidget = NULL;
@@ -214,7 +214,7 @@ private:
   unsigned long int capturedFrames;
 
   DigitalCameraCapture(const DigitalCameraCapture&);            // Disable copying
-  DigitalCameraCapture& operator=(DigitalCameraCapture const&); // Disable assigning
+  DigitalCameraCapture& cv::operator=(DigitalCameraCapture const&); // Disable assigning
 
   // Widgets
   int noOfWidgets;
@@ -239,7 +239,7 @@ private:
   } while(0)
 
 /**
- * \brief gPhoto2 context error feedback function.
+ * \brief gPhoto2 context cv::error feedback function.
  * @param thatGPhotoCap is required to be pointer to DigitalCameraCapture object.
  */
 void
@@ -344,7 +344,7 @@ DigitalCameraCapture::DigitalCameraCapture(int index) {
  * @see findDevice(const char*)
  * @see open(int)
  */
-DigitalCameraCapture::DigitalCameraCapture(const String& deviceName) {
+DigitalCameraCapture::DigitalCameraCapture(const cv::String& deviceName) {
   initContext();
   int index = findDevice(deviceName.c_str());
   if(deviceExist(index))
@@ -365,7 +365,7 @@ DigitalCameraCapture::~DigitalCameraCapture() {
     allDevices = NULL;
     gp_context_unref(context);
     context = NULL;
-  } catch(GPhoto2Exception& e) { message(ERROR, "destruction error", e); }
+  } catch(GPhoto2Exception& e) { message(ERROR, "destruction cv::error", e); }
 }
 
 /**
@@ -703,7 +703,7 @@ DigitalCameraCapture::setProperty(int propertyId, double value) {
 
 /**
  * Capture image, and store file in @field grabbedFrames.
- * Do not read a file. File will be deleted from camera automatically.
+ * Do not cv::read a file. File will be deleted from camera automatically.
  */
 bool
 DigitalCameraCapture::grabFrame() {
@@ -747,7 +747,7 @@ DigitalCameraCapture::retrieveFrame(int, OutputArray outputFrame) {
       readFrameFromFile(file, outputFrame);
       CR(gp_file_unref(file));
     } catch(GPhoto2Exception& e) {
-      message(WARNING, "cannot read file grabbed from device", e);
+      message(WARNING, "cannot cv::read file grabbed from device", e);
       return false;
     }
   } else {
@@ -837,7 +837,7 @@ DigitalCameraCapture::findWidgetByName(const char* subName) const {
         ++it;
       }
       return (it != end) ? it->second : NULL;
-    } catch(GPhoto2Exception& e) { message(WARNING, "error while searching for widget", e); }
+    } catch(GPhoto2Exception& e) { message(WARNING, "cv::error while searching for widget", e); }
   }
   return 0;
 }
@@ -845,16 +845,16 @@ DigitalCameraCapture::findWidgetByName(const char* subName) const {
 /**
  * Image file reader.
  *
- * @FUTURE: RAW format reader.
+ * @FUTURE: RAW cv::format reader.
  */
 void
 DigitalCameraCapture::readFrameFromFile(CameraFile* file, OutputArray outputFrame) throw(GPhoto2Exception) {
-  // FUTURE: OpenCV cannot read RAW files right now.
+  // FUTURE: OpenCV cannot cv::read RAW files right now.
   const char* data;
   unsigned long int size;
   CR(gp_file_get_data_and_size(file, &data, &size));
   if(size > 0) {
-    Mat buf = Mat(1, size, CV_8UC1, (void*)data);
+    cv::Mat buf = cv::Mat(1, size, CV_8UC1, (void*)data);
     if(!buf.empty()) {
       frame = imdecode(buf, cv::LOAD_IMAGE_UNCHANGED);
     }
@@ -1035,7 +1035,7 @@ createGPhoto2Capture(int index) {
  * @param deviceName is a substring in digital camera model name.
  */
 Ptr<IVideoCapture>
-createGPhoto2Capture(const String& deviceName) {
+createGPhoto2Capture(const cv::String& deviceName) {
   Ptr<IVideoCapture> capture = makePtr<gphoto2::DigitalCameraCapture>(deviceName);
 
   if(capture->isOpened())
