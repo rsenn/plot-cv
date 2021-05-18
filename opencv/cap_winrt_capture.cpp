@@ -173,16 +173,16 @@ VideoCapture_WinRT::retrieveFrame(int channel, cv::OutputArray outArray) {
 bool
 VideoCapture_WinRT::setProperty(int property_id, double value) {
   switch(property_id) {
-    case CAP_PROP_FRAME_WIDTH: size.width = (int)value; break;
-    case CAP_PROP_FRAME_HEIGHT: size.height = (int)value; break;
+    case cv::CAP_PROP_FRAME_WIDTH: size.width = (int)value; break;
+    case cv::CAP_PROP_FRAME_HEIGHT: size.height = (int)value; break;
     default: return false;
   }
   return true;
 }
 
-Ptr<IVideoCapture>
+cv::Ptr<IVideoCapture>
 create_WRT_capture(int device) {
-  return makePtr<VideoCapture_WinRT>(device);
+  return cv::makePtr<VideoCapture_WinRT>(device);
 }
 
 } // namespace cv

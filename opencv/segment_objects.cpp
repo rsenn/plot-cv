@@ -33,7 +33,7 @@ refineSegments(const cv::Mat& img, cv::Mat& mask, cv::Mat& dst) {
   cv::erode(temp, temp, cv::Mat(), cv::Point(-1, -1), niters * 2);
   cv::dilate(temp, temp, cv::Mat(), cv::Point(-1, -1), niters);
 
-  cv::findContours(temp, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
+  cv::findContours(temp, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE);
 
   dst = cv::Mat::zeros(img.size(), CV_8UC3);
 
@@ -54,7 +54,7 @@ refineSegments(const cv::Mat& img, cv::Mat& mask, cv::Mat& dst) {
     }
   }
   cv::Scalar color(0, 0, 255);
-  cv::drawContours(dst, contours, largestComp, color, FILLED, cv::LINE_8, hierarchy);
+  cv::drawContours(dst, contours, largestComp, color, cv::FILLED, cv::LINE_8, hierarchy);
 }
 
 int
@@ -89,7 +89,7 @@ main(int argc, char** argv) {
   cv::namedWindow("video", 1);
   cv::namedWindow("segmented", 1);
 
-  Ptr<BackgroundSubtractorMOG2> bgsubtractor = cv::createBackgroundSubtractorMOG2();
+  cv::Ptr<cv::BackgroundSubtractorMOG2> bgsubtractor = cv::createBackgroundSubtractorMOG2();
   bgsubtractor->setVarThreshold(10);
 
   for(;;) {

@@ -3,7 +3,7 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/core/utility.hpp>
 
-#include <opencv2/cv::ximgproc.hpp>
+#include <opencv2/ximgproc.hpp>
 
 #include <ctype.h>
 #include <stdio.h>
@@ -31,7 +31,7 @@ main(int argc, char** argv) {
     return 0;
   }
   int capture = cmd.get<int>("camera");
-  cv::String img_file = cmd.get<String>("image");
+  cv::String img_file = cmd.get<cv::String>("image");
   int algorithm = cmd.get<int>("algorithm");
   int region_size = 50;
   int ruler = 30;
@@ -77,11 +77,11 @@ main(int argc, char** argv) {
 
     result = frame;
     cv::Mat converted;
-    cv::cvtColor(frame, converted, COLOR_BGR2HSV);
+    cv::cvtColor(frame, converted, cv::COLOR_BGR2HSV);
 
     double t = (double)cv::getTickCount();
 
-    Ptr<SuperpixelSLIC> slic = createSuperpixelSLIC(converted, algorithm + SLIC, region_size, float(ruler));
+    cv::Ptr<SuperpixelSLIC> slic = createSuperpixelSLIC(converted, algorithm + SLIC, region_size, float(ruler));
     slic->iterate(num_iterations);
     if(min_element_size > 0)
       slic->enforceLabelConnectivity(min_element_size);

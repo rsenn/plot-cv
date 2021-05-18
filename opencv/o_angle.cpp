@@ -26,10 +26,10 @@ main(int argc, char** argv) {
   float radius;
   float radius_2;
 
-  cv::Mat hsv_element_dilate = cv::getStructuringElement(MORPH_DILATE, cv::Size(15, 15));  // 20170420
-  cv::Mat hsv_element_erode = cv::getStructuringElement(MORPH_ERODE, cv::Size(3, 3));      // 20170420
-  cv::Mat center_element_dilate = cv::getStructuringElement(MORPH_RECT, cv::Size(10, 10)); // 20170420
-  cv::Mat center_element_erode = cv::getStructuringElement(MORPH_RECT, cv::Size(7, 7));    // 20170420
+  cv::Mat hsv_element_dilate = cv::getStructuringElement(cv::MORPH_DILATE, cv::Size(15, 15));  // 20170420
+  cv::Mat hsv_element_erode = cv::getStructuringElement(cv::MORPH_ERODE, cv::Size(3, 3));      // 20170420
+  cv::Mat center_element_dilate = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(10, 10)); // 20170420
+  cv::Mat center_element_erode = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(7, 7));    // 20170420
   cv::Point2f vec_center_minus_red, vec_horizontal;                                // 20170420
   double arc_theta;
   double theta;
@@ -72,7 +72,7 @@ main(int argc, char** argv) {
     cv::add(src_HSV, src_HSV, src_add_mask, hsv_threshold);                           // 20170420
     int num = 0;
     if(!src_HSV.empty()) { // 20170420
-      cv::findContours(hsv_threshold, contours_2, hierarchy_2, cv::RETR_TREE, CHAIN_APPROX_NONE, cv::Point(0, 0));
+      cv::findContours(hsv_threshold, contours_2, hierarchy_2, cv::RETR_TREE, cv::CHAIN_APPROX_NONE, cv::Point(0, 0));
       if(!contours_2.empty()) {
         //#pragma omp parallel for
         for(int i = 0; i < contours_2.size(); i++) {
@@ -82,7 +82,7 @@ main(int argc, char** argv) {
       }
     }
     if(!src_copy.empty()) {
-      cv::findContours(src_copy, contours, hierarchy, cv::RETR_TREE, CHAIN_APPROX_NONE, cv::Point(0, 0));
+      cv::findContours(src_copy, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_NONE, cv::Point(0, 0));
       if(!contours.empty()) {
         //#pragma omp parallel for
         for(int i = 0; i < contours.size(); i++) {

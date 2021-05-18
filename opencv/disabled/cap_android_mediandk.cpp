@@ -12,7 +12,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
-#include <android/cv::log.h>
+#include <android/log.h>
 
 #include "media/NdkMediaCodec.h"
 #include "media/NdkMediaExtractor.h"

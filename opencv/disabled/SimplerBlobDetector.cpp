@@ -119,7 +119,7 @@ findBlobs(InputArray _image, InputArray _binaryImage, std::vector<Center>& cente
 
     // If filtering by inertia is requested,
     if(params.filterByInertia) {
-      double denominator = std::sqrt(std::cv::pow(2 * moms.mu11, 2) + std::pow(moms.mu20 - moms.mu02, 2));
+      double denominator = std::sqrt(std::pow(2 * moms.mu11, 2) + std::pow(moms.mu20 - moms.mu02, 2));
       const double eps = 1e-2;
       double ratio;
       if(denominator > eps) {

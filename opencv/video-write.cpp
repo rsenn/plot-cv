@@ -1,7 +1,7 @@
 #include <iostream> // for standard I/O
 #include <string>   // for strings
 
-#include <opencv2/core/core.hpp>       // Basic OpenCV structures (cv::Mat)
+#include <opencv2/core/core.hpp>       // Basic OpenCV structures (Mat)
 #include <opencv2/highgui/highgui.hpp> // Video write
 #include <opencv2/videoio.hpp>
 
@@ -29,7 +29,7 @@ main(int argc, char* argv[]) {
   }
 
   const string source = argv[1];                // the source file name
-  const bool askOutputType = argv[3][0] == 'Y'; // If false it will use the inputs codec type
+  const bool askOutputType = argv[3][0] == 'Y'; // If false cv::it will use the inputs codec type
 
   cv::VideoCapture inputVideo(source); // Open input
   if(!inputVideo.isOpened()) {

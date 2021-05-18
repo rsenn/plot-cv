@@ -52,17 +52,17 @@ main() {
   image = cv::imread(filename, cv::IMREAD_COLOR);
   width = image.size().width;
   height = image.size().height;
-  cv::namedWindow("result", WINDOW_NORMAL);
+  cv::namedWindow("result", cv::WINDOW_NORMAL);
   rect = cv::Rect(cv::Point(30, 100), cv::Point(width - 30, height - 30));
   mask.create(image.size(), CV_8UC1);
 
   // separate bg from fg;
-  cv::grabCut(image, mask, rect, bgdModel, fgdModel, 1, GC_INIT_WITH_RECT);
+  cv::grabCut(image, mask, rect, bgdModel, fgdModel, 1, cv::GC_INIT_WITH_RECT);
   mask = mask & 1;
   image.copyTo(result, mask);
 
   // process image for contour detection
-  cv::cvtColor(result, resultGrey, COLOR_BGR2GRAY);
+  cv::cvtColor(result, resultGrey, cv::COLOR_BGR2GRAY);
   int thresh = 20;
   cv::Mat canny_output;
   cv::Canny(resultGrey, canny_output, thresh, thresh * 2);
@@ -70,7 +70,7 @@ main() {
   // find contours
   vector<vector<cv::Point>> contours, cornerPoints;
   vector<cv::Point> approx;
-  cv::findContours(canny_output, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+  cv::findContours(canny_output, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
   for(size_t i = 0; i < contours.size(); i++) {
     cv::approxPolyDP(contours[i], approx, cv::arcLength(contours[i], true) * 0.02, true);
 
@@ -115,7 +115,7 @@ main() {
   for(int i = 0; i < 4; i++) { sourcePoints.push_back(cornerPoints[0][i]); }
 
   // align document using homography
-  cv::Mat h = cv::findHomography(sourcePoints, targetPoints, RANSAC);
+  cv::Mat h = cv::findHomography(sourcePoints, targetPoints, cv::RANSAC);
   cv::warpPerspective(image, alignedDoc, h, alignedDoc.size());
 
   // display result image

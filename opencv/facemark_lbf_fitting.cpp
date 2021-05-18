@@ -51,7 +51,7 @@ Mentor: Delia Passalacqua
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
-#include <opencv2/cv::face.hpp>
+#include <opencv2/face.hpp>
 
 using namespace std;
 //using namespace cv;
@@ -73,7 +73,7 @@ main(int argc, char** argv) {
   params.model_filename = model_path;
   params.cascade_face = cascade_path;
 
-  Ptr<FacemarkLBF> facemark = FacemarkLBF::create(params);
+  cv::Ptr<FacemarkLBF> facemark = FacemarkLBF::create(params);
   facemark->setFaceDetector((FN_FaceDetector)myDetector, &face_cascade);
   facemark->loadModel(params.model_filename.c_str());
 
@@ -142,14 +142,14 @@ myDetector(InputArray image, OutputArray faces, cv::CascadeClassifier* face_casc
   cv::Mat gray;
 
   if(image.channels() > 1)
-    cv::cvtColor(image, gray, COLOR_BGR2GRAY);
+    cv::cvtColor(image, gray, cv::COLOR_BGR2GRAY);
   else
     gray = image.getMat().clone();
 
   cv::equalizeHist(gray, gray);
 
   std::vector<cv::Rect> faces_;
-  face_cascade->detectMultiScale(gray, faces_, 1.4, 2, CASCADE_SCALE_IMAGE, cv::Size(30, 30));
+  face_cascade->detectMultiScale(gray, faces_, 1.4, 2, cv::CASCADE_SCALE_IMAGE, cv::Size(30, 30));
   cv::Mat(faces_).copyTo(faces);
   return true;
 }
@@ -170,7 +170,7 @@ parseArguments(int argc, char** argv, cv::String& cascade, cv::String& model, cv
     return false;
   }
 
-  cascade = cv::String(parser.get<String>("cascade"));
+  cascade = cv::String(parser.get<cv::String>("cascade"));
   model = cv::String(parser.get<string>("model"));
   video = cv::String(parser.get<string>("video"));
 

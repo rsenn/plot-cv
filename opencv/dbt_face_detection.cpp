@@ -1,7 +1,7 @@
 #if defined(__linux__) || defined(LINUX) || defined(__APPLE__) || defined(ANDROID) || (defined(_MSC_VER) && _MSC_VER >= 1800)
 
 #include <opencv2/imgproc.hpp> // Gaussian Blur
-#include <opencv2/core.hpp>    // Basic OpenCV structures (cv::Mat, cv::Scalar)
+#include <opencv2/core.hpp>    // Basic OpenCV structures (Mat, Scalar)
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp> // OpenCV window I/O
 #include <opencv2/features2d.hpp>
@@ -44,15 +44,15 @@ main(int, char**) {
   }
 
   std::string cascadeFrontalfilename = "../../data/lbpcascades/lbpcascade_frontalface.xml";
-  cv::Ptr<cv::CascadeClassifier> cascade = makePtr<cv::CascadeClassifier>(cascadeFrontalfilename);
-  cv::Ptr<cv::DetectionBasedTracker::IDetector> MainDetector = makePtr<CascadeDetectorAdapter>(cascade);
+  cv::Ptr<cv::CascadeClassifier> cascade = cv::makePtr<cv::CascadeClassifier>(cascadeFrontalfilename);
+  cv::Ptr<cv::DetectionBasedTracker::IDetector> MainDetector = cv::makePtr<CascadeDetectorAdapter>(cascade);
   if(cascade->empty()) {
     printf("cv::Error: Cannot load %s\n", cascadeFrontalfilename.c_str());
     return 2;
   }
 
-  cascade = makePtr<cv::CascadeClassifier>(cascadeFrontalfilename);
-  cv::Ptr<cv::DetectionBasedTracker::IDetector> TrackingDetector = makePtr<CascadeDetectorAdapter>(cascade);
+  cascade = cv::makePtr<cv::CascadeClassifier>(cascadeFrontalfilename);
+  cv::Ptr<cv::DetectionBasedTracker::IDetector> TrackingDetector = cv::makePtr<CascadeDetectorAdapter>(cascade);
   if(cascade->empty()) {
     printf("cv::Error: Cannot load %s\n", cascadeFrontalfilename.c_str());
     return 2;

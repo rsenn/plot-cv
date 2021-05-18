@@ -30,7 +30,7 @@ bool addRemovePt = false;
 
 static void
 onMouse(int event, int x, int y, int /*flags*/, void* /*param*/) {
-  if(event == EVENT_LBUTTONDOWN) {
+  if(event == cv::EVENT_LBUTTONDOWN) {
     point = cv::Point2f((float)x, (float)y);
     addRemovePt = true;
   }
@@ -39,7 +39,7 @@ onMouse(int event, int x, int y, int /*flags*/, void* /*param*/) {
 int
 main(int argc, char** argv) {
   cv::VideoCapture cap;
-  TermCriteria termcrit(TermCriteria::COUNT | TermCriteria::EPS, 20, 0.03);
+  cv::TermCriteria termcrit(cv::TermCriteria::COUNT | cv::TermCriteria::EPS, 20, 0.03);
   cv::Size subPixWinSize(10, 10), winSize(31, 31);
 
   const int MAX_COUNT = 500;
@@ -72,7 +72,7 @@ main(int argc, char** argv) {
       break;
 
     frame.copyTo(image);
-    cv::cvtColor(image, gray, COLOR_BGR2GRAY);
+    cv::cvtColor(image, gray, cv::COLOR_BGR2GRAY);
 
     if(nightMode)
       image = cv::Scalar::all(0);

@@ -38,7 +38,7 @@ the use of this software, even if advised of the possibility of such damage.
 
 #include <opencv2/highgui.hpp>
 #include <opencv2/calib3d.hpp>
-#include <opencv2/cv::aruco.hpp>
+#include <opencv2/aruco.hpp>
 #include <opencv2/imgproc.hpp>
 #include <vector>
 #include <iostream>
@@ -73,7 +73,7 @@ const char* keys = "{w        |       | Number of squares in X direction }"
 /**
  */
 static bool
-readDetectorParameters(string filename, Ptr<cv::aruco::DetectorParameters>& params) {
+readDetectorParameters(string filename, cv::Ptr<cv::aruco::DetectorParameters>& params) {
   cv::FileStorage fs(filename, cv::FileStorage::READ);
   if(!fs.isOpened())
     return false;
@@ -177,7 +177,7 @@ main(int argc, char* argv[]) {
   if(parser.get<bool>("pc"))
     calibrationFlags |= CALIB_FIX_PRINCIPAL_POINT;
 
-  Ptr<cv::aruco::DetectorParameters> detectorParams = cv::aruco::DetectorParameters::create();
+  cv::Ptr<cv::aruco::DetectorParameters> detectorParams = cv::aruco::DetectorParameters::create();
   if(parser.has("dp")) {
     bool readOk = readDetectorParameters(parser.get<string>("dp"), detectorParams);
     if(!readOk) {
@@ -209,11 +209,11 @@ main(int argc, char* argv[]) {
     waitTime = 10;
   }
 
-  Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
+  cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
 
   // create board object
-  Ptr<cv::aruco::GridBoard> gridboard = cv::aruco::GridBoard::create(markersX, markersY, markerLength, markerSeparation, dictionary);
-  Ptr<cv::aruco::Board> board = gridboard.staticCast<aruco::Board>();
+  cv::Ptr<cv::aruco::GridBoard> gridboard = cv::aruco::GridBoard::create(markersX, markersY, markerLength, markerSeparation, dictionary);
+  cv::Ptr<cv::aruco::Board> board = gridboard.staticCast<aruco::Board>();
 
   // collected frames for calibration
   vector<vector<vector<cv::Point2f>>> allCorners;
@@ -241,7 +241,7 @@ main(int argc, char* argv[]) {
     cv::putText(imageCopy,
             "Press 'c' to cv::add current frame. 'ESC' to finish and calibrate",
             cv::Point(10, 20),
-            FONT_HERSHEY_SIMPLEX,
+            cv::FONT_HERSHEY_SIMPLEX,
             0.5,
             cv::Scalar(255, 0, 0),
             2);

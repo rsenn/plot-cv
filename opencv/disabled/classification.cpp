@@ -1,7 +1,7 @@
 #include <fstream>
 #include <sstream>
 
-#include <opencv2/cv::dnn.hpp>
+#include <opencv2/dnn.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 

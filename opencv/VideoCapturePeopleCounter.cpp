@@ -58,9 +58,9 @@ protected:
     time_p now = high_resolution_clock::now();
     Person* person = NULL;
 
-    for(set<Person*>::iterator it = people.begin(); it != people.end(); ++it) {
-      if((*it)->hasSimilarContour(contour)) {
-        person = *it;
+    for(set<Person*>::iterator cv::it = people.begin(); it != people.end(); ++it) {
+      if((*cv::it)->hasSimilarContour(contour)) {
+        person = *cv::it;
         person->lastSeen = now;
         person->update(contour);
         countIfPersonIsCrossingTheRefLine(person);
@@ -83,20 +83,20 @@ protected:
   template<typename F>
   void
   unregisterPersonIf(F predicate) {
-    for(set<Person*>::iterator it = people.begin(); it != people.end();) {
-      Person* person = *it;
+    for(set<Person*>::iterator cv::it = people.begin(); it != people.end();) {
+      Person* person = *cv::it;
       if(predicate(person)) {
         lastFrameWherePersonWasSeen.erase(person);
         linesCrossedByPerson.erase(person);
-        it = people.erase(it);
+        cv::it = people.erase(it);
       } else {
-        ++it;
+        ++cv::it;
       }
     }
   }
 
 private:
-  Ptr<BackgroundSubtractor> backgroundSubstractor;
+  cv::Ptr<cv::BackgroundSubtractor> backgroundSubstractor;
   string videoCapturePath;
 
   int refLineY;
@@ -149,16 +149,16 @@ private:
     backgroundSubstractor->apply(frame, tempFrame);
 
     // binarize frame
-    cv::threshold(tempFrame, tempFrame, 128, 255, THRESH_BINARY);
+    cv::threshold(tempFrame, tempFrame, 128, 255, cv::THRESH_BINARY);
 
     // morph ops
-    cv::morphologyEx(tempFrame, tempFrame, MORPH_OPEN, cv::Mat(8, 8, CV_8UC1, cv::Scalar(1)));
-    cv::morphologyEx(tempFrame, tempFrame, MORPH_CLOSE, cv::Mat(8, 8, CV_8UC1, cv::Scalar(1)));
+    cv::morphologyEx(tempFrame, tempFrame, cv::MORPH_OPEN, cv::Mat(8, 8, CV_8UC1, cv::Scalar(1)));
+    cv::morphologyEx(tempFrame, tempFrame, cv::MORPH_CLOSE, cv::Mat(8, 8, CV_8UC1, cv::Scalar(1)));
 
     // find contours
     std::vector<std::vector<cv::Point>> contours;
     std::vector<cv::Vec4i> hierarchy;
-    cv::findContours(tempFrame, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+    cv::findContours(tempFrame, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
     // foreach identified person contour
     for(int i = 0; i < contours.size(); ++i) {

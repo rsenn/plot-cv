@@ -1,8 +1,8 @@
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
-#include <opencv2/cv::xphoto.hpp>
-#include <opencv2/cv::xphoto/oilpainting.hpp>
+#include <opencv2/xphoto.hpp>
+#include <opencv2/xphoto/oilpainting.hpp>
 #include <iostream>
 
 //using namespace cv;
@@ -17,7 +17,7 @@ static void addSlider(cv::String sliderName,
                       int* valSlider,
                       void (*f)(int, void*),
                       void* r);
-vector<int> colorSpace = {COLOR_BGR2GRAY, COLOR_BGR2HSV, COLOR_BGR2YUV, COLOR_BGR2XYZ};
+vector<int> colorSpace = {cv::COLOR_BGR2GRAY, cv::COLOR_BGR2HSV, COLOR_BGR2YUV, COLOR_BGR2XYZ};
 
 struct OilImage {
   cv::String winName = "Oil painting";
@@ -43,7 +43,7 @@ main(int argc, char* argv[]) {
     parser.printMessage();
     return 0;
   }
-  cv::String filename = parser.get<String>(0);
+  cv::String filename = parser.get<cv::String>(0);
   OilImage p;
   p.dynRatio = parser.get<int>("d");
   p.size = parser.get<int>("s");

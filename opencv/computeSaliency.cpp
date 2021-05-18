@@ -40,7 +40,7 @@
  //M*/
 
 #include <opencv2/core/utility.hpp>
-#include <opencv2/cv::saliency.hpp>
+#include <opencv2/saliency.hpp>
 #include <opencv2/highgui.hpp>
 #include <iostream>
 
@@ -68,10 +68,10 @@ main(int argc, char** argv) {
 
   cv::CommandLineParser parser(argc, argv, keys);
 
-  cv::String saliency_algorithm = parser.get<String>(0);
-  cv::String video_name = parser.get<String>(1);
+  cv::String saliency_algorithm = parser.get<cv::String>(0);
+  cv::String video_name = parser.get<cv::String>(1);
   int start_frame = parser.get<int>(2);
-  cv::String training_path = parser.get<String>(3);
+  cv::String training_path = parser.get<cv::String>(3);
 
   if(saliency_algorithm.empty() || video_name.empty()) {
     help();
@@ -81,7 +81,7 @@ main(int argc, char** argv) {
   // open the capture
   cv::VideoCapture cap;
   cap.open(video_name);
-  cap.set(CAP_PROP_POS_FRAMES, start_frame);
+  cap.set(cv::CAP_PROP_POS_FRAMES, start_frame);
 
   if(!cap.isOpened()) {
     help();
@@ -94,7 +94,7 @@ main(int argc, char** argv) {
   cv::Mat frame;
 
   // instantiates the specific Saliency
-  Ptr<Saliency> saliencyAlgorithm;
+  cv::Ptr<Saliency> saliencyAlgorithm;
 
   cv::Mat binaryMap;
   cv::Mat image;
@@ -174,7 +174,7 @@ main(int argc, char** argv) {
         if(frame.empty()) {
           return 0;
         }
-        cv::cvtColor(frame, frame, COLOR_BGR2GRAY);
+        cv::cvtColor(frame, frame, cv::COLOR_BGR2GRAY);
 
         cv::Mat saliencyMap;
         saliencyAlgorithm->computeSaliency(frame, saliencyMap);

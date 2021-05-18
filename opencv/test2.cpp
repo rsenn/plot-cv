@@ -44,18 +44,18 @@ threshold_callback(int, void*) {
   cv::Mat source2 = source.clone();
 
   // morphological closing with a column filter : retain only large vertical edges
-  cv::Mat morphKernelV = cv::getStructuringElement(MORPH_RECT, cv::Size(1, 10));
-  // cv::Mat morphKernelV = cv::getStructuringElement( MORPH_RECT, cv::Size( 2*10 + 1, 2*10+1 ), cv::Point( 10, 10 ) );
-  cv::morphologyEx(source2, morph, MORPH_CLOSE, morphKernelV);
+  cv::Mat morphKernelV = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(1, 10));
+  // cv::Mat morphKernelV = cv::getStructuringElement( cv::MORPH_RECT, cv::Size( 2*10 + 1, 2*10+1 ), cv::Point( 10, 10 ) );
+  cv::morphologyEx(source2, morph, cv::MORPH_CLOSE, morphKernelV);
 
   cv::Mat bwV;
   // binarize: will contain only large vertical edges
   cv::threshold(morph, bwV, 100, 255.0, cv::THRESH_BINARY | cv::THRESH_OTSU);
 
   // morphological closing with a row filter : retain only large horizontal edges
-  cv::Mat morphKernelH = cv::getStructuringElement(MORPH_RECT, cv::Size(10, 1));
-  // cv::Mat morphKernelH = cv::getStructuringElement( MORPH_RECT, cv::Size( 2*10 + 1, 2*10+1 ), cv::Point( 10, 10 ) );
-  cv::morphologyEx(source2, morph, MORPH_CLOSE, morphKernelH);
+  cv::Mat morphKernelH = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(10, 1));
+  // cv::Mat morphKernelH = cv::getStructuringElement( cv::MORPH_RECT, cv::Size( 2*10 + 1, 2*10+1 ), cv::Point( 10, 10 ) );
+  cv::morphologyEx(source2, morph, cv::MORPH_CLOSE, morphKernelH);
 
   cv::Mat bwH;
   // binarize: will contain only large horizontal edges
@@ -110,7 +110,7 @@ void
 setLabel(cv::Mat& im, const std::string label, std::vector<cv::Point>& contour) {
   double scale = 0.4;
   int baseline = 0;
-  int fontface = FONT_HERSHEY_SIMPLEX;
+  int fontface = cv::FONT_HERSHEY_SIMPLEX;
   int thickness = 1;
 
   cv::Size text = cv::getTextSize(label, fontface, scale, thickness, &baseline);

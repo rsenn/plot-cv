@@ -11,7 +11,7 @@ cv::Mat src, src_gray;
 
 int thresh = 100;
 int max_thresh = 255;
-RNG rng(12345);
+cv::RNG rng(12345);
 
 /// Function header
 void threshold_callback(int, void*);
@@ -53,7 +53,7 @@ threshold_callback(int, void*) {
   vector<cv::Vec4i> hierarchy;
 
   /// Detect edges using Threshold
-  cv::threshold(src_gray, threshold_output, thresh, 255, THRESH_BINARY);
+  cv::threshold(src_gray, threshold_output, thresh, 255, cv::THRESH_BINARY);
   /// Find contours
   cv::findContours(threshold_output, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 

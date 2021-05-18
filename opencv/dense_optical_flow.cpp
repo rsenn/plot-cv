@@ -6,7 +6,7 @@
 #include <iomanip>
 #include <vector>
 
-#include <opencv2/core/cv::ocl.hpp>
+#include <opencv2/core/ocl.hpp>
 #include <opencv2/core/utility.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/videoio.hpp>
@@ -30,7 +30,7 @@ getVisibleFlow(InputArray flow) {
   cv::UMat hsv;
   cv::merge(hsv_vec, hsv);
   cv::Mat img;
-  cv::cvtColor(hsv, img, COLOR_HSV2BGR);
+  cv::cvtColor(hsv, img, cv::COLOR_HSV2BGR);
   return img;
 }
 
@@ -78,7 +78,7 @@ main(int argc, const char* argv[]) {
     return 2;
   }
 
-  Ptr<DenseOpticalFlow> alg;
+  cv::Ptr<cv::DenseOpticalFlow> alg;
   if(algorithm == "fb")
     alg = cv::FarnebackOpticalFlow::create();
   else if(algorithm == "dis")
@@ -104,7 +104,7 @@ main(int argc, const char* argv[]) {
       cv::resize(input_frame, frame, small_size);
     else
       frame = input_frame;
-    cv::cvtColor(frame, frame, COLOR_BGR2GRAY);
+    cv::cvtColor(frame, frame, cv::COLOR_BGR2GRAY);
     cv::imshow("frame", frame);
     if(!prevFrame.empty()) {
       int64 t = cv::getTickCount();

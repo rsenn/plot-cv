@@ -82,11 +82,11 @@ TEST(cv::remap) {
   cv::Mat src, dst, xmap, ymap;
   gpu::GpuMat d_src, d_dst, d_xmap, d_ymap;
 
-  int interpolation = INTER_LINEAR;
+  int interpolation = cv::INTER_LINEAR;
   int borderMode = BORDER_REPLICATE;
 
   for(int size = 1000; size <= 4000; size *= 2) {
-    SUBTEST << size << 'x' << size << ", 8UC4, INTER_LINEAR, BORDER_REPLICATE";
+    SUBTEST << size << 'x' << size << ", 8UC4, cv::INTER_LINEAR, BORDER_REPLICATE";
 
     gen(src, size, size, CV_8UC4, 0, 256);
 
@@ -687,7 +687,7 @@ TEST(cv::erode) {
     SUBTEST << size << 'x' << size;
 
     gen(src, size, size, CV_8UC4, cv::Scalar::all(0), cv::Scalar::all(256));
-    ker = cv::getStructuringElement(MORPH_RECT, cv::Size(3, 3));
+    ker = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
 
     cv::erode(src, dst, ker);
 
@@ -710,22 +710,22 @@ TEST(cv::threshold) {
   gpu::GpuMat d_src, d_dst;
 
   for(int size = 2000; size <= 4000; size += 1000) {
-    SUBTEST << size << 'x' << size << ", 8UC1, THRESH_BINARY";
+    SUBTEST << size << 'x' << size << ", 8UC1, cv::THRESH_BINARY";
 
     gen(src, size, size, CV_8U, 0, 100);
 
-    cv::threshold(src, dst, 50.0, 0.0, THRESH_BINARY);
+    cv::threshold(src, dst, 50.0, 0.0, cv::THRESH_BINARY);
 
     CPU_ON;
-    cv::threshold(src, dst, 50.0, 0.0, THRESH_BINARY);
+    cv::threshold(src, dst, 50.0, 0.0, cv::THRESH_BINARY);
     CPU_OFF;
 
     d_src.upload(src);
 
-    gpu::cv::threshold(d_src, d_dst, 50.0, 0.0, THRESH_BINARY);
+    gpu::cv::threshold(d_src, d_dst, 50.0, 0.0, cv::THRESH_BINARY);
 
     GPU_ON;
-    gpu::cv::threshold(d_src, d_dst, 50.0, 0.0, THRESH_BINARY);
+    gpu::cv::threshold(d_src, d_dst, 50.0, 0.0, cv::THRESH_BINARY);
     GPU_OFF;
   }
 
@@ -1007,18 +1007,18 @@ TEST(cv::equalizeHist) {
 }
 
 TEST(cv::Canny) {
-  cv::Mat img = cv::imread(abspath("aloeL.jpg"), cv::LOAD_IMAGE_GRAYSCALE);
+  cv::Mat cv::img = cv::imread(abspath("aloeL.jpg"), cv::LOAD_IMAGE_GRAYSCALE);
 
-  if(img.empty())
+  if(cv::img.empty())
     throw runtime_error("can't open aloeL.jpg");
 
-  cv::Mat edges(img.size(), CV_8UC1);
+  cv::Mat edges(cv::img.size(), CV_8UC1);
 
   CPU_ON;
-  cv::Canny(img, edges, 50.0, 100.0);
+  cv::Canny(cv::img, edges, 50.0, 100.0);
   CPU_OFF;
 
-  gpu::GpuMat d_img(img);
+  gpu::GpuMat d_img(cv::img);
   gpu::GpuMat d_edges;
   gpu::CannyBuf d_buf;
 
@@ -1101,7 +1101,7 @@ TEST(gemm) {
 }
 
 TEST(GoodFeaturesToTrack) {
-  cv::Mat src = cv::imread(abspath("aloeL.jpg"), IMREAD_GRAYSCALE);
+  cv::Mat src = cv::imread(abspath("aloeL.jpg"), cv::IMREAD_GRAYSCALE);
   if(src.empty())
     throw runtime_error("can't open aloeL.jpg");
 
@@ -1135,7 +1135,7 @@ TEST(PyrLKOpticalFlow) {
     throw runtime_error("can't open rubberwhale2.png");
 
   cv::Mat gray_frame;
-  cv::cvtColor(frame0, gray_frame, COLOR_BGR2GRAY);
+  cv::cvtColor(frame0, gray_frame, cv::COLOR_BGR2GRAY);
 
   for(int points = 1000; points <= 8000; points *= 2) {
     SUBTEST << points;
@@ -1182,8 +1182,8 @@ TEST(cv::FarnebackOpticalFlow) {
       for(int useGaussianBlur = 0; useGaussianBlur < 2; ++useGaussianBlur) {
 
         SUBTEST << "dataset=" << datasets[i] << ", fastPyramids=" << fastPyramids << ", useGaussianBlur=" << useGaussianBlur;
-        cv::Mat frame0 = cv::imread(abspath(datasets[i] + "1.png"), IMREAD_GRAYSCALE);
-        cv::Mat frame1 = cv::imread(abspath(datasets[i] + "2.png"), IMREAD_GRAYSCALE);
+        cv::Mat frame0 = cv::imread(abspath(datasets[i] + "1.png"), cv::IMREAD_GRAYSCALE);
+        cv::Mat frame1 = cv::imread(abspath(datasets[i] + "2.png"), cv::IMREAD_GRAYSCALE);
         if(frame0.empty())
           throw runtime_error("can't open " + datasets[i] + "1.png");
         if(frame1.empty())
@@ -1219,7 +1219,7 @@ TEST(cv::FarnebackOpticalFlow) {
 namespace cv {
 template<>
 void
-Ptr<CvBGStatModel>::delete_obj() {
+cv::Ptr<CvBGStatModel>::delete_obj() {
   cvReleaseBGStatModel(&obj);
 }
 } // namespace cv
@@ -1227,18 +1227,18 @@ Ptr<CvBGStatModel>::delete_obj() {
 TEST(FGDStatModel) {
   const std::string inputFile = abspath("768x576.avi");
 
-  cv::VideoCapture cap(inputFile);
-  if(!cap.isOpened())
+  cv::VideoCapture cv::cap(inputFile);
+  if(!cv::cap.isOpened())
     throw runtime_error("can't open 768x576.avi");
 
   cv::Mat frame;
-  cap >> frame;
+  cv::cap >> frame;
 
   IplImage ipl_frame = frame;
   cv::Ptr<CvBGStatModel> model(cvCreateFGDStatModel(&ipl_frame));
 
   while(!TestSystem::instance().stop()) {
-    cap >> frame;
+    cv::cap >> frame;
     ipl_frame = frame;
 
     TestSystem::instance().cpuOn();
@@ -1249,15 +1249,15 @@ TEST(FGDStatModel) {
   }
   TestSystem::instance().cpuComplete();
 
-  cap.open(inputFile);
+  cv::cap.open(inputFile);
 
-  cap >> frame;
+  cv::cap >> frame;
 
   cv::gpu::GpuMat d_frame(frame);
   cv::gpu::FGDStatModel d_model(d_frame);
 
   while(!TestSystem::instance().stop()) {
-    cap >> frame;
+    cv::cap >> frame;
     d_frame.upload(frame);
 
     TestSystem::instance().gpuOn();
@@ -1272,12 +1272,12 @@ TEST(FGDStatModel) {
 TEST(MOG) {
   const std::string inputFile = abspath("768x576.avi");
 
-  cv::VideoCapture cap(inputFile);
-  if(!cap.isOpened())
+  cv::VideoCapture cv::cap(inputFile);
+  if(!cv::cap.isOpened())
     throw runtime_error("can't open 768x576.avi");
 
   cv::Mat frame;
-  cap >> frame;
+  cv::cap >> frame;
 
   cv::BackgroundSubtractorMOG mog;
   cv::Mat foreground;
@@ -1285,7 +1285,7 @@ TEST(MOG) {
   cv::mog(frame, foreground, 0.01);
 
   while(!TestSystem::instance().stop()) {
-    cap >> frame;
+    cv::cap >> frame;
 
     TestSystem::instance().cpuOn();
 
@@ -1295,9 +1295,9 @@ TEST(MOG) {
   }
   TestSystem::instance().cpuComplete();
 
-  cap.open(inputFile);
+  cv::cap.open(inputFile);
 
-  cap >> frame;
+  cv::cap >> frame;
 
   cv::gpu::GpuMat d_frame(frame);
   cv::gpu::MOG_GPU d_mog;
@@ -1306,7 +1306,7 @@ TEST(MOG) {
   d_mog(d_frame, d_foreground, 0.01f);
 
   while(!TestSystem::instance().stop()) {
-    cap >> frame;
+    cv::cap >> frame;
     d_frame.upload(frame);
 
     TestSystem::instance().gpuOn();
@@ -1321,12 +1321,12 @@ TEST(MOG) {
 TEST(MOG2) {
   const std::string inputFile = abspath("768x576.avi");
 
-  cv::VideoCapture cap(inputFile);
-  if(!cap.isOpened())
+  cv::VideoCapture cv::cap(inputFile);
+  if(!cv::cap.isOpened())
     throw runtime_error("can't open 768x576.avi");
 
   cv::Mat frame;
-  cap >> frame;
+  cv::cap >> frame;
 
   cv::BackgroundSubtractorMOG2 mog2;
   cv::Mat foreground;
@@ -1336,7 +1336,7 @@ TEST(MOG2) {
   mog2.getBackgroundImage(background);
 
   while(!TestSystem::instance().stop()) {
-    cap >> frame;
+    cv::cap >> frame;
 
     TestSystem::instance().cpuOn();
 
@@ -1347,9 +1347,9 @@ TEST(MOG2) {
   }
   TestSystem::instance().cpuComplete();
 
-  cap.open(inputFile);
+  cv::cap.open(inputFile);
 
-  cap >> frame;
+  cv::cap >> frame;
 
   cv::gpu::GpuMat d_frame(frame);
   cv::gpu::MOG2_GPU d_mog2;
@@ -1360,7 +1360,7 @@ TEST(MOG2) {
   d_mog2.getBackgroundImage(d_background);
 
   while(!TestSystem::instance().stop()) {
-    cap >> frame;
+    cv::cap >> frame;
     d_frame.upload(frame);
 
     TestSystem::instance().gpuOn();

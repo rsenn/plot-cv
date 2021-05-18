@@ -81,7 +81,7 @@ enum { DETECTION = 0, CAPTURING = 1, CALIBRATED = 2 };
 enum Pattern { CHESSBOARD, CIRCLES_GRID, ASYMMETRIC_CIRCLES_GRID };
 
 static double
-computeReprojectionErrors(const vector<vector<Point3f>>& objectPoints,
+computeReprojectionErrors(const vector<vector<cv::Point3f>>& objectPoints,
                           const vector<vector<cv::Point2f>>& imagePoints,
                           const vector<cv::Mat>& rvecs,
                           const vector<cv::Mat>& tvecs,
@@ -106,20 +106,20 @@ computeReprojectionErrors(const vector<vector<Point3f>>& objectPoints,
 }
 
 static void
-calcChessboardCorners(cv::Size boardSize, float squareSize, vector<Point3f>& corners, Pattern patternType = CHESSBOARD) {
+calcChessboardCorners(cv::Size boardSize, float squareSize, vector<cv::Point3f>& corners, Pattern patternType = CHESSBOARD) {
   corners.cv::resize(0);
 
   switch(patternType) {
     case CHESSBOARD:
     case CIRCLES_GRID:
       for(int i = 0; i < boardSize.height; i++)
-        for(int j = 0; j < boardSize.width; j++) corners.push_back(Point3f(float(j * squareSize), float(i * squareSize), 0));
+        for(int j = 0; j < boardSize.width; j++) corners.push_back(cv::Point3f(float(j * squareSize), float(i * squareSize), 0));
       break;
 
     case ASYMMETRIC_CIRCLES_GRID:
       for(int i = 0; i < boardSize.height; i++)
         for(int j = 0; j < boardSize.width; j++)
-          corners.push_back(Point3f(float((2 * j + i % 2) * squareSize), float(i * squareSize), 0));
+          corners.push_back(cv::Point3f(float((2 * j + i % 2) * squareSize), float(i * squareSize), 0));
       break;
 
     default: CV_Error(CV_StsBadArg, "Unknown pattern type\n");
@@ -146,7 +146,7 @@ runCalibration(vector<vector<cv::Point2f>> imagePoints,
 
   distCoeffs = cv::Mat::zeros(8, 1, CV_64F);
 
-  vector<vector<Point3f>> objectPoints(1);
+  vector<vector<cv::Point3f>> objectPoints(1);
   calcChessboardCorners(boardSize, squareSize, objectPoints[0], patternType);
 
   objectPoints.cv::resize(imagePoints.size(), objectPoints[0]);
@@ -221,8 +221,8 @@ saveCameraParams(const string& filename,
     CV_Assert(rvecs[0].type() == tvecs[0].type());
     cv::Mat bigmat((int)rvecs.size(), 6, rvecs[0].type());
     for(int i = 0; i < (int)rvecs.size(); i++) {
-      cv::Mat r = bigmat(Range(i, i + 1), Range(0, 3));
-      cv::Mat t = bigmat(Range(i, i + 1), Range(3, 6));
+      cv::Mat r = bigmat(cv::Range(i, i + 1), cv::Range(0, 3));
+      cv::Mat t = bigmat(cv::Range(i, i + 1), cv::Range(3, 6));
 
       CV_Assert(rvecs[i].rows == 3 && rvecs[i].cols == 1);
       CV_Assert(tvecs[i].rows == 3 && tvecs[i].cols == 1);
@@ -447,7 +447,7 @@ main(int argc, char** argv) {
       cv::flip(view, view, 0);
 
     vector<cv::Point2f> pointbuf;
-    cv::cvtColor(view, viewGray, COLOR_BGR2GRAY);
+    cv::cvtColor(view, viewGray, cv::COLOR_BGR2GRAY);
 
     bool found;
     switch(pattern) {
@@ -458,13 +458,13 @@ main(int argc, char** argv) {
                                       CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE);
         break;
       case CIRCLES_GRID: found = cv::findCirclesGrid(view, boardSize, pointbuf); break;
-      case ASYMMETRIC_CIRCLES_GRID: found = cv::findCirclesGrid(view, boardSize, pointbuf, CALIB_CB_ASYMMETRIC_GRID); break;
+      case ASYMMETRIC_CIRCLES_GRID: found = cv::findCirclesGrid(view, boardSize, pointbuf, cv::CALIB_CB_ASYMMETRIC_GRID); break;
       default: return fprintf(stderr, "Unknown pattern type\n"), -1;
     }
 
     // improve the found corners' coordinate accuracy
     if(pattern == CHESSBOARD && found)
-      cv::cornerSubPix(viewGray, pointbuf, cv::Size(11, 11), cv::Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+      cv::cornerSubPix(viewGray, pointbuf, cv::Size(11, 11), cv::Size(-1, -1), cv::TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
 
     if(mode == CAPTURING && found && (!capture.isOpened() || clock() - prevTimestamp > delay * 1e-3 * CLOCKS_PER_SEC)) {
       imagePoints.push_back(pointbuf);
@@ -548,7 +548,7 @@ main(int argc, char** argv) {
       if(!view.data)
         continue;
       // cv::undistort( view, rview, cameraMatrix, distCoeffs, cameraMatrix );
-      cv::remap(view, rview, map1, map2, INTER_LINEAR);
+      cv::remap(view, rview, map1, map2, cv::INTER_LINEAR);
       cv::imshow("Image View", rview);
       int c = 0xff & cv::waitKey();
       if((c & 255) == 27 || c == 'q' || c == 'Q')

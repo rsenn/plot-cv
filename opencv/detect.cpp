@@ -61,11 +61,11 @@ detectAndDisplay(cv::Mat frame) {
   std::vector<cv::Rect> faces;
   cv::Mat frame_gray;
 
-  cv::cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
+  cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
   cv::equalizeHist(frame_gray, frame_gray);
 
   //-- Detect faces
-  face_cascade.detectMultiScale(frame_gray, faces, 1.1, 2, 0 | CASCADE_SCALE_IMAGE, cv::Size(30, 30));
+  face_cascade.detectMultiScale(frame_gray, faces, 1.1, 2, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(30, 30));
 
   for(size_t i = 0; i < faces.size(); i++) {
     const cv::Point center(faces[i].x + faces[i].width / 2, faces[i].y + faces[i].height / 2);

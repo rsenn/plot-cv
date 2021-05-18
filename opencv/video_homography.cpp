@@ -43,25 +43,25 @@ void
 drawMatchesRelative(const vector<KeyPoint>& train,
                     const vector<KeyPoint>& query,
                     std::vector<cv::DMatch>& matches,
-                    cv::Mat& img,
+                    cv::Mat& cv::img,
                     const vector<unsigned char>& mask = vector<unsigned char>()) {
   for(int i = 0; i < (int)matches.size(); i++) {
     if(mask.empty() || mask[i]) {
-      cv::Point2f pt_new = query[matches[i].queryIdx].pt;
-      cv::Point2f pt_old = train[matches[i].trainIdx].pt;
+      cv::Point2f pt_new = query[matches[i].queryIdx].cv::pt;
+      cv::Point2f pt_old = train[matches[i].trainIdx].cv::pt;
 
-      cv::line(img, pt_new, pt_old, cv::Scalar(125, 255, 125), 1);
-      cv::circle(img, pt_new, 2, cv::Scalar(255, 0, 125), 1);
+      cv::line(cv::img, pt_new, pt_old, cv::Scalar(125, 255, 125), 1);
+      cv::circle(cv::img, pt_new, 2, cv::Scalar(255, 0, 125), 1);
     }
   }
 }
 
-// Takes a descriptor and turns it into an xy point
+// Takes a descriptor and turns cv::it into an xy point
 void
 keypoints2points(const vector<KeyPoint>& in, vector<cv::Point2f>& out) {
   out.clear();
   out.reserve(in.size());
-  for(size_t i = 0; i < in.size(); ++i) { out.push_back(in[i].pt); }
+  for(size_t i = 0; i < in.size(); ++i) { out.push_back(in[i].cv::pt); }
 }
 
 // Takes an xy point and appends that to a keypoint structure
@@ -102,8 +102,8 @@ matches2points(const vector<KeyPoint>& train,
 
     const DMatch& dmatch = matches[i];
 
-    pts_query.push_back(query[dmatch.queryIdx].pt);
-    pts_train.push_back(train[dmatch.trainIdx].pt);
+    pts_query.push_back(query[dmatch.queryIdx].cv::pt);
+    pts_train.push_back(train[dmatch.trainIdx].cv::pt);
   }
 }
 
@@ -121,7 +121,7 @@ main(int ac, char** av) {
     return 1;
   }
 
-  Ptr<BriefDescriptorExtractor> brief = BriefDescriptorExtractor::create(32);
+  cv::Ptr<BriefDescriptorExtractor> brief = BriefDescriptorExtractor::create(32);
 
   cv::VideoCapture capture;
   capture.open(atoi(av[1]));
@@ -151,7 +151,7 @@ main(int ac, char** av) {
   bool ref_live = true;
 
   cv::Mat train_desc, query_desc;
-  Ptr<FastFeatureDetector> detector = FastFeatureDetector::create(10, true);
+  cv::Ptr<FastFeatureDetector> detector = FastFeatureDetector::create(10, true);
 
   cv::Mat H_prev = cv::Mat::eye(3, 3, CV_32FC1);
   for(;;) {
@@ -176,7 +176,7 @@ main(int ac, char** av) {
       matches2points(train_kpts, query_kpts, matches, train_pts, query_pts);
 
       if(matches.size() > 5) {
-        cv::Mat H = cv::findHomography(train_pts, query_pts, RANSAC, 4, match_mask);
+        cv::Mat H = cv::findHomography(train_pts, query_pts, cv::RANSAC, 4, match_mask);
         if(cv::countNonZero(cv::Mat(match_mask)) > 15) {
           H_prev = H;
         } else

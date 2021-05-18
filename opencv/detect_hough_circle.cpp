@@ -29,7 +29,7 @@ const char* TABLE = "hough_circles";
 
 ofstream text;
 
-Mat
+cv::Mat
 applyFilters(cv::Mat& img) {
   cv::Mat var_img;
   cv::cvtColor(img, var_img, cv::COLOR_BGR2GRAY);
@@ -39,15 +39,15 @@ applyFilters(cv::Mat& img) {
   return var_img;
 }
 
-vector<Vec3f>
+vector<cv::Vec3f>
 getCircles(cv::Mat& img) {
-  vector<Vec3f> circles;
+  vector<cv::Vec3f> circles;
   cv::HoughCircles(img, circles, cv::HOUGH_GRADIENT, 1, img.rows / 8, 2, 32.0, 10, 30);
   return circles;
 }
 
-Point
-getCenterCoordinates(vector<Vec3f> circles) {
+cv::Point
+getCenterCoordinates(vector<cv::Vec3f> circles) {
   for(size_t i = 0; i < circles.size(); i++) {
     int radius = cvRound(circles[i][2]);
     if(radius >= MIN_RADIUS && radius <= MAX_RADIUS)
@@ -56,13 +56,13 @@ getCenterCoordinates(vector<Vec3f> circles) {
   return cv::Point(0, 0);
 }
 
-Point
+cv::Point
 rightCircle(cv::Mat& img) {
   int width = img.cols;
   cv::Rect roi(width - 150, 0, 150, 150);
   cv::Mat sub_img = img(roi);
   cv::Mat gray = applyFilters(sub_img);
-  vector<Vec3f> circles = getCircles(gray);
+  vector<cv::Vec3f> circles = getCircles(gray);
   if(circles.size() <= 0)
     return cv::Point(0, 0);
   cv::Point center = getCenterCoordinates(circles);
@@ -70,13 +70,13 @@ rightCircle(cv::Mat& img) {
   return cv::Point(center.x, center.y);
 }
 
-Point
+cv::Point
 leftCircle(cv::Mat& img) {
   cv::Rect roi(0, 0, 150, 150);
 
   cv::Mat sub_img = img(roi);
   cv::Mat gray = applyFilters(sub_img);
-  vector<Vec3f> circles = getCircles(gray);
+  vector<cv::Vec3f> circles = getCircles(gray);
   if(circles.size() <= 0)
     return cv::Point(0, 0);
   cv::Point center = getCenterCoordinates(circles);

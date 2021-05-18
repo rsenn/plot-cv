@@ -49,8 +49,8 @@
  */
 #include "precomp.hpp"
 
-#include <opencv2/core/cv::utils/logger.hpp>
-#include <opencv2/core/cv::utils/filesystem.hpp>
+#include <opencv2/core/utils/logger.hpp>
+#include <opencv2/core/utils/filesystem.hpp>
 
 #include <iostream>
 #include <string.h>

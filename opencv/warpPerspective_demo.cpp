@@ -21,7 +21,7 @@ help(char** argv) {
        << endl;
 }
 static void onMouse(int event, int x, int y, int, void*);
-cv::Mat warping(Mat image, cv::Size warped_image_size, vector<cv::Point2f> srcPoints, vector<Point2f> dstPoints);
+cv::Mat warping(cv::Mat image, cv::Size warped_image_size, vector<cv::Point2f> srcPoints, vector<cv::Point2f> dstPoints);
 cv::String windowTitle = "Perspective Transformation Demo";
 cv::String labels[4] = {"TL", "TR", "BR", "BL"};
 vector<cv::Point2f> roi_corners;
@@ -43,7 +43,7 @@ main(int argc, char** argv) {
   roi_corners.push_back(cv::Point2f((float)(original_image.cols / 1.15), (float)(original_image.rows / 3.32)));
   roi_corners.push_back(cv::Point2f((float)(original_image.cols / 1.33), (float)(original_image.rows / 1.10)));
   roi_corners.push_back(cv::Point2f((float)(original_image.cols / 1.93), (float)(original_image.rows / 1.36)));
-  cv::namedWindow(windowTitle, WINDOW_NORMAL);
+  cv::namedWindow(windowTitle, cv::WINDOW_NORMAL);
   cv::namedWindow("Warped Image", cv::WINDOW_AUTOSIZE);
   cv::moveWindow("Warped Image", 20, 20);
   cv::moveWindow(windowTitle, 330, 20);
@@ -58,7 +58,7 @@ main(int argc, char** argv) {
         if(i > 0) {
           cv::line(image, roi_corners[i - 1], roi_corners[(i)], cv::Scalar(0, 0, 255), 2);
           cv::circle(image, roi_corners[i], 5, cv::Scalar(0, 255, 0), 3);
-          cv::putText(image, labels[i].c_str(), roi_corners[i], FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(255, 0, 0), 2);
+          cv::putText(image, labels[i].c_str(), roi_corners[i], cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(255, 0, 0), 2);
         }
       }
       cv::imshow(windowTitle, image);
@@ -68,7 +68,7 @@ main(int argc, char** argv) {
       for(int i = 0; i < 4; ++i) {
         cv::line(image, roi_corners[i], roi_corners[(i + 1) % 4], cv::Scalar(0, 0, 255), 2);
         cv::circle(image, roi_corners[i], 5, cv::Scalar(0, 255, 0), 3);
-        cv::putText(image, labels[i].c_str(), roi_corners[i], FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(255, 0, 0), 2);
+        cv::putText(image, labels[i].c_str(), roi_corners[i], cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(255, 0, 0), 2);
       }
       cv::imshow(windowTitle, image);
       dst_corners[0].x = 0;
@@ -109,21 +109,21 @@ onMouse(int event, int x, int y, int, void*) {
   // Action when left button is pressed
   if(roi_corners.size() == 4) {
     for(int i = 0; i < 4; ++i) {
-      if((event == EVENT_LBUTTONDOWN) & ((abs(roi_corners[i].x - x) < 10)) & (abs(roi_corners[i].y - y) < 10)) {
+      if((event == cv::EVENT_LBUTTONDOWN) & ((abs(roi_corners[i].x - x) < 10)) & (abs(roi_corners[i].y - y) < 10)) {
         selected_corner_index = i;
         dragging = true;
       }
     }
-  } else if(event == EVENT_LBUTTONDOWN) {
+  } else if(event == cv::EVENT_LBUTTONDOWN) {
     roi_corners.push_back(cv::Point2f((float)x, (float)y));
     validation_needed = true;
   }
   // Action when left button is released
-  if(event == EVENT_LBUTTONUP) {
+  if(event == cv::EVENT_LBUTTONUP) {
     dragging = false;
   }
   // Action when left button is pressed and mouse has moved over the window
-  if((event == EVENT_MOUSEMOVE) && dragging) {
+  if((event == cv::EVENT_MOUSEMOVE) && dragging) {
     roi_corners[selected_corner_index].x = (float)x;
     roi_corners[selected_corner_index].y = (float)y;
     validation_needed = true;

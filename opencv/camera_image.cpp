@@ -2,7 +2,7 @@
 #include <unistd.h>
 //using namespace cv;
 
-Mat
+cv::Mat
 cameraCapture(cv::VideoCapture& cap) {
   cv::Mat img;
   cap >> img;
@@ -29,7 +29,7 @@ main(int argc, char** argv) {
 
     cv::Mat diff = cv::Mat::zeros(ref.size(), ref.type());
     cv::absdiff(ref, current, diff);
-    cv::threshold(diff, diff, 20, 1, THRESH_BINARY);
+    cv::threshold(diff, diff, 20, 1, cv::THRESH_BINARY);
     float different_pixels = cv::sum(diff)[0];
     std::cout << "Detected " << different_pixels << " different pixels";
 

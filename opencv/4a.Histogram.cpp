@@ -13,9 +13,9 @@ main() {
     printf("ERROR: khong the mo camera\r\n");
     return -1;
   }
-  cv::namedWindow("Camera", WINDOW_NORMAL);
+  cv::namedWindow("Camera", cv::WINDOW_NORMAL);
   cv::resizeWindow("Camera", 300, 300);
-  cv::namedWindow("Histogram", WINDOW_NORMAL);
+  cv::namedWindow("Histogram", cv::WINDOW_NORMAL);
   cv::resizeWindow("Histogram", 300, 300);
 
   while(1) {
@@ -60,12 +60,12 @@ main() {
               b_hist,         // Output array
               0,              // lower limit
               histImage.rows, // upper limit, height of histImage
-              NORM_MINMAX,    // type of normalization
+              cv::NORM_MINMAX,    // type of normalization
               -1,             // output normalized array will be the same type as the input
               cv::Mat()           // Optional mask
     );
-    cv::normalize(g_hist, g_hist, 0, histImage.rows, NORM_MINMAX, -1, cv::Mat());
-    cv::normalize(r_hist, r_hist, 0, histImage.rows, NORM_MINMAX, -1, cv::Mat());
+    cv::normalize(g_hist, g_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat());
+    cv::normalize(r_hist, r_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat());
     // Draw lines of histogram
     for(int i = 1; i < histSize; i++) {
       cv::line(histImage,

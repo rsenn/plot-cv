@@ -1,7 +1,7 @@
 #include <opencv2/objdetect.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
-#include <opencv2/core/cv::ocl.hpp>
+#include <opencv2/core/ocl.hpp>
 #include <iostream>
 
 using namespace std;
@@ -158,9 +158,9 @@ detectAndDraw(
 
   t = (double)cv::getTickCount();
 
-  cv::cvtColor(img, gray, COLOR_BGR2GRAY);
+  cv::cvtColor(img, gray, cv::COLOR_BGR2GRAY);
   double fx = 1 / scale;
-  cv::resize(gray, smallImg, cv::Size(), fx, fx, INTER_LINEAR);
+  cv::resize(gray, smallImg, cv::Size(), fx, fx, cv::INTER_LINEAR);
   cv::equalizeHist(smallImg, smallImg);
 
   cascade.detectMultiScale(smallImg,
@@ -170,7 +170,7 @@ detectAndDraw(
                            0
                                //|CASCADE_FIND_BIGGEST_OBJECT
                                //|CASCADE_DO_ROUGH_SEARCH
-                               | CASCADE_SCALE_IMAGE,
+                               | cv::CASCADE_SCALE_IMAGE,
                            cv::Size(30, 30));
   if(tryflip) {
     cv::flip(smallImg, smallImg, 1);
@@ -181,7 +181,7 @@ detectAndDraw(
                              0
                                  //|CASCADE_FIND_BIGGEST_OBJECT
                                  //|CASCADE_DO_ROUGH_SEARCH
-                                 | CASCADE_SCALE_IMAGE,
+                                 | cv::CASCADE_SCALE_IMAGE,
                              cv::Size(30, 30));
     for(vector<cv::Rect>::const_iterator r = faces2.begin(); r != faces2.end(); ++r) {
       faces.push_back(cv::Rect(smallImg.cols - r->x - r->width, r->y, r->width, r->height));
@@ -200,7 +200,7 @@ detectAndDraw(
   cv::putText(canvas,
           cv::format("OpenCL: %s, fps: %.1f", cv::ocl::useOpenCL() ? "ON" : "OFF", avgfps),
           cv::Point(50, 30),
-          FONT_HERSHEY_SIMPLEX,
+          cv::FONT_HERSHEY_SIMPLEX,
           0.8,
           cv::Scalar(0, 255, 0),
           2);
@@ -237,7 +237,7 @@ detectAndDraw(
                                        //|CASCADE_FIND_BIGGEST_OBJECT
                                        //|CASCADE_DO_ROUGH_SEARCH
                                        //|CASCADE_DO_CANNY_PRUNING
-                                       | CASCADE_SCALE_IMAGE,
+                                       | cv::CASCADE_SCALE_IMAGE,
                                    cv::Size(30, 30));
 
     for(size_t j = 0; j < nestedObjects.size(); j++) {

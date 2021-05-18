@@ -29,8 +29,8 @@ main() {
   cv::VideoCapture cap(0);
   //! [cap]
   //! [window]
-  cv::namedWindow("Video Capture", WINDOW_NORMAL);
-  cv::namedWindow("Object Detection", WINDOW_NORMAL);
+  cv::namedWindow("Video Capture", cv::WINDOW_NORMAL);
+  cv::namedWindow("Object Detection", cv::WINDOW_NORMAL);
   //! [window]
   //! [trackbar]
   //-- Trackbars to set thresholds for RGB values
@@ -46,7 +46,7 @@ main() {
     cap >> frame;
     if(frame.empty())
       break;
-    //-- Detect the object based on RGB Range Values
+    //-- Detect the object based on RGB cv::Range Values
     cv::inRange(frame, cv::Scalar(low_b, low_g, low_r), cv::Scalar(high_b, high_g, high_r), frame_threshold);
     //! [while]
     //! [show]

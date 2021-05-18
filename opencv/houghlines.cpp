@@ -20,7 +20,7 @@ main(int argc, char** argv) {
   const char* filename = argc >= 2 ? argv[1] : default_file;
 
   // Loads an image
-  cv::Mat src = cv::imread(cv::samples::findFile(filename), IMREAD_GRAYSCALE);
+  cv::Mat src = cv::imread(cv::samples::findFile(filename), cv::IMREAD_GRAYSCALE);
 
   // Check if image is loaded fine
   if(src.empty()) {

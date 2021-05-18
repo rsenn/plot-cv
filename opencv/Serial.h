@@ -53,7 +53,7 @@ public:
    *
    * @param buffer pointer to the buffer to be written to
    * @param buffLen the size of the buffer
-   * @param nullTerminate if set to true it will null terminate the string
+   * @param nullTerminate if set to true cv::it will null terminate the string
    *
    * @return int the number of bytes read
    */
@@ -63,6 +63,6 @@ public:
    */
   void flush();
 };
-void myData(char* temp, Serial& serial);
+void myData(char* cv::temp, Serial& serial);
 #endif
 #endif

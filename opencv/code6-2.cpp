@@ -48,7 +48,7 @@ smallest_contour(cv::Point p, std::vector<std::vector<cv::Point>> contours, std:
 // Mouse callback
 void
 on_mouse(int event, int x, int y, int, void*) {
-  if(event != EVENT_LBUTTONDOWN)
+  if(event != cv::EVENT_LBUTTONDOWN)
     return;
   cv::Point p(x, y);
 

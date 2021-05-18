@@ -6,7 +6,7 @@
 using namespace std;
 std::vector<std::vector<cv::Point>> contours;
 std::vector<cv::Vec4i> hierarchy;
-RNG rng(12345);
+cv::RNG rng(12345);
 double area;
 int
 main(int argc, char** argv) {
@@ -14,9 +14,9 @@ main(int argc, char** argv) {
   ;
   image = cv::imread(argv[1], 1);
   Result = image;
-  cv::cvtColor(image, gray, COLOR_BGR2GRAY);
-  cv::threshold(gray, gray, 177, 200, THRESH_BINARY);
-  cv::findContours(gray, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+  cv::cvtColor(image, gray, cv::COLOR_BGR2GRAY);
+  cv::threshold(gray, gray, 177, 200, cv::THRESH_BINARY);
+  cv::findContours(gray, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
   cv::Mat drawing = cv::Mat::zeros(gray.size(), CV_8UC3);
   for(int i = 0; i < contours.size(); i++) {
     area = cv::contourArea(contours[i]);

@@ -24,7 +24,7 @@ cv::CascadeClassifier face_cascade;
 cv::CascadeClassifier eyes_cascade;
 string window_name = "Capture - Face detection";
 
-RNG rng(12345);
+cv::RNG rng(12345);
 
 /**
  * @function main
@@ -75,7 +75,7 @@ detectAndDisplay(cv::Mat frame) {
   std::vector<cv::Rect> faces;
   cv::Mat frame_gray;
 
-  cv::cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
+  cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
   cv::equalizeHist(frame_gray, frame_gray);
 
   //-- Detect faces

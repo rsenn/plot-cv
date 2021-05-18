@@ -1,7 +1,7 @@
 
 #include <iostream>
 #include <opencv2/core.hpp>
-#include <opencv2/core/cv::ocl.hpp>
+#include <opencv2/core/ocl.hpp>
 #include <opencv2/core/utility.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/imgcodecs.hpp>
@@ -11,7 +11,7 @@
 //using namespace cv;
 using namespace std;
 
-Ptr<CLAHE> pFilter;
+cv::Ptr<CLAHE> pFilter;
 int tilesize;
 int cliplimit;
 
@@ -87,7 +87,7 @@ main(int argc, char** argv) {
       break;
     }
 
-    cv::cvtColor(frame, frame, COLOR_BGR2GRAY);
+    cv::cvtColor(frame, frame, cv::COLOR_BGR2GRAY);
     pFilter->apply(frame, outframe);
 
     cv::imshow("CLAHE", outframe);

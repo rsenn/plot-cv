@@ -113,9 +113,9 @@ thresh_callback(int, void*) {
   cv::Mat frame_hsv, frame_grey, frame_thresh, frame_thresh_circle, canny_output, drawing;
   vector<vector<cv::Point>> contours;
   vector<cv::Vec4i> hierarchy, lines;
-  vector<Vec3f> circles;
+  vector<cv::Vec3f> circles;
 
-  cv::cvtColor(frame, frame_hsv, COLOR_BGR2HSV); // Convert the captured frame from BGR to HSV
+  cv::cvtColor(frame, frame_hsv, cv::COLOR_BGR2HSV); // Convert the captured frame from BGR to HSV
   cv::inRange(frame_hsv, cv::Scalar(lowH, lowS, lowV), cv::Scalar(highH, highS, highV),
           frame_thresh); // Threshold the image
 
@@ -208,12 +208,12 @@ thresh_callback(int, void*) {
 void
 denoiseMat(cv::Mat frame, int structure_size) {
   // morphological opening (remove small objects from the foreground)
-  cv::erode(frame, frame, cv::getStructuringElement(MORPH_RECT, cv::Size(structure_size, structure_size)));
-  cv::dilate(frame, frame, cv::getStructuringElement(MORPH_RECT, cv::Size(structure_size, structure_size)));
+  cv::erode(frame, frame, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(structure_size, structure_size)));
+  cv::dilate(frame, frame, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(structure_size, structure_size)));
 
   // morphological closing (fill small holes in the foreground)
-  cv::dilate(frame, frame, cv::getStructuringElement(MORPH_RECT, cv::Size(structure_size, structure_size)));
-  cv::erode(frame, frame, cv::getStructuringElement(MORPH_RECT, cv::Size(structure_size, structure_size)));
+  cv::dilate(frame, frame, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(structure_size, structure_size)));
+  cv::erode(frame, frame, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(structure_size, structure_size)));
 }
 
 double

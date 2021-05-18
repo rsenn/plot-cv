@@ -274,7 +274,7 @@ Java_org_opencv_highgui_VideoCapture_n_1getSupportedPreviewSizes(JNIEnv* env, jc
       const char* name;
     } u;
     u.prop = me->get(cv::CAP_PROP_SUPPORTED_PREVIEW_SIZES_STRING);
-    // cv::VideoCapture::get can return 0.0 or -1.0 if it doesn't support
+    // cv::VideoCapture::get can return 0.0 or -1.0 if cv::it doesn't support
     // cv::CAP_PROP_SUPPORTED_PREVIEW_SIZES_STRING
     if(u.prop != 0.0 && u.prop != -1.0)
       return env->NewStringUTF(u.name);

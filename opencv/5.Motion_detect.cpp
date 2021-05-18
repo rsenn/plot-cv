@@ -26,14 +26,14 @@ main() {
       printf("Hinh bi loi\r\n");
       return -1;
     }
-    cv::namedWindow("Anh goc", WINDOW_NORMAL);
+    cv::namedWindow("Anh goc", cv::WINDOW_NORMAL);
     cv::resizeWindow("Anh goc", 300, 300);
     cv::imshow("Anh goc", image2);
     /*--------- Chuyen ve thang xam ------------------*/
     cv::Mat image_gray, image_gray2;
-    cv::cvtColor(image, image_gray, COLOR_BGR2GRAY);
-    cv::cvtColor(image2, image_gray2, COLOR_BGR2GRAY);
-    cv::namedWindow("Anh GRAY", WINDOW_NORMAL);
+    cv::cvtColor(image, image_gray, cv::COLOR_BGR2GRAY);
+    cv::cvtColor(image2, image_gray2, cv::COLOR_BGR2GRAY);
+    cv::namedWindow("Anh GRAY", cv::WINDOW_NORMAL);
     cv::resizeWindow("Anh GRAY", 300, 300);
     cv::imshow("Anh GRAY", image_gray2);
     /*--------- Chuyen ve muc nguong ----------------*/
@@ -49,15 +49,15 @@ main() {
     /*--------- So sanh 2 khung hinh ----------------*/
     cv::Mat diff;
     cv::absdiff(image_result, image_result2, diff);
-    cv::namedWindow("Anh Diff", WINDOW_NORMAL);
+    cv::namedWindow("Anh Diff", cv::WINDOW_NORMAL);
     cv::resizeWindow("Anh Diff", 300, 300);
     cv::imshow("Anh Diff", diff);
     /*--------- Loc bo hat nhieu trang --------------*/
     cv::Mat diff_erode;
     // Erode box
-    cv::Mat box_erode = cv::getStructuringElement(MORPH_RECT, cv::Size(2, 2));
+    cv::Mat box_erode = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(2, 2));
     cv::erode(diff, diff_erode, box_erode);
-    cv::namedWindow("Anh Erode", WINDOW_NORMAL);
+    cv::namedWindow("Anh Erode", cv::WINDOW_NORMAL);
     cv::resizeWindow("Anh Erode", 300, 300);
     cv::imshow("Anh Erode", diff_erode);
     /*---- Tinh tri trung binh va do lech chuan -----*/

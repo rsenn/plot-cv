@@ -41,7 +41,7 @@ drawText(cv::Mat& image) {
   cv::putText(image,
           "Hello OpenCV",
           cv::Point(20, 50),
-          FONT_HERSHEY_COMPLEX,
+          cv::FONT_HERSHEY_COMPLEX,
           1,                     // font cv::face and scale
           cv::Scalar(255, 255, 255), // white
           1,

@@ -18,7 +18,7 @@ cv::Mat src;
 cv::Mat src_gray;
 int thresh = 100;
 int max_thresh = 255;
-RNG rng(12345);
+cv::RNG rng(12345);
 
 /// Function header
 void thresh_callback(int, void*);
@@ -36,7 +36,7 @@ main(int, char** argv) {
   }
 
   /// Convert image to gray and cv::blur it
-  cv::cvtColor(src, src_gray, COLOR_BGR2GRAY);
+  cv::cvtColor(src, src_gray, cv::COLOR_BGR2GRAY);
   cv::blur(src_gray, src_gray, cv::Size(3, 3));
 
   /// Create Window

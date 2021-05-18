@@ -18,15 +18,15 @@
 using namespace std;
 //using namespace cv;
 
-cv::Mat_<Vec3b> extractFaceROI(cv::Mat_<Vec3b> image, string face_cascade_path);
-cv::Mat_<Vec3b> extractMouthROI(cv::Mat_<Vec3b> face_image);
+cv::Mat_<cv::Vec3b> extractFaceROI(cv::Mat_<cv::Vec3b> image, string face_cascade_path);
+cv::Mat_<cv::Vec3b> extractMouthROI(cv::Mat_<cv::Vec3b> face_image);
 
-cv::Mat_<Vec3b> equalizeImage(cv::Mat_<Vec3b> image_BGR);
-cv::Mat_<uchar> transformPseudoHue(cv::Mat_<Vec3b> image);
+cv::Mat_<cv::Vec3b> equalizeImage(cv::Mat_<cv::Vec3b> image_BGR);
+cv::Mat_<uchar> transformPseudoHue(cv::Mat_<cv::Vec3b> image);
 pair<double, double> Stats(cv::Mat_<double> pseudo_hue_plane);
-cv::Mat_<uchar> transformCIELAB(cv::Mat_<Vec3b> image_BGR);
-cv::Mat_<uchar> transformLUX(cv::Mat_<Vec3b> image_BGR);
-cv::Mat_<uchar> transformModifiedLUX(cv::Mat_<Vec3b> image_BGR);
+cv::Mat_<uchar> transformCIELAB(cv::Mat_<cv::Vec3b> image_BGR);
+cv::Mat_<uchar> transformLUX(cv::Mat_<cv::Vec3b> image_BGR);
+cv::Mat_<uchar> transformModifiedLUX(cv::Mat_<cv::Vec3b> image_BGR);
 
 pair<double, double> returnImageStats(const cv::Mat_<uchar>& image);
 cv::Mat_<uchar> binaryThresholding(const cv::Mat_<uchar>& image, const pair<double, double>& stats);
@@ -43,9 +43,9 @@ main(int argc, char** argv) {
   const string input_image_path = argv[1];
   const string face_cascade_path = argv[2];
 
-  cv::Mat_<Vec3b> image_BGR = cv::imread(input_image_path);
-  cv::Mat_<Vec3b> cv::face = extractFaceROI(image_BGR, face_cascade_path);
-  cv::Mat_<Vec3b> mouth = extractMouthROI(cv::face);
+  cv::Mat_<cv::Vec3b> image_BGR = cv::imread(input_image_path);
+  cv::Mat_<cv::Vec3b> cv::face = extractFaceROI(image_BGR, face_cascade_path);
+  cv::Mat_<cv::Vec3b> mouth = extractMouthROI(cv::face);
 
   cv::Mat_<uchar> pseudo_hue_plane = transformPseudoHue(mouth);
   cv::Mat_<uchar> pseudo_hue_bin = binaryThresholding(pseudo_hue_plane, returnImageStats(pseudo_hue_plane));
@@ -56,7 +56,7 @@ main(int argc, char** argv) {
   cv::findContours(binary_clone, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
 
   // Initialize blank image (for drawing contours)
-  cv::Mat_<Vec3b> image_contour(pseudo_hue_bin.size());
+  cv::Mat_<cv::Vec3b> image_contour(pseudo_hue_bin.size());
   for(int i = 0; i < image_contour.rows; ++i) {
     for(int j = 0; j < image_contour.cols; ++j) {
       image_contour(i, j)[0] = 0;
@@ -142,17 +142,17 @@ main(int argc, char** argv) {
   return 0;
 }
 
-cv::Mat_<Vec3b>
-extractFaceROI(cv::Mat_<Vec3b> image, string face_cascade_path) {
+cv::Mat_<cv::Vec3b>
+extractFaceROI(cv::Mat_<cv::Vec3b> image, string face_cascade_path) {
   cv::CascadeClassifier face_cascade;
-  std::vector<Rect_<int>> faces;
+  std::vector<cv::Rect_<int>> faces;
 
   face_cascade.load(face_cascade_path);
-  face_cascade.detectMultiScale(image, faces, 1.15, 3, 0 | CASCADE_SCALE_IMAGE, cv::Size(30, 30));
+  face_cascade.detectMultiScale(image, faces, 1.15, 3, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(30, 30));
 
-  cv::Mat_<Vec3b> face_ROI;
+  cv::Mat_<cv::Vec3b> face_ROI;
   for(int i = 0; i < faces.size(); ++i) {
-    Rect_<int> cv::face = faces[i];
+    cv::Rect_<int> cv::face = faces[i];
 
     int face_rows = cv::face.height;
     int face_cols = cv::face.width;
@@ -171,8 +171,8 @@ extractFaceROI(cv::Mat_<Vec3b> image, string face_cascade_path) {
   return face_ROI;
 }
 
-cv::Mat_<Vec3b>
-extractMouthROI(cv::Mat_<Vec3b> face_image) {
+cv::Mat_<cv::Vec3b>
+extractMouthROI(cv::Mat_<cv::Vec3b> face_image) {
   int face_rows = face_image.rows;
   int face_cols = face_image.cols;
 
@@ -187,10 +187,10 @@ extractMouthROI(cv::Mat_<Vec3b> face_image) {
  * performing histogram equalization on the Y-plane before
  * merging back
  */
-cv::Mat_<Vec3b>
-equalizeImage(cv::Mat_<Vec3b> image_BGR) {
+cv::Mat_<cv::Vec3b>
+equalizeImage(cv::Mat_<cv::Vec3b> image_BGR) {
   std::vector<cv::Mat> channels;
-  cv::Mat_<Vec3b> image_eq;
+  cv::Mat_<cv::Vec3b> image_eq;
 
   cv::cvtColor(image_BGR, image_eq, CV_BGR2YCrCb);
   cv::split(image_eq, channels);
@@ -203,7 +203,7 @@ equalizeImage(cv::Mat_<Vec3b> image_BGR) {
 
 // Extract the pseudo-hue plane
 cv::Mat_<uchar>
-transformPseudoHue(cv::Mat_<Vec3b> image) {
+transformPseudoHue(cv::Mat_<cv::Vec3b> image) {
   cv::Mat_<double> pseudo_hue(image.size());
   cv::Mat_<uchar> pseudo_hue_norm(image.size());
 
@@ -253,8 +253,8 @@ Stats(cv::Mat_<double> pseudo_hue_plane) {
 
 // CIELAB transformation and using the A-channel
 cv::Mat_<uchar>
-transformCIELAB(cv::Mat_<Vec3b> image_BGR) {
-  cv::Mat_<Vec3b> image_Lab;
+transformCIELAB(cv::Mat_<cv::Vec3b> image_BGR) {
+  cv::Mat_<cv::Vec3b> image_Lab;
   std::vector<cv::Mat> channels;
   cv::cvtColor(image_BGR, image_Lab, CV_BGR2Lab);
   cv::split(image_Lab, channels);
@@ -264,7 +264,7 @@ transformCIELAB(cv::Mat_<Vec3b> image_BGR) {
 }
 
 cv::Mat_<uchar>
-transformLUX(cv::Mat_<Vec3b> image_BGR) {
+transformLUX(cv::Mat_<cv::Vec3b> image_BGR) {
   cv::Mat_<uchar> U(image_BGR.size());
 
   int B = 0, G = 0, R = 0, L_int = 0, u_int = 0;
@@ -290,7 +290,7 @@ transformLUX(cv::Mat_<Vec3b> image_BGR) {
 }
 
 cv::Mat_<uchar>
-transformModifiedLUX(cv::Mat_<Vec3b> image_BGR) {
+transformModifiedLUX(cv::Mat_<cv::Vec3b> image_BGR) {
   cv::Mat_<uchar> Ucap(image_BGR.size());
 
   int B = 0, G = 0, R = 0, u_cap_int = 0;

@@ -45,7 +45,7 @@ main(int argc, char** argv) {
 
   // set up the ROI for tracking
   roi = frame(track_window);
-  cv::cvtColor(roi, hsv_roi, COLOR_BGR2HSV);
+  cv::cvtColor(roi, hsv_roi, cv::COLOR_BGR2HSV);
   cv::inRange(hsv_roi, cv::Scalar(0, 60, 32), cv::Scalar(180, 255, 255), mask);
 
   float range_[] = {0, 180};
@@ -54,17 +54,17 @@ main(int argc, char** argv) {
   int histSize[] = {180};
   int channels[] = {0};
   cv::calcHist(&hsv_roi, 1, channels, mask, roi_hist, 1, histSize, range);
-  cv::normalize(roi_hist, roi_hist, 0, 255, NORM_MINMAX);
+  cv::normalize(roi_hist, roi_hist, 0, 255, cv::NORM_MINMAX);
 
   // Setup the termination criteria, either 10 iteration or move by atleast 1 pt
-  TermCriteria term_crit(TermCriteria::EPS | TermCriteria::COUNT, 10, 1);
+  cv::TermCriteria term_crit(cv::TermCriteria::EPS | cv::TermCriteria::COUNT, 10, 1);
 
   while(true) {
     cv::Mat hsv, dst;
     capture >> frame;
     if(frame.empty())
       break;
-    cv::cvtColor(frame, hsv, COLOR_BGR2HSV);
+    cv::cvtColor(frame, hsv, cv::COLOR_BGR2HSV);
     cv::calcBackProject(&hsv, 1, channels, roi_hist, dst, range);
 
     // apply meanshift to get the new location

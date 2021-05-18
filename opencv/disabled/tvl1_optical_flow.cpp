@@ -2,7 +2,7 @@
 #include <vector>
 #include <iomanip>
 
-#include "opencv2/core/cv::ocl.hpp"
+#include "opencv2/core/ocl.hpp"
 #include "opencv2/core/utility.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/videoio.hpp"

@@ -169,7 +169,7 @@ camShiftKalman::track() {
   cv::Point lastCenter(trackWindow.x, trackWindow.y);
   bool isLost = false;
 
-  TermCriteria term(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 10, 1);
+  cv::TermCriteria term(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 10, 1);
 
   cv::VideoCapture video;
   video.open(videoName);
@@ -310,12 +310,12 @@ camShiftKalman::track() {
   }
 }
 
-Point
+cv::Point
 camShiftKalman::getCurrentObjectCenter() const {
   return KFCorrectCenter;
 }
 
-Rect
+cv::Rect
 camShiftKalman::getCurrentTrackWindow() const {
   return trackWindow;
 }
@@ -326,8 +326,8 @@ camShiftKalman::initKalman(double interval) {
   const int measureNum = 2;
 
   cv::Mat statePost =
-      (Mat_<float>(stateNum, 1) << trackWindow.x + trackWindow.width / 2.0, trackWindow.y + trackWindow.height / 2.0, 0, 0);
-  cv::Mat transitionMatrix = (Mat_<float>(stateNum, stateNum) << 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1);
+      (cv::Mat_<float>(stateNum, 1) << trackWindow.x + trackWindow.width / 2.0, trackWindow.y + trackWindow.height / 2.0, 0, 0);
+  cv::Mat transitionMatrix = (cv::Mat_<float>(stateNum, stateNum) << 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1);
 
   KF.init(stateNum, measureNum);
 
@@ -341,7 +341,7 @@ camShiftKalman::initKalman(double interval) {
   measurement = cv::Mat::zeros(measureNum, 1, CV_32F);
 }
 
-Point
+cv::Point
 camShiftKalman::getCurrentState() const {
   cv::Mat statePost = KF.statePost;
   return cv::Point(statePost.at<float>(0), statePost.at<float>(1));
@@ -411,26 +411,26 @@ camShiftKalman::drawTrackResult() {
   cv::imshow(winName, image);
 }
 
-Mat
+cv::Mat
 camShiftKalman::drawHist1d(const cv::Mat hist, int histSize) const {
   cv::Mat histimg = cv::Mat::zeros(640, 480, CV_8UC3);
 
   histimg = cv::Scalar::all(0);
   int binW = histimg.cols / histSize;
   cv::Mat buf(1, histSize, CV_8UC3);
-  for(int i = 0; i < histSize; i++) buf.at<Vec3b>(i) = Vec3b(saturate_cast<uchar>(i * 180. / histSize), 255, 255);
+  for(int i = 0; i < histSize; i++) buf.at<cv::Vec3b>(i) = cv::Vec3b(saturate_cast<uchar>(i * 180. / histSize), 255, 255);
   cv::cvtColor(buf, buf, CV_HSV2BGR);
 
   for(int i = 0; i < histSize; i++) {
     int val = saturate_cast<int>(hist.at<float>(i) * histimg.rows / 255);
     cv::rectangle(
-        histimg, cv::Point(i * binW, histimg.rows), cv::Point((i + 1) * binW, histimg.rows - val), cv::Scalar(buf.at<Vec3b>(i)), -1, 8);
+        histimg, cv::Point(i * binW, histimg.rows), cv::Point((i + 1) * binW, histimg.rows - val), cv::Scalar(buf.at<cv::Vec3b>(i)), -1, 8);
   }
 
   return histimg;
 }
 
-Mat
+cv::Mat
 camShiftKalman::drawHist2d(const cv::Mat hist, int histSizeX, int histSizeY) const {
   cv::Mat histImg = cv::Mat::zeros(640, 480, CV_8UC3);
   return histImg;

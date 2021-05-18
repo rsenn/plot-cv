@@ -54,11 +54,11 @@ main(int argc, char** argv) {
     double radius = (double)frame.cols / 4;
     double M = (double)frame.cols / cv::log(radius);
 
-    cv::logPolar(frame, log_polar_img, center, M, INTER_LINEAR + WARP_FILL_OUTLIERS);
-    cv::linearPolar(frame, lin_polar_img, center, radius, INTER_LINEAR + WARP_FILL_OUTLIERS);
+    cv::logPolar(frame, log_polar_img, center, M, cv::INTER_LINEAR + cv::WARP_FILL_OUTLIERS);
+    cv::linearPolar(frame, lin_polar_img, center, radius, cv::INTER_LINEAR + cv::WARP_FILL_OUTLIERS);
 
-    cv::logPolar(log_polar_img, recovered_log_polar, center, M, WARP_INVERSE_MAP + INTER_LINEAR);
-    cv::linearPolar(lin_polar_img, recovered_lin_polar_img, center, radius, WARP_INVERSE_MAP + INTER_LINEAR + WARP_FILL_OUTLIERS);
+    cv::logPolar(log_polar_img, recovered_log_polar, center, M, cv::WARP_INVERSE_MAP + cv::INTER_LINEAR);
+    cv::linearPolar(lin_polar_img, recovered_lin_polar_img, center, radius, cv::WARP_INVERSE_MAP + cv::INTER_LINEAR + cv::WARP_FILL_OUTLIERS);
 
     cv::imshow("Log-Polar", log_polar_img);
     cv::imshow("Linear-Polar", lin_polar_img);

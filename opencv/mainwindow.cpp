@@ -21,11 +21,11 @@ using namespace std;
 ////Line marking window name
 //string lineMarkerName = "Line marker";
 
-//cv::Mat img, workingImage;
+//cv::Mat cv::img, workingImage;
 //string draft = "draft.jpg";
 
 ////While the program is running, the webcam is always on
-//cv::VideoCapture cap(0);
+//cv::VideoCapture cv::cap(0);
 
 //--------------------
 */
@@ -36,8 +36,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
   ui->setupUi(this);
   scn = new QGraphicsScene;
   QString filename = "brontossauro3.jpg";
-  img.load(filename);
-  scn->addPixmap(img);
+  cv::img.load(filename);
+  scn->addPixmap(cv::img);
   ui->graphicsView->setScene(scn);
 }
 
@@ -60,38 +60,38 @@ MainWindow::on_comboBox_currentIndexChanged(int index) {
 
 // void onMouse(int event, int x, int y, int flags, void* userdata)
 //{
-//    if  ( event == EVENT_LBUTTONDOWN )
+//    if  ( event == cv::EVENT_LBUTTONDOWN )
 //    {
 //        //sets upper line
-//        img = cv::imread(draft);
-//        aLine templine(0, y, img.size().width, y);
-//        templine.drawaLine(img, cv::Scalar(0, 0, 255));
-//        cv::imshow(lineMarkerName, img);
+//        cv::img = cv::imread(draft);
+//        aLine templine(0, y, cv::img.size().width, y);
+//        templine.drawaLine(cv::img, cv::Scalar(0, 0, 255));
+//        cv::imshow(lineMarkerName, cv::img);
 //        markedLines.setLine(1,templine);
 //    }
-//    else if  ( event == EVENT_RBUTTONDOWN )
+//    else if  ( event == cv::EVENT_RBUTTONDOWN )
 //    {
 //        //sets bottom line
-//        img = cv::imread(draft);
-//        aLine templine(0, y, img.size().width, y);
-//        templine.drawaLine(img, cv::Scalar(0, 0, 255));
-//        cv::imshow(lineMarkerName, img);
+//        cv::img = cv::imread(draft);
+//        aLine templine(0, y, cv::img.size().width, y);
+//        templine.drawaLine(cv::img, cv::Scalar(0, 0, 255));
+//        cv::imshow(lineMarkerName, cv::img);
 //        markedLines.setLine(0,templine);
 //    }
-//    else if  ( event == EVENT_MBUTTONDOWN )
+//    else if  ( event == cv::EVENT_MBUTTONDOWN )
 //    {
 //        //take another picture
 //        cv::destroyWindow(lineMarkerName);
 //    }
-//    else if ( event == EVENT_MOUSEMOVE )
+//    else if ( event == cv::EVENT_MOUSEMOVE )
 //    {
 //        //draws mouse line
-//        img = cv::imread(draft);
-//        aLine templine(0, y, img.size().width, y);
-//        templine.drawaLine(img, cv::Scalar(0, 255, 255));
-//        if (markedLines.hasBottom()){markedLines.set[0].drawaLine(img, cv::Scalar(0, 255, 0));}
-//        if (markedLines.hasTop()){markedLines.set[1].drawaLine(img, cv::Scalar(255, 0, 0));}
-//        cv::imshow(lineMarkerName, img);
+//        cv::img = cv::imread(draft);
+//        aLine templine(0, y, cv::img.size().width, y);
+//        templine.drawaLine(cv::img, cv::Scalar(0, 255, 255));
+//        if (markedLines.hasBottom()){markedLines.set[0].drawaLine(cv::img, cv::Scalar(0, 255, 0));}
+//        if (markedLines.hasTop()){markedLines.set[1].drawaLine(cv::img, cv::Scalar(255, 0, 0));}
+//        cv::imshow(lineMarkerName, cv::img);
 //    }
 //}
 
@@ -102,7 +102,7 @@ MainWindow::on_comboBox_currentIndexChanged(int index) {
 //    markedLines = zeroSet;
 
 //    // Read image from file
-//    img = cv::imread(draft);
+//    cv::img = cv::imread(draft);
 
 //    //if fail to cv::read the image
 //    if ( workingImage.empty() )
@@ -118,7 +118,7 @@ MainWindow::on_comboBox_currentIndexChanged(int index) {
 //    cv::setMouseCallback(lineMarkerName, onMouse, NULL);
 
 //    //show the image
-//    cv::imshow(lineMarkerName, img);
+//    cv::imshow(lineMarkerName, cv::img);
 
 //    // Wait until user press some key
 //    cv::waitKey(0);

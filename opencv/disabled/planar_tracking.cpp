@@ -7,7 +7,7 @@
 #include <iomanip>
 
 #include "stats.h" // Stats structure definition
-#include "cv::utils.h" // Drawing and printing functions
+#include "utils.h" // Drawing and printing functions
 
 using namespace std;
 //using namespace cv;

@@ -187,7 +187,7 @@ void
 targetinginit() {
   cout << "Left click to collect cv::samples, right click to clear them.\n";
   cout << "'c' to toggle center finding.\n";
-  cout << "Press q to quit, but only if you really cv::mean it.\n";
+  cout << "Press q to quit, but only if you really cv::mean cv::it.\n";
 
   outfile.open("bgrout.txt", ios::trunc);
 
@@ -240,7 +240,7 @@ targetingprocess() {
           if(catnumx + catnumy != 0)
             if((thisbee < bee[h] + thresh && thisbee > bee[h] - thresh) &&
                (thisjee < jee[h] + thresh && thisjee > jee[h] - thresh) &&
-               (thisare < are[h] + thresh && thisare > are[h] - thresh)) { // if it's a match
+               (thisare < are[h] + thresh && thisare > are[h] - thresh)) { // if cv::it's a match
               newframe.at<cv::Vec3b>(i, j)[0] = 255;                       // set to white
               newframe.at<cv::Vec3b>(i, j)[1] = 255;
               newframe.at<cv::Vec3b>(i, j)[2] = 255;

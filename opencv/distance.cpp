@@ -31,7 +31,7 @@ main(int argc, char* argv[]) {
     cv::split(img, channel);
     cv::subtract(channel[2], img_gray, img_gray);
     // cv::convertScaleAbs(img, img);
-    cv::threshold(img_gray, img_gray, 90, 255, THRESH_BINARY);
+    cv::threshold(img_gray, img_gray, 90, 255, cv::THRESH_BINARY);
 
     cv::erode(img_gray, img_gray, cv::Mat(), cv::Point(-1, -1), 4);
     cv::dilate(img_gray, img_gray, cv::Mat(), cv::Point(-1, -1), 4);

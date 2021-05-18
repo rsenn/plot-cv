@@ -18,7 +18,7 @@ cv::Mat src;
 cv::Mat src_gray;
 int thresh = 100;
 int max_thresh = 255;
-RNG rng(12345);
+cv::RNG rng(12345);
 
 /// Function header
 void thresh_callback(int, void*);
@@ -32,7 +32,7 @@ main(int, char** argv) {
   src = cv::imread(argv[1], 1);
 
   /// Convert image to gray and cv::blur it
-  cv::cvtColor(src, src_gray, COLOR_BGR2GRAY);
+  cv::cvtColor(src, src_gray, cv::COLOR_BGR2GRAY);
   cv::blur(src_gray, src_gray, cv::Size(3, 3));
 
   /// Create Window
@@ -57,7 +57,7 @@ thresh_callback(int, void*) {
   std::vector<cv::Vec4i> hierarchy;
 
   /// Detect edges using Threshold
-  cv::threshold(src_gray, threshold_output, thresh, 255, THRESH_BINARY);
+  cv::threshold(src_gray, threshold_output, thresh, 255, cv::THRESH_BINARY);
   /// Find contours
   cv::findContours(threshold_output, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 

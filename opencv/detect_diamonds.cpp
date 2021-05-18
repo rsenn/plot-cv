@@ -37,7 +37,7 @@ the use of this software, even if advised of the possibility of such damage.
 */
 
 #include <opencv2/highgui.hpp>
-#include <opencv2/cv::aruco/charuco.hpp>
+#include <opencv2/aruco/charuco.hpp>
 #include <vector>
 #include <iostream>
 
@@ -78,7 +78,7 @@ readCameraParameters(string filename, cv::Mat& camMatrix, cv::Mat& distCoeffs) {
 /**
  */
 static bool
-readDetectorParameters(string filename, Ptr<cv::aruco::DetectorParameters>& params) {
+readDetectorParameters(string filename, cv::Ptr<cv::aruco::DetectorParameters>& params) {
   cv::FileStorage fs(filename, cv::FileStorage::READ);
   if(!fs.isOpened())
     return false;
@@ -125,7 +125,7 @@ main(int argc, char* argv[]) {
   bool autoScale = parser.has("as");
   float autoScaleFactor = autoScale ? parser.get<float>("as") : 1.f;
 
-  Ptr<cv::aruco::DetectorParameters> detectorParams = cv::aruco::DetectorParameters::create();
+  cv::Ptr<cv::aruco::DetectorParameters> detectorParams = cv::aruco::DetectorParameters::create();
   if(parser.has("dp")) {
     bool readOk = readDetectorParameters(parser.get<string>("dp"), detectorParams);
     if(!readOk) {
@@ -146,7 +146,7 @@ main(int argc, char* argv[]) {
     return 0;
   }
 
-  Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
+  cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
 
   cv::Mat camMatrix, distCoeffs;
   if(estimatePose) {

@@ -3,7 +3,7 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/core/utility.hpp>
 
-#include <opencv2/cv::ximgproc.hpp>
+#include <opencv2/ximgproc.hpp>
 
 #include <ctype.h>
 #include <stdio.h>
@@ -74,7 +74,7 @@ main(int argc, char** argv) {
   cv::createTrackbar("Iterations", window_name, &num_iterations, 12, 0);
 
   cv::Mat result, mask;
-  Ptr<SuperpixelSEEDS> seeds;
+  cv::Ptr<cv::ximgproc::SuperpixelSEEDS> seeds;
   int width, height;
   int display_mode = 0;
 
@@ -91,12 +91,12 @@ main(int argc, char** argv) {
     if(!init) {
       width = frame.size().width;
       height = frame.size().height;
-      seeds = createSuperpixelSEEDS(
+      seeds = cv::ximgproc::createSuperpixelSEEDS(
           width, height, frame.channels(), num_superpixels, num_levels, prior, num_histogram_bins, double_step);
       init = true;
     }
     cv::Mat converted;
-    cv::cvtColor(frame, converted, COLOR_BGR2HSV);
+    cv::cvtColor(frame, converted, cv::COLOR_BGR2HSV);
 
     double t = (double)cv::getTickCount();
 

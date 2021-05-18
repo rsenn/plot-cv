@@ -68,7 +68,7 @@ void
 drawFPS(cv::Mat& color_image, double fps) {
   ostringstream convert;
   convert << cvRound(fps) << " FPS (QR detection)";
-  cv::putText(color_image, convert.str(), cv::Point(25, 25), FONT_HERSHEY_DUPLEX, 1, cv::Scalar(0, 0, 255), 2);
+  cv::putText(color_image, convert.str(), cv::Point(25, 25), cv::FONT_HERSHEY_DUPLEX, 1, cv::Scalar(0, 0, 255), 2);
 }
 
 int
@@ -80,7 +80,7 @@ liveQRCodeDetect(const string& out_file) {
   }
 
   cv::QRCodeDetector qrcode;
-  TickMeter total;
+  cv::TickMeter total;
   for(;;) {
     cv::Mat frame, src, straight_barcode;
     string decode_info;
@@ -90,7 +90,7 @@ liveQRCodeDetect(const string& out_file) {
       cout << "End of video stream" << endl;
       break;
     }
-    cv::cvtColor(frame, src, COLOR_BGR2GRAY);
+    cv::cvtColor(frame, src, cv::COLOR_BGR2GRAY);
 
     total.start();
     bool result_detection = qrcode.detect(src, transform);
@@ -122,14 +122,14 @@ liveQRCodeDetect(const string& out_file) {
 int
 imageQRCodeDetect(const string& in_file, const string& out_file) {
   cv::Mat color_src = cv::imread(in_file, cv::IMREAD_COLOR), src;
-  cv::cvtColor(color_src, src, COLOR_BGR2GRAY);
+  cv::cvtColor(color_src, src, cv::COLOR_BGR2GRAY);
   cv::Mat straight_barcode;
   string decoded_info;
   std::vector<cv::Point> transform;
   const int count_experiments = 10;
   double transform_time = 0.0;
   bool result_detection = false;
-  TickMeter total;
+  cv::TickMeter total;
   cv::QRCodeDetector qrcode;
   for(size_t i = 0; i < count_experiments; i++) {
     total.start();

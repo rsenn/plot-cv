@@ -1,4 +1,4 @@
-#include <../inc/cv::utils.h>
+#include <../inc/utils.h>
 
 // info funciton
 void
@@ -54,13 +54,13 @@ image_mode(ERFilter* er_filter, char filename[]) {
 
 int
 video_mode(ERFilter* er_filter, char filename[]) {
-  cv::VideoCapture cap;
+  cv::VideoCapture cv::cap;
   if(filename != nullptr)
-    cap = cv::VideoCapture(filename);
+    cv::cap = cv::VideoCapture(filename);
   else
-    cap = cv::VideoCapture(0);
+    cv::cap = cv::VideoCapture(0);
 
-  if(!cap.isOpened()) {
+  if(!cv::cap.isOpened()) {
     cerr << "ERROR! Unable to open camera or video file\n";
     return -1;
   }
@@ -68,7 +68,7 @@ video_mode(ERFilter* er_filter, char filename[]) {
   cv::Mat frame;
   cv::VideoWriter writer;
   cv::VideoWriter original_writer;
-  cap >> frame; // get 1 frame to know the frame size
+  cv::cap >> frame; // get 1 frame to know the frame size
   writer.open("video_result/result/result.wmv", cv::VideoWriter::fourcc('W', 'M', 'V', '2'), 20.0, frame.size(), true);
   original_writer.open("video_result/result/input.wmv", cv::VideoWriter::fourcc('W', 'M', 'V', '2'), 20.0, frame.size(), true);
   if(!writer.isOpened()) {
@@ -92,7 +92,7 @@ video_mode(ERFilter* er_filter, char filename[]) {
     vector<cv::Mat> channel_vec;
 
     for(int n = 0; n < frame_count; n++) {
-      cap >> frame;
+      cv::cap >> frame;
       original_writer << frame;
       if(frame.empty())
         break;
@@ -159,7 +159,7 @@ video_mode(ERFilter* er_filter, char filename[]) {
       writer << result;
       std::sort(result_text.begin(), result_text.end(), [](Text a, Text b) { return a.box.y < b.box.y; });
       f_result_text << img_count;
-      for(auto it : result_text) { f_result_text << "," << it.word; }
+      for(auto cv::it : result_text) { f_result_text << "," << it.word; }
       f_result_text << endl;
       ++img_count;
 
@@ -192,7 +192,7 @@ video_mode(ERFilter* er_filter, char filename[]) {
     avg_time[4] += grouping_time.count();
     avg_time[5] += ocr_time.count();
 
-    for(auto it : root_vec) er_filter->er_delete(it);
+    for(auto cv::it : root_vec) er_filter->er_delete(it);
   }
   end = chrono::high_resolution_clock::now();
   avg_time[6] = chrono::duration<double>(end - start).count();
@@ -200,7 +200,7 @@ video_mode(ERFilter* er_filter, char filename[]) {
   avg_time[5] *= frame_count;
 
   // capture_thread.join();
-  cap.release();
+  cv::cap.release();
   original_writer.release();
   writer.release();
 
@@ -257,9 +257,9 @@ load_challenge2_training_file(cv::Mat& src, int n) {
 }
 
 void
-load_video_thread(cv::VideoCapture& cap, cv::Mat frame, cv::Mat result, vector<Text>* text, int* key) {
+load_video_thread(cv::VideoCapture& cv::cap, cv::Mat frame, cv::Mat result, vector<Text>* text, int* key) {
   for(;;) {
-    cap >> frame;
+    cv::cap >> frame;
     show_result(frame, result, *text);
     *key = cv::waitKey(1);
     if(*key >= 0)
@@ -286,22 +286,22 @@ show_result(cv::Mat& src,
   cv::Mat tracked_img = src.clone();
   result_img = src.clone();
   for(int i = 0; i < pool.size(); i++) {
-    for(auto it : all[i]) cv::rectangle(all_img, it->bound, cv::Scalar(255, 0, 0));
+    for(auto cv::it : all[i]) cv::rectangle(all_img, it->bound, cv::Scalar(255, 0, 0));
 
-    for(auto it : pool[i]) cv::rectangle(pool_img, it->bound, cv::Scalar(255, 0, 0));
+    for(auto cv::it : pool[i]) cv::rectangle(pool_img, it->bound, cv::Scalar(255, 0, 0));
 
-    for(auto it : weak[i]) cv::rectangle(weak_img, it->bound, cv::Scalar(0, 0, 255));
+    for(auto cv::it : weak[i]) cv::rectangle(weak_img, it->bound, cv::Scalar(0, 0, 255));
 
-    for(auto it : strong[i]) cv::rectangle(strong_img, it->bound, cv::Scalar(0, 255, 0));
+    for(auto cv::it : strong[i]) cv::rectangle(strong_img, it->bound, cv::Scalar(0, 255, 0));
   }
 
-  for(auto it : tracked) { cv::rectangle(tracked_img, it->bound, cv::Scalar(255, 0, 255)); }
+  for(auto cv::it : tracked) { cv::rectangle(tracked_img, it->bound, cv::Scalar(255, 0, 255)); }
 
-  for(auto it : text) {
-    /*if (abs(it.slope) > 0.05)
+  for(auto cv::it : text) {
+    /*if (abs(cv::it.slope) > 0.05)
     {
         vector<cv::Point> points;
-        for (auto it_er : it.ers)
+        for (auto it_er : cv::it.ers)
         {
             points.push_back(cv::Point(it_er->bound.x, it_er->bound.y));
             points.push_back(cv::Point(it_er->bound.br().x, it_er->bound.br().y));
@@ -318,28 +318,28 @@ show_result(cv::Mat& src,
 
     else
     {
-        cv::rectangle(result_img, it.box, cv::Scalar(0, 255, 255), 2);
+        cv::rectangle(result_img, cv::it.box, cv::Scalar(0, 255, 255), 2);
     }*/
-    cv::rectangle(result_img, it.box, cv::Scalar(0, 255, 255), 2);
+    cv::rectangle(result_img, cv::it.box, cv::Scalar(0, 255, 255), 2);
   }
 
-  for(auto it : text) {
+  for(auto cv::it : text) {
 #ifndef DO_OCR
-    // cv::rectangle(result_img, cv::Rect(it.box.tl().x, it.box.tl().y-20, 53, 19), cv::Scalar(30, 30, 200),
-    // cv::FILLED); cv::putText(result_img, "Text", cv::Point(it.box.tl().x, it.box.tl().y-4),
+    // cv::rectangle(result_img, cv::Rect(cv::it.box.tl().x, it.box.tl().y-20, 53, 19), cv::Scalar(30, 30, 200),
+    // cv::FILLED); cv::putText(result_img, "Text", cv::Point(cv::it.box.tl().x, it.box.tl().y-4),
     // FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255, 255, 255), 1);
-    cv::circle(result_img, cv::Point(it.box.tl().x + 5, it.box.tl().y - 12), 10, cv::Scalar(30, 30, 200), cv::FILLED);
+    cv::circle(result_img, cv::Point(cv::it.box.tl().x + 5, it.box.tl().y - 12), 10, cv::Scalar(30, 30, 200), cv::FILLED);
     cv::putText(
-        result_img, "T", cv::Point(it.box.tl().x - 2, it.box.tl().y - 5), FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255, 255, 255), 1);
+        result_img, "T", cv::Point(cv::it.box.tl().x - 2, it.box.tl().y - 5), FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255, 255, 255), 1);
 #else
-    cv::Size text_size = cv::getTextSize(it.word, FONT_HERSHEY_COMPLEX_SMALL, 1, 1, 0);
+    cv::Size text_size = cv::getTextSize(cv::it.word, FONT_HERSHEY_COMPLEX_SMALL, 1, 1, 0);
     cv::rectangle(result_img,
-              cv::Rect(it.box.tl().x, it.box.tl().y - 20, text_size.width, text_size.height + 5),
+              cv::Rect(cv::it.box.tl().x, it.box.tl().y - 20, text_size.width, text_size.height + 5),
               cv::Scalar(30, 30, 200, 0),
               cv::FILLED);
     cv::putText(result_img,
-            it.word,
-            cv::Point(it.box.tl().x, it.box.tl().y - 4),
+            cv::it.word,
+            cv::Point(cv::it.box.tl().x, it.box.tl().y - 4),
             FONT_HERSHEY_COMPLEX_SMALL,
             1,
             cv::Scalar(0xff, 0xff, 0xff),
@@ -410,7 +410,7 @@ draw_FPS(cv::Mat& src, double time) {
   avg_time += time;
   ++counter;
 
-  cv::putText(src, fps_text, cv::Point(10, 25), FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 0), 2);
+  cv::putText(src, fps_text, cv::Point(10, 25), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 0), 2);
 }
 
 // Testing Functions
@@ -426,7 +426,7 @@ draw_linear_time_MSER(string img_name) {
 
   cv::Mat color = cv::Mat::zeros(input.rows, input.cols, CV_8UC3);
   cv::Mat gray;
-  cv::cvtColor(input, gray, COLOR_BGR2GRAY);
+  cv::cvtColor(input, gray, cv::COLOR_BGR2GRAY);
   const int width = gray.cols;
   const int height = gray.rows;
   const int highest_level = 255 + 1;
@@ -444,7 +444,7 @@ draw_linear_time_MSER(string img_name) {
   //!<    with grey-level heigher than any allowed in the image
   er_stack.push_back(new ER(256, 0, 0, 0));
 
-  //!< 2. make the top-right corner the source pixel, get its gray level and mark it accessible
+  //!< 2. make the top-right corner the source pixel, get its gray level and mark cv::it accessible
   int current_pixel = 0;
   int current_edge = 0;
   int current_level = imgData[current_pixel];
@@ -461,8 +461,8 @@ step_3:
     //!< 4. Explore the remaining edges to the neighbors of the current pixel, in order, as follows
     //!< :
     //!<  For each neighbor, check if the neighbor is already accessible.If it
-    //!<  is not, mark it as accessible and retrieve its grey - level.If the grey - level is not
-    //!<  lower than the current one, push it onto the heap of boundary pixels.If on
+    //!<  is not, mark cv::it as accessible and retrieve its grey - level.If the grey - level is not
+    //!<  lower than the current one, push cv::it onto the heap of boundary pixels.If on
     //!<  the other hand the grey - level is lower than the current one, enter the current
     //!<  pixel back into the queue of boundary pixels for later processing(with the
     //!<  next edge number), consider the new pixel and its grey - level and go to 3.
@@ -648,10 +648,10 @@ void
 output_MSER_time(string img_name) {
   fstream fout = fstream("time.txt", fstream::out);
   ERFilter* erFilter = new ERFilter(1, 100, 1.0E7, NMS_STABILITY_T, NMS_OVERLAP_COEF);
-  cv::Mat input = cv::imread(img_name, IMREAD_GRAYSCALE);
+  cv::Mat input = cv::imread(img_name, cv::IMREAD_GRAYSCALE);
   double coef = 0.181;
   cv::Mat tmp;
-  while(tmp.total() <= 1.0E7) {
+  while(tmp.cv::total() <= 1.0E7) {
     cv::resize(input, tmp, cv::Size(), coef, coef);
 
     chrono::high_resolution_clock::time_point start, end;
@@ -664,9 +664,9 @@ output_MSER_time(string img_name) {
 
     for(int i = 0; i < root.size(); i++) erFilter->er_delete(root[i]);
 
-    std::cout << "pixel number: " << tmp.total();
+    std::cout << "pixel number: " << tmp.cv::total();
     std::cout << "\ttime: " << chrono::duration<double>(end - start).count() * 1000 / root.size() << "ms\n";
-    fout << tmp.total() << " " << chrono::duration<double>(end - start).count() * 1000 / root.size() << endl;
+    fout << tmp.cv::total() << " " << chrono::duration<double>(end - start).count() * 1000 / root.size() << endl;
     coef += 0.01;
   }
   erFilter->er_tree_extract(input);
@@ -823,7 +823,7 @@ calc_recall_rate() {
   er_filter->ocr = new OCR("ocr_classifier/OCR.model", OCR_IMG_L, OCR_FEATURE_L);
   er_filter->load_tp_table("dictionary/tp_table.txt");
 
-  Ptr<MSER> ms = MSER::create();
+  cv::Ptr<MSER> ms = MSER::create();
 
   int img_count = 0;
   double overlap_coef = 0.5;
@@ -882,10 +882,10 @@ calc_recall_rate() {
 
     // flatten each stage output
     vector<ERs> flat(7); // all ER, nms, strong, weak, classify, track
-    for(auto it : all) flat[0].insert(flat[0].end(), it.begin(), it.end());
-    for(auto it : pool) flat[1].insert(flat[1].end(), it.begin(), it.end());
-    for(auto it : strong) flat[2].insert(flat[2].end(), it.begin(), it.end());
-    for(auto it : weak) flat[3].insert(flat[3].end(), it.begin(), it.end());
+    for(auto cv::it : all) flat[0].insert(flat[0].end(), it.begin(), it.end());
+    for(auto cv::it : pool) flat[1].insert(flat[1].end(), it.begin(), it.end());
+    for(auto cv::it : strong) flat[2].insert(flat[2].end(), it.begin(), it.end());
+    for(auto cv::it : weak) flat[3].insert(flat[3].end(), it.begin(), it.end());
     flat[4].insert(flat[4].end(), flat[2].begin(), flat[2].end());
     flat[4].insert(flat[4].end(), flat[3].begin(), flat[3].end());
     flat[5].insert(flat[5].end(), tracked.begin(), tracked.end());
@@ -923,8 +923,8 @@ calc_recall_rate() {
 
     // count matches for every stage
     for(int i = 0; i < 7; i++) {
-      for(auto it : matches[i]) {
-        if(it == true)
+      for(auto cv::it : matches[i]) {
+        if(cv::it == true)
           ++recall_count[i];
       }
     }
@@ -1265,7 +1265,7 @@ bootstrap() {
             pic);
 
     ERs all, pool, strong, weak;
-    cv::Mat input = cv::imread(filename, IMREAD_GRAYSCALE);
+    cv::Mat input = cv::imread(filename, cv::IMREAD_GRAYSCALE);
     if(input.empty())
       continue;
 
@@ -1273,17 +1273,17 @@ bootstrap() {
     erFilter->non_maximum_supression(root, all, pool, input);
     erFilter->classify(pool, strong, weak, input);
 
-    for(auto it : strong) {
+    for(auto cv::it : strong) {
       char imgname[30];
       sprintf(imgname, "res/tmp1/%d_%d.jpg", pic, i);
-      cv::imwrite(imgname, input(it->bound));
+      cv::imwrite(imgname, input(cv::it->bound));
       i++;
     }
 
-    for(auto it : weak) {
+    for(auto cv::it : weak) {
       char imgname[30];
       sprintf(imgname, "res/tmp1/%d_%d.jpg", pic, i);
-      cv::imwrite(imgname, input(it->bound));
+      cv::imwrite(imgname, input(cv::it->bound));
       i++;
     }
 
@@ -1307,7 +1307,7 @@ get_lbp_data() {
   ERFilter erFilter(THRESHOLD_STEP, MIN_ER_AREA, MAX_ER_AREA, NMS_STABILITY_T, NMS_OVERLAP_COEF);
 
   /*
-   *  We will cv::normalize the image to 24x24, and cv::split it into 4 12x12 blocks.
+   *  We will cv::normalize the image to 24x24, and cv::split cv::it into 4 12x12 blocks.
    *  After that, we extract LBP histogram of each block. Therefore the dimension of
    *  feature vector is 1024(256*4), and have range of value from 0 to 144(12*12)
    */
@@ -1319,7 +1319,7 @@ get_lbp_data() {
     char filename[MAX_FILE_PATH];
     sprintf(filename, "res/pos/%d.jpg", pic);
 
-    cv::Mat input = cv::imread(filename, IMREAD_GRAYSCALE);
+    cv::Mat input = cv::imread(filename, cv::IMREAD_GRAYSCALE);
     if(input.empty())
       continue;
 
@@ -1340,7 +1340,7 @@ get_lbp_data() {
     char filename[MAX_FILE_PATH];
     sprintf(filename, "res/neg/%d.jpg", pic);
 
-    cv::Mat input = cv::imread(filename, IMREAD_GRAYSCALE);
+    cv::Mat input = cv::imread(filename, cv::IMREAD_GRAYSCALE);
     if(input.empty())
       continue;
 
@@ -1388,9 +1388,9 @@ get_ocr_data() {
           cv::String filename = path + table[label] + ".jpg";
           label++;
 
-          cv::Mat img = cv::imread(filename, IMREAD_GRAYSCALE);
+          cv::Mat cv::img = cv::imread(filename, cv::IMREAD_GRAYSCALE);
 
-          if(!img.empty())
+          if(!cv::img.empty())
             cout << filename << " done!" << endl;
           else {
             cout << filename << " not exist!" << endl;
@@ -1400,7 +1400,7 @@ get_ocr_data() {
           fout << label - 1;
 
           cv::Mat ocr_img;
-          cv::threshold(255 - img, ocr_img, 200, 255, cv::THRESH_BINARY);
+          cv::threshold(255 - cv::img, ocr_img, 200, 255, cv::THRESH_BINARY);
           erFilter.ocr->rotate_mat(ocr_img, ocr_img, 0, true);
           erFilter.ocr->ARAN(ocr_img, ocr_img, OCR_IMG_L);
 

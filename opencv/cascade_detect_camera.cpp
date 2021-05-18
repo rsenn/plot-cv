@@ -40,7 +40,7 @@
 // Author: Jiaolong Xu <jiaolongxu AT gmail.com>
 //M*/
 
-#include <opencv2/cv::dpm.hpp>
+#include <opencv2/dpm.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>

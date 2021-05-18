@@ -4,7 +4,7 @@
 #include <opencv2/videoio.hpp>
 
 //#include <opencv2/ovis.hpp>
-#include <opencv2/cv::aruco.hpp>
+#include <opencv2/aruco.hpp>
 
 #include <iostream>
 #include <sstream>
@@ -25,7 +25,7 @@ main() {
   const double focal_length = 800.0;
 
   // aruco
-  Ptr<cv::aruco::Dictionary> adict = cv::aruco::getPredefinedDictionary(aruco::DICT_4X4_50);
+  cv::Ptr<cv::aruco::Dictionary> adict = cv::aruco::getPredefinedDictionary(aruco::DICT_4X4_50);
   cv::Mat marker_img(cv::Size(100, 100), CV_8U);
   cv::Mat out_img(cv::Size(780, 780), CV_8U);
 
@@ -54,15 +54,15 @@ main() {
   // AR scene
   //  ovis::addResourceLocation("packs/Sinbad.zip"); // shipped with Ogre
   //
-  //  Ptr<ovis::WindowScene> win = ovis::createWindow(cv::String("arucoAR"), imsize,
+  //  cv::Ptr<ovis::WindowScene> win = ovis::createWindow(cv::String("arucoAR"), imsize,
   //  ovis::SCENE_INTERACTIVE | ovis::SCENE_AA); win->setCameraIntrinsics(K, imsize);
-  //  win->createEntity("sinbad", "Sinbad.mesh", Vec3i(0, 0, 5), Vec3f(1.57, 0.0, 0.0));
+  //  win->createEntity("sinbad", "Sinbad.mesh", Vec3i(0, 0, 5), cv::Vec3f(1.57, 0.0, 0.0));
   //  win->createLightEntity("sun", Vec3i(0, 0, 100));
 
   // video capture
   cv::VideoCapture cap{0};
-  cap.set(CAP_PROP_FRAME_WIDTH, imsize.width);
-  cap.set(CAP_PROP_FRAME_HEIGHT, imsize.height);
+  cap.set(cv::CAP_PROP_FRAME_WIDTH, imsize.width);
+  cap.set(cv::CAP_PROP_FRAME_HEIGHT, imsize.height);
 
   std::cout << "Press ESCAPE to exit demo" << std::endl;
   while(cv::waitKey(1) != KEY_ESCAPE) {

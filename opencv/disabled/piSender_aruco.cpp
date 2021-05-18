@@ -11,7 +11,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-#include <cv::aruco/aruco.h>
+#include <aruco/aruco.h>
 
 #include "videoSender.h"
 #include "videoSender.cpp"

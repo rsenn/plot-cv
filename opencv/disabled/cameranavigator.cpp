@@ -1,5 +1,5 @@
 #include "ros/ros.h"
-#include "std_msgs/cv::String.h"
+#include "std_msgs/String.h"
 #include "wheels/wheels_status.h"
 #include "wheels/cmd_get_one_wheel_status.h"
 #include "wheels/cmd_set_car_direction_speed.h"

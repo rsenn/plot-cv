@@ -38,7 +38,7 @@ the use of this software, even if advised of the possibility of such damage.
 
 #include <opencv2/highgui.hpp>
 #include <opencv2/calib3d.hpp>
-#include <opencv2/cv::aruco/charuco.hpp>
+#include <opencv2/aruco/charuco.hpp>
 #include <opencv2/imgproc.hpp>
 #include <vector>
 #include <iostream>
@@ -74,7 +74,7 @@ const char* keys = "{w        |       | Number of squares in X direction }"
 /**
  */
 static bool
-readDetectorParameters(string filename, Ptr<cv::aruco::DetectorParameters>& params) {
+readDetectorParameters(string filename, cv::Ptr<cv::aruco::DetectorParameters>& params) {
   cv::FileStorage fs(filename, cv::FileStorage::READ);
   if(!fs.isOpened())
     return false;
@@ -126,16 +126,16 @@ saveCameraParams(const string& filename,
   fs << "image_width" << imageSize.width;
   fs << "image_height" << imageSize.height;
 
-  if(flags & CALIB_FIX_ASPECT_RATIO)
+  if(flags & cv::CALIB_FIX_ASPECT_RATIO)
     fs << "aspectRatio" << aspectRatio;
 
   if(flags != 0) {
     sprintf(buf,
             "flags: %s%s%s%s",
-            flags & CALIB_USE_INTRINSIC_GUESS ? "+use_intrinsic_guess" : "",
-            flags & CALIB_FIX_ASPECT_RATIO ? "+fix_aspectRatio" : "",
-            flags & CALIB_FIX_PRINCIPAL_POINT ? "+fix_principal_point" : "",
-            flags & CALIB_ZERO_TANGENT_DIST ? "+zero_tangent_dist" : "");
+            flags & cv::CALIB_USE_INTRINSIC_GUESS ? "+use_intrinsic_guess" : "",
+            flags & cv::CALIB_FIX_ASPECT_RATIO ? "+fix_aspectRatio" : "",
+            flags & cv::CALIB_FIX_PRINCIPAL_POINT ? "+fix_principal_point" : "",
+            flags & cv::CALIB_ZERO_TANGENT_DIST ? "+zero_tangent_dist" : "");
   }
 
   fs << "flags" << flags;
@@ -172,15 +172,15 @@ main(int argc, char* argv[]) {
   int calibrationFlags = 0;
   float aspectRatio = 1;
   if(parser.has("a")) {
-    calibrationFlags |= CALIB_FIX_ASPECT_RATIO;
+    calibrationFlags |= cv::CALIB_FIX_ASPECT_RATIO;
     aspectRatio = parser.get<float>("a");
   }
   if(parser.get<bool>("zt"))
-    calibrationFlags |= CALIB_ZERO_TANGENT_DIST;
+    calibrationFlags |= cv::CALIB_ZERO_TANGENT_DIST;
   if(parser.get<bool>("pc"))
-    calibrationFlags |= CALIB_FIX_PRINCIPAL_POINT;
+    calibrationFlags |= cv::CALIB_FIX_PRINCIPAL_POINT;
 
-  Ptr<cv::aruco::DetectorParameters> detectorParams = cv::aruco::DetectorParameters::create();
+  cv::Ptr<cv::aruco::DetectorParameters> detectorParams = cv::aruco::DetectorParameters::create();
   if(parser.has("dp")) {
     bool readOk = readDetectorParameters(parser.get<string>("dp"), detectorParams);
     if(!readOk) {
@@ -212,12 +212,12 @@ main(int argc, char* argv[]) {
     waitTime = 10;
   }
 
-  Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
+  cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
 
   // create charuco board object
-  Ptr<cv::aruco::CharucoBoard> charucoboard =
+  cv::Ptr<cv::aruco::CharucoBoard> charucoboard =
       cv::aruco::CharucoBoard::create(squaresX, squaresY, squareLength, markerLength, dictionary);
-  Ptr<cv::aruco::Board> board = charucoboard.staticCast<aruco::Board>();
+  cv::Ptr<cv::aruco::Board> board = charucoboard.staticCast<cv::aruco::Board>();
 
   // collect data from each frame
   vector<vector<vector<cv::Point2f>>> allCorners;
@@ -255,7 +255,7 @@ main(int argc, char* argv[]) {
     cv::putText(imageCopy,
             "Press 'c' to cv::add current frame. 'ESC' to finish and calibrate",
             cv::Point(10, 20),
-            FONT_HERSHEY_SIMPLEX,
+            cv::FONT_HERSHEY_SIMPLEX,
             0.5,
             cv::Scalar(255, 0, 0),
             2);
@@ -282,7 +282,7 @@ main(int argc, char* argv[]) {
   vector<cv::Mat> rvecs, tvecs;
   double repError;
 
-  if(calibrationFlags & CALIB_FIX_ASPECT_RATIO) {
+  if(calibrationFlags & cv::CALIB_FIX_ASPECT_RATIO) {
     cameraMatrix = cv::Mat::eye(3, 3, CV_64F);
     cameraMatrix.at<double>(0, 0) = aspectRatio;
   }

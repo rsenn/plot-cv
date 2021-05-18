@@ -129,7 +129,7 @@ Video::initGrabber(int device, int w, int h) {
               props->Subtype = MediaEncodingSubtypes::Rgb24;
               bytesPerPixel = 3;
 
-              // XAML & WBM use BGRA8, so it would look like
+              // XAML & WBM use BGRA8, so cv::it would look like
               // props->Subtype = MediaEncodingSubtypes::Bgra8;   bytesPerPixel = 4;
 
               props->Width = width;

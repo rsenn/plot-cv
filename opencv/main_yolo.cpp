@@ -83,11 +83,11 @@ YOLO::drawPred(int classId,
 
   // Display the label at the top of the bounding box
   int baseLine;
-  cv::Size labelSize = cv::getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
+  cv::Size labelSize = cv::getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
   top = max(top, labelSize.height);
   // cv::rectangle(frame, cv::Point(left, top - int(1.5 * labelSize.height)), cv::Point(left + int(1.5 * labelSize.width), top +
-  // baseLine), cv::Scalar(0, 255, 0), FILLED);
-  cv::putText(frame, label, cv::Point(left, top), FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(0, 255, 0), 1);
+  // baseLine), cv::Scalar(0, 255, 0), cv::FILLED);
+  cv::putText(frame, label, cv::Point(left, top), cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(0, 255, 0), 1);
 }
 
 void
@@ -103,7 +103,7 @@ YOLO::detect(cv::Mat& frame) {
   double freq = cv::getTickFrequency() / 1000;
   double t = net.getPerfProfile(layersTimes) / freq;
   string label = cv::format("%s Inference time : %.2f ms", this->netname, t);
-  cv::putText(frame, label, cv::Point(0, 30), FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 0, 255), 2);
+  cv::putText(frame, label, cv::Point(0, 30), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 0, 255), 2);
   // cv::imwrite(cv::format("%s_out.jpg", this->netname), frame);
 }
 
@@ -115,7 +115,7 @@ main(int argc, char* argv[]) {
   yolo_model.detect(srcimg);
 
   static const string kWinName = "Deep learning object detection in OpenCV";
-  cv::namedWindow(kWinName, WINDOW_NORMAL);
+  cv::namedWindow(kWinName, cv::WINDOW_NORMAL);
   cv::imshow(kWinName, srcimg);
   cv::waitKey(0);
   cv::destroyAllWindows();

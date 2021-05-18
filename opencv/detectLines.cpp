@@ -14,11 +14,11 @@ detectCurve(cv::Mat& src) {
   PolyFit(src, img_plg);
 
   /*Detect Circles*/
-  vector<Vec3f> circles;
+  vector<cv::Vec3f> circles;
   mycircle(src, circles);
   /* Description:
    * circles contains all circles detected
-   * Vec3f = vector of 3 floats: x, y, r
+   * cv::Vec3f = vector of 3 floats: x, y, r
    */
 
   /*Detect cv::Rect Corners*/
@@ -84,7 +84,7 @@ detectCurve(cv::Mat& src) {
 /*-------------------------------------------------------------------------------------*/
 
 void
-createStraightLines(vector<cv::Point> rectCorners, vector<Point> curveEnds, vector<cv::Vec4i>& straight_lines) {
+createStraightLines(vector<cv::Point> rectCorners, vector<cv::Point> curveEnds, vector<cv::Vec4i>& straight_lines) {
   vector<cv::Point> points;
   points.insert(points.end(), rectCorners.begin(), rectCorners.end());
   points.insert(points.end(), curveEnds.begin(), curveEnds.end());
@@ -110,13 +110,13 @@ drawStraightLines(cv::Mat& img_all, vector<cv::Vec4i> straight_lines) {
 }
 
 void
-drawPoints(cv::Mat& img_all, vector<cv::Point> rectCorners, vector<Point> curveEnds) {
+drawPoints(cv::Mat& img_all, vector<cv::Point> rectCorners, vector<cv::Point> curveEnds) {
   for(int i = 0; i < rectCorners.size(); i++) { cv::circle(img_all, rectCorners[i], 50, cv::Scalar(0, 255, 0), 50); }
   for(int i = 0; i < curveEnds.size(); i++) { cv::circle(img_all, curveEnds[i], 50, cv::Scalar(0, 0, 255), 50); }
 }
 
 void
-mycircle(cv::Mat src, vector<Vec3f>& circles) {
+mycircle(cv::Mat src, vector<cv::Vec3f>& circles) {
 
   // binarize
   cv::Mat image_bin;
@@ -143,7 +143,7 @@ mycircle(cv::Mat src, vector<Vec3f>& circles) {
     cv::circle(temp, center, radius, cv::Scalar(0, 255, 0), 3, 8, 0);
   }
 #ifdef DEBUG_CIRCLE
-  cv::namedWindow("all circles", WINDOW_NORMAL);
+  cv::namedWindow("all circles", cv::WINDOW_NORMAL);
   cv::resizeWindow("all circles", src.cols / 10, src.rows / 10);
   cv::imshow("all circles", temp);
   cv::waitKey(0);
@@ -152,7 +152,7 @@ mycircle(cv::Mat src, vector<Vec3f>& circles) {
 }
 
 void
-findRectCorners(cv::Mat img_plg, vector<Vec3f> circles, vector<cv::Point>& corners) {
+findRectCorners(cv::Mat img_plg, vector<cv::Vec3f> circles, vector<cv::Point>& corners) {
   // find corners
   int max_corners = 30;
   double quality_level = 0.01;
@@ -174,7 +174,7 @@ findRectCorners(cv::Mat img_plg, vector<Vec3f> circles, vector<cv::Point>& corne
     cout << "x = " << corners[i].x << "\t\t y = " << corners[i].y << endl;
   }
 #ifdef DEBUG_CIRCLE
-  cv::namedWindow("corners", WINDOW_NORMAL);
+  cv::namedWindow("corners", cv::WINDOW_NORMAL);
   cv::resizeWindow("corners", src.cols / 10, src.rows / 10);
   cv::imshow("corners", img_corners);
   cv::waitKey(0);
@@ -199,7 +199,7 @@ PolyFit(cv::Mat src, cv::Mat& img_plg) {
   polygons.push_back(polygon);
   cv::drawContours(img_plg, polygons, -1, cv::Scalar(0), 1);
 #ifdef DEBUG_CIRCLE
-  cv::namedWindow("fitted polygon", WINDOW_NORMAL);
+  cv::namedWindow("fitted polygon", cv::WINDOW_NORMAL);
   cv::resizeWindow("fitted polygon", src.cols / 10, src.rows / 10);
   cv::imshow("fitted polygon", img_plg);
   cv::waitKey(0);
@@ -223,7 +223,7 @@ calcLinesP(const cv::Mat& input, vector<cv::Vec4i>& lines) {
 }
 
 void
-eraseCorner(vector<cv::Point>& corners, vector<Vec3f> circles) {
+eraseCorner(vector<cv::Point>& corners, vector<cv::Vec3f> circles) {
   for(int i = corners.size() - 1; i >= 0; i--) {
     if(isNearCircle(corners[i], circles)) {
       corners.erase(corners.begin() + i);
@@ -232,7 +232,7 @@ eraseCorner(vector<cv::Point>& corners, vector<Vec3f> circles) {
 }
 
 bool
-isNearCircle(cv::Point corner, vector<Vec3f> circles) {
+isNearCircle(cv::Point corner, vector<cv::Vec3f> circles) {
   bool flag = false;
   for(int i = 0; i < circles.size(); i++) {
     double dist =
@@ -245,7 +245,7 @@ isNearCircle(cv::Point corner, vector<Vec3f> circles) {
 }
 
 void
-findCurveEnds(vector<cv::Vec4i> linesP, vector<Vec3f> circles, vector<cv::Point>& curveEnds) {
+findCurveEnds(vector<cv::Vec4i> linesP, vector<cv::Vec3f> circles, vector<cv::Point>& curveEnds) {
   vector<cv::Point> temp;
   for(int i = 0; i < linesP.size(); i++) {
     cv::Point lineEnd1 = cv::Point(linesP[i][0], linesP[i][1]);
@@ -270,7 +270,7 @@ findCurveEnds(vector<cv::Vec4i> linesP, vector<Vec3f> circles, vector<cv::Point>
 }
 
 void
-extractCurve(vector<cv::Point> contour, vector<Point> curveEnds, vector<Point>& curve) {
+extractCurve(vector<cv::Point> contour, vector<cv::Point> curveEnds, vector<cv::Point>& curve) {
   //  ATTENTION: this function only work with 1 curve, which has 2 end points!
   for(int i = 0; i < contour.size(); i++) {
     if(contour[i].x >= min(curveEnds[0].x, curveEnds[1].x) && contour[i].x <= max(curveEnds[0].x, curveEnds[1].x) &&

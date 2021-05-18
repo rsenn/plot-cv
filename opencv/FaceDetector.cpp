@@ -30,11 +30,11 @@ DetectAndDisplayFaces(cv::Mat frame, cv::CascadeClassifier face_cascade) {
   int16_t BiggestFaceIndex = 0;
   uint32_t BiggestFaceArea = 0;
 
-  cv::cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
+  cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
   cv::equalizeHist(frame_gray, frame_gray);
 
-  /* Face dectection algorithm */
-  face_cascade.detectMultiScale(frame_gray, faces, 1.1, 2, 0 | CASCADE_SCALE_IMAGE, cv::Size(30, 30));
+  /* Face dectection cv::algorithm */
+  face_cascade.detectMultiScale(frame_gray, faces, 1.1, 2, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(30, 30));
 
   /* Add the cv::rectangle to the faces detected */
   for(CurrentFaceIndex = 0; CurrentFaceIndex < faces.size(); CurrentFaceIndex++) {
@@ -62,7 +62,7 @@ DetectAndDisplayFaces(cv::Mat frame, cv::CascadeClassifier face_cascade) {
   }
 
   if(faces.size() > 0) {
-    /*If inside this it means that at least one cv::face was detected */
+    /*If inside this cv::it means that at least one cv::face was detected */
     BiggestRegion.width = faces[BiggestFaceIndex].width;
     BiggestRegion.height = faces[BiggestFaceIndex].height;
 
@@ -88,9 +88,9 @@ FaceDetectorThread(StopProgram& condition) {
   cv::VideoCapture capture(0);
 
   /* Reduce the size of the window and the FPS */
-  capture.set(CAP_PROP_FRAME_HEIGHT, 500);
-  capture.set(CAP_PROP_FRAME_WIDTH, 400);
-  capture.set(CAP_PROP_FPS, 3);
+  capture.set(cv::CAP_PROP_FRAME_HEIGHT, 500);
+  capture.set(cv::CAP_PROP_FRAME_WIDTH, 400);
+  capture.set(cv::CAP_PROP_FPS, 3);
 
   /* Check if succeeded camera openning */
   if(!capture.isOpened()) {

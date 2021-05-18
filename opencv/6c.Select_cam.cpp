@@ -10,7 +10,7 @@ cv::Mat frame;
 cv::Point selected_point;       // Vi tri vua duoc nhan
 int selected_npts = 0;      // Bien dem so luong vi tri da chon
 vector<cv::Point> selected_pts; // Danh sach cac vi tri
-Rect2d r;
+cv::Rect2d r;
 void mouseHandler(int, int, int, int, void*);
 
 int
@@ -20,7 +20,7 @@ main() {
     printf("ERROR: khong the mo camera\r\n");
     return -1;
   }
-  cv::namedWindow("Camera", WINDOW_NORMAL);
+  cv::namedWindow("Camera", cv::WINDOW_NORMAL);
   cv::resizeWindow("Camera", 300, 300);
   cv::setMouseCallback("Camera", mouseHandler, NULL);
   /*------- Doc lien tuc ------------------------------*/
@@ -49,7 +49,7 @@ main() {
 void
 mouseHandler(int event, int x, int y, int, void*) {
   /*--------- Chuot trai duoc bam ------------------*/
-  if(event == EVENT_LBUTTONDOWN) {
+  if(event == cv::EVENT_LBUTTONDOWN) {
     selected_point = cv::Point(x, y); // Lay toa do diem duoc chon
     printf("[MOUSE] Left-Down: x=%d,y=%d,n=%d\r\n", x, y, selected_npts);
     // Ve diem tron danh dau
@@ -92,28 +92,28 @@ mouseHandler(int event, int x, int y, int, void*) {
     }
   }
   /*---------- Chuot trai duoc tha -----------------*/
-  if(event == EVENT_LBUTTONUP) {
+  if(event == cv::EVENT_LBUTTONUP) {
     printf("[MOUSE] Left-Up: x=%d,y=%d,n=%d\r\n", x, y, selected_npts);
     cv::imshow("Camera", frame);
   }
   /*---------- Chuot phai duoc bam -----------------*/
-  if(event == EVENT_RBUTTONDOWN) {
+  if(event == cv::EVENT_RBUTTONDOWN) {
     printf("[MOUSE] Right-Down: x=%d,y=%d\r\n", x, y);
   }
   /*------- Chuot phai duoc tha --------------------*/
-  if(event == EVENT_RBUTTONUP) {
+  if(event == cv::EVENT_RBUTTONUP) {
     printf("[MOUSE] Right-Up: x=%d,y=%d\r\n", x, y);
   }
   /*------- Chuot giua duoc bam -------------------*/
-  if(event == EVENT_MBUTTONDOWN) {
+  if(event == cv::EVENT_MBUTTONDOWN) {
     printf("[MOUSE] Middle-Down: x=%d,y=%d\r\n", x, y);
   }
   /*------- Chuot giua duoc tha -------------------*/
-  if(event == EVENT_MBUTTONUP) {
+  if(event == cv::EVENT_MBUTTONUP) {
     printf("[MOUSE] Middle-Up: x=%d,y=%d\r\n", x, y);
   }
   /*------- Chuot dang di chuyen ----------------*/
-  if(event == EVENT_MOUSEMOVE) {
+  if(event == cv::EVENT_MOUSEMOVE) {
     printf("[MOUSE] Moved to: x=%d,y=%d\r\n", x, y);
     selected_point = cv::Point(x, y); // Lay toa do diem duoc chon
     if(selected_npts > 0) {

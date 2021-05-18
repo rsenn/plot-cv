@@ -87,7 +87,7 @@ detect_shape() {
     vector<cv::Point> approx;
     // Approximate contour with accuracy proportional
     // to the contour perimeter
-    cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(Mat(contours[i]), true) * 0.02, true);
+    cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true) * 0.02, true);
 
     // Skip small or non-convex objects
     if(fabs(cv::contourArea(contours[i])) < (img.size().height * img.size().width) / 2500 || !cv::isContourConvex(approx)) {
@@ -127,7 +127,7 @@ detect_shape() {
         found_shape = true;
       }
     } else {
-      vector<Vec3f> circles;
+      vector<cv::Vec3f> circles;
 
       // Apply the Hough Transform to find the circles
       cv::HoughCircles(gray, circles, cv::HOUGH_GRADIENT, 1, gray.rows / 8, 200, 100, 0, 0);
@@ -146,7 +146,7 @@ detect_shape() {
     }
   }
 
-  cv::namedWindow("output", WINDOW_NORMAL);
+  cv::namedWindow("output", cv::WINDOW_NORMAL);
   cv::imshow("output", output);
 
   cv::imwrite(args["-o"], output);

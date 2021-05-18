@@ -13,7 +13,7 @@ cv::Mat src;
 cv::Mat src_gray;
 int thresh = 100;
 int max_thresh = 255;
-RNG rng(12345);
+cv::RNG rng(12345);
 
 /// Function header
 void thresh_callback(int, void*);

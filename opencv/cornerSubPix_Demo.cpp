@@ -17,7 +17,7 @@ cv::Mat src, src_gray;
 int maxCorners = 10;
 int maxTrackbar = 25;
 
-RNG rng(12345);
+cv::RNG rng(12345);
 const char* source_window = "Image";
 
 /// Function header
@@ -36,7 +36,7 @@ main(int argc, char** argv) {
     cout << "Usage: " << argv[0] << " <Input image>" << endl;
     return -1;
   }
-  cv::cvtColor(src, src_gray, COLOR_BGR2GRAY);
+  cv::cvtColor(src, src_gray, cv::COLOR_BGR2GRAY);
 
   /// Create Window
   cv::namedWindow(source_window);
@@ -78,7 +78,7 @@ goodFeaturesToTrack_Demo(int, void*) {
   cout << "** Number of corners detected: " << corners.size() << endl;
   int radius = 4;
   for(size_t i = 0; i < corners.size(); i++) {
-    cv::circle(copy, corners[i], radius, cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 256), rng.uniform(0, 256)), FILLED);
+    cv::circle(copy, corners[i], radius, cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 256), rng.uniform(0, 256)), cv::FILLED);
   }
 
   /// Show what you got
@@ -88,7 +88,7 @@ goodFeaturesToTrack_Demo(int, void*) {
   /// Set the needed parameters to find the refined corners
   cv::Size winSize = cv::Size(5, 5);
   cv::Size zeroZone = cv::Size(-1, -1);
-  TermCriteria criteria = TermCriteria(TermCriteria::EPS + TermCriteria::COUNT, 40, 0.001);
+  cv::TermCriteria criteria = cv::TermCriteria(TermCriteria::EPS + cv::TermCriteria::COUNT, 40, 0.001);
 
   /// Calculate the refined corner locations
   cv::cornerSubPix(src_gray, corners, winSize, zeroZone, criteria);

@@ -52,7 +52,7 @@ main() {
     cv::waitKey(10);
   }
 
-  cout << endl << endl << "total amount of frames: " << object->getFrameNumber() << endl << endl;
+  cout << endl << endl << "cv::total amount of frames: " << object->getFrameNumber() << endl << endl;
 
   return 0;
 }

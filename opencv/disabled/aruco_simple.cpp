@@ -29,8 +29,8 @@ or implied, of Rafael Muñoz Salinas.
 #include <cmath>
 #include <fstream>
 #include <sstream>
-#include <cv::aruco.h>
-#include <cv::aruco/cvdrawingutils.h>
+#include <aruco.h>
+#include <aruco/cvdrawingutils.h>
 #include <opencv2/highgui/highgui.hpp>
 using namespace std;
 //using namespace cv;

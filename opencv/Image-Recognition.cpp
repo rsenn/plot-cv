@@ -17,9 +17,9 @@ int thresh = 175;
 int max_thresh = 250;
 int ratio = 3;
 
-cv::Mat cannyThreshold(Mat& img, int e);
-cv::Mat morph(Mat& img);
-cv::Mat blue(Mat& img);
+cv::Mat cannyThreshold(cv::Mat& img, int e);
+cv::Mat morph(cv::Mat& img);
+cv::Mat blue(cv::Mat& img);
 void writeTo(cv::Mat& img, string& name);
 
 // main
@@ -98,10 +98,10 @@ main(/*int argc, char** argv*/) {
 }
 
 // morphologically close the image
-Mat
+cv::Mat
 morph(cv::Mat& img) {
   // Create structured element
-  cv::Mat dst, element = cv::getStructuringElement(MORPH_ELLIPSE, cv::Size(3, 3), cv::Point(-1, -1));
+  cv::Mat dst, element = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(3, 3), cv::Point(-1, -1));
 
   // Apply the closed morphology operation
   cv::morphologyEx(img, dst, 2, element);
@@ -111,7 +111,7 @@ morph(cv::Mat& img) {
 }
 
 // apply canny cv::threshold and cv::ellipse fitting depending on the user input
-Mat
+cv::Mat
 cannyThreshold(cv::Mat& img, int e) {
   cv::Mat edges, dst;
   vector<vector<cv::Point>> contours;
@@ -128,7 +128,7 @@ cannyThreshold(cv::Mat& img, int e) {
     cv::Canny(img, edges, thresh, thresh * 3, 3);
 
     // Find contours
-    cv::findContours(edges, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, cv::Point(-1, -1));
+    cv::findContours(edges, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(-1, -1));
 
     // Using cv::Canny's output as a mask
     dst = cv::Scalar::all(0);
@@ -179,18 +179,18 @@ cannyThreshold(cv::Mat& img, int e) {
 }
 
 // method to change every blue pixel value available to white
-Mat
+cv::Mat
 blue(cv::Mat& img) {
   cv::Mat dst = img.clone();
 
   // Replace all blue pixels with white pixels
   for(int x = 0; x < img.rows; x++) {
     for(int y = 0; y < img.cols; y++) {
-      if(img.at<Vec3b>(x, y) == Vec3b(255, 0, 0)) {
+      if(img.at<cv::Vec3b>(x, y) == cv::Vec3b(255, 0, 0)) {
         // combination of all 255 creates white
-        dst.at<Vec3b>(x, y)[0] = 255;
-        dst.at<Vec3b>(x, y)[1] = 255;
-        dst.at<Vec3b>(x, y)[2] = 255;
+        dst.at<cv::Vec3b>(x, y)[0] = 255;
+        dst.at<cv::Vec3b>(x, y)[1] = 255;
+        dst.at<cv::Vec3b>(x, y)[2] = 255;
       }
     }
   }

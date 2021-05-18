@@ -28,7 +28,7 @@ main(int argc, char* argv[]) {
 
   // Apply cv::adaptiveThreshold at the cv::bitwise_not of gray, notice the ~ symbol
   cv::Mat bw;
-  cv::adaptiveThreshold(~gray, bw, 255, cv::ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 15, -2);
+  cv::adaptiveThreshold(~gray, bw, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY, 15, -2);
 
   // Dilate a bit in order to correct possible gaps
   cv::Mat kernel = cv::Mat::ones(2, 2, CV_8UC1);
@@ -44,7 +44,7 @@ main(int argc, char* argv[]) {
   int horizontalsize = horizontal.cols / 30;
 
   // Create structure element for extracting horizontal lines through morphology operations
-  cv::Mat horizontalStructure = cv::getStructuringElement(MORPH_RECT, cv::Size(horizontalsize, 1));
+  cv::Mat horizontalStructure = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(horizontalsize, 1));
 
   // Apply morphology operations
   cv::erode(horizontal, horizontal, horizontalStructure, cv::Point(-1, -1));

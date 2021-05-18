@@ -1,7 +1,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <opencv2/cv::dnn.hpp>
+#include <opencv2/dnn.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 
@@ -33,7 +33,7 @@ private:
   char netname[20];
   vector<string> classes;
   Net net;
-  void postprocess(cv::Mat& frame, const vector<Mat>& outs);
+  void postprocess(cv::Mat& frame, const vector<cv::Mat>& outs);
   void drawPred(int classId, float conf, int left, int top, int right, int bottom, cv::Mat& frame);
 };
 

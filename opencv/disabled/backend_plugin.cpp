@@ -7,15 +7,15 @@
 #include "backend.hpp"
 #include "plugin_api.hpp"
 
-#include "opencv2/core/cv::utils/filesystem.hpp"
-#include "opencv2/core/cv::utils/configuration.private.hpp"
+#include "opencv2/core/utils/filesystem.hpp"
+#include "opencv2/core/utils/configuration.private.hpp"
 #include "opencv2/core/private.hpp"
 #include "videoio_registry.hpp"
 
 //==================================================================================================
 // Dynamic backend implementation
 
-#include "opencv2/core/cv::utils/logger.hpp"
+#include "opencv2/core/utils/logger.hpp"
 #include <sstream>
 using namespace std;
 

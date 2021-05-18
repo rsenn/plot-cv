@@ -288,10 +288,10 @@ process::startOpencv(int width, int height, int mode, ParkingInfo info, std::str
         int response = (int)svm->predict(plate.canonical());
 
         if(mode & WINDOWON)
-          cv::imshow("plate", plate.img);
+          cv::imshow("plate", plate.cv::img);
 
         if(mode & SVMTRAIN)
-          svmtrainer.train(plate.img);
+          svmtrainer.train(plate.cv::img);
 
         /** Svm을 통해 번호판 여부 확인 */
         if(response != 1)
@@ -434,7 +434,7 @@ process::startOpencv(int width, int height, int mode, ParkingInfo info, std::str
           cv::imshow("Text", textCollection);
 
         if(mode & WINDOWON)
-          cv::imshow("warp" /*+ to_string(i)*/, foundPlate.img);
+          cv::imshow("warp" /*+ to_string(i)*/, foundPlate.cv::img);
 
         k++;
       }

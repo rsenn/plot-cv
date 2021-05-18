@@ -19,14 +19,14 @@ main() {
 
   cv::Mat frame1, prvs;
   capture >> frame1;
-  cv::cvtColor(frame1, prvs, COLOR_BGR2GRAY);
+  cv::cvtColor(frame1, prvs, cv::COLOR_BGR2GRAY);
 
   while(true) {
     cv::Mat frame2, next;
     capture >> frame2;
     if(frame2.empty())
       break;
-    cv::cvtColor(frame2, next, COLOR_BGR2GRAY);
+    cv::cvtColor(frame2, next, cv::COLOR_BGR2GRAY);
 
     cv::Mat flow(prvs.size(), CV_32FC2);
     cv::calcOpticalFlowFarneback(prvs, next, flow, 0.5, 3, 15, 3, 5, 1.2, 0);
@@ -36,7 +36,7 @@ main() {
     cv::split(flow, flow_parts);
     cv::Mat cv::magnitude, angle, magn_norm;
     cv::cartToPolar(flow_parts[0], flow_parts[1], cv::magnitude, angle, true);
-    cv::normalize(cv::magnitude, magn_norm, 0.0f, 1.0f, NORM_MINMAX);
+    cv::normalize(cv::magnitude, magn_norm, 0.0f, 1.0f, cv::NORM_MINMAX);
     angle *= ((1.f / 360.f) * (180.f / 255.f));
 
     // build hsv image
@@ -46,7 +46,7 @@ main() {
     _hsv[2] = magn_norm;
     cv::merge(_hsv, 3, hsv);
     hsv.convertTo(hsv8, CV_8U, 255.0);
-    cv::cvtColor(hsv8, bgr, COLOR_HSV2BGR);
+    cv::cvtColor(hsv8, bgr, cv::COLOR_HSV2BGR);
 
     cv::imshow("frame2", bgr);
 

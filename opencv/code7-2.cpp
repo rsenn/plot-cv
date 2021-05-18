@@ -26,7 +26,7 @@ on_high_diff_trackbar(int, void*) {
 
 void
 on_mouse(int event, int x, int y, int, void*) {
-  if(event != EVENT_LBUTTONDOWN)
+  if(event != cv::EVENT_LBUTTONDOWN)
     return;
 
   selected = true;
@@ -93,9 +93,9 @@ main() {
     cv::inRange(hs, cv::Scalar(l_h, l_s), cv::Scalar(h_h, h_s), frame_thresholded);
 
     // open and close to remove noise
-    cv::Mat str_el = cv::getStructuringElement(MORPH_RECT, cv::Size(5, 5));
-    cv::morphologyEx(frame_thresholded, frame_thresholded, MORPH_OPEN, str_el);
-    cv::morphologyEx(frame_thresholded, frame_thresholded, MORPH_CLOSE, str_el);
+    cv::Mat str_el = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5));
+    cv::morphologyEx(frame_thresholded, frame_thresholded, cv::MORPH_OPEN, str_el);
+    cv::morphologyEx(frame_thresholded, frame_thresholded, cv::MORPH_CLOSE, str_el);
 
     cv::imshow("Video", frame);
     cv::imshow("Segmentation", frame_thresholded);

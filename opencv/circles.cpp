@@ -31,7 +31,7 @@ main() {
     cv::Canny(gray, gray, 0, 50, 3);
     cv::imshow("edges", gray);
 
-    vector<Vec3f> circles;
+    vector<cv::Vec3f> circles;
 
     // Apply the Hough Transform to find the circles
     cv::HoughCircles(gray, circles, cv::HOUGH_GRADIENT, 1, 30, 200, 50, 0, 0);

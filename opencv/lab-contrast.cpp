@@ -13,7 +13,7 @@ main(int argc, char** argv) {
   if(argc == 3)
     clim = atoi(argv[2]);
 
-  // READ RGB color image and convert it to Lab
+  // READ RGB color image and convert cv::it to Lab
   cv::Mat bgr_image = cv::imread(argv[1]);
   cv::Mat lab_image;
   cv::cvtColor(bgr_image, lab_image, CV_BGR2Lab);
@@ -22,7 +22,7 @@ main(int argc, char** argv) {
   std::vector<cv::Mat> lab_planes(3);
   cv::split(lab_image, lab_planes); // now we have the L image in lab_planes[0]
 
-  // apply the CLAHE algorithm to the L channel
+  // apply the CLAHE cv::algorithm to the L channel
   cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
   clahe->setClipLimit(clim);
   cv::Mat dst;

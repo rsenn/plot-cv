@@ -34,7 +34,7 @@ main(int, char**) {
   cout << "Start grabbing" << endl << "Press any key to terminate" << endl;
   for(;;) {
     // wait for a new frame from camera and store it into 'frame'
-    cap.cv::read(frame);
+    cap.read(frame);
     // check if we succeeded
     if(frame.empty()) {
       cerr << "ERROR! blank frame grabbed\n";

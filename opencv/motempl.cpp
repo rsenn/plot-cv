@@ -63,7 +63,7 @@ update_mhi(const cv::Mat& img, cv::Mat& dst, int diff_threshold) {
     buf[1] = cv::Mat::zeros(size, CV_8U);
   }
 
-  cv::cvtColor(img, buf[last], COLOR_BGR2GRAY); // convert frame to grayscale
+  cv::cvtColor(img, buf[last], cv::COLOR_BGR2GRAY); // convert frame to grayscale
 
   int idx2 = (last + 1) % 2; // index of (last - (N-1))th frame
   last = idx2;
@@ -71,7 +71,7 @@ update_mhi(const cv::Mat& img, cv::Mat& dst, int diff_threshold) {
   cv::Mat silh = buf[idx2];
   cv::absdiff(buf[idx1], buf[idx2], silh); // get difference between frames
 
-  cv::threshold(silh, silh, diff_threshold, 1, THRESH_BINARY); // and cv::threshold it
+  cv::threshold(silh, silh, diff_threshold, 1, cv::THRESH_BINARY); // and cv::threshold it
   updateMotionHistory(silh, mhi, timestamp, MHI_DURATION); // update MHI
 
   // convert MHI to blue 8u image
@@ -114,7 +114,7 @@ update_mhi(const cv::Mat& img, cv::Mat& dst, int diff_threshold) {
     angle = calcGlobalOrientation(orient_roi, mask_roi, mhi_roi, timestamp, MHI_DURATION);
     angle = 360.0 - angle; // adjust for images with top-left origin
 
-    count = cv::norm(silh_roi, NORM_L1);
+    count = cv::norm(silh_roi, cv::NORM_L1);
     ; // calculate number of points within silhouette ROI
 
     // check for the case of little motion

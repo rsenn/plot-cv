@@ -32,10 +32,10 @@ main(int, char** argv) {
   // better results during the use of Distance Transform
   for(int x = 0; x < src.rows; x++) {
     for(int y = 0; y < src.cols; y++) {
-      if(src.at<Vec3b>(x, y) == Vec3b(255, 255, 255)) {
-        src.at<Vec3b>(x, y)[0] = 0;
-        src.at<Vec3b>(x, y)[1] = 0;
-        src.at<Vec3b>(x, y)[2] = 0;
+      if(src.at<cv::Vec3b>(x, y) == cv::Vec3b(255, 255, 255)) {
+        src.at<cv::Vec3b>(x, y)[0] = 0;
+        src.at<cv::Vec3b>(x, y)[1] = 0;
+        src.at<cv::Vec3b>(x, y)[2] = 0;
       }
     }
   }
@@ -86,7 +86,7 @@ main(int, char** argv) {
 
   // Normalize the distance image for range = {0.0, 1.0}
   // so we can visualize and cv::threshold it
-  cv::normalize(dist, dist, 0, 1., NORM_MINMAX);
+  cv::normalize(dist, dist, 0, 1., cv::NORM_MINMAX);
   cv::imshow("Distance Transform Image", dist);
   //! [dist]
 
@@ -134,13 +134,13 @@ main(int, char** argv) {
   // image looks like at that point
 
   // Generate random colors
-  std::vector<Vec3b> colors;
+  std::vector<cv::Vec3b> colors;
   for(size_t i = 0; i < contours.size(); i++) {
     int b = cv::theRNG().uniform(0, 255);
     int g = cv::theRNG().uniform(0, 255);
     int r = cv::theRNG().uniform(0, 255);
 
-    colors.push_back(Vec3b((uchar)b, (uchar)g, (uchar)r));
+    colors.push_back(cv::Vec3b((uchar)b, (uchar)g, (uchar)r));
   }
 
   // Create the result image
@@ -151,9 +151,9 @@ main(int, char** argv) {
     for(int j = 0; j < markers.cols; j++) {
       int index = markers.at<int>(i, j);
       if(index > 0 && index <= static_cast<int>(contours.size()))
-        dst.at<Vec3b>(i, j) = colors[index - 1];
+        dst.at<cv::Vec3b>(i, j) = colors[index - 1];
       else
-        dst.at<Vec3b>(i, j) = Vec3b(0, 0, 0);
+        dst.at<cv::Vec3b>(i, j) = cv::Vec3b(0, 0, 0);
     }
   }
 

@@ -73,7 +73,7 @@ main(int argc, char** argv) {
   //![create_mat]
 
   //![convert_to_gray]
-  cv::cvtColor(src, src_gray, COLOR_BGR2GRAY);
+  cv::cvtColor(src, src_gray, cv::COLOR_BGR2GRAY);
   //![convert_to_gray]
 
   //![create_window]

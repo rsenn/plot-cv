@@ -18,7 +18,7 @@ cv::Mat src, src_gray;
 int maxCorners = 23;
 int maxTrackbar = 100;
 
-RNG rng(12345);
+cv::RNG rng(12345);
 const char* source_window = "Image";
 
 /// Function header
@@ -37,7 +37,7 @@ main(int argc, char** argv) {
     cout << "Usage: " << argv[0] << " <Input image>" << endl;
     return -1;
   }
-  cv::cvtColor(src, src_gray, COLOR_BGR2GRAY);
+  cv::cvtColor(src, src_gray, cv::COLOR_BGR2GRAY);
 
   /// Create Window
   cv::namedWindow(source_window);
@@ -79,7 +79,7 @@ goodFeaturesToTrack_Demo(int, void*) {
   cout << "** Number of corners detected: " << corners.size() << endl;
   int radius = 4;
   for(size_t i = 0; i < corners.size(); i++) {
-    cv::circle(copy, corners[i], radius, cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 256), rng.uniform(0, 256)), FILLED);
+    cv::circle(copy, corners[i], radius, cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 256), rng.uniform(0, 256)), cv::FILLED);
   }
 
   /// Show what you got

@@ -108,47 +108,47 @@ main() {
 
       // Triangle Detection
       // if there are 3  vertices  in the contour(It should be a triangle)
-      if(result->total == 3) {
+      if(result->cv::total == 3) {
         // iterating through each point
-        cv::Point* pt[3];
-        for(int i = 0; i < 3; i++) { pt[i] = (cv::Point*)cv::GetSeqElem(result, i); }
+        cv::Point* cv::pt[3];
+        for(int i = 0; i < 3; i++) { cv::pt[i] = (cv::Point*)cv::GetSeqElem(result, i); }
 
         // This If Statement ensures that the edges are sufficiently large enough to be detected
-        if(abs(pt[1]->x - pt[0]->x) > 10 && abs(pt[1]->x - pt[2]->x) > 10 && abs(pt[2]->x - pt[0]->x) > 10) {
+        if(abs(cv::pt[1]->x - pt[0]->x) > 10 && abs(pt[1]->x - pt[2]->x) > 10 && abs(pt[2]->x - pt[0]->x) > 10) {
           //////////drawing lines around the triangle
-          cv::line(frame, *pt[0], *pt[1], cv::Scalar(255, 0, 0), 4);
-          cv::line(frame, *pt[1], *pt[2], cv::Scalar(255, 0, 0), 4);
-          cv::line(frame, *pt[2], *pt[0], cv::Scalar(255, 0, 0), 4);
+          cv::line(frame, *cv::pt[0], *pt[1], cv::Scalar(255, 0, 0), 4);
+          cv::line(frame, *cv::pt[1], *pt[2], cv::Scalar(255, 0, 0), 4);
+          cv::line(frame, *cv::pt[2], *pt[0], cv::Scalar(255, 0, 0), 4);
           std::cout << "\nTriangle\n";
         }
       }
 
       // Rectangle detection
       // if there are 4 vertices in the contour(It should be a quadrilateral)
-      else if(result->total == 4) {
+      else if(result->cv::total == 4) {
         // iterating through each point
-        cv::Point* pt[4];
-        for(int i = 0; i < 4; i++) { pt[i] = (cv::Point*)cv::GetSeqElem(result, i); }
+        cv::Point* cv::pt[4];
+        for(int i = 0; i < 4; i++) { cv::pt[i] = (cv::Point*)cv::GetSeqElem(result, i); }
 
         // finding angles
-        double firstAngle = acos(angle(pt[0], pt[2], pt[1]));
-        double secondAngle = acos(angle(pt[1], pt[3], pt[2]));
-        double thirdAngle = acos(angle(pt[1], pt[3], pt[2]));
-        double fourthAngle = acos(angle(pt[0], pt[2], pt[3]));
+        double firstAngle = acos(angle(cv::pt[0], pt[2], pt[1]));
+        double secondAngle = acos(angle(cv::pt[1], pt[3], pt[2]));
+        double thirdAngle = acos(angle(cv::pt[1], pt[3], pt[2]));
+        double fourthAngle = acos(angle(cv::pt[0], pt[2], pt[3]));
 
         // This If Statement Ensures that the edges are sufficiently large
-        if(abs(pt[1]->x - pt[0]->x) > 10 && abs(pt[1]->x - pt[2]->x) > 10 && abs(pt[2]->x - pt[3]->x) > 10 &&
-           abs(pt[3]->x - pt[0]->x) > 10) {
+        if(abs(cv::pt[1]->x - pt[0]->x) > 10 && abs(pt[1]->x - pt[2]->x) > 10 && abs(pt[2]->x - pt[3]->x) > 10 &&
+           abs(cv::pt[3]->x - pt[0]->x) > 10) {
 
           // This if statement checks the angles to see if its a cv::rectangle or not (90 angles with 10%
           // uncertainty)
           if(firstAngle <= 1.884 && firstAngle >= 1.308 && secondAngle <= 1.884 && secondAngle >= 1.308 &&
              thirdAngle <= 1.884 && thirdAngle >= 1.308 && fourthAngle <= 1.884 && fourthAngle >= 1.308) {
             // drawing lines around the quadrilateral
-            cv::line(frame, *pt[0], *pt[1], cv::Scalar(0, 255, 0), 4);
-            cv::line(frame, *pt[1], *pt[2], cv::Scalar(0, 255, 0), 4);
-            cv::line(frame, *pt[2], *pt[3], cv::Scalar(0, 255, 0), 4);
-            cv::line(frame, *pt[3], *pt[0], cv::Scalar(0, 255, 0), 4);
+            cv::line(frame, *cv::pt[0], *pt[1], cv::Scalar(0, 255, 0), 4);
+            cv::line(frame, *cv::pt[1], *pt[2], cv::Scalar(0, 255, 0), 4);
+            cv::line(frame, *cv::pt[2], *pt[3], cv::Scalar(0, 255, 0), 4);
+            cv::line(frame, *cv::pt[3], *pt[0], cv::Scalar(0, 255, 0), 4);
 
             std::cout << "\nsquare\n";
             // cout << firstAngle; //Uncomment this to get the angles that its detecting.

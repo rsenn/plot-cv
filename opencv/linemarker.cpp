@@ -18,7 +18,7 @@ lineSet markedLines;
 // Line marking window name
 string lineMarkerName = "Line marker";
 
-cv::Mat img, workingImage;
+cv::Mat cv::img, workingImage;
 string draft = "draft.jpg";
 bool isMarkerNoob = true;
 
@@ -50,57 +50,57 @@ LineMarker::stopMarking() {
 // Mouse callback event to mark the lines
 void
 onMouse(int event, int x, int y, int flags, void* userdata) {
-  if(event == EVENT_LBUTTONDOWN) {
+  if(event == cv::EVENT_LBUTTONDOWN) {
     /*
     //sets upper line
-    img = cv::imread(draft);
-    aLine templine(0, y, img.size().width, y);
-    templine.drawaLine(img, cv::Scalar(0, 0, 255));
-    cv::imshow(lineMarkerName, img);
+    cv::img = cv::imread(draft);
+    aLine templine(0, y, cv::img.size().width, y);
+    templine.drawaLine(cv::img, cv::Scalar(0, 0, 255));
+    cv::imshow(lineMarkerName, cv::img);
     markedLines.setLine(1,templine);
     */
     if(isMarking) {
       if(wichLine) {
-        img = cv::imread(draft);
-        aLine templine(0, y, img.size().width, y);
-        templine.drawaLine(img, cv::Scalar(0, 0, 255));
-        cv::imshow(lineMarkerName, img);
+        cv::img = cv::imread(draft);
+        aLine templine(0, y, cv::img.size().width, y);
+        templine.drawaLine(cv::img, cv::Scalar(0, 0, 255));
+        cv::imshow(lineMarkerName, cv::img);
         markedLines.setLine(1, templine);
       } else if(!wichLine) {
-        img = cv::imread(draft);
-        aLine templine(0, y, img.size().width, y);
-        templine.drawaLine(img, cv::Scalar(0, 0, 255));
-        cv::imshow(lineMarkerName, img);
+        cv::img = cv::imread(draft);
+        aLine templine(0, y, cv::img.size().width, y);
+        templine.drawaLine(cv::img, cv::Scalar(0, 0, 255));
+        cv::imshow(lineMarkerName, cv::img);
         markedLines.setLine(0, templine);
       }
     }
-  } else if(event == EVENT_RBUTTONDOWN) {
+  } else if(event == cv::EVENT_RBUTTONDOWN) {
     // sets bottom line
-    // img = cv::imread(draft);
-    // aLine templine(0, y, img.size().width, y);
-    // templine.drawaLine(img, cv::Scalar(0, 0, 255));
-    // cv::imshow(lineMarkerName, img);
+    // cv::img = cv::imread(draft);
+    // aLine templine(0, y, cv::img.size().width, y);
+    // templine.drawaLine(cv::img, cv::Scalar(0, 0, 255));
+    // cv::imshow(lineMarkerName, cv::img);
     // markedLines.setLine(0,templine);
-  } else if(event == EVENT_MBUTTONDOWN) {
+  } else if(event == cv::EVENT_MBUTTONDOWN) {
     // take another picture
     // cv::destroyWindow(lineMarkerName);
-    // img = cv::imread(draft);
-    // aLine templine(0, y, img.size().width, y);
-    // templine.drawaLine(img, cv::Scalar(0, 0, 255));
-    // cv::imshow(lineMarkerName, img);
+    // cv::img = cv::imread(draft);
+    // aLine templine(0, y, cv::img.size().width, y);
+    // templine.drawaLine(cv::img, cv::Scalar(0, 0, 255));
+    // cv::imshow(lineMarkerName, cv::img);
     // markedLines.setLine(1,templine);
-  } else if(event == EVENT_MOUSEMOVE) {
+  } else if(event == cv::EVENT_MOUSEMOVE) {
     // draws mouse line
-    img = cv::imread(draft);
-    aLine templine(0, y, img.size().width, y);
-    templine.drawaLine(img, cv::Scalar(0, 255, 255));
+    cv::img = cv::imread(draft);
+    aLine templine(0, y, cv::img.size().width, y);
+    templine.drawaLine(cv::img, cv::Scalar(0, 255, 255));
     if(markedLines.hasBottom()) {
-      markedLines.set[0].drawaLine(img, cv::Scalar(0, 255, 0));
+      markedLines.set[0].drawaLine(cv::img, cv::Scalar(0, 255, 0));
     }
     if(markedLines.hasTop()) {
-      markedLines.set[1].drawaLine(img, cv::Scalar(255, 0, 0));
+      markedLines.set[1].drawaLine(cv::img, cv::Scalar(255, 0, 0));
     }
-    cv::imshow(lineMarkerName, img);
+    cv::imshow(lineMarkerName, cv::img);
   }
 }
 
@@ -113,7 +113,7 @@ LineMarker::markLines() {
   markedLines = zeroSet;
 
   // Read image from file
-  img = cv::imread(draft);
+  cv::img = cv::imread(draft);
 
   // if fail to cv::read the image
   if(workingImage.empty()) {
@@ -128,7 +128,7 @@ LineMarker::markLines() {
   cv::setMouseCallback(lineMarkerName, onMouse, NULL);
 
   // show the image
-  cv::imshow(lineMarkerName, img);
+  cv::imshow(lineMarkerName, cv::img);
 
   // Wait until user press some key
   cv::waitKey(0);
@@ -143,23 +143,23 @@ LineMarker::markLines() {
 // Open camera to take picture by pressing any key. Picture is used for cv::line marking
 lineSet
 LineMarker::displayCamera(string windowName) {
-  cv::VideoCapture cap;
+  cv::VideoCapture cv::cap;
   if(cameraIndexh == 0) {
-    cap = capz;
+    cv::cap = capz;
   } else if(cameraIndexh == 1) {
-    cap = capo;
+    cv::cap = capo;
   } else {
-    cap = capt;
+    cv::cap = capt;
   }
   cv::namedWindow(windowName);
   cv::Mat frame, messageFrame;
 
   do {
-    cap >> frame;
+    cv::cap >> frame;
     cv::imshow(windowName, frame);
   } while(cv::waitKey(10) < 0);
 
-  cap >> frame;
+  cv::cap >> frame;
 
   messageFrame = frame;
   /*

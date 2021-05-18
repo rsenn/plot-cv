@@ -11,20 +11,20 @@ namespace {
 enum Pattern { CHESSBOARD, CIRCLES_GRID, ASYMMETRIC_CIRCLES_GRID };
 
 void
-calcChessboardCorners(cv::Size boardSize, float squareSize, vector<Point3f>& corners, Pattern patternType = CHESSBOARD) {
+calcChessboardCorners(cv::Size boardSize, float squareSize, vector<cv::Point3f>& corners, Pattern patternType = CHESSBOARD) {
   corners.cv::resize(0);
 
   switch(patternType) {
     case CHESSBOARD:
     case CIRCLES_GRID:
       for(int i = 0; i < boardSize.height; i++)
-        for(int j = 0; j < boardSize.width; j++) corners.push_back(Point3f(float(j * squareSize), float(i * squareSize), 0));
+        for(int j = 0; j < boardSize.width; j++) corners.push_back(cv::Point3f(float(j * squareSize), float(i * squareSize), 0));
       break;
 
     case ASYMMETRIC_CIRCLES_GRID:
       for(int i = 0; i < boardSize.height; i++)
         for(int j = 0; j < boardSize.width; j++)
-          corners.push_back(Point3f(float((2 * j + i % 2) * squareSize), float(i * squareSize), 0));
+          corners.push_back(cv::Point3f(float((2 * j + i % 2) * squareSize), float(i * squareSize), 0));
       break;
 
     default: CV_Error(cv::Error::StsBadArg, "Unknown pattern type\n");
@@ -32,14 +32,14 @@ calcChessboardCorners(cv::Size boardSize, float squareSize, vector<Point3f>& cor
 }
 
 //! [compute-homography]
-Mat
+cv::Mat
 computeHomography(const cv::Mat& R_1to2, const cv::Mat& tvec_1to2, const double d_inv, const cv::Mat& normal) {
   cv::Mat homography = R_1to2 + d_inv * tvec_1to2 * normal.t();
   return homography;
 }
 //! [compute-homography]
 
-Mat
+cv::Mat
 computeHomography(const cv::Mat& R1, const cv::Mat& tvec1, const cv::Mat& R2, const cv::Mat& tvec2, const double d_inv, const cv::Mat& normal) {
   cv::Mat homography = R2 * R1.t() + d_inv * (-R2 * R1.t() * tvec1 + tvec2) * normal.t();
   return homography;
@@ -73,7 +73,7 @@ homographyFromCameraDisplacement(const string& img1Path,
     return;
   }
 
-  vector<Point3f> objectPoints;
+  vector<cv::Point3f> objectPoints;
   calcChessboardCorners(patternSize, squareSize, objectPoints);
 
   cv::FileStorage fs(intrinsicsPath, cv::FileStorage::READ);
@@ -106,7 +106,7 @@ homographyFromCameraDisplacement(const string& img1Path,
   //! [compute-camera-displacement]
 
   //! [compute-plane-normal-at-camera-pose-1]
-  cv::Mat normal = (Mat_<double>(3, 1) << 0, 0, 1);
+  cv::Mat normal = (cv::Mat_<double>(3, 1) << 0, 0, 1);
   cv::Mat normal1 = R1 * normal;
   //! [compute-plane-normal-at-camera-pose-1]
 
@@ -185,7 +185,7 @@ main(int argc, char* argv[]) {
   cv::Size patternSize(parser.get<int>("width"), parser.get<int>("height"));
   float squareSize = (float)parser.get<double>("square_size");
   homographyFromCameraDisplacement(
-      parser.get<cv::String>("image1"), parser.get<String>("image2"), patternSize, squareSize, parser.get<String>("intrinsics"));
+      parser.get<cv::String>("image1"), parser.get<cv::String>("image2"), patternSize, squareSize, parser.get<cv::String>("intrinsics"));
 
   return 0;
 }

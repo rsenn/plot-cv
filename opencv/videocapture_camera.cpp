@@ -1,7 +1,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp> // cv::Canny()
+#include <opencv2/imgproc.hpp> // Canny()
 #include <iostream>
 
 //using namespace cv;
@@ -19,9 +19,9 @@ main(int, char**) {
     return 1;
   }
 
-  cout << "Frame width: " << capture.get(CAP_PROP_FRAME_WIDTH) << endl;
-  cout << "     height: " << capture.get(CAP_PROP_FRAME_HEIGHT) << endl;
-  cout << "Capturing FPS: " << capture.get(CAP_PROP_FPS) << endl;
+  cout << "Frame width: " << capture.get(cv::CAP_PROP_FRAME_WIDTH) << endl;
+  cout << "     height: " << capture.get(cv::CAP_PROP_FRAME_HEIGHT) << endl;
+  cout << "Capturing FPS: " << capture.get(cv::CAP_PROP_FPS) << endl;
 
   cout << endl << "Press 'ESC' to quit, 'space' to toggle frame processing" << endl;
   cout << endl << "Start grabbing..." << endl;

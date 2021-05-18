@@ -2,7 +2,7 @@
 //µo¥¬°T®§"center_position"
 
 #include <ros/ros.h>
-#include <geometry_msgs/cv::Point.h>
+#include <geometry_msgs/Point.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>

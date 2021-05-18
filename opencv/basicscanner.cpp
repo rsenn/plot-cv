@@ -17,7 +17,7 @@ cv::Mat src_gray;
 cv::Mat resize_img;
 int thresh = 100;
 int max_thresh = 255;
-RNG rng(12345);
+cv::RNG rng(12345);
 int largestContour = -1;
 double max_svg_width = 1200; // pixels
 double max_svg_height = 900; // pixels
@@ -56,7 +56,7 @@ export_svg(vector<cv::Point> contour_arg, string output_file) {
   svg::LineChart chart(5.0);
   svg::Polyline polyline(svg::Stroke(1, svg::Color(255, 0, 0)));
   for(int i = 0; i < contour_arg.size(); i++) {
-    svg::cv::Point temp = svg::Point(contour_arg.at(i).x, contour_arg.at(i).y);
+    svg::cv::Point temp = svg::cv::Point(contour_arg.at(i).x, contour_arg.at(i).y);
     polyline << temp;
   }
   doc << polyline;

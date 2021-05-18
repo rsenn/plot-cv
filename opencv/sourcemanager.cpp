@@ -60,10 +60,10 @@ SourceManager::reloadCameras() {
   cameraCount = 0;
   bool search = true;
   while(search) {
-    cv::VideoCapture cap;
-    cap.open(cameraCount++);
-    if(cap.isOpened())
-      cap.release();
+    cv::VideoCapture cv::cap;
+    cv::cap.open(cameraCount++);
+    if(cv::cap.isOpened())
+      cv::cap.release();
     else
       search = false;
   }

@@ -14,9 +14,9 @@ cv::Rect zone(0, 0, 0, 0);
 vector<cv::Rect> rectangles;
 bool debug_mode = false, count_black = false;
 
-cv::Mat createBinaryImage(Mat, cv::Mat);
+cv::Mat createBinaryImage(cv::Mat, cv::Mat);
 cv::Mat keepLines(string);
-cv::Rect reduceRectangleSelection(Rect);
+cv::Rect reduceRectangleSelection(cv::Rect);
 cv::Rect buildZone(const char*);
 string intToString(int);
 vector<cv::Rect> findRectangles(cv::Mat);
@@ -107,7 +107,7 @@ main(int argc, char* argv[]) {
   return (0);
 }
 
-Rect
+cv::Rect
 reduceRectangleSelection(cv::Rect rect) {
   return cv::Rect(rect.tl().x + thin, rect.tl().y + thin, rect.width - thin, rect.height - thin);
 }
@@ -158,14 +158,14 @@ checkDebugMode(const char* arg) {
 }
 
 // Combined horizontal and vertical image in order to create the binary image
-Mat
+cv::Mat
 createBinaryImage(cv::Mat horizontal, cv::Mat vertical) {
   cv::Mat binary_image = horizontal & vertical;
   cv::threshold(binary_image, binary_image, 75, 255.0, cv::THRESH_BINARY_INV);
   return binary_image;
 }
 
-Mat
+cv::Mat
 keepLines(string dimension_type) {
   cv::Mat morph, bin;
 
@@ -176,8 +176,8 @@ keepLines(string dimension_type) {
     size = cv::Size(1, height);
   }
 
-  cv::Mat morph_kernel = cv::getStructuringElement(MORPH_RECT, size);
-  cv::morphologyEx(source_gray, morph, MORPH_CLOSE, morph_kernel);
+  cv::Mat morph_kernel = cv::getStructuringElement(cv::MORPH_RECT, size);
+  cv::morphologyEx(source_gray, morph, cv::MORPH_CLOSE, morph_kernel);
   cv::threshold(morph, bin, thresh, 255, cv::THRESH_BINARY);
   // cv::threshold(morph, bin, 100, 255.0, cv::THRESH_BINARY | cv::THRESH_OTSU);
 
@@ -188,7 +188,7 @@ void
 setLabel(cv::Mat& im, const std::string label, std::vector<cv::Point>& contour) {
   double scale = 0.3;
   int baseline = 0;
-  int fontface = FONT_HERSHEY_SIMPLEX;
+  int fontface = cv::FONT_HERSHEY_SIMPLEX;
   int thickness = 1;
 
   cv::Size text = cv::getTextSize(label, fontface, scale, thickness, &baseline);
@@ -249,7 +249,7 @@ assignArgs(char* argv) {
   }
 }
 
-Rect
+cv::Rect
 buildZone(const char* argv) {
   vector<string> v;
   int x = 0, y = 0, w = 0, h = 0;

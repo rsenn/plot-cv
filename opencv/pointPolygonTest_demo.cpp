@@ -32,7 +32,7 @@ main(void) {
   vert[4] = cv::Point(3 * r, 2 * r);
   vert[5] = cv::Point(5 * r / 2, static_cast<int>(1.34 * r));
 
-  /// Draw it in src
+  /// Draw cv::it in src
   for(int j = 0; j < 6; j++) { cv::line(src, vert[j], vert[(j + 1) % 6], cv::Scalar(255), 3, 8); }
 
   /// Get the contours
@@ -40,7 +40,7 @@ main(void) {
   std::vector<cv::Vec4i> hierarchy;
   cv::Mat src_copy = src.clone();
 
-  cv::findContours(src_copy, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+  cv::findContours(src_copy, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
 
   /// Calculate the distances to the contour
   cv::Mat raw_dist(src.size(), CV_32FC1);
@@ -63,13 +63,13 @@ main(void) {
   for(int j = 0; j < src.rows; j++) {
     for(int i = 0; i < src.cols; i++) {
       if(raw_dist.at<float>(j, i) < 0) {
-        drawing.at<Vec3b>(j, i)[0] = (uchar)(255 - abs(raw_dist.at<float>(j, i)) * 255 / minVal);
+        drawing.at<cv::Vec3b>(j, i)[0] = (uchar)(255 - abs(raw_dist.at<float>(j, i)) * 255 / minVal);
       } else if(raw_dist.at<float>(j, i) > 0) {
-        drawing.at<Vec3b>(j, i)[2] = (uchar)(255 - raw_dist.at<float>(j, i) * 255 / maxVal);
+        drawing.at<cv::Vec3b>(j, i)[2] = (uchar)(255 - raw_dist.at<float>(j, i) * 255 / maxVal);
       } else {
-        drawing.at<Vec3b>(j, i)[0] = 255;
-        drawing.at<Vec3b>(j, i)[1] = 255;
-        drawing.at<Vec3b>(j, i)[2] = 255;
+        drawing.at<cv::Vec3b>(j, i)[0] = 255;
+        drawing.at<cv::Vec3b>(j, i)[1] = 255;
+        drawing.at<cv::Vec3b>(j, i)[2] = 255;
       }
     }
   }

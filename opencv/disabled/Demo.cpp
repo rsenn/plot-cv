@@ -4,7 +4,7 @@
 #include "communication_api/serverapi.h"
 #include <iostream>
 #include <memory>
-#include <opencv2/cv::bgsegm.hpp>
+#include <opencv2/bgsegm.hpp>
 #include <QCoreApplication>
 using cv::BackgroundSubtractor;
 using cv::namedWindow;

@@ -31,10 +31,10 @@ main() {
   // Select ROI
   bool showCrosshair = false;
   bool fromCenter = false;
-  Rect2d r = cv::selectROI("Camera", frame, fromCenter, showCrosshair);
+  cv::Rect2d r = cv::selectROI("Camera", frame, fromCenter, showCrosshair);
   // Crop image
   cv::Mat imageCrop = frame(r);
-  cv::namedWindow("Crop", WINDOW_NORMAL);
+  cv::namedWindow("Crop", cv::WINDOW_NORMAL);
   cv::resizeWindow("Crop", 300, 300);
   cv::imshow("Crop", imageCrop); // Hien thi ma tran du lieu hinh anh
   /*------- Doc lien tuc ------------------------------*/

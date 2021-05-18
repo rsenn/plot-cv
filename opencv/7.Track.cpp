@@ -34,7 +34,7 @@ void
 Threshold_Convert(int, void*) {
   if(threshold_type < 5) {
     // Chuyen ve thang xam
-    cv::cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
+    cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
     // Chuyen ve nguong
     cv::threshold(frame_gray, frame_result, threshold_value, max_value, threshold_type);
   } else {
@@ -50,7 +50,7 @@ main() {
   }
   /*---- Bat mot so khung hinh dau tien de doi camera on dinh --*/
   int count = 0;
-  cv::namedWindow("Camera", WINDOW_NORMAL);
+  cv::namedWindow("Camera", cv::WINDOW_NORMAL);
   cv::resizeWindow("Camera", 300, 300);
   // Tao Trackbar de chon ham lay nguong
   cv::createTrackbar("Kieu: \n 0: Binary \n 1: Binary dao \n 2: Cat ngon \n 3: To Zero \n 4: To Zero "
@@ -74,12 +74,12 @@ main() {
     count++;
   }
   /*--- Chon khung hinh mau tu camera -----------------*/
-  cv::namedWindow("Crop", WINDOW_NORMAL);
+  cv::namedWindow("Crop", cv::WINDOW_NORMAL);
   cv::resizeWindow("Crop", 300, 300);
   // Select ROI
   bool showCrosshair = false;
   bool fromCenter = false;
-  Rect2d r = cv::selectROI("Camera",     // Ten cua so
+  cv::Rect2d r = cv::selectROI("Camera",     // Ten cua so
                        frame_result, // Ma tran chua hinh anh
                        fromCenter,
                        showCrosshair);
@@ -95,7 +95,7 @@ main() {
   // GOTURN: Generic Object Tracking Using Regression Networks, TrackerGOTURN
   // MOSSE: Minimum Output Sum of Squared cv::Error, TrackerMOSSE
   // CSRT: Discriminative Correlation Filter with Channel and Spatial Reliability, TrackerCSRT
-  Ptr<cv::Tracker> tracker = cv::TrackerTLD::create();
+  cv::Ptr<cv::Tracker> tracker = cv::TrackerTLD::create();
   if(!tracker->init(frame_result, r)) {
     printf("ERROR: khong the khoi dong tracker\r\n");
     return -1;

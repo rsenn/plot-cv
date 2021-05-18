@@ -46,7 +46,7 @@ main(int argc, const char** argv) {
     return -1;
   }
   cedge.create(image.size(), image.type());
-  cv::cvtColor(image, gray, COLOR_BGR2GRAY);
+  cv::cvtColor(image, gray, cv::COLOR_BGR2GRAY);
   // Create a window
   cv::namedWindow(window_name1, 1);
   cv::namedWindow(window_name2, 1);

@@ -417,7 +417,7 @@ Configuration_Manager::display_all_feeds() {
   }
 
   while(1) {                                           // Read frames and update windows until exit signal
-    for(unsigned int i = 0; i < cameras.size(); i++) { // Read frame from each camera and update it's window
+    for(unsigned int i = 0; i < cameras.size(); i++) { // Read frame from each camera and update cv::it's window
       if(!cameras.at(i)->cv::read(frame_temp)) {
         cout << "cv::Error: Configuration_Manager::display_all_feeds() could not cv::read frame from "
                 "Scheduler_"

@@ -17,7 +17,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/imgproc.hpp>
-#include <opencv2/cv::face.hpp>
+#include <opencv2/face.hpp>
 #include <opencv2/imgcodecs.hpp>
 
 #include "face_detect.hpp"

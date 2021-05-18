@@ -51,7 +51,7 @@ main(int argc, char** argv) {
 
   // Take first frame and find corners in it
   capture >> old_frame;
-  cv::cvtColor(old_frame, old_gray, COLOR_BGR2GRAY);
+  cv::cvtColor(old_frame, old_gray, cv::COLOR_BGR2GRAY);
   cv::goodFeaturesToTrack(old_gray, p0, 100, 0.3, 7, cv::Mat(), 7, false, 0.04);
 
   // Create a mask image for drawing purposes
@@ -63,12 +63,12 @@ main(int argc, char** argv) {
     capture >> frame;
     if(frame.empty())
       break;
-    cv::cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
+    cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
 
     // calculate optical flow
     vector<uchar> status;
     vector<float> err;
-    TermCriteria criteria = TermCriteria((TermCriteria::COUNT) + (TermCriteria::EPS), 10, 0.03);
+    cv::TermCriteria criteria = cv::TermCriteria((cv::TermCriteria::COUNT) + (cv::TermCriteria::EPS), 10, 0.03);
     cv::calcOpticalFlowPyrLK(old_gray, frame_gray, p0, p1, status, err, cv::Size(15, 15), 2, criteria);
 
     vector<cv::Point2f> good_new;

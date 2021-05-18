@@ -33,8 +33,8 @@ int
 main(int argc, char** argv) {
   cv::CommandLineParser parser(argc, argv, keys);
 
-  cv::String tracker_algorithm = parser.get<String>(0);
-  cv::String video_name = parser.get<String>(1);
+  cv::String tracker_algorithm = parser.get<cv::String>(0);
+  cv::String video_name = parser.get<cv::String>(1);
   int start_frame = parser.get<int>(2);
 
   if(tracker_algorithm.empty() || video_name.empty()) {
@@ -45,7 +45,7 @@ main(int argc, char** argv) {
   int coords[4] = {0, 0, 0, 0};
   bool initBoxWasGivenInCommandLine = false;
   {
-    cv::String initBoundingBox = parser.get<String>(3);
+    cv::String initBoundingBox = parser.get<cv::String>(3);
     for(size_t npos = 0, pos = 0, ctr = 0; ctr < 4; ctr++) {
       npos = initBoundingBox.find_first_of(',', pos);
       if(npos == string::npos && ctr < 3) {
@@ -76,7 +76,7 @@ main(int argc, char** argv) {
   // open the capture
   cv::VideoCapture cap;
   cap.open(video_name);
-  cap.set(CAP_PROP_POS_FRAMES, start_frame);
+  cap.set(cv::CAP_PROP_POS_FRAMES, start_frame);
 
   if(!cap.isOpened()) {
     help();
@@ -90,11 +90,11 @@ main(int argc, char** argv) {
   cv::namedWindow("Tracking API", 1);
 
   cv::Mat image;
-  Rect2d boundingBox;
+  cv::Rect2d boundingBox;
   bool paused = false;
 
   // instantiates the specific Tracker
-  Ptr<cv::Tracker> tracker = createTrackerByName(tracker_algorithm);
+  cv::Ptr<cv::Tracker> tracker = createTrackerByName(tracker_algorithm);
   if(!tracker) {
     cout << "***cv::Error in the instantiation of the tracker...***\n";
     return -1;

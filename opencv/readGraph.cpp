@@ -56,12 +56,12 @@ find_squares(cv::Mat& image, vector<vector<cv::Point>>& squares) {
       for(size_t i = 0; i < contours.size(); i++) {
         // approximate contour with accuracy proportional
         // to the contour perimeter
-        cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(Mat(contours[i]), true) * 0.02, true);
+        cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true) * 0.02, true);
 
         // Note: absolute value of an area is used because
         // area may be positive or negative - in accordance with the
         // contour orientation
-        if(approx.size() == 4 && fabs(cv::contourArea(cv::Mat(approx))) > 1000 && cv::isContourConvex(Mat(approx))) {
+        if(approx.size() == 4 && fabs(cv::contourArea(cv::Mat(approx))) > 1000 && cv::isContourConvex(cv::Mat(approx))) {
           double maxCosine = 0;
 
           for(int j = 2; j < 5; j++) {
@@ -253,7 +253,7 @@ findKMeansClusters(cv::Mat img, int k) {
   img3xN.convertTo(img3xN, CV_32F);
 
   cv::Mat bestLabels;
-  cv::kmeans(img3xN, k, bestLabels, TermCriteria(), 10, KMEANS_RANDOM_CENTERS);
+  cv::kmeans(img3xN, k, bestLabels, cv::TermCriteria(), 10, cv::KMEANS_RANDOM_CENTERS);
 
   bestLabels = bestLabels.reshape(0, img.rows);
   cv::convertScaleAbs(bestLabels, bestLabels, int(255 / k));

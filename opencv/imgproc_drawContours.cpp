@@ -21,14 +21,14 @@ main(int argc, char** argv) {
   std::vector<std::vector<cv::Point>> contours;
   std::vector<cv::Vec4i> hierarchy;
 
-  cv::findContours(src, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
+  cv::findContours(src, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE);
 
   // iterate through all the top-level contours,
   // draw each connected component with its own random color
   int idx = 0;
   for(; idx >= 0; idx = hierarchy[idx][0]) {
     cv::Scalar color(rand() & 255, rand() & 255, rand() & 255);
-    cv::drawContours(dst, contours, idx, color, FILLED, 8, hierarchy);
+    cv::drawContours(dst, contours, idx, color, cv::FILLED, 8, hierarchy);
   }
 
   cv::namedWindow("Components", 1);

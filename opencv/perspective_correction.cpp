@@ -50,7 +50,7 @@ perspectiveCorrection(const string& img1Path, const string& img2Path, const cv::
   cv::Mat img_draw_matches;
   cv::hconcat(img1, img2, img_draw_matches);
   for(size_t i = 0; i < corners1.size(); i++) {
-    cv::Mat pt1 = (Mat_<double>(3, 1) << corners1[i].x, corners1[i].y, 1);
+    cv::Mat pt1 = (cv::Mat_<double>(3, 1) << corners1[i].x, corners1[i].y, 1);
     cv::Mat pt2 = H * pt1;
     pt2 /= pt2.at<double>(2);
 
@@ -83,7 +83,7 @@ main(int argc, char* argv[]) {
   }
 
   cv::Size patternSize(parser.get<int>("width"), parser.get<int>("height"));
-  perspectiveCorrection(parser.get<cv::String>("image1"), parser.get<String>("image2"), patternSize, rng);
+  perspectiveCorrection(parser.get<cv::String>("image1"), parser.get<cv::String>("image2"), patternSize, rng);
 
   return 0;
 }

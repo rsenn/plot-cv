@@ -22,13 +22,13 @@ main() {
       printf("Hinh bi loi\r\n");
       return -1;
     }
-    cv::namedWindow("Anh goc", WINDOW_NORMAL);
+    cv::namedWindow("Anh goc", cv::WINDOW_NORMAL);
     cv::resizeWindow("Anh goc", 300, 300);
     cv::imshow("Anh goc", image);
     /*--------- Chuyen ve thang xam ------------------*/
     cv::Mat image_gray;
-    cv::cvtColor(image, image_gray, COLOR_BGR2GRAY);
-    cv::namedWindow("Anh GRAY", WINDOW_NORMAL);
+    cv::cvtColor(image, image_gray, cv::COLOR_BGR2GRAY);
+    cv::namedWindow("Anh GRAY", cv::WINDOW_NORMAL);
     cv::resizeWindow("Anh GRAY", 300, 300);
     cv::imshow("Anh GRAY", image_gray);
     // cout << "GRAY value = "<< endl << " " << image_gray << endl << endl;
@@ -41,7 +41,7 @@ main() {
     int max_value = 255;
     int threshold_type = 0;
     cv::threshold(image_gray, image_result, threshold_value, max_value, threshold_type);
-    cv::namedWindow("Anh Ket qua", WINDOW_NORMAL);
+    cv::namedWindow("Anh Ket qua", cv::WINDOW_NORMAL);
     cv::resizeWindow("Anh Ket qua", 300, 300);
     cv::imshow("Anh Ket qua", image_result);
     /*-----------------------------*/

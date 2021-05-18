@@ -4,7 +4,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
-#include <opencv2/core/cv::utils/trace.hpp>
+#include <opencv2/core/utils/trace.hpp>
 
 //using namespace cv;
 using namespace std;
@@ -16,7 +16,7 @@ process_frame(const cv::UMat& frame) {
   cv::imshow("Live", frame);
 
   cv::UMat gray, processed;
-  cv::cvtColor(frame, gray, COLOR_BGR2GRAY);
+  cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
   cv::Canny(gray, processed, 32, 64, 3);
   cv::imshow("Processed", processed);
 }
@@ -43,9 +43,9 @@ main(int argc, char** argv) {
     capture.open(cv::samples::findFileOrKeep(video)); // keep GStreamer pipelines
   int nframes = 0;
   if(capture.isOpened()) {
-    nframes = (int)capture.get(CAP_PROP_FRAME_COUNT);
-    cout << "Video " << video << ": width=" << capture.get(CAP_PROP_FRAME_WIDTH)
-         << ", height=" << capture.get(CAP_PROP_FRAME_HEIGHT) << ", nframes=" << nframes << endl;
+    nframes = (int)capture.get(cv::CAP_PROP_FRAME_COUNT);
+    cout << "Video " << video << ": width=" << capture.get(cv::CAP_PROP_FRAME_WIDTH)
+         << ", height=" << capture.get(cv::CAP_PROP_FRAME_HEIGHT) << ", nframes=" << nframes << endl;
   } else {
     cout << "Could not initialize video capturing...\n";
     return -1;

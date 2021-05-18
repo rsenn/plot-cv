@@ -10,11 +10,11 @@
 // including necessary libraries to access different algorithms in order to create our own code
 #include <opencv2/opencv.hpp>
 #include <opencv2/tracking.hpp>
-#include <opencv2/core/cv::ocl.hpp>
-#include <opencv2/cv::dnn.hpp>
+#include <opencv2/core/ocl.hpp>
+#include <opencv2/dnn.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
-#include <opencv2/core/cv::utils/trace.hpp>
+#include <opencv2/core/utils/trace.hpp>
 #include <opencv2/core/utility.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/video/background_segm.hpp>

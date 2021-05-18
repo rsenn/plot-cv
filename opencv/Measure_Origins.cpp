@@ -39,7 +39,7 @@ Measure_Origins(cv::Mat& src) {
   cv::cvtColor(src, img_corners, cv::COLOR_GRAY2BGR);
 
   for(int i = 0; i < rectCorners.size(); i++) { cv::circle(img_corners, rectCorners[i], 50, cv::Scalar(0, 0, 255), 8, 8, 0); }
-  cv::namedWindow("corners", WINDOW_NORMAL);
+  cv::namedWindow("corners", cv::WINDOW_NORMAL);
   cv::resizeWindow("corners", src.cols / 10, src.rows / 10);
   cv::imshow("corners", img_corners);
   cv::imwrite("./output/corners.jpg", img_corners);

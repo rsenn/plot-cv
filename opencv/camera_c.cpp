@@ -27,7 +27,7 @@ void
 camera_c::init() {
   // NEEDED ON RASPI : sud
   capture = new cv::VideoCapture(0);
-  // cv::VideoCapture cap(0); // open the default camera
+  // cv::VideoCapture cv::cap(0); // open the default camera
   if(!capture->isOpened()) { // check if we succeeded
     qDebug() << "camera not found";
     exit(0);
@@ -99,7 +99,7 @@ camera_c::snap() {
     if(!imageSnap.data) { // Check for invalid input
       qDebug() << "Could not open or find the image";
     } else {
-      // Show our image inside it.
+      // Show our image inside cv::it.
       qImageSnap = Mat2QImage(imageSnap);
       qImageSnap.save(((MainWindow*)parent)->imageFileName);
 

@@ -4,7 +4,7 @@
 #include <iostream>
 
 #ifdef HAVE_OPENCV_DNN
-#include <opencv2/cv::dnn.hpp>
+#include <opencv2/dnn.hpp>
 
 using namespace std;
 //using namespace cv;

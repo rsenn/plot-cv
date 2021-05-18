@@ -6,7 +6,7 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
-#include <opencv2/core/cv::ocl.hpp>
+#include <opencv2/core/ocl.hpp>
 #include <opencv2/video/video.hpp>
 
 using namespace std;
@@ -144,16 +144,16 @@ main(int argc, const char* argv[]) {
 
       if(i == 0) {
         frame.copyTo(frame0);
-        cv::cvtColor(frame0, frame0Gray, COLOR_BGR2GRAY);
+        cv::cvtColor(frame0, frame0Gray, cv::COLOR_BGR2GRAY);
       } else {
         if(i % 2 == 1) {
           frame.copyTo(frame1);
-          cv::cvtColor(frame1, frame1Gray, COLOR_BGR2GRAY);
+          cv::cvtColor(frame1, frame1Gray, cv::COLOR_BGR2GRAY);
           ptr0 = frame0Gray;
           ptr1 = frame1Gray;
         } else {
           frame.copyTo(frame0);
-          cv::cvtColor(frame0, frame0Gray, COLOR_BGR2GRAY);
+          cv::cvtColor(frame0, frame0Gray, cv::COLOR_BGR2GRAY);
           ptr0 = frame1Gray;
           ptr1 = frame0Gray;
         }

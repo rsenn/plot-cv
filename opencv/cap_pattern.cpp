@@ -41,7 +41,7 @@
 
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
-#include <opencv2/cv::structured_light.hpp>
+#include <opencv2/structured_light.hpp>
 #include <iostream>
 #include <stdio.h>
 
@@ -67,7 +67,7 @@ main(int argc, char** argv) {
   cv::structured_light::GrayCodePattern::Params params;
 
   cv::CommandLineParser parser(argc, argv, keys);
-  cv::String path = parser.get<String>(0);
+  cv::String path = parser.get<cv::String>(0);
   params.width = parser.get<int>(1);
   params.height = parser.get<int>(2);
 
@@ -77,7 +77,7 @@ main(int argc, char** argv) {
   }
 
   // Set up GraycodePattern with params
-  Ptr<cv::structured_light::GrayCodePattern> graycode = cv::structured_light::GrayCodePattern::create(params);
+  cv::Ptr<cv::structured_light::GrayCodePattern> graycode = cv::structured_light::GrayCodePattern::create(params);
 
   // Storage for pattern
   vector<cv::Mat> pattern;
@@ -94,10 +94,10 @@ main(int argc, char** argv) {
   pattern.push_back(black);
 
   // Setting pattern window on second monitor (the projector's one)
-  cv::namedWindow("Pattern Window", WINDOW_NORMAL);
+  cv::namedWindow("Pattern Window", cv::WINDOW_NORMAL);
   cv::resizeWindow("Pattern Window", params.width, params.height);
   cv::moveWindow("Pattern Window", params.width + 316, -20);
-  cv::setWindowProperty("Pattern Window", WND_PROP_FULLSCREEN, WINDOW_FULLSCREEN);
+  cv::setWindowProperty("Pattern Window", cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);
 
   // Open camera number 1, using libgphoto2
   cv::VideoCapture cap1(CAP_GPHOTO2);
@@ -137,20 +137,20 @@ main(int argc, char** argv) {
     if((frame1.data) && (frame2.data)) {
 
       cv::Mat tmp;
-      cout << "cam 1 size: " << cv::Size((int)cap1.get(CAP_PROP_FRAME_WIDTH), (int)cap1.get(CAP_PROP_FRAME_HEIGHT)) << endl;
+      cout << "cam 1 size: " << cv::Size((int)cap1.get(cv::CAP_PROP_FRAME_WIDTH), (int)cap1.get(cv::CAP_PROP_FRAME_HEIGHT)) << endl;
 
-      cout << "cam 2 size: " << cv::Size((int)cap2.get(CAP_PROP_FRAME_WIDTH), (int)cap2.get(CAP_PROP_FRAME_HEIGHT)) << endl;
+      cout << "cam 2 size: " << cv::Size((int)cap2.get(cv::CAP_PROP_FRAME_WIDTH), (int)cap2.get(cv::CAP_PROP_FRAME_HEIGHT)) << endl;
 
-      cout << "zoom cam 1: " << cap1.get(CAP_PROP_ZOOM) << endl << "zoom cam 2: " << cap2.get(CAP_PROP_ZOOM) << endl;
+      cout << "zoom cam 1: " << cap1.get(cv::CAP_PROP_ZOOM) << endl << "zoom cam 2: " << cap2.get(cv::CAP_PROP_ZOOM) << endl;
 
       cout << "focus cam 1: " << cap1.get(CAP_PROP_FOCUS) << endl << "focus cam 2: " << cap2.get(CAP_PROP_FOCUS) << endl;
 
       cout << "Press enter to save the photo or an other key to re-acquire the photo" << endl;
 
-      cv::namedWindow("cam1", WINDOW_NORMAL);
+      cv::namedWindow("cam1", cv::WINDOW_NORMAL);
       cv::resizeWindow("cam1", 640, 480);
 
-      cv::namedWindow("cam2", WINDOW_NORMAL);
+      cv::namedWindow("cam2", cv::WINDOW_NORMAL);
       cv::resizeWindow("cam2", 640, 480);
 
       // Moving window of cam2 to see the image at the same time with cam1

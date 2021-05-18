@@ -34,21 +34,21 @@ objectCounter::get_markers() {
   // cv::imshow("im_e", im_e);
 
   // cv::dilate to remove small black spots
-  cv::Mat strel = cv::getStructuringElement(MORPH_ELLIPSE, cv::Size(9, 9));
+  cv::Mat strel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(9, 9));
   cv::Mat im_d;
   cv::dilate(im_e, im_d, strel);
   // cv::imshow("im_d", im_d);
 
   // open and close to highlight objects
-  strel = cv::getStructuringElement(MORPH_ELLIPSE, cv::Size(19, 19));
+  strel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(19, 19));
   cv::Mat im_oc;
-  cv::morphologyEx(im_d, im_oc, MORPH_OPEN, strel);
-  cv::morphologyEx(im_oc, im_oc, MORPH_CLOSE, strel);
+  cv::morphologyEx(im_d, im_oc, cv::MORPH_OPEN, strel);
+  cv::morphologyEx(im_oc, im_oc, cv::MORPH_CLOSE, strel);
   // cv::imshow("im_oc", im_oc);
 
   // adaptive cv::threshold to create binary image
   cv::Mat th_a;
-  cv::adaptiveThreshold(im_oc, th_a, 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 105, 0);
+  cv::adaptiveThreshold(im_oc, th_a, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY, 105, 0);
   // cv::imshow("th_a", th_a);
 
   // cv::erode binary image twice to separate regions
@@ -77,13 +77,13 @@ objectCounter::count_objects() {
   cv::watershed(image, markers);
 
   // colors generated randomly to make the output look pretty
-  std::vector<Vec3b> colorTab;
+  std::vector<cv::Vec3b> colorTab;
   for(int i = 0; i < count; i++) {
     int b = cv::theRNG().uniform(0, 255);
     int g = cv::theRNG().uniform(0, 255);
     int r = cv::theRNG().uniform(0, 255);
 
-    colorTab.push_back(Vec3b((uchar)b, (uchar)g, (uchar)r));
+    colorTab.push_back(cv::Vec3b((uchar)b, (uchar)g, (uchar)r));
   }
 
   // cv::watershed output image
@@ -94,11 +94,11 @@ objectCounter::count_objects() {
     for(int j = 0; j < markers.cols; j++) {
       int index = markers.at<int>(i, j);
       if(index == -1)
-        wshed.at<Vec3b>(i, j) = Vec3b(255, 255, 255);
+        wshed.at<cv::Vec3b>(i, j) = cv::Vec3b(255, 255, 255);
       else if(index <= 0 || index > count)
-        wshed.at<Vec3b>(i, j) = Vec3b(0, 0, 0);
+        wshed.at<cv::Vec3b>(i, j) = cv::Vec3b(0, 0, 0);
       else
-        wshed.at<Vec3b>(i, j) = colorTab[index - 1];
+        wshed.at<cv::Vec3b>(i, j) = colorTab[index - 1];
     }
 
   // superimpose the cv::watershed image with 50% transparence on the grayscale original image

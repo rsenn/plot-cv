@@ -39,11 +39,11 @@ main() {
     return -1;
   }
   // Tao cua cac cua so hien thi
-  cv::namedWindow("Camera", WINDOW_NORMAL);
+  cv::namedWindow("Camera", cv::WINDOW_NORMAL);
   cv::resizeWindow("Camera", 300, 300);
-  cv::namedWindow("GRAY", WINDOW_NORMAL);
+  cv::namedWindow("GRAY", cv::WINDOW_NORMAL);
   cv::resizeWindow("GRAY", 300, 300);
-  cv::namedWindow("Equalizing", WINDOW_NORMAL);
+  cv::namedWindow("Equalizing", cv::WINDOW_NORMAL);
   cv::resizeWindow("Equalizing", 300, 300);
   while(1) {
     char timetext[32]; // chuoi hien thi thoi gian
@@ -57,7 +57,7 @@ main() {
     }
     /*------ Chuyen ve thang xam --------------------*/
     cv::Mat frame_gray;
-    cv::cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
+    cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
     /*------- Can bang pho mau (histogram) ----------*/
     cv::Mat frame_result;
     cv::equalizeHist(frame_gray, frame_result);

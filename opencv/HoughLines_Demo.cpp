@@ -74,7 +74,7 @@ main(int argc, char** argv) {
 
 /**
  * @function help
- * @brief Indications of how to run this program and why is it for
+ * @brief Indications of how to run this program and why is cv::it for
  */
 void
 help() {

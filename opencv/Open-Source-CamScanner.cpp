@@ -25,7 +25,7 @@ compareYCords(cv::Point p1, cv::Point p2) {
 }
 
 bool
-compareDistance(pair<cv::Point, cv::Point> p1, pair<Point, cv::Point> p2) {
+compareDistance(pair<cv::Point, cv::Point> p1, pair<cv::Point, cv::Point> p2) {
   return (cv::norm(p1.first - p1.second) < cv::norm(p2.first - p2.second));
 }
 
@@ -41,7 +41,7 @@ resizeToHeight(cv::Mat src, cv::Mat& dst, int height) {
 }
 
 void
-orderPoints(vector<cv::Point> inpts, vector<Point>& ordered) {
+orderPoints(vector<cv::Point> inpts, vector<cv::Point>& ordered) {
   sort(inpts.begin(), inpts.end(), compareXCords);
   vector<cv::Point> lm(inpts.begin(), inpts.begin() + 2);
   vector<cv::Point> rm(inpts.end() - 2, inpts.end());
@@ -81,7 +81,7 @@ fourPointTransform(cv::Mat src, cv::Mat& dst, vector<cv::Point> pts) {
       cv::Point2f(ordered_pts[2].x, ordered_pts[2].y),
       cv::Point2f(ordered_pts[3].x, ordered_pts[3].y),
   };
-  cv::Point2f dst_[] = {Point2f(0, 0), cv::Point2f(mw - 1, 0), cv::Point2f(mw - 1, mh - 1), Point2f(0, mh - 1)};
+  cv::Point2f dst_[] = {cv::Point2f(0, 0), cv::Point2f(mw - 1, 0), cv::Point2f(mw - 1, mh - 1), cv::Point2f(0, mh - 1)};
   cv::Mat m = cv::getPerspectiveTransform(src_, dst_);
   cv::warpPerspective(src, dst, m, cv::Size(mw, mh));
 }
@@ -169,7 +169,7 @@ main(int argc, char** argv) {
   vector<vector<cv::Point>> approx;
   cv::findContours(edged, contours, hierarchy, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE);
 
-  approx.cv::resize(contours.size());
+  approx.resize(contours.size());
   size_t i, j;
   for(i = 0; i < contours.size(); i++) {
     double peri = cv::arcLength(contours[i], true);
@@ -196,7 +196,7 @@ main(int argc, char** argv) {
     cv::imwrite(getOutputFileName(image_name, "flat.jpeg"), warped);
 #endif
     cv::cvtColor(warped, warped, cv::COLOR_BGR2GRAY, 1);
-    cv::adaptiveThreshold(warped, warped, 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 9, 15);
+    cv::adaptiveThreshold(warped, warped, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY, 9, 15);
     cv::GaussianBlur(warped, warped, cv::Size(3, 3), 0);
     cv::imwrite(getOutputFileName(image_name, "scanned.jpeg"), warped);
   }

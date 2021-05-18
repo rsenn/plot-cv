@@ -51,7 +51,7 @@ process(cv::VideoCapture& capture) {
   char filename[200];
   string window_name = "video | q or esc to quit";
   cout << "press space to save a picture. q or esc to quit" << endl;
-  cv::namedWindow(window_name, WINDOW_KEEPRATIO); // resizable window;
+  cv::namedWindow(window_name, cv::WINDOW_KEEPRATIO); // resizable window;
   cv::Mat frame;
 
   for(;;) {
@@ -91,7 +91,7 @@ main(int ac, char** av) {
     help(av);
     return 1;
   }
-  cv::VideoCapture capture(arg); // try to open string, this will attempt to open it as a video file or image sequence
+  cv::VideoCapture capture(arg); // try to open string, this will attempt to open cv::it as a video file or image sequence
   if(!capture.isOpened())    // if this fails, try to open as a video camera, through the use of an
                              // integer param
     capture.open(atoi(arg.c_str()));

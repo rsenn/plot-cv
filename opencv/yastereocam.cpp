@@ -37,7 +37,7 @@ YaStereoCam::YaStereoCam(QObject* parent) : QObject(parent) {
 
 YaStereoCam::~YaStereoCam() {
   qInfo() << __PRETTY_FUNCTION__;
-  qInfo() << "total # of captured frames" << count;
+  qInfo() << "cv::total # of captured frames" << count;
 }
 
 void
@@ -84,7 +84,7 @@ void
 YaStereoCam::capImages() {
   //    qInfo() << __PRETTY_FUNCTION__;
   count++;
-  qInfo() << "cap frame #" << count;
+  qInfo() << "cv::cap frame #" << count;
   *_capL >> *_imgInL;
   if(_imgInL->empty()) {
     qWarning() << "\tImage/Left is empty #" << count;
@@ -107,17 +107,17 @@ YaStereoCam::capImages() {
 }
 
 void
-YaStereoCam::getImageL(QImage& img, bool swapRnB) {
+YaStereoCam::getImageL(QImage& cv::img, bool swapRnB) {
   //    qInfo() << __PRETTY_FUNCTION__;
   if(swapRnB) {
     cv::cvtColor(*_imgInL, *_imgInL, cv::COLOR_BGR2RGB);
   }
   QImage qimg(_imgInL->ptr(), _imgInL->cols, _imgInL->rows, _imgInL->step, QImage::Format_RGB888);
-  img = qimg;
+  cv::img = qimg;
 }
 
 void
-YaStereoCam::getImageR(QImage& img, bool swapRnB) {
+YaStereoCam::getImageR(QImage& cv::img, bool swapRnB) {
 //    qInfo() << __PRETTY_FUNCTION__;
 #ifndef DEBUG_PC
   if(swapRnB) {
@@ -125,15 +125,15 @@ YaStereoCam::getImageR(QImage& img, bool swapRnB) {
   }
 #endif // DEBUG_PC
   QImage qimg(_imgInR->ptr(), _imgInR->cols, _imgInR->rows, _imgInR->step, QImage::Format_RGB888);
-  img = qimg;
+  cv::img = qimg;
 }
 void
-YaStereoCam::getImageL(cv::Mat& img) {
+YaStereoCam::getImageL(cv::Mat& cv::img) {
   //    qInfo() << __PRETTY_FUNCTION__;
-  img = *_imgInL;
+  cv::img = *_imgInL;
 }
 void
-YaStereoCam::getImageR(cv::Mat& img) {
+YaStereoCam::getImageR(cv::Mat& cv::img) {
   //    qInfo() << __PRETTY_FUNCTION__;
-  img = *_imgInR;
+  cv::img = *_imgInR;
 }

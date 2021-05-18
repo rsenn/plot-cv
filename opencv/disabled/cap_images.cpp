@@ -52,7 +52,7 @@
 #include "precomp.hpp"
 #include "opencv2/imgcodecs.hpp"
 
-#include "opencv2/core/cv::utils/filesystem.hpp"
+#include "opencv2/core/utils/filesystem.hpp"
 
 #if 0
 #define CV_WARN(message)

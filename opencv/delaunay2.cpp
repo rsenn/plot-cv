@@ -18,18 +18,18 @@ help(char** argv) {
 
 static void
 draw_subdiv_point(cv::Mat& img, cv::Point2f fp, cv::Scalar color) {
-  cv::circle(img, fp, 3, color, FILLED, cv::LINE_8, 0);
+  cv::circle(img, fp, 3, color, cv::FILLED, cv::LINE_8, 0);
 }
 
 static void
 draw_subdiv(cv::Mat& img, cv::Subdiv2D& subdiv, cv::Scalar delaunay_color) {
 #if 1
-  vector<Vec6f> triangleList;
+  vector<cv::Vec6f> triangleList;
   subdiv.getTriangleList(triangleList);
   vector<cv::Point> pt(3);
 
   for(size_t i = 0; i < triangleList.size(); i++) {
-    Vec6f t = triangleList[i];
+    cv::Vec6f t = triangleList[i];
     pt[0] = cv::Point(cvRound(t[0]), cvRound(t[1]));
     pt[1] = cv::Point(cvRound(t[2]), cvRound(t[3]));
     pt[2] = cv::Point(cvRound(t[4]), cvRound(t[5]));
@@ -79,7 +79,7 @@ paint_voronoi(cv::Mat& img, cv::Subdiv2D& subdiv) {
   vector<vector<cv::Point>> ifacets(1);
 
   for(size_t i = 0; i < facets.size(); i++) {
-    ifacet.cv::resize(facets[i].size());
+    ifacet.resize(facets[i].size());
     for(size_t j = 0; j < facets[i].size(); j++) ifacet[j] = facets[i][j];
 
     cv::Scalar color;
@@ -90,7 +90,7 @@ paint_voronoi(cv::Mat& img, cv::Subdiv2D& subdiv) {
 
     ifacets[0] = ifacet;
     cv::polylines(img, ifacets, true, cv::Scalar(), 1, cv::LINE_AA, 0);
-    cv::circle(img, centers[i], 3, cv::Scalar(), FILLED, cv::LINE_AA, 0);
+    cv::circle(img, centers[i], 3, cv::Scalar(), cv::FILLED, cv::LINE_AA, 0);
   }
 }
 

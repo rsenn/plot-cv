@@ -38,7 +38,7 @@
 #include <opencv2/core/utility.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
-#include <opencv2/cv::ximgproc.hpp>
+#include <opencv2/ximgproc.hpp>
 //// using namespace cv;
 //using namespace cv::ximgproc;
 
@@ -83,7 +83,7 @@ filterDoNothing(const cv::Mat& frame, cv::Mat& dst) {
 // simple edge-aware blurring
 void
 filterBlurring(const cv::Mat& frame, cv::Mat& dst) {
-  cv::ximgproc::dtFilter(frame, frame, dst, g_sigmaSpatial, g_sigmaColor, DTF_RF);
+  cv::ximgproc::dtFilter(frame, frame, dst, g_sigmaSpatial, g_sigmaColor, cv::ximgproc::DTF_RF);
 }
 
 // stylizing filter
@@ -91,7 +91,7 @@ void
 filterStylize(const cv::Mat& frame, cv::Mat& dst) {
   // cv::blur frame
   cv::Mat filtered;
-  cv::ximgproc::dtFilter(frame, frame, filtered, g_sigmaSpatial, g_sigmaColor, DTF_NC);
+  cv::ximgproc::dtFilter(frame, frame, filtered, g_sigmaSpatial, g_sigmaColor, cv::ximgproc::DTF_NC);
 
   // compute grayscale blurred frame
   cv::Mat filteredGray;
@@ -126,8 +126,8 @@ filterDetailEnhancement(const cv::Mat& frame8u, cv::Mat& dst) {
   // Generate progressively smoother versions of the lightness channel
   cv::Mat layer0 = frameLabCn[0]; // first channel is original lightness
   cv::Mat layer1, layer2;
-  cv::ximgproc::dtFilter(layer0, layer0, layer1, g_sigmaSpatial, g_sigmaColor, DTF_IC);
-  cv::ximgproc::dtFilter(layer1, layer1, layer2, 2 * g_sigmaSpatial, g_sigmaColor, DTF_IC);
+  cv::ximgproc::dtFilter(layer0, layer0, layer1, g_sigmaSpatial, g_sigmaColor, cv::ximgproc::DTF_IC);
+  cv::ximgproc::dtFilter(layer1, layer1, layer2, 2 * g_sigmaSpatial, g_sigmaColor, cv::ximgproc::DTF_IC);
 
   // Compute detail layers
   cv::Mat detailLayer1 = layer0 - layer1;

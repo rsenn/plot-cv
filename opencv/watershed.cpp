@@ -59,7 +59,7 @@ main(int argc, char** argv) {
   cv::namedWindow("image", 1);
 
   img0.copyTo(img);
-  cv::cvtColor(img, markerMask, COLOR_BGR2GRAY);
+  cv::cvtColor(img, markerMask, cv::COLOR_BGR2GRAY);
   cv::cvtColor(markerMask, imgGray, cv::COLOR_GRAY2BGR);
   markerMask = cv::Scalar::all(0);
   cv::imshow("image", img);
@@ -95,13 +95,13 @@ main(int argc, char** argv) {
       if(compCount == 0)
         continue;
 
-      std::vector<Vec3b> colorTab;
+      std::vector<cv::Vec3b> colorTab;
       for(i = 0; i < compCount; i++) {
         int b = cv::theRNG().uniform(0, 255);
         int g = cv::theRNG().uniform(0, 255);
         int r = cv::theRNG().uniform(0, 255);
 
-        colorTab.push_back(Vec3b((uchar)b, (uchar)g, (uchar)r));
+        colorTab.push_back(cv::Vec3b((uchar)b, (uchar)g, (uchar)r));
       }
 
       double t = (double)cv::getTickCount();
@@ -116,11 +116,11 @@ main(int argc, char** argv) {
         for(j = 0; j < markers.cols; j++) {
           int index = markers.at<int>(i, j);
           if(index == -1)
-            wshed.at<Vec3b>(i, j) = Vec3b(255, 255, 255);
+            wshed.at<cv::Vec3b>(i, j) = cv::Vec3b(255, 255, 255);
           else if(index <= 0 || index > compCount)
-            wshed.at<Vec3b>(i, j) = Vec3b(0, 0, 0);
+            wshed.at<cv::Vec3b>(i, j) = cv::Vec3b(0, 0, 0);
           else
-            wshed.at<Vec3b>(i, j) = colorTab[index - 1];
+            wshed.at<cv::Vec3b>(i, j) = colorTab[index - 1];
         }
 
       wshed = wshed * 0.5 + imgGray * 0.5;

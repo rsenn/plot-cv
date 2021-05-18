@@ -95,9 +95,9 @@ main() {
     }
 
     cv::inRange(frame, cv::Scalar(low_b, low_g, low_r), cv::Scalar(high_b, high_g, high_r), frame_thresholded);
-    cv::Mat str_el = cv::getStructuringElement(MORPH_RECT, cv::Size(3, 3));
-    cv::morphologyEx(frame_thresholded, frame_thresholded, MORPH_OPEN, str_el);
-    cv::morphologyEx(frame_thresholded, frame_thresholded, MORPH_CLOSE, str_el);
+    cv::Mat str_el = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
+    cv::morphologyEx(frame_thresholded, frame_thresholded, cv::MORPH_OPEN, str_el);
+    cv::morphologyEx(frame_thresholded, frame_thresholded, cv::MORPH_CLOSE, str_el);
 
     cv::imshow("Video", frame);
     cv::imshow("Segmentation", frame_thresholded);

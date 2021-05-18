@@ -25,8 +25,8 @@ int
 main() {
   cv::VideoCapture cap(0);
   // Thiet lap do phan giai o 1.3MP
-  cap.set(CAP_PROP_FRAME_WIDTH, 1280);
-  cap.set(CAP_PROP_FRAME_HEIGHT, 1024);
+  cap.set(cv::CAP_PROP_FRAME_WIDTH, 1280);
+  cap.set(cv::CAP_PROP_FRAME_HEIGHT, 1024);
   if(!cap.isOpened()) {
     printf("ERROR: khong the mo camera 0\r\n");
     return 0;
@@ -45,7 +45,7 @@ main() {
   printf("- Nhan 'p' de luu anh potive.\r\n");
   printf("- Nhan 'c' de ket thuc.\r\n\r\n");
   //------------------------------------------
-  cv::namedWindow("Camera", WINDOW_NORMAL);
+  cv::namedWindow("Camera", cv::WINDOW_NORMAL);
   cv::resizeWindow("Camera", 400, 400);
   //------------------------------------------
   cv::Mat frame;
@@ -69,19 +69,19 @@ main() {
       switch(c) {
         case 'n':
           snprintf(path, 32, "./data/neg/neg_%d.jpg", count_neg);
-          cv::cvtColor(frame, gray_img, COLOR_BGR2GRAY);
+          cv::cvtColor(frame, gray_img, cv::COLOR_BGR2GRAY);
           cv::equalizeHist(gray_img, gray_img);
           cv::imwrite(path, gray_img);
           count_neg++;
           printf("[NEG] Da luu %d hinh negative vao thu muc ./data/neg/\r\n", count_neg);
           break;
         case 'p':
-          cv::namedWindow("Select", WINDOW_NORMAL);
+          cv::namedWindow("Select", cv::WINDOW_NORMAL);
           cv::resizeWindow("Select", 800, 600);
           // Select ROI
           bool showCrosshair = false;
           bool fromCenter = false;
-          Rect2d r = cv::selectROI("Select", frame, fromCenter, showCrosshair);
+          cv::Rect2d r = cv::selectROI("Select", frame, fromCenter, showCrosshair);
           cv::destroyWindow("Select"); // Dong cua so sau khi da chon
           printf("[POS] Vat mau tai x=%.0f, y=%.0f, width=%.0f, heigth=%.0f\r\n", r.x, r.y, r.width, r.height);
           if((w > r.width) && (h > r.height)) { // Get smallest
@@ -90,7 +90,7 @@ main() {
           }
           snprintf(path, 32, "./data/pos/pos_%d.jpg", count_pos);
           if((r.x - 20 >= 0) && (r.y - 20 >= 0) && (r.x + 20 <= frame.cols) && (r.y + 20 <= frame.rows)) {
-            Rect2d cr(r.x - 20, r.y - 20, r.width + 40, r.height + 40);
+            cv::Rect2d cr(r.x - 20, r.y - 20, r.width + 40, r.height + 40);
             imageCrop = frame(cr);
             snprintf(
                 lineText, 256, "echo \"pos/pos_%d.jpg 1 20 20 %.0f %.0f\" >> ./data/info.txt", count_pos, r.width, r.height);

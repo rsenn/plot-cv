@@ -99,12 +99,12 @@ delete_char_list(char**& list, int len) {
 
 //@displays window or crashes program (not really in use)
 void
-display_window(string name, cv::Mat& img, bool wait /*= false*/) {
-  if(img.empty()) {
+display_window(string name, cv::Mat& cv::img, bool wait /*= false*/) {
+  if(cv::img.empty()) {
     cout << "Could not open or find the image" << std::endl;
     exit(1);
   }
-  cv::imshow(name, img);
+  cv::imshow(name, cv::img);
   cv::resizeWindow(name, 512, 384);
   cv::waitKey(1);
   if(wait)
@@ -135,7 +135,7 @@ get_background(string vid_name, cv::Mat& avg_frame) {
     exit(1);
   }
   frame_count++;
-  cv::cvtColor(avg_frame, avg_frame, COLOR_BGR2GRAY);
+  cv::cvtColor(avg_frame, avg_frame, cv::COLOR_BGR2GRAY);
 
   // display_window("Average", avg_frame);
 
@@ -149,7 +149,7 @@ get_background(string vid_name, cv::Mat& avg_frame) {
   while(success) {
     // cout << "frame: " << frame_count << endl;
     frame_count++;
-    cv::cvtColor(next_frame, next_frame, COLOR_BGR2GRAY);
+    cv::cvtColor(next_frame, next_frame, cv::COLOR_BGR2GRAY);
 
     // avg_frame = ( ((frame_count-1)*avg_frame) + next_frame) / frame_count;
     avg_frame = avg_frame + next_frame;

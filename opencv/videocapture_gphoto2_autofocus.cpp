@@ -84,7 +84,7 @@ createInitialState() {
 
 static void
 focusDriveEnd(cv::VideoCapture& cap, int direction) {
-  while(cap.set(CAP_PROP_ZOOM, (double)MAX_FOCUS_STEP * direction))
+  while(cap.set(cv::CAP_PROP_ZOOM, (double)MAX_FOCUS_STEP * direction))
     ;
 }
 
@@ -101,14 +101,14 @@ findMinFocusStep(cv::VideoCapture& cap, unsigned int startWith, int direction) {
   focusDriveEnd(cap, direction * FOCUS_DIRECTION_INFTY);
   while(lStep < rStep) {
     int mStep = (lStep + rStep) / 2;
-    cap.set(CAP_PROP_ZOOM, direction * FOCUS_DIRECTION_INFTY * FOCUS_STEP);
-    if(cap.set(CAP_PROP_ZOOM, -direction * mStep)) {
+    cap.set(cv::CAP_PROP_ZOOM, direction * FOCUS_DIRECTION_INFTY * FOCUS_STEP);
+    if(cap.set(cv::CAP_PROP_ZOOM, -direction * mStep)) {
       rStep = mStep;
     } else {
       lStep = mStep + 1;
     }
   }
-  cap.set(CAP_PROP_ZOOM, direction * FOCUS_DIRECTION_INFTY * MAX_FOCUS_STEP);
+  cap.set(cv::CAP_PROP_ZOOM, direction * FOCUS_DIRECTION_INFTY * MAX_FOCUS_STEP);
   if(GlobalArgs.verbose) {
     cout << "Found minimal focus step = " << lStep << endl;
   }
@@ -123,11 +123,11 @@ rateFrame(cv::Mat& frame) {
   unsigned long int cv::sum = 0;
   unsigned long int size = frame.cols * frame.rows;
   cv::Mat edges;
-  cv::cvtColor(frame, edges, COLOR_BGR2GRAY);
+  cv::cvtColor(frame, edges, cv::COLOR_BGR2GRAY);
   cv::GaussianBlur(edges, edges, cv::Size(7, 7), 1.5, 1.5);
   cv::Canny(edges, edges, 0, 30, 3);
 
-  MatIterator_<uchar> it, end;
+  cv::MatIterator_<uchar> it, end;
   for(it = edges.begin<uchar>(), end = edges.end<uchar>(); it != end; ++it) { cv::sum += *it != 0; }
 
   return (double)cv::sum / (double)size;
@@ -276,20 +276,20 @@ main(int argc, char** argv) {
 
   // Get settings:
   if(GlobalArgs.verbose) {
-    if((cap.get(CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) == 0) || (cap.get(CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) == -1)) {
+    if((cap.get(cv::CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) == 0) || (cap.get(cv::CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) == -1)) {
       // Some cv::VideoCapture implementations can return -1, 0.
       cout << "This is not GPHOTO2 device." << endl;
       return -2;
     }
-    cout << "List of camera settings: " << endl << (const char*)(intptr_t)cap.get(CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) << endl;
-    cap.set(CAP_PROP_GPHOTO2_COLLECT_MSGS, true);
+    cout << "List of camera settings: " << endl << (const char*)(intptr_t)cap.get(cv::CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) << endl;
+    cap.set(cv::CAP_PROP_GPHOTO2_COLLECT_MSGS, true);
   }
 
-  cap.set(CAP_PROP_GPHOTO2_PREVIEW, true);
-  cap.set(CAP_PROP_VIEWFINDER, true);
+  cap.set(cv::CAP_PROP_GPHOTO2_PREVIEW, true);
+  cap.set(cv::CAP_PROP_VIEWFINDER, true);
   cap >> frame; // To check PREVIEW output cv::Size.
   if(!GlobalArgs.output.empty()) {
-    cv::Size S = cv::Size((int)cap.get(CAP_PROP_FRAME_WIDTH), (int)cap.get(CAP_PROP_FRAME_HEIGHT));
+    cv::Size S = cv::Size((int)cap.get(cv::CAP_PROP_FRAME_WIDTH), (int)cap.get(cv::CAP_PROP_FRAME_HEIGHT));
     int fourCC = cv::VideoWriter::fourcc('M', 'J', 'P', 'G');
     videoWriter.open(GlobalArgs.output, fourCC, GlobalArgs.fps, S, true);
     if(!videoWriter.isOpened()) {
@@ -319,7 +319,7 @@ main(int argc, char** argv) {
 
     if(focus && !GlobalArgs.measure) {
       int stepToCorrect = correctFocus(lastSucceeded, state, rateFrame(frame));
-      lastSucceeded = cap.set(CAP_PROP_ZOOM, max(stepToCorrect, state.minFocusStep) * state.direction);
+      lastSucceeded = cap.set(cv::CAP_PROP_ZOOM, max(stepToCorrect, state.minFocusStep) * state.direction);
       if((!lastSucceeded) || (stepToCorrect < state.minFocusStep)) {
         if(--GlobalArgs.breakLimit <= 0) {
           focus = false;
@@ -333,7 +333,7 @@ main(int argc, char** argv) {
       }
     } else if(GlobalArgs.measure) {
       double rate = rateFrame(frame);
-      if(!cap.set(CAP_PROP_ZOOM, state.minFocusStep)) {
+      if(!cap.set(cv::CAP_PROP_ZOOM, state.minFocusStep)) {
         if(--GlobalArgs.breakLimit <= 0) {
           break;
         }
@@ -344,16 +344,16 @@ main(int argc, char** argv) {
 
     if((focus || GlobalArgs.measure) && GlobalArgs.verbose) {
       cout << "STATE\t" << state << endl;
-      cout << "Output from camera: " << endl << (const char*)(intptr_t)cap.get(CAP_PROP_GPHOTO2_FLUSH_MSGS) << endl;
+      cout << "Output from camera: " << endl << (const char*)(intptr_t)cap.get(cv::CAP_PROP_GPHOTO2_FLUSH_MSGS) << endl;
     }
 
     cv::imshow(windowOriginal, frame);
     switch(key = static_cast<char>(cv::waitKey(30))) {
       case 'k': // focus out
-        cap.set(CAP_PROP_ZOOM, 100);
+        cap.set(cv::CAP_PROP_ZOOM, 100);
         break;
       case 'j': // focus in
-        cap.set(CAP_PROP_ZOOM, -100);
+        cap.set(cv::CAP_PROP_ZOOM, -100);
         break;
       case ',': // Drive to closest
         focusDriveEnd(cap, -FOCUS_DIRECTION_INFTY);
@@ -372,9 +372,9 @@ main(int argc, char** argv) {
   }
 
   if(GlobalArgs.verbose) {
-    cout << "Captured " << (int)cap.get(CAP_PROP_FRAME_COUNT) << " frames" << endl
-         << "in " << (int)(cap.get(CAP_PROP_POS_MSEC) / 1e2) << " seconds," << endl
-         << "at avg speed " << (cap.get(CAP_PROP_FPS)) << " fps." << endl;
+    cout << "Captured " << (int)cap.get(cv::CAP_PROP_FRAME_COUNT) << " frames" << endl
+         << "in " << (int)(cap.get(cv::CAP_PROP_POS_MSEC) / 1e2) << " seconds," << endl
+         << "at avg speed " << (cap.get(cv::CAP_PROP_FPS)) << " fps." << endl;
   }
 
   return 0;

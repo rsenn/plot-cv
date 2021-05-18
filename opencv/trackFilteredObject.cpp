@@ -45,8 +45,8 @@ trackFiliteredObject::writeXY(int x, int y) {
   this->y = y;
 }
 void
-trackFiliteredObject::writeRange(int Range) {
-  this->Range = Range;
+trackFiliteredObject::writeRange(int cv::Range) {
+  this->cv::Range = Range;
 }
 int
 trackFiliteredObject::getX() {
@@ -58,7 +58,7 @@ trackFiliteredObject::getY() {
 }
 int
 trackFiliteredObject::getRange() {
-  return this->Range;
+  return this->cv::Range;
 }
 
 void
@@ -147,13 +147,13 @@ trackFiliteredObject::drawObject(int x, int y, cv::Mat& frame) {
 }
 void
 trackFiliteredObject::trackObjcet(int& x, int& y, cv::Mat cv::threshold, cv::Mat& cameraFeed) {
-  cv::Mat temp;
-  cv::threshold.copyTo(temp);
+  cv::Mat cv::temp;
+  cv::threshold.copyTo(cv::temp);
   // these two std::vectors need for output findcontours
   std::vector<std::vector<cv::Point>> contours;
   std::vector<cv::Vec4i> hierarchy;
   // find contours of filtered image using Opencv find Contours function
-  cv::findContours(temp, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE);
+  cv::findContours(cv::temp, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE);
   // use cv::moments method to find our filtered object
   double refArea = 0;
   bool objectFound = false;
@@ -166,10 +166,10 @@ trackFiliteredObject::trackObjcet(int& x, int& y, cv::Mat cv::threshold, cv::Mat
         cv::Moments moment = cv::moments((cv::Mat)contours[index]);
         double area = moment.m00;
 
-        // if the area is less than 20 px by 20px then it is probably just noise
+        // if the area is less than 20 px by 20px then cv::it is probably just noise
         // if the area is the same as the 3/2 of the image size, probably just a bad filter
         // we only want the object with the largest area so we safe a reference area each
-        // iteration and compare it to the area in the next iteration.
+        // iteration and compare cv::it to the area in the next iteration.
         if(area > MIN_OBJECT_AREA && area < MAX_OBJECT_AREA && area > refArea) {
           x = moment.m10 / area;
           y = moment.m01 / area;
@@ -227,9 +227,9 @@ void
 trackFiliteredObject::morphOps(cv::Mat& thresh) {
   // create structuring element that will be used to "cv::dilate" and "erod" image.
   // the element chosen here is a 3px by 3px rectangle
-  cv::Mat erodeElement = cv::getStructuringElement(MORPH_RECT, cv::Size(3, 3));
+  cv::Mat erodeElement = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
   // cv::dilate with larger element so make sure object is nicely visable
-  cv::Mat dilateElement = cv::getStructuringElement(MORPH_RECT, cv::Size(8, 8));
+  cv::Mat dilateElement = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(8, 8));
 
   cv::erode(thresh, thresh, erodeElement);
   cv::erode(thresh, thresh, erodeElement);

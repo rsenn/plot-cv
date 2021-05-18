@@ -45,7 +45,7 @@ main(int argc, char** argv) {
 
   // container of the tracked objects
   //! [roi]
-  vector<Rect2d> objects;
+  vector<cv::Rect2d> objects;
   //! [roi]
 
   // set input video
@@ -67,13 +67,13 @@ main(int argc, char** argv) {
 
   // initialize the tracker
   //! [init]
-  std::vector<Ptr<cv::Tracker>> algorithms;
+  std::vector<cv::Ptr<cv::Tracker>> algorithms;
   for(size_t i = 0; i < ROIs.size(); i++) {
     algorithms.push_back(createTrackerByName(trackingAlg));
     objects.push_back(ROIs[i]);
   }
 
-  trackers.cv::add(algorithms, frame, objects);
+  trackers.add(algorithms, frame, objects);
   //! [init]
 
   // do the tracking

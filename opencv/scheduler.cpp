@@ -29,8 +29,8 @@ Scheduler::add_event(Event* input_event) {
   bool element_inserted = false;
 
   for(list<Event*>::const_iterator iterator = event_schedule.begin(), end = event_schedule.end(); iterator != end; iterator++) {
-    Event* temp = *iterator;
-    if(temp->get_execution_deadline() >= input_event->get_execution_deadline()) {
+    Event* cv::temp = *iterator;
+    if(cv::temp->get_execution_deadline() >= input_event->get_execution_deadline()) {
       continue;
     } else {
       event_schedule.insert(iterator, input_event);
@@ -58,8 +58,8 @@ Scheduler::remove_event(long int eventID) {
   bool element_removed = false;
 
   for(list<Event*>::const_iterator iterator = event_schedule.begin(), end = event_schedule.end(); iterator != end; iterator++) {
-    Event* temp = *iterator;
-    if(temp->get_eventID() == eventID) {
+    Event* cv::temp = *iterator;
+    if(cv::temp->get_eventID() == eventID) {
       event_schedule.erase(iterator);
       element_removed = true;
       num_of_events--;
@@ -162,14 +162,14 @@ void
 Scheduler::print_event_schedule() {
 
   int event_num = 0;
-  Event* temp = NULL;
+  Event* cv::temp = NULL;
 
   for(list<Event*>::const_iterator iterator = event_schedule.begin(), end = event_schedule.end(); iterator != end; iterator++) {
-    temp = *iterator;
+    cv::temp = *iterator;
     cout << "E#" << event_num << endl;
-    cout << "E_ADDR=" << temp << endl;
-    cout << "E_ED=" << temp->get_execution_deadline() << endl;
-    cout << "E_ID=" << temp->get_eventID() << endl;
+    cout << "E_ADDR=" << cv::temp << endl;
+    cout << "E_ED=" << cv::temp->get_execution_deadline() << endl;
+    cout << "E_ID=" << cv::temp->get_eventID() << endl;
     cout << endl;
     event_num++;
   }
@@ -216,10 +216,10 @@ Scheduler::get_save_directory() {
 
 Event*
 Scheduler::check_overdueEvents() { // Scans event_schedule and returns the first overdue
-                                   // Event it finds.
-  // Returns NULL is event_schedule is empty or if it finds no overdue Events.
+                                   // Event cv::it finds.
+  // Returns NULL is event_schedule is empty or if cv::it finds no overdue Events.
   time_t current_time;
-  Event* temp = NULL;
+  Event* cv::temp = NULL;
 
   for(list<Event*>::const_reverse_iterator iterator = event_schedule.rbegin(); iterator != event_schedule.rend(); iterator++) {
 
@@ -230,11 +230,11 @@ Scheduler::check_overdueEvents() { // Scans event_schedule and returns the first
       return NULL;
     }
 
-    temp = *iterator; // Couldn't figure out how to access list elements directly from
+    cv::temp = *iterator; // Couldn't figure out how to access list elements directly from
                       // reverse_iterator so doing this
     // instead...
-    if(current_time >= temp->get_execution_deadline()) {
-      return temp; // Overdue Event found.
+    if(current_time >= cv::temp->get_execution_deadline()) {
+      return cv::temp; // Overdue Event found.
     }
   }
 

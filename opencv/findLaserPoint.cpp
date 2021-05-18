@@ -133,7 +133,7 @@ main() {
     int tempLeftD = 1000, tempRightD = 0, tempLeftDIndex = -1, tempRightDIndex = -1;
     if(maxAreaIndex != -1) {
       for(int j = 0; j < contours[maxAreaIndex].size(); j++) {
-        imgRaw.at<Vec3b>(contours[maxAreaIndex][j].y, contours[maxAreaIndex][j].x) = Vec3b(0, 0, 255);
+        imgRaw.at<cv::Vec3b>(contours[maxAreaIndex][j].y, contours[maxAreaIndex][j].x) = cv::Vec3b(0, 0, 255);
         if(contours[maxAreaIndex][j].x < left)
           left = contours[maxAreaIndex][j].x;
         if(contours[maxAreaIndex][j].x > right)
@@ -288,7 +288,7 @@ imgTemp=cv::Mat(imgHSV.size(),CV_8UC1,cv::Scalar(0));
         {
             for(int j=0;j<imgHSV.cols;j++)
             {
-                if((imgHSV.at<Vec3b>(i,j).val[0]>thresholdValueHSV-delt)&&(imgHSV.at<Vec3b>(i,j).val[0]<thresholdValueHSV+delt))
+                if((imgHSV.at<cv::Vec3b>(i,j).val[0]>thresholdValueHSV-delt)&&(imgHSV.at<cv::Vec3b>(i,j).val[0]<thresholdValueHSV+delt))
                 {
                     imgTemp.at<uchar>(i,j)=255;
                 }

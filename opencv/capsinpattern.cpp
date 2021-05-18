@@ -47,8 +47,8 @@
 #include <opencv2/core/utility.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/calib3d.hpp>
-#include <opencv2/cv::structured_light.hpp>
-#include <opencv2/cv::phase_unwrapping.hpp>
+#include <opencv2/structured_light.hpp>
+#include <opencv2/phase_unwrapping.hpp>
 
 //using namespace cv;
 using namespace std;
@@ -92,18 +92,18 @@ main(int argc, char** argv) {
   params.setMarkers = parser.get<bool>(3);
   params.horizontal = parser.get<bool>(4);
   params.methodId = parser.get<int>(5);
-  cv::String outputCapturePath = parser.get<String>(6);
+  cv::String outputCapturePath = parser.get<cv::String>(6);
 
   params.shiftValue = static_cast<float>(2 * CV_PI / 3);
   params.nbrOfPixelsBetweenMarkers = 70;
-  cv::String outputPatternPath = parser.get<String>(7);
-  cv::String outputWrappedPhasePath = parser.get<String>(8);
-  cv::String outputUnwrappedPhasePath = parser.get<String>(9);
-  cv::String reliabilitiesPath = parser.get<String>(10);
+  cv::String outputPatternPath = parser.get<cv::String>(7);
+  cv::String outputWrappedPhasePath = parser.get<cv::String>(8);
+  cv::String outputUnwrappedPhasePath = parser.get<cv::String>(9);
+  cv::String reliabilitiesPath = parser.get<cv::String>(10);
 
-  Ptr<cv::structured_light::SinusoidalPattern> sinus =
+  cv::Ptr<cv::structured_light::SinusoidalPattern> sinus =
       cv::structured_light::SinusoidalPattern::create(makePtr<structured_light::SinusoidalPattern::Params>(params));
-  Ptr<cv::phase_unwrapping::HistogramPhaseUnwrapping> phaseUnwrapping;
+  cv::Ptr<cv::phase_unwrapping::HistogramPhaseUnwrapping> phaseUnwrapping;
 
   vector<cv::Mat> patterns;
   cv::Mat shadowMask;
@@ -112,15 +112,15 @@ main(int argc, char** argv) {
   // Generate sinusoidal patterns
   sinus->generate(patterns);
 
-  cv::VideoCapture cap(CAP_PVAPI);
+  cv::VideoCapture cap(cv::CAP_PVAPI);
   if(!cap.isOpened()) {
     cout << "Camera could not be opened" << endl;
     return -1;
   }
-  cap.set(CAP_PROP_PVAPI_PIXELFORMAT, CAP_PVAPI_PIXELFORMAT_MONO8);
+  cap.set(cv::CAP_PROP_PVAPI_PIXELFORMAT, CAP_PVAPI_PIXELFORMAT_MONO8);
 
-  cv::namedWindow("pattern", WINDOW_NORMAL);
-  cv::setWindowProperty("pattern", WND_PROP_FULLSCREEN, WINDOW_FULLSCREEN);
+  cv::namedWindow("pattern", cv::WINDOW_NORMAL);
+  cv::setWindowProperty("pattern", cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);
   cv::imshow("pattern", patterns[0]);
   cout << "Press any key when ready" << endl;
   cv::waitKey(0);

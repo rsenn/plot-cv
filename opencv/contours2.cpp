@@ -67,7 +67,7 @@ main(int argc, char** argv) {
   cv::imshow("image", img);
   // Extract the contours so that
   std::vector<std::vector<cv::Point>> contours0;
-  cv::findContours(img, contours0, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+  cv::findContours(img, contours0, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
   contours.cv::resize(contours0.size());
   for(size_t k = 0; k < contours0.size(); k++) cv::approxPolyDP(cv::Mat(contours0[k]), contours[k], 3, true);
   cv::namedWindow("contours", 1);

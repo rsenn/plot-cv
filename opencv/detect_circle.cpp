@@ -13,7 +13,7 @@ void
 setLabel(cv::Mat& im, const std::string label, std::vector<cv::Point>& contour) {
   double scale = 0.4;
   int baseline = 0;
-  int fontface = FONT_HERSHEY_SIMPLEX;
+  int fontface = cv::FONT_HERSHEY_SIMPLEX;
   int thickness = 1;
 
   cv::Size text = cv::getTextSize(label, fontface, scale, thickness, &baseline);
@@ -52,7 +52,7 @@ main(int argc, char* argv[]) {
 
   for(int i = 0; i < contours.size(); i++) {
     // Approximate contour with accuracy proportional to the contour perimeter
-    cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(Mat(contours[i]), true) * 0.02, true);
+    cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true) * 0.02, true);
 
     // Skip small or non-convex objects
     if(std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
@@ -65,7 +65,7 @@ main(int argc, char* argv[]) {
     cv::Rect r = cv::boundingRect(contours[i]);
     int radius = r.width / 2;
 
-    if(std::abs(1 - ((double)r.width / r.height)) <= 0.2 && std::abs(1 - (area / (CV_PI * std::cv::pow(radius, 2.0)))) <= 0.2 &&
+    if(std::abs(1 - ((double)r.width / r.height)) <= 0.2 && std::abs(1 - (area / (CV_PI * std::pow(radius, 2.0)))) <= 0.2 &&
        (r.width <= 30)) {
       printf("x : %f\n", center.x);
       printf("y : %f\n", center.y);

@@ -6,7 +6,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/objdetect.hpp>
-#include <opencv2/cv::face/mace.hpp>
+#include <opencv2/face/mace.hpp>
 #include <iostream>
 //using namespace cv;
 //using namespace cv::face;
@@ -35,7 +35,7 @@ main(int argc, char** argv) {
                            "                     (random convolute images seeded with the crc of this)\n"
                            "                     users will get prompted to guess the secrect, additional to the image. "
                            "}");
-  cv::String cascade = parser.get<String>("cascade");
+  cv::String cascade = parser.get<cv::String>("cascade");
   if(parser.has("help") || cascade.empty()) {
     parser.printMessage();
     return 1;
@@ -43,13 +43,13 @@ main(int argc, char** argv) {
     cout << help << endl;
   }
   cv::String defname = "mace.xml.gz";
-  cv::String pre = parser.get<String>("pre");
-  cv::String two = parser.get<String>("twofactor");
+  cv::String pre = parser.get<cv::String>("pre");
+  cv::String two = parser.get<cv::String>("twofactor");
   int N = parser.get<int>("num");
   int Z = parser.get<int>("size");
   int state = NEUTRAL;
 
-  Ptr<MACE> mace;
+  cv::Ptr<MACE> mace;
   if(!pre.empty()) { // load pretrained model, if available
     mace = MACE::load(pre);
     if(mace->empty()) {

@@ -79,7 +79,7 @@ main() {
     cv::Mat interestPointObject = object;
     for(unsigned int i = 0; i < kpObject.size(); i++) {
       if(kpObject[i].octave) {
-        cv::circle(interestPointObject, kpObject[i].pt, kpObject[i].size, 0);
+        cv::circle(interestPointObject, kpObject[i].cv::pt, kpObject[i].size, 0);
         string octaveS;
         switch(kpObject[i].octave) {
           case 0: octaveS = "0"; break;
@@ -88,7 +88,7 @@ main() {
           default: break;
         }
         cv::putText(
-            interestPointObject, octaveS, kpObject[i].pt, FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(0, 0, 250), 1, cv::LINE_AA);
+            interestPointObject, octaveS, kpObject[i].cv::pt, FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(0, 0, 250), 1, cv::LINE_AA);
       }
     }
     cv::imshow("Good Matches", interestPointObject);
@@ -105,8 +105,8 @@ main() {
   FlannBasedMatcher matcher;
 
   // Initialize video and display window
-  cv::VideoCapture cap(1); // camera 1 is webcam
-  if(!cap.isOpened())
+  cv::VideoCapture cv::cap(1); // camera 1 is webcam
+  if(!cv::cap.isOpened())
     return -1;
 
   // Object corner points for plotting box
@@ -136,7 +136,7 @@ main() {
       frameCount++;
       cv::Mat frame;
       cv::Mat image;
-      cap >> frame;
+      cv::cap >> frame;
       cv::cvtColor(frame, image, cv::COLOR_RGB2GRAY);
 
       cv::Mat des_image, img_matches, H;
@@ -187,8 +187,8 @@ main() {
                 cv::LINE_AA);
         for(unsigned int i = 0; i < good_matches.size(); i++) {
           // Get the keypoints from the good matches
-          obj.push_back(kpObject[good_matches[i].queryIdx].pt);
-          scene.push_back(kp_image[good_matches[i].trainIdx].pt);
+          obj.push_back(kpObject[good_matches[i].queryIdx].cv::pt);
+          scene.push_back(kp_image[good_matches[i].trainIdx].cv::pt);
         }
 
         H = cv::findHomography(obj, scene, cv::RANSAC);
@@ -241,6 +241,6 @@ main() {
   }
 
   // Release camera and exit
-  cap.release();
+  cv::cap.release();
   return 0;
 }

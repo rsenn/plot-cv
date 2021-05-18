@@ -1,4 +1,4 @@
-#include <opencv2/cv::bgsegm.hpp>
+#include <opencv2/bgsegm.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/core/utility.hpp>
@@ -16,9 +16,9 @@ const cv::String keys = "{help h usage ? |      | print this message   }"
                     "{vid            |      | path to a video file }"
                     "{algo           | GMG  | name of the algorithm (GMG, CNT, KNN, MOG, MOG2) }";
 
-static Ptr<BackgroundSubtractor>
+static cv::Ptr<cv::BackgroundSubtractor>
 createBGSubtractorByName(const cv::String& algoName) {
-  Ptr<BackgroundSubtractor> algo;
+  cv::Ptr<cv::BackgroundSubtractor> algo;
   if(algoName == cv::String("GMG"))
     algo = createBackgroundSubtractorGMG(20, 0.7);
   else if(algoName == cv::String("CNT"))
@@ -43,15 +43,15 @@ main(int argc, char** argv) {
     return 0;
   }
 
-  cv::String videoPath = parser.get<String>("vid");
-  cv::String algoName = parser.get<String>("algo");
+  cv::String videoPath = parser.get<cv::String>("vid");
+  cv::String algoName = parser.get<cv::String>("algo");
 
   if(!parser.check()) {
     parser.printErrors();
     return 0;
   }
 
-  Ptr<BackgroundSubtractor> bgfs = createBGSubtractorByName(algoName);
+  cv::Ptr<cv::BackgroundSubtractor> bgfs = createBGSubtractorByName(algoName);
   if(!bgfs) {
     std::cerr << "Failed to create " << algoName << " background subtractor" << std::endl;
     return -1;
@@ -70,7 +70,7 @@ main(int argc, char** argv) {
 
   cv::Mat frame, fgmask, segm;
 
-  cv::namedWindow("FG Segmentation", WINDOW_NORMAL);
+  cv::namedWindow("FG Segmentation", cv::WINDOW_NORMAL);
 
   for(;;) {
     cap >> frame;
