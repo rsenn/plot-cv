@@ -37,8 +37,8 @@ main(int argc, char** argv) {
   double canny_th2 = 50.0;
   int canny_aperture_size = 3;
   bool do_merge = false;
-  cv::Ptr<cv::ximgproc::FastLineDetector> fld =
-      cv::ximgproc::createFastLineDetector(length_threshold, distance_threshold, canny_th1, canny_th2, canny_aperture_size, do_merge);
+  cv::Ptr<cv::ximgproc::FastLineDetector> fld = cv::ximgproc::createFastLineDetector(
+      length_threshold, distance_threshold, canny_th1, canny_th2, canny_aperture_size, do_merge);
   std::vector<cv::Vec4f> lines_fld;
   // Because of some CPU's power strategy, it seems that the first running of
   // an algorithm takes much longer. So here we run the algorithm 10 times
@@ -57,7 +57,7 @@ main(int argc, char** argv) {
   cv::Mat line_image_fld(image);
   fld->drawSegments(line_image_fld, lines_fld);
   cv::imshow("FLD result", line_image_fld);
-  cv::moveWindow("FLD result", 0,0);
+  cv::moveWindow("FLD result", 0, 0);
   cv::waitKey(0);
   return 0;
 }

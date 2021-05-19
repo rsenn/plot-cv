@@ -29,7 +29,7 @@ void thresh_callback(int, void*);
 int
 main(int, char** argv) {
   /// Load source image and convert it to gray
-  src = cv::imread(argv[1], 1);
+  src = cv::imread(argv[1] ? argv[1] : "class-ab-amp-schematic.jpg", cv::IMREAD_COLOR);
 
   /// Convert image to gray and cv::blur it
   cv::cvtColor(src, src_gray, cv::COLOR_BGR2GRAY);
