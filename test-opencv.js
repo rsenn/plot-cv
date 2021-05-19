@@ -6,8 +6,8 @@ import * as path from 'path';
 import RGBA from './lib/color/rgba.js';
 import Util from './lib/util.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
-import { Pipeline, Processor } from './cvPipeline.js';
-import { Window, MouseFlags, MouseEvents, Mouse, TextStyle, DrawText } from './cvHighGUI.js';
+import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
+import { Window, MouseFlags, MouseEvents, Mouse, TextStyle, DrawText } from './qjs-opencv/js/cvHighGUI.js';
 import * as nvg from 'nanovg';
 import * as glfw from 'glfw';
 

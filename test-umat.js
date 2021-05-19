@@ -12,7 +12,7 @@ import RGBA from './lib/color/rgba.js';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
-import { Pipeline, Processor } from './cvPipeline.js';
+import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
 
 let filesystem;
 

@@ -1,13 +1,13 @@
 import { Point, Size, Contour, Rect, Line, TickMeter, Mat, CLAHE, Draw } from 'opencv';
 import * as cv from 'opencv';
-import VideoSource from './cvVideo.js';
-import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './cvHighGUI.js';
+import { VideoSource } from './qjs-opencv/js/cvVideo.js';
+import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './qjs-opencv/js/cvHighGUI.js';
 import { HSLA } from './lib/color.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import fs from 'fs';
 import Console from 'console';
-import { Pipeline, Processor } from './cvPipeline.js';
-import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Define, Once, GetOpt, RoundTo, Range } from './cvUtils.js';
+import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
+import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Define, Once, GetOpt, RoundTo, Range } from './qjs-opencv/js/cvUtils.js';
 
 console.log('process', process);
 
@@ -321,6 +321,7 @@ function main(...args) {
       Processor(function AcquireFrame(src, dst) {
         const dstEmpty = dst.empty;
         if(dst.empty) dst0Size = dst.size;
+        console.log('video', video);
         video.read(dst);
         if(videoSize === undefined || videoSize.empty)
           videoSize = video.size.area ? video.size : dst.size;
