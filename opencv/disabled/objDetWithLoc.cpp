@@ -3,7 +3,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 int
@@ -29,7 +29,7 @@ main() {
   int eskix = -1;
   int eskiy = -1;
 
-  while(true) {    // sürekli tarama yapmak için sonsuz döngü
+  while(true) {        // sürekli tarama yapmak için sonsuz döngü
     cv::Mat yeniFrame; // kameradan alınan framelerin yükleneceği nesne
 
     bool okumaYapiliyormu = video.read(yeniFrame); // web camden video almak için nesne oluşturuldu

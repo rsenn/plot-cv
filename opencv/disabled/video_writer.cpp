@@ -67,13 +67,13 @@ main(int argc, const char* argv[]) {
 
     tm.reset();
     tm.start();
-    writer.cv::write(frame);
+    writer.write(frame);
     tm.stop();
     cpu_times.push_back(tm.getTimeMilli());
 
     tm.reset();
     tm.start();
-    d_writer.cv::write(d_frame);
+    d_writer.write(d_frame);
     tm.stop();
     gpu_times.push_back(tm.getTimeMilli());
   }

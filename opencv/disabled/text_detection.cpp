@@ -23,8 +23,8 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/dnn.hpp>
 
-//using namespace cv;
-//using namespace cv::dnn;
+// using namespace cv;
+// using namespace cv::dnn;
 
 const char* keys =
     "{ help  h     | | Print help message. }"

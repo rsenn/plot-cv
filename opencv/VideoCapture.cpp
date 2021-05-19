@@ -6,7 +6,7 @@
 
 #include <opencv2/highgui/highgui_c.h>
 #include <opencv2/highgui/highgui.hpp>
-//using namespace cv;
+// using namespace cv;
 
 /// throw java exception
 static void

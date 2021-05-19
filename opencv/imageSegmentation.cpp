@@ -11,7 +11,7 @@
 #include <iostream>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 int
 main(int, char** argv) {

@@ -7,7 +7,7 @@
 #include "samples_utility.hpp"
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 // prototype of the functino for feature extractor
 void sobelExtractor(const cv::Mat img, const cv::Rect roi, cv::Mat& feat);

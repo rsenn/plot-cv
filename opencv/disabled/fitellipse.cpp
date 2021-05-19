@@ -18,7 +18,7 @@
 #include <opencv2/imgproc/types_c.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 // static void help()

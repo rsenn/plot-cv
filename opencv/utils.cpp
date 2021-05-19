@@ -329,21 +329,26 @@ show_result(cv::Mat& src,
     // cv::FILLED); cv::putText(result_img, "Text", cv::Point(cv::it.box.tl().x, it.box.tl().y-4),
     // FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255, 255, 255), 1);
     cv::circle(result_img, cv::Point(cv::it.box.tl().x + 5, it.box.tl().y - 12), 10, cv::Scalar(30, 30, 200), cv::FILLED);
-    cv::putText(
-        result_img, "T", cv::Point(cv::it.box.tl().x - 2, it.box.tl().y - 5), FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255, 255, 255), 1);
+    cv::putText(result_img,
+                "T",
+                cv::Point(cv::it.box.tl().x - 2, it.box.tl().y - 5),
+                FONT_HERSHEY_COMPLEX_SMALL,
+                1,
+                cv::Scalar(255, 255, 255),
+                1);
 #else
     cv::Size text_size = cv::getTextSize(cv::it.word, FONT_HERSHEY_COMPLEX_SMALL, 1, 1, 0);
     cv::rectangle(result_img,
-              cv::Rect(cv::it.box.tl().x, it.box.tl().y - 20, text_size.width, text_size.height + 5),
-              cv::Scalar(30, 30, 200, 0),
-              cv::FILLED);
+                  cv::Rect(cv::it.box.tl().x, it.box.tl().y - 20, text_size.width, text_size.height + 5),
+                  cv::Scalar(30, 30, 200, 0),
+                  cv::FILLED);
     cv::putText(result_img,
-            cv::it.word,
-            cv::Point(cv::it.box.tl().x, it.box.tl().y - 4),
-            FONT_HERSHEY_COMPLEX_SMALL,
-            1,
-            cv::Scalar(0xff, 0xff, 0xff),
-            1);
+                cv::it.word,
+                cv::Point(cv::it.box.tl().x, it.box.tl().y - 4),
+                FONT_HERSHEY_COMPLEX_SMALL,
+                1,
+                cv::Scalar(0xff, 0xff, 0xff),
+                1);
 #endif
   }
 

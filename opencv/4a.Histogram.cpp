@@ -3,7 +3,7 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 int
@@ -38,16 +38,16 @@ main() {
     const float* histRange = {range};
     // calculate the histograms
     cv::calcHist(&bgr_planes[0], // source array
-             1,              // number of source arrays
-             0,              // channel
-             cv::Mat(),          // A mask to be used on the source array
-             b_hist,         // output
-             1,              // dimensionality
-             &histSize,      // The number of bins per each used dimension
-             &histRange,     // The range of values to be measured per each dimension
-             uniform,        // Flag indicating whether the histogram is uniform or not
-             accumulate      // Accumulation flag. If it is set, the histogram is not cleared in the
-                             // beginning when it is allocated.
+                 1,              // number of source arrays
+                 0,              // channel
+                 cv::Mat(),      // A mask to be used on the source array
+                 b_hist,         // output
+                 1,              // dimensionality
+                 &histSize,      // The number of bins per each used dimension
+                 &histRange,     // The range of values to be measured per each dimension
+                 uniform,        // Flag indicating whether the histogram is uniform or not
+                 accumulate      // Accumulation flag. If it is set, the histogram is not cleared in the
+                                 // beginning when it is allocated.
     );
     cv::calcHist(&bgr_planes[1], 1, 0, cv::Mat(), g_hist, 1, &histSize, &histRange, uniform, accumulate);
     cv::calcHist(&bgr_planes[2], 1, 0, cv::Mat(), r_hist, 1, &histSize, &histRange, uniform, accumulate);
@@ -56,39 +56,39 @@ main() {
     int bin_w = cvRound((double)hist_w / histSize);
     cv::Mat histImage(hist_h, hist_w, CV_8UC3, cv::Scalar(0, 0, 0));
     // Normalize the histogram so its values fall in the range of histImage size
-    cv::normalize(b_hist,         // Input array
-              b_hist,         // Output array
-              0,              // lower limit
-              histImage.rows, // upper limit, height of histImage
-              cv::NORM_MINMAX,    // type of normalization
-              -1,             // output normalized array will be the same type as the input
-              cv::Mat()           // Optional mask
+    cv::normalize(b_hist,          // Input array
+                  b_hist,          // Output array
+                  0,               // lower limit
+                  histImage.rows,  // upper limit, height of histImage
+                  cv::NORM_MINMAX, // type of normalization
+                  -1,              // output normalized array will be the same type as the input
+                  cv::Mat()        // Optional mask
     );
     cv::normalize(g_hist, g_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat());
     cv::normalize(r_hist, r_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat());
     // Draw lines of histogram
     for(int i = 1; i < histSize; i++) {
       cv::line(histImage,
-           cv::Point(bin_w * (i - 1), hist_h - cvRound(b_hist.at<float>(i - 1))),
-           cv::Point(bin_w * (i), hist_h - cvRound(b_hist.at<float>(i))),
-           cv::Scalar(255, 0, 0),
-           2,
-           8,
-           0);
+               cv::Point(bin_w * (i - 1), hist_h - cvRound(b_hist.at<float>(i - 1))),
+               cv::Point(bin_w * (i), hist_h - cvRound(b_hist.at<float>(i))),
+               cv::Scalar(255, 0, 0),
+               2,
+               8,
+               0);
       cv::line(histImage,
-           cv::Point(bin_w * (i - 1), hist_h - cvRound(g_hist.at<float>(i - 1))),
-           cv::Point(bin_w * (i), hist_h - cvRound(g_hist.at<float>(i))),
-           cv::Scalar(0, 255, 0),
-           2,
-           8,
-           0);
+               cv::Point(bin_w * (i - 1), hist_h - cvRound(g_hist.at<float>(i - 1))),
+               cv::Point(bin_w * (i), hist_h - cvRound(g_hist.at<float>(i))),
+               cv::Scalar(0, 255, 0),
+               2,
+               8,
+               0);
       cv::line(histImage,
-           cv::Point(bin_w * (i - 1), hist_h - cvRound(r_hist.at<float>(i - 1))),
-           cv::Point(bin_w * (i), hist_h - cvRound(r_hist.at<float>(i))),
-           cv::Scalar(0, 0, 255),
-           2,
-           8,
-           0);
+               cv::Point(bin_w * (i - 1), hist_h - cvRound(r_hist.at<float>(i - 1))),
+               cv::Point(bin_w * (i), hist_h - cvRound(r_hist.at<float>(i))),
+               cv::Scalar(0, 0, 255),
+               2,
+               8,
+               0);
     }
     /*-----------------------------------------------*/
     cv::imshow("Camera", frame);

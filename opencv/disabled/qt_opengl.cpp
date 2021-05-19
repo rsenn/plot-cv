@@ -20,7 +20,7 @@
 #endif
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 static void
 help() {
@@ -217,10 +217,10 @@ main(void) {
   cv::resizeWindow("POSIT", source.cols, source.rows);
 
   cv::displayOverlay("POSIT",
-                 "We lost the 4 corners' detection quite often (the red circles disappear).\n"
-                 "This demo is only to illustrate how to use OpenGL callback.\n"
-                 " -- Press ESC to exit.",
-                 10000);
+                     "We lost the 4 corners' detection quite often (the red circles disappear).\n"
+                     "This demo is only to illustrate how to use OpenGL callback.\n"
+                     " -- Press ESC to exit.",
+                     10000);
 
   float OpenGLcv::Matrix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   setOpenGlContext("POSIT");

@@ -10,7 +10,7 @@
 #include "utils.h" // Drawing and printing functions
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 const double akaze_thresh = 3e-4;   // AKAZE detection cv::threshold set to locate about 1000 keypoints
 const double ransac_thresh = 2.5f;  // RANSAC inlier threshold
@@ -108,7 +108,8 @@ cv::Tracker::process(const cv::Mat frame, Stats& stats) {
     drawBoundingBox(frame_with_bb, new_bb);
   }
   cv::Mat res;
-  drawMatches(first_frame, inliers1, frame_with_bb, inliers2, inlier_matches, res, cv::Scalar(255, 0, 0), cv::Scalar(255, 0, 0));
+  drawMatches(
+      first_frame, inliers1, frame_with_bb, inliers2, inlier_matches, res, cv::Scalar(255, 0, 0), cv::Scalar(255, 0, 0));
   return res;
 }
 } // namespace example

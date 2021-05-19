@@ -11,7 +11,7 @@
 int
 _tmain(int argc, _TCHAR* argv[]) {
   using namespace std;
-//  using namespace cv;
+  //  using namespace cv;
 
   cv::Mat img, img_gray, channel[3];
   cv::VideoCapture cam(1);

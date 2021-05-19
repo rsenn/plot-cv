@@ -4,7 +4,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
-//using namespace cv;
+// using namespace cv;
 
 // finds the angles for shape detection Status: Good to go
 double angle(cv::Point* pt1, cv::Point* pt2, cv::Point* pt0);

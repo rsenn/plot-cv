@@ -9,8 +9,8 @@
 #include <string>
 
 using namespace std;
-//using namespace cv;
-//using namespace cv::face;
+// using namespace cv;
+// using namespace cv::face;
 
 static bool
 myDetector(InputArray image, OutputArray faces, cv::CascadeClassifier* face_cascade) {
@@ -33,16 +33,16 @@ int
 main(int argc, char** argv) {
   // Give the path to the directory containing all the files containing data
   cv::CommandLineParser parser(argc,
-                           argv,
-                           "{ help h usage ?    |      | give the following arguments in following cv::format }"
-                           "{ model_filename f  |      | (required) path to binary file storing the trained model which "
-                           "is to be loaded "
-                           "[example - /data/file.dat]}"
-                           "{ video v           |      | (required) path to video in which cv::face landmarks have to be "
-                           "detected.[example - "
-                           "/data/video.avi] }"
-                           "{ face_cascade c    |      | Path to the cv::face cascade xml file which you want to use as a "
-                           "detector}");
+                               argv,
+                               "{ help h usage ?    |      | give the following arguments in following cv::format }"
+                               "{ model_filename f  |      | (required) path to binary file storing the trained model which "
+                               "is to be loaded "
+                               "[example - /data/file.dat]}"
+                               "{ video v           |      | (required) path to video in which cv::face landmarks have to be "
+                               "detected.[example - "
+                               "/data/video.avi] }"
+                               "{ face_cascade c    |      | Path to the cv::face cascade xml file which you want to use as a "
+                               "detector}");
   // Read in the input arguments
   if(parser.has("help")) {
     parser.printMessage();

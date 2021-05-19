@@ -6,7 +6,7 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/imgproc/types_c.h>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 cv::Mat frame_hsv, frame, mask;
@@ -37,13 +37,13 @@ on_mouse(int event, int x, int y, int, void*) {
   // make mask using floodFill
   mask = cv::Scalar::all(0);
   cv::floodFill(frame,
-            mask,
-            p,
-            cv::Scalar(255, 255, 255),
-            0,
-            cv::Scalar(low_diff, low_diff, low_diff),
-            cv::Scalar(high_diff, high_diff, high_diff),
-            flags);
+                mask,
+                p,
+                cv::Scalar(255, 255, 255),
+                0,
+                cv::Scalar(low_diff, low_diff, low_diff),
+                cv::Scalar(high_diff, high_diff, high_diff),
+                flags);
 
   // find the H and S range of piexels selected by floodFill
   cv::Mat channels[3];

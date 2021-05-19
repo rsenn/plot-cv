@@ -15,7 +15,7 @@
 #include <vector>
 #include <stdio.h>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 // hide the local functions in an anon namespace
@@ -87,8 +87,8 @@ main(int ac, char** av) {
   }
   std::string arg = av[1];
   cv::VideoCapture capture(arg); // try to open string, this will attempt to open it as a video file
-  if(!capture.isOpened())    // if this fails, try to open as a video camera, through the use of an
-                             // integer param
+  if(!capture.isOpened())        // if this fails, try to open as a video camera, through the use of an
+                                 // integer param
     capture.open(atoi(arg.c_str()));
   if(!capture.isOpened()) {
     cerr << "Failed to open a video device or video file!\n" << endl;

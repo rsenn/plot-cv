@@ -11,7 +11,7 @@
 #include <opencv2/imgproc.hpp>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 int thresh = 175;
 int max_thresh = 250;

@@ -1,5 +1,4 @@
 import { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, EagleNodeList, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, EagleDocument, EagleReference, EagleRef, makeEagleNode, EagleNode, Renderer, EagleProject, EagleElement, makeEagleElement, EagleElementProxy, EagleNodeMap, ImmutablePath, DereferenceError } from './lib/eagle.js';
-import PortableFileSystem from './lib/filesystem.js';
 import { toXML } from './lib/json.js';
 import Util from './lib/util.js';
 import deep from './lib/deep.js';
@@ -9,8 +8,9 @@ import ConsoleSetup from './lib/consoleSetup.js';
 import REPL from './repl.js';
 import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, Enum, HashList, Multimap, Shash, SortedMap, HashMultimap, MultiBiMap, MultiKeyMap, DenseSpatialHash2D, SpatialHash2D, HashMap, SpatialH, SpatialHash, SpatialHashMap, BoxHash } from './lib/container.js';
 import * as std from 'std';
-
-let filesystem;
+import fs from 'fs';
+import { Console } from 'console';
+let cmdhist;
 
 Util.define(Array.prototype, {
   findLastIndex(predicate) {
@@ -40,6 +40,11 @@ Util.define(Array.prototype, {
     return this[this.length-1];
   }
 });
+
+function ReadJSON(filename) {
+  let data = std.loadFile(filename);
+  return data ? JSON.parse(data) : null;
+}
 
 async function importModule(moduleName, ...args) {
   //console.log('importModule', moduleName, args);
@@ -213,7 +218,7 @@ function coordMap(doc) {
 
 async function testEagle(filename) {
   console.log('testEagle: ', filename);
-  let proj = new EagleProject(filename, filesystem);
+  let proj = new EagleProject(filename, fs);
   console.log('Project loaded: ', !proj.failed);
   console.log('Project: ', proj);
   console.log('proj.documents', proj.documents);
@@ -286,9 +291,8 @@ async function testEagle(filename) {
   return proj;
 }
 
-async function main(...args) {
-  await ConsoleSetup({ /*breakLength: 240, */ depth: 10 });
-  await PortableFileSystem(fs => (filesystem = fs));
+function main(...args) {
+  globalThis.console = new Console({ /*breakLength: 240, */ depth: 10 });
 
   const base = path.basename(Util.getArgv()[1], /\.[^.]*$/);
   const histfile = `.${base}-history`;
@@ -347,7 +351,15 @@ async function main(...args) {
 
   Object.assign(globalThis, {
     load(filename) {
-      return (globalThis.document = new EagleDocument(std.loadFile(filename)));
+      return (globalThis.document = new EagleDocument(std.loadFile(filename),
+        null,
+        filename,
+        null,
+        fs
+      ));
+    },
+    newProject(filename) {
+      return (globalThis.project = new EagleProject(filename, fs));
     }
   });
 
@@ -396,21 +408,59 @@ async function main(...args) {
     BoxHash
   });
 
+  cmdhist = `.${base}-cmdhistory`;
+
   let repl = (globalThis.repl = new REPL(base));
+  let debugLog = fs.fopen('debug.log', 'a');
+  repl.history_set(ReadJSON(cmdhist));
+  repl.debugLog = debugLog;
   repl.exit = Util.exit;
   repl.importModule = importModule;
+  repl.debug = (...args) => {
+    let s = '';
+    for(let arg of args) {
+      if(s) s += ' ';
+      if(typeof arg != 'strping' || arg.indexOf('\x1b') == -1)
+        s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
+      else s += arg;
+    }
+    debugLog.puts(s + '\n');
+    debugLog.flush();
+  };
+  repl.show = value => {
+    /*  if(Util.isObject(value) && value instanceof EagleNode) {
+      if(value.children && value.children.length > 0) {
+      }
+    } else*/ {
+      console.log(value);
+    }
+  };
 
   repl.history_set(JSON.parse(std.loadFile(histfile) || '[]'));
 
+  repl.cleanup = () => {
+    let hist = repl.history_get().filter((item, i, a) => a.lastIndexOf(item) == i);
+    fs.writeFileSync(cmdhist, JSON.stringify(hist, null, 2));
+    console.log(`EXIT (wrote ${hist.length} history entries)`);
+    std.exit(0);
+  };
+  /*
   Util.atexit(() => {
     let hist = repl.history_get().filter((item, i, a) => a.lastIndexOf(item) == i);
 
-    filesystem.writeFile(histfile, JSON.stringify(hist, null, 2));
+    fs.writeFileSync(histfile, JSON.stringify(hist, null, 2));
 
     console.log(`EXIT (wrote ${hist.length} history entries)`);
   });
-  await repl.run();
+*/ repl.run();
   console.log('REPL done');
 }
 
-Util.callMain(main, true);
+try {
+  main(...scriptArgs.slice(1));
+} catch(error) {
+  console.log(`FAIL: ${error.message}\n${error.stack}`);
+  Util.exit(1);
+} finally {
+  console.log('SUCCESS');
+}

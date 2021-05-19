@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <simple_svg_1.0.0.hpp>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 cv::Mat src;
@@ -56,7 +56,7 @@ export_svg(vector<cv::Point> contour_arg, string output_file) {
   svg::LineChart chart(5.0);
   svg::Polyline polyline(svg::Stroke(1, svg::Color(255, 0, 0)));
   for(int i = 0; i < contour_arg.size(); i++) {
-    svg::cv::Point temp = svg::cv::Point(contour_arg.at(i).x, contour_arg.at(i).y);
+    svg::Point temp = svg::Point(contour_arg.at(i).x, contour_arg.at(i).y);
     polyline << temp;
   }
   doc << polyline;

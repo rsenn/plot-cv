@@ -17,7 +17,7 @@
 #include <fcntl.h>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 string logFilePrefix = "/home/pi/pibilight/cv::log/";
 string logFileName;

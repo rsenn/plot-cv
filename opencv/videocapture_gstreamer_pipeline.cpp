@@ -7,7 +7,7 @@
 #include <map>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 //================================================================================
 
@@ -145,74 +145,76 @@ inline cv::Ptr<cv::VideoCapture>
 createCapture(const string& backend, const string& file_name, const string& codec) {
   if(backend == "gst-default") {
     cout << "Created GStreamer capture ( " << file_name << " )" << endl;
-    return makePtr<cv::VideoCapture>(file_name, CAP_GSTREAMER);
+    return makePtr<cv::VideoCapture>(file_name, cv::CAP_GSTREAMER);
   } else if(backend.find("gst") == 0) {
-    ostringstream cv::line;
-    cv::line << "filesrc location=\"" << file_name << "\"";
-    cv::line << " ! ";
-    cv::line << getValue(demuxPluginByContainer(), containerByName(file_name), "Invalid container");
-    cv::line << " ! ";
+    ostringstream line;
+    line << "filesrc location=\"" << file_name << "\"";
+    line << " ! ";
+    line << getValue(demuxPluginByContainer(), containerByName(file_name), "Invalid container");
+    line << " ! ";
     if(backend.find("basic") == 4)
-      cv::line << "decodebin";
+      line << "decodebin";
     else if(backend.find("vaapi") == 4)
-      cv::line << "vaapidecodebin";
+      line << "vaapidecodebin";
     else if(backend.find("libav") == 4)
-      cv::line << getValue(libavDecodeElementByCodec(), codec, "Invalid codec");
+      line << getValue(libavDecodeElementByCodec(), codec, "Invalid codec");
     else if(backend.find("mfx") == 4)
-      cv::line << getValue(mfxDecodeElementByCodec(), codec, "Invalid or unsupported codec");
+      line << getValue(mfxDecodeElementByCodec(), codec, "Invalid or unsupported codec");
     else
       return cv::Ptr<cv::VideoCapture>();
-    cv::line << " ! videoconvert n-threads=" << cv::getNumThreads();
-    cv::line << " ! appsink sync=false";
-    cout << "Created GStreamer capture  ( " << cv::line.str() << " )" << endl;
-    return makePtr<cv::VideoCapture>(cv::line.str(), CAP_GSTREAMER);
+    line << " ! videoconvert n-threads=" << cv::getNumThreads();
+    line << " ! appsink sync=false";
+    cout << "Created GStreamer capture  ( " << line.str() << " )" << endl;
+    return makePtr<cv::VideoCapture>(line.str(), cv::CAP_GSTREAMER);
   } else if(backend == "ffmpeg") {
     cout << "Created FFmpeg capture ( " << file_name << " )" << endl;
-    return makePtr<cv::VideoCapture>(file_name, CAP_FFMPEG);
+    return makePtr<cv::VideoCapture>(file_name, cv::CAP_FFMPEG);
   }
   return cv::Ptr<cv::VideoCapture>();
 }
 
 inline cv::Ptr<cv::VideoCapture>
 createSynthSource(cv::Size sz, unsigned fps) {
-  ostringstream cv::line;
-  cv::line << "videotestsrc pattern=smpte";
-  cv::line << " ! video/x-raw";
-  cv::line << ",width=" << sz.width << ",height=" << sz.height;
+  ostringstream line;
+  line << "videotestsrc pattern=smpte";
+  line << " ! video/x-raw";
+  line << ",width=" << sz.width << ",height=" << sz.height;
   if(fps > 0)
-    cv::line << ",framerate=" << fps << "/1";
-  cv::line << " ! appsink sync=false";
-  cout << "Created synthetic video source ( " << cv::line.str() << " )" << endl;
-  return makePtr<cv::VideoCapture>(cv::line.str(), CAP_GSTREAMER);
+    line << ",framerate=" << fps << "/1";
+  line << " ! appsink sync=false";
+  cout << "Created synthetic video source ( " << line.str() << " )" << endl;
+  return makePtr<cv::VideoCapture>(line.str(), cv::CAP_GSTREAMER);
 }
 
 inline cv::Ptr<cv::VideoWriter>
 createWriter(const string& backend, const string& file_name, const string& codec, cv::Size sz, unsigned fps) {
   if(backend == "gst-default") {
     cout << "Created GStreamer writer ( " << file_name << ", FPS=" << fps << ", cv::Size=" << sz << ")" << endl;
-    return makePtr<cv::VideoWriter>(file_name, CAP_GSTREAMER, getValue(fourccByCodec(), codec, "Invalid codec"), fps, sz, true);
+    return makePtr<cv::VideoWriter>(
+        file_name, cv::CAP_GSTREAMER, getValue(fourccByCodec(), codec, "Invalid codec"), fps, sz, true);
   } else if(backend.find("gst") == 0) {
-    ostringstream cv::line;
-    cv::line << "appsrc ! videoconvert n-threads=" << cv::getNumThreads() << " ! ";
+    ostringstream line;
+    line << "appsrc ! videoconvert n-threads=" << cv::getNumThreads() << " ! ";
     if(backend.find("basic") == 4)
-      cv::line << getValue(defaultEncodeElementByCodec(), codec, "Invalid codec");
+      line << getValue(defaultEncodeElementByCodec(), codec, "Invalid codec");
     else if(backend.find("vaapi") == 4)
-      cv::line << getValue(VAAPIEncodeElementByCodec(), codec, "Invalid codec");
+      line << getValue(VAAPIEncodeElementByCodec(), codec, "Invalid codec");
     else if(backend.find("libav") == 4)
-      cv::line << getValue(libavEncodeElementByCodec(), codec, "Invalid codec");
+      line << getValue(libavEncodeElementByCodec(), codec, "Invalid codec");
     else if(backend.find("mfx") == 4)
-      cv::line << getValue(mfxEncodeElementByCodec(), codec, "Invalid codec");
+      line << getValue(mfxEncodeElementByCodec(), codec, "Invalid codec");
     else
       return cv::Ptr<cv::VideoWriter>();
-    cv::line << " ! ";
-    cv::line << getValue(muxPluginByContainer(), containerByName(file_name), "Invalid container");
-    cv::line << " ! ";
-    cv::line << "filesink location=\"" << file_name << "\"";
-    cout << "Created GStreamer writer ( " << cv::line.str() << " )" << endl;
-    return makePtr<cv::VideoWriter>(cv::line.str(), CAP_GSTREAMER, 0, fps, sz, true);
+    line << " ! ";
+    line << getValue(muxPluginByContainer(), containerByName(file_name), "Invalid container");
+    line << " ! ";
+    line << "filesink location=\"" << file_name << "\"";
+    cout << "Created GStreamer writer ( " << line.str() << " )" << endl;
+    return makePtr<cv::VideoWriter>(line.str(), cv::CAP_GSTREAMER, 0, fps, sz, true);
   } else if(backend == "ffmpeg") {
     cout << "Created FFMpeg writer ( " << file_name << ", FPS=" << fps << ", cv::Size=" << sz << " )" << endl;
-    return makePtr<cv::VideoWriter>(file_name, CAP_FFMPEG, getValue(fourccByCodec(), codec, "Invalid codec"), fps, sz, true);
+    return makePtr<cv::VideoWriter>(
+        file_name, cv::CAP_FFMPEG, getValue(fourccByCodec(), codec, "Invalid codec"), fps, sz, true);
   }
   return cv::Ptr<cv::VideoWriter>();
 }

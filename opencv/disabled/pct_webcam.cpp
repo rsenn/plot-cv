@@ -65,7 +65,7 @@ References:
 #include <string>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 using namespace xfeatures2d;
 
 void printHelpMessage(void);

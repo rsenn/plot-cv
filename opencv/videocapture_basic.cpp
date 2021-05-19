@@ -9,7 +9,7 @@
 #include <iostream>
 #include <stdio.h>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 int

@@ -29,9 +29,9 @@
 #include <vector>
 #include <math.h>
 
-//using namespace cv;
-//using namespace cv::dnn; // using opencv namespace and cv::dnn module namespace to code the
-                         // identification portion
+// using namespace cv;
+// using namespace cv::dnn; // using opencv namespace and cv::dnn module namespace to code the
+// identification portion
 using namespace std;
 
 // declaring variables for track and identify and trackbars
@@ -182,7 +182,7 @@ track_and_identify(int argc, char** argv) {
 
   cv::VideoCapture cap(0); // Camera capture
   cv::Rect trackingBox;    // Delcaing the rectangular box of type
-  int hue_size = 32;   // Hue quantizes to 32 levels to get pixel data for histogram
+  int hue_size = 32;       // Hue quantizes to 32 levels to get pixel data for histogram
   // Hue varies from 0 to 170
   float hranges[] = {0, 180};
   const float* phranges = hranges; // pixel range is only based on hue range
@@ -194,10 +194,10 @@ track_and_identify(int argc, char** argv) {
     return -1;
   }
   createTrackbars();
-  cv::namedWindow("Histogram", 0);      // Histrogram box disaply name
+  cv::namedWindow("Histogram", 0);          // Histrogram box disaply name
   cv::namedWindow("Object cv::Tracker", 0); // Object tracker box display name
   cv::setMouseCallback("Object cv::Tracker", userMouse,
-                   0); // User can draw inside of the Object tracker box display
+                       0); // User can draw inside of the Object tracker box display
 
   cv::Mat frame, hsv, hue, mask, hist, histimg = cv::Mat::zeros(400, 640, CV_8UC3),
                                        backproj; // setting up the matrix holding the colors and frames of histrogram image
@@ -219,9 +219,9 @@ track_and_identify(int argc, char** argv) {
         int _vmin = vmin, _vmax = vmax;
 
         cv::inRange(hsv,
-                cv::Scalar(0, smin, MIN(_vmin, _vmax)),
-                cv::Scalar(180, 256, MAX(_vmin, _vmax)),
-                mask); // takes range of trackbar values in order to adjust noise
+                    cv::Scalar(0, smin, MIN(_vmin, _vmax)),
+                    cv::Scalar(180, 256, MAX(_vmin, _vmax)),
+                    mask); // takes range of trackbar values in order to adjust noise
         int ch[] = {0, 0};
         hue.create(hsv.size(), hsv.depth());
         cv::mixChannels(&hsv, 1, &hue, 1, ch, 1);
@@ -232,7 +232,7 @@ track_and_identify(int argc, char** argv) {
           cv::calcHist(&roi, 1, 0, maskroi, hist, 1, &hue_size, &phranges);
           cv::normalize(hist, hist, 0, 255, NORM_MINMAX);
           cv::Mat image_save = image(boundingbox).clone(); // savind the image of the bounding box from the roi
-          cv::imwrite("save.jpg", image_save);                 // saves boundingbox as an image
+          cv::imwrite("save.jpg", image_save);             // saves boundingbox as an image
           //-------------------------
           //---------------------
           trackingBox = boundingbox;
@@ -248,14 +248,14 @@ track_and_identify(int argc, char** argv) {
           for(int i = 0; i < hue_size; i++) {
             int val = saturate_cast<int>(hist.at<float>(i) * histimg.rows / 255); // value of the histogram
             cv::rectangle(histimg,
-                      cv::Point(i * binW,
-                                histimg.rows), // value from the cv::rectangle of selected object to
-                                               // convert into the
-                      // colored histogram
-                      cv::Point((i + 1) * binW, histimg.rows - val),
-                      cv::Scalar(buf.at<Vec3b>(i)),
-                      -1,
-                      8);
+                          cv::Point(i * binW,
+                                    histimg.rows), // value from the cv::rectangle of selected object to
+                                                   // convert into the
+                          // colored histogram
+                          cv::Point((i + 1) * binW, histimg.rows - val),
+                          cv::Scalar(buf.at<Vec3b>(i)),
+                          -1,
+                          8);
           }
         }
 
@@ -263,10 +263,10 @@ track_and_identify(int argc, char** argv) {
         cv::calcBackProject(&hue, 1, 0, hist, backproj, &phranges);
         backproj &= mask;
         cv::RotatedRect trackBox = cv::CamShift(backproj,
-                                        trackingBox,
-                                        TermCriteria(TermCriteria::EPS | TermCriteria::COUNT,
-                                                     0,
-                                                     1)); // using opencv's function criteria for tracking window
+                                                trackingBox,
+                                                TermCriteria(TermCriteria::EPS | TermCriteria::COUNT,
+                                                             0,
+                                                             1)); // using opencv's function criteria for tracking window
         if(trackingBox.area() <= 1) {
           int cols = backproj.cols, rows = backproj.rows, r = (MIN(cols, rows) + 5) / 6;
           trackingBox =
@@ -301,7 +301,7 @@ track_and_identify(int argc, char** argv) {
 
   // next few lines to access caffe model files and output errors are referenced from cv::dnn module of
   // OpenCV library rest of the code is created from scratch by learning OpenCV 3
-  CV_TRACE_FUNCTION();                                  // openCV function
+  CV_TRACE_FUNCTION();                                      // openCV function
   cv::String modelTxt = "bvlc_googlenet.prototxt";          // Accesing the caffe model files
   cv::String modelBin = "bvlc_googlenet.caffemodel";        // Accesing the caffe model files
   cv::String imageFile = (argc > 1) ? argv[1] : "save.jpg"; // calls boundingbox image instead of entire camera frame
@@ -321,7 +321,8 @@ track_and_identify(int argc, char** argv) {
     exit(-1);
   }
   // GoogLeNet accepts only specific sized RGB-images
-  cv::Mat inputBlob = blobFromImage(img, 1, cv::Size(224, 224), cv::Scalar(104, 117, 123)); // Convert cv::Mat to batch of images
+  cv::Mat inputBlob =
+      blobFromImage(img, 1, cv::Size(224, 224), cv::Scalar(104, 117, 123)); // Convert cv::Mat to batch of images
   cv::Mat prob;
   cv::TickMeter t;
   for(int i = 0; i < 10; i++) { // setting # of iterations for blob cv::dnn method recognition
@@ -365,9 +366,9 @@ bg_sub_contour(int argc, char** argv) {
   cout << "Use OpenCV's built in cv::Canny algorithm to color the contours how the user prefers" << endl; // instructions
   cout << "Press Enter on the Contour screen to exit the program" << endl << endl;
 
-  cv::Mat streamFeed; // matrix storing frames from webcam feed
-  cv::Mat hsv;        // stores hsv image
-  cv::Mat cv::threshold;  // stires binary cv::threshold image
+  cv::Mat streamFeed;    // matrix storing frames from webcam feed
+  cv::Mat hsv;           // stores hsv image
+  cv::Mat cv::threshold; // stires binary cv::threshold image
 
   createTrackbarsBG(); // creating trackbars for this program
 
@@ -383,9 +384,9 @@ bg_sub_contour(int argc, char** argv) {
 
     cv::cvtColor(streamFeed, hsv, COLOR_BGR2HSV); // converting from BGR color space to HSV
     cv::inRange(hsv,
-            cv::Scalar(hueMin, smin, vmin),
-            cv::Scalar(hueMax, smax, vmax),
-            cv::threshold); // takes range of min and max values and outputs into cv::threshold matrix
+                cv::Scalar(hueMin, smin, vmin),
+                cv::Scalar(hueMax, smax, vmax),
+                cv::threshold); // takes range of min and max values and outputs into cv::threshold matrix
 
     cv::imshow("Threshold feed", cv::threshold); // displays the produced thresh image very smoothly
 
@@ -408,7 +409,7 @@ bg_sub_contour(int argc, char** argv) {
   cv::imshow(source_window, src);
   cv::createTrackbar(" cv::Canny thresh:", "Source", &thresh, max_thresh, contour_figure);
   contour_figure(0, 0); // call reference function
-  cv::waitKey(0);           // program exits when user presses ENTER
+  cv::waitKey(0);       // program exits when user presses ENTER
 }
 
 // contour_figure is a modified function of an opencv tutorial
@@ -418,22 +419,23 @@ contour_figure(int, void*) {
   std::vector<std::vector<cv::Point>> contours;
   std::vector<cv::Vec4i> hierarchy;
   cv::Canny(src_gray, canny_output, thresh, thresh * 2,
-        3); // gathers the edges of the image, marks them in the output map
+            3); // gathers the edges of the image, marks them in the output map
   cv::findContours(canny_output,
-               contours,
-               hierarchy,
-               RETR_TREE,
-               CHAIN_APPROX_SIMPLE,
-               cv::Point(0, 0)); // retrives the countour from the binary image
+                   contours,
+                   hierarchy,
+                   RETR_TREE,
+                   CHAIN_APPROX_SIMPLE,
+                   cv::Point(0, 0)); // retrives the countour from the binary image
 
   // draw contours
   cv::Mat drawing = cv::Mat::zeros(canny_output.size(),
                                    CV_8UC3); // stores the output of canny to the columns of cv::Mat
   for(size_t i = 0; i < contours.size(); i++) {
-    cv::Scalar color =
-        cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255)); // changes scalar colours based on various edges
+    cv::Scalar color = cv::Scalar(rng.uniform(0, 255),
+                                  rng.uniform(0, 255),
+                                  rng.uniform(0, 255)); // changes scalar colours based on various edges
     cv::drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0,
-                 cv::Point()); // adds colours while also drawing the
+                     cv::Point()); // adds colours while also drawing the
     // contour lines
   }
 

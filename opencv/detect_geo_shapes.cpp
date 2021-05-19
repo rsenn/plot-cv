@@ -3,7 +3,7 @@
 #include <cmath>
 #include <iostream>
 
-//using namespace cv;
+// using namespace cv;
 
 /**
  * Helper function to find a cosine of angle between vectors

@@ -22,7 +22,7 @@
 
 #include <process.hpp>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 LCD lcd;

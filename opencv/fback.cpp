@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 static void
@@ -48,7 +48,7 @@ main(int, char**) {
     }
     if(cv::waitKey(30) >= 0)
       break;
-    std::cv::swap(prevgray, gray);
+    std::swap(prevgray, gray);
   }
   return 0;
 }

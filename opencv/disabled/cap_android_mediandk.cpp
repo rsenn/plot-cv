@@ -22,7 +22,7 @@
 #define COLOR_FormatYUV420Planar 19
 #define COLOR_FormatYUV420SemiPlanar 21
 
-//using namespace cv;
+// using namespace cv;
 
 #define TAG "NativeCodec"
 #define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, TAG, __VA_ARGS__)

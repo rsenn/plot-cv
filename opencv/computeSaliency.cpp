@@ -45,7 +45,7 @@
 #include <iostream>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 using namespace cv::saliency;
 
 static const char* keys = {"{@saliency_algorithm | | Saliency algorithm "

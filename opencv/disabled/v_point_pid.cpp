@@ -5,7 +5,7 @@
 #include <opencv2/opencv.hpp>
 #include <time.h>
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 int
 main(int argc, char* argv[]) {

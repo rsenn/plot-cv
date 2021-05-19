@@ -8,8 +8,8 @@
 #include <opencv2/dnn.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
-//using namespace cv;
-//using namespace cv::dnn;
+// using namespace cv;
+// using namespace cv::dnn;
 
 #include <cstdlib>
 #include <fstream>
@@ -56,7 +56,7 @@ texte(cv::Mat& image, const cv::String& txt, int x, int y) {
 
 int
 main() {
-  cv::Mat matImg;       // A matricial image
+  cv::Mat matImg;   // A matricial image
   char key;         // Keyboard input
   int classId;      // Class ID for the CNN
   double classProb; // Prediction probability
@@ -115,7 +115,7 @@ main() {
     // Initialization of the data blob
     cv::dnn::Blob inputBlob = cv::dnn::Blob::fromImages(matImg);
     net.setBlob(".data", inputBlob);
-    net.forward();                        // We launch the CNN
+    net.forward();                            // We launch the CNN
     cv::dnn::Blob prob = net.getBlob("prob"); // Retrieve the final prob
 
     getMaxClass(prob, &classId, &classProb);

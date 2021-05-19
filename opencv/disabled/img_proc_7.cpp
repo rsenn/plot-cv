@@ -7,7 +7,7 @@ Arguments:		img_proc_7.exe [input filename] [output filename]
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
-//using namespace cv;
+// using namespace cv;
 
 /*
 Class pointstack is a stack of 2D float points. It has a LIFO structure.

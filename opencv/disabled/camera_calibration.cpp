@@ -12,7 +12,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 static void
@@ -154,7 +154,7 @@ public:
   }
 
 public:
-  cv::Size boardSize;              // The size of the board -> Number of items by width and height
+  cv::Size boardSize;          // The size of the board -> Number of items by width and height
   Pattern calibrationPattern;  // One of the Chessboard, circles, or asymmetric cv::circle pattern
   float squareSize;            // The size of a square in your defined unit (point, millimeter,etc).
   int nrFrames;                // The number of frames to use from the input for calibration
@@ -191,8 +191,8 @@ cv::read(const cv::FileNode& node, Settings& x, const Settings& default_value = 
 
 enum { DETECTION = 0, CAPTURING = 1, CALIBRATED = 2 };
 
-bool
-runCalibrationAndSave(Settings& s, cv::Size imageSize, cv::Mat& cameraMatrix, cv::Mat& distCoeffs, vector<vector<cv::Point2f>> imagePoints);
+bool runCalibrationAndSave(
+    Settings& s, cv::Size imageSize, cv::Mat& cameraMatrix, cv::Mat& distCoeffs, vector<vector<cv::Point2f>> imagePoints);
 
 int
 main(int argc, char* argv[]) {
@@ -249,9 +249,9 @@ main(int argc, char* argv[]) {
     switch(s.calibrationPattern) { // Find feature points on the input format
       case Settings::CHESSBOARD:
         found = cv::findChessboardCorners(view,
-                                      s.boardSize,
-                                      pointBuf,
-                                      CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE);
+                                          s.boardSize,
+                                          pointBuf,
+                                          CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE);
         break;
       case Settings::CIRCLES_GRID: found = cv::findCirclesGrid(view, s.boardSize, pointBuf); break;
       case Settings::ASYMMETRIC_CIRCLES_GRID:
@@ -265,7 +265,8 @@ main(int argc, char* argv[]) {
       if(s.calibrationPattern == Settings::CHESSBOARD) {
         cv::Mat viewGray;
         cv::cvtColor(view, viewGray, COLOR_BGR2GRAY);
-        cv::cornerSubPix(viewGray, pointBuf, cv::Size(11, 11), cv::Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+        cv::cornerSubPix(
+            viewGray, pointBuf, cv::Size(11, 11), cv::Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
       }
 
       if(mode == CAPTURING && // For camera only take new cv::samples after delay time
@@ -323,13 +324,13 @@ main(int argc, char* argv[]) {
   if(s.inputType == Settings::IMAGE_LIST && s.showUndistorsed) {
     cv::Mat view, rview, map1, map2;
     cv::initUndistortRectifyMap(cameraMatrix,
-                            distCoeffs,
-                            cv::Mat(),
-                            cv::getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, imageSize, 1, imageSize, 0),
-                            imageSize,
-                            CV_16SC2,
-                            map1,
-                            map2);
+                                distCoeffs,
+                                cv::Mat(),
+                                cv::getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, imageSize, 1, imageSize, 0),
+                                imageSize,
+                                CV_16SC2,
+                                map1,
+                                map2);
 
     for(int i = 0; i < (int)s.imageList.size(); i++) {
       view = cv::imread(s.imageList[i], 1);
@@ -510,7 +511,8 @@ saveCameraParams(Settings& s,
 }
 
 bool
-runCalibrationAndSave(Settings& s, cv::Size imageSize, cv::Mat& cameraMatrix, cv::Mat& distCoeffs, vector<vector<cv::Point2f>> imagePoints) {
+runCalibrationAndSave(
+    Settings& s, cv::Size imageSize, cv::Mat& cameraMatrix, cv::Mat& distCoeffs, vector<vector<cv::Point2f>> imagePoints) {
   vector<cv::Mat> rvecs, tvecs;
   vector<float> reprojErrs;
   double totalAvgErr = 0;

@@ -5,7 +5,7 @@
 #include <iostream>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 static void
 help() {
@@ -32,8 +32,12 @@ help() {
        << endl;
 }
 
-void
-detectAndDraw(cv::UMat& img, cv::Mat& canvas, cv::CascadeClassifier& cascade, cv::CascadeClassifier& nestedCascade, double scale, bool tryflip);
+void detectAndDraw(cv::UMat& img,
+                   cv::Mat& canvas,
+                   cv::CascadeClassifier& cascade,
+                   cv::CascadeClassifier& nestedCascade,
+                   double scale,
+                   bool tryflip);
 
 string cascadeName = "../../data/haarcascades/haarcascade_frontalface_alt.xml";
 string nestedCascadeName = "../../data/haarcascades/haarcascade_eye_tree_eyeglasses.xml";
@@ -142,18 +146,22 @@ main(int argc, const char** argv) {
 }
 
 void
-detectAndDraw(
-    cv::UMat& img, cv::Mat& canvas, cv::CascadeClassifier& cascade, cv::CascadeClassifier& nestedCascade, double scale, bool tryflip) {
+detectAndDraw(cv::UMat& img,
+              cv::Mat& canvas,
+              cv::CascadeClassifier& cascade,
+              cv::CascadeClassifier& nestedCascade,
+              double scale,
+              bool tryflip) {
   double t = 0;
   vector<cv::Rect> faces, faces2;
   const static cv::Scalar colors[] = {cv::Scalar(255, 0, 0),
-                                  cv::Scalar(255, 128, 0),
-                                  cv::Scalar(255, 255, 0),
-                                  cv::Scalar(0, 255, 0),
-                                  cv::Scalar(0, 128, 255),
-                                  cv::Scalar(0, 255, 255),
-                                  cv::Scalar(0, 0, 255),
-                                  cv::Scalar(255, 0, 255)};
+                                      cv::Scalar(255, 128, 0),
+                                      cv::Scalar(255, 255, 0),
+                                      cv::Scalar(0, 255, 0),
+                                      cv::Scalar(0, 128, 255),
+                                      cv::Scalar(0, 255, 255),
+                                      cv::Scalar(0, 0, 255),
+                                      cv::Scalar(255, 0, 255)};
   static cv::UMat gray, smallImg;
 
   t = (double)cv::getTickCount();
@@ -198,12 +206,12 @@ detectAndDraw(
   avgfps = avgfps * (1 - alpha) + fps * alpha;
 
   cv::putText(canvas,
-          cv::format("OpenCL: %s, fps: %.1f", cv::ocl::useOpenCL() ? "ON" : "OFF", avgfps),
-          cv::Point(50, 30),
-          cv::FONT_HERSHEY_SIMPLEX,
-          0.8,
-          cv::Scalar(0, 255, 0),
-          2);
+              cv::format("OpenCL: %s, fps: %.1f", cv::ocl::useOpenCL() ? "ON" : "OFF", avgfps),
+              cv::Point(50, 30),
+              cv::FONT_HERSHEY_SIMPLEX,
+              0.8,
+              cv::Scalar(0, 255, 0),
+              2);
 
   for(size_t i = 0; i < faces.size(); i++) {
     cv::Rect r = faces[i];
@@ -220,12 +228,12 @@ detectAndDraw(
       cv::circle(canvas, center, radius, color, 3, 8, 0);
     } else
       cv::rectangle(canvas,
-                cv::Point(cvRound(r.x * scale), cvRound(r.y * scale)),
-                cv::Point(cvRound((r.x + r.width - 1) * scale), cvRound((r.y + r.height - 1) * scale)),
-                color,
-                3,
-                8,
-                0);
+                    cv::Point(cvRound(r.x * scale), cvRound(r.y * scale)),
+                    cv::Point(cvRound((r.x + r.width - 1) * scale), cvRound((r.y + r.height - 1) * scale)),
+                    color,
+                    3,
+                    8,
+                    0);
     if(nestedCascade.empty())
       continue;
     cv::UMat smallImgROI = smallImg(r);

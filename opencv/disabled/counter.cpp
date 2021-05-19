@@ -38,7 +38,7 @@
 #define MIN_ALIVE 5
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 // our sensitivity value to be used in the cv::threshold() function
 static double MAX_DIST_SQD = 6000000; // maximum distance between to centers to consider it one object
@@ -517,12 +517,12 @@ dynamic_threshold(cv::Mat& input_image, cv::Mat& threshold_image, float percent_
     cv::normalize(hist, hist, 0, histImage.rows, NORM_MINMAX, -1, cv::Mat());
     for(int i = 1; i < hist_size; i++) {
       cv::line(histImage,
-           cv::Point(bin_w * (i - 1), hist_h - cvRound(hist.at<float>(i - 1))),
-           cv::Point(bin_w * (i), hist_h - cvRound(hist.at<float>(i))),
-           cv::Scalar(255, 0, 0),
-           2,
-           8,
-           0);
+               cv::Point(bin_w * (i - 1), hist_h - cvRound(hist.at<float>(i - 1))),
+               cv::Point(bin_w * (i), hist_h - cvRound(hist.at<float>(i))),
+               cv::Scalar(255, 0, 0),
+               2,
+               8,
+               0);
     }
 
     cv::namedWindow("Histogram", cv::WINDOW_NORMAL);

@@ -12,7 +12,7 @@
 #define PI 3.14159265
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 using namespace Eigen;
 
 // Class to hold RANSAC parameters

@@ -7,8 +7,8 @@
 
 #include <time.h>
 
-//using namespace cv;
-//using namespace cv::ml;
+// using namespace cv;
+// using namespace cv::ml;
 using namespace std;
 
 void get_svm_detector(const Ptr<SVM>& svm, vector<float>& hog_detector);
@@ -84,7 +84,7 @@ load_images(const string& prefix, const string& filename, vector<cv::Mat>& img_l
       break;
     }
     cv::Mat img = cv::imread((prefix + cv::line).c_str()); // load the image
-    if(img.empty())                            // invalid image, just skip it.
+    if(img.empty())                                        // invalid image, just skip it.
       continue;
 #ifdef _DEBUG
     cv::imshow("image", img);
@@ -214,10 +214,10 @@ get_hogdescriptor_visu(const cv::Mat& color_origImg, vector<float>& descriptorVa
       int my = drawY + cellSize / 2;
 
       cv::rectangle(visu,
-                cv::Point((int)(drawX * zoomFac), (int)(drawY * zoomFac)),
-                cv::Point((int)((drawX + cellSize) * zoomFac), (int)((drawY + cellSize) * zoomFac)),
-                cv::Scalar(100, 100, 100),
-                1);
+                    cv::Point((int)(drawX * zoomFac), (int)(drawY * zoomFac)),
+                    cv::Point((int)((drawX + cellSize) * zoomFac), (int)((drawY + cellSize) * zoomFac)),
+                    cv::Scalar(100, 100, 100),
+                    1);
 
       // draw in each cell all 9 gradient strengths
       for(int bin = 0; bin < gradientBinSize; bin++) {
@@ -242,10 +242,10 @@ get_hogdescriptor_visu(const cv::Mat& color_origImg, vector<float>& descriptorVa
 
         // draw gradient visualization
         cv::line(visu,
-             cv::Point((int)(x1 * zoomFac), (int)(y1 * zoomFac)),
-             cv::Point((int)(x2 * zoomFac), (int)(y2 * zoomFac)),
-             cv::Scalar(0, 255, 0),
-             1);
+                 cv::Point((int)(x1 * zoomFac), (int)(y1 * zoomFac)),
+                 cv::Point((int)(x2 * zoomFac), (int)(y2 * zoomFac)),
+                 cv::Scalar(0, 255, 0),
+                 1);
 
       } // for (all bins)
 

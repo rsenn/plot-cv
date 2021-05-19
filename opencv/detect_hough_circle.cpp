@@ -10,7 +10,7 @@
 #include <fstream>
 // #include <mysql.h>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 const int ITERATOR = 1;

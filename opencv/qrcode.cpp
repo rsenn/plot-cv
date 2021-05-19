@@ -5,7 +5,7 @@
 #include <iostream>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 static void drawQRCodeContour(cv::Mat& color_image, std::vector<cv::Point> transform);
 static void drawFPS(cv::Mat& color_image, double fps);
@@ -56,7 +56,7 @@ drawQRCodeContour(cv::Mat& color_image, std::vector<cv::Point> transform) {
     contours.push_back(transform);
     cv::drawContours(color_image, contours, 0, cv::Scalar(211, 0, 148), cvRound(contour_radius));
 
-    RNG rng(1000);
+    cv::RNG rng(1000);
     for(size_t i = 0; i < 4; i++) {
       cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
       cv::circle(color_image, transform[i], cvRound(show_radius), color, -1);

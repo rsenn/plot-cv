@@ -6,7 +6,7 @@
 #include <opencv2/calib3d/calib3d.hpp>
 #include "Config.h"
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 class disparity {

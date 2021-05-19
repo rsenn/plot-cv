@@ -11,7 +11,7 @@
 #include <opencv2/imgproc/types_c.h>
 #include <opencv2/imgcodecs/legacy/constants_c.h>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 string path = ros::package::getPath("rpi_object_tracking");

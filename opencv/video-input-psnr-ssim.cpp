@@ -10,7 +10,7 @@
 #include <opencv2/videoio.hpp>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 double getPSNR(const cv::Mat& I1, const cv::Mat& I2);
 cv::Scalar getMSSIM(const cv::Mat& I1, const cv::Mat& I2);
@@ -59,7 +59,7 @@ main(int argc, char* argv[]) {
   }
 
   cv::Size refS = cv::Size((int)captRefrnc.get(cv::CAP_PROP_FRAME_WIDTH), (int)captRefrnc.get(cv::CAP_PROP_FRAME_HEIGHT)),
-       uTSi = cv::Size((int)captUndTst.get(cv::CAP_PROP_FRAME_WIDTH), (int)captUndTst.get(cv::CAP_PROP_FRAME_HEIGHT));
+           uTSi = cv::Size((int)captUndTst.get(cv::CAP_PROP_FRAME_WIDTH), (int)captUndTst.get(cv::CAP_PROP_FRAME_HEIGHT));
 
   if(refS != uTSi) {
     cout << "Inputs have different size!!! Closing." << endl;
@@ -127,7 +127,7 @@ main(int argc, char* argv[]) {
 double
 getPSNR(const cv::Mat& I1, const cv::Mat& I2) {
   cv::Mat s1;
-  cv::absdiff(I1, I2, s1);      // |I1 - I2|
+  cv::absdiff(I1, I2, s1);  // |I1 - I2|
   s1.convertTo(s1, CV_32F); // cannot make a square on 8 bits
   s1 = s1.mul(s1);          // |I1 - I2|^2
 
@@ -144,7 +144,7 @@ getPSNR(const cv::Mat& I1, const cv::Mat& I2) {
   }
 }
 
-Scalar
+cv::Scalar
 getMSSIM(const cv::Mat& i1, const cv::Mat& i2) {
   const double C1 = 6.5025, C2 = 58.5225;
   /***************************** INITS **********************************/

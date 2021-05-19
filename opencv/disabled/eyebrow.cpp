@@ -14,7 +14,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 string input_image_path;
 string face_cascade_path, eye_cascade_path;

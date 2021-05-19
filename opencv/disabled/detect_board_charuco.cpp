@@ -42,7 +42,7 @@ the use of this software, even if advised of the possibility of such damage.
 #include <iostream>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 namespace {
 const char* about = "Pose estimation using a ChArUco board";
@@ -202,7 +202,8 @@ main(int argc, char* argv[]) {
     // estimate charuco board pose
     bool validPose = false;
     if(camMatrix.total() != 0)
-      validPose = cv::aruco::estimatePoseCharucoBoard(charucoCorners, charucoIds, charucoboard, camMatrix, distCoeffs, rvec, tvec);
+      validPose =
+          cv::aruco::estimatePoseCharucoBoard(charucoCorners, charucoIds, charucoboard, camMatrix, distCoeffs, rvec, tvec);
 
     double currentTime = ((double)cv::getTickCount() - tick) / cv::getTickFrequency();
     totalTime += currentTime;

@@ -2,7 +2,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 
-//using namespace cv;
+// using namespace cv;
 
 int
 main(int, char*[]) {
@@ -29,7 +29,8 @@ main(int, char*[]) {
       // draw a cv::circle and cv::line indicating the shift direction...
       cv::Point center(curr.cols >> 1, curr.rows >> 1);
       cv::circle(frame, center, (int)radius, cv::Scalar(0, 255, 0), 3, cv::LINE_AA);
-      cv::line(frame, center, cv::Point(center.x + (int)shift.x, center.y + (int)shift.y), cv::Scalar(0, 255, 0), 3, cv::LINE_AA);
+      cv::line(
+          frame, center, cv::Point(center.x + (int)shift.x, center.y + (int)shift.y), cv::Scalar(0, 255, 0), 3, cv::LINE_AA);
     }
 
     cv::imshow("phase shift", frame);

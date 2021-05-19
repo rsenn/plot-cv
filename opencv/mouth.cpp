@@ -16,7 +16,7 @@
 #include <opencv2/imgproc/types_c.h>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 cv::Mat_<cv::Vec3b> extractFaceROI(cv::Mat_<cv::Vec3b> image, string face_cascade_path);
 cv::Mat_<cv::Vec3b> extractMouthROI(cv::Mat_<cv::Vec3b> face_image);

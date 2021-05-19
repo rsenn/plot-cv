@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 /** Function Headers */
 void on_low_r_thresh_trackbar(int, void*);

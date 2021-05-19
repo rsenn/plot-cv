@@ -6,7 +6,7 @@
 #include "Config.h"
 #include <iomanip>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 int

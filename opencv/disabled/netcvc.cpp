@@ -16,7 +16,7 @@
 #include "videoSender.cpp"
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 cv::VideoCapture capture;
 cv::Mat raw, img0, convertedColour;

@@ -2,7 +2,7 @@
 #include <opencv2/highgui.hpp>
 #include <math.h>
 #include <iostream>
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 static void
 help() {
@@ -21,7 +21,8 @@ static void
 on_trackbar(int, void*) {
   cv::Mat cnt_img = cv::Mat::zeros(w, w, CV_8UC3);
   int _levels = levels - 3;
-  cv::drawContours(cnt_img, contours, _levels <= 0 ? 3 : -1, cv::Scalar(128, 255, 255), 3, cv::LINE_AA, hierarchy, std::abs(_levels));
+  cv::drawContours(
+      cnt_img, contours, _levels <= 0 ? 3 : -1, cv::Scalar(128, 255, 255), 3, cv::LINE_AA, hierarchy, std::abs(_levels));
   cv::imshow("contours", cnt_img);
 }
 int
@@ -42,12 +43,12 @@ main(int argc, char** argv) {
       for(int j = 0; j <= 10; j++) {
         double angle = (j + 5) * CV_PI / 21;
         cv::line(img,
-             cv::Point(cvRound(dx + 100 + j * 10 - 80 * cos(angle)), cvRound(dy + 100 - 90 * sin(angle))),
-             cv::Point(cvRound(dx + 100 + j * 10 - 30 * cos(angle)), cvRound(dy + 100 - 30 * sin(angle))),
-             white,
-             1,
-             8,
-             0);
+                 cv::Point(cvRound(dx + 100 + j * 10 - 80 * cos(angle)), cvRound(dy + 100 - 90 * sin(angle))),
+                 cv::Point(cvRound(dx + 100 + j * 10 - 30 * cos(angle)), cvRound(dy + 100 - 30 * sin(angle))),
+                 white,
+                 1,
+                 8,
+                 0);
       }
     }
     cv::ellipse(img, cv::Point(dx + 150, dy + 100), cv::Size(100, 70), 0, 0, 360, white, -1, 8, 0);

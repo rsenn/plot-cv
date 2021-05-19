@@ -19,8 +19,8 @@
 #include "opencv2/gpu/gpu.hpp"
 
 using namespace std;
-//using namespace cv;
-//using namespace cv::gpu;
+// using namespace cv;
+// using namespace cv::gpu;
 
 ///////////////////////////////////////////////////////////
 // Thread

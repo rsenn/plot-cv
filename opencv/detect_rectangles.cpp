@@ -5,7 +5,7 @@
 #include <iostream>
 // #include <string>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 cv::Mat source, source_gray, debug_image;
@@ -24,7 +24,7 @@ void assignArgs(char*);
 void assignSource(string);
 void drawDebugImage(int, cv::Rect, vector<vector<cv::Point>>, int, vector<cv::Vec4i>);
 void setLabel(cv::Mat&, const std::string, std::vector<cv::Point>&);
-void cv::split(const string&, char, vector<string>&);
+void split(const string&, char, vector<string>&);
 
 // ./bin/detect_rectangles [nom de l'image] w=[largeur] h=[hauteur] s=[épaisseur] nb=[nombre de rectangles]
 // t=[cv::threshold]
@@ -226,7 +226,7 @@ assignSource(string filename) {
 void
 assignArgs(char* argv) {
   vector<string> v;
-  cv::split(argv, '=', v);
+  split(argv, '=', v);
 
   if(v[0] == "w") {
     sscanf(v[1].c_str(), "%d", &width);
@@ -253,7 +253,7 @@ cv::Rect
 buildZone(const char* argv) {
   vector<string> v;
   int x = 0, y = 0, w = 0, h = 0;
-  cv::split(argv, ',', v);
+  split(argv, ',', v);
   sscanf(v[0].c_str(), "%d", &x);
   sscanf(v[1].c_str(), "%d", &y);
   sscanf(v[2].c_str(), "%d", &w);
@@ -264,7 +264,7 @@ buildZone(const char* argv) {
 }
 
 void
-cv::split(const string& s, char c, vector<string>& v) {
+split(const string& s, char c, vector<string>& v) {
   string::size_type i = 0;
   string::size_type j = s.find(c);
 

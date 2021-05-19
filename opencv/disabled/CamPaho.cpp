@@ -19,7 +19,7 @@
 #include <sys/time.h>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 #define topic1 "control"
 #define topic2 "sync"
 #define topic3 "hello"

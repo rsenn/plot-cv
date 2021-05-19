@@ -41,7 +41,7 @@ the use of this software, even if advised of the possibility of such damage.
 #include <iostream>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 namespace {
 const char* about = "Basic marker detection";

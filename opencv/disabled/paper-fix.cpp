@@ -9,7 +9,7 @@
 #include <vector>
 #include <algorithm>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 const char* wndname = "Paper Fix";

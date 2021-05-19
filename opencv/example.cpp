@@ -4,7 +4,7 @@
 #include <opencv2/videoio.hpp>
 #include <iostream>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 void drawText(cv::Mat& image);
@@ -39,11 +39,11 @@ main() {
 void
 drawText(cv::Mat& image) {
   cv::putText(image,
-          "Hello OpenCV",
-          cv::Point(20, 50),
-          cv::FONT_HERSHEY_COMPLEX,
-          1,                     // font cv::face and scale
-          cv::Scalar(255, 255, 255), // white
-          1,
-          cv::LINE_AA); // cv::line thickness and type
+              "Hello OpenCV",
+              cv::Point(20, 50),
+              cv::FONT_HERSHEY_COMPLEX,
+              1,                         // font cv::face and scale
+              cv::Scalar(255, 255, 255), // white
+              1,
+              cv::LINE_AA); // cv::line thickness and type
 }

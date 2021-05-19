@@ -6,7 +6,7 @@
 
 #define PI 3.14159265
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 ///////////////////////////////////// VARIABEL ////////////////////////////////////////
@@ -244,9 +244,24 @@ main() {
       stringstream j;
       j << fixed << setprecision(2) << Jarak;
       S_Jarak = j.str();
-      cv::putText(matOriginal, S_Jarak, cv::Point(x_center, (y_center + 10)), FONT_HERSHEY_SIMPLEX, .7, cv::Scalar(255, 0, 0), 2, 8, false);
-      cv::putText(
-          matOriginal, "cm", cv::Point((x_center + 80), (y_center + 10)), FONT_HERSHEY_PLAIN, .7, cv::Scalar(255, 0, 0), 1, 8, false);
+      cv::putText(matOriginal,
+                  S_Jarak,
+                  cv::Point(x_center, (y_center + 10)),
+                  FONT_HERSHEY_SIMPLEX,
+                  .7,
+                  cv::Scalar(255, 0, 0),
+                  2,
+                  8,
+                  false);
+      cv::putText(matOriginal,
+                  "cm",
+                  cv::Point((x_center + 80), (y_center + 10)),
+                  FONT_HERSHEY_PLAIN,
+                  .7,
+                  cv::Scalar(255, 0, 0),
+                  1,
+                  8,
+                  false);
 
       stringstream x;
       x << x_center;

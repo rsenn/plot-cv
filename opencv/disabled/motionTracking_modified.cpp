@@ -10,7 +10,7 @@
 #include <stdlib.h>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 // our sensitivity value to be used in the cv::threshold() function
 static int SENSITIVITY_VALUE = 50; // original 20

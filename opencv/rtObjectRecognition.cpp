@@ -19,7 +19,7 @@
 #include <opencv2/xfeatures2d/nonfree.hpp>
 
 // Name spaces used
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 int
@@ -87,8 +87,14 @@ main() {
           case 2: octaveS = '2'; break;
           default: break;
         }
-        cv::putText(
-            interestPointObject, octaveS, kpObject[i].cv::pt, FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(0, 0, 250), 1, cv::LINE_AA);
+        cv::putText(interestPointObject,
+                    octaveS,
+                    kpObject[i].cv::pt,
+                    FONT_HERSHEY_COMPLEX_SMALL,
+                    1,
+                    cv::Scalar(0, 0, 250),
+                    1,
+                    cv::LINE_AA);
       }
     }
     cv::imshow("Good Matches", interestPointObject);
@@ -178,13 +184,13 @@ main() {
 
         // Display that the object is found
         cv::putText(img_matches,
-                "Object Found",
-                cv::Point(10, 50),
-                FONT_HERSHEY_COMPLEX_SMALL,
-                2,
-                cv::Scalar(0, 0, 250),
-                1,
-                cv::LINE_AA);
+                    "Object Found",
+                    cv::Point(10, 50),
+                    FONT_HERSHEY_COMPLEX_SMALL,
+                    2,
+                    cv::Scalar(0, 0, 250),
+                    1,
+                    cv::LINE_AA);
         for(unsigned int i = 0; i < good_matches.size(); i++) {
           // Get the keypoints from the good matches
           obj.push_back(kpObject[good_matches[i].queryIdx].cv::pt);
@@ -197,25 +203,25 @@ main() {
 
         // Draw lines between the corners (the mapped object in the scene image )
         cv::line(img_matches,
-             scene_corners[0] + cv::Point2f(object.cols, 0),
-             scene_corners[1] + cv::Point2f(object.cols, 0),
-             cv::Scalar(0, 255, 0),
-             4);
+                 scene_corners[0] + cv::Point2f(object.cols, 0),
+                 scene_corners[1] + cv::Point2f(object.cols, 0),
+                 cv::Scalar(0, 255, 0),
+                 4);
         cv::line(img_matches,
-             scene_corners[1] + cv::Point2f(object.cols, 0),
-             scene_corners[2] + cv::Point2f(object.cols, 0),
-             cv::Scalar(0, 255, 0),
-             4);
+                 scene_corners[1] + cv::Point2f(object.cols, 0),
+                 scene_corners[2] + cv::Point2f(object.cols, 0),
+                 cv::Scalar(0, 255, 0),
+                 4);
         cv::line(img_matches,
-             scene_corners[2] + cv::Point2f(object.cols, 0),
-             scene_corners[3] + cv::Point2f(object.cols, 0),
-             cv::Scalar(0, 255, 0),
-             4);
+                 scene_corners[2] + cv::Point2f(object.cols, 0),
+                 scene_corners[3] + cv::Point2f(object.cols, 0),
+                 cv::Scalar(0, 255, 0),
+                 4);
         cv::line(img_matches,
-             scene_corners[3] + cv::Point2f(object.cols, 0),
-             scene_corners[0] + cv::Point2f(object.cols, 0),
-             cv::Scalar(0, 255, 0),
-             4);
+                 scene_corners[3] + cv::Point2f(object.cols, 0),
+                 scene_corners[0] + cv::Point2f(object.cols, 0),
+                 cv::Scalar(0, 255, 0),
+                 4);
       } else {
         cv::putText(img_matches, "", cv::Point(10, 50), FONT_HERSHEY_COMPLEX_SMALL, 3, cv::Scalar(0, 0, 250), 1, cv::LINE_AA);
       }

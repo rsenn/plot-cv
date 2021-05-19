@@ -213,7 +213,7 @@ private:
   time_t firstCapturedFrameTime;
   unsigned long int capturedFrames;
 
-  DigitalCameraCapture(const DigitalCameraCapture&);            // Disable copying
+  DigitalCameraCapture(const DigitalCameraCapture&);                // Disable copying
   DigitalCameraCapture& cv::operator=(DigitalCameraCapture const&); // Disable assigning
 
   // Widgets

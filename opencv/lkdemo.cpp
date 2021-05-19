@@ -6,7 +6,7 @@
 #include <iostream>
 #include <ctype.h>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 static void
@@ -129,7 +129,7 @@ main(int argc, char** argv) {
       case 'n': nightMode = !nightMode; break;
     }
 
-    std::cv::swap(points[1], points[0]);
+    std::swap(points[1], points[0]);
     cv::swap(prevGray, gray);
   }
 

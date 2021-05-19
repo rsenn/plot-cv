@@ -6,14 +6,14 @@
 #include <opencv2/calib3d/calib3d.hpp>
 #include "Config.h"
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 class disparity {
 private:
   cv::Mat map_l1, map_l2, map_r1, map_r2; // rectification pixel maps
-  StereoSGBM stereo;                  // stereo matching object for disparity computation
-  int min_disp, num_disp;             // parameters of StereoSGBM
+  StereoSGBM stereo;                      // stereo matching object for disparity computation
+  int min_disp, num_disp;                 // parameters of StereoSGBM
 public:
   disparity(string, cv::Size); // constructor
   void

@@ -7,7 +7,7 @@
 #include <opencv2/video.hpp>
 #include <opencv2/videoio.hpp>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 const char* keys = {"{ help h      |                     | print help message }"

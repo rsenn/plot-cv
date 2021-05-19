@@ -6,7 +6,7 @@
 #include "../src/polygon.hpp"
 #include "../src/data.hpp"
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 const float STEP = 5;

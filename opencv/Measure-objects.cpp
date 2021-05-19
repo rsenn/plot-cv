@@ -5,7 +5,7 @@
 #include <fstream>
 #include <sstream>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 int
@@ -37,20 +37,20 @@ main() {
         index = 750, // index; calculated; allow conversion dimensions in ppi to mm
       szerokosc2 = 0, wysokosc2 = 0, wymiar2 = 0;
   cv::createTrackbar("Odleglosc obiektywu od obiektu",
-                 window_name[0],
-                 &odleglosc, // len-messured item distance
-                 1000,
-                 NULL);
+                     window_name[0],
+                     &odleglosc, // len-messured item distance
+                     1000,
+                     NULL);
   cv::createTrackbar("Dolna wartosc progowa 1",
-                 window_name[2],
-                 &lowerb,
-                 255, // down treshold of binary1
-                 NULL);
+                     window_name[2],
+                     &lowerb,
+                     255, // down treshold of binary1
+                     NULL);
   cv::createTrackbar("Gorna wartosc progowa 1",
-                 window_name[2],
-                 &upperb,
-                 255, // up treshold of binary1
-                 NULL);
+                     window_name[2],
+                     &upperb,
+                     255, // up treshold of binary1
+                     NULL);
   cv::createTrackbar("Dolna wartosc progowa 2", window_name[3], &low, 255, NULL); // down treshold of binary1
   cv::createTrackbar("Gorna wartosc progowa 2", window_name[3], &up, 255, NULL);  // up treshold of binary1
   while(cv::waitKey(20) != 27) {                                                  // capturing and analizing 27 fps
@@ -103,22 +103,22 @@ main() {
     {
       cv::approxPolyDP(cv::Mat(contours1[i_cont1]), contours_poly1, 3, true); // approximation of contours
       boundRect1 = cv::boundingRect(cv::Mat(contours_poly1));                 // creating bounding rectangle
-      cv::fillConvexPoly(drawing, contours_poly1, contours_poly1.size()); // filling convex polymoph
+      cv::fillConvexPoly(drawing, contours_poly1, contours_poly1.size());     // filling convex polymoph
       cv::rectangle(img,
-                boundRect1.tl(),
-                boundRect1.br(), // drawing cv::rectangle diagonals and flanks
-                cv::Scalar(125, 125, 125),
-                2,
-                8,
-                0);
+                    boundRect1.tl(),
+                    boundRect1.br(), // drawing cv::rectangle diagonals and flanks
+                    cv::Scalar(125, 125, 125),
+                    2,
+                    8,
+                    0);
       cv::line(img, boundRect1.tl(), boundRect1.br(), cv::Scalar(250, 250, 125), 1, 8, 0);
       cv::line(img,
-           cv::Point(boundRect1.x + boundRect1.width, boundRect1.y),
-           cv::Point(boundRect1.x, boundRect1.y + boundRect1.height),
-           cv::Scalar(250, 250, 125),
-           1,
-           8,
-           0);
+               cv::Point(boundRect1.x + boundRect1.width, boundRect1.y),
+               cv::Point(boundRect1.x, boundRect1.y + boundRect1.height),
+               cv::Scalar(250, 250, 125),
+               1,
+               8,
+               0);
       string s; // stream to put in text in window
       stringstream out;
       out << "Srodek: " << boundRect1.x + boundRect1.width / 2 << "x" // information about rectangles' width and height in ppi
@@ -128,15 +128,18 @@ main() {
       wysokosc1 = boundRect1.height; // height
       s = out.str();
       cv::putText(img,
-              s,
-              cv::Point(10, 10),
-              cv::FONT_HERSHEY_COMPLEX,
-              0.4, // puting information about rectangles in img window
-              cv::Scalar(20, 40, 80),
-              1,
-              8);
-      cv::drawContours(drawing, contours1, i_cont1, cv::Scalar(125, 125, 250),
-                   2); // drawing detected contours in drawing window
+                  s,
+                  cv::Point(10, 10),
+                  cv::FONT_HERSHEY_COMPLEX,
+                  0.4, // puting information about rectangles in img window
+                  cv::Scalar(20, 40, 80),
+                  1,
+                  8);
+      cv::drawContours(drawing,
+                       contours1,
+                       i_cont1,
+                       cv::Scalar(125, 125, 250),
+                       2); // drawing detected contours in drawing window
     }
     if(i_cont2 >= 0) // analise of binary2 (hsv cv::split 2), same as 1st
     {
@@ -146,12 +149,12 @@ main() {
       cv::rectangle(img, boundRect2.tl(), boundRect2.br(), cv::Scalar(125, 125, 125), 1, 8, 0);
       cv::line(img, boundRect2.tl(), boundRect2.br(), cv::Scalar(250, 250, 125), 1, 8, 0);
       cv::line(img,
-           cv::Point(boundRect2.x + boundRect2.width, boundRect2.y),
-           cv::Point(boundRect2.x, boundRect2.y + boundRect2.height),
-           cv::Scalar(250, 250, 125),
-           1,
-           8,
-           0);
+               cv::Point(boundRect2.x + boundRect2.width, boundRect2.y),
+               cv::Point(boundRect2.x, boundRect2.y + boundRect2.height),
+               cv::Scalar(250, 250, 125),
+               1,
+               8,
+               0);
       string st;
       stringstream out1;
       out1 << "Srodek: " << boundRect2.x + boundRect2.width / 2 << "x" << boundRect2.y + boundRect2.height / 2;
@@ -176,13 +179,13 @@ main() {
     out3 << "2: " << szerokosc2 << "x" << wysokosc2 << " mm";
     st2 = out3.str();
     cv::putText(img,
-            st2,
-            cv::Point(450, 40),
-            cv::FONT_HERSHEY_COMPLEX,
-            0.4, // puting dimensions in mm in img window
-            cv::Scalar(20, 40, 80),
-            1,
-            8);
+                st2,
+                cv::Point(450, 40),
+                cv::FONT_HERSHEY_COMPLEX,
+                0.4, // puting dimensions in mm in img window
+                cv::Scalar(20, 40, 80),
+                1,
+                8);
     stream_to_file << "Czas: " << mt_seconds << " s. Klatka: " // puting dimensions in mm to stream_to_file
                    << frame_counter << " Obiekt 1: " << szerokosc1 << " x " << wysokosc1 << " mm. Obiekt 2: " << szerokosc2
                    << " x " << wysokosc2 << " mm\n";

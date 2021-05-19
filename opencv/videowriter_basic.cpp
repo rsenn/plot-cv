@@ -11,7 +11,7 @@
 #include <iostream>
 #include <stdio.h>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 int
@@ -54,7 +54,7 @@ main(int, char**) {
       break;
     }
     // encode the frame into the videofile stream
-    writer.cv::write(src);
+    writer.write(src);
     // show live and wait for a key with timeout long enough to show images
     cv::imshow("Live", src);
     if(cv::waitKey(5) >= 0)

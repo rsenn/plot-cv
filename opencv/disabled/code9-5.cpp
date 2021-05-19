@@ -8,7 +8,7 @@
 #include <boost/filesystem.hpp>
 #include "Config.h"
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 using namespace boost::filesystem3;
 
@@ -81,20 +81,22 @@ calibrator::calc_image_points(bool show) {
     cv::Mat lim = l_images[i], rim = r_images[i];
     vector<cv::Point2f> l_im_p, r_im_p;
     bool l_pattern_found = cv::findChessboardCorners(lim,
-                                                 cv::Size(width, height),
-                                                 l_im_p,
-                                                 CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE + CALIB_CB_FAST_CHECK);
+                                                     cv::Size(width, height),
+                                                     l_im_p,
+                                                     CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE + CALIB_CB_FAST_CHECK);
     bool r_pattern_found = cv::findChessboardCorners(rim,
-                                                 cv::Size(width, height),
-                                                 r_im_p,
-                                                 CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE + CALIB_CB_FAST_CHECK);
+                                                     cv::Size(width, height),
+                                                     r_im_p,
+                                                     CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE + CALIB_CB_FAST_CHECK);
     if(l_pattern_found && r_pattern_found) {
       object_points.push_back(ob_p);
       cv::Mat gray;
       cv::cvtColor(lim, gray, cv::COLOR_BGR2GRAY);
-      cv::cornerSubPix(gray, l_im_p, cv::Size(5, 5), cv::Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+      cv::cornerSubPix(
+          gray, l_im_p, cv::Size(5, 5), cv::Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
       cv::cvtColor(rim, gray, cv::COLOR_BGR2GRAY);
-      cv::cornerSubPix(gray, r_im_p, cv::Size(5, 5), cv::Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+      cv::cornerSubPix(
+          gray, r_im_p, cv::Size(5, 5), cv::Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
       l_image_points.push_back(l_im_p);
       r_image_points.push_back(r_im_p);
       if(show) {
@@ -129,17 +131,17 @@ calibrator::calibrate() {
 
   if(!l_cameraMatrix.empty() && !l_distCoeffs.empty() && !r_cameraMatrix.empty() && !r_distCoeffs.empty()) {
     double rms = cv::stereoCalibrate(object_points,
-                                 l_image_points,
-                                 r_image_points,
-                                 l_cameraMatrix,
-                                 l_distCoeffs,
-                                 r_cameraMatrix,
-                                 r_distCoeffs,
-                                 l_images[0].size(),
-                                 R,
-                                 T,
-                                 E,
-                                 F);
+                                     l_image_points,
+                                     r_image_points,
+                                     l_cameraMatrix,
+                                     l_distCoeffs,
+                                     r_cameraMatrix,
+                                     r_distCoeffs,
+                                     l_images[0].size(),
+                                     R,
+                                     T,
+                                     E,
+                                     F);
     cout << "Calibrated stereo camera with a RMS cv::error of " << rms << endl;
     return true;
   } else

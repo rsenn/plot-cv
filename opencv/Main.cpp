@@ -8,7 +8,7 @@
 
 #include <Tensile.h>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 cv::Mat

@@ -4,29 +4,29 @@
 #include <opencv2/core/utility.hpp>
 #include <iostream>
 
-//using namespace cv;
-//using namespace cv::bgsegm;
+// using namespace cv;
+// using namespace cv::bgsegm;
 
 const cv::String about = "\nA program demonstrating the use and capabilities of different background "
-                     "subtraction algrorithms\n"
-                     "Using OpenCV version " +
-                     cv::String(CV_VERSION) + "\nPress q or ESC to exit\n";
+                         "subtraction algrorithms\n"
+                         "Using OpenCV version " +
+                         cv::String(CV_VERSION) + "\nPress q or ESC to exit\n";
 
 const cv::String keys = "{help h usage ? |      | print this message   }"
-                    "{vid            |      | path to a video file }"
-                    "{algo           | GMG  | name of the algorithm (GMG, CNT, KNN, MOG, MOG2) }";
+                        "{vid            |      | path to a video file }"
+                        "{algo           | GMG  | name of the algorithm (GMG, CNT, KNN, MOG, MOG2) }";
 
 static cv::Ptr<cv::BackgroundSubtractor>
 createBGSubtractorByName(const cv::String& algoName) {
   cv::Ptr<cv::BackgroundSubtractor> algo;
   if(algoName == cv::String("GMG"))
-    algo = createBackgroundSubtractorGMG(20, 0.7);
+    algo = cv::bgsegm::createBackgroundSubtractorGMG(20, 0.7);
   else if(algoName == cv::String("CNT"))
-    algo = createBackgroundSubtractorCNT();
+    algo = cv::bgsegm::createBackgroundSubtractorCNT();
   else if(algoName == cv::String("KNN"))
     algo = cv::createBackgroundSubtractorKNN();
   else if(algoName == cv::String("MOG"))
-    algo = createBackgroundSubtractorMOG();
+    algo = cv::bgsegm::createBackgroundSubtractorMOG();
   else if(algoName == cv::String("MOG2"))
     algo = cv::createBackgroundSubtractorMOG2();
 

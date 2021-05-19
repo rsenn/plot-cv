@@ -50,7 +50,7 @@
 #include <opencv2/calib3d.hpp>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 static const char* keys = {"{@camSettingsPath | | Path of camera calibration file}"
                            "{@projSettingsPath | | Path of projector settings}"
@@ -94,10 +94,14 @@ double calibrate(vector<vector<cv::Point3f>> objPoints,
                  vector<cv::Mat>& t,
                  cv::Size imgSize);
 
-void fromCamToWorld(
-    cv::Mat cameraMatrix, vector<cv::Mat> rV, vector<cv::Mat> tV, vector<vector<cv::Point2f>> imgPoints, vector<vector<cv::Point3f>>& worldPoints);
+void fromCamToWorld(cv::Mat cameraMatrix,
+                    vector<cv::Mat> rV,
+                    vector<cv::Mat> tV,
+                    vector<vector<cv::Point2f>> imgPoints,
+                    vector<vector<cv::Point3f>>& worldPoints);
 
-void saveCalibrationResults(cv::String path, cv::Mat camK, cv::Mat camDistCoeffs, cv::Mat projK, cv::Mat projDistCoeffs, cv::Mat fundamental);
+void saveCalibrationResults(
+    cv::String path, cv::Mat camK, cv::Mat camDistCoeffs, cv::Mat projK, cv::Mat projDistCoeffs, cv::Mat fundamental);
 
 void saveCalibrationData(cv::String path,
                          vector<cv::Mat> T1,
@@ -107,7 +111,7 @@ void saveCalibrationData(cv::String path,
                          vector<cv::Mat> ptsProjCamN,
                          vector<cv::Mat> ptsProjProjN);
 
-void cv::normalize(const cv::Mat& pts, const int& dim, cv::Mat& normpts, cv::Mat& T);
+void normalize(const cv::Mat& pts, const int& dim, cv::Mat& normpts, cv::Mat& T);
 
 void fromVectorToMat(vector<cv::Point2f> v, cv::Mat& pts);
 
@@ -200,16 +204,16 @@ main(int argc, char** argv) {
           cout << "found pattern" << endl;
           cv::Mat projCorners, camCorners;
           cv::cornerSubPix(gray,
-                       camPointBuf,
-                       camSettings.subpixelSize,
-                       cv::Size(-1, -1),
-                       cv::TermCriteria(TermCriteria::COUNT + cv::TermCriteria::EPS, 30, 0.1));
+                           camPointBuf,
+                           camSettings.subpixelSize,
+                           cv::Size(-1, -1),
+                           cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 30, 0.1));
 
           cv::cornerSubPix(gray,
-                       projPointBuf,
-                       projSettings.subpixelSize,
-                       cv::Size(-1, -1),
-                       cv::TermCriteria(TermCriteria::COUNT + cv::TermCriteria::EPS, 30, 0.1));
+                           projPointBuf,
+                           projSettings.subpixelSize,
+                           cv::Size(-1, -1),
+                           cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 30, 0.1));
 
           cv::drawChessboardCorners(gray, camSettings.patternSize, camPointBuf, foundCam);
           cv::drawChessboardCorners(gray, projSettings.patternSize, projPointBuf, foundProj);
@@ -235,7 +239,7 @@ main(int argc, char** argv) {
             vector<cv::Point2f> ptsProjCamVec;
 
             fromVectorToMat(tempProj, ptsProjProj);
-            cv::normalize(ptsProjProj, 2, ptsProjProjN, TProjProj);
+            normalize(ptsProjProj, 2, ptsProjProjN, TProjProj);
             fromMatToVector(ptsProjProjN, ptsProjProjVec);
             pointsInProjN.push_back(ptsProjProjVec);
             T2.push_back(TProjProj);
@@ -243,7 +247,7 @@ main(int argc, char** argv) {
             projInProjN.push_back(ptsProjProjN);
 
             fromVectorToMat(projPointBuf, ptsProjCam);
-            cv::normalize(ptsProjCam, 2, ptsProjCamN, TProjCam);
+            normalize(ptsProjCam, 2, ptsProjCamN, TProjCam);
             fromMatToVector(ptsProjCamN, ptsProjCamVec);
             imagePointsProjN.push_back(ptsProjCamVec);
             T1.push_back(TProjCam);
@@ -289,17 +293,17 @@ main(int argc, char** argv) {
   cv::Mat stereoR, stereoT, essential, fundamental;
   cv::Mat RCam, RProj, PCam, PProj, Q;
   rms = cv::stereoCalibrate(worldPointsProj,
-                        imagePointsProj,
-                        PointsInProj,
-                        cameraMatrix,
-                        distCoeffs,
-                        projectorMatrix,
-                        projectorDistCoeffs,
-                        camSettings.imageSize,
-                        stereoR,
-                        stereoT,
-                        essential,
-                        fundamental);
+                            imagePointsProj,
+                            PointsInProj,
+                            cameraMatrix,
+                            distCoeffs,
+                            projectorMatrix,
+                            projectorDistCoeffs,
+                            camSettings.imageSize,
+                            stereoR,
+                            stereoT,
+                            essential,
+                            fundamental);
 
   cout << "stereo calibrate: \n" << fundamental << endl;
 
@@ -375,8 +379,11 @@ createProjectorObjectPoints(vector<cv::Point2f>& patternCorners, cv::Size patter
 }
 
 void
-fromCamToWorld(
-    cv::Mat cameraMatrix, vector<cv::Mat> rV, vector<cv::Mat> tV, vector<vector<cv::Point2f>> imgPoints, vector<vector<cv::Point3f>>& worldPoints) {
+fromCamToWorld(cv::Mat cameraMatrix,
+               vector<cv::Mat> rV,
+               vector<cv::Mat> tV,
+               vector<vector<cv::Point2f>> imgPoints,
+               vector<vector<cv::Point3f>>& worldPoints) {
   int s = (int)rV.size();
   cv::Mat invK64, invK;
   invK64 = cameraMatrix.inv();
@@ -415,7 +422,8 @@ fromCamToWorld(
 }
 
 void
-saveCalibrationResults(cv::String path, cv::Mat camK, cv::Mat camDistCoeffs, cv::Mat projK, cv::Mat projDistCoeffs, cv::Mat fundamental) {
+saveCalibrationResults(
+    cv::String path, cv::Mat camK, cv::Mat camDistCoeffs, cv::Mat projK, cv::Mat projDistCoeffs, cv::Mat fundamental) {
   cv::FileStorage fs(path + ".yml", cv::FileStorage::WRITE);
   fs << "camIntrinsics" << camK;
   fs << "camDistCoeffs" << camDistCoeffs;
@@ -451,7 +459,7 @@ saveCalibrationData(cv::String path,
 }
 
 void
-cv::normalize(const cv::Mat& pts, const int& dim, cv::Mat& normpts, cv::Mat& T) {
+normalize(const cv::Mat& pts, const int& dim, cv::Mat& normpts, cv::Mat& T) {
   float averagedist = 0;
   float scale = 0;
 

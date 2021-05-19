@@ -6,7 +6,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/videoio.hpp>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 cv::Mat frame, frame_thresholded;

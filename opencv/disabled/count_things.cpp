@@ -49,7 +49,7 @@
 #include <ctime>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 int count_exit_1;
 int count_exit_2;
@@ -82,7 +82,7 @@ main(int argc, char** argv) {
     trackingAlg = argv[2]; // user
 
   cv::MultiTracker trackers(trackingAlg); // tracker
-  vector<Rect2d> objects;             // container for obj being tracked
+  vector<Rect2d> objects;                 // container for obj being tracked
 
   // get video
   // TODO make it video or camera

@@ -5,7 +5,7 @@
 #include <set>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 cv::Point2f center(0, 0);
 
@@ -146,9 +146,10 @@ main() {
 
   //获取自定义核
   cv::Mat element =
-      cv::getStructuringElement(cv::MORPH_RECT, cv::Size(1, 1)); //第一个参数cv::MORPH_RECT表示矩形的卷积核，当然还可以选择椭圆形的、交叉型的
-                                                     //膨胀操作
-  cv::dilate(img, img, element);                         //实现过程中发现，适当的膨胀很重要
+      cv::getStructuringElement(cv::MORPH_RECT,
+                                cv::Size(1, 1)); //第一个参数cv::MORPH_RECT表示矩形的卷积核，当然还可以选择椭圆形的、交叉型的
+                                                 //膨胀操作
+  cv::dilate(img, img, element);                 //实现过程中发现，适当的膨胀很重要
   cv::imshow("cv::dilate", img);
   cv::Canny(img, img, 30, 120, 3); //边缘提取
   cv::imshow("get contour", img);

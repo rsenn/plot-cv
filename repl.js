@@ -1555,14 +1555,14 @@ export default function REPL(title = 'QuickJS') {
       repl.puts(colors.none);
     } catch(error) {
       repl.puts('EXCEPTION: ' + colors[styles.error_msg]);
-      repl.puts(error.message + '\n');
+      repl.puts(error?.message + '\n');
 
       //      repl.puts(error.stack+'');
 
-      if(error instanceof Error || typeof error.message == 'string') {
-        repl.debug((error.type ?? Util.className(error)) + ': ' + error.message);
-        if(error.stack) {
-          repl.puts(error.stack);
+      if(error instanceof Error || typeof error?.message == 'string') {
+        repl.debug((error?.type ?? Util.className(error)) + ': ' + error?.message);
+        if(error?.stack) {
+          repl.puts(error?.stack);
         }
       } else {
         repl.puts('Throw: ');

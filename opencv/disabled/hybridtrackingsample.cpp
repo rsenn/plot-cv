@@ -22,7 +22,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 cv::Mat frame, image;
@@ -34,7 +34,8 @@ int live = 1;
 
 static void
 drawRectangle(cv::Mat* img, cv::Rect win) {
-  cv::rectangle(*img, cv::Point(win.x, win.y), cv::Point(win.x + win.width, win.y + win.height), cv::Scalar(0, 255, 0), 2, cv::LINE_AA);
+  cv::rectangle(
+      *img, cv::Point(win.x, win.y), cv::Point(win.x + win.width, win.y + win.height), cv::Scalar(0, 255, 0), 2, cv::LINE_AA);
 }
 
 static void
@@ -132,8 +133,10 @@ main(int argc, char** argv) {
       image = cv::imread(img_file, cv::LOAD_IMAGE_COLOR);
       if(image.empty())
         break;
-      selection =
-          cv::Rect(cvRound(w[0] * image.cols), cvRound(w[1] * image.rows), cvRound(w[2] * image.cols), cvRound(w[3] * image.rows));
+      selection = cv::Rect(cvRound(w[0] * image.cols),
+                           cvRound(w[1] * image.rows),
+                           cvRound(w[2] * image.cols),
+                           cvRound(w[3] * image.rows));
     }
 
     sprintf(img_file_num, "Frame: %d", i);
@@ -155,9 +158,11 @@ main(int argc, char** argv) {
         cv::bitwise_not(roi, roi);
       }
 
-      drawRectangle(
-          &image,
-          cv::Rect(cvRound(w[0] * image.cols), cvRound(w[1] * image.rows), cvRound(w[2] * image.cols), cvRound(w[3] * image.rows)));
+      drawRectangle(&image,
+                    cv::Rect(cvRound(w[0] * image.cols),
+                             cvRound(w[1] * image.rows),
+                             cvRound(w[2] * image.cols),
+                             cvRound(w[3] * image.rows)));
       cv::imshow("Win", image);
 
       cv::waitKey(100);

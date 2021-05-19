@@ -17,7 +17,7 @@
 #include <string.h>
 #include <vector>
 
-//using namespace cv;
+// using namespace cv;
 
 #define TURN_ON_FACE_TRACK 1
 

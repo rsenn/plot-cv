@@ -9,7 +9,7 @@
 #include <iostream>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 // TODO: do normalization ala Kalal's assessment protocol for TLD
 
@@ -18,8 +18,12 @@ static const cv::Scalar gtColor = cv::Scalar(0, 255, 0);
 static Scalar
 getNextColor() {
   const int num = 6;
-  static cv::Scalar colors[num] = {
-      cv::Scalar(160, 0, 0), cv::Scalar(0, 0, 160), cv::Scalar(0, 160, 160), cv::Scalar(160, 160, 0), cv::Scalar(160, 0, 160), Scalar(20, 50, 160)};
+  static cv::Scalar colors[num] = {cv::Scalar(160, 0, 0),
+                                   cv::Scalar(0, 0, 160),
+                                   cv::Scalar(0, 160, 160),
+                                   cv::Scalar(160, 160, 0),
+                                   cv::Scalar(160, 0, 160),
+                                   Scalar(20, 50, 160)};
   static int id = 0;
   return colors[id < num ? id++ : num - 1];
 }
@@ -154,7 +158,7 @@ struct AlgoWrap {
   getLTRC() const {
     cv::Mat t, res;
     cv::Mat(auc).convertTo(t, CV_64F); // integral does not support CV_32S input
-    integral(t.t(), res, CV_64F);  // t is a column of values
+    integral(t.t(), res, CV_64F);      // t is a column of values
     return res.row(1) / (double)numTotal;
   }
 

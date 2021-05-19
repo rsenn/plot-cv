@@ -33,7 +33,7 @@ or implied, of Rafael Muñoz Salinas.
 #include <aruco/cvdrawingutils.h>
 #include <opencv2/highgui/highgui.hpp>
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 using namespace cv::aruco;
 
 int fontFace = FONT_HERSHEY_SCRIPT_SIMPLEX;
@@ -157,7 +157,7 @@ main(int argc, char** argv) {
       TheVideoCapturer.retrieve(TheInputImage);
       // copy image
 
-      index++;                              // number of images captured
+      index++;                                  // number of images captured
       double tick = (double)cv::getTickCount(); // for checking the speed
       // Detection of markers in the image passed
       MDetector.detect(TheInputImage, TheMarkers, TheCameraParameters, TheMarkerSize);

@@ -252,8 +252,8 @@ protected:
 
 static std::vector<FileSystemPath_t>
 getPluginCandidates(const std::string& baseName) {
-//  using namespace cv::utils;
-//  using namespace cv::utils::fs;
+  //  using namespace cv::utils;
+  //  using namespace cv::utils::fs;
   const string baseName_l = toLowerCase(baseName);
   const string baseName_u = toUpperCase(baseName);
   const FileSystemPath_t baseName_l_fs = toFileSystemPath(baseName_l);

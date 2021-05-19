@@ -10,7 +10,7 @@
 #include <opencv2/video/video.hpp>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 typedef unsigned char uchar;
 #define LOOP_NUM 10
@@ -36,7 +36,7 @@ drawArrows(cv::UMat& _frame,
            const vector<cv::Point2f>& nextPts,
            const vector<uchar>& status,
            cv::Scalar line_color = cv::Scalar(0, 0, 255)) {
-  cv::Mat frame = _frame.getMat(ACCESS_WRITE);
+  cv::Mat frame = _frame.getMat(cv::ACCESS_WRITE);
   for(size_t i = 0; i < prevPts.size(); ++i) {
     if(status[i]) {
       int line_thickness = 1;

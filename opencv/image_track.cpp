@@ -8,7 +8,7 @@
 
 #include <image_track.hpp>
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 void static onMouse(int event, int x, int y, int, void*) {
   static cv::Point origin;
 
@@ -102,7 +102,8 @@ image_track::track_start(cv::VideoCapture video) {
 
         backproj &= mask;
         cv::imshow("backproj", backproj);
-        cv::RotatedRect trackBox = cv::CamShift(backproj, trackWindow, cv::TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 10, 1));
+        cv::RotatedRect trackBox =
+            cv::CamShift(backproj, trackWindow, cv::TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 10, 1));
         if(trackWindow.area() <= 1) {
           int cols = backproj.cols, rows = backproj.rows, r = (MIN(cols, rows) + 5) / 6;
           trackWindow =

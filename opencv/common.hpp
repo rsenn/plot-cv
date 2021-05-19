@@ -1,6 +1,6 @@
 #include <opencv2/core/utils/filesystem.hpp>
 
-//using namespace cv;
+// using namespace cv;
 
 std::string genArgument(const std::string& argName,
                         const std::string& help,

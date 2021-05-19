@@ -6,7 +6,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 int hs_slider = 0, low_slider = 30, high_slider = 100;

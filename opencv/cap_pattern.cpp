@@ -45,7 +45,7 @@
 #include <iostream>
 #include <stdio.h>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 static const char* keys = {"{@path | | Path of the folder where the captured pattern images will be save }"
@@ -100,7 +100,7 @@ main(int argc, char** argv) {
   cv::setWindowProperty("Pattern Window", cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);
 
   // Open camera number 1, using libgphoto2
-  cv::VideoCapture cap1(CAP_GPHOTO2);
+  cv::VideoCapture cap1(cv::CAP_GPHOTO2);
 
   if(!cap1.isOpened()) {
     // check if cam1 opened
@@ -120,8 +120,8 @@ main(int argc, char** argv) {
   }
 
   // Turning off autofocus
-  cap1.set(CAP_PROP_SETTINGS, 1);
-  cap2.set(CAP_PROP_SETTINGS, 1);
+  cap1.set(cv::CAP_PROP_SETTINGS, 1);
+  cap2.set(cv::CAP_PROP_SETTINGS, 1);
 
   int i = 0;
   while(i < (int)pattern.size()) {
@@ -137,13 +137,16 @@ main(int argc, char** argv) {
     if((frame1.data) && (frame2.data)) {
 
       cv::Mat tmp;
-      cout << "cam 1 size: " << cv::Size((int)cap1.get(cv::CAP_PROP_FRAME_WIDTH), (int)cap1.get(cv::CAP_PROP_FRAME_HEIGHT)) << endl;
+      cout << "cam 1 size: " << cv::Size((int)cap1.get(cv::CAP_PROP_FRAME_WIDTH), (int)cap1.get(cv::CAP_PROP_FRAME_HEIGHT))
+           << endl;
 
-      cout << "cam 2 size: " << cv::Size((int)cap2.get(cv::CAP_PROP_FRAME_WIDTH), (int)cap2.get(cv::CAP_PROP_FRAME_HEIGHT)) << endl;
+      cout << "cam 2 size: " << cv::Size((int)cap2.get(cv::CAP_PROP_FRAME_WIDTH), (int)cap2.get(cv::CAP_PROP_FRAME_HEIGHT))
+           << endl;
 
       cout << "zoom cam 1: " << cap1.get(cv::CAP_PROP_ZOOM) << endl << "zoom cam 2: " << cap2.get(cv::CAP_PROP_ZOOM) << endl;
 
-      cout << "focus cam 1: " << cap1.get(CAP_PROP_FOCUS) << endl << "focus cam 2: " << cap2.get(CAP_PROP_FOCUS) << endl;
+      cout << "focus cam 1: " << cap1.get(cv::CAP_PROP_FOCUS) << endl
+           << "focus cam 2: " << cap2.get(cv::CAP_PROP_FOCUS) << endl;
 
       cout << "Press enter to save the photo or an other key to re-acquire the photo" << endl;
 
@@ -157,10 +160,10 @@ main(int argc, char** argv) {
       cv::moveWindow("cam2", 640 + 75, 0);
 
       // Resizing images to avoid issues for high resolution images, visualizing them as grayscale
-      cv::resize(frame1, tmp, cv::Size(640, 480), 0, 0, INTER_LINEAR_EXACT);
+      cv::resize(frame1, tmp, cv::Size(640, 480), 0, 0, cv::INTER_LINEAR_EXACT);
       cv::cvtColor(tmp, tmp, cv::COLOR_RGB2GRAY);
       cv::imshow("cam1", tmp);
-      cv::resize(frame2, tmp, cv::Size(640, 480), 0, 0, INTER_LINEAR_EXACT);
+      cv::resize(frame2, tmp, cv::Size(640, 480), 0, 0, cv::INTER_LINEAR_EXACT);
       cv::cvtColor(tmp, tmp, cv::COLOR_RGB2GRAY);
       cv::imshow("cam2", tmp);
 

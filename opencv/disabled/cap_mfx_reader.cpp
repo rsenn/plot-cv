@@ -8,7 +8,7 @@
 #include "opencv2/imgproc/hal/hal.hpp"
 #include "cap_interface.hpp"
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 inline bool

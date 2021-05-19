@@ -5,7 +5,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/video.hpp>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 int

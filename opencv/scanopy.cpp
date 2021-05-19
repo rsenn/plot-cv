@@ -9,7 +9,7 @@
 #include <opencv2/imgproc/imgproc_c.h>
 #include <android/bitmap.h>
 #define APPNAME "Scanning"
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 double

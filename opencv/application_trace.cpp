@@ -6,7 +6,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/core/utils/trace.hpp>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 static void

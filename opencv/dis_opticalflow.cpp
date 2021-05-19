@@ -5,7 +5,7 @@
 #include <opencv2/video.hpp>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 static void
 help() {
@@ -36,7 +36,7 @@ main(int argc, char** argv) {
   cv::namedWindow("flow", 1);
   cv::namedWindow("orig", 1);
 
-  cv::Ptr<cv::DenseOpticalFlow> algorithm = cv::DISOpticalFlow::create(DISOpticalFlow::PRESET_MEDIUM);
+  cv::Ptr<cv::DenseOpticalFlow> algorithm = cv::DISOpticalFlow::create(cv::DISOpticalFlow::PRESET_MEDIUM);
 
   while(true) {
     cap >> frame;
@@ -62,7 +62,7 @@ main(int argc, char** argv) {
 
     if((ret = (char)cv::waitKey(20)) > 0)
       break;
-    std::cv::swap(prevgray, gray);
+    std::swap(prevgray, gray);
   }
 
   return 0;

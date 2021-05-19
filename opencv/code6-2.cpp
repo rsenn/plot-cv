@@ -8,7 +8,7 @@
 #include <opencv2/imgproc/types_c.h>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 std::vector<std::vector<cv::Point>> contours;
 std::vector<cv::Vec4i> heirarchy;

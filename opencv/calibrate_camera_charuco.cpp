@@ -45,7 +45,7 @@ the use of this software, even if advised of the possibility of such damage.
 #include <ctime>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 namespace {
 const char* about = "Calibration using a ChArUco board\n"
@@ -212,7 +212,8 @@ main(int argc, char* argv[]) {
     waitTime = 10;
   }
 
-  cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
+  cv::Ptr<cv::aruco::Dictionary> dictionary =
+      cv::aruco::getPredefinedDictionary(cv::aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
 
   // create charuco board object
   cv::Ptr<cv::aruco::CharucoBoard> charucoboard =
@@ -253,12 +254,12 @@ main(int argc, char* argv[]) {
       cv::aruco::drawDetectedCornersCharuco(imageCopy, currentCharucoCorners, currentCharucoIds);
 
     cv::putText(imageCopy,
-            "Press 'c' to cv::add current frame. 'ESC' to finish and calibrate",
-            cv::Point(10, 20),
-            cv::FONT_HERSHEY_SIMPLEX,
-            0.5,
-            cv::Scalar(255, 0, 0),
-            2);
+                "Press 'c' to cv::add current frame. 'ESC' to finish and calibrate",
+                cv::Point(10, 20),
+                cv::FONT_HERSHEY_SIMPLEX,
+                0.5,
+                cv::Scalar(255, 0, 0),
+                2);
 
     cv::imshow("out", imageCopy);
     char key = (char)cv::waitKey(waitTime);
@@ -303,15 +304,15 @@ main(int argc, char* argv[]) {
   // calibrate camera using cv::aruco markers
   double arucoRepErr;
   arucoRepErr = cv::aruco::calibrateCameraAruco(allCornersConcatenated,
-                                            allIdsConcatenated,
-                                            markerCounterPerFrame,
-                                            board,
-                                            imgSize,
-                                            cameraMatrix,
-                                            distCoeffs,
-                                            cv::noArray(),
-                                            cv::noArray(),
-                                            calibrationFlags);
+                                                allIdsConcatenated,
+                                                markerCounterPerFrame,
+                                                board,
+                                                imgSize,
+                                                cameraMatrix,
+                                                distCoeffs,
+                                                cv::noArray(),
+                                                cv::noArray(),
+                                                calibrationFlags);
 
   // prepare data for charuco calibration
   int nFrames = (int)allCorners.size();

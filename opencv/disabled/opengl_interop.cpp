@@ -459,7 +459,7 @@ static const char* keys = {"{c camera | true  | use camera or not}"
                            "{f file   |       | movie file name  }"
                            "{h help   | false | print help info  }"};
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 int

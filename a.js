@@ -2,8 +2,7 @@ function CenterX(x1, y1, x2, y2, radius) {
   let radsq = radius * radius;
   let x3 = (x1 + x2) / 2;
 
-  return (x3 + Math.sqrt(radsq - (chord / 2) * (chord / 2)) * ((y1 - y2) / chord)
-  );
+  return x3 + Math.sqrt(radsq - (chord / 2) * (chord / 2)) * ((y1 - y2) / chord);
 }
 
 function CenterY(x1, y1, x2, y2, radius) {
@@ -11,8 +10,7 @@ function CenterY(x1, y1, x2, y2, radius) {
 
   let y3 = (y1 + y2) / 2;
 
-  return (y3 + Math.sqrt(radsq - (chord / 2) * (chord / 2)) * ((x2 - x1) / chord)
-  );
+  return y3 + Math.sqrt(radsq - (chord / 2) * (chord / 2)) * ((x2 - x1) / chord);
 }
 
 function Center(x1, y1, x2, y2, radius) {

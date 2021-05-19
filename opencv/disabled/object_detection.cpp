@@ -39,7 +39,7 @@ std::string keys = "{ help  h     | | Print help message. }"
                    "{ async       | 0 | Number of asynchronous forwards at the same time. "
                    "Choose 0 for synchronous mode }";
 
-//using namespace cv;
+// using namespace cv;
 using namespace cv::dnn;
 
 float confThreshold, nmsThreshold;
@@ -386,8 +386,11 @@ drawPred(int classId, float conf, int left, int top, int right, int bottom, cv::
   cv::Size labelSize = cv::getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
 
   top = max(top, labelSize.height);
-  cv::rectangle(
-      frame, cv::Point(left, top - labelSize.height), cv::Point(left + labelSize.width, top + baseLine), cv::Scalar::all(255), FILLED);
+  cv::rectangle(frame,
+                cv::Point(left, top - labelSize.height),
+                cv::Point(left + labelSize.width, top + baseLine),
+                cv::Scalar::all(255),
+                FILLED);
   cv::putText(frame, label, cv::Point(left, top), FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar());
 }
 

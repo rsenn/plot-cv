@@ -2,7 +2,7 @@
 #include <opencv2/videoio.hpp>
 #include <opencv2/imgproc/types_c.h>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 #define pi 3.14159265358979323846 // 20170420
 short int old_area = 0;
@@ -30,7 +30,7 @@ main(int argc, char** argv) {
   cv::Mat hsv_element_erode = cv::getStructuringElement(cv::MORPH_ERODE, cv::Size(3, 3));      // 20170420
   cv::Mat center_element_dilate = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(10, 10)); // 20170420
   cv::Mat center_element_erode = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(7, 7));    // 20170420
-  cv::Point2f vec_center_minus_red, vec_horizontal;                                // 20170420
+  cv::Point2f vec_center_minus_red, vec_horizontal;                                            // 20170420
   double arc_theta;
   double theta;
 
@@ -67,9 +67,9 @@ main(int argc, char** argv) {
     // cv::dilate(src_copy, src_copy, cv::Mat());//20170420
     /////cv::imshow("src_copy", src_copy);//binanry image //20170420
     cv::inRange(src_HSV, cv::Scalar(153, 121, 91), cv::Scalar(192, 255, 255), hsv_threshold); // 20170420
-    cv::dilate(hsv_threshold, hsv_threshold, hsv_element_dilate);                     // 20170420
-    cv::erode(hsv_threshold, hsv_threshold, hsv_element_erode);                       // 20170420
-    cv::add(src_HSV, src_HSV, src_add_mask, hsv_threshold);                           // 20170420
+    cv::dilate(hsv_threshold, hsv_threshold, hsv_element_dilate);                             // 20170420
+    cv::erode(hsv_threshold, hsv_threshold, hsv_element_erode);                               // 20170420
+    cv::add(src_HSV, src_HSV, src_add_mask, hsv_threshold);                                   // 20170420
     int num = 0;
     if(!src_HSV.empty()) { // 20170420
       cv::findContours(hsv_threshold, contours_2, hierarchy_2, cv::RETR_TREE, cv::CHAIN_APPROX_NONE, cv::Point(0, 0));
@@ -126,8 +126,9 @@ main(int argc, char** argv) {
         vec_center_minus_red = center_2 - center;                   // 20170420
         vec_horizontal = cv::Point(300, 240) - cv::Point(200, 240); // 20170420
         ///////////////////�|(��)��!!!!!!!!!!! 20170420
-        arc_theta = acos(vec_center_minus_red.dot(vec_horizontal) / (cv::pow(vec_center_minus_red.dot(vec_center_minus_red), 0.5) *
-                                                                     cv::pow(vec_horizontal.dot(vec_horizontal), 0.5)));
+        arc_theta =
+            acos(vec_center_minus_red.dot(vec_horizontal) / (cv::pow(vec_center_minus_red.dot(vec_center_minus_red), 0.5) *
+                                                             cv::pow(vec_horizontal.dot(vec_horizontal), 0.5)));
         theta = (arc_theta * 360) / (2 * pi); // 20170420
 
         if((center_2.x > center.x) && (center_2.y < center.y)) { // 20170420

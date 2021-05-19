@@ -17,7 +17,7 @@
 #include "videoSender.cpp"
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 using namespace cv::aruco;
 
 // rows by cols.
@@ -119,7 +119,7 @@ main(int argc, char** argv) {
     TheInputImage = image;
     pthread_mutex_lock(&amutex);
 
-    imagesAnalysed++;                     // number of images captured
+    imagesAnalysed++;                         // number of images captured
     double tick = (double)cv::getTickCount(); // for checking the speed
     // Detection of markers in the image passed
     MDetector.detect(TheInputImage, TheMarkers, TheCameraParameters, TheMarkerSize);

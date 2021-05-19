@@ -122,8 +122,13 @@ detect_shape() {
 
       if(isSquare && args["-s"] == "square" || !isSquare && args["-s"] == "cv::rectangle") {
         cout << "top_x = " << top_x << endl;
-        cv::rectangle(
-            output, cv::Point(bottom_x, bottom_y), cv::Point(top_x, top_y), cv::Scalar(rgb_color[2], rgb_color[1], rgb_color[0]), 3, 8, 0);
+        cv::rectangle(output,
+                      cv::Point(bottom_x, bottom_y),
+                      cv::Point(top_x, top_y),
+                      cv::Scalar(rgb_color[2], rgb_color[1], rgb_color[0]),
+                      3,
+                      8,
+                      0);
         found_shape = true;
       }
     } else {

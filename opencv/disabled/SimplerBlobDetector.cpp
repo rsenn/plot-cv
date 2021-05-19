@@ -19,7 +19,7 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 // ------------------------------------------------------------------------------------------------
@@ -280,7 +280,7 @@ main(int argc, char** argv) {
      bug in OpenCV that prevents the closing element </opencv_storage> from being written.
      Make sure you cv::add it to the generated XML file manually, or reading the file will crash. */
   // cv::FileStorage storage("../BlobDetectionParameters.xml", cv::FileStorage::WRITE);
-  // params.cv::write(storage);
+  // params.write(storage);
 
   // Read the blob detection parameters from the designated file.
   cv::FileStorage storage("../BlobDetectionParameters.xml", cv::FileStorage::READ);

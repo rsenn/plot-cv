@@ -6,14 +6,14 @@
 #include "cvconfig.h"
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 #ifdef HAVE_IPP_A
 #include "opencv2/core/ippasync.hpp"
 
 #define CHECK_STATUS(STATUS, NAME)                                                                                             \
   if(STATUS != HPP_STATUS_NO_ERROR) {                                                                                          \
-    printf("%s cv::error %d\n", NAME, STATUS);                                                                                     \
+    printf("%s cv::error %d\n", NAME, STATUS);                                                                                 \
     if(virtMatrix) {                                                                                                           \
       hppStatus delSts = hppiDeleteVirtualMatrices(accel, virtMatrix);                                                         \
       CHECK_DEL_STATUS(delSts, "hppiDeleteVirtualMatrices");                                                                   \
@@ -27,7 +27,7 @@ using namespace std;
 
 #define CHECK_DEL_STATUS(STATUS, NAME)                                                                                         \
   if(STATUS != HPP_STATUS_NO_ERROR) {                                                                                          \
-    printf("%s cv::error %d\n", NAME, STATUS);                                                                                     \
+    printf("%s cv::error %d\n", NAME, STATUS);                                                                                 \
     return -1;                                                                                                                 \
   }
 

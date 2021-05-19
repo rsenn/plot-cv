@@ -47,7 +47,7 @@
 
 #include <stdio.h>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 int
@@ -85,7 +85,7 @@ main(int argc, const char** argv) {
     if(frame.rows <= rows0)
       src = frame;
     else
-      cv::resize(frame, src, cv::Size(cvRound(480. * frame.cols / frame.rows), 480), 0, 0, INTER_LINEAR_EXACT);
+      cv::resize(frame, src, cv::Size(cvRound(480. * frame.cols / frame.rows), 480), 0, 0, cv::INTER_LINEAR_EXACT);
 
     float t = (float)cv::getTickCount();
     cv::ximgproc::anisotropicDiffusion(src, dst, alpha, sigma, niters);

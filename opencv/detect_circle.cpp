@@ -4,7 +4,7 @@
 #include <iostream>
 #include <stdio.h>
 
-//using namespace cv;
+// using namespace cv;
 
 /**
  * Helper function to display text in the center of a contour

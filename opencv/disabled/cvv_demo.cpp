@@ -16,7 +16,7 @@
 #include <opencv2/cvv/final_show.hpp>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 template<class T>
 std::string

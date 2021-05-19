@@ -18,7 +18,7 @@ mau, chap nhan sai 1 mau -> ty le 0.005
 
 #include <stdlib.h>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 int

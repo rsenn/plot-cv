@@ -7,7 +7,7 @@
 
 #include <time.h>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 void
@@ -72,12 +72,13 @@ main() {
                                   1.1,                         // Scale
                                   2,                           // so diem xung quanh giu lai
                                   0 | cv::CASCADE_SCALE_IMAGE, // Co tham so thu vien HAAR
-                                  cv::Size(30, 30));               // Kich thuoc doi tuong
+                                  cv::Size(30, 30));           // Kich thuoc doi tuong
     getNow(timetext);
     printf("[%s] Phat hien %d khuon mat\r\n", timetext, faces.size());
     for(int i = 0; i < faces.size(); i++) {
       cv::Point center(faces[i].x + faces[i].width * 0.5, faces[i].y + faces[i].height * 0.5);
-      cv::ellipse(frame, center, cv::Size(faces[i].width * 0.5, faces[i].height * 0.5), 0, 0, 360, cv::Scalar(0, 0, 255), 4, 8, 0);
+      cv::ellipse(
+          frame, center, cv::Size(faces[i].width * 0.5, faces[i].height * 0.5), 0, 0, 360, cv::Scalar(0, 0, 255), 4, 8, 0);
       printf("[%s] Khuon mat thu %d tai: %d, %d\r\n", timetext, i, center.x, center.y);
       // Tim mat
       cv::Mat faceROI = frame_result(faces[i]);
@@ -86,7 +87,8 @@ main() {
       printf("[%s] Khuon mat %d co %d mat\r\n", timetext, i, eyes.size());
       for(int j = 0; j < eyes.size(); j++) {
         cv::Point center_eye(faces[i].x + eyes[j].x + eyes[j].width * 0.5, faces[i].y + eyes[j].y + eyes[j].height * 0.5);
-        cv::ellipse(frame, center_eye, cv::Size(eyes[j].width * 0.5, eyes[j].height * 0.5), 0, 0, 360, cv::Scalar(0, 0, 255), 4, 8, 0);
+        cv::ellipse(
+            frame, center_eye, cv::Size(eyes[j].width * 0.5, eyes[j].height * 0.5), 0, 0, 360, cv::Scalar(0, 0, 255), 4, 8, 0);
       }
     }
     printf("----------------------------------\r\n");

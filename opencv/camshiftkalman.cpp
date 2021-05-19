@@ -293,7 +293,13 @@ camShiftKalman::track() {
 
       cv::Mat image;
       currentFrame.copyTo(image);
-      cv::putText(image, "Target Lost", cv::Point(image.rows / 2, image.cols / 4), cv::FONT_HERSHEY_PLAIN, 2.0, cv::Scalar(0, 0, 255), 2);
+      cv::putText(image,
+                  "Target Lost",
+                  cv::Point(image.rows / 2, image.cols / 4),
+                  cv::FONT_HERSHEY_PLAIN,
+                  2.0,
+                  cv::Scalar(0, 0, 255),
+                  2);
       cv::imshow(winName, image);
     } else
       drawTrackResult();
@@ -423,8 +429,12 @@ camShiftKalman::drawHist1d(const cv::Mat hist, int histSize) const {
 
   for(int i = 0; i < histSize; i++) {
     int val = saturate_cast<int>(hist.at<float>(i) * histimg.rows / 255);
-    cv::rectangle(
-        histimg, cv::Point(i * binW, histimg.rows), cv::Point((i + 1) * binW, histimg.rows - val), cv::Scalar(buf.at<cv::Vec3b>(i)), -1, 8);
+    cv::rectangle(histimg,
+                  cv::Point(i * binW, histimg.rows),
+                  cv::Point((i + 1) * binW, histimg.rows - val),
+                  cv::Scalar(buf.at<cv::Vec3b>(i)),
+                  -1,
+                  8);
   }
 
   return histimg;

@@ -7,7 +7,7 @@
 #include <samples_utility.hpp>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 static const char* keys = {"{@tracker_algorithm | | cv::Tracker algorithm }"
                            "{@video_name      | | video name        }"

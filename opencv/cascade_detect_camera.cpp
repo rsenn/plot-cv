@@ -50,8 +50,8 @@
 #include <stdio.h>
 #include <iostream>
 
-//using namespace cv;
-//using namespace cv::dpm;
+// using namespace cv;
+// using namespace cv::dpm;
 using namespace std;
 
 static void
@@ -63,7 +63,7 @@ help() {
        << endl;
 }
 
-void drawBoxes(cv::Mat& frame, vector<DPMDetector::ObjectDetection> ds, cv::Scalar color, string text);
+void drawBoxes(cv::Mat& frame, vector<cv::dpm::DPMDetector::ObjectDetection> ds, cv::Scalar color, string text);
 
 int
 main(int argc, char** argv) {
@@ -77,7 +77,7 @@ main(int argc, char** argv) {
     return -1;
   }
 
-  cv::Ptr<DPMDetector> detector = DPMDetector::create(vector<string>(1, model_path));
+  cv::Ptr<cv::dpm::DPMDetector> detector = cv::dpm::DPMDetector::create(vector<string>(1, model_path));
 
   // use web camera
   cv::VideoCapture capture(0);
@@ -95,7 +95,7 @@ main(int argc, char** argv) {
   cv::Scalar color(0, 255, 255); // yellow
 
   while(capture.read(frame)) {
-    vector<DPMDetector::ObjectDetection> ds;
+    vector<cv::dpm::DPMDetector::ObjectDetection> ds;
 
     cv::Mat image;
     frame.copyTo(image);
@@ -120,10 +120,10 @@ main(int argc, char** argv) {
 }
 
 void
-drawBoxes(cv::Mat& frame, vector<DPMDetector::ObjectDetection> ds, cv::Scalar color, string text) {
+drawBoxes(cv::Mat& frame, vector<cv::dpm::DPMDetector::ObjectDetection> ds, cv::Scalar color, string text) {
   for(unsigned int i = 0; i < ds.size(); i++) { cv::rectangle(frame, ds[i].rect, color, 2); }
 
   // draw text on image
   cv::Scalar textColor(0, 0, 250);
-  cv::putText(frame, text, cv::Point(10, 50), FONT_HERSHEY_PLAIN, 2, textColor, 2);
+  cv::putText(frame, text, cv::Point(10, 50), cv::FONT_HERSHEY_PLAIN, 2, textColor, 2);
 }

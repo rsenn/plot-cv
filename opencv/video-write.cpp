@@ -6,7 +6,7 @@
 #include <opencv2/videoio.hpp>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 static void
 help() {
@@ -46,7 +46,7 @@ main(int argc, char* argv[]) {
       (char)(ex & 0XFF), (char)((ex & 0XFF00) >> 8), (char)((ex & 0XFF0000) >> 16), (char)((ex & 0XFF000000) >> 24), 0};
 
   cv::Size S = cv::Size((int)inputVideo.get(cv::CAP_PROP_FRAME_WIDTH), // Acquire input size
-                (int)inputVideo.get(cv::CAP_PROP_FRAME_HEIGHT));
+                        (int)inputVideo.get(cv::CAP_PROP_FRAME_HEIGHT));
 
   cv::VideoWriter outputVideo; // Open the output
   if(askOutputType)
@@ -83,7 +83,7 @@ main(int argc, char* argv[]) {
         spl[i] = cv::Mat::zeros(S, spl[0].type());
     cv::merge(spl, res);
 
-    // outputVideo.cv::write(res); //save or
+    // outputVideo.write(res); //save or
     outputVideo << res;
   }
 

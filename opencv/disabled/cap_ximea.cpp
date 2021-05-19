@@ -174,8 +174,7 @@ CvCaptureCAM_XIMEA::_open() {
   }
   return true;
 
-cv::error:
-  errMsg("Open XI_DEVICE failed", mvret);
+  cv::error : errMsg("Open XI_DEVICE failed", mvret);
   xiCloseDevice(hmv);
   hmv = NULL;
   return false;

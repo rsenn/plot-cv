@@ -42,7 +42,7 @@ the use of this software, even if advised of the possibility of such damage.
 #include <iostream>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 namespace {
 const char* about = "Detect ChArUco markers";
@@ -146,7 +146,8 @@ main(int argc, char* argv[]) {
     return 0;
   }
 
-  cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
+  cv::Ptr<cv::aruco::Dictionary> dictionary =
+      cv::aruco::getPredefinedDictionary(cv::aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
 
   cv::Mat camMatrix, distCoeffs;
   if(estimatePose) {
@@ -200,7 +201,8 @@ main(int argc, char* argv[]) {
           vector<vector<cv::Point2f>> currentCorners;
           vector<cv::Vec3d> currentRvec, currentTvec;
           currentCorners.push_back(diamondCorners[i]);
-          cv::aruco::estimatePoseSingleMarkers(currentCorners, autoSquareLength, camMatrix, distCoeffs, currentRvec, currentTvec);
+          cv::aruco::estimatePoseSingleMarkers(
+              currentCorners, autoSquareLength, camMatrix, distCoeffs, currentRvec, currentTvec);
           rvecs.push_back(currentRvec[0]);
           tvecs.push_back(currentTvec[0]);
         }

@@ -15,8 +15,8 @@
 #include <iostream>
 
 using namespace std;
-//using namespace cv;
-//using namespace cv::text;
+// using namespace cv;
+// using namespace cv::text;
 
 // ERStat extraction is done in parallel for different channels
 class Parallel_extractCSER : public cv::ParallelLoopBody {
@@ -291,48 +291,54 @@ main(int argc, char* argv[]) {
           continue;
         words_detection.push_back(words[i][j]);
         cv::rectangle(out_img, boxes[i][j].tl(), boxes[i][j].br(), cv::Scalar(255, 0, 255), 3);
-        cv::Size word_size = cv::getTextSize(words[i][j], FONT_HERSHEY_SIMPLEX, (double)scale_font, (int)(3 * scale_font), NULL);
+        cv::Size word_size =
+            cv::getTextSize(words[i][j], FONT_HERSHEY_SIMPLEX, (double)scale_font, (int)(3 * scale_font), NULL);
         cv::rectangle(out_img,
-                  boxes[i][j].tl() - cv::Point(3, word_size.height + 3),
-                  boxes[i][j].tl() + cv::Point(word_size.width, 0),
-                  cv::Scalar(255, 0, 255),
-                  -1);
+                      boxes[i][j].tl() - cv::Point(3, word_size.height + 3),
+                      boxes[i][j].tl() + cv::Point(word_size.width, 0),
+                      cv::Scalar(255, 0, 255),
+                      -1);
         cv::putText(out_img,
-                words[i][j],
-                boxes[i][j].tl() - cv::Point(1, 1),
-                FONT_HERSHEY_SIMPLEX,
-                scale_font,
-                cv::Scalar(255, 255, 255),
-                (int)(3 * scale_font));
+                    words[i][j],
+                    boxes[i][j].tl() - cv::Point(1, 1),
+                    FONT_HERSHEY_SIMPLEX,
+                    scale_font,
+                    cv::Scalar(255, 255, 255),
+                    (int)(3 * scale_font));
       }
     }
 
     t_all = ((double)cv::getTickCount() - t_all) * 1000 / cv::getTickFrequency();
     int text_thickness = 1 + (out_img.rows / 500);
     string fps_info = cv::format("%2.1f Fps. %dx%d", (float)(1000 / t_all), frame.cols, frame.rows);
-    cv::putText(
-        out_img, fps_info, cv::Point(10, out_img.rows - 5), FONT_HERSHEY_DUPLEX, scale_font, cv::Scalar(255, 0, 0), text_thickness);
     cv::putText(out_img,
-            region_types_str[REGION_TYPE],
-            cv::Point((int)(out_img.cols * 0.5), out_img.rows - (int)(bottom_bar_height / 1.5)),
-            FONT_HERSHEY_DUPLEX,
-            scale_font,
-            cv::Scalar(255, 0, 0),
-            text_thickness);
+                fps_info,
+                cv::Point(10, out_img.rows - 5),
+                FONT_HERSHEY_DUPLEX,
+                scale_font,
+                cv::Scalar(255, 0, 0),
+                text_thickness);
     cv::putText(out_img,
-            grouping_algorithms_str[GROUPING_ALGORITHM],
-            cv::Point((int)(out_img.cols * 0.5), out_img.rows - ((int)(bottom_bar_height / 3) + 4)),
-            FONT_HERSHEY_DUPLEX,
-            scale_font,
-            cv::Scalar(255, 0, 0),
-            text_thickness);
+                region_types_str[REGION_TYPE],
+                cv::Point((int)(out_img.cols * 0.5), out_img.rows - (int)(bottom_bar_height / 1.5)),
+                FONT_HERSHEY_DUPLEX,
+                scale_font,
+                cv::Scalar(255, 0, 0),
+                text_thickness);
     cv::putText(out_img,
-            recognitions_str[RECOGNITION],
-            cv::Point((int)(out_img.cols * 0.5), out_img.rows - 5),
-            FONT_HERSHEY_DUPLEX,
-            scale_font,
-            cv::Scalar(255, 0, 0),
-            text_thickness);
+                grouping_algorithms_str[GROUPING_ALGORITHM],
+                cv::Point((int)(out_img.cols * 0.5), out_img.rows - ((int)(bottom_bar_height / 3) + 4)),
+                FONT_HERSHEY_DUPLEX,
+                scale_font,
+                cv::Scalar(255, 0, 0),
+                text_thickness);
+    cv::putText(out_img,
+                recognitions_str[RECOGNITION],
+                cv::Point((int)(out_img.cols * 0.5), out_img.rows - 5),
+                FONT_HERSHEY_DUPLEX,
+                scale_font,
+                cv::Scalar(255, 0, 0),
+                text_thickness);
 
     cv::imshow("recognition", out_img);
 
@@ -409,13 +415,13 @@ er_draw(std::vector<cv::Mat>& channels,
       int newMaskVal = 255;
       int flags = 4 + (newMaskVal << 8) + FLOODFILL_FIXED_RANGE + FLOODFILL_MASK_ONLY;
       cv::floodFill(channels[group[r][0]],
-                segmentation,
-                cv::Point(er.pixel % channels[group[r][0]].cols, er.pixel / channels[group[r][0]].cols),
-                cv::Scalar(255),
-                0,
-                cv::Scalar(er.level),
-                cv::Scalar(0),
-                flags);
+                    segmentation,
+                    cv::Point(er.pixel % channels[group[r][0]].cols, er.pixel / channels[group[r][0]].cols),
+                    cv::Scalar(255),
+                    0,
+                    cv::Scalar(er.level),
+                    cv::Scalar(0),
+                    flags);
     }
   }
 }

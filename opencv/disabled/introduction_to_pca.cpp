@@ -8,7 +8,7 @@
 #include <opencv2/opencv.hpp>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 // Function declarations
 void drawAxis(cv::Mat&, cv::Point, cv::Point, cv::Scalar, const float);

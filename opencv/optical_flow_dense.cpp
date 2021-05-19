@@ -5,7 +5,7 @@
 #include <opencv2/videoio.hpp>
 #include <opencv2/video.hpp>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 int
@@ -34,9 +34,9 @@ main() {
     // visualization
     cv::Mat flow_parts[2];
     cv::split(flow, flow_parts);
-    cv::Mat cv::magnitude, angle, magn_norm;
-    cv::cartToPolar(flow_parts[0], flow_parts[1], cv::magnitude, angle, true);
-    cv::normalize(cv::magnitude, magn_norm, 0.0f, 1.0f, cv::NORM_MINMAX);
+    cv::Mat magnitude, angle, magn_norm;
+    cv::cartToPolar(flow_parts[0], flow_parts[1], magnitude, angle, true);
+    cv::normalize(magnitude, magn_norm, 0.0f, 1.0f, cv::NORM_MINMAX);
     angle *= ((1.f / 360.f) * (180.f / 255.f));
 
     // build hsv image

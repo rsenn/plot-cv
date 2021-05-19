@@ -66,7 +66,7 @@ createProcessingGraph(ivx::Image& inputImage, ivx::Image& outputImage) {
 
 int
 ovxDemo(std::string inputPath, UserMemoryMode mode) {
-//  using namespace cv;
+  //  using namespace cv;
   using namespace ivx;
 
   cv::Mat frame;

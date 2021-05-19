@@ -5,7 +5,7 @@
 #include <iostream>
 #include <ctype.h>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 cv::Mat image;
@@ -131,11 +131,11 @@ main(int argc, const char** argv) {
           for(int i = 0; i < hsize; i++) {
             int val = saturate_cast<int>(hist.at<float>(i) * histimg.rows / 255);
             cv::rectangle(histimg,
-                      cv::Point(i * binW, histimg.rows),
-                      cv::Point((i + 1) * binW, histimg.rows - val),
-                      cv::Scalar(buf.at<Vec3b>(i)),
-                      -1,
-                      8);
+                          cv::Point(i * binW, histimg.rows),
+                          cv::Point((i + 1) * binW, histimg.rows - val),
+                          cv::Scalar(buf.at<Vec3b>(i)),
+                          -1,
+                          8);
           }
         }
 

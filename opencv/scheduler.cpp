@@ -231,7 +231,7 @@ Scheduler::check_overdueEvents() { // Scans event_schedule and returns the first
     }
 
     cv::temp = *iterator; // Couldn't figure out how to access list elements directly from
-                      // reverse_iterator so doing this
+                          // reverse_iterator so doing this
     // instead...
     if(current_time >= cv::temp->get_execution_deadline()) {
       return cv::temp; // Overdue Event found.
@@ -289,7 +289,8 @@ int
 Scheduler::display_camera_feed() {
 
   if(!this->camera.isOpened()) {
-    cout << "cv::Error: Scheduler::display_camera_feed() could not access camera at camera_index= " << this->camera_index << endl;
+    cout << "cv::Error: Scheduler::display_camera_feed() could not access camera at camera_index= " << this->camera_index
+         << endl;
     return -1;
   } else {
     cv::Mat frame;

@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 // our sensitivity value to be used in the cv::threshold() function
 const static int SENSITIVITY_VALUE = 20;
@@ -48,7 +48,7 @@ searchForMovement(cv::Mat thresholdImage, cv::Mat& cameraFeed) {
   // cv::findContours(temp,contours,hierarchy,cv::RETR_CCOMP,cv::CHAIN_APPROX_SIMPLE );// retrieves all
   // contours
   cv::findContours(temp, contours, hierarchy, cv::RETR_EXTERNAL,
-               cv::CHAIN_APPROX_SIMPLE); // retrieves external contours
+                   cv::CHAIN_APPROX_SIMPLE); // retrieves external contours
 
   // if contours std::vector is not empty, we have found some objects
   if(contours.size() > 0)
@@ -80,12 +80,12 @@ searchForMovement(cv::Mat thresholdImage, cv::Mat& cameraFeed) {
   cv::line(cameraFeed, cv::Point(x, y), cv::Point(x - 25, y), cv::Scalar(0, 255, 0), 2);
   cv::line(cameraFeed, cv::Point(x, y), cv::Point(x + 25, y), cv::Scalar(0, 255, 0), 2);
   cv::putText(cameraFeed,
-          "Tracking object at (" + intToString(x) + "," + intToString(y) + ")",
-          cv::Point(x, y),
-          1,
-          1,
-          cv::Scalar(255, 0, 0),
-          2);
+              "Tracking object at (" + intToString(x) + "," + intToString(y) + ")",
+              cv::Point(x, y),
+              1,
+              1,
+              cv::Scalar(255, 0, 0),
+              2);
 }
 int
 main() {

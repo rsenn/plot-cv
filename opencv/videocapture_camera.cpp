@@ -4,7 +4,7 @@
 #include <opencv2/imgproc.hpp> // Canny()
 #include <iostream>
 
-//using namespace cv;
+// using namespace cv;
 using std::cerr;
 using std::cout;
 using std::endl;
@@ -42,7 +42,8 @@ main(int, char**) {
       int64 t1 = cv::getTickCount();
       cout << "Frames captured: " << cv::format("%5lld", (long long int)nFrames)
            << "    Average FPS: " << cv::format("%9.1f", (double)cv::getTickFrequency() * N / (t1 - t0))
-           << "    Average time per frame: " << cv::format("%9.2f ms", (double)(t1 - t0) * 1000.0f / (N * cv::getTickFrequency()))
+           << "    Average time per frame: "
+           << cv::format("%9.2f ms", (double)(t1 - t0) * 1000.0f / (N * cv::getTickFrequency()))
            << "    Average processing time: "
            << cv::format("%9.2f ms", (double)(processingTime)*1000.0f / (N * cv::getTickFrequency())) << std::endl;
       t0 = t1;

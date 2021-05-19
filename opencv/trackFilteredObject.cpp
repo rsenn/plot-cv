@@ -26,7 +26,7 @@
 
 #include <trackFilteredObject.hpp>
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 void static on_trackbar(int, void*) {
   // This function gets called whenever a
   // trackbar position is changed

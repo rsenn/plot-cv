@@ -8,7 +8,7 @@
 #include <fcntl.h>
 #include <qelapsedtimer.h>
 
-//using namespace cv;
+// using namespace cv;
 
 QElapsedTimer telapsed;
 

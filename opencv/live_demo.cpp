@@ -40,7 +40,7 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/ximgproc.hpp>
 //// using namespace cv;
-//using namespace cv::ximgproc;
+// using namespace cv::ximgproc;
 
 #include <iostream>
 using namespace std;

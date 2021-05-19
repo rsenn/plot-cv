@@ -36,13 +36,14 @@ std::string keys =
     "{ async       | 0 | Number of asynchronous forwards at the same time. "
     "Choose 0 for synchronous mode }";
 
-//using namespace cv;
+// using namespace cv;
 using namespace cv::dnn;
 
 float confThreshold, nmsThreshold;
 std::vector<std::string> classes;
 
-inline void preprocess(const cv::Mat& frame, cv::dnn::Net& net, cv::Size inpSize, float scale, const cv::Scalar& _mean, bool swapRB);
+inline void
+preprocess(const cv::Mat& frame, cv::dnn::Net& net, cv::Size inpSize, float scale, const cv::Scalar& _mean, bool swapRB);
 
 void postprocess(cv::Mat& frame, const std::vector<cv::Mat>& out, cv::dnn::Net& net, int backend);
 
@@ -416,8 +417,11 @@ drawPred(int classId, float conf, int left, int top, int right, int bottom, cv::
   cv::Size labelSize = cv::getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
 
   top = cv::max(top, labelSize.height);
-  cv::rectangle(
-      frame, cv::Point(left, top - labelSize.height), cv::Point(left + labelSize.width, top + baseLine), cv::Scalar::all(255), cv::FILLED);
+  cv::rectangle(frame,
+                cv::Point(left, top - labelSize.height),
+                cv::Point(left + labelSize.width, top + baseLine),
+                cv::Scalar::all(255),
+                cv::FILLED);
   cv::putText(frame, label, cv::Point(left, top), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar());
 }
 

@@ -25,9 +25,10 @@ CaptureWorker::doWork() {
   if(ok) {
     m_capture = new cv::VideoCapture(deviceId);
   } else {
-    m_capture = new cv::VideoCapture("rkcamsrc device=/dev/video0 io-mode=4 ! video/x-raw,cv::format=NV12,width=640,height=480 ! "
-                                     "videoconvert ! appsink",
-                                     cv::CAP_GSTREAMER);
+    m_capture =
+        new cv::VideoCapture("rkcamsrc device=/dev/video0 io-mode=4 ! video/x-raw,cv::format=NV12,width=640,height=480 ! "
+                             "videoconvert ! appsink",
+                             cv::CAP_GSTREAMER);
   }
   if(!m_capture->isOpened()) {
     qWarning() << "Can't capture" << m_device;

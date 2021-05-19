@@ -27,7 +27,7 @@ std::string keys = "{ help  h     | | Print help message. }"
                    "2: OpenCL fp16 (half-float precision), "
                    "3: VPU }";
 
-//using namespace cv;
+// using namespace cv;
 using namespace cv::dnn;
 
 std::vector<std::string> classes;
@@ -128,7 +128,9 @@ main(int argc, char** argv) {
     cv::putText(frame, label, cv::Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0));
 
     // Print predicted class.
-    label = cv::format("%s: %.4f", (classes.empty() ? cv::format("Class #%d", classId).c_str() : classes[classId].c_str()), confidence);
+    label = cv::format("%s: %.4f",
+                       (classes.empty() ? cv::format("Class #%d", classId).c_str() : classes[classId].c_str()),
+                       confidence);
     cv::putText(frame, label, cv::Point(0, 40), FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0));
 
     cv::imshow(kWinName, frame);

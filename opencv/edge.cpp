@@ -3,7 +3,7 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
 #include <stdio.h>
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 int edgeThresh = 1;
 int edgeThreshScharr = 1;

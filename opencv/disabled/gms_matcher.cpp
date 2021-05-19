@@ -7,8 +7,8 @@
 #include <opencv2/flann.hpp>
 #include <opencv2/xfeatures2d.hpp>
 
-//using namespace cv;
-//using namespace cv::xfeatures2d;
+// using namespace cv;
+// using namespace cv::xfeatures2d;
 
 ////////////////////////////////////////////////////
 // This program demonstrates the GMS matching strategy.
@@ -141,13 +141,17 @@ main(int argc, char* argv[]) {
       label = cv::format("GMS matching: %.2f ms", tm.getTimeMilli());
       cv::putText(frameMatches, label, cv::Point(20, 60), FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 255));
       cv::putText(frameMatches,
-              "Press r to reinitialize the reference image.",
-              cv::Point(frameMatches.cols - 380, 20),
-              FONT_HERSHEY_SIMPLEX,
-              0.5,
-              cv::Scalar(0, 0, 255));
-      cv::putText(
-          frameMatches, "Press esc to quit.", cv::Point(frameMatches.cols - 180, 40), FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 255));
+                  "Press r to reinitialize the reference image.",
+                  cv::Point(frameMatches.cols - 380, 20),
+                  FONT_HERSHEY_SIMPLEX,
+                  0.5,
+                  cv::Scalar(0, 0, 255));
+      cv::putText(frameMatches,
+                  "Press esc to quit.",
+                  cv::Point(frameMatches.cols - 180, 40),
+                  FONT_HERSHEY_SIMPLEX,
+                  0.5,
+                  cv::Scalar(0, 0, 255));
 
       cv::imshow("Matches GMS", frameMatches);
       int c = cv::waitKey(30);

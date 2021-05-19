@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 // Draw a single point

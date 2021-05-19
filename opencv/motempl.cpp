@@ -6,9 +6,9 @@
 #include <stdio.h>
 #include <ctype.h>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
-//using namespace cv::motempl;
+// using namespace cv::motempl;
 
 static void
 help(void) {
@@ -50,7 +50,7 @@ update_mhi(const cv::Mat& img, cv::Mat& dst, int diff_threshold) {
   double count;
   double angle;
   cv::Point center;
-  double cv::magnitude;
+  double magnitude;
   cv::Scalar color;
 
   // allocate images at the beginning or
@@ -71,8 +71,8 @@ update_mhi(const cv::Mat& img, cv::Mat& dst, int diff_threshold) {
   cv::Mat silh = buf[idx2];
   cv::absdiff(buf[idx1], buf[idx2], silh); // get difference between frames
 
-  cv::threshold(silh, silh, diff_threshold, 1, cv::THRESH_BINARY); // and cv::threshold it
-  updateMotionHistory(silh, mhi, timestamp, MHI_DURATION); // update MHI
+  cv::threshold(silh, silh, diff_threshold, 1, cv::THRESH_BINARY);      // and cv::threshold it
+  cv::motempl::updateMotionHistory(silh, mhi, timestamp, MHI_DURATION); // update MHI
 
   // convert MHI to blue 8u image
   mhi.convertTo(mask, CV_8U, 255. / MHI_DURATION, (MHI_DURATION - timestamp) * 255. / MHI_DURATION);
@@ -81,12 +81,12 @@ update_mhi(const cv::Mat& img, cv::Mat& dst, int diff_threshold) {
   cv::merge(planes, 3, dst);
 
   // calculate motion gradient orientation and valid orientation mask
-  calcMotionGradient(mhi, mask, orient, MAX_TIME_DELTA, MIN_TIME_DELTA, 3);
+  cv::motempl::calcMotionGradient(mhi, mask, orient, MAX_TIME_DELTA, MIN_TIME_DELTA, 3);
 
   // segment motion: get sequence of motion components
   // segmask is marked motion components map. It is not used further
   regions.clear();
-  segmentMotion(mhi, segmask, regions, timestamp, MAX_TIME_DELTA);
+  cv::motempl::segmentMotion(mhi, segmask, regions, timestamp, MAX_TIME_DELTA);
 
   // iterate through the motion components,
   // One more iteration (i == -1) corresponds to the whole image (global motion)
@@ -95,13 +95,13 @@ update_mhi(const cv::Mat& img, cv::Mat& dst, int diff_threshold) {
     if(i < 0) { // case of the whole image
       comp_rect = cv::Rect(0, 0, size.width, size.height);
       color = cv::Scalar(255, 255, 255);
-      cv::magnitude = 100;
+      magnitude = 100;
     } else { // i-th motion component
       comp_rect = regions[i];
       if(comp_rect.width + comp_rect.height < 100) // reject very small components
         continue;
       color = cv::Scalar(0, 0, 255);
-      cv::magnitude = 30;
+      magnitude = 30;
     }
 
     // select component ROI
@@ -111,7 +111,7 @@ update_mhi(const cv::Mat& img, cv::Mat& dst, int diff_threshold) {
     cv::Mat mask_roi = mask(comp_rect);
 
     // calculate orientation
-    angle = calcGlobalOrientation(orient_roi, mask_roi, mhi_roi, timestamp, MHI_DURATION);
+    angle = cv::motempl::calcGlobalOrientation(orient_roi, mask_roi, mhi_roi, timestamp, MHI_DURATION);
     angle = 360.0 - angle; // adjust for images with top-left origin
 
     count = cv::norm(silh_roi, cv::NORM_L1);
@@ -124,15 +124,15 @@ update_mhi(const cv::Mat& img, cv::Mat& dst, int diff_threshold) {
     // draw a clock with arrow indicating the direction
     center = cv::Point((comp_rect.x + comp_rect.width / 2), (comp_rect.y + comp_rect.height / 2));
 
-    cv::circle(img, center, cvRound(cv::magnitude * 1.2), color, 3, 16, 0);
+    cv::circle(img, center, cvRound(magnitude * 1.2), color, 3, 16, 0);
     cv::line(img,
-         center,
-         cv::Point(cvRound(center.x + cv::magnitude * cos(angle * CV_PI / 180)),
-               cvRound(center.y - cv::magnitude * sin(angle * CV_PI / 180))),
-         color,
-         3,
-         16,
-         0);
+             center,
+             cv::Point(cvRound(center.x + magnitude * cos(angle * CV_PI / 180)),
+                       cvRound(center.y - magnitude * sin(angle * CV_PI / 180))),
+             color,
+             3,
+             16,
+             0);
   }
 }
 

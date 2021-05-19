@@ -1,6 +1,6 @@
 #include <opencv2/opencv.hpp>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 void createCookBook(cv::Mat staveReg, int rightIndex);
@@ -441,12 +441,12 @@ findNotes(cv::Mat staveReg, Vector<float> staveLoc) {
       if(maxVal > NOTE_THRESHOLD) {
 
         cv::rectangle(staveReg,
-                  cv::Point(matchLoc.x + boundRect[i].tl().x, boundRect[i].tl().y + matchLoc.y),
-                  cv::Point(matchLoc.x + boundRect[i].br().x, boundRect[i].br().y + matchLoc.y),
-                  cv::Scalar::all(0),
-                  2,
-                  8,
-                  0);
+                      cv::Point(matchLoc.x + boundRect[i].tl().x, boundRect[i].tl().y + matchLoc.y),
+                      cv::Point(matchLoc.x + boundRect[i].br().x, boundRect[i].br().y + matchLoc.y),
+                      cv::Scalar::all(0),
+                      2,
+                      8,
+                      0);
       }
 
       cv::imshow("stave section", staveReg);

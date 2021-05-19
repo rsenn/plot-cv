@@ -3,7 +3,7 @@
 #include <test-config.h>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 SCENARIO("Can make a video stream") {
   cv::Mat mat;

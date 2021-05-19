@@ -12,8 +12,8 @@
 #include "opencv2/gpu/gpu.hpp"
 
 using namespace std;
-//using namespace cv;
-//using namespace cv::gpu;
+// using namespace cv;
+// using namespace cv::gpu;
 
 static void
 help() {
@@ -203,7 +203,9 @@ main(int argc, const char* argv[]) {
     if(useGPU) {
       resized_gpu.download(resized_cpu);
 
-      for(int i = 0; i < detections_num; ++i) { cv::rectangle(resized_cpu, faces_downloaded.ptr<cv::Rect>()[i], cv::Scalar(255)); }
+      for(int i = 0; i < detections_num; ++i) {
+        cv::rectangle(resized_cpu, faces_downloaded.ptr<cv::Rect>()[i], cv::Scalar(255));
+      }
     }
 
     tm.stop();

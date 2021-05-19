@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 static void
@@ -49,7 +49,7 @@ colorizeDisparity(const cv::Mat& gray, cv::Mat& rgb, double maxDisp = -1.f) {
 
 static float
 getMaxDisparity(cv::VideoCapture& capture) {
-  const int minDistance = 400;                                           // mm
+  const int minDistance = 400;                                               // mm
   float b = (float)capture.get(cv::CAP_OPENNI_DEPTH_GENERATOR_BASELINE);     // mm
   float F = (float)capture.get(cv::CAP_OPENNI_DEPTH_GENERATOR_FOCAL_LENGTH); // pixels
   return b * F / minDistance;

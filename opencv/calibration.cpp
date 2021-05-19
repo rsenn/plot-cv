@@ -11,7 +11,7 @@
 #include <string.h>
 #include <time.h>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 const char* usage = " \nexample command cv::line for calibration from a live feed.\n"
@@ -113,7 +113,8 @@ calcChessboardCorners(cv::Size boardSize, float squareSize, vector<cv::Point3f>&
     case CHESSBOARD:
     case CIRCLES_GRID:
       for(int i = 0; i < boardSize.height; i++)
-        for(int j = 0; j < boardSize.width; j++) corners.push_back(cv::Point3f(float(j * squareSize), float(i * squareSize), 0));
+        for(int j = 0; j < boardSize.width; j++)
+          corners.push_back(cv::Point3f(float(j * squareSize), float(i * squareSize), 0));
       break;
 
     case ASYMMETRIC_CIRCLES_GRID:
@@ -453,9 +454,9 @@ main(int argc, char** argv) {
     switch(pattern) {
       case CHESSBOARD:
         found = cv::findChessboardCorners(view,
-                                      boardSize,
-                                      pointbuf,
-                                      CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE);
+                                          boardSize,
+                                          pointbuf,
+                                          CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE);
         break;
       case CIRCLES_GRID: found = cv::findCirclesGrid(view, boardSize, pointbuf); break;
       case ASYMMETRIC_CIRCLES_GRID: found = cv::findCirclesGrid(view, boardSize, pointbuf, cv::CALIB_CB_ASYMMETRIC_GRID); break;
@@ -464,7 +465,11 @@ main(int argc, char** argv) {
 
     // improve the found corners' coordinate accuracy
     if(pattern == CHESSBOARD && found)
-      cv::cornerSubPix(viewGray, pointbuf, cv::Size(11, 11), cv::Size(-1, -1), cv::TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+      cv::cornerSubPix(viewGray,
+                       pointbuf,
+                       cv::Size(11, 11),
+                       cv::Size(-1, -1),
+                       cv::TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
 
     if(mode == CAPTURING && found && (!capture.isOpened() || clock() - prevTimestamp > delay * 1e-3 * CLOCKS_PER_SEC)) {
       imagePoints.push_back(pointbuf);
@@ -535,13 +540,13 @@ main(int argc, char** argv) {
   if(!capture.isOpened() && showUndistorted) {
     cv::Mat view, rview, map1, map2;
     cv::initUndistortRectifyMap(cameraMatrix,
-                            distCoeffs,
-                            cv::Mat(),
-                            cv::getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, imageSize, 1, imageSize, 0),
-                            imageSize,
-                            CV_16SC2,
-                            map1,
-                            map2);
+                                distCoeffs,
+                                cv::Mat(),
+                                cv::getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, imageSize, 1, imageSize, 0),
+                                imageSize,
+                                CV_16SC2,
+                                map1,
+                                map2);
 
     for(i = 0; i < (int)imageList.size(); i++) {
       view = cv::imread(imageList[i], 1);

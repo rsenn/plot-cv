@@ -33,7 +33,7 @@
 #include <opencv2/highgui.hpp>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 const char* windowOriginal = "Captured preview";
 const int FOCUS_STEP = 1024;
@@ -64,7 +64,7 @@ struct FocusState {
 };
 
 static ostream&
-cv::operator<<(ostream& os, FocusState& state) {
+operator<<(ostream& os, FocusState& state) {
   return os << "RATE=" << state.rate << "\tSTEP=" << state.step * state.direction
             << "\tLast change=" << state.lastDirectionChange << "\tstepToLastMax=" << state.stepToLastMax;
 }
@@ -120,7 +120,7 @@ findMinFocusStep(cv::VideoCapture& cap, unsigned int startWith, int direction) {
  */
 static double
 rateFrame(cv::Mat& frame) {
-  unsigned long int cv::sum = 0;
+  unsigned long int sum = 0;
   unsigned long int size = frame.cols * frame.rows;
   cv::Mat edges;
   cv::cvtColor(frame, edges, cv::COLOR_BGR2GRAY);
@@ -128,9 +128,9 @@ rateFrame(cv::Mat& frame) {
   cv::Canny(edges, edges, 0, 30, 3);
 
   cv::MatIterator_<uchar> it, end;
-  for(it = edges.begin<uchar>(), end = edges.end<uchar>(); it != end; ++it) { cv::sum += *it != 0; }
+  for(it = edges.begin<uchar>(), end = edges.end<uchar>(); it != end; ++it) { sum += *it != 0; }
 
-  return (double)cv::sum / (double)size;
+  return (double)sum / (double)size;
 }
 
 static int
@@ -281,7 +281,8 @@ main(int argc, char** argv) {
       cout << "This is not GPHOTO2 device." << endl;
       return -2;
     }
-    cout << "List of camera settings: " << endl << (const char*)(intptr_t)cap.get(cv::CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) << endl;
+    cout << "List of camera settings: " << endl
+         << (const char*)(intptr_t)cap.get(cv::CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) << endl;
     cap.set(cv::CAP_PROP_GPHOTO2_COLLECT_MSGS, true);
   }
 

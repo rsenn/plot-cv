@@ -11,7 +11,7 @@
 #include "NCVHaarObjectDetection.hpp"
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 #if defined(__arm__)
 int

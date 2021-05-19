@@ -9,8 +9,8 @@
 #include <stdio.h>
 #include <iostream>
 
-//using namespace cv;
-//using namespace cv::ximgproc;
+// using namespace cv;
+// using namespace cv::ximgproc;
 using namespace std;
 
 void trackbarChanged(int pos, void* data);

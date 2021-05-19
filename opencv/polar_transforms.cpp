@@ -2,7 +2,7 @@
 #include <opencv2/highgui.hpp>
 #include <iostream>
 
-//using namespace cv;
+// using namespace cv;
 
 static void
 help(void) {
@@ -58,7 +58,11 @@ main(int argc, char** argv) {
     cv::linearPolar(frame, lin_polar_img, center, radius, cv::INTER_LINEAR + cv::WARP_FILL_OUTLIERS);
 
     cv::logPolar(log_polar_img, recovered_log_polar, center, M, cv::WARP_INVERSE_MAP + cv::INTER_LINEAR);
-    cv::linearPolar(lin_polar_img, recovered_lin_polar_img, center, radius, cv::WARP_INVERSE_MAP + cv::INTER_LINEAR + cv::WARP_FILL_OUTLIERS);
+    cv::linearPolar(lin_polar_img,
+                    recovered_lin_polar_img,
+                    center,
+                    radius,
+                    cv::WARP_INVERSE_MAP + cv::INTER_LINEAR + cv::WARP_FILL_OUTLIERS);
 
     cv::imshow("Log-Polar", log_polar_img);
     cv::imshow("Linear-Polar", lin_polar_img);

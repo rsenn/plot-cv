@@ -18,7 +18,7 @@
 
 /**  GLOBAL VARIABLES  **/
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 string tutorial_path = "../../cv::samples/cpp/tutorial_code/calib3d/real_time_pose_estimation/"; // path to tutorial
@@ -72,17 +72,17 @@ main(int argc, char* argv[]) {
   help();
 
   const cv::String keys = "{help h        |      | print this message                   }"
-                      "{video v       |      | path to recorded video               }"
-                      "{model         |      | path to yml model                    }"
-                      "{mesh          |      | path to ply mesh                     }"
-                      "{keypoints k   |2000  | number of keypoints to detect        }"
-                      "{ratio r       |0.7   | cv::threshold for ratio test             }"
-                      "{iterations it |500   | RANSAC maximum iterations count      }"
-                      "{cv::error e       |2.0   | RANSAC reprojection errror           }"
-                      "{confidence c  |0.95  | RANSAC confidence                    }"
-                      "{inliers in    |30    | minimum inliers for Kalman update    }"
-                      "{method  pnp   |0     | PnP method: (0) ITERATIVE - (1) EPNP - (2) P3P - (3) DLS}"
-                      "{fast f        |true  | use of robust fast match             }";
+                          "{video v       |      | path to recorded video               }"
+                          "{model         |      | path to yml model                    }"
+                          "{mesh          |      | path to ply mesh                     }"
+                          "{keypoints k   |2000  | number of keypoints to detect        }"
+                          "{ratio r       |0.7   | cv::threshold for ratio test             }"
+                          "{iterations it |500   | RANSAC maximum iterations count      }"
+                          "{cv::error e       |2.0   | RANSAC reprojection errror           }"
+                          "{confidence c  |0.95  | RANSAC confidence                    }"
+                          "{inliers in    |30    | minimum inliers for Kalman update    }"
+                          "{method  pnp   |0     | PnP method: (0) ITERATIVE - (1) EPNP - (2) P3P - (3) DLS}"
+                          "{fast f        |true  | use of robust fast match             }";
   cv::CommandLineParser parser(argc, argv, keys);
 
   if(parser.has("help")) {
@@ -139,12 +139,12 @@ main(int argc, char* argv[]) {
 
   // Get the MODEL INFO
   vector<Point3f> list_points3d_model = model.get_points3d(); // list with model 3D coordinates
-  cv::Mat descriptors_model = model.get_descriptors();            // list with descriptors of each 3D coordinate
+  cv::Mat descriptors_model = model.get_descriptors();        // list with descriptors of each 3D coordinate
 
   // Create & Open Window
   cv::namedWindow("REAL TIME DEMO", WINDOW_KEEPRATIO);
 
-  cv::VideoCapture cap;          // instantiate VideoCapture
+  cv::VideoCapture cap;      // instantiate VideoCapture
   cap.open(video_read_path); // open a recorded video
 
   if(!cap.isOpened()) { // check if we succeeded
@@ -184,14 +184,14 @@ main(int argc, char* argv[]) {
 
     // -- Step 2: Find out the 2D/3D correspondences
 
-    vector<Point3f> list_points3d_model_match; // container for the model 3D coordinates found in the scene
+    vector<Point3f> list_points3d_model_match;     // container for the model 3D coordinates found in the scene
     vector<cv::Point2f> list_points2d_scene_match; // container for the model 2D coordinates found in the scene
 
     for(unsigned int match_index = 0; match_index < good_matches.size(); ++match_index) {
-      Point3f point3d_model = list_points3d_model[good_matches[match_index].trainIdx]; // 3D point from model
-      cv::Point2f point2d_scene = keypoints_scene[good_matches[match_index].queryIdx].pt;  // 2D point from the scene
-      list_points3d_model_match.push_back(point3d_model);                              // cv::add 3D point
-      list_points2d_scene_match.push_back(point2d_scene);                              // cv::add 2D point
+      Point3f point3d_model = list_points3d_model[good_matches[match_index].trainIdx];    // 3D point from model
+      cv::Point2f point2d_scene = keypoints_scene[good_matches[match_index].queryIdx].pt; // 2D point from the scene
+      list_points3d_model_match.push_back(point3d_model);                                 // cv::add 3D point
+      list_points2d_scene_match.push_back(point2d_scene);                                 // cv::add 2D point
     }
 
     // Draw outliers
@@ -213,9 +213,9 @@ main(int argc, char* argv[]) {
 
       // -- Step 4: Catch the inliers keypoints to draw
       for(int inliers_index = 0; inliers_index < inliers_idx.rows; ++inliers_index) {
-        int n = inliers_idx.at<int>(inliers_index);     // i-inlier
+        int n = inliers_idx.at<int>(inliers_index);         // i-inlier
         cv::Point2f point2d = list_points2d_scene_match[n]; // i-inlier point 2D
-        list_points2d_inliers.push_back(point2d);       // cv::add i-inlier to list
+        list_points2d_inliers.push_back(point2d);           // cv::add i-inlier to list
       }
 
       // Draw inliers points 2D

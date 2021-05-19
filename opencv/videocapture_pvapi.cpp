@@ -27,7 +27,7 @@
 #include <opencv2/videoio.hpp>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 int
 main() {

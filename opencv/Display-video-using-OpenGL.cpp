@@ -12,7 +12,7 @@
 #include <opencv2/videoio.hpp>
 #include <opencv2/core/opengl.hpp>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 GLfloat angle = 0.0;

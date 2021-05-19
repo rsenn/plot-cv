@@ -217,10 +217,7 @@ public:
       GSafePtr_release<T>(&ptr);
   }
 
-  inline
-  cv::operator T*() CV_NOEXCEPT {
-    return ptr;
-  }
+  inline cv::operator T*() CV_NOEXCEPT { return ptr; }
   inline cv::operator/*const*/ T*() const CV_NOEXCEPT { return (T*)ptr; } // there is no const correctness in Gst C API
 
   T*
@@ -278,11 +275,11 @@ public:
 
   inline void
   cv::swap(GSafePtr& o) CV_NOEXCEPT {
-    std::cv::swap(ptr, o.ptr);
+    std::swap(ptr, o.ptr);
   }
 
 private:
-  GSafePtr(const GSafePtr&);     // = disabled
+  GSafePtr(const GSafePtr&);         // = disabled
   GSafePtr& cv::operator=(const T*); // = disabled
 };
 

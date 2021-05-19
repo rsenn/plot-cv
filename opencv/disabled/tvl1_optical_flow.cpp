@@ -10,7 +10,7 @@
 #include "opencv2/video.hpp"
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 typedef unsigned char uchar;
 #define LOOP_NUM 10

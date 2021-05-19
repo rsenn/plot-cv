@@ -1,6 +1,6 @@
 #include </home/pi/surveillance_proj/events.h>
 
-//using namespace cv;
+// using namespace cv;
 // Event base class member functions
 
 Event::Event(time_t execution_deadline, time_t event_creation_time, string event_name, int priority) {
@@ -135,7 +135,7 @@ SurveillanceVideo::execute_event(cv::VideoCapture input_cap, int camera_index, s
           oVideoWriter.~cv::VideoWriter();
           return -1;
         } else {
-          oVideoWriter.cv::write(frame);
+          oVideoWriter.write(frame);
         }
       }
 

@@ -5,7 +5,7 @@
 #include <opencv2/calib3d.hpp>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 namespace {
 enum Pattern { CHESSBOARD, CIRCLES_GRID, ASYMMETRIC_CIRCLES_GRID };
@@ -18,7 +18,8 @@ calcChessboardCorners(cv::Size boardSize, float squareSize, vector<cv::Point3f>&
     case CHESSBOARD:
     case CIRCLES_GRID:
       for(int i = 0; i < boardSize.height; i++)
-        for(int j = 0; j < boardSize.width; j++) corners.push_back(cv::Point3f(float(j * squareSize), float(i * squareSize), 0));
+        for(int j = 0; j < boardSize.width; j++)
+          corners.push_back(cv::Point3f(float(j * squareSize), float(i * squareSize), 0));
       break;
 
     case ASYMMETRIC_CIRCLES_GRID:
@@ -40,14 +41,20 @@ computeHomography(const cv::Mat& R_1to2, const cv::Mat& tvec_1to2, const double 
 //! [compute-homography]
 
 cv::Mat
-computeHomography(const cv::Mat& R1, const cv::Mat& tvec1, const cv::Mat& R2, const cv::Mat& tvec2, const double d_inv, const cv::Mat& normal) {
+computeHomography(const cv::Mat& R1,
+                  const cv::Mat& tvec1,
+                  const cv::Mat& R2,
+                  const cv::Mat& tvec2,
+                  const double d_inv,
+                  const cv::Mat& normal) {
   cv::Mat homography = R2 * R1.t() + d_inv * (-R2 * R1.t() * tvec1 + tvec2) * normal.t();
   return homography;
 }
 
 //! [compute-c2Mc1]
 void
-computeC2MC1(const cv::Mat& R1, const cv::Mat& tvec1, const cv::Mat& R2, const cv::Mat& tvec2, cv::Mat& R_1to2, cv::Mat& tvec_1to2) {
+computeC2MC1(
+    const cv::Mat& R1, const cv::Mat& tvec1, const cv::Mat& R2, const cv::Mat& tvec2, cv::Mat& R_1to2, cv::Mat& tvec_1to2) {
   // c2Mc1 = c2Mo * oMc1 = c2Mo * c1Mo.inv()
   R_1to2 = R2 * R1.t();
   tvec_1to2 = R2 * (-R1.t() * tvec1) + tvec2;
@@ -184,8 +191,11 @@ main(int argc, char* argv[]) {
 
   cv::Size patternSize(parser.get<int>("width"), parser.get<int>("height"));
   float squareSize = (float)parser.get<double>("square_size");
-  homographyFromCameraDisplacement(
-      parser.get<cv::String>("image1"), parser.get<cv::String>("image2"), patternSize, squareSize, parser.get<cv::String>("intrinsics"));
+  homographyFromCameraDisplacement(parser.get<cv::String>("image1"),
+                                   parser.get<cv::String>("image2"),
+                                   patternSize,
+                                   squareSize,
+                                   parser.get<cv::String>("intrinsics"));
 
   return 0;
 }

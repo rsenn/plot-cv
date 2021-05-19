@@ -5,19 +5,19 @@
 #include <opencv2/highgui.hpp>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 namespace {
 enum Pattern { CHESSBOARD, CIRCLES_GRID, ASYMMETRIC_CIRCLES_GRID };
 
-Scalar
-randomColor(RNG& rng) {
+cv::Scalar
+randomColor(cv::RNG& rng) {
   int icolor = (unsigned int)rng;
   return cv::Scalar(icolor & 255, (icolor >> 8) & 255, (icolor >> 16) & 255);
 }
 
 void
-perspectiveCorrection(const string& img1Path, const string& img2Path, const cv::Size& patternSize, RNG& rng) {
+perspectiveCorrection(const string& img1Path, const string& img2Path, const cv::Size& patternSize, cv::RNG& rng) {
   cv::Mat img1 = cv::imread(img1Path);
   cv::Mat img2 = cv::imread(img2Path);
 

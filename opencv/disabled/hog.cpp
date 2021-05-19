@@ -8,7 +8,7 @@
 #include "opencv2/highgui/highgui.hpp"
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 bool help_showed = false;
 
@@ -256,14 +256,14 @@ App::run() {
     detector = cv::gpu::cv::HOGDescriptor::getPeopleDetector48x96();
 
   cv::gpu::cv::HOGDescriptor gpu_hog(win_size,
-                                 cv::Size(16, 16),
-                                 cv::Size(8, 8),
-                                 cv::Size(8, 8),
-                                 9,
-                                 cv::gpu::cv::HOGDescriptor::DEFAULT_WIN_SIGMA,
-                                 0.2,
-                                 gamma_corr,
-                                 cv::gpu::cv::HOGDescriptor::DEFAULT_NLEVELS);
+                                     cv::Size(16, 16),
+                                     cv::Size(8, 8),
+                                     cv::Size(8, 8),
+                                     9,
+                                     cv::gpu::cv::HOGDescriptor::DEFAULT_WIN_SIGMA,
+                                     0.2,
+                                     gamma_corr,
+                                     cv::gpu::cv::HOGDescriptor::DEFAULT_NLEVELS);
   cv::HOGDescriptor cpu_hog(win_size,
                             cv::Size(16, 16),
                             cv::Size(8, 8),
@@ -347,8 +347,15 @@ App::run() {
         cv::putText(img_to_show, "Mode: GPU", cv::Point(5, 25), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
       else
         cv::putText(img_to_show, "Mode: CPU", cv::Point(5, 25), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
-      cv::putText(img_to_show, "FPS (HOG only): " + hogWorkFps(), cv::Point(5, 65), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
-      cv::putText(img_to_show, "FPS (total): " + workFps(), cv::Point(5, 105), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
+      cv::putText(img_to_show,
+                  "FPS (HOG only): " + hogWorkFps(),
+                  cv::Point(5, 65),
+                  FONT_HERSHEY_SIMPLEX,
+                  1.,
+                  cv::Scalar(255, 100, 0),
+                  2);
+      cv::putText(
+          img_to_show, "FPS (total): " + workFps(), cv::Point(5, 105), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
       cv::imshow("opencv_gpu_hog", img_to_show);
 
       if(args.src_is_video || args.src_is_camera)

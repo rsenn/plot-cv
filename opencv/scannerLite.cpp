@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <string>
 #include <vector>
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 /**
@@ -51,7 +51,7 @@ cmp_x(const Line& p1, const Line& p2) {
  * @param l2
  * @return Intersect Point
  */
-Point2f
+cv::Point2f
 computeIntersect(Line l1, Line l2) {
   int x1 = l1._p1.x, x2 = l1._p2.x, y1 = l1._p1.y, y2 = l1._p2.y;
   int x3 = l2._p1.x, x4 = l2._p2.x, y3 = l2._p1.y, y4 = l2._p2.y;
@@ -126,13 +126,18 @@ scan(cv::String file, bool debug = true) {
   if(debug) {
     cv::line(img_proc, horizontals[0]._p1, horizontals[0]._p2, cv::Scalar(0, 255, 0), 2, cv::LINE_AA);
     cv::line(img_proc,
-         horizontals[horizontals.size() - 1]._p1,
-         horizontals[horizontals.size() - 1]._p2,
-         cv::Scalar(0, 255, 0),
-         2,
-         cv::LINE_AA);
+             horizontals[horizontals.size() - 1]._p1,
+             horizontals[horizontals.size() - 1]._p2,
+             cv::Scalar(0, 255, 0),
+             2,
+             cv::LINE_AA);
     cv::line(img_proc, verticals[0]._p1, verticals[0]._p2, cv::Scalar(255, 0, 0), 2, cv::LINE_AA);
-    cv::line(img_proc, verticals[verticals.size() - 1]._p1, verticals[verticals.size() - 1]._p2, cv::Scalar(255, 0, 0), 2, cv::LINE_AA);
+    cv::line(img_proc,
+             verticals[verticals.size() - 1]._p1,
+             verticals[verticals.size() - 1]._p2,
+             cv::Scalar(255, 0, 0),
+             2,
+             cv::LINE_AA);
   }
 
   /* perspective transformation */

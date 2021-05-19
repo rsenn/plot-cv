@@ -20,7 +20,7 @@
 #include <iostream>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 cv::Mat image, mask, bgdModel, fgdModel, result, resultGrey;
 int width, height;

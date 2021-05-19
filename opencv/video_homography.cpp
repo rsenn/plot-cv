@@ -20,8 +20,8 @@
 #include <vector>
 
 using namespace std;
-//using namespace cv;
-//using namespace cv::xfeatures2d;
+// using namespace cv;
+// using namespace cv::xfeatures2d;
 
 static void
 help(char** av) {

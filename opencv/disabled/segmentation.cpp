@@ -30,7 +30,7 @@ std::string keys = "{ help  h     | | Print help message. }"
                    "2: OpenCL fp16 (half-float precision), "
                    "3: VPU }";
 
-//using namespace cv;
+// using namespace cv;
 using namespace cv::dnn;
 
 std::vector<std::string> classes;
@@ -174,9 +174,9 @@ colorizeSegmentation(const cv::Mat& score, cv::Mat& segm) {
   } else if(chns != (int)colors.size()) {
     CV_Error(cv::Error::StsError,
              cv::format("Number of output classes does not match "
-                    "number of colors (%d != %zu)",
-                    chns,
-                    colors.size()));
+                        "number of colors (%d != %zu)",
+                        chns,
+                        colors.size()));
   }
 
   cv::Mat maxCl = cv::Mat::zeros(rows, cols, CV_8UC1);
@@ -212,9 +212,9 @@ showLegend() {
     if((int)colors.size() != numClasses) {
       CV_Error(cv::Error::StsError,
                cv::format("Number of output classes does not match "
-                      "number of labels (%zu != %zu)",
-                      colors.size(),
-                      classes.size()));
+                          "number of labels (%zu != %zu)",
+                          colors.size(),
+                          classes.size()));
     }
     legend.create(kBlockHeight * numClasses, 200, CV_8UC3);
     for(int i = 0; i < numClasses; i++) {

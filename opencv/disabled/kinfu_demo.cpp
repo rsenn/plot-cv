@@ -12,8 +12,8 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/rgbd/kinfu.hpp>
 
-//using namespace cv;
-//using namespace cv::kinfu;
+// using namespace cv;
+// using namespace cv::kinfu;
 using namespace std;
 
 #ifdef HAVE_OPENCV_VIZ
@@ -417,11 +417,12 @@ main(int argc, char** argv) {
 
     int64 newTime = cv::getTickCount();
     cv::putText(rendered,
-            cv::format("FPS: %2d press R to reset, P to pause, Q to quit", (int)(cv::getTickFrequency() / (newTime - prevTime))),
-            cv::Point(0, rendered.rows - 1),
-            FONT_HERSHEY_SIMPLEX,
-            0.5,
-            cv::Scalar(0, 255, 255));
+                cv::format("FPS: %2d press R to reset, P to pause, Q to quit",
+                           (int)(cv::getTickFrequency() / (newTime - prevTime))),
+                cv::Point(0, rendered.rows - 1),
+                FONT_HERSHEY_SIMPLEX,
+                0.5,
+                cv::Scalar(0, 255, 255));
     prevTime = newTime;
 
     cv::imshow("render", rendered);

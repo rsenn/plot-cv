@@ -8,8 +8,8 @@
 #include <opencv2/objdetect.hpp>
 #include <opencv2/face/mace.hpp>
 #include <iostream>
-//using namespace cv;
-//using namespace cv::face;
+// using namespace cv;
+// using namespace cv::face;
 using namespace std;
 
 enum STATE { NEUTRAL, RECORD, PREDICT };
@@ -24,17 +24,17 @@ const char* help = "press 'r' to record images. once N trainimages were recorded
 int
 main(int argc, char** argv) {
   cv::CommandLineParser parser(argc,
-                           argv,
-                           "{ help h usage ? ||     show this help message }"
-                           "{ cascade c      ||     (required) path to a cascade file for cv::face detection }"
-                           "{ pre p          ||     load a pretrained mace filter file, saved from previous session  "
-                           "(e.g. my.xml.gz) }"
-                           "{ num n          |50|   num train images }"
-                           "{ size s         |64|   image size }"
-                           "{ twofactor t    ||     pass phrase(text) for 2 factor authentification.\n"
-                           "                     (random convolute images seeded with the crc of this)\n"
-                           "                     users will get prompted to guess the secrect, additional to the image. "
-                           "}");
+                               argv,
+                               "{ help h usage ? ||     show this help message }"
+                               "{ cascade c      ||     (required) path to a cascade file for cv::face detection }"
+                               "{ pre p          ||     load a pretrained mace filter file, saved from previous session  "
+                               "(e.g. my.xml.gz) }"
+                               "{ num n          |50|   num train images }"
+                               "{ size s         |64|   image size }"
+                               "{ twofactor t    ||     pass phrase(text) for 2 factor authentification.\n"
+                               "                     (random convolute images seeded with the crc of this)\n"
+                               "                     users will get prompted to guess the secrect, additional to the image. "
+                               "}");
   cv::String cascade = parser.get<cv::String>("cascade");
   if(parser.has("help") || cascade.empty()) {
     parser.printMessage();
@@ -49,16 +49,16 @@ main(int argc, char** argv) {
   int Z = parser.get<int>("size");
   int state = NEUTRAL;
 
-  cv::Ptr<MACE> mace;
+  cv::Ptr<cv::face::MACE> mace;
   if(!pre.empty()) { // load pretrained model, if available
-    mace = MACE::load(pre);
+    mace = cv::face::MACE::load(pre);
     if(mace->empty()) {
       cerr << "loading the MACE failed !" << endl;
       return -1;
     }
     state = PREDICT;
   } else {
-    mace = MACE::create(Z);
+    mace = cv::face::MACE::create(Z);
     if(!two.empty()) {
       cout << "'" << two << "' initial passphrase" << endl;
       mace->salt(two);

@@ -45,7 +45,8 @@ Configuration_Manager::init_scheduler() {
   cout << "Initializing camera at camera_index=" << camera_index << "...\n";
 
   if(!camera_uninit.open(camera_index)) {
-    cout << "cv::Error: Configuration_Manager::init_scheduler() failed to open camera at camera_index=" << camera_index << ".\n";
+    cout << "cv::Error: Configuration_Manager::init_scheduler() failed to open camera at camera_index=" << camera_index
+         << ".\n";
     cout << "Returning to main menu." << endl;
     return -1;
   } else {

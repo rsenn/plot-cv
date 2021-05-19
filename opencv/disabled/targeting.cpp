@@ -14,7 +14,7 @@
 #include <vector>
 #include <stdio.h>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 bool editcurrent = false; // is true just after the user selects a pixel. when true, the program

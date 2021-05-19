@@ -9,7 +9,7 @@
 #include <string>
 #include <sstream>
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 int thresholdValue = 155;
 int thresholdValueHSV = 100;

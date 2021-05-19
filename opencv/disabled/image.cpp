@@ -48,22 +48,22 @@ FindCircle() {
     f_line = 1;
   for(int i = 0; i < circles.size(); i++) {
     cv::Point center(circles[i][0],
-                 circles[i][1]); // declare variable that are two integer type variables(x,y).
+                     circles[i][1]); // declare variable that are two integer type variables(x,y).
     cv::Point g_center(circles[i][0], circles[i][1]);
     if(f_line == true) {
       cv::line(frame,
-           cv::Point(g_center),
-           cv::Point((g_center.x + efrt_roll), (g_center.y + efrt_pitch)),
-           cv::Scalar(0, 0, 255),
-           5,
-           cv::LINE_AA);
+               cv::Point(g_center),
+               cv::Point((g_center.x + efrt_roll), (g_center.y + efrt_pitch)),
+               cv::Scalar(0, 0, 255),
+               5,
+               cv::LINE_AA);
       // cv::line(frame, g_center, (g_center[0][0], (g_center[0][1] + efrt_pitch)), cv::Scalar(0, 0, 255),
       // 5, cv::LINE_AA);
       f_line = 0;
     }
     radius = cvRound(circles[i][2]); // rounding the data number before assign to radius.
     cv::circle(frame, center, radius, cv::Scalar(0, 0, 255), 1, 8,
-           0); // drawing a cv::circle and the cv::circle is solid
+               0); // drawing a cv::circle and the cv::circle is solid
     cv::circle(frame, center, 1, cv::Scalar(0, 255, 0), 1, 8, 0);
 
     ROS_INFO("Center X: [%i] , Y: [%i] ", center.x, center.y);

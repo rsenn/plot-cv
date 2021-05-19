@@ -6,7 +6,7 @@
 #include <opencv2/highgui.hpp>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 int
 nonEmptyFrames(string movieFileName) {

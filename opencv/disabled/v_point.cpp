@@ -5,7 +5,7 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/opencv.hpp>
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 #define pi 3.14159265358979323846
 
 int
@@ -104,10 +104,10 @@ main(int argc, char** argv) {
             // msg_xy.angular.x = contours[0][0].x; msg_xy.angular.y = contours[0][0].y;
             // msg_xy.linear.x = double(320.0); msg_xy.linear.y = double(240.0);
             cv::line(src,
-                 cv::Point(contours[0][0].x, contours[0][0].y),
-                 cv::Point(contours[0][0].x, contours[0][0].y),
-                 cv::Scalar(0, 255, 0),
-                 5);
+                     cv::Point(contours[0][0].x, contours[0][0].y),
+                     cv::Point(contours[0][0].x, contours[0][0].y),
+                     cv::Scalar(0, 255, 0),
+                     5);
           }
           cv::line(src, center, center, cv::Scalar(0, 0, 255), 10);
           // contours[0][0].x = 0; contours[0][0].y = 0;
@@ -120,7 +120,7 @@ main(int argc, char** argv) {
     // pub_msg_xy.publish(msg_xy);
     cv::imshow("src", src);
     // cv::imshow("threshold_contour", cv::threshold);
-    // writer.cv::write(src);
+    // writer.write(src);
     if(cv::waitKey(16) == 27)
       break;
   }

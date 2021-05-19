@@ -13,7 +13,7 @@
 #include <stdlib.h>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 void load_arguments(int argc, char* argv[]);
 bool detect_shape();

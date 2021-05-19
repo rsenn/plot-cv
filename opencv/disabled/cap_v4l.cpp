@@ -1408,7 +1408,9 @@ CvCaptureCAM_V4L::convertToRgb(const Buffer& currentBuffer) {
       cv::cvtColor(temp, destination, cv::COLOR_GRAY2BGR);
       return;
     }
-    case V4L2_PIX_FMT_GREY: cv::cvtColor(cv::Mat(imageSize, CV_8UC1, currentBuffer.start), destination, cv::COLOR_GRAY2BGR); break;
+    case V4L2_PIX_FMT_GREY:
+      cv::cvtColor(cv::Mat(imageSize, CV_8UC1, currentBuffer.start), destination, cv::COLOR_GRAY2BGR);
+      break;
     case V4L2_PIX_FMT_BGR24:
     default:
       memcpy((char*)frame.imageData,

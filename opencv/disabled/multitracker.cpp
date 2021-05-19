@@ -35,7 +35,7 @@
 #define GREEN "\033[32m" /* Green */
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 int
 main(int argc, char** argv) {

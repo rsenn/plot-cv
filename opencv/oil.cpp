@@ -5,7 +5,7 @@
 #include <opencv2/xphoto/oilpainting.hpp>
 #include <iostream>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 static void TrackSlider(int, void*);
@@ -17,7 +17,7 @@ static void addSlider(cv::String sliderName,
                       int* valSlider,
                       void (*f)(int, void*),
                       void* r);
-vector<int> colorSpace = {cv::COLOR_BGR2GRAY, cv::COLOR_BGR2HSV, COLOR_BGR2YUV, COLOR_BGR2XYZ};
+vector<int> colorSpace = {cv::COLOR_BGR2GRAY, cv::COLOR_BGR2HSV, cv::COLOR_BGR2YUV, cv::COLOR_BGR2XYZ};
 
 struct OilImage {
   cv::String winName = "Oil painting";
@@ -28,12 +28,12 @@ struct OilImage {
 };
 
 const cv::String keys = "{Help h usage ? help  |     | Print this message   }"
-                    "{v                    | 0   | video index }"
-                    "{a                    | 700   | API index }"
-                    "{s                    | 10   | neighbouring size }"
-                    "{d                    | 1   | dynamic ratio }"
-                    "{c                    | 0   | color space }"
-                    "{@arg1                |     | file path}";
+                        "{v                    | 0   | video index }"
+                        "{a                    | 700   | API index }"
+                        "{s                    | 10   | neighbouring size }"
+                        "{d                    | 1   | dynamic ratio }"
+                        "{c                    | 0   | color space }"
+                        "{@arg1                |     | file path}";
 
 int
 main(int argc, char* argv[]) {

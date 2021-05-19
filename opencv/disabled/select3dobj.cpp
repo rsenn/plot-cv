@@ -17,7 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 const char* helphelp = "\nThis program's purpose is to collect data sets of an object and its segmentation mask.\n"
@@ -276,8 +276,11 @@ select3DBox(const string& windowname,
 }
 
 static bool
-readModelViews(
-    const string& filename, vector<Point3f>& box, vector<string>& imagelist, vector<cv::Rect>& roiList, vector<Vec6f>& poseList) {
+readModelViews(const string& filename,
+               vector<Point3f>& box,
+               vector<string>& imagelist,
+               vector<cv::Rect>& roiList,
+               vector<Vec6f>& poseList) {
   imagelist.resize(0);
   roiList.resize(0);
   poseList.resize(0);

@@ -3,7 +3,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 int thresh = 100;

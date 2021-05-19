@@ -10,7 +10,7 @@
 #include <math.h>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 int
 main(int argc, char* argv[]) {
 

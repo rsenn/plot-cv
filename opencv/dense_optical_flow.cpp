@@ -14,19 +14,19 @@
 #include <opencv2/video.hpp>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
-static Mat
-getVisibleFlow(InputArray flow) {
+static cv::Mat
+getVisibleFlow(cv::InputArray flow) {
   vector<cv::UMat> flow_vec;
   cv::split(flow, flow_vec);
-  cv::UMat cv::magnitude, angle;
-  cv::cartToPolar(flow_vec[0], flow_vec[1], cv::magnitude, angle, true);
-  cv::magnitude.convertTo(magnitude, CV_32F, 0.2);
+  cv::UMat magnitude, angle;
+  cv::cartToPolar(flow_vec[0], flow_vec[1], magnitude, angle, true);
+  magnitude.convertTo(magnitude, CV_32F, 0.2);
   vector<cv::UMat> hsv_vec;
   hsv_vec.push_back(angle);
   hsv_vec.push_back(cv::UMat::ones(angle.size(), angle.type()));
-  hsv_vec.push_back(cv::magnitude);
+  hsv_vec.push_back(magnitude);
   cv::UMat hsv;
   cv::merge(hsv_vec, hsv);
   cv::Mat img;
@@ -34,7 +34,7 @@ getVisibleFlow(InputArray flow) {
   return img;
 }
 
-static Size
+static cv::Size
 fitSize(const cv::Size& sz, const cv::Size& bounds) {
   CV_Assert(!sz.empty());
   if(sz.width > bounds.width || sz.height > bounds.height) {
@@ -82,7 +82,7 @@ main(int argc, const char* argv[]) {
   if(algorithm == "fb")
     alg = cv::FarnebackOpticalFlow::create();
   else if(algorithm == "dis")
-    alg = cv::DISOpticalFlow::create(DISOpticalFlow::PRESET_FAST);
+    alg = cv::DISOpticalFlow::create(cv::DISOpticalFlow::PRESET_FAST);
   else {
     cout << "Invalid algorithm: " << algorithm << endl;
     return 3;
@@ -116,7 +116,7 @@ main(int argc, const char* argv[]) {
         buf << "Algo: " << algorithm << " | "
             << "Mode: " << (useCPU ? "CPU" : "GPU") << " | "
             << "FPS: " << fixed << setprecision(1) << (cv::getTickFrequency() / (double)t);
-        cv::putText(img, buf.str(), cv::Point(10, 30), FONT_HERSHEY_PLAIN, 2.0, cv::Scalar(0, 0, 255), 2, cv::LINE_AA);
+        cv::putText(img, buf.str(), cv::Point(10, 30), cv::FONT_HERSHEY_PLAIN, 2.0, cv::Scalar(0, 0, 255), 2, cv::LINE_AA);
         cv::imshow("Dense optical flow field", img);
       }
     }

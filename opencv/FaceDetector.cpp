@@ -8,7 +8,7 @@
 #include <FaceDetector.h>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 /* FACE_XML_CLASSIFIER is set in the cmake */
 const string face_cascade_name = FACE_XML_CLASSIFIER;
@@ -55,7 +55,7 @@ DetectAndDisplayFaces(cv::Mat frame, cv::CascadeClassifier face_cascade) {
     /* Creation of the two points with the cv::face detected coordenates */
     cv::Point pt1(faces[CurrentFaceIndex].x, faces[CurrentFaceIndex].y);
     cv::Point pt2((faces[CurrentFaceIndex].x + faces[CurrentFaceIndex].height),
-              (faces[CurrentFaceIndex].y + faces[CurrentFaceIndex].width));
+                  (faces[CurrentFaceIndex].y + faces[CurrentFaceIndex].width));
 
     /* Create a green cv::rectangle box to attach to the frame */
     cv::rectangle(frame, pt1, pt2, cv::Scalar(0, 255, 0), 2, 8, 0);

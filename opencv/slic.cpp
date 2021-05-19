@@ -9,8 +9,8 @@
 #include <stdio.h>
 #include <iostream>
 
-//using namespace cv;
-//using namespace cv::ximgproc;
+// using namespace cv;
+// using namespace cv::ximgproc;
 using namespace std;
 
 static const char* window_name = "SLIC Superpixels";
@@ -24,7 +24,7 @@ int
 main(int argc, char** argv) {
   cv::CommandLineParser cmd(argc, argv, keys);
   if(cmd.has("help")) {
-    cmd.about("This program demonstrates SLIC superpixels using OpenCV class SuperpixelSLIC.\n"
+    cmd.about("This program demonstrates SLIC superpixels using OpenCV class cv::ximgproc::SuperpixelSLIC.\n"
               "If no image file is supplied, try to open a webcam.\n"
               "Use [space] to toggle output mode, ['q' or 'Q' or 'esc'] to exit.\n");
     cmd.printMessage();
@@ -81,7 +81,8 @@ main(int argc, char** argv) {
 
     double t = (double)cv::getTickCount();
 
-    cv::Ptr<SuperpixelSLIC> slic = createSuperpixelSLIC(converted, algorithm + SLIC, region_size, float(ruler));
+    cv::Ptr<cv::ximgproc::SuperpixelSLIC> slic =
+        cv::ximgproc::createSuperpixelSLIC(converted, algorithm + cv::ximgproc::SLIC, region_size, float(ruler));
     slic->iterate(num_iterations);
     if(min_element_size > 0)
       slic->enforceLabelConnectivity(min_element_size);

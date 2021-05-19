@@ -6,7 +6,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include "Serial.h"
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 class Entity {
 public:
@@ -42,8 +42,8 @@ public:
   }
 
 private:
-  int xPos, yPos;        // x y coordinates of the object
-  string type;           // type of object (player, ball, goal
+  int xPos, yPos;            // x y coordinates of the object
+  string type;               // type of object (player, ball, goal
   cv::Scalar HSVmin, HSVmax; // to store colour of the object
   cv::Scalar Color;          // colour for the text displayed
 };

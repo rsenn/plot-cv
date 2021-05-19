@@ -8,7 +8,7 @@
 #include "opencv2/imgproc.hpp"
 #include <iostream>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 /// Global variables
@@ -88,7 +88,7 @@ goodFeaturesToTrack_Demo(int, void*) {
   /// Set the needed parameters to find the refined corners
   cv::Size winSize = cv::Size(5, 5);
   cv::Size zeroZone = cv::Size(-1, -1);
-  cv::TermCriteria criteria = cv::TermCriteria(TermCriteria::EPS + cv::TermCriteria::COUNT, 40, 0.001);
+  cv::TermCriteria criteria = cv::TermCriteria(cv::TermCriteria::EPS + cv::TermCriteria::COUNT, 40, 0.001);
 
   /// Calculate the refined corner locations
   cv::cornerSubPix(src_gray, corners, winSize, zeroZone, criteria);

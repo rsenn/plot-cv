@@ -4,7 +4,7 @@
 
 #include <cstdio>
 
-//using namespace cv;
+// using namespace cv;
 
 /** Function Headers */
 void detectAndDisplay(cv::Mat frame);
@@ -71,15 +71,15 @@ detectAndDisplay(cv::Mat frame) {
     const cv::Point center(faces[i].x + faces[i].width / 2, faces[i].y + faces[i].height / 2);
 
     cv::ellipse(frame, // image
-            center,
-            cv::Size(faces[i].width / 2, faces[i].height / 2), // axes
-            0,                                             // angle
-            0,
-            360,                 // startAngle, endAngle
-            cv::Scalar(255, 0, 255), // color
-            4,
-            8,
-            0); // thickness, lineType, shift
+                center,
+                cv::Size(faces[i].width / 2, faces[i].height / 2), // axes
+                0,                                                 // angle
+                0,
+                360,                     // startAngle, endAngle
+                cv::Scalar(255, 0, 255), // color
+                4,
+                8,
+                0); // thickness, lineType, shift
 
     cv::Mat faceROI = frame_gray(faces[i]);
   }

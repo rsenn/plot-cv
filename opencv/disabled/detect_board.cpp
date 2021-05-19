@@ -42,7 +42,7 @@ the use of this software, even if advised of the possibility of such damage.
 #include <iostream>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 namespace {
 const char* about = "Pose estimation using a ArUco Planar Grid board";
@@ -169,7 +169,8 @@ main(int argc, char* argv[]) {
   float axisLength = 0.5f * ((float)min(markersX, markersY) * (markerLength + markerSeparation) + markerSeparation);
 
   // create board object
-  Ptr<cv::aruco::GridBoard> gridboard = cv::aruco::GridBoard::create(markersX, markersY, markerLength, markerSeparation, dictionary);
+  Ptr<cv::aruco::GridBoard> gridboard =
+      cv::aruco::GridBoard::create(markersX, markersY, markerLength, markerSeparation, dictionary);
   Ptr<cv::aruco::Board> board = gridboard.staticCast<aruco::Board>();
 
   double totalTime = 0;

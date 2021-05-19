@@ -8,7 +8,7 @@
 
 #include <time.h>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 cv::VideoCapture cap(0);
@@ -54,11 +54,11 @@ main() {
   cv::resizeWindow("Camera", 300, 300);
   // Tao Trackbar de chon ham lay nguong
   cv::createTrackbar("Kieu: \n 0: Binary \n 1: Binary dao \n 2: Cat ngon \n 3: To Zero \n 4: To Zero "
-                 "dao \n 5: Mau sac",
-                 "Camera",           // Cua so hien thi
-                 &threshold_type,    // Bien chiu tac dong cua trackbar nay
-                 5,                  // Gia tri toi da cua bien (cua thanh truot)
-                 Threshold_Convert); // Ham thuc thi khi keo thanh truot
+                     "dao \n 5: Mau sac",
+                     "Camera",           // Cua so hien thi
+                     &threshold_type,    // Bien chiu tac dong cua trackbar nay
+                     5,                  // Gia tri toi da cua bien (cua thanh truot)
+                     Threshold_Convert); // Ham thuc thi khi keo thanh truot
   // Tao trackbar de chon gia tri nguong
   cv::createTrackbar("Gia tri nguong", "Camera", &threshold_value, max_value, Threshold_Convert);
   // Bat khung hinh dau tien cho trackbar
@@ -80,9 +80,9 @@ main() {
   bool showCrosshair = false;
   bool fromCenter = false;
   cv::Rect2d r = cv::selectROI("Camera",     // Ten cua so
-                       frame_result, // Ma tran chua hinh anh
-                       fromCenter,
-                       showCrosshair);
+                               frame_result, // Ma tran chua hinh anh
+                               fromCenter,
+                               showCrosshair);
   // Crop image
   cv::Mat imageCrop = frame_result(r); // Cat hinh anh co kich co va vi tri r tu frame
   cv::imshow("Crop", imageCrop);
@@ -106,7 +106,7 @@ main() {
   }
   /*---------- Doc camera lien tuc -------------------*/
   cv::Point pt[1024]; // mang chua cac vi tri dich chuyen cua khung hinh mau
-  int pt_idx = 0; // bien kiem soat vi tri hien tai cua mang pt
+  int pt_idx = 0;     // bien kiem soat vi tri hien tai cua mang pt
   while(1) {
     time_t rawtime;      // bien lay thoi gian
     struct tm* timeinfo; // struct lay thoi gian

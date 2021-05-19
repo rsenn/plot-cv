@@ -14,7 +14,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 //#include <opencv2/gpu/gpu.hpp>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 using namespace boost::asio::ip;
 
@@ -117,7 +117,7 @@ thresh_callback(int, void*) {
 
   cv::cvtColor(frame, frame_hsv, cv::COLOR_BGR2HSV); // Convert the captured frame from BGR to HSV
   cv::inRange(frame_hsv, cv::Scalar(lowH, lowS, lowV), cv::Scalar(highH, highS, highV),
-          frame_thresh); // Threshold the image
+              frame_thresh); // Threshold the image
 
   //#pragma omp task
   // denoiseMat(frame_thresh, 4);
@@ -164,14 +164,14 @@ thresh_callback(int, void*) {
       if(area > largest_area)
         largest_rect = cv::Point((rect.x + rect.width) / 2, (rect.y + rect.height) / 2);
       cv::drawContours(drawing,
-                   contours_poly,
-                   i,
-                   rect_colour,
-                   -1, // cv::line thickness
-                   8,  // cv::line type
-                   hierarchy,
-                   0,            // max level to draw
-                   cv::Point(0, 0)); // cv::Point() offset
+                       contours_poly,
+                       i,
+                       rect_colour,
+                       -1, // cv::line thickness
+                       8,  // cv::line type
+                       hierarchy,
+                       0,                // max level to draw
+                       cv::Point(0, 0)); // cv::Point() offset
     }
     if(contours_poly[i].size() >= 12 || isCircle) {
       if(radius[i] > largest_radius)
@@ -179,14 +179,14 @@ thresh_callback(int, void*) {
       // cv::circle(drawing, centre[i], 3, circle_colour, -1, 4, 0);
       // cv::circle(drawing, centre[i], radius[i], circle_colour, -1, 4, 0);
       cv::drawContours(drawing,
-                   contours_poly,
-                   i,
-                   circle_colour,
-                   -1, // cv::line thickness
-                   8,  // cv::line type
-                   hierarchy,
-                   0,            // max level to draw
-                   cv::Point(0, 0)); // cv::Point() offset
+                       contours_poly,
+                       i,
+                       circle_colour,
+                       -1, // cv::line thickness
+                       8,  // cv::line type
+                       hierarchy,
+                       0,                // max level to draw
+                       cv::Point(0, 0)); // cv::Point() offset
     }
   }
   message += "cv::circle: ";

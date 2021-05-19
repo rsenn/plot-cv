@@ -7,7 +7,7 @@
 #include <camera.h>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 /*
 //------Globals-----NOT BEING USED

@@ -5,7 +5,7 @@
 #include <opencv2/videoio.hpp>
 #include <opencv2/video.hpp>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 int
@@ -38,7 +38,7 @@ main(int argc, char** argv) {
 
   // Create some random colors
   vector<cv::Scalar> colors;
-  RNG rng;
+  cv::RNG rng;
   for(int i = 0; i < 100; i++) {
     int r = rng.uniform(0, 256);
     int g = rng.uniform(0, 256);

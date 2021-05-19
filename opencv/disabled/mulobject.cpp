@@ -2,7 +2,7 @@
 #include "objecttracking.h"
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 TCHAR* myChar = "COM7";
 tstring commPortName(myChar);
 Serial serial(commPortName, 9600);
@@ -498,27 +498,27 @@ myFunc(cv::Mat& cameraFeed, Entity& playerfront, Entity& playerrear, Entity& bal
   // playerfront
   cv::cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
   cv::inRange(HSV, playerfront.getHSVmin(), playerfront.getHSVmax(),
-          cv::threshold); // enter the range of hsv for the object
+              cv::threshold); // enter the range of hsv for the object
   morphOps(cv::threshold);
   trackFilteredObject(playerfront, cv::threshold, HSV,
                       cameraFeed); // passes the object to the tracking function //playerrear
   cv::cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
   cv::inRange(HSV, playerrear.getHSVmin(), playerrear.getHSVmax(),
-          cv::threshold); // enter the range of hsv for the object
+              cv::threshold); // enter the range of hsv for the object
   morphOps(cv::threshold);
   trackFilteredObject(playerrear, cv::threshold, HSV,
                       cameraFeed); // passes the object to the tracking function
   // ball
   cv::cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
   cv::inRange(HSV, goal.getHSVmin(), goal.getHSVmax(),
-          cv::threshold); // enter the range of hsv for the object
+              cv::threshold); // enter the range of hsv for the object
   morphOps(cv::threshold);
   trackFilteredObject(goal, cv::threshold, HSV,
                       cameraFeed); // passes the object to the tracking function
   // goal
   cv::cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
   cv::inRange(HSV, ball.getHSVmin(), ball.getHSVmax(),
-          cv::threshold); // enter the range of hsv for the object
+              cv::threshold); // enter the range of hsv for the object
   morphOps(cv::threshold);
   trackFilteredObject(ball, cv::threshold, HSV,
                       cameraFeed); // passes the object to the tracking function

@@ -12,7 +12,7 @@
 #include <vector>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 const string WindowName = "Face Detection example";
 

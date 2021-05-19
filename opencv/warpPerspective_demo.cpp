@@ -4,7 +4,7 @@
 #include <opencv2/calib3d.hpp>
 #include <iostream>
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 static void
 help(char** argv) {
   // print a welcome message, and the OpenCV version
@@ -83,7 +83,7 @@ main(int argc, char** argv) {
       cv::Mat H = cv::findHomography(roi_corners, dst_corners); // get homography
       cv::Mat warped_image;
       cv::warpPerspective(original_image, warped_image, H,
-                      warped_image_size); // do perspective transformation
+                          warped_image_size); // do perspective transformation
       cv::imshow("Warped Image", warped_image);
     }
     char c = (char)cv::waitKey(10);

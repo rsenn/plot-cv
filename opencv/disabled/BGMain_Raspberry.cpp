@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 bool isLeftSideDetected = false; // 摄像头视角的左边三分之一区域是否被触发
 bool isMiddleSideDetected = false;
@@ -400,7 +400,7 @@ main(int argc, char** argv) {
       } else if(readPicCount == 100) {
         readPicCount++;
         cv::cvtColor(g_srcImage, hsvImage_base,
-                 COLOR_BGR2HSV); //【3】 将图像由BGR色彩空间转换到 HSV色彩空间
+                     COLOR_BGR2HSV); //【3】 将图像由BGR色彩空间转换到 HSV色彩空间
         hsvImage_halfDown =
             hsvImage_base(cv::Rect(LEFT_TOP_X, LEFT_TOP_Y, RIGHT_BOTTOM_X - LEFT_TOP_X, RIGHT_BOTTOM_Y - LEFT_TOP_Y));
         if(showOutput) { //显示部分框选画面
@@ -421,15 +421,15 @@ main(int argc, char** argv) {
         }
         // 【5】分别计算基准图像，半身基准图像的HSV直方图:
         cv::calcHist(&hsvImage_base_template,
-                 1,
-                 channels,
-                 cv::Mat(),
-                 baseHist,
-                 2,
-                 histSize,
-                 ranges,
-                 true,
-                 false); //计算模板图像的直方图
+                     1,
+                     channels,
+                     cv::Mat(),
+                     baseHist,
+                     2,
+                     histSize,
+                     ranges,
+                     true,
+                     false); //计算模板图像的直方图
         cv::normalize(baseHist, baseHist, 0, 1, NORM_MINMAX, -1, cv::Mat());
 
         cv::calcHist(&hsvImage_halfDown, 1, channels, cv::Mat(), halfDownHist, 2, histSize, ranges, true, false);

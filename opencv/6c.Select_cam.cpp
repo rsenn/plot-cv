@@ -3,12 +3,12 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 cv::Mat frame;
 cv::Point selected_point;       // Vi tri vua duoc nhan
-int selected_npts = 0;      // Bien dem so luong vi tri da chon
+int selected_npts = 0;          // Bien dem so luong vi tri da chon
 vector<cv::Point> selected_pts; // Danh sach cac vi tri
 cv::Rect2d r;
 void mouseHandler(int, int, int, int, void*);
@@ -30,11 +30,11 @@ main() {
       printf("ERROR: khong the bat hinh\r\n");
       break;
     }
-    cv::rectangle(frame,                 // Anh duoc ve
-              r,                     // Diem ket thuc
-              cv::Scalar(255, 255, 255), // Mau sac
-              2,                     // Do day net
-              cv::LINE_8);
+    cv::rectangle(frame,                     // Anh duoc ve
+                  r,                         // Diem ket thuc
+                  cv::Scalar(255, 255, 255), // Mau sac
+                  2,                         // Do day net
+                  cv::LINE_8);
     cv::imshow("Camera", frame);
     /*-----------------------------------------------*/
     cv::waitKey(1);
@@ -53,12 +53,12 @@ mouseHandler(int event, int x, int y, int, void*) {
     selected_point = cv::Point(x, y); // Lay toa do diem duoc chon
     printf("[MOUSE] Left-Down: x=%d,y=%d,n=%d\r\n", x, y, selected_npts);
     // Ve diem tron danh dau
-    cv::circle(frame,                 // Anh duoc ve
-           selected_point,        // Vi tri
-           2,                     // Ban kinh
-           cv::Scalar(255, 255, 255), // Mau sac
-           -1,                    // Do day net, -1 co nghia phu dac
-           cv::LINE_8                 // Kieu net
+    cv::circle(frame,                     // Anh duoc ve
+               selected_point,            // Vi tri
+               2,                         // Ban kinh
+               cv::Scalar(255, 255, 255), // Mau sac
+               -1,                        // Do day net, -1 co nghia phu dac
+               cv::LINE_8                 // Kieu net
     );
     // Luu vi tri vao mang cac vi tri
     selected_pts.push_back(selected_point);

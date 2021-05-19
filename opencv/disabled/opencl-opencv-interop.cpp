@@ -29,7 +29,7 @@
 #include <opencv2/imgproc.hpp>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 namespace opencl {
 
@@ -897,13 +897,22 @@ App::run() {
 
     uframe.copyTo(img_to_show);
 
+    cv::putText(img_to_show,
+                "Version : " + m_platformInfo.Version(),
+                cv::Point(5, 30),
+                FONT_HERSHEY_SIMPLEX,
+                1.,
+                cv::Scalar(255, 100, 0),
+                2);
     cv::putText(
-        img_to_show, "Version : " + m_platformInfo.Version(), cv::Point(5, 30), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
-    cv::putText(img_to_show, "Name : " + m_platformInfo.Name(), cv::Point(5, 60), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
-    cv::putText(img_to_show, "Device : " + m_deviceInfo.Name(), cv::Point(5, 90), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
+        img_to_show, "Name : " + m_platformInfo.Name(), cv::Point(5, 60), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
+    cv::putText(
+        img_to_show, "Device : " + m_deviceInfo.Name(), cv::Point(5, 90), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
     cv::String memtype = useBuffer() ? "buffer" : "image";
-    cv::putText(img_to_show, "interop with OpenCL " + memtype, cv::Point(5, 120), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
-    cv::putText(img_to_show, "Time : " + timeStr() + " msec", cv::Point(5, 150), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
+    cv::putText(
+        img_to_show, "interop with OpenCL " + memtype, cv::Point(5, 120), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
+    cv::putText(
+        img_to_show, "Time : " + timeStr() + " msec", cv::Point(5, 150), FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(255, 100, 0), 2);
 
     cv::imshow("opencl_interop", img_to_show);
 

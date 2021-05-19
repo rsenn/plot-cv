@@ -15,7 +15,7 @@
 
 #include <raspicam/raspicam_cv.h>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 void
@@ -186,7 +186,7 @@ main(int argc, char** argv) {
                 cv::VideoWriter outStream(outFile, codec_id, \
                             2, cv::Size(imgSizeX, imgSizeY), isOutputColored);
                 if (outStream.isOpened()){
-                    outStream.cv::write(output);
+                    outStream.write(output);
                 } else {
                     cout<<"ERROR: Can't cv::write to "<<outFile<<"!\n";
                     return -1;

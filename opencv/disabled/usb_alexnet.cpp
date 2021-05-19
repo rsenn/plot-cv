@@ -8,8 +8,8 @@
 #include <opencv2/dnn.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
-//using namespace cv;
-//using namespace cv::dnn;
+// using namespace cv;
+// using namespace cv::dnn;
 
 #include <cstdlib>
 #include <fstream>
@@ -55,7 +55,7 @@ texte(cv::Mat& image, const cv::String& txt, int x, int y) {
 
 int
 main() {
-  cv::Mat matImg;       // Une image matricielle
+  cv::Mat matImg;   // Une image matricielle
   char key;         // Un input keyboard
   int classId;      // ID classe pour le CNN
   double classProb; // Probabilite de la prediction

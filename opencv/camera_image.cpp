@@ -1,6 +1,6 @@
 #include <opencv2/opencv.hpp>
 #include <unistd.h>
-//using namespace cv;
+// using namespace cv;
 
 cv::Mat
 cameraCapture(cv::VideoCapture& cap) {

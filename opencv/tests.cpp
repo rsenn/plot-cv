@@ -14,7 +14,7 @@
 #endif
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 static void
 InitMatchTemplate() {
@@ -1201,15 +1201,15 @@ TEST(cv::FarnebackOpticalFlow) {
         cv::Mat flow;
         CPU_ON;
         cv::calcOpticalFlowFarneback(frame0,
-                                 frame1,
-                                 flow,
-                                 calc.pyrScale,
-                                 calc.numLevels,
-                                 calc.winSize,
-                                 calc.numIters,
-                                 calc.polyN,
-                                 calc.polySigma,
-                                 calc.flags);
+                                     frame1,
+                                     flow,
+                                     calc.pyrScale,
+                                     calc.numLevels,
+                                     calc.winSize,
+                                     calc.numIters,
+                                     calc.polyN,
+                                     calc.polySigma,
+                                     calc.flags);
         CPU_OFF;
       }
     }

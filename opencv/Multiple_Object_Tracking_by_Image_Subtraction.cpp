@@ -39,7 +39,7 @@ main(int argc, char* argv[]) {
 
   capVideo.open(argv[1] ? argv[1] : "768x576.avi");
 
-  if(!capVideo.isOpened()) {                                           // if unable to open video file
+  if(!capVideo.isOpened()) {                                               // if unable to open video file
     std::cout << "cv::error reading video file" << std::endl << std::endl; // show cv::error message
     getchar();  // it may be necessary to change or remove this cv::line if not using Windows
     return (0); // and exit program

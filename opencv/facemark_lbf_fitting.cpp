@@ -54,10 +54,10 @@ Mentor: Delia Passalacqua
 #include <opencv2/face.hpp>
 
 using namespace std;
-//using namespace cv;
-//using namespace cv::face;
+// using namespace cv;
+// using namespace cv::face;
 
-static bool myDetector(InputArray image, OutputArray ROIs, cv::CascadeClassifier* face_cascade);
+static bool myDetector(cv::InputArray image, cv::OutputArray ROIs, cv::CascadeClassifier* face_cascade);
 static bool parseArguments(int argc, char** argv, cv::String& cascade, cv::String& model, cv::String& video);
 
 int
@@ -69,12 +69,12 @@ main(int argc, char** argv) {
   cv::CascadeClassifier face_cascade;
   face_cascade.load(cascade_path);
 
-  FacemarkLBF::Params params;
+  cv::face::FacemarkLBF::Params params;
   params.model_filename = model_path;
   params.cascade_face = cascade_path;
 
-  cv::Ptr<FacemarkLBF> facemark = FacemarkLBF::create(params);
-  facemark->setFaceDetector((FN_FaceDetector)myDetector, &face_cascade);
+  cv::Ptr<cv::face::FacemarkLBF> facemark = cv::face::FacemarkLBF::create(params);
+  facemark->setFaceDetector((cv::face::FN_FaceDetector)myDetector, &face_cascade);
   facemark->loadModel(params.model_filename.c_str());
 
   cv::VideoCapture capture(video_path);
@@ -102,7 +102,7 @@ main(int argc, char** argv) {
     double __time__ = (double)cv::getTickCount();
 
     float scale = (float)(400.0 / frame.cols);
-    cv::resize(frame, img, cv::Size((int)(frame.cols * scale), (int)(frame.rows * scale)), 0, 0, INTER_LINEAR_EXACT);
+    cv::resize(frame, img, cv::Size((int)(frame.cols * scale), (int)(frame.rows * scale)), 0, 0, cv::INTER_LINEAR_EXACT);
 
     facemark->getFaces(img, rects);
     rects_scaled.clear();
@@ -121,15 +121,15 @@ main(int argc, char** argv) {
 
       fittime = ((cv::getTickCount() - newtime) / cv::getTickFrequency());
       for(int j = 0; j < (int)rects.size(); j++) {
-        landmarks[j] = cv::Mat(Mat(landmarks[j]));
-        drawFacemarks(frame, landmarks[j], cv::Scalar(0, 0, 255));
+        landmarks[j] = cv::Mat(cv::Mat(landmarks[j]));
+        cv::face::drawFacemarks(frame, landmarks[j], cv::Scalar(0, 0, 255));
       }
     }
 
     double fps = (cv::getTickFrequency() / (cv::getTickCount() - __time__));
     sprintf(buff, "faces: %i %03.2f fps, fit:%03.0f ms", nfaces, fps, fittime * 1000);
     text = buff;
-    cv::putText(frame, text, cv::Point(20, 40), FONT_HERSHEY_PLAIN, 2.0, cv::Scalar::all(255), 2, 8);
+    cv::putText(frame, text, cv::Point(20, 40), cv::FONT_HERSHEY_PLAIN, 2.0, cv::Scalar::all(255), 2, 8);
 
     cv::imshow("w", frame);
     cv::waitKey(1); // waits to display frame
@@ -138,7 +138,7 @@ main(int argc, char** argv) {
 }
 
 bool
-myDetector(InputArray image, OutputArray faces, cv::CascadeClassifier* face_cascade) {
+myDetector(cv::InputArray image, cv::OutputArray faces, cv::CascadeClassifier* face_cascade) {
   cv::Mat gray;
 
   if(image.channels() > 1)
@@ -157,11 +157,11 @@ myDetector(InputArray image, OutputArray faces, cv::CascadeClassifier* face_casc
 bool
 parseArguments(int argc, char** argv, cv::String& cascade, cv::String& model, cv::String& video) {
   const cv::String keys = "{ @c cascade         |      | (required) path to the cascade model file for the cv::face "
-                      "detector }"
-                      "{ @m model           |      | (required) path to the trained model }"
-                      "{ @v video           |      | (required) path input video}"
-                      "{ help h usage ?     |      | facemark_lbf_fitting -cascade -model -video [-t]\n"
-                      " example: facemark_lbf_fitting ../face_cascade.xml ../LBF.model ../video.mp4}";
+                          "detector }"
+                          "{ @m model           |      | (required) path to the trained model }"
+                          "{ @v video           |      | (required) path input video}"
+                          "{ help h usage ?     |      | facemark_lbf_fitting -cascade -model -video [-t]\n"
+                          " example: facemark_lbf_fitting ../face_cascade.xml ../LBF.model ../video.mp4}";
   cv::CommandLineParser parser(argc, argv, keys);
   parser.about("hello");
 

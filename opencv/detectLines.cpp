@@ -101,7 +101,7 @@ createStraightLines(vector<cv::Point> rectCorners, vector<cv::Point> curveEnds, 
 void
 drawStraightLines(cv::Mat& img_all, vector<cv::Vec4i> straight_lines) {
   for(int i = 0; i < straight_lines.size(); i++) {
-    cv::line(img_all,
+    line(img_all,
          cv::Point(straight_lines[i][0], straight_lines[i][1]),
          cv::Point(straight_lines[i][2], straight_lines[i][3]),
          cv::Scalar(255, 0, 0),
@@ -195,7 +195,7 @@ PolyFit(cv::Mat src, cv::Mat& img_plg) {
   cv::approxPolyDP(contour, polygon, 50, true);
   cv::approxPolyDP(contour, plg_for_vertice, 200, true);
 
-  // draw polygon for cv::line detection
+  // draw polygon for line detection
   polygons.push_back(polygon);
   cv::drawContours(img_plg, polygons, -1, cv::Scalar(0), 1);
 #ifdef DEBUG_CIRCLE
@@ -210,7 +210,7 @@ PolyFit(cv::Mat src, cv::Mat& img_plg) {
 void
 drawLinesP(cv::Mat& input, const vector<cv::Vec4i>& lines) {
   for(int i = 0; i < lines.size(); i++) {
-    cv::line(input, cv::Point(lines[i][0], lines[i][1]), cv::Point(lines[i][2], lines[i][3]), cv::Scalar(255, 0, 0), 50);
+    line(input, cv::Point(lines[i][0], lines[i][1]), cv::Point(lines[i][2], lines[i][3]), cv::Scalar(255, 0, 0), 50);
   }
 }
 
@@ -281,9 +281,9 @@ extractCurve(vector<cv::Point> contour, vector<cv::Point> curveEnds, vector<cv::
 }
 
 bool
-isVorH(cv::Vec4i cv::line) {
-  cv::Point point1 = cv::Point(cv::line[0], cv::line[1]);
-  cv::Point point2 = cv::Point(cv::line[2], cv::line[3]);
+isVorH(cv::Vec4i line) {
+  cv::Point point1 = cv::Point(line[0], line[1]);
+  cv::Point point2 = cv::Point(line[2], line[3]);
   if(point1.y > point2.y) {
     cv::Point temp;
     temp = point2;

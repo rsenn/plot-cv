@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 /// Global variables
 

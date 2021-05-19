@@ -8,7 +8,7 @@
 #include <opencv2/highgui.hpp>
 #include <iostream>
 
-//using namespace cv;
+// using namespace cv;
 
 //![variables]
 cv::Mat src, src_gray;

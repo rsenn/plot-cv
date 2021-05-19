@@ -52,7 +52,7 @@
 #include <xine.h>
 #include <xine/xineutils.h>
 
-//using namespace cv;
+// using namespace cv;
 
 class XINECapture : public IVideoCapture {
   // method call table

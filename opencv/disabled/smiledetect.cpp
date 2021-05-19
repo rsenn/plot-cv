@@ -4,7 +4,7 @@
 #include <iostream>
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 static void
 help() {
@@ -25,7 +25,8 @@ help() {
        << endl;
 }
 
-void detectAndDraw(cv::Mat& img, cv::CascadeClassifier& cascade, cv::CascadeClassifier& nestedCascade, double scale, bool tryflip);
+void
+detectAndDraw(cv::Mat& img, cv::CascadeClassifier& cascade, cv::CascadeClassifier& nestedCascade, double scale, bool tryflip);
 
 string cascadeName;
 string nestedCascadeName;
@@ -110,13 +111,13 @@ void
 detectAndDraw(cv::Mat& img, cv::CascadeClassifier& cascade, cv::CascadeClassifier& nestedCascade, double scale, bool tryflip) {
   vector<cv::Rect> faces, faces2;
   const static cv::Scalar colors[] = {Scalar(255, 0, 0),
-                                  cv::Scalar(255, 128, 0),
-                                  cv::Scalar(255, 255, 0),
-                                  cv::Scalar(0, 255, 0),
-                                  cv::Scalar(0, 128, 255),
-                                  cv::Scalar(0, 255, 255),
-                                  cv::Scalar(0, 0, 255),
-                                  cv::Scalar(255, 0, 255)};
+                                      cv::Scalar(255, 128, 0),
+                                      cv::Scalar(255, 255, 0),
+                                      cv::Scalar(0, 255, 0),
+                                      cv::Scalar(0, 128, 255),
+                                      cv::Scalar(0, 255, 255),
+                                      cv::Scalar(0, 0, 255),
+                                      cv::Scalar(255, 0, 255)};
   cv::Mat gray, smallImg;
 
   cv::cvtColor(img, gray, COLOR_BGR2GRAY);
@@ -166,12 +167,12 @@ detectAndDraw(cv::Mat& img, cv::CascadeClassifier& cascade, cv::CascadeClassifie
       cv::circle(img, center, radius, color, 3, 8, 0);
     } else
       cv::rectangle(img,
-                cvPoint(cvRound(r.x * scale), cvRound(r.y * scale)),
-                cvPoint(cvRound((r.x + r.width - 1) * scale), cvRound((r.y + r.height - 1) * scale)),
-                color,
-                3,
-                8,
-                0);
+                    cvPoint(cvRound(r.x * scale), cvRound(r.y * scale)),
+                    cvPoint(cvRound((r.x + r.width - 1) * scale), cvRound((r.y + r.height - 1) * scale)),
+                    color,
+                    3,
+                    8,
+                    0);
 
     const int half_height = cvRound((float)r.height / 2);
     r.y = r.y + half_height;

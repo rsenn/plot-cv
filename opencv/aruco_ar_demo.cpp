@@ -11,7 +11,7 @@
 
 #define KEY_ESCAPE 27
 
-//using namespace cv;
+// using namespace cv;
 
 int
 main() {
@@ -21,11 +21,11 @@ main() {
   std::vector<cv::Vec3d> rvecs;
   std::vector<cv::Vec3d> tvecs;
 
-  const Size2i imsize(800, 600);
+  const cv::Size2i imsize(800, 600);
   const double focal_length = 800.0;
 
   // aruco
-  cv::Ptr<cv::aruco::Dictionary> adict = cv::aruco::getPredefinedDictionary(aruco::DICT_4X4_50);
+  cv::Ptr<cv::aruco::Dictionary> adict = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_4X4_50);
   cv::Mat marker_img(cv::Size(100, 100), CV_8U);
   cv::Mat out_img(cv::Size(780, 780), CV_8U);
 
@@ -45,10 +45,10 @@ main() {
   cv::imwrite("marker.png", out_img);
 
   // random calibration data, your mileage may vary
-  Mat1d cm = Mat1d::zeros(3, 3);      // init empty matrix
-  cm.at<double>(0, 0) = focal_length; // f_x
-  cm.at<double>(1, 1) = focal_length; // f_y
-  cm.at<double>(2, 2) = 1;            // f_z
+  cv::Mat1d cm = cv::Mat1d::zeros(3, 3); // init empty matrix
+  cm.at<double>(0, 0) = focal_length;    // f_x
+  cm.at<double>(1, 1) = focal_length;    // f_y
+  cm.at<double>(2, 2) = 1;               // f_z
   cv::Mat K = cv::getDefaultNewCameraMatrix(cm, imsize, true);
 
   // AR scene

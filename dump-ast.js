@@ -90,10 +90,7 @@ class Location {
   }
 }
 
-function NodeToString(node,
-  locKey = 'expansionLoc' || 'spellingLoc',
-  startOffset
-) {
+function NodeToString(node, locKey = 'expansionLoc' || 'spellingLoc', startOffset) {
   if(node.value) return node.value;
   let flat = deep.flatten(node,
     new Map(),
@@ -130,19 +127,14 @@ function* GetRanges(tree) {
 }
 
 function* GetLocations(tree) {
-  for(let [node, path] of deep.iterate(tree,
-    v => Util.isObject(v) && typeof v.offset == 'number'
-  ))
+  for(let [node, path] of deep.iterate(tree, v => Util.isObject(v) && typeof v.offset == 'number'))
     yield [path.join('.'), node];
 }
 
 function* GetNodes(tree, pred = n => true) {
   for(let [node, path] of deep.iterate(tree,
     (v, p) =>
-      Util.isObject(v) &&
-      typeof v.kind == 'string' &&
-      v.kind != 'TranslationUnitDecl' &&
-      pred(v, p)
+      Util.isObject(v) && typeof v.kind == 'string' && v.kind != 'TranslationUnitDecl' && pred(v, p)
   ))
     yield [path.join('.'), node];
 }
@@ -222,8 +214,7 @@ function GetNodeProps([k, v]) {
     .map(n => [n, v[n]])
     .filter(([n, v]) => !Util.isObject(v) && v != '');
 
-  if(props.filter(([prop, value]) => prop != 'kind').length)
-    return Object.fromEntries(props);
+  if(props.filter(([prop, value]) => prop != 'kind').length) return Object.fromEntries(props);
 }
 
 function GetNodeTypes(ast, [k, v]) {
@@ -245,16 +236,10 @@ function GetNodeTypes(ast, [k, v]) {
 }
 
 function GetNodeChildren(ast, [k, v]) {
-  let children = [...deep.iterate(v, (v, p) => Util.isObject(v))].map(GetValueKey
-  );
-  children = children.filter(([key, child]) => typeof child.kind == 'string' && child.kind != ''
-  );
+  let children = [...deep.iterate(v, (v, p) => Util.isObject(v))].map(GetValueKey);
+  children = children.filter(([key, child]) => typeof child.kind == 'string' && child.kind != '');
 
-  return children.reduce((acc, [key, child]) => [
-      ...acc,
-      new ImmutablePath(key),
-      GetNodeProps([key, child]) || child
-    ],
+  return children.reduce((acc, [key, child]) => [...acc, new ImmutablePath(key), GetNodeProps([key, child]) || child],
     []
   );
 }
@@ -262,23 +247,18 @@ function GetNodeChildren(ast, [k, v]) {
 function GetNameOrId(ast, [key, node], pred = id => id != '') {
   let [k, n] = GetOwned(ast, key);
   let paths = [['name']];
-  if(node.ownedTagDecl)
-    paths = [['ownedTagDecl', 'name'], ['ownedTagDecl', 'id'], ...paths];
+  if(node.ownedTagDecl) paths = [['ownedTagDecl', 'name'], ['ownedTagDecl', 'id'], ...paths];
   for(let prop of [...paths, ['id']]) {
     let value = deep.get(n, prop);
-    if(typeof value == 'string' && pred(value))
-      return [[...k, ...prop], value];
+    if(typeof value == 'string' && pred(value)) return [[...k, ...prop], value];
   }
   let names = [
-    ...deep.iterate(n,
-      (v, p) => p[p.length - 1] == 'name' && typeof v == 'string' && v != '',
-      [...k]
-    )
+    ...deep.iterate(n, (v, p) => p[p.length - 1] == 'name' && typeof v == 'string' && v != '', [
+      ...k
+    ])
   ].map(GetValueKey);
 
-  let ids = [
-    ...deep.iterate(n, (v, p) => p[p.length - 1] == 'id' && v, [...k])
-  ].map(GetValueKey);
+  let ids = [...deep.iterate(n, (v, p) => p[p.length - 1] == 'id' && v, [...k])].map(GetValueKey);
 
   return [...names, ...ids].filter(([k, v]) => pred(v))[0];
 }
@@ -306,15 +286,13 @@ Util.define(Array.prototype, {
   },
   startsWith(other) {
     if(other.length > this.length) return false;
-    for(let i = 0; i < other.length; i++)
-      if(this[i] != other[i]) return false;
+    for(let i = 0; i < other.length; i++) if(this[i] != other[i]) return false;
     return true;
   },
   endsWith(other) {
     if(other.length > this.length) return false;
     let start = this.length - other.length;
-    for(let i = 0; i < other.length; i++)
-      if(this[i + start] != other[i]) return false;
+    for(let i = 0; i < other.length; i++) if(this[i + start] != other[i]) return false;
     return true;
   }
 });
@@ -328,13 +306,10 @@ async function DumpAst(source) {
     console.log(`Generating '${outfile}' ...`);
 
     let stderr = filesystem.open('ast.err', 'w+');
-    let proc = childProcess('clang',
-      ['-Xclang', '-ast-dump=json', '-fsyntax-only', source],
-      {
-        block: false,
-        stdio: [null, 'pipe', stderr]
-      }
-    );
+    let proc = childProcess('clang', ['-Xclang', '-ast-dump=json', '-fsyntax-only', source], {
+      block: false,
+      stdio: [null, 'pipe', stderr]
+    });
     data = await ReadAll(proc.stdout);
     filesystem.close(stderr);
     WriteFile(outfile, data);
@@ -380,8 +355,7 @@ async function main(...args) {
   await PortableFileSystem(fs => (filesystem = fs));
   await PortableChildProcess(cp => (childProcess = cp));
 
-  if(args.length == 0)
-    args.unshift('/home/roman/Sources/c-utils/genmakefile.c');
+  if(args.length == 0) args.unshift('/home/roman/Sources/c-utils/genmakefile.c');
 
   for(let arg of args) {
     Location.primary = arg;
@@ -395,22 +369,14 @@ async function main(...args) {
       ));
     generateFlat();
     let l = deep
-      .flatten(ast,
-        new Map(),
-        (v, k) => Util.isObject(v) && typeof v.col == 'number'
-      )
+      .flatten(ast, new Map(), (v, k) => Util.isObject(v) && typeof v.col == 'number')
       .values();
     let line;
     const re = /^(__fbufsize|__flbf|__fpending|__fpurge|__freadable|__freading|__fwritable|clearerr|clearerr_unlocked|fclose|fdopen|feof|feof_unlocked|ferror|ferror_unlocked|fflush|fflush_unlocked|fgetc|fgetc_unlocked|fgetpos|fgets|fgets_unlocked|fileno|fileno_unlocked|fopen|fprintf|fputc|fputc_unlocked|fputs|fputs_unlocked|fread|fread_unlocked|freopen|fscanf|fseek|fseeko|fsetpos|ftell|ftello|fwrite|fwrite_unlocked|printf|putchar|puts|scanf|setvbuf|tmpfile|ungetc|vfprintf|vfscanf|vprintf|vscanf)$/;
-    let allf = [...flat].filter(([k, v]) => Util.isObject(v) && v.kind == 'CallExpr'
+    let allf = [...flat].filter(([k, v]) => Util.isObject(v) && v.kind == 'CallExpr');
+    let allst = [...flat].filter(([k, v]) => Util.isObject(v) && IsStruct(v) && typeRe.test(GetProperty(ast, k, v => v.name))
     );
-    let allst = [...flat].filter(([k, v]) =>
-        Util.isObject(v) &&
-        IsStruct(v) &&
-        typeRe.test(GetProperty(ast, k, v => v.name))
-    );
-    let incfrom = [...flat].filter(([k, v]) => k[k.length - 1] == 'includedFrom'
-    );
+    let incfrom = [...flat].filter(([k, v]) => k[k.length - 1] == 'includedFrom');
 
     incfrom.forEach(([k, v]) => deep.set(ast, k, v.file));
     //incfrom.forEach(([k,v])  => flat.set( k, v.file));
@@ -422,9 +388,7 @@ async function main(...args) {
 
     refIds.sort((a, b) => a[1] - b[1]);
 
-    let ids = refIds
-      .filter(([k, id, v]) => ContainsDecls(v))
-      .map(([k, id, v]) => id);
+    let ids = refIds.filter(([k, id, v]) => ContainsDecls(v)).map(([k, id, v]) => id);
     ids = Util.unique(ids);
     let idLists = new Map(ids
         .map(id => [
@@ -482,9 +446,7 @@ async function main(...args) {
 
     //  incfrom = [...flat].filter(([k, v]) => k[k.length - 1] == 'includedFrom');
     //   console.log('incfrom:', incfrom);
-    let localfiles = [...flat]
-      .map(([k, v]) => [k, locMap.get(v)])
-      .filter(([k, v]) => !!v);
+    let localfiles = [...flat].map(([k, v]) => [k, locMap.get(v)]).filter(([k, v]) => !!v);
 
     // console.log('localfiles:', localfiles);
     localfiles = localfiles.filter(([k, l]) =>
@@ -505,9 +467,7 @@ async function main(...args) {
 
     /// console.log('locs:', [...flat].map(([k, v]) => [k, locMap.get(v)]).filter(([k,v]) => !! v));
 
-    let types = [...flat].filter(([k, v]) =>
-        Util.isObject(v) &&
-        (('name' in v && typeRe.test(v.name)) || IsStruct(v))
+    let types = [...flat].filter(([k, v]) => Util.isObject(v) && (('name' in v && typeRe.test(v.name)) || IsStruct(v))
     );
     let typeKeys = types.map(([k, v]) => k);
 
@@ -562,9 +522,7 @@ async function main(...args) {
         (v, k) => Util.isObject(v) && k.length < 10,
         (k, v) => [k, v]
       );
-      let inner = value.inner.map((n, i) =>
-        NodeToString(n, 'spellingLoc', i > 0 ? loc.offset : 0)
-      );
+      let inner = value.inner.map((n, i) => NodeToString(n, 'spellingLoc', i > 0 ? loc.offset : 0));
       processCallExpr(loc, ...inner);
       //    console.log('inner:',  inner);
     }

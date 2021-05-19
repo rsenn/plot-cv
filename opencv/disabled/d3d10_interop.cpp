@@ -21,7 +21,7 @@
 #pragma comment(lib, "d3d10.lib")
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 class D3D10WinApp : public D3DSample {
 public:

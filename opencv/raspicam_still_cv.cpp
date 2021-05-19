@@ -38,7 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <private_still/private_still_impl.h>
 #include <raspicam_still_cv.h>
 #include <scaler.h>
-//using namespace cv;
+// using namespace cv;
 namespace raspicam {
 RaspiCam_Still_Cv::RaspiCam_Still_Cv() {
   _impl = new _private::Private_Impl_Still();

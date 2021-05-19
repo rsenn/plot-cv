@@ -15,7 +15,7 @@
 #define ml2 3
 
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 void detectAndDisplay(cv::Mat frame);
 

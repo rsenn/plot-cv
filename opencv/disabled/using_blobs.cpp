@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//using namespace cvb;
+// using namespace cvb;
 using namespace std;
 
 #define VIDEO "/home/pi/test_videos/red_lego_LR.h264"

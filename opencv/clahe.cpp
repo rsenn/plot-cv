@@ -8,10 +8,10 @@
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
-cv::Ptr<CLAHE> pFilter;
+cv::Ptr<cv::CLAHE> pFilter;
 int tilesize;
 int cliplimit;
 
@@ -48,8 +48,8 @@ main(int argc, char** argv) {
   cv::VideoCapture capture;
 
   cv::namedWindow("CLAHE");
-  cv::createTrackbar("Tile cv::Size", "CLAHE", &tilesize, 32, (TrackbarCallback)TSize_Callback);
-  cv::createTrackbar("Clip Limit", "CLAHE", &cliplimit, 20, (TrackbarCallback)Clip_Callback);
+  cv::createTrackbar("Tile cv::Size", "CLAHE", &tilesize, 32, (cv::TrackbarCallback)TSize_Callback);
+  cv::createTrackbar("Clip Limit", "CLAHE", &cliplimit, 20, (cv::TrackbarCallback)Clip_Callback);
 
   cv::UMat frame, outframe;
 

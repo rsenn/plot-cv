@@ -19,7 +19,7 @@
 
 #include <boost/atomic.hpp>
 using namespace std;
-//using namespace cv;
+// using namespace cv;
 
 cv::VideoCapture cap;
 cv::Mat img, showimg;

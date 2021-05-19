@@ -50,7 +50,7 @@
 #include <opencv2/structured_light.hpp>
 #include <opencv2/phase_unwrapping.hpp>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 static const char* keys = {"{@width | | Projector width}"
@@ -102,7 +102,7 @@ main(int argc, char** argv) {
   cv::String reliabilitiesPath = parser.get<cv::String>(10);
 
   cv::Ptr<cv::structured_light::SinusoidalPattern> sinus =
-      cv::structured_light::SinusoidalPattern::create(makePtr<structured_light::SinusoidalPattern::Params>(params));
+      cv::structured_light::SinusoidalPattern::create(cv::makePtr<cv::structured_light::SinusoidalPattern::Params>(params));
   cv::Ptr<cv::phase_unwrapping::HistogramPhaseUnwrapping> phaseUnwrapping;
 
   vector<cv::Mat> patterns;
@@ -117,7 +117,7 @@ main(int argc, char** argv) {
     cout << "Camera could not be opened" << endl;
     return -1;
   }
-  cap.set(cv::CAP_PROP_PVAPI_PIXELFORMAT, CAP_PVAPI_PIXELFORMAT_MONO8);
+  cap.set(cv::CAP_PROP_PVAPI_PIXELFORMAT, cv::CAP_PVAPI_PIXELFORMAT_MONO8);
 
   cv::namedWindow("pattern", cv::WINDOW_NORMAL);
   cv::setWindowProperty("pattern", cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);

@@ -8,8 +8,8 @@
 #include <opencv2/calib3d.hpp>
 #include <opencv2/xfeatures2d.hpp>
 
-//using namespace cv;
-//using namespace cv::xfeatures2d;
+// using namespace cv;
+// using namespace cv::xfeatures2d;
 using namespace std;
 
 bool OVERLAY_ENABLED = true;
@@ -62,7 +62,7 @@ main(int argc, char* argv[]) {
   axis[3] = cv::Point3f(0.0, 0.0, -50.0);
 
   cv::VideoCapture cv::cap("/dev/video0"); // open the video file for reading
-  if(!cv::cap.isOpened())              // if not success, exit program
+  if(!cv::cap.isOpened())                  // if not success, exit program
   {
     cout << "Cannot open the video file" << endl;
     return -1;
@@ -98,7 +98,7 @@ main(int argc, char* argv[]) {
 
   while(1) {
     bool bSuccess = cv::cap.read(frame); // cv::read a new frame from video
-    if(!bSuccess)                    // if not success, break loop
+    if(!bSuccess)                        // if not success, break loop
     {
       cout << "Cannot cv::read the frame from video file" << endl;
       break;

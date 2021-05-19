@@ -11,7 +11,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 
 string path = ros::package::getPath("rpi_object_tracking");

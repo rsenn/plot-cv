@@ -10,19 +10,19 @@
 #include <boost/filesystem.hpp>
 #include "Config.h"
 
-//using namespace cv;
+// using namespace cv;
 using namespace std;
 using namespace boost::filesystem3;
 
 class categorizer {
 private:
   map<string, cv::Mat> templates, objects, positive_data,
-      negative_data;               // maps from category names to data
+      negative_data;                   // maps from category names to data
   multimap<string, cv::Mat> train_set; // training images, mapped by category name
-  map<string, CvSVM> svms;         // trained SVMs, mapped by category name
-  vector<string> category_names;   // names of the categories found in TRAIN_FOLDER
-  int categories;                  // number of categories
-  int clusters;                    // number of clusters for SURF features to build vocabulary
+  map<string, CvSVM> svms;             // trained SVMs, mapped by category name
+  vector<string> category_names;       // names of the categories found in TRAIN_FOLDER
+  int categories;                      // number of categories
+  int clusters;                        // number of clusters for SURF features to build vocabulary
   cv::Mat vocab;                       // vocabulary
 
   // Feature detectors and descriptor extractors
@@ -38,9 +38,9 @@ private:
   string remove_extension(string); // function to remove extension from file name, used for
                                    // organizing templates into categories
 public:
-  categorizer(int);              // constructor
-  void build_vocab();            // function to build the BOW vocabulary
-  void train_classifiers();      // function to train the one-vs-all SVM classifiers for all categories
+  categorizer(int);                  // constructor
+  void build_vocab();                // function to build the BOW vocabulary
+  void train_classifiers();          // function to train the one-vs-all SVM classifiers for all categories
   void categorize(cv::VideoCapture); // function to perform real-time object categorization on camera frames
 };
 
