@@ -43,6 +43,8 @@ Util.define(Array.prototype, {
 
 function ReadJSON(filename) {
   let data = std.loadFile(filename);
+if(data)
+  console.log(`ReadJSON('${filename}') ${data.length} bytes read`);
   return data ? JSON.parse(data) : null;
 }
 
@@ -405,7 +407,7 @@ function main(...args) {
     SpatialH,
     SpatialHash,
     SpatialHashMap,
-    BoxHash
+    BoxHash,ReadJSON
   });
 
   cmdhist = `.${base}-cmdhistory`;
@@ -428,10 +430,9 @@ function main(...args) {
     debugLog.flush();
   };
   repl.show = value => {
-    /*  if(Util.isObject(value) && value instanceof EagleNode) {
-      if(value.children && value.children.length > 0) {
-      }
-    } else*/ {
+    if(Util.isObject(value) && value instanceof EagleNode) {
+      console.log(value.inspect());
+    } else {
       console.log(value);
     }
   };

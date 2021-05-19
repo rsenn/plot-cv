@@ -346,3 +346,6 @@ add_prog(delaunay2)
 add_prog(object_detection)
 target_link_libraries(object_detection pthread)
 add_prog(main_yolo)
+add_prog(lsd_lines_extraction)
+#add_prog(LSDDetector)
+
