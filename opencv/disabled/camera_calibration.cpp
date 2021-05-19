@@ -186,7 +186,7 @@ cv::read(const cv::FileNode& node, Settings& x, const Settings& default_value = 
   if(node.empty())
     x = default_value;
   else
-    x.cv::read(node);
+    x.read(node);
 }
 
 enum { DETECTION = 0, CAPTURING = 1, CALIBRATED = 2 };
@@ -357,7 +357,7 @@ computeReprojectionErrors(const vector<vector<Point3f>>& objectPoints,
   vector<cv::Point2f> imagePoints2;
   int i, totalPoints = 0;
   double totalErr = 0, err;
-  perViewErrors.cv::resize(objectPoints.size());
+  perViewErrors.resize(objectPoints.size());
 
   for(i = 0; i < (int)objectPoints.size(); ++i) {
     cv::projectPoints(cv::Mat(objectPoints[i]), rvecs[i], tvecs[i], cameraMatrix, distCoeffs, imagePoints2);
@@ -415,7 +415,7 @@ runCalibration(Settings& s,
   vector<vector<Point3f>> objectPoints(1);
   calcBoardCornerPositions(s.boardSize, s.squareSize, objectPoints[0], s.calibrationPattern);
 
-  objectPoints.cv::resize(imagePoints.size(), objectPoints[0]);
+  objectPoints.resize(imagePoints.size(), objectPoints[0]);
 
   // Find intrinsic and extrinsic camera parameters
   double rms = cv::calibrateCamera(

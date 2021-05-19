@@ -160,7 +160,7 @@ main() {
       }
 
       // if (good_matches.size()<1)
-      //	good_matches.cv::resize(0,cv::DMatch);
+      //	good_matches.resize(0,cv::DMatch);
 
       // Draw only "good" matches
       drawMatches(object,

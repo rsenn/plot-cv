@@ -43,7 +43,7 @@ public:
     fps = round(videoCapture.get(cv::CAP_PROP_FPS));
     printf("Video FPS: %d\n", fps);
     while(videoCapture.isOpened()) {
-      if(!videoCapture.cv::read(frame))
+      if(!videoCapture.read(frame))
         break;
       if(++frameNumber == 1) {
         setRefLineY(frame.rows / 2);

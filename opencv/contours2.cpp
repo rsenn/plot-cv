@@ -68,7 +68,7 @@ main(int argc, char** argv) {
   // Extract the contours so that
   std::vector<std::vector<cv::Point>> contours0;
   cv::findContours(img, contours0, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
-  contours.cv::resize(contours0.size());
+  contours.resize(contours0.size());
   for(size_t k = 0; k < contours0.size(); k++) cv::approxPolyDP(cv::Mat(contours0[k]), contours[k], 3, true);
   cv::namedWindow("contours", 1);
   cv::createTrackbar("levels+3", "contours", &levels, 7, on_trackbar);

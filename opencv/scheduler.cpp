@@ -297,7 +297,7 @@ Scheduler::display_camera_feed() {
     cv::namedWindow(window_name, cv::WINDOW_AUTOSIZE);
 
     while(1) {
-      if(!this->camera.cv::read(frame)) {
+      if(!this->camera.read(frame)) {
         cout << "cv::Error: Scheduler::display_camera_feed() could not cv::read frame from camera at "
                 "camera_index= "
              << this->camera_index << endl;
@@ -334,7 +334,7 @@ Scheduler::scheduler_execution_cycle() {
     this->camera.~cv::VideoCapture();
     return -1;
   } else {
-    this->camera.cv::read(frame_temp);
+    this->camera.read(frame_temp);
   }
 
   /*Execution stage1: Check event_schedule for overdue events*/
@@ -343,7 +343,7 @@ Scheduler::scheduler_execution_cycle() {
   /*Execution stage1: complete*/
 
   // Execution stage2: Run enabled frame analyzing functions
-  this->camera.cv::read(frame_temp);
+  this->camera.read(frame_temp);
 
   int colour_analysis_code = this->frame_processor->frame_colour_analysis(frame_temp, this->camera_index);
   if(colour_analysis_code == 1) {

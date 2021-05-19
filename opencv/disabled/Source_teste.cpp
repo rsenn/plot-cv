@@ -25,7 +25,7 @@ main(int argc, char** argv) {
   while(1) {
 
     cv::Mat frame;
-    bool success = cap.cv::read(frame);
+    bool success = cap.read(frame);
     if(!success) {
       cout << "Cannot cv::read  frame " << endl;
       break;

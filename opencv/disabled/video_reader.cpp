@@ -33,14 +33,14 @@ main(int argc, const char* argv[]) {
   for(;;) {
     tm.reset();
     tm.start();
-    if(!reader.cv::read(frame))
+    if(!reader.read(frame))
       break;
     tm.stop();
     cpu_times.push_back(tm.getTimeMilli());
 
     tm.reset();
     tm.start();
-    if(!d_reader.cv::read(d_frame))
+    if(!d_reader.read(d_frame))
       break;
     tm.stop();
     gpu_times.push_back(tm.getTimeMilli());

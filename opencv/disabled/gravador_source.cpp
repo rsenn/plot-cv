@@ -27,7 +27,7 @@ main(int argc, char** argv) {
   while(Pos <= count) {
     cap.set(cv::CAP_PROP_POS_FRAMES, Pos); // Set index to first frame (simbolo da playstation)
     cv::Mat frame;
-    bool success = cap.cv::read(frame);
+    bool success = cap.read(frame);
     if(!success) {
       cout << "Cannot cv::read  frame " << endl;
       break;

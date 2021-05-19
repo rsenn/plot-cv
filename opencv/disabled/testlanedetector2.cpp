@@ -26,7 +26,7 @@ main(int argc, char* argv[]) {
   // for all frames in video
   while(!stop) {
     // cv::read next frame if any
-    if(!capture.cv::read(frame))
+    if(!capture.read(frame))
       break;
 
     cv::imshow("Extracted Frame", frame);

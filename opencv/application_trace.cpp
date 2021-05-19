@@ -62,7 +62,7 @@ main(int argc, char** argv) {
     CV_TRACE_REGION("FRAME"); // OpenCV Trace macro for named "scope" region
     {
       CV_TRACE_REGION("cv::read");
-      capture.cv::read(frame);
+      capture.read(frame);
 
       if(frame.empty()) {
         cerr << "Can't capture frame: " << i << std::endl;

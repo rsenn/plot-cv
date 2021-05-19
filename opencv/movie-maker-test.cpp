@@ -14,7 +14,7 @@ nonEmptyFrames(string movieFileName) {
   cv::VideoCapture movieReader(movieFileName);
   int n = 0;
   while(1) {
-    movieReader.cv::read(mat);
+    movieReader.read(mat);
     if(mat.empty()) {
       break;
     }

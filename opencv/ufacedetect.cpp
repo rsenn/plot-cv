@@ -87,7 +87,7 @@ main(int argc, const char** argv) {
   } else {
     if(inputName.empty())
       inputName = "../data/lena.jpg";
-    image = cv::imread(inputName, 1).getUMat(ACCESS_READ);
+    image = cv::imread(inputName, 1).getUMat(cv::ACCESS_READ);
     if(image.empty()) {
       if(!capture.open(inputName))
         cout << "Could not cv::read " << inputName << endl;
@@ -123,7 +123,7 @@ main(int argc, const char** argv) {
           while(len > 0 && isspace(buf[len - 1])) len--;
           buf[len] = '\0';
           cout << "file " << buf << endl;
-          image = cv::imread(buf, 1).getUMat(ACCESS_READ);
+          image = cv::imread(buf, 1).getUMat(cv::ACCESS_READ);
           if(!image.empty()) {
             detectAndDraw(image, canvas, cascade, nestedCascade, scale, tryflip);
             char c = (char)cv::waitKey(0);
@@ -146,7 +146,7 @@ detectAndDraw(
     cv::UMat& img, cv::Mat& canvas, cv::CascadeClassifier& cascade, cv::CascadeClassifier& nestedCascade, double scale, bool tryflip) {
   double t = 0;
   vector<cv::Rect> faces, faces2;
-  const static cv::Scalar colors[] = {Scalar(255, 0, 0),
+  const static cv::Scalar colors[] = {cv::Scalar(255, 0, 0),
                                   cv::Scalar(255, 128, 0),
                                   cv::Scalar(255, 255, 0),
                                   cv::Scalar(0, 255, 0),

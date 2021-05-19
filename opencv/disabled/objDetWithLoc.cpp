@@ -32,7 +32,7 @@ main() {
   while(true) {    // sürekli tarama yapmak için sonsuz döngü
     cv::Mat yeniFrame; // kameradan alınan framelerin yükleneceği nesne
 
-    bool okumaYapiliyormu = video.cv::read(yeniFrame); // web camden video almak için nesne oluşturuldu
+    bool okumaYapiliyormu = video.read(yeniFrame); // web camden video almak için nesne oluşturuldu
 
     if(!okumaYapiliyormu) {              // kameradan frame alınamamışsa
       cout << "frame alinamadi" << endl; // kullanıcıya bilgi veriliyor

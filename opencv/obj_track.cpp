@@ -195,7 +195,7 @@ trackObjectloop() {
   // all of our operations will be performed within this loop
   while(1) {
     // store image to matrix
-    capture.cv::read(cameraFeed);
+    capture.read(cameraFeed);
     // convert frame from BGR to HSV colorspace
     cv::cvtColor(cameraFeed, HSV, cv::COLOR_BGR2HSV);
     // filter HSV image between values and store filtered image to
@@ -364,7 +364,7 @@ processVideoBg(char* videoFilename) {
   // cv::read input data. ESC or 'q' for quitting
   while((char)keyboard != 'q' && (char)keyboard != 27) {
     // cv::read the current frame
-    if(!capture.cv::read(frame)) {
+    if(!capture.read(frame)) {
       cerr << "Unable to cv::read next frame." << endl;
       cerr << "Exiting..." << endl;
       exit(EXIT_FAILURE);

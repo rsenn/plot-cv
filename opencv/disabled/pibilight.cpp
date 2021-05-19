@@ -146,7 +146,7 @@ openCamera() {
 void
 captureImage() {
   // wait for a new frame from camera and store it into 'frame'
-  cap.cv::read(currentImage);
+  cap.read(currentImage);
   // check if we succeeded
   if(currentImage.empty()) {
     throw("ERROR! blank frame grabbed");

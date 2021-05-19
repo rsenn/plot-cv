@@ -9,8 +9,8 @@ YOLO::YOLO(Net_config config) {
   strcpy(this->netname, config.netname.c_str());
 
   ifstream ifs(config.classesFile.c_str());
-  string cv::line;
-  while(getline(ifs, cv::line)) this->classes.push_back(line);
+  string _line;
+  while(std::getline(ifs, _line)) this->classes.push_back(_line);
 
   this->net = readNetFromDarknet(config.modelConfiguration, config.modelWeights);
   this->net.setPreferableBackend(DNN_BACKEND_OPENCV);

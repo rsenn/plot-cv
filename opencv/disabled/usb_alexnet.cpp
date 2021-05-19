@@ -105,7 +105,7 @@ main() {
   while(key != 'q' && key != 'Q') {
 
     // On récupère une image
-    cap.cv::read(matImg);
+    cap.read(matImg);
 
     cv::resize(matImg, matImg, cv::Size(227, 227));
 

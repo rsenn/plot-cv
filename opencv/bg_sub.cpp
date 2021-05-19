@@ -99,7 +99,7 @@ processVideo(char* videoFilename) {
   keyboard = 0;
   while(keyboard != 'q' && keyboard != 27) {
     // cv::read the current frame
-    if(!capture.cv::read(frame)) {
+    if(!capture.read(frame)) {
       cerr << "Unable to cv::read next frame." << endl;
       cerr << "Exiting..." << endl;
       exit(EXIT_FAILURE);

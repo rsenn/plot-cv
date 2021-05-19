@@ -99,7 +99,7 @@ readCameraMatrix(const string& filename, cv::Mat& cameraMatrix, cv::Mat& distCoe
 
 static void
 calcChessboardCorners(cv::Size boardSize, float squareSize, vector<Point3f>& corners) {
-  corners.cv::resize(0);
+  corners.resize(0);
 
   for(int i = 0; i < boardSize.height; i++)
     for(int j = 0; j < boardSize.width; j++) corners.push_back(Point3f(float(j * squareSize), float(i * squareSize), 0));
@@ -200,7 +200,7 @@ select3DBox(const string& windowname,
   int nobjpt = 0;
   cv::Mat R, selectedObjMask, selectedObjFrame, shownFrame;
   cv::Rodrigues(rvec, R);
-  box.cv::resize(4);
+  box.resize(4);
 
   for(;;) {
     float Z = 0.f;
@@ -213,7 +213,7 @@ select3DBox(const string& windowname,
       if(nobjpt < 2)
         imgpt[npt] = m;
       else {
-        tempobj.cv::resize(1);
+        tempobj.resize(1);
         int nearestIdx = npt - 1;
         if(nobjpt == 3) {
           nearestIdx = 0;
@@ -278,10 +278,10 @@ select3DBox(const string& windowname,
 static bool
 readModelViews(
     const string& filename, vector<Point3f>& box, vector<string>& imagelist, vector<cv::Rect>& roiList, vector<Vec6f>& poseList) {
-  imagelist.cv::resize(0);
-  roiList.cv::resize(0);
-  poseList.cv::resize(0);
-  box.cv::resize(0);
+  imagelist.resize(0);
+  roiList.resize(0);
+  poseList.resize(0);
+  box.resize(0);
 
   cv::FileStorage fs(filename, cv::FileStorage::READ);
   if(!fs.isOpened())
@@ -343,7 +343,7 @@ writeModelViews(const string& filename,
 
 static bool
 readStringList(const string& filename, vector<string>& l) {
-  l.cv::resize(0);
+  l.resize(0);
   cv::FileStorage fs(filename, cv::FileStorage::READ);
   if(!fs.isOpened())
     return false;

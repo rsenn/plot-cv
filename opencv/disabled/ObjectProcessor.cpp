@@ -379,7 +379,7 @@ bg_sub_contour(int argc, char** argv) {
   }
 
   for(;;) {                  // iterates a camera feed
-    stream.cv::read(streamFeed); // stores image to matrix
+    stream.read(streamFeed); // stores image to matrix
 
     cv::cvtColor(streamFeed, hsv, COLOR_BGR2HSV); // converting from BGR color space to HSV
     cv::inRange(hsv,

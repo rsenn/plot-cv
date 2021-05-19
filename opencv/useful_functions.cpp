@@ -128,7 +128,7 @@ get_background(string vid_name, cv::Mat& avg_frame) {
     exit(1);
   }
 
-  success = capture.cv::read(avg_frame);
+  success = capture.read(avg_frame);
   avg_frame.convertTo(avg_frame, CV_32F);
   if(!success) {
     cout << endl << "ERROR: next frame failed to be cv::read" << endl;
@@ -139,7 +139,7 @@ get_background(string vid_name, cv::Mat& avg_frame) {
 
   // display_window("Average", avg_frame);
 
-  success = capture.cv::read(next_frame);
+  success = capture.read(next_frame);
   next_frame.convertTo(next_frame, CV_32F);
   if(!success) {
     cout << endl << "ERROR: next frame failed to be cv::read" << endl;
@@ -156,7 +156,7 @@ get_background(string vid_name, cv::Mat& avg_frame) {
 
     // display_window("Average", avg_frame);
 
-    success = capture.cv::read(next_frame);
+    success = capture.read(next_frame);
     next_frame.convertTo(next_frame, CV_32F);
   } // inner while loop
   avg_frame = avg_frame / frame_count;

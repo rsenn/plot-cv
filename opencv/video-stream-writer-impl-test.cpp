@@ -28,14 +28,14 @@ SCENARIO("Can make a video stream") {
       THEN("Can make a readable video with all of them") {
         cv::VideoCapture videoCapture(videoStreamWriter.getFileName());
 
-        REQUIRE(videoCapture.cv::read(mat) == true);
+        REQUIRE(videoCapture.read(mat) == true);
         REQUIRE(mat.size() == size);
-        REQUIRE(videoCapture.cv::read(mat) == true);
+        REQUIRE(videoCapture.read(mat) == true);
         REQUIRE(mat.size() == size);
-        REQUIRE(videoCapture.cv::read(mat) == true);
+        REQUIRE(videoCapture.read(mat) == true);
         REQUIRE(mat.size() == size);
 
-        REQUIRE(videoCapture.cv::read(mat) == false);
+        REQUIRE(videoCapture.read(mat) == false);
 
         videoCapture.release();
       }

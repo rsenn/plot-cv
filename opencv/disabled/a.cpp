@@ -173,7 +173,7 @@ main() {
   cv::createTrackbar("max_rad", "Circle", &max_rad, 1000);
 
   while(charCheckForEscKey != 27 && cap.isOpened()) {
-    bool blnFrameReadSuccessfully = cap.cv::read(matOriginal);
+    bool blnFrameReadSuccessfully = cap.read(matOriginal);
 
     if(!blnFrameReadSuccessfully || matOriginal.empty()) {
       std::cout << "cv::error: frame not cv::read from webcam\n";

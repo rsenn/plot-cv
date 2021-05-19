@@ -107,7 +107,7 @@ main() {
   while(key != 'q' && key != 'Q') {
 
     // Get the next frame received
-    capture.cv::read(matImg);
+    capture.read(matImg);
 
     // Caffenet CNN network only accepts 227x227 pictures
     cv::resize(matImg, matImg, cv::Size(227, 227));

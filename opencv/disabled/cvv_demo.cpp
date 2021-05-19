@@ -100,7 +100,7 @@ main(int argc, char** argv) {
       // remove worst (as defined by match distance) bestRatio quantile
       double bestRatio = 0.8;
       std::sort(matches.begin(), matches.end());
-      matches.cv::resize(int(bestRatio * matches.size()));
+      matches.resize(int(bestRatio * matches.size()));
       printf("%d: best matches size=%zd\n", imgId, matches.size());
       std::string bestMatchIdString{"best " + toString(bestRatio) + " matches "};
       bestMatchIdString += toString(imgId - 1) + "<->" + toString(imgId);

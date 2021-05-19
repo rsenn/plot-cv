@@ -82,7 +82,7 @@ private:
     if(CL_SUCCESS != res)
       throw std::runtime_error(std::string("clGetPlatformInfo failed"));
 
-    buf.cv::resize(psize);
+    buf.resize(psize);
     res = clGetPlatformInfo(id, param, psize, buf, 0);
     if(CL_SUCCESS != res)
       throw std::runtime_error(std::string("clGetPlatformInfo failed"));
@@ -268,7 +268,7 @@ private:
     if(0 == size)
       return CL_SUCCESS;
 
-    value.cv::resize(size / sizeof(T));
+    value.resize(size / sizeof(T));
 
     res = clGetDeviceInfo(id, param, size, &value[0], 0);
     if(CL_SUCCESS != res)
@@ -286,7 +286,7 @@ private:
     if(CL_SUCCESS != res)
       throw std::runtime_error(std::string("clGetDeviceInfo failed"));
 
-    value.cv::resize(size + 1);
+    value.resize(size + 1);
 
     res = clGetDeviceInfo(id, param, size, &value[0], 0);
     if(CL_SUCCESS != res)
@@ -458,7 +458,7 @@ public:
 protected:
   bool
   nextFrame(cv::Mat& frame) {
-    return m_cap.cv::read(frame);
+    return m_cap.read(frame);
   }
   void handleKey(char key);
   void timerStart();
@@ -580,7 +580,7 @@ App::initOpenCL() {
   if(CL_SUCCESS != res)
     return -1;
 
-  m_platform_ids.cv::resize(num_entries);
+  m_platform_ids.resize(num_entries);
 
   res = clGetPlatformIDs(num_entries, &m_platform_ids[0], 0);
   if(CL_SUCCESS != res)

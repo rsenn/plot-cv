@@ -40,7 +40,7 @@ boost::lockfree::spsc_queue<cv::Mat, boost::lockfree::capacity<1024>>
 void
 producer(void) {
   while(true) {
-    cap.cv::read(img);        /* 获取图像 */
+    cap.read(img);        /* 获取图像 */
     spsc_queue.push(img); /* 加入到缓存队列中 */
   }
 }

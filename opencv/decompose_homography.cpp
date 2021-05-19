@@ -11,7 +11,7 @@ enum Pattern { CHESSBOARD, CIRCLES_GRID, ASYMMETRIC_CIRCLES_GRID };
 
 void
 calcChessboardCorners(cv::Size boardSize, float squareSize, vector<cv::Point3f>& corners, Pattern patternType = CHESSBOARD) {
-  corners.cv::resize(0);
+  corners.resize(0);
 
   switch(patternType) {
     case CHESSBOARD:

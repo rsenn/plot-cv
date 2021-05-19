@@ -164,7 +164,7 @@ public:
 
   int
   get_frame(cv::ogl::Texture2D& texture, cv::ogl::Buffer& buffer, bool do_buffer) {
-    if(!m_cap.cv::read(m_frame_bgr))
+    if(!m_cap.read(m_frame_bgr))
       return -1;
 
     cv::cvtColor(m_frame_bgr, m_frame_rgba, CV_RGB2RGBA);

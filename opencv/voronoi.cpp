@@ -48,7 +48,7 @@ draw_voronoi(cv::Mat& img, cv::Subdiv2D& subdiv) {
   std::vector<vector<cv::Point>> ifacets(1);
 
   for(size_t i = 0; i < facets.size(); i++) {
-    ifacet.cv::resize(facets[i].size());
+    ifacet.resize(facets[i].size());
     for(size_t j = 0; j < facets[i].size(); j++) ifacet[j] = facets[i][j];
 
     cv::Scalar color;

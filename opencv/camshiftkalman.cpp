@@ -186,7 +186,7 @@ camShiftKalman::track() {
 
   video.set(cv::CAP_PROP_POS_FRAMES, frameStart);
   while(1) {
-    video.cv::read(currentFrame);
+    video.read(currentFrame);
     if(currentFrame.empty())
       break;
 

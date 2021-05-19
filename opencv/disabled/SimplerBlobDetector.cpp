@@ -285,7 +285,7 @@ main(int argc, char** argv) {
   // Read the blob detection parameters from the designated file.
   cv::FileStorage storage("../BlobDetectionParameters.xml", cv::FileStorage::READ);
   cv::FileNode node = storage["opencv_storage"];
-  params.cv::read(node);
+  params.read(node);
 
   // This program requires a filename as the first command cv::line parameter. Read the
   // image from the specified file, if possible.

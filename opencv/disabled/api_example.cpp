@@ -25,11 +25,11 @@ main(int argc, char* argv[]) {
 
   cv::Mat input_frame;
   cv::Mat output_frame;
-  CV_Assert(cap.cv::read(input_frame));
+  CV_Assert(cap.read(input_frame));
   do {
     ac.apply(input_frame, output_frame);
     cv::imshow("output", output_frame);
-  } while(cap.cv::read(input_frame) && cv::waitKey(30) < 0);
+  } while(cap.read(input_frame) && cv::waitKey(30) < 0);
 
   return 0;
 }

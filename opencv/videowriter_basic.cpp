@@ -49,7 +49,7 @@ main(int, char**) {
   cout << "Writing videofile: " << filename << endl << "Press any key to terminate" << endl;
   for(;;) {
     // check if we succeeded
-    if(!cap.cv::read(src)) {
+    if(!cap.read(src)) {
       cerr << "ERROR! blank frame grabbed\n";
       break;
     }

@@ -37,7 +37,7 @@ public:
     cv::VideoCapture videoCapture(videoCapturePath);
 
     while(videoCapture.isOpened()) {
-      if(!videoCapture.cv::read(frame))
+      if(!videoCapture.read(frame))
         break;
       if(++frameNumber == 1)
         refLine = Line(0, refLineY, frame.cols, refLineY);

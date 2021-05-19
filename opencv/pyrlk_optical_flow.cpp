@@ -139,7 +139,7 @@ main(int argc, const char* argv[]) {
 
     cout << "In capture ..." << endl;
     for(int i = 0;; i++) {
-      if(!capture.cv::read(frame))
+      if(!capture.read(frame))
         break;
 
       if(i == 0) {

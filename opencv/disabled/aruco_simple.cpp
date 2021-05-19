@@ -127,7 +127,7 @@ main(int argc, char** argv) {
     // cv::read camera parameters if passed
     if(TheIntrinsicFile != "") {
       TheCameraParameters.readFromXMLFile(TheIntrinsicFile);
-      TheCameraParameters.cv::resize(TheInputImage.size());
+      TheCameraParameters.resize(TheInputImage.size());
     }
     // Configure other parameters
     if(ThePyrDownLevel > 0)

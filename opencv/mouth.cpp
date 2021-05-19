@@ -44,8 +44,8 @@ main(int argc, char** argv) {
   const string face_cascade_path = argv[2];
 
   cv::Mat_<cv::Vec3b> image_BGR = cv::imread(input_image_path);
-  cv::Mat_<cv::Vec3b> cv::face = extractFaceROI(image_BGR, face_cascade_path);
-  cv::Mat_<cv::Vec3b> mouth = extractMouthROI(cv::face);
+  cv::Mat_<cv::Vec3b> face = extractFaceROI(image_BGR, face_cascade_path);
+  cv::Mat_<cv::Vec3b> mouth = extractMouthROI(face);
 
   cv::Mat_<uchar> pseudo_hue_plane = transformPseudoHue(mouth);
   cv::Mat_<uchar> pseudo_hue_bin = binaryThresholding(pseudo_hue_plane, returnImageStats(pseudo_hue_plane));
@@ -122,7 +122,7 @@ main(int argc, char** argv) {
     cv::line(image_contour, cv::Point(closest_mid_x, mid_y_values[i]), cv::Point(max_x, max_y), cv::Scalar(0, 0, 255), 1, 8);
   }
 
-  // cv::imshow("Face-ROI", cv::face);
+  // cv::imshow("Face-ROI", face);
   cv::imshow("Mouth-ROI", mouth);
   // cv::imshow("Input-Image", image_BGR);
   cv::imshow("Contour", image_contour);
@@ -152,15 +152,15 @@ extractFaceROI(cv::Mat_<cv::Vec3b> image, string face_cascade_path) {
 
   cv::Mat_<cv::Vec3b> face_ROI;
   for(int i = 0; i < faces.size(); ++i) {
-    cv::Rect_<int> cv::face = faces[i];
+    cv::Rect_<int> face = faces[i];
 
-    int face_rows = cv::face.height;
-    int face_cols = cv::face.width;
+    int face_rows = face.height;
+    int face_cols = face.width;
 
-    face_ROI = image(cv::Rect(cv::face.x, cv::face.y, face_cols, face_rows));
+    face_ROI = image(cv::Rect(face.x, face.y, face_cols, face_rows));
 
     /*
-    int roi_x = cv::face.x, roi_y = cv::face.y + ((2 * face_rows) / 3);
+    int roi_x = face.x, roi_y = face.y + ((2 * face_rows) / 3);
     int roi_rows = (face_rows - roi_y), roi_cols = face_cols;
 
     cv::rectangle(image, cv::Point(roi_x, roi_y), cv::Point(roi_x+roi_cols, roi_y+roi_rows),
@@ -314,22 +314,22 @@ transformModifiedLUX(cv::Mat_<cv::Vec3b> image_BGR) {
 
 pair<double, double>
 returnImageStats(const cv::Mat_<uchar>& image) {
-  double cv::mean = 0.0, std_dev = 0.0;
+  double mean = 0.0, std_dev = 0.0;
   int total_pixels = (image.rows * image.cols);
 
   int intensity_sum = 0;
   for(int i = 0; i < image.rows; ++i) {
     for(int j = 0; j < image.cols; ++j) intensity_sum += image.at<uchar>(i, j);
   }
-  cv::mean = (double)intensity_sum / total_pixels;
+  mean = (double)intensity_sum / total_pixels;
 
   int sum_sq = 0;
   for(int i = 0; i < image.rows; ++i) {
-    for(int j = 0; j < image.cols; ++j) sum_sq += ((image.at<uchar>(i, j) - cv::mean) * (image.at<uchar>(i, j) - cv::mean));
+    for(int j = 0; j < image.cols; ++j) sum_sq += ((image.at<uchar>(i, j) - mean) * (image.at<uchar>(i, j) - mean));
   }
   std_dev = sqrt((double)sum_sq / total_pixels);
 
-  return make_pair(cv::mean, std_dev);
+  return make_pair(mean, std_dev);
 }
 
 cv::Mat_<uchar>
@@ -337,10 +337,10 @@ binaryThresholding(const cv::Mat_<uchar>& image, const pair<double, double>& sta
   cv::Mat_<uchar> image_binary(image.size());
 
   double Z = 0.9;
-  double cv::threshold = stats.first + (Z * stats.second);
+  double threshold = stats.first + (Z * stats.second);
   for(int i = 0; i < image.rows; ++i) {
     for(int j = 0; j < image.cols; ++j) {
-      if(image.at<uchar>(i, j) >= cv::threshold + numeric_limits<double>::epsilon())
+      if(image.at<uchar>(i, j) >= threshold + numeric_limits<double>::epsilon())
         image_binary.at<uchar>(i, j) = 255;
       else
         image_binary.at<uchar>(i, j) = 0;

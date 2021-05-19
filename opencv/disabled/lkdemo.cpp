@@ -101,7 +101,7 @@ main(int argc, char** argv) {
         points[1][k++] = points[1][i];
         cv::circle(image, points[1][i], 3, cv::Scalar(0, 255, 0), -1, 8);
       }
-      points[1].cv::resize(k);
+      points[1].resize(k);
     }
 
     if(addRemovePt && points[1].size() < (size_t)MAX_COUNT) {

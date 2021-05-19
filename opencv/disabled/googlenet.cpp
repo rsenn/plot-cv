@@ -107,7 +107,7 @@ main() {
   while(key != 'q' && key != 'Q') {
 
     // Get the next frame received
-    capture.cv::read(matImg);
+    capture.read(matImg);
 
     // AlexNet CNN network only accepts 224x224 pictures
     cv::resize(matImg, matImg, cv::Size(224, 224));

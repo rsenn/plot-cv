@@ -240,37 +240,37 @@ MjpegInputStream& cv::operator>>(MjpegInputStream& is, AviIndex& idx1);
 
 MjpegInputStream&
 cv::operator>>(MjpegInputStream& is, AviMainHeader& avih) {
-  is.cv::read((char*)(&avih), sizeof(AviMainHeader));
+  is.read((char*)(&avih), sizeof(AviMainHeader));
   return is;
 }
 
 MjpegInputStream&
 cv::operator>>(MjpegInputStream& is, AviStreamHeader& strh) {
-  is.cv::read((char*)(&strh), sizeof(AviStreamHeader));
+  is.read((char*)(&strh), sizeof(AviStreamHeader));
   return is;
 }
 
 MjpegInputStream&
 cv::operator>>(MjpegInputStream& is, BitmapInfoHeader& bmph) {
-  is.cv::read((char*)(&bmph), sizeof(BitmapInfoHeader));
+  is.read((char*)(&bmph), sizeof(BitmapInfoHeader));
   return is;
 }
 
 MjpegInputStream&
 cv::operator>>(MjpegInputStream& is, RiffList& riff_list) {
-  is.cv::read((char*)(&riff_list), sizeof(riff_list));
+  is.read((char*)(&riff_list), sizeof(riff_list));
   return is;
 }
 
 MjpegInputStream&
 cv::operator>>(MjpegInputStream& is, RiffChunk& riff_chunk) {
-  is.cv::read((char*)(&riff_chunk), sizeof(riff_chunk));
+  is.read((char*)(&riff_chunk), sizeof(riff_chunk));
   return is;
 }
 
 MjpegInputStream&
 cv::operator>>(MjpegInputStream& is, AviIndex& idx1) {
-  is.cv::read((char*)(&idx1), sizeof(idx1));
+  is.read((char*)(&idx1), sizeof(idx1));
   return is;
 }
 
@@ -733,9 +733,9 @@ MotionJpegCapture::readFrame(frame_iterator it) {
   std::vector<char> result;
 
   result.reserve(chunk.m_size);
-  result.cv::resize(chunk.m_size);
+  result.resize(chunk.m_size);
 
-  m_file_stream.cv::read(&(result[0]), chunk.m_size); // result.data() failed with MSVS2008
+  m_file_stream.read(&(result[0]), chunk.m_size); // result.data() failed with MSVS2008
 
   return result;
 }

@@ -67,7 +67,7 @@ main(int argc, char* argv[]) {
   }*/
 
   for(;;) {
-    frameExists = camera.cv::read(frame);
+    frameExists = camera.read(frame);
 
     if(!frameExists) {
       printf("Cannot cv::read image from camera. \n");

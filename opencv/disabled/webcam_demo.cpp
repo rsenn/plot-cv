@@ -123,7 +123,7 @@ main(int argc, char* argv[]) {
 
     cout << " Done!" << endl;
 
-    cap.cv::read(frame);
+    cap.read(frame);
   }
 
   cv::namedWindow("recognition", WINDOW_NORMAL);
@@ -336,7 +336,7 @@ main(int argc, char* argv[]) {
 
     cv::imshow("recognition", out_img);
 
-    if((image_file_name == "") && !cap.cv::read(frame)) {
+    if((image_file_name == "") && !cap.read(frame)) {
       cout << "Capturing ended! press any key to exit." << endl;
       cv::waitKey();
       return 0;

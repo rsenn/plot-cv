@@ -151,7 +151,7 @@ main(int argc, char** argv) {
     printf("Could not initialize video capture\n");
     return 0;
   }
-  buf.cv::resize(2);
+  buf.resize(2);
   cv::Mat image, motion;
   for(;;) {
     cap >> image;

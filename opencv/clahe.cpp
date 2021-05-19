@@ -79,7 +79,7 @@ main(int argc, char** argv) {
 
   for(;;) {
     if(capture.isOpened())
-      capture.cv::read(frame);
+      capture.read(frame);
     else
       cv::imread(infile).copyTo(frame);
     if(frame.empty()) {

@@ -66,7 +66,7 @@ main() {
 
   std::cout << "Press ESCAPE to exit demo" << std::endl;
   while(cv::waitKey(1) != KEY_ESCAPE) {
-    cap.cv::read(img);
+    cap.read(img);
     // win->setBackground(img);
     cv::aruco::detectMarkers(img, adict, corners, ids);
 

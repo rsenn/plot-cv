@@ -59,9 +59,9 @@ public:
     float ratio = landscape ? float(bg.height) / bg.width : float(bg.width) / bg.height;
 
     if(landscape) {
-      bg.cv::resize(600, 600 * ratio);
+      bg.resize(600, 600 * ratio);
     } else {
-      bg.cv::resize(600 * ratio, 600);
+      bg.resize(600 * ratio, 600);
     }
   }
 

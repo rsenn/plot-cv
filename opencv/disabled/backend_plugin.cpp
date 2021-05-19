@@ -36,14 +36,14 @@ typedef std::wstring FileSystemPath_t;
 static FileSystemPath_t
 toFileSystemPath(const std::string& p) {
   FileSystemPath_t result;
-  result.cv::resize(p.size());
+  result.resize(p.size());
   for(size_t i = 0; i < p.size(); i++) result[i] = (wchar_t)p[i];
   return result;
 }
 static std::string
 toPrintablePath(const FileSystemPath_t& p) {
   std::string result;
-  result.cv::resize(p.size());
+  result.resize(p.size());
   for(size_t i = 0; i < p.size(); i++) {
     wchar_t ch = p[i];
     if((int)ch >= ' ' && (int)ch < 128)

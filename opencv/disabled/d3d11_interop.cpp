@@ -179,7 +179,7 @@ public:
   get_surface(ID3D11Texture2D** ppSurface, bool use_nv12) {
     HRESULT r;
 
-    if(!m_cap.cv::read(m_frame_bgr))
+    if(!m_cap.read(m_frame_bgr))
       return -1;
 
     if(use_nv12) {

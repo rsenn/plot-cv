@@ -63,7 +63,7 @@ SurveillancePhoto::execute_event(cv::VideoCapture input_cap, int camera_index, s
     return -1;
   } else {
     cv::Mat frame;
-    bool read_success = input_cap.cv::read(frame);
+    bool read_success = input_cap.read(frame);
 
     if(!read_success) {
       cout << "cv::Error reading frame from camera: " << camera_index << endl;
@@ -127,7 +127,7 @@ SurveillanceVideo::execute_event(cv::VideoCapture input_cap, int camera_index, s
 
       while(difftime(current_time, start_time) <= this->videoLen_s) {
         time(&current_time);
-        success = input_cap.cv::read(frame);
+        success = input_cap.read(frame);
 
         if(!success) {
           cout << "cv::Error: Failed to cv::read frame from camera at index: " << camera_index << endl;

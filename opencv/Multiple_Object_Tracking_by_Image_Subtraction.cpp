@@ -51,8 +51,8 @@ main(int argc, char* argv[]) {
     return (0);
   }
 
-  capVideo.cv::read(imgFrame1);
-  capVideo.cv::read(imgFrame2);
+  capVideo.read(imgFrame1);
+  capVideo.read(imgFrame2);
 
   char chCheckForEscKey = 0;
 
@@ -110,8 +110,8 @@ main(int argc, char* argv[]) {
 
     drawAndShowContours(imgThresh.size(), convexHulls, "imgConvexHulls");
 
-    for(auto& cv::convexHull : convexHulls) {
-      Blob possibleBlob(cv::convexHull);
+    for(auto& convexHull : convexHulls) {
+      Blob possibleBlob(convexHull);
 
       if(possibleBlob.currentBoundingRect.area() > 100 && possibleBlob.dblCurrentAspectRatio >= 0.2 &&
          possibleBlob.dblCurrentAspectRatio <= 1.25 && possibleBlob.currentBoundingRect.width > 20 &&
@@ -147,7 +147,7 @@ main(int argc, char* argv[]) {
     imgFrame1 = imgFrame2.clone(); // move frame 1 up to where frame 2 is
 
     if((capVideo.get(cv::CAP_PROP_POS_FRAMES) + 1) < capVideo.get(cv::CAP_PROP_FRAME_COUNT)) {
-      capVideo.cv::read(imgFrame2);
+      capVideo.read(imgFrame2);
     } else {
       std::cout << "end of video\n";
       break;

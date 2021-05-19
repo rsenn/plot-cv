@@ -95,7 +95,7 @@ main(int argc, const char* argv[]) {
 
   cv::UMat prevFrame, frame, input_frame, flow;
   for(;;) {
-    if(!cap.cv::read(input_frame) || input_frame.empty()) {
+    if(!cap.read(input_frame) || input_frame.empty()) {
       cout << "Finished reading: empty frame" << endl;
       break;
     }

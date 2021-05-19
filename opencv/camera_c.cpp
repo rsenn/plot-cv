@@ -210,7 +210,7 @@ void
 camera_c::startLearning(void) {
   isLearning = true;
 
-  detectedZone.cv::resize(resolution, std::vector<bool>(resolution, false));
+  detectedZone.resize(resolution, std::vector<bool>(resolution, false));
 }
 
 void

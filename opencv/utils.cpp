@@ -624,9 +624,9 @@ draw_multiple_channel(string img_name) {
   ERs root;
   vector<ERs> all;
   vector<ERs> pool;
-  root.cv::resize(channel.size());
-  all.cv::resize(channel.size());
-  pool.cv::resize(channel.size());
+  root.resize(channel.size());
+  all.resize(channel.size());
+  pool.resize(channel.size());
 
   for(int i = 0; i < channel.size(); i++) {
     root[i] = erFilter->er_tree_extract(channel[i]);
@@ -689,11 +689,11 @@ output_optimal_path(string img_name) {
 
   er_filter.compute_channels(src, Ycrcb, channel);
 
-  root.cv::resize(channel.size());
-  all.cv::resize(channel.size());
-  pool.cv::resize(channel.size());
-  strong.cv::resize(channel.size());
-  weak.cv::resize(channel.size());
+  root.resize(channel.size());
+  all.resize(channel.size());
+  pool.resize(channel.size());
+  strong.resize(channel.size());
+  weak.resize(channel.size());
 
 #pragma omp parallel for
   for(int i = 0; i < channel.size(); i++) {
@@ -889,7 +889,7 @@ calc_recall_rate() {
     flat[4].insert(flat[4].end(), flat[2].begin(), flat[2].end());
     flat[4].insert(flat[4].end(), flat[3].begin(), flat[3].end());
     flat[5].insert(flat[5].end(), tracked.begin(), tracked.end());
-    flat[6].cv::resize(mser_bbox.size());
+    flat[6].resize(mser_bbox.size());
 
     vector<vector<bool>> matches(7, vector<bool>(gt_box.size(),
                                                  false)); // all, nms, strong, weak, classify, track

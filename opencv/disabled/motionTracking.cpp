@@ -128,7 +128,7 @@ main() {
     while(capture.get(cv::CAP_PROP_POS_FRAMES) < capture.get(cv::CAP_PROP_FRAME_COUNT) - 1) {
       bool success;
       // cv::read first frame
-      success = capture.cv::read(frame1);
+      success = capture.read(frame1);
       if(!success) {
         cout << endl << "ERROR: frame 1 failed to be cv::read" << endl;
         exit(1);
@@ -136,7 +136,7 @@ main() {
       // convert frame1 to gray scale for frame differencing
       cv::cvtColor(frame1, grayImage1, COLOR_BGR2GRAY);
       // copy second frame
-      success = capture.cv::read(frame2);
+      success = capture.read(frame2);
       if(!success) {
         cout << endl << "ERROR: frame 2 failed to be cv::read" << endl;
         exit(1);

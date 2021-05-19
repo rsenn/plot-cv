@@ -356,7 +356,7 @@ main(int argc, char* argv[]) {
 
 static void
 reprojectcv::Points(const std::vector<cv::Point3d>& proj, std::vector<cv::Point3d>& real, double f) {
-  real.cv::resize(proj.size());
+  real.resize(proj.size());
   double f_inv = 1.0 / f;
 
   for(int i = 0; i < (int)proj.size(); ++i) {

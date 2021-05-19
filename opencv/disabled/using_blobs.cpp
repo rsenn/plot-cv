@@ -37,7 +37,7 @@ main() {
 
   cv::Mat img_mat1, img_mat2, diff_mat, thrs_mat, bw_mat1, bw_mat2;
 
-  image_success = capture.cv::read(img_mat1);
+  image_success = capture.read(img_mat1);
   if(!image_success) {
     cout << endl << "ERROR: img_mat1 failed to be cv::read" << endl;
     exit(1);
@@ -55,7 +55,7 @@ main() {
   // IplImage ipl_img;
   // cv::Mat mat_img(ipl_img );
 
-  image_success = capture.cv::read(img_mat2);
+  image_success = capture.read(img_mat2);
   if(!image_success) {
     cout << endl << "ERROR: img_mat2 failed to be cv::read" << endl;
     exit(1);
@@ -67,7 +67,7 @@ main() {
 
     cout << "in the loop-d-loop" << endl;
 
-    image_success = capture.cv::read(img_mat2);
+    image_success = capture.read(img_mat2);
     if(!image_success) {
       cout << endl << "ERROR: img_mat2 failed to be cv::read" << endl;
       exit(1);
@@ -118,7 +118,7 @@ main() {
 
     cvReleaseBlobs(blobs);
 
-    image_success = capture.cv::read(img_mat2);
+    image_success = capture.read(img_mat2);
     if(!image_success) {
       cout << endl << "ERROR: img_mat2 failed to be cv::read" << endl;
       exit(1);

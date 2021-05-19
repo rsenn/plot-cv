@@ -94,7 +94,7 @@ main(int argc, char** argv) {
   // the color of the rectangle
   cv::Scalar color(0, 255, 255); // yellow
 
-  while(capture.cv::read(frame)) {
+  while(capture.read(frame)) {
     vector<DPMDetector::ObjectDetection> ds;
 
     cv::Mat image;

@@ -91,7 +91,7 @@ computeReprojectionErrors(const vector<vector<cv::Point3f>>& objectPoints,
   vector<cv::Point2f> imagePoints2;
   int i, totalPoints = 0;
   double totalErr = 0, err;
-  perViewErrors.cv::resize(objectPoints.size());
+  perViewErrors.resize(objectPoints.size());
 
   for(i = 0; i < (int)objectPoints.size(); i++) {
     cv::projectPoints(cv::Mat(objectPoints[i]), rvecs[i], tvecs[i], cameraMatrix, distCoeffs, imagePoints2);
@@ -107,7 +107,7 @@ computeReprojectionErrors(const vector<vector<cv::Point3f>>& objectPoints,
 
 static void
 calcChessboardCorners(cv::Size boardSize, float squareSize, vector<cv::Point3f>& corners, Pattern patternType = CHESSBOARD) {
-  corners.cv::resize(0);
+  corners.resize(0);
 
   switch(patternType) {
     case CHESSBOARD:
@@ -149,7 +149,7 @@ runCalibration(vector<vector<cv::Point2f>> imagePoints,
   vector<vector<cv::Point3f>> objectPoints(1);
   calcChessboardCorners(boardSize, squareSize, objectPoints[0], patternType);
 
-  objectPoints.cv::resize(imagePoints.size(), objectPoints[0]);
+  objectPoints.resize(imagePoints.size(), objectPoints[0]);
 
   double rms = cv::calibrateCamera(
       objectPoints, imagePoints, imageSize, cameraMatrix, distCoeffs, rvecs, tvecs, flags | CV_CALIB_FIX_K4 | CV_CALIB_FIX_K5);
@@ -248,7 +248,7 @@ saveCameraParams(const string& filename,
 
 static bool
 readStringList(const string& filename, vector<string>& l) {
-  l.cv::resize(0);
+  l.resize(0);
   cv::FileStorage fs(filename, cv::FileStorage::READ);
   if(!fs.isOpened())
     return false;

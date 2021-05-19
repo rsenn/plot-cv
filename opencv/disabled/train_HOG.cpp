@@ -35,7 +35,7 @@ get_svm_detector(const Ptr<SVM>& svm, vector<float>& hog_detector) {
   CV_Assert(sv.type() == CV_32F);
   hog_detector.clear();
 
-  hog_detector.cv::resize(sv.cols + 1);
+  hog_detector.resize(sv.cols + 1);
   memcpy(&hog_detector[0], sv.ptr(), sv.cols * sizeof(hog_detector[0]));
   hog_detector[sv.cols] = (float)-rho;
 }

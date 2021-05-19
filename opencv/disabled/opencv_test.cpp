@@ -69,7 +69,7 @@ main(int argc, char** argv) {
 
     cv::Mat frame;
 
-    bool bSuccess = cap.cv::read(frame);
+    bool bSuccess = cap.read(frame);
     if(bSuccess) {
       if(counter % 2 == 0) {
         frontalface.detectMultiScale(frame,

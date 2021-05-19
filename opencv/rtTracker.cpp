@@ -97,7 +97,7 @@ main(int argc, char* argv[]) {
   surf->detectAndCompute(gray_object, cv::Mat(), keypoints1, descriptors1);
 
   while(1) {
-    bool bSuccess = cv::cap.cv::read(frame); // cv::read a new frame from video
+    bool bSuccess = cv::cap.read(frame); // cv::read a new frame from video
     if(!bSuccess)                    // if not success, break loop
     {
       cout << "Cannot cv::read the frame from video file" << endl;
