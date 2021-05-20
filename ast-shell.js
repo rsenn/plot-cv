@@ -156,7 +156,12 @@ async function CommandLine() {
   repl.cleanup = () => {
     Terminal.mousetrackingDisable();
     let hist = repl.history_get().filter((item, i, a) => a.lastIndexOf(item) == i);
-    fs.writeFile(cmdhist, JSON.stringify(hist, null, 2));
+    fs.writeFileSync(cmdhist,
+      hist
+        .filter(entry => (entry + '').trim() != '')
+        .map(entry => entry.replace(/\n/g, '\\n') + '\n')
+        .join('')
+    );
     console.log(`EXIT (wrote ${hist.length} history entries)`);
     std.exit(0);
   };

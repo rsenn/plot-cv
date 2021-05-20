@@ -5,11 +5,9 @@ const ESC = '\x1b';
 Object.defineProperty(globalThis, 'terminal', {
   get() {
     const g = globalThis;
-    if(g.filesystem) {
-      delete g.terminal;
-      g.terminal = filesystem.stdout;
-      return g.terminal;
-    }
+    delete g.terminal;
+    g.terminal = filesystem.stdout;
+    return g.terminal;
   },
   configurable: true,
   enumerable: false
