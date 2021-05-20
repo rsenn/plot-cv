@@ -114,7 +114,7 @@ async function CommandLine() {
   //console.log('repl', repl);
 
   repl.importModule = ImportModule;
-  repl.history_set(ReadJSON(cmdhist));
+  repl.history_set(LoadHistory(cmdhist));
   repl.directives = {
     c(...args) {
       Compile(...args);
@@ -305,11 +305,38 @@ function ReadFile(name, binary) {
   return ret;
 }
 
-function ReadJSON(filename) {
-  let data = std.loadFile(filename);
-  return data ? JSON.parse(data) : null;
+function Terminate(exitCode) {
+  console.log('Terminate', exitCode);
+
+  Util.exit(exitCode);
 }
 
+function LoadHistory(filename) {
+  let contents = std.loadFile(filename);
+  let data;
+
+  const parse = () => {
+    try {
+      data = JSON.parse(contents);
+    } catch(e) {}
+    if(data) return data;
+    try {
+      data = contents.split(/\n/g);
+    } catch(e) {}
+    if(data) return data;
+  };
+
+  return (parse() ?? [])
+    .filter(entry => (entry + '').trim() != '')
+    .map(entry => entry.replace(/\\n/g, '\n'));
+}
+
+function ReadJSON(filename) {
+  let data = std.loadFile(filename);
+
+  if(data) console.log(`ReadJSON('${filename}') ${data.length} bytes read`);
+  return data ? JSON.parse(data) : null;
+}
 function MapFile(filename) {
   let fd = os.open(filename, os.O_RDONLY);
   let { size } = os.stat(filename)[0];

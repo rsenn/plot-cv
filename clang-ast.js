@@ -1037,7 +1037,7 @@ export async function AstDump(compiler, source, args, force) {
     console.log(`Loading cached '${output}'...`);
     r = { file: output };
   } else {
-    if(fs.exists(output)) fs.unlink(output);
+    if(fs.existsSync(output)) fs.unlink(output);
 
     console.log(`Compiling '${source}'...`);
     r = await SpawnCompiler(compiler, source, output, [

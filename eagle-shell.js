@@ -41,10 +41,36 @@ Util.define(Array.prototype, {
   }
 });
 
+function Terminate(exitCode) {
+  console.log('Terminate', exitCode);
+
+  Util.exit(exitCode);
+}
+
+function LoadHistory(filename) {
+  let contents = std.loadFile(filename);
+  let data;
+
+  const parse = () => {
+    try {
+      data = JSON.parse(contents);
+    } catch(e) {}
+    if(data) return data;
+    try {
+      data = contents.split(/\n/g);
+    } catch(e) {}
+    if(data) return data;
+  };
+
+  return (parse() ?? [])
+    .filter(entry => (entry + '').trim() != '')
+    .map(entry => entry.replace(/\\n/g, '\n'));
+}
+
 function ReadJSON(filename) {
   let data = std.loadFile(filename);
-if(data)
-  console.log(`ReadJSON('${filename}') ${data.length} bytes read`);
+
+  if(data) console.log(`ReadJSON('${filename}') ${data.length} bytes read`);
   return data ? JSON.parse(data) : null;
 }
 
@@ -407,16 +433,18 @@ function main(...args) {
     SpatialH,
     SpatialHash,
     SpatialHashMap,
-    BoxHash,ReadJSON
+    BoxHash,
+    ReadJSON
   });
 
   cmdhist = `.${base}-cmdhistory`;
 
   let repl = (globalThis.repl = new REPL(base));
   let debugLog = fs.fopen('debug.log', 'a');
-  repl.history_set(ReadJSON(cmdhist));
+  repl.history_set(LoadHistory(cmdhist));
+  console.log(`LOAD (read ${repl.history.length} history entries)`);
   repl.debugLog = debugLog;
-  repl.exit = Util.exit;
+  repl.exit = Terminate;
   repl.importModule = importModule;
   repl.debug = (...args) => {
     let s = '';
@@ -437,13 +465,21 @@ function main(...args) {
     }
   };
 
-  repl.history_set(JSON.parse(std.loadFile(histfile) || '[]'));
+  // repl.history_set(JSON.parse(std.loadFile(histfile) || '[]'));
 
   repl.cleanup = () => {
     let hist = repl.history_get().filter((item, i, a) => a.lastIndexOf(item) == i);
-    fs.writeFileSync(cmdhist, JSON.stringify(hist, null, 2));
+
+    //    fs.writeFileSync(cmdhist, JSON.stringify(hist, null, 2));
+    fs.writeFileSync(cmdhist,
+      hist
+        .filter(entry => (entry + '').trim() != '')
+        .map(entry => entry.replace(/\n/g, '\\n') + '\n')
+        .join('')
+    );
+
     console.log(`EXIT (wrote ${hist.length} history entries)`);
-    std.exit(0);
+    Terminate(0);
   };
   /*
   Util.atexit(() => {
