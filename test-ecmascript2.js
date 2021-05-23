@@ -92,12 +92,13 @@ function main(...args) {
 
   const time = () => Date.now() / 1000;
 
-  if(params['@'].length == 0) params['@'].push(null); //'./lib/ecmascript/parser.js');
+  if(params['@'].length == 0) params['@'].push(Util.getArgv()[1]);
+
   console.log(`params['@']`, params['@']);
   for(let file of params['@']) {
     let error;
 
-    const processing = /*Util.instrument*/ () => processFile(file, params);
+    const processing = Util.instrument(() => processFile(file, params));
 
     // Util.safeCall(processFile, file, params);
     try {

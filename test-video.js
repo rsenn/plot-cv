@@ -14,7 +14,7 @@ console.log('process', process);
 let rainbow;
 let zoom = 1;
 let debug = false;
-let basename = process.args[1].replace(/\.js$/, '');
+let basename = process.argv[1].replace(/\.js$/, '');
 
 function Hierarchy(array) {
   if(array instanceof Int32Array)
