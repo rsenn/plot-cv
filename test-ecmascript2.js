@@ -94,7 +94,7 @@ function main(...args) {
 
   if(params['@'].length == 0) params['@'].push(Util.getArgv()[1]);
 
-  console.log(`params['@']`, params['@']);
+  console.log(`params['@']`, params?.['@']);
   for(let file of params['@']) {
     let error;
 
@@ -105,8 +105,8 @@ function main(...args) {
       processing(); //.catch(err => console.log('processFile ERROR:', err));
     } catch(error) {
       if(error) {
-        console.log('ERROR:', error?.message);
-        console.log('STACK:', error?.stack);
+        console.log?.('ERROR:', error?.message);
+        console.log?.('STACK:', error?.stack);
       } else {
         console.log('ERROR:', error);
       }
