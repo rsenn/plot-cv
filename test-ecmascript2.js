@@ -98,7 +98,7 @@ function main(...args) {
   for(let file of params['@']) {
     let error;
 
-    const processing = /*Util.instrument*/(() => processFile(file, params));
+    const processing = /*Util.instrument*/ () => processFile(file, params);
 
     // Util.safeCall(processFile, file, params);
     try {
@@ -140,7 +140,7 @@ function processFile(file, params) {
     data = source;
   }
   console.log('OK, data: ', Util.abbreviate(Util.escape(data)));
-  ECMAScriptParser.instrumentate();
+  //ECMAScriptParser.instrumentate();
   console.log('ECMAScriptParser:', ECMAScriptParser);
 
   let ast, error;
