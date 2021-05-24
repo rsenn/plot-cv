@@ -5,6 +5,8 @@
 #include <sys/select.h>
 #include <sys/time.h>
 #include <sys/mman.h>
+#include <sys/un.h>
+#include <netpacket/packet.h>
 #include <termios.h>
 #include <fcntl.h>
 #include <math.h>
@@ -92,4 +94,19 @@ main() {
   printf("INT32_MAX = %" PRIi32 "\n", INT32_MAX);
   printf("INT64_MIN = %" PRIi64 "\n", INT64_MIN);
   printf("INT64_MAX = %" PRIi64 "\n", INT64_MAX);
+  struct sockaddr_in si;
+  struct sockaddr_in6 si6;
+  struct sockaddr_ll sl;
+  struct sockaddr_storage ss;
+  struct sockaddr_un su;
+
+  printf("sizeof(struct sockaddr_in) = %zu\n", sizeof(struct sockaddr_in));
+  printf("sizeof(struct sockaddr_in6) = %zu\n", sizeof(struct sockaddr_in6));
+ // printf("sizeof(struct sockaddr_in_pad) = %zu\n", sizeof(struct sockaddr_in_pad));
+  printf("sizeof(struct sockaddr_ll) = %zu\n", sizeof(struct sockaddr_ll));
+  //printf("sizeof(struct sockaddr_nl) = %zu\n", sizeof(struct sockaddr_nl));
+ // printf("sizeof(struct sockaddr_pkt) = %zu\n", sizeof(struct sockaddr_pkt));
+  printf("sizeof(struct sockaddr_storage) = %zu\n", sizeof(struct sockaddr_storage));
+  printf("sizeof(struct sockaddr_un) = %zu\n", sizeof(struct sockaddr_un));
+
 }

@@ -98,7 +98,7 @@ function main(...args) {
   for(let file of params['@']) {
     let error;
 
-    const processing = Util.instrument(() => processFile(file, params));
+    const processing = /*Util.instrument*/(() => processFile(file, params));
 
     // Util.safeCall(processFile, file, params);
     try {
@@ -149,7 +149,6 @@ function processFile(file, params) {
 
   try {
     ast = parser.parseProgram();
-    console.log('ast:', ast);
   } catch(err) {
     console.log('parseProgram token', parser.token);
     console.log('parseProgram loc', parser.lexer.loc + '');
@@ -170,7 +169,7 @@ function processFile(file, params) {
     }
   }
 
-  console.log('Parsed: ', ast);
+  //console.log('Parsed: ', ast);
   /* parser.assoc(ast);
   console.log('parser.assocMap: ', console.config({depth: 0 }), [...parser.assoc.map.keys()]);*/
 

@@ -11,7 +11,6 @@ set(CMAKE_BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR}" CACHE PATH "Build with local
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib" CACHE PATH "Build with install rpath" FORCE)
 
 set(quickjs_sources_root ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
-include(${quickjs_sources_root}/defs.cmake)
 
 if(NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
   set(CMAKE_BUILD_TYPE "Debug")
@@ -32,6 +31,7 @@ include(FindPkgConfig)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Functions.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindQuickJS.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/OpenCV.cmake)
+include(${quickjs_sources_root}/defs.cmake)
 
 find_quickjs()
 find_opencv()

@@ -4,14 +4,18 @@ import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './fcntl.js';
 import { errno } from 'ffi';
 import { Socket, socket, AF_INET, SOCK_STREAM, ndelay, connect, sockaddr_in, select, fd_set, timeval, FD_SET, FD_ISSET, FD_ZERO, send, recv } from './socket.js';
 import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
+import { Console } from 'console';
 
 async function main(...args) {
-  await ConsoleSetup({
-    breakLength: 120,
-    maxStringLength: 200,
-    multiline: 1,
-    alignMap: true
+  globalThis.console = new Console({
+    stdout: process.stdout,
+    inspectOptions: {
+      colors: true,
+      depth: 8,
+      maxArrayLength: 100,
+      compact: 3,
+      customInspect: true
+    }
   });
 
   const listen = !!(args[0] == '-l' && args.shift());
@@ -37,21 +41,24 @@ async function main(...args) {
 
   console.log('Error:', Error);
 
-  await (async function IOHandler() {
-    for await(let data of sock) {
-      console.log('data:', data);
-      if(data.length <= 9) continue;
-      let [len, json] = [...Util.splitAt(data, 9)];
-      let size = parseInt(len, 16);
-      let message = JSON.parse(json);
-      console.log('', { size, message });
+  if(!sock.listening)
+    await (async function IOHandler() {
+      for await(let data of sock) {
+        console.log('data:', data);
+        if(data.length <= 9) continue;
+        let [len, json] = [...Util.splitAt(data, 9)];
+        let size = parseInt(len, 16);
+        let message = JSON.parse(json);
+        console.log('', { size, message });
 
-      if(message.type == 'event') handleEvent(sock, message.event);
-    }
-  })();
+        if(message.type == 'event') handleEvent(sock, message.event);
+      }
+    })();
 
   /*  ret = sendRequest(+sock, 'next');
   retValue(ret);*/
+
+  IOLoop();
 
   console.log('debuggerprotocol', { sock, connection });
 
@@ -75,8 +82,7 @@ async function main(...args) {
       const timeout = new timeval(5, 0);
 
       ret = select(null, rfds, null, null, timeout);
-
-      console.log('select', { rfds, timeout });
+      console.log('select', { rfds, wfds, timeout });
 
       if(FD_ISSET(+sock, wfds)) {
         connection = sock;

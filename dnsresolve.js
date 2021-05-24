@@ -1,6 +1,6 @@
 import { strerror, err, out, exit, open, loadFile } from 'std';
 import { read, signal, ttySetRaw, write } from 'os';
-import { errno, toString, toArrayBuffer, toPointer, argSize, ptrSize } from 'ffi';
+import { errno, toString, toArrayBuffer, toPointer, pointerSize } from 'ffi';
 import { Socket, socket, socklen_t, AF_INET, SOCK_STREAM, IPPROTO_UDP, ndelay, connect, sockaddr_in, select, fd_set, timeval, FD_SET, FD_CLR, FD_ISSET, FD_ZERO, errnos, send, recv } from './socket.js';
 import { termios, tcgetattr, tcsetattr, TCSANOW, IGNPAR, IMAXBEL, IUTF8, OPOST, ONLCR, CR0, TAB0, BS0, VT0, FF0, EXTB, CS8, CREAD, ISIG, ECHOE, ECHOK, ECHOCTL, ECHOKE, VINTR, cfgetospeed, cfsetospeed, B57600, B115200 } from './term.js';
 
@@ -149,7 +149,7 @@ function main(...args) {
 }
 
 function ReturnValue(ret, ...args) {
-  const r = [-1, 0].indexOf(ret) != -1 ? ret + '' : '0x' + NumberToHex(ret, ptrSize * 2);
+  const r = [-1, 0].indexOf(ret) != -1 ? ret + '' : '0x' + NumberToHex(ret, pointerSize * 2);
   debug('%s ret = %s%s%s',
     args,
     r,

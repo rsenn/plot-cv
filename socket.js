@@ -1,7 +1,7 @@
-import { Error, strerror } from 'std';
+import { Error as Errors, strerror } from 'std';
 import { read, write, close, setReadHandler, setWriteHandler } from 'os';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './fcntl.js';
-import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toArrayBuffer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_NODELETE, RTLD_NOLOAD, RTLD_DEEPBIND, RTLD_DEFAULT, RTLD_NEXT, argSize, ptrSize } from 'ffi';
+import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toPointer, toArrayBuffer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_NODELETE, RTLD_NOLOAD, RTLD_DEEPBIND, RTLD_DEFAULT, RTLD_NEXT, pointerSize } from 'ffi';
 
 function foreign(name, ret, ...args) {
   let fp = dlsym(RTLD_DEFAULT, name);
@@ -122,7 +122,7 @@ export const SOL_SOCKET = 1;
 /* prettier-ignore */
 const syscall = { socket: foreign('socket', 'int', 'int', 'int', 'int'), select: foreign( 'select', 'int', 'int', 'buffer', 'buffer', 'buffer', 'buffer' ), connect: foreign('connect', 'int', 'int', 'void *', 'size_t'), bind: foreign('bind', 'int', 'int', 'void *', 'size_t'), listen: foreign('listen', 'int', 'int', 'int'), accept: foreign('accept', 'int', 'int', 'buffer', 'buffer'), getsockopt: foreign( 'getsockopt', 'int', 'int', 'int', 'int', 'void *', 'buffer' ), setsockopt: foreign( 'setsockopt', 'int', 'int', 'int', 'int', 'void *', 'size_t' ), recv: foreign('recv', 'int', 'int', 'buffer', 'size_t', 'int'), recvfrom: foreign( 'recvfrom', 'int', 'int', 'buffer', 'size_t', 'int', 'buffer', 'buffer' ), send: foreign('send', 'int', 'int', 'buffer', 'size_t', 'int'), sendto: foreign( 'sendto', 'int', 'int', 'buffer', 'size_t', 'int', 'buffer', 'size_t' ) };
 
-export const errnos = Object.fromEntries(Object.getOwnPropertyNames(Error).map(name => [Error[name], name])
+export const errnos = Object.fromEntries(Object.getOwnPropertyNames(Errors).map(name => [Errors[name], name])
 );
 
 export function socket(af = AF_INET, type = SOCK_STREAM, proto = IPPROTO_IP) {
@@ -180,10 +180,13 @@ export function send(fd, buf, offset, len, flags = 0) {
 
 export function select(nfds, readfds = null, writefds = null, exceptfds = null, timeout = null) {
   if(!(typeof nfds == 'number')) {
-    let maxfd = Math.max(...[readfds, writefds, exceptfds].filter(s => s instanceof fd_set).map(s => s.maxfd)
+    /*  let maxfd = Math.max(...[readfds, writefds, exceptfds].filter(s => s instanceof fd_set).map(s => s.maxfd)
     );
-    nfds = maxfd + 1;
+    nfds = maxfd + 1;*/
+    nfds = FD_SETSIZE;
   }
+  /* console.log("select",{nfds,readfds,writefds,exceptfds,timeout});
+  console.log("select",toPointer(readfds));*/
   return syscall.select(nfds, readfds, writefds, exceptfds, timeout);
 }
 
@@ -196,11 +199,12 @@ export function setsockopt(sockfd, level, optname, optval, optlen) {
 }
 
 export class timeval extends ArrayBuffer {
-  static arrType = ptrSize == 8 ? BigUint64Array : Uint32Array;
-  static numType = ptrSize == 8 ? BigInt : n => n;
+  static arrType = pointerSize == 8 ? BigUint64Array : Uint32Array;
+  static numType = pointerSize == 8 ? BigInt : n => n;
 
   constructor(sec, usec) {
-    super(ptrSize * 2);
+    super(pointerSize * 2);
+    Object.setPrototypeOf(this, new ArrayBuffer(pointerSize * 2));
 
     if(sec !== undefined || usec !== undefined) {
       let a = new timeval.arrType(this);
@@ -231,6 +235,10 @@ export class timeval extends ArrayBuffer {
 export class sockaddr_in extends ArrayBuffer {
   constructor(family, port, addr) {
     super(16);
+
+    // Object.setPrototypeOf(this, new ArrayBuffer(16));
+
+    console.log('this:', this);
 
     this.sin_family = family;
     this.sin_port = port;
@@ -266,6 +274,8 @@ Object.defineProperties(sockaddr_in.prototype, {
       new DataView(this, 2).setUint16(0, port, false);
     },
     get() {
+      //Object.setPrototypeOf(this, ArrayBuffer.prototype);
+      // console.log("this:", this.slice());
       return new DataView(this, 2).getUint16(0, false);
     },
     enumerable: true
@@ -293,6 +303,8 @@ Object.defineProperties(sockaddr_in.prototype, {
 export class fd_set extends ArrayBuffer {
   constructor() {
     super(FD_SETSIZE / 8);
+
+    Object.setPrototypeOf(this, new ArrayBuffer(FD_SETSIZE / 8));
   }
 
   get size() {
@@ -315,11 +327,21 @@ export class fd_set extends ArrayBuffer {
   toString() {
     return `[ ${this.array.join(', ')} ]`;
   }
+
+  [Symbol.inspect]() {
+    return this.array;
+  }
+
+  [Symbol.for('nodejs.util.inspect.custom')]() {
+    return this.array;
+  }
 }
 
 export class socklen_t extends ArrayBuffer {
   constructor(v) {
     super(4);
+    Object.setPrototypeOf(this, new ArrayBuffer(4));
+
     if(v != undefined) new Uint32Array(this)[0] = v | 0;
   }
 
@@ -410,6 +432,7 @@ export class Socket {
     if(addr != undefined) this.localAddress = addr;
     if(port != undefined) this.localPort = port;
     setsockopt(this.fd, SOL_SOCKET, SO_REUSEADDR, new socklen_t(1));
+    console.log('this.local', this.local[Symbol.toStringTag]);
     if((ret = bind(this.fd, this.local, this.local.byteLength)) == -1) this.errno = syscall.errno;
     return ret;
   }
@@ -417,6 +440,7 @@ export class Socket {
   listen(backlog = 5) {
     let ret;
     if((ret = listen(this.fd, backlog)) == -1) this.errno = syscall.errno;
+    else this.listening = true;
     return ret;
   }
 
@@ -441,8 +465,10 @@ export class Socket {
       let data = new ArrayBuffer(typeof buf == 'number' ? buf : 1024);
       if((ret = this.read(data)) > 0) return data.slice(0, ret);
     } else if((ret = read(this.fd, buf, offset, len)) <= 0) {
-      if(ret < 0) this.errno = syscall.errno;
-      else if(ret == 0) this.close();
+      if(ret < 0) {
+        this.errno = syscall.errno;
+        throw new Error(`Socket ${this.fd} error: ${this.errno}`);
+      } else if(ret == 0) this.close();
     }
     return ret;
   }
@@ -485,6 +511,8 @@ export class Socket {
   async *[Symbol.asyncIterator]() {
     let r;
 
+    if(this.listening) throw new Error(`Socket[Symbol.asyncIterator] listening socket`);
+
     if(!globalThis['std']) {
       let m = await import('std');
       globalThis['std'] = m;
@@ -497,7 +525,14 @@ export class Socket {
       if(this.file == undefined) this.file = std.fdopen(this.fd, 'r+');
 
       r = this.file.readAsString();
-      console.log('SOcket[Symbol.asyncIterator]', { r });
+      let err;
+      if((err = this.file.error())) {
+        let errCode = errno();
+        let errStr = strerror(errCode);
+        throw new Error(`Socket[Symbol.asyncIterator] error = ${errStr}, errno = ${errCode}`);
+      }
+
+      console.log('Socket[Symbol.asyncIterator]', { r });
       if(typeof r != 'string') return 0;
 
       yield r;

@@ -1,7 +1,7 @@
 import PortableFileSystem from './lib/filesystem.js';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
-import deep from './lib/deep.js';
+import * as deep from './lib/deep.js';
 import path from './lib/path.js';
 import tXml from './lib/tXml.js';
 import { XPath } from './lib/xml.js';
@@ -71,18 +71,26 @@ async function main(...args) {
   let colors, keys;
   filesystem = await PortableFileSystem();
 
-  console.log('main', args);
-  if(args.length == 0)
-    args = ['/home/roman/.config/sublime-text-3/Packages/Babel/Next.tmTheme' /*  */];
-  let filename = args.shift();
+  let params = Util.getOpt({
+      output: [true, null, 'o'],
+      '@': 'input,'
+    },
+args
+  );
+
+  console.log('main', params);
+  if(params['@'].length == 0)
+    params['@'] = ['/home/roman/.config/sublime-text-3/Packages/Babel/Next.tmTheme' /*  */];
+  let filename = params['@'].shift();
   let basename = path.basename(filename, /\.[^.]+$/g);
   let outfile;
-  if(/\.(xml|tmThem)/.test(args[0])) outfile = args.shift();
-  else {
-    outfile = basename + '.xml';
+  
+    outfile = params.output ?? basename + '.xml';
     if(outfile == filename) outfile = basename + '.out.xml';
-  }
-  let cmds = args;
+   
+let name = path.basename(outfile, /\..*/g);
+
+     let cmds = params['@'];
   let newObj = {};
   let xmlData;
   let hex2idx, idx2hue, idx2path;
@@ -118,6 +126,8 @@ async function main(...args) {
       path
     ]);
     let o = it.map(([path, value]) => {
+      path = new Path(path);
+      console.log('it.map', { path, value });
       const key = path.up(0);
       let prev = new Path([]),
         prevValue = {},
@@ -235,8 +245,8 @@ async function main(...args) {
 
     let handlers = {
       shuffle(...seed) {
-        let rng = prng.clone();
-        if(seed) rng.mash(...seed);
+        let rng = new Alea(...seed);
+        //if(seed) rng.mash(...seed);
         const keys = [...palette.keys()];
         let values = keys.reduce((acc, key) => [...acc, palette.get(key)], []);
         values = Util.shuffle(values, rng);
@@ -497,12 +507,25 @@ async function main(...args) {
       UpdatePalette();
       // console.log('New Palette ', ret);
     });
+    
+    // Change UUID
+    const mkuuid = () => [8, 4, 4, 4, 12].map(n => Util.randStr(n, '0123456789abcdef')).join('-');
 
-    ///* prettier-ignore */ console.log(`hues`, hues.map((h) => new HSLA(h, 100, 50, 1)));
+    const change = (key,value) => {
+        let ptr = new Path(deep.find(newObj, (v, p) => v.children && v.children[0] == key)?.path);
 
-    /* palette.remapChannel('h', Util.remap(mm.h, [0, 360]));
-    palette.remapChannel('s', Util.remap(mm.s, [50, 100])); */
+    if(ptr) {
+      let valuePath = ptr.nextSibling.down('children', 0);
+      deep.set(newObj, valuePath, value);
+    }
 
+    }
+
+    change('uuid', mkuuid());
+    change('name', name);
+    change('background', '#000000');
+
+  
     outfile = outfile || basename + '.xml';
     filesystem.writeFile(outfile, toXML(newObj));
   } catch(err) {
