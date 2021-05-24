@@ -1,22 +1,23 @@
-import { strerror, Error } from 'std';
+import * as std from 'std';
 import * as os from 'os';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './fcntl.js';
 import { errno } from 'ffi';
 import { Socket, socket, AF_INET, SOCK_STREAM, ndelay, connect, sockaddr_in, select, fd_set, timeval, FD_SET, FD_ISSET, FD_ZERO, send, recv } from './socket.js';
 import Util from './lib/util.js';
 import { Console } from 'console';
+import { toString, toArrayBuffer } from 'misc';
 
 async function main(...args) {
   globalThis.console = new Console({
-    stdout: process.stdout,
     inspectOptions: {
       colors: true,
-      depth: 8,
+      depth: Infinity,
       maxArrayLength: 100,
-      compact: 3,
+      compact: 2,
       customInspect: true
     }
   });
+  console.log('console.options', console.options);
 
   const listen = !!(args[0] == '-l' && args.shift());
 
@@ -38,8 +39,6 @@ async function main(...args) {
 
     retValue(ret, `sock.connect(${addr}, ${port})`);
   }
-
-  console.log('Error:', Error);
 
   if(!sock.listening)
     await (async function IOHandler() {
@@ -81,8 +80,9 @@ async function main(...args) {
 
       const timeout = new timeval(5, 0);
 
-      ret = select(null, rfds, null, null, timeout);
-      console.log('select', { rfds, wfds, timeout });
+      //console.log('select(1)', { rfds, wfds, timeout });
+      ret = select(null, rfds, wfds, null, timeout);
+      //console.log('select(2)', rfds, +connection, connection?.fd, FD_ISSET(+connection, rfds));
 
       if(FD_ISSET(+sock, wfds)) {
         connection = sock;
@@ -92,23 +92,28 @@ async function main(...args) {
         if(listen) {
           connection = sock.accept();
           retValue(connection, 'sock.accept()');
+          ndelay(connection);
         }
       }
 
       if(FD_ISSET(+connection, rfds)) {
-        let data = ArrayBufToString(connection.read(9));
-        let length = parseInt(ArrayBufToString(data), 16);
+        let data = toString(connection.read(9));
+        let length = parseInt(data, 16);
         if(length > 0) {
-          console.log('length:', length);
-          data = connection.read(length);
-          let message = JSON.parse(ArrayBufToString(data));
+          data = toString(connection.read(length));
+          let message = JSON.parse(data);
+          //console.log('message:', data);
           if(message.type == 'event') {
             handleEvent(connection, message.event);
           } else {
-            console.log('message:', message);
+            console.log('message:',
+              console.config({ compact: false, breakLength: Infinity }),
+              message
+            );
           }
         } else {
           connection = undefined;
+          //  std.exit(1);
         }
       }
 
@@ -123,21 +128,31 @@ async function main(...args) {
 function readCommand(connection) {
   let line;
 
-  while((line = std.in.getline())) {
-    console.log('Command:', line);
+  if((line = std.in.getline())) {
+    // console.log('Command:', line);
 
     sendRequest(connection, line);
   }
 }
 
 function handleEvent(connection, event) {
-  console.log('handleEvent', event);
+  console.log('handleEvent', console.config({ compact: false, breakLength: Infinity }), event);
   switch (event.type) {
     case 'StoppedEvent': {
-      //      sendRequest(connection, 'stackTrace');
-      sendRequest(connection, 'continue');
+      if(event.reason == 'entry') {
+        sendMessage(connection, 'breakpoints', {
+          breakpoints: { path: 'test-ecmascript2.js', breakpoints: [{ line: 47, column: 3 }] }
+        });
+        sendMessage(connection, 'breakpoints', {
+          path: 'test-ecmascript2.js'
+        });
+        sendRequest(connection, 'continue');
+      } else {
+        sendRequest(connection, 'stackTrace');
+        sendRequest(connection, 'variables', { args: { variablesReference: 1 } });
+      }
 
-      Util.waitFor(10000).then(() => sendRequest(connection, 'pause'));
+      // Util.waitFor(10000).then(() => sendRequest(connection, 'pause'));
       break;
     }
   }
@@ -146,7 +161,7 @@ function handleEvent(connection, event) {
 function sendMessage(sock, type, args = {}) {
   const msg = { type, ...args };
 
-  console.log('sendMessage', msg, sock);
+  console.log('sendMessage', +sock, console.config({ compact: false, breakLength: Infinity }), msg);
   const json = JSON.stringify(msg);
   return sock.puts(`${toHex(json.length, 8)}\n${json}`);
 }
@@ -161,7 +176,7 @@ function getSeq(sock) {
 }
 
 function sendRequest(sock, command, args = {}) {
-  const request = { command, seq: getSeq(sock), request: { command, ...args } };
+  const request = { request: { command, request_seq: getSeq(sock), ...args } };
   return sendMessage(sock, 'request', request);
 }
 
@@ -176,14 +191,6 @@ function retValue(ret, ...args) {
 function toHex(n, b = 2) {
   let s = (+n).toString(16);
   return '0'.repeat(Math.ceil(s.length / b) * b - s.length) + s;
-}
-
-function ArrayBufToString(buf, offset, length) {
-  if(typeof buf == 'object' && buf != null && buf instanceof ArrayBuffer) {
-    let arr = new Uint8Array(buf, offset, length);
-    return arr.reduce((s, code) => s + String.fromCodePoint(code), '');
-  }
-  return buf;
 }
 
 function MakeArray(buf, numBytes) {

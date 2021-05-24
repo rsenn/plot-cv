@@ -51,6 +51,7 @@
    "description": "",
    "devDependencies": {
       "@deque/dot": "^1.1.5",
+      "@s-ui/lint": "^3.31.0",
       "acorn": "^8.1.1",
       "ansi-colors": "^4.1.1",
       "ansi-escapes": "^4.3.1",

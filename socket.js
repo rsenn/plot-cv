@@ -119,8 +119,23 @@ export const SO_TIMESTAMP = 29;
 
 export const SOL_SOCKET = 1;
 
-/* prettier-ignore */
-const syscall = { socket: foreign('socket', 'int', 'int', 'int', 'int'), select: foreign( 'select', 'int', 'int', 'buffer', 'buffer', 'buffer', 'buffer' ), connect: foreign('connect', 'int', 'int', 'void *', 'size_t'), bind: foreign('bind', 'int', 'int', 'void *', 'size_t'), listen: foreign('listen', 'int', 'int', 'int'), accept: foreign('accept', 'int', 'int', 'buffer', 'buffer'), getsockopt: foreign( 'getsockopt', 'int', 'int', 'int', 'int', 'void *', 'buffer' ), setsockopt: foreign( 'setsockopt', 'int', 'int', 'int', 'int', 'void *', 'size_t' ), recv: foreign('recv', 'int', 'int', 'buffer', 'size_t', 'int'), recvfrom: foreign( 'recvfrom', 'int', 'int', 'buffer', 'size_t', 'int', 'buffer', 'buffer' ), send: foreign('send', 'int', 'int', 'buffer', 'size_t', 'int'), sendto: foreign( 'sendto', 'int', 'int', 'buffer', 'size_t', 'int', 'buffer', 'size_t' ) };
+const syscall = {
+  socket: foreign('socket', 'int', 'int', 'int', 'int'),
+  select: foreign('select', 'int', 'int', 'buffer', 'buffer', 'buffer', 'buffer'),
+  connect: foreign('connect', 'int', 'int', 'void *', 'size_t'),
+  bind: foreign('bind', 'int', 'int', 'void *', 'size_t'),
+  listen: foreign('listen', 'int', 'int', 'int'),
+  accept: foreign('accept', 'int', 'int', 'buffer', 'buffer'),
+  getsockopt: foreign('getsockopt', 'int', 'int', 'int', 'int', 'void *', 'buffer'),
+  setsockopt: foreign('setsockopt', 'int', 'int', 'int', 'int', 'void *', 'size_t'),
+  recv: foreign('recv', 'int', 'int', 'buffer', 'size_t', 'int'),
+  recvfrom: foreign('recvfrom', 'int', 'int', 'buffer', 'size_t', 'int', 'buffer', 'buffer'),
+  send: foreign('send', 'int', 'int', 'buffer', 'size_t', 'int'),
+  sendto: foreign('sendto', 'int', 'int', 'buffer', 'size_t', 'int', 'buffer', 'size_t'),
+  get errno() {
+    return errno();
+  }
+};
 
 export const errnos = Object.fromEntries(Object.getOwnPropertyNames(Errors).map(name => [Errors[name], name])
 );
@@ -304,7 +319,7 @@ export class fd_set extends ArrayBuffer {
   constructor() {
     super(FD_SETSIZE / 8);
 
-    Object.setPrototypeOf(this, new ArrayBuffer(FD_SETSIZE / 8));
+    //  Object.setPrototypeOf(this, new ArrayBuffer(FD_SETSIZE / 8));
   }
 
   get size() {
@@ -329,12 +344,12 @@ export class fd_set extends ArrayBuffer {
   }
 
   [Symbol.inspect]() {
-    return this.array;
+    return this.toString();
   }
-
+  /*
   [Symbol.for('nodejs.util.inspect.custom')]() {
     return this.array;
-  }
+  }*/
 }
 
 export class socklen_t extends ArrayBuffer {
@@ -451,9 +466,9 @@ export class Socket {
     if(ret == -1) this.errno = syscall.errno;
     else
       ret = Object.create(Socket.prototype, {
-        fd: { v: ret, enumerable: true },
-        local: { v: this.local, enumerable: true },
-        remote: { v: remote, enumerable: true }
+        fd: { value: ret, enumerable: true, writable: true, configurable: true },
+        local: { value: this.local, enumerable: true },
+        remote: { value: remote, enumerable: true }
       });
     return ret;
   }
@@ -464,10 +479,10 @@ export class Socket {
     if(args.length == 0 || typeof buf != 'object') {
       let data = new ArrayBuffer(typeof buf == 'number' ? buf : 1024);
       if((ret = this.read(data)) > 0) return data.slice(0, ret);
-    } else if((ret = read(this.fd, buf, offset, len)) <= 0) {
+    } else if((ret = read(this.fd, buf, offset ?? 0, len ?? buf.byteLength)) <= 0) {
       if(ret < 0) {
         this.errno = syscall.errno;
-        throw new Error(`Socket ${this.fd} error: ${this.errno}`);
+        if(this.errno != EAGAIN) throw new Error(`Socket ${this.fd} error: ${this.errno}`);
       } else if(ret == 0) this.close();
     }
     return ret;
@@ -494,7 +509,10 @@ export class Socket {
   }
 
   close() {
+    console.log('Socket.close', this.fd);
     close(this.fd);
+    console.log('this.fd', Object.getOwnPropertyDescriptors(this)['fd']);
+    delete this.fd;
     this.destroyed = true;
   }
 
@@ -522,6 +540,7 @@ export class Socket {
 
     for(;;) {
       await WaitRead(this.fd);
+
       if(this.file == undefined) this.file = std.fdopen(this.fd, 'r+');
 
       r = this.file.readAsString();
@@ -546,7 +565,8 @@ Object.assign(Socket.prototype, {
   destroyed: false,
   pending: false,
   remote: null,
-  local: null
+  local: null,
+  [Symbol.getStringTag]: 'Socket'
 });
 
 function WaitRead(fd) {

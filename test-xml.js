@@ -75,7 +75,7 @@ async function main(...args) {
       output: [true, null, 'o'],
       '@': 'input,'
     },
-args
+    args
   );
 
   console.log('main', params);
@@ -84,13 +84,13 @@ args
   let filename = params['@'].shift();
   let basename = path.basename(filename, /\.[^.]+$/g);
   let outfile;
-  
-    outfile = params.output ?? basename + '.xml';
-    if(outfile == filename) outfile = basename + '.out.xml';
-   
-let name = path.basename(outfile, /\..*/g);
 
-     let cmds = params['@'];
+  outfile = params.output ?? basename + '.xml';
+  if(outfile == filename) outfile = basename + '.out.xml';
+
+  let name = path.basename(outfile, /\..*/g);
+
+  let cmds = params['@'];
   let newObj = {};
   let xmlData;
   let hex2idx, idx2hue, idx2path;
@@ -507,25 +507,23 @@ let name = path.basename(outfile, /\..*/g);
       UpdatePalette();
       // console.log('New Palette ', ret);
     });
-    
+
     // Change UUID
     const mkuuid = () => [8, 4, 4, 4, 12].map(n => Util.randStr(n, '0123456789abcdef')).join('-');
 
-    const change = (key,value) => {
-        let ptr = new Path(deep.find(newObj, (v, p) => v.children && v.children[0] == key)?.path);
+    const change = (key, value) => {
+      let ptr = new Path(deep.find(newObj, (v, p) => v.children && v.children[0] == key)?.path);
 
-    if(ptr) {
-      let valuePath = ptr.nextSibling.down('children', 0);
-      deep.set(newObj, valuePath, value);
-    }
-
-    }
+      if(ptr) {
+        let valuePath = ptr.nextSibling.down('children', 0);
+        deep.set(newObj, valuePath, value);
+      }
+    };
 
     change('uuid', mkuuid());
     change('name', name);
     change('background', '#000000');
 
-  
     outfile = outfile || basename + '.xml';
     filesystem.writeFile(outfile, toXML(newObj));
   } catch(err) {
