@@ -138,7 +138,7 @@ export class Node {
       ];
   }
 
-  /*  inspect(depth, opts = {}) {
+  /*  [Symbol.for("nodejs.util.inspect.custom")](depth, opts = {}) {
     const text = opts.colors ? (t, ...c) => '\x1b[' + c.join(';') + 'm' + t + '\x1b[m' : t => t;
     const type = this.constructor?.name ?? Util.className(this);
 
@@ -510,7 +510,7 @@ const { size,unsigned } = this;
     return size;
   }
 
-  /* inspect(depth, opts = {}) {
+  /* [Symbol.for("nodejs.util.inspect.custom")](depth, opts = {}) {
     const text = opts.colors ? (t, ...c) => '\x1b[' + c.join(';') + 'm' + t + '\x1b[m' : t => t;
     const { name, size } = this;
     let props = {...this} ?? Object.getOwnPropertyNames(this).reduce((acc,name) => ({...acc, [name]: this[name] }), {});
@@ -812,7 +812,7 @@ export class Location {
     Object.assign(this, { line, col, file, offset });
   }
 
-  inspect(depth, opts = {}) {
+  [Symbol.for("nodejs.util.inspect.custom")](depth, opts = {}) {
     const text = opts.colors ? (t, ...c) => '\x1b[' + c.join(';') + 'm' + t + '\x1b[m' : t => t;
     return text('Location', 38, 5, 111) + ' [ ' + this.toString() + ' ]';
   }
@@ -839,7 +839,7 @@ export function TypeFactory(node, ast, cache = true) {
   // console.log('TypeFactory:', { node });
 
   Util.assert(node.kind,
-    `Not an AST node: ${inspect(node, {
+    `Not an AST node: ${[Symbol.for("nodejs.util.inspect.custom")](node, {
       colors: false,
       compact: 0,
       depth: Infinity

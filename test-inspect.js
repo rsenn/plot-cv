@@ -85,7 +85,7 @@ async function main(...args) {
     get value() { return value; },
     set value(v) { value = v; },
     set v(v) { value = v; },
-    inspect(depth, options) {
+    [Symbol.for("nodejs.util.inspect.custom")](depth, options) {
       const { hideKeys, ...opts } = options;
       print('inspect hideKeys ' + hideKeys.join(','));
       return ''; //dumpObj(this, depth, options);

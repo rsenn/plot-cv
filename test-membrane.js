@@ -5,7 +5,7 @@ import { ImmutablePath, PathMapper, toXML, TreeObserver } from './lib/json.js';
 import { ImmutableXPath, parseXPath, XMLIterator } from './lib/xml.js';
 
 const inspect = (arg, depth = 10, colors = true, breakLength = Number.Infinity) =>
-  util.inspect(arg, {
+  util.[Symbol.for("nodejs.util.inspect.custom")](arg, {
     depth,
     breakLength,
     compact: true,

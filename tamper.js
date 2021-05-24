@@ -821,7 +821,7 @@
     };
   })();
   Util.inspect = (obj, opts = {}) =>
-    Util.inspect(obj, {
+    Util.[Symbol.for("nodejs.util.inspect.custom")](obj, {
       toString: Util.symbols.inspect,
       colors: true,
       ...opts,
@@ -1607,7 +1607,7 @@
         if(i > 0) print(separator, 1, 36);
         else print(padding);
         print(sep(i > 0));
-        Util.inspect(obj.i, {
+        Util.[Symbol.for("nodejs.util.inspect.custom")](obj.i, {
           ...opts,
           c,
           print,
@@ -1661,7 +1661,7 @@
           )
             print(isMap ? `'${key}'` : key, 1, isMap ? 36 : 33);
           else
-            Util.inspect(key, {
+            Util.[Symbol.for("nodejs.util.inspect.custom")](key, {
               ...opts,
               c,
               print,
@@ -1675,7 +1675,7 @@
           if(typeof value == 'number') print(`${value}`, 1, 36);
           else if(typeof value == 'string' || value instanceof String) print(`'${value}'`, 1, 36);
           else if(typeof value == 'object')
-            Util.inspect(value, {
+            Util.[Symbol.for("nodejs.util.inspect.custom")](value, {
               ...opts,
               print,
               multiline: isMap && !(value instanceof Map) ? false : multiline,
@@ -4894,7 +4894,7 @@
         const obj = this;
 
         return (c.text(Util.fnName(proto.constructor) + ' ', 1, 31) +
-          Util.inspect(props.reduce((acc, key) => {
+          Util.[Symbol.for("nodejs.util.inspect.custom")](props.reduce((acc, key) => {
               acc.key = obj.key;
               return acc;
             }, {}),

@@ -73,7 +73,7 @@ async function main(...args) {
 
     let output = { components, nets };
 
-    let json = Util.inspect(output, {
+    let json = Util.[Symbol.for("nodejs.util.inspect.custom")](output, {
       multiline: true,
       depth: 2,
       json: true,

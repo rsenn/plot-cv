@@ -1540,7 +1540,7 @@ Util.inspect = function(obj, opts = {}) {
       if(i > 0) print(separator, 1, 36);
       else print(padding);
       print(sep(i > 0));
-      Util.inspect(obj[i], {
+      Util.[Symbol.for("nodejs.util.inspect.custom")](obj[i], {
         ...opts,
         c,
         print,
@@ -1589,7 +1589,7 @@ Util.inspect = function(obj, opts = {}) {
             isMap ? 36 : 33
           );
         else
-          Util.inspect(key, {
+          Util.[Symbol.for("nodejs.util.inspect.custom")](key, {
             ...opts,
             c,
             print,
@@ -1604,7 +1604,7 @@ Util.inspect = function(obj, opts = {}) {
         else if(typeof value == 'string' || value instanceof String)
           print(`${quote}${value}${quote}`, 1, 36);
         else if(typeof value == 'object')
-          Util.inspect(value, {
+          Util.[Symbol.for("nodejs.util.inspect.custom")](value, {
             ...opts,
             print,
             multiline: isMap && !(value instanceof Map) ? false : multiline,
@@ -4671,7 +4671,7 @@ Util.defineInspect = (proto, ...props) => {
     proto[inspectSymbol] = function() {
       const obj = this;
       return (c.text(Util.fnName(proto.constructor) + ' ', 1, 31) +
-        Util.inspect(props.reduce((acc, key) => {
+        Util.[Symbol.for("nodejs.util.inspect.custom")](props.reduce((acc, key) => {
             acc[key] = obj[key];
             return acc;
           }, {}),

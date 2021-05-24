@@ -19,10 +19,13 @@ function WriteFile(name, data) {
 }
 
 class Comment extends String {
+  
   constructor(s) {
     super(s);
+    this.#field = 1337;
   }
-  inspect() {
+
+  [Symbol.for("nodejs.util.inspect.custom")]() {
     return `Comment('${this}')`;
   }
 }
@@ -32,7 +35,7 @@ class PList extends Array {
     super();
     this.push(...args);
   }
-  inspect(options) {
+  [Symbol.for("nodejs.util.inspect.custom")](options) {
     return `\x1b[1;31mPList\x1b[0m [\n  ${this.map(item =>
       (item.inspect ? item.inspect(options) : console.inspect(item, options)).replace(/\n/g,
         '\n    '
@@ -46,7 +49,7 @@ class Pair {
     Object.assign(this, { key, value });
   }
 
-  inspect(options) {
+  [Symbol.for("nodejs.util.inspect.custom")](options) {
     const { key, value } = this;
     return `\x1b[1;31mPair \x1b[1;33m${key}\x1b[0m => ${console.inspect(value, options)}`;
   }
@@ -62,7 +65,7 @@ class Dict extends Array {
     super();
   }
 
-  inspect(options) {
+  [Symbol.for("nodejs.util.inspect.custom")](options) {
     return `\x1b[1;31mDict\x1b[0m {\n  ${this.map(([key, value]) => {
       let s = key + ' => ';
       if(value instanceof Array)

@@ -14,7 +14,7 @@ import { Console } from 'console';
 
 let lexer, parser;
 
-Error.stackTraceLimit = 100;
+Error.stackTraceLimit = 1_0_0;
 
 const testfn = () => true;
 const testtmpl = `this is\na test`;
@@ -140,7 +140,7 @@ function processFile(file, params) {
     data = source;
   }
   console.log('OK, data: ', Util.abbreviate(Util.escape(data)));
-  //ECMAScriptParser.instrumentate();
+  if(debug) ECMAScriptParser.instrumentate();
   console.log('ECMAScriptParser:', ECMAScriptParser);
 
   let ast, error;
