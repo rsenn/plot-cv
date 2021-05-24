@@ -325,7 +325,7 @@ class ES6ImportExport {
         Object.setPrototypeOf({
             type,
             module: module[inspectSymbol]().replace(/\n\s*/g, '\n  '),
-            bindings: Util.[Symbol.for("nodejs.util.inspect.custom")](bindings, {
+            bindings: Util.inspect(bindings, {
               colors: true,
               toString: 'toString'
             }).replaceAll('\n', '\n  ')
