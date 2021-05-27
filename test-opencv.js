@@ -264,11 +264,11 @@ function main(...args) {
           Draw.line(skel, ...line.toPoints(), [0, 0, 0], lineWidth, cv.LINE_8);
           ++i;
         }
-      lines = lines.filter(l => Math.round(l.angle * RAD2DEG) % 90 < 30);
+        lines = lines.filter(l => Math.round(l.angle * RAD2DEG) % 90 < 30);
 
         lines.sort((a, b) => b.length - a.length);
-          lines = lines.slice(0, 50);
-    console.log(`lines`,
+        lines = lines.slice(0, 50);
+        console.log(`lines`,
           lines.map(l => [l, l.slope, l.angle * RAD2DEG])
         );
 
@@ -288,28 +288,34 @@ function main(...args) {
           .sort((a, b) => a[1].y - b[1].y)
           .map(([l]) => l);
 
-     /*   v = firstLast(v);
+        /*   v = firstLast(v);
         h = firstLast(h);*/
         console.log('lines:', { v, h });
 
         const angle2Color = a => {
           let color = new HSLA(Math.round(a), 100, 50).toRGBA();
-          return [color.b,color.g,color.r];
-        }
+          return [color.b, color.g, color.r];
+        };
 
-                console.log('angle2Color(100):', angle2Color(100 ));
-                console.log('angle2Color(360):', angle2Color(0));
-let ll = v.map(l => [l.at(0.5),l.angle]);
-                console.log('ll',ll);
-
+        console.log('angle2Color(100):', angle2Color(100));
+        console.log('angle2Color(360):', angle2Color(0));
+        let ll = v
+          .map(l => [l.slope,l.a, l.b, l.aspect, l.angle, l.length])
+          //.map(([from, to, as, an, len]) => [to.sub(from), from, to, as, an, len])
+          .map(([sl, from, to, as, an, len]) =>
+            sl.abs.y > sl.abs.x
+              ? [sl, to.y / sl.y, from, to, len]
+              : [sl, to.x / sl.x, from, to, len]
+          );
+        console.log('ll', ll);
 
         for(let line of v) {
-          let color =angle2Color(line.angle*(180/Math.PI)%180);
+          let color = angle2Color((line.angle * (180 / Math.PI)) % 180);
 
           Draw.line(dst, ...line.toPoints(), color, 1, cv.LINE_AA);
         }
         for(let line of h) {
-          let color =angle2Color(line.angle*(180/Math.PI)%180);
+          let color = angle2Color((line.angle * (180 / Math.PI)) % 180);
 
           Draw.line(dst, ...line.toPoints(), color, 1, cv.LINE_AA);
         }
