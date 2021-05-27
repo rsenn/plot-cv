@@ -1,5 +1,5 @@
 //import 'module-alias/register.js';
-import { ECMAScriptParser, Lexer } from './lib/ecmascript/parser.js';
+import { ECMAScriptParser, Lexer } from './lib/ecmascript/parser2.js';
 import { PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
 import { estree, ESNode, Program, ModuleDeclaration, ModuleSpecifier, ImportDeclaration, ImportSpecifier, ImportDefaultSpecifier, ImportNamespaceSpecifier, Super, Expression, FunctionLiteral, Pattern, Identifier, Literal, RegExpLiteral, TemplateLiteral, BigIntLiteral, TaggedTemplateExpression, TemplateElement, ThisExpression, UnaryExpression, UpdateExpression, BinaryExpression, AssignmentExpression, LogicalExpression, MemberExpression, ConditionalExpression, CallExpression, DecoratorExpression, NewExpression, SequenceExpression, Statement, EmptyStatement, DebuggerStatement, LabeledStatement, BlockStatement, FunctionBody, StatementList, ExpressionStatement, Directive, ReturnStatement, ContinueStatement, BreakStatement, IfStatement, SwitchStatement, SwitchCase, WhileStatement, DoWhileStatement, ForStatement, ForInStatement, ForOfStatement, WithStatement, TryStatement, CatchClause, ThrowStatement, Declaration, ClassDeclaration, ClassBody, MethodDefinition, MetaProperty, YieldExpression, FunctionArgument, FunctionDeclaration, ArrowFunctionExpression, VariableDeclaration, VariableDeclarator, ObjectExpression, Property, ArrayExpression, JSXLiteral, AssignmentProperty, ObjectPattern, ArrayPattern, RestElement, AssignmentPattern, AwaitExpression, SpreadElement, ExportNamedDeclaration, ExportSpecifier, AnonymousDefaultExportedFunctionDeclaration, AnonymousDefaultExportedClassDeclaration, ExportDefaultDeclaration, ExportAllDeclaration } from './lib/ecmascript/estree.js';
@@ -11,7 +11,7 @@ import Tree from './lib/tree.js';
 import fs from 'fs';
 import * as deep from './lib/deep.js';
 import { Console } from 'console';
-import { Location,Stack, StackFrame } from './quickjs/modules/lib/stack.js';
+import { Location, Stack, StackFrame } from './quickjs/modules/lib/stack.js';
 
 let lexer, parser;
 
@@ -75,7 +75,7 @@ function main(...argv) {
       breakLength: null,
       maxStringLength: Infinity,
       maxArrayLength: 100,
-      compact: 1,
+      compact: 2,
       customInspect: true
     }
   });
@@ -131,7 +131,10 @@ function main(...argv) {
     } catch(error) {
       if(error) {
         console.log?.('ERROR:', error?.message);
-        console.log?.('STACK:\n' + new Stack(error?.stack, fr => fr.functionName != 'esfactory').toString()
+        console.log?.('STACK:\n  ' +
+            new Stack(error?.stack, fr => fr.functionName != 'esfactory')
+              .toString()
+              .replace(/\n/g, '\n  ')
         );
       } else {
         console.log('ERROR:', error);
@@ -176,20 +179,26 @@ function processFile(file, params) {
   try {
     ast = parser.parseProgram();
   } catch(err) {
-    const token = parser.tokens[0];
+    const tokens = [...parser.processed, ...parser.tokens];
+    const token = tokens[tokens.length - 1];
+    console.log('parseProgram tokens',
+      tokens.slice(-3).map(tok => [tok, new Stack(tok.stack.slice(0, 3)) + ''])
+    );
     console.log('parseProgram token', token);
-    if(token) console.log('parseProgram token.stack', token.stack);
-    console.log('parseProgram loc', parser.lexer.loc + '');
-    console.log('parseProgram parser.stack', parser.stack );
+    if(token)
+      console.log(`parseProgram token.stack\n  ` + token.stack.toString().replace(/\n/g, '\n  '));
+    console.log(`parseProgram loc`, parser.lexer.loc + ``);
+    console.log(`parseProgram stateStack`, parser.lexer.stateStack);
+    // console.log(`parseProgram parser.stack`, parser.stack.map(({frame,...entry}) =>  [entry,frame?.loc]));
 
     if(err !== null) {
-      console.log('parseProgram ERROR message:', err?.message);
-      console.log('parseProgram ERROR stack:', FormatStack(GetStack(err?.stack, () => true)));
-      console.log('parser.tokens:', parser.tokens);
-      if(parser.tokens[0])
-        console.log('parser.tokens[0].stack:', FormatStack(parser.tokens[0].stack));
-      //console.log('parser.callStack:', parser.callStack);
-      //Util.exit(1);
+      console.log(`parseProgram ERROR message:`, err?.message);
+      console.log(`parseProgram ERROR stack:\n  ` +
+          new Stack(err?.stack, (fr, i) => fr.functionName != 'esfactory' && i < 5)
+            .toString()
+            .replace(/\n/g, '\n  ')
+      );
+      //console.log(`parseProgram parser.stack\n`, parser.stack .map(entry => [entry, parser.constructor.stackMap.get(entry)]) .map(([entry, frame]) => [entry.position + '', frame ? frame + '' : entry.methodName]));
       throw err;
     } else {
       console.log('parseProgram ERROR:', err);
@@ -283,7 +292,10 @@ try {
 } finally {
   if(error) {
     console.log(`FAIL: ${error.message}`,
-      `\n` + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString()
+      `\n  ` +
+        new Stack(error.stack, fr => fr.functionName != 'esfactory')
+          .toString()
+          .replace(/\n/g, '\n  ')
     );
     console.log('FAIL');
     Util.exit(1);
