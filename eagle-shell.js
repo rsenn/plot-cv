@@ -1,7 +1,7 @@
 import { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, EagleNodeList, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, EagleDocument, EagleReference, EagleRef, makeEagleNode, EagleNode, Renderer, EagleProject, EagleElement, makeEagleElement, EagleElementProxy, EagleNodeMap, ImmutablePath, DereferenceError } from './lib/eagle.js';
 import { toXML } from './lib/json.js';
 import Util from './lib/util.js';
-import deep from './lib/deep.js';
+import * as deep from 'deep';
 import path from './lib/path.js';
 import { LineList, Point, Circle, Rect, Size, Line, TransformationList, Rotation, Translation, Scaling, Matrix } from './lib/geom.js';
 import ConsoleSetup from './lib/consoleSetup.js';
@@ -10,6 +10,8 @@ import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, 
 import * as std from 'std';
 import fs from 'fs';
 import { Console } from 'console';
+import { Pointer } from 'pointer';
+
 let cmdhist;
 
 Util.define(Array.prototype, {
@@ -244,6 +246,22 @@ function coordMap(doc) {
   //  return map;
 }
 
+function GetPolygons(d = doc) {
+  return [...d.getAll(e => e.tagName == 'polygon' && [1, 16].indexOf(+e.attributes.layer) != -1)];
+}
+
+function FindPolygons() {
+  return (globalThis.polygons = docs.map(doc => [doc, GetPolygons(doc).map(e => e.path)]));
+}
+
+function RemovePolygons(p = polygons) {
+  polygons.forEach(([doc, list]) => {
+    list.forEach(path => deep.unset(doc.raw, path));
+
+    doc.saveTo();
+  });
+}
+
 async function testEagle(filename) {
   console.log('testEagle: ', filename);
   let proj = new EagleProject(filename, fs);
@@ -320,7 +338,9 @@ async function testEagle(filename) {
 }
 
 function main(...args) {
-  globalThis.console = new Console({ /*breakLength: 240, */ depth: 10 });
+  globalThis.console = new Console({
+    inspectOptions: { /*breakLength: 240, */ depth: 10, compact: 1 }
+  });
 
   const base = path.basename(Util.getArgv()[1], /\.[^.]*$/);
   const histfile = `.${base}-history`;
@@ -390,6 +410,9 @@ function main(...args) {
       return (globalThis.project = new EagleProject(filename, fs));
     }
   });
+  globalThis.project = new EagleProject(null, fs);
+
+  globalThis.docs = args.map(arg => (globalThis.doc = load(arg)));
 
   Object.assign(globalThis, {
     updateMeasures,
@@ -409,7 +432,10 @@ function main(...args) {
     Rotation,
     Translation,
     Scaling,
-    Matrix
+    Matrix,
+    fs,
+    Pointer,
+    deep
   });
 
   Object.assign(globalThis, {
@@ -434,7 +460,10 @@ function main(...args) {
     SpatialHash,
     SpatialHashMap,
     BoxHash,
-    ReadJSON
+    ReadJSON,
+    GetPolygons,
+    FindPolygons,
+    RemovePolygons
   });
 
   cmdhist = `.${base}-cmdhistory`;
@@ -474,7 +503,7 @@ function main(...args) {
     fs.writeFileSync(cmdhist,
       hist
         .filter(entry => (entry + '').trim() != '')
-        .map(entry => entry.replace(/\n/g, '\\n') + '\n')
+        .map(entry => entry.replace(/\n/g, '\\\\n') + '\n')
         .join('')
     );
 
@@ -489,7 +518,9 @@ function main(...args) {
 
     console.log(`EXIT (wrote ${hist.length} history entries)`);
   });
-*/ repl.run();
+*/
+
+  repl.run();
   console.log('REPL done');
 }
 
