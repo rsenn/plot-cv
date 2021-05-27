@@ -264,12 +264,16 @@ function main(...args) {
           Draw.line(skel, ...line.toPoints(), [0, 0, 0], lineWidth, cv.LINE_8);
           ++i;
         }
-        lines = lines.filter(l => Math.round(l.angle * RAD2DEG) % 90 < 30);
+        lines = lines.map(l => (l.slope.y < 0 ? l.swap() : l));
+
+        const GetAngle = l => Math.round((l.angle * RAD2DEG) / 15) * 15;
+
+        lines = lines.filter(l => l.length >= 40 &&Math.abs(GetAngle(l)) != 45);
 
         lines.sort((a, b) => b.length - a.length);
-        lines = lines.slice(0, 50);
+        //    lines = lines.slice(0, 50);
         console.log(`lines`,
-          lines.map(l => [l, l.slope, l.angle * RAD2DEG])
+          lines.map(l => [l, l.slope, GetAngle(l)])
         );
 
         let isHorizontal = l => Math.abs(l.x2 - l.x1) > Math.abs(l.y2 - l.y1);
@@ -299,16 +303,46 @@ function main(...args) {
 
         console.log('angle2Color(100):', angle2Color(100));
         console.log('angle2Color(360):', angle2Color(0));
-        let ll = v
-          .map(l => [l.slope,l.a, l.b, l.aspect, l.angle, l.length])
-          //.map(([from, to, as, an, len]) => [to.sub(from), from, to, as, an, len])
+        /*let ll = [...v ,...h]
+           .map(l => [l.slope, l.a, l.b, l.aspect, l.angle, l.length])
           .map(([sl, from, to, as, an, len]) =>
-            sl.abs.y > sl.abs.x
-              ? [sl, to.y / sl.y, from, to, len]
-              : [sl, to.x / sl.x, from, to, len]
-          );
+            Math.abs(sl.y) > Math.abs(sl.x)
+              ? [
+                  sl,
+                  sl.mul(Math.max(from.y, to.y) / sl.y),
+                  from.y > to.y ? to : from,
+                  from.y > to.y ? from : to,
+                  an,
+                  len
+                ]
+              : [
+                  sl,
+                  sl.mul(Math.max(from.x, to.x) / sl.x),
+                  from.x > to.x ? to : from,
+                  from.x > to.x ? from : to,
+                  an,
+                  len
+                ]
+          )
+          .map(([sl, scaled, from, to, an, len]) => [
+            to.sub(scaled).round(0.01),
+            from,
+            to,
+            an * RAD2DEG,
+            len
+          ]);
         console.log('ll', ll);
+       
 
+        v = ll.map(([fr1, fr2, to, an, len]) => new Line(...fr1, ...to));
+ */
+        console.log('v',
+          [...v.slice(0, 4), ...h.slice(0, 4)].map(l => [
+            ...l.toPoints(),
+            `yIntercept() = ${l.yIntercept()}`,
+            `xIntercept() = ${l.xIntercept()}`
+          ])
+        );
         for(let line of v) {
           let color = angle2Color((line.angle * (180 / Math.PI)) % 180);
 
@@ -334,7 +368,7 @@ function main(...args) {
           +params.param1,
           +params.param2,
           +params.minRadius,
-          +params.maxRadius
+          +params.maxRadiMathus
         ];
         let circles1 = [] || new Mat();
         let circles2 = [] || new Mat();
