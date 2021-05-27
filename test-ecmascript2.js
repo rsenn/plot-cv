@@ -11,6 +11,7 @@ import Tree from './lib/tree.js';
 import fs from 'fs';
 import * as deep from './lib/deep.js';
 import { Console } from 'console';
+import { Location,Stack, StackFrame } from './quickjs/modules/lib/stack.js';
 
 let lexer, parser;
 
@@ -22,6 +23,28 @@ const testtmpl = `this is\na test`;
 const source = `this.define('DecimalDigit', /[0-9]/);`;
 const inspectSymbol = Symbol.for('nodejs.util.inspect.custom');
 
+const SliceOffEmpty = (arr, pred = item => item != '') => arr.slice(arr.findIndex(pred));
+const FilterOutEmpty = (arr, pred = item => item != '') => arr.filter(pred);
+
+globalThis.GetStack = (stack, cond = fr => fr.functionName != 'esfactory') =>
+  new Stack(stack, cond);
+
+globalThis.FormatStack = (stack, start, limit) => {
+  start ??= fr => /^(expect|match|parse)/.test(fr);
+
+  limit ??= Infinity;
+  if(typeof start == 'function') start = stack.findIndex((frame, i) => start(frame, i, stack));
+  if(Number.isFinite(start)) stack = stack.slice(start);
+  if(Number.isFinite(limit)) stack = stack.slice(0, limit);
+
+  return (/*stack.join('\n') || */ '\n' +
+    stack
+      .filter(fr => fr.functionName != 'esfactory')
+      .map(fr => [fr.functionName, fr.fileName, fr.lineNumber])
+      .map(([func, file, line]) => '  ' + func.padEnd(40) + file + ':' + line)
+      .join('\n')
+  );
+};
 function WriteFile(name, data) {
   if(Util.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
@@ -42,15 +65,17 @@ function printAst(ast, comments, printer = globalThis.printer) {
 
 let files = {};
 
-function main(...args) {
-  console.log('main', args);
+function main(...argv) {
+  console.log('main', argv);
   globalThis.console = new Console({
     stdout: process.stdout,
     inspectOptions: {
       colors: true,
       depth: 8,
+      breakLength: null,
+      maxStringLength: Infinity,
       maxArrayLength: 100,
-      compact: 3,
+      compact: 1,
       customInspect: true
     }
   });
@@ -72,14 +97,14 @@ function main(...args) {
         false,
         function(v, r, o, result) {
           const thisObj = this;
-          //          console.log('debug', { v, r, o, result,thisObj });
+          // console.log('debug', { v, r, o, result,thisObj });
           return (result.debug | 0) + 1;
         },
         'x'
       ],
       '@': 'input'
     },
-    args
+    argv
   );
 
   console.log('params.debug', params.debug);
@@ -106,7 +131,8 @@ function main(...args) {
     } catch(error) {
       if(error) {
         console.log?.('ERROR:', error?.message);
-        console.log?.('STACK:', error?.stack);
+        console.log?.('STACK:\n' + new Stack(error?.stack, fr => fr.functionName != 'esfactory').toString()
+        );
       } else {
         console.log('ERROR:', error);
       }
@@ -150,18 +176,20 @@ function processFile(file, params) {
   try {
     ast = parser.parseProgram();
   } catch(err) {
-    console.log('parseProgram token', parser.token);
+    const token = parser.tokens[0];
+    console.log('parseProgram token', token);
+    if(token) console.log('parseProgram token.stack', token.stack);
     console.log('parseProgram loc', parser.lexer.loc + '');
+    console.log('parseProgram parser.stack', parser.stack );
 
     if(err !== null) {
       console.log('parseProgram ERROR message:', err?.message);
-      console.log('parseProgram ERROR stack:',
-        (err.stack + '')
-          .split(/\n/g)
-          .filter(line => !/at (esfactory|call \(native\))/.test(line))
-          .join('\n')
-      );
-      Util.exit(1);
+      console.log('parseProgram ERROR stack:', FormatStack(GetStack(err?.stack, () => true)));
+      console.log('parser.tokens:', parser.tokens);
+      if(parser.tokens[0])
+        console.log('parser.tokens[0].stack:', FormatStack(parser.tokens[0].stack));
+      //console.log('parser.callStack:', parser.callStack);
+      //Util.exit(1);
       throw err;
     } else {
       console.log('parseProgram ERROR:', err);
@@ -248,12 +276,15 @@ function finish(err) {
 
 let error;
 try {
-  main(...Util.getArgs().slice(1));
+  const argv = [...(process?.argv ?? scriptArgs)].slice(2);
+  main(...argv);
 } catch(e) {
   error = e;
 } finally {
   if(error) {
-    console.log(`FAIL: ${error.message}\n${error.stack}`);
+    console.log(`FAIL: ${error.message}`,
+      `\n` + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString()
+    );
     console.log('FAIL');
     Util.exit(1);
   } else {

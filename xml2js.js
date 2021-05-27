@@ -147,7 +147,7 @@ async function main(...args) {
       xmlData = output.map(str => tXml(str));
       js = newObj
         .map(obj =>
-          [Symbol.for("nodejs.util.inspect.custom")](obj, {
+          [Symbol.for('nodejs.util.inspect.custom')](obj, {
             depth: Number.MAX_SAFE_INTEGER,
             multiline: false,
             breakLength: 80,
@@ -159,7 +159,7 @@ async function main(...args) {
     } else {
       xmlData = xml[0];
       newObj = deep.clone(xmlData);
-      js = [Symbol.for("nodejs.util.inspect.custom")](newObj, {
+      js = [Symbol.for('nodejs.util.inspect.custom')](newObj, {
         depth: Number.MAX_SAFE_INTEGER,
         multiline: true,
         breakLength: 80,

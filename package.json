@@ -16,7 +16,8 @@
       "cvUtils.js": "qjs-opencv/js/cvUtils.js",
       "cvPipeline.js": "qjs-opencv/js/cvPipeline.js",
       "cvHighGUI.js": "qjs-opencv/js/cvHighGUI.js",
-      "lib/deep.js": "deep"
+      "lib/deep.js": "deep",
+      "stack": "quickjs/modules/lib/stack.js"
    },
    "author": "Roman Senn <roman.l.senn@gmail.com>",
    "license": "MIT",

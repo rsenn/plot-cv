@@ -102,11 +102,10 @@ main() {
 
   printf("sizeof(struct sockaddr_in) = %zu\n", sizeof(struct sockaddr_in));
   printf("sizeof(struct sockaddr_in6) = %zu\n", sizeof(struct sockaddr_in6));
- // printf("sizeof(struct sockaddr_in_pad) = %zu\n", sizeof(struct sockaddr_in_pad));
+  // printf("sizeof(struct sockaddr_in_pad) = %zu\n", sizeof(struct sockaddr_in_pad));
   printf("sizeof(struct sockaddr_ll) = %zu\n", sizeof(struct sockaddr_ll));
-  //printf("sizeof(struct sockaddr_nl) = %zu\n", sizeof(struct sockaddr_nl));
- // printf("sizeof(struct sockaddr_pkt) = %zu\n", sizeof(struct sockaddr_pkt));
+  // printf("sizeof(struct sockaddr_nl) = %zu\n", sizeof(struct sockaddr_nl));
+  // printf("sizeof(struct sockaddr_pkt) = %zu\n", sizeof(struct sockaddr_pkt));
   printf("sizeof(struct sockaddr_storage) = %zu\n", sizeof(struct sockaddr_storage));
   printf("sizeof(struct sockaddr_un) = %zu\n", sizeof(struct sockaddr_un));
-
 }

@@ -812,7 +812,7 @@ export class Location {
     Object.assign(this, { line, col, file, offset });
   }
 
-  [Symbol.for("nodejs.util.inspect.custom")](depth, opts = {}) {
+  [Symbol.for('nodejs.util.inspect.custom')](depth, opts = {}) {
     const text = opts.colors ? (t, ...c) => '\x1b[' + c.join(';') + 'm' + t + '\x1b[m' : t => t;
     return text('Location', 38, 5, 111) + ' [ ' + this.toString() + ' ]';
   }
@@ -839,7 +839,7 @@ export function TypeFactory(node, ast, cache = true) {
   // console.log('TypeFactory:', { node });
 
   Util.assert(node.kind,
-    `Not an AST node: ${[Symbol.for("nodejs.util.inspect.custom")](node, {
+    `Not an AST node: ${[Symbol.for('nodejs.util.inspect.custom')](node, {
       colors: false,
       compact: 0,
       depth: Infinity
