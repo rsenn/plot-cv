@@ -3,7 +3,7 @@ import * as cv from 'opencv';
 import fs from 'fs';
 import Console from 'console';
 import * as path from 'path';
-import RGBA from './lib/color/rgba.js';
+import { RGBA, HSLA } from './lib/color.js';
 import Util from './lib/util.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
@@ -12,6 +12,7 @@ import * as nvg from 'nanovg';
 import * as glfw from 'glfw';
 
 let basename = Util.getArgv()[1].replace(/\.js$/, '');
+const RAD2DEG = 180 / Math.PI;
 
 function GLFW(...args) {
   let resolution, window, size, position;
@@ -263,8 +264,56 @@ function main(...args) {
           Draw.line(skel, ...line.toPoints(), [0, 0, 0], lineWidth, cv.LINE_8);
           ++i;
         }
-        lines.sort((a, b) => (a.y1 == b.y1 ? a.x1 - b.x1 : a.y1 - b.y1));
-        console.log(`lines`, lines);
+      lines = lines.filter(l => Math.round(l.angle * RAD2DEG) % 90 < 30);
+
+        lines.sort((a, b) => b.length - a.length);
+          lines = lines.slice(0, 50);
+    console.log(`lines`,
+          lines.map(l => [l, l.slope, l.angle * RAD2DEG])
+        );
+
+        let isHorizontal = l => Math.abs(l.x2 - l.x1) > Math.abs(l.y2 - l.y1);
+
+        let firstLast = a => [a[0], a[a.length - 1]];
+
+        let v = lines
+          .filter(l => !isHorizontal(l))
+          .map(l => [l, l.at(0.5)])
+          .sort((a, b) => a[1].x - b[1].x)
+          .map(([l]) => l);
+
+        let h = lines
+          .filter(l => isHorizontal(l))
+          .map(l => [l, l.at(0.5)])
+          .sort((a, b) => a[1].y - b[1].y)
+          .map(([l]) => l);
+
+     /*   v = firstLast(v);
+        h = firstLast(h);*/
+        console.log('lines:', { v, h });
+
+        const angle2Color = a => {
+          let color = new HSLA(Math.round(a), 100, 50).toRGBA();
+          return [color.b,color.g,color.r];
+        }
+
+                console.log('angle2Color(100):', angle2Color(100 ));
+                console.log('angle2Color(360):', angle2Color(0));
+let ll = v.map(l => [l.at(0.5),l.angle]);
+                console.log('ll',ll);
+
+
+        for(let line of v) {
+          let color =angle2Color(line.angle*(180/Math.PI)%180);
+
+          Draw.line(dst, ...line.toPoints(), color, 1, cv.LINE_AA);
+        }
+        for(let line of h) {
+          let color =angle2Color(line.angle*(180/Math.PI)%180);
+
+          Draw.line(dst, ...line.toPoints(), color, 1, cv.LINE_AA);
+        }
+
         let kern = cv.getStructuringElement(cv.MORPH_CROSS, new Size(3, 3));
         cv.dilate(skel, skel, kern);
         cv.erode(skel, skel, kern);

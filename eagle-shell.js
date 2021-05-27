@@ -398,9 +398,9 @@ function main(...args) {
   });
 
   Object.assign(globalThis, {
-    load(filename) {
+    load(filename, project = globalThis.project) {
       return (globalThis.document = new EagleDocument(std.loadFile(filename),
-        null,
+        project,
         filename,
         null,
         fs
