@@ -640,7 +640,7 @@ async function main() {
 
   app.get('/index.html', async (req, res) => {
     let data = await fs.promises.readFile(path.join(p, 'index.html'));
-    res.send(data.toString().replace(/<\?TS\?>/g, Util.unixTime() + ''));
+    res.send(data.toString().replace(/<TS>/g, Util.unixTime() + ''));
   });
   app.get('/contours', RequestContours);
   app.post('/contours', RequestContours);

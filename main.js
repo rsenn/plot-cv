@@ -2299,20 +2299,24 @@ const AppMain = (window.onload = async () => {
         showSearch,
         changeInput,
         focusSearch,
-        sortCompare: (a, b) => {
-          let nameA = a.name,
-            nameB = b.name;
-          // console.log('sortCompare', { nameA, nameB });
-
-          let extA = path.extname(nameA),
-            extB = path.extname(nameB);
-
-          if(extA == '.lbr' && extB != '.lbr') return -1;
-          if(extA != '.lbr' && extB == '.lbr') return 1;
-          console.log('sortCompare', { extA, extB });
-
-          return nameA.localeCompare(nameB);
-        },
+        sortKey: (globalThis.sortKey = trkl('name')),
+        sortOrder: (globalThis.sortOrder = trkl(1)),
+        makeSortCompare: key =>
+          key == 'name' || !key
+            ? function(a, b) {
+                let nameA = a.name,
+                  nameB = b.name;
+                let extA = path.extname(nameA),
+                  extB = path.extname(nameB);
+                if(extA == '.lbr' && extB != '.lbr') return -1;
+                if(extA != '.lbr' && extB == '.lbr') return 1;
+                return nameA.localeCompare(nameB);
+              }
+            : function(a, b) {
+                let valueA = a[key],
+                  valueB = b[key];
+                return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+              },
         currentInput: currentSearch
       }),
 

@@ -443,15 +443,15 @@ export const File = ({
     : /lbr$/i.test(id + className)
     ? h(LibraryIcon, {})
     : undefined;
-  icon = h('div', { style }, icon);
   if(id) {
     id = isNaN(+id) ? i : id;
     id = 'file-' + id;
     //  name = id;
     //  id = (id + '').replace(/[^._A-Za-z0-9]/g, '-');
   }
-  label = label.replace(/\.[^.]*$/, '').replace(/([^\s])-([^\s])/g, '$1 $2');
-  let ext = name.replace(/.*\//g, '').replace(/.*\./g, '');
+  label = label.replace(/([^\s])-([^\s])/g, '$1 $2');
+  //let ext = name.replace(/.*\//g, '').replace(/.*\./g, '');
+  if(icon) label = label.replace(/\.[^.]*$/, '');
   label = h(Label, { text: Util.wordWrap(label, 50, '\n') });
   if(description) {
     let s = Util.multiParagraphWordWrap(Util.stripXML(Util.decodeHTMLEntities(description)),
@@ -467,6 +467,7 @@ export const File = ({
       )
     ]);
   }
+  icon = h('div', { style }, icon);
 
   //data = signal();
   //console.debug(`File`, { name, label });
@@ -596,10 +597,18 @@ export const FileList = ({
   changeInput,
   tag = 'div',
   listTag = 'div',
+  sortKey,
+  sortOrder,
+  makeSortCompare,
   ...props
 }) => {
   const [active, setActive] = useState(true);
   const [items, setItems] = useState(files());
+  const key = useTrkl(sortKey);
+  const order = useTrkl(sortOrder);
+
+  const sortFunction = makeSortCompare(key);
+  const sortCompare = (a, b) => sortFunction(a, b) * (order | 1);
 
   files.subscribe(value => setItems(value));
 
@@ -628,6 +637,7 @@ export const FileList = ({
       itemComponent: File,
       itemClass: item => classNames('file', 'hcenter', item.name.replace(/.*\./g, '')),
       itemFilter: filter,
+      sortCompare,
       items,
       tooltip: ToolTipFn,
       onChange: (...args) => onChange(...args),

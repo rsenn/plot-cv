@@ -33,6 +33,7 @@ function GLFW(...args) {
   window = new Window(resolution.width, resolution.height, 'OpenGL');
   glfw.context.current = window;
   this.context = glfw.context;
+
   size = new Size(window.size);
   position = new Point(window.position);
   const rect = new Rect(...position, ...size);
@@ -152,12 +153,20 @@ function main(...args) {
   console.log('helpRect:', helpRect);
   let screen = new Mat(screenSize, cv.CV_8UC3);
 
-  /*let gfx = new GLFW(1024, 600);
-  console.log('gfx:', gfx);*/
+  let gfx = new GLFW(...screenSize);
+  console.log('gfx:', gfx);
+  console.log('screen.buffer:', screen.buffer);
 
   cv.imshow('output', screen);
   cv.moveWindow('output', 0, 0);
   cv.resizeWindow('output', screenSize.width);
+
+  cv.setMouseCallback('output', (event, x, y, flags) => {
+    if(flags == cv.EVENT_FLAG_LBUTTON || event == cv.EVENT_LBUTTONDOWN)
+      console.log(`click ${x},${y}`);
+    else if(event) console.log('MouseCallback', { event, x, y, flags });
+  });
+
   let backgroundColor = 0xd0d0d0;
   let shadowColor = 0x404040;
   let textColor = 0xd3d7cf;
@@ -268,13 +277,11 @@ function main(...args) {
 
         const GetAngle = l => Math.round((l.angle * RAD2DEG) / 15) * 15;
 
-        lines = lines.filter(l => l.length >= 40 &&Math.abs(GetAngle(l)) != 45);
+        lines = lines.filter(l => l.length >= 40 && Math.abs(GetAngle(l)) != 45);
 
         lines.sort((a, b) => b.length - a.length);
         //    lines = lines.slice(0, 50);
-        console.log(`lines`,
-          lines.map(l => [l, l.slope, GetAngle(l)])
-        );
+        //console.log(`lines`, lines.map(l => [l, l.slope, GetAngle(l)]));
 
         let isHorizontal = l => Math.abs(l.x2 - l.x1) > Math.abs(l.y2 - l.y1);
 
@@ -294,7 +301,7 @@ function main(...args) {
 
         /*   v = firstLast(v);
         h = firstLast(h);*/
-        console.log('lines:', { v, h });
+        //console.log('lines:', { v, h });
 
         const angle2Color = a => {
           let color = new HSLA(Math.round(a), 100, 50).toRGBA();
@@ -303,46 +310,14 @@ function main(...args) {
 
         console.log('angle2Color(100):', angle2Color(100));
         console.log('angle2Color(360):', angle2Color(0));
-        /*let ll = [...v ,...h]
-           .map(l => [l.slope, l.a, l.b, l.aspect, l.angle, l.length])
-          .map(([sl, from, to, as, an, len]) =>
-            Math.abs(sl.y) > Math.abs(sl.x)
-              ? [
-                  sl,
-                  sl.mul(Math.max(from.y, to.y) / sl.y),
-                  from.y > to.y ? to : from,
-                  from.y > to.y ? from : to,
-                  an,
-                  len
-                ]
-              : [
-                  sl,
-                  sl.mul(Math.max(from.x, to.x) / sl.x),
-                  from.x > to.x ? to : from,
-                  from.x > to.x ? from : to,
-                  an,
-                  len
-                ]
-          )
-          .map(([sl, scaled, from, to, an, len]) => [
-            to.sub(scaled).round(0.01),
-            from,
-            to,
-            an * RAD2DEG,
-            len
-          ]);
-        console.log('ll', ll);
-       
-
-        v = ll.map(([fr1, fr2, to, an, len]) => new Line(...fr1, ...to));
- */
+        /*
         console.log('v',
           [...v.slice(0, 4), ...h.slice(0, 4)].map(l => [
             ...l.toPoints(),
             `yIntercept() = ${l.yIntercept()}`,
             `xIntercept() = ${l.xIntercept()}`
           ])
-        );
+        );*/
         for(let line of v) {
           let color = angle2Color((line.angle * (180 / Math.PI)) % 180);
 
