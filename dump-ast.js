@@ -342,7 +342,8 @@ function processCallExpr(loc, func, ...args) {
   //console.log('ranges:', ranges);
   //console.log('parts:', parts);
 }
-const typeRe = /^(array|buffer|build_type_t|config_t|dirs_t|dir_t|exts_t|fd_t|HMAP_DB|int64|intptr_t|lang_type|machine_type|MAP_NODE_T|MAP_PAIR_T|MAP_T|os_type|range|rdir_t|set_iterator_t|set_t|sighandler_t_ref|sigset_t|sourcedir|sourcefile|ssize_t|stralloc|strarray|strlist|system_type|target|tools_t|TUPLE|uint32|uint64)$/;
+const typeRe =
+  /^(array|buffer|build_type_t|config_t|dirs_t|dir_t|exts_t|fd_t|HMAP_DB|int64|intptr_t|lang_type|machine_type|MAP_NODE_T|MAP_PAIR_T|MAP_T|os_type|range|rdir_t|set_iterator_t|set_t|sighandler_t_ref|sigset_t|sourcedir|sourcefile|ssize_t|stralloc|strarray|strlist|system_type|target|tools_t|TUPLE|uint32|uint64)$/;
 
 async function main(...args) {
   const cols = await Util.getEnv('COLUMNS');
@@ -372,7 +373,8 @@ async function main(...args) {
       .flatten(ast, new Map(), (v, k) => Util.isObject(v) && typeof v.col == 'number')
       .values();
     let line;
-    const re = /^(__fbufsize|__flbf|__fpending|__fpurge|__freadable|__freading|__fwritable|clearerr|clearerr_unlocked|fclose|fdopen|feof|feof_unlocked|ferror|ferror_unlocked|fflush|fflush_unlocked|fgetc|fgetc_unlocked|fgetpos|fgets|fgets_unlocked|fileno|fileno_unlocked|fopen|fprintf|fputc|fputc_unlocked|fputs|fputs_unlocked|fread|fread_unlocked|freopen|fscanf|fseek|fseeko|fsetpos|ftell|ftello|fwrite|fwrite_unlocked|printf|putchar|puts|scanf|setvbuf|tmpfile|ungetc|vfprintf|vfscanf|vprintf|vscanf)$/;
+    const re =
+      /^(__fbufsize|__flbf|__fpending|__fpurge|__freadable|__freading|__fwritable|clearerr|clearerr_unlocked|fclose|fdopen|feof|feof_unlocked|ferror|ferror_unlocked|fflush|fflush_unlocked|fgetc|fgetc_unlocked|fgetpos|fgets|fgets_unlocked|fileno|fileno_unlocked|fopen|fprintf|fputc|fputc_unlocked|fputs|fputs_unlocked|fread|fread_unlocked|freopen|fscanf|fseek|fseeko|fsetpos|ftell|ftello|fwrite|fwrite_unlocked|printf|putchar|puts|scanf|setvbuf|tmpfile|ungetc|vfprintf|vfscanf|vprintf|vscanf)$/;
     let allf = [...flat].filter(([k, v]) => Util.isObject(v) && v.kind == 'CallExpr');
     let allst = [...flat].filter(([k, v]) => Util.isObject(v) && IsStruct(v) && typeRe.test(GetProperty(ast, k, v => v.name))
     );

@@ -415,7 +415,9 @@ export async function GetCache(match = /.*/) {
       time,
       ...methods
     });
-    entries.push([request.url.replace(baseUrl, ''), response]);
+    const file = request.url.replace(baseUrl, '');
+
+    if(pred(file)) entries.push([file, response]);
   }
   return entries;
 }

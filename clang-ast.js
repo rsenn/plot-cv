@@ -2023,14 +2023,8 @@ export function NodePrinter(ast) {
           put('this');
         }
         CXXDestructorDecl(cxx_destructor_decl) {
-          const {
-            isImplicit,
-            name,
-            mangledName,
-            type,
-            inline,
-            explicitlyDefaulted
-          } = cxx_destructor_decl;
+          const { isImplicit, name, mangledName, type, inline, explicitlyDefaulted } =
+            cxx_destructor_decl;
 
           let l = cxx_destructor_decl.inner
             ? [...cxx_destructor_decl.inner].filter(n => n.kind && !n.kind.endsWith('Comment'))

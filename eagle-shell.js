@@ -3,7 +3,7 @@ import { toXML } from './lib/json.js';
 import Util from './lib/util.js';
 import * as deep from 'deep';
 import path from './lib/path.js';
-import { LineList, Point, Circle, Rect, Size, Line, TransformationList, Rotation, Translation, Scaling, Matrix } from './lib/geom.js';
+import { LineList, Point, Circle, Rect, Size, Line, TransformationList, Rotation, Translation, Scaling, Matrix, BBox } from './lib/geom.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import REPL from './repl.js';
 import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, Enum, HashList, Multimap, Shash, SortedMap, HashMultimap, MultiBiMap, MultiKeyMap, DenseSpatialHash2D, SpatialHash2D, HashMap, SpatialH, SpatialHash, SpatialHashMap, BoxHash } from './lib/container.js';
@@ -433,6 +433,7 @@ function main(...args) {
     Translation,
     Scaling,
     Matrix,
+    BBox,
     fs,
     Pointer,
     deep

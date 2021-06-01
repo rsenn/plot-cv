@@ -56,9 +56,7 @@ async function main(...args) {
       const { hideKeys, ...opts } = options;
       print('inspect hideKeys', hideKeys.join(','));
       return dumpObj(this, depth, options);
-    }, */ inspect(depth,
-      options
-    ) {
+    }, */ inspect(depth, options) {
       const { hideKeys, ...opts } = options;
       print('inspect hideKeys ' + hideKeys.join(','));
       return ''; //dumpObj(this, depth, options);

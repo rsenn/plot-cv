@@ -68,6 +68,7 @@ main() {
   for SOURCE; do
     case "$SOURCE" in
       *.es5.js) continue ;;
+      *.html) PARSER=html ;;
     esac
     [ -e "$SOURCE" -a ! -f "$SOURCE" ] && continue
     ARG=${SOURCE//"["/"\\["}

@@ -193,24 +193,10 @@ function convertJsFunctionToWasm(func, sig) {
     typeSection = typeSection.concat([1, typeCodes[sigRet]]);
   }
   typeSection[1] = typeSection.length - 2;
-  var bytes = new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0].concat(typeSection, [
-      2,
-      7,
-      1,
-      1,
-      101,
-      1,
-      102,
-      0,
-      0,
-      7,
-      5,
-      1,
-      1,
-      102,
-      0,
-      0
-    ])
+  var bytes = new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0].concat(
+      typeSection,
+      [2, 7, 1, 1, 101, 1, 102, 0, 0, 7, 5, 1, 1, 102, 0, 0]
+    )
   );
   var module = new WebAssembly.Module(bytes);
   var instance = new WebAssembly.Instance(module, { e: { f: func } });

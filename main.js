@@ -167,7 +167,7 @@ config.zoomLog.subscribe(AdjustZoom);
 const add = (arr, ...items) => [...(arr ? arr : []), ...items];
 
 const useSlot = (arr, i) => [() => arr[i], v => (arr[i] = v)];
-const trklGetSet = (get, set) => value => (value !== undefined ? set(value) : get());
+const trklGetSet = (get, set) => value => value !== undefined ? set(value) : get();
 //const useTrkl = trkl => [() => trkl(), value => trkl(value)];
 
 const MouseEvents = h => ({
@@ -816,10 +816,8 @@ function EagleMaps(project) {
   console.debug('maps.eagle2dom:', maps.eagle2dom);*/
   //) maps.dom2eagle = Util.mapFunction(new WeakMap(eagle2dom.map(([k, v]) => [v, k])));
   const [path2component, component2path] = project.renderer.maps.map(Util.mapFunction);
-  const {
-    /*path2obj, obj2path, */ path2eagle,
-    eagle2path /*, eagle2obj, obj2eagle */
-  } = project.doc.maps;
+  const { /*path2obj, obj2path, */ path2eagle, eagle2path /*, eagle2obj, obj2eagle */ } =
+    project.doc.maps;
   const [component2eagle, eagle2component] = [
     Util.mapAdapter((key, value) =>
       value === undefined ? path2eagle(component2path(key)) : undefined
@@ -1590,10 +1588,12 @@ const AppMain = (window.onload = async () => {
   //window.focusSearch = trkl();
   window.currentSearch = trkl(null);
 
-  window.keystroke = target => (key, modifiers = 0) =>
-    keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(new keysim.Keystroke(modifiers, key),
-      target
-    );
+  window.keystroke =
+    target =>
+    (key, modifiers = 0) =>
+      keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(new keysim.Keystroke(modifiers, key),
+        target
+      );
 
   window.focusSearch = state => {
     const input = currentSearch();
@@ -2103,12 +2103,8 @@ const AppMain = (window.onload = async () => {
                   console.debug('BoardToGerber side =', side, ' file =', gerber.file);
                 }
               }
-              const sides = /*Object.fromEntries*/ [
-                'back',
-                'front',
-                'drill',
-                'outline'
-              ].map(side => [side, project.gerber[side].file]);
+              const sides = /*Object.fromEntries*/ ['back', 'front', 'drill', 'outline'].map(side => [side, project.gerber[side].file]
+              );
               console.debug('  sides = ', sides);
               console.debug('  project = ', project);
               let allGcode = {};
@@ -2696,6 +2692,8 @@ const AppMain = (window.onload = async () => {
 
   window.addEventListener('wheel', event => {
     const {
+      wheelDelta,
+      deltaMode,
       deltaX,
       deltaY,
       screenX,
@@ -2725,7 +2723,7 @@ const AppMain = (window.onload = async () => {
     clientArea.height = window.innerHeight;
     clientArea.x += container.parentElement.scrollLeft;
 
-    //console.log('wheel:', { sideBar, clientArea });
+    //console.log('wheel:', {   deltaY, deltaMode,wheelDelta });
 
     const clientCenter = clientArea.center;
     const { target, currentTarget, buttons, altKey, ctrlKey, shiftKey } = event;
@@ -2733,7 +2731,9 @@ const AppMain = (window.onload = async () => {
 
     if(!pos.inside(clientArea)) return;
 
-    const wheelPos = -event.deltaY.toFixed(2);
+    const dy = Math.sign(event.deltaY) * 53;
+
+    const wheelPos = -dy.toFixed(2);
     let zoomVal = config.zoomLog();
 
     zoomVal = altKey || ctrlKey || shiftKey ? 0 : Util.clamp(-100, 300, zoomVal + wheelPos * 0.1);

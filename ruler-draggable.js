@@ -211,17 +211,16 @@ const Ruler = forwardRef((props, ref) => {
       clearInterval(timerID.current);
     }
   }));*/ handlers({
-      pressingUp() {
-        timer(load, 1);
-      },
-      pressingDown() {
-        timer(load, -1);
-      },
-      stopPressing() {
-        clearInterval(timerID.current);
-      }
+    pressingUp() {
+      timer(load, 1);
+    },
+    pressingDown() {
+      timer(load, -1);
+    },
+    stopPressing() {
+      clearInterval(timerID.current);
     }
-  );
+  });
   useMemo(() => {
     if(!counterJS.current) onChanged(draggerJS.current);
   }, [draggerJS.current]);

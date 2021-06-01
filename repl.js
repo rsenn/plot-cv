@@ -441,8 +441,7 @@ export default function REPL(title = 'QuickJS') {
       repl.flush();
       return;
     } /* cursor_pos is the position in 16 bit characters inside the
-           UTF-16 string 'cmd_line' */ else if(cmd_line != last_cmd
-    ) {
+           UTF-16 string 'cmd_line' */ else if(cmd_line != last_cmd) {
       if(!colorize &&
         last_cmd.substring(0, last_cursor_pos) == cmd_line.substring(0, last_cursor_pos)
       ) {

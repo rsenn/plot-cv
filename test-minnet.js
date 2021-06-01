@@ -1,11 +1,12 @@
 import { client, server, fetch } from 'net';
 import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
+import { Console } from 'console';
 
 function CreateServer() {
   print('SERVER');
   server({
     port: 3300,
+    mounts: [['/', '.', 'index.html']],
     onConnect: socket => {
       print('Client connected');
       print('Socket: ' + socket);
@@ -61,8 +62,6 @@ function getJSON() {
 }
 
 async function main(...args) {
-  await ConsoleSetup({ depth: 10 });
-
   switch (args[0]) {
     case 's':
       CreateServer();

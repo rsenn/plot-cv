@@ -115,9 +115,9 @@ async function main(...args) {
         (p.length && p.indexOf('attributes') == p.length - 1),
       (p, v) => [new Path(p), v]
     );
-    colors = new Map([
-        ...Iterator.filter(flat, ([path, value]) => /^#[0-9A-Fa-f]*$/.test(value))
-      ].map(([path, value]) => [path, new RGBA(value)])
+    colors = new Map([...Iterator.filter(flat, ([path, value]) => /^#[0-9A-Fa-f]*$/.test(value))].map(
+        ([path, value]) => [path, new RGBA(value)]
+      )
     );
     let it = new IteratorForwarder(colors.entries());
     let paths = Iterator.map(colors, ([path, value]) => [

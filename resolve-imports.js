@@ -878,8 +878,7 @@ async function main(...args) {
           /* if(node.left) return GetName(node.left);
           if(node.declaration) return GetName(node.declaration);
  
-          */ if(node.property
-          ) {
+          */ if(node.property) {
             let str = PrintAst(node);
             if(/^module.exports/.test(str)) return str.replace(/^module\.exports\.?/, '');
           }

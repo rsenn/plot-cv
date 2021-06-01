@@ -185,9 +185,7 @@ export function recv(fd, buf, offset, len, flags = 0) {
 
 export function send(fd, buf, offset, len, flags = 0) {
   /* if(typeof buf == 'string') buf = StringToArrayBuffer(buf);
-  else */ if(typeof buf.buffer == 'object'
-  )
-    buf = buf.buffer;
+  else */ if(typeof buf.buffer == 'object') buf = buf.buffer;
   if(offset === undefined) offset = 0;
   if(len === undefined) len = buf.byteLength;
   return syscall.send(+fd, buf, offset, len, flags);

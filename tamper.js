@@ -2604,8 +2604,9 @@
     initVal = () => 0,
     setVal = v => v
   ) => {
-    const set = /*Util.isObject(out) && typeof out.set == 'function' ? (k, v) => out.set(k, v) :*/ Util.setter(out
-    );
+    const set =
+      /*Util.isObject(out) && typeof out.set == 'function' ? (k, v) => out.set(k, v) :*/ Util.setter(out
+      );
     const get = Util.getOrCreate(out, initVal, set);
     let ctor = Object.getPrototypeOf(out) !== Object.prototype ? out.constructor : null;
     let tmp;
@@ -3366,8 +3367,7 @@
 
     const insert =
       /*dest instanceof Map ||
-        dest instanceof WeakMap ||*/ typeof dest.set == 'function' &&
-      dest.set.length >= 2
+        dest instanceof WeakMap ||*/ typeof dest.set == 'function' && dest.set.length >= 2
         ? (k, v) => dest.set(k, v)
         : Util.isArray(dest)
         ? (k, v) => dest.push([k, v])
@@ -3604,8 +3604,14 @@
 
     if(proto) yield* Util.iterateMembers(proto, predicate, depth + 1);
   };
-  Util.and = (...predicates) => (...args) => predicates.every(pred => pred(...args));
-  Util.or = (...predicates) => (...args) => predicates.some(pred => pred(...args));
+  Util.and =
+    (...predicates) =>
+    (...args) =>
+      predicates.every(pred => pred(...args));
+  Util.or =
+    (...predicates) =>
+    (...args) =>
+      predicates.some(pred => pred(...args));
   Util.members = Util.curry((pred, obj) =>
     Util.unique([...Util.iterateMembers(obj, Util.tryPredicate(pred))])
   );
@@ -3617,16 +3623,16 @@
     );
   Util.getMemberNames = (obj, depth = Number.Infinity, start = 0) =>
     Util.members(Util.memberNameFilter(depth, start))(obj);
-  Util.objectReducer = (filterFn, accFn = (a, m, o) => ({ ...a, [[m]]: o.m }), accu = {}) => (obj,
-    ...args
-  ) =>
-    Util.members(filterFn(...args), obj).reduce(Util.tryFunction(
-        (a, m) => accFn(a, m, obj),
-        (r, a, m) => r,
-        (r, a) => a
-      ),
-      accu
-    );
+  Util.objectReducer =
+    (filterFn, accFn = (a, m, o) => ({ ...a, [[m]]: o.m }), accu = {}) =>
+    (obj, ...args) =>
+      Util.members(filterFn(...args), obj).reduce(Util.tryFunction(
+          (a, m) => accFn(a, m, obj),
+          (r, a, m) => r,
+          (r, a) => a
+        ),
+        accu
+      );
 
   Util.incrementer = (incFn = (c, n, self) => (self.count = c + n)) => {
     let self, incr;
@@ -4778,8 +4784,7 @@
               `rgb(${Util.range(0, 2)
                 .map(bitno => Util.getBit(i, bitno) * (i & 0x08 ? 160 : 80))
                 .join(',')})`
-          )*/ code(...args
-          ) {
+          )*/ code(...args) {
             let css = '';
             let bold = 0;
 
@@ -4917,7 +4922,7 @@
     const [propMap, propNames] = Util.isArray(props)
       ? [props.reduce((acc, name) => ({ ...acc, [[name]]: name }), {}), props]
       : [props, Object.keys(props)];
-    if(!gen) gen = p => v => (v === undefined ? target[propMap.p] : (target[propMap.p] = v));
+    if(!gen) gen = p => v => v === undefined ? target[propMap.p] : (target[propMap.p] = v);
     const propGetSet = propNames
       .map(k => [k, propMap.k])
       .reduce((a, [k, v]) => ({
@@ -5397,7 +5402,9 @@
   Util.weakAssoc = (fn = (value, ...args) => Object.assign(value, ...args)) => {
     let mapper = Util.tryCatch(() => new WeakMap(),
       map => Util.weakMapper((obj, ...args) => Util.merge(...args), map),
-      () => (obj, ...args) => Util.define(obj, ...args)
+      () =>
+        (obj, ...args) =>
+          Util.define(obj, ...args)
     );
 
     return (obj, ...args) => {
@@ -5879,8 +5886,7 @@
     const { x, y } = this;
     return x | (y << shl);
   };
-  */ Point.prototype.toString = function(opts = {}
-  ) {
+  */ Point.prototype.toString = function(opts = {}) {
     const { precision = 0.001, unit = '', separator = ',', left = '', right = '', pad = 0 } = opts;
     let x = Util.roundTo(this.x, precision);
     let y = Util.roundTo(this.y, precision);
@@ -6443,7 +6449,7 @@
 
   Line.bind = (o, p, gen) => {
     const [x1, y1, x2, y2] = p || ['x1', 'y1', 'x2', 'y2'];
-    if(!gen) gen = k => v => (v === undefined ? o.k : (o.k = v));
+    if(!gen) gen = k => v => v === undefined ? o.k : (o.k = v);
     let proxy = { a: Point.bind(o, [x1, y1]), b: Point.bind(o, [x2, y2]) };
     Util.bindProperties(proxy, o, { x1, y1, x2, y2 }, gen);
     return Object.setPrototypeOf(proxy, Line.prototype);
@@ -6656,7 +6662,7 @@
     const gen = Util.isFunction(args[args.length - 1]) && args.pop();
     const p = args.length > 1 ? args.pop() : ['width', 'height'];
     const t = args.pop();
-    gen = gen || (k => v => (v === undefined ? t.k : (t.k = v)));
+    gen = gen || (k => v => v === undefined ? t.k : (t.k = v));
 
     // const [  p = ['width', 'height']  ] = args[0] instanceof Size ? args : [new Size(), ...args];
 
@@ -6796,8 +6802,10 @@
     })
   );
   const getPoint = Util.memoize(rect =>
-    Util.bindProperties(new Point(0, 0), rect, ['x', 'y'], k => v =>
-      v !== undefined ? (rect.k = v) : rect.k
+    Util.bindProperties(new Point(0, 0),
+      rect,
+      ['x', 'y'],
+      k => v => v !== undefined ? (rect.k = v) : rect.k
     )
   );
 
@@ -7122,7 +7130,7 @@
   };
 
   Rect.bind = (...args) => {
-    const [o, p, gen = k => v => (v === undefined ? o.k : (o.k = v))] =
+    const [o, p, gen = k => v => v === undefined ? o.k : (o.k = v)] =
       args[0] instanceof Rect ? [new Rect(), ...args] : args;
     const [x, y, width, height] = p || ['x', 'y', 'width', 'height'];
     let pt = Point.bind(o, ['x', 'y'], gen);
@@ -8622,7 +8630,7 @@
 
   Circle.bind = (o, p, gen) => {
     const [x, y, radius] = p || ['x', 'y', 'radius'];
-    if(!gen) gen = k => v => (v === undefined ? o.k : (o.k = v));
+    if(!gen) gen = k => v => v === undefined ? o.k : (o.k = v);
     return Util.bindProperties(new Circle(0, 0, 0), o, { x, y, radius }, gen);
   };
 
