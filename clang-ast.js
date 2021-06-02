@@ -691,7 +691,7 @@ export class TypedefDecl extends Type {
 
     //type ??= GetType(node, ast);
     Util.assertEqual(inner.length, 1);
-    console.log('TypedefDecl.constructor', { node, typeId, type });
+    // console.log('TypedefDecl.constructor', { node, typeId, type });
 
     if(type?.decl) type = type.decl;
     if(type?.kind && type.kind.endsWith('Type')) type = type.type;
@@ -839,7 +839,7 @@ export function TypeFactory(node, ast, cache = true) {
   // console.log('TypeFactory:', { node });
 
   Util.assert(node.kind,
-    `Not an AST node: ${[Symbol.for('nodejs.util.inspect.custom')](node, {
+    `Not an AST node: ${inspect(node, {
       colors: false,
       compact: 0,
       depth: Infinity

@@ -1,4 +1,4 @@
-import { Mat, Point, Size, Rect, Line, Contour } from 'opencv';
+import { Mat, Point, Size, Rect, RotatedRect, Line, Contour } from 'opencv';
 import * as cv from 'opencv';
 import * as std from 'std';
 import { PointIterator } from 'opencv';
@@ -44,12 +44,36 @@ async function main(...args) {
   console.log('c.push', c.push);
 
   c.push(new Point(0, 0));
-  /*   c.push({x: 50, y: 0});
-    c.push({x: 50, y: 50});
-    c.push({x: 0, y: 50});
-    c.push({x: 0, y: 0});*/
+  c.push({ x: 50, y: 0 });
+  c.push({ x: 50, y: 50 });
+  c.push({ x: 0, y: 50 });
+  c.push({ x: 0, y: 0 });
+  console.log('contour[0]', c[0]);
+  console.log('contour[1]', c[1]);
+  c[4] = new Point(99, 33);
+  let fitted = new Line();
+  console.log('fitted', fitted);
+  c.fitLine(fitted);
+  let ellipse = new RotatedRect();
+  console.log('ellipse', ellipse);
+  ellipse = c.fitEllipse();
+  console.log('ellipse', ellipse);
+
+  console.log('fitted', fitted);
+  console.log('contour[4]', c[4]);
   console.log('contour:', c);
   console.log('c[Symbol.iterator]:', c[Symbol.iterator]);
+  console.log('Object.getOwnPropertyNames(Contour.prototype)',
+    Object.getOwnPropertyNames(Contour.prototype)
+  );
+
+  console.log('Object.getOwnPropertyNames(c)', Object.getOwnPropertyNames(c));
+  console.log('Object.keys(c)', Object.keys(c));
+
+  let a = [1, 2, 3, 4, 5];
+  console.log('Object.getOwnPropertyNames(a)', Object.getOwnPropertyNames(a));
+  console.log('Object.keys(a)', Object.keys(a));
+
   let it = c[Symbol.iterator]();
 
   console.log('contour[Symbol.iterator]:', c[Symbol.iterator]);
@@ -70,6 +94,8 @@ async function main(...args) {
   console.log(`Object.keys(Object.getPrototypeOf(rect))`, Object.keys(Object.getPrototypeOf(rect)));
   console.log(`Object.keys(rect)`, Object.keys(rect));
   console.log(`inspect(rect)`, inspect(rect));*/
+  return;
+
   let point = new Point(25, 75);
   console.log(`inspect(point)`, inspect(point));
   function toHex(n, b = 2) {

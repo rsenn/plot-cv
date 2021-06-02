@@ -2,6 +2,7 @@ import { Error as Errors, strerror } from 'std';
 import { read, write, close, setReadHandler, setWriteHandler } from 'os';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './fcntl.js';
 import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toPointer, toArrayBuffer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_NODELETE, RTLD_NOLOAD, RTLD_DEEPBIND, RTLD_DEFAULT, RTLD_NEXT, pointerSize } from 'ffi';
+import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from 'misc';
 
 function foreign(name, ret, ...args) {
   let fp = dlsym(RTLD_DEFAULT, name);
@@ -177,6 +178,7 @@ export function listen(fd, backlog = 5) {
 }
 
 export function recv(fd, buf, offset, len, flags = 0) {
+  console.log('syscall.recv', { fd, buf, offset, len, flags });
   if(typeof buf == 'object' && typeof buf.buffer == 'object') buf = buf.buffer;
   if(offset === undefined) offset = 0;
   if(len === undefined) len = buf.byteLength;
@@ -251,7 +253,7 @@ export class sockaddr_in extends ArrayBuffer {
 
     // Object.setPrototypeOf(this, new ArrayBuffer(16));
 
-    console.log('this:', this);
+    // console.log('this:', this);
 
     this.sin_family = family;
     this.sin_port = port;
@@ -288,7 +290,7 @@ Object.defineProperties(sockaddr_in.prototype, {
     },
     get() {
       //Object.setPrototypeOf(this, ArrayBuffer.prototype);
-      // console.log("this:", this.slice());
+      console.log('this:', this);
       return new DataView(this, 2).getUint16(0, false);
     },
     enumerable: true
@@ -392,6 +394,10 @@ export class Socket {
     this.pending = true;
   }
 
+  ndelay(on) {
+    return ndelay(this.fd, on);
+  }
+
   set remoteFamily(family) {
     this.remote.sin_family = family;
   }
@@ -474,6 +480,7 @@ export class Socket {
   read(...args) {
     let ret;
     const [buf, offset, len] = args;
+
     if(args.length == 0 || typeof buf != 'object') {
       let data = new ArrayBuffer(typeof buf == 'number' ? buf : 1024);
       if((ret = this.read(data)) > 0) return data.slice(0, ret);
@@ -509,7 +516,7 @@ export class Socket {
   close() {
     console.log('Socket.close', this.fd);
     close(this.fd);
-    console.log('this.fd', Object.getOwnPropertyDescriptors(this)['fd']);
+    // console.log('this.fd', Object.getOwnPropertyDescriptors(this)['fd']);
     delete this.fd;
     this.destroyed = true;
   }
@@ -524,36 +531,34 @@ export class Socket {
     this.file.flush();
   }
 
-  async *[Symbol.asyncIterator]() {
-    let r;
+  [Symbol.asyncIterator]() {
+    return new SocketIterator(this, 1024);
+  }
+}
 
-    if(this.listening) throw new Error(`Socket[Symbol.asyncIterator] listening socket`);
+class SocketIterator {
+  constructor(socket, bufsize = 1024) {
+    this.fd = typeof socket == 'number' ? socket : socket.fd;
+    this.buf = new ArrayBuffer(bufsize);
+  }
 
-    if(!globalThis['std']) {
-      let m = await import('std');
-      globalThis['std'] = m;
-    }
+  async next(n) {
+    const { fd, buf } = this;
+    await WaitRead(fd);
+    n ??= buf.byteLength;
+    let r = recv(fd, buf, n, 0);
+    let data;
+    if(r <= 0) {
+      let errCode = errno();
+      let errStr = strerror(errCode);
+      if(errCode != EAGAIN)
+        return {
+          done: true,
+          error: `Socket[Symbol.asyncIterator] error = ${errStr}, errno = ${errCode}`
+        };
+    } else data = ArrayBufferToString(buf.slice(0, r));
 
-    ndelay(this.fd);
-
-    for(;;) {
-      await WaitRead(this.fd);
-
-      if(this.file == undefined) this.file = std.fdopen(this.fd, 'r+');
-
-      r = this.file.readAsString();
-      let err;
-      if((err = this.file.error())) {
-        let errCode = errno();
-        let errStr = strerror(errCode);
-        throw new Error(`Socket[Symbol.asyncIterator] error = ${errStr}, errno = ${errCode}`);
-      }
-
-      console.log('Socket[Symbol.asyncIterator]', { r });
-      if(typeof r != 'string') return 0;
-
-      yield r;
-    }
+    return { done: false, value: data };
   }
 }
 
@@ -567,7 +572,7 @@ Object.assign(Socket.prototype, {
   [Symbol.getStringTag]: 'Socket'
 });
 
-function WaitRead(fd) {
+export function WaitRead(fd) {
   let resolver = () =>
     new Promise((resolve, reject) => {
       os.setReadHandler(fd, () => {
