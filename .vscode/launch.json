@@ -19,7 +19,8 @@
             "type": "node",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/src/debugAdapter.ts",
+            "program": "${workspaceFolder}/../vscode-quickjs-debug/src/debugAdapter.ts",
+            "runtimeExecutable": "node"
             "args": [
                 "--server=4711"
             ],
@@ -31,51 +32,25 @@
             "name": "Launch QuickJS",
             "type": "quickjs",
             "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "env": 
-                "DISPLAY": ":0",
-                "QUICKJS_DEBUG_ADDRESS": "127.0.0.1:9001"
-            },
-            "program": "${file}",
-            "args": [],
-            "runtimeExecutable": "/usr/local/bin/qjsm",
+            "program": "${workspaceFolder}/test-ecmascript2.js",
+            "runtimeExecutable": "/usr/bin/env",
+            "runtimeArgs": [  "QUICKJS_DEBUG_ADDRESS=localhost:9001",
+                "/usr/local/bin/qjsm" ],
+            "address": "127.0.0.1",
             "port": 9000
-        },
-        {
-            "name": "Debug QuickJS",
-            "type": "quickjs",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "program": "${file}",
-            "args": [ "${relativeFile}" ],
-            "runtimeArgs": [
-                "DISPLAY=:0",
-                "QUICKJS_DEBUG_LISTEN_ADDRESS=127.0.0.1:9000",
-                  "/usr/local/bin/qjsm"
-            ],
-            "runtimeExecutable": "/usr/bin/env"
         },
         {
             "name": "Attach QuickJS (connect)",
             "type": "quickjs",
             "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "environment": {
-                "DISPLAY": ":0"
-            },
-            "program": "${file}",
-            "args": [
-                
-            ],
+            "program":  "${workspaceFolder}/test-ecmascript2.js",
             "runtimeExecutable": "/usr/bin/env",
-            "runtimeArgs": [
-                "DISPLAY=:0",
-                "QUICKJS_DEBUG_LISTEN_ADDRESS=127.0.0.1:9000",
-                "/usr/local/bin/qjsm"
-            ],
+            "runtimeArgs": [ "QUICKJS_DEBUG_ADDRESS=127.0.0.1:9001","/usr/local/bin/qjsm" ],
+            "localRoot": "${workspaceFolder}",
             "mode": "connect",
             "attach": true,
-            "port": 9999
+            "address": "127.0.0.1",
+            "port": 9000
         },
         {
             "name": "Attach QuickJS",
@@ -83,13 +58,7 @@
             "request": "launch",
             "attach": true,
             "port": 5555,
-            "env": {
-                "DISPLAY": ":0"
-            },
-            "program": "${relativeFile}",
-            "args": [
-                "test-ecmascript.js"
-            ],
+            "program": "${workspaceFolder}/src/tests/data/test.js",
             "localRoot": "${workspaceFolder}/src/tests/data/",
             "runtimeExecutable": "/usr/local/bin/qjs"
         }
@@ -97,10 +66,7 @@
     "compounds": [
         {
             "name": "Extension + Server",
-            "configurations": [
-                "Extension",
-                "Server"
-            ]
+            "configurations": [ "Extension", "Server" ]
         }
     ]
 }

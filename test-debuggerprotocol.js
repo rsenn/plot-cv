@@ -25,10 +25,18 @@ async function main(...args) {
     }
   });
   console.log('console.options', console.options);
+  let params = Util.getOpt({
+      listen: [false, null, 'l'],
+      debug: [false, null, 'x'],
+      address: [true, null, 'c'],
+      port: [true, null, 'p'],
+      '@': 'address,port'
+    },
+    args
+  );
+  const { listen } = params;
 
-  const listen = !!(args[0] == '-l' && args.shift());
-
-  const [addr = '127.0.0.1', port = 9000] = args;
+  const [address = '127.0.0.1', port = 9000] = args;
 
   let sock = new Socket();
   console.log('socket() fd =', +sock);
@@ -37,14 +45,14 @@ async function main(...args) {
   let debug;
 
   if(listen) {
-    ret = sock.bind(addr, port);
-    retValue(ret, `sock.bind(${addr}, ${port})`);
+    ret = sock.bind(address, port);
+    retValue(ret, `sock.bind(${address}, ${port})`);
     ret = sock.listen();
     retValue(ret, `sock.listen())`);
   } else {
     sock.ndelay(true);
-    ret = sock.connect(addr, port);
-    retValue(ret, `sock.connect(${addr}, ${port})`);
+    ret = sock.connect(address, port);
+    retValue(ret, `sock.connect(${address}, ${port})`);
   }
 
   /*  ret = sendRequest(+sock, 'next');
