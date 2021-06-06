@@ -583,7 +583,7 @@ export class RecordDecl extends Type {
     if(name && name != 'struct') this.name = name;
     this.name ??= NameFor(node, ast);
     if(inner?.find(child => child.kind == 'PackedAttr')) this.packed = true;
-    let fields = inner?.filter(child => child.kind.endsWith('FieldDecl'));
+    let fields = inner?.filter(child => child.kind.endsWith('Decl'));
 
     if(tagUsed) this.tag = tagUsed;
 
@@ -596,8 +596,8 @@ export class RecordDecl extends Type {
           if(node.isBitfield) {
             name += ':' + node.inner[0].inner[0].value;
           }
-          if(kind.endsWith('FieldDecl')) {
-            if(node?.type?.qualType && / at /.test(node.type.qualType)) {
+          if(kind.endsWith('Decl')) {
+            if(node?.type?.qualType && /( at )/.test(node.type.qualType)) {
               let loc = node.type.qualType.split(/(?:\s*[()]| at )/g)[2];
               let [file, line, column] = loc.split(/:/g).map(i => (!isNaN(+i) ? +i : i));
 
@@ -605,7 +605,9 @@ export class RecordDecl extends Type {
               let typeNode = deep.get(inner, typePath);
               type = TypeFactory(typeNode, ast);
               //  console.log('loc:', { kind, file, line, column, typeNode});
-            } else if(node.type) {
+            } else if(node.kind.startsWith('CXX')) {
+              type = TypeFactory(node, ast);
+            }          else if(node.type) {
               type = new Type(node.type, ast);
               if(type.desugared && type.desugared.startsWith('struct ')) {
                 let tmp = ast.inner.find(n => n.kind == 'RecordDecl' && n.name == /^struct./.test(n.name)
@@ -861,6 +863,9 @@ export function TypeFactory(node, ast, cache = true) {
     case 'TypedefDecl':
       obj = new TypedefDecl(node, ast);
       break;
+    case 'CXXConstructorDecl':
+    case 'CXXMethodDecl':
+    case 'CXXDestructorDecl':
     case 'FunctionDecl':
       obj = new FunctionDecl(node, ast);
       break;
@@ -876,12 +881,15 @@ export function TypeFactory(node, ast, cache = true) {
     case 'CXXRecordDecl':
       obj = new ClassDecl(node, ast);
       break;
-
+    case 'VarDecl':
+      obj = new VarDecl(node, ast);
+      break;
     case undefined:
       throw new Error(`Not an AST node: ${inspect(node, { colors: false, compact: 0 })}`);
       break;
 
-    default: throw new Error(`No such kind of AST node: ${node.kind}`);
+    default: console.log('node:', node);
+      throw new Error(`No such kind of AST node: ${node.kind}`);
       //obj = new Type(node, ast);
       break;
   }
@@ -950,8 +958,10 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
     [
       ...(/^([0-9]+)\s/g.exec(errorLines.find(line => /errors\sgenerated/.test(line)) || '0') || [])
     ][0] || errorLines.length;
-  //console.log('errors:', errors);
-  if(numErrors) throw new Error(errorLines.join('\n'));
+  if(numErrors) {
+    console.log('errors:', errors);
+    throw new Error(errorLines.join('\n'));
+  }
 
   function PipeReader(fd, callback) {
     let ret;
@@ -1037,7 +1047,7 @@ export async function AstDump(compiler, source, args, force) {
     console.log(`Loading cached '${output}'...`);
     r = { file: output };
   } else {
-    if(fs.existsSync(output)) fs.unlink(output);
+    if(fs.existsSync(output)) fs.unlinkSync(output);
 
     console.log(`Compiling '${source}'...`);
     r = await SpawnCompiler(compiler, source, output, [
@@ -1957,7 +1967,7 @@ export function NodePrinter(ast) {
             : [];
           put(`${name}(`);
           while(l.length && l[0].kind == 'ParmVarDecl' && (param = l.shift())) {
-            if(param.name) {
+            /*if(param.name)*/ {
               if(i > 0) put(', ');
               printer.print(param);
               i++;
@@ -2184,6 +2194,28 @@ export function PrintNode(node) {
   }
   if(Array.isArray(out)) out = out.join(sep);
   return out;
+}
+
+export function PrintAst(node, ast) {
+  ast ??= $.data;
+  let printer = NodePrinter(ast);
+  globalThis.printer = printer;
+  Object.defineProperties(printer, {
+    path: {
+      get() {
+        return deep.pathOf(ast, this.node);
+      }
+    }
+  });
+  if(Array.isArray(node)) {
+    for(let elem of node) {
+      if(printer.output) printer.put('\n');
+      printer(elem, ast);
+    }
+  } else {
+    printer(node, ast);
+  }
+  return printer.output;
 }
 
 export function isNode(obj) {

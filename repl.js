@@ -829,8 +829,13 @@ export default function REPL(title = 'QuickJS') {
               return eval(base);
             obj = repl.get_context_object(line, pos - base.length);
             if(obj === null || obj === void 0) return obj;
-            if(obj === globalThis && obj[base] === void 0) return eval(base);
-            else return obj[base];
+            if(obj === globalThis && obj[base] === void 0) {
+              let ret;
+              try {
+                ret = eval(base);
+              } catch(e) {}
+              return ret;
+            } else return obj[base];
           }
           return {};
       }
@@ -886,7 +891,9 @@ export default function REPL(title = 'QuickJS') {
 
     s = repl.get_context_word(line, pos);
     //    repl.print_status('get_completions', { line, pos, repl.cmd, word: s });
+
     ctx_obj = repl.get_context_object(line, pos - s.length);
+
     r = [];
     /* enumerate properties from object and its prototype chain,
            add non-numeric regular properties with s as e prefix

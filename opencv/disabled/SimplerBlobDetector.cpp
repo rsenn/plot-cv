@@ -65,7 +65,7 @@ onMouseClick(int event, int x, int y, int flags, void* userdata) {
 // POST : centers contains Center objects for each blob that was found
 // ------------------------------------------------------------------------------------------------
 void
-findBlobs(InputArray _image, InputArray _binaryImage, std::vector<Center>& centers, int cv::threshold) {
+findBlobs(cv::_InputArray _image, cv::_InputArray _binaryImage, std::vector<Center>& centers, int threshold) {
   cv::Scalar contourColor = cv::Scalar(255, 0, 0);                 // Blue
   cv::Scalar filteredByAreaColor = cv::Scalar(0, 255, 0);          // Green
   cv::Scalar filteredByCircularityColor = cv::Scalar(255, 255, 0); // Cyan
@@ -74,14 +74,14 @@ findBlobs(InputArray _image, InputArray _binaryImage, std::vector<Center>& cente
   cv::Scalar filteredByColorColor = cv::Scalar(255, 255, 255); // White
   cv::Scalar selectedColor = cv::Scalar(0, 0, 255);            // Red
 
-  cv::Mat image = _image.getcv::Mat(), binaryImage = _binaryImage.getcv::Mat();
+  cv::Mat image = _image.getMat(), binaryImage = _binaryImage.getMat();
   centers.clear();
 
   // Find contours in the binary image using the cv::findContours()-function. Let this function
   // return a list of contours only (no hierarchical data).
   std::vector<std::vector<cv::Point>> contours;
   cv::Mat tmpBinaryImage = binaryImage.clone();
-  cv::findContours(tmpBinaryImage, contours, RETR_LIST, CHAIN_APPROX_NONE);
+  cv::findContours(tmpBinaryImage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
 
   // Now process all the contours that were found.
   cv::Mat inter;
@@ -186,7 +186,7 @@ findBlobs(InputArray _image, InputArray _binaryImage, std::vector<Center>& cente
 
   // Let the window border reflect the number of found and filtered contours.
   ostringstream os;
-  os << "Threshold: " << cv::threshold << ", number of contours found: " << contours.size();
+  os << "Threshold: " << threshold << ", number of contours found: " << contours.size();
   os << ", remaining after filtering: " << centers.size();
   cv::imshow(os.str(), inter);
   cv::moveWindow(os.str(), 100 + window * 50, 100 + window++ * 50);
@@ -196,20 +196,20 @@ findBlobs(InputArray _image, InputArray _binaryImage, std::vector<Center>& cente
 // detect()- Detects blobs in an image.
 // ------------------------------------------------------------------------------------------------
 // PRE  : image contains an image
-// PRE  : keypoints is a reference to a std::vector of Keycv::Point instances
+// PRE  : keypoints is a reference to a std::vector of cv::KeyPoint instances
 // PRE  : mask is an ROI matrix with nonzero values for pixels of interest
-// POST : keypoints contains a Keycv::Point instance for each blob that was found
+// POST : keypoints contains a cv::KeyPoint instance for each blob that was found
 // ------------------------------------------------------------------------------------------------
 void
-detect(InputArray image, std::vector<Keycv::Point>& keypoints, InputArray mask) {
+detect(cv::_InputArray image, std::vector<cv::KeyPoint>& keypoints, cv::_InputArray mask) {
   keypoints.clear();
 
   // When necessary, convert the supplied image to a gray scale image.
   cv::Mat grayscaleImage;
   if(image.channels() == 3 || image.channels() == 4)
-    cv::cvtColor(image, grayscaleImage, COLOR_BGR2GRAY);
+    cv::cvtColor(image, grayscaleImage, cv::COLOR_BGR2GRAY);
   else
-    grayscaleImage = image.getcv::Mat();
+    grayscaleImage = image.getMat();
 
   // We only support 8 bit images.
   if(grayscaleImage.type() != CV_8UC1)
@@ -220,7 +220,7 @@ detect(InputArray image, std::vector<Keycv::Point>& keypoints, InputArray mask) 
     // For each cv::threshold value from the specified minimum to the specified maximum using the
     // specified step size, generate a binary image and find the centers of any blobs in it.
     cv::Mat binarizedImage;
-    cv::threshold(grayscaleImage, binarizedImage, thresh, 255, THRESH_BINARY);
+    cv::threshold(grayscaleImage, binarizedImage, thresh, 255, cv::THRESH_BINARY);
     std::vector<Center> curCenters;
     findBlobs(grayscaleImage, binarizedImage, curCenters, thresh);
 
@@ -250,25 +250,25 @@ detect(InputArray image, std::vector<Keycv::Point>& keypoints, InputArray mask) 
     copy(newCenters.begin(), newCenters.end(), back_inserter(centers));
   }
 
-  // Now convert the centers that were found into Keycv::Points. Skip contours with
+  // Now convert the centers that were found into cv::KeyPoints. Skip contours with
   // a repeat count lesser than the minimum repeatability.
   for(size_t i = 0; i < centers.size(); i++) {
     if(centers[i].size() < params.minRepeatability)
       continue;
-    cv::Point2d sumcv::Point(0, 0);
+    cv::Point2d sumPoint(0, 0);
     double normalizer = 0;
     for(size_t j = 0; j < centers[i].size(); j++) {
-      sumcv::Point += centers[i][j].confidence * centers[i][j].location;
+      sumPoint += centers[i][j].confidence * centers[i][j].location;
       normalizer += centers[i][j].confidence;
     }
-    sumcv::Point *= (1. / normalizer);
-    Keycv::Point kpt(sumcv::Point, (float)(centers[i][centers[i].size() / 2].radius) * 2.0f);
+    sumPoint *= (1. / normalizer);
+    cv::KeyPoint kpt(sumPoint, (float)(centers[i][centers[i].size() / 2].radius) * 2.0f);
     keypoints.push_back(kpt);
   }
 
-  // Filter the Keycv::Points by the supplied mask, if any.
+  // Filter the cv::KeyPoints by the supplied mask, if any.
   if(!mask.empty())
-    Keycv::PointsFilter::runByPixelsMask(keypoints, mask.getcv::Mat());
+    cv::KeyPointsFilter::runByPixelsMask(keypoints, mask.getMat());
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -294,7 +294,7 @@ main(int argc, char** argv) {
     exit(-1);
   }
 
-  cv::Mat image = cv::imread(argv[1], cv::LOAD_IMAGE_COLOR);
+  cv::Mat image = cv::imread(argv[1]/*, cv::LOAD_IMAGE_COLOR*/);
   if(!image.data) {
     cout << "Could not open file " << argv[1] << endl;
     exit(-1);
@@ -332,10 +332,10 @@ main(int argc, char** argv) {
   // Find blobs in the image, using the blob detector parameters specified above.
   // Show the coordinates of all keypoints that were found.
   cv::Mat mask, result;
-  std::vector<Keycv::Point> keypoints;
+  std::vector<cv::KeyPoint> keypoints;
   detect(image, keypoints, mask);
-  for(Keycv::Point k : keypoints) cout << "(" << k.pt.x << "," << k.pt.y << ")" << endl;
-  drawKeypoints(image, keypoints, result, cv::Scalar(0, 0, 255), Drawcv::MatchesFlags::DRAW_RICH_KEYPOINTS);
+  for(cv::KeyPoint k : keypoints) cout << "(" << k.pt.x << "," << k.pt.y << ")" << endl;
+  drawKeypoints(image, keypoints, result, cv::Scalar(0, 0, 255), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
   ostringstream os;
   os << "Result: " << keypoints.size() << " keypoints.";
   cv::imshow(os.str(), result);

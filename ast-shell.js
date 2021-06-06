@@ -4,7 +4,7 @@ import path from './lib/path.js';
 import * as deep from 'deep';
 import { Console } from 'console';
 import REPL from './repl.js';
-import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, VarDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter, isNode, SourceDependencies, GetTypeNode, GetFields, PathRemoveLoc } from './clang-ast.js';
+import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, VarDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter, isNode, SourceDependencies, GetTypeNode, GetFields, PathRemoveLoc, PrintAst } from './clang-ast.js';
 import Tree from './lib/tree.js';
 import { Pointer } from 'pointer';
 import * as Terminal from './terminal.js';
@@ -12,6 +12,10 @@ import * as ECMAScript from './lib/ecmascript.js';
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import { lazyInitializer } from './lib/lazyInitializer.js';
 import fs from 'fs';
+import { extendArray } from 'util';
+import { Predicate } from 'predicate';
+
+extendArray(Array.prototype);
 
 let params;
 let files;
@@ -823,23 +827,24 @@ function Namespaces(nodePath, ast = $.data) {
   return ns;
 }
 
-function MemberNames(members) {
-  const ret = [];
+MemberNames.UPPER = 1;
+MemberNames.METHODS = 2;
+MemberNames.PROPERTIES = 4;
+
+function MemberNames(members, flags = 0) {
+  let ret = [];
   if(members.members) members = members.members;
 
   if(!Array.isArray(members)) {
     for(let ptr of deep
-      .select(members, n => n.kind == 'FieldDecl' || n.name, deep.RETURN_PATH)
+      .select(members, n => n.kind.endsWith('Decl') && n.name, deep.RETURN_PATH)
       .map(path => new Pointer(path))) {
       let ptrs = ptr.chain(2);
       console.log('ptrs:', ptrs);
-
       let names = ptrs.map(p => deep.get(members, [...p, 'name'], deep.NO_THROW));
       let kinds = ptrs.map(p => deep.get(members, [...p, 'kind'], deep.NO_THROW));
-
       console.log('kinds:', kinds);
       console.log('names:', names);
-
       ret.push(names.filter(name => name).join('.'));
     }
   } else {
@@ -850,13 +855,12 @@ function MemberNames(members) {
       )
       .map(path => new Pointer(path))) {
       let ptrs = ptr.chain(3);
-      //console.log('ptrs:', ptrs);
       let names = ptrs.map(p => deep.get(members, [...p, 0]));
-
-      //console.log('names:', names);
-
       ret.push(names.filter(name => name).join('.'));
     }
+  }
+  if(flags & MemberNames.UPPER) {
+    ret = ret.map(name => Util.decamelize(name, '_').toUpperCase());
   }
   return ret;
 }
@@ -872,31 +876,6 @@ function UnsetLoc(node, pred = (v, p) => true) {
   return node;
 }
 
-function PrintAst(node, ast) {
-  ast ??= $.data;
-
-  let printer = NodePrinter(ast);
-  globalThis.printer = printer;
-
-  Object.defineProperties(printer, {
-    path: {
-      get() {
-        return deep.pathOf(ast, this.node);
-      }
-    }
-  });
-
-  if(Array.isArray(node)) {
-    for(let elem of node) {
-      if(printer.output) printer.put('\n');
-
-      printer(elem, ast);
-    }
-  } else {
-    printer(node, ast);
-  }
-  return printer.output;
-}
 
 function MakeFFI(node, fp, lib, exp) {
   if(Array.isArray(node)) {
@@ -1174,6 +1153,7 @@ async function ASTShell(...args) {
 
   Object.assign(globalThis, {
     Pointer,
+    Predicate,
     Tree,
     deep,
     Compile,

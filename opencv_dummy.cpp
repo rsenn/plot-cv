@@ -27,6 +27,10 @@ using std::endl;
 int window_width = 640;
 int window_height = 480;
 
+using cv::SimpleBlobDetector;
+
+static SimpleBlobDetector::Params simple_blob_params;
+
 // Function turn a cv::Mat into a texture, and return the texture ID as a GLuint for use
 static GLuint
 matToTexture(const cv::Mat& mat, GLenum minFilter, GLenum magFilter, GLenum wrapFilter) {
