@@ -7,7 +7,7 @@ import * as cv from 'opencv';
 var parent = os.Worker.parent;
 
 function WorkerMain() {
- globalThis.console= new Console({
+  globalThis.console = new Console({
     colors: true,
     compact: 1,
     prefix: '\x1b[38;5;128mWORKER\x1b[0m'

@@ -8,26 +8,26 @@ var worker;
 var counter;
 
 function TestWorker() {
-  globalThis.console =new Console({
+  globalThis.console = new Console({
     colors: true,
     compact: 1,
     prefix: '\x1b[38;5;220mPARENT\x1b[0m'
   });
 
-  worker = new os.Worker('./worker.js');
+  worker = new os.Worker('./ws-worker.js');
 
   counter = 0;
   worker.onmessage = HandleMessage;
- console.log('TestWorker',worker.onmessage);
- 
- /* while(1){
+  console.log('TestWorker', worker.onmessage);
+
+  /* while(1){
     os.sleep(500);
   }*/
 }
 
 function HandleMessage(e) {
-   console.log('HandleMessage', e);
- var ev = e.data;
+  console.log('HandleMessage', e);
+  var ev = e.data;
   switch (ev.type) {
     case 'num':
       assert(ev.num, counter);
@@ -50,7 +50,7 @@ function HandleMessage(e) {
       break;
     case 'done':
       /* terminate */
-      worker.onmessage = null;
+      // worker.onmessage = null;
       break;
   }
 }

@@ -5,6 +5,8 @@ import { Console } from 'console';
 
 var parent = os.Worker.parent;
 
+const log = (...args) => console.log('WORKER', ...args);
+
 function WorkerMain() {
   globalThis.console = new Console({
     colors: true,
@@ -12,7 +14,7 @@ function WorkerMain() {
     prefix: '\x1b[38;5;128mWORKER\x1b[0m'
   });
 
-  console.log('WorkerMain.parent', parent);
+  log('WorkerMain.parent', parent);
 
   var i;
 
@@ -21,11 +23,35 @@ function WorkerMain() {
   for(i = 0; i < 10; i++) {
     parent.postMessage({ type: 'num', num: i });
   }
+  os.sleep(1000);
+
+  log('parent.postMessage', parent.postMessage);
 
   CreateServer();
 }
 
-WorkerMain();
+try {
+  WorkerMain();
+} catch(error) {
+  log(`FAIL: ${error.message}\n${error.stack}`);
+  std.exit(1);
+} finally {
+  log('SUCCESS');
+}
+
+class WSClient {
+  static map = new Map();
+
+  static get(socket) {
+    return WSClient.map.get(socket.fd);
+  }
+
+  constructor(socket) {
+    this.socket = socket;
+
+    WSClient.map.set(socket.fd, this);
+  }
+}
 
 function CreateServer(port = 9900) {
   print(`Listening on http://127.0.0.1:${port}`);
@@ -33,57 +59,64 @@ function CreateServer(port = 9900) {
     port,
     mounts: [['/', '.', 'debugger.html']],
     onConnect: socket => {
-      console.log('Client connected', socket);
+      log(`Client connected (${socket.fd})`);
+      new WSClient(socket);
     },
-    onMessage: async (socket, msg) => {
-      console.log('Received:', msg);
+    onMessage: (socket, msg) => {
+      //let client = WSClient.get(socket);
+
+      log(`onMessage (${socket.fd})`, socket);
+
       if(typeof msg == 'string') {
         const json = JSON.parse(msg);
-        console.log('Received:', json);
+        log('Received', { json });
+        parent.postMessage(json);
+        return;
 
         if(json.type == 'start') {
           const { args, connect, address } = json.start;
           let child = StartDebugger(args, connect, address);
 
-          /* console.log('child.wait()', child.wait());
-          console.log('child(3).stderr', child.stderr);*/
+          /* log('child.wait()', child.wait());
+          log('child(3).stderr', child.stderr);*/
           os.sleep(1000);
           sock = new Socket(IPPROTO_TCP);
 
           fs.onWrite(+sock, () => {
-            console.log('writeable', +sock);
+            log('writeable', +sock);
             fs.onWrite(+sock, null);
             connection = new DebuggerProtocol(sock);
             fs.onRead(+sock, () => {
-              console.log('readable', +sock);
+              log('readable', +sock);
               if(connection) connection.read();
             });
           });
 
           ret = sock.connect('127.0.0.1', 9901);
-          console.log('sock', sock);
+          log('sock', sock);
 
           // sock.ndelay(true);
 
-          console.log('ret:', ret);
+          log('ret:', ret);
 
-          console.log('child(3)', child);
+          log('child(3)', child);
         } else if(sock) {
           sock.send(msg);
         }
       }
     },
     onClose: why => {
-      console.log('Client disconnected.' + (why ? ' Reason: ' + why : ''));
+      log('Client disconnected.' + (why ? ' Reason: ' + why : ''));
     },
     onPong: (socket, data) => {
-      console.log('PONG', data);
+      log('PONG', data);
     }
   });
 }
+
 function HandleMessage(e) {
   var ev = e.data;
-  console.log('Worker HandleMessage', ev);
+  log('HandleMessage', ev);
 
   switch (ev.type) {
     case 'abort':

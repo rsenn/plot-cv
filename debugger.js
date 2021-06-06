@@ -1,4 +1,3 @@
-import { client, server, fetch } from 'net';
 import { Console } from 'console';
 import { btoa } from 'misc';
 import * as os from 'os';
@@ -35,44 +34,39 @@ function StartDebugger(args, connect, address) {
 
   return child;
 }
-let sock, connection;
 
-function main(...args) {
+var worker;
+var counter;
+
+function TestWorker() {
   globalThis.console = new Console({
-    inspectOptions: {
-      colors: true,
-      depth: 8,
-      breakLength: 100,
-      maxStringLength: Infinity,
-      maxArrayLength: 30,
-      compact: 2,
-      showHidden: false
-    }
+    colors: true,
+    compact: 1,
+    prefix: '\x1b[38;5;220mPARENT\x1b[0m'
   });
-  let port = 9900;
-  for(let arg of args) {
-    if(!isNaN(+arg)) arg = +arg;
 
-    if(typeof arg == 'number' && arg >= 1024 && arg <= 65535) port = arg;
-  }
-  let i = 0;
+  worker = new os.Worker('./ws-worker.js');
 
-  /*  os.setTimeout(() => {
-    console.log(`interval #${i++}`);
-  }, 500);*/
+  counter = 0;
+  worker.onmessage = HandleMessage;
+  console.log('TestWorker', worker.onmessage);
 
-  let wsworker = new os.Worker('./ws-worker.js');
-
-  wsworker.onmessage = HandleMessage;
+  /* while(1){
+    os.sleep(500);
+  }*/
 }
 
-main(...scriptArgs.slice(1));
 function HandleMessage(e) {
   console.log('HandleMessage', e);
   var ev = e.data;
   switch (ev.type) {
-    case 'num':
-      assert(ev.num, counter);
+    case 'start': {
+    console.log('START', ev.start);
+    break;
+
+    }
+    case 'num': {
+      util.assert(ev.num, counter);
       counter++;
       if(counter == 10) {
         /* test SharedArrayBuffer modification */
@@ -82,17 +76,21 @@ function HandleMessage(e) {
         counter = 0;
       }
       break;
+    }
     case 'sab_done':
       {
         let buf = ev.buf;
         /* check that the SharedArrayBuffer was modified */
-        assert(buf[2], 10);
+        util.assert(buf[2], 10);
         worker.postMessage({ type: 'abort' });
-      }
       break;
-    case 'done':
-      /* terminate */
-      worker.onmessage = null;
+    }
+      case 'done':
+     { /* terminate */
+      // worker.onmessage = null;
       break;
+    }
   }
 }
+
+TestWorker();
