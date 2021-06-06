@@ -33,6 +33,12 @@
 #include "../qjs-opencv/jsbindings.hpp"
 #include "../qjs-opencv/js_point_iterator.hpp"
 #include "../qjs-opencv/js_contour.hpp"
+#include "../qjs-opencv/js_rect.hpp"
+#include "../qjs-opencv/js_size.hpp"
+#include "../qjs-opencv/js_point.hpp"
+#include "../qjs-opencv/js_line.hpp"
+#include "../qjs-opencv/js_cv.hpp"
+#include "../qjs-opencv/js_mat.hpp"
 
 using std::string;
 using std::chrono::duration;

@@ -1,5 +1,6 @@
 import * as std from 'std';
 import * as os from 'os';
+import * as deep from './lib/deep.js';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './fcntl.js';
 import { errno } from 'ffi';
 import { Socket, WaitRead, socket, EAGAIN, AF_INET, SOCK_STREAM, ndelay, connect, sockaddr_in, select, fd_set, timeval, FD_SET, FD_CLR, FD_ISSET, FD_ZERO, send, recv } from './socket.js';
@@ -193,7 +194,9 @@ class DebuggerProtocol {
       type,
       /*request_seq: args.request?.request_seq ?? args.request_seq ?? this.getSeq(),*/ ...args
     };
-
+    for(let [value, key] of deep.iterate({ type, args }, v => typeof v != 'object')) {
+      console.log(`${key}=${value}`);
+    }
     console.log(`sendMessage #${msg.request_seq}`, cfg({ hideKeys: ['request_seq'] }), {
       type,
       ...args
