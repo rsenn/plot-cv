@@ -3,9 +3,19 @@ import { btoa } from 'misc';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as util from 'util';
+import * as path from './lib/path.js';
+import * as deep from './lib/deep.js';
 import child_process from './lib/childProcess.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 import { Socket, IPPROTO_TCP } from './socket.js';
+import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
+
+console.log('toString',
+  ArrayBufferToString(
+    new Uint8Array([0x61, 0x62, 0x64, 0x65, 0x66, 0x20, 0xc3, 0xa4, 0xc3, 0xb6, 0xc3, 0xbc]).buffer
+  )
+);
+console.log('toArrayBuffer', StringToArrayBuffer('blah äöü'));
 
 function StartDebugger(args, connect, address) {
   let env = {};
@@ -16,7 +26,6 @@ function StartDebugger(args, connect, address) {
     env,
     stdio: ['inherit', 'pipe', 'pipe']
   });
-  console.log('child(1)', child);
 
   child.stdio.slice(1).forEach((fd, i) => {
     const out = ['stdout', 'stderr'][i];
@@ -30,7 +39,7 @@ function StartDebugger(args, connect, address) {
     });
   });
 
-  console.log('child(2)', child);
+  console.log('StartDebugger', child);
 
   return child;
 }
@@ -59,7 +68,7 @@ function TestWorker() {
 let sock, connection;
 
 function WorkerMessage(e) {
-  console.log('WorkerMessage', e);
+  // console.log('WorkerMessage', e);
   var ev = e.data;
   const { message, id } = ev;
 
@@ -80,9 +89,17 @@ function WorkerMessage(e) {
             fs.onWrite(fd, null);
             connection = new DebuggerProtocol(sock);
             connection.onmessage = body => {
-              console.log("DEBUGGER", body);
-             send(id, body);
-           }
+              const json = JSON.parse(body);
+              console.log('To WORKER', json);
+
+              console.log('deep.select', deep.select + '');
+
+              for(let [n, p] of deep.select(json, (n, k) => n.filename)) {
+                if(n.filename) n.filename = n.filename.replace(process.cwd() + '/', './');
+              }
+
+              send(id, json);
+            };
             fs.onRead(fd, () => {
               if(connection) {
                 let r = connection.read();
@@ -101,7 +118,7 @@ function WorkerMessage(e) {
           break;
         }
         default: {
-          console.log('MESSAGE', message);
+          console.log('From WORKER', ev);
           connection.sendMessage(message);
 
           break;

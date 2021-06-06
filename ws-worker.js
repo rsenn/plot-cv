@@ -15,18 +15,8 @@ function WorkerMain() {
   });
 
   log('WorkerMain.parent', parent);
-
-  var i;
-
   parent.onmessage = HandleMessage;
-/*
-  for(i = 0; i < 10; i++) {
-    parent.postMessage({ type: 'num', num: i });
-  }*/
   os.sleep(500);
-
-  log('parent.postMessage', parent.postMessage);
-
   CreateServer();
 }
 
@@ -50,15 +40,13 @@ function CreateServer(port = 9900) {
   server({
     port,
     mounts: [['/', '.', 'debugger.html']],
-    onConnect: socket => {
-      log(`Client connected (${socket.fd})`);
-      new WSClient(socket);
-      log(`clients`, clients);
+    onConnect(ws) {
+      let client = new WSClient(ws);
+      log(`Server.onConnect client#${client.id} (${ws.fd})`);
     },
-    onMessage: (socket, msg) => {
-      let client = WSClient.get(socket.fd);
-      log(`onMessage (${socket.fd})`);
-      log(`onMessage`, client);
+    onMessage(ws, msg) {
+      let client = WSClient.get(ws.fd);
+      log(`Server.onMessage client#${client.id} (${ws.fd})`);
 
       if(typeof msg == 'string') {
         const message = { id: client.id, type: 'message', message: JSON.parse(msg) };
@@ -67,11 +55,14 @@ function CreateServer(port = 9900) {
         return;
       }
     },
-    onClose: why => {
-      log('Client disconnected.' + (why ? ' Reason: ' + why : ''));
+    onClose(ws, why) {
+      let client = WSClient.get(ws.fd);
+
+      log(`Server.onClose client#${client.id} (${ws.fd})` + (why ? ' Reason: ' + why : ''));
     },
-    onPong: (socket, data) => {
-      log('PONG', data);
+    onPong(ws, data) {
+      let client = WSClient.get(ws.fd);
+      log(`Server.onPong client#${client.id} (${ws.fd})` + (data ? ' Data: ' + data : ''));
     }
   });
 }
@@ -84,9 +75,10 @@ function HandleMessage(e) {
     case 'send': {
       const { id, body } = ev;
       let client;
-      if((client = [...clients.values()].find(cl => cl.id == id))) {
-        client.socket.send(body);
-      }
+      const json = typeof body != 'string' ? JSON.stringify(body) : body;
+
+      if((client = [...clients.values()].find(cl => cl.id == id))) client.socket.send(json);
+
       break;
     }
     case 'abort': {
@@ -108,7 +100,7 @@ function HandleMessage(e) {
 try {
   WorkerMain();
 } catch(error) {
-  log(`FAIL: ${error.message}\n${error.stack}`);
+  log(`FAIL: ${error?.message}\n${error.stack}`);
   std.exit(1);
 } finally {
   log('SUCCESS');

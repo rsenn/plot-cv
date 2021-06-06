@@ -17,6 +17,7 @@
       "lib/path.js": "path",
       "lib/xml.js": "xml",
       "lib/filesystem.js": "fs",
+      "lib/misc.js": "misc",
       "lib/childProcess.js": "child_process",
       "stack": "quickjs/modules/lib/stack.js"
    },

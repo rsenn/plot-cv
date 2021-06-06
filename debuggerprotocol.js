@@ -1,10 +1,6 @@
-import * as std from 'std';
-import * as os from 'os';
 import * as deep from './lib/deep.js';
-import { errno } from 'ffi';
-import { EAGAIN } from './socket.js';
 import Util from './lib/util.js';
-import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from 'misc';
+import { toString as ArrayBufferToString } from './lib/misc.js';
 
 const cfg = (obj = {}) => console.config({ compact: false, breakLength: Infinity, ...obj });
 
@@ -16,13 +12,13 @@ export class DebuggerProtocol {
     this.onmessage = this.handleMessage;
   }
 
-  readCommand(connection) {
+  /* readCommand(connection) {
     let line;
     if((line = std.in.getline())) {
       // console.log('Command:', line);
       this.sendRequest(line);
     }
-  }
+  }*/
 
   handleResponse(message) {
     const { type, request_seq, ...response } = message;
@@ -108,7 +104,7 @@ export class DebuggerProtocol {
 
     let r = sock.read(lengthBuf);
     if(r <= 0) {
-      if(r < 0 && errno() != EAGAIN) throw new Error(`read error ${std.strerror(errno())}`);
+      if(r < 0 && sock.errno != sock.EAGAIN) throw new Error(`read error ${sock.error()}`);
     } else {
       let len = ArrayBufferToString(lengthBuf);
       let size = parseInt(len, 16);
@@ -116,7 +112,7 @@ export class DebuggerProtocol {
       r = sock.read(jsonBuf);
       // console.log(`Socket(${sock.fd}).read =`, r);
       if(r <= 0) {
-        if(r < 0 && errno() != EAGAIN) throw new Error(`read error ${strerror(errno())}`);
+        if(r < 0 && sock.errno != sock.EAGAIN) throw new Error(`read error ${sock.error()}`);
       } else {
         let json = ArrayBufferToString(jsonBuf.slice(0, r));
         try {

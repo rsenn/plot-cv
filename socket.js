@@ -393,6 +393,8 @@ export class Socket {
     this.remote = new sockaddr_in(this.family);
     this.local = new sockaddr_in(this.family);
     this.pending = true;
+
+    Util.define(this, { EAGAIN });
   }
 
   ndelay(on) {
@@ -434,6 +436,10 @@ export class Socket {
   }
   get localPort() {
     return this.local.sin_port;
+  }
+
+  error(errno = this.errno) {
+    return std.strerror(errno);
   }
 
   connect(addr, port) {
@@ -484,7 +490,7 @@ export class Socket {
 
     if(args.length == 0 || typeof buf != 'object') {
       let data = new ArrayBuffer(typeof buf == 'number' ? buf : 1024);
-      if((ret = this.read(data)) > 0) return data.slice(0, ret);
+      if((ret = this.read(data)) > 0) return ArrayBufferToString(data.slice(0, ret));
     } else if((ret = read(this.fd, buf, offset ?? 0, len ?? buf.byteLength)) <= 0) {
       if(ret < 0) {
         this.errno = syscall.errno;
