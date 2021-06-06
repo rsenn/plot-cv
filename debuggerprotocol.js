@@ -11,9 +11,9 @@ const cfg = (obj = {}) => console.config({ compact: false, breakLength: Infinity
 export class DebuggerProtocol {
   constructor(sock) {
     Util.define(this, { sock });
-    console.log('constructor:', +sock);
     this.seq = 0;
     this.requests = new Map();
+    this.onmessage = this.handleMessage;
   }
 
   readCommand(connection) {
@@ -30,12 +30,14 @@ export class DebuggerProtocol {
   }
 
   handleBreakpoints(message) {
-    const { /*breakpoints,*/ request_seq, ...response } = message;
-    console.log(`handleBreakpoints #${request_seq}`, cfg(), message);
-    this.breakpoints = this.breakpoints;
+    const { breakpoints, request_seq, ...response } = message;
+    console.log(`handleBreakpoints`, cfg(), message);
+    this.breakpoints = breakpoints;
   }
 
-  handleMessage(message) {
+  handleMessage(json) {
+    let message = JSON.parse(json);
+
     switch (message.type) {
       case 'event':
         this.handleEvent(message.event);
@@ -52,7 +54,7 @@ export class DebuggerProtocol {
   }
 
   handleEvent(event) {
-    console.log('handleEvent', console.config({ compact: false, breakLength: Infinity }), event);
+    console.log('handleEvent', cfg(), event);
     switch (event.type) {
       case 'StoppedEvent': {
         if(event.reason == 'entry') {
@@ -64,32 +66,26 @@ export class DebuggerProtocol {
             path: 'test-ecmascript2.js'
           });
           this.sendRequest('stepIn');
-          //          this.sendRequest('continue');
         } else {
           this.sendRequest('stackTrace');
           this.sendRequest('variables', { args: { variablesReference: 1 } });
-          //this.sendRequest('continue');
           this.sendRequest('step');
         }
-
-        // Util.waitFor(10000).then(() => sendRequest(connection, 'pause'));
         break;
       }
     }
   }
 
-  sendMessage(type, args = {}) {
-    const msg = {
-      type,
-      /*request_seq: args.request?.request_seq ?? args.request_seq ?? this.getSeq(),*/ ...args
-    };
-    //for(let [value, key] of deep.iterate({ type, args }, v => typeof v != 'object')) console.log(`${key}=${value}`);
-    //console.log(`sendMessage #${msg.request_seq}`, cfg({ hideKeys: ['request_seq'] }), {type, ...args });
+  sendMessage(type, args) {
+    const msg = args ? { type, ...args } : type;
     try {
       const json = JSON.stringify(msg);
+
+      if(this.send) return this.send(json);
+
       return this.sock.puts(`${toHex(json.length, 8)}\n${json}`);
     } catch(error) {
-      console.log('sendMessage', error.message /*, { msg }*/);
+      console.log('sendMessage', error.message);
     }
   }
 
@@ -100,38 +96,37 @@ export class DebuggerProtocol {
   sendRequest(command, args = {}) {
     const request_seq = 1 + this.getSeq();
     const request = { command, request_seq, ...args };
-    const message = { request, request_seq };
+    const message = { type: 'request', request };
     this.requests.set(request_seq, message);
-    return this.sendMessage('request', message);
+    return this.sendMessage(message);
   }
 
   read() {
+    const { sock } = this;
     let lengthBuf = new ArrayBuffer(9);
     let jsonBuf;
 
-    let r = this.sock.read(lengthBuf);
+    let r = sock.read(lengthBuf);
     if(r <= 0) {
       if(r < 0 && errno() != EAGAIN) throw new Error(`read error ${std.strerror(errno())}`);
     } else {
       let len = ArrayBufferToString(lengthBuf);
       let size = parseInt(len, 16);
       jsonBuf = new ArrayBuffer(size);
-      r = this.sock.read(jsonBuf);
-      //console.log(`read`, { r, size });
+      r = sock.read(jsonBuf);
+      // console.log(`Socket(${sock.fd}).read =`, r);
       if(r <= 0) {
         if(r < 0 && errno() != EAGAIN) throw new Error(`read error ${strerror(errno())}`);
       } else {
         let json = ArrayBufferToString(jsonBuf.slice(0, r));
         try {
-          let message = JSON.parse(json);
-          this.handleMessage(message);
+          this.onmessage(json);
         } catch(e) {
           console.log('ERROR', e.message, '\nDATA\n', json, '\nSTACK\n', e.stack);
           throw e;
         }
       }
     }
-    //console.log('read',  r < 0 ? std.strerror(errno()) : r);
     return r;
   }
 

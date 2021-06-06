@@ -19,37 +19,29 @@ function WorkerMain() {
   var i;
 
   parent.onmessage = HandleMessage;
-
+/*
   for(i = 0; i < 10; i++) {
     parent.postMessage({ type: 'num', num: i });
-  }
-  os.sleep(1000);
+  }*/
+  os.sleep(500);
 
   log('parent.postMessage', parent.postMessage);
 
   CreateServer();
 }
 
-try {
-  WorkerMain();
-} catch(error) {
-  log(`FAIL: ${error.message}\n${error.stack}`);
-  std.exit(1);
-} finally {
-  log('SUCCESS');
-}
+const clients = new Map();
 
 class WSClient {
-  static map = new Map();
-
-  static get(socket) {
-    return WSClient.map.get(socket.fd);
+  static get(fd) {
+    return clients.get(fd);
   }
 
   constructor(socket) {
     this.socket = socket;
+    this.id = WSClient.id = (WSClient.id ?? 0) + 1;
 
-    WSClient.map.set(socket.fd, this);
+    clients.set(socket.fd, this);
   }
 }
 
@@ -61,48 +53,18 @@ function CreateServer(port = 9900) {
     onConnect: socket => {
       log(`Client connected (${socket.fd})`);
       new WSClient(socket);
+      log(`clients`, clients);
     },
     onMessage: (socket, msg) => {
-      //let client = WSClient.get(socket);
-
-      log(`onMessage (${socket.fd})`, socket);
+      let client = WSClient.get(socket.fd);
+      log(`onMessage (${socket.fd})`);
+      log(`onMessage`, client);
 
       if(typeof msg == 'string') {
-        const json = JSON.parse(msg);
-        log('Received', { json });
-        parent.postMessage(json);
+        const message = { id: client.id, type: 'message', message: JSON.parse(msg) };
+        log('Received', message);
+        parent.postMessage(message);
         return;
-
-        if(json.type == 'start') {
-          const { args, connect, address } = json.start;
-          let child = StartDebugger(args, connect, address);
-
-          /* log('child.wait()', child.wait());
-          log('child(3).stderr', child.stderr);*/
-          os.sleep(1000);
-          sock = new Socket(IPPROTO_TCP);
-
-          fs.onWrite(+sock, () => {
-            log('writeable', +sock);
-            fs.onWrite(+sock, null);
-            connection = new DebuggerProtocol(sock);
-            fs.onRead(+sock, () => {
-              log('readable', +sock);
-              if(connection) connection.read();
-            });
-          });
-
-          ret = sock.connect('127.0.0.1', 9901);
-          log('sock', sock);
-
-          // sock.ndelay(true);
-
-          log('ret:', ret);
-
-          log('child(3)', child);
-        } else if(sock) {
-          sock.send(msg);
-        }
       }
     },
     onClose: why => {
@@ -119,9 +81,18 @@ function HandleMessage(e) {
   log('HandleMessage', ev);
 
   switch (ev.type) {
-    case 'abort':
+    case 'send': {
+      const { id, body } = ev;
+      let client;
+      if((client = [...clients.values()].find(cl => cl.id == id))) {
+        client.socket.send(body);
+      }
+      break;
+    }
+    case 'abort': {
       parent.postMessage({ type: 'done' });
       break;
+    }
     case 'sab':
       /* modify the SharedArrayBuffer */
       ev.buf[2] = 10;
@@ -132,4 +103,13 @@ function HandleMessage(e) {
       parent.postMessage({ type: 'sab_done', buf: ev.buf });
       break;
   }
+}
+
+try {
+  WorkerMain();
+} catch(error) {
+  log(`FAIL: ${error.message}\n${error.stack}`);
+  std.exit(1);
+} finally {
+  log('SUCCESS');
 }

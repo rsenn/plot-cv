@@ -48,7 +48,7 @@ function TestWorker() {
   worker = new os.Worker('./ws-worker.js');
 
   counter = 0;
-  worker.onmessage = HandleMessage;
+  worker.onmessage = WorkerMessage;
   console.log('TestWorker', worker.onmessage);
 
   /* while(1){
@@ -56,14 +56,58 @@ function TestWorker() {
   }*/
 }
 
-function HandleMessage(e) {
-  console.log('HandleMessage', e);
-  var ev = e.data;
-  switch (ev.type) {
-    case 'start': {
-    console.log('START', ev.start);
-    break;
+let sock, connection;
 
+function WorkerMessage(e) {
+  console.log('WorkerMessage', e);
+  var ev = e.data;
+  const { message, id } = ev;
+
+  switch (ev.type) {
+    case 'message': {
+      switch (message.type) {
+        case 'start': {
+          console.log('START', message.start);
+
+          const { args, connect, address } = message.start;
+          let child = StartDebugger(args, connect, address);
+
+          os.sleep(1000);
+          let fd = +(sock = new Socket(IPPROTO_TCP));
+
+          fs.onWrite(fd, () => {
+            //console.log('writeable', fd);
+            fs.onWrite(fd, null);
+            connection = new DebuggerProtocol(sock);
+            connection.onmessage = body => {
+              console.log("DEBUGGER", body);
+             send(id, body);
+           }
+            fs.onRead(fd, () => {
+              if(connection) {
+                let r = connection.read();
+                // console.log('readable', {fd, r});;
+
+                if(r == 0) fs.onRead(fd, null);
+              }
+            });
+          });
+
+          let ret = sock.connect('127.0.0.1', 9901);
+          /*console.log('sock', sock);
+          console.log('ret:', ret);
+          console.log('child(3)', child);*/
+
+          break;
+        }
+        default: {
+          console.log('MESSAGE', message);
+          connection.sendMessage(message);
+
+          break;
+        }
+      }
+      break;
     }
     case 'num': {
       util.assert(ev.num, counter);
@@ -77,20 +121,22 @@ function HandleMessage(e) {
       }
       break;
     }
-    case 'sab_done':
-      {
-        let buf = ev.buf;
-        /* check that the SharedArrayBuffer was modified */
-        util.assert(buf[2], 10);
-        worker.postMessage({ type: 'abort' });
+    case 'sab_done': {
+      let buf = ev.buf;
+      /* check that the SharedArrayBuffer was modified */
+      util.assert(buf[2], 10);
+      worker.postMessage({ type: 'abort' });
       break;
     }
-      case 'done':
-     { /* terminate */
+    case 'done': {
+      /* terminate */
       // worker.onmessage = null;
       break;
     }
   }
 }
 
+function send(id, body) {
+  worker.postMessage({ type: 'send', id, body });
+}
 TestWorker();

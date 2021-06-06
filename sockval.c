@@ -3,6 +3,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/select.h>
+#include <sys/poll.h>
 #include <sys/time.h>
 #include <termio.h>
 #include <fcntl.h>
@@ -22,6 +23,7 @@ main() {
   struct timeval tv;
   struct termio tio;
   struct termios tios;
+  struct pollfd pfd;
   typedef int dim1[10];
 
   dim2 test;
