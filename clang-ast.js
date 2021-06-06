@@ -607,7 +607,7 @@ export class RecordDecl extends Type {
               //  console.log('loc:', { kind, file, line, column, typeNode});
             } else if(node.kind.startsWith('CXX')) {
               type = TypeFactory(node, ast);
-            }          else if(node.type) {
+            } else if(node.type) {
               type = new Type(node.type, ast);
               if(type.desugared && type.desugared.startsWith('struct ')) {
                 let tmp = ast.inner.find(n => n.kind == 'RecordDecl' && n.name == /^struct./.test(n.name)

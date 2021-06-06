@@ -268,13 +268,14 @@ export class sockaddr_in extends ArrayBuffer {
     return `${this.sin_addr}:${this.sin_port}`;
   }
 
-  get [Symbol.toStringTag]() {
+  [Symbol.inspect ?? Symbol.for('quickjs.inspect.custom')]() {
     const { sin_family, sin_port, sin_addr } = this;
-    return `{ .sin_family = ${sin_family}, .sin_port = ${sin_port}, .sin_addr = ${sin_addr} }`;
+    return { sin_family, sin_port, sin_addr };
   }
 }
 
 Object.defineProperties(sockaddr_in.prototype, {
+  [Symbol.toStringTag]: { value: 'sockaddr_in' },
   sin_family: {
     set(af) {
       new Uint16Array(this)[0] = af;
@@ -290,7 +291,7 @@ Object.defineProperties(sockaddr_in.prototype, {
     },
     get() {
       //Object.setPrototypeOf(this, ArrayBuffer.prototype);
-      console.log('this:', this);
+      //console.log('this:', this);
       return new DataView(this, 2).getUint16(0, false);
     },
     enumerable: true

@@ -17,6 +17,7 @@
       "lib/path.js": "path",
       "lib/xml.js": "xml",
       "lib/filesystem.js": "fs",
+      "lib/childProcess.js": "child_process",
       "stack": "quickjs/modules/lib/stack.js"
    },
    "author": "Roman Senn <roman.l.senn@gmail.com>",

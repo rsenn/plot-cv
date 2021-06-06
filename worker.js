@@ -7,7 +7,7 @@ import * as cv from 'opencv';
 var parent = os.Worker.parent;
 
 function WorkerMain() {
-  new Console({
+ globalThis.console= new Console({
     colors: true,
     compact: 1,
     prefix: '\x1b[38;5;128mWORKER\x1b[0m'
@@ -18,6 +18,7 @@ function WorkerMain() {
   var i;
 
   parent.onmessage = HandleMessage;
+
   for(i = 0; i < 10; i++) {
     parent.postMessage({ type: 'num', num: i });
   }
@@ -27,7 +28,7 @@ WorkerMain();
 
 function HandleMessage(e) {
   var ev = e.data;
-  console.log('HandleMessage', ev);
+  console.log('Worker HandleMessage', ev);
 
   switch (ev.type) {
     case 'abort':
