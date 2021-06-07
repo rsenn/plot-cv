@@ -22,35 +22,89 @@ function main(...args) {
 
   console.log('cv', features2d_names);
 
-  let kp = new cv.KeyPoint();
-  console.log('kp', kp);
-  console.log('kp.hash()', kp.hash());
-  let f2d = new cv.FastFeatureDetector();
-  console.log('f2d', f2d);
-  console.log('f2d.defaultName', f2d.defaultName);
-  console.log('f2d.descriptorSize', f2d.descriptorSize);
-  const { CV_8U, CV_16U,CV_16S, CV_32F, CV_64F} = cv;
-  console.log('f2d.descriptorType', f2d.descriptorType, { CV_8U, CV_16U,CV_16S,CV_32F,CV_64F});
+  let detectors = {
+    //affine: cv.AffineFeature,
+    agast: cv.AgastFeatureDetector,
+    akaze: cv.AKAZE,
+    //brisk: cv.BRISK,
+    fast: cv.FastFeatureDetector,
+    gftt: cv.GFTTDetector,
+    kaze: cv.KAZE,
+    mser: cv.MSER,
+    orb: cv.ORB,
+    //sift: cv.SIFT,
+    //simple_blob: cv.SimpleBlobDetector,
+    //affine: cv.AffineFeature2D,
+    boost: cv.BoostDesc,
+   //  brief: cv.BriefDescriptorExtractor,
+  //  daisy: cv.DAISY,
+    freak: cv.FREAK,
+    harris_laplace: cv.HarrisLaplaceFeatureDetector,
+   /* latch: cv.LATCH,
+    lucid: cv.LUCID,*/
+    msd: cv.MSDDetector,
+    star: cv.StarDetector,
+    surf: cv.SURF,
+    vgg: cv.VGG
+  };
+  let detectorNames = Object.keys(detectors);
 
+  /*let instances=Object.entries(detectors).reduce((acc,[name,ctor]) => ({ ...acc, [name]: new ctor() }), {});
+console.log("instances",instances);*/
+  let img = cv.imread('class-ab-amp-schematic.jpg');
 
+  for(let name of detectorNames) {
+    const CTOR = detectors[name];
 
-  console.log('f2d.write', f2d.write("features2d.xml"));
-  console.log('f2d.read', f2d.read("features2d.xml"));
+    let kp = new cv.KeyPoint();
+    console.log(`kp`, kp);
+    console.log(`kp.hash()`, kp.hash());
+    let f2d = new CTOR();
+    console.log(`${name}`, f2d);
+    console.log(`${name}.defaultName`, f2d.defaultName);
+    console.log(`${name}.descriptorSize`, f2d.descriptorSize);
+    const { CV_8U, CV_16U, CV_16S, CV_32F, CV_64F } = cv;
+    console.log(`${name}.descriptorType`, f2d.descriptorType, {
+      CV_8U,
+      CV_16U,
+      CV_16S,
+      CV_32F,
+      CV_64F
+    });
 
-  let img = cv.imread('Best_of_Italo_Disco_Vol._6.png');
+    console.log(`${name}.write`, f2d.write(`features2d.xml`));
+    console.log(`${name}.read`, f2d.read(`features2d.xml`));
 
-  console.log('img', img);
-  let keypoints;
-  try {
-    f2d.compute(img, (keypoints = []));
-  } catch(e) {
-    console.log('ERROR', e.message);
+    console.log('img', img);
+    let keypoints, keypoints2, descriptors;
+
+    Util.tryCatch(() => f2d.compute(img, (keypoints = []), (descriptors = [])),
+      r => r,
+      e => console.log('ERROR', e.message)
+    );
+
+    Util.tryCatch(() => f2d.detect(img, (keypoints2 = [])),
+      r => r,
+      e => console.log('ERROR', e.message)
+    );
+
+    console.log('keypoints', keypoints);
+    console.log('keypoints2', keypoints2);
+    console.log('descriptors', descriptors);
+    console.log('f2d.defaultName', f2d.defaultName);
+
+    let gray = new cv.Mat();
+    cv.cvtColor(img, gray, cv.COLOR_BGR2GRAY);
+    cv.cvtColor(gray, img, cv.COLOR_GRAY2BGR);
+
+    cv.drawKeypoints(img, keypoints2, gray, [255, 120, 0], cv.DRAW_RICH_KEYPOINTS);
+
+    cv.imshow('img', gray);
+
+    cv.resizeWindow('img', img.cols / 4, img.rows / 4);
+    cv.moveWindow('img', 0, 0);
+    cv.waitKey(-1);
   }
-
-  f2d.detect(img, (keypoints = []));
-
-  console.log('keypoints', keypoints);
-  console.log('f2d.defaultName', f2d.defaultName);
 
   console.log('EXIT');
 }
