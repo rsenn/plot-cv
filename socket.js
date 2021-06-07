@@ -2,7 +2,7 @@ import { Error as Errors, strerror } from 'std';
 import { read, write, close, setReadHandler, setWriteHandler } from 'os';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './fcntl.js';
 import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toPointer, toArrayBuffer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_NODELETE, RTLD_NOLOAD, RTLD_DEEPBIND, RTLD_DEFAULT, RTLD_NEXT, pointerSize } from 'ffi';
-import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from 'misc';
+import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
 
 function foreign(name, ret, ...args) {
   let fp = dlsym(RTLD_DEFAULT, name);

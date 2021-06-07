@@ -6,7 +6,7 @@ import { errno } from 'ffi';
 import { Socket, WaitRead, socket, EAGAIN, AF_INET, SOCK_STREAM, ndelay, connect, sockaddr_in, select, fd_set, timeval, FD_SET, FD_CLR, FD_ISSET, FD_ZERO, send, recv } from './socket.js';
 import Util from './lib/util.js';
 import { Console } from 'console';
-import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from 'misc';
+import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 
 Util.define(Array.prototype, {

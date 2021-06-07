@@ -1,5 +1,5 @@
 import { Console } from 'console';
-import { btoa } from 'misc';
+import { btoa } from './lib/misc.js';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as util from 'util';

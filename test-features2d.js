@@ -27,6 +27,15 @@ function main(...args) {
   console.log('kp.hash()', kp.hash());
   let f2d = new cv.FastFeatureDetector();
   console.log('f2d', f2d);
+  console.log('f2d.defaultName', f2d.defaultName);
+  console.log('f2d.descriptorSize', f2d.descriptorSize);
+  const { CV_8U, CV_16U,CV_16S, CV_32F, CV_64F} = cv;
+  console.log('f2d.descriptorType', f2d.descriptorType, { CV_8U, CV_16U,CV_16S,CV_32F,CV_64F});
+
+
+
+  console.log('f2d.write', f2d.write("features2d.xml"));
+  console.log('f2d.read', f2d.read("features2d.xml"));
 
   let img = cv.imread('Best_of_Italo_Disco_Vol._6.png');
 

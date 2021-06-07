@@ -11,11 +11,11 @@ import Tree from './lib/tree.js';
 import fs from 'fs';
 import * as deep from './lib/deep.js';
 import { Console } from 'console';
-import { Location, Stack, StackFrame } from './quickjs/modules/lib/stack.js';
+import { Location, Stack, StackFrame } from './lib/stack.js';
 
 let lexer, parser;
 
-Error.stackTraceLimit = 1_0_0;
+Error.stackTraceLimit = 100;
 
 const testfn = () => true;
 const testtmpl = `this is\na test`;
