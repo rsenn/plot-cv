@@ -57,12 +57,19 @@ function CreateServer(port = 9900) {
     },
     onClose(ws, why) {
       let client = WSClient.get(ws.fd);
-
+ os.setReadHandler(fd, null);
+      os.setWriteHandler(fd, null);
       log(`Server.onClose client#${client.id} (${ws.fd})` + (why ? ' Reason: ' + why : ''));
     },
     onPong(ws, data) {
       let client = WSClient.get(ws.fd);
       log(`Server.onPong client#${client.id} (${ws.fd})` + (data ? ' Data: ' + data : ''));
+    },
+    onFd(fd, readable, writable) {
+      os.setReadHandler(fd, readable);
+      os.setWriteHandler(fd, writable);
+
+      log(`Server.onFd ${fd}`,readable && typeof readable, writable && typeof writable);
     }
   });
 }
