@@ -32,10 +32,6 @@ main() {
   #PRE_EXPR='/^\s*[sg]et\s[^\s\t ]\+\s*([^)]*)\s*{/ s|^\(\s*\)|\1/* prettier-ignore */ |'
   PRE_EXPR="$PRE_EXPR;; "'/^\s*[sg]et\s\+/ s|^\(\s*\)|\1/* prettier-ignore */ |'
   POST_EXPR='1 { /@format/ { N; /\n$/ { d } } }'
-  for KW in "if" "for" "for await" "do" "while" "catch" "function"; do
-    POST_EXPR="$POST_EXPR; s|\s${KW}\s*(| ${KW}(|"
-    POST_EXPR="$POST_EXPR; s|^${KW}\s*(|${KW}(|"
-  done
   POST_EXPR="$POST_EXPR; /($/ { N; s|(\n\s*|(| }"
   POST_EXPR="$POST_EXPR; /([^,]*,$/ { N; s|^\(\s*[^ ]*([^,]*,\)\n\s*{|\1 {| }"
   POST_EXPR="$POST_EXPR; /^\s*[^ ]\+:$/ { N; s|^\(\s*[^ ]\+:\)\n\s*|\1 | }"
@@ -45,6 +41,11 @@ main() {
   #POST_EXPR="$POST_EXPR; /^\s*var\s/ { :lp; /;\s*$/! { N; s,\s*\n\s*, ,g; b lp } }"
   POST_EXPR="$POST_EXPR; /^import/ { :lp; /;$/! { N; b lp };  s|\n\s*| |g }"
   POST_EXPR="$POST_EXPR; /\*\/\s[gs]et\s/ s|/\* prettier-ignore \*/ ||g"
+  POST_EXPR="/^\[warn\]/d"
+  for KW in "if" "for" "for await" "do" "while" "catch" "function"; do
+    POST_EXPR="$POST_EXPR; s|\s${KW}\s*(| ${KW}(|"
+    POST_EXPR="$POST_EXPR; s|^${KW}\s*(|${KW}(|"
+  done
   #POST_EXPR="$POST_EXPR; "':st; /^\s*[gs]et(/ { N; /\n\s*[^{}\n]*$/  N;  /\/\/.*\n/! { /\n\s*},$/ s,\n\s*, ,g } }'
 
   SEP=${IFS%"${IFS#?}"}
@@ -82,7 +83,7 @@ main() {
       *.css) : ${PARSER="css"} ;;
       *) ;;
     esac
-    sed <"$ARG" "$PRE_EXPR" | prettier >"$TMPFILE"; R=$?
+    sed <"$ARG" "$PRE_EXPR" | prettier >"$TMPFILE" ; R=$?
 
     if [ $R != 0 ]; then
       cat "$TMPFILE" 1>&2 

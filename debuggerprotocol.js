@@ -1,4 +1,6 @@
 import * as deep from './lib/deep.js';
+import * as fs from './lib/filesystem.js';
+import * as path from './lib/path.js';
 import Util from './lib/util.js';
 import { toString as ArrayBufferToString } from './lib/misc.js';
 
@@ -9,20 +11,47 @@ export class DebuggerProtocol {
     Util.define(this, { sock });
     this.seq = 0;
     this.requests = new Map();
+    this.files = {};
     this.onmessage = this.handleMessage;
   }
 
-  /* readCommand(connection) {
+  readCommand(connection) {
     let line;
     if((line = std.in.getline())) {
       // console.log('Command:', line);
       this.sendRequest(line);
     }
-  }*/
+  }
+
+  getFile(filename) {
+    const { files } = this;
+    if(!(filename in files)) {
+      let data = fs.readFileSync(filename, 'utf-8');
+      files[filename] = data.split(/\r?\n/g);
+    }
+    return files[filename];
+  }
 
   handleResponse(message) {
     const { type, request_seq, ...response } = message;
-    console.log(`handleResponse #${request_seq}`, /*cfg(),*/ response);
+    const { request } = this.requests.get(request_seq);
+    this.requests.delete(request_seq);
+    console.log(`handleResponse #${request_seq}`, request.command, /*cfg(),*/ response);
+
+    switch (request.command) {
+      case 'stackTrace': {
+        for(let frame of response.body) {
+          const { id, name, filename, line } = frame;
+let code,location=filename ? path.relative(filename,process.cwd()) : '';
+          if(typeof line == 'number') {
+code = this.getFile(location)[line-1];
+location += ':'+line;
+          }
+          console.log(`Stack Frame #${id}`, name.padEnd(20), location+(code ? `: `+ code : ''));
+        }
+        break;
+      }
+    }
   }
 
   handleBreakpoints(message) {
@@ -65,7 +94,7 @@ export class DebuggerProtocol {
         } else {
           this.sendRequest('stackTrace');
           this.sendRequest('variables', { args: { variablesReference: 1 } });
-          this.sendRequest('step');
+          this.sendRequest('stepIn');
         }
         break;
       }
@@ -74,6 +103,7 @@ export class DebuggerProtocol {
 
   sendMessage(type, args) {
     const msg = args ? { type, ...args } : type;
+    console.log('sendMessage', cfg(), msg);
     try {
       const json = JSON.stringify(msg);
 
@@ -86,12 +116,22 @@ export class DebuggerProtocol {
   }
 
   getSeq() {
-    return ++this.seq;
+    return (this.seq = (this.seq | 0) + 1);
   }
 
   sendRequest(command, args = {}) {
-    const request_seq = 1 + this.getSeq();
+    const request_seq = this.getSeq();
     const request = { command, request_seq, ...args };
+switch(command) {
+  case 'variables': {
+    if(!('args' in request))
+      request.args = {};
+    if(!('variablesReference' in request.args))
+      request.args.variablesReference=1;
+    break;
+  }
+}
+
     const message = { type: 'request', request };
     this.requests.set(request_seq, message);
     return this.sendMessage(message);

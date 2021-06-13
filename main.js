@@ -70,6 +70,7 @@ import github, { GithubListRepositories, GithubRepositories, GithubListContents,
 /* prettier-ignore */ const { Align, AlignToString, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line,Matrix,  Point, PointList, Polyline, Rect, Select, Size, SVG, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
 
 import { classNames } from './lib/classNames.js';
+import * as rpc from './quickjs/net/rpc.js';
 
 Util.colorCtor = ColoredText;
 const elementDefaultAttributes = {
@@ -1553,6 +1554,7 @@ const AppMain = (window.onload = async () => {
   );
 
   //prettier-ignore
+  Util.weakAssign(window, { rpc });
   Util.weakAssign(window, imports );
   Util.weakAssign(window.Element, Util.getMethods(dom.Element));
   Util.weakAssign(window, dom, geom, imports, localFunctions);

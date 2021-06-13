@@ -57,7 +57,7 @@ function CreateServer(port = 9900) {
     },
     onClose(ws, why) {
       let client = WSClient.get(ws.fd);
- os.setReadHandler(fd, null);
+      os.setReadHandler(fd, null);
       os.setWriteHandler(fd, null);
       log(`Server.onClose client#${client.id} (${ws.fd})` + (why ? ' Reason: ' + why : ''));
     },
@@ -69,7 +69,7 @@ function CreateServer(port = 9900) {
       os.setReadHandler(fd, readable);
       os.setWriteHandler(fd, writable);
 
-      log(`Server.onFd ${fd}`,readable && typeof readable, writable && typeof writable);
+      //log(`Server.onFd ${fd}`, readable && 1 | readable, writable && 1 | writable);
     }
   });
 }

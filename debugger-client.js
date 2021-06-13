@@ -5,6 +5,7 @@ import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer, 
 import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
 import { ECMAScriptParser, Lexer } from './lib/ecmascript/parser2.js';
 import * as dom from './lib/dom.js';
+import rpc from './quickjs/net/rpc.js';
 
 window.addEventListener('load', e => {
   let socketURL = Util.makeURL({ location: '/ws', protocol: 'ws' });
@@ -40,7 +41,8 @@ Object.assign(globalThis, {
   ECMAScriptParser,
   Lexer,
   dom,
-  CreateSocket
+  CreateSocket,
+  rpc
 });
 
 async function CreateSocket(url) {

@@ -21,6 +21,7 @@ async function main(...args) {
       colors: true,
       depth: Infinity,
       maxArrayLength: 100,
+      breakLength: 10000,
       compact: 2,
       customInspect: true
     }

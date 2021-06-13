@@ -205,7 +205,7 @@ export class Type extends Node {
       if(!isPointer && !node) {
         let subscripts = GetSubscripts(name);
         name = TrimSubscripts(name, subscripts);
-        console.log('Type', { name, subscripts });
+        //console.log('Type', { name, subscripts });
 
         node = GetType(name, ast);
 
@@ -395,7 +395,9 @@ export class Type extends Node {
     const {  desugared, qualType } = this;
 
     let str = this+'';
-    if(str == 'char *' || qualType == 'char *'||this.pointer == 'char') return 'char *';
+    if(str.startsWith('const '))
+      str = str.substring(6);
+    if(/^(const |)char \*$/.test(desugared) || /^(const |)char \*$/.test(qualType) ||/^(const |)char$/.test(this.pointer)) return 'char *';
 
     for(const type of [str, desugared])
       if(["void", "sint8", "sint16", "sint32", "sint64", "uint8", "uint16", "uint32", "uint64", "float", "double", "schar", "uchar", "sshort", "ushort", "sint", "uint", "slong", "ulong", "longdouble", "pointer", "int", "long", "short", "char", "size_t", "unsigned char", "unsigned int", "unsigned long", "void *", "char *", "string"].indexOf(type) != -1)
@@ -776,7 +778,7 @@ export class VarDecl extends Node {
 
     this.type = type.kind ? TypeFactory(type, ast) : new Type(type, ast);
 
-    console.log('VarDecl', this);
+    //console.log('VarDecl', this);
   }
 }
 export class ClassDecl extends RecordDecl {}
@@ -1009,13 +1011,13 @@ export async function SourceDependencies(...args) {
 
   let [compiler, source, flags = []] = args;
 
-  console.log('SourceDependencies', { compiler, source, flags });
+  //console.log('SourceDependencies', { compiler, source, flags });
 
   let r = await SpawnCompiler(compiler, source, null, ['-MM', '-I.', ...flags]);
   let { output, result, errors } = (globalThis.response = r);
   output = output.replace(/\s*\\\n\s*/g, ' ');
   let [object, sources] = output.split(/:\s+/);
-  console.log('SourceDependencies', { sources });
+  //console.log('SourceDependencies', { sources });
 
   sources = sources.trim().split(/ /g);
   let [compilation_unit, ...includes] = sources;
@@ -1027,7 +1029,7 @@ export async function SourceDependencies(...args) {
 
 export async function AstDump(compiler, source, args, force) {
   compiler ??= 'clang';
-  console.log('AstDump', { compiler, source, args, force });
+  //console.log('AstDump', { compiler, source, args, force });
   let output = path.basename(source, /\.[^.]*$/) + '.ast.json';
   let r;
   let sources = await SourceDependencies(compiler, source, args);
@@ -1059,7 +1061,7 @@ export async function AstDump(compiler, source, args, force) {
     ]);
   }
 
-  console.log('AstDump', r);
+  //console.log('AstDump', r);
 
   //r.size = (await fs.stat(r.file)).size;
   r = Util.lazyProperties(r, {
@@ -1156,7 +1158,7 @@ export function NameFor(decl, ast = this.data) {
 
     if(parent.kind == 'TypedefDecl' && parent.name) return parent.name;
 
-    console.log('p:', p, 'node:', node, 'parent:', parent);
+    //console.log('p:', p, 'node:', node, 'parent:', parent);
 
     return node?.type?.desugaredQualType;
   }
@@ -1366,7 +1368,7 @@ export function NodePrinter(ast) {
           put('break');
         }
         CallExpr(call_expr) {
-          console.log('CallExpr', call_expr);
+          //console.log('CallExpr', call_expr);
           let [func, ...args] = call_expr.inner ?? [];
 
           printer.print(func);
@@ -2124,7 +2126,7 @@ export function NodePrinter(ast) {
             valueCategory,
             isArray
           } = cxx_new_expr;
-          console.log('CXXNewExpr', cxx_new_expr);
+          //console.log('CXXNewExpr', cxx_new_expr);
 
           if(isArray) {
             put(`new ${type.replace(/[\s*]*$/g, '')}[`);

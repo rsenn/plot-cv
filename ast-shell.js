@@ -902,7 +902,7 @@ function MakeFFI(node, fp, lib, exp) {
   if(node instanceof FunctionDecl) {
     let ffi = new FFI_Function(node);
 
-    let protoStr = PrintAst(node.ast, $.data).split(/\n/g)[0].replace(/\ {$/, ';');
+    let protoStr = PrintAst(node.ast, $.data).replace(/^([^\n\(]*)\n/, "$1 ").split(/\n/g)[0].replace(/\ {$/, ';');
     protoStr = protoStr.replace(/^\s*extern\s+/, '');
     return `/* ${protoStr} */\n` + ffi.generate(fp, lib, exp);
   } else if(node instanceof RecordDecl || node instanceof TypedefDecl) {
