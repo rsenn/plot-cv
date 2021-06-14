@@ -23,7 +23,7 @@
  */
 import * as Terminal from './terminal.js';
 import fs from 'fs';
-import {isatty} from 'tty';
+import { isatty } from 'tty';
 import { extendArray } from './lib/misc.js';
 
 ('use strip');
@@ -234,7 +234,7 @@ export default function REPL(title = 'QuickJS') {
   async function term_init() {
     //   repl.debug("term_init");
     var tab;
-    this.term_fd = input && input.fileno ? input.fileno() : 1; 
+    this.term_fd = input && input.fileno ? input.fileno() : 1;
     /* get the terminal size */
     term_width = 80;
     if(isatty(this.term_fd)) {
@@ -1561,8 +1561,8 @@ export default function REPL(title = 'QuickJS') {
     repl.puts('\x1b[1K\r');
     for(let arg of args) repl.show(arg);
     repl.puts('\n');
-       repl.puts('\x1b[1K\r');
- repl.readline_print_prompt();
+    repl.puts('\x1b[1K\r');
+    repl.readline_print_prompt();
   }
 
   function eval_and_print(expr) {
