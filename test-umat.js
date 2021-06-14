@@ -36,7 +36,8 @@ async function main(...args) {
   ];
 
   for(let [k, v] of types) {
-    console.log(k,
+    console.log(
+      k,
       v,
       '0x' + v.toString(16),
       '0b' + v.toString(2),
@@ -46,7 +47,8 @@ async function main(...args) {
     );
   }
 
-  let input = cv.imread(args[0] ??
+  let input = cv.imread(
+    args[0] ??
       '../an-tronics/images/fm/Two-Transistor-Regenerative-Receiver-Schematic-Circuit-Diagram.jpg'
   );
   console.log('input.type', '0x' + input.type.toString(16));
@@ -75,7 +77,8 @@ async function main(...args) {
 
   let contours = [];
   let hierarchy = [];
-  cv.findContours(canny,
+  cv.findContours(
+    canny,
     contours,
     hierarchy,
     cv.RETR_TREE,
@@ -150,19 +153,23 @@ async function main(...args) {
     let angles;
 
     console.log('poly.arcLength()', poly.arcLength());
-    console.log('lpoly.length',
+    console.log(
+      'lpoly.length',
       lpoly.length,
       lpoly.map(({ x1, y1, x2, y2 }) => `${x1},${y1}|${x2},${y2}`)
     );
-    console.log('lpoly angles',
+    console.log(
+      'lpoly angles',
       lpoly.length,
       (angles = lpoly.map(l => Math.floor((l.angle * 180) / Math.PI)).map(a => a % 90))
     );
-    console.log('lpoly slopes',
+    console.log(
+      'lpoly slopes',
       lpoly.length,
       lpoly.map(l => l.slope).map(({ x, y }) => [x, y])
     );
-    console.log('lpoly lengths',
+    console.log(
+      'lpoly lengths',
       lpoly.length,
       lpoly.map(l => Math.round(l.length))
     );

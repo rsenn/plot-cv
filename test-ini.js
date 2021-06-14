@@ -45,7 +45,8 @@ async function main(...args) {
       return { ...acc, [sdata[0]]: createMap(sdata[1] || []) };
     }, {});
 
-    const flat = deep.flatten(sections,
+    const flat = deep.flatten(
+      sections,
       new Map(),
       k => k.length > 0,
       (k, v) => [k.slice(1), v]
@@ -77,7 +78,8 @@ async function main(...args) {
         svg.attributes.height
       ];
       const [x1, y1, x2, y2] = viewCoords;
-      const viewBox = new Rect(svg.attributes && svg.attributes.viewBox
+      const viewBox = new Rect(
+        svg.attributes && svg.attributes.viewBox
           ? { x1, y1, x2, y2 }
           : ['width', 'height'].map(a => svg.attributes[a])
       );
@@ -144,7 +146,8 @@ async function main(...args) {
 
       let filenames = files.map(f => f.FILE_INFO);
 
-      files = files.filter(file => !/.*(buffer|comparator|lcd|format|ds18b20|hd44).*/.test(file.FILE_INFO)
+      files = files.filter(
+        file => !/.*(buffer|comparator|lcd|format|ds18b20|hd44).*/.test(file.FILE_INFO)
       );
 
       //console.log('data:', file_sections);

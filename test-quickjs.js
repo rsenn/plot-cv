@@ -20,10 +20,12 @@ async function main(...args) {
   console.log('console.log', console.log);
   let entries = Object.fromEntries(Object.entries(cv).filter(([k, v]) => k.startsWith('CV_')));
   console.log(console.config({ depth: 1, compact: 1 }), entries);
-  console.log(console.config({ compact: 0 }),
+  console.log(
+    console.config({ compact: 0 }),
     Object.keys(entries).filter(k => /[0-9]S/.test(k))
   );
-  console.log(console.config({ compact: 0 }),
+  console.log(
+    console.config({ compact: 0 }),
     Object.keys(entries).filter(k => /[0-9]F/.test(k))
   );
 
@@ -63,7 +65,8 @@ async function main(...args) {
   console.log('contour[4]', c[4]);
   console.log('contour:', c);
   console.log('c[Symbol.iterator]:', c[Symbol.iterator]);
-  console.log('Object.getOwnPropertyNames(Contour.prototype)',
+  console.log(
+    'Object.getOwnPropertyNames(Contour.prototype)',
     Object.getOwnPropertyNames(Contour.prototype)
   );
 
@@ -120,10 +123,12 @@ async function main(...args) {
   console.log(`mat.channels`, mat.channels);
   console.log(`mat.depth`, mat.depth);
   console.log(`1 << mat.depth`, 1 << mat.depth);
-  console.log(`Mat[DEPTH]`,
+  console.log(
+    `Mat[DEPTH]`,
     Object.keys(Mat).find(k => Mat[k] === mat.depth)
   );
-  console.log(`Mat[TYPE]`,
+  console.log(
+    `Mat[TYPE]`,
     Object.keys(Mat).find(k => Mat[k] === mat.type)
   );
   mat.setTo([0xff, 0xff, 0xff, 0x80]);
@@ -180,7 +185,8 @@ async function main(...args) {
   let range = mat.rowRange(2, 8);
   i = 0;
   for(let [[row, col], value] of range.entries()) {
-    console.log(`range[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`
+    console.log(
+      `range[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`
     );
   }
   i = 0;
@@ -189,10 +195,12 @@ async function main(...args) {
     let roi = mat.roi(rr);
 
     for(let [[row, col], value] of roi.entries()) {
-      console.log(`roi[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`
+      console.log(
+        `roi[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`
       );
     }
-    console.log(`roi rows=${roi.rows} cols=${roi.cols} depth=${roi.depth} channels=${roi.channels}`
+    console.log(
+      `roi rows=${roi.rows} cols=${roi.cols} depth=${roi.depth} channels=${roi.channels}`
     );
 
     for(let r = 0; r < roi.rows; r++)
@@ -207,7 +215,8 @@ async function main(...args) {
 
   i = 0;
   for(let [[row, col], value] of mat.entries()) {
-    console.log(`mat[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`
+    console.log(
+      `mat[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`
     );
   }
 
@@ -235,7 +244,8 @@ async function main(...args) {
     let arr = line.toArray();
     console.log('toArray:', line.toArray().join(','));
     console.log('values(): ', line.values());
-    console.log('toPoints(): ',
+    console.log(
+      'toPoints(): ',
       [...line.toPoints()].map(p => Util.className(p))
     );
 

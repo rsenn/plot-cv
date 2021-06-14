@@ -183,7 +183,7 @@ var asm2wasmImports = {
   'f64-rem': function(x, y) {
     return x % y;
   },
-  debugger: function () {
+  debugger: function() {
     debugger;
   }
 };
@@ -214,7 +214,8 @@ function Pointer_stringify(ptr, length) {
     var MAX_CHUNK = 1024;
     var curr;
     while(length > 0) {
-      curr = String.fromCharCode.apply(String,
+      curr = String.fromCharCode.apply(
+        String,
         HEAPU8.subarray(ptr, ptr + Math.min(length, MAX_CHUNK))
       );
       ret = ret ? ret + curr : curr;
@@ -305,7 +306,8 @@ var DYNAMIC_BASE, DYNAMICTOP_PTR;
 STATIC_BASE = STATICTOP = STACK_BASE = STACKTOP = STACK_MAX = DYNAMIC_BASE = DYNAMICTOP_PTR = 0;
 staticSealed = false;
 function abortOnCannotGrowMemory() {
-  abort('Cannot enlarge memory arrays. Either (1) compile with  -s TOTAL_MEMORY=X  with X higher than the current value ' +
+  abort(
+    'Cannot enlarge memory arrays. Either (1) compile with  -s TOTAL_MEMORY=X  with X higher than the current value ' +
       TOTAL_MEMORY +
       ', (2) compile with  -s ALLOW_MEMORY_GROWTH=1  which allows increasing the size at runtime, or (3) if you want malloc to return NULL (0) instead of this abort, compile with  -s ABORTING_MALLOC=0 '
   );
@@ -355,7 +357,8 @@ function enlargeMemory() {
 }
 var byteLength;
 try {
-  byteLength = Function.prototype.call.bind(Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, 'byteLength').get
+  byteLength = Function.prototype.call.bind(
+    Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, 'byteLength').get
   );
   byteLength(new ArrayBuffer(4));
 } catch(e) {
@@ -366,7 +369,8 @@ try {
 var TOTAL_STACK = Module['TOTAL_STACK'] || 5242880;
 var TOTAL_MEMORY = Module['TOTAL_MEMORY'] || 16777216;
 if(TOTAL_MEMORY < TOTAL_STACK)
-  err('TOTAL_MEMORY should be larger than TOTAL_STACK, was ' +
+  err(
+    'TOTAL_MEMORY should be larger than TOTAL_STACK, was ' +
       TOTAL_MEMORY +
       '! (TOTAL_STACK=' +
       TOTAL_STACK +
@@ -512,7 +516,8 @@ function integrateWasmJS() {
   function mergeMemory(newBuffer) {
     var oldBuffer = Module['buffer'];
     if(newBuffer.byteLength < oldBuffer.byteLength) {
-      err('the new buffer in mergeMemory is smaller than the previous one. in native wasm, we should grow memory here'
+      err(
+        'the new buffer in mergeMemory is smaller than the previous one. in native wasm, we should grow memory here'
       );
     }
     var oldView = new Int8Array(oldBuffer);
@@ -539,7 +544,8 @@ function integrateWasmJS() {
     }
   }
   function getBinaryPromise() {
-    if(!Module['wasmBinary'] &&
+    if(
+      !Module['wasmBinary'] &&
       (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) &&
       typeof fetch === 'function'
     ) {
@@ -601,7 +607,8 @@ function integrateWasmJS() {
           abort(reason);
         });
     }
-    if(!Module['wasmBinary'] &&
+    if(
+      !Module['wasmBinary'] &&
       typeof WebAssembly.instantiateStreaming === 'function' &&
       !isDataURI(wasmBinaryFile) &&
       typeof fetch === 'function'
@@ -698,18 +705,18 @@ var SYSCALLS = {
     var ret = HEAP32[(SYSCALLS.varargs - 4) >> 2];
     return ret;
   },
-  getStr: function () {
+  getStr: function() {
     var ret = Pointer_stringify(SYSCALLS.get());
     return ret;
   },
-  get64: function () {
+  get64: function() {
     var low = SYSCALLS.get(),
       high = SYSCALLS.get();
     if(low >= 0) assert(high === 0);
     else assert(high === -1);
     return low;
   },
-  getZero: function () {
+  getZero: function() {
     assert(SYSCALLS.get() === 0);
   }
 };
@@ -962,7 +969,8 @@ if(Module['preInit']) {
   }
 }
 run();
-if(typeof window === 'object' &&
+if(
+  typeof window === 'object' &&
   (typeof ENVIRONMENT_IS_PTHREAD === 'undefined' || !ENVIRONMENT_IS_PTHREAD)
 ) {
   function emrun_register_handlers() {

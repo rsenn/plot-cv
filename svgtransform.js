@@ -46,7 +46,8 @@ async function main(...args) {
   await ConsoleSetup({ depth: 20, colors: true, breakLength: 80 });
   filesystem = await PortableFileSystem();
 
-  let params = Util.getOpt({
+  let params = Util.getOpt(
+    {
       output: [true, null, 'o'],
       input: [true, null, 'i'],
       xml: [true, null, 'x'],
@@ -94,7 +95,8 @@ async function main(...args) {
       }
     }
 
-    for(let [node, acc] of tree.each(null,
+    for(let [node, acc] of tree.each(
+      null,
       (acc, node) => {
         let parentNode = tree.parentNode(node);
         let t = transforms.get(node);
@@ -212,7 +214,8 @@ async function main(...args) {
 
     function hasCoord(node) {
       let keys = Object.keys(node);
-      return keys.some(key => ['x', 'y', 'cx', 'cy', 'd', 'x1', 'y1', 'x2', 'y2'].indexOf(key) != -1
+      return keys.some(
+        key => ['x', 'y', 'cx', 'cy', 'd', 'x1', 'y1', 'x2', 'y2'].indexOf(key) != -1
       );
     }
     function coordKeys(node) {

@@ -1,6 +1,42 @@
 import * as glfw from 'glfw';
 import Util from './lib/util.js';
-import { glFlush, glBegin, glBindTexture, glClear, glClearColor, glEnable, glEnd, glGenTextures, glTexCoord2f, glTexParameterf, glTexImage2D, glVertex3f, glViewport, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT, GL_LINEAR, GL_QUADS, GL_REPEAT, GL_RGB, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_TEXTURE_WRAP_S, GL_TEXTURE_WRAP_T, GL_UNSIGNED_BYTE, glDisable, glLoadIdentity, glMatrixMode, glOrtho, glPushMatrix, glPopMatrix, GL_LIGHTING, GL_MODELVIEW, GL_PROJECTION } from './gl.js';
+import {
+  glFlush,
+  glBegin,
+  glBindTexture,
+  glClear,
+  glClearColor,
+  glEnable,
+  glEnd,
+  glGenTextures,
+  glTexCoord2f,
+  glTexParameterf,
+  glTexImage2D,
+  glVertex3f,
+  glViewport,
+  GL_COLOR_BUFFER_BIT,
+  GL_DEPTH_BUFFER_BIT,
+  GL_STENCIL_BUFFER_BIT,
+  GL_LINEAR,
+  GL_QUADS,
+  GL_REPEAT,
+  GL_RGB,
+  GL_TEXTURE_2D,
+  GL_TEXTURE_MAG_FILTER,
+  GL_TEXTURE_MIN_FILTER,
+  GL_TEXTURE_WRAP_S,
+  GL_TEXTURE_WRAP_T,
+  GL_UNSIGNED_BYTE,
+  glDisable,
+  glLoadIdentity,
+  glMatrixMode,
+  glOrtho,
+  glPushMatrix,
+  glPopMatrix,
+  GL_LIGHTING,
+  GL_MODELVIEW,
+  GL_PROJECTION
+} from './gl.js';
 import { RGBA, HSLA } from './lib/color.js';
 import { Mat, Size, Point, Rect } from 'opencv';
 import * as cv from 'opencv';
@@ -64,14 +100,16 @@ function main(...args) {
 
   mat.setTo([11, 22, 33, 255]);
   //cv.rectangle(mat, new glfw.Position(0,0), new glfw.Position(800,600), [255,0,0,0],4, cv.LINE_8);
-  cv.line(mat,
+  cv.line(
+    mat,
     new Point(10, 10),
     new Point(size.width - 10, size.height - 10),
     [255, 255, 0, 255],
     4,
     cv.LINE_AA
   );
-  cv.line(mat,
+  cv.line(
+    mat,
     new Point(size.width - 10, 10),
     new Point(10, size.height - 10),
     [255, 0, 0, 255],

@@ -36,7 +36,8 @@ class PList extends Array {
   }
   [Symbol.for('nodejs.util.inspect.custom')](options) {
     return `\x1b[1;31mPList\x1b[0m [\n  ${this.map(item =>
-      (item.inspect ? item.inspect(options) : console.inspect(item, options)).replace(/\n/g,
+      (item.inspect ? item.inspect(options) : console.inspect(item, options)).replace(
+        /\n/g,
         '\n    '
       )
     ).join(',\n  ')}\n]`;
@@ -72,14 +73,16 @@ class Dict extends Array {
           '[\n    ' +
           value
             .map(item =>
-              (item.inspect ? item.inspect(options) : console.inspect(item, options)).replace(/\n/g,
+              (item.inspect ? item.inspect(options) : console.inspect(item, options)).replace(
+                /\n/g,
                 '\n    '
               )
             )
             .join(',\n    ') +
           '\n  ]';
       else
-        s += `${(value.inspect ? value.inspect(options) : console.inspect(value, options)).replace(/\n/g,
+        s += `${(value.inspect ? value.inspect(options) : console.inspect(value, options)).replace(
+          /\n/g,
           '\n    '
         )}`;
       return s;
@@ -212,7 +215,8 @@ async function main(...args) {
     let scopes = [];
 
     if(/\.tmLanguage$/.test(file)) {
-      scopes.push(...[...pairs.values()]
+      scopes.push(
+        ...[...pairs.values()]
           .filter(pair => pair.key == 'name' && /\./.test(pair.value))
           .map(pair => pair.value)
       );
@@ -222,7 +226,8 @@ async function main(...args) {
         .filter(pair => pair.key == 'scope' && /\./.test(pair.value))
         .map(pair => pair.value);
 
-      scopes.push(...a
+      scopes.push(
+        ...a
           .map(s => s.split(/,\s+/g))
           .flat()
           .map(s => s.trim())

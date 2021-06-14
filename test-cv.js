@@ -38,7 +38,8 @@ function WriteImage(name, mat) {
 function SaveConfig(configObj) {
   configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v]));
 
-  return filesystem.writeFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'),
+  return filesystem.writeFile(
+    Util.getArgv()[1].replace(/\.js$/, '.config.json'),
     JSON.stringify(configObj, null, 2) + '\n'
   );
 }
@@ -47,7 +48,8 @@ function LoadConfig() {
   let str = filesystem.readFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'), 'utf-8');
   let configObj = JSON.parse(str ?? '{}');
 
-  configObj = Object.fromEntries(Object.entries(configObj)
+  configObj = Object.fromEntries(
+    Object.entries(configObj)
       .map(([k, v]) => [k, +v])
       .filter(([k, v]) => !isNaN(v))
   );
@@ -114,10 +116,12 @@ async function main(...args) {
     console.log(`mat.channels`, mat.channels);
     console.log(`mat.depth`, mat.depth);
     console.log(`1 << mat.depth`, 1 << mat.depth);
-    console.log(`Mat[DEPTH]`,
+    console.log(
+      `Mat[DEPTH]`,
       Object.keys(Mat).find(k => Mat[k] === mat.depth)
     );
-    console.log(`Mat[TYPE]`,
+    console.log(
+      `Mat[TYPE]`,
       Object.keys(Mat).find(k => Mat[k] === mat.type)
     );
     let row0 = mat.row(0);
@@ -154,14 +158,16 @@ async function main(...args) {
     }
     i = 0;
     for(let [key, value] of row0.entries()) {
-      console.log(`row0.entries() #${i++}`,
+      console.log(
+        `row0.entries() #${i++}`,
         key,
         '0x' + ('00000000' + value.toString(16)).slice(-8)
       );
     }
     i = 0;
     for(let [key, value] of col0.entries()) {
-      console.log(`col0.entries() #${i++}`,
+      console.log(
+        `col0.entries() #${i++}`,
         key,
         '0x' + ('00000000' + value.toString(16)).slice(-8)
       );
@@ -169,14 +175,16 @@ async function main(...args) {
     let range = mat.rowRange(2, 8);
     i = 0;
     for(let [[row, col], value] of range) {
-      console.log(`range[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`
+      console.log(
+        `range[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`
       );
     }
     i = 0;
     if(globalThis.Rect) {
       let roi = mat.roi(rr);
       for(let [[row, col], value] of roi) {
-        console.log(`roi[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`
+        console.log(
+          `roi[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`
         );
       }
       for(let r = 0; r < roi.rows; r++)
@@ -188,7 +196,8 @@ async function main(...args) {
     }
     i = 0;
     for(let [[row, col], value] of mat) {
-      console.log(`mat[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`
+      console.log(
+        `mat[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`
       );
     }
     let fmat = new Mat(new Size(10, 10), Mat.CV_32FC1);
@@ -213,7 +222,8 @@ async function main(...args) {
       let arr = line.toArray();
       console.log('toArray:', line.toArray().join(','));
       console.log('values(): ', line.values());
-      console.log('toPoints(): ',
+      console.log(
+        'toPoints(): ',
         [...line.toPoints()].map(p => Util.className(p))
       );
       console.log('toString(): ', line.toString());

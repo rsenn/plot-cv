@@ -5,7 +5,8 @@ export { blah as test };
 'blah'.replace(/.*\./, '');
 
 let obj = {
-  className: typeof itemClass == 'function'
+  className:
+    typeof itemClass == 'function'
       ? itemClass(value)
       : classNames(itemClass || className + '-item', (name + '').replace(/.*\./, '')),
   active: i == active,

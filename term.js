@@ -458,28 +458,28 @@ export class winsize extends ArrayBuffer {
     this.ws_xpixel = x | 0;
     this.ws_ypixel = y | 0;
   }
-  get ws_row() {
+  /* prettier-ignore */ get ws_row() {
     return new Uint16Array(this, 0)[0];
   }
-  set ws_row(v) {
+  /* prettier-ignore */ set ws_row(v) {
     new Uint16Array(this, 0)[0] = v >>> 0;
   }
-  get ws_col() {
+  /* prettier-ignore */ get ws_col() {
     return new Uint16Array(this, 2)[0];
   }
-  set ws_col(v) {
+  /* prettier-ignore */ set ws_col(v) {
     new Uint16Array(this, 2)[0] = v >>> 0;
   }
-  get ws_xpixel() {
+  /* prettier-ignore */ get ws_xpixel() {
     return new Uint16Array(this, 4)[0];
   }
-  set ws_xpixel(v) {
+  /* prettier-ignore */ set ws_xpixel(v) {
     new Uint16Array(this, 4)[0] = v >>> 0;
   }
-  get ws_ypixel() {
+  /* prettier-ignore */ get ws_ypixel() {
     return new Uint16Array(this, 6)[0];
   }
-  set ws_ypixel(v) {
+  /* prettier-ignore */ set ws_ypixel(v) {
     new Uint16Array(this, 6)[0] = v >>> 0;
   }
 }
@@ -489,40 +489,40 @@ export class termio extends ArrayBuffer {
   constructor() {
     super(18);
   }
-  get c_iflag() {
+  /* prettier-ignore */ get c_iflag() {
     return new termio.fields(this, 0)[0];
   }
-  set c_iflag(v) {
+  /* prettier-ignore */ set c_iflag(v) {
     new termio.fields(this, 0)[0] = v >>> 0;
   }
-  get c_oflag() {
+  /* prettier-ignore */ get c_oflag() {
     return new termio.fields(this, 2)[0];
   }
-  set c_oflag(v) {
+  /* prettier-ignore */ set c_oflag(v) {
     new termio.fields(this, 2)[0] = v >>> 0;
   }
-  get c_cflag() {
+  /* prettier-ignore */ get c_cflag() {
     return new termio.fields(this, 4)[0];
   }
-  set c_cflag(v) {
+  /* prettier-ignore */ set c_cflag(v) {
     new termio.fields(this, 4)[0] = v >>> 0;
   }
-  get c_lflag() {
+  /* prettier-ignore */ get c_lflag() {
     return new termio.fields(this, 6)[0];
   }
-  set c_lflag(v) {
+  /* prettier-ignore */ set c_lflag(v) {
     new termio.fields(this, 6)[0] = v >>> 0;
   }
-  get c_line() {
+  /* prettier-ignore */ get c_line() {
     return new Uint8Array(this, 8)[0];
   }
-  set c_line(v) {
+  /* prettier-ignore */ set c_line(v) {
     new Uint8Array(this, 8)[0] = typeof v == 'string' ? v.charCodeAt(0) : v;
   }
-  get c_cc() {
+  /* prettier-ignore */ get c_cc() {
     return new Uint8Array(this, 9).slice(0, NCC);
   }
-  set c_cc(v) {
+  /* prettier-ignore */ set c_cc(v) {
     const a = new Uint8Array(this, 9, NCC);
     const n = Math.min(v.length, a.length);
     for(let i = 0; i < n; i++)
@@ -535,40 +535,40 @@ export class termios extends ArrayBuffer {
   constructor() {
     super(60);
   }
-  get c_iflag() {
+  /* prettier-ignore */ get c_iflag() {
     return new termios.fields(this, 0)[0];
   }
-  set c_iflag(v) {
+  /* prettier-ignore */ set c_iflag(v) {
     new termios.fields(this, 0)[0] = v >>> 0;
   }
-  get c_oflag() {
+  /* prettier-ignore */ get c_oflag() {
     return new termios.fields(this, 4)[0];
   }
-  set c_oflag(v) {
+  /* prettier-ignore */ set c_oflag(v) {
     new termios.fields(this, 4)[0] = v >>> 0;
   }
-  get c_cflag() {
+  /* prettier-ignore */ get c_cflag() {
     return new termios.fields(this, 8)[0];
   }
-  set c_cflag(v) {
+  /* prettier-ignore */ set c_cflag(v) {
     new termios.fields(this, 8)[0] = v >>> 0;
   }
-  get c_lflag() {
+  /* prettier-ignore */ get c_lflag() {
     return new termios.fields(this, 12)[0];
   }
-  set c_lflag(v) {
+  /* prettier-ignore */ set c_lflag(v) {
     new termios.fields(this, 12)[0] = v >>> 0;
   }
-  get c_line() {
+  /* prettier-ignore */ get c_line() {
     return new Uint8Array(this, 16)[0];
   }
-  set c_line(v) {
+  /* prettier-ignore */ set c_line(v) {
     new Uint8Array(this, 16)[0] = v >>> 0;
   }
-  get c_cc() {
+  /* prettier-ignore */ get c_cc() {
     return new Uint8Array(this, 17, NCCS) /*.map(c => String.fromCharCode(c))*/;
   }
-  set c_cc(v) {
+  /* prettier-ignore */ set c_cc(v) {
     const a = new Uint8Array(this, 17, NCCS);
     const n = Math.min(v.length, a.length);
     for(let i = 0; i < n; i++)

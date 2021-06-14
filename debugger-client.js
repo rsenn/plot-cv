@@ -1,8 +1,22 @@
-import { WebSocketClient } from './lib/net/websocket-async.js';
+//import { WebSocketClient } from './lib/net/websocket-async.js';
 import Util from './lib/util.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
-import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer, btoa as Base64Encode, atob as Base64Decode } from './lib/misc.js';
-import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
+import {
+  toString as ArrayBufferToString,
+  toArrayBuffer as StringToArrayBuffer,
+  btoa as Base64Encode,
+  atob as Base64Decode
+} from './lib/misc.js';
+import React, {
+  h,
+  html,
+  render,
+  Fragment,
+  Component,
+  useState,
+  useLayoutEffect,
+  useRef
+} from './lib/dom/preactComponent.js';
 import { ECMAScriptParser, Lexer } from './lib/ecmascript/parser2.js';
 import * as dom from './lib/dom.js';
 import rpc from './quickjs/net/rpc.js';
@@ -11,7 +25,7 @@ window.addEventListener('load', e => {
   let socketURL = Util.makeURL({ location: '/ws', protocol: 'ws' });
   console.log(`Loaded URL=${socketURL}`);
 
-  CreateSocket(socketURL);
+  //CreateSocket(socketURL);
 });
 
 async function LoadSource(filename) {
@@ -41,10 +55,9 @@ Object.assign(globalThis, {
   ECMAScriptParser,
   Lexer,
   dom,
-  CreateSocket,
   rpc
 });
-
+/*
 async function CreateSocket(url) {
   let ws = (Util.getGlobalObject().ws = new WebSocketClient());
 
@@ -69,3 +82,4 @@ async function CreateSocket(url) {
     })
   );
 }
+*/

@@ -18,7 +18,7 @@ class C {
   }
 
   static _x_setter(value) {}
-  set x(value) {
+  /* prettier-ignore */ set x(value) {
     return x_setter.call(this, value);
   }
 }

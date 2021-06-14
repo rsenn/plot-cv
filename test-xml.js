@@ -31,7 +31,8 @@ function readXML(filename) {
 const push_back = (arr, ...items) => [...(arr || []), ...items];
 const push_front = (arr, ...items) => [...items, ...(arr || [])];
 
-const GeneratePalette = (counts = { h: 3, s: 3, l: 5 },
+const GeneratePalette = (
+  counts = { h: 3, s: 3, l: 5 },
   deltas = { h: 360, s: 100, l: 30 },
   prng
 ) => {
@@ -71,7 +72,8 @@ async function main(...args) {
   let colors, keys;
   filesystem = await PortableFileSystem();
 
-  let params = Util.getOpt({
+  let params = Util.getOpt(
+    {
       output: [true, null, 'o'],
       '@': 'input,'
     },
@@ -108,14 +110,16 @@ async function main(...args) {
     filesystem.writeFile(basename + '.json', json);
     xmlData = xml[0];
     newObj = deep.clone(xml[0]);
-    let flat = deep.flatten(xml[0],
+    let flat = deep.flatten(
+      xml[0],
       new Map(),
       (v, p) =>
         (typeof v != 'object' && p.indexOf('attributes') == -1) ||
         (p.length && p.indexOf('attributes') == p.length - 1),
       (p, v) => [new Path(p), v]
     );
-    colors = new Map([...Iterator.filter(flat, ([path, value]) => /^#[0-9A-Fa-f]*$/.test(value))].map(
+    colors = new Map(
+      [...Iterator.filter(flat, ([path, value]) => /^#[0-9A-Fa-f]*$/.test(value))].map(
         ([path, value]) => [path, new RGBA(value)]
       )
     );
@@ -139,7 +143,8 @@ async function main(...args) {
           let value = deep.get(xml[0], p);
           const children = Util.isObject(value) && value.children ? value.children : [];
           const text = typeof children[0] == 'string' ? children[0] : '';
-          if(['Next', 'settings', 'scope', 'name', 'gutter'].indexOf(text) != -1 ||
+          if(
+            ['Next', 'settings', 'scope', 'name', 'gutter'].indexOf(text) != -1 ||
             /* text.startsWith('#') ||*/ typeof children[0] != 'string'
           ) {
             skip();
@@ -170,7 +175,8 @@ async function main(...args) {
     o = [...o].filter(([p, k, v]) => !/background/i.test(k));
     keys = new Map(o.map(([p, k, v]) => [p, k]));
     colors = new Map(o.map(([p, k, v]) => [p, v]));
-    colors = new Map([...colors.entries()]
+    colors = new Map(
+      [...colors.entries()]
         .map(([p, c]) => [p, p.up(2).prevSibling.down('children', 0), c])
         .map(([p, f, c]) => [p, f.apply(xml[0]), c])
         .filter(([p, f, c]) => !/(gutter|guide)/.test(f))
@@ -202,7 +208,8 @@ async function main(...args) {
     //    console.log("colors:",colors);
 
     const hash = key =>
-      ((a, b) => a / b)(...lexOrder(key).reduce(
+      ((a, b) => a / b)(
+        ...lexOrder(key).reduce(
           (acc, c) => [acc[0] * (10 + 26 + 26) + c, acc[1] * (10 + 26 + 26)],
           [0, 1]
         )
@@ -276,7 +283,8 @@ async function main(...args) {
             let obj = path2.apply(newObj, true);
             console.log(`path2=${path2} obj=`, obj);
           }
-          const { value, index, distance } = RGBA.nearestColor(color.toRGBA(),
+          const { value, index, distance } = RGBA.nearestColor(
+            color.toRGBA(),
             newColors,
             distanceChecker
           );
@@ -417,7 +425,8 @@ async function main(...args) {
 
         let hueData = hueIds
           .map(([hue, ids], idx) => [idx, hue, ids /*.split(',').map((v) => +v)*/])
-          .reduce((acc, [idx, hue, ids = getIds4Hue(hue)]) => [
+          .reduce(
+            (acc, [idx, hue, ids = getIds4Hue(hue)]) => [
               ...acc,
               [idx, hue, ids.split(',').map(p => +p)]
             ],
@@ -464,7 +473,8 @@ async function main(...args) {
                 new RGBA(c).toHSLA()
               );
 
-              console.info(`changed #${i}`,
+              console.info(
+                `changed #${i}`,
                 fromColor,
                 ` -> #${index} `,
                 toColor,

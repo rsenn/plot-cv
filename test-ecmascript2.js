@@ -2,7 +2,92 @@
 import { ECMAScriptParser, Lexer } from './lib/ecmascript/parser2.js';
 import { PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
-import { estree, ESNode, Program, ModuleDeclaration, ModuleSpecifier, ImportDeclaration, ImportSpecifier, ImportDefaultSpecifier, ImportNamespaceSpecifier, Super, Expression, FunctionLiteral, Pattern, Identifier, Literal, RegExpLiteral, TemplateLiteral, BigIntLiteral, TaggedTemplateExpression, TemplateElement, ThisExpression, UnaryExpression, UpdateExpression, BinaryExpression, AssignmentExpression, LogicalExpression, MemberExpression, ConditionalExpression, CallExpression, DecoratorExpression, NewExpression, SequenceExpression, Statement, EmptyStatement, DebuggerStatement, LabeledStatement, BlockStatement, FunctionBody, StatementList, ExpressionStatement, Directive, ReturnStatement, ContinueStatement, BreakStatement, IfStatement, SwitchStatement, SwitchCase, WhileStatement, DoWhileStatement, ForStatement, ForInStatement, ForOfStatement, WithStatement, TryStatement, CatchClause, ThrowStatement, Declaration, ClassDeclaration, ClassBody, MethodDefinition, MetaProperty, YieldExpression, FunctionArgument, FunctionDeclaration, ArrowFunctionExpression, VariableDeclaration, VariableDeclarator, ObjectExpression, Property, ArrayExpression, JSXLiteral, AssignmentProperty, ObjectPattern, ArrayPattern, RestElement, AssignmentPattern, AwaitExpression, SpreadElement, ExportNamedDeclaration, ExportSpecifier, AnonymousDefaultExportedFunctionDeclaration, AnonymousDefaultExportedClassDeclaration, ExportDefaultDeclaration, ExportAllDeclaration } from './lib/ecmascript/estree.js';
+import {
+  estree,
+  ESNode,
+  Program,
+  ModuleDeclaration,
+  ModuleSpecifier,
+  ImportDeclaration,
+  ImportSpecifier,
+  ImportDefaultSpecifier,
+  ImportNamespaceSpecifier,
+  Super,
+  Expression,
+  FunctionLiteral,
+  Pattern,
+  Identifier,
+  Literal,
+  RegExpLiteral,
+  TemplateLiteral,
+  BigIntLiteral,
+  TaggedTemplateExpression,
+  TemplateElement,
+  ThisExpression,
+  UnaryExpression,
+  UpdateExpression,
+  BinaryExpression,
+  AssignmentExpression,
+  LogicalExpression,
+  MemberExpression,
+  ConditionalExpression,
+  CallExpression,
+  DecoratorExpression,
+  NewExpression,
+  SequenceExpression,
+  Statement,
+  EmptyStatement,
+  DebuggerStatement,
+  LabeledStatement,
+  BlockStatement,
+  FunctionBody,
+  StatementList,
+  ExpressionStatement,
+  Directive,
+  ReturnStatement,
+  ContinueStatement,
+  BreakStatement,
+  IfStatement,
+  SwitchStatement,
+  SwitchCase,
+  WhileStatement,
+  DoWhileStatement,
+  ForStatement,
+  ForInStatement,
+  ForOfStatement,
+  WithStatement,
+  TryStatement,
+  CatchClause,
+  ThrowStatement,
+  Declaration,
+  ClassDeclaration,
+  ClassBody,
+  MethodDefinition,
+  MetaProperty,
+  YieldExpression,
+  FunctionArgument,
+  FunctionDeclaration,
+  ArrowFunctionExpression,
+  VariableDeclaration,
+  VariableDeclarator,
+  ObjectExpression,
+  Property,
+  ArrayExpression,
+  JSXLiteral,
+  AssignmentProperty,
+  ObjectPattern,
+  ArrayPattern,
+  RestElement,
+  AssignmentPattern,
+  AwaitExpression,
+  SpreadElement,
+  ExportNamedDeclaration,
+  ExportSpecifier,
+  AnonymousDefaultExportedFunctionDeclaration,
+  AnonymousDefaultExportedClassDeclaration,
+  ExportDefaultDeclaration,
+  ExportAllDeclaration
+} from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import { Path } from './lib/json.js';
 import { SortedMap } from './lib/container/sortedMap.js';
@@ -37,7 +122,8 @@ globalThis.FormatStack = (stack, start, limit) => {
   if(Number.isFinite(start)) stack = stack.slice(start);
   if(Number.isFinite(limit)) stack = stack.slice(0, limit);
 
-  return (/*stack.join('\n') || */ '\n' +
+  return (
+    /*stack.join('\n') || */ '\n' +
     stack
       .filter(fr => fr.functionName != 'esfactory')
       .map(fr => [fr.functionName, fr.fileName, fr.lineNumber])
@@ -80,12 +166,14 @@ function main(...argv) {
     }
   });
 
-  let params = Util.getOpt({
+  let params = Util.getOpt(
+    {
       help: [
         false,
         (v, r, o) => {
           console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
-          console.log(o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n')
+          console.log(
+            o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n')
           );
           Util.exit(0);
         },
@@ -131,7 +219,8 @@ function main(...argv) {
     } catch(error) {
       if(error) {
         console.log?.('ERROR:', error?.message);
-        console.log?.('STACK:\n  ' +
+        console.log?.(
+          'STACK:\n  ' +
             new Stack(error?.stack, fr => fr.functionName != 'esfactory')
               .toString()
               .replace(/\n/g, '\n  ')
@@ -181,7 +270,8 @@ function processFile(file, params) {
   } catch(err) {
     const tokens = [...parser.processed, ...parser.tokens];
     const token = tokens[tokens.length - 1];
-    console.log('parseProgram tokens',
+    console.log(
+      'parseProgram tokens',
       tokens.slice(-3).map(tok => [tok, new Stack(tok.stack.slice(0, 3)) + ''])
     );
     console.log('parseProgram token', token);
@@ -193,7 +283,8 @@ function processFile(file, params) {
 
     if(err !== null) {
       console.log(`parseProgram ERROR message:`, err?.message);
-      console.log(`parseProgram ERROR stack:\n  ` +
+      console.log(
+        `parseProgram ERROR stack:\n  ` +
           new Stack(err?.stack, (fr, i) => fr.functionName != 'esfactory' && i < 5)
             .toString()
             .replace(/\n/g, '\n  ')
@@ -220,7 +311,8 @@ function processFile(file, params) {
   );*/
   parser.addCommentsToNodes(ast);
 
-  WriteFile(params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json',
+  WriteFile(
+    params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json',
     JSON.stringify(ast /*.toJSON()*/, null, 2)
   );
 
@@ -230,7 +322,8 @@ function processFile(file, params) {
   const isRequire = node => node instanceof CallExpression && node.callee.value == 'require';
   const isImport = node => node instanceof ImportDeclaration;
 
-  let commentMap = new Map([...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
+  let commentMap = new Map(
+    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
       pos * 10 - 1,
       { comment, pos, len, node }
     ]),
@@ -291,7 +384,8 @@ try {
   error = e;
 } finally {
   if(error) {
-    console.log(`FAIL: ${error.message}`,
+    console.log(
+      `FAIL: ${error.message}`,
       `\n  ` +
         new Stack(error.stack, fr => fr.functionName != 'esfactory')
           .toString()

@@ -1,4 +1,12 @@
-import React, { h, useState, useMemo, useEffect, useRef, forwardRef, useImperativeHandle } from './lib/dom/preactComponent.js';
+import React, {
+  h,
+  useState,
+  useMemo,
+  useEffect,
+  useRef,
+  forwardRef,
+  useImperativeHandle
+} from './lib/dom/preactComponent.js';
 import PropTypes from './lib/prop-types.js';
 import { useDebounce } from './lib/hooks/useDebounce.js';
 import Cursor from './cursor.js';
@@ -33,7 +41,8 @@ const Ruler = forwardRef((props, ref) => {
   const totalWidth = longLength * MULTIPLICATOR_LENGTH;
   const timerID = useRef(null);
   const counterJS = useRef(null);
-  const draggerJS = useRef(defaultValue ? (horizontal ? 1 * defaultValue : 1 * (1 - defaultValue).toFixed(3)) : 50
+  const draggerJS = useRef(
+    defaultValue ? (horizontal ? 1 * defaultValue : 1 * (1 - defaultValue).toFixed(3)) : 50
   );
   const dragSomethingRef = useRef();
   const velocityJS = useRef(0);
@@ -59,7 +68,8 @@ const Ruler = forwardRef((props, ref) => {
     if(!globalThis.window || !dragSomethingRef.current) {
       return;
     }
-    dragSomethingRef.current.addEventListener('dragstart',
+    dragSomethingRef.current.addEventListener(
+      'dragstart',
       function remove(e) {
         const crt = this.cloneNode(true);
         crt.style.opacity = 0;
@@ -157,7 +167,8 @@ const Ruler = forwardRef((props, ref) => {
       ? inputEl.current.offsetLeft + cursorLength.current / 2
       : inputEl.current.offsetTop + cursorLength.current / 2;
     draggerJS.current = Math.min(100, Math.max(0, (100 * (client - offset)) / longLength));
-    inertiaJS.current = Math.min(totalWidth,
+    inertiaJS.current = Math.min(
+      totalWidth,
       Math.max(0, (totalWidth * (client - offset)) / longLength)
     );
     timeJS.current = 150;
@@ -171,7 +182,8 @@ const Ruler = forwardRef((props, ref) => {
       ? inputEl.current.offsetLeft + cursorLength.current / 2
       : inputEl.current.offsetTop + cursorLength.current / 2;
     draggerJS.current = Math.min(100, Math.max(0, (100 * (client - offset)) / longLength));
-    inertiaJS.current = Math.min(totalWidth,
+    inertiaJS.current = Math.min(
+      totalWidth,
       Math.max(0, (totalWidth * (client - offset)) / longLength)
     );
     timeJS.current = 150;
@@ -231,15 +243,22 @@ const Ruler = forwardRef((props, ref) => {
     listenMouseEventUp(dragging => (isDragging.current = dragging));
   }, []);
   //console.log('Ruler.render onChanged =', onChanged);
-  return h('div',
+  return h(
+    'div',
     {
       class: 'ruler__container'
-    }, [
-      h('div', {
+    },
+    [
+      h(
+        'div',
+        {
           ref: inputEl,
           style: { position: 'relative' }
-        }, [
-          h('div', {
+        },
+        [
+          h(
+            'div',
+            {
               class: classNames('ruler', (horizontal && 'horizontal') || 'vertical'),
               'data-image': backgroundImage || backgroundImageDefault,
               style: {
@@ -250,8 +269,11 @@ const Ruler = forwardRef((props, ref) => {
                 backgroundPositionY: !horizontal ? inertiaJS.current : undefined,
                 transition: `all ${timeJS.current}ms cubic-bezier(.35,.7,.42,1)`
               }
-            }, [
-              h('div', {
+            },
+            [
+              h(
+                'div',
+                {
                   onDragStart,
                   onDragEnd,
                   draggable: true,
@@ -268,9 +290,12 @@ const Ruler = forwardRef((props, ref) => {
                     top: !horizontal && `${Math.max(1, draggerJS.current)}%`,
                     ...styleCursorContainer
                   }
-                }, [CursorElement]
+                },
+                [CursorElement]
               ),
-              h('div', {
+              h(
+                'div',
+                {
                   style: {
                     cursor: isDragging.current ? 'grabbing' : 'grab',
                     width: horizontal ? 6000 : '100%',
@@ -282,7 +307,8 @@ const Ruler = forwardRef((props, ref) => {
                   onTouchMove: onTouch,
                   onTouchStart,
                   onTouchEnd: onDragEnd
-                }, []
+                },
+                []
               )
             ]
           )

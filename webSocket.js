@@ -55,7 +55,8 @@ function sendTo(sock, msg, ...args) {
   const { writable } = this || { writable: true };
   // console.debug(`[${sock.id}] sendTo '${msg.replace(/\n/g, '\\n')}'`);
 
-  return Util.tryCatch(async () => {
+  return Util.tryCatch(
+    async () => {
       if(writable) await sock.ws.send(msg);
       else throw new Error(`${sock.id} not writable`);
     },
@@ -71,7 +72,8 @@ function sendMany(except, msg, ...args) {
     msg = new Message(msg, ...args);
     msg = msg.data;
   }
-  return Promise.all(sockets
+  return Promise.all(
+    sockets
       .filter(sock => !(sock == except || sock.id == except || sock.ws == except))
       .map(sock => sendTo.call(this, sock, msg))
   );
@@ -111,7 +113,8 @@ export class Socket {
       const id = sockets.findIndex(s => s.id == msg.body);
       if(id != -1) {
         const sock = sockets[id];
-        return await send({ ...this.info, idle: Date.now() - this.lastMessage },
+        return await send(
+          { ...this.info, idle: Date.now() - this.lastMessage },
           sock.id,
           null,
           'INFO'
@@ -165,7 +168,8 @@ export class Socket {
     const { cookie } = headers;
     if(localAddress == '::1') localAddress = 'localhost';
     if(remoteAddress == '::1') remoteAddress = 'localhost';
-    let s = Socket.map(ws,
+    let s = Socket.map(
+      ws,
       {
         local: localAddress.replace(/^::ffff:/, '') + ':' + localPort,
         remote: remoteAddress.replace(/^::ffff:/, '') + ':' + remotePort,

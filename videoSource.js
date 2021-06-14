@@ -10,25 +10,25 @@ export class ImageSequence {
     this.frame = null;
     this.index = 0;
     this.props = {
-      get frame_count() {
+      /* prettier-ignore */ get frame_count() {
         return imgs.images.length;
       },
       fps: 1,
       backend: 'imread',
-      get pos_frames() {
+      /* prettier-ignore */ get pos_frames() {
         return imgs.index;
       },
-      set pos_frames(value) {
+      /* prettier-ignore */ set pos_frames(value) {
         imgs.index = Util.mod(value, images.length);
       },
-      get pos_msec() {
+      /* prettier-ignore */ get pos_msec() {
         const { pos_frames, fps } = this;
         return (pos_frames * 1000) / fps;
       },
-      get frame_width() {
+      /* prettier-ignore */ get frame_width() {
         if(imgs.frame) return imgs.frame.cols;
       },
-      get frame_height() {
+      /* prettier-ignore */ get frame_height() {
         if(imgs.frame) return imgs.frame.rows;
       }
     };
@@ -64,7 +64,8 @@ const isVideoPath = arg =>
   /\.(3gp|avi|f4v|flv|m4v|m2v|mkv|mov|mp4|mpeg|mpg|ogm|vob|webm|wmv)$/i.test(arg);
 
 export class VideoSource {
-  static backends = Object.fromEntries([
+  static backends = Object.fromEntries(
+    [
       'ANY',
       'VFW',
       'V4L',
@@ -169,7 +170,7 @@ export class VideoSource {
     return this.cap.set(this.propId(prop), value);
   }
 
-  get backend() {
+  /* prettier-ignore */ get backend() {
     const { cap } = this;
     if(cap && typeof cap.getBackendName == 'function')
       return cap.getBackendName();
@@ -180,11 +181,12 @@ export class VideoSource {
     }
   }
 
-  get fps() {
+  /* prettier-ignore */ get fps() {
     return this.get('fps');
   }
 
-  dump(props = [
+  dump(
+    props = [
       'frame_count',
       'frame_width',
       'frame_height',
@@ -196,7 +198,8 @@ export class VideoSource {
       'pos_msec'
     ]
   ) {
-    return new Map(props.map(propName => [propName, this.get(propName)]).filter(([k, v]) => v !== undefined)
+    return new Map(
+      props.map(propName => [propName, this.get(propName)]).filter(([k, v]) => v !== undefined)
     );
   }
 
@@ -212,7 +215,7 @@ export class VideoSource {
     return this.get('pos_msec');
   }
 
-  get durationMsecs() {
+  /* prettier-ignore */ get durationMsecs() {
     const msec_per_frame = 1000 / this.fps;
     return +(this.get('frame_count') * msec_per_frame).toFixed(3);
   }

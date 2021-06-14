@@ -30,7 +30,8 @@ async function main(...args) {
     console.log('data:', filesystem.bufferToString(data));
 
   return;
-  console.log(Util.getMethodNames(filesystem)
+  console.log(
+    Util.getMethodNames(filesystem)
       .map(n => `  'filesystem.${n}': null,`)
       .join('\n')
   );

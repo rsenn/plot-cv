@@ -17,7 +17,8 @@ function main(...args) {
   });
   let ctor_names = Object.getOwnPropertyNames(cv).filter(name => typeof cv[name] == 'function');
 
-  let features2d_names = ctor_names.filter(name => cv[name].prototype && cv[name].prototype[Symbol.toStringTag] == 'Feature2D'
+  let features2d_names = ctor_names.filter(
+    name => cv[name].prototype && cv[name].prototype[Symbol.toStringTag] == 'Feature2D'
   );
 
   console.log('cv', features2d_names);
@@ -78,12 +79,14 @@ console.log("instances",instances);*/
     console.log('img', img);
     let keypoints, keypoints2, descriptors;
 
-    Util.tryCatch(() => f2d.compute(img, (keypoints = []), (descriptors = [])),
+    Util.tryCatch(
+      () => f2d.compute(img, (keypoints = []), (descriptors = [])),
       r => r,
       e => console.log('ERROR', e.message)
     );
 
-    Util.tryCatch(() => f2d.detect(img, (keypoints2 = [])),
+    Util.tryCatch(
+      () => f2d.detect(img, (keypoints2 = [])),
       r => r,
       e => console.log('ERROR', e.message)
     );

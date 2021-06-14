@@ -46,7 +46,8 @@ async function main(...args) {
   await ConsoleSetup({ depth: 20, colors: true, breakLength: 80 });
   filesystem = await PortableFileSystem();
 
-  let params = Util.getOpt({
+  let params = Util.getOpt(
+    {
       output: [true, null, 'o'],
       input: [true, null, 'i'],
       xml: [true, null, 'x'],

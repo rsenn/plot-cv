@@ -14,7 +14,8 @@ async function main() {
   let ws = new WebSocketAsync(WebSocket);
 
   const dump = () =>
-    console.log('ws:',
+    console.log(
+      'ws:',
       Util.getKeys(ws, ['receiveDataQueue', 'receiveCallbacksQueue', 'connected'])
     );
 

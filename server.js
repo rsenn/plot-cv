@@ -112,7 +112,8 @@ async function main() {
 
   Socket.timeoutCycler();
 
-  let mounter = runMount(new Repeater(async (push, stop) => {
+  let mounter = runMount(
+    new Repeater(async (push, stop) => {
       while(true) await push(mountDirs);
     })
   ).then(exitCode => {
@@ -166,7 +167,8 @@ async function main() {
     } = opts;
     const base = path.basename(boardFile, '.brd');
     const formatToExt = (layers, format) => {
-      if(opts.drill ||
+      if(
+        opts.drill ||
         format.startsWith('EXCELLON') ||
         layers.indexOf('Drills') != -1 ||
         layers.indexOf('Holes') != -1
@@ -267,7 +269,8 @@ async function main() {
     }
 
     const params = [...Object.entries(opts)]
-      .filter(([k, v]) =>
+      .filter(
+        ([k, v]) =>
           typeof v == 'string' || typeof v == 'number' || (typeof v == 'boolean' && v === true)
       )
       .map(([k, v]) => `--${k}${typeof v != 'boolean' && v != '' ? '=' + v : ''}`);
@@ -382,8 +385,11 @@ async function main() {
     if(!/lib\//.test(req.url)) {
       const { path, url, method, headers, query, body } = req;
       false &&
-        console.log('Static request:', { path, url, method, headers, query, body } /* Object.keys(req), */,
-          ...Util.if(Util.filterOutKeys(
+        console.log(
+          'Static request:',
+          { path, url, method, headers, query, body } /* Object.keys(req), */,
+          ...Util.if(
+            Util.filterOutKeys(
               req.headers,
               /(^sec|^accept|^cache|^dnt|-length|^host$|^if-|^connect|^user-agent|-type$|^origin$|^referer$)/
             ),
@@ -452,7 +458,8 @@ async function main() {
 
     if(!names) names = [...(await fs.promises.readdir(dir))].filter(f);
 
-    return Promise.all(names
+    return Promise.all(
+      names
         .map(entry => `${dir}/${entry}`)
         .reduce((acc, file) => {
           let description = descriptions ? descMap(file) : descMap.get(file);
@@ -462,7 +469,8 @@ async function main() {
           };
           if(typeof description == 'string') obj.description = description;
 
-          acc.push(fs.promises
+          acc.push(
+            fs.promises
               .stat(file)
               .then(({ ctime, mtime, mode, size }) =>
                 Object.assign(obj, {
@@ -489,7 +497,8 @@ async function main() {
   app.get(/\/list-serial/, async (req, res) => {
     const list = await SerialPort.list();
 
-    res.json(list.filter(port => ['manufacturer', 'pnpId', 'vendorId', 'productId'].some(key => port[key]))
+    res.json(
+      list.filter(port => ['manufacturer', 'pnpId', 'vendorId', 'productId'].some(key => port[key]))
     );
   });
 
@@ -525,7 +534,8 @@ async function main() {
     const { port } = body;
   });
   const configFile = 'config.json';
-  const safeStat = Util.tryFunction(f => filesystem.stat(f),
+  const safeStat = Util.tryFunction(
+    f => filesystem.stat(f),
     st => st,
     () => {}
   );
@@ -534,7 +544,8 @@ async function main() {
     let str = '',
       data = {},
       time = 0;
-    Util.tryCatch(() => filesystem.readFile(configFile),
+    Util.tryCatch(
+      () => filesystem.readFile(configFile),
       c => {
         str = c;
         let stat = safeStat(configFile);
@@ -543,7 +554,8 @@ async function main() {
       },
       () => (str = '{}')
     );
-    let config = Util.tryCatch(() => JSON.parse(str),
+    let config = Util.tryCatch(
+      () => JSON.parse(str),
       o => o,
       () => ({})
     );
@@ -566,7 +578,8 @@ async function main() {
   });
 
   app.get(/\/github/, async (req, res) => {
-    Util.tryCatch(async () => {
+    Util.tryCatch(
+      async () => {
         const { body } = req;
         const url = Util.parseURL(req.url);
         const { location, query } = url;
@@ -617,7 +630,8 @@ async function main() {
     const { owner, repo, dir, filter } = body;
     console.log('POST github', { owner, repo, dir, filter });
 
-    res.json(await GithubListContents(owner, repo, dir, filter && new RegExp(filter, 'g'))
+    res.json(
+      await GithubListContents(owner, repo, dir, filter && new RegExp(filter, 'g'))
         .then(result => FilesURLs(result.map(file => file.download_url)))
         .catch(error => ({ error }))
     );
@@ -671,7 +685,8 @@ async function main() {
     let st,
       err,
       filename =
-        (req.headers['content-disposition'] || '').replace(new RegExp('.*"([^"]*)".*', 'g'),
+        (req.headers['content-disposition'] || '').replace(
+          new RegExp('.*"([^"]*)".*', 'g'),
           '$1'
         ) || 'output.svg';
     filename = 'tmp/' + filename.replace(/^tmp\//, '');

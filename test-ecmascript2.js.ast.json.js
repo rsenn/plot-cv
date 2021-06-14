@@ -1,7 +1,92 @@
 import { ECMAScriptParser, Lexer } from './lib/ecmascript/parser.js';
 import { PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
-import { estree, ESNode, Program, ModuleDeclaration, ModuleSpecifier, ImportDeclaration, ImportSpecifier, ImportDefaultSpecifier, ImportNamespaceSpecifier, Super, Expression, FunctionLiteral, Pattern, Identifier, Literal, RegExpLiteral, TemplateLiteral, BigIntLiteral, TaggedTemplateExpression, TemplateElement, ThisExpression, UnaryExpression, UpdateExpression, BinaryExpression, AssignmentExpression, LogicalExpression, MemberExpression, ConditionalExpression, CallExpression, DecoratorExpression, NewExpression, SequenceExpression, Statement, EmptyStatement, DebuggerStatement, LabeledStatement, BlockStatement, FunctionBody, StatementList, ExpressionStatement, Directive, ReturnStatement, ContinueStatement, BreakStatement, IfStatement, SwitchStatement, SwitchCase, WhileStatement, DoWhileStatement, ForStatement, ForInStatement, ForOfStatement, WithStatement, TryStatement, CatchClause, ThrowStatement, Declaration, ClassDeclaration, ClassBody, MethodDefinition, MetaProperty, YieldExpression, FunctionArgument, FunctionDeclaration, ArrowFunctionExpression, VariableDeclaration, VariableDeclarator, ObjectExpression, Property, ArrayExpression, JSXLiteral, AssignmentProperty, ObjectPattern, ArrayPattern, RestElement, AssignmentPattern, AwaitExpression, SpreadElement, ExportNamedDeclaration, ExportSpecifier, AnonymousDefaultExportedFunctionDeclaration, AnonymousDefaultExportedClassDeclaration, ExportDefaultDeclaration, ExportAllDeclaration } from './lib/ecmascript/estree.js';
+import {
+  estree,
+  ESNode,
+  Program,
+  ModuleDeclaration,
+  ModuleSpecifier,
+  ImportDeclaration,
+  ImportSpecifier,
+  ImportDefaultSpecifier,
+  ImportNamespaceSpecifier,
+  Super,
+  Expression,
+  FunctionLiteral,
+  Pattern,
+  Identifier,
+  Literal,
+  RegExpLiteral,
+  TemplateLiteral,
+  BigIntLiteral,
+  TaggedTemplateExpression,
+  TemplateElement,
+  ThisExpression,
+  UnaryExpression,
+  UpdateExpression,
+  BinaryExpression,
+  AssignmentExpression,
+  LogicalExpression,
+  MemberExpression,
+  ConditionalExpression,
+  CallExpression,
+  DecoratorExpression,
+  NewExpression,
+  SequenceExpression,
+  Statement,
+  EmptyStatement,
+  DebuggerStatement,
+  LabeledStatement,
+  BlockStatement,
+  FunctionBody,
+  StatementList,
+  ExpressionStatement,
+  Directive,
+  ReturnStatement,
+  ContinueStatement,
+  BreakStatement,
+  IfStatement,
+  SwitchStatement,
+  SwitchCase,
+  WhileStatement,
+  DoWhileStatement,
+  ForStatement,
+  ForInStatement,
+  ForOfStatement,
+  WithStatement,
+  TryStatement,
+  CatchClause,
+  ThrowStatement,
+  Declaration,
+  ClassDeclaration,
+  ClassBody,
+  MethodDefinition,
+  MetaProperty,
+  YieldExpression,
+  FunctionArgument,
+  FunctionDeclaration,
+  ArrowFunctionExpression,
+  VariableDeclaration,
+  VariableDeclarator,
+  ObjectExpression,
+  Property,
+  ArrayExpression,
+  JSXLiteral,
+  AssignmentProperty,
+  ObjectPattern,
+  ArrayPattern,
+  RestElement,
+  AssignmentPattern,
+  AwaitExpression,
+  SpreadElement,
+  ExportNamedDeclaration,
+  ExportSpecifier,
+  AnonymousDefaultExportedFunctionDeclaration,
+  AnonymousDefaultExportedClassDeclaration,
+  ExportDefaultDeclaration,
+  ExportAllDeclaration
+} from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import { Path } from './lib/json.js';
 import { SortedMap } from './lib/container/sortedMap.js';
@@ -42,12 +127,14 @@ function main(...args) {
       customInspect: true
     }
   });
-  let params = Util.getOpt({
+  let params = Util.getOpt(
+    {
       help: [
         false,
         (v, r, o) => {
           console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
-          console.log(o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n')
+          console.log(
+            o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n')
           );
           Util.exit(0);
         },
@@ -70,7 +157,8 @@ function main(...args) {
   console.log('params.debug', params.debug);
   if(params.debug) ECMAScriptParser.instrumentate();
   Util.defineGettersSetters(globalThis, {
-    printer: Util.once(() =>
+    printer: Util.once(
+      () =>
         new Printer({
           colors: false,
           indent: 2
@@ -127,7 +215,8 @@ function processFile(file, params) {
     console.log('parseProgram loc', parser.lexer.loc + '');
     if(err !== null) {
       console.log('parseProgram ERROR message:', err?.message);
-      console.log('parseProgram ERROR stack:',
+      console.log(
+        'parseProgram ERROR stack:',
         (err.stack + '')
           .split(/\n/g)
           .filter(line => !/at (esfactory|call \(native\))/.test(line))
@@ -141,14 +230,16 @@ function processFile(file, params) {
     }
   }
   parser.addCommentsToNodes(ast);
-  WriteFile(params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json',
+  WriteFile(
+    params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json',
     JSON.stringify(ast, null, 2)
   );
   let node2path = new WeakMap();
   let nodeKeys = [];
   const isRequire = node => node instanceof CallExpression && node.callee.value == 'require';
   const isImport = node => node instanceof ImportDeclaration;
-  let commentMap = new Map([...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
+  let commentMap = new Map(
+    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
       pos * 10 - 1,
       {
         comment,

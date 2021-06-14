@@ -107,8 +107,8 @@ function HandleMessage(e) {
 try {
   WorkerMain();
 } catch(error) {
-  log(`FAIL: ${error?.message}\n${error.stack}`);
+  console.log(`FAIL: ${error?.message}\n${error?.stack}`);
   std.exit(1);
 } finally {
-  log('SUCCESS');
+  console.log('SUCCESS');
 }

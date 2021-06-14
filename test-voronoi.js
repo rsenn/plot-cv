@@ -114,7 +114,8 @@ async function testVoronoi(filename) {
   ];
 
   const polylines = [
-    ...cells.reduce((acc, { site, halfedges }) => [
+    ...cells.reduce(
+      (acc, { site, halfedges }) => [
         ...acc,
         [
           'polyline',

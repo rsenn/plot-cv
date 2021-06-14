@@ -31,25 +31,25 @@ class sf_info_t extends ArrayBuffer {
     super(32);
     Object.assign(this, obj);
   }
-  get [Symbol.toStringTag]() { return `[struct sf_info_t @ ${toPointer(this)} ]`; }
+  /* prettier-ignore */ get [Symbol.toStringTag]() { return `[struct sf_info_t @ ${toPointer(this)} ]`; }
 
-  set frames(v) { new BigUint64Array(this, 0)[0] = BigInt(v); }
-  get frames() { return Number(new BigUint64Array(this, 0)[0]); }
+  /* prettier-ignore */ set frames(v) { new BigUint64Array(this, 0)[0] = BigInt(v); }
+  /* prettier-ignore */ get frames() { return Number(new BigUint64Array(this, 0)[0]); }
 
-  set samplerate(v) { new Uint32Array(this, 8)[0] = v; }
-  get samplerate() { return new Uint32Array(this, 8)[0]; }
+  /* prettier-ignore */ set samplerate(v) { new Uint32Array(this, 8)[0] = v; }
+  /* prettier-ignore */ get samplerate() { return new Uint32Array(this, 8)[0]; }
 
-  set channels(v) { new Uint32Array(this, 12)[0] = v; }
-  get channels() { return new Uint32Array(this, 12)[0]; }
+  /* prettier-ignore */ set channels(v) { new Uint32Array(this, 12)[0] = v; }
+  /* prettier-ignore */ get channels() { return new Uint32Array(this, 12)[0]; }
 
-  set format(v) { new Uint32Array(this, 16)[0] = v; }
-  get format() { return new Uint32Array(this, 16)[0]; }
+  /* prettier-ignore */ set format(v) { new Uint32Array(this, 16)[0] = v; }
+  /* prettier-ignore */ get format() { return new Uint32Array(this, 16)[0]; }
 
-  set sections(v) { new Uint32Array(this, 20)[0] = v; }
-  get sections() { return new Uint32Array(this, 20)[0]; }
+  /* prettier-ignore */ set sections(v) { new Uint32Array(this, 20)[0] = v; }
+  /* prettier-ignore */ get sections() { return new Uint32Array(this, 20)[0]; }
 
-  set seekable(v) { new Uint32Array(this, 24)[0] = v; }
-  get seekable() { return new Uint32Array(this, 24)[0]; }
+  /* prettier-ignore */ set seekable(v) { new Uint32Array(this, 24)[0] = v; }
+  /* prettier-ignore */ get seekable() { return new Uint32Array(this, 24)[0]; }
 
   toString() {
     const { frames, samplerate, channels, format, sections, seekable } = this;
@@ -103,7 +103,8 @@ function main(...args) {
   let mag = re.map(m => Math.abs(m));
   let max = Math.max(...mag);
   let ind = [...mag].map((m, i) => [i, m]).filter(([i, m]) => m === max);
-  console.log(`dominant frequencies:`,
+  console.log(
+    `dominant frequencies:`,
     ind.map(([i, m]) => bin2frequency(i))
   );
 }

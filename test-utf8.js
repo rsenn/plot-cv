@@ -38,7 +38,8 @@ async function main(...args) {
 
   let bytes = new Uint8Array(data);
 
-  let result = [...bytes].reduce((acc, c) => {
+  let result = [...bytes].reduce(
+    (acc, c) => {
       let [out, state, val] = acc;
       if(state !== 0 && c >= 0x80 && c < 0xc0) {
         val = (val << 6) | (c & 0x3f);
@@ -54,7 +55,8 @@ async function main(...args) {
         out.push(c);
       }
       return [out, state, val];
-    }, [[], 0, 0]
+    },
+    [[], 0, 0]
   )[0];
 
   console.log('result:', result);

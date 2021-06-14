@@ -18,51 +18,51 @@ class BPGImageInfo extends ArrayBuffer {
 
     return Object.setPrototypeOf(arrayBuf.slice(), BPGImageInfo.prototype);
   }
-  get [Symbol.toStringTag]() { return `[struct BPGImageInfo @ ${this} ]`; }
+  /* prettier-ignore */ get [Symbol.toStringTag]() { return `[struct BPGImageInfo @ ${this} ]`; }
 
   /* width@0 uint32_t 4 */
-  set width(v) { new Uint32Array(this, 0)[0] = v; }
-  get width() { return new Uint32Array(this, 0)[0]; }
+  /* prettier-ignore */ set width(v) { new Uint32Array(this, 0)[0] = v; }
+  /* prettier-ignore */ get width() { return new Uint32Array(this, 0)[0]; }
 
   /* height@4 uint32_t 4 */
-  set height(v) { new Uint32Array(this, 4, 1)[0] = v; }
-  get height() { return new Uint32Array(this, 4, 1)[0]; }
+  /* prettier-ignore */ set height(v) { new Uint32Array(this, 4, 1)[0] = v; }
+  /* prettier-ignore */ get height() { return new Uint32Array(this, 4, 1)[0]; }
 
   /* format@8 uint8_t 1 */
-  set format(v) { new Uint8Array(this, 8, 1)[0] = v; }
-  get format() { return new Uint8Array(this, 8, 1)[0]; }
+  /* prettier-ignore */ set format(v) { new Uint8Array(this, 8, 1)[0] = v; }
+  /* prettier-ignore */ get format() { return new Uint8Array(this, 8, 1)[0]; }
 
   /* has_alpha@9 uint8_t 1 */
-  set has_alpha(v) { new Uint8Array(this, 9, 1)[0] = v; }
-  get has_alpha() { return new Uint8Array(this, 9, 1)[0]; }
+  /* prettier-ignore */ set has_alpha(v) { new Uint8Array(this, 9, 1)[0] = v; }
+  /* prettier-ignore */ get has_alpha() { return new Uint8Array(this, 9, 1)[0]; }
 
   /* color_space@10 uint8_t 1 */
-  set color_space(v) { new Uint8Array(this, 10, 1)[0] = v; }
-  get color_space() { return new Uint8Array(this, 10, 1)[0]; }
+  /* prettier-ignore */ set color_space(v) { new Uint8Array(this, 10, 1)[0] = v; }
+  /* prettier-ignore */ get color_space() { return new Uint8Array(this, 10, 1)[0]; }
 
   /* bit_depth@11 uint8_t 1 */
-  set bit_depth(v) { new Uint8Array(this, 11, 1)[0] = v; }
-  get bit_depth() { return new Uint8Array(this, 11, 1)[0]; }
+  /* prettier-ignore */ set bit_depth(v) { new Uint8Array(this, 11, 1)[0] = v; }
+  /* prettier-ignore */ get bit_depth() { return new Uint8Array(this, 11, 1)[0]; }
 
   /* premultiplied_alpha@12 uint8_t 1 */
-  set premultiplied_alpha(v) { new Uint8Array(this, 12, 1)[0] = v; }
-  get premultiplied_alpha() { return new Uint8Array(this, 12, 1)[0]; }
+  /* prettier-ignore */ set premultiplied_alpha(v) { new Uint8Array(this, 12, 1)[0] = v; }
+  /* prettier-ignore */ get premultiplied_alpha() { return new Uint8Array(this, 12, 1)[0]; }
 
   /* has_w_plane@13 uint8_t 1 */
-  set has_w_plane(v) { new Uint8Array(this, 13, 1)[0] = v; }
-  get has_w_plane() { return new Uint8Array(this, 13, 1)[0]; }
+  /* prettier-ignore */ set has_w_plane(v) { new Uint8Array(this, 13, 1)[0] = v; }
+  /* prettier-ignore */ get has_w_plane() { return new Uint8Array(this, 13, 1)[0]; }
 
   /* limited_range@14 uint8_t 1 */
-  set limited_range(v) { new Uint8Array(this, 14, 1)[0] = v; }
-  get limited_range() { return new Uint8Array(this, 14, 1)[0]; }
+  /* prettier-ignore */ set limited_range(v) { new Uint8Array(this, 14, 1)[0] = v; }
+  /* prettier-ignore */ get limited_range() { return new Uint8Array(this, 14, 1)[0]; }
 
   /* has_animation@15 uint8_t 1 */
-  set has_animation(v) { new Uint8Array(this, 15, 1)[0] = v; }
-  get has_animation() { return new Uint8Array(this, 15, 1)[0]; }
+  /* prettier-ignore */ set has_animation(v) { new Uint8Array(this, 15, 1)[0] = v; }
+  /* prettier-ignore */ get has_animation() { return new Uint8Array(this, 15, 1)[0]; }
 
   /* loop_count@16 uint16_t NaN */
-  set loop_count(v) { new Uint8Array(this, 16, 1)[0] = v; }
-  get loop_count() { return new Uint8Array(this, 16, 1)[0]; }
+  /* prettier-ignore */ set loop_count(v) { new Uint8Array(this, 16, 1)[0] = v; }
+  /* prettier-ignore */ get loop_count() { return new Uint8Array(this, 16, 1)[0]; }
 
   toString() {
     const {
@@ -149,7 +149,8 @@ class BPGLoader extends BPGDecoder {
 
     if(!isBPG(buffer)) {
       const magic = new Uint8Array(buffer, 0, 4);
-      throw new Error(`BPGLoader.load: is not a BPG (${magic.join(', ')}) '${[...magic]
+      throw new Error(
+        `BPGLoader.load: is not a BPG (${magic.join(', ')}) '${[...magic]
           .map(code =>
             code < 32 || code >= 127
               ? `\\x${('0' + code.toString(16)).slice(-2)}`
@@ -171,7 +172,7 @@ class BPGLoader extends BPGDecoder {
     return ret;
   }
 
-  get info() {
+  /* prettier-ignore */ get info() {
     const { handle, bpg_decoder_get_info } = this;
     let info = this.malloc(5 * 4);
     let ret = bpg_decoder_get_info(handle, info);

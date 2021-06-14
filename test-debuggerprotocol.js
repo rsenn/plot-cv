@@ -3,10 +3,32 @@ import * as os from 'os';
 import * as deep from './lib/deep.js';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './fcntl.js';
 import { errno } from 'ffi';
-import { Socket, WaitRead, socket, EAGAIN, AF_INET, SOCK_STREAM, ndelay, connect, sockaddr_in, select, fd_set, timeval, FD_SET, FD_CLR, FD_ISSET, FD_ZERO, send, recv } from './socket.js';
+import {
+  Socket,
+  WaitRead,
+  socket,
+  EAGAIN,
+  AF_INET,
+  SOCK_STREAM,
+  ndelay,
+  connect,
+  sockaddr_in,
+  select,
+  fd_set,
+  timeval,
+  FD_SET,
+  FD_CLR,
+  FD_ISSET,
+  FD_ZERO,
+  send,
+  recv
+} from './socket.js';
 import Util from './lib/util.js';
 import { Console } from 'console';
-import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
+import {
+  toString as ArrayBufferToString,
+  toArrayBuffer as StringToArrayBuffer
+} from './lib/misc.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 
 Util.define(Array.prototype, {
@@ -27,7 +49,8 @@ async function main(...args) {
     }
   });
   console.log('console.options', console.options);
-  let params = Util.getOpt({
+  let params = Util.getOpt(
+    {
       listen: [false, null, 'l'],
       debug: [false, null, 'x'],
       address: [true, null, 'c'],
@@ -114,7 +137,8 @@ async function main(...args) {
 }
 
 function retValue(ret, ...args) {
-  console.log(...args,
+  console.log(
+    ...args,
     `ret =`,
     ret,
     ...(ret == -1 ? [' errno =', errno(), ' error =', std.strerror(errno())] : [])
@@ -133,14 +157,16 @@ function MakeArray(buf, numBytes) {
       return new Uint32Array(buf);
     case 2:
       return new Uint16Array(buf);
-    default: return new Uint8Array(buf);
+    default:
+      return new Uint8Array(buf);
   }
 }
 
 function ArrayBufToHex(buf, numBytes = 8) {
   if(typeof buf == 'object' && buf != null && buf instanceof ArrayBuffer) {
     let arr = MakeArray(buf, numBytes);
-    return arr.reduce((s, code) =>
+    return arr.reduce(
+      (s, code) =>
         (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
       ''
     );

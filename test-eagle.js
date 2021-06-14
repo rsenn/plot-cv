@@ -104,7 +104,8 @@ function updateMeasures(board) {
     let lines = rect.toLines(lines => new LineList(lines));
     let { plain } = board;
     plain.remove(e => e.tagName == 'wire' && e.attributes.layer == '47');
-    plain.append(...lines.map(line => ({
+    plain.append(
+      ...lines.map(line => ({
         tagName: 'wire',
         attributes: { ...line.toObject(), layer: 47, width: 0 }
       }))
@@ -139,7 +140,8 @@ function alignItem(item) {
     console.log('before:', Util.abbreviate(before));
     console.log('after:', Util.abbreviate(item.parentNode.toXML()));
     //console.log('geometry:', geometry);
-    console.log('align\n',
+    console.log(
+      'align\n',
       item.xpath(),
       '\n newPos:',
       newPos,
@@ -189,7 +191,8 @@ async function testEagle(filename) {
 
   const packages = {
     board: (board && board.elements && [...board.elements].map(([name, e]) => e.package)) || [],
-    schematic: (schematic &&
+    schematic:
+      (schematic &&
         schematic.sheets &&
         [...schematic.sheets]
           .map(e =>
@@ -295,7 +298,8 @@ async function main(...args) {
     try {
       let project = await testEagle(arg);
     } catch(err) {
-      console.log('Err:',
+      console.log(
+        'Err:',
         err.message,
         typeof err.stack == 'string' ? err.stack : [...err.stack].map(f => f + '')
       );

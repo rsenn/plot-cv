@@ -153,7 +153,8 @@ async function main(...args) {
   let matTypeEntries = matTypes.map(n => [n, cv[n]]);
   console.log(new Map(matTypeEntries.map(([n, v]) => [n, ('0000000' + v.toString(16)).slice(-8)])));
 
-  console.log('mask: ',
+  console.log(
+    'mask: ',
     matTypeEntries
       .filter(([n, v]) => !/C[0-9]$/.test(n))
       .reduce((acc, [n, v]) => acc | v, 0)

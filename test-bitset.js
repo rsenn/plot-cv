@@ -32,7 +32,8 @@ function printBinary(arr, base = 2) {
   const pad = base == 2 ? 24 : base == '16' ? 6 : base == 8 ? '0o' : 9;
   let i = 0;
   for(let num of arr) {
-    console.log((i++ + '').padStart(3, ' ') +
+    console.log(
+      (i++ + '').padStart(3, ' ') +
         ': ' +
         prefix +
         ('0'.repeat(pad) + Math.abs(num).toString(base)).slice(-pad)

@@ -60,7 +60,8 @@ const vectorAngle = (ux, uy, vx, vy) => {
   return sign * Math.acos(dot);
 };
 
-const getArcCenter = (px,
+const getArcCenter = (
+  px,
   py,
   cx,
   cy,
@@ -149,7 +150,8 @@ const arcToBezier = ({
     ry *= Math.sqrt(lambda);
   }
 
-  let [centerx, centery, ang1, ang2] = getArcCenter(px,
+  let [centerx, centery, ang1, ang2] = getArcCenter(
+    px,
     py,
     cx,
     cy,

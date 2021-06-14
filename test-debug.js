@@ -19,7 +19,8 @@ async function main(...args) {
 
   // tell the debug adapter to attach to a debuggee which is already running somewhere
   // SpecificAttachArguments has to extend DebugProtocol.AttachRequestArguments
-  await client.attach(/*<SpecificAttachArguments>*/ {
+  await client.attach(
+    /*<SpecificAttachArguments>*/ {
       // ...
     }
   );

@@ -142,21 +142,22 @@
         function() {
           return Curried(...args);
         },
-        function (a) {
+        function(a) {
           return Curried(...args, ...a);
         },
-        function (a, b) {
+        function(a, b) {
           return Curried(...args, ...a, ...b);
         },
-        function (a, b, c) {
+        function(a, b, c) {
           return r(...args, ...a, ...b, ...c);
         },
-        function (a, b, c, d) {
+        function(a, b, c, d) {
           return Curried(...args, ...a, ...b, ...c, ...d);
         }
       ].n;
 
-      return new Function(...a,
+      return new Function(
+        ...a,
         ...`const { curried,thisObj,args} = this; return curried.apply(thisObj, args.concat([${a.join(
           ','
         )}]))`
@@ -187,27 +188,27 @@
           return fn();
         };
       },
-      function (fn) {
+      function(fn) {
         return function(a) {
           return fn(a);
         };
       },
-      function (fn) {
+      function(fn) {
         return function(a, b) {
           return fn(a, b);
         };
       },
-      function (fn) {
+      function(fn) {
         return function(a, b, c) {
           return fn(a, b, c);
         };
       },
-      function (fn) {
+      function(fn) {
         return function(a, b, c, d) {
           return fn(a, b, c, d);
         };
       },
-      function (fn) {
+      function(fn) {
         return function(a, b, c, d, e) {
           return fn(a, b, c, d, e);
           H;
@@ -331,8 +332,8 @@
 
   Util.updater = (target, get, set, fn) => {
     let value;
-    get = get || Util.getter(target);
-    set = set || Util.setter(target);
+    /* prettier-ignore */ get = get || Util.getter(target);
+    /* prettier-ignore */ set = set || Util.setter(target);
     return (k, f, i) => doUpdate(k, f || fn, i);
 
     function doUpdate(key, func, i) {
@@ -351,7 +352,7 @@
   Util.getOrCreate = (target, create = () => ({}), set) => {
     const get = Util.getter(target),
       has = Util.hasFn(target);
-    set = set || Util.setter(target);
+    /* prettier-ignore */ set = set || Util.setter(target);
     let value;
     return key =>
       (value = has.call(target, key)
@@ -412,13 +413,16 @@
 
   Util.getGlobalObject = Util.memoize(arg => {
     const retfn = typeof arg == 'function' ? arg : typeof arg == 'string' ? g => g.arg : g => g;
-    return Util.tryCatch(() => global,
+    return Util.tryCatch(
+      () => global,
       retfn,
       err =>
-        Util.tryCatch(() => globalThis,
+        Util.tryCatch(
+          () => globalThis,
           retfn,
           err =>
-            Util.tryCatch(() => window,
+            Util.tryCatch(
+              () => window,
               retfn,
               err => console.log('Util.getGlobalObject:', err)
             )
@@ -446,7 +450,8 @@
 
     let locationStr = location.toString(true);
     let c = [
-      (locationStr[Symbol.for('nodejs.util.inspect.custom')] || locationStr.toString).call(locationStr
+      (locationStr[Symbol.for('nodejs.util.inspect.custom')] || locationStr.toString).call(
+        locationStr
       )
     ];
     c.push(' ');
@@ -461,7 +466,8 @@
       else if(Util.isObject(p) && p[Symbol.for('nodejs.util.inspect.custom')])
         p = p[Symbol.for('nodejs.util.inspect.custom')]();
       else if(typeof p != 'string') {
-        if(Util.isObject(p) &&
+        if(
+          Util.isObject(p) &&
           typeof p.toString == 'function' &&
           !Util.isNativeFunction(p.toString)
         )
@@ -1037,7 +1043,8 @@
 
           if(deep && Util.isCloneable(value)) {
             let base = Array.isArray(value) ? [] : {};
-            result.key = Util.extend(true,
+            result.key = Util.extend(
+              true,
               result.hasOwnProperty(key) && !Util.isUnextendable(result.key) ? result.key : base,
               value
             );
@@ -1074,7 +1081,8 @@
   };*/
 
   Util.static = (obj, functions, thisObj, pred = (k, v, f) => true) => {
-    for(let [name, fn] of Util.iterateMembers(functions,
+    for(let [name, fn] of Util.iterateMembers(
+      functions,
       Util.tryPredicate(
         (key, depth) =>
           obj.key === undefined &&
@@ -1088,7 +1096,8 @@
 
       try {
         obj.name = value;
-      } catch(/*        Object.defineProperty(obj, name, { value, enumerable: false, configurable: false, writable: false });*/
+      } catch(
+        /*        Object.defineProperty(obj, name, { value, enumerable: false, configurable: false, writable: false });*/
         err
       ) {
         console.log('static:', err);
@@ -1124,12 +1133,13 @@
       return this.filter((item, i, a) => a.indexOf(item) == i);
     });
 
-    Util.defineGetterSetter(arr,
+    Util.defineGetterSetter(
+      arr,
       'tail',
       function() {
         return Util.tail(this);
       },
-      function (value) {
+      function(value) {
         if(this.length == 0) this.push(value);
         else this[this.length - 1] = value;
       }
@@ -1139,17 +1149,18 @@
   /*Util.define(arr, 'inspect', function(opts = {}) {
       return Util.inspect(this, { depth: 100, ...opts });
     });*/
-  Util.adapter = function(obj,
+  Util.adapter = function(
+    obj,
     getLength = (obj => obj.length,
     (getKey =
       ((obj, index) => obj.key(index),
       (getItem = ((obj, key) => obj.key, (setItem = (obj, index, value) => (obj.index = value)))))))
   ) {
     const adapter = obj && {
-      get length() {
+      /* prettier-ignore */ get length() {
         return getLength(obj);
       },
-      get instance() {
+      /* prettier-ignore */ get instance() {
         return obj;
       },
       key(i) {
@@ -1171,7 +1182,8 @@
       },
       *entries() {
         for(let key of this.keys()) yield [key, getItem(obj, key)];
-      }, [Symbol.iterator]() {
+      },
+      [Symbol.iterator]() {
         return this.entries();
       },
       toObject() {
@@ -1186,11 +1198,13 @@
   };
 
   Util.adapter.localStorage = function(s) {
-    s = Util.tryCatch(() => !s && global.window,
+    s = Util.tryCatch(
+      () => !s && global.window,
       w => w.localStorage,
       () => s
     );
-    return Util.adapter(s,
+    return Util.adapter(
+      s,
       l => l.length,
       (l, i) => l.key(i),
       (l, key) => JSON.parse(l.getItem(key)),
@@ -1218,7 +1232,8 @@
     return a;
   };
   Util.arrayFromEntries = entries =>
-    Array.from(entries.map(([k, v]) => k),
+    Array.from(
+      entries.map(([k, v]) => k),
       key => entries.find(([k, v]) => k === key)[1]
     );
 
@@ -1494,7 +1509,8 @@
     } else if(Util.isMap(arg)) {
       //console.log('Util.match ', { arg });
 
-      return [...arg.keys()].reduce((acc, key) => (match(arg.get(key), key, arg) ? acc.set(key, arg.get(key)) : acc),
+      return [...arg.keys()].reduce(
+        (acc, key) => (match(arg.get(key), key, arg) ? acc.set(key, arg.get(key)) : acc),
         new Map()
       );
     }
@@ -1620,7 +1636,8 @@
     } else if(Util.isObject(obj)) {
       const inspect = toString ? obj.toString : null;
 
-      if(typeof inspect == 'function' &&
+      if(
+        typeof inspect == 'function' &&
         !Util.isNativeFunction(inspect) &&
         !/Util.inspect/.test(inspect + '')
       ) {
@@ -1656,7 +1673,8 @@
           if(typeof key == 'symbol') print(key.toString(), 1, 32);
           else if(Util.isObject(key) && typeof key.toString == 'function')
             print(isMap ? `'${key.toString()}'` : key.toString(), 1, isMap ? 36 : 33);
-          else if(typeof key == 'string' ||
+          else if(
+            typeof key == 'string' ||
             (!isMap && Util.isObject(key) && typeof key.toString == 'function')
           )
             print(isMap ? `'${key}'` : key, 1, isMap ? 36 : 33);
@@ -1706,7 +1724,8 @@
       args.push(props.key);
     }
 
-    const w = Util.tryCatch(() => global.window,
+    const w = Util.tryCatch(
+      () => global.window,
       w => w,
       () => null
     );
@@ -1784,7 +1803,8 @@
 
     for(let j = 0; j < iterable.length; j++) {
       const [i, color] = iterable.j.length == 2 ? iterable.j : [j, iterable.j];
-      console.log(`  %c    %c ${color} %c ${textFn(color, i)}`,
+      console.log(
+        `  %c    %c ${color} %c ${textFn(color, i)}`,
         `background: ${color}; font-size: 18px; ${filters};`,
         `background: none; color: ${color}; min-width: 120px; ${filters}; `,
         `color: black; font-size: 12px;`
@@ -1948,7 +1968,8 @@
   };
 
   Util.validatePassword = function(value) {
-    return (value.length > 7 &&
+    return (
+      value.length > 7 &&
       new RegExp('^(?![d]+$)(?![a-zA-Z]+$)(?![!#$%^&*]+$)[da-zA-Z!#$ %^&*]').test(value) &&
       !/\s/.test(value)
     );
@@ -1957,7 +1978,8 @@
   Util.clone = function(obj, proto) {
     if(Util.isArray(obj)) return obj.slice();
     else if(typeof obj == 'object')
-      return Object.create(proto || obj.constructor.prototype || Object.getPrototypeOf(obj),
+      return Object.create(
+        proto || obj.constructor.prototype || Object.getPrototypeOf(obj),
         Object.getOwnPropertyDescriptors(obj)
       );
   };
@@ -2163,7 +2185,8 @@
   //console.log(`Setting cookie[${key}] = ${value}`);
 
   Util.clearCookies = function(c) {
-    return Util.setCookies(Object.keys(Util.parseCookie(c)).reduce(
+    return Util.setCookies(
+      Object.keys(Util.parseCookie(c)).reduce(
         (acc, name) =>
           Object.assign(acc, {
             [[name]]: `; max-age=0; expires=${new Date().toUTCString()}`
@@ -2174,7 +2197,8 @@
   };
 
   Util.deleteCookie = function(name) {
-    const w = Util.tryCatch(() => global.window,
+    const w = Util.tryCatch(
+      () => global.window,
       w => w,
       () => null
     );
@@ -2321,7 +2345,8 @@
 
           //console.log('x ', {property, desc})
 
-          if(property.indexOf('$') !== 0 &&
+          if(
+            property.indexOf('$') !== 0 &&
             typeof object.property !== 'function' &&
             !desc.get &&
             !desc.set
@@ -2336,7 +2361,8 @@
 
             //if (Object.prototype.hasOwnProperty.call(object, property)) {
 
-            Util.searchObject(object.property,
+            Util.searchObject(
+              object.property,
               matchCallback,
               `${currentPath}.${property}`,
               result,
@@ -2345,7 +2371,8 @@
           }
         }
       }
-    } catch(//}
+    } catch(
+      //}
 
       e
     ) {}
@@ -2358,7 +2385,8 @@
   };
 
   Util.getURL = Util.memoize((req = {}) =>
-    Util.tryCatch(() => process.argv[1],
+    Util.tryCatch(
+      () => process.argv[1],
       () => 'file://' + Util.scriptDir(),
       () => {
         let proto =
@@ -2455,7 +2483,8 @@
       href(override) {
         if(typeof override === 'object') Object.assign(this, override);
         const qstr = Util.encodeQuery(this.query);
-        return ((this.protocol ? `${this.protocol}://` : '') +
+        return (
+          (this.protocol ? `${this.protocol}://` : '') +
           (this.host ? this.host : '') +
           (this.port ? `:${this.port}` : '') +
           `${this.location}` +
@@ -2546,18 +2575,21 @@
     return fn => /* prettier-ignore */ Util.tryFunction(fn, ((ret) => ret), Util.putError);
   })();
   Util.tryPredicate = (fn, defaultRet) =>
-    Util.tryFunction(fn,
+    Util.tryFunction(
+      fn,
       ret => ret,
       () => defaultRet
     );
 
   Util.isBrowser = function() {
     let ret = false;
-    Util.tryCatch(() => window,
+    Util.tryCatch(
+      () => window,
       w => (Util.isObject(w) ? (ret = true) : undefined),
       () => {}
     );
-    Util.tryCatch(() => document,
+    Util.tryCatch(
+      () => document,
       w => (Util.isObject(w) ? (ret = true) : undefined),
       () => {}
     );
@@ -2582,7 +2614,8 @@
     return promise;
   };
   Util.timeout = async (msecs, promises, promiseClass = Promise) =>
-    await promiseClass.race([Util.waitFor(msecs)].concat(Util.isArray(promises) ? promises : [promises])
+    await promiseClass.race(
+      [Util.waitFor(msecs)].concat(Util.isArray(promises) ? promises : [promises])
     );
 
   Util.isServer = function() {
@@ -2598,14 +2631,16 @@
       : (el, i, arr) => arr.findIndex(item => cmp(el, item)) === i;
   Util.unique = (arr, cmp) => arr.filter(Util.uniquePred(cmp));
 
-  Util.histogram = /* new Set()*/ (arr,
+  Util.histogram = /* new Set()*/ (
+    arr,
     t,
     out = false ? {} : new Map(),
     initVal = () => 0,
     setVal = v => v
   ) => {
     const set =
-      /*Util.isObject(out) && typeof out.set == 'function' ? (k, v) => out.set(k, v) :*/ Util.setter(out
+      /*Util.isObject(out) && typeof out.set == 'function' ? (k, v) => out.set(k, v) :*/ Util.setter(
+        out
       );
     const get = Util.getOrCreate(out, initVal, set);
     let ctor = Object.getPrototypeOf(out) !== Object.prototype ? out.constructor : null;
@@ -2727,7 +2762,8 @@
   };
 
   Util.isGenerator = function(fn) {
-    return ((typeof fn == 'function' && /^[^(]*\*/.test(fn.toString())) ||
+    return (
+      (typeof fn == 'function' && /^[^(]*\*/.test(fn.toString())) ||
       (['function', 'object'].indexOf(typeof fn) != -1 && fn.next !== undefined)
     );
   };
@@ -2829,7 +2865,8 @@
     console.log("isGenerator",Util.isGenerator(obj));*/
 
     if(Util.isGenerator(obj))
-      return ret((function* () {
+      return ret(
+        (function* () {
           let i = 0;
           for(let item of obj) yield fn(item, i++, obj);
         })()
@@ -2873,7 +2910,8 @@
   };
 
   Util.isDate = function(d) {
-    return (d instanceof Date ||
+    return (
+      d instanceof Date ||
       (typeof d == 'string' &&
         /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]T[0-9][0-9]:[0-9][0-9]:[0-9][0-9]/.test(d))
     );
@@ -2956,7 +2994,8 @@
     s = Math.floor(s / 7);
     const weeks = s;
     let ret = '';
-    ret = `${('0' + hours).substring(0, 2)}:${('0' + minutes).substring(0, 2)}:${('0' + seconds
+    ret = `${('0' + hours).substring(0, 2)}:${('0' + minutes).substring(0, 2)}:${(
+      '0' + seconds
     ).substring(0, 2)}`;
     if(days) ret = `${days} days ${ret}`;
     if(weeks) ret = `${weeks} weeks ${ret}`;
@@ -3020,11 +3059,13 @@
   Util.base64 = (() => {
     const g = globalThis;
     return {
-      encode: Util.tryFunction(utf8 => g.btoa(g.unescape(g.encodeURIComponent(utf8))),
+      encode: Util.tryFunction(
+        utf8 => g.btoa(g.unescape(g.encodeURIComponent(utf8))),
         v => v,
         utf8 => Buffer.from(utf8).toString('base64')
       ),
-      decode: Util.tryFunction(base64 => g.decodeURIComponent(g.escape(g.atob(base64))),
+      decode: Util.tryFunction(
+        base64 => g.decodeURIComponent(g.escape(g.atob(base64))),
         v => v,
         string => Buffer.from(string, 'base64').toString('utf-8')
       )
@@ -3047,7 +3088,8 @@
   };
 
   Util.isArray = function(obj) {
-    return ((obj &&
+    return (
+      (obj &&
         !Util.isGetter(obj, 'length') &&
         Util.isObject(obj) &&
         'length' in obj &&
@@ -3118,8 +3160,10 @@
   Util.getFormFields = function(initialState) {
     return Util.mergeObjects([
       initialState,
-      [...document.forms].reduce((acc, { elements }) =>
-          [...elements].reduce((acc2, { name, value }) =>
+      [...document.forms].reduce(
+        (acc, { elements }) =>
+          [...elements].reduce(
+            (acc2, { name, value }) =>
               name == '' || value == undefined || value == 'undefined'
                 ? acc2
                 : Object.assign(acc2, { [[name]]: value }),
@@ -3130,7 +3174,8 @@
     ]);
   };
 
-  Util.mergeObjects = function(objArr,
+  Util.mergeObjects = function(
+    objArr,
     predicate = (dst, src, key) => (src.key == '' ? undefined : src.key)
   ) {
     let args = objArr;
@@ -3452,7 +3497,8 @@
       return m;
     })(map);
 
-    if(map instanceof Map ||
+    if(
+      map instanceof Map ||
       (Util.isObject(map) && typeof map.get == 'function' && typeof map.set == 'function')
     ) {
       fn.set = (key, value) => (map.set(key, value), (k, v) => fn(k, v));
@@ -3490,14 +3536,16 @@
       fn[Symbol.iterator] = fn.entries;
 
       fn[Symbol.for('nodejs.util.inspect.custom')] = function() {
-        return new Map(this.map(([key, value]) => [Util.isArray(key) ? key.join('.') : key, value])
+        return new Map(
+          this.map(([key, value]) => [Util.isArray(key) ? key.join('.') : key, value])
         );
       };
     }
 
     if(typeof fn.entries == 'function') {
       fn.filter = function(pred) {
-        return Util.mapFunction(new Map(
+        return Util.mapFunction(
+          new Map(
             (function* () {
               let i = 0;
               for(let [key, value] of fn.entries())
@@ -3508,7 +3556,8 @@
       };
 
       fn.map = function(t) {
-        return Util.mapFunction(new Map(
+        return Util.mapFunction(
+          new Map(
             (function* () {
               let i = 0;
               for(let [key, value] of fn.entries()) yield t([key, value], i++);
@@ -3587,7 +3636,8 @@
     return fn;
   };
 
-  Util.iterateMembers = function* (obj,
+  Util.iterateMembers = function* (
+    obj,
     predicate = ((name, depth, obj, proto) => true, (depth = 0))
   ) {
     let names = [];
@@ -3616,7 +3666,8 @@
     Util.unique([...Util.iterateMembers(obj, Util.tryPredicate(pred))])
   );
   Util.memberNameFilter = (depth = (1, (start = 0))) =>
-    Util.and((m, l, o) => start <= l && l < depth + start,
+    Util.and(
+      (m, l, o) => start <= l && l < depth + start,
       (m, l, o) =>
         typeof m != 'string' || ['caller', 'callee', 'constructor', 'arguments'].indexOf(m) == -1,
       (name, depth, obj, proto) => obj != Object.prototype
@@ -3626,7 +3677,8 @@
   Util.objectReducer =
     (filterFn, accFn = (a, m, o) => ({ ...a, [[m]]: o.m }), accu = {}) =>
     (obj, ...args) =>
-      Util.members(filterFn(...args), obj).reduce(Util.tryFunction(
+      Util.members(filterFn(...args), obj).reduce(
+        Util.tryFunction(
           (a, m) => accFn(a, m, obj),
           (r, a, m) => r,
           (r, a) => a
@@ -3661,14 +3713,16 @@
   Util.mapReducer = (setFn, filterFn = (key, value) => true, mapObj = new Map()) => {
     setFn = setFn || Util.setter(mapObj);
     let fn;
-    let next = Util.tryFunction(((acc, mem, idx) => (filterFn(mem, idx) ? (setFn(idx, mem), acc) : null),
+    let next = Util.tryFunction(
+      ((acc, mem, idx) => (filterFn(mem, idx) ? (setFn(idx, mem), acc) : null),
       r => r,
       () => mapObj)
     );
 
     fn = function ReduceIntoMap(arg, acc = mapObj) {
       if(Util.isObject(arg) && typeof o.reduce == 'function')
-        return arg.reduce((acc, arg) => (Util.isArray(arg) ? arg : Util.members(arg)).reduce(reducer, acc),
+        return arg.reduce(
+          (acc, arg) => (Util.isArray(arg) ? arg : Util.members(arg)).reduce(reducer, acc),
           self.map
         );
       let c = Util.counter();
@@ -3808,15 +3862,19 @@
     return Object.setPrototypeOf(e, proto);
   };
 
-  Util.define(Util.exception.prototype, {
+  Util.define(
+    Util.exception.prototype,
+    {
       toString(color = false) {
         const { message, stack, proto } = this;
 
         return `${Util.fnName((proto && proto.constructor) || this.constructor)}: ${message}
     Stack:${Util.stack.prototype.toString.call(stack, color, stack.columnWidths)}`;
-      }, [Symbol.toStringTag]() {
+      },
+      [Symbol.toStringTag]() {
         return this.toString(false);
-      }, [Symbol.for('nodejs.util.inspect.custom')]() {
+      },
+      [Symbol.for('nodejs.util.inspect.custom')]() {
         return Util.exception.prototype.toString.call(this, true);
       }
     },
@@ -3858,9 +3916,11 @@
       c(':', palette[1]);
       c(columnNumber, palette[2]);
       return text;
-    }, [Symbol.toStringTag]() {
+    },
+    [Symbol.toStringTag]() {
       return Util.location.prototype.toString.call(this, false);
-    }, [Symbol.for('nodejs.util.inspect.custom')]() {
+    },
+    [Symbol.for('nodejs.util.inspect.custom')]() {
       return Util.location.prototype.toString.call(this, !Util.isBrowser());
     },
     getFileName() {
@@ -3877,7 +3937,8 @@
   Util.stackFrame = function StackFrame(frame) {
     //console.debug('Util.stackFrame', frame);
 
-    ['methodName', 'functionName', 'fileName', 'lineNumber', 'columnNumber', 'typeName'].forEach(prop => {
+    ['methodName', 'functionName', 'fileName', 'lineNumber', 'columnNumber', 'typeName'].forEach(
+      prop => {
         let fn = 'get' + Util.ucfirst(prop);
         if(frame.prop === undefined && typeof frame.fn == 'function') frame.prop = frame.fn();
       }
@@ -3913,7 +3974,9 @@
     }
   });
 
-  Util.define(Util.stackFrame.prototype, {
+  Util.define(
+    Util.stackFrame.prototype,
+    {
       getMethodName() {
         return this.methodName;
       },
@@ -3936,7 +3999,9 @@
     true
   );
 
-  Util.define(Util.stackFrame.prototype, {
+  Util.define(
+    Util.stackFrame.prototype,
+    {
       colorCtor: null,
       get() {
         const { fileName, columnNumber, lineNumber } = this;
@@ -3972,7 +4037,8 @@
 
         let colonList = [fileName, lineNumber, columnNumber]
           .map(p => ('' + p == 'undefined' ? undefined : p))
-          .filter(p => p !== undefined && p != 'undefined' && ['number', 'string'].indexOf(typeof p) != -1
+          .filter(
+            p => p !== undefined && p != 'undefined' && ['number', 'string'].indexOf(typeof p) != -1
           )
           .join(':');
 
@@ -3981,18 +4047,21 @@
       getLocation() {
         return new Util.location(this);
       },
-      get location() {
+      /* prettier-ignore */ get location() {
         return this.getLocation();
-      }, [Symbol.toStringTag]() {
+      },
+      [Symbol.toStringTag]() {
         return this.toString(false);
-      }, [Symbol.for('nodejs.util.inspect.custom')](...args) {
+      },
+      [Symbol.for('nodejs.util.inspect.custom')](...args) {
         return Util.stackFrame.prototype.toString.call(this, true, this.columnWidths);
       }
     },
     true
   );
   Util.scriptName = () =>
-    Util.tryCatch(() => process.argv[1],
+    Util.tryCatch(
+      () => process.argv[1],
       script => script + '',
       () => Util.getURL()
     );
@@ -4002,7 +4071,8 @@
     return frame.getFunctionName() || frame.getMethodName();
   };
   Util.scriptDir = () =>
-    Util.tryCatch(() => Util.scriptName(),
+    Util.tryCatch(
+      () => Util.scriptName(),
       script => (script + '').replace(new RegExp('\\/[^/]*$', 'g'), ''),
       () => Util.getURL()
     );
@@ -4025,9 +4095,10 @@
       stack = [...stack].map(frame =>
         propertyMap
           .filter(([m, p]) => frame.m() !== undefined)
-          .reduce((acc, [method, property]) => ({
+          .reduce(
+            (acc, [method, property]) => ({
               ...acc,
-              get [property]() {
+              /* prettier-ignore */ get [property]() {
                 return frame.method();
               }
             }),
@@ -4092,7 +4163,8 @@
         lineNumber,
         columnNumber
       }));
-      stack = stack.map(({
+      stack = stack.map(
+        ({
           methodName,
           functionName: func,
           fileName: file,
@@ -4102,11 +4174,13 @@
           functionName: func,
           methodName,
           fileName: file.replace(new RegExp(Util.getURL() + '/', 'g'), '').replace(/:.*/g, ''),
-          lineNumber: Util.ifThenElse(s => s != '',
+          lineNumber: Util.ifThenElse(
+            s => s != '',
             s => +s,
             () => undefined
           )(line + file.replace(/.*[^0-9]([0-9]*)$/g, '$1')),
-          columnNumber: Util.ifThenElse(s => s != '',
+          columnNumber: Util.ifThenElse(
+            s => s != '',
             s => +s,
             () => undefined
           )(column)
@@ -4138,9 +4212,11 @@
       );
       let s = a.join('\n');
       return s + '\n';
-    }, [Symbol.toStringTag]() {
+    },
+    [Symbol.toStringTag]() {
       return Util.stack.prototype.toString.call(this);
-    }, [Symbol.for('nodejs.util.inspect.custom')](...args) {
+    },
+    [Symbol.for('nodejs.util.inspect.custom')](...args) {
       const { columnWidths } = this;
       return '\n' + this.map(f => f.toString(!Util.isBrowser(), { columnWidths })).join('\n');
     }
@@ -4149,7 +4225,8 @@
   Object.defineProperties(Util.stack.prototype, {
     columnWidths: {
       get() {
-        return this.reduce((a, f) => ['functionName'].map((fn, i) => Math.max(a.i, (f.fn + '').length)),
+        return this.reduce(
+          (a, f) => ['functionName'].map((fn, i) => Math.max(a.i, (f.fn + '').length)),
           [0, 0, 0, 0]
         );
       }
@@ -4160,7 +4237,8 @@
     Error.stackTraceLimit = position + limit;
 
     if(position >= Error.stackTraceLimit) {
-      throw new TypeError(`getCallerFile(position) requires position be less then Error.stackTraceLimit but position was: '${position}' and Error.stackTraceLimit was: '${Error.stackTraceLimit}'`
+      throw new TypeError(
+        `getCallerFile(position) requires position be less then Error.stackTraceLimit but position was: '${position}' and Error.stackTraceLimit was: '${Error.stackTraceLimit}'`
       );
     }
 
@@ -4334,7 +4412,8 @@
       if(pred(node, depth, parent)) {
         yield t(node);
 
-        if(typeof node == 'object' &&
+        if(
+          typeof node == 'object' &&
           node !== null &&
           typeof node.children == 'object' &&
           node.children.length
@@ -4427,7 +4506,8 @@
 
       //Only consider pixels that aren't black, white, or too transparent
 
-      if(pixel.a > settings.tooAlpha &&
+      if(
+        pixel.a > settings.tooAlpha &&
         (luma = pixel.r + pixel.g + pixel.b) > settings.tooDark && //Luma is assigned inside the conditional to avoid re-calculation when alpha is not met
         luma < settings.tooLight
       ) {
@@ -4898,8 +4978,10 @@
       proto[Symbol.for('nodejs.util.inspect.custom')] = function() {
         const obj = this;
 
-        return (c.text(Util.fnName(proto.constructor) + ' ', 1, 31) +
-          Util[Symbol.for('nodejs.util.inspect.custom')](props.reduce((acc, key) => {
+        return (
+          c.text(Util.fnName(proto.constructor) + ' ', 1, 31) +
+          Util[Symbol.for('nodejs.util.inspect.custom')](
+            props.reduce((acc, key) => {
               acc.key = obj.key;
               return acc;
             }, {}),
@@ -4925,7 +5007,8 @@
     if(!gen) gen = p => v => v === undefined ? target[propMap.p] : (target[propMap.p] = v);
     const propGetSet = propNames
       .map(k => [k, propMap.k])
-      .reduce((a, [k, v]) => ({
+      .reduce(
+        (a, [k, v]) => ({
           ...a,
           [[k]]: Util.isFunction(v)
             ? (...args) => v.call(target, k, ...args)
@@ -4937,7 +5020,8 @@
     /*  console.log(`Util.bindProperties`, { proxy, target, props, gen });*/
     //console.log(`Util.bindProperties`, { propMap, propNames, propGetSet });
 
-    Object.defineProperties(proxy,
+    Object.defineProperties(
+      proxy,
       propNames.reduce(
         (a, k) => {
           const prop = props.k;
@@ -5031,7 +5115,8 @@
   };
 
   Util.transformer = (a, ...l) =>
-    (l || []).reduce((c, f) =>
+    (l || []).reduce(
+      (c, f) =>
         function(...v) {
           return f.apply(this, [c.apply(this, v), ...v]);
         },
@@ -5100,9 +5185,11 @@
     };
 
     const log = (method, ...args) =>
-      console.log(`${Date.now() - createdTime.valueOf()} timer#${id}.${method}`,
+      console.log(
+        `${Date.now() - createdTime.valueOf()} timer#${id}.${method}`,
         ...args.map(obj =>
-          Util.toPlainObject(obj || {},
+          Util.toPlainObject(
+            obj || {},
             v => v || (v instanceof Date ? `+${v.valueOf() - createdTime}` : v)
           )
         )
@@ -5126,25 +5213,25 @@
 
     timer = {
       subscribers: [],
-      get delay() {
+      /* prettier-ignore */ get delay() {
         return delay;
       },
-      get created() {
+      /* prettier-ignore */ get created() {
         return createdTime;
       },
-      get start() {
+      /* prettier-ignore */ get start() {
         return startTime || new Date(endTime.valueOf() - delay);
       },
-      get stop() {
+      /* prettier-ignore */ get stop() {
         return stopTime instanceof Date ? stopTime : undefined;
       },
-      get elapsed() {
+      /* prettier-ignore */ get elapsed() {
         return delay + (stopTime || new Date()).valueOf() - endTime.valueOf();
       },
-      get end() {
+      /* prettier-ignore */ get end() {
         return endTime;
       },
-      get remain() {
+      /* prettier-ignore */ get remain() {
         return endTime.valueOf() - (stopTime || new Date()).valueOf();
       },
       cancel() {
@@ -5289,7 +5376,8 @@
 
   Util.cacheAdapter = (st, defaultOpts = {}) => {
     if(typeof st == 'string')
-      st = Util.tryCatch(() => window.caches,
+      st = Util.tryCatch(
+        () => window.caches,
         async c => c.open(st),
         () => null
       );
@@ -5361,7 +5449,8 @@
 
     if(debug)
       self = Util.printReturnValue(self, {
-        print: print ||
+        print:
+          print ||
           ((returnValue, fn, ...args) =>
             console.debug(`cachedFetch[${cache}] (`, ...args, ...`) =`, ...returnValue))
       });
@@ -5372,7 +5461,8 @@
   Util.proxyObject = (root, handler) => {
     const ptr = path => path.reduce((a, i) => a.i, root);
 
-    const nodes = Util.weakMapper((value, path) =>
+    const nodes = Util.weakMapper(
+      (value, path) =>
         new Proxy(value, {
           get(target, key) {
             let prop = value.key;
@@ -5394,13 +5484,15 @@
   };
 
   Util.parseXML = function(xmlStr) {
-    return Util.tryCatch(() => new DOMParser(),
+    return Util.tryCatch(
+      () => new DOMParser(),
       parser => parser.parseFromString(xmlStr, 'application/xml')
     );
   };
 
   Util.weakAssoc = (fn = (value, ...args) => Object.assign(value, ...args)) => {
-    let mapper = Util.tryCatch(() => new WeakMap(),
+    let mapper = Util.tryCatch(
+      () => new WeakMap(),
       map => Util.weakMapper((obj, ...args) => Util.merge(...args), map),
       () =>
         (obj, ...args) =>
@@ -5413,16 +5505,19 @@
     };
   };
   Util.getArgs = Util.memoize(() =>
-    Util.tryCatch(() => process.argv,
+    Util.tryCatch(
+      () => process.argv,
       a => a.slice(2),
       () =>
-        Util.tryCatch(() => scriptArgs,
+        Util.tryCatch(
+          () => scriptArgs,
           a => a.slice(1)
         )
     )
   );
   Util.getEnv = async varName =>
-    Util.tryCatch(() => process.env,
+    Util.tryCatch(
+      () => process.env,
       async e => e.varName,
       () => Util.tryCatch(async () => await import('std').then(std => std.getenv(varName)))
     );
@@ -5441,7 +5536,8 @@
     if(trapExceptions) {
       Error.stackTraceLimit = Infinity;
 
-      exec = Util.tryFunction(exec, //async (...args) => { Error.stackTraceLimit=Infinity;  return await exec(...args); },
+      exec = Util.tryFunction(
+        exec, //async (...args) => { Error.stackTraceLimit=Infinity;  return await exec(...args); },
 
         a => a,
         err => {
@@ -5470,7 +5566,8 @@
     const {
       print = (returnValue, fn, ...args) => {
         let stack = Util.getCallerStack();
-        (console.debug || console.log)('RETURN VAL:',
+        (console.debug || console.log)(
+          'RETURN VAL:',
           Util.inspect(returnValue, { colors: false }),
           {
             fn,
@@ -5524,7 +5621,8 @@
     };
 
     delete self.length;
-    Object.setPrototypeOf(self,
+    Object.setPrototypeOf(
+      self,
       Util.extend(Util.consolePrinter.prototype, Util.getMethods(Object.getPrototypeOf(self), 1, 0))
     );
     self.splice(0, self.length, '');
@@ -5574,7 +5672,8 @@
     }
 
     delete self.length;
-    Object.setPrototypeOf(self,
+    Object.setPrototypeOf(
+      self,
       Util.extend(Util.consoleConcat.prototype, Object.getPrototypeOf(self))
     );
     self.push('');
@@ -5582,12 +5681,14 @@
     return self;
   };
 
-  Util.consoleConcat.prototype = Object.assign(Util.consoleConcat.prototype,
+  Util.consoleConcat.prototype = Object.assign(
+    Util.consoleConcat.prototype,
     Util.getMethods(Array.prototype, 1, 0),
     {
       [Symbol.for('nodejs.util.inspect.custom')]() {
         return [this, [...this]];
-      }, [Symbol.iterator]() {
+      },
+      [Symbol.iterator]() {
         return Array.prototype[Symbol.iterator].call(this);
       },
       clear() {
@@ -5673,14 +5774,16 @@
     }
 
     equals(connection) {
-      return ((this.node1.equals(connection.node1) && this.node2.equals(connection.node2)) ||
+      return (
+        (this.node1.equals(connection.node1) && this.node2.equals(connection.node2)) ||
         (this.node2.equals(connection.node1) && this.node1.equals(connection.node2))
       );
     }
   };
 
   /* --- concatenated 'lib/geom/point.js' --- */
-  const SymSpecies = Util.tryCatch(() => Symbol,
+  const SymSpecies = Util.tryCatch(
+    () => Symbol,
     sym => sym.species
   );
 
@@ -5690,7 +5793,8 @@
     if(p.SymSpecies) return p.SymSpecies;
     return p.constructor;
   };
-  const getArgs = args => (console.debug('getArgs', ...args),
+  const getArgs = args => (
+    console.debug('getArgs', ...args),
     typeof args[0] == 'number' ? [{ x: args[0], y: args[1] }] : args
   );
 
@@ -5900,12 +6004,14 @@
 
     //console.debug("toString", {x,y}, {pad});
 
-    return `${left}${(x + '').padStart(pad, ' ')}${unit}${separator}${(y + '').padEnd(pad,
+    return `${left}${(x + '').padStart(pad, ' ')}${unit}${separator}${(y + '').padEnd(
+      pad,
       ' '
     )}${unit}${right}`;
   };
 
-  Util.defineGetterSetter(Point.prototype,
+  Util.defineGetterSetter(
+    Point.prototype,
     Symbol.toStringTag,
     function() {
       return `Point{ ${Point.prototype.toSource.call(this)}`;
@@ -5927,7 +6033,8 @@
     if(typeof this != 'object' || this === null) return '';
     if(asArray) return `[${x},${y}]`;
     if(plainObj) return `{x:${x},y:${y}}`;
-    return `${c(showNew ? 'new ' : '', 1, 31)}${c('Point', 1, 33)}${c('(', 1, 36)}${c(x, 1, 32)}${c(',',
+    return `${c(showNew ? 'new ' : '', 1, 31)}${c('Point', 1, 33)}${c('(', 1, 36)}${c(x, 1, 32)}${c(
+      ',',
       1,
       36
     )}${c(y, 1, 32)}${c(')', 1, 36)}`;
@@ -5959,7 +6066,8 @@
   };
 
   Point.prototype.inside = function(rect) {
-    return (this.x >= rect.x &&
+    return (
+      this.x >= rect.x &&
       this.x < rect.x + rect.width &&
       this.y >= rect.y &&
       this.y < rect.y + rect.height
@@ -6231,7 +6339,8 @@
 
   Line.prototype.matchEndpoints = function(arr) {
     const { a, b } = this;
-    return [...arr.entries()].filter(([i, otherLine]) =>
+    return [...arr.entries()].filter(
+      ([i, otherLine]) =>
         !Line.prototype.equals.call(this, otherLine) &&
         (Point.prototype.equals.call(a, otherLine.a) ||
           Point.prototype.equals.call(b, otherLine.b) ||
@@ -6246,7 +6355,8 @@
     if(l2 === 0) return Point.prototype.distanceSquared.call(p, a);
     let t = ((p.x - a.x) * (b.x - a.x) + (p.y - a.y) * (b.y - a.y)) / l2;
     t = Math.max(0, Math.min(1, t));
-    return Point.prototype.distanceSquared.call(p,
+    return Point.prototype.distanceSquared.call(
+      p,
       new Point(a.x + t * (b.x - a.x), a.y + t * (b.y - a.y))
     );
   };
@@ -6314,7 +6424,8 @@
   Line.prototype.toString = function(opts = {}) {
     const { separator = ', ', brackets = s => `[ ${s} ]`, pad = 6 } = opts;
     const { x1, y1, x2, y2 } = this;
-    return (brackets(Point.toString(this.a || Point(x1, y1), { ...opts, separator, pad })) +
+    return (
+      brackets(Point.toString(this.a || Point(x1, y1), { ...opts, separator, pad })) +
       separator +
       brackets(Point.toString(this.b || Point(x2, y2), { ...opts, separator, pad }))
     );
@@ -6802,7 +6913,8 @@
     })
   );
   const getPoint = Util.memoize(rect =>
-    Util.bindProperties(new Point(0, 0),
+    Util.bindProperties(
+      new Point(0, 0),
       rect,
       ['x', 'y'],
       k => v => v !== undefined ? (rect.k = v) : rect.k
@@ -6988,7 +7100,8 @@
     return ctor(a);
   };
 
-  Rect.prototype.toLines = function(ctor = lines => Array.from(lines, points => new Line(...points))
+  Rect.prototype.toLines = function(
+    ctor = lines => Array.from(lines, points => new Line(...points))
   ) {
     let [a, b, c, d] = Rect.prototype.toPoints.call(this);
     return ctor([
@@ -7014,7 +7127,8 @@
         this.x = align_to.x + xdiff;
         break;
 
-      default: this.x = align_to.x + xdiff / 2;
+      default:
+        this.x = align_to.x + xdiff / 2;
         break;
     }
 
@@ -7027,7 +7141,8 @@
         this.y = align_to.y + ydiff;
         break;
 
-      default: this.y = align_to.y + ydiff / 2;
+      default:
+        this.y = align_to.y + ydiff / 2;
         break;
     }
 
@@ -7244,7 +7359,8 @@
     new Rect(trbl.left, trbl.top, trbl.right - trbl.left, trbl.bottom - trbl.top);
 
   TRBL.prototype.toString = function(unit = 'px') {
-    return ('' +
+    return (
+      '' +
       this.top +
       '' +
       unit +
@@ -7263,7 +7379,8 @@
   };
 
   TRBL.prototype.toSource = function() {
-    return ('{top:' +
+    return (
+      '{top:' +
       this.top +
       ',right:' +
       this.right +
@@ -7496,7 +7613,8 @@
       y1: first.y,
       y2: first.y,
       toString() {
-        return `{x1:${(this.x1 + '').padStart(4, ' ')},x2:${(this.x2 + '').padStart(4, ' ')},y1:${(this.y1 + ''
+        return `{x1:${(this.x1 + '').padStart(4, ' ')},x2:${(this.x2 + '').padStart(4, ' ')},y1:${(
+          this.y1 + ''
         ).padStart(4, ' ')},y2:${(this.y2 + '').padStart(4, ' ')}}`;
       }
     };
@@ -7615,7 +7733,8 @@
   };
 
   PointList.prototype.sort = function(pred) {
-    return Array.prototype.sort.call(this,
+    return Array.prototype.sort.call(
+      this,
       pred || ((a, b) => Point.prototype.valueOf.call(a) - Point.prototype.valueOf.call(b))
     );
   };
@@ -7637,7 +7756,8 @@
 
   PointList.prototype.toPath = function() {
     return Array.prototype.map.call(this, (point, i) => `${i > 0 ? 'L' : 'M'}${point}`).join(' ');
-    return Array.prototype.reduce.call(this,
+    return Array.prototype.reduce.call(
+      this,
       (acc, point, i) => (acc ? acc + ' ' : '') + `${acc ? 'L' : 'M'}${point}`
     );
   };
@@ -7725,7 +7845,8 @@
       return `${c.text('PointList', 1, 31)}${c.text('(', 1, 36)}${
         c.text(this.getLength(), 1, 35) + c.code(1, 36)
       }) [
-        ${this.map(({ x, y }) => Util.inspect({ x, y }, { multiline: false, spacing: ' ' })).join(///*Point.prototype.toSource.call(point, { plainObj: true, colors: true })  ||*/ Util.toSource(point, {colors: true }) || point[sym]() ||
+        ${this.map(({ x, y }) => Util.inspect({ x, y }, { multiline: false, spacing: ' ' })).join(
+          ///*Point.prototype.toSource.call(point, { plainObj: true, colors: true })  ||*/ Util.toSource(point, {colors: true }) || point[sym]() ||
 
           ',\n  '
         )}
@@ -7751,7 +7872,8 @@
   Polyline.prototype = new PointList();
 
   Polyline.prototype.toSVG = function(factory, attrs = ({}, (parent = (null, prec)))) {
-    return factory('polyline',
+    return factory(
+      'polyline',
       { points: PointList.prototype.toString.call(this), ...attrs },
       parent,
       prec
@@ -7776,7 +7898,8 @@
       nvert = this.length;
 
     for(i = (0, (j = nvert - 1)); i < nvert; j = i++) {
-      if(this.i.y > point.y !== this.j.y > point.y &&
+      if(
+        this.i.y > point.y !== this.j.y > point.y &&
         point.x < ((this.j.x - this.i.x) * (point.y - this.i.y)) / (this.j.y - this.i.y) + this.i.x
       ) {
         c = !c;
@@ -7825,7 +7948,7 @@
   };
 
   Util.define(PointList, {
-    get [Symbol.species]() {
+    /* prettier-ignore */ get [Symbol.species]() {
       return PointList;
     }
   });
@@ -7837,7 +7960,8 @@
    *
    * @param [[[x, y], [x, y]], ...] lines
    */
-  LineList.toPolygons = (lines,
+  LineList.toPolygons = (
+    lines,
     createfn = points => Object.setPrototypeOf(points, PointList.prototype)
   ) => {
     const polygons = [];
@@ -7883,7 +8007,8 @@
 
         // check if the polygon is closed (the nextLine start point is one of the current start or end point and the nextLine end point is one of the current start or end point)
 
-        if(polygon.length >= 3 &&
+        if(
+          polygon.length >= 3 &&
           ((currentEndPoint.x === nextLine.x1 &&
             currentEndPoint.y === nextLine.y1 &&
             currentStartPoint.x === nextLine.x2 &&
@@ -8014,7 +8139,8 @@
   };
 
   const MatrixProps = (obj = {}) =>
-    Object.entries(keyIndexes).reduce((acc, [k, i]) => ({
+    Object.entries(keyIndexes).reduce(
+      (acc, [k, i]) => ({
         ...acc,
         [[k]]: {
           get() {
@@ -8086,7 +8212,8 @@
   Matrix.prototype.multiply_self = function(...args) {
     for(let m of args) {
       if(!(m instanceof Matrix)) m = new Matrix(m);
-      Matrix.prototype.init.call(this,
+      Matrix.prototype.init.call(
+        this,
         this[0] * m[0] + this[1] * m[3],
         this[0] * m[1] + this[1] * m[4],
         this[0] * m[2] + this[1] * m[5] + this[2],
@@ -8135,7 +8262,8 @@
   };
 
   Matrix.prototype.determinant = function() {
-    return (this[0] * (this[4] * this[8] - this[5] * this[7]) +
+    return (
+      this[0] * (this[4] * this[8] - this[5] * this[7]) +
       this[1] * (this[5] * this[6] - this[3] * this[8]) +
       this[2] * (this[3] * this[7] - this[4] * this[6])
     );
@@ -8801,7 +8929,9 @@
     reduceRight
   } = Array.prototype;
 
-  Util.inherit(TransformationList.prototype, {
+  Util.inherit(
+    TransformationList.prototype,
+    {
       // concat,
 
       copyWithin,
@@ -8827,7 +8957,8 @@
     {
       [Symbol.iterator]() {
         return Array.prototype[Symbol.iterator];
-      }, [Symbol.isConcatSpreadable]() {
+      },
+      [Symbol.isConcatSpreadable]() {
         return true;
       }
     }

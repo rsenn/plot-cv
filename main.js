@@ -1,11 +1,23 @@
 // prettier-ignore-start
-import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
+import {
+  Transformation,
+  Rotation,
+  Translation,
+  Scaling,
+  MatrixTransformation,
+  TransformationList
+} from './lib/geom/transformation.js';
 import dom from './lib/dom.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
 import { iterator, eventIterator } from './lib/dom/iterator.js';
 import keysim from './lib/dom/keysim.js';
 import geom, { isBBox, BBox, Polygon, Circle, LineList, Arc } from './lib/geom.js';
-import { normalizePath, reverseNormalizedPath, reverseSubPath, reversePath } from './lib/svg/pathReverse.js';
+import {
+  normalizePath,
+  reverseNormalizedPath,
+  reverseSubPath,
+  reversePath
+} from './lib/svg/pathReverse.js';
 import { FixedMedium } from './lib/svg/fixedMedium.js';
 import { TouchListener } from './lib/touchHandler.js';
 import { trkl } from './lib/trkl.js';
@@ -39,19 +51,137 @@ import LogJS from './lib/log.js';
 import serial from './serial.js';
 import { toXML, ImmutablePath, MutablePath, arrayDiff, objectDiff } from './lib/json.js';
 import { Object2Array, XmlObject, XmlAttr, ImmutableXPath, MutableXPath } from './lib/xml.js';
-import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
+import {
+  RGBA,
+  isRGBA,
+  ImmutableRGBA,
+  HSLA,
+  isHSLA,
+  ImmutableHSLA,
+  ColoredText
+} from './lib/color.js';
 //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
-import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
-import components, { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Fence, Zoomable, DisplayList, Ruler, Toggle } from './components.js';
+import React, {
+  h,
+  html,
+  render,
+  Fragment,
+  Component,
+  useState,
+  useLayoutEffect,
+  useRef
+} from './lib/dom/preactComponent.js';
+import components, {
+  Chooser,
+  DynamicLabel,
+  Button,
+  FileList,
+  Panel,
+  SizedAspectRatioBox,
+  TransformedElement,
+  Canvas,
+  ColorWheel,
+  Slider,
+  CrossHair,
+  FloatingPanel,
+  DropDown,
+  Conditional,
+  Fence,
+  Zoomable,
+  DisplayList,
+  Ruler,
+  Toggle
+} from './components.js';
 import { Message } from './message.js';
 
-import { useActive, useClickout, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useRecognizers, useDrag, usePinch, useWheel, useMove, useScroll, useGesture, useHover, useMousePosition, usePanZoom, useToggleButtonGroupState } from './lib/hooks.js';
+import {
+  useActive,
+  useClickout,
+  useDimensions,
+  useDoubleClick,
+  useElement,
+  EventTracker,
+  useEvent,
+  useFocus,
+  useRecognizers,
+  useDrag,
+  usePinch,
+  useWheel,
+  useMove,
+  useScroll,
+  useGesture,
+  useHover,
+  useMousePosition,
+  usePanZoom,
+  useToggleButtonGroupState
+} from './lib/hooks.js';
 
 import { WebSocketClient } from './lib/net/websocket-async.js';
 /* prettier-ignore */ import * as ecmascript from './lib/ecmascript.js';
-import { PipeTo, AsyncRead, AsyncWrite, DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater, WritableStream, ReadFromIterator } from './lib/stream.js?ts=<?TS?>';
-import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
-import { useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, RenderArc } from './lib/eagle/renderUtils.js';
+import {
+  PipeTo,
+  AsyncRead,
+  AsyncWrite,
+  DebugTransformStream,
+  TextEncodeTransformer,
+  TextEncoderStream,
+  TextDecodeTransformer,
+  TextDecoderStream,
+  TransformStreamSink,
+  TransformStreamSource,
+  TransformStreamDefaultController,
+  TransformStream,
+  ArrayWriter,
+  readStream,
+  WriteToRepeater,
+  LogSink,
+  RepeaterSink,
+  StringReader,
+  LineReader,
+  ChunkReader,
+  ByteReader,
+  PipeToRepeater,
+  WritableStream,
+  ReadFromIterator
+} from './lib/stream.js?ts=<?TS?>';
+import {
+  PrimitiveComponents,
+  ElementNameToComponent,
+  ElementToComponent
+} from './lib/eagle/components.js';
+import {
+  useTrkl,
+  RAD2DEG,
+  DEG2RAD,
+  VERTICAL,
+  HORIZONTAL,
+  HORIZONTAL_VERTICAL,
+  DEBUG,
+  log,
+  setDebug,
+  PinSizes,
+  EscapeClassName,
+  UnescapeClassName,
+  LayerToClass,
+  ElementToClass,
+  ClampAngle,
+  AlignmentAngle,
+  MakeRotation,
+  EagleAlignments,
+  Alignment,
+  SVGAlignments,
+  AlignmentAttrs,
+  RotateTransformation,
+  LayerAttributes,
+  InvertY,
+  PolarToCartesian,
+  CartesianToPolar,
+  CalculateArcRadius,
+  LinesToPath,
+  MakeCoordTransformer,
+  useAttributes,
+  RenderArc
+} from './lib/eagle/renderUtils.js';
 import { Wire } from './lib/eagle/components/wire.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
@@ -60,11 +190,46 @@ import { Slot, SlotProvider } from './slots.js';
 import Voronoi from './lib/geom/voronoi.js';
 import GerberParser from './lib/gerber/parser.js';
 import { lazyInitializer } from './lib/lazyInitializer.js';
-import { EagleElementProxy, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, LibraryRenderer, makeEagleElement, makeEagleNode } from './lib/eagle.js';
+import {
+  EagleElementProxy,
+  BoardRenderer,
+  DereferenceError,
+  EagleDocument,
+  EagleElement,
+  EagleNode,
+  EagleNodeList,
+  EagleNodeMap,
+  EagleProject,
+  EagleRef,
+  EagleReference,
+  EagleSVGRenderer,
+  Renderer,
+  SchematicRenderer,
+  LibraryRenderer,
+  makeEagleElement,
+  makeEagleNode
+} from './lib/eagle.js';
 //import PureCache from 'pure-cache';
 import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //const React = {Component, Fragment, create: h, html, render, useLayoutEffect, useRef, useState };
-import commands, { NormalizeResponse, ResponseData, FetchURL, FetchCached, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ClearCache } from './commands.js';
-import github, { GithubListRepositories, GithubRepositories, GithubListContents, ListGithubRepoServer } from './lib/github.js';
+import commands, {
+  NormalizeResponse,
+  ResponseData,
+  FetchURL,
+  FetchCached,
+  ListProjects,
+  GetLayer,
+  AddLayer,
+  BoardToGerber,
+  GerberToGcode,
+  GcodeToPolylines,
+  ClearCache
+} from './commands.js';
+import github, {
+  GithubListRepositories,
+  GithubRepositories,
+  GithubListContents,
+  ListGithubRepoServer
+} from './lib/github.js';
 // prettier-ignore-end
 
 /* prettier-ignore */ const { Align, AlignToString, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line,Matrix,  Point, PointList, Polyline, Rect, Select, Size, SVG, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
@@ -200,13 +365,15 @@ const svgFactory = Util.memoize((parent, delegate) => {
     {
       viewBox: rect.toString(),
       style: `position: absolute; left: 0; top: 0; z-index: ${zIndex}; stroke: #000, fill: none;`
-    }, [
+    },
+    [
       ['defs'],
       [
         'g',
         {
           transform: ` scale(1,-1) translate(0,1.27) translate(0,${-rect.y2}) `
-        }, [['rect', { ...rect.toObject(), fill: 'hsla(0,0%,50%,0.3333)' }]]
+        },
+        [['rect', { ...rect.toObject(), fill: 'hsla(0,0%,50%,0.3333)' }]]
       ]
     ]
   ];
@@ -395,7 +562,8 @@ async function LoadImage(filename) {
 const RenderComponent = (() => {
   let id = 1;
   return function RenderComponent(component) {
-    let element = Element.create('div',
+    let element = Element.create(
+      'div',
       { id: `react-${id++}`, style: { display: 'inline-block' } },
       'body'
     );
@@ -452,7 +620,8 @@ let svgGroupFactory = Util.memoize((props = {}) =>
 );
 
 const maxZIndex = () =>
-  Math.max(...Element.findAll('*')
+  Math.max(
+    ...Element.findAll('*')
       .map(e => Element.getCSS(e, 'z-index'))
       .filter(z => !/(auto)/.test(z))
       .map(z => +z)
@@ -601,7 +770,8 @@ const DrawBinaryTree = (tree, draw = DrawSVG()) => {
     let fx = j => j * 20 - ((nodes.length - 1) * 20) / 2;
     nodes.map((node, j) => (node.x = fx(j)));
   });
-  a.flat().forEach(item => (DrawNode(item.x, item.y, item.node), item.parent && DrawEdge(item, item.parent))
+  a.flat().forEach(
+    item => (DrawNode(item.x, item.y, item.node), item.parent && DrawEdge(item, item.parent))
   );
 
   function DrawNode(x, y, node) {
@@ -613,7 +783,9 @@ const DrawBinaryTree = (tree, draw = DrawSVG()) => {
       fill: '#fff',
       'stroke-width': 0.4
     });
-    draw('text', {
+    draw(
+      'text',
+      {
         x: x + 0.2,
         y: y + 0.5,
         ...AlignmentAttrs({ x: 0, y: 0 }),
@@ -638,7 +810,8 @@ const DrawBinaryTree = (tree, draw = DrawSVG()) => {
     });
   }
 };
-DrawBinaryTree.bt = new BinaryTree(new BinaryTree.Node(
+DrawBinaryTree.bt = new BinaryTree(
+  new BinaryTree.Node(
     'A',
     new BinaryTree.Node('B', new BinaryTree.Node('D')),
     new BinaryTree.Node(
@@ -648,12 +821,14 @@ DrawBinaryTree.bt = new BinaryTree(new BinaryTree.Node(
     )
   )
 );
-DrawBinaryTree.bt = new BinaryTree(new BinaryTree.Node(
+DrawBinaryTree.bt = new BinaryTree(
+  new BinaryTree.Node(
     'V',
     new BinaryTree.Node('H', new BinaryTree.Node(2), new BinaryTree.Node(1)),
     new BinaryTree.Node(
       'H',
-      new BinaryTree.Node('H',
+      new BinaryTree.Node(
+        'H',
         new BinaryTree.Node('V', new BinaryTree.Node(6), new BinaryTree.Node(7)),
         new BinaryTree.Node('V', new BinaryTree.Node(4), new BinaryTree.Node(5)),
         new BinaryTree.Node('V')
@@ -664,7 +839,8 @@ DrawBinaryTree.bt = new BinaryTree(new BinaryTree.Node(
 );
 
 function GetPaths(query, parent = project.svgElement) {
-  return Element.findAll(query, parent).reduce((a, e) => a.concat(e.tagName != 'path' ? Element.findAll('path', e) : [e]),
+  return Element.findAll(query, parent).reduce(
+    (a, e) => a.concat(e.tagName != 'path' ? Element.findAll('path', e) : [e]),
     []
   );
 }
@@ -681,7 +857,8 @@ function PathToPolylines(path, step = 0.01) {
   return polys
     .filter(poly => poly.length > 1)
     .map(poly => {
-      let transforms = new TransformationList(Element.walkUp(path, (p, d, set, stop) =>
+      let transforms = new TransformationList(
+        Element.walkUp(path, (p, d, set, stop) =>
           p.parentElement.tagName == 'svg'
             ? stop()
             : p.hasAttribute('transform') && set(p.getAttribute('transform'))
@@ -695,7 +872,8 @@ function PathToPolylines(path, step = 0.01) {
 function PathToPolyline(path, step = 0.01) {
   let poly = [...SVG.pathIterator(path, { step })];
 
-  let transforms = new TransformationList(Element.walkUp(path, (p, d, set, stop) =>
+  let transforms = new TransformationList(
+    Element.walkUp(path, (p, d, set, stop) =>
       p.parentElement.tagName == 'svg'
         ? stop()
         : p.hasAttribute('transform') && set(p.getAttribute('transform'))
@@ -714,7 +892,8 @@ function PathsToPolylines(paths, step = 0.01) {
 function OutsetPath(path, offset, miterLimit = 2, arcTolerance = 0.01) {
   let co = new ClipperLib.ClipperOffset(miterLimit, arcTolerance);
   let output = (window.output = new ClipperLib.Paths());
-  co.AddPath(path.closed ? path.slice(0, -1) : path,
+  co.AddPath(
+    path.closed ? path.slice(0, -1) : path,
     ClipperLib.JoinType[path.closed ? 'jtRound' : 'jtSquare'],
     ClipperLib.EndType[
       path.closed ? 'etClosedLine' /*'etClosedPolygon' */ : 'etOpenSquare' || 'etOpenRound'
@@ -760,7 +939,8 @@ function ClipPath(path, clip, mode = ClipperLib.ClipType.ctUnion) {
   let cl = new ClipperLib.Clipper();
   let output = new ClipperLib.Paths();
   const add = (p, clip = false) =>
-    (Util.isArray(p[0]) ? cl.AddPaths : cl.AddPath).call(cl,
+    (Util.isArray(p[0]) ? cl.AddPaths : cl.AddPath).call(
+      cl,
       p,
       clip ? ClipperLib.PolyType.ptClip : ClipperLib.PolyType.ptSubject,
       true
@@ -780,8 +960,9 @@ function saveItemStates(itemList, get = item => Util.is.on(item.visible())) {
   return itemList.map(item => [item, get(item)]);
 }
 
-function restoreItemStates(itemStates,
-  set = (item, value) => item.visible(value ? 'yes' : 'no')
+function restoreItemStates(
+  itemStates,
+  /* prettier-ignore */ set = (item, value) => item.visible(value ? 'yes' : 'no')
 ) {
   for(let [item, state] of itemStates) set(item, state);
 }
@@ -873,7 +1054,8 @@ function* PackageNames(doc = project.doc) {
   for(let [element, name, matches, w, h, size, orientation] of names) {
     let tokens = matches.map(({ index, ...match }) => match[0] + '');
     let [index] = matches
-      .reduce(({ s, v, indexes }, match, i) => {
+      .reduce(
+        ({ s, v, indexes }, match, i) => {
           if(Number.isFinite(s) && indexes.length) return { s, v, indexes };
           if(match[0] == '/' && !Number.isFinite(s)) s = i;
           if(match[0] == 'V') v = i;
@@ -950,10 +1132,12 @@ async function LoadDocument(project, parentElem) {
       let names = [...PackageNames(doc)];
       console.log('Package names', names);
       let changes = names.filter(a => a[0] != a[1]);
-      console.log('Commands:\n' +
+      console.log(
+        'Commands:\n' +
           changes.map(([oldName, newName]) => `RENAME ${oldName} ${newName};`).join('\n')
       );
-      console.log('Expressions:\n' +
+      console.log(
+        'Expressions:\n' +
           changes.map(([oldName, newName]) => `s|="${oldName}"|="${newName}"|g;`).join('\n')
       );
       return names;
@@ -980,7 +1164,8 @@ async function LoadDocument(project, parentElem) {
     let usedLayers = [...doc.layers.list].filter(layer => layer.elements.size > 0);
 
     Timer.once(250).then(() =>
-      layerList(usedLayers.map(layer => ({
+      layerList(
+        usedLayers.map(layer => ({
           i: layer.number,
           name: layer.name,
           color: layer.getColor(),
@@ -1026,13 +1211,16 @@ async function LoadDocument(project, parentElem) {
     console.debug('aspectRatio:', aspectRatio);
     Component =
       // h(Zoomable, { /*className: 'zoomable',*/ style: size.toCSS('mm') }, [Component]) ||
-      h(Fence, {
+      h(
+        Fence,
+        {
           style: {},
           sizeListener,
           aspectListener,
           listener: transform,
           'data-name': project.name
-        }, [Component]
+        },
+        [Component]
       );
   }
 
@@ -1234,7 +1422,8 @@ const GenerateVoronoi = () => {
     ]) /* ...points2.map(p => [ 'circle', { cx: p.x, cy: p.y, r: 0.254 * 2, fill: 'none', stroke: 'rgba(0,255,255,0.75)', 'stroke-width': 0.1 } ])*/
   ];
   const polylines = [
-    ...cells.reduce((acc, { site, halfedges }) => [
+    ...cells.reduce(
+      (acc, { site, halfedges }) => [
         ...acc,
         [
           'polyline',
@@ -1277,10 +1466,12 @@ function ElementChildren(layer = 'tPlace', rfn = ent => new Map(ent)) {
 }
 
 function ElementGeometries(layer = 'tPlace', rfn = ent => new Map(ent)) {
-  return rfn(ElementChildren(layer, ent => ent)
+  return rfn(
+    ElementChildren(layer, ent => ent)
       .map(([name, children]) => [
         name,
-        new LineList(children.map(([i, e]) => {
+        new LineList(
+          children.map(([i, e]) => {
             let line = e.geometry;
             if(e.curve !== undefined) line.curve = e.curve;
             line.element = e;
@@ -1321,7 +1512,9 @@ const MakeFitAction = index => async event => {
   else align |= Align.MIDDLE;
   newSize.align(clientArea, align);
   matrix = Matrix.getAffineTransform(oldSize.toPoints(), newSize.toPoints());
-  console.debug(`FitAction(${index})`, { oldSize, newSize, clientArea },
+  console.debug(
+    `FitAction(${index})`,
+    { oldSize, newSize, clientArea },
     AlignToString(align),
     matrix.decompose()
   );
@@ -1369,7 +1562,8 @@ function HandleMessage(msg) {
       let { frame, width, height, contours } = body;
       console.log('HandleMessage', { contours });
 
-      let lists = (typeof contours == 'string' ? contours.split(/\s*\|\s*/g) : contours).map(pointStr => new Polyline(pointStr)
+      let lists = (typeof contours == 'string' ? contours.split(/\s*\|\s*/g) : contours).map(
+        pointStr => new Polyline(pointStr)
       );
 
       window.lists = lists;
@@ -1422,12 +1616,17 @@ const AuthorizationDialog = ({ onAuth, ...props }) => {
   const [username, setUsername] = useState(props.username || '');
   const [password, setPassword] = useState(props.password || '');
 
-  return h(Portal,
+  return h(
+    Portal,
     { into: '#portal' },
-    h('div', { class: 'auth-portal' },
+    h(
+      'div',
+      { class: 'auth-portal' },
       h('div', { class: 'auth-dialog' }, [
         h('h1', {}, 'Authorization'),
-        h('form', { action: '', method: '', onSubmit: () => false },
+        h(
+          'form',
+          { action: '', method: '', onSubmit: () => false },
           h('div', { class: 'auth-form' }, [
             h('input', {
               name: 'username',
@@ -1549,13 +1748,14 @@ const AppMain = (window.onload = async () => {
     });
   }
   const importedNames = Object.keys(imports);
-  console.debug('Dupes:',
+  console.debug(
+    'Dupes:',
     Util.getMemberNames(window).filter(m => importedNames.indexOf(m) != -1)
   );
 
   //prettier-ignore
   Util.weakAssign(window, { rpc });
-  Util.weakAssign(window, imports );
+  Util.weakAssign(window, imports);
   Util.weakAssign(window.Element, Util.getMethods(dom.Element));
   Util.weakAssign(window, dom, geom, imports, localFunctions);
   Util.weakAssign(window, {
@@ -1593,7 +1793,8 @@ const AppMain = (window.onload = async () => {
   window.keystroke =
     target =>
     (key, modifiers = 0) =>
-      keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(new keysim.Keystroke(modifiers, key),
+      keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(
+        new keysim.Keystroke(modifiers, key),
         target
       );
 
@@ -1625,7 +1826,8 @@ const AppMain = (window.onload = async () => {
   console.log('testComponent', c);
   window.testComponent = c;
 
-  const UpdateProjectList = async (opts = config.listURL() ? { url: config.listURL(), ...credentials } : {}
+  const UpdateProjectList = async (
+    opts = config.listURL() ? { url: config.listURL(), ...credentials } : {}
   ) => {
     let list = [];
     //console.log('opts:', opts);
@@ -1644,7 +1846,8 @@ const AppMain = (window.onload = async () => {
         file.name = name;
         file.i = i;
         trkl.bind(file, { data });
-        LogJS.info(`Got file '${
+        LogJS.info(
+          `Got file '${
             name.replace(/.*:\/\//g, '').replace(/raw.githubusercontent.com/, 'github.com') ||
             name.replace(/.*\//g, '')
           }'`
@@ -1656,7 +1859,8 @@ const AppMain = (window.onload = async () => {
         return this.name;
       };
       if(files) {
-        list = list.concat(files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i))
+        list = list.concat(
+          files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i))
         );
         let svgs = list.reduce((acc, file) => {
           if(/\.lbr$/i.test(file.name)) return acc;
@@ -1766,7 +1970,8 @@ const AppMain = (window.onload = async () => {
         yield time;
       }
     });
-    return h('div',
+    return h(
+      'div',
       {
         className: 'vcenter fixed grow no-select',
         style: {
@@ -1777,10 +1982,12 @@ const AppMain = (window.onload = async () => {
           width: '200px',
           padding: '0 10px 0 0'
         }
-      }, [result && new Date(result.value).toLocaleTimeString('de-CH')]
+      },
+      [result && new Date(result.value).toLocaleTimeString('de-CH')]
     );
   };
-  LogJS.addAppender(class extends LogJS.BaseAppender {
+  LogJS.addAppender(
+    class extends LogJS.BaseAppender {
       log(type, time, msg) {
         let d = new Date(time);
         if(typeof window.pushlog == 'function')
@@ -1811,11 +2018,14 @@ const AppMain = (window.onload = async () => {
     if(result) {
       lines.push(result.value);
     }
-    return h('table',
+    return h(
+      'table',
       { className: 'logger', ref },
       lines.slice(-100, lines.length).map(([type, d, t, m], i) =>
         h('tr', {}, [
-          h('td', { className: 'log sign' },
+          h(
+            'td',
+            { className: 'log sign' },
             h('img', {
               className: 'log sign',
               src: `/static/${type.toLowerCase() || 'warn'}.svg`,
@@ -1835,7 +2045,8 @@ const AppMain = (window.onload = async () => {
     let lines = [];
     dump.subscribe(value => setValues(value));
     for(let [key, value] of Object.entries(values)) lines.push([key, value]);
-    return h('table',
+    return h(
+      'table',
       { border: '0', cellpadding: 3, cellspacing: 0, className: 'dumper' },
       lines.map(([k, v], i) =>
         h('tr', { className: 'watch' }, [
@@ -1860,14 +2071,16 @@ const AppMain = (window.onload = async () => {
         setInputText(target.value);
       }
     };
-    return h('input',
+    return h(
+      'input',
       {
         type: 'text',
         className: 'commander',
         value: inputText,
         onKeyDown: handler,
         autofocus: true
-      }, []
+      },
+      []
     );
   };
 
@@ -1892,7 +2105,8 @@ const AppMain = (window.onload = async () => {
       }
     }, 200);
     // console.log(`Layer #${i} ${name} isVisible=${isVisible}`);
-    return h('div',
+    return h(
+      'div',
       {
         className: classNames(className, !isVisible && 'gray'),
         id: `layer-${i}`,
@@ -1948,8 +2162,11 @@ const AppMain = (window.onload = async () => {
           setTo = null;
         } /*,
         onMouseDown*/
-      }, [
-        h('span', {
+      },
+      [
+        h(
+          'span',
+          {
             className: classNames(className, 'number'),
             style: {
               background: color || (Util.isObject(element) && element.color)
@@ -1958,7 +2175,9 @@ const AppMain = (window.onload = async () => {
           },
           `${i}`
         ),
-        h('span', {
+        h(
+          'span',
+          {
             className: classNames(className, 'name', !isVisible && 'gray', solo && 'bold'),
             ...props
           },
@@ -2015,7 +2234,8 @@ const AppMain = (window.onload = async () => {
 
   let sortOrder = (window.sortOrder = trkl(false));
 
-  React.render(h(SlotProvider, {}, [
+  React.render(
+    h(SlotProvider, {}, [
       h(Panel, { className: classNames('buttons', 'no-select'), tag: 'header' }, [
         h(Button, {
           image: 'static/svg/browse.svg',
@@ -2054,10 +2274,13 @@ const AppMain = (window.onload = async () => {
             toggle: true,
             image: 'static/svg/grid.svg'
           }),
-          h(DropDown, {
+          h(
+            DropDown,
+            {
               isOpen: layersDropDown.subscribe(open => console.log('layers dropdown', { open }))
               // into: '#portal'
-            }, [
+            },
+            [
               props =>
                 h(Button, {
                   ...props,
@@ -2066,13 +2289,16 @@ const AppMain = (window.onload = async () => {
                   image: 'static/svg/layers.svg'
                 }),
               props =>
-                h(Chooser, {
+                h(
+                  Chooser,
+                  {
                     ...props,
                     className: 'layers',
                     itemClass: 'layer',
                     itemComponent: Layer,
                     items: layerList
-                  }, []
+                  },
+                  []
                 )
             ]
           ),
@@ -2105,7 +2331,8 @@ const AppMain = (window.onload = async () => {
                   console.debug('BoardToGerber side =', side, ' file =', gerber.file);
                 }
               }
-              const sides = /*Object.fromEntries*/ ['back', 'front', 'drill', 'outline'].map(side => [side, project.gerber[side].file]
+              const sides = /*Object.fromEntries*/ ['back', 'front', 'drill', 'outline'].map(
+                side => [side, project.gerber[side].file]
               );
               console.debug('  sides = ', sides);
               console.debug('  project = ', project);
@@ -2159,7 +2386,8 @@ const AppMain = (window.onload = async () => {
                           name: makeLayerName('processed', side),
                           'data-filename': processed,
                           create: (project, props = {}) => {
-                            let g = SVG.create('g',
+                            let g = SVG.create(
+                              'g',
                               { innerHTML: gc.svg, ...props },
                               project.svgElement
                             );
@@ -2197,7 +2425,8 @@ const AppMain = (window.onload = async () => {
                       }
                     }
 
-                    console.debug('GerberToGcode side =',
+                    console.debug(
+                      'GerberToGcode side =',
                       side,
                       ' gc =',
                       gc.file,
@@ -2213,7 +2442,8 @@ const AppMain = (window.onload = async () => {
 
               function makeLayerName(name, side) {
                 const prefix = side == 'front' ? 't-' : side == 'back' ? 'b-' : '';
-                return Util.camelize(prefix + path.basename(name, /\.[^.]+$/).replace(new RegExp(`_${side}`), '')
+                return Util.camelize(
+                  prefix + path.basename(name, /\.[^.]+$/).replace(new RegExp(`_${side}`), '')
                 );
               }
             }, 100),
@@ -2334,7 +2564,9 @@ const AppMain = (window.onload = async () => {
         }) /*])*/
       ]),
       h(Slot, { name: 'layers' }),
-      h(Conditional, { signal: wantAuthorization },
+      h(
+        Conditional,
+        { signal: wantAuthorization },
         h(AuthorizationDialog, { onAuth: config.credentials })
       ),
       h(Ruler, {
@@ -2389,7 +2621,8 @@ const AppMain = (window.onload = async () => {
         e = e.parentElement;
       }
     }
-    let zIndex = Util.find(Util.map(WalkUp(event.target), e => e.style.getPropertyValue('z-index')),
+    let zIndex = Util.find(
+      Util.map(WalkUp(event.target), e => e.style.getPropertyValue('z-index')),
       z => /^[0-9]/.test(z)
     );
     if(zIndex > 0) Util.clear(event.elements);
@@ -2399,7 +2632,8 @@ const AppMain = (window.onload = async () => {
         .forEach(p => Util.remove(event.elements, p));
     Util.remove(event.elements, document.documentElement);
 
-    event.layers = new Map(event.elements.map(e => [
+    event.layers = new Map(
+      event.elements.map(e => [
         e,
         Element.walkUp(e, e => {
           if(e.hasAttribute('data-layer')) throw e.getAttribute('data-layer');
@@ -2412,12 +2646,15 @@ const AppMain = (window.onload = async () => {
       let l = FindLayer(layer);
       if(l) event.colors.set(e, l.color.setOpacity(0.8) || '#000');
     }
-    event.classes = new Map(event.elements.map(e => [
+    event.classes = new Map(
+      event.elements.map(e => [
         e,
-        Util.ifThenElse(v => v,
+        Util.ifThenElse(
+          v => v,
           l => l.map(e => e.classList.value),
           () => ''
-        )(Element.walkUp(
+        )(
+          Element.walkUp(
             e,
             (e, depth) => !e.classList.value.startsWith('aspect') && e.classList.value
           )
@@ -2442,7 +2679,8 @@ const AppMain = (window.onload = async () => {
 
     if(prevEvent && group) {
       let u = Util.union(prevEvent.elements, event.elements, (a, b) => a.isSameNode(b));
-      let [remove, add] = Util.difference(prevEvent.elements,
+      let [remove, add] = Util.difference(
+        prevEvent.elements,
         event.elements,
         (a, b) => a.findIndex(Node.prototype.isSameNode, b) != -1
       );
@@ -2450,7 +2688,8 @@ const AppMain = (window.onload = async () => {
       //  console.log('difference:', [remove,add], 'union:', u);
       //  console.log('add:', add);
 
-      const bboxes = new Map(add.map(e => [e, new Rect(e.getBBox ? e.getBBox() : e.getBoundingClientRect())])
+      const bboxes = new Map(
+        add.map(e => [e, new Rect(e.getBBox ? e.getBBox() : e.getBoundingClientRect())])
       );
 
       for(let [e, rect] of bboxes) {
@@ -2468,10 +2707,14 @@ const AppMain = (window.onload = async () => {
         };
         rects.set(e, [
           // SVG.create('rect', { ...props, stroke: '#000', 'stroke-width': 0.127 * 2 }, group),
-          SVG.create('rect', { ...props, 'stroke-dasharray': '0.508 0.508', stroke: '#000' },
+          SVG.create(
+            'rect',
+            { ...props, 'stroke-dasharray': '0.508 0.508', stroke: '#000' },
             group
           ),
-          SVG.create('rect', {
+          SVG.create(
+            'rect',
+            {
               ...props,
               'stroke-dasharray': '0.508 0.508',
               'stroke-dashoffset': 0.508,
@@ -2570,7 +2813,8 @@ const AppMain = (window.onload = async () => {
           })
         );
 
-        window.move = move = Element.moveRelative(box,
+        window.move = move = Element.moveRelative(
+          box,
           null,
           id == 'console' ? ['right', 'bottom'] : ['left', 'top'],
           (pos, last, first) => {

@@ -1,7 +1,16 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
-import { estree, ESNode, Literal, TemplateLiteral, CallExpression, ImportDeclaration, Identifier, ObjectPattern } from './lib/ecmascript/estree.js';
+import {
+  estree,
+  ESNode,
+  Literal,
+  TemplateLiteral,
+  CallExpression,
+  ImportDeclaration,
+  Identifier,
+  ObjectPattern
+} from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import { Path } from './lib/json.js';
@@ -241,7 +250,8 @@ async function main(...args) {
 
       parser.addCommentsToNodes(ast);
 
-      let flat = deep.flatten(ast,
+      let flat = deep.flatten(
+        ast,
         new Map(),
         node => node instanceof ESNode,
         (path, value) => {
@@ -257,7 +267,8 @@ async function main(...args) {
         node2path.set(node, path);
         nodeKeys.push(path);
       }
-      let commentMap = new Map([...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
+      let commentMap = new Map(
+        [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
           pos * 10 - 1,
           { comment, pos, len, node: posMap.keyOf(node) }
         ]),
@@ -267,7 +278,8 @@ async function main(...args) {
       console.log('commentMap:', commentMap);
 
       const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral);
-      const taggedTemplates = templates.filter(([path, node]) => path[path.length - 1] == 'arguments'
+      const taggedTemplates = templates.filter(
+        ([path, node]) => path[path.length - 1] == 'arguments'
       );
       const taggedCalls = taggedTemplates.map(([path, node]) => [
         path.up(),
@@ -275,7 +287,8 @@ async function main(...args) {
       ]);
 
       console.log('taggedCalls:', taggedCalls);
-      console.log('transformTagged:',
+      console.log(
+        'transformTagged:',
         taggedCalls.map(([path, node]) => transformTagged(node))
       );
 

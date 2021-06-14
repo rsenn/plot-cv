@@ -1,20 +1,43 @@
 import PortableSpawn from './lib/spawn.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
-import * as deep from 'deep';
+import * as deep from './lib/deep.js';
 import { Console } from 'console';
 import REPL from './repl.js';
-import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, VarDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter, isNode, SourceDependencies, GetTypeNode, GetFields, PathRemoveLoc, PrintAst } from './clang-ast.js';
+import {
+  SIZEOF_POINTER,
+  Node,
+  Type,
+  RecordDecl,
+  EnumDecl,
+  TypedefDecl,
+  VarDecl,
+  FunctionDecl,
+  Location,
+  TypeFactory,
+  SpawnCompiler,
+  AstDump,
+  NodeType,
+  NodeName,
+  GetLoc,
+  GetType,
+  GetTypeStr,
+  NodePrinter,
+  isNode,
+  SourceDependencies,
+  GetTypeNode,
+  GetFields,
+  PathRemoveLoc,
+  PrintAst
+} from './clang-ast.js';
 import Tree from './lib/tree.js';
-import { Pointer } from 'pointer';
+import { Pointer } from './lib/pointer.js';
 import * as Terminal from './terminal.js';
 import * as ECMAScript from './lib/ecmascript.js';
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import { lazyInitializer } from './lib/lazyInitializer.js';
 import fs from 'fs';
-import { extendArray } from 'util';
-import { Predicate } from 'predicate';
-
+import { extendArray, toString, toArrayBuffer } from './lib/misc.js';
 extendArray(Array.prototype);
 
 let params;
@@ -66,26 +89,27 @@ Util.define(Array.prototype, {
   at(index) {
     return this[Util.mod(index, this.length)];
   },
-  get first() {
+  /* prettier-ignore */ get first() {
     return this[this.length-1];
   },
-  get head() {
+  /* prettier-ignore */ get head() {
     return this[this.length-1];
   },
-  get tail() {
+  /* prettier-ignore */ get tail() {
     return this[this.length-1];
   },
-  get last() {
+  /* prettier-ignore */ get last() {
     return this[this.length-1];
   }
 });
 
 async function ImportModule(modulePath, ...args) {
   let done = false;
-  let moduleName = path.basename(modulePath, /\.[^.]*$/);
+  let moduleName = path.basename(modulePath, '.js');
   return await import(modulePath).then(module => {
     done = true;
-    module = Object.create(null,
+    module = Object.create(
+      null,
       Util.getMemberNames(module, Infinity, 0).reduce(
         (acc, item) => ({
           ...acc,
@@ -109,7 +133,7 @@ async function ImportModule(modulePath, ...args) {
 
 async function CommandLine() {
   let log = console.reallog;
-  let outputLog = fs.fopen('output.log', 'w+');
+  let outputLog = fs.openSync('output.log', 'w+');
 
   console.log('outputLog', outputLog);
 
@@ -130,7 +154,8 @@ async function CommandLine() {
     }
   };
   repl.show = value => {
-    if((Util.isArray(value) || value instanceof Array) &&
+    if(
+      (Util.isArray(value) || value instanceof Array) &&
       Util.isObject(value.first) &&
       value.first.kind
     )
@@ -138,7 +163,7 @@ async function CommandLine() {
     else if(typeof value == 'string') console.log(value);
     else console.log(inspect(value, { ...console.options, hideKeys: ['loc', 'range'] }));
   };
-  let debugLog = fs.fopen('debug.log', 'a');
+  let debugLog = fs.openSync('debug.log', 'a');
   repl.debugLog = debugLog;
 
   globalThis.printNode = arg => {
@@ -153,14 +178,15 @@ async function CommandLine() {
         s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
       else s += arg;
     }
-    debugLog.puts(s + '\n');
-    debugLog.flush();
+    fs.writeSync(debugLog, s + '\n');
+    if(debugLog.flush) debugLog.flush();
   };
 
   repl.cleanup = () => {
     Terminal.mousetrackingDisable();
     let hist = repl.history_get().filter((item, i, a) => a.lastIndexOf(item) == i);
-    fs.writeFileSync(cmdhist,
+    fs.writeFileSync(
+      cmdhist,
       hist
         .filter(entry => (entry + '').trim() != '')
         .map(entry => entry.replace(/\n/g, '\\n') + '\n')
@@ -243,7 +269,8 @@ function Structs(nodes) {
       //deep.find(node, n => typeof n.line == 'number'),
       new Location(GetLoc(node)),
       ((node.tagUsed ? node.tagUsed + ' ' : '') + (node.name ?? '')).trim(),
-      new Map(node.inner.map((field, i) =>
+      new Map(
+        node.inner.map((field, i) =>
           /Attr/.test(field.kind)
             ? [Symbol(field.kind), field.id]
             : [field.name || i, (field.type && TypeFactory(field.type)) || field.kind]
@@ -265,9 +292,11 @@ function Table(list, pred = (n, l) => true /*/\.c:/.test(l)*/) {
       .map((s, col) => (s + '')[`pad${col ? 'End' : 'Start'}`](colSizes[col] ?? 30, pad ?? ' '))
       .join(sep ?? '│ ')
       .trimEnd();
-  return (outputRow(colNames) +
+  return (
+    outputRow(colNames) +
     '\n' +
-    outputRow(colNames.map(n => ''),
+    outputRow(
+      colNames.map(n => ''),
       '─',
       '┼─'
     ) +
@@ -321,7 +350,7 @@ function Terminate(exitCode) {
 }
 
 function LoadHistory(filename) {
-  let contents = std.loadFile(filename);
+  let contents = fs.readFileSync(filename, 'utf-8');
   let data;
 
   const parse = () => {
@@ -335,13 +364,12 @@ function LoadHistory(filename) {
     if(data) return data;
   };
 
-  return (parse() ?? [])
-    .filter(entry => (entry + '').trim() != '')
-    .map(entry => entry.replace(/\\n/g, '\n'));
+  return (parse() ?? []).filter(entry => (entry + '').trim() != '');
+  //.map(entry => entry.replace(/\\n/g, '\n'))
 }
 
 function ReadJSON(filename) {
-  let data = std.loadFile(filename);
+  let data = fs.readFileSync(filename, 'utf-8');
 
   if(data) console.log(`ReadJSON('${filename}') ${data.length} bytes read`);
   return data ? JSON.parse(data) : null;
@@ -368,11 +396,20 @@ function ReadBJSON(filename) {
 }
 
 function WriteFile(name, data, verbose = true) {
+  if(Util.isGenerator(data)) {
+    let fd = fs.openSync(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, 0x1a4);
+    let r = 0;
+    for(let item of data) {
+      r += fs.writeSync(fd, toArrayBuffer(item + ''));
+    }
+    fs.closeSync(fd);
+    let stat = fs.statSync(name);
+    return stat?.size;
+  }
   if(Util.isIterator(data)) data = [...data];
   if(Util.isArray(data)) data = data.join('\n');
 
   if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
-  console.log(`fs`, fs);
   let ret = fs.writeFileSync(name, data);
 
   if(verbose) console.log(`Wrote ${name}: ${ret} bytes`);
@@ -590,7 +627,8 @@ function* GenerateStructClass(decl, ffiPrefix = '') {
   yield `  toString() {\n    const { ${fields.join(', ')} } = this;\n    return \`${name} {${[
     ...members
   ]
-    .map(([field, member]) =>
+    .map(
+      ([field, member]) =>
         '\\n\\t.' +
         field +
         ' = ' +
@@ -621,7 +659,8 @@ function GenerateGetSet(name, offset, type, ffiPrefix) {
   }
   return [
     ...a,
-    `set ${name}(value) { if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = ${ffiPrefix}toPointer(value); new ${ctor}(this, ${offset})[0] = ${ByteLength2Value(size,
+    `set ${name}(value) { if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = ${ffiPrefix}toPointer(value); new ${ctor}(this, ${offset})[0] = ${ByteLength2Value(
+      size,
       signed,
       floating
     )}; }`,
@@ -636,7 +675,8 @@ function ByteLength2TypedArray(byteLength, signed, floating) {
         return 'Float32Array';
       case 8:
         return 'Float64Array';
-      default: throw new Error(`Floating point, but ${byteLength} size`);
+      default:
+        throw new Error(`Floating point, but ${byteLength} size`);
     }
   }
   switch (byteLength) {
@@ -648,7 +688,8 @@ function ByteLength2TypedArray(byteLength, signed, floating) {
       return signed ? 'Int32Array' : 'Uint32Array';
     case 8:
       return signed ? 'BigInt64Array' : 'BigUint64Array';
-    default: return signed ? 'Int8Array' : 'Uint8Array';
+    default:
+      return signed ? 'Int8Array' : 'Uint8Array';
   }
 }
 
@@ -670,12 +711,51 @@ export class FFI_Function {
     const { prefix, name, returnType, parameters } = this;
     fp ??= (name, lib) => `${prefix}dlsym(${lib ?? 'RTLD_DEFAULT'}, '${name}')`;
     let code = `'${name}', ${fp(name, lib)}, null, '${returnType}'`;
-    for(let [name, type] of parameters) {
-      console.log('name:', name, 'type:', type);
+    console.log('function', name, 'returnType:', returnType);
+    let paramIndex = 0;
+    for(let [paramName, type] of parameters) {
+      ++paramIndex;
+      console.log(
+        `param #${paramIndex}`,
+        ...(paramName ? ['name:', paramName] : []),
+        'type:',
+        type
+      );
       code += ', ';
       code += `'${type}'`;
     }
     return `${prefix}define(${code});`;
+  }
+
+  generateDoc() {
+    const { prefix, name, returnType, parameters } = this;
+    const lines = [];
+    const columns = [10, 16];
+    const push = (...args) =>
+      lines.push(
+        [...args]
+          .map(field => (typeof field != 'string' ? '' : field))
+          .map((field, col) => field.padEnd(columns[col] ?? 0))
+          .join('')
+      );
+    push('/**');
+
+    push(`@function`, `${name}`);
+    push();
+
+    let js = type => {
+      let typeObj = Type.declarations.get(type);
+      return typeObj ? typeObj.toJS() : type;
+    };
+
+    for(let [paramName, type] of parameters) {
+      //console.log(console.config({ breakLength: Infinity }), { paramName, type });
+
+      push(`@param`, `{${js(type)}}`, paramName);
+    }
+    push();
+    push(`@return`, `{${js(returnType)}}`);
+    return lines.join('\n * ') + '\n */\n';
   }
 
   generateCall() {
@@ -801,7 +881,8 @@ function ParseECMAScript(file, debug = false) {
   let data = fs.readFileSync(file, 'utf-8');
   let ast, error;
   let parser;
-  globalThis.parser = parser = new ECMAScriptParser(data?.toString ? data.toString() : data,
+  globalThis.parser = parser = new ECMAScriptParser(
+    data?.toString ? data.toString() : data,
     file,
     debug
   );
@@ -849,7 +930,8 @@ function MemberNames(members, flags = 0) {
     }
   } else {
     for(let ptr of deep
-      .select(members,
+      .select(
+        members,
         n => Array.isArray(n) && n.length == 2 && typeof n[0] == 'string' && n[1] !== null,
         deep.RETURN_PATH
       )
@@ -866,7 +948,8 @@ function MemberNames(members, flags = 0) {
 }
 
 function UnsetLoc(node, pred = (v, p) => true) {
-  for(let [v, p] of deep.select(node,
+  for(let [v, p] of deep.select(
+    node,
     (v, k) => k == 'loc' || k == 'range',
     deep.RETURN_VALUE_PATH
   )) {
@@ -878,22 +961,24 @@ function UnsetLoc(node, pred = (v, p) => true) {
 
 function MakeFFI(node, fp, lib, exp) {
   if(Array.isArray(node)) {
-    let out = '';
-    let i = 0;
-    for(let item of node) {
-      console.log(`MakeFFI item #${i + 1}/${node.length}`);
-      try {
-        let ret = MakeFFI(item, fp, lib, exp);
-        if(typeof ret == 'string' && ret.length > 0) {
-          if(out) out += '\n';
-          out += ret;
+    return (function* () {
+      let i = 0;
+      for(let item of node) {
+        let out = '';
+        console.log(`MakeFFI item #${i + 1}/${node.length}`);
+        try {
+          let ret = MakeFFI(item, fp, lib, exp);
+          if(typeof ret == 'string' && ret.length > 0) {
+            if(out) out += '\n';
+            out += ret;
+          }
+        } catch(error) {
+          console.log(`ERROR item [${i}]:`, error.message + '\n' + error.stack);
         }
-      } catch(error) {
-        console.log(`ERROR item [${i}]:`, error.message);
+        i++;
+        yield out;
       }
-      i++;
-    }
-    return out;
+    })();
   }
   if(!(node instanceof Node)) node = TypeFactory(node, $.data);
 
@@ -902,9 +987,13 @@ function MakeFFI(node, fp, lib, exp) {
   if(node instanceof FunctionDecl) {
     let ffi = new FFI_Function(node);
 
-    let protoStr = PrintAst(node.ast, $.data).replace(/^([^\n\(]*)\n/, "$1 ").split(/\n/g)[0].replace(/\ {$/, ';');
+    let protoStr = PrintAst(node.ast, $.data)
+      .replace(/^([^\n\(]*)\n/, '$1 ')
+      .split(/\n/g)[0]
+      .replace(/\ {$/, ';');
+
     protoStr = protoStr.replace(/^\s*extern\s+/, '');
-    return `/* ${protoStr} */\n` + ffi.generate(fp, lib, exp);
+    return (ffi.generateDoc(fp, lib, exp) ?? `/* ${protoStr} */\n`) + ffi.generate(fp, lib, exp);
   } else if(node instanceof RecordDecl || node instanceof TypedefDecl) {
     let code = [...GenerateStructClass(node)].join('\n');
     return code;
@@ -919,73 +1008,22 @@ async function ASTShell(...args) {
     maxArrayLength: Infinity,
     hideKeys: ['loc', 'range']
   };
-  globalThis.console = new Console({ inspectOptions });
+  globalThis.console = new Console({ stdout: process.stdout, inspectOptions });
   await PortableSpawn(fn => (spawn = fn));
 
-  await import('bjson').then(module => {
+  /*  await import('bjson').then(module => {
     const { read, write } = module;
     globalThis.bjson = { read, write };
   });
-  console.log('bjson:', globalThis.bjson);
-  await import('mmap').then(module => {
-    const {
-      mmap,
-      munmap,
-      toString,
-      PROT_READ,
-      PROT_WRITE,
-      PROT_EXEC,
-      PROT_SEM,
-      PROT_NONE,
-      PROT_GROWSDOWN,
-      PROT_GROWSUP,
-      MAP_SHARED,
-      MAP_PRIVATE,
-      MAP_TYPE,
-      MAP_FIXED,
-      MAP_ANONYMOUS,
-      MAP_GROWSDOWN,
-      MAP_DENYWRITE,
-      MAP_EXECUTABLE,
-      MAP_LOCKED,
-      MAP_NORESERVE,
-      MAP_POPULATE,
-      MAP_NONBLOCK,
-      MAP_STACK
-    } = module;
-    globalThis.mmap = {
-      mmap,
-      munmap,
-      toString,
-      PROT_READ,
-      PROT_WRITE,
-      PROT_EXEC,
-      PROT_SEM,
-      PROT_NONE,
-      PROT_GROWSDOWN,
-      PROT_GROWSUP,
-      MAP_SHARED,
-      MAP_PRIVATE,
-      MAP_TYPE,
-      MAP_FIXED,
-      MAP_ANONYMOUS,
-      MAP_GROWSDOWN,
-      MAP_DENYWRITE,
-      MAP_EXECUTABLE,
-      MAP_LOCKED,
-      MAP_NORESERVE,
-      MAP_POPULATE,
-      MAP_NONBLOCK,
-      MAP_STACK
-    };
-  });
+  console.log('bjson:', globalThis.bjson);*/
+  /*await import('mmap').then(module => {const {mmap, munmap, toString, PROT_READ, PROT_WRITE, PROT_EXEC, PROT_SEM, PROT_NONE, PROT_GROWSDOWN, PROT_GROWSUP, MAP_SHARED, MAP_PRIVATE, MAP_TYPE, MAP_FIXED, MAP_ANONYMOUS, MAP_GROWSDOWN, MAP_DENYWRITE, MAP_EXECUTABLE, MAP_LOCKED, MAP_NORESERVE, MAP_POPULATE, MAP_NONBLOCK, MAP_STACK } = module; globalThis.mmap = {mmap, munmap, toString, PROT_READ, PROT_WRITE, PROT_EXEC, PROT_SEM, PROT_NONE, PROT_GROWSDOWN, PROT_GROWSUP, MAP_SHARED, MAP_PRIVATE, MAP_TYPE, MAP_FIXED, MAP_ANONYMOUS, MAP_GROWSDOWN, MAP_DENYWRITE, MAP_EXECUTABLE, MAP_LOCKED, MAP_NORESERVE, MAP_POPULATE, MAP_NONBLOCK, MAP_STACK }; });
   console.log('mmap:', globalThis.mmap);
-
+*/
   /*  console.options = consoleOptions;
   console.options.compact = 1;
   console.options.hideKeys = ['loc', 'range'];*/
-  console.options.depth = 2;
-  console.options.compact = 1;
+  /*console.options.depth = 2;
+  console.options.compact = 1;*/
 
   globalThis.files = files = {};
 
@@ -1000,10 +1038,12 @@ async function ASTShell(...args) {
     ? import('deep.so').then(module => (globalThis.deep = module))
     : import('./lib/deep.js').then(module => (globalThis.deep = module['default']));
 
-  base = path.basename(Util.getArgv()[1], /\.[^.]*$/);
+  base = path.basename(Util.getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
   cmdhist = `.${base}-cmdhistory`;
+  1;
 
-  params = globalThis.params = Util.getOpt({
+  params = globalThis.params = Util.getOpt(
+    {
       include: [true, (a, p) => (p || []).concat([a]), 'I'],
       define: [true, (a, p) => (p || []).concat([a]), 'D'],
       libs: [true, (a, p) => (p || []).concat([a]), 'l'],
@@ -1027,7 +1067,7 @@ async function ASTShell(...args) {
     defs,
     includes,
     libs,
-    get flags() {
+    /* prettier-ignore */ get flags() {
       return [...includes.map(v => `-I${v}`), ...defs.map(d => `-D${d}`), ...libs.map(l => `-l${l}`)];
     }
   });
@@ -1059,7 +1099,8 @@ async function ASTShell(...args) {
       },
       getType(name_or_id) {
         let result =
-          this.getByIdOrName(name_or_id,
+          this.getByIdOrName(
+            name_or_id,
             n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind)
           ) ?? GetType(name_or_id, this.data);
 
@@ -1083,11 +1124,27 @@ async function ASTShell(...args) {
           : this.getByIdOrName(name_or_id, n => /(VarDecl)/.test(n.kind));
 
         if(result) return new VarDecl(result, this.data);
+      },
+      getLoc(node) {
+        let loc;
+        if(Util.isObject(node)) {
+          if('loc' in node) loc = node.loc;
+          else {
+            if('ast' in node) node = node.ast;
+            if('loc' in node) loc = node.loc;
+          }
+        }
+
+        if(loc) {
+          if(!(loc instanceof Location)) loc = new Location(loc);
+        }
+        return loc;
       }
     });
     return Util.define(r, {
       pathOf(needle, maxDepth = 10) {
-        for(let [node, path] of deep.iterate(r.data,
+        for(let [node, path] of deep.iterate(
+          r.data,
           n => typeof n == 'object' && n != null,
           deep.RETURN_VALUE_PATH,
           maxDepth
@@ -1133,7 +1190,9 @@ async function ASTShell(...args) {
     MakeFFI,
     ParseECMAScript,
     PrintECMAScript,
-    ProcessFile
+    ProcessFile,
+    toArrayBuffer,
+    toString
   });
 
   Pointer.prototype.chain = function(step, limit = Infinity) {
@@ -1152,7 +1211,6 @@ async function ASTShell(...args) {
 
   Object.assign(globalThis, {
     Pointer,
-    Predicate,
     Tree,
     deep,
     Compile,

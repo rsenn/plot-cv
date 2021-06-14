@@ -37,7 +37,8 @@ const tests = {
     assert(filesystem.exists(tmpdir));
   },
   'filesystem.open': () => {
-    assert((handle = filesystem.open(tmpdir + '/rdwr', 'w+')) != null,
+    assert(
+      (handle = filesystem.open(tmpdir + '/rdwr', 'w+')) != null,
       `open("${tmpdir}/rdwr", "w+") == null`
     );
   },
@@ -153,7 +154,8 @@ async function main(...args) {
   console.log('Console:', Object.getPrototypeOf(console));
   console.log('log:', Object.getPrototypeOf(console).log);
 
-  console.log('ARGS:',
+  console.log(
+    'ARGS:',
     new Map([
       ['a', 1],
       ['b', 2]
@@ -163,7 +165,8 @@ async function main(...args) {
   tmpdir = `/tmp/${Util.randStr(10)}`;
   TinyTest.run(Util.filter(tests, t => t));
   return;
-  console.log(Util.getMethodNames(filesystem)
+  console.log(
+    Util.getMethodNames(filesystem)
       .map(n => `  'filesystem.${n}': null,`)
       .join('\n')
   );

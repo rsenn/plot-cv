@@ -109,7 +109,8 @@ try {
     };
 
     let tags = {};
-    let iter = new XMLIterator({
+    let iter = new XMLIterator(
+      {
         children: xml.children,
         tagName: tree.tagName,
         attributes: tree.attributes

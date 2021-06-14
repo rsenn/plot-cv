@@ -42,12 +42,13 @@ export class DebuggerProtocol {
       case 'stackTrace': {
         for(let frame of response.body) {
           const { id, name, filename, line } = frame;
-let code,location=filename ? path.relative(filename,process.cwd()) : '';
+          let code,
+            location = filename ? path.relative(filename, process.cwd()) : '';
           if(typeof line == 'number') {
-code = this.getFile(location)[line-1];
-location += ':'+line;
+            code = this.getFile(location)[line - 1];
+            location += ':' + line;
           }
-          console.log(`Stack Frame #${id}`, name.padEnd(20), location+(code ? `: `+ code : ''));
+          console.log(`Stack Frame #${id}`, name.padEnd(20), location + (code ? `: ` + code : ''));
         }
         break;
       }
@@ -73,7 +74,8 @@ location += ':'+line;
       case 'response':
         this.handleResponse(message);
         break;
-      default: throw new Error(`Unknown message type: ${message.type}`);
+      default:
+        throw new Error(`Unknown message type: ${message.type}`);
         break;
     }
   }
@@ -122,15 +124,13 @@ location += ':'+line;
   sendRequest(command, args = {}) {
     const request_seq = this.getSeq();
     const request = { command, request_seq, ...args };
-switch(command) {
-  case 'variables': {
-    if(!('args' in request))
-      request.args = {};
-    if(!('variablesReference' in request.args))
-      request.args.variablesReference=1;
-    break;
-  }
-}
+    switch (command) {
+      case 'variables': {
+        if(!('args' in request)) request.args = {};
+        if(!('variablesReference' in request.args)) request.args.variablesReference = 1;
+        break;
+      }
+    }
 
     const message = { type: 'request', request };
     this.requests.set(request_seq, message);
@@ -195,7 +195,8 @@ switch(command) {
 }
 
 function retValue(ret, ...args) {
-  console.log(...args,
+  console.log(
+    ...args,
     `ret =`,
     ret,
     ...(ret == -1 ? [' errno =', errno(), ' error =', std.strerror(errno())] : [])
@@ -214,14 +215,16 @@ function MakeArray(buf, numBytes) {
       return new Uint32Array(buf);
     case 2:
       return new Uint16Array(buf);
-    default: return new Uint8Array(buf);
+    default:
+      return new Uint8Array(buf);
   }
 }
 
 function ArrayBufToHex(buf, numBytes = 8) {
   if(typeof buf == 'object' && buf != null && buf instanceof ArrayBuffer) {
     let arr = MakeArray(buf, numBytes);
-    return arr.reduce((s, code) =>
+    return arr.reduce(
+      (s, code) =>
         (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
       ''
     );

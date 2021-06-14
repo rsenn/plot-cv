@@ -1,7 +1,29 @@
 import * as std from 'std';
 import * as os from 'os';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './fcntl.js';
-import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toArrayBuffer, toPointer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_NODELETE, RTLD_NOLOAD, RTLD_DEEPBIND, RTLD_DEFAULT, RTLD_NEXT } from 'ffi';
+import {
+  debug,
+  dlopen,
+  define,
+  dlerror,
+  dlclose,
+  dlsym,
+  call,
+  toString,
+  toArrayBuffer,
+  toPointer,
+  errno,
+  JSContext,
+  RTLD_LAZY,
+  RTLD_NOW,
+  RTLD_GLOBAL,
+  RTLD_LOCAL,
+  RTLD_NODELETE,
+  RTLD_NOLOAD,
+  RTLD_DEEPBIND,
+  RTLD_DEFAULT,
+  RTLD_NEXT
+} from 'ffi';
 import * as ffi from 'ffi';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
@@ -46,65 +68,65 @@ class Registers extends ArrayBuffer {
     super(256);
     // Object.assign(this, obj);
   }
-  get [Symbol.toStringTag]() {
+  /* prettier-ignore */ get [Symbol.toStringTag]() {
     return `[Registers @ ${toPointer(this)} ]`;
   }
 
-  set rax(v) {
+  /* prettier-ignore */ set rax(v) {
     new BigUint64Array(this, 0, 1)[0] = BigInt(v);
   }
-  get rax() {
+  /* prettier-ignore */ get rax() {
     let a = new BigUint64Array(this, 0, 1);
     return a[0];
   }
 
-  set rbx(v) {
+  /* prettier-ignore */ set rbx(v) {
     new BigUint64Array(this, 8, 1)[0] = BigInt(v);
   }
-  get rbx() {
+  /* prettier-ignore */ get rbx() {
     let a = new BigUint64Array(this, 8, 1);
     return a[0];
   }
 
-  set rcx(v) {
+  /* prettier-ignore */ set rcx(v) {
     new BigUint64Array(this, 16, 1)[0] = BigInt(v);
   }
-  get rcx() {
+  /* prettier-ignore */ get rcx() {
     let a = new BigUint64Array(this, 16, 1);
     return a[0];
   }
-  set rdx(v) {
+  /* prettier-ignore */ set rdx(v) {
     new BigUint64Array(this, 24, 1)[0] = BigInt(v);
   }
-  get rdx() {
+  /* prettier-ignore */ get rdx() {
     let a = new BigUint64Array(this, 24, 1);
     return a[0];
   }
-  set rsi(v) {
+  /* prettier-ignore */ set rsi(v) {
     new BigUint64Array(this, 32, 1)[0] = BigInt(v);
   }
-  get rsi() {
+  /* prettier-ignore */ get rsi() {
     let a = new BigUint64Array(this, 32, 1);
     return a[0];
   }
-  set rdi(v) {
+  /* prettier-ignore */ set rdi(v) {
     new BigUint64Array(this, 40, 1)[0] = BigInt(v);
   }
-  get rdi() {
+  /* prettier-ignore */ get rdi() {
     let a = new BigUint64Array(this, 40, 1);
     return a[0];
   }
-  set rsp(v) {
+  /* prettier-ignore */ set rsp(v) {
     new BigUint64Array(this, 48, 1)[0] = BigInt(v);
   }
-  get rsp() {
+  /* prettier-ignore */ get rsp() {
     let a = new BigUint64Array(this, 48, 1);
     return a[0];
   }
-  set rbp(v) {
+  /* prettier-ignore */ set rbp(v) {
     new BigUint64Array(this, 56, 1)[0] = BigInt(v);
   }
-  get rbp() {
+  /* prettier-ignore */ get rbp() {
     let a = new BigUint64Array(this, 56, 1);
     return a[0];
   }
@@ -134,7 +156,8 @@ async function main(...args) {
   let newState = false;
   console.log('strdup:', strdup('BLAH').toString(16));
   console.log('dlsym_(RTLD_DEFAULT, "strdup"):', dlsym(RTLD_DEFAULT, 'strdup').toString(16));
-  console.log('snprintf(outBuf, outBuf.byteLength, "%p", -1):',
+  console.log(
+    'snprintf(outBuf, outBuf.byteLength, "%p", -1):',
     snprintf(outBuf, outBuf.byteLength, '%p', 0x7fffffffffffffff)
   );
   console.log('outBuf:', ArrayBufToString(outBuf));
@@ -201,7 +224,8 @@ async function main(...args) {
   let returnADDR = area + 200;
   strcpy(area + 200, '\x48\x8b\x04\x24\xc3');
   let writeREGS = area + 300;
-  strcpy(area + 300,
+  strcpy(
+    area + 300,
     '\xf3\x0f\x1e\xfa\x48\x89\x07\x48\x89\x5f\x08\x48\x89\x4f\x10\x48\x89\x57\x18\x48\x89\x77\x20\x48\x89\x7f\x28\x48\x89\x6f\x30\x48\x89\x67\x38\x48\x31\xc0\x48\xff\xc0\xc3'
   );
   console.log('writeREGS:', writeREGS.toString(16));
@@ -270,17 +294,20 @@ function MakeArray(buf, numBytes) {
         return new Uint32Array(buf);
       case 2:
         return new Uint16Array(buf);
-      default: return new Uint8Array(buf);
+      default:
+        return new Uint8Array(buf);
     }
   } catch(error) {
-    console.error(`MakeArray(${Util.className(buf)}[${buf.byteLength}], ${numBytes}): ${error.message}`
+    console.error(
+      `MakeArray(${Util.className(buf)}[${buf.byteLength}], ${numBytes}): ${error.message}`
     );
   }
 }
 
 function ArrayBufToHex(buf, numBytes = 8) {
   let arr = MakeArray(buf, numBytes);
-  return arr.reduce((s, code) =>
+  return arr.reduce(
+    (s, code) =>
       (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
     ''
   );
@@ -298,19 +325,19 @@ function timeval(sec = 0, usec = 0) {
       }
     }
 
-    set tv_sec(s) {
+    /* prettier-ignore */ set tv_sec(s) {
       let a = new BigUint64Array(this);
       a[0] = BigInt(s);
     }
-    get tv_sec() {
+    /* prettier-ignore */ get tv_sec() {
       let a = new BigUint64Array(this);
       return a[0];
     }
-    set tv_usec(us) {
+    /* prettier-ignore */ set tv_usec(us) {
       let a = new BigUint64Array(this);
       a[1] = BigInt(us);
     }
-    get tv_usec() {
+    /* prettier-ignore */ get tv_usec() {
       let a = new BigUint64Array(this);
       return a[1];
     }

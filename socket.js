@@ -1,8 +1,34 @@
 import { Error as Errors, strerror } from 'std';
 import { read, write, close, setReadHandler, setWriteHandler } from 'os';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './fcntl.js';
-import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toPointer, toArrayBuffer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_NODELETE, RTLD_NOLOAD, RTLD_DEEPBIND, RTLD_DEFAULT, RTLD_NEXT, pointerSize } from 'ffi';
-import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
+import {
+  debug,
+  dlopen,
+  define,
+  dlerror,
+  dlclose,
+  dlsym,
+  call,
+  toString,
+  toPointer,
+  toArrayBuffer,
+  errno,
+  JSContext,
+  RTLD_LAZY,
+  RTLD_NOW,
+  RTLD_GLOBAL,
+  RTLD_LOCAL,
+  RTLD_NODELETE,
+  RTLD_NOLOAD,
+  RTLD_DEEPBIND,
+  RTLD_DEFAULT,
+  RTLD_NEXT,
+  pointerSize
+} from 'ffi';
+import {
+  toString as ArrayBufferToString,
+  toArrayBuffer as StringToArrayBuffer
+} from './lib/misc.js';
 
 function foreign(name, ret, ...args) {
   let fp = dlsym(RTLD_DEFAULT, name);
@@ -133,12 +159,13 @@ const syscall = {
   recvfrom: foreign('recvfrom', 'int', 'int', 'buffer', 'size_t', 'int', 'buffer', 'buffer'),
   send: foreign('send', 'int', 'int', 'buffer', 'size_t', 'int'),
   sendto: foreign('sendto', 'int', 'int', 'buffer', 'size_t', 'int', 'buffer', 'size_t'),
-  get errno() {
+  /* prettier-ignore */ get errno() {
     return errno();
   }
 };
 
-export const errnos = Object.fromEntries(Object.getOwnPropertyNames(Errors).map(name => [Errors[name], name])
+export const errnos = Object.fromEntries(
+  Object.getOwnPropertyNames(Errors).map(name => [Errors[name], name])
 );
 
 export function socket(af = AF_INET, type = SOCK_STREAM, proto = IPPROTO_IP) {
@@ -228,16 +255,16 @@ export class timeval extends ArrayBuffer {
     }
   }
 
-  set tv_sec(s) {
+  /* prettier-ignore */ set tv_sec(s) {
     new timeval.arrType(this)[0] = timeval.numType(s);
   }
-  get tv_sec() {
+  /* prettier-ignore */ get tv_sec() {
     return new timeval.arrType(this)[0];
   }
-  set tv_usec(us) {
+  /* prettier-ignore */ set tv_usec(us) {
     new timeval.arrType(this)[1] = timeval.numType(us);
   }
-  get tv_usec() {
+  /* prettier-ignore */ get tv_usec() {
     return new timeval.arrType(this)[1];
   }
 
@@ -323,15 +350,15 @@ export class fd_set extends ArrayBuffer {
     //  Object.setPrototypeOf(this, new ArrayBuffer(FD_SETSIZE / 8));
   }
 
-  get size() {
+  /* prettier-ignore */ get size() {
     return this.byteLength * 8;
   }
-  get maxfd() {
+  /* prettier-ignore */ get maxfd() {
     const a = this.array;
     return a[a.length - 1];
   }
 
-  get array() {
+  /* prettier-ignore */ get array() {
     const a = new Uint8Array(this);
     const n = a.byteLength;
     const r = [];
@@ -401,40 +428,40 @@ export class Socket {
     return ndelay(this.fd, on);
   }
 
-  set remoteFamily(family) {
+  /* prettier-ignore */ set remoteFamily(family) {
     this.remote.sin_family = family;
   }
-  get remoteFamily() {
+  /* prettier-ignore */ get remoteFamily() {
     return this.remote.sin_family;
   }
-  set remoteAddress(a) {
+  /* prettier-ignore */ set remoteAddress(a) {
     this.remote.sin_addr = a;
   }
-  get remoteAddress() {
+  /* prettier-ignore */ get remoteAddress() {
     return this.remote.sin_addr;
   }
-  set remotePort(n) {
+  /* prettier-ignore */ set remotePort(n) {
     this.remote.sin_port = n;
   }
-  get remotePort() {
+  /* prettier-ignore */ get remotePort() {
     return this.remote.sin_port;
   }
-  set localFamily(family) {
+  /* prettier-ignore */ set localFamily(family) {
     this.local.sin_family = family;
   }
-  get localFamily() {
+  /* prettier-ignore */ get localFamily() {
     return this.local.sin_family;
   }
-  set localAddress(a) {
+  /* prettier-ignore */ set localAddress(a) {
     this.local.sin_addr = a;
   }
-  get localAddress() {
+  /* prettier-ignore */ get localAddress() {
     return this.local.sin_addr;
   }
-  set localPort(n) {
+  /* prettier-ignore */ set localPort(n) {
     this.local.sin_port = n;
   }
-  get localPort() {
+  /* prettier-ignore */ get localPort() {
     return this.local.sin_port;
   }
 
@@ -511,7 +538,8 @@ export class Socket {
   }
 
   sendto(buf, len, flags = 0, dest_addr = null, addrlen) {
-    return syscall.sendto(this.fd,
+    return syscall.sendto(
+      this.fd,
       buf,
       len,
       flags,

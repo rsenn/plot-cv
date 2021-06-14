@@ -7,7 +7,14 @@ import { RGBA, HSLA } from './lib/color.js';
 import Util from './lib/util.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
-import { Window, MouseFlags, MouseEvents, Mouse, TextStyle, DrawText } from './qjs-opencv/js/cvHighGUI.js';
+import {
+  Window,
+  MouseFlags,
+  MouseEvents,
+  Mouse,
+  TextStyle,
+  DrawText
+} from './qjs-opencv/js/cvHighGUI.js';
 import * as nvg from 'nanovg';
 import * as glfw from 'glfw';
 
@@ -52,7 +59,8 @@ function SaveConfig(configObj) {
   let file = std.open(basename + '.config.json', 'w+b');
   file.puts(JSON.stringify(configObj, null, 2) + '\n');
   file.close();
-  console.log("Saved config to '" + basename + '.config.json' + "'",
+  console.log(
+    "Saved config to '" + basename + '.config.json' + "'",
     inspect(configObj, { compact: false })
   );
 }
@@ -60,7 +68,8 @@ function SaveConfig(configObj) {
 function LoadConfig() {
   let str = std.loadFile(basename + '.config.json');
   let configObj = JSON.parse(str || '{}');
-  configObj = Object.fromEntries(Object.entries(configObj)
+  configObj = Object.fromEntries(
+    Object.entries(configObj)
       .map(([k, v]) => [k, +v])
       .filter(([k, v]) => !isNaN(v))
   );
@@ -209,7 +218,8 @@ function main(...args) {
   palette[2] = [0x60, 0x60, 0x60, 0xff];
   palette[3] = [0xff, 0xff, 0x0, 0xff];
   for(let i = 8; i < 16; i++) palette[i] = black;
-  let pipeline = new Pipeline([
+  let pipeline = new Pipeline(
+    [
       function AcquireFrame(src, dst) {
         image = cv.imread(file);
         image.copyTo(dst);
@@ -227,7 +237,8 @@ function main(...args) {
         cv.threshold(src, dst, +params.thres, 255, +params.type);
       },
       function Morphology(src, dst) {
-        let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS,
+        let structuringElement = cv.getStructuringElement(
+          cv.MORPH_CROSS,
           new Size(+params.kernel_size * 2 + 1, +params.kernel_size * 2 + 1)
         );
         src.copyTo(dst);
@@ -254,7 +265,8 @@ function main(...args) {
         let output = new Mat();
         if(skel.channels > 1) cv.cvtColor(skel, skel, cv.COLOR_BGR2GRAY);
         if(morpho.channels > 1) cv.cvtColor(morpho, morpho, cv.COLOR_BGR2GRAY);
-        cv.HoughLinesP(skel,
+        cv.HoughLinesP(
+          skel,
           output,
           +params.rho,
           (Math.PI * (+params.theta || 1)) / 180,
@@ -400,12 +412,14 @@ function main(...args) {
       `params:\n` +
       params
         .map((name, idx) => {
-          return `  ${idx + paramIndexes[0] == paramNav.index ? '\x1b[1;31m' : ''}${name.padEnd(13
+          return `  ${idx + paramIndexes[0] == paramNav.index ? '\x1b[1;31m' : ''}${name.padEnd(
+            13
           )}\x1b[0m   \x1b[1;36m${+paramNav.get(name)}\x1b[0m\n`;
         })
         .join('');
     DrawText(statusMat(textRect), text, textColor, fontFace, fontSize);
-    DrawText(statusMat(helpRect),
+    DrawText(
+      statusMat(helpRect),
       '< prev, > next, + increment, - decrement, DEL reset',
       textColor,
       fontFace,
@@ -420,7 +434,8 @@ function main(...args) {
     cv.setWindowTitle('output', `#${i}: ` + pipeline.names[i]);
   }
   let key;
-  let paramAccumulator = paramNav.setCallback(new Accumulator((name, param) => {
+  let paramAccumulator = paramNav.setCallback(
+    new Accumulator((name, param) => {
       // console.log(`param '${name}' callback`, param);
     })
   );

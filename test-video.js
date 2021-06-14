@@ -7,7 +7,19 @@ import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import fs from 'fs';
 import Console from 'console';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
-import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Define, Once, GetOpt, RoundTo, Range } from './qjs-opencv/js/cvUtils.js';
+import {
+  WeakMapper,
+  Modulo,
+  WeakAssign,
+  BindMethods,
+  BitsToNames,
+  FindKey,
+  Define,
+  Once,
+  GetOpt,
+  RoundTo,
+  Range
+} from './qjs-opencv/js/cvUtils.js';
 
 console.log('process', process);
 
@@ -41,7 +53,8 @@ function SaveConfig(configObj) {
   let file = std.open(basename + '.config.json', 'w+b');
   file.puts(JSON.stringify(configObj, null, 2) + '\n');
   file.close();
-  console.log(`Saved config to '${basename + '.config.json'}'`,
+  console.log(
+    `Saved config to '${basename + '.config.json'}'`,
     inspect(configObj, { compact: false })
   );
 }
@@ -50,7 +63,8 @@ function LoadConfig() {
   let str = std.loadFile(basename + '.config.json');
   let configObj = JSON.parse(str || '{}');
 
-  configObj = Object.fromEntries(Object.entries(configObj)
+  configObj = Object.fromEntries(
+    Object.entries(configObj)
       .map(([k, v]) => [k, +v])
       .filter(([k, v]) => !isNaN(v))
   );
@@ -148,11 +162,11 @@ function Profiler(name, ticks = () => cv.getTickCount(), freq = cv.getTickFreque
   };
 
   Define(self, {
-    get elapsed() {
+    /* prettier-ignore */ get elapsed() {
       let t = ticks();
       return t - start;
     },
-    get lap() {
+    /* prettier-ignore */ get lap() {
       let t = ticks();
       return t - (prev || start);
     }
@@ -186,7 +200,8 @@ function main(...args) {
 
   globalThis.console = new Console({ colors: true, depth: 1, maxArrayLength: 30 });
 
-  let opts = GetOpt({
+  let opts = GetOpt(
+    {
       input: [true, (file, current) => [...(current || []), file], 'i'],
       driver: [
         true,
@@ -317,7 +332,8 @@ function main(...args) {
   let dst0Size, firstSize, videoSize;
   let clahe = new CLAHE(4, new Size(8, 8));
 
-  let pipeline = new Pipeline([
+  let pipeline = new Pipeline(
+    [
       Processor(function AcquireFrame(src, dst) {
         const dstEmpty = dst.empty;
         if(dst.empty) dst0Size = dst.size;
@@ -327,7 +343,8 @@ function main(...args) {
           videoSize = video.size.area ? video.size : dst.size;
         if(dstEmpty) firstSize = new Size(...videoSize);
         if(dst.size && !videoSize.equals(dst.size))
-          throw new Error(`AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`
+          throw new Error(
+            `AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`
           );
       }),
       Processor(function Grayscale(src, dst) {
@@ -343,7 +360,8 @@ function main(...args) {
         cv.GaussianBlur(src, dst, [+params.ksize, +params.ksize], 0, 0, cv.BORDER_REPLICATE);
       }),
       Processor(function EdgeDetect(src, dst) {
-        cv.Canny(src,
+        cv.Canny(
+          src,
           dst,
           +params.thresh1,
           +params.thresh2,
@@ -369,7 +387,8 @@ function main(...args) {
         let edges = pipeline.outputOf('EdgeDetect');
         lines = new Mat(0, 0, cv.CV_32SC4);
 
-        cv.HoughLinesP(edges,
+        cv.HoughLinesP(
+          edges,
           lines,
           2,
           (+params.angleResolution * Math.PI) / 180,
@@ -403,7 +422,8 @@ function main(...args) {
   console.log(`Trackbar 'frame' frameShow=${frameShow} pipeline.size - 1 = ${pipeline.size - 1}`);
 
   if(opts['trackbars'])
-    cv.createTrackbar('frame',
+    cv.createTrackbar(
+      'frame',
       'gray',
       frameShow,
       pipeline.size - 1,
@@ -423,7 +443,8 @@ function main(...args) {
 
   const ClearSurface = mat => (mat.setTo([0, 0, 0, 0]), mat);
   const MakeSurface = () =>
-    Once((...args) => new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)),
+    Once(
+      (...args) => new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)),
       null,
       ClearSurface
     );
@@ -456,7 +477,8 @@ function main(...args) {
         keyCode = key;
         keyTime = Date.now();
         modifiers = Object.fromEntries(modifierMap(keyCode));
-        modifierList = modifierMap(keyCode).reduce((acc, [modifier, active]) => (active ? [...acc, modifier] : acc),
+        modifierList = modifierMap(keyCode).reduce(
+          (acc, [modifier, active]) => (active ? [...acc, modifier] : acc),
           []
         );
         let ch = String.fromCodePoint(keyCode & 0xff);
@@ -532,7 +554,8 @@ function main(...args) {
           video['seek' + method](offset);
           let pos = video.position(method);
 
-          console.log('seek' +
+          console.log(
+            'seek' +
               method +
               ' ' +
               offset +
@@ -582,11 +605,13 @@ function main(...args) {
     } else {
       let ids = [...getToplevel(hier)];
 
-      let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]])
+      let palette = Object.fromEntries(
+        [...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]])
       );
       let hierObj = new Hierarchy(hier);
     }
-    font.draw(over,
+    font.draw(
+      over,
       video.time + ' ⏩',
       tPos,
       { r: 0, g: 255, b: 0, a: 255 },
@@ -634,7 +659,8 @@ function main(...args) {
       drawParam(paramNav.param);
     }
 
-    font.draw(over,
+    font.draw(
+      over,
       `#${frameShow + 1}/${pipeline.size}` + (outputName ? ` (${outputName})` : ''),
       [5, 5 + tSize.y],
       {
@@ -674,7 +700,8 @@ function main(...args) {
     method,
     lineWidth
   } = params;
-  SaveConfig(Object.entries({
+  SaveConfig(
+    Object.entries({
       frameShow,
       ksize,
       thresh1,
@@ -692,7 +719,8 @@ function main(...args) {
 
   for(let mat of Mat.list || []) {
     let stack = Mat.backtrace(mat)
-      .filter(frame =>
+      .filter(
+        frame =>
           frame.functionName != '<anonymous>' &&
           (frame.lineNumber !== undefined || /test-video/.test(frame.fileName))
       )

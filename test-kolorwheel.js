@@ -165,7 +165,8 @@ for(let color of allColors) {
 const GeneratePalette = numColors => {
   let ret = [];
   let base = new HSLA(Util.randInt(0, 360, prng), 100, 50).toRGBA();
-  let offsets = Util.range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360],
+  let offsets = Util.range(1, numColors).reduce(
+    (acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360],
     []
   );
   offsets = offsets.sort((a, b) => a - b);
@@ -205,7 +206,8 @@ async function main(...args) {
       s += `${key}: palette[${i}]`;
     }
   }
-  console.log('const palette = [ ' +
+  console.log(
+    'const palette = [ ' +
       palette.map(c => c.toSource()).join(', ') +
       ' ];\n renderer.colors = {' +
       s +
@@ -223,7 +225,8 @@ async function main(...args) {
 
   console.log(colors);
   console.log(colors.map(c => c.toHSLA()));
-  console.log(colors
+  console.log(
+    colors
       .map(c => c.hex())
       .map(c => `"${c}"`)
       .join(',\n')
@@ -235,7 +238,8 @@ async function main(...args) {
   for(let h of Util.range(0, 300, 300 / 100)) rainbow.push(new HSLA(h, 100, 60));
 
   console.log(rainbow);
-  console.log(Util.chunkArray(
+  console.log(
+    Util.chunkArray(
       rainbow.map(c => c.hex()).map(c => `"${c}"`),
       8
     )

@@ -10,25 +10,34 @@ export function Ruler() {
   const onChanged = value => setValue(value);
 
   return h(RulerDraggable, {}, [
-    h('button', {
+    h(
+      'button',
+      {
         onMouseDown: pressingDown,
         onMouseUp: stopPressing
-      }, [Down]
+      },
+      [Down]
     ),
-    h('button', {
+    h(
+      'button',
+      {
         onMouseDown: pressingUp,
         onMouseUp: stopPressing
-      }, [Up]
+      },
+      [Up]
     ),
     h('div', {}, [value]),
-    h(Ruler, {
+    h(
+      Ruler,
+      {
         ref: refRuler,
         defaultValue: 50,
         onChanged,
         longLength: 300,
         shortLength: 60,
         horizontal: true
-      }, []
+      },
+      []
     )
   ]);
 }

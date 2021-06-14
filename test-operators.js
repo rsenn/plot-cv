@@ -18,7 +18,8 @@ function test_operators_create() {
     }
   }
 
-  Vec2.prototype[Symbol.operatorSet] = Operators.create({
+  Vec2.prototype[Symbol.operatorSet] = Operators.create(
+    {
       '+'(p1, p2) {
         var r = new Vec2();
         r.x = p1.x + p2.x;
@@ -94,7 +95,8 @@ function test_operators() {
     return r;
   }
 
-  var vec2_ops = Operators({
+  var vec2_ops = Operators(
+    {
       '+'(p1, p2) {
         var r = new Vec2();
         r.x = p1.x + p2.x;

@@ -25,7 +25,8 @@ export function Port(device) {
 
 Port.prototype.connect = function() {
   let readLoop = () => {
-    this.device_.transferIn(this.endpointIn, 64).then(result => {
+    this.device_.transferIn(this.endpointIn, 64).then(
+      result => {
         this.onReceive(result.data);
         readLoop();
       },

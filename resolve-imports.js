@@ -4,7 +4,27 @@ import ConsoleSetup from './lib/consoleSetup.js';
 import Lexer, { PathReplacer, Location, Range } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
 import { Token } from './lib/ecmascript/token.js';
-import estree, { ImportSpecifier, VariableDeclaration, VariableDeclarator, ModuleSpecifier, ImportDeclaration, ExportNamedDeclaration, ExportDefaultDeclaration, ExportAllDeclaration, Identifier, MemberExpression, ESNode, CallExpression, ObjectPattern, ArrayPattern, Literal, AssignmentExpression, ExpressionStatement, ClassDeclaration, AssignmentProperty } from './lib/ecmascript/estree.js';
+import estree, {
+  ImportSpecifier,
+  VariableDeclaration,
+  VariableDeclarator,
+  ModuleSpecifier,
+  ImportDeclaration,
+  ExportNamedDeclaration,
+  ExportDefaultDeclaration,
+  ExportAllDeclaration,
+  Identifier,
+  MemberExpression,
+  ESNode,
+  CallExpression,
+  ObjectPattern,
+  ArrayPattern,
+  Literal,
+  AssignmentExpression,
+  ExpressionStatement,
+  ClassDeclaration,
+  AssignmentProperty
+} from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
 import { ImmutablePath, Path } from './lib/json.js';
@@ -12,7 +32,35 @@ import deep from './lib/deep.js';
 import Tree from './lib/tree.js';
 import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 import { Repeater } from './lib/repeater/repeater.js';
-import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater, Reader, ReadAll } from './lib/stream/utils.js';
+import {
+  isStream,
+  AcquireReader,
+  AcquireWriter,
+  ArrayWriter,
+  readStream,
+  PipeTo,
+  WritableRepeater,
+  WriteIterator,
+  AsyncWrite,
+  AsyncRead,
+  ReadFromIterator,
+  WriteToRepeater,
+  LogSink,
+  StringReader,
+  LineReader,
+  DebugTransformStream,
+  CreateWritableStream,
+  CreateTransformStream,
+  RepeaterSource,
+  RepeaterSink,
+  LineBufferStream,
+  TextTransformStream,
+  ChunkReader,
+  ByteReader,
+  PipeToRepeater,
+  Reader,
+  ReadAll
+} from './lib/stream/utils.js';
 
 let filesystem, childProcess, search, files;
 let node2path, flat, value, list;
@@ -75,7 +123,7 @@ class ES6Module {
   static get(file) {
     return [...ES6Module.moduleList].find(m => m.file === file);
   }
-  get chain() {
+  /* prettier-ignore */ get chain() {
     let ret = [];
     let tmp,
       mod = this;
@@ -104,7 +152,8 @@ class ES6Module {
     s += t('\n}', 1, 36);
     function formatProp(value) {
       if(Util.isArray(value))
-        return (t('[ ', 1, 36) +
+        return (
+          t('[ ', 1, 36) +
           value.map(mod => formatProp(mod.file)).join(t(', ', 1, 36)) +
           t(' ]', 1, 36)
         );
@@ -115,19 +164,19 @@ class ES6Module {
     return s;
   }
 
-  get deps() {
+  /* prettier-ignore */ get deps() {
     return [...ES6Module.getDeps(this)];
   }
 
-  get imports() {
+  /* prettier-ignore */ get imports() {
     return [...ES6Module.getImportExport(this, (i) => i == -1)];
   }
 
-  get exports() {
+  /* prettier-ignore */ get exports() {
     return [...ES6Module.getImportExport(this, (i) => i != -1)];
   }
 
-  get bindings() {
+  /* prettier-ignore */ get bindings() {
     let imports = [...ES6ImportExport.importExportList].filter(impExp => impExp.fromPath == this.file);
 
     return new Map(imports.map(imp => [...imp.bindings]).flat().sort((a,b) => a[0].localeCompare(b[0])));
@@ -164,7 +213,8 @@ class ES6Module {
       let deps = [...ES6Module.getDeps(module)];
       for(let i = 0; i < deps.length; i++) {
         //console.log('', { i, sym });
-        printModule(deps[i],
+        printModule(
+          deps[i],
           sym.replace(/\u251c\u2500/g, '\u2502 ').replace(/\u2514\u2500/g, '  ') +
             ((i + 1 == deps.length ? '\u2514' : '\u251c') + '\u2500') +
             ' '
@@ -265,7 +315,7 @@ class ES6ImportExport {
     return ret;
   }
 
-  get relpath() {
+  /* prettier-ignore */ get relpath() {
     const { file } = this;
     if(ES6Env.cwd && file) {
       let r = path.relative(ES6Env.cwd, file);
@@ -274,13 +324,13 @@ class ES6ImportExport {
     }
   }
 
-  get fromBase() {
+  /* prettier-ignore */ get fromBase() {
     return path
       .basename(this.relpath)
       .replace(/\.([0-9a-z]{2}|[0-9a-z]{3})$/, '');
   }
 
-  get from() {
+  /* prettier-ignore */ get from() {
     let { node, path } = this;
     let value = (node && node.source) || node;
     path = (value && path.down('source')) || path;
@@ -288,7 +338,7 @@ class ES6ImportExport {
     return [value, path];
   }
 
-  set from(value) {
+  /* prettier-ignore */ set from(value) {
     let { ast, node, path } = this;
     if(node.source) {
       let key = path.last;
@@ -300,7 +350,7 @@ class ES6ImportExport {
   toSource() {
     return PrintAst(this.node);
   }
-  get code() {
+  /* prettier-ignore */ get code() {
     return this.toSource();
   }
   static get exports() {
@@ -321,8 +371,10 @@ class ES6ImportExport {
     if(Util.isIterator(position))
       position = [...position].map(p => ES6Env.pathTransform(p)).join(':');
 
-    return Util.inspect(Object.assign(
-        Object.setPrototypeOf({
+    return Util.inspect(
+      Object.assign(
+        Object.setPrototypeOf(
+          {
             type,
             module: module[inspectSymbol]().replace(/\n\s*/g, '\n  '),
             bindings: Util.inspect(bindings, {
@@ -363,7 +415,8 @@ class ES6ImportExport {
 const isRequire = ([path, node]) => {
   //console.log("isRequire node:", node);
 
-  return ((node instanceof CallExpression || node.type == 'CallExpression') &&
+  return (
+    (node instanceof CallExpression || node.type == 'CallExpression') &&
     (node.callee.value == 'require' || PrintAst(node.callee) == 'require')
   );
 };
@@ -446,12 +499,14 @@ function DumpNode(node) {
   ];
 }
 
-function GenerateFlatMap(ast,
+function GenerateFlatMap(
+  ast,
   root = [],
   pred = (n, p) => true,
   t = (p, n) => [root.concat(p).join('.'), n]
 ) {
-  flat = deep.flatten(ast,
+  flat = deep.flatten(
+    ast,
     new Map(),
     (n, p) => n instanceof ESNode && pred(n, p),
     (p, n) => t(p, n)
@@ -476,7 +531,8 @@ async function main(...args) {
   console.options = consoleOpts;
   await PortableFileSystem(fs => (filesystem = fs));
   await PortableChildProcess(cp => (childProcess = cp));
-  let params = Util.getOpt({
+  let params = Util.getOpt(
+    {
       output: [true, null, 'o'],
       debug: [false, null, 'x'],
       '@': 'input'
@@ -535,7 +591,8 @@ async function main(...args) {
     //          console.log('FriendlyPrintNode', st.pathOf(n));
 
     if(n.type)
-      return Object.defineProperties([
+      return Object.defineProperties(
+        [
           GetPosition(n),
           n.type || Util.className(n),
           /*st ? st.pathOf(n) : */ undefined,
@@ -545,11 +602,13 @@ async function main(...args) {
         {
           inspectSymbol: {
             value() {
-              let arr = this.reduce((acc, item) => [...acc, (item[inspectSymbol] ?? item.toString).call(item)],
+              let arr = this.reduce(
+                (acc, item) => [...acc, (item[inspectSymbol] ?? item.toString).call(item)],
                 []
               );
               let [pos, type, path, node, id] = arr;
-              return ('{' +
+              return (
+                '{' +
                 Object.entries({ pos, type, path, node, id })
                   .map(([k, v]) => `\n    ${k}: ${v}`)
                   .join('') +
@@ -697,7 +756,8 @@ async function main(...args) {
 
           return false;
         });
-        console.log('moduleImports:',
+        console.log(
+          'moduleImports:',
           moduleImports.map(([p, n]) => [p, PrintAst(n)])
         );
 
@@ -723,7 +783,8 @@ async function main(...args) {
               value() {
                 return this + '';
               }
-            }, [inspectSymbol]: {
+            },
+            [inspectSymbol]: {
               value() {
                 let path = this.path;
                 return this;
@@ -738,7 +799,8 @@ async function main(...args) {
           GetImportBindings([n, p] /*, a=> a*/)
         ]);
         //Verbose(`importEntries:`, importEntries);
-        importEntries = new Map(importEntries.map(([node, [parent, bindings]]) => {
+        importEntries = new Map(
+          importEntries.map(([node, [parent, bindings]]) => {
             //Verbose('bindings:', {n,bindings});
             bindings ??= [];
             bindings = [...bindings].map(([name, binding]) => [name, binding /*.concat([n])*/]);
@@ -751,7 +813,8 @@ async function main(...args) {
             let { position } = assoc;
             bindings = bindings.map(([name, [source, imp, node, parent]]) => [
               name,
-              Object.defineProperties([
+              Object.defineProperties(
+                [
                   source,
                   imp == 'default' ? null : imp,
                   node,
@@ -785,7 +848,8 @@ async function main(...args) {
                     get() {
                       return this[3];
                     }
-                  }, [inspectSymbol]: {
+                  },
+                  [inspectSymbol]: {
                     value() {
                       const [source, imported, node, path, position] = this;
                       //console.log("position", {file,line,column});
@@ -810,7 +874,8 @@ async function main(...args) {
         );
         Verbose(`importEntries[${Util.size(importEntries)}]:`, importEntries);
 
-        importMap[file] = Object.fromEntries([...importEntries].reduce(
+        importMap[file] = Object.fromEntries(
+          [...importEntries].reduce(
             (acc, [n, bindings]) => /*(Array.isArray(bindings) ?*/ [...acc, ...bindings] /*: acc)*/,
             []
           )
@@ -831,10 +896,12 @@ async function main(...args) {
             //console.log('props:', props);
             const p = [38, 5, 124] || [1, 31];
             const b = [0, 37];
-            props = props.reduce((acc, item) => (acc && acc.length ? [...acc, ctxt('\u066d', ...p), item] : [item]),
+            props = props.reduce(
+              (acc, item) => (acc && acc.length ? [...acc, ctxt('\u066d', ...p), item] : [item]),
               []
             );
-            return [ctxt('Node', 38, 5, 198), ctxt(`{`, ...b), ...props, ctxt(`}`, ...b)].reduce((acc, item) => (acc ? acc + ' ' + item : item),
+            return [ctxt('Node', 38, 5, 198), ctxt(`{`, ...b), ...props, ctxt(`}`, ...b)].reduce(
+              (acc, item) => (acc ? acc + ' ' + item : item),
               ''
             );
           }
@@ -960,7 +1027,8 @@ async function main(...args) {
           name,
           ...nodes
         ]);
-        exportMap[file] = Object.fromEntries(exportNodes.map(([exp, name, ...nodes]) => [
+        exportMap[file] = Object.fromEntries(
+          exportNodes.map(([exp, name, ...nodes]) => [
             exp,
             /*FriendlyPrintNodes*/ nodes /*.slice(0,2)*/
 
@@ -1037,7 +1105,8 @@ async function main(...args) {
         break;
       }
 
-      const useStrict = map.filter(([key, node]) => node instanceof Literal && /use strict/.test(node.value)
+      const useStrict = map.filter(
+        ([key, node]) => node instanceof Literal && /use strict/.test(node.value)
       );
       useStrict.forEach(([path, node]) => deep.unset(ast, path));
       // Verbose('importNodes:', importNodes);
@@ -1087,9 +1156,11 @@ async function main(...args) {
 
       //Verbose(`imports YYY:`, imports.map(imp => [imp.path, imp.position || { file: imp.file }]));
 
-      const fromMap = new WeakMap(imports.map((imp, idx) => [
+      const fromMap = new WeakMap(
+        imports.map((imp, idx) => [
           imp.node,
-          Util.tryCatch(() => imp.fromPath,
+          Util.tryCatch(
+            () => imp.fromPath,
             v => v,
             () => Literal.string(GetLiteral(imp.node))
           )
@@ -1198,12 +1269,14 @@ async function main(...args) {
           console.log('specifiers:', node.specifiers);
           return [
             node,
-            new Map(node.specifiers.map(({ local, imported }) => [
+            new Map(
+              node.specifiers.map(({ local, imported }) => [
                 Identifier.string(local),
                 [
                   Literal.string(node.source),
 
-                  Util.ifThenElse(str => str == 'default',
+                  Util.ifThenElse(
+                    str => str == 'default',
                     () => Symbol.for('default'),
                     s => s
                   )(imported)
@@ -1218,7 +1291,8 @@ async function main(...args) {
         let code = PrintAst(node);
 
         console.log('code:', code);
-        if(node instanceof CallExpression ||
+        if(
+          node instanceof CallExpression ||
           node.type == 'CallExpression' ||
           code.startsWith('require(')
         ) {
@@ -1257,7 +1331,8 @@ async function main(...args) {
 
               return [
                 parent,
-                retMap(properties.map(({ key, value }) => [
+                retMap(
+                  properties.map(({ key, value }) => [
                     Identifier.string(key),
                     [source, Identifier.string(value)]
                   ])
@@ -1313,7 +1388,8 @@ async function main(...args) {
             }
             if(declaration.declarations) {
               //   Verbose("declarations:", declaration.declarations);
-              return new Map(declaration.declarations.map(({ id, init }) => {
+              return new Map(
+                declaration.declarations.map(({ id, init }) => {
                   if(id instanceof ArrayPattern) {
                     const ids = id.elements.map(prop => Identifier.string(prop.key));
                     const values = init.elements;
@@ -1348,7 +1424,8 @@ async function main(...args) {
             return new Map([['default', right]]);
         }
         let children = [...deep.iterate(node, n => n && n instanceof ESNode)];
-        children = children.filter(([n, p]) => n instanceof MemberExpression && /^module\.exports/.test(PrintAst(n))
+        children = children.filter(
+          ([n, p]) => n instanceof MemberExpression && /^module\.exports/.test(PrintAst(n))
         );
         children = children
           .map(([n, p]) => [st.parentNode(n), p.slice(0, -1)])
@@ -1365,7 +1442,8 @@ async function main(...args) {
             ])
           ]);
         if(Util.size(bindings))
-          Verbose(`GetExportBindings:`,
+          Verbose(
+            `GetExportBindings:`,
             new Map(
               bindings.map(([p, pos, code, n, ...anchestors], i) => {
                 return [i, { path: p, pos, code, node: n, anchestors }];
@@ -1407,7 +1485,8 @@ function FdReader(fd, bufferSize = 1024) {
 
 async function Prettier(file) {
   let input = filesystem.open(file, 'r');
-  let proc = childProcess('sh',
+  let proc = childProcess(
+    'sh',
     [
       '-c',
       `node_modules/.bin/prettier --config .prettierrc --parser babel <'${file}' | tee '${file}.prettier'`
@@ -1506,17 +1585,21 @@ function GetFromValue(...args) {
   if(!n || !(n instanceof ESNode)) throw new Error('No node:' + n + ' path:' + p);
   if(!(n instanceof ESNode)) n = deep.get(ast, n);
   let pathStr = p.join('.');
-  let flat = GenerateFlatMap(n,
+  let flat = GenerateFlatMap(
+    n,
     p,
     (n, p) =>
       true ||
       Util.isArray(n) ||
-      [ExportNamedDeclaration, ImportDeclaration, ObjectPattern, Literal].some(ctor => n instanceof ctor
+      [ExportNamedDeclaration, ImportDeclaration, ObjectPattern, Literal].some(
+        ctor => n instanceof ctor
       ),
     (p, n) => [
       p,
-      Object.setPrototypeOf({
-          ...Util.filterKeys(n,
+      Object.setPrototypeOf(
+        {
+          ...Util.filterKeys(
+            n,
             k =>
               n instanceof CallExpression ||
               (k != 'type' && !(Util.isObject(n[k]) || Util.isFunction(n[k])))
@@ -1563,7 +1646,8 @@ function GetLiteral(node) {
   return (deep.find(node, n => n instanceof Literal) || {}).value;
 }
 function IsBuiltinModule(name) {
-  return /^(std|os|ffi|net|_http_agent|_http_client|_http_common|_http_incoming|_http_outgoing|_http_server|_stream_duplex|_stream_passthrough|_stream_readable|_stream_transform|_stream_wrap|_tls_common|_tls_wrap|assert|async_hooks|buffer|child_process|cluster|console|constants|crypto|dgram|dns|domain|events|fs|http|http2|https|inspector|module|net|os|path|perf_hooks|process|punycode|querystring|readline|repl|stream|string_decoder|timers|tls|trace_events|tty|url|util|v8|vm|worker_threads|zlib)$/.test(name
+  return /^(std|os|ffi|net|_http_agent|_http_client|_http_common|_http_incoming|_http_outgoing|_http_server|_stream_duplex|_stream_passthrough|_stream_readable|_stream_transform|_stream_wrap|_tls_common|_tls_wrap|assert|async_hooks|buffer|child_process|cluster|console|constants|crypto|dgram|dns|domain|events|fs|http|http2|https|inspector|module|net|os|path|perf_hooks|process|punycode|querystring|readline|repl|stream|string_decoder|timers|tls|trace_events|tty|url|util|v8|vm|worker_threads|zlib)$/.test(
+    name
   );
 }
 
@@ -1751,7 +1835,8 @@ function SearchModuleInPath(name, _from, position) {
   let fromModule = ES6Module.get(_from);
   if(!fromModule) throw new Error(`Module "${_from}" not found (${name})`, name);
   let chain = fromModule.chain;
-  throw new URIError(`Module '${name}' imported from '${_from}' not found ` +
+  throw new URIError(
+    `Module '${name}' imported from '${_from}' not found ` +
       Util.inspect({ name, chain }, { multiline: false }),
     name
   );

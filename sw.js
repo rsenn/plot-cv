@@ -219,7 +219,8 @@ self.addEventListener('install', event => {
   /* Using event.waitUntil(p) blocks the installation process on the provided
      promise. If the promise is rejected, the service worker won't be installed.
   */
-  event.waitUntil(/* The caches built-in is a promise-based API that helps you cache responses,
+  event.waitUntil(
+    /* The caches built-in is a promise-based API that helps you cache responses,
        as well as finding and deleting them.
     */
     caches
@@ -284,7 +285,8 @@ self.addEventListener('fetch', event => {
      Fulfillment result will be used as the response, and rejection will end in a
      HTTP response indicating failure.
   */
-  event.respondWith(caches
+  event.respondWith(
+    caches
       /* This method returns a promise that resolves to a cache entry matching
          the request. Once the promise is settled, we can then provide a response
          to the fetch request.
@@ -374,13 +376,15 @@ self.addEventListener('activate', event => {
      Activation will fail unless the promise is fulfilled. */
   log('activate event in progress.');
 
-  event.waitUntil(caches
+  event.waitUntil(
+    caches
       /* This method returns a promise which will resolve to an array of available
          cache keys.  */
       .keys()
       // We return a promise that settles when all outdated caches are deleted.
       .then(keys =>
-        Promise.all(keys
+        Promise.all(
+          keys
             // Filter by keys that don't start with the latest version prefix.
             .filter(key => !key.startsWith(version))
             .map(key => caches.delete(key))
