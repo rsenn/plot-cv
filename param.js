@@ -43,17 +43,17 @@ export class NumericParam extends Param {
     this.value = newValue;
   }
 
-  get alpha() {
+  /* prettier-ignore */ get alpha() {
     const { value, min, max } = this;
     return (value - min) / (max - min);
   }
 
-  set alpha(a) {
+  /* prettier-ignore */ set alpha(a) {
     const { min, max, step, clamp } = this;
     this.value = this.clamp(min + Util.roundTo((max - min) * a, step, null, 'floor'));
   }
 
-  get range() {
+  /* prettier-ignore */ get range() {
     const { min, max } = this;
     let r = [min, max];
     r.valueOf = function() {
@@ -167,24 +167,24 @@ Util.define(ParamNavigator.prototype, {
     const { map } = this;
     return map.get(name);
   },
-  get current() {
+  /* prettier-ignore */ get current() {
     return this.at(this.index);
   },
-  set current(index_or_name) {
+  /* prettier-ignore */ set current(index_or_name) {
 if(typeof index_or_name != 'number')
   index_or_name = this.indexOf(index_or_name);
 if(index_or_name >= 0 && index_or_name < this.map.size)
   this.index = index_or_name;
   },
-  get name() {
+  /* prettier-ignore */ get name() {
     const { map, index } = this;
     return [...map.keys()][index];
   },
-  get param() {
+  /* prettier-ignore */ get param() {
     const { map, index } = this;
     return [...map.values()][index];
   },
-  get size() {
+  /* prettier-ignore */ get size() {
     const { map } = this;
     return map.size;
   }

@@ -41,14 +41,16 @@ function main(...args) {
     }
   });
 
-  let params = Util.getOpt({
+  let params = Util.getOpt(
+    {
       'output-ast': [true, null, 'a'],
       'output-js': [true, null, 'o'],
       help: [
         false,
         (v, r, o) => {
           console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
-          console.log(o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n')
+          console.log(
+            o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n')
           );
           Util.exit(0);
         },
@@ -146,7 +148,8 @@ function processFile(file, params) {
   const isRequire = node => node instanceof CallExpression && node.callee.value == 'require';
   const isImport = node => node instanceof ImportDeclaration;
 
-  let commentMap = new Map([...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
+  let commentMap = new Map(
+    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
       pos * 10 - 1,
       { comment, pos, len, node }
     ]),
@@ -157,7 +160,8 @@ function processFile(file, params) {
 
   const output_file = params['output-js'] ?? path.basename(file, path.extname(file)) + '.es';
 
-  WriteFile(params['output-ast'] ?? path.basename(file, path.extname(file)) + '.ast.json',
+  WriteFile(
+    params['output-ast'] ?? path.basename(file, path.extname(file)) + '.ast.json',
     JSON.stringify(ast /*.toJSON()*/, null, 2)
   );
 }

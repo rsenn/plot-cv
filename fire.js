@@ -140,7 +140,8 @@ function CreatePaletteHSL() {
   console.log('breakpoints:', breakpoints);
 
   for(let i = 0; i < 256; i++) {
-    const hue = Util.ifThenElse(v => v == -1,
+    const hue = Util.ifThenElse(
+      v => v == -1,
       () => hues.length - 2,
       v => v
     )(breakpoints.findIndex(b => i < b));

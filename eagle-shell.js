@@ -1,12 +1,97 @@
-import { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, EagleNodeList, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, EagleDocument, EagleReference, EagleRef, makeEagleNode, EagleNode, Renderer, EagleProject, EagleElement, makeEagleElement, EagleElementProxy, EagleNodeMap, ImmutablePath, DereferenceError } from './lib/eagle.js';
+import {
+  EagleSVGRenderer,
+  SchematicRenderer,
+  BoardRenderer,
+  LibraryRenderer,
+  EagleNodeList,
+  useTrkl,
+  RAD2DEG,
+  DEG2RAD,
+  VERTICAL,
+  HORIZONTAL,
+  HORIZONTAL_VERTICAL,
+  DEBUG,
+  log,
+  setDebug,
+  PinSizes,
+  EscapeClassName,
+  UnescapeClassName,
+  LayerToClass,
+  ElementToClass,
+  ClampAngle,
+  AlignmentAngle,
+  MakeRotation,
+  EagleAlignments,
+  Alignment,
+  SVGAlignments,
+  AlignmentAttrs,
+  RotateTransformation,
+  LayerAttributes,
+  InvertY,
+  PolarToCartesian,
+  CartesianToPolar,
+  RenderArc,
+  CalculateArcRadius,
+  LinesToPath,
+  MakeCoordTransformer,
+  useAttributes,
+  EagleDocument,
+  EagleReference,
+  EagleRef,
+  makeEagleNode,
+  EagleNode,
+  Renderer,
+  EagleProject,
+  EagleElement,
+  makeEagleElement,
+  EagleElementProxy,
+  EagleNodeMap,
+  ImmutablePath,
+  DereferenceError
+} from './lib/eagle.js';
 import { toXML } from './lib/json.js';
 import Util from './lib/util.js';
 import * as deep from 'deep';
 import path from './lib/path.js';
-import { LineList, Point, Circle, Rect, Size, Line, TransformationList, Rotation, Translation, Scaling, Matrix, BBox } from './lib/geom.js';
+import {
+  LineList,
+  Point,
+  Circle,
+  Rect,
+  Size,
+  Line,
+  TransformationList,
+  Rotation,
+  Translation,
+  Scaling,
+  Matrix,
+  BBox
+} from './lib/geom.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import REPL from './repl.js';
-import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, Enum, HashList, Multimap, Shash, SortedMap, HashMultimap, MultiBiMap, MultiKeyMap, DenseSpatialHash2D, SpatialHash2D, HashMap, SpatialH, SpatialHash, SpatialHashMap, BoxHash } from './lib/container.js';
+import {
+  BinaryTree,
+  BucketStore,
+  BucketMap,
+  ComponentMap,
+  CompositeMap,
+  Deque,
+  Enum,
+  HashList,
+  Multimap,
+  Shash,
+  SortedMap,
+  HashMultimap,
+  MultiBiMap,
+  MultiKeyMap,
+  DenseSpatialHash2D,
+  SpatialHash2D,
+  HashMap,
+  SpatialH,
+  SpatialHash,
+  SpatialHashMap,
+  BoxHash
+} from './lib/container.js';
 import * as std from 'std';
 import fs from 'fs';
 import { Console } from 'console';
@@ -35,10 +120,10 @@ Util.define(Array.prototype, {
   at(index) {
     return this[Util.mod(index, this.length)];
   },
-  get head() {
+  /* prettier-ignore */ get head() {
     return this[this.length-1];
   },
-  get tail() {
+  /* prettier-ignore */ get tail() {
     return this[this.length-1];
   }
 });
@@ -105,7 +190,8 @@ function updateMeasures(board) {
     let lines = rect.toLines(lines => new LineList(lines));
     let { plain } = board;
     plain.remove(e => e.tagName == 'wire' && e.attributes.layer == '47');
-    plain.append(...lines.map(line => ({
+    plain.append(
+      ...lines.map(line => ({
         tagName: 'wire',
         attributes: { ...line.toObject(), layer: 47, width: 0 }
       }))
@@ -183,7 +269,8 @@ function fixValue(element) {
 
   switch (element.name[0]) {
     case 'R': {
-      newValue = value.replace(/^([0-9.]+)([mkM]?)(?:\xEF\xBF\xBD|\xC2\xA9|\x26\xC2*\xA9+|\u2126?[\x80-\xFF]+)([\x00-\x7F]*)/,
+      newValue = value.replace(
+        /^([0-9.]+)([mkM]?)(?:\xEF\xBF\xBD|\xC2\xA9|\x26\xC2*\xA9+|\u2126?[\x80-\xFF]+)([\x00-\x7F]*)/,
         '$1$2\u2126$3'
       );
       break;
@@ -271,7 +358,8 @@ async function testEagle(filename) {
   let { board, schematic } = proj;
   const packages = {
     board: (board && board.elements && [...board.elements].map(([name, e]) => e.package)) || [],
-    schematic: (schematic &&
+    schematic:
+      (schematic &&
         schematic.sheets &&
         [...schematic.sheets]
           .map(e =>
@@ -399,7 +487,8 @@ function main(...args) {
 
   Object.assign(globalThis, {
     load(filename, project = globalThis.project) {
-      return (globalThis.document = new EagleDocument(std.loadFile(filename),
+      return (globalThis.document = new EagleDocument(
+        std.loadFile(filename),
         project,
         filename,
         null,
@@ -501,7 +590,8 @@ function main(...args) {
     let hist = repl.history_get().filter((item, i, a) => a.lastIndexOf(item) == i);
 
     //    fs.writeFileSync(cmdhist, JSON.stringify(hist, null, 2));
-    fs.writeFileSync(cmdhist,
+    fs.writeFileSync(
+      cmdhist,
       hist
         .filter(entry => (entry + '').trim() != '')
         .map(entry => entry.replace(/\n/g, '\\\\n') + '\n')

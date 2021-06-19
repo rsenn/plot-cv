@@ -49,7 +49,8 @@ async function main(...args) {
   await PortableFileSystem(fs => (fs = fs));
   await PortableSpawn(fn => (spawn = fn));
 
-  let params = Util.getOpt({
+  let params = Util.getOpt(
+    {
       output: [true, null, 'o'],
       xml: [true, null, 'X'],
       json: [true, null, 'j'],
@@ -72,7 +73,8 @@ async function main(...args) {
   const win32 = false;
 
   if(win32) {
-    defs = defs.concat(Object.entries({
+    defs = defs.concat(
+      Object.entries({
         PDWORD: 'unsigned long*',
         UCHAR: 'unsigned char',
         BYTE: 'char',
@@ -110,7 +112,8 @@ async function main(...args) {
       let outfile = base + '.ast.json';
       let boutfile = base + '.ast.bjson';
 
-      async function ReadAST(outfile,
+      async function ReadAST(
+        outfile,
         load = f => fs.readFileSync(f),
         save = WriteFile,
         parse = JSON.parse
@@ -151,7 +154,8 @@ async function main(...args) {
       //console.log("ast:", ast);
 
       let tree = new Tree(ast);
-      let flat = /*tree.flat();*/ deep.flatten(ast,
+      let flat = /*tree.flat();*/ deep.flatten(
+        ast,
         new Map(),
         (v, p) =>
           ['inner', 'loc', 'range'].indexOf(p[p.length - 1]) == -1 &&
@@ -166,7 +170,8 @@ async function main(...args) {
         const [p, n] = entry;
         let loc = GetLoc(n);
         if(loc)
-          l = Object.setPrototypeOf({ ...(l || {}), ...loc },
+          l = Object.setPrototypeOf(
+            { ...(l || {}), ...loc },
             {
               toString() {
                 let s;
@@ -212,7 +217,8 @@ async function main(...args) {
 
         let namedNodes = mainNodes.filter(([p, n]) => 'name' in n);
 
-        let loc_name = Util.intersect(/*namedNodes
+        let loc_name = Util.intersect(
+          /*namedNodes
             .filter(([p, n]) => /Decl/.test(n.kind + '') && Util.isNumeric(p[p.length - 1]))
             .map(([p]) => p) ||*/
           typedefs.map(([p]) => p),
@@ -221,7 +227,8 @@ async function main(...args) {
 
         if(params.debug) console.log('loc_name:', loc_name);
 
-        let namedDecls = new Map(loc_name
+        let namedDecls = new Map(
+          loc_name
             .filter(([p, n]) => !/(ParmVar|FieldDecl)/.test(n.kind))
             .map(([p, n]) => [n.name, n])
             .sort((a, b) => a[0].localeCompare(b[0]))
@@ -244,12 +251,14 @@ async function main(...args) {
 
         if(params.debug) console.log('loc ∩ name:', loc_name.length);
 
-        for(let decl of decls.filter(([path, node, id, name, type, kind]) => !/ParmVar/.test(kind)
+        for(let decl of decls.filter(
+          ([path, node, id, name, type, kind]) => !/ParmVar/.test(kind)
         )) {
           const line = decl
             .slice(2)
             .map((field, i) =>
-              (Util.abbreviate(field, [Infinity, Infinity, 20, Infinity, Infinity, Infinity][i]) +
+              (
+                Util.abbreviate(field, [Infinity, Infinity, 20, Infinity, Infinity, Infinity][i]) +
                 ''
               ).padEnd([6, 25, 20, 20, 40, 0][i])
             )

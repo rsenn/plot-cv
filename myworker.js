@@ -22,7 +22,8 @@ function LoadConfig() {
   let str = std.loadFile(configFile);
   let configObj = JSON.parse(str ?? '{}');
 
-  configObj = Object.fromEntries(Object.entries(configObj)
+  configObj = Object.fromEntries(
+    Object.entries(configObj)
       .map(([k, v]) => [k, +v])
       .filter(([k, v]) => !isNaN(v))
   );

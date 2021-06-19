@@ -1,5 +1,14 @@
 import { ECMAScriptParser, Printer, PathReplacer } from './lib/ecmascript.js';
-import { ObjectPattern, ObjectExpression, ImportDeclaration, ExportNamedDeclaration, VariableDeclaration, estree, ESNode, Literal } from './lib/ecmascript.js';
+import {
+  ObjectPattern,
+  ObjectExpression,
+  ImportDeclaration,
+  ExportNamedDeclaration,
+  VariableDeclaration,
+  estree,
+  ESNode,
+  Literal
+} from './lib/ecmascript.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import Util from './lib/util.js';
 import { ImmutablePath } from './lib/json.js';
@@ -59,19 +68,19 @@ class ES6ImportExport {
     return ret;
   }
 
-  get from() {
+  /* prettier-ignore */ get from() {
     let value = this.node.source;
     while(Util.isObject(value) && value.value) value = value.value;
     return value;
   }
-  set from(value) {
+  /* prettier-ignore */ set from(value) {
     this.node.source =
       value instanceof Literal ? value : new Literal(`'${value}'`);
   }
   toSource() {
     return printAst(this.node);
   }
-  get code() {
+  /* prettier-ignore */ get code() {
     return this.toSource();
   }
 }
@@ -218,7 +227,8 @@ async function main(...args) {
     try {
       ast = parser.parseProgram();
       parser.addCommentsToNodes(ast);
-      let flat = deep.flatten(ast,
+      let flat = deep.flatten(
+        ast,
         new Map(),
         node => node instanceof ESNode,
         (path, value) => [path, value]
@@ -232,7 +242,8 @@ async function main(...args) {
           if(!predicate(node, path)) continue;
           console.log('removeStatements loop:', new ImmutablePath(path), printAst(node));
 
-          if(node instanceof ImportDeclaration ||
+          if(
+            node instanceof ImportDeclaration ||
             (Util.isObject(node) && node.what == 'default')
           ) {
             deep.unset(ast, path);
@@ -250,7 +261,8 @@ async function main(...args) {
       const getRelative = filename => path.join(thisdir, filename);
       const getFile = Util.memoize(module => searchModuleInPath(module, file));
       let imports,
-        importStatements = [...flat.entries()].filter(([key, node]) => node instanceof ImportDeclaration
+        importStatements = [...flat.entries()].filter(
+          ([key, node]) => node instanceof ImportDeclaration
         );
       imports = importStatements.map(([path, node], i) => {
         //   console.debug("node:",node);
@@ -280,16 +292,19 @@ async function main(...args) {
         return node;
       });
 
-      log(`imports =`,
+      log(
+        `imports =`,
         imports.map(imp => imp.toSource())
       );
-      log(`alter =`,
+      log(
+        `alter =`,
         alter.map(imp => printAst(imp.node))
       );
       let remove = imports
         .map((imp, idx) => [idx, imp.node])
         .filter((imp, idx) => !/^lib/.test(imp.fromPath));
-      log(`remove =`,
+      log(
+        `remove =`,
         remove
           .reduce((acc, [i, imp]) => [...acc, imp /*(imp.fromPath),imp.toSource()*/], [])
           .map(imp => Util.className(imp))
@@ -303,11 +318,13 @@ async function main(...args) {
       //recurseFiles = recurseFiles.map(([path,module]) => { console.log("module:",module.fromPath); return module.fromPath; });
       // removeFile(modulePath);
 
-      log(`recurseFiles =`,
+      log(
+        `recurseFiles =`,
         recurseFiles.map(imp => imp.fromPath)
       );
       recurseFiles.forEach(imp => processFile(imp.fromPath));
-      let exports = [...flat.entries()].filter(([key, value]) => value instanceof ExportNamedDeclaration || value.exported === true
+      let exports = [...flat.entries()].filter(
+        ([key, value]) => value instanceof ExportNamedDeclaration || value.exported === true
       );
 
       for(let [path, node] of exports) {

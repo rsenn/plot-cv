@@ -4,7 +4,8 @@ const cursorPng = '/static/ruler/cursor.png';
 
 const Cursor = ({ horizontal }) =>
   horizontal
-    ? h('img',
+    ? h(
+        'img',
         {
           src: 'static/ruler/cursor.svg',
           alt: 'cursor',
@@ -13,7 +14,8 @@ const Cursor = ({ horizontal }) =>
           style: { objectFit: 'cover' }
         } /*, h(CursorImage)*/
       )
-    : h('img',
+    : h(
+        'img',
         {
           src: 'static/ruler/cursor.svg',
           alt: 'cursor',
@@ -29,7 +31,8 @@ const Cursor = ({ horizontal }) =>
       );
 
 function CursorImage(props) {
-  return h('svg',
+  return h(
+    'svg',
     {
       height: '512',
       width: '512',

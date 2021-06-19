@@ -1,5 +1,16 @@
 import { ECMAScriptParser, Printer, PathReplacer } from './lib/ecmascript.js';
-import { ObjectPattern, ObjectExpression, ImportDeclaration, ExportNamedDeclaration, ExportDefaultDeclaration, VariableDeclaration, estree, ESNode, Literal, Identifier } from './lib/ecmascript.js';
+import {
+  ObjectPattern,
+  ObjectExpression,
+  ImportDeclaration,
+  ExportNamedDeclaration,
+  ExportDefaultDeclaration,
+  VariableDeclaration,
+  estree,
+  ESNode,
+  Literal,
+  Identifier
+} from './lib/ecmascript.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import Util from './lib/util.js';
 import { ImmutablePath } from './lib/json.js';
@@ -17,7 +28,8 @@ const removeModulesDir = PrefixRemover([/node_modules\//g, /^\.\//g]);
 console.log('main');
 Util.callMain(main);
 /*
-const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg"> <defs /> */ function PrefixRemover(reOrStr,
+const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg"> <defs /> */ function PrefixRemover(
+  reOrStr,
   replacement = ''
 ) {
   if(!(Util.isArray(reOrStr) || Util.isIterable(reOrStr))) reOrStr = [reOrStr];
@@ -110,7 +122,8 @@ async function main(...args) {
         log(`export ${path}`, node);
         if(node.declarations) deep.set(ast, path, node.declarations[0]);
       }
-      allExports.splice(allExports.length,
+      allExports.splice(
+        allExports.length,
         0,
         ...exports.map(([key, value]) => {
           const { position } = ESNode.assoc(value);

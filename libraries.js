@@ -23,7 +23,8 @@ async function Search(q, languages) {
   const [doc] = tXml(html);
   console.log('doc:', doc);
 
-  const flat = deep.flatten(doc,
+  const flat = deep.flatten(
+    doc,
     new Map(),
     (v, p) => typeof v == 'object' && v != null && 'tagName' in v,
     (p, v) => [XPath.from(p, doc), v]

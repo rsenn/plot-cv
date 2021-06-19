@@ -32,7 +32,8 @@ async function main(...args) {
   await ConsoleSetup({ breakLength: 120, depth: 10 });
   await PortableFileSystem(fs => (filesystem = fs));
 
-  let params = Util.getOpt({
+  let params = Util.getOpt(
+    {
       output: [true, null, 'o'],
       indent: [true, null, 'i'],
       'output-dir': [true, null, 'd'],
@@ -45,7 +46,8 @@ async function main(...args) {
   let output = params.output ? filesystem.open(params.output, 'w+') : filesystem.stdout;
 
   if(params.output && params['@'].length > 1)
-    throw new Error(`Output file specified as '${params.output}', but got ${params['@'].length} input files`
+    throw new Error(
+      `Output file specified as '${params.output}', but got ${params['@'].length} input files`
     );
 
   for(let arg of params['@']) {

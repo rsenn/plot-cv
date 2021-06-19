@@ -1,4 +1,17 @@
-import { choice, seq, token, char, regex, option, any, many, eof, ignore, concat, invert } from './lib/parse/fn.js';
+import {
+  choice,
+  seq,
+  token,
+  char,
+  regex,
+  option,
+  any,
+  many,
+  eof,
+  ignore,
+  concat,
+  invert
+} from './lib/parse/fn.js';
 
 function wrap(parser, name) {
   return (str, pos) => {
@@ -9,7 +22,8 @@ function wrap(parser, name) {
   };
 }
 function primaryExpression(...args) {
-  return wrap(choice(identifier, constant, stringLiteral, seq(token('('), expression, token(')'))),
+  return wrap(
+    choice(identifier, constant, stringLiteral, seq(token('('), expression, token(')'))),
     'primaryExpression'
   )(...args);
 }
@@ -23,7 +37,8 @@ function argumentExpressionList(...args) {
 }
 
 function unaryExpression(...args) {
-  return wrap(choice(
+  return wrap(
+    choice(
       postfixExpression,
       seq(token('++'), unaryExpression),
       seq(token('--'), unaryExpression),
@@ -34,7 +49,8 @@ function unaryExpression(...args) {
 }
 
 function unaryOperator(...args) {
-  return wrap(choice(token('&'), token('*'), token('+'), token('-'), token('~'), token('!')),
+  return wrap(
+    choice(token('&'), token('*'), token('+'), token('-'), token('~'), token('!')),
     'unaryOperator'
   )(...args);
 }
@@ -84,7 +100,8 @@ function logicalOrExpression(...args) {
 }
 
 function conditionalExpression(...args) {
-  return wrap(choice(
+  return wrap(
+    choice(
       logicalOrExpression,
       seq(logicalOrExpression, token('?'), expression, token(':'), conditionalExpression)
     ),
@@ -93,13 +110,15 @@ function conditionalExpression(...args) {
 }
 
 function assignmentExpression(...args) {
-  return wrap(choice(conditionalExpression, seq(unaryExpression, assignmentOperator, assignmentExpression)),
+  return wrap(
+    choice(conditionalExpression, seq(unaryExpression, assignmentOperator, assignmentExpression)),
     'assignmentExpression'
   )(...args);
 }
 
 function assignmentOperator(...args) {
-  return wrap(choice(
+  return wrap(
+    choice(
       token('='),
       token('*='),
       token('/='),

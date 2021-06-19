@@ -836,7 +836,8 @@ export function glPopMatrix() {
   return call('glPopMatrix');
 }
 
-define('glBindTexture',
+define(
+  'glBindTexture',
   dlsym(libGL, 'glBindTexture'),
   null,
   'void',
@@ -847,7 +848,8 @@ export function glBindTexture(target, texture) {
   return call('glBindTexture', target, texture);
 }
 
-define('glBitmap',
+define(
+  'glBitmap',
   dlsym(libGL, 'glBitmap'),
   null,
   'void',
@@ -883,7 +885,8 @@ export function glClear(mask) {
   return call('glClear', mask);
 }
 
-define('glClearAccum',
+define(
+  'glClearAccum',
   dlsym(libGL, 'glClearAccum'),
   null,
   'void',
@@ -896,7 +899,8 @@ export function glClearAccum(red, green, blue, alpha) {
   return call('glClearAccum', red, green, blue, alpha);
 }
 
-define('glClearColor',
+define(
+  'glClearColor',
   dlsym(libGL, 'glClearColor'),
   null,
   'void',
@@ -979,7 +983,8 @@ export function glColor3sv(v) {
   return call('glColor3sv', v);
 }
 
-define('glColor3ub',
+define(
+  'glColor3ub',
   dlsym(libGL, 'glColor3ub'),
   null,
   'void',
@@ -996,7 +1001,8 @@ export function glColor3ubv(v) {
   return call('glColor3ubv', v);
 }
 
-define('glColor3ui',
+define(
+  'glColor3ui',
   dlsym(libGL, 'glColor3ui'),
   null,
   'void',
@@ -1033,7 +1039,8 @@ export function glColor4bv(v) {
   return call('glColor4bv', v);
 }
 
-define('glColor4d',
+define(
+  'glColor4d',
   dlsym(libGL, 'glColor4d'),
   null,
   'void',
@@ -1081,7 +1088,8 @@ export function glColor4sv(v) {
   return call('glColor4sv', v);
 }
 
-define('glColor4ub',
+define(
+  'glColor4ub',
   dlsym(libGL, 'glColor4ub'),
   null,
   'void',
@@ -1099,7 +1107,8 @@ export function glColor4ubv(v) {
   return call('glColor4ubv', v);
 }
 
-define('glColor4ui',
+define(
+  'glColor4ui',
   dlsym(libGL, 'glColor4ui'),
   null,
   'void',
@@ -1117,7 +1126,8 @@ export function glColor4uiv(v) {
   return call('glColor4uiv', v);
 }
 
-define('glColor4us',
+define(
+  'glColor4us',
   dlsym(libGL, 'glColor4us'),
   null,
   'void',
@@ -1135,7 +1145,8 @@ export function glColor4usv(v) {
   return call('glColor4usv', v);
 }
 
-define('glColorMask',
+define(
+  'glColorMask',
   dlsym(libGL, 'glColorMask'),
   null,
   'void',
@@ -1148,7 +1159,8 @@ export function glColorMask(red, green, blue, alpha) {
   return call('glColorMask', red, green, blue, alpha);
 }
 
-define('glColorMaterial',
+define(
+  'glColorMaterial',
   dlsym(libGL, 'glColorMaterial'),
   null,
   'void',
@@ -1159,7 +1171,8 @@ export function glColorMaterial(face, mode) {
   return call('glColorMaterial', face, mode);
 }
 
-define('glColorPointer',
+define(
+  'glColorPointer',
   dlsym(libGL, 'glColorPointer'),
   null,
   'void',
@@ -1172,7 +1185,8 @@ export function glColorPointer(size, type, stride, pointer) {
   return call('glColorPointer', size, type, stride, pointer);
 }
 
-define('glCopyPixels',
+define(
+  'glCopyPixels',
   dlsym(libGL, 'glCopyPixels'),
   null,
   'void',
@@ -1186,7 +1200,8 @@ export function glCopyPixels(x, y, width, height, type) {
   return call('glCopyPixels', x, y, width, height, type);
 }
 
-define('glCopyTexImage1D',
+define(
+  'glCopyTexImage1D',
   dlsym(libGL, 'glCopyTexImage1D'),
   null,
   'void',
@@ -1202,7 +1217,8 @@ export function glCopyTexImage1D(target, level, internalFormat, x, y, width, bor
   return call('glCopyTexImage1D', target, level, internalFormat, x, y, width, border);
 }
 
-define('glCopyTexImage2D',
+define(
+  'glCopyTexImage2D',
   dlsym(libGL, 'glCopyTexImage2D'),
   null,
   'void',
@@ -1219,7 +1235,8 @@ export function glCopyTexImage2D(target, level, internalFormat, x, y, width, hei
   return call('glCopyTexImage2D', target, level, internalFormat, x, y, width, height, border);
 }
 
-define('glCopyTexSubImage1D',
+define(
+  'glCopyTexSubImage1D',
   dlsym(libGL, 'glCopyTexSubImage1D'),
   null,
   'void',
@@ -1234,7 +1251,8 @@ export function glCopyTexSubImage1D(target, level, xoffset, x, y, width) {
   return call('glCopyTexSubImage1D', target, level, xoffset, x, y, width);
 }
 
-define('glCopyTexSubImage2D',
+define(
+  'glCopyTexSubImage2D',
   dlsym(libGL, 'glCopyTexSubImage2D'),
   null,
   'void',
@@ -1301,7 +1319,8 @@ export function glDrawBuffer(mode) {
   return call('glDrawBuffer', mode);
 }
 
-define('glDrawElements',
+define(
+  'glDrawElements',
   dlsym(libGL, 'glDrawElements'),
   null,
   'void',
@@ -1314,7 +1333,8 @@ export function glDrawElements(mode, count, type, indices) {
   return call('glDrawElements', mode, count, type, indices);
 }
 
-define('glDrawPixels',
+define(
+  'glDrawPixels',
   dlsym(libGL, 'glDrawPixels'),
   null,
   'void',
@@ -1398,7 +1418,8 @@ export function glEvalMesh1(mode, i1, i2) {
   return call('glEvalMesh1', mode, i1, i2);
 }
 
-define('glEvalMesh2',
+define(
+  'glEvalMesh2',
   dlsym(libGL, 'glEvalMesh2'),
   null,
   'void',
@@ -1422,7 +1443,8 @@ export function glEvalPoint2(i, j) {
   return call('glEvalPoint2', i, j);
 }
 
-define('glFeedbackBuffer',
+define(
+  'glFeedbackBuffer',
   dlsym(libGL, 'glFeedbackBuffer'),
   null,
   'void',
@@ -1459,7 +1481,8 @@ export function glFrontFace(mode) {
   return call('glFrontFace', mode);
 }
 
-define('glFrustum',
+define(
+  'glFrustum',
   dlsym(libGL, 'glFrustum'),
   null,
   'void',
@@ -1509,7 +1532,8 @@ export function glGetIntegerv(pname, params) {
   return call('glGetIntegerv', pname, params);
 }
 
-define('glGetLightfv',
+define(
+  'glGetLightfv',
   dlsym(libGL, 'glGetLightfv'),
   null,
   'void',
@@ -1521,7 +1545,8 @@ export function glGetLightfv(light, pname, params) {
   return call('glGetLightfv', light, pname, params);
 }
 
-define('glGetLightiv',
+define(
+  'glGetLightiv',
   dlsym(libGL, 'glGetLightiv'),
   null,
   'void',
@@ -1533,7 +1558,8 @@ export function glGetLightiv(light, pname, params) {
   return call('glGetLightiv', light, pname, params);
 }
 
-define('glGetMapdv',
+define(
+  'glGetMapdv',
   dlsym(libGL, 'glGetMapdv'),
   null,
   'void',
@@ -1545,7 +1571,8 @@ export function glGetMapdv(target, query, v) {
   return call('glGetMapdv', target, query, v);
 }
 
-define('glGetMapfv',
+define(
+  'glGetMapfv',
   dlsym(libGL, 'glGetMapfv'),
   null,
   'void',
@@ -1557,7 +1584,8 @@ export function glGetMapfv(target, query, v) {
   return call('glGetMapfv', target, query, v);
 }
 
-define('glGetMapiv',
+define(
+  'glGetMapiv',
   dlsym(libGL, 'glGetMapiv'),
   null,
   'void',
@@ -1569,7 +1597,8 @@ export function glGetMapiv(target, query, v) {
   return call('glGetMapiv', target, query, v);
 }
 
-define('glGetMaterialfv',
+define(
+  'glGetMaterialfv',
   dlsym(libGL, 'glGetMaterialfv'),
   null,
   'void',
@@ -1581,7 +1610,8 @@ export function glGetMaterialfv(face, pname, params) {
   return call('glGetMaterialfv', face, pname, params);
 }
 
-define('glGetMaterialiv',
+define(
+  'glGetMaterialiv',
   dlsym(libGL, 'glGetMaterialiv'),
   null,
   'void',
@@ -1598,7 +1628,8 @@ export function glGetPixelMapfv(map, values) {
   return call('glGetPixelMapfv', map, values);
 }
 
-define('glGetPixelMapuiv',
+define(
+  'glGetPixelMapuiv',
   dlsym(libGL, 'glGetPixelMapuiv'),
   null,
   'void',
@@ -1609,7 +1640,8 @@ export function glGetPixelMapuiv(map, values) {
   return call('glGetPixelMapuiv', map, values);
 }
 
-define('glGetPixelMapusv',
+define(
+  'glGetPixelMapusv',
   dlsym(libGL, 'glGetPixelMapusv'),
   null,
   'void',
@@ -1635,7 +1667,8 @@ export function glGetString(name) {
   return call('glGetString', name);
 }
 
-define('glGetTexEnvfv',
+define(
+  'glGetTexEnvfv',
   dlsym(libGL, 'glGetTexEnvfv'),
   null,
   'void',
@@ -1647,7 +1680,8 @@ export function glGetTexEnvfv(target, pname, params) {
   return call('glGetTexEnvfv', target, pname, params);
 }
 
-define('glGetTexEnviv',
+define(
+  'glGetTexEnviv',
   dlsym(libGL, 'glGetTexEnviv'),
   null,
   'void',
@@ -1659,7 +1693,8 @@ export function glGetTexEnviv(target, pname, params) {
   return call('glGetTexEnviv', target, pname, params);
 }
 
-define('glGetTexGendv',
+define(
+  'glGetTexGendv',
   dlsym(libGL, 'glGetTexGendv'),
   null,
   'void',
@@ -1671,7 +1706,8 @@ export function glGetTexGendv(coord, pname, params) {
   return call('glGetTexGendv', coord, pname, params);
 }
 
-define('glGetTexGenfv',
+define(
+  'glGetTexGenfv',
   dlsym(libGL, 'glGetTexGenfv'),
   null,
   'void',
@@ -1683,7 +1719,8 @@ export function glGetTexGenfv(coord, pname, params) {
   return call('glGetTexGenfv', coord, pname, params);
 }
 
-define('glGetTexGeniv',
+define(
+  'glGetTexGeniv',
   dlsym(libGL, 'glGetTexGeniv'),
   null,
   'void',
@@ -1695,7 +1732,8 @@ export function glGetTexGeniv(coord, pname, params) {
   return call('glGetTexGeniv', coord, pname, params);
 }
 
-define('glGetTexImage',
+define(
+  'glGetTexImage',
   dlsym(libGL, 'glGetTexImage'),
   null,
   'void',
@@ -1709,7 +1747,8 @@ export function glGetTexImage(target, level, format, type, pixels) {
   return call('glGetTexImage', target, level, format, type, pixels);
 }
 
-define('glGetTexLevelParameterfv',
+define(
+  'glGetTexLevelParameterfv',
   dlsym(libGL, 'glGetTexLevelParameterfv'),
   null,
   'void',
@@ -1722,7 +1761,8 @@ export function glGetTexLevelParameterfv(target, level, pname, params) {
   return call('glGetTexLevelParameterfv', target, level, pname, params);
 }
 
-define('glGetTexLevelParameteriv',
+define(
+  'glGetTexLevelParameteriv',
   dlsym(libGL, 'glGetTexLevelParameteriv'),
   null,
   'void',
@@ -1735,7 +1775,8 @@ export function glGetTexLevelParameteriv(target, level, pname, params) {
   return call('glGetTexLevelParameteriv', target, level, pname, params);
 }
 
-define('glGetTexParameterfv',
+define(
+  'glGetTexParameterfv',
   dlsym(libGL, 'glGetTexParameterfv'),
   null,
   'void',
@@ -1747,7 +1788,8 @@ export function glGetTexParameterfv(target, pname, params) {
   return call('glGetTexParameterfv', target, pname, params);
 }
 
-define('glGetTexParameteriv',
+define(
+  'glGetTexParameteriv',
   dlsym(libGL, 'glGetTexParameteriv'),
   null,
   'void',
@@ -1799,7 +1841,8 @@ export function glIndexMask(mask) {
   return call('glIndexMask', mask);
 }
 
-define('glIndexPointer',
+define(
+  'glIndexPointer',
   dlsym(libGL, 'glIndexPointer'),
   null,
   'void',
@@ -1831,7 +1874,8 @@ export function glIndexubv(c) {
   return call('glIndexubv', c);
 }
 
-define('glInterleavedArrays',
+define(
+  'glInterleavedArrays',
   dlsym(libGL, 'glInterleavedArrays'),
   null,
   'void',
@@ -1863,7 +1907,8 @@ export function glLightf(light, pname, param) {
   return call('glLightf', light, pname, param);
 }
 
-define('glLightfv',
+define(
+  'glLightfv',
   dlsym(libGL, 'glLightfv'),
   null,
   'void',
@@ -1880,7 +1925,8 @@ export function glLighti(light, pname, param) {
   return call('glLighti', light, pname, param);
 }
 
-define('glLightiv',
+define(
+  'glLightiv',
   dlsym(libGL, 'glLightiv'),
   null,
   'void',
@@ -1947,7 +1993,8 @@ export function glLogicOp(opcode) {
   return call('glLogicOp', opcode);
 }
 
-define('glMap1d',
+define(
+  'glMap1d',
   dlsym(libGL, 'glMap1d'),
   null,
   'void',
@@ -1962,7 +2009,8 @@ export function glMap1d(target, u1, u2, stride, order, points) {
   return call('glMap1d', target, u1, u2, stride, order, points);
 }
 
-define('glMap1f',
+define(
+  'glMap1f',
   dlsym(libGL, 'glMap1f'),
   null,
   'void',
@@ -1977,7 +2025,8 @@ export function glMap1f(target, u1, u2, stride, order, points) {
   return call('glMap1f', target, u1, u2, stride, order, points);
 }
 
-define('glMap2d',
+define(
+  'glMap2d',
   dlsym(libGL, 'glMap2d'),
   null,
   'void',
@@ -1996,7 +2045,8 @@ export function glMap2d(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder
   return call('glMap2d', target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, points);
 }
 
-define('glMap2f',
+define(
+  'glMap2f',
   dlsym(libGL, 'glMap2f'),
   null,
   'void',
@@ -2025,7 +2075,8 @@ export function glMapGrid1f(un, u1, u2) {
   return call('glMapGrid1f', un, u1, u2);
 }
 
-define('glMapGrid2d',
+define(
+  'glMapGrid2d',
   dlsym(libGL, 'glMapGrid2d'),
   null,
   'void',
@@ -2040,7 +2091,8 @@ export function glMapGrid2d(un, u1, u2, vn, v1, v2) {
   return call('glMapGrid2d', un, u1, u2, vn, v1, v2);
 }
 
-define('glMapGrid2f',
+define(
+  'glMapGrid2f',
   dlsym(libGL, 'glMapGrid2f'),
   null,
   'void',
@@ -2055,7 +2107,8 @@ export function glMapGrid2f(un, u1, u2, vn, v1, v2) {
   return call('glMapGrid2f', un, u1, u2, vn, v1, v2);
 }
 
-define('glMaterialf',
+define(
+  'glMaterialf',
   dlsym(libGL, 'glMaterialf'),
   null,
   'void',
@@ -2067,7 +2120,8 @@ export function glMaterialf(face, pname, param) {
   return call('glMaterialf', face, pname, param);
 }
 
-define('glMaterialfv',
+define(
+  'glMaterialfv',
   dlsym(libGL, 'glMaterialfv'),
   null,
   'void',
@@ -2079,7 +2133,8 @@ export function glMaterialfv(face, pname, params) {
   return call('glMaterialfv', face, pname, params);
 }
 
-define('glMateriali',
+define(
+  'glMateriali',
   dlsym(libGL, 'glMateriali'),
   null,
   'void',
@@ -2091,7 +2146,8 @@ export function glMateriali(face, pname, param) {
   return call('glMateriali', face, pname, param);
 }
 
-define('glMaterialiv',
+define(
+  'glMaterialiv',
   dlsym(libGL, 'glMaterialiv'),
   null,
   'void',
@@ -2173,7 +2229,8 @@ export function glNormal3sv(v) {
   return call('glNormal3sv', v);
 }
 
-define('glNormalPointer',
+define(
+  'glNormalPointer',
   dlsym(libGL, 'glNormalPointer'),
   null,
   'void',
@@ -2185,7 +2242,8 @@ export function glNormalPointer(type, stride, pointer) {
   return call('glNormalPointer', type, stride, pointer);
 }
 
-define('glOrtho',
+define(
+  'glOrtho',
   dlsym(libGL, 'glOrtho'),
   null,
   'void',
@@ -2210,7 +2268,8 @@ export function glPixelMapfv(map, mapsize, values) {
   return call('glPixelMapfv', map, mapsize, values);
 }
 
-define('glPixelMapuiv',
+define(
+  'glPixelMapuiv',
   dlsym(libGL, 'glPixelMapuiv'),
   null,
   'void',
@@ -2222,7 +2281,8 @@ export function glPixelMapuiv(map, mapsize, values) {
   return call('glPixelMapuiv', map, mapsize, values);
 }
 
-define('glPixelMapusv',
+define(
+  'glPixelMapusv',
   dlsym(libGL, 'glPixelMapusv'),
   null,
   'void',
@@ -2264,7 +2324,8 @@ export function glPointSize(size) {
   return call('glPointSize', size);
 }
 
-define('glPolygonMode',
+define(
+  'glPolygonMode',
   dlsym(libGL, 'glPolygonMode'),
   null,
   'void',
@@ -2285,7 +2346,8 @@ export function glPolygonStipple(mask) {
   return call('glPolygonStipple', mask);
 }
 
-define('glPrioritizeTextures',
+define(
+  'glPrioritizeTextures',
   dlsym(libGL, 'glPrioritizeTextures'),
   null,
   'void',
@@ -2392,7 +2454,8 @@ export function glRasterPos3sv(v) {
   return call('glRasterPos3sv', v);
 }
 
-define('glRasterPos4d',
+define(
+  'glRasterPos4d',
   dlsym(libGL, 'glRasterPos4d'),
   null,
   'void',
@@ -2410,7 +2473,8 @@ export function glRasterPos4dv(v) {
   return call('glRasterPos4dv', v);
 }
 
-define('glRasterPos4f',
+define(
+  'glRasterPos4f',
   dlsym(libGL, 'glRasterPos4f'),
   null,
   'void',
@@ -2438,7 +2502,8 @@ export function glRasterPos4iv(v) {
   return call('glRasterPos4iv', v);
 }
 
-define('glRasterPos4s',
+define(
+  'glRasterPos4s',
   dlsym(libGL, 'glRasterPos4s'),
   null,
   'void',
@@ -2461,7 +2526,8 @@ export function glReadBuffer(mode) {
   return call('glReadBuffer', mode);
 }
 
-define('glReadPixels',
+define(
+  'glReadPixels',
   dlsym(libGL, 'glReadPixels'),
   null,
   'void',
@@ -2522,7 +2588,8 @@ export function glRenderMode(mode) {
   return call('glRenderMode', mode);
 }
 
-define('glRotated',
+define(
+  'glRotated',
   dlsym(libGL, 'glRotated'),
   null,
   'void',
@@ -2565,7 +2632,8 @@ export function glShadeModel(mode) {
   return call('glShadeModel', mode);
 }
 
-define('glStencilFunc',
+define(
+  'glStencilFunc',
   dlsym(libGL, 'glStencilFunc'),
   null,
   'void',
@@ -2582,7 +2650,8 @@ export function glStencilMask(mask) {
   return call('glStencilMask', mask);
 }
 
-define('glStencilOp',
+define(
+  'glStencilOp',
   dlsym(libGL, 'glStencilOp'),
   null,
   'void',
@@ -2714,7 +2783,8 @@ export function glTexCoord3sv(v) {
   return call('glTexCoord3sv', v);
 }
 
-define('glTexCoord4d',
+define(
+  'glTexCoord4d',
   dlsym(libGL, 'glTexCoord4d'),
   null,
   'void',
@@ -2732,7 +2802,8 @@ export function glTexCoord4dv(v) {
   return call('glTexCoord4dv', v);
 }
 
-define('glTexCoord4f',
+define(
+  'glTexCoord4f',
   dlsym(libGL, 'glTexCoord4f'),
   null,
   'void',
@@ -2760,7 +2831,8 @@ export function glTexCoord4iv(v) {
   return call('glTexCoord4iv', v);
 }
 
-define('glTexCoord4s',
+define(
+  'glTexCoord4s',
   dlsym(libGL, 'glTexCoord4s'),
   null,
   'void',
@@ -2778,7 +2850,8 @@ export function glTexCoord4sv(v) {
   return call('glTexCoord4sv', v);
 }
 
-define('glTexCoordPointer',
+define(
+  'glTexCoordPointer',
   dlsym(libGL, 'glTexCoordPointer'),
   null,
   'void',
@@ -2791,7 +2864,8 @@ export function glTexCoordPointer(size, type, stride, pointer) {
   return call('glTexCoordPointer', size, type, stride, pointer);
 }
 
-define('glTexEnvf',
+define(
+  'glTexEnvf',
   dlsym(libGL, 'glTexEnvf'),
   null,
   'void',
@@ -2803,7 +2877,8 @@ export function glTexEnvf(target, pname, param) {
   return call('glTexEnvf', target, pname, param);
 }
 
-define('glTexEnvfv',
+define(
+  'glTexEnvfv',
   dlsym(libGL, 'glTexEnvfv'),
   null,
   'void',
@@ -2820,7 +2895,8 @@ export function glTexEnvi(target, pname, param) {
   return call('glTexEnvi', target, pname, param);
 }
 
-define('glTexEnviv',
+define(
+  'glTexEnviv',
   dlsym(libGL, 'glTexEnviv'),
   null,
   'void',
@@ -2832,7 +2908,8 @@ export function glTexEnviv(target, pname, params) {
   return call('glTexEnviv', target, pname, params);
 }
 
-define('glTexGend',
+define(
+  'glTexGend',
   dlsym(libGL, 'glTexGend'),
   null,
   'void',
@@ -2844,7 +2921,8 @@ export function glTexGend(coord, pname, param) {
   return call('glTexGend', coord, pname, param);
 }
 
-define('glTexGendv',
+define(
+  'glTexGendv',
   dlsym(libGL, 'glTexGendv'),
   null,
   'void',
@@ -2856,7 +2934,8 @@ export function glTexGendv(coord, pname, params) {
   return call('glTexGendv', coord, pname, params);
 }
 
-define('glTexGenf',
+define(
+  'glTexGenf',
   dlsym(libGL, 'glTexGenf'),
   null,
   'void',
@@ -2868,7 +2947,8 @@ export function glTexGenf(coord, pname, param) {
   return call('glTexGenf', coord, pname, param);
 }
 
-define('glTexGenfv',
+define(
+  'glTexGenfv',
   dlsym(libGL, 'glTexGenfv'),
   null,
   'void',
@@ -2885,7 +2965,8 @@ export function glTexGeni(coord, pname, param) {
   return call('glTexGeni', coord, pname, param);
 }
 
-define('glTexGeniv',
+define(
+  'glTexGeniv',
   dlsym(libGL, 'glTexGeniv'),
   null,
   'void',
@@ -2897,7 +2978,8 @@ export function glTexGeniv(coord, pname, params) {
   return call('glTexGeniv', coord, pname, params);
 }
 
-define('glTexImage1D',
+define(
+  'glTexImage1D',
   dlsym(libGL, 'glTexImage1D'),
   null,
   'void',
@@ -2914,7 +2996,8 @@ export function glTexImage1D(target, level, internalformat, width, border, forma
   return call('glTexImage1D', target, level, internalformat, width, border, format, type, pixels);
 }
 
-define('glTexImage2D',
+define(
+  'glTexImage2D',
   dlsym(libGL, 'glTexImage2D'),
   null,
   'void',
@@ -2928,7 +3011,8 @@ define('glTexImage2D',
   'unsigned int',
   'void *'
 );
-export function glTexImage2D(target,
+export function glTexImage2D(
+  target,
   level,
   internalformat,
   width,
@@ -2938,7 +3022,8 @@ export function glTexImage2D(target,
   type,
   pixels
 ) {
-  return call('glTexImage2D',
+  return call(
+    'glTexImage2D',
     target,
     level,
     internalformat,
@@ -2951,7 +3036,8 @@ export function glTexImage2D(target,
   );
 }
 
-define('glTexParameterf',
+define(
+  'glTexParameterf',
   dlsym(libGL, 'glTexParameterf'),
   null,
   'void',
@@ -2963,7 +3049,8 @@ export function glTexParameterf(target, pname, param) {
   return call('glTexParameterf', target, pname, param);
 }
 
-define('glTexParameterfv',
+define(
+  'glTexParameterfv',
   dlsym(libGL, 'glTexParameterfv'),
   null,
   'void',
@@ -2975,7 +3062,8 @@ export function glTexParameterfv(target, pname, params) {
   return call('glTexParameterfv', target, pname, params);
 }
 
-define('glTexParameteri',
+define(
+  'glTexParameteri',
   dlsym(libGL, 'glTexParameteri'),
   null,
   'void',
@@ -2987,7 +3075,8 @@ export function glTexParameteri(target, pname, param) {
   return call('glTexParameteri', target, pname, param);
 }
 
-define('glTexParameteriv',
+define(
+  'glTexParameteriv',
   dlsym(libGL, 'glTexParameteriv'),
   null,
   'void',
@@ -2999,7 +3088,8 @@ export function glTexParameteriv(target, pname, params) {
   return call('glTexParameteriv', target, pname, params);
 }
 
-define('glTexSubImage1D',
+define(
+  'glTexSubImage1D',
   dlsym(libGL, 'glTexSubImage1D'),
   null,
   'void',
@@ -3015,7 +3105,8 @@ export function glTexSubImage1D(target, level, xoffset, width, format, type, pix
   return call('glTexSubImage1D', target, level, xoffset, width, format, type, pixels);
 }
 
-define('glTexSubImage2D',
+define(
+  'glTexSubImage2D',
   dlsym(libGL, 'glTexSubImage2D'),
   null,
   'void',
@@ -3029,7 +3120,8 @@ define('glTexSubImage2D',
   'unsigned int',
   'void *'
 );
-export function glTexSubImage2D(target,
+export function glTexSubImage2D(
+  target,
   level,
   xoffset,
   yoffset,
@@ -3039,7 +3131,8 @@ export function glTexSubImage2D(target,
   type,
   pixels
 ) {
-  return call('glTexSubImage2D',
+  return call(
+    'glTexSubImage2D',
     target,
     level,
     xoffset,
@@ -3142,7 +3235,8 @@ export function glVertex3sv(v) {
   return call('glVertex3sv', v);
 }
 
-define('glVertex4d',
+define(
+  'glVertex4d',
   dlsym(libGL, 'glVertex4d'),
   null,
   'void',
@@ -3190,7 +3284,8 @@ export function glVertex4sv(v) {
   return call('glVertex4sv', v);
 }
 
-define('glVertexPointer',
+define(
+  'glVertexPointer',
   dlsym(libGL, 'glVertexPointer'),
   null,
   'void',

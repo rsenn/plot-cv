@@ -10,100 +10,88 @@ import REPL from './quickjs/modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import { extendArray, define } from './lib/misc.js';
+import * as net from 'net';
 
-const base = path.basename(Util.getArgv()[0], /\.[a-z]*$/);
-const cmdhist = `.history-${base}`;
-
-function LoadHistory(filename) {
-  let contents = std.loadFile(filename);
-  let data;
-
-  const parse = () => {
-    try {
-      data = JSON.parse(contents);
-    } catch(e) {}
-    if(data) return data;
-    try {
-      data = contents.split(/\n/g);
-    } catch(e) {}
-    if(data) return data;
-  };
-
-  return (parse() ?? [])
-    .filter(entry => (entry + '').trim() != '')
-    .map(entry => entry.replace(/\\n/g, '\n'));
-}
-
-function ReadJSON(filename) {
-  let data = std.loadFile(filename);
-
-  if(data) console.log(`ReadJSON('${filename}') ${data.length} bytes read`);
-  return data ? JSON.parse(data) : null;
-}
+extendArray();
 
 function main(...args) {
   globalThis.console = new Console({
     inspectOptions: {
       colors: true,
       depth: Infinity,
-      maxArrayLength: 100,
-      breakLength: 10000,
-      compact: 2 /*,
-      customInspect: true*/
+      compact: 2,
+      customInspect: true,
+      getters: true
     }
   });
-  extendArray(Array.prototype, define);
-  console.log('[1,2,3,4].last', [1, 2, 3, 4].last);
-  console.log('[1,2,3,4].at(-1)', [1, 2, 3, 4].at(-1));
-  console.log('console.options', console.options);
   let params = Util.getOpt(
     {
       listen: [false, null, 'l'],
+      connect: [false, null, 'c'],
       debug: [false, null, 'x'],
-      address: [true, null, 'c'],
+      address: [true, null, 'a'],
       port: [true, null, 'p'],
       '@': 'address,port'
     },
     args
   );
-  const { listen } = params;
+  //const { listen } = params;
 
   const [address = '127.0.0.1', port = 9000] = args;
+
+  const listen = params.connect && !params.listen ? false : true;
 
   let name = Util.getArgs()[0];
   name = name
     .replace(/.*\//, '')
     .replace(/-/g, ' ')
     .replace(/\.[^\/.]*$/, '');
-  let repl = new REPL(name);
+
+  let [prefix, suffix] = name.split(' ');
+
+  let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, fs, false);
+
+  repl.historyLoad(null, false);
 
   repl.help = () => {};
   let { log } = console;
   repl.show = arg => std.puts(typeof arg == 'string' ? arg : inspect(arg, { colors: true }));
 
   repl.cleanup = () => {
+    repl.readlineRemovePrompt();
     Terminal.mousetrackingDisable();
-
     let numLines = repl.historySave();
-    console.log(`EXIT (wrote ${numLines} history entries)`);
+
+    repl.printStatus(`EXIT (wrote ${numLines} history entries)`, false);
+
     std.exit(0);
   };
-  let debugLog = fs.fopen('debug.log', 'a');
-  repl.debugLog = debugLog;
-  console.log = (...args) => repl.printStatus(() => log(...args));
 
-  let client = new rpc.Socket();
-  //client.log = (...args) => console.log("RPC Client", ...args); //repl.wrapPrintFunction(log, console);
+  console.log = repl.printFunction(log);
 
-  import('os').then(os =>
-    import('net').then(({ client }) =>
-      client.connect((url, callbacks) => client({ ...url, ...callbacks }), os)
-    )
-  );
+  //  console.log = (...args) => repl.printStatus(() => log(...args));
 
-  Object.assign(globalThis, { repl, client, Util, rpc });
+  let socket = new rpc.Socket('0.0.0.0:9200', rpc.RPCServerConnection, 1);
 
-repl.historyLoad(null, false);
+  const createWS = (url, callbacks, listen) => [net.client, net.server][+listen]({ ...url, ...callbacks });
+
+  globalThis[['connection', 'listener'][+listen]] = socket;
+  globalThis.connections = socket.fdlist;
+
+  [socket.connect, socket.listen][+listen].call(socket, createWS, os);
+
+  Object.assign(globalThis, {
+    repl,
+    Util,
+    rpc,
+    quit,
+    exit: quit
+  });
+
+  function quit(why) {
+    repl.cleanup(why);
+  }
+
   repl.runSync();
 }
 
@@ -113,5 +101,5 @@ try {
   console.log(`FAIL: ${error.message}\n${error.stack}`);
   std.exit(1);
 } finally {
-  console.log('SUCCESS');
+  //console.log('SUCCESS');
 }

@@ -54,7 +54,7 @@ class Location {
     return ret;
   }
 
-  get token() {
+  /* prettier-ignore */ get token() {
     const { file, offset, tokLen } = this;
     let data = Location.contents(file || Location.primary);
     return data.substring(offset, offset + tokLen);
@@ -92,7 +92,8 @@ class Location {
 
 function NodeToString(node, locKey = 'expansionLoc' || 'spellingLoc', startOffset) {
   if(node.value) return node.value;
-  let flat = deep.flatten(node,
+  let flat = deep.flatten(
+    node,
     new Map(),
     (v, k) => Util.isObject(v),
     (k, v) => [k, v]
@@ -109,7 +110,8 @@ function NodeToString(node, locKey = 'expansionLoc' || 'spellingLoc', startOffse
   let { begin, end } = node.range || {};
   if(begin && begin[locKey]) begin = begin[locKey];
   if(end && end[locKey]) end = end[locKey];
-  l = Util.unique(l.sort((a, b) => a[1].offset - b[1].offset),
+  l = Util.unique(
+    l.sort((a, b) => a[1].offset - b[1].offset),
     (a, b) => Location.equal(a[1], b[1])
   );
   if(!l.length && node.name) return node.name;
@@ -132,7 +134,8 @@ function* GetLocations(tree) {
 }
 
 function* GetNodes(tree, pred = n => true) {
-  for(let [node, path] of deep.iterate(tree,
+  for(let [node, path] of deep.iterate(
+    tree,
     (v, p) =>
       Util.isObject(v) && typeof v.kind == 'string' && v.kind != 'TranslationUnitDecl' && pred(v, p)
   ))
@@ -239,7 +242,8 @@ function GetNodeChildren(ast, [k, v]) {
   let children = [...deep.iterate(v, (v, p) => Util.isObject(v))].map(GetValueKey);
   children = children.filter(([key, child]) => typeof child.kind == 'string' && child.kind != '');
 
-  return children.reduce((acc, [key, child]) => [...acc, new ImmutablePath(key), GetNodeProps([key, child]) || child],
+  return children.reduce(
+    (acc, [key, child]) => [...acc, new ImmutablePath(key), GetNodeProps([key, child]) || child],
     []
   );
 }
@@ -273,7 +277,8 @@ function GetTypeStr(node) {
 
 function GetRecord(node) {
   if(Util.isObject(node) && Array.isArray(node.inner))
-    return new Map(node.inner.map(field => [
+    return new Map(
+      node.inner.map(field => [
         field.name,
         ContainsDecls(field) ? GetRecord(field) : GetTypeStr(field) || field
       ])
@@ -326,7 +331,8 @@ function processCallExpr(loc, func, ...args) {
   const fmtStr = args[fmtIndex];
   const fmtArgs = args.slice(fmtIndex + 1);
   let matches = [
-    ...Util.matchAll(/(%([-#0 +'I]?)([0-9.]*)[diouxXeEfFgGaAcspnm%](hh|h|l|ll|q|L|j|z|Z|t|))/g,
+    ...Util.matchAll(
+      /(%([-#0 +'I]?)([0-9.]*)[diouxXeEfFgGaAcspnm%](hh|h|l|ll|q|L|j|z|Z|t|))/g,
       fmtStr
     )
   ];
@@ -363,7 +369,8 @@ async function main(...args) {
     let ast = await DumpAst(arg);
     let flat;
     const generateFlat = () =>
-      (flat = deep.flatten(ast,
+      (flat = deep.flatten(
+        ast,
         new Map(),
         (v, k) => k.indexOf('range') == -1 && Util.isObject(v),
         (k, v) => [k, v]
@@ -376,7 +383,8 @@ async function main(...args) {
     const re =
       /^(__fbufsize|__flbf|__fpending|__fpurge|__freadable|__freading|__fwritable|clearerr|clearerr_unlocked|fclose|fdopen|feof|feof_unlocked|ferror|ferror_unlocked|fflush|fflush_unlocked|fgetc|fgetc_unlocked|fgetpos|fgets|fgets_unlocked|fileno|fileno_unlocked|fopen|fprintf|fputc|fputc_unlocked|fputs|fputs_unlocked|fread|fread_unlocked|freopen|fscanf|fseek|fseeko|fsetpos|ftell|ftello|fwrite|fwrite_unlocked|printf|putchar|puts|scanf|setvbuf|tmpfile|ungetc|vfprintf|vfscanf|vprintf|vscanf)$/;
     let allf = [...flat].filter(([k, v]) => Util.isObject(v) && v.kind == 'CallExpr');
-    let allst = [...flat].filter(([k, v]) => Util.isObject(v) && IsStruct(v) && typeRe.test(GetProperty(ast, k, v => v.name))
+    let allst = [...flat].filter(
+      ([k, v]) => Util.isObject(v) && IsStruct(v) && typeRe.test(GetProperty(ast, k, v => v.name))
     );
     let incfrom = [...flat].filter(([k, v]) => k[k.length - 1] == 'includedFrom');
 
@@ -392,7 +400,8 @@ async function main(...args) {
 
     let ids = refIds.filter(([k, id, v]) => ContainsDecls(v)).map(([k, id, v]) => id);
     ids = Util.unique(ids);
-    let idLists = new Map(ids
+    let idLists = new Map(
+      ids
         .map(id => [
           id,
           refIds
@@ -469,11 +478,13 @@ async function main(...args) {
 
     /// console.log('locs:', [...flat].map(([k, v]) => [k, locMap.get(v)]).filter(([k,v]) => !! v));
 
-    let types = [...flat].filter(([k, v]) => Util.isObject(v) && (('name' in v && typeRe.test(v.name)) || IsStruct(v))
+    let types = [...flat].filter(
+      ([k, v]) => Util.isObject(v) && (('name' in v && typeRe.test(v.name)) || IsStruct(v))
     );
     let typeKeys = types.map(([k, v]) => k);
 
-    console.log('types:',
+    console.log(
+      'types:',
       types
         .filter(([k, v]) => IsStruct(v))
         .map(([k, v]) => [
@@ -498,7 +509,8 @@ async function main(...args) {
       breakLength: 138
     });
     //console.log('allf:', allf.map(([k, v]) =>   NodeToString(v, 'expansionLoc')));
-    console.log('allst:',
+    console.log(
+      'allst:',
       allst.map(([k, v]) => [
         v.name,
         k.join('.'),
@@ -519,7 +531,8 @@ async function main(...args) {
     for(let [key, value] of fmtc) {
       const loc = value.range.begin.spellingLoc || value.range.begin;
       const call = NodeToString(value, 'spellingLoc');
-      let flat = deep.flatten(value,
+      let flat = deep.flatten(
+        value,
         new Map(),
         (v, k) => Util.isObject(v) && k.length < 10,
         (k, v) => [k, v]

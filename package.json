@@ -13,7 +13,7 @@
     "cvUtils.js": "qjs-opencv/js/cvUtils.js",
     "cvPipeline.js": "qjs-opencv/js/cvPipeline.js",
     "cvHighGUI.js": "qjs-opencv/js/cvHighGUI.js",
-    "lib/objectInspect.js": "inspect",
+     "lib/objectInspect.js": "inspect",
     "lib/pointer.js": "pointer",
     "lib/deep.js": "deep",
     "lib/path.js": "path",
@@ -21,7 +21,7 @@
     "lib/filesystem.js": "fs",
     "lib/misc.js": "util",
     "lib/childProcess.js": "child_process",
-    "lib/stack.js": "stack" 
+    "lib/stack.js": "stack"
   },
   "author": "Roman Senn <roman.l.senn@gmail.com>",
   "license": "MIT",

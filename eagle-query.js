@@ -4,7 +4,15 @@ import { LineList, Rect } from './lib/geom.js';
 import { toXML } from './lib/json.js';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
-import { digit2color, GetFactor, GetColorBands, ValueToNumber, NumberToValue, GetExponent, GetMantissa } from './lib/eda/colorCoding.js';
+import {
+  digit2color,
+  GetFactor,
+  GetColorBands,
+  ValueToNumber,
+  NumberToValue,
+  GetExponent,
+  GetMantissa
+} from './lib/eda/colorCoding.js';
 import { UnitForName } from './lib/eda/units.js';
 
 let filesystem,
@@ -27,7 +35,8 @@ function updateMeasures(board) {
     let lines = rect.toLines(lines => new LineList(lines));
     let { plain } = board;
     plain.remove(e => e.tagName == 'wire' && e.attributes.layer == '47');
-    plain.append(...lines.map(line => ({
+    plain.append(
+      ...lines.map(line => ({
         tagName: 'wire',
         attributes: { ...line.toObject(), layer: 47, width: 0 }
       }))
@@ -48,7 +57,8 @@ function alignItem(item) {
   if(changed) {
     console.log('before:', Util.abbreviate(before));
     console.log('after:', Util.abbreviate(item.parentNode.toXML()));
-    console.log('align\n',
+    console.log(
+      'align\n',
       item.xpath(),
       '\n newPos:',
       newPos,
@@ -94,7 +104,8 @@ function num2color(num, square = false) {
   //console.log('num2color:', { num, square, sym, c });
   return c
     .map(n =>
-      color.text(n ? sym[0] : color.text(sym[1], 38, 5, 236),
+      color.text(
+        n ? sym[0] : color.text(sym[1], 38, 5, 236),
         n ? 38 : 48,
         ...digit2color.ansi[n].slice(1)
       )
@@ -133,9 +144,11 @@ async function main(...args) {
       [/^L/, /^[0-9.]+([nuμm]H?|H?)/]
     ];
 
-    let nameValueMap = new Map(parts.filter(([name, value]) => matchers.some(m => m[0].test(name) && m[1].test(value)))
+    let nameValueMap = new Map(
+      parts.filter(([name, value]) => matchers.some(m => m[0].test(name) && m[1].test(value)))
     );
-    console.log('nameValueMap',
+    console.log(
+      'nameValueMap',
       new Map(
         [...nameValueMap].map(([n, v]) => [
           n,
@@ -177,7 +190,8 @@ async function main(...args) {
   console.log('components:', components);
   /*console.log('histograms:', histograms);*/
 
-  console.log('values:\n   ' +
+  console.log(
+    'values:\n   ' +
       Object.entries(values)
         .map(([key, list]) => `${key}:\n\t${list.join('\n\t')}`)
         .join('\n   ')

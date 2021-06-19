@@ -193,7 +193,8 @@ function convertJsFunctionToWasm(func, sig) {
     typeSection = typeSection.concat([1, typeCodes[sigRet]]);
   }
   typeSection[1] = typeSection.length - 2;
-  var bytes = new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0].concat(
+  var bytes = new Uint8Array(
+    [0, 97, 115, 109, 1, 0, 0, 0].concat(
       typeSection,
       [2, 7, 1, 1, 101, 1, 102, 0, 0, 7, 5, 1, 1, 102, 0, 0]
     )
@@ -277,7 +278,7 @@ function ccall(ident, returnType, argTypes, args, opts) {
       }
       return ret;
     },
-    array: function (arr) {
+    array: function(arr) {
       var ret = stackAlloc(arr.length);
       writeArrayToMemory(arr, ret);
       return ret;
@@ -549,8 +550,9 @@ function getBinaryPromise() {
     } else {
       if(readAsync) {
         return new Promise(function (resolve, reject) {
-          readAsync(wasmBinaryFile,
-            function (response) {
+          readAsync(
+            wasmBinaryFile,
+            function(response) {
               resolve(new Uint8Array(response));
             },
             reject
@@ -588,7 +590,8 @@ function createWasm() {
       });
   }
   function instantiateAsync() {
-    if(!wasmBinary &&
+    if(
+      !wasmBinary &&
       typeof WebAssembly.instantiateStreaming === 'function' &&
       !isDataURI(wasmBinaryFile) &&
       !isFileURI(wasmBinaryFile) &&
@@ -707,7 +710,8 @@ var _getOneLayerN_Poligonal = (Module['_getOneLayerN_Poligonal'] = function() {
     Module['asm']['getOneLayerN_Poligonal']).apply(null, arguments);
 });
 var _getMultiLayerN = (Module['_getMultiLayerN'] = function() {
-  return (_getMultiLayerN = Module['_getMultiLayerN'] = Module['asm']['getMultiLayerN']).apply(null,
+  return (_getMultiLayerN = Module['_getMultiLayerN'] = Module['asm']['getMultiLayerN']).apply(
+    null,
     arguments
   );
 });
@@ -720,7 +724,8 @@ var _getMultiLayerI_byN = (Module['_getMultiLayerI_byN'] = function() {
     Module['asm']['getMultiLayerI_byN']).apply(null, arguments);
 });
 var _getMultiLayerI = (Module['_getMultiLayerI'] = function() {
-  return (_getMultiLayerI = Module['_getMultiLayerI'] = Module['asm']['getMultiLayerI']).apply(null,
+  return (_getMultiLayerI = Module['_getMultiLayerI'] = Module['asm']['getMultiLayerI']).apply(
+    null,
     arguments
   );
 });
@@ -741,12 +746,14 @@ var _getMultilayerI_Foil = (Module['_getMultilayerI_Foil'] = function() {
     Module['asm']['getMultilayerI_Foil']).apply(null, arguments);
 });
 var _getFerriteN = (Module['_getFerriteN'] = function() {
-  return (_getFerriteN = Module['_getFerriteN'] = Module['asm']['getFerriteN']).apply(null,
+  return (_getFerriteN = Module['_getFerriteN'] = Module['asm']['getFerriteN']).apply(
+    null,
     arguments
   );
 });
 var _getFerriteI = (Module['_getFerriteI'] = function() {
-  return (_getFerriteI = Module['_getFerriteI'] = Module['asm']['getFerriteI']).apply(null,
+  return (_getFerriteI = Module['_getFerriteI'] = Module['asm']['getFerriteI']).apply(
+    null,
     arguments
   );
 });
@@ -757,12 +764,14 @@ var _getPCB_I = (Module['_getPCB_I'] = function() {
   return (_getPCB_I = Module['_getPCB_I'] = Module['asm']['getPCB_I']).apply(null, arguments);
 });
 var _getSpiralPCB_N = (Module['_getSpiralPCB_N'] = function() {
-  return (_getSpiralPCB_N = Module['_getSpiralPCB_N'] = Module['asm']['getSpiralPCB_N']).apply(null,
+  return (_getSpiralPCB_N = Module['_getSpiralPCB_N'] = Module['asm']['getSpiralPCB_N']).apply(
+    null,
     arguments
   );
 });
 var _getSpiralPCB_I = (Module['_getSpiralPCB_I'] = function() {
-  return (_getSpiralPCB_I = Module['_getSpiralPCB_I'] = Module['asm']['getSpiralPCB_I']).apply(null,
+  return (_getSpiralPCB_I = Module['_getSpiralPCB_I'] = Module['asm']['getSpiralPCB_I']).apply(
+    null,
     arguments
   );
 });
@@ -777,32 +786,38 @@ var _findToroidPemeability = (Module['_findToroidPemeability'] = function() {
     Module['asm']['findToroidPemeability']).apply(null, arguments);
 });
 var _findFerriteRodN = (Module['_findFerriteRodN'] = function() {
-  return (_findFerriteRodN = Module['_findFerriteRodN'] = Module['asm']['findFerriteRodN']).apply(null,
+  return (_findFerriteRodN = Module['_findFerriteRodN'] = Module['asm']['findFerriteRodN']).apply(
+    null,
     arguments
   );
 });
 var _findMeadrPCB_I = (Module['_findMeadrPCB_I'] = function() {
-  return (_findMeadrPCB_I = Module['_findMeadrPCB_I'] = Module['asm']['findMeadrPCB_I']).apply(null,
+  return (_findMeadrPCB_I = Module['_findMeadrPCB_I'] = Module['asm']['findMeadrPCB_I']).apply(
+    null,
     arguments
   );
 });
 var _findMultiloop_I = (Module['_findMultiloop_I'] = function() {
-  return (_findMultiloop_I = Module['_findMultiloop_I'] = Module['asm']['findMultiloop_I']).apply(null,
+  return (_findMultiloop_I = Module['_findMultiloop_I'] = Module['asm']['findMultiloop_I']).apply(
+    null,
     arguments
   );
 });
 var _findMultiloop_N = (Module['_findMultiloop_N'] = function() {
-  return (_findMultiloop_N = Module['_findMultiloop_N'] = Module['asm']['findMultiloop_N']).apply(null,
+  return (_findMultiloop_N = Module['_findMultiloop_N'] = Module['asm']['findMultiloop_N']).apply(
+    null,
     arguments
   );
 });
 var _findRoundLoop_I = (Module['_findRoundLoop_I'] = function() {
-  return (_findRoundLoop_I = Module['_findRoundLoop_I'] = Module['asm']['findRoundLoop_I']).apply(null,
+  return (_findRoundLoop_I = Module['_findRoundLoop_I'] = Module['asm']['findRoundLoop_I']).apply(
+    null,
     arguments
   );
 });
 var _findRoundLoop_D = (Module['_findRoundLoop_D'] = function() {
-  return (_findRoundLoop_D = Module['_findRoundLoop_D'] = Module['asm']['findRoundLoop_D']).apply(null,
+  return (_findRoundLoop_D = Module['_findRoundLoop_D'] = Module['asm']['findRoundLoop_D']).apply(
+    null,
     arguments
   );
 });
@@ -835,32 +850,38 @@ var _findAirCoreRoundToroid_N = (Module['_findAirCoreRoundToroid_N'] = function(
     Module['asm']['findAirCoreRoundToroid_N']).apply(null, arguments);
 });
 var _findPotCore_I = (Module['_findPotCore_I'] = function() {
-  return (_findPotCore_I = Module['_findPotCore_I'] = Module['asm']['findPotCore_I']).apply(null,
+  return (_findPotCore_I = Module['_findPotCore_I'] = Module['asm']['findPotCore_I']).apply(
+    null,
     arguments
   );
 });
 var _findPotCore_N = (Module['_findPotCore_N'] = function() {
-  return (_findPotCore_N = Module['_findPotCore_N'] = Module['asm']['findPotCore_N']).apply(null,
+  return (_findPotCore_N = Module['_findPotCore_N'] = Module['asm']['findPotCore_N']).apply(
+    null,
     arguments
   );
 });
 var _findECore_I = (Module['_findECore_I'] = function() {
-  return (_findECore_I = Module['_findECore_I'] = Module['asm']['findECore_I']).apply(null,
+  return (_findECore_I = Module['_findECore_I'] = Module['asm']['findECore_I']).apply(
+    null,
     arguments
   );
 });
 var _findECore_N = (Module['_findECore_N'] = function() {
-  return (_findECore_N = Module['_findECore_N'] = Module['asm']['findECore_N']).apply(null,
+  return (_findECore_N = Module['_findECore_N'] = Module['asm']['findECore_N']).apply(
+    null,
     arguments
   );
 });
 var _findUCore_I = (Module['_findUCore_I'] = function() {
-  return (_findUCore_I = Module['_findUCore_I'] = Module['asm']['findUCore_I']).apply(null,
+  return (_findUCore_I = Module['_findUCore_I'] = Module['asm']['findUCore_I']).apply(
+    null,
     arguments
   );
 });
 var _findUCore_N = (Module['_findUCore_N'] = function() {
-  return (_findUCore_N = Module['_findUCore_N'] = Module['asm']['findUCore_N']).apply(null,
+  return (_findUCore_N = Module['_findUCore_N'] = Module['asm']['findUCore_N']).apply(
+    null,
     arguments
   );
 });
@@ -872,7 +893,8 @@ var stackSave = (Module['stackSave'] = function() {
   return (stackSave = Module['stackSave'] = Module['asm']['stackSave']).apply(null, arguments);
 });
 var stackRestore = (Module['stackRestore'] = function() {
-  return (stackRestore = Module['stackRestore'] = Module['asm']['stackRestore']).apply(null,
+  return (stackRestore = Module['stackRestore'] = Module['asm']['stackRestore']).apply(
+    null,
     arguments
   );
 });

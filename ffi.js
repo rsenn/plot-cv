@@ -22,7 +22,28 @@
 
 import * as std from 'std';
 import * as os from 'os';
-import { debug, dlopen, dlerror, dlclose, dlsym, define, call, toString, toArrayBuffer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_NODELETE, RTLD_NOLOAD, RTLD_DEEPBIND, RTLD_DEFAULT, RTLD_NEXT } from 'ffi';
+import {
+  debug,
+  dlopen,
+  dlerror,
+  dlclose,
+  dlsym,
+  define,
+  call,
+  toString,
+  toArrayBuffer,
+  errno,
+  JSContext,
+  RTLD_LAZY,
+  RTLD_NOW,
+  RTLD_GLOBAL,
+  RTLD_LOCAL,
+  RTLD_NODELETE,
+  RTLD_NOLOAD,
+  RTLD_DEEPBIND,
+  RTLD_DEFAULT,
+  RTLD_NEXT
+} from 'ffi';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 
@@ -166,15 +187,15 @@ async function main(...args) {
       .map(n => +n)
       .forEach((n, i) => (arr[4 + i] = n));
     Object.assign(buf, {
-      get af() {
+      /* prettier-ignore */ get af() {
         let arr = new Uint8Array(this);
         return arr[0] | (arr[1] << 8);
       },
-      get port() {
+      /* prettier-ignore */ get port() {
         let arr = new Uint8Array(this);
         return arr[3] | (arr[2] << 8);
       },
-      get addr() {
+      /* prettier-ignore */ get addr() {
         let arr = new Uint8Array(this);
         return arr
           .slice(4, 8)

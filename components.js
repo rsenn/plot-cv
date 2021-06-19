@@ -1,9 +1,41 @@
-import { h, Fragment, html, render, Component, useState, useEffect, useRef, useCallback, Portal, ReactComponent } from './lib/dom/preactComponent.js';
+import {
+  h,
+  Fragment,
+  html,
+  render,
+  Component,
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  Portal,
+  ReactComponent
+} from './lib/dom/preactComponent.js';
 import { trkl } from './lib/trkl.js';
 import { Element } from './lib/dom.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
 import { classNames } from './lib/classNames.js';
-import { useActive, useClickout, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useRecognizers, useDrag, usePinch, useWheel, useMove, useScroll, useGesture, useHover, useMousePosition, usePanZoom, useToggleButtonGroupState } from './lib/hooks.js';
+import {
+  useActive,
+  useClickout,
+  useDimensions,
+  useDoubleClick,
+  useElement,
+  EventTracker,
+  useEvent,
+  useFocus,
+  useRecognizers,
+  useDrag,
+  usePinch,
+  useWheel,
+  useMove,
+  useScroll,
+  useGesture,
+  useHover,
+  useMousePosition,
+  usePanZoom,
+  useToggleButtonGroupState
+} from './lib/hooks.js';
 import deepDiff from './lib/deep-diff.js';
 import { useValue } from './lib/repeater/react-hooks.js';
 import RulerDraggable from './ruler-draggable.js';
@@ -38,18 +70,26 @@ export function Ruler({ handleChange, style = {}, class: className }) {
   }
 
   return h('div', { style, class: className }, [
-    h('button', {
+    h(
+      'button',
+      {
         onMouseDown: pressingDown,
         onMouseUp: stopPressing
-      }, ['Down']
+      },
+      ['Down']
     ),
-    h('button', {
+    h(
+      'button',
+      {
         onMouseDown: pressingUp,
         onMouseUp: stopPressing
-      }, ['Up']
+      },
+      ['Up']
     ),
     h('div', {}, [Util.roundTo(value, 0.001, 3)]),
-    h(RulerDraggable, {
+    h(
+      RulerDraggable,
+      {
         ref: refRuler,
         handlers,
         defaultValue: 50,
@@ -57,7 +97,8 @@ export function Ruler({ handleChange, style = {}, class: className }) {
         longLength: 600,
         shortLength: 60,
         horizontal: false
-      }, []
+      },
+      []
     )
   ]);
 }
@@ -103,7 +144,8 @@ export const Overlay = ({
 }) => {
   const [pushed, setPushed] =
     typeof state == 'function' ? [useTrkl(state), state] : useState(false);
-  const events = MouseEvents((toggle ? ToggleHandler : ClickHandler)(
+  const events = MouseEvents(
+    (toggle ? ToggleHandler : ClickHandler)(
       (e, state) => {
         const prev = pushed;
         if(e.buttons && e.buttons != 1) return;
@@ -120,7 +162,8 @@ export const Overlay = ({
   );
   if(typeof title == 'string' && title.length > 0) props.title = title;
   if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
-  return h('div',
+  return h(
+    'div',
     {
       className: classNames(className, pushed && 'pushed', active ? 'active' : 'inactive'),
       ...props,
@@ -246,7 +289,8 @@ export const FloatingPanel = ({ children, className, onSize, onHide, style = {},
 
   if(hidden) style.display = 'none';
 
-  return h(Overlay,
+  return h(
+    Overlay,
     {
       ref,
       className: classNames('floating', hidden && 'hidden', className),
@@ -260,7 +304,8 @@ export const FloatingPanel = ({ children, className, onSize, onHide, style = {},
 export const Label = ({ className, text, title, tooltip, children, ...props }) => {
   if(typeof title == 'string' && title.length > 0) props.title = title;
   if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
-  return h('div',
+  return h(
+    'div',
     { className: classNames('caption', className), ...props },
     (text ? [text] : []).concat(children)
   );
@@ -285,7 +330,9 @@ export const Icon = ({ className = 'icon', caption, image, ...props }) =>
   h(Container, { className, ...props }, h('img', { src: image }));
 
 export const Progress = ({ className, percent, ...props }) =>
-  h(Overlay, {
+  h(
+    Overlay,
+    {
       className: classNames('progress', 'center', className),
       text: percent + '%',
       style: {
@@ -402,7 +449,8 @@ export const EditBox = ({
 
   if(type == 'form') outerProps.onSubmit = event => event.preventDefault();
 
-  return h(type,
+  return h(
+    type,
     outerProps,
     h('input', {
       type: 'text',
@@ -454,7 +502,8 @@ export const File = ({
   if(icon) label = label.replace(/\.[^.]*$/, '');
   label = h(Label, { text: Util.wordWrap(label, 50, '\n') });
   if(description) {
-    let s = Util.multiParagraphWordWrap(Util.stripXML(Util.decodeHTMLEntities(description)),
+    let s = Util.multiParagraphWordWrap(
+      Util.stripXML(Util.decodeHTMLEntities(description)),
       60,
       '\n'
     );
@@ -462,7 +511,9 @@ export const File = ({
     let d = s.split(/\n/g).slice(0, 1);
     label = h('div', {}, [
       label,
-      h('div', { className: 'description' },
+      h(
+        'div',
+        { className: 'description' },
         d.map(line => h('pre', { className: 'description' }, [line]))
       )
     ]);
@@ -472,7 +523,8 @@ export const File = ({
   //data = signal();
   //console.debug(`File`, { name, label });
 
-  return h(Item,
+  return h(
+    Item,
     { className, id, 'data-filename': name, label, onPush, icon, ...props },
     h(Progress, {
       className: !isNaN(loaded) ? 'visible' : 'hidden',
@@ -549,7 +601,8 @@ export const Chooser = ({
       return h(itemComponent, {
         key: i,
         i,
-        className: typeof itemClass == 'function'
+        className:
+          typeof itemClass == 'function'
             ? itemClass(value)
             : classNames(itemClass || className + '-item', (name + '').replace(/.*\./, '')),
         active: i == active,
@@ -570,7 +623,8 @@ export const Chooser = ({
       });
     });
 
-  return h(Container,
+  return h(
+    Container,
     { className: classNames('panel', 'no-select', className), ...props },
     children
   );
@@ -651,7 +705,8 @@ export const Panel = ({ className, children, ...props }) =>
 
 export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className }, children) =>
   enable
-    ? h(SizedAspectRatioBox,
+    ? h(
+        SizedAspectRatioBox,
         {
           className,
           width,
@@ -660,7 +715,8 @@ export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className 
         },
         children
       )
-    : h('div',
+    : h(
+        'div',
         {
           className,
           style: { width }
@@ -668,7 +724,8 @@ export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className 
         children
       );
 
-export const AspectRatioBox = ({
+export const AspectRatioBox = (
+  {
     aspect = 1.0,
     children,
     insideClassName,
@@ -679,15 +736,20 @@ export const AspectRatioBox = ({
   } /* console.debug('AspectRatioBox ', { props, aspect, children, insideClassName, outsideClassName, style });*/
 ) =>
   h(Fragment, {}, [
-    h('div', {
+    h(
+      'div',
+      {
         className: classNames('aspect-ratio-box', outsideClassName),
         style: {
           height: 0,
           paddingBottom: (1.0 / aspect) * 100 + '%',
           ...style
         }
-      }, [
-        h('div', {
+      },
+      [
+        h(
+          'div',
+          {
             className: classNames('aspect-ratio-box-inside', insideClassName)
           },
           children
@@ -712,17 +774,24 @@ export const SizedAspectRatioBox = ({
   onClick,
   ...props
 }) =>
-  h('div', {
-      className: classNames('aspect-ratio-box-size',
+  h(
+    'div',
+    {
+      className: classNames(
+        'aspect-ratio-box-size',
         className && className + '-size',
         sizeClassName
       ),
       style: { position: 'relative', width, height, ...style },
       onClick,
       id
-    }, [
-      h(AspectRatioBox, {
-          outsideClassName: classNames('aspect-ratio-box-outside',
+    },
+    [
+      h(
+        AspectRatioBox,
+        {
+          outsideClassName: classNames(
+            'aspect-ratio-box-outside',
             className && className + '-outside',
             outsideClassName
           ),
@@ -755,7 +824,8 @@ export const TransformedElement = ({
       if(value !== undefined) setTransform(value + '');
     });*/
   let transform = useTrkl(listener);
-  return h(type,
+  return h(
+    type,
     {
       id,
       className: classNames('transformed-element', className && className + '-size'),
@@ -794,7 +864,8 @@ export const Slider = ({
   label = label || name;
   let dim = length ? { [orient == 'horizontal' ? 'width' : 'height']: length } : {};
 
-  return h('div',
+  return h(
+    'div',
     {
       style: {
         display: 'inline-flex',
@@ -805,7 +876,8 @@ export const Slider = ({
         fontSize: '0.8em',
         ...style
       }
-    }, [
+    },
+    [
       //h('label', { for: name }, label),
       label,
       h('input', {
@@ -893,7 +965,8 @@ export const Canvas = ({ onInit, ...props }) => {
     ctx.current.strokeStyle = props.color;
     ctx.current.beginPath();
     //actual coordinates
-    ctx.current.moveTo(e.clientX - canvasRef.current.offsetLeft,
+    ctx.current.moveTo(
+      e.clientX - canvasRef.current.offsetLeft,
       e.clientY - canvasRef.current.offsetTop
     );
     setDrawing(true);
@@ -904,7 +977,8 @@ export const Canvas = ({ onInit, ...props }) => {
     setDrawing(false);
   }
 
-  return h('canvas',
+  return h(
+    'canvas',
     {
       ref: canvasRef,
       width,
@@ -913,7 +987,8 @@ export const Canvas = ({ onInit, ...props }) => {
       onMouseUp: stopDrawing,
       onMouseOut: stopDrawing,
       onMouseMove: handleMouseMove
-    }, []
+    },
+    []
   );
 };
 
@@ -1022,7 +1097,8 @@ export const CrossHair = ({ position, show, radius = 20, ...props }) => {
   position.subscribe(value => setPos(value));
   show.subscribe(value => setVisible(value));
 
-  return h('div',
+  return h(
+    'div',
     {
       style: {
         position: 'fixed',
@@ -1053,11 +1129,14 @@ export const CrossHair = ({ position, show, radius = 20, ...props }) => {
 };
 
 export const MoveCursor = props =>
-  h('svg', {
+  h(
+    'svg',
+    {
       height: '22',
       width: '22',
       xmlns: 'http://www.w3.org/2000/svg'
-    }, [
+    },
+    [
       h('defs', {}),
       h('path', {
         d: 'M19.173 11.722l-2.393 2.393 1.044 1.044L22 10.983l-4.176-4.177L16.78 7.85l3.132 3.133zM5.221 14.115l-3.132-3.132L5.22 7.851 4.177 6.806 0 10.983l4.177 4.177zm6.535-11.288l2.398 2.394 1.044-1.044L11.018 0 6.84 4.177 7.885 5.22l3.132-3.133zm-1.473 16.345L7.885 16.78l-1.044 1.044L11.017 22l4.181-4.177-1.044-1.044-3.136 3.132zm-7.455-7.45h16.345l.739-.74-.74-.739H2.829l-.74.74zm8.928-8.895l-.739-.739-.734.74v7.415h1.473zm-1.473 16.345l.734.74.74-.74v-7.455h-1.474z'
@@ -1076,7 +1155,8 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen = trkl(false), .
       Element.setCSS(element, xy.toCSS());
     }
   });
-  const event = useCallback(trkl().subscribe((e, prev) => {
+  const event = useCallback(
+    trkl().subscribe((e, prev) => {
       const { x, y, buttons, button, timeStamp } = e;
       const orect = Element.rect(oref.current);
       const timeStep = timeStamp - (prev ? prev.timeStamp : NaN);
@@ -1120,7 +1200,8 @@ export const Fence = ({ children, style = {}, sizeListener, aspectListener, ...p
   if(aspectListener && aspectListener.subscribe)
     aspectListener.subscribe(value => setAspect(value));
   //console.debug('Fence dimensions:', dimensions);
-  return h(TransformedElement,
+  return h(
+    TransformedElement,
     {
       id: 'fence',
       type: 'div' || SizedAspectRatioBox,
@@ -1165,7 +1246,8 @@ export const Zoomable = ({ type = 'div', style, children, ...props }) => {
           //console.log('Zoomable.inner:', inner().getBoundingClientRect());*/
     setContainer(el);
   };
-  return h(type,
+  return h(
+    type,
     {
       ...props,
       ...panZoomHandlers

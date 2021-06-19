@@ -9,13 +9,15 @@ export function Point(arg) {
     const matches = [...arg.matchAll(new RegExp('/([-+]?d*.?d+)(?:[eE]([-+]?d+))?/g'))];
     p.x = parseFloat(matches[0]);
     p.y = parseFloat(matches[1]);
-  } else if(typeof arg == 'object' &&
+  } else if(
+    typeof arg == 'object' &&
     arg !== null &&
     (arg.x !== undefined || arg.y !== undefined)
   ) {
     p.x = arg.x;
     p.y = arg.y;
-  } else if(typeof arg == 'object' &&
+  } else if(
+    typeof arg == 'object' &&
     arg !== null &&
     arg.length > 0 &&
     x !== undefined &&
@@ -112,7 +114,8 @@ Point.prototype.neg = function() {
   return this;
 };
 Point.prototype.distance = function(other = { x: 0, y: 0 }) {
-  return Math.sqrt((other.y - this.y) * (other.y - this.y) + (other.x - this.x) * (other.x - this.x)
+  return Math.sqrt(
+    (other.y - this.y) * (other.y - this.y) + (other.x - this.x) * (other.x - this.x)
   );
 };
 Point.prototype.equal = function(other) {
@@ -163,7 +166,8 @@ Point.prototype.toCSS = function() {
   };
 };
 Point.prototype.inside = function(rect) {
-  return (this.x >= rect.x &&
+  return (
+    this.x >= rect.x &&
     this.x < rect.x + rect.width &&
     this.y >= rect.y &&
     this.y < rect.y + rect.height
@@ -291,7 +295,8 @@ export function Line(x1, y1, x2, y2) {
   } else if(args.length == 1) {
     arg = args[0];
   }
-  if(arg &&
+  if(
+    arg &&
     arg.x1 !== undefined &&
     arg.y1 !== undefined &&
     arg.x2 !== undefined &&
@@ -436,7 +441,8 @@ export function Rect(arg) {
   ['x', 'y', 'width', 'height'].forEach(field => {
     if(typeof obj[field] != 'number') obj[field] = 0;
   });
-  if(arg &&
+  if(
+    arg &&
     arg.x1 !== undefined &&
     arg.y1 !== undefined &&
     arg.x2 !== undefined &&
@@ -448,7 +454,8 @@ export function Rect(arg) {
     obj.width = x2 - x1;
     obj.height = y2 - y1;
     ret = 1;
-  } else if(arg &&
+  } else if(
+    arg &&
     arg.x !== undefined &&
     arg.y !== undefined &&
     arg.x2 !== undefined &&
@@ -460,7 +467,8 @@ export function Rect(arg) {
     obj.width = x2 - x;
     obj.height = y2 - y;
     ret = 1;
-  } else if(isPoint(arg) &&
+  } else if(
+    isPoint(arg) &&
     arg.y !== undefined &&
     arg.width !== undefined &&
     arg.height !== undefined
@@ -537,7 +545,8 @@ Rect.prototype.toString = function() {
   return this.x + ',' + this.y + ' ' + this.width + 'x' + this.height;
 };
 Rect.prototype.toSource = function() {
-  return ('new Rect(' + (this ? this.x + ',' + this.y + ',' + this.width + ',' + this.height : '') + ')'
+  return (
+    'new Rect(' + (this ? this.x + ',' + this.y + ',' + this.width + ',' + this.height : '') + ')'
   );
 };
 Object.defineProperty(Rect.prototype, 'x1', {
@@ -777,7 +786,8 @@ PointList.prototype.minmax = function() {
     y1: this[0].y,
     y2: this[0].y,
     toString() {
-      return `x ${this.x1.toFixed(3)}->${this.x2.toFixed(3)} y ${this.y1.toFixed(3
+      return `x ${this.x1.toFixed(3)}->${this.x2.toFixed(3)} y ${this.y1.toFixed(
+        3
       )}->${this.y2.toFixed(3)}`;
     }
   };

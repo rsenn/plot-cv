@@ -9,7 +9,8 @@ export class Message {
     //console.log('new Message(', ...args, ')');
 
     if(args.length == 1) {
-      Object.assign(this,
+      Object.assign(
+        this,
         typeof args[0] == 'string'
           ? Message.decode(args[0])
           : Util.filterOutMembers(args[0], v => v == undefined)
@@ -77,7 +78,7 @@ export class Message {
     return o;
   }
 
-  get data() {
+  /* prettier-ignore */ get data() {
     // console.log(`Message data: `, this);
     let data = this.encode();
     //  console.log(`Message data: '${data}'`);
@@ -102,7 +103,7 @@ export class Message {
     return r;
   }
 
-  get json() {
+  /* prettier-ignore */ get json() {
     const { body } = this;
     let r = Util.tryCatch(() => JSON.parse(body),
       (obj) => obj,
@@ -117,7 +118,8 @@ export class Message {
   }
   [Symbol.toStringTag]() {
     const { origin, recipient, type, body } = this;
-    return ('new Message', Util.filterOutMembers({ origin, recipient, type, body }, v => v == undefined)
+    return (
+      'new Message', Util.filterOutMembers({ origin, recipient, type, body }, v => v == undefined)
     );
   }
 }

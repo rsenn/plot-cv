@@ -3,9 +3,43 @@ import Util from './lib/util.js';
 import path from './lib/path.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import REPL from './repl.js';
-import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, Enum, HashList, Multimap, Shash, SortedMap, HashMultimap, MultiBiMap, MultiKeyMap, DenseSpatialHash2D, SpatialHash2D, HashMap, SpatialH, SpatialHash, SpatialHashMap, BoxHash } from './lib/container.js';
+import {
+  BinaryTree,
+  BucketStore,
+  BucketMap,
+  ComponentMap,
+  CompositeMap,
+  Deque,
+  Enum,
+  HashList,
+  Multimap,
+  Shash,
+  SortedMap,
+  HashMultimap,
+  MultiBiMap,
+  MultiKeyMap,
+  DenseSpatialHash2D,
+  SpatialHash2D,
+  HashMap,
+  SpatialH,
+  SpatialHash,
+  SpatialHashMap,
+  BoxHash
+} from './lib/container.js';
 import * as std from 'std';
-import { cv, draw, Contour, Line, Mat, Point, PointIterator, Rect, Size, TickMeter, VideoCapture } from './lib/opencv.js';
+import {
+  cv,
+  draw,
+  Contour,
+  Line,
+  Mat,
+  Point,
+  PointIterator,
+  Rect,
+  Size,
+  TickMeter,
+  VideoCapture
+} from './lib/opencv.js';
 
 let filesystem;
 
@@ -30,10 +64,10 @@ Util.define(Array.prototype, {
   at(index) {
     return this[Util.mod(index, this.length)];
   },
-  get head() {
+  /* prettier-ignore */ get head() {
     return this[this.length-1];
   },
-  get tail() {
+  /* prettier-ignore */ get tail() {
     return this[this.length-1];
   }
 });

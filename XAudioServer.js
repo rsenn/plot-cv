@@ -1,4 +1,5 @@
-function XAudioServer(channels,
+function XAudioServer(
+  channels,
   sampleRate,
   minBufferSize,
   maxBufferSize,
@@ -32,7 +33,8 @@ XAudioServer.prototype.writeAudioNoCallback =
   XAudioServer.prototype.callbackBasedWriteAudioNoCallback = function(buffer) {
     //Callback-centered audio APIs:
     var length = buffer.length;
-    for(var bufferCounter = 0;
+    for(
+      var bufferCounter = 0;
       bufferCounter < length && XAudioJSAudioBufferSize < XAudioJSMaxBufferSize;
 
     ) {
@@ -46,7 +48,8 @@ XAudioServer.prototype.writeAudio = function(buffer) {
 };
 
 XAudioServer.prototype.remainingBuffer = function() {
-  return (Math.floor(
+  return (
+    Math.floor(
       (XAudioJSResampledSamplesLeft() * XAudioJSResampleControl.ratioWeight) /
         XAudioJSChannelsAllocated
     ) *
@@ -78,12 +81,14 @@ XAudioServer.prototype.initializeAudio = XAudioServer.prototype.initializeWebAud
     XAudioJSWebAudioAudioNode = null;
   }
   try {
-    XAudioJSWebAudioAudioNode = XAudioJSWebAudioContextHandle.createScriptProcessor(XAudioJSSamplesPerCallback,
+    XAudioJSWebAudioAudioNode = XAudioJSWebAudioContextHandle.createScriptProcessor(
+      XAudioJSSamplesPerCallback,
       0,
       XAudioJSChannelsAllocated
     ); //Create the js event node.
   } catch(error) {
-    XAudioJSWebAudioAudioNode = XAudioJSWebAudioContextHandle.createJavaScriptNode(XAudioJSSamplesPerCallback,
+    XAudioJSWebAudioAudioNode = XAudioJSWebAudioContextHandle.createJavaScriptNode(
+      XAudioJSSamplesPerCallback,
       0,
       XAudioJSChannelsAllocated
     ); //Create the js event node.
@@ -109,12 +114,14 @@ XAudioServer.prototype.resetCallbackAPIAudioBuffer = function(APISampleRate) {
 };
 XAudioServer.prototype.initializeResampler = function(sampleRate) {
   XAudioJSAudioContextSampleBuffer = this.getFloat32(XAudioJSMaxBufferSize);
-  XAudioJSResampleBufferSize = Math.max(XAudioJSMaxBufferSize * Math.ceil(sampleRate / this.XAudioJSSampleRate) +
+  XAudioJSResampleBufferSize = Math.max(
+    XAudioJSMaxBufferSize * Math.ceil(sampleRate / this.XAudioJSSampleRate) +
       XAudioJSChannelsAllocated,
     XAudioJSSamplesPerCallback * XAudioJSChannelsAllocated
   );
   console.log('Target sample rate:', this.XAudioJSSampleRate);
-  XAudioJSResampleControl = new Resampler(this.XAudioJSSampleRate,
+  XAudioJSResampleControl = new Resampler(
+    this.XAudioJSSampleRate,
     sampleRate,
     XAudioJSChannelsAllocated,
     XAudioJSResampleBufferSize,
@@ -157,7 +164,8 @@ function XAudioJSWebAudioEvent(event) {
   //Make sure we have resampled samples ready:
   XAudioJSResampleRefill();
   //Copy samples from XAudioJS to the Web Audio API:
-  for(var index = 0;
+  for(
+    var index = 0;
     index < XAudioJSSamplesPerCallback && XAudioJSResampleBufferStart != XAudioJSResampleBufferEnd;
     ++index
   ) {
@@ -199,7 +207,8 @@ function XAudioJSResampleRefill() {
   }
 }
 function XAudioJSResampledSamplesLeft() {
-  return ((XAudioJSResampleBufferStart <= XAudioJSResampleBufferEnd ? 0 : XAudioJSResampleBufferSize) +
+  return (
+    (XAudioJSResampleBufferStart <= XAudioJSResampleBufferEnd ? 0 : XAudioJSResampleBufferSize) +
     XAudioJSResampleBufferEnd -
     XAudioJSResampleBufferStart
   );

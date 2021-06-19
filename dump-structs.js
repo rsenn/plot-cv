@@ -36,7 +36,8 @@ async function main(...args) {
   await PortableFileSystem(fs => (filesystem = fs));
   await PortableSpawn(fn => console.log('PortableSpawn', (globalThis.spawn = spawn = fn)));
 
-  let params = Util.getOpt({
+  let params = Util.getOpt(
+    {
       output: [true, null, 'o'],
       xml: [true, null, 'X'],
       json: [true, null, 'j'],
@@ -59,7 +60,8 @@ async function main(...args) {
   const win32 = false;
 
   if(win32) {
-    defs = defs.concat(Object.entries({
+    defs = defs.concat(
+      Object.entries({
         PDWORD: 'unsigned long*',
         UCHAR: 'unsigned char',
         BYTE: 'char',
@@ -108,7 +110,8 @@ async function main(...args) {
       }
 
       let tree = new Tree(ast);
-      let flat = /*tree.flat();*/ deep.flatten(ast,
+      let flat = /*tree.flat();*/ deep.flatten(
+        ast,
         new Map(),
         (v, p) =>
           ['inner', 'loc', 'range'].indexOf(p[p.length - 1]) == -1 &&
@@ -124,7 +127,8 @@ async function main(...args) {
         const [p, n] = entry;
         let loc = GetLoc(n);
         if(loc)
-          l = Object.setPrototypeOf({ ...(l || {}), ...loc },
+          l = Object.setPrototypeOf(
+            { ...(l || {}), ...loc },
             {
               toString() {
                 let s;
@@ -158,7 +162,8 @@ async function main(...args) {
 
           let typedefs = [...Util.filter(mainNodes, ([path, decl]) => decl.kind == 'TypedefDecl')];
 
-          Type.declarations = new Map([...entries]
+          Type.declarations = new Map(
+            [...entries]
               .filter(([p, n]) => Util.isObject(n) && /Decl/.test(n.kind) && n.name)
               .map(([p, n]) => [n.name, n])
           );
@@ -184,16 +189,19 @@ async function main(...args) {
 
           let namedNodes = mainNodes.filter(([p, n]) => 'name' in n);
 
-          let loc_name = (namedNodes
+          let loc_name = (
+            namedNodes
               .filter(([p, n]) => /Decl/.test(n.kind + '') && Util.isNumeric(p[p.length - 1]))
               .map(([p]) => p) ||
-            Util.intersect(typedefs.map(([p]) => p),
+            Util.intersect(
+              typedefs.map(([p]) => p),
               namedNodes.map(([p]) => p)
             )
           ).map(p => [p.split('.'), flat.get(p)]);
           //           console.log('loc_name:', loc_name);
           //
-          let namedDecls = new Map(loc_name
+          let namedDecls = new Map(
+            loc_name
               .filter(([p, n]) => !/(ParmVar|FieldDecl)/.test(n.kind))
               .map(([p, n]) => [n.name, n])
               .sort((a, b) => a[0].localeCompare(b[0]))
@@ -214,21 +222,24 @@ async function main(...args) {
               l.toString()
             ]);
           console.log('loc ∩ name:', loc_name.length);
-          let idNodes = new Map([...tree.filter(node => typeof node.id == 'string' && node.id.startsWith('0x'))]
+          let idNodes = new Map(
+            [...tree.filter(node => typeof node.id == 'string' && node.id.startsWith('0x'))]
               .map(([p, n]) => p)
               .filter(p => p.indexOf('decl') == -1 && p.indexOf('ownedTagDecl') == -1)
               .map(p => [p, tree.at(p)])
               .map(([p, n]) => [n.id, n])
           );
 
-          console.log('names:',
+          console.log(
+            'names:',
             decls
               .filter(([path, node, id, name, type, kind]) => !/ParmVar/.test(kind))
               .map(decl =>
                 decl
                   .slice(2)
                   .map((field, i) =>
-                    (Util.abbreviate(
+                    (
+                      Util.abbreviate(
                         field,
                         [Infinity, Infinity, 20, Infinity, Infinity, Infinity][i]
                       ) + ''
@@ -239,12 +250,14 @@ async function main(...args) {
               .join('\n')
           );
           let findDecl = node =>
-            (deep.find(
+            (
+              deep.find(
                 node,
                 (n, p) => {
                   //console.log('findDecl', p);
                   return ['ownedTagDecl', 'decl'].indexOf(p[p.length - 1]) != -1;
-                }, []
+                },
+                []
               ) || {}
             ).value;
 
@@ -277,12 +290,14 @@ async function main(...args) {
             [...tree.filter((node, path) => Util.isObject(node) && node.id == id)][0];
           let findIdKind = (id, kind) =>
             [
-              ...tree.filter((node, path) => Util.isObject(node) && node.id == id && node.kind == kind
+              ...tree.filter(
+                (node, path) => Util.isObject(node) && node.id == id && node.kind == kind
               )
             ][0];
           let findNode = (id, kind, exclude) =>
             deep
-              .select(ast,
+              .select(
+                ast,
                 (n, p) => {
                   if(n == exclude) return false;
                   if(Util.isObject(n)) {
@@ -290,7 +305,8 @@ async function main(...args) {
                     if(id && id != n.id) return false;
                     return true;
                   }
-                }, []
+                },
+                []
               )
               .map(({ path, value }) => [
                 path,
@@ -301,10 +317,12 @@ async function main(...args) {
               .map(([p, , n]) => n)[0];
           let fieldDecls = node => {
             if(node && node.inner) {
-              let decls = new Map(node.inner
+              let decls = new Map(
+                node.inner
                   .filter(n => /Field/.test(n.kind) || n.name)
                   .map(n => [n.name, nodeType(n)])
-                  .reduce(([offset, arr], [name, type]) => [
+                  .reduce(
+                    ([offset, arr], [name, type]) => [
                       offset + type.size,
                       arr.concat([[name, type, offset, type.size]])
                     ],
@@ -340,8 +358,10 @@ async function main(...args) {
       );
       console.log('scalars:', scalars);*/
 
-          let structs = new Map(decls
-              .filter(([path, node, id, name, type, kind]) =>
+          let structs = new Map(
+            decls
+              .filter(
+                ([path, node, id, name, type, kind]) =>
                   /Typedef/.test(kind) && /(struct|union)/.test(type)
               )
               .map(([path, node, id, name, type, kind]) => [findDecl(node), node])
@@ -351,7 +371,8 @@ async function main(...args) {
             /* .filter(([name, [size, value]]) => !isNaN(size))*/
           );
           if(params.debug) console.log('structs:', structs);
-          let prototypes = new Map([...entries]
+          let prototypes = new Map(
+            [...entries]
               .filter(([path, node]) => /FunctionDecl/.test(node.kind))
               .map(([path, node]) => {
                 let { name, type, inner } = node;
@@ -374,7 +395,8 @@ async function main(...args) {
                   [
                     type,
                     inner &&
-                      new Map(inner.reduce(
+                      new Map(
+                        inner.reduce(
                           ([offset, entries], [key, type]) => [
                             offset + type.size,
                             entries.concat([[key, [type, offset]]])
@@ -391,7 +413,8 @@ async function main(...args) {
           let libraries = new Map();
 
           function DefinePrototype(name, retType, params) {
-            let ret = Util.tryCatch(() => retType.ffi,
+            let ret = Util.tryCatch(
+              () => retType.ffi,
               t => t,
               null
             );
@@ -406,7 +429,8 @@ async function main(...args) {
               varname = name => `dlsym(${libraries.get(lib)}, '${name}')`;
             }
             if(ret) {
-              prototypeOutput.push(`\ndefine('${name}', ${varname(name)}, null, '${ret}'${[...(params || [])]
+              prototypeOutput.push(
+                `\ndefine('${name}', ${varname(name)}, null, '${ret}'${[...(params || [])]
                   .map(([name, [param, offset]]) => ", '" + param.ffi + "'")
                   .join('')});`
               );
@@ -451,7 +475,8 @@ async function main(...args) {
           let records = [...tree.filter(node => node.kind == 'RecordDecl')];
 
           let getIds = (id, exclude) =>
-            [...tree.filter((node, path) => node == id && !path.startsWith(exclude))].map(([p, n]) => p /*.join('.')*/
+            [...tree.filter((node, path) => node == id && !path.startsWith(exclude))].map(
+              ([p, n]) => p /*.join('.')*/
             );
 
           let recordNodes = records
@@ -466,7 +491,8 @@ async function main(...args) {
               ]),
               [n, ...tree.anchestors(n)]
                 .filter(n => !(n instanceof Array) && n.kind != 'TranslationUnitDecl')
-                .reduce((a, n) => [
+                .reduce(
+                  (a, n) => [
                     ...a,
                     ...(typeof n.tagUsed == 'string' && n.tagUsed != '' ? [n.tagUsed] : []),
                     ...(typeof n.name == 'string' ? [n.name] : [])
@@ -475,14 +501,17 @@ async function main(...args) {
                 ),
 
               [...tree.anchestors(n, [...p])]
-                .filter(([p, n]) => typeof n.kind == 'string' && (/[^t]Decl/.test(n.kind) || n.name)
+                .filter(
+                  ([p, n]) => typeof n.kind == 'string' && (/[^t]Decl/.test(n.kind) || n.name)
                 )
                 .map(([p, n]) => [p.join('.'), n.kind, n.name, n.tagUsed]),
               // getIds(n.id, p.slice(0, 2)),
               nodeType(n),
               n.inner &&
-                new Map(n.inner
-                    .reduce((a, field) =>
+                new Map(
+                  n.inner
+                    .reduce(
+                      (a, field) =>
                         /Comment/.test(field.kind) ? a : [...a, [nodeName(field), nodeType(field)]],
                       []
                     )
@@ -490,7 +519,8 @@ async function main(...args) {
                       name,
                       [
                         type,
-                        Util.tryCatch(() => type && type.size,
+                        Util.tryCatch(
+                          () => type && type.size,
                           s => s
                         )
                       ]
@@ -499,7 +529,8 @@ async function main(...args) {
             ]) /*.map(([p,i,x,y,a1,a2,t,c]) => [p,i,x,y,a1,a2,t && t.size,c])*/
             .filter(a => a[a.length - 1]);
           recordNodes.forEach(([p, n, x, y, a1, a2, t, inner]) => {
-            inner = [...inner].reduce(([offset, arr], [name, [type, byteLength]], i) => [
+            inner = [...inner].reduce(
+              ([offset, arr], [name, [type, byteLength]], i) => [
                 offset + byteLength,
                 [
                   ...arr,
@@ -509,7 +540,8 @@ async function main(...args) {
                       type,
                       byteLength,
                       offset,
-                      `set ${name}(v) { new ${ByteLength2TypedArray(byteLength
+                      `set ${name}(v) { new ${ByteLength2TypedArray(
+                        byteLength
                       )}(this, ${offset})[0] = ${ByteLength2Value(byteLength)}; }`,
                       `get ${name}() { return new ${ByteLength2TypedArray(
                         byteLength
@@ -520,7 +552,8 @@ async function main(...args) {
               ],
               [0, []]
             )[1];
-            const structSize = [...inner.values()].reduce((a, [type, byteLength]) => (byteLength | 0) + a,
+            const structSize = [...inner.values()].reduce(
+              (a, [type, byteLength]) => (byteLength | 0) + a,
               0
             );
 
@@ -536,16 +569,19 @@ async function main(...args) {
           ];
 
           let recordTypes = [
-            ...tree.filter((node, path) => typeof node.id == 'string' && recordIds.indexOf(node.id) != -1
+            ...tree.filter(
+              (node, path) => typeof node.id == 'string' && recordIds.indexOf(node.id) != -1
             )
           ].map(([p, n]) => [p, getId(n.id, n).map(([p, n]) => p /*.join('.')*/), n]);
 
           console.log('number of nodes:', nodes.size);
           console.log('nodes with offset:', offsetNodes.length);
-          console.log('nodes with offset and no line:',
+          console.log(
+            'nodes with offset and no line:',
             offsetNodes.filter(([p, n]) => !('line' in n)).length
           );
-          console.log('nodes with offset and no file:',
+          console.log(
+            'nodes with offset and no file:',
             offsetNodes.filter(([p, n]) => !('file' in n)).length
           );
           console.log('nodes with name:', namedNodes.length);
@@ -562,7 +598,8 @@ async function main(...args) {
           function GetTypeStr(node) {
             let type;
             if(node.type) type = node.type;
-            else if('inner' in node &&
+            else if(
+              'inner' in node &&
               node.inner.some(inner => 'name' in inner || 'type' in inner)
             ) {
               type = node.inner.map(inner => [inner.name, GetTypeStr(inner)]);
@@ -574,7 +611,8 @@ async function main(...args) {
             return type;
           }
           function MakeFilename(className) {
-            return path.join(params['output-dir'] ?? 'tmp',
+            return path.join(
+              params['output-dir'] ?? 'tmp',
               path.basename(file || Util.scriptName(), /\.[^.\/]*$/) + `.${className}.js`
             );
           }
@@ -653,7 +691,8 @@ function* GenerateStructClass(name, [size, map]) {
     fields.push(name);
   }
   yield '';
-  yield `  toString() {\n    const { ${fields.join(', '
+  yield `  toString() {\n    const { ${fields.join(
+    ', '
   )} } = this;\n    return \`struct ${name} {${fields
     .map(field => '\\n\\t.' + field + ' = ${' + field + '}')
     .join(',')}\\n}\`;\n  }`;
@@ -662,7 +701,8 @@ function* GenerateStructClass(name, [size, map]) {
 
 function GenerateGetSet(name, offset, size) {
   return [
-    `set ${name}(v) { new ${ByteLength2TypedArray(size)}(this, ${offset})[0] = ${ByteLength2Value(size
+    `set ${name}(v) { new ${ByteLength2TypedArray(size)}(this, ${offset})[0] = ${ByteLength2Value(
+      size
     )}; }`,
     `get ${name}() { return new ${ByteLength2TypedArray(size)}(this, ${offset})[0]; }`
   ];
@@ -678,13 +718,15 @@ function ByteLength2TypedArray(byteLength) {
       return 'Uint32Array';
     case 8:
       return 'BigUint64Array';
-    default: return 'Uint8Array';
+    default:
+      return 'Uint8Array';
   }
 }
 function ByteLength2Value(byteLength) {
   switch (byteLength) {
     case 8:
       return 'BigInt(v)';
-    default: return 'v';
+    default:
+      return 'v';
   }
 }
