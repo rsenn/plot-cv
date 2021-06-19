@@ -11,6 +11,7 @@ import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import { extendArray, define } from './lib/misc.js';
 import * as net from 'net';
+import { Socket, recv, send, errno } from './socket.js';
 
 extendArray();
 
@@ -26,6 +27,7 @@ function main(...args) {
   });
   let params = Util.getOpt(
     {
+      verbose: [false, () => params.verbose++, 'v'],
       listen: [false, null, 'l'],
       connect: [false, null, 'c'],
       debug: [false, null, 'x'],
@@ -37,6 +39,7 @@ function main(...args) {
   );
   //const { listen } = params;
 
+  console.log('params.verbose', params.verbose);
   const [address = '127.0.0.1', port = 9000] = args;
 
   const listen = params.connect && !params.listen ? false : true;
@@ -68,25 +71,31 @@ function main(...args) {
   };
 
   console.log = repl.printFunction(log);
-
   //  console.log = (...args) => repl.printStatus(() => log(...args));
 
-  let socket = new rpc.Socket('0.0.0.0:9200', rpc.RPCServerConnection, 1);
+  let cli = new rpc.Socket('0.0.0.0:9200', rpc.RPCServerConnection, +params.verbose);
 
-  const createWS = (url, callbacks, listen) => [net.client, net.server][+listen]({ ...url, ...callbacks });
+  cli.register(Socket);
 
-  globalThis[['connection', 'listener'][+listen]] = socket;
-  globalThis.connections = socket.fdlist;
+  const createWS = (url, callbacks, listen) =>
+    [net.client, net.server][+listen]({ ...url, ...callbacks });
 
-  [socket.connect, socket.listen][+listen].call(socket, createWS, os);
+  globalThis[['connection', 'listener'][+listen]] = cli;
+  globalThis.connections = cli.fdlist;
 
   Object.assign(globalThis, {
     repl,
     Util,
-    rpc,
+    ...rpc,
     quit,
-    exit: quit
+    exit: quit,
+    Socket,
+    recv,
+    send,
+    errno
   });
+
+  [cli.connect, cli.listen][+listen].call(cli, createWS, os);
 
   function quit(why) {
     repl.cleanup(why);

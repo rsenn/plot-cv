@@ -112,12 +112,7 @@ async function main(...args) {
       let outfile = base + '.ast.json';
       let boutfile = base + '.ast.bjson';
 
-      async function ReadAST(
-        outfile,
-        load = f => fs.readFileSync(f),
-        save = WriteFile,
-        parse = JSON.parse
-      ) {
+      async function ReadAST(outfile, load = f => fs.readFileSync(f), save = WriteFile, parse = JSON.parse) {
         let st = [file, outfile].map(name => fs.stat(name));
         let times = st.map(stat => (stat && stat.mtime) || 0);
         let cached = times[1] >= times[0];
@@ -157,9 +152,7 @@ async function main(...args) {
       let flat = /*tree.flat();*/ deep.flatten(
         ast,
         new Map(),
-        (v, p) =>
-          ['inner', 'loc', 'range'].indexOf(p[p.length - 1]) == -1 &&
-          Util.isObject(v) /*&& 'kind' in v*/
+        (v, p) => ['inner', 'loc', 'range'].indexOf(p[p.length - 1]) == -1 && Util.isObject(v) /*&& 'kind' in v*/
       );
       let locations = [];
       let l = Object.setPrototypeOf({}, { toString() {} });
@@ -206,8 +199,7 @@ async function main(...args) {
         let typedefs = [...Util.filter(mainNodes, ([path, decl]) => decl.kind == 'TypedefDecl')];
 
         const names = decls => [...decls].map(([path, decl]) => decl.name);
-        const declarations = decls =>
-          [...decls].map(([path, decl, loc]) => [decl.name, loc.toString()]);
+        const declarations = decls => [...decls].map(([path, decl, loc]) => [decl.name, loc.toString()]);
 
         if(params.debug) {
           let nodeTypes = [...nodes].map(([p, n]) => n.kind);
@@ -251,16 +243,13 @@ async function main(...args) {
 
         if(params.debug) console.log('loc ∩ name:', loc_name.length);
 
-        for(let decl of decls.filter(
-          ([path, node, id, name, type, kind]) => !/ParmVar/.test(kind)
-        )) {
+        for(let decl of decls.filter(([path, node, id, name, type, kind]) => !/ParmVar/.test(kind))) {
           const line = decl
             .slice(2)
             .map((field, i) =>
-              (
-                Util.abbreviate(field, [Infinity, Infinity, 20, Infinity, Infinity, Infinity][i]) +
-                ''
-              ).padEnd([6, 25, 20, 20, 40, 0][i])
+              (Util.abbreviate(field, [Infinity, Infinity, 20, Infinity, Infinity, Infinity][i]) + '').padEnd(
+                [6, 25, 20, 20, 40, 0][i]
+              )
             )
             .join(' ');
 

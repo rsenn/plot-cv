@@ -23,11 +23,7 @@ var ENVIRONMENT_IS_NODE = false;
 var ENVIRONMENT_IS_SHELL = false;
 ENVIRONMENT_IS_WEB = typeof window === 'object';
 ENVIRONMENT_IS_WORKER = typeof importScripts === 'function';
-ENVIRONMENT_IS_NODE =
-  typeof process === 'object' &&
-  typeof require === 'function' &&
-  !ENVIRONMENT_IS_WEB &&
-  !ENVIRONMENT_IS_WORKER;
+ENVIRONMENT_IS_NODE = typeof process === 'object' && typeof require === 'function' && !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_WORKER;
 ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIRONMENT_IS_WORKER;
 var scriptDirectory = '';
 function locateFile(path) {
@@ -150,18 +146,8 @@ if(ENVIRONMENT_IS_NODE) {
   };
 } else {
 }
-var out =
-  Module['print'] ||
-  (typeof console !== 'undefined'
-    ? console.log.bind(console)
-    : typeof print !== 'undefined'
-    ? print
-    : null);
-var err =
-  Module['printErr'] ||
-  (typeof printErr !== 'undefined'
-    ? printErr
-    : (typeof console !== 'undefined' && console.warn.bind(console)) || out);
+var out = Module['print'] || (typeof console !== 'undefined' ? console.log.bind(console) : typeof print !== 'undefined' ? print : null);
+var err = Module['printErr'] || (typeof printErr !== 'undefined' ? printErr : (typeof console !== 'undefined' && console.warn.bind(console)) || out);
 for(key in moduleOverrides) {
   if(moduleOverrides.hasOwnProperty(key)) {
     Module[key] = moduleOverrides[key];
@@ -214,10 +200,7 @@ function Pointer_stringify(ptr, length) {
     var MAX_CHUNK = 1024;
     var curr;
     while(length > 0) {
-      curr = String.fromCharCode.apply(
-        String,
-        HEAPU8.subarray(ptr, ptr + Math.min(length, MAX_CHUNK))
-      );
+      curr = String.fromCharCode.apply(String, HEAPU8.subarray(ptr, ptr + Math.min(length, MAX_CHUNK)));
       ret = ret ? ret + curr : curr;
       ptr += MAX_CHUNK;
       length -= MAX_CHUNK;
@@ -357,9 +340,7 @@ function enlargeMemory() {
 }
 var byteLength;
 try {
-  byteLength = Function.prototype.call.bind(
-    Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, 'byteLength').get
-  );
+  byteLength = Function.prototype.call.bind(Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, 'byteLength').get);
   byteLength(new ArrayBuffer(4));
 } catch(e) {
   byteLength = function(buffer) {
@@ -368,14 +349,7 @@ try {
 }
 var TOTAL_STACK = Module['TOTAL_STACK'] || 5242880;
 var TOTAL_MEMORY = Module['TOTAL_MEMORY'] || 16777216;
-if(TOTAL_MEMORY < TOTAL_STACK)
-  err(
-    'TOTAL_MEMORY should be larger than TOTAL_STACK, was ' +
-      TOTAL_MEMORY +
-      '! (TOTAL_STACK=' +
-      TOTAL_STACK +
-      ')'
-  );
+if(TOTAL_MEMORY < TOTAL_STACK) err('TOTAL_MEMORY should be larger than TOTAL_STACK, was ' + TOTAL_MEMORY + '! (TOTAL_STACK=' + TOTAL_STACK + ')');
 if(Module['buffer']) {
   buffer = Module['buffer'];
 } else {
@@ -488,9 +462,7 @@ Module['preloadedImages'] = {};
 Module['preloadedAudios'] = {};
 var dataURIPrefix = 'data:application/octet-stream;base64,';
 function isDataURI(filename) {
-  return String.prototype.startsWith
-    ? filename.startsWith(dataURIPrefix)
-    : filename.indexOf(dataURIPrefix) === 0;
+  return String.prototype.startsWith ? filename.startsWith(dataURIPrefix) : filename.indexOf(dataURIPrefix) === 0;
 }
 function integrateWasmJS() {
   var wasmTextFile = 'wasmkissfft.wast';
@@ -516,9 +488,7 @@ function integrateWasmJS() {
   function mergeMemory(newBuffer) {
     var oldBuffer = Module['buffer'];
     if(newBuffer.byteLength < oldBuffer.byteLength) {
-      err(
-        'the new buffer in mergeMemory is smaller than the previous one. in native wasm, we should grow memory here'
-      );
+      err('the new buffer in mergeMemory is smaller than the previous one. in native wasm, we should grow memory here');
     }
     var oldView = new Int8Array(oldBuffer);
     var newView = new Int8Array(newBuffer);
@@ -544,11 +514,7 @@ function integrateWasmJS() {
     }
   }
   function getBinaryPromise() {
-    if(
-      !Module['wasmBinary'] &&
-      (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) &&
-      typeof fetch === 'function'
-    ) {
+    if(!Module['wasmBinary'] && (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) && typeof fetch === 'function') {
       return fetch(wasmBinaryFile, { credentials: 'same-origin' })
         .then(function (response) {
           if(!response['ok']) {
@@ -607,12 +573,7 @@ function integrateWasmJS() {
           abort(reason);
         });
     }
-    if(
-      !Module['wasmBinary'] &&
-      typeof WebAssembly.instantiateStreaming === 'function' &&
-      !isDataURI(wasmBinaryFile) &&
-      typeof fetch === 'function'
-    ) {
+    if(!Module['wasmBinary'] && typeof WebAssembly.instantiateStreaming === 'function' && !isDataURI(wasmBinaryFile) && typeof fetch === 'function') {
       WebAssembly.instantiateStreaming(fetch(wasmBinaryFile, { credentials: 'same-origin' }), info)
         .then(receiveInstantiatedSource)
         .catch(function (reason) {
@@ -969,10 +930,7 @@ if(Module['preInit']) {
   }
 }
 run();
-if(
-  typeof window === 'object' &&
-  (typeof ENVIRONMENT_IS_PTHREAD === 'undefined' || !ENVIRONMENT_IS_PTHREAD)
-) {
+if(typeof window === 'object' && (typeof ENVIRONMENT_IS_PTHREAD === 'undefined' || !ENVIRONMENT_IS_PTHREAD)) {
   function emrun_register_handlers() {
     var emrun_num_post_messages_in_flight = 0;
     var emrun_should_close_itself = false;
@@ -993,8 +951,7 @@ if(
       ++emrun_num_post_messages_in_flight;
       http.onreadystatechange = function() {
         if(http.readyState == 4) {
-          if(--emrun_num_post_messages_in_flight == 0 && emrun_should_close_itself)
-            postExit('^exit^' + EXITSTATUS);
+          if(--emrun_num_post_messages_in_flight == 0 && emrun_should_close_itself) postExit('^exit^' + EXITSTATUS);
         }
       };
       http.open('POST', 'stdio.html', true);

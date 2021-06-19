@@ -27,14 +27,39 @@ import {
 } from 'ffi';
 import {
   toString as ArrayBufferToString,
-  toArrayBuffer as StringToArrayBuffer
+  toArrayBuffer as StringToArrayBuffer,
+  SyscallError
 } from './lib/misc.js';
+export { SyscallError } from './lib/misc.js';
+export { errno } from 'ffi';
 
 function foreign(name, ret, ...args) {
   let fp = dlsym(RTLD_DEFAULT, name);
   define(name, fp, null, ret, ...args);
-  return (...args) => call(name, ...args);
+  return (...args) => {
+    let err,
+      ret = call(name, ...args);
+    /*
+    if(ret === -1 && (err = errno())) {
+      let exception = new SyscallError(name, err);
+      throw exception;
+    }*/
+    return ret;
+  };
 }
+
+function syscall_return(name, ret) {
+  let err;
+  if(ret === -1) err = errno();
+  console.log(`${name}() returned ${ret}` + (ret < 0 ? ` (${std.strerror(err)})` : ''));
+
+  if(err !== undefined) {
+    let exception = new SyscallError(name, err);
+    throw exception;
+  }
+  return ret;
+}
+
 export let FD_SETSIZE = 1024;
 
 export const SOCK_STREAM = 1; /* stream (connection) socket */
@@ -206,10 +231,13 @@ export function listen(fd, backlog = 5) {
 
 export function recv(fd, buf, offset, len, flags = 0) {
   console.log('syscall.recv', { fd, buf, offset, len, flags });
-  if(typeof buf == 'object' && typeof buf.buffer == 'object') buf = buf.buffer;
+  if(typeof buf == 'object' && buf != null && typeof buf.buffer == 'object') buf = buf.buffer;
   if(offset === undefined) offset = 0;
-  if(len === undefined) len = buf.byteLength;
-  return syscall.recv(+fd, buf, offset, len, flags);
+  if(len === undefined && typeof buf == 'object' && buf != null && 'byteLength' in buf)
+    len = buf.byteLength;
+  const args = [+fd, buf, offset, len, flags];
+  console.log('syscall.recv', args);
+  return syscall.recv(...args);
 }
 
 export function send(fd, buf, offset, len, flags = 0) {
@@ -424,7 +452,7 @@ export class Socket {
     Util.define(this, { EAGAIN });
   }
 
-  ndelay(on) {
+  ndelay(on = true) {
     return ndelay(this.fd, on);
   }
 
@@ -513,16 +541,26 @@ export class Socket {
 
   read(...args) {
     let ret;
-    const [buf, offset, len] = args;
+    let [buf, offset, len] = args;
 
     if(args.length == 0 || typeof buf != 'object') {
       let data = new ArrayBuffer(typeof buf == 'number' ? buf : 1024);
       if((ret = this.read(data)) > 0) return ArrayBufferToString(data.slice(0, ret));
-    } else if((ret = read(this.fd, buf, offset ?? 0, len ?? buf.byteLength)) <= 0) {
+    } else {
+      let { fd } = this;
+      offset ??= 0;
+      len ??= buf.byteLength;
+      ret = os.read(fd, buf, offset, len);
+      console.log('os.read', { fd, offset, len, ret });
+
+      if((ret = syscall_return('os.read', ret)) <= 0) this.close();
+
+      /*
       if(ret < 0) {
         this.errno = syscall.errno;
+        ret = -1;
         if(this.errno != EAGAIN) throw new Error(`Socket ${this.fd} error: ${this.errno}`);
-      } else if(ret == 0) this.close();
+      } else if(ret == 0) this.close();*/
     }
     return ret;
   }
@@ -604,7 +642,7 @@ Object.assign(Socket.prototype, {
   pending: false,
   remote: null,
   local: null,
-  [Symbol.getStringTag]: 'Socket'
+  [Symbol.toStringTag]: 'Socket'
 });
 
 export function WaitRead(fd) {

@@ -18,9 +18,7 @@ var ENVIRONMENT_IS_SHELL = false;
 ENVIRONMENT_IS_WEB = typeof window === 'object';
 ENVIRONMENT_IS_WORKER = typeof importScripts === 'function';
 ENVIRONMENT_IS_NODE =
-  typeof process === 'object' &&
-  typeof process.versions === 'object' &&
-  typeof process.versions.node === 'string';
+  typeof process === 'object' && typeof process.versions === 'object' && typeof process.versions.node === 'string';
 ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIRONMENT_IS_WORKER;
 var scriptDirectory = '';
 function locateFile(path) {
@@ -194,10 +192,7 @@ function convertJsFunctionToWasm(func, sig) {
   }
   typeSection[1] = typeSection.length - 2;
   var bytes = new Uint8Array(
-    [0, 97, 115, 109, 1, 0, 0, 0].concat(
-      typeSection,
-      [2, 7, 1, 1, 101, 1, 102, 0, 0, 7, 5, 1, 1, 102, 0, 0]
-    )
+    [0, 97, 115, 109, 1, 0, 0, 0].concat(typeSection, [2, 7, 1, 1, 101, 1, 102, 0, 0, 7, 5, 1, 1, 102, 0, 0])
   );
   var module = new WebAssembly.Module(bytes);
   var instance = new WebAssembly.Instance(module, { e: { f: func } });
@@ -670,8 +665,10 @@ var ASSERTIONS = false;
 var asmLibraryArg = {};
 var asm = createWasm();
 var ___wasm_call_ctors = (Module['___wasm_call_ctors'] = function() {
-  return (___wasm_call_ctors = Module['___wasm_call_ctors'] =
-    Module['asm']['__wasm_call_ctors']).apply(null, arguments);
+  return (___wasm_call_ctors = Module['___wasm_call_ctors'] = Module['asm']['__wasm_call_ctors']).apply(
+    null,
+    arguments
+  );
 });
 var _find_Archimedean_spiral_length = (Module['_find_Archimedean_spiral_length'] = function() {
   return (_find_Archimedean_spiral_length = Module['_find_Archimedean_spiral_length'] =
@@ -682,12 +679,16 @@ var _find_actual_spiral_length = (Module['_find_actual_spiral_length'] = functio
     Module['asm']['find_actual_spiral_length']).apply(null, arguments);
 });
 var _getOneLayerI_Poligonal = (Module['_getOneLayerI_Poligonal'] = function() {
-  return (_getOneLayerI_Poligonal = Module['_getOneLayerI_Poligonal'] =
-    Module['asm']['getOneLayerI_Poligonal']).apply(null, arguments);
+  return (_getOneLayerI_Poligonal = Module['_getOneLayerI_Poligonal'] = Module['asm']['getOneLayerI_Poligonal']).apply(
+    null,
+    arguments
+  );
 });
 var _getFerriteCoreMagConst = (Module['_getFerriteCoreMagConst'] = function() {
-  return (_getFerriteCoreMagConst = Module['_getFerriteCoreMagConst'] =
-    Module['asm']['getFerriteCoreMagConst']).apply(null, arguments);
+  return (_getFerriteCoreMagConst = Module['_getFerriteCoreMagConst'] = Module['asm']['getFerriteCoreMagConst']).apply(
+    null,
+    arguments
+  );
 });
 var _getOneLayerN_withRoundWire = (Module['_getOneLayerN_withRoundWire'] = function() {
   return (_getOneLayerN_withRoundWire = Module['_getOneLayerN_withRoundWire'] =
@@ -706,28 +707,26 @@ var _getOneLayerI_withRectWire = (Module['_getOneLayerI_withRectWire'] = functio
     Module['asm']['getOneLayerI_withRectWire']).apply(null, arguments);
 });
 var _getOneLayerN_Poligonal = (Module['_getOneLayerN_Poligonal'] = function() {
-  return (_getOneLayerN_Poligonal = Module['_getOneLayerN_Poligonal'] =
-    Module['asm']['getOneLayerN_Poligonal']).apply(null, arguments);
-});
-var _getMultiLayerN = (Module['_getMultiLayerN'] = function() {
-  return (_getMultiLayerN = Module['_getMultiLayerN'] = Module['asm']['getMultiLayerN']).apply(
+  return (_getOneLayerN_Poligonal = Module['_getOneLayerN_Poligonal'] = Module['asm']['getOneLayerN_Poligonal']).apply(
     null,
     arguments
   );
+});
+var _getMultiLayerN = (Module['_getMultiLayerN'] = function() {
+  return (_getMultiLayerN = Module['_getMultiLayerN'] = Module['asm']['getMultiLayerN']).apply(null, arguments);
 });
 var _getMultiLayerN_rectFormer = (Module['_getMultiLayerN_rectFormer'] = function() {
   return (_getMultiLayerN_rectFormer = Module['_getMultiLayerN_rectFormer'] =
     Module['asm']['getMultiLayerN_rectFormer']).apply(null, arguments);
 });
 var _getMultiLayerI_byN = (Module['_getMultiLayerI_byN'] = function() {
-  return (_getMultiLayerI_byN = Module['_getMultiLayerI_byN'] =
-    Module['asm']['getMultiLayerI_byN']).apply(null, arguments);
-});
-var _getMultiLayerI = (Module['_getMultiLayerI'] = function() {
-  return (_getMultiLayerI = Module['_getMultiLayerI'] = Module['asm']['getMultiLayerI']).apply(
+  return (_getMultiLayerI_byN = Module['_getMultiLayerI_byN'] = Module['asm']['getMultiLayerI_byN']).apply(
     null,
     arguments
   );
+});
+var _getMultiLayerI = (Module['_getMultiLayerI'] = function() {
+  return (_getMultiLayerI = Module['_getMultiLayerI'] = Module['asm']['getMultiLayerI']).apply(null, arguments);
 });
 var _getMultiLayerI_rectFormer = (Module['_getMultiLayerI_rectFormer'] = function() {
   return (_getMultiLayerI_rectFormer = Module['_getMultiLayerI_rectFormer'] =
@@ -738,24 +737,22 @@ var _getMultiLayerI_fromResistance = (Module['_getMultiLayerI_fromResistance'] =
     Module['asm']['getMultiLayerI_fromResistance']).apply(null, arguments);
 });
 var _getMultilayerN_Foil = (Module['_getMultilayerN_Foil'] = function() {
-  return (_getMultilayerN_Foil = Module['_getMultilayerN_Foil'] =
-    Module['asm']['getMultilayerN_Foil']).apply(null, arguments);
+  return (_getMultilayerN_Foil = Module['_getMultilayerN_Foil'] = Module['asm']['getMultilayerN_Foil']).apply(
+    null,
+    arguments
+  );
 });
 var _getMultilayerI_Foil = (Module['_getMultilayerI_Foil'] = function() {
-  return (_getMultilayerI_Foil = Module['_getMultilayerI_Foil'] =
-    Module['asm']['getMultilayerI_Foil']).apply(null, arguments);
+  return (_getMultilayerI_Foil = Module['_getMultilayerI_Foil'] = Module['asm']['getMultilayerI_Foil']).apply(
+    null,
+    arguments
+  );
 });
 var _getFerriteN = (Module['_getFerriteN'] = function() {
-  return (_getFerriteN = Module['_getFerriteN'] = Module['asm']['getFerriteN']).apply(
-    null,
-    arguments
-  );
+  return (_getFerriteN = Module['_getFerriteN'] = Module['asm']['getFerriteN']).apply(null, arguments);
 });
 var _getFerriteI = (Module['_getFerriteI'] = function() {
-  return (_getFerriteI = Module['_getFerriteI'] = Module['asm']['getFerriteI']).apply(
-    null,
-    arguments
-  );
+  return (_getFerriteI = Module['_getFerriteI'] = Module['asm']['getFerriteI']).apply(null, arguments);
 });
 var _getPCB_N = (Module['_getPCB_N'] = function() {
   return (_getPCB_N = Module['_getPCB_N'] = Module['asm']['getPCB_N']).apply(null, arguments);
@@ -764,16 +761,10 @@ var _getPCB_I = (Module['_getPCB_I'] = function() {
   return (_getPCB_I = Module['_getPCB_I'] = Module['asm']['getPCB_I']).apply(null, arguments);
 });
 var _getSpiralPCB_N = (Module['_getSpiralPCB_N'] = function() {
-  return (_getSpiralPCB_N = Module['_getSpiralPCB_N'] = Module['asm']['getSpiralPCB_N']).apply(
-    null,
-    arguments
-  );
+  return (_getSpiralPCB_N = Module['_getSpiralPCB_N'] = Module['asm']['getSpiralPCB_N']).apply(null, arguments);
 });
 var _getSpiralPCB_I = (Module['_getSpiralPCB_I'] = function() {
-  return (_getSpiralPCB_I = Module['_getSpiralPCB_I'] = Module['asm']['getSpiralPCB_I']).apply(
-    null,
-    arguments
-  );
+  return (_getSpiralPCB_I = Module['_getSpiralPCB_I'] = Module['asm']['getSpiralPCB_I']).apply(null, arguments);
 });
 var _getSpiralN = (Module['_getSpiralN'] = function() {
   return (_getSpiralN = Module['_getSpiralN'] = Module['asm']['getSpiralN']).apply(null, arguments);
@@ -782,44 +773,28 @@ var _getSpiralI = (Module['_getSpiralI'] = function() {
   return (_getSpiralI = Module['_getSpiralI'] = Module['asm']['getSpiralI']).apply(null, arguments);
 });
 var _findToroidPemeability = (Module['_findToroidPemeability'] = function() {
-  return (_findToroidPemeability = Module['_findToroidPemeability'] =
-    Module['asm']['findToroidPemeability']).apply(null, arguments);
+  return (_findToroidPemeability = Module['_findToroidPemeability'] = Module['asm']['findToroidPemeability']).apply(
+    null,
+    arguments
+  );
 });
 var _findFerriteRodN = (Module['_findFerriteRodN'] = function() {
-  return (_findFerriteRodN = Module['_findFerriteRodN'] = Module['asm']['findFerriteRodN']).apply(
-    null,
-    arguments
-  );
+  return (_findFerriteRodN = Module['_findFerriteRodN'] = Module['asm']['findFerriteRodN']).apply(null, arguments);
 });
 var _findMeadrPCB_I = (Module['_findMeadrPCB_I'] = function() {
-  return (_findMeadrPCB_I = Module['_findMeadrPCB_I'] = Module['asm']['findMeadrPCB_I']).apply(
-    null,
-    arguments
-  );
+  return (_findMeadrPCB_I = Module['_findMeadrPCB_I'] = Module['asm']['findMeadrPCB_I']).apply(null, arguments);
 });
 var _findMultiloop_I = (Module['_findMultiloop_I'] = function() {
-  return (_findMultiloop_I = Module['_findMultiloop_I'] = Module['asm']['findMultiloop_I']).apply(
-    null,
-    arguments
-  );
+  return (_findMultiloop_I = Module['_findMultiloop_I'] = Module['asm']['findMultiloop_I']).apply(null, arguments);
 });
 var _findMultiloop_N = (Module['_findMultiloop_N'] = function() {
-  return (_findMultiloop_N = Module['_findMultiloop_N'] = Module['asm']['findMultiloop_N']).apply(
-    null,
-    arguments
-  );
+  return (_findMultiloop_N = Module['_findMultiloop_N'] = Module['asm']['findMultiloop_N']).apply(null, arguments);
 });
 var _findRoundLoop_I = (Module['_findRoundLoop_I'] = function() {
-  return (_findRoundLoop_I = Module['_findRoundLoop_I'] = Module['asm']['findRoundLoop_I']).apply(
-    null,
-    arguments
-  );
+  return (_findRoundLoop_I = Module['_findRoundLoop_I'] = Module['asm']['findRoundLoop_I']).apply(null, arguments);
 });
 var _findRoundLoop_D = (Module['_findRoundLoop_D'] = function() {
-  return (_findRoundLoop_D = Module['_findRoundLoop_D'] = Module['asm']['findRoundLoop_D']).apply(
-    null,
-    arguments
-  );
+  return (_findRoundLoop_D = Module['_findRoundLoop_D'] = Module['asm']['findRoundLoop_D']).apply(null, arguments);
 });
 var _findIsoIsoscelesTriangleLoop_I = (Module['_findIsoIsoscelesTriangleLoop_I'] = function() {
   return (_findIsoIsoscelesTriangleLoop_I = Module['_findIsoIsoscelesTriangleLoop_I'] =
@@ -830,16 +805,22 @@ var _findIsoIsoscelesTriangleLoop_a = (Module['_findIsoIsoscelesTriangleLoop_a']
     Module['asm']['findIsoIsoscelesTriangleLoop_a']).apply(null, arguments);
 });
 var _findRectangleLoop_I = (Module['_findRectangleLoop_I'] = function() {
-  return (_findRectangleLoop_I = Module['_findRectangleLoop_I'] =
-    Module['asm']['findRectangleLoop_I']).apply(null, arguments);
+  return (_findRectangleLoop_I = Module['_findRectangleLoop_I'] = Module['asm']['findRectangleLoop_I']).apply(
+    null,
+    arguments
+  );
 });
 var _findRectangleLoop_a = (Module['_findRectangleLoop_a'] = function() {
-  return (_findRectangleLoop_a = Module['_findRectangleLoop_a'] =
-    Module['asm']['findRectangleLoop_a']).apply(null, arguments);
+  return (_findRectangleLoop_a = Module['_findRectangleLoop_a'] = Module['asm']['findRectangleLoop_a']).apply(
+    null,
+    arguments
+  );
 });
 var _findSheildedInductance = (Module['_findSheildedInductance'] = function() {
-  return (_findSheildedInductance = Module['_findSheildedInductance'] =
-    Module['asm']['findSheildedInductance']).apply(null, arguments);
+  return (_findSheildedInductance = Module['_findSheildedInductance'] = Module['asm']['findSheildedInductance']).apply(
+    null,
+    arguments
+  );
 });
 var _findAirCoreRoundToroid_I = (Module['_findAirCoreRoundToroid_I'] = function() {
   return (_findAirCoreRoundToroid_I = Module['_findAirCoreRoundToroid_I'] =
@@ -850,53 +831,31 @@ var _findAirCoreRoundToroid_N = (Module['_findAirCoreRoundToroid_N'] = function(
     Module['asm']['findAirCoreRoundToroid_N']).apply(null, arguments);
 });
 var _findPotCore_I = (Module['_findPotCore_I'] = function() {
-  return (_findPotCore_I = Module['_findPotCore_I'] = Module['asm']['findPotCore_I']).apply(
-    null,
-    arguments
-  );
+  return (_findPotCore_I = Module['_findPotCore_I'] = Module['asm']['findPotCore_I']).apply(null, arguments);
 });
 var _findPotCore_N = (Module['_findPotCore_N'] = function() {
-  return (_findPotCore_N = Module['_findPotCore_N'] = Module['asm']['findPotCore_N']).apply(
-    null,
-    arguments
-  );
+  return (_findPotCore_N = Module['_findPotCore_N'] = Module['asm']['findPotCore_N']).apply(null, arguments);
 });
 var _findECore_I = (Module['_findECore_I'] = function() {
-  return (_findECore_I = Module['_findECore_I'] = Module['asm']['findECore_I']).apply(
-    null,
-    arguments
-  );
+  return (_findECore_I = Module['_findECore_I'] = Module['asm']['findECore_I']).apply(null, arguments);
 });
 var _findECore_N = (Module['_findECore_N'] = function() {
-  return (_findECore_N = Module['_findECore_N'] = Module['asm']['findECore_N']).apply(
-    null,
-    arguments
-  );
+  return (_findECore_N = Module['_findECore_N'] = Module['asm']['findECore_N']).apply(null, arguments);
 });
 var _findUCore_I = (Module['_findUCore_I'] = function() {
-  return (_findUCore_I = Module['_findUCore_I'] = Module['asm']['findUCore_I']).apply(
-    null,
-    arguments
-  );
+  return (_findUCore_I = Module['_findUCore_I'] = Module['asm']['findUCore_I']).apply(null, arguments);
 });
 var _findUCore_N = (Module['_findUCore_N'] = function() {
-  return (_findUCore_N = Module['_findUCore_N'] = Module['asm']['findUCore_N']).apply(
-    null,
-    arguments
-  );
+  return (_findUCore_N = Module['_findUCore_N'] = Module['asm']['findUCore_N']).apply(null, arguments);
 });
 var ___errno_location = (Module['___errno_location'] = function() {
-  return (___errno_location = Module['___errno_location'] =
-    Module['asm']['__errno_location']).apply(null, arguments);
+  return (___errno_location = Module['___errno_location'] = Module['asm']['__errno_location']).apply(null, arguments);
 });
 var stackSave = (Module['stackSave'] = function() {
   return (stackSave = Module['stackSave'] = Module['asm']['stackSave']).apply(null, arguments);
 });
 var stackRestore = (Module['stackRestore'] = function() {
-  return (stackRestore = Module['stackRestore'] = Module['asm']['stackRestore']).apply(
-    null,
-    arguments
-  );
+  return (stackRestore = Module['stackRestore'] = Module['asm']['stackRestore']).apply(null, arguments);
 });
 var stackAlloc = (Module['stackAlloc'] = function() {
   return (stackAlloc = Module['stackAlloc'] = Module['asm']['stackAlloc']).apply(null, arguments);
