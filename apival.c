@@ -18,6 +18,24 @@
 #include <inttypes.h>
 #include <stdint.h>
 
+static inline int
+escape_char_pred(int c) {
+  switch(c) {
+    case 8: return 'b';
+    case 9: return 't';
+    case 10: return 'n';
+    case 11: return 'v';
+    case 12: return 'f';
+    case 13: return 'r';
+    case 39: return '\'';
+    case 92: return '\\';
+  }
+  if(c < 0x20 || c == 127)
+    return 'x';
+
+  return 0;
+}
+
 typedef struct numbers_s {
   union {
     uint32_t fl_i;
@@ -37,7 +55,6 @@ main() {
   jmp_buf jmpb;
   glob_t gl;
   struct termios tio;
-
   n.fl_i = 0x40490fdb;
   n.db_i = 0x4005bf0a8b145769;
   printf("n.fl = %f\n", n.fl);
@@ -108,4 +125,8 @@ main() {
   // printf("sizeof(struct sockaddr_pkt) = %zu\n", sizeof(struct sockaddr_pkt));
   printf("sizeof(struct sockaddr_storage) = %zu\n", sizeof(struct sockaddr_storage));
   printf("sizeof(struct sockaddr_un) = %zu\n", sizeof(struct sockaddr_un));
+  char map[256];
+
+  for(size_t i = 0; i < 256; i++) map[i] = escape_char_pred(i);
+  for(size_t i = 0; i < 256; i++) { printf("%s0x%02x", i > 0 ? ", " : "", map[i]); }
 }
