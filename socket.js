@@ -1,35 +1,8 @@
 import { Error as Errors, strerror } from 'std';
 import { read, write, close, setReadHandler, setWriteHandler } from 'os';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './fcntl.js';
-import {
-  debug,
-  dlopen,
-  define,
-  dlerror,
-  dlclose,
-  dlsym,
-  call,
-  toString,
-  toPointer,
-  toArrayBuffer,
-  errno,
-  JSContext,
-  RTLD_LAZY,
-  RTLD_NOW,
-  RTLD_GLOBAL,
-  RTLD_LOCAL,
-  RTLD_NODELETE,
-  RTLD_NOLOAD,
-  RTLD_DEEPBIND,
-  RTLD_DEFAULT,
-  RTLD_NEXT,
-  pointerSize
-} from 'ffi';
-import {
-  toString as ArrayBufferToString,
-  toArrayBuffer as StringToArrayBuffer,
-  SyscallError
-} from './lib/misc.js';
+import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toPointer, toArrayBuffer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_NODELETE, RTLD_NOLOAD, RTLD_DEEPBIND, RTLD_DEFAULT, RTLD_NEXT, pointerSize } from 'ffi';
+import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer, SyscallError } from './lib/misc.js';
 export { SyscallError } from './lib/misc.js';
 export { errno } from 'ffi';
 
@@ -184,14 +157,12 @@ const syscall = {
   recvfrom: foreign('recvfrom', 'int', 'int', 'buffer', 'size_t', 'int', 'buffer', 'buffer'),
   send: foreign('send', 'int', 'int', 'buffer', 'size_t', 'int'),
   sendto: foreign('sendto', 'int', 'int', 'buffer', 'size_t', 'int', 'buffer', 'size_t'),
-  /* prettier-ignore */ get errno() {
+  get errno() {
     return errno();
   }
 };
 
-export const errnos = Object.fromEntries(
-  Object.getOwnPropertyNames(Errors).map(name => [Errors[name], name])
-);
+export const errnos = Object.fromEntries(Object.getOwnPropertyNames(Errors).map(name => [Errors[name], name]));
 
 export function socket(af = AF_INET, type = SOCK_STREAM, proto = IPPROTO_IP) {
   return syscall.socket(af, type, proto);
@@ -233,8 +204,7 @@ export function recv(fd, buf, offset, len, flags = 0) {
   console.log('syscall.recv', { fd, buf, offset, len, flags });
   if(typeof buf == 'object' && buf != null && typeof buf.buffer == 'object') buf = buf.buffer;
   if(offset === undefined) offset = 0;
-  if(len === undefined && typeof buf == 'object' && buf != null && 'byteLength' in buf)
-    len = buf.byteLength;
+  if(len === undefined && typeof buf == 'object' && buf != null && 'byteLength' in buf) len = buf.byteLength;
   const args = [+fd, buf, offset, len, flags];
   console.log('syscall.recv', args);
   return syscall.recv(...args);
@@ -283,16 +253,16 @@ export class timeval extends ArrayBuffer {
     }
   }
 
-  /* prettier-ignore */ set tv_sec(s) {
+  set tv_sec(s) {
     new timeval.arrType(this)[0] = timeval.numType(s);
   }
-  /* prettier-ignore */ get tv_sec() {
+  get tv_sec() {
     return new timeval.arrType(this)[0];
   }
-  /* prettier-ignore */ set tv_usec(us) {
+  set tv_usec(us) {
     new timeval.arrType(this)[1] = timeval.numType(us);
   }
-  /* prettier-ignore */ get tv_usec() {
+  get tv_usec() {
     return new timeval.arrType(this)[1];
   }
 
@@ -378,20 +348,19 @@ export class fd_set extends ArrayBuffer {
     //  Object.setPrototypeOf(this, new ArrayBuffer(FD_SETSIZE / 8));
   }
 
-  /* prettier-ignore */ get size() {
+  get size() {
     return this.byteLength * 8;
   }
-  /* prettier-ignore */ get maxfd() {
+  get maxfd() {
     const a = this.array;
     return a[a.length - 1];
   }
 
-  /* prettier-ignore */ get array() {
+  get array() {
     const a = new Uint8Array(this);
     const n = a.byteLength;
     const r = [];
-    for(let i = 0; i < n; i++)
-      for(let j = 0; j < 8; j++) if(a[i] & (1 << j)) r.push(i * 8 + j);
+    for(let i = 0; i < n; i++) for (let j = 0; j < 8; j++) if(a[i] & (1 << j)) r.push(i * 8 + j);
     return r;
   }
 
@@ -456,40 +425,40 @@ export class Socket {
     return ndelay(this.fd, on);
   }
 
-  /* prettier-ignore */ set remoteFamily(family) {
+  set remoteFamily(family) {
     this.remote.sin_family = family;
   }
-  /* prettier-ignore */ get remoteFamily() {
+  get remoteFamily() {
     return this.remote.sin_family;
   }
-  /* prettier-ignore */ set remoteAddress(a) {
+  set remoteAddress(a) {
     this.remote.sin_addr = a;
   }
-  /* prettier-ignore */ get remoteAddress() {
+  get remoteAddress() {
     return this.remote.sin_addr;
   }
-  /* prettier-ignore */ set remotePort(n) {
+  set remotePort(n) {
     this.remote.sin_port = n;
   }
-  /* prettier-ignore */ get remotePort() {
+  get remotePort() {
     return this.remote.sin_port;
   }
-  /* prettier-ignore */ set localFamily(family) {
+  set localFamily(family) {
     this.local.sin_family = family;
   }
-  /* prettier-ignore */ get localFamily() {
+  get localFamily() {
     return this.local.sin_family;
   }
-  /* prettier-ignore */ set localAddress(a) {
+  set localAddress(a) {
     this.local.sin_addr = a;
   }
-  /* prettier-ignore */ get localAddress() {
+  get localAddress() {
     return this.local.sin_addr;
   }
-  /* prettier-ignore */ set localPort(n) {
+  set localPort(n) {
     this.local.sin_port = n;
   }
-  /* prettier-ignore */ get localPort() {
+  get localPort() {
     return this.local.sin_port;
   }
 
@@ -554,7 +523,6 @@ export class Socket {
       console.log('os.read', { fd, offset, len, ret });
 
       if((ret = syscall_return('os.read', ret)) <= 0) this.close();
-
       /*
       if(ret < 0) {
         this.errno = syscall.errno;
@@ -576,14 +544,7 @@ export class Socket {
   }
 
   sendto(buf, len, flags = 0, dest_addr = null, addrlen) {
-    return syscall.sendto(
-      this.fd,
-      buf,
-      len,
-      flags,
-      dest_addr,
-      addrlen === undefined ? dest_addr.byteLength : addrlen
-    );
+    return syscall.sendto(this.fd, buf, len, flags, dest_addr, addrlen === undefined ? dest_addr.byteLength : addrlen);
   }
 
   close() {

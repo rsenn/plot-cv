@@ -36,10 +36,21 @@ async function main(...args) {
   ];
 
   for(let [k, v] of types) {
-    console.log(k, v, '0x' + v.toString(16), '0b' + v.toString(2), v >> 1, 1 << ((v >> 1) + 3), 1 << (v >> 1));
+    console.log(
+      k,
+      v,
+      '0x' + v.toString(16),
+      '0b' + v.toString(2),
+      v >> 1,
+      1 << ((v >> 1) + 3),
+      1 << (v >> 1)
+    );
   }
 
-  let input = cv.imread(args[0] ?? '../an-tronics/images/fm/Two-Transistor-Regenerative-Receiver-Schematic-Circuit-Diagram.jpg');
+  let input = cv.imread(
+    args[0] ??
+      '../an-tronics/images/fm/Two-Transistor-Regenerative-Receiver-Schematic-Circuit-Diagram.jpg'
+  );
   console.log('input.type', '0x' + input.type.toString(16));
   console.log('input.depth', '0x' + input.depth.toString(16));
   console.log('input.channels', '0x' + input.channels.toString(16));
@@ -66,7 +77,14 @@ async function main(...args) {
 
   let contours = [];
   let hierarchy = [];
-  cv.findContours(canny, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE, new Point(0, 0));
+  cv.findContours(
+    canny,
+    contours,
+    hierarchy,
+    cv.RETR_TREE,
+    cv.CHAIN_APPROX_SIMPLE,
+    new Point(0, 0)
+  );
   let i = 0;
 
   function getDepth(idx, id = cv.HIER_PARENT) {
@@ -140,7 +158,11 @@ async function main(...args) {
       lpoly.length,
       lpoly.map(({ x1, y1, x2, y2 }) => `${x1},${y1}|${x2},${y2}`)
     );
-    console.log('lpoly angles', lpoly.length, (angles = lpoly.map(l => Math.floor((l.angle * 180) / Math.PI)).map(a => a % 90)));
+    console.log(
+      'lpoly angles',
+      lpoly.length,
+      (angles = lpoly.map(l => Math.floor((l.angle * 180) / Math.PI)).map(a => a % 90))
+    );
     console.log(
       'lpoly slopes',
       lpoly.length,
