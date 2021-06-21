@@ -1,8 +1,35 @@
 import { Error as Errors, strerror } from 'std';
 import { read, write, close, setReadHandler, setWriteHandler } from 'os';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './fcntl.js';
-import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toPointer, toArrayBuffer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_NODELETE, RTLD_NOLOAD, RTLD_DEEPBIND, RTLD_DEFAULT, RTLD_NEXT, pointerSize } from 'ffi';
-import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer, SyscallError } from './lib/misc.js';
+import {
+  debug,
+  dlopen,
+  define,
+  dlerror,
+  dlclose,
+  dlsym,
+  call,
+  toString,
+  toPointer,
+  toArrayBuffer,
+  errno,
+  JSContext,
+  RTLD_LAZY,
+  RTLD_NOW,
+  RTLD_GLOBAL,
+  RTLD_LOCAL,
+  RTLD_NODELETE,
+  RTLD_NOLOAD,
+  RTLD_DEEPBIND,
+  RTLD_DEFAULT,
+  RTLD_NEXT,
+  pointerSize
+} from 'ffi';
+import {
+  toString as ArrayBufferToString,
+  toArrayBuffer as StringToArrayBuffer,
+  SyscallError
+} from './lib/misc.js';
 export { SyscallError } from './lib/misc.js';
 export { errno } from 'ffi';
 
@@ -162,7 +189,9 @@ const syscall = {
   }
 };
 
-export const errnos = Object.fromEntries(Object.getOwnPropertyNames(Errors).map(name => [Errors[name], name]));
+export const errnos = Object.fromEntries(
+  Object.getOwnPropertyNames(Errors).map(name => [Errors[name], name])
+);
 
 export function socket(af = AF_INET, type = SOCK_STREAM, proto = IPPROTO_IP) {
   return syscall.socket(af, type, proto);
@@ -204,7 +233,8 @@ export function recv(fd, buf, offset, len, flags = 0) {
   console.log('syscall.recv', { fd, buf, offset, len, flags });
   if(typeof buf == 'object' && buf != null && typeof buf.buffer == 'object') buf = buf.buffer;
   if(offset === undefined) offset = 0;
-  if(len === undefined && typeof buf == 'object' && buf != null && 'byteLength' in buf) len = buf.byteLength;
+  if(len === undefined && typeof buf == 'object' && buf != null && 'byteLength' in buf)
+    len = buf.byteLength;
   const args = [+fd, buf, offset, len, flags];
   console.log('syscall.recv', args);
   return syscall.recv(...args);
@@ -544,7 +574,14 @@ export class Socket {
   }
 
   sendto(buf, len, flags = 0, dest_addr = null, addrlen) {
-    return syscall.sendto(this.fd, buf, len, flags, dest_addr, addrlen === undefined ? dest_addr.byteLength : addrlen);
+    return syscall.sendto(
+      this.fd,
+      buf,
+      len,
+      flags,
+      dest_addr,
+      addrlen === undefined ? dest_addr.byteLength : addrlen
+    );
   }
 
   close() {

@@ -178,7 +178,7 @@ async function importModule(moduleName, ...args) {
   // while(!done) std.sleep(50);
 }
 
-function updateMeasures(board) {
+function UpdateMeasures(board) {
   if(!board) return false;
   let bounds = board.getBounds();
   let measures = board.getMeasures();
@@ -203,43 +203,43 @@ function updateMeasures(board) {
   return !measures;
 }
 
-function alignItem(item) {
+function AlignItem(item) {
   let changed;
-  // console.log('alignItem', { item });
+  // console.log('AlignItem', { item });
   let offsetPos = new Point(0, 0);
   let geometry = item.geometry;
   if(item.tagName == 'element') {
     let pkg = item['package'];
     let transformation = item.transformation().filter(tr => tr.type != 'translate');
     let matrix = transformation.toMatrix();
-    //console.log('alignItem:', { transformation, matrix });
+    //console.log('AlignItem:', { transformation, matrix });
     offsetPos = new Point(pkg.pads[0]).transform(matrix);
     let inchPos = offsetPos.quot(2.54);
-    // console.log('alignItem:', { offsetPos, inchPos });
+    // console.log('AlignItem:', { offsetPos, inchPos });
     let oldPos = new Point(item);
     inchPos = oldPos.quot(2.54);
-    // console.log('alignItem:', { oldPos, inchPos });
+    // console.log('AlignItem:', { oldPos, inchPos });
     let padPos = oldPos.sum(offsetPos);
     inchPos = padPos.quot(2.54);
-    // console.log('alignItem:', { padPos, inchPos });
+    // console.log('AlignItem:', { padPos, inchPos });
     let newPos = padPos.round(2.54).diff(offsetPos).round(0.0001, 4);
     let diff = newPos.diff(oldPos);
     let before = item.parentNode.toXML();
     //console.log('geometry:', Object.entries(Object.getOwnPropertyDescriptors(geometry)).map(([name, { value }]) => [name, value && Object.getOwnPropertyDescriptors(value)]), geometry.x1);
     inchPos = newPos.quot(2.54);
-    //console.log('alignItem:', { newPos, diff, inchPos });
+    //console.log('AlignItem:', { newPos, diff, inchPos });
     geometry.add(diff);
     changed = !diff.isNull();
   }
   if(item.tagName == 'wire') {
     let oldCoord = geometry.clone();
     let inchCoord = oldCoord.quot(2.54);
-    //console.log('alignItem:', { oldCoord, inchCoord });
+    //console.log('AlignItem:', { oldCoord, inchCoord });
     let newCoord = oldCoord.clone().round(2.54);
     inchCoord = newCoord.quot(2.54);
-    //console.log('alignItem:', { newCoord, inchCoord });
+    //console.log('AlignItem:', { newCoord, inchCoord });
     let diff = newCoord.diff(oldCoord);
-    //console.log('alignItem:', { diff });
+    //console.log('AlignItem:', { diff });
     changed = !diff.isNull();
     geometry.add(diff);
   }
@@ -251,15 +251,17 @@ function alignItem(item) {
   return changed;
 }
 
-function alignAll(doc = globalThis.document) {
+function AlignAll(doc = globalThis.document) {
   if(!doc) return false;
 
   let items = doc.getAll(doc.type == 'brd' ? 'element' : 'instance');
   let changed = false;
-  for(let item of items) changed |= alignItem(item);
+  items = [...items];
+  console.log('items:', items);
+  for(let item of items) changed |= AlignItem(item);
   let signals_nets = doc.getAll(/(signals|nets)/);
   //console.log('signals_nets:', signals_nets);
-  for(let net of signals_nets) for (let item of net.getAll('wire')) changed |= alignItem(item);
+  for(let net of signals_nets) for (let item of net.getAll('wire')) changed |= AlignItem(item);
   return !!changed;
 }
 
@@ -349,6 +351,68 @@ function RemovePolygons(p = polygons) {
   });
 }
 
+function GetNames(doc, pred) {
+  let list, names;
+  if(typeof pred != 'function') pred = e => !!e.package;
+
+  switch (doc.type) {
+    case 'sch': {
+      list = doc.sheets.map(sheet => [...sheet.instances.list]).flat();
+      list = [...list].filter(pred);
+      names = list.map(e => e.attributes.part);
+      break;
+    }
+    case 'brd': {
+      list = doc.elements.list;
+      list = [...list].filter(pred);
+      names = list.map(e => e.attributes.name);
+      break;
+    }
+  }
+  return Util.unique(names);
+}
+
+let nameMaps = (() => {
+  let assoc = new WeakMap();
+
+  return Util.memoize(doc => {
+    let map;
+    switch (doc.type) {
+      case 'sch': {
+        map = new Map(doc.sheets.map(sheet => [...sheet.instances]).flat());
+        break;
+      }
+      case 'brd': {
+        map = new Map([...doc.elements]);
+        break;
+      }
+    }
+    return map;
+  });
+})();
+
+function GetByName(doc, name) {
+  let map = nameMaps(doc);
+
+  //console.log("GetByName", map);
+  return map.get(name);
+}
+
+function CorrelateSchematicAndBoard(schematic, board) {
+  if(!schematic) schematic = project.schematic;
+  if(!board) board = project.board;
+  let documents = [schematic, board];
+  let names = documents.map(d => GetNames(d));
+  let allNames = Math.max(...names.map(n => n.length));
+  let intersection = Util.intersect(...names);
+
+  if(allNames.length > intersection.length)
+    console.warn(`WARNING: Only ${intersection.length} names of ${allNames.length} correlate`);
+  console.log(`intersection`, intersection);
+
+  return /*new Map*/ intersection.map(name => [name, documents.map(doc => GetByName(doc, name))]);
+}
+
 async function testEagle(filename) {
   console.log('testEagle: ', filename);
   let proj = new EagleProject(filename, fs);
@@ -389,8 +453,8 @@ async function testEagle(filename) {
     if(elem.rot) cmds.push(`ROTATE ${elem.rot} ${elem.name};`);
   }
   console.log('proj.board', proj.board);
-  if(proj.board) updateMeasures(proj.board);
-  if(alignAll(board) || alignAll(schematic)) console.log('Saved:', await proj.saveTo('tmp', true));
+  if(proj.board) UpdateMeasures(proj.board);
+  if(AlignAll(board) || AlignAll(schematic)) console.log('Saved:', await proj.saveTo('tmp', true));
   console.log('documents', proj.documents);
   console.log('saved:', await proj.saveTo('tmp', true));
   for(let doc of proj.documents) {
@@ -482,7 +546,13 @@ function main(...args) {
     EagleElementProxy,
     EagleNodeMap,
     ImmutablePath,
-    DereferenceError
+    DereferenceError,
+    GetNames,
+    GetByName,
+    CorrelateSchematicAndBoard,
+    AlignItem,
+    AlignAll,
+    UpdateMeasures
   });
 
   Object.assign(globalThis, {
@@ -504,9 +574,9 @@ function main(...args) {
   globalThis.docs = args.map(arg => (globalThis.doc = load(arg)));
 
   Object.assign(globalThis, {
-    updateMeasures,
-    alignItem,
-    alignAll,
+    UpdateMeasures,
+    AlignItem,
+    AlignAll,
     fixValue,
     fixValues,
     coordMap,
