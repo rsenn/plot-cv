@@ -368,6 +368,13 @@ function GetNames(doc, pred) {
       names = list.map(e => e.attributes.name);
       break;
     }
+    default: {
+      names = deep
+        .select(doc.raw, e => e.attributes.name, deep.RETURN_VALUE_PATH)
+        .filter(([v, p]) => ['symbol', 'device', 'package'].indexOf(v.tagName) != -1)
+        .map(([v, p]) => v.attributes.name);
+      break;
+    }
   }
   return Util.unique(names);
 }
@@ -496,6 +503,15 @@ function main(...args) {
 
   const base = path.basename(Util.getArgv()[1], /\.[^.]*$/);
   const histfile = `.${base}-history`;
+
+  let params = Util.getOpt(
+    {
+      debug: [false, null, 'x'],
+      'output-dir': [true, null, 'd'],
+      '@': 'input'
+    },
+    args
+  );
 
   Object.assign(globalThis, {
     EagleSVGRenderer,
@@ -680,6 +696,11 @@ function main(...args) {
     console.log(`EXIT (wrote ${hist.length} history entries)`);
   });
 */
+
+  for(let file of params['@']) {
+    console.log(`Loading '${file}'...`);
+    newProject(file);
+  }
 
   repl.run();
   console.log('REPL done');

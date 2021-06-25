@@ -139,7 +139,7 @@ function scaleSVG(file, size) {
         let path = parsePath(attributes.d);
         attributes.d = [...formatPath(path)].join(' ');
 
-        console.log('path:', path.length);
+        //console.log('path:', path.length);
       }
 
       if('id' in attributes) delete attributes.id;

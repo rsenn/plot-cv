@@ -54,7 +54,7 @@ async function main(...args) {
     console.log(`obj2`, obj2);
     console.log(`fn`, fn);
     console.log(`boundFn`, boundFn);
-    console.log(`path`, inspect(path));
+    //console.log(`path`, inspect(path));
     console.log(
       `console`,
       console.config({ colors: true, compact: 1, breakLength: Infinity }),

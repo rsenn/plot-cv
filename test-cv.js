@@ -252,7 +252,7 @@ async function main(...args) {
   if(0) {
     console.log(`std.gc`, std.gc);
     console.log(`args`, args);
-    console.log(`path`, inspect(path));
+    //console.log(`path`, inspect(path));
     console.log(`console`, Util.inspect(console));
     console.log(`filesystem.realpath('.')`, filesystem.realpath('.'));
     console.log(`filesystem.chdir('..')`, filesystem.chdir('..'));
