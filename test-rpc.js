@@ -27,7 +27,7 @@ function main(...args) {
   });
   let params = Util.getOpt(
     {
-      verbose: [false, () => params.verbose++, 'v'],
+      verbose: [false, (a, v) => (v | 0) + 1, 'v'],
       listen: [false, null, 'l'],
       connect: [false, null, 'c'],
       debug: [false, null, 'x'],
@@ -39,7 +39,7 @@ function main(...args) {
   );
   //const { listen } = params;
 
-  console.log('params.verbose', params.verbose);
+  console.log('params', params);
   const [address = '127.0.0.1', port = 9000] = args;
 
   const listen = params.connect && !params.listen ? false : true;
@@ -78,7 +78,23 @@ function main(...args) {
   cli.register(Socket);
 
   const createWS = (url, callbacks, listen) =>
-    [net.client, net.server][+listen]({ ...url, ...callbacks });
+    [net.client, net.server][+listen]({
+      mounts: [['/', '.', 'debugger.html']],
+      ...url,
+      ...callbacks,
+      onHttp(sock, url) {
+        console.log(url.replace('/', ''));
+        //console.log('onHttp', { sock, url }, sock.respond);
+
+        if(url != '/') {
+          if(/\.html/.test(url) && !/debugger.html/.test(url))
+            sock.redirect(sock.HTTP_STATUS_FOUND, '/debugger.html');
+
+          //if(!/\.(js|css)$/.test(url)) return sock.respond(sock.HTTP_STATUS_NOT_FOUND, 'Not found');
+        }
+        sock.header('Test', 'blah');
+      }
+    });
 
   globalThis[['connection', 'listener'][+listen]] = cli;
   globalThis.connections = cli.fdlist;
@@ -92,7 +108,14 @@ function main(...args) {
     Socket,
     recv,
     send,
-    errno
+    errno,
+    cli,
+    net,
+    std,
+    os,
+    deep,
+    fs,
+    path
   });
 
   [cli.connect, cli.listen][+listen].call(cli, createWS, os);

@@ -1,4 +1,4 @@
-//import { WebSocketClient } from './lib/net/websocket-async.js';
+import { WebSocketClient } from './lib/net/websocket-async.js';
 import Util from './lib/util.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 import {
@@ -21,11 +21,11 @@ import { ECMAScriptParser, Lexer } from './lib/ecmascript/parser2.js';
 import * as dom from './lib/dom.js';
 import rpc from './quickjs/net/rpc.js';
 
-window.addEventListener('load', e => {
+window.addEventListener('load', async e => {
   let socketURL = Util.makeURL({ location: '/ws', protocol: 'ws' });
-  console.log(`Loaded URL=${socketURL}`);
 
-  //CreateSocket(socketURL);
+  globalThis.ws = await CreateSocket(socketURL);
+  console.log(`Loaded`, { socketURL, ws });
 });
 
 async function LoadSource(filename) {
@@ -57,7 +57,7 @@ Object.assign(globalThis, {
   dom,
   rpc
 });
-/*
+
 async function CreateSocket(url) {
   let ws = (Util.getGlobalObject().ws = new WebSocketClient());
 
@@ -76,10 +76,16 @@ async function CreateSocket(url) {
     }
   })();
 
-  await ws.send(JSON.stringify({
+  await ws.send(
+    JSON.stringify({
       type: 'start',
       start: { connect: false, args: ['test-ecmascript2.js'], address: '127.0.0.1:9901' }
     })
   );
+
+  ws.sendMessage = function(msg) {
+    return this.send(JSON.stringify(msg));
+  };
+
+  return ws;
 }
-*/
