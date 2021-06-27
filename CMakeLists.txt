@@ -29,11 +29,17 @@ include(CheckLibraryExists)
 include(CheckTypeSize)
 include(FindPkgConfig)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Functions.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindQuickJS.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/OpenCV.cmake)
-include(${QUICKJS_SOURCES_ROOT}/defs.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/quickjs/cmake/FindQuickJS.cmake)
 
-find_quickjs(${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
+option(BUILD_QUICKJS "Build quickjs library" ON)
+
+if(BUILD_QUICKJS)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/quickjs/defs.cmake)
+else(BUILD_QUICKJS)
+  find_quickjs()
+endif(BUILD_QUICKJS)
+
 find_opencv()
 
 if(ENABLE_CCACHE)
