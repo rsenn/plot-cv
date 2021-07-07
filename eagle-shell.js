@@ -149,9 +149,7 @@ function LoadHistory(filename) {
     if(data) return data;
   };
 
-  return (parse() ?? [])
-    .filter(entry => (entry + '').trim() != '')
-    .map(entry => entry.replace(/\\n/g, '\n'));
+  return (parse() ?? []).filter(entry => (entry + '').trim() != '').map(entry => entry.replace(/\\n/g, '\n'));
 }
 
 function ReadJSON(filename) {
@@ -433,9 +431,7 @@ async function testEagle(filename) {
       (schematic &&
         schematic.sheets &&
         [...schematic.sheets]
-          .map(e =>
-            [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)
-          )
+          .map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined))
           .flat()) ||
       []
   };
@@ -573,13 +569,7 @@ function main(...args) {
 
   Object.assign(globalThis, {
     load(filename, project = globalThis.project) {
-      return (globalThis.document = new EagleDocument(
-        std.loadFile(filename),
-        project,
-        filename,
-        null,
-        fs
-      ));
+      return (globalThis.document = new EagleDocument(std.loadFile(filename), project, filename, null, fs));
     },
     newProject(filename) {
       return (globalThis.project = new EagleProject(filename, fs));

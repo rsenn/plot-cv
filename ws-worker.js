@@ -42,7 +42,9 @@ function CreateServer({
   sslPrivateKey = '/home/roman/.acme.sh/senn.gotdns.ch/senn.gotdns.ch.key',
   index = 'index.html'
 }) {
-  print(`Listening on http://127.0.0.1:${port}`);
+  print(`Listening on http://${host}:${port}`);
+  if(sslCert) print(`SSL certificate file: ${sslCert}`);
+  if(sslPrivateKey) print(`SSL certificate file: ${sslPrivateKey}`);
   server({
     host,
     port,
@@ -99,9 +101,10 @@ function HandleMessage(e) {
     }
     case 'httpd': {
       CreateServer(ev);
-//      parent.postMessage({ type: 'done' });
+      //      parent.postMessage({ type: 'done' });
       break;
-    }   case 'abort': {
+    }
+    case 'abort': {
       parent.postMessage({ type: 'done' });
       break;
     }
