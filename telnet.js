@@ -87,9 +87,10 @@ function main(...args) {
 
   const listen = !!(args[0] == '-l' && args.shift());
 
-  const [addr = '213.136.8.188', port = 23] = args;
+  const [addr = '23.253.235.38', port = 1701] = args;
 
   debug('addr: %s, port: %u', addr, port);
+  console.debug('sockaddr_in:', new sockaddr_in(AF_INET, port, addr));
 
   let sock = new Socket();
   let conn;

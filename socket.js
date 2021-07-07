@@ -51,6 +51,7 @@ function foreign(name, ret, ...args) {
 function syscall_return(name, ret) {
   let err;
   if(ret === -1) err = errno();
+  else if(ret < 0) err = -ret;
   console.log(`${name}() returned ${ret}` + (ret < 0 ? ` (${std.strerror(err)})` : ''));
 
   if(err !== undefined) {
@@ -354,6 +355,7 @@ Object.defineProperties(sockaddr_in.prototype, {
   sin_addr: {
     set(addr) {
       if(typeof addr == 'string') addr = addr.split(/[.:]/).map(n => +n);
+      console.log('addr:', addr);
       if(addr instanceof Array) {
         let a = new Uint8Array(this, 4);
         a[0] = addr[0];
@@ -441,55 +443,17 @@ export function FD_ZERO(fd, set) {
 }
 
 export class Socket {
+  remote = null;
+  local = null;
+
   constructor(proto = IPPROTO_IP) {
     this.type = [IPPROTO_UDP, SOCK_DGRAM].indexOf(proto) != -1 ? SOCK_DGRAM : SOCK_STREAM;
     this.fd = socket(this.family, this.type, proto);
-    this.remote = new sockaddr_in(this.family);
-    this.local = new sockaddr_in(this.family);
     this.pending = true;
-
-    Util.define(this, { EAGAIN });
   }
 
   ndelay(on = true) {
     return ndelay(this.fd, on);
-  }
-
-  set remoteFamily(family) {
-    this.remote.sin_family = family;
-  }
-  get remoteFamily() {
-    return this.remote.sin_family;
-  }
-  set remoteAddress(a) {
-    this.remote.sin_addr = a;
-  }
-  get remoteAddress() {
-    return this.remote.sin_addr;
-  }
-  set remotePort(n) {
-    this.remote.sin_port = n;
-  }
-  get remotePort() {
-    return this.remote.sin_port;
-  }
-  set localFamily(family) {
-    this.local.sin_family = family;
-  }
-  get localFamily() {
-    return this.local.sin_family;
-  }
-  set localAddress(a) {
-    this.local.sin_addr = a;
-  }
-  get localAddress() {
-    return this.local.sin_addr;
-  }
-  set localPort(n) {
-    this.local.sin_port = n;
-  }
-  get localPort() {
-    return this.local.sin_port;
   }
 
   error(errno = this.errno) {
@@ -498,8 +462,7 @@ export class Socket {
 
   connect(addr, port) {
     let ret;
-    if(addr != undefined) this.remoteAddress = addr;
-    if(port != undefined) this.remotePort = port;
+    this.remote = new sockaddr_in(this.family, port, addr);
     if((ret = connect(this.fd, this.remote, this.remote.byteLength)) == -1) {
       this.errno = syscall.errno;
       if(this.errno == EINPROGRESS) this.connecting = true;
@@ -509,8 +472,7 @@ export class Socket {
 
   bind(addr, port) {
     let ret;
-    if(addr != undefined) this.localAddress = addr;
-    if(port != undefined) this.localPort = port;
+    this.local = new sockaddr_in(this.family, port, addr);
     setsockopt(this.fd, SOL_SOCKET, SO_REUSEADDR, new socklen_t(1));
     console.log('this.local', this.local[Symbol.toStringTag]);
     if((ret = bind(this.fd, this.local, this.local.byteLength)) == -1) this.errno = syscall.errno;

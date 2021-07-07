@@ -1,0 +1,47 @@
+<html>
+  <head>
+    <title>WebAudio</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script type="module" src="XAudioServer.js"></script>
+    <script type="module">
+      fetch('music.raw').then(async response => {
+        globalThis.rawMusic = new Float32Array(await response.arrayBuffer());
+        console.log('rawMusic[0]', rawMusic[0]);
+
+        globalThis.audio = new AudioContext({ latencyHint: 'playback', sampleRate: 48000 });
+
+        function NoiseBuffer(num_samples, raw) {
+          const buf = audio.createBuffer(2, num_samples, audio.sampleRate);
+          for(let c = 0; c < buf.numberOfChannels; c++) {
+            const data = buf.getChannelData(c);
+            if(raw) for(let i = 0; i < buf.length; i++) data[i] = raw[i];
+          }
+          return buf;
+        }
+
+        globalThis.buf = NoiseBuffer(rawMusic.length, rawMusic);
+
+        console.log('buf.getChannelData(0)', buf.getChannelData(0));
+        console.log('buf.getChannelData(0)[0]', buf.getChannelData(0)[0]);
+
+        function NoiseStart(buf, time) {
+          let s = audio.createBufferSource();
+          s.buffer = buf;
+          s.loop = false;
+          s.connect(audio.destination);
+
+          s.onended = () => {
+            console.log('onended');
+            s.disconnect(audio.destination);
+          };
+          if(time !== undefined) s.start(time);
+          return s;
+        }
+        NoiseStart(buf, 0);
+      });
+    </script>
+  </head>
+  <body>
+    <div>NoIsE</div>
+  </body>
+</html>
