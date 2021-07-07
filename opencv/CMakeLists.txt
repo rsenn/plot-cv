@@ -17,24 +17,49 @@ if(ADDITIONAL_PROGS)
   # add_prog(mouth) add_prog(contour) add_prog(contours2) add_prog(distance)
   add_prog(images ${CMAKE_SOURCE_DIR}/src/polygon.cpp ${CMAKE_SOURCE_DIR}/src/data.cpp)
   #
-  # add_prog(laser) add_prog(o_angle) add_prog(code7-3) add_prog(connected_components) add_prog(generalContours_demo1) add_prog(generalContours_demo2) add_prog(hull_demo) add_prog(imageSegmentation) add_prog(imgproc_drawContours) add_prog(pointPolygonTest_demo) add_prog(watershed) add_prog(bg_sub) add_prog(bgsubtract2) add_prog(calibration) add_prog(camera_image) add_prog(camera_opencv)
+  # add_prog(laser) add_prog(o_angle) add_prog(code7-3) add_prog(connected_components)
+  # add_prog(generalContours_demo1) add_prog(generalContours_demo2) add_prog(hull_demo)
+  # add_prog(imageSegmentation) add_prog(imgproc_drawContours) add_prog(pointPolygonTest_demo)
+  # add_prog(watershed) add_prog(bg_sub) add_prog(bgsubtract2) add_prog(calibration)
+  # add_prog(camera_image) add_prog(camera_opencv)
   #
-  # add_prog(camshift) add_prog(cascade_detect_camera) add_prog(clahe) add_prog(code10-1) add_prog(code4-3) add_prog(code4-4) add_prog(code4-5) add_prog(code5-7) add_prog(code7-2) add_prog(code9-2) add_prog(computeSaliency) add_prog(dbt_face_detection) add_prog(detect) add_prog(example) add_prog(fback) add_prog(image_sequence) add_prog(live_demo) add_prog(laplace) add_prog(findLaserPoint)
+  # add_prog(camshift) add_prog(cascade_detect_camera) add_prog(clahe) add_prog(code10-1)
+  # add_prog(code4-3) add_prog(code4-4) add_prog(code4-5) add_prog(code5-7) add_prog(code7-2)
+  # add_prog(code9-2) add_prog(computeSaliency) add_prog(dbt_face_detection) add_prog(detect)
+  # add_prog(example) add_prog(fback) add_prog(image_sequence) add_prog(live_demo) add_prog(laplace)
+  # add_prog(findLaserPoint)
   #
-  # add_prog(homography) add_prog(meanshift) add_prog(motempl) add_prog(OpenCVFaceDetection) add_prog(OpenCVWebcam) add_prog(peopledetect) add_prog(polar_transforms) add_prog(projectorcalibration) add_prog(seeds) add_prog(SimpleGrab) add_prog(slic) add_prog(starter_video) add_prog(targeting2) add_prog(template) add_prog(Threshold_inRange) add_prog(ufacedetect) add_prog(videocapture_basic)
+  # add_prog(homography) add_prog(meanshift) add_prog(motempl) add_prog(OpenCVFaceDetection)
+  # add_prog(OpenCVWebcam) add_prog(peopledetect) add_prog(polar_transforms)
+  # add_prog(projectorcalibration) add_prog(seeds) add_prog(SimpleGrab) add_prog(slic)
+  # add_prog(starter_video) add_prog(targeting2) add_prog(template) add_prog(Threshold_inRange)
+  # add_prog(ufacedetect) add_prog(videocapture_basic)
   #
-  # add_prog(videocapture_gphoto2_autofocus) add_prog(videocapture_image_sequence) add_prog(videocapture_openni) add_prog(videocapture_pvapi) add_prog(videocapture_starter) add_prog(video-input-psnr-ssim) add_prog(video-write) add_prog(videowriter_basic) add_prog(warpPerspective_demo) add_prog(decompose_homography) add_prog(perspective_correction) add_prog(lab-contrast) add_prog(homomorphicFilter)
+  # add_prog(videocapture_gphoto2_autofocus) add_prog(videocapture_image_sequence)
+  # add_prog(videocapture_openni) add_prog(videocapture_pvapi) add_prog(videocapture_starter)
+  # add_prog(video-input-psnr-ssim) add_prog(video-write) add_prog(videowriter_basic)
+  # add_prog(warpPerspective_demo) add_prog(decompose_homography) add_prog(perspective_correction)
+  # add_prog(lab-contrast) add_prog(homomorphicFilter)
   #
-  # add_prog(1a.Test) add_prog(2d.Capture) add_prog(4a.Histogram) add_prog(4b.Equalizing) add_prog(4c.Threshold) add_prog(5.Motion_detect) add_prog(6a.Select) add_prog(6c.Select_cam) add_prog(7.Track) add_prog(9a.Training) add_prog(9b.Object_detect) add_prog(bgfg) add_prog(calibrate_camera_charuco) add_prog(calibrate_camera) add_prog(cap_pattern) add_prog(capsinpattern) add_prog(code5-8)
+  # add_prog(1a.Test) add_prog(2d.Capture) add_prog(4a.Histogram) add_prog(4b.Equalizing)
+  # add_prog(4c.Threshold) add_prog(5.Motion_detect) add_prog(6a.Select) add_prog(6c.Select_cam)
+  # add_prog(7.Track) add_prog(9a.Training) add_prog(9b.Object_detect) add_prog(bgfg)
+  # add_prog(calibrate_camera_charuco) add_prog(calibrate_camera) add_prog(cap_pattern)
+  # add_prog(capsinpattern) add_prog(code5-8)
   #
-  # add_prog(dense_optical_flow) add_prog(detect_diamonds) add_prog(dis_opticalflow) add_prog(facemark_lbf_fitting) add_prog(filterdemo) add_prog(mace_webcam) add_prog(oil) add_prog(optical_flow_dense) add_prog(qrcode) add_prog(videocapture_gstreamer_pipeline)
+  # add_prog(dense_optical_flow) add_prog(detect_diamonds) add_prog(dis_opticalflow)
+  # add_prog(facemark_lbf_fitting) add_prog(filterdemo) add_prog(mace_webcam) add_prog(oil)
+  # add_prog(optical_flow_dense) add_prog(qrcode) add_prog(videocapture_gstreamer_pipeline)
   #
-  # add_prog(homography_from_camera_displacement) add_prog(aruco_ar_demo) add_prog(bounding_rect_circle) add_prog(detect_checked_boxes) add_prog(detect_rectangles) add_prog(morpho) add_prog(test2)
+  # add_prog(homography_from_camera_displacement) add_prog(aruco_ar_demo)
+  # add_prog(bounding_rect_circle) add_prog(detect_checked_boxes) add_prog(detect_rectangles)
+  # add_prog(morpho) add_prog(test2)
 
   #
   # add_prog(segment_objects) add_prog(tracker) add_prog(tutorial_multitracker)
   #
-  # add_prog(main ${CMAKE_CURRENT_SOURCE_DIR}/getExteriorContour.cpp ${CMAKE_CURRENT_SOURCE_DIR}/detectLines.cpp)
+  # add_prog(main ${CMAKE_CURRENT_SOURCE_DIR}/getExteriorContour.cpp
+  # ${CMAKE_CURRENT_SOURCE_DIR}/detectLines.cpp)
   #
   # add_prog(objectDetection) add_prog(objectDetection2) add_prog(obj_track)
   set(EXTRA_PROGS
@@ -170,7 +195,9 @@ if(ADDITIONAL_PROGS_2)
       camera_calibration
       CamPaho
       camshiftdemo
-      # cap cap_android_mediandk cap_aravis cap_dc1394_v2 cap_dshow cap_ffmpeg cap_gphoto2 cap_gstreamer cap_images cap_intelperc cap_librealsense cap_mfx_reader cap_mjpeg_decoder cap_msmf cap_pvapi capture_positives cap_v4l cap_ximea cap_xine
+      # cap cap_android_mediandk cap_aravis cap_dc1394_v2 cap_dshow cap_ffmpeg cap_gphoto2
+      # cap_gstreamer cap_images cap_intelperc cap_librealsense cap_mfx_reader cap_mjpeg_decoder
+      # cap_msmf cap_pvapi capture_positives cap_v4l cap_ximea cap_xine
       cascadeclassifier
       cascadeclassifier_nvidia_api
       classification
@@ -288,24 +315,25 @@ if(OPENCV_INCLUDE_DIRS AND EXISTS "${OPENCV_INCLUDE_DIRS}")
   include_directories("${OPENCV_INCLUDE_DIRS}")
 endif(OPENCV_INCLUDE_DIRS AND EXISTS "${OPENCV_INCLUDE_DIRS}")
 
-find_file(OPENCV_XFEATURES2D_HPP opencv2/xfeatures2d.hpp PATHS ${OPENCV_INCLUDE_DIRS} NO_DEFAULT_PATH)
+find_file(OPENCV_XFEATURES2D_HPP opencv2/xfeatures2d.hpp PATHS ${OPENCV_INCLUDE_DIRS}
+          NO_DEFAULT_PATH)
 
 if(ADDITIONAL_PROGS)
-if(OPENCV_XFEATURES2D_HPP AND EXISTS "${OPENCV_XFEATURES2D_HPP}")
-  check_include_file_cxx(opencv2/xfeatures2d.hpp HAVE_XFEATURES2D)
-  message(STATUS "Have XFEATURES2D extra module: ${HAVE_XFEATURES2D}")
-  if(HAVE_XFEATURES2D)
-    set(EXTRA_PROGS ${EXTRA_PROGS} rtObjectRecognition rtTracker video_homography)
-  endif(HAVE_XFEATURES2D)
-else(OPENCV_XFEATURES2D_HPP AND EXISTS "${OPENCV_XFEATURES2D_HPP}")
-  set(HAVE_XFEATURES2D 0)
-  unset(OPENCV_XFEATURES2D_HPP)
-endif(OPENCV_XFEATURES2D_HPP AND EXISTS "${OPENCV_XFEATURES2D_HPP}")
+  if(OPENCV_XFEATURES2D_HPP AND EXISTS "${OPENCV_XFEATURES2D_HPP}")
+    check_include_file_cxx(opencv2/xfeatures2d.hpp HAVE_XFEATURES2D)
+    message(STATUS "Have XFEATURES2D extra module: ${HAVE_XFEATURES2D}")
+    if(HAVE_XFEATURES2D)
+      set(EXTRA_PROGS ${EXTRA_PROGS} rtObjectRecognition rtTracker video_homography)
+    endif(HAVE_XFEATURES2D)
+  else(OPENCV_XFEATURES2D_HPP AND EXISTS "${OPENCV_XFEATURES2D_HPP}")
+    set(HAVE_XFEATURES2D 0)
+    unset(OPENCV_XFEATURES2D_HPP)
+  endif(OPENCV_XFEATURES2D_HPP AND EXISTS "${OPENCV_XFEATURES2D_HPP}")
 
-message(STATUS "HAVE_XFEATURES2D = ${HAVE_XFEATURES2D}")
-message(STATUS "OPENCV_XFEATURES2D_HPP = ${OPENCV_XFEATURES2D_HPP}")
+  message(STATUS "HAVE_XFEATURES2D = ${HAVE_XFEATURES2D}")
+  message(STATUS "OPENCV_XFEATURES2D_HPP = ${OPENCV_XFEATURES2D_HPP}")
 
-#if(ADDITIONAL_PROGS)
+  # if(ADDITIONAL_PROGS)
   find_package(Boost 1.56 REQUIRED COMPONENTS system)
   set(EXTRA_PROGS
       ${EXTRA_PROGS}
@@ -313,16 +341,39 @@ message(STATUS "OPENCV_XFEATURES2D_HPP = ${OPENCV_XFEATURES2D_HPP}")
       Measure-objects
       # rtTracker
       shapefinder
-       # Shape_Detect
+      # Shape_Detect
       shape_detection
       voronoi)
 
-  set(EXTRA_PROGS ${EXTRA_PROGS} cornerSubPix_Demo goodFeaturesToTrack_Demo lkdemo optical_flow pyrlk_optical_flow)
+  set(EXTRA_PROGS ${EXTRA_PROGS} cornerSubPix_Demo goodFeaturesToTrack_Demo lkdemo optical_flow
+                  pyrlk_optical_flow)
 
   set(EXTRA_PROGS
-      ${EXTRA_PROGS} application_trace autofocus basicscanner canny CannyDetector_Demo circles code6-1 code6-2 contours Contour_detection detect_circle detect_geo_shapes detect_hough_circle documentScanner edge findContours_demo
+      ${EXTRA_PROGS}
+      application_trace
+      autofocus
+      basicscanner
+      canny
+      CannyDetector_Demo
+      circles
+      code6-1
+      code6-2
+      contours
+      Contour_detection
+      detect_circle
+      detect_geo_shapes
+      detect_hough_circle
+      documentScanner
+      edge
+      findContours_demo
       # getExteriorContour
-      moments_demo Open-Source-CamScanner PhotoScanner readGraph scanner scannerLite videocapture_camera)
+      moments_demo
+      Open-Source-CamScanner
+      PhotoScanner
+      readGraph
+      scanner
+      scannerLite
+      videocapture_camera)
 
   add_prog(main detectLines.cpp getExteriorContour.cpp)
   add_prog(Shape-Finder)
@@ -347,5 +398,4 @@ add_prog(object_detection)
 target_link_libraries(object_detection pthread)
 add_prog(main_yolo)
 add_prog(lsd_lines_extraction)
-#add_prog(LSDDetector)
-
+# add_prog(LSDDetector)
