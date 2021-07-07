@@ -17,7 +17,7 @@ function WorkerMain() {
   log('WorkerMain.parent', parent);
   parent.onmessage = HandleMessage;
   os.sleep(500);
-  CreateServer();
+  //CreateServer();
 }
 
 const clients = new Map();
@@ -35,11 +35,20 @@ class WSClient {
   }
 }
 
-function CreateServer(port = 9900) {
+function CreateServer({
+  host = '127.0.0.1',
+  port = 9900,
+  sslCert = '/home/roman/.acme.sh/senn.gotdns.ch/senn.gotdns.ch.cer',
+  sslPrivateKey = '/home/roman/.acme.sh/senn.gotdns.ch/senn.gotdns.ch.key',
+  index = 'index.html'
+}) {
   print(`Listening on http://127.0.0.1:${port}`);
   server({
+    host,
     port,
-    mounts: [['/', '.', 'debugger.html']],
+    sslCert,
+    sslPrivateKey,
+    mounts: [['/', '.', index ?? 'debugger.html']],
     onConnect(ws) {
       let client = new WSClient(ws);
       log(`Server.onConnect client#${client.id} (${ws.fd})`);
@@ -88,7 +97,11 @@ function HandleMessage(e) {
 
       break;
     }
-    case 'abort': {
+    case 'httpd': {
+      CreateServer(ev);
+//      parent.postMessage({ type: 'done' });
+      break;
+    }   case 'abort': {
       parent.postMessage({ type: 'done' });
       break;
     }

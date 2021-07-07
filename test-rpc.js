@@ -40,7 +40,7 @@ function main(...args) {
   //const { listen } = params;
 
   console.log('params', params);
-  const [address = '127.0.0.1', port = 9000] = args;
+  const {address = '0.0.0.0', port = 9000} = params;
 
   const listen = params.connect && !params.listen ? false : true;
 
@@ -73,7 +73,7 @@ function main(...args) {
   console.log = repl.printFunction(log);
   //  console.log = (...args) => repl.printStatus(() => log(...args));
 
-  let cli = new rpc.Socket('0.0.0.0:9200', rpc.RPCServerConnection, +params.verbose);
+  let cli = new rpc.Socket(`${address}:${port}`, rpc.RPCServerConnection, +params.verbose);
 
   cli.register(Socket);
 
