@@ -1,4 +1,4 @@
-import { client, server, fetch } from 'net';
+import { client, server, fetch, setLog } from 'net';
 import * as std from 'std';
 import * as os from 'os';
 import { Console } from 'console';
@@ -15,7 +15,7 @@ function WorkerMain() {
   });
 
   log('WorkerMain.parent', parent);
-  parent.onmessage = HandleMessage;
+  parent.onmessage = e => HandleMessage.call(parent, e);
   os.sleep(500);
   //CreateServer();
 }
@@ -100,12 +100,18 @@ function HandleMessage(e) {
       break;
     }
     case 'httpd': {
+      setLog((module, msg) => {
+        if(/ERROR/.test(msg)) throw new Error(msg);
+        console.log(`${module}.log: ${msg}`);
+      });
       CreateServer(ev);
-      //      parent.postMessage({ type: 'done' });
+
+      setLog(null);
+      this.postMessage({ type: 'done' });
       break;
     }
     case 'abort': {
-      parent.postMessage({ type: 'done' });
+      this.postMessage({ type: 'done' });
       break;
     }
     case 'sab':
@@ -115,7 +121,7 @@ function HandleMessage(e) {
       ev.buf[4] = 8;
       ev.buf[5] = 7;
       ev.buf[6] = 6;
-      parent.postMessage({ type: 'sab_done', buf: ev.buf });
+      this.postMessage({ type: 'sab_done', buf: ev.buf });
       break;
   }
 }
