@@ -1,0 +1,10 @@
+  body {
+    height: 0px;
+    background: rgba(128,128,128);
+  }
+  canvas {
+   bottom: 0;
+   width: calc(100% - 16px);
+   height: auto;
+   max-height: calc(100vh - 16px);
+ }

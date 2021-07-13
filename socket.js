@@ -25,7 +25,11 @@ import {
   RTLD_NEXT,
   pointerSize
 } from 'ffi';
-import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer, SyscallError } from './lib/misc.js';
+import {
+  toString as ArrayBufferToString,
+  toArrayBuffer as StringToArrayBuffer,
+  SyscallError
+} from './lib/misc.js';
 export { SyscallError } from './lib/misc.js';
 export { errno } from 'ffi';
 
@@ -186,7 +190,9 @@ const syscall = {
   }
 };
 
-export const errnos = Object.fromEntries(Object.getOwnPropertyNames(Errors).map(name => [Errors[name], name]));
+export const errnos = Object.fromEntries(
+  Object.getOwnPropertyNames(Errors).map(name => [Errors[name], name])
+);
 
 export function socket(af = AF_INET, type = SOCK_STREAM, proto = IPPROTO_IP) {
   return syscall.socket(af, type, proto);
@@ -228,7 +234,8 @@ export function recv(fd, buf, offset, len, flags = 0) {
   console.log('syscall.recv', { fd, buf, offset, len, flags });
   if(typeof buf == 'object' && buf != null && typeof buf.buffer == 'object') buf = buf.buffer;
   if(offset === undefined) offset = 0;
-  if(len === undefined && typeof buf == 'object' && buf != null && 'byteLength' in buf) len = buf.byteLength;
+  if(len === undefined && typeof buf == 'object' && buf != null && 'byteLength' in buf)
+    len = buf.byteLength;
   const args = [+fd, buf, offset, len, flags];
   console.log('syscall.recv', args);
   return syscall.recv(...args);
@@ -529,7 +536,14 @@ export class Socket {
   }
 
   sendto(buf, len, flags = 0, dest_addr = null, addrlen) {
-    return syscall.sendto(this.fd, buf, len, flags, dest_addr, addrlen === undefined ? dest_addr.byteLength : addrlen);
+    return syscall.sendto(
+      this.fd,
+      buf,
+      len,
+      flags,
+      dest_addr,
+      addrlen === undefined ? dest_addr.byteLength : addrlen
+    );
   }
 
   close() {
