@@ -22,7 +22,8 @@ import * as dom from './lib/dom.js';
 import rpc from './quickjs/net/rpc.js';
 
 window.addEventListener('load', async e => {
-  let socketURL = Util.makeURL({ location: '/ws', protocol: 'ws' });
+  let url = Util.parseURL();
+  let socketURL = Util.makeURL({ location: url.location+'/ws', protocol: url.protocol=='https' ? 'wss' : 'ws' });
 
   globalThis.ws = await CreateSocket(socketURL);
   console.log(`Loaded`, { socketURL, ws });
