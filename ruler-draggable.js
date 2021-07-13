@@ -13,8 +13,8 @@ import Cursor from './cursor.js';
 import Util from './lib/util.js';
 import { classNames } from './lib/classNames.js';
 
-const rulerImgVertical = '/static/ruler/rulerVertical.svg';
-const rulerImg = '/static/ruler/rulerHorizontal.svg';
+const rulerImgVertical = 'static/ruler/rulerVertical.svg';
+const rulerImg = 'static/ruler/rulerHorizontal.svg';
 const Ruler = forwardRef((props, ref) => {
   //console.log("Ruler props =", props);
   console.log('Ruler props = ', props);

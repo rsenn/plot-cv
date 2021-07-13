@@ -88,11 +88,11 @@ export async function FetchURL(url, allOpts = {}) {
   if(opts.method && opts.method.toUpperCase() == 'POST') nocache = true;
   let fetch = nocache ? window.fetch : FetchCached;
   if(/tmp\//.test(url)) {
-    url = url.replace(/.*tmp\//g, '/tmp/');
+    url = url.replace(/.*tmp\//g, 'tmp/');
   } else if(/^\//.test(url)) {
   } else if(/:\/\//.test(url)) {
   } else {
-    url = '/static/' + url;
+    url = 'static/' + url;
   }
   try {
     if(!ret) ret = result = await fetch(url, opts);
@@ -108,7 +108,7 @@ export async function ListProjects(opts = {}) {
   console.log('ListProjects', { url, descriptions, names, filter });
   let response;
   if(!url) {
-    response = await fetch('/files.html', {
+    response = await fetch('files.html', {
       method: 'post',
       mode: 'cors',
       cache: 'no-cache',

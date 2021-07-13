@@ -540,7 +540,7 @@ async function main() {
     () => {}
   );
 
-  app.get('/config', async (req, res) => {
+  app.get(/\/config/, async (req, res) => {
     let str = '',
       data = {},
       time = 0;
@@ -563,7 +563,7 @@ async function main() {
 
     res.json({ config, time, hash: Util.hashString(str) });
   });
-  app.post('/config', async (req, res) => {
+  app.post(/\/config/, async (req, res) => {
     const { body } = req;
     let text = body.toString();
     console.log('text:', text);

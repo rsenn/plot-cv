@@ -279,7 +279,7 @@ const documentSize = trkl('');
 const SaveConfig = Util.debounce(() => {
   let obj = store.toObject();
 
-  return fetch('/config', {
+  return fetch('config', {
     method: 'POST',
     headers: { 'content-type': 'application/octet-stream' },
     body: JSON.stringify(obj)
@@ -287,7 +287,7 @@ const SaveConfig = Util.debounce(() => {
 }, 5 * 1000);
 
 const LoadConfig = Util.once(() =>
-  fetch('/config')
+  fetch('config')
     .then(ResponseData)
     .then(r => (console.log('config:', r), r))
     //    .then(r => r.json())
@@ -473,7 +473,7 @@ const ElementToXML = (e, predicate) => {
 
 const filesystem = {
   async readFile(filename) {
-    return await FetchURL(`/static/${filename}`);
+    return await FetchURL(`static/${filename}`);
   },
   async writeFile(filename, data, overwrite = true) {
     return await fetch('/save', {
@@ -493,7 +493,7 @@ async function LoadFile(file) {
   let { url, name: filename } =
     typeof file == 'string' ? { url: file, name: file.replace(/.*\//g, '') } : GetProject(file);
   LogJS.info(`LoadFile ${url}`);
-  url = /:\/\//.test(url) ? url : /^tmp\//.test(url) ? '/' + url : `/static/${filename}`;
+  url = /:\/\//.test(url) ? url : /^tmp\//.test(url) ? '/' + url : `static/${filename}`;
   //console.log('LoadFile url=', url);
   let response = await FetchURL(url);
   console.debug('LoadFile response=', response);
@@ -1576,7 +1576,7 @@ function HandleMessage(msg) {
 
 const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
   // log = log || ((...args) => console.log(...args));
-  socketURL = socketURL || Util.makeURL({ location: '/ws', protocol: 'ws' });
+  socketURL = socketURL || Util.makeURL({ location:  Util.parseURL(window.location.href).location + 'ws', protocol: window.location.href.startsWith('https') ? 'wss' : 'ws' });
   let ws = new WebSocketClient();
   let send = ws.send;
   ws.send = (...args) => {
@@ -2028,7 +2028,7 @@ const AppMain = (window.onload = async () => {
             { className: 'log sign' },
             h('img', {
               className: 'log sign',
-              src: `/static/${type.toLowerCase() || 'warn'}.svg`,
+              src: `static/${type.toLowerCase() || 'warn'}.svg`,
               style: { height: '14px', width: 'auto', marginTop: '-1px' }
             })
           ),
