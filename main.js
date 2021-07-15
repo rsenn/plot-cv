@@ -1576,7 +1576,12 @@ function HandleMessage(msg) {
 
 const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
   // log = log || ((...args) => console.log(...args));
-  socketURL = socketURL || Util.makeURL({ location:  Util.parseURL(window.location.href).location + 'ws', protocol: window.location.href.startsWith('https') ? 'wss' : 'ws' });
+  socketURL =
+    socketURL ||
+    Util.makeURL({
+      location: Util.parseURL(window.location.href).location + 'ws',
+      protocol: window.location.href.startsWith('https') ? 'wss' : 'ws'
+    });
   let ws = new WebSocketClient();
   let send = ws.send;
   ws.send = (...args) => {
@@ -2969,11 +2974,19 @@ const AppMain = (window.onload = async () => {
     clientArea.height = window.innerHeight;
     clientArea.x += container.parentElement.scrollLeft;
 
-    //console.log('wheel:', {   deltaY, deltaMode,wheelDelta });
-
     const clientCenter = clientArea.center;
     const { target, currentTarget, buttons, altKey, ctrlKey, shiftKey } = event;
     const pos = new Point(clientX, clientY);
+
+    if(
+      Element.walkUp(target)
+        .map(e => [...e.classList])
+        .flat()
+        .indexOf('ruler-container') != -1
+    )
+      return;
+
+    console.log('wheel:', { deltaY, deltaMode, wheelDelta, target });
 
     if(!pos.inside(clientArea)) return;
 

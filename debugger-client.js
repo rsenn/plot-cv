@@ -23,7 +23,10 @@ import rpc from './quickjs/net/rpc.js';
 
 window.addEventListener('load', async e => {
   let url = Util.parseURL();
-  let socketURL = Util.makeURL({ location: url.location+'/ws', protocol: url.protocol=='https' ? 'wss' : 'ws' });
+  let socketURL = Util.makeURL({
+    location: url.location + '/ws',
+    protocol: url.protocol == 'https' ? 'wss' : 'ws'
+  });
 
   globalThis.ws = await CreateSocket(socketURL);
   console.log(`Loaded`, { socketURL, ws });
