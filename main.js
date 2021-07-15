@@ -2986,7 +2986,7 @@ const AppMain = (window.onload = async () => {
     )
       return;
 
-    console.log('wheel:', { deltaY, deltaMode, wheelDelta, target });
+    //console.log('wheel:', { deltaY, deltaMode, wheelDelta, target });
 
     if(!pos.inside(clientArea)) return;
 
