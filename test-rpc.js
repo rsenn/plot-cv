@@ -13,7 +13,7 @@ import * as net from 'net';
 import { Socket, recv, send, errno } from './socket.js';
 import { EventEmitter, EventTarget, eventify } from './lib/events.js';
 import { Repeater } from './lib/repeater/repeater.js';
-import { fnmatch } from './lib/fnmatch.js';
+import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
 
 import rpc from './quickjs/net/rpc.js';
 import { makeCommandProxy, define, GetKeys, getPropertyDescriptors, GetProperties, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, Connection, RPCServerConnection, RPCClientConnection, RPCSocket } from './quickjs/net/rpc.js';
@@ -36,6 +36,9 @@ Object.assign(globalThis, {
   EventTarget,
   eventify,
   Repeater,
+  fnmatch,
+  PATH_FNM_MULTI,
+
   rpc: { ...rpc, GetKeys, getPropertyDescriptors, GetProperties, makeCommandProxy }
 });
 

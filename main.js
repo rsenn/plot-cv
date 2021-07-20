@@ -129,6 +129,7 @@ import github, { GithubListRepositories, GithubRepositories, GithubListContents,
 
 import { classNames } from './lib/classNames.js';
 import * as rpc from './quickjs/net/rpc.js';
+import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
 
 Util.colorCtor = ColoredText;
 const elementDefaultAttributes = {
@@ -1490,6 +1491,8 @@ const AppMain = (window.onload = async () => {
     GetKeys,
     getPropertyDescriptors,
     GetProperties,
+    fnmatch,
+    PATH_FNM_MULTI,
     rpc: { ...rpc, makeCommandProxy, GetKeys, getPropertyDescriptors, GetProperties }
   };
 
