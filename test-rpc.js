@@ -38,7 +38,8 @@ Object.assign(globalThis, {
   Mapper,
   EventProxy,
   Connection,
-  DefaultConstructor
+  DefaultConstructor,
+  rpc
 });
 
 function main(...args) {
