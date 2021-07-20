@@ -46,7 +46,7 @@ import components, { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspect
 import { Message } from './message.js';
 
 import { useActive, useClickout, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useRecognizers, useDrag, usePinch, useWheel, useMove, useScroll, useGesture, useHover, useMousePosition, usePanZoom, useToggleButtonGroupState } from './lib/hooks.js';
-import { Mapper, EventProxy, MessageReceiver, MessageTransmitter, MessageTransceiver, Connection, RPCServerConnection, RPCClientConnection, RPCSocket } from './quickjs/net/rpc.js';
+import { Mapper, DefaultConstructor, EventProxy, MessageReceiver, MessageTransmitter, MessageTransceiver, Connection, RPCServerConnection, RPCClientConnection, RPCSocket } from './quickjs/net/rpc.js';
 
 import { WebSocketClient } from './lib/net/websocket-async.js';
 /* prettier-ignore */ import * as ecmascript from './lib/ecmascript.js';
@@ -1477,6 +1477,7 @@ const AppMain = (window.onload = async () => {
     FixedMedium,
     EventProxy,
     Mapper,
+    DefaultConstructor,
     MessageReceiver,
     MessageTransmitter,
     MessageTransceiver,
