@@ -16,7 +16,7 @@ import { Repeater } from './lib/repeater/repeater.js';
 import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
 
 import rpc from './quickjs/net/rpc.js';
-import { makeCommandProxy, define, GetKeys, getPropertyDescriptors, GetProperties, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, Connection, RPCServerConnection, RPCClientConnection, RPCSocket } from './quickjs/net/rpc.js';
+import { MakeCommandFunction, define, GetKeys, getPropertyDescriptors, GetProperties, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, Connection, RPCServerConnection, RPCClientConnection, RPCSocket } from './quickjs/net/rpc.js';
 
 extendArray();
 Object.assign(globalThis, {
@@ -29,7 +29,7 @@ Object.assign(globalThis, {
   MessageTransceiver,
   Mapper,
   EventLogger,
-  makeCommandProxy,
+  MakeCommandFunction,
   Connection,
   DefaultConstructor,
   EventEmitter,
@@ -39,7 +39,7 @@ Object.assign(globalThis, {
   fnmatch,
   PATH_FNM_MULTI,
 
-  rpc: { ...rpc, GetKeys, getPropertyDescriptors, GetProperties, makeCommandProxy }
+  rpc: { ...rpc, GetKeys, getPropertyDescriptors, GetProperties, MakeCommandFunction }
 });
 
 function main(...args) {

@@ -46,7 +46,7 @@ import components, { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspect
 import { Message } from './message.js';
 
 import { useActive, useClickout, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useRecognizers, useDrag, usePinch, useWheel, useMove, useScroll, useGesture, useHover, useMousePosition, usePanZoom, useToggleButtonGroupState } from './lib/hooks.js';
-import { Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, Connection, RPCServerConnection, RPCClientConnection, RPCSocket, makeCommandProxy, GetKeys, getPropertyDescriptors, GetProperties } from './quickjs/net/rpc.js';
+import { Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, Connection, RPCServerConnection, RPCClientConnection, RPCSocket, MakeCommandFunction, GetKeys, getPropertyDescriptors, GetProperties } from './quickjs/net/rpc.js';
 
 import { WebSocketClient } from './lib/net/websocket-async.js';
 /* prettier-ignore */ import * as ecmascript from './lib/ecmascript.js';
@@ -1487,13 +1487,13 @@ const AppMain = (window.onload = async () => {
     RPCServerConnection,
     RPCClientConnection,
     RPCSocket,
-    makeCommandProxy,
+    MakeCommandFunction,
     GetKeys,
     getPropertyDescriptors,
     GetProperties,
     fnmatch,
     PATH_FNM_MULTI,
-    rpc: { ...rpc, makeCommandProxy, GetKeys, getPropertyDescriptors, GetProperties }
+    rpc: { ...rpc, MakeCommandFunction, GetKeys, getPropertyDescriptors, GetProperties }
   };
 
   if(store.keys().length == 0) {
