@@ -16,13 +16,13 @@ import { Repeater } from './lib/repeater/repeater.js';
 import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
 
 import rpc from './quickjs/net/rpc.js';
-import { MakeCommandFunction, define, GetKeys, getPropertyDescriptors, GetProperties, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, Connection, RPCServerConnection, RPCClientConnection, RPCSocket } from './quickjs/net/rpc.js';
+import { MakeCommandFunction, define, GetKeys, getPropertyDescriptors, GetProperties, Mapper, DefaultConstructor, EventLogger, RPCApi, MessageReceiver, MessageTransmitter, MessageTransceiver, Connection, RPCServer, RPCClient, RPCSocket } from './quickjs/net/rpc.js';
 
 extendArray();
 Object.assign(globalThis, {
   ...rpc,
-  RPCServerConnection,
-  RPCClientConnection,
+  RPCServer,
+  RPCClient,
   RPCSocket,
   MessageReceiver,
   MessageTransmitter,
@@ -38,8 +38,8 @@ Object.assign(globalThis, {
   Repeater,
   fnmatch,
   PATH_FNM_MULTI,
-
-  rpc: { ...rpc, GetKeys, getPropertyDescriptors, GetProperties, MakeCommandFunction }
+  RPCApi,
+  rpc
 });
 
 function main(...args) {
@@ -118,21 +118,7 @@ function main(...args) {
         mounts: [['/', '.', 'debugger.html']],
         ...url,
         ...callbacks,
-        /* onFd(fd, readable, writable) {
-          os.setReadHandler(fd, readable);
-          os.setWriteHandler(fd, writable);
-         },
-        onConnect(sock) {
-          connections.add(sock);
-          console.log('onConnect', sock);
-        },
-        onMessage(...args) {
-          console.log('onMessage', ...args);
-        },
-        onClose(sock) {
-          connections.delete(sock);
-          console.log('onClose', sock);
-        },*/
+
         onHttp(sock, url) {
           console.log(url.replace('/', ''));
 
