@@ -143,7 +143,7 @@ function ShowOutput(ast, tree, flat, file, params) {
 
 function NodeToName(node) {
   let id;
-  if(node.name) id = node;
+  if(node && node.name) id = node;
   if(!id) id = deep.find(node, (path, key) => ['id', 'exported'].indexOf(key) != -1, deep.RETURN_VALUE);
   if(!id && node.id && node.id instanceof Identifier) id = node.id;
   if(id)

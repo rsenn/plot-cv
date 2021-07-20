@@ -13,18 +13,7 @@ import * as net from 'net';
 import { Socket, recv, send, errno } from './socket.js';
 
 import rpc from './quickjs/net/rpc.js';
-import {
-  Mapper,
-  DefaultConstructor,
-  EventProxy,
-  MessageReceiver,
-  MessageTransmitter,
-  MessageTransceiver,
-  Connection,
-  RPCServerConnection,
-  RPCClientConnection,
-  RPCSocket
-} from './quickjs/net/rpc.js';
+import { getKeys, getPropertyDescriptors, getPropertyNames, Mapper, DefaultConstructor, EventProxy, MessageReceiver, MessageTransmitter, MessageTransceiver, Connection, RPCServerConnection, RPCClientConnection, RPCSocket } from './quickjs/net/rpc.js';
 
 extendArray();
 Object.assign(globalThis, {
@@ -39,7 +28,7 @@ Object.assign(globalThis, {
   EventProxy,
   Connection,
   DefaultConstructor,
-  rpc
+  rpc: { ...rpc, getKeys, getPropertyDescriptors, getPropertyNames }
 });
 
 function main(...args) {
@@ -106,11 +95,7 @@ function main(...args) {
 
   //  console.log = (...args) => repl.printStatus(() => log(...args));
 
-  let cli = (globalThis.sock = new rpc.Socket(
-    `${address}:${port}`,
-    rpc[`RPC${server ? 'Server' : 'Client'}Connection`],
-    +params.verbose
-  ));
+  let cli = (globalThis.sock = new rpc.Socket(`${address}:${port}`, rpc[`RPC${server ? 'Server' : 'Client'}Connection`], +params.verbose));
 
   cli.register({ Socket, Worker: os.Worker });
 
@@ -141,8 +126,7 @@ function main(...args) {
           console.log(url.replace('/', ''));
 
           if(url != '/') {
-            if(/\.html/.test(url) && !/debugger.html/.test(url))
-              sock.redirect(sock.HTTP_STATUS_FOUND, '/debugger.html');
+            if(/\.html/.test(url) && !/debugger.html/.test(url)) sock.redirect(sock.HTTP_STATUS_FOUND, '/debugger.html');
           }
           sock.header('Test', 'blah');
         },
