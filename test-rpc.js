@@ -87,7 +87,8 @@ function main(...args) {
         //console.log('onHttp', { sock, url }, sock.respond);
 
         if(url != '/') {
-          if(/\.html/.test(url) && !/debugger.html/.test(url)) sock.redirect(sock.HTTP_STATUS_FOUND, '/debugger.html');
+          if(/\.html/.test(url) && !/debugger.html/.test(url))
+            sock.redirect(sock.HTTP_STATUS_FOUND, '/debugger.html');
 
           //if(!/\.(js|css)$/.test(url)) return sock.respond(sock.HTTP_STATUS_NOT_FOUND, 'Not found');
         }

@@ -1,5 +1,5 @@
 //import 'module-alias/register.js';
-import { ECMAScriptParser, Lexer } from './lib/ecmascript/parser2.js';
+import { ECMAScriptParser } from './lib/ecmascript/parser2.js';
 import { PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
 import {
@@ -89,14 +89,11 @@ import {
   ExportAllDeclaration
 } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
-import { Path } from './lib/json.js';
-import { SortedMap } from './lib/container/sortedMap.js';
-import { ImmutablePath } from './lib/json.js';
 import Tree from './lib/tree.js';
 import fs from 'fs';
 import * as deep from './lib/deep.js';
 import { Console } from 'console';
-import { Location, Stack, StackFrame } from './lib/stack.js';
+import { Stack } from './lib/stack.js';
 
 let lexer, parser;
 

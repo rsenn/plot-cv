@@ -1,226 +1,290 @@
-import { ECMAScriptParser, Printer, PathReplacer } from './lib/ecmascript.js';
+//import 'module-alias/register.js';
+import { ECMAScriptParser } from './lib/ecmascript/parser2.js';
+import { PathReplacer } from './lib/ecmascript.js';
+import Printer from './lib/ecmascript/printer.js';
 import {
-  ObjectPattern,
-  ObjectExpression,
-  ImportDeclaration,
-  ExportNamedDeclaration,
-  ExportDefaultDeclaration,
-  VariableDeclaration,
   estree,
   ESNode,
+  Program,
+  ModuleDeclaration,
+  ModuleSpecifier,
+  ImportDeclaration,
+  ImportSpecifier,
+  ImportDefaultSpecifier,
+  ImportNamespaceSpecifier,
+  Super,
+  Expression,
+  FunctionLiteral,
+  Pattern,
+  Identifier,
   Literal,
-  Identifier
-} from './lib/ecmascript.js';
-import ConsoleSetup from './lib/consoleSetup.js';
+  RegExpLiteral,
+  TemplateLiteral,
+  BigIntLiteral,
+  TaggedTemplateExpression,
+  TemplateElement,
+  ThisExpression,
+  UnaryExpression,
+  UpdateExpression,
+  BinaryExpression,
+  AssignmentExpression,
+  LogicalExpression,
+  MemberExpression,
+  ConditionalExpression,
+  CallExpression,
+  DecoratorExpression,
+  NewExpression,
+  SequenceExpression,
+  Statement,
+  EmptyStatement,
+  DebuggerStatement,
+  LabeledStatement,
+  BlockStatement,
+  FunctionBody,
+  StatementList,
+  ExpressionStatement,
+  Directive,
+  ReturnStatement,
+  ContinueStatement,
+  BreakStatement,
+  IfStatement,
+  SwitchStatement,
+  SwitchCase,
+  WhileStatement,
+  DoWhileStatement,
+  ForStatement,
+  ForInStatement,
+  ForOfStatement,
+  WithStatement,
+  TryStatement,
+  CatchClause,
+  ThrowStatement,
+  Declaration,
+  ClassDeclaration,
+  ClassBody,
+  MethodDefinition,
+  MetaProperty,
+  YieldExpression,
+  FunctionArgument,
+  FunctionDeclaration,
+  ArrowFunctionExpression,
+  VariableDeclaration,
+  VariableDeclarator,
+  ObjectExpression,
+  Property,
+  ArrayExpression,
+  JSXLiteral,
+  AssignmentProperty,
+  ObjectPattern,
+  ArrayPattern,
+  RestElement,
+  AssignmentPattern,
+  AwaitExpression,
+  SpreadElement,
+  ExportNamedDeclaration,
+  ExportSpecifier,
+  AnonymousDefaultExportedFunctionDeclaration,
+  AnonymousDefaultExportedClassDeclaration,
+  ExportDefaultDeclaration,
+  ExportAllDeclaration
+} from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
-import { ImmutablePath } from './lib/json.js';
 import Tree from './lib/tree.js';
-import deep from './lib/deep.js';
-import path from './lib/path.js';
-import { SortedMap } from './lib/container/sortedMap.js';
-import PortableFileSystem from './lib/filesystem.js';
-let filesystem;
-let cwd;
-let exportMap = new Map();
-let allExports = [];
-let error;
-const removeModulesDir = PrefixRemover([/node_modules\//g, /^\.\//g]);
-console.log('main');
-Util.callMain(main);
-/*
-const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg"> <defs /> */ function PrefixRemover(
-  reOrStr,
-  replacement = ''
-) {
-  if(!(Util.isArray(reOrStr) || Util.isIterable(reOrStr))) reOrStr = [reOrStr];
-  return arg => reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), arg);
-}
+import fs from 'fs';
+import * as deep from './lib/deep.js';
+import { Console } from 'console';
+import { Stack } from './lib/stack.js';
+
+let lexer, parser;
+
+Error.stackTraceLimit = 100;
+
+const testfn = () => true;
+const testtmpl = `this is\na test`;
+
+const source = `this.define('DecimalDigit', /[0-9]/);`;
+const inspectSymbol = Symbol.for('nodejs.util.inspect.custom');
+
+const SliceOffEmpty = (arr, pred = item => item != '') => arr.slice(arr.findIndex(pred));
+const FilterOutEmpty = (arr, pred = item => item != '') => arr.filter(pred);
+
+globalThis.GetStack = (stack, cond = fr => fr.functionName != 'esfactory') =>
+  new Stack(stack, cond);
+
+globalThis.FormatStack = (stack, start, limit) => {
+  start ??= fr => /^(expect|match|parse)/.test(fr);
+
+  limit ??= Infinity;
+  if(typeof start == 'function') start = stack.findIndex((frame, i) => start(frame, i, stack));
+  if(Number.isFinite(start)) stack = stack.slice(start);
+  if(Number.isFinite(limit)) stack = stack.slice(0, limit);
+
+  return (
+    /*stack.join('\n') || */ '\n' +
+    stack
+      .filter(fr => fr.functionName != 'esfactory')
+      .map(fr => [fr.functionName, fr.fileName, fr.lineNumber])
+      .map(([func, file, line]) => '  ' + func.padEnd(40) + file + ':' + line)
+      .join('\n')
+  );
+};
 function WriteFile(name, data) {
   if(Util.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
-  filesystem.writeFile(name, data + '\n');
-  console.log(`Wrote ${name}: ${data.length} bytes`);
+
+  data = data.trim();
+
+  if(data != '') {
+    fs.writeFileSync(name, data + '\n');
+    console.log(`Wrote ${name}: ${data.length} bytes`);
+  }
 }
-function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments)) {
-  return printer.print(ast);
+
+function printAst(ast, comments, printer = globalThis.printer) {
+  let output = printer.print(ast);
+  //console.log('printAst:', Util.abbreviate(output), Util.decodeAnsi(output));
+  return output;
 }
-async function main(...args) {
-  await PortableFileSystem(fs => (filesystem = fs));
-  await ConsoleSetup({ depth: 5 });
-  console.log('console.config', console.config);
-  cwd = filesystem.realpath('.');
-  // cwd = process.cwd() || fs.realpath('.');
-  console.log('cwd=', cwd);
-  if(args.length == 0)
-    args = [
-      /*'lib/geom/align.js', 'lib/geom/bbox.js','lib/geom/line.js'*/ 'lib/geom/point.js',
-      'lib/geom/size.js',
-      'lib/geom/trbl.js',
-      'lib/geom/rect.js',
-      'lib/dom/element.js'
-    ];
-  let r = [];
-  let processed = [];
-  console.log('args=', args);
-  console.log('test', path.dirname('/usr/bin/ls'));
-  console.log('test', path.resolve('/proc/self/../ls'));
-  const argDirs = [...args].map(arg => path.dirname(arg));
-  // console.log('argDirs',Util.inspect(argDirs));
-  const dirs = [cwd].concat(argDirs);
-  /*.map(p => path.resolve(p))*/ console.log('dirs=', dirs);
-  console.log('join()', path.join(cwd, argDirs[0]));
-  console.log('cwd', cwd);
-  console.log('argDirs[0]', argDirs[0]);
-  ///path.cwd = cwd;
-  try {
-    console.log('relative()', path.relative(cwd, argDirs[0], cwd));
-    console.log('relative()', path.relative(argDirs[0], cwd, cwd));
-  } catch(err) {
-    console.log(err);
-  }
-  const name = args.join(', ');
-  while(args.length > 0) {
-    if(!processFile(args.shift())) throw error;
-  }
-  // console.log("result:",r);
-  for(let ids of exportMap.values())
-    r.push(`Util.weakAssign(globalObj, { ${Util.unique(ids).join(', ')} });`);
-  let success = Object.entries(processed).filter(([k, v]) => !!v).length != 0;
-  function removeFile(file) {
-    let idx = args.indexOf(file);
-    if(idx != -1) args.splice(idx, idx + 1);
-    if(processed.indexOf(file) != -1) return false;
-    processed.push(file);
-    return true;
-  }
-  function processFile(file) {
-    let data, b, ret;
-    if(!removeFile(file)) return;
-    const modulePath = removeModulesDir(file);
-    console.log('processing:', modulePath);
-    let thisdir = path.dirname(file);
-    let absthisdir = path.resolve(thisdir);
-    data = filesystem.readFile(file).toString();
-    let ast, error;
-    let parser = new ECMAScriptParser(data ? data.toString() : code, file);
-    let printer = new Printer({ indent: 4 });
-    try {
-      ast = parser.parseProgram();
-      parser.addCommentsToNodes(ast);
-      let tree = new Tree(ast);
-      let flat = tree.flat(null, ([path, node]) => typeof node == 'object' && node != null);
-      //log(`keys==`, [...flat].map(([k,v]) => [k.join('.'), Util.className(v)]));
-      let exports = [...flat.entries()].filter(([key, value]) =>
-        /^Export.*Declaration/.test(value.type)
-      );
-      exports = exports.map(([p, e]) =>
-        'declarations' in e && !Util.isArray(e.declarations)
-          ? [[...p, 'declarations'], e.declarations]
-          : [p, e]
-      );
-      for(let [path, node] of exports) {
-        log(`export ${path}`, node);
-        if(node.declarations) deep.set(ast, path, node.declarations[0]);
-      }
-      allExports.splice(
-        allExports.length,
-        0,
-        ...exports.map(([key, value]) => {
-          const { position } = ESNode.assoc(value);
-          return [position + '', value];
-        })
-      );
-      exports = exports.map(([p, stmt]) => [p, stmt.declarations || stmt.properties || stmt]);
-      console.log('exports [1]:', console.config({ depth: 1 }), exports);
-      exports = exports.map(([p, stmt]) => stmt);
-      /*exports = exports.map(([p, stmt]) => {
-       for(let prop in ['declarations','properties']) 
-        if((Util.isObject(stmt[prop]) &&
-          Util.isObject(stmt[prop].id) &&
-          Util.isObject(stmt[prop].id.value)) == (Util.isObject(stmt.what) && Util.isObject(stmt.what.value)))
-          return stmt[prop];
-        return stmt;
-      });*/
-      console.log('exports [2]:', exports);
-      exports = exports.map(decl =>
-        decl instanceof ObjectPattern
-          ? decl.properties.map(prop => ('id' in prop ? prop.id : prop))
-          : decl instanceof ObjectExpression
-          ? decl.members.map(prop => ('id' in prop ? prop.id : prop))
-          : decl
-      );
-      console.log('exports [3]:', exports);
-      //exports = exports.map(decls => decls.map(decl => (Util.isObject(decl) && 'id' in decl ? decl.id : decl)));
-      exports = exports.map(decl => (Util.isObject(decl) && 'id' in decl ? decl.id : decl));
-      //      exportProps =exportProps.map(ep => 'id' in ep ? ep.id.value : ep);
-      log(`exports==`, exports);
-      let exportProps = exports.reduce((a, stmt) => {
-        // if('declarations' in stmt) stmt = stmt.declarations;
-        let specifiers;
-        if(Util.isArray(stmt.specifiers))
-          specifiers = stmt.specifiers.map(({ exported, local }) =>
-            exported.name && local.name && exported.name != local.name
-              ? `${local.name} as ${exported.name}`
-              : local.name || exported.name
+
+let files = {};
+
+function main(...argv) {
+   globalThis.console = new Console({
+    stdout: process.stdout,
+    inspectOptions: {
+      colors: true,
+      depth: 2,
+      breakLength: null,
+      maxStringLength: Infinity,
+      maxArrayLength: 100,
+      compact: 2,
+      customInspect: true
+    }
+  });
+  let params = Util.getOpt(
+    {
+      help: [
+        false,
+        (v, r, o) => {
+          console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
+          console.log(
+            o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n')
           );
-        else if(stmt.declaration) {
-          if(stmt.declaration.type == 'VariableDeclaration') {
-            const { declarations } = stmt.declaration;
-            specifiers = declarations.map(({ id }) => Identifier.string(id));
-          } else {
-            let id = Identifier.string(stmt.declaration);
-            if(stmt instanceof ExportDefaultDeclaration) id = `default as ${id}`;
-            specifiers = [id];
-          }
-        }
-        /*        if('value' in stmt) stmt = [stmt.value];*/
-        if(!Util.isArray(specifiers)) {
-          console.error('stmt:', stmt);
-          throw new Error(`No handler for ${stmt.type} ${inspect(stmt)} `);
-        }
-        return [...a, ...specifiers];
-      }, []);
-      exportProps = exportProps
-        .map(ep => (Util.isObject(ep) && 'id' in ep ? ep.id : ep))
-        .map(ep => (Util.isObject(ep) && 'value' in ep ? ep.value : ep));
-      log(`exportProps==`, exportProps);
-      /*      exports = exports.flat().map(e => e.value);
-      log(`exports =`, exports.join(', '));*/
-      exportMap.set(modulePath, Util.unique(exportProps));
-    } catch(err) {
-      console.error(err.message);
-      Util.putStack(err.stack);
-      error = err;
-      return false;
-      Util.exit(1);
+          Util.exit(0);
+        },
+        'h'
+      ],
+      'output-ast': [true, null, 'a'],
+      output: [true, null, 'o'],
+      debug: [
+        false,
+        function(v, r, o, result) {
+          const thisObj = this;
+          // console.log('debug', { v, r, o, result,thisObj });
+          return (result.debug | 0) + 1;
+        },
+        'x'
+      ],
+      '@': 'input'
+    },
+    argv
+  );
+    if(params.debug) ECMAScriptParser.instrumentate();
+  Util.defineGettersSetters(globalThis, {
+    printer: Util.once(() => new Printer({ colors: false, indent: 2 }))
+  });
+  const time = () => Date.now() / 1000;
+  if(params['@'].length == 0) params['@'].push(Util.getArgv()[1]);
+   for(let file of params['@']) {
+    let error;
+    const processing =  () => processFile(file, params);
+    try {
+      processing() 
+    } catch(error) {
+      if(error) {
+        console.log?.('ERROR:', error?.message);
+        console.log?.(
+          'STACK:\n  ' +
+            new Stack(error?.stack, fr => fr.functionName != 'esfactory')
+              .toString()
+              .replace(/\n/g, '\n  ')
+        );
+      } else {
+        console.log('ERROR:', error);
+      }
+      if(error !== null) throw error;
     }
-    let output = '';
-    output = printAst(ast, parser.comments, printer).trim();
-    if(output != '')
-      r = r.concat(`/* --- concatenated '${file}' --- */\n${output}\n`.split(/\n/g));
-    function log(...args) {
-      const assoc = args
-        .map(arg => arg instanceof ESNode && ESNode.assoc(arg))
-        .filter(assoc => !!assoc);
-      //if(assoc[0]) console.log('ASSOC:', assoc[0].position.clone());
-      const prefix =
-        (assoc.length == 1 && assoc[0].position && assoc[0].position.clone()) || modulePath;
-      console.log(prefix.toString() + ':', ...args);
+     files[file] = finish(error);
+    if(error) {
+      Util.putError(error);
+       break;
     }
-    return true;
-  }
-  console.log('processed:', ...processed);
-  //console.log('exports:', allExports);
-  console.log('exportMap:', exportMap);
-  let output = '';
-  for(let [source, list] of exportMap) {
-    // list.sort();
-    list = Util.unique(list);
-    output += `export { ${list.join(', ')} } from './${source}';\n`;
-  }
-  console.log(output);
-  Util.exit(Number(processed.length == 0));
+   }
+  let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
+  Util.exit(Number(files.length == 0));
 }
+
+function processFile(file, params) {
+  let data, b, ret;
+  const { debug } = params;
+  if(file == '-') file = '/dev/stdin';
+  if(file && fs.existsSync(file)) {
+    data = fs.readFileSync(file, 'utf8');
+   } else {
+    file = 'stdin';
+    data = source;
+  }
+   if(debug) ECMAScriptParser.instrumentate();
+ 
+  let ast, error;
+  globalThis.parser = parser = null;
+  globalThis.parser = parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
+  try {
+    ast = parser.parseProgram();
+  } catch(err) {
+    const tokens = [...parser.processed, ...parser.tokens];
+    const token = tokens[tokens.length - 1];
+    if(err !== null) {
+      throw err;
+    } else {
+      throw new Error(`parseProgram`);
+    }
+  }
+  parser.addCommentsToNodes(ast);
+
+  WriteFile(
+    params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json',
+    JSON.stringify(ast /*.toJSON()*/, null, 2)
+  );
+
+  let node2path = new WeakMap();
+  let nodeKeys = [];
+
+  const isRequire = node => node instanceof CallExpression && node.callee.value == 'require';
+  const isImport = node => node instanceof ImportDeclaration;
+
+  let commentMap = new Map(
+    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
+      pos * 10 - 1,
+      { comment, pos, len, node }
+    ]),
+    (a, b) => a - b
+  );
+
+  //console.log('commentMap:', commentMap);
+
+  let tree = new Tree(ast);
+
+  let flat = tree.flat(null, ([path, node]) => {
+    return !Util.isPrimitive(node);
+  });
+
+  ShowOutput(ast, tree, flat, file, params);
+  // const code = printAst(ast, parser.comments, printer);
+
+  //console.log('templates:', templates);
+}
+
 function finish(err) {
   let fail = !!err;
   if(fail) {
@@ -229,17 +293,96 @@ function finish(err) {
       .filter(s => !/esfactory/.test(s))
       .join('\n');
   }
+
   if(err) {
     console.log(parser.lexer.currentLine());
     console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
   }
-  let lexer = parser.lexer;
+
+  lexer = parser.lexer;
   let t = [];
-  //console.log(parser.trace() );
-  WriteFile('trace.log', parser.trace());
+  console.log(parser.trace());
+  // WriteFile('trace.log', parser.trace());
   if(fail) {
     console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
   }
   console.log('finish: ' + (fail ? 'error' : 'success'));
   return !fail;
+}
+
+let error;
+try {
+  const argv = [...(process?.argv ?? scriptArgs)].slice(2);
+  main(...argv);
+} catch(e) {
+  error = e;
+} finally {
+  if(error) {
+    console.log(
+      `FAIL: ${error.message}`,
+      `\n  ` +
+        new Stack(error.stack, fr => fr.functionName != 'esfactory')
+          .toString()
+          .replace(/\n/g, '\n  ')
+    );
+    console.log('FAIL');
+    Util.exit(1);
+  } else {
+    console.log('SUCCESS');
+  }
+}
+
+function ShowOutput(ast, tree, flat, file, params) {
+  const output_file =
+    params['output-js'] ?? file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
+
+  let nodes = deep.select(ast, node => /Export/.test(Util.className(node)), deep.RETURN_VALUE);
+  let names = [
+    ...deep.select(ast, (node, key) => key == 'exported', deep.RETURN_VALUE),
+    ...deep
+      .select(ast, (node, key) => node instanceof ExportNamedDeclaration, deep.RETURN_VALUE)
+      .map(node =>
+        node.declaration && node.declaration.id ? node.declaration.id : node.declaration
+      )
+  ];
+
+  let defaultExport = deep.find(
+    ast,
+    node => node instanceof ExportDefaultDeclaration,
+    deep.RETURN_VALUE
+  );
+
+  // let code = nodes.map(node => printAst(node, parser.comments, printer)).join('\n');
+
+  // console.log('nodes:', nodes.map(node => node) );
+  console.log(
+    'names:',
+    names.map(n => NodeToName(n))
+  );
+
+  let importNode = new ImportDeclaration(
+    [...names.map(n =>  new ImportSpecifier( new Identifier(NodeToName(n))))],
+    new Literal(`'${file}'`)
+  );
+
+  let code = printAst(importNode);
+  console.log('code:', code);
+  // console.log('defaultExport:', defaultExport);
+
+  WriteFile(output_file, code);
+
+  //  const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral);
+}
+
+function NodeToName(node) {
+  let id;
+  if(node.name) id = node;
+  if(!id)
+    id = deep.find(node, (path, key) => ['id', 'exported'].indexOf(key) != -1, deep.RETURN_VALUE);
+  if(!id && node.id && node.id instanceof Identifier) id = node.id;
+  if(id)
+    if(id instanceof Identifier) id = Identifier.string(id);
+    else if('name' in id) id = id.name;
+
+  return id;
 }
