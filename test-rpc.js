@@ -16,29 +16,22 @@ import { Repeater } from './lib/repeater/repeater.js';
 import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
 
 import rpc from './quickjs/net/rpc.js';
-import { MakeCommandFunction, define, GetKeys, getPropertyDescriptors, GetProperties, Mapper, DefaultConstructor, EventLogger, RPCApi, MessageReceiver, MessageTransmitter, MessageTransceiver, Connection, RPCServer, RPCClient, RPCSocket } from './quickjs/net/rpc.js';
+import { RPCServer, RPCClient, RPCApi, RPCSocket } from './quickjs/net/rpc.js';
+import * as rpc2 from './quickjs/net/rpc.js';
 
 extendArray();
 Object.assign(globalThis, {
-  ...rpc,
-  RPCServer,
-  RPCClient,
-  RPCSocket,
-  MessageReceiver,
-  MessageTransmitter,
-  MessageTransceiver,
-  Mapper,
-  EventLogger,
-  MakeCommandFunction,
-  Connection,
-  DefaultConstructor,
   EventEmitter,
   EventTarget,
   eventify,
   Repeater,
   fnmatch,
   PATH_FNM_MULTI,
+  RPCServer,
+  RPCClient,
   RPCApi,
+  RPCSocket,
+  ...rpc2,
   rpc
 });
 

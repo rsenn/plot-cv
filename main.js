@@ -46,70 +46,12 @@ import components, { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspect
 import { Message } from './message.js';
 
 import { useActive, useClickout, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useRecognizers, useDrag, usePinch, useWheel, useMove, useScroll, useGesture, useHover, useMousePosition, usePanZoom, useToggleButtonGroupState } from './lib/hooks.js';
-import { Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, Connection, RPCServer, RPCClient, RPCSocket, MakeCommandFunction, GetKeys, getPropertyDescriptors, GetProperties } from './quickjs/net/rpc.js';
 
 import { WebSocketClient } from './lib/net/websocket-async.js';
 /* prettier-ignore */ import * as ecmascript from './lib/ecmascript.js';
-import {
-  PipeTo,
-  AsyncRead,
-  AsyncWrite,
-  DebugTransformStream,
-  TextEncodeTransformer,
-  TextEncoderStream,
-  TextDecodeTransformer,
-  TextDecoderStream,
-  TransformStreamSink,
-  TransformStreamSource,
-  TransformStreamDefaultController,
-  TransformStream,
-  ArrayWriter,
-  readStream,
-  WriteToRepeater,
-  LogSink,
-  RepeaterSink,
-  StringReader,
-  LineReader,
-  ChunkReader,
-  ByteReader,
-  PipeToRepeater,
-  WritableStream,
-  ReadFromIterator
-} from './lib/stream.js?ts=<?TS?>';
+import { PipeTo, AsyncRead, AsyncWrite, DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater, WritableStream, ReadFromIterator } from './lib/stream.js?ts=<?TS?>';
 import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
-import {
-  useTrkl,
-  RAD2DEG,
-  DEG2RAD,
-  VERTICAL,
-  HORIZONTAL,
-  HORIZONTAL_VERTICAL,
-  DEBUG,
-  log,
-  setDebug,
-  PinSizes,
-  EscapeClassName,
-  UnescapeClassName,
-  LayerToClass,
-  ElementToClass,
-  ClampAngle,
-  AlignmentAngle,
-  MakeRotation,
-  EagleAlignments,
-  Alignment,
-  SVGAlignments,
-  AlignmentAttrs,
-  RotateTransformation,
-  LayerAttributes,
-  InvertY,
-  PolarToCartesian,
-  CartesianToPolar,
-  CalculateArcRadius,
-  LinesToPath,
-  MakeCoordTransformer,
-  useAttributes,
-  RenderArc
-} from './lib/eagle/renderUtils.js';
+import { useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, RenderArc } from './lib/eagle/renderUtils.js';
 import { Wire } from './lib/eagle/components/wire.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
@@ -128,7 +70,8 @@ import github, { GithubListRepositories, GithubRepositories, GithubListContents,
 /* prettier-ignore */ const { Align, AlignToString, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line,Matrix,  Point, PointList, Polyline, Rect, Select, Size, SVG, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
 
 import { classNames } from './lib/classNames.js';
-import * as rpc from './quickjs/net/rpc.js';
+import rpc from './quickjs/net/rpc.js';
+import * as rpc2 from './quickjs/net/rpc.js';
 import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
 
 Util.colorCtor = ColoredText;
@@ -1476,24 +1419,12 @@ const AppMain = (window.onload = async () => {
     SaveConfig,
     LoadConfig,
     FixedMedium,
-    EventLogger,
+    EventTarget,
     EventEmitter,
-    Mapper,
-    DefaultConstructor,
-    MessageReceiver,
-    MessageTransmitter,
-    MessageTransceiver,
-    Connection,
-    RPCServer,
-    RPCClient,
-    RPCSocket,
-    MakeCommandFunction,
-    GetKeys,
-    getPropertyDescriptors,
-    GetProperties,
+    ...rpc2,
     fnmatch,
     PATH_FNM_MULTI,
-    rpc: { ...rpc, MakeCommandFunction, GetKeys, getPropertyDescriptors, GetProperties }
+    rpc: { ...rpc }
   };
 
   if(store.keys().length == 0) {
