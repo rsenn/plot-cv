@@ -1,10 +1,12 @@
-  body {
-    height: 0px;
-    background: rgba(128,128,128);
-  }
-  canvas {
-   bottom: 0;
-   width: calc(100% - 16px);
-   height: auto;
-   max-height: calc(100vh - 16px);
- }
+body {
+  height: 0px;
+  background: rgba(128, 128, 128);
+  background: linear-gradient(0deg, hsla(220, 0%, 20%, 1) 0%, hsla(220, 0%, 50%, 1) 10%, hsla(220, 0%, 90%, 1) 75%);
+  background-attachment: fixed;
+}
+canvas {
+  bottom: 0;
+  width: calc(100% - 16px);
+  height: auto;
+  max-height: calc(100vh - 16px);
+}
