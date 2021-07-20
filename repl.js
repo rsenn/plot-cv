@@ -407,16 +407,26 @@ export default function REPL(title = 'QuickJS') {
       colorize = show_colors;
 
     if(search) {
-      const re = new RegExp((search_pattern = cmd_line.replace(/([\(\)\?\+\*])/g, '.' /*'\\$1'*/)), 'i');
+      const re = new RegExp(
+        (search_pattern = cmd_line.replace(/([\(\)\?\+\*])/g, '.' /*'\\$1'*/)),
+        'i'
+      );
       const num = search > 0 ? search - 1 : search;
       //search_index = history.findLastIndex(c => re.test(c) && --num == 0);
       let history_search = [...history.entries()].rotateLeft(history_index);
-      search_matches.splice(0, search_matches.length, ...history_search.filter(([i, c]) => re.test(c)));
+      search_matches.splice(
+        0,
+        search_matches.length,
+        ...history_search.filter(([i, c]) => re.test(c))
+      );
       //num = search > 0 ? search - 1 : search;
       const match = search_matches.at(num);
       const [histidx = -1, histcmd = ''] = match || [];
       const histdir = search > 0 ? 'forward' : 'reverse';
-      const histpos = search < 0 ? history_search.indexOf(match) - history_search.length : history_search.indexOf(match);
+      const histpos =
+        search < 0
+          ? history_search.indexOf(match) - history_search.length
+          : history_search.indexOf(match);
       search_index = histidx;
       let line_start = `(${histdir}-search[${histpos}])\``;
       cmd_line = `${line_start}${repl.cmd}': ${histcmd}`;
@@ -438,7 +448,10 @@ export default function REPL(title = 'QuickJS') {
       return;
     } /* cursor_pos is the position in 16 bit characters inside the
            UTF-16 string 'cmd_line' */ else if(cmd_line != last_cmd) {
-      if(!colorize && last_cmd.substring(0, last_cursor_pos) == cmd_line.substring(0, last_cursor_pos)) {
+      if(
+        !colorize &&
+        last_cmd.substring(0, last_cursor_pos) == cmd_line.substring(0, last_cursor_pos)
+      ) {
         /* optimize common case */
         repl.puts(cmd_line.substring(last_cursor_pos));
       } else {
@@ -573,7 +586,11 @@ export default function REPL(title = 'QuickJS') {
   function accept_line() {
     repl.puts('\n');
     repl.history_add(search ? history[search_index] : repl.cmd);
-    repl.debug('accept_line', { cmd: repl.cmd, history_index, search, history_length: history.length }, [...history.entries()].slice(history_index - 3, history_index + 2));
+    repl.debug(
+      'accept_line',
+      { cmd: repl.cmd, history_index, search, history_length: history.length },
+      [...history.entries()].slice(history_index - 3, history_index + 2)
+    );
     return -1;
   }
 
@@ -700,7 +717,11 @@ export default function REPL(title = 'QuickJS') {
     var pos = cursor_pos;
     if(repl.cmd.length > 1 && pos > 0) {
       if(pos == repl.cmd.length) pos--;
-      repl.cmd = repl.cmd.substring(0, pos - 1) + repl.cmd.substring(pos, pos + 1) + repl.cmd.substring(pos - 1, pos) + repl.cmd.substring(pos + 1);
+      repl.cmd =
+        repl.cmd.substring(0, pos - 1) +
+        repl.cmd.substring(pos, pos + 1) +
+        repl.cmd.substring(pos - 1, pos) +
+        repl.cmd.substring(pos + 1);
       cursor_pos = pos + 1;
     }
   }
@@ -712,19 +733,29 @@ export default function REPL(title = 'QuickJS') {
     var p3 = repl.skip_word_backward(p4);
 
     if(p1 < p2 && p2 <= cursor_pos && cursor_pos <= p3 && p3 < p4) {
-      repl.cmd = repl.cmd.substring(0, p1) + repl.cmd.substring(p3, p4) + repl.cmd.substring(p2, p3) + repl.cmd.substring(p1, p2);
+      repl.cmd =
+        repl.cmd.substring(0, p1) +
+        repl.cmd.substring(p3, p4) +
+        repl.cmd.substring(p2, p3) +
+        repl.cmd.substring(p1, p2);
       cursor_pos = p4;
     }
   }
 
   function upcase_word() {
     var end = repl.skip_word_forward(cursor_pos);
-    repl.cmd = repl.cmd.substring(0, cursor_pos) + repl.cmd.substring(cursor_pos, end).toUpperCase() + repl.cmd.substring(end);
+    repl.cmd =
+      repl.cmd.substring(0, cursor_pos) +
+      repl.cmd.substring(cursor_pos, end).toUpperCase() +
+      repl.cmd.substring(end);
   }
 
   function downcase_word() {
     var end = repl.skip_word_forward(cursor_pos);
-    repl.cmd = repl.cmd.substring(0, cursor_pos) + repl.cmd.substring(cursor_pos, end).toLowerCase() + repl.cmd.substring(end);
+    repl.cmd =
+      repl.cmd.substring(0, cursor_pos) +
+      repl.cmd.substring(cursor_pos, end).toLowerCase() +
+      repl.cmd.substring(end);
   }
 
   function kill_region(start, end, dir) {
@@ -804,7 +835,8 @@ export default function REPL(title = 'QuickJS') {
         default:
           if(repl.is_word(c)) {
             base = repl.get_context_word(line, pos);
-            if(['true', 'false', 'null', 'this'].includes(base) || !isNaN(+base)) return eval(base);
+            if(['true', 'false', 'null', 'this'].includes(base) || !isNaN(+base))
+              return eval(base);
             obj = repl.get_context_object(line, pos - base.length);
             if(obj === null || obj === void 0) return obj;
             if(obj === globalThis && obj[base] === void 0) {
@@ -1081,7 +1113,9 @@ export default function REPL(title = 'QuickJS') {
   }
 
   function handle_mouse(keys) {
-    const [button, x, y, cmd] = [...Util.matchAll(/([0-9]+|[A-Za-z]+)/g, keys)].map(p => p[1]).map(p => (!isNaN(+p) ? +p : p));
+    const [button, x, y, cmd] = [...Util.matchAll(/([0-9]+|[A-Za-z]+)/g, keys)]
+      .map(p => p[1])
+      .map(p => (!isNaN(+p) ? +p : p));
     let press = cmd == 'm';
 
     repl.debug('handle_mouse', { button, x, y, press });
@@ -1218,7 +1252,11 @@ export default function REPL(title = 'QuickJS') {
       }
       if(typeof a === 'bigfloat' && eval_mode !== 'math') {
         s += 'l';
-      } else if(eval_mode !== 'std' && s.indexOf('.') < 0 && ((radix == 16 && s.indexOf('p') < 0) || (radix == 10 && s.indexOf('e') < 0))) {
+      } else if(
+        eval_mode !== 'std' &&
+        s.indexOf('.') < 0 &&
+        ((radix == 16 && s.indexOf('p') < 0) || (radix == 10 && s.indexOf('e') < 0))
+      ) {
         /* add a decimal point so that the floating point type
                    is visible */
         s += '.0';
@@ -1257,7 +1295,16 @@ export default function REPL(title = 'QuickJS') {
           repl.puts(a);
         } else if(stack.indexOf(a) >= 0) {
           repl.puts('[circular]');
-        } else if(has_jscalc && (a instanceof Fraction || a instanceof Complex || a instanceof Mod || a instanceof Polynomial || a instanceof PolyMod || a instanceof RationalFunction || a instanceof Series)) {
+        } else if(
+          has_jscalc &&
+          (a instanceof Fraction ||
+            a instanceof Complex ||
+            a instanceof Mod ||
+            a instanceof Polynomial ||
+            a instanceof PolyMod ||
+            a instanceof RationalFunction ||
+            a instanceof Series)
+        ) {
           repl.puts(a.toString());
         } else {
           stack.push(a);
@@ -1349,7 +1396,15 @@ export default function REPL(title = 'QuickJS') {
         .trim()
         .split(' ');
       if(param.length === 1 && param[0] === '') {
-        repl.puts('BigFloat precision=' + prec + ' bits (~' + Math.floor(prec / log2_10) + ' digits), exponent size=' + expBits + ' bits\n');
+        repl.puts(
+          'BigFloat precision=' +
+            prec +
+            ' bits (~' +
+            Math.floor(prec / log2_10) +
+            ' digits), exponent size=' +
+            expBits +
+            ' bits\n'
+        );
       } else if(param[0] === 'f16') {
         prec = 11;
         expBits = 5;
@@ -1370,7 +1425,11 @@ export default function REPL(title = 'QuickJS') {
           repl.puts('Invalid precision\n');
           return false;
         }
-        if(Number.isNaN(expBits1) || expBits1 < BigFloatEnv.expBitsMin || expBits1 > BigFloatEnv.expBitsMax) {
+        if(
+          Number.isNaN(expBits1) ||
+          expBits1 < BigFloatEnv.expBitsMin ||
+          expBits1 > BigFloatEnv.expBitsMax
+        ) {
           repl.puts('Invalid exponent bits\n');
           return false;
         }
@@ -1457,12 +1516,34 @@ export default function REPL(title = 'QuickJS') {
     function sel(n) {
       return n ? '*' : ' ';
     }
-    repl.puts('\\h          this help\n' + '\\x             ' + sel(hex_mode) + 'hexadecimal number display\n' + '\\d             ' + sel(!hex_mode) + 'decimal number display\n' + '\\t             ' + sel(show_time) + 'toggle timing display\n' + '\\clear              clear the terminal\n');
+    repl.puts(
+      '\\h          this help\n' +
+        '\\x             ' +
+        sel(hex_mode) +
+        'hexadecimal number display\n' +
+        '\\d             ' +
+        sel(!hex_mode) +
+        'decimal number display\n' +
+        '\\t             ' +
+        sel(show_time) +
+        'toggle timing display\n' +
+        '\\clear              clear the terminal\n'
+    );
     if(has_jscalc) {
-      repl.puts('\\a             ' + sel(algebraicMode) + 'algebraic mode\n' + '\\n             ' + sel(!algebraicMode) + 'numeric mode\n');
+      repl.puts(
+        '\\a             ' +
+          sel(algebraicMode) +
+          'algebraic mode\n' +
+          '\\n             ' +
+          sel(!algebraicMode) +
+          'numeric mode\n'
+      );
     }
     if(has_bignum) {
-      repl.puts("\\p [m [e]]       set the BigFloat precision to 'm' bits\n" + "\\digits n   set the BigFloat precision to 'ceil(n*log2(10))' bits\n");
+      repl.puts(
+        "\\p [m [e]]       set the BigFloat precision to 'm' bits\n" +
+          "\\digits n   set the BigFloat precision to 'ceil(n*log2(10))' bits\n"
+      );
       if(!has_jscalc) {
         repl.puts('\\mode [std|math] change the running mode (current = ' + eval_mode + ')\n');
       }
@@ -1498,7 +1579,11 @@ export default function REPL(title = 'QuickJS') {
       repl.print_status(colors[styles.result], result, '\n', colors.none);
       repl.update();
     } catch(error) {
-      let output = `${error.constructor.name || 'EXCEPTION'}: ` + colors[styles.error_msg] + error?.message + '\n';
+      let output =
+        `${error.constructor.name || 'EXCEPTION'}: ` +
+        colors[styles.error_msg] +
+        error?.message +
+        '\n';
 
       //      repl.puts(error.stack+'');
 
@@ -1518,7 +1603,12 @@ export default function REPL(title = 'QuickJS') {
     if(Util.isPromise(result)) {
       result.then(value => {
         result.resolved = true;
-        repl.print_status(`Promise resolved to:`, Util.typeOf(value), console.config({ depth: 1, multiline: true }), value);
+        repl.print_status(
+          `Promise resolved to:`,
+          Util.typeOf(value),
+          console.config({ depth: 1, multiline: true }),
+          value
+        );
         globalThis.$ = value;
       });
     }
@@ -1693,12 +1783,25 @@ export default function REPL(title = 'QuickJS') {
 
     function parse_number() {
       style = 'number';
-      while(i < n && (repl.is_word(str[i]) || (str[i] == '.' && (i == n - 1 || str[i + 1] != '.')))) {
+      while(
+        i < n &&
+        (repl.is_word(str[i]) || (str[i] == '.' && (i == n - 1 || str[i + 1] != '.')))
+      ) {
         i++;
       }
     }
 
-    var js_keywords = '|' + 'break|case|catch|continue|debugger|default|delete|do|' + 'else|finally|for|function|if|in|instanceof|new|' + 'return|switch|this|throw|try|typeof|while|with|' + 'class|const|enum|import|export|extends|super|' + 'implements|interface|let|package|private|protected|' + 'public|static|yield|' + 'undefined|null|true|false|Infinity|NaN|' + 'eval|arguments|' + 'await|';
+    var js_keywords =
+      '|' +
+      'break|case|catch|continue|debugger|default|delete|do|' +
+      'else|finally|for|function|if|in|instanceof|new|' +
+      'return|switch|this|throw|try|typeof|while|with|' +
+      'class|const|enum|import|export|extends|super|' +
+      'implements|interface|let|package|private|protected|' +
+      'public|static|yield|' +
+      'undefined|null|true|false|Infinity|NaN|' +
+      'eval|arguments|' +
+      'await|';
 
     var js_no_regex = '|this|super|undefined|null|true|false|Infinity|NaN|arguments|';
     var js_types = '|void|var|';

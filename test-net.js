@@ -61,7 +61,9 @@ async function main(...args) {
 
   function randContour() {
     let pl = new PointList();
-    Util.repeat(Util.randInt(10, 100, prng), () => pl.push(Util.randInt(0, width, prng), Util.randInt(0, height, prng)));
+    Util.repeat(Util.randInt(10, 100, prng), () =>
+      pl.push(Util.randInt(0, width, prng), Util.randInt(0, height, prng))
+    );
     let ctr = pl.centroid();
     let bb = pl.bbox();
     pl.translate(-ctr.x, -ctr.y);
@@ -79,7 +81,9 @@ async function main(...args) {
   }
 
   let contours = Util.repeat(4, () => randContour());
-  let contourStr = contours.map(c => c.toString(Contour.FORMAT_NOBRACKET | Contour.FORMAT_SPACE | Contour.FORMAT_01));
+  let contourStr = contours.map(c =>
+    c.toString(Contour.FORMAT_NOBRACKET | Contour.FORMAT_SPACE | Contour.FORMAT_01)
+  );
   let body;
   body = JSON.stringify({ contours: contourStr, frame: 0, width, height });
   console.log('Prepare duration:', hr(start));

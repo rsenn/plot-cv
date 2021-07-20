@@ -100,8 +100,22 @@ function main(...args) {
 
   mat.setTo([11, 22, 33, 255]);
   //cv.rectangle(mat, new glfw.Position(0,0), new glfw.Position(800,600), [255,0,0,0],4, cv.LINE_8);
-  cv.line(mat, new Point(10, 10), new Point(size.width - 10, size.height - 10), [255, 255, 0, 255], 4, cv.LINE_AA);
-  cv.line(mat, new Point(size.width - 10, 10), new Point(10, size.height - 10), [255, 0, 0, 255], 4, cv.LINE_AA);
+  cv.line(
+    mat,
+    new Point(10, 10),
+    new Point(size.width - 10, size.height - 10),
+    [255, 255, 0, 255],
+    4,
+    cv.LINE_AA
+  );
+  cv.line(
+    mat,
+    new Point(size.width - 10, 10),
+    new Point(10, size.height - 10),
+    [255, 0, 0, 255],
+    4,
+    cv.LINE_AA
+  );
 
   console.log('glfw.Position', glfw.Position);
   console.log('mat:', mat);

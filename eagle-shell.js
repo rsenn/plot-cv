@@ -53,10 +53,45 @@ import { toXML } from './lib/json.js';
 import Util from './lib/util.js';
 import * as deep from 'deep';
 import path from './lib/path.js';
-import { LineList, Point, Circle, Rect, Size, Line, TransformationList, Rotation, Translation, Scaling, Matrix, BBox } from './lib/geom.js';
+import {
+  LineList,
+  Point,
+  Circle,
+  Rect,
+  Size,
+  Line,
+  TransformationList,
+  Rotation,
+  Translation,
+  Scaling,
+  Matrix,
+  BBox
+} from './lib/geom.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import REPL from './repl.js';
-import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, Enum, HashList, Multimap, Shash, SortedMap, HashMultimap, MultiBiMap, MultiKeyMap, DenseSpatialHash2D, SpatialHash2D, HashMap, SpatialH, SpatialHash, SpatialHashMap, BoxHash } from './lib/container.js';
+import {
+  BinaryTree,
+  BucketStore,
+  BucketMap,
+  ComponentMap,
+  CompositeMap,
+  Deque,
+  Enum,
+  HashList,
+  Multimap,
+  Shash,
+  SortedMap,
+  HashMultimap,
+  MultiBiMap,
+  MultiKeyMap,
+  DenseSpatialHash2D,
+  SpatialHash2D,
+  HashMap,
+  SpatialH,
+  SpatialHash,
+  SpatialHashMap,
+  BoxHash
+} from './lib/container.js';
 import * as std from 'std';
 import fs from 'fs';
 import { Console } from 'console';
@@ -114,7 +149,9 @@ function LoadHistory(filename) {
     if(data) return data;
   };
 
-  return (parse() ?? []).filter(entry => (entry + '').trim() != '').map(entry => entry.replace(/\\n/g, '\n'));
+  return (parse() ?? [])
+    .filter(entry => (entry + '').trim() != '')
+    .map(entry => entry.replace(/\\n/g, '\n'));
 }
 
 function ReadJSON(filename) {
@@ -234,7 +271,10 @@ function fixValue(element) {
 
   switch (element.name[0]) {
     case 'R': {
-      newValue = value.replace(/^([0-9.]+)([mkM]?)(?:\xEF\xBF\xBD|\xC2\xA9|\x26\xC2*\xA9+|\u2126?[\x80-\xFF]+)([\x00-\x7F]*)/, '$1$2\u2126$3');
+      newValue = value.replace(
+        /^([0-9.]+)([mkM]?)(?:\xEF\xBF\xBD|\xC2\xA9|\x26\xC2*\xA9+|\u2126?[\x80-\xFF]+)([\x00-\x7F]*)/,
+        '$1$2\u2126$3'
+      );
       break;
     }
     case 'L': {
@@ -373,7 +413,8 @@ function CorrelateSchematicAndBoard(schematic, board) {
   let allNames = Math.max(...names.map(n => n.length));
   let intersection = Util.intersect(...names);
 
-  if(allNames.length > intersection.length) console.warn(`WARNING: Only ${intersection.length} names of ${allNames.length} correlate`);
+  if(allNames.length > intersection.length)
+    console.warn(`WARNING: Only ${intersection.length} names of ${allNames.length} correlate`);
   console.log(`intersection`, intersection);
 
   return /*new Map*/ intersection.map(name => [name, documents.map(doc => GetByName(doc, name))]);
@@ -388,7 +429,15 @@ async function testEagle(filename) {
   let { board, schematic } = proj;
   const packages = {
     board: (board && board.elements && [...board.elements].map(([name, e]) => e.package)) || [],
-    schematic: (schematic && schematic.sheets && [...schematic.sheets].map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)).flat()) || []
+    schematic:
+      (schematic &&
+        schematic.sheets &&
+        [...schematic.sheets]
+          .map(e =>
+            [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)
+          )
+          .flat()) ||
+      []
   };
   let parts = (schematic && schematic.parts) || [];
   let sheets = (schematic && schematic.sheets) || [];
@@ -439,7 +488,9 @@ async function testEagle(filename) {
   }
   let desc = proj.documents.map(doc => [doc.filename, doc.find('description')]);
   console.log('desc', desc);
-  desc = desc.map(([file, e]) => [file, e && e.xpath()]).map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
+  desc = desc
+    .map(([file, e]) => [file, e && e.xpath()])
+    .map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
   desc = new Map(desc);
   console.log('descriptions', [...Util.map(desc, ([k, v]) => [k, v])]);
   return proj;
@@ -522,7 +573,13 @@ function main(...args) {
 
   Object.assign(globalThis, {
     load(filename, project = globalThis.project) {
-      return (globalThis.document = new EagleDocument(std.loadFile(filename), project, filename, null, fs));
+      return (globalThis.document = new EagleDocument(
+        std.loadFile(filename),
+        project,
+        filename,
+        null,
+        fs
+      ));
     },
     newProject(filename) {
       return (globalThis.project = new EagleProject(filename, fs));
@@ -598,7 +655,8 @@ function main(...args) {
     let s = '';
     for(let arg of args) {
       if(s) s += ' ';
-      if(typeof arg != 'strping' || arg.indexOf('\x1b') == -1) s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
+      if(typeof arg != 'strping' || arg.indexOf('\x1b') == -1)
+        s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
       else s += arg;
     }
     debugLog.puts(s + '\n');

@@ -98,7 +98,9 @@ class RecursiveIterator {
    * @returns {Array<Object>}
    */
   getStatesOfChildNodes(node, path, deep) {
-    return getKeys(node).map(key => this.getState(node, node[key], key, path.concat(key), deep + 1));
+    return getKeys(node).map(key =>
+      this.getState(node, node[key], key, path.concat(key), deep + 1)
+    );
   }
   /**
    * Returns state of node. Calls for each node

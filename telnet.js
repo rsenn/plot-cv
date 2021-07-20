@@ -1,8 +1,54 @@
 import { strerror, err, out, exit, open } from 'std';
 import { read, signal, ttySetRaw, write } from 'os';
 import { errno, toString, toArrayBuffer, toPointer, pointerSize } from 'ffi';
-import { Socket, socket, AF_INET, SOCK_STREAM, ndelay, connect, sockaddr_in, select, fd_set, timeval, FD_SET, FD_CLR, FD_ISSET, FD_ZERO, errnos, send, recv } from './socket.js';
-import { termios, tcgetattr, tcsetattr, TCSANOW, IGNPAR, IMAXBEL, IUTF8, OPOST, ONLCR, CR0, TAB0, BS0, VT0, FF0, EXTB, CS8, CREAD, ISIG, ECHOE, ECHOK, ECHOCTL, ECHOKE, VINTR, cfgetospeed, cfsetospeed, B57600, B115200 } from './term.js';
+import {
+  Socket,
+  socket,
+  AF_INET,
+  SOCK_STREAM,
+  ndelay,
+  connect,
+  sockaddr_in,
+  select,
+  fd_set,
+  timeval,
+  FD_SET,
+  FD_CLR,
+  FD_ISSET,
+  FD_ZERO,
+  errnos,
+  send,
+  recv
+} from './socket.js';
+import {
+  termios,
+  tcgetattr,
+  tcsetattr,
+  TCSANOW,
+  IGNPAR,
+  IMAXBEL,
+  IUTF8,
+  OPOST,
+  ONLCR,
+  CR0,
+  TAB0,
+  BS0,
+  VT0,
+  FF0,
+  EXTB,
+  CS8,
+  CREAD,
+  ISIG,
+  ECHOE,
+  ECHOK,
+  ECHOCTL,
+  ECHOKE,
+  VINTR,
+  cfgetospeed,
+  cfsetospeed,
+  B57600,
+  B115200
+} from './term.js';
 
 function not(n) {
   return ~n >>> 0;
@@ -219,7 +265,12 @@ function SetCursor(show) {
 
 function ReturnValue(ret, ...args) {
   const r = [-1, 0].indexOf(ret) != -1 ? ret + '' : '0x' + NumberToHex(ret, pointerSize * 2);
-  debug('%s ret = %s%s%s', args, r, ...(ret == -1 ? [' errno =', errno(), ' error =', strerror(errno())] : ['', '']));
+  debug(
+    '%s ret = %s%s%s',
+    args,
+    r,
+    ...(ret == -1 ? [' errno =', errno(), ' error =', strerror(errno())] : ['', ''])
+  );
 }
 
 function NumberToHex(n, b = 2) {
@@ -245,7 +296,11 @@ function EscapeString(str) {
 
 function BufferToArray(buf, offset, length) {
   let len,
-    arr = new Uint8Array(buf, offset !== undefined ? offset : 0, length !== undefined ? length : buf.byteLength);
+    arr = new Uint8Array(
+      buf,
+      offset !== undefined ? offset : 0,
+      length !== undefined ? length : buf.byteLength
+    );
   //   arr = [...arr];
   if((len = arr.indexOf(0)) != -1) arr = arr.slice(0, len);
   return arr;
@@ -271,7 +326,13 @@ function ArrayToBytes(arr, delim = ', ', bytes = 1, limit = Infinity) {
     arr = arr.slice(0, len);
     if(len < arr.length) trail = `... ${arr.length - len} more bytes ...`;
   }
-  let str = arr.reduce((s, code) => (s != '' ? s + delim : '') + '0x' + ('000000000000000' + code.toString(16)).slice(-(bytes * 2)), '');
+  let str = arr.reduce(
+    (s, code) =>
+      (s != '' ? s + delim : '') +
+      '0x' +
+      ('000000000000000' + code.toString(16)).slice(-(bytes * 2)),
+    ''
+  );
   return '[' + str + trail + ']';
 }
 
