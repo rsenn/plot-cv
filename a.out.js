@@ -17,8 +17,7 @@ var ENVIRONMENT_IS_NODE = false;
 var ENVIRONMENT_IS_SHELL = false;
 ENVIRONMENT_IS_WEB = typeof window === 'object';
 ENVIRONMENT_IS_WORKER = typeof importScripts === 'function';
-ENVIRONMENT_IS_NODE =
-  typeof process === 'object' && typeof process.versions === 'object' && typeof process.versions.node === 'string';
+ENVIRONMENT_IS_NODE = typeof process === 'object' && typeof process.versions === 'object' && typeof process.versions.node === 'string';
 ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIRONMENT_IS_WORKER;
 var scriptDirectory = '';
 function locateFile(path) {
@@ -191,9 +190,7 @@ function convertJsFunctionToWasm(func, sig) {
     typeSection = typeSection.concat([1, typeCodes[sigRet]]);
   }
   typeSection[1] = typeSection.length - 2;
-  var bytes = new Uint8Array(
-    [0, 97, 115, 109, 1, 0, 0, 0].concat(typeSection, [2, 7, 1, 1, 101, 1, 102, 0, 0, 7, 5, 1, 1, 102, 0, 0])
-  );
+  var bytes = new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0].concat(typeSection, [2, 7, 1, 1, 101, 1, 102, 0, 0, 7, 5, 1, 1, 102, 0, 0]));
   var module = new WebAssembly.Module(bytes);
   var instance = new WebAssembly.Instance(module, { e: { f: func } });
   var wrappedFunc = instance.exports['f'];
@@ -585,13 +582,7 @@ function createWasm() {
       });
   }
   function instantiateAsync() {
-    if(
-      !wasmBinary &&
-      typeof WebAssembly.instantiateStreaming === 'function' &&
-      !isDataURI(wasmBinaryFile) &&
-      !isFileURI(wasmBinaryFile) &&
-      typeof fetch === 'function'
-    ) {
+    if(!wasmBinary && typeof WebAssembly.instantiateStreaming === 'function' && !isDataURI(wasmBinaryFile) && !isFileURI(wasmBinaryFile) && typeof fetch === 'function') {
       return fetch(wasmBinaryFile, { credentials: 'same-origin' }).then(function (response) {
         var result = WebAssembly.instantiateStreaming(response, info);
         return result.then(receiveInstantiatedSource, function(reason) {
@@ -665,88 +656,58 @@ var ASSERTIONS = false;
 var asmLibraryArg = {};
 var asm = createWasm();
 var ___wasm_call_ctors = (Module['___wasm_call_ctors'] = function() {
-  return (___wasm_call_ctors = Module['___wasm_call_ctors'] = Module['asm']['__wasm_call_ctors']).apply(
-    null,
-    arguments
-  );
+  return (___wasm_call_ctors = Module['___wasm_call_ctors'] = Module['asm']['__wasm_call_ctors']).apply(null, arguments);
 });
 var _find_Archimedean_spiral_length = (Module['_find_Archimedean_spiral_length'] = function() {
-  return (_find_Archimedean_spiral_length = Module['_find_Archimedean_spiral_length'] =
-    Module['asm']['find_Archimedean_spiral_length']).apply(null, arguments);
+  return (_find_Archimedean_spiral_length = Module['_find_Archimedean_spiral_length'] = Module['asm']['find_Archimedean_spiral_length']).apply(null, arguments);
 });
 var _find_actual_spiral_length = (Module['_find_actual_spiral_length'] = function() {
-  return (_find_actual_spiral_length = Module['_find_actual_spiral_length'] =
-    Module['asm']['find_actual_spiral_length']).apply(null, arguments);
+  return (_find_actual_spiral_length = Module['_find_actual_spiral_length'] = Module['asm']['find_actual_spiral_length']).apply(null, arguments);
 });
 var _getOneLayerI_Poligonal = (Module['_getOneLayerI_Poligonal'] = function() {
-  return (_getOneLayerI_Poligonal = Module['_getOneLayerI_Poligonal'] = Module['asm']['getOneLayerI_Poligonal']).apply(
-    null,
-    arguments
-  );
+  return (_getOneLayerI_Poligonal = Module['_getOneLayerI_Poligonal'] = Module['asm']['getOneLayerI_Poligonal']).apply(null, arguments);
 });
 var _getFerriteCoreMagConst = (Module['_getFerriteCoreMagConst'] = function() {
-  return (_getFerriteCoreMagConst = Module['_getFerriteCoreMagConst'] = Module['asm']['getFerriteCoreMagConst']).apply(
-    null,
-    arguments
-  );
+  return (_getFerriteCoreMagConst = Module['_getFerriteCoreMagConst'] = Module['asm']['getFerriteCoreMagConst']).apply(null, arguments);
 });
 var _getOneLayerN_withRoundWire = (Module['_getOneLayerN_withRoundWire'] = function() {
-  return (_getOneLayerN_withRoundWire = Module['_getOneLayerN_withRoundWire'] =
-    Module['asm']['getOneLayerN_withRoundWire']).apply(null, arguments);
+  return (_getOneLayerN_withRoundWire = Module['_getOneLayerN_withRoundWire'] = Module['asm']['getOneLayerN_withRoundWire']).apply(null, arguments);
 });
 var _getOneLayerI_withRoundWire = (Module['_getOneLayerI_withRoundWire'] = function() {
-  return (_getOneLayerI_withRoundWire = Module['_getOneLayerI_withRoundWire'] =
-    Module['asm']['getOneLayerI_withRoundWire']).apply(null, arguments);
+  return (_getOneLayerI_withRoundWire = Module['_getOneLayerI_withRoundWire'] = Module['asm']['getOneLayerI_withRoundWire']).apply(null, arguments);
 });
 var _getOneLayerN_withRectWire = (Module['_getOneLayerN_withRectWire'] = function() {
-  return (_getOneLayerN_withRectWire = Module['_getOneLayerN_withRectWire'] =
-    Module['asm']['getOneLayerN_withRectWire']).apply(null, arguments);
+  return (_getOneLayerN_withRectWire = Module['_getOneLayerN_withRectWire'] = Module['asm']['getOneLayerN_withRectWire']).apply(null, arguments);
 });
 var _getOneLayerI_withRectWire = (Module['_getOneLayerI_withRectWire'] = function() {
-  return (_getOneLayerI_withRectWire = Module['_getOneLayerI_withRectWire'] =
-    Module['asm']['getOneLayerI_withRectWire']).apply(null, arguments);
+  return (_getOneLayerI_withRectWire = Module['_getOneLayerI_withRectWire'] = Module['asm']['getOneLayerI_withRectWire']).apply(null, arguments);
 });
 var _getOneLayerN_Poligonal = (Module['_getOneLayerN_Poligonal'] = function() {
-  return (_getOneLayerN_Poligonal = Module['_getOneLayerN_Poligonal'] = Module['asm']['getOneLayerN_Poligonal']).apply(
-    null,
-    arguments
-  );
+  return (_getOneLayerN_Poligonal = Module['_getOneLayerN_Poligonal'] = Module['asm']['getOneLayerN_Poligonal']).apply(null, arguments);
 });
 var _getMultiLayerN = (Module['_getMultiLayerN'] = function() {
   return (_getMultiLayerN = Module['_getMultiLayerN'] = Module['asm']['getMultiLayerN']).apply(null, arguments);
 });
 var _getMultiLayerN_rectFormer = (Module['_getMultiLayerN_rectFormer'] = function() {
-  return (_getMultiLayerN_rectFormer = Module['_getMultiLayerN_rectFormer'] =
-    Module['asm']['getMultiLayerN_rectFormer']).apply(null, arguments);
+  return (_getMultiLayerN_rectFormer = Module['_getMultiLayerN_rectFormer'] = Module['asm']['getMultiLayerN_rectFormer']).apply(null, arguments);
 });
 var _getMultiLayerI_byN = (Module['_getMultiLayerI_byN'] = function() {
-  return (_getMultiLayerI_byN = Module['_getMultiLayerI_byN'] = Module['asm']['getMultiLayerI_byN']).apply(
-    null,
-    arguments
-  );
+  return (_getMultiLayerI_byN = Module['_getMultiLayerI_byN'] = Module['asm']['getMultiLayerI_byN']).apply(null, arguments);
 });
 var _getMultiLayerI = (Module['_getMultiLayerI'] = function() {
   return (_getMultiLayerI = Module['_getMultiLayerI'] = Module['asm']['getMultiLayerI']).apply(null, arguments);
 });
 var _getMultiLayerI_rectFormer = (Module['_getMultiLayerI_rectFormer'] = function() {
-  return (_getMultiLayerI_rectFormer = Module['_getMultiLayerI_rectFormer'] =
-    Module['asm']['getMultiLayerI_rectFormer']).apply(null, arguments);
+  return (_getMultiLayerI_rectFormer = Module['_getMultiLayerI_rectFormer'] = Module['asm']['getMultiLayerI_rectFormer']).apply(null, arguments);
 });
 var _getMultiLayerI_fromResistance = (Module['_getMultiLayerI_fromResistance'] = function() {
-  return (_getMultiLayerI_fromResistance = Module['_getMultiLayerI_fromResistance'] =
-    Module['asm']['getMultiLayerI_fromResistance']).apply(null, arguments);
+  return (_getMultiLayerI_fromResistance = Module['_getMultiLayerI_fromResistance'] = Module['asm']['getMultiLayerI_fromResistance']).apply(null, arguments);
 });
 var _getMultilayerN_Foil = (Module['_getMultilayerN_Foil'] = function() {
-  return (_getMultilayerN_Foil = Module['_getMultilayerN_Foil'] = Module['asm']['getMultilayerN_Foil']).apply(
-    null,
-    arguments
-  );
+  return (_getMultilayerN_Foil = Module['_getMultilayerN_Foil'] = Module['asm']['getMultilayerN_Foil']).apply(null, arguments);
 });
 var _getMultilayerI_Foil = (Module['_getMultilayerI_Foil'] = function() {
-  return (_getMultilayerI_Foil = Module['_getMultilayerI_Foil'] = Module['asm']['getMultilayerI_Foil']).apply(
-    null,
-    arguments
-  );
+  return (_getMultilayerI_Foil = Module['_getMultilayerI_Foil'] = Module['asm']['getMultilayerI_Foil']).apply(null, arguments);
 });
 var _getFerriteN = (Module['_getFerriteN'] = function() {
   return (_getFerriteN = Module['_getFerriteN'] = Module['asm']['getFerriteN']).apply(null, arguments);
@@ -773,10 +734,7 @@ var _getSpiralI = (Module['_getSpiralI'] = function() {
   return (_getSpiralI = Module['_getSpiralI'] = Module['asm']['getSpiralI']).apply(null, arguments);
 });
 var _findToroidPemeability = (Module['_findToroidPemeability'] = function() {
-  return (_findToroidPemeability = Module['_findToroidPemeability'] = Module['asm']['findToroidPemeability']).apply(
-    null,
-    arguments
-  );
+  return (_findToroidPemeability = Module['_findToroidPemeability'] = Module['asm']['findToroidPemeability']).apply(null, arguments);
 });
 var _findFerriteRodN = (Module['_findFerriteRodN'] = function() {
   return (_findFerriteRodN = Module['_findFerriteRodN'] = Module['asm']['findFerriteRodN']).apply(null, arguments);
@@ -797,38 +755,25 @@ var _findRoundLoop_D = (Module['_findRoundLoop_D'] = function() {
   return (_findRoundLoop_D = Module['_findRoundLoop_D'] = Module['asm']['findRoundLoop_D']).apply(null, arguments);
 });
 var _findIsoIsoscelesTriangleLoop_I = (Module['_findIsoIsoscelesTriangleLoop_I'] = function() {
-  return (_findIsoIsoscelesTriangleLoop_I = Module['_findIsoIsoscelesTriangleLoop_I'] =
-    Module['asm']['findIsoIsoscelesTriangleLoop_I']).apply(null, arguments);
+  return (_findIsoIsoscelesTriangleLoop_I = Module['_findIsoIsoscelesTriangleLoop_I'] = Module['asm']['findIsoIsoscelesTriangleLoop_I']).apply(null, arguments);
 });
 var _findIsoIsoscelesTriangleLoop_a = (Module['_findIsoIsoscelesTriangleLoop_a'] = function() {
-  return (_findIsoIsoscelesTriangleLoop_a = Module['_findIsoIsoscelesTriangleLoop_a'] =
-    Module['asm']['findIsoIsoscelesTriangleLoop_a']).apply(null, arguments);
+  return (_findIsoIsoscelesTriangleLoop_a = Module['_findIsoIsoscelesTriangleLoop_a'] = Module['asm']['findIsoIsoscelesTriangleLoop_a']).apply(null, arguments);
 });
 var _findRectangleLoop_I = (Module['_findRectangleLoop_I'] = function() {
-  return (_findRectangleLoop_I = Module['_findRectangleLoop_I'] = Module['asm']['findRectangleLoop_I']).apply(
-    null,
-    arguments
-  );
+  return (_findRectangleLoop_I = Module['_findRectangleLoop_I'] = Module['asm']['findRectangleLoop_I']).apply(null, arguments);
 });
 var _findRectangleLoop_a = (Module['_findRectangleLoop_a'] = function() {
-  return (_findRectangleLoop_a = Module['_findRectangleLoop_a'] = Module['asm']['findRectangleLoop_a']).apply(
-    null,
-    arguments
-  );
+  return (_findRectangleLoop_a = Module['_findRectangleLoop_a'] = Module['asm']['findRectangleLoop_a']).apply(null, arguments);
 });
 var _findSheildedInductance = (Module['_findSheildedInductance'] = function() {
-  return (_findSheildedInductance = Module['_findSheildedInductance'] = Module['asm']['findSheildedInductance']).apply(
-    null,
-    arguments
-  );
+  return (_findSheildedInductance = Module['_findSheildedInductance'] = Module['asm']['findSheildedInductance']).apply(null, arguments);
 });
 var _findAirCoreRoundToroid_I = (Module['_findAirCoreRoundToroid_I'] = function() {
-  return (_findAirCoreRoundToroid_I = Module['_findAirCoreRoundToroid_I'] =
-    Module['asm']['findAirCoreRoundToroid_I']).apply(null, arguments);
+  return (_findAirCoreRoundToroid_I = Module['_findAirCoreRoundToroid_I'] = Module['asm']['findAirCoreRoundToroid_I']).apply(null, arguments);
 });
 var _findAirCoreRoundToroid_N = (Module['_findAirCoreRoundToroid_N'] = function() {
-  return (_findAirCoreRoundToroid_N = Module['_findAirCoreRoundToroid_N'] =
-    Module['asm']['findAirCoreRoundToroid_N']).apply(null, arguments);
+  return (_findAirCoreRoundToroid_N = Module['_findAirCoreRoundToroid_N'] = Module['asm']['findAirCoreRoundToroid_N']).apply(null, arguments);
 });
 var _findPotCore_I = (Module['_findPotCore_I'] = function() {
   return (_findPotCore_I = Module['_findPotCore_I'] = Module['asm']['findPotCore_I']).apply(null, arguments);

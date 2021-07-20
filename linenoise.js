@@ -4,26 +4,13 @@ const liblinenoise = dlopen('/usr/local/lib/x86_64-linux-gnu/liblinenoise.so', R
 console.log('liblinenoise', liblinenoise);
 
 /* void linenoiseSetCompletionCallback(linenoiseCompletionCallback* fn)  */
-define(
-  'linenoiseSetCompletionCallback',
-  dlsym(liblinenoise, 'linenoiseSetCompletionCallback'),
-  null,
-  'void',
-  'void *'
-);
+define('linenoiseSetCompletionCallback', dlsym(liblinenoise, 'linenoiseSetCompletionCallback'), null, 'void', 'void *');
 export function linenoiseSetCompletionCallback(fn) {
   return call('linenoiseSetCompletionCallback', fn);
 }
 
 /* void linenoiseAddCompletion(linenoiseCompletions* lc, const char* str)  */
-define(
-  'linenoiseAddCompletion',
-  dlsym(liblinenoise, 'linenoiseAddCompletion'),
-  null,
-  'void',
-  'void *',
-  'string'
-);
+define('linenoiseAddCompletion', dlsym(liblinenoise, 'linenoiseAddCompletion'), null, 'void', 'void *', 'string');
 export function linenoiseAddCompletion(lc, str) {
   return call('linenoiseAddCompletion', lc, str);
 }
@@ -43,13 +30,7 @@ export function linenoiseHistoryAdd(line) {
 }
 
 /* int linenoiseHistorySetMaxLen(int len)  */
-define(
-  'linenoiseHistorySetMaxLen',
-  dlsym(liblinenoise, 'linenoiseHistorySetMaxLen'),
-  null,
-  'int',
-  'int'
-);
+define('linenoiseHistorySetMaxLen', dlsym(liblinenoise, 'linenoiseHistorySetMaxLen'), null, 'int', 'int');
 export function linenoiseHistorySetMaxLen(len) {
   return call('linenoiseHistorySetMaxLen', len);
 }
