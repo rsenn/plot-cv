@@ -13,14 +13,20 @@ import * as net from 'net';
 import { Socket, recv, send, errno } from './socket.js';
 
 import rpc from './quickjs/net/rpc.js';
-import { MessageReceiver, MessageTransmitter, MessageTransceiver, Connection, RPCServerConnection, RPCClientConnection, RPCSocket } from './quickjs/net/rpc.js';
+import { Mapper, EventProxy, MessageReceiver, MessageTransmitter, MessageTransceiver, Connection, RPCServerConnection, RPCClientConnection, RPCSocket } from './quickjs/net/rpc.js';
 
 extendArray();
 Object.assign(globalThis, {
   ...rpc,
   RPCServerConnection,
   RPCClientConnection,
-  RPCSocket
+  RPCSocket,
+  MessageReceiver,
+  MessageTransmitter,
+  MessageTransceiver,
+  Mapper,
+  EventProxy,
+  Connection
 });
 
 function main(...args) {
@@ -99,11 +105,10 @@ function main(...args) {
         mounts: [['/', '.', 'debugger.html']],
         ...url,
         ...callbacks,
-        onFd(fd, readable, writable) {
+        /* onFd(fd, readable, writable) {
           os.setReadHandler(fd, readable);
           os.setWriteHandler(fd, writable);
-          //     console.log('onFd', ...args.map(a => a+''));
-        },
+         },
         onConnect(sock) {
           connections.add(sock);
           console.log('onConnect', sock);
@@ -114,7 +119,7 @@ function main(...args) {
         onClose(sock) {
           connections.delete(sock);
           console.log('onClose', sock);
-        },
+        },*/
         onHttp(sock, url) {
           console.log(url.replace('/', ''));
 
