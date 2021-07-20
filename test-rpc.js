@@ -108,7 +108,7 @@ function main(...args) {
 
   let cli = (globalThis.sock = new rpc.Socket(`${address}:${port}`, rpc[`RPC${server ? 'Server' : 'Client'}Connection`], +params.verbose));
 
-  cli.register({ Socket, Worker: os.Worker });
+  cli.register({ Socket, Worker: os.Worker, Repeater, REPL, EventEmitter });
 
   let connections = new Set();
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
