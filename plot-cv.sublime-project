@@ -25,7 +25,7 @@
 		},
 		{
 			"name": "prettier",
-			"shell_cmd": "yarn run format",
+			"shell_cmd": "(. ~/.nvm/nvm.sh; nvm use 14;  set -x; yarn run format)",
 			"working_dir": "${project_path:${folder:${file_path}}}",
 		},
 		{
@@ -45,7 +45,7 @@
 		},
 		{
 			"name": "prettier ${file_path}",
-			"shell_cmd": "WIDTH=400 bash scripts/prettier.sh '${file}'",
+			"shell_cmd": "(. ~/.nvm/nvm.sh; nvm use 14;  set -x; WIDTH=400 bash scripts/prettier.sh '${file}')",
 			"working_dir": "${project_path:${folder:${file_path}}}",
 		}
 	],
