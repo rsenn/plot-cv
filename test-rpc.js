@@ -13,15 +13,7 @@ import * as net from 'net';
 import { Socket, recv, send, errno } from './socket.js';
 
 import rpc from './quickjs/net/rpc.js';
-import {
-  MessageReceiver,
-  MessageTransmitter,
-  MessageTransceiver,
-  Connection,
-  RPCServerConnection,
-  RPCClientConnection,
-  RPCSocket
-} from './quickjs/net/rpc.js';
+import { MessageReceiver, MessageTransmitter, MessageTransceiver, Connection, RPCServerConnection, RPCClientConnection, RPCSocket } from './quickjs/net/rpc.js';
 
 extendArray();
 Object.assign(globalThis, {
@@ -38,7 +30,7 @@ function main(...args) {
       depth: Infinity,
       compact: 2,
       customInspect: true,
-      getters: true
+      getters: false
     }
   });
   let params = Util.getOpt(
@@ -46,6 +38,8 @@ function main(...args) {
       verbose: [false, (a, v) => (v | 0) + 1, 'v'],
       listen: [false, null, 'l'],
       connect: [false, null, 'c'],
+      client: [false, null, 'C'],
+      server: [false, null, 'S'],
       debug: [false, null, 'x'],
       address: [true, null, 'a'],
       port: [true, null, 'p'],
@@ -59,6 +53,7 @@ function main(...args) {
   const { address = '0.0.0.0', port = 9000 } = params;
 
   const listen = params.connect && !params.listen ? false : true;
+  const server = !params.client || params.server;
 
   let name = Util.getArgs()[0];
   name = name
@@ -87,16 +82,16 @@ function main(...args) {
   };
 
   console.log = repl.printFunction(log);
+  console.options.depth = 2;
+  console.options.compact = 2;
+  console.options.getters = false;
+
   //  console.log = (...args) => repl.printStatus(() => log(...args));
 
-  let cli = (globalThis.sock = new rpc.Socket(
-    `${address}:${port}`,
-    rpc.RPCServerConnection,
-    +params.verbose
-  ));
+  let cli = (globalThis.sock = new rpc.Socket(`${address}:${port}`, rpc[`RPC${server ? 'Server' : 'Client'}Connection`], +params.verbose));
 
   cli.register(Socket);
-
+  let connections = new Set();
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     console.log('createWS', { url, callbacks, listen });
     return [net.client, net.server][+listen](
@@ -104,16 +99,27 @@ function main(...args) {
         mounts: [['/', '.', 'debugger.html']],
         ...url,
         ...callbacks,
-        /*  onConnect(...args) {
-     console.log('onConnect', { args });
-
-      },*/
+        onFd(fd, readable, writable) {
+          os.setReadHandler(fd, readable);
+          os.setWriteHandler(fd, writable);
+          //     console.log('onFd', ...args.map(a => a+''));
+        },
+        onConnect(sock) {
+          connections.add(sock);
+          console.log('onConnect', sock);
+        },
+        onMessage(...args) {
+          console.log('onMessage', ...args);
+        },
+        onClose(sock) {
+          connections.delete(sock);
+          console.log('onClose', sock);
+        },
         onHttp(sock, url) {
           console.log(url.replace('/', ''));
 
           if(url != '/') {
-            if(/\.html/.test(url) && !/debugger.html/.test(url))
-              sock.redirect(sock.HTTP_STATUS_FOUND, '/debugger.html');
+            if(/\.html/.test(url) && !/debugger.html/.test(url)) sock.redirect(sock.HTTP_STATUS_FOUND, '/debugger.html');
           }
           sock.header('Test', 'blah');
         },
@@ -123,7 +129,12 @@ function main(...args) {
   });
 
   globalThis[['connection', 'listener'][+listen]] = cli;
-  globalThis.connections = cli.fdlist;
+
+  define(globalThis, {
+    get connections() {
+      return [...connections];
+    }
+  });
 
   Object.assign(globalThis, {
     repl,
@@ -144,8 +155,8 @@ function main(...args) {
     path
   });
 
-  if(params.connect) cli.connect(createWS, os);
-  if(params.listen) cli.listen(createWS, os);
+  if(listen) cli.listen(createWS, os);
+  else cli.connect(createWS, os);
 
   function quit(why) {
     repl.cleanup(why);

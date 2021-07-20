@@ -2,16 +2,7 @@
 import { ECMAScriptParser } from './lib/ecmascript/parser2.js';
 import { PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
-import {
-  ImportDeclaration,
-  ImportSpecifier,
-  Identifier,
-  Literal,
-  TemplateLiteral,
-  CallExpression,
-  ExportNamedDeclaration,
-  ExportDefaultDeclaration
-} from './lib/ecmascript/estree.js';
+import { ImportDeclaration, ImportSpecifier, Identifier, Literal, TemplateLiteral, CallExpression, ExportNamedDeclaration, ExportDefaultDeclaration } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import Tree from './lib/tree.js';
 import fs from 'fs';
@@ -61,9 +52,7 @@ function main(...argv) {
         false,
         (v, r, o) => {
           console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
-          console.log(
-            o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n')
-          );
+          console.log(o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n'));
           Util.exit(0);
         },
         'h'
@@ -97,12 +86,7 @@ function main(...argv) {
     } catch(error) {
       if(error) {
         console.log?.('ERROR:', error?.message);
-        console.log?.(
-          'STACK:\n  ' +
-            new Stack(error?.stack, fr => fr.functionName != 'esfactory')
-              .toString()
-              .replace(/\n/g, '\n  ')
-        );
+        console.log?.('STACK:\n  ' + new Stack(error?.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  '));
       } else {
         console.log('ERROR:', error);
       }
@@ -126,13 +110,7 @@ try {
   error = e;
 } finally {
   if(error) {
-    console.log(
-      `FAIL: ${error.message}`,
-      `\n  ` +
-        new Stack(error.stack, fr => fr.functionName != 'esfactory')
-          .toString()
-          .replace(/\n/g, '\n  ')
-    );
+    console.log(`FAIL: ${error.message}`, `\n  ` + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  '));
     console.log('FAIL');
     Util.exit(1);
   } else {
@@ -144,29 +122,15 @@ function ShowOutput(ast, tree, flat, file, params) {
   const output_file = params['output-js'] ?? '/dev/stdout';
 
   let nodes = deep.select(ast, node => /Export/.test(Util.className(node)), deep.RETURN_VALUE);
-  let names = [
-    ...deep.select(ast, (node, key) => key == 'exported', deep.RETURN_VALUE),
-    ...deep
-      .select(ast, (node, key) => node instanceof ExportNamedDeclaration, deep.RETURN_VALUE)
-      .map(node =>
-        node.declaration && node.declaration.id ? node.declaration.id : node.declaration
-      )
-  ];
+  let names = [...deep.select(ast, (node, key) => key == 'exported', deep.RETURN_VALUE), ...deep.select(ast, (node, key) => node instanceof ExportNamedDeclaration, deep.RETURN_VALUE).map(node => (node.declaration && node.declaration.id ? node.declaration.id : node.declaration))];
 
-  let defaultExport = deep.find(
-    ast,
-    node => node instanceof ExportDefaultDeclaration,
-    deep.RETURN_VALUE
-  );
+  let defaultExport = deep.find(ast, node => node instanceof ExportDefaultDeclaration, deep.RETURN_VALUE);
   console.log(
     'names:',
     names.map(n => NodeToName(n))
   );
 
-  let importNode = new ImportDeclaration(
-    [...names.map(n => new ImportSpecifier(new Identifier(NodeToName(n))))],
-    new Literal(`'${file}'`)
-  );
+  let importNode = new ImportDeclaration([...names.map(n => new ImportSpecifier(new Identifier(NodeToName(n))))], new Literal(`'${file}'`));
 
   let code = PrintAst(importNode);
   //console.log('code:', code);
@@ -180,8 +144,7 @@ function ShowOutput(ast, tree, flat, file, params) {
 function NodeToName(node) {
   let id;
   if(node.name) id = node;
-  if(!id)
-    id = deep.find(node, (path, key) => ['id', 'exported'].indexOf(key) != -1, deep.RETURN_VALUE);
+  if(!id) id = deep.find(node, (path, key) => ['id', 'exported'].indexOf(key) != -1, deep.RETURN_VALUE);
   if(!id && node.id && node.id instanceof Identifier) id = node.id;
   if(id)
     if(id instanceof Identifier) id = Identifier.string(id);
@@ -217,19 +180,13 @@ function ProcessFile(file, params) {
   }
   parser.addCommentsToNodes(ast);
 
-  WriteFile(
-    params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json',
-    JSON.stringify(ast /*.toJSON()*/, null, 2)
-  );
+  WriteFile(params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json', JSON.stringify(ast /*.toJSON()*/, null, 2));
 
   let node2path = new WeakMap();
   let nodeKeys = [];
 
   let commentMap = new Map(
-    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
-      pos * 10 - 1,
-      { comment, pos, len, node }
-    ]),
+    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node }]),
     (a, b) => a - b
   );
 

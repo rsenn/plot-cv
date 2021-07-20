@@ -899,6 +899,26 @@ function PrintECMAScript(ast, comments, printer = new ECMAScript.Printer({ inden
   return printer.print(ast);
 }
 
+function PrintCArray(strings) {
+  let o='';
+
+      for (let str of strings) {
+if(o!='')
+  o+= ', ';
+
+if(typeof str == 'string')
+o+= '"'+str+'"';
+else
+o+= '0';
+      }
+
+/*     +
+    strings.map(str => (typeof str == 'string' && str ? '"' + str + '"' : '""')).map(str => str != '' ? str : '""').join(',\n') +*/
+
+   o+= ` });`
+  return `((const char*const []){ `+o;
+}
+
 function Namespaces(nodePath, ast = $.data) {
   let ptr = new Pointer(nodePath);
   let ptrs = ptr.chain(2);
@@ -906,6 +926,12 @@ function Namespaces(nodePath, ast = $.data) {
 
   let ns = ptrs.map(p => get(p)).filter(n => n.kind == 'NamespaceDecl');
   return ns;
+}
+
+function* Constants(node, t = (name, value) => [name, !isNaN(+value) ? +value : value]) {
+  for(let inner of node.inner) {
+    yield t(...PrintAst(inner).split(/ = /g));
+  }
 }
 
 MemberNames.UPPER = 1;
@@ -1192,7 +1218,9 @@ async function ASTShell(...args) {
     PrintECMAScript,
     ProcessFile,
     toArrayBuffer,
-    toString
+    toString,
+    Constants,
+    PrintCArray
   });
 
   Pointer.prototype.chain = function(step, limit = Infinity) {

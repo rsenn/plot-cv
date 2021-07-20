@@ -1527,13 +1527,12 @@ export function NodePrinter(ast) {
           // if(';}'.indexOf(out[out.length - 1] ?? '\n') == -1) put(';');
         }
         EnumConstantDecl(enum_constant_decl) {
-          const { name, value } = enum_constant_decl;
-
+          const { name, inner } = enum_constant_decl;
+          let value = inner[0];
           put(name);
-
           if(value) {
             put(' = ');
-            put(value);
+            printer.print(value);
           }
         }
         EnumDecl(enum_decl) {
