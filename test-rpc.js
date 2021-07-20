@@ -8,12 +8,15 @@ import { Console } from 'console';
 import REPL from './quickjs/modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
-import { extendArray, define } from './lib/misc.js';
+import { extendArray } from './lib/misc.js';
 import * as net from 'net';
 import { Socket, recv, send, errno } from './socket.js';
+import { EventEmitter, EventTarget, eventify } from './lib/events.js';
+import { Repeater } from './lib/repeater/repeater.js';
+import { fnmatch } from './lib/fnmatch.js';
 
 import rpc from './quickjs/net/rpc.js';
-import { getKeys, getPropertyDescriptors, getPropertyNames, Mapper, DefaultConstructor, EventProxy, MessageReceiver, MessageTransmitter, MessageTransceiver, Connection, RPCServerConnection, RPCClientConnection, RPCSocket } from './quickjs/net/rpc.js';
+import { makeCommandProxy, define, GetKeys, getPropertyDescriptors, GetProperties, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, Connection, RPCServerConnection, RPCClientConnection, RPCSocket } from './quickjs/net/rpc.js';
 
 extendArray();
 Object.assign(globalThis, {
@@ -25,10 +28,15 @@ Object.assign(globalThis, {
   MessageTransmitter,
   MessageTransceiver,
   Mapper,
-  EventProxy,
+  EventLogger,
+  makeCommandProxy,
   Connection,
   DefaultConstructor,
-  rpc: { ...rpc, getKeys, getPropertyDescriptors, getPropertyNames }
+  EventEmitter,
+  EventTarget,
+  eventify,
+  Repeater,
+  rpc: { ...rpc, GetKeys, getPropertyDescriptors, GetProperties, makeCommandProxy }
 });
 
 function main(...args) {
@@ -103,7 +111,7 @@ function main(...args) {
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     console.log('createWS', { url, callbacks, listen });
     return [net.client, net.server][+listen](
-      /*new EventProxy*/ {
+      /*new EventLogger*/ {
         mounts: [['/', '.', 'debugger.html']],
         ...url,
         ...callbacks,

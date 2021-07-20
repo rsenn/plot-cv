@@ -1,5 +1,6 @@
 import Util from './lib/util.js';
 import { Repeater } from './lib/repeater/repeater.js';
+export { EventEmitter, EventTarget } from './lib/events.js';
 
 export function Emitter(target) {
   const listeners = new Map();
