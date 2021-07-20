@@ -16,24 +16,11 @@ import { Repeater } from './lib/repeater/repeater.js';
 import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
 
 import rpc from './quickjs/net/rpc.js';
-import { RPCServer, RPCClient, RPCApi, RPCSocket } from './quickjs/net/rpc.js';
+//import { RPCServer, RPCClient, RPCApi, RPCSocket,RPCFactory } from './quickjs/net/rpc.js';
 import * as rpc2 from './quickjs/net/rpc.js';
 
 extendArray();
-Object.assign(globalThis, {
-  EventEmitter,
-  EventTarget,
-  eventify,
-  Repeater,
-  fnmatch,
-  PATH_FNM_MULTI,
-  RPCServer,
-  RPCClient,
-  RPCApi,
-  RPCSocket,
-  ...rpc2,
-  rpc
-});
+Object.assign(globalThis, { EventEmitter, EventTarget, eventify, Repeater, fnmatch, PATH_FNM_MULTI, ...rpc2, rpc });
 
 function main(...args) {
   globalThis.console = new Console({
@@ -97,8 +84,6 @@ function main(...args) {
 
   Object.assign(console.options, { depth: 2, compact: 2, getters: false });
 
-  //  console.log = (...args) => repl.printStatus(() => log(...args));
-
   let cli = (globalThis.sock = new rpc.Socket(`${address}:${port}`, rpc[`RPC${server ? 'Server' : 'Client'}Connection`], +params.verbose));
 
   cli.register({ Socket, Worker: os.Worker, Repeater, REPL, EventEmitter });
@@ -110,11 +95,17 @@ function main(...args) {
       /*new EventLogger*/ {
         mounts: [['/', '.', 'debugger.html']],
         ...url,
+        onFd(fd) {
+          console.log('onFd', fd);
+        },
+        onConnect(s) {
+          console.log('onConnect', s);
+        },
+        onOpen(s) {
+          console.log('onOpen', s);
+        },
         ...callbacks,
-
         onHttp(sock, url) {
-          console.log(url.replace('/', ''));
-
           if(url != '/') {
             if(/\.html/.test(url) && !/debugger.html/.test(url)) sock.redirect(sock.HTTP_STATUS_FOUND, '/debugger.html');
           }

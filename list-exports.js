@@ -120,36 +120,33 @@ try {
 
 function ShowOutput(ast, tree, flat, file, params) {
   const output_file = params['output-js'] ?? '/dev/stdout';
-
   let nodes = deep.select(ast, node => /Export/.test(Util.className(node)), deep.RETURN_VALUE);
   let names = [...deep.select(ast, (node, key) => key == 'exported', deep.RETURN_VALUE), ...deep.select(ast, (node, key) => node instanceof ExportNamedDeclaration, deep.RETURN_VALUE).map(node => (node.declaration && node.declaration.id ? node.declaration.id : node.declaration))];
-
   let defaultExport = deep.find(ast, node => node instanceof ExportDefaultDeclaration, deep.RETURN_VALUE);
   console.log(
     'names:',
     names.map(n => NodeToName(n))
   );
-
   let importNode = new ImportDeclaration([...names.map(n => new ImportSpecifier(new Identifier(NodeToName(n))))], new Literal(`'${file}'`));
-
   let code = PrintAst(importNode);
-  //console.log('code:', code);
-  // console.log('defaultExport:', defaultExport);
-
   WriteFile(output_file, code);
-
-  //  const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral);
 }
 
 function NodeToName(node) {
   let id;
   if(node && node.name) id = node;
-  if(!id) id = deep.find(node, (path, key) => ['id', 'exported'].indexOf(key) != -1, deep.RETURN_VALUE);
-  if(!id && node.id && node.id instanceof Identifier) id = node.id;
+  if(!id)
+    try {
+      id = deep.find(node, (path, key) => ['id', 'exported'].indexOf(key) != -1, deep.RETURN_VALUE);
+    } catch(e) {}
+  try {
+    if(!id && node.id && node.id instanceof Identifier) id = node.id;
+  } catch(e) {}
   if(id)
-    if(id instanceof Identifier) id = Identifier.string(id);
-    else if('name' in id) id = id.name;
-
+    try {
+      if(id instanceof Identifier) id = Identifier.string(id);
+      else if('name' in id) id = id.name;
+    } catch(e) {}
   return id;
 }
 
@@ -179,21 +176,14 @@ function ProcessFile(file, params) {
     }
   }
   parser.addCommentsToNodes(ast);
-
   WriteFile(params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json', JSON.stringify(ast /*.toJSON()*/, null, 2));
-
   let node2path = new WeakMap();
   let nodeKeys = [];
-
   let commentMap = new Map(
     [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node }]),
     (a, b) => a - b
   );
-
-  //console.log('commentMap:', commentMap);
-
   let tree = new Tree(ast);
-
   let flat = tree.flat(null, ([path, node]) => {
     return !Util.isPrimitive(node);
   });

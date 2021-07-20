@@ -49,9 +49,66 @@ import { useActive, useClickout, useDimensions, useDoubleClick, useElement, Even
 
 import { WebSocketClient } from './lib/net/websocket-async.js';
 /* prettier-ignore */ import * as ecmascript from './lib/ecmascript.js';
-import { PipeTo, AsyncRead, AsyncWrite, DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater, WritableStream, ReadFromIterator } from './lib/stream.js?ts=<?TS?>';
+import {
+  PipeTo,
+  AsyncRead,
+  AsyncWrite,
+  DebugTransformStream,
+  TextEncodeTransformer,
+  TextEncoderStream,
+  TextDecodeTransformer,
+  TextDecoderStream,
+  TransformStreamSink,
+  TransformStreamSource,
+  TransformStreamDefaultController,
+  TransformStream,
+  ArrayWriter,
+  readStream,
+  WriteToRepeater,
+  LogSink,
+  RepeaterSink,
+  StringReader,
+  LineReader,
+  ChunkReader,
+  ByteReader,
+  PipeToRepeater,
+  WritableStream,
+  ReadFromIterator
+} from './lib/stream.js?ts=<?TS?>';
 import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
-import { useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, RenderArc } from './lib/eagle/renderUtils.js';
+import {
+  useTrkl,
+  RAD2DEG,
+  DEG2RAD,
+  VERTICAL,
+  HORIZONTAL,
+  HORIZONTAL_VERTICAL,
+  DEBUG,
+  log,
+  setDebug,
+  PinSizes,
+  EscapeClassName,
+  UnescapeClassName,
+  LayerToClass,
+  ElementToClass,
+  ClampAngle,
+  AlignmentAngle,
+  MakeRotation,
+  EagleAlignments,
+  Alignment,
+  SVGAlignments,
+  AlignmentAttrs,
+  RotateTransformation,
+  LayerAttributes,
+  InvertY,
+  PolarToCartesian,
+  CartesianToPolar,
+  CalculateArcRadius,
+  LinesToPath,
+  MakeCoordTransformer,
+  useAttributes,
+  RenderArc
+} from './lib/eagle/renderUtils.js';
 import { Wire } from './lib/eagle/components/wire.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
