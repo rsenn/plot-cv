@@ -115,6 +115,15 @@ import {
   usePanZoom,
   useToggleButtonGroupState
 } from './lib/hooks.js';
+import {
+  MessageReceiver,
+  MessageTransmitter,
+  MessageTransceiver,
+  Connection,
+  RPCServerConnection,
+  RPCClientConnection,
+  RPCSocket
+} from './quickjs/net/rpc.js';
 
 import { WebSocketClient } from './lib/net/websocket-async.js';
 /* prettier-ignore */ import * as ecmascript from './lib/ecmascript.js';
@@ -1717,7 +1726,14 @@ const AppMain = (window.onload = async () => {
     EagleMaps,
     SaveConfig,
     LoadConfig,
-    FixedMedium
+    FixedMedium,
+    MessageReceiver,
+    MessageTransmitter,
+    MessageTransceiver,
+    Connection,
+    RPCServerConnection,
+    RPCClientConnection,
+    RPCSocket
   };
 
   if(store.keys().length == 0) {
