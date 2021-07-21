@@ -86,14 +86,7 @@ async function main(...args) {
       })
     );
 
-    args = args.concat([
-      '-D_WIN32=1',
-      '-DWINAPI=',
-      '-D__declspec(x)=',
-      '-include',
-      '/usr/x86_64-w64-mingw32/include/wtypesbase.h',
-      '-I/usr/x86_64-w64-mingw32/include'
-    ]);
+    args = args.concat(['-D_WIN32=1', '-DWINAPI=', '-D__declspec(x)=', '-include', '/usr/x86_64-w64-mingw32/include/wtypesbase.h', '-I/usr/x86_64-w64-mingw32/include']);
   }
   console.log('args', { defs, includes });
   args = args.concat(defs.map(d => `-D${d}`));
@@ -112,12 +105,7 @@ async function main(...args) {
       let outfile = base + '.ast.json';
       let boutfile = base + '.ast.bjson';
 
-      async function ReadAST(
-        outfile,
-        load = f => fs.readFileSync(f),
-        save = WriteFile,
-        parse = JSON.parse
-      ) {
+      async function ReadAST(outfile, load = f => fs.readFileSync(f), save = WriteFile, parse = JSON.parse) {
         let st = [file, outfile].map(name => fs.stat(name));
         let times = st.map(stat => (stat && stat.mtime) || 0);
         let cached = times[1] >= times[0];
@@ -154,13 +142,7 @@ async function main(...args) {
       //console.log("ast:", ast);
 
       let tree = new Tree(ast);
-      let flat = /*tree.flat();*/ deep.flatten(
-        ast,
-        new Map(),
-        (v, p) =>
-          ['inner', 'loc', 'range'].indexOf(p[p.length - 1]) == -1 &&
-          Util.isObject(v) /*&& 'kind' in v*/
-      );
+      let flat = /*tree.flat();*/ deep.flatten(ast, new Map(), (v, p) => ['inner', 'loc', 'range'].indexOf(p[p.length - 1]) == -1 && Util.isObject(v) /*&& 'kind' in v*/);
       let locations = [];
       let l = Object.setPrototypeOf({}, { toString() {} });
       //let path = new WeakMap();
@@ -206,8 +188,7 @@ async function main(...args) {
         let typedefs = [...Util.filter(mainNodes, ([path, decl]) => decl.kind == 'TypedefDecl')];
 
         const names = decls => [...decls].map(([path, decl]) => decl.name);
-        const declarations = decls =>
-          [...decls].map(([path, decl, loc]) => [decl.name, loc.toString()]);
+        const declarations = decls => [...decls].map(([path, decl, loc]) => [decl.name, loc.toString()]);
 
         if(params.debug) {
           let nodeTypes = [...nodes].map(([p, n]) => n.kind);
@@ -236,32 +217,14 @@ async function main(...args) {
 
         if(params.debug) console.log('namedDecls:', namedDecls);
 
-        let decls = loc_name
-          .map(([p, n]) => [p, n, locations[tree.pathOf(n)]])
-          .map(([p, n, l]) => [
-            p,
-            n,
-            n.id || tree.pathOf(n),
-            n.name || n.referencedMemberDecl || Object.keys(n).filter(k => typeof n[k] == 'string'),
-            GetTypeStr(n),
-            n.kind,
-            p.join('.').replace(/\.?inner\./g, '/'),
-            l + ''
-          ]);
+        let decls = loc_name.map(([p, n]) => [p, n, locations[tree.pathOf(n)]]).map(([p, n, l]) => [p, n, n.id || tree.pathOf(n), n.name || n.referencedMemberDecl || Object.keys(n).filter(k => typeof n[k] == 'string'), GetTypeStr(n), n.kind, p.join('.').replace(/\.?inner\./g, '/'), l + '']);
 
         if(params.debug) console.log('loc ∩ name:', loc_name.length);
 
-        for(let decl of decls.filter(
-          ([path, node, id, name, type, kind]) => !/ParmVar/.test(kind)
-        )) {
+        for(let decl of decls.filter(([path, node, id, name, type, kind]) => !/ParmVar/.test(kind))) {
           const line = decl
             .slice(2)
-            .map((field, i) =>
-              (
-                Util.abbreviate(field, [Infinity, Infinity, 20, Infinity, Infinity, Infinity][i]) +
-                ''
-              ).padEnd([6, 25, 20, 20, 40, 0][i])
-            )
+            .map((field, i) => (Util.abbreviate(field, [Infinity, Infinity, 20, Infinity, Infinity, Infinity][i]) + '').padEnd([6, 25, 20, 20, 40, 0][i]))
             .join(' ');
 
           console.log(line);
