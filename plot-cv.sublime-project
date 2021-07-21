@@ -150,7 +150,13 @@
 			"path": ".",
 		},
 		{
-			"path": "quickjs"
+			"path": "quickjs",
+		},
+		{
+			"path": "js-live-eval",
+		},
+		{
+			"path": "js-live-eval/src"
 		},
 	],
 	"settings":
