@@ -133,24 +133,7 @@ function main(...args) {
     }
   });
 
-  Object.assign(globalThis, {
-    repl,
-    Util,
-    ...rpc,
-    quit,
-    exit: quit,
-    Socket,
-    recv,
-    send,
-    errno,
-    cli,
-    net,
-    std,
-    os,
-    deep,
-    fs,
-    path
-  });
+  Object.assign(globalThis, { repl, Util, ...rpc, quit, exit: quit, Socket, recv, send, errno, cli, net, std, os, deep, fs, path });
 
   define(globalThis, listen ? { server: cli, cli } : { client: cli, cli });
   delete globalThis.DEBUG;
