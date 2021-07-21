@@ -49,9 +49,7 @@ function main(...args) {
         false,
         (v, r, o) => {
           console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
-          console.log(
-            o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n')
-          );
+          console.log(o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n'));
           Util.exit(0);
         },
         'h'
@@ -149,10 +147,7 @@ function processFile(file, params) {
   const isImport = node => node instanceof ImportDeclaration;
 
   let commentMap = new Map(
-    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
-      pos * 10 - 1,
-      { comment, pos, len, node }
-    ]),
+    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node }]),
     (a, b) => a - b
   );
 
@@ -160,10 +155,7 @@ function processFile(file, params) {
 
   const output_file = params['output-js'] ?? path.basename(file, path.extname(file)) + '.es';
 
-  WriteFile(
-    params['output-ast'] ?? path.basename(file, path.extname(file)) + '.ast.json',
-    JSON.stringify(ast /*.toJSON()*/, null, 2)
-  );
+  WriteFile(params['output-ast'] ?? path.basename(file, path.extname(file)) + '.ast.json', JSON.stringify(ast /*.toJSON()*/, null, 2));
 }
 
 function finish(err) {

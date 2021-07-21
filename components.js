@@ -1,41 +1,9 @@
-import {
-  h,
-  Fragment,
-  html,
-  render,
-  Component,
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  Portal,
-  ReactComponent
-} from './lib/dom/preactComponent.js';
+import { h, Fragment, html, render, Component, useState, useEffect, useRef, useCallback, Portal, ReactComponent } from './lib/dom/preactComponent.js';
 import { trkl } from './lib/trkl.js';
 import { Element } from './lib/dom.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
 import { classNames } from './lib/classNames.js';
-import {
-  useActive,
-  useClickout,
-  useDimensions,
-  useDoubleClick,
-  useElement,
-  EventTracker,
-  useEvent,
-  useFocus,
-  useRecognizers,
-  useDrag,
-  usePinch,
-  useWheel,
-  useMove,
-  useScroll,
-  useGesture,
-  useHover,
-  useMousePosition,
-  usePanZoom,
-  useToggleButtonGroupState
-} from './lib/hooks.js';
+import { useActive, useClickout, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useRecognizers, useDrag, usePinch, useWheel, useMove, useScroll, useGesture, useHover, useMousePosition, usePanZoom, useToggleButtonGroupState } from './lib/hooks.js';
 import deepDiff from './lib/deep-diff.js';
 import { useValue } from './lib/repeater/react-hooks.js';
 import RulerDraggable from './ruler-draggable.js';
@@ -130,20 +98,8 @@ export const MouseEvents = h => ({
   onMouseUp: h
 });
 
-export const Overlay = ({
-  className = 'overlay',
-  title,
-  tooltip,
-  active = true,
-  toggle,
-  state,
-  onPush,
-  text,
-  children,
-  ...props
-}) => {
-  const [pushed, setPushed] =
-    typeof state == 'function' ? [useTrkl(state), state] : useState(false);
+export const Overlay = ({ className = 'overlay', title, tooltip, active = true, toggle, state, onPush, text, children, ...props }) => {
+  const [pushed, setPushed] = typeof state == 'function' ? [useTrkl(state), state] : useState(false);
   const events = MouseEvents(
     (toggle ? ToggleHandler : ClickHandler)(
       (e, state) => {
@@ -179,16 +135,7 @@ export const Container = ({ className = 'panel', tag = 'div', children, ...props
 };
 
 export const Button = allProps => {
-  let {
-    className,
-    caption,
-    image,
-    fn,
-    state,
-    onPush = state => (state && typeof fn == 'function' ? fn(state) : undefined),
-    style = {},
-    ...props
-  } = allProps;
+  let { className, caption, image, fn, state, onPush = state => (state && typeof fn == 'function' ? fn(state) : undefined), style = {}, ...props } = allProps;
 
   if(!props.children) props.children = [];
   if(typeof image == 'string') image = h('img', { src: image });
@@ -267,8 +214,7 @@ export const FloatingPanel = ({ children, className, onSize, onHide, style = {},
     const tmpSize = onSize();
     noUpdate = true;
     // if(tmpSize.width != width || tmpSize.height != height)
-    if(Util.isObject(tmpSize) && (tmpSize.width === undefined || tmpSize.height === undefined))
-      if(width !== undefined && height !== undefined) onSize({ width, height });
+    if(Util.isObject(tmpSize) && (tmpSize.width === undefined || tmpSize.height === undefined)) if (width !== undefined && height !== undefined) onSize({ width, height });
     noUpdate = false;
   }
   const hasOnHide = typeof onHide == 'function' && typeof onHide.subscribe == 'function';
@@ -304,11 +250,7 @@ export const FloatingPanel = ({ children, className, onSize, onHide, style = {},
 export const Label = ({ className, text, title, tooltip, children, ...props }) => {
   if(typeof title == 'string' && title.length > 0) props.title = title;
   if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
-  return h(
-    'div',
-    { className: classNames('caption', className), ...props },
-    (text ? [text] : []).concat(children)
-  );
+  return h('div', { className: classNames('caption', className), ...props }, (text ? [text] : []).concat(children));
 };
 
 export const DynamicLabel = ({ caption, title, children, ...props }) => {
@@ -326,8 +268,7 @@ export const Item = ({ className = 'item', title, tooltip, label, icon, children
   return h(Overlay, { className, ...props }, h(Label, { text: icon }, label));
 };
 
-export const Icon = ({ className = 'icon', caption, image, ...props }) =>
-  h(Container, { className, ...props }, h('img', { src: image }));
+export const Icon = ({ className = 'icon', caption, image, ...props }) => h(Container, { className, ...props }, h('img', { src: image }));
 
 export const Progress = ({ className, percent, ...props }) =>
   h(
@@ -364,10 +305,7 @@ export const Progress = ({ className, percent, ...props }) =>
 export const SchematicIcon = props => html`
   <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
     <defs />
-    <path
-      d="M32.02 3.594c-21.347 24.27-10.673 12.135 0 0zm3.439 26.494a2.727 2.727 0 01-.7 1.675l-7.165 7.505a2.375 2.375 0 01-1.706.732H12.766c-3.32 0-5.978-2.8-5.978-6.245V6.25c0-1.735.675-3.302 1.754-4.433C9.629.702 11.108 0 12.766 0h16.708A5.86 5.86 0 0133.7 1.817 6.422 6.422 0 0135.46 6.25z"
-      fill="#fff"
-    />
+    <path d="M32.02 3.594c-21.347 24.27-10.673 12.135 0 0zm3.439 26.494a2.727 2.727 0 01-.7 1.675l-7.165 7.505a2.375 2.375 0 01-1.706.732H12.766c-3.32 0-5.978-2.8-5.978-6.245V6.25c0-1.735.675-3.302 1.754-4.433C9.629.702 11.108 0 12.766 0h16.708A5.86 5.86 0 0133.7 1.817 6.422 6.422 0 0135.46 6.25z" fill="#fff" />
     <path
       d="M33.079 6.25a3.82 3.82 0 00-1.059-2.656 3.481 3.481 0 00-2.547-1.091H12.765c-.968 0-1.868.375-2.538 1.09A3.785 3.785 0 009.175 6.25v27.505c0 2.06 1.612 3.742 3.59 3.742h13.143V29.82h7.17zm2.38 23.838a2.728 2.728 0 01-.7 1.675l-7.165 7.505a2.375 2.375 0 01-1.706.733H12.766c-3.319 0-5.978-2.802-5.978-6.245V6.25c0-1.735.675-3.303
     1.754-4.434C9.63.702 11.108 0 12.766 0h16.708A5.86 5.86 0 0133.7 1.817a6.421 6.421 0 011.76 4.434z"
@@ -384,10 +322,7 @@ export const SchematicIcon = props => html`
 export const BoardIcon = props => html`
   <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
     <defs />
-    <path
-      d="M32.02 3.594c-21.347 24.27-10.673 12.135 0 0zm3.439 26.494a2.727 2.727 0 01-.7 1.675l-7.165 7.505a2.375 2.375 0 01-1.706.732H12.766c-3.32 0-5.978-2.8-5.978-6.245V6.25c0-1.735.675-3.302 1.754-4.433C9.629.702 11.108 0 12.766 0h16.708A5.86 5.86 0 0133.7 1.817 6.422 6.422 0 0135.46 6.25z"
-      fill="#fff"
-    />
+    <path d="M32.02 3.594c-21.347 24.27-10.673 12.135 0 0zm3.439 26.494a2.727 2.727 0 01-.7 1.675l-7.165 7.505a2.375 2.375 0 01-1.706.732H12.766c-3.32 0-5.978-2.8-5.978-6.245V6.25c0-1.735.675-3.302 1.754-4.433C9.629.702 11.108 0 12.766 0h16.708A5.86 5.86 0 0133.7 1.817 6.422 6.422 0 0135.46 6.25z" fill="#fff" />
     <path
       d="M33.079 6.25a3.82 3.82 0 00-1.059-2.656 3.481 3.481 0 00-2.548-1.091H12.765c-.968 0-1.868.374-2.538 1.09A3.785 3.785 0 009.175 6.25v27.505c0 2.06 1.612 3.742 3.591 3.742H25.91V29.82h7.17V6.25zm2.38 23.837a2.728 2.728 0 01-.7 1.675l-7.165 7.505a2.375 2.375 0 01-1.707.733H12.765c-3.319 0-5.978-2.801-5.978-6.245V6.25a6.41 6.41 0 011.754-4.434C9.63.701 11.107 0 12.765 0h16.707A5.86 5.86 0 0133.7 1.816a6.421 6.421 0 011.759 4.434v23.837z"
       fill="#444443"
@@ -402,23 +337,13 @@ export const BoardIcon = props => html`
 
 export const LibraryIcon = props => html`
   <svg xmlns="http://www.w3.org/2000/svg">
-    <path
-      d="M3.398 6.487v26.942c0 3.085 2.13 5.675 5.011 6.406V.107a6.56 6.56 0 00-5.011 6.38M30.122 0H11.644v40.009h18.478c3.64 0 6.59-2.967 6.59-6.581V6.487c0-3.641-2.95-6.487-6.59-6.487"
-      fill="#444443"
-    />
+    <path d="M3.398 6.487v26.942c0 3.085 2.13 5.675 5.011 6.406V.107a6.56 6.56 0 00-5.011 6.38M30.122 0H11.644v40.009h18.478c3.64 0 6.59-2.967 6.59-6.581V6.487c0-3.641-2.95-6.487-6.59-6.487" fill="#444443" />
     <path d="m30.312 19.791h-12.5v-12.5h12.5z" fill="#dedd00" />
     <path d="M8.408 0v39.834l3.237.166V0z" fill="rgba(255,255,255,0)  " />
   </svg>
 `;
 
-export const Conditional = ({
-  initialState,
-  component = Fragment,
-  className,
-  children,
-  signal,
-  ...props
-}) => {
+export const Conditional = ({ initialState, component = Fragment, className, children, signal, ...props }) => {
   const [show, setShown] = useState(initialState !== undefined ? initialState : signal());
 
   if(signal) signal.subscribe(value => setShown(value));
@@ -434,15 +359,7 @@ export const ShowHide = ({ initialState, component, className, children, signal,
   return h(component, { className: classNames(className, hidden && 'hidden'), ...props }, children);
 };
 
-export const EditBox = ({
-  value = '',
-  type = 'div',
-  className,
-  hidden = false,
-  current,
-  focus,
-  ...props
-}) => {
+export const EditBox = ({ value = '', type = 'div', className, hidden = false, current, focus, ...props }) => {
   if(typeof current == 'function') props.ref = input => current(input);
 
   const outerProps = { className: classNames(className, hidden && 'hidden') };
@@ -461,19 +378,7 @@ export const EditBox = ({
   );
 };
 
-export const File = ({
-  label,
-  name,
-  description,
-  i,
-  key,
-  className = 'file',
-  onPush,
-  signal,
-  data,
-  doc,
-  ...props
-}) => {
+export const File = ({ label, name, description, i, key, className = 'file', onPush, signal, data, doc, ...props }) => {
   const [loaded, setLoaded] = useState(NaN);
   if(signal) signal.subscribe(data => setLoaded(data.percent));
   onPush =
@@ -484,13 +389,7 @@ export const File = ({
     });
   let id = key || i;
   let style = { minWidth: '40px', width: '40px', height: '40px' };
-  let icon = /brd$/i.test(id + className)
-    ? h(BoardIcon, { style })
-    : /sch$/i.test(id + className)
-    ? h(SchematicIcon, {})
-    : /lbr$/i.test(id + className)
-    ? h(LibraryIcon, {})
-    : undefined;
+  let icon = /brd$/i.test(id + className) ? h(BoardIcon, { style }) : /sch$/i.test(id + className) ? h(SchematicIcon, {}) : /lbr$/i.test(id + className) ? h(LibraryIcon, {}) : undefined;
   if(id) {
     id = isNaN(+id) ? i : id;
     id = 'file-' + id;
@@ -502,11 +401,7 @@ export const File = ({
   if(icon) label = label.replace(/\.[^.]*$/, '');
   label = h(Label, { text: Util.wordWrap(label, 50, '\n') });
   if(description) {
-    let s = Util.multiParagraphWordWrap(
-      Util.stripXML(Util.decodeHTMLEntities(description)),
-      60,
-      '\n'
-    );
+    let s = Util.multiParagraphWordWrap(Util.stripXML(Util.decodeHTMLEntities(description)), 60, '\n');
 
     let d = s.split(/\n/g).slice(0, 1);
     label = h('div', {}, [
@@ -533,18 +428,7 @@ export const File = ({
   );
 };
 
-export const Chooser = ({
-  className = 'list',
-  itemClass = 'item',
-  tooltip = () => '',
-  itemComponent = Overlay,
-  itemFilter,
-  items,
-  sortCompare,
-  onChange = () => {},
-  onPush = () => {},
-  ...props
-}) => {
+export const Chooser = ({ className = 'list', itemClass = 'item', tooltip = () => '', itemComponent = Overlay, itemFilter, items, sortCompare, onChange = () => {}, onPush = () => {}, ...props }) => {
   const [active, setActive] = useState(-1);
   const [filter, setFilter] = useState('*');
   const [list, setList] = /*useState(items);*/ trkl.is(items) ? useState(items()) : [items];
@@ -564,12 +448,7 @@ export const Chooser = ({
     setFilter(itemFilter());
     itemFilter.subscribe(value => setFilter(value));
   }
-  const list2re = list =>
-    list
-      .map(part =>
-        Util.tryCatch(() => new RegExp(part.trim().replace(/\./g, '\\.').replace(/\*/g, '.*'), 'i'))
-      )
-      .filter(r => r !== null);
+  const list2re = list => list.map(part => Util.tryCatch(() => new RegExp(part.trim().replace(/\./g, '\\.').replace(/\*/g, '.*'), 'i'))).filter(r => r !== null);
   const bar = html``;
   const preFilter = filter
     .replace(/\|/g, ' | ')
@@ -585,8 +464,7 @@ export const Chooser = ({
     .filter(p => p != '')
     .map(p => list2re(p.split(/\s\s*/g)));
   //Sconsole.debug('regex:', ...reList);
-  const pred = name =>
-    !reList.every(c => !c.every(re => re.test(name))) && plus.every(re => re.test(name));
+  const pred = name => !reList.every(c => !c.every(re => re.test(name))) && plus.every(re => re.test(name));
   const other = list.filter(({ name }) => !pred(name)).map(i => i.name);
   const displayList = [...list].sort(sortCompare);
   console.log('displayList', { displayList, sortCompare });
@@ -601,10 +479,7 @@ export const Chooser = ({
       return h(itemComponent, {
         key: i,
         i,
-        className:
-          typeof itemClass == 'function'
-            ? itemClass(value)
-            : classNames(itemClass || className + '-item', (name + '').replace(/.*\./, '')),
+        className: typeof itemClass == 'function' ? itemClass(value) : classNames(itemClass || className + '-item', (name + '').replace(/.*\./, '')),
         active: i == active,
         onPush: pushHandler(i),
         label: name.replace(new RegExp('.*/'), ''),
@@ -623,39 +498,19 @@ export const Chooser = ({
       });
     });
 
-  return h(
-    Container,
-    { className: classNames('panel', 'no-select', className), ...props },
-    children
-  );
+  return h(Container, { className: classNames('panel', 'no-select', className), ...props }, children);
 };
 
 const ToolTipFn = ({ name, data, ...item }) => {
   let tooltip = `name\t${name.replace(new RegExp('.*/', 'g'), '')}`;
 
-  for(let field of ['type', 'size', 'sha', 'path'])
-    if(item[field] !== undefined) tooltip += `\n${field}\t${item[field]}`;
+  for(let field of ['type', 'size', 'sha', 'path']) if(item[field] !== undefined) tooltip += `\n${field}\t${item[field]}`;
 
   if(data) tooltip += `\ndata\t${Util.abbreviate(data)}`;
   return tooltip;
 };
 
-export const FileList = ({
-  files,
-  onChange,
-  onActive,
-  filter,
-  showSearch,
-  focusSearch,
-  currentInput,
-  changeInput,
-  tag = 'div',
-  listTag = 'div',
-  sortKey,
-  sortOrder,
-  makeSortCompare,
-  ...props
-}) => {
+export const FileList = ({ files, onChange, onActive, filter, showSearch, focusSearch, currentInput, changeInput, tag = 'div', listTag = 'div', sortKey, sortOrder, makeSortCompare, ...props }) => {
   const [active, setActive] = useState(true);
   const [items, setItems] = useState(files());
   const key = useTrkl(sortKey);
@@ -700,8 +555,7 @@ export const FileList = ({
   ]);
 };
 
-export const Panel = ({ className, children, ...props }) =>
-  h(Container, { className: classNames('panel', className), ...props }, children);
+export const Panel = ({ className, children, ...props }) => h(Container, { className: classNames('panel', className), ...props }, children);
 
 export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className }, children) =>
   enable
@@ -724,17 +578,7 @@ export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className 
         children
       );
 
-export const AspectRatioBox = (
-  {
-    aspect = 1.0,
-    children,
-    insideClassName,
-    outsideClassName,
-    outsideProps = {},
-    style,
-    ...props
-  } /* console.debug('AspectRatioBox ', { props, aspect, children, insideClassName, outsideClassName, style });*/
-) =>
+export const AspectRatioBox = ({ aspect = 1.0, children, insideClassName, outsideClassName, outsideProps = {}, style, ...props } /* console.debug('AspectRatioBox ', { props, aspect, children, insideClassName, outsideClassName, style });*/) =>
   h(Fragment, {}, [
     h(
       'div',
@@ -758,30 +602,11 @@ export const AspectRatioBox = (
     )
   ]);
 
-export const SizedAspectRatioBox = ({
-  id,
-  width,
-  height,
-  style,
-  className,
-  children,
-  outsideClassName,
-  insideClassName,
-  insideProps,
-  outsideProps = {},
-  sizeClassName,
-  sizeProps = {},
-  onClick,
-  ...props
-}) =>
+export const SizedAspectRatioBox = ({ id, width, height, style, className, children, outsideClassName, insideClassName, insideProps, outsideProps = {}, sizeClassName, sizeProps = {}, onClick, ...props }) =>
   h(
     'div',
     {
-      className: classNames(
-        'aspect-ratio-box-size',
-        className && className + '-size',
-        sizeClassName
-      ),
+      className: classNames('aspect-ratio-box-size', className && className + '-size', sizeClassName),
       style: { position: 'relative', width, height, ...style },
       onClick,
       id
@@ -790,11 +615,7 @@ export const SizedAspectRatioBox = ({
       h(
         AspectRatioBox,
         {
-          outsideClassName: classNames(
-            'aspect-ratio-box-outside',
-            className && className + '-outside',
-            outsideClassName
-          ),
+          outsideClassName: classNames('aspect-ratio-box-outside', className && className + '-outside', outsideClassName),
           outsideProps,
           insideClassName: insideClassName || className,
           onClick,
@@ -805,16 +626,7 @@ export const SizedAspectRatioBox = ({
     ]
   );
 
-export const TransformedElement = ({
-  type = 'div',
-  id,
-  aspect,
-  listener,
-  style = { position: 'relative' },
-  className,
-  children = [],
-  ...props
-}) => {
+export const TransformedElement = ({ type = 'div', id, aspect, listener, style = { position: 'relative' }, className, children = [], ...props }) => {
   /*  const [transform, setTransform] = useState(new TransformationList());
   //console.debug('TransformedElement:', { aspect });
   //
@@ -841,19 +653,7 @@ export const TransformedElement = ({
   );
 };
 
-export const Slider = ({
-  min = 0,
-  max = 100,
-  value: initialValue = 0,
-  step = 1,
-  name = 'slider',
-  orient = 'horizontal',
-  label,
-  onChange = value => {},
-  style = {},
-  length,
-  ...props
-}) => {
+export const Slider = ({ min = 0, max = 100, value: initialValue = 0, step = 1, name = 'slider', orient = 'horizontal', label, onChange = value => {}, style = {}, length, ...props }) => {
   const [value, setValue] = useState(initialValue);
   const onInput = e => {
     const { target } = e;
@@ -934,8 +734,7 @@ export const Canvas = ({ onInit, ...props }) => {
     //console.debug('ctx.current', ctx.current);
     const { offsetLeft: x, offsetTop: y } = canvasRef.current;
 
-    if(typeof onInit == 'function')
-      onInit(ctx.current, canvasRef.current, { width, height, x, y });
+    if(typeof onInit == 'function') onInit(ctx.current, canvasRef.current, { width, height, x, y });
   }, []);
 
   /*  const [windowWidth, windowHeight] = useWindowSize(() => {
@@ -945,10 +744,7 @@ export const Canvas = ({ onInit, ...props }) => {
 
   function handleMouseMove(e) {
     //actual coordinates
-    const coords = [
-      e.clientX - canvasRef.current.offsetLeft,
-      e.clientY - canvasRef.current.offsetTop
-    ];
+    const coords = [e.clientX - canvasRef.current.offsetLeft, e.clientY - canvasRef.current.offsetTop];
     if(drawing) {
       ctx.current.lineTo(...coords);
       ctx.current.stroke();
@@ -965,10 +761,7 @@ export const Canvas = ({ onInit, ...props }) => {
     ctx.current.strokeStyle = props.color;
     ctx.current.beginPath();
     //actual coordinates
-    ctx.current.moveTo(
-      e.clientX - canvasRef.current.offsetLeft,
-      e.clientY - canvasRef.current.offsetTop
-    );
+    ctx.current.moveTo(e.clientX - canvasRef.current.offsetLeft, e.clientY - canvasRef.current.offsetTop);
     setDrawing(true);
   }
 
@@ -1197,8 +990,7 @@ export const Fence = ({ children, style = {}, sizeListener, aspectListener, ...p
   const [dimensions, setDimensions] = useState(sizeListener());
   const [aspect, setAspect] = useState(aspectListener());
   if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
-  if(aspectListener && aspectListener.subscribe)
-    aspectListener.subscribe(value => setAspect(value));
+  if(aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));
   //console.debug('Fence dimensions:', dimensions);
   return h(
     TransformedElement,

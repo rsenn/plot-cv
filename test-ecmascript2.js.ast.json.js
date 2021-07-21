@@ -133,9 +133,7 @@ function main(...args) {
         false,
         (v, r, o) => {
           console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
-          console.log(
-            o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n')
-          );
+          console.log(o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n'));
           Util.exit(0);
         },
         'h'
@@ -230,10 +228,7 @@ function processFile(file, params) {
     }
   }
   parser.addCommentsToNodes(ast);
-  WriteFile(
-    params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json',
-    JSON.stringify(ast, null, 2)
-  );
+  WriteFile(params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json', JSON.stringify(ast, null, 2));
   let node2path = new WeakMap();
   let nodeKeys = [];
   const isRequire = node => node instanceof CallExpression && node.callee.value == 'require';
@@ -250,8 +245,7 @@ function processFile(file, params) {
     ]),
     (a, b) => a - b
   );
-  const output_file =
-    params['output-js'] ?? file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
+  const output_file = params['output-js'] ?? file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
   let tree = new Tree(ast);
   let flat = tree.flat(null, ([path, node]) => {
     return !Util.isPrimitive(node);

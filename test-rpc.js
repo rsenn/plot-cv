@@ -20,16 +20,6 @@ import rpc from './quickjs/net/rpc.js';
 import * as rpc2 from './quickjs/net/rpc.js';
 
 extendArray();
-Object.assign(globalThis, {
-  EventEmitter,
-  EventTarget,
-  eventify,
-  Repeater,
-  fnmatch,
-  PATH_FNM_MULTI,
-  ...rpc2,
-  rpc
-});
 
 function main(...args) {
   globalThis.console = new Console({
@@ -62,6 +52,16 @@ function main(...args) {
 
   const listen = params.connect && !params.listen ? false : true;
   const server = !params.client || params.server;
+  Object.assign(globalThis, {
+    EventEmitter,
+    EventTarget,
+    eventify,
+    Repeater,
+    fnmatch,
+    PATH_FNM_MULTI,
+    ...rpc2,
+    rpc
+  });
 
   let name = Util.getArgs()[0];
   name = name
@@ -93,11 +93,7 @@ function main(...args) {
 
   Object.assign(console.options, { depth: 2, compact: 2, getters: false });
 
-  let cli = (globalThis.sock = new rpc.Socket(
-    `${address}:${port}`,
-    rpc[`RPC${server ? 'Server' : 'Client'}Connection`],
-    +params.verbose
-  ));
+  let cli = (globalThis.sock = new rpc.Socket(`${address}:${port}`, rpc[`RPC${server ? 'Server' : 'Client'}Connection`], +params.verbose));
 
   cli.register({ Socket, Worker: os.Worker, Repeater, REPL, EventEmitter });
 
@@ -120,8 +116,7 @@ function main(...args) {
         ...callbacks,
         onHttp(sock, url) {
           if(url != '/') {
-            if(/\.html/.test(url) && !/debugger.html/.test(url))
-              sock.redirect(sock.HTTP_STATUS_FOUND, '/debugger.html');
+            if(/\.html/.test(url) && !/debugger.html/.test(url)) sock.redirect(sock.HTTP_STATUS_FOUND, '/debugger.html');
           }
           sock.header('Test', 'blah');
         },
