@@ -153,6 +153,8 @@ function main(...args) {
   });
 
   define(globalThis, listen ? { server: cli, cli } : { client: cli, cli });
+  delete globalThis.debug;
+  Object.defineProperty(globalThis, 'debug', { get: DebugFlags });
 
   if(listen) cli.listen(createWS, os);
   else cli.connect(createWS, os);
