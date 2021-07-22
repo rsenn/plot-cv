@@ -1516,7 +1516,7 @@ const AppMain = (window.onload = async () => {
             break;
         }
       }
-    });
+    }).catch(e => {})
   }
   const importedNames = Object.keys(imports);
   console.debug(

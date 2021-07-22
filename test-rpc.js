@@ -102,7 +102,7 @@ function main(...args) {
     console.log('createWS', { url, callbacks, listen });
     return [net.client, net.server][+listen](
       /*new EventLogger*/ {
-        mounts: [['/', '.', 'debugger.html']],
+        mounts: [['/', '.', 'index.html']],
         ...url,
         onFd(fd) {
           console.log('onFd', fd);
