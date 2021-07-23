@@ -114,7 +114,10 @@ function main(...args) {
           console.log('onOpen', s);
         },
         ...callbacks,
-        onHttp(sock, url) {
+        onHttp(...args) {
+          console.log('onHttp(', ...args, ')');
+          const[sock,url] =args;
+          
           if(url != '/') {
             if(/\.html/.test(url) && !/debugger.html/.test(url)) sock.redirect(sock.HTTP_STATUS_FOUND, '/debugger.html');
           }
