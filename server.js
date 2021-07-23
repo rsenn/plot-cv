@@ -24,6 +24,7 @@ SerialStream.Binding = SerialBinding;
 let filesystem, childProcess;
 const port = process.env.PORT || 3000;
 
+const files = new Set();
 const hash = crypto.createHash('sha1');
 
 const prng = new Alea();
@@ -359,6 +360,13 @@ async function main() {
     next();
   });
 
+  app.use((req, res, next) => {
+    let file = req.url.replace(/^\//, '');
+    if(fs.existsSync(file)) {console.log('The file ' + file + ' was requested.');
+    files.add(file);
+  }
+    next();
+  });
   app.use('/static', express.static(path.join(p, 'static')));
   app.use('/modules', express.static(path.join(p, 'node_modules')));
   app.use('/htm', express.static(path.join(p, 'htm')));
@@ -590,6 +598,7 @@ async function main() {
     );
   });
 
+  app.get(/^\/!urls/, async (req, res) => res.json({ files: [...files].sort() }));
   app.get(/^\/files/, async (req, res) => res.json({ files: await GetFilesList() }));
   app.post(/^\/(files|list).html/, async (req, res) => {
     const { body } = req;

@@ -1487,36 +1487,38 @@ const AppMain = (window.onload = async () => {
   };
 
   if(store.keys().length == 0) {
-    await LoadConfig().then(response => {
-      for(let [key, value] of response.entries()) {
-        console.log(`Initializing store set('${key}',`, value, `)`);
-        store.set(key, value);
-      }
-
-      for(let key of store.keys()) {
-        const value = store.get(key);
-        switch (key) {
-          case 'url':
-            config.listURL(value);
-            break;
-          case 'filter':
-            config.searchFilter(value);
-            break;
-          case 'zoom':
-            config.zoomLog(value);
-            break;
-          case 'console':
-            config.logSize(value);
-            break;
-          case 'debug':
-            config.debugFlag(value);
-            break;
-          case 'auth':
-            config.credentials(value);
-            break;
+    await LoadConfig()
+      .then(response => {
+        for(let [key, value] of response.entries()) {
+          console.log(`Initializing store set('${key}',`, value, `)`);
+          store.set(key, value);
         }
-      }
-    }).catch(e => {})
+
+        for(let key of store.keys()) {
+          const value = store.get(key);
+          switch (key) {
+            case 'url':
+              config.listURL(value);
+              break;
+            case 'filter':
+              config.searchFilter(value);
+              break;
+            case 'zoom':
+              config.zoomLog(value);
+              break;
+            case 'console':
+              config.logSize(value);
+              break;
+            case 'debug':
+              config.debugFlag(value);
+              break;
+            case 'auth':
+              config.credentials(value);
+              break;
+          }
+        }
+      })
+      .catch(e => {});
   }
   const importedNames = Object.keys(imports);
   console.debug(
