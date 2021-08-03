@@ -1,7 +1,7 @@
 import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
-import * as fs from './lib/filesystem.js';
+import fs from './lib/filesystem.js';
 import * as path from './lib/path.js';
 import Util from './lib/util.js';
 import { Console } from 'console';
@@ -48,7 +48,7 @@ function main(...args) {
   //const { listen } = params;
 
   console.log('params', params);
-  const { address = '0.0.0.0', port = 9000 } = params;
+  const { address = '0.0.0.0', port = 8999 } = params;
 
   const listen = params.connect && !params.listen ? false : true;
   const server = !params.client || params.server;
@@ -100,6 +100,9 @@ function main(...args) {
   let connections = new Set();
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     console.log('createWS', { url, callbacks, listen });
+
+    net.setLog((...args) => console.log(...args));
+
     return [net.client, net.server][+listen](
       /*new EventLogger*/ {
         mounts: [['/', '.', 'index.html']],
@@ -114,14 +117,51 @@ function main(...args) {
           console.log('onOpen', s);
         },
         ...callbacks,
-        onHttp(...args) {
-          console.log('onHttp(', ...args, ')');
-          const[sock,url] =args;
-          
-          if(url != '/') {
-            if(/\.html/.test(url) && !/debugger.html/.test(url)) sock.redirect(sock.HTTP_STATUS_FOUND, '/debugger.html');
-          }
-          sock.header('Test', 'blah');
+        onHttp(req, rsp) {
+          console.log('onHttp(', req, rsp, ')');
+
+          rsp = new net.Response(req.url, 301, true, 'application/binary');
+
+          rsp.header('Blah', 'XXXX');
+          return rsp;
+        },
+        *onBody(req, resp) {
+          console.log('onBody(', req, resp, ')');
+          console.log('headers', resp.headers);
+
+          let dir = 'tmp';
+          let names = fs.readdirSync(dir);
+
+          yield JSON.stringify(
+            names
+              .map(entry => `${dir}/${entry}`)
+              .reduce((acc, file) => {
+                //let description = descriptions ? descMap(file) : descMap.get(file);
+                //   console.log('descMap:', util.inspect(descMap, { depth: 1 }));
+                let obj = {
+                  name: file
+                };
+                // if(typeof description == 'string') obj.description = description;
+                let st = fs.statSync(file);
+
+                acc.push(
+                  Object.assign(obj, {
+                    mtime: Util.toUnixTime(st.mtime),
+                    time: Util.toUnixTime(st.ctime),
+                    mode: `0${(st.mode & 0x09ff).toString(8)}`,
+                    size: st.size
+                  })
+                );
+                return acc;
+              }, []),
+            null,
+            2
+          );
+
+          //.map(f => `tmp/${f}`).filter(f => /\.(sch|brd|lbr|G[A-Z][A-Z])$/.test(f)).sort()
+          //yield *entries.map(f => `${f}\n`);
+
+          //throw new Error('blah');
         },
         ...(url && url.host ? url : {})
       }

@@ -70,6 +70,12 @@ function CreateServer({ host = '127.0.0.1', port = 9900, sslCert = '/home/roman/
       let client = WSClient.get(ws.fd);
       log(`Server.onPong client#${client.id} (${ws.fd})` + (data ? ' Data: ' + data : ''));
     },
+    onHttp(ws, data) {
+      log(`Server.onHttp ws`, ws, data ? ' Data: ' + data : '');
+    },
+    onBody(ws) {
+      log(`Server.onBody ws`, ws);
+    },
     onFd(fd, readable, writable) {
       os.setReadHandler(fd, readable);
       os.setWriteHandler(fd, writable);

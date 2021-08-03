@@ -76,12 +76,17 @@ export class List extends Array {
     }
     return ret;
   }
+
   values() {
     let ret = [];
     for(let [i, elem] of super.entries()) {
       if(elem) ret.push(elem);
     }
     return ret;
+  }
+
+  toArray() {
+    return this.reduce((a, n) => [...a, n], []);
   }
 }
 
@@ -755,6 +760,11 @@ export class FunctionDecl extends Node {
 
     this.body = body;
   }
+
+  toJSON() {
+    const { name, parameters } = this;
+    return super.toJSON({ name, parameters });
+  }
 }
 
 export class VarDecl extends Node {
@@ -771,7 +781,13 @@ export class VarDecl extends Node {
 
     //console.log('VarDecl', this);
   }
+
+  toJSON() {
+    const { name, type } = this;
+    return super.toJSON({ name, type });
+  }
 }
+
 export class ClassDecl extends RecordDecl {}
 
 export class BuiltinType extends Type {
@@ -788,6 +804,11 @@ export class PointerType extends Node {
     this.type = new Type(node.type, ast);
     this.pointee = TypeFactory(node.inner[0], ast);
   }
+
+  toJSON() {
+    const { pointee, type } = this;
+    return super.toJSON({ pointee, type });
+  }
 }
 
 export class ConstantArrayType extends Node {
@@ -798,6 +819,11 @@ export class ConstantArrayType extends Node {
     if(elementType.decl) elementType = elementType.decl;
     this.type = new Type(node.type, ast);
     this.elementType = TypeFactory(elementType, ast);
+  }
+
+  toJSON() {
+    const { type, elementType } = this;
+    return super.toJSON({ type, elementType });
   }
 }
 
@@ -1001,7 +1027,7 @@ export async function SourceDependencies(...args) {
 
   let [compiler, source, flags = []] = args;
 
-  //console.log('SourceDependencies', { compiler, source, flags });
+  console.log('SourceDependencies', { compiler, source, flags });
 
   let r = await SpawnCompiler(compiler, source, null, ['-MM', '-I.', ...flags]);
   let { output, result, errors } = (globalThis.response = r);
@@ -1019,7 +1045,7 @@ export async function SourceDependencies(...args) {
 
 export async function AstDump(compiler, source, args, force) {
   compiler ??= 'clang';
-  //console.log('AstDump', { compiler, source, args, force });
+  console.log('AstDump', { compiler, source, args, force });
   let output = path.basename(source, /\.[^.]*$/) + '.ast.json';
   let r;
   let sources = await SourceDependencies(compiler, source, args);

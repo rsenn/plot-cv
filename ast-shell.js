@@ -17,7 +17,7 @@ extendArray(Array.prototype);
 
 let params;
 let files;
-let spawn, base, cmdhist;
+let spawn, base, cmdhist, config;
 let defs, includes, libs, sources;
 let libdirs = ['/lib', '/lib/i386-linux-gnu', '/lib/x86_64-linux-gnu', '/lib32', '/libx32', '/usr/lib', '/usr/lib/i386-linux-gnu', '/usr/lib/i386-linux-gnu/i686/sse2', '/usr/lib/i386-linux-gnu/sse2', '/usr/lib/x86_64-linux-gnu', '/usr/lib/x86_64-linux-gnu/libfakeroot', '/usr/lib32', '/usr/libx32', '/usr/local/lib', '/usr/local/lib/i386-linux-gnu', '/usr/local/lib/x86_64-linux-gnu'];
 let libdirs32 = libdirs.filter(d => /(32$|i[0-9]86)/.test(d));
@@ -99,6 +99,11 @@ async function CommandLine() {
   repl = globalThis.repl = new REPL('AST');
   //console.log('repl', repl);
 
+  let cfg = ReadJSON(config);
+  console.log('cfg', { config, cfg });
+
+  if(cfg) Object.assign(console.options, cfg.inspectOptions);
+
   repl.importModule = ImportModule;
   repl.history_set(LoadHistory(cmdhist));
   repl.directives = {
@@ -144,6 +149,10 @@ async function CommandLine() {
         .map(entry => entry.replace(/\n/g, '\\n') + '\n')
         .join('')
     );
+
+    let cfg = { inspectOptions: console.options };
+    WriteJSON(config, cfg);
+
     console.log(`EXIT (wrote ${hist.length} history entries)`);
     std.exit(0);
   };
@@ -176,11 +185,11 @@ function* DirIterator(...args) {
 
 function* RecursiveDirIterator(dir, maxDepth = Infinity, pred = (entry, file, dir) => true) {
   if(!dir.endsWith('/')) dir += '/';
-  for(let file of fs.readdir(dir)) {
+  for(let file of fs.readdirSync(dir)) {
     if(['.', '..'].indexOf(file) != -1) continue;
     let entry = `${dir}${file}`;
     let isDir = false;
-    let st = fs.stat(entry);
+    let st = fs.statSync(entry);
     isDir = st && st.isDirectory();
     if(isDir) entry += '/';
     let show = pred(entry, file, dir);
@@ -223,9 +232,19 @@ function Structs(nodes) {
 
 function Table(list, pred = (n, l) => true /*/\.c:/.test(l)*/) {
   let entries = [...list].map((n, i) => (n ? [i, LocationString(GetLoc(n)), n] : undefined)).filter(e => e);
-  const colSizes = [5, 15, 12, 30, 12, 15, 25];
-  const colKeys = ['id', 'kind', 'name', 'tagUsed' /*, 'previousDecl', 'completeDefinition'*/];
-  const colNames = ['#', ...colKeys, 'location'];
+  const colSizes = [5, 15, 12, 30, 30];
+  const colKeys = [
+    'id',
+    'kind',
+    'name',
+    function returnType(n) {
+      if(n.type) {
+        const { qualType } = n.type;
+        return qualType.replace(/\([^\)]*\)$/g, '');
+      }
+    } /*, 'previousDecl'*/
+  ];
+  const colNames = ['#', ...colKeys.map(k => (typeof k == 'function' ? k.name : k)), 'location'];
   const outputRow = (cols, pad, sep) =>
     cols
       .map((s, col) => (s + '')[`pad${col ? 'End' : 'Start'}`](colSizes[col] ?? 30, pad ?? ' '))
@@ -243,7 +262,7 @@ function Table(list, pred = (n, l) => true /*/\.c:/.test(l)*/) {
     entries
       .filter(([i, l, n]) => pred(n, l))
       .reduce((acc, [i, l, n]) => {
-        let row = colKeys.map(k => n[k] ?? '');
+        let row = colKeys.map(k => (typeof k == 'string' ? n[k] : k(n) ?? ''));
         row.unshift(i);
         row.push(l);
         acc.push(outputRow(row));
@@ -946,7 +965,7 @@ async function ASTShell(...args) {
 
   base = path.basename(Util.getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
   cmdhist = `.${base}-cmdhistory`;
-  1;
+  config = `.${base}-config`;
 
   params = globalThis.params = Util.getOpt(
     {

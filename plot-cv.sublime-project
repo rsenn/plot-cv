@@ -156,7 +156,10 @@
 			"path": "js-live-eval",
 		},
 		{
-			"path": "js-live-eval/src"
+			"path": "js-live-eval/src",
+		},
+		{
+			"path": "quickjs/net/libwebsockets"
 		},
 	],
 	"settings":

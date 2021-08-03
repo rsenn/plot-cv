@@ -362,9 +362,10 @@ async function main() {
 
   app.use((req, res, next) => {
     let file = req.url.replace(/^\//, '');
-    if(fs.existsSync(file)) {console.log('The file ' + file + ' was requested.');
-    files.add(file);
-  }
+    if(fs.existsSync(file)) {
+      console.log('The file ' + file + ' was requested.');
+      files.add(file);
+    }
     next();
   });
   app.use('/static', express.static(path.join(p, 'static')));
