@@ -80,7 +80,6 @@ function main(...args) {
     },
     args
   );
-  console.log('params', params);
   const { address = '0.0.0.0', port = 8999 } = params;
   const listen = params.connect && !params.listen ? false : true;
   const server = !params.client || params.server;
@@ -108,7 +107,7 @@ function main(...args) {
 
   repl.help = () => {};
   let { log } = console;
-  repl.show = arg => std.puts(typeof arg == 'string' ? arg : inspect(arg, { colors: true }));
+  repl.show = arg => std.puts(typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options));
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();
@@ -128,74 +127,74 @@ function main(...args) {
 
   let connections = new Set();
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
-    console.log('createWS', { url, callbacks, listen });
+    //console.log('createWS', { url, callbacks, listen });
 
     net.setLog(0 /*net.LLL_DEBUG-1*/, (level, ...args) => console.log((['err', 'warn', 'notice', 'info', 'debug'][Math.log2(level)] ?? level + '').padEnd(8).toUpperCase(), ...args));
 
     return [net.client, net.server][+listen]({
       mounts: [
-        [
-          '/index',
-          function* (req, res) {
-            console.log(req.path, { req, res });
-            yield '<html>';
-            yield '<head>';
-            yield '</head>';
-            yield '<body>';
-            yield '</body>';
-            yield '</html>';
-          }
-        ],
-        [
-          '/files',
-          function* (req, resp) {
-            console.log(req.type, req.url);
-            //  console.log('headers', resp.headers);
+        function* index(req, res) {
+          console.log(req.path, { req, res });
+          yield '<html>';
+          yield '<head>';
+          yield '</head>';
+          yield '<body>';
+          yield '</body>';
+          yield '</html>';
+        },
+        function* files(req, resp) {
+       //   resp.type = 'application/json';
 
-            let dir = 'tmp';
-            let names = fs.readdirSync(dir).map(entry => `${dir}/${entry}`);
+          console.log('\x1b[38;5;215m*files\x1b[0m', {req,resp});
+          //  console.log('headers', resp.headers);
 
-            let entries = names.map(file => [file, fs.statSync(file)]);
 
-            yield JSON.stringify(
-              entries
-                .filter(([file, st]) => st.isFile())
-                .sort((a,b) => b[1].mtime - a[1].mtime)
-                .reduce((acc, [file, st]) => {
-                  let obj = {
-                    name: file
-                  };
+          let dir = 'tmp';
+          let names = fs.readdirSync(dir);
 
-                  acc.push(
-                    Object.assign(obj, {
-                      mtime: Util.toUnixTime(st.mtime),
-                      time: Util.toUnixTime(st.ctime),
-                      mode: `0${(st.mode & 0x09ff).toString(8)}`,
-                      size: st.size
-                    })
-                  );
-                  return acc;
-                }, []),
-              null,
-              2
-            );
-          }
-        ],
+          names = names.filter(name => /\.(brd|sch|G[A-Z][A-Z])$/.test(name));
+          names = names.map(entry => `${dir}/${entry}`);
+
+          let entries = names.map(file => [file, fs.statSync(file)]);
+
+          yield JSON.stringify(
+            entries
+              .filter(([file, st]) => st.isFile())
+              .sort((a, b) => b[1].mtime - a[1].mtime)
+              .reduce((acc, [file, st]) => {
+                let obj = {
+                  name: file
+                };
+
+                acc.push(
+                  Object.assign(obj, {
+                    mtime: Util.toUnixTime(st.mtime),
+                    time: Util.toUnixTime(st.ctime),
+                    mode: `0${(st.mode & 0x09ff).toString(8)}`,
+                    size: st.size
+                  })
+                );
+                return acc;
+              }, []),
+            null,
+            2
+          );
+        },
         ['/', '.', 'index.html']
       ],
       ...url,
       onFd(...args) {
-        console.log('onFd(', ...args, ')');
+        console.log('\x1b[38;5;82moonFd\x1b[0m(', ...args, ')');
       },
       onConnect(s) {
-        console.log('onConnect', s);
+        console.log('\x1b[38;5;82moonConnect\x1b[0m', s);
       },
       onOpen(s) {
-        console.log('onOpen', s);
+        console.log('\x1b[38;5;82moonOpen\x1b[0m', s);
       },
       ...callbacks,
-      onHttp2(req, rsp) {
-        console.log('onHttp(', req, rsp, ')');
+      onHttp(req, rsp) {
+        console.log('\x1b[38;5;82monHttp\x1b[0m(', req, rsp, ')');
         /*   rsp = new net.Response(req.url, 301, true, 'application/binary');
           rsp.header('Blah', 'XXXX');*/
         return rsp;
@@ -228,7 +227,10 @@ function main(...args) {
     os,
     deep,
     fs,
-    path
+    path,
+    ReadJSON,
+    WriteFile,
+    WriteJSON
   });
 
   define(globalThis, listen ? { server: cli, cli } : { client: cli, cli });
