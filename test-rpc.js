@@ -55,7 +55,7 @@ function WriteJSON(name, data) {
 
 function main(...args) {
   const base = path.basename(Util.getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
-  const config = ReadJSON(`.${base}-config`);
+  const config = ReadJSON(`.${base}-config`) ?? {};
   globalThis.console = new Console({
     inspectOptions: {
       colors: true,
@@ -183,7 +183,7 @@ function main(...args) {
             2
           );
         },
-        ['/', '.', 'index.html']
+        ['/', '.', 'debugger.html']
       ],
       ...url,
       onFd(...args) {
