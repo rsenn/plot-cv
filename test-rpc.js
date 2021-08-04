@@ -141,6 +141,9 @@ function main(...args) {
           yield '<body>';
           yield '</body>';
           yield '</html>';
+        },    function* config(req, res) {
+          console.log(req.path, { req, res });
+          yield '{}';
         },
         function* files(req, resp) {
        //   resp.type = 'application/json';
