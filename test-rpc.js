@@ -1,13 +1,14 @@
 import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
-import fs from './lib/filesystem.js';
+//import fs from './lib/filesystem.js';
 import * as path from './lib/path.js';
 import Util from './lib/util.js';
 import { Console } from 'console';
 import REPL from './quickjs/modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
+import * as fs from './lib/filesystem.js';
 import { extendArray } from './lib/misc.js';
 import * as net from 'net';
 import { Socket, recv, send, errno } from './socket.js';
@@ -21,14 +22,48 @@ import * as rpc2 from './quickjs/net/rpc.js';
 
 extendArray();
 
+function ReadJSON(filename) {
+  let data = fs.readFileSync(filename, 'utf-8');
+
+  if(data) console.log(`ReadJSON('${filename}') ${data.length} bytes read`);
+  return data ? JSON.parse(data) : null;
+}
+
+function WriteFile(name, data, verbose = true) {
+  if(Util.isGenerator(data)) {
+    let fd = fs.openSync(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, 0x1a4);
+    let r = 0;
+    for(let item of data) {
+      r += fs.writeSync(fd, toArrayBuffer(item + ''));
+    }
+    fs.closeSync(fd);
+    let stat = fs.statSync(name);
+    return stat?.size;
+  }
+  if(Util.isIterator(data)) data = [...data];
+  if(Util.isArray(data)) data = data.join('\n');
+
+  if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
+  let ret = fs.writeFileSync(name, data);
+
+  if(verbose) console.log(`Wrote ${name}: ${ret} bytes`);
+}
+
+function WriteJSON(name, data) {
+  WriteFile(name, JSON.stringify(data, null, 2));
+}
+
 function main(...args) {
+  const base = path.basename(Util.getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
+  const config = ReadJSON(`.${base}-config`);
   globalThis.console = new Console({
     inspectOptions: {
       colors: true,
       depth: Infinity,
-      compact: 2,
+      compact: 1,
       customInspect: true,
-      getters: false
+      getters: false,
+      ...(config.inspectOptions ?? {})
     }
   });
   let params = Util.getOpt(
@@ -45,11 +80,8 @@ function main(...args) {
     },
     args
   );
-  //const { listen } = params;
-
   console.log('params', params);
   const { address = '0.0.0.0', port = 8999 } = params;
-
   const listen = params.connect && !params.listen ? false : true;
   const server = !params.client || params.server;
   Object.assign(globalThis, {
@@ -62,7 +94,6 @@ function main(...args) {
     ...rpc2,
     rpc
   });
-
   let name = Util.getArgs()[0];
   name = name
     .replace(/.*\//, '')
@@ -91,8 +122,6 @@ function main(...args) {
 
   console.log = repl.printFunction(log);
 
-  Object.assign(console.options, { depth: 2, compact: 2, getters: false });
-
   let cli = (globalThis.sock = new rpc.Socket(`${address}:${port}`, rpc[`RPC${server ? 'Server' : 'Client'}Connection`], +params.verbose));
 
   cli.register({ Socket, Worker: os.Worker, Repeater, REPL, EventEmitter });
@@ -101,71 +130,78 @@ function main(...args) {
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     console.log('createWS', { url, callbacks, listen });
 
-    net.setLog((...args) => console.log(...args));
+    net.setLog(0 /*net.LLL_DEBUG-1*/, (level, ...args) => console.log((['err', 'warn', 'notice', 'info', 'debug'][Math.log2(level)] ?? level + '').padEnd(8).toUpperCase(), ...args));
 
-    return [net.client, net.server][+listen](
-      /*new EventLogger*/ {
-        mounts: [['/', '.', 'index.html']],
-        ...url,
-        onFd(fd) {
-          console.log('onFd', fd);
-        },
-        onConnect(s) {
-          console.log('onConnect', s);
-        },
-        onOpen(s) {
-          console.log('onOpen', s);
-        },
-        ...callbacks,
-        onHttp(req, rsp) {
-          console.log('onHttp(', req, rsp, ')');
+    return [net.client, net.server][+listen]({
+      mounts: [
+        [
+          '/index',
+          function* (req, res) {
+            console.log(req.path, { req, res });
+            yield '<html>';
+            yield '<head>';
+            yield '</head>';
+            yield '<body>';
+            yield '</body>';
+            yield '</html>';
+          }
+        ],
+        [
+          '/files',
+          function* (req, resp) {
+            console.log(req.type, req.url);
+            //  console.log('headers', resp.headers);
 
-          rsp = new net.Response(req.url, 301, true, 'application/binary');
+            let dir = 'tmp';
+            let names = fs.readdirSync(dir).map(entry => `${dir}/${entry}`);
 
-          rsp.header('Blah', 'XXXX');
-          return rsp;
-        },
-        *onBody(req, resp) {
-          console.log('onBody(', req, resp, ')');
-          console.log('headers', resp.headers);
+            let entries = names.map(file => [file, fs.statSync(file)]);
 
-          let dir = 'tmp';
-          let names = fs.readdirSync(dir);
+            yield JSON.stringify(
+              entries
+                .filter(([file, st]) => st.isFile())
+                .sort((a,b) => b[1].mtime - a[1].mtime)
+                .reduce((acc, [file, st]) => {
+                  let obj = {
+                    name: file
+                  };
 
-          yield JSON.stringify(
-            names
-              .map(entry => `${dir}/${entry}`)
-              .reduce((acc, file) => {
-                //let description = descriptions ? descMap(file) : descMap.get(file);
-                //   console.log('descMap:', util.inspect(descMap, { depth: 1 }));
-                let obj = {
-                  name: file
-                };
-                // if(typeof description == 'string') obj.description = description;
-                let st = fs.statSync(file);
-
-                acc.push(
-                  Object.assign(obj, {
-                    mtime: Util.toUnixTime(st.mtime),
-                    time: Util.toUnixTime(st.ctime),
-                    mode: `0${(st.mode & 0x09ff).toString(8)}`,
-                    size: st.size
-                  })
-                );
-                return acc;
-              }, []),
-            null,
-            2
-          );
-
-          //.map(f => `tmp/${f}`).filter(f => /\.(sch|brd|lbr|G[A-Z][A-Z])$/.test(f)).sort()
-          //yield *entries.map(f => `${f}\n`);
-
-          //throw new Error('blah');
-        },
-        ...(url && url.host ? url : {})
-      }
-    );
+                  acc.push(
+                    Object.assign(obj, {
+                      mtime: Util.toUnixTime(st.mtime),
+                      time: Util.toUnixTime(st.ctime),
+                      mode: `0${(st.mode & 0x09ff).toString(8)}`,
+                      size: st.size
+                    })
+                  );
+                  return acc;
+                }, []),
+              null,
+              2
+            );
+          }
+        ],
+        ['/', '.', 'index.html']
+      ],
+      ...url,
+      onFd(...args) {
+        console.log('onFd(', ...args, ')');
+      },
+      onConnect(s) {
+        console.log('onConnect', s);
+      },
+      onOpen(s) {
+        console.log('onOpen', s);
+      },
+      ...callbacks,
+      onHttp2(req, rsp) {
+        console.log('onHttp(', req, rsp, ')');
+        /*   rsp = new net.Response(req.url, 301, true, 'application/binary');
+          rsp.header('Blah', 'XXXX');*/
+        return rsp;
+      },
+      ...(url && url.host ? url : {})
+    });
   });
 
   globalThis[['connection', 'listener'][+listen]] = cli;
@@ -176,7 +212,24 @@ function main(...args) {
     }
   });
 
-  Object.assign(globalThis, { repl, Util, ...rpc, quit, exit: quit, Socket, recv, send, errno, cli, net, std, os, deep, fs, path });
+  Object.assign(globalThis, {
+    repl,
+    Util,
+    ...rpc,
+    quit,
+    exit: quit,
+    Socket,
+    recv,
+    send,
+    errno,
+    cli,
+    net,
+    std,
+    os,
+    deep,
+    fs,
+    path
+  });
 
   define(globalThis, listen ? { server: cli, cli } : { client: cli, cli });
   delete globalThis.DEBUG;
@@ -186,6 +239,10 @@ function main(...args) {
   else cli.connect(createWS, os);
 
   function quit(why) {
+    console.log(`quit('${why}')`);
+
+    let cfg = { inspectOptions: console.options };
+    WriteJSON(`.${base}-config`, cfg);
     repl.cleanup(why);
   }
 
