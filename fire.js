@@ -54,8 +54,8 @@ Object.assign(globalThis, {
 async function Loop() {
   const delay = 1000 / fps;
   const log = (t, name) => globalThis.doLog && console.log(`${name} timing: ${t.toFixed(3)}ms`);
-  const fire = Util.instrument(Fire, log);
-  const redraw = Util.instrument(Redraw, log);
+  const fire = /*Util.instrument*/(Fire, log);
+  const redraw = /*Util.instrument*/(Redraw, log);
 
   await once(window, 'load');
 
@@ -164,7 +164,7 @@ function MouseHandler(e) {
   const x = Math.round((offsetX * w) / rect.width);
   const y = Math.round((offsetY * h) / rect.height);
 
-  console.log(`${e.type} @ ${x},${y}`);
+  //console.log(`${e.type} @ ${x},${y}`);
 
   if(/(down|start)$/.test(type)) rc = pixels[y][x] > 0x30 ? 0 : RandomByte() | 0x80;
 
