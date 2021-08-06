@@ -54,8 +54,8 @@ Object.assign(globalThis, {
 async function Loop() {
   const delay = 1000 / fps;
   const log = (t, name) => globalThis.doLog && console.log(`${name} timing: ${t.toFixed(3)}ms`);
-  const fire = Util.instrument(Fire, log);
-  const redraw = Util.instrument(Redraw, log);
+  const fire = /*Util.instrument*/(Fire, log);
+  const redraw = /*Util.instrument*/(Redraw, log);
 
   await once(window, 'load');
 

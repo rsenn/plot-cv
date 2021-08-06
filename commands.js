@@ -173,7 +173,7 @@ export async function BoardToGerber(proj, opts = { fetch: true }) {
   let params = { ...opts, board: proj.name, raw: false },
     response,
     result;
-  response = await FetchURL(`/gerber/${opts.side ? '?side=' + opts.side : ''}`, {
+  response = await FetchURL(`gerber/${opts.side ? '?side=' + opts.side : ''}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(params)
