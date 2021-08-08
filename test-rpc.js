@@ -76,11 +76,18 @@ function main(...args) {
       debug: [false, null, 'x'],
       address: [true, null, 'a'],
       port: [true, null, 'p'],
+      'ssl-cert': [true, null],
+      'ssl-private-key': [true, null],
       '@': 'address,port'
     },
     args
   );
-  const { address = '0.0.0.0', port = 8999 } = params;
+  const {
+    address = '0.0.0.0',
+    port = 8999,
+    'ssl-cert': sslCert,
+    'ssl-private-key': sslPrivateKey
+  } = params;
   const listen = params.connect && !params.listen ? false : true;
   const server = !params.client || params.server;
   Object.assign(globalThis, {
@@ -107,7 +114,8 @@ function main(...args) {
 
   repl.help = () => {};
   let { log } = console;
-  repl.show = arg => std.puts(typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options));
+  repl.show = arg =>
+    std.puts(typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options));
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();
@@ -121,7 +129,11 @@ function main(...args) {
 
   console.log = repl.printFunction(log);
 
-  let cli = (globalThis.sock = new rpc.Socket(`${address}:${port}`, rpc[`RPC${server ? 'Server' : 'Client'}Connection`], +params.verbose));
+  let cli = (globalThis.sock = new rpc.Socket(
+    `${address}:${port}`,
+    rpc[`RPC${server ? 'Server' : 'Client'}Connection`],
+    +params.verbose
+  ));
 
   cli.register({ Socket, Worker: os.Worker, Repeater, REPL, EventEmitter });
 
@@ -129,9 +141,18 @@ function main(...args) {
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     //console.log('createWS', { url, callbacks, listen });
 
-    net.setLog(0 /*net.LLL_DEBUG-1*/, (level, ...args) => console.log((['err', 'warn', 'notice', 'info', 'debug'][Math.log2(level)] ?? level + '').padEnd(8).toUpperCase(), ...args));
+    net.setLog(0 /*net.LLL_DEBUG-1*/, (level, ...args) =>
+      console.log(
+        (['err', 'warn', 'notice', 'info', 'debug'][Math.log2(level)] ?? level + '')
+          .padEnd(8)
+          .toUpperCase(),
+        ...args
+      )
+    );
 
     return [net.client, net.server][+listen]({
+      sslCert,
+      sslPrivateKey,
       mounts: [
         function* index(req, res) {
           console.log(req.path, { req, res });
@@ -141,16 +162,16 @@ function main(...args) {
           yield '<body>';
           yield '</body>';
           yield '</html>';
-        },    function* config(req, res) {
+        },
+        function* config(req, res) {
           console.log(req.path, { req, res });
           yield '{}';
         },
         function* files(req, resp) {
-       //   resp.type = 'application/json';
+          //   resp.type = 'application/json';
 
-          console.log('\x1b[38;5;215m*files\x1b[0m', {req,resp});
+          console.log('\x1b[38;5;215m*files\x1b[0m', { req, resp });
           //  console.log('headers', resp.headers);
-
 
           let dir = 'tmp';
           let names = fs.readdirSync(dir);
