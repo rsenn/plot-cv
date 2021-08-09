@@ -4,6 +4,7 @@ import { DebuggerProtocol } from './debuggerprotocol.js';
 import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer, btoa as Base64Encode, atob as Base64Decode } from './lib/misc.js';
 import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
 import { ECMAScriptParser, Lexer } from './lib/ecmascript/parser2.js';
+import { EventEmitter, EventTarget } from './lib/events.js';
 import * as dom from './lib/dom.js';
 import rpc from './quickjs/net/rpc.js';
 
@@ -44,6 +45,7 @@ Object.assign(globalThis, {
   useRef,
   ECMAScriptParser,
   Lexer,
+  EventEmitter,EventTarget,
   dom,
   rpc
 });
@@ -68,7 +70,7 @@ async function CreateSocket(url) {
 
   await ws.send(
     JSON.stringify({
-      type: 'start',
+      command: 'start',
       start: { connect: false, args: ['test-ecmascript2.js'], address: '127.0.0.1:9901' }
     })
   );

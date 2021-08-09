@@ -19,6 +19,7 @@
 #include <stdint.h>
 #include <limits.h>
 #include <stdlib.h>
+#include <libwebsockets.h>
 
 static inline int
 escape_char_pred(int c) {
@@ -132,4 +133,5 @@ main() {
   for(size_t i = 0; i < 256; i++) map[i] = escape_char_pred(i);
   for(size_t i = 0; i < 256; i++) { printf("%s0x%02x", i > 0 ? ", " : "", map[i]); }
   printf("PATH_MAX = %zu\n", PATH_MAX);
+  printf("LWS_PRE = %zu\n", LWS_PRE);
 }
