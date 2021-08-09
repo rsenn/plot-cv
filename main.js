@@ -278,6 +278,8 @@ let sizeListener = trkl({});
 let aspectListener = trkl(1);
 const documentTitle = trkl('');
 const documentSize = trkl('');
+const loading = trkl(false);
+const filePanel = trkl(false);
 
 const SaveConfig = Util.debounce(() => {
   let obj = store.toObject();
@@ -1348,9 +1350,11 @@ async function ChooseDocument(project, i) {
   LogJS.info(`${project.name} selected.`);
 
   if(!project.loaded) {
+    loading(true);
     let data = await LoadDocument(project, box);
     project.loaded = true;
     console.log('loaded:', project);
+    loading(false);
   }
   return project.loaded;
 }
@@ -1779,7 +1783,9 @@ const AppMain = (window.onload = async () => {
     functions: Util.filter(localFunctions, v => typeof v == 'function'),
     dom,
     geom,
-    config
+    config,
+    loading,
+    filePanel
   });
   Error.stackTraceLimit = 100;
 
@@ -2256,6 +2262,7 @@ const AppMain = (window.onload = async () => {
       h(Panel, { className: classNames('buttons', 'no-select'), tag: 'header' }, [
         h(Button, {
           image: 'static/svg/browse.svg',
+          state: open,
           fn: e => {
             if(e.type.endsWith('down')) {
               //console.log('file list push', e);

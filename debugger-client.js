@@ -1,8 +1,22 @@
 import { WebSocketClient } from './lib/net/websocket-async.js';
 import Util from './lib/util.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
-import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer, btoa as Base64Encode, atob as Base64Decode } from './lib/misc.js';
-import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
+import {
+  toString as ArrayBufferToString,
+  toArrayBuffer as StringToArrayBuffer,
+  btoa as Base64Encode,
+  atob as Base64Decode
+} from './lib/misc.js';
+import React, {
+  h,
+  html,
+  render,
+  Fragment,
+  Component,
+  useState,
+  useLayoutEffect,
+  useRef
+} from './lib/dom/preactComponent.js';
 import { ECMAScriptParser, Lexer } from './lib/ecmascript/parser2.js';
 import { EventEmitter, EventTarget } from './lib/events.js';
 import * as dom from './lib/dom.js';
@@ -45,7 +59,8 @@ Object.assign(globalThis, {
   useRef,
   ECMAScriptParser,
   Lexer,
-  EventEmitter,EventTarget,
+  EventEmitter,
+  EventTarget,
   dom,
   rpc
 });

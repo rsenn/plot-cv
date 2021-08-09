@@ -1,0 +1,58 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="palette.css" />
+    <script src="https://twgljs.org/dist/twgl.min.js"></script>
+    <script id="vshader" type="whatever">
+        attribute vec4 a_position;
+        varying vec2 v_texcoord;
+        void main() {
+          gl_Position = a_position;
+
+          // assuming a unit quad for position we
+          // can just use that for texcoords. Flip Y though so we get the top at 0
+          v_texcoord = a_position.xy * vec2(0.5, -0.5) + 0.5;
+      }
+    </script>
+    <script id="fshader" type="whatever">
+      precision mediump float;
+      varying vec2 v_texcoord;
+      uniform sampler2D u_image;
+      uniform sampler2D u_palette;
+
+      void main() {
+          float index = texture2D(u_image, v_texcoord).a * 255.0;
+          gl_FragColor = texture2D(u_palette, vec2((index + 0.5) / 256.0, 0.5));
+      }
+    </script>
+    <script>
+      window.addEventListener('load', () => {
+        let inputElement = document.getElementById('fn');
+        let formElement = document.querySelector('form');
+        console.log('inputElement:', inputElement);
+
+        inputElement.addEventListener('keydown', e => {
+          const { data, target, key } = e;
+          if (key == 'Enter') {
+            setTimeout(() => {
+              const { value } = target;
+              console.log('changed:', { value, e });
+            }, 100);
+            e.preventDefault();
+            return false;
+          }
+        });
+      });
+    </script>
+    <script src="palette.js"></script>
+  </head>
+  <body>
+    <div id="container">
+      <canvas id="c" width="256" height="256"></canvas>
+      <div id="formula">
+        <form action="" method="" onsubmit="void(0)">
+          <input id="fn" type="text" name="formula" value="(x >> 6) ^ (y >> 3)" size="30" />
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
