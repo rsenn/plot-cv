@@ -25,7 +25,7 @@ extendArray();
 function ReadJSON(filename) {
   let data = fs.readFileSync(filename, 'utf-8');
 
-  if(data) console.log(`ReadJSON('${filename}') ${data.length} bytes read`);
+  if(data) console.debug(`${data.length} bytes read from '${filename}'`);
   return data ? JSON.parse(data) : null;
 }
 
@@ -139,7 +139,7 @@ function main(...args) {
 
   let connections = new Set();
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
-    //console.log('createWS', { url, callbacks, listen });
+ console.log('createWS', { url, callbacks, listen });
 
     net.setLog(0 /*net.LLL_DEBUG-1*/, (level, ...args) =>
       console.log(
@@ -154,7 +154,8 @@ function main(...args) {
       sslCert,
       sslPrivateKey,
       mounts: [
-        function* index(req, res) {
+        ['/', '.', 'debugger.html'],
+     /*   function* index(req, res) {
           console.log(req.path, { req, res });
           yield '<html>';
           yield '<head>';
@@ -162,13 +163,13 @@ function main(...args) {
           yield '<body>';
           yield '</body>';
           yield '</html>';
-        },
+        },*/
         function* config(req, res) {
           console.log(req.path, { req, res });
           yield '{}';
         },
         function* files(req, resp) {
-          //   resp.type = 'application/json';
+         //   resp.type = 'application/json';
 
           console.log('\x1b[38;5;215m*files\x1b[0m', { req, resp });
           //  console.log('headers', resp.headers);
@@ -203,22 +204,13 @@ function main(...args) {
             null,
             2
           );
-        },
-        ['/', '.', 'debugger.html']
+        }
       ],
       ...url,
-      onFd(...args) {
-        console.log('\x1b[38;5;82moonFd\x1b[0m(', ...args, ')');
-      },
-      onConnect(s) {
-        console.log('\x1b[38;5;82moonConnect\x1b[0m', s);
-      },
-      onOpen(s) {
-        console.log('\x1b[38;5;82moonOpen\x1b[0m', s);
-      },
+    
       ...callbacks,
       onHttp(req, rsp) {
-        console.log('\x1b[38;5;82monHttp\x1b[0m(', req, rsp, ')');
+        console.log('\x1b[38;5;82monHttp\x1b[0m(\n\t', req, ',\n\t', rsp, '\n)');
         /*   rsp = new net.Response(req.url, 301, true, 'application/binary');
           rsp.header('Blah', 'XXXX');*/
         return rsp;
