@@ -164,7 +164,7 @@ function MouseHandler(e) {
   const x = Math.round((offsetX * w) / rect.width);
   const y = Math.round((offsetY * h) / rect.height);
 
-  console.log(`${e.type} @ ${x},${y}`);
+  //console.log(`${e.type} @ ${x},${y}`);
 
   if(/(down|start)$/.test(type)) rc = pixels[y][x] > 0x30 ? 0 : RandomByte() | 0x80;
 
