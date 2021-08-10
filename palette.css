@@ -29,3 +29,6 @@ div#container {
 div#formula {
   padding: 1em;
 }
+form {
+  margin: 0;
+}

@@ -49,7 +49,7 @@ window.addEventListener('load', () => {
   // Make image. Just going to make something 8x8
   var width = 256;
   var height = 256;
-  var image = makeImage((x, y) => x); /*new Uint8Array([
+  var image = makeImage((x, y) => x ^ y); /*new Uint8Array([
     0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 2, 0, 0, 2, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 3, 3, 3, 3, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0
   ]);*/
 
@@ -71,7 +71,8 @@ window.addEventListener('load', () => {
 
     // skip 3 of 4 frames so the animation is not too fast
     if ((frameCounter & 3) == 0) {
-      rotatePalette(palette);
+      //      rotatePalette(palette);
+      reuploadImage();
 
       gl.drawArrays(gl.TRIANGLES, 0, positions.length / 2);
     }
@@ -93,9 +94,17 @@ window.addEventListener('load', () => {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 256, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, p);
   }
 
-  function makeImage(fn) {
-    if (fn == 'string') fn = new Function('x', 'y', fn);
+  function reuploadImage() {
+    // re-upload image
+    gl.activeTexture(gl.TEXTURE0);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.ALPHA, width, height, 0, gl.ALPHA, gl.UNSIGNED_BYTE, image);
+  }
 
+  globalThis.makeImage = makeImage;
+
+  function makeImage(fn) {
+    if (typeof fn == 'string') fn = new Function('x', 'y', `return ${fn}`);
+    console.log('fn:', fn);
     let i = 0;
     let a = new Uint8Array(width * height);
     for (let y = 0; y < height; y++) {
@@ -103,7 +112,7 @@ window.addEventListener('load', () => {
         a[i++] = fn(x, y);
       }
     }
-    return a;
+    return (image = a);
   }
 
   render();

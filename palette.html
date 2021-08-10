@@ -25,6 +25,18 @@
       }
     </script>
     <script>
+      let zoom = 1;
+      window.addEventListener('wheel', e => {
+        const { wheelDeltaY, deltaY } = e;
+        let sign = Math.sign(deltaY);
+        let containerElement = document.getElementById('container');
+        console.log('wheel:', { wheelDeltaY, deltaY });
+
+        let f = Math.pow(0.9, sign);
+        zoom *= f;
+
+        containerElement.style.transform = `scale(${zoom},${zoom})`;
+      });
       window.addEventListener('load', () => {
         let inputElement = document.getElementById('fn');
         let formElement = document.querySelector('form');
@@ -36,6 +48,7 @@
             setTimeout(() => {
               const { value } = target;
               console.log('changed:', { value, e });
+              makeImage(value);
             }, 100);
             e.preventDefault();
             return false;
