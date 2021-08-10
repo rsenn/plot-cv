@@ -55,6 +55,24 @@
           }
         });
       });
+      function bitCount(n) {
+        n = n - ((n >> 1) & 0x55555555);
+        n = (n & 0x33333333) + ((n >> 2) & 0x33333333);
+        return (((n + (n >> 4)) & 0xf0f0f0f) * 0x1010101) >> 24;
+      }
+      globalThis.bitCount = bitCount;
+      function mortonNumber(x, y) {
+        let z = 0;
+        for (
+          let i = 0;
+          i < 16;
+          i++ // unroll for more speed...
+        ) {
+          z |= ((x & (1 << i)) << i) | ((y & (1 << i)) << (i + 1));
+        }
+        return z;
+      }
+      globalThis.mortonNumber = mortonNumber;
     </script>
     <script src="palette.js"></script>
   </head>

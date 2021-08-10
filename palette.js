@@ -109,7 +109,7 @@ window.addEventListener('load', () => {
     let a = new Uint8Array(width * height);
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
-        a[i++] = fn(x, y);
+        a[i++] = fn(x, y) & 0xff;
       }
     }
     return (image = a);
