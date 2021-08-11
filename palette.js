@@ -34,7 +34,7 @@ window.addEventListener('load', () => {
   setPalette(2, 0, 255, 0, 255); // green
   setPalette(3, 0, 0, 255, 255); // blue
 
-  for (let i = 0; i < 256; i++) setPalette(i, i, i, i, 255);
+  for(let i = 0; i < 256; i++) setPalette(i, i, i, i, 255);
 
   // make palette texture and upload palette
   gl.activeTexture(gl.TEXTURE1);
@@ -70,7 +70,7 @@ window.addEventListener('load', () => {
     ++frameCounter;
 
     // skip 3 of 4 frames so the animation is not too fast
-    if ((frameCounter & 3) == 0) {
+    if((frameCounter & 3) == 0) {
       //      rotatePalette(palette);
       reuploadImage();
 
@@ -103,12 +103,12 @@ window.addEventListener('load', () => {
   globalThis.makeImage = makeImage;
 
   function makeImage(fn) {
-    if (typeof fn == 'string') fn = new Function('x', 'y', `return ${fn}`);
+    if(typeof fn == 'string') fn = new Function('x', 'y', `return ${fn}`);
     console.log('fn:', fn);
     let i = 0;
     let a = new Uint8Array(width * height);
-    for (let y = 0; y < height; y++) {
-      for (let x = 0; x < width; x++) {
+    for(let y = 0; y < height; y++) {
+      for(let x = 0; x < width; x++) {
         a[i++] = fn(x, y) & 0xff;
       }
     }

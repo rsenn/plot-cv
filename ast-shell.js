@@ -4,32 +4,7 @@ import path from './lib/path.js';
 import * as deep from './lib/deep.js';
 import { Console } from 'console';
 import REPL from './repl.js';
-import {
-  SIZEOF_POINTER,
-  Node,
-  Type,
-  RecordDecl,
-  EnumDecl,
-  TypedefDecl,
-  VarDecl,
-  FunctionDecl,
-  Location,
-  TypeFactory,
-  SpawnCompiler,
-  AstDump,
-  NodeType,
-  NodeName,
-  GetLoc,
-  GetType,
-  GetTypeStr,
-  NodePrinter,
-  isNode,
-  SourceDependencies,
-  GetTypeNode,
-  GetFields,
-  PathRemoveLoc,
-  PrintAst
-} from './clang-ast.js';
+import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, VarDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter, isNode, SourceDependencies, GetTypeNode, GetFields, PathRemoveLoc, PrintAst } from './clang-ast.js';
 import Tree from './lib/tree.js';
 import { Pointer } from './lib/pointer.js';
 import * as Terminal from './terminal.js';
@@ -38,70 +13,17 @@ import { ECMAScriptParser } from './lib/ecmascript.js';
 import { lazyInitializer } from './lib/lazyInitializer.js';
 import fs from 'fs';
 import { extendArray, toString, toArrayBuffer } from './lib/misc.js';
+import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
+
 extendArray(Array.prototype);
 
 let params;
 let files;
 let spawn, base, cmdhist, config;
 let defs, includes, libs, sources;
-let libdirs = [
-  '/lib',
-  '/lib/i386-linux-gnu',
-  '/lib/x86_64-linux-gnu',
-  '/lib32',
-  '/libx32',
-  '/usr/lib',
-  '/usr/lib/i386-linux-gnu',
-  '/usr/lib/i386-linux-gnu/i686/sse2',
-  '/usr/lib/i386-linux-gnu/sse2',
-  '/usr/lib/x86_64-linux-gnu',
-  '/usr/lib/x86_64-linux-gnu/libfakeroot',
-  '/usr/lib32',
-  '/usr/libx32',
-  '/usr/local/lib',
-  '/usr/local/lib/i386-linux-gnu',
-  '/usr/local/lib/x86_64-linux-gnu'
-];
+let libdirs = ['/lib', '/lib/i386-linux-gnu', '/lib/x86_64-linux-gnu', '/lib32', '/libx32', '/usr/lib', '/usr/lib/i386-linux-gnu', '/usr/lib/i386-linux-gnu/i686/sse2', '/usr/lib/i386-linux-gnu/sse2', '/usr/lib/x86_64-linux-gnu', '/usr/lib/x86_64-linux-gnu/libfakeroot', '/usr/lib32', '/usr/libx32', '/usr/local/lib', '/usr/local/lib/i386-linux-gnu', '/usr/local/lib/x86_64-linux-gnu'];
 let libdirs32 = libdirs.filter(d => /(32$|i[0-9]86)/.test(d));
 let libdirs64 = libdirs.filter(d => !/(32$|i[0-9]86)/.test(d));
-
-Util.define(Array.prototype, {
-  findLastIndex(predicate) {
-    for(let i = this.length - 1; i >= 0; --i) {
-      const x = this[i];
-      if(predicate(x, i, this)) return i;
-    }
-    return -1;
-  },
-  findLast(predicate) {
-    let i;
-    if((i = this.findLastIndex(predicate)) == -1) return null;
-    return this[i];
-  },
-  rotateRight(n) {
-    this.unshift(...this.splice(n, this.length - n));
-    return this;
-  },
-  rotateLeft(n) {
-    this.push(...this.splice(0, n));
-    return this;
-  },
-  at(index) {
-    return this[Util.mod(index, this.length)];
-  },
-  /* prettier-ignore */ get first() {
-    return this[this.length-1];
-  },
-  /* prettier-ignore */ get head() {
-    return this[this.length-1];
-  },
-  /* prettier-ignore */ get tail() {
-    return this[this.length-1];
-  },
-  /* prettier-ignore */ get last() {
-    return this[this.length-1];
-  }
-});
 
 async function ImportModule(modulePath, ...args) {
   let done = false;
@@ -159,12 +81,7 @@ async function CommandLine() {
     }
   };
   repl.show = value => {
-    if(
-      (Util.isArray(value) || value instanceof Array) &&
-      Util.isObject(value.first) &&
-      value.first.kind
-    )
-      console.log(Table(value));
+    if((Util.isArray(value) || value instanceof Array) && Util.isObject(value.first) && value.first.kind) console.log(Table(value));
     else if(typeof value == 'string') console.log(value);
     else console.log(inspect(value, { ...console.options, hideKeys: ['loc', 'range'] }));
   };
@@ -179,8 +96,7 @@ async function CommandLine() {
     let s = '';
     for(let arg of args) {
       if(s) s += ' ';
-      if(typeof arg != 'strping' || arg.indexOf('\x1b') == -1)
-        s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
+      if(typeof arg != 'strping' || arg.indexOf('\x1b') == -1) s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
       else s += arg;
     }
     fs.writeSync(debugLog, s + '\n');
@@ -213,47 +129,12 @@ async function CommandLine() {
   console.log('REPL done');
 }
 
-function* DirIterator(...args) {
-  let pred = typeof args[0] != 'string' ? Util.predicate(args.shift()) : () => true;
-  for(let dir of args) {
-    let entries = os.readdir(dir)[0] ?? [];
-    for(let entry of entries.sort()) {
-      let file = path.join(dir, entry);
-      let lst = os.lstat(file)[0];
-      let st = os.stat(file)[0];
-      let is_dir = (st?.mode & os.S_IFMT) == os.S_IFDIR;
-      let is_symlink = (lst?.mode & os.S_IFMT) == os.S_IFLNK;
-
-      if(is_dir) file += '/';
-      if(!pred(entry, file, is_dir, is_symlink)) continue;
-      yield file;
-    }
-  }
-}
-
-function* RecursiveDirIterator(dir, maxDepth = Infinity, pred = (entry, file, dir) => true) {
-  if(!dir.endsWith('/')) dir += '/';
-  for(let file of fs.readdirSync(dir)) {
-    if(['.', '..'].indexOf(file) != -1) continue;
-    let entry = `${dir}${file}`;
-    let isDir = false;
-    let st = fs.statSync(entry);
-    isDir = st && st.isDirectory();
-    if(isDir) entry += '/';
-    let show = pred(entry, file, dir);
-    if(show) yield entry;
-    if(maxDepth > 0 && isDir) yield* RecursiveDirIterator(entry, maxDepth - 1, pred);
-  }
-}
-
 function* IncludeAll(dir, maxDepth = Infinity, pred = entry => /\.[ch]$/.test(entry)) {
   for(let entry of RecursiveDirIterator(dir, maxDepth, pred)) yield `#include "${entry}"`;
 }
 
 function SelectLocations(node) {
-  let result = deep.select(node, n =>
-    ['offset', 'line', 'file'].some(prop => n[prop] !== undefined)
-  );
+  let result = deep.select(node, n => ['offset', 'line', 'file'].some(prop => n[prop] !== undefined));
   //console.log('result:', console.config({ depth: 1 }), result);
   return result;
 }
@@ -261,10 +142,7 @@ function SelectLocations(node) {
 function LocationString(loc) {
   if(typeof loc == 'object' && loc != null) {
     let file = loc.includedFrom ? loc.includedFrom.file : loc.file;
-    if(typeof loc.line == 'number')
-      return `${file ? file + ':' : ''}${loc.line}${
-        typeof loc.col == 'number' ? ':' + loc.col : ''
-      }`;
+    if(typeof loc.line == 'number') return `${file ? file + ':' : ''}${loc.line}${typeof loc.col == 'number' ? ':' + loc.col : ''}`;
     return `${file ? file : ''}@${loc.offset}`;
   }
 }
@@ -278,21 +156,13 @@ function Structs(nodes) {
       //deep.find(node, n => typeof n.line == 'number'),
       new Location(GetLoc(node)),
       ((node.tagUsed ? node.tagUsed + ' ' : '') + (node.name ?? '')).trim(),
-      new Map(
-        node.inner.map((field, i) =>
-          /Attr/.test(field.kind)
-            ? [Symbol(field.kind), field.id]
-            : [field.name || i, (field.type && TypeFactory(field.type)) || field.kind]
-        )
-      )
+      new Map(node.inner.map((field, i) => (/Attr/.test(field.kind) ? [Symbol(field.kind), field.id] : [field.name || i, (field.type && TypeFactory(field.type)) || field.kind])))
     ]);
   /*.map(node => types(node))*/
 }
 
 function Table(list, pred = (n, l) => true /*/\.c:/.test(l)*/) {
-  let entries = [...list]
-    .map((n, i) => (n ? [i, LocationString(GetLoc(n)), n] : undefined))
-    .filter(e => e);
+  let entries = [...list].map((n, i) => (n ? [i, LocationString(GetLoc(n)), n] : undefined)).filter(e => e);
   const colSizes = [5, 15, 12, 30, 30];
   const colKeys = [
     'id',
@@ -355,99 +225,10 @@ function OverlapRange(r1, r2) {
   return false;
 }
 
-function ReadFile(name, binary) {
-  let ret = fs.readFileSync(name, binary ? null : 'utf-8');
-
-  console.log(`Read ${name}: ${ret.length} bytes`);
-  return ret;
-}
-
 function Terminate(exitCode) {
   console.log('Terminate', exitCode);
 
   Util.exit(exitCode);
-}
-
-function LoadHistory(filename) {
-  let contents = fs.readFileSync(filename, 'utf-8');
-  let data;
-
-  const parse = () => {
-    try {
-      data = JSON.parse(contents);
-    } catch(e) {}
-    if(data) return data;
-    try {
-      data = contents.split(/\n/g);
-    } catch(e) {}
-    if(data) return data;
-  };
-
-  return (parse() ?? []).filter(entry => (entry + '').trim() != '');
-  //.map(entry => entry.replace(/\\n/g, '\n'))
-}
-
-function ReadJSON(filename) {
-  let data = fs.readFileSync(filename, 'utf-8');
-
-  if(data) console.log(`ReadJSON('${filename}') ${data.length} bytes read`);
-  return data ? JSON.parse(data) : null;
-}
-function MapFile(filename) {
-  let fd = os.open(filename, os.O_RDONLY);
-  let { size } = os.stat(filename)[0];
-  console.log(`MapFile`, { filename, fd, size });
-  let data = mmap.mmap(0, size + 10, mmap.PROT_READ, mmap.MAP_PRIVATE, fd, 0);
-  os.close(fd);
-  return data;
-}
-function ReadBJSON(filename) {
-  let fd = os.open(filename, os.O_RDONLY);
-  let { size } = os.stat(filename)[0];
-  console.log(`ReadBJSON`, { filename, fd, size });
-  let data = mmap.mmap(0, size + 10, mmap.PROT_READ, mmap.MAP_PRIVATE, fd, 0);
-  console.log(`ReadBJSON`, { data });
-  let ret = bjson.read(data, 0, size);
-
-  mmap.munmap(data);
-  os.close(fd);
-  return ret;
-}
-
-function WriteFile(name, data, verbose = true) {
-  if(Util.isGenerator(data)) {
-    let fd = fs.openSync(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, 0x1a4);
-    let r = 0;
-    for(let item of data) {
-      r += fs.writeSync(fd, toArrayBuffer(item + ''));
-    }
-    fs.closeSync(fd);
-    let stat = fs.statSync(name);
-    return stat?.size;
-  }
-  if(Util.isIterator(data)) data = [...data];
-  if(Util.isArray(data)) data = data.join('\n');
-
-  if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
-  let ret = fs.writeFileSync(name, data);
-
-  if(verbose) console.log(`Wrote ${name}: ${ret} bytes`);
-}
-
-function WriteJSON(name, data) {
-  WriteFile(name, JSON.stringify(data, null, 2));
-}
-
-function WriteBJSON(name, data) {
-  let buf = bjson.write(data);
-  let size = buf.byteLength;
-  let fd = os.open(name, os.O_WRONLY | os.O_CREAT | os.O_TRUNC);
-
-  let ret = os.write(fd, buf, 0, size);
-  console.log('WriteBJSON', { name, fd, size, ret });
-  os.close(fd);
-
-  return ret;
 }
 
 function* GenerateInspectStruct(decl, includes) {
@@ -566,11 +347,7 @@ function InspectStruct(decl, includes, compiler = 'clang') {
     result = lines
       .map(line => (typeof line == 'string' ? line.split(' ') : line))
       .map(line => line.map((col, i) => (isNaN(+col) ? col : +col)))
-      .map(([field, offset, size]) => [
-        field.replace(/:.*/, '').replace(/^\./, name + '.'),
-        offset,
-        size
-      ]);
+      .map(([field, offset, size]) => [field.replace(/:.*/, '').replace(/^\./, name + '.'), offset, size]);
 
     let end = 0;
     result = result.reduce((acc, line) => {
@@ -643,21 +420,7 @@ function* GenerateStructClass(decl, ffiPrefix = '') {
   yield `  static from(address) {\n    let ret = ${ffiPrefix}toArrayBuffer(address, ${offset});\n    return Object.setPrototypeOf(ret, ${className}.prototype);\n  }`;
   yield '';
 
-  yield `  toString() {\n    const { ${fields.join(', ')} } = this;\n    return \`${name} {${[
-    ...members
-  ]
-    .map(
-      ([field, member]) =>
-        '\\n\\t.' +
-        field +
-        ' = ' +
-        (member.isPointer() ? '0x' : '') +
-        '${' +
-        field +
-        (member.isPointer() ? '.toString(16)' : '') +
-        '}'
-    )
-    .join(',')}\\n}\`;\n  }`;
+  yield `  toString() {\n    const { ${fields.join(', ')} } = this;\n    return \`${name} {${[...members].map(([field, member]) => '\\n\\t.' + field + ' = ' + (member.isPointer() ? '0x' : '') + '${' + field + (member.isPointer() ? '.toString(16)' : '') + '}').join(',')}\\n}\`;\n  }`;
   yield '}';
 }
 
@@ -676,15 +439,7 @@ function GenerateGetSet(name, offset, type, ffiPrefix) {
     a.unshift(`/* ${name}${desugared ? ` (${desugared})` : ''} ${size} ${signed} */`);
     console.log('GenerateStructClass', { pointer });
   }
-  return [
-    ...a,
-    `set ${name}(value) { if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = ${ffiPrefix}toPointer(value); new ${ctor}(this, ${offset})[0] = ${ByteLength2Value(
-      size,
-      signed,
-      floating
-    )}; }`,
-    `get ${name}() { return ${toHex(`new ${ctor}(this, ${offset})[0]`)}; }`
-  ];
+  return [...a, `set ${name}(value) { if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = ${ffiPrefix}toPointer(value); new ${ctor}(this, ${offset})[0] = ${ByteLength2Value(size, signed, floating)}; }`, `get ${name}() { return ${toHex(`new ${ctor}(this, ${offset})[0]`)}; }`];
 }
 
 function ByteLength2TypedArray(byteLength, signed, floating) {
@@ -719,27 +474,23 @@ function ByteLength2Value(byteLength, signed, floating) {
 
 export class FFI_Function {
   constructor(node, prefix = '') {
-    const { name, returnType, parameters } = node;
+    const { name, returnType = 'void', parameters = [] } = node;
+    //console.log('FFI_Function.constructor', node, {name,parameters});
     this.name = name;
     this.prefix = prefix;
     this.returnType = returnType.ffi;
-    this.parameters = [...(parameters ?? [])].map(([name, type]) => [name, type.ffi]);
+    this.parameters = [...parameters].map(([name, type], idx) => [name ?? `arg${idx + 1}`, type.ffi]);
   }
 
   generateDefine(fp, lib) {
     const { prefix, name, returnType, parameters } = this;
     fp ??= (name, lib) => `${prefix}dlsym(${lib ?? 'RTLD_DEFAULT'}, '${name}')`;
     let code = `'${name}', ${fp(name, lib)}, null, '${returnType}'`;
-    console.log('function', name, 'returnType:', returnType);
+    console.log('function', Util.colorText(name, 1, 33), 'returnType:', Util.colorText(returnType, 1, 31));
     let paramIndex = 0;
     for(let [paramName, type] of parameters) {
       ++paramIndex;
-      console.log(
-        `param #${paramIndex}`,
-        ...(paramName ? ['name:', paramName] : []),
-        'type:',
-        type
-      );
+      //console.log(`param #${paramIndex}`, ...(paramName ? ['name:', paramName] : []), 'type:', type);
       code += ', ';
       code += `'${type}'`;
     }
@@ -760,7 +511,7 @@ export class FFI_Function {
     push('/**');
 
     push(`@function`, `${name}`);
-    push();
+    if(parameters.length) push();
 
     let js = type => {
       let typeObj = Type.declarations.get(type);
@@ -772,8 +523,10 @@ export class FFI_Function {
 
       push(`@param`, `{${js(type)}}`, paramName);
     }
-    push();
-    push(`@return`, `{${js(returnType)}}`);
+    if(returnType != 'void') {
+      push();
+      push(`@return`, `{${js(returnType)}}`);
+    }
     return lines.join('\n * ') + '\n */\n';
   }
 
@@ -781,19 +534,13 @@ export class FFI_Function {
     const { prefix, name, returnType, parameters } = this;
     const paramNames = parameters.map(([name, type]) => name);
     let code = `function ${name}(${paramNames.join(', ')}) {\n`;
-    code += `  return ${prefix}call('${name}', ${paramNames.join(', ')});\n`;
+    code += `  ${returnType != 'void' ? 'return ' : ''}${prefix}call('${name}', ${paramNames.join(', ')});\n`;
     code += `}`;
     return code;
   }
 
   generate(fp, lib, exp) {
-    return [
-      this.generateDefine(fp, lib),
-      '\n',
-      exp ? 'export ' : '',
-      this.generateCall(),
-      '\n'
-    ].join('');
+    return [this.generateDefine(fp, lib), '\n', exp ? 'export ' : '', this.generateCall(), '\n'].join('');
   }
 
   generateFunction(fp, lib) {
@@ -900,11 +647,7 @@ function ParseECMAScript(file, debug = false) {
   let data = fs.readFileSync(file, 'utf-8');
   let ast, error;
   let parser;
-  globalThis.parser = parser = new ECMAScriptParser(
-    data?.toString ? data.toString() : data,
-    file,
-    debug
-  );
+  globalThis.parser = parser = new ECMAScriptParser(data?.toString ? data.toString() : data, file, debug);
 
   globalThis.ast = ast = parser.parseProgram();
   parser.addCommentsToNodes(ast);
@@ -959,9 +702,7 @@ function MemberNames(members, flags = 0) {
   if(members.members) members = members.members;
 
   if(!Array.isArray(members)) {
-    for(let ptr of deep
-      .select(members, n => n.kind.endsWith('Decl') && n.name, deep.RETURN_PATH)
-      .map(path => new Pointer(path))) {
+    for(let ptr of deep.select(members, n => n.kind.endsWith('Decl') && n.name, deep.RETURN_PATH).map(path => new Pointer(path))) {
       let ptrs = ptr.chain(2);
       console.log('ptrs:', ptrs);
       let names = ptrs.map(p => deep.get(members, [...p, 'name'], deep.NO_THROW));
@@ -971,13 +712,7 @@ function MemberNames(members, flags = 0) {
       ret.push(names.filter(name => name).join('.'));
     }
   } else {
-    for(let ptr of deep
-      .select(
-        members,
-        n => Array.isArray(n) && n.length == 2 && typeof n[0] == 'string' && n[1] !== null,
-        deep.RETURN_PATH
-      )
-      .map(path => new Pointer(path))) {
+    for(let ptr of deep.select(members, n => Array.isArray(n) && n.length == 2 && typeof n[0] == 'string' && n[1] !== null, deep.RETURN_PATH).map(path => new Pointer(path))) {
       let ptrs = ptr.chain(3);
       let names = ptrs.map(p => deep.get(members, [...p, 0]));
       ret.push(names.filter(name => name).join('.'));
@@ -990,26 +725,30 @@ function MemberNames(members, flags = 0) {
 }
 
 function UnsetLoc(node, pred = (v, p) => true) {
-  for(let [v, p] of deep.select(
-    node,
-    (v, k) => k == 'loc' || k == 'range',
-    deep.RETURN_VALUE_PATH
-  )) {
+  for(let [v, p] of deep.select(node, (v, k) => k == 'loc' || k == 'range', deep.RETURN_VALUE_PATH)) {
     console.log('UnsetLoc', { v, p });
     if(pred(deep.get(node, [...p].slice(0, -1)), [...p].last)) deep.unset(node, p);
   }
   return node;
 }
 
-function MakeFFI(node, fp, lib, exp) {
+function MakeFFI(node, lib, exp, fp) {
   if(Array.isArray(node)) {
     return (function* () {
       let i = 0;
+
+      if(!fp) yield `import { dlopen, define, dlerror, dlclose, dlsym, call, errno, RTLD_NOW } from 'ffi';\n`;
+
+      if(lib) {
+        let libvar = lib.replace(/\.so($|\..*)/g, '').replace(/[^A-Za-z0-9_]/g, '_');
+        yield `const ${libvar} = dlopen('${lib}', RTLD_NOW);\n`;
+        lib = libvar;
+      }
       for(let item of node) {
         let out = '';
         console.log(`MakeFFI item #${i + 1}/${node.length}`);
         try {
-          let ret = MakeFFI(item, fp, lib, exp);
+          let ret = MakeFFI(item, lib, exp, fp);
           if(typeof ret == 'string' && ret.length > 0) {
             if(out) out += '\n';
             out += ret;
@@ -1073,12 +812,9 @@ async function ASTShell(...args) {
   console.log('platform:', platform);
   if(platform == 'quickjs') await import('std').then(module => (globalThis.std = module));
 
-  if(platform == 'node')
-    await import('util').then(module => (globalThis.inspect = module.inspect));
+  if(platform == 'node') await import('util').then(module => (globalThis.inspect = module.inspect));
 
-  (await Util.getPlatform()) == 'quickjs'
-    ? import('deep.so').then(module => (globalThis.deep = module))
-    : import('./lib/deep.js').then(module => (globalThis.deep = module['default']));
+  (await Util.getPlatform()) == 'quickjs' ? import('deep.so').then(module => (globalThis.deep = module)) : import('./lib/deep.js').then(module => (globalThis.deep = module['default']));
 
   base = path.basename(Util.getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
   cmdhist = `.${base}-cmdhistory`;
@@ -1122,11 +858,7 @@ async function ASTShell(...args) {
 
     function nameOrIdPred(name_or_id, pred = n => true) {
       if(typeof name_or_id == 'number') name_or_id = '0x' + name_or_id.toString(16);
-      return name_or_id instanceof RegExp
-        ? node => name_or_id.test(node.name) && pred(node)
-        : name_or_id.startsWith('0x')
-        ? node => node.id == name_or_id && pred(node)
-        : node => node.name == name_or_id && pred(node);
+      return name_or_id instanceof RegExp ? node => name_or_id.test(node.name) && pred(node) : name_or_id.startsWith('0x') ? node => node.id == name_or_id && pred(node) : node => node.name == name_or_id && pred(node);
     }
 
     Object.assign(r, {
@@ -1140,11 +872,7 @@ async function ASTShell(...args) {
         return node;
       },
       getType(name_or_id) {
-        let result =
-          this.getByIdOrName(
-            name_or_id,
-            n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind)
-          ) ?? GetType(name_or_id, this.data);
+        let result = this.getByIdOrName(name_or_id, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind)) ?? GetType(name_or_id, this.data);
 
         if(result) {
           let type = TypeFactory(result, this.data);
@@ -1154,16 +882,12 @@ async function ASTShell(...args) {
       },
 
       getFunction(name_or_id) {
-        let result = isNode(name_or_id)
-          ? name_or_id
-          : this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
+        let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
 
         if(result) return new FunctionDecl(result, this.data);
       },
       getVariable(name_or_id) {
-        let result = isNode(name_or_id)
-          ? name_or_id
-          : this.getByIdOrName(name_or_id, n => /(VarDecl)/.test(n.kind));
+        let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(VarDecl)/.test(n.kind));
 
         if(result) return new VarDecl(result, this.data);
       },
@@ -1185,12 +909,7 @@ async function ASTShell(...args) {
     });
     return Util.define(r, {
       pathOf(needle, maxDepth = 10) {
-        for(let [node, path] of deep.iterate(
-          r.data,
-          n => typeof n == 'object' && n != null,
-          deep.RETURN_VALUE_PATH,
-          maxDepth
-        )) {
+        for(let [node, path] of deep.iterate(r.data, n => typeof n == 'object' && n != null, deep.RETURN_VALUE_PATH, maxDepth)) {
           //console.log("pathOf",console.config({depth:1}),{node,path});
           if(node === needle) return new Pointer(path);
         }

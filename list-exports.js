@@ -124,10 +124,14 @@ function ShowOutput(ast, tree, flat, file, params) {
   /*let nodes = deep.select(ast, node => /Import|Export/.test(Util.className(node)), deep.RETURN_VALUE);
   console.log('nodes:', nodes);/
 */ const flags = deep.RETURN_VALUE_PATH;
-  let names = [...deep.select(ast, (node, key) => ['exported', 'imported', 'local'].indexOf(key) != -1, flags), ...deep.select(ast, (node, key) => /Export/.test(node.type), flags).map(node => (node.declaration && node.declaration.id ? node.declaration.id : node.declaration))];
+  let nodes = [...deep.select(ast, (node, key) => ['exported', 'imported', 'local'].indexOf(key) != -1, flags), ...deep.select(ast, (node, key) => /Export/.test(node.type), flags)].map(([node, path]) => [node, path.slice(0, -1), deep.get(ast, path.slice(0, -1))]);
+
+  let names = nodes.filter(([n, p, parent]) => !/Import/.test(parent.type)).map(([node, path, parent]) => (node.declaration && node.declaration.id ? node.declaration.id : node));
 
   let defaultExport = deep.find(ast, node => node instanceof ExportDefaultDeclaration, deep.RETURN_VALUE);
   console.log('names:', names);
+
+  if(!file.startsWith('./') && !file.startsWith('/') && !file.startsWith('..')) file = './' + file;
 
   let importNode = new ImportDeclaration([...names.map(n => new ImportSpecifier(new Identifier(NodeToName(n))))], new Literal(`'${file}'`));
   console.log('importNode', importNode);
@@ -139,12 +143,14 @@ function ShowOutput(ast, tree, flat, file, params) {
 
 function NodeToName(node) {
   let id;
+  if(Array.isArray(node) && node.length == 2) node = node[0];
+
   if(typeof node == 'object' && node != null) {
+    if(node instanceof Identifier || node.type == 'Identifier' || 'name' in node) id = node.name;
     if(!id && node.id && node.id instanceof Identifier) id = node.id;
     if(!id && node.name) id = node.name;
 
     if(!id) id = deep.find(node, (path, key) => ['id', 'exported'].indexOf(key) != -1, deep.RETURN_VALUE);
-    else if('name' in id) id = id.name;
 
     if(id instanceof Identifier) id = Identifier.string(id);
   } else if(typeof node == 'number' || typeof node == 'string') id = node;
