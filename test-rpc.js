@@ -139,7 +139,7 @@ function main(...args) {
 
   let connections = new Set();
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
- console.log('createWS', { url, callbacks, listen });
+    console.log('createWS', { url, callbacks, listen });
 
     net.setLog(0 /*net.LLL_DEBUG-1*/, (level, ...args) =>
       console.log(
@@ -155,7 +155,7 @@ function main(...args) {
       sslPrivateKey,
       mounts: [
         ['/', '.', 'debugger.html'],
-     /*   function* index(req, res) {
+        /*   function* index(req, res) {
           console.log(req.path, { req, res });
           yield '<html>';
           yield '<head>';
@@ -169,7 +169,7 @@ function main(...args) {
           yield '{}';
         },
         function* files(req, resp) {
-         //   resp.type = 'application/json';
+          //   resp.type = 'application/json';
 
           console.log('\x1b[38;5;215m*files\x1b[0m', { req, resp });
           //  console.log('headers', resp.headers);
@@ -207,7 +207,7 @@ function main(...args) {
         }
       ],
       ...url,
-    
+
       ...callbacks,
       onHttp(req, rsp) {
         console.log('\x1b[38;5;82monHttp\x1b[0m(\n\t', req, ',\n\t', rsp, '\n)');

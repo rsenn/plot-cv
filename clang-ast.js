@@ -2266,6 +2266,7 @@ export function PrintNode(node) {
 }
 
 export function PrintAst(node, ast) {
+  if('ast' in node) node = node.ast;
   ast ??= $.data;
   let printer = NodePrinter(ast);
   globalThis.printer = printer;

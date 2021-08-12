@@ -4,7 +4,11 @@ window.addEventListener('load', () => {
 
   // Note: createProgramFromScripts will call bindAttribLocation
   // based on the index of the attibute names we pass to it.
-  var program = twgl.createProgramFromScripts(gl, ['vshader', 'fshader'], ['a_position', 'a_textureIndex']);
+  var program = twgl.createProgramFromScripts(
+    gl,
+    ['vshader', 'fshader'],
+    ['a_position', 'a_textureIndex']
+  );
   gl.useProgram(program);
   var imageLoc = gl.getUniformLocation(program, 'u_image');
   var paletteLoc = gl.getUniformLocation(program, 'u_palette');
