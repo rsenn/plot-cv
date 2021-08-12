@@ -10,7 +10,8 @@ function main(...args) {
   let buf = new ArrayBuffer(1024);
 
   for(let ent of ar) {
-    if(!/\.xml$/.test(ent.pathname)) continue;
+    if(ent.pathname.endsWith('/')) continue;
+    //if(!/\.xml$/.test(ent.pathname)) continue;
     console.log('ent', ent);
 
     ar.extract(ent, 0, (archive, entry) => {
