@@ -452,11 +452,12 @@ async function main(...args) {
 
   console.log('args', args);
   let fs;
+  let debugLog;
 
   if(Util.getPlatform() == 'quickjs') {
     globalThis.std = await import('std');
     globalThis.os = await import('os');
-    globalThis.fs = await import('./lib/filesystem.js');
+    globalThis.fs = fs = await import('./lib/filesystem.js');
     // console.log('quickjs', { std, os, fs });
   } else {
     //globalThis.fs = fs=await import('fs');
@@ -466,6 +467,8 @@ async function main(...args) {
     };
     await PortableFileSystem(cb);
   }
+
+debugLog = fs.openSync('debug.log', 'a');
 
   const base = path.basename(Util.getArgv()[1], /\.[^.]*$/);
   const histfile = `.${base}-history`;
@@ -609,7 +612,6 @@ async function main(...args) {
   cmdhist = `.${base}-cmdhistory`;
 
   let repl = (globalThis.repl = new REPL(base));
-  let debugLog = fs.openSync('debug.log', 'a');
 
   // console.log(`debugLog`, Util.getMethods(debugLog, Infinity, 0));
   repl.history_set(LoadHistory(cmdhist));

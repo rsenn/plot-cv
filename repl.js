@@ -39,8 +39,7 @@ export default function REPL(title = 'QuickJS') {
   var input, output;
 
   let fs = globalThis.fs ? globalThis.fs : filesystem && filesystem.openSync ? filesystem : null;
-  console.log('filesystem', fs);
-  if(!fs)
+   if(!fs)
     filesystem.PortableFileSystem(filesystem => {
       fs = filesystem;
       console.log('process', process);
