@@ -2501,7 +2501,9 @@ const AppMain = (window.onload = async () => {
         ]),
         h(Toggle, {
           state: sortOrder,
-          images: ['static/svg/sort-asc.svg', 'static/svg/sort-desc.svg']
+          images: ['static/svg/sort-asc.svg', 'static/svg/sort-desc.svg'],
+          //disable: trkl(true),
+          visible: open
         }),
         h(DynamicLabel, {
           className: 'vcenter pad-lr',

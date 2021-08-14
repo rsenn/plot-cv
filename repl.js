@@ -22,9 +22,10 @@
  * THE SOFTWARE.
  */
 import * as Terminal from './terminal.js';
-import fs from 'fs';
+import PortableFileSystem from './lib/filesystem.js';
 import { isatty } from 'tty';
 import { extendArray } from './lib/misc.js';
+import Util from './lib/util.js';
 
 ('use strip');
 
@@ -34,16 +35,24 @@ export default function REPL(title = 'QuickJS') {
   /* add 'os' and 'std' bindings */
   /*globalThis.os = os;
   globalThis.std = std;*/
-  const { std, os } = globalThis;
+  const { std, os, fs } = globalThis;
+  var input, output;
+
+  /*PortableFileSystem().then(filesystem => {
+console.log("",{input,output})
+  fs = filesystem;*/
+  input = globalThis.process && process.stdin ? process.stdin : std.in;
+  output = globalThis.process && process.stdout ? process.stdout : std.out;
+  //});
 
   /* close global objects */
   //const { Object, String, Array, Date, Math, isFinite, parseFloat } = globalThis;
   var thisObj = this;
-  var output = fs.stdout;
-  var input = fs.stdin;
+  /*  var output = fs.stdout;
+  var input = fs.stdin;*/
 
-  const puts = str => output.puts(str);
-  const flush = () => output.flush();
+  const puts = str => fs.puts(output, str);
+  const flush = () => fs.flushSync(output);
 
   /*
   function puts(str) {
@@ -244,7 +253,7 @@ export default function REPL(title = 'QuickJS') {
           term_width = tab[0];
         });
       }
-      Util.ttySetRaw(this.term_fd);
+      Util.ttySetRaw(input);
       repl.debug('TTY setup done');
     }
 
@@ -253,7 +262,9 @@ export default function REPL(title = 'QuickJS') {
 
     /* install a handler to read stdin */
     term_read_buf = new Uint8Array(1);
-    os.setReadHandler(this.term_fd, () => repl.term_read_handler());
+
+    Util.setReadHandler(input ?? this.term_fd, () => repl.term_read_handler());
+
     repl.debug('term_init');
     repl.debug('this.term_fd', this.term_fd);
   }
@@ -267,7 +278,7 @@ export default function REPL(title = 'QuickJS') {
     var l, i;
     repl.debug('term_read_buf', term_read_buf);
     const { buffer } = term_read_buf;
-    l = os.read(input, buffer, 0, 1);
+    l = fs.readSync(input, buffer, 0, 1);
     repl.debug('term_read_handler', { l, buffer });
 
     for(i = 0; i < l; i++) {
@@ -2039,7 +2050,7 @@ export default function REPL(title = 'QuickJS') {
     repl.cmd_start(title);
 
     do {
-      await fs.waitRead(input.fileno());
+      await fs.waitRead(input);
 
       await repl.term_read_handler();
     } while(running);

@@ -51,7 +51,7 @@ import {
 } from './lib/eagle.js';
 import { toXML } from './lib/json.js';
 import Util from './lib/util.js';
-import * as deep from 'deep';
+import * as deep from './lib/deep.js';
 import path from './lib/path.js';
 import {
   LineList,
@@ -92,12 +92,12 @@ import {
   SpatialHashMap,
   BoxHash
 } from './lib/container.js';
-import * as std from 'std';
-import fs from 'fs';
-import { Console } from 'console';
-import { Pointer } from 'pointer';
+//import * as std from 'std';
+import PortableFileSystem from './lib/filesystem.js';
+import { Pointer } from './lib/pointer.js';
+import inspect from './lib/objectInspect.js';
 
-let cmdhist;
+let fs, cmdhist;
 
 Util.define(Array.prototype, {
   findLastIndex(predicate) {
@@ -135,7 +135,7 @@ function Terminate(exitCode) {
 }
 
 function LoadHistory(filename) {
-  let contents = std.loadFile(filename);
+  let contents = fs.readFileSync(filename, 'utf-8');
   let data;
 
   const parse = () => {
@@ -496,10 +496,12 @@ async function testEagle(filename) {
   return proj;
 }
 
-function main(...args) {
-  globalThis.console = new Console({
-    inspectOptions: { /*breakLength: 240, */ depth: 10, compact: 1 }
+async function main(...args) {
+  /*globalThis.console = await ConsoleSetup({
+    inspectOptions: { depth: 10, compact: 1 }
   });
+*/
+  globalThis.fs = fs = await PortableFileSystem();
 
   const base = path.basename(Util.getArgv()[1], /\.[^.]*$/);
   const histfile = `.${base}-history`;
@@ -512,6 +514,7 @@ function main(...args) {
     },
     args
   );
+  console.log('params', params);
 
   Object.assign(globalThis, {
     EagleSVGRenderer,
@@ -574,7 +577,7 @@ function main(...args) {
   Object.assign(globalThis, {
     load(filename, project = globalThis.project) {
       return (globalThis.document = new EagleDocument(
-        std.loadFile(filename),
+        fs.readFileSync(filename, 'utf-8'),
         project,
         filename,
         null,
@@ -639,13 +642,18 @@ function main(...args) {
     ReadJSON,
     GetPolygons,
     FindPolygons,
-    RemovePolygons
+    RemovePolygons,
+    quit(arg) {
+      repl.cleanup();
+      Util.exit(arg ?? 0);
+    }
   });
 
   cmdhist = `.${base}-cmdhistory`;
 
   let repl = (globalThis.repl = new REPL(base));
-  let debugLog = fs.fopen('debug.log', 'a');
+  let debugLog = filesystem.openSync('debug.log', 'a');
+  // console.log(`debugLog`, Util.getMethods(debugLog, Infinity, 0));
   repl.history_set(LoadHistory(cmdhist));
   console.log(`LOAD (read ${repl.history.length} history entries)`);
   repl.debugLog = debugLog;
@@ -659,8 +667,10 @@ function main(...args) {
         s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
       else s += arg;
     }
-    debugLog.puts(s + '\n');
-    debugLog.flush();
+    filesystem.writeSync(debugLog, filesystem.bufferFrom(s + '\n'));
+
+    //    debugLog.puts(s + '\n');
+    filesystem.flushSync(debugLog);
   };
   repl.show = value => {
     if(Util.isObject(value) && value instanceof EagleNode) {
@@ -707,7 +717,7 @@ function main(...args) {
 }
 
 try {
-  main(...scriptArgs.slice(1));
+  main(...Util.getArgs().slice(1));
 } catch(error) {
   console.log(`FAIL: ${error.message}\n${error.stack}`);
   Util.exit(1);

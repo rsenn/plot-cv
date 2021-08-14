@@ -140,16 +140,7 @@ function alignItem(item) {
     console.log('before:', Util.abbreviate(before));
     console.log('after:', Util.abbreviate(item.parentNode.toXML()));
     //console.log('geometry:', geometry);
-    console.log(
-      'align\n',
-      item.xpath(),
-      '\n newPos:',
-      newPos,
-      '\n diff:',
-      diff,
-      '\n attr:',
-      item.raw.attributes
-    );
+    // console.log('align\n', item.xpath(), '\n newPos:', newPos, '\n diff:', diff, '\n attr:', item.raw.attributes );
   }
   return changed;
 }
@@ -167,9 +158,9 @@ function alignAll(doc) {
 }
 
 async function testEagle(filename) {
-  await PortableFileSystem(fs => (filesystem = fs));
+  await PortableFileSystem(fs => (filesystem = globalThis.fs = fs));
 
-  console.log('testEagle: ', filename);
+  console.log('testEagle: ', filesystem);
   let proj = new EagleProject(filename, filesystem);
 
   /*
@@ -291,7 +282,7 @@ async function testEagle(filename) {
   return proj;
 }
 async function main(...args) {
-  await ConsoleSetup({ breakLength: 120, depth: 10 });
+  //  await ConsoleSetup({ breakLength: 120, depth: 10 });
   if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3');
   for(let arg of args) {
     //arg = arg.replace(/\.(brd|sch|lbr)$/i, '');

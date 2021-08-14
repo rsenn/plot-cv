@@ -41,7 +41,7 @@ import deepDiff from './lib/deep-diff.js';
 import { useValue } from './lib/repeater/react-hooks.js';
 import RulerDraggable from './ruler-draggable.js';
 
-export function Ruler({ handleChange, style = {}, class: className }) {
+export const Ruler = ({ handleChange, style = {}, class: className }) => {
   const refRuler = useRef();
   const [value, setValue] = useState(null);
 
@@ -102,7 +102,7 @@ export function Ruler({ handleChange, style = {}, class: className }) {
       []
     )
   ]);
-}
+};
 
 export const ClickHandler = callback => e => {
   if(e.type) {
@@ -136,6 +136,8 @@ export const Overlay = ({
   title,
   tooltip,
   active = true,
+  enable = trkl(true),
+  visible = trkl(true),
   toggle,
   state,
   onPush,
@@ -145,28 +147,36 @@ export const Overlay = ({
 }) => {
   const [pushed, setPushed] =
     typeof state == 'function' ? [useTrkl(state), state] : useState(false);
-  const events = MouseEvents(
-    (toggle ? ToggleHandler : ClickHandler)(
-      (e, state) => {
-        const prev = pushed;
-        if(e.buttons && e.buttons != 1) return;
-        if(!e.type.endsWith('down') && !e.type.endsWith('up')) return;
-        let ret;
-        // console.log("MouseEvent", {type: e.type, state});
-        if(typeof onPush == 'function') ret = onPush(e, state);
-        if(ret === true || ret === false) state = ret;
-        setPushed(state);
-      },
-      () => pushed,
-      setPushed
-    )
-  );
+  const enabled = useTrkl(enable);
+  const events = enabled
+    ? MouseEvents(
+        (toggle ? ToggleHandler : ClickHandler)(
+          (e, state) => {
+            const prev = pushed;
+            if(e.buttons && e.buttons != 1) return;
+            if(!e.type.endsWith('down') && !e.type.endsWith('up')) return;
+            let ret;
+            // console.log("MouseEvent", {type: e.type, state});
+            if(typeof onPush == 'function') ret = onPush(e, state);
+            if(ret === true || ret === false) state = ret;
+            setPushed(state);
+          },
+          () => pushed,
+          setPushed
+        )
+      )
+    : {};
   if(typeof title == 'string' && title.length > 0) props.title = title;
   if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
   return h(
     'div',
     {
-      className: classNames(className, pushed && 'pushed', active ? 'active' : 'inactive'),
+      className: classNames(
+        className,
+        pushed && 'pushed',
+        active ? 'active' : 'inactive',
+        !visible && 'hidden'
+      ),
       ...props,
       ...events
     },
@@ -186,12 +196,14 @@ export const Button = allProps => {
     image,
     fn,
     state,
-    disable = trkl(false),
+    enable = trkl(true),
+    visible = trkl(true),
     onPush = state => (state && typeof fn == 'function' ? fn(state) : undefined),
     style = {},
     ...props
   } = allProps;
-  const disabled = useTrkl(disable);
+  const enabled = useTrkl(enable);
+  const show = useTrkl(visible);
 
   if(!props.children) props.children = [];
   if(typeof image == 'string') image = h('img', { src: image });
@@ -199,14 +211,17 @@ export const Button = allProps => {
 
   props.children.unshift(image);
 
+  console.log('Button', caption ?? image, { enabled, show });
+
   return h(Overlay, {
-    className: classNames('button', className, disabled && 'disabled'),
+    className: classNames('button', className, !enabled && 'disabled'),
     text: caption,
     toggle: true,
     state,
     onPush,
     style,
-    active: disabled ? false : true,
+    enable,
+    visible,
     ...props
   });
 };
@@ -326,7 +341,7 @@ export const DynamicLabel = ({ caption, title, children, ...props }) => {
 export const Item = ({ className = 'item', title, tooltip, label, icon, children, ...props }) => {
   if(typeof title == 'string' && title.length > 0) props.title = title;
   if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
-
+  console.log('Item', props);
   return h(Overlay, { className, ...props }, h(Label, { text: icon }, label));
 };
 
@@ -507,6 +522,7 @@ export const File = ({
   doc,
   ...props
 }) => {
+  console.log('File', props);
   const [loaded, setLoaded] = useState(NaN);
   if(signal) signal.subscribe(data => setLoaded(data.percent));
   onPush =
