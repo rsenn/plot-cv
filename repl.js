@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 import * as Terminal from './terminal.js';
-import PortableFileSystem from './lib/filesystem.js';
+import filesystem from './lib/filesystem.js';
 import { isatty } from 'tty';
 import { extendArray } from './lib/misc.js';
 import Util from './lib/util.js';
@@ -35,14 +35,24 @@ export default function REPL(title = 'QuickJS') {
   /* add 'os' and 'std' bindings */
   /*globalThis.os = os;
   globalThis.std = std;*/
-  const { std, os, fs } = globalThis;
+  const { std, os } = globalThis;
   var input, output;
 
-  /*PortableFileSystem().then(filesystem => {
-console.log("",{input,output})
-  fs = filesystem;*/
-  input = globalThis.process && process.stdin ? process.stdin : std.in;
-  output = globalThis.process && process.stdout ? process.stdout : std.out;
+  let fs = globalThis.fs ? globalThis.fs : filesystem && filesystem.openSync ? filesystem : null;
+  console.log('filesystem', fs);
+  if(!fs)
+    filesystem.PortableFileSystem(filesystem => {
+      fs = filesystem;
+      console.log('process', process);
+      input = globalThis.process && process.stdin ? process.stdin : std.in;
+      output = globalThis.process && process.stderr ? process.stderr : std.out;
+      //console.log('', { input, output });
+    });
+  else {
+    input = Util.stdio(0);
+    output = Util.stdio(1) ?? process.stdout;
+  }
+  // console.log('REPL', { input, output });
   //});
 
   /* close global objects */
@@ -56,7 +66,7 @@ console.log("",{input,output})
 
   /*
   function puts(str) {
-    fs.repl.puts(output, str);
+    fs.puts(output, str);
   }
   
   function flush() {
@@ -362,14 +372,14 @@ console.log("",{input,output})
     for(j = start; j < str.length; ) {
       var style = style_names[(i = j)];
       while(++j < str.length && style_names[j] == style) continue;
-      repl.puts(colors[styles[style] || 'default']);
-      repl.puts(str.substring(i, j));
-      repl.puts(colors['none']);
+      puts(colors[styles[style] || 'default']);
+      puts(str.substring(i, j));
+      puts(colors['none']);
     }
   }
 
   function print_csi(n, code) {
-    repl.puts('\x1b[' + (n != 1 ? n : '') + code);
+    puts('\x1b[' + (n != 1 ? n : '') + code);
   }
 
   /* XXX: handle double-width characters */
@@ -380,7 +390,7 @@ console.log("",{input,output})
     if(delta > 0) {
       while(delta != 0) {
         if(term_cursor_x == term_width - 1) {
-          repl.puts('\n'); /* translated to CRLF */
+          puts('\n'); /* translated to CRLF */
           term_cursor_x = 0;
           delta--;
         } else {
@@ -418,26 +428,16 @@ console.log("",{input,output})
       colorize = show_colors;
 
     if(search) {
-      const re = new RegExp(
-        (search_pattern = cmd_line.replace(/([\(\)\?\+\*])/g, '.' /*'\\$1'*/)),
-        'i'
-      );
+      const re = new RegExp((search_pattern = cmd_line.replace(/([\(\)\?\+\*])/g, '.' /*'\\$1'*/)), 'i');
       const num = search > 0 ? search - 1 : search;
       //search_index = history.findLastIndex(c => re.test(c) && --num == 0);
       let history_search = [...history.entries()].rotateLeft(history_index);
-      search_matches.splice(
-        0,
-        search_matches.length,
-        ...history_search.filter(([i, c]) => re.test(c))
-      );
+      search_matches.splice(0, search_matches.length, ...history_search.filter(([i, c]) => re.test(c)));
       //num = search > 0 ? search - 1 : search;
       const match = search_matches.at(num);
       const [histidx = -1, histcmd = ''] = match || [];
       const histdir = search > 0 ? 'forward' : 'reverse';
-      const histpos =
-        search < 0
-          ? history_search.indexOf(match) - history_search.length
-          : history_search.indexOf(match);
+      const histpos = search < 0 ? history_search.indexOf(match) - history_search.length : history_search.indexOf(match);
       search_index = histidx;
       let line_start = `(${histdir}-search[${histpos}])\``;
       cmd_line = `${line_start}${repl.cmd}': ${histcmd}`;
@@ -445,26 +445,23 @@ console.log("",{input,output})
       const start = cmd_line.length - histcmd.length - 3 - repl.cmd.length + cursor_pos;
       let r = cmd_line.substring(start);
 
-      repl.puts(`\x1b[1G`);
-      repl.puts(cmd_line);
-      repl.puts('\x1b[J');
+      puts(`\x1b[1G`);
+      puts(cmd_line);
+      puts('\x1b[J');
       last_cmd = cmd_line;
       term_cursor_x = start;
       last_cursor_pos = cursor_pos;
       let nback = repl.ucs_length(r);
       if(isNaN(nback)) throw new Error(`update nback=${nback}`);
-      repl.puts(`\x1b[${nback}D`);
+      puts(`\x1b[${nback}D`);
       //repl.move_cursor(-repl.ucs_length(r));
       repl.flush();
       return;
     } /* cursor_pos is the position in 16 bit characters inside the
            UTF-16 string 'cmd_line' */ else if(cmd_line != last_cmd) {
-      if(
-        !colorize &&
-        last_cmd.substring(0, last_cursor_pos) == cmd_line.substring(0, last_cursor_pos)
-      ) {
+      if(!colorize && last_cmd.substring(0, last_cursor_pos) == cmd_line.substring(0, last_cursor_pos)) {
         /* optimize common case */
-        repl.puts(cmd_line.substring(last_cursor_pos));
+        puts(cmd_line.substring(last_cursor_pos));
       } else {
         /* goto the start of the line */
         // repl.debug("last_cmd",last_cmd, last_cursor_pos);
@@ -480,16 +477,16 @@ console.log("",{input,output})
           var colorstate = repl.colorize_js(str);
           repl.print_color_text(str, start, colorstate[2]);
         } else {
-          repl.puts(cmd_line);
+          puts(cmd_line);
         }
       }
       term_cursor_x = (term_cursor_x + repl.ucs_length(cmd_line)) % term_width;
       if(term_cursor_x == 0) {
         /* show the cursor on the next line */
-        repl.puts(' \x08');
+        puts(' \x08');
       }
       /* remove the trailing characters */
-      repl.puts('\x1b[J');
+      puts('\x1b[J');
       last_cmd = cmd_line;
       last_cursor_pos = cmd_line.length;
     }
@@ -499,7 +496,9 @@ console.log("",{input,output})
       repl.move_cursor(-repl.ucs_length(cmd_line.substring(cursor_pos, last_cursor_pos)));
     }
     last_cursor_pos = cursor_pos;
-    repl.flush();
+    //console.log('\nrepl', repl.flush + '');
+    //console.log('fs', fs.flushSync, { output });
+    fs.flushSync(output);
   }
 
   /* editing commands */
@@ -595,13 +594,9 @@ console.log("",{input,output})
   }
 
   function accept_line() {
-    repl.puts('\n');
+    puts('\n');
     repl.history_add(search ? history[search_index] : repl.cmd);
-    repl.debug(
-      'accept_line',
-      { cmd: repl.cmd, history_index, search, history_length: history.length },
-      [...history.entries()].slice(history_index - 3, history_index + 2)
-    );
+    repl.debug('accept_line', { cmd: repl.cmd, history_index, search, history_length: history.length }, [...history.entries()].slice(history_index - 3, history_index + 2));
     return -1;
   }
 
@@ -710,7 +705,7 @@ console.log("",{input,output})
 
   function control_d() {
     if(repl.cmd.length == 0) {
-      repl.puts('\n');
+      puts('\n');
 
       (repl.cleanup ?? std.exit)(0);
 
@@ -728,11 +723,7 @@ console.log("",{input,output})
     var pos = cursor_pos;
     if(repl.cmd.length > 1 && pos > 0) {
       if(pos == repl.cmd.length) pos--;
-      repl.cmd =
-        repl.cmd.substring(0, pos - 1) +
-        repl.cmd.substring(pos, pos + 1) +
-        repl.cmd.substring(pos - 1, pos) +
-        repl.cmd.substring(pos + 1);
+      repl.cmd = repl.cmd.substring(0, pos - 1) + repl.cmd.substring(pos, pos + 1) + repl.cmd.substring(pos - 1, pos) + repl.cmd.substring(pos + 1);
       cursor_pos = pos + 1;
     }
   }
@@ -744,29 +735,19 @@ console.log("",{input,output})
     var p3 = repl.skip_word_backward(p4);
 
     if(p1 < p2 && p2 <= cursor_pos && cursor_pos <= p3 && p3 < p4) {
-      repl.cmd =
-        repl.cmd.substring(0, p1) +
-        repl.cmd.substring(p3, p4) +
-        repl.cmd.substring(p2, p3) +
-        repl.cmd.substring(p1, p2);
+      repl.cmd = repl.cmd.substring(0, p1) + repl.cmd.substring(p3, p4) + repl.cmd.substring(p2, p3) + repl.cmd.substring(p1, p2);
       cursor_pos = p4;
     }
   }
 
   function upcase_word() {
     var end = repl.skip_word_forward(cursor_pos);
-    repl.cmd =
-      repl.cmd.substring(0, cursor_pos) +
-      repl.cmd.substring(cursor_pos, end).toUpperCase() +
-      repl.cmd.substring(end);
+    repl.cmd = repl.cmd.substring(0, cursor_pos) + repl.cmd.substring(cursor_pos, end).toUpperCase() + repl.cmd.substring(end);
   }
 
   function downcase_word() {
     var end = repl.skip_word_forward(cursor_pos);
-    repl.cmd =
-      repl.cmd.substring(0, cursor_pos) +
-      repl.cmd.substring(cursor_pos, end).toLowerCase() +
-      repl.cmd.substring(end);
+    repl.cmd = repl.cmd.substring(0, cursor_pos) + repl.cmd.substring(cursor_pos, end).toLowerCase() + repl.cmd.substring(end);
   }
 
   function kill_region(start, end, dir) {
@@ -803,12 +784,12 @@ console.log("",{input,output})
 
   function control_c() {
     if(last_fun === control_c) {
-      repl.puts('\n');
+      puts('\n');
 
       running = false;
       (repl.cleanup ?? std.exit)(0);
     } else {
-      repl.puts('\n(Press Ctrl-C again to quit)\n');
+      puts('\n(Press Ctrl-C again to quit)\n');
       repl.cmd = '';
       repl.readline_print_prompt();
     }
@@ -846,8 +827,7 @@ console.log("",{input,output})
         default:
           if(repl.is_word(c)) {
             base = repl.get_context_word(line, pos);
-            if(['true', 'false', 'null', 'this'].includes(base) || !isNaN(+base))
-              return eval(base);
+            if(['true', 'false', 'null', 'this'].includes(base) || !isNaN(+base)) return eval(base);
             obj = repl.get_context_object(line, pos - base.length);
             if(obj === null || obj === void 0) return obj;
             if(obj === globalThis && obj[base] === void 0) {
@@ -987,7 +967,7 @@ console.log("",{input,output})
       max_width += 2;
       n_cols = Math.max(1, Math.floor((term_width + 1) / max_width));
       n_rows = Math.ceil(tab.length / n_cols);
-      repl.puts('\n');
+      puts('\n');
       /* display the sorted list column-wise */
       for(row = 0; row < n_rows; row++) {
         for(col = 0; col < n_cols; col++) {
@@ -995,9 +975,9 @@ console.log("",{input,output})
           if(i >= tab.length) break;
           s = tab[i];
           if(col != n_cols - 1) s = s.padEnd(max_width);
-          repl.puts(s);
+          puts(s);
         }
-        repl.puts('\n');
+        puts('\n');
       }
       /* show a new prompt */
       repl.readline_print_prompt();
@@ -1124,9 +1104,7 @@ console.log("",{input,output})
   }
 
   function handle_mouse(keys) {
-    const [button, x, y, cmd] = [...Util.matchAll(/([0-9]+|[A-Za-z]+)/g, keys)]
-      .map(p => p[1])
-      .map(p => (!isNaN(+p) ? +p : p));
+    const [button, x, y, cmd] = [...Util.matchAll(/([0-9]+|[A-Za-z]+)/g, keys)].map(p => p[1]).map(p => (!isNaN(+p) ? +p : p));
     let press = cmd == 'm';
 
     repl.debug('handle_mouse', { button, x, y, press });
@@ -1186,8 +1164,8 @@ console.log("",{input,output})
             //readline_cb = readline_handle_cmd;
             search = 0;
             //repl.cmd = histcmd;
-            repl.puts(`\x1b[1G`);
-            repl.puts(`\x1b[J`);
+            puts(`\x1b[1G`);
+            puts(`\x1b[J`);
             cursor_pos = histcmd.length;
             repl.readline_start(histcmd, readline_handle_cmd);
             return;
@@ -1263,11 +1241,7 @@ console.log("",{input,output})
       }
       if(typeof a === 'bigfloat' && eval_mode !== 'math') {
         s += 'l';
-      } else if(
-        eval_mode !== 'std' &&
-        s.indexOf('.') < 0 &&
-        ((radix == 16 && s.indexOf('p') < 0) || (radix == 10 && s.indexOf('e') < 0))
-      ) {
+      } else if(eval_mode !== 'std' && s.indexOf('.') < 0 && ((radix == 16 && s.indexOf('p') < 0) || (radix == 10 && s.indexOf('e') < 0))) {
         /* add a decimal point so that the floating point type
                    is visible */
         s += '.0';
@@ -1303,72 +1277,63 @@ console.log("",{input,output})
       type = typeof a;
       if(type === 'object') {
         if(a === null) {
-          repl.puts(a);
+          puts(a);
         } else if(stack.indexOf(a) >= 0) {
-          repl.puts('[circular]');
-        } else if(
-          has_jscalc &&
-          (a instanceof Fraction ||
-            a instanceof Complex ||
-            a instanceof Mod ||
-            a instanceof Polynomial ||
-            a instanceof PolyMod ||
-            a instanceof RationalFunction ||
-            a instanceof Series)
-        ) {
-          repl.puts(a.toString());
+          puts('[circular]');
+        } else if(has_jscalc && (a instanceof Fraction || a instanceof Complex || a instanceof Mod || a instanceof Polynomial || a instanceof PolyMod || a instanceof RationalFunction || a instanceof Series)) {
+          puts(a.toString());
         } else {
           stack.push(a);
           if(Array.isArray(a)) {
             n = a.length;
-            repl.puts('[ ');
+            puts('[ ');
             for(i = 0; i < n; i++) {
-              if(i !== 0) repl.puts(', ');
+              if(i !== 0) puts(', ');
               if(i in a) {
                 print_rec(a[i]);
               } else {
-                repl.puts('<empty>');
+                puts('<empty>');
               }
               if(i > 20) {
-                repl.puts('...');
+                puts('...');
                 break;
               }
             }
-            repl.puts(' ]');
+            puts(' ]');
           } else if(Object.__getClass(a) === 'RegExp') {
-            repl.puts(a.toString());
+            puts(a.toString());
           } else {
             keys = Object.keys(a);
             n = keys.length;
-            repl.puts('{ ');
+            puts('{ ');
             for(i = 0; i < n; i++) {
-              if(i !== 0) repl.puts(', ');
+              if(i !== 0) puts(', ');
               key = keys[i];
-              repl.puts(key, ': ');
+              puts(key, ': ');
               print_rec(a[key]);
             }
-            repl.puts(' }');
+            puts(' }');
           }
           stack.pop(a);
         }
       } else if(type === 'string') {
         s = a.__quote();
         if(s.length > 79) s = s.substring(0, 75) + '..."';
-        repl.puts(s);
+        puts(s);
       } else if(type === 'number') {
-        repl.puts(repl.number_to_string(a, hex_mode ? 16 : 10));
+        puts(repl.number_to_string(a, hex_mode ? 16 : 10));
       } else if(type === 'bigint') {
-        repl.puts(repl.bigint_to_string(a, hex_mode ? 16 : 10));
+        puts(repl.bigint_to_string(a, hex_mode ? 16 : 10));
       } else if(type === 'bigfloat') {
-        repl.puts(repl.bigfloat_to_string(a, hex_mode ? 16 : 10));
+        puts(repl.bigfloat_to_string(a, hex_mode ? 16 : 10));
       } else if(type === 'bigdecimal') {
-        repl.puts(a.toString() + 'm');
+        puts(a.toString() + 'm');
       } else if(type === 'symbol') {
-        repl.puts(String(a));
+        puts(String(a));
       } else if(type === 'function') {
-        repl.puts('function ' + a.name + '()');
+        puts('function ' + a.name + '()');
       } else {
-        repl.puts(a);
+        puts(a);
       }
     }
     print_rec(a);
@@ -1407,15 +1372,7 @@ console.log("",{input,output})
         .trim()
         .split(' ');
       if(param.length === 1 && param[0] === '') {
-        repl.puts(
-          'BigFloat precision=' +
-            prec +
-            ' bits (~' +
-            Math.floor(prec / log2_10) +
-            ' digits), exponent size=' +
-            expBits +
-            ' bits\n'
-        );
+        puts('BigFloat precision=' + prec + ' bits (~' + Math.floor(prec / log2_10) + ' digits), exponent size=' + expBits + ' bits\n');
       } else if(param[0] === 'f16') {
         prec = 11;
         expBits = 5;
@@ -1433,15 +1390,11 @@ console.log("",{input,output})
         if(param.length >= 2) expBits1 = parseInt(param[1]);
         else expBits1 = BigFloatEnv.expBitsMax;
         if(Number.isNaN(prec1) || prec1 < BigFloatEnv.precMin || prec1 > BigFloatEnv.precMax) {
-          repl.puts('Invalid precision\n');
+          puts('Invalid precision\n');
           return false;
         }
-        if(
-          Number.isNaN(expBits1) ||
-          expBits1 < BigFloatEnv.expBitsMin ||
-          expBits1 > BigFloatEnv.expBitsMax
-        ) {
-          repl.puts('Invalid exponent bits\n');
+        if(Number.isNaN(expBits1) || expBits1 < BigFloatEnv.expBitsMin || expBits1 > BigFloatEnv.expBitsMax) {
+          puts('Invalid exponent bits\n');
           return false;
         }
         prec = prec1;
@@ -1452,7 +1405,7 @@ console.log("",{input,output})
       param = expr.substring(cmd.length + 1).trim();
       prec1 = Math.ceil(parseFloat(param) * log2_10);
       if(prec1 < BigFloatEnv.precMin || prec1 > BigFloatEnv.precMax) {
-        repl.puts('Invalid precision\n');
+        puts('Invalid precision\n');
         return false;
       }
       prec = prec1;
@@ -1461,15 +1414,15 @@ console.log("",{input,output})
     } else if(has_bignum && cmd === 'mode') {
       param = expr.substring(cmd.length + 1).trim();
       if(param === '') {
-        repl.puts('Running mode=' + eval_mode + '\n');
+        puts('Running mode=' + eval_mode + '\n');
       } else if(param === 'std' || param === 'math') {
         eval_mode = param;
       } else {
-        repl.puts('Invalid mode\n');
+        puts('Invalid mode\n');
       }
       return false;
     } else if(cmd === 'clear') {
-      repl.puts('\x1b[H\x1b[J');
+      puts('\x1b[H\x1b[J');
     } else if(cmd === 'q') {
       running = false;
       //(thisObj.exit ?? std.exit)(0);
@@ -1497,7 +1450,7 @@ console.log("",{input,output})
       const handler = repl.directives[cmd];
       return repl.handler(...args) === false ? false : true;
     } else {
-      repl.puts('Unknown directive: ' + cmd + '\n');
+      puts('Unknown directive: ' + cmd + '\n');
       return false;
     }
     return true;
@@ -1527,52 +1480,30 @@ console.log("",{input,output})
     function sel(n) {
       return n ? '*' : ' ';
     }
-    repl.puts(
-      '\\h          this help\n' +
-        '\\x             ' +
-        sel(hex_mode) +
-        'hexadecimal number display\n' +
-        '\\d             ' +
-        sel(!hex_mode) +
-        'decimal number display\n' +
-        '\\t             ' +
-        sel(show_time) +
-        'toggle timing display\n' +
-        '\\clear              clear the terminal\n'
-    );
+    puts('\\h          this help\n' + '\\x             ' + sel(hex_mode) + 'hexadecimal number display\n' + '\\d             ' + sel(!hex_mode) + 'decimal number display\n' + '\\t             ' + sel(show_time) + 'toggle timing display\n' + '\\clear              clear the terminal\n');
     if(has_jscalc) {
-      repl.puts(
-        '\\a             ' +
-          sel(algebraicMode) +
-          'algebraic mode\n' +
-          '\\n             ' +
-          sel(!algebraicMode) +
-          'numeric mode\n'
-      );
+      puts('\\a             ' + sel(algebraicMode) + 'algebraic mode\n' + '\\n             ' + sel(!algebraicMode) + 'numeric mode\n');
     }
     if(has_bignum) {
-      repl.puts(
-        "\\p [m [e]]       set the BigFloat precision to 'm' bits\n" +
-          "\\digits n   set the BigFloat precision to 'ceil(n*log2(10))' bits\n"
-      );
+      puts("\\p [m [e]]       set the BigFloat precision to 'm' bits\n" + "\\digits n   set the BigFloat precision to 'ceil(n*log2(10))' bits\n");
       if(!has_jscalc) {
-        repl.puts('\\mode [std|math] change the running mode (current = ' + eval_mode + ')\n');
+        puts('\\mode [std|math] change the running mode (current = ' + eval_mode + ')\n');
       }
     }
-    repl.puts('\\i [module] import module\n');
+    puts('\\i [module] import module\n');
     if(!config_numcalc) {
-      repl.puts('\\q          exit\n');
+      puts('\\q          exit\n');
     }
   }
 
   function print_status(...args) {
-    /*repl.puts('\x1b[1S');
-    repl.puts('\x1b[1F');*/
-    //    repl.puts('\x1b[1G');
-    repl.puts('\x1b[1K\r');
+    /*puts('\x1b[1S');
+    puts('\x1b[1F');*/
+    //    puts('\x1b[1G');
+    puts('\x1b[1K\r');
     for(let arg of args) repl.show(arg);
-    repl.puts('\n');
-    repl.puts('\x1b[1K\r');
+    puts('\n');
+    puts('\x1b[1K\r');
     repl.readline_print_prompt();
   }
 
@@ -1590,13 +1521,9 @@ console.log("",{input,output})
       repl.print_status(colors[styles.result], result, '\n', colors.none);
       repl.update();
     } catch(error) {
-      let output =
-        `${error.constructor.name || 'EXCEPTION'}: ` +
-        colors[styles.error_msg] +
-        error?.message +
-        '\n';
+      let output = `${error.constructor.name || 'EXCEPTION'}: ` + colors[styles.error_msg] + error?.message + '\n';
 
-      //      repl.puts(error.stack+'');
+      //      puts(error.stack+'');
 
       if(error instanceof Error || typeof error?.message == 'string') {
         repl.debug((error?.type ?? Util.className(error)) + ': ' + error?.message);
@@ -1606,7 +1533,7 @@ console.log("",{input,output})
       }
       output += colors.none;
 
-      repl.puts(output, '\n\r');
+      puts(output, '\n\r');
     }
 
     /* set the last result */
@@ -1614,19 +1541,14 @@ console.log("",{input,output})
     if(Util.isPromise(result)) {
       result.then(value => {
         result.resolved = true;
-        repl.print_status(
-          `Promise resolved to:`,
-          Util.typeOf(value),
-          console.config({ depth: 1, multiline: true }),
-          value
-        );
+        repl.print_status(`Promise resolved to:`, Util.typeOf(value), console.config({ depth: 1, multiline: true }), value);
         globalThis.$ = value;
       });
     }
   }
 
   function cmd_start(title) {
-    if(repl.help) repl.puts(`${title} - Type "\\h" for help\n`);
+    if(repl.help) puts(`${title} - Type "\\h" for help\n`);
     if(has_bignum) {
       log2_10 = Math.log(10) / Math.log(2);
       prec = 113;
@@ -1794,25 +1716,12 @@ console.log("",{input,output})
 
     function parse_number() {
       style = 'number';
-      while(
-        i < n &&
-        (repl.is_word(str[i]) || (str[i] == '.' && (i == n - 1 || str[i + 1] != '.')))
-      ) {
+      while(i < n && (repl.is_word(str[i]) || (str[i] == '.' && (i == n - 1 || str[i + 1] != '.')))) {
         i++;
       }
     }
 
-    var js_keywords =
-      '|' +
-      'break|case|catch|continue|debugger|default|delete|do|' +
-      'else|finally|for|function|if|in|instanceof|new|' +
-      'return|switch|this|throw|try|typeof|while|with|' +
-      'class|const|enum|import|export|extends|super|' +
-      'implements|interface|let|package|private|protected|' +
-      'public|static|yield|' +
-      'undefined|null|true|false|Infinity|NaN|' +
-      'eval|arguments|' +
-      'await|';
+    var js_keywords = '|' + 'break|case|catch|continue|debugger|default|delete|do|' + 'else|finally|for|function|if|in|instanceof|new|' + 'return|switch|this|throw|try|typeof|while|with|' + 'class|const|enum|import|export|extends|super|' + 'implements|interface|let|package|private|protected|' + 'public|static|yield|' + 'undefined|null|true|false|Infinity|NaN|' + 'eval|arguments|' + 'await|';
 
     var js_no_regex = '|this|super|undefined|null|true|false|Infinity|NaN|arguments|';
     var js_types = '|void|var|';
@@ -2050,6 +1959,7 @@ console.log("",{input,output})
     repl.cmd_start(title);
 
     do {
+      // console.log("run", {fs});
       await fs.waitRead(input);
 
       await repl.term_read_handler();
@@ -2067,7 +1977,7 @@ console.log("",{input,output})
     repl.term_init();
     repl.cmd_start(title);
 
-    os.setReadHandler(input.fileno(), () => repl.term_read_handler());
+    Util.setReadHandler(input, () => repl.term_read_handler());
   }
 
   function wrapPrintFunction(fn, thisObj) {
@@ -2077,7 +1987,7 @@ console.log("",{input,output})
       ret = fn.call(thisObj, ...args);
       //repl.term_init();
       //repl.cmd_readline_start(title);
-      // repl.puts('\r\x1b[J');
+      // puts('\r\x1b[J');
       repl.readline_print_prompt();
       repl.update();
     };

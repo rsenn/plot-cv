@@ -12,9 +12,7 @@ import ConsoleSetup from './lib/consoleSetup.js';
 let filesystem;
 
 function xmlize(obj, depth = 2) {
-  return obj.toXML
-    ? obj.toXML().replace(/>\s*</g, '>\n    <')
-    : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
+  return obj.toXML ? obj.toXML().replace(/>\s*</g, '>\n    <') : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
 
 function testLocator() {
@@ -182,15 +180,7 @@ async function testEagle(filename) {
 
   const packages = {
     board: (board && board.elements && [...board.elements].map(([name, e]) => e.package)) || [],
-    schematic:
-      (schematic &&
-        schematic.sheets &&
-        [...schematic.sheets]
-          .map(e =>
-            [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)
-          )
-          .flat()) ||
-      []
+    schematic: (schematic && schematic.sheets && [...schematic.sheets].map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)).flat()) || []
   };
   let parts = (schematic && schematic.parts) || [];
   let sheets = (schematic && schematic.sheets) || [];
@@ -273,9 +263,7 @@ async function testEagle(filename) {
   let desc = documents.map(doc => [doc.filename, doc.find('description')]);
   console.log('desc', desc);
 
-  desc = desc
-    .map(([file, e]) => [file, e && e.xpath()])
-    .map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
+  desc = desc.map(([file, e]) => [file, e && e.xpath()]).map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
   desc = new Map(desc);
   console.log('descriptions', [...Util.map(desc, ([k, v]) => [k, v])]);
 
@@ -289,11 +277,7 @@ async function main(...args) {
     try {
       let project = await testEagle(arg);
     } catch(err) {
-      console.log(
-        'Err:',
-        err.message,
-        typeof err.stack == 'string' ? err.stack : [...err.stack].map(f => f + '')
-      );
+      console.log('Err:', err.message, typeof err.stack == 'string' ? err.stack : [...err.stack].map(f => f + ''));
       Util.exit(1);
     }
   }

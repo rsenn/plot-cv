@@ -53,51 +53,16 @@ import { toXML } from './lib/json.js';
 import Util from './lib/util.js';
 import * as deep from './lib/deep.js';
 import path from './lib/path.js';
-import {
-  LineList,
-  Point,
-  Circle,
-  Rect,
-  Size,
-  Line,
-  TransformationList,
-  Rotation,
-  Translation,
-  Scaling,
-  Matrix,
-  BBox
-} from './lib/geom.js';
+import { LineList, Point, Circle, Rect, Size, Line, TransformationList, Rotation, Translation, Scaling, Matrix, BBox } from './lib/geom.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import REPL from './repl.js';
-import {
-  BinaryTree,
-  BucketStore,
-  BucketMap,
-  ComponentMap,
-  CompositeMap,
-  Deque,
-  Enum,
-  HashList,
-  Multimap,
-  Shash,
-  SortedMap,
-  HashMultimap,
-  MultiBiMap,
-  MultiKeyMap,
-  DenseSpatialHash2D,
-  SpatialHash2D,
-  HashMap,
-  SpatialH,
-  SpatialHash,
-  SpatialHashMap,
-  BoxHash
-} from './lib/container.js';
+import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, Enum, HashList, Multimap, Shash, SortedMap, HashMultimap, MultiBiMap, MultiKeyMap, DenseSpatialHash2D, SpatialHash2D, HashMap, SpatialH, SpatialHash, SpatialHashMap, BoxHash } from './lib/container.js';
 //import * as std from 'std';
 import PortableFileSystem from './lib/filesystem.js';
 import { Pointer } from './lib/pointer.js';
 import inspect from './lib/objectInspect.js';
 
-let fs, cmdhist;
+let cmdhist;
 
 Util.define(Array.prototype, {
   findLastIndex(predicate) {
@@ -149,9 +114,7 @@ function LoadHistory(filename) {
     if(data) return data;
   };
 
-  return (parse() ?? [])
-    .filter(entry => (entry + '').trim() != '')
-    .map(entry => entry.replace(/\\n/g, '\n'));
+  return (parse() ?? []).filter(entry => (entry + '').trim() != '').map(entry => entry.replace(/\\n/g, '\n'));
 }
 
 function ReadJSON(filename) {
@@ -271,10 +234,7 @@ function fixValue(element) {
 
   switch (element.name[0]) {
     case 'R': {
-      newValue = value.replace(
-        /^([0-9.]+)([mkM]?)(?:\xEF\xBF\xBD|\xC2\xA9|\x26\xC2*\xA9+|\u2126?[\x80-\xFF]+)([\x00-\x7F]*)/,
-        '$1$2\u2126$3'
-      );
+      newValue = value.replace(/^([0-9.]+)([mkM]?)(?:\xEF\xBF\xBD|\xC2\xA9|\x26\xC2*\xA9+|\u2126?[\x80-\xFF]+)([\x00-\x7F]*)/, '$1$2\u2126$3');
       break;
     }
     case 'L': {
@@ -413,8 +373,7 @@ function CorrelateSchematicAndBoard(schematic, board) {
   let allNames = Math.max(...names.map(n => n.length));
   let intersection = Util.intersect(...names);
 
-  if(allNames.length > intersection.length)
-    console.warn(`WARNING: Only ${intersection.length} names of ${allNames.length} correlate`);
+  if(allNames.length > intersection.length) console.warn(`WARNING: Only ${intersection.length} names of ${allNames.length} correlate`);
   console.log(`intersection`, intersection);
 
   return /*new Map*/ intersection.map(name => [name, documents.map(doc => GetByName(doc, name))]);
@@ -429,15 +388,7 @@ async function testEagle(filename) {
   let { board, schematic } = proj;
   const packages = {
     board: (board && board.elements && [...board.elements].map(([name, e]) => e.package)) || [],
-    schematic:
-      (schematic &&
-        schematic.sheets &&
-        [...schematic.sheets]
-          .map(e =>
-            [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)
-          )
-          .flat()) ||
-      []
+    schematic: (schematic && schematic.sheets && [...schematic.sheets].map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)).flat()) || []
   };
   let parts = (schematic && schematic.parts) || [];
   let sheets = (schematic && schematic.sheets) || [];
@@ -488,20 +439,33 @@ async function testEagle(filename) {
   }
   let desc = proj.documents.map(doc => [doc.filename, doc.find('description')]);
   console.log('desc', desc);
-  desc = desc
-    .map(([file, e]) => [file, e && e.xpath()])
-    .map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
+  desc = desc.map(([file, e]) => [file, e && e.xpath()]).map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
   desc = new Map(desc);
   console.log('descriptions', [...Util.map(desc, ([k, v]) => [k, v])]);
   return proj;
 }
 
 async function main(...args) {
-  /*globalThis.console = await ConsoleSetup({
-    inspectOptions: { depth: 10, compact: 1 }
+  await ConsoleSetup({
+    inspectOptions: { depth: 3, compact: 3, maxArrayLength: 10, maxStringLength: 10 }
   });
-*/
-  globalThis.fs = fs = await PortableFileSystem();
+
+  console.log('args', args);
+  let fs;
+
+  if(Util.getPlatform() == 'quickjs') {
+    globalThis.std = await import('std');
+    globalThis.os = await import('os');
+    globalThis.fs = await import('./lib/filesystem.js');
+    // console.log('quickjs', { std, os, fs });
+  } else {
+    //globalThis.fs = fs=await import('fs');
+    //  console.log('fs', globalThis.fs);
+    const cb = filesystem => {
+      globalThis.fs = fs = filesystem;
+    };
+    await PortableFileSystem(cb);
+  }
 
   const base = path.basename(Util.getArgv()[1], /\.[^.]*$/);
   const histfile = `.${base}-history`;
@@ -514,7 +478,6 @@ async function main(...args) {
     },
     args
   );
-  console.log('params', params);
 
   Object.assign(globalThis, {
     EagleSVGRenderer,
@@ -576,21 +539,15 @@ async function main(...args) {
 
   Object.assign(globalThis, {
     load(filename, project = globalThis.project) {
-      return (globalThis.document = new EagleDocument(
-        fs.readFileSync(filename, 'utf-8'),
-        project,
-        filename,
-        null,
-        fs
-      ));
+      globalThis.document = new EagleDocument(fs.readFileSync(filename, 'utf-8'), project, filename, null, fs);
     },
     newProject(filename) {
-      return (globalThis.project = new EagleProject(filename, fs));
+      if(!globalThis.project) globalThis.project = new EagleProject(null);
+
+      project.lazyOpen(filename);
     }
   });
-  globalThis.project = new EagleProject(null, fs);
-
-  globalThis.docs = args.map(arg => (globalThis.doc = load(arg)));
+  // globalThis.docs = args.map(arg => (globalThis.doc = load(arg)));
 
   Object.assign(globalThis, {
     UpdateMeasures,
@@ -652,7 +609,8 @@ async function main(...args) {
   cmdhist = `.${base}-cmdhistory`;
 
   let repl = (globalThis.repl = new REPL(base));
-  let debugLog = filesystem.openSync('debug.log', 'a');
+  let debugLog = fs.openSync('debug.log', 'a');
+
   // console.log(`debugLog`, Util.getMethods(debugLog, Infinity, 0));
   repl.history_set(LoadHistory(cmdhist));
   console.log(`LOAD (read ${repl.history.length} history entries)`);
@@ -663,14 +621,13 @@ async function main(...args) {
     let s = '';
     for(let arg of args) {
       if(s) s += ' ';
-      if(typeof arg != 'strping' || arg.indexOf('\x1b') == -1)
-        s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
+      if(typeof arg != 'strping' || arg.indexOf('\x1b') == -1) s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
       else s += arg;
     }
-    filesystem.writeSync(debugLog, filesystem.bufferFrom(s + '\n'));
+    fs.writeSync(debugLog, fs.bufferFrom(s + '\n'));
 
     //    debugLog.puts(s + '\n');
-    filesystem.flushSync(debugLog);
+    fs.flushSync(debugLog);
   };
   repl.show = value => {
     if(Util.isObject(value) && value instanceof EagleNode) {
@@ -712,10 +669,14 @@ async function main(...args) {
     newProject(file);
   }
 
-  repl.run();
-  console.log('REPL done');
+  //globalThis.project = new EagleProject(params['@']);
+  //console.log('globalThis.project', globalThis.project);
+
+  await repl.run();
 }
 
+Util.callMain(main, true);
+/*
 try {
   main(...Util.getArgs().slice(1));
 } catch(error) {
@@ -724,3 +685,4 @@ try {
 } finally {
   console.log('SUCCESS');
 }
+*/
