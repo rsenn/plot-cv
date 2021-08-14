@@ -47,7 +47,7 @@ export class List extends Array {
 
     if(typeof callback == 'object' && callback != null && callback instanceof RegExp) {
       var re = callback;
-      callback = elem => re.test(elem);
+      callback = elem => re.test(typeof elem == 'object' && elem != null && elem.name);
     }
 
     for(let elem of this) {

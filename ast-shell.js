@@ -28,7 +28,8 @@ import {
   GetTypeNode,
   GetFields,
   PathRemoveLoc,
-  PrintAst
+  PrintAst,
+  GetParams
 } from './clang-ast.js';
 import Tree from './lib/tree.js';
 import { Pointer } from './lib/pointer.js';
@@ -235,53 +236,73 @@ function Table(list, pred = (n, l) => true) {
   let entries = [...list]
     .map((n, i) => (n ? [i, LocationString(GetLoc(n)), n] : undefined))
     .filter(e => e);
-  const keys = [
-    'id',
-    'kind',
-    'name',
-    function returnType(n) {
-      if(n.type) {
-        const { qualType } = n.type;
-        return qualType.replace(/\s*\(.*$/g, '');
+  let keys = ['id', 'kind', 'name'].filter(k => !!k);
+  let items = entries.filter(([i, l, n]) => pred(n, l));
+  const first = items[0][2];
+  console.log('items[0]', first.kind);
+  if(/Function/.test(first.kind)) {
+    keys = [
+      ...keys,
+      function returnType(n) {
+        if(n.type) {
+          const { qualType } = n.type;
+          return qualType.replace(/\s*\(.*$/g, '');
+        }
+      },
+      function numArgs(n) {
+        let params = GetParams(n);
+        return params ? params.length : undefined;
+      },
+      function Params(n) {
+        let params = GetParams(n);
+        return params ? params.map(p => PrintAst(p)).join(',') : undefined;
       }
-    }
-  ];
-  let rows = entries
-    .filter(([i, l, n]) => pred(n, l))
-    .reduce((acc, [i, l, n]) => {
-      let row = keys.map(k => (typeof k == 'string' ? n[k] : k(n) ?? ''));
-      row.unshift(i);
-      row.push(l);
-      acc.push(row);
-      return acc;
-    }, []);
-
-  let sizes = rows.reduce(
-    (acc, row) => {
-      for(let i = 0; i < acc.length; i++) {
-        if(acc[i] < row[i].length) acc[i] = row[i].length;
-      }
-      return acc;
-    },
-    [5, 15, 12, 30, 30]
+    ];
+  }
+  keys = ['n', ...keys, 'location'];
+  const names = keys.map(k => (typeof k == 'function' ? k.name : k));
+  let rows = items.map(([i, l, n]) =>
+    Object.fromEntries([
+      ['n', i],
+      ...keys.slice(1, -1).map((k, j) => [names[j + 1], typeof k == 'string' ? n[k] : k(n) ?? '']),
+      ['location', l]
+    ])
   );
+  let sizes = {}; //[3, 8, 12, 5, 4, 1, 24, 16];
+  for(let row of rows) {
+    //console.log(`row`, row);
+    for(let [j, i] of names.entries()) {
+      const col = row[i] + '';
+      //console.log(`row[${i}]`, col, col.length);
+      if((sizes[i] ?? 0) < col.length) sizes[i] = col.length;
+    }
+  }
+  console.log('sizes:', sizes);
+  let width = names.reduce((acc, name) => (acc ? acc + 3 + sizes[name] : sizes[name]), 0);
+  console.log('width', width);
+  if(width > repl.term_width) sizes['Params'] -= width - repl.term_width;
 
-  const names = ['#', ...keys.map(k => (typeof k == 'function' ? k.name : k)), 'location'];
-  const pad = (cols, pad, sep) =>
-    cols
-      .map((s, col) => (s + '')[`pad${col ? 'End' : 'Start'}`](sizes[col] ?? 30, pad ?? ' '))
-      .join(sep ?? '│ ')
+  const trunc = names.map((name, i) => Util.padTrunc((i == 0 ? -1 : 1) * sizes[name]));
+  const pad = (cols, pad, sep) => {
+    //console.log('pad', cols);
+    if(!Array.isArray(cols)) cols = names.map((key, i) => cols[key]);
+    return cols
+      .map((s, col) => trunc[col](s, pad))
+      .join(sep ?? ' │ ')
       .trimEnd();
+  };
   return (
     pad(names) +
     '\n' +
     pad(
-      names.map(n => ''),
+      names.reduce((acc, n) => ({ ...acc, [n]: '' }), {}),
       '─',
-      '┼─'
+      '─┼─'
     ) +
     '\n' +
-    rows.map(row => pad(row)).join('\n')
+    rows.reduce((acc, row) => {
+      return acc + pad(row) + '\n';
+    }, '')
   );
 }
 
@@ -1116,7 +1137,8 @@ async function ASTShell(...args) {
     toArrayBuffer,
     toString,
     Constants,
-    PrintCArray
+    PrintCArray,
+    GetParams
   });
 
   Pointer.prototype.chain = function(step, limit = Infinity) {
