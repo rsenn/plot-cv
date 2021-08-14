@@ -3,6 +3,11 @@ import { GPIO } from 'gpio';
 function main(...args) {
   const gpio = new GPIO();
   console.log('gpio.initPin', gpio.initPin);
+  /*console.log('gpio.setPin', gpio.setPin);
+  console.log('gpio.getPin', gpio.getPin);
+  console.log('gpio', Object.getOwnPropertyNames(gpio));
+  console.log('gpio.constructor', gpio.constructor);
+  console.log('GPIO', Object.getOwnPropertyNames(GPIO));*/
 
   gpio.initPin(0, GPIO.OUTPUT);
   gpio.setPin(0, 1);
