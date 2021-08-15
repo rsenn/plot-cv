@@ -61,7 +61,10 @@ export default function REPL(title = 'QuickJS') {
   var input = fs.stdin;*/
 
   const puts = str => fs.puts(output, str);
-  const flush = () => fs.flushSync(output);
+  const flush = () => {
+//   console.log("flush", {flushSync:fs.flushSync+'',output});
+    fs.flushSync(output);
+  }
 
   /*
   function puts(str) {
@@ -497,7 +500,8 @@ export default function REPL(title = 'QuickJS') {
     last_cursor_pos = cursor_pos;
     //console.log('\nrepl', repl.flush + '');
     //console.log('fs', fs.flushSync, { output });
-    fs.flushSync(output);
+    repl.flush();
+//    fs.flushSync(output);
   }
 
   /* editing commands */
