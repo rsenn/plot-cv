@@ -39,7 +39,7 @@ export default function REPL(title = 'QuickJS') {
   var input, output;
 
   let fs = globalThis.fs ? globalThis.fs : filesystem && filesystem.openSync ? filesystem : null;
-   if(!fs)
+  if(!fs)
     filesystem.PortableFileSystem(filesystem => {
       fs = filesystem;
       console.log('process', process);
@@ -51,6 +51,9 @@ export default function REPL(title = 'QuickJS') {
     input = Util.stdio(0);
     output = Util.stdio(1) ?? process.stdout;
   }
+
+  Util.ttySetRaw(input);
+  Util.ttySetRaw(output);
   // console.log('REPL', { input, output });
   //});
 
@@ -62,9 +65,9 @@ export default function REPL(title = 'QuickJS') {
 
   const puts = str => fs.puts(output, str);
   const flush = () => {
-//   console.log("flush", {flushSync:fs.flushSync+'',output});
+    //   console.log("flush", {flushSync:fs.flushSync+'',output});
     fs.flushSync(output);
-  }
+  };
 
   /*
   function puts(str) {
@@ -501,7 +504,7 @@ export default function REPL(title = 'QuickJS') {
     //console.log('\nrepl', repl.flush + '');
     //console.log('fs', fs.flushSync, { output });
     repl.flush();
-//    fs.flushSync(output);
+    //    fs.flushSync(output);
   }
 
   /* editing commands */
@@ -1171,8 +1174,8 @@ export default function REPL(title = 'QuickJS') {
             puts(`\x1b[J`);
             cursor_pos = histcmd.length;
             repl.readline_start(histcmd, readline_handle_cmd);
+            repl.update();
             return;
-            //repl.update();
           }
           break;
       }
