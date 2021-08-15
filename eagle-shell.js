@@ -468,7 +468,7 @@ async function main(...args) {
     await PortableFileSystem(cb);
   }
 
-debugLog = fs.openSync('debug.log', 'a');
+  debugLog = fs.openSync('debug.log', 'a');
 
   const base = path.basename(Util.getArgv()[1], /\.[^.]*$/);
   const histfile = `.${base}-history`;
