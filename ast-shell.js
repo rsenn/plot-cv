@@ -647,6 +647,10 @@ export async function LibraryExports(file) {
   return entries.map(entry => entry[entry.length - 1].trimStart());
 }
 
+function SaveLibraries() {
+  const layers = Object.values([...project.schematic.layers, ...project.board.layers].reduce((acc, [n, e]) => ({ ...acc, [n]: e.raw }), {}));
+}
+
 function ProcessFile(file, debug = true) {
   const ext = path.extname(file);
   let ret = null;

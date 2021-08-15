@@ -49,7 +49,7 @@ import {
   ImmutablePath,
   DereferenceError
 } from './lib/eagle.js';
-import { toXML } from './lib/json.js';
+//import { toXML } from './lib/json.js';
 import Util from './lib/util.js';
 import * as deep from './lib/deep.js';
 import path from './lib/path.js';
@@ -60,7 +60,9 @@ import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, 
 //import * as std from 'std';
 import PortableFileSystem from './lib/filesystem.js';
 import { Pointer } from './lib/pointer.js';
+import { read as fromXML, write as toXML } from './lib/xml.js';
 import inspect from './lib/objectInspect.js';
+import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
 
 let cmdhist;
 
@@ -99,7 +101,7 @@ function Terminate(exitCode) {
   Util.exit(exitCode);
 }
 
-function LoadHistory(filename) {
+/*function LoadHistory(filename) {
   let contents = fs.readFileSync(filename, 'utf-8');
   let data;
 
@@ -122,7 +124,7 @@ function ReadJSON(filename) {
 
   if(data) console.log(`ReadJSON('${filename}') ${data.length} bytes read`);
   return data ? JSON.parse(data) : null;
-}
+}*/
 
 async function importModule(moduleName, ...args) {
   //console.log('importModule', moduleName, args);
@@ -379,6 +381,82 @@ function CorrelateSchematicAndBoard(schematic, board) {
   return /*new Map*/ intersection.map(name => [name, documents.map(doc => GetByName(doc, name))]);
 }
 
+function SaveLibraries() {
+  const { schematic, board } = project;
+  const layers = Object.values([...schematic.layers, ...board.layers].reduce((acc, [n, e]) => ({ ...acc, [n]: e.raw }), {}));
+  const entities = ['symbols', 'devicesets', 'packages'];
+
+  const libraryNames = Util.unique([...schematic.libraries, ...board.libraries].map(([n, e]) => n));
+  console.log('libraryNames', libraryNames);
+
+  const libraries = libraryNames.map(name => [name, schematic.libraries[name], board.libraries[name]]);
+  for(let [name, ...libs] of libraries) {
+    let obj = { symbols: [], devicesets: [], packages: [] };
+
+    let xml = { tagName: 'library', children: [{ tagName: 'description', attributes: {}, children: [`${name}.lbr library`] }], attributes: { name } };
+
+    for(let lib of libs) {
+      if(lib) {
+        for(let entity of entities) {
+          if(lib[entity]) obj[entity] = [...obj[entity], ...lib[entity]];
+        }
+      }
+    }
+    for(let entity of entities) {
+      obj[entity] = obj[entity].reduce((acc, [n, e]) => ({ ...acc, [n]: e.raw }), {});
+    }
+
+    for(let entity of entities) {
+      obj[entity] = Object.values(obj[entity]);
+
+      xml.children.push({ tagName: entity, children: obj[entity] });
+    }
+
+    //  console.log('', { xml });
+
+    xml = {
+      tagName: '?xml',
+      attributes: { version: '1.0', encoding: 'utf-8' },
+      children: [
+        { tagName: '!DOCTYPE eagle SYSTEM "eagle.dtd"' },
+        {
+          tagName: 'eagle',
+          attributes: { version: '6.4.1' },
+          children: [
+            {
+              tagName: 'drawing',
+              attributes: {},
+              children: [
+                {
+                  tagName: 'settings',
+                  attributes: {},
+                  children: [
+                    { tagName: 'setting', attributes: { alwaysvectorfont: 'no' } },
+                    { tagName: 'setting', attributes: { verticaltext: 'up' } }
+                  ]
+                },
+                { tagName: 'grid', attributes: { distance: '0.3175', unitdist: 'mm', unit: 'mm', style: 'lines', multiple: '1', display: 'yes', altdistance: '0.025', altunitdist: 'mm', altunit: 'mm' } },
+                {
+                  tagName: 'layers',
+                  attributes: {},
+                  children: layers
+                },
+                xml
+              ]
+            }
+          ]
+        }
+      ]
+    };
+
+    console.log('xml', console.config({ compact: 3, depth: 9 }), xml);
+    WriteFile(`${name}.lbr`, toXML(xml));
+  }
+
+  return xml;
+  //console.log('libraries', libraries);
+}
+
 async function testEagle(filename) {
   console.log('testEagle: ', filename);
   let proj = new EagleProject(filename, fs);
@@ -483,6 +561,7 @@ async function main(...args) {
   );
 
   Object.assign(globalThis, {
+    SaveLibraries,
     EagleSVGRenderer,
     SchematicRenderer,
     BoardRenderer,
@@ -537,7 +616,17 @@ async function main(...args) {
     CorrelateSchematicAndBoard,
     AlignItem,
     AlignAll,
-    UpdateMeasures
+    UpdateMeasures,
+    ReadFile,
+    LoadHistory,
+    ReadJSON,
+    MapFile,
+    ReadBJSON,
+    WriteFile,
+    WriteJSON,
+    WriteBJSON,
+    DirIterator,
+    RecursiveDirIterator
   });
 
   Object.assign(globalThis, {

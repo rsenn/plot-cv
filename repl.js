@@ -54,15 +54,15 @@ export default function REPL(title = 'QuickJS') {
 
   Util.ttySetRaw(input);
   Util.ttySetRaw(output);
-  
-  var thisObj = this; 
-  
+
+  var thisObj = this;
+
   const puts = str => fs.puts(output, str);
   const flush = () => {
     //   console.log("flush", {flushSync:fs.flushSync+'',output});
     fs.flushSync(output);
   };
- 
+
   /* XXX: use preprocessor ? */
   var config_numcalc = false; //typeof os.open === 'undefined';
   var has_jscalc = typeof Fraction === 'function';
@@ -604,9 +604,9 @@ export default function REPL(title = 'QuickJS') {
 
   function history_add(str) {
     //repl.debug('history_add', { str });
-    str = str.trim();
 
     if(str) {
+      str = str.trim();
       history.push(str);
     }
     history_index = history.length;
