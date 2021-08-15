@@ -54,30 +54,15 @@ export default function REPL(title = 'QuickJS') {
 
   Util.ttySetRaw(input);
   Util.ttySetRaw(output);
-  // console.log('REPL', { input, output });
-  //});
-
-  /* close global objects */
-  //const { Object, String, Array, Date, Math, isFinite, parseFloat } = globalThis;
-  var thisObj = this;
-  /*  var output = fs.stdout;
-  var input = fs.stdin;*/
-
+  
+  var thisObj = this; 
+  
   const puts = str => fs.puts(output, str);
   const flush = () => {
     //   console.log("flush", {flushSync:fs.flushSync+'',output});
     fs.flushSync(output);
   };
-
-  /*
-  function puts(str) {
-    fs.puts(output, str);
-  }
-  
-  function flush() {
-   fs.repl.flush(output);
-  }*/
-
+ 
   /* XXX: use preprocessor ? */
   var config_numcalc = false; //typeof os.open === 'undefined';
   var has_jscalc = typeof Fraction === 'function';
