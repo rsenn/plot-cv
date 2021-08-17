@@ -56,17 +56,11 @@ Resampler.prototype.compileLinearInterpolationFunction = function() {
       outputBuffer[outputOffset++] = l1 * firstWeight + b1 * secondWeight;
     }
 
-    for(
-      weight -= 1, bufferLength -= 2, sourceOffset = weight << 1;
-      outputOffset < outLength && sourceOffset < bufferLength;
-
-    ) {
+    for(weight -= 1, bufferLength -= 2, sourceOffset = weight << 1; outputOffset < outLength && sourceOffset < bufferLength; ) {
       secondWeight = weight % 1;
       firstWeight = 1 - secondWeight;
-      outputBuffer[outputOffset++] =
-        buffer[sourceOffset] * firstWeight + buffer[sourceOffset + 2] * secondWeight;
-      outputBuffer[outputOffset++] =
-        buffer[sourceOffset + 1] * firstWeight + buffer[sourceOffset + 3] * secondWeight;
+      outputBuffer[outputOffset++] = buffer[sourceOffset] * firstWeight + buffer[sourceOffset + 2] * secondWeight;
+      outputBuffer[outputOffset++] = buffer[sourceOffset + 1] * firstWeight + buffer[sourceOffset + 3] * secondWeight;
       weight += ratioWeight;
       sourceOffset = weight << 1;
     }

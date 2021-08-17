@@ -195,12 +195,7 @@ export class DebuggerProtocol {
 }
 
 function retValue(ret, ...args) {
-  console.log(
-    ...args,
-    `ret =`,
-    ret,
-    ...(ret == -1 ? [' errno =', errno(), ' error =', std.strerror(errno())] : [])
-  );
+  console.log(...args, `ret =`, ret, ...(ret == -1 ? [' errno =', errno(), ' error =', std.strerror(errno())] : []));
 }
 
 function toHex(n, b = 2) {
@@ -223,11 +218,7 @@ function MakeArray(buf, numBytes) {
 function ArrayBufToHex(buf, numBytes = 8) {
   if(typeof buf == 'object' && buf != null && buf instanceof ArrayBuffer) {
     let arr = MakeArray(buf, numBytes);
-    return arr.reduce(
-      (s, code) =>
-        (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
-      ''
-    );
+    return arr.reduce((s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)), '');
   }
   return buf;
 }

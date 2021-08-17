@@ -16,12 +16,7 @@ const mapToEllipse = ({ x, y }, rx, ry, cosphi, sinphi, centerx, centery) => {
 const approxUnitArc = (ang1, ang2) => {
   // If 90 degree circular arc, use a constant
   // as derived from http://spencermortensen.com/articles/bezier-circle
-  const a =
-    ang2 === 1.5707963267948966
-      ? 0.551915024494
-      : ang2 === -1.5707963267948966
-      ? -0.551915024494
-      : (4 / 3) * Math.tan(ang2 / 4);
+  const a = ang2 === 1.5707963267948966 ? 0.551915024494 : ang2 === -1.5707963267948966 ? -0.551915024494 : (4 / 3) * Math.tan(ang2 / 4);
 
   const x1 = Math.cos(ang1);
   const y1 = Math.sin(ang1);
@@ -60,20 +55,7 @@ const vectorAngle = (ux, uy, vx, vy) => {
   return sign * Math.acos(dot);
 };
 
-const getArcCenter = (
-  px,
-  py,
-  cx,
-  cy,
-  rx,
-  ry,
-  largeArcFlag,
-  sweepFlag,
-  sinphi,
-  cosphi,
-  pxp,
-  pyp
-) => {
+const getArcCenter = (px, py, cx, cy, rx, ry, largeArcFlag, sweepFlag, sinphi, cosphi, pxp, pyp) => {
   const rxsq = Math.pow(rx, 2);
   const rysq = Math.pow(ry, 2);
   const pxpsq = Math.pow(pxp, 2);
@@ -113,17 +95,7 @@ const getArcCenter = (
   return [centerx, centery, ang1, ang2];
 };
 
-const arcToBezier = ({
-  px,
-  py,
-  cx,
-  cy,
-  rx,
-  ry,
-  xAxisRotation = 0,
-  largeArcFlag = 0,
-  sweepFlag = 0
-}) => {
+const arcToBezier = ({ px, py, cx, cy, rx, ry, xAxisRotation = 0, largeArcFlag = 0, sweepFlag = 0 }) => {
   const curves = [];
 
   if(rx === 0 || ry === 0) {
@@ -150,20 +122,7 @@ const arcToBezier = ({
     ry *= Math.sqrt(lambda);
   }
 
-  let [centerx, centery, ang1, ang2] = getArcCenter(
-    px,
-    py,
-    cx,
-    cy,
-    rx,
-    ry,
-    largeArcFlag,
-    sweepFlag,
-    sinphi,
-    cosphi,
-    pxp,
-    pyp
-  );
+  let [centerx, centery, ang1, ang2] = getArcCenter(px, py, cx, cy, rx, ry, largeArcFlag, sweepFlag, sinphi, cosphi, pxp, pyp);
 
   // If 'ang2' == 90.0000000001, then `ratio` will evaluate to
   // 1.0000000001. This causes `segments` to be greater than one, which is an

@@ -383,15 +383,30 @@ function CorrelateSchematicAndBoard(schematic, board) {
 
 function SaveLibraries() {
   const { schematic, board } = project;
-  const layers = Object.values([...schematic.layers, ...board.layers].reduce((acc, [n, e]) => ({ ...acc, [n]: e.raw }), {}));
-  const entities = ['symbols', 'devicesets', 'packages'];
+  const layerMap = /*Object.values*/ [...schematic.layers, ...board.layers].filter(([n, e]) => e.active).reduce((acc, [n, e]) => ({ ...acc, [e.number]: e.raw }), {});
+  const entities = ['symbols', 'packages', 'devicesets'];
+
+  let layerIds = deep
+    .select([schematic.raw, board.raw], e => e && e.layer)
+    .map(e => +e.layer)
+    .concat(Util.range(17, 49))
+    .sort((a, b) => a - b);
+  layerIds = Util.unique(layerIds);
+  let layers = layerIds.map(id => layerMap[id]);
+
+  //  console.log('layers', layers);
+  console.log(
+    'layerIds',
+    console.config({ compact: 2 }),
+    layerIds.map(id => [id, layerMap[id].attributes.name])
+  );
 
   const libraryNames = Util.unique([...schematic.libraries, ...board.libraries].map(([n, e]) => n));
   console.log('libraryNames', libraryNames);
 
   const libraries = libraryNames.map(name => [name, schematic.libraries[name], board.libraries[name]]);
   for(let [name, ...libs] of libraries) {
-    let obj = { symbols: [], devicesets: [], packages: [] };
+    let obj = { symbols: [], packages: [], devicesets: [] };
 
     let xml = { tagName: 'library', children: [{ tagName: 'description', attributes: {}, children: [`${name}.lbr library`] }], attributes: { name } };
 
@@ -412,13 +427,13 @@ function SaveLibraries() {
       xml.children.push({ tagName: entity, children: obj[entity] });
     }
 
-    //  console.log('', { xml });
+    // console.log('', console.config({ compact: 3, depth: 4 }), xml);
 
     xml = {
       tagName: '?xml',
       attributes: { version: '1.0', encoding: 'utf-8' },
       children: [
-        { tagName: '!DOCTYPE eagle SYSTEM "eagle.dtd"' },
+        { tagName: '!DOCTYPE eagle SYSTEM "eagle.dtd"', attributes: {}, children: [] },
         {
           tagName: 'eagle',
           attributes: { version: '6.4.1' },
@@ -449,7 +464,7 @@ function SaveLibraries() {
       ]
     };
 
-    console.log('xml', console.config({ compact: 3, depth: 9 }), xml);
+    //    console.log('xml', console.config({ compact: 3, depth: 9 }), xml);
     WriteFile(`${name}.lbr`, toXML(xml));
   }
 

@@ -35,14 +35,7 @@ class WSClient {
   }
 }
 
-function CreateServer({
-  host = '127.0.0.1',
-  port = 9900,
-  sslCert = '/home/roman/.acme.sh/senn.gotdns.ch/senn.gotdns.ch.cer',
-  sslPrivateKey = '/home/roman/.acme.sh/senn.gotdns.ch/senn.gotdns.ch.key',
-  index = 'index.html',
-  ...options
-}) {
+function CreateServer({ host = '127.0.0.1', port = 9900, sslCert = '/home/roman/.acme.sh/senn.gotdns.ch/senn.gotdns.ch.cer', sslPrivateKey = '/home/roman/.acme.sh/senn.gotdns.ch/senn.gotdns.ch.key', index = 'index.html', ...options }) {
   print(`Listening on http://${host}:${port}`);
   if(sslCert) print(`SSL certificate file: ${sslCert}`);
   if(sslPrivateKey) print(`SSL certificate file: ${sslPrivateKey}`);

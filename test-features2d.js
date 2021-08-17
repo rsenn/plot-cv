@@ -17,9 +17,7 @@ function main(...args) {
   });
   let ctor_names = Object.getOwnPropertyNames(cv).filter(name => typeof cv[name] == 'function');
 
-  let features2d_names = ctor_names.filter(
-    name => cv[name].prototype && cv[name].prototype[Symbol.toStringTag] == 'Feature2D'
-  );
+  let features2d_names = ctor_names.filter(name => cv[name].prototype && cv[name].prototype[Symbol.toStringTag] == 'Feature2D');
 
   console.log('cv', features2d_names);
 

@@ -82,12 +82,7 @@ function main(...args) {
     },
     args
   );
-  const {
-    address = '0.0.0.0',
-    port = 8999,
-    'ssl-cert': sslCert,
-    'ssl-private-key': sslPrivateKey
-  } = params;
+  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert, 'ssl-private-key': sslPrivateKey } = params;
   const listen = params.connect && !params.listen ? false : true;
   const server = !params.client || params.server;
   Object.assign(globalThis, {
@@ -114,8 +109,7 @@ function main(...args) {
 
   repl.help = () => {};
   let { log } = console;
-  repl.show = arg =>
-    std.puts(typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options));
+  repl.show = arg => std.puts(typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options));
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();
@@ -129,11 +123,7 @@ function main(...args) {
 
   console.log = repl.printFunction(log);
 
-  let cli = (globalThis.sock = new rpc.Socket(
-    `${address}:${port}`,
-    rpc[`RPC${server ? 'Server' : 'Client'}Connection`],
-    +params.verbose
-  ));
+  let cli = (globalThis.sock = new rpc.Socket(`${address}:${port}`, rpc[`RPC${server ? 'Server' : 'Client'}Connection`], +params.verbose));
 
   cli.register({ Socket, Worker: os.Worker, Repeater, REPL, EventEmitter });
 
@@ -141,14 +131,7 @@ function main(...args) {
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     console.log('createWS', { url, callbacks, listen });
 
-    net.setLog(0 /*net.LLL_DEBUG-1*/, (level, ...args) =>
-      console.log(
-        (['err', 'warn', 'notice', 'info', 'debug'][Math.log2(level)] ?? level + '')
-          .padEnd(8)
-          .toUpperCase(),
-        ...args
-      )
-    );
+    net.setLog(0 /*net.LLL_DEBUG-1*/, (level, ...args) => console.log((['err', 'warn', 'notice', 'info', 'debug'][Math.log2(level)] ?? level + '').padEnd(8).toUpperCase(), ...args));
 
     return [net.client, net.server][+listen]({
       sslCert,
