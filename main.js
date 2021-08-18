@@ -128,8 +128,8 @@ import github, { GithubListRepositories, GithubRepositories, GithubListContents,
 /* prettier-ignore */ const { Align, AlignToString, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line,Matrix,  Point, PointList, Polyline, Rect, Select, Size, SVG, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
 
 import { classNames } from './lib/classNames.js';
-import rpc from './quickjs/net/rpc.js';
-import * as rpc2 from './quickjs/net/rpc.js';
+import rpc from './quickjs/qjs-net/rpc.js';
+import * as rpc2 from './quickjs/qjs-net/rpc.js';
 import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
 
 Util.colorCtor = ColoredText;

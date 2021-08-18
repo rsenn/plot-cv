@@ -5,7 +5,7 @@ import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
 import Util from './lib/util.js';
 import { Console } from 'console';
-import REPL from './quickjs/modules/lib/repl.js';
+import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from './lib/filesystem.js';
@@ -16,9 +16,9 @@ import { EventEmitter, EventTarget, eventify } from './lib/events.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
 
-import rpc from './quickjs/net/rpc.js';
-//import { RPCServer, RPCClient, RPCApi, RPCSocket,RPCFactory } from './quickjs/net/rpc.js';
-import * as rpc2 from './quickjs/net/rpc.js';
+import rpc from './quickjs/qjs-net/rpc.js';
+//import { RPCServer, RPCClient, RPCApi, RPCSocket,RPCFactory } from './quickjs/qjs-net/rpc.js';
+import * as rpc2 from './quickjs/qjs-net/rpc.js';
 
 extendArray();
 

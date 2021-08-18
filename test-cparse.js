@@ -11,7 +11,7 @@ let filesystem,
   childProcess,
   prng = new Alea(318);
 
-const sources = ['quickjs/cutils.c', 'quickjs/ffi/ffi.c', 'quickjs/libbf.c', 'quickjs/libregexp.c', 'quickjs/libunicode.c', 'quickjs/net/minnet.c', 'quickjs/qjs.c', 'quickjs/qjscalc.c', 'quickjs/qjsc.c', 'quickjs/quickjs.c', 'quickjs/quickjs-debugger.c', 'quickjs/quickjs-debugger-transport-unix.c', 'quickjs/quickjs-find-module.c', 'quickjs/quickjs-libc.c', 'quickjs/repl.c'];
+const sources = ['quickjs/cutils.c', 'quickjs/ffi/ffi.c', 'quickjs/libbf.c', 'quickjs/libregexp.c', 'quickjs/libunicode.c', 'quickjs/qjs-net/minnet.c', 'quickjs/qjs.c', 'quickjs/qjscalc.c', 'quickjs/qjsc.c', 'quickjs/quickjs.c', 'quickjs/quickjs-debugger.c', 'quickjs/quickjs-debugger-transport-unix.c', 'quickjs/quickjs-find-module.c', 'quickjs/quickjs-libc.c', 'quickjs/repl.c'];
 const includeDirs = ['/opt/diet/include', '.'];
 
 const FindIncludeFunc = source => {
