@@ -4,6 +4,7 @@ import Util from './lib/util.js';
 import * as bjson from 'bjson';
 import * as mmap from 'mmap';
 import * as path from './lib/path.js';
+import { types } from 'util';
 
 export function ReadFile(name, binary) {
   let ret = fs.readFileSync(name, binary ? null : 'utf-8');
@@ -114,7 +115,14 @@ export function* DirIterator(...args) {
   }
 }
 
-export function* RecursiveDirIterator(dir, maxDepth = Infinity, pred = (entry, file, dir) => true) {
+export function* RecursiveDirIterator(dir, pred = (entry, file, dir, depth) => true, depth = 0) {
+  let re;
+  if(typeof pred != 'function') {
+    if(!pred) pred = '.*';
+    if(typeof pred == 'string') pred = new RegExp(pred, 'gi');
+    re = pred;
+    pred = (entry, file, dir, depth) =>   re.test(entry) || re.test(file);
+   }
   if(!dir.endsWith('/')) dir += '/';
   for(let file of fs.readdirSync(dir)) {
     if(['.', '..'].indexOf(file) != -1) continue;
@@ -123,8 +131,10 @@ export function* RecursiveDirIterator(dir, maxDepth = Infinity, pred = (entry, f
     let st = fs.statSync(entry);
     isDir = st && st.isDirectory();
     if(isDir) entry += '/';
-    let show = pred(entry, file, dir);
-    if(show) yield entry;
-    if(maxDepth > 0 && isDir) yield* RecursiveDirIterator(entry, maxDepth - 1, pred);
+    let show = pred(entry, file, dir, depth);
+    if(show) {
+      yield entry;
+    }
+      if(isDir) yield* RecursiveDirIterator(entry, pred, depth + 1);
   }
 }
