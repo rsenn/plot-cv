@@ -21,7 +21,8 @@
     "lib/filesystem.js": "fs",
     "lib/misc.js": "util",
     "lib/childProcess.js": "child_process",
-    "lib/stack.js": "stack"
+    "lib/stack.js": "stack",
+    "xrepl.js": "quickjs/qjs-modules/lib/repl.js"
   },
   "author": "Roman Senn <roman.l.senn@gmail.com>",
   "license": "MIT",

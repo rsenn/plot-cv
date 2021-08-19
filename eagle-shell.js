@@ -49,15 +49,13 @@ import {
   ImmutablePath,
   DereferenceError
 } from './lib/eagle.js';
-//import { toXML } from './lib/json.js';
 import Util from './lib/util.js';
 import * as deep from './lib/deep.js';
 import path from './lib/path.js';
 import { LineList, Point, Circle, Rect, Size, Line, TransformationList, Rotation, Translation, Scaling, Matrix, BBox } from './lib/geom.js';
 import ConsoleSetup from './lib/consoleSetup.js';
-import REPL from './repl.js';
+import REPL from './xrepl.js';
 import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, Enum, HashList, Multimap, Shash, SortedMap, HashMultimap, MultiBiMap, MultiKeyMap, DenseSpatialHash2D, SpatialHash2D, HashMap, SpatialH, SpatialHash, SpatialHashMap, BoxHash } from './lib/container.js';
-//import * as std from 'std';
 import PortableFileSystem from './lib/filesystem.js';
 import { Pointer } from './lib/pointer.js';
 import { read as fromXML, write as toXML } from './lib/xml.js';
@@ -408,7 +406,11 @@ function SaveLibraries() {
   for(let [name, ...libs] of libraries) {
     let obj = { symbols: [], packages: [], devicesets: [] };
 
-    let xml = { tagName: 'library', children: [{ tagName: 'description', attributes: {}, children: [`${name}.lbr library`] }], attributes: { name } };
+    let xml = {
+      tagName: 'library',
+      children: [{ tagName: 'description', attributes: {}, children: [`${name}.lbr library`] }],
+      attributes: { name }
+    };
 
     for(let lib of libs) {
       if(lib) {
@@ -450,7 +452,20 @@ function SaveLibraries() {
                     { tagName: 'setting', attributes: { verticaltext: 'up' } }
                   ]
                 },
-                { tagName: 'grid', attributes: { distance: '0.3175', unitdist: 'mm', unit: 'mm', style: 'lines', multiple: '1', display: 'yes', altdistance: '0.025', altunitdist: 'mm', altunit: 'mm' } },
+                {
+                  tagName: 'grid',
+                  attributes: {
+                    distance: '0.3175',
+                    unitdist: 'mm',
+                    unit: 'mm',
+                    style: 'lines',
+                    multiple: '1',
+                    display: 'yes',
+                    altdistance: '0.025',
+                    altunitdist: 'mm',
+                    altunit: 'mm'
+                  }
+                },
                 {
                   tagName: 'layers',
                   attributes: {},
@@ -717,8 +732,10 @@ async function main(...args) {
 
   let repl = (globalThis.repl = new REPL(base));
 
-  // console.log(`debugLog`, Util.getMethods(debugLog, Infinity, 0));
-  repl.history_set(LoadHistory(cmdhist));
+  console.log(`repl`, repl);
+  //console.log(`debugLog`, Util.getMethods(debugLog, Infinity, 0));
+  repl.historySet(LoadHistory(cmdhist));
+
   console.log(`LOAD (read ${repl.history.length} history entries)`);
   repl.debugLog = debugLog;
   repl.exit = Terminate;
@@ -743,10 +760,10 @@ async function main(...args) {
     }
   };
 
-  // repl.history_set(JSON.parse(std.loadFile(histfile) || '[]'));
+  // repl.historySet(JSON.parse(std.loadFile(histfile) || '[]'));
 
   repl.cleanup = () => {
-    let hist = repl.history_get().filter((item, i, a) => a.lastIndexOf(item) == i);
+    let hist = repl.historyGet().filter((item, i, a) => a.lastIndexOf(item) == i);
 
     //    fs.writeFileSync(cmdhist, JSON.stringify(hist, null, 2));
     fs.writeFileSync(
@@ -762,7 +779,7 @@ async function main(...args) {
   };
   /*
   Util.atexit(() => {
-    let hist = repl.history_get().filter((item, i, a) => a.lastIndexOf(item) == i);
+    let hist = repl.historyGet().filter((item, i, a) => a.lastIndexOf(item) == i);
 
     fs.writeFileSync(histfile, JSON.stringify(hist, null, 2));
 

@@ -114,7 +114,7 @@ export function backward_byte(count, key) {
   return call('rl_backward_byte', count, key);
 }
 /**
- * @function backward_char
+ * @function backwardChar
  *
  * @param    {Number}        count
  * @param    {Number}        key
@@ -122,7 +122,7 @@ export function backward_byte(count, key) {
  * @return   {Number}
  */
 define('rl_backward_char', dlsym(libreadline, 'rl_backward_char'), null, 'int', 'int', 'int');
-export function backward_char(count, key) {
+export function backwardChar(count, key) {
   return call('rl_backward_char', count, key);
 }
 /**
@@ -138,7 +138,7 @@ export function backward_char_search(count, key) {
   return call('rl_backward_char_search', count, key);
 }
 /**
- * @function backward_kill_line
+ * @function backwardKillLine
  *
  * @param    {Number}        direction
  * @param    {Number}        key
@@ -146,11 +146,11 @@ export function backward_char_search(count, key) {
  * @return   {Number}
  */
 define('rl_backward_kill_line', dlsym(libreadline, 'rl_backward_kill_line'), null, 'int', 'int', 'int');
-export function backward_kill_line(direction, key) {
+export function backwardKillLine(direction, key) {
   return call('rl_backward_kill_line', direction, key);
 }
 /**
- * @function backward_kill_word
+ * @function backwardKillWord
  *
  * @param    {Number}        count
  * @param    {Number}        key
@@ -158,7 +158,7 @@ export function backward_kill_line(direction, key) {
  * @return   {Number}
  */
 define('rl_backward_kill_word', dlsym(libreadline, 'rl_backward_kill_word'), null, 'int', 'int', 'int');
-export function backward_kill_word(count, key) {
+export function backwardKillWord(count, key) {
   return call('rl_backward_kill_word', count, key);
 }
 /**
@@ -174,7 +174,7 @@ export function backward_menu_complete(count, key) {
   return call('rl_backward_menu_complete', count, key);
 }
 /**
- * @function backward_word
+ * @function backwardWord
  *
  * @param    {Number}        count
  * @param    {Number}        key
@@ -182,7 +182,7 @@ export function backward_menu_complete(count, key) {
  * @return   {Number}
  */
 define('rl_backward_word', dlsym(libreadline, 'rl_backward_word'), null, 'int', 'int', 'int');
-export function backward_word(count, key) {
+export function backwardWord(count, key) {
   return call('rl_backward_word', count, key);
 }
 /**
@@ -744,7 +744,7 @@ export function do_undo() {
   return call('rl_do_undo');
 }
 /**
- * @function downcase_word
+ * @function downcaseWord
  *
  * @param    {Number}        count
  * @param    {Number}        key
@@ -752,7 +752,7 @@ export function do_undo() {
  * @return   {Number}
  */
 define('rl_downcase_word', dlsym(libreadline, 'rl_downcase_word'), null, 'int', 'int', 'int');
-export function downcase_word(count, key) {
+export function downcaseWord(count, key) {
   return call('rl_downcase_word', count, key);
 }
 /**
@@ -850,7 +850,7 @@ export function end_of_history(count, key) {
   return call('rl_end_of_history', count, key);
 }
 /**
- * @function end_of_line
+ * @function endOfLine
  *
  * @param    {Number}        count
  * @param    {Number}        key
@@ -858,7 +858,7 @@ export function end_of_history(count, key) {
  * @return   {Number}
  */
 define('rl_end_of_line', dlsym(libreadline, 'rl_end_of_line'), null, 'int', 'int', 'int');
-export function end_of_line(count, key) {
+export function endOfLine(count, key) {
   return call('rl_end_of_line', count, key);
 }
 /**
@@ -951,7 +951,7 @@ export function forward_byte(count, key) {
   return call('rl_forward_byte', count, key);
 }
 /**
- * @function forward_char
+ * @function forwardChar
  *
  * @param    {Number}        count
  * @param    {Number}        key
@@ -959,7 +959,7 @@ export function forward_byte(count, key) {
  * @return   {Number}
  */
 define('rl_forward_char', dlsym(libreadline, 'rl_forward_char'), null, 'int', 'int', 'int');
-export function forward_char(count, key) {
+export function forwardChar(count, key) {
   return call('rl_forward_char', count, key);
 }
 /**
@@ -975,7 +975,7 @@ export function forward_search_history(sign, key) {
   return call('rl_forward_search_history', sign, key);
 }
 /**
- * @function forward_word
+ * @function forwardWord
  *
  * @param    {Number}        count
  * @param    {Number}        key
@@ -983,7 +983,7 @@ export function forward_search_history(sign, key) {
  * @return   {Number}
  */
 define('rl_forward_word', dlsym(libreadline, 'rl_forward_word'), null, 'int', 'int', 'int');
-export function forward_word(count, key) {
+export function forwardWord(count, key) {
   return call('rl_forward_word', count, key);
 }
 /**
@@ -1170,7 +1170,7 @@ export function getc(stream) {
   return call('rl_getc', stream);
 }
 /**
- * @function history_search_backward
+ * @function historySearchBackward
  *
  * @param    {Number}        count
  * @param    {Number}        ignore
@@ -1178,11 +1178,11 @@ export function getc(stream) {
  * @return   {Number}
  */
 define('rl_history_search_backward', dlsym(libreadline, 'rl_history_search_backward'), null, 'int', 'int', 'int');
-export function history_search_backward(count, ignore) {
+export function historySearchBackward(count, ignore) {
   return call('rl_history_search_backward', count, ignore);
 }
 /**
- * @function history_search_forward
+ * @function historySearchForward
  *
  * @param    {Number}        count
  * @param    {Number}        ignore
@@ -1190,7 +1190,7 @@ export function history_search_backward(count, ignore) {
  * @return   {Number}
  */
 define('rl_history_search_forward', dlsym(libreadline, 'rl_history_search_forward'), null, 'int', 'int', 'int');
-export function history_search_forward(count, ignore) {
+export function historySearchForward(count, ignore) {
   return call('rl_history_search_forward', count, ignore);
 }
 /**
@@ -1332,7 +1332,7 @@ export function kill_full_line(count, key) {
   return call('rl_kill_full_line', count, key);
 }
 /**
- * @function kill_line
+ * @function killLine
  *
  * @param    {Number}        direction
  * @param    {Number}        key
@@ -1340,11 +1340,11 @@ export function kill_full_line(count, key) {
  * @return   {Number}
  */
 define('rl_kill_line', dlsym(libreadline, 'rl_kill_line'), null, 'int', 'int', 'int');
-export function kill_line(direction, key) {
+export function killLine(direction, key) {
   return call('rl_kill_line', direction, key);
 }
 /**
- * @function kill_region
+ * @function killRegion
  *
  * @param    {Number}        count
  * @param    {Number}        key
@@ -1352,7 +1352,7 @@ export function kill_line(direction, key) {
  * @return   {Number}
  */
 define('rl_kill_region', dlsym(libreadline, 'rl_kill_region'), null, 'int', 'int', 'int');
-export function kill_region(count, key) {
+export function killRegion(count, key) {
   return call('rl_kill_region', count, key);
 }
 /**
@@ -1368,7 +1368,7 @@ export function kill_text(from, to) {
   return call('rl_kill_text', from, to);
 }
 /**
- * @function kill_word
+ * @function killWord
  *
  * @param    {Number}        count
  * @param    {Number}        key
@@ -1376,7 +1376,7 @@ export function kill_text(from, to) {
  * @return   {Number}
  */
 define('rl_kill_word', dlsym(libreadline, 'rl_kill_word'), null, 'int', 'int', 'int');
-export function kill_word(count, key) {
+export function killWord(count, key) {
   return call('rl_kill_word', count, key);
 }
 /**
@@ -1687,7 +1687,7 @@ export function push_macro_input(macro) {
   return call('rl_push_macro_input', macro);
 }
 /**
- * @function quoted_insert
+ * @function quotedInsert
  *
  * @param    {Number}        count
  * @param    {Number}        key
@@ -1695,7 +1695,7 @@ export function push_macro_input(macro) {
  * @return   {Number}
  */
 define('rl_quoted_insert', dlsym(libreadline, 'rl_quoted_insert'), null, 'int', 'int', 'int');
-export function quoted_insert(count, key) {
+export function quotedInsert(count, key) {
   return call('rl_quoted_insert', count, key);
 }
 /**
@@ -2126,7 +2126,7 @@ export function translate_keyseq(seq, array, len) {
   return call('rl_translate_keyseq', seq, array, len);
 }
 /**
- * @function transpose_chars
+ * @function transposeChars
  *
  * @param    {Number}        count
  * @param    {Number}        key
@@ -2134,11 +2134,11 @@ export function translate_keyseq(seq, array, len) {
  * @return   {Number}
  */
 define('rl_transpose_chars', dlsym(libreadline, 'rl_transpose_chars'), null, 'int', 'int', 'int');
-export function transpose_chars(count, key) {
+export function transposeChars(count, key) {
   return call('rl_transpose_chars', count, key);
 }
 /**
- * @function transpose_words
+ * @function transposeWords
  *
  * @param    {Number}        count
  * @param    {Number}        key
@@ -2146,7 +2146,7 @@ export function transpose_chars(count, key) {
  * @return   {Number}
  */
 define('rl_transpose_words', dlsym(libreadline, 'rl_transpose_words'), null, 'int', 'int', 'int');
-export function transpose_words(count, key) {
+export function transposeWords(count, key) {
   return call('rl_transpose_words', count, key);
 }
 /**
@@ -2313,7 +2313,7 @@ export function untranslate_keyseq(seq) {
   return call('rl_untranslate_keyseq', seq);
 }
 /**
- * @function upcase_word
+ * @function upcaseWord
  *
  * @param    {Number}        count
  * @param    {Number}        key
@@ -2321,7 +2321,7 @@ export function untranslate_keyseq(seq) {
  * @return   {Number}
  */
 define('rl_upcase_word', dlsym(libreadline, 'rl_upcase_word'), null, 'int', 'int', 'int');
-export function upcase_word(count, key) {
+export function upcaseWord(count, key) {
   return call('rl_upcase_word', count, key);
 }
 /**

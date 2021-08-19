@@ -1,7 +1,7 @@
 import * as os from 'os';
 import * as fs from './lib/filesystem.js';
 import Util from './lib/util.js';
-import * as bjson from 'bjson';
+//import * as bjson from 'bjson';
 import * as mmap from 'mmap';
 import * as path from './lib/path.js';
 import { types } from 'util';
@@ -121,8 +121,8 @@ export function* RecursiveDirIterator(dir, pred = (entry, file, dir, depth) => t
     if(!pred) pred = '.*';
     if(typeof pred == 'string') pred = new RegExp(pred, 'gi');
     re = pred;
-    pred = (entry, file, dir, depth) =>   re.test(entry) || re.test(file);
-   }
+    pred = (entry, file, dir, depth) => re.test(entry) || re.test(file);
+  }
   if(!dir.endsWith('/')) dir += '/';
   for(let file of fs.readdirSync(dir)) {
     if(['.', '..'].indexOf(file) != -1) continue;
@@ -135,6 +135,6 @@ export function* RecursiveDirIterator(dir, pred = (entry, file, dir, depth) => t
     if(show) {
       yield entry;
     }
-      if(isDir) yield* RecursiveDirIterator(entry, pred, depth + 1);
+    if(isDir) yield* RecursiveDirIterator(entry, pred, depth + 1);
   }
 }

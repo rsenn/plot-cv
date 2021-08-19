@@ -68,7 +68,7 @@ async function CommandLine() {
   if(cfg) Object.assign(console.options, cfg.inspectOptions);
 
   repl.importModule = ImportModule;
-  repl.history_set(LoadHistory(cmdhist));
+  repl.historySet(LoadHistory(cmdhist));
   repl.directives = {
     c(...args) {
       Compile(...args);
@@ -104,7 +104,7 @@ async function CommandLine() {
 
   repl.cleanup = () => {
     Terminal.mousetrackingDisable();
-    let hist = repl.history_get().filter((item, i, a) => a.lastIndexOf(item) == i);
+    let hist = repl.historyGet().filter((item, i, a) => a.lastIndexOf(item) == i);
     fs.writeFileSync(
       cmdhist,
       hist
