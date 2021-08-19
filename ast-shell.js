@@ -1220,6 +1220,8 @@ async function ASTShell(...args) {
     }
   };
 
+  console.log('Loading sources:', sources);
+
   for(let source of sources) {
     let item;
     if(/\.js$/.test(source)) item = ParseECMAScript(source);

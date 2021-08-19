@@ -7,7 +7,7 @@ import * as path from './lib/path.js';
 import { types } from 'util';
 
 export function IfDebug(token, loggerFn) {
-  const { DEBUG } = process.env;
+  const { DEBUG = '' } = process.env;
   const tokList = DEBUG.split(/[^A-Za-z0-9_]+/g);
 
   if(tokList.indexOf(token) == -1) return () => {};
