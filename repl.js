@@ -52,9 +52,12 @@ export default function REPL(title = 'QuickJS') {
     output = Util.stdio(1) ?? process.stdout;
   }
 
-  Util.ttySetRaw(input);
-  Util.ttySetRaw(output);
+  var tty_set_raw = Util.once(fd => os.ttySetRaw(fd));
+  var put_banner = Util.once(() => std.puts('QuickJS - Type "\\h" for this.help\n'));
 
+  /*Util.ttySetRaw(input);
+  Util.ttySetRaw(output);
+*/
   var thisObj = this;
 
   const puts = str => std.out.puts(str);
@@ -253,7 +256,7 @@ export default function REPL(title = 'QuickJS') {
           term_width = tab[0];
         });
       }
-      Util.ttySetRaw(input);
+      tty_set_raw(this.term_fd);
       repl.debug('TTY setup done');
     }
 
@@ -418,16 +421,26 @@ export default function REPL(title = 'QuickJS') {
       colorize = show_colors;
 
     if(search) {
-      const re = new RegExp((search_pattern = cmd_line.replace(/([\(\)\?\+\*])/g, '.' /*'\\$1'*/)), 'i');
+      const re = new RegExp(
+        (search_pattern = cmd_line.replace(/([\(\)\?\+\*])/g, '.' /*'\\$1'*/)),
+        'i'
+      );
       const num = search > 0 ? search - 1 : search;
       //search_index = history.findLastIndex(c => re.test(c) && --num == 0);
       let historySearch = [...history.entries()].rotateLeft(history_index);
-      search_matches.splice(0, search_matches.length, ...historySearch.filter(([i, c]) => re.test(c)));
+      search_matches.splice(
+        0,
+        search_matches.length,
+        ...historySearch.filter(([i, c]) => re.test(c))
+      );
       //num = search > 0 ? search - 1 : search;
       const match = search_matches.at(num);
       const [histidx = -1, histcmd = ''] = match || [];
       const histdir = search > 0 ? 'forward' : 'reverse';
-      const histpos = search < 0 ? historySearch.indexOf(match) - historySearch.length : historySearch.indexOf(match);
+      const histpos =
+        search < 0
+          ? historySearch.indexOf(match) - historySearch.length
+          : historySearch.indexOf(match);
       search_index = histidx;
       let line_start = `(${histdir}-search[${histpos}])\``;
       cmd_line = `${line_start}${repl.cmd}': ${histcmd}`;
@@ -451,7 +464,10 @@ export default function REPL(title = 'QuickJS') {
     } else if(cmd_line != last_cmd) {
       /* cursor_pos is the position in 16 bit characters inside the
            UTF-16 string 'cmd_line' */
-      if(!colorize && last_cmd.substring(0, last_cursor_pos) == cmd_line.substring(0, last_cursor_pos)) {
+      if(
+        !colorize &&
+        last_cmd.substring(0, last_cursor_pos) == cmd_line.substring(0, last_cursor_pos)
+      ) {
         /* optimize common case */
         puts(cmd_line.substring(last_cursor_pos));
       } else {
@@ -589,7 +605,11 @@ export default function REPL(title = 'QuickJS') {
   function acceptLine() {
     puts('\n');
     repl.historyAdd(search ? history[search_index] : repl.cmd);
-    repl.debug('acceptLine', { cmd: repl.cmd, history_index, search, history_length: history.length }, [...history.entries()].slice(history_index - 3, history_index + 2));
+    repl.debug(
+      'acceptLine',
+      { cmd: repl.cmd, history_index, search, history_length: history.length },
+      [...history.entries()].slice(history_index - 3, history_index + 2)
+    );
     return -1;
   }
 
@@ -716,7 +736,11 @@ export default function REPL(title = 'QuickJS') {
     var pos = cursor_pos;
     if(repl.cmd.length > 1 && pos > 0) {
       if(pos == repl.cmd.length) pos--;
-      repl.cmd = repl.cmd.substring(0, pos - 1) + repl.cmd.substring(pos, pos + 1) + repl.cmd.substring(pos - 1, pos) + repl.cmd.substring(pos + 1);
+      repl.cmd =
+        repl.cmd.substring(0, pos - 1) +
+        repl.cmd.substring(pos, pos + 1) +
+        repl.cmd.substring(pos - 1, pos) +
+        repl.cmd.substring(pos + 1);
       cursor_pos = pos + 1;
     }
   }
@@ -728,19 +752,29 @@ export default function REPL(title = 'QuickJS') {
     var p3 = repl.skipWordBackward(p4);
 
     if(p1 < p2 && p2 <= cursor_pos && cursor_pos <= p3 && p3 < p4) {
-      repl.cmd = repl.cmd.substring(0, p1) + repl.cmd.substring(p3, p4) + repl.cmd.substring(p2, p3) + repl.cmd.substring(p1, p2);
+      repl.cmd =
+        repl.cmd.substring(0, p1) +
+        repl.cmd.substring(p3, p4) +
+        repl.cmd.substring(p2, p3) +
+        repl.cmd.substring(p1, p2);
       cursor_pos = p4;
     }
   }
 
   function upcaseWord() {
     var end = repl.skipWordForward(cursor_pos);
-    repl.cmd = repl.cmd.substring(0, cursor_pos) + repl.cmd.substring(cursor_pos, end).toUpperCase() + repl.cmd.substring(end);
+    repl.cmd =
+      repl.cmd.substring(0, cursor_pos) +
+      repl.cmd.substring(cursor_pos, end).toUpperCase() +
+      repl.cmd.substring(end);
   }
 
   function downcaseWord() {
     var end = repl.skipWordForward(cursor_pos);
-    repl.cmd = repl.cmd.substring(0, cursor_pos) + repl.cmd.substring(cursor_pos, end).toLowerCase() + repl.cmd.substring(end);
+    repl.cmd =
+      repl.cmd.substring(0, cursor_pos) +
+      repl.cmd.substring(cursor_pos, end).toLowerCase() +
+      repl.cmd.substring(end);
   }
 
   function killRegion(start, end, dir) {
@@ -820,7 +854,8 @@ export default function REPL(title = 'QuickJS') {
         default:
           if(repl.isWord(c)) {
             base = repl.getContextWord(line, pos);
-            if(['true', 'false', 'null', 'this'].includes(base) || !isNaN(+base)) return eval(base);
+            if(['true', 'false', 'null', 'this'].includes(base) || !isNaN(+base))
+              return eval(base);
             obj = repl.getContextObject(line, pos - base.length);
             if(obj === null || obj === void 0) return obj;
             if(obj === globalThis && obj[base] === void 0) {
@@ -1094,7 +1129,9 @@ export default function REPL(title = 'QuickJS') {
   }
 
   function handleMouse(keys) {
-    const [button, x, y, cmd] = [...Util.matchAll(/([0-9]+|[A-Za-z]+)/g, keys)].map(p => p[1]).map(p => (!isNaN(+p) ? +p : p));
+    const [button, x, y, cmd] = [...Util.matchAll(/([0-9]+|[A-Za-z]+)/g, keys)]
+      .map(p => p[1])
+      .map(p => (!isNaN(+p) ? +p : p));
     let press = cmd == 'm';
 
     repl.debug('handleMouse', { button, x, y, press });
@@ -1231,7 +1268,11 @@ export default function REPL(title = 'QuickJS') {
       }
       if(typeof a === 'bigfloat' && eval_mode !== 'math') {
         s += 'l';
-      } else if(eval_mode !== 'std' && s.indexOf('.') < 0 && ((radix == 16 && s.indexOf('p') < 0) || (radix == 10 && s.indexOf('e') < 0))) {
+      } else if(
+        eval_mode !== 'std' &&
+        s.indexOf('.') < 0 &&
+        ((radix == 16 && s.indexOf('p') < 0) || (radix == 10 && s.indexOf('e') < 0))
+      ) {
         /* add a decimal point so that the floating point type
                    is visible */
         s += '.0';
@@ -1270,7 +1311,16 @@ export default function REPL(title = 'QuickJS') {
           puts(a);
         } else if(stack.indexOf(a) >= 0) {
           puts('[circular]');
-        } else if(has_jscalc && (a instanceof Fraction || a instanceof Complex || a instanceof Mod || a instanceof Polynomial || a instanceof PolyMod || a instanceof RationalFunction || a instanceof Series)) {
+        } else if(
+          has_jscalc &&
+          (a instanceof Fraction ||
+            a instanceof Complex ||
+            a instanceof Mod ||
+            a instanceof Polynomial ||
+            a instanceof PolyMod ||
+            a instanceof RationalFunction ||
+            a instanceof Series)
+        ) {
           puts(a.toString());
         } else {
           stack.push(a);
@@ -1362,7 +1412,15 @@ export default function REPL(title = 'QuickJS') {
         .trim()
         .split(' ');
       if(param.length === 1 && param[0] === '') {
-        puts('BigFloat precision=' + prec + ' bits (~' + Math.floor(prec / log2_10) + ' digits), exponent size=' + expBits + ' bits\n');
+        puts(
+          'BigFloat precision=' +
+            prec +
+            ' bits (~' +
+            Math.floor(prec / log2_10) +
+            ' digits), exponent size=' +
+            expBits +
+            ' bits\n'
+        );
       } else if(param[0] === 'f16') {
         prec = 11;
         expBits = 5;
@@ -1383,7 +1441,11 @@ export default function REPL(title = 'QuickJS') {
           puts('Invalid precision\n');
           return false;
         }
-        if(Number.isNaN(expBits1) || expBits1 < BigFloatEnv.expBitsMin || expBits1 > BigFloatEnv.expBitsMax) {
+        if(
+          Number.isNaN(expBits1) ||
+          expBits1 < BigFloatEnv.expBitsMin ||
+          expBits1 > BigFloatEnv.expBitsMax
+        ) {
           puts('Invalid exponent bits\n');
           return false;
         }
@@ -1470,13 +1532,35 @@ export default function REPL(title = 'QuickJS') {
     function sel(n) {
       return n ? '*' : ' ';
     }
-    puts('\\h          this help\n' + '\\x             ' + sel(hex_mode) + 'hexadecimal number display\n' + '\\d             ' + sel(!hex_mode) + 'decimal number display\n' + '\\t             ' + sel(show_time) + 'toggle timing display\n' + '\\clear              clear the terminal\n');
+    puts(
+      '\\h          this help\n' +
+        '\\x             ' +
+        sel(hex_mode) +
+        'hexadecimal number display\n' +
+        '\\d             ' +
+        sel(!hex_mode) +
+        'decimal number display\n' +
+        '\\t             ' +
+        sel(show_time) +
+        'toggle timing display\n' +
+        '\\clear              clear the terminal\n'
+    );
 
     if(has_jscalc) {
-      puts('\\a             ' + sel(algebraicMode) + 'algebraic mode\n' + '\\n             ' + sel(!algebraicMode) + 'numeric mode\n');
+      puts(
+        '\\a             ' +
+          sel(algebraicMode) +
+          'algebraic mode\n' +
+          '\\n             ' +
+          sel(!algebraicMode) +
+          'numeric mode\n'
+      );
     }
     if(has_bignum) {
-      puts("\\p [m [e]]       set the BigFloat precision to 'm' bits\n" + "\\digits n   set the BigFloat precision to 'ceil(n*log2(10))' bits\n");
+      puts(
+        "\\p [m [e]]       set the BigFloat precision to 'm' bits\n" +
+          "\\digits n   set the BigFloat precision to 'ceil(n*log2(10))' bits\n"
+      );
       if(!has_jscalc) {
         puts('\\mode [std|math] change the running mode (current = ' + eval_mode + ')\n');
       }
@@ -1494,8 +1578,10 @@ export default function REPL(title = 'QuickJS') {
     puts('\x1b[1K\r');
     for(let arg of args) repl.show(arg);
     puts('\n');
-    puts('\x1b[1K\r');
+    //    puts('\x1b[1K\r');
+    repl.readlineRemovePrompt();
     repl.readlinePrintPrompt();
+    this.out.flush();
   }
 
   function evalAndPrint(expr) {
@@ -1512,7 +1598,11 @@ export default function REPL(title = 'QuickJS') {
       repl.printStatus(colors[styles.result], result, '\n', colors.none);
       repl.update();
     } catch(error) {
-      let output = `${error.constructor.name || 'EXCEPTION'}: ` + colors[styles.error_msg] + error?.message + '\n';
+      let output =
+        `${error.constructor.name || 'EXCEPTION'}: ` +
+        colors[styles.error_msg] +
+        error?.message +
+        '\n';
 
       //      puts(error.stack+'');
 
@@ -1532,7 +1622,12 @@ export default function REPL(title = 'QuickJS') {
     if(Util.isPromise(result)) {
       result.then(value => {
         result.resolved = true;
-        repl.printStatus(`Promise resolved to:`, Util.typeOf(value), console.config({ depth: 1, multiline: true }), value);
+        repl.printStatus(
+          `Promise resolved to:`,
+          Util.typeOf(value),
+          console.config({ depth: 1, multiline: true }),
+          value
+        );
         globalThis.$ = value;
       });
     }
@@ -1707,12 +1802,25 @@ export default function REPL(title = 'QuickJS') {
 
     function parseNumber() {
       style = 'number';
-      while(i < n && (repl.isWord(str[i]) || (str[i] == '.' && (i == n - 1 || str[i + 1] != '.')))) {
+      while(
+        i < n &&
+        (repl.isWord(str[i]) || (str[i] == '.' && (i == n - 1 || str[i + 1] != '.')))
+      ) {
         i++;
       }
     }
 
-    var js_keywords = '|' + 'break|case|catch|continue|debugger|default|delete|do|' + 'else|finally|for|function|if|in|instanceof|new|' + 'return|switch|this|throw|try|typeof|while|with|' + 'class|const|enum|import|export|extends|super|' + 'implements|interface|let|package|private|protected|' + 'public|static|yield|' + 'undefined|null|true|false|Infinity|NaN|' + 'eval|arguments|' + 'await|';
+    var js_keywords =
+      '|' +
+      'break|case|catch|continue|debugger|default|delete|do|' +
+      'else|finally|for|function|if|in|instanceof|new|' +
+      'return|switch|this|throw|try|typeof|while|with|' +
+      'class|const|enum|import|export|extends|super|' +
+      'implements|interface|let|package|private|protected|' +
+      'public|static|yield|' +
+      'undefined|null|true|false|Infinity|NaN|' +
+      'eval|arguments|' +
+      'await|';
 
     var js_no_regex = '|this|super|undefined|null|true|false|Infinity|NaN|arguments|';
     var js_types = '|void|var|';

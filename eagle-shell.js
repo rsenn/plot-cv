@@ -558,7 +558,6 @@ async function main(...args) {
     inspectOptions: { depth: 3, compact: 3, maxArrayLength: 10, maxStringLength: 10 }
   });
 
-  console.log('args', args);
   let fs;
   let debugLog;
 
@@ -578,7 +577,8 @@ async function main(...args) {
 
   debugLog = fs.openSync('debug.log', 'a');
 
-  const base = path.basename(Util.getArgv()[1], /\.[^.]*$/);
+  const progName = Util.getArgv()[1];
+  const base = path.basename(progName, path.extname(progName));
   const histfile = `.${base}-history`;
 
   let params = Util.getOpt(
@@ -732,11 +732,12 @@ async function main(...args) {
 
   let repl = (globalThis.repl = new REPL(base));
 
-  console.log(`repl`, repl);
+  //console.log(`repl`, repl);
   //console.log(`debugLog`, Util.getMethods(debugLog, Infinity, 0));
-  repl.historySet(LoadHistory(cmdhist));
+  repl.history = LoadHistory(cmdhist);
 
-  console.log(`LOAD (read ${repl.history.length} history entries)`);
+  repl.printStatus(/*console.log*/ `LOAD (read ${repl.history.length} history entries)`);
+
   repl.debugLog = debugLog;
   repl.exit = Terminate;
   repl.importModule = importModule;
@@ -788,7 +789,8 @@ async function main(...args) {
 */
 
   for(let file of params['@']) {
-    console.log(`Loading '${file}'...`);
+    repl.printStatus(`Loading '${file}'...`);
+
     newProject(file);
   }
 
