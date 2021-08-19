@@ -763,7 +763,7 @@ async function main(...args) {
   // repl.historySet(JSON.parse(std.loadFile(histfile) || '[]'));
 
   repl.cleanup = () => {
-    let hist = repl.historyGet().filter((item, i, a) => a.lastIndexOf(item) == i);
+    let hist = repl.history.filter((item, i, a) => a.lastIndexOf(item) == i);
 
     //    fs.writeFileSync(cmdhist, JSON.stringify(hist, null, 2));
     fs.writeFileSync(
@@ -779,7 +779,7 @@ async function main(...args) {
   };
   /*
   Util.atexit(() => {
-    let hist = repl.historyGet().filter((item, i, a) => a.lastIndexOf(item) == i);
+    let hist = repl.history.filter((item, i, a) => a.lastIndexOf(item) == i);
 
     fs.writeFileSync(histfile, JSON.stringify(hist, null, 2));
 
@@ -809,4 +809,3 @@ try {
   console.log('SUCCESS');
 }
 */
-

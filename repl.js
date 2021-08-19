@@ -57,10 +57,10 @@ export default function REPL(title = 'QuickJS') {
 
   var thisObj = this;
 
-  const puts = str => fs.puts(output, str);
+  const puts = str => std.out.puts(str);
   const flush = () => {
     //   console.log("flush", {flushSync:fs.flushSync+'',output});
-    fs.flushSync(output);
+    std.out.flush(); // fs.flushSync(output);
   };
 
   /* XXX: use preprocessor ? */
@@ -442,13 +442,15 @@ export default function REPL(title = 'QuickJS') {
       term_cursor_x = start;
       last_cursor_pos = cursor_pos;
       let nback = repl.ucsLength(r);
+      std.out.flush();
       if(isNaN(nback)) throw new Error(`update nback=${nback}`);
       puts(`\x1b[${nback}D`);
       //repl.moveCursor(-repl.ucsLength(r));
-      repl.flush();
+      std.out.flush();
       return;
-    } /* cursor_pos is the position in 16 bit characters inside the
-           UTF-16 string 'cmd_line' */ else if(cmd_line != last_cmd) {
+    } else if(cmd_line != last_cmd) {
+      /* cursor_pos is the position in 16 bit characters inside the
+           UTF-16 string 'cmd_line' */
       if(!colorize && last_cmd.substring(0, last_cursor_pos) == cmd_line.substring(0, last_cursor_pos)) {
         /* optimize common case */
         puts(cmd_line.substring(last_cursor_pos));
@@ -595,9 +597,9 @@ export default function REPL(title = 'QuickJS') {
     if(entries) history.splice(0, history.length, ...entries);
   }
 
-  function historyGet() {
+  /* function historyGet() {
     return history;
-  }
+  }*/
   function historyPos() {
     return history_index;
   }
@@ -1836,6 +1838,14 @@ export default function REPL(title = 'QuickJS') {
         {
           get() {
             return term_width;
+          }
+        }
+      ],
+      [
+        'history',
+        {
+          get() {
+            return history;
           }
         }
       ],
