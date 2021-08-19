@@ -763,7 +763,7 @@ async function main(...args) {
 
   // repl.historySet(JSON.parse(std.loadFile(histfile) || '[]'));
 
-  repl.cleanup = () => {
+  repl.addCleanupHandler(() => {
     let hist = repl.history.filter((item, i, a) => a.lastIndexOf(item) == i);
 
     //    fs.writeFileSync(cmdhist, JSON.stringify(hist, null, 2));
@@ -777,7 +777,7 @@ async function main(...args) {
 
     console.log(`EXIT (wrote ${hist.length} history entries)`);
     Terminate(0);
-  };
+  });
   /*
   Util.atexit(() => {
     let hist = repl.history.filter((item, i, a) => a.lastIndexOf(item) == i);

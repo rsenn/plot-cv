@@ -161,7 +161,7 @@ async function CommandLine() {
     if(debugLog.flush) debugLog.flush();
   };
 
-  repl.cleanup = () => {
+  repl.addCleanupHandler(() => {
     Terminal.mousetrackingDisable();
     let hist = repl.history.filter((item, i, a) => a.lastIndexOf(item) == i);
     fs.writeFileSync(
@@ -177,7 +177,7 @@ async function CommandLine() {
 
     console.log(`EXIT (wrote ${hist.length} history entries)`);
     std.exit(0);
-  };
+  });
 
   Util.atexit(() => repl.cleanup());
 
