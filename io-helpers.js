@@ -1,14 +1,26 @@
 import * as os from 'os';
 import * as fs from './lib/filesystem.js';
 import Util from './lib/util.js';
-import * as bjson from 'bjson';
+//import * as bjson from 'bjson';
 import * as mmap from 'mmap';
 import * as path from './lib/path.js';
+import { types } from 'util';
+
+export function IfDebug(token, loggerFn) {
+  const { DEBUG = '' } = process.env;
+  const tokList = DEBUG.split(/[^A-Za-z0-9_]+/g);
+
+  if(tokList.indexOf(token) == -1) return () => {};
+
+  return loggerFn;
+}
+
+const debug = IfDebug('io-helpers', (...args) => console.log(...args));
 
 export function ReadFile(name, binary) {
   let ret = fs.readFileSync(name, binary ? null : 'utf-8');
 
-  console.log(`Read ${name}: ${ret.length} bytes`);
+  debug(`Read ${name}: ${ret.length} bytes`);
   return ret;
 }
 
@@ -34,14 +46,14 @@ export function LoadHistory(filename) {
 export function ReadJSON(filename) {
   let data = fs.readFileSync(filename, 'utf-8');
 
-  if(data) console.log(`ReadJSON('${filename}') ${data.length} bytes read`);
+  if(data) debug(`ReadJSON: ${data.length} bytes read from '${filename}'`);
   return data ? JSON.parse(data) : null;
 }
 
 export function MapFile(filename) {
   let fd = os.open(filename, os.O_RDONLY);
   let { size } = os.stat(filename)[0];
-  console.log(`MapFile`, { filename, fd, size });
+  debug(`MapFile`, { filename, fd, size });
   let data = mmap.mmap(0, size + 10, mmap.PROT_READ, mmap.MAP_PRIVATE, fd, 0);
   os.close(fd);
   return data;
@@ -50,9 +62,9 @@ export function MapFile(filename) {
 export function ReadBJSON(filename) {
   let fd = os.open(filename, os.O_RDONLY);
   let { size } = os.stat(filename)[0];
-  console.log(`ReadBJSON`, { filename, fd, size });
+  debug(`ReadBJSON`, { filename, fd, size });
   let data = mmap.mmap(0, size + 10, mmap.PROT_READ, mmap.MAP_PRIVATE, fd, 0);
-  console.log(`ReadBJSON`, { data });
+  debug(`ReadBJSON`, { data });
   let ret = bjson.read(data, 0, size);
 
   mmap.munmap(data);
@@ -77,7 +89,7 @@ export function WriteFile(name, data, verbose = true) {
   if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
   let ret = fs.writeFileSync(name, data);
 
-  if(verbose) console.log(`Wrote ${name}: ${ret} bytes`);
+  if(verbose) debug(`Wrote ${name}: ${ret} bytes`);
 }
 
 export function WriteJSON(name, data) {
@@ -90,7 +102,7 @@ export function WriteBJSON(name, data) {
   let fd = os.open(name, os.O_WRONLY | os.O_CREAT | os.O_TRUNC);
 
   let ret = os.write(fd, buf, 0, size);
-  console.log('WriteBJSON', { name, fd, size, ret });
+  debug('WriteBJSON', { name, fd, size, ret });
   os.close(fd);
 
   return ret;
@@ -114,7 +126,14 @@ export function* DirIterator(...args) {
   }
 }
 
-export function* RecursiveDirIterator(dir, maxDepth = Infinity, pred = (entry, file, dir) => true) {
+export function* RecursiveDirIterator(dir, pred = (entry, file, dir, depth) => true, depth = 0) {
+  let re;
+  if(typeof pred != 'function') {
+    if(!pred) pred = '.*';
+    if(typeof pred == 'string') pred = new RegExp(pred, 'gi');
+    re = pred;
+    pred = (entry, file, dir, depth) => re.test(entry) || re.test(file);
+  }
   if(!dir.endsWith('/')) dir += '/';
   for(let file of fs.readdirSync(dir)) {
     if(['.', '..'].indexOf(file) != -1) continue;
@@ -123,8 +142,10 @@ export function* RecursiveDirIterator(dir, maxDepth = Infinity, pred = (entry, f
     let st = fs.statSync(entry);
     isDir = st && st.isDirectory();
     if(isDir) entry += '/';
-    let show = pred(entry, file, dir);
-    if(show) yield entry;
-    if(maxDepth > 0 && isDir) yield* RecursiveDirIterator(entry, maxDepth - 1, pred);
+    let show = pred(entry, file, dir, depth);
+    if(show) {
+      yield entry;
+    }
+    if(isDir) yield* RecursiveDirIterator(entry, pred, depth + 1);
   }
 }

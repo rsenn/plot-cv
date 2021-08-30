@@ -149,7 +149,7 @@ export const Button = allProps => {
 
   props.children.unshift(image);
 
-  console.log('Button', caption ?? image, { enabled, show });
+  //console.log('Button', caption ?? image, { enabled, show });
 
   return h(Overlay, {
     className: classNames('button', className, !enabled && 'disabled'),
@@ -274,7 +274,7 @@ export const DynamicLabel = ({ caption, title, children, ...props }) => {
 export const Item = ({ className = 'item', title, tooltip, label, icon, children, ...props }) => {
   if(typeof title == 'string' && title.length > 0) props.title = title;
   if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
-  console.log('Item', props);
+  //console.log('Item', props);
   return h(Overlay, { className, ...props }, h(Label, { text: icon }, label));
 };
 
@@ -409,7 +409,7 @@ export const EditBox = ({ value = '', type = 'div', className, hidden = false, c
 };
 
 export const File = ({ label, name, description, i, key, className = 'file', onPush, signal, data, doc, ...props }) => {
-  console.log('File', props);
+  //console.log('File', props);
   const [loaded, setLoaded] = useState(NaN);
   if(signal) signal.subscribe(data => setLoaded(data.percent));
   onPush =
@@ -491,7 +491,7 @@ export const Chooser = ({ className = 'list', itemClass = 'item', tooltip = () =
   const pred = name => !reList.every(c => !c.every(re => re.test(name))) && plus.every(re => re.test(name));
   const other = list.filter(({ name }) => !pred(name)).map(i => i.name);
   const displayList = [...list].sort(sortCompare);
-  console.log('displayList', { displayList, sortCompare });
+  //console.log('displayList', { displayList, sortCompare });
   const children = displayList
     .filter(({ name }) => pred(name))
     .map((value, key) => {

@@ -1,5 +1,6 @@
 import Util from './lib/util.js';
 import * as path from './lib/path.js';
+import * as deep from './lib/deep.js';
 //import Predicate from 'path';
 import { AcquireReader } from './lib/stream/utils.js';
 export let SIZEOF_POINTER = 8;
@@ -589,9 +590,11 @@ export class RecordDecl extends Type {
     if(inner?.find(child => child.kind == 'PackedAttr')) this.packed = true;
     let fields = inner?.filter(child => child.kind.endsWith('Decl'));
 
+    console.log('RecordDecl.fields', fields);
+
     if(tagUsed) this.tag = tagUsed;
 
-    if(fields)
+    if(fields) {
       this.members = fields
         .filter(node => !('parentDeclContextId' in node))
         .reduce((acc, node) => {
@@ -604,8 +607,12 @@ export class RecordDecl extends Type {
             if(node?.type?.qualType && /( at )/.test(node.type.qualType)) {
               let loc = node.type.qualType.split(/(?:\s*[()]| at )/g)[2];
               let [file, line, column] = loc.split(/:/g).map(i => (!isNaN(+i) ? +i : i));
+              console.log('deep', deep);
+              console.log('deep.RETURN_PATH', deep.RETURN_PATH);
 
-              let typePath = PathRemoveLoc(deep.find(inner, n => n.line == line, deep.RETURN_PATH));
+              let typePaths = deep.select(inner, n => n.line == line, deep.RETURN_PATH);
+              let typePath = PathRemoveLoc(typePaths[0]);
+              console.log('RecordDecl', { typePath });
               let typeNode = deep.get(inner, typePath);
               type = TypeFactory(typeNode, ast);
               //  console.log('loc:', { kind, file, line, column, typeNode});
@@ -617,6 +624,10 @@ export class RecordDecl extends Type {
                 let tmp = ast.inner.find(n => n.kind == 'RecordDecl' && n.name == /^struct./.test(n.name));
                 if(tmp) type = TypeFactory(tmp.value, ast);
               }
+            } else if(node.kind.startsWith('Record')) {
+              type = new RecordDecl(node, ast);
+            } else {
+              throw new Error(`node.kind=${node.kind} `);
             }
           }
           if(type) acc.push([name, /*node.kind,*/ type]);
@@ -628,6 +639,7 @@ export class RecordDecl extends Type {
             node.kind.startsWith('Indirect') ? null : TypeFactory(node, ast)
           ];*/
         }, []);
+    }
   }
 
   /* prettier-ignore */ get size() {

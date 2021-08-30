@@ -99,13 +99,7 @@ export function archive_read_new() {
  *
  * @return   {Number}
  */
-define(
-  'archive_read_support_compression_all',
-  dlsym(libarchive, 'archive_read_support_compression_all'),
-  null,
-  'int',
-  'void *'
-);
+define('archive_read_support_compression_all', dlsym(libarchive, 'archive_read_support_compression_all'), null, 'int', 'void *');
 export function archive_read_support_compression_all(arg1) {
   return call('archive_read_support_compression_all', arg1);
 }

@@ -52,17 +52,20 @@ export default function REPL(title = 'QuickJS') {
     output = Util.stdio(1) ?? process.stdout;
   }
 
-  Util.ttySetRaw(input);
+  var tty_set_raw = Util.once(fd => os.ttySetRaw(fd));
+  var put_banner = Util.once(() => std.puts('QuickJS - Type "\\h" for this.help\n'));
+
+  /*Util.ttySetRaw(input);
   Util.ttySetRaw(output);
-  
-  var thisObj = this; 
-  
-  const puts = str => fs.puts(output, str);
+*/
+  var thisObj = this;
+
+  const puts = str => std.out.puts(str);
   const flush = () => {
     //   console.log("flush", {flushSync:fs.flushSync+'',output});
-    fs.flushSync(output);
+    std.out.flush(); // fs.flushSync(output);
   };
- 
+
   /* XXX: use preprocessor ? */
   var config_numcalc = false; //typeof os.open === 'undefined';
   var has_jscalc = typeof Fraction === 'function';
@@ -175,54 +178,54 @@ export default function REPL(title = 'QuickJS') {
   var eval_mode = 'std';
 
   var commands = {
-    /* command table */ '\x01': beginning_of_line /* ^A - bol */,
-    '\x02': backward_char /* ^B - backward-char */,
-    '\x03': control_c /* ^C - abort */,
-    '\x04': control_d /* ^D - delete-char or exit */,
-    '\x05': end_of_line /* ^E - eol */,
-    '\x06': forward_char /* ^F - forward-char */,
+    /* command table */ '\x01': beginningOfLine /* ^A - bol */,
+    '\x02': backwardChar /* ^B - backward-char */,
+    '\x03': controlC /* ^C - abort */,
+    '\x04': controlD /* ^D - delete-char or exit */,
+    '\x05': endOfLine /* ^E - eol */,
+    '\x06': forwardChar /* ^F - forward-char */,
     '\x07': abort /* ^G - bell */,
-    '\x08': backward_delete_char /* ^H - backspace */,
+    '\x08': backwardDeleteChar /* ^H - backspace */,
     '\x09': completion /* ^I - history-search-backward */,
-    '\x0a': accept_line /* ^J - newline */,
-    '\x0b': kill_line /* ^K - delete to end of line */,
-    '\x0d': accept_line /* ^M - enter */,
-    '\x0e': history_next /* ^N - down */,
-    '\x10': history_previous /* ^P - up */,
-    '\x11': quoted_insert /* ^Q - quoted-insert */,
-    '\x12': reverse_search /* ^R - reverse-search */,
-    '\x13': forward_search /* ^S - search */,
-    '\x14': transpose_chars /* ^T - transpose */,
+    '\x0a': acceptLine /* ^J - newline */,
+    '\x0b': killLine /* ^K - delete to end of line */,
+    '\x0d': acceptLine /* ^M - enter */,
+    '\x0e': historyNext /* ^N - down */,
+    '\x10': historyPrevious /* ^P - up */,
+    '\x11': quotedInsert /* ^Q - quoted-insert */,
+    '\x12': reverseSearch /* ^R - reverse-search */,
+    '\x13': forwardSearch /* ^S - search */,
+    '\x14': transposeChars /* ^T - transpose */,
     '\x18': reset /* ^X - cancel */,
     '\x19': yank /* ^Y - yank */,
-    '\x1bOA': history_previous /* ^[OA - up */,
-    '\x1bOB': history_next /* ^[OB - down */,
-    '\x1bOC': forward_char /* ^[OC - right */,
-    '\x1bOD': backward_char /* ^[OD - left */,
-    '\x1bOF': forward_word /* ^[OF - ctrl-right */,
-    '\x1bOH': backward_word /* ^[OH - ctrl-left */,
-    '\x1b[1;5C': forward_word /* ^[[1;5C - ctrl-right */,
-    '\x1b[1;5D': backward_word /* ^[[1;5D - ctrl-left */,
-    '\x1b[1~': beginning_of_line /* ^[[1~ - bol */,
-    '\x1b[3~': delete_char /* ^[[3~ - delete */,
-    '\x1b[4~': end_of_line /* ^[[4~ - eol */,
-    '\x1b[5~': history_search_backward /* ^[[5~ - page up */,
-    '\x1b[6~': history_search_forward /* ^[[5~ - page down */,
-    '\x1b[A': history_previous /* ^[[A - up */,
-    '\x1b[B': history_next /* ^[[B - down */,
-    '\x1b[C': forward_char /* ^[[C - right */,
-    '\x1b[D': backward_char /* ^[[D - left */,
-    '\x1b[F': end_of_line /* ^[[F - end */,
-    '\x1b[H': beginning_of_line /* ^[[H - home */,
-    '\x1b\x7f': backward_kill_word /* M-C-? - backward_kill_word */,
-    '\x1bb': backward_word /* M-b - backward_word */,
-    '\x1bd': kill_word /* M-d - kill_word */,
-    '\x1bf': forward_word /* M-f - backward_word */,
-    '\x1bk': backward_kill_line /* M-k - backward_kill_line */,
-    '\x1bl': downcase_word /* M-l - downcase_word */,
-    '\x1bt': transpose_words /* M-t - transpose_words */,
-    '\x1bu': upcase_word /* M-u - upcase_word */,
-    '\x7f': backward_delete_char /* ^? - delete */
+    '\x1bOA': historyPrevious /* ^[OA - up */,
+    '\x1bOB': historyNext /* ^[OB - down */,
+    '\x1bOC': forwardChar /* ^[OC - right */,
+    '\x1bOD': backwardChar /* ^[OD - left */,
+    '\x1bOF': forwardWord /* ^[OF - ctrl-right */,
+    '\x1bOH': backwardWord /* ^[OH - ctrl-left */,
+    '\x1b[1;5C': forwardWord /* ^[[1;5C - ctrl-right */,
+    '\x1b[1;5D': backwardWord /* ^[[1;5D - ctrl-left */,
+    '\x1b[1~': beginningOfLine /* ^[[1~ - bol */,
+    '\x1b[3~': deleteChar /* ^[[3~ - delete */,
+    '\x1b[4~': endOfLine /* ^[[4~ - eol */,
+    '\x1b[5~': historySearchBackward /* ^[[5~ - page up */,
+    '\x1b[6~': historySearchForward /* ^[[5~ - page down */,
+    '\x1b[A': historyPrevious /* ^[[A - up */,
+    '\x1b[B': historyNext /* ^[[B - down */,
+    '\x1b[C': forwardChar /* ^[[C - right */,
+    '\x1b[D': backwardChar /* ^[[D - left */,
+    '\x1b[F': endOfLine /* ^[[F - end */,
+    '\x1b[H': beginningOfLine /* ^[[H - home */,
+    '\x1b\x7f': backwardKillWord /* M-C-? - backwardKillWord */,
+    '\x1bb': backwardWord /* M-b - backwardWord */,
+    '\x1bd': killWord /* M-d - killWord */,
+    '\x1bf': forwardWord /* M-f - backwardWord */,
+    '\x1bk': backwardKillLine /* M-k - backwardKillLine */,
+    '\x1bl': downcaseWord /* M-l - downcaseWord */,
+    '\x1bt': transposeWords /* M-t - transposeWords */,
+    '\x1bu': upcaseWord /* M-u - upcaseWord */,
+    '\x7f': backwardDeleteChar /* ^? - delete */
   };
 
   let currentCommand = '';
@@ -240,8 +243,8 @@ export default function REPL(title = 'QuickJS') {
     history: { value: history, enumerable: false }
   });
 
-  async function term_init() {
-    //   repl.debug("term_init");
+  async function termInit() {
+    //   repl.debug("termInit");
     var tab;
     this.term_fd = input && input.fileno ? input.fileno() : 1;
     /* get the terminal size */
@@ -249,89 +252,89 @@ export default function REPL(title = 'QuickJS') {
     if(isatty(this.term_fd)) {
       if(Util.ttyGetWinSize) {
         await Util.ttyGetWinSize(1).then(tab => {
-          repl.debug('term_init', { tab });
+          repl.debug('termInit', { tab });
           term_width = tab[0];
         });
       }
-      Util.ttySetRaw(input);
+      tty_set_raw(this.term_fd);
       repl.debug('TTY setup done');
     }
 
     /* install a Ctrl-C signal handler */
-    Util.signal('SIGINT', sigint_handler);
+    Util.signal('SIGINT', sigintHandler);
 
     /* install a handler to read stdin */
     term_read_buf = new Uint8Array(1);
 
-    Util.setReadHandler(input ?? this.term_fd, () => repl.term_read_handler());
+    Util.setReadHandler(input ?? this.term_fd, () => repl.termReadHandler());
 
-    repl.debug('term_init');
+    repl.debug('termInit');
     repl.debug('this.term_fd', this.term_fd);
   }
 
-  function sigint_handler() {
+  function sigintHandler() {
     /* send Ctrl-C to readline */
-    repl.handle_byte(3);
+    repl.handleByte(3);
   }
 
-  function term_read_handler() {
+  function termReadHandler() {
     var l, i;
     repl.debug('term_read_buf', term_read_buf);
     const { buffer } = term_read_buf;
     l = fs.readSync(input, buffer, 0, 1);
-    repl.debug('term_read_handler', { l, buffer });
+    repl.debug('termReadHandler', { l, buffer });
 
     for(i = 0; i < l; i++) {
-      repl.debug('term_read_handler', {
+      repl.debug('termReadHandler', {
         code: term_read_buf[i],
         char: String.fromCharCode(term_read_buf[i])
       });
-      repl.handle_byte(term_read_buf[i]);
+      repl.handleByte(term_read_buf[i]);
 
       if(!running) break;
     }
   }
 
-  function handle_byte(c) {
-    repl.debug('handle_byte', { c, utf8 });
+  function handleByte(c) {
+    repl.debug('handleByte', { c, utf8 });
     if(!utf8) {
-      repl.handle_char(c);
+      repl.handleChar(c);
     } else if(utf8_state !== 0 && c >= 0x80 && c < 0xc0) {
       utf8_val = (utf8_val << 6) | (c & 0x3f);
       utf8_state--;
       if(utf8_state === 0) {
-        repl.handle_char(utf8_val);
+        repl.handleChar(utf8_val);
       }
     } else if(c >= 0xc0 && c < 0xf8) {
       utf8_state = 1 + (c >= 0xe0) + (c >= 0xf0);
       utf8_val = c & ((1 << (6 - utf8_state)) - 1);
     } else {
       utf8_state = 0;
-      repl.handle_char(c);
+      repl.handleChar(c);
     }
   }
 
-  function is_alpha(c) {
+  function isAlpha(c) {
     return typeof c === 'string' && ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'));
   }
 
-  function is_digit(c) {
+  function isDigit(c) {
     return typeof c === 'string' && c >= '0' && c <= '9';
   }
 
-  function is_word(c) {
-    return typeof c === 'string' && (repl.is_alpha(c) || repl.is_digit(c) || c == '_' || c == '$');
+  function isWord(c) {
+    return typeof c === 'string' && (repl.isAlpha(c) || repl.isDigit(c) || c == '_' || c == '$');
   }
 
-  function ucs_length(str) {
+  function ucsLength(str) {
     var len,
       c,
       i,
       str_len = str.length;
     len = 0;
     /* we never count the trailing surrogate to have the
-         following property: repl.ucs_length(str) =
-         repl.ucs_length(str.substring(0, a)) + repl.ucs_length(str.substring(a,
+         following property: repl.ucsLength(str) =
+         repl.ucsLength(str.substring(0, a)) + repl.ucsLength(str.substring(a,
          str.length)) for 0 <= a <= str.length */
     for(i = 0; i < str_len; i++) {
       c = str.charCodeAt(i);
@@ -340,14 +343,14 @@ export default function REPL(title = 'QuickJS') {
     return len;
   }
 
-  function is_trailing_surrogate(c) {
+  function isTrailingSurrogate(c) {
     var d;
     if(typeof c !== 'string') return false;
     d = c.codePointAt(0); /* can be NaN if empty string */
     return d >= 0xdc00 && d < 0xe000;
   }
 
-  function is_balanced(a, b) {
+  function isBalanced(a, b) {
     switch (a + b) {
       case '()':
       case '[]':
@@ -357,7 +360,7 @@ export default function REPL(title = 'QuickJS') {
     return false;
   }
 
-  function print_color_text(str, start, style_names) {
+  function printColorText(str, start, style_names) {
     var i, j;
     for(j = start; j < str.length; ) {
       var style = style_names[(i = j)];
@@ -368,12 +371,12 @@ export default function REPL(title = 'QuickJS') {
     }
   }
 
-  function print_csi(n, code) {
+  function printCsi(n, code) {
     puts('\x1b[' + (n != 1 ? n : '') + code);
   }
 
   /* XXX: handle double-width characters */
-  function move_cursor(delta) {
+  function moveCursor(delta) {
     //if(isNaN(delta)) return;
 
     var i, l;
@@ -385,7 +388,7 @@ export default function REPL(title = 'QuickJS') {
           delta--;
         } else {
           l = Math.min(term_width - 1 - term_cursor_x, delta);
-          repl.print_csi(l, 'C'); /* right */
+          repl.printCsi(l, 'C'); /* right */
           delta -= l;
           term_cursor_x += l;
         }
@@ -394,16 +397,16 @@ export default function REPL(title = 'QuickJS') {
       delta = -delta;
       while(delta != 0) {
         if(term_cursor_x == 0) {
-          repl.print_csi(1, 'A'); /* up */
-          repl.print_csi(term_width - 1, 'C'); /* right */
+          repl.printCsi(1, 'A'); /* up */
+          repl.printCsi(term_width - 1, 'C'); /* right */
           delta--;
           term_cursor_x = term_width - 1;
         } else {
-          // repl.debug("move_cursor", {delta,term_cursor_x, term_width});
+          // repl.debug("moveCursor", {delta,term_cursor_x, term_width});
           l = Math.min(delta, term_cursor_x);
 
-          if(isNaN(l)) throw new Error(`move_cursor l=${l}`);
-          repl.print_csi(l, 'D'); /* left */
+          if(isNaN(l)) throw new Error(`moveCursor l=${l}`);
+          repl.printCsi(l, 'D'); /* left */
           delta -= l;
           term_cursor_x -= l;
         }
@@ -418,16 +421,26 @@ export default function REPL(title = 'QuickJS') {
       colorize = show_colors;
 
     if(search) {
-      const re = new RegExp((search_pattern = cmd_line.replace(/([\(\)\?\+\*])/g, '.' /*'\\$1'*/)), 'i');
+      const re = new RegExp(
+        (search_pattern = cmd_line.replace(/([\(\)\?\+\*])/g, '.' /*'\\$1'*/)),
+        'i'
+      );
       const num = search > 0 ? search - 1 : search;
       //search_index = history.findLastIndex(c => re.test(c) && --num == 0);
-      let history_search = [...history.entries()].rotateLeft(history_index);
-      search_matches.splice(0, search_matches.length, ...history_search.filter(([i, c]) => re.test(c)));
+      let historySearch = [...history.entries()].rotateLeft(history_index);
+      search_matches.splice(
+        0,
+        search_matches.length,
+        ...historySearch.filter(([i, c]) => re.test(c))
+      );
       //num = search > 0 ? search - 1 : search;
       const match = search_matches.at(num);
       const [histidx = -1, histcmd = ''] = match || [];
       const histdir = search > 0 ? 'forward' : 'reverse';
-      const histpos = search < 0 ? history_search.indexOf(match) - history_search.length : history_search.indexOf(match);
+      const histpos =
+        search < 0
+          ? historySearch.indexOf(match) - historySearch.length
+          : historySearch.indexOf(match);
       search_index = histidx;
       let line_start = `(${histdir}-search[${histpos}])\``;
       cmd_line = `${line_start}${repl.cmd}': ${histcmd}`;
@@ -441,15 +454,20 @@ export default function REPL(title = 'QuickJS') {
       last_cmd = cmd_line;
       term_cursor_x = start;
       last_cursor_pos = cursor_pos;
-      let nback = repl.ucs_length(r);
+      let nback = repl.ucsLength(r);
+      std.out.flush();
       if(isNaN(nback)) throw new Error(`update nback=${nback}`);
       puts(`\x1b[${nback}D`);
-      //repl.move_cursor(-repl.ucs_length(r));
-      repl.flush();
+      //repl.moveCursor(-repl.ucsLength(r));
+      std.out.flush();
       return;
-    } /* cursor_pos is the position in 16 bit characters inside the
-           UTF-16 string 'cmd_line' */ else if(cmd_line != last_cmd) {
-      if(!colorize && last_cmd.substring(0, last_cursor_pos) == cmd_line.substring(0, last_cursor_pos)) {
+    } else if(cmd_line != last_cmd) {
+      /* cursor_pos is the position in 16 bit characters inside the
+           UTF-16 string 'cmd_line' */
+      if(
+        !colorize &&
+        last_cmd.substring(0, last_cursor_pos) == cmd_line.substring(0, last_cursor_pos)
+      ) {
         /* optimize common case */
         puts(cmd_line.substring(last_cursor_pos));
       } else {
@@ -457,20 +475,20 @@ export default function REPL(title = 'QuickJS') {
         // repl.debug("last_cmd",last_cmd, last_cursor_pos);
         const leading = last_cmd.substring(0, last_cursor_pos);
         //repl.debug("leading",leading);
-        const move_x = -repl.ucs_length(leading);
+        const move_x = -repl.ucsLength(leading);
         //repl.debug("move_x",move_x);
-        repl.move_cursor(move_x);
+        repl.moveCursor(move_x);
 
         if(colorize) {
           var str = mexpr ? mexpr + '\n' + cmd_line : cmd_line;
           var start = str.length - cmd_line.length;
-          var colorstate = repl.colorize_js(str);
-          repl.print_color_text(str, start, colorstate[2]);
+          var colorstate = repl.colorizeJs(str);
+          repl.printColorText(str, start, colorstate[2]);
         } else {
           puts(cmd_line);
         }
       }
-      term_cursor_x = (term_cursor_x + repl.ucs_length(cmd_line)) % term_width;
+      term_cursor_x = (term_cursor_x + repl.ucsLength(cmd_line)) % term_width;
       if(term_cursor_x == 0) {
         /* show the cursor on the next line */
         puts(' \x08');
@@ -481,9 +499,9 @@ export default function REPL(title = 'QuickJS') {
       last_cursor_pos = cmd_line.length;
     }
     if(cursor_pos > last_cursor_pos) {
-      repl.move_cursor(repl.ucs_length(cmd_line.substring(last_cursor_pos, cursor_pos)));
+      repl.moveCursor(repl.ucsLength(cmd_line.substring(last_cursor_pos, cursor_pos)));
     } else if(cursor_pos < last_cursor_pos) {
-      repl.move_cursor(-repl.ucs_length(cmd_line.substring(cursor_pos, last_cursor_pos)));
+      repl.moveCursor(-repl.ucsLength(cmd_line.substring(cursor_pos, last_cursor_pos)));
     }
     last_cursor_pos = cursor_pos;
     //console.log('\nrepl', repl.flush + '');
@@ -500,7 +518,7 @@ export default function REPL(title = 'QuickJS') {
     }
   }
 
-  function quoted_insert() {
+  function quotedInsert() {
     quote_flag = true;
   }
 
@@ -512,118 +530,122 @@ export default function REPL(title = 'QuickJS') {
 
   function alert() {}
 
-  function reverse_search() {
+  function reverseSearch() {
     if(search == 0) repl.cmd = '';
     search--;
-    readline_cb = search_cb;
-    repl.debug('reverse_search', { search, cursor_pos, term_cursor_x });
+    readline_cb = searchCb;
+    repl.debug('reverseSearch', { search, cursor_pos, term_cursor_x });
     repl.update();
     return -2;
   }
-  function forward_search() {
+  function forwardSearch() {
     if(search == 0) repl.cmd = '';
     search++;
-    readline_cb = search_cb;
-    //repl.debug('forward_search', { search, cursor_pos, term_cursor_x });
+    readline_cb = searchCb;
+    //repl.debug('forwardSearch', { search, cursor_pos, term_cursor_x });
     repl.update();
     return -2;
   }
 
-  function search_cb(pattern) {
+  function searchCb(pattern) {
     if(pattern !== null) {
       const histcmd = history[search_index];
-      //repl.debug('search_cb', { pattern, histcmd,cmd }, history.slice(-2));
+      //repl.debug('searchCb', { pattern, histcmd,cmd }, history.slice(-2));
       search = 0;
-      readline_cb = readline_handle_cmd;
+      readline_cb = readlineHandleCmd;
       repl.cmd = '';
-      repl.readline_handle_cmd(histcmd ?? '');
+      repl.readlineHandleCmd(histcmd ?? '');
 
       repl.update();
     }
   }
 
-  function beginning_of_line() {
+  function beginningOfLine() {
     cursor_pos = 0;
   }
 
-  function end_of_line() {
+  function endOfLine() {
     cursor_pos = repl.cmd.length;
   }
 
-  function forward_char() {
+  function forwardChar() {
     if(cursor_pos < repl.cmd.length) {
       cursor_pos++;
-      while(repl.is_trailing_surrogate(repl.cmd.charAt(cursor_pos))) cursor_pos++;
+      while(repl.isTrailingSurrogate(repl.cmd.charAt(cursor_pos))) cursor_pos++;
     }
   }
 
-  function backward_char() {
+  function backwardChar() {
     if(cursor_pos > 0) {
       cursor_pos--;
-      while(repl.is_trailing_surrogate(repl.cmd.charAt(cursor_pos))) cursor_pos--;
+      while(repl.isTrailingSurrogate(repl.cmd.charAt(cursor_pos))) cursor_pos--;
     }
   }
 
-  function skip_word_forward(pos) {
-    while(pos < repl.cmd.length && !repl.is_word(repl.cmd.charAt(pos))) pos++;
-    while(pos < repl.cmd.length && repl.is_word(repl.cmd.charAt(pos))) pos++;
+  function skipWordForward(pos) {
+    while(pos < repl.cmd.length && !repl.isWord(repl.cmd.charAt(pos))) pos++;
+    while(pos < repl.cmd.length && repl.isWord(repl.cmd.charAt(pos))) pos++;
     return pos;
   }
 
-  function skip_word_backward(pos) {
-    while(pos > 0 && !repl.is_word(repl.cmd.charAt(pos - 1))) pos--;
-    while(pos > 0 && repl.is_word(repl.cmd.charAt(pos - 1))) pos--;
+  function skipWordBackward(pos) {
+    while(pos > 0 && !repl.isWord(repl.cmd.charAt(pos - 1))) pos--;
+    while(pos > 0 && repl.isWord(repl.cmd.charAt(pos - 1))) pos--;
     return pos;
   }
 
-  function forward_word() {
-    cursor_pos = repl.skip_word_forward(cursor_pos);
+  function forwardWord() {
+    cursor_pos = repl.skipWordForward(cursor_pos);
   }
 
-  function backward_word() {
-    cursor_pos = repl.skip_word_backward(cursor_pos);
+  function backwardWord() {
+    cursor_pos = repl.skipWordBackward(cursor_pos);
   }
 
-  function accept_line() {
+  function acceptLine() {
     puts('\n');
-    repl.history_add(search ? history[search_index] : repl.cmd);
-    repl.debug('accept_line', { cmd: repl.cmd, history_index, search, history_length: history.length }, [...history.entries()].slice(history_index - 3, history_index + 2));
+    repl.historyAdd(search ? history[search_index] : repl.cmd);
+    repl.debug(
+      'acceptLine',
+      { cmd: repl.cmd, history_index, search, history_length: history.length },
+      [...history.entries()].slice(history_index - 3, history_index + 2)
+    );
     return -1;
   }
 
-  function history_set(entries) {
+  function historySet(entries) {
     if(entries) history.splice(0, history.length, ...entries);
   }
 
-  function history_get() {
+  /* function historyGet() {
     return history;
-  }
-  function history_pos() {
+  }*/
+  function historyPos() {
     return history_index;
   }
 
-  function history_add(str) {
-    //repl.debug('history_add', { str });
-    str = str.trim();
+  function historyAdd(str) {
+    //repl.debug('historyAdd', { str });
 
     if(str) {
+      str = str.trim();
       history.push(str);
     }
     history_index = history.length;
   }
 
-  function num_lines(str) {
+  function numLines(str) {
     return str.split(/\n/g).length;
   }
-  function last_line(str) {
+  function lastLine(str) {
     let lines = str.split(/\n/g);
     return lines[lines.length - 1];
   }
 
-  function history_previous() {
-    let num_lines = repl.cmd.split(/\n/g).length;
+  function historyPrevious() {
+    let numLines = repl.cmd.split(/\n/g).length;
 
-    if(num_lines > 1) repl.readline_clear();
+    if(numLines > 1) repl.readlineClear();
     search = 0;
 
     if(history_index > 0) {
@@ -636,10 +658,10 @@ export default function REPL(title = 'QuickJS') {
     }
   }
 
-  function history_next() {
-    let num_lines = repl.cmd.split(/\n/g).length;
+  function historyNext() {
+    let numLines = repl.cmd.split(/\n/g).length;
 
-    if(num_lines > 1) repl.readline_clear();
+    if(numLines > 1) repl.readlineClear();
     search = 0;
 
     if(history_index < history.length - 1) {
@@ -649,7 +671,7 @@ export default function REPL(title = 'QuickJS') {
     }
   }
 
-  function history_search(dir) {
+  function historySearch(dir) {
     var pos = cursor_pos;
     for(var i = 1; i <= history.length; i++) {
       var index = (history.length + i * dir + history_index) % history.length;
@@ -661,28 +683,28 @@ export default function REPL(title = 'QuickJS') {
     }
   }
 
-  function history_search_backward() {
-    return repl.history_search(-1);
+  function historySearchBackward() {
+    return repl.historySearch(-1);
   }
 
-  function history_search_forward() {
-    return repl.history_search(1);
+  function historySearchForward() {
+    return repl.historySearch(1);
   }
 
-  function delete_char_dir(dir) {
+  function deleteCharDir(dir) {
     var start, end;
 
     start = cursor_pos;
     if(dir < 0) {
       start--;
-      while(repl.is_trailing_surrogate(repl.cmd.charAt(start))) start--;
+      while(repl.isTrailingSurrogate(repl.cmd.charAt(start))) start--;
     }
     end = start + 1;
-    while(repl.is_trailing_surrogate(repl.cmd.charAt(end))) end++;
+    while(repl.isTrailingSurrogate(repl.cmd.charAt(end))) end++;
 
     if(start >= 0 && start < repl.cmd.length) {
-      if(last_fun === kill_region) {
-        repl.kill_region(start, end, dir);
+      if(last_fun === killRegion) {
+        repl.killRegion(start, end, dir);
       } else {
         repl.cmd = repl.cmd.substring(0, start) + repl.cmd.substring(end);
         cursor_pos = start;
@@ -690,11 +712,11 @@ export default function REPL(title = 'QuickJS') {
     }
   }
 
-  function delete_char() {
-    repl.delete_char_dir(1);
+  function deleteChar() {
+    repl.deleteCharDir(1);
   }
 
-  function control_d() {
+  function controlD() {
     if(repl.cmd.length == 0) {
       puts('\n');
 
@@ -702,79 +724,93 @@ export default function REPL(title = 'QuickJS') {
 
       return -3; /* exit read eval print loop */
     } else {
-      repl.delete_char_dir(1);
+      repl.deleteCharDir(1);
     }
   }
 
-  function backward_delete_char() {
-    repl.delete_char_dir(-1);
+  function backwardDeleteChar() {
+    repl.deleteCharDir(-1);
   }
 
-  function transpose_chars() {
+  function transposeChars() {
     var pos = cursor_pos;
     if(repl.cmd.length > 1 && pos > 0) {
       if(pos == repl.cmd.length) pos--;
-      repl.cmd = repl.cmd.substring(0, pos - 1) + repl.cmd.substring(pos, pos + 1) + repl.cmd.substring(pos - 1, pos) + repl.cmd.substring(pos + 1);
+      repl.cmd =
+        repl.cmd.substring(0, pos - 1) +
+        repl.cmd.substring(pos, pos + 1) +
+        repl.cmd.substring(pos - 1, pos) +
+        repl.cmd.substring(pos + 1);
       cursor_pos = pos + 1;
     }
   }
 
-  function transpose_words() {
-    var p1 = repl.skip_word_backward(cursor_pos);
-    var p2 = repl.skip_word_forward(p1);
-    var p4 = repl.skip_word_forward(cursor_pos);
-    var p3 = repl.skip_word_backward(p4);
+  function transposeWords() {
+    var p1 = repl.skipWordBackward(cursor_pos);
+    var p2 = repl.skipWordForward(p1);
+    var p4 = repl.skipWordForward(cursor_pos);
+    var p3 = repl.skipWordBackward(p4);
 
     if(p1 < p2 && p2 <= cursor_pos && cursor_pos <= p3 && p3 < p4) {
-      repl.cmd = repl.cmd.substring(0, p1) + repl.cmd.substring(p3, p4) + repl.cmd.substring(p2, p3) + repl.cmd.substring(p1, p2);
+      repl.cmd =
+        repl.cmd.substring(0, p1) +
+        repl.cmd.substring(p3, p4) +
+        repl.cmd.substring(p2, p3) +
+        repl.cmd.substring(p1, p2);
       cursor_pos = p4;
     }
   }
 
-  function upcase_word() {
-    var end = repl.skip_word_forward(cursor_pos);
-    repl.cmd = repl.cmd.substring(0, cursor_pos) + repl.cmd.substring(cursor_pos, end).toUpperCase() + repl.cmd.substring(end);
+  function upcaseWord() {
+    var end = repl.skipWordForward(cursor_pos);
+    repl.cmd =
+      repl.cmd.substring(0, cursor_pos) +
+      repl.cmd.substring(cursor_pos, end).toUpperCase() +
+      repl.cmd.substring(end);
   }
 
-  function downcase_word() {
-    var end = repl.skip_word_forward(cursor_pos);
-    repl.cmd = repl.cmd.substring(0, cursor_pos) + repl.cmd.substring(cursor_pos, end).toLowerCase() + repl.cmd.substring(end);
+  function downcaseWord() {
+    var end = repl.skipWordForward(cursor_pos);
+    repl.cmd =
+      repl.cmd.substring(0, cursor_pos) +
+      repl.cmd.substring(cursor_pos, end).toLowerCase() +
+      repl.cmd.substring(end);
   }
 
-  function kill_region(start, end, dir) {
+  function killRegion(start, end, dir) {
     var s = repl.cmd.substring(start, end);
-    if(last_fun !== kill_region) clip_board = s;
+    if(last_fun !== killRegion) clip_board = s;
     else if(dir < 0) clip_board = s + clip_board;
     else clip_board = clip_board + s;
 
     repl.cmd = repl.cmd.substring(0, start) + repl.cmd.substring(end);
     if(cursor_pos > end) cursor_pos -= end - start;
     else if(cursor_pos > start) cursor_pos = start;
-    this_fun = kill_region;
+    this_fun = killRegion;
   }
 
-  function kill_line() {
-    repl.kill_region(cursor_pos, repl.cmd.length, 1);
+  function killLine() {
+    repl.killRegion(cursor_pos, repl.cmd.length, 1);
   }
 
-  function backward_kill_line() {
-    repl.kill_region(0, cursor_pos, -1);
+  function backwardKillLine() {
+    repl.killRegion(0, cursor_pos, -1);
   }
 
-  function kill_word() {
-    repl.kill_region(cursor_pos, repl.skip_word_forward(cursor_pos), 1);
+  function killWord() {
+    repl.killRegion(cursor_pos, repl.skipWordForward(cursor_pos), 1);
   }
 
-  function backward_kill_word() {
-    repl.kill_region(repl.skip_word_backward(cursor_pos), cursor_pos, -1);
+  function backwardKillWord() {
+    repl.killRegion(repl.skipWordBackward(cursor_pos), cursor_pos, -1);
   }
 
   function yank() {
     repl.insert(clip_board);
   }
 
-  function control_c() {
-    if(last_fun === control_c) {
+  function controlC() {
+    if(last_fun === controlC) {
       puts('\n');
 
       running = false;
@@ -782,7 +818,7 @@ export default function REPL(title = 'QuickJS') {
     } else {
       puts('\n(Press Ctrl-C again to quit)\n');
       repl.cmd = '';
-      repl.readline_print_prompt();
+      repl.readlinePrintPrompt();
     }
   }
 
@@ -791,15 +827,15 @@ export default function REPL(title = 'QuickJS') {
     cursor_pos = 0;
   }
 
-  function get_context_word(line, pos) {
+  function getContextWord(line, pos) {
     var s = '';
-    while(pos > 0 && repl.is_word(line[pos - 1])) {
+    while(pos > 0 && repl.isWord(line[pos - 1])) {
       pos--;
       s = line[pos] + s;
     }
     return s;
   }
-  function get_context_object(line, pos) {
+  function getContextObject(line, pos) {
     var obj, base, c;
     if(pos <= 0 || ' ~!%^&*(-+={[|:;,<>?/'.indexOf(line[pos - 1]) >= 0) return globalThis;
     if(pos >= 2 && line[pos - 1] === '.') {
@@ -816,10 +852,11 @@ export default function REPL(title = 'QuickJS') {
         case '/':
           return /\ /;
         default:
-          if(repl.is_word(c)) {
-            base = repl.get_context_word(line, pos);
-            if(['true', 'false', 'null', 'this'].includes(base) || !isNaN(+base)) return eval(base);
-            obj = repl.get_context_object(line, pos - base.length);
+          if(repl.isWord(c)) {
+            base = repl.getContextWord(line, pos);
+            if(['true', 'false', 'null', 'this'].includes(base) || !isNaN(+base))
+              return eval(base);
+            obj = repl.getContextObject(line, pos - base.length);
             if(obj === null || obj === void 0) return obj;
             if(obj === globalThis && obj[base] === void 0) {
               let ret;
@@ -835,7 +872,7 @@ export default function REPL(title = 'QuickJS') {
     return void 0;
   }
 
-  function get_directory_entries(pathStr = '.', mask = '*') {
+  function getDirectoryEntries(pathStr = '.', mask = '*') {
     let dir, base;
     let stat = fs.stat(pathStr);
     if(stat && stat?.isDirectory() && pathStr.endsWith('/')) {
@@ -848,7 +885,6 @@ export default function REPL(title = 'QuickJS') {
     let expr = mask.replace(/\./g, '\\.').replace(/\*/g, '.*');
     expr = (mask.startsWith('*') ? '' : '^') + expr + (mask.endsWith('*') ? '' : '$');
     let re = new RegExp(expr);
-    //repl.debug('get_directory_entries:', { dir, base, expr });
     let entries = fs
       .readdir(dir)
       .map(entry => {
@@ -856,35 +892,33 @@ export default function REPL(title = 'QuickJS') {
         return entry + (st && st.isDirectory() ? '/' : '');
       })
       .sort((a, b) => b.endsWith('/') - a.endsWith('/') || a.localeCompare(b));
-    //repl.debug('get_directory_entries:', { entries });
     entries = entries.filter(entry => re.test(entry) || entry.endsWith('/'));
     if(base != '') entries = entries.filter(entry => entry.startsWith(base));
-    //repl.debug('get_directory_entries:', { len: entries.length });
     return entries.map(entry => path.join(dir, entry));
   }
 
-  function get_filename_completions(line, pos) {
+  function getFilenameCompletions(line, pos) {
     let s = line.slice(0, pos).replace(/^\\[^ ]?\s*/, '');
 
-    //  let s = repl.get_context_word(line, pos);
-    //repl.debug('get_filename_completions', { line, pos, s });
+    //  let s = repl.getContextWord(line, pos);
+    //repl.debug('getFilenameCompletions', { line, pos, s });
 
     let mask = '*';
 
     if(line.startsWith('\\i')) mask = '*.(js|so)';
-    let tab = repl.get_directory_entries(s, mask);
+    let tab = repl.getDirectoryEntries(s, mask);
     return { tab, pos: s.length, ctx: {} };
   }
 
-  function get_completions(line, pos) {
+  function getCompletions(line, pos) {
     var s, obj, ctx_obj, r, i, j, paren;
 
-    if(/\\[il]/.test(repl.cmd)) return repl.get_filename_completions(line, pos);
+    if(/\\[il]/.test(repl.cmd)) return repl.getFilenameCompletions(line, pos);
 
-    s = repl.get_context_word(line, pos);
-    //    repl.print_status('get_completions', { line, pos, repl.cmd, word: s });
+    s = repl.getContextWord(line, pos);
+    //    repl.printStatus('getCompletions', { line, pos, repl.cmd, word: s });
 
-    ctx_obj = repl.get_context_object(line, pos - s.length);
+    ctx_obj = repl.getContextObject(line, pos - s.length);
 
     r = [];
     /* enumerate properties from object and its prototype chain,
@@ -923,7 +957,7 @@ export default function REPL(title = 'QuickJS') {
 
   function completion() {
     var tab, res, s, i, j, len, t, max_width, col, n_cols, row, n_rows;
-    res = repl.get_completions(repl.cmd, cursor_pos);
+    res = repl.getCompletions(repl.cmd, cursor_pos);
     tab = res.tab;
     if(tab.length === 0) return;
     s = tab[0];
@@ -971,7 +1005,7 @@ export default function REPL(title = 'QuickJS') {
         puts('\n');
       }
       /* show a new prompt */
-      repl.readline_print_prompt();
+      repl.readlinePrintPrompt();
     }
   }
 
@@ -981,26 +1015,26 @@ export default function REPL(title = 'QuickJS') {
     return res;
   }
 
-  function readline_clear() {
-    const num_lines = (repl.cmd ?? '').split(/\n/g).length;
+  function readlineClear() {
+    const numLines = (repl.cmd ?? '').split(/\n/g).length;
 
-    if(num_lines > 1) Terminal.cursorUp(num_lines - 1);
+    if(numLines > 1) Terminal.cursorUp(numLines - 1);
 
     Terminal.cursorHome();
     Terminal.eraseInDisplay();
-    repl.readline_print_prompt();
+    repl.readlinePrintPrompt();
   }
 
-  function readline_print_prompt() {
+  function readlinePrintPrompt() {
     repl.puts('\r\x1b[K');
     repl.puts(prompt);
-    term_cursor_x = repl.ucs_length(prompt) % term_width;
+    term_cursor_x = repl.ucsLength(prompt) % term_width;
     last_cmd = '';
     last_cursor_pos = 0;
   }
 
-  function readline_start(defstr, cb) {
-    repl.debug('readline_start', { defstr, cb });
+  function readlineStart(defstr, cb) {
+    repl.debug('readlineStart', { defstr, cb });
     let a = (defstr || '').split(/\n/g);
     mexpr = a.slice(0, -1).join('\n');
     repl.cmd = a[a.length - 1];
@@ -1024,14 +1058,14 @@ export default function REPL(title = 'QuickJS') {
       plen = prompt.length;
       prompt += ps1;
     }
-    repl.readline_print_prompt();
+    repl.readlinePrintPrompt();
     repl.update();
     repl.readline_state = 0;
   }
 
-  function handle_char(c1) {
+  function handleChar(c1) {
     var c;
-    repl.debug('handle_char', {
+    repl.debug('handleChar', {
       c1,
       state: repl.readline_state,
       readline_keys
@@ -1046,7 +1080,7 @@ export default function REPL(title = 'QuickJS') {
             readline_keys = c;
             repl.readline_state = 1;
           } else {
-            repl.handle_key(c);
+            repl.handleKey(c);
           }
           break;
         case 1 /* '^[ */:
@@ -1056,7 +1090,7 @@ export default function REPL(title = 'QuickJS') {
           } else if(c == 'O') {
             repl.readline_state = 3;
           } else {
-            repl.handle_key(readline_keys);
+            repl.handleKey(readline_keys);
             repl.readline_state = 0;
           }
           break;
@@ -1066,20 +1100,20 @@ export default function REPL(title = 'QuickJS') {
           if(c == '<') {
             repl.readline_state = 4;
           } else if(!(c == ';' || (c >= '0' && c <= '9'))) {
-            repl.handle_key(readline_keys);
+            repl.handleKey(readline_keys);
             repl.readline_state = 0;
           }
           break;
 
         case 3 /* '^[O' - ESC2 */:
           readline_keys += c;
-          repl.handle_key(readline_keys);
+          repl.handleKey(readline_keys);
           repl.readline_state = 0;
           break;
 
         case 4:
           if(!(c == ';' || (c >= '0' && c <= '9') || c == 'M' || c == 'm')) {
-            repl.handle_mouse(readline_keys);
+            repl.handleMouse(readline_keys);
 
             repl.readline_state = 0;
             readline_keys = '';
@@ -1094,23 +1128,25 @@ export default function REPL(title = 'QuickJS') {
     }
   }
 
-  function handle_mouse(keys) {
-    const [button, x, y, cmd] = [...Util.matchAll(/([0-9]+|[A-Za-z]+)/g, keys)].map(p => p[1]).map(p => (!isNaN(+p) ? +p : p));
+  function handleMouse(keys) {
+    const [button, x, y, cmd] = [...Util.matchAll(/([0-9]+|[A-Za-z]+)/g, keys)]
+      .map(p => p[1])
+      .map(p => (!isNaN(+p) ? +p : p));
     let press = cmd == 'm';
 
-    repl.debug('handle_mouse', { button, x, y, press });
+    repl.debug('handleMouse', { button, x, y, press });
   }
 
-  function handle_key(keys) {
+  function handleKey(keys) {
     var fun;
-    repl.debug('handle_key:', { keys });
+    repl.debug('handleKey:', { keys });
 
     if(quote_flag) {
-      if(repl.ucs_length(keys) === 1) repl.insert(keys);
+      if(repl.ucsLength(keys) === 1) repl.insert(keys);
       quote_flag = false;
     } else if((fun = commands[keys])) {
       const ret = fun(keys);
-      repl.debug('handle_key', {
+      repl.debug('handleKey', {
         keys,
         fun,
         ret,
@@ -1135,37 +1171,37 @@ export default function REPL(title = 'QuickJS') {
           if(
             search &&
             [
-              accept_line,
-              backward_char,
-              backward_delete_char,
-              backward_kill_line,
-              backward_kill_word,
-              backward_word,
-              beginning_of_line,
-              delete_char,
-              //end_of_line,
-              forward_char,
-              forward_word,
-              kill_line,
-              kill_word
+              acceptLine,
+              backwardChar,
+              backwardDeleteChar,
+              backwardKillLine,
+              backwardKillWord,
+              backwardWord,
+              beginningOfLine,
+              deleteChar,
+              //endOfLine,
+              forwardChar,
+              forwardWord,
+              killLine,
+              killWord
             ].indexOf(fun) == -1
           ) {
             const histcmd = history[search_index];
 
-            //readline_cb = readline_handle_cmd;
+            //readline_cb = readlineHandleCmd;
             search = 0;
             //repl.cmd = histcmd;
             puts(`\x1b[1G`);
             puts(`\x1b[J`);
             cursor_pos = histcmd.length;
-            repl.readline_start(histcmd, readline_handle_cmd);
+            repl.readlineStart(histcmd, readlineHandleCmd);
             repl.update();
             return;
           }
           break;
       }
       last_fun = this_fun;
-    } else if(repl.ucs_length(keys) === 1 && keys >= ' ') {
+    } else if(repl.ucsLength(keys) === 1 && keys >= ' ') {
       repl.insert(keys);
       last_fun = insert;
     } else {
@@ -1176,7 +1212,7 @@ export default function REPL(title = 'QuickJS') {
     repl.update();
   }
 
-  function number_to_string(a, radix) {
+  function numberToString(a, radix) {
     var s;
     if(!isFinite(a)) {
       /* NaN, Infinite */
@@ -1203,7 +1239,7 @@ export default function REPL(title = 'QuickJS') {
     }
   }
 
-  function bigfloat_to_string(a, radix) {
+  function bigfloatToString(a, radix) {
     var s;
     if(!BigFloat.isFinite(a)) {
       /* NaN, Infinite */
@@ -1232,7 +1268,11 @@ export default function REPL(title = 'QuickJS') {
       }
       if(typeof a === 'bigfloat' && eval_mode !== 'math') {
         s += 'l';
-      } else if(eval_mode !== 'std' && s.indexOf('.') < 0 && ((radix == 16 && s.indexOf('p') < 0) || (radix == 10 && s.indexOf('e') < 0))) {
+      } else if(
+        eval_mode !== 'std' &&
+        s.indexOf('.') < 0 &&
+        ((radix == 16 && s.indexOf('p') < 0) || (radix == 10 && s.indexOf('e') < 0))
+      ) {
         /* add a decimal point so that the floating point type
                    is visible */
         s += '.0';
@@ -1241,7 +1281,7 @@ export default function REPL(title = 'QuickJS') {
     }
   }
 
-  function bigint_to_string(a, radix) {
+  function bigintToString(a, radix) {
     var s;
     if(radix == 16) {
       var s;
@@ -1262,7 +1302,7 @@ export default function REPL(title = 'QuickJS') {
   function print(a) {
     var stack = [];
 
-    function print_rec(a) {
+    function printRec(a) {
       var n, i, keys, key, type, s;
 
       type = typeof a;
@@ -1271,7 +1311,16 @@ export default function REPL(title = 'QuickJS') {
           puts(a);
         } else if(stack.indexOf(a) >= 0) {
           puts('[circular]');
-        } else if(has_jscalc && (a instanceof Fraction || a instanceof Complex || a instanceof Mod || a instanceof Polynomial || a instanceof PolyMod || a instanceof RationalFunction || a instanceof Series)) {
+        } else if(
+          has_jscalc &&
+          (a instanceof Fraction ||
+            a instanceof Complex ||
+            a instanceof Mod ||
+            a instanceof Polynomial ||
+            a instanceof PolyMod ||
+            a instanceof RationalFunction ||
+            a instanceof Series)
+        ) {
           puts(a.toString());
         } else {
           stack.push(a);
@@ -1281,7 +1330,7 @@ export default function REPL(title = 'QuickJS') {
             for(i = 0; i < n; i++) {
               if(i !== 0) puts(', ');
               if(i in a) {
-                print_rec(a[i]);
+                printRec(a[i]);
               } else {
                 puts('<empty>');
               }
@@ -1301,7 +1350,7 @@ export default function REPL(title = 'QuickJS') {
               if(i !== 0) puts(', ');
               key = keys[i];
               puts(key, ': ');
-              print_rec(a[key]);
+              printRec(a[key]);
             }
             puts(' }');
           }
@@ -1312,11 +1361,11 @@ export default function REPL(title = 'QuickJS') {
         if(s.length > 79) s = s.substring(0, 75) + '..."';
         puts(s);
       } else if(type === 'number') {
-        puts(repl.number_to_string(a, hex_mode ? 16 : 10));
+        puts(repl.numberToString(a, hex_mode ? 16 : 10));
       } else if(type === 'bigint') {
-        puts(repl.bigint_to_string(a, hex_mode ? 16 : 10));
+        puts(repl.bigintToString(a, hex_mode ? 16 : 10));
       } else if(type === 'bigfloat') {
-        puts(repl.bigfloat_to_string(a, hex_mode ? 16 : 10));
+        puts(repl.bigfloatToString(a, hex_mode ? 16 : 10));
       } else if(type === 'bigdecimal') {
         puts(a.toString() + 'm');
       } else if(type === 'symbol') {
@@ -1327,20 +1376,20 @@ export default function REPL(title = 'QuickJS') {
         puts(a);
       }
     }
-    print_rec(a);
+    printRec(a);
   }
 
-  function extract_directive(a) {
+  function extractDirective(a) {
     var pos;
     if(a[0] !== '\\') return '';
     for(pos = 1; pos < a.length; pos++) {
-      if(!repl.is_alpha(a[pos])) break;
+      if(!repl.isAlpha(a[pos])) break;
     }
     return a.substring(1, pos);
   }
 
   /* return true if the string after cmd can be evaluted as JS */
-  function handle_directive(cmd, expr) {
+  function handleDirective(cmd, expr) {
     var param, prec1, expBits1;
     const [, ...args] = expr.split(/\s+/g);
 
@@ -1363,7 +1412,15 @@ export default function REPL(title = 'QuickJS') {
         .trim()
         .split(' ');
       if(param.length === 1 && param[0] === '') {
-        puts('BigFloat precision=' + prec + ' bits (~' + Math.floor(prec / log2_10) + ' digits), exponent size=' + expBits + ' bits\n');
+        puts(
+          'BigFloat precision=' +
+            prec +
+            ' bits (~' +
+            Math.floor(prec / log2_10) +
+            ' digits), exponent size=' +
+            expBits +
+            ' bits\n'
+        );
       } else if(param[0] === 'f16') {
         prec = 11;
         expBits = 5;
@@ -1384,7 +1441,11 @@ export default function REPL(title = 'QuickJS') {
           puts('Invalid precision\n');
           return false;
         }
-        if(Number.isNaN(expBits1) || expBits1 < BigFloatEnv.expBitsMin || expBits1 > BigFloatEnv.expBitsMax) {
+        if(
+          Number.isNaN(expBits1) ||
+          expBits1 < BigFloatEnv.expBitsMin ||
+          expBits1 > BigFloatEnv.expBitsMax
+        ) {
           puts('Invalid exponent bits\n');
           return false;
         }
@@ -1422,16 +1483,16 @@ export default function REPL(title = 'QuickJS') {
       thisObj
         .importModule(...args)
         .catch(e => {
-          repl.print_status(`ERROR importing:`, e);
+          repl.printStatus(`ERROR importing:`, e);
           done = true;
         })
         .then(({ moduleName, modulePath, module }) => {
-          repl.print_status(`imported '${moduleName}' from '${modulePath}':`, module);
+          repl.printStatus(`imported '${moduleName}' from '${modulePath}':`, module);
           done = true;
         });
       /*while(!done) std.sleep(50);*/
 
-      //    repl.debug("handle_directive", {cmd,module,exports});
+      //    repl.debug("handleDirective", {cmd,module,exports});
       return false;
     } else if(has_jscalc && cmd === 'a') {
       algebraicMode = true;
@@ -1471,12 +1532,35 @@ export default function REPL(title = 'QuickJS') {
     function sel(n) {
       return n ? '*' : ' ';
     }
-    puts('\\h          this help\n' + '\\x             ' + sel(hex_mode) + 'hexadecimal number display\n' + '\\d             ' + sel(!hex_mode) + 'decimal number display\n' + '\\t             ' + sel(show_time) + 'toggle timing display\n' + '\\clear              clear the terminal\n');
+    puts(
+      '\\h          this help\n' +
+        '\\x             ' +
+        sel(hex_mode) +
+        'hexadecimal number display\n' +
+        '\\d             ' +
+        sel(!hex_mode) +
+        'decimal number display\n' +
+        '\\t             ' +
+        sel(show_time) +
+        'toggle timing display\n' +
+        '\\clear              clear the terminal\n'
+    );
+
     if(has_jscalc) {
-      puts('\\a             ' + sel(algebraicMode) + 'algebraic mode\n' + '\\n             ' + sel(!algebraicMode) + 'numeric mode\n');
+      puts(
+        '\\a             ' +
+          sel(algebraicMode) +
+          'algebraic mode\n' +
+          '\\n             ' +
+          sel(!algebraicMode) +
+          'numeric mode\n'
+      );
     }
     if(has_bignum) {
-      puts("\\p [m [e]]       set the BigFloat precision to 'm' bits\n" + "\\digits n   set the BigFloat precision to 'ceil(n*log2(10))' bits\n");
+      puts(
+        "\\p [m [e]]       set the BigFloat precision to 'm' bits\n" +
+          "\\digits n   set the BigFloat precision to 'ceil(n*log2(10))' bits\n"
+      );
       if(!has_jscalc) {
         puts('\\mode [std|math] change the running mode (current = ' + eval_mode + ')\n');
       }
@@ -1487,18 +1571,20 @@ export default function REPL(title = 'QuickJS') {
     }
   }
 
-  function print_status(...args) {
+  function printStatus(...args) {
     /*puts('\x1b[1S');
     puts('\x1b[1F');*/
     //    puts('\x1b[1G');
     puts('\x1b[1K\r');
     for(let arg of args) repl.show(arg);
     puts('\n');
-    puts('\x1b[1K\r');
-    repl.readline_print_prompt();
+    //    puts('\x1b[1K\r');
+    repl.readlineRemovePrompt();
+    repl.readlinePrintPrompt();
+    this.out.flush();
   }
 
-  function eval_and_print(expr) {
+  function evalAndPrint(expr) {
     var result;
 
     try {
@@ -1509,10 +1595,14 @@ export default function REPL(title = 'QuickJS') {
       result = (std?.evalScript ?? eval)(expr, { backtrace_barrier: true });
       eval_time = new Date().getTime() - now;
 
-      repl.print_status(colors[styles.result], result, '\n', colors.none);
+      repl.printStatus(colors[styles.result], result, '\n', colors.none);
       repl.update();
     } catch(error) {
-      let output = `${error.constructor.name || 'EXCEPTION'}: ` + colors[styles.error_msg] + error?.message + '\n';
+      let output =
+        `${error.constructor.name || 'EXCEPTION'}: ` +
+        colors[styles.error_msg] +
+        error?.message +
+        '\n';
 
       //      puts(error.stack+'');
 
@@ -1532,13 +1622,18 @@ export default function REPL(title = 'QuickJS') {
     if(Util.isPromise(result)) {
       result.then(value => {
         result.resolved = true;
-        repl.print_status(`Promise resolved to:`, Util.typeOf(value), console.config({ depth: 1, multiline: true }), value);
+        repl.printStatus(
+          `Promise resolved to:`,
+          Util.typeOf(value),
+          console.config({ depth: 1, multiline: true }),
+          value
+        );
         globalThis.$ = value;
       });
     }
   }
 
-  function cmd_start(title) {
+  function cmdStart(title) {
     if(repl.help) puts(`${title} - Type "\\h" for help\n`);
     if(has_bignum) {
       log2_10 = Math.log(10) / Math.log(2);
@@ -1551,39 +1646,39 @@ export default function REPL(title = 'QuickJS') {
       }
     }
 
-    repl.cmd_readline_start();
+    repl.cmdReadlineStart();
   }
 
-  function cmd_readline_start() {
-    repl.readline_start(repl.dupstr('    ', level), readline_handle_cmd);
+  function cmdReadlineStart() {
+    repl.readlineStart(repl.dupstr('    ', level), readlineHandleCmd);
   }
 
-  function readline_handle_cmd(expr) {
-    let ret = repl.handle_cmd(expr);
-    //repl.debug('readline_handle_cmd', { expr, mexpr, ret });
-    repl.cmd_readline_start();
+  function readlineHandleCmd(expr) {
+    let ret = repl.handleCmd(expr);
+    //repl.debug('readlineHandleCmd', { expr, mexpr, ret });
+    repl.cmdReadlineStart();
   }
 
-  function handle_cmd(expr) {
+  function handleCmd(expr) {
     var colorstate, command;
     if(expr === null || expr === '') {
       expr = '';
       return -1;
     }
-    repl.debug('handle_cmd', { expr, cmd: repl.cmd });
+    repl.debug('handleCmd', { expr, cmd: repl.cmd });
     if(expr === '?') {
       repl.help();
       return -2;
     }
-    command = repl.extract_directive(expr);
+    command = repl.extractDirective(expr);
     if(command.length > 0) {
-      if(!repl.handle_directive(command, expr)) return -3;
+      if(!repl.handleDirective(command, expr)) return -3;
       expr = expr.substring(command.length + 1);
     }
     if(expr === '') return -4;
 
     if(mexpr) expr = mexpr + '\n' + expr;
-    colorstate = repl.colorize_js(expr);
+    colorstate = repl.colorizeJs(expr);
     pstate = colorstate[0];
     level = colorstate[1];
     if(pstate) {
@@ -1593,20 +1688,20 @@ export default function REPL(title = 'QuickJS') {
     mexpr = '';
 
     if(has_bignum) {
-      BigFloatEnv.setPrec(eval_and_print.bind(null, expr), prec, expBits);
+      BigFloatEnv.setPrec(evalAndPrint.bind(null, expr), prec, expBits);
     } else {
-      repl.eval_and_print(expr);
+      repl.evalAndPrint(expr);
     }
     level = 0;
     let histidx = history?.findLastIndex(entry => expr?.startsWith(entry));
 
-    repl.history_add(history.splice(histidx, history_index - histidx).join('\n'));
-    //repl.debug('handle_cmd', {histidx}, history.slice(histidx));
+    repl.historyAdd(history.splice(histidx, history_index - histidx).join('\n'));
+    //repl.debug('handleCmd', {histidx}, history.slice(histidx));
     /* run the garbage collector after each command */
     if(Util.getPlatform() == 'quickjs') std.gc();
   }
 
-  function colorize_js(str) {
+  function colorizeJs(str) {
     var i,
       c,
       start,
@@ -1618,31 +1713,31 @@ export default function REPL(title = 'QuickJS') {
       can_regex = 1;
     var r = [];
 
-    function push_state(c) {
+    function pushState(c) {
       state += c;
     }
-    function last_state(c) {
+    function lastState(c) {
       return state.substring(state.length - 1);
     }
-    function pop_state(c) {
-      var c = last_state();
+    function popState(c) {
+      var c = lastState();
       state = state.substring(0, state.length - 1);
       return c;
     }
 
-    function parse_block_comment() {
+    function parseBlockComment() {
       style = 'comment';
-      push_state('/');
+      pushState('/');
       for(i++; i < n - 1; i++) {
         if(str[i] == '*' && str[i + 1] == '/') {
           i += 2;
-          pop_state('/');
+          popState('/');
           break;
         }
       }
     }
 
-    function parse_line_comment() {
+    function parseLineComment() {
       style = 'comment';
       for(i++; i < n; i++) {
         if(str[i] == '\n') {
@@ -1651,9 +1746,9 @@ export default function REPL(title = 'QuickJS') {
       }
     }
 
-    function parse_string(delim) {
+    function parseString(delim) {
       style = 'string';
-      push_state(delim);
+      pushState(delim);
       while(i < n) {
         c = str[i++];
         if(c == '\n') {
@@ -1664,15 +1759,15 @@ export default function REPL(title = 'QuickJS') {
           if(i >= n) break;
           i++;
         } else if(c == delim) {
-          pop_state();
+          popState();
           break;
         }
       }
     }
 
-    function parse_regex() {
+    function parseRegex() {
       style = 'regex';
-      push_state('/');
+      pushState('/');
       while(i < n) {
         c = str[i++];
         if(c == '\n') {
@@ -1685,42 +1780,55 @@ export default function REPL(title = 'QuickJS') {
           }
           continue;
         }
-        if(last_state() == '[') {
+        if(lastState() == '[') {
           if(c == ']') {
-            pop_state();
+            popState();
           }
           //ECMA 5: ignore '/' inside char classes
           continue;
         }
         if(c == '[') {
-          push_state('[');
+          pushState('[');
           if(str[i] == '[' || str[i] == ']') i++;
           continue;
         }
         if(c == '/') {
-          pop_state();
-          while(i < n && repl.is_word(str[i])) i++;
+          popState();
+          while(i < n && repl.isWord(str[i])) i++;
           break;
         }
       }
     }
 
-    function parse_number() {
+    function parseNumber() {
       style = 'number';
-      while(i < n && (repl.is_word(str[i]) || (str[i] == '.' && (i == n - 1 || str[i + 1] != '.')))) {
+      while(
+        i < n &&
+        (repl.isWord(str[i]) || (str[i] == '.' && (i == n - 1 || str[i + 1] != '.')))
+      ) {
         i++;
       }
     }
 
-    var js_keywords = '|' + 'break|case|catch|continue|debugger|default|delete|do|' + 'else|finally|for|function|if|in|instanceof|new|' + 'return|switch|this|throw|try|typeof|while|with|' + 'class|const|enum|import|export|extends|super|' + 'implements|interface|let|package|private|protected|' + 'public|static|yield|' + 'undefined|null|true|false|Infinity|NaN|' + 'eval|arguments|' + 'await|';
+    var js_keywords =
+      '|' +
+      'break|case|catch|continue|debugger|default|delete|do|' +
+      'else|finally|for|function|if|in|instanceof|new|' +
+      'return|switch|this|throw|try|typeof|while|with|' +
+      'class|const|enum|import|export|extends|super|' +
+      'implements|interface|let|package|private|protected|' +
+      'public|static|yield|' +
+      'undefined|null|true|false|Infinity|NaN|' +
+      'eval|arguments|' +
+      'await|';
 
     var js_no_regex = '|this|super|undefined|null|true|false|Infinity|NaN|arguments|';
     var js_types = '|void|var|';
 
-    function parse_identifier() {
+    function parseIdentifier() {
       can_regex = 1;
 
-      while(i < n && repl.is_word(str[i])) i++;
+      while(i < n && repl.isWord(str[i])) i++;
 
       var w = '|' + str.substring(start, i) + '|';
 
@@ -1747,7 +1855,7 @@ export default function REPL(title = 'QuickJS') {
       can_regex = 0;
     }
 
-    function set_style(_from, to) {
+    function setStyle(_from, to) {
       while(r.length < _from) r.push('default');
       while(r.length < to) r.push(style);
     }
@@ -1772,16 +1880,16 @@ export default function REPL(title = 'QuickJS') {
         case '/':
           if(i < n && str[i] == '*') {
             //block comment
-            parse_block_comment();
+            parseBlockComment();
             break;
           }
           if(i < n && str[i] == '/') {
             //line comment
-            parse_line_comment();
+            parseLineComment();
             break;
           }
           if(can_regex) {
-            parse_regex();
+            parseRegex();
             can_regex = 0;
             break;
           }
@@ -1790,7 +1898,7 @@ export default function REPL(title = 'QuickJS') {
         case "'":
         case '"':
         case '`':
-          parse_string(c);
+          parseString(c);
           can_regex = 0;
           break;
         case '(':
@@ -1798,38 +1906,38 @@ export default function REPL(title = 'QuickJS') {
         case '{':
           can_regex = 1;
           level++;
-          push_state(c);
+          pushState(c);
           continue;
         case ')':
         case ']':
         case '}':
           can_regex = 0;
-          if(level > 0 && repl.is_balanced(last_state(), c)) {
+          if(level > 0 && repl.isBalanced(lastState(), c)) {
             level--;
-            pop_state();
+            popState();
             continue;
           }
           style = 'error';
           break;
         default:
-          if(repl.is_digit(c)) {
-            parse_number();
+          if(repl.isDigit(c)) {
+            parseNumber();
             can_regex = 0;
             break;
           }
-          if(repl.is_word(c) || c == '$') {
-            parse_identifier();
+          if(repl.isWord(c) || c == '$') {
+            parseIdentifier();
             break;
           }
           can_regex = 1;
           continue;
       }
-      if(style) set_style(start, i);
+      if(style) setStyle(start, i);
     }
-    set_style(n, n);
+    setStyle(n, n);
     return [state, level, r];
   }
-  Object.assign(repl, { debug() {}, print_status });
+  Object.assign(repl, { debug() {}, printStatus });
   Object.defineProperties(
     repl,
     Object.fromEntries([
@@ -1841,86 +1949,94 @@ export default function REPL(title = 'QuickJS') {
           }
         }
       ],
+      [
+        'history',
+        {
+          get() {
+            return history;
+          }
+        }
+      ],
       ...Object.entries({
         run,
         runSync,
-        term_init,
-        sigint_handler,
-        term_read_handler,
-        handle_byte,
-        is_alpha,
-        is_digit,
-        is_word,
-        ucs_length,
-        is_trailing_surrogate,
-        is_balanced,
-        print_color_text,
-        print_csi,
-        move_cursor,
+        termInit,
+        sigintHandler,
+        termReadHandler,
+        handleByte,
+        isAlpha,
+        isDigit,
+        isWord,
+        ucsLength,
+        isTrailingSurrogate,
+        isBalanced,
+        printColorText,
+        printCsi,
+        moveCursor,
         update,
         insert,
-        quoted_insert,
+        quotedInsert,
         abort,
         alert,
-        beginning_of_line,
-        end_of_line,
-        forward_char,
-        backward_char,
-        skip_word_forward,
-        skip_word_backward,
-        forward_word,
-        backward_word,
-        accept_line,
-        history_get,
-        history_pos,
-        history_set,
-        history_add,
-        history_previous,
-        history_next,
-        history_search,
-        history_search_backward,
-        history_search_forward,
-        delete_char_dir,
-        delete_char,
-        control_d,
-        backward_delete_char,
-        transpose_chars,
-        transpose_words,
-        upcase_word,
-        downcase_word,
-        kill_region,
-        kill_line,
-        backward_kill_line,
-        kill_word,
-        backward_kill_word,
+        beginningOfLine,
+        endOfLine,
+        forwardChar,
+        backwardChar,
+        skipWordForward,
+        skipWordBackward,
+        forwardWord,
+        backwardWord,
+        acceptLine,
+        historyGet,
+        historyPos,
+        historySet,
+        historyAdd,
+        historyPrevious,
+        historyNext,
+        historySearch,
+        historySearchBackward,
+        historySearchForward,
+        deleteCharDir,
+        deleteChar,
+        controlD,
+        backwardDeleteChar,
+        transposeChars,
+        transposeWords,
+        upcaseWord,
+        downcaseWord,
+        killRegion,
+        killLine,
+        backwardKillLine,
+        killWord,
+        backwardKillWord,
         yank,
-        control_c,
+        controlC,
         reset,
-        get_context_word,
-        get_context_object,
-        get_completions,
+        getContextWord,
+        getContextObject,
+        getCompletions,
         completion,
         dupstr,
-        readline_print_prompt,
-        readline_start,
-        readline_clear,
-        handle_char,
-        handle_key,
-        number_to_string,
-        bigfloat_to_string,
-        bigint_to_string,
+        readlinePrintPrompt,
+        readlineStart,
+        readlineClear,
+        handleChar,
+        handleKey,
+        numberToString,
+        bigfloatToString,
+        bigintToString,
         print,
-        extract_directive,
-        handle_directive,
+        extractDirective,
+        handleDirective,
         // help,
-        eval_and_print,
-        cmd_start,
-        cmd_readline_start,
-        readline_handle_cmd,
-        handle_cmd,
-        colorize_js,
-        get_directory_entries,
-        get_filename_completions,
+        evalAndPrint,
+        cmdStart,
+        cmdReadlineStart,
+        readlineHandleCmd,
+        handleCmd,
+        colorizeJs,
+        getDirectoryEntries,
+        getFilenameCompletions,
         wrapPrintFunction
       }).map(([name, value]) => [name, { value, enumerable: false, writable: false }])
     ])
@@ -1946,14 +2062,14 @@ export default function REPL(title = 'QuickJS') {
     console.options.compact = 2;
     console.options.maxArrayLength = Infinity;*/
 
-    await repl.term_init();
-    repl.cmd_start(title);
+    await repl.termInit();
+    repl.cmdStart(title);
 
     do {
       // console.log("run", {fs});
       await fs.waitRead(input);
 
-      await repl.term_read_handler();
+      await repl.termReadHandler();
     } while(running);
   }
   function runSync() {
@@ -1965,10 +2081,10 @@ export default function REPL(title = 'QuickJS') {
     console.options.compact = 2;
     console.options.maxArrayLength = Infinity;*/
 
-    repl.term_init();
-    repl.cmd_start(title);
+    repl.termInit();
+    repl.cmdStart(title);
 
-    Util.setReadHandler(input, () => repl.term_read_handler());
+    Util.setReadHandler(input, () => repl.termReadHandler());
   }
 
   function wrapPrintFunction(fn, thisObj) {
@@ -1976,10 +2092,10 @@ export default function REPL(title = 'QuickJS') {
       let ret;
       puts('\r\x1b[K');
       ret = fn.call(thisObj, ...args);
-      //repl.term_init();
-      //repl.cmd_readline_start(title);
+      //repl.termInit();
+      //repl.cmdReadlineStart(title);
       // puts('\r\x1b[J');
-      repl.readline_print_prompt();
+      repl.readlinePrintPrompt();
       repl.update();
     };
   }

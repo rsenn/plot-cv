@@ -3,43 +3,9 @@ import Util from './lib/util.js';
 import path from './lib/path.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import REPL from './repl.js';
-import {
-  BinaryTree,
-  BucketStore,
-  BucketMap,
-  ComponentMap,
-  CompositeMap,
-  Deque,
-  Enum,
-  HashList,
-  Multimap,
-  Shash,
-  SortedMap,
-  HashMultimap,
-  MultiBiMap,
-  MultiKeyMap,
-  DenseSpatialHash2D,
-  SpatialHash2D,
-  HashMap,
-  SpatialH,
-  SpatialHash,
-  SpatialHashMap,
-  BoxHash
-} from './lib/container.js';
+import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, Enum, HashList, Multimap, Shash, SortedMap, HashMultimap, MultiBiMap, MultiKeyMap, DenseSpatialHash2D, SpatialHash2D, HashMap, SpatialH, SpatialHash, SpatialHashMap, BoxHash } from './lib/container.js';
 import * as std from 'std';
-import {
-  cv,
-  draw,
-  Contour,
-  Line,
-  Mat,
-  Point,
-  PointIterator,
-  Rect,
-  Size,
-  TickMeter,
-  VideoCapture
-} from './lib/opencv.js';
+import { cv, draw, Contour, Line, Mat, Point, PointIterator, Rect, Size, TickMeter, VideoCapture } from './lib/opencv.js';
 
 let filesystem;
 
@@ -137,10 +103,10 @@ async function main(...args) {
   repl.exit = Util.exit;
   repl.importModule = importModule;
 
-  repl.history_set(JSON.parse(std.loadFile(histfile) || '[]'));
+  repl.historySet(JSON.parse(std.loadFile(histfile) || '[]'));
 
   Util.atexit(() => {
-    let hist = repl.history_get().filter((item, i, a) => a.lastIndexOf(item) == i);
+    let hist = repl.historyGet().filter((item, i, a) => a.lastIndexOf(item) == i);
 
     filesystem.writeFile(histfile, JSON.stringify(hist, null, 2));
 
