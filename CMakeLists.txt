@@ -102,7 +102,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/opencv ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
 
-foreach(CXX_STANDARD c++20 c++17 c++14 c++11)
+foreach(CXX_STANDARD c++17 c++14 c++11)
   string(REPLACE "c++" "CPLUSPLUS" CXX_STANDARD_NUM "${CXX_STANDARD}")
   set(CMAKE_REQUIRED_QUIET TRUE)
   check_cxx_compiler_flag("-std=${CXX_STANDARD}"

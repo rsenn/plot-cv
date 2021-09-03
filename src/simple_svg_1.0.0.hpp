@@ -62,13 +62,13 @@ emptyElemEnd() {
   return "/>\n";
 }
 
-// Quick optional return type.  This allows functions to return an invalid
+// Quick Optional return type.  This allows functions to return an invalid
 //  value if no good return is possible.  The user checks for validity
 //  before using the returned value.
-template<typename T> class optional {
+template<typename T> class Optional {
 public:
-  optional<T>(T const& type) : valid(true), type(type) {}
-  optional<T>() : valid(false), type(T()) {}
+  Optional<T>(const T & type) : valid(true), type(type) {}
+  Optional<T>() : valid(false), type(T()) {}
   T*
   operator->() {
     // If we try to access an invalid value, an exception is thrown.
@@ -101,10 +101,10 @@ struct Point {
   double y;
 };
 
-inline optional<Point>
+inline Optional<Point>
 getMinPoint(std::vector<Point> const& points) {
   if(points.empty())
-    return optional<Point>();
+    return Optional<Point>();
 
   Point min = points[0];
   for(unsigned i = 0; i < points.size(); ++i) {
@@ -113,13 +113,13 @@ getMinPoint(std::vector<Point> const& points) {
     if(points[i].y < min.y)
       min.y = points[i].y;
   }
-  return optional<Point>(min);
+  return Optional<Point>(min);
 }
 
-inline optional<Point>
+inline Optional<Point>
 getMaxPoint(std::vector<Point> const& points) {
   if(points.empty())
-    return optional<Point>();
+    return Optional<Point>();
 
   Point max = points[0];
   for(unsigned i = 0; i < points.size(); ++i) {
@@ -128,7 +128,7 @@ getMaxPoint(std::vector<Point> const& points) {
     if(points[i].y > max.y)
       max.y = points[i].y;
   }
-  return optional<Point>(max);
+  return Optional<Point>(max);
 }
 
 // Defines the dimensions, scale, origin, and origin offset of the document.
@@ -535,13 +535,13 @@ private:
   double scale;
   std::vector<Polyline> polylines;
 
-  optional<Dimensions>
+  Optional<Dimensions>
   getDimensions() const {
     if(polylines.empty())
-      return optional<Dimensions>();
+      return Optional<Dimensions>();
 
-    optional<Point> min = getMinPoint(polylines[0].points);
-    optional<Point> max = getMaxPoint(polylines[0].points);
+    Optional<Point> min = getMinPoint(polylines[0].points);
+    Optional<Point> max = getMaxPoint(polylines[0].points);
     for(unsigned i = 0; i < polylines.size(); ++i) {
       if(getMinPoint(polylines[i].points)->x < min->x)
         min->x = getMinPoint(polylines[i].points)->x;
@@ -553,11 +553,11 @@ private:
         max->y = getMaxPoint(polylines[i].points)->y;
     }
 
-    return optional<Dimensions>(Dimensions(max->x - min->x, max->y - min->y));
+    return Optional<Dimensions>(Dimensions(max->x - min->x, max->y - min->y));
   }
   std::string
   axisString(Layout const& layout) const {
-    optional<Dimensions> dimensions = getDimensions();
+    Optional<Dimensions> dimensions = getDimensions();
     if(!dimensions)
       return "";
 
