@@ -293,9 +293,33 @@ endmacro()
 set(QUICKJS_LIBRARY quickjs)
 link_directories(${CMAKE_CURRENT_BINARY_DIR}/quickjs)
 
+list(APPEND CLI_SOURCES
+  #qjs-opencv/geometry.cpp
+  #qjs-opencv/jsbindings.cpp
+  #qjs-opencv/js_contour.cpp
+  #qjs-opencv/js_cv.cpp
+  #qjs-opencv/js_draw.cpp
+  #qjs-opencv/js_keypoint.cpp
+  #qjs-opencv/js_line.cpp
+  #qjs-opencv/js_mat.cpp
+  #qjs-opencv/js_point.cpp
+  #qjs-opencv/js_point_iterator.cpp
+  #qjs-opencv/js_rect.cpp
+  #qjs-opencv/js_rotated_rect.cpp
+  #qjs-opencv/js_size.cpp
+  #qjs-opencv/js_umat.cpp
+  #qjs-opencv/js_video_capture.cpp
+  #qjs-opencv/line.cpp
+  #qjs-opencv/util.cpp
+  src/cli.cpp
+  src/color.cpp
+  src/js.cpp
+  src/matrix.cpp
+  src/plot-cv.cpp
+  )
 src_program(
   cli
-  "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/matrix.cpp;qjs-opencv/line.cpp;qjs-opencv/geometry.cpp;qjs-opencv/util.cpp;src/js.cpp;qjs-opencv/jsbindings.cpp;qjs-opencv/js_contour.cpp;qjs-opencv/js_keypoint.cpp;src/js.cpp;qjs-opencv/js_draw.cpp;qjs-opencv/js_line.cpp;qjs-opencv/js_mat.cpp;qjs-opencv/js_umat.cpp;qjs-opencv/js_rotated_rect.cpp;qjs-opencv/js_point.cpp;qjs-opencv/js_point_iterator.cpp;qjs-opencv/js_rect.cpp;qjs-opencv/js_size.cpp;qjs-opencv/js_cv.cpp;qjs-opencv/js_video_capture.cpp;qjs-opencv/util.cpp"
+  "${CLI_SOURCES}"
   ${OpenCV_LIBS}
   ${QUICKJS_LIBRARY}
   png
