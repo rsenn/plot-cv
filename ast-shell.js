@@ -183,11 +183,9 @@ async function CommandLine() {
 
   repl = Util.traceProxy(repl);
 
-  if(params.exec)
-    repl.evalAndPrint(params.exec);
-  else
-    await repl.run();
-  
+  if(params.exec) repl.evalAndPrint(params.exec);
+  else await repl.run();
+
   console.log('REPL done');
 }
 
@@ -206,8 +204,8 @@ function SelectLocations(node) {
 function LocationString(loc) {
   if(typeof loc == 'object' && loc != null) {
     let file = loc.includedFrom ? loc.includedFrom.file : loc.file;
-    //console.log('LocationString:', loc);
-    file = path.relative(file, process.cwd());
+    //if(typeof file != 'string') console.log('LocationString:', file);
+    if(file) file = path.relative(file, process.cwd());
     if(typeof loc.line == 'number')
       return `${file ? file + ':' : ''}${loc.line}${
         typeof loc.col == 'number' ? ':' + loc.col : ''
@@ -279,7 +277,7 @@ function Table(list, pred = (n, l) => true) {
     }
   }
   let width = names.reduce((acc, name) => (acc ? acc + 3 + sizes[name] : sizes[name]), 0);
-  if(width > repl.term_width) sizes['Params'] -= width - repl.term_width;
+  if(width > repl.termWidth) sizes['Params'] -= width - repl.termWidth;
 
   const trunc = names.map((name, i) => Util.padTrunc((i == 0 ? -1 : 1) * sizes[name]));
   const pad = (cols, pad, sep) => {
@@ -299,7 +297,7 @@ function Table(list, pred = (n, l) => true) {
     ) +
     '\n' +
     rows.reduce((acc, row) => {
-      return acc + pad(row) + '\n';
+      return acc + pad(row).slice(0, repl.columns) + '\n';
     }, '')
   );
 }
