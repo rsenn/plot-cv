@@ -30,12 +30,18 @@ include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 include(CheckLibraryExists)
 include(CheckTypeSize)
+include(FindPNG)
 include(FindPkgConfig)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Functions.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/OpenCV.cmake)
+#include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindPNG.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/quickjs/cmake/FindQuickJS.cmake)
 
 option(BUILD_QUICKJS "Build quickjs library" ON)
+
+if(PNG_LIBRARIES)
+  message(STATUS "Found libpng library: ${PNG_LIBRARIES}")
+endif(PNG_LIBRARIES)
 
 if(BUILD_QUICKJS)
   include(${CMAKE_CURRENT_SOURCE_DIR}/quickjs/defs.cmake)
@@ -317,12 +323,16 @@ list(APPEND CLI_SOURCES
   src/matrix.cpp
   src/plot-cv.cpp
   )
+
+dump(PNG_LIBRARY PNG_LIBRARY_RELEASE)
+
 src_program(
   cli
   "${CLI_SOURCES}"
   ${OpenCV_LIBS}
   ${QUICKJS_LIBRARY}
-  png
+  ${PNG_LIBRARY}
+  #png
   pthread
   dl
   m
@@ -336,6 +346,7 @@ target_compile_definitions(
           CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM
           CONFIG_CHECK_JSVALUE ${PLOTCV_DEFS})
 target_link_libraries(cli ${QUICKJS_OPENCV_A})
+target_link_libraries(cli ${PNG_LIBRARIES})
 
 add_executable(test-qjs test-qjs.c)
 
