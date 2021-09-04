@@ -340,13 +340,32 @@ src_program(
   #
 )
 
+#include(CheckLibraryExists)
+#check_library_exists(opencv_freetype _ZN2cv8freetype13FreeType2ImplC1Ev "${OPENCV_LIBRARY_DIRS}" HAVE_OPENCV2_FREETYPE_LIBRARY)
+#
+#if(HAVE_OPENCV2_FREETYPE_LIBRARY)
+#  set(OPENCV_FREETYPE_LIBRARY opencv_freetype)
+#endif(HAVE_OPENCV2_FREETYPE_LIBRARY)
+#
+#dump(OPENCV_FREETYPE_LIBRARY)
+
+include(CheckIncludeFileCXX)
+
+set(CMAKE_REQUIRED_INCLUDES "${OPENCV_INCLUDE_DIRS}")
+check_include_file_cxx(opencv2/freetype.hpp HAVE_OPENCV2_FREETYPE_HPP)
+if(HAVE_OPENCV2_FREETYPE_HPP)
+  add_definitions(-DHAVE_OPENCV_FREETYPE)
+  set(OPENCV_FREETYPE_LIBRARY opencv_freetype)
+endif(HAVE_OPENCV2_FREETYPE_HPP)
+
+
 target_compile_definitions(
   cli
   PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${QUICKJS_VERSION}"
           CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM
           CONFIG_CHECK_JSVALUE ${PLOTCV_DEFS})
 target_link_libraries(cli ${QUICKJS_OPENCV_A})
-target_link_libraries(cli ${PNG_LIBRARIES})
+target_link_libraries(cli ${PNG_LIBRARIES} ${OPENCV_FREETYPE_LIBRARY})
 
 add_dependencies(cli qjs-opencv)
 
