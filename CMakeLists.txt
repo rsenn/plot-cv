@@ -348,6 +348,8 @@ target_compile_definitions(
 target_link_libraries(cli ${QUICKJS_OPENCV_A})
 target_link_libraries(cli ${PNG_LIBRARIES})
 
+add_dependencies(cli qjs-opencv)
+
 add_executable(test-qjs test-qjs.c)
 
 target_link_libraries(test-qjs quickjs pthread dl m)
