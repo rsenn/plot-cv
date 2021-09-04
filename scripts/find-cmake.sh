@@ -11,7 +11,7 @@ exec_cmd() (
 
 find_cmake_files() (
 	#set -f
-	[ $# -le 0 ] && set -- . cmake quickjs quickjs/*/
+  [ $# -le 0 ] && set -- $(find . cmake quickjs quickjs/*/ -maxdepth 2 -type f -iname "*cmake*" | grep -E  '^(quickjs/.*|qjs-opencv/|)(cmake/[^/]*\.cmake$|CMakeLists.txt)$' |grep -vE  '(build[-/]|libwebsockets/)')
 set -- "$@" -maxdepth 1
 	if [ "$TYPE" ]; then
 		case "$TYPE" in
