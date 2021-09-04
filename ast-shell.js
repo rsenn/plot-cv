@@ -183,7 +183,11 @@ async function CommandLine() {
 
   repl = Util.traceProxy(repl);
 
-  await repl.run();
+  if(params.exec)
+    repl.evalAndPrint(params.exec);
+  else
+    await repl.run();
+  
   console.log('REPL done');
 }
 
@@ -697,6 +701,7 @@ export class FFI_Function {
     return fn();
   }
 }
+
 function FdReader(fd, bufferSize = 1024) {
   let buf = fs.buffer(bufferSize);
   return new Repeater(async (push, stop) => {
@@ -996,6 +1001,7 @@ async function ASTShell(...args) {
       libs: [true, (a, p) => (p || []).concat([a]), 'l'],
       debug: [false, null, 'x'],
       force: [false, null, 'f'],
+      exec: [true, null, 'e'],
       'system-includes': [false, null, 's'],
       'no-remove-empty': [false, null, 'E'],
       'output-dir': [true, null, 'd'],
@@ -1231,6 +1237,7 @@ async function ASTShell(...args) {
       items.push(item);
     }
   }
+
   WriteFile(unithist, JSON.stringify(hist, null, 2));
 
   globalThis.$ = items.length == 1 ? items[0] : items;
