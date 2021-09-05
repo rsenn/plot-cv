@@ -236,6 +236,7 @@ function main(...args) {
   );
 
   console.log('opts:', opts);
+  console.log('opts.size:', opts.size);
 
   const makeRainbow = steps =>
     Range(0, 360, 360 / steps)
@@ -750,8 +751,8 @@ function main(...args) {
 try {
   main(...scriptArgs.slice(1));
 } catch(error) {
-  console.log(`FAIL: ${error.message}\n${error.stack}`);
+  console.log(`FAIL: ${error.message}`, error && error.stack ? '\n' + error.stack : '');
   std.exit(1);
-} finally {
-  console.log('SUCCESS');
 }
+
+console.log('SUCCESS');
