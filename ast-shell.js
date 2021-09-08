@@ -1096,6 +1096,9 @@ async function ASTShell(...args) {
     Util.defineGetter(r, 'tree', Util.memoize(() => new Tree(r.data)));
     return Util.define(r, {
       pathOf(needle, maxDepth = 10) {
+        if('ast' in needle)
+          needle = needle.ast;
+        
         for(let [node, path] of deep.iterate(
           r.data,
           n => typeof n == 'object' && n != null,
