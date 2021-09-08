@@ -1046,6 +1046,7 @@ async function ASTShell(...args) {
         let node = this.data.inner.findLast(nameOrIdPred(name_or_id, pred));
 
         node ??= this.classes.findLast(nameOrIdPred(name_or_id, pred));
+        node ??= deep.find(this.data, n => n.name == name_or_id || n.id == name_or_id, deep.RETURN_VALUE);
         return node;
       },
       getType(name_or_id) {
@@ -1092,6 +1093,7 @@ async function ASTShell(...args) {
         return loc;
       }
     });
+    Util.defineGetter(r, 'tree', Util.memoize(() => new Tree(r.data)));
     return Util.define(r, {
       pathOf(needle, maxDepth = 10) {
         for(let [node, path] of deep.iterate(
@@ -1104,9 +1106,6 @@ async function ASTShell(...args) {
           if(node === needle) return new Pointer(path);
         }
       }
-      /*tree() {
-        return new Tree(this.data);
-      }*/
     });
   }
 

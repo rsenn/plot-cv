@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(plot-cv)
+project(plot-cv C CXX)
 
 set(DISABLE_WERROR TRUE CACHE BOOL "Disable -Werror flag" FORCE)
 

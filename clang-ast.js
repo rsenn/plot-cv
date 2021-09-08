@@ -1368,7 +1368,7 @@ export function NodePrinter(ast) {
       value(node) {
         let fn = this.nodePrinter[node.kind];
         let oldlen = out.length;
-        if(!fn) throw new Error(`No such printer for ${node.kind}`);
+        if(!fn) throw new Error(`No such printer for ${node.kind} (${inspect(node)})`);
         this.node = node;
 
         let success = fn.call(this.nodePrinter, node, this.ast);
@@ -1923,6 +1923,13 @@ export function NodePrinter(ast) {
 
         AddrLabelExpr(addr_label_expr) {}
         AliasAttr(alias_attr) {}
+        AlignValueAttr(align_value_attr) {
+ 
+put(`__attribute__((align_value(`);
+          printer.print(align_value_attr.inner[0]);
+
+put(`)))`);
+        }
         AllocSizeAttr(alloc_size_attr) {}
         ArrayInitIndexExpr(array_init_index_expr) {}
         ArrayInitLoopExpr(array_init_loop_expr) {}
@@ -1959,7 +1966,11 @@ export function NodePrinter(ast) {
         FunctionTemplateDecl(function_template_decl) {}
         GCCAsmStmt(gcc_asm_stmt) {}
         GNUInlineAttr(gnu_inline_attr) {}
-        GNUNullExpr(gnu_null_expr) {}
+        GNUNullExpr(gnu_null_expr) {
+
+                    put(`__null`);
+
+        }
         ImplicitValueInitExpr(implicit_value_init_expr) {}
         IncompleteArrayType(incomplete_array_type) {}
         IndirectFieldDecl(indirect_field_decl) {}
