@@ -114,7 +114,7 @@ function main(...args) {
   console.log('mat:', mat);
   console.log('mat.elemSize', mat.elemSize);
   let { buffer } = mat;
-  console.log('mat.buffer:', buffer);
+  //console.log('mat.buffer:', buffer);
   let pixels;
   console.log('mat.buffer.byteLength/mat.elemSize:', (pixels = buffer.byteLength / mat.elemSize));
   console.log('pixels / mat.cols', pixels / mat.cols);
