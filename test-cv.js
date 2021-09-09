@@ -9,7 +9,7 @@ import { CLAHE } from 'opencv';
 import * as draw from 'opencv';
 import inspect from './lib/objectInspect.js';
 import path from './lib/path.js';
-import PortableFileSystem from './lib/filesystem.js';
+import fs from './lib/filesystem.js';
 import RGBA from './lib/color/rgba.js';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
@@ -61,7 +61,6 @@ async function main(...args) {
     breakLength: 100,
     compact: 0
   });
-  await PortableFileSystem(fs => (filesystem = fs));
 
   // console.log('cv', cv);
   //console.log('Object.keys(cv)', Object.keys(cv));
@@ -77,7 +76,6 @@ async function main(...args) {
 
   let image;
 
-  let globalThis = globalThis;
   const moduleNames = ['Rect', 'Point', 'Size', 'Line', 'Mat', 'Contour', 'PointIterator', 'Draw'];
   for(let moduleName of moduleNames) Util.tryCatch(() => eval(`globalThis[moduleName] = ${moduleName};`));
   let ctors = new Map(moduleNames.map(name => [name, globalThis[name]]));
@@ -160,7 +158,7 @@ async function main(...args) {
     for(let [key, value] of col0.entries()) {
       console.log(`col0.entries() #${i++}`, key, '0x' + ('00000000' + value.toString(16)).slice(-8));
     }
-    let range = mat.rowRange(2, 8);
+    /*let range = mat.rowRange(2, 8);
     i = 0;
     for(let [[row, col], value] of range) {
       console.log(`range[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
@@ -188,7 +186,7 @@ async function main(...args) {
     fmat.setTo(...values);
     for(let [[row, col], value] of fmat) {
       console.log(`fmat[${i++}] row=${row} col=${col} value=${value}`);
-    }
+    }*/
   }
   if(globalThis.Line) {
     let ll = [new Line(0, 0, 50, 50), new Line(50, 50, 50, 75), new Line(50, 75, 100, 75)];

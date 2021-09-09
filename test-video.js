@@ -263,13 +263,11 @@ function main(...args) {
   let video = new VideoSource(...videos);
 
   if(opts['size']) {
-    video.size = new Size(opts['size']);
-    console.log('video.size', video.size);
-    video.set(cv.CAP_PROP_FRAME_WIDTH, video.size.width);
-    video.set(cv.CAP_PROP_FRAME_HEIGHT, video.size.height);
+    video.size = new Size(...opts['size'].split('x'));
+      console.log('video.size', video.size); 
+      win.resize(video.size);
   }
-  //if(!video.isVideo) video.size = new Size(960, 540);
-
+ 
   let thickness = 1;
   let font = new TextStyle(cv.FONT_HERSHEY_PLAIN, 1.0, thickness);
   let tSize = font.size(video.time);
@@ -500,7 +498,7 @@ function main(...args) {
         console.log(`keypress [${modifierList}] 0x${(keyCode & ~0xd000).toString(16)} '${ch}'`);
       }
 
-      switch (key & 0xfff) {
+      switch (key & 0xfff) {  
         case 0x3c /* < */:
           paramNav.prev();
           break;
@@ -691,14 +689,14 @@ function main(...args) {
 
     const showOverlay = frameShow != pipeline.size - 1 || now - keyTime < 2000;
     if(maskRect && showOverlay) {
-      Draw.rect(out, maskRect, [0, 0, 0, 255], -1);
-      Draw.rect(out, maskRect, [255, 255, 255, 255], 1);
+       Draw.rectangle(out, maskRect, [0, 0, 0, 255], -1);
+      Draw.rectangle(out, maskRect, [255, 255, 255, 255], 1);
     }
     let composite = MakeMatFor(showOutput);
 
     cv.addWeighted(out, 1, over, showOverlay ? 1 : 0, 0, composite);
     if(maskRect && showOverlay) {
-      Draw.rect(composite, maskRect, [255, 255, 255, 255], 1);
+      Draw.rectangle(composite, maskRect, [255, 255, 255, 255], 1);
     }
 
     win.show(composite);
