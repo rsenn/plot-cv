@@ -751,7 +751,7 @@ function main(...args) {
 try {
   main(...scriptArgs.slice(1));
 } catch(error) {
-  console.log(`FAIL: ${error.message}`, error && error.stack ? '\n' + error.stack : '');
+  console.log(`FAIL: ${error && error.message}`, error && error.stack ? '\n' + error.stack : '');
   std.exit(1);
 }
 

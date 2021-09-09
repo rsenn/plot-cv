@@ -323,15 +323,14 @@ src_program(
   #
 )
 
-include(CheckLibraryExists)
-check_library_exists(opencv_freetype _ZN2cv8freetype15createFreeType2Ev "${OPENCV_LIBRARY_DIRS}"
-                     HAVE_OPENCV2_FREETYPE_LIBRARY)
-
-if(HAVE_OPENCV2_FREETYPE_LIBRARY)
-  set(OPENCV_FREETYPE_LIBRARY opencv_freetype)
-endif(HAVE_OPENCV2_FREETYPE_LIBRARY)
-
-dump(OPENCV_FREETYPE_LIBRARY)
+#include(CheckLibraryExists)
+#check_library_exists(opencv_freetype _ZN2cv8freetype15createFreeType2Ev "${OPENCV_LIBRARY_DIRS}" HAVE_OPENCV2_FREETYPE_LIBRARY)
+#
+#if(HAVE_OPENCV2_FREETYPE_LIBRARY)
+#  set(OPENCV_FREETYPE_LIBRARY opencv_freetype)
+#endif(HAVE_OPENCV2_FREETYPE_LIBRARY)
+#
+#dump(OPENCV_FREETYPE_LIBRARY)
 
 include(CheckIncludeFileCXX)
 

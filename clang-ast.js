@@ -100,7 +100,7 @@ export class Node {
   static node2ast = new WeakMap();
 
   constructor(ast) {
-    if(typeof ast == 'object') {
+    if(typeof ast == 'object' && ast != null) {
       if('path' in ast && 'value' in ast) ast = ast.value;
 
       //   throw new Error(`Node constructor ${inspect(ast)}`);
@@ -204,6 +204,7 @@ export class Type extends Node {
       }
 
       const isPointer = name.endsWith('*');
+      const isReference= name.endsWith('&');
 
       if(isPointer) {
         node = {
@@ -212,7 +213,7 @@ export class Type extends Node {
           desugaredQualType: 'void *'
         };
       }
-      if(!isPointer && !node) {
+      if(!isPointer && !isReference && !node) {
         let subscripts = GetSubscripts(name);
         name = TrimSubscripts(name, subscripts);
         //console.log('Type', { name, subscripts });
@@ -600,6 +601,7 @@ Type.declarations.set('double', new Type({ qualType: 'double' }));
 Type.declarations.set('void *', new Type({ qualType: 'void *' }));
 Type.declarations.set('char *', new Type({ qualType: 'char *' }));
 Type.declarations.set('const char *', new Type({ qualType: 'const char *' }));
+Type.declarations.set('bool', new Type({ qualType: 'bool' }));
 
 function RoundTo(value, align) {
   return Math.floor((value + (align - 1)) / align) * align;
@@ -1266,7 +1268,7 @@ export function NodeType(n) {
 export function NodeName(n, name) {
   if(typeof name != 'string') name = '';
   if(name == '' && n.name) name = n.name;
-  if(n.tagUsed) name = n.tagUsed + ' ' + name;
+  if(typeof n == 'object' && n != null && n.tagUsed) name = n.tagUsed + ' ' + name;
   return name;
 }
 
@@ -1389,13 +1391,14 @@ export function NodePrinter(ast) {
         if(out.length == oldlen) {
           console.log('printer error', { loc, location }, this.loc);
           throw new Error(
-            `Node printer for ${node.kind} (${this.loc}) failed: ${inspect(
+            `Node printer for ${node.kind} (${loc}) failed: ${inspect(
               { ...node, loc },
               {
+                ...console.options,
                 depth: 10,
-                compact: false,
+                compact: 1,
                 breakLength: 80,
-                hideKeys: ['range', 'loc']
+                hideKeys: ['range']
               }
             )}`
           );
@@ -1924,11 +1927,10 @@ export function NodePrinter(ast) {
         AddrLabelExpr(addr_label_expr) {}
         AliasAttr(alias_attr) {}
         AlignValueAttr(align_value_attr) {
- 
-put(`__attribute__((align_value(`);
+          put(`__attribute__((align_value(`);
           printer.print(align_value_attr.inner[0]);
 
-put(`)))`);
+          put(`)))`);
         }
         AllocSizeAttr(alloc_size_attr) {}
         ArrayInitIndexExpr(array_init_index_expr) {}
@@ -1957,7 +1959,9 @@ put(`)))`);
         DependentTemplateSpecializationType(dependent_template_specialization_type) {}
         ElaboratedType(elaborated_type) {}
         EnumType(enum_type) {}
-        ExprWithCleanups(expr_with_cleanups) {}
+        ExprWithCleanups(expr_with_cleanups) {
+          for(let inner of expr_with_cleanups.inner) printer.print(inner);
+        }
         FinalAttr(final_attr) {}
         FormatArgAttr(format_arg_attr) {}
         FriendDecl(friend_decl) {}
@@ -1967,9 +1971,7 @@ put(`)))`);
         GCCAsmStmt(gcc_asm_stmt) {}
         GNUInlineAttr(gnu_inline_attr) {}
         GNUNullExpr(gnu_null_expr) {
-
-                    put(`__null`);
-
+          put(`NULL`);
         }
         ImplicitValueInitExpr(implicit_value_init_expr) {}
         IncompleteArrayType(incomplete_array_type) {}
@@ -1979,7 +1981,9 @@ put(`)))`);
         LambdaExpr(lambda_expr) {}
         LinkageSpecDecl(linkage_spec_decl) {}
         LValueReferenceType(l_value_reference_type) {}
-        MaterializeTemporaryExpr(materialize_temporary_expr) {}
+        MaterializeTemporaryExpr(materialize_temporary_expr) {
+          for(let inner of materialize_temporary_expr.inner) printer.print(inner);
+        }
         MaxFieldAlignmentAttr(max_field_alignment_attr) {}
         MayAliasAttr(may_alias_attr) {}
         MemberPointerType(member_pointer_type) {}
@@ -2253,7 +2257,11 @@ put(`)))`);
         CXX11NoReturnAttr(cxx11_no_return_attr) {}
         CXXBindTemporaryExpr(cxx_bind_temporary_expr) {}
         CXXCatchStmt(cxx_catch_stmt) {}
-        CXXConstructExpr(cxx_construct_expr) {}
+        CXXConstructExpr(cxx_construct_expr) {
+          const { type } = cxx_construct_expr;
+
+          for(let inner of cxx_construct_expr.inner) printer.print(inner);
+        }
         CXXConversionDecl(cxx_conversion_decl) {}
         CXXDefaultArgExpr(cxx_default_arg_expr) {}
         CXXDefaultInitExpr(cxx_default_init_expr) {}
@@ -2266,7 +2274,16 @@ put(`)))`);
         CXXOperatorCallExpr(cxx_operator_call_expr) {}
         CXXReinterpretCastExpr(cxx_reinterpret_cast_expr) {}
         CXXScalarValueInitExpr(cxx_scalar_value_init_expr) {}
-        CXXTemporaryObjectExpr(cxx_temporary_object_expr) {}
+        CXXTemporaryObjectExpr(cxx_temporary_object_expr) {
+          const { type } = cxx_temporary_object_expr;
+
+          put(type.qualType);
+          put(`(`);
+          for(let inner of cxx_temporary_object_expr.inner) {
+            printer.print(inner);
+          }
+          put(`)`);
+        }
         CXXTryStmt(cxx_try_stmt) {}
       })()
     }

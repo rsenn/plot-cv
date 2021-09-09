@@ -154,7 +154,6 @@ function main(...args) {
 
   let gfx = new GLFW(...screenSize);
   console.log('gfx:', gfx);
-  console.log('screen.buffer:', screen.buffer);
 
   cv.imshow('output', screen);
   cv.moveWindow('output', 0, 0);
