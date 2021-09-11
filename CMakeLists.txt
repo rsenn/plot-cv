@@ -111,7 +111,9 @@ foreach(CXX_STANDARD c++17 c++14 c++11)
     message("CXX_STANDARD_NAME = ${CXX_STANDARD_NAME}")
     message("CXX_STANDARD_VERSION = ${CXX_STANDARD_VERSION}")
 
-    add_definitions(-D"${CXX_STANDARD_NAME}")
+      if(NOT CXX_STANDARD_NAME STREQUAL "")
+        add_definitions(-D"${CXX_STANDARD_NAME}")
+      endif(NOT CXX_STANDARD_NAME STREQUAL "")
     # add_definitions(-DCXX_STANDARD=${CXX_STANDARD_VERSION})
 
     set(CXX_STANDARD_VALUE "${CXX_STANDARD}" CACHE STRING "C++ standard" FORCE)
