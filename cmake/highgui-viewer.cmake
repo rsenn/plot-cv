@@ -12,4 +12,5 @@ target_compile_definitions(highgui-viewer PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="
 
 target_link_libraries(highgui-viewer ${QUICKJS_OPENCV_A} ${OpenCV_LIBS} opencv_freetype ${GLEW_SHARED_LIBRARY_RELEASE} ${GLEW_SHARED_LIBRARIES} quickjs png ${LIBDL} ${LIBM} ${LIBPTHREAD})
 
+add_dependencies(highgui-viewer qjs-opencv)
 install(TARGETS highgui-viewer DESTINATION bin)

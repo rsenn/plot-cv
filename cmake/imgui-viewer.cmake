@@ -66,3 +66,6 @@ if(OpenCV_FOUND)
 endif()
 
 install(TARGETS imgui-viewer DESTINATION bin)
+
+add_dependencies(imgui-viewer qjs-opencv)
+
