@@ -123,7 +123,7 @@ import { EagleElementProxy, BoardRenderer, DereferenceError, EagleDocument, Eagl
 import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //const React = {Component, Fragment, create: h, html, render, useLayoutEffect, useRef, useState };
 import commands, { ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ClearCache } from './commands.js';
 import { NormalizeResponse, ResponseData, FetchURL, FetchCached } from './lib/fetch.js';
-import github, { GithubListRepositories, GithubRepositories, GithubListContents, ListGithubRepoServer } from './lib/github.js';
+import github, { GithubListFiles, GithubListRepositories, GithubRepositories, GithubListContents, ListGithubRepoServer } from './lib/github.js';
 // prettier-ignore-end
 
 /* prettier-ignore */ const { Align, AlignToString, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line,Matrix,  Point, PointList, Polyline, Rect, Select, Size, SVG, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
@@ -1535,7 +1535,7 @@ const AppMain = (window.onload = async () => {
   Util.weakAssign(window, { rpc });
   Util.weakAssign(window, imports);
   Util.weakAssign(window.Element, Util.getMethods(dom.Element));
-  Util.weakAssign(window, dom, geom, imports, localFunctions);
+  Util.weakAssign(window, dom, geom, github, imports, localFunctions);
   Util.weakAssign(window, {
     functions: Util.filter(localFunctions, v => typeof v == 'function'),
     dom,
@@ -1558,7 +1558,7 @@ const AppMain = (window.onload = async () => {
   });
 
   const logger = new Repeater(async (push, stop) => {
-    push(['DEBUG', null, null, 'Load ready!']);
+    push(['DEBUi', null, null, 'Load ready!']);
     window.pushlog = push;
     await stop;
   });
