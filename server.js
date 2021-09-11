@@ -560,7 +560,7 @@ async function main() {
         const { owner, repo, dir, filter, tab, after } = options;
 
         if(owner && repo && dir) result = await GithubListContents(owner, repo, dir, filter && new RegExp(filter, 'g'));
-        else if(owner && (tab || after)) {
+        /*if(owner && (tab || after))*/ else {
           let proxyUrl = Util.makeURL({
             ...url,
             protocol: 'https',
