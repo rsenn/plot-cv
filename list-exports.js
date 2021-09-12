@@ -212,6 +212,7 @@ function ProcessFile(file, params) {
   });
 
   ShowOutput(ast, tree, flat, file, params);
+  std.gc();
 }
 
 function Finish(err) {
