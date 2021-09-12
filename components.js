@@ -529,8 +529,14 @@ const ToolTipFn = ({ name, data, ...item }) => {
   let tooltip = `name\t${name.replace(new RegExp('.*/', 'g'), '')}`;
 
   for(let field of ['type', 'size', 'sha', 'path']) if(item[field] !== undefined) tooltip += `\n${field}\t${item[field]}`;
-
-  if(data) tooltip += `\ndata\t${Util.abbreviate(data)}`;
+  if(typeof data == 'object' && data != null) {
+    //console.log('data',data);
+    data = Object.entries(data)
+      .filter(([name, value]) => !isNaN(value) && value != null)
+      .map(([name, value]) => `${name}: ${value}`)
+      .join('\n');
+  } else data = Util.abbreviate(data);
+  if(data) tooltip += `\ndata\t${data}`;
   return tooltip;
 };
 
