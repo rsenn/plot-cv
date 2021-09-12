@@ -9,21 +9,9 @@ import fs from 'fs';
 import * as deep from './lib/deep.js';
 import { Console } from 'console';
 import { Stack } from './lib/stack.js';
+import { IfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
 
 let lexer, parser;
-
-function WriteFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
-  if(typeof data != 'string') data = '' + data;
-
-  data = data.trim();
-
-  if(data != '') {
-    fs.writeFileSync(name, data + '\n');
-    let st = fs.statSync(name);
-    if(st && st.isFile()) console.log(`Wrote ${name}: ${data.length} bytes`);
-  }
-}
 
 function PrintAst(ast, comments, printer = globalThis.printer) {
   let output = printer.print(ast);
@@ -129,11 +117,13 @@ function ShowOutput(ast, tree, flat, file, params) {
 
   let importNode = new ImportDeclaration(
     [
-      ...names.reduce((acc, n) => {
-        let name = NodeToName(n);
-        if(name) acc.push(new ImportSpecifier(new Identifier(name)));
-        return acc;
-      }, [])
+      ...names
+        .reduce((acc, n) => {
+          let name = NodeToName(n);
+          if(name && acc.indexOf(name) == -1) acc.push(name);
+          return acc;
+        }, [])
+        .map(name => new ImportSpecifier(new Identifier(name)))
     ],
     new Literal(`'${file}'`)
   );
@@ -166,7 +156,7 @@ function NodeToName(node) {
 }
 
 function ProcessFile(file, params) {
-  let data, b, ret;
+  let data, b, ret, parser;
   const { debug } = params;
   //console.log('ProcessFile', { debug });
   if(file == '-') file = '/dev/stdin';
@@ -178,8 +168,7 @@ function ProcessFile(file, params) {
   }
   if(debug >= 2) ECMAScriptParser.instrumentate();
   let ast, error;
-  globalThis.parser = parser = null;
-  globalThis.parser = parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
+  parser = globalThis.parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
   try {
     ast = parser.parseProgram();
   } catch(err) {
@@ -212,6 +201,9 @@ function ProcessFile(file, params) {
   });
 
   ShowOutput(ast, tree, flat, file, params);
+
+  delete globalThis.parser;
+
   std.gc();
 }
 
@@ -227,9 +219,11 @@ function Finish(err) {
     console.log(parser.lexer.currentLine());
     console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
   }
-  lexer = parser.lexer;
   let t = [];
-  console.log(parser.trace());
+  if(globalThis.parser) {
+    lexer = parser.lexer;
+    console.log(parser.trace());
+  }
   if(fail) {
     console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
   }
