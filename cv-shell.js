@@ -20,7 +20,7 @@ import {
   DirIterator,
   RecursiveDirIterator
 } from './io-helpers.js';
-import { VideoSource, ImageSequence} from './qjs-opencv/js/cvVideo.js';
+import { VideoSource, ImageSequence } from './qjs-opencv/js/cvVideo.js';
 
 let cmdhist;
 
@@ -58,7 +58,6 @@ function Terminate(exitCode) {
 
   Util.exit(exitCode);
 }
- 
 
 async function importModule(moduleName, ...args) {
   //console.log('importModule', moduleName, args);
@@ -76,7 +75,6 @@ async function importModule(moduleName, ...args) {
     });
   // while(!done) std.sleep(50);
 }
- 
 
 async function main(...args) {
   await ConsoleSetup({
@@ -90,8 +88,7 @@ async function main(...args) {
     globalThis.std = await import('std');
     globalThis.os = await import('os');
     globalThis.fs = fs = await import('./lib/filesystem.js');
-   } else {
-  
+  } else {
     const cb = filesystem => {
       globalThis.fs = fs = filesystem;
     };
@@ -115,17 +112,16 @@ async function main(...args) {
 
   //Object.assign(globalThis, cv);
 
- 
   Object.assign(globalThis, {
     cv,
-     fs,
+    fs,
     Pointer,
     deep,
-    VideoSource, ImageSequence
+    VideoSource,
+    ImageSequence
   });
 
   Object.assign(globalThis, {
- 
     quit(arg) {
       repl.cleanup();
       Util.exit(arg ?? 0);
@@ -135,7 +131,7 @@ async function main(...args) {
   cmdhist = `.${base}-cmdhistory`;
 
   let repl = (globalThis.repl = new REPL(base));
- 
+
   repl.history = LoadHistory(cmdhist);
 
   repl.printStatus(/*console.log*/ `LOAD (read ${repl.history.length} history entries)`);
@@ -169,7 +165,7 @@ async function main(...args) {
   repl.addCleanupHandler(() => {
     let hist = repl.history.filter((item, i, a) => a.lastIndexOf(item) == i);
 
-     fs.writeFileSync(
+    fs.writeFileSync(
       cmdhist,
       hist
         .filter(entry => (entry + '').trim() != '')
@@ -190,7 +186,7 @@ async function main(...args) {
   });
 */
 
-/*  for(let file of params['@']) {
+  /*  for(let file of params['@']) {
     repl.printStatus(`Loading '${file}'...`);
 
     newProject(file);
@@ -202,4 +198,4 @@ async function main(...args) {
   await repl.run();
 }
 
-Util.callMain(main, true); 
+Util.callMain(main, true);

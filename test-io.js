@@ -26,7 +26,8 @@ async function main(...args) {
   await ConsoleSetup({ colors: true, depth: Infinity });
   await PortableFileSystem(fs => (filesystem = fs));
 
-  for await(let data of await FileReader('test-io.js', 64)) console.log('data:', filesystem.bufferToString(data));
+  for await(let data of await FileReader('test-io.js', 64))
+    console.log('data:', filesystem.bufferToString(data));
 
   return;
   console.log(

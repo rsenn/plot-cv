@@ -84,12 +84,6 @@ function main(...argv) {
     try {
       processing();
     } catch(error) {
-      if(error) {
-        console.log?.('ERROR:', error?.message);
-        console.log?.('STACK:\n  ' + new Stack(error?.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  '));
-      } else {
-        console.log('ERROR:', error);
-      }
       if(error !== null) throw error;
     }
     files[file] = Finish(error);
@@ -110,7 +104,7 @@ try {
   error = e;
 } finally {
   if(error) {
-    console.log(`FAIL: ${error.message}`, `\n  ` + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  '));
+    console.log(`FAIL: ${error.message}`, `\n  ` + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  ').split('\n').slice(0, 10).join('\n'));
     console.log('FAIL');
     Util.exit(1);
   } else {
@@ -154,7 +148,8 @@ function NodeToName(node) {
 
     if(id instanceof Identifier) id = Identifier.string(id);
   } else if(typeof node == 'number' || typeof node == 'string') id = node;
-  if(!id) throw new Error(`NodeToName(${inspect(node)})`);
+
+  if(!id) throw new Error(`NodeToName(${inspect(node, { breakLength: 80 })})`);
 
   return id;
 }
@@ -162,6 +157,7 @@ function NodeToName(node) {
 function ProcessFile(file, params) {
   let data, b, ret;
   const { debug } = params;
+  console.log('ProcessFile', { debug });
   if(file == '-') file = '/dev/stdin';
   if(file && fs.existsSync(file)) {
     data = fs.readFileSync(file, 'utf8');

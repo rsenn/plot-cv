@@ -264,10 +264,10 @@ function main(...args) {
 
   if(opts['size']) {
     video.size = new Size(...opts['size'].split('x'));
-      console.log('video.size', video.size); 
-      win.resize(video.size);
+    console.log('video.size', video.size);
+    win.resize(video.size);
   }
- 
+
   let thickness = 1;
   let font = new TextStyle(cv.FONT_HERSHEY_PLAIN, 1.0, thickness);
   let tSize = font.size(video.time);
@@ -498,7 +498,7 @@ function main(...args) {
         console.log(`keypress [${modifierList}] 0x${(keyCode & ~0xd000).toString(16)} '${ch}'`);
       }
 
-      switch (key & 0xfff) {  
+      switch (key & 0xfff) {
         case 0x3c /* < */:
           paramNav.prev();
           break;
@@ -689,7 +689,7 @@ function main(...args) {
 
     const showOverlay = frameShow != pipeline.size - 1 || now - keyTime < 2000;
     if(maskRect && showOverlay) {
-       Draw.rectangle(out, maskRect, [0, 0, 0, 255], -1);
+      Draw.rectangle(out, maskRect, [0, 0, 0, 255], -1);
       Draw.rectangle(out, maskRect, [255, 255, 255, 255], 1);
     }
     let composite = MakeMatFor(showOutput);

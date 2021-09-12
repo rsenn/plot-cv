@@ -32,7 +32,8 @@ function main(...args) {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="10.16" height="10.16">
     ${xml.write([
       lines.toSVG(
-        (tagName, attributes, children) => (children ? { tagName, attributes, children } : { tagName, attributes }),
+        (tagName, attributes, children) =>
+          children ? { tagName, attributes, children } : { tagName, attributes },
         () => ({
           tagName: 'g',
           attributes: { stroke: '#ccc', fill: 'none', 'stroke-width': 0.025 }

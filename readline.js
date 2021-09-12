@@ -47,7 +47,14 @@ export function add_defun(name, func, key) {
  *
  * @return   {Number}
  */
-define('rl_add_funmap_entry', dlsym(libreadline, 'rl_add_funmap_entry'), null, 'int', 'char *', 'void *');
+define(
+  'rl_add_funmap_entry',
+  dlsym(libreadline, 'rl_add_funmap_entry'),
+  null,
+  'int',
+  'char *',
+  'void *'
+);
 
 export function add_funmap_entry(name, func) {
   return call('rl_add_funmap_entry', name, func);
@@ -62,7 +69,16 @@ export function add_funmap_entry(name, func) {
  *
  * @return   {Number}
  */
-define('rl_add_undo', dlsym(libreadline, 'rl_add_undo'), null, 'void', 'int', 'int', 'int', 'char *');
+define(
+  'rl_add_undo',
+  dlsym(libreadline, 'rl_add_undo'),
+  null,
+  'void',
+  'int',
+  'int',
+  'int',
+  'char *'
+);
 export function add_undo(what, start, end, text) {
   return call('rl_add_undo', what, start, end, text);
 }
@@ -133,7 +149,14 @@ export function backwardChar(count, key) {
  *
  * @return   {Number}
  */
-define('rl_backward_char_search', dlsym(libreadline, 'rl_backward_char_search'), null, 'int', 'int', 'int');
+define(
+  'rl_backward_char_search',
+  dlsym(libreadline, 'rl_backward_char_search'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function backward_char_search(count, key) {
   return call('rl_backward_char_search', count, key);
 }
@@ -145,7 +168,14 @@ export function backward_char_search(count, key) {
  *
  * @return   {Number}
  */
-define('rl_backward_kill_line', dlsym(libreadline, 'rl_backward_kill_line'), null, 'int', 'int', 'int');
+define(
+  'rl_backward_kill_line',
+  dlsym(libreadline, 'rl_backward_kill_line'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function backwardKillLine(direction, key) {
   return call('rl_backward_kill_line', direction, key);
 }
@@ -157,7 +187,14 @@ export function backwardKillLine(direction, key) {
  *
  * @return   {Number}
  */
-define('rl_backward_kill_word', dlsym(libreadline, 'rl_backward_kill_word'), null, 'int', 'int', 'int');
+define(
+  'rl_backward_kill_word',
+  dlsym(libreadline, 'rl_backward_kill_word'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function backwardKillWord(count, key) {
   return call('rl_backward_kill_word', count, key);
 }
@@ -169,7 +206,14 @@ export function backwardKillWord(count, key) {
  *
  * @return   {Number}
  */
-define('rl_backward_menu_complete', dlsym(libreadline, 'rl_backward_menu_complete'), null, 'int', 'int', 'int');
+define(
+  'rl_backward_menu_complete',
+  dlsym(libreadline, 'rl_backward_menu_complete'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function backward_menu_complete(count, key) {
   return call('rl_backward_menu_complete', count, key);
 }
@@ -215,7 +259,14 @@ export function begin_undo_group() {
  *
  * @return   {Number}
  */
-define('rl_beginning_of_history', dlsym(libreadline, 'rl_beginning_of_history'), null, 'int', 'int', 'int');
+define(
+  'rl_beginning_of_history',
+  dlsym(libreadline, 'rl_beginning_of_history'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function beginning_of_history(count, key) {
   return call('rl_beginning_of_history', count, key);
 }
@@ -239,7 +290,14 @@ export function bind_key(key, func) {
  *
  * @return   {Number}
  */
-define('rl_bind_key_if_unbound', dlsym(libreadline, 'rl_bind_key_if_unbound'), null, 'int', 'int', 'void *');
+define(
+  'rl_bind_key_if_unbound',
+  dlsym(libreadline, 'rl_bind_key_if_unbound'),
+  null,
+  'int',
+  'int',
+  'void *'
+);
 export function bind_key_if_unbound(key, default_func) {
   return call('rl_bind_key_if_unbound', key, default_func);
 }
@@ -252,7 +310,15 @@ export function bind_key_if_unbound(key, default_func) {
  *
  * @return   {Number}
  */
-define('rl_bind_key_if_unbound_in_map', dlsym(libreadline, 'rl_bind_key_if_unbound_in_map'), null, 'int', 'int', 'void *', 'long');
+define(
+  'rl_bind_key_if_unbound_in_map',
+  dlsym(libreadline, 'rl_bind_key_if_unbound_in_map'),
+  null,
+  'int',
+  'int',
+  'void *',
+  'long'
+);
 export function bind_key_if_unbound_in_map(key, default_func, kmap) {
   return call('rl_bind_key_if_unbound_in_map', key, default_func, kmap);
 }
@@ -265,7 +331,15 @@ export function bind_key_if_unbound_in_map(key, default_func, kmap) {
  *
  * @return   {Number}
  */
-define('rl_bind_key_in_map', dlsym(libreadline, 'rl_bind_key_in_map'), null, 'int', 'int', 'void *', 'long');
+define(
+  'rl_bind_key_in_map',
+  dlsym(libreadline, 'rl_bind_key_in_map'),
+  null,
+  'int',
+  'int',
+  'void *',
+  'long'
+);
 export function bind_key_in_map(key, func, map) {
   return call('rl_bind_key_in_map', key, func, map);
 }
@@ -289,7 +363,14 @@ export function bind_keyseq(keyseq, func) {
  *
  * @return   {Number}
  */
-define('rl_bind_keyseq_if_unbound', dlsym(libreadline, 'rl_bind_keyseq_if_unbound'), null, 'int', 'char *', 'void *');
+define(
+  'rl_bind_keyseq_if_unbound',
+  dlsym(libreadline, 'rl_bind_keyseq_if_unbound'),
+  null,
+  'int',
+  'char *',
+  'void *'
+);
 export function bind_keyseq_if_unbound(keyseq, default_func) {
   return call('rl_bind_keyseq_if_unbound', keyseq, default_func);
 }
@@ -302,7 +383,15 @@ export function bind_keyseq_if_unbound(keyseq, default_func) {
  *
  * @return   {Number}
  */
-define('rl_bind_keyseq_if_unbound_in_map', dlsym(libreadline, 'rl_bind_keyseq_if_unbound_in_map'), null, 'int', 'char *', 'void *', 'long');
+define(
+  'rl_bind_keyseq_if_unbound_in_map',
+  dlsym(libreadline, 'rl_bind_keyseq_if_unbound_in_map'),
+  null,
+  'int',
+  'char *',
+  'void *',
+  'long'
+);
 export function bind_keyseq_if_unbound_in_map(keyseq, default_func, kmap) {
   return call('rl_bind_keyseq_if_unbound_in_map', keyseq, default_func, kmap);
 }
@@ -315,7 +404,15 @@ export function bind_keyseq_if_unbound_in_map(keyseq, default_func, kmap) {
  *
  * @return   {Number}
  */
-define('rl_bind_keyseq_in_map', dlsym(libreadline, 'rl_bind_keyseq_in_map'), null, 'int', 'char *', 'void *', 'long');
+define(
+  'rl_bind_keyseq_in_map',
+  dlsym(libreadline, 'rl_bind_keyseq_in_map'),
+  null,
+  'int',
+  'char *',
+  'void *',
+  'long'
+);
 export function bind_keyseq_in_map(keyseq, func, map) {
   return call('rl_bind_keyseq_in_map', keyseq, func, map);
 }
@@ -327,7 +424,14 @@ export function bind_keyseq_in_map(keyseq, func, map) {
  *
  * @return   {Number}
  */
-define('rl_bracketed_paste_begin', dlsym(libreadline, 'rl_bracketed_paste_begin'), null, 'int', 'int', 'int');
+define(
+  'rl_bracketed_paste_begin',
+  dlsym(libreadline, 'rl_bracketed_paste_begin'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function bracketed_paste_begin(count, key) {
   return call('rl_bracketed_paste_begin', count, key);
 }
@@ -339,7 +443,14 @@ export function bracketed_paste_begin(count, key) {
  *
  * @return   {Number}
  */
-define('rl_call_last_kbd_macro', dlsym(libreadline, 'rl_call_last_kbd_macro'), null, 'int', 'int', 'int');
+define(
+  'rl_call_last_kbd_macro',
+  dlsym(libreadline, 'rl_call_last_kbd_macro'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function call_last_kbd_macro(count, ignore) {
   return call('rl_call_last_kbd_macro', count, ignore);
 }
@@ -351,7 +462,14 @@ export function call_last_kbd_macro(count, ignore) {
  *
  * @return   {Number}
  */
-define('rl_callback_handler_install', dlsym(libreadline, 'rl_callback_handler_install'), null, 'void', 'char *', 'void *');
+define(
+  'rl_callback_handler_install',
+  dlsym(libreadline, 'rl_callback_handler_install'),
+  null,
+  'void',
+  'char *',
+  'void *'
+);
 export function callback_handler_install(prompt, linefunc) {
   return call('rl_callback_handler_install', prompt, linefunc);
 }
@@ -361,7 +479,12 @@ export function callback_handler_install(prompt, linefunc) {
  *
  * @return   {Number}
  */
-define('rl_callback_handler_remove', dlsym(libreadline, 'rl_callback_handler_remove'), null, 'void');
+define(
+  'rl_callback_handler_remove',
+  dlsym(libreadline, 'rl_callback_handler_remove'),
+  null,
+  'void'
+);
 export function callback_handler_remove() {
   return call('rl_callback_handler_remove');
 }
@@ -534,7 +657,14 @@ export function complete_internal(what_to_do) {
  *
  * @return   {Number}
  */
-define('rl_completion_matches', dlsym(libreadline, 'rl_completion_matches'), null, 'void *', 'char *', 'void *');
+define(
+  'rl_completion_matches',
+  dlsym(libreadline, 'rl_completion_matches'),
+  null,
+  'void *',
+  'char *',
+  'void *'
+);
 export function completion_matches(text, entry_function) {
   return call('rl_completion_matches', text, entry_function);
 }
@@ -557,7 +687,14 @@ export function completion_mode(cfunc) {
  *
  * @return   {Number}
  */
-define('rl_copy_backward_word', dlsym(libreadline, 'rl_copy_backward_word'), null, 'int', 'int', 'int');
+define(
+  'rl_copy_backward_word',
+  dlsym(libreadline, 'rl_copy_backward_word'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function copy_backward_word(count, key) {
   return call('rl_copy_backward_word', count, key);
 }
@@ -569,7 +706,14 @@ export function copy_backward_word(count, key) {
  *
  * @return   {Number}
  */
-define('rl_copy_forward_word', dlsym(libreadline, 'rl_copy_forward_word'), null, 'int', 'int', 'int');
+define(
+  'rl_copy_forward_word',
+  dlsym(libreadline, 'rl_copy_forward_word'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function copy_forward_word(count, key) {
   return call('rl_copy_forward_word', count, key);
 }
@@ -581,7 +725,14 @@ export function copy_forward_word(count, key) {
  *
  * @return   {Number}
  */
-define('rl_copy_region_to_kill', dlsym(libreadline, 'rl_copy_region_to_kill'), null, 'int', 'int', 'int');
+define(
+  'rl_copy_region_to_kill',
+  dlsym(libreadline, 'rl_copy_region_to_kill'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function copy_region_to_kill(count, key) {
   return call('rl_copy_region_to_kill', count, key);
 }
@@ -627,7 +778,14 @@ export function rl_delete(count, key) {
  *
  * @return   {Number}
  */
-define('rl_delete_horizontal_space', dlsym(libreadline, 'rl_delete_horizontal_space'), null, 'int', 'int', 'int');
+define(
+  'rl_delete_horizontal_space',
+  dlsym(libreadline, 'rl_delete_horizontal_space'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function delete_horizontal_space(count, ignore) {
   return call('rl_delete_horizontal_space', count, ignore);
 }
@@ -639,7 +797,14 @@ export function delete_horizontal_space(count, ignore) {
  *
  * @return   {Number}
  */
-define('rl_delete_or_show_completions', dlsym(libreadline, 'rl_delete_or_show_completions'), null, 'int', 'int', 'int');
+define(
+  'rl_delete_or_show_completions',
+  dlsym(libreadline, 'rl_delete_or_show_completions'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function delete_or_show_completions(count, key) {
   return call('rl_delete_or_show_completions', count, key);
 }
@@ -717,7 +882,15 @@ export function discard_keymap(map) {
  *
  * @return   {Number}
  */
-define('rl_display_match_list', dlsym(libreadline, 'rl_display_match_list'), null, 'void', 'void *', 'int', 'int');
+define(
+  'rl_display_match_list',
+  dlsym(libreadline, 'rl_display_match_list'),
+  null,
+  'void',
+  'void *',
+  'int',
+  'int'
+);
 export function display_match_list(matches, len, max) {
   return call('rl_display_match_list', matches, len, max);
 }
@@ -729,7 +902,14 @@ export function display_match_list(matches, len, max) {
  *
  * @return   {Number}
  */
-define('rl_do_lowercase_version', dlsym(libreadline, 'rl_do_lowercase_version'), null, 'int', 'int', 'int');
+define(
+  'rl_do_lowercase_version',
+  dlsym(libreadline, 'rl_do_lowercase_version'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function do_lowercase_version(ignore1, ignore2) {
   return call('rl_do_lowercase_version', ignore1, ignore2);
 }
@@ -810,7 +990,14 @@ export function echo_signal_char(sig) {
  *
  * @return   {Number}
  */
-define('rl_emacs_editing_mode', dlsym(libreadline, 'rl_emacs_editing_mode'), null, 'int', 'int', 'int');
+define(
+  'rl_emacs_editing_mode',
+  dlsym(libreadline, 'rl_emacs_editing_mode'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function emacs_editing_mode(count, key) {
   return call('rl_emacs_editing_mode', count, key);
 }
@@ -879,7 +1066,14 @@ export function end_undo_group() {
  *
  * @return   {Number}
  */
-define('rl_exchange_point_and_mark', dlsym(libreadline, 'rl_exchange_point_and_mark'), null, 'int', 'int', 'int');
+define(
+  'rl_exchange_point_and_mark',
+  dlsym(libreadline, 'rl_exchange_point_and_mark'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function exchange_point_and_mark(count, key) {
   return call('rl_exchange_point_and_mark', count, key);
 }
@@ -970,7 +1164,14 @@ export function forwardChar(count, key) {
  *
  * @return   {Number}
  */
-define('rl_forward_search_history', dlsym(libreadline, 'rl_forward_search_history'), null, 'int', 'int', 'int');
+define(
+  'rl_forward_search_history',
+  dlsym(libreadline, 'rl_forward_search_history'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function forward_search_history(sign, key) {
   return call('rl_forward_search_history', sign, key);
 }
@@ -1048,7 +1249,15 @@ export function function_dumper(print_readably) {
  *
  * @return   {Number}
  */
-define('rl_function_of_keyseq', dlsym(libreadline, 'rl_function_of_keyseq'), null, 'void *', 'char *', 'long', 'void *');
+define(
+  'rl_function_of_keyseq',
+  dlsym(libreadline, 'rl_function_of_keyseq'),
+  null,
+  'void *',
+  'char *',
+  'long',
+  'void *'
+);
 export function function_of_keyseq(keyseq, map, type) {
   return call('rl_function_of_keyseq', keyseq, map, type);
 }
@@ -1062,7 +1271,16 @@ export function function_of_keyseq(keyseq, map, type) {
  *
  * @return   {Number}
  */
-define('rl_function_of_keyseq_len', dlsym(libreadline, 'rl_function_of_keyseq_len'), null, 'void *', 'char *', 'size_t', 'long', 'void *');
+define(
+  'rl_function_of_keyseq_len',
+  dlsym(libreadline, 'rl_function_of_keyseq_len'),
+  null,
+  'void *',
+  'char *',
+  'size_t',
+  'long',
+  'void *'
+);
 export function function_of_keyseq_len(keyseq, len, map, type) {
   return call('rl_function_of_keyseq_len', keyseq, len, map, type);
 }
@@ -1086,7 +1304,16 @@ export function funmap_names() {
  *
  * @return   {Number}
  */
-define('rl_generic_bind', dlsym(libreadline, 'rl_generic_bind'), null, 'int', 'int', 'char *', 'char *', 'long');
+define(
+  'rl_generic_bind',
+  dlsym(libreadline, 'rl_generic_bind'),
+  null,
+  'int',
+  'int',
+  'char *',
+  'char *',
+  'long'
+);
 export function generic_bind(type, keyseq, data, map) {
   return call('rl_generic_bind', type, keyseq, data, map);
 }
@@ -1107,7 +1334,12 @@ export function get_keymap_name(map) {
  *
  * @return   {String}
  */
-define('rl_get_keymap_name_from_edit_mode', dlsym(libreadline, 'rl_get_keymap_name_from_edit_mode'), null, 'char *');
+define(
+  'rl_get_keymap_name_from_edit_mode',
+  dlsym(libreadline, 'rl_get_keymap_name_from_edit_mode'),
+  null,
+  'char *'
+);
 export function get_keymap_name_from_edit_mode() {
   return call('rl_get_keymap_name_from_edit_mode');
 }
@@ -1131,7 +1363,14 @@ export function get_next_history(count, key) {
  *
  * @return   {Number}
  */
-define('rl_get_previous_history', dlsym(libreadline, 'rl_get_previous_history'), null, 'int', 'int', 'int');
+define(
+  'rl_get_previous_history',
+  dlsym(libreadline, 'rl_get_previous_history'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function get_previous_history(count, key) {
   return call('rl_get_previous_history', count, key);
 }
@@ -1143,7 +1382,14 @@ export function get_previous_history(count, key) {
  *
  * @return   {Number}
  */
-define('rl_get_screen_size', dlsym(libreadline, 'rl_get_screen_size'), null, 'void', 'void *', 'void *');
+define(
+  'rl_get_screen_size',
+  dlsym(libreadline, 'rl_get_screen_size'),
+  null,
+  'void',
+  'void *',
+  'void *'
+);
 export function get_screen_size(rows, cols) {
   return call('rl_get_screen_size', rows, cols);
 }
@@ -1177,7 +1423,14 @@ export function getc(stream) {
  *
  * @return   {Number}
  */
-define('rl_history_search_backward', dlsym(libreadline, 'rl_history_search_backward'), null, 'int', 'int', 'int');
+define(
+  'rl_history_search_backward',
+  dlsym(libreadline, 'rl_history_search_backward'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function historySearchBackward(count, ignore) {
   return call('rl_history_search_backward', count, ignore);
 }
@@ -1189,7 +1442,14 @@ export function historySearchBackward(count, ignore) {
  *
  * @return   {Number}
  */
-define('rl_history_search_forward', dlsym(libreadline, 'rl_history_search_forward'), null, 'int', 'int', 'int');
+define(
+  'rl_history_search_forward',
+  dlsym(libreadline, 'rl_history_search_forward'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function historySearchForward(count, ignore) {
   return call('rl_history_search_forward', count, ignore);
 }
@@ -1201,7 +1461,14 @@ export function historySearchForward(count, ignore) {
  *
  * @return   {Number}
  */
-define('rl_history_substr_search_backward', dlsym(libreadline, 'rl_history_substr_search_backward'), null, 'int', 'int', 'int');
+define(
+  'rl_history_substr_search_backward',
+  dlsym(libreadline, 'rl_history_substr_search_backward'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function history_substr_search_backward(count, ignore) {
   return call('rl_history_substr_search_backward', count, ignore);
 }
@@ -1213,7 +1480,14 @@ export function history_substr_search_backward(count, ignore) {
  *
  * @return   {Number}
  */
-define('rl_history_substr_search_forward', dlsym(libreadline, 'rl_history_substr_search_forward'), null, 'int', 'int', 'int');
+define(
+  'rl_history_substr_search_forward',
+  dlsym(libreadline, 'rl_history_substr_search_forward'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function history_substr_search_forward(count, ignore) {
   return call('rl_history_substr_search_forward', count, ignore);
 }
@@ -1281,7 +1555,14 @@ export function insert_comment(count, key) {
  *
  * @return   {Number}
  */
-define('rl_insert_completions', dlsym(libreadline, 'rl_insert_completions'), null, 'int', 'int', 'int');
+define(
+  'rl_insert_completions',
+  dlsym(libreadline, 'rl_insert_completions'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function insert_completions(ignore, invoking_key) {
   return call('rl_insert_completions', ignore, invoking_key);
 }
@@ -1315,7 +1596,14 @@ export function invoking_keyseqs(func) {
  *
  * @return   {Number}
  */
-define('rl_invoking_keyseqs_in_map', dlsym(libreadline, 'rl_invoking_keyseqs_in_map'), null, 'void *', 'void *', 'long');
+define(
+  'rl_invoking_keyseqs_in_map',
+  dlsym(libreadline, 'rl_invoking_keyseqs_in_map'),
+  null,
+  'void *',
+  'void *',
+  'long'
+);
 export function invoking_keyseqs_in_map(func, map) {
   return call('rl_invoking_keyseqs_in_map', func, map);
 }
@@ -1398,7 +1686,15 @@ export function list_funmap_names() {
  *
  * @return   {Number}
  */
-define('rl_macro_bind', dlsym(libreadline, 'rl_macro_bind'), null, 'int', 'char *', 'char *', 'long');
+define(
+  'rl_macro_bind',
+  dlsym(libreadline, 'rl_macro_bind'),
+  null,
+  'int',
+  'char *',
+  'char *',
+  'long'
+);
 export function macro_bind(keyseq, macro, map) {
   return call('rl_macro_bind', keyseq, macro, map);
 }
@@ -1523,7 +1819,14 @@ export function next_screen_line(count, key) {
  *
  * @return   {Number}
  */
-define('rl_noninc_forward_search', dlsym(libreadline, 'rl_noninc_forward_search'), null, 'int', 'int', 'int');
+define(
+  'rl_noninc_forward_search',
+  dlsym(libreadline, 'rl_noninc_forward_search'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function noninc_forward_search(count, key) {
   return call('rl_noninc_forward_search', count, key);
 }
@@ -1535,7 +1838,14 @@ export function noninc_forward_search(count, key) {
  *
  * @return   {Number}
  */
-define('rl_noninc_forward_search_again', dlsym(libreadline, 'rl_noninc_forward_search_again'), null, 'int', 'int', 'int');
+define(
+  'rl_noninc_forward_search_again',
+  dlsym(libreadline, 'rl_noninc_forward_search_again'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function noninc_forward_search_again(count, key) {
   return call('rl_noninc_forward_search_again', count, key);
 }
@@ -1547,7 +1857,14 @@ export function noninc_forward_search_again(count, key) {
  *
  * @return   {Number}
  */
-define('rl_noninc_reverse_search', dlsym(libreadline, 'rl_noninc_reverse_search'), null, 'int', 'int', 'int');
+define(
+  'rl_noninc_reverse_search',
+  dlsym(libreadline, 'rl_noninc_reverse_search'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function noninc_reverse_search(count, key) {
   return call('rl_noninc_reverse_search', count, key);
 }
@@ -1559,7 +1876,14 @@ export function noninc_reverse_search(count, key) {
  *
  * @return   {Number}
  */
-define('rl_noninc_reverse_search_again', dlsym(libreadline, 'rl_noninc_reverse_search_again'), null, 'int', 'int', 'int');
+define(
+  'rl_noninc_reverse_search_again',
+  dlsym(libreadline, 'rl_noninc_reverse_search_again'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function noninc_reverse_search_again(count, key) {
   return call('rl_noninc_reverse_search_again', count, key);
 }
@@ -1571,7 +1895,14 @@ export function noninc_reverse_search_again(count, key) {
  *
  * @return   {Number}
  */
-define('rl_old_menu_complete', dlsym(libreadline, 'rl_old_menu_complete'), null, 'int', 'int', 'int');
+define(
+  'rl_old_menu_complete',
+  dlsym(libreadline, 'rl_old_menu_complete'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function old_menu_complete(count, invoking_key) {
   return call('rl_old_menu_complete', count, invoking_key);
 }
@@ -1636,7 +1967,14 @@ export function pending_signal() {
  *
  * @return   {Number}
  */
-define('rl_possible_completions', dlsym(libreadline, 'rl_possible_completions'), null, 'int', 'int', 'int');
+define(
+  'rl_possible_completions',
+  dlsym(libreadline, 'rl_possible_completions'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function possible_completions(ignore, invoking_key) {
   return call('rl_possible_completions', ignore, invoking_key);
 }
@@ -1659,7 +1997,14 @@ export function prep_terminal(meta_flag) {
  *
  * @return   {Number}
  */
-define('rl_previous_screen_line', dlsym(libreadline, 'rl_previous_screen_line'), null, 'int', 'int', 'int');
+define(
+  'rl_previous_screen_line',
+  dlsym(libreadline, 'rl_previous_screen_line'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function previous_screen_line(count, key) {
   return call('rl_previous_screen_line', count, key);
 }
@@ -1671,7 +2016,14 @@ export function previous_screen_line(count, key) {
  *
  * @return   {Number}
  */
-define('rl_print_last_kbd_macro', dlsym(libreadline, 'rl_print_last_kbd_macro'), null, 'int', 'int', 'int');
+define(
+  'rl_print_last_kbd_macro',
+  dlsym(libreadline, 'rl_print_last_kbd_macro'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function print_last_kbd_macro(count, ignore) {
   return call('rl_print_last_kbd_macro', count, ignore);
 }
@@ -1706,7 +2058,14 @@ export function quotedInsert(count, key) {
  *
  * @return   {Number}
  */
-define('rl_re_read_init_file', dlsym(libreadline, 'rl_re_read_init_file'), null, 'int', 'int', 'int');
+define(
+  'rl_re_read_init_file',
+  dlsym(libreadline, 'rl_re_read_init_file'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function re_read_init_file(count, ignore) {
   return call('rl_re_read_init_file', count, ignore);
 }
@@ -1747,7 +2106,12 @@ export function redisplay() {
  *
  * @return   {Number}
  */
-define('rl_redraw_prompt_last_line', dlsym(libreadline, 'rl_redraw_prompt_last_line'), null, 'void');
+define(
+  'rl_redraw_prompt_last_line',
+  dlsym(libreadline, 'rl_redraw_prompt_last_line'),
+  null,
+  'void'
+);
 export function redraw_prompt_last_line() {
   return call('rl_redraw_prompt_last_line');
 }
@@ -1856,7 +2220,14 @@ export function restore_prompt() {
  *
  * @return   {Number}
  */
-define('rl_reverse_search_history', dlsym(libreadline, 'rl_reverse_search_history'), null, 'int', 'int', 'int');
+define(
+  'rl_reverse_search_history',
+  dlsym(libreadline, 'rl_reverse_search_history'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function reverse_search_history(sign, key) {
   return call('rl_reverse_search_history', sign, key);
 }
@@ -1937,7 +2308,13 @@ export function set_key(keyseq, func, map) {
  *
  * @return   {Number}
  */
-define('rl_set_keyboard_input_timeout', dlsym(libreadline, 'rl_set_keyboard_input_timeout'), null, 'int', 'int');
+define(
+  'rl_set_keyboard_input_timeout',
+  dlsym(libreadline, 'rl_set_keyboard_input_timeout'),
+  null,
+  'int',
+  'int'
+);
 export function set_keyboard_input_timeout(u) {
   return call('rl_set_keyboard_input_timeout', u);
 }
@@ -1958,7 +2335,12 @@ export function set_keymap(map) {
  *
  * @return   {Number}
  */
-define('rl_set_keymap_from_edit_mode', dlsym(libreadline, 'rl_set_keymap_from_edit_mode'), null, 'void');
+define(
+  'rl_set_keymap_from_edit_mode',
+  dlsym(libreadline, 'rl_set_keymap_from_edit_mode'),
+  null,
+  'void'
+);
 export function set_keymap_from_edit_mode() {
   return call('rl_set_keymap_from_edit_mode');
 }
@@ -1970,7 +2352,14 @@ export function set_keymap_from_edit_mode() {
  *
  * @return   {Number}
  */
-define('rl_set_keymap_name', dlsym(libreadline, 'rl_set_keymap_name'), null, 'int', 'char *', 'long');
+define(
+  'rl_set_keymap_name',
+  dlsym(libreadline, 'rl_set_keymap_name'),
+  null,
+  'int',
+  'char *',
+  'long'
+);
 export function set_keymap_name(name, map) {
   return call('rl_set_keymap_name', name, map);
 }
@@ -1993,7 +2382,13 @@ export function set_mark(count, key) {
  *
  * @return   {Number}
  */
-define('rl_set_paren_blink_timeout', dlsym(libreadline, 'rl_set_paren_blink_timeout'), null, 'int', 'int');
+define(
+  'rl_set_paren_blink_timeout',
+  dlsym(libreadline, 'rl_set_paren_blink_timeout'),
+  null,
+  'int',
+  'int'
+);
 export function set_paren_blink_timeout(u) {
   return call('rl_set_paren_blink_timeout', u);
 }
@@ -2049,7 +2444,14 @@ export function show_char(c) {
  *
  * @return   {Number}
  */
-define('rl_skip_csi_sequence', dlsym(libreadline, 'rl_skip_csi_sequence'), null, 'int', 'int', 'int');
+define(
+  'rl_skip_csi_sequence',
+  dlsym(libreadline, 'rl_skip_csi_sequence'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function skip_csi_sequence(count, key) {
   return call('rl_skip_csi_sequence', count, key);
 }
@@ -2121,7 +2523,15 @@ export function tilde_expand(ignore, key) {
  *
  * @return   {Number}
  */
-define('rl_translate_keyseq', dlsym(libreadline, 'rl_translate_keyseq'), null, 'int', 'char *', 'char *', 'void *');
+define(
+  'rl_translate_keyseq',
+  dlsym(libreadline, 'rl_translate_keyseq'),
+  null,
+  'int',
+  'char *',
+  'char *',
+  'void *'
+);
 export function translate_keyseq(seq, array, len) {
   return call('rl_translate_keyseq', seq, array, len);
 }
@@ -2156,7 +2566,13 @@ export function transposeWords(count, key) {
  *
  * @return   {Number}
  */
-define('rl_tty_set_default_bindings', dlsym(libreadline, 'rl_tty_set_default_bindings'), null, 'void', 'long');
+define(
+  'rl_tty_set_default_bindings',
+  dlsym(libreadline, 'rl_tty_set_default_bindings'),
+  null,
+  'void',
+  'long'
+);
 export function tty_set_default_bindings(kmap) {
   return call('rl_tty_set_default_bindings', kmap);
 }
@@ -2190,7 +2606,13 @@ export function tty_status(count, key) {
  *
  * @return   {Number}
  */
-define('rl_tty_unset_default_bindings', dlsym(libreadline, 'rl_tty_unset_default_bindings'), null, 'void', 'long');
+define(
+  'rl_tty_unset_default_bindings',
+  dlsym(libreadline, 'rl_tty_unset_default_bindings'),
+  null,
+  'void',
+  'long'
+);
 export function tty_unset_default_bindings(kmap) {
   return call('rl_tty_unset_default_bindings', kmap);
 }
@@ -2202,7 +2624,14 @@ export function tty_unset_default_bindings(kmap) {
  *
  * @return   {Number}
  */
-define('rl_unbind_command_in_map', dlsym(libreadline, 'rl_unbind_command_in_map'), null, 'int', 'char *', 'long');
+define(
+  'rl_unbind_command_in_map',
+  dlsym(libreadline, 'rl_unbind_command_in_map'),
+  null,
+  'int',
+  'char *',
+  'long'
+);
 export function unbind_command_in_map(command, map) {
   return call('rl_unbind_command_in_map', command, map);
 }
@@ -2214,7 +2643,14 @@ export function unbind_command_in_map(command, map) {
  *
  * @return   {Number}
  */
-define('rl_unbind_function_in_map', dlsym(libreadline, 'rl_unbind_function_in_map'), null, 'int', 'void *', 'long');
+define(
+  'rl_unbind_function_in_map',
+  dlsym(libreadline, 'rl_unbind_function_in_map'),
+  null,
+  'int',
+  'void *',
+  'long'
+);
 export function unbind_function_in_map(func, map) {
   return call('rl_unbind_function_in_map', func, map);
 }
@@ -2237,7 +2673,14 @@ export function unbind_key(key) {
  *
  * @return   {Number}
  */
-define('rl_unbind_key_in_map', dlsym(libreadline, 'rl_unbind_key_in_map'), null, 'int', 'int', 'long');
+define(
+  'rl_unbind_key_in_map',
+  dlsym(libreadline, 'rl_unbind_key_in_map'),
+  null,
+  'int',
+  'int',
+  'long'
+);
 export function unbind_key_in_map(key, map) {
   return call('rl_unbind_key_in_map', key, map);
 }
@@ -2261,7 +2704,14 @@ export function undo_command(count, key) {
  *
  * @return   {Number}
  */
-define('rl_universal_argument', dlsym(libreadline, 'rl_universal_argument'), null, 'int', 'int', 'int');
+define(
+  'rl_universal_argument',
+  dlsym(libreadline, 'rl_universal_argument'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function universal_argument(count, key) {
   return call('rl_universal_argument', count, key);
 }
@@ -2273,7 +2723,14 @@ export function universal_argument(count, key) {
  *
  * @return   {Number}
  */
-define('rl_unix_filename_rubout', dlsym(libreadline, 'rl_unix_filename_rubout'), null, 'int', 'int', 'int');
+define(
+  'rl_unix_filename_rubout',
+  dlsym(libreadline, 'rl_unix_filename_rubout'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function unix_filename_rubout(count, key) {
   return call('rl_unix_filename_rubout', count, key);
 }
@@ -2285,7 +2742,14 @@ export function unix_filename_rubout(count, key) {
  *
  * @return   {Number}
  */
-define('rl_unix_line_discard', dlsym(libreadline, 'rl_unix_line_discard'), null, 'int', 'int', 'int');
+define(
+  'rl_unix_line_discard',
+  dlsym(libreadline, 'rl_unix_line_discard'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function unix_line_discard(count, key) {
   return call('rl_unix_line_discard', count, key);
 }
@@ -2332,7 +2796,14 @@ export function upcaseWord(count, key) {
  *
  * @return   {String}
  */
-define('rl_username_completion_function', dlsym(libreadline, 'rl_username_completion_function'), null, 'char *', 'char *', 'int');
+define(
+  'rl_username_completion_function',
+  dlsym(libreadline, 'rl_username_completion_function'),
+  null,
+  'char *',
+  'char *',
+  'int'
+);
 export function username_completion_function(text, state) {
   return call('rl_username_completion_function', text, state);
 }
@@ -2426,7 +2897,14 @@ export function vi_bWord(count, ignore) {
  *
  * @return   {Number}
  */
-define('rl_vi_back_to_indent', dlsym(libreadline, 'rl_vi_back_to_indent'), null, 'int', 'int', 'int');
+define(
+  'rl_vi_back_to_indent',
+  dlsym(libreadline, 'rl_vi_back_to_indent'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function vi_back_to_indent(count, key) {
   return call('rl_vi_back_to_indent', count, key);
 }
@@ -2723,7 +3201,14 @@ export function vi_insert_mode(count, key) {
  *
  * @return   {Number}
  */
-define('rl_vi_insertion_mode', dlsym(libreadline, 'rl_vi_insertion_mode'), null, 'int', 'int', 'int');
+define(
+  'rl_vi_insertion_mode',
+  dlsym(libreadline, 'rl_vi_insertion_mode'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function vi_insertion_mode(count, key) {
   return call('rl_vi_insertion_mode', count, key);
 }
@@ -2783,7 +3268,14 @@ export function vi_overstrike(count, key) {
  *
  * @return   {Number}
  */
-define('rl_vi_overstrike_delete', dlsym(libreadline, 'rl_vi_overstrike_delete'), null, 'int', 'int', 'int');
+define(
+  'rl_vi_overstrike_delete',
+  dlsym(libreadline, 'rl_vi_overstrike_delete'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function vi_overstrike_delete(count, key) {
   return call('rl_vi_overstrike_delete', count, key);
 }
@@ -2880,7 +3372,15 @@ export function vi_set_mark(count, key) {
  *
  * @return   {Number}
  */
-define('rl_vi_start_inserting', dlsym(libreadline, 'rl_vi_start_inserting'), null, 'void', 'int', 'int', 'int');
+define(
+  'rl_vi_start_inserting',
+  dlsym(libreadline, 'rl_vi_start_inserting'),
+  null,
+  'void',
+  'int',
+  'int',
+  'int'
+);
 export function vi_start_inserting(key, repeat, sign) {
   return call('rl_vi_start_inserting', key, repeat, sign);
 }
@@ -2928,7 +3428,14 @@ export function vi_undo(count, key) {
  *
  * @return   {Number}
  */
-define('rl_vi_unix_word_rubout', dlsym(libreadline, 'rl_vi_unix_word_rubout'), null, 'int', 'int', 'int');
+define(
+  'rl_vi_unix_word_rubout',
+  dlsym(libreadline, 'rl_vi_unix_word_rubout'),
+  null,
+  'int',
+  'int',
+  'int'
+);
 export function vi_unix_word_rubout(count, key) {
   return call('rl_vi_unix_word_rubout', count, key);
 }
