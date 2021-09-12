@@ -72,7 +72,7 @@ function main(...argv) {
     },
     argv
   );
-  if(params.debug) ECMAScriptParser.instrumentate();
+  if(params.debug >= 2) ECMAScriptParser.instrumentate();
   Util.defineGettersSetters(globalThis, {
     printer: Util.once(() => new Printer({ colors: false, indent: 2 }))
   });
@@ -123,7 +123,7 @@ function ShowOutput(ast, tree, flat, file, params) {
   let names = nodes.filter(([n, p, parent]) => !/Import/.test(parent.type)).map(([node, path, parent]) => (node.declaration && node.declaration.id ? node.declaration.id : node));
 
   let defaultExport = deep.find(ast, node => node instanceof ExportDefaultDeclaration, deep.RETURN_VALUE);
-  console.log('names:', names);
+  //console.log('names:', names);
 
   if(!file.startsWith('./') && !file.startsWith('/') && !file.startsWith('..')) file = './' + file;
 
@@ -165,7 +165,7 @@ function ProcessFile(file, params) {
     file = 'stdin';
     data = source;
   }
-  if(debug) ECMAScriptParser.instrumentate();
+  if(debug >= 2) ECMAScriptParser.instrumentate();
   let ast, error;
   globalThis.parser = parser = null;
   globalThis.parser = parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
