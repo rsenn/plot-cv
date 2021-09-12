@@ -208,7 +208,10 @@ let config = {
   logSize: trkl(store.get('console') || null),
   debugFlag: trkl(store.get('debug') || false),
   credentials: trkl(store.get('auth') || {}),
-  showGrid: trkl(store.get('grîd') || true)
+  showGrid: trkl(store.get('grid') || true),
+  sortOrder:   trkl(store.get('sortOrder') || -1),
+  sortKey:   trkl(store.get('sortKey') || 'name'),
+
 };
 
 const GetProject = arg => {
@@ -1436,7 +1439,7 @@ const AuthorizationDialog = ({ onAuth, ...props }) => {
 const BindGlobal = Util.once(arg => trkl.bind(window, arg));
 
 const AppMain = (window.onload = async () => {
-  // Util(globalThis);
+  const {sortOrder,sortKey} = config;
   //prettier-ignore
   const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, MutablePath, ImmutablePath, MutablePath,arrayDiff, objectDiff, Object2Array, XmlObject, XmlAttr, MutableXPath,ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient,    PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc,
  CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes , Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer,EagleElementProxy,  BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, 
@@ -1985,7 +1988,6 @@ const AppMain = (window.onload = async () => {
   window.documentList = data = new DocumentList();
   React.render(h(DisplayList, { data }), Element.find('#display'));
 
-  let sortOrder = (window.sortOrder = trkl(false));
 
   React.render(
     h(SlotProvider, {}, [
@@ -2264,8 +2266,8 @@ const AppMain = (window.onload = async () => {
         showSearch,
         changeInput,
         focusSearch,
-        sortKey: (globalThis.sortKey = trkl('name')),
-        sortOrder: (globalThis.sortOrder = trkl(1)),
+        sortKey,
+        sortOrder,
         makeSortCompare: key =>
           key == 'name' || !key
             ? function(a, b) {
