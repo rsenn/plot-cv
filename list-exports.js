@@ -168,7 +168,7 @@ function NodeToName(node) {
 function ProcessFile(file, params) {
   let data, b, ret;
   const { debug } = params;
-  console.log('ProcessFile', { debug });
+  //console.log('ProcessFile', { debug });
   if(file == '-') file = '/dev/stdin';
   if(file && fs.existsSync(file)) {
     data = fs.readFileSync(file, 'utf8');
