@@ -59,12 +59,8 @@ async function testVoronoi(filename) {
   //console.log('cells:', cells);
 
   let holes = edges.filter(e => !e.rSite).map(({ lSite, rSite, ...edge }) => new Point(lSite));
-  let rlines = edges
-    .filter(e => e.rSite)
-    .map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
-  let vlines = edges
-    .filter(e => e.va && e.vb)
-    .map(({ va, vb, ...edge }) => new Line(va, vb).round(0.127, 4));
+  let rlines = edges.filter(e => e.rSite).map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
+  let vlines = edges.filter(e => e.va && e.vb).map(({ va, vb, ...edge }) => new Line(va, vb).round(0.127, 4));
   let points2 = vertices.map(v => new Point(v).round(0.127, 4));
   const add = (arr, ...items) => [...(Util.isArray(arr) ? arr : []), ...items];
 
@@ -77,16 +73,7 @@ async function testVoronoi(filename) {
     }
   });
 
-  const lines = [
-    ...rlines.map(l => [
-      'line',
-      { ...l.toObject(t => t + ''), stroke: '#000', 'stroke-width': 0.1 }
-    ]),
-    ...vlines.map(l => [
-      'line',
-      { ...l.toObject(t => t + ''), stroke: '#f00', 'stroke-width': 0.1 }
-    ])
-  ];
+  const lines = [...rlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#000', 'stroke-width': 0.1 }]), ...vlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#f00', 'stroke-width': 0.1 }])];
 
   const circles = [
     ...holes.map(p => [

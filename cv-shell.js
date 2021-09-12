@@ -8,18 +8,7 @@ import PortableFileSystem from './lib/filesystem.js';
 import { Pointer } from './lib/pointer.js';
 import { read as fromXML, write as toXML } from './lib/xml.js';
 import inspect from './lib/objectInspect.js';
-import {
-  ReadFile,
-  LoadHistory,
-  ReadJSON,
-  MapFile,
-  ReadBJSON,
-  WriteFile,
-  WriteJSON,
-  WriteBJSON,
-  DirIterator,
-  RecursiveDirIterator
-} from './io-helpers.js';
+import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
 import { VideoSource, ImageSequence } from './qjs-opencv/js/cvVideo.js';
 
 let cmdhist;
@@ -143,8 +132,7 @@ async function main(...args) {
     let s = '';
     for(let arg of args) {
       if(s) s += ' ';
-      if(typeof arg != 'strping' || arg.indexOf('\x1b') == -1)
-        s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
+      if(typeof arg != 'strping' || arg.indexOf('\x1b') == -1) s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
       else s += arg;
     }
     fs.writeSync(debugLog, fs.bufferFrom(s + '\n'));

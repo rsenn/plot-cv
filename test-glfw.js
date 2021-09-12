@@ -1,16 +1,4 @@
-import {
-  poll,
-  context,
-  CONTEXT_VERSION_MAJOR,
-  CONTEXT_VERSION_MINOR,
-  OPENGL_PROFILE,
-  OPENGL_CORE_PROFILE,
-  OPENGL_FORWARD_COMPAT,
-  RESIZABLE,
-  SAMPLES,
-  Window,
-  Monitor
-} from 'glfw';
+import { poll, context, CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_PROFILE, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, RESIZABLE, SAMPLES, Window, Monitor } from 'glfw';
 import Util from './lib/util.js';
 import Console from 'console';
 import {
@@ -65,17 +53,7 @@ function Mat2Texture(texture_cv) {
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-  glTexImage2D(
-    GL_TEXTURE_2D,
-    0,
-    3,
-    texture_cv.cols,
-    texture_cv.rows,
-    0,
-    GL_RGB,
-    GL_UNSIGNED_BYTE,
-    buffer
-  );
+  glTexImage2D(GL_TEXTURE_2D, 0, 3, texture_cv.cols, texture_cv.rows, 0, GL_RGB, GL_UNSIGNED_BYTE, buffer);
   return texture[0];
 }
 

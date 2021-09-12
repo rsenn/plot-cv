@@ -127,8 +127,17 @@ function ShowOutput(ast, tree, flat, file, params) {
 
   if(!file.startsWith('./') && !file.startsWith('/') && !file.startsWith('..')) file = './' + file;
 
-  let importNode = new ImportDeclaration([...names.map(n => new ImportSpecifier(new Identifier(NodeToName(n))))], new Literal(`'${file}'`));
-  console.log('importNode', importNode);
+  let importNode = new ImportDeclaration(
+    [
+      ...names.reduce((acc, n) => {
+        let name = NodeToName(n);
+        if(name) acc.push(new ImportSpecifier(new Identifier(name)));
+        return acc;
+      }, [])
+    ],
+    new Literal(`'${file}'`)
+  );
+  //console.log('importNode', importNode);
 
   let code = PrintAst(importNode);
 
@@ -138,6 +147,8 @@ function ShowOutput(ast, tree, flat, file, params) {
 function NodeToName(node) {
   let id;
   if(Array.isArray(node) && node.length == 2) node = node[0];
+
+  if(node instanceof ExportDefaultDeclaration) return null;
 
   if(typeof node == 'object' && node != null) {
     if(node instanceof Identifier || node.type == 'Identifier' || 'name' in node) id = node.name;
@@ -149,7 +160,7 @@ function NodeToName(node) {
     if(id instanceof Identifier) id = Identifier.string(id);
   } else if(typeof node == 'number' || typeof node == 'string') id = node;
 
-  if(!id) throw new Error(`NodeToName(${inspect(node, { breakLength: 80 })})`);
+  if(!id) throw new Error(`NodeToName(${inspect(node, { breakLength: 120, multiline: true, compact: 0 })})`);
 
   return id;
 }
