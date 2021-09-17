@@ -1,11 +1,12 @@
 import { strerror, err, out, exit, open, loadFile } from 'std';
 import { read, signal, ttySetRaw, write } from 'os';
 import { errno, toString, toArrayBuffer, toPointer, pointerSize } from 'ffi';
-import { Socket, socket, AF_INET, SOCK_STREAM, IPPROTO_UDP, SockAddr as sockaddr_in/*ndelay, connect, sockaddr_in*/, select/*, fd_set, timeval, FD_SET, FD_CLR, FD_ISSET, FD_ZERO, errnos, send, recv*/ } from './socket.js';
+import { Socket, socket, AF_INET, SOCK_STREAM, IPPROTO_UDP, SockAddr as sockaddr_in /*ndelay, connect, sockaddr_in*/, select /*, fd_set, timeval, FD_SET, FD_CLR, FD_ISSET, FD_ZERO, errnos, send, recv*/ } from './socket.js';
 import fd_set from './quickjs/qjs-modules/lib/fd_set.js';
 import socklen_t from './quickjs/qjs-modules/lib/socklen_t.js';
 
-import { termios, tcgetattr, tcsetattr, TCSANOW, IGNPAR, IMAXBEL, IUTF8, OPOST, ONLCR, CR0, TAB0, BS0, VT0, FF0, EXTB, CS8, CREAD, ISIG, ECHOE, ECHOK, ECHOCTL, ECHOKE, VINTR, cfgetospeed, cfsetospeed, B57600, B115200 } from './term.js';
+import * as term from './term.js';
+console.log('x', { fd_set, socklen_t, term });
 
 function not(n) {
   return ~n >>> 0;
