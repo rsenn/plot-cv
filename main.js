@@ -899,17 +899,16 @@ function* PackageNames(doc = project.doc) {
 }
 let projectIndex;
 
-  function NextDocument(n = 1) {
-    let i;
-    const { projects } = globalThis;
-if(typeof projectIndex != 'number')
-projectIndex =  projects.indexOf(project);
+function NextDocument(n = 1) {
+  let i;
+  const { projects } = globalThis;
+  if(typeof projectIndex != 'number') projectIndex = projects.indexOf(project);
 
-++projectIndex;
-projectIndex %= projects.length;
-  
+  ++projectIndex;
+  projectIndex %= projects.length;
+
   return LoadDocument(projects[projectIndex]);
-  }
+}
 
 async function LoadDocument(project, parentElem) {
   open(false);
@@ -918,7 +917,7 @@ async function LoadDocument(project, parentElem) {
   if(typeof project == 'string') project = GetProject(project);
   console.log('project:', project);
 
-  config. currentProject(project.name);
+  config.currentProject(project.name);
 
   project.doc = await LoadFile(project).catch(err => console.error(err));
 
@@ -1044,11 +1043,11 @@ async function LoadDocument(project, parentElem) {
     let object = ReactComponent.toObject(Component);
     project.object = object;
     let rendered = object.children[0];
- console.debug('LoadDocument rendered:', rendered);
+    console.debug('LoadDocument rendered:', rendered);
 
-setTimeout(() => {
- SaveSVG();
-}, 500);
+    setTimeout(() => {
+      SaveSVG();
+    }, 500);
 
     //console.debug('LoadDocument element:', element);
     //console.debug('LoadDocument  project:', project);

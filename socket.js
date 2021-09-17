@@ -5,6 +5,7 @@ import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toPoint
 import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer, SyscallError } from './lib/misc.js';
 export { SyscallError } from './lib/misc.js';
 export { errno } from 'ffi';
+import socklen_t from './lib/socklen_t.js';
 
 function foreign(name, ret, ...args) {
   let fp = dlsym(RTLD_DEFAULT, name);
@@ -377,21 +378,6 @@ export class fd_set extends ArrayBuffer {
   [Symbol.for('nodejs.util.inspect.custom')]() {
     return this.array;
   }*/
-}
-
-export class socklen_t extends ArrayBuffer {
-  constructor(v) {
-    super(4);
-    Object.setPrototypeOf(this, new ArrayBuffer(4));
-
-    if(v != undefined) new Uint32Array(this)[0] = v | 0;
-  }
-
-  [Symbol.toPrimitive](hint) {
-    return new Uint32Array(this)[0];
-  }
-
-  [Symbol.toStringTag] = `[object socklen_t]`;
 }
 
 export function FD_SET(fd, set) {
