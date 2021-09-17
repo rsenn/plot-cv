@@ -17,19 +17,27 @@ import { NormalizeResponse, ResponseData, FetchCached, FetchURL } from './lib/fe
 
 const prng = new Alea(1598127218);
 
-export async function ListProjects(opts = {}) {
-  const { url, descriptions = true, names, filter } = opts;
-  console.log('ListProjects', { url, descriptions, names, filter });
-  let response;
-  if(!url) {
-    response = await fetch('files.html', {
+export async function AsyncFetch(url, params = {}) {
+return  await fetch('files.html', {
       method: 'post',
       mode: 'cors',
       cache: 'no-cache',
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ descriptions, names, filter })
+      body: JSON.stringify(params)
     })
+      .then(NormalizeResponse)
+      .catch(error => ({ error }));
+    };
+
+
+
+export async function ListProjects(opts = {}) {
+  const { url, descriptions = true, names, filter } = opts;
+  console.log('ListProjects', { url, descriptions, names, filter });
+  let response;
+  if(!url) {
+    response = await AsyncFetch('files.html', { descriptions, names, filter })
       .then(NormalizeResponse)
       .catch(error => ({ error }));
 

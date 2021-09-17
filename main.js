@@ -209,9 +209,9 @@ let config = {
   debugFlag: trkl(store.get('debug') || false),
   credentials: trkl(store.get('auth') || {}),
   showGrid: trkl(store.get('grid') || true),
-  sortOrder:   trkl(store.get('sortOrder') || -1),
-  sortKey:   trkl(store.get('sortKey') || 'name'),
-
+  sortOrder: trkl(store.get('sortOrder') || -1),
+  sortKey: trkl(store.get('sortKey') || 'name'),
+  currentProject: trkl(store.get('currentProject') || null)
 };
 
 const GetProject = arg => {
@@ -348,6 +348,8 @@ function setViewBox(svgOwner, box) {
   });
 }
 const ElementToXML = (e, predicate) => {
+  if(globalThis.XMLSerializer) return new XMLSerializer().serializeToString(e);
+
   const x = Element.toObject(e, { predicate });
 
   for(let [value, path] of deep.iterate(x, (v, k) => k[k.length - 1] == 'd')) {
@@ -895,6 +897,19 @@ function* PackageNames(doc = project.doc) {
     }
   }
 }
+let projectIndex;
+
+  function NextDocument(n = 1) {
+    let i;
+    const { projects } = globalThis;
+if(typeof projectIndex != 'number')
+projectIndex =  projects.indexOf(project);
+
+++projectIndex;
+projectIndex %= projects.length;
+  
+  return LoadDocument(projects[projectIndex]);
+  }
 
 async function LoadDocument(project, parentElem) {
   open(false);
@@ -902,6 +917,8 @@ async function LoadDocument(project, parentElem) {
 
   if(typeof project == 'string') project = GetProject(project);
   console.log('project:', project);
+
+  config. currentProject(project.name);
 
   project.doc = await LoadFile(project).catch(err => console.error(err));
 
@@ -1027,8 +1044,12 @@ async function LoadDocument(project, parentElem) {
     let object = ReactComponent.toObject(Component);
     project.object = object;
     let rendered = object.children[0];
+ console.debug('LoadDocument rendered:', rendered);
 
-    //console.debug('LoadDocument rendered:', rendered);
+setTimeout(() => {
+ SaveSVG();
+}, 500);
+
     //console.debug('LoadDocument element:', element);
     //console.debug('LoadDocument  project:', project);
 
@@ -1439,7 +1460,7 @@ const AuthorizationDialog = ({ onAuth, ...props }) => {
 const BindGlobal = Util.once(arg => trkl.bind(window, arg));
 
 const AppMain = (window.onload = async () => {
-  const {sortOrder,sortKey} = config;
+  const { sortOrder, sortKey } = config;
   //prettier-ignore
   const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, MutablePath, ImmutablePath, MutablePath,arrayDiff, objectDiff, Object2Array, XmlObject, XmlAttr, MutableXPath,ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient,    PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc,
  CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes , Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer,EagleElementProxy,  BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, 
@@ -1462,6 +1483,7 @@ const AppMain = (window.onload = async () => {
     ModifyColors,
     GerberLayers,
     LoadDocument,
+    NextDocument,
     ChooseDocument,
     GenerateVoronoi,
     MakeFitAction,
@@ -1987,7 +2009,6 @@ const AppMain = (window.onload = async () => {
   let data;
   window.documentList = data = new DocumentList();
   React.render(h(DisplayList, { data }), Element.find('#display'));
-
 
   React.render(
     h(SlotProvider, {}, [

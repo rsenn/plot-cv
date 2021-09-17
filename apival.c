@@ -139,4 +139,6 @@ main() {
   printf("SIGRTMIN = %zu\n", SIGRTMIN);
   printf("sizeof(dev_t) = %zu\n", sizeof(dev_t));
   printf("sizeof(mode_t) = %zu\n", sizeof(mode_t));
+  printf("sizeof(socklen_t) = %zu\n", sizeof(socklen_t));
+  printf("sizeof(sa_family_t) = %zu\n", sizeof(sa_family_t));
 }
