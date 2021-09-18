@@ -1,1 +1,0 @@
-quickjs/qjs-ffi/examples/telnet.js
