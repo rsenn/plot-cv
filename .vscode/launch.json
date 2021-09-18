@@ -34,7 +34,7 @@
             "name": "Launch QuickJS",
             "type": "quickjs",
             "request": "launch",
-            "program": "${workspaceFolder}/test-ecmascript2.js",
+            "program": "${workspaceFolder}/${relativeFile}",
             "runtimeExecutable": "/usr/bin/env",
             "runtimeArgs": [  "QUICKJS_DEBUG_ADDRESS=localhost:9001",
                 "/usr/local/bin/qjsm" ],
