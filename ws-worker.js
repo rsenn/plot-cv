@@ -3,7 +3,7 @@ import * as std from 'std';
 import * as os from 'os';
 import { Console } from 'console';
 
-var parent = os.Worker.parent;
+var parent = os.Worker?.parent;
 
 const log = (...args) => console.log('WORKER', ...args);
 
@@ -14,8 +14,11 @@ function WorkerMain() {
     prefix: '\x1b[38;5;128mWORKER\x1b[0m'
   });
 
-  log('WorkerMain.parent', parent);
-  parent.onmessage = e => HandleMessage.call(parent, e);
+  if(parent) {
+    log('WorkerMain.parent', parent);
+
+    parent.onmessage = e => HandleMessage.call(parent, e);
+  }
   os.sleep(500);
   //CreateServer();
 }
