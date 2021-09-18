@@ -1583,7 +1583,7 @@ const AppMain = (window.onload = async () => {
   });
 
   const logger = new Repeater(async (push, stop) => {
-    push(['DEBUi', null, null, 'Load ready!']);
+    push(['DEBUG', null, null, 'Load ready!']);
     window.pushlog = push;
     await stop;
   });

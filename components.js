@@ -346,12 +346,13 @@ export const BoardIcon = props => html`
 `;
 
 export const LibraryIcon = props => html`
-  <svg xmlns="http://www.w3.org/2000/svg">
-    <path d="M3.398 6.487v26.942c0 3.085 2.13 5.675 5.011 6.406V.107a6.56 6.56 0 00-5.011 6.38M30.122 0H11.644v40.009h18.478c3.64 0 6.59-2.967 6.59-6.581V6.487c0-3.641-2.95-6.487-6.59-6.487" fill="#444443" />
-    <path d="m30.312 19.791h-12.5v-12.5h12.5z" fill="#dedd00" />
-    <path d="M8.408 0v39.834l3.237.166V0z" fill="rgba(255,255,255,0)  " />
-  </svg>
-`;
+  <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <path d="M3.397 6.488v26.938c0 3.085 2.13 5.675 5.013 6.407V.105a6.561 6.561 0 00-5.012 6.38M30.122-.096H11.645v40.105h18.477a6.6 6.6 0 006.59-6.581V6.488a6.582 6.582 0 00-6.59-6.583" fill="#444443"/>
+    <path d="M30.313 19.791h-12.5v-12.5h12.5v12.5z" fill="#dedd00"/>
+  </g>
+</svg>`;
+
 export const GCodeIcon = props => html`<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
   <path d="M32.02 3.594c-21.347 24.27-10.673 12.135 0 0zm3.439 26.494a2.727 2.727 0 01-.7 1.675l-7.165 7.505a2.375 2.375 0 01-1.706.732H12.766c-3.32 0-5.978-2.8-5.978-6.245V6.25c0-1.735.675-3.302 1.754-4.433C9.629.702 11.108 0 12.766 0h16.708A5.86 5.86 0 0133.7 1.817a6.422 6.422 0 011.76 4.433z" fill="#fff" />
   <path d="M33.079 6.25c-22.053 22.5-11.026 11.25 0 0zm2.38 23.837a2.728 2.728 0 01-.7 1.675l-7.165 7.505a2.375 2.375 0 01-1.707.733H12.765c-3.319 0-5.978-2.801-5.978-6.245V6.25a6.41 6.41 0 011.754-4.434C9.63.701 11.107 0 12.765 0h16.707A5.86 5.86 0 0133.7 1.816a6.421 6.421 0 011.759 4.434z" fill="#fff" />
@@ -418,10 +419,10 @@ export const File = ({ label, name, description, i, key, className = 'file', onP
       await load(name);
     });
   let id = key || i;
-  let style = { minWidth: '40px', width: '40px', height: '40px' };
-  let icon = /brd$/i.test(id + className) ? h(BoardIcon, { style }) : /sch$/i.test(id + className) ? h(SchematicIcon, {}) : /lbr$/i.test(id + className) ? h(LibraryIcon, {}) : undefined;
+  let iconProps = { style: { minWidth: '20px'/*, width: '40px', height: '40px'*/ } };
+  let icon = /brd$/i.test(id + className) ? h(BoardIcon, { ...iconProps, className: 'icon' }) : /sch$/i.test(id + className) ? h(SchematicIcon, {   ...iconProps,className: 'icon'}) : /lbr$/i.test(id + className) ? h(LibraryIcon, {  ...iconProps,className: 'icon'}) : undefined;
   let fileExt = path.extname(name).replace(/^\./, '');
-  if(!icon && FileIcons[fileExt]) icon = h(FileIcons[fileExt], { style });
+  if(!icon && FileIcons[fileExt]) icon = h(FileIcons[fileExt], {  ...iconProps, className: 'icon' });
   if(id) {
     id = isNaN(+id) ? i : id;
     id = 'file-' + id;
@@ -441,7 +442,7 @@ export const File = ({ label, name, description, i, key, className = 'file', onP
       )
     ]);
   }
-  icon = h('div', { style }, icon);
+  icon = h('div', {  ...iconProps, className: 'icon' }, icon);
   return h(
     Item,
     { className, id, 'data-filename': name, label, onPush, icon, ...props },
