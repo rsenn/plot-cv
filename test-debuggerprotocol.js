@@ -3,7 +3,7 @@ import * as os from 'os';
 import * as deep from './lib/deep.js';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './fcntl.js';
 import { errno } from 'ffi';
-import { Socket, WaitRead, socket, EAGAIN, AF_INET, SOCK_STREAM, /*ndelay, */ connect, sockaddr_in, select, fd_set, timeval, FD_SET, FD_CLR, FD_ISSET, FD_ZERO, send, recv } from './socket.js';
+import { Socket, WaitRead, socket, EAGAIN, AF_INET, SOCK_STREAM, /*ndelay, */ connect, sockaddr_in, select, fd_set, timeval, FD_SET, FD_CLR, FD_ISSET, FD_ZERO, send, recv } from './quickjs/qjs-ffi/examples/socket.js';
 import Util from './lib/util.js';
 import { Console } from 'console';
 import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';

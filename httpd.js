@@ -6,7 +6,7 @@ import * as util from 'util';
 import Util from './lib/util.js';
 import * as path from './lib/path.js';
 import * as deep from './lib/deep.js';
-import { Socket, IPPROTO_TCP } from './socket.js';
+import { Socket, IPPROTO_TCP } from './quickjs/qjs-ffi/examples/socket.js';
 import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
 
 var worker;
