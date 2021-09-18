@@ -12,35 +12,7 @@ import deep from './lib/deep.js';
 import Tree from './lib/tree.js';
 import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 import { Repeater } from './lib/repeater/repeater.js';
-import {
-  isStream,
-  AcquireReader,
-  AcquireWriter,
-  ArrayWriter,
-  readStream,
-  PipeTo,
-  WritableRepeater,
-  WriteIterator,
-  AsyncWrite,
-  AsyncRead,
-  ReadFromIterator,
-  WriteToRepeater,
-  LogSink,
-  StringReader,
-  LineReader,
-  DebugTransformStream,
-  CreateWritableStream,
-  CreateTransformStream,
-  RepeaterSource,
-  RepeaterSink,
-  LineBufferStream,
-  TextTransformStream,
-  ChunkReader,
-  ByteReader,
-  PipeToRepeater,
-  Reader,
-  ReadAll
-} from './lib/stream/utils.js';
+import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater, Reader, ReadAll } from './lib/stream/utils.js';
 
 let filesystem, childProcess, search, files;
 let node2path, flat, value, list;
@@ -1459,9 +1431,7 @@ function GetLiteral(node) {
   return (deep.find(node, n => n instanceof Literal) || {}).value;
 }
 function IsBuiltinModule(name) {
-  return /^(std|os|ffi|net|_http_agent|_http_client|_http_common|_http_incoming|_http_outgoing|_http_server|_stream_duplex|_stream_passthrough|_stream_readable|_stream_transform|_stream_wrap|_tls_common|_tls_wrap|assert|async_hooks|buffer|child_process|cluster|console|constants|crypto|dgram|dns|domain|events|fs|http|http2|https|inspector|module|net|os|path|perf_hooks|process|punycode|querystring|readline|repl|stream|string_decoder|timers|tls|trace_events|tty|url|util|v8|vm|worker_threads|zlib)$/.test(
-    name
-  );
+  return /^(std|os|ffi|net|_http_agent|_http_client|_http_common|_http_incoming|_http_outgoing|_http_server|_stream_duplex|_stream_passthrough|_stream_readable|_stream_transform|_stream_wrap|_tls_common|_tls_wrap|assert|async_hooks|buffer|child_process|cluster|console|constants|crypto|dgram|dns|domain|events|fs|http|http2|https|inspector|module|net|os|path|perf_hooks|process|punycode|querystring|readline|repl|stream|string_decoder|timers|tls|trace_events|tty|url|util|v8|vm|worker_threads|zlib)$/.test(name);
 }
 
 function GetFromPath([path, node], position) {

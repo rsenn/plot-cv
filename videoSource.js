@@ -63,9 +63,7 @@ export class ImageSequence {
 const isVideoPath = arg => /\.(3gp|avi|f4v|flv|m4v|m2v|mkv|mov|mp4|mpeg|mpg|ogm|vob|webm|wmv)$/i.test(arg);
 
 export class VideoSource {
-  static backends = Object.fromEntries(
-    ['ANY', 'VFW', 'V4L', 'V4L2', 'FIREWIRE', 'FIREWARE', 'IEEE1394', 'DC1394', 'CMU1394', 'QT', 'UNICAP', 'DSHOW', 'PVAPI', 'OPENNI', 'OPENNI_ASUS', 'ANDROID', 'XIAPI', 'AVFOUNDATION', 'GIGANETIX', 'MSMF', 'WINRT', 'INTELPERC', 'REALSENSE', 'OPENNI2', 'OPENNI2_ASUS', 'GPHOTO2', 'GSTREAMER', 'FFMPEG', 'IMAGES', 'ARAVIS', 'OPENCV_MJPEG', 'INTEL_MFX', 'XINE'].map(name => [name, cv['CAP_' + name]])
-  );
+  static backends = Object.fromEntries(['ANY', 'VFW', 'V4L', 'V4L2', 'FIREWIRE', 'FIREWARE', 'IEEE1394', 'DC1394', 'CMU1394', 'QT', 'UNICAP', 'DSHOW', 'PVAPI', 'OPENNI', 'OPENNI_ASUS', 'ANDROID', 'XIAPI', 'AVFOUNDATION', 'GIGANETIX', 'MSMF', 'WINRT', 'INTELPERC', 'REALSENSE', 'OPENNI2', 'OPENNI2_ASUS', 'GPHOTO2', 'GSTREAMER', 'FFMPEG', 'IMAGES', 'ARAVIS', 'OPENCV_MJPEG', 'INTEL_MFX', 'XINE'].map(name => [name, cv['CAP_' + name]]));
 
   constructor(...args) {
     if(args.length > 0) {

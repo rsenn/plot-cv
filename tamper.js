@@ -7641,17 +7641,7 @@
 
   Matrix.prototype.invert = function() {
     const det = Matrix.prototype.determinant.call(this);
-    return new Matrix([
-      (this[4] * this[8] - this[5] * this[7]) / det,
-      (this[2] * this[7] - this[1] * this[8]) / det,
-      (this[1] * this[5] - this[2] * this[4]) / det,
-      (this[5] * this[6] - this[3] * this[8]) / det,
-      (this[0] * this[8] - this[2] * this[6]) / det,
-      (this[2] * this[3] - this[0] * this[5]) / det,
-      (this[3] * this[7] - this[4] * this[6]) / det,
-      (this[6] * this[1] - this[0] * this[7]) / det,
-      (this[0] * this[4] - this[1] * this[3]) / det
-    ]);
+    return new Matrix([(this[4] * this[8] - this[5] * this[7]) / det, (this[2] * this[7] - this[1] * this[8]) / det, (this[1] * this[5] - this[2] * this[4]) / det, (this[5] * this[6] - this[3] * this[8]) / det, (this[0] * this[8] - this[2] * this[6]) / det, (this[2] * this[3] - this[0] * this[5]) / det, (this[3] * this[7] - this[4] * this[6]) / det, (this[6] * this[1] - this[0] * this[7]) / det, (this[0] * this[4] - this[1] * this[3]) / det]);
   };
 
   Matrix.prototype.scalar_product = function(f) {
