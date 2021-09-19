@@ -13,6 +13,7 @@ import PortableFileSystem from './lib/filesystem.js';
 import PortableChildProcess from './lib/childProcess.js';
 import { Console } from 'console';
 import { inspect } from 'util';
+import process from 'process';
 
 let lexer, parser, childProcess;
 
@@ -25,8 +26,9 @@ function PrintAst(ast, comments, printer = globalThis.printer) {
 let files = {};
 
 async function main(...argv) {
-  await PortableFileSystem(fs => (globalThis.fs = filesystem = fs));
-  await PortableChildProcess(cp => (childProcess = cp));
+  console.log('process:',process);
+ await PortableFileSystem(fs => (globalThis.fs = filesystem = fs));
+  //await PortableChildProcess(cp => (childProcess = cp));
   globalThis.console = new Console({
     stdout: process.stderr,
     inspectOptions: {
@@ -159,17 +161,11 @@ function NodeToName(node) {
     let firstId = idList[0];
     entries = entries.filter(([n, p]) => p.indexOf('init') == -1);
 
-    console.log(
-      'entries',
-      entries.map(([n, p]) => [p.join('.'), NodeType(deep.get(node, [...p].slice(0, -1))), n.type, n.name, p.length])
-    );
+    //console.log('entries', entries.map(([n, p]) => [p.join('.'), NodeType(deep.get(node, [...p].slice(0, -1))), n.type, n.name, p.length]));
 
     entries = entries.map(([n, p]) => [n.name, p.length, NodeType(deep.get(node, p.slice(0, -1))), [...Ancestors(n, p, (n, k) => [k, NodeType(n) ?? `[${k}]`, n.name])]]);
 
-    console.log(
-      'idList',
-      idList.map(([n, p]) => [ n.name, p.length].concat(Util.range(-5,-1).map(x=> NodeType(deep.get(node, p.slice(0, x))))))
-    );
+    //console.log('idList', idList.map(([n, p]) => [ n.name, p.length].concat(Util.range(-5,-1).map(x=> NodeType(deep.get(node, p.slice(0, x)))))));
     id = entries.map(e => e[0]);
     console.log('node.type', node.type);
   }

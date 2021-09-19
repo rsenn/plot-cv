@@ -14,6 +14,7 @@ import { Repeater } from './lib/repeater/repeater.js';
 import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater, Reader, ReadAll } from './lib/stream/utils.js';
 import * as fs from 'fs';
 import { Console } from 'console';
+import process from 'process';
 
 let childProcess, search, files;
 let node2path, flat, value, list;
@@ -438,8 +439,9 @@ function GenerateDistinctVariableDeclarations(variableDeclaration) {
 }
 
 async function main(...args) {
-  let consoleOpts;
-  globalThis.console = new Console((consoleOpts = { inspectOptions: { colors: true, depth: 6, compact: 1, breakLength: 80 } }));
+  //console.log('process:',process);
+ let consoleOpts;
+  globalThis.console = new Console((consoleOpts = { stdout: process.stdout, inspectOptions: { colors: true, depth: 1, compact:  false, breakLength: 80 } }));
   console.options = consoleOpts;
   let params = Util.getOpt(
     {
@@ -449,7 +451,7 @@ async function main(...args) {
     },
     args
   );
-  console.log('params', console.config({ compact: 10 }), params);
+  console.log('params',  params);
   const re = {
     name: /^(process|readline)$/,
     path: /(lib\/util.js$|^lib\/)/
@@ -549,21 +551,24 @@ async function main(...args) {
     let st = new Tree(ast);
 
     let astStr = JSON.stringify(ast, null, 2);
-    // Verbose('ast:', ast);
     fs.writeFileSync(path.basename(file, /\.[^.]+$/) + '.ast.json', astStr);
     Verbose(`${file} parsed:`, { data, error });
     function generateFlatAndMap() {
-      flat = deep.flatten(ast, new Map(), node => typeof node == 'object' && node != null);
-      console.log('flat:', flat);
-      map = Util.mapAdapter((key, value) =>
+           console.log('ast:', ast);
+ flat = deep.flatten(ast, new Map(), node => typeof node == 'object' && node != null);
+              console.log("flat:", [...flat].map(([p,n]) => [p, n]));
+       map = Util.mapAdapter((key, value) =>
         key !== undefined
           ? value !== undefined
             ? value === null
               ? deep.unset(ast, [...key])
               : deep.set(ast, [...key], value)
             : deep.get(ast, [...key])
-          : (function* () {
-              for(let [key, value] of flat.entries()) yield [key, key.apply(ast, true)];
+          : (function*  () {
+              for(let [key, value] of flat.entries()) {
+              
+               yield [key,deep.get(ast, key) ??  key.apply(ast, true)];
+             }
             })()
       );
       node2path = new WeakMap([...flat].map(([path, node]) => [node, path]));
@@ -600,7 +605,6 @@ async function main(...args) {
 
       again: while(true) {
         generateFlatAndMap();
-        //        console.log("flat:", [...flat].map(([p,n]) => [p, n]));
 
         //        moduleImports = [...flat];
         moduleImports = [...flat].filter(([p, n]) => {
@@ -1288,7 +1292,7 @@ async function ParseFile(file) {
     const debug = await Util.getEnv('DEBUG');
     console.log('FILE:', file);
     console.log('DEBUG:', debug);
-    console.log('DATA:', data);
+    console.log('DATA:', Util.abbreviate(data));
     parser = new ECMAScriptParser(data.toString(), file, debug ?? false);
     g.parser = parser;
     ast = parser.parseProgram();
