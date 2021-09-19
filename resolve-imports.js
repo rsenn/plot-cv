@@ -1,7 +1,6 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
-import PortableFileSystem from './lib/filesystem.js';
 import ConsoleSetup from './lib/consoleSetup.js';
-import Lexer, { PathReplacer, Location, Range } from './lib/ecmascript.js';
+import { Lexer, PathReplacer, Location } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
 import { Token } from './lib/ecmascript/token.js';
 import estree, { ImportSpecifier, VariableDeclaration, VariableDeclarator, ModuleSpecifier, ImportDeclaration, ExportNamedDeclaration, ExportDefaultDeclaration, ExportAllDeclaration, Identifier, MemberExpression, ESNode, CallExpression, ObjectPattern, ArrayPattern, Literal, AssignmentExpression, ExpressionStatement, ClassDeclaration, AssignmentProperty } from './lib/ecmascript/estree.js';
@@ -13,8 +12,10 @@ import Tree from './lib/tree.js';
 import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater, Reader, ReadAll } from './lib/stream/utils.js';
+import * as fs from 'fs';
+import { Console } from 'console';
 
-let filesystem, childProcess, search, files;
+let childProcess, search, files;
 let node2path, flat, value, list;
 const removeModulesDir = PrefixRemover([/node_modules\//g, /^\.\//g]);
 let name;
@@ -167,7 +168,7 @@ const IMPORT = 1;
 const EXPORT = 2;
 
 class ES6Env {
-  static getCwd = Util.memoize(() => filesystem.realpath('.') || path.resolve('.'));
+  static getCwd = Util.memoize(() => fs.realpathSync('.') || path.resolve('.'));
   static get cwd() {
     return ES6Env.getCwd();
   }
@@ -397,7 +398,7 @@ function PrefixRemover(reOrStr, replacement = '') {
 function DumpFile(name, data) {
   if(Util.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
-  filesystem.writeFile(name, data + '\n');
+  fs.writeFileSync(name, data + '\n');
   console.log(`Wrote ${name}: ${data.length} bytes`);
 }
 
@@ -438,11 +439,9 @@ function GenerateDistinctVariableDeclarations(variableDeclaration) {
 
 async function main(...args) {
   let consoleOpts;
-  await ConsoleSetup((consoleOpts = { colors: true, depth: 6, compact: 1, breakLength: 80 }));
+  globalThis.console = new Console(consoleOpts = { inspectOptions:  { colors: true, depth: 6, compact: 1, breakLength: 80 }});
   console.options = consoleOpts;
-  await PortableFileSystem(fs => (filesystem = fs));
-  await PortableChildProcess(cp => (childProcess = cp));
-  let params = Util.getOpt(
+   let params = Util.getOpt(
     {
       output: [true, null, 'o'],
       debug: [false, null, 'x'],
@@ -450,50 +449,37 @@ async function main(...args) {
     },
     args
   );
-  console.log('main', params);
+  console.log('params', console.config({ compact: 10 }), params);
   const re = {
     name: /^(process|readline)$/,
     path: /(lib\/util.js$|^lib\/)/
   };
-  /*let parameters =  params['@']; [];
 
-  while(/^-/.test(args[0])) parameters.push(args.shift());*/
   args = params['@'];
-
   if(args.length == 0) args = ['lib/geom/point.js', 'lib/geom/size.js', 'lib/geom/trbl.js', 'lib/geom/rect.js', 'lib/dom/element.js'];
-  let r = [];
+    console.log('args:', args);
+let r = [];
   let processed = [];
   let allImports = [];
-
   const dirs = [ES6Env.cwd, ...args.map(arg => path.dirname(arg))];
-
   search = MakeSearch(dirs);
-
-  console.log('search:', search);
+  //console.log('search:', search);
   let optind = 0;
 
   while(args.length > 0) {
     let arg = args.shift();
     while(/:[0-9]+:?$/.test(arg)) arg = arg.replace(/:[0-9]*$/g, '');
     let ret;
-
-    if((ret = await processFile(ES6Env.pathTransform(arg))) < 0) return -ret;
+  console.log('arg:', arg);
+    if((ret = await processFile(/*ES6Env.pathTransform*/(arg))) < 0) return -ret;
     optind++;
   }
 
-  //console.log('processed:', ...processed.map(file => `\n  ${file}`));
-
   let success = Object.entries(processed).filter(([k, v]) => !!v).length != 0;
-  // Util.exit(Number(processed.length == 0));
-
   console.log('processed files:', processed);
-
   DumpFile(`${name}.es`, r.join('\n'));
 
   function FriendlyPrintNode(n) {
-    //let anchestors = [n,...st.anchestors(n, n => n.type && n.type != 'Program' && n);
-    //          console.log('FriendlyPrintNode', st.pathOf(n));
-
     if(n.type)
       return Object.defineProperties([GetPosition(n), n.type || Util.className(n), /*st ? st.pathOf(n) : */ undefined, Util.abbreviate(Util.escape(PrintAst(n))), GetName(n) /*|| Symbol.for('default')*/], {
         inspectSymbol: {
@@ -507,7 +493,6 @@ async function main(...args) {
                 .join('') +
               '\n}'
             );
-
             return arr.join('\n  ');
           }
         },
@@ -520,15 +505,12 @@ async function main(...args) {
     return n;
   }
   function FriendlyPrintNodes(nodes) {
-    return /*n nodes instanceof ESNode ? FriendlyPrintNode(nodes):*/ Array.isArray(nodes) ? nodes.map(n => (Array.isArray(n) ? FriendlyPrintNodes(n) : FriendlyPrintNode(n))) : nodes;
+    return Array.isArray(nodes) ? nodes.map(n => (Array.isArray(n) ? FriendlyPrintNodes(n) : FriendlyPrintNode(n))) : nodes;
   }
 
   console.log(`\nModules:\n\n  ` + ES6Module.tree().replaceAll('\n', '\n  '));
   console.log('exportMap:', exportMap);
   console.log('importMap(1):', importMap);
-  /*console.log('importMap(2):',
-    //Object.fromEntries 
-    (    Object.entries(importMap).map(([file,imports]) => [file, Object.entries(imports).map(([name, entry]) => [name, PrintNodes(entry)])]) )  );*/
 
   function removeFile(file) {
     Util.remove(args, file);
@@ -536,8 +518,7 @@ async function main(...args) {
   }
 
   async function processFile(file, depth = 0) {
-    Verbose(`processFile[${depth}]`);
-    ///console.log(`ParentPackage(${file}) = ${ParentPackage(file)}`);
+    Verbose(`processFile[${depth}] '${file}'`);
 
     function Verbose(...args) {
       console.log(...[`${file}:`, ...args]);
@@ -559,7 +540,7 @@ async function main(...args) {
     let thisdir = path.dirname(file);
     let absthisdir = path.resolve(thisdir);
     let moduleImports, imports;
-    // Verbose('processing:', { file, thisdir });
+    Verbose('processing:', { file, thisdir });
 
     const result = await ParseFile(file);
     /// Verbose('result:', result);
@@ -569,18 +550,11 @@ async function main(...args) {
 
     let astStr = JSON.stringify(ast, null, 2);
     // Verbose('ast:', ast);
-    filesystem.writeFile(path.basename(file, /\.[^.]+$/) + '.ast.json', astStr);
-
-    //Verbose(`${file} parsed:`, { data, error });
-
+    fs.writeFileSync(path.basename(file, /\.[^.]+$/) + '.ast.json', astStr);
+    Verbose(`${file} parsed:`, { data, error });
     function generateFlatAndMap() {
-      /*flat = GenerateFlatMap(ast,
-        [],
-        node => node instanceof ESNode,
-        (p, n) => [new ImmutablePath(p), n]
-      );*/
       flat = deep.flatten(ast, new Map(), node => typeof node == 'object' && node != null);
-      //      console.log("flat:", flat);
+      console.log('flat:', flat);
       map = Util.mapAdapter((key, value) =>
         key !== undefined
           ? value !== undefined
@@ -1273,24 +1247,24 @@ async function main(...args) {
 }
 
 function FdReader(fd, bufferSize = 1024) {
-  let buf = filesystem.buffer(bufferSize);
+  let buf = fs.buffer(bufferSize);
   return new Repeater(async (push, stop) => {
     let ret;
     do {
-      let r = await filesystem.waitRead(fd);
-      ret = filesystem.read(fd, buf);
+      let r = await fs.waitRead(fd);
+      ret = fs.read(fd, buf);
       if(ret > 0) {
         let data = buf.slice(0, ret);
-        await push(filesystem.bufferToString(data));
+        await push(fs.bufferToString(data));
       }
     } while(ret == bufferSize);
     stop();
-    filesystem.close(fd);
+    fs.close(fd);
   });
 }
 
 async function Prettier(file) {
-  let input = filesystem.open(file, 'r');
+  let input = fs.open(file, 'r');
   let proc = childProcess('sh', ['-c', `node_modules/.bin/prettier --config .prettierrc --parser babel <'${file}' | tee '${file}.prettier'`], {
     block: false,
     stdio: [input, 'pipe', 'pipe']
@@ -1304,7 +1278,7 @@ async function Prettier(file) {
 async function ParseFile(file) {
   let data, error, ast, flat;
   try {
-    data = filesystem.readFile(file);
+    data = fs.readFileSync(file);
 
     //data = await Prettier(file);
     // console.log('data:', Util.abbreviate(Util.escape(data + ''), 40));
@@ -1312,7 +1286,9 @@ async function ParseFile(file) {
 
     ECMAScriptParser.instrumentate();
     const debug = await Util.getEnv('DEBUG');
+    console.log('FILE:', file);
     console.log('DEBUG:', debug);
+    console.log('DATA:', data);
     parser = new ECMAScriptParser(data.toString(), file, debug ?? false);
     g.parser = parser;
     ast = parser.parseProgram();
@@ -1350,20 +1326,20 @@ function GetPosition(node) {
 function GetFile(module, position) {
   let r;
   let file = Util.isObject(position) && typeof position.file == 'string' ? position.file : position;
-  if(position instanceof Range) position = position.start;
+  //if(position instanceof Range) position = position.start;
   // console.log('GetFile', { module, position, file }, Util.className(position));
   module = module.replace(/\?.*/g, '');
   if(module.startsWith('.') && typeof file == 'string' && !path.isAbsolute(module)) module = path.join(path.dirname(file), module);
   try {
-    if(!filesystem.exists(module)) {
+    if(!fs.exists(module)) {
       for(let name of MakeNames(module)) {
-        if(filesystem.exists(name)) {
+        if(fs.exists(name)) {
           module = name;
           break;
         }
       }
     }
-    if(filesystem.exists(module)) r = module;
+    if(fs.exists(module)) r = module;
     else r = SearchModuleInPath(module, file, position);
   } catch(err) {
     console.log(`GetFile(`, module, ', ', position, `) =`, err);
@@ -1451,10 +1427,10 @@ function GetBase(filename) {
 
 function ReaddirRecursive(dir) {
   let ret = [];
-  for(let entry of filesystem.readdir(dir)) {
+  for(let entry of fs.readdir(dir)) {
     if(entry == '.' || entry == '..') continue;
     let file = path.join(dir, entry);
-    if(filesystem.stat(file).isDirectory()) {
+    if(fs.stat(file).isDirectory()) {
       ret = ret.concat(ReaddirRecursive(file));
       continue;
     }
@@ -1500,7 +1476,7 @@ function MakeSearchPath(dirs, extra = 'node_modules') {
       const dir = parts.join('/');
       const extra_dir = path.join(dir, extra);
       if(extra == 'node_modules') if (i == 0) addPath(dir);
-      if(filesystem.exists(extra_dir)) addPath(extra_dir);
+      if(fs.existsSync(extra_dir)) addPath(extra_dir);
       i++;
       parts.pop();
     }
@@ -1510,7 +1486,7 @@ function MakeSearchPath(dirs, extra = 'node_modules') {
 }
 
 function CheckExists(path) {
-  let r = filesystem.exists(path);
+  let r = fs.exists(path);
   //console.log(`CheckExists('${path}') = ${r}`);
   return r;
 }
@@ -1532,13 +1508,13 @@ function GetMain(dir) {
   //console.log("GetMain",{indexes});
   for(let index of indexes) {
     let file = path.join(dir, index);
-    if(filesystem.exists(file)) return file;
+    if(fs.exists(file)) return file;
   }
 }
 
 function FileOrDirectory(relpath, callback = name => {}) {
   let names = MakeNames(relpath);
-  let index = names.findIndex(name => filesystem.exists(name));
+  let index = names.findIndex(name => fs.exists(name));
 
   if(index != -1) callback(names[index]);
   return index;
@@ -1549,7 +1525,7 @@ function FindModule(relpath) {
 
   FileOrDirectory(relpath, name => (relpath = name));
 
-  let st = filesystem.stat(relpath);
+  let st = fs.stat(relpath);
   let module;
   const name = path.basename(relpath);
   let pkg = GetPackage(relpath);
@@ -1595,14 +1571,14 @@ function SearchModuleInPath(name, _from, position) {
     for(let module of searchFor) {
       let modPath = path.join(dir, module);
       let p;
-      if(filesystem.exists(modPath)) {
-        let st = filesystem.stat(modPath);
+      if(fs.exists(modPath)) {
+        let st = fs.stat(modPath);
         if(st.isDirectory()) if (IsPackage(modPath)) AddPackage(modPath);
         if((p = FindModule(modPath))) return p;
       }
       if(!/\.js$/.test(modPath)) {
         modPath += '.js';
-        if(filesystem.exists(modPath)) if ((p = FindModule(modPath))) return p;
+        if(fs.exists(modPath)) if ((p = FindModule(modPath))) return p;
       }
     }
   }
@@ -1681,12 +1657,12 @@ function MakeNames(prefix) {
 function IsPackage(dir) {
   if(packages.has(dir)) return true;
   const packageFile = path.join(dir, 'package.json');
-  return filesystem.exists(packageFile);
+  return fs.exists(packageFile);
 }
 
 function AddPackage(dir) {
   const packageFile = path.join(dir, 'package.json');
-  const obj = JSON.parse(filesystem.readFile(packageFile));
+  const obj = JSON.parse(fs.readFileSync(packageFile));
   packages.set(dir, obj);
   return obj;
 }
@@ -1721,13 +1697,13 @@ function MakeSearch(dirs) {
     packages: [] //MakeSearchPath(dirs, 'package.json')
   };
   o.aliases = o.packages.reduce((acc, p) => {
-    let json = JSON.parse(filesystem.readFile(p));
+    let json = JSON.parse(fs.readFileSync(p));
     let aliases = json._moduleAliases || {};
     for(let alias in aliases) {
       let module = path.join(path.dirname(p), aliases[alias]);
-      if(!filesystem.exists(module)) throw new Error(`No such module alias from '${alias}' to '${aliases[alias]}'`);
+      if(!fs.exists(module)) throw new Error(`No such module alias from '${alias}' to '${aliases[alias]}'`);
       let file = FindModule(module);
-      let st = filesystem.stat(file);
+      let st = fs.stat(file);
       acc.set(alias, file);
     }
     return acc;

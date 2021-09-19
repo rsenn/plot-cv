@@ -346,12 +346,15 @@ async function SaveFile(filename, data, contentType) {
     },
     body: data
   });
-  let   { status, statusText } =response;
-//console.log('SaveFile', {filename,data, response});
-globalThis.saveResponse=response;
-  let body = await response.text().then(s => JSON.parse(s)).catch(() => null);
-  let headers = [...await response.headers.entries()];
-console.log('SaveFile', {body,headers});
+  let { status, statusText } = response;
+  //console.log('SaveFile', {filename,data, response});
+  globalThis.saveResponse = response;
+  let body = await response
+    .text()
+    .then(s => JSON.parse(s))
+    .catch(() => null);
+  let headers = [...(await response.headers.entries())];
+  console.log('SaveFile', { body, headers });
   const result = { status, statusText };
   const request = new Request(`/tmp/${filename}`);
   response = new Response(data, { status, statusText });
@@ -841,12 +844,13 @@ function* PackageNames(doc = project.doc) {
     }
   }
 }
-let projectIndex;
+
+//let projectIndex;
 
 function NextDocument(n = 1) {
   let i;
   const { projects } = globalThis;
-  if(typeof projectIndex != 'number') projectIndex = projects.indexOf(project);
+  if(typeof globalThis.projectIndex != 'number') globalThis.projectIndex = projects.indexOf(project);
   const cond = Util.isObject(n) && n instanceof RegExp ? (idx, i) => !n.test(projects[idx]?.name) : (idx, i) => i < n;
   let start = projectIndex;
   for(i = 0; cond(++projectIndex, i); ++i) {
@@ -857,8 +861,11 @@ function NextDocument(n = 1) {
   }
   LogJS.verbose(`NextDocument skipped ${projectIndex - start}`);
 
+  let next = projects[projectIndex];
+  config.currentProject(next.name);
+
   //console.log('NextDocument', `[${projectIndex}]`, projects[projectIndex].name);
-  return LoadDocument(projects[projectIndex]);
+  return LoadDocument(next);
 }
 
 async function LoadDocument(project, parentElem) {
@@ -1462,6 +1469,7 @@ const AppMain = (window.onload = async () => {
     EventEmitter,
     ...rpc2,
     ...components,
+    ...commands,
     fnmatch,
     PATH_FNM_MULTI,
     rpc: { ...rpc }

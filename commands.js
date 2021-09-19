@@ -102,7 +102,7 @@ export async function BoardToGerber(proj, opts = { fetch: true }) {
   result.data = response.data.data;
 
   if((opts.fetch || !gerber[opts.side].data) && response.file) {
-    response = await FetchCached(`static/${r.file.replace(/^\.\//, '')}`).then(ResponseData);
+    response = await FetchCached('static/'+r.file.replace(/^\.\//, '')).then(ResponseData);
     //console.debug('FetchURL response =', response);
     if(response) result.data = response;
   }
@@ -145,7 +145,7 @@ export async function GerberToGcode(project, allOpts = {}) {
     }
   }
   if((opts.fetch || typeof result.data != 'string') && result.file) {
-    response = await FetchCached(`static/${response.file.replace(/^\.\//, '')}`).then(ResponseData);
+    response = await FetchCached('static/'+response.file.replace(/^\.\//, '')).then(ResponseData);
     //console.debug('GerberToGcode result =', result);
     if(response.data) result.data = response.data;
   }
@@ -153,7 +153,7 @@ export async function GerberToGcode(project, allOpts = {}) {
   //  console.debug('GerberToGcode result =', result);
   if(!result.data)
     Util.lazyProperty(result, 'data', async () => {
-      let response = await FetchCached(`static/${response.file}`).then(ResponseData);
+      let response = await FetchCached('static/'+response.file).then(ResponseData);
       return response;
     });
   return result;
@@ -286,17 +286,23 @@ export async function ClearCache(match = /.*/) {
   }
 }
 
-export async function ShowCache(match = /.*/) {
+export async function ListCache(match = /.*/) {
   let pred = Util.predicate(match);
   let cache = await caches.open('fetch');
   let baseUrl = Util.makeURL({ location: '/' });
+  let result = [];
 
-  for(let request of await cache.keys()) {
+  for await(let request of await cache.keys()) {
     if(pred(request.url)) {
-      const file = request.url.replace(baseUrl, '');
-      console.info(`Cache entry ${file}`);
+      //yield request.url.replace(baseUrl, '');
+      result.push(request.url.replace(baseUrl, ''));
     }
   }
+  return result;
+}
+
+export async function ShowCache(match = /.*/) {
+  for(let url of await ListCache(match)) console.info(`Cache entry ${url}`);
 }
 
 export async function GetCache(match = /.*/, key = 'fetch') {
@@ -335,6 +341,7 @@ export default {
   GithubListContents,
   ListGithubRepoServer,
   ClearCache,
+  ListCache,
   ShowCache,
   GetCache,
   GithubRepositories
