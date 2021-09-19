@@ -440,8 +440,8 @@ function GenerateDistinctVariableDeclarations(variableDeclaration) {
 
 async function main(...args) {
   //console.log('process:',process);
- let consoleOpts;
-  globalThis.console = new Console((consoleOpts = { stdout: process.stdout, inspectOptions: { colors: true, depth: 1, compact:  false, breakLength: 80 } }));
+  let consoleOpts;
+  globalThis.console = new Console((consoleOpts = { stdout: process.stdout, inspectOptions: { colors: true, depth: 1, compact: false, breakLength: 80 } }));
   console.options = consoleOpts;
   let params = Util.getOpt(
     {
@@ -451,7 +451,7 @@ async function main(...args) {
     },
     args
   );
-  console.log('params',  params);
+  console.log('params', params);
   const re = {
     name: /^(process|readline)$/,
     path: /(lib\/util.js$|^lib\/)/
@@ -554,21 +554,23 @@ async function main(...args) {
     fs.writeFileSync(path.basename(file, /\.[^.]+$/) + '.ast.json', astStr);
     Verbose(`${file} parsed:`, { data, error });
     function generateFlatAndMap() {
-           console.log('ast:', ast);
- flat = deep.flatten(ast, new Map(), node => typeof node == 'object' && node != null);
-              console.log("flat:", [...flat].map(([p,n]) => [p, n]));
-       map = Util.mapAdapter((key, value) =>
+      console.log('ast:', ast);
+      flat = deep.flatten(ast, new Map(), node => typeof node == 'object' && node != null);
+      console.log(
+        'flat:',
+        [...flat].map(([p, n]) => [p, n])
+      );
+      map = Util.mapAdapter((key, value) =>
         key !== undefined
           ? value !== undefined
             ? value === null
               ? deep.unset(ast, [...key])
               : deep.set(ast, [...key], value)
             : deep.get(ast, [...key])
-          : (function*  () {
+          : (function* () {
               for(let [key, value] of flat.entries()) {
-              
-               yield [key,deep.get(ast, key) ??  key.apply(ast, true)];
-             }
+                yield [key, deep.get(ast, key) ?? key.apply(ast, true)];
+              }
             })()
       );
       node2path = new WeakMap([...flat].map(([path, node]) => [node, path]));

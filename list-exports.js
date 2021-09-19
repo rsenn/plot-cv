@@ -26,8 +26,8 @@ function PrintAst(ast, comments, printer = globalThis.printer) {
 let files = {};
 
 async function main(...argv) {
-  console.log('process:',process);
- await PortableFileSystem(fs => (globalThis.fs = filesystem = fs));
+ // console.log('process:', process);
+  await PortableFileSystem(fs => (globalThis.fs = filesystem = fs));
   //await PortableChildProcess(cp => (childProcess = cp));
   globalThis.console = new Console({
     stdout: process.stderr,

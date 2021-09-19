@@ -669,8 +669,8 @@ function ProcessFile(file, debug = true) {
 }
 
 function ParseECMAScript(file, debug = false) {
-   console.log(`Parsing '${file}'...`);
- let data = fs.readFileSync(file, 'utf-8');
+  console.log(`Parsing '${file}'...`);
+  let data = fs.readFileSync(file, 'utf-8');
   let ast, error;
   let parser;
   globalThis.parser = parser = new ECMAScriptParser(data?.toString ? data.toString() : data, file, debug);
