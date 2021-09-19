@@ -17,7 +17,7 @@ import { Console } from 'console';
 
 let childProcess, search, files;
 let node2path, flat, value, list;
-const removeModulesDir = PrefixRemover([/node_modules\//g, /^\.\//g]);
+const removeModulesDir = PrefixRemover([/node_modules[/]/g, /^\.\//g]);
 let name;
 let parser, printer;
 const g = globalThis;
@@ -439,9 +439,9 @@ function GenerateDistinctVariableDeclarations(variableDeclaration) {
 
 async function main(...args) {
   let consoleOpts;
-  globalThis.console = new Console(consoleOpts = { inspectOptions:  { colors: true, depth: 6, compact: 1, breakLength: 80 }});
+  globalThis.console = new Console((consoleOpts = { inspectOptions: { colors: true, depth: 6, compact: 1, breakLength: 80 } }));
   console.options = consoleOpts;
-   let params = Util.getOpt(
+  let params = Util.getOpt(
     {
       output: [true, null, 'o'],
       debug: [false, null, 'x'],
@@ -457,8 +457,8 @@ async function main(...args) {
 
   args = params['@'];
   if(args.length == 0) args = ['lib/geom/point.js', 'lib/geom/size.js', 'lib/geom/trbl.js', 'lib/geom/rect.js', 'lib/dom/element.js'];
-    console.log('args:', args);
-let r = [];
+  console.log('args:', args);
+  let r = [];
   let processed = [];
   let allImports = [];
   const dirs = [ES6Env.cwd, ...args.map(arg => path.dirname(arg))];
@@ -470,8 +470,8 @@ let r = [];
     let arg = args.shift();
     while(/:[0-9]+:?$/.test(arg)) arg = arg.replace(/:[0-9]*$/g, '');
     let ret;
-  console.log('arg:', arg);
-    if((ret = await processFile(/*ES6Env.pathTransform*/(arg))) < 0) return -ret;
+    console.log('arg:', arg);
+    if((ret = await processFile(/*ES6Env.pathTransform*/ arg)) < 0) return -ret;
     optind++;
   }
 

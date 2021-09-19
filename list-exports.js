@@ -1,17 +1,20 @@
 //import 'module-alias/register.js';
-import { ECMAScriptParser } from './lib/ecmascript/parser2.js';
+import { ECMAScriptParser } from './lib/ecmascript/parser.js';
 import { PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
 import { ImportDeclaration, ImportSpecifier, Identifier, Literal, TemplateLiteral, CallExpression, ExportNamedDeclaration, ExportDefaultDeclaration } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import Tree from './lib/tree.js';
 import fs from 'fs';
-import * as deep from './lib/deep.js';
-import { Console } from 'console';
+import deep from './lib/deep.js';
 import { Stack } from './lib/stack.js';
 import { IfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
+import PortableFileSystem from './lib/filesystem.js';
+import PortableChildProcess from './lib/childProcess.js';
+import { Console } from 'console';
+import { inspect } from 'util';
 
-let lexer, parser;
+let lexer, parser, childProcess;
 
 function PrintAst(ast, comments, printer = globalThis.printer) {
   let output = printer.print(ast);
@@ -21,19 +24,22 @@ function PrintAst(ast, comments, printer = globalThis.printer) {
 
 let files = {};
 
-function main(...argv) {
+async function main(...argv) {
+  await PortableFileSystem(fs => (globalThis.fs = filesystem = fs));
+  await PortableChildProcess(cp => (childProcess = cp));
   globalThis.console = new Console({
-    stdout: process.stdout,
+    stdout: process.stderr,
     inspectOptions: {
       colors: true,
-      depth: 5,
-      breakLength: null,
-      maxStringLength: Infinity,
-      maxArrayLength: 100,
-      compact: 2,
+      depth: 2,
+      breakLength: 1000,
+      maxStringLength: 300,
+      maxArrayLength: Infinity,
+      compact: 1,
       customInspect: true
     }
   });
+
   let params = Util.getOpt(
     {
       help: [
@@ -103,18 +109,12 @@ try {
 function ShowOutput(ast, tree, flat, file, params) {
   const output_file = params['output-js'] ?? '/dev/stdout';
 
-  /*let nodes = deep.select(ast, node => /Import|Export/.test(Util.className(node)), deep.RETURN_VALUE);
-  console.log('nodes:', nodes);/
-*/ const flags = deep.RETURN_VALUE_PATH;
+  const flags = deep.RETURN_VALUE_PATH;
   let nodes = [...deep.select(ast, (node, key) => ['exported', 'imported', 'local'].indexOf(key) != -1, flags), ...deep.select(ast, (node, key) => /Export/.test(node.type), flags)].map(([node, path]) => [node, path.slice(0, -1), deep.get(ast, path.slice(0, -1))]);
-
   let names = nodes.filter(([n, p, parent]) => !/Import/.test(parent.type)).map(([node, path, parent]) => (node.declaration && node.declaration.id ? node.declaration.id : node));
-
   let defaultExport = deep.find(ast, node => node instanceof ExportDefaultDeclaration, deep.RETURN_VALUE);
   //console.log('names:', names);
-
   if(!file.startsWith('./') && !file.startsWith('/') && !file.startsWith('..')) file = './' + file;
-
   let importNode = new ImportDeclaration(
     [
       ...names
@@ -133,6 +133,9 @@ function ShowOutput(ast, tree, flat, file, params) {
 
   WriteFile(output_file, code);
 }
+function NodeType(node) {
+  if(typeof node == 'object') return typeof node.type == 'string' ? node.type : Util.className(node);
+}
 
 function NodeToName(node) {
   let id;
@@ -150,15 +153,75 @@ function NodeToName(node) {
     if(id instanceof Identifier) id = Identifier.string(id);
   } else if(typeof node == 'number' || typeof node == 'string') id = node;
 
-  if(!id) throw new Error(`NodeToName(${inspect(node, { breakLength: 120, multiline: true, compact: 0 })})`);
+  if(/*0 ||*/ !id) {
+    let entries = deep.select(node, (n, p) => p[p.length - 1] == 'id' && typeof n == 'object' && n != null && (n.name || (n.type ?? n.kind) == 'Identifier'), deep.RETURN_VALUE_PATH);
+    let idList = deep.select(node, (n, p) => p[p.length - 1] == 'id' && typeof n == 'object' && n != null && (n.type ?? n.kind) == 'Identifier', deep.RETURN_VALUE_PATH);
+    let firstId = idList[0];
+    entries = entries.filter(([n, p]) => p.indexOf('init') == -1);
+
+    console.log(
+      'entries',
+      entries.map(([n, p]) => [p.join('.'), NodeType(deep.get(node, [...p].slice(0, -1))), n.type, n.name, p.length])
+    );
+
+    entries = entries.map(([n, p]) => [n.name, p.length, NodeType(deep.get(node, p.slice(0, -1))), [...Ancestors(n, p, (n, k) => [k, NodeType(n) ?? `[${k}]`, n.name])]]);
+
+    console.log(
+      'idList',
+      idList.map(([n, p]) => [ n.name, p.length].concat(Util.range(-5,-1).map(x=> NodeType(deep.get(node, p.slice(0, x))))))
+    );
+    id = entries.map(e => e[0]);
+    console.log('node.type', node.type);
+  }
+  if(!id) {
+    let message =
+      'NodeToName(' +
+      node.kind +
+      ' ' +
+      Util.abbreviate(
+        inspect(node, {
+          breakLength: 1000,
+          multiline: false,
+          compact: 100,
+          depth: 2,
+          colors: true,
+          maxStringLength: 30,
+          maxArrayLength: 2
+        }),
+        500
+      );
+    console.log(message);
+    let e = new Error(message);
+    throw e;
+  }
 
   return id;
+}
+
+function* Ancestors(obj, path, t = a => a) {
+  let i = 0;
+  //console.log(`Ancestors`,`[${path.length}]`);
+  for(let k of path) {
+    //console.log(` `, ...[i, k, NodeType(obj)].map(col => col+'').map((c,i) =>c.padEnd(i ? 20 : 7)), obj);
+    if(typeof obj == 'object') yield t(obj, k);
+    try {
+      obj = obj[k];
+    } catch(e) {
+      break;
+    }
+    ++i;
+  }
+}
+function NodeParent(obj, path) {
+  let r;
+  for(let n of Ancestors(obj, path)) if(n && n.type) r = n;
+  return r;
 }
 
 function ProcessFile(file, params) {
   let data, b, ret, parser;
   const { debug } = params;
-  //console.log('ProcessFile', { debug });
+  console.log(`Processing file '${file}'...`);
   if(file == '-') file = '/dev/stdin';
   if(file && fs.existsSync(file)) {
     data = fs.readFileSync(file, 'utf8');
@@ -204,7 +267,7 @@ function ProcessFile(file, params) {
 
   delete globalThis.parser;
 
-  std.gc();
+  //std.gc();
 }
 
 function Finish(err) {

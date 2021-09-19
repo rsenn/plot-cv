@@ -1,4 +1,4 @@
-import { ECMAScriptParser } from './lib/ecmascript/parser2.js';
+import { ECMAScriptParser } from './lib/ecmascript/parser.js';
 import { Printer, PathReplacer } from './lib/ecmascript.js';
 import { ESNode, ImportDeclaration, CallExpression } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';

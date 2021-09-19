@@ -354,7 +354,7 @@ async function SaveFile(filename, data, contentType) {
     .then(s => JSON.parse(s))
     .catch(() => null);
   let headers = [...(await response.headers.entries())];
-  console.log('SaveFile', { body, headers });
+  //console.log('SaveFile', { body, headers });
   const result = { status, statusText };
   const request = new Request(`/tmp/${filename}`);
   response = new Response(data, { status, statusText });

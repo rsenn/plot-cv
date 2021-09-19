@@ -1,5 +1,5 @@
 //import 'module-alias/register.js';
-import { ECMAScriptParser } from './lib/ecmascript/parser2.js';
+import { ECMAScriptParser } from './lib/ecmascript/parser.js';
 import { PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
 import {
