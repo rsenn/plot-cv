@@ -56,6 +56,11 @@ function TestWorker() {
   worker.onmessage = WorkerMessage;
   console.log('TestWorker', worker.onmessage);
 
+  os.setReadHandler(0, () => {
+    let line = process.stdin.getline();
+
+    worker.postMessage({ line });
+  });
   /* while(1){
     os.sleep(500);
   }*/
@@ -64,7 +69,7 @@ function TestWorker() {
 let sock, connection;
 
 function WorkerMessage(e) {
-  // console.log('WorkerMessage', e);
+  console.log('WorkerMessage', e);
   var ev = e.data;
   const { message, id } = ev;
 

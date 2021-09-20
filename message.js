@@ -6,7 +6,6 @@ export class Message {
   static TYPE_ID = 0x2606;
 
   constructor(...args) {
-
     if(args.length == 1) {
       Object.assign(this, typeof args[0] == 'string' ? Message.decode(args[0]) : Util.filterOutMembers(args[0], v => v == undefined));
     } else {
@@ -17,8 +16,6 @@ export class Message {
       if(body !== undefined) this.body = body;
     }
     const { origin, recipient, type, body } = this;
-
-
   }
 
   static isId(char) {
@@ -71,8 +68,7 @@ export class Message {
     return o;
   }
 
-   get data() {
-
+  get data() {
     let data = this.encode();
 
     return data;
@@ -94,10 +90,11 @@ export class Message {
     return r;
   }
 
-   get json() {
+  get json() {
     const { body } = this;
-    let r = Util.tryCatch(() => JSON.parse(body),
-      (obj) => obj,
+    let r = Util.tryCatch(
+      () => JSON.parse(body),
+      obj => obj,
       () => null
     );
 
@@ -115,7 +112,6 @@ export class Message {
 
 function decodeBody(str) {
   if(str[0] == ':') {
-
     return JSON.parse(unescape(str.substring(1)));
   }
   return str;
@@ -125,7 +121,6 @@ function encodeBody(body) {
   if(typeof body == 'string') return body;
   if(body == undefined) return undefined;
 
-
-  return ':' +  JSON.stringify(body);
+  return ':' + JSON.stringify(body);
 }
 export default Message;

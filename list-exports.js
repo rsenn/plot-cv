@@ -295,4 +295,4 @@ function NodeParent(obj, path) {
   let r;
   for(let n of Ancestors(obj, path)) if(n && n.type) r = n;
   return r;
-} 
+}

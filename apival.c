@@ -67,8 +67,8 @@ main() {
   printf("ts.tv_nsec %lu %lu\n", offsetof(struct timespec, tv_nsec), sizeof(ts.tv_nsec));
   printf("sizeof(struct timespec) %lu\n", sizeof(struct timespec));
   printf("sizeof(clockid_t) %lu\n", sizeof(clockid_t));
-  printf("const PAGE_SIZE = %d;\n", sysconf(_SC_PAGE_SIZE));
-  printf("const PAGE_SIZE = 0x%x;\n", sysconf(_SC_PAGE_SIZE));
+  printf("const PAGE_SIZE = %ld;\n", sysconf(_SC_PAGE_SIZE));
+  printf("const PAGE_SIZE = 0x%lx;\n", sysconf(_SC_PAGE_SIZE));
   printf("const CLOCK_REALTIME = %d;\n", CLOCK_REALTIME);
   printf("const CLOCK_REALTIME_COARSE = %d;\n", CLOCK_REALTIME_COARSE);
   printf("const CLOCK_MONOTONIC = %d;\n", CLOCK_MONOTONIC);
@@ -132,13 +132,19 @@ main() {
 
   for(size_t i = 0; i < 256; i++) map[i] = escape_char_pred(i);
   for(size_t i = 0; i < 256; i++) { printf("%s0x%02x", i > 0 ? ", " : "", map[i]); }
-  printf("PATH_MAX = %zu\n", PATH_MAX);
-  printf("LWS_PRE = %zu\n", LWS_PRE);
-  printf("NSIG = %zu\n", NSIG);
-  printf("SIGRTMAX = %zu\n", SIGRTMAX);
-  printf("SIGRTMIN = %zu\n", SIGRTMIN);
+  printf("PATH_MAX = %i\n", PATH_MAX);
+  printf("LWS_PRE = %i\n", LWS_PRE);
+  printf("NSIG = %i\n", NSIG);
+  printf("SIGRTMAX = %i\n", SIGRTMAX);
+  printf("SIGRTMIN = %i\n", SIGRTMIN);
   printf("sizeof(dev_t) = %zu\n", sizeof(dev_t));
   printf("sizeof(mode_t) = %zu\n", sizeof(mode_t));
   printf("sizeof(socklen_t) = %zu\n", sizeof(socklen_t));
   printf("sizeof(sa_family_t) = %zu\n", sizeof(sa_family_t));
+  printf("sizeof(struct timeval) = %zu\n", sizeof(struct timeval));
+  struct timeval tv;
+  printf("sizeof(tv.tv_sec) = %zu\n", sizeof(tv.tv_sec));
+  printf("sizeof(struct timespec) = %zu\n", sizeof(struct timespec));
+  printf("SOCK_STREAM = %i\n", SOCK_STREAM);
+  printf("SOCK_DGRAM = %i\n", SOCK_DGRAM);
 }

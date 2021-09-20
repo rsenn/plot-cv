@@ -18,11 +18,17 @@ function TestWorker() {
 
   counter = 0;
   worker.onmessage = HandleMessage;
-  console.log('TestWorker', worker.onmessage);
+  console.log(
+    'worker',
+    Object.getOwnPropertyNames(Object.getPrototypeOf(worker)).reduce((acc, n) => ({ ...acc, [n]: worker[n] }), {})
+  );
+  //console.log('TestWorker', worker.onmessage);
 
-  /* while(1){
-    os.sleep(500);
-  }*/
+  os.setReadHandler(0, () => {
+    let line = process.stdin.getline();
+
+    worker.postMessage({ line });
+  });
 }
 
 function HandleMessage(e) {

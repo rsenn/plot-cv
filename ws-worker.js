@@ -15,7 +15,10 @@ function WorkerMain() {
   });
 
   if(parent) {
-    log('WorkerMain.parent', parent);
+    log(
+      'WorkerMain.parent',
+      Object.getOwnPropertyNames(Object.getPrototypeOf(parent)).reduce((acc, n) => ({ ...acc, [n]: parent[n] }), {})
+    );
 
     parent.onmessage = e => HandleMessage.call(parent, e);
   }

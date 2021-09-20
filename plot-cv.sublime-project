@@ -120,7 +120,8 @@
 				"*.eslintignore",
 				"*.?#?",
 				"*.es",
-				"*.log"
+				"*.log",
+				"*.ast.json*"
 			],
 			"folder_exclude_patterns":
 			[
@@ -144,11 +145,15 @@
 				"Sources/[!p][!l]*",
 				"Sources/[^p][^l]*",
 				"*/test262/*",
-				"test262"
+				"test262",
+				"libwebsockets"
 			],
 			/*"folder_include_patterns": [ "src", "opencv", "quickjs", "lib" ],*/
 			"path": ".",
-		}
+		},
+		{
+			"path": "quickjs/qjs-ffi"
+		},
 	],
 	"settings":
 	{

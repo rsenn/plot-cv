@@ -24,7 +24,8 @@
     "lib/stack.js": "stack",
     "xrepl.js": "quickjs/qjs-modules/lib/repl.js",
     "terminal.js": "quickjs/qjs-modules/lib/terminal.js",
-    "x/quickjs/qjs-ffi/examples/socket.js": "sockets"
+    "x/quickjs/qjs-ffi/examples/socket.js": "sockets",
+    "quickjs/qjs-ffi/lib/socket.js": "sockets"
   },
   "author": "Roman Senn <roman.l.senn@gmail.com>",
   "license": "MIT",

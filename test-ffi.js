@@ -1,6 +1,6 @@
 import * as std from 'std';
 import * as os from 'os';
-import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './fcntl.js';
+import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './quickjs/qjs-ffi/examples/fcntl.js';
 import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toArrayBuffer, toPointer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_NODELETE, RTLD_NOLOAD, RTLD_DEEPBIND, RTLD_DEFAULT, RTLD_NEXT } from 'ffi';
 import * as ffi from 'ffi';
 import Util from './lib/util.js';

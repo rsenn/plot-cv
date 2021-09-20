@@ -1,9 +1,10 @@
 import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
-import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './fcntl.js';
+import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './quickjs/qjs-ffi/examples/fcntl.js';
 import { errno } from 'ffi';
-import { Socket, WaitRead, socket, EAGAIN, AF_INET, SOCK_STREAM, /*ndelay, */ connect, sockaddr_in, select, fd_set, timeval, FD_SET, FD_CLR, FD_ISSET, FD_ZERO, send, recv } from './quickjs/qjs-ffi/examples/socket.js';
+import { Socket, socket, EAGAIN, AF_INET, SOCK_STREAM, /*ndelay, */ SockAddr, select } from './quickjs/qjs-ffi/examples/socket.js';
+import { fd_set, FD_SET, FD_CLR, FD_ISSET, FD_ZERO } from './quickjs/qjs-modules/lib/fd_set.js';
 import Util from './lib/util.js';
 import { Console } from 'console';
 import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
@@ -41,21 +42,23 @@ async function main(...args) {
 
   const [address = '127.0.0.1', port = 9000] = args;
 
-  let sock = new Socket();
+  let sock = new Socket(AF_INET, SOCK_STREAM);
+  let addr = new SockAddr(AF_INET, address, port);
+
   console.log('socket() fd =', +sock);
 
   let ret;
   let debug;
 
   if(listen) {
-    ret = sock.bind(address, port);
-    retValue(ret, `sock.bind(${address}, ${port})`);
+    ret = sock.bind(addr);
+    retValue(ret, `sock.bind(${addr})`);
     ret = sock.listen();
     retValue(ret, `sock.listen())`);
   } else {
     sock.ndelay(true);
-    ret = sock.connect(address, port);
-    retValue(ret, `sock.connect(${address}, ${port})`);
+    ret = sock.connect(addr);
+    retValue(ret, `sock.connect(${addr})`);
   }
 
   /*  ret = sendRequest(+sock, 'next');
@@ -63,13 +66,14 @@ async function main(...args) {
 
   IOLoop();
 
-  console.log('debuggerprotocol');
+  console.log('debuggerprotocol', sock);
 
   function IOLoop() {
     //const buf = new ArrayBuffer(1024);
     const rfds = new fd_set();
     const wfds = new fd_set();
 
+    console.log('IOLoop', sock);
     FD_SET(+sock, wfds);
 
     do {

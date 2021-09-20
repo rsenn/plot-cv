@@ -142,14 +142,14 @@ export class DebuggerProtocol {
     let lengthBuf = new ArrayBuffer(9);
     let jsonBuf;
 
-    let r = sock.read(lengthBuf);
+    let r = sock.recv(lengthBuf);
     if(r <= 0) {
       if(r < 0 && sock.errno != sock.EAGAIN) throw new Error(`read error ${sock.error()}`);
     } else {
       let len = ArrayBufferToString(lengthBuf);
       let size = parseInt(len, 16);
       jsonBuf = new ArrayBuffer(size);
-      r = sock.read(jsonBuf);
+      r = sock.recv(jsonBuf);
       // console.log(`Socket(${sock.fd}).read =`, r);
       if(r <= 0) {
         if(r < 0 && sock.errno != sock.EAGAIN) throw new Error(`read error ${sock.error()}`);
