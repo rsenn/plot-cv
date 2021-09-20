@@ -946,7 +946,7 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
 
   if(args.indexOf('-ast-dump=json') != -1) {
     args.unshift(compiler ?? 'clang');
-    args = ['sh', '-c', `exec ${args.map(p => (/\ /.test(p) ? `'${p}'` : p)).join(' ')}${output ? ` 1>${output}` : ''}`];
+    args = ['sh', '-c', 'exec '+args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ')+(output ? ` 1>${output}` : '')];
   } else {
     if(output) {
       args.unshift(output);
@@ -955,7 +955,7 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
     args.unshift(compiler ?? 'clang');
   }
 
-  console.log(`SpawnCompiler: ${args.map(p => (/\ /.test(p) ? `"${p}"` : p)).join(' ')}`);
+  console.log('SpawnCompiler', args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ')+(output ? ` 1>${output}` : ''));
 
   let child = spawn(args, {
     block: false,
@@ -2151,9 +2151,9 @@ export function NodePrinter(ast) {
             isArray
           } = cxx_new_expr;
           //console.log('CXXNewExpr', cxx_new_expr);
-
+          type = type.trim();
           if(isArray) {
-            put(`new ${type.replace(/[\s*]*$/g, '')}[`);
+            put(`new ${type)}[`);
           } else {
             put(`new ${type} (`);
           }
