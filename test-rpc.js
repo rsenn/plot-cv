@@ -1,7 +1,6 @@
 import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
-//import fs from './lib/filesystem.js';
 import * as path from './lib/path.js';
 import Util from './lib/util.js';
 import { Console } from 'console';
@@ -19,6 +18,8 @@ import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
 import rpc from './quickjs/qjs-net/rpc.js';
 //import { RPCServer, RPCClient, RPCApi, RPCSocket,RPCFactory } from './quickjs/qjs-net/rpc.js';
 import * as rpc2 from './quickjs/qjs-net/rpc.js';
+
+globalThis.fs = fs;
 
 extendArray();
 
