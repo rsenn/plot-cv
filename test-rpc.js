@@ -10,7 +10,7 @@ import * as Terminal from './terminal.js';
 import * as fs from './lib/filesystem.js';
 import { extendArray } from './lib/misc.js';
 import * as net from 'net';
-import { Socket, recv, send, errno } from './quickjs/qjs-ffi/lib/socket.js';
+import { Socket } from './quickjs/qjs-ffi/lib/socket.js';
 import { EventEmitter, EventTarget, eventify } from './lib/events.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
@@ -63,7 +63,8 @@ function main(...args) {
       depth: Infinity,
       compact: 1,
       customInspect: true,
-      getters: false,
+      getters: true,
+      protoChain: 1,
       ...(config.inspectOptions ?? {})
     }
   });
@@ -218,9 +219,6 @@ function main(...args) {
     quit,
     exit: quit,
     Socket,
-    recv,
-    send,
-    errno,
     cli,
     net,
     std,
