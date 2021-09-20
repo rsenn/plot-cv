@@ -64,7 +64,7 @@ function main(...args) {
       compact: 1,
       customInspect: true,
       getters: true,
-      protoChain: 1,
+      protoChain: 3,
       ...(config.inspectOptions ?? {})
     }
   });
@@ -140,6 +140,14 @@ function main(...args) {
       sslPrivateKey,
       mounts: [
         ['/', '.', 'debugger.html'],
+        function proxy(req, res) {
+          const {url,method,headers} =req;
+          const {status,ok,type} = res;
+
+
+          console.log("proxy",{url,method,headers}, {status,ok,url,type});
+
+        },
         /*   function* index(req, res) {
           console.log(req.path, { req, res });
           yield '<html>';
@@ -149,7 +157,7 @@ function main(...args) {
           yield '</body>';
           yield '</html>';
         },*/
-        function* config(req, res) {
+        function* config(req, res) {f
           console.log(req.path, { req, res });
           yield '{}';
         },
@@ -195,7 +203,8 @@ function main(...args) {
 
       ...callbacks,
       onHttp(req, rsp) {
-        console.log('\x1b[38;5;82monHttp\x1b[0m(\n\t', req, ',\n\t', rsp, '\n)');
+        const {url,method,headers} =req;
+        console.log('\x1b[38;5;82monHttp\x1b[0m(\n\t', Object.setPrototypeOf({url,method,headers}, Object.getPrototypeOf(req)), ',\n\t', rsp, '\n)');
         /*   rsp = new net.Response(req.url, 301, true, 'application/binary');
           rsp.header('Blah', 'XXXX');*/
         return rsp;
