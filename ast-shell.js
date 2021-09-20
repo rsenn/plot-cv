@@ -334,7 +334,7 @@ bitsize(const void* p, size_t len) {
 
 function InspectStruct(decl, includes, compiler = 'clang') {
   if(typeof decl == 'string') {
-    let name = (/ /.test(decl) ? '' : 'struct ') + decl;
+    let name = (decl.indexOf(' ') != -1 ? '' : 'struct ') + decl;
     decl = Type.get(name, $.data);
     decl ??= $.getType(name);
     decl.name = name;

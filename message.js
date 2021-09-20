@@ -3,10 +3,9 @@ import Util from './lib/util.js';
 export class Message {
   static SENDER_ID = 0x2609;
   static RECIPIENT_ID = 0x2690;
-  static TYPE_ID = 0x2606; //0xfffc;
+  static TYPE_ID = 0x2606;
 
   constructor(...args) {
-    //console.log('new Message(', ...args, ')');
 
     if(args.length == 1) {
       Object.assign(this, typeof args[0] == 'string' ? Message.decode(args[0]) : Util.filterOutMembers(args[0], v => v == undefined));
@@ -19,8 +18,7 @@ export class Message {
     }
     const { origin, recipient, type, body } = this;
 
-    //console.log('new Message', Util.filterOutMembers({ origin, recipient, type, body }, v => v == undefined));
-    //console.log('new Message',  Util.abbreviate(this.encode(),80));
+
   }
 
   static isId(char) {
@@ -73,16 +71,16 @@ export class Message {
     return o;
   }
 
-  /* prettier-ignore */ get data() {
-    // console.log(`Message data: `, this);
+   get data() {
+
     let data = this.encode();
-    //  console.log(`Message data: '${data}'`);
+
     return data;
   }
 
   encode(plain = true) {
     const { body, recipient, origin, type, isJSON } = this;
-    //console.log('Message.encode',{body,recipient,origin, type});
+
     let r = encodeBody(body) || '';
 
     const prepend = plain ? str => (r = str + (r != '' ? ' ' : '') + r) : str => (r = str + r);
@@ -96,7 +94,7 @@ export class Message {
     return r;
   }
 
-  /* prettier-ignore */ get json() {
+   get json() {
     const { body } = this;
     let r = Util.tryCatch(() => JSON.parse(body),
       (obj) => obj,
@@ -117,7 +115,7 @@ export class Message {
 
 function decodeBody(str) {
   if(str[0] == ':') {
-    //console.debug('decodeBody', str);
+
     return JSON.parse(unescape(str.substring(1)));
   }
   return str;
@@ -127,7 +125,7 @@ function encodeBody(body) {
   if(typeof body == 'string') return body;
   if(body == undefined) return undefined;
 
-  //console.debug('encodeBody', JSON.stringify(body));
-  return ':' + /*escape*/ JSON.stringify(body);
+
+  return ':' +  JSON.stringify(body);
 }
 export default Message;

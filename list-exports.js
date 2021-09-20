@@ -5,17 +5,18 @@ import Printer from './lib/ecmascript/printer.js';
 import { ImportDeclaration, ImportSpecifier, Identifier, Literal, TemplateLiteral, CallExpression, ExportNamedDeclaration, ExportDefaultDeclaration } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import Tree from './lib/tree.js';
-import fs from 'fs';
+import * as fs from 'fs';
 import deep from './lib/deep.js';
 import { Stack } from './lib/stack.js';
 import { IfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
 import PortableFileSystem from './lib/filesystem.js';
-import PortableChildProcess from './lib/childProcess.js';
 import { Console } from 'console';
 import { inspect } from 'util';
 import process from 'process';
 
 let lexer, parser, childProcess;
+
+globalThis.fs = fs;
 
 function PrintAst(ast, comments, printer = globalThis.printer) {
   let output = printer.print(ast);
@@ -25,10 +26,7 @@ function PrintAst(ast, comments, printer = globalThis.printer) {
 
 let files = {};
 
-async function main(...argv) {
-  // console.log('process:', process);
-  await PortableFileSystem(fs => (globalThis.fs = filesystem = fs));
-  //await PortableChildProcess(cp => (childProcess = cp));
+function main(...argv) {
   globalThis.console = new Console({
     stdout: process.stderr,
     inspectOptions: {
@@ -68,6 +66,8 @@ async function main(...argv) {
     },
     argv
   );
+  console.log('params', params);
+
   if(params.debug >= 2) ECMAScriptParser.instrumentate();
   Util.defineGettersSetters(globalThis, {
     printer: Util.once(() => new Printer({ colors: false, indent: 2 }))
@@ -100,12 +100,90 @@ try {
   error = e;
 } finally {
   if(error) {
-    console.log(`FAIL: ${error.message}`, `\n  ` + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  ').split('\n').slice(0, 10).join('\n'));
+    console.log(`FAIL: ${Util.className(error)} ${error.message}`, `\n  ` + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  ').split('\n').slice(0, 10).join('\n'));
     console.log('FAIL');
     Util.exit(1);
   } else {
     console.log('SUCCESS');
   }
+}
+
+function ProcessFile(file, params) {
+  let data, b, ret, parser;
+  const { debug } = params;
+  console.log(`Processing file '${file}'...`);
+  if(file == '-') file = '/dev/stdin';
+  if(file && fs.existsSync(file)) {
+    data = fs.readFileSync(file, 'utf8');
+  } else {
+    file = 'stdin';
+    data = fs.readFileSync('/dev/stdin', 'utf8');
+  }
+  if(debug >= 2) ECMAScriptParser.instrumentate();
+  let ast, error;
+  parser = globalThis.parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
+  try {
+    ast = parser.parseProgram();
+  } catch(err) {
+    const tokens = [...parser.processed, ...parser.tokens];
+    const token = tokens[tokens.length - 1];
+    if(err !== null) {
+      throw err;
+    } else {
+      throw new Error(`parseProgram`);
+    }
+  }
+  parser.addCommentsToNodes(ast);
+
+  params['output-ast'] ??= file.replace(/.*\//g, '') + '.ast.json';
+  console.log('output-ast', params['output-ast']);
+
+  WriteFile(params['output-ast'], JSON.stringify(ast /*.toJSON()*/, null, 2));
+
+  let node2path = new WeakMap();
+  let nodeKeys = [];
+
+  let commentMap = new Map(
+    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node }]),
+    (a, b) => a - b
+  );
+
+  //console.log('commentMap:', commentMap);
+
+  let tree = new Tree(ast);
+
+  /*let flat = tree.flat(null, ([path, node]) => {
+    return !Util.isPrimitive(node);
+  });*/
+
+  ShowOutput(ast, tree, null, file, params);
+
+  //delete globalThis.parser;
+
+  //std.gc();
+}
+
+function Finish(err) {
+  let fail = !!err;
+  if(fail) {
+    err.stack = PathReplacer()('' + err.stack)
+      .split(/\n/g)
+      .filter(s => !/esfactory/.test(s))
+      .join('\n');
+  }
+  if(err) {
+    console.log(parser.lexer.currentLine());
+    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
+  }
+  let t = [];
+  if(globalThis.parser) {
+    lexer = globalThis.parser.lexer;
+    console.log(globalThis.parser.trace());
+  }
+  if(fail) {
+    console.log('\nERR:', err.msg, '\n', parser.lexer.currentLine());
+  }
+  return !fail;
 }
 
 function ShowOutput(ast, tree, flat, file, params) {
@@ -131,10 +209,12 @@ function ShowOutput(ast, tree, flat, file, params) {
   );
   //console.log('importNode', importNode);
 
-  let code = PrintAst(importNode);
+  let code = PrintAst(importNode) + '\n';
 
-  WriteFile(output_file, code);
+  if(output_file == '/dev/stdout') fs.writeSync(process.stdout.fd ?? process.stdout, code);
+  else WriteFile(output_file, code);
 }
+
 function NodeType(node) {
   if(typeof node == 'object') return typeof node.type == 'string' ? node.type : Util.className(node);
 }
@@ -161,7 +241,10 @@ function NodeToName(node) {
     let firstId = idList[0];
     entries = entries.filter(([n, p]) => p.indexOf('init') == -1);
 
-    //console.log('entries', entries.map(([n, p]) => [p.join('.'), NodeType(deep.get(node, [...p].slice(0, -1))), n.type, n.name, p.length]));
+    console.log(
+      'entries',
+      entries.map(([n, p]) => [p.join('.'), NodeType(deep.get(node, [...p].slice(0, -1))), n.type, n.name, p.length])
+    );
 
     entries = entries.map(([n, p]) => [n.name, p.length, NodeType(deep.get(node, p.slice(0, -1))), [...Ancestors(n, p, (n, k) => [k, NodeType(n) ?? `[${k}]`, n.name])]]);
 
@@ -212,79 +295,4 @@ function NodeParent(obj, path) {
   let r;
   for(let n of Ancestors(obj, path)) if(n && n.type) r = n;
   return r;
-}
-
-function ProcessFile(file, params) {
-  let data, b, ret, parser;
-  const { debug } = params;
-  console.log(`Processing file '${file}'...`);
-  if(file == '-') file = '/dev/stdin';
-  if(file && fs.existsSync(file)) {
-    data = fs.readFileSync(file, 'utf8');
-  } else {
-    file = 'stdin';
-    data = fs.readFileSync('/dev/stdin', 'utf8');
-  }
-  if(debug >= 2) ECMAScriptParser.instrumentate();
-  let ast, error;
-  parser = globalThis.parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
-  try {
-    ast = parser.parseProgram();
-  } catch(err) {
-    const tokens = [...parser.processed, ...parser.tokens];
-    const token = tokens[tokens.length - 1];
-    if(err !== null) {
-      throw err;
-    } else {
-      throw new Error(`parseProgram`);
-    }
-  }
-  parser.addCommentsToNodes(ast);
-
-  WriteFile(params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json', JSON.stringify(ast /*.toJSON()*/, null, 2));
-
-  let node2path = new WeakMap();
-  let nodeKeys = [];
-
-  let commentMap = new Map(
-    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node }]),
-    (a, b) => a - b
-  );
-
-  //console.log('commentMap:', commentMap);
-
-  let tree = new Tree(ast);
-
-  let flat = tree.flat(null, ([path, node]) => {
-    return !Util.isPrimitive(node);
-  });
-
-  ShowOutput(ast, tree, flat, file, params);
-
-  delete globalThis.parser;
-
-  //std.gc();
-}
-
-function Finish(err) {
-  let fail = !!err;
-  if(fail) {
-    err.stack = PathReplacer()('' + err.stack)
-      .split(/\n/g)
-      .filter(s => !/esfactory/.test(s))
-      .join('\n');
-  }
-  if(err) {
-    console.log(parser.lexer.currentLine());
-    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
-  }
-  let t = [];
-  if(globalThis.parser) {
-    lexer = parser.lexer;
-    console.log(parser.trace());
-  }
-  if(fail) {
-    console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
-  }
-  return !fail;
-}
+} 
