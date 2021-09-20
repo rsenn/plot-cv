@@ -1,10 +1,11 @@
 import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
-import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './quickjs/qjs-ffi/examples/fcntl.js';
+import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './quickjs/qjs-ffi/lib/fcntl.js';
 import { errno } from 'ffi';
-import { Socket, socket, EAGAIN, AF_INET, SOCK_STREAM, /*ndelay, */ SockAddr, select } from './quickjs/qjs-ffi/examples/socket.js';
-import { fd_set, FD_SET, FD_CLR, FD_ISSET, FD_ZERO } from './quickjs/qjs-modules/lib/fd_set.js';
+import { Socket, socket, EAGAIN, AF_INET, SOCK_STREAM, /*ndelay, */ SockAddr, select } from './quickjs/qjs-ffi/lib/socket.js';
+import { fd_set, FD_SET, FD_CLR, FD_ISSET, FD_ZERO } from './quickjs/qjs-ffi/lib/fd_set.js';
+import timeval from './quickjs/qjs-ffi/lib/timeval.js';
 import Util from './lib/util.js';
 import { Console } from 'console';
 import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
@@ -86,16 +87,16 @@ async function main(...args) {
       //  console.log('select(1)',  { rfds: rfds.array, wfds: wfds.array });
 
       ret = select(null, rfds, wfds, null, timeout);
-      let readable = rfds.array,
-        writable = wfds.array;
+      let readable = rfds.toArray(),
+        writable = wfds.toArray();
 
-      // console.log('select(2)',   {readable,writable });
+       console.log('select(2)',   {readable,writable });
 
-      if(writable.contains(sock.fd)) {
+      if(writable.indexOf(sock.fd) != -1) {
         if(!debug) debug = new DebuggerProtocol(sock);
         FD_CLR(sock.fd, wfds);
       }
-      if(readable.contains(sock.fd)) {
+      if(readable.indexOf(sock.fd) != -1) {
         if(listen) {
           let connection = sock.accept();
           if(!debug) debug = new DebuggerProtocol(connection);

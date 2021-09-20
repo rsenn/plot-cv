@@ -7,7 +7,7 @@ import * as path from './lib/path.js';
 import * as deep from './lib/deep.js';
 import child_process from './lib/childProcess.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
-import { Socket, IPPROTO_TCP } from './quickjs/qjs-ffi/examples/socket.js';
+import { Socket, IPPROTO_TCP } from './quickjs/qjs-ffi/lib/socket.js';
 import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
 
 console.log('toString', ArrayBufferToString(new Uint8Array([0x61, 0x62, 0x64, 0x65, 0x66, 0x20, 0xc3, 0xa4, 0xc3, 0xb6, 0xc3, 0xbc]).buffer));

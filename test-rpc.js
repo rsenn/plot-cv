@@ -10,7 +10,7 @@ import * as Terminal from './terminal.js';
 import * as fs from './lib/filesystem.js';
 import { extendArray } from './lib/misc.js';
 import * as net from 'net';
-import { Socket, recv, send, errno } from './quickjs/qjs-ffi/examples/socket.js';
+import { Socket, recv, send, errno } from './quickjs/qjs-ffi/lib/socket.js';
 import { EventEmitter, EventTarget, eventify } from './lib/events.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
