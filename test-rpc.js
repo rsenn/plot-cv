@@ -111,7 +111,7 @@ function main(...args) {
 
   repl.help = () => {};
   let { log } = console;
-  repl.show = arg => std.puts(typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options));
+  repl.show = arg => std.puts((typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options))+'\n');
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();

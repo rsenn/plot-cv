@@ -80,9 +80,10 @@ async function CommandLine() {
   };
   repl.show = value => {
     let first;
-    if(/*(Util.isArray(value) || Array.isArray(value) || value instanceof List)*/ Util.isObject(value) && (first = value.first ?? value[0]) && Util.isObject(first) && (first.type || first.kind)) console.log(Table(value));
+    if(Util.isObject(value) && (first = value.first ?? value[0]) && Util.isObject(first) && (first.type || first.kind)) console.log(Table(value));
     else if(typeof value == 'string') console.log(value);
     else console.log(inspect(value, { ...console.options, hideKeys: ['loc', 'range'] }));
+    std.out.puts('\n');
   };
   let debugLog = fs.openSync('debug.log', 'a');
   repl.debugLog = debugLog;
