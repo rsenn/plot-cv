@@ -92,6 +92,8 @@ export class List extends Array {
   }
 }
 
+Util.define(List.prototype, { [Symbol.toStringTag]: 'List' });
+
 export class Node {
   static ast2node = new WeakMap();
   static node2ast = new WeakMap();

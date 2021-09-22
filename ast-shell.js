@@ -4,7 +4,7 @@ import path from './lib/path.js';
 import * as deep from './lib/deep.js';
 import { Console } from 'console';
 import REPL from './xrepl.js';
-import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, VarDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter, isNode, SourceDependencies, GetTypeNode, GetFields, PathRemoveLoc, PrintAst, GetParams } from './clang-ast.js';
+import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, VarDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter, isNode, SourceDependencies, GetTypeNode, GetFields, PathRemoveLoc, PrintAst, GetParams, List } from './clang-ast.js';
 import Tree from './lib/tree.js';
 import { Pointer } from './lib/pointer.js';
 import * as Terminal from './terminal.js';
@@ -79,7 +79,8 @@ async function CommandLine() {
     }
   };
   repl.show = value => {
-    if((Util.isArray(value) || value instanceof Array) && Util.isObject(value.first) && value.first.kind) console.log(Table(value));
+    let first;
+    if(/*(Util.isArray(value) || Array.isArray(value) || value instanceof List)*/ Util.isObject(value) && (first = value.first ?? value[0]) && Util.isObject(first) && (first.type || first.kind)) console.log(Table(value));
     else if(typeof value == 'string') console.log(value);
     else console.log(inspect(value, { ...console.options, hideKeys: ['loc', 'range'] }));
   };
@@ -989,7 +990,8 @@ async function ASTShell(...args) {
     toString,
     Constants,
     PrintCArray,
-    GetParams
+    GetParams,
+    List
   });
 
   Pointer.prototype.chain = function(step, limit = Infinity) {
