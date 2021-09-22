@@ -11,7 +11,7 @@ import fs, { promises as fsPromises } from 'fs';
 import ConsoleSetup from './lib/consoleSetup.js';
 import SerialPort from 'serialport';
 import SerialStream from '@serialport/stream';
-import SerialBinding from '@serialport/bindings';
+//import SerialBinding from '@serialport/bindings';
 import Socket from './webSocket.js';
 import WebSocket from 'ws';
 import PortableFileSystem from './lib/filesystem.js';
@@ -19,7 +19,7 @@ import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/
 import { Repeater } from './lib/repeater/repeater.js';
 import { Message } from './message.js';
 
-SerialStream.Binding = SerialBinding;
+//SerialStream.Binding = SerialBinding;
 
 let filesystem, childProcess;
 const port = process.env.PORT || 3000;

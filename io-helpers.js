@@ -1,18 +1,23 @@
+import * as fs from 'fs';
 import * as os from 'os';
 import Util from './lib/util.js';
 import * as path from './lib/path.js';
 import { types } from 'util';
 
-export function IfDebug(token, loggerFn) {
+export function IfDebug(token) {
   const { DEBUG = '' } = process.env;
   const tokList = DEBUG.split(/[^A-Za-z0-9_]+/g);
 
-  if(tokList.indexOf(token) == -1) return () => {};
+  return tokList.indexOf(token) != -1;
+}
+
+export function LogIfDebug(token, loggerFn) {
+  if(!IfDebug(token)) return () => {};
 
   return loggerFn;
 }
 
-const debug = IfDebug('io-helpers', (...args) => console.log(...args));
+const debug = LogIfDebug('io-helpers', (...args) => console.log(...args));
 
 export function ReadFile(name, binary) {
   let ret = fs.readFileSync(name, binary ? null : 'utf-8');

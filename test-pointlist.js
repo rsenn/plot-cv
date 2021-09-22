@@ -3,11 +3,44 @@ import Util from './lib/util.js';
 
 //let args = [...process.argv].slice(2);
 
-let points = new PointList([new Point(536, 478), new Point(516, 673), new Point(492, 606), new Point(393, 444), new Point(302, 434), new Point(270, 405), new Point(221, 348), new Point(168, 374), new Point(210, 303), new Point(220, 252), new Point(233, 181), new Point(286, 139), new Point(300, 125), new Point(366, 66), new Point(457, 72), new Point(531, 57), new Point(614, 46), new Point(644, 98), new Point(677, 138), new Point(762, 169), new Point(849, 301), new Point(769, 318), new Point(757, 355), new Point(672, 391), new Point(597, 409)], Uint32Array);
+let points = new PointList(
+  [
+    new Point(536, 478),
+    new Point(516, 673),
+    new Point(492, 606),
+    new Point(393, 444),
+    new Point(302, 434),
+    new Point(270, 405),
+    new Point(221, 348),
+    new Point(168, 374),
+    new Point(210, 303),
+    new Point(220, 252),
+    new Point(233, 181),
+    new Point(286, 139),
+    new Point(300, 125),
+    new Point(366, 66),
+    new Point(457, 72),
+    new Point(531, 57),
+    new Point(614, 46),
+    new Point(644, 98),
+    new Point(677, 138),
+    new Point(762, 169),
+    new Point(849, 301),
+    new Point(769, 318),
+    new Point(757, 355),
+    new Point(672, 391),
+    new Point(597, 409)
+  ],
+  Uint32Array
+);
 //console.log("points:", points);
 
 //console.log('points:', Util.className(points));
-const methods = Util.getMethods(Array.prototype, false, (key, value) => (typeof key == 'string' && key.startsWith('_') ? undefined : [key == 'length' ? 'size' : key, value]));
+const methods = Util.getMethods(Array.prototype, false, (key, value) =>
+  typeof key == 'string' && key.startsWith('_')
+    ? undefined
+    : [key == 'length' ? 'size' : key, value]
+);
 //console.log('Array.prototype getMethods:', methods);
 g47;
 

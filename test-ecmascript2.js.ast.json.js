@@ -231,7 +231,7 @@ function processFile(file, params) {
   WriteFile(params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json', JSON.stringify(ast, null, 2));
   let node2path = new WeakMap();
   let nodeKeys = [];
-  const isRequire = node => node instanceof CallExpression && node.callee.value == 'require';
+  const isRequire = node => node instanceof CallExpression && node.callee.name == 'require';
   const isImport = node => node instanceof ImportDeclaration;
   let commentMap = new Map(
     [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [

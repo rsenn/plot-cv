@@ -143,7 +143,7 @@ function processFile(file, params) {
 
   let nodeKeys = [];
 
-  const isRequire = node => node instanceof CallExpression && node.callee.value == 'require';
+  const isRequire = node => node instanceof CallExpression && node.callee.name == 'require';
   const isImport = node => node instanceof ImportDeclaration;
 
   let commentMap = new Map(

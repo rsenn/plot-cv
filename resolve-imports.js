@@ -345,7 +345,7 @@ class ES6ImportExport {
 const isRequire = ([path, node]) => {
   //console.log("isRequire node:", node);
 
-  return (node instanceof CallExpression || node.type == 'CallExpression') && (node.callee.value == 'require' || PrintAst(node.callee) == 'require');
+  return (node instanceof CallExpression || node.type == 'CallExpression') && (node.callee.name == 'require' || PrintAst(node.callee) == 'require');
 };
 
 const isImport = ([path, node]) => node instanceof ImportDeclaration;
@@ -356,7 +356,7 @@ const isCJSExport = ([path, node]) => node.left && PrintAst(node.left).startsWit
 
 const getImport = ([p, n]) => {
   let r = [];
-  if(n instanceof CallExpression && Util.isObject(n) && n.callee && n.callee.value == 'require') {
+  if(n instanceof CallExpression && Util.isObject(n) && n.callee && n.callee.name == 'require') {
     let idx = p.lastIndexOf('init');
     let start = idx != -1 ? idx + 1 : p.length;
     let end = p.length;

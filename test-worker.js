@@ -20,7 +20,10 @@ function TestWorker() {
   worker.onmessage = HandleMessage;
   console.log(
     'worker',
-    Object.getOwnPropertyNames(Object.getPrototypeOf(worker)).reduce((acc, n) => ({ ...acc, [n]: worker[n] }), {})
+    Object.getOwnPropertyNames(Object.getPrototypeOf(worker)).reduce(
+      (acc, n) => ({ ...acc, [n]: worker[n] }),
+      {}
+    )
   );
   //console.log('TestWorker', worker.onmessage);
 

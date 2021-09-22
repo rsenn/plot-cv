@@ -7,7 +7,19 @@ import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import fs from 'fs';
 import Console from 'console';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
-import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Define, Once, GetOpt, RoundTo, Range } from './qjs-opencv/js/cvUtils.js';
+import {
+  WeakMapper,
+  Modulo,
+  WeakAssign,
+  BindMethods,
+  BitsToNames,
+  FindKey,
+  Define,
+  Once,
+  GetOpt,
+  RoundTo,
+  Range
+} from './qjs-opencv/js/cvUtils.js';
 
 let rainbow;
 let zoom = 1;
@@ -39,7 +51,10 @@ function SaveConfig(configObj) {
   let file = std.open(basename + '.config.json', 'w+b');
   file.puts(JSON.stringify(configObj, null, 2) + '\n');
   file.close();
-  console.log(`Saved config to '${basename + '.config.json'}'`, inspect(configObj, { compact: false }));
+  console.log(
+    `Saved config to '${basename + '.config.json'}'`,
+    inspect(configObj, { compact: false })
+  );
 }
 
 function LoadConfig() {
@@ -289,8 +304,19 @@ function main(...args) {
     L2gradient: new NumericParam(config.L2gradient || 0, 0, 1),
     dilations: new NumericParam(config.dilations || 0, 0, 10),
     erosions: new NumericParam(config.erosions || 0, 0, 10),
-    mode: new EnumParam(config.mode || 3, ['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL']),
-    method: new EnumParam(config.method || 0, ['CHAIN_APPROX_NONE', 'CHAIN_APPROX_SIMPLE', 'CHAIN_APPROX_TC89_L1', 'CHAIN_APPROX_TC89_L189_KCOS']),
+    mode: new EnumParam(config.mode || 3, [
+      'RETR_EXTERNAL',
+      'RETR_LIST',
+      'RETR_CCOMP',
+      'RETR_TREE',
+      'RETR_FLOODFILL'
+    ]),
+    method: new EnumParam(config.method || 0, [
+      'CHAIN_APPROX_NONE',
+      'CHAIN_APPROX_SIMPLE',
+      'CHAIN_APPROX_TC89_L1',
+      'CHAIN_APPROX_TC89_L189_KCOS'
+    ]),
     maskColor: new EnumParam(config.maskColor || false, ['OFF', 'ON']),
     lineWidth: new NumericParam(config.lineWidth || 1, 0, 10),
     fontThickness: new NumericParam(config.fontThickness || 1, 0, 10)
@@ -326,9 +352,13 @@ function main(...args) {
         if(dst.empty) dst0Size = dst.size;
         // console.log('video', video);
         video.read(dst);
-        if(videoSize === undefined || videoSize.empty) videoSize = video.size.area ? video.size : dst.size;
+        if(videoSize === undefined || videoSize.empty)
+          videoSize = video.size.area ? video.size : dst.size;
         if(dstEmpty) firstSize = new Size(...videoSize);
-        if(dst.size && !videoSize.equals(dst.size)) throw new Error(`AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`);
+        if(dst.size && !videoSize.equals(dst.size))
+          throw new Error(
+            `AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`
+          );
       }),
       Processor(function Grayscale(src, dst) {
         let channels = [];
@@ -343,7 +373,14 @@ function main(...args) {
         cv.GaussianBlur(src, dst, [+params.ksize, +params.ksize], 0, 0, cv.BORDER_REPLICATE);
       }),
       Processor(function EdgeDetect(src, dst) {
-        cv.Canny(src, dst, +params.thresh1, +params.thresh2, +params.apertureSize, +params.L2gradient);
+        cv.Canny(
+          src,
+          dst,
+          +params.thresh1,
+          +params.thresh2,
+          +params.apertureSize,
+          +params.L2gradient
+        );
         ////console.log('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);
       }),
       Processor(function Morph(src, dst) {
@@ -363,7 +400,15 @@ function main(...args) {
         let edges = pipeline.outputOf('EdgeDetect');
         lines = new Mat(0, 0, cv.CV_32SC4);
 
-        cv.HoughLinesP(edges, lines, 2, (+params.angleResolution * Math.PI) / 180, +params.threshc, +params.minLineLength, +params.maxLineGap);
+        cv.HoughLinesP(
+          edges,
+          lines,
+          2,
+          (+params.angleResolution * Math.PI) / 180,
+          +params.threshc,
+          +params.minLineLength,
+          +params.maxLineGap
+        );
         src.copyTo(dst);
       })
     ],
@@ -390,10 +435,16 @@ function main(...args) {
   console.log(`Trackbar 'frame' frameShow=${frameShow} pipeline.size - 1 = ${pipeline.size - 1}`);
 
   if(opts['trackbars'])
-    cv.createTrackbar('frame', 'gray', frameShow, pipeline.size - 1, function(value, count, name, window) {
-      //console.log('Trackbar', { value, count, name, window });
-      frameShow = value;
-    });
+    cv.createTrackbar(
+      'frame',
+      'gray',
+      frameShow,
+      pipeline.size - 1,
+      function(value, count, name, window) {
+        //console.log('Trackbar', { value, count, name, window });
+        frameShow = value;
+      }
+    );
 
   const resizeOutput = Once(() => {
     let size = outputMat.size.mul(zoom);
@@ -404,7 +455,12 @@ function main(...args) {
   let size;
 
   const ClearSurface = mat => (mat.setTo([0, 0, 0, 0]), mat);
-  const MakeSurface = () => Once((...args) => new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)), null, ClearSurface);
+  const MakeSurface = () =>
+    Once(
+      (...args) => new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)),
+      null,
+      ClearSurface
+    );
   const MakeComposite = Once(() => new Mat());
   let surface = MakeSurface();
   let keyCode,
@@ -434,7 +490,10 @@ function main(...args) {
         keyCode = key;
         keyTime = Date.now();
         modifiers = Object.fromEntries(modifierMap(keyCode));
-        modifierList = modifierMap(keyCode).reduce((acc, [modifier, active]) => (active ? [...acc, modifier] : acc), []);
+        modifierList = modifierMap(keyCode).reduce(
+          (acc, [modifier, active]) => (active ? [...acc, modifier] : acc),
+          []
+        );
         let ch = String.fromCodePoint(keyCode & 0xff);
         console.log(`keypress [${modifierList}] 0x${(keyCode & ~0xd000).toString(16)} '${ch}'`);
       }
@@ -499,14 +558,22 @@ function main(...args) {
         case 0xf52: /* up */
         case 0xf54: /* down */ {
           const method = keyCode & 0x1 ? 'Frames' : 'Msecs';
-          const distance = (keyCode & 0x1 ? 1 : 1000) * (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
+          const distance =
+            (keyCode & 0x1 ? 1 : 1000) *
+            (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
           const offset = keyCode & 0x2 ? +distance : -distance;
 
           //console.log('seek', { method, distance, offset });
           video['seek' + method](offset);
           let pos = video.position(method);
 
-          console.log('seek' + method + ' ' + offset + ` distance = ${distance} pos = ${pos} (${RoundTo(video.position('%'), 0.001)}%)`);
+          console.log(
+            'seek' +
+              method +
+              ' ' +
+              offset +
+              ` distance = ${distance} pos = ${pos} (${RoundTo(video.position('%'), 0.001)}%)`
+          );
           break;
         }
         default: {
@@ -551,16 +618,27 @@ function main(...args) {
     } else {
       let ids = [...getToplevel(hier)];
 
-      let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]]));
+      let palette = Object.fromEntries(
+        [...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]])
+      );
       let hierObj = new Hierarchy(hier);
     }
-    font.draw(over, video.time + ' ⏩', tPos, { r: 0, g: 255, b: 0, a: 255 }, +params.fontThickness);
+    font.draw(
+      over,
+      video.time + ' ⏩',
+      tPos,
+      { r: 0, g: 255, b: 0, a: 255 },
+      +params.fontThickness
+    );
 
     function drawParam(param, y, color) {
       const name = paramNav.nameOf(param);
       const value = param.get() + (param.get() != (param | 0) + '' ? ` (${+param})` : '');
       const arrow = Number.isInteger(y) && paramNav.name == name ? '=>' : '  ';
-      const text = `${arrow}${name}` + (Number.isInteger(y) ? `[${param.range.join('-')}]` : '') + ` = ${value}`;
+      const text =
+        `${arrow}${name}` +
+        (Number.isInteger(y) ? `[${param.range.join('-')}]` : '') +
+        ` = ${value}`;
       color = color || { r: 0xb7, g: 0x35, b: 255, a: 255 };
       y = tPos.y - 20 - (y | 0);
       font.draw(over, text, [tPos.x, y], { r: 0, g: 0, b: 0, a: 255 }, params.fontThickness * 2);
@@ -623,7 +701,18 @@ function main(...args) {
 
     win.show(composite);
   }
-  const { ksize, thresh1, thresh2, apertureSize, L2gradient, dilations, erosions, mode, method, lineWidth } = params;
+  const {
+    ksize,
+    thresh1,
+    thresh2,
+    apertureSize,
+    L2gradient,
+    dilations,
+    erosions,
+    mode,
+    method,
+    lineWidth
+  } = params;
   SaveConfig(
     Object.entries({
       frameShow,
@@ -643,7 +732,11 @@ function main(...args) {
 
   for(let mat of Mat.list || []) {
     let stack = Mat.backtrace(mat)
-      .filter(frame => frame.functionName != '<anonymous>' && (frame.lineNumber !== undefined || /test-video/.test(frame.fileName)))
+      .filter(
+        frame =>
+          frame.functionName != '<anonymous>' &&
+          (frame.lineNumber !== undefined || /test-video/.test(frame.fileName))
+      )
       .map(frame => frame.toString())
       .join('\n  ');
 

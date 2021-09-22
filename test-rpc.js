@@ -84,7 +84,12 @@ function main(...args) {
     },
     args
   );
-  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert, 'ssl-private-key': sslPrivateKey } = params;
+  const {
+    address = '0.0.0.0',
+    port = 8999,
+    'ssl-cert': sslCert,
+    'ssl-private-key': sslPrivateKey
+  } = params;
   const listen = params.connect && !params.listen ? false : true;
   const server = !params.client || params.server;
   Object.assign(globalThis, {
@@ -111,7 +116,8 @@ function main(...args) {
 
   repl.help = () => {};
   let { log } = console;
-  repl.show = arg => std.puts(typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options));
+  repl.show = arg =>
+    std.puts(typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options));
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();
@@ -125,7 +131,11 @@ function main(...args) {
 
   console.log = repl.printFunction(log);
 
-  let cli = (globalThis.sock = new rpc.Socket(`${address}:${port}`, rpc[`RPC${server ? 'Server' : 'Client'}Connection`], +params.verbose));
+  let cli = (globalThis.sock = new rpc.Socket(
+    `${address}:${port}`,
+    rpc[`RPC${server ? 'Server' : 'Client'}Connection`],
+    +params.verbose
+  ));
 
   cli.register({ Socket, Worker: os.Worker, Repeater, REPL, EventEmitter });
 
@@ -133,7 +143,14 @@ function main(...args) {
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     console.log('createWS', { url, callbacks, listen });
 
-    net.setLog(0 /*net.LLL_DEBUG-1*/, (level, ...args) => console.log((['err', 'warn', 'notice', 'info', 'debug'][Math.log2(level)] ?? level + '').padEnd(8).toUpperCase(), ...args));
+    net.setLog(0 /*net.LLL_DEBUG-1*/, (level, ...args) =>
+      console.log(
+        (['err', 'warn', 'notice', 'info', 'debug'][Math.log2(level)] ?? level + '')
+          .padEnd(8)
+          .toUpperCase(),
+        ...args
+      )
+    );
 
     return [net.client, net.server][+listen]({
       sslCert,
@@ -141,12 +158,10 @@ function main(...args) {
       mounts: [
         ['/', '.', 'debugger.html'],
         function proxy(req, res) {
-          const {url,method,headers} =req;
-          const {status,ok,type} = res;
+          const { url, method, headers } = req;
+          const { status, ok, type } = res;
 
-
-          console.log("proxy",{url,method,headers}, {status,ok,url,type});
-
+          console.log('proxy', { url, method, headers }, { status, ok, url, type });
         },
         /*   function* index(req, res) {
           console.log(req.path, { req, res });
@@ -157,7 +172,8 @@ function main(...args) {
           yield '</body>';
           yield '</html>';
         },*/
-        function* config(req, res) {f
+        function* config(req, res) {
+          f;
           console.log(req.path, { req, res });
           yield '{}';
         },
@@ -203,8 +219,14 @@ function main(...args) {
 
       ...callbacks,
       onHttp(req, rsp) {
-        const {url,method,headers} =req;
-        console.log('\x1b[38;5;82monHttp\x1b[0m(\n\t', Object.setPrototypeOf({url,method,headers}, Object.getPrototypeOf(req)), ',\n\t', rsp, '\n)');
+        const { url, method, headers } = req;
+        console.log(
+          '\x1b[38;5;82monHttp\x1b[0m(\n\t',
+          Object.setPrototypeOf({ url, method, headers }, Object.getPrototypeOf(req)),
+          ',\n\t',
+          rsp,
+          '\n)'
+        );
         /*   rsp = new net.Response(req.url, 301, true, 'application/binary');
           rsp.header('Blah', 'XXXX');*/
         return rsp;
