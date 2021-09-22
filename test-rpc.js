@@ -61,10 +61,10 @@ function main(...args) {
     inspectOptions: {
       colors: true,
       depth: Infinity,
-      compact: 1,
-      customInspect: true,
-      getters: true,
-      protoChain: 3,
+      compact: 2,
+     //customInspect: true,
+     // getters: true,
+     // protoChain: 3,
       ...(config.inspectOptions ?? {})
     }
   });
@@ -87,8 +87,8 @@ function main(...args) {
   const {
     address = '0.0.0.0',
     port = 8999,
-    'ssl-cert': sslCert,
-    'ssl-private-key': sslPrivateKey
+    'ssl-cert': sslCert = 'localhost.crt',
+    'ssl-private-key': sslPrivateKey = 'localhost.key'
   } = params;
   const listen = params.connect && !params.listen ? false : true;
   const server = !params.client || params.server;

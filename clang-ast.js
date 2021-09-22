@@ -2153,9 +2153,9 @@ export function NodePrinter(ast) {
           //console.log('CXXNewExpr', cxx_new_expr);
           type = type.trim();
           if(isArray) {
-            put(`new ${type)}[`);
+            put('new '+type+'[');
           } else {
-            put(`new ${type} (`);
+            put('new '+type+'(');
           }
           printer.print(cxx_new_expr.inner[0]);
 
