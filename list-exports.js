@@ -2,14 +2,13 @@
 import { ECMAScriptParser } from './lib/ecmascript/parser.js';
 import { PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
-import { ImportDeclaration, ImportSpecifier, Identifier, Literal, TemplateLiteral, CallExpression, ExportNamedDeclaration, ExportDefaultDeclaration } from './lib/ecmascript/estree.js';
+import { ImportDeclaration, ImportSpecifier, Identifier, Literal, ExportDefaultDeclaration } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import Tree from './lib/tree.js';
 import * as fs from 'fs';
 import deep from './lib/deep.js';
 import { Stack } from './lib/stack.js';
-import { IfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
-import PortableFileSystem from './lib/filesystem.js';
+import { WriteFile } from './io-helpers.js';
 import { Console } from 'console';
 import { inspect } from 'util';
 import process from 'process';
@@ -124,8 +123,7 @@ function ProcessFile(file, params) {
   parser = globalThis.parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
   try {
     ast = parser.parseProgram();
-  } catch(err) {
-    const tokens = [...parser.processed, ...parser.tokens];
+  } catch(err) {    const tokens = [...parser.processed, ...parser.tokens];
     const token = tokens[tokens.length - 1];
     if(err !== null) {
       throw err;
@@ -134,33 +132,17 @@ function ProcessFile(file, params) {
     }
   }
   parser.addCommentsToNodes(ast);
-
   params['output-ast'] ??= file.replace(/.*\//g, '') + '.ast.json';
   console.log('output-ast', params['output-ast']);
-
   WriteFile(params['output-ast'], JSON.stringify(ast /*.toJSON()*/, null, 2));
-
   let node2path = new WeakMap();
   let nodeKeys = [];
-
   let commentMap = new Map(
     [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node }]),
     (a, b) => a - b
-  );
-
-  //console.log('commentMap:', commentMap);
-
-  let tree = new Tree(ast);
-
-  /*let flat = tree.flat(null, ([path, node]) => {
-    return !Util.isPrimitive(node);
-  });*/
-
-  ShowOutput(ast, tree, null, file, params);
-
-  //delete globalThis.parser;
-
-  //std.gc();
+  ); 
+  let tree = new Tree(ast); 
+  ShowOutput(ast, tree, null, file, params); 
 }
 
 function Finish(err) {
@@ -188,13 +170,11 @@ function Finish(err) {
 
 function ShowOutput(ast, tree, flat, file, params) {
   const output_file = params['output-js'] ?? '/dev/stdout';
-
   const flags = deep.RETURN_VALUE_PATH;
   let nodes = [...deep.select(ast, (node, key) => ['exported', 'imported', 'local'].indexOf(key) != -1, flags), ...deep.select(ast, (node, key) => /Export/.test(node.type), flags)].map(([node, path]) => [node, path.slice(0, -1), deep.get(ast, path.slice(0, -1))]);
   let names = nodes.filter(([n, p, parent]) => !/Import/.test(parent.type)).map(([node, path, parent]) => (node.declaration && node.declaration.id ? node.declaration.id : node));
   let defaultExport = deep.find(ast, node => node instanceof ExportDefaultDeclaration, deep.RETURN_VALUE);
-  //console.log('names:', names);
-  if(!file.startsWith('./') && !file.startsWith('/') && !file.startsWith('..')) file = './' + file;
+   if(!file.startsWith('./') && !file.startsWith('/') && !file.startsWith('..')) file = './' + file;
   let importNode = new ImportDeclaration(
     [
       ...names
@@ -207,10 +187,7 @@ function ShowOutput(ast, tree, flat, file, params) {
     ],
     new Literal(`'${file}'`)
   );
-  //console.log('importNode', importNode);
-
   let code = PrintAst(importNode) + '\n';
-
   if(output_file == '/dev/stdout') fs.writeSync(process.stdout.fd ?? process.stdout, code);
   else WriteFile(output_file, code);
 }
@@ -291,6 +268,7 @@ function* Ancestors(obj, path, t = a => a) {
     ++i;
   }
 }
+
 function NodeParent(obj, path) {
   let r;
   for(let n of Ancestors(obj, path)) if(n && n.type) r = n;
