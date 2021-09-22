@@ -1,20 +1,43 @@
 import gql from './lib/nanographql.js';
+import fetch from 'isomorphic-fetch';
+import { Console } from 'console';
 
-var query = gql`
-  query ($name: String!) {
-    movie(name: $name) {
-      releaseDate
+let query = gql`
+  query MyQuery {
+    users {
+      id
+      email
+      username
+      last_seen
     }
   }
 `;
 
-try {
-  var res = await fetch('/query', {
-    body: query({ name: 'Back to the Future' }),
-    method: 'POST'
+async function main() {
+  globalThis.console = new Console({
+    stdout: process.stdout,
+    stderr: process.stderr,
+    inspectOptions: {
+      colors: true,
+      depth: Infinity,
+      customInspect: true,
+      compact: 2,
+      multiline: true
+    }
   });
-  var json = res.json();
-  console.log(json);
-} catch(err) {
-  console.error(err);
+
+  try {
+    let body = query();
+    console.log('body', body);
+    let res = await fetch('http://wild-beauty.herokuapp.com/v1/graphql', {
+      body,
+      method: 'POST'
+    });
+    let json = await res.json();
+    console.log('json', json);
+  } catch(err) {
+    console.error(err);
+  }
 }
+
+main();
