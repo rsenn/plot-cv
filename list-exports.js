@@ -1,11 +1,8 @@
-//import 'module-alias/register.js';
-import { ECMAScriptParser } from './lib/ecmascript/parser.js';
-import { PathReplacer } from './lib/ecmascript.js';
-import Printer from './lib/ecmascript/printer.js';
-import { ImportDeclaration, ImportSpecifier, Identifier, Literal, ExportDefaultDeclaration } from './lib/ecmascript/estree.js';
+import { ECMAScriptParser, Printer, PathReplacer, ImportDeclaration, ImportSpecifier, Identifier, Literal, ExportDefaultDeclaration } from './lib/ecmascript.js';
 import Util from './lib/util.js';
 import Tree from './lib/tree.js';
 import * as fs from 'fs';
+import * as path from 'path';
 import deep from './lib/deep.js';
 import { Stack } from './lib/stack.js';
 import { WriteFile } from './io-helpers.js';
@@ -19,7 +16,7 @@ globalThis.fs = fs;
 
 function PrintAst(ast, comments, printer = globalThis.printer) {
   let output = printer.print(ast);
-  //console.log('PrintAst:', Util.abbreviate(output), Util.decodeAnsi(output));
+
   return output;
 }
 
@@ -54,11 +51,7 @@ function main(...argv) {
       output: [true, null, 'o'],
       debug: [
         false,
-        function(v, r, o, result) {
-          const thisObj = this;
-          // console.log('debug', { v, r, o, result,thisObj });
-          return (result.debug | 0) + 1;
-        },
+        (v, r, o, result) => (result.debug | 0) + 1,
         'x'
       ],
       '@': 'input'
@@ -92,6 +85,7 @@ function main(...argv) {
 }
 
 let error;
+
 try {
   const argv = [...(process?.argv ?? scriptArgs)].slice(2);
   main(...argv);
@@ -132,17 +126,17 @@ function ProcessFile(file, params) {
     }
   }
   parser.addCommentsToNodes(ast);
-  params['output-ast'] ??= file.replace(/.*\//g, '') + '.ast.json';
+  params['output-ast'] ??= path.basename(file) + '.ast.json';
   console.log('output-ast', params['output-ast']);
-  WriteFile(params['output-ast'], JSON.stringify(ast /*.toJSON()*/, null, 2));
+  WriteFile(params['output-ast'], JSON.stringify(ast , null, 2));
   let node2path = new WeakMap();
   let nodeKeys = [];
   let commentMap = new Map(
     [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node }]),
     (a, b) => a - b
-  ); 
-  let tree = new Tree(ast); 
-  ShowOutput(ast, tree, null, file, params); 
+  );
+  let tree = new Tree(ast);
+  ShowOutput(ast, tree, null, file, params);
 }
 
 function Finish(err) {
@@ -197,35 +191,25 @@ function NodeType(node) {
 }
 
 function NodeToName(node) {
-  let id;
-  if(Array.isArray(node) && node.length == 2) node = node[0];
-
+  let id;  if(Array.isArray(node) && node.length == 2) node = node[0];
   if(node instanceof ExportDefaultDeclaration) return null;
-
   if(typeof node == 'object' && node != null) {
     if(node instanceof Identifier || node.type == 'Identifier' || 'name' in node) id = node.name;
     if(!id && node.id && node.id instanceof Identifier) id = node.id;
     if(!id && node.name) id = node.name;
-
     if(!id) id = deep.find(node, (path, key) => ['id', 'exported'].indexOf(key) != -1, deep.RETURN_VALUE);
-
     if(id instanceof Identifier) id = Identifier.string(id);
   } else if(typeof node == 'number' || typeof node == 'string') id = node;
-
-  if(/*0 ||*/ !id) {
+  if( !id) {
     let entries = deep.select(node, (n, p) => p[p.length - 1] == 'id' && typeof n == 'object' && n != null && (n.name || (n.type ?? n.kind) == 'Identifier'), deep.RETURN_VALUE_PATH);
     let idList = deep.select(node, (n, p) => p[p.length - 1] == 'id' && typeof n == 'object' && n != null && (n.type ?? n.kind) == 'Identifier', deep.RETURN_VALUE_PATH);
     let firstId = idList[0];
     entries = entries.filter(([n, p]) => p.indexOf('init') == -1);
-
     console.log(
       'entries',
       entries.map(([n, p]) => [p.join('.'), NodeType(deep.get(node, [...p].slice(0, -1))), n.type, n.name, p.length])
     );
-
     entries = entries.map(([n, p]) => [n.name, p.length, NodeType(deep.get(node, p.slice(0, -1))), [...Ancestors(n, p, (n, k) => [k, NodeType(n) ?? `[${k}]`, n.name])]]);
-
-    //console.log('idList', idList.map(([n, p]) => [ n.name, p.length].concat(Util.range(-5,-1).map(x=> NodeType(deep.get(node, p.slice(0, x)))))));
     id = entries.map(e => e[0]);
     console.log('node.type', node.type);
   }
@@ -234,31 +218,17 @@ function NodeToName(node) {
       'NodeToName(' +
       node.kind +
       ' ' +
-      Util.abbreviate(
-        inspect(node, {
-          breakLength: 1000,
-          multiline: false,
-          compact: 100,
-          depth: 2,
-          colors: true,
-          maxStringLength: 30,
-          maxArrayLength: 2
-        }),
-        500
-      );
+      Util.abbreviate(inspect(node, { breakLength: 1000, multiline: false, compact: 100, depth: 2, colors: true, maxStringLength: 30, maxArrayLength: 2 }), 500 );
     console.log(message);
     let e = new Error(message);
     throw e;
   }
-
   return id;
 }
 
 function* Ancestors(obj, path, t = a => a) {
   let i = 0;
-  //console.log(`Ancestors`,`[${path.length}]`);
   for(let k of path) {
-    //console.log(` `, ...[i, k, NodeType(obj)].map(col => col+'').map((c,i) =>c.padEnd(i ? 20 : 7)), obj);
     if(typeof obj == 'object') yield t(obj, k);
     try {
       obj = obj[k];
