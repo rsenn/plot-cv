@@ -10,8 +10,13 @@ exec_cmd() (
 )
 
 find_cmake_files() (
+  [ $# -le 0 ] && set -- . quickjs quickjs/qjs-*
+  for DIR; do
+    ls -fd "$DIR/CMakeLists.txt" "$DIR"/cmake/*.cmake 2>/dev/null
+  done
+  return 0
 	#set -f
-  [ $# -le 0 ] && set -- $(find . cmake quickjs quickjs/*/ -maxdepth 2 -type f -iname "*cmake*" | grep -E  '^(quickjs/.*|qjs-opencv/|)(cmake/[^/]*\.cmake$|CMakeLists.txt)$' |grep -vE  '(build[-/]|libwebsockets/)')
+  [ $# -le 0 ] && set -- $(find . cmake quickjs quickjs/qjs-*/ -maxdepth 2 -type f -iname "*cmake*" | grep -E  '^(quickjs/.*|qjs-opencv/|)(cmake/[^/]*\.cmake$|CMakeLists.txt)$' |grep -vE  '(build[-/]|libwebsockets/)')
 set -- "$@" -maxdepth 1
 	if [ "$TYPE" ]; then
 		case "$TYPE" in
@@ -60,7 +65,7 @@ find_cmake() (
 		esac
 	done
 	CMD='echo "$FILE"'
-	LIST_CMD='find_cmake_files'
+	LIST_CMD='find_cmake_files "$@"'
 	: ${CMAKE_FORMAT:=".cmake-format"}
 	if [ -f "$CMAKE_FORMAT" ]; then
 		CMAKE_FORMAT_CONFIG=$(realpath --relative-to "$PWD" "$CMAKE_FORMAT")
