@@ -14,7 +14,8 @@ find_sources() {
      cd "$SAVE_PWD"
    fi
 
-   find "$@" -maxdepth 1 -name "*.[ch]" -or -name "*.[ch]pp"
+   find "$@" -maxdepth 1 -name "*.[ch]" -or -name "*.[ch]pp" |
+     sed -u 's|^\./||'
 }
 
 find_sources "$@"
