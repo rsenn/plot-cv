@@ -8,5 +8,5 @@
 	branch = main
 [submodule "lib"]
 	path = lib
-	url = https://github.com/rsenn/libweb.git
+	url = git@github.com:rsenn/libweb.git
 	branch = main
