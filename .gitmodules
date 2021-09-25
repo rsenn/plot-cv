@@ -1,10 +1,10 @@
 [submodule "qjs-opencv"]
 	path = qjs-opencv
-	url = https://github.com/rsenn/qjs-opencv.git
+	url = git@github.com:rsenn/qjs-opencv.git
 	branch = main
 [submodule "qjs-main"]
 	path = quickjs
-	url = https://github.com/rsenn/quickjs.git
+	url = git@github.com:rsenn/quickjs.git
 	branch = main
 [submodule "lib"]
 	path = lib
