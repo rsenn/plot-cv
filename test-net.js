@@ -1,5 +1,4 @@
-import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
+import { Console } from 'console';
 import { client, server, fetch } from 'net';
 import { Contour } from 'opencv';
 import * as cv from 'opencv';
@@ -12,14 +11,15 @@ import { Alea } from './lib/alea.js';
 import * as os from 'os';
 
 let prng = new Alea(Date.now());
-const hr = Util.hrtime;
 
-async function main(...args) {
-  let start;
-  let begin = hr();
-  await ConsoleSetup({
-    breakLength: 120,
-    maxStringLength: 200
+function main(...args) {
+  globalThis.console = new Console({
+    inspectOptions: {
+      colors: true,
+      depth: Infinity,
+      compact: 1,
+      customInspect: true
+    }
   });
 
   /*  function connect() {
@@ -43,7 +43,7 @@ async function main(...args) {
     });
   }
 */
-  console.log('Setup duration:', hr(begin));
+  /* console.log('Setup duration:', hr(begin));
 
   let raw = new Mat();
   let cap = new VideoCapture();
@@ -80,27 +80,34 @@ async function main(...args) {
 
   let contours = Util.repeat(4, () => randContour());
   let contourStr = contours.map(c => c.toString(Contour.FORMAT_NOBRACKET | Contour.FORMAT_SPACE | Contour.FORMAT_01));
-  let body;
   body = JSON.stringify({ contours: contourStr, frame: 0, width, height });
   console.log('Prepare duration:', hr(start));
 
-  start = hr();
+  start = hr();*/
+  let body;
 
-  let response = await fetch('http://127.0.0.1:3001/contours', {
-    method: 'post',
+  let response = fetch('http://www.google.com/', {
+    method: 'get',
     headers: {
-      'Content-Type': 'application/json',
+      // 'Content-Type': 'application/json',
       'User-Agent': 'meep!meep!'
     },
     body
   });
 
-  console.log('Request duration:', hr(start));
+  // console.log('Request duration:', hr(start));
 
   console.log('response:', response);
-  console.log('response:', Util.getMemberNames(response));
+  // console.log('response:', Util.getMemberNames(response));
 
-  console.log('Total duration:', hr(begin));
+  // console.log('Total duration:', hr(begin));
 }
 
-Util.callMain(main, true);
+try {
+  main(...scriptArgs.slice(1));
+} catch(error) {
+  console.log(`FAIL: ${error.message}\n${error.stack}`);
+  std.exit(1);
+} finally {
+  //console.log('SUCCESS');
+}

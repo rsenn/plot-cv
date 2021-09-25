@@ -84,12 +84,7 @@ function main(...args) {
     },
     args
   );
-  const {
-    address = '0.0.0.0',
-    port = 8999,
-    'ssl-cert': sslCert = 'localhost.crt',
-    'ssl-private-key': sslPrivateKey = 'localhost.key'
-  } = params;
+  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key' } = params;
   const listen = params.connect && !params.listen ? false : true;
   const server = !params.client || params.server;
   Object.assign(globalThis, {
@@ -116,8 +111,7 @@ function main(...args) {
 
   repl.help = () => {};
   let { log } = console;
-  repl.show = arg =>
-    std.puts((typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options)) + '\n');
+  repl.show = arg => std.puts((typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options)) + '\n');
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();
@@ -131,11 +125,7 @@ function main(...args) {
 
   console.log = repl.printFunction(log);
 
-  let cli = (globalThis.sock = new rpc.Socket(
-    `${address}:${port}`,
-    rpc[`RPC${server ? 'Server' : 'Client'}Connection`],
-    +params.verbose
-  ));
+  let cli = (globalThis.sock = new rpc.Socket(`${address}:${port}`, rpc[`RPC${server ? 'Server' : 'Client'}Connection`], +params.verbose));
 
   cli.register({ Socket, Worker: os.Worker, Repeater, REPL, EventEmitter });
 
@@ -143,14 +133,7 @@ function main(...args) {
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     console.log('createWS', { url, callbacks, listen });
 
-    net.setLog(net.LLL_ALL, (level, ...args) =>
-      console.log(
-        (['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '')
-          .padEnd(8)
-          .toUpperCase(),
-        ...args
-      )
-    );
+    net.setLog((net.LLL_NOTICE - 1) | net.LLL_USER, (level, ...args) => std.puts('\r\x1b[2K' + (['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8).toUpperCase() + args.join('') + '\n'));
 
     return [net.client, net.server][+listen]({
       sslCert,
@@ -173,8 +156,7 @@ function main(...args) {
           yield '</html>';
         },*/
         function* config(req, res) {
-          f;
-          console.log(req.path, { req, res });
+          console.log('/config', { req, res });
           yield '{}';
         },
         function* files(req, resp) {
@@ -231,13 +213,7 @@ function main(...args) {
       },
       onHttp(req, rsp) {
         const { url, method, headers } = req;
-        console.log(
-          '\x1b[38;5;82monHttp\x1b[0m(\n\t',
-          Object.setPrototypeOf({ url, method, headers }, Object.getPrototypeOf(req)),
-          ',\n\t',
-          rsp,
-          '\n)'
-        );
+        console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', rsp, '\n]');
         /*   rsp = new net.Response(req.url, 301, true, 'application/binary');
           rsp.header('Blah', 'XXXX');*/
         return rsp;
