@@ -2,7 +2,7 @@
 	path = qjs-opencv
 	url = git@github.com:rsenn/qjs-opencv.git
 	branch = main
-[submodule "qjs-main"]
+[submodule "quickjs"]
 	path = quickjs
 	url = git@github.com:rsenn/quickjs.git
 	branch = main
