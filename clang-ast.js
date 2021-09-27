@@ -183,18 +183,26 @@ export function Hier(node_or_path, ast = $.data) {
   if(node_or_path && node_or_path.kind) p = PathOf(node_or_path, ast);
   else p = new Pointer(node_or_path);
 
-  console.log(p .hier());
+  console.log(p.hier());
   console.log(
     p
-      .hier().map(p => [p, p.deref(ast)])
-      .filter(([p,n]) => !Array.isArray(n))
+      .hier()
+      .map(p => [p, p.deref(ast)])
+      .filter(([p, n]) => !Array.isArray(n))
       .map(
         ([p, n]) =>
           p +
           '\n' +
-          '\x1b[1;31m' + n.kind +
+          '\x1b[1;31m' +
+          n.kind +
           '\x1b[0m ' +
-          inspect(n, { depth: 0, maxArrayLength: 10, maxStringLength: 80, compact: 1, hideKeys: ['kind'] })
+          inspect(n, {
+            depth: 0,
+            maxArrayLength: 10,
+            maxStringLength: 80,
+            compact: 1,
+            hideKeys: ['kind']
+          })
       )
       .join('\n\n')
   );

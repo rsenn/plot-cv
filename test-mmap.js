@@ -2,11 +2,11 @@ import * as os from 'os';
 import * as fs from 'fs';
 import { exec, spawn } from 'child_process';
 import { Console } from 'console';
-import { mmap, munmap, PROT_READ, PROT_WRITE, MAP_PRIVATE, msync, MS_SYNC } from 'mmap';
+import { mmap, munmap, mprotect, PROT_READ, PROT_WRITE, MAP_PRIVATE, msync, MS_SYNC } from 'mmap';
 import {
   searchArrayBuffer,
   dupArrayBuffer,
-  copyArrayBuffer,
+  memcpy,
   toString,
   toPointer,
   format
@@ -78,15 +78,15 @@ function main(...args) {
   let fd = os.open(args[0], os.O_RDONLY);
   console.log('fd', fd);
   let [st, err] = os.stat(args[0]);
-  console.log('st', st);
-  const { size } = st;
+   const { size } = st;
   console.log('size', size);
 
-  console.log('typeof 1n', typeof 1n);
-
+ 
   let map = mmap(0, size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
 
-  console.log('map',toPointer(map),  map);
+
+  console.log('map', toPointer(map));
+  console.log('map', map);
 
   // console.log('array', array);
   let array = new Uint8Array(map);
@@ -127,21 +127,20 @@ function main(...args) {
       '48 89 e7 be ? ? ? ? ba ? ? ? ? e8 ? ? ? ? 45 84 e4 74 12',
       'Upgrade required',
       (map, offset, length) => {
-      let buf = dupArrayBuffer(map, offset, length);
-          console.log('map',toPointer(map));
-console.log('buf',toPointer(buf)-toPointer(map));
-console.log('buf',buf);
-     console.log('offset',offset);
-     console.log('length',length);
+        let buf = dupArrayBuffer(map, offset, length);
+        console.log('map', toPointer(map));
+        console.log('buf', toPointer(buf) - toPointer(map));
+        console.log('buf', buf);
+        console.log('offset', offset);
+        console.log('length', length);
 
-     let arr =   new Uint32Array(buf, 4, 1);
+        let arr = new Uint32Array(buf, 4, 1);
 
-     console.log('arr[0]', arr[0]);
+        console.log('arr[0]', arr[0]);
 
-     --arr[0];
-          console.log('arr[0]', arr[0]);
-
-   }
+        //++arr[0];
+        console.log('arr[0]', arr[0]);
+      }
     ]
     //['c3', "Ret"]
   ];
@@ -203,11 +202,11 @@ console.log('buf',buf);
   });
   console.log('results', { ...results });
 
-  offsets.forEach((offset, i) => {
+  offsets.slice(0,4).forEach((offset, i) => {
     const rep = replacements[i];
 
     if(typeof rep == 'function') {
-      console.log('offset',offset);
+      console.log('offset', offset);
       console.log('patterns[i]', patterns[i]);
 
       rep(map, offset, Pattern(patterns[i][0]).length);
@@ -217,10 +216,13 @@ console.log('buf',buf);
         replacements[i].split(' ').map(s => (s == '?' ? 0 : +(`0x` + s)))
       );
       if(offset !== null) {
-        //   console.log('patch', { map, offset, buffer });
         const dst = dupArrayBuffer(map, offset, buffer.byteLength);
-        console.log(`dst[${i}]`, dst);
-        copyArrayBuffer(dst, buffer);
+        const diff = toPointer(dst) - toPointer(map);
+       console.log('patch', { map: +toPointer(map), dst: +toPointer(dst),  offset,diff });
+  
+  mprotect(dst, dst.byteLength, PROT_WRITE);
+
+        memcpy(dst, buffer);
         console.log(`dst[${i}]`, dst);
       }
     }
@@ -258,7 +260,14 @@ console.log('buf',buf);
   }*/
 
   let outFd = os.open(`sublime_text`, os.O_TRUNC | os.O_CREAT | os.O_WRONLY, 0o755);
+
+    mprotect(map, size, PROT_READ);
+
   let r = os.write(outFd, map, 0, size);
+      console.log('map', toPointer(map));
+      console.log('map', map);
+      console.log('size', size);
+
   console.log(`Wrote ${r} bytes`);
   os.close(outFd);
 
