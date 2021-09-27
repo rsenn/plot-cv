@@ -1,9 +1,16 @@
 import * as os from 'os';
 import * as fs from 'fs';
-import { exec,spawn } from 'child_process';
+import { exec, spawn } from 'child_process';
 import { Console } from 'console';
 import { mmap, munmap, PROT_READ, PROT_WRITE, MAP_PRIVATE, msync, MS_SYNC } from 'mmap';
-import { searchArrayBuffer, dupArrayBuffer, copyArrayBuffer, toString, toPointer, format } from 'util';
+import {
+  searchArrayBuffer,
+  dupArrayBuffer,
+  copyArrayBuffer,
+  toString,
+  toPointer,
+  format
+} from 'util';
 
 function PrintSlice(arr, start, end, linelen) {
   let i, j;
@@ -32,36 +39,34 @@ function PrintSlice(arr, start, end, linelen) {
   }
 }
 
-function ExecTool(cmd,...args) {
-let child = spawn(cmd, args, { stdio: [0,'pipe', 2] });
-     console.log('ExecTool',{args,child});
- let [stdin, stdout, stderr] = child.stdio;
-let r;
-let b = new ArrayBuffer(1024);
-r=child.wait();
-    //console.log('r',r);
+function ExecTool(cmd, ...args) {
+  let child = spawn(cmd, args, { stdio: [0, 'pipe', 2] });
+  let [stdin, stdout, stderr] = child.stdio;
+  let r;
+  let b = new ArrayBuffer(1024);
+  r = child.wait();
+  // console.log('ExecTool', { args, child });
 
-r  = os.read(stdout, b, 0, 1024);
-let data = b.slice(0,r);
-let str = toString(data);
-    //console.log('r',{data,str});
+  r = os.read(stdout, b, 0, 1024);
+  let data = b.slice(0, r);
+  let str = toString(data);
 
-return parseInt(str);
+  return parseInt(str);
 }
 
 function RVA2Offset(file, rva) {
-return   ExecTool('elflist', file, '-a', rva);
+  return ExecTool('elflist', file, '-a', rva);
 }
 
 function Offset2RVA(file, offset) {
-return   ExecTool('elflist', file, '-o', offset);
+  return ExecTool('elflist', file, '-o', offset);
 }
 
 function main(...args) {
   globalThis.console = new Console({
     inspectOptions: {
       colors: true,
-      depth: 1,
+      depth: 2,
       compact: 2,
       customInspect: false,
       maxStringLength: 100,
@@ -87,11 +92,27 @@ function main(...args) {
   let array = new Uint8Array(map);
 
   const patterns = [
-    ['e8 ? ? ? ? 49 8b bf ? ? ? ? 85 c0', 'License Validity Checking (Aka IsValidLicense)', '48 31 c0 c3'],
-    ['e8 ? ? ? ? 48 89 5c 24 ? 48 8b b3', 'Invalidation/Validation Functions - Pattern 1', '90 90 90 90 90'],
-    ['e8 ? ? ? ? bf ? ? ? ? e8 ? ? ? ? 83 25', 'Invalidation/Validation Functions - Pattern 2', '90 90 90 90 90'],
+    [
+      'e8 ? ? ? ? 49 8b bf ? ? ? ? 85 c0',
+      'License Validity Checking (Aka IsValidLicense)',
+      '48 31 c0 c3'
+    ],
+    [
+      'e8 ? ? ? ? 48 89 5c 24 ? 48 8b b3',
+      'Invalidation/Validation Functions - Pattern 1',
+      '90 90 90 90 90'
+    ],
+    [
+      'e8 ? ? ? ? bf ? ? ? ? e8 ? ? ? ? 83 25',
+      'Invalidation/Validation Functions - Pattern 2',
+      '90 90 90 90 90'
+    ],
     ['55 41 56 53 41 89 f6 48 89 fd 6a 28', 'Server Validation Thread', '48 31 c0 48 ff c0 c3'],
-    ['e8 ? ? ? ? 3d ? ? ? ? 75 12', 'License Validity Checking', '48 31 c0 c3' /*'48 c7 c0 19 01 00 00'*/],
+    [
+      'e8 ? ? ? ? 3d ? ? ? ? 75 12',
+      'License Validity Checking',
+      '48 31 c0 c3' /*'48 c7 c0 19 01 00 00'*/
+    ],
     [
       '41 57 41 56 56 57 55 53 b8 28 21 00 00',
       'RSA Key Patch (allows any key in right format to work)',
@@ -122,10 +143,14 @@ function main(...args) {
   }
 
   function searchPattern(str) {
-   const results = searchAll(str);
+    const results = searchAll(str);
 
-   if(results.length > 1) 
-    throw new Error(`Multiple results for pattern '${str}': ${results.map(r => '0x'+r.toString(16)).join(', ')}`);
+    if(results.length > 1)
+      throw new Error(
+        `Multiple results for pattern '${str}': ${results
+          .map(r => '0x' + r.toString(16))
+          .join(', ')}`
+      );
     return results[0];
   }
   function searchAll(str) {
@@ -141,7 +166,6 @@ function main(...args) {
     for(;;) {
       pos = searchArrayBuffer(range, needle.buffer, mask.buffer);
       if(pos === null) break;
-      console.log('base + pos', base + pos);
       offsets.push(base + pos);
 
       base += pos + 1;
@@ -150,16 +174,19 @@ function main(...args) {
     return offsets;
   }
   const results = patterns.map(([pattern, description], i) => {
-    console.log(`Searching [${i}] ${description}`);
-    return searchAll(pattern);
+    console.log(`[${i}] Searching ${description} [ ${pattern} ]`);
+    let results = searchAll(pattern).map(offset => ({ offset, rva: Offset2RVA(args[0], offset) }));
+
+    console.log(`results[${results.length}]`, results);
+    return results;
   });
- 
+
   const offsets = results.map(r => {
-if(typeof r[0] == 'number') {
-  let rva=Offset2RVA(args[0], r[0]);
-  console.log(`RVA`,rva);
-}
-    return r[0];
+    const { offset, rva } = r[0] ?? {};
+    if(offset == 'number') {
+      console.log(`RVA`, rva);
+    }
+    return offset;
   });
   console.log('results', { ...results });
 
@@ -170,14 +197,15 @@ if(typeof r[0] == 'number') {
       rep(map, offset, Pattern(patterns[i][0]).length);
     }
     if(typeof rep == 'string') {
-      const { buffer } = new Uint8Array(replacements[i].split(' ').map(s => (s == '?' ? 0 : +(`0x` + s))));
+      const { buffer } = new Uint8Array(
+        replacements[i].split(' ').map(s => (s == '?' ? 0 : +(`0x` + s)))
+      );
       if(offset !== null) {
-     //   console.log('patch', { map, offset, buffer });
+        //   console.log('patch', { map, offset, buffer });
         const dst = dupArrayBuffer(map, offset, buffer.byteLength);
         console.log(`dst[${i}]`, dst);
         copyArrayBuffer(dst, buffer);
         console.log(`dst[${i}]`, dst);
-        
       }
     }
   });

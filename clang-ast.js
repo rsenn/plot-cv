@@ -1,6 +1,7 @@
 import Util from './lib/util.js';
 import * as path from './lib/path.js';
 import * as deep from './lib/deep.js';
+import { Pointer } from './lib/pointer.js';
 //import Predicate from 'path';
 import { AcquireReader } from './lib/stream/utils.js';
 export let SIZEOF_POINTER = 8;
@@ -172,6 +173,49 @@ export class Node {
 }
 
 const getTypeFromNode = Util.memoize((node, ast) => new Type(node.type, ast), new WeakMap());
+
+export function PathOf(node, ast = $.data) {
+  return new Pointer(deep.find(ast, n => n == node, deep.RETURN_PATH));
+}
+
+export function Hier(node_or_path, ast = $.data) {
+  let p;
+  if(node_or_path && node_or_path.kind) p = PathOf(node_or_path, ast);
+  else p = new Pointer(node_or_path);
+
+  console.log(p .hier());
+  console.log(
+    p
+      .hier().map(p => [p, p.deref(ast)])
+      .filter(([p,n]) => !Array.isArray(n))
+      .map(
+        ([p, n]) =>
+          p +
+          '\n' +
+          '\x1b[1;31m' + n.kind +
+          '\x1b[0m ' +
+          inspect(n, { depth: 0, maxArrayLength: 10, maxStringLength: 80, compact: 1, hideKeys: ['kind'] })
+      )
+      .join('\n\n')
+  );
+}
+
+export function FindType(typeName, ast = $.data) {
+  let tokens = [...typeName.matchAll(/[A-Za-z_][A-Za-z0-9_]+/g)].map(([tok]) => tok);
+
+  while(['const'].indexOf(tokens[0]) != -1) {
+    tokens.shift();
+    typeName = typeName.replace(new RegExp('^' + tokens[0] + '\\s*'), '');
+  }
+  //  console.log('tokens', tokens);
+
+  let nodes = deep.select(ast, n => n.name == tokens[0], deep.RETURN_VALUE);
+
+  nodes = nodes.filter(node => node.inner && node.inner.length);
+  console.log('nodes', nodes);
+
+  return new Type(typeName, ast);
+}
 
 export class Type extends Node {
   static declarations = new Map();
@@ -824,6 +868,7 @@ export class VarDecl extends Node {
     if(node.mangledName && node.mangledName != node.name) this.mangledName = node.mangledName;
 
     let type = node.type?.qualType;
+    console.log('VarDecl', { type });
 
     this.type = type.kind ? TypeFactory(type, ast) : new Type(type, ast);
 
@@ -1396,8 +1441,8 @@ export function NodePrinter(ast) {
         if(out.length == oldlen) {
           console.log('printer error', { loc, location }, this.loc);
           throw new Error(
-            `Node printer for ${node.kind} (${loc}) failed: ${inspect(
-              { ...node, loc },
+            `Node printer for ${node.kind} (${this.loc}) failed: ${inspect(
+              { ...node, loc: this.loc + '' },
               {
                 ...console.options,
                 depth: 10,
