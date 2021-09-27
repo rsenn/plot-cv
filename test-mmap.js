@@ -86,7 +86,7 @@ function main(...args) {
 
   let map = mmap(0, size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
 
-  console.log('map', map);
+  console.log('map',toPointer(map),  map);
 
   // console.log('array', array);
   let array = new Uint8Array(map);
@@ -127,8 +127,21 @@ function main(...args) {
       '48 89 e7 be ? ? ? ? ba ? ? ? ? e8 ? ? ? ? 45 84 e4 74 12',
       'Upgrade required',
       (map, offset, length) => {
-        let buf = dupArrayBuffer(map, offset, length);
-      }
+      let buf = dupArrayBuffer(map, offset, length);
+          console.log('map',toPointer(map));
+console.log('buf',toPointer(buf)-toPointer(map));
+console.log('buf',buf);
+     console.log('offset',offset);
+     console.log('length',length);
+
+     let arr =   new Uint32Array(buf, 4, 1);
+
+     console.log('arr[0]', arr[0]);
+
+     --arr[0];
+          console.log('arr[0]', arr[0]);
+
+   }
     ]
     //['c3', "Ret"]
   ];
@@ -194,6 +207,9 @@ function main(...args) {
     const rep = replacements[i];
 
     if(typeof rep == 'function') {
+      console.log('offset',offset);
+      console.log('patterns[i]', patterns[i]);
+
       rep(map, offset, Pattern(patterns[i][0]).length);
     }
     if(typeof rep == 'string') {
