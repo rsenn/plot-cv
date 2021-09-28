@@ -3,14 +3,7 @@ import * as fs from 'fs';
 import { exec, spawn } from 'child_process';
 import { Console } from 'console';
 import { mmap, munmap, mprotect, PROT_READ, PROT_WRITE, MAP_PRIVATE, msync, MS_SYNC } from 'mmap';
-import {
-  searchArrayBuffer,
-  dupArrayBuffer,
-  memcpy,
-  toString,
-  toPointer,
-  format
-} from 'util';
+import { searchArrayBuffer, dupArrayBuffer, memcpy, toString, toPointer, format } from 'util';
 
 function PrintSlice(arr, start, end, linelen) {
   let i, j;
@@ -78,12 +71,10 @@ function main(...args) {
   let fd = os.open(args[0], os.O_RDONLY);
   console.log('fd', fd);
   let [st, err] = os.stat(args[0]);
-   const { size } = st;
+  const { size } = st;
   console.log('size', size);
 
- 
   let map = mmap(0, size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
-
 
   console.log('map', toPointer(map));
   console.log('map', map);
@@ -92,27 +83,11 @@ function main(...args) {
   let array = new Uint8Array(map);
 
   const patterns = [
-    [
-      'e8 ? ? ? ? 49 8b bf ? ? ? ? 85 c0',
-      'License Validity Checking (Aka IsValidLicense)',
-      '48 31 c0 c3'
-    ],
-    [
-      'e8 ? ? ? ? 48 89 5c 24 ? 48 8b b3',
-      'Invalidation/Validation Functions - Pattern 1',
-      '90 90 90 90 90'
-    ],
-    [
-      'e8 ? ? ? ? bf ? ? ? ? e8 ? ? ? ? 83 25',
-      'Invalidation/Validation Functions - Pattern 2',
-      '90 90 90 90 90'
-    ],
+    ['e8 ? ? ? ? 49 8b bf ? ? ? ? 85 c0', 'License Validity Checking (Aka IsValidLicense)', '48 31 c0 c3'],
+    ['e8 ? ? ? ? 48 89 5c 24 ? 48 8b b3', 'Invalidation/Validation Functions - Pattern 1', '90 90 90 90 90'],
+    ['e8 ? ? ? ? bf ? ? ? ? e8 ? ? ? ? 83 25', 'Invalidation/Validation Functions - Pattern 2', '90 90 90 90 90'],
     ['55 41 56 53 41 89 f6 48 89 fd 6a 28', 'Server Validation Thread', '48 31 c0 48 ff c0 c3'],
-    [
-      'e8 ? ? ? ? 3d ? ? ? ? 75 12',
-      'License Validity Checking',
-      '48 31 c0 c3' /*'48 c7 c0 19 01 00 00'*/
-    ],
+    ['e8 ? ? ? ? 3d ? ? ? ? 75 12', 'License Validity Checking', '48 31 c0 c3' /*'48 c7 c0 19 01 00 00'*/],
     [
       '41 57 41 56 56 57 55 53 b8 28 21 00 00',
       'RSA Key Patch (allows any key in right format to work)',
@@ -158,11 +133,7 @@ function main(...args) {
     const results = searchAll(str);
 
     if(results.length > 1)
-      throw new Error(
-        `Multiple results for pattern '${str}': ${results
-          .map(r => '0x' + r.toString(16))
-          .join(', ')}`
-      );
+      throw new Error(`Multiple results for pattern '${str}': ${results.map(r => '0x' + r.toString(16)).join(', ')}`);
     return results[0];
   }
   function searchAll(str) {
@@ -202,7 +173,7 @@ function main(...args) {
   });
   console.log('results', { ...results });
 
-  offsets.slice(0,4).forEach((offset, i) => {
+  offsets.slice(0, 4).forEach((offset, i) => {
     const rep = replacements[i];
 
     if(typeof rep == 'function') {
@@ -212,15 +183,13 @@ function main(...args) {
       rep(map, offset, Pattern(patterns[i][0]).length);
     }
     if(typeof rep == 'string') {
-      const { buffer } = new Uint8Array(
-        replacements[i].split(' ').map(s => (s == '?' ? 0 : +(`0x` + s)))
-      );
+      const { buffer } = new Uint8Array(replacements[i].split(' ').map(s => (s == '?' ? 0 : +(`0x` + s))));
       if(offset !== null) {
         const dst = dupArrayBuffer(map, offset, buffer.byteLength);
         const diff = toPointer(dst) - toPointer(map);
-       console.log('patch', { map: +toPointer(map), dst: +toPointer(dst),  offset,diff });
-  
-  mprotect(dst, dst.byteLength, PROT_WRITE);
+        console.log('patch', { map: +toPointer(map), dst: +toPointer(dst), offset, diff });
+
+        mprotect(dst, dst.byteLength, PROT_WRITE);
 
         memcpy(dst, buffer);
         console.log(`dst[${i}]`, dst);
@@ -261,12 +230,12 @@ function main(...args) {
 
   let outFd = os.open(`sublime_text`, os.O_TRUNC | os.O_CREAT | os.O_WRONLY, 0o755);
 
-    mprotect(map, size, PROT_READ);
+  mprotect(map, size, PROT_READ);
 
   let r = os.write(outFd, map, 0, size);
-      console.log('map', toPointer(map));
-      console.log('map', map);
-      console.log('size', size);
+  console.log('map', toPointer(map));
+  console.log('map', map);
+  console.log('size', size);
 
   console.log(`Wrote ${r} bytes`);
   os.close(outFd);

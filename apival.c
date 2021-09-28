@@ -344,5 +344,7 @@ main() {
   printf("O_ASYNC = %i\n", O_ASYNC);
   printf("O_NONBLOCK = %i\n", O_NONBLOCK);
   printf("EAGAIN = %i\n", EAGAIN);
+  printf("SHUT_WR = %i\n", SHUT_WR);
+  printf("SHUT_RD = %i\n", SHUT_RD);
   return 0;
 }

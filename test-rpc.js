@@ -116,8 +116,7 @@ function main(...args) {
 
   repl.help = () => {};
   let { log } = console;
-  repl.show = arg =>
-    std.puts((typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options)) + '\n');
+  repl.show = arg => std.puts((typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options)) + '\n');
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();
@@ -251,6 +250,10 @@ function main(...args) {
         /*   rsp = new net.Response(req.url, 301, true, 'application/binary');
           rsp.header('Blah', 'XXXX');*/
         return rsp;
+      },
+      onFd(fd, rd, wr) {
+        console.log('onFd', { fd, rd, wr });
+        return callbacks.onFd(fd, rd, wr);
       },
       ...(url && url.host ? url : {})
     });
