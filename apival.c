@@ -346,5 +346,6 @@ main() {
   printf("EAGAIN = %i\n", EAGAIN);
   printf("SHUT_WR = %i\n", SHUT_WR);
   printf("SHUT_RD = %i\n", SHUT_RD);
+  printf("SIG_SETMASK = %i\n", SIG_SETMASK);
   return 0;
 }
