@@ -3,7 +3,27 @@ import ConsoleSetup from './lib/consoleSetup.js';
 import { Lexer, PathReplacer, Location } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
 import { Token } from './lib/ecmascript/token.js';
-import estree, { ImportSpecifier, VariableDeclaration, VariableDeclarator, ModuleSpecifier, ImportDeclaration, ExportNamedDeclaration, ExportDefaultDeclaration, ExportAllDeclaration, Identifier, MemberExpression, ESNode, CallExpression, ObjectPattern, ArrayPattern, Literal, AssignmentExpression, ExpressionStatement, ClassDeclaration, AssignmentProperty } from './lib/ecmascript/estree.js';
+import estree, {
+  ImportSpecifier,
+  VariableDeclaration,
+  VariableDeclarator,
+  ModuleSpecifier,
+  ImportDeclaration,
+  ExportNamedDeclaration,
+  ExportDefaultDeclaration,
+  ExportAllDeclaration,
+  Identifier,
+  MemberExpression,
+  ESNode,
+  CallExpression,
+  ObjectPattern,
+  ArrayPattern,
+  Literal,
+  AssignmentExpression,
+  ExpressionStatement,
+  ClassDeclaration,
+  AssignmentProperty
+} from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
 import { ImmutablePath, Path } from './lib/json.js';
@@ -11,7 +31,35 @@ import deep from './lib/deep.js';
 import Tree from './lib/tree.js';
 import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 import { Repeater } from './lib/repeater/repeater.js';
-import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater, Reader, ReadAll } from './lib/stream/utils.js';
+import {
+  isStream,
+  AcquireReader,
+  AcquireWriter,
+  ArrayWriter,
+  readStream,
+  PipeTo,
+  WritableRepeater,
+  WriteIterator,
+  AsyncWrite,
+  AsyncRead,
+  ReadFromIterator,
+  WriteToRepeater,
+  LogSink,
+  StringReader,
+  LineReader,
+  DebugTransformStream,
+  CreateWritableStream,
+  CreateTransformStream,
+  RepeaterSource,
+  RepeaterSink,
+  LineBufferStream,
+  TextTransformStream,
+  ChunkReader,
+  ByteReader,
+  PipeToRepeater,
+  Reader,
+  ReadAll
+} from './lib/stream/utils.js';
 import fs from 'fs';
 import { Console } from 'console';
 import process from 'process';
@@ -488,27 +536,30 @@ async function main(...args) {
 
   function FriendlyPrintNode(n) {
     if(n.type)
-      return Object.defineProperties([GetPosition(n), n.type || Util.className(n), /*st ? st.pathOf(n) : */ undefined, Util.abbreviate(Util.escape(PrintAst(n))), GetName(n) /*|| Symbol.for('default')*/], {
-        inspectSymbol: {
-          value() {
-            let arr = this.reduce((acc, item) => [...acc, (item[inspectSymbol] ?? item.toString).call(item)], []);
-            let [pos, type, path, node, id] = arr;
-            return (
-              '{' +
-              Object.entries({ pos, type, path, node, id })
-                .map(([k, v]) => `\n    ${k}: ${v}`)
-                .join('') +
-              '\n}'
-            );
-            return arr.join('\n  ');
-          }
-        },
-        id: {
-          get() {
-            if(n.id) return Identifier.string(n.id);
+      return Object.defineProperties(
+        [GetPosition(n), n.type || Util.className(n), /*st ? st.pathOf(n) : */ undefined, Util.abbreviate(Util.escape(PrintAst(n))), GetName(n) /*|| Symbol.for('default')*/],
+        {
+          inspectSymbol: {
+            value() {
+              let arr = this.reduce((acc, item) => [...acc, (item[inspectSymbol] ?? item.toString).call(item)], []);
+              let [pos, type, path, node, id] = arr;
+              return (
+                '{' +
+                Object.entries({ pos, type, path, node, id })
+                  .map(([k, v]) => `\n    ${k}: ${v}`)
+                  .join('') +
+                '\n}'
+              );
+              return arr.join('\n  ');
+            }
+          },
+          id: {
+            get() {
+              if(n.id) return Identifier.string(n.id);
+            }
           }
         }
-      });
+      );
     return n;
   }
   function FriendlyPrintNodes(nodes) {
@@ -1231,7 +1282,9 @@ async function main(...args) {
         let children = [...deep.iterate(node, n => n && n instanceof ESNode)];
         children = children.filter(([n, p]) => n instanceof MemberExpression && /^module\.exports/.test(PrintAst(n)));
         children = children.map(([n, p]) => [st.parentNode(n), p.slice(0, -1)]).filter(([n, p]) => n instanceof AssignmentExpression);
-        let bindings = children.filter(([n, p]) => p[p.length - 1] == 'left').map(([n, p]) => [p, GetPosition(n), Util.escape(/*Util.abbreviate*/ PrintAst(n)), n, new Map([...st.anchestors(n, n => n.type && n.type != 'Program' && [st.pathOf(n), PrintAst(n)])])]);
+        let bindings = children
+          .filter(([n, p]) => p[p.length - 1] == 'left')
+          .map(([n, p]) => [p, GetPosition(n), Util.escape(/*Util.abbreviate*/ PrintAst(n)), n, new Map([...st.anchestors(n, n => n.type && n.type != 'Program' && [st.pathOf(n), PrintAst(n)])])]);
         if(Util.size(bindings))
           Verbose(
             `GetExportBindings:`,
@@ -1418,7 +1471,9 @@ function GetLiteral(node) {
   return (deep.find(node, n => n instanceof Literal) || {}).value;
 }
 function IsBuiltinModule(name) {
-  return /^(std|os|ffi|net|_http_agent|_http_client|_http_common|_http_incoming|_http_outgoing|_http_server|_stream_duplex|_stream_passthrough|_stream_readable|_stream_transform|_stream_wrap|_tls_common|_tls_wrap|assert|async_hooks|buffer|child_process|cluster|console|constants|crypto|dgram|dns|domain|events|fs|http|http2|https|inspector|module|net|os|path|perf_hooks|process|punycode|querystring|readline|repl|stream|string_decoder|timers|tls|trace_events|tty|url|util|v8|vm|worker_threads|zlib)$/.test(name);
+  return /^(std|os|ffi|net|_http_agent|_http_client|_http_common|_http_incoming|_http_outgoing|_http_server|_stream_duplex|_stream_passthrough|_stream_readable|_stream_transform|_stream_wrap|_tls_common|_tls_wrap|assert|async_hooks|buffer|child_process|cluster|console|constants|crypto|dgram|dns|domain|events|fs|http|http2|https|inspector|module|net|os|path|perf_hooks|process|punycode|querystring|readline|repl|stream|string_decoder|timers|tls|trace_events|tty|url|util|v8|vm|worker_threads|zlib)$/.test(
+    name
+  );
 }
 
 function GetFromPath([path, node], position) {

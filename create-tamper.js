@@ -299,8 +299,18 @@ async function main(...args) {
         deep.set(ast, path, node.declarations[0]);
       }
 
-      exports = exports.map(([p, stmt]) => ((Util.isObject(stmt.declarations) && Util.isObject(stmt.declarations.id) && Util.isObject(stmt.declarations.id.value)) == (Util.isObject(stmt.what) && Util.isObject(stmt.what.value)) ? stmt.declarations : stmt));
-      exports = exports.map(decl => (decl instanceof ObjectPattern ? decl.properties.map(prop => ('id' in prop ? prop.id : prop)) : decl instanceof ObjectExpression ? decl.members.map(prop => ('id' in prop ? prop.id : prop)) : decl));
+      exports = exports.map(([p, stmt]) =>
+        (Util.isObject(stmt.declarations) && Util.isObject(stmt.declarations.id) && Util.isObject(stmt.declarations.id.value)) == (Util.isObject(stmt.what) && Util.isObject(stmt.what.value))
+          ? stmt.declarations
+          : stmt
+      );
+      exports = exports.map(decl =>
+        decl instanceof ObjectPattern
+          ? decl.properties.map(prop => ('id' in prop ? prop.id : prop))
+          : decl instanceof ObjectExpression
+          ? decl.members.map(prop => ('id' in prop ? prop.id : prop))
+          : decl
+      );
       exports = exports.map(decl => (Util.isObject(decl) && 'id' in decl ? decl.id : decl));
       exports = exports.map(e => e.value);
       log(`exports =`, exports.join(', '));
@@ -382,7 +392,13 @@ function findModule(relpath) {
   let module;
   if(st.isDirectory()) {
     const name = path.basename(relpath);
-    let indexes = [...makeNames(relpath + '/dist/' + name), ...makeNames(relpath + '/dist/index'), ...makeNames(relpath + '/build/' + name), ...makeNames(relpath + '/' + name), ...makeNames(relpath + '/index')];
+    let indexes = [
+      ...makeNames(relpath + '/dist/' + name),
+      ...makeNames(relpath + '/dist/index'),
+      ...makeNames(relpath + '/build/' + name),
+      ...makeNames(relpath + '/' + name),
+      ...makeNames(relpath + '/index')
+    ];
     module = indexes.find(i => checkExists(i));
   } else if(st.isFile()) {
     module = relpath;
