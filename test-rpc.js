@@ -76,6 +76,8 @@ function main(...args) {
       client: [false, null, 'C'],
       server: [false, null, 'S'],
       debug: [false, null, 'x'],
+      tls: [false, null, 't'],
+      'no-tls': [false, (v,pv,o) => (o.tls=false,true), 'T'],
       address: [true, null, 'a'],
       port: [true, null, 'p'],
       'ssl-cert': [true, null],
@@ -84,6 +86,9 @@ function main(...args) {
     },
     args
   );
+  if(params['no-tls'] === true)
+    params.tls = false;
+  console.log('params',params);
   const {
     address = '0.0.0.0',
     port = 8999,
@@ -169,6 +174,7 @@ function main(...args) {
     );
 
     return [net.client, net.server][+listen]({
+      tls: params.tls,
       sslCert,
       sslPrivateKey,
       mounts: [
