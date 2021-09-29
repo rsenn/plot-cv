@@ -4,11 +4,10 @@ import ConsoleSetup from './lib/consoleSetup.js';
 import Util from './lib/util.js';
 import { ImmutablePath } from './lib/json.js';
 import deep from './lib/deep.js';
+import filesystem from 'fs';
 import path from './lib/path.js';
 import { SortedMap } from './lib/container/sortedMap.js';
 import PortableFileSystem from './lib/filesystem.js';
-
-let filesystem;
 
 const code = `export const Progress = ({ className, percent, ...props }) => html\`<\x24{Overlay} className=\x24{classNames('progress', 'center', className)} text=\x24{percent + '%'} style=\x24{{
   position: 'relative',
@@ -93,7 +92,7 @@ function PrefixRemover(reOrStr, replacement = '') {
 function WriteFile(name, data) {
   if(Util.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
-  filesystem.writeFile(name, data + '\n');
+  filesystem.writeFileSync(name, data + '\n');
   console.log(`Wrote ${name}: ${data.length} bytes`);
 }
 
@@ -102,10 +101,9 @@ function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments))
 }
 
 async function main(...args) {
-  await PortableFileSystem(fs => (filesystem = fs));
   await ConsoleSetup({ depth: 5 });
 
-  cwd = filesystem.realpath('.');
+  cwd = process.cwd();
 
   // cwd = process.cwd() || fs.realpath('.');
   console.log('cwd=', cwd);
@@ -139,13 +137,13 @@ async function main(...args) {
   packagesPath = makeSearchPath(dirs, 'package.json');
   console.log('packagesPath=', packagesPath);
   moduleAliases = packagesPath.reduce((acc, p) => {
-    let json = JSON.parse(filesystem.readFile(p));
+    let json = JSON.parse(filesystem.readFileSync(p));
     let aliases = json._moduleAliases || {};
     for(let alias in aliases) {
       let module = path.join(path.dirname(p), aliases[alias]);
-      if(!filesystem.exists(module)) throw new Error(`No such module alias from '${alias}' to '${aliases[alias]}'`);
+      if(!filesystem.existsSync(module)) throw new Error(`No such module alias from '${alias}' to '${aliases[alias]}'`);
       let file = findModule(module);
-      // let st = filesystem.stat(file);
+      // let st = filesystem.statSync(file);
       acc.set(alias, file);
     }
     return acc;
@@ -202,7 +200,7 @@ async function main(...args) {
 
     let thisdir = path.dirname(file);
     let absthisdir = path.resolve(thisdir);
-    data = filesystem.readFile(file).toString();
+    data = filesystem.readFileSync(file).toString();
     let ast, error;
     let parser = new ECMAScriptParser(data ? data.toString() : code, file);
     let printer = new Printer({ indent: 4 });
@@ -364,7 +362,7 @@ function makeSearchPath(dirs, extra = 'node_modules') {
       const dir = parts.join('/');
       const extra_dir = path.join(dir, extra);
       if(extra == 'node_modules') if (i == 0) addPath(dir);
-      if(filesystem.exists(extra_dir)) addPath(extra_dir);
+      if(filesystem.existsSync(extra_dir)) addPath(extra_dir);
       i++;
       parts.pop();
     }
@@ -374,13 +372,13 @@ function makeSearchPath(dirs, extra = 'node_modules') {
 }
 
 function checkExists(path) {
-  let r = filesystem.exists(path);
+  let r = filesystem.existsSync(path);
   //console.log(`checkExists('${path}') = ${r}`);
   return r;
 }
 
 function findModule(relpath) {
-  let st = filesystem.stat(relpath);
+  let st = filesystem.statSync(relpath);
   let module;
   if(st.isDirectory()) {
     const name = path.basename(relpath);
@@ -411,7 +409,7 @@ function searchModuleInPath(name, _from) {
     let searchFor = dir.endsWith('node_modules') ? [name] : names;
     for(let module of searchFor) {
       let modPath = path.join(dir, module);
-      if(filesystem.exists(modPath)) {
+      if(filesystem.existsSync(modPath)) {
         //console.log('modPath', modPath);
         let path = findModule(modPath);
         //console.log('path', path);

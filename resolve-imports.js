@@ -12,7 +12,7 @@ import Tree from './lib/tree.js';
 import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater, Reader, ReadAll } from './lib/stream/utils.js';
-import * as fs from 'fs';
+import fs from 'fs';
 import { Console } from 'console';
 import process from 'process';
 
@@ -349,7 +349,7 @@ const isRequire = ([path, node]) => {
 };
 
 const isImport = ([path, node]) => node instanceof ImportDeclaration;
-const isES6Export = ([path, node]) => node.type.startsWith('Export');
+const isES6Export = ([path, node]) => node?.type?.startsWith('Export');
 /*const isCJSExport = ([path, node]) =>
   node instanceof MemberExpression &&   PrintAst(node).startsWith('module.exports');*/
 const isCJSExport = ([path, node]) => node.left && PrintAst(node.left).startsWith('module.exports'); // node instanceof MemberExpression &&   PrintAst(node).startsWith('module.exports');

@@ -66,7 +66,6 @@
 				"*.xml",
 				"*.filters",
 				"*.tsbuildinfo",
-				"*.cjs",
 				"*.flow",
 				"*.o",
 				"*.yml",
@@ -151,10 +150,7 @@
 			/*"folder_include_patterns": [ "src", "opencv", "quickjs", "lib" ],*/
 			"path": ".",
 		},
-		{
-			"path": "quickjs/qjs-ffi"
-		},
-	],
+			],
 	"settings":
 	{
 	 

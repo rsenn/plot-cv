@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <libwebsockets.h>
 #include <errno.h>
+#include <sys/ptrace.h>
 
 static inline int
 escape_char_pred(int c) {
@@ -347,5 +348,6 @@ main() {
   printf("SHUT_WR = %i\n", SHUT_WR);
   printf("SHUT_RD = %i\n", SHUT_RD);
   printf("SIG_SETMASK = %i\n", SIG_SETMASK);
+  printf("PTRACE_SYSCALL = %i\n", PTRACE_SYSCALL);
   return 0;
 }
