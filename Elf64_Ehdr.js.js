@@ -139,7 +139,22 @@ class Elf64_Ehdr extends ArrayBuffer {
   }
 
   toString() {
-    const { e_ident, e_type, e_machine, e_version, e_entry, e_phoff, e_shoff, e_flags, e_ehsize, e_phentsize, e_phnum, e_shentsize, e_shnum, e_shstrndx } = this;
+    const {
+      e_ident,
+      e_type,
+      e_machine,
+      e_version,
+      e_entry,
+      e_phoff,
+      e_shoff,
+      e_flags,
+      e_ehsize,
+      e_phentsize,
+      e_phnum,
+      e_shentsize,
+      e_shnum,
+      e_shstrndx
+    } = this;
     return `Elf64_Ehdr {\n\t.e_ident = ${e_ident},\n\t.e_type = ${e_type},\n\t.e_machine = ${e_machine},\n\t.e_version = ${e_version},\n\t.e_entry = ${e_entry},\n\t.e_phoff = ${e_phoff},\n\t.e_shoff = ${e_shoff},\n\t.e_flags = ${e_flags},\n\t.e_ehsize = ${e_ehsize},\n\t.e_phentsize = ${e_phentsize},\n\t.e_phnum = ${e_phnum},\n\t.e_shentsize = ${e_shentsize},\n\t.e_shnum = ${e_shnum},\n\t.e_shstrndx = ${e_shstrndx}\n}`;
   }
 }

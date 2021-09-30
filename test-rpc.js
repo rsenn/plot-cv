@@ -8,20 +8,15 @@ import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from './lib/filesystem.js';
-import { extendArray } from './lib/misc.js';
 import * as net from 'net';
 import { Socket } from './quickjs/qjs-ffi/lib/socket.js';
-import { EventEmitter, EventTarget, eventify } from './lib/events.js';
+import { EventEmitter } from './lib/events.js';
 import { Repeater } from './lib/repeater/repeater.js';
-import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
 
 import rpc from './quickjs/qjs-net/rpc.js';
-//import { RPCServer, RPCClient, RPCApi, RPCSocket,RPCFactory } from './quickjs/qjs-net/rpc.js';
 import * as rpc2 from './quickjs/qjs-net/rpc.js';
 
 globalThis.fs = fs;
-
-extendArray();
 
 function ReadJSON(filename) {
   let data = fs.readFileSync(filename, 'utf-8');
@@ -78,24 +73,10 @@ function main(...args) {
   );
   if(params['no-tls'] === true) params.tls = false;
   console.log('params', params);
-  const {
-    address = '0.0.0.0',
-    port = 8999,
-    'ssl-cert': sslCert = 'localhost.crt',
-    'ssl-private-key': sslPrivateKey = 'localhost.key'
-  } = params;
+  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key' } = params;
   const listen = params.connect && !params.listen ? false : true;
   const server = !params.client || params.server;
-  Object.assign(globalThis, {
-    EventEmitter,
-    EventTarget,
-    eventify,
-    Repeater,
-    fnmatch,
-    PATH_FNM_MULTI,
-    ...rpc2,
-    rpc
-  });
+  Object.assign(globalThis, { ...rpc2, rpc });
   let name = Util.getArgs()[0];
   name = name
     .replace(/.*\//, '')
@@ -124,11 +105,7 @@ function main(...args) {
 
   console.log = repl.printFunction(log);
 
-  let cli = (globalThis.sock = new rpc.Socket(
-    `${address}:${port}`,
-    rpc[`RPC${server ? 'Server' : 'Client'}Connection`],
-    +params.verbose
-  ));
+  let cli = (globalThis.sock = new rpc.Socket(`${address}:${port}`, rpc[`RPC${server ? 'Server' : 'Client'}Connection`], +params.verbose));
 
   cli.register({ Socket, Worker: os.Worker, Repeater, REPL, EventEmitter });
 
@@ -139,24 +116,7 @@ function main(...args) {
     net.setLog((net.LLL_NOTICE - 1) | net.LLL_USER, (level, ...args) =>
       std.puts(
         '\r\x1b[2K' +
-          (
-            [
-              'ERR',
-              'WARN',
-              'NOTICE',
-              'INFO',
-              'DEBUG',
-              'PARSER',
-              'HEADER',
-              'EXT',
-              'CLIENT',
-              'LATENCY',
-              'MINNET',
-              'THREAD'
-            ][Math.log2(level)] ?? level + ''
-          )
-            .padEnd(8)
-            .toUpperCase() +
+          (['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8).toUpperCase() +
           args.join('') +
           '\n'
       )
@@ -174,24 +134,13 @@ function main(...args) {
 
           console.log('proxy', { url, method, headers }, { status, ok, url, type });
         },
-        /*   function* index(req, res) {
-          console.log(req.path, { req, res });
-          yield '<html>';
-          yield '<head>';
-          yield '</head>';
-          yield '<body>';
-          yield '</body>';
-          yield '</html>';
-        },*/
+
         function* config(req, res) {
           console.log('/config', { req, res });
           yield '{}';
         },
         function* files(req, resp) {
-          //   resp.type = 'application/json';
-
           console.log('\x1b[38;5;215m*files\x1b[0m', { req, resp });
-          //  console.log('headers', resp.headers);
 
           let dir = 'tmp';
           let names = fs.readdirSync(dir);
