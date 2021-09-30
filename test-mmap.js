@@ -116,7 +116,8 @@ function main(...args) {
         //++arr[0];
         console.log('arr[0]', arr[0]);
       }
-    ]
+    ],
+    ['85 db 74 29 0f be b3 0d cc 29', 'Upgrade',  ['85 db eb']]
     //['c3', "Ret"]
   ];
   const replacements = patterns.map(([s, m, r]) => r);
