@@ -264,7 +264,8 @@ function main(...args) {
 try {
   main(...scriptArgs.slice(1));
 } catch(error) {
-  console.log(`FAIL: ${error.message}\n${error.stack}`);
+  console.log(`FAIL: ${error?.message ?? error}\n${error?.stack}`);
+1
   std.exit(1);
 } finally {
   //console.log('SUCCESS');
