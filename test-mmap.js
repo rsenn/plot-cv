@@ -118,6 +118,7 @@ function main(...args) {
       }
     ],
     ['85 db 74 29 0f be b3 0d cc 29', 'Upgrade',  ['85 db eb']]
+    ['50 be fc d8 20 00 ba ab 10 21 00 31 ff e8 bd 79 18 00 84 c0 74 16 48 8b 05 b9 ed 4a 00 be a7 ae 21 00 31 ff 31 d2 31 c9 41 58 ff e0 58', 'Patch-Sublime-License-Message',  '90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90']
     //['c3', "Ret"]
   ];
   const replacements = patterns.map(([s, m, r]) => r);
