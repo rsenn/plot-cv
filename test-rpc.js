@@ -61,7 +61,7 @@ function main(...args) {
     inspectOptions: {
       colors: true,
       depth: Infinity,
-      compact: 2,
+      compact: 1,
       customInspect: true,
       // getters: true,
       // protoChain: 3,
