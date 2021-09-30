@@ -113,14 +113,28 @@ function main(...args) {
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     console.log('createWS', { url, callbacks, listen });
 
-    net.setLog((net.LLL_NOTICE - 1) | net.LLL_USER, (level, ...args) =>
-      std.puts(
-        '\r\x1b[2K' +
-          (['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8).toUpperCase() +
-          args.join('') +
-          '\n'
-      )
-    );
+    net.setLog((params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE: net.LLL_WARN) << 1) - 1), (level, ...args) => {
+      if(params.debug)
+        console.log(
+          (
+            [
+              'ERR',
+              'WARN',
+              'NOTICE',
+              'INFO',
+              'DEBUG',
+              'PARSER',
+              'HEADER',
+              'EXT',
+              'CLIENT',
+              'LATENCY',
+              'MINNET',
+              'THREAD'
+            ][Math.log2(level)] ?? level + ''
+          ).padEnd(8),
+          ...args
+        );
+    });
 
     return [net.client, net.server][+listen]({
       tls: params.tls,
