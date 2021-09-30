@@ -48,8 +48,8 @@
 #else
 #define debug(...)
 #endif
-#define verbmsg(...)                                                                                                           \
-  if(verbose)                                                                                                                  \
+#define verbmsg(...) \
+  if(verbose) \
   fprintf(stderr, __VA_ARGS__)
 #define errmsg(...) fprintf(stderr, __VA_ARGS__)
 #define outmsg(...) fprintf(stdout, __VA_ARGS__)
@@ -59,8 +59,8 @@
 #else
 #define debug(...)
 #endif
-#define verbmsg(format, args...)                                                                                               \
-  if(verbose)                                                                                                                  \
+#define verbmsg(format, args...) \
+  if(verbose) \
   fprintf(stderr, format, ##args)
 #define errmsg(format, args...) fprintf(stderr, format, ##args)
 #define outmsg(format, args...) fprintf(stdout, format, ##args)

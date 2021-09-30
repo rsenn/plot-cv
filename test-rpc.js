@@ -57,17 +57,7 @@ function WriteJSON(name, data) {
 function main(...args) {
   const base = path.basename(Util.getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
   const config = ReadJSON(`.${base}-config`) ?? {};
-  globalThis.console = new Console({
-    inspectOptions: {
-      colors: true,
-      depth: Infinity,
-      compact: 1,
-      customInspect: true,
-      // getters: true,
-      // protoChain: 3,
-      ...(config.inspectOptions ?? {})
-    }
-  });
+  globalThis.console = new Console({ inspectOptions: { compact: 2, customInspect: true } });
   let params = Util.getOpt(
     {
       verbose: [false, (a, v) => (v | 0) + 1, 'v'],
@@ -88,7 +78,12 @@ function main(...args) {
   );
   if(params['no-tls'] === true) params.tls = false;
   console.log('params', params);
-  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key' } = params;
+  const {
+    address = '0.0.0.0',
+    port = 8999,
+    'ssl-cert': sslCert = 'localhost.crt',
+    'ssl-private-key': sslPrivateKey = 'localhost.key'
+  } = params;
   const listen = params.connect && !params.listen ? false : true;
   const server = !params.client || params.server;
   Object.assign(globalThis, {
@@ -129,7 +124,11 @@ function main(...args) {
 
   console.log = repl.printFunction(log);
 
-  let cli = (globalThis.sock = new rpc.Socket(`${address}:${port}`, rpc[`RPC${server ? 'Server' : 'Client'}Connection`], +params.verbose));
+  let cli = (globalThis.sock = new rpc.Socket(
+    `${address}:${port}`,
+    rpc[`RPC${server ? 'Server' : 'Client'}Connection`],
+    +params.verbose
+  ));
 
   cli.register({ Socket, Worker: os.Worker, Repeater, REPL, EventEmitter });
 
@@ -140,7 +139,24 @@ function main(...args) {
     net.setLog((net.LLL_NOTICE - 1) | net.LLL_USER, (level, ...args) =>
       std.puts(
         '\r\x1b[2K' +
-          (['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8).toUpperCase() +
+          (
+            [
+              'ERR',
+              'WARN',
+              'NOTICE',
+              'INFO',
+              'DEBUG',
+              'PARSER',
+              'HEADER',
+              'EXT',
+              'CLIENT',
+              'LATENCY',
+              'MINNET',
+              'THREAD'
+            ][Math.log2(level)] ?? level + ''
+          )
+            .padEnd(8)
+            .toUpperCase() +
           args.join('') +
           '\n'
       )
@@ -226,9 +242,10 @@ function main(...args) {
       onHttp(req, rsp) {
         const { url, method, headers } = req;
         console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', rsp, '\n]');
-        /*   rsp = new net.Response(req.url, 301, true, 'application/binary');
-          rsp.header('Blah', 'XXXX');*/
         return rsp;
+      },
+      onMessage(ws, data) {
+        console.log('onMessage', ws, data);
       },
       onFd(fd, rd, wr) {
         return callbacks.onFd(fd, rd, wr);
