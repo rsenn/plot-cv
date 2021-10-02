@@ -211,7 +211,8 @@ function main(...args) {
         console.log('onMessage', ws, data);
       },
       onFd(fd, rd, wr) {
-        return callbacks.onFd(fd, rd, wr);
+             console.log('onFd',{fd,rd,wr});
+   return callbacks.onFd(fd, rd, wr);
       },
       ...(url && url.host ? url : {})
     });
