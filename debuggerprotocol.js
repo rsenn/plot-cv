@@ -27,6 +27,7 @@ export class DebuggerProtocol {
     const { files } = this;
     if(!(filename in files)) {
       let data = fs.readFileSync(filename, 'utf-8');
+      //console.log('getFile', {filename,data});
       files[filename] = data.split(/\r?\n/g);
     }
     return files[filename];
@@ -81,7 +82,8 @@ export class DebuggerProtocol {
   }
 
   handleEvent(event) {
-    console.log('handleEvent', cfg(), event);
+    console.log('handleEvent', cfg(), event,  this.sendMessage);
+    const stepMode = 'next';
     switch (event.type) {
       case 'StoppedEvent': {
         if(event.reason == 'entry') {
@@ -92,11 +94,11 @@ export class DebuggerProtocol {
           this.sendMessage('breakpoints', {
             path: 'test-ecmascript2.js'
           });
-          this.sendRequest('stepIn');
+          this.sendRequest(stepMode);
         } else {
           this.sendRequest('stackTrace');
           this.sendRequest('variables', { args: { variablesReference: 1 } });
-          this.sendRequest('stepIn');
+          this.sendRequest(stepMode);
         }
         break;
       }
@@ -105,15 +107,15 @@ export class DebuggerProtocol {
 
   sendMessage(type, args) {
     const msg = args ? { type, ...args } : type;
-    console.log('sendMessage', cfg(), msg);
+    console.log('sendMessage',  msg);
     try {
       const json = JSON.stringify(msg);
 
       if(this.send) return this.send(json);
 
-      return this.sock.puts(`${toHex(json.length, 8)}\n${json}`);
+      return this.sock.send(`${toHex(json.length, 8)}\n${json}`);
     } catch(error) {
-      console.log('sendMessage', error.message);
+      console.log('sendMessage', error.message, error.stack);
     }
   }
 
@@ -150,13 +152,13 @@ export class DebuggerProtocol {
       let size = parseInt(len, 16);
       jsonBuf = new ArrayBuffer(size);
       r = sock.recv(jsonBuf);
-      // console.log(`Socket(${sock.fd}).read =`, r);
+    //console.log(`Socket(${sock.fd}).read =`, r);
       if(r <= 0) {
         if(r < 0 && sock.errno != sock.EAGAIN) throw new Error(`read error ${sock.error()}`);
       } else {
         let json = ArrayBufferToString(jsonBuf.slice(0, r));
         try {
-          this.onmessage(json);
+   this.onmessage(json);
         } catch(e) {
           console.log('ERROR', e.message, '\nDATA\n', json, '\nSTACK\n', e.stack);
           throw e;
