@@ -96,7 +96,8 @@ function main(...args) {
 
   repl.help = () => {};
   let { log } = console;
-  repl.show = arg => std.puts((typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options)) + '\n');
+  repl.show = arg =>
+    std.puts((typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options)) + '\n');
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();
@@ -123,7 +124,8 @@ function main(...args) {
     console.log('createWS', { url, callbacks, listen });
 
     net.setLog(
-      (params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
+      (params.debug ? net.LLL_USER : 0) |
+        (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
       (level, ...args) => {
         if(params.debug)
           console.log(
@@ -166,7 +168,12 @@ function main(...args) {
           yield '{}';
         },
         function* files(req, resp) {
-          console.log('\x1b[38;5;215m*files\x1b[0m', { req, resp });
+          const { body, headers } = req;
+          const { 'content-type': content_type } = headers;
+
+          resp.type = 'application/json';
+
+          console.log('\x1b[38;5;215m*files\x1b[0m', { headers, body, req, resp });
 
           let dir = 'tmp';
           let names = fs.readdirSync(dir);
@@ -221,8 +228,8 @@ function main(...args) {
       },
       onMessage(ws, data) {
         console.log('onMessage', ws, data);
-            return callbacks.onMessage(ws, data);
-  },
+        return callbacks.onMessage(ws, data);
+      },
       onFd(fd, rd, wr) {
         //console.log('onFd',{fd,rd,wr});
         return callbacks.onFd(fd, rd, wr);
