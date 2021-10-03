@@ -33,9 +33,9 @@ function main(script, ...args) {
 
   send('httpd', params);
 
-  while(1) {
+   while(1) {
     os.sleep(500);
-  }
+  } 
 }
 
 let sock, connection;

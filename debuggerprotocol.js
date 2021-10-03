@@ -27,8 +27,10 @@ export class DebuggerProtocol {
     const { files } = this;
     if(!(filename in files)) {
       let data = fs.readFileSync(filename, 'utf-8');
+      if(typeof data == 'string')
+        data = data.split(/\r?\n/g);
       //console.log('getFile', {filename,data});
-      files[filename] = data.split(/\r?\n/g);
+      files[filename] = data;
     }
     return files[filename];
   }
@@ -46,7 +48,7 @@ export class DebuggerProtocol {
           let code,
             location = filename ? path.relative(filename, process.cwd()) : '';
           if(typeof line == 'number') {
-            code = this.getFile(location)[line - 1];
+            code = this.getFile(location)?.[line - 1];
             location += ':' + line;
           }
           console.log(`Stack Frame #${id}`, name.padEnd(20), location + (code ? `: ` + code : ''));
@@ -146,7 +148,8 @@ export class DebuggerProtocol {
 
     let r = sock.recv(lengthBuf);
     if(r <= 0) {
-      if(r < 0 && sock.errno != sock.EAGAIN) throw new Error(`read error ${sock.error()}`);
+      console.log('sock.error', sock.error);
+      if(r < 0 && sock.errno != sock.EAGAIN) throw new Error(`${sock.error.syscall} error: ${sock.error.message}`);
     } else {
       let len = ArrayBufferToString(lengthBuf);
       let size = parseInt(len, 16);
@@ -154,7 +157,7 @@ export class DebuggerProtocol {
       r = sock.recv(jsonBuf);
     //console.log(`Socket(${sock.fd}).read =`, r);
       if(r <= 0) {
-        if(r < 0 && sock.errno != sock.EAGAIN) throw new Error(`read error ${sock.error()}`);
+        if(r < 0 && sock.errno != sock.EAGAIN) throw new Error(`${sock.error.syscall} error: ${sock.error.message}`);
       } else {
         let json = ArrayBufferToString(jsonBuf.slice(0, r));
         try {

@@ -14,6 +14,8 @@ function WorkerMain() {
     prefix: '\x1b[38;5;128mWORKER\x1b[0m'
   });
 
+log('ws-worker.js');
+
   if(parent) {
     log(
       'WorkerMain.parent',

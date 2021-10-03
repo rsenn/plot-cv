@@ -49,6 +49,7 @@ function TestWorker() {
     compact: 1,
     prefix: '\x1b[38;5;220mPARENT\x1b[0m'
   });
+  console.log('scriptArgs',scriptArgs);
 
   worker = new os.Worker('./ws-worker.js');
 
