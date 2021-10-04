@@ -144,7 +144,9 @@ async function main(...args) {
         false,
         (v, r, o) => {
           console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
-          console.log(o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n'));
+          console.log(
+            o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n')
+          );
           Util.exit(0);
         },
         'h'
@@ -262,13 +264,17 @@ function processFile(file, params) {
   const isImport = node => node instanceof ImportDeclaration;
 
   let commentMap = new Map(
-    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node }]),
+    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
+      pos * 10 - 1,
+      { comment, pos, len, node }
+    ]),
     (a, b) => a - b
   );
 
   //console.log('commentMap:', commentMap);
 
-  const output_file = params['output-js'] ?? file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
+  const output_file =
+    params['output-js'] ?? file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
 
   let tree = new Tree(ast);
 
@@ -285,15 +291,24 @@ function processFile(file, params) {
 
   function getImports() {
     const imports = [...flat].filter(([path, node]) => isRequire(node) || isImport(node));
-    const importStatements = imports.map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path)).map(path => [path, deep.get(ast, path)]);
+    const importStatements = imports
+      .map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path))
+      .map(path => [path, deep.get(ast, path)]);
 
-    console.log('imports:', new Map(imports.map(([path, node]) => [ESNode.assoc(node).position, node])));
+    console.log(
+      'imports:',
+      new Map(imports.map(([path, node]) => [ESNode.assoc(node).position, node]))
+    );
     console.log('importStatements:', importStatements);
 
-    const importedFiles = imports.map(([pos, node]) => Identifier.string(node.source || node.arguments[0]));
+    const importedFiles = imports.map(([pos, node]) =>
+      Identifier.string(node.source || node.arguments[0])
+    );
     console.log('importedFiles:', importedFiles);
 
-    let importIdentifiers = importStatements.map(([p, n]) => [p, n.identifiers ? n.identifiers : n]).map(([p, n]) => [p, n.declarations ? n.declarations : n]);
+    let importIdentifiers = importStatements
+      .map(([p, n]) => [p, n.identifiers ? n.identifiers : n])
+      .map(([p, n]) => [p, n.declarations ? n.declarations : n]);
     console.log('importIdentifiers:', importIdentifiers);
 
     console.log('importIdentifiers:', Util.unique(importIdentifiers.flat()).join(', '));

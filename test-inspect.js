@@ -32,11 +32,16 @@ async function main(...args) {
     hideKeys: ['loc', 'range', Symbol.for('nodejs.util.inspect.custom')]
   };
 
-  await import(Util.getPlatform() == 'quickjs' ? 'inspect.so' : 'util').then(module => (globalThis.inspect = module.inspect));
+  await import(Util.getPlatform() == 'quickjs' ? 'inspect.so' : 'util').then(
+    module => (globalThis.inspect = module.inspect)
+  );
   const dumpObj = (obj, depth, options) =>
     '{' +
     Object.entries(obj)
-      .map(([k, v]) => `\n${'  '.repeat(options.depth - depth + 1)}${k}=${inspect(v, depth - 1, options)}`)
+      .map(
+        ([k, v]) =>
+          `\n${'  '.repeat(options.depth - depth + 1)}${k}=${inspect(v, depth - 1, options)}`
+      )
       .join(',') +
     '}';
   console.log('main', args);

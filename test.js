@@ -113,7 +113,43 @@ async function main(...args) {
     //  detectLines(dst);
   }
 
-  let matTypes = ['CV_8U', 'CV_8S', 'CV_16U', 'CV_16S', 'CV_32S', 'CV_32F', 'CV_64F', 'CV_8UC1', 'CV_8UC2', 'CV_8UC3', 'CV_8UC4', 'CV_8SC1', 'CV_8SC2', 'CV_8SC3', 'CV_8SC4', 'CV_16UC1', 'CV_16UC2', 'CV_16UC3', 'CV_16UC4', 'CV_16SC1', 'CV_16SC2', 'CV_16SC3', 'CV_16SC4', 'CV_32SC1', 'CV_32SC2', 'CV_32SC3', 'CV_32SC4', 'CV_32FC1', 'CV_32FC2', 'CV_32FC3', 'CV_32FC4', 'CV_64FC1', 'CV_64FC2', 'CV_64FC3', 'CV_64FC4'];
+  let matTypes = [
+    'CV_8U',
+    'CV_8S',
+    'CV_16U',
+    'CV_16S',
+    'CV_32S',
+    'CV_32F',
+    'CV_64F',
+    'CV_8UC1',
+    'CV_8UC2',
+    'CV_8UC3',
+    'CV_8UC4',
+    'CV_8SC1',
+    'CV_8SC2',
+    'CV_8SC3',
+    'CV_8SC4',
+    'CV_16UC1',
+    'CV_16UC2',
+    'CV_16UC3',
+    'CV_16UC4',
+    'CV_16SC1',
+    'CV_16SC2',
+    'CV_16SC3',
+    'CV_16SC4',
+    'CV_32SC1',
+    'CV_32SC2',
+    'CV_32SC3',
+    'CV_32SC4',
+    'CV_32FC1',
+    'CV_32FC2',
+    'CV_32FC3',
+    'CV_32FC4',
+    'CV_64FC1',
+    'CV_64FC2',
+    'CV_64FC3',
+    'CV_64FC4'
+  ];
   let matTypeEntries = matTypes.map(n => [n, cv[n]]);
   console.log(new Map(matTypeEntries.map(([n, v]) => [n, ('0000000' + v.toString(16)).slice(-8)])));
 
@@ -288,7 +324,14 @@ async function main(...args) {
   /*console.log("Point.prototype: ", Point.prototype);
 //console.log("Point.prototype.constructor: ", Point.prototype.constructor);
 */
-  let points = [new Point(0, 0), new Point(50, 0), new Point(100, 0), new Point(100, 50), new Point(100, 100), new Point(100, 200)];
+  let points = [
+    new Point(0, 0),
+    new Point(50, 0),
+    new Point(100, 0),
+    new Point(100, 50),
+    new Point(100, 100),
+    new Point(100, 200)
+  ];
   //console.log('points[0]: ', points[0]);
   //console.log('points[last]: ', points[points.length - 1]);
   //console.log('points: ', points.map(p => `{x:${p.x},y:${p.y}}`).join(', '));

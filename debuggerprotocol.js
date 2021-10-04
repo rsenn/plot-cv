@@ -3,6 +3,7 @@ import * as fs from './lib/filesystem.js';
 import * as path from './lib/path.js';
 import Util from './lib/util.js';
 import { toString as ArrayBufferToString } from './lib/misc.js';
+//import { Socket, AF_INET, SOCK_STREAM, IPPROTO_TCP } from './quickjs/qjs-ffi/lib/socket.js';
 
 const cfg = (obj = {}) => console.config({ compact: false, breakLength: Infinity, ...obj });
 
@@ -15,7 +16,7 @@ export class DebuggerProtocol {
     this.onmessage = this.handleMessage;
   }
 
-  readCommand(connection) {
+  readCommand() {
     let line;
     if((line = std.in.getline())) {
       // console.log('Command:', line);
@@ -27,8 +28,7 @@ export class DebuggerProtocol {
     const { files } = this;
     if(!(filename in files)) {
       let data = fs.readFileSync(filename, 'utf-8');
-      if(typeof data == 'string')
-        data = data.split(/\r?\n/g);
+      if(typeof data == 'string') data = data.split(/\r?\n/g);
       //console.log('getFile', {filename,data});
       files[filename] = data;
     }
@@ -84,7 +84,7 @@ export class DebuggerProtocol {
   }
 
   handleEvent(event) {
-    console.log('handleEvent', cfg(), event,  this.sendMessage);
+    console.log('handleEvent', cfg(), event, this.sendMessage);
     const stepMode = 'next';
     switch (event.type) {
       case 'StoppedEvent': {
@@ -109,7 +109,7 @@ export class DebuggerProtocol {
 
   sendMessage(type, args) {
     const msg = args ? { type, ...args } : type;
-    console.log('sendMessage',  msg);
+    console.log('sendMessage', msg);
     try {
       const json = JSON.stringify(msg);
 
@@ -149,19 +149,21 @@ export class DebuggerProtocol {
     let r = sock.recv(lengthBuf);
     if(r <= 0) {
       console.log('sock.error', sock.error);
-      if(r < 0 && sock.errno != sock.EAGAIN) throw new Error(`${sock.error.syscall} error: ${sock.error.message}`);
+      if(r < 0 && sock.errno != sock.EAGAIN)
+        throw new Error(`${sock.error.syscall} error: ${sock.error.message}`);
     } else {
       let len = ArrayBufferToString(lengthBuf);
       let size = parseInt(len, 16);
       jsonBuf = new ArrayBuffer(size);
       r = sock.recv(jsonBuf);
-    //console.log(`Socket(${sock.fd}).read =`, r);
+      //console.log(`Socket(${sock.fd}).read =`, r);
       if(r <= 0) {
-        if(r < 0 && sock.errno != sock.EAGAIN) throw new Error(`${sock.error.syscall} error: ${sock.error.message}`);
+        if(r < 0 && sock.errno != sock.EAGAIN)
+          throw new Error(`${sock.error.syscall} error: ${sock.error.message}`);
       } else {
         let json = ArrayBufferToString(jsonBuf.slice(0, r));
         try {
-   this.onmessage(json);
+          this.onmessage(json);
         } catch(e) {
           console.log('ERROR', e.message, '\nDATA\n', json, '\nSTACK\n', e.stack);
           throw e;
@@ -200,7 +202,12 @@ export class DebuggerProtocol {
 }
 
 function retValue(ret, ...args) {
-  console.log(...args, `ret =`, ret, ...(ret == -1 ? [' errno =', errno(), ' error =', std.strerror(errno())] : []));
+  console.log(
+    ...args,
+    `ret =`,
+    ret,
+    ...(ret == -1 ? [' errno =', errno(), ' error =', std.strerror(errno())] : [])
+  );
 }
 
 function toHex(n, b = 2) {
@@ -223,7 +230,11 @@ function MakeArray(buf, numBytes) {
 function ArrayBufToHex(buf, numBytes = 8) {
   if(typeof buf == 'object' && buf != null && buf instanceof ArrayBuffer) {
     let arr = MakeArray(buf, numBytes);
-    return arr.reduce((s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)), '');
+    return arr.reduce(
+      (s, code) =>
+        (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
+      ''
+    );
   }
   return buf;
 }

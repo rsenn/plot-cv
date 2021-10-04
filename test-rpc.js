@@ -127,6 +127,7 @@ function main(...args) {
       (params.debug ? net.LLL_USER : 0) |
         (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
       (level, ...args) => {
+        repl.printStatus(...args);
         if(params.debug)
           console.log(
             (

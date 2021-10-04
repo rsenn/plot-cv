@@ -38,7 +38,10 @@ function WriteImage(name, mat) {
 function SaveConfig(configObj) {
   configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v]));
 
-  return filesystem.writeFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'), JSON.stringify(configObj, null, 2) + '\n');
+  return filesystem.writeFile(
+    Util.getArgv()[1].replace(/\.js$/, '.config.json'),
+    JSON.stringify(configObj, null, 2) + '\n'
+  );
 }
 
 function LoadConfig() {
@@ -77,7 +80,8 @@ async function main(...args) {
   let image;
 
   const moduleNames = ['Rect', 'Point', 'Size', 'Line', 'Mat', 'Contour', 'PointIterator', 'Draw'];
-  for(let moduleName of moduleNames) Util.tryCatch(() => eval(`globalThis[moduleName] = ${moduleName};`));
+  for(let moduleName of moduleNames)
+    Util.tryCatch(() => eval(`globalThis[moduleName] = ${moduleName};`));
   let ctors = new Map(moduleNames.map(name => [name, globalThis[name]]));
   console.log('globalThis:', Object.keys(globalThis));
   console.log('modules:', inspect(ctors));
@@ -152,11 +156,19 @@ async function main(...args) {
     }
     i = 0;
     for(let [key, value] of row0.entries()) {
-      console.log(`row0.entries() #${i++}`, key, '0x' + ('00000000' + value.toString(16)).slice(-8));
+      console.log(
+        `row0.entries() #${i++}`,
+        key,
+        '0x' + ('00000000' + value.toString(16)).slice(-8)
+      );
     }
     i = 0;
     for(let [key, value] of col0.entries()) {
-      console.log(`col0.entries() #${i++}`, key, '0x' + ('00000000' + value.toString(16)).slice(-8));
+      console.log(
+        `col0.entries() #${i++}`,
+        key,
+        '0x' + ('00000000' + value.toString(16)).slice(-8)
+      );
     }
     /*let range = mat.rowRange(2, 8);
     i = 0;

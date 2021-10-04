@@ -1879,8 +1879,8 @@ const AppMain = (window.onload = async () => {
     for(url of urls) {
       //console.log('UpdateProjectList:', { ...opts, ...credentials, url });
       let data = await ListProjects({ ...opts, ...credentials, url });
-      let { files } = data;
-      //console.log(`Got ${files.length} files`, files);
+      let files = data;
+  console.log('files', files);
       function File(obj, i) {
         const { name } = obj;
         let file = this instanceof File ? this : Object.create(File.prototype);
