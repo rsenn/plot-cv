@@ -54,7 +54,8 @@
 		{
 			"file_exclude_patterns":
 			[
-				"tags",
+				  "*.xz", "*.json", "*.c", "*.txt", "*.log", "*.png", "*.tmp", "*.patch", "*.cpp", "*.svg", "*.sed", "*.sh", "*.html", "*.h", "*.jpg", "*.xml", "*.bin", "*.diff", "*.brd", "*.pcf", "*.cfg", "*.bdf", "*.txz", "*.m3u", "*.es", "*.mjs", "*.bjson", "*.qjs", "*.out", "*.list", "*.css", "*.bpg", "*.weights", "*.wav", "*.ttf", "*.sch", "*.rej", "*.project", "*.pro",
+				"tags",".*history",
  				"*.bz2",
 				"*.gz",
 				"*.txz",
