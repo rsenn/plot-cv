@@ -444,6 +444,7 @@ export default class Editor extends React.Component {
       paddingBottom: padding,
       paddingLeft: padding
     };
+    console.log('highlight',highlight)
     const highlighted = highlight(value);
     return h("div", _extends({}, rest, {
       style: { ...styles.container,

@@ -1,71 +1,7 @@
-body {
-  height: 0px;
-  background: rgba(128, 128, 128);
-  background: linear-gradient(0deg, hsla(220, 0%, 20%, 1) 0%, hsla(220, 0%, 50%, 1) 10%, hsla(220, 0%, 90%, 1) 75%);
-  background-attachment: fixed;
+/* Page */
+html {
+  box-sizing: border-box;
 }
-
-* {
-  box-sizing: content-box;
-}
-
-canvas {
-  bottom: 0;
-  width: calc(100% - 16px);
-  height: auto;
-  max-height: calc(100vh - 16px);
-}
-
-pre {
-  margin: 0px;
-}
-
-.lineno {
-  float: left;
-  width: 3em;  
-  text-align: right;  
-  color: black;
-  padding-right: 0.5em;
-}
-
-.line {
-  min-height: 1em;
-}
-
-.text {
-  background: black;
-  padding: 0 0.5em;
-}
-
-.container {
-  font-size: 11px;
-  color: #cccccc;
-  overflow: visible;
-  margin: 0;
-  padding: 0;
-  border: 1px solid black;
-}
-
-.container {
-  display: grid;   
-  grid-column-gap: 10px;
-  grid-gap: 0px;
-  grid-template-columns: auto 1fr;
-}
-
-.header {
-  color: white;
-  text-shadow: 1px 1px 1px #000000;
-  background: hsl(200, 100%, 30%); 
-  border: 1px solid black;
-  margin: -1px 0 0 0;
-  font-size: 1.5em;
-  padding: 2px;
-}
-
-
-
-
 
 *,
 *:before,
@@ -80,16 +16,12 @@ body,
   width: 100%;
 }
 
-body > div {
-  background:  whitecontainer_editor_line_number;
-}
-
 body {
   font-family: 'Fira code', 'Fira Mono', Consolas, Menlo, Courier, monospace;
   font-size: 14px;
   line-height: 1.5;
   margin: 0;
-  padding: 10px 10px 10px 80px;
+  padding: 0;
 }
 
 /* App */
@@ -109,10 +41,10 @@ body {
 }
 
 .container_editor_area {
+  tab-size: 4ch;
   max-height: 400px;
   overflow: auto;
   margin: 1.67em 0;
-  padding-left: 3em;
 }
 
 .container__editor {
@@ -120,17 +52,6 @@ body {
   font-variant-ligatures: common-ligatures;
   background-color: #fafafa;
   border-radius: 3px;
-  counter-reset: line;
-}
-
-.container_editor_line_number:before {
-  position: absolute;
-  right: 100%;
-  margin-left: 10px;
-  margin-right: 10px;
-  text-align: right;
-  opacity: .3;
-  user-select: none; 
 }
 
 .container__editor textarea {

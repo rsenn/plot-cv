@@ -129,8 +129,10 @@ function SendRequest(command, args = {}) {
 
 const SourceLine = ({ lineno, text }) => h(Fragment, {}, [h('pre', { class: 'lineno' }, [lineno + 1 + '']), h('pre', { class: 'text' }, [text])]);
 const SourceFile = ({ filename }) => {
-  const url = path.relative(cwd, filename);
+  console.log('SourceLine', {filename,cwd});
+  const url = filename ; //path.relative(cwd, filename);
   let text = useFetch(url) ?? '';
+  return h(EditorView,{ code:text},[]);
   return h(
     'div',
     { class: 'container' },
@@ -139,7 +141,61 @@ const SourceFile = ({ filename }) => {
 };
 
 async function CreateSource(filename) {
-  const component = h(SourceFile, { filename });
+  const component = /*h(EditorView,{},[]); // */h(SourceFile, { filename });
   const { body } = document;
   let r = render(component, body);
 }
+
+
+const code = `function add(a, b) {
+  return a + b;
+}
+`;
+
+class EditorView extends React.Component {
+  state = {
+   code: ''
+  };
+  constructor(props) {
+  super(props);
+/*  console.log(this.props);
+  this.state.code = this.props.code;
+//  this.setState({ code: this.props.code });
+  console.log('code',this.state.code);*/
+}
+
+
+    componentWillReceiveProps(props) {
+        this.setState({
+            code: props.code,
+        })
+    }
+
+  render() {
+    return h(CodeEditor, {
+      value: this.state.code,
+      onValueChange: code => this.setState({
+        code
+      }),
+      /*highlight: code => { 
+        console.log('highlight', {highlight,code,languages});
+       return highlight(code, languages.js);
+      },*/
+     highlight: code =>
+                highlight(code, languages.js)
+                  .split('\n')
+                  .map(
+                    (line,n) =>
+                      `<div class="container_editor_line_number"></div>${line}`
+                  )
+                  .join('\n')
+              ,    padding: 10,
+      style: {
+        fontFamily: '"Fira code", "Fira Mono", monospace',
+        fontSize: 12
+      }
+    });
+  }
+
+}
+
