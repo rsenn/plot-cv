@@ -15,6 +15,13 @@ import { trkl } from './lib/trkl.js';
 import { HSLA, RGBA, Point, isPoint, Size, isSize, Line, isLine, Rect, isRect, PointList, Polyline, Matrix, isMatrix, BBox, TRBL, Timer, Tree, Node, XPath, Element, isElement, CSS, SVG, Container, Layer, Renderer, Select, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementWHProps, ElementXYProps, Align, Anchor, dom, isNumber, Unit, ScalarValue, ElementTransformation, CSSTransformSetters, Transition, TransitionList, RandomColor } from './lib/dom.js';
 import { useActive, useClickout, useConditional, useDebouncedCallback, useDebounce, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useForceUpdate, useGetSet, useHover, useMousePosition, useToggleButtonGroupState, useTrkl, useFetch } from './lib/hooks.js';
 import { clamp, identity, noop, compose, maybe, snd, toPair, getOffset, getPositionOnElement, isChildOf } from './lib/hooks.js';
+import CodeEditor from './react-simple-code-editor.js'
+import Prism from './prism-core.js';
+import './react-simple-code-editor/node_modules/prismjs/components/prism-clike.js';
+import './react-simple-code-editor/node_modules/prismjs/components/prism-javascript.js';
+
+
+const {highlight,languages} = Prism;
 
 globalThis.addEventListener('load', async e => {
   let url = Util.parseURL();
@@ -40,6 +47,7 @@ Object.assign(globalThis, { DroppingBuffer, FixedBuffer, MAX_QUEUE_LENGTH, Repea
 Object.assign(globalThis, { HSLA, RGBA, Point, isPoint, Size, isSize, Line, isLine, Rect, isRect, PointList, Polyline, Matrix, isMatrix, BBox, TRBL, Timer, Tree, Node, XPath, Element, isElement, CSS, SVG, Container, Layer, Renderer, Select, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementWHProps, ElementXYProps, Align, Anchor, dom, isNumber, Unit, ScalarValue, ElementTransformation, CSSTransformSetters, Transition, TransitionList, RandomColor });
 Object.assign(globalThis, { useActive, useClickout, useConditional, useDebouncedCallback, useDebounce, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useForceUpdate, useGetSet, useHover, useMousePosition, useToggleButtonGroupState, useTrkl, useFetch });
 Object.assign(globalThis, { clamp, identity, noop, compose, maybe, snd, toPair, getOffset, getPositionOnElement, isChildOf });
+Object.assign(globalThis, {CodeEditor ,  highlight, languages});
 
 function Start(args, address = '127.0.0.1:9901') {
   return ws.send(
@@ -126,7 +134,7 @@ const SourceFile = ({ filename }) => {
   return h(
     'div',
     { class: 'container' },
-    text.split('\n').map((text, lineno) => h(SourceLine, { lineno, text }))
+    [ h('div', { }, []), h('div', {class: 'header'}, [url])].concat(text.split('\n').map((text, lineno) => h(SourceLine, { lineno, text })))
   );
 };
 

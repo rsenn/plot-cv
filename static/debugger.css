@@ -15,21 +15,23 @@ canvas {
   height: auto;
   max-height: calc(100vh - 16px);
 }
+
 pre {
-    margin: 0px;
+  margin: 0px;
 }
+
 .lineno {
-  float:  left;
-  width:  3em;
-  /*background: #555;*/
-  text-align:  right;
- /* color:  #0ff;*/
- color:  black;
-  padding-right:  0.5em;
+  float: left;
+  width: 3em;  
+  text-align: right;  
+  color: black;
+  padding-right: 0.5em;
 }
+
 .line {
   min-height: 1em;
 }
+
 .text {
   background: black;
   padding: 0 0.5em;
@@ -40,13 +42,23 @@ pre {
   color: #cccccc;
   overflow: visible;
   margin: 0;
-  padding:  0;
+  padding: 0;
   border: 1px solid black;
 }
+
 .container {
-   display: grid;
-  /*grid-auto-flow: column;*/
-grid-column-gap:  10px;
+  display: grid;   
+  grid-column-gap: 10px;
   grid-gap: 0px;
   grid-template-columns: auto 1fr;
+}
+
+.header {
+  color: white;
+  text-shadow: 1px 1px 1px #000000;
+  background: hsl(200, 100%, 30%); 
+  border: 1px solid black;
+  margin: -1px 0 0 0;
+  font-size: 1.5em;
+  padding: 2px;
 }
