@@ -51,7 +51,7 @@ function main(...args) {
   const base = path.basename(Util.getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
 
   const config = ReadJSON(`.${base}-config`) ?? {};
-  globalThis.console = new Console({
+  globalThis.console = new Console(std.err, {
     inspectOptions: { compact: 2, customInspect: true }
   });
   let params = Util.getOpt(
@@ -113,8 +113,7 @@ function main(...args) {
 
     net.setLog((params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1), (level, ...args) => {
       console.log(...args);
-      if(params.debug)
-        console.log((['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8), ...args);
+      if(params.debug) console.log((['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8), ...args);
     });
 
     let child, dbg;

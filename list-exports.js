@@ -1,13 +1,4 @@
-import {
-  ECMAScriptParser,
-  Printer,
-  PathReplacer,
-  ImportDeclaration,
-  ImportSpecifier,
-  Identifier,
-  Literal,
-  ExportDefaultDeclaration
-} from './lib/ecmascript.js';
+import { ECMAScriptParser, Printer, PathReplacer, ImportDeclaration, ImportSpecifier, Identifier, Literal, ExportDefaultDeclaration } from './lib/ecmascript.js';
 import Util from './lib/util.js';
 import Tree from './lib/tree.js';
 import * as fs from 'fs';
@@ -32,8 +23,7 @@ function PrintAst(ast, comments, printer = globalThis.printer) {
 let files = {};
 
 function main(...argv) {
-  globalThis.console = new Console({
-    stdout: process.stderr,
+  globalThis.console = new Console(process.stderr, {
     inspectOptions: {
       colors: true,
       depth: 2,
@@ -51,9 +41,7 @@ function main(...argv) {
         false,
         (v, r, o) => {
           console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
-          console.log(
-            o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n')
-          );
+          console.log(o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n'));
           Util.exit(0);
         },
         'h'
@@ -65,7 +53,6 @@ function main(...argv) {
     },
     argv
   );
-  console.log('params', params);
 
   if(params.debug >= 2) ECMAScriptParser.instrumentate();
   Util.defineGettersSetters(globalThis, {
@@ -100,16 +87,7 @@ try {
   error = e;
 } finally {
   if(error) {
-    console.log(
-      `FAIL: ${Util.className(error)} ${error.message}`,
-      `\n  ` +
-        new Stack(error.stack, fr => fr.functionName != 'esfactory')
-          .toString()
-          .replace(/\n/g, '\n  ')
-          .split('\n')
-          .slice(0, 10)
-          .join('\n')
-    );
+    console.log(`FAIL: ${Util.className(error)} ${error.message}`, `\n  ` + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  ').split('\n').slice(0, 10).join('\n'));
     console.log('FAIL');
     Util.exit(1);
   } else {
@@ -149,10 +127,7 @@ function ProcessFile(file, params) {
   let node2path = new WeakMap();
   let nodeKeys = [];
   let commentMap = new Map(
-    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
-      pos * 10 - 1,
-      { comment, pos, len, node }
-    ]),
+    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node }]),
     (a, b) => a - b
   );
   let tree = new Tree(ast);
@@ -185,20 +160,9 @@ function Finish(err) {
 function ShowOutput(ast, tree, flat, file, params) {
   const output_file = params['output-js'] ?? '/dev/stdout';
   const flags = deep.RETURN_VALUE_PATH;
-  let nodes = [
-    ...deep.select(ast, (node, key) => ['exported', 'imported', 'local'].indexOf(key) != -1, flags),
-    ...deep.select(ast, (node, key) => /Export/.test(node.type), flags)
-  ].map(([node, path]) => [node, path.slice(0, -1), deep.get(ast, path.slice(0, -1))]);
-  let names = nodes
-    .filter(([n, p, parent]) => !/Import/.test(parent.type))
-    .map(([node, path, parent]) =>
-      node.declaration && node.declaration.id ? node.declaration.id : node
-    );
-  let defaultExport = deep.find(
-    ast,
-    node => node instanceof ExportDefaultDeclaration,
-    deep.RETURN_VALUE
-  );
+  let nodes = [...deep.select(ast, (node, key) => ['exported', 'imported', 'local'].indexOf(key) != -1, flags), ...deep.select(ast, (node, key) => /Export/.test(node.type), flags)].map(([node, path]) => [node, path.slice(0, -1), deep.get(ast, path.slice(0, -1))]);
+  let names = nodes.filter(([n, p, parent]) => !/Import/.test(parent.type)).map(([node, path, parent]) => (node.declaration && node.declaration.id ? node.declaration.id : node));
+  let defaultExport = deep.find(ast, node => node instanceof ExportDefaultDeclaration, deep.RETURN_VALUE);
   if(!file.startsWith('./') && !file.startsWith('/') && !file.startsWith('..')) file = './' + file;
   let importNode = new ImportDeclaration(
     [
@@ -212,14 +176,13 @@ function ShowOutput(ast, tree, flat, file, params) {
     ],
     new Literal(`'${file}'`)
   );
-  let code = PrintAst(importNode) + '\n';
+  let code = PrintAst(importNode).trim() + '\n';
   if(output_file == '/dev/stdout') fs.writeSync(process.stdout.fd ?? process.stdout, code);
   else WriteFile(output_file, code);
 }
 
 function NodeType(node) {
-  if(typeof node == 'object')
-    return typeof node.type == 'string' ? node.type : Util.className(node);
+  if(typeof node == 'object') return typeof node.type == 'string' ? node.type : Util.className(node);
 }
 
 function NodeToName(node) {
@@ -230,47 +193,19 @@ function NodeToName(node) {
     if(node instanceof Identifier || node.type == 'Identifier' || 'name' in node) id = node.name;
     if(!id && node.id && node.id instanceof Identifier) id = node.id;
     if(!id && node.name) id = node.name;
-    if(!id)
-      id = deep.find(node, (path, key) => ['id', 'exported'].indexOf(key) != -1, deep.RETURN_VALUE);
+    if(!id) id = deep.find(node, (path, key) => ['id', 'exported'].indexOf(key) != -1, deep.RETURN_VALUE);
     if(id instanceof Identifier) id = Identifier.string(id);
   } else if(typeof node == 'number' || typeof node == 'string') id = node;
   if(!id) {
-    let entries = deep.select(
-      node,
-      (n, p) =>
-        p[p.length - 1] == 'id' &&
-        typeof n == 'object' &&
-        n != null &&
-        (n.name || (n.type ?? n.kind) == 'Identifier'),
-      deep.RETURN_VALUE_PATH
-    );
-    let idList = deep.select(
-      node,
-      (n, p) =>
-        p[p.length - 1] == 'id' &&
-        typeof n == 'object' &&
-        n != null &&
-        (n.type ?? n.kind) == 'Identifier',
-      deep.RETURN_VALUE_PATH
-    );
+    let entries = deep.select(node, (n, p) => p[p.length - 1] == 'id' && typeof n == 'object' && n != null && (n.name || (n.type ?? n.kind) == 'Identifier'), deep.RETURN_VALUE_PATH);
+    let idList = deep.select(node, (n, p) => p[p.length - 1] == 'id' && typeof n == 'object' && n != null && (n.type ?? n.kind) == 'Identifier', deep.RETURN_VALUE_PATH);
     let firstId = idList[0];
     entries = entries.filter(([n, p]) => p.indexOf('init') == -1);
     console.log(
       'entries',
-      entries.map(([n, p]) => [
-        p.join('.'),
-        NodeType(deep.get(node, [...p].slice(0, -1))),
-        n.type,
-        n.name,
-        p.length
-      ])
+      entries.map(([n, p]) => [p.join('.'), NodeType(deep.get(node, [...p].slice(0, -1))), n.type, n.name, p.length])
     );
-    entries = entries.map(([n, p]) => [
-      n.name,
-      p.length,
-      NodeType(deep.get(node, p.slice(0, -1))),
-      [...Ancestors(n, p, (n, k) => [k, NodeType(n) ?? `[${k}]`, n.name])]
-    ]);
+    entries = entries.map(([n, p]) => [n.name, p.length, NodeType(deep.get(node, p.slice(0, -1))), [...Ancestors(n, p, (n, k) => [k, NodeType(n) ?? `[${k}]`, n.name])]]);
     id = entries.map(e => e[0]);
     console.log('node.type', node.type);
   }

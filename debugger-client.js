@@ -6,9 +6,17 @@ import { toString, toArrayBuffer, btoa as Base64Encode, atob as Base64Decode } f
 import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
 import { ECMAScriptParser, Lexer } from './lib/ecmascript/parser.js';
 import { EventEmitter, EventTarget } from './lib/events.js';
-import { Element, isElement } from './lib/dom.js';
+import { DroppingBuffer, FixedBuffer, MAX_QUEUE_LENGTH, Repeater, RepeaterOverflowError, SlidingBuffer } from './lib/repeater/repeater.js';
+import { useAsyncIter, useRepeater, useResult, useValue } from './lib/repeater/react-hooks.js';
+import { TimeoutError, delay, interval, timeout } from './lib/repeater/timers.js';
+import { InMemoryPubSub } from './lib/repeater/pubsub.js';
+import { semaphore, throttler } from './lib/repeater/limiters.js';
+import { trkl } from './lib/trkl.js';
+import { HSLA, RGBA, Point, isPoint, Size, isSize, Line, isLine, Rect, isRect, PointList, Polyline, Matrix, isMatrix, BBox, TRBL, Timer, Tree, Node, XPath, Element, isElement, CSS, SVG, Container, Layer, Renderer, Select, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementWHProps, ElementXYProps, Align, Anchor, dom, isNumber, Unit, ScalarValue, ElementTransformation, CSSTransformSetters, Transition, TransitionList, RandomColor } from './lib/dom.js';
+import { useActive, useClickout, useConditional, useDebouncedCallback, useDebounce, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useForceUpdate, useGetSet, useHover, useMousePosition, useToggleButtonGroupState, useTrkl, useFetch } from './lib/hooks.js';
+import { clamp, identity, noop, compose, maybe, snd, toPair, getOffset, getPositionOnElement, isChildOf } from './lib/hooks.js';
 
-window.addEventListener('load', async e => {
+globalThis.addEventListener('load', async e => {
   let url = Util.parseURL();
   let socketURL = Util.makeURL({
     location: url.location + '/ws',
@@ -26,34 +34,12 @@ async function LoadSource(filename) {
   } catch(e) {}
 }
 
-Object.assign(globalThis, {
-  DebuggerProtocol,
-  LoadSource,
-  Util,
-  toString,
-  toArrayBuffer,
-  Base64Encode,
-  Base64Decode,
-  React,
-  h,
-  html,
-  render,
-  Fragment,
-  Component,
-  useState,
-  useLayoutEffect,
-  useRef,
-  ECMAScriptParser,
-  Lexer,
-  EventEmitter,
-  EventTarget,
-  Element,
-  isElement,
-  path,
-  CreateSource,
-  Start,
-  GetVariables
-});
+Object.assign(globalThis, { DebuggerProtocol, LoadSource, Util, toString, toArrayBuffer, Base64Encode, Base64Decode, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, ECMAScriptParser, Lexer, EventEmitter, EventTarget, Element, isElement, path, CreateSource, Start, GetVariables, SendRequest, Step, Next, Continue, StackTrace });
+Object.assign(globalThis, { DroppingBuffer, FixedBuffer, MAX_QUEUE_LENGTH, Repeater, RepeaterOverflowError, SlidingBuffer, useAsyncIter, useRepeater, useResult, useValue, TimeoutError, delay, interval, timeout, InMemoryPubSub, semaphore, throttler, trkl });
+
+Object.assign(globalThis, { HSLA, RGBA, Point, isPoint, Size, isSize, Line, isLine, Rect, isRect, PointList, Polyline, Matrix, isMatrix, BBox, TRBL, Timer, Tree, Node, XPath, Element, isElement, CSS, SVG, Container, Layer, Renderer, Select, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementWHProps, ElementXYProps, Align, Anchor, dom, isNumber, Unit, ScalarValue, ElementTransformation, CSSTransformSetters, Transition, TransitionList, RandomColor });
+Object.assign(globalThis, { useActive, useClickout, useConditional, useDebouncedCallback, useDebounce, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useForceUpdate, useGetSet, useHover, useMousePosition, useToggleButtonGroupState, useTrkl, useFetch });
+Object.assign(globalThis, { clamp, identity, noop, compose, maybe, snd, toPair, getOffset, getPositionOnElement, isChildOf });
 
 function Start(args, address = '127.0.0.1:9901') {
   return ws.send(
@@ -63,6 +49,7 @@ function Start(args, address = '127.0.0.1:9901') {
     })
   );
 }
+let cwd = '.';
 
 async function CreateSocket(url) {
   let ws = (globalThis.ws = new WebSocketClient());
@@ -89,10 +76,10 @@ async function CreateSocket(url) {
             const { path, data } = response;
             CreateSource(data, path);
           } else if(command == 'start') {
-            const { cwd, args } = response;
-
-            Object.assign(globalThis, { cwd, args });
-            console.log('start', { cwd, args });
+            //const { cwd, args } = response;
+            cwd = response.cwd;
+            // Object.assign(globalThis, { cwd, args });
+            console.log('start', response);
           }
         }
       }
@@ -110,33 +97,41 @@ async function CreateSocket(url) {
 let seq = 0;
 
 function GetVariables(ref = 0) {
-  ws.sendMessage({ type: 'request', request: { request_seq: ++seq, command: 'variables', args: { variablesReference: ref } } });
+  SendRequest('variables', { variablesReference: ref });
 }
 
+function Step() {
+  SendRequest('step');
+}
+function Next() {
+  SendRequest('next');
+}
+
+function Continue() {
+  SendRequest('continue');
+}
+
+function StackTrace() {
+  SendRequest('stackTrace');
+}
+
+function SendRequest(command, args = {}) {
+  ws.sendMessage({ type: 'request', request: { request_seq: ++seq, command, args } });
+}
+
+const SourceLine = ({ lineno, text }) => h(Fragment, {}, [h('pre', { class: 'lineno' }, [lineno + 1 + '']), h('pre', { class: 'text' }, [text])]);
+const SourceFile = ({ filename }) => {
+  const url = path.relative(cwd, filename);
+  let text = useFetch(url) ?? '';
+  return h(
+    'div',
+    { class: 'container' },
+    text.split('\n').map((text, lineno) => h(SourceLine, { lineno, text }))
+  );
+};
+
 async function CreateSource(filename) {
-  if(path.isAbsolute(filename)) filename = path.relative(cwd, filename);
-
-  let response = await fetch(filename);
-  let text = await response.text();
-  const lines = text.split('\n');
-
-  const container = Element.create('div', { class: 'container', 'data-filename': filename });
-
-  lines.forEach((line, i) => {
-    //  let e=Element.create('div', { class: 'line' }, container);
-    Element.create('pre', { class: 'lineno', innerText: i + 1 + '' }, container);
-    Element.create('pre', { class: 'text', innerText: line }, container);
-  });
-
+  const component = h(SourceFile, { filename });
   const { body } = document;
-  let elm, next;
-  for(elm = body.firstElementChild; elm; elm = next) {
-    next = elm.nextElementSibling;
-    let data = elm.getAttribute('data-filename');
-    if(data == filename) body.removeChild(elm);
-    else elm.style.setProperty('display', 'none');
-  }
-
-  body.appendChild(container);
-  return container;
+  let r = render(component, body);
 }
