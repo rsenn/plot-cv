@@ -3,16 +3,7 @@ import Util from './lib/util.js';
 import path from './lib/path.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 import { toString, toArrayBuffer, btoa as Base64Encode, atob as Base64Decode } from './lib/misc.js';
-import React, {
-  h,
-  html,
-  render,
-  Fragment,
-  Component,
-  useState,
-  useLayoutEffect,
-  useRef
-} from './lib/dom/preactComponent.js';
+import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
 import { ECMAScriptParser, Lexer } from './lib/ecmascript/parser.js';
 import { EventEmitter, EventTarget } from './lib/events.js';
 import { Element, isElement } from './lib/dom.js';
@@ -60,7 +51,8 @@ Object.assign(globalThis, {
   isElement,
   path,
   CreateSource,
-  Start
+  Start,
+  GetVariables
 });
 
 function Start(args, address = '127.0.0.1:9901') {
@@ -73,7 +65,7 @@ function Start(args, address = '127.0.0.1:9901') {
 }
 
 async function CreateSocket(url) {
-  let ws = (Util.getGlobalObject().ws = new WebSocketClient());
+  let ws = (globalThis.ws = new WebSocketClient());
 
   console.log('ws', ws);
   await ws.connect(url);
@@ -114,6 +106,11 @@ async function CreateSocket(url) {
   };
 
   return ws;
+}
+let seq = 0;
+
+function GetVariables(ref = 0) {
+  ws.sendMessage({ type: 'request', request: { request_seq: ++seq, command: 'variables', args: { variablesReference: ref } } });
 }
 
 async function CreateSource(filename) {

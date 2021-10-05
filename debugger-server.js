@@ -113,7 +113,8 @@ function main(...args) {
 
     net.setLog((params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1), (level, ...args) => {
       console.log(...args);
-      if(params.debug) console.log((['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8), ...args);
+      if(params.debug)
+        console.log((['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8), ...args);
     });
 
     let child, dbg;
@@ -140,7 +141,7 @@ function main(...args) {
         console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', rsp, '\n]');
         return rsp;
       },
-       onMessage(ws, data) {
+      onMessage(ws, data) {
         console.log('onMessage', ws, data);
         let obj = JSON.parse(data);
 
@@ -196,14 +197,14 @@ function main(...args) {
             const lines = [];
 
             for(;;) {
-                      const {pos,size} = lexer;
-            console.log('lexer', {pos,size});
-    let result =lexer.next();
+              const { pos, size } = lexer;
+              console.log('lexer', { pos, size });
+              let result = lexer.next();
               if(result.done) break;
               const token = result.value;
               console.log('token', { lexeme: token.lexeme, id: token.id, loc: token.loc + '' });
               const { type, id, lexeme, loc } = token;
-              const { line, column,   file } = loc;
+              const { line, column, file } = loc;
               //console.log('token', {lexeme,id,line});
 
               if(!lines[line - 1]) lines.push([]);
