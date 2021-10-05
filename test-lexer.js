@@ -1,8 +1,9 @@
-//import Lexer from './lib/ecmascript/lexer.js';
-import { Lexer } from 'lexer';
-import ConsoleSetup from './lib/consoleSetup.js';
+import Lexer from './lib/ecmascript/lexer.js';
+import { Console } from 'console';
 import { h, Component } from './lib/dom/preactComponent.js';
 import Util from './lib/util.js';
+import fs from 'fs';
+
 const testfn = () => true;
 const testtmpl = `this is
 a test`;
@@ -14,26 +15,33 @@ const Code = `
   
  `;
 
-(async arg => {
-  await ConsoleSetup();
-  let data = Code || (await fs.readFileSync(arg || './lib/ecmascript/parser.js'));
+function main(arg) {
+  let file = arg || './lib/ecmascript/parser.js';
+  let data = fs.readFileSync(file);
   console.log('data:', data);
 
-  let lexer = new Lexer(data.toString());
+  let lexer = new Lexer(data.toString(), file);
   let token;
   try {
     do {
       token = lexer.lex();
 
-      console.info('tok:', tokenColor(token));
+      console.log(`tok(${token.id}):`, tokenColor(token));
     } while(token.type != 'eof');
   } catch(err) {
-    console.log('ERROR:', err);
+    console.log('ERROR:', err.message, err.stack);
   }
-})(...Util.getArgs());
+}
+try {
+  main(...Util.getArgs());
+} catch(error) {
+  console.log(`FAIL: ${error.message}\n${error.stack}`);
+} finally {
+  console.log('SUCCESS');
+}
 
 function tokenColor(tok) {
-  const { type, value, position, offset } = tok;
+  const { type, lexeme, loc, pos } = tok;
 
   const colors = {
     templateLiteral: '\x1b[1;35m',
@@ -48,5 +56,5 @@ function tokenColor(tok) {
     regexpLiteral: '\x1b[1;35m'
   };
 
-  return `${colors[type]}${value}\x1b[0m`;
+  return `${colors[type]}${lexeme}\x1b[0m`;
 }

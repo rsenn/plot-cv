@@ -7,7 +7,14 @@ import { RGBA, HSLA } from './lib/color.js';
 import Util from './lib/util.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
-import { Window, MouseFlags, MouseEvents, Mouse, TextStyle, DrawText } from './qjs-opencv/js/cvHighGUI.js';
+import {
+  Window,
+  MouseFlags,
+  MouseEvents,
+  Mouse,
+  TextStyle,
+  DrawText
+} from './qjs-opencv/js/cvHighGUI.js';
 import * as nvg from 'nanovg';
 import * as glfw from 'glfw';
 
@@ -52,7 +59,10 @@ function SaveConfig(configObj) {
   let file = std.open(basename + '.config.json', 'w+b');
   file.puts(JSON.stringify(configObj, null, 2) + '\n');
   file.close();
-  console.log("Saved config to '" + basename + '.config.json' + "'", inspect(configObj, { compact: false }));
+  console.log(
+    "Saved config to '" + basename + '.config.json' + "'",
+    inspect(configObj, { compact: false })
+  );
 }
 
 function LoadConfig() {
@@ -160,14 +170,19 @@ function main(...args) {
   cv.resizeWindow('output', screenSize.width);
 
   cv.setMouseCallback('output', (event, x, y, flags) => {
-    if(flags == cv.EVENT_FLAG_LBUTTON || event == cv.EVENT_LBUTTONDOWN) console.log(`click ${x},${y}`);
+    if(flags == cv.EVENT_FLAG_LBUTTON || event == cv.EVENT_LBUTTONDOWN)
+      console.log(`click ${x},${y}`);
     else if(event) console.log('MouseCallback', { event, x, y, flags });
   });
 
   let backgroundColor = 0xd0d0d0;
   let shadowColor = 0x404040;
   let textColor = 0xd3d7cf;
-  let fonts = ['/home/roman/.fonts/gothic.ttf', '/home/roman/.fonts/gothicb.ttf', '/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf'];
+  let fonts = [
+    '/home/roman/.fonts/gothic.ttf',
+    '/home/roman/.fonts/gothicb.ttf',
+    '/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf'
+  ];
   let fontFace = fonts[2];
   let fontSize = 14;
   fonts.forEach(file => Draw.loadFont(file));
@@ -197,7 +212,8 @@ function main(...args) {
   let paramIndexes = [-1, -1];
   let palette = new Array();
   const black = [0x00, 0x00, 0x00, 0xff];
-  for(let i = 0; i < 8; i++) palette[i] = [i & 0x04 ? 0xff : 0x00, i & 0x02 ? 0xff : 0x00, i & 0x01 ? 0xff : 0x00, 0xff];
+  for(let i = 0; i < 8; i++)
+    palette[i] = [i & 0x04 ? 0xff : 0x00, i & 0x02 ? 0xff : 0x00, i & 0x01 ? 0xff : 0x00, 0xff];
   palette[2] = [0x60, 0x60, 0x60, 0xff];
   palette[3] = [0xff, 0xff, 0x0, 0xff];
   for(let i = 8; i < 16; i++) palette[i] = black;
@@ -220,7 +236,10 @@ function main(...args) {
         cv.threshold(src, dst, +params.thres, 255, +params.type);
       },
       function Morphology(src, dst) {
-        let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS, new Size(+params.kernel_size * 2 + 1, +params.kernel_size * 2 + 1));
+        let structuringElement = cv.getStructuringElement(
+          cv.MORPH_CROSS,
+          new Size(+params.kernel_size * 2 + 1, +params.kernel_size * 2 + 1)
+        );
         src.copyTo(dst);
         cv.morphologyEx(dst, dst, cv.MORPH_ERODE, structuringElement);
         dst.xor([255, 255, 255, 0], dst);
@@ -245,7 +264,15 @@ function main(...args) {
         let output = new Mat();
         if(skel.channels > 1) cv.cvtColor(skel, skel, cv.COLOR_BGR2GRAY);
         if(morpho.channels > 1) cv.cvtColor(morpho, morpho, cv.COLOR_BGR2GRAY);
-        cv.HoughLinesP(skel, output, +params.rho, (Math.PI * (+params.theta || 1)) / 180, +params.threshold, +params.minLineLength, +params.maxLineGap);
+        cv.HoughLinesP(
+          skel,
+          output,
+          +params.rho,
+          (Math.PI * (+params.theta || 1)) / 180,
+          +params.threshold,
+          +params.minLineLength,
+          +params.maxLineGap
+        );
         cv.cvtColor(skel, dst, cv.COLOR_GRAY2BGR);
         let i = 0;
         lines.splice(0, lines.length);
@@ -321,7 +348,14 @@ function main(...args) {
       function HoughCircles(src, dst) {
         const morpho = this.outputOf('Morphology');
         const skel = this.outputOf('Skeletonization');
-        const paramArray = [+params.dp || 1, +params.minDist, +params.param1, +params.param2, +params.minRadius, +params.maxRadiMathus];
+        const paramArray = [
+          +params.dp || 1,
+          +params.minDist,
+          +params.param1,
+          +params.param2,
+          +params.minRadius,
+          +params.maxRadiMathus
+        ];
         let circles1 = [] || new Mat();
         let circles2 = [] || new Mat();
         cv.HoughCircles(morpho, circles1, cv.HOUGH_GRADIENT, ...paramArray);
@@ -346,7 +380,8 @@ function main(...args) {
         let params = processorParams.get(processor);
         paramIndexes[0] = paramNav.indexOf(params[0]);
         paramIndexes[1] = paramNav.indexOf(params[params.length - 1]);
-        if(paramNav.index < paramIndexes[0] || paramNav.index > paramIndexes[1]) paramNav.current = params[0];
+        if(paramNav.index < paramIndexes[0] || paramNav.index > paramIndexes[1])
+          paramNav.current = params[0];
         let mat = pipeline.getImage(i);
         if(mat.channels == 1) cv.cvtColor(mat, outputMat, cv.COLOR_GRAY2BGR);
         else if(mat.channels == 4) cv.cvtColor(mat, outputMat, cv.COLOR_BGRA2BGR);
@@ -376,11 +411,19 @@ function main(...args) {
       `params:\n` +
       params
         .map((name, idx) => {
-          return `  ${idx + paramIndexes[0] == paramNav.index ? '\x1b[1;31m' : ''}${name.padEnd(13)}\x1b[0m   \x1b[1;36m${+paramNav.get(name)}\x1b[0m\n`;
+          return `  ${idx + paramIndexes[0] == paramNav.index ? '\x1b[1;31m' : ''}${name.padEnd(
+            13
+          )}\x1b[0m   \x1b[1;36m${+paramNav.get(name)}\x1b[0m\n`;
         })
         .join('');
     DrawText(statusMat(textRect), text, textColor, fontFace, fontSize);
-    DrawText(statusMat(helpRect), '< prev, > next, + increment, - decrement, DEL reset', textColor, fontFace, fontSize);
+    DrawText(
+      statusMat(helpRect),
+      '< prev, > next, + increment, - decrement, DEL reset',
+      textColor,
+      fontFace,
+      fontSize
+    );
   }
   function RedrawWindow() {
     let i = pipeline.currentProcessor;
@@ -416,7 +459,8 @@ function main(...args) {
       case 0xf52 /* up */:
       case 0x3c /* < */:
         paramNav.prev();
-        if(paramIndexes[0] != -1 && paramNav.index < paramIndexes[0]) paramNav.index = paramIndexes[1];
+        if(paramIndexes[0] != -1 && paramNav.index < paramIndexes[0])
+          paramNav.index = paramIndexes[1];
         console.log(`Param #${paramNav.index} '${paramNav.name}' selected (${+paramNav.param})`);
         RedrawStatus();
         RedrawWindow();
@@ -424,7 +468,8 @@ function main(...args) {
       case 0xf54 /*down  */:
       case 0x3e /* > */:
         paramNav.next();
-        if(paramIndexes[1] != -1 && paramNav.index > paramIndexes[1]) paramNav.index = paramIndexes[0];
+        if(paramIndexes[1] != -1 && paramNav.index > paramIndexes[1])
+          paramNav.index = paramIndexes[0];
         console.log(`Param #${paramNav.index} '${paramNav.name}' selected (${+paramNav.param})`);
         RedrawStatus();
         RedrawWindow();

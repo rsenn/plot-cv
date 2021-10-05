@@ -836,12 +836,31 @@ export function glPopMatrix() {
   return call('glPopMatrix');
 }
 
-define('glBindTexture', dlsym(libGL, 'glBindTexture'), null, 'void', 'unsigned int', 'unsigned int');
+define(
+  'glBindTexture',
+  dlsym(libGL, 'glBindTexture'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int'
+);
 export function glBindTexture(target, texture) {
   return call('glBindTexture', target, texture);
 }
 
-define('glBitmap', dlsym(libGL, 'glBitmap'), null, 'void', 'int', 'int', 'float', 'float', 'float', 'float', 'void *');
+define(
+  'glBitmap',
+  dlsym(libGL, 'glBitmap'),
+  null,
+  'void',
+  'int',
+  'int',
+  'float',
+  'float',
+  'float',
+  'float',
+  'void *'
+);
 export function glBitmap(width, height, xorig, yorig, xmove, ymove, bitmap) {
   return call('glBitmap', width, height, xorig, yorig, xmove, ymove, bitmap);
 }
@@ -866,12 +885,30 @@ export function glClear(mask) {
   return call('glClear', mask);
 }
 
-define('glClearAccum', dlsym(libGL, 'glClearAccum'), null, 'void', 'float', 'float', 'float', 'float');
+define(
+  'glClearAccum',
+  dlsym(libGL, 'glClearAccum'),
+  null,
+  'void',
+  'float',
+  'float',
+  'float',
+  'float'
+);
 export function glClearAccum(red, green, blue, alpha) {
   return call('glClearAccum', red, green, blue, alpha);
 }
 
-define('glClearColor', dlsym(libGL, 'glClearColor'), null, 'void', 'float', 'float', 'float', 'float');
+define(
+  'glClearColor',
+  dlsym(libGL, 'glClearColor'),
+  null,
+  'void',
+  'float',
+  'float',
+  'float',
+  'float'
+);
 export function glClearColor(red, green, blue, alpha) {
   return call('glClearColor', red, green, blue, alpha);
 }
@@ -946,7 +983,15 @@ export function glColor3sv(v) {
   return call('glColor3sv', v);
 }
 
-define('glColor3ub', dlsym(libGL, 'glColor3ub'), null, 'void', 'unsigned char', 'unsigned char', 'unsigned char');
+define(
+  'glColor3ub',
+  dlsym(libGL, 'glColor3ub'),
+  null,
+  'void',
+  'unsigned char',
+  'unsigned char',
+  'unsigned char'
+);
 export function glColor3ub(red, green, blue) {
   return call('glColor3ub', red, green, blue);
 }
@@ -956,7 +1001,15 @@ export function glColor3ubv(v) {
   return call('glColor3ubv', v);
 }
 
-define('glColor3ui', dlsym(libGL, 'glColor3ui'), null, 'void', 'unsigned int', 'unsigned int', 'unsigned int');
+define(
+  'glColor3ui',
+  dlsym(libGL, 'glColor3ui'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'unsigned int'
+);
 export function glColor3ui(red, green, blue) {
   return call('glColor3ui', red, green, blue);
 }
@@ -986,7 +1039,16 @@ export function glColor4bv(v) {
   return call('glColor4bv', v);
 }
 
-define('glColor4d', dlsym(libGL, 'glColor4d'), null, 'void', 'double', 'double', 'double', 'double');
+define(
+  'glColor4d',
+  dlsym(libGL, 'glColor4d'),
+  null,
+  'void',
+  'double',
+  'double',
+  'double',
+  'double'
+);
 export function glColor4d(red, green, blue, alpha) {
   return call('glColor4d', red, green, blue, alpha);
 }
@@ -1026,7 +1088,16 @@ export function glColor4sv(v) {
   return call('glColor4sv', v);
 }
 
-define('glColor4ub', dlsym(libGL, 'glColor4ub'), null, 'void', 'unsigned char', 'unsigned char', 'unsigned char', 'unsigned char');
+define(
+  'glColor4ub',
+  dlsym(libGL, 'glColor4ub'),
+  null,
+  'void',
+  'unsigned char',
+  'unsigned char',
+  'unsigned char',
+  'unsigned char'
+);
 export function glColor4ub(red, green, blue, alpha) {
   return call('glColor4ub', red, green, blue, alpha);
 }
@@ -1036,7 +1107,16 @@ export function glColor4ubv(v) {
   return call('glColor4ubv', v);
 }
 
-define('glColor4ui', dlsym(libGL, 'glColor4ui'), null, 'void', 'unsigned int', 'unsigned int', 'unsigned int', 'unsigned int');
+define(
+  'glColor4ui',
+  dlsym(libGL, 'glColor4ui'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'unsigned int',
+  'unsigned int'
+);
 export function glColor4ui(red, green, blue, alpha) {
   return call('glColor4ui', red, green, blue, alpha);
 }
@@ -1046,7 +1126,16 @@ export function glColor4uiv(v) {
   return call('glColor4uiv', v);
 }
 
-define('glColor4us', dlsym(libGL, 'glColor4us'), null, 'void', 'uint16', 'uint16', 'uint16', 'uint16');
+define(
+  'glColor4us',
+  dlsym(libGL, 'glColor4us'),
+  null,
+  'void',
+  'uint16',
+  'uint16',
+  'uint16',
+  'uint16'
+);
 export function glColor4us(red, green, blue, alpha) {
   return call('glColor4us', red, green, blue, alpha);
 }
@@ -1056,42 +1145,126 @@ export function glColor4usv(v) {
   return call('glColor4usv', v);
 }
 
-define('glColorMask', dlsym(libGL, 'glColorMask'), null, 'void', 'unsigned char', 'unsigned char', 'unsigned char', 'unsigned char');
+define(
+  'glColorMask',
+  dlsym(libGL, 'glColorMask'),
+  null,
+  'void',
+  'unsigned char',
+  'unsigned char',
+  'unsigned char',
+  'unsigned char'
+);
 export function glColorMask(red, green, blue, alpha) {
   return call('glColorMask', red, green, blue, alpha);
 }
 
-define('glColorMaterial', dlsym(libGL, 'glColorMaterial'), null, 'void', 'unsigned int', 'unsigned int');
+define(
+  'glColorMaterial',
+  dlsym(libGL, 'glColorMaterial'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int'
+);
 export function glColorMaterial(face, mode) {
   return call('glColorMaterial', face, mode);
 }
 
-define('glColorPointer', dlsym(libGL, 'glColorPointer'), null, 'void', 'int', 'unsigned int', 'int', 'void *');
+define(
+  'glColorPointer',
+  dlsym(libGL, 'glColorPointer'),
+  null,
+  'void',
+  'int',
+  'unsigned int',
+  'int',
+  'void *'
+);
 export function glColorPointer(size, type, stride, pointer) {
   return call('glColorPointer', size, type, stride, pointer);
 }
 
-define('glCopyPixels', dlsym(libGL, 'glCopyPixels'), null, 'void', 'int', 'int', 'int', 'int', 'unsigned int');
+define(
+  'glCopyPixels',
+  dlsym(libGL, 'glCopyPixels'),
+  null,
+  'void',
+  'int',
+  'int',
+  'int',
+  'int',
+  'unsigned int'
+);
 export function glCopyPixels(x, y, width, height, type) {
   return call('glCopyPixels', x, y, width, height, type);
 }
 
-define('glCopyTexImage1D', dlsym(libGL, 'glCopyTexImage1D'), null, 'void', 'unsigned int', 'int', 'unsigned int', 'int', 'int', 'int', 'int');
+define(
+  'glCopyTexImage1D',
+  dlsym(libGL, 'glCopyTexImage1D'),
+  null,
+  'void',
+  'unsigned int',
+  'int',
+  'unsigned int',
+  'int',
+  'int',
+  'int',
+  'int'
+);
 export function glCopyTexImage1D(target, level, internalFormat, x, y, width, border) {
   return call('glCopyTexImage1D', target, level, internalFormat, x, y, width, border);
 }
 
-define('glCopyTexImage2D', dlsym(libGL, 'glCopyTexImage2D'), null, 'void', 'unsigned int', 'int', 'unsigned int', 'int', 'int', 'int', 'int', 'int');
+define(
+  'glCopyTexImage2D',
+  dlsym(libGL, 'glCopyTexImage2D'),
+  null,
+  'void',
+  'unsigned int',
+  'int',
+  'unsigned int',
+  'int',
+  'int',
+  'int',
+  'int',
+  'int'
+);
 export function glCopyTexImage2D(target, level, internalFormat, x, y, width, height, border) {
   return call('glCopyTexImage2D', target, level, internalFormat, x, y, width, height, border);
 }
 
-define('glCopyTexSubImage1D', dlsym(libGL, 'glCopyTexSubImage1D'), null, 'void', 'unsigned int', 'int', 'int', 'int', 'int', 'int');
+define(
+  'glCopyTexSubImage1D',
+  dlsym(libGL, 'glCopyTexSubImage1D'),
+  null,
+  'void',
+  'unsigned int',
+  'int',
+  'int',
+  'int',
+  'int',
+  'int'
+);
 export function glCopyTexSubImage1D(target, level, xoffset, x, y, width) {
   return call('glCopyTexSubImage1D', target, level, xoffset, x, y, width);
 }
 
-define('glCopyTexSubImage2D', dlsym(libGL, 'glCopyTexSubImage2D'), null, 'void', 'unsigned int', 'int', 'int', 'int', 'int', 'int', 'int', 'int');
+define(
+  'glCopyTexSubImage2D',
+  dlsym(libGL, 'glCopyTexSubImage2D'),
+  null,
+  'void',
+  'unsigned int',
+  'int',
+  'int',
+  'int',
+  'int',
+  'int',
+  'int',
+  'int'
+);
 export function glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height) {
   return call('glCopyTexSubImage2D', target, level, xoffset, yoffset, x, y, width, height);
 }
@@ -1146,12 +1319,31 @@ export function glDrawBuffer(mode) {
   return call('glDrawBuffer', mode);
 }
 
-define('glDrawElements', dlsym(libGL, 'glDrawElements'), null, 'void', 'unsigned int', 'int', 'unsigned int', 'void *');
+define(
+  'glDrawElements',
+  dlsym(libGL, 'glDrawElements'),
+  null,
+  'void',
+  'unsigned int',
+  'int',
+  'unsigned int',
+  'void *'
+);
 export function glDrawElements(mode, count, type, indices) {
   return call('glDrawElements', mode, count, type, indices);
 }
 
-define('glDrawPixels', dlsym(libGL, 'glDrawPixels'), null, 'void', 'int', 'int', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glDrawPixels',
+  dlsym(libGL, 'glDrawPixels'),
+  null,
+  'void',
+  'int',
+  'int',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glDrawPixels(width, height, format, type, pixels) {
   return call('glDrawPixels', width, height, format, type, pixels);
 }
@@ -1226,7 +1418,17 @@ export function glEvalMesh1(mode, i1, i2) {
   return call('glEvalMesh1', mode, i1, i2);
 }
 
-define('glEvalMesh2', dlsym(libGL, 'glEvalMesh2'), null, 'void', 'unsigned int', 'int', 'int', 'int', 'int');
+define(
+  'glEvalMesh2',
+  dlsym(libGL, 'glEvalMesh2'),
+  null,
+  'void',
+  'unsigned int',
+  'int',
+  'int',
+  'int',
+  'int'
+);
 export function glEvalMesh2(mode, i1, i2, j1, j2) {
   return call('glEvalMesh2', mode, i1, i2, j1, j2);
 }
@@ -1241,7 +1443,15 @@ export function glEvalPoint2(i, j) {
   return call('glEvalPoint2', i, j);
 }
 
-define('glFeedbackBuffer', dlsym(libGL, 'glFeedbackBuffer'), null, 'void', 'int', 'unsigned int', 'void *');
+define(
+  'glFeedbackBuffer',
+  dlsym(libGL, 'glFeedbackBuffer'),
+  null,
+  'void',
+  'int',
+  'unsigned int',
+  'void *'
+);
 export function glFeedbackBuffer(size, type, buffer) {
   return call('glFeedbackBuffer', size, type, buffer);
 }
@@ -1271,7 +1481,18 @@ export function glFrontFace(mode) {
   return call('glFrontFace', mode);
 }
 
-define('glFrustum', dlsym(libGL, 'glFrustum'), null, 'void', 'double', 'double', 'double', 'double', 'double', 'double');
+define(
+  'glFrustum',
+  dlsym(libGL, 'glFrustum'),
+  null,
+  'void',
+  'double',
+  'double',
+  'double',
+  'double',
+  'double',
+  'double'
+);
 export function glFrustum(left, right, bottom, top, zNear, zFar) {
   return call('glFrustum', left, right, bottom, top, zNear, zFar);
 }
@@ -1311,37 +1532,93 @@ export function glGetIntegerv(pname, params) {
   return call('glGetIntegerv', pname, params);
 }
 
-define('glGetLightfv', dlsym(libGL, 'glGetLightfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glGetLightfv',
+  dlsym(libGL, 'glGetLightfv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glGetLightfv(light, pname, params) {
   return call('glGetLightfv', light, pname, params);
 }
 
-define('glGetLightiv', dlsym(libGL, 'glGetLightiv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glGetLightiv',
+  dlsym(libGL, 'glGetLightiv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glGetLightiv(light, pname, params) {
   return call('glGetLightiv', light, pname, params);
 }
 
-define('glGetMapdv', dlsym(libGL, 'glGetMapdv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glGetMapdv',
+  dlsym(libGL, 'glGetMapdv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glGetMapdv(target, query, v) {
   return call('glGetMapdv', target, query, v);
 }
 
-define('glGetMapfv', dlsym(libGL, 'glGetMapfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glGetMapfv',
+  dlsym(libGL, 'glGetMapfv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glGetMapfv(target, query, v) {
   return call('glGetMapfv', target, query, v);
 }
 
-define('glGetMapiv', dlsym(libGL, 'glGetMapiv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glGetMapiv',
+  dlsym(libGL, 'glGetMapiv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glGetMapiv(target, query, v) {
   return call('glGetMapiv', target, query, v);
 }
 
-define('glGetMaterialfv', dlsym(libGL, 'glGetMaterialfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glGetMaterialfv',
+  dlsym(libGL, 'glGetMaterialfv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glGetMaterialfv(face, pname, params) {
   return call('glGetMaterialfv', face, pname, params);
 }
 
-define('glGetMaterialiv', dlsym(libGL, 'glGetMaterialiv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glGetMaterialiv',
+  dlsym(libGL, 'glGetMaterialiv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glGetMaterialiv(face, pname, params) {
   return call('glGetMaterialiv', face, pname, params);
 }
@@ -1351,12 +1628,26 @@ export function glGetPixelMapfv(map, values) {
   return call('glGetPixelMapfv', map, values);
 }
 
-define('glGetPixelMapuiv', dlsym(libGL, 'glGetPixelMapuiv'), null, 'void', 'unsigned int', 'void *');
+define(
+  'glGetPixelMapuiv',
+  dlsym(libGL, 'glGetPixelMapuiv'),
+  null,
+  'void',
+  'unsigned int',
+  'void *'
+);
 export function glGetPixelMapuiv(map, values) {
   return call('glGetPixelMapuiv', map, values);
 }
 
-define('glGetPixelMapusv', dlsym(libGL, 'glGetPixelMapusv'), null, 'void', 'unsigned int', 'void *');
+define(
+  'glGetPixelMapusv',
+  dlsym(libGL, 'glGetPixelMapusv'),
+  null,
+  'void',
+  'unsigned int',
+  'void *'
+);
 export function glGetPixelMapusv(map, values) {
   return call('glGetPixelMapusv', map, values);
 }
@@ -1376,52 +1667,136 @@ export function glGetString(name) {
   return call('glGetString', name);
 }
 
-define('glGetTexEnvfv', dlsym(libGL, 'glGetTexEnvfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glGetTexEnvfv',
+  dlsym(libGL, 'glGetTexEnvfv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glGetTexEnvfv(target, pname, params) {
   return call('glGetTexEnvfv', target, pname, params);
 }
 
-define('glGetTexEnviv', dlsym(libGL, 'glGetTexEnviv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glGetTexEnviv',
+  dlsym(libGL, 'glGetTexEnviv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glGetTexEnviv(target, pname, params) {
   return call('glGetTexEnviv', target, pname, params);
 }
 
-define('glGetTexGendv', dlsym(libGL, 'glGetTexGendv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glGetTexGendv',
+  dlsym(libGL, 'glGetTexGendv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glGetTexGendv(coord, pname, params) {
   return call('glGetTexGendv', coord, pname, params);
 }
 
-define('glGetTexGenfv', dlsym(libGL, 'glGetTexGenfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glGetTexGenfv',
+  dlsym(libGL, 'glGetTexGenfv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glGetTexGenfv(coord, pname, params) {
   return call('glGetTexGenfv', coord, pname, params);
 }
 
-define('glGetTexGeniv', dlsym(libGL, 'glGetTexGeniv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glGetTexGeniv',
+  dlsym(libGL, 'glGetTexGeniv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glGetTexGeniv(coord, pname, params) {
   return call('glGetTexGeniv', coord, pname, params);
 }
 
-define('glGetTexImage', dlsym(libGL, 'glGetTexImage'), null, 'void', 'unsigned int', 'int', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glGetTexImage',
+  dlsym(libGL, 'glGetTexImage'),
+  null,
+  'void',
+  'unsigned int',
+  'int',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glGetTexImage(target, level, format, type, pixels) {
   return call('glGetTexImage', target, level, format, type, pixels);
 }
 
-define('glGetTexLevelParameterfv', dlsym(libGL, 'glGetTexLevelParameterfv'), null, 'void', 'unsigned int', 'int', 'unsigned int', 'void *');
+define(
+  'glGetTexLevelParameterfv',
+  dlsym(libGL, 'glGetTexLevelParameterfv'),
+  null,
+  'void',
+  'unsigned int',
+  'int',
+  'unsigned int',
+  'void *'
+);
 export function glGetTexLevelParameterfv(target, level, pname, params) {
   return call('glGetTexLevelParameterfv', target, level, pname, params);
 }
 
-define('glGetTexLevelParameteriv', dlsym(libGL, 'glGetTexLevelParameteriv'), null, 'void', 'unsigned int', 'int', 'unsigned int', 'void *');
+define(
+  'glGetTexLevelParameteriv',
+  dlsym(libGL, 'glGetTexLevelParameteriv'),
+  null,
+  'void',
+  'unsigned int',
+  'int',
+  'unsigned int',
+  'void *'
+);
 export function glGetTexLevelParameteriv(target, level, pname, params) {
   return call('glGetTexLevelParameteriv', target, level, pname, params);
 }
 
-define('glGetTexParameterfv', dlsym(libGL, 'glGetTexParameterfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glGetTexParameterfv',
+  dlsym(libGL, 'glGetTexParameterfv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glGetTexParameterfv(target, pname, params) {
   return call('glGetTexParameterfv', target, pname, params);
 }
 
-define('glGetTexParameteriv', dlsym(libGL, 'glGetTexParameteriv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glGetTexParameteriv',
+  dlsym(libGL, 'glGetTexParameteriv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glGetTexParameteriv(target, pname, params) {
   return call('glGetTexParameteriv', target, pname, params);
 }
@@ -1466,7 +1841,15 @@ export function glIndexMask(mask) {
   return call('glIndexMask', mask);
 }
 
-define('glIndexPointer', dlsym(libGL, 'glIndexPointer'), null, 'void', 'unsigned int', 'int', 'void *');
+define(
+  'glIndexPointer',
+  dlsym(libGL, 'glIndexPointer'),
+  null,
+  'void',
+  'unsigned int',
+  'int',
+  'void *'
+);
 export function glIndexPointer(type, stride, pointer) {
   return call('glIndexPointer', type, stride, pointer);
 }
@@ -1491,7 +1874,15 @@ export function glIndexubv(c) {
   return call('glIndexubv', c);
 }
 
-define('glInterleavedArrays', dlsym(libGL, 'glInterleavedArrays'), null, 'void', 'unsigned int', 'int', 'void *');
+define(
+  'glInterleavedArrays',
+  dlsym(libGL, 'glInterleavedArrays'),
+  null,
+  'void',
+  'unsigned int',
+  'int',
+  'void *'
+);
 export function glInterleavedArrays(format, stride, pointer) {
   return call('glInterleavedArrays', format, stride, pointer);
 }
@@ -1516,7 +1907,15 @@ export function glLightf(light, pname, param) {
   return call('glLightf', light, pname, param);
 }
 
-define('glLightfv', dlsym(libGL, 'glLightfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glLightfv',
+  dlsym(libGL, 'glLightfv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glLightfv(light, pname, params) {
   return call('glLightfv', light, pname, params);
 }
@@ -1526,7 +1925,15 @@ export function glLighti(light, pname, param) {
   return call('glLighti', light, pname, param);
 }
 
-define('glLightiv', dlsym(libGL, 'glLightiv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glLightiv',
+  dlsym(libGL, 'glLightiv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glLightiv(light, pname, params) {
   return call('glLightiv', light, pname, params);
 }
@@ -1586,22 +1993,74 @@ export function glLogicOp(opcode) {
   return call('glLogicOp', opcode);
 }
 
-define('glMap1d', dlsym(libGL, 'glMap1d'), null, 'void', 'unsigned int', 'double', 'double', 'int', 'int', 'void *');
+define(
+  'glMap1d',
+  dlsym(libGL, 'glMap1d'),
+  null,
+  'void',
+  'unsigned int',
+  'double',
+  'double',
+  'int',
+  'int',
+  'void *'
+);
 export function glMap1d(target, u1, u2, stride, order, points) {
   return call('glMap1d', target, u1, u2, stride, order, points);
 }
 
-define('glMap1f', dlsym(libGL, 'glMap1f'), null, 'void', 'unsigned int', 'float', 'float', 'int', 'int', 'void *');
+define(
+  'glMap1f',
+  dlsym(libGL, 'glMap1f'),
+  null,
+  'void',
+  'unsigned int',
+  'float',
+  'float',
+  'int',
+  'int',
+  'void *'
+);
 export function glMap1f(target, u1, u2, stride, order, points) {
   return call('glMap1f', target, u1, u2, stride, order, points);
 }
 
-define('glMap2d', dlsym(libGL, 'glMap2d'), null, 'void', 'unsigned int', 'double', 'double', 'int', 'int', 'double', 'double', 'int', 'int', 'void *');
+define(
+  'glMap2d',
+  dlsym(libGL, 'glMap2d'),
+  null,
+  'void',
+  'unsigned int',
+  'double',
+  'double',
+  'int',
+  'int',
+  'double',
+  'double',
+  'int',
+  'int',
+  'void *'
+);
 export function glMap2d(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, points) {
   return call('glMap2d', target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, points);
 }
 
-define('glMap2f', dlsym(libGL, 'glMap2f'), null, 'void', 'unsigned int', 'float', 'float', 'int', 'int', 'float', 'float', 'int', 'int', 'void *');
+define(
+  'glMap2f',
+  dlsym(libGL, 'glMap2f'),
+  null,
+  'void',
+  'unsigned int',
+  'float',
+  'float',
+  'int',
+  'int',
+  'float',
+  'float',
+  'int',
+  'int',
+  'void *'
+);
 export function glMap2f(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, points) {
   return call('glMap2f', target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, points);
 }
@@ -1616,32 +2075,86 @@ export function glMapGrid1f(un, u1, u2) {
   return call('glMapGrid1f', un, u1, u2);
 }
 
-define('glMapGrid2d', dlsym(libGL, 'glMapGrid2d'), null, 'void', 'int', 'double', 'double', 'int', 'double', 'double');
+define(
+  'glMapGrid2d',
+  dlsym(libGL, 'glMapGrid2d'),
+  null,
+  'void',
+  'int',
+  'double',
+  'double',
+  'int',
+  'double',
+  'double'
+);
 export function glMapGrid2d(un, u1, u2, vn, v1, v2) {
   return call('glMapGrid2d', un, u1, u2, vn, v1, v2);
 }
 
-define('glMapGrid2f', dlsym(libGL, 'glMapGrid2f'), null, 'void', 'int', 'float', 'float', 'int', 'float', 'float');
+define(
+  'glMapGrid2f',
+  dlsym(libGL, 'glMapGrid2f'),
+  null,
+  'void',
+  'int',
+  'float',
+  'float',
+  'int',
+  'float',
+  'float'
+);
 export function glMapGrid2f(un, u1, u2, vn, v1, v2) {
   return call('glMapGrid2f', un, u1, u2, vn, v1, v2);
 }
 
-define('glMaterialf', dlsym(libGL, 'glMaterialf'), null, 'void', 'unsigned int', 'unsigned int', 'float');
+define(
+  'glMaterialf',
+  dlsym(libGL, 'glMaterialf'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'float'
+);
 export function glMaterialf(face, pname, param) {
   return call('glMaterialf', face, pname, param);
 }
 
-define('glMaterialfv', dlsym(libGL, 'glMaterialfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glMaterialfv',
+  dlsym(libGL, 'glMaterialfv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glMaterialfv(face, pname, params) {
   return call('glMaterialfv', face, pname, params);
 }
 
-define('glMateriali', dlsym(libGL, 'glMateriali'), null, 'void', 'unsigned int', 'unsigned int', 'int');
+define(
+  'glMateriali',
+  dlsym(libGL, 'glMateriali'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'int'
+);
 export function glMateriali(face, pname, param) {
   return call('glMateriali', face, pname, param);
 }
 
-define('glMaterialiv', dlsym(libGL, 'glMaterialiv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glMaterialiv',
+  dlsym(libGL, 'glMaterialiv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glMaterialiv(face, pname, params) {
   return call('glMaterialiv', face, pname, params);
 }
@@ -1716,12 +2229,31 @@ export function glNormal3sv(v) {
   return call('glNormal3sv', v);
 }
 
-define('glNormalPointer', dlsym(libGL, 'glNormalPointer'), null, 'void', 'unsigned int', 'int', 'void *');
+define(
+  'glNormalPointer',
+  dlsym(libGL, 'glNormalPointer'),
+  null,
+  'void',
+  'unsigned int',
+  'int',
+  'void *'
+);
 export function glNormalPointer(type, stride, pointer) {
   return call('glNormalPointer', type, stride, pointer);
 }
 
-define('glOrtho', dlsym(libGL, 'glOrtho'), null, 'void', 'double', 'double', 'double', 'double', 'double', 'double');
+define(
+  'glOrtho',
+  dlsym(libGL, 'glOrtho'),
+  null,
+  'void',
+  'double',
+  'double',
+  'double',
+  'double',
+  'double',
+  'double'
+);
 export function glOrtho(left, right, bottom, top, zNear, zFar) {
   return call('glOrtho', left, right, bottom, top, zNear, zFar);
 }
@@ -1736,12 +2268,28 @@ export function glPixelMapfv(map, mapsize, values) {
   return call('glPixelMapfv', map, mapsize, values);
 }
 
-define('glPixelMapuiv', dlsym(libGL, 'glPixelMapuiv'), null, 'void', 'unsigned int', 'int', 'void *');
+define(
+  'glPixelMapuiv',
+  dlsym(libGL, 'glPixelMapuiv'),
+  null,
+  'void',
+  'unsigned int',
+  'int',
+  'void *'
+);
 export function glPixelMapuiv(map, mapsize, values) {
   return call('glPixelMapuiv', map, mapsize, values);
 }
 
-define('glPixelMapusv', dlsym(libGL, 'glPixelMapusv'), null, 'void', 'unsigned int', 'int', 'void *');
+define(
+  'glPixelMapusv',
+  dlsym(libGL, 'glPixelMapusv'),
+  null,
+  'void',
+  'unsigned int',
+  'int',
+  'void *'
+);
 export function glPixelMapusv(map, mapsize, values) {
   return call('glPixelMapusv', map, mapsize, values);
 }
@@ -1776,7 +2324,14 @@ export function glPointSize(size) {
   return call('glPointSize', size);
 }
 
-define('glPolygonMode', dlsym(libGL, 'glPolygonMode'), null, 'void', 'unsigned int', 'unsigned int');
+define(
+  'glPolygonMode',
+  dlsym(libGL, 'glPolygonMode'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int'
+);
 export function glPolygonMode(face, mode) {
   return call('glPolygonMode', face, mode);
 }
@@ -1791,7 +2346,15 @@ export function glPolygonStipple(mask) {
   return call('glPolygonStipple', mask);
 }
 
-define('glPrioritizeTextures', dlsym(libGL, 'glPrioritizeTextures'), null, 'void', 'int', 'void *', 'void *');
+define(
+  'glPrioritizeTextures',
+  dlsym(libGL, 'glPrioritizeTextures'),
+  null,
+  'void',
+  'int',
+  'void *',
+  'void *'
+);
 export function glPrioritizeTextures(n, textures, priorities) {
   return call('glPrioritizeTextures', n, textures, priorities);
 }
@@ -1891,7 +2454,16 @@ export function glRasterPos3sv(v) {
   return call('glRasterPos3sv', v);
 }
 
-define('glRasterPos4d', dlsym(libGL, 'glRasterPos4d'), null, 'void', 'double', 'double', 'double', 'double');
+define(
+  'glRasterPos4d',
+  dlsym(libGL, 'glRasterPos4d'),
+  null,
+  'void',
+  'double',
+  'double',
+  'double',
+  'double'
+);
 export function glRasterPos4d(x, y, z, w) {
   return call('glRasterPos4d', x, y, z, w);
 }
@@ -1901,7 +2473,16 @@ export function glRasterPos4dv(v) {
   return call('glRasterPos4dv', v);
 }
 
-define('glRasterPos4f', dlsym(libGL, 'glRasterPos4f'), null, 'void', 'float', 'float', 'float', 'float');
+define(
+  'glRasterPos4f',
+  dlsym(libGL, 'glRasterPos4f'),
+  null,
+  'void',
+  'float',
+  'float',
+  'float',
+  'float'
+);
 export function glRasterPos4f(x, y, z, w) {
   return call('glRasterPos4f', x, y, z, w);
 }
@@ -1921,7 +2502,16 @@ export function glRasterPos4iv(v) {
   return call('glRasterPos4iv', v);
 }
 
-define('glRasterPos4s', dlsym(libGL, 'glRasterPos4s'), null, 'void', 'short', 'short', 'short', 'short');
+define(
+  'glRasterPos4s',
+  dlsym(libGL, 'glRasterPos4s'),
+  null,
+  'void',
+  'short',
+  'short',
+  'short',
+  'short'
+);
 export function glRasterPos4s(x, y, z, w) {
   return call('glRasterPos4s', x, y, z, w);
 }
@@ -1936,7 +2526,19 @@ export function glReadBuffer(mode) {
   return call('glReadBuffer', mode);
 }
 
-define('glReadPixels', dlsym(libGL, 'glReadPixels'), null, 'void', 'int', 'int', 'int', 'int', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glReadPixels',
+  dlsym(libGL, 'glReadPixels'),
+  null,
+  'void',
+  'int',
+  'int',
+  'int',
+  'int',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glReadPixels(x, y, width, height, format, type, pixels) {
   return call('glReadPixels', x, y, width, height, format, type, pixels);
 }
@@ -1986,7 +2588,16 @@ export function glRenderMode(mode) {
   return call('glRenderMode', mode);
 }
 
-define('glRotated', dlsym(libGL, 'glRotated'), null, 'void', 'double', 'double', 'double', 'double');
+define(
+  'glRotated',
+  dlsym(libGL, 'glRotated'),
+  null,
+  'void',
+  'double',
+  'double',
+  'double',
+  'double'
+);
 export function glRotated(angle, x, y, z) {
   return call('glRotated', angle, x, y, z);
 }
@@ -2021,7 +2632,15 @@ export function glShadeModel(mode) {
   return call('glShadeModel', mode);
 }
 
-define('glStencilFunc', dlsym(libGL, 'glStencilFunc'), null, 'void', 'unsigned int', 'int', 'unsigned int');
+define(
+  'glStencilFunc',
+  dlsym(libGL, 'glStencilFunc'),
+  null,
+  'void',
+  'unsigned int',
+  'int',
+  'unsigned int'
+);
 export function glStencilFunc(func, ref, mask) {
   return call('glStencilFunc', func, ref, mask);
 }
@@ -2031,7 +2650,15 @@ export function glStencilMask(mask) {
   return call('glStencilMask', mask);
 }
 
-define('glStencilOp', dlsym(libGL, 'glStencilOp'), null, 'void', 'unsigned int', 'unsigned int', 'unsigned int');
+define(
+  'glStencilOp',
+  dlsym(libGL, 'glStencilOp'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'unsigned int'
+);
 export function glStencilOp(fail, zfail, zpass) {
   return call('glStencilOp', fail, zfail, zpass);
 }
@@ -2156,7 +2783,16 @@ export function glTexCoord3sv(v) {
   return call('glTexCoord3sv', v);
 }
 
-define('glTexCoord4d', dlsym(libGL, 'glTexCoord4d'), null, 'void', 'double', 'double', 'double', 'double');
+define(
+  'glTexCoord4d',
+  dlsym(libGL, 'glTexCoord4d'),
+  null,
+  'void',
+  'double',
+  'double',
+  'double',
+  'double'
+);
 export function glTexCoord4d(s, t, r, q) {
   return call('glTexCoord4d', s, t, r, q);
 }
@@ -2166,7 +2802,16 @@ export function glTexCoord4dv(v) {
   return call('glTexCoord4dv', v);
 }
 
-define('glTexCoord4f', dlsym(libGL, 'glTexCoord4f'), null, 'void', 'float', 'float', 'float', 'float');
+define(
+  'glTexCoord4f',
+  dlsym(libGL, 'glTexCoord4f'),
+  null,
+  'void',
+  'float',
+  'float',
+  'float',
+  'float'
+);
 export function glTexCoord4f(s, t, r, q) {
   return call('glTexCoord4f', s, t, r, q);
 }
@@ -2186,7 +2831,16 @@ export function glTexCoord4iv(v) {
   return call('glTexCoord4iv', v);
 }
 
-define('glTexCoord4s', dlsym(libGL, 'glTexCoord4s'), null, 'void', 'short', 'short', 'short', 'short');
+define(
+  'glTexCoord4s',
+  dlsym(libGL, 'glTexCoord4s'),
+  null,
+  'void',
+  'short',
+  'short',
+  'short',
+  'short'
+);
 export function glTexCoord4s(s, t, r, q) {
   return call('glTexCoord4s', s, t, r, q);
 }
@@ -2196,17 +2850,42 @@ export function glTexCoord4sv(v) {
   return call('glTexCoord4sv', v);
 }
 
-define('glTexCoordPointer', dlsym(libGL, 'glTexCoordPointer'), null, 'void', 'int', 'unsigned int', 'int', 'void *');
+define(
+  'glTexCoordPointer',
+  dlsym(libGL, 'glTexCoordPointer'),
+  null,
+  'void',
+  'int',
+  'unsigned int',
+  'int',
+  'void *'
+);
 export function glTexCoordPointer(size, type, stride, pointer) {
   return call('glTexCoordPointer', size, type, stride, pointer);
 }
 
-define('glTexEnvf', dlsym(libGL, 'glTexEnvf'), null, 'void', 'unsigned int', 'unsigned int', 'float');
+define(
+  'glTexEnvf',
+  dlsym(libGL, 'glTexEnvf'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'float'
+);
 export function glTexEnvf(target, pname, param) {
   return call('glTexEnvf', target, pname, param);
 }
 
-define('glTexEnvfv', dlsym(libGL, 'glTexEnvfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glTexEnvfv',
+  dlsym(libGL, 'glTexEnvfv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glTexEnvfv(target, pname, params) {
   return call('glTexEnvfv', target, pname, params);
 }
@@ -2216,27 +2895,67 @@ export function glTexEnvi(target, pname, param) {
   return call('glTexEnvi', target, pname, param);
 }
 
-define('glTexEnviv', dlsym(libGL, 'glTexEnviv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glTexEnviv',
+  dlsym(libGL, 'glTexEnviv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glTexEnviv(target, pname, params) {
   return call('glTexEnviv', target, pname, params);
 }
 
-define('glTexGend', dlsym(libGL, 'glTexGend'), null, 'void', 'unsigned int', 'unsigned int', 'double');
+define(
+  'glTexGend',
+  dlsym(libGL, 'glTexGend'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'double'
+);
 export function glTexGend(coord, pname, param) {
   return call('glTexGend', coord, pname, param);
 }
 
-define('glTexGendv', dlsym(libGL, 'glTexGendv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glTexGendv',
+  dlsym(libGL, 'glTexGendv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glTexGendv(coord, pname, params) {
   return call('glTexGendv', coord, pname, params);
 }
 
-define('glTexGenf', dlsym(libGL, 'glTexGenf'), null, 'void', 'unsigned int', 'unsigned int', 'float');
+define(
+  'glTexGenf',
+  dlsym(libGL, 'glTexGenf'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'float'
+);
 export function glTexGenf(coord, pname, param) {
   return call('glTexGenf', coord, pname, param);
 }
 
-define('glTexGenfv', dlsym(libGL, 'glTexGenfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glTexGenfv',
+  dlsym(libGL, 'glTexGenfv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glTexGenfv(coord, pname, params) {
   return call('glTexGenfv', coord, pname, params);
 }
@@ -2246,49 +2965,184 @@ export function glTexGeni(coord, pname, param) {
   return call('glTexGeni', coord, pname, param);
 }
 
-define('glTexGeniv', dlsym(libGL, 'glTexGeniv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glTexGeniv',
+  dlsym(libGL, 'glTexGeniv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glTexGeniv(coord, pname, params) {
   return call('glTexGeniv', coord, pname, params);
 }
 
-define('glTexImage1D', dlsym(libGL, 'glTexImage1D'), null, 'void', 'unsigned int', 'int', 'int', 'int', 'int', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glTexImage1D',
+  dlsym(libGL, 'glTexImage1D'),
+  null,
+  'void',
+  'unsigned int',
+  'int',
+  'int',
+  'int',
+  'int',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glTexImage1D(target, level, internalformat, width, border, format, type, pixels) {
   return call('glTexImage1D', target, level, internalformat, width, border, format, type, pixels);
 }
 
-define('glTexImage2D', dlsym(libGL, 'glTexImage2D'), null, 'void', 'unsigned int', 'int', 'int', 'int', 'int', 'int', 'unsigned int', 'unsigned int', 'void *');
-export function glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels) {
-  return call('glTexImage2D', target, level, internalformat, width, height, border, format, type, pixels);
+define(
+  'glTexImage2D',
+  dlsym(libGL, 'glTexImage2D'),
+  null,
+  'void',
+  'unsigned int',
+  'int',
+  'int',
+  'int',
+  'int',
+  'int',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
+export function glTexImage2D(
+  target,
+  level,
+  internalformat,
+  width,
+  height,
+  border,
+  format,
+  type,
+  pixels
+) {
+  return call(
+    'glTexImage2D',
+    target,
+    level,
+    internalformat,
+    width,
+    height,
+    border,
+    format,
+    type,
+    pixels
+  );
 }
 
-define('glTexParameterf', dlsym(libGL, 'glTexParameterf'), null, 'void', 'unsigned int', 'unsigned int', 'float');
+define(
+  'glTexParameterf',
+  dlsym(libGL, 'glTexParameterf'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'float'
+);
 export function glTexParameterf(target, pname, param) {
   return call('glTexParameterf', target, pname, param);
 }
 
-define('glTexParameterfv', dlsym(libGL, 'glTexParameterfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glTexParameterfv',
+  dlsym(libGL, 'glTexParameterfv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glTexParameterfv(target, pname, params) {
   return call('glTexParameterfv', target, pname, params);
 }
 
-define('glTexParameteri', dlsym(libGL, 'glTexParameteri'), null, 'void', 'unsigned int', 'unsigned int', 'int');
+define(
+  'glTexParameteri',
+  dlsym(libGL, 'glTexParameteri'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'int'
+);
 export function glTexParameteri(target, pname, param) {
   return call('glTexParameteri', target, pname, param);
 }
 
-define('glTexParameteriv', dlsym(libGL, 'glTexParameteriv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glTexParameteriv',
+  dlsym(libGL, 'glTexParameteriv'),
+  null,
+  'void',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glTexParameteriv(target, pname, params) {
   return call('glTexParameteriv', target, pname, params);
 }
 
-define('glTexSubImage1D', dlsym(libGL, 'glTexSubImage1D'), null, 'void', 'unsigned int', 'int', 'int', 'int', 'unsigned int', 'unsigned int', 'void *');
+define(
+  'glTexSubImage1D',
+  dlsym(libGL, 'glTexSubImage1D'),
+  null,
+  'void',
+  'unsigned int',
+  'int',
+  'int',
+  'int',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
 export function glTexSubImage1D(target, level, xoffset, width, format, type, pixels) {
   return call('glTexSubImage1D', target, level, xoffset, width, format, type, pixels);
 }
 
-define('glTexSubImage2D', dlsym(libGL, 'glTexSubImage2D'), null, 'void', 'unsigned int', 'int', 'int', 'int', 'int', 'int', 'unsigned int', 'unsigned int', 'void *');
-export function glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels) {
-  return call('glTexSubImage2D', target, level, xoffset, yoffset, width, height, format, type, pixels);
+define(
+  'glTexSubImage2D',
+  dlsym(libGL, 'glTexSubImage2D'),
+  null,
+  'void',
+  'unsigned int',
+  'int',
+  'int',
+  'int',
+  'int',
+  'int',
+  'unsigned int',
+  'unsigned int',
+  'void *'
+);
+export function glTexSubImage2D(
+  target,
+  level,
+  xoffset,
+  yoffset,
+  width,
+  height,
+  format,
+  type,
+  pixels
+) {
+  return call(
+    'glTexSubImage2D',
+    target,
+    level,
+    xoffset,
+    yoffset,
+    width,
+    height,
+    format,
+    type,
+    pixels
+  );
 }
 
 define('glTranslated', dlsym(libGL, 'glTranslated'), null, 'void', 'double', 'double', 'double');
@@ -2381,7 +3235,16 @@ export function glVertex3sv(v) {
   return call('glVertex3sv', v);
 }
 
-define('glVertex4d', dlsym(libGL, 'glVertex4d'), null, 'void', 'double', 'double', 'double', 'double');
+define(
+  'glVertex4d',
+  dlsym(libGL, 'glVertex4d'),
+  null,
+  'void',
+  'double',
+  'double',
+  'double',
+  'double'
+);
 export function glVertex4d(x, y, z, w) {
   return call('glVertex4d', x, y, z, w);
 }
@@ -2421,7 +3284,16 @@ export function glVertex4sv(v) {
   return call('glVertex4sv', v);
 }
 
-define('glVertexPointer', dlsym(libGL, 'glVertexPointer'), null, 'void', 'int', 'unsigned int', 'int', 'void *');
+define(
+  'glVertexPointer',
+  dlsym(libGL, 'glVertexPointer'),
+  null,
+  'void',
+  'int',
+  'unsigned int',
+  'int',
+  'void *'
+);
 export function glVertexPointer(size, type, stride, pointer) {
   return call('glVertexPointer', size, type, stride, pointer);
 }

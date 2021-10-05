@@ -55,6 +55,7 @@ typedef struct numbers_s {
 
 int
 main() {
+  __int128 i128;
   struct timespec ts;
   numbers_t n = {};
   jmp_buf jmpb;
@@ -347,7 +348,39 @@ main() {
   printf("EAGAIN = %i\n", EAGAIN);
   printf("SHUT_WR = %i\n", SHUT_WR);
   printf("SHUT_RD = %i\n", SHUT_RD);
-  printf("SIG_SETMASK = %i\n", SIG_SETMASK);
+  //printf("SIG_SETMASK = %i\n", SIG_SETMASK);
   printf("PTRACE_SYSCALL = %i\n", PTRACE_SYSCALL);
+  printf("sizeof(__int128) = %zu\n", sizeof(__int128));
+  printf("SIGHUP = %i\n", SIGHUP);
+  printf("SIGINT = %i\n", SIGINT);
+  printf("SIGQUIT = %i\n", SIGQUIT);
+  printf("SIGILL = %i\n", SIGILL);
+  printf("SIGTRAP = %i\n", SIGTRAP);
+  printf("SIGABRT = %i\n", SIGABRT);
+  printf("SIGBUS = %i\n", SIGBUS);
+  printf("SIGFPE = %i\n", SIGFPE);
+  printf("SIGKILL = %i\n", SIGKILL);
+  printf("SIGUSR1 = %i\n", SIGUSR1);
+  printf("SIGSEGV = %i\n", SIGSEGV);
+  printf("SIGUSR2 = %i\n", SIGUSR2);
+  printf("SIGPIPE = %i\n", SIGPIPE);
+  printf("SIGALRM = %i\n", SIGALRM);
+  printf("SIGTERM = %i\n", SIGTERM);
+  printf("SIGSTKFLT = %i\n", SIGSTKFLT);
+  printf("SIGCHLD = %i\n", SIGCHLD);
+  printf("SIGCONT = %i\n", SIGCONT);
+  printf("SIGSTOP = %i\n", SIGSTOP);
+  printf("SIGTSTP = %i\n", SIGTSTP);
+  printf("SIGTTIN = %i\n", SIGTTIN);
+  printf("SIGTTOU = %i\n", SIGTTOU);
+  printf("SIGURG = %i\n", SIGURG);
+  printf("SIGXCPU = %i\n", SIGXCPU);
+  printf("SIGXFSZ = %i\n", SIGXFSZ);
+  printf("SIGVTALRM = %i\n", SIGVTALRM);
+  printf("SIGPROF = %i\n", SIGPROF);
+  printf("SIGWINCH = %i\n", SIGWINCH);
+  printf("SIGIO = %i\n", SIGIO);
+  printf("SIGPWR = %i\n", SIGPWR);
+  printf("SIGSYS = %i\n", SIGSYS);
   return 0;
 }

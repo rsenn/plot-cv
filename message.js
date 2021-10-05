@@ -7,7 +7,12 @@ export class Message {
 
   constructor(...args) {
     if(args.length == 1) {
-      Object.assign(this, typeof args[0] == 'string' ? Message.decode(args[0]) : Util.filterOutMembers(args[0], v => v == undefined));
+      Object.assign(
+        this,
+        typeof args[0] == 'string'
+          ? Message.decode(args[0])
+          : Util.filterOutMembers(args[0], v => v == undefined)
+      );
     } else {
       const [body, origin, recipient, type] = args;
       if(origin !== undefined) this.origin = origin;
@@ -81,7 +86,9 @@ export class Message {
 
     const prepend = plain ? str => (r = str + (r != '' ? ' ' : '') + r) : str => (r = str + r);
 
-    const insertField = plain ? (str, code) => prepend((code == Message.SENDER_ID ? ':' : '') + str) : (str, code) => prepend((r = String.fromCodePoint(code) + str + String.fromCodePoint(code)));
+    const insertField = plain
+      ? (str, code) => prepend((code == Message.SENDER_ID ? ':' : '') + str)
+      : (str, code) => prepend((r = String.fromCodePoint(code) + str + String.fromCodePoint(code)));
 
     if(recipient) r = insertField(recipient, Message.RECIPIENT_ID);
     r = insertField(type || 'x', Message.TYPE_ID);
@@ -106,7 +113,9 @@ export class Message {
   }
   [Symbol.toStringTag]() {
     const { origin, recipient, type, body } = this;
-    return 'new Message', Util.filterOutMembers({ origin, recipient, type, body }, v => v == undefined);
+    return (
+      'new Message', Util.filterOutMembers({ origin, recipient, type, body }, v => v == undefined)
+    );
   }
 }
 

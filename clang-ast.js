@@ -51,7 +51,9 @@ export class List extends Array {
     if(typeof callback == 'object' && callback != null && callback instanceof RegExp) {
       var re = callback;
       callback = elem =>
-        typeof elem == 'object' && elem != null && (re.test(elem.name) || (GetLoc(elem) && re.test(GetLoc(elem).file)));
+        typeof elem == 'object' &&
+        elem != null &&
+        (re.test(elem.name) || (GetLoc(elem) && re.test(GetLoc(elem).file)));
     }
 
     for(let elem of this) {
@@ -245,7 +247,8 @@ export class Type extends Node {
       // ast ??= globalThis['$']?.data;
       if(
         ast &&
-        typeof (tmp = deep.find(ast, n => typeof n == 'object' && n && n.name == name)) == 'object' &&
+        typeof (tmp = deep.find(ast, n => typeof n == 'object' && n && n.name == name)) ==
+          'object' &&
         tmp != null
       ) {
         //console.log('Type', tmp, name;
@@ -333,7 +336,9 @@ export class Type extends Node {
       let ptr = (name ?? this + '').replace(/\*$/, '').trimEnd();
       //console.log('ptr:', ptr);
       if(ast) {
-        let node = deep.find(ast, (n, p) => (p.length > 2 ? -1 : typeof n == 'object' && n && n.name == ptr))?.value;
+        let node = deep.find(ast, (n, p) =>
+          p.length > 2 ? -1 : typeof n == 'object' && n && n.name == ptr
+        )?.value;
 
         if(node) new Type(node, ast);
       }
@@ -600,7 +605,10 @@ const { size,unsigned } = this;
 
   [Symbol.toPrimitive](hint) {
     if(hint == 'default' || hint == 'string')
-      return (this.qualType ?? this.desugaredQualType ?? this?.ast?.name ?? '').replace(/\s+(\*+)$/, '$1'); //this+'';
+      return (this.qualType ?? this.desugaredQualType ?? this?.ast?.name ?? '').replace(
+        /\s+(\*+)$/,
+        '$1'
+      ); //this+'';
     return this;
   }
 
@@ -623,7 +631,8 @@ const { size,unsigned } = this;
       else type = TypeFactory(node, ast);
       if(node.name && typeof name_or_id != 'string') name_or_id = node.name;
     }
-    if(typeof name_or_id == 'string' && !Type.declarations.has(name_or_id)) Type.declarations.set(name_or_id, type);
+    if(typeof name_or_id == 'string' && !Type.declarations.has(name_or_id))
+      Type.declarations.set(name_or_id, type);
     return type;
   }
 }
@@ -692,7 +701,9 @@ export class RecordDecl extends Type {
             } else if(node.type) {
               type = new Type(node.type, ast);
               if(type.desugared && type.desugared.startsWith('struct ')) {
-                let tmp = ast.inner.find(n => n.kind == 'RecordDecl' && n.name == /^struct./.test(n.name));
+                let tmp = ast.inner.find(
+                  n => n.kind == 'RecordDecl' && n.name == /^struct./.test(n.name)
+                );
                 if(tmp) type = TypeFactory(tmp.value, ast);
               }
             } else if(node.kind.startsWith('Record')) {
@@ -702,7 +713,8 @@ export class RecordDecl extends Type {
             }
           }
           if(type) acc.push([name, /*node.kind,*/ type]);
-          else if(name) acc.push([name, node.kind.startsWith('Indirect') ? null : TypeFactory(node, ast)]);
+          else if(name)
+            acc.push([name, node.kind.startsWith('Indirect') ? null : TypeFactory(node, ast)]);
           return acc;
           /*  return [
             name,
@@ -730,7 +742,10 @@ export class RecordDecl extends Type {
     return super.toJSON({
       name,
       size,
-      members: members.map(([name, member]) => [name, member != null && member.toJSON ? member.toJSON() : member])
+      members: members.map(([name, member]) => [
+        name,
+        member != null && member.toJSON ? member.toJSON() : member
+      ])
     });
   }
 }
@@ -840,7 +855,8 @@ export class FunctionDecl extends Node {
     // console.log('FunctionDecl', { type, returnType,tmp });
 
     this.returnType = returnType.kind ? TypeFactory(returnType, ast) : new Type(returnType, ast);
-    this.parameters = parameters && /*new Map*/ parameters.map(({ name, type }) => [name, new Type(type, ast)]);
+    this.parameters =
+      parameters && /*new Map*/ parameters.map(({ name, type }) => [name, new Type(type, ast)]);
 
     this.body = body;
   }
@@ -1019,7 +1035,9 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
     args = [
       'sh',
       '-c',
-      'exec ' + args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (output ? ` 1>${output}` : '')
+      'exec ' +
+        args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') +
+        (output ? ` 1>${output}` : '')
     ];
   } else {
     if(output) {
@@ -1068,8 +1086,9 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
   let errorLines = errors.split(/\n/g).filter(line => line.trim() != '');
   errorLines = errorLines.filter(line => /error:/.test(line));
   const numErrors =
-    [...(/^([0-9]+)\s/g.exec(errorLines.find(line => /errors\sgenerated/.test(line)) || '0') || [])][0] ||
-    errorLines.length;
+    [
+      ...(/^([0-9]+)\s/g.exec(errorLines.find(line => /errors\sgenerated/.test(line)) || '0') || [])
+    ][0] || errorLines.length;
   if(numErrors) {
     console.log('errors:', errors);
     throw new Error(errorLines.join('\n'));
@@ -1162,7 +1181,13 @@ export async function AstDump(compiler, source, args, force) {
     if(fs.existsSync(output)) fs.unlinkSync(output);
 
     console.log(`Compiling '${source}'...`);
-    r = await SpawnCompiler(compiler, source, output, ['-Xclang', '-ast-dump=json', '-fsyntax-only', '-I.', ...args]);
+    r = await SpawnCompiler(compiler, source, output, [
+      '-Xclang',
+      '-ast-dump=json',
+      '-fsyntax-only',
+      '-I.',
+      ...args
+    ]);
   }
 
   //console.log('AstDump', r);
@@ -1232,7 +1257,8 @@ export async function AstDump(compiler, source, args, force) {
         () => true
       );
 
-      if(list.length == 0) list = deep.select(this.data, n => n.kind.startsWith('FunctionDecl'), deep.RETURN_VALUE);
+      if(list.length == 0)
+        list = deep.select(this.data, n => n.kind.startsWith('FunctionDecl'), deep.RETURN_VALUE);
 
       return Object.setPrototypeOf(list, List.prototype);
     },
@@ -1247,7 +1273,10 @@ export async function AstDump(compiler, source, args, force) {
       /*(Predicate.property('kind', Predicate.equal('CXXRecordDecl')),
         Predicate.not(Predicate.property('isImplicit', Predicate.equal(true))));*/
       //predicate = n => 'CXXRecordDecl' == n.kind && !n.isImplicit;
-      return Object.setPrototypeOf(deep.select(this.data, predicate, deep.RETURN_VALUE, 10), List.prototype);
+      return Object.setPrototypeOf(
+        deep.select(this.data, predicate, deep.RETURN_VALUE, 10),
+        List.prototype
+      );
     },
     variables() {
       return Object.setPrototypeOf(
@@ -1262,7 +1291,9 @@ export async function AstDump(compiler, source, args, force) {
 export function NameFor(decl, ast = this.data) {
   const { id } = decl;
   let p;
-  if((p = deep.find(ast, (value, key) => key == 'ownedTagDecl' && value.id == id, deep.RETURN_PATH))) {
+  if(
+    (p = deep.find(ast, (value, key) => key == 'ownedTagDecl' && value.id == id, deep.RETURN_PATH))
+  ) {
     p = p.slice(0, -1);
 
     let node = deep.get(ast, p);
@@ -1704,7 +1735,10 @@ export function NodePrinter(ast) {
         GotoStmt(goto_stmt) {
           const { targetLabelDeclId } = goto_stmt;
 
-          let target = deep.find(this.ast, n => typeof n == 'object' && n && n.declId == targetLabelDeclId)?.value;
+          let target = deep.find(
+            this.ast,
+            n => typeof n == 'object' && n && n.declId == targetLabelDeclId
+          )?.value;
           const { name } = target;
 
           put(`goto ${name}`);
@@ -1907,7 +1941,9 @@ export function NodePrinter(ast) {
         VarDecl(var_decl, base_type) {
           let type = new Type(var_decl.type, this.ast);
           put(var_decl.name);
-          let subscripts = (type.subscripts ?? []).map(([offset, subscript]) => `[${subscript}]`).join('');
+          let subscripts = (type.subscripts ?? [])
+            .map(([offset, subscript]) => `[${subscript}]`)
+            .join('');
           if(subscripts) put(subscripts);
           if(var_decl.inner && var_decl.inner.length) {
             put(' = ');
@@ -2071,7 +2107,8 @@ export function NodePrinter(ast) {
             let i = -1;
             for(let inner of cxx_record_decl.inner) {
               i++;
-              if(inner.kind && (inner.kind.endsWith('Comment') || inner.kind == 'CXXRecordDecl')) continue;
+              if(inner.kind && (inner.kind.endsWith('Comment') || inner.kind == 'CXXRecordDecl'))
+                continue;
               //  console.log(`CXXRecordDecl inner[${i}]`, inner);
               printer.print(inner);
               put(`\n`);
@@ -2156,7 +2193,8 @@ export function NodePrinter(ast) {
           put('this');
         }
         CXXDestructorDecl(cxx_destructor_decl) {
-          const { isImplicit, name, mangledName, type, inline, explicitlyDefaulted } = cxx_destructor_decl;
+          const { isImplicit, name, mangledName, type, inline, explicitlyDefaulted } =
+            cxx_destructor_decl;
 
           let l = cxx_destructor_decl.inner
             ? [...cxx_destructor_decl.inner].filter(n => n.kind && !n.kind.endsWith('Comment'))
@@ -2387,7 +2425,8 @@ export function GetType(name_or_id, ast = $.data) {
           ? node => node.id == name_or_id && wantKind.test(node.kind)
           : node => node.name == name_or_id && wantKind.test(node.kind)
       );
-      if(results.length <= 1 || (idx = results.findIndex(r => r.completeDefinition)) == -1) idx = 0;
+      if(results.length <= 1 || (idx = results.findIndex(r => r.completeDefinition)) == -1)
+        idx = 0;
       result = results[idx];
 
       if(!result && Type.declarations.has(name_or_id)) result = Type.declarations.get(name_or_id);

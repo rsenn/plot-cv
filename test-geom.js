@@ -53,7 +53,9 @@ async function main(...args) {
 
   console.log('l.toSource():', l.toSource({ plainObj: true, asString: true }));
   console.log('l:', l);
-  let l2 = new PointList('-47.88,5.53 52.120000000000005,55.53 2.12,-44.47 -47.88,-44.47 19.12,22.53 -13.88,-10.47');
+  let l2 = new PointList(
+    '-47.88,5.53 52.120000000000005,55.53 2.12,-44.47 -47.88,-44.47 19.12,22.53 -13.88,-10.47'
+  );
   console.log('l2:', l2);
   let bbox = { xl: 0, xr: 800, yt: 0, yb: 600 };
 

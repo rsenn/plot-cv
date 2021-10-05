@@ -7,7 +7,10 @@ async function main(...args) {
     maxStringLength: 200
   });
 
-  console.log(`console`, inspect(console, { customInspect: true, showHidden: true, compact: false }));
+  console.log(
+    `console`,
+    inspect(console, { customInspect: true, showHidden: true, compact: false })
+  );
 
   let c = console;
   console.log('console', c.log);
@@ -52,7 +55,11 @@ async function main(...args) {
     console.log(`fn`, fn);
     console.log(`boundFn`, boundFn);
     //console.log(`path`, inspect(path));
-    console.log(`console`, console.config({ colors: true, compact: 1, breakLength: Infinity }), console);
+    console.log(
+      `console`,
+      console.config({ colors: true, compact: 1, breakLength: Infinity }),
+      console
+    );
     console.log(`map`, map);
     console.log(`weakMap`, weakMap);
   }

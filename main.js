@@ -8,7 +8,7 @@ import {
   TransformationList
 } from './lib/geom/transformation.js';
 import dom from './lib/dom.js';
- import { ReactComponent, Fragment } from './lib/dom/preactComponent.js';
+import { ReactComponent, Fragment } from './lib/dom/preactComponent.js';
 import { iterator, eventIterator } from './lib/dom/iterator.js';
 import keysim from './lib/dom/keysim.js';
 import geom, { isBBox, BBox, Polygon, Circle, LineList, Arc } from './lib/geom.js';
@@ -1879,8 +1879,8 @@ const AppMain = (window.onload = async () => {
     for(url of urls) {
       //console.log('UpdateProjectList:', { ...opts, ...credentials, url });
       let data = await ListProjects({ ...opts, ...credentials, url });
-      let { files } = data;
-      //console.log(`Got ${files.length} files`, files);
+      let files = data;
+      console.log('files', files);
       function File(obj, i) {
         const { name } = obj;
         let file = this instanceof File ? this : Object.create(File.prototype);
@@ -2620,7 +2620,7 @@ const AppMain = (window.onload = async () => {
       }
     })
   ]);
-  console.log('DUMMY', window.preactComponent = preactComponent);
+  console.log('DUMMY', (window.preactComponent = preactComponent));
   React.render(preactComponent, Element.find('#preact'));
 
   let move, resize;
