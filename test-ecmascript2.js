@@ -149,7 +149,6 @@ function printAst(ast, comments, printer = globalThis.printer) {
 let files = {};
 
 function main(...argv) {
-  console.log('main', argv);
   globalThis.console = new Console({
     stdout: process.stdout,
     inspectOptions: {
@@ -192,7 +191,6 @@ function main(...argv) {
     argv
   );
 
-  console.log('params.debug', params.debug);
   // params.debug ??= true;
   if(params.debug) ECMAScriptParser.instrumentate();
 
@@ -204,7 +202,6 @@ function main(...argv) {
 
   if(params['@'].length == 0) params['@'].push(Util.getArgv()[1]);
 
-  console.log(`params['@']`, params?.['@']);
   for(let file of params['@']) {
     let error;
 
@@ -267,14 +264,14 @@ function processFile(file, params) {
   } catch(err) {
     const tokens = [...parser.processed, ...parser.tokens];
     const token = tokens[tokens.length - 1];
-    console.log(
+    /*console.log(
       'parseProgram tokens',
       tokens.slice(-3).map(tok => [tok, new Stack(tok.stack.slice(0, 3)) + ''])
-    );
+    );*/
     console.log('parseProgram token', token);
     if(token)
-      console.log(`parseProgram token.stack\n  ` + token.stack.toString().replace(/\n/g, '\n  '));
-    console.log(`parseProgram loc`, parser.lexer.loc + ``);
+    //  console.log(`parseProgram token.stack\n  ` + token.stack.toString().replace(/\n/g, '\n  '));
+    console.log(`parseProgram loc`, parser.lexer.position() + ``);
     console.log(`parseProgram stateStack`, parser.lexer.stateStack);
     // console.log(`parseProgram parser.stack`, parser.stack.map(({frame,...entry}) =>  [entry,frame?.loc]));
 

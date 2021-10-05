@@ -4,9 +4,49 @@ body {
   background: linear-gradient(0deg, hsla(220, 0%, 20%, 1) 0%, hsla(220, 0%, 50%, 1) 10%, hsla(220, 0%, 90%, 1) 75%);
   background-attachment: fixed;
 }
+
+* {
+  box-sizing: content-box;
+}
+
 canvas {
   bottom: 0;
   width: calc(100% - 16px);
   height: auto;
   max-height: calc(100vh - 16px);
+}
+pre {
+    margin: 0px;
+}
+.lineno {
+  float:  left;
+  width:  3em;
+  /*background: #555;*/
+  text-align:  right;
+ /* color:  #0ff;*/
+ color:  black;
+  padding-right:  0.5em;
+}
+.line {
+  min-height: 1em;
+}
+.text {
+  background: black;
+  padding: 0 0.5em;
+}
+
+.container {
+  font-size: 11px;
+  color: #cccccc;
+  overflow: visible;
+  margin: 0;
+  padding:  0;
+  border: 1px solid black;
+}
+.container {
+   display: grid;
+  /*grid-auto-flow: column;*/
+grid-column-gap:  10px;
+  grid-gap: 0px;
+  grid-template-columns: auto 1fr;
 }

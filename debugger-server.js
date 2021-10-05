@@ -3,17 +3,16 @@ import * as os from 'os';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
 import Util from './lib/util.js';
-import { toArrayBuffer} from './lib/misc.js';
+import { toArrayBuffer, toString, escape, quote, define } from './lib/misc.js';
 import { Console } from 'console';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from './lib/filesystem.js';
 import * as net from 'net';
-import { Socket } from './quickjs/qjs-ffi/lib/socket.js';
-import { define } from './lib/misc.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 import { StartDebugger, ConnectDebugger } from './debugger.js';
+import Lexer from './quickjs/qjs-modules/lib/jslexer.js';
 
 globalThis.fs = fs;
 
@@ -49,14 +48,11 @@ function WriteJSON(name, data) {
 }
 
 function main(...args) {
-  
-console.log('path.basename', path.basename);
   const base = path.basename(Util.getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
-
 
   const config = ReadJSON(`.${base}-config`) ?? {};
   globalThis.console = new Console({
-    inspectOptions: { compact: 1, breakLength: 80, customInspect: true }
+    inspectOptions: { compact: 2, customInspect: true }
   });
   let params = Util.getOpt(
     {
@@ -77,7 +73,6 @@ console.log('path.basename', path.basename);
     args
   );
   if(params['no-tls'] === true) params.tls = false;
-  console.log('params', params);
   const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key' } = params;
   const listen = params.connect && !params.listen ? false : true;
   const server = !params.client || params.server;
@@ -121,63 +116,13 @@ console.log('path.basename', path.basename);
       if(params.debug) console.log((['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8), ...args);
     });
 
+    let child, dbg;
+
     return [net.client, net.server][+listen]({
       tls: params.tls,
       sslCert,
       sslPrivateKey,
-      mounts: [
-        ['/', '.', 'debugger.html'],
-        function proxy(req, res) {
-          const { url, method, headers } = req;
-          const { status, ok, type } = res;
-
-          console.log('proxy', { url, method, headers }, { status, ok, url, type });
-        },
-
-        function* config(req, res) {
-          console.log('/config', { req, res });
-          yield '{}';
-        },
-        function* files(req, resp) {
-          const { body, headers } = req;
-          const { 'content-type': content_type } = headers;
-
-          resp.type = 'application/json';
-
-          console.log('\x1b[38;5;215m*files\x1b[0m', { headers, body, req, resp });
-
-          let dir = 'tmp';
-          let names = fs.readdirSync(dir);
-
-          names = names.filter(name => /\.(brd|sch|G[A-Z][A-Z])$/.test(name));
-          names = names.map(entry => `${dir}/${entry}`);
-
-          let entries = names.map(file => [file, fs.statSync(file)]);
-
-          yield JSON.stringify(
-            entries
-              .filter(([file, st]) => st.isFile())
-              .sort((a, b) => b[1].mtime - a[1].mtime)
-              .reduce((acc, [file, st]) => {
-                let obj = {
-                  name: file
-                };
-
-                acc.push(
-                  Object.assign(obj, {
-                    mtime: Util.toUnixTime(st.mtime),
-                    time: Util.toUnixTime(st.ctime),
-                    mode: `0${(st.mode & 0x09ff).toString(8)}`,
-                    size: st.size
-                  })
-                );
-                return acc;
-              }, []),
-            null,
-            2
-          );
-        }
-      ],
+      mounts: [['/', '.', 'debugger.html']],
       ...url,
 
       ...callbacks,
@@ -195,7 +140,7 @@ console.log('path.basename', path.basename);
         console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', rsp, '\n]');
         return rsp;
       },
-      onMessage(ws, data) {
+       onMessage(ws, data) {
         console.log('onMessage', ws, data);
         let obj = JSON.parse(data);
 
@@ -206,14 +151,71 @@ console.log('path.basename', path.basename);
           case 'start': {
             const { start } = rest;
             const { connect = true, address = '127.0.0.1:' + Math.round(Math.random() * (65535 - 1024)) + 1024, args = [] } = start;
-            let child = StartDebugger(args, connect, address);
+            child = StartDebugger(args, connect, address);
             console.log('child', child.pid);
             os.sleep(1000);
-            let sock = ConnectDebugger(address);
-            console.log('sock', sock);
+            dbg = ConnectDebugger(address, (dbg, sock) => {
+              console.log('wait() =', child.wait());
+              console.log('child', child);
+            });
+            os.setWriteHandler(+dbg, async () => {
+              os.setWriteHandler(+dbg, null);
+              console.log('connected', dbg);
+              const cwd = process.cwd();
+              ws.send(JSON.stringify({ type: 'response', response: { command: 'start', args, cwd } }));
+
+              let msg;
+
+              while(dbg.open) {
+                try {
+                  msg = await DebuggerProtocol.read(dbg);
+                  console.log('DebuggerProtocol.read() =', escape(msg));
+                  if(typeof msg == 'string') {
+                    ws.send(msg);
+                  } else {
+                    console.log('sock', dbg);
+                  }
+                } catch(error) {
+                  const { message, stack } = error;
+                  ws.send(JSON.stringify({ type: 'error', error: { message, stack } }));
+                  dbg.close();
+                  break;
+                }
+              }
+            });
+            console.log('dbg', dbg);
+            break;
+          }
+          case 'file': {
+            const { path } = rest;
+            const data = fs.readFileSync(path, 'utf-8');
+            //ws.send(JSON.stringify({ type: 'response', response: { command: 'file', path, data } }));
+
+            const lexer = new Lexer(data, path);
+            console.log('lexer', lexer);
+            const lines = [];
+
+            for(;;) {
+                      const {pos,size} = lexer;
+            console.log('lexer', {pos,size});
+    let result =lexer.next();
+              if(result.done) break;
+              const token = result.value;
+              console.log('token', { lexeme: token.lexeme, id: token.id, loc: token.loc + '' });
+              const { type, id, lexeme, loc } = token;
+              const { line, column,   file } = loc;
+              //console.log('token', {lexeme,id,line});
+
+              if(!lines[line - 1]) lines.push([]);
+              let a = lines[line - 1];
+              a.push([lexeme, id]);
+            }
+            console.log('lines', lines);
             break;
           }
           default: {
+            console.log('send to debugger', data);
+            DebuggerProtocol.send(dbg, data);
             break;
           }
         }
@@ -235,22 +237,6 @@ console.log('path.basename', path.basename);
     get connections() {
       return [...connections];
     }
-  });
-
-  Object.assign(globalThis, {
-    Util,
-    quit,
-    exit: quit,
-    Socket,
-    net,
-    std,
-    os,
-    deep,
-    fs,
-    path,
-    ReadJSON,
-    WriteFile,
-    WriteJSON
   });
 
   delete globalThis.DEBUG;

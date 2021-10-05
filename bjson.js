@@ -45,7 +45,10 @@ async function main(...args) {
 
   let output = params.output ? filesystem.open(params.output, 'w+') : filesystem.stdout;
 
-  if(params.output && params['@'].length > 1) throw new Error(`Output file specified as '${params.output}', but got ${params['@'].length} input files`);
+  if(params.output && params['@'].length > 1)
+    throw new Error(
+      `Output file specified as '${params.output}', but got ${params['@'].length} input files`
+    );
 
   for(let arg of params['@']) {
     let base = path.basename(arg, /\.[^./]*$/);

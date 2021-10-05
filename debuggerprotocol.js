@@ -2,18 +2,21 @@ import * as deep from './lib/deep.js';
 import * as fs from './lib/filesystem.js';
 import * as path from './lib/path.js';
 import Util from './lib/util.js';
-import { toString as ArrayBufferToString } from './lib/misc.js';
-//import { Socket, AF_INET, SOCK_STREAM, IPPROTO_TCP } from './quickjs/qjs-ffi/lib/socket.js';
+import { toString, define, escape } from './lib/misc.js';
+import { EventEmitter } from './lib/events.js';
 
 const cfg = (obj = {}) => console.config({ compact: false, breakLength: Infinity, ...obj });
 
-export class DebuggerProtocol {
+export class DebuggerProtocol extends EventEmitter {
   constructor(sock) {
-    Util.define(this, { sock });
+    super();
+    define(this, { sock });
     this.seq = 0;
     this.requests = new Map();
     this.files = {};
-    this.onmessage = this.handleMessage;
+
+    this.on('message', this.handleMessage);
+    //    this.onmessage = this.handleMessage;
   }
 
   readCommand() {
@@ -45,8 +48,9 @@ export class DebuggerProtocol {
       case 'stackTrace': {
         for(let frame of response.body) {
           const { id, name, filename, line } = frame;
-          let code,
-            location = filename ? path.relative(filename, process.cwd()) : '';
+          let code, location, wd;
+          wd = process.cwd();
+          location = filename && filename[0] == '/' ? path.relative(filename, process.cwd()) : filename;
           if(typeof line == 'number') {
             code = this.getFile(location)?.[line - 1];
             location += ':' + line;
@@ -64,9 +68,7 @@ export class DebuggerProtocol {
     this.breakpoints = breakpoints;
   }
 
-  handleMessage(json) {
-    let message = JSON.parse(json);
-
+  handleMessage(message) {
     switch (message.type) {
       case 'event':
         this.handleEvent(message.event);
@@ -141,35 +143,47 @@ export class DebuggerProtocol {
     return this.sendMessage(message);
   }
 
-  read() {
-    const { sock } = this;
+  static async read(sock) {
     let lengthBuf = new ArrayBuffer(9);
-    let jsonBuf;
-
-    let r = sock.recv(lengthBuf);
+    let r = await sock.recv(lengthBuf);
     if(r <= 0) {
       console.log('sock.error', sock.error);
-      if(r < 0 && sock.errno != sock.EAGAIN) throw new Error(`${sock.error.syscall} error: ${sock.error.message}`);
-    } else {
-      let len = ArrayBufferToString(lengthBuf);
-      let size = parseInt(len, 16);
-      jsonBuf = new ArrayBuffer(size);
-      r = sock.recv(jsonBuf);
-      //console.log(`Socket(${sock.fd}).read =`, r);
-      if(r <= 0) {
-        if(r < 0 && sock.errno != sock.EAGAIN) throw new Error(`${sock.error.syscall} error: ${sock.error.message}`);
-      } else {
-        let json = ArrayBufferToString(jsonBuf.slice(0, r));
-        try {
-          this.onmessage(json);
-        } catch(e) {
-          console.log('ERROR', e.message, '\nDATA\n', json, '\nSTACK\n', e.stack);
-          throw e;
-        }
-      }
+      if(r < 0 && sock.errno != sock.EAGAIN) throw sock.error;
+      return null;
     }
-    return r;
+    let len = toString(lengthBuf);
+    let size = parseInt(len, 16);
+    let jsonBuf = new ArrayBuffer(size);
+    console.log('read size', size);
+    r = await sock.recv(jsonBuf);
+    if(r <= 0) {
+      if(r < 0 && sock.errno != sock.EAGAIN) throw sock.error;
+      return null;
+    }
+    console.log('read r =', r);
+    return toString(jsonBuf.slice(0, r));
   }
+
+  static send(sock, msg) {
+    const data = toHex(msg.length, 8) + '\n' + msg;
+    console.log('data', escape(data));
+    return sock.send(data);
+  }
+
+  async read() {
+    let data = await DebuggerProtocol.read(sock);
+    if(data) this.emit('message', JSON.parse(data));
+    return data;
+  }
+
+  /*  parse(json) {
+    try {
+      this.emit('message', JSON.parse(json));
+    } catch(e) {
+      console.log('ERROR', e.message, '\nDATA\n', json, '\nSTACK\n', e.stack);
+      throw e;
+    }
+  }*/
 
   async readHandler() {
     let it = this.sock[Symbol.asyncIterator]();

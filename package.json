@@ -22,11 +22,12 @@
     "lib/misc.js": "util",
     "lib/childProcess.js": "child_process",
     "./lib/childProcess.js": "child_process",
-    "lib/stack.js": "stack",
+    "lib/stack.js": "quickjs/qjs-modules/lib/stack.js",
     "xrepl.js": "quickjs/qjs-modules/lib/repl.js",
     "terminal.js": "quickjs/qjs-modules/lib/terminal.js",
     "x/quickjs/qjs-ffi/examples/socket.js": "sockets",
     "quickjs/qjs-ffi/lib/socket.js": "sockets",
+    "lib/events.js": "events",
     "lib/preact.js": "lib/preact.esm.js"
   },
   "author": "Roman Senn <roman.l.senn@gmail.com>",

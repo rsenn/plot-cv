@@ -7,11 +7,25 @@ import * as path from './lib/path.js';
 import * as deep from './lib/deep.js';
 import { toString } from './lib/misc.js';
 import child_process from './lib/childProcess.js';
-import { Socket, SockAddr, AF_INET, SOCK_STREAM, IPPROTO_TCP } from './quickjs/qjs-ffi/lib/socket.js';
-import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
+import {
+  Socket,
+  SockAddr,
+  AF_INET,
+  SOCK_STREAM,
+  IPPROTO_TCP
+} from './quickjs/qjs-ffi/lib/socket.js';
+import {
+  toString as ArrayBufferToString,
+  toArrayBuffer as StringToArrayBuffer
+} from './lib/misc.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 
-console.log('toString', ArrayBufferToString(new Uint8Array([0x61, 0x62, 0x64, 0x65, 0x66, 0x20, 0xc3, 0xa4, 0xc3, 0xb6, 0xc3, 0xbc]).buffer));
+console.log(
+  'toString',
+  ArrayBufferToString(
+    new Uint8Array([0x61, 0x62, 0x64, 0x65, 0x66, 0x20, 0xc3, 0xa4, 0xc3, 0xb6, 0xc3, 0xbc]).buffer
+  )
+);
 console.log('toArrayBuffer', StringToArrayBuffer('blah äöü'));
 console.log('child_process', child_process.spawn + '');
 var worker;
@@ -28,58 +42,39 @@ export function StartDebugger(args, connect, address) {
     stdio: ['inherit', 'inherit', 'inherit']
   });
 
-  /* child.stdio.slice(1).forEach((fd, i) => {
-    const out = ['stdout', 'stderr'][i];
-    child[out] = '';
-    os.setReadHandler(fd, () => {
-      let buf = new ArrayBuffer(1024);
-      let r = os.read(fd, buf);
-      if(r === 0) os.setReadHandler(fd, null);
-      else if(r > 0) child[out] += toStringg(buf.slice(0, r));
-      console.log(`child[${out}]`, child[out].replace(/\n/g, '\\n'));
-    });
-  });
-*/
-  console.log('StartDebugger', child.pid);
+  console.log('StartDebugger', child.pid, child.args, child.env);
 
   return child;
 }
 
-export function ConnectDebugger(address) {
+export function ConnectDebugger(address, callback) {
   let addr = new SockAddr(AF_INET, ...address.split(':'));
   console.log('ConnectDebugger', addr);
   let sock = new Socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-  console.log('socket() =', +sock);
-  console.log('ndelay(true) =', sock.ndelay(true));
+  sock.ndelay(true);
   let ret = sock.connect(addr);
-  console.log('connect() =', ret);
 
-  os.setWriteHandler(+sock, () => {
+  /*  os.setWriteHandler(+sock, () => {
     console.log('Connected to', addr);
     os.setWriteHandler(+sock, null);
-    let connection = new DebuggerProtocol(sock);
-    connection.onmessage = body => {
-      console.log('DebuggerProtocol.onmessage', body);
-      /*      const json = JSON.parse(body);
-      console.log('To WORKER', json);
-      console.log('deep.select', deep.select + '');
-      for(let [n, p] of deep.select(json, (n, k) => n.filename)) {
-        if(n.filename) n.filename = n.filename.replace(process.cwd() + '/', './');
-      }
-      send(id, json);*/
-    };
+    let dbg = new DebuggerProtocol(sock);
+  
     os.setReadHandler(+sock, () => {
-      if(connection) {
-        let r = connection.read();
-        console.log('readable', { fd: +sock, r });
-        if(r == 0) os.setReadHandler(+sock, null);
+      if(dbg) {
+        let r = dbg.read();
+      console.log('readable', { fd: +sock, r });
+        if(r <= 0) {
+          os.setReadHandler(+sock, null);
+          console.log('read() =', r, sock.error, callback + '');
+          callback(dbg, sock);
+        }
       }
     });
   });
+*/
+  //  if(ret < 0) throw new Error(`Connection failed: ${sock.error}`);
 
-  if(ret < 0) throw new Error(`Connection failed: ${sock.error}`);
-
-  return connection;
+  return sock;
 }
 
 function TestWorker() {
