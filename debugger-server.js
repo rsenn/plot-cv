@@ -3,6 +3,7 @@ import * as os from 'os';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
 import Util from './lib/util.js';
+import { toArrayBuffer} from './lib/misc.js';
 import { Console } from 'console';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
@@ -48,7 +49,11 @@ function WriteJSON(name, data) {
 }
 
 function main(...args) {
+  
+console.log('path.basename', path.basename);
   const base = path.basename(Util.getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
+
+
   const config = ReadJSON(`.${base}-config`) ?? {};
   globalThis.console = new Console({
     inspectOptions: { compact: 1, breakLength: 80, customInspect: true }
@@ -73,12 +78,7 @@ function main(...args) {
   );
   if(params['no-tls'] === true) params.tls = false;
   console.log('params', params);
-  const {
-    address = '0.0.0.0',
-    port = 8999,
-    'ssl-cert': sslCert = 'localhost.crt',
-    'ssl-private-key': sslPrivateKey = 'localhost.key'
-  } = params;
+  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key' } = params;
   const listen = params.connect && !params.listen ? false : true;
   const server = !params.client || params.server;
   let name = Util.getArgs()[0];
@@ -116,33 +116,10 @@ function main(...args) {
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     console.log('createWS', { url, callbacks, listen });
 
-    net.setLog(
-      (params.debug ? net.LLL_USER : 0) |
-        (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
-      (level, ...args) => {
-        console.log(...args);
-        if(params.debug)
-          console.log(
-            (
-              [
-                'ERR',
-                'WARN',
-                'NOTICE',
-                'INFO',
-                'DEBUG',
-                'PARSER',
-                'HEADER',
-                'EXT',
-                'CLIENT',
-                'LATENCY',
-                'MINNET',
-                'THREAD'
-              ][Math.log2(level)] ?? level + ''
-            ).padEnd(8),
-            ...args
-          );
-      }
-    );
+    net.setLog((params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1), (level, ...args) => {
+      console.log(...args);
+      if(params.debug) console.log((['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8), ...args);
+    });
 
     return [net.client, net.server][+listen]({
       tls: params.tls,
@@ -228,11 +205,7 @@ function main(...args) {
         switch (command) {
           case 'start': {
             const { start } = rest;
-            const {
-              connect = true,
-              address = '127.0.0.1:' + Math.round(Math.random() * (65535 - 1024)) + 1024,
-              args = []
-            } = start;
+            const { connect = true, address = '127.0.0.1:' + Math.round(Math.random() * (65535 - 1024)) + 1024, args = [] } = start;
             let child = StartDebugger(args, connect, address);
             console.log('child', child.pid);
             os.sleep(1000);

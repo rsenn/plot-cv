@@ -1,0 +1,142 @@
+{
+  "_moduleAliases": {
+    "node-c-lexer": "node_modules/node-c-lexer/index.js",
+    "preact": "lib/dom/preactComponent.js",
+    "prop-types": "lib/prop-types.js",
+    "react": "lib/dom/preactComponent.js",
+    "react-dom": "node_modules/preact/compat",
+    "react-ssr-prepass": "node_modules/preact-ssr-prepass",
+    "util": "lib/util.js",
+    "lib/ecmascript/parser.js": "lib/ecmascript/parser2.js",
+    "lib/ecmascript/lexer.js": "quickjs/qjs-modules/lib/jslexer.js",
+    "cvVideo.js": "qjs-opencv/js/cvVideo.js",
+    "cvUtils.js": "qjs-opencv/js/cvUtils.js",
+    "cvPipeline.js": "qjs-opencv/js/cvPipeline.js",
+    "cvHighGUI.js": "qjs-opencv/js/cvHighGUI.js",
+    "lib/objectInspect.js": "inspect",
+    "lib/pointer.js": "pointer",
+    "lib/deep.js": "deep",
+    "lib/path.js": "path",
+    "lib/xml.js": "xml",
+    "lib/filesystem.js": "fs",
+    "lib/misc.js": "util",
+    "lib/childProcess.js": "child_process",
+    "./lib/childProcess.js": "child_process",
+    "lib/stack.js": "stack",
+    "xrepl.js": "quickjs/qjs-modules/lib/repl.js",
+    "terminal.js": "quickjs/qjs-modules/lib/terminal.js",
+    "x/quickjs/qjs-ffi/examples/socket.js": "sockets",
+    "quickjs/qjs-ffi/lib/socket.js": "sockets",
+    "lib/preact.js": "lib/preact.esm.js"
+  },
+  "author": "Roman Senn <roman.l.senn@gmail.com>",
+  "license": "MIT",
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "dependencies": {
+    "@serialport/bindings": "^9.0.2",
+    "@serialport/stream": "^9.0.1",
+    "body-parser": "^1.19.0",
+    "bpg-decoder": "^0.0.7",
+    "bpg-stream": "^0.0.2",
+    "codejar": "https://github.com/antonmedv/codejar",
+    "columnify": "^1.5.4",
+    "cross-spawn": "^7.0.3",
+    "express": "^4.17.1",
+    "express-ws": "^4.0.0",
+    "htm": "^3.0.4",
+    "is-bpg": "^0.1.0",
+    "isomorphic-fetch": "^3.0.0",
+    "libbpg-bin": "^1.0.4",
+    "module-alias": "^2.2.2",
+    "node-bpg": "^1.0.0",
+    "preact": "^10.4.1",
+    "preact-compat": "^3.19.0",
+    "preact-ssr-prepass": "^1.1.2",
+    "promisify-child-process": "^4.1.1",
+    "serialport": "^9.0.1",
+    "sort-order": "^1.0.1",
+    "wasm-loader": "^1.3.0",
+    "ws": "^7.3.1"
+  },
+  "description": "",
+  "devDependencies": {
+    "@deque/dot": "^1.1.5",
+    "@s-ui/lint": "^3.31.0",
+    "acorn": "^8.1.1",
+    "ansi-colors": "^4.1.1",
+    "ansi-escapes": "^4.3.1",
+    "astring": "^1.7.4",
+    "bash-parser": "^0.5.0",
+    "c-ast": "^1.0.0",
+    "clarify": "^2.1.0",
+    "fetch-with-proxy": "^3.0.1",
+    "free-proxy": "^0.1.6",
+    "http": "0.0.0",
+    "jison-es": "^0.4.18",
+    "lebab": "^3.1.0",
+    "lex": "^1.7.9",
+    "node-c-lexer": "^1.0.5",
+    "node-c-parser": "^1.0.11",
+    "node-debugprotocol-client": "^0.1.1",
+    "node-exceptions": "^4.0.1",
+    "opentype": "^0.1.2",
+    "proxy-lists": "^1.23.0",
+    "proxynova": "^0.1.0",
+    "sc-random": "^1.0.0",
+    "userscript-builder": "^0.3.0"
+  },
+  "engines": {
+    "node": ">= 14"
+  },
+  "eslintConfig": {
+    "extends": [
+      "./node_modules/@s-ui/lint/eslintrc.js"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "eslint . --ext .js --ext .jsx --ignore-path .eslintignore --fix",
+      "git add"
+    ]
+  },
+  "main": "server.js",
+  "name": "plot-cv",
+  "prettier": "./node_modules/@s-ui/lint/.prettierrc.js",
+  "scripts": {
+    "build": "next build",
+    "deploy": "now --target production",
+    "lint": "eslint . --ext .js --ext .jsx --ignore-path .eslintignore --fix",
+    "now-build": "next build",
+    "server": "env PORT=3000 nodemon --experimental-modules -w server.js server.js",
+    "start": "next start"
+  },
+  "stylelint": {
+    "extends": "./node_modules/@s-ui/lint/stylelint.config.js"
+  },
+  "type": "module",
+  "userscript": {
+    "dev": "./tmp",
+    "entry": "./userscript-test.js",
+    "fileName": "lib",
+    "meta": {
+      "grant": "none",
+      "homepage": "https://openuserjs.org/scripts/va4ok",
+      "match": "*://*.*",
+      "name": "My lib",
+      "namespace": "http://tampermonkey.net/",
+      "require": [
+        "https://some.url.1",
+        "https://some.url.2"
+      ]
+    },
+    "release": "./data"
+  },
+  "version": "1.0.0"
+}

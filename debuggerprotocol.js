@@ -149,8 +149,7 @@ export class DebuggerProtocol {
     let r = sock.recv(lengthBuf);
     if(r <= 0) {
       console.log('sock.error', sock.error);
-      if(r < 0 && sock.errno != sock.EAGAIN)
-        throw new Error(`${sock.error.syscall} error: ${sock.error.message}`);
+      if(r < 0 && sock.errno != sock.EAGAIN) throw new Error(`${sock.error.syscall} error: ${sock.error.message}`);
     } else {
       let len = ArrayBufferToString(lengthBuf);
       let size = parseInt(len, 16);
@@ -158,8 +157,7 @@ export class DebuggerProtocol {
       r = sock.recv(jsonBuf);
       //console.log(`Socket(${sock.fd}).read =`, r);
       if(r <= 0) {
-        if(r < 0 && sock.errno != sock.EAGAIN)
-          throw new Error(`${sock.error.syscall} error: ${sock.error.message}`);
+        if(r < 0 && sock.errno != sock.EAGAIN) throw new Error(`${sock.error.syscall} error: ${sock.error.message}`);
       } else {
         let json = ArrayBufferToString(jsonBuf.slice(0, r));
         try {
@@ -202,12 +200,7 @@ export class DebuggerProtocol {
 }
 
 function retValue(ret, ...args) {
-  console.log(
-    ...args,
-    `ret =`,
-    ret,
-    ...(ret == -1 ? [' errno =', errno(), ' error =', std.strerror(errno())] : [])
-  );
+  console.log(...args, `ret =`, ret, ...(ret == -1 ? [' errno =', errno(), ' error =', std.strerror(errno())] : []));
 }
 
 function toHex(n, b = 2) {
@@ -230,11 +223,7 @@ function MakeArray(buf, numBytes) {
 function ArrayBufToHex(buf, numBytes = 8) {
   if(typeof buf == 'object' && buf != null && buf instanceof ArrayBuffer) {
     let arr = MakeArray(buf, numBytes);
-    return arr.reduce(
-      (s, code) =>
-        (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
-      ''
-    );
+    return arr.reduce((s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)), '');
   }
   return buf;
 }
