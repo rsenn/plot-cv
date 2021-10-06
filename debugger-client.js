@@ -2,26 +2,20 @@ import { WebSocketClient } from './lib/net/websocket-async.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
-import { toString, toArrayBuffer, btoa as Base64Encode, atob as Base64Decode } from './lib/misc.js';
-import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
-import { ECMAScriptParser, Lexer } from './lib/ecmascript/parser.js';
-import { EventEmitter, EventTarget } from './lib/events.js';
-import { DroppingBuffer, FixedBuffer, MAX_QUEUE_LENGTH, Repeater, RepeaterOverflowError, SlidingBuffer } from './lib/repeater/repeater.js';
-import { useAsyncIter, useRepeater, useResult, useValue } from './lib/repeater/react-hooks.js';
-import { TimeoutError, delay, interval, timeout } from './lib/repeater/timers.js';
-import { InMemoryPubSub } from './lib/repeater/pubsub.js';
-import { semaphore, throttler } from './lib/repeater/limiters.js';
+/* prettier-ignore */ import { toString, toArrayBuffer, btoa as Base64Encode, atob as Base64Decode } from './lib/misc.js';
+/* prettier-ignore */ import React, {h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
+/* prettier-ignore */ import { ECMAScriptParser, Lexer } from './lib/ecmascript/parser.js';
+/* prettier-ignore */ import { EventEmitter, EventTarget } from './lib/events.js';
+/* prettier-ignore */ import { DroppingBuffer, FixedBuffer, MAX_QUEUE_LENGTH, Repeater, RepeaterOverflowError, SlidingBuffer } from './lib/repeater/repeater.js';
+/* prettier-ignore */ import { useAsyncIter, useRepeater, useResult, useValue } from './lib/repeater/react-hooks.js';
+/* prettier-ignore */ import { TimeoutError, delay, interval, timeout } from './lib/repeater/timers.js';
+/* prettier-ignore */ import { InMemoryPubSub } from './lib/repeater/pubsub.js';
+/* prettier-ignore */ import { semaphore, throttler } from './lib/repeater/limiters.js';
 import { trkl } from './lib/trkl.js';
-import { HSLA, RGBA, Point, isPoint, Size, isSize, Line, isLine, Rect, isRect, PointList, Polyline, Matrix, isMatrix, BBox, TRBL, Timer, Tree, Node, XPath, Element, isElement, CSS, SVG, Container, Layer, Renderer, Select, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementWHProps, ElementXYProps, Align, Anchor, dom, isNumber, Unit, ScalarValue, ElementTransformation, CSSTransformSetters, Transition, TransitionList, RandomColor } from './lib/dom.js';
-import { useActive, useClickout, useConditional, useDebouncedCallback, useDebounce, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useForceUpdate, useGetSet, useHover, useMousePosition, useToggleButtonGroupState, useTrkl, useFetch } from './lib/hooks.js';
-import { clamp, identity, noop, compose, maybe, snd, toPair, getOffset, getPositionOnElement, isChildOf } from './lib/hooks.js';
-import CodeEditor from './react-simple-code-editor.js'
-import Prism from './prism-core.js';
-import './react-simple-code-editor/node_modules/prismjs/components/prism-clike.js';
-import './react-simple-code-editor/node_modules/prismjs/components/prism-javascript.js';
-
-
-const {highlight,languages} = Prism;
+import { classNames } from './lib/classNames.js';
+/* prettier-ignore */ import { HSLA, RGBA, Point, isPoint, Size, isSize, Line, isLine, Rect, isRect, PointList, Polyline, Matrix, isMatrix, BBox, TRBL, Timer, Tree, Node, XPath, Element, isElement, CSS, SVG, Container, Layer, Renderer, Select, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementWHProps, ElementXYProps, Align, Anchor, dom, isNumber, Unit, ScalarValue, ElementTransformation, CSSTransformSetters, Transition, TransitionList, RandomColor } from './lib/dom.js';
+/* prettier-ignore */ import { useActive, useClickout, useConditional, useDebouncedCallback, useDebounce, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useForceUpdate, useGetSet, useHover, useMousePosition, useToggleButtonGroupState, useTrkl, useFetch } from './lib/hooks.js';
+/* prettier-ignore */ import { clamp, identity, noop, compose, maybe, snd, toPair, getOffset, getPositionOnElement, isChildOf } from './lib/hooks.js';
 
 globalThis.addEventListener('load', async e => {
   let url = Util.parseURL();
@@ -34,6 +28,19 @@ globalThis.addEventListener('load', async e => {
   console.log(`Loaded`, { socketURL, ws });
 });
 
+globalThis.addEventListener('keypress', e => {
+  const handler = {
+    KeyN: Next,
+    KeyI: StepIn,
+    KeyO: StepOut,
+    KeyC: Continue,
+    KeyP: Pause
+  }[e.code];
+  //console.log('keypress', e, handler);
+
+  if(handler) handler();
+});
+
 async function LoadSource(filename) {
   try {
     let response = await fetch(filename);
@@ -41,13 +48,12 @@ async function LoadSource(filename) {
   } catch(e) {}
 }
 
-Object.assign(globalThis, { DebuggerProtocol, LoadSource, Util, toString, toArrayBuffer, Base64Encode, Base64Decode, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, ECMAScriptParser, Lexer, EventEmitter, EventTarget, Element, isElement, path, CreateSource, Start, GetVariables, SendRequest, Step, Next, Continue, StackTrace });
-Object.assign(globalThis, { DroppingBuffer, FixedBuffer, MAX_QUEUE_LENGTH, Repeater, RepeaterOverflowError, SlidingBuffer, useAsyncIter, useRepeater, useResult, useValue, TimeoutError, delay, interval, timeout, InMemoryPubSub, semaphore, throttler, trkl });
-
-Object.assign(globalThis, { HSLA, RGBA, Point, isPoint, Size, isSize, Line, isLine, Rect, isRect, PointList, Polyline, Matrix, isMatrix, BBox, TRBL, Timer, Tree, Node, XPath, Element, isElement, CSS, SVG, Container, Layer, Renderer, Select, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementWHProps, ElementXYProps, Align, Anchor, dom, isNumber, Unit, ScalarValue, ElementTransformation, CSSTransformSetters, Transition, TransitionList, RandomColor });
-Object.assign(globalThis, { useActive, useClickout, useConditional, useDebouncedCallback, useDebounce, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useForceUpdate, useGetSet, useHover, useMousePosition, useToggleButtonGroupState, useTrkl, useFetch });
-Object.assign(globalThis, { clamp, identity, noop, compose, maybe, snd, toPair, getOffset, getPositionOnElement, isChildOf });
-Object.assign(globalThis, {CodeEditor ,  highlight, languages});
+/* prettier-ignore */ Object.assign(globalThis, { DebuggerProtocol, LoadSource, Util, toString, toArrayBuffer, Base64Encode, Base64Decode, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, ECMAScriptParser, Lexer, EventEmitter, EventTarget, Element, isElement, path });
+/* prettier-ignore */ Object.assign(globalThis, { DroppingBuffer, FixedBuffer, MAX_QUEUE_LENGTH, Repeater, RepeaterOverflowError, SlidingBuffer, useAsyncIter, useRepeater, useResult, useValue, TimeoutError, delay, interval, timeout, InMemoryPubSub, semaphore, throttler, trkl });
+/* prettier-ignore */ Object.assign(globalThis, { HSLA, RGBA, Point, isPoint, Size, isSize, Line, isLine, Rect, isRect, PointList, Polyline, Matrix, isMatrix, BBox, TRBL, Timer, Tree, Node, XPath, Element, isElement, CSS, SVG, Container, Layer, Renderer, Select, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementWHProps, ElementXYProps, Align, Anchor, dom, isNumber, Unit, ScalarValue, ElementTransformation, CSSTransformSetters, Transition, TransitionList, RandomColor });
+/* prettier-ignore */ Object.assign(globalThis, { useActive, useClickout, useConditional, useDebouncedCallback, useDebounce, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useForceUpdate, useGetSet, useHover, useMousePosition, useToggleButtonGroupState, useTrkl, useFetch });
+/* prettier-ignore */ Object.assign(globalThis, { clamp, identity, noop, compose, maybe, snd, toPair, getOffset, getPositionOnElement, isChildOf });
+/* prettier-ignore */ Object.assign(globalThis, { ShowSource, Start, GetVariables, SendRequest, StepIn,StepOut, Next, Continue, Pause, Evaluate, StackTrace });
 
 function Start(args, address = '127.0.0.1:9901') {
   return ws.send(
@@ -57,7 +63,13 @@ function Start(args, address = '127.0.0.1:9901') {
     })
   );
 }
+
 let cwd = '.';
+let responses = {};
+let currentSource;
+let currentLine = trkl();
+
+Object.assign(globalThis, { responses, currentLine });
 
 async function CreateSocket(url) {
   let ws = (globalThis.ws = new WebSocketClient());
@@ -75,21 +87,23 @@ async function CreateSocket(url) {
       }
       globalThis.response = data;
       if(data) {
-        console.log('WS', data);
-        const { response } = data;
+        //console.log('WS', data);
+        const { response, request_seq } = data;
         if(response) {
           const { command } = response;
 
-          if(command == 'file') {
+          /* if(command == 'file') {
             const { path, data } = response;
             CreateSource(data, path);
-          } else if(command == 'start') {
-            //const { cwd, args } = response;
+            continue;
+          } else*/ if(command == 'start') {
             cwd = response.cwd;
-            // Object.assign(globalThis, { cwd, args });
             console.log('start', response);
+            ShowSource(response.args[0]);
+            continue;
           }
         }
+        if(responses[request_seq]) responses[request_seq](data);
       }
     }
   })();
@@ -105,97 +119,89 @@ async function CreateSocket(url) {
 let seq = 0;
 
 function GetVariables(ref = 0) {
-  SendRequest('variables', { variablesReference: ref });
+  return SendRequest('variables', { variablesReference: ref });
 }
 
-function Step() {
-  SendRequest('step');
-}
-function Next() {
-  SendRequest('next');
+async function UpdatePosition() {
+  const stack = await StackTrace();
+  //console.log('stack', stack);
+
+  const { filename, line, name } = stack[0];
+
+  ShowSource(filename);
+  currentLine(line);
+
+  window.location.hash = `#line-${line}`;
 }
 
-function Continue() {
-  SendRequest('continue');
+async function StepIn() {
+  await SendRequest('stepIn');
+  await UpdatePosition();
 }
 
-function StackTrace() {
-  SendRequest('stackTrace');
+async function StepOut() {
+  await SendRequest('stepOut');
+  await UpdatePosition();
+}
+
+async function Next() {
+  await SendRequest('next');
+  await UpdatePosition();
+}
+
+async function Continue() {
+  return SendRequest('continue');
+}
+
+async function Pause() {
+  await SendRequest('pause');
+  await UpdatePosition();
+}
+
+async function Evaluate(expression) {
+  return SendRequest('evaluate', { expression });
+}
+
+async function StackTrace() {
+  let { body } = await SendRequest('stackTrace');
+  return body;
 }
 
 function SendRequest(command, args = {}) {
-  ws.sendMessage({ type: 'request', request: { request_seq: ++seq, command, args } });
+  const request_seq = ++seq;
+  ws.sendMessage({ type: 'request', request: { request_seq, command, args } });
+  return new Promise((resolve, reject) => (responses[request_seq] = resolve));
 }
 
-const SourceLine = ({ lineno, text }) => h(Fragment, {}, [h('pre', { class: 'lineno' }, [lineno + 1 + '']), h('pre', { class: 'text' }, [text])]);
-const SourceFile = ({ filename }) => {
-  console.log('SourceLine', {filename,cwd});
-  const url = filename ; //path.relative(cwd, filename);
-  let text = useFetch(url) ?? '';
-  return h(EditorView,{ code:text},[]);
+const SourceLine = ({ lineno, text, active }) =>
+  h(Fragment, {}, [
+    h('pre', { class: 'lineno' }, h('a', { name: `line-${lineno}` }, [lineno + ''])),
+    h('pre', { class: classNames('text', active && 'active') }, [text])
+  ]);
+
+const SourceText = ({ text }) => {
+  const activeLine = useTrkl(currentLine);
   return h(
-    'div',
-    { class: 'container' },
-    [ h('div', { }, []), h('div', {class: 'header'}, [url])].concat(text.split('\n').map((text, lineno) => h(SourceLine, { lineno, text })))
+    Fragment,
+    {},
+    text.split('\n').map((text, i) => h(SourceLine, { lineno: i + 1, text, active: activeLine == i + 1 }))
   );
 };
 
-async function CreateSource(filename) {
-  const component = /*h(EditorView,{},[]); // */h(SourceFile, { filename });
-  const { body } = document;
-  let r = render(component, body);
-}
+const SourceFile = ({ filename }) => {
+  let text = useFetch(filename) ?? '';
+  return h('div', { class: 'container' }, [
+    h('div', {}, []),
+    h('div', { class: 'header' }, [filename]),
+    h(SourceText, { text })
+  ]);
+};
 
-
-const code = `function add(a, b) {
-  return a + b;
-}
-`;
-
-class EditorView extends React.Component {
-  state = {
-   code: ''
-  };
-  constructor(props) {
-  super(props);
-/*  console.log(this.props);
-  this.state.code = this.props.code;
-//  this.setState({ code: this.props.code });
-  console.log('code',this.state.code);*/
-}
-
-
-    componentWillReceiveProps(props) {
-        this.setState({
-            code: props.code,
-        })
-    }
-
-  render() {
-    return h(CodeEditor, {
-      value: this.state.code,
-      onValueChange: code => this.setState({
-        code
-      }),
-      /*highlight: code => { 
-        console.log('highlight', {highlight,code,languages});
-       return highlight(code, languages.js);
-      },*/
-     highlight: code =>
-                highlight(code, languages.js)
-                  .split('\n')
-                  .map(
-                    (line,n) =>
-                      `<div class="container_editor_line_number"></div>${line}`
-                  )
-                  .join('\n')
-              ,    padding: 10,
-      style: {
-        fontFamily: '"Fira code", "Fira Mono", monospace',
-        fontSize: 12
-      }
-    });
+async function ShowSource(sourceFile) {
+  if(currentSource != sourceFile) {
+    currentSource = sourceFile;
+    const component = h(SourceFile, { filename: path.relative(cwd, sourceFile, cwd) });
+    const { body } = document;
+    let r = render(component, body);
   }
-
 }
-

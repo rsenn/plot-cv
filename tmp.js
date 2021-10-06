@@ -2,10 +2,10 @@ const code = `function add(a, b) {
   return a + b;
 }
 `;
- 
+
 class App extends React.Component {
   state = { code };
- 
+
   render() {
     return (
       <Editor
@@ -15,7 +15,7 @@ class App extends React.Component {
         padding={10}
         style={{
           fontFamily: '"Fira code", "Fira Mono", monospace',
-          fontSize: 12,
+          fontSize: 12
         }}
       />
     );

@@ -1,4 +1,19 @@
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+function _extends() {
+  _extends =
+    Object.assign ||
+    function(target) {
+      for(var i = 1; i < arguments.length; i++) {
+        var source = arguments[i];
+        for(var key in source) {
+          if(Object.prototype.hasOwnProperty.call(source, key)) {
+            target[key] = source[key];
+          }
+        }
+      }
+      return target;
+    };
+  return _extends.apply(this, arguments);
+}
 
 /*       */
 
@@ -24,8 +39,8 @@ const isWindows = 'navigator' in globalThis && /Win/i.test(navigator.platform);
 const isMacLike = 'navigator' in globalThis && /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform);
 const className = 'npm__react-simple-code-editor__textarea';
 const cssText =
-/* CSS */
-`
+  /* CSS */
+  `
 /**
  * Reset the text fill color so that placeholder is visible
  */
@@ -69,13 +84,9 @@ export default class Editor extends React.Component {
 
   _recordCurrentState = () => {
     const input = this._input;
-    if (!input) return; // Save current state of the input
+    if(!input) return; // Save current state of the input
 
-    const {
-      value,
-      selectionStart,
-      selectionEnd
-    } = input;
+    const { value, selectionStart, selectionEnd } = input;
 
     this._recordChange({
       value,
@@ -85,18 +96,15 @@ export default class Editor extends React.Component {
   };
   _getLines = (text, position) => text.substring(0, position).split('\n');
   _recordChange = (record, overwrite = false) => {
-    const {
-      stack,
-      offset
-    } = this._history;
+    const { stack, offset } = this._history;
 
-    if (stack.length && offset > -1) {
+    if(stack.length && offset > -1) {
       // When something updates, drop the redo operations
       this._history.stack = stack.slice(0, offset + 1); // Limit the number of operations to 100
 
       const count = this._history.stack.length;
 
-      if (count > HISTORY_LIMIT) {
+      if(count > HISTORY_LIMIT) {
         const extras = count - HISTORY_LIMIT;
         this._history.stack = stack.slice(extras, count);
         this._history.offset = Math.max(this._history.offset - extras, 0);
@@ -105,40 +113,34 @@ export default class Editor extends React.Component {
 
     const timestamp = Date.now();
 
-    if (overwrite) {
+    if(overwrite) {
       const last = this._history.stack[this._history.offset];
 
-      if (last && timestamp - last.timestamp < HISTORY_TIME_GAP) {
+      if(last && timestamp - last.timestamp < HISTORY_TIME_GAP) {
         // A previous entry exists and was in short interval
         // Match the last word in the line
         const re = /[^a-z0-9]([a-z0-9]+)$/i; // Get the previous line
 
         const previous = this._getLines(last.value, last.selectionStart).pop().match(re); // Get the current line
 
-
         const current = this._getLines(record.value, record.selectionStart).pop().match(re);
 
-        if (previous && current && current[1].startsWith(previous[1])) {
+        if(previous && current && current[1].startsWith(previous[1])) {
           // The last word of the previous line and current line match
           // Overwrite previous entry so that undo will remove whole word
-          this._history.stack[this._history.offset] = { ...record,
-            timestamp
-          };
+          this._history.stack[this._history.offset] = { ...record, timestamp };
           return;
         }
       }
     } // Add the new operation to the stack
 
-
-    this._history.stack.push({ ...record,
-      timestamp
-    });
+    this._history.stack.push({ ...record, timestamp });
 
     this._history.offset++;
   };
   _updateInput = record => {
     const input = this._input;
-    if (!input) return; // Update values and selection state
+    if(!input) return; // Update values and selection state
 
     input.value = record.value;
     input.selectionStart = record.selectionStart;
@@ -150,27 +152,20 @@ export default class Editor extends React.Component {
     const input = this._input;
     const last = this._history.stack[this._history.offset];
 
-    if (last && input) {
-      this._history.stack[this._history.offset] = { ...last,
-        selectionStart: input.selectionStart,
-        selectionEnd: input.selectionEnd
-      };
+    if(last && input) {
+      this._history.stack[this._history.offset] = { ...last, selectionStart: input.selectionStart, selectionEnd: input.selectionEnd };
     } // Save the changes
-
 
     this._recordChange(record);
 
     this._updateInput(record);
   };
   _undoEdit = () => {
-    const {
-      stack,
-      offset
-    } = this._history; // Get the previous edit
+    const { stack, offset } = this._history; // Get the previous edit
 
     const record = stack[offset - 1];
 
-    if (record) {
+    if(record) {
       // Apply the changes and update the offset
       this._updateInput(record);
 
@@ -178,14 +173,11 @@ export default class Editor extends React.Component {
     }
   };
   _redoEdit = () => {
-    const {
-      stack,
-      offset
-    } = this._history; // Get the next edit
+    const { stack, offset } = this._history; // Get the next edit
 
     const record = stack[offset + 1];
 
-    if (record) {
+    if(record) {
       // Apply the changes and update the offset
       this._updateInput(record);
 
@@ -193,51 +185,45 @@ export default class Editor extends React.Component {
     }
   };
   _handleKeyDown = e => {
-    const {
-      tabSize,
-      insertSpaces,
-      ignoreTabKey,
-      onKeyDown
-    } = this.props;
+    const { tabSize, insertSpaces, ignoreTabKey, onKeyDown } = this.props;
 
-    if (onKeyDown) {
+    if(onKeyDown) {
       onKeyDown(e);
 
-      if (e.defaultPrevented) {
+      if(e.defaultPrevented) {
         return;
       }
     }
 
-    if (e.keyCode === KEYCODE_ESCAPE) {
+    if(e.keyCode === KEYCODE_ESCAPE) {
       e.target.blur();
     }
 
-    const {
-      value,
-      selectionStart,
-      selectionEnd
-    } = e.target;
+    const { value, selectionStart, selectionEnd } = e.target;
     const tabCharacter = (insertSpaces ? ' ' : '\t').repeat(tabSize);
 
-    if (e.keyCode === KEYCODE_TAB && !ignoreTabKey && this.state.capture) {
+    if(e.keyCode === KEYCODE_TAB && !ignoreTabKey && this.state.capture) {
       // Prevent focus change
       e.preventDefault();
 
-      if (e.shiftKey) {
+      if(e.shiftKey) {
         // Unindent selected lines
         const linesBeforeCaret = this._getLines(value, selectionStart);
 
         const startLine = linesBeforeCaret.length - 1;
         const endLine = this._getLines(value, selectionEnd).length - 1;
-        const nextValue = value.split('\n').map((line, i) => {
-          if (i >= startLine && i <= endLine && line.startsWith(tabCharacter)) {
-            return line.substring(tabCharacter.length);
-          }
+        const nextValue = value
+          .split('\n')
+          .map((line, i) => {
+            if(i >= startLine && i <= endLine && line.startsWith(tabCharacter)) {
+              return line.substring(tabCharacter.length);
+            }
 
-          return line;
-        }).join('\n');
+            return line;
+          })
+          .join('\n');
 
-        if (value !== nextValue) {
+        if(value !== nextValue) {
           const startLineText = linesBeforeCaret[startLine];
 
           this._applyEdits({
@@ -249,7 +235,7 @@ export default class Editor extends React.Component {
             selectionEnd: selectionEnd - (value.length - nextValue.length)
           });
         }
-      } else if (selectionStart !== selectionEnd) {
+      } else if(selectionStart !== selectionEnd) {
         // Indent selected lines
         const linesBeforeCaret = this._getLines(value, selectionStart);
 
@@ -258,13 +244,16 @@ export default class Editor extends React.Component {
         const startLineText = linesBeforeCaret[startLine];
 
         this._applyEdits({
-          value: value.split('\n').map((line, i) => {
-            if (i >= startLine && i <= endLine) {
-              return tabCharacter + line;
-            }
+          value: value
+            .split('\n')
+            .map((line, i) => {
+              if(i >= startLine && i <= endLine) {
+                return tabCharacter + line;
+              }
 
-            return line;
-          }).join('\n'),
+              return line;
+            })
+            .join('\n'),
           // Move the start cursor by number of characters added in first line of selection
           // Don't move it if it there was no text before cursor
           selectionStart: /\S/.test(startLineText) ? selectionStart + tabCharacter.length : selectionStart,
@@ -282,11 +271,11 @@ export default class Editor extends React.Component {
           selectionEnd: updatedSelection
         });
       }
-    } else if (e.keyCode === KEYCODE_BACKSPACE) {
+    } else if(e.keyCode === KEYCODE_BACKSPACE) {
       const hasSelection = selectionStart !== selectionEnd;
       const textBeforeCaret = value.substring(0, selectionStart);
 
-      if (textBeforeCaret.endsWith(tabCharacter) && !hasSelection) {
+      if(textBeforeCaret.endsWith(tabCharacter) && !hasSelection) {
         // Prevent default delete behaviour
         e.preventDefault();
         const updatedSelection = selectionStart - tabCharacter.length;
@@ -299,15 +288,15 @@ export default class Editor extends React.Component {
           selectionEnd: updatedSelection
         });
       }
-    } else if (e.keyCode === KEYCODE_ENTER) {
+    } else if(e.keyCode === KEYCODE_ENTER) {
       // Ignore selections
-      if (selectionStart === selectionEnd) {
+      if(selectionStart === selectionEnd) {
         // Get the current line
         const line = this._getLines(value, selectionStart).pop();
 
         const matches = line.match(/^\s+/);
 
-        if (matches && matches[0]) {
+        if(matches && matches[0]) {
           e.preventDefault(); // Preserve indentation on inserting a new line
 
           const indent = '\n' + matches[0];
@@ -322,29 +311,28 @@ export default class Editor extends React.Component {
           });
         }
       }
-    } else if (e.keyCode === KEYCODE_PARENS || e.keyCode === KEYCODE_BRACKETS || e.keyCode === KEYCODE_QUOTE || e.keyCode === KEYCODE_BACK_QUOTE) {
+    } else if(e.keyCode === KEYCODE_PARENS || e.keyCode === KEYCODE_BRACKETS || e.keyCode === KEYCODE_QUOTE || e.keyCode === KEYCODE_BACK_QUOTE) {
       let chars;
 
-      if (e.keyCode === KEYCODE_PARENS && e.shiftKey) {
+      if(e.keyCode === KEYCODE_PARENS && e.shiftKey) {
         chars = ['(', ')'];
-      } else if (e.keyCode === KEYCODE_BRACKETS) {
-        if (e.shiftKey) {
+      } else if(e.keyCode === KEYCODE_BRACKETS) {
+        if(e.shiftKey) {
           chars = ['{', '}'];
         } else {
           chars = ['[', ']'];
         }
-      } else if (e.keyCode === KEYCODE_QUOTE) {
-        if (e.shiftKey) {
+      } else if(e.keyCode === KEYCODE_QUOTE) {
+        if(e.shiftKey) {
           chars = ['"', '"'];
         } else {
           chars = ["'", "'"];
         }
-      } else if (e.keyCode === KEYCODE_BACK_QUOTE && !e.shiftKey) {
+      } else if(e.keyCode === KEYCODE_BACK_QUOTE && !e.shiftKey) {
         chars = ['`', '`'];
       } // If text is selected, wrap them in the characters
 
-
-      if (selectionStart !== selectionEnd && chars) {
+      if(selectionStart !== selectionEnd && chars) {
         e.preventDefault();
 
         this._applyEdits({
@@ -354,20 +342,28 @@ export default class Editor extends React.Component {
           selectionEnd: selectionEnd + 2
         });
       }
-    } else if ((isMacLike ? // Trigger undo with ⌘+Z on Mac
-    e.metaKey && e.keyCode === KEYCODE_Z : // Trigger undo with Ctrl+Z on other platforms
-    e.ctrlKey && e.keyCode === KEYCODE_Z) && !e.shiftKey && !e.altKey) {
+    } else if(
+      (isMacLike // Trigger undo with ⌘+Z on Mac
+        ? e.metaKey && e.keyCode === KEYCODE_Z // Trigger undo with Ctrl+Z on other platforms
+        : e.ctrlKey && e.keyCode === KEYCODE_Z) &&
+      !e.shiftKey &&
+      !e.altKey
+    ) {
       e.preventDefault();
 
       this._undoEdit();
-    } else if ((isMacLike ? // Trigger redo with ⌘+Shift+Z on Mac
-    e.metaKey && e.keyCode === KEYCODE_Z && e.shiftKey : isWindows ? // Trigger redo with Ctrl+Y on Windows
-    e.ctrlKey && e.keyCode === KEYCODE_Y : // Trigger redo with Ctrl+Shift+Z on other platforms
-    e.ctrlKey && e.keyCode === KEYCODE_Z && e.shiftKey) && !e.altKey) {
+    } else if(
+      (isMacLike // Trigger redo with ⌘+Shift+Z on Mac
+        ? e.metaKey && e.keyCode === KEYCODE_Z && e.shiftKey
+        : isWindows // Trigger redo with Ctrl+Y on Windows
+        ? e.ctrlKey && e.keyCode === KEYCODE_Y // Trigger redo with Ctrl+Shift+Z on other platforms
+        : e.ctrlKey && e.keyCode === KEYCODE_Z && e.shiftKey) &&
+      !e.altKey
+    ) {
       e.preventDefault();
 
       this._redoEdit();
-    } else if (e.keyCode === KEYCODE_M && e.ctrlKey && (isMacLike ? e.shiftKey : true)) {
+    } else if(e.keyCode === KEYCODE_M && e.ctrlKey && (isMacLike ? e.shiftKey : true)) {
       e.preventDefault(); // Toggle capturing tab key so users can focus away
 
       this.setState(state => ({
@@ -376,17 +372,16 @@ export default class Editor extends React.Component {
     }
   };
   _handleChange = e => {
-    const {
-      value,
-      selectionStart,
-      selectionEnd
-    } = e.target;
+    const { value, selectionStart, selectionEnd } = e.target;
 
-    this._recordChange({
-      value,
-      selectionStart,
-      selectionEnd
-    }, true);
+    this._recordChange(
+      {
+        value,
+        selectionStart,
+        selectionEnd
+      },
+      true
+    );
 
     this.props.onValueChange(value);
   };
@@ -444,62 +439,67 @@ export default class Editor extends React.Component {
       paddingBottom: padding,
       paddingLeft: padding
     };
-    console.log('highlight',highlight)
+    console.log('highlight', highlight);
     const highlighted = highlight(value);
-    return h("div", _extends({}, rest, {
-      style: { ...styles.container,
-        ...style
-      }
-    }), h("textarea", {
-      ref: c => this._input = c,
-      style: { ...styles.editor,
-        ...styles.textarea,
-        ...contentStyle
-      },
-      className: className + (textareaClassName ? ` ${textareaClassName}` : ''),
-      id: textareaId,
-      value: value,
-      onChange: this._handleChange,
-      onKeyDown: this._handleKeyDown,
-      onClick: onClick,
-      onKeyUp: onKeyUp,
-      onFocus: onFocus,
-      onBlur: onBlur,
-      disabled: disabled,
-      form: form,
-      maxLength: maxLength,
-      minLength: minLength,
-      name: name,
-      placeholder: placeholder,
-      readOnly: readOnly,
-      required: required,
-      autoFocus: autoFocus,
-      autoCapitalize: "off",
-      autoComplete: "off",
-      autoCorrect: "off",
-      spellCheck: false,
-      "data-gramm": false
-    }), h("pre", _extends({
-      className: preClassName,
-      "aria-hidden": "true",
-      style: { ...styles.editor,
-        ...styles.highlight,
-        ...contentStyle
-      }
-    }, typeof highlighted === 'string' ? {
-      dangerouslySetInnerHTML: {
-        __html: highlighted + '<br />'
-      }
-    } : {
-      children: highlighted
-    })), h("style", {
-      type: "text/css",
-      dangerouslySetInnerHTML: {
-        __html: cssText
-      }
-    }));
+    return h(
+      'div',
+      _extends({}, rest, {
+        style: { ...styles.container, ...style }
+      }),
+      h('textarea', {
+        ref: c => (this._input = c),
+        style: { ...styles.editor, ...styles.textarea, ...contentStyle },
+        className: className + (textareaClassName ? ` ${textareaClassName}` : ''),
+        id: textareaId,
+        value: value,
+        onChange: this._handleChange,
+        onKeyDown: this._handleKeyDown,
+        onClick: onClick,
+        onKeyUp: onKeyUp,
+        onFocus: onFocus,
+        onBlur: onBlur,
+        disabled: disabled,
+        form: form,
+        maxLength: maxLength,
+        minLength: minLength,
+        name: name,
+        placeholder: placeholder,
+        readOnly: readOnly,
+        required: required,
+        autoFocus: autoFocus,
+        autoCapitalize: 'off',
+        autoComplete: 'off',
+        autoCorrect: 'off',
+        spellCheck: false,
+        'data-gramm': false
+      }),
+      h(
+        'pre',
+        _extends(
+          {
+            className: preClassName,
+            'aria-hidden': 'true',
+            style: { ...styles.editor, ...styles.highlight, ...contentStyle }
+          },
+          typeof highlighted === 'string'
+            ? {
+                dangerouslySetInnerHTML: {
+                  __html: highlighted + '<br />'
+                }
+              }
+            : {
+                children: highlighted
+              }
+        )
+      ),
+      h('style', {
+        type: 'text/css',
+        dangerouslySetInnerHTML: {
+          __html: cssText
+        }
+      })
+    );
   }
-
 }
 const styles = {
   container: {

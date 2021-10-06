@@ -1,10 +1,12 @@
 body {
-  height: 0px;
   background: rgba(128, 128, 128);
   background: linear-gradient(0deg, hsla(220, 0%, 20%, 1) 0%, hsla(220, 0%, 50%, 1) 10%, hsla(220, 0%, 90%, 1) 75%);
   background-attachment: fixed;
 }
-
+body {
+  width:  100%;
+  height:  100%;
+}
 * {
   box-sizing: content-box;
 }
@@ -26,6 +28,8 @@ pre {
   text-align: right;  
   color: black;
   padding-right: 0.5em;
+  user-select: none;
+
 }
 
 .line {
@@ -36,6 +40,7 @@ pre {
   background: black;
   padding: 0 0.5em;
 }
+
 
 .container {
   font-size: 11px;
@@ -61,151 +66,29 @@ pre {
   margin: -1px 0 0 0;
   font-size: 1.5em;
   padding: 2px;
+  /*grid-column: 1 / span 2;*/
+
+}
+
+.text {
+  box-sizing: border-box;
+}
+.active {
+  border: 1px solid hsl(50,100%,60%);
+  background:   hsl(50,100%,5%);
+}
+
+.wrap {
+  word-break: break-all;
+  word-wrap: break-word;
+  white-space: pre;
+  white-space: -moz-pre-wrap;
+  white-space: pre-wrap;
+  white-space: pre\9; 
+  /*word-break: keep-all;*/
 }
 
 
 
 
 
-*,
-*:before,
-*:after {
-  box-sizing: inherit;
-}
-
-html,
-body,
-#root {
-  height: 100%;
-  width: 100%;
-}
-
-body > div {
-  background:  whitecontainer_editor_line_number;
-}
-
-body {
-  font-family: 'Fira code', 'Fira Mono', Consolas, Menlo, Courier, monospace;
-  font-size: 14px;
-  line-height: 1.5;
-  margin: 0;
-  padding: 10px 10px 10px 80px;
-}
-
-/* App */
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  width: 100%;
-}
-
-.container__content {
-  width: 440px;
-  max-width: 100%;
-  padding: 10px;
-  text-align: center;
-}
-
-.container_editor_area {
-  max-height: 400px;
-  overflow: auto;
-  margin: 1.67em 0;
-  padding-left: 3em;
-}
-
-.container__editor {
-  font-size: 12px;
-  font-variant-ligatures: common-ligatures;
-  background-color: #fafafa;
-  border-radius: 3px;
-  counter-reset: line;
-}
-
-.container_editor_line_number:before {
-  position: absolute;
-  right: 100%;
-  margin-left: 10px;
-  margin-right: 10px;
-  text-align: right;
-  opacity: .3;
-  user-select: none; 
-}
-
-.container__editor textarea {
-  outline: 0;
-}
-
-.button {
-  display: inline-block;
-  padding: 0 6px;
-  text-decoration: none;
-  background: #000;
-  color: #fff;
-}
-
-.button:hover {
-  background: linear-gradient(45deg, #E42B66, #E2433F);
-}
-
-/* Syntax highlighting */
-.token.comment,
-.token.prolog,
-.token.doctype,
-.token.cdata {
-  color: #90a4ae;
-}
-.token.punctuation {
-  color: #9e9e9e;
-}
-.namespace {
-  opacity: 0.7;
-}
-.token.property,
-.token.tag,
-.token.boolean,
-.token.number,
-.token.constant,
-.token.symbol,
-.token.deleted {
-  color: #e91e63;
-}
-.token.selector,
-.token.attr-name,
-.token.string,
-.token.char,
-.token.builtin,
-.token.inserted {
-  color: #4caf50;
-}
-.token.operator,
-.token.entity,
-.token.url,
-.language-css .token.string,
-.style .token.string {
-  color: #795548;
-}
-.token.atrule,
-.token.attr-value,
-.token.keyword {
-  color: #3f51b5;
-}
-.token.function {
-  color: #f44336;
-}
-.token.regex,
-.token.important,
-.token.variable {
-  color: #ff9800;
-}
-.token.important,
-.token.bold {
-  font-weight: bold;
-}
-.token.italic {
-  font-style: italic;
-}
-.token.entity {
-  cursor: help;
-}
