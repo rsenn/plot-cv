@@ -13,9 +13,30 @@ import { DebuggerProtocol } from './debuggerprotocol.js';
 import { trkl } from './lib/trkl.js';
 import { classNames } from './lib/classNames.js';
 /* prettier-ignore */ import { HSLA, RGBA, Point, isPoint, Size, isSize, Line, isLine, Rect, isRect, PointList, Polyline, Matrix, isMatrix, BBox, TRBL, Timer, Tree, Node, XPath, Element, isElement, CSS, SVG, Container, Layer, Renderer, Select, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementWHProps, ElementXYProps, Align, Anchor, dom, isNumber, Unit, ScalarValue, ElementTransformation, CSSTransformSetters, Transition, TransitionList, RandomColor } from './lib/dom.js';
-/* prettier-ignore */ import { useIterable, useIterator, useAsyncGenerator, useAsyncIterable, useAsyncIterator, useGenerator, useActive, useClickout, useConditional, useDebouncedCallback, useDebounce, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useForceUpdate, useGetSet, useHover, useMousePosition, useToggleButtonGroupState, useTrkl, useFetch } from './lib/hooks.js';
+/* prettier-ignore */ import { useClick, useIterable, useIterator, useAsyncGenerator, useAsyncIterable, useAsyncIterator, useGenerator, useActive, useClickout, useConditional, useDebouncedCallback, useDebounce, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useForceUpdate, useGetSet, useHover, useMousePosition, useToggleButtonGroupState, useTrkl, useFetch } from './lib/hooks.js';
 /* prettier-ignore */ import { clamp, identity, noop, compose, maybe, snd, toPair, getOffset, getPositionOnElement, isChildOf } from './lib/hooks.js';
 import { JSLexer, Location } from './lib/jslexer.js';
+import {
+  Chooser,
+  DynamicLabel,
+  Button,
+  FileList,
+  Panel,
+  SizedAspectRatioBox,
+  TransformedElement,
+  Canvas,
+  ColorWheel,
+  Slider,
+  CrossHair,
+  FloatingPanel,
+  DropDown,
+  Conditional,
+  Fence,
+  Zoomable,
+  DisplayList,
+  Ruler,
+  Toggle
+} from './components.js';
 
 let cwd = '.';
 let responses = {};
@@ -100,12 +121,12 @@ function* TokenizeJS(data, filename) {
   let out = [];
   for(let { id, lexeme, line } of lex) {
     const type = tokens[id - 1];
-  let { line } = lex.loc;
-line -= lexeme.split(/\n/g).length-1;
-  /*  if(type == 'whitespace') lexeme = lexeme.replace(/ /g, '\u00a0');
+    let { line } = lex.loc;
+    line -= lexeme.split(/\n/g).length - 1;
+    /*  if(type == 'whitespace') lexeme = lexeme.replace(/ /g, '\u00a0');
     if(type != 'comment') lexeme = lexeme.replace(/^\n/g, '');*/
     console.log('tok', { id, lexeme, line });
-  //    if(lexeme === '') continue;
+    //    if(lexeme === '') continue;
 
     if(prev.line != line) {
       //  yield out;
@@ -251,9 +272,20 @@ function SendRequest(command, args = {}) {
   return new Promise((resolve, reject) => (responses[request_seq] = resolve));
 }
 
+/*const Button = ({image}) => {
+const ref = useClick(e => {
+  console.log('click!!!!');
+});
+ return  h('button', { ref, class: 'button' }, h('img', { src: image }));
+}*/
+/*
+
+const ButtonBar=  ({children}) => 
+h('div', {class: 'button-bar' }, children);*/
+
 const SourceLine = ({ lineno, text, active, children }) =>
   h(Fragment, {}, [
-    h('pre', { class:  classNames('lineno', active && 'active') }, h('a', { name: `line-${lineno}` }, [lineno + ''])),
+    h('pre', { class: classNames('lineno', active && 'active') }, h('a', { name: `line-${lineno}` }, [lineno + ''])),
     h('pre', { class: classNames('text', active && 'active'), innerHTML: text })
   ]);
 
@@ -292,7 +324,25 @@ const SourceFile = ({ filename }) => {
 async function ShowSource(sourceFile) {
   if(currentSource() != sourceFile) {
     currentSource(sourceFile);
-    const component = h(SourceFile, { filename: path.relative(cwd, sourceFile, cwd) });
+    const component = h(Fragment, {}, [
+      h(Panel, { className: classNames('buttons', 'no-select'), tag: 'header' }, [
+              h(Button, { image: 'static/svg/continue.svg', fn: Continue }),
+  h(Button, {image: 'static/svg/pause.svg', fn: Pause }),
+          //h(Button, {image: 'static/svg/start.svg'}),
+        h(Button, {
+          image: 'static/svg/step-into.svg',
+          fn: StepIn
+        }),
+        h(Button, {
+          image: 'static/svg/step-out.svg',
+          fn: StepOut
+        }),
+        h(Button, { image: 'static/svg/step-over.svg', fn: Next }),
+ //   h(Button, { image: 'static/svg/restart.svg' }),
+          //h(Button, {image: 'static/svg/stop.svg', enable: trkl(false)}),
+      ]),
+      h(SourceFile, { filename: path.relative(cwd, sourceFile, cwd) })
+    ]);
     const { body } = document;
     let r = render(component, body);
   }

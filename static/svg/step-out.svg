@@ -4,6 +4,6 @@
       <path fill-rule="evenodd" stroke="#000" stroke-width=".4pt" d="M2.308 0l-3.46 2v-4l3.46 2z"/>
     </marker>
   </defs>
-  <path fill="none" stroke="#000a00" stroke-width=".678" d="M4.749 8.406H7.95v3.045H4.75z"/>
+  <path fill="none" stroke="#000a00" stroke-width=".678" d="M4.749 8.406H7.95v3.045h-3.2z"/>
   <path fill="none" stroke="#000" stroke-width=".678" marker-end="url(#step-out_svg__a)" d="M6.373 7.365l-.007-4.528"/>
 </svg>

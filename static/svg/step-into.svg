@@ -5,7 +5,7 @@
     </marker>
   </defs>
   <g fill="none" stroke-width=".678">
-    <path stroke="#000a00" d="M4.749 8.406H7.95v3.045H4.75z"/>
+    <path stroke="#000a00" d="M4.749 8.406H7.95v3.045h-3.2z"/>
     <path stroke="#000" marker-end="url(#step-into_svg__a)" d="M6.373-.11l-.007 4.53" transform="translate(0 1.02)"/>
   </g>
 </svg>

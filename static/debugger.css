@@ -85,9 +85,17 @@ pre.text, .display-linebreak {
 }
 .lineno.active {
   color:   hsl(60,100%,60%);
-  background-image:  url(/static/svg/arrow-right.svg);
+  background-image:  url(/static/svg/stackframe-active.svg);
+background-size: auto 100%;
+background-position: center left;
+background-repeat:  no-repeat; 
+}
+blahbutton {
+  color:   hsl(60,100%,60%);
+  background-image:  url(/static/svg/stackframe-active.svg);
   background-size: contain;
-background-repeat:  no-repeat; }
+background-repeat:  no-repeat; 
+}
 
 .wrap {
   word-break: break-all;
@@ -98,10 +106,20 @@ background-repeat:  no-repeat; }
   white-space: pre\9; 
   /*word-break: keep-all;*/
 }
-
-
-
-
+ .button { 
+ padding:  0;
+ height:16px;
+ width:16px;
+} 
+.button > img {
+  width:  14px;
+  height:  14px;
+   filter: invert(1);
+   margin:  0;
+   outline:  0;
+  transform:  translate(1px,-1px) scale(1.8);
+}
+ 
 
 span.identifier { color:  #ff0; }
 span.keyword { color:  #f00; }
@@ -113,3 +131,37 @@ span.booleanLiteral { color:  #f80; }
 span.nullLiteral { color:  #80f; }
 span.numericLiteral { color:  #0ff; }
 span.regexpLiteral { color:  #f0f; }
+
+.panel, .buttons {
+  display: grid;
+    gap:  3px;
+grid-auto-flow: row dense;
+  grid-template-columns: repeat(10,28px);
+
+}
+
+.buttons {
+  padding-bottom:  10px;
+ }
+.buttons {
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.buttons {
+ /* background: linear-gradient(90deg, hsla(220, 50%, 10%, 0.5) 0%, hsla(220, 50%, 30%, 0.5) 100%);*/
+  z-index: 100000;
+}
+
+.panel.list {
+  background: none;
+}
+
+.panel.list {
+  background: white;
+  max-height: 85vh;
+}
+
+.panel.list < .file {
+  background: white;
+}
