@@ -91,6 +91,7 @@ import {
 import Util from './lib/util.js';
 import Tree from './lib/tree.js';
 import fs from 'fs';
+import process from 'process';
 import * as deep from './lib/deep.js';
 import { Console } from 'console';
 import { Stack } from './lib/stack.js';
@@ -148,8 +149,7 @@ function printAst(ast, comments, printer = globalThis.printer) {
 let files = {};
 
 function main(...argv) {
-  globalThis.console = new Console({
-    stdout: process.stdout,
+  globalThis.console = new Console(std.out, {
     inspectOptions: {
       colors: true,
       depth: 8,
@@ -209,8 +209,8 @@ function main(...argv) {
       processing(); //.catch(err => console.log('processFile ERROR:', err));
     } catch(error) {
       if(error) {
-        console.log?.('ERROR:', error?.message);
-        console.log?.('STACK:\n  ' + new Stack(error?.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  '));
+        console.log('ERROR:', error?.message);
+        console.log('STACK:\n  ' + new Stack(error?.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  '));
       } else {
         console.log('ERROR:', error);
       }
@@ -263,7 +263,7 @@ function processFile(file, params) {
     console.log('parseProgram token', token);
     if(token)
       //  console.log(`parseProgram token.stack\n  ` + token.stack.toString().replace(/\n/g, '\n  '));
-      console.log(`parseProgram loc`, parser.lexer.position() + ``);
+      console.log(`parseProgram loc`, token.loc + ``);
     console.log(`parseProgram stateStack`, parser.lexer.stateStack);
     // console.log(`parseProgram parser.stack`, parser.stack.map(({frame,...entry}) =>  [entry,frame?.loc]));
 

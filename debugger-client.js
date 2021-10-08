@@ -87,7 +87,6 @@ async function CreateSocket(url) {
       }
       globalThis.response = data;
       if(data) {
-        //console.log('WS', data);
         const { response, request_seq } = data;
         if(response) {
           const { command } = response;
@@ -104,6 +103,9 @@ async function CreateSocket(url) {
           }
         }
         if(responses[request_seq]) responses[request_seq](data);
+      } else {
+        console.log('WS', data);
+
       }
     }
   })();
@@ -166,6 +168,16 @@ async function StackTrace() {
   let { body } = await SendRequest('stackTrace');
   return body;
 }
+
+/*
+  {
+    "type": "breakpoints",
+    "breakpoints": {
+      "path": "lib/ecmascript/parser2.js",
+      "breakpoints": [ { "line": 470, "column": 0 }, { "line": 2151, "column": 0 }, { "line": 2401, "column": 0 } ]
+    }
+  }
+*/
 
 function SendRequest(command, args = {}) {
   const request_seq = ++seq;
