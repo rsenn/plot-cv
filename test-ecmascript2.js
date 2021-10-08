@@ -167,7 +167,7 @@ function main(...argv) {
         false,
         (v, r, o) => {
           console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
-          console.log(o.map(([name, [arg, fn, ch]]) => ('  --'+ name + ', -' + ch).padEnd(20)).join('\n'));
+          console.log(o.map(([name, [arg, fn, ch]]) => ('  --' + name + ', -' + ch).padEnd(20)).join('\n'));
           Util.exit(0);
         },
         'h'
@@ -370,7 +370,7 @@ try {
 } finally {
   if(error) {
     console.log(
-      'FAIL: '+error.message,
+      'FAIL: ' + error.message,
       '\n  ' + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  ')
     );
     console.log('FAIL');
