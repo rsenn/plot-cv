@@ -97,27 +97,43 @@ function* TokenizeJS(data, filename) {
     {}
   );
   let prev = {};
-  yield '<pre>';
-
-  for(let { id, lexeme } of lex) {
-    const color = colors[id];
-    const { line } = lex.loc;
-
-    if(prev.color != color || prev.line != line) yield '</pre>';
+  let out = [];
+  for(let { id, lexeme, line } of lex) {
+    const type = tokens[id - 1];
+  let { line } = lex.loc;
+line -= lexeme.split(/\n/g).length-1;
+  /*  if(type == 'whitespace') lexeme = lexeme.replace(/ /g, '\u00a0');
+    if(type != 'comment') lexeme = lexeme.replace(/^\n/g, '');*/
+    console.log('tok', { id, lexeme, line });
+  //    if(lexeme === '') continue;
 
     if(prev.line != line) {
-      yield `<pre class="lineno"><a name="line-${line}">${line}</a></pre>`;
+      //  yield out;
+
+      for(let i = prev.line; i < line; i++) {
+        yield out;
+        out = [];
+      }
+    }
+    out.push([type, lexeme]);
+
+    /*
+    const color = colors[id];
+    const { line } = lex.loc;
+    if(prev.color != color || prev.line != line) out += '</pre>';
+    if(prev.line != line) {
+      out += `<pre class="lineno"><a name="line-${line}">${line}</a></pre>`;
     }
     if(prev.color != color || prev.line != line) {
-      yield `<pre style="color: ${color};">`;
+      out += `<pre style="color: ${color};">`;
     }
     console.log('tok', { lexeme, color, line });
-    yield lexeme;
-
-    prev.color = color;
+    out += lexeme;
+    prev.color = color;*/
     prev.line = line;
+    line = lex.loc;
   }
-  yield '</pre>';
+  out += '</pre>';
 }
 
 Object.assign(globalThis, { responses, currentLine, currentSource, TokenizeJS });
@@ -235,22 +251,31 @@ function SendRequest(command, args = {}) {
   return new Promise((resolve, reject) => (responses[request_seq] = resolve));
 }
 
-const SourceLine = ({ lineno, text, active }) =>
+const SourceLine = ({ lineno, text, active, children }) =>
   h(Fragment, {}, [
-    h('pre', { class: 'lineno' }, h('a', { name: `line-${lineno}` }, [lineno + ''])),
-    h('pre', { class: classNames('text', active && 'active') }, [text])
+    h('pre', { class:  classNames('lineno', active && 'active') }, h('a', { name: `line-${lineno}` }, [lineno + ''])),
+    h('pre', { class: classNames('text', active && 'active'), innerHTML: text })
   ]);
 
 const SourceText = ({ text, filename }) => {
   const activeLine = useTrkl(currentLine);
   let tokens = TokenizeJS(text, filename);
 
-let data=[...tokens];
-  console.log('useIterable',data);
+  let lines = [...tokens];
+  console.log('useIterable', lines[0]);
   return h(
     Fragment,
     {},
-    text.split('\n').map((text, i) => h(SourceLine, { lineno: i + 1, text, active: activeLine == i + 1 }))
+    lines.map((tokens, i) => {
+      //  const text = tokens.map(([type, token]) => h('span', { class: type }, [token]));
+      // console.log('tokens',tokens);
+
+      const text = tokens
+        .map(([type, token]) => [type, token.replace(/ /g, '\xa0')])
+        .map(([type, token]) => (type == 'whitespace' ? token : `<span class="${type}">${token}</span>`));
+      //console.log('text',text);
+      return h(SourceLine, { lineno: i + 1, text: text.join(''), active: activeLine == i + 1 }, text);
+    })
   );
 };
 

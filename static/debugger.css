@@ -36,6 +36,12 @@ pre {
   min-height: 1em;
 }
 
+pre.text {
+white-space:pre-wrap;
+}
+pre.text, .display-linebreak {
+  white-space: pre-line;
+}
 .text {
   background: black;
   padding: 0 0.5em;
@@ -73,10 +79,15 @@ pre {
 .text {
   box-sizing: border-box;
 }
-.active {
-  border: 1px solid hsl(50,100%,60%);
+.text.active {
+  border: 1px dashed hsl(20,100%,60%);
   background:   hsl(50,100%,5%);
 }
+.lineno.active {
+  color:   hsl(60,100%,60%);
+  background-image:  url(/static/svg/arrow-right.svg);
+  background-size: contain;
+background-repeat:  no-repeat; }
 
 .wrap {
   word-break: break-all;
@@ -92,3 +103,13 @@ pre {
 
 
 
+span.identifier { color:  #ff0; }
+span.keyword { color:  #f00; }
+span.punctuator { color:  #0ff; }
+span.comment { color:  #0f0; }
+span.stringLiteral { color:  #0ff; }
+span.templateLiteral { color:  #f0f; }
+span.booleanLiteral { color:  #f80; }
+span.nullLiteral { color:  #80f; }
+span.numericLiteral { color:  #0ff; }
+span.regexpLiteral { color:  #f0f; }
