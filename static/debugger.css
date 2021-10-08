@@ -35,10 +35,12 @@ pre {
 .line {
   min-height: 1em;
 }
-
+.text {
+	padding: 1px 0.5em 2px 0.5em;
+	margin: -1px 0;
+}
 .text {
   background: black;
-  padding: 0 0.5em;
 }
 
 
