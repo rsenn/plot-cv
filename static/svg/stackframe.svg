@@ -1,3 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="48" height="28" viewBox="0 0 12.7 7.409">
-  <path fill="#fff" stroke="#000" stroke-linecap="square" stroke-width=".794" d="M5.36 6.69l4.962-2.986L5.36.72H.397v5.97z"/>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="48" height="28" viewBox="0 0 12.7 7.409">
+  <defs>
+    <linearGradient id="stackframe_svg__a">
+      <stop offset="0" stop-color="#fc0"/>
+      <stop offset=".825" stop-color="#f95"/>
+      <stop offset="1" stop-color="#fc0" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="stackframe_svg__b" x1="-1.347" x2="11.314" y1="7.576" y2=".095" gradientUnits="userSpaceOnUse" href="#stackframe_svg__a"/>
+  </defs>
+  <path fill="url(#stackframe_svg__b)" stroke="#000" stroke-linecap="square" stroke-width=".529" d="M5.36 6.69l4.962-2.986L5.36.72H.397v5.97z"/>
 </svg>
