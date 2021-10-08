@@ -66,8 +66,7 @@ export const FindLayer = (name, project = window.project) => {
   return layers.find(l => l.name === name);
 };
 
-export const GetLayer = (layer, project = window.project) =>
-  FindLayer(layer.name, project) || AddLayer(layer, project);
+export const GetLayer = (layer, project = window.project) => FindLayer(layer.name, project) || AddLayer(layer, project);
 
 export const AddLayer = (layer, project = window.project) => {
   const { color, name, create, ...props } = layer;
@@ -171,12 +170,7 @@ export const GcodeToPolylines = (data, opts = {}) => {
   const { fill = false, color, side } = opts;
   //console.debug('GcodeToPolylines', { data, opts });
 
-  let gc = [
-    ...Util.filter(
-      parseGcode(data),
-      g => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args
-    )
-  ];
+  let gc = [...Util.filter(parseGcode(data), g => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args)];
   let polylines = [];
   let polyline = null;
   let bb = new BBox();
@@ -233,9 +227,7 @@ export const GcodeToPolylines = (data, opts = {}) => {
     let inside = new Map(
       polylines.map((polyline2, i) => [
         polyline2,
-        polylines.filter(
-          (polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2)
-        )
+        polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2))
       ])
     );
     let insideOf = polylines.map((polyline, i) => [
@@ -265,12 +257,7 @@ export const GcodeToPolylines = (data, opts = {}) => {
   let ids = polylines.map((pl, i) => i).filter(i => !remove.has(i));
   let polys = [
     ...ids.map(i =>
-      polylines[i].toSVG(
-        (...args) => args,
-        { ...props(polylines[i], i), id: `polyline-${i}` },
-        grp,
-        0.01
-      )
+      polylines[i].toSVG((...args) => args, { ...props(polylines[i], i), id: `polyline-${i}` }, grp, 0.01)
     ),
     ...paths
       .map(([i, d]) => ({

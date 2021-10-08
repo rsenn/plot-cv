@@ -2,9 +2,8 @@ import { WebSocketClient } from './lib/net/websocket-async.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
-/* prettier-ignore */ import { toString, toArrayBuffer, btoa as Base64Encode, atob as Base64Decode } from './lib/misc.js';
+/* prettier-ignore */ import { toString, toArrayBuffer, extendArray } from './lib/misc.js';
 /* prettier-ignore */ import React, {h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
-/* prettier-ignore */ import { ECMAScriptParser, Lexer } from './lib/ecmascript/parser.js';
 /* prettier-ignore */ import { EventEmitter, EventTarget } from './lib/events.js';
 /* prettier-ignore */ import { DroppingBuffer, FixedBuffer, MAX_QUEUE_LENGTH, Repeater, RepeaterOverflowError, SlidingBuffer } from './lib/repeater/repeater.js';
 /* prettier-ignore */ import { useAsyncIter, useRepeater, useResult, useValue } from './lib/repeater/react-hooks.js';
@@ -14,18 +13,26 @@ import { DebuggerProtocol } from './debuggerprotocol.js';
 import { trkl } from './lib/trkl.js';
 import { classNames } from './lib/classNames.js';
 /* prettier-ignore */ import { HSLA, RGBA, Point, isPoint, Size, isSize, Line, isLine, Rect, isRect, PointList, Polyline, Matrix, isMatrix, BBox, TRBL, Timer, Tree, Node, XPath, Element, isElement, CSS, SVG, Container, Layer, Renderer, Select, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementWHProps, ElementXYProps, Align, Anchor, dom, isNumber, Unit, ScalarValue, ElementTransformation, CSSTransformSetters, Transition, TransitionList, RandomColor } from './lib/dom.js';
-/* prettier-ignore */ import { useActive, useClickout, useConditional, useDebouncedCallback, useDebounce, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useForceUpdate, useGetSet, useHover, useMousePosition, useToggleButtonGroupState, useTrkl, useFetch } from './lib/hooks.js';
+/* prettier-ignore */ import { useIterable, useIterator, useAsyncGenerator, useAsyncIterable, useAsyncIterator, useGenerator, useActive, useClickout, useConditional, useDebouncedCallback, useDebounce, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useForceUpdate, useGetSet, useHover, useMousePosition, useToggleButtonGroupState, useTrkl, useFetch } from './lib/hooks.js';
 /* prettier-ignore */ import { clamp, identity, noop, compose, maybe, snd, toPair, getOffset, getPositionOnElement, isChildOf } from './lib/hooks.js';
+import { JSLexer, Location } from './lib/jslexer.js';
 
-globalThis.addEventListener('load', async e => {
+let cwd = '.';
+let responses = {};
+let currentSource = trkl();
+let currentLine = trkl();
+
+window.addEventListener('load', e => {
   let url = Util.parseURL();
   let socketURL = Util.makeURL({
     location: url.location + '/ws',
     protocol: url.protocol == 'https' ? 'wss' : 'ws'
   });
 
-  globalThis.ws = await CreateSocket(socketURL);
-  console.log(`Loaded`, { socketURL, ws });
+  (async () => {
+    globalThis.ws = await CreateSocket(socketURL);
+    console.log(`Loaded`, { socketURL, ws });
+  })();
 });
 
 globalThis.addEventListener('keypress', e => {
@@ -48,12 +55,13 @@ async function LoadSource(filename) {
   } catch(e) {}
 }
 
-/* prettier-ignore */ Object.assign(globalThis, { DebuggerProtocol, LoadSource, Util, toString, toArrayBuffer, Base64Encode, Base64Decode, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, ECMAScriptParser, Lexer, EventEmitter, EventTarget, Element, isElement, path });
+/* prettier-ignore */ Object.assign(globalThis, { DebuggerProtocol, LoadSource, Util, toString, toArrayBuffer, extendArray, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, EventEmitter, EventTarget, Element, isElement, path });
 /* prettier-ignore */ Object.assign(globalThis, { DroppingBuffer, FixedBuffer, MAX_QUEUE_LENGTH, Repeater, RepeaterOverflowError, SlidingBuffer, useAsyncIter, useRepeater, useResult, useValue, TimeoutError, delay, interval, timeout, InMemoryPubSub, semaphore, throttler, trkl });
 /* prettier-ignore */ Object.assign(globalThis, { HSLA, RGBA, Point, isPoint, Size, isSize, Line, isLine, Rect, isRect, PointList, Polyline, Matrix, isMatrix, BBox, TRBL, Timer, Tree, Node, XPath, Element, isElement, CSS, SVG, Container, Layer, Renderer, Select, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementWHProps, ElementXYProps, Align, Anchor, dom, isNumber, Unit, ScalarValue, ElementTransformation, CSSTransformSetters, Transition, TransitionList, RandomColor });
-/* prettier-ignore */ Object.assign(globalThis, { useActive, useClickout, useConditional, useDebouncedCallback, useDebounce, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useForceUpdate, useGetSet, useHover, useMousePosition, useToggleButtonGroupState, useTrkl, useFetch });
+/* prettier-ignore */ Object.assign(globalThis, {   useIterable, useIterator, useAsyncGenerator, useAsyncIterable, useAsyncIterator, useGenerator, useActive, useClickout, useConditional, useDebouncedCallback, useDebounce, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useForceUpdate, useGetSet, useHover, useMousePosition, useToggleButtonGroupState, useTrkl, useFetch });
 /* prettier-ignore */ Object.assign(globalThis, { clamp, identity, noop, compose, maybe, snd, toPair, getOffset, getPositionOnElement, isChildOf });
 /* prettier-ignore */ Object.assign(globalThis, { ShowSource, Start, GetVariables, SendRequest, StepIn,StepOut, Next, Continue, Pause, Evaluate, StackTrace });
+/* prettier-ignore */ Object.assign(globalThis, {JSLexer, Location});
 
 function Start(args, address = '127.0.0.1:9901') {
   return ws.send(
@@ -64,12 +72,55 @@ function Start(args, address = '127.0.0.1:9901') {
   );
 }
 
-let cwd = '.';
-let responses = {};
-let currentSource;
-let currentLine = trkl();
+const tokenColors = {
+  comment: new RGBA(0, 255, 0),
+  regexpLiteral: new RGBA(255, 0, 255),
+  templateLiteral: new RGBA(0, 255, 255),
+  punctuator: new RGBA(0, 255, 255),
+  numericLiteral: new RGBA(0, 255, 255),
+  stringLiteral: new RGBA(0, 255, 255),
+  booleanLiteral: new RGBA(255, 255, 0),
+  nullLiteral: new RGBA(255, 0, 255),
+  keyword: new RGBA(255, 0, 0),
+  identifier: new RGBA(255, 255, 0),
+  privateIdentifier: new RGBA(255, 255, 0),
+  whitespace: new RGBA(255, 255, 255)
+};
 
-Object.assign(globalThis, { responses, currentLine });
+function* TokenizeJS(data, filename) {
+  let lex = new JSLexer();
+  lex.setInput(data, filename);
+
+  let { tokens } = lex;
+  let colors = Object.entries(tokenColors).reduce(
+    (acc, [type, c]) => ({ ...acc, [tokens.indexOf(type) + 1]: c.hex() }),
+    {}
+  );
+  let prev = {};
+  yield '<pre>';
+
+  for(let { id, lexeme } of lex) {
+    const color = colors[id];
+    const { line } = lex.loc;
+
+    if(prev.color != color || prev.line != line) yield '</pre>';
+
+    if(prev.line != line) {
+      yield `<pre class="lineno"><a name="line-${line}">${line}</a></pre>`;
+    }
+    if(prev.color != color || prev.line != line) {
+      yield `<pre style="color: ${color};">`;
+    }
+    console.log('tok', { lexeme, color, line });
+    yield lexeme;
+
+    prev.color = color;
+    prev.line = line;
+  }
+  yield '</pre>';
+}
+
+Object.assign(globalThis, { responses, currentLine, currentSource, TokenizeJS });
 
 async function CreateSocket(url) {
   let ws = (globalThis.ws = new WebSocketClient());
@@ -105,7 +156,6 @@ async function CreateSocket(url) {
         if(responses[request_seq]) responses[request_seq](data);
       } else {
         console.log('WS', data);
-
       }
     }
   })();
@@ -191,8 +241,12 @@ const SourceLine = ({ lineno, text, active }) =>
     h('pre', { class: classNames('text', active && 'active') }, [text])
   ]);
 
-const SourceText = ({ text }) => {
+const SourceText = ({ text, filename }) => {
   const activeLine = useTrkl(currentLine);
+  let tokens = TokenizeJS(text, filename);
+
+let data=[...tokens];
+  console.log('useIterable',data);
   return h(
     Fragment,
     {},
@@ -202,16 +256,17 @@ const SourceText = ({ text }) => {
 
 const SourceFile = ({ filename }) => {
   let text = useFetch(filename) ?? '';
+
   return h('div', { class: 'container' }, [
     h('div', {}, []),
     h('div', { class: 'header' }, [filename]),
-    h(SourceText, { text })
+    h(SourceText, { text, filename })
   ]);
 };
 
 async function ShowSource(sourceFile) {
-  if(currentSource != sourceFile) {
-    currentSource = sourceFile;
+  if(currentSource() != sourceFile) {
+    currentSource(sourceFile);
     const component = h(SourceFile, { filename: path.relative(cwd, sourceFile, cwd) });
     const { body } = document;
     let r = render(component, body);

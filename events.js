@@ -6,13 +6,9 @@ export function Emitter(target) {
   const listeners = new Map();
   let emitter = new.target ? this : {};
   Object.assign(emitter, {
-    on: (type, handler) => (
-      listeners.set(type, handler), target.addEventListener(type, handler), emitter
-    ),
+    on: (type, handler) => (listeners.set(type, handler), target.addEventListener(type, handler), emitter),
     off: (type, handler) => (
-      target.removeEventListener(type, handler || listeners.get(type)),
-      listeners.delete(type),
-      emitter
+      target.removeEventListener(type, handler || listeners.get(type)), listeners.delete(type), emitter
     ),
     reset: () => {
       for(let [type, handler] of listeners) target.removeEventListener(type, handler);

@@ -10,8 +10,7 @@ class buffer extends ArrayBuffer {
   /* 0: char* x */
   /* undefined 1 true */
   set x(value) {
-    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer)
-      value = toPointer(value);
+    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = toPointer(value);
     new BigInt64Array(this, 0)[0] = BigInt(value);
   }
   get x() {
@@ -20,8 +19,7 @@ class buffer extends ArrayBuffer {
 
   /* 8: size_t (unsigned long) p */
   set p(value) {
-    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer)
-      value = toPointer(value);
+    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = toPointer(value);
     new BigInt64Array(this, 8)[0] = BigInt(value);
   }
   get p() {
@@ -30,8 +28,7 @@ class buffer extends ArrayBuffer {
 
   /* 16: size_t (unsigned long) n */
   set n(value) {
-    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer)
-      value = toPointer(value);
+    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = toPointer(value);
     new BigInt64Array(this, 16)[0] = BigInt(value);
   }
   get n() {
@@ -40,8 +37,7 @@ class buffer extends ArrayBuffer {
 
   /* 24: size_t (unsigned long) a */
   set a(value) {
-    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer)
-      value = toPointer(value);
+    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = toPointer(value);
     new BigInt64Array(this, 24)[0] = BigInt(value);
   }
   get a() {
@@ -51,8 +47,7 @@ class buffer extends ArrayBuffer {
   /* 32: buffer_op_proto* op */
   /* buffer_op_proto 8 true */
   set op(value) {
-    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer)
-      value = toPointer(value);
+    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = toPointer(value);
     new BigInt64Array(this, 32)[0] = BigInt(value);
   }
   get op() {
@@ -62,8 +57,7 @@ class buffer extends ArrayBuffer {
   /* 40: void* cookie */
   /* undefined 0 true */
   set cookie(value) {
-    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer)
-      value = toPointer(value);
+    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = toPointer(value);
     new BigInt64Array(this, 40)[0] = BigInt(value);
   }
   get cookie() {
@@ -72,8 +66,7 @@ class buffer extends ArrayBuffer {
 
   /* 48: void (*)() deinit */
   set deinit(value) {
-    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer)
-      value = toPointer(value);
+    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = toPointer(value);
     new BigInt64Array(this, 48)[0] = BigInt(value);
   }
   get deinit() {
@@ -82,8 +75,7 @@ class buffer extends ArrayBuffer {
 
   /* 56: fd_t (int) fd */
   set fd(value) {
-    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer)
-      value = toPointer(value);
+    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = toPointer(value);
     new Int32Array(this, 56)[0] = value;
   }
   get fd() {
@@ -99,10 +91,8 @@ class buffer extends ArrayBuffer {
     const { x, p, n, a, op, cookie, deinit, fd } = this;
     return `struct buffer {\n\t.x = 0x${x.toString(
       16
-    )},\n\t.p = ${p},\n\t.n = ${n},\n\t.a = ${a},\n\t.op = 0x${op.toString(
+    )},\n\t.p = ${p},\n\t.n = ${n},\n\t.a = ${a},\n\t.op = 0x${op.toString(16)},\n\t.cookie = 0x${cookie.toString(
       16
-    )},\n\t.cookie = 0x${cookie.toString(16)},\n\t.deinit = 0x${deinit.toString(
-      16
-    )},\n\t.fd = ${fd}\n}`;
+    )},\n\t.deinit = 0x${deinit.toString(16)},\n\t.fd = ${fd}\n}`;
   }
 }

@@ -96,8 +96,7 @@ function main(...args) {
 
   repl.help = () => {};
   let { log } = console;
-  repl.show = arg =>
-    std.puts((typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options)) + '\n');
+  repl.show = arg => std.puts((typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options)) + '\n');
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();
@@ -124,8 +123,7 @@ function main(...args) {
     console.log('createWS', { url, callbacks, listen });
 
     net.setLog(
-      (params.debug ? net.LLL_USER : 0) |
-        (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
+      (params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
       (level, ...args) => {
         repl.printStatus(...args);
         if(params.debug)

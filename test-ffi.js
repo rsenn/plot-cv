@@ -298,17 +298,14 @@ function MakeArray(buf, numBytes) {
         return new Uint8Array(buf);
     }
   } catch(error) {
-    console.error(
-      `MakeArray(${Util.className(buf)}[${buf.byteLength}], ${numBytes}): ${error.message}`
-    );
+    console.error(`MakeArray(${Util.className(buf)}[${buf.byteLength}], ${numBytes}): ${error.message}`);
   }
 }
 
 function ArrayBufToHex(buf, numBytes = 8) {
   let arr = MakeArray(buf, numBytes);
   return arr.reduce(
-    (s, code) =>
-      (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
+    (s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
     ''
   );
 }

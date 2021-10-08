@@ -42,9 +42,7 @@ function main(...args) {
         false,
         (v, r, o) => {
           console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
-          console.log(
-            o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n')
-          );
+          console.log(o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n'));
           Util.exit(0);
         },
         'h'
@@ -98,10 +96,7 @@ function main(...args) {
       switch (target) {
         case 'import': {
           let node = new ImportDeclaration(
-            names.map(
-              ([local, imported]) =>
-                new ImportSpecifier(new Identifier(imported), new Identifier(local))
-            )
+            names.map(([local, imported]) => new ImportSpecifier(new Identifier(imported), new Identifier(local)))
           );
           let x = deep.get(ast, path);
           let y = deep.get(ast, path.slice(0, -1));

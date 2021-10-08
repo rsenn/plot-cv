@@ -49,10 +49,7 @@ async function main(...args) {
       //    ret = interpreter.run(ast);
       parser.addCommentsToNodes(ast);
       let imports = [
-        ...deep.iterate(
-          ast,
-          node => node instanceof CallExpression && /console.log/.test(printer.print(node))
-        )
+        ...deep.iterate(ast, node => node instanceof CallExpression && /console.log/.test(printer.print(node)))
       ].map(([node, path]) => node);
     } catch(err) {
       error = err;

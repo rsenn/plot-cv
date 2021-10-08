@@ -12,7 +12,6 @@ import * as fs from './lib/filesystem.js';
 import * as net from 'net';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 import { StartDebugger, ConnectDebugger } from './debugger.js';
-import Lexer from './quickjs/qjs-modules/lib/jslexer.js';
 
 globalThis.fs = fs;
 
@@ -73,7 +72,12 @@ function main(...args) {
     args
   );
   if(params['no-tls'] === true) params.tls = false;
-  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key' } = params;
+  const {
+    address = '0.0.0.0',
+    port = 8999,
+    'ssl-cert': sslCert = 'localhost.crt',
+    'ssl-private-key': sslPrivateKey = 'localhost.key'
+  } = params;
   const listen = params.connect && !params.listen ? false : true;
   const server = !params.client || params.server;
   let name = Util.getArgs()[0];
@@ -111,10 +115,32 @@ function main(...args) {
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     console.log('createWS', { url, callbacks, listen });
 
-    net.setLog((params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1), (level, ...args) => {
-      console.log(...args);
-      if(params.debug) console.log((['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8), ...args);
-    });
+    net.setLog(
+      (params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
+      (level, ...args) => {
+        console.log(...args);
+        if(params.debug)
+          console.log(
+            (
+              [
+                'ERR',
+                'WARN',
+                'NOTICE',
+                'INFO',
+                'DEBUG',
+                'PARSER',
+                'HEADER',
+                'EXT',
+                'CLIENT',
+                'LATENCY',
+                'MINNET',
+                'THREAD'
+              ][Math.log2(level)] ?? level + ''
+            ).padEnd(8),
+            ...args
+          );
+      }
+    );
 
     let child, dbg;
 
@@ -122,6 +148,32 @@ function main(...args) {
       tls: params.tls,
       sslCert,
       sslPrivateKey,
+      mimetypes: [
+        ['.svgz', 'application/gzip'],
+        ['.mjs', 'application/javascript'],
+        ['.wasm', 'application/octet-stream'],
+        ['.eot', 'application/vnd.ms-fontobject'],
+        ['.lib', 'application/x-archive'],
+        ['.bz2', 'application/x-bzip2'],
+        ['.gitignore', 'text/plain'],
+        ['.cmake', 'text/plain'],
+        ['.hex', 'text/plain'],
+        ['.md', 'text/plain'],
+        ['.pbxproj', 'text/plain'],
+        ['.wat', 'text/plain'],
+        ['.c', 'text/x-c'],
+        ['.h', 'text/x-c'],
+        ['.cpp', 'text/x-c++'],
+        ['.hpp', 'text/x-c++'],
+        ['.filters', 'text/xml'],
+        ['.plist', 'text/xml'],
+        ['.storyboard', 'text/xml'],
+        ['.vcxproj', 'text/xml'],
+        ['.bat', 'text/x-msdos-batch'],
+        ['.mm', 'text/x-objective-c'],
+        ['.m', 'text/x-objective-c'],
+        ['.sh', 'text/x-shellscript']
+      ],
       mounts: [['/', '.', 'debugger.html']],
       ...url,
 
@@ -150,7 +202,11 @@ function main(...args) {
         switch (command) {
           case 'start': {
             const { start } = rest;
-            const { connect = true, address = '127.0.0.1:' + Math.round(Math.random() * (65535 - 1024)) + 1024, args = [] } = start;
+            const {
+              connect = true,
+              address = '127.0.0.1:' + Math.round(Math.random() * (65535 - 1024)) + 1024,
+              args = []
+            } = start;
             child = StartDebugger(args, connect, address);
             console.log('child', child.pid);
             os.sleep(1000);

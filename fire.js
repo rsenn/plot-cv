@@ -209,9 +209,7 @@ function Init() {
 
   const handler =
     MouseHandler ||
-    Util.instrument(MouseHandler, (duration, name, args, ret) =>
-      console.log(`handler time: ${duration}`)
-    );
+    Util.instrument(MouseHandler, (duration, name, args, ret) => console.log(`handler time: ${duration}`));
 
   subscribe(MouseIterator(), handler);
 }

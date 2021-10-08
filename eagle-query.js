@@ -19,9 +19,7 @@ let filesystem,
   documents = [];
 
 function xmlize(obj, depth = 2) {
-  return obj.toXML
-    ? obj.toXML().replace(/>\s*</g, '>\n    <')
-    : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
+  return obj.toXML ? obj.toXML().replace(/>\s*</g, '>\n    <') : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
 
 function updateMeasures(board) {
@@ -57,16 +55,7 @@ function alignItem(item) {
   if(changed) {
     console.log('before:', Util.abbreviate(before));
     console.log('after:', Util.abbreviate(item.parentNode.toXML()));
-    console.log(
-      'align\n',
-      item.xpath(),
-      '\n newPos:',
-      newPos,
-      '\n diff:',
-      diff,
-      '\n attr:',
-      item.raw.attributes
-    );
+    console.log('align\n', item.xpath(), '\n newPos:', newPos, '\n diff:', diff, '\n attr:', item.raw.attributes);
   }
   return changed;
 }
@@ -103,13 +92,7 @@ function num2color(num, square = false) {
   let c = typeof num == 'number' ? GetColorBands(num) : num;
   //console.log('num2color:', { num, square, sym, c });
   return c
-    .map(n =>
-      color.text(
-        n ? sym[0] : color.text(sym[1], 38, 5, 236),
-        n ? 38 : 48,
-        ...digit2color.ansi[n].slice(1)
-      )
-    )
+    .map(n => color.text(n ? sym[0] : color.text(sym[1], 38, 5, 236), n ? 38 : 48, ...digit2color.ansi[n].slice(1)))
     .join('');
 }
 const SubstChars = str => str.replace(/\xCE\xBC/g, '\u00B5').replace(/\xCE\xA9/g, '\u2126');

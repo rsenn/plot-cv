@@ -421,26 +421,16 @@ export default function REPL(title = 'QuickJS') {
       colorize = showColors;
 
     if(search) {
-      const re = new RegExp(
-        (search_pattern = cmd_line.replace(/([\(\)\?\+\*])/g, '.' /*'\\$1'*/)),
-        'i'
-      );
+      const re = new RegExp((search_pattern = cmd_line.replace(/([\(\)\?\+\*])/g, '.' /*'\\$1'*/)), 'i');
       const num = search > 0 ? search - 1 : search;
       //search_index = history.findLastIndex(c => re.test(c) && --num == 0);
       let historySearch = [...history.entries()].rotateLeft(historyIndex);
-      search_matches.splice(
-        0,
-        search_matches.length,
-        ...historySearch.filter(([i, c]) => re.test(c))
-      );
+      search_matches.splice(0, search_matches.length, ...historySearch.filter(([i, c]) => re.test(c)));
       //num = search > 0 ? search - 1 : search;
       const match = search_matches.at(num);
       const [histidx = -1, histcmd = ''] = match || [];
       const histdir = search > 0 ? 'forward' : 'reverse';
-      const histpos =
-        search < 0
-          ? historySearch.indexOf(match) - historySearch.length
-          : historySearch.indexOf(match);
+      const histpos = search < 0 ? historySearch.indexOf(match) - historySearch.length : historySearch.indexOf(match);
       search_index = histidx;
       let line_start = `(${histdir}-search[${histpos}])\``;
       cmd_line = `${line_start}${repl.cmd}': ${histcmd}`;
@@ -464,10 +454,7 @@ export default function REPL(title = 'QuickJS') {
     } else if(cmd_line != lastCmd) {
       /* cursorPos is the position in 16 bit characters inside the
            UTF-16 string 'cmd_line' */
-      if(
-        !colorize &&
-        lastCmd.substring(0, lastCursorPos) == cmd_line.substring(0, lastCursorPos)
-      ) {
+      if(!colorize && lastCmd.substring(0, lastCursorPos) == cmd_line.substring(0, lastCursorPos)) {
         /* optimize common case */
         puts(cmd_line.substring(lastCursorPos));
       } else {
@@ -764,17 +751,13 @@ export default function REPL(title = 'QuickJS') {
   function upcaseWord() {
     var end = repl.skipWordForward(cursorPos);
     repl.cmd =
-      repl.cmd.substring(0, cursorPos) +
-      repl.cmd.substring(cursorPos, end).toUpperCase() +
-      repl.cmd.substring(end);
+      repl.cmd.substring(0, cursorPos) + repl.cmd.substring(cursorPos, end).toUpperCase() + repl.cmd.substring(end);
   }
 
   function downcaseWord() {
     var end = repl.skipWordForward(cursorPos);
     repl.cmd =
-      repl.cmd.substring(0, cursorPos) +
-      repl.cmd.substring(cursorPos, end).toLowerCase() +
-      repl.cmd.substring(end);
+      repl.cmd.substring(0, cursorPos) + repl.cmd.substring(cursorPos, end).toLowerCase() + repl.cmd.substring(end);
   }
 
   function killRegion(start, end, dir) {
@@ -854,8 +837,7 @@ export default function REPL(title = 'QuickJS') {
         default:
           if(repl.isWord(c)) {
             base = repl.getContextWord(line, pos);
-            if(['true', 'false', 'null', 'this'].includes(base) || !isNaN(+base))
-              return eval(base);
+            if(['true', 'false', 'null', 'this'].includes(base) || !isNaN(+base)) return eval(base);
             obj = repl.getContextObject(line, pos - base.length);
             if(obj === null || obj === void 0) return obj;
             if(obj === globalThis && obj[base] === void 0) {
@@ -1441,11 +1423,7 @@ export default function REPL(title = 'QuickJS') {
           puts('Invalid precision\n');
           return false;
         }
-        if(
-          Number.isNaN(expBits1) ||
-          expBits1 < BigFloatEnv.expBitsMin ||
-          expBits1 > BigFloatEnv.expBitsMax
-        ) {
+        if(Number.isNaN(expBits1) || expBits1 < BigFloatEnv.expBitsMin || expBits1 > BigFloatEnv.expBitsMax) {
           puts('Invalid exponent bits\n');
           return false;
         }
@@ -1598,11 +1576,7 @@ export default function REPL(title = 'QuickJS') {
       repl.printStatus(colors[styles.result], result, '\n', colors.none);
       repl.update();
     } catch(error) {
-      let output =
-        `${error.constructor.name || 'EXCEPTION'}: ` +
-        colors[styles.error_msg] +
-        error?.message +
-        '\n';
+      let output = `${error.constructor.name || 'EXCEPTION'}: ` + colors[styles.error_msg] + error?.message + '\n';
 
       //      puts(error.stack+'');
 
@@ -1802,10 +1776,7 @@ export default function REPL(title = 'QuickJS') {
 
     function parseNumber() {
       style = 'number';
-      while(
-        i < n &&
-        (repl.isWord(str[i]) || (str[i] == '.' && (i == n - 1 || str[i + 1] != '.')))
-      ) {
+      while(i < n && (repl.isWord(str[i]) || (str[i] == '.' && (i == n - 1 || str[i + 1] != '.')))) {
         i++;
       }
     }

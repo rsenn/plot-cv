@@ -16,10 +16,7 @@ import { fd_set, FD_SET, FD_CLR, FD_ISSET, FD_ZERO } from './quickjs/qjs-ffi/lib
 import timeval from './quickjs/qjs-ffi/lib/timeval.js';
 import Util from './lib/util.js';
 import { Console } from 'console';
-import {
-  toString as ArrayBufferToString,
-  toArrayBuffer as StringToArrayBuffer
-} from './lib/misc.js';
+import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 
 Util.define(Array.prototype, {
@@ -130,12 +127,7 @@ async function main(...args) {
 }
 
 function retValue(ret, ...args) {
-  console.log(
-    ...args,
-    `ret =`,
-    ret,
-    ...(ret == -1 ? [' errno =', errno(), ' error =', std.strerror(errno())] : [])
-  );
+  console.log(...args, `ret =`, ret, ...(ret == -1 ? [' errno =', errno(), ' error =', std.strerror(errno())] : []));
 }
 
 function toHex(n, b = 2) {
@@ -159,8 +151,7 @@ function ArrayBufToHex(buf, numBytes = 8) {
   if(typeof buf == 'object' && buf != null && buf instanceof ArrayBuffer) {
     let arr = MakeArray(buf, numBytes);
     return arr.reduce(
-      (s, code) =>
-        (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
+      (s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
       ''
     );
   }

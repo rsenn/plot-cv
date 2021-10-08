@@ -1,17 +1,8 @@
-function XAudioServer(
-  channels,
-  sampleRate,
-  minBufferSize,
-  maxBufferSize,
-  underRunCallback,
-  volume,
-  failureCallback
-) {
+function XAudioServer(channels, sampleRate, minBufferSize, maxBufferSize, underRunCallback, volume, failureCallback) {
   XAudioJSChannelsAllocated = Math.max(channels, 1);
   this.XAudioJSSampleRate = Math.abs(sampleRate);
   XAudioJSMinBufferSize =
-    minBufferSize >= XAudioJSSamplesPerCallback * XAudioJSChannelsAllocated &&
-    minBufferSize < maxBufferSize
+    minBufferSize >= XAudioJSSamplesPerCallback * XAudioJSChannelsAllocated && minBufferSize < maxBufferSize
       ? minBufferSize & -XAudioJSChannelsAllocated
       : XAudioJSSamplesPerCallback * XAudioJSChannelsAllocated;
   XAudioJSMaxBufferSize =
@@ -29,18 +20,15 @@ function XAudioServer(
   this.initializeAudio();
 }
 
-XAudioServer.prototype.writeAudioNoCallback =
-  XAudioServer.prototype.callbackBasedWriteAudioNoCallback = function(buffer) {
-    //Callback-centered audio APIs:
-    var length = buffer.length;
-    for(
-      var bufferCounter = 0;
-      bufferCounter < length && XAudioJSAudioBufferSize < XAudioJSMaxBufferSize;
-
-    ) {
-      XAudioJSAudioContextSampleBuffer[XAudioJSAudioBufferSize++] = buffer[bufferCounter++];
-    }
-  };
+XAudioServer.prototype.writeAudioNoCallback = XAudioServer.prototype.callbackBasedWriteAudioNoCallback = function(
+  buffer
+) {
+  //Callback-centered audio APIs:
+  var length = buffer.length;
+  for(var bufferCounter = 0; bufferCounter < length && XAudioJSAudioBufferSize < XAudioJSMaxBufferSize; ) {
+    XAudioJSAudioContextSampleBuffer[XAudioJSAudioBufferSize++] = buffer[bufferCounter++];
+  }
+};
 
 XAudioServer.prototype.writeAudio = function(buffer) {
   this.callbackBasedWriteAudioNoCallback(buffer);
@@ -49,22 +37,18 @@ XAudioServer.prototype.writeAudio = function(buffer) {
 
 XAudioServer.prototype.remainingBuffer = function() {
   return (
-    Math.floor(
-      (XAudioJSResampledSamplesLeft() * XAudioJSResampleControl.ratioWeight) /
-        XAudioJSChannelsAllocated
-    ) *
+    Math.floor((XAudioJSResampledSamplesLeft() * XAudioJSResampleControl.ratioWeight) / XAudioJSChannelsAllocated) *
       XAudioJSChannelsAllocated +
     XAudioJSAudioBufferSize
   );
 };
 
-XAudioServer.prototype.executeCallback = XAudioServer.prototype.callbackBasedExecuteCallback =
-  function() {
-    var samplesRequested = XAudioJSMinBufferSize - this.remainingBuffer();
-    if(samplesRequested > 0) {
-      this.callbackBasedWriteAudioNoCallback(this.underRunCallback(samplesRequested));
-    }
-  };
+XAudioServer.prototype.executeCallback = XAudioServer.prototype.callbackBasedExecuteCallback = function() {
+  var samplesRequested = XAudioJSMinBufferSize - this.remainingBuffer();
+  if(samplesRequested > 0) {
+    this.callbackBasedWriteAudioNoCallback(this.underRunCallback(samplesRequested));
+  }
+};
 
 XAudioServer.prototype.initializeAudio = XAudioServer.prototype.initializeWebAudio = function() {
   if(!XAudioJSWebAudioLaunchedContext) {
@@ -115,8 +99,7 @@ XAudioServer.prototype.resetCallbackAPIAudioBuffer = function(APISampleRate) {
 XAudioServer.prototype.initializeResampler = function(sampleRate) {
   XAudioJSAudioContextSampleBuffer = this.getFloat32(XAudioJSMaxBufferSize);
   XAudioJSResampleBufferSize = Math.max(
-    XAudioJSMaxBufferSize * Math.ceil(sampleRate / this.XAudioJSSampleRate) +
-      XAudioJSChannelsAllocated,
+    XAudioJSMaxBufferSize * Math.ceil(sampleRate / this.XAudioJSSampleRate) + XAudioJSChannelsAllocated,
     XAudioJSSamplesPerCallback * XAudioJSChannelsAllocated
   );
   console.log('Target sample rate:', this.XAudioJSSampleRate);
@@ -170,8 +153,7 @@ function XAudioJSWebAudioEvent(event) {
     ++index
   ) {
     for(bufferCount = 0; bufferCount < XAudioJSChannelsAllocated; ++bufferCount) {
-      buffers[bufferCount][index] =
-        XAudioJSResampledBuffer[XAudioJSResampleBufferStart++] * XAudioJSVolume;
+      buffers[bufferCount][index] = XAudioJSResampledBuffer[XAudioJSResampleBufferStart++] * XAudioJSVolume;
     }
     if(XAudioJSResampleBufferStart == XAudioJSResampleBufferSize) {
       XAudioJSResampleBufferStart = 0;

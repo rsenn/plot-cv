@@ -41,9 +41,7 @@ const Ruler = forwardRef((props, ref) => {
   const totalWidth = longLength * MULTIPLICATOR_LENGTH;
   const timerID = useRef(null);
   const counterJS = useRef(null);
-  const draggerJS = useRef(
-    defaultValue ? (horizontal ? 1 * defaultValue : 1 * (1 - defaultValue).toFixed(3)) : 50
-  );
+  const draggerJS = useRef(defaultValue ? (horizontal ? 1 * defaultValue : 1 * (1 - defaultValue).toFixed(3)) : 50);
   const dragSomethingRef = useRef();
   const velocityJS = useRef(0);
   const positionJS = useRef(0);
@@ -132,9 +130,7 @@ const Ruler = forwardRef((props, ref) => {
   const onMouseMove = e => {
     if(!isDragging.current || disabledDragRuler) return;
     draggerJS.current = (100 * inertiaJS.current) / totalWidth;
-    velocityJS.current = horizontal
-      ? e.clientX - positionJS.current
-      : e.clientY - positionJS.current;
+    velocityJS.current = horizontal ? e.clientX - positionJS.current : e.clientY - positionJS.current;
     positionJS.current = horizontal ? e.clientX : e.clientY;
     if(Math.abs(velocityJS.current) > 1) {
       const [i, d] = velocityResolver(velocityJS.current);
@@ -167,10 +163,7 @@ const Ruler = forwardRef((props, ref) => {
       ? inputEl.current.offsetLeft + cursorLength.current / 2
       : inputEl.current.offsetTop + cursorLength.current / 2;
     draggerJS.current = Math.min(100, Math.max(0, (100 * (client - offset)) / longLength));
-    inertiaJS.current = Math.min(
-      totalWidth,
-      Math.max(0, (totalWidth * (client - offset)) / longLength)
-    );
+    inertiaJS.current = Math.min(totalWidth, Math.max(0, (totalWidth * (client - offset)) / longLength));
     timeJS.current = 150;
     requestAnimationFrame(() => setLoad(load + 1));
   };
@@ -182,10 +175,7 @@ const Ruler = forwardRef((props, ref) => {
       ? inputEl.current.offsetLeft + cursorLength.current / 2
       : inputEl.current.offsetTop + cursorLength.current / 2;
     draggerJS.current = Math.min(100, Math.max(0, (100 * (client - offset)) / longLength));
-    inertiaJS.current = Math.min(
-      totalWidth,
-      Math.max(0, (totalWidth * (client - offset)) / longLength)
-    );
+    inertiaJS.current = Math.min(totalWidth, Math.max(0, (totalWidth * (client - offset)) / longLength));
     timeJS.current = 150;
     requestAnimationFrame(() => setLoad(load + 1));
   };

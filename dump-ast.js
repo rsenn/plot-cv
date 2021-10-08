@@ -48,8 +48,7 @@ class Location {
         .split(/\n/g).length;
     if(!('file' in ret)) ret.file = Location.primary;
     ret.file = path.relative(filesystem.getcwd(), ret.file);
-    if('includedFrom' in ret)
-      ret.includedFrom = path.relative(filesystem.getcwd(), ret.includedFrom);
+    if('includedFrom' in ret) ret.includedFrom = path.relative(filesystem.getcwd(), ret.includedFrom);
 
     return ret;
   }
@@ -124,8 +123,7 @@ function NodeToString(node, locKey = 'expansionLoc' || 'spellingLoc', startOffse
 }
 
 function* GetRanges(tree) {
-  for(let [node, path] of deep.iterate(tree, v => Util.isObject(v) && v.begin))
-    yield [path.join('.'), node];
+  for(let [node, path] of deep.iterate(tree, v => Util.isObject(v) && v.begin)) yield [path.join('.'), node];
 }
 
 function* GetLocations(tree) {
@@ -136,8 +134,7 @@ function* GetLocations(tree) {
 function* GetNodes(tree, pred = n => true) {
   for(let [node, path] of deep.iterate(
     tree,
-    (v, p) =>
-      Util.isObject(v) && typeof v.kind == 'string' && v.kind != 'TranslationUnitDecl' && pred(v, p)
+    (v, p) => Util.isObject(v) && typeof v.kind == 'string' && v.kind != 'TranslationUnitDecl' && pred(v, p)
   ))
     yield [path.join('.'), node];
 }
@@ -213,9 +210,7 @@ function RelativeTo(to, k) {
   return k;
 }
 function GetNodeProps([k, v]) {
-  let props = [...Util.getMemberNames(v)]
-    .map(n => [n, v[n]])
-    .filter(([n, v]) => !Util.isObject(v) && v != '');
+  let props = [...Util.getMemberNames(v)].map(n => [n, v[n]]).filter(([n, v]) => !Util.isObject(v) && v != '');
 
   if(props.filter(([prop, value]) => prop != 'kind').length) return Object.fromEntries(props);
 }
@@ -228,10 +223,7 @@ function GetNodeTypes(ast, [k, v]) {
     let node = deep.get(ast, key);
 
     if(Util.isObject(node) && typeof node.kind == 'string') {
-      ret = ret.concat([
-        new ImmutablePath(RelativeTo(prev, key)),
-        GetNodeProps([key, node]) || node.kind
-      ]);
+      ret = ret.concat([new ImmutablePath(RelativeTo(prev, key)), GetNodeProps([key, node]) || node.kind]);
       prev = key;
     }
   }
@@ -256,11 +248,9 @@ function GetNameOrId(ast, [key, node], pred = id => id != '') {
     let value = deep.get(n, prop);
     if(typeof value == 'string' && pred(value)) return [[...k, ...prop], value];
   }
-  let names = [
-    ...deep.iterate(n, (v, p) => p[p.length - 1] == 'name' && typeof v == 'string' && v != '', [
-      ...k
-    ])
-  ].map(GetValueKey);
+  let names = [...deep.iterate(n, (v, p) => p[p.length - 1] == 'name' && typeof v == 'string' && v != '', [...k])].map(
+    GetValueKey
+  );
 
   let ids = [...deep.iterate(n, (v, p) => p[p.length - 1] == 'id' && v, [...k])].map(GetValueKey);
 
@@ -278,10 +268,7 @@ function GetTypeStr(node) {
 function GetRecord(node) {
   if(Util.isObject(node) && Array.isArray(node.inner))
     return new Map(
-      node.inner.map(field => [
-        field.name,
-        ContainsDecls(field) ? GetRecord(field) : GetTypeStr(field) || field
-      ])
+      node.inner.map(field => [field.name, ContainsDecls(field) ? GetRecord(field) : GetTypeStr(field) || field])
     );
 }
 
@@ -330,12 +317,7 @@ function processCallExpr(loc, func, ...args) {
   if(fmtIndex == -1) return;
   const fmtStr = args[fmtIndex];
   const fmtArgs = args.slice(fmtIndex + 1);
-  let matches = [
-    ...Util.matchAll(
-      /(%([-#0 +'I]?)([0-9.]*)[diouxXeEfFgGaAcspnm%](hh|h|l|ll|q|L|j|z|Z|t|))/g,
-      fmtStr
-    )
-  ];
+  let matches = [...Util.matchAll(/(%([-#0 +'I]?)([0-9.]*)[diouxXeEfFgGaAcspnm%](hh|h|l|ll|q|L|j|z|Z|t|))/g, fmtStr)];
   let ranges = [];
   let last = 0;
   for(let match of matches) {
@@ -376,9 +358,7 @@ async function main(...args) {
         (k, v) => [k, v]
       ));
     generateFlat();
-    let l = deep
-      .flatten(ast, new Map(), (v, k) => Util.isObject(v) && typeof v.col == 'number')
-      .values();
+    let l = deep.flatten(ast, new Map(), (v, k) => Util.isObject(v) && typeof v.col == 'number').values();
     let line;
     const re =
       /^(__fbufsize|__flbf|__fpending|__fpurge|__freadable|__freading|__fwritable|clearerr|clearerr_unlocked|fclose|fdopen|feof|feof_unlocked|ferror|ferror_unlocked|fflush|fflush_unlocked|fgetc|fgetc_unlocked|fgetpos|fgets|fgets_unlocked|fileno|fileno_unlocked|fopen|fprintf|fputc|fputc_unlocked|fputs|fputs_unlocked|fread|fread_unlocked|freopen|fscanf|fseek|fseeko|fsetpos|ftell|ftello|fwrite|fwrite_unlocked|printf|putchar|puts|scanf|setvbuf|tmpfile|ungetc|vfprintf|vfscanf|vprintf|vscanf)$/;
@@ -460,9 +440,7 @@ async function main(...args) {
     let localfiles = [...flat].map(([k, v]) => [k, locMap.get(v)]).filter(([k, v]) => !!v);
 
     // console.log('localfiles:', localfiles);
-    localfiles = localfiles.filter(([k, l]) =>
-      typeof l.file == 'string' ? l.file.startsWith('/home') : true
-    );
+    localfiles = localfiles.filter(([k, l]) => (typeof l.file == 'string' ? l.file.startsWith('/home') : true));
     localfiles = localfiles.map(([k, l]) => [k, flat.get(k)]);
 
     //console.log('localfiles:', localfiles);
@@ -478,21 +456,14 @@ async function main(...args) {
 
     /// console.log('locs:', [...flat].map(([k, v]) => [k, locMap.get(v)]).filter(([k,v]) => !! v));
 
-    let types = [...flat].filter(
-      ([k, v]) => Util.isObject(v) && (('name' in v && typeRe.test(v.name)) || IsStruct(v))
-    );
+    let types = [...flat].filter(([k, v]) => Util.isObject(v) && (('name' in v && typeRe.test(v.name)) || IsStruct(v)));
     let typeKeys = types.map(([k, v]) => k);
 
     console.log(
       'types:',
       types
         .filter(([k, v]) => IsStruct(v))
-        .map(([k, v]) => [
-          k,
-          GetProperty(ast, k, v => v.name) || v.id,
-          IsStruct(v) ? GetRecord(v) : v,
-          locMap.get(v)
-        ])
+        .map(([k, v]) => [k, GetProperty(ast, k, v => v.name) || v.id, IsStruct(v) ? GetRecord(v) : v, locMap.get(v)])
     );
     //    console.log('types keys:', typeKeys);
     /* console.log('type fields: ',
@@ -500,9 +471,7 @@ async function main(...args) {
         ).filter(([k, v]) => /Field/.test(v.kind + ''))
     );*/
 
-    let fmtfns = [...flat]
-      .filter(([k, v]) => typeof v == 'string' && re.test(v))
-      .map(([k, v]) => k.slice(0, -1));
+    let fmtfns = [...flat].filter(([k, v]) => typeof v == 'string' && re.test(v)).map(([k, v]) => k.slice(0, -1));
     await ConsoleSetup({
       colors: true,
       depth: 4,

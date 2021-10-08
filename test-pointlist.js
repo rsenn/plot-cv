@@ -37,9 +37,7 @@ let points = new PointList(
 
 //console.log('points:', Util.className(points));
 const methods = Util.getMethods(Array.prototype, false, (key, value) =>
-  typeof key == 'string' && key.startsWith('_')
-    ? undefined
-    : [key == 'length' ? 'size' : key, value]
+  typeof key == 'string' && key.startsWith('_') ? undefined : [key == 'length' ? 'size' : key, value]
 );
 //console.log('Array.prototype getMethods:', methods);
 g47;
