@@ -11,13 +11,16 @@ import { Socket, SockAddr, AF_INET, SOCK_STREAM, IPPROTO_TCP } from './quickjs/q
 import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 
-console.log('toString', ArrayBufferToString(new Uint8Array([0x61, 0x62, 0x64, 0x65, 0x66, 0x20, 0xc3, 0xa4, 0xc3, 0xb6, 0xc3, 0xbc]).buffer));
+console.log(
+  'toString',
+  ArrayBufferToString(new Uint8Array([0x61, 0x62, 0x64, 0x65, 0x66, 0x20, 0xc3, 0xa4, 0xc3, 0xb6, 0xc3, 0xbc]).buffer)
+);
 console.log('toArrayBuffer', StringToArrayBuffer('blah äöü'));
 console.log('child_process', child_process.spawn + '');
 
 var worker;
 var counter;
-let connections = (globalThis.connections ??= new Set());
+let sockets = (globalThis.sockets ??= new Set());
 
 export function StartDebugger(args, connect, address) {
   let env = {};
@@ -44,7 +47,8 @@ export function ConnectDebugger(address, callback) {
   if(ret >= 0) {
     sock.ndelay(true);
     console.log('Connected', +sock, 'to', sock.remote);
-    connections.add(sock);
+    sockets.add(sock);
+    console.log('sockets', sockets);
   }
 
   /*  os.setWriteHandler(+sock, () => {
@@ -65,7 +69,7 @@ export function ConnectDebugger(address, callback) {
   });
 */
   //  if(ret < 0) throw new Error(`Connection failed: ${sock.error}`);
-    console.log('ConnectDebugger',sock);
+  console.log('ConnectDebugger', sock);
 
   return sock;
 }
