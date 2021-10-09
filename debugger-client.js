@@ -123,34 +123,31 @@ function* TokenizeJS(data, filename) {
     const type = tokens[id - 1];
     let { line } = lex.loc;
     line -= lexeme.split(/\n/g).length - 1;
-    /*  if(type == 'whitespace') lexeme = lexeme.replace(/ /g, '\u00a0');
-    if(type != 'comment') lexeme = lexeme.replace(/^\n/g, '');*/
-    console.log('tok', { id, lexeme, line });
-    //    if(lexeme === '') continue;
+
+    //console.log('tok', { id, lexeme, line });
 
     if(prev.line != line) {
-      //  yield out;
-
       for(let i = prev.line; i < line; i++) {
         yield out;
         out = [];
       }
     }
-    out.push([type, lexeme]);
 
-    /*
-    const color = colors[id];
-    const { line } = lex.loc;
-    if(prev.color != color || prev.line != line) out += '</pre>';
-    if(prev.line != line) {
-      out += `<pre class="lineno"><a name="line-${line}">${line}</a></pre>`;
+    for(let s of lexeme.split(/\n/g).reduce((acc, l) => {
+      if(l != '') {
+        if(acc.length) acc[acc.length - 1] += '\n';
+        acc.push(l);
+      }
+      return acc;
+    }, [])) {
+      out.push([type, s]);
+      if(s.endsWith('\n')) {
+        yield out;
+        out = [];
+        line++;
+      }
     }
-    if(prev.color != color || prev.line != line) {
-      out += `<pre style="color: ${color};">`;
-    }
-    console.log('tok', { lexeme, color, line });
-    out += lexeme;
-    prev.color = color;*/
+
     prev.line = line;
     line = lex.loc;
   }
@@ -285,7 +282,11 @@ h('div', {class: 'button-bar' }, children);*/
 
 const SourceLine = ({ lineno, text, active, children }) =>
   h(Fragment, {}, [
-    h('pre', { class: classNames('lineno', active && 'active') }, h('a', { name: `line-${lineno}` }, [lineno + ''])),
+    h(
+      'pre',
+      { class: classNames('lineno', active && 'active', ['even', 'odd'][lineno % 2]) },
+      h('a', { name: `line-${lineno}` }, [lineno + ''])
+    ),
     h('pre', { class: classNames('text', active && 'active'), innerHTML: text })
   ]);
 
@@ -294,25 +295,31 @@ const SourceText = ({ text, filename }) => {
   let tokens = TokenizeJS(text, filename);
 
   let lines = [...tokens];
-  console.log('useIterable', lines[0]);
   return h(
     Fragment,
     {},
-    lines.map((tokens, i) => {
-      //  const text = tokens.map(([type, token]) => h('span', { class: type }, [token]));
-      // console.log('tokens',tokens);
-
+    lines.reduce((acc, tokens, i) => {
       const text = tokens
         .map(([type, token]) => [type, token.replace(/ /g, '\xa0')])
-        .map(([type, token]) => (type == 'whitespace' ? token : `<span class="${type}">${token}</span>`));
+        .reduce((acc, [type, token]) => {
+          acc.push(type == 'whitespace' ? token : `<span class="${type}">${token}</span>`);
+          return acc;
+        }, []);
+
       //console.log('text',text);
-      return h(SourceLine, { lineno: i + 1, text: text.join(''), active: activeLine == i + 1 }, text);
-    })
+      acc.push(h(SourceLine, { lineno: i + 1, text: text.join(''), active: activeLine == i + 1 }, text));
+
+      return acc;
+    }, [])
   );
 };
 
 const SourceFile = ({ filename }) => {
-  let text = useFetch(filename) ?? '';
+  let text =
+    useFetch(filename, resp => {
+      console.log('Fetch', resp.status, Util.makeURL({ location: '/' + filename }));
+      return resp.text();
+    }) ?? '';
 
   return h('div', { class: 'container' }, [
     h('div', {}, []),
@@ -326,9 +333,9 @@ async function ShowSource(sourceFile) {
     currentSource(sourceFile);
     const component = h(Fragment, {}, [
       h(Panel, { className: classNames('buttons', 'no-select'), tag: 'header' }, [
-              h(Button, { image: 'static/svg/continue.svg', fn: Continue }),
-  h(Button, {image: 'static/svg/pause.svg', fn: Pause }),
-          //h(Button, {image: 'static/svg/start.svg'}),
+        h(Button, { image: 'static/svg/continue.svg', fn: Continue }),
+        h(Button, { image: 'static/svg/pause.svg', fn: Pause }),
+        //h(Button, {image: 'static/svg/start.svg'}),
         h(Button, {
           image: 'static/svg/step-into.svg',
           fn: StepIn
@@ -337,9 +344,9 @@ async function ShowSource(sourceFile) {
           image: 'static/svg/step-out.svg',
           fn: StepOut
         }),
-        h(Button, { image: 'static/svg/step-over.svg', fn: Next }),
- //   h(Button, { image: 'static/svg/restart.svg' }),
-          //h(Button, {image: 'static/svg/stop.svg', enable: trkl(false)}),
+        h(Button, { image: 'static/svg/step-over.svg', fn: Next })
+        //   h(Button, { image: 'static/svg/restart.svg' }),
+        //h(Button, {image: 'static/svg/stop.svg', enable: trkl(false)}),
       ]),
       h(SourceFile, { filename: path.relative(cwd, sourceFile, cwd) })
     ]);
