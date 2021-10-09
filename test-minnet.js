@@ -27,24 +27,22 @@ function CreateServer() {
 
 function CreateClient() {
   print('CLIENT');
+ setLog(() => {});
+ // setLog((level, ...args) => (level > 256 ? console.log('WSI', ...args) : null));
 
-  setLog(() => {});
-
-  return client({
-    port: 22,
-    host: '127.0.0.1',
-    raw: true,
-    binary: true,
-    onMessage(ws, msg) {
-      console.log('onMessage', ws, msg);
-      const b = concat(toArrayBuffer('BLAH'), msg.slice(0, 30), toArrayBuffer('\n'));
-      console.log('b', b);
-      let ret = ws.send(b); //ws.send('XXX\n');
-
-      console.log('ret=ws.send(msg)', ret, toString(b));
+ let url;
+ url='https://127.0.0.1:9000/debugger-client.js';
+ url='ws://127.0.0.1:9000/';
+  return client(url, {
+     sslCA: 'warmcat.com.cer',
+     onMessage(ws, msg) {
+  /*    console.log('onMessage', ws, escape(msg.slice(0, 30)));*/
+      console.log('data:',msg);
     },
     onConnect(ws, req) {
       console.log('onConnect', ws, req);
+   /*   ws.send('HELLO\n');*/
+ 
     },
     onPong(ws, req) {
       console.log('onPong', ws, req);
