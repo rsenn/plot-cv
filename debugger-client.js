@@ -42,9 +42,11 @@ let cwd = '.';
 let responses = {};
 let currentSource = trkl();
 let currentLine = trkl();
+let url;
 
 window.addEventListener('load', e => {
-  let url = Util.parseURL();
+  url = Util.parseURL();
+  console.log('URL', url);
   let socketURL = Util.makeURL({
     location: url.location + '/ws',
     protocol: url.protocol == 'https' ? 'wss' : 'ws'
@@ -84,13 +86,18 @@ async function LoadSource(filename) {
 /* prettier-ignore */ Object.assign(globalThis, { ShowSource, Start, GetVariables, SendRequest, StepIn,StepOut, Next, Continue, Pause, Evaluate, StackTrace });
 /* prettier-ignore */ Object.assign(globalThis, {JSLexer, Location});
 
-function Start(args, address = '127.0.0.1:9901') {
-  return ws.send(
-    JSON.stringify({
-      command: 'start',
-      start: { connect: false, args, address }
-    })
-  );
+function Start(args, address) {
+  return Initiate('start', address, false, args);
+}
+
+function Connect(address) {
+  return Initiate('connect', address, true);
+}
+
+function Initiate(command, address, connect = false, args) {
+  address ??= `${url.query.address ?? '127.0.0.1'}:${url.query.port ?? 9901}`;
+  console.log('Initiate', { command, address, connect, args });
+  return ws.send(JSON.stringify({ command, connect, address, args }));
 }
 
 const tokenColors = {
@@ -113,10 +120,7 @@ function* TokenizeJS(data, filename) {
   lex.setInput(data, filename);
 
   let { tokens } = lex;
-  let colors = Object.entries(tokenColors).reduce(
-    (acc, [type, c]) => ({ ...acc, [tokens.indexOf(type) + 1]: c.hex() }),
-    {}
-  );
+  let colors = Object.entries(tokenColors).reduce((acc, [type, c]) => ({ ...acc, [tokens.indexOf(type) + 1]: c.hex() }), {});
   let prev = {};
   let out = [];
   for(let { id, lexeme, line } of lex) {
@@ -156,11 +160,11 @@ function* TokenizeJS(data, filename) {
 
 Object.assign(globalThis, { responses, currentLine, currentSource, TokenizeJS });
 
-async function CreateSocket(url) {
+async function CreateSocket(endpoint) {
   let ws = (globalThis.ws = new WebSocketClient());
 
   console.log('ws', ws);
-  await ws.connect(url);
+  await ws.connect(endpoint);
 
   (async function ReadSocket() {
     for await(let msg of ws) {
@@ -180,7 +184,18 @@ async function CreateSocket(url) {
             const { path, data } = response;
             CreateSource(data, path);
             continue;
-          } else*/ if(command == 'start') {
+          } else*/
+
+          if(['start', 'connect'].indexOf(command) >= 0) {
+            cwd = response.cwd;
+
+            console.log('command:', command);
+
+            UpdatePosition();
+            continue;
+          }
+
+          if(command == 'start') {
             cwd = response.cwd;
             console.log('start', response);
             ShowSource(response.args[0]);
@@ -194,14 +209,16 @@ async function CreateSocket(url) {
     }
   })();
 
-  await Start(['test-ecmascript2.js']);
-
   ws.sendMessage = function(msg) {
     return this.send(JSON.stringify(msg));
   };
 
+  if(url.query.port) await Connect();
+  else await Start([url.query.script ?? 'test-ecmascript2.js']);
+
   return ws;
 }
+
 let seq = 0;
 
 function GetVariables(ref = 0) {
@@ -282,11 +299,7 @@ h('div', {class: 'button-bar' }, children);*/
 
 const SourceLine = ({ lineno, text, active, children }) =>
   h(Fragment, {}, [
-    h(
-      'pre',
-      { class: classNames('lineno', active && 'active', ['even', 'odd'][lineno % 2]) },
-      h('a', { name: `line-${lineno}` }, [lineno + ''])
-    ),
+    h('pre', { class: classNames('lineno', active && 'active', ['even', 'odd'][lineno % 2]) }, h('a', { name: `line-${lineno}` }, [lineno + ''])),
     h('pre', { class: classNames('text', active && 'active'), innerHTML: text })
   ]);
 
@@ -321,11 +334,7 @@ const SourceFile = ({ filename }) => {
       return resp.text();
     }) ?? '';
 
-  return h('div', { class: 'container' }, [
-    h('div', {}, []),
-    h('div', { class: 'header' }, [filename]),
-    h(SourceText, { text, filename })
-  ]);
+  return h('div', { class: 'container' }, [h('div', {}, []), h('div', { class: 'header' }, [filename]), h(SourceText, { text, filename })]);
 };
 
 async function ShowSource(sourceFile) {

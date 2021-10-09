@@ -28,6 +28,7 @@
     "x/quickjs/qjs-ffi/examples/socket.js": "sockets",
     "quickjs/qjs-ffi/lib/socket.js": "sockets",
     "lib/events.js": "events",
+    "lib/preact.mjs": "lib/preact.esm.js",
     "lib/preact.js": "lib/preact.esm.js"
   },
   "author": "Roman Senn <roman.l.senn@gmail.com>",

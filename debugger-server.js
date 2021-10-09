@@ -46,12 +46,120 @@ function WriteJSON(name, data) {
   WriteFile(name, JSON.stringify(data, null, 2));
 }
 
+function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = '') {
+  let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, fs, false);
+
+  repl.historyLoad(null, false);
+
+  repl.help = () => {};
+  let { log } = console;
+  repl.show = arg => std.puts((typeof arg == 'string' ? arg : inspect(arg, repl.inspectOptions)) + '\n');
+
+  repl.cleanup = () => {
+    repl.readlineRemovePrompt();
+    Terminal.mousetrackingDisable();
+    let numLines = repl.historySave();
+
+    repl.printStatus(`EXIT (wrote ${numLines} history entries)`, false);
+
+    std.exit(0);
+  };
+
+  console.log = repl.printFunction((...args) => {  log(console.config(repl.inspectOptions), ...args); });
+
+  repl.run();
+  return repl;
+}
+
+function handleCommand(obj) {
+  const { command, ...rest } = obj;
+  console.log('onMessage', command, rest);
+  const {
+    connect = true,
+    address = '127.0.0.1:' + Math.round(Math.random() * (65535 - 1024)) + 1024,
+    args = []
+  } = rest;
+
+  switch (command) {
+    case 'start': {
+      child = StartDebugger(args, connect, address);
+      console.log('child', child.pid);
+      os.sleep(1000);
+    }
+    case 'connect': {
+      dbg = ConnectDebugger(address, (dbg, sock) => {
+        console.log('wait() =', child.wait());
+        console.log('child', child);
+      });
+      os.setWriteHandler(+dbg, async () => {
+        os.setWriteHandler(+dbg, null);
+        console.log(`connected to ${address}`, dbg);
+        const cwd = process.cwd();
+        ws.send(JSON.stringify({ type: 'response', response: { command: 'start', args, cwd, address } }));
+
+        let msg;
+
+        while(dbg.open) {
+          try {
+            msg = await DebuggerProtocol.read(dbg);
+            console.log('DebuggerProtocol.read() =', escape(msg));
+            if(typeof msg == 'string') {
+              ws.send(msg);
+            } else {
+              console.log('sock', dbg);
+            }
+          } catch(error) {
+            const { message, stack } = error;
+            ws.send(JSON.stringify({ type: 'error', error: { message, stack } }));
+            dbg.close();
+            break;
+          }
+        }
+      });
+      console.log('dbg', dbg);
+      break;
+    }
+    case 'file': {
+      const { path } = rest;
+      const data = fs.readFileSync(path, 'utf-8');
+      //ws.send(JSON.stringify({ type: 'response', response: { command: 'file', path, data } }));
+
+      const lexer = new Lexer(data, path);
+      console.log('lexer', lexer);
+      const lines = [];
+
+      for(;;) {
+        const { pos, size } = lexer;
+        console.log('lexer', { pos, size });
+        let result = lexer.next();
+        if(result.done) break;
+        const token = result.value;
+        console.log('token', { lexeme: token.lexeme, id: token.id, loc: token.loc + '' });
+        const { type, id, lexeme, loc } = token;
+        const { line, column, file } = loc;
+        //console.log('token', {lexeme,id,line});
+
+        if(!lines[line - 1]) lines.push([]);
+        let a = lines[line - 1];
+        a.push([lexeme, id]);
+      }
+      console.log('lines', lines);
+      break;
+    }
+    default: {
+      console.log('send to debugger', data);
+      DebuggerProtocol.send(dbg, data);
+      break;
+    }
+  }
+}
+
 function main(...args) {
   const base = path.basename(Util.getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
 
   const config = ReadJSON(`.${base}-config`) ?? {};
   globalThis.console = new Console(std.err, {
-    inspectOptions: { compact: 2, customInspect: true }
+    inspectOptions: { compact: 3, customInspect: true }
   });
   let params = Util.getOpt(
     {
@@ -87,31 +195,9 @@ function main(...args) {
     .replace(/\.[^\/.]*$/, '');
 
   let [prefix, suffix] = name.split(' ');
-  /*
-  let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, fs, false);
 
-  repl.historyLoad(null, false);
-
-  repl.help = () => {};
-  let { log } = console;
-  repl.show = arg =>
-    std.puts((typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options)) + '\n');
-
-  repl.cleanup = () => {
-    repl.readlineRemovePrompt();
-    Terminal.mousetrackingDisable();
-    let numLines = repl.historySave();
-
-    repl.printStatus(`EXIT (wrote ${numLines} history entries)`, false);
-
-    std.exit(0);
-  };
-
-  console.log = repl.printFunction(log);
- 
-*/
   let protocol = new WeakMap();
-  let connections = new Set();
+  let connections = (globalThis.connections ??= new Set());
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     console.log('createWS', { url, callbacks, listen });
 
@@ -196,86 +282,7 @@ function main(...args) {
         console.log('onMessage', ws, data);
         let obj = JSON.parse(data);
 
-        const { command, ...rest } = obj;
-        console.log('onMessage', command, rest);
-
-        switch (command) {
-          case 'start': {
-            const { start } = rest;
-            const {
-              connect = true,
-              address = '127.0.0.1:' + Math.round(Math.random() * (65535 - 1024)) + 1024,
-              args = []
-            } = start;
-            child = StartDebugger(args, connect, address);
-            console.log('child', child.pid);
-            os.sleep(1000);
-            dbg = ConnectDebugger(address, (dbg, sock) => {
-              console.log('wait() =', child.wait());
-              console.log('child', child);
-            });
-            os.setWriteHandler(+dbg, async () => {
-              os.setWriteHandler(+dbg, null);
-              console.log('connected', dbg);
-              const cwd = process.cwd();
-              ws.send(JSON.stringify({ type: 'response', response: { command: 'start', args, cwd } }));
-
-              let msg;
-
-              while(dbg.open) {
-                try {
-                  msg = await DebuggerProtocol.read(dbg);
-                  console.log('DebuggerProtocol.read() =', escape(msg));
-                  if(typeof msg == 'string') {
-                    ws.send(msg);
-                  } else {
-                    console.log('sock', dbg);
-                  }
-                } catch(error) {
-                  const { message, stack } = error;
-                  ws.send(JSON.stringify({ type: 'error', error: { message, stack } }));
-                  dbg.close();
-                  break;
-                }
-              }
-            });
-            console.log('dbg', dbg);
-            break;
-          }
-          case 'file': {
-            const { path } = rest;
-            const data = fs.readFileSync(path, 'utf-8');
-            //ws.send(JSON.stringify({ type: 'response', response: { command: 'file', path, data } }));
-
-            const lexer = new Lexer(data, path);
-            console.log('lexer', lexer);
-            const lines = [];
-
-            for(;;) {
-              const { pos, size } = lexer;
-              console.log('lexer', { pos, size });
-              let result = lexer.next();
-              if(result.done) break;
-              const token = result.value;
-              console.log('token', { lexeme: token.lexeme, id: token.id, loc: token.loc + '' });
-              const { type, id, lexeme, loc } = token;
-              const { line, column, file } = loc;
-              //console.log('token', {lexeme,id,line});
-
-              if(!lines[line - 1]) lines.push([]);
-              let a = lines[line - 1];
-              a.push([lexeme, id]);
-            }
-            console.log('lines', lines);
-            break;
-          }
-          default: {
-            console.log('send to debugger', data);
-            DebuggerProtocol.send(dbg, data);
-            break;
-          }
-        }
-
+        handleCommand(obj);
         /*           let p = new DebuggerProtocol();
         protocol.set(ws, p);*/
       },
@@ -289,15 +296,22 @@ function main(...args) {
     });
   });
 
-  define(globalThis, {
+  Object.assign(globalThis, {
     get connections() {
       return [...connections];
-    }
+    },
+    net,
+    StartDebugger,
+    ConnectDebugger,
+    DebuggerProtocol,
+    repl: StartREPL()
   });
 
   delete globalThis.DEBUG;
 
-  createWS(Util.parseURL('wss://127.0.0.1:9000/ws'), {}, true);
+  
+
+  globalThis.ws = createWS(Util.parseURL('wss://127.0.0.1:9000/ws'), {}, true);
   //  Object.defineProperty(globalThis, 'DEBUG', { get: DebugFlags });
 
   /* if(listen) cli.listen(createWS, os);
@@ -310,8 +324,6 @@ function main(...args) {
     WriteJSON(`.${base}-config`, cfg);
     // repl.cleanup(why);
   }
-
-  // repl.runSync();
 }
 
 try {

@@ -210,9 +210,7 @@ function main(...argv) {
     } catch(error) {
       if(error) {
         console.log('ERROR:', error?.message);
-        console.log(
-          'STACK:\n  ' + new Stack(error?.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  ')
-        );
+        console.log('STACK:\n  ' + new Stack(error?.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  '));
       } else {
         console.log('ERROR:', error);
       }
@@ -271,10 +269,7 @@ function processFile(file, params) {
 
     if(err !== null) {
       console.log('parseProgram ERROR message:', err?.message);
-      console.log(
-        'parseProgram ERROR stack:\n  ' +
-          new Stack(err?.stack, (fr, i) => fr.functionName != 'esfactory' && i < 5).toString().replace(/\n/g, '\n  ')
-      );
+      console.log('parseProgram ERROR stack:\n  ' + new Stack(err?.stack, (fr, i) => fr.functionName != 'esfactory' && i < 5).toString().replace(/\n/g, '\n  '));
       //console.log('parseProgram parser.stack\n', parser.stack .map(entry => [entry, parser.constructor.stackMap.get(entry)]) .map(([entry, frame]) => [entry.position + '', frame ? frame + '' : entry.methodName]));
       throw err;
     } else {
@@ -297,10 +292,7 @@ function processFile(file, params) {
   );*/
   parser.addCommentsToNodes(ast);
 
-  WriteFile(
-    params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json',
-    JSON.stringify(ast /*.toJSON()*/, null, 2)
-  );
+  WriteFile(params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json', JSON.stringify(ast /*.toJSON()*/, null, 2));
 
   let node2path = new WeakMap();
   let nodeKeys = [];
@@ -309,10 +301,7 @@ function processFile(file, params) {
   const isImport = node => node instanceof ImportDeclaration;
 
   let commentMap = new Map(
-    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
-      pos * 10 - 1,
-      { comment, pos, len, node }
-    ]),
+    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node }]),
     (a, b) => a - b
   );
 
@@ -369,10 +358,7 @@ try {
   error = e;
 } finally {
   if(error) {
-    console.log(
-      'FAIL: ' + error.message,
-      '\n  ' + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  ')
-    );
+    console.log('FAIL: ' + error.message, '\n  ' + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  '));
     console.log('FAIL');
     Util.exit(1);
   } else {

@@ -1,12 +1,5 @@
 // prettier-ignore-start
-import {
-  Transformation,
-  Rotation,
-  Translation,
-  Scaling,
-  MatrixTransformation,
-  TransformationList
-} from './lib/geom/transformation.js';
+import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
 import dom from './lib/dom.js';
 import { ReactComponent, Fragment } from './lib/dom/preactComponent.js';
 import { iterator, eventIterator } from './lib/dom/iterator.js';
@@ -188,23 +181,9 @@ import {
 } from './lib/eagle.js';
 //import PureCache from 'pure-cache';
 import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //const React = {Component, Fragment, create: h, html, render, useLayoutEffect, useRef, useState };
-import commands, {
-  ListProjects,
-  GetLayer,
-  AddLayer,
-  BoardToGerber,
-  GerberToGcode,
-  GcodeToPolylines,
-  ClearCache
-} from './commands.js';
+import commands, { ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ClearCache } from './commands.js';
 import { NormalizeResponse, ResponseData, FetchURL, FetchCached } from './lib/fetch.js';
-import github, {
-  GithubListFiles,
-  GithubListRepositories,
-  GithubRepositories,
-  GithubListContents,
-  ListGithubRepoServer
-} from './lib/github.js';
+import github, { GithubListFiles, GithubListRepositories, GithubRepositories, GithubListContents, ListGithubRepoServer } from './lib/github.js';
 // prettier-ignore-end
 
 /* prettier-ignore */ const { Align, AlignToString, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line,Matrix,  Point, PointList, Polyline, Rect, Select, Size, SVG, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
@@ -296,8 +275,7 @@ let config = {
 };
 
 const GetProject = arg => {
-  let ret =
-    typeof arg == 'number' ? projects()[arg] : typeof arg == 'string' ? projects().find(p => p.name == arg) : arg;
+  let ret = typeof arg == 'number' ? projects()[arg] : typeof arg == 'string' ? projects().find(p => p.name == arg) : arg;
   if(typeof ret == 'string') ret = { name: ret };
   return ret;
 };
@@ -438,8 +416,7 @@ const ElementToXML = (e, predicate) => {
     deep.set(x, path, value.trim().replace(/\s+/g, ' '));
   }
 
-  for(let [value, path] of deep.iterate(x, (v, k) => k[k.length - 1] == 'id' && v == 'rects'))
-    deep.unset(x, path.slice(0, -1));
+  for(let [value, path] of deep.iterate(x, (v, k) => k[k.length - 1] == 'id' && v == 'rects')) deep.unset(x, path.slice(0, -1));
   for(let [value, path] of deep.iterate(x, (v, k) => /(^data-|^class$)/.test(k[k.length - 1]))) deep.unset(x, path);
   //console.log('x:', x);
   return Element.toString(x, { newline: '\n' });
@@ -641,11 +618,7 @@ function DrawArc(start, end, angle) {
   //console.log('slopes:', slopes);
 
   // r('rect', rect.toObject());
-  let rot = new TransformationList([
-    new Translation(middle.x, middle.y),
-    new Rotation(90),
-    new Translation(-middle.x, -middle.y)
-  ]);
+  let rot = new TransformationList([new Translation(middle.x, middle.y), new Rotation(90), new Translation(-middle.x, -middle.y)]);
   //console.log('rot:', rot + '');
   let pivots = [middle, line.a, line.b];
   let colors = ['#EB1F00', '#F0CC11', '#34DB05', '#0078F0', '#8D1AE6'];
@@ -780,11 +753,7 @@ const DrawBinaryTree = (tree, draw = DrawSVG()) => {
   }
 };
 DrawBinaryTree.bt = new BinaryTree(
-  new BinaryTree.Node(
-    'A',
-    new BinaryTree.Node('B', new BinaryTree.Node('D')),
-    new BinaryTree.Node('C', new BinaryTree.Node('E', null, new BinaryTree.Node('G')), new BinaryTree.Node('F'))
-  )
+  new BinaryTree.Node('A', new BinaryTree.Node('B', new BinaryTree.Node('D')), new BinaryTree.Node('C', new BinaryTree.Node('E', null, new BinaryTree.Node('G')), new BinaryTree.Node('F')))
 );
 DrawBinaryTree.bt = new BinaryTree(
   new BinaryTree.Node(
@@ -804,10 +773,7 @@ DrawBinaryTree.bt = new BinaryTree(
 );
 
 function GetPaths(query, parent = project.svgElement) {
-  return Element.findAll(query, parent).reduce(
-    (a, e) => a.concat(e.tagName != 'path' ? Element.findAll('path', e) : [e]),
-    []
-  );
+  return Element.findAll(query, parent).reduce((a, e) => a.concat(e.tagName != 'path' ? Element.findAll('path', e) : [e]), []);
 }
 
 function PathToPolylines(path, step = 0.01) {
@@ -823,9 +789,7 @@ function PathToPolylines(path, step = 0.01) {
     .filter(poly => poly.length > 1)
     .map(poly => {
       let transforms = new TransformationList(
-        Element.walkUp(path, (p, d, set, stop) =>
-          p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform'))
-        ).reverse()
+        Element.walkUp(path, (p, d, set, stop) => (p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))).reverse()
       ).collapse();
       //console.log('transforms', transforms);
       return new Polyline(poly).transform(transforms);
@@ -836,9 +800,7 @@ function PathToPolyline(path, step = 0.01) {
   let poly = [...SVG.pathIterator(path, { step })];
 
   let transforms = new TransformationList(
-    Element.walkUp(path, (p, d, set, stop) =>
-      p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform'))
-    ).reverse()
+    Element.walkUp(path, (p, d, set, stop) => (p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))).reverse()
   ).collapse();
   //console.log('transforms', transforms);
   return new Polyline(poly).transform(transforms);
@@ -897,13 +859,7 @@ function OutsetPaths(paths, offset, miterLimit = 2, arcTolerance = 0.25) {
 function ClipPath(path, clip, mode = ClipperLib.ClipType.ctUnion) {
   let cl = new ClipperLib.Clipper();
   let output = new ClipperLib.Paths();
-  const add = (p, clip = false) =>
-    (Util.isArray(p[0]) ? cl.AddPaths : cl.AddPath).call(
-      cl,
-      p,
-      clip ? ClipperLib.PolyType.ptClip : ClipperLib.PolyType.ptSubject,
-      true
-    );
+  const add = (p, clip = false) => (Util.isArray(p[0]) ? cl.AddPaths : cl.AddPath).call(cl, p, clip ? ClipperLib.PolyType.ptClip : ClipperLib.PolyType.ptSubject, true);
 
   add(path, false);
   add(clip, true);
@@ -919,19 +875,13 @@ function saveItemStates(itemList, get = item => Util.is.on(item.visible())) {
   return itemList.map(item => [item, get(item)]);
 }
 
-function restoreItemStates(
-  itemStates,
-  /* prettier-ignore */ set = (item, value) => item.visible(value ? 'yes' : 'no')
-) {
+function restoreItemStates(itemStates, /* prettier-ignore */ set = (item, value) => item.visible(value ? 'yes' : 'no')) {
   for(let [item, state] of itemStates) set(item, state);
 }
 
 function EagleMaps(project) {
   let transformPath = p => p.replace(/\s*➟\s*/g, '/').replace(/\/([0-9]+)/g, '/[$1]');
-  let dom2path = [...Element.findAll('*[data-path]', project.object)].map(e => [
-    e,
-    new ImmutableXPath(transformPath(e.getAttribute('data-path')))
-  ]);
+  let dom2path = [...Element.findAll('*[data-path]', project.object)].map(e => [e, new ImmutableXPath(transformPath(e.getAttribute('data-path')))]);
   // console.debug('dom2path:', dom2path);
   dom2path = Util.mapFunction(new WeakMap(dom2path));
 
@@ -994,15 +944,7 @@ function* PackageNames(doc = project.doc) {
   let names = packages
     .map(e => [e, e.getBounds()])
     .map(([e, b]) => [e, b.width, b.height, Math.max(b.width, b.height), b.height > b.width])
-    .map(([e, w, h, m, v]) => [
-      e,
-      e.name,
-      [...tokenize(e.name)],
-      Util.roundTo(w, 0.01),
-      Util.roundTo(h, 0.01),
-      Math.floor(m),
-      v ? 'V' : ''
-    ]);
+    .map(([e, w, h, m, v]) => [e, e.name, [...tokenize(e.name)], Util.roundTo(w, 0.01), Util.roundTo(h, 0.01), Math.floor(m), v ? 'V' : '']);
 
   for(let [element, name, matches, w, h, size, orientation] of names) {
     let tokens = matches.map(({ index, ...match }) => match[0] + '');
@@ -1257,11 +1199,7 @@ async function LoadDocument(project, parentElem) {
       let g = SVG.create('g', {});
 
       project.svgElement.appendChild(g);
-      let ll =
-        geometries.R4 &&
-        geometries.R4.lines.toSVG(ReactComponent.append, () =>
-          h('g', { ...elementDefaultAttributes, defaultTransform })
-        );
+      let ll = geometries.R4 && geometries.R4.lines.toSVG(ReactComponent.append, () => h('g', { ...elementDefaultAttributes, defaultTransform }));
 
       render(ll, g);
     }
@@ -1416,9 +1354,7 @@ const GenerateVoronoi = () => {
 };
 
 function PackageChildren(element, layer) {
-  let children = [...element.children]
-    .map((c, i) => [i, c])
-    .filter(([i, p]) => p.layer && p.layer.name == 'tPlace' && p.tagName == 'wire');
+  let children = [...element.children].map((c, i) => [i, c]).filter(([i, p]) => p.layer && p.layer.name == 'tPlace' && p.tagName == 'wire');
   children.xml = children.map(([i, e]) => e.toXML()).join('\n');
   return children;
 }
@@ -1521,9 +1457,7 @@ function HandleMessage(msg) {
       let { frame, width, height, contours } = body;
       //console.log('HandleMessage', { contours });
 
-      let lists = (typeof contours == 'string' ? contours.split(/\s*\|\s*/g) : contours).map(
-        pointStr => new Polyline(pointStr)
-      );
+      let lists = (typeof contours == 'string' ? contours.split(/\s*\|\s*/g) : contours).map(pointStr => new Polyline(pointStr));
 
       window.lists = lists;
       //console.log('HandleMessage', { type, width, height, frame }, lists);
@@ -1801,7 +1735,7 @@ const AppMain = (window.onload = async () => {
     for(url of urls) {
       //console.log('UpdateProjectList:', { ...opts, ...credentials, url });
       let data = await ListProjects({ ...opts, ...credentials, url });
-      let files = data;
+      let files = data.files;
       console.log('files', files);
       function File(obj, i) {
         const { name } = obj;
@@ -1811,11 +1745,7 @@ const AppMain = (window.onload = async () => {
         file.name = name;
         file.i = i;
         trkl.bind(file, { data });
-        LogJS.info(
-          `Got file '${
-            name.replace(/.*:\/\//g, '').replace(/raw.githubusercontent.com/, 'github.com') || name.replace(/.*\//g, '')
-          }'`
-        );
+        LogJS.info(`Got file '${name.replace(/.*:\/\//g, '').replace(/raw.githubusercontent.com/, 'github.com') || name.replace(/.*\//g, '')}'`);
 
         return file;
       }
@@ -1952,13 +1882,7 @@ const AppMain = (window.onload = async () => {
     class extends LogJS.BaseAppender {
       log(type, time, msg) {
         let d = new Date(time);
-        if(typeof window.pushlog == 'function')
-          window.pushlog([
-            type,
-            Util.isoDate(d).replace(/-/g, ''),
-            d.toLocaleTimeString(navigator.language || 'de'),
-            msg
-          ]);
+        if(typeof window.pushlog == 'function') window.pushlog([type, Util.isoDate(d).replace(/-/g, ''), d.toLocaleTimeString(navigator.language || 'de'), msg]);
       }
     }
   );
@@ -2010,12 +1934,7 @@ const AppMain = (window.onload = async () => {
     return h(
       'table',
       { border: '0', cellpadding: 3, cellspacing: 0, className: 'dumper' },
-      lines.map(([k, v], i) =>
-        h('tr', { className: 'watch' }, [
-          h('td', { className: 'name' }, k + ''),
-          h('td', { className: 'value' }, v + '')
-        ])
-      )
+      lines.map(([k, v], i) => h('tr', { className: 'watch' }, [h('td', { className: 'name' }, k + ''), h('td', { className: 'value' }, v + '')]))
     );
   };
 
@@ -2290,10 +2209,7 @@ const AppMain = (window.onload = async () => {
                 //console.debug('BoardToGerber side =', side, ' file =', gerber.file);
               }
             }
-            const sides = /*Object.fromEntries*/ ['back', 'front', 'drill', 'outline'].map(side => [
-              side,
-              project.gerber[side].file
-            ]);
+            const sides = /*Object.fromEntries*/ ['back', 'front', 'drill', 'outline'].map(side => [side, project.gerber[side].file]);
             //console.debug('  sides = ', sides);
             //console.debug('  project = ', project);
             let allGcode = {};
@@ -2617,11 +2533,7 @@ const AppMain = (window.onload = async () => {
 
     if(prevEvent && group) {
       let u = Util.union(prevEvent.elements, event.elements, (a, b) => a.isSameNode(b));
-      let [remove, add] = Util.difference(
-        prevEvent.elements,
-        event.elements,
-        (a, b) => a.findIndex(Node.prototype.isSameNode, b) != -1
-      );
+      let [remove, add] = Util.difference(prevEvent.elements, event.elements, (a, b) => a.findIndex(Node.prototype.isSameNode, b) != -1);
 
       //  console.log('difference:', [remove,add], 'union:', u);
       //  console.log('add:', add);
@@ -2631,9 +2543,7 @@ const AppMain = (window.onload = async () => {
       for(let [e, rect] of bboxes) {
         let transforms =
           Element.walkUp(e, (p, d, set, stop) =>
-            p.parentElement == null || p.parentElement.isSameNode(p.ownerSVGElement)
-              ? stop()
-              : p.hasAttribute('transform') && set(p.getAttribute('transform'))
+            p.parentElement == null || p.parentElement.isSameNode(p.ownerSVGElement) ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform'))
           ) || [];
         transforms = transforms.reverse();
         elems.add(e);
@@ -2741,24 +2651,19 @@ const AppMain = (window.onload = async () => {
           })
         );
 
-        window.move = move = Element.moveRelative(
-          box,
-          null,
-          id == 'console' ? ['right', 'bottom'] : ['left', 'top'],
-          (pos, last, first) => {
-            if(pos && first) {
-              let rel = Point.diff(pos, first);
-              if(rel.distanceSquared() > 0) {
-                setStyle();
+        window.move = move = Element.moveRelative(box, null, id == 'console' ? ['right', 'bottom'] : ['left', 'top'], (pos, last, first) => {
+          if(pos && first) {
+            let rel = Point.diff(pos, first);
+            if(rel.distanceSquared() > 0) {
+              setStyle();
 
-                translation.x = rel.x;
-                translation.y = rel.y;
-                transform(transformList.collapse());
-                //   console.log('TouchHandler transform:', transform());
-              }
+              translation.x = rel.x;
+              translation.y = rel.y;
+              transform(transformList.collapse());
+              //   console.log('TouchHandler transform:', transform());
             }
           }
-        );
+        });
       }
       return true;
     }
@@ -2865,24 +2770,7 @@ const AppMain = (window.onload = async () => {
   });*/
 
   window.addEventListener('wheel', event => {
-    const {
-      wheelDelta,
-      deltaMode,
-      deltaX,
-      deltaY,
-      screenX,
-      screenY,
-      clientX,
-      clientY,
-      pageX,
-      pageY,
-      x,
-      y,
-      offsetX,
-      offsetY,
-      layerX,
-      layerY
-    } = event;
+    const { wheelDelta, deltaMode, deltaX, deltaY, screenX, screenY, clientX, clientY, pageX, pageY, x, y, offsetX, offsetY, layerX, layerY } = event;
 
     window.wheelEvent = event;
 
