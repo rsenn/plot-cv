@@ -279,7 +279,7 @@ function GetVariables(ref = 0) {
 }
 
 async function UpdatePosition() {
-  const stack = await StackTrace();
+  const stack = globalThis.stack = await StackTrace();
   //console.log('stack', stack);
 
   const { filename, line, name } = stack[0];
