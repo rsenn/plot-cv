@@ -3,7 +3,7 @@ import * as os from 'os';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
 import Util from './lib/util.js';
-import { toArrayBuffer, toString, escape, quote, define } from './lib/misc.js';
+import { toArrayBuffer, toString, escape, quote, define, extendArray } from './lib/misc.js';
 import { Console } from 'console';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
@@ -14,6 +14,8 @@ import { DebuggerProtocol } from './debuggerprotocol.js';
 import { StartDebugger, ConnectDebugger } from './debugger.js';
 
 globalThis.fs = fs;
+
+extendArray();
 
 function ReadJSON(filename) {
   let data = fs.readFileSync(filename, 'utf-8');
@@ -147,6 +149,7 @@ function main(...args) {
           );
       }
     );
+
     let options;
     let child, dbg;
 
@@ -188,11 +191,20 @@ function main(...args) {
         onConnect(ws, req) {
           console.log('debugger-server', { ws, req });
 
-          connections.add(ws);
+          ws.sendMessage = function(msg) {
+            let ret = this.send(JSON.stringify(msg));
+            console.log(`ws.sendMessage(`, msg, `) = ${ret}`);
+            return ret;
+          };
+
+          sockets.add(ws);
         },
         onClose(ws) {
+          console.log('onClose', ws);
+          dbg.close();
+
           protocol.delete(ws);
-          connections.delete(ws);
+          sockets.delete(ws);
         },
         onHttp(req, rsp) {
           const { url, method, headers } = req;
@@ -229,8 +241,11 @@ function main(...args) {
                 os.setWriteHandler(+dbg, async () => {
                   os.setWriteHandler(+dbg, null);
                   console.log(`connected to ${address}`, dbg);
+
+                  sockets.add(dbg);
+
                   const cwd = process.cwd();
-                  ws.send(JSON.stringify({ type: 'response', response: { command: 'start', args, cwd, address } }));
+                  ws.sendMessage({ type: 'response', response: { command: 'start', args, cwd, address } });
 
                   let msg;
 
@@ -239,13 +254,17 @@ function main(...args) {
                       msg = await DebuggerProtocol.read(dbg);
                       console.log('DebuggerProtocol.read() =', escape(msg));
                       if(typeof msg == 'string') {
-                        ws.send(msg);
+                        let ret;
+                        ret = ws.send(msg);
+                        console.log(`ws.send(${quote(msg, "'")}) = ${ret}`);
                       } else {
-                        console.log('sock', dbg);
+                        console.log('closed socket', dbg);
+                        sockets.delete(dbg);
+                        ws.sendMessage({ type: 'end', reason: 'closed' });
                       }
                     } catch(error) {
                       const { message, stack } = error;
-                      ws.send(JSON.stringify({ type: 'error', error: { message, stack } }));
+                      ws.sendMessage({ type: 'error', error: { message, stack } });
                       dbg.close();
                       break;
                     }
@@ -303,9 +322,12 @@ function main(...args) {
     );
   });
 
-  Object.assign(globalThis, {
+  define(globalThis, {
     get connections() {
-      return [...sockets];
+      return [...globalThis.sockets];
+    },
+    get socklist() {
+      return [...globalThis.sockets];
     },
     net,
     StartDebugger,

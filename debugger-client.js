@@ -40,10 +40,18 @@ import {
 
 let cwd = '.';
 let responses = {};
-let currentSource = trkl();
-let currentLine = trkl();
+let currentSource = trkl(null);
+let currentLine = trkl(-1);
 let url;
 let seq = 0;
+
+currentSource.id = 'currentSource';
+currentLine.id = 'currentLine';
+
+currentSource.subscribe(source => console.log('currentSource set to', source));
+currentLine.subscribe(line => console.log('currentLine set to', line));
+
+const doRender = Util.memoize(RenderUI);
 
 window.addEventListener('load', e => {
   url = Util.parseURL();
@@ -72,6 +80,9 @@ globalThis.addEventListener('keypress', e => {
   if(handler) handler();
 });
 
+/******************************************************************************
+ * Components                                                                 *
+ ******************************************************************************/
 const SourceLine = ({ lineno, text, active, children }) =>
   h(Fragment, {}, [
     h(
@@ -106,9 +117,14 @@ const SourceText = ({ text, filename }) => {
   );
 };
 
-const SourceFile = ({ filename }) => {
+const SourceFile = props => {
+  console.log('props.file', currentSource());
+  const file = useTrkl(currentSource);
+  console.log('file', file);
+  const filename = file ? path.relative(cwd, file, cwd) : null;
   let text =
-    (!/^<.*>$/.test(filename) &&
+    (file &&
+      !/^<.*>$/.test(file) &&
       useFetch(filename, resp => {
         console.log('Fetch', resp.status, Util.makeURL({ location: '/' + filename }));
         return resp.text();
@@ -122,6 +138,10 @@ const SourceFile = ({ filename }) => {
   ]);
 };
 
+/******************************************************************************
+ * End of Components                                                          *
+ ******************************************************************************/
+
 async function LoadSource(filename) {
   try {
     let response = await fetch(filename);
@@ -134,7 +154,7 @@ async function LoadSource(filename) {
 /* prettier-ignore */ Object.assign(globalThis, { HSLA, RGBA, Point, isPoint, Size, isSize, Line, isLine, Rect, isRect, PointList, Polyline, Matrix, isMatrix, BBox, TRBL, Timer, Tree, Node, XPath, Element, isElement, CSS, SVG, Container, Layer, Renderer, Select, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementWHProps, ElementXYProps, Align, Anchor, dom, isNumber, Unit, ScalarValue, ElementTransformation, CSSTransformSetters, Transition, TransitionList, RandomColor });
 /* prettier-ignore */ Object.assign(globalThis, {   useIterable, useIterator, useAsyncGenerator, useAsyncIterable, useAsyncIterator, useGenerator, useActive, useClickout, useConditional, useDebouncedCallback, useDebounce, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useForceUpdate, useGetSet, useHover, useMousePosition, useToggleButtonGroupState, useTrkl, useFetch });
 /* prettier-ignore */ Object.assign(globalThis, { clamp, identity, noop, compose, maybe, snd, toPair, getOffset, getPositionOnElement, isChildOf });
-/* prettier-ignore */ Object.assign(globalThis, { ShowSource, Start, GetVariables, SendRequest, StepIn,StepOut, Next, Continue, Pause, Evaluate, StackTrace });
+/* prettier-ignore */ Object.assign(globalThis, { RenderUI, Start, GetVariables, SendRequest, StepIn,StepOut, Next, Continue, Pause, Evaluate, StackTrace });
 /* prettier-ignore */ Object.assign(globalThis, {JSLexer, Location});
 
 function Start(args, address) {
@@ -231,6 +251,7 @@ async function CreateSocket(endpoint) {
       }
       globalThis.response = data;
       if(data) {
+        console.log('ws received ', data);
         const { response, request_seq } = data;
         if(response) {
           const { command } = response;
@@ -245,21 +266,32 @@ async function CreateSocket(endpoint) {
             cwd = response.cwd;
 
             console.log('command:', command);
+            console.log('response:', response);
 
-            UpdatePosition();
+            if(response.args[0]) {
+              currentSource(response.args[0]);
+            } else {
+              UpdatePosition();
+            }
+            RenderUI();
             continue;
           }
 
           if(command == 'start') {
             cwd = response.cwd;
             console.log('start', response);
-            ShowSource(response.args[0]);
+            RenderUI(response.args[0]);
             continue;
           }
         }
+
         if(responses[request_seq]) responses[request_seq](data);
       } else {
         console.log('WS', data);
+      }
+      if(['end', 'error'].indexOf(data.type) >= 0) {
+        document.body.innerHTML = '';
+        continue;
       }
     }
   })();
@@ -279,13 +311,18 @@ function GetVariables(ref = 0) {
 }
 
 async function UpdatePosition() {
-  const stack = globalThis.stack = await StackTrace();
-  //console.log('stack', stack);
+  const stack = (globalThis.stack = await StackTrace());
+  console.log('stack', stack);
 
   const { filename, line, name } = stack[0];
 
-  ShowSource(filename);
+  currentSource(filename);
+  //  RenderUI(filename);
   currentLine(line);
+
+  RenderUI();
+
+  // doRender(currentSource);
 
   window.location.hash = `#line-${line}`;
 }
@@ -350,29 +387,31 @@ const ref = useClick(e => {
 const ButtonBar=  ({children}) => 
 h('div', {class: 'button-bar' }, children);*/
 
-async function ShowSource(sourceFile) {
-  if(currentSource() != sourceFile) {
-    currentSource(sourceFile);
-    const component = h(Fragment, {}, [
-      h(Panel, { className: classNames('buttons', 'no-select'), tag: 'header' }, [
-        h(Button, { image: 'static/svg/continue.svg', fn: Continue }),
-        h(Button, { image: 'static/svg/pause.svg', fn: Pause }),
-        //h(Button, {image: 'static/svg/start.svg'}),
-        h(Button, {
-          image: 'static/svg/step-into.svg',
-          fn: StepIn
-        }),
-        h(Button, {
-          image: 'static/svg/step-out.svg',
-          fn: StepOut
-        }),
-        h(Button, { image: 'static/svg/step-over.svg', fn: Next })
-        //   h(Button, { image: 'static/svg/restart.svg' }),
-        //h(Button, {image: 'static/svg/stop.svg', enable: trkl(false)}),
-      ]),
-      h(SourceFile, { filename: path.relative(cwd, sourceFile, cwd) })
-    ]);
-    const { body } = document;
-    let r = render(component, body);
-  }
+function RenderUI() {
+  console.log('RenderUI');
+  /* if(currentSource() != file) 
+    currentSource(file);*/
+
+  const component = h(Fragment, {}, [
+    h(Panel, { className: classNames('buttons', 'no-select'), tag: 'header' }, [
+      h(Button, { image: 'static/svg/continue.svg', fn: Continue }),
+      h(Button, { image: 'static/svg/pause.svg', fn: Pause }),
+      //h(Button, {image: 'static/svg/start.svg'}),
+      h(Button, {
+        image: 'static/svg/step-into.svg',
+        fn: StepIn
+      }),
+      h(Button, {
+        image: 'static/svg/step-out.svg',
+        fn: StepOut
+      }),
+      h(Button, { image: 'static/svg/step-over.svg', fn: Next })
+      //   h(Button, { image: 'static/svg/restart.svg' }),
+      //h(Button, {image: 'static/svg/stop.svg', enable: trkl(false)}),
+    ]),
+    h(SourceFile, { file: currentSource })
+  ]);
+  const { body } = document;
+  let r = render(component, body);
+  console.log('rendered', r);
 }

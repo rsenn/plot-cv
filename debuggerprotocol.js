@@ -2,7 +2,7 @@ import * as deep from './lib/deep.js';
 import * as fs from './lib/filesystem.js';
 import * as path from './lib/path.js';
 import Util from './lib/util.js';
-import { toString, define, escape } from './lib/misc.js';
+import { toString, define, escape, quote } from './lib/misc.js';
 import { EventEmitter } from './lib/events.js';
 
 const cfg = (obj = {}) => console.config({ compact: false, breakLength: Infinity, ...obj });
@@ -154,14 +154,18 @@ export class DebuggerProtocol extends EventEmitter {
     let len = toString(lengthBuf);
     let size = parseInt(len, 16);
     let jsonBuf = new ArrayBuffer(size);
-    console.log('read size', size);
-    r = await sock.recv(jsonBuf);
-    if(r <= 0) {
-      if(r < 0 && sock.errno != sock.EAGAIN) throw sock.error;
-      return null;
+    console.log('read size', isNaN(size) ? quote(len, "'") : size);
+    let n = 0;
+    while(n < size) {
+      r = await sock.recv(jsonBuf, n, size - n);
+      if(r <= 0) {
+        if(r < 0 && sock.errno != sock.EAGAIN) throw sock.error;
+        return null;
+      }
+      n += r;
     }
-    console.log('read r =', r);
-    return toString(jsonBuf.slice(0, r));
+    //console.log('read r =', r);
+    return toString(jsonBuf.slice(0, n));
   }
 
   static send(sock, msg) {
