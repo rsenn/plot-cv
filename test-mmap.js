@@ -70,7 +70,10 @@ function main(...args) {
 
   let fd = os.open(args[0], os.O_RDONLY);
   console.log('fd', fd);
+  console.log('args[0]', args[0]);
   let [st, err] = os.stat(args[0]);
+  console.log('st', st);
+
   const { size } = st;
   console.log('size', size);
 
@@ -171,20 +174,25 @@ function main(...args) {
     console.log(`[${i}] Searching ${description} [ ${pattern} ]`);
     let results = searchAll(pattern).map(offset => ({ offset, rva: Offset2RVA(args[0], offset) }));
 
-    console.log(`results[${results.length}]`, results);
-    return results;
+    //console.log(`results[${results.length}]`, results);
+    return [description,results];
   });
-
-  const offsets = results.map(r => {
+  
+  console.log('results', { ...results });
+  
+  let offsets = results.map(([desc,r]) => {
     const { offset, rva } = r[0] ?? {};
     if(offset == 'number') {
       console.log(`RVA`, rva);
     }
-    return offset;
+    return [desc,offset];
   });
-  console.log('results', { ...results });
 
-  offsets.slice(0, 4).forEach((offset, i) => {
+offsets = offsets.slice(0,4);
+//offsets = [offsets[0], offsets[3]]
+  console.log('offsets', { ...offsets });
+
+  offsets.forEach(([desc,offset], i) => {
     const rep = replacements[i];
 
     if(typeof rep == 'function') {
