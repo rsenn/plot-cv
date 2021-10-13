@@ -5,8 +5,11 @@ import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './qjs-opencv/
 import { HSLA } from './lib/color.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import fs from 'fs';
+import { format } from 'util';
+import * as xml from 'xml';
 import Console from 'console';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
+import SvgPath from './lib/svg/path.js';
 import {
   WeakMapper,
   Modulo,
@@ -20,11 +23,35 @@ import {
   RoundTo,
   Range
 } from './qjs-opencv/js/cvUtils.js';
+import {
+  IfDebug,
+  LogIfDebug,
+  ReadFile,
+  LoadHistory,
+  ReadJSON,
+  MapFile,
+  ReadBJSON,
+  WriteFile,
+  WriteJSON,
+  WriteBJSON,
+  DirIterator,
+  RecursiveDirIterator
+} from './io-helpers.js';
 
 let rainbow;
 let zoom = 1;
 let debug = false;
 let basename = process.argv[1].replace(/\.js$/, '');
+
+let simplifyMethods = {
+  NTH_POINT: c => c.simplifyNthPoint(2),
+  RADIAL_DISTANCE: c => c.simplifyRadialDistance(10),
+  PERPENDICULAR_DISTANCE: c => c.simplifyPerpendicularDistance(20),
+  REUMANN_WITKAM: c => c.simplifyReumannWitkam(),
+  OPHEIM: c => c.simplifyOpheim(),
+  LANG: c => c.simplifyLang(),
+  DOUGLAS_PEUCKER: c => c.simplifyDouglasPeucker()
+};
 
 function Hierarchy(array) {
   if(array instanceof Int32Array)
@@ -193,7 +220,12 @@ function main(...args) {
   let running = true;
   let paused = false;
 
-  globalThis.console = new Console({ colors: true, depth: 1, maxArrayLength: 30 });
+  globalThis.console = new Console({
+    colors: true,
+    depth: 1,
+    maxArrayLength: 30,
+    compact: 1
+  });
 
   let opts = GetOpt(
     {
@@ -335,6 +367,7 @@ function main(...args) {
 
   let dst0Size, firstSize, videoSize;
   let clahe = new CLAHE(4, new Size(8, 8));
+  let framePos;
 
   let pipeline = new Pipeline(
     [
@@ -342,6 +375,7 @@ function main(...args) {
         const dstEmpty = dst.empty;
         if(dst.empty) dst0Size = dst.size;
         // console.log('video', video);
+        framePos = video.get('pos_frames');
         video.read(dst);
         if(videoSize === undefined || videoSize.empty) videoSize = video.size.area ? video.size : dst.size;
         if(dstEmpty) firstSize = new Size(...videoSize);
@@ -468,66 +502,67 @@ function main(...args) {
         let ch = String.fromCodePoint(keyCode & 0xff);
         console.log(`keypress [${modifierList}] 0x${(keyCode & ~0xd000).toString(16)} '${ch}'`);
       }
+      let keyChar = String.fromCodePoint(key & 0xfff);
 
-      switch (key & 0xfff) {
-        case 0x3c /* < */:
+      switch (keyChar) {
+        case '<' /* < */:
           paramNav.prev();
           break;
-        case 0x3e /* > */:
+        case '>' /* > */:
           paramNav.next();
           break;
 
-        case 0x2b /* + */:
+        case '\x2b' /* + */:
           paramNav.param.increment();
           break;
-        case 0x2d /* - */:
-        case 0x2fad /* numpad - */:
+        case '\x2d' /* - */:
+        case '\x2f' /* numpad - */:
           paramNav.param.decrement();
           break;
 
-        case 0x31: /* 1 */
-        case 0x32: /* 2 */
-        case 0x33: /* 3 */
-        case 0x34: /* 4 */
-        case 0x35: /* 5 */
-        case 0x36: /* 6 */
-        case 0x37: /* 7 */
-        case 0x38: /* 8 */
-        case 0x39: /* 9 */
-        case 0x30 /* 0 */:
+        case '1': /* 1 */
+        case '2': /* 2 */
+        case '3': /* 3 */
+        case '4': /* 4 */
+        case '5': /* 5 */
+        case '6': /* 6 */
+        case '7': /* 7 */
+        case '8': /* 8 */
+        case '9': /* 9 */
+        case '0' /* 0 */:
           let v = keyCode & 0xf || 10;
           paramNav.param.alpha = v / 10;
           break;
-        case 0xa7 /* § */:
+        case '§' /* § */:
           paramNav.param.alpha = 0;
           break;
-        case 0x51: /* Q */
-        case 0x71: /* q */
+        case 'Q': /* Q */
+        case 'q': /* q */
 
-        case 0x1b:
+        case '\x1b':
           running = false;
           break;
-        case 0x20:
+        case ' ':
           paused = !paused;
           break;
-        case 0x6e: /* n */
-        case 0x4e /* N */:
+        case 'n': /* n */
+        case 'N' /* N */:
           frameShow = Modulo(frameShow + 1, pipeline.size);
           break;
-        case 0x70: /* p */
-        case 0x50 /* P */:
+        case 'p': /* p */
+        case 'P' /* P */:
           frameShow = Modulo(frameShow - 1, pipeline.size);
           break;
-        case 0xf50 /* home */:
+        case '\u0f50' /* home */:
           video.set('pos_frames', 0);
           break;
-        case 0xf57 /* end */:
+        case '\u0f57' /* end */:
           video.set('pos_frames', video.get('frame_count') - Math.round(video.fps * 3));
           break;
-        case 0xf51: /* left */
-        case 0xf53: /* right */
-        case 0xf52: /* up */
-        case 0xf54: /* down */ {
+        case '\u0f51': /* left */
+        case '\u0f53': /* right */
+        case '\u0f52': /* up */
+        case '\u0f54': /* down */ {
           const method = keyCode & 0x1 ? 'Frames' : 'Msecs';
           const distance =
             (keyCode & 0x1 ? 1 : 1000) *
@@ -545,6 +580,50 @@ function main(...args) {
               offset +
               ` distance = ${distance} pos = ${pos} (${RoundTo(video.position('%'), 0.001)}%)`
           );
+          break;
+        }
+        case 's': /* save */ {
+          console.log('contours.length', contours.length);
+          let points = contours.reduce((acc, contour, i) => {
+            //console.log('contour #' + i, contour);
+            //contour =simplifyMethods.PERPENDICULAR_DISTANCE(contour);
+            contour = simplifyMethods.RADIAL_DISTANCE(contour);
+            let array = contour.toArray();
+            //console.log('array #' + i, array.length);
+            if(array.length >= 3) {
+              let sp = new SvgPath();
+              sp.abs();
+
+              for(let i = 0; i < array.length; i += 1) {
+                const { x, y } = array[i];
+                sp[i == 0 ? 'to' : 'line'](x, y);
+              }
+              let rsp = sp.toRelative();
+              acc.push(rsp.str(2, ' ', ','));
+            }
+            return acc;
+          }, []);
+          let paths = points.map(d => ({
+            tagName: 'path',
+            attributes: { d }
+          }));
+          let viewBox = [0, 0, ...outputMat.size].join(' ');
+          let doc = {
+            tagName: 'svg',
+            children: paths,
+            attributes: {
+              xmlns: 'http://www.w3.org/2000/svg',
+              viewBox
+            }
+          };
+
+          //  console.log('size', [0,0].concat([...outputMat.size]));
+          //  console.log('points', points);
+          const output = xml.write(doc);
+          const filename = `output-${framePos}.svg`;
+          WriteFile(filename, output);
+          console.log(`Saved '${filename}' (${outputMat.size}).`);
+
           break;
         }
         default: {
@@ -601,7 +680,12 @@ function main(...args) {
       const value = param.get() + (param.get() != (param | 0) + '' ? ` (${+param})` : '');
       const arrow = Number.isInteger(y) && paramNav.name == name ? '=>' : '  ';
       const text = `${arrow}${name}` + (Number.isInteger(y) ? `[${param.range.join('-')}]` : '') + ` = ${value}`;
-      color = color || { r: 0xb7, g: 0x35, b: 255, a: 255 };
+      color = color || {
+        r: '\xb7',
+        g: 0x35,
+        b: 255,
+        a: 255
+      };
       y = tPos.y - 20 - (y | 0);
       font.draw(over, text, [tPos.x, y], { r: 0, g: 0, b: 0, a: 255 }, params.fontThickness * 2);
       font.draw(over, text, [tPos.x, y], color, +params.fontThickness);
@@ -627,7 +711,16 @@ function main(...args) {
       for(let i = size - 1; i >= start; i--) {
         const pos = Modulo(i, size);
         const [name, param] = paramNav.at(pos);
-        drawParam(param, y, paramNav.index == pos && { r: 255, g: 255, b: 0, a: 255 });
+        drawParam(
+          param,
+          y,
+          paramNav.index == pos && {
+            r: 255,
+            g: 255,
+            b: 0,
+            a: 255
+          }
+        );
         y += 20;
       }
     } else {

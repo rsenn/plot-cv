@@ -110,7 +110,9 @@ const SourceText = ({ text, filename }) => {
         }, []);
 
       //console.log('text',text);
-      acc.push(h(SourceLine, { lineno: i + 1, text: text.join(''), active: activeLine == i + 1 }, text));
+      acc.push(
+        h(SourceLine, { lineno: i + 1, text: text.join(''), active: activeLine == i + 1 }, text)
+      );
 
       return acc;
     }, [])

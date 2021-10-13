@@ -56,7 +56,8 @@ function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = ''
 
   repl.help = () => {};
   let { log } = console;
-  repl.show = arg => std.puts((typeof arg == 'string' ? arg : inspect(arg, repl.inspectOptions)) + '\n');
+  repl.show = arg =>
+    std.puts((typeof arg == 'string' ? arg : inspect(arg, repl.inspectOptions)) + '\n');
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();
@@ -124,7 +125,8 @@ function main(...args) {
     console.log('createWS', { url, callbacks, listen });
 
     net.setLog(
-      (params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
+      (params.debug ? net.LLL_USER : 0) |
+        (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
       (level, ...args) => {
         console.log(...args);
         if(params.debug)
@@ -245,7 +247,15 @@ function main(...args) {
                   sockets.add(dbg);
 
                   const cwd = process.cwd();
-                  ws.sendMessage({ type: 'response', response: { command: 'start', args, cwd, address } });
+                  ws.sendMessage({
+                    type: 'response',
+                    response: {
+                      command: 'start',
+                      args,
+                      cwd,
+                      address
+                    }
+                  });
 
                   let msg;
 
@@ -260,11 +270,17 @@ function main(...args) {
                       } else {
                         console.log('closed socket', dbg);
                         sockets.delete(dbg);
-                        ws.sendMessage({ type: 'end', reason: 'closed' });
+                        ws.sendMessage({
+                          type: 'end',
+                          reason: 'closed'
+                        });
                       }
                     } catch(error) {
                       const { message, stack } = error;
-                      ws.sendMessage({ type: 'error', error: { message, stack } });
+                      ws.sendMessage({
+                        type: 'error',
+                        error: { message, stack }
+                      });
                       dbg.close();
                       break;
                     }
@@ -289,7 +305,11 @@ function main(...args) {
                   let result = lexer.next();
                   if(result.done) break;
                   const token = result.value;
-                  console.log('token', { lexeme: token.lexeme, id: token.id, loc: token.loc + '' });
+                  console.log('token', {
+                    lexeme: token.lexeme,
+                    id: token.id,
+                    loc: token.loc + ''
+                  });
                   const { type, id, lexeme, loc } = token;
                   const { line, column, file } = loc;
                   //console.log('token', {lexeme,id,line});
