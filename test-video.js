@@ -10,33 +10,8 @@ import * as xml from 'xml';
 import Console from 'console';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
 import SvgPath from './lib/svg/path.js';
-import {
-  WeakMapper,
-  Modulo,
-  WeakAssign,
-  BindMethods,
-  BitsToNames,
-  FindKey,
-  Define,
-  Once,
-  GetOpt,
-  RoundTo,
-  Range
-} from './qjs-opencv/js/cvUtils.js';
-import {
-  IfDebug,
-  LogIfDebug,
-  ReadFile,
-  LoadHistory,
-  ReadJSON,
-  MapFile,
-  ReadBJSON,
-  WriteFile,
-  WriteJSON,
-  WriteBJSON,
-  DirIterator,
-  RecursiveDirIterator
-} from './io-helpers.js';
+import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Define, Once, GetOpt, RoundTo, Range } from './qjs-opencv/js/cvUtils.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
 
 let rainbow;
 let zoom = 1;
@@ -78,7 +53,10 @@ function SaveConfig(configObj) {
   let file = std.open(basename + '.config.json', 'w+b');
   file.puts(JSON.stringify(configObj, null, 2) + '\n');
   file.close();
-  console.log(`Saved config to '${basename + '.config.json'}'`, inspect(configObj, { compact: false }));
+  console.log(
+    `Saved config to '${basename + '.config.json'}'`,
+    inspect(configObj, { compact: false })
+  );
 }
 
 function LoadConfig() {
@@ -215,6 +193,24 @@ function Profiler(name, ticks = () => cv.getTickCount(), freq = cv.getTickFreque
   return self;
 }
 
+function MakeSVG(children, size) {
+  let viewBox = [0, 0, ...size].join(' ');
+  return {
+    tagName: 'svg',
+    children: [{ tagName: 'g', attributes: { stroke: 'black' }, children }],
+    attributes: {
+      xmlns: 'http://www.w3.org/2000/svg',
+      viewBox
+    }
+  };
+}
+
+function SaveSVG(filename, doc) {
+  const output = xml.write(doc);
+  WriteFile(filename, output);
+  console.log('Saved ' + filename + '.');
+}
+
 function main(...args) {
   let start;
   let running = true;
@@ -226,6 +222,8 @@ function main(...args) {
     maxArrayLength: 30,
     compact: 1
   });
+  const { DISPLAY } = process.env;
+  console.log('DISPLAY', DISPLAY);
 
   let opts = GetOpt(
     {
@@ -293,9 +291,9 @@ function main(...args) {
 
   if(opts['size']) {
     video.size = new Size(...opts['size'].split('x'));
-    console.log('video.size', video.size);
-    win.resize(video.size);
   }
+  console.log('video.size', video.size);
+  win.resize(video.size);
 
   let thickness = 1;
   let font = new TextStyle(cv.FONT_HERSHEY_PLAIN, 1.0, thickness);
@@ -333,7 +331,13 @@ function main(...args) {
     L2gradient: new NumericParam(config.L2gradient || 0, 0, 1),
     dilations: new NumericParam(config.dilations || 0, 0, 10),
     erosions: new NumericParam(config.erosions || 0, 0, 10),
-    mode: new EnumParam(config.mode || 3, ['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL']),
+    mode: new EnumParam(config.mode || 3, [
+      'RETR_EXTERNAL',
+      'RETR_LIST',
+      'RETR_CCOMP',
+      'RETR_TREE',
+      'RETR_FLOODFILL'
+    ]),
     method: new EnumParam(config.method || 0, [
       'CHAIN_APPROX_NONE',
       'CHAIN_APPROX_SIMPLE',
@@ -377,10 +381,15 @@ function main(...args) {
         // console.log('video', video);
         framePos = video.get('pos_frames');
         video.read(dst);
-        if(videoSize === undefined || videoSize.empty) videoSize = video.size.area ? video.size : dst.size;
+        console.log('dst', dst);
+        win.show(dst);
+        if(videoSize === undefined || videoSize.empty)
+          videoSize = video.size.area ? video.size : dst.size;
         if(dstEmpty) firstSize = new Size(...videoSize);
         if(dst.size && !videoSize.equals(dst.size))
-          throw new Error(`AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`);
+          throw new Error(
+            `AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`
+          );
       }),
       Processor(function Grayscale(src, dst) {
         let channels = [];
@@ -395,7 +404,14 @@ function main(...args) {
         cv.GaussianBlur(src, dst, [+params.ksize, +params.ksize], 0, 0, cv.BORDER_REPLICATE);
       }),
       Processor(function EdgeDetect(src, dst) {
-        cv.Canny(src, dst, +params.thresh1, +params.thresh2, +params.apertureSize, +params.L2gradient);
+        cv.Canny(
+          src,
+          dst,
+          +params.thresh1,
+          +params.thresh2,
+          +params.apertureSize,
+          +params.L2gradient
+        );
         ////console.log('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);
       }),
       Processor(function Morph(src, dst) {
@@ -413,17 +429,21 @@ function main(...args) {
       }),
       Processor(function HoughLines(src, dst) {
         let edges = pipeline.outputOf('EdgeDetect');
-        lines = new Mat(0, 0, cv.CV_32SC4);
+        let mat = new Mat(0, 0, cv.CV_32SC4);
 
         cv.HoughLinesP(
           edges,
-          lines,
+          mat,
           2,
           (+params.angleResolution * Math.PI) / 180,
           +params.threshc,
           +params.minLineLength,
           +params.maxLineGap
         );
+        lines = [...mat]; //.array;
+        // console.log('mat', mat);
+        //  console.log('lines', lines.slice(0, 10));
+        // console.log('lines.length', lines.length);
         src.copyTo(dst);
       })
     ],
@@ -450,10 +470,16 @@ function main(...args) {
   console.log(`Trackbar 'frame' frameShow=${frameShow} pipeline.size - 1 = ${pipeline.size - 1}`);
 
   if(opts['trackbars'])
-    cv.createTrackbar('frame', 'gray', frameShow, pipeline.size - 1, function(value, count, name, window) {
-      //console.log('Trackbar', { value, count, name, window });
-      frameShow = value;
-    });
+    cv.createTrackbar(
+      'frame',
+      'gray',
+      frameShow,
+      pipeline.size - 1,
+      function(value, count, name, window) {
+        //console.log('Trackbar', { value, count, name, window });
+        frameShow = value;
+      }
+    );
 
   const resizeOutput = Once(() => {
     let size = outputMat.size.mul(zoom);
@@ -465,7 +491,11 @@ function main(...args) {
 
   const ClearSurface = mat => (mat.setTo([0, 0, 0, 0]), mat);
   const MakeSurface = () =>
-    Once((...args) => new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)), null, ClearSurface);
+    Once(
+      (...args) => new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)),
+      null,
+      ClearSurface
+    );
   const MakeComposite = Once(() => new Mat());
   let surface = MakeSurface();
   let keyCode,
@@ -584,46 +614,8 @@ function main(...args) {
         }
         case 's': /* save */ {
           console.log('contours.length', contours.length);
-          let points = contours.reduce((acc, contour, i) => {
-            //console.log('contour #' + i, contour);
-            //contour =simplifyMethods.PERPENDICULAR_DISTANCE(contour);
-            contour = simplifyMethods.RADIAL_DISTANCE(contour);
-            let array = contour.toArray();
-            //console.log('array #' + i, array.length);
-            if(array.length >= 3) {
-              let sp = new SvgPath();
-              sp.abs();
-
-              for(let i = 0; i < array.length; i += 1) {
-                const { x, y } = array[i];
-                sp[i == 0 ? 'to' : 'line'](x, y);
-              }
-              let rsp = sp.toRelative();
-              acc.push(rsp.str(2, ' ', ','));
-            }
-            return acc;
-          }, []);
-          let paths = points.map(d => ({
-            tagName: 'path',
-            attributes: { d }
-          }));
-          let viewBox = [0, 0, ...outputMat.size].join(' ');
-          let doc = {
-            tagName: 'svg',
-            children: paths,
-            attributes: {
-              xmlns: 'http://www.w3.org/2000/svg',
-              viewBox
-            }
-          };
-
-          //  console.log('size', [0,0].concat([...outputMat.size]));
-          //  console.log('points', points);
-          const output = xml.write(doc);
-          const filename = `output-${framePos}.svg`;
-          WriteFile(filename, output);
-          console.log(`Saved '${filename}' (${outputMat.size}).`);
-
+          saveContours(contours, outputMat.size);
+          saveLines(lines, outputMat.size);
           break;
         }
         default: {
@@ -673,13 +665,22 @@ function main(...args) {
       );
       let hierObj = new Hierarchy(hier);
     }
-    font.draw(over, video.time + ' ⏩', tPos, { r: 0, g: 255, b: 0, a: 255 }, +params.fontThickness);
+    font.draw(
+      over,
+      video.time + ' ⏩',
+      tPos,
+      { r: 0, g: 255, b: 0, a: 255 },
+      +params.fontThickness
+    );
 
     function drawParam(param, y, color) {
       const name = paramNav.nameOf(param);
       const value = param.get() + (param.get() != (param | 0) + '' ? ` (${+param})` : '');
       const arrow = Number.isInteger(y) && paramNav.name == name ? '=>' : '  ';
-      const text = `${arrow}${name}` + (Number.isInteger(y) ? `[${param.range.join('-')}]` : '') + ` = ${value}`;
+      const text =
+        `${arrow}${name}` +
+        (Number.isInteger(y) ? `[${param.range.join('-')}]` : '') +
+        ` = ${value}`;
       color = color || {
         r: '\xb7',
         g: 0x35,
@@ -756,7 +757,76 @@ function main(...args) {
 
     win.show(composite);
   }
-  const { ksize, thresh1, thresh2, apertureSize, L2gradient, dilations, erosions, mode, method, lineWidth } = params;
+
+  function saveContours(contours, size) {
+    let points = contours.reduce((acc, contour, i) => {
+      //console.log('contour #' + i, contour);
+      //contour =simplifyMethods.PERPENDICULAR_DISTANCE(contour);
+      contour = simplifyMethods.RADIAL_DISTANCE(contour);
+      let array = contour.toArray();
+      //console.log('array #' + i, array.length);
+      if(array.length >= 3) {
+        let sp = new SvgPath();
+        sp.abs();
+
+        for(let i = 0; i < array.length; i += 1) {
+          const { x, y } = array[i];
+          sp[i == 0 ? 'to' : 'line'](x, y);
+        }
+        let rsp = sp.toRelative();
+        acc.push(rsp.str(2, ' ', ','));
+      }
+      return acc;
+    }, []);
+    let children = points.map(d => ({
+      tagName: 'path',
+      attributes: { d }
+    }));
+    let viewBox = [0, 0, ...size].join(' ');
+    let doc = {
+      tagName: 'svg',
+      children: [{ tagName: 'g', attributes: { stroke: 'black' }, children }],
+      attributes: {
+        xmlns: 'http://www.w3.org/2000/svg',
+        viewBox
+      }
+    };
+
+    SaveSVG('contours-' + framePos + '.svg', doc);
+  }
+
+  function saveLines(lines, size) {
+    let viewBox = [0, 0, ...size].join(' ');
+    let children = lines
+      .map(coords => new Line(...coords))
+      .map(([x1, y1, x2, y2]) => ({
+        tagName: 'line',
+        attributes: { x1, y1, x2, y2 }
+      }));
+    let doc = {
+      tagName: 'svg',
+      children: [{ tagName: 'g', attributes: { stroke: 'black' }, children }],
+      attributes: {
+        xmlns: 'http://www.w3.org/2000/svg',
+        viewBox
+      }
+    };
+
+    SaveSVG('lines-' + framePos + '.svg', doc);
+  }
+
+  const {
+    ksize,
+    thresh1,
+    thresh2,
+    apertureSize,
+    L2gradient,
+    dilations,
+    erosions,
+    mode,
+    method,
+    lineWidth
+  } = params;
   SaveConfig(
     Object.entries({
       frameShow,
@@ -778,7 +848,8 @@ function main(...args) {
     let stack = Mat.backtrace(mat)
       .filter(
         frame =>
-          frame.functionName != '<anonymous>' && (frame.lineNumber !== undefined || /test-video/.test(frame.fileName))
+          frame.functionName != '<anonymous>' &&
+          (frame.lineNumber !== undefined || /test-video/.test(frame.fileName))
       )
       .map(frame => frame.toString())
       .join('\n  ');
@@ -792,7 +863,7 @@ function main(...args) {
 try {
   main(...scriptArgs.slice(1));
 } catch(error) {
-  console.log(`FAIL: ${error && error.message}`, error && error.stack ? '\n' + error.stack : '');
+  console.log('FAIL: ', error && error.message, error && error.stack ? '\n' + error.stack : '');
   std.exit(1);
 }
 

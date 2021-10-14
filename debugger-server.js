@@ -12,6 +12,7 @@ import * as fs from './lib/filesystem.js';
 import * as net from 'net';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 import { StartDebugger, ConnectDebugger } from './debugger.js';
+import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
 
 globalThis.fs = fs;
 
@@ -82,7 +83,7 @@ function main(...args) {
 
   const config = ReadJSON(`.${base}-config`) ?? {};
   globalThis.console = new Console(std.err, {
-    inspectOptions: { compact: 3, customInspect: true }
+    inspectOptions: { compact: 2, customInspect: true }
   });
   let params = Util.getOpt(
     {
@@ -231,12 +232,40 @@ function main(...args) {
 
             switch (command) {
               case 'start': {
-                child = StartDebugger(args, connect, address);
-                console.log('child', child.pid);
+                child = ws.child = StartDebugger(args, connect, address);
+                const [, stdout, stderr] = child.stdio;
+                for(let fd of [stdout, stderr]) {
+                                 //console.log(`fcntl(${fd}, F_GETFL)`);
+    let flags = fcntl(fd, F_GETFL);
+                                 //console.log(`fcntl(${fd}, F_SETFL, 0x${flags.toString(16)})`);
+   flags |= O_NONBLOCK;
+                  fcntl(fd, F_SETFL, flags);
+                }
+ for(let i = 1; i <= 2; i++) {
+                  let fd = child.stdio[i];
+                                               console.log('os.setReadHandler',fd);
+  os.setReadHandler(fd, () => {
+                    let buf = new ArrayBuffer(1024);
+                    let r = os.read(fd, buf, 0, buf.byteLength);
+
+                    if(r > 0) {
+                      let data = toString(buf.slice(0, r));
+                      console.log(`read(${fd}, buf) = ${r} (${quote(data, "'")})`);
+
+                      ws.sendMessage({
+                        type: 'output',
+                        channel: ['stdout', 'stderr'][i - 1],
+                        data
+                      });
+                    }
+                  });
+                }
+                               console.log('child', child.pid);
+
                 os.sleep(1000);
               }
               case 'connect': {
-                dbg = ConnectDebugger(address, (dbg, sock) => {
+                dbg = ws.dbg = ConnectDebugger(address, (dbg, sock) => {
                   console.log('wait() =', child.wait());
                   console.log('child', child);
                 });

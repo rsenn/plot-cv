@@ -50,7 +50,8 @@ export class DebuggerProtocol extends EventEmitter {
           const { id, name, filename, line } = frame;
           let code, location, wd;
           wd = process.cwd();
-          location = filename && filename[0] == '/' ? path.relative(filename, process.cwd()) : filename;
+          location =
+            filename && filename[0] == '/' ? path.relative(filename, process.cwd()) : filename;
           if(typeof line == 'number') {
             code = this.getFile(location)?.[line - 1];
             location += ':' + line;
@@ -218,7 +219,12 @@ export class DebuggerProtocol extends EventEmitter {
 }
 
 function retValue(ret, ...args) {
-  console.log(...args, `ret =`, ret, ...(ret == -1 ? [' errno =', errno(), ' error =', std.strerror(errno())] : []));
+  console.log(
+    ...args,
+    `ret =`,
+    ret,
+    ...(ret == -1 ? [' errno =', errno(), ' error =', std.strerror(errno())] : [])
+  );
 }
 
 function toHex(n, b = 2) {
@@ -242,7 +248,8 @@ function ArrayBufToHex(buf, numBytes = 8) {
   if(typeof buf == 'object' && buf != null && buf instanceof ArrayBuffer) {
     let arr = MakeArray(buf, numBytes);
     return arr.reduce(
-      (s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
+      (s, code) =>
+        (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
       ''
     );
   }

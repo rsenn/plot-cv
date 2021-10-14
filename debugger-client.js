@@ -95,9 +95,17 @@ const SourceLine = ({ lineno, text, active, children }) =>
 
 const SourceText = ({ text, filename }) => {
   const activeLine = useTrkl(currentLine);
-  let tokens = TokenizeJS(text, filename);
+  let tokens, lines;
 
-  let lines = [...tokens];
+  try {
+    tokens = TokenizeJS(text, filename);
+    lines = [...tokens];
+  } catch(e) {
+    console.log('Error tokenizing:', e.message);
+  }
+
+  lines ??= text.split(/\n/g).map(line => [[null, line]]);
+
   return h(
     Fragment,
     {},
@@ -303,7 +311,7 @@ async function CreateSocket(endpoint) {
   };
 
   if(url.query.port) await Connect();
-  else await Start([url.query.script ?? 'test-ecmascript2.js']);
+  else await Start([url.query.script ?? 'test-video.js', 'test.jpg']);
 
   return ws;
 }
@@ -411,7 +419,8 @@ function RenderUI() {
       //   h(Button, { image: 'static/svg/restart.svg' }),
       //h(Button, {image: 'static/svg/stop.svg', enable: trkl(false)}),
     ]),
-    h(SourceFile, { file: currentSource })
+    h('main', {}, h(SourceFile, { file: currentSource })),
+    h('footer', {}, [])
   ]);
   const { body } = document;
   let r = render(component, body);

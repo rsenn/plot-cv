@@ -6,11 +6,30 @@ body {
 body {
   width: 100%;
   height: 100%;
+  margin:  0;
+  overflow:  hidden;
 }
 * {
   box-sizing: content-box;
 }
 
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    height: 46px;
+}
+
+main {
+    flex: auto;
+ }
+
+footer {
+    height: 100px;
+}
+/*
 canvas {
   bottom: 0;
   width: calc(100% - 16px);
@@ -64,7 +83,7 @@ pre.text,
 .container {
   font-size: 12px;
   color: #cccccc;
-  overflow: visible;
+  overflow: auto;
   margin: 0;
   padding: 0;
   border: 1px solid black;
@@ -76,7 +95,18 @@ pre.text,
   grid-gap: 0px;
   grid-template-columns: auto 1fr;
 }
-
+/*header {
+   position: fixed;
+  top: 0px;
+  padding: 8px 0;
+}
+main {
+  width:  100vw;
+  height:  100vh;
+  overflow:  hidden;
+  padding: 46px 0 0 0;
+}
+*/
 .header {
   color: white;
   text-shadow: 1px 1px 1px #000000;
@@ -85,7 +115,6 @@ pre.text,
   margin: -1px 0 0 0;
   font-size: 1.5em;
   padding: 2px;
-  /*grid-column: 1 / span 2;*/
 }
 
 .text {
@@ -97,7 +126,6 @@ pre.text,
 }
 .lineno.active {
   font-weight: bold;
-/*  color: hsl(60, 100%, 60%);*/
   background-image: url(/static/svg/stackframe-active.svg);
   background-size: auto 100%;
   background-position: center left;
@@ -117,7 +145,6 @@ blahbutton {
   white-space: -moz-pre-wrap;
   white-space: pre-wrap;
   white-space: pre\9;
-  /*word-break: keep-all;*/
 }
 .button {
   padding: 0;
@@ -181,7 +208,6 @@ span.regexpLiteral {
 }
 
 .buttons {
-  /* background: linear-gradient(90deg, hsla(220, 50%, 10%, 0.5) 0%, hsla(220, 50%, 30%, 0.5) 100%);*/
   z-index: 100000;
 }
 
@@ -197,3 +223,4 @@ span.regexpLiteral {
 .panel.list < .file {
   background: white;
 }
+*/
