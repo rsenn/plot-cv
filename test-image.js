@@ -1,4 +1,3 @@
-
 import { Point, Size, Contour, Rect, Line, TickMeter, Mat, CLAHE, Draw } from 'opencv';
 import * as cv from 'opencv';
 import { VideoSource } from './qjs-opencv/js/cvVideo.js';
@@ -16,6 +15,7 @@ import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSO
 import { MakeSVG, SaveSVG } from './image-helpers.js';
 import {ImagePipeline} from './imagePipeline.js';
 import { Profiler } from './time-helpers.js';
+import { SaveConfig, LoadConfig } from './config.js';
 
 let rainbow;
 let zoom = 1;

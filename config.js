@@ -1,7 +1,6 @@
 import * as std from 'std';
 import inspect from 'inspect';
 import { memoize } from './lib/misc.js';
-import { SaveConfig,  LoadConfig } from './config.js';
 
 let basename = memoize(() => process.argv[1].replace(/\.js$/, ''));
 
