@@ -454,11 +454,7 @@ function SaveLibraries() {
   const libraryNames = Util.unique([...schematic.libraries, ...board.libraries].map(([n, e]) => n));
   console.log('libraryNames', libraryNames);
 
-  const libraries = libraryNames.map(name => [
-    name,
-    schematic.libraries[name],
-    board.libraries[name]
-  ]);
+  const libraries = libraryNames.map(name => [name, schematic.libraries[name], board.libraries[name]]);
   for(let [name, ...libs] of libraries) {
     let obj = { symbols: [], packages: [], devicesets: [] };
 
@@ -556,9 +552,7 @@ async function testEagle(filename) {
       (schematic &&
         schematic.sheets &&
         [...schematic.sheets]
-          .map(e =>
-            [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)
-          )
+          .map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined))
           .flat()) ||
       []
   };
@@ -727,13 +721,7 @@ async function main(...args) {
 
   Object.assign(globalThis, {
     load(filename, project = globalThis.project) {
-      globalThis.document = new EagleDocument(
-        fs.readFileSync(filename, 'utf-8'),
-        project,
-        filename,
-        null,
-        fs
-      );
+      globalThis.document = new EagleDocument(fs.readFileSync(filename, 'utf-8'), project, filename, null, fs);
     },
     newProject(filename) {
       if(!globalThis.project) globalThis.project = new EagleProject(null);

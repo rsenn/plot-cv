@@ -9,8 +9,7 @@ class Elf64_Ehdr extends ArrayBuffer {
 
   /* 0: unsigned char [16] e_ident */
   set e_ident(value) {
-    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer)
-      value = toPointer(value);
+    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = toPointer(value);
     new Uint8Array(this, 0)[0] = value;
   }
   get e_ident() {
@@ -19,8 +18,7 @@ class Elf64_Ehdr extends ArrayBuffer {
 
   /* 4: Elf64_Half (unsigned short) e_type */
   set e_type(value) {
-    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer)
-      value = toPointer(value);
+    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = toPointer(value);
     new Int16Array(this, 4)[0] = value;
   }
   get e_type() {
@@ -29,8 +27,7 @@ class Elf64_Ehdr extends ArrayBuffer {
 
   /* 8: Elf64_Half (unsigned short) e_machine */
   set e_machine(value) {
-    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer)
-      value = toPointer(value);
+    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = toPointer(value);
     new Int16Array(this, 8)[0] = value;
   }
   get e_machine() {
@@ -39,8 +36,7 @@ class Elf64_Ehdr extends ArrayBuffer {
 
   /* 12: Elf64_Word (unsigned int) e_version */
   set e_version(value) {
-    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer)
-      value = toPointer(value);
+    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = toPointer(value);
     new Int32Array(this, 12)[0] = value;
   }
   get e_version() {
@@ -49,8 +45,7 @@ class Elf64_Ehdr extends ArrayBuffer {
 
   /* 16: Elf64_Addr (unsigned long) e_entry */
   set e_entry(value) {
-    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer)
-      value = toPointer(value);
+    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = toPointer(value);
     new BigInt64Array(this, 16)[0] = BigInt(value);
   }
   get e_entry() {
@@ -59,8 +54,7 @@ class Elf64_Ehdr extends ArrayBuffer {
 
   /* 24: Elf64_Off (unsigned long) e_phoff */
   set e_phoff(value) {
-    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer)
-      value = toPointer(value);
+    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = toPointer(value);
     new BigInt64Array(this, 24)[0] = BigInt(value);
   }
   get e_phoff() {
@@ -69,8 +63,7 @@ class Elf64_Ehdr extends ArrayBuffer {
 
   /* 32: Elf64_Off (unsigned long) e_shoff */
   set e_shoff(value) {
-    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer)
-      value = toPointer(value);
+    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = toPointer(value);
     new BigInt64Array(this, 32)[0] = BigInt(value);
   }
   get e_shoff() {
@@ -79,8 +72,7 @@ class Elf64_Ehdr extends ArrayBuffer {
 
   /* 40: Elf64_Word (unsigned int) e_flags */
   set e_flags(value) {
-    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer)
-      value = toPointer(value);
+    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = toPointer(value);
     new Int32Array(this, 40)[0] = value;
   }
   get e_flags() {
@@ -89,8 +81,7 @@ class Elf64_Ehdr extends ArrayBuffer {
 
   /* 44: Elf64_Half (unsigned short) e_ehsize */
   set e_ehsize(value) {
-    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer)
-      value = toPointer(value);
+    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = toPointer(value);
     new Int16Array(this, 44)[0] = value;
   }
   get e_ehsize() {
@@ -99,8 +90,7 @@ class Elf64_Ehdr extends ArrayBuffer {
 
   /* 48: Elf64_Half (unsigned short) e_phentsize */
   set e_phentsize(value) {
-    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer)
-      value = toPointer(value);
+    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = toPointer(value);
     new Int16Array(this, 48)[0] = value;
   }
   get e_phentsize() {
@@ -109,8 +99,7 @@ class Elf64_Ehdr extends ArrayBuffer {
 
   /* 52: Elf64_Half (unsigned short) e_phnum */
   set e_phnum(value) {
-    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer)
-      value = toPointer(value);
+    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = toPointer(value);
     new Int16Array(this, 52)[0] = value;
   }
   get e_phnum() {
@@ -119,8 +108,7 @@ class Elf64_Ehdr extends ArrayBuffer {
 
   /* 56: Elf64_Half (unsigned short) e_shentsize */
   set e_shentsize(value) {
-    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer)
-      value = toPointer(value);
+    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = toPointer(value);
     new Int16Array(this, 56)[0] = value;
   }
   get e_shentsize() {
@@ -129,8 +117,7 @@ class Elf64_Ehdr extends ArrayBuffer {
 
   /* 60: Elf64_Half (unsigned short) e_shnum */
   set e_shnum(value) {
-    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer)
-      value = toPointer(value);
+    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = toPointer(value);
     new Int16Array(this, 60)[0] = value;
   }
   get e_shnum() {
@@ -139,8 +126,7 @@ class Elf64_Ehdr extends ArrayBuffer {
 
   /* 64: Elf64_Half (unsigned short) e_shstrndx */
   set e_shstrndx(value) {
-    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer)
-      value = toPointer(value);
+    if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = toPointer(value);
     new Int16Array(this, 64)[0] = value;
   }
   get e_shstrndx() {

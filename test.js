@@ -161,7 +161,7 @@ async function main(...args) {
       .toString(2)
   );
 
-  let input = cv.imread('3daaffa22db97a9394054e9e9bdb6837_20170930_120917.jpg');
+  let input = cv.imread(args[0] ?? '3daaffa22db97a9394054e9e9bdb6837_20170930_120917.jpg');
   let output = new Mat();
 
   detectEdges(input, output);

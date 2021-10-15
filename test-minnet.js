@@ -1,4 +1,5 @@
-import { client, server, fetch } from 'net';
+import { client, server, fetch, setLog } from 'net';
+import { concat, escape, quote, toString, toArrayBuffer } from 'util';
 import Util from './lib/util.js';
 import { Console } from 'console';
 
@@ -26,23 +27,55 @@ function CreateServer() {
 
 function CreateClient() {
   print('CLIENT');
-  client({
-    port: 7981,
-    server: 'localhost',
-    onConnect: socket => {
-      print('Connected to server');
-      socket.send('Hello from client');
+  // setLog(() => {});
+  setLog((level, ...args) => (level > 256 ? console.log('WSI', ...args) : null));
+
+  let url;
+  url = 'https://127.0.0.1:9000/debugger-client.js';
+  url = 'ws://127.0.0.1:9000/';
+  let cl;
+
+  cl = client(url, {
+    sslCA: 'warmcat.com.cer',
+    onMessage(ws, msg) {
+      /*    console.log('onMessage', ws, escape(msg.slice(0, 30)));*/
+      console.log('data:', quote(msg, "'"));
     },
-    onMessage: (socket, msg) => {
-      print('Received from server: ', msg);
+    onConnect(ws, req) {
+      console.log('onConnect', ws, req);
+
+      os.setReadHandler(0, () => {
+        let rbuf = new ArrayBuffer(1024);
+        let ret = os.read(0, rbuf, 0, 1024);
+        console.log('os.read() =', ret);
+        if(ret === 0) {
+          os.setReadHandler(0, null);
+          return;
+        }
+        let data = toString(rbuf, 0, ret);
+        console.log('Read:', data.trimRight());
+        ws.send(data);
+      });
+      let n = 0;
+      os.signal(os.SIGINT, () => {
+        if(n++ < 1) console.log('(Press Ctrl-C again to quit)');
+        else ws.close();
+      });
     },
-    onClose: why => {
-      print('Disconnected from server. Reason: ', why);
+    onPong(ws, req) {
+      console.log('onPong', ws, req);
     },
-    onPong: (socket, data) => {
-      print('Pong: ', data);
+    onClose(ws, req) {
+      console.log('onClose', ws, req);
+      std.exit(0);
+    },
+    onFd(fd, rd, wr) {
+      //console.log('onFd', fd, rd, wr);
+      os.setReadHandler(fd, rd);
+      os.setWriteHandler(fd, wr);
     }
   });
+  return cl;
 }
 
 function getJSON() {
@@ -61,18 +94,29 @@ function getJSON() {
   return data;
 }
 
-async function main(...args) {
+function main(...args) {
+  globalThis.console = new Console({ inspectOptions: { compact: 2, customInspect: true } });
+  let ws;
   switch (args[0]) {
     case 's':
-      CreateServer();
+      ws = CreateServer();
       break;
     case 'c':
-      CreateClient();
+      ws = CreateClient();
       break;
     case 'f':
-      getJSON();
+      ws = getJSON();
       break;
   }
+  console.log('ws', ws);
 }
 
-Util.callMain(main, true);
+try {
+  main(...scriptArgs.slice(1));
+} catch(error) {
+  console.log(`FAIL: ${error?.message ?? error}\n${error?.stack}`);
+  1;
+  std.exit(1);
+} finally {
+  //console.log('SUCCESS');
+}

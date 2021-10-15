@@ -2,7 +2,7 @@ import * as deep from './lib/deep.js';
 import * as fs from './lib/filesystem.js';
 import * as path from './lib/path.js';
 import Util from './lib/util.js';
-import { toString, define, escape } from './lib/misc.js';
+import { toString, define, escape, quote } from './lib/misc.js';
 import { EventEmitter } from './lib/events.js';
 
 const cfg = (obj = {}) => console.config({ compact: false, breakLength: Infinity, ...obj });
@@ -50,7 +50,8 @@ export class DebuggerProtocol extends EventEmitter {
           const { id, name, filename, line } = frame;
           let code, location, wd;
           wd = process.cwd();
-          location = filename && filename[0] == '/' ? path.relative(filename, process.cwd()) : filename;
+          location =
+            filename && filename[0] == '/' ? path.relative(filename, process.cwd()) : filename;
           if(typeof line == 'number') {
             code = this.getFile(location)?.[line - 1];
             location += ':' + line;
@@ -154,14 +155,18 @@ export class DebuggerProtocol extends EventEmitter {
     let len = toString(lengthBuf);
     let size = parseInt(len, 16);
     let jsonBuf = new ArrayBuffer(size);
-    console.log('read size', size);
-    r = await sock.recv(jsonBuf);
-    if(r <= 0) {
-      if(r < 0 && sock.errno != sock.EAGAIN) throw sock.error;
-      return null;
+    console.log('read size', isNaN(size) ? quote(len, "'") : size);
+    let n = 0;
+    while(n < size) {
+      r = await sock.recv(jsonBuf, n, size - n);
+      if(r <= 0) {
+        if(r < 0 && sock.errno != sock.EAGAIN) throw sock.error;
+        return null;
+      }
+      n += r;
     }
-    console.log('read r =', r);
-    return toString(jsonBuf.slice(0, r));
+    //console.log('read r =', r);
+    return toString(jsonBuf.slice(0, n));
   }
 
   static send(sock, msg) {
@@ -214,7 +219,12 @@ export class DebuggerProtocol extends EventEmitter {
 }
 
 function retValue(ret, ...args) {
-  console.log(...args, `ret =`, ret, ...(ret == -1 ? [' errno =', errno(), ' error =', std.strerror(errno())] : []));
+  console.log(
+    ...args,
+    `ret =`,
+    ret,
+    ...(ret == -1 ? [' errno =', errno(), ' error =', std.strerror(errno())] : [])
+  );
 }
 
 function toHex(n, b = 2) {
@@ -237,7 +247,11 @@ function MakeArray(buf, numBytes) {
 function ArrayBufToHex(buf, numBytes = 8) {
   if(typeof buf == 'object' && buf != null && buf instanceof ArrayBuffer) {
     let arr = MakeArray(buf, numBytes);
-    return arr.reduce((s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)), '');
+    return arr.reduce(
+      (s, code) =>
+        (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
+      ''
+    );
   }
   return buf;
 }

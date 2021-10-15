@@ -7,10 +7,7 @@ import Util from './lib/util.js';
 import * as path from './lib/path.js';
 import * as deep from './lib/deep.js';
 import { Socket, IPPROTO_TCP } from './quickjs/qjs-ffi/lib/socket.js';
-import {
-  toString as ArrayBufferToString,
-  toArrayBuffer as StringToArrayBuffer
-} from './lib/misc.js';
+import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
 
 var worker;
 var counter;

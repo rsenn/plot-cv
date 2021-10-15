@@ -38,9 +38,7 @@ async function main(...args) {
         log(...args) {
           console.debug(
             'console.log(',
-            ...args
-              .map(arg => `'${arg}'`)
-              .reduce((acc, arg) => (acc ? [...acc, ',', arg] : [arg]), null),
+            ...args.map(arg => `'${arg}'`).reduce((acc, arg) => (acc ? [...acc, ',', arg] : [arg]), null),
             ')'
           );
         }

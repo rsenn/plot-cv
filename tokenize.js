@@ -143,9 +143,7 @@ export async function* tokenize(streamOfText) {
   lexer.addRule(tokenRules['int'], lexeme =>
     token({ lexeme, loc: { line, column }, tokenClass: 'INT', keyword: true })
   );
-  lexer.addRule(tokenRules['if'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'IF', keyword: true })
-  );
+  lexer.addRule(tokenRules['if'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'IF', keyword: true }));
   lexer.addRule(tokenRules['goto'], lexeme =>
     token({ lexeme, loc: { line, column }, tokenClass: 'GOTO', keyword: true })
   );
@@ -177,9 +175,7 @@ export async function* tokenize(streamOfText) {
       keyword: true
     })
   );
-  lexer.addRule(tokenRules['do'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'DO', keyword: true })
-  );
+  lexer.addRule(tokenRules['do'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'DO', keyword: true }));
   lexer.addRule(tokenRules['default'], lexeme =>
     token({
       lexeme,
@@ -246,21 +242,11 @@ export async function* tokenize(streamOfText) {
       keyword: true
     })
   );
-  lexer.addRule(tokenRules['identifier'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'IDENTIFIER' })
-  );
-  lexer.addRule(tokenRules['hexadecimal'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'CONSTANT' })
-  );
-  lexer.addRule(tokenRules['octal'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'CONSTANT' })
-  );
-  lexer.addRule(tokenRules['decimal'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'CONSTANT' })
-  );
-  lexer.addRule(tokenRules['char_literal'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'CONSTANT' })
-  );
+  lexer.addRule(tokenRules['identifier'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'IDENTIFIER' }));
+  lexer.addRule(tokenRules['hexadecimal'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'CONSTANT' }));
+  lexer.addRule(tokenRules['octal'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'CONSTANT' }));
+  lexer.addRule(tokenRules['decimal'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'CONSTANT' }));
+  lexer.addRule(tokenRules['char_literal'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'CONSTANT' }));
   lexer.addRule(tokenRules['floatWithoutPoint'], lexeme =>
     token({ lexeme, loc: { line, column }, tokenClass: 'CONSTANT' })
   );
@@ -273,150 +259,58 @@ export async function* tokenize(streamOfText) {
   lexer.addRule(tokenRules['string_literal'], lexeme =>
     token({ lexeme, loc: { line, column }, tokenClass: 'STRING_LITERAL' })
   );
-  lexer.addRule(tokenRules['ellipsis'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'ELLIPSIS' })
-  );
+  lexer.addRule(tokenRules['ellipsis'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'ELLIPSIS' }));
   lexer.addRule(tokenRules['right_assign'], lexeme =>
     token({ lexeme, loc: { line, column }, tokenClass: 'RIGHT_ASSIGN' })
   );
   lexer.addRule(tokenRules['left_assign'], lexeme =>
     token({ lexeme, loc: { line, column }, tokenClass: 'LEFT_ASSIGN' })
   );
-  lexer.addRule(tokenRules['add_assign'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'ADD_ASSIGN' })
-  );
-  lexer.addRule(tokenRules['sub_assign'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'SUB_ASSIGN' })
-  );
-  lexer.addRule(tokenRules['mul_assign'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'MUL_ASSIGN' })
-  );
-  lexer.addRule(tokenRules['div_assign'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'DIV_ASSIGN' })
-  );
-  lexer.addRule(tokenRules['mod_assign'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'MOD_ASSIGN' })
-  );
-  lexer.addRule(tokenRules['and_assign'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'AND_ASSIGN' })
-  );
-  lexer.addRule(tokenRules['xor_assign'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'XOR_ASSIGN' })
-  );
-  lexer.addRule(tokenRules['or_assign'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'OR_ASSIGN' })
-  );
-  lexer.addRule(tokenRules['right_op'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'RIGHT_OP' })
-  );
-  lexer.addRule(tokenRules['left_op'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'LEFT_OP' })
-  );
-  lexer.addRule(tokenRules['inc_op'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'INC_OP' })
-  );
-  lexer.addRule(tokenRules['dec_op'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'DEC_OP' })
-  );
-  lexer.addRule(tokenRules['ptr_op'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'PTR_OP' })
-  );
-  lexer.addRule(tokenRules['and_op'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'AND_OP' })
-  );
-  lexer.addRule(tokenRules['or_op'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'OR_OP' })
-  );
-  lexer.addRule(tokenRules['le_op'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'LE_OP' })
-  );
-  lexer.addRule(tokenRules['ge_op'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'GE_OP' })
-  );
-  lexer.addRule(tokenRules['eq_op'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'EQ_OP' })
-  );
-  lexer.addRule(tokenRules['ne_op'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'NE_OP' })
-  );
-  lexer.addRule(tokenRules[';'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: ';' })
-  );
-  lexer.addRule(tokenRules['{'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: '{' })
-  );
-  lexer.addRule(tokenRules['}'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: '}' })
-  );
-  lexer.addRule(tokenRules[','], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: ',' })
-  );
-  lexer.addRule(tokenRules[':'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: ':' })
-  );
-  lexer.addRule(tokenRules['='], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: '=' })
-  );
-  lexer.addRule(tokenRules['('], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: '(' })
-  );
-  lexer.addRule(tokenRules[')'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: ')' })
-  );
-  lexer.addRule(tokenRules['['], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: '[' })
-  );
-  lexer.addRule(tokenRules[']'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: ']' })
-  );
-  lexer.addRule(tokenRules['.'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: '.' })
-  );
-  lexer.addRule(tokenRules['&'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: '&' })
-  );
-  lexer.addRule(tokenRules['!'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: '!' })
-  );
-  lexer.addRule(tokenRules['~'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: '~' })
-  );
-  lexer.addRule(tokenRules['-'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: '-' })
-  );
-  lexer.addRule(tokenRules['+'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: '+' })
-  );
-  lexer.addRule(tokenRules['*'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: '*' })
-  );
-  lexer.addRule(tokenRules['/'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: '/' })
-  );
-  lexer.addRule(tokenRules['%'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: '%' })
-  );
-  lexer.addRule(tokenRules['<'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: '<' })
-  );
-  lexer.addRule(tokenRules['>'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: '>' })
-  );
-  lexer.addRule(tokenRules['^'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: '^' })
-  );
-  lexer.addRule(tokenRules['|'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: '|' })
-  );
-  lexer.addRule(tokenRules['?'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: '?' })
-  );
-  lexer.addRule(tokenRules['whitespace'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'WHITESPACE' })
-  );
-  lexer.addRule(tokenRules['unmatched'], lexeme =>
-    token({ lexeme, loc: { line, column }, tokenClass: 'UNMATCHED' })
-  );
+  lexer.addRule(tokenRules['add_assign'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'ADD_ASSIGN' }));
+  lexer.addRule(tokenRules['sub_assign'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'SUB_ASSIGN' }));
+  lexer.addRule(tokenRules['mul_assign'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'MUL_ASSIGN' }));
+  lexer.addRule(tokenRules['div_assign'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'DIV_ASSIGN' }));
+  lexer.addRule(tokenRules['mod_assign'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'MOD_ASSIGN' }));
+  lexer.addRule(tokenRules['and_assign'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'AND_ASSIGN' }));
+  lexer.addRule(tokenRules['xor_assign'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'XOR_ASSIGN' }));
+  lexer.addRule(tokenRules['or_assign'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'OR_ASSIGN' }));
+  lexer.addRule(tokenRules['right_op'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'RIGHT_OP' }));
+  lexer.addRule(tokenRules['left_op'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'LEFT_OP' }));
+  lexer.addRule(tokenRules['inc_op'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'INC_OP' }));
+  lexer.addRule(tokenRules['dec_op'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'DEC_OP' }));
+  lexer.addRule(tokenRules['ptr_op'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'PTR_OP' }));
+  lexer.addRule(tokenRules['and_op'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'AND_OP' }));
+  lexer.addRule(tokenRules['or_op'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'OR_OP' }));
+  lexer.addRule(tokenRules['le_op'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'LE_OP' }));
+  lexer.addRule(tokenRules['ge_op'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'GE_OP' }));
+  lexer.addRule(tokenRules['eq_op'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'EQ_OP' }));
+  lexer.addRule(tokenRules['ne_op'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'NE_OP' }));
+  lexer.addRule(tokenRules[';'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: ';' }));
+  lexer.addRule(tokenRules['{'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: '{' }));
+  lexer.addRule(tokenRules['}'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: '}' }));
+  lexer.addRule(tokenRules[','], lexeme => token({ lexeme, loc: { line, column }, tokenClass: ',' }));
+  lexer.addRule(tokenRules[':'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: ':' }));
+  lexer.addRule(tokenRules['='], lexeme => token({ lexeme, loc: { line, column }, tokenClass: '=' }));
+  lexer.addRule(tokenRules['('], lexeme => token({ lexeme, loc: { line, column }, tokenClass: '(' }));
+  lexer.addRule(tokenRules[')'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: ')' }));
+  lexer.addRule(tokenRules['['], lexeme => token({ lexeme, loc: { line, column }, tokenClass: '[' }));
+  lexer.addRule(tokenRules[']'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: ']' }));
+  lexer.addRule(tokenRules['.'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: '.' }));
+  lexer.addRule(tokenRules['&'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: '&' }));
+  lexer.addRule(tokenRules['!'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: '!' }));
+  lexer.addRule(tokenRules['~'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: '~' }));
+  lexer.addRule(tokenRules['-'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: '-' }));
+  lexer.addRule(tokenRules['+'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: '+' }));
+  lexer.addRule(tokenRules['*'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: '*' }));
+  lexer.addRule(tokenRules['/'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: '/' }));
+  lexer.addRule(tokenRules['%'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: '%' }));
+  lexer.addRule(tokenRules['<'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: '<' }));
+  lexer.addRule(tokenRules['>'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: '>' }));
+  lexer.addRule(tokenRules['^'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: '^' }));
+  lexer.addRule(tokenRules['|'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: '|' }));
+  lexer.addRule(tokenRules['?'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: '?' }));
+  lexer.addRule(tokenRules['whitespace'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'WHITESPACE' }));
+  lexer.addRule(tokenRules['unmatched'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'UNMATCHED' }));
 
   lexer.setInput(streamOfText);
   var x = lexer.lex();

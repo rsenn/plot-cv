@@ -1,16 +1,4 @@
-import {
-  choice,
-  seq,
-  token,
-  char,
-  regex,
-  option,
-  any,
-  many,
-  eof,
-  ignore,
-  invert
-} from './lib/parse/fn.js';
+import { choice, seq, token, char, regex, option, any, many, eof, ignore, invert } from './lib/parse/fn.js';
 
 function wrap(parser, name) {
   return (str, pos) => {
@@ -90,10 +78,7 @@ function RBRACK(...args) {
 }
 
 function LINE_COMMENT(...args) {
-  return wrap(
-    seq(token(';'), invert(any(choice(char('\n'), char('\r'))))),
-    'LINE_COMMENT'
-  )(...args);
+  return wrap(seq(token(';'), invert(any(choice(char('\n'), char('\r'))))), 'LINE_COMMENT')(...args);
 }
 
 function WS(...args) {

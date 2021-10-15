@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 12.7 12.7">
+  <defs>
+    <marker id="restart_svg__a" orient="auto" overflow="visible">
+      <path fill-rule="evenodd" stroke="#000" stroke-width=".2pt" d="M1.154 0l-1.73 1v-2l1.73 1z"/>
+    </marker>
+  </defs>
+  <g>
+    <path fill="none" stroke="#000" stroke-width="1.024" marker-end="url(#restart_svg__a)" d="M2.535 292.36c.492 1.137 1.517 1.926 2.456 2.264 1.85.665 4.252-.214 5.15-2.336a4.172 4.172 0 10-7.686-3.25" transform="translate(0 -284.3)"/>
+  </g>
+</svg>

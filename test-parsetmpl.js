@@ -278,13 +278,8 @@ async function main(...args) {
       console.log('commentMap:', commentMap);
 
       const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral);
-      const taggedTemplates = templates.filter(
-        ([path, node]) => path[path.length - 1] == 'arguments'
-      );
-      const taggedCalls = taggedTemplates.map(([path, node]) => [
-        path.up(),
-        deep.get(ast, path.up())
-      ]);
+      const taggedTemplates = templates.filter(([path, node]) => path[path.length - 1] == 'arguments');
+      const taggedCalls = taggedTemplates.map(([path, node]) => [path.up(), deep.get(ast, path.up())]);
 
       console.log('taggedCalls:', taggedCalls);
       console.log(

@@ -28,6 +28,7 @@
     "x/quickjs/qjs-ffi/examples/socket.js": "sockets",
     "quickjs/qjs-ffi/lib/socket.js": "sockets",
     "lib/events.js": "events",
+    "lib/preact.mjs": "lib/preact.esm.js",
     "lib/preact.js": "lib/preact.esm.js"
   },
   "author": "Roman Senn <roman.l.senn@gmail.com>",
@@ -56,6 +57,7 @@
     "node-bpg": "^1.0.0",
     "preact": "^10.4.1",
     "preact-compat": "^3.19.0",
+    "preact-fluid": "^0.9.1",
     "preact-ssr-prepass": "^1.1.2",
     "prism-react-renderer": "^1.2.1",
     "promisify-child-process": "^4.1.1",

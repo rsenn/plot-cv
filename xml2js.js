@@ -101,8 +101,7 @@ async function main(...args) {
         let { attributes } = parent;
         delete parent.attributes;
 
-        for(let key in attributes)
-          if(!isNaN(+attributes[key])) attributes[key] = +attributes[key];
+        for(let key in attributes) if(!isNaN(+attributes[key])) attributes[key] = +attributes[key];
 
         tree.replace(parent, { ...parent, ...attributes });
       }

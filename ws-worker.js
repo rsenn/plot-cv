@@ -19,10 +19,7 @@ function WorkerMain() {
   if(parent) {
     log(
       'WorkerMain.parent',
-      Object.getOwnPropertyNames(Object.getPrototypeOf(parent)).reduce(
-        (acc, n) => ({ ...acc, [n]: parent[n] }),
-        {}
-      )
+      Object.getOwnPropertyNames(Object.getPrototypeOf(parent)).reduce((acc, n) => ({ ...acc, [n]: parent[n] }), {})
     );
 
     parent.onmessage = e => HandleMessage.call(parent, e);
@@ -63,20 +60,9 @@ function CreateServer({
   setLog(LLL_USER | ((LLL_NOTICE << 1) - 1), (level, ...args) => {
     let output = [
       (
-        [
-          'ERR',
-          'WARN',
-          'NOTICE',
-          'INFO',
-          'DEBUG',
-          'PARSER',
-          'HEADER',
-          'EXT',
-          'CLIENT',
-          'LATENCY',
-          'MINNET',
-          'THREAD'
-        ][Math.log2(level)] ?? level + ''
+        ['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][
+          Math.log2(level)
+        ] ?? level + ''
       ).padEnd(8),
       ...args
     ];

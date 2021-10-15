@@ -49,9 +49,7 @@ function main(...args) {
         false,
         (v, r, o) => {
           console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
-          console.log(
-            o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n')
-          );
+          console.log(o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n'));
           Util.exit(0);
         },
         'h'

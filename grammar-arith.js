@@ -1,17 +1,4 @@
-import {
-  choice,
-  seq,
-  token,
-  char,
-  regex,
-  option,
-  any,
-  many,
-  eof,
-  ignore,
-  concat,
-  invert
-} from './lib/parse/fn.js';
+import { choice, seq, token, char, regex, option, any, many, eof, ignore, concat, invert } from './lib/parse/fn.js';
 
 function wrap(parser, name) {
   return (str, pos) => {
@@ -49,10 +36,7 @@ function unaryExpression(...args) {
 }
 
 function unaryOperator(...args) {
-  return wrap(
-    choice(token('&'), token('*'), token('+'), token('-'), token('~'), token('!')),
-    'unaryOperator'
-  )(...args);
+  return wrap(choice(token('&'), token('*'), token('+'), token('-'), token('~'), token('!')), 'unaryOperator')(...args);
 }
 
 function castExpression(...args) {
@@ -101,10 +85,7 @@ function logicalOrExpression(...args) {
 
 function conditionalExpression(...args) {
   return wrap(
-    choice(
-      logicalOrExpression,
-      seq(logicalOrExpression, token('?'), expression, token(':'), conditionalExpression)
-    ),
+    choice(logicalOrExpression, seq(logicalOrExpression, token('?'), expression, token(':'), conditionalExpression)),
     'conditionalExpression'
   )(...args);
 }

@@ -5,26 +5,31 @@ import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './qjs-opencv/
 import { HSLA } from './lib/color.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import fs from 'fs';
+import { format } from 'util';
+import * as xml from 'xml';
 import Console from 'console';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
-import {
-  WeakMapper,
-  Modulo,
-  WeakAssign,
-  BindMethods,
-  BitsToNames,
-  FindKey,
-  Define,
-  Once,
-  GetOpt,
-  RoundTo,
-  Range
-} from './qjs-opencv/js/cvUtils.js';
+import { SaveConfig,  LoadConfig } from './config.js';
+import SvgPath from './lib/svg/path.js';
+import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Define, Once, GetOpt, RoundTo, Range } from './qjs-opencv/js/cvUtils.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
+import { MakeSVG, SaveSVG } from './image-helpers.js';
+import { Profiler } from './time-helpers.js';
 
 let rainbow;
 let zoom = 1;
 let debug = false;
 let basename = process.argv[1].replace(/\.js$/, '');
+
+let simplifyMethods = {
+  NTH_POINT: c => c.simplifyNthPoint(2),
+  RADIAL_DISTANCE: c => c.simplifyRadialDistance(10),
+  PERPENDICULAR_DISTANCE: c => c.simplifyPerpendicularDistance(20),
+  REUMANN_WITKAM: c => c.simplifyReumannWitkam(),
+  OPHEIM: c => c.simplifyOpheim(),
+  LANG: c => c.simplifyLang(),
+  DOUGLAS_PEUCKER: c => c.simplifyDouglasPeucker()
+};
 
 function Hierarchy(array) {
   if(array instanceof Int32Array)
@@ -46,29 +51,6 @@ Object.assign(Hierarchy.prototype, {
     prev(id) { const a = this.index(id); return a[cv.HIER_PREV]; }
   });
 
-function SaveConfig(configObj) {
-  configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v]));
-  let file = std.open(basename + '.config.json', 'w+b');
-  file.puts(JSON.stringify(configObj, null, 2) + '\n');
-  file.close();
-  console.log(
-    `Saved config to '${basename + '.config.json'}'`,
-    inspect(configObj, { compact: false })
-  );
-}
-
-function LoadConfig() {
-  let str = std.loadFile(basename + '.config.json');
-  let configObj = JSON.parse(str || '{}');
-
-  configObj = Object.fromEntries(
-    Object.entries(configObj)
-      .map(([k, v]) => [k, +v])
-      .filter(([k, v]) => !isNaN(v))
-  );
-  console.log('LoadConfig:', inspect(configObj, { compact: false }));
-  return configObj;
-}
 
 function getConstants(names) {
   return Object.fromEntries(names.map(name => [name, '0x' + cv[name].toString(16)]));
@@ -144,59 +126,21 @@ function* walkContours(hier, id) {
     id = h[cv.HIER_NEXT];
   }
 }
-
-function Profiler(name, ticks = () => cv.getTickCount(), freq = cv.getTickFrequency()) {
-  let self,
-    i = 0,
-    prev,
-    start = ticks();
-
-  self = function(label = `#${i}`) {
-    let t = ticks();
-    let split = t - (prev || start);
-    if(prev) console.log(`${name} ${printTime(split).padEnd(6)} ${label}`);
-    i++;
-    return (prev = t);
-  };
-
-  Define(self, {
-    /* prettier-ignore */ get elapsed() {
-      let t = ticks();
-      return t - start;
-    },
-    /* prettier-ignore */ get lap() {
-      let t = ticks();
-      return t - (prev || start);
-    }
-  });
-
-  function printTime(t) {
-    let time, unit;
-    if(t < freq * 1e-7) {
-      time = t / (freq * 1e-9);
-      unit = 'ns';
-    } else if(t < freq * 1e-4) {
-      time = t / (freq * 1e-6);
-      unit = '\u00b5s';
-    } else if(t < freq * 1e-1) {
-      time = t / (freq * 1e-3);
-      unit = 'ms';
-    } else {
-      time = t / freq;
-      unit = 's';
-    }
-    return time.toFixed(4 - Math.max(1, Math.ceil(Math.log10(time)))) + unit;
-  }
-
-  return self;
-}
+1
 
 function main(...args) {
   let start;
   let running = true;
   let paused = false;
 
-  globalThis.console = new Console({ colors: true, depth: 1, maxArrayLength: 30 });
+  globalThis.console = new Console({
+    colors: true,
+    depth: 1,
+    maxArrayLength: 30,
+    compact: 1
+  });
+  const { DISPLAY } = process.env;
+  console.log('DISPLAY', DISPLAY);
 
   let opts = GetOpt(
     {
@@ -247,10 +191,7 @@ function main(...args) {
   let win = new Window('gray', cv.WINDOW_NORMAL /*| cv.WINDOW_AUTOSIZE | cv.WINDOW_KEEPRATIO*/);
   //console.debug('Mouse :', { MouseEvents, MouseFlags });
 
-  const printFlags = flags => [...BitsToNames(MouseFlags)];
-  /*console.log('printFlags:', printFlags + '');
-  console.log('tickFrequency:', cv.getTickFrequency());*/
-
+  const printFlags = flags => [...BitsToNames(MouseFlags)]; 
   win.setMouseCallback(function (event, x, y, flags) {
     event = Mouse.printEvent(event);
     flags = Mouse.printFlags(flags);
@@ -264,9 +205,9 @@ function main(...args) {
 
   if(opts['size']) {
     video.size = new Size(...opts['size'].split('x'));
-    console.log('video.size', video.size);
-    win.resize(video.size);
   }
+  console.log('video.size', video.size);
+  win.resize(video.size);
 
   let thickness = 1;
   let font = new TextStyle(cv.FONT_HERSHEY_PLAIN, 1.0, thickness);
@@ -344,6 +285,7 @@ function main(...args) {
 
   let dst0Size, firstSize, videoSize;
   let clahe = new CLAHE(4, new Size(8, 8));
+  let framePos;
 
   let pipeline = new Pipeline(
     [
@@ -351,7 +293,10 @@ function main(...args) {
         const dstEmpty = dst.empty;
         if(dst.empty) dst0Size = dst.size;
         // console.log('video', video);
+        framePos = video.get('pos_frames');
         video.read(dst);
+        console.log('dst', dst);
+        win.show(dst);
         if(videoSize === undefined || videoSize.empty)
           videoSize = video.size.area ? video.size : dst.size;
         if(dstEmpty) firstSize = new Size(...videoSize);
@@ -398,17 +343,21 @@ function main(...args) {
       }),
       Processor(function HoughLines(src, dst) {
         let edges = pipeline.outputOf('EdgeDetect');
-        lines = new Mat(0, 0, cv.CV_32SC4);
+        let mat = new Mat(0, 0, cv.CV_32SC4);
 
         cv.HoughLinesP(
           edges,
-          lines,
+          mat,
           2,
           (+params.angleResolution * Math.PI) / 180,
           +params.threshc,
           +params.minLineLength,
           +params.maxLineGap
         );
+        lines = [...mat]; //.array;
+        // console.log('mat', mat);
+        //  console.log('lines', lines.slice(0, 10));
+        // console.log('lines.length', lines.length);
         src.copyTo(dst);
       })
     ],
@@ -497,66 +446,67 @@ function main(...args) {
         let ch = String.fromCodePoint(keyCode & 0xff);
         console.log(`keypress [${modifierList}] 0x${(keyCode & ~0xd000).toString(16)} '${ch}'`);
       }
+      let keyChar = String.fromCodePoint(key & 0xfff);
 
-      switch (key & 0xfff) {
-        case 0x3c /* < */:
+      switch (keyChar) {
+        case '<' /* < */:
           paramNav.prev();
           break;
-        case 0x3e /* > */:
+        case '>' /* > */:
           paramNav.next();
           break;
 
-        case 0x2b /* + */:
+        case '\x2b' /* + */:
           paramNav.param.increment();
           break;
-        case 0x2d /* - */:
-        case 0x2fad /* numpad - */:
+        case '\x2d' /* - */:
+        case '\x2f' /* numpad - */:
           paramNav.param.decrement();
           break;
 
-        case 0x31: /* 1 */
-        case 0x32: /* 2 */
-        case 0x33: /* 3 */
-        case 0x34: /* 4 */
-        case 0x35: /* 5 */
-        case 0x36: /* 6 */
-        case 0x37: /* 7 */
-        case 0x38: /* 8 */
-        case 0x39: /* 9 */
-        case 0x30 /* 0 */:
+        case '1': /* 1 */
+        case '2': /* 2 */
+        case '3': /* 3 */
+        case '4': /* 4 */
+        case '5': /* 5 */
+        case '6': /* 6 */
+        case '7': /* 7 */
+        case '8': /* 8 */
+        case '9': /* 9 */
+        case '0' /* 0 */:
           let v = keyCode & 0xf || 10;
           paramNav.param.alpha = v / 10;
           break;
-        case 0xa7 /* § */:
+        case '§' /* § */:
           paramNav.param.alpha = 0;
           break;
-        case 0x51: /* Q */
-        case 0x71: /* q */
+        case 'Q': /* Q */
+        case 'q': /* q */
 
-        case 0x1b:
+        case '\x1b':
           running = false;
           break;
-        case 0x20:
+        case ' ':
           paused = !paused;
           break;
-        case 0x6e: /* n */
-        case 0x4e /* N */:
+        case 'n': /* n */
+        case 'N' /* N */:
           frameShow = Modulo(frameShow + 1, pipeline.size);
           break;
-        case 0x70: /* p */
-        case 0x50 /* P */:
+        case 'p': /* p */
+        case 'P' /* P */:
           frameShow = Modulo(frameShow - 1, pipeline.size);
           break;
-        case 0xf50 /* home */:
+        case '\u0f50' /* home */:
           video.set('pos_frames', 0);
           break;
-        case 0xf57 /* end */:
+        case '\u0f57' /* end */:
           video.set('pos_frames', video.get('frame_count') - Math.round(video.fps * 3));
           break;
-        case 0xf51: /* left */
-        case 0xf53: /* right */
-        case 0xf52: /* up */
-        case 0xf54: /* down */ {
+        case '\u0f51': /* left */
+        case '\u0f53': /* right */
+        case '\u0f52': /* up */
+        case '\u0f54': /* down */ {
           const method = keyCode & 0x1 ? 'Frames' : 'Msecs';
           const distance =
             (keyCode & 0x1 ? 1 : 1000) *
@@ -574,6 +524,12 @@ function main(...args) {
               offset +
               ` distance = ${distance} pos = ${pos} (${RoundTo(video.position('%'), 0.001)}%)`
           );
+          break;
+        }
+        case 's': /* save */ {
+          console.log('contours.length', contours.length);
+          saveContours(contours, outputMat.size);
+          saveLines(lines, outputMat.size);
           break;
         }
         default: {
@@ -639,7 +595,12 @@ function main(...args) {
         `${arrow}${name}` +
         (Number.isInteger(y) ? `[${param.range.join('-')}]` : '') +
         ` = ${value}`;
-      color = color || { r: 0xb7, g: 0x35, b: 255, a: 255 };
+      color = color || {
+        r: '\xb7',
+        g: 0x35,
+        b: 255,
+        a: 255
+      };
       y = tPos.y - 20 - (y | 0);
       font.draw(over, text, [tPos.x, y], { r: 0, g: 0, b: 0, a: 255 }, params.fontThickness * 2);
       font.draw(over, text, [tPos.x, y], color, +params.fontThickness);
@@ -665,7 +626,16 @@ function main(...args) {
       for(let i = size - 1; i >= start; i--) {
         const pos = Modulo(i, size);
         const [name, param] = paramNav.at(pos);
-        drawParam(param, y, paramNav.index == pos && { r: 255, g: 255, b: 0, a: 255 });
+        drawParam(
+          param,
+          y,
+          paramNav.index == pos && {
+            r: 255,
+            g: 255,
+            b: 0,
+            a: 255
+          }
+        );
         y += 20;
       }
     } else {
@@ -701,6 +671,64 @@ function main(...args) {
 
     win.show(composite);
   }
+
+  function saveContours(contours, size) {
+    let points = contours.reduce((acc, contour, i) => {
+      //console.log('contour #' + i, contour);
+      //contour =simplifyMethods.PERPENDICULAR_DISTANCE(contour);
+      contour = simplifyMethods.RADIAL_DISTANCE(contour);
+      let array = contour.toArray();
+      //console.log('array #' + i, array.length);
+      if(array.length >= 3) {
+        let sp = new SvgPath();
+        sp.abs();
+
+        for(let i = 0; i < array.length; i += 1) {
+          const { x, y } = array[i];
+          sp[i == 0 ? 'to' : 'line'](x, y);
+        }
+        let rsp = sp.toRelative();
+        acc.push(rsp.str(2, ' ', ','));
+      }
+      return acc;
+    }, []);
+    let children = points.map(d => ({
+      tagName: 'path',
+      attributes: { d }
+    }));
+    let viewBox = [0, 0, ...size].join(' ');
+    let doc = {
+      tagName: 'svg',
+      children: [{ tagName: 'g', attributes: { stroke: 'black' }, children }],
+      attributes: {
+        xmlns: 'http://www.w3.org/2000/svg',
+        viewBox
+      }
+    };
+
+    SaveSVG('contours-' + framePos + '.svg', doc);
+  }
+
+  function saveLines(lines, size) {
+    let viewBox = [0, 0, ...size].join(' ');
+    let children = lines
+      .map(coords => new Line(...coords))
+      .map(([x1, y1, x2, y2]) => ({
+        tagName: 'line',
+        attributes: { x1, y1, x2, y2 }
+      }));
+    let doc = {
+      tagName: 'svg',
+      children: [{ tagName: 'g', attributes: { stroke: 'black' }, children }],
+      attributes: {
+        xmlns: 'http://www.w3.org/2000/svg',
+        viewBox
+      }
+    };
+
+    SaveSVG('lines-' + framePos + '.svg', doc);
+  }
+
   const {
     ksize,
     thresh1,
@@ -749,7 +777,7 @@ function main(...args) {
 try {
   main(...scriptArgs.slice(1));
 } catch(error) {
-  console.log(`FAIL: ${error && error.message}`, error && error.stack ? '\n' + error.stack : '');
+  console.log('FAIL: ', error && error.message, error && error.stack ? '\n' + error.stack : '');
   std.exit(1);
 }
 

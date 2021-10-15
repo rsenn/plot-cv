@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 12.7 12.7">
+  <defs>
+    <marker id="step-over_svg__a" orient="auto" overflow="visible" refX="0" refY="0">
+      <path fill-rule="evenodd" stroke="#000" stroke-width=".4pt" d="M2.308 0l-3.46 2v-4l3.46 2z"/>
+    </marker>
+  </defs>
+  <path fill="none" stroke="#000a00" stroke-width=".678" d="M4.749 6.186H7.95v3.046h-3.2z"/>
+  <path fill="none" stroke="#000" stroke-width=".678" marker-end="url(#step-over_svg__a)" d="M1.243 5.354C3.248 1.027 8.707.256 10.535 5.17"/>
+</svg>
