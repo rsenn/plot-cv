@@ -1,3 +1,4 @@
+
 import { Point, Size, Contour, Rect, Line, TickMeter, Mat, CLAHE, Draw } from 'opencv';
 import * as cv from 'opencv';
 import { VideoSource } from './qjs-opencv/js/cvVideo.js';
@@ -5,21 +6,21 @@ import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './qjs-opencv/
 import { HSLA } from './lib/color.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import fs from 'fs';
-import { format } from 'util';
+import { format, once, memoize } from './lib/misc.js';
 import * as xml from 'xml';
 import Console from 'console';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
-import { SaveConfig,  LoadConfig } from './config.js';
 import SvgPath from './lib/svg/path.js';
 import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Define, Once, GetOpt, RoundTo, Range } from './qjs-opencv/js/cvUtils.js';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
 import { MakeSVG, SaveSVG } from './image-helpers.js';
+import {ImagePipeline} from './imagePipeline.js';
 import { Profiler } from './time-helpers.js';
 
 let rainbow;
 let zoom = 1;
 let debug = false;
-let basename = process.argv[1].replace(/\.js$/, '');
+let basename = memoize(() => process.argv[1].replace(/\.js$/, ''));
 
 let simplifyMethods = {
   NTH_POINT: c => c.simplifyNthPoint(2),
@@ -49,8 +50,7 @@ Object.assign(Hierarchy.prototype, {
     child(id) { const a = this.index(id); return a[cv.HIER_CHILD]; },
     next(id) { const a = this.index(id); return a[cv.HIER_NEXT]; },
     prev(id) { const a = this.index(id); return a[cv.HIER_PREV]; }
-  });
-
+  }); 
 
 function getConstants(names) {
   return Object.fromEntries(names.map(name => [name, '0x' + cv[name].toString(16)]));
@@ -126,8 +126,7 @@ function* walkContours(hier, id) {
     id = h[cv.HIER_NEXT];
   }
 }
-1
-
+ 
 function main(...args) {
   let start;
   let running = true;
@@ -191,7 +190,10 @@ function main(...args) {
   let win = new Window('gray', cv.WINDOW_NORMAL /*| cv.WINDOW_AUTOSIZE | cv.WINDOW_KEEPRATIO*/);
   //console.debug('Mouse :', { MouseEvents, MouseFlags });
 
-  const printFlags = flags => [...BitsToNames(MouseFlags)]; 
+  const printFlags = flags => [...BitsToNames(MouseFlags)];
+  /*console.log('printFlags:', printFlags + '');
+  console.log('tickFrequency:', cv.getTickFrequency());*/
+
   win.setMouseCallback(function (event, x, y, flags) {
     event = Mouse.printEvent(event);
     flags = Mouse.printFlags(flags);
