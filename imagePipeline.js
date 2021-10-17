@@ -157,4 +157,6 @@ export function ImagePipeline(config) {
       }
     }
   );
+
+  return pipeline;
 }
