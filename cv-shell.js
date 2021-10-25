@@ -37,6 +37,10 @@ function FilterImages(gen) {
   return Filter(gen, /\.(png|jpe?g)$/i);
 }
 
+function SortFiles(arr, field = 'ctime') {
+  return [...arr].sort((a, b) => a.stat[field] - b.stat[field]);
+}
+
 function* StatFiles(gen) {
   for(let file of gen) {
     let stat = fs.statSync(file);
@@ -54,6 +58,12 @@ function* StatFiles(gen) {
         return define(info, {
           toString() {
             return this.width + 'x' + this.height;
+          },
+          get landscape() {
+            return this.width > this.height;
+          },
+          get portrait() {
+            return this.height > this.width;
           }
         });
       })
@@ -165,6 +175,7 @@ function main(...args) {
     Filter,
     FilterImages,
     StatFiles,
+    SortFiles,
     Util,
     toArrayBuffer,
     toString,
