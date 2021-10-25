@@ -1,6 +1,6 @@
 import * as cv from 'opencv';
 import Util from './lib/util.js';
-import { toArrayBuffer, toString, escape, quote, define, extendArray, memoize } from './lib/misc.js';
+import { toArrayBuffer, toString, escape, quote, define, extendArray, memoize, getFunctionArguments } from './lib/misc.js';
 import * as deep from './lib/deep.js';
 import path from './lib/path.js';
 import { Console } from 'console';
@@ -108,7 +108,6 @@ function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = ''
   repl.historyLoad(null, false);
   repl.inspectOptions = console.options;
 
-  repl.help = () => {};
   let { log } = console;
   repl.show = arg => std.puts((typeof arg == 'string' ? arg : inspect(arg, repl.inspectOptions)) + '\n');
 
@@ -120,6 +119,14 @@ function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = ''
     repl.printStatus(`EXIT (wrote ${numLines} history entries)`, false);
 
     std.exit(0);
+  };
+  repl.directives = {
+    load: [
+    image => {
+        console.log();
+      },
+      'loads an image / video'
+    ]
   };
 
   console.log = repl.printFunction((...args) => {
@@ -177,12 +184,7 @@ function main(...args) {
     StatFiles,
     SortFiles,
     Util,
-    toArrayBuffer,
-    toString,
-    escape,
-    quote,
-    define,
-    extendArray,
+  toArrayBuffer, toString, escape, quote, define, extendArray, memoize, getFunctionArguments,
     path,
     Console,
     REPL,
