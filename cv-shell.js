@@ -1,6 +1,6 @@
 import * as cv from 'opencv';
 import Util from './lib/util.js';
-import { toArrayBuffer, toString, escape, quote, define, extendArray } from './lib/misc.js';
+import { toArrayBuffer, toString, escape, quote, define, extendArray, memoize } from './lib/misc.js';
 import * as deep from './lib/deep.js';
 import path from './lib/path.js';
 import { Console } from 'console';
@@ -23,6 +23,7 @@ import {
   RecursiveDirIterator
 } from './io-helpers.js';
 import { VideoSource, ImageSequence } from './qjs-opencv/js/cvVideo.js';
+import { ImageInfo } from './lib/image-info.js';
 
 let cmdhist;
 
@@ -32,18 +33,44 @@ function* Filter(gen, regEx = /.*/) {
   for(let item of gen) if(regEx.test(item)) yield item;
 }
 
+function FilterImages(gen) {
+  return Filter(gen, /\.(png|jpe?g)$/i);
+}
+
+function* StatFiles(gen) {
+  for(let file of gen) {
+    let stat = fs.statSync(file);
+    let obj = define(
+      { file, stat },
+      {
+        toString() {
+          return this.file;
+        }
+      }
+    );
+    Object.defineProperty(obj, 'size', {
+      get: memoize(() => {
+        let { filename, ...info } = ImageInfo(obj.file);
+        return define(info, {
+          toString() {
+            return this.width + 'x' + this.height;
+          }
+        });
+      })
+    });
+    yield obj;
+  }
+}
+
 function* ReadDirRecursive(dir, maxDepth = Infinity) {
+  dir = dir.replace(/~/g, std.getenv('HOME'));
   for(let file of fs.readdirSync(dir)) {
     if(['.', '..'].indexOf(file) != -1) continue;
-
     let entry = `${dir}/${file}`;
     let isDir = false;
     let st = fs.statSync(entry);
-
     isDir = st && st.isDirectory();
-
     yield isDir ? entry + '/' : entry;
-
     if(maxDepth > 0 && isDir) yield* ReadDirRecursive(entry, maxDepth - 1);
   }
 }
@@ -67,9 +94,9 @@ async function importModule(moduleName, ...args) {
 
 function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, fs, false);
-
+  repl.fs = fs;
   repl.historyLoad(null, false);
-  repl.inspectOptions = { ...console.options, compact: 2 };
+  repl.inspectOptions = console.options;
 
   repl.help = () => {};
   let { log } = console;
@@ -95,7 +122,7 @@ function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = ''
 
 function main(...args) {
   globalThis.console = new Console(std.err, {
-    inspectOptions: { compact: 2, customInspect: true }
+    inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 20, maxStringLength: 100, numberBase: 16 }
   });
   let debugLog;
 
@@ -136,6 +163,8 @@ function main(...args) {
     repl,
     ReadDirRecursive,
     Filter,
+    FilterImages,
+    StatFiles,
     Util,
     toArrayBuffer,
     toString,
@@ -159,7 +188,8 @@ function main(...args) {
     WriteJSON,
     WriteBJSON,
     DirIterator,
-    RecursiveDirIterator
+    RecursiveDirIterator,
+    ImageInfo
   });
 }
 

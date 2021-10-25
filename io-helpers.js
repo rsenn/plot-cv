@@ -113,6 +113,7 @@ export function WriteBJSON(name, data) {
 export function* DirIterator(...args) {
   let pred = typeof args[0] != 'string' ? Util.predicate(args.shift()) : () => true;
   for(let dir of args) {
+    dir = dir.replace(/~/g, std.getenv('HOME'));
     let entries = os.readdir(dir)[0] ?? [];
     for(let entry of entries.sort()) {
       let file = path.join(dir, entry);
@@ -137,6 +138,7 @@ export function* RecursiveDirIterator(dir, pred = (entry, file, dir, depth) => t
     pred = (entry, file, dir, depth) => re.test(entry) || re.test(file);
   }
   if(!dir.endsWith('/')) dir += '/';
+  dir = dir.replace(/~/g, std.getenv('HOME'));
   for(let file of fs.readdirSync(dir)) {
     if(['.', '..'].indexOf(file) != -1) continue;
     let entry = `${dir}${file}`;
