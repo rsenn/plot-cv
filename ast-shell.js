@@ -777,7 +777,12 @@ function ParseECMAScript(file, debug = false) {
 
   globalThis.files[file] = ast;
 
-  return ast;
+  return {
+    ast,
+    get data() {
+      return this.ast;
+    }
+  };
 }
 
 function PrintECMAScript(ast, comments, printer = new ECMAScript.Printer({ indent: 4 }, comments)) {
@@ -819,6 +824,26 @@ function* Constants(node, t = (name, value) => [name, !isNaN(+value) ? +value : 
 MemberNames.UPPER = 1;
 MemberNames.METHODS = 2;
 MemberNames.PROPERTIES = 4;
+
+function GetImports(ast = $.data) {
+  const r = [];
+  for(let [n, p] of deep.select($.data, n => (n.type ?? n.kind).startsWith('Import'))) {
+    r.push(n);
+  }
+  return r;
+}
+function GetIdentifiers(nodes, key = null) {
+  const r = [];
+  for(let node of nodes) {
+    for(let n of deep.select(
+      node,
+      (n, k) => (n.type ?? n.kind) == 'Identifier' && (key === null || k == key),
+      deep.RETURN_VALUE
+    ))
+      r.push(n.name);
+  }
+  return r;
+}
 
 function MemberNames(members, flags = 0) {
   let ret = [];
@@ -1164,6 +1189,8 @@ async function ASTShell(...args) {
     libdirs64,
     LibraryExports,
     MemberNames,
+    GetImports,
+    GetIdentifiers,
     Namespaces,
     UnsetLoc
   });
@@ -1196,8 +1223,9 @@ async function ASTShell(...args) {
 
   for(let source of sources) {
     let item;
-    if(/\.js$/.test(source)) item = ParseECMAScript(source);
-    else item = await Compile(source);
+    item = await ProcessFile(source);
+    /*    if(/\.js$/.test(source)) item = ParseECMAScript(source);
+    else item = await Compile(source);*/
     if(item) {
       pushUnique(hist, [...flags, source]);
       items.push(item);

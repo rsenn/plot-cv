@@ -57,8 +57,7 @@ function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = ''
 
   repl.help = () => {};
   let { log } = console;
-  repl.show = arg =>
-    std.puts((typeof arg == 'string' ? arg : inspect(arg, repl.inspectOptions)) + '\n');
+  repl.show = arg => std.puts((typeof arg == 'string' ? arg : inspect(arg, repl.inspectOptions)) + '\n');
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();
@@ -126,8 +125,7 @@ function main(...args) {
     console.log('createWS', { url, callbacks, listen });
 
     net.setLog(
-      (params.debug ? net.LLL_USER : 0) |
-        (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
+      (params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
       (level, ...args) => {
         console.log(...args);
         if(params.debug)
@@ -235,16 +233,16 @@ function main(...args) {
                 child = ws.child = StartDebugger(args, connect, address);
                 const [, stdout, stderr] = child.stdio;
                 for(let fd of [stdout, stderr]) {
-                                 //console.log(`fcntl(${fd}, F_GETFL)`);
-    let flags = fcntl(fd, F_GETFL);
-                                 //console.log(`fcntl(${fd}, F_SETFL, 0x${flags.toString(16)})`);
-   flags |= O_NONBLOCK;
+                  //console.log(`fcntl(${fd}, F_GETFL)`);
+                  let flags = fcntl(fd, F_GETFL);
+                  //console.log(`fcntl(${fd}, F_SETFL, 0x${flags.toString(16)})`);
+                  flags |= O_NONBLOCK;
                   fcntl(fd, F_SETFL, flags);
                 }
- for(let i = 1; i <= 2; i++) {
+                for(let i = 1; i <= 2; i++) {
                   let fd = child.stdio[i];
-                                               console.log('os.setReadHandler',fd);
-  os.setReadHandler(fd, () => {
+                  console.log('os.setReadHandler', fd);
+                  os.setReadHandler(fd, () => {
                     let buf = new ArrayBuffer(1024);
                     let r = os.read(fd, buf, 0, buf.byteLength);
 
@@ -260,7 +258,7 @@ function main(...args) {
                     }
                   });
                 }
-                               console.log('child', child.pid);
+                console.log('child', child.pid);
 
                 os.sleep(1000);
               }
