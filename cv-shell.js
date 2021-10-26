@@ -8,7 +8,10 @@ import {
   define,
   extendArray,
   memoize,
-  getFunctionArguments
+  getFunctionArguments,
+  glob,GLOB_TILDE,
+  fnmatch,
+  wordexp
 } from './lib/misc.js';
 import * as deep from './lib/deep.js';
 import path from './lib/path.js';
@@ -134,7 +137,22 @@ function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = ''
       image => {
         console.log('load', { image });
       },
-      'loads an image / video'
+      'loads an image / video',
+      function(line, pos) {
+        let arg = line.replace(/^\\*load\s*/, '');
+        let start = line.length - arg.length;
+        let paths = [];
+        let pattern=wordexp(arg, 0)[0];
+   //     if(!pattern.endsWith('*')) pattern += '*';
+
+        glob(pattern+'*', GLOB_TILDE, (p,err) => console.log('glob error', {p,err}), paths);
+
+        const tab = paths.filter(p => p.startsWith(pattern)); //.map(p => p.replace(arg, ''));
+
+
+        console.log('complete', { line, arg, pos });
+        return { tab, pos: 0, ctx: {} };
+      }
     ]
   };
 
@@ -201,6 +219,9 @@ function main(...args) {
     extendArray,
     memoize,
     getFunctionArguments,
+    glob,
+    fnmatch,
+    wordexp,
     path,
     Console,
     REPL,
