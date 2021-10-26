@@ -10,58 +10,17 @@ import REPL from './xrepl.js';
 import * as fs from './lib/filesystem.js';
 import { Pointer } from './lib/pointer.js';
 import * as Terminal from './terminal.js';
-import { read as fromXML, write as toXML } from './lib/xml.js';
+import { as fromXML as toXML } from './lib/xml.js';
 import inspect from './lib/objectInspect.js';
 import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive } from './io-helpers.js';
 import { VideoSource, ImageSequence } from './qjs-opencv/js/cvVideo.js';
 import { ImageInfo } from './lib/image-info.js';
+import { MouseEvents, MouseFlags, Mouse, Window, TextStyle, DrawText } from './qjs-opencv/js/cvHighGUI.js';
+//import {   DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles } from './io-helpers.js';
 
 let cmdhist;
 
 extendArray();
-
-function* Filter(gen, regEx = /.*/) {
-  for(let item of gen) if(regEx.test(item)) yield item;
-}
-
-function FilterImages(gen) {
-  return Filter(gen, /\.(png|jpe?g)$/i);
-}
-
-function SortFiles(arr, field = 'ctime') {
-  return [...arr].sort((a, b) => a.stat[field] - b.stat[field]);
-}
-
-function* StatFiles(gen) {
-  for(let file of gen) {
-    let stat = fs.statSync(file);
-    let obj = define(
-      { file, stat },
-      {
-        toString() {
-          return this.file;
-        }
-      }
-    );
-    Object.defineProperty(obj, 'size', {
-      get: memoize(() => {
-        let { filename, ...info } = ImageInfo(obj.file);
-        return define(info, {
-          toString() {
-            return this.width + 'x' + this.height;
-          },
-          get landscape() {
-            return this.width > this.height;
-          },
-          get portrait() {
-            return this.height > this.width;
-          }
-        });
-      })
-    });
-    yield obj;
-  }
-}
 
 async function importModule(moduleName, ...args) {
   //console.log('importModule', moduleName, args);
@@ -165,11 +124,18 @@ function main(...args) {
   Object.assign(globalThis, {
     cv,
     fs,
-    util,misc,
+    util,
+    misc,
     Pointer,
     deep,
     VideoSource,
     ImageSequence,
+    MouseEvents,
+    MouseFlags,
+    Mouse,
+    Window,
+    TextStyle,
+    DrawText,
     repl,
     ReadDirRecursive,
     Filter,

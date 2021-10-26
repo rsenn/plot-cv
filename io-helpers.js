@@ -167,3 +167,46 @@ export function* ReadDirRecursive(dir, maxDepth = Infinity) {
     if(maxDepth > 0 && isDir) yield* ReadDirRecursive(entry, maxDepth - 1);
   }
 }
+
+export function* Filter(gen, regEx = /.*/) {
+  for(let item of gen) if(regEx.test(item)) yield item;
+}
+
+export function FilterImages(gen) {
+  return Filter(gen, /\.(png|jpe?g)$/i);
+}
+
+export function SortFiles(arr, field = 'ctime') {
+  return [...arr].sort((a, b) => a.stat[field] - b.stat[field]);
+}
+
+export function* StatFiles(gen) {
+  for(let file of gen) {
+    let stat = fs.statSync(file);
+    let obj = define(
+      { file, stat },
+      {
+        toString() {
+          return this.file;
+        }
+      }
+    );
+    Object.defineProperty(obj, 'size', {
+      get: memoize(() => {
+        let { filename, ...info } = ImageInfo(obj.file);
+        return define(info, {
+          toString() {
+            return this.width + 'x' + this.height;
+          },
+          get landscape() {
+            return this.width > this.height;
+          },
+          get portrait() {
+            return this.height > this.width;
+          }
+        });
+      })
+    });
+    yield obj;
+  }
+}
