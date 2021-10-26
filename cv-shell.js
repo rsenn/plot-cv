@@ -1,6 +1,15 @@
 import * as cv from 'opencv';
 import Util from './lib/util.js';
-import { toArrayBuffer, toString, escape, quote, define, extendArray, memoize, getFunctionArguments } from './lib/misc.js';
+import {
+  toArrayBuffer,
+  toString,
+  escape,
+  quote,
+  define,
+  extendArray,
+  memoize,
+  getFunctionArguments
+} from './lib/misc.js';
 import * as deep from './lib/deep.js';
 import path from './lib/path.js';
 import { Console } from 'console';
@@ -122,8 +131,8 @@ function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = ''
   };
   repl.directives = {
     load: [
-    image => {
-        console.log();
+      image => {
+        console.log('load', { image });
       },
       'loads an image / video'
     ]
@@ -184,7 +193,14 @@ function main(...args) {
     StatFiles,
     SortFiles,
     Util,
-  toArrayBuffer, toString, escape, quote, define, extendArray, memoize, getFunctionArguments,
+    toArrayBuffer,
+    toString,
+    escape,
+    quote,
+    define,
+    extendArray,
+    memoize,
+    getFunctionArguments,
     path,
     Console,
     REPL,
