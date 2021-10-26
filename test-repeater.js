@@ -1,9 +1,16 @@
 import { Repeater } from './lib/repeater/repeater.js';
 import { delay } from './lib/repeater/timers.js';
-import ConsoleSetup from './lib/consoleSetup.js';
+import { Console } from 'console';
 
 async function main() {
-  await ConsoleSetup({ compact: 2 });
+  /* globalThis.console = new Console({
+    inspectOptions: {
+      colors: true,
+      depth: 1,
+      maxArrayLength: 30,
+      compact: 1
+    }
+  });*/
   let pushEvent, stopEvent;
 
   await Util.waitFor(0);
@@ -72,4 +79,4 @@ async function main() {
   })();
 }
 
-Util.callMain(main, true);
+main();
