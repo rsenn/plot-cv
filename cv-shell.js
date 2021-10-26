@@ -1,18 +1,6 @@
 import * as cv from 'opencv';
 import Util from './lib/util.js';
-import {
-  toArrayBuffer,
-  toString,
-  escape,
-  quote,
-  define,
-  extendArray,
-  memoize,
-  getFunctionArguments,
-  glob,GLOB_TILDE,
-  fnmatch,
-  wordexp
-} from './lib/misc.js';
+import { toArrayBuffer, toString, escape, quote, define, extendArray, memoize, getFunctionArguments, glob, GLOB_TILDE, fnmatch, wordexp } from './lib/misc.js';
 import * as deep from './lib/deep.js';
 import path from './lib/path.js';
 import { Console } from 'console';
@@ -22,18 +10,7 @@ import { Pointer } from './lib/pointer.js';
 import * as Terminal from './terminal.js';
 import { read as fromXML, write as toXML } from './lib/xml.js';
 import inspect from './lib/objectInspect.js';
-import {
-  ReadFile,
-  LoadHistory,
-  ReadJSON,
-  MapFile,
-  ReadBJSON,
-  WriteFile,
-  WriteJSON,
-  WriteBJSON,
-  DirIterator,
-  RecursiveDirIterator
-} from './io-helpers.js';
+import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive } from './io-helpers.js';
 import { VideoSource, ImageSequence } from './qjs-opencv/js/cvVideo.js';
 import { ImageInfo } from './lib/image-info.js';
 
@@ -84,19 +61,6 @@ function* StatFiles(gen) {
   }
 }
 
-function* ReadDirRecursive(dir, maxDepth = Infinity) {
-  dir = dir.replace(/~/g, std.getenv('HOME'));
-  for(let file of fs.readdirSync(dir)) {
-    if(['.', '..'].indexOf(file) != -1) continue;
-    let entry = `${dir}/${file}`;
-    let isDir = false;
-    let st = fs.statSync(entry);
-    isDir = st && st.isDirectory();
-    yield isDir ? entry + '/' : entry;
-    if(maxDepth > 0 && isDir) yield* ReadDirRecursive(entry, maxDepth - 1);
-  }
-}
-
 async function importModule(moduleName, ...args) {
   //console.log('importModule', moduleName, args);
   let done = false;
@@ -142,13 +106,12 @@ function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = ''
         let arg = line.replace(/^\\*load\s*/, '');
         let start = line.length - arg.length;
         let paths = [];
-        let pattern=wordexp(arg, 0)[0];
-   //     if(!pattern.endsWith('*')) pattern += '*';
+        let pattern = wordexp(arg, 0)[0];
+        //     if(!pattern.endsWith('*')) pattern += '*';
 
-        glob(pattern+'*', GLOB_TILDE, (p,err) => console.log('glob error', {p,err}), paths);
+        glob(pattern + '*', GLOB_TILDE, (p, err) => console.log('glob error', { p, err }), paths);
 
         const tab = paths.filter(p => p.startsWith(pattern)); //.map(p => p.replace(arg, ''));
-
 
         console.log('complete', { line, arg, pos });
         return { tab, pos: 0, ctx: {} };

@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as os from 'os';
+import * as std from 'std';
 import Util from './lib/util.js';
 import * as path from './lib/path.js';
 import { types } from 'util';
@@ -151,5 +152,18 @@ export function* RecursiveDirIterator(dir, pred = (entry, file, dir, depth) => t
       yield entry;
     }
     if(isDir) yield* RecursiveDirIterator(entry, pred, depth + 1);
+  }
+}
+
+export function* ReadDirRecursive(dir, maxDepth = Infinity) {
+  dir = dir.replace(/~/g, process.env['HOME'] ?? std.getenv('HOME'));
+  for(let file of fs.readdirSync(dir)) {
+    if(['.', '..'].indexOf(file) != -1) continue;
+    let entry = `${dir}/${file}`;
+    let isDir = false;
+    let st = fs.statSync(entry);
+    isDir = st && st.isDirectory();
+    yield isDir ? entry + '/' : entry;
+    if(maxDepth > 0 && isDir) yield* ReadDirRecursive(entry, maxDepth - 1);
   }
 }
