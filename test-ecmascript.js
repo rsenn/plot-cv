@@ -1,96 +1,8 @@
-import { ECMAScriptParser, Lexer, PathReplacer } from './lib/ecmascript.js';
+import { ECMAScriptParser, PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
-import {
-  estree,
-  ESNode,
-  Program,
-  ModuleDeclaration,
-  ModuleSpecifier,
-  ImportDeclaration,
-  ImportSpecifier,
-  ImportDefaultSpecifier,
-  ImportNamespaceSpecifier,
-  Super,
-  Expression,
-  FunctionLiteral,
-  Pattern,
-  Identifier,
-  Literal,
-  RegExpLiteral,
-  TemplateLiteral,
-  BigIntLiteral,
-  TaggedTemplateExpression,
-  TemplateElement,
-  ThisExpression,
-  UnaryExpression,
-  UpdateExpression,
-  BinaryExpression,
-  AssignmentExpression,
-  LogicalExpression,
-  MemberExpression,
-  ConditionalExpression,
-  CallExpression,
-  DecoratorExpression,
-  NewExpression,
-  SequenceExpression,
-  Statement,
-  EmptyStatement,
-  DebuggerStatement,
-  LabeledStatement,
-  BlockStatement,
-  FunctionBody,
-  StatementList,
-  ExpressionStatement,
-  Directive,
-  ReturnStatement,
-  ContinueStatement,
-  BreakStatement,
-  IfStatement,
-  SwitchStatement,
-  SwitchCase,
-  WhileStatement,
-  DoWhileStatement,
-  ForStatement,
-  ForInStatement,
-  ForOfStatement,
-  WithStatement,
-  TryStatement,
-  CatchClause,
-  ThrowStatement,
-  Declaration,
-  ClassDeclaration,
-  ClassBody,
-  MethodDefinition,
-  MetaProperty,
-  YieldExpression,
-  FunctionArgument,
-  FunctionDeclaration,
-  ArrowFunctionExpression,
-  VariableDeclaration,
-  VariableDeclarator,
-  ObjectExpression,
-  Property,
-  ArrayExpression,
-  JSXLiteral,
-  AssignmentProperty,
-  ObjectPattern,
-  ArrayPattern,
-  RestElement,
-  AssignmentPattern,
-  AwaitExpression,
-  SpreadElement,
-  ExportNamedDeclaration,
-  ExportSpecifier,
-  AnonymousDefaultExportedFunctionDeclaration,
-  AnonymousDefaultExportedClassDeclaration,
-  ExportDefaultDeclaration,
-  ExportAllDeclaration
-} from './lib/ecmascript/estree.js';
+import { ESNode, ImportDeclaration, Identifier, TemplateLiteral, CallExpression } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import deep from './lib/deep.js';
-import { Path } from './lib/json.js';
-import { SortedMap } from './lib/container/sortedMap.js';
-import { ImmutablePath } from './lib/json.js';
 import Tree from './lib/tree.js';
 import { Console } from 'console';
 import fs from 'fs';
@@ -262,7 +174,10 @@ function processFile(file, params) {
   const isImport = node => node instanceof ImportDeclaration;
 
   let commentMap = new Map(
-    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node }]),
+    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
+      pos * 10 - 1,
+      { comment, pos, len, node }
+    ]),
     (a, b) => a - b
   );
 
@@ -285,7 +200,9 @@ function processFile(file, params) {
 
   function getImports() {
     const imports = [...flat].filter(([path, node]) => isRequire(node) || isImport(node));
-    const importStatements = imports.map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path)).map(path => [path, deep.get(ast, path)]);
+    const importStatements = imports
+      .map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path))
+      .map(path => [path, deep.get(ast, path)]);
 
     console.log('imports:', new Map(imports.map(([path, node]) => [ESNode.assoc(node).position, node])));
     console.log('importStatements:', importStatements);
@@ -293,7 +210,9 @@ function processFile(file, params) {
     const importedFiles = imports.map(([pos, node]) => Identifier.string(node.source || node.arguments[0]));
     console.log('importedFiles:', importedFiles);
 
-    let importIdentifiers = importStatements.map(([p, n]) => [p, n.identifiers ? n.identifiers : n]).map(([p, n]) => [p, n.declarations ? n.declarations : n]);
+    let importIdentifiers = importStatements
+      .map(([p, n]) => [p, n.identifiers ? n.identifiers : n])
+      .map(([p, n]) => [p, n.declarations ? n.declarations : n]);
     console.log('importIdentifiers:', importIdentifiers);
 
     console.log('importIdentifiers:', Util.unique(importIdentifiers.flat()).join(', '));

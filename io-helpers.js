@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as os from 'os';
+import * as std from 'std';
 import Util from './lib/util.js';
 import * as path from './lib/path.js';
 import { types } from 'util';
@@ -113,6 +114,7 @@ export function WriteBJSON(name, data) {
 export function* DirIterator(...args) {
   let pred = typeof args[0] != 'string' ? Util.predicate(args.shift()) : () => true;
   for(let dir of args) {
+    dir = dir.replace(/~/g, std.getenv('HOME'));
     let entries = os.readdir(dir)[0] ?? [];
     for(let entry of entries.sort()) {
       let file = path.join(dir, entry);
@@ -137,6 +139,7 @@ export function* RecursiveDirIterator(dir, pred = (entry, file, dir, depth) => t
     pred = (entry, file, dir, depth) => re.test(entry) || re.test(file);
   }
   if(!dir.endsWith('/')) dir += '/';
+  dir = dir.replace(/~/g, std.getenv('HOME'));
   for(let file of fs.readdirSync(dir)) {
     if(['.', '..'].indexOf(file) != -1) continue;
     let entry = `${dir}${file}`;
@@ -149,5 +152,61 @@ export function* RecursiveDirIterator(dir, pred = (entry, file, dir, depth) => t
       yield entry;
     }
     if(isDir) yield* RecursiveDirIterator(entry, pred, depth + 1);
+  }
+}
+
+export function* ReadDirRecursive(dir, maxDepth = Infinity) {
+  dir = dir.replace(/~/g, process.env['HOME'] ?? std.getenv('HOME'));
+  for(let file of fs.readdirSync(dir)) {
+    if(['.', '..'].indexOf(file) != -1) continue;
+    let entry = `${dir}/${file}`;
+    let isDir = false;
+    let st = fs.statSync(entry);
+    isDir = st && st.isDirectory();
+    yield isDir ? entry + '/' : entry;
+    if(maxDepth > 0 && isDir) yield* ReadDirRecursive(entry, maxDepth - 1);
+  }
+}
+
+export function* Filter(gen, regEx = /.*/) {
+  for(let item of gen) if(regEx.test(item)) yield item;
+}
+
+export function FilterImages(gen) {
+  return Filter(gen, /\.(png|jpe?g)$/i);
+}
+
+export function SortFiles(arr, field = 'ctime') {
+  return [...arr].sort((a, b) => a.stat[field] - b.stat[field]);
+}
+
+export function* StatFiles(gen) {
+  for(let file of gen) {
+    let stat = fs.statSync(file);
+    let obj = define(
+      { file, stat },
+      {
+        toString() {
+          return this.file;
+        }
+      }
+    );
+    Object.defineProperty(obj, 'size', {
+      get: memoize(() => {
+        let { filename, ...info } = ImageInfo(obj.file);
+        return define(info, {
+          toString() {
+            return this.width + 'x' + this.height;
+          },
+          get landscape() {
+            return this.width > this.height;
+          },
+          get portrait() {
+            return this.height > this.width;
+          }
+        });
+      })
+    });
+    yield obj;
   }
 }

@@ -1,0 +1,66 @@
+.button {
+ 
+  border-radius: 4px;
+   background: linear-gradient(30deg,
+    hsla(200, 100%, 40%, 1) 20%,
+    hsla(200, 100%, 50%, 1) 50%,
+    hsla(200, 100%, 45%, 1) 80%
+  );  color: white;
+  font-weight: bold;
+  user-select: none;
+  font-size: 16px;
+}
+
+.button, .center, .button {
+  justify-content: center;
+  align-items: center;  
+ }
+ .button {
+  border: 2px outset hsl(200, 100%, 70%);
+/*  box-shadow: 2px 2px 6px hsl(60, 100%, 80%);*/
+}
+.button {
+  position: relative;
+  overflow: hidden;
+}
+
+.button {
+  text-shadow: 1px 1px 1px black;
+  margin: 0; 
+  padding: 4px 4px;
+  flex: 0 1 auto;
+} 
+
+#preact, svg {
+  pointer-events: all;
+}
+
+.button .pushed {
+  background-color: #ffff00ee;
+   transform: translate(1px, 1px);
+}
+
+.button.pushed,
+.button-inactive {
+}
+.button.disabled {
+  filter: grayscale() brightness(1.5);
+}
+.button.active:hover {
+  box-shadow: 0.5px 0.5px 5px #ffff20;
+}
+
+.button.pushed {
+  transition-timing-function: ease-in-out;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.7);
+
+  transition: filter 0.1s, transform 0.1s;
+}
+.button.inactive {
+  transition-timing-function: ease-in-out;
+  transition: filter 0.3s, transform 0.1s;
+}
+.button.pushed {
+  background-color: #ffff00ee;
+   transform: translate(1px, 1px);
+} 

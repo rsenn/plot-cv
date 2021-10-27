@@ -1,5 +1,14 @@
 import { ECMAScriptParser, Printer, PathReplacer } from './lib/ecmascript.js';
-import { ObjectPattern, ObjectExpression, ImportDeclaration, ExportNamedDeclaration, VariableDeclaration, estree, ESNode, Literal } from './lib/ecmascript.js';
+import {
+  ObjectPattern,
+  ObjectExpression,
+  ImportDeclaration,
+  ExportNamedDeclaration,
+  VariableDeclaration,
+  estree,
+  ESNode,
+  Literal
+} from './lib/ecmascript.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import Util from './lib/util.js';
 import { ImmutablePath } from './lib/json.js';
@@ -108,7 +117,14 @@ async function main(...args) {
   // cwd = process.cwd() || fs.realpath('.');
   console.log('cwd=', cwd);
 
-  if(args.length == 0) args = [/*'lib/geom/align.js', 'lib/geom/bbox.js','lib/geom/line.js'*/ 'lib/geom/point.js', 'lib/geom/size.js', 'lib/geom/trbl.js', 'lib/geom/rect.js', 'lib/dom/element.js'];
+  if(args.length == 0)
+    args = [
+      /*'lib/geom/align.js', 'lib/geom/bbox.js','lib/geom/line.js'*/ 'lib/geom/point.js',
+      'lib/geom/size.js',
+      'lib/geom/trbl.js',
+      'lib/geom/rect.js',
+      'lib/dom/element.js'
+    ];
   let r = [];
   let processed = [];
   console.log('args=', args);
@@ -141,7 +157,8 @@ async function main(...args) {
     let aliases = json._moduleAliases || {};
     for(let alias in aliases) {
       let module = path.join(path.dirname(p), aliases[alias]);
-      if(!filesystem.existsSync(module)) throw new Error(`No such module alias from '${alias}' to '${aliases[alias]}'`);
+      if(!filesystem.existsSync(module))
+        throw new Error(`No such module alias from '${alias}' to '${aliases[alias]}'`);
       let file = findModule(module);
       // let st = filesystem.statSync(file);
       acc.set(alias, file);
@@ -278,7 +295,9 @@ async function main(...args) {
       let remove = imports.map((imp, idx) => [idx, imp.node]).filter((imp, idx) => !/^lib/.test(imp.fromPath));
       log(
         `remove =`,
-        remove.reduce((acc, [i, imp]) => [...acc, imp /*(imp.fromPath),imp.toSource()*/], []).map(imp => Util.className(imp))
+        remove
+          .reduce((acc, [i, imp]) => [...acc, imp /*(imp.fromPath),imp.toSource()*/], [])
+          .map(imp => Util.className(imp))
       );
 
       removeStatements(remove.map(([idx, node]) => [imports[idx].path, node]));
@@ -292,7 +311,9 @@ async function main(...args) {
         recurseFiles.map(imp => imp.fromPath)
       );
       recurseFiles.forEach(imp => processFile(imp.fromPath));
-      let exports = [...flat.entries()].filter(([key, value]) => value instanceof ExportNamedDeclaration || value.exported === true);
+      let exports = [...flat.entries()].filter(
+        ([key, value]) => value instanceof ExportNamedDeclaration || value.exported === true
+      );
 
       for(let [path, node] of exports) {
         log(`export ${path}`, node);
@@ -300,7 +321,9 @@ async function main(...args) {
       }
 
       exports = exports.map(([p, stmt]) =>
-        (Util.isObject(stmt.declarations) && Util.isObject(stmt.declarations.id) && Util.isObject(stmt.declarations.id.value)) == (Util.isObject(stmt.what) && Util.isObject(stmt.what.value))
+        (Util.isObject(stmt.declarations) &&
+          Util.isObject(stmt.declarations.id) &&
+          Util.isObject(stmt.declarations.id.value)) == (Util.isObject(stmt.what) && Util.isObject(stmt.what.value))
           ? stmt.declarations
           : stmt
       );
@@ -419,7 +442,12 @@ function searchModuleInPath(name, _from) {
   if(moduleAliases.has(name)) return moduleAliases.get(name);
 
   let names = makeNames(name);
-  let indexes = [...makeNames(name + '/dist/' + name), ...makeNames(name + '/build/' + name), ...makeNames(name + '/' + name), ...makeNames(name + '/index')];
+  let indexes = [
+    ...makeNames(name + '/dist/' + name),
+    ...makeNames(name + '/build/' + name),
+    ...makeNames(name + '/' + name),
+    ...makeNames(name + '/index')
+  ];
 
   for(let dir of [thisdir, ...searchPath]) {
     let searchFor = dir.endsWith('node_modules') ? [name] : names;

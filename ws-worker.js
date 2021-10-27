@@ -1,4 +1,4 @@
-import { client, server, fetch, setLog } from 'net';
+import { client, server, fetch, setLog, LLL_USER, LLL_NOTICE } from 'net';
 import * as std from 'std';
 import * as os from 'os';
 import { Console } from 'console';
@@ -14,13 +14,12 @@ function WorkerMain() {
     prefix: '\x1b[38;5;128mWORKER\x1b[0m'
   });
 
+  log('ws-worker.js');
+
   if(parent) {
     log(
       'WorkerMain.parent',
-      Object.getOwnPropertyNames(Object.getPrototypeOf(parent)).reduce(
-        (acc, n) => ({ ...acc, [n]: parent[n] }),
-        {}
-      )
+      Object.getOwnPropertyNames(Object.getPrototypeOf(parent)).reduce((acc, n) => ({ ...acc, [n]: parent[n] }), {})
     );
 
     parent.onmessage = e => HandleMessage.call(parent, e);
@@ -47,14 +46,31 @@ class WSClient {
 function CreateServer({
   host = '127.0.0.1',
   port = 9900,
-  sslCert = '/etc/nginx/transistorisiert.ch.cer',
-  sslPrivateKey = '/etc/nginx/transistorisiert.ch.key',
+  sslCert = 'localhost.crt',
+  sslPrivateKey = 'localhost.key',
   index = 'index.html',
   ...options
 }) {
   print(`Listening on http://${host}:${port}`);
   if(sslCert) print(`SSL certificate file: ${sslCert}`);
   if(sslPrivateKey) print(`SSL certificate file: ${sslPrivateKey}`);
+
+  let logfile = std.open('httpd.log', 'w+');
+
+  setLog(LLL_USER | ((LLL_NOTICE << 1) - 1), (level, ...args) => {
+    let output = [
+      (
+        ['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][
+          Math.log2(level)
+        ] ?? level + ''
+      ).padEnd(8),
+      ...args
+    ];
+
+    logfile.puts(output.join(' ') + '\n');
+    logfile.flush();
+  });
+
   server({
     host,
     port,

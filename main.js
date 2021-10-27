@@ -1,7 +1,7 @@
 // prettier-ignore-start
 import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
 import dom from './lib/dom.js';
-import { ReactComponent } from './lib/dom/preactComponent.js';
+import { ReactComponent, Fragment } from './lib/dom/preactComponent.js';
 import { iterator, eventIterator } from './lib/dom/iterator.js';
 import keysim from './lib/dom/keysim.js';
 import geom, { isBBox, BBox, Polygon, Circle, LineList, Arc } from './lib/geom.js';
@@ -41,18 +41,117 @@ import { toXML, ImmutablePath, MutablePath, arrayDiff, objectDiff } from './lib/
 import { Object2Array, XmlObject, XmlAttr, ImmutableXPath, MutableXPath } from './lib/xml.js';
 import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
 //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
-import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
-import { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Fence, Zoomable, DisplayList, Ruler, Toggle } from './components.js';
+//import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
+import * as React from './lib/preact.mjs';
+import { h, html, render, Component, useState, useLayoutEffect, useRef } from './lib/preact.mjs';
+import {
+  Chooser,
+  DynamicLabel,
+  Button,
+  FileList,
+  Panel,
+  SizedAspectRatioBox,
+  TransformedElement,
+  Canvas,
+  ColorWheel,
+  Slider,
+  CrossHair,
+  FloatingPanel,
+  DropDown,
+  Conditional,
+  Fence,
+  Zoomable,
+  DisplayList,
+  Ruler,
+  Toggle
+} from './components.js';
 import * as components from './components.js';
 import { Message } from './message.js';
 
-import { useActive, useClickout, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useRecognizers, useDrag, usePinch, useWheel, useMove, useScroll, useGesture, useHover, useMousePosition, usePanZoom, useToggleButtonGroupState } from './lib/hooks.js';
+import {
+  useActive,
+  useClickout,
+  useDimensions,
+  useDoubleClick,
+  useElement,
+  EventTracker,
+  useEvent,
+  useFocus,
+  useRecognizers,
+  useDrag,
+  usePinch,
+  useWheel,
+  useMove,
+  useScroll,
+  useGesture,
+  useHover,
+  useMousePosition,
+  usePanZoom,
+  useToggleButtonGroupState
+} from './lib/hooks.js';
 
 import { WebSocketClient } from './lib/net/websocket-async.js';
 /* prettier-ignore */ import * as ecmascript from './lib/ecmascript.js';
-import { PipeTo, AsyncRead, AsyncWrite, DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater, WritableStream, ReadFromIterator } from './lib/stream.js?ts=<?TS?>';
+import {
+  PipeTo,
+  AsyncRead,
+  AsyncWrite,
+  DebugTransformStream,
+  TextEncodeTransformer,
+  TextEncoderStream,
+  TextDecodeTransformer,
+  TextDecoderStream,
+  TransformStreamSink,
+  TransformStreamSource,
+  TransformStreamDefaultController,
+  TransformStream,
+  ArrayWriter,
+  readStream,
+  WriteToRepeater,
+  LogSink,
+  RepeaterSink,
+  StringReader,
+  LineReader,
+  ChunkReader,
+  ByteReader,
+  PipeToRepeater,
+  WritableStream,
+  ReadFromIterator
+} from './lib/stream.js?ts=<?TS?>';
 import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
-import { useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, RenderArc } from './lib/eagle/renderUtils.js';
+import {
+  useTrkl,
+  RAD2DEG,
+  DEG2RAD,
+  VERTICAL,
+  HORIZONTAL,
+  HORIZONTAL_VERTICAL,
+  DEBUG,
+  log,
+  setDebug,
+  PinSizes,
+  EscapeClassName,
+  UnescapeClassName,
+  LayerToClass,
+  ElementToClass,
+  ClampAngle,
+  AlignmentAngle,
+  MakeRotation,
+  EagleAlignments,
+  Alignment,
+  SVGAlignments,
+  AlignmentAttrs,
+  RotateTransformation,
+  LayerAttributes,
+  InvertY,
+  PolarToCartesian,
+  CartesianToPolar,
+  CalculateArcRadius,
+  LinesToPath,
+  MakeCoordTransformer,
+  useAttributes,
+  RenderArc
+} from './lib/eagle/renderUtils.js';
 import { Wire } from './lib/eagle/components/wire.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
@@ -61,7 +160,25 @@ import { Slot, SlotProvider } from './slots.js';
 import Voronoi from './lib/geom/voronoi.js';
 import GerberParser from './lib/gerber/parser.js';
 import { lazyInitializer } from './lib/lazyInitializer.js';
-import { EagleElementProxy, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, LibraryRenderer, makeEagleElement, makeEagleNode } from './lib/eagle.js';
+import {
+  EagleElementProxy,
+  BoardRenderer,
+  DereferenceError,
+  EagleDocument,
+  EagleElement,
+  EagleNode,
+  EagleNodeList,
+  EagleNodeMap,
+  EagleProject,
+  EagleRef,
+  EagleReference,
+  EagleSVGRenderer,
+  Renderer,
+  SchematicRenderer,
+  LibraryRenderer,
+  makeEagleElement,
+  makeEagleNode
+} from './lib/eagle.js';
 //import PureCache from 'pure-cache';
 import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //const React = {Component, Fragment, create: h, html, render, useLayoutEffect, useRef, useState };
 import commands, { ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ClearCache } from './commands.js';
@@ -635,8 +752,25 @@ const DrawBinaryTree = (tree, draw = DrawSVG()) => {
     });
   }
 };
-DrawBinaryTree.bt = new BinaryTree(new BinaryTree.Node('A', new BinaryTree.Node('B', new BinaryTree.Node('D')), new BinaryTree.Node('C', new BinaryTree.Node('E', null, new BinaryTree.Node('G')), new BinaryTree.Node('F'))));
-DrawBinaryTree.bt = new BinaryTree(new BinaryTree.Node('V', new BinaryTree.Node('H', new BinaryTree.Node(2), new BinaryTree.Node(1)), new BinaryTree.Node('H', new BinaryTree.Node('H', new BinaryTree.Node('V', new BinaryTree.Node(6), new BinaryTree.Node(7)), new BinaryTree.Node('V', new BinaryTree.Node(4), new BinaryTree.Node(5)), new BinaryTree.Node('V')), new BinaryTree.Node(3))));
+DrawBinaryTree.bt = new BinaryTree(
+  new BinaryTree.Node('A', new BinaryTree.Node('B', new BinaryTree.Node('D')), new BinaryTree.Node('C', new BinaryTree.Node('E', null, new BinaryTree.Node('G')), new BinaryTree.Node('F')))
+);
+DrawBinaryTree.bt = new BinaryTree(
+  new BinaryTree.Node(
+    'V',
+    new BinaryTree.Node('H', new BinaryTree.Node(2), new BinaryTree.Node(1)),
+    new BinaryTree.Node(
+      'H',
+      new BinaryTree.Node(
+        'H',
+        new BinaryTree.Node('V', new BinaryTree.Node(6), new BinaryTree.Node(7)),
+        new BinaryTree.Node('V', new BinaryTree.Node(4), new BinaryTree.Node(5)),
+        new BinaryTree.Node('V')
+      ),
+      new BinaryTree.Node(3)
+    )
+  )
+);
 
 function GetPaths(query, parent = project.svgElement) {
   return Element.findAll(query, parent).reduce((a, e) => a.concat(e.tagName != 'path' ? Element.findAll('path', e) : [e]), []);
@@ -654,7 +788,9 @@ function PathToPolylines(path, step = 0.01) {
   return polys
     .filter(poly => poly.length > 1)
     .map(poly => {
-      let transforms = new TransformationList(Element.walkUp(path, (p, d, set, stop) => (p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))).reverse()).collapse();
+      let transforms = new TransformationList(
+        Element.walkUp(path, (p, d, set, stop) => (p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))).reverse()
+      ).collapse();
       //console.log('transforms', transforms);
       return new Polyline(poly).transform(transforms);
     });
@@ -663,7 +799,9 @@ function PathToPolylines(path, step = 0.01) {
 function PathToPolyline(path, step = 0.01) {
   let poly = [...SVG.pathIterator(path, { step })];
 
-  let transforms = new TransformationList(Element.walkUp(path, (p, d, set, stop) => (p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))).reverse()).collapse();
+  let transforms = new TransformationList(
+    Element.walkUp(path, (p, d, set, stop) => (p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))).reverse()
+  ).collapse();
   //console.log('transforms', transforms);
   return new Polyline(poly).transform(transforms);
 }
@@ -677,7 +815,11 @@ function PathsToPolylines(paths, step = 0.01) {
 function OutsetPath(path, offset, miterLimit = 2, arcTolerance = 0.01) {
   let co = new ClipperLib.ClipperOffset(miterLimit, arcTolerance);
   let output = (window.output = new ClipperLib.Paths());
-  co.AddPath(path.closed ? path.slice(0, -1) : path, ClipperLib.JoinType[path.closed ? 'jtRound' : 'jtSquare'], ClipperLib.EndType[path.closed ? 'etClosedLine' /*'etClosedPolygon' */ : 'etOpenSquare' || 'etOpenRound']);
+  co.AddPath(
+    path.closed ? path.slice(0, -1) : path,
+    ClipperLib.JoinType[path.closed ? 'jtRound' : 'jtSquare'],
+    ClipperLib.EndType[path.closed ? 'etClosedLine' /*'etClosedPolygon' */ : 'etOpenSquare' || 'etOpenRound']
+  );
   co.Execute(output, offset);
   //console.log('output:', output);
   output.toPolylines = function() {
@@ -765,7 +907,10 @@ function EagleMaps(project) {
   //) maps.dom2eagle = Util.mapFunction(new WeakMap(eagle2dom.map(([k, v]) => [v, k])));
   const [path2component, component2path] = project.renderer.maps.map(Util.mapFunction);
   const { /*path2obj, obj2path, */ path2eagle, eagle2path /*, eagle2obj, obj2eagle */ } = project.doc.maps;
-  const [component2eagle, eagle2component] = [Util.mapAdapter((key, value) => (value === undefined ? path2eagle(component2path(key)) : undefined)), Util.mapAdapter((key, value) => (value === undefined ? path2component(eagle2path(key) + '') : undefined))];
+  const [component2eagle, eagle2component] = [
+    Util.mapAdapter((key, value) => (value === undefined ? path2eagle(component2path(key)) : undefined)),
+    Util.mapAdapter((key, value) => (value === undefined ? path2component(eagle2path(key) + '') : undefined))
+  ];
   Util.weakAssign(maps, {
     path2eagle,
     eagle2path,
@@ -1161,7 +1306,10 @@ const GenerateVoronoi = () => {
   let points2 = vertices.map(v => new Point(v).round(0.127, 4));
   const add = (arr, ...items) => [...(Util.isArray(arr) ? arr : []), ...items];
   const factory = SVG.factory();
-  const lines = [...rlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#000', 'stroke-width': 0.01 }]), ...vlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#f00', 'stroke-width': 0.01 }])];
+  const lines = [
+    ...rlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#000', 'stroke-width': 0.01 }]),
+    ...vlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#f00', 'stroke-width': 0.01 }])
+  ];
   const circles = [
     ...holes.map(p => [
       'circle',
@@ -1577,8 +1725,6 @@ const AppMain = (window.onload = async () => {
   const testComponent = props => html` <div>This is a test</div> `;
 
   let c = h(testComponent, {});
-
-  //console.log('testComponent', c);
   window.testComponent = c;
 
   const UpdateProjectList = async (opts = config.listURL() ? { url: config.listURL(), ...credentials } : {}) => {
@@ -1589,8 +1735,8 @@ const AppMain = (window.onload = async () => {
     for(url of urls) {
       //console.log('UpdateProjectList:', { ...opts, ...credentials, url });
       let data = await ListProjects({ ...opts, ...credentials, url });
-      let { files } = data;
-      //console.log(`Got ${files.length} files`, files);
+      let files = data.files;
+      console.log('files', files);
       function File(obj, i) {
         const { name } = obj;
         let file = this instanceof File ? this : Object.create(File.prototype);
@@ -1962,24 +2108,26 @@ const AppMain = (window.onload = async () => {
     }
   }
   let data;
+
+  console.log('DUMMY');
+
   window.documentList = data = new DocumentList();
   React.render(h(DisplayList, { data }), Element.find('#display'));
 
-  React.render(
-    h(SlotProvider, {}, [
-      h(Panel, { className: classNames('buttons', 'no-select'), tag: 'header' }, [
-        h(Button, {
-          image: 'static/svg/browse.svg',
-          state: open,
-          fn: e => {
-            if(e.type.endsWith('down')) {
-              //console.log('file list push', e);
-              open(!open());
-            }
+  let preactComponent = h(SlotProvider, {}, [
+    h(Panel, { className: classNames('buttons', 'no-select'), tag: 'header' }, [
+      h(Button, {
+        image: 'static/svg/browse.svg',
+        state: open,
+        fn: e => {
+          if(e.type.endsWith('down')) {
+            //console.log('file list push', e);
+            open(!open());
           }
-        }),
+        }
+      }),
 
-        /* h(Button, {
+      /* h(Button, {
           caption: 'Random',
           fn: ModifyColors(c => c.replaceAll(c => HSLA.random()))
         }),
@@ -1987,225 +2135,225 @@ const AppMain = (window.onload = async () => {
           caption: 'Invert',
           fn: ModifyColors(c => c.replaceAll(c => c.invert()))
         }),*/
-        h(DropDown, {}, []),
-        h(Button, {
-          //  caption: '↔',
-          fn: MakeFitAction(VERTICAL & 1),
-          image: 'static/svg/fit-vertical.svg'
-        }),
+      h(DropDown, {}, []),
+      h(Button, {
+        //  caption: '↔',
+        fn: MakeFitAction(VERTICAL & 1),
+        image: 'static/svg/fit-vertical.svg'
+      }),
+      h(Button, {
+        //  caption: '↕',
+        fn: MakeFitAction(HORIZONTAL & 1),
+        image: 'static/svg/fit-horizontal.svg'
+      }),
+      h(Conditional, { signal: currentProj }, [
         h(Button, {
           //  caption: '↕',
-          fn: MakeFitAction(HORIZONTAL & 1),
-          image: 'static/svg/fit-horizontal.svg'
+          fn: () => config.showGrid(!config.showGrid()),
+          state: config.showGrid,
+          toggle: true,
+          image: 'static/svg/grid.svg'
         }),
-        h(Conditional, { signal: currentProj }, [
-          h(Button, {
-            //  caption: '↕',
-            fn: () => config.showGrid(!config.showGrid()),
-            state: config.showGrid,
-            toggle: true,
-            image: 'static/svg/grid.svg'
-          }),
-          h(
-            DropDown,
-            {
-              isOpen: layersDropDown.subscribe(open => console.log('layers dropdown', { open }))
-              // into: '#portal'
-            },
-            [
-              props =>
-                h(Button, {
+        h(
+          DropDown,
+          {
+            isOpen: layersDropDown.subscribe(open => console.log('layers dropdown', { open }))
+            // into: '#portal'
+          },
+          [
+            props =>
+              h(Button, {
+                ...props,
+                toggle: true,
+                state: layersDropDown,
+                image: 'static/svg/layers.svg'
+              }),
+            props =>
+              h(
+                Chooser,
+                {
                   ...props,
-                  toggle: true,
-                  state: layersDropDown,
-                  image: 'static/svg/layers.svg'
-                }),
-              props =>
-                h(
-                  Chooser,
-                  {
-                    ...props,
-                    className: 'layers',
-                    itemClass: 'layer',
-                    itemComponent: Layer,
-                    items: layerList
-                  },
-                  []
-                )
-            ]
-          ),
-          h(Button, {
-            fn: debounceAsync(async e => {
-              /*console.log("CAM button",{e});
+                  className: 'layers',
+                  itemClass: 'layer',
+                  itemComponent: Layer,
+                  items: layerList
+                },
+                []
+              )
+          ]
+        ),
+        h(Button, {
+          fn: debounceAsync(async e => {
+            /*console.log("CAM button",{e});
               if(e.type.endsWith('up')) return false;*/
-              let r;
-              project.gerber = {};
-              project.gcode = {};
-              //console.debug('CAM Button');
-              for(let side of ['back', 'front', 'drill', 'outline']) {
-                let gerber = await BoardToGerber(project, {
-                  side,
-                  [side]: true,
-                  fetch: ['drill', 'outline'].indexOf(side) != -1
-                });
+            let r;
+            project.gerber = {};
+            project.gcode = {};
+            //console.debug('CAM Button');
+            for(let side of ['back', 'front', 'drill', 'outline']) {
+              let gerber = await BoardToGerber(project, {
+                side,
+                [side]: true,
+                fetch: ['drill', 'outline'].indexOf(side) != -1
+              });
 
-                if(gerber) {
-                  //console.debug(`project.gerber['${side}'] =`, gerber);
-                  project.gerber[side] = gerber;
-                  if(gerber && gerber.data) {
-                    gerber.cmds = await GerberParser.parse(gerber.data);
-                    gerber.unit = gerber.cmds.find(i => i.prop == 'units');
+              if(gerber) {
+                //console.debug(`project.gerber['${side}'] =`, gerber);
+                project.gerber[side] = gerber;
+                if(gerber && gerber.data) {
+                  gerber.cmds = await GerberParser.parse(gerber.data);
+                  gerber.unit = gerber.cmds.find(i => i.prop == 'units');
 
-                    gerber.points = gerber.cmds.filter(i => i.coord).map(({ coord }) => new Point(coord.x, coord.y));
-                  }
-                  //console.debug('BoardToGerber side =', side, ' file =', gerber.file);
+                  gerber.points = gerber.cmds.filter(i => i.coord).map(({ coord }) => new Point(coord.x, coord.y));
                 }
+                //console.debug('BoardToGerber side =', side, ' file =', gerber.file);
               }
-              const sides = /*Object.fromEntries*/ ['back', 'front', 'drill', 'outline'].map(side => [side, project.gerber[side].file]);
-              //console.debug('  sides = ', sides);
-              //console.debug('  project = ', project);
-              let allGcode = {};
-              for(let [side, file] of sides) {
-                let gcode = await GerberToGcode(project, {
-                  side,
-                  file,
-                  nog64: true,
-                  'fill-outline': true,
-                  voronoi: true,
-                  /*'zero-start': true,*/ nog81: true
-                });
-                allGcode[side] = gcode;
-                //project.gcode[side] = gcode.data && gcode.data.data ? gcode.data.data : gcode.data;
-              }
-              //console.debug('GerberToGcode allGcode = ', allGcode);
-              let bbox;
-              for(let side of ['outline', 'back', 'front', 'drill']) {
-                try {
-                  let gerber = project.gerber[side];
-                  let data = allGcode[side];
-                  let file = gerber.file || allGcode.data.files[side];
-                  //console.debug('GerberToGcode  ', { gerber, data, file });
+            }
+            const sides = /*Object.fromEntries*/ ['back', 'front', 'drill', 'outline'].map(side => [side, project.gerber[side].file]);
+            //console.debug('  sides = ', sides);
+            //console.debug('  project = ', project);
+            let allGcode = {};
+            for(let [side, file] of sides) {
+              let gcode = await GerberToGcode(project, {
+                side,
+                file,
+                nog64: true,
+                'fill-outline': true,
+                voronoi: true,
+                /*'zero-start': true,*/ nog81: true
+              });
+              allGcode[side] = gcode;
+              //project.gcode[side] = gcode.data && gcode.data.data ? gcode.data.data : gcode.data;
+            }
+            //console.debug('GerberToGcode allGcode = ', allGcode);
+            let bbox;
+            for(let side of ['outline', 'back', 'front', 'drill']) {
+              try {
+                let gerber = project.gerber[side];
+                let data = allGcode[side];
+                let file = gerber.file || allGcode.data.files[side];
+                //console.debug('GerberToGcode  ', { gerber, data, file });
 
-                  if(data) {
-                    let gc = { data, file };
+                if(data) {
+                  let gc = { data, file };
 
-                    if(side != 'drill') {
-                      let processed = file.replace(/\.ngc$/, '.svg');
-                      //console.debug('processed', processed);
-                      gc.svg = await FetchURL(processed).then(ResponseData);
-                      let pos;
+                  if(side != 'drill') {
+                    let processed = file.replace(/\.ngc$/, '.svg');
+                    //console.debug('processed', processed);
+                    gc.svg = await FetchURL(processed).then(ResponseData);
+                    let pos;
 
-                      if(gc.svg) {
-                        if((pos = gc.svg.indexOf('<svg ')) != -1) gc.svg = gc.svg.substring(pos);
+                    if(gc.svg) {
+                      if((pos = gc.svg.indexOf('<svg ')) != -1) gc.svg = gc.svg.substring(pos);
 
-                        if(side == 'outline') {
-                          //console.debug('outline', gc.svg);
-                          let xmlData = tXml(gc.svg);
-                          let svgPath = Util.tail(xmlData[0].children).children[0];
-                          let points = SVG.pathToPoints(svgPath.attributes);
-                          //console.debug('points:', points);
-                          bbox = new Rect(new BBox().update(points)).round(0.001);
-                          //console.debug('bbox:', bbox);
+                      if(side == 'outline') {
+                        //console.debug('outline', gc.svg);
+                        let xmlData = tXml(gc.svg);
+                        let svgPath = Util.tail(xmlData[0].children).children[0];
+                        let points = SVG.pathToPoints(svgPath.attributes);
+                        //console.debug('points:', points);
+                        bbox = new Rect(new BBox().update(points)).round(0.001);
+                        //console.debug('bbox:', bbox);
 
-                          continue;
-                        }
-                        //  console.debug('gc.svg ',gc.svg );
-                        let layer = GetLayer({
-                          name: makeLayerName('processed', side),
-                          'data-filename': processed,
-                          create: (project, props = {}) => {
-                            let g = SVG.create('g', { innerHTML: gc.svg, ...props }, project.svgElement);
-                            g.innerHTML = gc.svg;
-                            if(g.firstElementChild && g.firstElementChild.tagName == 'svg') {
-                              let svg = g.firstElementChild;
-                              ['width', 'height', 'xmlns', 'xmlns:xlink', 'version'].forEach(a => svg.removeAttribute(a));
-                              svg.setAttribute('viewBox', bbox);
-                            }
-                            Element.findAll('path', g)
-                              .filter(e => e.style['fill-opacity'] == 1)
-                              .forEach(e => (e.style.display = 'none'));
-
-                            ['fill', 'stroke'].forEach(name =>
-                              Element.findAll(`[style*="${name}:"]`, g).forEach(e => {
-                                const value = e.style[name];
-                                if(value != 'rgb(0, 0, 0)' && value != 'none') {
-                                  e.setAttribute(name, value);
-                                  e.style.removeProperty(name);
-                                }
-                              })
-                            );
-
-                            return g;
+                        continue;
+                      }
+                      //  console.debug('gc.svg ',gc.svg );
+                      let layer = GetLayer({
+                        name: makeLayerName('processed', side),
+                        'data-filename': processed,
+                        create: (project, props = {}) => {
+                          let g = SVG.create('g', { innerHTML: gc.svg, ...props }, project.svgElement);
+                          g.innerHTML = gc.svg;
+                          if(g.firstElementChild && g.firstElementChild.tagName == 'svg') {
+                            let svg = g.firstElementChild;
+                            ['width', 'height', 'xmlns', 'xmlns:xlink', 'version'].forEach(a => svg.removeAttribute(a));
+                            svg.setAttribute('viewBox', bbox);
                           }
-                        });
-                        /*
+                          Element.findAll('path', g)
+                            .filter(e => e.style['fill-opacity'] == 1)
+                            .forEach(e => (e.style.display = 'none'));
+
+                          ['fill', 'stroke'].forEach(name =>
+                            Element.findAll(`[style*="${name}:"]`, g).forEach(e => {
+                              const value = e.style[name];
+                              if(value != 'rgb(0, 0, 0)' && value != 'none') {
+                                e.setAttribute(name, value);
+                                e.style.removeProperty(name);
+                              }
+                            })
+                          );
+
+                          return g;
+                        }
+                      });
+                      /*
                       layer.sublayers = Util.histogram(Element.walk(layer.dom, (e, acc) => (e.tagName.endsWith('g') ? acc : [...acc, e]), []),
                         e => e.getAttribute('style'),
                         new Map(),
                         () => new Set()
                       );*/
-                      }
                     }
-
-                    //console.debug('GerberToGcode side =', side, ' gc =', gc.file, ' svg =', Util.abbreviate(gc.svg));
                   }
-                } catch(e) {
-                  Util.putError(e);
-                }
-              }
-              gcode(project.gcode);
 
-              function makeLayerName(name, side) {
-                const prefix = side == 'front' ? 't-' : side == 'back' ? 'b-' : '';
-                return Util.camelize(prefix + path.basename(name, /\.[^.]+$/).replace(new RegExp(`_${side}`), ''));
-              }
-            }, 100),
-            'data-tooltip': 'Generate Gerber RS274-X CAM data',
-            image: 'static/svg/cnc-obrabeni.svg'
-          })
-        ]),
-
-        h(Conditional, { signal: gcode }, [
-          h(Button, {
-            fn: () => {
-              const colors = {
-                front: 'hsl(300,100%,70%)',
-                back: 'hsl(230,100%,70%)'
-              };
-              for(let side of ['back', 'front']) {
-                let gc = project.gcode[side];
-                if(gc) {
-                  //console.debug(`${side} gcode gc =`, gc);
-                  GcodeToPolylines(gc.data, {
-                    fill: false,
-                    color: colors[side],
-                    side
-                  });
+                  //console.debug('GerberToGcode side =', side, ' gc =', gc.file, ' svg =', Util.abbreviate(gc.svg));
                 }
+              } catch(e) {
+                Util.putError(e);
               }
-            },
-            'data-tooltip': 'Create Voronoi diagram',
-            image: 'static/svg/voronoi.svg'
-          })
-        ]),
-        h(Toggle, {
-          state: sortOrder,
-          images: ['static/svg/sort-asc.svg', 'static/svg/sort-desc.svg'],
-          //disable: trkl(true),
-          visible: open
-        }),
-        h(DynamicLabel, {
-          className: 'vcenter pad-lr',
-          caption: documentTitle
-        }),
-        h(DynamicLabel, {
-          className: 'vcenter pad-lr',
-          caption: documentSize
-        }),
-        h(Consumer, {})
+            }
+            gcode(project.gcode);
+
+            function makeLayerName(name, side) {
+              const prefix = side == 'front' ? 't-' : side == 'back' ? 'b-' : '';
+              return Util.camelize(prefix + path.basename(name, /\.[^.]+$/).replace(new RegExp(`_${side}`), ''));
+            }
+          }, 100),
+          'data-tooltip': 'Generate Gerber RS274-X CAM data',
+          image: 'static/svg/cnc-obrabeni.svg'
+        })
       ]),
 
-      /*  h('div', { style: { display: 'inline-flex', flexFlow: 'row', alignItems: 'stretch', height: '100px', padding: '10px' } }, [
+      h(Conditional, { signal: gcode }, [
+        h(Button, {
+          fn: () => {
+            const colors = {
+              front: 'hsl(300,100%,70%)',
+              back: 'hsl(230,100%,70%)'
+            };
+            for(let side of ['back', 'front']) {
+              let gc = project.gcode[side];
+              if(gc) {
+                //console.debug(`${side} gcode gc =`, gc);
+                GcodeToPolylines(gc.data, {
+                  fill: false,
+                  color: colors[side],
+                  side
+                });
+              }
+            }
+          },
+          'data-tooltip': 'Create Voronoi diagram',
+          image: 'static/svg/voronoi.svg'
+        })
+      ]),
+      h(Toggle, {
+        state: sortOrder,
+        images: ['static/svg/sort-asc.svg', 'static/svg/sort-desc.svg'],
+        //disable: trkl(true),
+        visible: open
+      }),
+      h(DynamicLabel, {
+        className: 'vcenter pad-lr',
+        caption: documentTitle
+      }),
+      h(DynamicLabel, {
+        className: 'vcenter pad-lr',
+        caption: documentSize
+      }),
+      h(Consumer, {})
+    ]),
+
+    /*  h('div', { style: { display: 'inline-flex', flexFlow: 'row', alignItems: 'stretch', height: '100px', padding: '10px' } }, [
         h(ColorWheel, {}),
         h(Slider, {
           min: 0,
@@ -2231,68 +2379,68 @@ const AppMain = (window.onload = async () => {
           }
         })
       ]),*/
-      h(FileList, {
-        listTag: 'nav',
-        files: projects,
-        onActive: open,
-        onChange: debounceAsync(async (e, p, i) => await ChooseDocument(p, i), 5000, {
-          leading: true
-        }),
-        filter: config.searchFilter,
-        showSearch,
-        changeInput,
-        focusSearch,
-        sortKey,
-        sortOrder,
-        makeSortCompare: key =>
-          key == 'name' || !key
-            ? function(a, b) {
-                let nameA = a.name,
-                  nameB = b.name;
-                let extA = path.extname(nameA),
-                  extB = path.extname(nameB);
-                if(extA == '.lbr' && extB != '.lbr') return -1;
-                if(extA != '.lbr' && extB == '.lbr') return 1;
-                return nameA.localeCompare(nameB);
-              }
-            : function(a, b) {
-                let valueA = a[key],
-                  valueB = b[key];
-                return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
-              },
-        currentInput: currentSearch
+    h(FileList, {
+      listTag: 'nav',
+      files: projects,
+      onActive: open,
+      onChange: debounceAsync(async (e, p, i) => await ChooseDocument(p, i), 5000, {
+        leading: true
       }),
+      filter: config.searchFilter,
+      showSearch,
+      changeInput,
+      focusSearch,
+      sortKey,
+      sortOrder,
+      makeSortCompare: key =>
+        key == 'name' || !key
+          ? function(a, b) {
+              let nameA = a.name,
+                nameB = b.name;
+              let extA = path.extname(nameA),
+                extB = path.extname(nameB);
+              if(extA == '.lbr' && extB != '.lbr') return -1;
+              if(extA != '.lbr' && extB == '.lbr') return 1;
+              return nameA.localeCompare(nameB);
+            }
+          : function(a, b) {
+              let valueA = a[key],
+                valueB = b[key];
+              return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+            },
+      currentInput: currentSearch
+    }),
 
-      h(CrossHair, { ...crosshair }),
-      h(FloatingPanel, { onSize: config.logSize, className: 'no-select', id: 'console' }, [
-        /*h(div, {}, [ */ h(Logger, {}),
-        h(Dumper, {}),
-        h(Commander, {
-          onCommand: cmdStr => {
-            let fn = new Function(`return ${cmdStr};`);
+    h(CrossHair, { ...crosshair }),
+    h(FloatingPanel, { onSize: config.logSize, className: 'no-select', id: 'console' }, [
+      /*h(div, {}, [ */ h(Logger, {}),
+      h(Dumper, {}),
+      h(Commander, {
+        onCommand: cmdStr => {
+          let fn = new Function(`return ${cmdStr};`);
 
-            //console.log('Command:', cmdStr);
-            LogJS.info(`> ${cmdStr}`);
-            let result = fn();
-            LogJS.info(`= ${Util.toSource(result)}`);
-          }
-        }) /*])*/
-      ]),
-      h(Slot, { name: 'layers' }),
-      h(Conditional, { signal: wantAuthorization }, h(AuthorizationDialog, { onAuth: config.credentials })),
-      h(Ruler, {
-        class: 'ruler-container vertical ',
-        handleChange: e => {
-          //console.log('Ruler changed:', e);
-        },
-        style: {
-          position: 'absolute',
-          right: 0
+          //console.log('Command:', cmdStr);
+          LogJS.info(`> ${cmdStr}`);
+          let result = fn();
+          LogJS.info(`= ${Util.toSource(result)}`);
         }
-      })
+      }) /*])*/
     ]),
-    Element.find('#preact')
-  );
+    h(Slot, { name: 'layers' }),
+    h(Conditional, { signal: wantAuthorization }, h(AuthorizationDialog, { onAuth: config.credentials })),
+    h(Ruler, {
+      class: 'ruler-container vertical ',
+      handleChange: e => {
+        //console.log('Ruler changed:', e);
+      },
+      style: {
+        position: 'absolute',
+        right: 0
+      }
+    })
+  ]);
+  console.log('DUMMY', (window.preactComponent = preactComponent));
+  React.render(preactComponent, Element.find('#preact'));
 
   let move, resize;
   let box;
@@ -2393,7 +2541,10 @@ const AppMain = (window.onload = async () => {
       const bboxes = new Map(add.map(e => [e, new Rect(e.getBBox ? e.getBBox() : e.getBoundingClientRect())]));
 
       for(let [e, rect] of bboxes) {
-        let transforms = Element.walkUp(e, (p, d, set, stop) => (p.parentElement == null || p.parentElement.isSameNode(p.ownerSVGElement) ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))) || [];
+        let transforms =
+          Element.walkUp(e, (p, d, set, stop) =>
+            p.parentElement == null || p.parentElement.isSameNode(p.ownerSVGElement) ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform'))
+          ) || [];
         transforms = transforms.reverse();
         elems.add(e);
         let props = {
@@ -2557,7 +2708,48 @@ const AppMain = (window.onload = async () => {
   };
   window.processEvents = async function eventLoop() {
     for await(let e of new EventIterator('touch')) {
-      const { altKey, bubbles, button, buttons, cancelBubble, cancelable, clientX, clientY, composed, ctrlKey, detail, eventPhase, fromElement, isTrusted, layerX, layerY, metaKey, movementX, movementY, offsetX, offsetY, pageX, pageY, path, region, relatedTarget, returnValue, screenX, screenY, shiftKey, srcElement, target, timeStamp, toElement, type, view, which, x, y, ...event } = e;
+      const {
+        altKey,
+        bubbles,
+        button,
+        buttons,
+        cancelBubble,
+        cancelable,
+        clientX,
+        clientY,
+        composed,
+        ctrlKey,
+        detail,
+        eventPhase,
+        fromElement,
+        isTrusted,
+        layerX,
+        layerY,
+        metaKey,
+        movementX,
+        movementY,
+        offsetX,
+        offsetY,
+        pageX,
+        pageY,
+        path,
+        region,
+        relatedTarget,
+        returnValue,
+        screenX,
+        screenY,
+        shiftKey,
+        srcElement,
+        target,
+        timeStamp,
+        toElement,
+        type,
+        view,
+        which,
+        x,
+        y,
+        ...event
+      } = e;
       // LogJS.info(`${type} ` + /* Util.toSource(e)+ */ ` ${x},${y} → ${Element.xpath(target)}`);
     }
   };

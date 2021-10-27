@@ -146,7 +146,14 @@ async function main() {
 
   const convertToGerber = async (boardFile, opts = {}) => {
     console.log('convertToGerber', { boardFile, opts });
-    let { layers = opts.side == 'outline' ? ['Measures'] : opts.drill ? ['Drills', 'Holes'] : [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'], format = opts.drill ? 'EXCELLON' : 'GERBER_RS274X', data, fetch = false, front, back } = opts;
+    let {
+      layers = opts.side == 'outline' ? ['Measures'] : opts.drill ? ['Drills', 'Holes'] : [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'],
+      format = opts.drill ? 'EXCELLON' : 'GERBER_RS274X',
+      data,
+      fetch = false,
+      front,
+      back
+    } = opts;
     const base = path.basename(boardFile, '.brd');
     const formatToExt = (layers, format) => {
       if(opts.drill || format.startsWith('EXCELLON') || layers.indexOf('Drills') != -1 || layers.indexOf('Holes') != -1) return 'TXT';
@@ -240,7 +247,9 @@ async function main() {
       return path.join(opts['output-dir'], `${base}_${side}.${ext}`);
     }
 
-    const params = [...Object.entries(opts)].filter(([k, v]) => typeof v == 'string' || typeof v == 'number' || (typeof v == 'boolean' && v === true)).map(([k, v]) => `--${k}${typeof v != 'boolean' && v != '' ? '=' + v : ''}`);
+    const params = [...Object.entries(opts)]
+      .filter(([k, v]) => typeof v == 'string' || typeof v == 'number' || (typeof v == 'boolean' && v === true))
+      .map(([k, v]) => `--${k}${typeof v != 'boolean' && v != '' ? '=' + v : ''}`);
     console.log('Request /gcode', { gerberFile, fetch, raw });
     //console.warn(`gerberToGcode`, Util.abbreviate(gerberFile), { gcodeFile, opts });
 
@@ -601,7 +610,7 @@ async function main() {
 
   app.get(/^\/!urls/, async (req, res) => res.json({ files: [...files].sort() }));
   app.get(/^\/files/, async (req, res) => res.json({ files: await GetFilesList() }));
-  app.post(/^\/(files|list).html/, async (req, res) => {
+  app.post(/^\/(files|list)(.html|)/, async (req, res) => {
     const { body } = req;
     let { filter, descriptions, names } = body;
 

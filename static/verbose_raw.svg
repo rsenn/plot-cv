@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" version="1.0" viewBox="0 0 4.8 4.8">
+  <defs>
+    <linearGradient id="verbose_raw_svg__a" x1="42.986" x2="22.014" y1="7.013" y2="51.987" gradientTransform="translate(-.157 -.157) scale(.08246)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#c2f497"/>
+      <stop offset="1" stop-color="#78b655"/>
+    </linearGradient>
+    <linearGradient id="verbose_raw_svg__b" x1="55.454" x2="9.547" y1="42.753" y2="16.249" gradientTransform="translate(-.157 -.157) scale(.08246)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4d7632"/>
+      <stop offset="1" stop-color="#6da150"/>
+    </linearGradient>
+  </defs>
+  <circle cx="2.4" cy="2.4" r="2.127" fill="url(#verbose_raw_svg__a)" stroke="url(#verbose_raw_svg__b)" stroke-width=".165"/>
+  <text style="line-height:1.25;-inkscape-font-specification:Musica" x="2.4" y="3.886" fill="#fff" stroke-width=".047" font-family="Musica" font-size="1.878" font-weight="400" letter-spacing="0" word-spacing="0">
+    <tspan x="2.4" y="3.886" style="-inkscape-font-specification:'Liberation Sans Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center" font-family="Liberation Sans" font-size="3.684" font-weight="700" text-anchor="middle">💡</tspan>
+  </text>
+</svg>

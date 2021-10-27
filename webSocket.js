@@ -1,7 +1,8 @@
 import { Message } from './message.js';
 import Util from './lib/util.js';
 import { Alea } from './lib/alea.js';
-import Timers, { TimeoutError } from './lib/repeater/timers.js';
+import{   TimeoutError } from './lib/repeater/timers.js';
+import * as Timers  from './lib/repeater/timers.js';
 
 const prng = new Alea();
 prng.seed(Date.now());
@@ -113,12 +114,7 @@ export class Socket {
       const id = sockets.findIndex(s => s.id == msg.body);
       if(id != -1) {
         const sock = sockets[id];
-        return await send(
-          { ...this.info, idle: Date.now() - this.lastMessage },
-          sock.id,
-          null,
-          'INFO'
-        );
+        return await send({ ...this.info, idle: Date.now() - this.lastMessage }, sock.id, null, 'INFO');
       }
     } else if(msg.type == 'PING') {
       return await send(msg.body, null, msg.origin, 'PONG');
@@ -185,8 +181,7 @@ export class Socket {
     s.closeConnection = async function closeConnection(reason) {
       console.debug(`[${this.id}] closeConnection:`, reason);
       await this.ws.close();
-      if(removeItem(sockets, this.ws, 'ws'))
-        await client.sendMany(this, reason || 'closed', this.id, null, 'QUIT');
+      if(removeItem(sockets, this.ws, 'ws')) await client.sendMany(this, reason || 'closed', this.id, null, 'QUIT');
     };
     s.lastMessage = Date.now();
     sockets.push(s);

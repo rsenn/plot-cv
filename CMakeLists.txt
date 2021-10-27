@@ -143,6 +143,8 @@ string(REGEX REPLACE " -Wall" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 nowarn_flag(-Wno-unused-value)
 nowarn_flag(-Wno-unused-variable)
 
+set(CMAKE_CXX11_EXTENSION_COMPILE_OPTION "${CXX_STANDARD_FLAG}" CACHE STRING "" FORCE)
+
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES ".*Clang.*")
   nowarn_flag(-Wno-deprecated-anon-enum-enum-conversion)
   nowarn_flag(-Wno-extern-c-compat)

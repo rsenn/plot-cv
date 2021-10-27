@@ -38,7 +38,10 @@ function WriteImage(name, mat) {
 function SaveConfig(configObj) {
   configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v]));
 
-  return filesystem.writeFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'), JSON.stringify(configObj, null, 2) + '\n');
+  return filesystem.writeFile(
+    Util.getArgv()[1].replace(/\.js$/, '.config.json'),
+    JSON.stringify(configObj, null, 2) + '\n'
+  );
 }
 
 function LoadConfig() {

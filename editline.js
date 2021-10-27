@@ -96,7 +96,14 @@ function rl_completion_matches(token, generator) {
 }
 
 /* char* rl_filename_completion_function(const char* text, int state)  */
-define('rl_filename_completion_function', dlsym('rl_filename_completion_function', libeditline), null, 'char *', 'void *', 'int');
+define(
+  'rl_filename_completion_function',
+  dlsym('rl_filename_completion_function', libeditline),
+  null,
+  'char *',
+  'void *',
+  'int'
+);
 function rl_filename_completion_function(text, state) {
   return call('rl_filename_completion_function', text, state);
 }
@@ -198,7 +205,14 @@ function rl_set_list_possib_func(func) {
 }
 
 /* void rl_callback_handler_install(const char* prompt, rl_vcpfunc_t* lhandler)  */
-define('rl_callback_handler_install', dlsym('rl_callback_handler_install', libeditline), null, 'void', 'void *', 'void *');
+define(
+  'rl_callback_handler_install',
+  dlsym('rl_callback_handler_install', libeditline),
+  null,
+  'void',
+  'void *',
+  'void *'
+);
 function rl_callback_handler_install(prompt, lhandler) {
   return call('rl_callback_handler_install', prompt, lhandler);
 }

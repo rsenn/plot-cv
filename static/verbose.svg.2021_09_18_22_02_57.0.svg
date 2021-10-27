@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg6796"
+   version="1.1"
+   viewBox="0 0 12.7 12.7"
+   height="48"
+   width="48"
+   sodipodi:docname="verbose.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="640"
+     inkscape:window-height="480"
+     id="namedview42"
+     showgrid="false"
+     showguides="true" />
+  <defs
+     id="defs6790">
+    <linearGradient
+       id="linearGradient7351">
+      <stop
+         id="stop7347"
+         offset="0"
+         style="stop-color:#55d400;stop-opacity:1" />
+      <stop
+         id="stop7349"
+         offset="1"
+         style="stop-color:#44aa00;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient
+       gradientTransform="matrix(0.99999998,0.26794918,-0.25881904,0.96592583,23.65113,-3.3680879)"
+       gradientUnits="userSpaceOnUse"
+       r="75.898026"
+       fy="91.380951"
+       fx="24.190475"
+       cy="91.380951"
+       cx="24.190475"
+       id="radialGradient7355"
+       xlink:href="#linearGradient7351" />
+    <radialGradient
+       r="75.898026"
+       fy="91.380951"
+       fx="24.190475"
+       cy="91.380951"
+       cx="24.190475"
+       gradientTransform="matrix(0.99999998,0.26794918,-0.25881904,0.96592583,23.65113,-3.3680879)"
+       gradientUnits="userSpaceOnUse"
+       id="radialGradient7365"
+       xlink:href="#linearGradient7351" />
+  </defs>
+  <metadata
+     id="metadata6793">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(39.587577,-161.57645)"
+     id="layer1">
+    <path
+       transform="matrix(0.08119793,0.01030828,-0.01030828,0.08119793,-34.259813,160.25714)"
+       d="M 92.238782,52.093242 100.0885,111.71776 63.478184,159.42926 3.8536615,167.27898 -43.857831,130.66866 -51.707549,71.044137 -15.097233,23.332644 44.527289,15.482927 Z"
+       id="path7341"
+       style="opacity:1;vector-effect:none;fill:url(#radialGradient7365);fill-opacity:1;stroke:#ffffff;stroke-width:4.8488298;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <g
+       transform="matrix(0.08184965,0,0,0.08184965,-35.950473,159.61511)"
+       id="text7345"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:34.52301407px;line-height:1.25;font-family:'Dephunked BRK';-inkscape-font-specification:'Dephunked BRK';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+       aria-label="!">
+      <path
+         id="path7357"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:165.71046448px;font-family:Gunplay;-inkscape-font-specification:Gunplay;fill:#ffffff;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+         d="m 20.239197,160.04431 v -21.03746 h 25.892261 v 21.03746 z m 4.854799,-32.93172 -5.987585,-84.068929 h 28.07692 l -5.906672,84.068929 z" />
+    </g>
+  </g>
+</svg>

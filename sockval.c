@@ -14,6 +14,16 @@
 #define OFFSETOF(type, field) ((size_t) & ((type*)0)->field)
 //#endif
 
+#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
+#define BYTE_TO_BINARY(byte)  \
+  (byte & 0x80 ? '1' : '0'), \
+  (byte & 0x40 ? '1' : '0'), \
+  (byte & 0x20 ? '1' : '0'), \
+  (byte & 0x10 ? '1' : '0'), \
+  (byte & 0x08 ? '1' : '0'), \
+  (byte & 0x04 ? '1' : '0'), \
+  (byte & 0x02 ? '1' : '0'), \
+  (byte & 0x01 ? '1' : '0') 
 enum test { A, B, C, D };
 
 typedef int dim2[10][20];
@@ -179,4 +189,9 @@ main() {
   enum { A = 1, B = 2, C = 3 } e;
   printf("sizeof(e) %lu\n", sizeof(e));
   printf("sizeof(off_t) %lu\n", sizeof(off_t));
+  printf("POLLIN  0b" BYTE_TO_BINARY_PATTERN "\n", BYTE_TO_BINARY(POLLIN));
+  printf("POLLPRI 0b" BYTE_TO_BINARY_PATTERN "\n", BYTE_TO_BINARY(POLLPRI));
+  printf("POLLOUT 0b" BYTE_TO_BINARY_PATTERN "\n", BYTE_TO_BINARY(POLLOUT));
+  printf("POLLERR 0b" BYTE_TO_BINARY_PATTERN "\n", BYTE_TO_BINARY(POLLERR));
+  printf("POLLHUP 0b" BYTE_TO_BINARY_PATTERN "\n", BYTE_TO_BINARY(POLLHUP));
 }

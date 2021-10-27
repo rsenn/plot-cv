@@ -3,12 +3,23 @@ import * as os from 'os';
 import * as deep from './lib/deep.js';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './quickjs/qjs-ffi/lib/fcntl.js';
 import { errno } from 'ffi';
-import { Socket, socket, EAGAIN, AF_INET, SOCK_STREAM, /*ndelay, */ SockAddr, select } from './quickjs/qjs-ffi/lib/socket.js';
+import {
+  Socket,
+  socket,
+  EAGAIN,
+  AF_INET,
+  SOCK_STREAM,
+  /*ndelay, */ SockAddr,
+  select
+} from './quickjs/qjs-ffi/lib/socket.js';
 import { fd_set, FD_SET, FD_CLR, FD_ISSET, FD_ZERO } from './quickjs/qjs-ffi/lib/fd_set.js';
 import timeval from './quickjs/qjs-ffi/lib/timeval.js';
 import Util from './lib/util.js';
 import { Console } from 'console';
-import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
+import {
+  toString as ArrayBufferToString,
+  toArrayBuffer as StringToArrayBuffer
+} from './lib/misc.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 
 Util.define(Array.prototype, {
@@ -20,11 +31,10 @@ Util.define(Array.prototype, {
 async function main(...args) {
   globalThis.console = new Console({
     inspectOptions: {
-      colors: true,
       depth: Infinity,
       maxArrayLength: 100,
       breakLength: 10000,
-      compact: 2,
+      compact: 3,
       customInspect: true
     }
   });
@@ -57,41 +67,43 @@ async function main(...args) {
     ret = sock.listen();
     retValue(ret, `sock.listen())`);
   } else {
-    sock.ndelay(true);
+    //  sock.ndelay(true);
     ret = sock.connect(addr);
     retValue(ret, `sock.connect(${addr})`);
   }
 
+  debug = new DebuggerProtocol(sock);
+  console.log('debug', debug);
+
+  os.setReadHandler(+sock, () => {
+    console.log('debug.read', debug.read);
+    debug.read();
+    if(sock.eof) os.setReadHandler(+sock, null);
+  });
+  os.setReadHandler(0, () => {
+    debug.readCommand();
+  });
+
   /*  ret = sendRequest(+sock, 'next');
   retValue(ret);*/
 
-  IOLoop();
+  //  IOLoop();
 
   console.log('debuggerprotocol', sock);
 
   function IOLoop() {
-    //const buf = new ArrayBuffer(1024);
     const rfds = new fd_set();
     const wfds = new fd_set();
-
     console.log('IOLoop', sock);
     FD_SET(+sock, wfds);
-
     do {
       FD_SET((debug ? debug.sock : sock).fd, rfds);
-
       if(debug) FD_SET(0, rfds);
-
       const timeout = new timeval(5, 0);
-
-      //  console.log('select(1)',  { rfds: rfds.array, wfds: wfds.array });
-
       ret = select(null, rfds, wfds, null, timeout);
       let readable = rfds.toArray(),
         writable = wfds.toArray();
-
-       console.log('select(2)',   {readable,writable });
-
+      console.log('select(2)', { readable, writable });
       if(writable.indexOf(sock.fd) != -1) {
         if(!debug) debug = new DebuggerProtocol(sock);
         FD_CLR(sock.fd, wfds);
@@ -104,13 +116,11 @@ async function main(...args) {
           ndelay(connection);
         }
       }
-
       if(debug && readable.contains((debug.sock ?? sock).fd)) {
         debug.read();
       } else if(!debug && readable.contains(sock.fd)) {
         debug = new DebuggerProtocol(sock);
       }
-
       if(readable.contains(0)) {
         debug.readCommand();
       }
@@ -120,7 +130,12 @@ async function main(...args) {
 }
 
 function retValue(ret, ...args) {
-  console.log(...args, `ret =`, ret, ...(ret == -1 ? [' errno =', errno(), ' error =', std.strerror(errno())] : []));
+  console.log(
+    ...args,
+    `ret =`,
+    ret,
+    ...(ret == -1 ? [' errno =', errno(), ' error =', std.strerror(errno())] : [])
+  );
 }
 
 function toHex(n, b = 2) {
@@ -143,8 +158,20 @@ function MakeArray(buf, numBytes) {
 function ArrayBufToHex(buf, numBytes = 8) {
   if(typeof buf == 'object' && buf != null && buf instanceof ArrayBuffer) {
     let arr = MakeArray(buf, numBytes);
-    return arr.reduce((s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)), '');
+    return arr.reduce(
+      (s, code) =>
+        (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
+      ''
+    );
   }
   return buf;
 }
-Util.callMain(main, true);
+
+try {
+  main(...scriptArgs.slice(1));
+} catch(error) {
+  console.log(`FAIL: ${error && error.message}\n${error && error.stack}`);
+  std.exit(1);
+} finally {
+  //console.log('SUCCESS');
+}

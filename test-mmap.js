@@ -70,7 +70,10 @@ function main(...args) {
 
   let fd = os.open(args[0], os.O_RDONLY);
   console.log('fd', fd);
+  console.log('args[0]', args[0]);
   let [st, err] = os.stat(args[0]);
+  console.log('st', st);
+
   const { size } = st;
   console.log('size', size);
 
@@ -83,13 +86,37 @@ function main(...args) {
   let array = new Uint8Array(map);
 
   const patterns = [
-    ['e8 ? ? ? ? 49 8b bf ? ? ? ? 85 c0', 'License Validity Checking (Aka IsValidLicense)', '48 31 c0 c3'],
-    ['e8 ? ? ? ? 48 89 5c 24 ? 48 8b b3', 'Invalidation/Validation Functions - Pattern 1', '90 90 90 90 90'],
-    ['e8 ? ? ? ? bf ? ? ? ? e8 ? ? ? ? 83 25', 'Invalidation/Validation Functions - Pattern 2', '90 90 90 90 90'],
+    [
+      'e8 ? ? ? ? 49 8b bf ? ? ? ? 85 c0',
+      'License Validity Checking (Aka IsValidLicense)',
+      '48 31 c0 c3'
+    ],
+    [
+      'e8 ? ? ? ? 48 89 5c 24 ? 48 8b b3',
+      'Invalidation/Validation Functions - Pattern 1',
+      '90 90 90 90 90'
+    ],
+    [
+      'e8 ? ? ? ? bf ? ? ? ? e8 ? ? ? ? 83 25',
+      'Invalidation/Validation Functions - Pattern 2',
+      '90 90 90 90 90'
+    ],
     ['55 41 56 53 41 89 f6 48 89 fd 6a 28', 'Server Validation Thread', '48 31 c0 48 ff c0 c3'],
-    ['e8 ? ? ? ? 3d ? ? ? ? 75 12', 'License Validity Checking', '48 31 c0 c3' /*'48 c7 c0 19 01 00 00'*/],
-    ['41 57 41 56 56 57 55 53 b8 28 21 00 00', 'RSA Key Patch (allows any key in right format to work)', '33 c0 fe c0 c3 57 55 53 b8 28 21 00 00'],
-    ['6c 69 63 65 6e 73 65 2e 73 75 62 6c 69 6d 65 68 71 2e 63 6f 6d', 'Disable License Check', '73 75 62 6c 69 6d 65 68 71 2e 6c 6f 63 61 6c 68 6f 73 74 00 00'],
+    [
+      'e8 ? ? ? ? 3d ? ? ? ? 75 12',
+      'License Validity Checking',
+      '48 31 c0 c3' /*'48 c7 c0 19 01 00 00'*/
+    ],
+    [
+      '41 57 41 56 56 57 55 53 b8 28 21 00 00',
+      'RSA Key Patch (allows any key in right format to work)',
+      '33 c0 fe c0 c3 57 55 53 b8 28 21 00 00'
+    ],
+    [
+      '6c 69 63 65 6e 73 65 2e 73 75 62 6c 69 6d 65 68 71 2e 63 6f 6d',
+      'Disable License Check',
+      '73 75 62 6c 69 6d 65 68 71 2e 6c 6f 63 61 6c 68 6f 73 74 00 00'
+    ],
     [
       '48 89 e7 be ? ? ? ? ba ? ? ? ? e8 ? ? ? ? 45 84 e4 74 12',
       'Upgrade required',
@@ -108,6 +135,17 @@ function main(...args) {
         //++arr[0];
         console.log('arr[0]', arr[0]);
       }
+    ],
+    ['85 db 74 29 0f be b3 0d cc 29', 'Upgrade', '85 db eb'],
+    [
+      '50 be fc d8 20 00 ba ab 10 21 00 31 ff e8 bd 79 18 00 84 c0 74 16 48 8b 05 b9 ed 4a 00 be a7 ae 21 00 31 ff 31 d2 31 c9 41 58 ff e0 58',
+      'Patch-Sublime-License-Message',
+      '90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90'
+    ],
+    [
+      '41 57 41 56 56 57 55 53 B8 28 21 00 00',
+      'RSA Key Patch (allows any key in right format to work)',
+      '33 C0 FE C0 C3 57 55 53 B8 28 21 00 00'
     ]
     //['c3', "Ret"]
   ];
@@ -124,7 +162,12 @@ function main(...args) {
   function searchPattern(str) {
     const results = searchAll(str);
 
-    if(results.length > 1) throw new Error(`Multiple results for pattern '${str}': ${results.map(r => '0x' + r.toString(16)).join(', ')}`);
+    if(results.length > 1)
+      throw new Error(
+        `Multiple results for pattern '${str}': ${results
+          .map(r => '0x' + r.toString(16))
+          .join(', ')}`
+      );
     return results[0];
   }
   function searchAll(str) {
@@ -149,22 +192,30 @@ function main(...args) {
   }
   const results = patterns.map(([pattern, description], i) => {
     console.log(`[${i}] Searching ${description} [ ${pattern} ]`);
-    let results = searchAll(pattern).map(offset => ({ offset, rva: Offset2RVA(args[0], offset) }));
+    let results = searchAll(pattern).map(offset => ({
+      offset,
+      rva: Offset2RVA(args[0], offset)
+    }));
 
-    console.log(`results[${results.length}]`, results);
-    return results;
+    //console.log(`results[${results.length}]`, results);
+    return [description, results];
   });
 
-  const offsets = results.map(r => {
+  console.log('results', { ...results });
+
+  let offsets = results.map(([desc, r]) => {
     const { offset, rva } = r[0] ?? {};
     if(offset == 'number') {
       console.log(`RVA`, rva);
     }
-    return offset;
+    return [desc, offset];
   });
-  console.log('results', { ...results });
 
-  offsets.slice(0, 4).forEach((offset, i) => {
+  offsets = offsets.slice(0, 4);
+  //offsets = [offsets[0], offsets[3]]
+  console.log('offsets', { ...offsets });
+
+  offsets.forEach(([desc, offset], i) => {
     const rep = replacements[i];
 
     if(typeof rep == 'function') {
@@ -174,11 +225,18 @@ function main(...args) {
       rep(map, offset, Pattern(patterns[i][0]).length);
     }
     if(typeof rep == 'string') {
-      const { buffer } = new Uint8Array(replacements[i].split(' ').map(s => (s == '?' ? 0 : +(`0x` + s))));
+      const { buffer } = new Uint8Array(
+        replacements[i].split(' ').map(s => (s == '?' ? 0 : +(`0x` + s)))
+      );
       if(offset !== null) {
         const dst = dupArrayBuffer(map, offset, buffer.byteLength);
         const diff = toPointer(dst) - toPointer(map);
-        console.log('patch', { map: +toPointer(map), dst: +toPointer(dst), offset, diff });
+        console.log('patch', {
+          map: +toPointer(map),
+          dst: +toPointer(dst),
+          offset,
+          diff
+        });
 
         mprotect(dst, dst.byteLength, PROT_WRITE);
 

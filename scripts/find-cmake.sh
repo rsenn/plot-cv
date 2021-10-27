@@ -1,3 +1,11 @@
+#!/bin/sh
+ME=$0
+MYDIR=`dirname "$ME"`
+TOPDIR=`cd "$MYDIR"/.. && pwd`
+
+RELDIR=`realpath --relative-to "$PWD" "$TOPDIR"`
+cd "$TOPDIR"
+
 IFS="
 "
 exec_cmd() (
@@ -40,7 +48,7 @@ set -- "$@" -maxdepth 1
 		done
 	fi
 	[ "$DEBUG" = true ] && set -x
-	exec find "$@"
+	exec find "$@" 
 )
 
 append() {
@@ -64,7 +72,7 @@ find_cmake() (
 		*) break ;;
 		esac
 	done
-	CMD='echo "$FILE"'
+	CMD='echo "${RELDIR:+$RELDIR/}$FILE"'
 	LIST_CMD='find_cmake_files "$@"'
 	: ${CMAKE_FORMAT:=".cmake-format"}
 	if [ -f "$CMAKE_FORMAT" ]; then

@@ -91,6 +91,7 @@ import {
 import Util from './lib/util.js';
 import Tree from './lib/tree.js';
 import fs from 'fs';
+import process from 'process';
 import * as deep from './lib/deep.js';
 import { Console } from 'console';
 import { Stack } from './lib/stack.js';
@@ -148,9 +149,7 @@ function printAst(ast, comments, printer = globalThis.printer) {
 let files = {};
 
 function main(...argv) {
-  console.log('main', argv);
-  globalThis.console = new Console({
-    stdout: process.stdout,
+  globalThis.console = new Console(std.out, {
     inspectOptions: {
       colors: true,
       depth: 8,
@@ -168,7 +167,7 @@ function main(...argv) {
         false,
         (v, r, o) => {
           console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
-          console.log(o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n'));
+          console.log(o.map(([name, [arg, fn, ch]]) => ('  --' + name + ', -' + ch).padEnd(20)).join('\n'));
           Util.exit(0);
         },
         'h'
@@ -189,7 +188,6 @@ function main(...argv) {
     argv
   );
 
-  console.log('params.debug', params.debug);
   // params.debug ??= true;
   if(params.debug) ECMAScriptParser.instrumentate();
 
@@ -201,7 +199,6 @@ function main(...argv) {
 
   if(params['@'].length == 0) params['@'].push(Util.getArgv()[1]);
 
-  console.log(`params['@']`, params?.['@']);
   for(let file of params['@']) {
     let error;
 
@@ -212,8 +209,8 @@ function main(...argv) {
       processing(); //.catch(err => console.log('processFile ERROR:', err));
     } catch(error) {
       if(error) {
-        console.log?.('ERROR:', error?.message);
-        console.log?.('STACK:\n  ' + new Stack(error?.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  '));
+        console.log('ERROR:', error?.message);
+        console.log('STACK:\n  ' + new Stack(error?.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  '));
       } else {
         console.log('ERROR:', error);
       }
@@ -259,24 +256,25 @@ function processFile(file, params) {
   } catch(err) {
     const tokens = [...parser.processed, ...parser.tokens];
     const token = tokens[tokens.length - 1];
-    console.log(
+    /*console.log(
       'parseProgram tokens',
       tokens.slice(-3).map(tok => [tok, new Stack(tok.stack.slice(0, 3)) + ''])
-    );
+    );*/
     console.log('parseProgram token', token);
-    if(token) console.log(`parseProgram token.stack\n  ` + token.stack.toString().replace(/\n/g, '\n  '));
-    console.log(`parseProgram loc`, parser.lexer.loc + ``);
-    console.log(`parseProgram stateStack`, parser.lexer.stateStack);
-    // console.log(`parseProgram parser.stack`, parser.stack.map(({frame,...entry}) =>  [entry,frame?.loc]));
+    /*
+    if(token)   console.log('parseProgram token.stack\n  ' + token.stack.toString().replace(/\n/g, '\n  '));
+      console.log('parseProgram loc', token.loc + '');
+    console.log('parseProgram stateStack', parser.lexer.stateStack);
+     console.log('parseProgram parser.stack', parser.stack.map(({frame,...entry}) =>  [entry,frame?.loc]));*/
 
     if(err !== null) {
-      console.log(`parseProgram ERROR message:`, err?.message);
-      console.log(`parseProgram ERROR stack:\n  ` + new Stack(err?.stack, (fr, i) => fr.functionName != 'esfactory' && i < 5).toString().replace(/\n/g, '\n  '));
-      //console.log(`parseProgram parser.stack\n`, parser.stack .map(entry => [entry, parser.constructor.stackMap.get(entry)]) .map(([entry, frame]) => [entry.position + '', frame ? frame + '' : entry.methodName]));
+      console.log('parseProgram ERROR message:', err?.message);
+      console.log('parseProgram ERROR stack:\n  ' + new Stack(err?.stack, (fr, i) => fr.functionName != 'esfactory' && i < 5).toString().replace(/\n/g, '\n  '));
+      //console.log('parseProgram parser.stack\n', parser.stack .map(entry => [entry, parser.constructor.stackMap.get(entry)]) .map(([entry, frame]) => [entry.position + '', frame ? frame + '' : entry.methodName]));
       throw err;
     } else {
       console.log('parseProgram ERROR:', err);
-      throw new Error(`parseProgram`);
+      throw new Error('parseProgram');
     }
   }
 
@@ -360,7 +358,7 @@ try {
   error = e;
 } finally {
   if(error) {
-    console.log(`FAIL: ${error.message}`, `\n  ` + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  '));
+    console.log('FAIL: ' + error.message, '\n  ' + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  '));
     console.log('FAIL');
     Util.exit(1);
   } else {

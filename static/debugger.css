@@ -1,12 +1,226 @@
 body {
-  height: 0px;
   background: rgba(128, 128, 128);
   background: linear-gradient(0deg, hsla(220, 0%, 20%, 1) 0%, hsla(220, 0%, 50%, 1) 10%, hsla(220, 0%, 90%, 1) 75%);
   background-attachment: fixed;
 }
+body {
+  width: 100%;
+  height: 100%;
+  margin:  0;
+  overflow:  hidden;
+}
+* {
+  box-sizing: content-box;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    height: 46px;
+}
+
+main {
+    flex: auto;
+ }
+
+footer {
+    height: 100px;
+}
+/*
 canvas {
   bottom: 0;
   width: calc(100% - 16px);
   height: auto;
   max-height: calc(100vh - 16px);
 }
+
+pre {
+  margin: 0px;
+}
+
+.lineno {
+  float: left;
+  width: 4em;
+  text-align: right;
+  color: black;
+  padding-right: 4px;
+  user-select: none;
+  background:  white;
+  padding-top: 1px;
+  padding-bottom: -1px;
+  font-family:  Arial,sans-serif;
+  font-size: 8pt;
+}
+
+.odd {
+    background:  #fff;
+
+}
+.even {
+    background:  #eee;
+
+}
+.line {
+  min-height: 1em;
+}
+
+pre.text {
+  font-size: 12px;
+  white-space: pre-wrap;
+}
+pre.text,
+.display-linebreak {
+  white-space: pre-line;
+}
+.text {
+  background: black;
+  padding: 0 0.5em;
+}
+
+.container {
+  font-size: 12px;
+  color: #cccccc;
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+  border: 1px solid black;
+}
+
+.container {
+  display: grid;
+  grid-column-gap: 10px;
+  grid-gap: 0px;
+  grid-template-columns: auto 1fr;
+}
+/*header {
+   position: fixed;
+  top: 0px;
+  padding: 8px 0;
+}
+main {
+  width:  100vw;
+  height:  100vh;
+  overflow:  hidden;
+  padding: 46px 0 0 0;
+}
+*/
+.header {
+  color: white;
+  text-shadow: 1px 1px 1px #000000;
+  background: hsl(200, 100%, 30%);
+  border: 1px solid black;
+  margin: -1px 0 0 0;
+  font-size: 1.5em;
+  padding: 2px;
+}
+
+.text {
+  box-sizing: border-box;
+}
+.text.active {
+  border: 1px dashed hsl(20, 100%, 60%);
+  background: hsl(50, 100%, 5%);
+}
+.lineno.active {
+  font-weight: bold;
+  background-image: url(/static/svg/stackframe-active.svg);
+  background-size: auto 100%;
+  background-position: center left;
+  background-repeat: no-repeat;
+}
+blahbutton {
+  color: hsl(60, 100%, 60%);
+  background-image: url(/static/svg/stackframe-active.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.wrap {
+  word-break: break-all;
+  word-wrap: break-word;
+  white-space: pre;
+  white-space: -moz-pre-wrap;
+  white-space: pre-wrap;
+  white-space: pre\9;
+}
+.button {
+  padding: 0;
+  height: 16px;
+  width: 16px;
+}
+.button > img {
+  width: 14px;
+  height: 14px;
+  filter: invert(1);
+  margin: 0;
+  outline: 0;
+  transform: translate(1px, -1px) scale(1.8);
+}
+
+span.identifier {
+  color: #ff0;
+}
+span.keyword {
+  color: #f00;
+}
+span.punctuator {
+  color: #0ff;
+}
+span.comment {
+  color: #0f0;
+}
+span.stringLiteral {
+  color: #0ff;
+}
+span.templateLiteral {
+  color: #f0f;
+}
+span.booleanLiteral {
+  color: #f80;
+}
+span.nullLiteral {
+  color: #80f;
+}
+span.numericLiteral {
+  color: #0ff;
+}
+span.regexpLiteral {
+  color: #f0f;
+}
+
+.panel,
+.buttons {
+  display: grid;
+  gap: 3px;
+  grid-auto-flow: row dense;
+  grid-template-columns: repeat(10, 28px);
+}
+
+.buttons {
+  padding-bottom: 10px;
+}
+.buttons {
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.buttons {
+  z-index: 100000;
+}
+
+.panel.list {
+  background: none;
+}
+
+.panel.list {
+  background: white;
+  max-height: 85vh;
+}
+
+.panel.list < .file {
+  background: white;
+}
+*/
