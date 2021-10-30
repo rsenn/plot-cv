@@ -1,7 +1,8 @@
 import { Message } from './message.js';
 import Util from './lib/util.js';
 import { Alea } from './lib/alea.js';
-import Timers, { TimeoutError } from './lib/repeater/timers.js';
+import { TimeoutError } from './lib/repeater/timers.js';
+import * as Timers from './lib/repeater/timers.js';
 
 const prng = new Alea();
 prng.seed(Date.now());

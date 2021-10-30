@@ -22,7 +22,8 @@ import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import Alea from './lib/alea.js';
 import path from './lib/path.js';
-import Timers, { TimeoutError } from './lib/repeater/timers.js';
+import { TimeoutError } from './lib/repeater/timers.js';
+import * as Timers from './lib/repeater/timers.js';
 import asyncHelpers from './lib/async/helpers.js';
 import { Cache } from './lib/dom/cache.js';
 import { CacheStorage } from './lib/dom/cacheStorage.js';
@@ -1735,7 +1736,7 @@ const AppMain = (window.onload = async () => {
     for(url of urls) {
       //console.log('UpdateProjectList:', { ...opts, ...credentials, url });
       let data = await ListProjects({ ...opts, ...credentials, url });
-      let files = data.files;
+      let files = typeof data == 'object' && data != null && data.files || [];
       console.log('files', files);
       function File(obj, i) {
         const { name } = obj;
