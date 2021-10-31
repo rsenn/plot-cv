@@ -9,10 +9,35 @@ import { format } from 'util';
 import * as xml from 'xml';
 import Console from 'console';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
-import { SaveConfig,  LoadConfig } from './config.js';
+import { SaveConfig, LoadConfig } from './config.js';
 import SvgPath from './lib/svg/path.js';
-import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Define, Once, GetOpt, RoundTo, Range } from './qjs-opencv/js/cvUtils.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
+import {
+  WeakMapper,
+  Modulo,
+  WeakAssign,
+  BindMethods,
+  BitsToNames,
+  FindKey,
+  Define,
+  Once,
+  GetOpt,
+  RoundTo,
+  Range
+} from './qjs-opencv/js/cvUtils.js';
+import {
+  IfDebug,
+  LogIfDebug,
+  ReadFile,
+  LoadHistory,
+  ReadJSON,
+  MapFile,
+  ReadBJSON,
+  WriteFile,
+  WriteJSON,
+  WriteBJSON,
+  DirIterator,
+  RecursiveDirIterator
+} from './io-helpers.js';
 import { MakeSVG, SaveSVG } from './image-helpers.js';
 import { Profiler } from './time-helpers.js';
 
@@ -20,6 +45,7 @@ let rainbow;
 let zoom = 1;
 let debug = false;
 let basename = process.argv[1].replace(/\.js$/, '');
+  let lastTime;
 
 let simplifyMethods = {
   NTH_POINT: c => c.simplifyNthPoint(2),
@@ -50,7 +76,6 @@ Object.assign(Hierarchy.prototype, {
     next(id) { const a = this.index(id); return a[cv.HIER_NEXT]; },
     prev(id) { const a = this.index(id); return a[cv.HIER_PREV]; }
   });
-
 
 function getConstants(names) {
   return Object.fromEntries(names.map(name => [name, '0x' + cv[name].toString(16)]));
@@ -126,7 +151,7 @@ function* walkContours(hier, id) {
     id = h[cv.HIER_NEXT];
   }
 }
-1
+1;
 
 function main(...args) {
   let start;
@@ -191,7 +216,7 @@ function main(...args) {
   let win = new Window('gray', cv.WINDOW_NORMAL /*| cv.WINDOW_AUTOSIZE | cv.WINDOW_KEEPRATIO*/);
   //console.debug('Mouse :', { MouseEvents, MouseFlags });
 
-  const printFlags = flags => [...BitsToNames(MouseFlags)]; 
+  const printFlags = flags => [...BitsToNames(MouseFlags)];
   win.setMouseCallback(function (event, x, y, flags) {
     event = Mouse.printEvent(event);
     flags = Mouse.printFlags(flags);
@@ -245,13 +270,7 @@ function main(...args) {
     L2gradient: new NumericParam(config.L2gradient || 0, 0, 1),
     dilations: new NumericParam(config.dilations || 0, 0, 10),
     erosions: new NumericParam(config.erosions || 0, 0, 10),
-    mode: new EnumParam(config.mode || 3, [
-      'RETR_EXTERNAL',
-      'RETR_LIST',
-      'RETR_CCOMP',
-      'RETR_TREE',
-      'RETR_FLOODFILL'
-    ]),
+    mode: new EnumParam(config.mode || 3, ['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL']),
     method: new EnumParam(config.method || 0, [
       'CHAIN_APPROX_NONE',
       'CHAIN_APPROX_SIMPLE',
@@ -295,15 +314,12 @@ function main(...args) {
         // console.log('video', video);
         framePos = video.get('pos_frames');
         video.read(dst);
-        console.log('dst', dst);
+        //   console.log('dst', dst);
         win.show(dst);
-        if(videoSize === undefined || videoSize.empty)
-          videoSize = video.size.area ? video.size : dst.size;
+        if(videoSize === undefined || videoSize.empty) videoSize = video.size.area ? video.size : dst.size;
         if(dstEmpty) firstSize = new Size(...videoSize);
         if(dst.size && !videoSize.equals(dst.size))
-          throw new Error(
-            `AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`
-          );
+          throw new Error(`AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`);
       }),
       Processor(function Grayscale(src, dst) {
         let channels = [];
@@ -318,14 +334,7 @@ function main(...args) {
         cv.GaussianBlur(src, dst, [+params.ksize, +params.ksize], 0, 0, cv.BORDER_REPLICATE);
       }),
       Processor(function EdgeDetect(src, dst) {
-        cv.Canny(
-          src,
-          dst,
-          +params.thresh1,
-          +params.thresh2,
-          +params.apertureSize,
-          +params.L2gradient
-        );
+        cv.Canny(src, dst, +params.thresh1, +params.thresh2, +params.apertureSize, +params.L2gradient);
         ////console.log('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);
       }),
       Processor(function Morph(src, dst) {
@@ -384,16 +393,10 @@ function main(...args) {
   console.log(`Trackbar 'frame' frameShow=${frameShow} pipeline.size - 1 = ${pipeline.size - 1}`);
 
   if(opts['trackbars'])
-    cv.createTrackbar(
-      'frame',
-      'gray',
-      frameShow,
-      pipeline.size - 1,
-      function(value, count, name, window) {
-        //console.log('Trackbar', { value, count, name, window });
-        frameShow = value;
-      }
-    );
+    cv.createTrackbar('frame', 'gray', frameShow, pipeline.size - 1, function(value, count, name, window) {
+      //console.log('Trackbar', { value, count, name, window });
+      frameShow = value;
+    });
 
   const resizeOutput = Once(() => {
     let size = outputMat.size.mul(zoom);
@@ -405,11 +408,7 @@ function main(...args) {
 
   const ClearSurface = mat => (mat.setTo([0, 0, 0, 0]), mat);
   const MakeSurface = () =>
-    Once(
-      (...args) => new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)),
-      null,
-      ClearSurface
-    );
+    Once((...args) => new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)), null, ClearSurface);
   const MakeComposite = Once(() => new Mat());
   let surface = MakeSurface();
   let keyCode,
@@ -551,7 +550,6 @@ function main(...args) {
 
     prevTime = meter.timeSec;
   }
-
   function showOutput() {
     let over = surface(outputMat.rows, outputMat.cols, cv.CV_8UC4);
     let now = Date.now();
@@ -579,22 +577,13 @@ function main(...args) {
       );
       let hierObj = new Hierarchy(hier);
     }
-    font.draw(
-      over,
-      video.time + ' ⏩',
-      tPos,
-      { r: 0, g: 255, b: 0, a: 255 },
-      +params.fontThickness
-    );
+    font.draw(over, video.time + ' ⏩', tPos, { r: 0, g: 255, b: 0, a: 255 }, +params.fontThickness);
 
     function drawParam(param, y, color) {
       const name = paramNav.nameOf(param);
       const value = param.get() + (param.get() != (param | 0) + '' ? ` (${+param})` : '');
       const arrow = Number.isInteger(y) && paramNav.name == name ? '=>' : '  ';
-      const text =
-        `${arrow}${name}` +
-        (Number.isInteger(y) ? `[${param.range.join('-')}]` : '') +
-        ` = ${value}`;
+      const text = `${arrow}${name}` + (Number.isInteger(y) ? `[${param.range.join('-')}]` : '') + ` = ${value}`;
       color = color || {
         r: '\xb7',
         g: 0x35,
@@ -668,8 +657,10 @@ function main(...args) {
     if(maskRect && showOverlay) {
       Draw.rectangle(composite, maskRect, [255, 255, 255, 255], 1);
     }
-
+    let t = Date.now();
+    console.log(t - (lastTime ?? t));
     win.show(composite);
+    lastTime = t;
   }
 
   function saveContours(contours, size) {
@@ -729,18 +720,7 @@ function main(...args) {
     SaveSVG('lines-' + framePos + '.svg', doc);
   }
 
-  const {
-    ksize,
-    thresh1,
-    thresh2,
-    apertureSize,
-    L2gradient,
-    dilations,
-    erosions,
-    mode,
-    method,
-    lineWidth
-  } = params;
+  const { ksize, thresh1, thresh2, apertureSize, L2gradient, dilations, erosions, mode, method, lineWidth } = params;
   SaveConfig(
     Object.entries({
       frameShow,
@@ -762,8 +742,7 @@ function main(...args) {
     let stack = Mat.backtrace(mat)
       .filter(
         frame =>
-          frame.functionName != '<anonymous>' &&
-          (frame.lineNumber !== undefined || /test-video/.test(frame.fileName))
+          frame.functionName != '<anonymous>' && (frame.lineNumber !== undefined || /test-video/.test(frame.fileName))
       )
       .map(frame => frame.toString())
       .join('\n  ');

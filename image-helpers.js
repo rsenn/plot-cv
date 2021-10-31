@@ -1,4 +1,5 @@
 import { WriteFile } from './io-helpers.js';
+import * as xml from 'xml';
 
 
 export function MakeSVG(children, size) {
