@@ -8,8 +8,9 @@ import { Graph } from './lib/fd-graph.js';
 import ptr from './lib/json-ptr.js';
 import LogJS from './lib/log.js';
 import ConsoleSetup from './lib/consoleSetup.js';
+import fs from 'fs';
 
-let filesystem;
+let filesystem = fs;
 
 function xmlize(obj, depth = 2) {
   return obj.toXML ? obj.toXML().replace(/>\s*</g, '>\n    <') : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
@@ -156,8 +157,6 @@ function alignAll(doc) {
 }
 
 async function testEagle(filename) {
-  await PortableFileSystem(fs => (filesystem = globalThis.fs = fs));
-
   console.log('testEagle: ', filesystem);
   let proj = new EagleProject(filename, filesystem);
 
