@@ -1802,7 +1802,7 @@ const AppMain = (window.onload = async () => {
     for(url of urls) {
       //console.log('UpdateProjectList:', { ...opts, ...credentials, url });
       let data = await ListProjects({ ...opts, ...credentials, url });
-      let files = data.files;
+      let files = typeof data == 'object' && data != null && data.files || [];
       console.log('files', files);
       function File(obj, i) {
         const { name } = obj;

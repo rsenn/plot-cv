@@ -6,10 +6,11 @@
             "request": "launch",
             "name": "Launch QuickJS",
             "runtimeExecutable": "/usr/local/bin/qjsm",
-            "program": "${workspaceFolder}/test-ecmascript2.js",
+            "program": "${workspaceFolder}/${relativeFile}",
             "args": [
                 "${workspaceFolder}/test-ecmascript2.js"
-            ]
+            ],
+            "work"
         },
         {
             "type": "quickjs",
