@@ -467,7 +467,7 @@ const filesystem = {
 async function LoadFile(file) {
   let { url, name } = typeof file == 'string' ? { url: file, name: file.replace(/.*\//g, '') } : GetProject(file);
   LogJS.info(`LoadFile ${name}`);
-  url = /:\/\//.test(url) ? url : /^tmp\//.test(url) ? '/' + url : `static/${name}`;
+  url = /:\/\//.test(url) ? url : /^(tmp|data|static)\//.test(url) ? '/' + url : `/data/${name}`;
   let response = await FetchURL(url);
   let xml = await response.text();
   let doc = new EagleDocument(await xml, null, name, null, filesystem);
@@ -1073,11 +1073,11 @@ function NextDocument(n = 1) {
 }
 
 async function LoadDocument(project, parentElem) {
+  console.log('LoadDocument', project);
   open(false);
   gcode(null);
 
   if(typeof project == 'string') project = GetProject(project);
-  //console.log('project:', project);
 
   config.currentProject(project.name);
 
@@ -1812,7 +1812,7 @@ const AppMain = (window.onload = async () => {
         file.name = name;
         file.i = i;
         trkl.bind(file, { data });
-        LogJS.info(
+        console.info(
           `Got file '${
             name.replace(/.*:\/\//g, '').replace(/raw.githubusercontent.com/, 'github.com') || name.replace(/.*\//g, '')
           }'`
@@ -1833,7 +1833,7 @@ const AppMain = (window.onload = async () => {
         }, []);
 
         data = await ListProjects({ descriptions: false, names: svgs });
-        files = (data && data.files) || [];
+        files = globalThis.files = (data && data.files) || [];
         //      console.log('filesData:', files);
 
         for(let svgFile of files) {

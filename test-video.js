@@ -163,15 +163,14 @@ function main(...args) {
     maxArrayLength: 30,
     compact: 1
   });
-let f = std.open('test-video.log', 'w');
-console.log('f.write', f.write);
-    globalThis.log = new Console(f, {
+  let f = std.open('test-video.log', 'w');
+  console.log('f.write', f.write);
+  globalThis.log = new Console(f, {
     colors: true,
     depth: 1,
     maxArrayLength: 30,
     compact: 1
   });
-
 
   const { DISPLAY } = process.env;
   log.info('DISPLAY', DISPLAY);
@@ -324,7 +323,7 @@ console.log('f.write', f.write);
         // log.info('video', video);
         framePos = video.get('pos_frames');
         video.read(dst);
-      //  log.info('dst', dst);
+        //  log.info('dst', dst);
         win.show(dst);
         if(videoSize === undefined || videoSize.empty) videoSize = video.size.area ? video.size : dst.size;
         if(dstEmpty) firstSize = new Size(...videoSize);
