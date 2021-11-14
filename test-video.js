@@ -45,7 +45,6 @@ let rainbow;
 let zoom = 1;
 let debug = false;
 let basename = process.argv[1].replace(/\.js$/, '');
-  let lastTime;
 
 let simplifyMethods = {
   NTH_POINT: c => c.simplifyNthPoint(2),
@@ -324,11 +323,7 @@ function main(...args) {
         // log.info('video', video);
         framePos = video.get('pos_frames');
         video.read(dst);
-<<<<<<< HEAD
         //  log.info('dst', dst);
-=======
-        //   console.log('dst', dst);
->>>>>>> cadeb8b44d0418c6742fa1406e3513edb12abc42
         win.show(dst);
         if(videoSize === undefined || videoSize.empty) videoSize = video.size.area ? video.size : dst.size;
         if(dstEmpty) firstSize = new Size(...videoSize);
@@ -349,11 +344,7 @@ function main(...args) {
       }),
       Processor(function EdgeDetect(src, dst) {
         cv.Canny(src, dst, +params.thresh1, +params.thresh2, +params.apertureSize, +params.L2gradient);
-<<<<<<< HEAD
         ////log.info('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);
-=======
-        ////console.log('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);
->>>>>>> cadeb8b44d0418c6742fa1406e3513edb12abc42
       }),
       Processor(function Morph(src, dst) {
         cv.dilate(src, dst, structuringElement, new Point(-1, -1), +params.dilations);
@@ -412,11 +403,7 @@ function main(...args) {
 
   if(opts['trackbars'])
     cv.createTrackbar('frame', 'gray', frameShow, pipeline.size - 1, function(value, count, name, window) {
-<<<<<<< HEAD
       //log.info('Trackbar', { value, count, name, window });
-=======
-      //console.log('Trackbar', { value, count, name, window });
->>>>>>> cadeb8b44d0418c6742fa1406e3513edb12abc42
       frameShow = value;
     });
 
@@ -576,6 +563,7 @@ function main(...args) {
 
     prevTime = meter.timeSec;
   }
+
   function showOutput() {
     let over = surface(outputMat.rows, outputMat.cols, cv.CV_8UC4);
     let now = Date.now();
@@ -693,10 +681,8 @@ function main(...args) {
     if(maskRect && showOverlay) {
       Draw.rectangle(composite, maskRect, [255, 255, 255, 255], 1);
     }
-    let t = Date.now();
-    console.log(t - (lastTime ?? t));
+
     win.show(composite);
-    lastTime = t;
   }
 
   function saveContours(contours, size) {
