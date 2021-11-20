@@ -40,41 +40,41 @@ help(char** av) {
 
 namespace {
 void
-drawMatchesRelative(const vector<KeyPoint>& train,
-                    const vector<KeyPoint>& query,
+drawMatchesRelative(const vector<cv::KeyPoint>& train,
+                    const vector<cv::KeyPoint>& query,
                     std::vector<cv::DMatch>& matches,
-                    cv::Mat& cv::img,
+                    cv::Mat& img,
                     const vector<unsigned char>& mask = vector<unsigned char>()) {
   for(int i = 0; i < (int)matches.size(); i++) {
     if(mask.empty() || mask[i]) {
-      cv::Point2f pt_new = query[matches[i].queryIdx].cv::pt;
-      cv::Point2f pt_old = train[matches[i].trainIdx].cv::pt;
+      cv::Point2f pt_new = query[matches[i].queryIdx].pt;
+      cv::Point2f pt_old = train[matches[i].trainIdx].pt;
 
-      cv::line(cv::img, pt_new, pt_old, cv::Scalar(125, 255, 125), 1);
-      cv::circle(cv::img, pt_new, 2, cv::Scalar(255, 0, 125), 1);
+      cv::line(img, pt_new, pt_old, cv::Scalar(125, 255, 125), 1);
+      cv::circle(img, pt_new, 2, cv::Scalar(255, 0, 125), 1);
     }
   }
 }
 
 // Takes a descriptor and turns cv::it into an xy point
 void
-keypoints2points(const vector<KeyPoint>& in, vector<cv::Point2f>& out) {
+keypoints2points(const vector<cv::KeyPoint>& in, vector<cv::Point2f>& out) {
   out.clear();
   out.reserve(in.size());
-  for(size_t i = 0; i < in.size(); ++i) { out.push_back(in[i].cv::pt); }
+  for(size_t i = 0; i < in.size(); ++i) { out.push_back(in[i].pt); }
 }
 
 // Takes an xy point and appends that to a keypoint structure
 void
-points2keypoints(const vector<cv::Point2f>& in, vector<KeyPoint>& out) {
+points2keypoints(const vector<cv::Point2f>& in, vector<cv::KeyPoint>& out) {
   out.clear();
   out.reserve(in.size());
-  for(size_t i = 0; i < in.size(); ++i) { out.push_back(KeyPoint(in[i], 1)); }
+  for(size_t i = 0; i < in.size(); ++i) { out.push_back(cv::KeyPoint(in[i], 1)); }
 }
 
 // Uses computed homography H to warp original input points to new planar position
 void
-warpKeypoints(const cv::Mat& H, const vector<KeyPoint>& in, vector<KeyPoint>& out) {
+warpKeypoints(const cv::Mat& H, const vector<cv::KeyPoint>& in, vector<cv::KeyPoint>& out) {
   vector<cv::Point2f> pts;
   keypoints2points(in, pts);
   vector<cv::Point2f> pts_w(pts.size());
@@ -85,8 +85,8 @@ warpKeypoints(const cv::Mat& H, const vector<KeyPoint>& in, vector<KeyPoint>& ou
 
 // Converts matching indices to xy points
 void
-matches2points(const vector<KeyPoint>& train,
-               const vector<KeyPoint>& query,
+matches2points(const vector<cv::KeyPoint>& train,
+               const vector<cv::KeyPoint>& query,
                const std::vector<cv::DMatch>& matches,
                std::vector<cv::Point2f>& pts_train,
                std::vector<cv::Point2f>& pts_query) {
@@ -102,8 +102,8 @@ matches2points(const vector<KeyPoint>& train,
 
     const DMatch& dmatch = matches[i];
 
-    pts_query.push_back(query[dmatch.queryIdx].cv::pt);
-    pts_train.push_back(train[dmatch.trainIdx].cv::pt);
+    pts_query.push_back(query[dmatch.queryIdx].pt);
+    pts_train.push_back(train[dmatch.trainIdx].pt);
   }
 }
 
@@ -143,7 +143,7 @@ main(int ac, char** av) {
   BFMatcher desc_matcher(brief->defaultNorm());
 
   vector<cv::Point2f> train_pts, query_pts;
-  vector<KeyPoint> train_kpts, query_kpts;
+  vector<cv::KeyPoint> train_kpts, query_kpts;
   vector<unsigned char> match_mask;
 
   cv::Mat gray;
@@ -166,7 +166,7 @@ main(int ac, char** av) {
 
     if(!train_kpts.empty()) {
 
-      vector<KeyPoint> test_kpts;
+      vector<cv::KeyPoint> test_kpts;
       warpKeypoints(H_prev.inv(), query_kpts, test_kpts);
 
       // cv::Mat mask = windowedMatchingMask(test_kpts, train_kpts, 25, 25);
