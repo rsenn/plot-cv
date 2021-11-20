@@ -1,28 +1,12 @@
 import { Point, Size, Contour, Rect, Line, TickMeter, Mat, CLAHE, Draw } from 'opencv';
 import * as cv from 'opencv';
-import { VideoSource } from './qjs-opencv/js/cvVideo.js';
-import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './qjs-opencv/js/cvHighGUI.js';
 import { HSLA } from './lib/color.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import fs from 'fs';
 import { format, once, memoize } from './lib/misc.js';
 import * as xml from 'xml';
 import Console from 'console';
-import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
 import SvgPath from './lib/svg/path.js';
-import {
-  WeakMapper,
-  Modulo,
-  WeakAssign,
-  BindMethods,
-  BitsToNames,
-  FindKey,
-  Define,
-  Once,
-  GetOpt,
-  RoundTo,
-  Range
-} from './qjs-opencv/js/cvUtils.js';
 import {
   IfDebug,
   LogIfDebug,
@@ -38,9 +22,25 @@ import {
   RecursiveDirIterator
 } from './io-helpers.js';
 import { MakeSVG, SaveSVG } from './image-helpers.js';
-import { ImagePipeline } from './imagePipeline.js';
 import { Profiler } from './time-helpers.js';
 import { SaveConfig, LoadConfig } from './config.js';
+import { VideoSource, ImageSequence } from './qjs-opencv/js/cvVideo.js';
+import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './qjs-opencv/js/cvHighGUI.js';
+import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
+import {
+  WeakMapper,
+  Modulo,
+  WeakAssign,
+  BindMethods,
+  BitsToNames,
+  FindKey,
+  Define,
+  Once,
+  GetOpt,
+  RoundTo,
+  Range
+} from './qjs-opencv/js/cvUtils.js';
+import { ImagePipeline } from './imagePipeline.js';
 
 let rainbow;
 let zoom = 1;
@@ -159,7 +159,7 @@ function main(...args) {
 
   globalThis.console = new Console({
     colors: true,
-    depth: 1,
+    depth: 3,
     maxArrayLength: 30,
     compact: 1
   });
@@ -226,43 +226,37 @@ function main(...args) {
     //console.debug('Mouse event:', console.inspect({ event, x, y, flags }, { multiline: false }));
   });
 
-  const videos = opts['input'] ? [opts['input']] : opts['@'];
-  console.log('Creating VideoSource:', videos);
-  let video = new VideoSource(...videos);
+  const images = opts['input'] ? [opts['input']] : opts['@'];
+ 
+for(let image of images ) {
+  console.log('image', image);
+let mat = cv.imread(image);
 
-  if(opts['size']) {
-    video.size = new Size(...opts['size'].split('x'));
+  console.log('mat', mat);
+  let [w,h]=[...mat.size];
+   console.log('mat.size', {w,h});
+ 
+  win.resize(mat.size);
+  win.show(mat);
+cv.waitKey(-1);
   }
-  console.log('video.size', video.size);
-  win.resize(video.size);
+  std.exit(0);
 
-  let thickness = 1;
-  let font = new TextStyle(cv.FONT_HERSHEY_PLAIN, 1.0, thickness);
-  let tSize = font.size(video.time);
 
-  let tPos = new Point(...tSize.div(2))
-    .floor()
-    .mul(-1)
-    .add(50, video.get('frame_height') - tSize.y * 0.8);
-
-  tPos.x = 5;
-
-  // let bgr = new Mat();
-  console.log('backend:', video.backend);
-  console.log('grab():', video.grab);
-  console.log('fps:', video.fps);
-  let frameCount = video.get('frame_count');
-  let { frameShow, ...config } = LoadConfig();
-  console.log('frameShow:', frameShow);
-
-  let pipeline = ImagePipeline(config);
 /*
+  for(let image of seq) {
+    console.log(`image#${i}`, image);
+    let result = pipeline(image, frameShow);
+    console.log(`result#${i}`, result);
+    i++;
+  }*/
+  /*
   let contours, hier;
   let contoursDepth;
   let lines, circles;
   let outputMat, outputName;*/
 
-/*  let params = {
+  /*  let params = {
     ksize: new NumericParam(config.ksize || 3, 1, 13, 2),
     thresh1: new NumericParam(config.thresh1 || 40, 0, 100),
     thresh2: new NumericParam(config.thresh2 || 90, 0, 100),
@@ -376,8 +370,8 @@ function main(...args) {
       }
     }
   );*/
- 
-  std.gc();
+
+  //std.gc();
 }
 
 try {
