@@ -1,15 +1,4 @@
-import {
-  h,
-  Fragment,
-  html,
-  render,
-  Component,
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  Portal,
-  ReactComponent
+import {h, Fragment, html, render, Component, useState, useEffect, useRef, useCallback, Portal, ReactComponent
 } from './lib/dom/preactComponent.js';
 import { trkl } from './lib/trkl.js';
 import { Element } from './lib/dom.js';
