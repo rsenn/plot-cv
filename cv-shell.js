@@ -1,6 +1,19 @@
 import * as cv from 'opencv';
 import Util from './lib/util.js';
-import { toArrayBuffer, toString, escape, quote, define, extendArray, memoize, getFunctionArguments, glob, GLOB_TILDE, fnmatch, wordexp } from './lib/misc.js';
+import {
+  toArrayBuffer,
+  toString,
+  escape,
+  quote,
+  define,
+  extendArray,
+  memoize,
+  getFunctionArguments,
+  glob,
+  GLOB_TILDE,
+  fnmatch,
+  wordexp
+} from './lib/misc.js';
 import * as misc from './lib/misc.js';
 import * as util from 'util';
 import * as deep from './lib/deep.js';
@@ -12,7 +25,19 @@ import { Pointer } from './lib/pointer.js';
 import * as Terminal from './terminal.js';
 import { read as fromXML, write as toXML } from './lib/xml.js';
 import inspect from './lib/objectInspect.js';
-import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive } from './io-helpers.js';
+import {
+  ReadFile,
+  LoadHistory,
+  ReadJSON,
+  MapFile,
+  ReadBJSON,
+  WriteFile,
+  WriteJSON,
+  WriteBJSON,
+  DirIterator,
+  RecursiveDirIterator,
+  ReadDirRecursive
+} from './io-helpers.js';
 import { VideoSource, ImageSequence } from './qjs-opencv/js/cvVideo.js';
 import { ImageInfo } from './lib/image-info.js';
 import { MouseEvents, MouseFlags, Mouse, Window, TextStyle, DrawText } from './qjs-opencv/js/cvHighGUI.js';
@@ -90,7 +115,7 @@ function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = ''
 
 function main(...args) {
   globalThis.console = new Console(std.err, {
-    inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 20, maxStringLength: 100, numberBase: 16 }
+    inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 20, maxStringLength: 100, numberBase: 10 }
   });
   let debugLog;
 

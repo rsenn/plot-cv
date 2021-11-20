@@ -45,7 +45,6 @@ let rainbow;
 let zoom = 1;
 let debug = false;
 let basename = process.argv[1].replace(/\.js$/, '');
-  let lastTime;
 
 let simplifyMethods = {
   NTH_POINT: c => c.simplifyNthPoint(2),
@@ -164,8 +163,17 @@ function main(...args) {
     maxArrayLength: 30,
     compact: 1
   });
+  let f = std.open('test-video.log', 'w');
+  console.log('f.write', f.write);
+  globalThis.log = new Console(f, {
+    colors: true,
+    depth: 1,
+    maxArrayLength: 30,
+    compact: 1
+  });
+
   const { DISPLAY } = process.env;
-  console.log('DISPLAY', DISPLAY);
+  log.info('DISPLAY', DISPLAY);
 
   let opts = GetOpt(
     {
@@ -182,7 +190,7 @@ function main(...args) {
         true,
         (arg, current, options, results) => {
           let driverId = arg in VideoSource.backends ? arg : current;
-          console.log('driver', { arg, current, driverId });
+          log.info('driver', { arg, current, driverId });
           if(driverId === undefined) {
             const input = results['input'];
             let args = [arg];
@@ -204,8 +212,8 @@ function main(...args) {
     args
   );
 
-  console.log('opts:', opts);
-  console.log('opts.size:', opts.size);
+  log.info('opts:', opts);
+  log.info('opts.size:', opts.size);
 
   const makeRainbow = steps =>
     Range(0, 360, 360 / steps)
@@ -225,13 +233,13 @@ function main(...args) {
   });
 
   const videos = opts['input'] ? [opts['input']] : opts['@'];
-  console.log('Creating VideoSource:', videos);
+  log.info('Creating VideoSource:', videos);
   let video = new VideoSource(...videos);
 
   if(opts['size']) {
     video.size = new Size(...opts['size'].split('x'));
   }
-  console.log('video.size', video.size);
+  log.info('video.size', video.size);
   win.resize(video.size);
 
   let thickness = 1;
@@ -246,12 +254,12 @@ function main(...args) {
   tPos.x = 5;
 
   // let bgr = new Mat();
-  console.log('backend:', video.backend);
-  console.log('grab():', video.grab);
-  console.log('fps:', video.fps);
+  log.info('backend:', video.backend);
+  log.info('grab():', video.grab);
+  log.info('fps:', video.fps);
   let frameCount = video.get('frame_count');
   let { frameShow, ...config } = LoadConfig();
-  console.log('frameShow:', frameShow);
+  log.info('frameShow:', frameShow);
 
   let contours, hier;
   let contoursDepth;
@@ -283,18 +291,18 @@ function main(...args) {
   };
   let paramNav = new ParamNavigator(params, config.currentParam);
   let dummyArray = [0, 1, 2, 3, 4, 5, 6, 7];
-  console.log('win.imageRect (1)', win.imageRect);
+  log.info('win.imageRect (1)', win.imageRect);
 
   if(opts['trackbars']) {
     params.apertureSize.createTrackbar('apertureSize', win);
     params.thresh1.createTrackbar('thresh1', win);
     params.thresh2.createTrackbar('thresh2', win);
-    console.log('win.imageRect (2)', win.imageRect);
+    log.info('win.imageRect (2)', win.imageRect);
   }
 
-  // cv.createButton('apertureSize', arg => console.log("Button apertureSize", arg), 0, false);
+  // cv.createButton('apertureSize', arg => log.info("Button apertureSize", arg), 0, false);
 
-  //console.log('paramNav.param:', paramNav.param);
+  //log.info('paramNav.param:', paramNav.param);
   //await params.apertureSize.createTrackbar('apertureSize', win);
 
   //std.exit(0);
@@ -305,16 +313,17 @@ function main(...args) {
   let dst0Size, firstSize, videoSize;
   let clahe = new CLAHE(4, new Size(8, 8));
   let framePos;
+  let invert = false;
 
   let pipeline = new Pipeline(
     [
       Processor(function AcquireFrame(src, dst) {
         const dstEmpty = dst.empty;
         if(dst.empty) dst0Size = dst.size;
-        // console.log('video', video);
+        // log.info('video', video);
         framePos = video.get('pos_frames');
         video.read(dst);
-        //   console.log('dst', dst);
+        //  log.info('dst', dst);
         win.show(dst);
         if(videoSize === undefined || videoSize.empty) videoSize = video.size.area ? video.size : dst.size;
         if(dstEmpty) firstSize = new Size(...videoSize);
@@ -335,7 +344,7 @@ function main(...args) {
       }),
       Processor(function EdgeDetect(src, dst) {
         cv.Canny(src, dst, +params.thresh1, +params.thresh2, +params.apertureSize, +params.L2gradient);
-        ////console.log('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);
+        ////log.info('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);
       }),
       Processor(function Morph(src, dst) {
         cv.dilate(src, dst, structuringElement, new Point(-1, -1), +params.dilations);
@@ -364,9 +373,9 @@ function main(...args) {
           +params.maxLineGap
         );
         lines = [...mat]; //.array;
-        // console.log('mat', mat);
-        //  console.log('lines', lines.slice(0, 10));
-        // console.log('lines.length', lines.length);
+        // log.info('mat', mat);
+        //  log.info('lines', lines.slice(0, 10));
+        // log.info('lines.length', lines.length);
         src.copyTo(dst);
       })
     ],
@@ -380,21 +389,21 @@ function main(...args) {
     }
   );
 
-  console.log(`pipeline.images = { ` + pipeline.images.map(image => '\n  ' + image) + '\n}');
+  log.info(`pipeline.images = { ` + pipeline.images.map(image => '\n  ' + image) + '\n}');
 
-  console.log('Pipeline processor names:', pipeline.names);
+  log.info('Pipeline processor names:', pipeline.names);
   let meter = new TickMeter();
   let prevTime;
   let frameDelay = Math.floor(1000 / video.fps);
-  console.log('frameDelay:', frameDelay);
+  log.info('frameDelay:', frameDelay);
 
   if(frameShow === undefined) frameShow = Modulo(-1, pipeline.size);
 
-  console.log(`Trackbar 'frame' frameShow=${frameShow} pipeline.size - 1 = ${pipeline.size - 1}`);
+  log.info(`Trackbar 'frame' frameShow=${frameShow} pipeline.size - 1 = ${pipeline.size - 1}`);
 
   if(opts['trackbars'])
     cv.createTrackbar('frame', 'gray', frameShow, pipeline.size - 1, function(value, count, name, window) {
-      //console.log('Trackbar', { value, count, name, window });
+      //log.info('Trackbar', { value, count, name, window });
       frameShow = value;
     });
 
@@ -443,7 +452,7 @@ function main(...args) {
           []
         );
         let ch = String.fromCodePoint(keyCode & 0xff);
-        console.log(`keypress [${modifierList}] 0x${(keyCode & ~0xd000).toString(16)} '${ch}'`);
+        log.info(`keypress [${modifierList}] 0x${(keyCode & ~0xd000).toString(16)} '${ch}'`);
       }
       let keyChar = String.fromCodePoint(key & 0xfff);
 
@@ -512,11 +521,11 @@ function main(...args) {
             (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
           const offset = keyCode & 0x2 ? +distance : -distance;
 
-          //console.log('seek', { method, distance, offset });
+          //log.info('seek', { method, distance, offset });
           video['seek' + method](offset);
           let pos = video.position(method);
 
-          console.log(
+          log.info(
             'seek' +
               method +
               ' ' +
@@ -525,15 +534,19 @@ function main(...args) {
           );
           break;
         }
+        case 'i' /* invert */:
+          invert = !invert;
+          break;
+
         case 's': /* save */ {
-          console.log('contours.length', contours.length);
+          log.info('contours.length', contours.length);
           saveContours(contours, outputMat.size);
           saveLines(lines, outputMat.size);
           break;
         }
         default: {
           if(keyCode !== undefined && key != -1)
-            console.log('unhandled', console.config({ numberBase: 16 }), {
+            log.info('unhandled', console.config({ numberBase: 16 }), {
               key,
               keyCode,
               modifiers
@@ -550,6 +563,7 @@ function main(...args) {
 
     prevTime = meter.timeSec;
   }
+
   function showOutput() {
     let over = surface(outputMat.rows, outputMat.cols, cv.CV_8UC4);
     let now = Date.now();
@@ -653,23 +667,31 @@ function main(...args) {
     }
     let composite = MakeMatFor(showOutput);
 
+    if(invert) {
+      //      over.xor([255,255,255,0]);
+      for(let pixel of over) {
+        if(pixel[3] > 0) {
+          pixel[0] = 255 - pixel[0];
+          pixel[1] = 255 - pixel[1];
+          pixel[2] = 255 - pixel[2];
+        }
+      }
+    }
     cv.addWeighted(out, 1, over, showOverlay ? 1 : 0, 0, composite);
     if(maskRect && showOverlay) {
       Draw.rectangle(composite, maskRect, [255, 255, 255, 255], 1);
     }
-    let t = Date.now();
-    console.log(t - (lastTime ?? t));
+
     win.show(composite);
-    lastTime = t;
   }
 
   function saveContours(contours, size) {
     let points = contours.reduce((acc, contour, i) => {
-      //console.log('contour #' + i, contour);
+      //log.info('contour #' + i, contour);
       //contour =simplifyMethods.PERPENDICULAR_DISTANCE(contour);
       contour = simplifyMethods.RADIAL_DISTANCE(contour);
       let array = contour.toArray();
-      //console.log('array #' + i, array.length);
+      //log.info('array #' + i, array.length);
       if(array.length >= 3) {
         let sp = new SvgPath();
         sp.abs();
@@ -747,9 +769,9 @@ function main(...args) {
       .map(frame => frame.toString())
       .join('\n  ');
 
-    console.log('mat=' + mat.toString() + '\n  ' + stack);
+    log.info('mat=' + mat.toString() + '\n  ' + stack);
   }
-  console.log('props:', video.dump());
+  log.info('props:', video.dump());
   std.gc();
 }
 

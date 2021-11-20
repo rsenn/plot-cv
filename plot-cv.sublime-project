@@ -50,7 +50,7 @@
   ],
   "folders": [
     {
-      "file_exclude_patterns": ["*.xz", "*.log", "*.tmp", "*.patch", "tags", ".*history"],
+      "file_exclude_patterns": ["*.xz", "*.log", "*.tmp", "*.patch", "tags", ".*history", "contours-*.svg", "lines-*.svg" ],
       "folder_exclude_patterns": [
         ".*",
         "*.js",

@@ -1164,7 +1164,7 @@
 
   Util.adapter.localStorage = function(s) {
     s = Util.tryCatch(
-      () => !s && global.window,
+      () => !s && globalThis.window,
       w => w.localStorage,
       () => s
     );
@@ -1681,7 +1681,7 @@
     }
 
     const w = Util.tryCatch(
-      () => global.window,
+      () => globalThis.window,
       w => w,
       () => null
     );
@@ -2151,7 +2151,7 @@
 
   Util.deleteCookie = function(name) {
     const w = Util.tryCatch(
-      () => global.window,
+      () => globalThis.window,
       w => w,
       () => null
     );
@@ -2532,7 +2532,7 @@
     return ret;
   };
 
-  //return !!(global.window && global.window.document);
+  //return !!(globalThis.window && globalThis.window.document);
 
   Util.waitFor = msecs => {
     let promise, clear, timerId;

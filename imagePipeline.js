@@ -10,15 +10,42 @@ import * as xml from 'xml';
 import Console from 'console';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
 import SvgPath from './lib/svg/path.js';
-import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Define, Once, GetOpt, RoundTo, Range } from './qjs-opencv/js/cvUtils.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
-
+import {
+  WeakMapper,
+  Modulo,
+  WeakAssign,
+  BindMethods,
+  BitsToNames,
+  FindKey,
+  Define,
+  Once,
+  GetOpt,
+  RoundTo,
+  Range
+} from './qjs-opencv/js/cvUtils.js';
+import {
+  IfDebug,
+  LogIfDebug,
+  ReadFile,
+  LoadHistory,
+  ReadJSON,
+  MapFile,
+  ReadBJSON,
+  WriteFile,
+  WriteJSON,
+  WriteBJSON,
+  DirIterator,
+  RecursiveDirIterator
+} from './io-helpers.js';
 
 export function ImagePipeline(config) {
- let contours, hier;
+  let contours = [],
+    hier = [];
   let contoursDepth;
-  let lines, circles;
-  let outputMat, outputName;
+  let lines = [],
+    circles = [];
+  let outputMat = new Mat(),
+    outputName;
 
   let params = {
     ksize: new NumericParam(config.ksize || 3, 1, 13, 2),
@@ -32,13 +59,7 @@ export function ImagePipeline(config) {
     L2gradient: new NumericParam(config.L2gradient || 0, 0, 1),
     dilations: new NumericParam(config.dilations || 0, 0, 10),
     erosions: new NumericParam(config.erosions || 0, 0, 10),
-    mode: new EnumParam(config.mode || 3, [
-      'RETR_EXTERNAL',
-      'RETR_LIST',
-      'RETR_CCOMP',
-      'RETR_TREE',
-      'RETR_FLOODFILL'
-    ]),
+    mode: new EnumParam(config.mode || 3, ['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL']),
     method: new EnumParam(config.method || 0, [
       'CHAIN_APPROX_NONE',
       'CHAIN_APPROX_SIMPLE',
@@ -49,32 +70,26 @@ export function ImagePipeline(config) {
     lineWidth: new NumericParam(config.lineWidth || 1, 0, 10),
     fontThickness: new NumericParam(config.fontThickness || 1, 0, 10)
   };
-  let paramNav = new ParamNavigator(params, config.currentParam);
+  /*  let paramNav = new ParamNavigator(params, config.currentParam);
   let dummyArray = [0, 1, 2, 3, 4, 5, 6, 7];
-  console.log('win.imageRect (1)', win.imageRect);
-
+ 
   if(opts['trackbars']) {
     params.apertureSize.createTrackbar('apertureSize', win);
     params.thresh1.createTrackbar('thresh1', win);
     params.thresh2.createTrackbar('thresh2', win);
     console.log('win.imageRect (2)', win.imageRect);
   }
-
-  // cv.createButton('apertureSize', arg => console.log("Button apertureSize", arg), 0, false);
-
-  //console.log('paramNav.param:', paramNav.param);
-  //await params.apertureSize.createTrackbar('apertureSize', win);
-
-  //std.exit(0);
+ 
   rainbow = makeRainbow(256);
-
+*/
   let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS, new Size(3, 3));
 
   let dst0Size, firstSize, videoSize;
   let clahe = new CLAHE(4, new Size(8, 8));
   let framePos;
 
-  let pipeline = new Pipeline(
+  let pipeline;
+  pipeline = new Pipeline(
     [
       Processor(function AcquireFrame(src, dst) {
         const dstEmpty = dst.empty;
@@ -84,13 +99,10 @@ export function ImagePipeline(config) {
         video.read(dst);
         console.log('dst', dst);
         win.show(dst);
-        if(videoSize === undefined || videoSize.empty)
-          videoSize = video.size.area ? video.size : dst.size;
+        if(videoSize === undefined || videoSize.empty) videoSize = video.size.area ? video.size : dst.size;
         if(dstEmpty) firstSize = new Size(...videoSize);
         if(dst.size && !videoSize.equals(dst.size))
-          throw new Error(
-            `AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`
-          );
+          throw new Error(`AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`);
       }),
       Processor(function Grayscale(src, dst) {
         let channels = [];
@@ -105,14 +117,7 @@ export function ImagePipeline(config) {
         cv.GaussianBlur(src, dst, [+params.ksize, +params.ksize], 0, 0, cv.BORDER_REPLICATE);
       }),
       Processor(function EdgeDetect(src, dst) {
-        cv.Canny(
-          src,
-          dst,
-          +params.thresh1,
-          +params.thresh2,
-          +params.apertureSize,
-          +params.L2gradient
-        );
+        cv.Canny(src, dst, +params.thresh1, +params.thresh2, +params.apertureSize, +params.L2gradient);
         ////console.log('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);
       }),
       Processor(function Morph(src, dst) {
@@ -141,7 +146,7 @@ export function ImagePipeline(config) {
           +params.minLineLength,
           +params.maxLineGap
         );
-        lines = [...mat]; //.array;
+        pipeline.lines = [...mat]; //.array;
         // console.log('mat', mat);
         //  console.log('lines', lines.slice(0, 10));
         // console.log('lines.length', lines.length);
@@ -152,8 +157,8 @@ export function ImagePipeline(config) {
       if(frameShow == i) {
         let mat = pipeline.getImage(i);
 
-        outputName = pipeline.processors[frameShow].name;
-        outputMat = mat;
+        pipeline.outputName = pipeline.processors[frameShow].name;
+        pipeline.outputMat = mat;
       }
     }
   );
