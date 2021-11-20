@@ -61,7 +61,6 @@
     "preact-ssr-prepass": "^1.1.2",
     "prism-react-renderer": "^1.2.1",
     "promisify-child-process": "^4.1.1",
-    "react-ace": "^9.4.4",
     "react-prism-editor": "https://github.com/lumia2046/react-prism-editor",
     "react-simple-code-editor": "^0.11.0",
     "serialport": "^9.0.1",
@@ -80,7 +79,6 @@
     "@babel/plugin-transform-modules-commonjs": "^7.15.4",
     "@babel/plugin-transform-react-jsx": "^7.14.9",
     "@deque/dot": "^1.1.5",
-    "@s-ui/lint": "^3.31.0",
     "acorn": "^8.1.1",
     "ansi-colors": "^4.1.1",
     "ansi-escapes": "^4.3.1",
@@ -102,7 +100,6 @@
     "node-debugprotocol-client": "^0.1.1",
     "node-exceptions": "^4.0.1",
     "opentype": "^0.1.2",
-    "proxy-lists": "^1.23.0",
     "proxynova": "^0.1.0",
     "sc-random": "^1.0.0",
     "userscript-builder": "^0.3.0"
