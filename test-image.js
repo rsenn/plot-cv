@@ -7,45 +7,20 @@ import { format, once, memoize } from './lib/misc.js';
 import * as xml from 'xml';
 import Console from 'console';
 import SvgPath from './lib/svg/path.js';
-import {
-  IfDebug,
-  LogIfDebug,
-  ReadFile,
-  LoadHistory,
-  ReadJSON,
-  MapFile,
-  ReadBJSON,
-  WriteFile,
-  WriteJSON,
-  WriteBJSON,
-  DirIterator,
-  RecursiveDirIterator
-} from './io-helpers.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
 import { MakeSVG, SaveSVG } from './image-helpers.js';
 import { Profiler } from './time-helpers.js';
 import { SaveConfig, LoadConfig } from './config.js';
 import { VideoSource, ImageSequence } from './qjs-opencv/js/cvVideo.js';
 import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './qjs-opencv/js/cvHighGUI.js';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
-import {
-  WeakMapper,
-  Modulo,
-  WeakAssign,
-  BindMethods,
-  BitsToNames,
-  FindKey,
-  Define,
-  Once,
-  GetOpt,
-  RoundTo,
-  Range
-} from './qjs-opencv/js/cvUtils.js';
+import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Define, Once, GetOpt, RoundTo, Range } from './qjs-opencv/js/cvUtils.js';
 import { ImagePipeline } from './imagePipeline.js';
 
-let rainbow;
+/*let rainbow;
 let zoom = 1;
 let debug = false;
-let basename = memoize(() => process.argv[1].replace(/\.js$/, ''));
+let basename = memoize(() => process.argv[1].replace(/\.js$/, ''));*/
 
 let simplifyMethods = {
   NTH_POINT: c => c.simplifyNthPoint(2),
@@ -76,7 +51,7 @@ Object.assign(Hierarchy.prototype, {
     next(id) { const a = this.index(id); return a[cv.HIER_NEXT]; },
     prev(id) { const a = this.index(id); return a[cv.HIER_PREV]; }
   });
-
+/*
 function getConstants(names) {
   return Object.fromEntries(names.map(name => [name, '0x' + cv[name].toString(16)]));
 }
@@ -150,7 +125,7 @@ function* walkContours(hier, id) {
 
     id = h[cv.HIER_NEXT];
   }
-}
+}*/
 
 function main(...args) {
   let start;
@@ -161,7 +136,7 @@ function main(...args) {
     colors: true,
     depth: 3,
     maxArrayLength: 30,
-    compact: 1
+    compact: 3
   });
   const { DISPLAY } = process.env;
   console.log('DISPLAY', DISPLAY);
@@ -213,7 +188,7 @@ function main(...args) {
       .map(hue => new HSLA(hue, 100, 50))
       .map(h => h.toRGBA());
 
-  let win = new Window('gray', cv.WINDOW_NORMAL  | cv.WINDOW_AUTOSIZE /* | cv.WINDOW_KEEPRATIO*/);
+  let win = new Window('gray', cv.WINDOW_NORMAL | cv.WINDOW_AUTOSIZE /* | cv.WINDOW_KEEPRATIO*/);
   //console.debug('Mouse :', { MouseEvents, MouseFlags });
 
   const printFlags = flags => [...BitsToNames(MouseFlags)];
@@ -224,62 +199,32 @@ function main(...args) {
     event = Mouse.printEvent(event);
     flags = Mouse.printFlags(flags);
 
-    //console.debug('Mouse event:', console.inspect({ event, x, y, flags }, { multiline: false }));
+    console.debug('Mouse event:', console.inspect({ event, x, y, flags }, { multiline: false }));
   });
 
-  const images = opts['input'] ? [opts['input']] : opts['@'];
- 
-for(let image of images ) {
-  console.log('image', image);
-let mat = cv.imread(image);
-
-  console.log('mat', mat);
-  let [w,h]=[...mat.size];
-   console.log('mat.size', {w,h});
- 
-  win.resize(mat.size);
-  win.show(mat);
-cv.waitKey(-1);
-  }
-  std.exit(0);
-
-
-/*
-  for(let image of seq) {
-    console.log(`image#${i}`, image);
-    let result = pipeline(image, frameShow);
-    console.log(`result#${i}`, result);
-    i++;
-  }*/
-  /*
   let contours, hier;
   let contoursDepth;
   let lines, circles;
-  let outputMat, outputName;*/
+  let outputMat, outputName;
 
-  /*  let params = {
-    ksize: new NumericParam(config.ksize || 3, 1, 13, 2),
-    thresh1: new NumericParam(config.thresh1 || 40, 0, 100),
-    thresh2: new NumericParam(config.thresh2 || 90, 0, 100),
-    threshc: new NumericParam(config.threshc || 50, 0, 100),
-    angleResolution: new NumericParam(config.angleResolution || 2, 0.5, 180),
-    minLineLength: new NumericParam(config.minLineLength || 30, 0, 500),
-    maxLineGap: new NumericParam(config.maxLineGap || 10, 0, 500),
-    apertureSize: new NumericParam(config.apertureSize || 3, 3, 7, 2),
-    L2gradient: new NumericParam(config.L2gradient || 0, 0, 1),
-    dilations: new NumericParam(config.dilations || 0, 0, 10),
-    erosions: new NumericParam(config.erosions || 0, 0, 10),
-    mode: new EnumParam(config.mode || 3, ['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL']),
-    method: new EnumParam(config.method || 0, [
-      'CHAIN_APPROX_NONE',
-      'CHAIN_APPROX_SIMPLE',
-      'CHAIN_APPROX_TC89_L1',
-      'CHAIN_APPROX_TC89_L189_KCOS'
-    ]),
-    maskColor: new EnumParam(config.maskColor || false, ['OFF', 'ON']),
-    lineWidth: new NumericParam(config.lineWidth || 1, 0, 10),
-    fontThickness: new NumericParam(config.fontThickness || 1, 0, 10)
-  };
+  const images = opts['input'] ? [opts['input']] : opts['@'];
+
+  for(let image of images) {
+    console.log('image', image);
+    let mat = cv.imread(image);
+
+    console.log('mat', mat);
+    //let [w, h] = [...mat.size];
+    //console.log('mat.size', { w, h });
+
+    win.move(0,0);
+    win.resize(...mat.size);
+    win.show(mat);
+    cv.waitKey(-1);
+  }
+  std.exit(0);
+
+  /*   
   let paramNav = new ParamNavigator(params, config.currentParam);
   let dummyArray = [0, 1, 2, 3, 4, 5, 6, 7];
   console.log('win.imageRect (1)', win.imageRect);
