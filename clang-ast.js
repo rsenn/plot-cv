@@ -1009,7 +1009,7 @@ export function TypeFactory(node, ast, cache = true) {
 }
 
 export async function SpawnCompiler(compiler, input, output, args = []) {
-  // console.log(`SpawnCompiler`, { compiler, input, output, args });
+ // console.log(`SpawnCompiler`, { compiler, input, output, args });
   let base = path.basename(input, path.extname(input));
 
   args.push(input);
@@ -1031,7 +1031,7 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
 
   console.log(
     'SpawnCompiler',
-    args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (output ? ` 1>${output}` : '')
+    args//.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (output ? ` 1>${output}` : '')
   );
 
   let child = spawn(args, {
@@ -1173,10 +1173,11 @@ export async function AstDump(compiler, source, args, force) {
       return fs.stat(output)?.size;
     },
     json() {
-      let json = fs.readFileSync(output);
+      let json = fs.readFileSync(output, 'utf-8');
       return json;
     },
     data() {
+      console.log('this.json',this.json);
       let data = JSON.parse(this.json);
       let file;
       let maxDepth = 0;

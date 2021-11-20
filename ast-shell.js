@@ -530,7 +530,7 @@ function* GenerateStructClass(decl, ffiPrefix = '') {
     .join(',')}\\n}\`;\n  }`;
   yield '}';
 }
-
+ 
 function GenerateGetSet(name, offset, type, ffiPrefix) {
   const { size, signed } = type;
   const floating = type.isFloatingPoint();
@@ -759,7 +759,7 @@ function ProcessFile(file, debug = true) {
       break;
     case '.c':
     case '.h':
-      ret = Compile(file, debug);
+      ret = Compile(file/*, debug*/);
       break;
   }
   return ret;
@@ -996,6 +996,9 @@ async function ASTShell(...args) {
     args
   );
 
+
+  console.log('params',params);
+
   defs = params.define || [];
   includes = params.include || [];
   libs = params.libs || [];
@@ -1006,12 +1009,13 @@ async function ASTShell(...args) {
     includes,
     libs,
     /* prettier-ignore */ get flags() {
-      return [...includes.map(v => `-I${v}`), ...defs.map(d => `-D${d}`), ...libs.map(l => `-l${l}`)];
+      return [...includes.filter(v => typeof v == 'string').map(v => `-I${v}`), ...defs.map(d => `-D${d}`), ...libs.map(l => `-l${l}`)];
     }
   });
 
   async function Compile(file, ...args) {
-    let r = await AstDump(params.compiler, file, [...globalThis.flags, ...args], params.force);
+     console.log('args',args);
+ let r = await AstDump(params.compiler, file, [...globalThis.flags, ...args], params.force);
     r.source = file;
 
     globalThis.files[file] = r;

@@ -22,6 +22,7 @@
 #include <libwebsockets.h>
 #include <errno.h>
 #include <sys/ptrace.h>
+#include <sys/inotify.h>
 
 static inline int
 escape_char_pred(int c) {
@@ -382,5 +383,34 @@ main() {
   printf("SIGIO = %i\n", SIGIO);
   printf("SIGPWR = %i\n", SIGPWR);
   printf("SIGSYS = %i\n", SIGSYS);
+  printf("#define IN_ACCESS 0x%x\n", IN_ACCESS);
+  printf("#define IN_MODIFY 0x%x\n", IN_MODIFY);
+  printf("#define IN_ATTRIB 0x%x\n", IN_ATTRIB);
+  printf("#define IN_CLOSE_WRITE 0x%x\n", IN_CLOSE_WRITE);
+  printf("#define IN_CLOSE_NOWRITE 0x%x\n", IN_CLOSE_NOWRITE);
+  printf("#define IN_CLOSE 0x%x\n", IN_CLOSE);
+  printf("#define IN_OPEN 0x%x\n", IN_OPEN);
+  printf("#define IN_MOVED_FROM 0x%x\n", IN_MOVED_FROM);
+  printf("#define IN_MOVED_TO 0x%x\n", IN_MOVED_TO);
+  printf("#define IN_MOVE 0x%x\n", IN_MOVE);
+  printf("#define IN_CREATE 0x%x\n", IN_CREATE);
+  printf("#define IN_DELETE 0x%x\n", IN_DELETE);
+  printf("#define IN_DELETE_SELF 0x%x\n", IN_DELETE_SELF);
+  printf("#define IN_MOVE_SELF 0x%x\n", IN_MOVE_SELF);
+  printf("#define IN_UNMOUNT 0x%x\n", IN_UNMOUNT);
+  printf("#define IN_Q_OVERFLOW 0x%x\n", IN_Q_OVERFLOW);
+  printf("#define IN_IGNORED 0x%x\n", IN_IGNORED);
+  printf("#define IN_CLOSE 0x%x\n", IN_CLOSE);
+  printf("#define IN_MOVE 0x%x\n", IN_MOVE);
+  printf("#define IN_ONLYDIR 0x%x\n", IN_ONLYDIR);
+  printf("#define IN_DONT_FOLLOW 0x%x\n", IN_DONT_FOLLOW);
+  printf("#define IN_EXCL_UNLINK 0x%x\n", IN_EXCL_UNLINK);
+  printf("#define IN_MASK_CREATE 0x%x\n", IN_MASK_CREATE);
+  printf("#define IN_MASK_ADD 0x%x\n", IN_MASK_ADD);
+  printf("#define IN_ISDIR 0x%x\n", IN_ISDIR);
+  printf("#define IN_ONESHOT 0x%x\n", IN_ONESHOT);
+  printf("#define IN_ALL_EVENTS 0x%x\n", IN_ALL_EVENTS);
+  printf("sizeof(struct inotify_event) = %zu\n", sizeof(struct inotify_event));
+
   return 0;
 }

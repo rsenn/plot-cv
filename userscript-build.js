@@ -1150,7 +1150,7 @@ Util.adapter = function(
 };
 Util.adapter.localStorage = function(s) {
   s = Util.tryCatch(
-    () => !s && global.window,
+    () => !s && globalThis.window,
     w => w.localStorage,
     () => s
   );
@@ -1602,7 +1602,7 @@ Util.dump = function(name, props) {
     args.push(props[key]);
   }
   const w = Util.tryCatch(
-    () => global.window,
+    () => globalThis.window,
     w => w,
     () => null
   );
@@ -2011,7 +2011,7 @@ Util.clearCookies = function(c) {
 };
 Util.deleteCookie = function(name) {
   const w = Util.tryCatch(
-    () => global.window,
+    () => globalThis.window,
     w => w,
     () => null
   );
@@ -2336,7 +2336,7 @@ Util.isBrowser = function() {
     () => {}
   );
   return ret;
-  //return !!(global.window && global.window.document);
+  //return !!(globalThis.window && globalThis.window.document);
 };
 
 Util.waitFor = async function waitFor(msecs) {
@@ -8822,7 +8822,7 @@ class Element extends Node {
   static getCSS(element, property = undefined, receiver = null) {
     element = typeof element == 'string' ? Element.find(element) : element;
 
-    const w = window !== undefined ? window : global.window;
+    const w = window !== undefined ? window : globalThis.window;
     const d = document !== undefined ? document : global.document;
     // console.log('Element.getCSS ', { element,property });
 
@@ -9091,7 +9091,7 @@ class Element extends Node {
     if(isElement(x)) return Element.isat.apply(Element, arguments);
     let args = [...arguments];
     const p = Point$1(args);
-    const w = global.window;
+    const w = globalThis.window;
     const d = w.document;
     const s = o.all
       ? e => {

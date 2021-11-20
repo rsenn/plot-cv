@@ -451,7 +451,7 @@ const filesystem = {
     return await FetchURL(`static/${filename}`);
   },
   async writeFile(filename, data, overwrite = true) {
-    return await fetch('/save', {
+    return await fetch('save', {
       method: 'post',
       headers: {
         'Content-Type': 'application/octet-stream',
@@ -479,7 +479,7 @@ async function LoadFile(file) {
 
 async function SaveFile(filename, data, contentType) {
   if(!data.endsWith('\n')) data += '\n';
-  let response = await fetch('/save', {
+  let response = await fetch('save', {
     method: 'post',
     headers: {
       'Content-Type': contentType || 'application/xml',
@@ -1802,7 +1802,7 @@ const AppMain = (window.onload = async () => {
     for(url of urls) {
       //console.log('UpdateProjectList:', { ...opts, ...credentials, url });
       let data = await ListProjects({ ...opts, ...credentials, url });
-      let files = typeof data == 'object' && data != null && data.files || [];
+      let files = (typeof data == 'object' && data != null && data.files) || [];
       console.log('files', files);
       function File(obj, i) {
         const { name } = obj;
