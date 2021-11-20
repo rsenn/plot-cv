@@ -38,7 +38,7 @@ import {
   RecursiveDirIterator
 } from './io-helpers.js';
 
-export function ImagePipeline(config) {
+export function ImagePipeline(input, config) {
   let contours = [],
     hier = [];
   let contoursDepth;
@@ -84,26 +84,30 @@ export function ImagePipeline(config) {
 */
   let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS, new Size(3, 3));
 
-  let dst0Size, firstSize, videoSize;
   let clahe = new CLAHE(4, new Size(8, 8));
   let framePos;
 
   let pipeline;
   pipeline = new Pipeline(
     [
-      Processor(function AcquireFrame(src, dst) {
+ /*     Processor(function AcquireFrame(src, dst) {
+        let dst0Size, firstSize, videoSize;
         const dstEmpty = dst.empty;
         if(dst.empty) dst0Size = dst.size;
-        // console.log('video', video);
-        framePos = video.get('pos_frames');
-        video.read(dst);
-        console.log('dst', dst);
-        win.show(dst);
-        if(videoSize === undefined || videoSize.empty) videoSize = video.size.area ? video.size : dst.size;
+
+       
+        framePos = input.get('pos_frames');
+
+        console.log('dst(1)', dst);
+
+        input.read(dst);
+        console.log('dst(2)', dst);
+       
+        if(videoSize === undefined || videoSize.empty) videoSize = input.size.area ? input.size : dst.size;
         if(dstEmpty) firstSize = new Size(...videoSize);
         if(dst.size && !videoSize.equals(dst.size))
           throw new Error(`AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`);
-      }),
+      }),*/
       Processor(function Grayscale(src, dst) {
         let channels = [];
         cv.cvtColor(src, dst, cv.COLOR_BGR2Lab);
@@ -153,12 +157,13 @@ export function ImagePipeline(config) {
         src.copyTo(dst);
       })
     ],
-    (i, n) => {
-      if(frameShow == i) {
-        let mat = pipeline.getImage(i);
+    function(i, n) {
+      const { show = 0 } = this;
+      if(show === i) {
+        let mat = this.getImage(i);
 
-        pipeline.outputName = pipeline.processors[frameShow].name;
-        pipeline.outputMat = mat;
+        this.outputName = this.processors[show].name;
+        this.outputMat = mat;
       }
     }
   );
