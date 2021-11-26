@@ -12,7 +12,7 @@ import { MakeSVG, SaveSVG } from './image-helpers.js';
 import { Profiler } from './time-helpers.js';
 import { SaveConfig, LoadConfig } from './config.js';
 import { VideoSource, ImageSequence } from './qjs-opencv/js/cvVideo.js';
-import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './qjs-opencv/js/cvHighGUI.js';
+import { Window,Screen, MouseFlags, MouseEvents, Mouse, TextStyle } from './qjs-opencv/js/cvHighGUI.js';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
 import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Define, Once, GetOpt, RoundTo, Range } from './qjs-opencv/js/cvUtils.js';
 import { ImagePipeline } from './imagePipeline.js';
@@ -140,6 +140,16 @@ function main(...args) {
   });
   const { DISPLAY } = process.env;
   console.log('DISPLAY', DISPLAY);
+  console.log(
+    'cv.ALIGN_RIGHT',
+    Object.getOwnPropertyNames(cv).filter(n => /ALIGN/.test(n))
+  );
+  let r1 = new Rect(0, 0, 1200, 600),
+    r2 = new Size(400, 200);
+
+  let r3 = r2.align(r1, cv.ALIGN_RIGHT | cv.ALIGN_BOTTOM);
+  console.log('r3', r3);
+  console.log('Screen.size()', Screen.size());
 
   let opts = GetOpt(
     {
@@ -217,10 +227,16 @@ function main(...args) {
     //let [w, h] = [...mat.size];
     //console.log('mat.size', { w, h });
 
-    win.move(0,0);
+    //win.move(0, 0);
     win.resize(...mat.size);
+    win.align(0);
+
     win.show(mat);
-    cv.waitKey(-1);
+    let k;
+    while((k =    cv.waitKey(-1))) {
+      if(['\n','\r',13,10].indexOf(k) != -1)
+        break;
+    }
   }
   std.exit(0);
 

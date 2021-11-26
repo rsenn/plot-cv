@@ -71,7 +71,8 @@ import {
   Zoomable,
   DisplayList,
   Ruler,
-  Toggle
+  Toggle,
+  ButtonGroup
 } from './components.js';
 import * as components from './components.js';
 import { Message } from './message.js';
@@ -2437,7 +2438,11 @@ const AppMain = (window.onload = async () => {
       }),
       h(Consumer, {})
     ]),
-
+    h(ButtonGroup, {}, [
+      h(Button, { className: 'small', image: 'static/svg/sort-name-2.svg', caption: 'Name' }),
+      h(Button, { className: 'small', image: 'static/svg/sort-time-2.svg', caption: 'Modification time' }),
+      h(Button, { className: 'small', image: 'static/svg/sort-size-2.svg', caption: 'Size' })
+    ]),
     /*  h('div', { style: { display: 'inline-flex', flexFlow: 'row', alignItems: 'stretch', height: '100px', padding: '10px' } }, [
         h(ColorWheel, {}),
         h(Slider, {

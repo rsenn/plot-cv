@@ -9,7 +9,9 @@ import {
   useRef,
   useCallback,
   Portal,
-  ReactComponent
+  ReactComponent,
+  toChildArray, cloneElement, createFactory, createPortal, findDOMNode, flushSync, forwardRef, hydrate, isValidElement, lazy, memo, PureComponent, render, StrictMode, Suspense, SuspenseList, unmountComponentAtNode, version
+
 } from './lib/dom/preactComponent.js';
 import { trkl } from './lib/trkl.js';
 import { Element } from './lib/dom.js';
@@ -236,20 +238,17 @@ export const Toggle = ({ className, images, fn, state, style = {}, ...props }) =
   });
 };
 
-export const ButtonGroup = ({ className, images, fn, state, style = {}, ...props }) => {
-  const pushed = useTrkl(state);
-  const image = images[pushed | 0];
-  state.subscribe(value => {
-    //console.log('Toggled:', value);
-  });
-  return h(Button, {
-    className,
-    fn,
-    state,
-    image,
-    style,
-    ...props
-  });
+export const ButtonGroup = ({ className, children, ...props }) => {
+  const buttons = [...children /*.map(component => cloneElement(component))*/];
+  console.log('ButtonGroup.buttons:', buttons);
+
+  return h(
+    'div',
+    {
+      className
+    },
+    buttons
+  );
 };
 
 /*html`

@@ -1,9 +1,8 @@
 @font-face {
   font-family: 'NovaMono';
   src: url('fonts/NovaMono.eot');
-  src: url('fonts/NovaMono.eot?#iefix') format('embedded-opentype'), url('fonts/NovaMono.woff2') format('woff2'),
-    url('fonts/NovaMono.woff') format('woff'), url('fonts/NovaMono.ttf') format('truetype'),
-    url('fonts/NovaMono.svg#NovaMono') format('svg');
+  src: url('fonts/NovaMono.eot?#iefix') format('embedded-opentype'), url('fonts/NovaMono.woff2') format('woff2'), url('fonts/NovaMono.woff') format('woff'),
+    url('fonts/NovaMono.ttf') format('truetype'), url('fonts/NovaMono.svg#NovaMono') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -12,8 +11,7 @@
 @font-face {
   font-family: 'monofur';
   src: url('fonts/Monofur.eot');
-  src: url('fonts/Monofur.eot?#iefix') format('embedded-opentype'), url('fonts/Monofur.woff2') format('woff2'),
-    url('fonts/Monofur.woff') format('woff'), url('fonts/Monofur.ttf') format('truetype'),
+  src: url('fonts/Monofur.eot?#iefix') format('embedded-opentype'), url('fonts/Monofur.woff2') format('woff2'), url('fonts/Monofur.woff') format('woff'), url('fonts/Monofur.ttf') format('truetype'),
     url('fonts/Monofur.svg#Monofur') format('svg');
   font-weight: normal;
   font-style: normal;
@@ -23,10 +21,8 @@
 @font-face {
   font-family: 'Belshaw Donut Robot';
   src: url('fonts/BelshawDonutRobot.eot');
-  src: url('fonts/BelshawDonutRobot.eot?#iefix') format('embedded-opentype'),
-    url('fonts/BelshawDonutRobot.woff2') format('woff2'), url('fonts/BelshawDonutRobot.woff') format('woff'),
-    url('fonts/BelshawDonutRobot.ttf') format('truetype'),
-    url('fonts/BelshawDonutRobot.svg#BelshawDonutRobot') format('svg');
+  src: url('fonts/BelshawDonutRobot.eot?#iefix') format('embedded-opentype'), url('fonts/BelshawDonutRobot.woff2') format('woff2'), url('fonts/BelshawDonutRobot.woff') format('woff'),
+    url('fonts/BelshawDonutRobot.ttf') format('truetype'), url('fonts/BelshawDonutRobot.svg#BelshawDonutRobot') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -35,8 +31,7 @@
 @font-face {
   font-family: 'saxMono';
   src: url('fonts/saxMono.eot');
-  src: url('fonts/saxMono.eot?#iefix') format('embedded-opentype'), url('fonts/saxMono.woff2') format('woff2'),
-    url('fonts/saxMono.woff') format('woff'), url('fonts/saxMono.ttf') format('truetype'),
+  src: url('fonts/saxMono.eot?#iefix') format('embedded-opentype'), url('fonts/saxMono.woff2') format('woff2'), url('fonts/saxMono.woff') format('woff'), url('fonts/saxMono.ttf') format('truetype'),
     url('fonts/saxMono.svg#saxMono') format('svg');
   font-weight: normal;
   font-style: normal;
@@ -46,8 +41,7 @@
 @font-face {
   font-family: 'Borgen';
   src: url('fonts/Borgen.eot');
-  src: url('fonts/Borgen.eot?#iefix') format('embedded-opentype'), url('fonts/Borgen.woff2') format('woff2'),
-    url('fonts/Borgen.woff') format('woff'), url('fonts/Borgen.ttf') format('truetype'),
+  src: url('fonts/Borgen.eot?#iefix') format('embedded-opentype'), url('fonts/Borgen.woff2') format('woff2'), url('fonts/Borgen.woff') format('woff'), url('fonts/Borgen.ttf') format('truetype'),
     url('fonts/Borgen.svg#Borgen') format('svg');
   font-weight: normal;
   font-style: normal;
@@ -57,8 +51,7 @@
 @font-face {
   font-family: 'Share-TechMono';
   src: url('fonts/Share-TechMono.eot');
-  src: url('fonts/Share-TechMono.eot?#iefix') format('embedded-opentype'),
-    url('fonts/Share-TechMono.woff2') format('woff2'), url('fonts/Share-TechMono.woff') format('woff'),
+  src: url('fonts/Share-TechMono.eot?#iefix') format('embedded-opentype'), url('fonts/Share-TechMono.woff2') format('woff2'), url('fonts/Share-TechMono.woff') format('woff'),
     url('fonts/Share-TechMono.ttf') format('truetype'), url('fonts/Share-TechMono.svg#Share-TechMono') format('svg');
   font-weight: normal;
   font-style: normal;
@@ -68,8 +61,7 @@
 @font-face {
   font-family: 'Pseudo APL';
   src: url('fonts/Courier.eot');
-  src: url('fonts/Courier.eot?#iefix') format('embedded-opentype'), url('fonts/Courier.woff2') format('woff2'),
-    url('fonts/Courier.woff') format('woff'), url('fonts/Courier.ttf') format('truetype'),
+  src: url('fonts/Courier.eot?#iefix') format('embedded-opentype'), url('fonts/Courier.woff2') format('woff2'), url('fonts/Courier.woff') format('woff'), url('fonts/Courier.ttf') format('truetype'),
     url('fonts/Courier.svg#Courier') format('svg');
   font-weight: normal;
   font-style: normal;
@@ -79,9 +71,8 @@
 @font-face {
   font-family: 'MonoSpatial';
   src: url('fonts/MonoSpatial.eot');
-  src: url('fonts/MonoSpatial.eot?#iefix') format('embedded-opentype'), url('fonts/MonoSpatial.woff2') format('woff2'),
-    url('fonts/MonoSpatial.woff') format('woff'), url('fonts/MonoSpatial.ttf') format('truetype'),
-    url('fonts/MonoSpatial.svg#MonoSpatial') format('svg');
+  src: url('fonts/MonoSpatial.eot?#iefix') format('embedded-opentype'), url('fonts/MonoSpatial.woff2') format('woff2'), url('fonts/MonoSpatial.woff') format('woff'),
+    url('fonts/MonoSpatial.ttf') format('truetype'), url('fonts/MonoSpatial.svg#MonoSpatial') format('svg');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -90,8 +81,7 @@
 @font-face {
   font-family: 'Share-TechMono';
   src: url('fonts/Share-TechMono_1.eot');
-  src: url('fonts/Share-TechMono_1.eot?#iefix') format('embedded-opentype'),
-    url('fonts/Share-TechMono_1.woff2') format('woff2'), url('fonts/Share-TechMono_1.woff') format('woff'),
+  src: url('fonts/Share-TechMono_1.eot?#iefix') format('embedded-opentype'), url('fonts/Share-TechMono_1.woff2') format('woff2'), url('fonts/Share-TechMono_1.woff') format('woff'),
     url('fonts/Share-TechMono_1.ttf') format('truetype'), url('fonts/Share-TechMono_1.svg#Share-TechMono') format('svg');
   font-weight: normal;
   font-style: normal;
@@ -101,8 +91,7 @@
 @font-face {
   font-family: 'MonoSpatial';
   src: url('fonts/MonoSpatial_1.eot');
-  src: url('fonts/MonoSpatial_1.eot?#iefix') format('embedded-opentype'),
-    url('fonts/MonoSpatial_1.woff2') format('woff2'), url('fonts/MonoSpatial_1.woff') format('woff'),
+  src: url('fonts/MonoSpatial_1.eot?#iefix') format('embedded-opentype'), url('fonts/MonoSpatial_1.woff2') format('woff2'), url('fonts/MonoSpatial_1.woff') format('woff'),
     url('fonts/MonoSpatial_1.ttf') format('truetype'), url('fonts/MonoSpatial_1.svg#MonoSpatial') format('svg');
   font-weight: 500;
   font-style: normal;
@@ -112,9 +101,8 @@
 @font-face {
   font-family: 'NovaMono';
   src: url('fonts/NovaMono_1.eot');
-  src: url('fonts/NovaMono_1.eot?#iefix') format('embedded-opentype'), url('fonts/NovaMono_1.woff2') format('woff2'),
-    url('fonts/NovaMono_1.woff') format('woff'), url('fonts/NovaMono_1.ttf') format('truetype'),
-    url('fonts/NovaMono_1.svg#NovaMono') format('svg');
+  src: url('fonts/NovaMono_1.eot?#iefix') format('embedded-opentype'), url('fonts/NovaMono_1.woff2') format('woff2'), url('fonts/NovaMono_1.woff') format('woff'),
+    url('fonts/NovaMono_1.ttf') format('truetype'), url('fonts/NovaMono_1.svg#NovaMono') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -123,10 +111,8 @@
 @font-face {
   font-family: 'Everson Mono Latin 6';
   src: url('fonts/EversonMonoLatin6.eot');
-  src: url('fonts/EversonMonoLatin6.eot?#iefix') format('embedded-opentype'),
-    url('fonts/EversonMonoLatin6.woff2') format('woff2'), url('fonts/EversonMonoLatin6.woff') format('woff'),
-    url('fonts/EversonMonoLatin6.ttf') format('truetype'),
-    url('fonts/EversonMonoLatin6.svg#EversonMonoLatin6') format('svg');
+  src: url('fonts/EversonMonoLatin6.eot?#iefix') format('embedded-opentype'), url('fonts/EversonMonoLatin6.woff2') format('woff2'), url('fonts/EversonMonoLatin6.woff') format('woff'),
+    url('fonts/EversonMonoLatin6.ttf') format('truetype'), url('fonts/EversonMonoLatin6.svg#EversonMonoLatin6') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -135,9 +121,8 @@
 @font-face {
   font-family: 'Borgen';
   src: url('fonts/Borgen_1.eot');
-  src: url('fonts/Borgen_1.eot?#iefix') format('embedded-opentype'), url('fonts/Borgen_1.woff2') format('woff2'),
-    url('fonts/Borgen_1.woff') format('woff'), url('fonts/Borgen_1.ttf') format('truetype'),
-    url('fonts/Borgen_1.svg#Borgen') format('svg');
+  src: url('fonts/Borgen_1.eot?#iefix') format('embedded-opentype'), url('fonts/Borgen_1.woff2') format('woff2'), url('fonts/Borgen_1.woff') format('woff'),
+    url('fonts/Borgen_1.ttf') format('truetype'), url('fonts/Borgen_1.svg#Borgen') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -146,8 +131,7 @@
 @font-face {
   font-family: 'monofur';
   src: url('fonts/Monofuritalic.eot');
-  src: url('fonts/Monofuritalic.eot?#iefix') format('embedded-opentype'),
-    url('fonts/Monofuritalic.woff2') format('woff2'), url('fonts/Monofuritalic.woff') format('woff'),
+  src: url('fonts/Monofuritalic.eot?#iefix') format('embedded-opentype'), url('fonts/Monofuritalic.woff2') format('woff2'), url('fonts/Monofuritalic.woff') format('woff'),
     url('fonts/Monofuritalic.ttf') format('truetype'), url('fonts/Monofuritalic.svg#Monofuritalic') format('svg');
   font-weight: normal;
   font-style: italic;
@@ -157,10 +141,8 @@
 @font-face {
   font-family: 'Everson Mono Latin 6';
   src: url('fonts/EversonMonoLatin6_1.eot');
-  src: url('fonts/EversonMonoLatin6_1.eot?#iefix') format('embedded-opentype'),
-    url('fonts/EversonMonoLatin6_1.woff2') format('woff2'), url('fonts/EversonMonoLatin6_1.woff') format('woff'),
-    url('fonts/EversonMonoLatin6_1.ttf') format('truetype'),
-    url('fonts/EversonMonoLatin6_1.svg#EversonMonoLatin6') format('svg');
+  src: url('fonts/EversonMonoLatin6_1.eot?#iefix') format('embedded-opentype'), url('fonts/EversonMonoLatin6_1.woff2') format('woff2'), url('fonts/EversonMonoLatin6_1.woff') format('woff'),
+    url('fonts/EversonMonoLatin6_1.ttf') format('truetype'), url('fonts/EversonMonoLatin6_1.svg#EversonMonoLatin6') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -169,9 +151,8 @@
 @font-face {
   font-family: 'saxMono';
   src: url('fonts/saxMono_1.eot');
-  src: url('fonts/saxMono_1.eot?#iefix') format('embedded-opentype'), url('fonts/saxMono_1.woff2') format('woff2'),
-    url('fonts/saxMono_1.woff') format('woff'), url('fonts/saxMono_1.ttf') format('truetype'),
-    url('fonts/saxMono_1.svg#saxMono') format('svg');
+  src: url('fonts/saxMono_1.eot?#iefix') format('embedded-opentype'), url('fonts/saxMono_1.woff2') format('woff2'), url('fonts/saxMono_1.woff') format('woff'),
+    url('fonts/saxMono_1.ttf') format('truetype'), url('fonts/saxMono_1.svg#saxMono') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -180,10 +161,8 @@
 @font-face {
   font-family: 'Everson Mono Latin 6';
   src: url('fonts/EversonMonoLatin6_2.eot');
-  src: url('fonts/EversonMonoLatin6_2.eot?#iefix') format('embedded-opentype'),
-    url('fonts/EversonMonoLatin6_2.woff2') format('woff2'), url('fonts/EversonMonoLatin6_2.woff') format('woff'),
-    url('fonts/EversonMonoLatin6_2.ttf') format('truetype'),
-    url('fonts/EversonMonoLatin6_2.svg#EversonMonoLatin6') format('svg');
+  src: url('fonts/EversonMonoLatin6_2.eot?#iefix') format('embedded-opentype'), url('fonts/EversonMonoLatin6_2.woff2') format('woff2'), url('fonts/EversonMonoLatin6_2.woff') format('woff'),
+    url('fonts/EversonMonoLatin6_2.ttf') format('truetype'), url('fonts/EversonMonoLatin6_2.svg#EversonMonoLatin6') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
