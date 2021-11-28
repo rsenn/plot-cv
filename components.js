@@ -10,9 +10,10 @@ import {
   useCallback,
   Portal,
   ReactComponent,
-  toChildArray, cloneElement, createFactory, createPortal, findDOMNode, flushSync, forwardRef, hydrate, isValidElement, lazy, memo, PureComponent, render, StrictMode, Suspense, SuspenseList, unmountComponentAtNode, version
-
+  toChildArray /*, cloneElement*/
 } from './lib/dom/preactComponent.js';
+//import { isValidElement } from './lib/compat.mjs';
+
 import { trkl } from './lib/trkl.js';
 import { Element } from './lib/dom.js';
 import path from './lib/path.js';
@@ -147,7 +148,8 @@ export const Overlay = ({
   children,
   ...props
 }) => {
-  const [pushed, setPushed] = typeof state == 'function' ? [useTrkl(state), state] : useState(false);
+  const [pushed, setPushed] =
+    typeof state == 'function' ? [useTrkl(state), state] : useState(false);
   const enabled = useTrkl(enable);
   const events = enabled
     ? MouseEvents(
@@ -172,7 +174,12 @@ export const Overlay = ({
   return h(
     'div',
     {
-      className: classNames(className, pushed && 'pushed', active ? 'active' : 'inactive', !visible && 'hidden'),
+      className: classNames(
+        className,
+        pushed && 'pushed',
+        active ? 'active' : 'inactive',
+        !visible && 'hidden'
+      ),
       ...props,
       ...events
     },
@@ -238,14 +245,47 @@ export const Toggle = ({ className, images, fn, state, style = {}, ...props }) =
   });
 };
 
-export const ButtonGroup = ({ className, children, ...props }) => {
-  const buttons = [...children /*.map(component => cloneElement(component))*/];
+export const ButtonGroup = ({ className, index = trkl(), children, onChange = () => {}, ...props }) => {
+  const active = useTrkl(index);
+  const buttons = [
+    ...children.map((component, i) =>
+      typeof component == 'function'
+        ? component({
+            ...props,
+            className: classNames('button', className),
+            state: active === i/*,
+            onPush*/
+          })
+        : component
+    )
+  ];
+
+  function onPush(event) {
+    let { currentTarget, target } = event;
+
+    const tag = target?.tagName?.toLowerCase();
+    let siblingCounter = 0;
+    if(tag == 'img') {
+      do {
+        target = target.previousElementSibling;
+        siblingCounter++;
+      } while(target);
+      console.log('ButtonGroup.event:', siblingCounter);
+      let j =siblingCounter-1;
+      if(j != active) {
+      index(j);
+    onChange(event); }
+
+    }
+  }
+
   console.log('ButtonGroup.buttons:', buttons);
 
   return h(
     'div',
     {
-      className
+      className: 'button-group',
+      onMouseDown: onPush
     },
     buttons
   );
@@ -316,7 +356,11 @@ export const FloatingPanel = ({ children, className, onSize, onHide, style = {},
 export const Label = ({ className, text, title, tooltip, children, ...props }) => {
   if(typeof title == 'string' && title.length > 0) props.title = title;
   if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
-  return h('div', { className: classNames('caption', className), ...props }, (text ? [text] : []).concat(children));
+  return h(
+    'div',
+    { className: classNames('caption', className), ...props },
+    (text ? [text] : []).concat(children)
+  );
 };
 
 export const DynamicLabel = ({ caption, title, children, ...props }) => {
@@ -408,7 +452,10 @@ export const BoardIcon = props => html`
   </svg>
 `;
 
-export const LibraryIcon = props => html` <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+export const LibraryIcon = props => html` <svg
+  viewBox="0 0 40 40"
+  xmlns="http://www.w3.org/2000/svg"
+>
   <g>
     <path
       d="M3.397 6.488v26.938c0 3.085 2.13 5.675 5.013 6.407V.105a6.561 6.561 0 00-5.012 6.38M30.122-.096H11.645v40.105h18.477a6.6 6.6 0 006.59-6.581V6.488a6.582 6.582 0 00-6.59-6.583"
@@ -448,7 +495,14 @@ export const FileIcons = {
   ngc: GCodeIcon
 };
 
-export const Conditional = ({ initialState, component = Fragment, className, children, signal, ...props }) => {
+export const Conditional = ({
+  initialState,
+  component = Fragment,
+  className,
+  children,
+  signal,
+  ...props
+}) => {
   const [show, setShown] = useState(initialState !== undefined ? initialState : signal());
 
   if(signal) signal.subscribe(value => setShown(value));
@@ -464,7 +518,15 @@ export const ShowHide = ({ initialState, component, className, children, signal,
   return h(component, { className: classNames(className, hidden && 'hidden'), ...props }, children);
 };
 
-export const EditBox = ({ value = '', type = 'div', className, hidden = false, current, focus, ...props }) => {
+export const EditBox = ({
+  value = '',
+  type = 'div',
+  className,
+  hidden = false,
+  current,
+  focus,
+  ...props
+}) => {
   if(typeof current == 'function') props.ref = input => current(input);
 
   const outerProps = { className: classNames(className, hidden && 'hidden') };
@@ -483,7 +545,19 @@ export const EditBox = ({ value = '', type = 'div', className, hidden = false, c
   );
 };
 
-export const File = ({ label, name, description, i, key, className = 'file', onPush, signal, data, doc, ...props }) => {
+export const File = ({
+  label,
+  name,
+  description,
+  i,
+  key,
+  className = 'file',
+  onPush,
+  signal,
+  data,
+  doc,
+  ...props
+}) => {
   //console.log('File', props);
   const [loaded, setLoaded] = useState(NaN);
   if(signal) signal.subscribe(data => setLoaded(data.percent));
@@ -502,7 +576,8 @@ export const File = ({ label, name, description, i, key, className = 'file', onP
     ? h(LibraryIcon, { ...iconProps, className: 'icon' })
     : undefined;
   let fileExt = path.extname(name).replace(/^\./, '');
-  if(!icon && FileIcons[fileExt]) icon = h(FileIcons[fileExt], { ...iconProps, className: 'icon' });
+  if(!icon && FileIcons[fileExt])
+    icon = h(FileIcons[fileExt], { ...iconProps, className: 'icon' });
   if(id) {
     id = isNaN(+id) ? i : id;
     id = 'file-' + id;
@@ -511,7 +586,11 @@ export const File = ({ label, name, description, i, key, className = 'file', onP
   //if(icon) label = label.replace(/\.[^.]*$/, '');
   label = h(Label, { text: Util.wordWrap(label, 50, '\n') });
   if(description) {
-    let s = Util.multiParagraphWordWrap(Util.stripXML(Util.decodeHTMLEntities(description)), 60, '\n');
+    let s = Util.multiParagraphWordWrap(
+      Util.stripXML(Util.decodeHTMLEntities(description)),
+      60,
+      '\n'
+    );
     let d = s.split(/\n/g).slice(0, 1);
     label = h('div', {}, [
       label,
@@ -566,7 +645,9 @@ export const Chooser = ({
   }
   const list2re = list =>
     list
-      .map(part => Util.tryCatch(() => new RegExp(part.trim().replace(/\./g, '\\.').replace(/\*/g, '.*'), 'i')))
+      .map(part =>
+        Util.tryCatch(() => new RegExp(part.trim().replace(/\./g, '\\.').replace(/\*/g, '.*'), 'i'))
+      )
       .filter(r => r !== null);
   const bar = html``;
   const preFilter = filter
@@ -583,7 +664,8 @@ export const Chooser = ({
     .filter(p => p != '')
     .map(p => list2re(p.split(/\s\s*/g)));
   //Sconsole.debug('regex:', ...reList);
-  const pred = name => !reList.every(c => !c.every(re => re.test(name))) && plus.every(re => re.test(name));
+  const pred = name =>
+    !reList.every(c => !c.every(re => re.test(name))) && plus.every(re => re.test(name));
   const other = list.filter(({ name }) => !pred(name)).map(i => i.name);
   const displayList = [...list].sort(sortCompare);
   //console.log('displayList', { displayList, sortCompare });
@@ -620,7 +702,11 @@ export const Chooser = ({
       });
     });
 
-  return h(Container, { className: classNames('panel', 'no-select', className), ...props }, children);
+  return h(
+    Container,
+    { className: classNames('panel', 'no-select', className), ...props },
+    children
+  );
 };
 
 const ToolTipFn = ({ name, data, ...item }) => {
@@ -776,7 +862,11 @@ export const SizedAspectRatioBox = ({
   h(
     'div',
     {
-      className: classNames('aspect-ratio-box-size', className && className + '-size', sizeClassName),
+      className: classNames(
+        'aspect-ratio-box-size',
+        className && className + '-size',
+        sizeClassName
+      ),
       style: { position: 'relative', width, height, ...style },
       onClick,
       id
@@ -929,7 +1019,8 @@ export const Canvas = ({ onInit, ...props }) => {
     //console.debug('ctx.current', ctx.current);
     const { offsetLeft: x, offsetTop: y } = canvasRef.current;
 
-    if(typeof onInit == 'function') onInit(ctx.current, canvasRef.current, { width, height, x, y });
+    if(typeof onInit == 'function')
+      onInit(ctx.current, canvasRef.current, { width, height, x, y });
   }, []);
 
   /*  const [windowWidth, windowHeight] = useWindowSize(() => {
@@ -939,7 +1030,10 @@ export const Canvas = ({ onInit, ...props }) => {
 
   function handleMouseMove(e) {
     //actual coordinates
-    const coords = [e.clientX - canvasRef.current.offsetLeft, e.clientY - canvasRef.current.offsetTop];
+    const coords = [
+      e.clientX - canvasRef.current.offsetLeft,
+      e.clientY - canvasRef.current.offsetTop
+    ];
     if(drawing) {
       ctx.current.lineTo(...coords);
       ctx.current.stroke();
@@ -956,7 +1050,10 @@ export const Canvas = ({ onInit, ...props }) => {
     ctx.current.strokeStyle = props.color;
     ctx.current.beginPath();
     //actual coordinates
-    ctx.current.moveTo(e.clientX - canvasRef.current.offsetLeft, e.clientY - canvasRef.current.offsetTop);
+    ctx.current.moveTo(
+      e.clientX - canvasRef.current.offsetLeft,
+      e.clientY - canvasRef.current.offsetTop
+    );
     setDrawing(true);
   }
 
@@ -1185,7 +1282,8 @@ export const Fence = ({ children, style = {}, sizeListener, aspectListener, ...p
   const [dimensions, setDimensions] = useState(sizeListener());
   const [aspect, setAspect] = useState(aspectListener());
   if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
-  if(aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));
+  if(aspectListener && aspectListener.subscribe)
+    aspectListener.subscribe(value => setAspect(value));
   //console.debug('Fence dimensions:', dimensions);
   return h(
     TransformedElement,

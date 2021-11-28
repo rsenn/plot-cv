@@ -12,7 +12,7 @@ import { MakeSVG, SaveSVG } from './image-helpers.js';
 import { Profiler } from './time-helpers.js';
 import { SaveConfig, LoadConfig } from './config.js';
 import { VideoSource, ImageSequence } from './qjs-opencv/js/cvVideo.js';
-import { Window,Screen, MouseFlags, MouseEvents, Mouse, TextStyle } from './qjs-opencv/js/cvHighGUI.js';
+import { Window, Screen, MouseFlags, MouseEvents, Mouse, TextStyle } from './qjs-opencv/js/cvHighGUI.js';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
 import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Define, Once, GetOpt, RoundTo, Range } from './qjs-opencv/js/cvUtils.js';
 import { ImagePipeline } from './imagePipeline.js';
@@ -233,9 +233,8 @@ function main(...args) {
 
     win.show(mat);
     let k;
-    while((k =    cv.waitKey(-1))) {
-      if(['\n','\r',13,10].indexOf(k) != -1)
-        break;
+    while((k = cv.waitKey(-1))) {
+      if(['\n', '\r', 13, 10].indexOf(k) != -1) break;
     }
   }
   std.exit(0);

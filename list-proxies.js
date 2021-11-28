@@ -12,33 +12,7 @@ import ConsoleSetup from './lib/consoleSetup.js';
 import fetch from 'isomorphic-fetch';
 import deep from './lib/deep.js';
 import { promises as fsPromises } from 'fs';
-import {
-  isStream,
-  AcquireReader,
-  AcquireWriter,
-  ArrayWriter,
-  readStream,
-  PipeTo,
-  WritableRepeater,
-  WriteIterator,
-  AsyncWrite,
-  AsyncRead,
-  ReadFromIterator,
-  WriteToRepeater,
-  LogSink,
-  StringReader,
-  LineReader,
-  DebugTransformStream,
-  CreateWritableStream,
-  CreateTransformStream,
-  RepeaterSource,
-  RepeaterSink,
-  LineBufferStream,
-  TextTransformStream,
-  ChunkReader,
-  ByteReader,
-  PipeToRepeater
-} from './lib/stream.js';
+import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater } from './lib/stream.js';
 
 function TCPSocket(host, port) {
   const defaultTimeout = 30000;

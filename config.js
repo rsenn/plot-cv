@@ -9,10 +9,7 @@ export function SaveConfig(configObj) {
   let file = std.open(basename() + '.config.json', 'w+b');
   file.puts(JSON.stringify(configObj, null, 2) + '\n');
   file.close();
-  console.log(
-    `Saved config to '${basename() + '.config.json'}'`,
-    inspect(configObj, { compact: false })
-  );
+  console.log(`Saved config to '${basename() + '.config.json'}'`, inspect(configObj, { compact: false }));
 }
 
 export function LoadConfig() {

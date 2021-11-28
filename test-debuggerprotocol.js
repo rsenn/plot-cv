@@ -3,23 +3,12 @@ import * as os from 'os';
 import * as deep from './lib/deep.js';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './quickjs/qjs-ffi/lib/fcntl.js';
 import { errno } from 'ffi';
-import {
-  Socket,
-  socket,
-  EAGAIN,
-  AF_INET,
-  SOCK_STREAM,
-  /*ndelay, */ SockAddr,
-  select
-} from './quickjs/qjs-ffi/lib/socket.js';
+import { Socket, socket, EAGAIN, AF_INET, SOCK_STREAM, /*ndelay, */ SockAddr, select } from './quickjs/qjs-ffi/lib/socket.js';
 import { fd_set, FD_SET, FD_CLR, FD_ISSET, FD_ZERO } from './quickjs/qjs-ffi/lib/fd_set.js';
 import timeval from './quickjs/qjs-ffi/lib/timeval.js';
 import Util from './lib/util.js';
 import { Console } from 'console';
-import {
-  toString as ArrayBufferToString,
-  toArrayBuffer as StringToArrayBuffer
-} from './lib/misc.js';
+import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 
 Util.define(Array.prototype, {
@@ -130,12 +119,7 @@ async function main(...args) {
 }
 
 function retValue(ret, ...args) {
-  console.log(
-    ...args,
-    `ret =`,
-    ret,
-    ...(ret == -1 ? [' errno =', errno(), ' error =', std.strerror(errno())] : [])
-  );
+  console.log(...args, `ret =`, ret, ...(ret == -1 ? [' errno =', errno(), ' error =', std.strerror(errno())] : []));
 }
 
 function toHex(n, b = 2) {
@@ -158,11 +142,7 @@ function MakeArray(buf, numBytes) {
 function ArrayBufToHex(buf, numBytes = 8) {
   if(typeof buf == 'object' && buf != null && buf instanceof ArrayBuffer) {
     let arr = MakeArray(buf, numBytes);
-    return arr.reduce(
-      (s, code) =>
-        (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
-      ''
-    );
+    return arr.reduce((s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)), '');
   }
   return buf;
 }
