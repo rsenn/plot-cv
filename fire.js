@@ -196,6 +196,8 @@ function Init() {
 
   rect = element.getBoundingClientRect();
 
+  window.addEventListener('resize', ResizeHandler, true);
+
   const handler = MouseHandler || Util.instrument(MouseHandler, (duration, name, args, ret) => console.log(`handler time: ${duration}`));
 
   subscribe(MouseIterator(), handler);
