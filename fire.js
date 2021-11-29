@@ -186,6 +186,7 @@ async function* MouseIterator() {
 
 function ResizeHandler(e) {
   rect = element.getBoundingClientRect();
+  console.log('rect', rect);
 }
 
 Object.assign(globalThis, { RandomByte });
