@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import {
   h,
   Fragment,
@@ -12,9 +11,6 @@ import {
   Portal,
   ReactComponent,
   toChildArray /*, cloneElement*/
-=======
-import {h, Fragment, html, render, Component, useState, useEffect, useRef, useCallback, Portal, ReactComponent
->>>>>>> 88943b11a4eab9edd61aa1b2c3867f235c86687c
 } from './lib/dom/preactComponent.js';
 //import { isValidElement } from './lib/compat.mjs';
 
