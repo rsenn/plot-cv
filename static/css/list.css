@@ -1,24 +1,39 @@
-list, .list {
+/*list, .list {
   display:  grid;
   grid-template-columns: 4em 1fr 100px 200px  ;
   grid-column-gap: 1em;
   width:  100vw;
-}
+}*/
+table {
 
+}
+.preformatted {
+    font-family: monospace;
+    white-space: pre;
+}
 
 .item {
   margin: 1px;
-/*  border:  1px dotted black;*/
   word-break: keep-all;
-white-space: nowrap; 
+  white-space: nowrap; 
+  vertical-align:  top;
 }
-name {
+.name {
   overflow-x: hidden;
+  width:  100px;
+  white-space: pre-wrap;
 }
-size {
+td.size {
   text-align: right;
 }
 
-mtime,time {
-text-align: center  ;
+td.mtime, td.time {
+  text-align: center  ;
+}
+th {
+  font-weight:  0;
+  font-size: 13px;
+  text-align:  left;
+}
+tr.head > th {  border-bottom: 1px solid black;
 }
