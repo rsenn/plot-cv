@@ -1,5 +1,5 @@
 import { LogWrap, VfnAdapter, VfnDecorator, Memoize, DebugFlags, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, isThenable, hasHandler, callHandler, parseURL, GetProperties, GetKeys, getPropertyDescriptors, define, setHandlers, statusResponse, objectCommand, MakeListCommand, getPrototypeName, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/rpc.js';
-//import * as React from './lib/dom/preactComponent.js';
+import { h, options, html, render, Component, createContext, createRef, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue, forwardRef, Fragment, React, ReactComponent, Portal, toChildArray } from './lib/dom/preactComponent.js';
 import Util from './lib/util.js';
 import { once, streamify, filter, map, throttle, distinct, subscribe } from './lib/async/events.js';
 import iterify from './lib/async/iterify.js';
@@ -43,7 +43,7 @@ Object.assign(globalThis, {
   statusResponse,
   Util,
   VfnAdapter,
-  VfnDecorator,
+  VfnDecorator
 });
 
 globalThis.addEventListener('load', async () => {
@@ -58,6 +58,8 @@ globalThis.addEventListener('load', async () => {
   for await(let e of iter) {
     console.log(`WS ${e.type}`, e);
   }
+
+  render(h('list', {}, ['test1', 'test2']), document.body);
 });
 
 async function ListDirectory(dir = '.', options = {}) {
