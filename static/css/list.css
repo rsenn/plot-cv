@@ -1,0 +1,12 @@
+list {
+  display:  grid;
+  grid-template-columns: 30px 1fr 1fr 1fr  ;
+}
+
+
+.item {
+  margin: 1px;
+  border:  1px dotted black;
+  word-break: keep-all;
+white-space: nowrap; 
+}

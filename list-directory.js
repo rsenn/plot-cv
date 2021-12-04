@@ -43,33 +43,56 @@ Object.assign(globalThis, {
   statusResponse,
   Util,
   VfnAdapter,
-  VfnDecorator,Refresh
+  VfnDecorator,
+  Refresh
 });
+let columns = ['mode', 'name', 'size', 'mtime'];
+let input = {
+  mode(s) {
+    return +s;
+  },
+  name(s) {
+    return s;
+  },
+  size(s) {
+    return +s;
+  },
+  mtime(s) {
+    return '' + new Date(s * 1000);
+  }
+};
 
 globalThis.addEventListener('load', async () => {
   let url = Util.makeURL({ location: '/rpc/ws', protocol: 'wss', port: undefined });
 
   console.log('Loaded', url);
 
- /* let ws = (globalThis.ws = new WebSocket(url));
+  StartSocket();
+
+  Refresh();
+});
+
+async function StartSocket() {
+  let ws = (globalThis.ws = new WebSocket(url));
 
   let iter = streamify(['open', 'message', 'close', 'error'], ws);
 
   for await(let e of iter) {
     console.log(`WS ${e.type}`, e);
-  }*/
-
-Refresh();
-});
-
-function Refresh(list=['test1','test2']){
-  let component = h('ul', {}, list.map(caption => h('li', {},[caption])));
-  render(component, document.body);
-  console.log('rendered');
-
+  }
 }
 
-async function ListDirectory(dir = '.', options = {}) {
+function Refresh(list = []) {
+  let component = h(
+    'list',
+    {},
+    list.map(obj => columns.map((name, i) => h(name, { class: 'item' }, [input[name] ? input[name](obj[name]) : obj[name]])))
+  );
+  render(component, document.body);
+  console.log('rendered');
+}
+
+async function ListDirectory(dir = '.', options = { objects: true }) {
   const { filter = '.*', key = 'mtime', ...opts } = typeof options == 'string' ? { filter: options } : options;
   let response = await fetch('rpc/files', { method: 'POST', body: JSON.stringify({ dir, filter, key, ...opts }) });
 
