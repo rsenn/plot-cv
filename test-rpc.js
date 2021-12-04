@@ -1,7 +1,7 @@
 import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
-import   path from 'path';
+import path from 'path';
 import Util from './lib/util.js';
 import { Console } from 'console';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
@@ -144,12 +144,21 @@ function main(...args) {
 
           //console.log('\x1b[38;5;215m*files\x1b[0m', { headers, data, req, resp });
           let { dir = 'tmp', filter = '.(brd|sch|G[A-Z][A-Z])$', verbose = false, objects = false, key = 'mtime' } = data;
+          let absdir = path.realpath(dir);
 
-          if(fs.existsSync(dir)) dir = path.realpath(dir);
-          
-          console.log('\x1b[38;5;215m*files\x1b[0m', { dir });
+          let components = absdir.split(path.sep);
 
-          let names = fs.readdirSync(dir);
+          if(components.length && components[0] === '') components.shift();
+
+          if(components.length < 2 || components[0] != 'home') throw new Error(`Access error`);
+
+          console.log('\x1b[38;5;215m*files\x1b[0m', { dir, components, absdir });
+
+          //          if(fs.existsSync(dir)) dir = path.realpath(dir);
+
+          console.log('\x1b[38;5;215m*files\x1b[0m', { absdir });
+
+          let names = fs.readdirSync(absdir);
           //console.log('\x1b[38;5;215m*files\x1b[0m', { dir, names });
           if(filter) {
             const re = new RegExp(filter, 'gi');
