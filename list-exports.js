@@ -23,7 +23,9 @@ function PrintAst(ast, comments, printer = globalThis.printer) {
 let files = {};
 
 function main(...argv) {
-  globalThis.console = new Console(process.stderr, {
+  globalThis.console = new Console({
+    stdout: process.stdout,
+    stderr: process.stderr,
     inspectOptions: {
       colors: true,
       depth: 2,
