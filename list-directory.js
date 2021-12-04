@@ -43,7 +43,7 @@ Object.assign(globalThis, {
   statusResponse,
   Util,
   VfnAdapter,
-  VfnDecorator
+  VfnDecorator,Refresh
 });
 
 globalThis.addEventListener('load', async () => {
@@ -51,16 +51,23 @@ globalThis.addEventListener('load', async () => {
 
   console.log('Loaded', url);
 
-  let ws = (globalThis.ws = new WebSocket(url));
+ /* let ws = (globalThis.ws = new WebSocket(url));
 
   let iter = streamify(['open', 'message', 'close', 'error'], ws);
 
   for await(let e of iter) {
     console.log(`WS ${e.type}`, e);
-  }
+  }*/
 
-  render(h('list', {}, ['test1', 'test2']), document.body);
+Refresh();
 });
+
+function Refresh(list=['test1','test2']){
+  let component = h('ul', {}, list.map(caption => h('li', {},[caption])));
+  render(component, document.body);
+  console.log('rendered');
+
+}
 
 async function ListDirectory(dir = '.', options = {}) {
   const { filter = '.*', key = 'mtime', ...opts } = typeof options == 'string' ? { filter: options } : options;
