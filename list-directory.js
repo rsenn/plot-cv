@@ -4,6 +4,7 @@ import Util from './lib/util.js';
 import { once, streamify, filter, map, throttle, distinct, subscribe } from './lib/async/events.js';
 import iterify from './lib/async/iterify.js';
 import trkl from './lib/trkl.js';
+import path from './lib/path.js';
 
 Object.assign(globalThis, {
   callHandler,
@@ -45,6 +46,11 @@ Object.assign(globalThis, {
   Util,
   VfnAdapter,
   VfnDecorator,
+  Refresh,
+  path,
+  GetDir,
+  Round,
+  HumanSize,
   Refresh
 });
 let columns = ['mode', 'name', 'size', 'mtime'];
@@ -128,13 +134,19 @@ function onClick(event) {
   while(target.parentElement && target.tagName != 'TR') target = target.parentElement;
   const name = target.getAttribute('data-name');
 
-  // const name =target.parentElement.attributes['data-name'].value;
-  console.log('onClick', { target, name });
+  if(name.endsWith('/')) {
+    let dir = GetDir();
 
-  ListDirectory().then(item => Refresh(item));
-
-  event.preventDefault(true);
-  return false;
+    dir = path.join(dir, name);
+    // const name =target.parentElement.attributes['data-name'].value;
+    console.log('onClick', { target, name, dir });
+    ListDirectory(dir).then(item => {
+      console.log('item', item);
+      Refresh(item);
+    });
+    event.preventDefault(true);
+    return false;
+  }
 }
 
 function TableHeader() {
@@ -146,8 +158,17 @@ function TableHeader() {
   );
 }
 
+function GetDir() {
+  return document.querySelector('#dir').innerText;
+}
+
 function Refresh([dir, list]) {
-  let component = h(Fragment, {}, [h('h1', {}, [`Index of ${dir}`]), h('table', { class: 'list preformatted', cellpadding: 2, cellspacing: 0 }, [TableHeader(), ...list.filter(({ name }) => !/^\.\/$/.test(name)).map(obj => h(TableItem, obj))])]);
+  //list = list.filter(({ name }) => !/^\.\/$/.test(name));
+
+  if(!list.some(({ name }) => /^\.\.\/$/.test(name))) list.unshift({ name: '../', mtime: 0, time: 0, mode: 0 });
+  if(!list.some(({ name }) => /^\.\/$/.test(name))) list.unshift({ name: './', mtime: 0, time: 0, mode: 0 });
+
+  let component = h(Fragment, {}, [h('h1', {}, [`Index of `, h('span', { id: 'dir' }, [dir])]), h('table', { class: 'list preformatted', cellpadding: 2, cellspacing: 0 }, [TableHeader(), ...list.map(obj => h(TableItem, obj))])]);
   render(component, document.body);
   console.log('rendered');
 }
@@ -155,6 +176,9 @@ function Refresh([dir, list]) {
 async function ListDirectory(dir = '.', options = { objects: true }) {
   const { filter = '.*', key = 'mtime', ...opts } = typeof options == 'string' ? { filter: options } : options;
   let response = await fetch('rpc/files', { method: 'POST', body: JSON.stringify({ dir, filter, key, ...opts }) });
-
-  return [dir, await response.json()];
+  try {
+    return [dir, await response.json()];
+  } catch(e) {
+    throw new Error('Error parsing');
+  }
 }

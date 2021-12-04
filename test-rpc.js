@@ -184,7 +184,7 @@ function main(...args) {
 
           console.log('\x1b[38;5;215m*files\x1b[0m', { absdir });
 
-          let names = fs.readdirSync(absdir);
+          let names = fs.readdirSync(absdir) ?? [];
           //console.log('\x1b[38;5;215m*files\x1b[0m', { dir, names });
           if(filter) {
             const re = new RegExp(filter, 'gi');
