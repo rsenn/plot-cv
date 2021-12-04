@@ -143,7 +143,7 @@ function main(...args) {
           resp.type = 'application/json';
 
           console.log('\x1b[38;5;215m*files\x1b[0m', { headers, data, req, resp });
-          let { dir = 'tmp', filter = '.(brd|sch|G[A-Z][A-Z])$', verbose = false, objects = false, sortKey = 'mtime' } = data;
+          let { dir = 'tmp', filter = '.(brd|sch|G[A-Z][A-Z])$', verbose = false, objects = false, key = 'mtime' } = data;
           let names = fs.readdirSync(dir);
           console.log('\x1b[38;5;215m*files\x1b[0m', { dir, names });
           if(filter) {
@@ -151,7 +151,7 @@ function main(...args) {
             names = names.filter(name => re.test(name));
           }
 
-          let entries = names.map(entry => `${dir}/${entry}`).map(file => [file, fs.statSync(file)]);
+          let entries = names.map(file => [file, fs.statSync(`${dir}/${entry}`)]);
 
           entries = entries.reduce((acc, [file, st]) => {
             let obj = {
@@ -170,7 +170,16 @@ function main(...args) {
             return acc;
           }, []);
 
-          entries = entries.sort((a, b) => b[1][sortKey] - a[1][sortKey]);
+          let cmp = {
+            string(a, b) {
+              return b[1][key].localeCompare(a[1][key]);
+            },
+            number(a, b) {
+              return b[1][key] - a[1][key];
+            }
+          }[typeof entries[0][1][key]];
+
+          entries = entries.sort(cmp);
 
           console.log('\x1b[38;5;215m*files\x1b[0m', { entries });
           names = entries.map(([name, obj]) => (objects ? obj : name));
