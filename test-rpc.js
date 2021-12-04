@@ -138,41 +138,43 @@ function main(...args) {
         function* files(req, resp) {
           const { body, headers } = req;
           const { 'content-type': content_type } = headers;
+          const data = JSON.parse(body);
 
           resp.type = 'application/json';
 
-          console.log('\x1b[38;5;215m*files\x1b[0m', { headers, body, req, resp });
-
-          let dir = 'tmp';
+          console.log('\x1b[38;5;215m*files\x1b[0m', { headers, data, req, resp });
+          let { dir = 'tmp', filter = '.(brd|sch|G[A-Z][A-Z])$' } = data;
           let names = fs.readdirSync(dir);
+          console.log('\x1b[38;5;215m*files\x1b[0m', { dir, names });
+          if(filter) {
+            const re = new RegExp(filter, 'gi');
+            names = names.filter(name => re.test(name));
+          }
 
-          names = names.filter(name => /\.(brd|sch|G[A-Z][A-Z])$/.test(name));
-          names = names.map(entry => `${dir}/${entry}`);
+          let entries = names.map(entry => `${dir}/${entry}`).map(file => [file, fs.statSync(file)]);
 
-          let entries = names.map(file => [file, fs.statSync(file)]);
+          entries = entries.reduce((acc, [file, st]) => {
+            let obj = {
+              name: file
+            };
 
-          yield JSON.stringify(
-            entries
-              .filter(([file, st]) => st.isFile())
-              .sort((a, b) => b[1].mtime - a[1].mtime)
-              .reduce((acc, [file, st]) => {
-                let obj = {
-                  name: file
-                };
+            acc.push([
+              file + (st.isDirectory() ? '/' : ''),
+              Object.assign(obj, {
+                mtime: Util.toUnixTime(st.mtime),
+                time: Util.toUnixTime(st.ctime),
+                mode: `0${(st.mode & 0x09ff).toString(8)}`,
+                size: st.size
+              })
+            ]);
+            return acc;
+          }, []);
 
-                acc.push(
-                  Object.assign(obj, {
-                    mtime: Util.toUnixTime(st.mtime),
-                    time: Util.toUnixTime(st.ctime),
-                    mode: `0${(st.mode & 0x09ff).toString(8)}`,
-                    size: st.size
-                  })
-                );
-                return acc;
-              }, []),
-            null,
-            2
-          );
+          entries = entries.sort((a, b) => b[1].mtime - a[1].mtime);
+
+          console.log('\x1b[38;5;215m*files\x1b[0m', { entries });
+          names = entries.map(([name, obj]) => name);
+          yield JSON.stringify(names /*, null, 2*/);
         }
       ],
       ...url,
