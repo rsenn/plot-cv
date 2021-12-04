@@ -63,16 +63,15 @@ let input = {
 };
 
 globalThis.addEventListener('load', async () => {
-  let url = Util.makeURL({ location: '/rpc/ws', protocol: 'wss', port: undefined });
-
-  console.log('Loaded', url);
-
   StartSocket();
 
   Refresh();
 });
 
 async function StartSocket() {
+  let url = Util.makeURL({ location: '/rpc/ws', protocol: 'wss', port: undefined });
+
+  console.log('Connect to', url);
   let ws = (globalThis.ws = new WebSocket(url));
 
   let iter = streamify(['open', 'message', 'close', 'error'], ws);
