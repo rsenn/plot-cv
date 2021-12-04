@@ -4,7 +4,47 @@ import Util from './lib/util.js';
 import { once, streamify, filter, map, throttle, distinct, subscribe } from './lib/async/events.js';
 import iterify from './lib/async/iterify.js';
 
-Object.assign(globalThis, { Util, ListDirectory, LogWrap, VfnAdapter, VfnDecorator, Memoize, DebugFlags, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, isThenable, hasHandler, callHandler, parseURL, GetProperties, GetKeys, getPropertyDescriptors, define, setHandlers, statusResponse, objectCommand, MakeListCommand, getPrototypeName, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen });
+Object.assign(globalThis, {
+  Util,
+  ListDirectory,
+  LogWrap,
+  VfnAdapter,
+  VfnDecorator,
+  Memoize,
+  DebugFlags,
+  Mapper,
+  DefaultConstructor,
+  EventLogger,
+  MessageReceiver,
+  MessageTransmitter,
+  MessageTransceiver,
+  RPCApi,
+  RPCProxy,
+  RPCObject,
+  RPCFactory,
+  Connection,
+  RPCServer,
+  RPCClient,
+  RPCSocket,
+  isThenable,
+  hasHandler,
+  callHandler,
+  parseURL,
+  GetProperties,
+  GetKeys,
+  getPropertyDescriptors,
+  define,
+  setHandlers,
+  statusResponse,
+  objectCommand,
+  MakeListCommand,
+  getPrototypeName,
+  SerializeValue,
+  DeserializeSymbols,
+  DeserializeValue,
+  RPCConnect,
+  RPCListen
+});
 
 globalThis.addEventListener('load', async () => {
   let url = Util.makeURL({ location: '/rpc/ws', protocol: 'wss', port: undefined });
