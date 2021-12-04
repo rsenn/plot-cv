@@ -143,7 +143,7 @@ function main(...args) {
           resp.type = 'application/json';
 
           console.log('\x1b[38;5;215m*files\x1b[0m', { headers, data, req, resp });
-          let { dir = 'tmp', filter = '.(brd|sch|G[A-Z][A-Z])$' } = data;
+          let { dir = 'tmp', filter = '.(brd|sch|G[A-Z][A-Z])$', verbose = false, objects = false, sortKey = 'mtime' } = data;
           let names = fs.readdirSync(dir);
           console.log('\x1b[38;5;215m*files\x1b[0m', { dir, names });
           if(filter) {
@@ -170,11 +170,12 @@ function main(...args) {
             return acc;
           }, []);
 
-          entries = entries.sort((a, b) => b[1].mtime - a[1].mtime);
+          entries = entries.sort((a, b) => b[1][sortKey] - a[1][sortKey]);
 
           console.log('\x1b[38;5;215m*files\x1b[0m', { entries });
-          names = entries.map(([name, obj]) => name);
-          yield JSON.stringify(names /*, null, 2*/);
+          names = entries.map(([name, obj]) => (objects ? obj : name));
+
+          yield JSON.stringify(...[names, ...(verbose ? [null, 2] : [])]);
         }
       ],
       ...url,
