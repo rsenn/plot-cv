@@ -11,8 +11,10 @@ async function main(...args) {
   await PortableFileSystem(fs => (filesystem = fs));
 
   console.log('main', args);
-
-  let filename = Util.getArgv()[1];
+ console.log('path.sep', path.sep);
+  console.log('path.delimiter', path.delimiter);
+ 
+  let filename = process.argv[1];
   console.log('path.basename', path.basename);
   console.log('filename', filename);
   let basename = path.basename(filename, /\.[^.]*$/);

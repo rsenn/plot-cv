@@ -1,7 +1,7 @@
 import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
-import * as path from './lib/path.js';
+import   path from 'path';
 import Util from './lib/util.js';
 import { Console } from 'console';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
@@ -142,16 +142,21 @@ function main(...args) {
 
           resp.type = 'application/json';
 
-          console.log('\x1b[38;5;215m*files\x1b[0m', { headers, data, req, resp });
+          //console.log('\x1b[38;5;215m*files\x1b[0m', { headers, data, req, resp });
           let { dir = 'tmp', filter = '.(brd|sch|G[A-Z][A-Z])$', verbose = false, objects = false, key = 'mtime' } = data;
+
+          if(fs.existsSync(dir)) dir = path.realpath(dir);
+          
+          console.log('\x1b[38;5;215m*files\x1b[0m', { dir });
+
           let names = fs.readdirSync(dir);
-          console.log('\x1b[38;5;215m*files\x1b[0m', { dir, names });
+          //console.log('\x1b[38;5;215m*files\x1b[0m', { dir, names });
           if(filter) {
             const re = new RegExp(filter, 'gi');
             names = names.filter(name => re.test(name));
           }
 
-          let entries = names.map(file => [file, fs.statSync(`${dir}/${entry}`)]);
+          let entries = names.map(file => [file, fs.statSync(`${dir}/${file}`)]);
 
           entries = entries.reduce((acc, [file, st]) => {
             let obj = {
