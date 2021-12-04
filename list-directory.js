@@ -5,45 +5,45 @@ import { once, streamify, filter, map, throttle, distinct, subscribe } from './l
 import iterify from './lib/async/iterify.js';
 
 Object.assign(globalThis, {
-  Util,
-  ListDirectory,
-  LogWrap,
-  VfnAdapter,
-  VfnDecorator,
-  Memoize,
-  DebugFlags,
-  Mapper,
-  DefaultConstructor,
-  EventLogger,
-  MessageReceiver,
-  MessageTransmitter,
-  MessageTransceiver,
-  RPCApi,
-  RPCProxy,
-  RPCObject,
-  RPCFactory,
-  Connection,
-  RPCServer,
-  RPCClient,
-  RPCSocket,
-  isThenable,
-  hasHandler,
   callHandler,
-  parseURL,
-  GetProperties,
-  GetKeys,
-  getPropertyDescriptors,
+  Connection,
+  DebugFlags,
+  DefaultConstructor,
   define,
-  setHandlers,
-  statusResponse,
-  objectCommand,
-  MakeListCommand,
-  getPrototypeName,
-  SerializeValue,
   DeserializeSymbols,
   DeserializeValue,
+  EventLogger,
+  GetKeys,
+  GetProperties,
+  getPropertyDescriptors,
+  getPrototypeName,
+  hasHandler,
+  isThenable,
+  ListDirectory,
+  LogWrap,
+  MakeListCommand,
+  Mapper,
+  Memoize,
+  MessageReceiver,
+  MessageTransceiver,
+  MessageTransmitter,
+  objectCommand,
+  parseURL,
+  RPCApi,
+  RPCClient,
   RPCConnect,
-  RPCListen
+  RPCFactory,
+  RPCListen,
+  RPCObject,
+  RPCProxy,
+  RPCServer,
+  RPCSocket,
+  SerializeValue,
+  setHandlers,
+  statusResponse,
+  Util,
+  VfnAdapter,
+  VfnDecorator,
 });
 
 globalThis.addEventListener('load', async () => {
@@ -63,8 +63,6 @@ globalThis.addEventListener('load', async () => {
 async function ListDirectory(dir = '.', options = {}) {
   const { filter = '.*', key = 'mtime', ...opts } = typeof options == 'string' ? { filter: options } : options;
   let response = await fetch('rpc/files', { method: 'POST', body: JSON.stringify({ dir, filter, key, ...opts }) });
-
-  //  console.log('ListDirectory', { response });
 
   return await response.json();
 }
