@@ -1,70 +1,9 @@
-import {
-  LogWrap,
-  VfnAdapter,
-  VfnDecorator,
-  Memoize,
-  DebugFlags,
-  Mapper,
-  DefaultConstructor,
-  EventLogger,
-  MessageReceiver,
-  MessageTransmitter,
-  MessageTransceiver,
-  RPCApi,
-  RPCProxy,
-  RPCObject,
-  RPCFactory,
-  Connection,
-  RPCServer,
-  RPCClient,
-  RPCSocket,
-  isThenable,
-  hasHandler,
-  callHandler,
-  parseURL,
-  GetProperties,
-  GetKeys,
-  getPropertyDescriptors,
-  define,
-  setHandlers,
-  statusResponse,
-  objectCommand,
-  MakeListCommand,
-  getPrototypeName,
-  SerializeValue,
-  DeserializeSymbols,
-  DeserializeValue,
-  RPCConnect,
-  RPCListen
-} from './quickjs/qjs-net/rpc.js';
-import {
-  h,
-  options,
-  html,
-  render,
-  Component,
-  createContext,
-  createRef,
-  useState,
-  useReducer,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useImperativeHandle,
-  useMemo,
-  useCallback,
-  useContext,
-  useDebugValue,
-  forwardRef,
-  Fragment,
-  React,
-  ReactComponent,
-  Portal,
-  toChildArray
-} from './lib/dom/preactComponent.js';
+import { LogWrap, VfnAdapter, VfnDecorator, Memoize, DebugFlags, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, isThenable, hasHandler, callHandler, parseURL, GetProperties, GetKeys, getPropertyDescriptors, define, setHandlers, statusResponse, objectCommand, MakeListCommand, getPrototypeName, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/rpc.js';
+import { h, options, html, render, Component, createContext, createRef, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue, forwardRef, Fragment, React, ReactComponent, Portal, toChildArray } from './lib/dom/preactComponent.js';
 import Util from './lib/util.js';
 import { once, streamify, filter, map, throttle, distinct, subscribe } from './lib/async/events.js';
 import iterify from './lib/async/iterify.js';
+import trkl from './lib/trkl.js';
 
 Object.assign(globalThis, {
   callHandler,
@@ -123,7 +62,7 @@ let input = {
     ]);
   },
   name(s) {
-    return h('td', { class: `${name} item` }, h('a', { href: s }, [s.replace(/\/$/, '')]));
+    return h('td', { class: `${name} item` }, h('a', { href: s, onClick }, [s.replace(/\/$/, '')]));
   },
   size(s, obj) {
     return h('td', { class: `${name} item` }, (obj.name ?? '').endsWith('/') ? [] : [HumanSize(+s)]);
@@ -138,7 +77,8 @@ let input = {
 globalThis.addEventListener('load', async () => {
   StartSocket();
 
-  ListDirectory().then(Refresh);
+  ListDirectory().then(item => Refresh(item));
+
   //  Refresh();
 });
 
@@ -170,16 +110,31 @@ function Item(obj) {
   return h(
     Fragment,
     {},
-    columns.map(name => h(name, { class: 'item' }, [input[name] ? input[name](obj[name], obj, name) : obj[name]]))
+    columns.map(name => h(name, { class: `item ${name}` }, [input[name] ? input[name](obj[name], obj, name) : obj[name]]))
   );
 }
 
 function TableItem(obj) {
   return h(
     'tr',
-    {},
+    { 'data-name': obj.name },
     columns.map(field => [input[field] ? input[field](obj[field], obj, field) : obj[field]])
   );
+}
+
+function onClick(event) {
+  let { target, currentTarget } = event;
+
+  while(target.parentElement && target.tagName != 'TR') target = target.parentElement;
+  const name = target.getAttribute('data-name');
+
+  // const name =target.parentElement.attributes['data-name'].value;
+  console.log('onClick', { target, name });
+
+  ListDirectory().then(item => Refresh(item));
+
+  event.preventDefault(true);
+  return false;
 }
 
 function TableHeader() {
@@ -187,15 +142,12 @@ function TableHeader() {
   return h(
     'tr',
     { class: 'head' },
-    columns.map((name, i) => h('th', { class: `${name} header` }, [titles[i]]))
+    columns.map((name, i) => h('th', { class: `${name} header` }, [h('a', { href: `#?sort=${name}`, onClick }, [titles[i]])]))
   );
 }
 
-function Refresh(list = []) {
-  let component = h('table', { class: 'list preformatted', cellpadding: 2, cellspacing: 0 }, [
-    TableHeader(),
-    ...list.filter(({ name }) => !/^\.\/$/.test(name)).map(obj => h(TableItem, obj))
-  ]);
+function Refresh([dir, list]) {
+  let component = h(Fragment, {}, [h('h1', {}, [`Index of ${dir}`]), h('table', { class: 'list preformatted', cellpadding: 2, cellspacing: 0 }, [TableHeader(), ...list.filter(({ name }) => !/^\.\/$/.test(name)).map(obj => h(TableItem, obj))])]);
   render(component, document.body);
   console.log('rendered');
 }
@@ -204,5 +156,5 @@ async function ListDirectory(dir = '.', options = { objects: true }) {
   const { filter = '.*', key = 'mtime', ...opts } = typeof options == 'string' ? { filter: options } : options;
   let response = await fetch('rpc/files', { method: 'POST', body: JSON.stringify({ dir, filter, key, ...opts }) });
 
-  return await response.json();
+  return [dir, await response.json()];
 }

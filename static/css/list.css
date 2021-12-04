@@ -20,8 +20,13 @@ table {
 }
 .name {
   overflow-x: hidden;
-  width:  100px;
-  white-space: pre-wrap;
+  max-width:  100px;
+    word-break: break-all;
+}
+.name > a {
+  white-space: wrap;
+ word-break: break-all;
+
 }
 td.size {
   text-align: right;
@@ -30,10 +35,23 @@ td.size {
 td.mtime, td.time {
   text-align: center  ;
 }
+td {
+    font-weight:  0;
+
+}
 th {
   font-weight:  0;
   font-size: 13px;
   text-align:  left;
 }
 tr.head > th {  border-bottom: 1px solid black;
+}
+th > a {
+  color:  black;
+  text-decoration: none;
+}
+
+th > a:hover {
+  /*color:  rgba(0,0,255,1);*/
+  text-decoration: underline;
 }
