@@ -54,31 +54,6 @@ Object.assign(globalThis, {
   Refresh
 });
 let columns = ['mode', 'name', 'size', 'mtime'];
-let input = {
-  mode(s, obj) {
-    return h('td', { class: `${name} item` }, [
-      [(obj.name ?? '').endsWith('/') ? 'd' : '-']
-        .concat(
-          parseInt(s, 8)
-            .toString(2)
-            .split('')
-            .map((n, i) => (i < 9 ? (+n ? 'rwx'[i % 3] : '-') : +n))
-        )
-        .join('')
-    ]);
-  },
-  name(s) {
-    return h('td', { class: `${name} item` }, h('a', { href: s, onClick }, [s.replace(/\/$/, '')]));
-  },
-  size(s, obj) {
-    return h('td', { class: `${name} item` }, (obj.name ?? '').endsWith('/') ? [] : [HumanSize(+s)]);
-  },
-  mtime(epoch) {
-    let date = new Date(epoch * 1000);
-    let [Y, M, D, hr, mi, se, ms] = date.toISOString().split(/[^0-9]+/g);
-    return h('td', { class: `${name} item` }, [`${Y}/${M}/${D} ${hr}:${mi}:${se}`]);
-  }
-};
 
 globalThis.addEventListener('load', async () => {
   StartSocket();
@@ -113,6 +88,32 @@ function HumanSize(n) {
   return n;
 }
 function Item(obj) {
+  const input = {
+    mode(s, obj) {
+      return h('td', { class: `${name} item` }, [
+        [(obj.name ?? '').endsWith('/') ? 'd' : '-']
+          .concat(
+            parseInt(s, 8)
+              .toString(2)
+              .split('')
+              .map((n, i) => (i < 9 ? (+n ? 'rwx'[i % 3] : '-') : +n))
+          )
+          .join('')
+      ]);
+    },
+    name(s) {
+      return h('td', { class: `${name} item` }, h('a', { href: s, onClick }, [s.replace(/\/$/, '')]));
+    },
+    size(s, obj) {
+      return h('td', { class: `${name} item` }, (obj.name ?? '').endsWith('/') ? [] : [HumanSize(+s)]);
+    },
+    mtime(epoch) {
+      let date = new Date(epoch * 1000);
+      let [Y, M, D, hr, mi, se, ms] = date.toISOString().split(/[^0-9]+/g);
+      return h('td', { class: `${name} item` }, [`${Y}/${M}/${D} ${hr}:${mi}:${se}`]);
+    }
+  };
+
   return h(
     Fragment,
     {},
