@@ -1,5 +1,5 @@
-import { LogWrap, VfnAdapter, VfnDecorator, Memoize, DebugFlags, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, isThenable, hasHandler, callHandler, parseURL, GetProperties, GetKeys, getPropertyDescriptors, define, setHandlers, statusResponse, objectCommand, MakeListCommand, getPrototypeName, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/rpc.js';
-import { h, options, html, render, Component, createContext, createRef, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue, forwardRef, Fragment, React, ReactComponent, Portal, toChildArray } from './lib/dom/preactComponent.js';
+import {LogWrap, VfnAdapter, VfnDecorator, Memoize, DebugFlags, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, isThenable, hasHandler, callHandler, parseURL, GetProperties, GetKeys, getPropertyDescriptors, define, setHandlers, statusResponse, objectCommand, MakeListCommand, getPrototypeName, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/rpc.js';
+import {h, options, html, render, Component, createContext, createRef, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue, forwardRef, Fragment, React, ReactComponent, Portal, toChildArray } from './lib/dom/preactComponent.js';
 import Util from './lib/util.js';
 import { once, streamify, filter, map, throttle, distinct, subscribe } from './lib/async/events.js';
 import iterify from './lib/async/iterify.js';
@@ -49,7 +49,10 @@ Object.assign(globalThis, {
 let columns = ['mode', 'name', 'size', 'mtime'];
 let input = {
   mode(s) {
-    return +s;
+    return parseInt(s, 8)
+      .toString(2)
+      .split('')
+      .map((n, i) => (i < 9 ? (+n ? 'rwx'[i % 3] : '-') : +n));
   },
   name(s) {
     return s;
@@ -57,15 +60,18 @@ let input = {
   size(s) {
     return +s;
   },
-  mtime(s) {
-    return '' + new Date(s * 1000);
+  mtime(epoch) {
+    let date = new Date(epoch * 1000);
+    let [Y, M, D, h, m, s, ms] = date.toISOString().split(/[^0-9]+/g);
+    return `${Y}/${M}/${D} ${h}:${m}:${s}`;
   }
 };
 
 globalThis.addEventListener('load', async () => {
   StartSocket();
 
-  Refresh();
+  ListDirectory().then(Refresh);
+  //  Refresh();
 });
 
 async function StartSocket() {
@@ -81,11 +87,19 @@ async function StartSocket() {
   }
 }
 
+function Item(obj) {
+  return h(
+    Fragment,
+    {},
+    columns.map(name => h(name, { class: 'item' }, [input[name] ? input[name](obj[name]) : obj[name]]))
+  );
+}
+
 function Refresh(list = []) {
   let component = h(
-    'list',
-    {},
-    list.map(obj => columns.map((name, i) => h(name, { class: 'item' }, [input[name] ? input[name](obj[name]) : obj[name]])))
+    'pre',
+    { class: 'list' },
+    list.map(obj => h(Item, obj))
   );
   render(component, document.body);
   console.log('rendered');
