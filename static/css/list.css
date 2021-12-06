@@ -20,7 +20,7 @@ table {
 }
 .name {
   overflow-x: hidden;
-  max-width:  100px;
+  min-width:  100px;
     word-break: break-all;
 }
 .name > a {
