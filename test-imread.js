@@ -42,11 +42,14 @@ function main(...args) {
   cv.Canny(gray, canny, 40, 90, 3);
   cv.findContours(canny, (contours = []), h => (hier = h), cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
 
+  cv.cvtColor(gray, img, cv.COLOR_GRAY2BGR);
+cv.drawContours(img, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
+
   console.log('contours', contours);
 
   cv.namedWindow('img');
   cv.resizeWindow('img', 640, 480);
-  cv.imshow('img', canny);
+  cv.imshow('img', img);
 
   cv.moveWindow('img', 0, 0);
   cv.waitKey(-1);
