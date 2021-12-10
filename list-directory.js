@@ -53,7 +53,8 @@ Object.assign(globalThis, {
   Round,
   Table2Array,
   HumanSize,
-  Refresh,Row2Obj,
+  Refresh,
+  Row2Obj,
   Element
 });
 let columns = ['mode', 'name', 'size', 'mtime'];
@@ -90,15 +91,15 @@ function Table2Array(table = 'table') {
 }
 function Row2Obj(row) {
   let columns = [...row.children];
-let obj={}; 
-for(let column of columns) {
-  console.log('column', column);
-  let field=[...column.classList].filter(n => n != 'item')[0];
-let data=column.getAttribute('data-value') ?? column.innerText;
+  let obj = {};
+  for(let column of columns) {
+    console.log('column', column);
+    let field = [...column.classList].filter(n => n != 'item')[0];
+    let data = column.getAttribute('data-value') ?? column.innerText;
 
-obj[field]=data;
-}
-return obj;
+    obj[field] = data;
+  }
+  return obj;
 }
 
 function Round(n, digits = 3, f = Math.round) {
