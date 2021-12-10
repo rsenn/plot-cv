@@ -17,7 +17,7 @@ function main() {
   let j = 0;
 
   for(let i = 0; i < 256; i++) {
-    let code = (i < 32 || (i >= 0x7f && i < 0xa0))  ? 0x20 : i;
+    let code = i < 32 || (i >= 0x7f && i < 0xa0) ? 0x20 : i;
     a[j++] = code;
 
     s += String.fromCodePoint(code);
@@ -29,7 +29,7 @@ function main() {
   }
   console.log('a', a);
   fs.writeFileSync('output.txt', s);
- // fs.writeFileSync('output.txt', a.buffer);
+  // fs.writeFileSync('output.txt', a.buffer);
 }
 
 main();

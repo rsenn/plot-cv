@@ -1,6 +1,7 @@
 import * as cv from 'opencv';
 import Console from 'console';
 import * as path from 'path';
+import Util from './lib/util.js';
 
 function Grayscale(src, dst) {
   let channels = [];
@@ -8,13 +9,25 @@ function Grayscale(src, dst) {
   cv.split(dst, channels);
   channels[0].copyTo(dst);
 }
+
+function* TraverseHierarchy(h, s = -1, depth = 0) {
+  let a = Array.isArray(h) ? h : [...h];
+  let i = a[s] ? s : a.findIndex(([n, p, c, u]) => u == -1);
+  while(a[i]) {
+    let [n, p, c, u] = a[i];
+    yield [i, depth];
+    if(a[c]) yield* TraverseHierarchy(h, c, depth + 1);
+    i = n;
+  }
+}
+
 function main(...args) {
   globalThis.console = new Console({
     inspectOptions: {
       maxStringLength: 200,
       maxArrayLength: 10,
       breakLength: 100,
-      compact: 1,
+      compact: 2,
       depth: 10
     }
   });
@@ -38,14 +51,49 @@ function main(...args) {
   let na = new Float32Array(float.buffer);
   console.log('na', na);
 
-  let contours, hier;
+  let contours,
+    hier,
+    lines = new cv.Mat();
   cv.Canny(gray, canny, 40, 90, 3);
-  cv.findContours(canny, (contours = []), h => (hier = h), cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
+  cv.findContours(canny, (contours = []), (hier = new cv.Mat()), cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
 
   cv.cvtColor(gray, img, cv.COLOR_GRAY2BGR);
-cv.drawContours(img, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
+  cv.drawContours(img, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
 
-  console.log('contours', contours);
+  console.log('hier', hier);
+  console.log('hier.cols', hier.cols);
+  console.log('hier.depth', 1 << (hier.depth + 1));
+  console.log('hier.channels', hier.channels);
+
+  //let A = [...hier];
+  //  console.log('A', A);
+
+  //console.log('contours', contours);
+  console.log('contours.length', contours.length);
+
+  for(let [id, depth] of TraverseHierarchy(hier, 0)) {
+    console.log('contour', { id, depth });
+    const c = contours[id];
+
+    let desc = Object.getOwnPropertyDescriptors(Object.getPrototypeOf(c));
+    console.log(
+      'contour',
+      Object.keys(desc).filter(name => desc[name].get != undefined)
+    );
+    const { length, /*area, */aspectRatio, extent, solidity, equivalentDiameter, orientation } = c;
+    console.log('contour', { length, /*area,*/ aspectRatio, extent, solidity, equivalentDiameter, orientation });
+  }
+  /*  for(let contour of contours) {
+    console.log('contour', contour);
+  }*/
+
+  cv.HoughLinesP(canny, lines, 1, cv.CV_PI / 24, 40, 5, 10);
+
+  for(let line of lines) {
+    let [x1, y1, x2, y2] = line;
+    cv.line(img, [x1, y1], [x2, y2], [255, 0, 255, 255], 1, cv.LINE_AA);
+    // console.log('line', line);
+  }
 
   cv.namedWindow('img');
   cv.resizeWindow('img', 640, 480);

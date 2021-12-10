@@ -614,7 +614,7 @@ jsrt::value
 contours_to_array(JSContext* ctx, const contour_vector<int>& contours) {
   JSValue ret = JS_NewArray(ctx);
   uint32_t i, n = contours.size();
-  for(i = 0; i < n; i++) { JS_SetPropertyUint32(ctx, ret, i, js_contour_new<int>(ctx, contours[i])); }
+  for(i = 0; i < n; i++) { JS_SetPropertyUint32(ctx, ret, i, js_contour_new(ctx, contours[i])); }
   return ret;
 }
 
