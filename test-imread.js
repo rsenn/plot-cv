@@ -72,16 +72,12 @@ function main(...args) {
   cv.drawContours(img, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
 
   for(let [id, depth] of TraverseHierarchy(hier, 0)) {
-   // console.log('contour', { id, depth });
-    const c = new cv.Contour(contours[id]);
+    //console.log('contour', { id, depth });
+    const c = contours[id];
+    let contour = new cv.Contour([...c]);
 
-    /*    let desc = Object.getOwnPropertyDescriptors(Object.getPrototypeOf(c));
-    console.log(
-      'contour',
-      Object.keys(desc).filter(name => desc[name].get != undefined)
-    );*/
-    //const {area,length}=c;
-    console.log('contour', c, misc.getClassID(c),Object.getPrototypeOf(c));
+    //const {area,length}=contour;
+    console.log('contour', contour /*, misc.getClassID(c),Object.getPrototypeOf(c)*/);
   }
   return;
 
