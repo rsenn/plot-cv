@@ -66,17 +66,16 @@ function main(...args) {
   console.log('contours', contours);
   console.log('contours.length', contours.length);
 
-
   cv.cvtColor(gray, img, cv.COLOR_GRAY2BGR);
   cv.drawContours(img, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
 
   for(let [id, depth] of TraverseHierarchy(hier, 0)) {
     //console.log('contour', { id, depth });
     const c = contours[id];
-    let contour = [...c];
+    let contour = c;
 
-    //const {area,length}=contour;
-     console.log('contour', contour /*, misc.getClassID(c),Object.getPrototypeOf(c)*/);
+    const { aspectRatio, length } = contour;
+    console.log('contour', contour, { aspectRatio, length } /*, misc.getClassID(c),Object.getPrototypeOf(c)*/);
   }
   return;
 
