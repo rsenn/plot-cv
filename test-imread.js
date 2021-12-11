@@ -1,6 +1,7 @@
 import * as cv from 'opencv';
 import Console from 'console';
 import * as path from 'path';
+import * as misc from 'misc';
 import Util from './lib/util.js';
 
 function Grayscale(src, dst) {
@@ -71,7 +72,7 @@ function main(...args) {
   cv.drawContours(img, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
 
   for(let [id, depth] of TraverseHierarchy(hier, 0)) {
-    console.log('contour', { id, depth });
+   // console.log('contour', { id, depth });
     const c = new cv.Contour(contours[id]);
 
     /*    let desc = Object.getOwnPropertyDescriptors(Object.getPrototypeOf(c));
@@ -79,7 +80,8 @@ function main(...args) {
       'contour',
       Object.keys(desc).filter(name => desc[name].get != undefined)
     );*/
-    console.log('contour', c);
+    //const {area,length}=c;
+    console.log('contour', c, misc.getClassID(c),Object.getPrototypeOf(c));
   }
   return;
 

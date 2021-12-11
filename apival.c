@@ -411,6 +411,7 @@ main() {
   printf("#define IN_ONESHOT 0x%x\n", IN_ONESHOT);
   printf("#define IN_ALL_EVENTS 0x%x\n", IN_ALL_EVENTS);
   printf("sizeof(struct inotify_event) = %zu\n", sizeof(struct inotify_event));
+  printf("BUFSIZ = %zu\n", BUFSIZ);
 
   return 0;
 }
