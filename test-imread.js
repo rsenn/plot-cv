@@ -3,6 +3,7 @@ import Console from 'console';
 import * as path from 'path';
 import * as misc from 'misc';
 import Util from './lib/util.js';
+import { RGBA, HSLA } from './lib/color.js';
 
 function Grayscale(src, dst) {
   let channels = [];
@@ -15,10 +16,11 @@ function* TraverseHierarchy(h, s = -1, depth = 0) {
   let a = Array.isArray(h) ? h : [...h];
   let i = a[s] ? s : a.findIndex(([n, p, c, u]) => u == -1);
   while(a[i]) {
-    let [n, p, c, u] = a[i];
+    let entry=a[i];
+    let [, prev, child, ] = entry;
     yield [i, depth];
-    if(a[c]) yield* TraverseHierarchy(h, c, depth + 1);
-    i = n;
+    if(a[child]) yield* TraverseHierarchy(h, child , depth + 1);
+    i = entry[cv.HIER_NEXT]; 
   }
 }
 
@@ -55,45 +57,42 @@ function main(...args) {
   let contours,
     hier,
     lines = new cv.Mat();
-  cv.Canny(gray, canny, 40, 90, 3);
-  // cv.findContours(canny, (contours = []), (hier = new cv.Mat()), cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
-  cv.findContours(canny, (contours = []), (hier = new cv.Mat()), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
-
+  cv.Canny(gray, canny, 0, 90, 3);
+   cv.findContours(canny, (contours = []), (hier = new cv.Mat()), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+/*
   console.log('hier', hier);
   console.log('hier.cols', hier.cols);
   console.log('hier.depth', 1 << (hier.depth + 1));
-  console.log('hier.channels', hier.channels);
+  console.log('hier.channels', hier.channels);*/
 
   //console.log('contours', contours);
   console.log('contours.length', contours.length);
 
   cv.cvtColor(gray, img, cv.COLOR_GRAY2BGR);
-  cv.drawContours(img, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 2, cv.LINE_8);
+  cv.drawContours(img, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
 
   for(let [id, depth] of TraverseHierarchy(hier, 0)) {
-    //console.log('contour', { id, depth });
+  //console.log('contour', { id, depth });
     const c = contours[id];
     let contour = c;
-    //console.log('contour', contour, misc.getClassID(c), Object.getPrototypeOf(c));
-
-    /*  const { aspectRatio, area, extent, solidity, equivalentDiameter, orientation, length } = contour;
-    const arcLen = contour.arcLength(true);
-    console.log('contour', { depth,arcLen, boundingRect, aspectRatio, area, extent, solidity, equivalentDiameter, orientation, length });
-*/
+  
     const boundingRect = contour.boundingRect();
-    console.log('contour', {   boundingRect });
+    c[4]=boundingRect;
+   // console.log('contour', {   boundingRect });
   }
 
-  cv.HoughLinesP(canny, lines, 1, cv.CV_PI / 24, 40, 5, 10);
+
+
+/*  cv.HoughLinesP(canny, lines, 1, cv.CV_PI / 24, 40, 5, 10);
 
   for(let line of lines) {
     let [x1, y1, x2, y2] = line;
     cv.line(img, [x1, y1], [x2, y2], [255, 0, 255, 255], 2, cv.LINE_8);
     // console.log('line', line);
-  }
+  }*/
 
   cv.namedWindow('img');
-  cv.resizeWindow('img', 640, 480);
+  cv.resizeWindow('img', 1280,800);
   cv.imshow('img', img);
 
   cv.moveWindow('img', 0, 0);
