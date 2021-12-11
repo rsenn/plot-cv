@@ -72,7 +72,7 @@ function main(...args) {
 
   for(let [id, depth] of TraverseHierarchy(hier, 0)) {
     console.log('contour', { id, depth });
-    const c = new cv.Contour([...contours[id]]);
+    const c = new cv.Contour(contours[id]);
 
     /*    let desc = Object.getOwnPropertyDescriptors(Object.getPrototypeOf(c));
     console.log(
