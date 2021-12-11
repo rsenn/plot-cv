@@ -78,7 +78,7 @@ function main(...args) {
     const { aspectRatio, area, extent, solidity, equivalentDiameter, orientation, length } = contour;
     const arcLen = contour.arcLength(true);
     const boundingRect = contour.boundingRect();
-    console.log('contour', { arcLen, boundingRect, aspectRatio, area, extent, solidity, equivalentDiameter, orientation, length });
+    console.log('contour', { depth,arcLen, boundingRect, aspectRatio, area, extent, solidity, equivalentDiameter, orientation, length });
   }
   return;
 
