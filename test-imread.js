@@ -22,12 +22,12 @@ function* TraverseHierarchy(h, s = -1, depth = 0) {
 }
 
 function main(...args) {
-  globalThis.console = new Console({
+  globalThis.console = new Console(process.stdout, {
     inspectOptions: {
       maxStringLength: 200,
       maxArrayLength: 10,
       breakLength: 100,
-      compact: 2,
+      compact: 3,
       depth: 10
     }
   });
@@ -57,35 +57,31 @@ function main(...args) {
   cv.Canny(gray, canny, 40, 90, 3);
   cv.findContours(canny, (contours = []), (hier = new cv.Mat()), cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
 
-  cv.cvtColor(gray, img, cv.COLOR_GRAY2BGR);
-  cv.drawContours(img, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
-
   console.log('hier', hier);
   console.log('hier.cols', hier.cols);
   console.log('hier.depth', 1 << (hier.depth + 1));
   console.log('hier.channels', hier.channels);
 
-  //let A = [...hier];
-  //  console.log('A', A);
-
-  //console.log('contours', contours);
+  /*
+  console.log('contours', contours);
   console.log('contours.length', contours.length);
+*/
+
+  cv.cvtColor(gray, img, cv.COLOR_GRAY2BGR);
+  cv.drawContours(img, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
 
   for(let [id, depth] of TraverseHierarchy(hier, 0)) {
     console.log('contour', { id, depth });
-    const c = contours[id];
+    const c = new cv.Contour([...contours[id]]);
 
-    let desc = Object.getOwnPropertyDescriptors(Object.getPrototypeOf(c));
+    /*    let desc = Object.getOwnPropertyDescriptors(Object.getPrototypeOf(c));
     console.log(
       'contour',
       Object.keys(desc).filter(name => desc[name].get != undefined)
-    );
-    const { length, /*area, */aspectRatio, extent, solidity, equivalentDiameter, orientation } = c;
-    console.log('contour', { length, /*area,*/ aspectRatio, extent, solidity, equivalentDiameter, orientation });
+    );*/
+    console.log('contour', c);
   }
-  /*  for(let contour of contours) {
-    console.log('contour', contour);
-  }*/
+  return;
 
   cv.HoughLinesP(canny, lines, 1, cv.CV_PI / 24, 40, 5, 10);
 
@@ -107,7 +103,7 @@ function main(...args) {
 try {
   main(...scriptArgs.slice(1));
 } catch(error) {
-  console.log(`FAIL: ${error.message}\n${error.stack}`);
+  console.log(`FAIL: ${error?.message}\n${error?.stack}`);
   std.exit(1);
 } finally {
   console.log('SUCCESS');
