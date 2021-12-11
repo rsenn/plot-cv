@@ -16,11 +16,11 @@ function* TraverseHierarchy(h, s = -1, depth = 0) {
   let a = Array.isArray(h) ? h : [...h];
   let i = a[s] ? s : a.findIndex(([n, p, c, u]) => u == -1);
   while(a[i]) {
-    let entry=a[i];
-    let [, prev, child, ] = entry;
+    let entry = a[i];
+    let [, prev, child] = entry;
     yield [i, depth];
-    if(a[child]) yield* TraverseHierarchy(h, child , depth + 1);
-    i = entry[cv.HIER_NEXT]; 
+    if(a[child]) yield* TraverseHierarchy(h, child, depth + 1);
+    i = entry[cv.HIER_NEXT];
   }
 }
 
@@ -58,8 +58,8 @@ function main(...args) {
     hier,
     lines = new cv.Mat();
   cv.Canny(gray, canny, 0, 90, 3);
-   cv.findContours(canny, (contours = []), (hier = new cv.Mat()), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
-/*
+  cv.findContours(canny, (contours = []), (hier = new cv.Mat()), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+  /*
   console.log('hier', hier);
   console.log('hier.cols', hier.cols);
   console.log('hier.depth', 1 << (hier.depth + 1));
@@ -70,20 +70,18 @@ function main(...args) {
 
   cv.cvtColor(gray, img, cv.COLOR_GRAY2BGR);
   cv.drawContours(img, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
-
+  let rects = [];
   for(let [id, depth] of TraverseHierarchy(hier, 0)) {
-  //console.log('contour', { id, depth });
+    //console.log('contour', { id, depth });
     const c = contours[id];
     let contour = c;
-  
+
     const boundingRect = contour.boundingRect();
-    c[4]=boundingRect;
-   // console.log('contour', {   boundingRect });
+    c[4] = rects[id] = boundingRect;
+    // console.log('contour', {   boundingRect });
   }
 
-
-
-/*  cv.HoughLinesP(canny, lines, 1, cv.CV_PI / 24, 40, 5, 10);
+  /*  cv.HoughLinesP(canny, lines, 1, cv.CV_PI / 24, 40, 5, 10);
 
   for(let line of lines) {
     let [x1, y1, x2, y2] = line;
@@ -92,12 +90,12 @@ function main(...args) {
   }*/
 
   cv.namedWindow('img');
-  cv.resizeWindow('img', 1280,800);
+  cv.resizeWindow('img', 1280, 800);
   cv.imshow('img', img);
 
   cv.moveWindow('img', 0, 0);
 
-  let roi = cv.selectROI('img', img);
+  let roi = cv.selectROIs('img', img);
   console.log('ROI', roi);
 
   cv.waitKey(-1);
