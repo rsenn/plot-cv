@@ -70,17 +70,27 @@ function main(...args) {
 
   cv.cvtColor(gray, img, cv.COLOR_GRAY2BGR);
   cv.drawContours(img, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
-  let rects = [];
+  let rects = new Array(contours.length);
   for(let [id, depth] of TraverseHierarchy(hier, 0)) {
     //console.log('contour', { id, depth });
     const c = contours[id];
     let contour = c;
 
-    const boundingRect = contour.boundingRect();
-    c[4] = rects[id] = boundingRect;
+    const r = contour.boundingRect();
+    c[4] = rects[id] = r;
+    const { tl, br } = r;
+    //    console.log('contour', { id, tl, br });
+
+    cv.rectangle(img, tl, br, [255, 0, 255, 255], 1, cv.LINE_AA);
+    //cv.line(img, tl, br, [255, 0, 255, 255], 1, cv.LINE_AA);
+
     // console.log('contour', {   boundingRect });
   }
 
+  /*for(let rect of rects) {
+    cv.rectangle(img, rect.tl, rect.br, [255, 0, 255, 255], 1, cv.LINE_8);
+  }
+*/
   /*  cv.HoughLinesP(canny, lines, 1, cv.CV_PI / 24, 40, 5, 10);
 
   for(let line of lines) {
@@ -95,8 +105,8 @@ function main(...args) {
 
   cv.moveWindow('img', 0, 0);
 
-  let roi = cv.selectROIs('img', img);
-  console.log('ROI', roi);
+  /*let roi = cv.selectROI('img', img);
+  console.log('ROI', roi);*/
 
   cv.waitKey(-1);
 

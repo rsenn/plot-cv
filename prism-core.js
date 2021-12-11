@@ -488,19 +488,7 @@ export const Prism = (function () {
       })
       .join(' ');
 
-    return (
-      '<' +
-      env.tag +
-      ' class="' +
-      env.classes.join(' ') +
-      '"' +
-      (attributes ? ' ' + attributes : '') +
-      '>' +
-      env.content +
-      '</' +
-      env.tag +
-      '>'
-    );
+    return '<' + env.tag + ' class="' + env.classes.join(' ') + '"' + (attributes ? ' ' + attributes : '') + '>' + env.content + '</' + env.tag + '>';
   };
 
   if(!_self.document) {
