@@ -50,9 +50,9 @@
     "node-bpg": "^1.0.0",
     "preact": "^10",
     "preact-compat": "^3",
-    "preact-ssr-prepass": "^1",
     "preact-context": "^1.1.4",
     "preact-render-to-string": "^5.1.19",
+    "preact-ssr-prepass": "^1",
     "ws": "^7.3.1"
   },
   "oldDeps": {
@@ -92,8 +92,8 @@
   },
   "description": "",
   "devDependencies": {
-    "@babel/core": "^7",
     "@babel/cli": "^7",
+    "@babel/core": "^7",
     "@babel/node": "^7",
     "@babel/plugin-proposal-class-properties": "^7",
     "@babel/plugin-proposal-decorators": "^⁷",
@@ -114,13 +114,20 @@
     "node": ">= 14"
   },
   "eslintConfig": {
-    "extends": [ "./node_modules/@s-ui/lint/eslintrc.js" ]
+    "extends": [
+      "./node_modules/@s-ui/lint/eslintrc.js"
+    ]
   },
   "husky": {
-    "hooks": { "pre-commit": "lint-staged" }
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "lint-staged": {
-    "*.{js,jsx}": [ "eslint . --ext .js --ext .jsx --ignore-path .eslintignore --fix", "git add" ]
+    "*.{js,jsx}": [
+      "eslint . --ext .js --ext .jsx --ignore-path .eslintignore --fix",
+      "git add"
+    ]
   },
   "main": "server.js",
   "name": "plot-cv",
@@ -141,7 +148,17 @@
     "dev": "./tmp",
     "entry": "./userscript-test.js",
     "fileName": "lib",
-    "meta": { "grant": "none", "homepage": "https://openuserjs.org/scripts/va4ok", "match": "*://*.*", "name": "My lib", "namespace": "http://tampermonkey.net/", "require": [ "https://some.url.1", "https://some.url.2" ] },
+    "meta": {
+      "grant": "none",
+      "homepage": "https://openuserjs.org/scripts/va4ok",
+      "match": "*://*.*",
+      "name": "My lib",
+      "namespace": "http://tampermonkey.net/",
+      "require": [
+        "https://some.url.1",
+        "https://some.url.2"
+      ]
+    },
     "release": "./data"
   },
   "version": "1.0.0"
