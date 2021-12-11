@@ -73,9 +73,10 @@ function main(...args) {
     //console.log('contour', { id, depth });
     const c = contours[id];
     let contour = c;
+    console.log('contour', contour, misc.getClassID(c),Object.getPrototypeOf(c));
 
-    const { aspectRatio, length } = contour;
-    console.log('contour', contour, { aspectRatio, length } /*, misc.getClassID(c),Object.getPrototypeOf(c)*/);
+    const { aspectRatio, area, extent, solidity, equivalentDiameter, orientation, length } = contour;
+    console.log('contour', contour, { aspectRatio, area, extent, solidity, equivalentDiameter, orientation, length });
   }
   return;
 
