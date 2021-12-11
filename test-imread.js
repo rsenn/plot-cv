@@ -64,7 +64,7 @@ function main(...args) {
   console.log('hier.depth', 1 << (hier.depth + 1));
   console.log('hier.channels', hier.channels);
 
-  console.log('contours', contours);
+  //console.log('contours', contours);
   console.log('contours.length', contours.length);
 
   cv.cvtColor(gray, img, cv.COLOR_GRAY2BGR);
@@ -78,9 +78,10 @@ function main(...args) {
 
     /*  const { aspectRatio, area, extent, solidity, equivalentDiameter, orientation, length } = contour;
     const arcLen = contour.arcLength(true);
-    const boundingRect = contour.boundingRect();
     console.log('contour', { depth,arcLen, boundingRect, aspectRatio, area, extent, solidity, equivalentDiameter, orientation, length });
 */
+    const boundingRect = contour.boundingRect();
+    console.log('contour', {   boundingRect });
   }
 
   cv.HoughLinesP(canny, lines, 1, cv.CV_PI / 24, 40, 5, 10);
