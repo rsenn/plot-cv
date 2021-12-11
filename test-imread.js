@@ -56,7 +56,8 @@ function main(...args) {
     hier,
     lines = new cv.Mat();
   cv.Canny(gray, canny, 40, 90, 3);
-  cv.findContours(canny, (contours = []), (hier = new cv.Mat()), cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
+  // cv.findContours(canny, (contours = []), (hier = new cv.Mat()), cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
+  cv.findContours(canny, (contours = []), (hier = new cv.Mat()), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
 
   console.log('hier', hier);
   console.log('hier.cols', hier.cols);
@@ -67,7 +68,7 @@ function main(...args) {
   console.log('contours.length', contours.length);
 
   cv.cvtColor(gray, img, cv.COLOR_GRAY2BGR);
-  cv.drawContours(img, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
+  cv.drawContours(img, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 2, cv.LINE_8);
 
   for(let [id, depth] of TraverseHierarchy(hier, 0)) {
     //console.log('contour', { id, depth });
@@ -75,18 +76,18 @@ function main(...args) {
     let contour = c;
     //console.log('contour', contour, misc.getClassID(c), Object.getPrototypeOf(c));
 
-    const { aspectRatio, area, extent, solidity, equivalentDiameter, orientation, length } = contour;
+    /*  const { aspectRatio, area, extent, solidity, equivalentDiameter, orientation, length } = contour;
     const arcLen = contour.arcLength(true);
     const boundingRect = contour.boundingRect();
     console.log('contour', { depth,arcLen, boundingRect, aspectRatio, area, extent, solidity, equivalentDiameter, orientation, length });
+*/
   }
-  return;
 
   cv.HoughLinesP(canny, lines, 1, cv.CV_PI / 24, 40, 5, 10);
 
   for(let line of lines) {
     let [x1, y1, x2, y2] = line;
-    cv.line(img, [x1, y1], [x2, y2], [255, 0, 255, 255], 1, cv.LINE_AA);
+    cv.line(img, [x1, y1], [x2, y2], [255, 0, 255, 255], 2, cv.LINE_8);
     // console.log('line', line);
   }
 
@@ -95,6 +96,10 @@ function main(...args) {
   cv.imshow('img', img);
 
   cv.moveWindow('img', 0, 0);
+
+  let roi = cv.selectROI('img', img);
+  console.log('ROI', roi);
+
   cv.waitKey(-1);
 
   console.log('EXIT');
