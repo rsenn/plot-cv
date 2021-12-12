@@ -83,9 +83,8 @@ function main(...args) {
 
     cv.rectangle(img, tl, br, [255, 0, 255, 255], 1, cv.LINE_AA);
     //cv.line(img, tl, br, [255, 0, 255, 255], 1, cv.LINE_AA);
-
-   } 
-   /*  cv.HoughLinesP(canny, lines, 1, cv.CV_PI / 24, 40, 5, 10);
+  }
+  /*  cv.HoughLinesP(canny, lines, 1, cv.CV_PI / 24, 40, 5, 10);
 
   for(let line of lines) {
     let [x1, y1, x2, y2] = line;
