@@ -6,60 +6,12 @@ import Util from './lib/util.js';
 import { Console } from 'console';
 import { digit2color, GetFactor, GetColorBands, ValueToNumber, NumberToValue, GetExponent, GetMantissa } from './lib/eda/colorCoding.js';
 import { UnitForName } from './lib/eda/units.js';
+import { updateMeasures, alignItem, alignAll } from './eagle-commands.js';
 
 let documents = [];
 
 function xmlize(obj, depth = 2) {
   return obj.toXML ? obj.toXML().replace(/>\s*</g, '>\n    <') : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
-}
-
-function updateMeasures(board) {
-  if(!board) return false;
-  let bounds = board.getBounds();
-  let measures = board.getMeasures();
-  if(measures) {
-    console.log('got measures:', measures);
-  } else {
-    let rect = new Rect(bounds.rect);
-    let lines = rect.toLines(lines => new LineList(lines));
-    let { plain } = board;
-    plain.remove(e => e.tagName == 'wire' && e.attributes.layer == '47');
-    plain.append(
-      ...lines.map(line => ({
-        tagName: 'wire',
-        attributes: { ...line.toObject(), layer: 47, width: 0 }
-      }))
-    );
-  }
-  return !measures;
-}
-
-function alignItem(item) {
-  console.debug('alignItem', item);
-  let geometry = item.geometry;
-  let oldPos = geometry.clone();
-  let newPos = geometry.clone().round(1.27, 2);
-  let diff = newPos.diff(oldPos).round(0.0001, 5);
-  let before = item.parentNode.toXML();
-  geometry.add(diff);
-  let changed = !diff.isNull();
-  if(changed) {
-    console.log('before:', Util.abbreviate(before));
-    console.log('after:', Util.abbreviate(item.parentNode.toXML()));
-    console.log('align\n', item.xpath(), '\n newPos:', newPos, '\n diff:', diff, '\n attr:', item.raw.attributes);
-  }
-  return changed;
-}
-
-function alignAll(doc) {
-  if(!doc) return false;
-  let items = doc.getAll(doc.type == 'brd' ? 'element' : 'instance');
-  let changed = false;
-  for(let item of items) changed |= alignItem(item);
-  let signals_nets = doc.getAll(/(signals|nets)/);
-  //console.log('signals_nets:', signals_nets);
-  for(let net of signals_nets) for (let item of net.getAll('wire')) changed |= alignItem(item);
-  return !!changed;
 }
 
 function scientific(value) {
@@ -81,7 +33,7 @@ const largeSquares = ['■', '□'];
 function num2color(num, square = false) {
   let sym = square ? largeSquares : verticalRectangles;
   let c = typeof num == 'number' ? GetColorBands(num) : num;
-  //console.log('num2color:', { num, square, sym, c });
+
   return c.map(n => color.text(n ? sym[0] : color.text(sym[1], 38, 5, 236), n ? 38 : 48, ...digit2color.ansi[n].slice(1))).join('');
 }
 const SubstChars = str => str.replace(/\xCE\xBC/g, '\u00B5').replace(/\xCE\xA9/g, '\u2126');
@@ -118,7 +70,7 @@ async function main(...args) {
       new Map(
         [...nameValueMap].map(([n, v]) => [
           n,
-          v //Util.escape(v, codePoint => codePoint < 32 || codePoint > 0x7f)
+          v
         ])
       )
     );
@@ -135,20 +87,20 @@ async function main(...args) {
   }
   for(let key in components) {
     components[key].sort();
-    let hist = Util.histogram(components[key], /*(item, i) => [item[1], i],*/ new Map());
-    //console.log('hist', { hist });
+    let hist = Util.histogram(components[key],  new Map());
+
     histograms[key] = new Map([...hist].sort((a, b) => b[1] - a[1]));
     values[key] = [...histograms[key]]
       .map(([value, count]) => {
-        // console.log('', { key, value, count });
-        //rational(value).toExponential()
+
+
         return [value || scientific(value).toString(), ValueToNumber(value), count];
       })
       .sort((a, b) => a[1] - b[1])
-      .map(([val, rat, count]) => [(val + '').padStart(4, ' ') + UnitForName(key), /*rat, GetFactor(rat),*/ rat >= 1 ? num2color(rat) : '', `  × ${count}`].join(' '));
+      .map(([val, rat, count]) => [(val + '').padStart(4, ' ') + UnitForName(key),  rat >= 1 ? num2color(rat) : '', `  × ${count}`].join(' '));
   }
   console.log('components:', components);
-  /*console.log('histograms:', histograms);*/
+
 
   console.log(
     'values:\n   ' +
@@ -170,3 +122,4 @@ async function main(...args) {
 }
 
 Util.callMain(main, true);
+

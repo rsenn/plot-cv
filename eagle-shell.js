@@ -3,14 +3,17 @@ import Util from './lib/util.js';
 import * as deep from './lib/deep.js';
 import path from './lib/path.js';
 import { LineList, Point, Circle, Rect, Size, Line, TransformationList, Rotation, Translation, Scaling, Matrix, BBox } from './lib/geom.js';
-import ConsoleSetup from './lib/consoleSetup.js';
+import { Console } from 'console';
 import REPL from './xrepl.js';
 import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, Enum, HashList, Multimap, Shash, SortedMap, HashMultimap, MultiBiMap, MultiKeyMap, DenseSpatialHash2D, SpatialHash2D, HashMap, SpatialH, SpatialHash, SpatialHashMap, BoxHash } from './lib/container.js';
-import PortableFileSystem from './lib/filesystem.js';
+import fs from 'fs';
 import { Pointer } from './lib/pointer.js';
 import { read as fromXML, write as toXML } from './lib/xml.js';
 import inspect from './lib/objectInspect.js';
 import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
+import { GetExponent, GetMantissa, ValueToNumber, NumberToValue, GetMultipliers, GetFactor, GetColorBands, digit2color } from './lib/eda/colorCoding.js';
+import { UnitForName } from './lib/eda/units.js';
+import { updateMeasures, alignItem, alignAll } from './eagle-commands.js';
 
 let cmdhist;
 
@@ -504,26 +507,20 @@ async function testEagle(filename) {
 }
 
 async function main(...args) {
-  await ConsoleSetup({
-    inspectOptions: { depth: 3, compact: 3, maxArrayLength: 10, maxStringLength: 10 }
-  });
+  globalThis.console = new Console({ inspectOptions: { breakLength: 100, colors: true, depth: Infinity, compact: 2, customInspect: true } });
 
-  let fs;
   let debugLog;
 
-  if(Util.getPlatform() == 'quickjs') {
+ /* if(Util.getPlatform() == 'quickjs') {
     globalThis.std = await import('std');
     globalThis.os = await import('os');
     globalThis.fs = fs = await import('./lib/filesystem.js');
-    // console.log('quickjs', { std, os, fs });
   } else {
-    //globalThis.fs = fs=await import('fs');
-    //  console.log('fs', globalThis.fs);
     const cb = filesystem => {
       globalThis.fs = fs = filesystem;
     };
     await PortableFileSystem(cb);
-  }
+  }*/
 
   debugLog = fs.openSync('debug.log', 'a');
 
@@ -608,7 +605,20 @@ async function main(...args) {
     DirIterator,
     RecursiveDirIterator
   });
-
+  Object.assign(globalThis, {
+    GetExponent,
+    GetMantissa,
+    ValueToNumber,
+    NumberToValue,
+    GetMultipliers,
+    GetFactor,
+    GetColorBands,
+    digit2color,
+    UnitForName,
+    updateMeasures,
+    alignItem,
+    alignAll
+  });
   Object.assign(globalThis, {
     load(filename, project = globalThis.project) {
       globalThis.document = new EagleDocument(fs.readFileSync(filename, 'utf-8'), project, filename, null, fs);
@@ -684,9 +694,6 @@ async function main(...args) {
 
   //console.log(`repl`, repl);
   //console.log(`debugLog`, Util.getMethods(debugLog, Infinity, 0));
-  repl.history = LoadHistory(cmdhist);
-
-  repl.printStatus(/*console.log*/ `LOAD (read ${repl.history.length} history entries)`);
 
   repl.debugLog = debugLog;
   repl.exit = Terminate;
@@ -728,24 +735,15 @@ async function main(...args) {
     console.log(`EXIT (wrote ${hist.length} history entries)`);
     Terminate(0);
   });
-  /*
-  Util.atexit(() => {
-    let hist = repl.history.filter((item, i, a) => a.lastIndexOf(item) == i);
-
-    fs.writeFileSync(histfile, JSON.stringify(hist, null, 2));
-
-    console.log(`EXIT (wrote ${hist.length} history entries)`);
-  });
-*/
 
   for(let file of params['@']) {
-    repl.printStatus(`Loading '${file}'...`);
-
+   console.log(`Loading '${file}'...`);
     newProject(file);
   }
 
-  //globalThis.project = new EagleProject(params['@']);
-  //console.log('globalThis.project', globalThis.project);
+  repl.history = LoadHistory(cmdhist);
+  console.log(`Loaded ${repl.history.length} history entries)`);
+
 
   await repl.run();
 }
