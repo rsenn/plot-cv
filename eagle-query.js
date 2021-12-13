@@ -1,14 +1,13 @@
 import { EagleDocument } from './lib/eagle.js';
-import PortableFileSystem from './lib/filesystem.js';
 import { LineList, Rect } from './lib/geom.js';
 import { toXML } from './lib/json.js';
+import fs from 'fs';
 import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
+import { Console } from 'console';
 import { digit2color, GetFactor, GetColorBands, ValueToNumber, NumberToValue, GetExponent, GetMantissa } from './lib/eda/colorCoding.js';
 import { UnitForName } from './lib/eda/units.js';
 
-let filesystem,
-  documents = [];
+let documents = [];
 
 function xmlize(obj, depth = 2) {
   return obj.toXML ? obj.toXML().replace(/>\s*</g, '>\n    <') : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
@@ -88,12 +87,11 @@ function num2color(num, square = false) {
 const SubstChars = str => str.replace(/\xCE\xBC/g, '\u00B5').replace(/\xCE\xA9/g, '\u2126');
 
 async function main(...args) {
-  await ConsoleSetup({ colors: true, depth: Infinity, breakLength: 100 });
-  await PortableFileSystem(fs => (filesystem = fs));
+  globalThis.console = new Console({ inspectOptions: { breakLength: 100, colors: true, depth: Infinity, compact: 2, customInspect: true } });
   if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt2.brd');
   args = Util.unique(args);
   for(let arg of args) {
-    let data = filesystem.readFile(arg);
+    let data = fs.readFileSync(arg);
     console.log(`loaded '${arg}' length: ${data.length}`);
     let doc = new EagleDocument(data, null, arg);
     documents.push(doc);
