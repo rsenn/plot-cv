@@ -412,6 +412,12 @@ main() {
   printf("#define IN_ALL_EVENTS 0x%x\n", IN_ALL_EVENTS);
   printf("sizeof(struct inotify_event) = %zu\n", sizeof(struct inotify_event));
   printf("BUFSIZ = %zu\n", BUFSIZ);
-
+  printf("#ifndef GLOB_ALTDIRFUNC\n#define GLOB_ALTDIRFUNC %d\n#endif\n", GLOB_ALTDIRFUNC);
+  printf("#ifndef GLOB_BRACE\n#define GLOB_BRACE %d\n#endif\n", GLOB_BRACE);
+  printf("#ifndef GLOB_NOMAGIC\n#define GLOB_NOMAGIC %d\n#endif\n", GLOB_NOMAGIC);
+  printf("#ifndef GLOB_TILDE\n#define GLOB_TILDE %d\n#endif\n", GLOB_TILDE);
+  printf("#ifndef GLOB_TILDE_CHECK\n#define GLOB_TILDE_CHECK %d\n#endif\n", GLOB_TILDE_CHECK);
+  printf("#ifndef GLOB_ONLYDIR\n#define GLOB_ONLYDIR %d\n#endif\n", GLOB_ONLYDIR);
+  printf("#ifndef GLOB_MAGCHAR\n#define GLOB_MAGCHAR %d\n#endif\n", GLOB_MAGCHAR);
   return 0;
 }
