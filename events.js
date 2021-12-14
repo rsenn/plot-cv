@@ -1,3 +1,4 @@
+import { define, isObject, memoize, unique } from './lib/misc.js';
 import Util from './lib/util.js';
 import { Repeater } from './lib/repeater/repeater.js';
 export { EventEmitter, EventTarget } from './lib/events.js';
@@ -14,7 +15,7 @@ export function Emitter(target) {
       return emitter;
     }
   });
-  return Util.define(emitter, { listeners, target });
+  return define(emitter, { listeners, target });
 }
 
 export function EventIterator(events, target = Util.tryCatch(() => window)) {
@@ -35,7 +36,7 @@ export function EventIterator(events, target = Util.tryCatch(() => window)) {
       console.log('unregistered', events);*/
     emitter.reset();
   });
-  return Util.define(iter, { emitter, target });
+  return define(iter, { emitter, target });
   iter.emitter = emitter;
   return iter;
 }

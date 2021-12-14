@@ -2,7 +2,7 @@ import { Console } from 'console';
 import { btoa } from './lib/misc.js';
 import * as os from 'os';
 import * as fs from 'fs';
-import * as util from 'util';
+import * as util from './lib/misc.js';
 import * as path from './lib/path.js';
 import * as deep from './lib/deep.js';
 import { toString } from './lib/misc.js';

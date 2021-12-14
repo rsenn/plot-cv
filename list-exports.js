@@ -7,7 +7,7 @@ import deep from './lib/deep.js';
 import { Stack } from './lib/stack.js';
 import { WriteFile } from './io-helpers.js';
 import { Console } from 'console';
-import { inspect } from 'util';
+import { inspect } from './lib/misc.js';
 import process from 'process';
 
 let lexer, parser, childProcess;

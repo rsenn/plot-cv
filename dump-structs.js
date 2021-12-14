@@ -1,3 +1,4 @@
+import { define, isObject, memoize, unique } from './lib/misc.js';
 import PortableFileSystem from './lib/filesystem.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import PortableSpawn from './lib/spawn.js';
@@ -11,7 +12,7 @@ import { Type, AstDump, GetLoc } from './clang-ast.js';
 //prettier-ignore
 let filesystem, spawn;
 
-Util.define(Array.prototype, {
+define(Array.prototype, {
   findLastIndex(predicate) {
     for(let i = this.length - 1; i >= 0; --i) {
       const x = this[i];
@@ -103,7 +104,7 @@ async function main(...args) {
       }
 
       let tree = new Tree(ast);
-      let flat = /*tree.flat();*/ deep.flatten(ast, new Map(), (v, p) => ['inner', 'loc', 'range'].indexOf(p[p.length - 1]) == -1 && Util.isObject(v) /*&& 'kind' in v*/);
+      let flat = /*tree.flat();*/ deep.flatten(ast, new Map(), (v, p) => ['inner', 'loc', 'range'].indexOf(p[p.length - 1]) == -1 && isObject(v) /*&& 'kind' in v*/);
       let entries = [...flat];
       let locations = [];
       let l = Object.setPrototypeOf({}, { toString() {} });
@@ -137,7 +138,7 @@ async function main(...args) {
         locations.push(l);
       }
 
-      for(let [n, p] of deep.iterate(ast, v => Util.isObject(v))) {
+      for(let [n, p] of deep.iterate(ast, v => isObject(v))) {
         if(/(loc|range)/.test(p[p.length - 1] + '')) {
           //console.log("remove", p);
           deep.unset(ast, p);
@@ -149,7 +150,7 @@ async function main(...args) {
 
           let typedefs = [...Util.filter(mainNodes, ([path, decl]) => decl.kind == 'TypedefDecl')];
 
-          Type.declarations = new Map([...entries].filter(([p, n]) => Util.isObject(n) && /Decl/.test(n.kind) && n.name).map(([p, n]) => [n.name, n]));
+          Type.declarations = new Map([...entries].filter(([p, n]) => isObject(n) && /Decl/.test(n.kind) && n.name).map(([p, n]) => [n.name, n]));
 
           //console.log('Type.declarations:', [...Type.declarations.keys()]);
           //typedefs = NoSystemIncludes(typedefs);
@@ -221,7 +222,7 @@ async function main(...args) {
               ) || {}
             ).value;
 
-          let findType = name => deep.find(ast, (n, p) => Util.isObject(n) && n.kind && n.name == name, []).value;
+          let findType = name => deep.find(ast, (n, p) => isObject(n) && n.kind && n.name == name, []).value;
 
           let nodeType = n =>
             n.type
@@ -233,10 +234,10 @@ async function main(...args) {
                     type = Type.declarations.get(t.desugaredQualType);
                   }
 
-                  if(Util.isObject(type) && Util.isObject(type.type)) type = type.type;
+                  if(isObject(type) && isObject(type.type)) type = type.type;
                   return new Type(type);
                 })(n.type)
-              : nodeType(deep.find(ast, n => Util.isObject(n) && n.type).value);
+              : nodeType(deep.find(ast, n => isObject(n) && n.type).value);
 
           let nodeName = (n, name) => {
             if(typeof name != 'string') name = '';
@@ -244,15 +245,15 @@ async function main(...args) {
             if(n.tagUsed) name = n.tagUsed + ' ' + name;
             return name;
           };
-          let findId = id => [...tree.filter((node, path) => Util.isObject(node) && node.id == id)][0];
-          let findIdKind = (id, kind) => [...tree.filter((node, path) => Util.isObject(node) && node.id == id && node.kind == kind)][0];
+          let findId = id => [...tree.filter((node, path) => isObject(node) && node.id == id)][0];
+          let findIdKind = (id, kind) => [...tree.filter((node, path) => isObject(node) && node.id == id && node.kind == kind)][0];
           let findNode = (id, kind, exclude) =>
             deep
               .select(
                 ast,
                 (n, p) => {
                   if(n == exclude) return false;
-                  if(Util.isObject(n)) {
+                  if(isObject(n)) {
                     if(kind && kind != n.kind) return false;
                     if(id && id != n.id) return false;
                     return true;
@@ -277,8 +278,8 @@ async function main(...args) {
           };
           let structSize = map => [...map].reduce((acc, [name, [type, offset, size]]) => acc + size, 0);
           /*
-      let paramDeclarations = Util.unique([...entries]
-          .filter(([p, n]) => Util.isObject(n) && n.kind && n.kind.startsWith('Parm'))
+      let paramDeclarations = unique([...entries]
+          .filter(([p, n]) => isObject(n) && n.kind && n.kind.startsWith('Parm'))
           .map(([p, n]) => {
             let name = nodeName(n);
             let type = nodeType(n);

@@ -1,5 +1,5 @@
 import { client, server, fetch, setLog } from 'net';
-import { concat, escape, quote, toString, toArrayBuffer } from 'util';
+import { concat, escape, quote, toString, toArrayBuffer } from './lib/misc.js';
 import Util from './lib/util.js';
 import { Console } from 'console';
 

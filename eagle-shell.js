@@ -11,9 +11,11 @@ import { Pointer } from './lib/pointer.js';
 import { read as fromXML, write as toXML } from './lib/xml.js';
 import inspect from './lib/objectInspect.js';
 import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
-import { GetExponent, GetMantissa, ValueToNumber, NumberToValue, GetMultipliers, GetFactor, GetColorBands, digit2color } from './lib/eda/colorCoding.js';
+import { GetColorBands,digit2color, GetFactor, GetColorBands, ValueToNumber, NumberToValue, GetExponent, GetMantissa } from './lib/eda/colorCoding.js';
 import { UnitForName } from './lib/eda/units.js';
-import { updateMeasures, alignItem, alignAll } from './eagle-commands.js';
+import { num2color, scientific, updateMeasures, alignItem, alignAll } from './eagle-commands.js';
+import { define, isObject, memoize, unique } from './lib/misc.js';
+import { HSLA, isHSLA, ImmutableHSLA, RGBA, isRGBA, ImmutableRGBA, ColoredText } from './lib/color.js';
 
 let cmdhist;
 
@@ -511,7 +513,7 @@ async function main(...args) {
 
   let debugLog;
 
- /* if(Util.getPlatform() == 'quickjs') {
+  /* if(Util.getPlatform() == 'quickjs') {
     globalThis.std = await import('std');
     globalThis.os = await import('os');
     globalThis.fs = fs = await import('./lib/filesystem.js');
@@ -620,6 +622,12 @@ async function main(...args) {
     alignAll
   });
   Object.assign(globalThis, {
+    define,
+    isObject,
+    memoize,
+    unique
+  });
+  Object.assign(globalThis, {
     load(filename, project = globalThis.project) {
       globalThis.document = new EagleDocument(fs.readFileSync(filename, 'utf-8'), project, filename, null, fs);
     },
@@ -690,7 +698,7 @@ async function main(...args) {
 
   cmdhist = `.${base}-cmdhistory`;
 
-  let repl = (globalThis.repl = new REPL(base));
+  let repl = (globalThis.repl = new REPL(base, false));
 
   //console.log(`repl`, repl);
   //console.log(`debugLog`, Util.getMethods(debugLog, Infinity, 0));
@@ -737,13 +745,12 @@ async function main(...args) {
   });
 
   for(let file of params['@']) {
-   console.log(`Loading '${file}'...`);
+    console.log(`Loading '${file}'...`);
     newProject(file);
   }
 
   repl.history = LoadHistory(cmdhist);
   console.log(`Loaded ${repl.history.length} history entries)`);
-
 
   await repl.run();
 }

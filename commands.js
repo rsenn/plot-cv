@@ -1,3 +1,4 @@
+import { define, isObject, memoize, unique } from './lib/misc.js';
 import dom from './lib/dom.js';
 import geom from './lib/geom.js';
 import { BBox, Rect, Point, Polyline, Line, PointList, isPoint } from './lib/geom.js';
@@ -39,7 +40,7 @@ export async function ListProjects(opts = {}) {
       .then(NormalizeResponse)
       .catch(error => ({ error }));
 
-    if(Util.isObject(response)) response = response.data;
+    if(isObject(response)) response = response.data;
   } else {
     response = await GithubListContents(url, null, null, '\\.(brd|sch|lbr)$', opts);
 

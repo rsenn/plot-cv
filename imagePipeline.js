@@ -5,7 +5,7 @@ import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './qjs-opencv/
 import { HSLA } from './lib/color.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import fs from 'fs';
-import { format } from 'util';
+import { format } from './lib/misc.js';
 import * as xml from 'xml';
 import Console from 'console';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';

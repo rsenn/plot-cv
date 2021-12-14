@@ -7,7 +7,7 @@ import Tree from './lib/tree.js';
 import { Console } from 'console';
 import fs from 'fs';
 import * as path from 'path';
-import { inspect } from 'util';
+import { inspect } from './lib/misc.js';
 
 function WriteFile(name, data) {
   if(Util.isArray(data)) data = data.join('\n');

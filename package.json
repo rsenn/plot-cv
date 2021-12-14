@@ -53,15 +53,15 @@
     "preact-context": "^1.1.4",
     "preact-render-to-string": "^5.1.19",
     "preact-ssr-prepass": "^1",
-    "ws": "^7.3.1"
+    "promisify-child-process": "^4.1.1",
+    "ws": "^7.3.1",
+    "serialport": "^9.0.1"
   },
   "oldDeps": {
     "@deque/dot": "^1.1.5",
     "@serialport/bindings": "^9.0.2",
     "@serialport/stream": "^9.0.1",
     "preact-fluid": "^0.9.1",
-    "promisify-child-process": "^4.1.1",
-    "serialport": "^9.0.1",
     "sort-order": "^1.0.1",
     "columnify": "^1.5.4",
     "cross-spawn": "^7.0.3",

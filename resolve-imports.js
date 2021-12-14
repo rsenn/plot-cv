@@ -1,3 +1,4 @@
+import { define, isObject, memoize, unique } from './lib/misc.js';
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import { Lexer, PathReplacer, Location } from './lib/ecmascript.js';
@@ -29,7 +30,7 @@ let searchExts = ['.js', '.mjs'];
 let exportMap = {};
 let importMap = {};
 
-Util.define(Array.prototype, {
+define(Array.prototype, {
   startsWith(other) {
     if(other.length > this.length) return false;
     for(let i = 0; i < other.length; i++) if(this[i] !== other[i]) return false;
@@ -58,7 +59,7 @@ class ES6Module {
   static create(file, from, position) {
     let mod = new ES6Module();
     mod.file = file;
-    if(position || from) Util.define(mod, { importedFrom: position ? position : from });
+    if(position || from) define(mod, { importedFrom: position ? position : from });
     if(ES6Module.root == null) ES6Module.root = mod;
     ES6Module.moduleList.add(mod);
     return mod;
@@ -169,7 +170,7 @@ const IMPORT = 1;
 const EXPORT = 2;
 
 class ES6Env {
-  static getCwd = Util.memoize(() => fs.realpathSync('.') || path.resolve('.'));
+  static getCwd = memoize(() => fs.realpathSync('.') || path.resolve('.'));
   static get cwd() {
     return ES6Env.getCwd();
   }
@@ -194,7 +195,7 @@ class ES6ImportExport {
   static create(obj) {
     let ret = new ES6ImportExport();
     let nodeClass = Util.className(obj.node);
-    let code = Util.memoize(() => '' + Util.decamelize(nodeClass) + ' ' + PrintAst(obj.node))();
+    let code = memoize(() => '' + Util.decamelize(nodeClass) + ' ' + PrintAst(obj.node))();
     let p, n;
     p = obj.path.slice(0, 2);
     n = p.apply(obj.ast, true);
@@ -214,7 +215,7 @@ class ES6ImportExport {
     let bindings = (obj.bindings instanceof Map && obj.bindings) || new Map();
     ret = Object.assign(ret, { type, bindings, position });
     let dir = path.relative(ES6Env.cwd, path.dirname(obj.file));
-    ret = Util.define(ret, { ...obj, nodeClass, dir });
+    ret = define(ret, { ...obj, nodeClass, dir });
 
     /*    bindings[inspectSymbol] = function() {
       return Util.inspect(this);
@@ -230,7 +231,7 @@ class ES6ImportExport {
       .map(n => [ESNode.assoc(n).position, PrintAst(n)])
       .map(([p, n]) => [Util.isGenerator(position) && [...position].map(p => ES6Env.pathTransform(p)).join(':'), n]);
 
-    if(Util.isObject(position) && position.toString) position = position.toString(true, (p, i) => (i == 0 ? path.relative(ES6Env.cwd, p) : p)).replace(/1;33/, '1;34');
+    if(isObject(position) && position.toString) position = position.toString(true, (p, i) => (i == 0 ? path.relative(ES6Env.cwd, p) : p)).replace(/1;33/, '1;34');
     /* const InspectFn = ret.bindings[inspectSymbol];
   console.log(Util.ansi.text(Util.ucfirst((type + '').toLowerCase()), 1, 31) + Util.ansi.text(` @ `, 1, 36),
       InspectFn ? InspectFn.call(ret.bindings) : '',
@@ -268,7 +269,7 @@ class ES6ImportExport {
     let { node, path } = this;
     let value = (node && node.source) || node;
     path = (value && path.down('source')) || path;
-    while(Util.isObject(value) && value.value) value = value.value;
+    while(isObject(value) && value.value) value = value.value;
     return [value, path];
   }
 
@@ -330,7 +331,7 @@ class ES6ImportExport {
       .replace(/\s*'\s*/g, '');
 
     let proto = Object.getPrototypeOf(this);
-    let obj = Util.filterOutMembers(this, x => [Util.isFunction /*, Util.isObject*/].some(f => f(x)));
+    let obj = Util.filterOutMembers(this, x => [Util.isFunction /*, isObject*/].some(f => f(x)));
     return Util.inspect({ ...obj, __proto__: proto }, { multiline: true });
   }
   toString() {
@@ -356,7 +357,7 @@ const isCJSExport = ([path, node]) => node.left && PrintAst(node.left).startsWit
 
 const getImport = ([p, n]) => {
   let r = [];
-  if(n instanceof CallExpression && Util.isObject(n) && n.callee && n.callee.name == 'require') {
+  if(n instanceof CallExpression && isObject(n) && n.callee && n.callee.name == 'require') {
     let idx = p.lastIndexOf('init');
     let start = idx != -1 ? idx + 1 : p.length;
     let end = p.length;
@@ -918,7 +919,7 @@ async function main(...args) {
           //Verbose('ast.body:', ast.body);
           let importStatements = moduleImports.map(([, imp]) => imp);
           //Verbose('importStatements:', importStatements);
-          let declPaths = Util.unique(importStatements.map(stmt => stmt.toString()));
+          let declPaths = unique(importStatements.map(stmt => stmt.toString()));
 
           let declStatements = declPaths
             .map(p => p.split(/\./g))
@@ -1012,7 +1013,7 @@ async function main(...args) {
          deep.set(ast, [...path], new ExpressionStatement(new Literal(`"removed ${PrintAst(node).replace(/;$/, '')}"`)));
       });*/
 
-      let recurseImports = Util.unique(remove.map(([idx, imp]) => imp || imports[idx]));
+      let recurseImports = unique(remove.map(([idx, imp]) => imp || imports[idx]));
       let recursePaths = recurseImports.map(imp => [ES6Env.cwd, GetFromPath([imp.path, imp.node], file), imp.node]);
       //Verbose(`recursePaths [${depth}]:`, recursePaths.map(p => p[1]));
       let recurseFiles = recursePaths.map(paths => path.relative(...paths.slice(0, 2)));
@@ -1336,7 +1337,7 @@ function GetPosition(node) {
 
 function GetFile(module, position) {
   let r;
-  let file = Util.isObject(position) && typeof position.file == 'string' ? position.file : position;
+  let file = isObject(position) && typeof position.file == 'string' ? position.file : position;
   //if(position instanceof Range) position = position.start;
   // console.log('GetFile', { module, position, file }, Util.className(position));
   module = module.replace(/\?.*/g, '');
@@ -1375,7 +1376,7 @@ function GetFromValue(...args) {
       p,
       Object.setPrototypeOf(
         {
-          ...Util.filterKeys(n, k => n instanceof CallExpression || (k != 'type' && !(Util.isObject(n[k]) || Util.isFunction(n[k]))))
+          ...Util.filterKeys(n, k => n instanceof CallExpression || (k != 'type' && !(isObject(n[k]) || Util.isFunction(n[k]))))
         },
         Object.getPrototypeOf(n)
       )

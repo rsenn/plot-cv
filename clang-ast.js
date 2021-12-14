@@ -1,3 +1,4 @@
+import { define, isObject, memoize, unique } from './lib/misc.js';
 import Util from './lib/util.js';
 import * as path from './lib/path.js';
 import * as deep from './lib/deep.js';
@@ -93,7 +94,7 @@ export class List extends Array {
   }
 }
 
-Util.define(List.prototype, { [Symbol.toStringTag]: 'List' });
+define(List.prototype, { [Symbol.toStringTag]: 'List' });
 
 export class Node {
   static ast2node = new WeakMap();
@@ -169,7 +170,7 @@ export class Node {
   }
 }
 
-const getTypeFromNode = Util.memoize((node, ast) => new Type(node.type, ast), new WeakMap());
+const getTypeFromNode = memoize((node, ast) => new Type(node.type, ast), new WeakMap());
 
 export function PathOf(node, ast = $.data) {
   return new Pointer(deep.find(ast, n => n == node, deep.RETURN_PATH));
@@ -1178,11 +1179,11 @@ export async function AstDump(compiler, source, args, force) {
       return data;
     },
     files() {
-      return Util.unique(this.data.inner.map(n => n.loc.file).filter(file => file != undefined));
+      return unique(this.data.inner.map(n => n.loc.file).filter(file => file != undefined));
     }
   });
 
-  r = Util.define(r, {
+  r = define(r, {
     matchFiles: null,
     nomatchFiles: /^\/usr/,
     filter(pred, pred2 = (used, implicit) => used && !implicit) {
@@ -1259,10 +1260,10 @@ export function NodeType(n) {
           type = Type.declarations.get(t.desugaredQualType);
         }
 
-        if(Util.isObject(type) && Util.isObject(type.type)) type = type.type;
+        if(isObject(type) && isObject(type.type)) type = type.type;
         return new Type(type);
       })(n.type)
-    : NodeType(deep.find(ast, n => Util.isObject(n) && n.type).value);
+    : NodeType(deep.find(ast, n => isObject(n) && n.type).value);
 }
 
 export function NodeName(n, name) {
@@ -2318,7 +2319,7 @@ export function PrintAst(node, ast) {
 }
 
 export function isNode(obj) {
-  return Util.isObject(obj) && typeof obj.kind == 'string';
+  return isObject(obj) && typeof obj.kind == 'string';
 }
 
 export function GetType(name_or_id, ast = $.data) {

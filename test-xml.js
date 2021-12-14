@@ -1,3 +1,4 @@
+import { define, isObject, memoize, unique } from './lib/misc.js';
 import PortableFileSystem from './lib/filesystem.js';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
@@ -60,7 +61,7 @@ const GeneratePalette = (counts = { h: 3, s: 3, l: 5 }, deltas = { h: 360, s: 10
     });
   //ret = ret.sort((a,b) => a.compareTo(b));
   //ret=ret.filter((hsla,i,arr) => arr.findIndex(item => item.compareTo(hsla) == 0) == i);
-  return ret; //Util.unique(ret, (a,b) => a.compareTo(b));
+  return ret; //unique(ret, (a,b) => a.compareTo(b));
 };
 
 async function main(...args) {
@@ -126,7 +127,7 @@ async function main(...args) {
         ...key.walk((p, i, abort, skip) => {
           let r;
           let value = deep.get(xml[0], p);
-          const children = Util.isObject(value) && value.children ? value.children : [];
+          const children = isObject(value) && value.children ? value.children : [];
           const text = typeof children[0] == 'string' ? children[0] : '';
           if(['Next', 'settings', 'scope', 'name', 'gutter'].indexOf(text) != -1 || /* text.startsWith('#') ||*/ typeof children[0] != 'string') {
             skip();
@@ -408,7 +409,7 @@ async function main(...args) {
             const r = RGBA.nearestColor(oldColor, newPalette, distanceChecker);
             //    console.log('r', r , {oldColor});
 
-            if(Util.isObject(r) && r.index !== undefined) {
+            if(isObject(r) && r.index !== undefined) {
               const { value, index, distance } = r;
               // console.log('i=', i, 'r', Util.inspect({ value, index, distance }, { multiline: false }));
 

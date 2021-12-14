@@ -1,3 +1,4 @@
+import { define, isObject, memoize, unique } from './lib/misc.js';
 import PortableFileSystem from './lib/fs.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import PortableSpawn from './lib/spawn.js';
@@ -11,7 +12,7 @@ import { Type, Compile, AstDump, NodeType, NodeName, GetLoc, GetTypeStr } from '
 //prettier-ignore
 let fs, spawn;
 
-Util.define(Array.prototype, {
+define(Array.prototype, {
   findLastIndex(predicate) {
     for(let i = this.length - 1; i >= 0; --i) {
       const x = this[i];
@@ -142,7 +143,7 @@ async function main(...args) {
       //console.log("ast:", ast);
 
       let tree = new Tree(ast);
-      let flat = /*tree.flat();*/ deep.flatten(ast, new Map(), (v, p) => ['inner', 'loc', 'range'].indexOf(p[p.length - 1]) == -1 && Util.isObject(v) /*&& 'kind' in v*/);
+      let flat = /*tree.flat();*/ deep.flatten(ast, new Map(), (v, p) => ['inner', 'loc', 'range'].indexOf(p[p.length - 1]) == -1 && isObject(v) /*&& 'kind' in v*/);
       let locations = [];
       let l = Object.setPrototypeOf({}, { toString() {} });
       //let path = new WeakMap();
@@ -174,7 +175,7 @@ async function main(...args) {
         entry[2] = l;
         locations.push(l);
       }
-      for(let [n, p] of deep.iterate(ast, v => Util.isObject(v))) {
+      for(let [n, p] of deep.iterate(ast, v => isObject(v))) {
         if(/(loc|range)/.test(p[p.length - 1] + '')) deep.unset(ast, p);
       }
       ListNodes(params['system-includes']);

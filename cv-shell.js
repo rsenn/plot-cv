@@ -2,7 +2,7 @@ import * as cv from 'opencv';
 import Util from './lib/util.js';
 import { toArrayBuffer, toString, escape, quote, define, extendArray, memoize, getFunctionArguments, glob, GLOB_TILDE, fnmatch, wordexp } from './lib/misc.js';
 import * as misc from './lib/misc.js';
-import * as util from 'util';
+import * as util from './lib/misc.js';
 import * as deep from './lib/deep.js';
 import path from './lib/path.js';
 import { Console } from 'console';

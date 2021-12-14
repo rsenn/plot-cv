@@ -1,3 +1,4 @@
+import { define, isObject, memoize, unique } from './lib/misc.js';
 import { h, Fragment, html, render, Component, useState, useEffect, useRef, useCallback, Portal, ReactComponent, toChildArray /*, cloneElement*/ } from './lib/dom/preactComponent.js';
 //import { isValidElement } from './lib/compat.mjs';
 
@@ -22,7 +23,7 @@ export const Ruler = ({ handleChange, style = {}, class: className }) => {
   let commands;
 
   handlers.subscribe(value => {
-    if(!commands && Util.isObject(value)) commands = value;
+    if(!commands && isObject(value)) commands = value;
     /*console.log('trkl handlers value =', value);
     //console.log('commands =', commands);*/
   });
@@ -256,7 +257,7 @@ export const FloatingPanel = ({ children, className, onSize, onHide, style = {},
     const tmpSize = onSize();
     noUpdate = true;
     // if(tmpSize.width != width || tmpSize.height != height)
-    if(Util.isObject(tmpSize) && (tmpSize.width === undefined || tmpSize.height === undefined)) if (width !== undefined && height !== undefined) onSize({ width, height });
+    if(isObject(tmpSize) && (tmpSize.width === undefined || tmpSize.height === undefined)) if (width !== undefined && height !== undefined) onSize({ width, height });
     noUpdate = false;
   }
   const hasOnHide = typeof onHide == 'function' && typeof onHide.subscribe == 'function';

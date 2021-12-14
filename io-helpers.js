@@ -3,7 +3,7 @@ import * as fs from 'fs';
 //import * as std from 'std';
 import Util from './lib/util.js';
 import * as path from './lib/path.js';
-import { types } from 'util';
+import { types } from './lib/misc.js';
 
 export function IfDebug(token) {
   const { DEBUG = '' } = process.env;

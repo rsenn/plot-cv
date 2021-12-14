@@ -1,3 +1,4 @@
+import { define, isObject, memoize, unique } from './lib/misc.js';
 import Util from './lib/util.js';
 import * as cv from 'opencv';
 
@@ -29,7 +30,7 @@ export class NumericParam extends Param {
     const clamp = MinMax(min, max);
     this.value = clamp(value);
     Object.assign(this, { default: value, min, max });
-    Util.define(this, { step, clamp });
+    define(this, { step, clamp });
   }
 
   get() {
@@ -89,7 +90,7 @@ export class EnumParam extends NumericParam {
       values = Util.isArray(args[0]) ? args[0] : args;
     }
     super(init, 0, values.length - 1);
-    Util.define(this, { values });
+    define(this, { values });
   }
 
   get() {
@@ -113,7 +114,7 @@ export function ParamNavigator(map, index = 0) {
 
   // console.log('map:', map);
 
-  Util.define(this, {
+  define(this, {
     map,
     index,
     next() {
@@ -133,13 +134,13 @@ export function ParamNavigator(map, index = 0) {
     }
   });
 }
-Util.define(ParamNavigator.prototype, {
+define(ParamNavigator.prototype, {
   nameOf(param) {
     for(let [name, value] of this.map) if(value === param) return name;
   }
 });
 
-Util.define(ParamNavigator.prototype, {
+define(ParamNavigator.prototype, {
   at(index) {
     const { map } = this;
     return [...map.entries()][index];

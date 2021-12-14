@@ -1,3 +1,4 @@
+import { define, isObject, memoize, unique } from './lib/misc.js';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import PortableFileSystem from './lib/filesystem.js';
@@ -170,7 +171,7 @@ async function main(...args) {
 
     let tree = new Tree(xml);
 
-    let array = tree.find(n => Util.isObject(n) && n.tagName == 'plist');
+    let array = tree.find(n => isObject(n) && n.tagName == 'plist');
     let objs = Element2Object(array);
 
     /*for(let obj of objs) {
@@ -190,7 +191,7 @@ async function main(...args) {
     //  console.log('xml:', xml);
     console.log('file:', file);
     let st = new Tree(objs);
-    let pairs = st.flat(([, node]) => Util.isObject(node) && node instanceof Pair);
+    let pairs = st.flat(([, node]) => isObject(node) && node instanceof Pair);
 
     let scopes = [];
 
@@ -218,7 +219,7 @@ async function main(...args) {
     let str = toXML(xml);
     //    console.log('str:', str);
     WriteFile(file, str);
-    scopes = Util.unique(scopes)
+    scopes = unique(scopes)
       .filter(s => !/(^col_|^-$|^\s*$)/.test(s) && !/^\s*$/.test(s))
       .sort();
     console.log('scopes:', scopes);

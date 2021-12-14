@@ -1,3 +1,4 @@
+import { define, isObject, memoize, unique } from './lib/misc.js';
 import { ECMAScriptParser, PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
 import { ESNode, ImportDeclaration, Identifier, TemplateLiteral, CallExpression } from './lib/ecmascript/estree.js';
@@ -148,7 +149,7 @@ function processFile(file, params) {
     console.log('parseProgram token', parser.token);
     console.log('parseProgram loc', parser.lexer.loc + '');
     console.log('parseProgram ERROR:', err);
-    if(Util.isObject(err)) {
+    if(isObject(err)) {
       console.log('parseProgram ERROR message:', err.message);
       console.log('parseProgram ERROR stack:', err.stack);
     }
@@ -208,7 +209,7 @@ function processFile(file, params) {
     let importIdentifiers = importStatements.map(([p, n]) => [p, n.identifiers ? n.identifiers : n]).map(([p, n]) => [p, n.declarations ? n.declarations : n]);
     console.log('importIdentifiers:', importIdentifiers);
 
-    console.log('importIdentifiers:', Util.unique(importIdentifiers.flat()).join(', '));
+    console.log('importIdentifiers:', unique(importIdentifiers.flat()).join(', '));
   }
 
   //  await ConsoleSetup({ depth: Infinity });

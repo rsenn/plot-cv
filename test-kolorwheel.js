@@ -1,3 +1,4 @@
+import { define, isObject, memoize, unique } from './lib/misc.js';
 import KolorWheel from './lib/KolorWheel.js';
 import { RGBA, HSLA } from './lib/color.js';
 import Util from './lib/util.js';
@@ -150,7 +151,7 @@ for(let name in layerColors) {
   layerColors[name] = c;
 }
 
-const allColors = Util.unique(Object.values(layerColors));
+const allColors = unique(Object.values(layerColors));
 //console.log('allColors: ' + allColors);
 
 let keyList = [];
