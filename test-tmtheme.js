@@ -1,3 +1,4 @@
+import { define, isObject, memoize, unique } from './lib/misc.js';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import PortableFileSystem from './lib/filesystem.js';
@@ -35,9 +36,7 @@ class PList extends Array {
     this.push(...args);
   }
   [Symbol.for('nodejs.util.inspect.custom')](options) {
-    return `\x1b[1;31mPList\x1b[0m [\n  ${this.map(item =>
-      (item.inspect ? item.inspect(options) : console.inspect(item, options)).replace(/\n/g, '\n    ')
-    ).join(',\n  ')}\n]`;
+    return `\x1b[1;31mPList\x1b[0m [\n  ${this.map(item => (item.inspect ? item.inspect(options) : console.inspect(item, options)).replace(/\n/g, '\n    ')).join(',\n  ')}\n]`;
   }
 }
 
@@ -65,17 +64,8 @@ class Dict extends Array {
   [Symbol.for('nodejs.util.inspect.custom')](options) {
     return `\x1b[1;31mDict\x1b[0m {\n  ${this.map(([key, value]) => {
       let s = key + ' => ';
-      if(value instanceof Array)
-        s +=
-          '[\n    ' +
-          value
-            .map(item =>
-              (item.inspect ? item.inspect(options) : console.inspect(item, options)).replace(/\n/g, '\n    ')
-            )
-            .join(',\n    ') +
-          '\n  ]';
-      else
-        s += `${(value.inspect ? value.inspect(options) : console.inspect(value, options)).replace(/\n/g, '\n    ')}`;
+      if(value instanceof Array) s += '[\n    ' + value.map(item => (item.inspect ? item.inspect(options) : console.inspect(item, options)).replace(/\n/g, '\n    ')).join(',\n    ') + '\n  ]';
+      else s += `${(value.inspect ? value.inspect(options) : console.inspect(value, options)).replace(/\n/g, '\n    ')}`;
       return s;
     }).join(',\n  ')}\n}`;
   }
@@ -181,7 +171,7 @@ async function main(...args) {
 
     let tree = new Tree(xml);
 
-    let array = tree.find(n => Util.isObject(n) && n.tagName == 'plist');
+    let array = tree.find(n => isObject(n) && n.tagName == 'plist');
     let objs = Element2Object(array);
 
     /*for(let obj of objs) {
@@ -201,14 +191,12 @@ async function main(...args) {
     //  console.log('xml:', xml);
     console.log('file:', file);
     let st = new Tree(objs);
-    let pairs = st.flat(([, node]) => Util.isObject(node) && node instanceof Pair);
+    let pairs = st.flat(([, node]) => isObject(node) && node instanceof Pair);
 
     let scopes = [];
 
     if(/\.tmLanguage$/.test(file)) {
-      scopes.push(
-        ...[...pairs.values()].filter(pair => pair.key == 'name' && /\./.test(pair.value)).map(pair => pair.value)
-      );
+      scopes.push(...[...pairs.values()].filter(pair => pair.key == 'name' && /\./.test(pair.value)).map(pair => pair.value));
       //console.log('scopes:', scopes);
     } else {
       let a = [...pairs.values()].filter(pair => pair.key == 'scope' && /\./.test(pair.value)).map(pair => pair.value);
@@ -231,7 +219,7 @@ async function main(...args) {
     let str = toXML(xml);
     //    console.log('str:', str);
     WriteFile(file, str);
-    scopes = Util.unique(scopes)
+    scopes = unique(scopes)
       .filter(s => !/(^col_|^-$|^\s*$)/.test(s) && !/^\s*$/.test(s))
       .sort();
     console.log('scopes:', scopes);

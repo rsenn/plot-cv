@@ -1,0 +1,57 @@
+/*list, .list {
+  display:  grid;
+  grid-template-columns: 4em 1fr 100px 200px  ;
+  grid-column-gap: 1em;
+  width:  100vw;
+}*/
+table {
+
+}
+.preformatted {
+    font-family: monospace;
+    white-space: pre;
+}
+
+.item {
+  margin: 1px;
+  word-break: keep-all;
+  white-space: nowrap; 
+  vertical-align:  top;
+}
+.name {
+  overflow-x: hidden;
+  min-width:  100px;
+    word-break: break-all;
+}
+.name > a {
+  white-space: wrap;
+ word-break: break-all;
+
+}
+td.size {
+  text-align: right;
+}
+
+td.mtime, td.time {
+  text-align: center  ;
+}
+td {
+    font-weight:  0;
+
+}
+th {
+  font-weight:  0;
+  font-size: 13px;
+  text-align:  left;
+}
+tr.head > th {  border-bottom: 1px solid black;
+}
+th > a {
+  color:  black;
+  text-decoration: none;
+}
+
+th > a:hover {
+  /*color:  rgba(0,0,255,1);*/
+  text-decoration: underline;
+}

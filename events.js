@@ -1,3 +1,4 @@
+import { define, isObject, memoize, unique } from './lib/misc.js';
 import Util from './lib/util.js';
 import { Repeater } from './lib/repeater/repeater.js';
 export { EventEmitter, EventTarget } from './lib/events.js';
@@ -7,16 +8,14 @@ export function Emitter(target) {
   let emitter = new.target ? this : {};
   Object.assign(emitter, {
     on: (type, handler) => (listeners.set(type, handler), target.addEventListener(type, handler), emitter),
-    off: (type, handler) => (
-      target.removeEventListener(type, handler || listeners.get(type)), listeners.delete(type), emitter
-    ),
+    off: (type, handler) => (target.removeEventListener(type, handler || listeners.get(type)), listeners.delete(type), emitter),
     reset: () => {
       for(let [type, handler] of listeners) target.removeEventListener(type, handler);
       listeners.clear();
       return emitter;
     }
   });
-  return Util.define(emitter, { listeners, target });
+  return define(emitter, { listeners, target });
 }
 
 export function EventIterator(events, target = Util.tryCatch(() => window)) {
@@ -37,7 +36,7 @@ export function EventIterator(events, target = Util.tryCatch(() => window)) {
       console.log('unregistered', events);*/
     emitter.reset();
   });
-  return Util.define(iter, { emitter, target });
+  return define(iter, { emitter, target });
   iter.emitter = emitter;
   return iter;
 }

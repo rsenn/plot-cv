@@ -1,3 +1,4 @@
+import { define, isObject, memoize, unique } from './lib/misc.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import PortableFileSystem from './lib/filesystem.js';
 import tXml from './lib/tXml.js';
@@ -8,7 +9,7 @@ let filesystem;
 
 class Node {
   constructor(raw, path) {
-    Util.define(this, { raw, path });
+    define(this, { raw, path });
     this.raw = raw;
     this.path = path;
   }
@@ -32,7 +33,7 @@ const proxyObject = (root, handler) => {
 
           if(key == 'attributes') return prop;
 
-          if(key !== 'attributes' && (Util.isObject(prop) || Util.isArray(prop))) return new node([...path, key]);
+          if(key !== 'attributes' && (isObject(prop) || Util.isArray(prop))) return new node([...path, key]);
 
           return handler && handler.get ? handler.get(prop, key) : prop;
         },
@@ -85,7 +86,7 @@ async function main() {
     p,
     (
       o //console.log('o:', o);
-    ) => Util.isObject(o) && o.attributes !== undefined && o.name !== undefined
+    ) => isObject(o) && o.attributes !== undefined && o.name !== undefined
   );
   //console.log('result:', result);
 

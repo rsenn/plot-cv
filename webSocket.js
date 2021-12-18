@@ -1,7 +1,8 @@
 import { Message } from './message.js';
 import Util from './lib/util.js';
 import { Alea } from './lib/alea.js';
-import Timers, { TimeoutError } from './lib/repeater/timers.js';
+import { TimeoutError } from './lib/repeater/timers.js';
+import * as Timers from './lib/repeater/timers.js';
 
 const prng = new Alea();
 prng.seed(Date.now());
@@ -72,11 +73,7 @@ function sendMany(except, msg, ...args) {
     msg = new Message(msg, ...args);
     msg = msg.data;
   }
-  return Promise.all(
-    sockets
-      .filter(sock => !(sock == except || sock.id == except || sock.ws == except))
-      .map(sock => sendTo.call(this, sock, msg))
-  );
+  return Promise.all(sockets.filter(sock => !(sock == except || sock.id == except || sock.ws == except)).map(sock => sendTo.call(this, sock, msg)));
 }
 
 export class Socket {

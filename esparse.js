@@ -7,7 +7,7 @@ import Tree from './lib/tree.js';
 import { Console } from 'console';
 import fs from 'fs';
 import * as path from 'path';
-import { inspect } from 'util';
+import { inspect } from './lib/misc.js';
 
 function WriteFile(name, data) {
   if(Util.isArray(data)) data = data.join('\n');
@@ -147,10 +147,7 @@ function processFile(file, params) {
   const isImport = node => node instanceof ImportDeclaration;
 
   let commentMap = new Map(
-    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
-      pos * 10 - 1,
-      { comment, pos, len, node }
-    ]),
+    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node }]),
     (a, b) => a - b
   );
 
@@ -158,10 +155,7 @@ function processFile(file, params) {
 
   const output_file = params['output-js'] ?? path.basename(file, path.extname(file)) + '.es';
 
-  WriteFile(
-    params['output-ast'] ?? path.basename(file, path.extname(file)) + '.ast.json',
-    JSON.stringify(ast /*.toJSON()*/, null, 2)
-  );
+  WriteFile(params['output-ast'] ?? path.basename(file, path.extname(file)) + '.ast.json', JSON.stringify(ast /*.toJSON()*/, null, 2));
 }
 
 function finish(err) {

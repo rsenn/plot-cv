@@ -3,32 +3,16 @@ import { choice, seq, token, char, regex, option, any, many, eof, ignore, concat
 function wrap(parser, name) {
   return (str, pos) => {
     let r = parser(str, pos);
-    if(r[0] || name.startsWith('direct'))
-      console.log('matched (' + name + ') ' + pos + ' - ' + r[2] + ": '", r[1], "'");
+    if(r[0] || name.startsWith('direct')) console.log('matched (' + name + ') ' + pos + ' - ' + r[2] + ": '", r[1], "'");
     return r;
   };
 }
 function primaryExpression(...args) {
-  return wrap(
-    choice(
-      Identifier,
-      Constant,
-      many(StringLiteral),
-      seq(token('('), expression, token(')')),
-      genericSelection,
-      seq(option(token('__extension__')), token('('), compoundStatement, token(')')),
-      seq(token('__builtin_va_arg'), token('('), unaryExpression, token(','), typeName, token(')')),
-      seq(token('__builtin_offsetof'), token('('), typeName, token(','), unaryExpression, token(')'))
-    ),
-    'primaryExpression'
-  )(...args);
+  return wrap(choice(Identifier, Constant, many(StringLiteral), seq(token('('), expression, token(')')), genericSelection, seq(option(token('__extension__')), token('('), compoundStatement, token(')')), seq(token('__builtin_va_arg'), token('('), unaryExpression, token(','), typeName, token(')')), seq(token('__builtin_offsetof'), token('('), typeName, token(','), unaryExpression, token(')'))), 'primaryExpression')(...args);
 }
 
 function genericSelection(...args) {
-  return wrap(
-    seq(token('_Generic'), token('('), assignmentExpression, token(','), genericAssocList, token(')')),
-    'genericSelection'
-  )(...args);
+  return wrap(seq(token('_Generic'), token('('), assignmentExpression, token(','), genericAssocList, token(')')), 'genericSelection')(...args);
 }
 
 function genericAssocList(...args) {
@@ -36,67 +20,19 @@ function genericAssocList(...args) {
 }
 
 function genericAssociation(...args) {
-  return wrap(
-    choice(seq(typeName, token(':'), assignmentExpression), seq(token('default'), token(':'), assignmentExpression)),
-    'genericAssociation'
-  )(...args);
+  return wrap(choice(seq(typeName, token(':'), assignmentExpression), seq(token('default'), token(':'), assignmentExpression)), 'genericAssociation')(...args);
 }
 
 function postfixExpression(...args) {
-  return wrap(
-    seq(
-      choice(
-        primaryExpression,
-        seq(token('('), typeName, token(')'), token('{'), initializerList, token('}')),
-        seq(token('('), typeName, token(')'), token('{'), initializerList, token(','), token('}')),
-        seq(token('__extension__'), token('('), typeName, token(')'), token('{'), initializerList, token('}')),
-        seq(
-          token('__extension__'),
-          token('('),
-          typeName,
-          token(')'),
-          token('{'),
-          initializerList,
-          token(','),
-          token('}')
-        )
-      ),
-      option(
-        choice(
-          seq(token('['), expression, token(']')),
-          seq(token('('), option(argumentExpressionList), token(')')),
-          seq(token('.'), Identifier),
-          seq(token('->'), Identifier),
-          token('++'),
-          token('--')
-        )
-      )
-    ),
-    'postfixExpression'
-  )(...args);
+  return wrap(seq(choice(primaryExpression, seq(token('('), typeName, token(')'), token('{'), initializerList, token('}')), seq(token('('), typeName, token(')'), token('{'), initializerList, token(','), token('}')), seq(token('__extension__'), token('('), typeName, token(')'), token('{'), initializerList, token('}')), seq(token('__extension__'), token('('), typeName, token(')'), token('{'), initializerList, token(','), token('}'))), option(choice(seq(token('['), expression, token(']')), seq(token('('), option(argumentExpressionList), token(')')), seq(token('.'), Identifier), seq(token('->'), Identifier), token('++'), token('--')))), 'postfixExpression')(...args);
 }
 
 function argumentExpressionList(...args) {
-  return wrap(
-    seq(assignmentExpression, option(seq(token(','), assignmentExpression))),
-    'argumentExpressionList'
-  )(...args);
+  return wrap(seq(assignmentExpression, option(seq(token(','), assignmentExpression))), 'argumentExpressionList')(...args);
 }
 
 function unaryExpression(...args) {
-  return wrap(
-    choice(
-      postfixExpression,
-      seq(token('++'), unaryExpression),
-      seq(token('--'), unaryExpression),
-      seq(unaryOperator, castExpression),
-      seq(token('sizeof'), unaryExpression),
-      seq(token('sizeof'), token('('), typeName, token(')')),
-      seq(token('_Alignof'), token('('), typeName, token(')')),
-      seq(token('&&'), Identifier)
-    ),
-    'unaryExpression'
-  )(...args);
+  return wrap(choice(postfixExpression, seq(token('++'), unaryExpression), seq(token('--'), unaryExpression), seq(unaryOperator, castExpression), seq(token('sizeof'), unaryExpression), seq(token('sizeof'), token('('), typeName, token(')')), seq(token('_Alignof'), token('('), typeName, token(')')), seq(token('&&'), Identifier)), 'unaryExpression')(...args);
 }
 
 function unaryOperator(...args) {
@@ -104,69 +40,27 @@ function unaryOperator(...args) {
 }
 
 function castExpression(...args) {
-  return wrap(
-    choice(
-      seq(token('('), typeName, token(')'), castExpression),
-      seq(token('__extension__'), token('('), typeName, token(')'), castExpression),
-      unaryExpression,
-      DigitSequence
-    ),
-    'castExpression'
-  )(...args);
+  return wrap(choice(seq(token('('), typeName, token(')'), castExpression), seq(token('__extension__'), token('('), typeName, token(')'), castExpression), unaryExpression, DigitSequence), 'castExpression')(...args);
 }
 
 function multiplicativeExpression(...args) {
-  return wrap(
-    seq(
-      castExpression,
-      option(choice(seq(token('*'), castExpression), seq(token('/'), castExpression), seq(token('%'), castExpression)))
-    ),
-    'multiplicativeExpression'
-  )(...args);
+  return wrap(seq(castExpression, option(choice(seq(token('*'), castExpression), seq(token('/'), castExpression), seq(token('%'), castExpression)))), 'multiplicativeExpression')(...args);
 }
 
 function additiveExpression(...args) {
-  return wrap(
-    seq(
-      multiplicativeExpression,
-      option(choice(seq(token('+'), multiplicativeExpression), seq(token('-'), multiplicativeExpression)))
-    ),
-    'additiveExpression'
-  )(...args);
+  return wrap(seq(multiplicativeExpression, option(choice(seq(token('+'), multiplicativeExpression), seq(token('-'), multiplicativeExpression)))), 'additiveExpression')(...args);
 }
 
 function shiftExpression(...args) {
-  return wrap(
-    seq(additiveExpression, option(choice(seq(token('<<'), additiveExpression), seq(token('>>'), additiveExpression)))),
-    'shiftExpression'
-  )(...args);
+  return wrap(seq(additiveExpression, option(choice(seq(token('<<'), additiveExpression), seq(token('>>'), additiveExpression)))), 'shiftExpression')(...args);
 }
 
 function relationalExpression(...args) {
-  return wrap(
-    seq(
-      shiftExpression,
-      option(
-        choice(
-          seq(token('<'), shiftExpression),
-          seq(token('>'), shiftExpression),
-          seq(token('<='), shiftExpression),
-          seq(token('>='), shiftExpression)
-        )
-      )
-    ),
-    'relationalExpression'
-  )(...args);
+  return wrap(seq(shiftExpression, option(choice(seq(token('<'), shiftExpression), seq(token('>'), shiftExpression), seq(token('<='), shiftExpression), seq(token('>='), shiftExpression)))), 'relationalExpression')(...args);
 }
 
 function equalityExpression(...args) {
-  return wrap(
-    seq(
-      relationalExpression,
-      option(choice(seq(token('=='), relationalExpression), seq(token('!='), relationalExpression)))
-    ),
-    'equalityExpression'
-  )(...args);
+  return wrap(seq(relationalExpression, option(choice(seq(token('=='), relationalExpression), seq(token('!='), relationalExpression)))), 'equalityExpression')(...args);
 }
 
 function andExpression(...args) {
@@ -178,57 +72,27 @@ function exclusiveOrExpression(...args) {
 }
 
 function inclusiveOrExpression(...args) {
-  return wrap(
-    seq(exclusiveOrExpression, option(seq(token('|'), exclusiveOrExpression))),
-    'inclusiveOrExpression'
-  )(...args);
+  return wrap(seq(exclusiveOrExpression, option(seq(token('|'), exclusiveOrExpression))), 'inclusiveOrExpression')(...args);
 }
 
 function logicalAndExpression(...args) {
-  return wrap(
-    seq(inclusiveOrExpression, option(seq(token('&&'), inclusiveOrExpression))),
-    'logicalAndExpression'
-  )(...args);
+  return wrap(seq(inclusiveOrExpression, option(seq(token('&&'), inclusiveOrExpression))), 'logicalAndExpression')(...args);
 }
 
 function logicalOrExpression(...args) {
-  return wrap(
-    seq(logicalAndExpression, option(seq(token('||'), logicalAndExpression))),
-    'logicalOrExpression'
-  )(...args);
+  return wrap(seq(logicalAndExpression, option(seq(token('||'), logicalAndExpression))), 'logicalOrExpression')(...args);
 }
 
 function conditionalExpression(...args) {
-  return wrap(
-    seq(logicalOrExpression, option(seq(token('?'), expression, token(':'), conditionalExpression))),
-    'conditionalExpression'
-  )(...args);
+  return wrap(seq(logicalOrExpression, option(seq(token('?'), expression, token(':'), conditionalExpression))), 'conditionalExpression')(...args);
 }
 
 function assignmentExpression(...args) {
-  return wrap(
-    choice(conditionalExpression, seq(unaryExpression, assignmentOperator, assignmentExpression), DigitSequence),
-    'assignmentExpression'
-  )(...args);
+  return wrap(choice(conditionalExpression, seq(unaryExpression, assignmentOperator, assignmentExpression), DigitSequence), 'assignmentExpression')(...args);
 }
 
 function assignmentOperator(...args) {
-  return wrap(
-    choice(
-      token('='),
-      token('*='),
-      token('/='),
-      token('%='),
-      token('+='),
-      token('-='),
-      token('<<='),
-      token('>>='),
-      token('&='),
-      token('^='),
-      token('|=')
-    ),
-    'assignmentOperator'
-  )(...args);
+  return wrap(choice(token('='), token('*='), token('/='), token('%='), token('+='), token('-='), token('<<='), token('>>='), token('&='), token('^='), token('|=')), 'assignmentOperator')(...args);
 }
 
 function expression(...args) {
@@ -240,14 +104,7 @@ function constantExpression(...args) {
 }
 
 function declaration(...args) {
-  return wrap(
-    choice(
-      seq(declarationSpecifiers, initDeclaratorList, token(';')),
-      seq(declarationSpecifiers, token(';')),
-      staticAssertDeclaration
-    ),
-    'declaration'
-  )(...args);
+  return wrap(choice(seq(declarationSpecifiers, initDeclaratorList, token(';')), seq(declarationSpecifiers, token(';')), staticAssertDeclaration), 'declaration')(...args);
 }
 
 function declarationSpecifiers(...args) {
@@ -259,10 +116,7 @@ function declarationSpecifiers2(...args) {
 }
 
 function declarationSpecifier(...args) {
-  return wrap(
-    choice(storageClassSpecifier, typeSpecifier, typeQualifier, functionSpecifier, alignmentSpecifier),
-    'declarationSpecifier'
-  )(...args);
+  return wrap(choice(storageClassSpecifier, typeSpecifier, typeQualifier, functionSpecifier, alignmentSpecifier), 'declarationSpecifier')(...args);
 }
 
 function initDeclaratorList(...args) {
@@ -274,65 +128,15 @@ function initDeclarator(...args) {
 }
 
 function storageClassSpecifier(...args) {
-  return wrap(
-    choice(
-      token('typedef'),
-      token('extern'),
-      token('static'),
-      token('_Thread_local'),
-      token('auto'),
-      token('register')
-    ),
-    'storageClassSpecifier'
-  )(...args);
+  return wrap(choice(token('typedef'), token('extern'), token('static'), token('_Thread_local'), token('auto'), token('register')), 'storageClassSpecifier')(...args);
 }
 
 function typeSpecifier(...args) {
-  return wrap(
-    seq(
-      choice(
-        choice(
-          token('void'),
-          token('char'),
-          token('short'),
-          token('int'),
-          token('long'),
-          token('float'),
-          token('double'),
-          token('signed'),
-          token('unsigned'),
-          token('_Bool'),
-          token('_Complex'),
-          token('__m128'),
-          token('__m128d'),
-          token('__m128i')
-        ),
-        seq(
-          token('__extension__'),
-          token('('),
-          choice(token('__m128'), token('__m128d'), token('__m128i')),
-          token(')')
-        ),
-        atomicTypeSpecifier,
-        structOrUnionSpecifier,
-        enumSpecifier,
-        typedefName,
-        seq(token('__typeof__'), token('('), constantExpression, token(')'))
-      ),
-      option(pointer)
-    ),
-    'typeSpecifier'
-  )(...args);
+  return wrap(seq(choice(choice(token('void'), token('char'), token('short'), token('int'), token('long'), token('float'), token('double'), token('signed'), token('unsigned'), token('_Bool'), token('_Complex'), token('__m128'), token('__m128d'), token('__m128i')), seq(token('__extension__'), token('('), choice(token('__m128'), token('__m128d'), token('__m128i')), token(')')), atomicTypeSpecifier, structOrUnionSpecifier, enumSpecifier, typedefName, seq(token('__typeof__'), token('('), constantExpression, token(')'))), option(pointer)), 'typeSpecifier')(...args);
 }
 
 function structOrUnionSpecifier(...args) {
-  return wrap(
-    choice(
-      seq(structOrUnion, option(Identifier), token('{'), structDeclarationList, token('}')),
-      seq(structOrUnion, Identifier)
-    ),
-    'structOrUnionSpecifier'
-  )(...args);
+  return wrap(choice(seq(structOrUnion, option(Identifier), token('{'), structDeclarationList, token('}')), seq(structOrUnion, Identifier)), 'structOrUnionSpecifier')(...args);
 }
 
 function structOrUnion(...args) {
@@ -344,17 +148,11 @@ function structDeclarationList(...args) {
 }
 
 function structDeclaration(...args) {
-  return wrap(
-    choice(seq(specifierQualifierList, option(structDeclaratorList), token(';')), staticAssertDeclaration),
-    'structDeclaration'
-  )(...args);
+  return wrap(choice(seq(specifierQualifierList, option(structDeclaratorList), token(';')), staticAssertDeclaration), 'structDeclaration')(...args);
 }
 
 function specifierQualifierList(...args) {
-  return wrap(
-    choice(seq(typeSpecifier, option(specifierQualifierList)), seq(typeQualifier, option(specifierQualifierList))),
-    'specifierQualifierList'
-  )(...args);
+  return wrap(choice(seq(typeSpecifier, option(specifierQualifierList)), seq(typeQualifier, option(specifierQualifierList))), 'specifierQualifierList')(...args);
 }
 
 function structDeclaratorList(...args) {
@@ -366,14 +164,7 @@ function structDeclarator(...args) {
 }
 
 function enumSpecifier(...args) {
-  return wrap(
-    choice(
-      seq(token('enum'), option(Identifier), token('{'), enumeratorList, token('}')),
-      seq(token('enum'), option(Identifier), token('{'), enumeratorList, token(','), token('}')),
-      seq(token('enum'), Identifier)
-    ),
-    'enumSpecifier'
-  )(...args);
+  return wrap(choice(seq(token('enum'), option(Identifier), token('{'), enumeratorList, token('}')), seq(token('enum'), option(Identifier), token('{'), enumeratorList, token(','), token('}')), seq(token('enum'), Identifier)), 'enumSpecifier')(...args);
 }
 
 function enumeratorList(...args) {
@@ -381,10 +172,7 @@ function enumeratorList(...args) {
 }
 
 function enumerator(...args) {
-  return wrap(
-    choice(enumerationConstant, seq(enumerationConstant, token('='), constantExpression)),
-    'enumerator'
-  )(...args);
+  return wrap(choice(enumerationConstant, seq(enumerationConstant, token('='), constantExpression)), 'enumerator')(...args);
 }
 
 function enumerationConstant(...args) {
@@ -400,24 +188,11 @@ function typeQualifier(...args) {
 }
 
 function functionSpecifier(...args) {
-  return wrap(
-    choice(
-      choice(token('inline'), token('_Noreturn'), token('__inline__'), token('__stdcall')),
-      gccAttributeSpecifier,
-      seq(token('__declspec'), token('('), Identifier, token(')'))
-    ),
-    'functionSpecifier'
-  )(...args);
+  return wrap(choice(choice(token('inline'), token('_Noreturn'), token('__inline__'), token('__stdcall')), gccAttributeSpecifier, seq(token('__declspec'), token('('), Identifier, token(')'))), 'functionSpecifier')(...args);
 }
 
 function alignmentSpecifier(...args) {
-  return wrap(
-    choice(
-      seq(token('_Alignas'), token('('), typeName, token(')')),
-      seq(token('_Alignas'), token('('), constantExpression, token(')'))
-    ),
-    'alignmentSpecifier'
-  )(...args);
+  return wrap(choice(seq(token('_Alignas'), token('('), typeName, token(')')), seq(token('_Alignas'), token('('), constantExpression, token(')'))), 'alignmentSpecifier')(...args);
 }
 
 function declarator(...args) {
@@ -425,41 +200,15 @@ function declarator(...args) {
 }
 
 function directDeclarator(...args) {
-  return wrap(
-    seq(
-      choice(
-        Identifier,
-        seq(token('('), declarator, token(')')),
-        seq(Identifier, token(':'), DigitSequence),
-        seq(token('('), option(typeSpecifier), pointer, directDeclarator, token(')'))
-      ),
-      option(
-        choice(
-          seq(token('['), option(typeQualifierList), option(assignmentExpression), token(']')),
-          seq(token('['), token('static'), option(typeQualifierList), assignmentExpression, token(']')),
-          seq(token('['), typeQualifierList, token('static'), assignmentExpression, token(']')),
-          seq(token('['), option(typeQualifierList), token('*'), token(']')),
-          seq(token('('), parameterTypeList, token(')')),
-          seq(token('('), option(identifierList), token(')'))
-        )
-      )
-    ),
-    'directDeclarator'
-  )(...args);
+  return wrap(seq(choice(Identifier, seq(token('('), declarator, token(')')), seq(Identifier, token(':'), DigitSequence), seq(token('('), option(typeSpecifier), pointer, directDeclarator, token(')'))), option(choice(seq(token('['), option(typeQualifierList), option(assignmentExpression), token(']')), seq(token('['), token('static'), option(typeQualifierList), assignmentExpression, token(']')), seq(token('['), typeQualifierList, token('static'), assignmentExpression, token(']')), seq(token('['), option(typeQualifierList), token('*'), token(']')), seq(token('('), parameterTypeList, token(')')), seq(token('('), option(identifierList), token(')'))))), 'directDeclarator')(...args);
 }
 
 function gccDeclaratorExtension(...args) {
-  return wrap(
-    choice(seq(token('__asm'), token('('), many(StringLiteral), token(')')), gccAttributeSpecifier),
-    'gccDeclaratorExtension'
-  )(...args);
+  return wrap(choice(seq(token('__asm'), token('('), many(StringLiteral), token(')')), gccAttributeSpecifier), 'gccDeclaratorExtension')(...args);
 }
 
 function gccAttributeSpecifier(...args) {
-  return wrap(
-    seq(token('__attribute__'), token('('), token('('), gccAttributeList, token(')'), token(')')),
-    'gccAttributeSpecifier'
-  )(...args);
+  return wrap(seq(token('__attribute__'), token('('), token('('), gccAttributeList, token(')'), token(')')), 'gccAttributeSpecifier')(...args);
 }
 
 function gccAttributeList(...args) {
@@ -467,35 +216,15 @@ function gccAttributeList(...args) {
 }
 
 function gccAttribute(...args) {
-  return wrap(
-    choice(
-      seq(
-        invert(choice(token(','), token('('), token(')'))),
-        option(seq(token('('), option(argumentExpressionList), token(')')))
-      ),
-      empty()
-    ),
-    'gccAttribute'
-  )(...args);
+  return wrap(choice(seq(invert(choice(token(','), token('('), token(')'))), option(seq(token('('), option(argumentExpressionList), token(')')))), empty()), 'gccAttribute')(...args);
 }
 
 function nestedParenthesesBlock(...args) {
-  return wrap(
-    any(choice(invert(choice(token('('), token(')'))), seq(token('('), nestedParenthesesBlock, token(')')))),
-    'nestedParenthesesBlock'
-  )(...args);
+  return wrap(any(choice(invert(choice(token('('), token(')'))), seq(token('('), nestedParenthesesBlock, token(')')))), 'nestedParenthesesBlock')(...args);
 }
 
 function pointer(...args) {
-  return wrap(
-    choice(
-      seq(token('*'), option(typeQualifierList)),
-      seq(token('*'), option(typeQualifierList), pointer),
-      seq(token('^'), option(typeQualifierList)),
-      seq(token('^'), option(typeQualifierList), pointer)
-    ),
-    'pointer'
-  )(...args);
+  return wrap(choice(seq(token('*'), option(typeQualifierList)), seq(token('*'), option(typeQualifierList), pointer), seq(token('^'), option(typeQualifierList)), seq(token('^'), option(typeQualifierList), pointer)), 'pointer')(...args);
 }
 
 function typeQualifierList(...args) {
@@ -511,10 +240,7 @@ function parameterList(...args) {
 }
 
 function parameterDeclaration(...args) {
-  return wrap(
-    choice(seq(declarationSpecifiers, declarator), seq(declarationSpecifiers2, option(abstractDeclarator))),
-    'parameterDeclaration'
-  )(...args);
+  return wrap(choice(seq(declarationSpecifiers, declarator), seq(declarationSpecifiers2, option(abstractDeclarator))), 'parameterDeclaration')(...args);
 }
 
 function identifierList(...args) {
@@ -526,35 +252,11 @@ function typeName(...args) {
 }
 
 function abstractDeclarator(...args) {
-  return wrap(
-    choice(pointer, seq(option(pointer), directAbstractDeclarator, any(gccDeclaratorExtension))),
-    'abstractDeclarator'
-  )(...args);
+  return wrap(choice(pointer, seq(option(pointer), directAbstractDeclarator, any(gccDeclaratorExtension))), 'abstractDeclarator')(...args);
 }
 
 function directAbstractDeclarator(...args) {
-  return wrap(
-    seq(
-      choice(
-        seq(token('('), abstractDeclarator, token(')'), any(gccDeclaratorExtension)),
-        seq(token('['), option(typeQualifierList), option(assignmentExpression), token(']')),
-        seq(token('['), token('static'), option(typeQualifierList), assignmentExpression, token(']')),
-        seq(token('['), typeQualifierList, token('static'), assignmentExpression, token(']')),
-        seq(token('['), token('*'), token(']')),
-        seq(token('('), option(parameterTypeList), token(')'), any(gccDeclaratorExtension))
-      ),
-      option(
-        choice(
-          seq(token('['), option(typeQualifierList), option(assignmentExpression), token(']')),
-          seq(token('['), token('static'), option(typeQualifierList), assignmentExpression, token(']')),
-          seq(token('['), typeQualifierList, token('static'), assignmentExpression, token(']')),
-          seq(token('['), token('*'), token(']')),
-          seq(token('('), option(parameterTypeList), token(')'), any(gccDeclaratorExtension))
-        )
-      )
-    ),
-    'directAbstractDeclarator'
-  )(...args);
+  return wrap(seq(choice(seq(token('('), abstractDeclarator, token(')'), any(gccDeclaratorExtension)), seq(token('['), option(typeQualifierList), option(assignmentExpression), token(']')), seq(token('['), token('static'), option(typeQualifierList), assignmentExpression, token(']')), seq(token('['), typeQualifierList, token('static'), assignmentExpression, token(']')), seq(token('['), token('*'), token(']')), seq(token('('), option(parameterTypeList), token(')'), any(gccDeclaratorExtension))), option(choice(seq(token('['), option(typeQualifierList), option(assignmentExpression), token(']')), seq(token('['), token('static'), option(typeQualifierList), assignmentExpression, token(']')), seq(token('['), typeQualifierList, token('static'), assignmentExpression, token(']')), seq(token('['), token('*'), token(']')), seq(token('('), option(parameterTypeList), token(')'), any(gccDeclaratorExtension))))), 'directAbstractDeclarator')(...args);
 }
 
 function typedefName(...args) {
@@ -562,21 +264,11 @@ function typedefName(...args) {
 }
 
 function initializer(...args) {
-  return wrap(
-    choice(
-      assignmentExpression,
-      seq(token('{'), initializerList, token('}')),
-      seq(token('{'), initializerList, token(','), token('}'))
-    ),
-    'initializer'
-  )(...args);
+  return wrap(choice(assignmentExpression, seq(token('{'), initializerList, token('}')), seq(token('{'), initializerList, token(','), token('}'))), 'initializer')(...args);
 }
 
 function initializerList(...args) {
-  return wrap(
-    seq(seq(option(designation), initializer), option(seq(token(','), option(designation), initializer))),
-    'initializerList'
-  )(...args);
+  return wrap(seq(seq(option(designation), initializer), option(seq(token(','), option(designation), initializer))), 'initializerList')(...args);
 }
 
 function designation(...args) {
@@ -588,59 +280,19 @@ function designatorList(...args) {
 }
 
 function designator(...args) {
-  return wrap(
-    choice(seq(token('['), constantExpression, token(']')), seq(token('.'), Identifier)),
-    'designator'
-  )(...args);
+  return wrap(choice(seq(token('['), constantExpression, token(']')), seq(token('.'), Identifier)), 'designator')(...args);
 }
 
 function staticAssertDeclaration(...args) {
-  return wrap(
-    seq(
-      token('_Static_assert'),
-      token('('),
-      constantExpression,
-      token(','),
-      many(StringLiteral),
-      token(')'),
-      token(';')
-    ),
-    'staticAssertDeclaration'
-  )(...args);
+  return wrap(seq(token('_Static_assert'), token('('), constantExpression, token(','), many(StringLiteral), token(')'), token(';')), 'staticAssertDeclaration')(...args);
 }
 
 function statement(...args) {
-  return wrap(
-    choice(
-      labeledStatement,
-      compoundStatement,
-      expressionStatement,
-      selectionStatement,
-      iterationStatement,
-      jumpStatement,
-      seq(
-        choice(token('__asm'), token('__asm__')),
-        choice(token('volatile'), token('__volatile__')),
-        token('('),
-        option(seq(logicalOrExpression, any(seq(token(','), logicalOrExpression)))),
-        any(seq(token(':'), option(seq(logicalOrExpression, any(seq(token(','), logicalOrExpression)))))),
-        token(')'),
-        token(';')
-      )
-    ),
-    'statement'
-  )(...args);
+  return wrap(choice(labeledStatement, compoundStatement, expressionStatement, selectionStatement, iterationStatement, jumpStatement, seq(choice(token('__asm'), token('__asm__')), choice(token('volatile'), token('__volatile__')), token('('), option(seq(logicalOrExpression, any(seq(token(','), logicalOrExpression)))), any(seq(token(':'), option(seq(logicalOrExpression, any(seq(token(','), logicalOrExpression)))))), token(')'), token(';'))), 'statement')(...args);
 }
 
 function labeledStatement(...args) {
-  return wrap(
-    choice(
-      seq(Identifier, token(':'), statement),
-      seq(token('case'), constantExpression, token(':'), statement),
-      seq(token('default'), token(':'), statement)
-    ),
-    'labeledStatement'
-  )(...args);
+  return wrap(choice(seq(Identifier, token(':'), statement), seq(token('case'), constantExpression, token(':'), statement), seq(token('default'), token(':'), statement)), 'labeledStatement')(...args);
 }
 
 function compoundStatement(...args) {
@@ -660,34 +312,15 @@ function expressionStatement(...args) {
 }
 
 function selectionStatement(...args) {
-  return wrap(
-    choice(
-      seq(token('if'), token('('), expression, token(')'), statement, option(seq(token('else'), statement))),
-      seq(token('switch'), token('('), expression, token(')'), statement)
-    ),
-    'selectionStatement'
-  )(...args);
+  return wrap(choice(seq(token('if'), token('('), expression, token(')'), statement, option(seq(token('else'), statement))), seq(token('switch'), token('('), expression, token(')'), statement)), 'selectionStatement')(...args);
 }
 
 function iterationStatement(...args) {
-  return wrap(
-    choice(
-      seq(While, token('('), expression, token(')'), statement),
-      seq(Do, statement, While, token('('), expression, token(')'), token(';')),
-      seq(For, token('('), forCondition, token(')'), statement)
-    ),
-    'iterationStatement'
-  )(...args);
+  return wrap(choice(seq(While, token('('), expression, token(')'), statement), seq(Do, statement, While, token('('), expression, token(')'), token(';')), seq(For, token('('), forCondition, token(')'), statement)), 'iterationStatement')(...args);
 }
 
 function forCondition(...args) {
-  return wrap(
-    choice(
-      seq(forDeclaration, token(';'), option(forExpression), token(';'), option(forExpression)),
-      seq(option(expression), token(';'), option(forExpression), token(';'), option(forExpression))
-    ),
-    'forCondition'
-  )(...args);
+  return wrap(choice(seq(forDeclaration, token(';'), option(forExpression), token(';'), option(forExpression)), seq(option(expression), token(';'), option(forExpression), token(';'), option(forExpression))), 'forCondition')(...args);
 }
 
 function forDeclaration(...args) {
@@ -699,16 +332,7 @@ function forExpression(...args) {
 }
 
 function jumpStatement(...args) {
-  return wrap(
-    choice(
-      seq(token('goto'), Identifier, token(';')),
-      seq(token('continue'), token(';')),
-      seq(token('break'), token(';')),
-      seq(token('return'), option(expression), token(';')),
-      seq(token('goto'), unaryExpression, token(';'))
-    ),
-    'jumpStatement'
-  )(...args);
+  return wrap(choice(seq(token('goto'), Identifier, token(';')), seq(token('continue'), token(';')), seq(token('break'), token(';')), seq(token('return'), option(expression), token(';')), seq(token('goto'), unaryExpression, token(';'))), 'jumpStatement')(...args);
 }
 
 function compilationUnit(...args) {
@@ -724,10 +348,7 @@ function externalDeclaration(...args) {
 }
 
 function functionDefinition(...args) {
-  return wrap(
-    seq(option(declarationSpecifiers), declarator, option(declarationList), compoundStatement),
-    'functionDefinition'
-  )(...args);
+  return wrap(seq(option(declarationSpecifiers), declarator, option(declarationList), compoundStatement), 'functionDefinition')(...args);
 }
 
 function declarationList(...args) {
@@ -1111,10 +732,7 @@ function Digit(...args) {
 }
 
 function UniversalCharacterName(...args) {
-  return wrap(
-    choice(seq(token('\\u'), HexQuad), seq(token('\\U'), HexQuad, HexQuad)),
-    'UniversalCharacterName'
-  )(...args);
+  return wrap(choice(seq(token('\\u'), HexQuad), seq(token('\\U'), HexQuad, HexQuad)), 'UniversalCharacterName')(...args);
 }
 
 function HexQuad(...args) {
@@ -1126,15 +744,7 @@ function Constant(...args) {
 }
 
 function IntegerConstant(...args) {
-  return wrap(
-    choice(
-      seq(DecimalConstant, option(IntegerSuffix)),
-      seq(OctalConstant, option(IntegerSuffix)),
-      seq(HexadecimalConstant, option(IntegerSuffix)),
-      BinaryConstant
-    ),
-    'IntegerConstant'
-  )(...args);
+  return wrap(choice(seq(DecimalConstant, option(IntegerSuffix)), seq(OctalConstant, option(IntegerSuffix)), seq(HexadecimalConstant, option(IntegerSuffix)), BinaryConstant), 'IntegerConstant')(...args);
 }
 
 function BinaryConstant(...args) {
@@ -1170,15 +780,7 @@ function HexadecimalDigit(...args) {
 }
 
 function IntegerSuffix(...args) {
-  return wrap(
-    choice(
-      seq(UnsignedSuffix, option(LongSuffix)),
-      seq(UnsignedSuffix, LongLongSuffix),
-      seq(LongSuffix, option(UnsignedSuffix)),
-      seq(LongLongSuffix, option(UnsignedSuffix))
-    ),
-    'IntegerSuffix'
-  )(...args);
+  return wrap(choice(seq(UnsignedSuffix, option(LongSuffix)), seq(UnsignedSuffix, LongLongSuffix), seq(LongSuffix, option(UnsignedSuffix)), seq(LongLongSuffix, option(UnsignedSuffix))), 'IntegerSuffix')(...args);
 }
 
 function UnsignedSuffix(...args) {
@@ -1198,37 +800,19 @@ function FloatingConstant(...args) {
 }
 
 function DecimalFloatingConstant(...args) {
-  return wrap(
-    choice(
-      seq(FractionalConstant, option(ExponentPart), option(FloatingSuffix)),
-      seq(DigitSequence, ExponentPart, option(FloatingSuffix))
-    ),
-    'DecimalFloatingConstant'
-  )(...args);
+  return wrap(choice(seq(FractionalConstant, option(ExponentPart), option(FloatingSuffix)), seq(DigitSequence, ExponentPart, option(FloatingSuffix))), 'DecimalFloatingConstant')(...args);
 }
 
 function HexadecimalFloatingConstant(...args) {
-  return wrap(
-    choice(
-      seq(HexadecimalPrefix, HexadecimalFractionalConstant, BinaryExponentPart, option(FloatingSuffix)),
-      seq(HexadecimalPrefix, HexadecimalDigitSequence, BinaryExponentPart, option(FloatingSuffix))
-    ),
-    'HexadecimalFloatingConstant'
-  )(...args);
+  return wrap(choice(seq(HexadecimalPrefix, HexadecimalFractionalConstant, BinaryExponentPart, option(FloatingSuffix)), seq(HexadecimalPrefix, HexadecimalDigitSequence, BinaryExponentPart, option(FloatingSuffix))), 'HexadecimalFloatingConstant')(...args);
 }
 
 function FractionalConstant(...args) {
-  return wrap(
-    choice(seq(option(DigitSequence), token('.'), DigitSequence), seq(DigitSequence, token('.'))),
-    'FractionalConstant'
-  )(...args);
+  return wrap(choice(seq(option(DigitSequence), token('.'), DigitSequence), seq(DigitSequence, token('.'))), 'FractionalConstant')(...args);
 }
 
 function ExponentPart(...args) {
-  return wrap(
-    choice(seq(token('e'), option(Sign), DigitSequence), seq(token('E'), option(Sign), DigitSequence)),
-    'ExponentPart'
-  )(...args);
+  return wrap(choice(seq(token('e'), option(Sign), DigitSequence), seq(token('E'), option(Sign), DigitSequence)), 'ExponentPart')(...args);
 }
 
 function Sign(...args) {
@@ -1240,20 +824,11 @@ function DigitSequence(...args) {
 }
 
 function HexadecimalFractionalConstant(...args) {
-  return wrap(
-    choice(
-      seq(option(HexadecimalDigitSequence), token('.'), HexadecimalDigitSequence),
-      seq(HexadecimalDigitSequence, token('.'))
-    ),
-    'HexadecimalFractionalConstant'
-  )(...args);
+  return wrap(choice(seq(option(HexadecimalDigitSequence), token('.'), HexadecimalDigitSequence), seq(HexadecimalDigitSequence, token('.'))), 'HexadecimalFractionalConstant')(...args);
 }
 
 function BinaryExponentPart(...args) {
-  return wrap(
-    choice(seq(token('p'), option(Sign), DigitSequence), seq(token('P'), option(Sign), DigitSequence)),
-    'BinaryExponentPart'
-  )(...args);
+  return wrap(choice(seq(token('p'), option(Sign), DigitSequence), seq(token('P'), option(Sign), DigitSequence)), 'BinaryExponentPart')(...args);
 }
 
 function HexadecimalDigitSequence(...args) {
@@ -1265,15 +840,7 @@ function FloatingSuffix(...args) {
 }
 
 function CharacterConstant(...args) {
-  return wrap(
-    choice(
-      seq(token("'"), CCharSequence, token("'")),
-      seq(token("L'"), CCharSequence, token("'")),
-      seq(token("u'"), CCharSequence, token("'")),
-      seq(token("U'"), CCharSequence, token("'"))
-    ),
-    'CharacterConstant'
-  )(...args);
+  return wrap(choice(seq(token("'"), CCharSequence, token("'")), seq(token("L'"), CCharSequence, token("'")), seq(token("u'"), CCharSequence, token("'")), seq(token("U'"), CCharSequence, token("'"))), 'CharacterConstant')(...args);
 }
 
 function CCharSequence(...args) {
@@ -1285,10 +852,7 @@ function CChar(...args) {
 }
 
 function EscapeSequence(...args) {
-  return wrap(
-    choice(SimpleEscapeSequence, OctalEscapeSequence, HexadecimalEscapeSequence, UniversalCharacterName),
-    'EscapeSequence'
-  )(...args);
+  return wrap(choice(SimpleEscapeSequence, OctalEscapeSequence, HexadecimalEscapeSequence, UniversalCharacterName), 'EscapeSequence')(...args);
 }
 
 function SimpleEscapeSequence(...args) {
@@ -1296,14 +860,7 @@ function SimpleEscapeSequence(...args) {
 }
 
 function OctalEscapeSequencef(...args) {
-  return wrap(
-    choice(
-      seq(token('\\'), OctalDigit),
-      seq(token('\\'), OctalDigit, OctalDigit),
-      seq(token('\\'), OctalDigit, OctalDigit, OctalDigit)
-    ),
-    'OctalEscapeSequencef'
-  )(...args);
+  return wrap(choice(seq(token('\\'), OctalDigit), seq(token('\\'), OctalDigit, OctalDigit), seq(token('\\'), OctalDigit, OctalDigit, OctalDigit)), 'OctalEscapeSequencef')(...args);
 }
 
 function HexadecimalEscapeSequence(...args) {
@@ -1327,60 +884,27 @@ function SChar(...args) {
 }
 
 function ComplexDefine(...args) {
-  return wrap(
-    ignore(seq(token('#'), option(Whitespace), token('define'), invert(regex(/[#]*/g)))),
-    'ComplexDefine'
-  )(...args);
+  return wrap(ignore(seq(token('#'), option(Whitespace), token('define'), invert(regex(/[#]*/g)))), 'ComplexDefine')(...args);
 }
 
 function IncludeDirective(...args) {
-  return wrap(
-    ignore(
-      seq(
-        token('#'),
-        option(Whitespace),
-        token('include'),
-        option(Whitespace),
-        choice(
-          seq(token('"'), invert(regex(/[\r\n]*/g)), token('"')),
-          seq(token('<'), invert(regex(/[\r\n]*/g)), token('>'))
-        ),
-        option(Whitespace),
-        Newline
-      )
-    ),
-    'IncludeDirective'
-  )(...args);
+  return wrap(ignore(seq(token('#'), option(Whitespace), token('include'), option(Whitespace), choice(seq(token('"'), invert(regex(/[\r\n]*/g)), token('"')), seq(token('<'), invert(regex(/[\r\n]*/g)), token('>'))), option(Whitespace), Newline)), 'IncludeDirective')(...args);
 }
 
 function AsmBlock(...args) {
-  return wrap(
-    ignore(seq(token('asm'), invert(any(token('{'))), token('{'), invert(any(token('}'))), token('}'))),
-    'AsmBlock'
-  )(...args);
+  return wrap(ignore(seq(token('asm'), invert(any(token('{'))), token('{'), invert(any(token('}'))), token('}'))), 'AsmBlock')(...args);
 }
 
 function LineAfterPreprocessing(...args) {
-  return wrap(
-    ignore(seq(token('#line'), any(Whitespace), invert(regex(/[\r\n]*/g)))),
-    'LineAfterPreprocessing'
-  )(...args);
+  return wrap(ignore(seq(token('#line'), any(Whitespace), invert(regex(/[\r\n]*/g)))), 'LineAfterPreprocessing')(...args);
 }
 
 function LineDirective(...args) {
-  return wrap(
-    ignore(
-      seq(token('#'), option(Whitespace), DecimalConstant, option(Whitespace), StringLiteral, invert(regex(/[\r\n]*/g)))
-    ),
-    'LineDirective'
-  )(...args);
+  return wrap(ignore(seq(token('#'), option(Whitespace), DecimalConstant, option(Whitespace), StringLiteral, invert(regex(/[\r\n]*/g)))), 'LineDirective')(...args);
 }
 
 function PragmaDirective(...args) {
-  return wrap(
-    ignore(seq(token('#'), option(Whitespace), token('pragma'), Whitespace, invert(regex(/[\r\n]*/g)))),
-    'PragmaDirective'
-  )(...args);
+  return wrap(ignore(seq(token('#'), option(Whitespace), token('pragma'), Whitespace, invert(regex(/[\r\n]*/g)))), 'PragmaDirective')(...args);
 }
 
 function Whitespace(...args) {

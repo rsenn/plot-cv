@@ -1,5 +1,6 @@
 import express from 'express';
-import path from './lib/path.js';
+import * as path from 'path';
+import * as util from 'util';
 import Util from './lib/util.js';
 import bodyParser from 'body-parser';
 import expressWs from 'express-ws';
@@ -7,8 +8,10 @@ import { Alea } from './lib/alea.js';
 import crypto from 'crypto';
 import fetch from 'isomorphic-fetch';
 import { exec } from 'promisify-child-process';
-import fs, { promises as fsPromises } from 'fs';
-import ConsoleSetup from './lib/consoleSetup.js';
+import * as fs from 'fs';
+import { promises as fsPromises } from 'fs';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles } from './io-helpers.js';
+import { Console } from 'console';
 import SerialPort from 'serialport';
 import SerialStream from '@serialport/stream';
 //import SerialBinding from '@serialport/bindings';
@@ -20,6 +23,8 @@ import { Repeater } from './lib/repeater/repeater.js';
 import { Message } from './message.js';
 
 //SerialStream.Binding = SerialBinding;
+let names = [],
+  dirs = {};
 
 let filesystem, childProcess;
 const port = process.env.PORT || 3000;
@@ -95,17 +100,22 @@ async function RequestContours(req, res) {
 //console.log('Serving from', p);
 
 async function main() {
-  await ConsoleSetup({
-    breakLength: 120,
-    maxStringLength: Infinity,
-    maxArrayLength: Infinity
+  const { stdout, stderr } = process;
+  globalThis.console = new Console({
+    stdout,
+    stderr,
+    inspectOptions: {
+      breakLength: 120,
+      maxStringLength: Infinity,
+      maxArrayLength: 30,
+      compact: 2
+    }
   });
-  await PortableFileSystem(fs => (filesystem = fs));
   await PortableChildProcess(cp => (childProcess = cp));
 
   Socket.timeoutCycler();
 
-  let mounter = runMount(
+  /*  let mounter = runMount(
     new Repeater(async (push, stop) => {
       while(true) await push(mountDirs);
     })
@@ -115,8 +125,13 @@ async function main() {
       Util.exit(127);
     }
     return exitCode;
-  });
+  });*/
+  console.log('mountDirs', { mountDirs });
 
+  app.use((req, res, next) => {
+    //    console.log("req", req.url, req.method);
+    next();
+  });
   app.use(express.text({ type: 'application/xml', limit: '16384kb' }));
 
   app.use(bodyParser.json({ limit: '200mb' }));
@@ -146,14 +161,7 @@ async function main() {
 
   const convertToGerber = async (boardFile, opts = {}) => {
     console.log('convertToGerber', { boardFile, opts });
-    let {
-      layers = opts.side == 'outline' ? ['Measures'] : opts.drill ? ['Drills', 'Holes'] : [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'],
-      format = opts.drill ? 'EXCELLON' : 'GERBER_RS274X',
-      data,
-      fetch = false,
-      front,
-      back
-    } = opts;
+    let { layers = opts.side == 'outline' ? ['Measures'] : opts.drill ? ['Drills', 'Holes'] : [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'], format = opts.drill ? 'EXCELLON' : 'GERBER_RS274X', data, fetch = false, front, back } = opts;
     const base = path.basename(boardFile, '.brd');
     const formatToExt = (layers, format) => {
       if(opts.drill || format.startsWith('EXCELLON') || layers.indexOf('Drills') != -1 || layers.indexOf('Holes') != -1) return 'TXT';
@@ -176,7 +184,7 @@ async function main() {
     if(code !== 0) throw new Error(output);
     if(output) output = output.replace(/\s*\r*\n/g, '\n');
     let result = { code, output };
-    if(opts.fetch) result.data = await (await fsPromises.readFile(gerberFile)).toString();
+    if(opts.fetch) result.data = await (await fsPromises.readFile(GetVFSPath(gerberFile))).toString();
     result.file = gerberFile;
     console.log('convertToGerber result =', result);
     return result;
@@ -247,9 +255,7 @@ async function main() {
       return path.join(opts['output-dir'], `${base}_${side}.${ext}`);
     }
 
-    const params = [...Object.entries(opts)]
-      .filter(([k, v]) => typeof v == 'string' || typeof v == 'number' || (typeof v == 'boolean' && v === true))
-      .map(([k, v]) => `--${k}${typeof v != 'boolean' && v != '' ? '=' + v : ''}`);
+    const params = [...Object.entries(opts)].filter(([k, v]) => typeof v == 'string' || typeof v == 'number' || (typeof v == 'boolean' && v === true)).map(([k, v]) => `--${k}${typeof v != 'boolean' && v != '' ? '=' + v : ''}`);
     console.log('Request /gcode', { gerberFile, fetch, raw });
     //console.warn(`gerberToGcode`, Util.abbreviate(gerberFile), { gcodeFile, opts });
 
@@ -281,7 +287,7 @@ async function main() {
 
       let result = { code, output, cmd };
       if(fetch) {
-        for(let [side, file] of files) result[side] = await (await fsPromises.readFile(file)).toString();
+        for(let [side, file] of files) result[side] = await (await fsPromises.readFile(GetVFSPath(file))).toString();
       }
       if(/*/get/i.test(req.method) || */ raw) {
         const { file } = result;
@@ -331,7 +337,7 @@ async function main() {
       let isFile = false;
 
       await fsPromises
-        .stat(relativePath)
+        .stat(GetVFSPath(relativePath))
         .then(st => (isFile = st.isFile()))
         .catch(err => {});
 
@@ -339,7 +345,7 @@ async function main() {
 
       if(isFile)
         await fsPromises
-          .access(overridePath, fs.constants.F_OK)
+          .access(GetVFSPath(overridePath), fs.constants.F_OK)
           .then(() => (override = true))
           .catch(err => {});
 
@@ -369,10 +375,28 @@ async function main() {
     next();
   });
 
+  /*  app.use((req, res, next) => {
+    let file = req.url.replace(/^\/?/, '');
+
+    if(/(data|tmp)/.test(req.url)) {
+      console.log(`Data file '${file}'`);
+      file = file.replace(/^\/?(data\/|tmp\/|)/, '');
+      let dir = dirs[file];
+      if(dir) {
+        console.log('Data file ' + file + ' was requested.');
+      }
+    }
+    next();
+  });*/
+
+  /*  app.use((req, res, next) => {
+    console.log('Request', req.url);
+    next();
+  });*/
   app.use((req, res, next) => {
-    let file = req.url.replace(/^\//, '');
+    let file = req.url.replace(/^\/?/, '');
     if(fs.existsSync(file)) {
-      console.log('The file ' + file + ' was requested.');
+      //  console.log('The file ' + file + ' was requested.');
       files.add(file);
     }
     next();
@@ -385,7 +409,29 @@ async function main() {
   app.use('/components', express.static(path.join(p, 'components')));
   app.use('/lib', express.static(path.join(p, 'lib')));
   app.use('/tmp', express.static(path.join(p, 'tmp')));
+
   app.use('/', express.static(p));
+
+  function FindFile(relative) {
+    for(let mnt of mountDirs) {
+      let file = path.join(mnt, relative);
+      const exists = fs.existsSync(file);
+      //console.log('FILE', file,exists);
+
+      if(exists) return mnt;
+    }
+  }
+
+  app.get(/^\/?(data|tmp|vfs)\//, async (req, res) => {
+    const file = req.url.replace(/^\/?(data|tmp|vfs)\//, '');
+    const dir = dirs[file] ?? FindFile(file);
+    const p = path.resolve(dir, file);
+    console.log('DATA', file, dir, p);
+    let data = await fsPromises.readFile(p, 'utf-8');
+    return res.type('application/json').status(200).send(data);
+
+    //   return res.sendFile(p);
+  });
 
   app.get('/favicon.ico', (req, res) =>
     res.sendFile(path.join(p, 'lib/eagle/icon/eagleicon.ico'), {
@@ -404,8 +450,18 @@ async function main() {
     })
   );
 
+  function GetVFSPath(file) {
+    let dir = dirs[file];
+    let ret = file;
+    if(dir) ret = path.join(dir, file);
+
+    // if(ret != file) console.log('GetVFSPath', dir, file);
+    return ret;
+  }
+
   async function getDescription(file) {
-    let str = await fs.promises.readFile(file).then(r => r.toString());
+    // console.log('getDescription()', { file});
+    let str = await fsPromises.readFile(GetVFSPath(file)).then(r => r.toString());
     let r = [...Util.matchAll('<(/)?(board|schematic|library)[ >]', str)]
       .map(m => m.index)
       .sort((a, b) => a - b)
@@ -430,22 +486,41 @@ async function main() {
 
     console.log('GetFilesList()', { filter, descriptions }, ...(names ? [names.length] : []));
 
-    if(!names) names = [...(await fs.promises.readdir(dir))].filter(f);
+    let dirmap = {};
 
+    //    if(!names) names = [...(await fsPromises.readdir(dir))].filter(f);
+    dirmap = mountDirs.reduce((acc, dir) => {
+      console.log('ReadDirRecursive', dir);
+      for(let entry of ReadDirRecursive(dir)) {
+        if(entry.endsWith('/')) continue;
+        if(!f(entry)) continue;
+        let relative = entry.startsWith(dir + '/') ? entry.slice(dir.length + 1) : entry;
+        acc[relative] = dir;
+        dirs[relative] = dir;
+      }
+      return acc;
+    }, {});
+
+    //   console.log('dirmap', dirmap);
+    if(!names) names = Object.keys(dirmap);
+    console.log('names', names.length);
     return Promise.all(
       names
-        .map(entry => `${dir}/${entry}`)
+        //.map(entry => dirs[entry] +'/'+entry)
         .reduce((acc, file) => {
+          let dir = dirs[file];
+          let abs = dir + '/' + file;
           let description = descriptions ? descMap(file) : descMap.get(file);
           //   console.log('descMap:', util.inspect(descMap, { depth: 1 }));
           let obj = {
-            name: file
+            name: file,
+            //file,
+            dir: dirs[file]
           };
           if(typeof description == 'string') obj.description = description;
-
           acc.push(
-            fs.promises
-              .stat(file)
+            fsPromises
+              .stat(abs)
               .then(({ ctime, mtime, mode, size }) =>
                 Object.assign(obj, {
                   mtime: Util.toUnixTime(mtime),
@@ -612,20 +687,24 @@ async function main() {
   app.get(/^\/files/, async (req, res) => res.json({ files: await GetFilesList() }));
   app.post(/^\/(files|list)(.html|)/, async (req, res) => {
     const { body } = req;
-    let { filter, descriptions, names } = body;
+    let { filter = '.*', descriptions, names } = body;
+    let opts = { filter };
+    if(descriptions) opts.descriptions = descriptions;
 
     if(names !== undefined) {
       if(typeof names == 'string') names = names.split(/\n/g);
       if(Util.isArray(names)) names = names.map(name => name.replace(/.*\//g, ''));
+      opts.names = names;
     }
-
+    let files = await GetFilesList('tmp', opts);
+    console.log('POST files', util.inspect(files, { breakLength: Infinity, colors: true, maxArrayLength: 10, compact: 1 }));
     res.json({
-      files: await GetFilesList('tmp', { filter, descriptions, names })
+      files
     });
   });
 
   app.get('/index.html', async (req, res) => {
-    let data = await fs.promises.readFile(path.join(p, 'index.html'));
+    let data = await fsPromises.readFile(path.join(p, 'index.html'));
     res.send(data.toString().replace(/<TS>/g, Util.unixTime() + ''));
   });
   app.get('/contours', RequestContours);
@@ -652,13 +731,13 @@ async function main() {
 
     const { body } = req;
     console.log('req.headers:', req.headers);
-    console.log('body:', body, Util.className(body), Util.inspect(body));
+    console.log('body:', Util.abbreviate(body), Util.className(body), Util.inspect(body));
     console.log('save body:', typeof body == 'string' ? Util.abbreviate(body, 100) : body);
     let st,
       err,
       filename = (req.headers['content-disposition'] || '').replace(new RegExp('.*"([^"]*)".*', 'g'), '$1') || 'output.svg';
     filename = 'tmp/' + filename.replace(/^tmp\//, '');
-    await fs.promises
+    await fsPromises
       .writeFile(filename, body, { mode: 0x0180, flag: 'w' })
       .then(() => (st = fs.statSync(filename)))
       .catch(error => (err = error));
@@ -684,10 +763,10 @@ async function main() {
     console.log(`Ready at http://127.0.0.1:${port}`);
   });
 }
-
+/*
 try {
   await main();
 } catch(err) {
   Util.putError(err);
-}
-//Util.callMain(main, true);
+}*/
+Util.callMain(main, true);

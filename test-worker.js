@@ -2,7 +2,7 @@
 import * as std from 'std';
 import * as os from 'os';
 import { Console } from 'console';
-import { assert } from 'util';
+import { assert } from './lib/misc.js';
 
 var worker;
 var counter;

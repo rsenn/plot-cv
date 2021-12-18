@@ -22,7 +22,8 @@ import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import Alea from './lib/alea.js';
 import path from './lib/path.js';
-import Timers, { TimeoutError } from './lib/repeater/timers.js';
+import { TimeoutError } from './lib/repeater/timers.js';
+import * as Timers from './lib/repeater/timers.js';
 import asyncHelpers from './lib/async/helpers.js';
 import { Cache } from './lib/dom/cache.js';
 import { CacheStorage } from './lib/dom/cacheStorage.js';
@@ -44,114 +45,19 @@ import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText }
 //import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
 import * as React from './lib/preact.mjs';
 import { h, html, render, Component, useState, useLayoutEffect, useRef } from './lib/preact.mjs';
-import {
-  Chooser,
-  DynamicLabel,
-  Button,
-  FileList,
-  Panel,
-  SizedAspectRatioBox,
-  TransformedElement,
-  Canvas,
-  ColorWheel,
-  Slider,
-  CrossHair,
-  FloatingPanel,
-  DropDown,
-  Conditional,
-  Fence,
-  Zoomable,
-  DisplayList,
-  Ruler,
-  Toggle
-} from './components.js';
+import { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Fence, Zoomable, DisplayList, Ruler, Toggle, ButtonGroup } from './components.js';
 import * as components from './components.js';
 import { Message } from './message.js';
+import { updateMeasures, alignItem, alignAll, scientific, num2color } from './eagle-commands.js';
+import { GetExponent, GetMantissa, ValueToNumber, NumberToValue, GetMultipliers, GetFactor, GetColorBands, BG, digit2color } from './lib/eda/colorCoding.js';
 
-import {
-  useActive,
-  useClickout,
-  useDimensions,
-  useDoubleClick,
-  useElement,
-  EventTracker,
-  useEvent,
-  useFocus,
-  useRecognizers,
-  useDrag,
-  usePinch,
-  useWheel,
-  useMove,
-  useScroll,
-  useGesture,
-  useHover,
-  useMousePosition,
-  usePanZoom,
-  useToggleButtonGroupState
-} from './lib/hooks.js';
+import { useActive, useClickout, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useRecognizers, useDrag, usePinch, useWheel, useMove, useScroll, useGesture, useHover, useMousePosition, usePanZoom, useToggleButtonGroupState } from './lib/hooks.js';
 
 import { WebSocketClient } from './lib/net/websocket-async.js';
 /* prettier-ignore */ import * as ecmascript from './lib/ecmascript.js';
-import {
-  PipeTo,
-  AsyncRead,
-  AsyncWrite,
-  DebugTransformStream,
-  TextEncodeTransformer,
-  TextEncoderStream,
-  TextDecodeTransformer,
-  TextDecoderStream,
-  TransformStreamSink,
-  TransformStreamSource,
-  TransformStreamDefaultController,
-  TransformStream,
-  ArrayWriter,
-  readStream,
-  WriteToRepeater,
-  LogSink,
-  RepeaterSink,
-  StringReader,
-  LineReader,
-  ChunkReader,
-  ByteReader,
-  PipeToRepeater,
-  WritableStream,
-  ReadFromIterator
-} from './lib/stream.js?ts=<?TS?>';
+import { PipeTo, AsyncRead, AsyncWrite, DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater, WritableStream, ReadFromIterator } from './lib/stream.js?ts=<?TS?>';
 import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
-import {
-  useTrkl,
-  RAD2DEG,
-  DEG2RAD,
-  VERTICAL,
-  HORIZONTAL,
-  HORIZONTAL_VERTICAL,
-  DEBUG,
-  log,
-  setDebug,
-  PinSizes,
-  EscapeClassName,
-  UnescapeClassName,
-  LayerToClass,
-  ElementToClass,
-  ClampAngle,
-  AlignmentAngle,
-  MakeRotation,
-  EagleAlignments,
-  Alignment,
-  SVGAlignments,
-  AlignmentAttrs,
-  RotateTransformation,
-  LayerAttributes,
-  InvertY,
-  PolarToCartesian,
-  CartesianToPolar,
-  CalculateArcRadius,
-  LinesToPath,
-  MakeCoordTransformer,
-  useAttributes,
-  RenderArc
-} from './lib/eagle/renderUtils.js';
+import { useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, RenderArc } from './lib/eagle/renderUtils.js';
 import { Wire } from './lib/eagle/components/wire.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
@@ -160,25 +66,7 @@ import { Slot, SlotProvider } from './slots.js';
 import Voronoi from './lib/geom/voronoi.js';
 import GerberParser from './lib/gerber/parser.js';
 import { lazyInitializer } from './lib/lazyInitializer.js';
-import {
-  EagleElementProxy,
-  BoardRenderer,
-  DereferenceError,
-  EagleDocument,
-  EagleElement,
-  EagleNode,
-  EagleNodeList,
-  EagleNodeMap,
-  EagleProject,
-  EagleRef,
-  EagleReference,
-  EagleSVGRenderer,
-  Renderer,
-  SchematicRenderer,
-  LibraryRenderer,
-  makeEagleElement,
-  makeEagleNode
-} from './lib/eagle.js';
+import { EagleElementProxy, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, LibraryRenderer, makeEagleElement, makeEagleNode } from './lib/eagle.js';
 //import PureCache from 'pure-cache';
 import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //const React = {Component, Fragment, create: h, html, render, useLayoutEffect, useRef, useState };
 import commands, { ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ClearCache } from './commands.js';
@@ -427,7 +315,7 @@ const filesystem = {
     return await FetchURL(`static/${filename}`);
   },
   async writeFile(filename, data, overwrite = true) {
-    return await fetch('/save', {
+    return await fetch('save', {
       method: 'post',
       headers: {
         'Content-Type': 'application/octet-stream',
@@ -443,7 +331,7 @@ const filesystem = {
 async function LoadFile(file) {
   let { url, name } = typeof file == 'string' ? { url: file, name: file.replace(/.*\//g, '') } : GetProject(file);
   LogJS.info(`LoadFile ${name}`);
-  url = /:\/\//.test(url) ? url : /^tmp\//.test(url) ? '/' + url : `static/${name}`;
+  url = /:\/\//.test(url) ? url : /^(tmp|data|static)\//.test(url) ? '/' + url : `/data/${name}`;
   let response = await FetchURL(url);
   let xml = await response.text();
   let doc = new EagleDocument(await xml, null, name, null, filesystem);
@@ -455,7 +343,7 @@ async function LoadFile(file) {
 
 async function SaveFile(filename, data, contentType) {
   if(!data.endsWith('\n')) data += '\n';
-  let response = await fetch('/save', {
+  let response = await fetch('save', {
     method: 'post',
     headers: {
       'Content-Type': contentType || 'application/xml',
@@ -752,25 +640,8 @@ const DrawBinaryTree = (tree, draw = DrawSVG()) => {
     });
   }
 };
-DrawBinaryTree.bt = new BinaryTree(
-  new BinaryTree.Node('A', new BinaryTree.Node('B', new BinaryTree.Node('D')), new BinaryTree.Node('C', new BinaryTree.Node('E', null, new BinaryTree.Node('G')), new BinaryTree.Node('F')))
-);
-DrawBinaryTree.bt = new BinaryTree(
-  new BinaryTree.Node(
-    'V',
-    new BinaryTree.Node('H', new BinaryTree.Node(2), new BinaryTree.Node(1)),
-    new BinaryTree.Node(
-      'H',
-      new BinaryTree.Node(
-        'H',
-        new BinaryTree.Node('V', new BinaryTree.Node(6), new BinaryTree.Node(7)),
-        new BinaryTree.Node('V', new BinaryTree.Node(4), new BinaryTree.Node(5)),
-        new BinaryTree.Node('V')
-      ),
-      new BinaryTree.Node(3)
-    )
-  )
-);
+DrawBinaryTree.bt = new BinaryTree(new BinaryTree.Node('A', new BinaryTree.Node('B', new BinaryTree.Node('D')), new BinaryTree.Node('C', new BinaryTree.Node('E', null, new BinaryTree.Node('G')), new BinaryTree.Node('F'))));
+DrawBinaryTree.bt = new BinaryTree(new BinaryTree.Node('V', new BinaryTree.Node('H', new BinaryTree.Node(2), new BinaryTree.Node(1)), new BinaryTree.Node('H', new BinaryTree.Node('H', new BinaryTree.Node('V', new BinaryTree.Node(6), new BinaryTree.Node(7)), new BinaryTree.Node('V', new BinaryTree.Node(4), new BinaryTree.Node(5)), new BinaryTree.Node('V')), new BinaryTree.Node(3))));
 
 function GetPaths(query, parent = project.svgElement) {
   return Element.findAll(query, parent).reduce((a, e) => a.concat(e.tagName != 'path' ? Element.findAll('path', e) : [e]), []);
@@ -788,9 +659,7 @@ function PathToPolylines(path, step = 0.01) {
   return polys
     .filter(poly => poly.length > 1)
     .map(poly => {
-      let transforms = new TransformationList(
-        Element.walkUp(path, (p, d, set, stop) => (p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))).reverse()
-      ).collapse();
+      let transforms = new TransformationList(Element.walkUp(path, (p, d, set, stop) => (p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))).reverse()).collapse();
       //console.log('transforms', transforms);
       return new Polyline(poly).transform(transforms);
     });
@@ -799,9 +668,7 @@ function PathToPolylines(path, step = 0.01) {
 function PathToPolyline(path, step = 0.01) {
   let poly = [...SVG.pathIterator(path, { step })];
 
-  let transforms = new TransformationList(
-    Element.walkUp(path, (p, d, set, stop) => (p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))).reverse()
-  ).collapse();
+  let transforms = new TransformationList(Element.walkUp(path, (p, d, set, stop) => (p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))).reverse()).collapse();
   //console.log('transforms', transforms);
   return new Polyline(poly).transform(transforms);
 }
@@ -815,11 +682,7 @@ function PathsToPolylines(paths, step = 0.01) {
 function OutsetPath(path, offset, miterLimit = 2, arcTolerance = 0.01) {
   let co = new ClipperLib.ClipperOffset(miterLimit, arcTolerance);
   let output = (window.output = new ClipperLib.Paths());
-  co.AddPath(
-    path.closed ? path.slice(0, -1) : path,
-    ClipperLib.JoinType[path.closed ? 'jtRound' : 'jtSquare'],
-    ClipperLib.EndType[path.closed ? 'etClosedLine' /*'etClosedPolygon' */ : 'etOpenSquare' || 'etOpenRound']
-  );
+  co.AddPath(path.closed ? path.slice(0, -1) : path, ClipperLib.JoinType[path.closed ? 'jtRound' : 'jtSquare'], ClipperLib.EndType[path.closed ? 'etClosedLine' /*'etClosedPolygon' */ : 'etOpenSquare' || 'etOpenRound']);
   co.Execute(output, offset);
   //console.log('output:', output);
   output.toPolylines = function() {
@@ -907,10 +770,7 @@ function EagleMaps(project) {
   //) maps.dom2eagle = Util.mapFunction(new WeakMap(eagle2dom.map(([k, v]) => [v, k])));
   const [path2component, component2path] = project.renderer.maps.map(Util.mapFunction);
   const { /*path2obj, obj2path, */ path2eagle, eagle2path /*, eagle2obj, obj2eagle */ } = project.doc.maps;
-  const [component2eagle, eagle2component] = [
-    Util.mapAdapter((key, value) => (value === undefined ? path2eagle(component2path(key)) : undefined)),
-    Util.mapAdapter((key, value) => (value === undefined ? path2component(eagle2path(key) + '') : undefined))
-  ];
+  const [component2eagle, eagle2component] = [Util.mapAdapter((key, value) => (value === undefined ? path2eagle(component2path(key)) : undefined)), Util.mapAdapter((key, value) => (value === undefined ? path2component(eagle2path(key) + '') : undefined))];
   Util.weakAssign(maps, {
     path2eagle,
     eagle2path,
@@ -1014,11 +874,11 @@ function NextDocument(n = 1) {
 }
 
 async function LoadDocument(project, parentElem) {
+  console.log('LoadDocument', project);
   open(false);
   gcode(null);
 
   if(typeof project == 'string') project = GetProject(project);
-  //console.log('project:', project);
 
   config.currentProject(project.name);
 
@@ -1306,10 +1166,7 @@ const GenerateVoronoi = () => {
   let points2 = vertices.map(v => new Point(v).round(0.127, 4));
   const add = (arr, ...items) => [...(Util.isArray(arr) ? arr : []), ...items];
   const factory = SVG.factory();
-  const lines = [
-    ...rlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#000', 'stroke-width': 0.01 }]),
-    ...vlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#f00', 'stroke-width': 0.01 }])
-  ];
+  const lines = [...rlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#000', 'stroke-width': 0.01 }]), ...vlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#f00', 'stroke-width': 0.01 }])];
   const circles = [
     ...holes.map(p => [
       'circle',
@@ -1620,7 +1477,9 @@ const AppMain = (window.onload = async () => {
     ...commands,
     fnmatch,
     PATH_FNM_MULTI,
-    rpc: { ...rpc }
+    rpc: { ...rpc },
+    ...{ GetColorBands, updateMeasures, alignItem, alignAll, scientific, num2color },
+    ...{ GetExponent, GetMantissa, ValueToNumber, NumberToValue, GetMultipliers, GetFactor, GetColorBands, BG, digit2color }
   };
 
   if(store.keys().length == 0) {
@@ -1735,7 +1594,7 @@ const AppMain = (window.onload = async () => {
     for(url of urls) {
       //console.log('UpdateProjectList:', { ...opts, ...credentials, url });
       let data = await ListProjects({ ...opts, ...credentials, url });
-      let files = data.files;
+      let files = (typeof data == 'object' && data != null && data.files) || [];
       console.log('files', files);
       function File(obj, i) {
         const { name } = obj;
@@ -1745,7 +1604,7 @@ const AppMain = (window.onload = async () => {
         file.name = name;
         file.i = i;
         trkl.bind(file, { data });
-        LogJS.info(`Got file '${name.replace(/.*:\/\//g, '').replace(/raw.githubusercontent.com/, 'github.com') || name.replace(/.*\//g, '')}'`);
+        //        console.info(`Got file '${name.replace(/.*:\/\//g, '').replace(/raw.githubusercontent.com/, 'github.com') || name.replace(/.*\//g, '')}'`);
 
         return file;
       }
@@ -1762,7 +1621,7 @@ const AppMain = (window.onload = async () => {
         }, []);
 
         data = await ListProjects({ descriptions: false, names: svgs });
-        files = (data && data.files) || [];
+        files = globalThis.files = (data && data.files) || [];
         //      console.log('filesData:', files);
 
         for(let svgFile of files) {
@@ -2352,7 +2211,42 @@ const AppMain = (window.onload = async () => {
       }),
       h(Consumer, {})
     ]),
+    h(
+      ButtonGroup,
+      {
+        className: 'small',
+        onChange(event) {
+          let { currentTarget, target } = event;
+          let key = target.getAttribute('data-key');
 
+          console.log('Sort order changed', key);
+          config.sortKey(key);
+        }
+      },
+      [
+        props =>
+          h('img', {
+            src: 'static/svg/sort-name-2.svg',
+            alt: 'Name',
+            'data-key': 'name',
+            ...props
+          }),
+        props =>
+          h('img', {
+            src: 'static/svg/sort-time-2.svg',
+            alt: 'Modification time',
+            'data-key': 'mtime',
+            ...props
+          }),
+        props =>
+          h('img', {
+            src: 'static/svg/sort-size-2.svg',
+            alt: 'Size',
+            'data-key': 'size',
+            ...props
+          })
+      ]
+    ),
     /*  h('div', { style: { display: 'inline-flex', flexFlow: 'row', alignItems: 'stretch', height: '100px', padding: '10px' } }, [
         h(ColorWheel, {}),
         h(Slider, {
@@ -2541,10 +2435,7 @@ const AppMain = (window.onload = async () => {
       const bboxes = new Map(add.map(e => [e, new Rect(e.getBBox ? e.getBBox() : e.getBoundingClientRect())]));
 
       for(let [e, rect] of bboxes) {
-        let transforms =
-          Element.walkUp(e, (p, d, set, stop) =>
-            p.parentElement == null || p.parentElement.isSameNode(p.ownerSVGElement) ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform'))
-          ) || [];
+        let transforms = Element.walkUp(e, (p, d, set, stop) => (p.parentElement == null || p.parentElement.isSameNode(p.ownerSVGElement) ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))) || [];
         transforms = transforms.reverse();
         elems.add(e);
         let props = {
@@ -2708,48 +2599,7 @@ const AppMain = (window.onload = async () => {
   };
   window.processEvents = async function eventLoop() {
     for await(let e of new EventIterator('touch')) {
-      const {
-        altKey,
-        bubbles,
-        button,
-        buttons,
-        cancelBubble,
-        cancelable,
-        clientX,
-        clientY,
-        composed,
-        ctrlKey,
-        detail,
-        eventPhase,
-        fromElement,
-        isTrusted,
-        layerX,
-        layerY,
-        metaKey,
-        movementX,
-        movementY,
-        offsetX,
-        offsetY,
-        pageX,
-        pageY,
-        path,
-        region,
-        relatedTarget,
-        returnValue,
-        screenX,
-        screenY,
-        shiftKey,
-        srcElement,
-        target,
-        timeStamp,
-        toElement,
-        type,
-        view,
-        which,
-        x,
-        y,
-        ...event
-      } = e;
+      const { altKey, bubbles, button, buttons, cancelBubble, cancelable, clientX, clientY, composed, ctrlKey, detail, eventPhase, fromElement, isTrusted, layerX, layerY, metaKey, movementX, movementY, offsetX, offsetY, pageX, pageY, path, region, relatedTarget, returnValue, screenX, screenY, shiftKey, srcElement, target, timeStamp, toElement, type, view, which, x, y, ...event } = e;
       // LogJS.info(`${type} ` + /* Util.toSource(e)+ */ ` ${x},${y} → ${Element.xpath(target)}`);
     }
   };

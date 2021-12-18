@@ -12,7 +12,7 @@ import path from './lib/path.js';
 import fs from './lib/filesystem.js';
 import RGBA from './lib/color/rgba.js';
 import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
+import Console from 'console';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
 
@@ -38,10 +38,7 @@ function WriteImage(name, mat) {
 function SaveConfig(configObj) {
   configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v]));
 
-  return filesystem.writeFile(
-    Util.getArgv()[1].replace(/\.js$/, '.config.json'),
-    JSON.stringify(configObj, null, 2) + '\n'
-  );
+  return filesystem.writeFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'), JSON.stringify(configObj, null, 2) + '\n');
 }
 
 function LoadConfig() {
@@ -57,18 +54,19 @@ function LoadConfig() {
   return configObj;
 }
 
-async function main(...args) {
-  await ConsoleSetup({
-    maxStringLength: 200,
-    maxArrayLength: 10,
-    breakLength: 100,
-    compact: 0
+function main(...args) {
+  globalThis.console = new Console({
+    colors: true,
+    depth: 3,
+    maxArrayLength: 30,
+    compact: 3
   });
 
   // console.log('cv', cv);
   //console.log('Object.keys(cv)', Object.keys(cv));
   console.log('Util.getMethodNames(cv)', Util.getMethodNames(cv, Infinity, 0));
   console.log('cv.HoughLines', cv.HoughLines);
+  console.log('cv.ALIGN_RIGHT', cv.ALIGN_RIGHT);
 
   let line = new Line(0, 0, 50, 50);
 

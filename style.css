@@ -118,7 +118,82 @@ p.description {
   margin: 4px 4px 6px 4px;
   padding: 4px 4px;
   flex: 0 1 auto;
+}
+.button .big,
+header > .button {
   min-width: 52px;
+}
+
+.button > img {
+  max-width: 100%;
+  max-height: 100%;
+}
+.button {
+  position: relative;
+  overflow: hidden;
+}
+.button .big,
+header > .button {
+  max-width: 48px;
+  max-height: 48px;
+}
+.button {
+  border: 2px outset hsl(220, 100%, 70%);
+  box-shadow: 2px 2px 6px hsl(60, 100%, 80%);
+}
+
+.button,
+.center,
+.button {
+  justify-content: center;
+  align-items: center;
+  /*  border: 2px solid hsl(220,100%,50%);*/
+}
+.button {
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.7);
+  border-radius: 4px;
+  background: linear-gradient(30deg, hsla(220, 100%, 40%, 1) 20%, hsla(220, 100%, 50%, 1) 50%, hsla(220, 100%, 45%, 1) 80%); /* w3c */
+  color: white;
+  font-weight: bold;
+  user-select: none;
+  font-size: 16px;
+}
+.button .big,
+header > .button {
+  min-width: 48px;
+  min-height: 48px;
+}
+.button.pushed {
+  /*background: #ffff00ee;*/
+  /*  filter: invert();*/
+  background: linear-gradient(30deg, #ffc30f -20%, #ffecb3 85%);
+  border: 2px inset #ffd24d;
+}
+.button.pushed > img {
+  filter: invert();
+}
+
+.button {
+  display: inline-flex;
+}
+
+.small > img {
+  transform: scale(0.8);
+}
+.button .small,
+#preact > .button {
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  text-shadow: 1px 1px 2px black;
+  margin: 1px -1px 2px 1px;
+  padding: 2px 2px;
+  flex: 0 1 auto;
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 2x;
+  border-right: 1px inset hsla(220, 100%, 75%, 0.99);
+  border-bottom: 1px inset hsla(220, 100%, 75%, 0.99);
+  border-top: none;
+  border-left: none;
 }
 .hcenter {
   justify-content: center;
@@ -162,60 +237,11 @@ p.description {
 .transparent {
   opacity: 0;
 }
-.button > img {
-  max-width: 100%;
-  max-height: 100%;
-}
-.button {
-  position: relative;
-  max-width: 48px;
-  max-height: 48px;
-  overflow: hidden;
-}
-.button {
-  border: 2px outset hsl(220, 100%, 70%);
-  box-shadow: 2px 2px 6px hsl(60, 100%, 80%);
-}
-
-.button,
-.center,
-.button {
-  justify-content: center;
-  align-items: center;
-  /*  border: 2px solid hsl(220,100%,50%);*/
-}
 body {
   background: linear-gradient(0deg, hsla(220, 0%, 20%, 1) 0%, hsla(220, 0%, 50%, 1) 10%, hsla(220, 0%, 90%, 1) 75%);
   background-attachment: fixed;
 }
-.button {
-  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.7);
-  border-radius: 4px;
-  background: linear-gradient(30deg,
-    hsla(220, 100%, 40%, 1) 20%,
-    hsla(220, 100%, 50%, 1) 50%,
-    hsla(220, 100%, 45%, 1) 80%
-  ); /* w3c */
-  color: white;
-  font-weight: bold;
-  user-select: none;
-  font-size: 16px;
-  min-width: 48px;
-  min-height: 48px;
-}
-.button.pushed {
-  /*background: #ffff00ee;*/
-  /*  filter: invert();*/
-  background: linear-gradient(30deg, #ffc30f -20%, #ffecb3 85%);
-  border: 2px inset #ffd24d;
-}
-.button.pushed > img {
-  filter: invert();
-}
 
-.button {
-  display: inline-flex;
-}
 .list > .file.active {
   margin: 4px;
   box-shadow: 1px 1px 4px #000000ff;
@@ -300,7 +326,7 @@ text {
 .file.inactive {
   border: 4px solid hsla(230, 100%, 0%, 0);
   margin: 4px;
-  box-shadow: 1px 1px 4px rgba(0,0,0, 0.8);
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
 }
 .pad-lr {
   padding: 0px 10px;
@@ -567,7 +593,8 @@ ul.dumper {
   position: absolute;
   right: 0px;
 
-  background-image: linear-gradient(to top,
+  background-image: linear-gradient(
+    to top,
     rgb(219, 209, 222),
     rgb(205, 197, 208),
     rgb(191, 185, 193),
@@ -598,18 +625,8 @@ td.name,
 td.value {
   background: #ffffff; /* Old browsers */
   background: -moz-linear-gradient(top, #ffffff 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%); /* FF3.6-15 */
-  background: -webkit-linear-gradient(top,
-    #ffffff 0%,
-    #f1f1f1 50%,
-    #e1e1e1 51%,
-    #f6f6f6 100%
-  ); /* Chrome10-25,Safari5.1-6 */
-  background: linear-gradient(to bottom,
-    #ffffff 0%,
-    #f1f1f1 50%,
-    #e1e1e1 51%,
-    #f6f6f6 100%
-  ); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  background: -webkit-linear-gradient(top, #ffffff 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom, #ffffff 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0 ); /* IE6-9 */
 }
 td.name {
@@ -686,7 +703,7 @@ input.commander {
   /*border: 1px solid red;*/
   max-height: 80vh;
   overflow-y: auto;
-} 
+}
 div.panel.no-select.layers {
   position: fixed;
 }
@@ -847,6 +864,5 @@ div.frame > .title > p {
 }
 
 .icon {
-  min-width:  auto;
-
+  min-width: auto;
 }

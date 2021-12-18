@@ -1,4 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 1000 1000">
-  <path d="M429.6 575.1c16 19.2 38.5 31 63.3 33.2 2.9.3 5.7.4 8.5.4 47.8 0 88.7-37.4 93-85 2.2-24.8-5.3-49.1-21.3-68.3s-38.5-31-63.3-33.3c-8.2-.7-16.5-.3-25.3 1.4L214.6 194.9l198.3 291.3c-2.5 7.3-4 14-4.6 20.6-2.3 24.8 5.2 49.1 21.3 68.3z"/>
-  <path d="M500 10h-44.2v233h88.4V100.8c202.5 22 357.4 192.6 357.4 399.2 0 221.5-180.2 401.6-401.6 401.6S98.4 721.5 98.4 500c0-90.6 29.5-176.2 85.1-247.3l15.6-19.8-69.6-54.5-15.5 19.8C46 285.1 10 389.4 10 500c0 270.2 219.8 490 490 490s490-219.8 490-490S770.2 10 500 10z"/>
+<svg xmlns="http://www.w3.org/2000/svg" height="32" width="32">
+  <defs>
+    <marker id="sort-time-2_svg__a" refX="0" refY="0" orient="auto" overflow="visible">
+      <path d="M1.154 0l-1.73 1v-2l1.73 1z" fill-rule="evenodd"  fill="white" stroke="white" stroke-width=".2pt"/>
+    </marker>
+  </defs>
+  <path d="M13.87 1.278h2.472c5.748.048 11.233 3.818 13.347 9.166 1.852 4.353 1.27 9.575-1.418 13.455-2.772 4.146-7.667 6.837-12.664 6.825-6.058-.381-11.715-4.6-13.605-10.4C.16 15.074 1.89 8.943 5.966 5.22" style="isolation:auto;mix-blend-mode:normal;solid-color:white;solid-opacity:1" color="white" font-weight="400" font-family="sans-serif" overflow="visible" fill="none" stroke="white" stroke-width="2" stroke-linejoin="bevel" marker-end="url(#sort-time-2_svg__a)"/>
+  <path d="M7.12 16.693h8.768l7.046-5.653" fill="white" stroke="white" stroke-linecap="square"/>
+  <path d="M15.745 28.568v1.821m0-28.177v1.436M3.558 16.693H1.407m28.82 0h-2.295" fill="none" stroke="white" stroke-linecap="square"/>
 </svg>

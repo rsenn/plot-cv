@@ -1,3 +1,4 @@
+import { define, isObject, memoize, unique } from './lib/misc.js';
 import KolorWheel from './lib/KolorWheel.js';
 import { RGBA, HSLA } from './lib/color.js';
 import Util from './lib/util.js';
@@ -150,7 +151,7 @@ for(let name in layerColors) {
   layerColors[name] = c;
 }
 
-const allColors = Util.unique(Object.values(layerColors));
+const allColors = unique(Object.values(layerColors));
 //console.log('allColors: ' + allColors);
 
 let keyList = [];
@@ -165,10 +166,7 @@ for(let color of allColors) {
 const GeneratePalette = numColors => {
   let ret = [];
   let base = new HSLA(Util.randInt(0, 360, prng), 100, 50).toRGBA();
-  let offsets = Util.range(1, numColors).reduce(
-    (acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360],
-    []
-  );
+  let offsets = Util.range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360], []);
   offsets = offsets.sort((a, b) => a - b);
   //offsets = Util.shuffle(offsets, prng);
   //console.log('offsets:', offsets);
@@ -206,9 +204,7 @@ async function main(...args) {
       s += `${key}: palette[${i}]`;
     }
   }
-  console.log(
-    'const palette = [ ' + palette.map(c => c.toSource()).join(', ') + ' ];\n renderer.colors = {' + s + '};'
-  );
+  console.log('const palette = [ ' + palette.map(c => c.toSource()).join(', ') + ' ];\n renderer.colors = {' + s + '};');
   let colors = [...Gradient('#9ceaff', '#000088', 7)].map(c => new RGBA(c));
 
   colors = (function () {

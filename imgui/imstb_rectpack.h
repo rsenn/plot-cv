@@ -123,8 +123,7 @@ struct stbrp_rect {
 
 }; // 16 bytes, nominally
 
-STBRP_DEF void
-stbrp_init_target(stbrp_context* context, int width, int height, stbrp_node* nodes, int num_nodes);
+STBRP_DEF void stbrp_init_target(stbrp_context* context, int width, int height, stbrp_node* nodes, int num_nodes);
 // Initialize a rectangle packer to:
 //    pack a rectangle that is 'width' by 'height' in dimensions
 //    using temporary storage provided by the array 'nodes', which is 'num_nodes' long
@@ -180,8 +179,7 @@ struct stbrp_context {
   int num_nodes;
   stbrp_node* active_head;
   stbrp_node* free_head;
-  stbrp_node
-      extra[2]; // we allocate two extra nodes so optimal user-node-count is 'width' not 'width+2'
+  stbrp_node extra[2]; // we allocate two extra nodes so optimal user-node-count is 'width' not 'width+2'
 };
 
 #ifdef __cplusplus
@@ -221,8 +219,7 @@ STBRP_DEF void
 stbrp_setup_heuristic(stbrp_context* context, int heuristic) {
   switch(context->init_mode) {
     case STBRP__INIT_skyline:
-      STBRP_ASSERT(heuristic == STBRP_HEURISTIC_Skyline_BL_sortHeight ||
-                   heuristic == STBRP_HEURISTIC_Skyline_BF_sortHeight);
+      STBRP_ASSERT(heuristic == STBRP_HEURISTIC_Skyline_BL_sortHeight || heuristic == STBRP_HEURISTIC_Skyline_BF_sortHeight);
       context->heuristic = heuristic;
       break;
     default: STBRP_ASSERT(0);
@@ -540,9 +537,7 @@ stbrp_pack_rects(stbrp_context* context, stbrp_rect* rects, int num_rects) {
   int i, all_rects_packed = 1;
 
   // we use the 'was_packed' field internally to allow sorting/unsorting
-  for(i = 0; i < num_rects; ++i) {
-    rects[i].was_packed = i;
-  }
+  for(i = 0; i < num_rects; ++i) { rects[i].was_packed = i; }
 
   // sort according to heuristic
   STBRP_SORT(rects, num_rects, sizeof(rects[0]), rect_height_compare);

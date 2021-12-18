@@ -194,4 +194,8 @@ main() {
   printf("POLLOUT 0b" BYTE_TO_BINARY_PATTERN "\n", BYTE_TO_BINARY(POLLOUT));
   printf("POLLERR 0b" BYTE_TO_BINARY_PATTERN "\n", BYTE_TO_BINARY(POLLERR));
   printf("POLLHUP 0b" BYTE_TO_BINARY_PATTERN "\n", BYTE_TO_BINARY(POLLHUP));
+  printf("#define POLLIN\t%d\n", POLLIN);
+  printf("#define POLLOUT\t%d\n", POLLOUT);
+  printf("#define POLLERR\t%d\n", POLLERR);
+  printf("#define POLLHUP\t%d\n", POLLHUP);
 }

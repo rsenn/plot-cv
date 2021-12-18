@@ -57,8 +57,7 @@ function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = ''
 
   repl.help = () => {};
   let { log } = console;
-  repl.show = arg =>
-    std.puts((typeof arg == 'string' ? arg : inspect(arg, repl.inspectOptions)) + '\n');
+  repl.show = arg => std.puts((typeof arg == 'string' ? arg : inspect(arg, repl.inspectOptions)) + '\n');
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();
@@ -104,12 +103,7 @@ function main(...args) {
     args
   );
   if(params['no-tls'] === true) params.tls = false;
-  const {
-    address = '0.0.0.0',
-    port = 8999,
-    'ssl-cert': sslCert = 'localhost.crt',
-    'ssl-private-key': sslPrivateKey = 'localhost.key'
-  } = params;
+  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key' } = params;
   const listen = params.connect && !params.listen ? false : true;
   const server = !params.client || params.server;
   let name = Util.getArgs()[0];
@@ -125,33 +119,10 @@ function main(...args) {
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     console.log('createWS', { url, callbacks, listen });
 
-    net.setLog(
-      (params.debug ? net.LLL_USER : 0) |
-        (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
-      (level, ...args) => {
-        console.log(...args);
-        if(params.debug)
-          console.log(
-            (
-              [
-                'ERR',
-                'WARN',
-                'NOTICE',
-                'INFO',
-                'DEBUG',
-                'PARSER',
-                'HEADER',
-                'EXT',
-                'CLIENT',
-                'LATENCY',
-                'MINNET',
-                'THREAD'
-              ][Math.log2(level)] ?? level + ''
-            ).padEnd(8),
-            ...args
-          );
-      }
-    );
+    net.setLog((params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1), (level, ...args) => {
+      console.log(...args);
+      if(params.debug) console.log((['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8), ...args);
+    });
 
     let options;
     let child, dbg;
@@ -224,27 +195,23 @@ function main(...args) {
 
             const { command, ...rest } = obj;
             // console.log('onMessage', command, rest);
-            const {
-              connect = true,
-              address = '127.0.0.1:' + Math.round(Math.random() * (65535 - 1024)) + 1024,
-              args = []
-            } = rest;
+            const { connect = true, address = '127.0.0.1:' + Math.round(Math.random() * (65535 - 1024)) + 1024, args = [] } = rest;
 
             switch (command) {
               case 'start': {
                 child = ws.child = StartDebugger(args, connect, address);
                 const [, stdout, stderr] = child.stdio;
                 for(let fd of [stdout, stderr]) {
-                                 //console.log(`fcntl(${fd}, F_GETFL)`);
-    let flags = fcntl(fd, F_GETFL);
-                                 //console.log(`fcntl(${fd}, F_SETFL, 0x${flags.toString(16)})`);
-   flags |= O_NONBLOCK;
+                  //console.log(`fcntl(${fd}, F_GETFL)`);
+                  let flags = fcntl(fd, F_GETFL);
+                  //console.log(`fcntl(${fd}, F_SETFL, 0x${flags.toString(16)})`);
+                  flags |= O_NONBLOCK;
                   fcntl(fd, F_SETFL, flags);
                 }
- for(let i = 1; i <= 2; i++) {
+                for(let i = 1; i <= 2; i++) {
                   let fd = child.stdio[i];
-                                               console.log('os.setReadHandler',fd);
-  os.setReadHandler(fd, () => {
+                  console.log('os.setReadHandler', fd);
+                  os.setReadHandler(fd, () => {
                     let buf = new ArrayBuffer(1024);
                     let r = os.read(fd, buf, 0, buf.byteLength);
 
@@ -260,7 +227,7 @@ function main(...args) {
                     }
                   });
                 }
-                               console.log('child', child.pid);
+                console.log('child', child.pid);
 
                 os.sleep(1000);
               }

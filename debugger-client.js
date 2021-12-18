@@ -16,27 +16,7 @@ import { classNames } from './lib/classNames.js';
 /* prettier-ignore */ import { useClick, useIterable, useIterator, useAsyncGenerator, useAsyncIterable, useAsyncIterator, useGenerator, useActive, useClickout, useConditional, useDebouncedCallback, useDebounce, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useForceUpdate, useGetSet, useHover, useMousePosition, useToggleButtonGroupState, useTrkl, useFetch } from './lib/hooks.js';
 /* prettier-ignore */ import { clamp, identity, noop, compose, maybe, snd, toPair, getOffset, getPositionOnElement, isChildOf } from './lib/hooks.js';
 import { JSLexer, Location } from './lib/jslexer.js';
-import {
-  Chooser,
-  DynamicLabel,
-  Button,
-  FileList,
-  Panel,
-  SizedAspectRatioBox,
-  TransformedElement,
-  Canvas,
-  ColorWheel,
-  Slider,
-  CrossHair,
-  FloatingPanel,
-  DropDown,
-  Conditional,
-  Fence,
-  Zoomable,
-  DisplayList,
-  Ruler,
-  Toggle
-} from './components.js';
+import { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Fence, Zoomable, DisplayList, Ruler, Toggle } from './components.js';
 
 let cwd = '.';
 let responses = {};
@@ -83,15 +63,7 @@ globalThis.addEventListener('keypress', e => {
 /******************************************************************************
  * Components                                                                 *
  ******************************************************************************/
-const SourceLine = ({ lineno, text, active, children }) =>
-  h(Fragment, {}, [
-    h(
-      'pre',
-      { class: classNames('lineno', active && 'active', ['even', 'odd'][lineno % 2]) },
-      h('a', { name: `line-${lineno}` }, [lineno + ''])
-    ),
-    h('pre', { class: classNames('text', active && 'active'), innerHTML: text })
-  ]);
+const SourceLine = ({ lineno, text, active, children }) => h(Fragment, {}, [h('pre', { class: classNames('lineno', active && 'active', ['even', 'odd'][lineno % 2]) }, h('a', { name: `line-${lineno}` }, [lineno + ''])), h('pre', { class: classNames('text', active && 'active'), innerHTML: text })]);
 
 const SourceText = ({ text, filename }) => {
   const activeLine = useTrkl(currentLine);
@@ -118,9 +90,7 @@ const SourceText = ({ text, filename }) => {
         }, []);
 
       //console.log('text',text);
-      acc.push(
-        h(SourceLine, { lineno: i + 1, text: text.join(''), active: activeLine == i + 1 }, text)
-      );
+      acc.push(h(SourceLine, { lineno: i + 1, text: text.join(''), active: activeLine == i + 1 }, text));
 
       return acc;
     }, [])
@@ -141,11 +111,7 @@ const SourceFile = props => {
       })) ||
     '';
 
-  return h('div', { class: 'container' }, [
-    h('div', {}, []),
-    h('div', { class: 'header' }, [filename]),
-    h(SourceText, { text, filename })
-  ]);
+  return h('div', { class: 'container' }, [h('div', {}, []), h('div', { class: 'header' }, [filename]), h(SourceText, { text, filename })]);
 };
 
 /******************************************************************************
@@ -201,10 +167,7 @@ function* TokenizeJS(data, filename) {
   lex.setInput(data, filename);
 
   let { tokens } = lex;
-  let colors = Object.entries(tokenColors).reduce(
-    (acc, [type, c]) => ({ ...acc, [tokens.indexOf(type) + 1]: c.hex() }),
-    {}
-  );
+  let colors = Object.entries(tokenColors).reduce((acc, [type, c]) => ({ ...acc, [tokens.indexOf(type) + 1]: c.hex() }), {});
   let prev = {};
   let out = [];
   for(let { id, lexeme, line } of lex) {

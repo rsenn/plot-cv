@@ -1,7 +1,7 @@
 import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
-import * as path from './lib/path.js';
+import path from 'path';
 import Util from './lib/util.js';
 import { Console } from 'console';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
@@ -73,12 +73,7 @@ function main(...args) {
   );
   if(params['no-tls'] === true) params.tls = false;
   console.log('params', params);
-  const {
-    address = '0.0.0.0',
-    port = 8999,
-    'ssl-cert': sslCert = 'localhost.crt',
-    'ssl-private-key': sslPrivateKey = 'localhost.key'
-  } = params;
+  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key' } = params;
   const listen = params.connect && !params.listen ? false : true;
   const server = !params.client || params.server;
   Object.assign(globalThis, { ...rpc2, rpc });
@@ -110,11 +105,7 @@ function main(...args) {
 
   console.log = repl.printFunction(log);
 
-  let cli = (globalThis.sock = new rpc.Socket(
-    `${address}:${port}`,
-    rpc[`RPC${server ? 'Server' : 'Client'}Connection`],
-    +params.verbose
-  ));
+  let cli = (globalThis.sock = new rpc.Socket(`${address}:${port}`, rpc[`RPC${server ? 'Server' : 'Client'}Connection`], +params.verbose));
 
   cli.register({ Socket, Worker: os.Worker, Repeater, REPL, EventEmitter });
 
@@ -122,37 +113,41 @@ function main(...args) {
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     console.log('createWS', { url, callbacks, listen });
 
-    net.setLog(
-      (params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
-      (level, ...args) => {
-        repl.printStatus(...args);
-        if(params.debug)
-          console.log(
-            (
-              [
-                'ERR',
-                'WARN',
-                'NOTICE',
-                'INFO',
-                'DEBUG',
-                'PARSER',
-                'HEADER',
-                'EXT',
-                'CLIENT',
-                'LATENCY',
-                'MINNET',
-                'THREAD'
-              ][Math.log2(level)] ?? level + ''
-            ).padEnd(8),
-            ...args
-          );
-      }
-    );
+    net.setLog((params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1), (level, ...args) => {
+      repl.printStatus(...args);
+      if(params.debug) console.log((['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8), ...args);
+    });
 
     return [net.client, net.server][+listen]({
       tls: params.tls,
       sslCert,
       sslPrivateKey,
+      mimetypes: [
+        ['.svgz', 'application/gzip'],
+        ['.mjs', 'application/javascript'],
+        ['.wasm', 'application/octet-stream'],
+        ['.eot', 'application/vnd.ms-fontobject'],
+        ['.lib', 'application/x-archive'],
+        ['.bz2', 'application/x-bzip2'],
+        ['.gitignore', 'text/plain'],
+        ['.cmake', 'text/plain'],
+        ['.hex', 'text/plain'],
+        ['.md', 'text/plain'],
+        ['.pbxproj', 'text/plain'],
+        ['.wat', 'text/plain'],
+        ['.c', 'text/x-c'],
+        ['.h', 'text/x-c'],
+        ['.cpp', 'text/x-c++'],
+        ['.hpp', 'text/x-c++'],
+        ['.filters', 'text/xml'],
+        ['.plist', 'text/xml'],
+        ['.storyboard', 'text/xml'],
+        ['.vcxproj', 'text/xml'],
+        ['.bat', 'text/x-msdos-batch'],
+        ['.mm', 'text/x-objective-c'],
+        ['.m', 'text/x-objective-c'],
+        ['.sh', 'text/x-shellscript']
+      ],
       mounts: [
         ['/', '.', 'debugger.html'],
         function proxy(req, res) {
@@ -169,41 +164,69 @@ function main(...args) {
         function* files(req, resp) {
           const { body, headers } = req;
           const { 'content-type': content_type } = headers;
+          const data = JSON.parse(body);
 
           resp.type = 'application/json';
 
-          console.log('\x1b[38;5;215m*files\x1b[0m', { headers, body, req, resp });
+          //console.log('\x1b[38;5;215m*files\x1b[0m', { headers, data, req, resp });
+          let { dir = 'tmp', filter = '.(brd|sch|G[A-Z][A-Z])$', verbose = false, objects = false, key = 'mtime' } = data;
+          let absdir = path.realpath(dir);
 
-          let dir = 'tmp';
-          let names = fs.readdirSync(dir);
+          let components = absdir.split(path.sep);
 
-          names = names.filter(name => /\.(brd|sch|G[A-Z][A-Z])$/.test(name));
-          names = names.map(entry => `${dir}/${entry}`);
+          if(components.length && components[0] === '') components.shift();
 
-          let entries = names.map(file => [file, fs.statSync(file)]);
+          if(components.length < 2 || components[0] != 'home') throw new Error(`Access error`);
 
-          yield JSON.stringify(
-            entries
-              .filter(([file, st]) => st.isFile())
-              .sort((a, b) => b[1].mtime - a[1].mtime)
-              .reduce((acc, [file, st]) => {
-                let obj = {
-                  name: file
-                };
+          console.log('\x1b[38;5;215m*files\x1b[0m', { dir, components, absdir });
 
-                acc.push(
-                  Object.assign(obj, {
-                    mtime: Util.toUnixTime(st.mtime),
-                    time: Util.toUnixTime(st.ctime),
-                    mode: `0${(st.mode & 0x09ff).toString(8)}`,
-                    size: st.size
-                  })
-                );
-                return acc;
-              }, []),
-            null,
-            2
-          );
+          //          if(fs.existsSync(dir)) dir = path.realpath(dir);
+
+          console.log('\x1b[38;5;215m*files\x1b[0m', { absdir });
+
+          let names = fs.readdirSync(absdir) ?? [];
+          //console.log('\x1b[38;5;215m*files\x1b[0m', { dir, names });
+          if(filter) {
+            const re = new RegExp(filter, 'gi');
+            names = names.filter(name => re.test(name));
+          }
+
+          let entries = names.map(file => [file, fs.statSync(`${dir}/${file}`)]);
+
+          entries = entries.reduce((acc, [file, st]) => {
+            let name = file + (st.isDirectory() ? '/' : '');
+
+            let obj = {
+              name
+            };
+
+            acc.push([
+              name,
+              Object.assign(obj, {
+                mtime: Util.toUnixTime(st.mtime),
+                time: Util.toUnixTime(st.ctime),
+                mode: `0${(st.mode & 0x09ff).toString(8)}`,
+                size: st.size
+              })
+            ]);
+            return acc;
+          }, []);
+
+          let cmp = {
+            string(a, b) {
+              return b[1][key].localeCompare(a[1][key]);
+            },
+            number(a, b) {
+              return b[1][key] - a[1][key];
+            }
+          }[typeof entries[0][1][key]];
+
+          entries = entries.sort(cmp);
+
+          console.log('\x1b[38;5;215m*files\x1b[0m', { entries });
+          names = entries.map(([name, obj]) => (objects ? obj : name));
+
+          yield JSON.stringify(...[names, ...(verbose ? [null, 2] : [])]);
         }
       ],
       ...url,

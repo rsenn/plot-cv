@@ -614,7 +614,7 @@ jsrt::value
 contours_to_array(JSContext* ctx, const contour_vector<int>& contours) {
   JSValue ret = JS_NewArray(ctx);
   uint32_t i, n = contours.size();
-  for(i = 0; i < n; i++) { JS_SetPropertyUint32(ctx, ret, i, js_contour_new<int>(ctx, contours[i])); }
+  for(i = 0; i < n; i++) { JS_SetPropertyUint32(ctx, ret, i, js_contour_new(ctx, contours[i])); }
   return ret;
 }
 
@@ -824,7 +824,7 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
 
         std::vector<int> adjacent = filter_lines(lines.begin(), lines.end(), [&](Line<float>& l2, size_t index) -> bool {
           size_t point_index;
-          double min_dist = line.min_distance(l2, &point_index);
+          double min_dist = line.minDistance(l2, &point_index);
           bool intersects = line.intersect(l2);
           bool ok = (/*intersects ||*/ min_dist < 10);
           if(ok)
@@ -850,20 +850,20 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
         std::transform(adjacent_lines.begin(),
                        adjacent_lines.end(),
                        back_inserter(distances),
-                       [&line](Line<float>* l2) -> float { return line.min_distance(*l2); });
+                       [&line](Line<float>* l2) -> float { return line.minDistance(*l2); });
         std::transform(adjacent_lines.begin(),
                        adjacent_lines.end(),
                        back_inserter(line_ends),
                        [&line](Line<float>* l2) -> LineEnd<float> {
                          LineEnd<float> end;
-                         line.nearest_end(*l2, end);
+                         line.nearestEnd(*l2, end);
                          return end;
                        });
         angleoffs.clear();
         std::transform(adjacent_lines.begin(),
                        adjacent_lines.end(),
                        back_inserter(angleoffs),
-                       [&line](Line<float>* l2) -> float { return line.angle_diff(*l2); });
+                       [&line](Line<float>* l2) -> float { return line.angleDiff(*l2); });
         std::vector<int> angleoffs_i;
 
         std::transform(angleoffs.begin(), angleoffs.end(), back_inserter(angleoffs_i), [](const float ang) -> int {

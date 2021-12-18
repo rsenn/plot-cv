@@ -2,25 +2,7 @@ import REPL from './repl.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import PortableFileSystem from './lib/filesystem.js';
 import * as Terminal from './terminal.js';
-import {
-  SIZEOF_POINTER,
-  Node,
-  Type,
-  RecordDecl,
-  EnumDecl,
-  TypedefDecl,
-  FunctionDecl,
-  Location,
-  TypeFactory,
-  SpawnCompiler,
-  AstDump,
-  NodeType,
-  NodeName,
-  GetLoc,
-  GetType,
-  GetTypeStr,
-  NodePrinter
-} from './clang-ast.js';
+import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter } from './clang-ast.js';
 
 const consoleOpts = { depth: 5, compact: 2, hideKeys: ['range', 'loc'] };
 async function main(...args) {

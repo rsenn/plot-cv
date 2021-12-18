@@ -18,7 +18,7 @@ exec_cmd() (
 )
 
 find_cmake_files() (
-  [ $# -le 0 ] && set -- . quickjs quickjs/qjs-*
+  [ $# -le 0 ] && set -- . quickjs quickjs/qjs-* qjs-*
   for DIR; do
     ls -fd "$DIR/CMakeLists.txt" "$DIR"/cmake/*.cmake 2>/dev/null
   done

@@ -6,28 +6,28 @@ body {
 body {
   width: 100%;
   height: 100%;
-  margin:  0;
-  overflow:  hidden;
+  margin: 0;
+  overflow: hidden;
 }
 * {
   box-sizing: content-box;
 }
 
 body {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 header {
-    height: 46px;
+  height: 46px;
 }
 
 main {
-    flex: auto;
- }
+  flex: auto;
+}
 
 footer {
-    height: 100px;
+  height: 100px;
 }
 /*
 canvas {
@@ -228,4 +228,3 @@ span.regexpLiteral {
 .panel.list < .file {
   background: white;
 }
-*/
