@@ -37,6 +37,7 @@
     "sourceType": "module"
   },
   "dependencies": {
+    "@s-ui/lint": "^3.43.0",
     "body-parser": "^1.19.0",
     "bpg-decoder": "^0.0.7",
     "bpg-stream": "^0.0.2",
@@ -54,8 +55,8 @@
     "preact-render-to-string": "^5.1.19",
     "preact-ssr-prepass": "^1",
     "promisify-child-process": "^4.1.1",
-    "ws": "^7.3.1",
-    "serialport": "^9.0.1"
+    "serialport": "^9.0.1",
+    "ws": "^7.3.1"
   },
   "oldDeps": {
     "@deque/dot": "^1.1.5",
