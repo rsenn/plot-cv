@@ -419,5 +419,6 @@ main() {
   printf("#ifndef GLOB_TILDE_CHECK\n#define GLOB_TILDE_CHECK %d\n#endif\n", GLOB_TILDE_CHECK);
   printf("#ifndef GLOB_ONLYDIR\n#define GLOB_ONLYDIR %d\n#endif\n", GLOB_ONLYDIR);
   printf("#ifndef GLOB_MAGCHAR\n#define GLOB_MAGCHAR %d\n#endif\n", GLOB_MAGCHAR);
+  printf("#define _SC_OPEN_MAX 0x%x\n", _SC_OPEN_MAX);
   return 0;
 }

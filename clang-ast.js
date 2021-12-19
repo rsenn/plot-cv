@@ -1157,7 +1157,7 @@ export async function AstDump(compiler, source, args, force) {
       return json;
     },
     data() {
-      console.log('this.json', this.json);
+      //console.log('this.json', this.json);
       let data = JSON.parse(this.json);
       let file;
       let maxDepth = 0;
