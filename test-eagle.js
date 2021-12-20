@@ -91,7 +91,7 @@ async function testGraph(proj) {
   }
 }
 
-function updateMeasures(board) {
+function UpdateMeasures(board) {
   if(!board) return false;
   let bounds = board.getBounds();
   let measures = board.getMeasures();
@@ -116,8 +116,8 @@ function updateMeasures(board) {
   return !measures;
 }
 
-function alignItem(item) {
-  console.debug('alignItem', item);
+function AlignItem(item) {
+  console.debug('AlignItem', item);
   let geometry = item.geometry;
   let oldPos = geometry.clone();
 
@@ -144,15 +144,15 @@ function alignItem(item) {
   return changed;
 }
 
-function alignAll(doc) {
+function AlignAll(doc) {
   if(!doc) return false;
 
   let items = doc.getAll(doc.type == 'brd' ? 'element' : 'instance');
   let changed = false;
-  for(let item of items) changed |= alignItem(item);
+  for(let item of items) changed |= AlignItem(item);
   let signals_nets = doc.getAll(/(signals|nets)/);
   //console.log('signals_nets:', signals_nets);
-  for(let net of signals_nets) for (let item of net.getAll('wire')) changed |= alignItem(item);
+  for(let net of signals_nets) for (let item of net.getAll('wire')) changed |= AlignItem(item);
   return !!changed;
 }
 
@@ -206,9 +206,9 @@ async function testEagle(filename) {
   /*  for(let description of board.getAll('description')) {
   }*/
   console.log('proj.board', proj.board);
-  if(proj.board) updateMeasures(proj.board);
+  if(proj.board) UpdateMeasures(proj.board);
 
-  if(alignAll(board) || alignAll(schematic)) console.log('Saved:', await proj.saveTo('tmp', true));
+  if(AlignAll(board) || AlignAll(schematic)) console.log('Saved:', await proj.saveTo('tmp', true));
 
   console.log('saved:', await proj.saveTo('tmp', true));
 

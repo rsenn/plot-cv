@@ -82,7 +82,7 @@ async function CommandLine() {
     let first;
     if(Util.isObject(value) && (first = value.first ?? value[0]) && Util.isObject(first) && (first.type || first.kind)) console.log(Table(value));
     else if(typeof value == 'string') console.log(value);
-    else console.log(inspect(value, { ...console.options,depth: 1,  hideKeys: ['loc', 'range'] }));
+    else console.log(inspect(value, { ...console.options, depth: 1, hideKeys: ['loc', 'range'] }));
     std.out.puts('\n');
   };
   let debugLog = fs.openSync('debug.log', 'a');
