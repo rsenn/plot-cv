@@ -143,9 +143,8 @@ function SelectLocations(node) {
 
 function LocationString(loc) {
   if(typeof loc == 'object' && loc != null) {
-    let file = loc.includedFrom ? loc.includedFrom.file : loc.file;
-    //if(typeof file != 'string') console.log('LocationString:', file);
-    if(file) file = path.relative(file, process.cwd());
+    let file = loc.file ?? (loc.includedFrom && loc.includedFrom.file);
+    //if(file) file = path.relative(file, process.cwd());
     if(typeof loc.line == 'number') return `${file ? file + ':' : ''}${loc.line}${typeof loc.col == 'number' ? ':' + loc.col : ''}`;
     return `${file ? file : ''}@${loc.offset}`;
   }
@@ -917,7 +916,7 @@ async function ASTShell(...args) {
       return name_or_id instanceof RegExp ? node => name_or_id.test(node.name) && pred(node) : name_or_id.startsWith('0x') ? node => node.id == name_or_id && pred(node) : node => node.name == name_or_id && pred(node);
     }
 
-    Object.assign(r, {
+    Util.bindMethods(r, {
       select(name_or_id, pred = n => true) {
         return this.data.inner.filter(nameOrIdPred(name_or_id, pred));
       },
@@ -1039,6 +1038,7 @@ async function ASTShell(...args) {
     Pointer,
     Tree,
     deep,
+    path,
     Compile,
     SelectLocations,
     LocationString,
