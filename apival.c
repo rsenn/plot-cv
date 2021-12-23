@@ -23,6 +23,7 @@
 #include <errno.h>
 #include <sys/ptrace.h>
 #include <sys/inotify.h>
+#include <portmidi.h>
 
 static inline int
 escape_char_pred(int c) {
@@ -349,7 +350,7 @@ main() {
   printf("EAGAIN = %i\n", EAGAIN);
   printf("SHUT_WR = %i\n", SHUT_WR);
   printf("SHUT_RD = %i\n", SHUT_RD);
-  //printf("SIG_SETMASK = %i\n", SIG_SETMASK);
+  // printf("SIG_SETMASK = %i\n", SIG_SETMASK);
   printf("PTRACE_SYSCALL = %i\n", PTRACE_SYSCALL);
   printf("sizeof(__int128) = %zu\n", sizeof(__int128));
   printf("SIGHUP = %i\n", SIGHUP);
@@ -420,5 +421,22 @@ main() {
   printf("#ifndef GLOB_ONLYDIR\n#define GLOB_ONLYDIR %d\n#endif\n", GLOB_ONLYDIR);
   printf("#ifndef GLOB_MAGCHAR\n#define GLOB_MAGCHAR %d\n#endif\n", GLOB_MAGCHAR);
   printf("#define _SC_OPEN_MAX 0x%x\n", _SC_OPEN_MAX);
+  printf("sizeof(PmDeviceInfo) = %zu\n", sizeof(PmDeviceInfo));
+  printf("sizeof(PmEvent) = %zu\n", sizeof(PmEvent));
+  printf("pmNoError = %i\n", pmNoError);
+  printf("pmNoData = %i\n", pmNoData);
+  printf("pmGotData = %i\n", pmGotData);
+  printf("pmHostError = %i\n", pmHostError);
+  printf("pmInvalidDeviceId = %i\n", pmInvalidDeviceId);
+  printf("pmInsufficientMemory = %i\n", pmInsufficientMemory);
+  printf("pmBufferTooSmall = %i\n", pmBufferTooSmall);
+  printf("pmBufferOverflow = %i\n", pmBufferOverflow);
+  printf("pmBadPtr = %i\n", pmBadPtr);
+  printf("pmBadData = %i\n", pmBadData);
+  printf("pmInternalError = %i\n", pmInternalError);
+  printf("pmBufferMaxSize = %i\n", pmBufferMaxSize);
+  printf("pmNotImplemented = %i\n", pmNotImplemented);
+  printf("pmInterfaceNotSupported = %i\n", pmInterfaceNotSupported);
+  printf("pmNameConflict = %i\n", pmNameConflict);
   return 0;
 }

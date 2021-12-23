@@ -496,11 +496,11 @@ function ByteLength2Value(byteLength, signed, floating) {
 export class FFI_Function {
   constructor(node, prefix = '') {
     const { name, returnType = 'void', parameters = [] } = node;
-    //console.log('FFI_Function.constructor', node, {name,parameters});
+    console.log('FFI_Function.constructor', node, { name, parameters });
     this.name = name;
     this.prefix = prefix;
     this.returnType = returnType.ffi;
-    this.parameters = [...parameters].map(([name, type], idx) => [name ?? `arg${idx + 1}`, type.ffi]);
+    this.parameters = [...(parameters || [])].map(([name, type], idx) => [name ?? `arg${idx + 1}`, type.ffi]);
   }
 
   generateDefine(fp, lib) {
@@ -818,6 +818,8 @@ function MakeFFI(node, lib, exp, fp) {
   if(typeof node == 'object' && node && node.kind == 'FunctionDecl') node = new FunctionDecl(node);
 
   if(node instanceof FunctionDecl) {
+    console.log('node', (globalThis.node = node));
+
     let ffi = new FFI_Function(node);
 
     let protoStr = PrintAst(node.ast, $.data)
@@ -888,7 +890,7 @@ async function ASTShell(...args) {
     args
   );
 
-  console.log('params', params);
+  //console.log('params', params);
 
   defs = params.define || [];
   includes = params.include || [];
@@ -905,7 +907,7 @@ async function ASTShell(...args) {
   });
 
   async function Compile(file, ...args) {
-    console.log('args', args);
+    //console.log('args', args);
     let r = await AstDump(params.compiler, file, [...globalThis.flags, ...args], params.force);
     r.source = file;
 

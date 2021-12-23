@@ -492,8 +492,10 @@ const { size,unsigned } = this;
     if(size > SIZEOF_POINTER) return 'void *';
     if(size === 0) return 'void';
 
-    if(Type.declarations.has(this + '')) {
-      let decl = Type.declarations.get(this + '');
+    str??= this+'';
+
+    if(Type.declarations.has(str)) {
+      let decl = Type.declarations.get(str);
       if(decl.kind == 'EnumDecl') return 'int';
     } else {
       throw new Error(`No ffi type '${str}' ${size} ${Util.className(this)} ${this.ast.kind}`);

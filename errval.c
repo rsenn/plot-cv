@@ -1,9 +1,9 @@
-#include <stdio.h> 
-#include <errno.h> 
- 
+#include <stdio.h>
+#include <errno.h>
+
 int
 main() {
-  
+
   printf("EPERM = %i\n", EPERM);
   printf("ENOENT = %i\n", ENOENT);
   printf("ESRCH = %i\n", ESRCH);

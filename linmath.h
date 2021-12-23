@@ -11,42 +11,42 @@
 #define LINMATH_H_FUNC static inline
 #endif
 
-#define LINMATH_H_DEFINE_VEC(n)                                                                                                \
-  typedef float vec##n[n];                                                                                                     \
-  LINMATH_H_FUNC void vec##n##_add(vec##n r, vec##n const a, vec##n const b) {                                                 \
-    int i;                                                                                                                     \
-    for(i = 0; i < n; ++i) r[i] = a[i] + b[i];                                                                                 \
-  }                                                                                                                            \
-  LINMATH_H_FUNC void vec##n##_sub(vec##n r, vec##n const a, vec##n const b) {                                                 \
-    int i;                                                                                                                     \
-    for(i = 0; i < n; ++i) r[i] = a[i] - b[i];                                                                                 \
-  }                                                                                                                            \
-  LINMATH_H_FUNC void vec##n##_scale(vec##n r, vec##n const v, float const s) {                                                \
-    int i;                                                                                                                     \
-    for(i = 0; i < n; ++i) r[i] = v[i] * s;                                                                                    \
-  }                                                                                                                            \
-  LINMATH_H_FUNC float vec##n##_mul_inner(vec##n const a, vec##n const b) {                                                    \
-    float p = 0.f;                                                                                                             \
-    int i;                                                                                                                     \
-    for(i = 0; i < n; ++i) p += b[i] * a[i];                                                                                   \
-    return p;                                                                                                                  \
-  }                                                                                                                            \
-  LINMATH_H_FUNC float vec##n##_len(vec##n const v) { return sqrtf(vec##n##_mul_inner(v, v)); }                                \
-  LINMATH_H_FUNC void vec##n##_norm(vec##n r, vec##n const v) {                                                                \
-    float k = 1.f / vec##n##_len(v);                                                                                           \
-    vec##n##_scale(r, v, k);                                                                                                   \
-  }                                                                                                                            \
-  LINMATH_H_FUNC void vec##n##_min(vec##n r, vec##n const a, vec##n const b) {                                                 \
-    int i;                                                                                                                     \
-    for(i = 0; i < n; ++i) r[i] = a[i] < b[i] ? a[i] : b[i];                                                                   \
-  }                                                                                                                            \
-  LINMATH_H_FUNC void vec##n##_max(vec##n r, vec##n const a, vec##n const b) {                                                 \
-    int i;                                                                                                                     \
-    for(i = 0; i < n; ++i) r[i] = a[i] > b[i] ? a[i] : b[i];                                                                   \
-  }                                                                                                                            \
-  LINMATH_H_FUNC void vec##n##_dup(vec##n r, vec##n const src) {                                                               \
-    int i;                                                                                                                     \
-    for(i = 0; i < n; ++i) r[i] = src[i];                                                                                      \
+#define LINMATH_H_DEFINE_VEC(n) \
+  typedef float vec##n[n]; \
+  LINMATH_H_FUNC void vec##n##_add(vec##n r, vec##n const a, vec##n const b) { \
+    int i; \
+    for(i = 0; i < n; ++i) r[i] = a[i] + b[i]; \
+  } \
+  LINMATH_H_FUNC void vec##n##_sub(vec##n r, vec##n const a, vec##n const b) { \
+    int i; \
+    for(i = 0; i < n; ++i) r[i] = a[i] - b[i]; \
+  } \
+  LINMATH_H_FUNC void vec##n##_scale(vec##n r, vec##n const v, float const s) { \
+    int i; \
+    for(i = 0; i < n; ++i) r[i] = v[i] * s; \
+  } \
+  LINMATH_H_FUNC float vec##n##_mul_inner(vec##n const a, vec##n const b) { \
+    float p = 0.f; \
+    int i; \
+    for(i = 0; i < n; ++i) p += b[i] * a[i]; \
+    return p; \
+  } \
+  LINMATH_H_FUNC float vec##n##_len(vec##n const v) { return sqrtf(vec##n##_mul_inner(v, v)); } \
+  LINMATH_H_FUNC void vec##n##_norm(vec##n r, vec##n const v) { \
+    float k = 1.f / vec##n##_len(v); \
+    vec##n##_scale(r, v, k); \
+  } \
+  LINMATH_H_FUNC void vec##n##_min(vec##n r, vec##n const a, vec##n const b) { \
+    int i; \
+    for(i = 0; i < n; ++i) r[i] = a[i] < b[i] ? a[i] : b[i]; \
+  } \
+  LINMATH_H_FUNC void vec##n##_max(vec##n r, vec##n const a, vec##n const b) { \
+    int i; \
+    for(i = 0; i < n; ++i) r[i] = a[i] > b[i] ? a[i] : b[i]; \
+  } \
+  LINMATH_H_FUNC void vec##n##_dup(vec##n r, vec##n const src) { \
+    int i; \
+    for(i = 0; i < n; ++i) r[i] = src[i]; \
   }
 
 LINMATH_H_DEFINE_VEC(2)
