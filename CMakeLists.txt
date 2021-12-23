@@ -354,12 +354,10 @@ target_link_libraries(cli ${PNG_LIBRARIES} ${OPENCV_FREETYPE_LIBRARY})
 
 add_dependencies(cli qjs-opencv)
 
-add_executable(test-qjs test-qjs.c)
-
-target_link_libraries(test-qjs quickjs pthread dl m)
-
-target_compile_definitions(test-qjs PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${QUICKJS_VERSION}"
-                                            CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1 ${PLOTCV_DEFS})
+#add_executable(test-qjs test-qjs.c)
+#target_link_libraries(test-qjs quickjs pthread dl m)
+#target_compile_definitions(test-qjs PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${QUICKJS_VERSION}"
+#                                            CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1 ${PLOTCV_DEFS})
 
 option(ADDITIONAL_PROGS "Build other OpenCV programs" OFF)
 
