@@ -241,12 +241,6 @@ link_directories(BEFORE ${quickjs_BINARY_DIR})
 
 link_directories("${CMAKE_CURRENT_BINARY_DIR}/quickjs" "${QUICKJS_LIBRARY_DIR}")
 
-add_subdirectory(qjs-opencv "${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv")
-add_library(qjs-opencv-a STATIC IMPORTED GLOBAL)
-set_target_properties(qjs-opencv-a PROPERTIES IMPORTED_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv/opencv.a")
-
-set(QUICKJS_OPENCV_A qjs-opencv-a)
-
 function(src_program NAME SOURCES)
   foreach(SRC ${SOURCES})
     file(GLOB "${NAME}_SOURCES" ${SRC})
@@ -346,6 +340,12 @@ if(HAVE_OPENCV2_FREETYPE_HPP)
   set(OPENCV_FREETYPE_LIBRARY opencv_freetype)
 endif(HAVE_OPENCV2_FREETYPE_HPP)
 set(OPENCV_FREETYPE_LIBRARY opencv_freetype)
+
+add_subdirectory(qjs-opencv "${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv")
+add_library(qjs-opencv-a STATIC IMPORTED GLOBAL)
+set_target_properties(qjs-opencv-a PROPERTIES IMPORTED_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv/opencv.a")
+
+set(QUICKJS_OPENCV_A qjs-opencv-a)
 
 target_compile_definitions(
   cli PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${QUICKJS_VERSION}" CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM
