@@ -2,7 +2,7 @@ import { LineList, Rect, Point } from './lib/geom.js';
 import Util from './lib/util.js';
 import { BG, digit2color, GetColorBands, PartScales } from './lib/eda/colorCoding.js';
 export { GetColorBands } from './lib/eda/colorCoding.js';
-import { map, consume, reduce } from './lib/iterator/helpers.js';
+import { map, consume, reduce } from './lib/iterable.js';
 
 export function GetParts(schematic, t = entries => Object.fromEntries(entries)) {
   return t(map(schematic.getAll('part'), elem => [elem.name, elem]));
