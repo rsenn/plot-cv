@@ -98,18 +98,18 @@ function main(...args) {
       'Upgrade required',
       (map, offset, length) => {
         let buf = dupArrayBuffer(map, offset, length);
-        console.log('map', toPointer(map));
+        /*console.log('map', toPointer(map));
         console.log('buf', toPointer(buf) - toPointer(map));
         console.log('buf', buf);
         console.log('offset', offset);
-        console.log('length', length);
+        console.log('length', length);*/
 
         let arr = new Uint32Array(buf, 4, 1);
 
-        console.log('arr[0]', arr[0]);
+        //console.log('arr[0]', arr[0]);
 
         //++arr[0];
-        console.log('arr[0]', arr[0]);
+        //console.log('arr[0]', arr[0]);
       }
     ],
     ['85 db 74 29 0f be b3 0d cc 29', 'Upgrade', '85 db eb'],
@@ -164,7 +164,7 @@ function main(...args) {
     return [description, results];
   });
 
-  console.log('results', { ...results });
+  console.log('results', console.config({ compact: 3, depth: Infinity }), results);
 
   let offsets = results.map(([desc, r]) => {
     const { offset, rva } = r[0] ?? {};
@@ -174,11 +174,20 @@ function main(...args) {
     return [desc, offset];
   });
 
-  offsets = offsets.slice(0, 4);
   //offsets = [offsets[0], offsets[3]]
-  console.log('offsets', { ...offsets });
+  offsets = offsets.map((a, i) => [i, a]);
+  console.log(
+    'offsets',
+    console.config({ /*numberBase: 10, */ compact: 1 }),
+    offsets.filter(([i, [name, offset]]) => offset !== undefined).reduce((acc, [i, a]) => ({ ...acc, [i]: a }), {})
+  );
 
-  offsets.forEach(([desc, offset], i) => {
+  offsets = offsets.filter(([i, [name, offset]]) => offset !== undefined);
+
+  console.log('offsets', offsets);
+
+  // offsets = offsets.slice(0, 4);
+  offsets.forEach(([i, [desc, offset]]) => {
     const rep = replacements[i];
 
     if(typeof rep == 'function') {
@@ -192,7 +201,7 @@ function main(...args) {
       if(offset !== null) {
         const dst = dupArrayBuffer(map, offset, buffer.byteLength);
         const diff = toPointer(dst) - toPointer(map);
-        console.log('patch', {
+        console.log(`patch[${i}]`, {
           map: +toPointer(map),
           dst: +toPointer(dst),
           offset,
@@ -200,6 +209,7 @@ function main(...args) {
         });
 
         mprotect(dst, dst.byteLength, PROT_WRITE);
+        console.log(`replacement`, new Uint8Array(buffer));
 
         memcpy(dst, buffer);
         console.log(`dst[${i}]`, dst);
@@ -243,9 +253,9 @@ function main(...args) {
   mprotect(map, size, PROT_READ);
 
   let r = os.write(outFd, map, 0, size);
-  console.log('map', toPointer(map));
+  /*console.log('map', toPointer(map));
   console.log('map', map);
-  console.log('size', size);
+  console.log('size', size);*/
 
   console.log(`Wrote ${r} bytes`);
   os.close(outFd);
