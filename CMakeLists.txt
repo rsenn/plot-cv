@@ -43,7 +43,10 @@ endif(PNG_LIBRARIES)
 if(BUILD_QUICKJS)
   include(${CMAKE_CURRENT_SOURCE_DIR}/quickjs/defs.cmake)
 else(BUILD_QUICKJS)
+  dump(QUICKJS_PREFIX)
+
   find_quickjs()
+  dump(QUICKJS_INCLUDE_DIR)
 endif(BUILD_QUICKJS)
 
 find_opencv()
