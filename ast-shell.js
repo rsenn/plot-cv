@@ -343,7 +343,7 @@ function InspectStruct(decl, includes, compiler = 'clang') {
   console.log('InspectStruct', decl);
 
   const code = [...GenerateInspectStruct(decl, includes)].join('\n');
-  const program = `/tmp/inspect-${decl.name.replace(/\ /g, '_')}`;
+  const program = `/tmp/inspect-${decl.name.replace(/ /g, '_')}`;
   WriteFile(program + '.c', code);
 
   let command = [compiler, '-O2', '-g', '-w', '-o', program, program + '.c', ...flags];

@@ -2,6 +2,7 @@ import { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, Ea
 import Util from './lib/util.js';
 import * as deep from './lib/deep.js';
 import path from './lib/path.js';
+import require from 'require';
 import { LineList, Point, Circle, Rect, Size, Line, TransformationList, Rotation, Translation, Scaling, Matrix, BBox } from './lib/geom.js';
 import { Console } from 'console';
 import REPL from './xrepl.js';
@@ -13,6 +14,7 @@ import inspect from './lib/objectInspect.js';
 import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
 import { GetExponent, GetMantissa, ValueToNumber, NumberToValue, GetMultipliers, GetMultiplier, GetFactor, BG, PartScales, digit2color } from './lib/eda/colorCoding.js';
 import { UnitForName } from './lib/eda/units.js';
+import CircuitJS from './lib/eda/circuitjs.js';
 import { define, isObject, memoize, unique, atexit } from './lib/misc.js';
 import { HSLA, isHSLA, ImmutableHSLA, RGBA, isRGBA, ImmutableRGBA, ColoredText } from './lib/color.js';
 import { GetColorBands, scientific, num2color, GetParts, GetInstances, GetPositions, GetElements } from './eagle-commands.js';
@@ -509,7 +511,7 @@ async function testEagle(filename) {
 }
 
 async function main(...args) {
-  globalThis.console = new Console({ inspectOptions: { breakLength: 100, colors: true, depth: Infinity, compact: 0, customInspect: true } });
+  globalThis.console = new Console({ inspectOptions: { maxArrayLength: 100, colors: true, depth: Infinity, compact: 1, customInspect: true } });
 
   let debugLog;
 
@@ -602,7 +604,11 @@ async function main(...args) {
     WriteJSON,
     WriteBJSON,
     DirIterator,
-    RecursiveDirIterator
+    RecursiveDirIterator,
+    CircuitJS,
+    toNumber(n) {
+      return isNaN(+n) ? n : +n;
+    }
   });
   Object.assign(globalThis, {
     GetExponent,
@@ -704,9 +710,13 @@ async function main(...args) {
   //console.log(`repl`, repl);
   //console.log(`debugLog`, Util.getMethods(debugLog, Infinity, 0));
   //repl.historyLoad(null, false);
+  repl.directives.i = [module => require(module), 'import module'];
 
   repl.debugLog = debugLog;
-  repl.exit = Terminate;
+  repl.exit = () => {
+    repl.cleanup();
+    Terminate();
+  };
   repl.importModule = importModule;
   repl.debug = (...args) => {
     let s = '';
