@@ -69,8 +69,10 @@ target_compile_definitions(
 
 # link
 target_link_libraries(
-  imgui-viewer ${SDL2_LIBRARIES} ${QUICKJS_OPENCV_A} ${OpenCV_LIBS} glfw ${OPENGL_LIBRARIES}
-  ${GLFW_LIBRARIES} ${GLEW_LIBRARIES} ${EXTRA_LIBS} quickjs png ${LIBDL} ${LIBM} ${LIBPTHREAD} GL)
+  imgui-viewer ${SDL2_LIBRARIES} ${QUICKJS_OPENCV_A} ${PNG_LIBRARIES} ${OPENCV_FREETYPE_LIBRARY}
+  ${OPENCV_LIBRARIES} glfw ${OPENGL_LIBRARIES} ${GLFW_LIBRARIES} ${GLEW_LIBRARIES} ${EXTRA_LIBS}
+  quickjs ${LIBDL} ${LIBM} ${LIBPTHREAD} GL)
+
 if(OpenCV_FOUND)
   target_include_directories(imgui-viewer PUBLIC ${OpenCV_INCLUDE_DIRS})
   target_link_libraries(imgui-viewer ${OpenCV_LIBS})

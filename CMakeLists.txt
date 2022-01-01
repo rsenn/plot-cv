@@ -349,19 +349,23 @@ set(OPENCV_FREETYPE_LIBRARY opencv_freetype)
 
 add_subdirectory(qjs-opencv "${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv")
 add_library(qjs-opencv-a STATIC IMPORTED GLOBAL)
-set_target_properties(qjs-opencv-a PROPERTIES IMPORTED_LOCATION
-                                              "${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv/opencv.a")
+set_target_properties(
+  qjs-opencv-a PROPERTIES IMPORTED_LOCATION
+                          "${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv/libqjs-opencv.a"
+                          IMPORTED_LINK_INTERFACE_LIBRARIES
+                          "${OPENCV_LIBRARIES};X11")
 
 #set(QUICKJS_OPENCV_A qjs-opencv-a)
-set(QUICKJS_OPENCV_A ${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv/libopencv.a)
+set(QUICKJS_OPENCV_A qjs-opencv-a)
 
-link_directories(${OPENCV_LIBDIR})
+link_directories(${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv ${OPENCV_LIBDIR})
 
 target_compile_definitions(
   cli
   PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${QUICKJS_VERSION}" CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}"
           CONFIG_BIGNUM CONFIG_CHECK_JSVALUE ${PLOTCV_DEFS})
 set_target_properties(cli PROPERTIES LINK_FLAGS ${OPENCV_LINK_FLAGS})
+dump(OPENCV_LIBRARIES)
 target_link_libraries(cli ${QUICKJS_OPENCV_A} ${PNG_LIBRARIES} ${OPENCV_FREETYPE_LIBRARY}
                       ${OPENCV_LIBRARIES})
 

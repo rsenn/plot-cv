@@ -108,7 +108,7 @@ macro(find_opencv)
   if(NOT OPENCV_CHECKED)
     message(STATUS "Finding opencv library")
 
-      message("OpenCV_DIR = ${OpenCV_DIR}")
+    message("OpenCV_DIR = ${OpenCV_DIR}")
     if(OPENCV_PREFIX)
       message("OpenCV prefix: ${OPENCV_PREFIX}")
       set(OPENCV_PREFIX "${OPENCV_PREFIX}" CACHE PATH "OpenCV root dir")

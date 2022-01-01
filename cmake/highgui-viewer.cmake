@@ -14,8 +14,9 @@ target_compile_definitions(
                          CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1 ${PLOTCV_DEFS})
 
 target_link_libraries(
-  highgui-viewer ${QUICKJS_OPENCV_A} ${OpenCV_LIBS} opencv_freetype ${GLEW_SHARED_LIBRARY_RELEASE}
-  ${GLEW_SHARED_LIBRARIES} quickjs png ${LIBDL} ${LIBM} ${LIBPTHREAD})
+  highgui-viewer ${QUICKJS_OPENCV_A} ${PNG_LIBRARIES} ${OPENCV_FREETYPE_LIBRARY}
+  ${OPENCV_LIBRARIES} ${GLEW_SHARED_LIBRARY_RELEASE} ${GLEW_SHARED_LIBRARIES} quickjs ${LIBDL}
+  ${LIBM} ${LIBPTHREAD})
 
 add_dependencies(highgui-viewer qjs-opencv)
 install(TARGETS highgui-viewer DESTINATION bin)
