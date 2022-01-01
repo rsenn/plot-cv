@@ -5,13 +5,10 @@ set(DISABLE_WERROR TRUE CACHE BOOL "Disable -Werror flag" FORCE)
 
 set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "build type")
 
-set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS Debug Release MinSizeRel
-                                             RelWithDebInfo)
+set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS Debug Release MinSizeRel RelWithDebInfo)
 
-set(CMAKE_BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR}"
-    CACHE PATH "Build with local rpath" FORCE)
-set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib"
-    CACHE PATH "Build with install rpath" FORCE)
+set(CMAKE_BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR}" CACHE PATH "Build with local rpath" FORCE)
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib" CACHE PATH "Build with install rpath" FORCE)
 
 set(QUICKJS_SOURCES_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
 
@@ -94,12 +91,10 @@ if(HAVE_LIBDL)
 endif(HAVE_LIBDL)
 
 set(CMAKE_INSTALL_RPATH
-    "${CMAKE_INSTALL_RPATH};${CMAKE_INSTALL_PREFIX}/lib;${CMAKE_INSTALL_PREFIX}/lib/quickjs"
-)
+    "${CMAKE_INSTALL_RPATH};${CMAKE_INSTALL_PREFIX}/lib;${CMAKE_INSTALL_PREFIX}/lib/quickjs")
 set(CMAKE_BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR};${CMAKE_CURRENT_BINARY_DIR}")
 
-check_library_exists(json-cpp ZN4YAML6detail9node_data9reset_mapEv /usr
-                     JSON_CPP)
+check_library_exists(json-cpp ZN4YAML6detail9node_data9reset_mapEv /usr JSON_CPP)
 
 set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE
     CACHE BOOL "Build installable binaries with -Wl,-rpath=PREFIX" FORCE)
@@ -107,15 +102,14 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE
     CACHE BOOL "Add dirs in runtime search path to the install rpath" FORCE)
 
 include_directories(
-  ${OPENCV_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/opencv ${CMAKE_CURRENT_SOURCE_DIR}/src
-  ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
+  ${OPENCV_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/opencv
+  ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
 
 foreach(CXX_STANDARD c++17 c++14 c++11)
   string(REPLACE "c++" "CPLUSPLUS" CXX_STANDARD_NUM "${CXX_STANDARD}")
   set(CMAKE_REQUIRED_QUIET TRUE)
-  check_cxx_compiler_flag("-std=${CXX_STANDARD}"
-                          CXX_STANDARD_${CXX_STANDARD_NUM})
+  check_cxx_compiler_flag("-std=${CXX_STANDARD}" CXX_STANDARD_${CXX_STANDARD_NUM})
   set(CMAKE_REQUIRED_QUIET FALSE)
   if(CXX_STANDARD_${CXX_STANDARD_NUM})
     string(REGEX REPLACE "\\+" "x" CXX_STANDARD_NAME "${CXX_STANDARD_VALUE}")
@@ -128,8 +122,7 @@ foreach(CXX_STANDARD c++17 c++14 c++11)
     # add_definitions(-DCXX_STANDARD=${CXX_STANDARD_VERSION})
 
     set(CXX_STANDARD_VALUE "${CXX_STANDARD}" CACHE STRING "C++ standard" FORCE)
-    set(CXX_STANDARD_FLAG "-std=${CXX_STANDARD}"
-        CACHE STRING "C++ standard argument" FORCE)
+    set(CXX_STANDARD_FLAG "-std=${CXX_STANDARD}" CACHE STRING "C++ standard argument" FORCE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_STANDARD_FLAG}")
     break()
   endif(CXX_STANDARD_${CXX_STANDARD_NUM})
@@ -155,8 +148,7 @@ string(REGEX REPLACE " -Wall" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 nowarn_flag(-Wno-unused-value)
 nowarn_flag(-Wno-unused-variable)
 
-set(CMAKE_CXX11_EXTENSION_COMPILE_OPTION "${CXX_STANDARD_FLAG}" CACHE STRING ""
-                                                                      FORCE)
+set(CMAKE_CXX11_EXTENSION_COMPILE_OPTION "${CXX_STANDARD_FLAG}" CACHE STRING "" FORCE)
 
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES ".*Clang.*")
   nowarn_flag(-Wno-deprecated-anon-enum-enum-conversion)
@@ -202,14 +194,13 @@ check_c_compiler_flag("-O0" OPT_C_OPT_NONE)
 check_cxx_compiler_flag("-O0" OPT_CXX_OPT_NONE)
 if(OPT_C_OPT_NONE)
   if(NOT "${CMAKE_C_FLAGS_DEBUG}" MATCHES "-O0")
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0"
-        CACHE STRING "C compiler options" FORCE)
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0" CACHE STRING "C compiler options" FORCE)
   endif(NOT "${CMAKE_C_FLAGS_DEBUG}" MATCHES "-O0")
 endif(OPT_C_OPT_NONE)
 if(OPT_CXX_OPT_NONE)
   if(NOT "${CMAKE_CXX_FLAGS_DEBUG}" MATCHES "-O0")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0"
-        CACHE STRING "C++ compiler options" FORCE)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0" CACHE STRING "C++ compiler options"
+                                                                   FORCE)
   endif(NOT "${CMAKE_CXX_FLAGS_DEBUG}" MATCHES "-O0")
 endif(OPT_CXX_OPT_NONE)
 
@@ -217,14 +208,13 @@ check_c_compiler_flag("-ggdb" OPT_C_G_GDB)
 check_cxx_compiler_flag("-ggdb" OPT_CXX_G_GDB)
 if(OPT_C_G_GDB)
   if(NOT "${CMAKE_C_FLAGS_DEBUG}" MATCHES "-ggdb")
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -ggdb"
-        CACHE STRING "C compiler options" FORCE)
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -ggdb" CACHE STRING "C compiler options" FORCE)
   endif(NOT "${CMAKE_C_FLAGS_DEBUG}" MATCHES "-ggdb")
 endif(OPT_C_G_GDB)
 if(OPT_CXX_G_GDB)
   if(NOT "${CMAKE_CXX_FLAGS_DEBUG}" MATCHES "-ggdb")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb"
-        CACHE STRING "C++ compiler options" FORCE)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb" CACHE STRING "C++ compiler options"
+                                                                     FORCE)
   endif(NOT "${CMAKE_CXX_FLAGS_DEBUG}" MATCHES "-ggdb")
 endif(OPT_CXX_G_GDB)
 
@@ -273,7 +263,7 @@ function(src_program NAME SOURCES)
   install(TARGETS ${NAME} DESTINATION bin)
 endfunction()
 
-option(HIGHGUI_VIEWER "Enable OpenCV highgui viewer" ON)
+option(HIGHGUI_VIEWER "Enable OpenCV highgui viewer" OFF)
 option(IMGUI_VIEWER "Enable imgui viewer" OFF)
 
 if(HIGHGUI_VIEWER)
@@ -290,8 +280,7 @@ set(QUICKJS_SOURCES_LIST
 # add_definitions(-D_GNU_SOURCE=1)
 
 macro(find_static_library VAR NAME)
-  find_library(${VAR} NAMES lib${NAME}.a PATHS "${CMAKE_INSTALL_PREFIX}/lib"
-               NO_DEFAULT_PATH)
+  find_library(${VAR} NAMES lib${NAME}.a PATHS "${CMAKE_INSTALL_PREFIX}/lib" NO_DEFAULT_PATH)
 endmacro()
 
 set(QUICKJS_LIBRARY quickjs)
@@ -360,20 +349,21 @@ set(OPENCV_FREETYPE_LIBRARY opencv_freetype)
 
 add_subdirectory(qjs-opencv "${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv")
 add_library(qjs-opencv-a STATIC IMPORTED GLOBAL)
-set_target_properties(
-  qjs-opencv-a PROPERTIES IMPORTED_LOCATION
-                          "${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv/opencv.a")
+set_target_properties(qjs-opencv-a PROPERTIES IMPORTED_LOCATION
+                                              "${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv/opencv.a")
 
 #set(QUICKJS_OPENCV_A qjs-opencv-a)
 set(QUICKJS_OPENCV_A ${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv/libopencv.a)
 
+link_directories(${OPENCV_LIBDIR})
+
 target_compile_definitions(
   cli
-  PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${QUICKJS_VERSION}"
-          CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM
-          CONFIG_CHECK_JSVALUE ${PLOTCV_DEFS})
-target_link_libraries(cli ${QUICKJS_OPENCV_A})
-target_link_libraries(cli ${PNG_LIBRARIES} ${OPENCV_FREETYPE_LIBRARY})
+  PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${QUICKJS_VERSION}" CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}"
+          CONFIG_BIGNUM CONFIG_CHECK_JSVALUE ${PLOTCV_DEFS})
+set_target_properties(cli PROPERTIES LINK_FLAGS ${OPENCV_LINK_FLAGS})
+target_link_libraries(cli ${QUICKJS_OPENCV_A} ${PNG_LIBRARIES} ${OPENCV_FREETYPE_LIBRARY}
+                      ${OPENCV_LIBRARIES})
 
 add_dependencies(cli qjs-opencv)
 
@@ -411,7 +401,8 @@ add_custom_target(
   dist
   COMMAND rm -rf "${CMAKE_INSTALL_DIR}"
   COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR="${CMAKE_INSTALL_DIR}"
-  COMMAND tar -C "${CMAKE_INSTALL_DIR}" -cf "${CMAKE_PROJECT_NAME}-${DATE_TIME}.tar" .
+  COMMAND tar -C "${CMAKE_INSTALL_DIR}" -J -cf "${CMAKE_PROJECT_NAME}-${DATE_TIME}.tar.xz" .
+  #COMMAND 7z a -w"${CMAKE_INSTALL_DIR}"  "${CMAKE_PROJECT_NAME}-${DATE_TIME}.tar"  .
   WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
   BYPRODUCTS "${CMAKE_INSTALL_DIR}"
   COMMENT "Install into directory")
