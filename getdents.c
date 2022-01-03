@@ -15,10 +15,10 @@
 #include <sys/syscall.h>
 #include <bits/syscall.h>
 
-#define handle_error(msg)                                                                                                      \
-  do {                                                                                                                         \
-    perror(msg);                                                                                                               \
-    exit(EXIT_FAILURE);                                                                                                        \
+#define handle_error(msg) \
+  do { \
+    perror(msg); \
+    exit(EXIT_FAILURE); \
   } while(0)
 
 struct linux_dirent {

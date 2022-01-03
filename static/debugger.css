@@ -66,6 +66,11 @@ pre {
 .line {
   min-height: 1em;
 }
+<<<<<<< HEAD
+.text {
+	padding: 1px 0.5em 2px 0.5em;
+	margin: -1px 0;
+=======
 
 pre.text {
   font-size: 12px;
@@ -74,10 +79,10 @@ pre.text {
 pre.text,
 .display-linebreak {
   white-space: pre-line;
+>>>>>>> 1c907b991cf415ca0e6bd71f68a1ec2e61038e99
 }
 .text {
   background: black;
-  padding: 0 0.5em;
 }
 
 .container {

@@ -1,21 +1,24 @@
 import { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, EagleNodeList, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, EagleDocument, EagleReference, EagleRef, makeEagleNode, EagleNode, Renderer, EagleProject, EagleElement, makeEagleElement, EagleElementProxy, EagleNodeMap, ImmutablePath, DereferenceError } from './lib/eagle.js';
 import Util from './lib/util.js';
+import * as util from './lib/misc.js';
 import * as deep from './lib/deep.js';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
+import require from 'require';
 import { LineList, Point, Circle, Rect, Size, Line, TransformationList, Rotation, Translation, Scaling, Matrix, BBox } from './lib/geom.js';
 import { Console } from 'console';
 import REPL from './xrepl.js';
 import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, Enum, HashList, Multimap, Shash, SortedMap, HashMultimap, MultiBiMap, MultiKeyMap, DenseSpatialHash2D, SpatialHash2D, HashMap, SpatialH, SpatialHash, SpatialHashMap, BoxHash } from './lib/container.js';
-import fs from 'fs';
+import * as fs from 'fs';
 import { Pointer } from './lib/pointer.js';
 import { read as fromXML, write as toXML } from './lib/xml.js';
 import inspect from './lib/objectInspect.js';
 import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
-import { GetColorBands,digit2color, GetFactor, GetColorBands, ValueToNumber, NumberToValue, GetExponent, GetMantissa } from './lib/eda/colorCoding.js';
+import { GetExponent, GetMantissa, ValueToNumber, NumberToValue, GetMultipliers, GetMultiplier, GetFactor, BG, PartScales, digit2color } from './lib/eda/colorCoding.js';
 import { UnitForName } from './lib/eda/units.js';
-import { num2color, scientific, updateMeasures, alignItem, alignAll } from './eagle-commands.js';
-import { define, isObject, memoize, unique } from './lib/misc.js';
+import CircuitJS from './lib/eda/circuitjs.js';
+import { define, isObject, memoize, unique, atexit } from './lib/misc.js';
 import { HSLA, isHSLA, ImmutableHSLA, RGBA, isRGBA, ImmutableRGBA, ColoredText } from './lib/color.js';
+import { GetColorBands, scientific, num2color, GetParts, GetInstances, GetPositions, GetElements } from './eagle-commands.js';
 
 let cmdhist;
 
@@ -51,7 +54,7 @@ Util.define(Array.prototype, {
 function Terminate(exitCode) {
   console.log('Terminate', exitCode);
 
-  Util.exit(exitCode);
+  std.exit(exitCode);
 }
 
 /*function LoadHistory(filename) {
@@ -509,7 +512,9 @@ async function testEagle(filename) {
 }
 
 async function main(...args) {
-  globalThis.console = new Console({ inspectOptions: { breakLength: 100, colors: true, depth: Infinity, compact: 2, customInspect: true } });
+  globalThis.console = new Console({
+    inspectOptions: { maxArrayLength: 100, colors: true, depth: Infinity, compact: 1, customInspect: true }
+  });
 
   let debugLog;
 
@@ -593,9 +598,6 @@ async function main(...args) {
     GetNames,
     GetByName,
     CorrelateSchematicAndBoard,
-    AlignItem,
-    AlignAll,
-    UpdateMeasures,
     ReadFile,
     LoadHistory,
     ReadJSON,
@@ -605,7 +607,13 @@ async function main(...args) {
     WriteJSON,
     WriteBJSON,
     DirIterator,
-    RecursiveDirIterator
+    RecursiveDirIterator,
+    CircuitJS,
+    toNumber(n) {
+      return isNaN(+n) ? n : +n;
+    },
+    util,
+    path
   });
   Object.assign(globalThis, {
     GetExponent,
@@ -615,11 +623,15 @@ async function main(...args) {
     GetMultipliers,
     GetFactor,
     GetColorBands,
-    digit2color,
-    UnitForName,
-    updateMeasures,
-    alignItem,
-    alignAll
+    UpdateMeasures,
+    AlignItem,
+    AlignAll,
+    scientific,
+    num2color,
+    GetParts,
+    GetInstances,
+    GetPositions,
+    GetElements
   });
   Object.assign(globalThis, {
     define,
@@ -702,9 +714,14 @@ async function main(...args) {
 
   //console.log(`repl`, repl);
   //console.log(`debugLog`, Util.getMethods(debugLog, Infinity, 0));
+  //repl.historyLoad(null, false);
+  repl.directives.i = [module => require(module), 'import module'];
 
   repl.debugLog = debugLog;
-  repl.exit = Terminate;
+  repl.exit = () => {
+    repl.cleanup();
+    Terminate();
+  };
   repl.importModule = importModule;
   repl.debug = (...args) => {
     let s = '';

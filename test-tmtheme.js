@@ -36,7 +36,7 @@ class PList extends Array {
     this.push(...args);
   }
   [Symbol.for('nodejs.util.inspect.custom')](options) {
-    return `\x1b[1;31mPList\x1b[0m [\n  ${this.map(item => (item.inspect ? item.inspect(options) : console.inspect(item, options)).replace(/\n/g, '\n    ')).join(',\n  ')}\n]`;
+    return '\x1b[1;31mPList\x1b[0m [\n  ' + this.map(item => (item.inspect ? item.inspect(options) : console.inspect(item, options)).replace(/\n/g, '\n    ')).join(',\n  ') + '\n';
   }
 }
 

@@ -1,6 +1,6 @@
 import express from 'express';
 import * as path from 'path';
-import * as util from 'util';
+import * as util from './lib/misc.js';
 import Util from './lib/util.js';
 import bodyParser from 'body-parser';
 import expressWs from 'express-ws';

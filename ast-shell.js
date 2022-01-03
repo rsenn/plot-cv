@@ -82,7 +82,7 @@ async function CommandLine() {
     let first;
     if(Util.isObject(value) && (first = value.first ?? value[0]) && Util.isObject(first) && (first.type || first.kind)) console.log(Table(value));
     else if(typeof value == 'string') console.log(value);
-    else console.log(inspect(value, { ...console.options, hideKeys: ['loc', 'range'] }));
+    else console.log(inspect(value, { ...console.options, depth: 1, hideKeys: ['loc', 'range'] }));
     std.out.puts('\n');
   };
   let debugLog = fs.openSync('debug.log', 'a');
@@ -143,9 +143,8 @@ function SelectLocations(node) {
 
 function LocationString(loc) {
   if(typeof loc == 'object' && loc != null) {
-    let file = loc.includedFrom ? loc.includedFrom.file : loc.file;
-    //if(typeof file != 'string') console.log('LocationString:', file);
-    if(file) file = path.relative(file, process.cwd());
+    let file = loc.file ?? (loc.includedFrom && loc.includedFrom.file);
+    //if(file) file = path.relative(file, process.cwd());
     if(typeof loc.line == 'number') return `${file ? file + ':' : ''}${loc.line}${typeof loc.col == 'number' ? ':' + loc.col : ''}`;
     return `${file ? file : ''}@${loc.offset}`;
   }
@@ -344,7 +343,7 @@ function InspectStruct(decl, includes, compiler = 'clang') {
   console.log('InspectStruct', decl);
 
   const code = [...GenerateInspectStruct(decl, includes)].join('\n');
-  const program = `/tmp/inspect-${decl.name.replace(/\ /g, '_')}`;
+  const program = `/tmp/inspect-${decl.name.replace(/ /g, '_')}`;
   WriteFile(program + '.c', code);
 
   let command = [compiler, '-O2', '-g', '-w', '-o', program, program + '.c', ...flags];
@@ -497,11 +496,11 @@ function ByteLength2Value(byteLength, signed, floating) {
 export class FFI_Function {
   constructor(node, prefix = '') {
     const { name, returnType = 'void', parameters = [] } = node;
-    //console.log('FFI_Function.constructor', node, {name,parameters});
+    console.log('FFI_Function.constructor', node, { name, parameters });
     this.name = name;
     this.prefix = prefix;
     this.returnType = returnType.ffi;
-    this.parameters = [...parameters].map(([name, type], idx) => [name ?? `arg${idx + 1}`, type.ffi]);
+    this.parameters = [...(parameters || [])].map(([name, type], idx) => [name ?? `arg${idx + 1}`, type.ffi]);
   }
 
   generateDefine(fp, lib) {
@@ -662,6 +661,9 @@ function ProcessFile(file, debug = true) {
     case '.js':
       ret = ParseECMAScript(file, debug);
       break;
+    case '.cpp':
+    case '.cxx':
+    case '.cc':
     case '.c':
     case '.h':
       ret = Compile(file /*, debug*/);
@@ -816,6 +818,8 @@ function MakeFFI(node, lib, exp, fp) {
   if(typeof node == 'object' && node && node.kind == 'FunctionDecl') node = new FunctionDecl(node);
 
   if(node instanceof FunctionDecl) {
+    console.log('node', (globalThis.node = node));
+
     let ffi = new FFI_Function(node);
 
     let protoStr = PrintAst(node.ast, $.data)
@@ -886,7 +890,7 @@ async function ASTShell(...args) {
     args
   );
 
-  console.log('params', params);
+  //console.log('params', params);
 
   defs = params.define || [];
   includes = params.include || [];
@@ -903,7 +907,7 @@ async function ASTShell(...args) {
   });
 
   async function Compile(file, ...args) {
-    console.log('args', args);
+    //console.log('args', args);
     let r = await AstDump(params.compiler, file, [...globalThis.flags, ...args], params.force);
     r.source = file;
 
@@ -914,7 +918,7 @@ async function ASTShell(...args) {
       return name_or_id instanceof RegExp ? node => name_or_id.test(node.name) && pred(node) : name_or_id.startsWith('0x') ? node => node.id == name_or_id && pred(node) : node => node.name == name_or_id && pred(node);
     }
 
-    Object.assign(r, {
+    Util.bindMethods(r, {
       select(name_or_id, pred = n => true) {
         return this.data.inner.filter(nameOrIdPred(name_or_id, pred));
       },
@@ -1036,6 +1040,7 @@ async function ASTShell(...args) {
     Pointer,
     Tree,
     deep,
+    path,
     Compile,
     SelectLocations,
     LocationString,

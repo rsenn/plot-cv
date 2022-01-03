@@ -90,8 +90,8 @@ macro(find_opencv)
 
   endfunction(OPENCV_CHANGE VAR ACCESS VALUE LIST_FILE STACK)
 
-  variable_watch(OpenCV_DIR OPENCV_CHANGE_DIR)
-  variable_watch(OpenCV_DIR OPENCV_CHANGE)
+  #variable_watch(OpenCV_DIR OPENCV_CHANGE_DIR)
+  #variable_watch(OpenCV_DIR OPENCV_CHANGE)
 
   if(NOT OPENCV_PREFIX)
     if(OpenCV_DIR)
@@ -99,12 +99,20 @@ macro(find_opencv)
     endif(OpenCV_DIR)
   endif(NOT OPENCV_PREFIX)
 
+  if(NOT OpenCV_DIR AND OPENCV_PREFIX)
+    set(OpenCV_DIR "${OPENCV_PREFIX}")
+  endif(NOT OpenCV_DIR AND OPENCV_PREFIX)
+
   # dump(OPENCV_PREFIX)
 
   if(NOT OPENCV_CHECKED)
-    message(CHECK_START "Finding opencv library")
+    message(STATUS "Finding opencv library")
 
-    set(OPENCV_PREFIX "${OPENCV_PREFIX}" CACHE PATH "OpenCV root dir")
+    message("OpenCV_DIR = ${OpenCV_DIR}")
+    if(OPENCV_PREFIX)
+      message("OpenCV prefix: ${OPENCV_PREFIX}")
+      set(OPENCV_PREFIX "${OPENCV_PREFIX}" CACHE PATH "OpenCV root dir")
+    endif(OPENCV_PREFIX)
 
     if(OPENCV_PREFIX)
       list(APPEND CMAKE_PREFIX_PATH "${OPENCV_PREFIX}")
@@ -114,13 +122,16 @@ macro(find_opencv)
     # dump(CMAKE_PREFIX_PATH CMAKE_MODULE_PATH)
 
     if(NOT OPENCV_FOUND)
-      find_package(OpenCV PATHS "${OPENCV_PREFIX}/lib/cmake/opencv4;${OPENCV_PREFIX}/lib/cmake;${OPENCV_PREFIX}")
-      # message(STATUS "OpenCV_VERSION = ${OpenCV_VERSION}")
+
+      find_package(OpenCV PATHS "${OPENCV_PREFIX}/lib/cmake/opencv4" "${OPENCV_PREFIX}/lib/cmake"
+                   "${OPENCV_PREFIX}" NO_DEFAULT_PATH)
+      message(STATUS "OpenCV_VERSION = ${OpenCV_VERSION}")
       if(OpenCV_VERSION)
 
         set(OPENCV_VERSION "${OpenCV_VERSION}" CACHE PATH "OpenCV version")
         set(OPENCV_LIBDIR "${OpenCV_INSTALL_PATH}/lib" CACHE PATH "OpenCV library directory")
-        set(OPENCV_LINK_FLAGS "-Wl,-rpath,${OPENCV_LIBDIR} -L${OPENCV_LIBDIR}" CACHE STRING "OpenCV link flags")
+        set(OPENCV_LINK_FLAGS "-Wl,-rpath,${OPENCV_LIBDIR} -L${OPENCV_LIBDIR}"
+            CACHE STRING "OpenCV link flags")
         set(OPENCV_PREFIX "${OpenCV_INSTALL_PATH}" CACHE PATH "OpenCV install directory")
         set(OPENCV_INCLUDE_DIRS "${OpenCV_INCLUDE_DIRS}" CACHE PATH "OpenCV include directories")
         set(OPENCV_LIBRARIES "${OpenCV_LIBS}" CACHE PATH "OpenCV libraries")
@@ -154,10 +165,10 @@ macro(find_opencv)
       set(CMAKE_INSTALL_RPATH "${OPENCV_LIB_DIR}:${CMAKE_INSTALL_RPATH}")
       set(CMAKE_BUILD_RPATH "${OPENCV_LIB_DIR}:${CMAKE_BUILD_RPATH}")
       set(OPENCV_RESULT TRUE)
-      message(CHECK_PASS "found")
 
+      message(STATUS "Finding opencv library - found")
     else(OPENCV_FOUND OR OPENCV_LIBRARIES)
-      message(CHECK_FAIL "fail")
+      message(STATUS "Finding opencv library - not found")
     endif(OPENCV_FOUND OR OPENCV_LIBRARIES)
 
     if(OPENCV_FOUND)

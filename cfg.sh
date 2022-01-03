@@ -82,8 +82,10 @@ cfg() {
     IFS="$IFS "
     set -- -Wno-dev \
       -G "$generator" \
+    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
       ${prefix:+-DCMAKE_INSTALL_PREFIX="$prefix"} \
       ${VERBOSE:+-DCMAKE_VERBOSE_MAKEFILE=OFF${VERBOSE:-OFF}} \
+      -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
       -DCMAKE_BUILD_TYPE="${TYPE:-Debug}" \
       -DBUILD_SHARED_LIBS=ON \
       ${CC:+-DCMAKE_C_COMPILER="$CC"} \

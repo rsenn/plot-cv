@@ -247,8 +247,8 @@ function main(...args) {
     thresh2: new NumericParam(config.thresh2 || 90, 0, 100),
     threshc: new NumericParam(config.threshc || 50, 0, 100),
     angleResolution: new NumericParam(config.angleResolution || 2, 0.5, 180),
-    minLineLength: new NumericParam(config.minLineLength || 30, 0, 500),
-    maxLineGap: new NumericParam(config.maxLineGap || 10, 0, 500),
+    minLineLength: new NumericParam(config.minLineLength || 3, 0, 50),
+    maxLineGap: new NumericParam(config.maxLineGap || 1, 0, 50),
     apertureSize: new NumericParam(config.apertureSize || 3, 3, 7, 2),
     L2gradient: new NumericParam(config.L2gradient || 0, 0, 1),
     dilations: new NumericParam(config.dilations || 0, 0, 10),
@@ -636,7 +636,7 @@ function main(...args) {
     let points = contours.reduce((acc, contour, i) => {
       //log.info('contour #' + i, contour);
       //contour =simplifyMethods.PERPENDICULAR_DISTANCE(contour);
-      contour = simplifyMethods.RADIAL_DISTANCE(contour);
+      //contour = simplifyMethods.RADIAL_DISTANCE(contour);
       let array = contour.toArray();
       //log.info('array #' + i, array.length);
       if(array.length >= 3) {
@@ -659,13 +659,13 @@ function main(...args) {
     let viewBox = [0, 0, ...size].join(' ');
     let doc = {
       tagName: 'svg',
-      children: [{ tagName: 'g', attributes: { stroke: 'black' }, children }],
+      children: [{ tagName: 'g', attributes: { stroke: 'black', fill: 'none' }, children }],
       attributes: {
         xmlns: 'http://www.w3.org/2000/svg',
         viewBox
       }
     };
-
+    WriteJSON('contours-' + framePos + '.json', doc);
     SaveSVG('contours-' + framePos + '.svg', doc);
   }
 
@@ -679,17 +679,18 @@ function main(...args) {
       }));
     let doc = {
       tagName: 'svg',
-      children: [{ tagName: 'g', attributes: { stroke: 'black' }, children }],
+      children: [{ tagName: 'g', attributes: { stroke: 'black', fill: 'none' }, children }],
       attributes: {
         xmlns: 'http://www.w3.org/2000/svg',
         viewBox
       }
     };
 
+    WriteJSON('lines-' + framePos + '.json', doc);
     SaveSVG('lines-' + framePos + '.svg', doc);
   }
 
-  const { ksize, thresh1, thresh2, apertureSize, L2gradient, dilations, erosions, mode, method, lineWidth } = params;
+  const { ksize, thresh1, thresh2, apertureSize, L2gradient, dilations, erosions, mode, method, lineWidth, minLineLength, maxLineGap } = params;
   SaveConfig(
     Object.entries({
       frameShow,
@@ -703,6 +704,8 @@ function main(...args) {
       mode,
       method,
       lineWidth,
+      minLineLength,
+      maxLineGap,
       currentParam: paramNav.index
     }).reduce((a, [k, v]) => ({ ...a, [k]: +v }), {})
   );

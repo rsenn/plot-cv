@@ -23,6 +23,8 @@
 #include <errno.h>
 #include <sys/ptrace.h>
 #include <sys/inotify.h>
+#include <portmidi.h>
+#include <linux/random.h>
 
 static inline int
 escape_char_pred(int c) {
@@ -349,7 +351,7 @@ main() {
   printf("EAGAIN = %i\n", EAGAIN);
   printf("SHUT_WR = %i\n", SHUT_WR);
   printf("SHUT_RD = %i\n", SHUT_RD);
-  //printf("SIG_SETMASK = %i\n", SIG_SETMASK);
+  // printf("SIG_SETMASK = %i\n", SIG_SETMASK);
   printf("PTRACE_SYSCALL = %i\n", PTRACE_SYSCALL);
   printf("sizeof(__int128) = %zu\n", sizeof(__int128));
   printf("SIGHUP = %i\n", SIGHUP);
@@ -410,7 +412,7 @@ main() {
   printf("#define IN_ISDIR 0x%x\n", IN_ISDIR);
   printf("#define IN_ONESHOT 0x%x\n", IN_ONESHOT);
   printf("#define IN_ALL_EVENTS 0x%x\n", IN_ALL_EVENTS);
-  printf("sizeof(struct inotify_event) = %zu\n", sizeof(struct inotify_event));
+
   printf("BUFSIZ = %zu\n", BUFSIZ);
   printf("#ifndef GLOB_ALTDIRFUNC\n#define GLOB_ALTDIRFUNC %d\n#endif\n", GLOB_ALTDIRFUNC);
   printf("#ifndef GLOB_BRACE\n#define GLOB_BRACE %d\n#endif\n", GLOB_BRACE);
@@ -419,5 +421,49 @@ main() {
   printf("#ifndef GLOB_TILDE_CHECK\n#define GLOB_TILDE_CHECK %d\n#endif\n", GLOB_TILDE_CHECK);
   printf("#ifndef GLOB_ONLYDIR\n#define GLOB_ONLYDIR %d\n#endif\n", GLOB_ONLYDIR);
   printf("#ifndef GLOB_MAGCHAR\n#define GLOB_MAGCHAR %d\n#endif\n", GLOB_MAGCHAR);
+  printf("#define _SC_OPEN_MAX 0x%x\n", _SC_OPEN_MAX);
+  printf("sizeof(PmDeviceInfo) = %zu\n", sizeof(PmDeviceInfo));
+  printf("sizeof(PmEvent) = %zu\n", sizeof(PmEvent));
+  printf("pmNoError = %i\n", pmNoError);
+  printf("pmNoData = %i\n", pmNoData);
+  printf("pmGotData = %i\n", pmGotData);
+  printf("pmHostError = %i\n", pmHostError);
+  printf("pmInvalidDeviceId = %i\n", pmInvalidDeviceId);
+  printf("pmInsufficientMemory = %i\n", pmInsufficientMemory);
+  printf("pmBufferTooSmall = %i\n", pmBufferTooSmall);
+  printf("pmBufferOverflow = %i\n", pmBufferOverflow);
+  printf("pmBadPtr = %i\n", pmBadPtr);
+  printf("pmBadData = %i\n", pmBadData);
+  printf("pmInternalError = %i\n", pmInternalError);
+  printf("pmBufferMaxSize = %i\n", pmBufferMaxSize);
+  printf("pmNotImplemented = %i\n", pmNotImplemented);
+  printf("pmInterfaceNotSupported = %i\n", pmInterfaceNotSupported);
+  printf("pmNameConflict = %i\n", pmNameConflict);
+
+  printf("sizeof(struct inotify_event) = %zu\n", sizeof(struct inotify_event));
+  printf("IN_ACCESS = %i\n", IN_ACCESS);
+  printf("IN_MODIFY = %i\n", IN_MODIFY);
+  printf("IN_ATTRIB = %i\n", IN_ATTRIB);
+  printf("IN_CLOSE_WRITE = %i\n", IN_CLOSE_WRITE);
+  printf("IN_CLOSE_NOWRITE = %i\n", IN_CLOSE_NOWRITE);
+  printf("IN_CLOSE = %i\n", IN_CLOSE);
+  printf("IN_OPEN = %i\n", IN_OPEN);
+  printf("IN_MOVED_FROM = %i\n", IN_MOVED_FROM);
+  printf("IN_MOVED_TO = %i\n", IN_MOVED_TO);
+  printf("IN_MOVE = %i\n", IN_MOVE);
+  printf("IN_CREATE = %i\n", IN_CREATE);
+  printf("IN_DELETE = %i\n", IN_DELETE);
+  printf("IN_DELETE_SELF = %i\n", IN_DELETE_SELF);
+  printf("IN_MOVE_SELF = %i\n", IN_MOVE_SELF);
+  printf("IN_UNMOUNT = %i\n", IN_UNMOUNT);
+  printf("IN_Q_OVERFLOW = %i\n", IN_Q_OVERFLOW);
+  printf("IN_IGNORED = %i\n", IN_IGNORED);
+  printf("IN_ONLYDIR = %i\n", IN_ONLYDIR);
+  printf("IN_DONT_FOLLOW = %i\n", IN_DONT_FOLLOW);
+  printf("IN_EXCL_UNLINK = %i\n", IN_EXCL_UNLINK);
+  printf("IN_MASK_ADD = %i\n", IN_MASK_ADD);
+  printf("IN_ISDIR = %i\n", IN_ISDIR);
+  printf("IN_ONESHOT = %i\n", IN_ONESHOT);
+  printf("RNDGETENTCNT = %x\n", RNDGETENTCNT);
   return 0;
 }

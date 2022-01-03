@@ -67,11 +67,11 @@ async function main(...args) {
       })
       .sort((a, b) => a[1] - b[1])
       .map(([val, rat, count]) => {
-     console.log('c', { val, rat, count });
+        console.log('c', { val, rat, count });
         const scal = PartScales[key[0]];
 
         let bands = key[0] == 'C' ? [' '] /*?? GetColorBands(rat * scal, 2).map(b => `[${b}]`)*/ : [num2color(rat * scal)];
-      //  console.log('c', { bands });
+        //  console.log('c', { bands });
 
         return [key, (val + '').substring(0, 10).padStart(10, ' ') + UnitForName(key), bands.join(' '), `  × ${count}`].join(' ');
       });
