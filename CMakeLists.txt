@@ -313,19 +313,7 @@ list(
 
 dump(PNG_LIBRARY PNG_LIBRARY_RELEASE)
 
-src_program(
-  cli
-  "${CLI_SOURCES}"
-  ${OpenCV_LIBS}
-  ${QUICKJS_LIBRARY}
-  ${PNG_LIBRARY}
-  #png
-  pthread
-  dl
-  m
-  ${LIBWS2_32}
-  #
-)
+option(BUILD_CLI "Build command-line interpreter" OFF)
 
 #include(CheckLibraryExists)
 #check_library_exists(opencv_freetype _ZN2cv8freetype15createFreeType2Ev "${OPENCV_LIBRARY_DIRS}" HAVE_OPENCV2_FREETYPE_LIBRARY)
@@ -346,13 +334,29 @@ if(HAVE_OPENCV2_FREETYPE_HPP)
 endif(HAVE_OPENCV2_FREETYPE_HPP)
 set(OPENCV_FREETYPE_LIBRARY opencv_freetype)
 
-target_compile_definitions(
-  cli PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${QUICKJS_VERSION}" CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM
-              CONFIG_CHECK_JSVALUE ${PLOTCV_DEFS})
-target_link_libraries(cli ${QUICKJS_OPENCV_A})
-target_link_libraries(cli ${PNG_LIBRARIES} ${OPENCV_FREETYPE_LIBRARY})
+if(BUILD_CLI)
+  src_program(
+    cli
+    "${CLI_SOURCES}"
+    ${OpenCV_LIBS}
+    ${QUICKJS_LIBRARY}
+    ${PNG_LIBRARY}
+    #png
+    pthread
+    dl
+    m
+    ${LIBWS2_32}
+    #
+  )
 
-add_dependencies(cli qjs-opencv)
+  target_compile_definitions(
+    cli PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${QUICKJS_VERSION}" CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM
+                CONFIG_CHECK_JSVALUE ${PLOTCV_DEFS})
+  target_link_libraries(cli ${QUICKJS_OPENCV_A})
+  target_link_libraries(cli ${PNG_LIBRARIES} ${OPENCV_FREETYPE_LIBRARY})
+
+  add_dependencies(cli qjs-opencv)
+endif(BUILD_CLI)
 
 add_executable(test-qjs test-qjs.c)
 
