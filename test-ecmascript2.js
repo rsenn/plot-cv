@@ -232,7 +232,7 @@ function main(...argv) {
   Util.exit(Number(files.length == 0));
 }
 
-function processFile(file, params) {
+function ParseECMAScript(file, params) {
   let data, b, ret;
   const { debug } = params;
   if(file == '-') file = '/dev/stdin';
@@ -291,6 +291,11 @@ function processFile(file, params) {
     deep.TYPE_OBJECT
   );*/
   parser.addCommentsToNodes(ast);
+  return ast;
+}
+
+function processFile(file, params) {
+  let ast = ParseECMAScript(file, params);
 
   WriteFile(params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json', JSON.stringify(ast /*.toJSON()*/, null, 2));
 

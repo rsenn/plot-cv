@@ -43,7 +43,10 @@ endif(PNG_LIBRARIES)
 if(BUILD_QUICKJS)
   include(${CMAKE_CURRENT_SOURCE_DIR}/quickjs/defs.cmake)
 else(BUILD_QUICKJS)
+  dump(QUICKJS_PREFIX)
+
   find_quickjs()
+  dump(QUICKJS_INCLUDE_DIR)
 endif(BUILD_QUICKJS)
 
 find_opencv()
@@ -87,17 +90,21 @@ if(HAVE_LIBDL)
   # message("Found dlfcn library: ${LIBDL}")
 endif(HAVE_LIBDL)
 
-set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH};${CMAKE_INSTALL_PREFIX}/lib;${CMAKE_INSTALL_PREFIX}/lib/quickjs")
+set(CMAKE_INSTALL_RPATH
+    "${CMAKE_INSTALL_RPATH};${CMAKE_INSTALL_PREFIX}/lib;${CMAKE_INSTALL_PREFIX}/lib/quickjs")
 set(CMAKE_BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR};${CMAKE_CURRENT_BINARY_DIR}")
 
 check_library_exists(json-cpp ZN4YAML6detail9node_data9reset_mapEv /usr JSON_CPP)
 
-set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE CACHE BOOL "Build installable binaries with -Wl,-rpath=PREFIX" FORCE)
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE CACHE BOOL "Add dirs in runtime search path to the install rpath" FORCE)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE
+    CACHE BOOL "Build installable binaries with -Wl,-rpath=PREFIX" FORCE)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE
+    CACHE BOOL "Add dirs in runtime search path to the install rpath" FORCE)
 
 include_directories(
-  ${OPENCV_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/opencv ${CMAKE_CURRENT_SOURCE_DIR}/src
-  ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
+  ${OPENCV_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/opencv
+  ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
 
 foreach(CXX_STANDARD c++17 c++14 c++11)
   string(REPLACE "c++" "CPLUSPLUS" CXX_STANDARD_NUM "${CXX_STANDARD}")
@@ -108,12 +115,10 @@ foreach(CXX_STANDARD c++17 c++14 c++11)
     string(REGEX REPLACE "\\+" "x" CXX_STANDARD_NAME "${CXX_STANDARD_VALUE}")
     string(TOUPPER "${CXX_STANDARD_NAME}" CXX_STANDARD_NAME)
     string(REGEX REPLACE "CXX" "" CXX_STANDARD_VERSION "${CXX_STANDARD_NAME}")
-    message("CXX_STANDARD_NAME = ${CXX_STANDARD_NAME}")
-    message("CXX_STANDARD_VERSION = ${CXX_STANDARD_VERSION}")
 
-      if(NOT CXX_STANDARD_NAME STREQUAL "")
-        add_definitions(-D"${CXX_STANDARD_NAME}")
-      endif(NOT CXX_STANDARD_NAME STREQUAL "")
+    if(NOT CXX_STANDARD_NAME STREQUAL "")
+      add_definitions(-D"${CXX_STANDARD_NAME}")
+    endif(NOT CXX_STANDARD_NAME STREQUAL "")
     # add_definitions(-DCXX_STANDARD=${CXX_STANDARD_VERSION})
 
     set(CXX_STANDARD_VALUE "${CXX_STANDARD}" CACHE STRING "C++ standard" FORCE)
@@ -194,7 +199,8 @@ if(OPT_C_OPT_NONE)
 endif(OPT_C_OPT_NONE)
 if(OPT_CXX_OPT_NONE)
   if(NOT "${CMAKE_CXX_FLAGS_DEBUG}" MATCHES "-O0")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0" CACHE STRING "C++ compiler options" FORCE)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0" CACHE STRING "C++ compiler options"
+                                                                   FORCE)
   endif(NOT "${CMAKE_CXX_FLAGS_DEBUG}" MATCHES "-O0")
 endif(OPT_CXX_OPT_NONE)
 
@@ -207,7 +213,8 @@ if(OPT_C_G_GDB)
 endif(OPT_C_G_GDB)
 if(OPT_CXX_G_GDB)
   if(NOT "${CMAKE_CXX_FLAGS_DEBUG}" MATCHES "-ggdb")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb" CACHE STRING "C++ compiler options" FORCE)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb" CACHE STRING "C++ compiler options"
+                                                                     FORCE)
   endif(NOT "${CMAKE_CXX_FLAGS_DEBUG}" MATCHES "-ggdb")
 endif(OPT_CXX_G_GDB)
 
@@ -240,12 +247,6 @@ link_directories(BEFORE ${quickjs_BINARY_DIR})
 
 link_directories("${CMAKE_CURRENT_BINARY_DIR}/quickjs" "${QUICKJS_LIBRARY_DIR}")
 
-add_subdirectory(qjs-opencv "${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv")
-add_library(qjs-opencv-a STATIC IMPORTED GLOBAL)
-set_target_properties(qjs-opencv-a PROPERTIES IMPORTED_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv/opencv.a")
-
-set(QUICKJS_OPENCV_A qjs-opencv-a)
-
 function(src_program NAME SOURCES)
   foreach(SRC ${SOURCES})
     file(GLOB "${NAME}_SOURCES" ${SRC})
@@ -262,7 +263,7 @@ function(src_program NAME SOURCES)
   install(TARGETS ${NAME} DESTINATION bin)
 endfunction()
 
-option(HIGHGUI_VIEWER "Enable OpenCV highgui viewer" ON)
+option(HIGHGUI_VIEWER "Enable OpenCV highgui viewer" OFF)
 option(IMGUI_VIEWER "Enable imgui viewer" OFF)
 
 if(HIGHGUI_VIEWER)
@@ -358,12 +359,10 @@ if(BUILD_CLI)
   add_dependencies(cli qjs-opencv)
 endif(BUILD_CLI)
 
-add_executable(test-qjs test-qjs.c)
-
-target_link_libraries(test-qjs quickjs pthread dl m)
-
-target_compile_definitions(test-qjs PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${QUICKJS_VERSION}"
-                                            CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1 ${PLOTCV_DEFS})
+#add_executable(test-qjs test-qjs.c)
+#target_link_libraries(test-qjs quickjs pthread dl m)
+#target_compile_definitions(test-qjs PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${QUICKJS_VERSION}"
+#                                            CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1 ${PLOTCV_DEFS})
 
 option(ADDITIONAL_PROGS "Build other OpenCV programs" OFF)
 
@@ -386,3 +385,16 @@ endif(BUILD_QUICKJS)
 if(ADDITIONAL_PROGS)
   add_subdirectory(opencv ${CMAKE_CURRENT_BINARY_DIR}/opencv)
 endif(ADDITIONAL_PROGS)
+
+string(REPLACE "/build/" "/inst/" CMAKE_INSTALL_DIR "${CMAKE_BINARY_DIR}")
+string(TIMESTAMP DATE_TIME "%y%m%d" UTC)
+
+add_custom_target(
+  dist
+  COMMAND rm -rf "${CMAKE_INSTALL_DIR}"
+  COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR="${CMAKE_INSTALL_DIR}"
+  COMMAND tar -C "${CMAKE_INSTALL_DIR}" -J -cf "${CMAKE_PROJECT_NAME}-${DATE_TIME}.tar.xz" .
+  #COMMAND 7z a -w"${CMAKE_INSTALL_DIR}"  "${CMAKE_PROJECT_NAME}-${DATE_TIME}.tar"  .
+  WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+  BYPRODUCTS "${CMAKE_INSTALL_DIR}"
+  COMMENT "Install into directory")
