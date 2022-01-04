@@ -4,7 +4,37 @@ import path from './lib/path.js';
 import * as deep from './lib/deep.js';
 import { Console } from 'console';
 import REPL from './xrepl.js';
-import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, VarDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, FindType, Hier, PathOf, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter, isNode, SourceDependencies, GetTypeNode, GetFields, PathRemoveLoc, PrintAst, GetParams, List } from './clang-ast.js';
+import {
+  SIZEOF_POINTER,
+  Node,
+  Type,
+  RecordDecl,
+  EnumDecl,
+  TypedefDecl,
+  VarDecl,
+  FunctionDecl,
+  Location,
+  TypeFactory,
+  SpawnCompiler,
+  AstDump,
+  FindType,
+  Hier,
+  PathOf,
+  NodeType,
+  NodeName,
+  GetLoc,
+  GetType,
+  GetTypeStr,
+  NodePrinter,
+  isNode,
+  SourceDependencies,
+  GetTypeNode,
+  GetFields,
+  PathRemoveLoc,
+  PrintAst,
+  GetParams,
+  List
+} from './clang-ast.js';
 import Tree from './lib/tree.js';
 import { Pointer } from './lib/pointer.js';
 import * as Terminal from './terminal.js';
@@ -22,7 +52,24 @@ let params;
 let files;
 let spawn, base, cmdhist, config;
 let defs, includes, libs, sources;
-let libdirs = ['/lib', '/lib/i386-linux-gnu', '/lib/x86_64-linux-gnu', '/lib32', '/libx32', '/usr/lib', '/usr/lib/i386-linux-gnu', '/usr/lib/i386-linux-gnu/i686/sse2', '/usr/lib/i386-linux-gnu/sse2', '/usr/lib/x86_64-linux-gnu', '/usr/lib/x86_64-linux-gnu/libfakeroot', '/usr/lib32', '/usr/libx32', '/usr/local/lib', '/usr/local/lib/i386-linux-gnu', '/usr/local/lib/x86_64-linux-gnu'];
+let libdirs = [
+  '/lib',
+  '/lib/i386-linux-gnu',
+  '/lib/x86_64-linux-gnu',
+  '/lib32',
+  '/libx32',
+  '/usr/lib',
+  '/usr/lib/i386-linux-gnu',
+  '/usr/lib/i386-linux-gnu/i686/sse2',
+  '/usr/lib/i386-linux-gnu/sse2',
+  '/usr/lib/x86_64-linux-gnu',
+  '/usr/lib/x86_64-linux-gnu/libfakeroot',
+  '/usr/lib32',
+  '/usr/libx32',
+  '/usr/local/lib',
+  '/usr/local/lib/i386-linux-gnu',
+  '/usr/local/lib/x86_64-linux-gnu'
+];
 let libdirs32 = libdirs.filter(d => /(32$|i[0-9]86)/.test(d));
 let libdirs64 = libdirs.filter(d => !/(32$|i[0-9]86)/.test(d));
 
@@ -54,7 +101,7 @@ async function ImportModule(modulePath, ...args) {
     })*/
 }
 
-async function CommandLine() {
+function CommandLine() {
   let log = console.reallog;
   let outputLog = fs.openSync('output.log', 'w+');
 
@@ -82,7 +129,7 @@ async function CommandLine() {
     let first;
     if(Util.isObject(value) && (first = value.first ?? value[0]) && Util.isObject(first) && (first.type || first.kind)) console.log(Table(value));
     else if(typeof value == 'string') console.log(value);
-    else console.log(inspect(value, { ...console.options, depth: 1, hideKeys: ['loc', 'range'] }));
+    else console.log(inspect(value, { ...console.options, hideKeys: ['loc', 'range'] }));
     std.out.puts('\n');
   };
   let debugLog = fs.openSync('debug.log', 'a');
@@ -126,7 +173,7 @@ async function CommandLine() {
   repl = Util.traceProxy(repl);
 
   if(params.exec) repl.evalAndPrint(params.exec);
-  else await repl.run();
+  else repl.run();
 
   console.log('REPL done');
 }
@@ -441,7 +488,9 @@ function* GenerateStructClass(decl, ffiPrefix = '') {
   yield `  static from(address) {\n    let ret = ${ffiPrefix}toArrayBuffer(address, ${offset});\n    return Object.setPrototypeOf(ret, ${className}.prototype);\n  }`;
   yield '';
 
-  yield `  toString() {\n    const { ${fields.join(', ')} } = this;\n    return \`${name} {${[...members].map(([field, member]) => '\\n\\t.' + field + ' = ' + (member.isPointer() ? '0x' : '') + '${' + field + (member.isPointer() ? '.toString(16)' : '') + '}').join(',')}\\n}\`;\n  }`;
+  yield `  toString() {\n    const { ${fields.join(', ')} } = this;\n    return \`${name} {${[...members]
+    .map(([field, member]) => '\\n\\t.' + field + ' = ' + (member.isPointer() ? '0x' : '') + '${' + field + (member.isPointer() ? '.toString(16)' : '') + '}')
+    .join(',')}\\n}\`;\n  }`;
   yield '}';
 }
 
@@ -460,7 +509,11 @@ function GenerateGetSet(name, offset, type, ffiPrefix) {
     a.unshift(`/* ${name}${desugared ? ` (${desugared})` : ''} ${size} ${signed} */`);
     console.log('GenerateStructClass', { pointer });
   }
-  return [...a, `set ${name}(value) { if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = ${ffiPrefix}toPointer(value); new ${ctor}(this, ${offset})[0] = ${ByteLength2Value(size, signed, floating)}; }`, `get ${name}() { return ${toHex(`new ${ctor}(this, ${offset})[0]`)}; }`];
+  return [
+    ...a,
+    `set ${name}(value) { if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = ${ffiPrefix}toPointer(value); new ${ctor}(this, ${offset})[0] = ${ByteLength2Value(size, signed, floating)}; }`,
+    `get ${name}() { return ${toHex(`new ${ctor}(this, ${offset})[0]`)}; }`
+  ];
 }
 
 function ByteLength2TypedArray(byteLength, signed, floating) {
@@ -672,11 +725,54 @@ function ProcessFile(file, debug = true) {
   return ret;
 }
 
-function ParseECMAScript(file, debug = false) {
+function ParseECMAScript(file, params = {}) {
+  let data, b, ret;
+  const { debug } = params;
+  if(file == '-') file = '/dev/stdin';
+  if(file && fs.existsSync(file)) {
+    data = fs.readFileSync(file, 'utf8');
+    console.log('opened:', file);
+  } else {
+    file = 'stdin';
+    data = source;
+  }
+  console.log('OK, data: ', Util.abbreviate(Util.escape(data)));
+  if(debug) ECMAScriptParser.instrumentate();
+  console.log('ECMAScriptParser:', ECMAScriptParser);
+
+  let parser, ast, error;
+  globalThis.parser = parser = null;
+  globalThis.parser = parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
+
+  try {
+    ast = parser.parseProgram();
+  } catch(err) {
+    const tokens = [...parser.processed, ...parser.tokens];
+    const token = tokens[tokens.length - 1];
+
+    console.log('parseProgram token', token);
+
+    if(err !== null) {
+      console.log('parseProgram ERROR message:', err?.message);
+      console.log('parseProgram ERROR stack:\n  ' + new Stack(err?.stack, (fr, i) => fr.functionName != 'esfactory' && i < 5).toString().replace(/\n/g, '\n  '));
+
+      throw err;
+    } else {
+      console.log('parseProgram ERROR:', err);
+      throw new Error('parseProgram');
+    }
+  }
+
+  parser.addCommentsToNodes(ast);
+  return ast;
+}
+
+/*function ParseECMAScript(file, debug = false) {
   console.log(`Parsing '${file}'...`);
   let data = fs.readFileSync(file, 'utf-8');
   let ast, error;
   let parser;
+  console.log('data', data);
   globalThis.parser = parser = new ECMAScriptParser(data?.toString ? data.toString() : data, file, debug);
 
   globalThis.ast = ast = parser.parseProgram();
@@ -690,7 +786,7 @@ function ParseECMAScript(file, debug = false) {
       return this.ast;
     }
   };
-}
+}*/
 
 function PrintECMAScript(ast, comments, printer = new ECMAScript.Printer({ indent: 4 }, comments)) {
   return printer.print(ast);
@@ -1123,4 +1219,18 @@ async function ASTShell(...args) {
   await CommandLine();
 }
 
-Util.callMain(ASTShell, true);
+let error;
+try {
+  const argv = [...(process?.argv ?? scriptArgs)].slice(2);
+  ASTShell(...argv);
+} catch(e) {
+  error = e;
+} finally {
+  if(error) {
+    console.log('FAIL: ' + error.message, '\n  ' + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  '));
+    console.log('FAIL');
+    Util.exit(1);
+  } else {
+    console.log('SUCCESS');
+  }
+}
