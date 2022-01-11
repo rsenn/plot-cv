@@ -4,37 +4,7 @@ import path from './lib/path.js';
 import * as deep from './lib/deep.js';
 import { Console } from 'console';
 import REPL from './xrepl.js';
-import {
-  SIZEOF_POINTER,
-  Node,
-  Type,
-  RecordDecl,
-  EnumDecl,
-  TypedefDecl,
-  VarDecl,
-  FunctionDecl,
-  Location,
-  TypeFactory,
-  SpawnCompiler,
-  AstDump,
-  FindType,
-  Hier,
-  PathOf,
-  NodeType,
-  NodeName,
-  GetLoc,
-  GetType,
-  GetTypeStr,
-  NodePrinter,
-  isNode,
-  SourceDependencies,
-  GetTypeNode,
-  GetFields,
-  PathRemoveLoc,
-  PrintAst,
-  GetParams,
-  List
-} from './clang-ast.js';
+import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, VarDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, FindType, Hier, PathOf, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter, isNode, SourceDependencies, GetTypeNode, GetFields, PathRemoveLoc, PrintAst, GetParams, List } from './clang-ast.js';
 import Tree from './lib/tree.js';
 import { Pointer } from './lib/pointer.js';
 import * as Terminal from './terminal.js';
@@ -52,24 +22,7 @@ let params;
 let files;
 let spawn, base, cmdhist, config;
 let defs, includes, libs, sources;
-let libdirs = [
-  '/lib',
-  '/lib/i386-linux-gnu',
-  '/lib/x86_64-linux-gnu',
-  '/lib32',
-  '/libx32',
-  '/usr/lib',
-  '/usr/lib/i386-linux-gnu',
-  '/usr/lib/i386-linux-gnu/i686/sse2',
-  '/usr/lib/i386-linux-gnu/sse2',
-  '/usr/lib/x86_64-linux-gnu',
-  '/usr/lib/x86_64-linux-gnu/libfakeroot',
-  '/usr/lib32',
-  '/usr/libx32',
-  '/usr/local/lib',
-  '/usr/local/lib/i386-linux-gnu',
-  '/usr/local/lib/x86_64-linux-gnu'
-];
+let libdirs = ['/lib', '/lib/i386-linux-gnu', '/lib/x86_64-linux-gnu', '/lib32', '/libx32', '/usr/lib', '/usr/lib/i386-linux-gnu', '/usr/lib/i386-linux-gnu/i686/sse2', '/usr/lib/i386-linux-gnu/sse2', '/usr/lib/x86_64-linux-gnu', '/usr/lib/x86_64-linux-gnu/libfakeroot', '/usr/lib32', '/usr/libx32', '/usr/local/lib', '/usr/local/lib/i386-linux-gnu', '/usr/local/lib/x86_64-linux-gnu'];
 let libdirs32 = libdirs.filter(d => /(32$|i[0-9]86)/.test(d));
 let libdirs64 = libdirs.filter(d => !/(32$|i[0-9]86)/.test(d));
 
@@ -488,9 +441,7 @@ function* GenerateStructClass(decl, ffiPrefix = '') {
   yield `  static from(address) {\n    let ret = ${ffiPrefix}toArrayBuffer(address, ${offset});\n    return Object.setPrototypeOf(ret, ${className}.prototype);\n  }`;
   yield '';
 
-  yield `  toString() {\n    const { ${fields.join(', ')} } = this;\n    return \`${name} {${[...members]
-    .map(([field, member]) => '\\n\\t.' + field + ' = ' + (member.isPointer() ? '0x' : '') + '${' + field + (member.isPointer() ? '.toString(16)' : '') + '}')
-    .join(',')}\\n}\`;\n  }`;
+  yield `  toString() {\n    const { ${fields.join(', ')} } = this;\n    return \`${name} {${[...members].map(([field, member]) => '\\n\\t.' + field + ' = ' + (member.isPointer() ? '0x' : '') + '${' + field + (member.isPointer() ? '.toString(16)' : '') + '}').join(',')}\\n}\`;\n  }`;
   yield '}';
 }
 
@@ -509,11 +460,7 @@ function GenerateGetSet(name, offset, type, ffiPrefix) {
     a.unshift(`/* ${name}${desugared ? ` (${desugared})` : ''} ${size} ${signed} */`);
     console.log('GenerateStructClass', { pointer });
   }
-  return [
-    ...a,
-    `set ${name}(value) { if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = ${ffiPrefix}toPointer(value); new ${ctor}(this, ${offset})[0] = ${ByteLength2Value(size, signed, floating)}; }`,
-    `get ${name}() { return ${toHex(`new ${ctor}(this, ${offset})[0]`)}; }`
-  ];
+  return [...a, `set ${name}(value) { if(typeof value == 'object' && value != null && value instanceof ArrayBuffer) value = ${ffiPrefix}toPointer(value); new ${ctor}(this, ${offset})[0] = ${ByteLength2Value(size, signed, floating)}; }`, `get ${name}() { return ${toHex(`new ${ctor}(this, ${offset})[0]`)}; }`];
 }
 
 function ByteLength2TypedArray(byteLength, signed, floating) {

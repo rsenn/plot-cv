@@ -207,6 +207,7 @@ function main(...args) {
     quiet,
     exp,
     relativeTo,
+    match = /.*/gi,
     files = [];
 
   while(args[optind]) {
@@ -218,6 +219,7 @@ function main(...args) {
       else if(/(quiet|^-q)/.test(args[optind])) quiet = true;
       else if(/(export|^-e)/.test(args[optind])) exp = true;
       else if(/(relative|^-r)/.test(args[optind])) relativeTo = path.absolute(args[++optind]);
+      else if(/(match|^-m)/.test(args[optind])) match = new RegExp(args[++optind], 'i');
     } else files.push(args[optind]);
 
     optind++;
@@ -405,7 +407,7 @@ function main(...args) {
     if(path.isRelative(source) && !/^(\.|\.\.)\//.test(source)) source = './' + source;
 
     if(exportNames.length) {
-      const names = exportNames.map(t => (t == 'default' ? t + ' as ' + base : t));
+      const names = exportNames.map(t => (t == 'default' ? t + ' as ' + base : t)).filter(n => match.test(n));
       const keyword = exp ? 'export' : 'import';
 
       if(names.length == 1 && /^default as/.test(names[0])) std.puts(keyword + ` ${base} from '${source}'\n`);
