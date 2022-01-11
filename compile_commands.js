@@ -29,55 +29,51 @@ function main(...arglist) {
     directories = [],
     workingDir = path.getcwd();
 
-  //console.log('workingDir', workingDir);
   for(let { directory, command } of compileCommands) {
     let cmd = new CompileCommand(command);
     commands.push(cmd);
-    directories.push(directory);
+    directories.push(path.relative(directory, workingDir));
     prevDirectory = directory;
   }
 
   let common = util
     .arraysInCommon(commands)
     .filter((arg, i) => i > 0 && ['mode', 'output'].indexOf(ArgumentType(arg)) == -1);
-  // console.log('common', common);
+
   let i = 0;
   for(let cmd of commands) {
     cmd.remove(...common);
     let sources = cmd.sources.map(s => '\x1b[32m' + path.relative(s, workingDir) + '\x1b[0m');
-    //console.log('compileCommand.sources', ...sources);
 
     {
-      let { program, output, sources } = cmd;
+      let { program, output, source } = cmd;
       output = path.join(directories[i], output);
-      output = path.relative(output, workingDir);
+      cmd.output = path.relative(output, directories[i]);
 
       cmd.program = path.basename(program);
-      cmd.output = path.basename(output);
 
-      cmd.sources = sources.map(src => path.relative(src, workingDir));
+      cmd.source = path.relative(source, workingDir);
     }
 
     let idx = cmd.findIndex(a => /^-(o|c|S|E)/.test(a));
-    cmd.splice(idx, 0, '$(CFLAGS)');
+    // cmd.splice(idx, 0, '$(CFLAGS)');
 
-    std.puts(cmd.toString('' && '\\\n\t') + '\n');
+    {
+      let { program, output, source, flags } = cmd;
+      console.log('cmd', inspect({ program, flags, output, source }, { ...console.options, compact: 2 }));
+    }
+    //    std.puts(cmd.toString('' && '\\\n\t') + '\n');
     ++i;
   }
   let { program } = commands[0];
-  /*  console.log('program', program);
-  console.log('common', common.join(' \\\n\t'));*/
 
   common.unshift(program);
   let newCmd = common.join(' ');
-  //console.log('newCmd', newCmd);
 
   let commonCmd = new CompileCommand(newCmd);
-  //  console.log('commonCmd', commonCmd.toString(' \\\n\t'));
 
   const { defines, includes, flags } = commonCmd;
 
-  //console.log('commonCmd', { defines, includes, flags });
   const CFLAGS = [...defines.map(d => '-D' + d), ...includes.map(i => '-I' + i), ...flags];
   console.log('CFLAGS', CFLAGS);
 }
