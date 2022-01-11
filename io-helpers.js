@@ -210,3 +210,20 @@ export function* StatFiles(gen) {
     yield obj;
   }
 }
+
+export function FdReader(fd, bufferSize = 1024) {
+  let buf = new ArrayBuffer(bufferSize);
+  return new Repeater(async (push, stop) => {
+    let ret;
+    do {
+      let r = await waitRead(fd);
+      ret = typeof fd == 'number' ? filesystem.readSync(fd, buf) : fd.read(buf);
+      if(ret > 0) {
+        let data = buf.slice(0, ret);
+        await push(filesystem.bufferToString(data));
+      }
+    } while(ret == bufferSize);
+    stop();
+    typeof fd == 'number' ? filesystem.closeSync(fd) : fd.destroy();
+  });
+}

@@ -1,24 +1,139 @@
-import { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, EagleNodeList, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, EagleDocument, EagleReference, EagleRef, makeEagleNode, EagleNode, Renderer, EagleProject, EagleElement, makeEagleElement, EagleElementProxy, EagleNodeMap, ImmutablePath, DereferenceError } from './lib/eagle.js';
+import {
+  EagleSVGRenderer,
+  SchematicRenderer,
+  BoardRenderer,
+  LibraryRenderer,
+  EagleNodeList,
+  useTrkl,
+  RAD2DEG,
+  DEG2RAD,
+  VERTICAL,
+  HORIZONTAL,
+  HORIZONTAL_VERTICAL,
+  DEBUG,
+  log,
+  setDebug,
+  PinSizes,
+  EscapeClassName,
+  UnescapeClassName,
+  LayerToClass,
+  ElementToClass,
+  ClampAngle,
+  AlignmentAngle,
+  MakeRotation,
+  EagleAlignments,
+  Alignment,
+  SVGAlignments,
+  AlignmentAttrs,
+  RotateTransformation,
+  LayerAttributes,
+  InvertY,
+  PolarToCartesian,
+  CartesianToPolar,
+  RenderArc,
+  CalculateArcRadius,
+  LinesToPath,
+  MakeCoordTransformer,
+  useAttributes,
+  EagleDocument,
+  EagleReference,
+  EagleRef,
+  makeEagleNode,
+  EagleNode,
+  Renderer,
+  EagleProject,
+  EagleElement,
+  makeEagleElement,
+  EagleElementProxy,
+  EagleNodeMap,
+  ImmutablePath,
+  DereferenceError
+} from './lib/eagle.js';
 import Util from './lib/util.js';
 import * as util from './lib/misc.js';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
 import require from 'require';
-import { LineList, Point, Circle, Rect, Size, Line, TransformationList, Rotation, Translation, Scaling, Matrix, BBox } from './lib/geom.js';
+import {
+  LineList,
+  Point,
+  Circle,
+  Rect,
+  Size,
+  Line,
+  TransformationList,
+  Rotation,
+  Translation,
+  Scaling,
+  Matrix,
+  BBox
+} from './lib/geom.js';
 import { Console } from 'console';
 import REPL from './xrepl.js';
-import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, Enum, HashList, Multimap, Shash, SortedMap, HashMultimap, MultiBiMap, MultiKeyMap, DenseSpatialHash2D, SpatialHash2D, HashMap, SpatialH, SpatialHash, SpatialHashMap, BoxHash } from './lib/container.js';
+import {
+  BinaryTree,
+  BucketStore,
+  BucketMap,
+  ComponentMap,
+  CompositeMap,
+  Deque,
+  Enum,
+  HashList,
+  Multimap,
+  Shash,
+  SortedMap,
+  HashMultimap,
+  MultiBiMap,
+  MultiKeyMap,
+  DenseSpatialHash2D,
+  SpatialHash2D,
+  HashMap,
+  SpatialH,
+  SpatialHash,
+  SpatialHashMap,
+  BoxHash
+} from './lib/container.js';
 import * as fs from 'fs';
 import { Pointer } from './lib/pointer.js';
 import { read as fromXML, write as toXML } from './lib/xml.js';
 import inspect from './lib/objectInspect.js';
-import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
-import { GetExponent, GetMantissa, ValueToNumber, NumberToValue, GetMultipliers, GetMultiplier, GetFactor, BG, PartScales, digit2color } from './lib/eda/colorCoding.js';
+import {
+  ReadFile,
+  LoadHistory,
+  ReadJSON,
+  MapFile,
+  ReadBJSON,
+  WriteFile,
+  WriteJSON,
+  WriteBJSON,
+  DirIterator,
+  RecursiveDirIterator
+} from './io-helpers.js';
+import {
+  GetExponent,
+  GetMantissa,
+  ValueToNumber,
+  NumberToValue,
+  GetMultipliers,
+  GetMultiplier,
+  GetFactor,
+  BG,
+  PartScales,
+  digit2color
+} from './lib/eda/colorCoding.js';
 import { UnitForName } from './lib/eda/units.js';
 import CircuitJS from './lib/eda/circuitjs.js';
 import { define, isObject, memoize, unique, atexit } from './lib/misc.js';
 import { HSLA, isHSLA, ImmutableHSLA, RGBA, isRGBA, ImmutableRGBA, ColoredText } from './lib/color.js';
-import { GetColorBands, scientific, num2color, GetParts, GetInstances, GetPositions, GetElements } from './eagle-commands.js';
+import {
+  GetColorBands,
+  scientific,
+  num2color,
+  GetParts,
+  GetInstances,
+  GetPositions,
+  GetElements
+} from './eagle-commands.js';
 import { Edge, Graph, Node } from './lib/geom/graph.js';
 
 let cmdhist;
@@ -198,7 +313,10 @@ function fixValue(element) {
 
   switch (element.name[0]) {
     case 'R': {
-      newValue = value.replace(/^([0-9.]+)([mkM]?)(?:\xEF\xBF\xBD|\xC2\xA9|\x26\xC2*\xA9+|\u2126?[\x80-\xFF]+)([\x00-\x7F]*)/, '$1$2\u2126$3');
+      newValue = value.replace(
+        /^([0-9.]+)([mkM]?)(?:\xEF\xBF\xBD|\xC2\xA9|\x26\xC2*\xA9+|\u2126?[\x80-\xFF]+)([\x00-\x7F]*)/,
+        '$1$2\u2126$3'
+      );
       break;
     }
     case 'L': {
@@ -337,7 +455,8 @@ function CorrelateSchematicAndBoard(schematic, board) {
   let allNames = Math.max(...names.map(n => n.length));
   let intersection = Util.intersect(...names);
 
-  if(allNames.length > intersection.length) console.warn(`WARNING: Only ${intersection.length} names of ${allNames.length} correlate`);
+  if(allNames.length > intersection.length)
+    console.warn(`WARNING: Only ${intersection.length} names of ${allNames.length} correlate`);
   console.log(`intersection`, intersection);
 
   return /*new Map*/ intersection.map(name => [name, documents.map(doc => GetByName(doc, name))]);
@@ -351,7 +470,9 @@ function GetSheets(doc_or_proj) {
 
 function SaveLibraries() {
   const { schematic, board } = project;
-  const layerMap = /*Object.values*/ [...schematic.layers, ...board.layers].filter(([n, e]) => e.active).reduce((acc, [n, e]) => ({ ...acc, [e.number]: e.raw }), {});
+  const layerMap = /*Object.values*/ [...schematic.layers, ...board.layers]
+    .filter(([n, e]) => e.active)
+    .reduce((acc, [n, e]) => ({ ...acc, [e.number]: e.raw }), {});
   const entities = ['symbols', 'packages', 'devicesets'];
 
   let layerIds = deep
@@ -466,7 +587,13 @@ async function testEagle(filename) {
   let { board, schematic } = proj;
   const packages = {
     board: (board && board.elements && [...board.elements].map(([name, e]) => e.package)) || [],
-    schematic: (schematic && schematic.sheets && [...schematic.sheets].map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)).flat()) || []
+    schematic:
+      (schematic &&
+        schematic.sheets &&
+        [...schematic.sheets]
+          .map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined))
+          .flat()) ||
+      []
   };
   let parts = (schematic && schematic.parts) || [];
   let sheets = (schematic && schematic.sheets) || [];
@@ -517,7 +644,9 @@ async function testEagle(filename) {
   }
   let desc = proj.documents.map(doc => [doc.filename, doc.find('description')]);
   console.log('desc', desc);
-  desc = desc.map(([file, e]) => [file, e && e.xpath()]).map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
+  desc = desc
+    .map(([file, e]) => [file, e && e.xpath()])
+    .map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
   desc = new Map(desc);
   console.log('descriptions', [...Util.map(desc, ([k, v]) => [k, v])]);
   return proj;
@@ -744,7 +873,8 @@ async function main(...args) {
     let s = '';
     for(let arg of args) {
       if(s) s += ' ';
-      if(typeof arg != 'strping' || arg.indexOf('\x1b') == -1) s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
+      if(typeof arg != 'strping' || arg.indexOf('\x1b') == -1)
+        s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
       else s += arg;
     }
     fs.writeSync(debugLog, fs.bufferFrom(s + '\n'));

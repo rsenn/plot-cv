@@ -7,14 +7,39 @@ import { format, once, memoize } from './lib/misc.js';
 import * as xml from 'xml';
 import Console from 'console';
 import SvgPath from './lib/svg/path.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
+import {
+  IfDebug,
+  LogIfDebug,
+  ReadFile,
+  LoadHistory,
+  ReadJSON,
+  MapFile,
+  ReadBJSON,
+  WriteFile,
+  WriteJSON,
+  WriteBJSON,
+  DirIterator,
+  RecursiveDirIterator
+} from './io-helpers.js';
 import { MakeSVG, SaveSVG } from './image-helpers.js';
 import { Profiler } from './time-helpers.js';
 import { SaveConfig, LoadConfig } from './config.js';
 import { VideoSource, ImageSequence } from './qjs-opencv/js/cvVideo.js';
 import { Window, Screen, MouseFlags, MouseEvents, Mouse, TextStyle } from './qjs-opencv/js/cvHighGUI.js';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
-import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Define, Once, GetOpt, RoundTo, Range } from './qjs-opencv/js/cvUtils.js';
+import {
+  WeakMapper,
+  Modulo,
+  WeakAssign,
+  BindMethods,
+  BitsToNames,
+  FindKey,
+  Define,
+  Once,
+  GetOpt,
+  RoundTo,
+  Range
+} from './qjs-opencv/js/cvUtils.js';
 import { ImagePipeline } from './imagePipeline.js';
 
 /*let rainbow;
