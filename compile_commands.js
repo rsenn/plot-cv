@@ -20,7 +20,7 @@ function main(...arglist) {
     }
   });
   let json = fs.readFileSync(
-    '/home/roman/Projects/plot-cv/quickjs/qjs-modules/build/x86_64-linux-profile/compile_commands.json',
+    arglist[0] ?? '/home/roman/Projects/plot-cv/quickjs/qjs-modules/build/x86_64-linux-profile/compile_commands.json',
     'utf-8'
   );
   let compileCommands = JSON.parse(json);
@@ -52,7 +52,7 @@ function main(...arglist) {
 
       cmd.program = path.basename(program);
 
-      cmd.source = path.relative(source, workingDir);
+      if(source) cmd.source = path.relative(source, workingDir);
     }
 
     let idx = cmd.findIndex(a => /^-(o|c|S|E)/.test(a));

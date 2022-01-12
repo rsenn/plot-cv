@@ -135,6 +135,8 @@ import {
   GetElements
 } from './eagle-commands.js';
 import { Edge, Graph, Node } from './lib/geom/graph.js';
+import { MutableXPath as XPath, parseXPath, ImmutableXPath } from './quickjs/qjs-modules/lib/xpath.js';
+import { Predicate } from 'predicate';
 
 let cmdhist;
 
@@ -669,6 +671,12 @@ async function main(...args) {
     };
     await PortableFileSystem(cb);
   }*/
+  Util.defineGetterSetter(
+    globalThis,
+    'compact',
+    () => console.options.compact,
+    value => (console.options.compact = value)
+  );
 
   debugLog = fs.openSync('debug.log', 'a');
 
@@ -758,7 +766,11 @@ async function main(...args) {
     Graph,
     Edge,
     Node,
-    xml
+    xml,
+    XPath,
+    ImmutableXPath,
+    parseXPath,
+    Predicate
   });
   Object.assign(globalThis, {
     GetExponent,
