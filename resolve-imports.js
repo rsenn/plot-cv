@@ -4,27 +4,7 @@ import ConsoleSetup from './lib/consoleSetup.js';
 import { Lexer, PathReplacer, Location } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
 import { Token } from './lib/ecmascript/token.js';
-import estree, {
-  ImportSpecifier,
-  VariableDeclaration,
-  VariableDeclarator,
-  ModuleSpecifier,
-  ImportDeclaration,
-  ExportNamedDeclaration,
-  ExportDefaultDeclaration,
-  ExportAllDeclaration,
-  Identifier,
-  MemberExpression,
-  ESNode,
-  CallExpression,
-  ObjectPattern,
-  ArrayPattern,
-  Literal,
-  AssignmentExpression,
-  ExpressionStatement,
-  ClassDeclaration,
-  AssignmentProperty
-} from './lib/ecmascript/estree.js';
+import estree, { ImportSpecifier, VariableDeclaration, VariableDeclarator, ModuleSpecifier, ImportDeclaration, ExportNamedDeclaration, ExportDefaultDeclaration, ExportAllDeclaration, Identifier, MemberExpression, ESNode, CallExpression, ObjectPattern, ArrayPattern, Literal, AssignmentExpression, ExpressionStatement, ClassDeclaration, AssignmentProperty } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
 import { ImmutablePath, Path } from './lib/json.js';
@@ -32,35 +12,7 @@ import deep from './lib/deep.js';
 import Tree from './lib/tree.js';
 import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 import { Repeater } from './lib/repeater/repeater.js';
-import {
-  isStream,
-  AcquireReader,
-  AcquireWriter,
-  ArrayWriter,
-  readStream,
-  PipeTo,
-  WritableRepeater,
-  WriteIterator,
-  AsyncWrite,
-  AsyncRead,
-  ReadFromIterator,
-  WriteToRepeater,
-  LogSink,
-  StringReader,
-  LineReader,
-  DebugTransformStream,
-  CreateWritableStream,
-  CreateTransformStream,
-  RepeaterSource,
-  RepeaterSink,
-  LineBufferStream,
-  TextTransformStream,
-  ChunkReader,
-  ByteReader,
-  PipeToRepeater,
-  Reader,
-  ReadAll
-} from './lib/stream/utils.js';
+import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater, Reader, ReadAll } from './lib/stream/utils.js';
 import fs from 'fs';
 import { Console } from 'console';
 import process from 'process';
