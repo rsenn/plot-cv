@@ -3,7 +3,7 @@ import Util from './lib/util.js';
 import * as util from './lib/misc.js';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
-import { EventEmitter, EventTarget, eventify } from './lib/events.js'
+import { EventEmitter, EventTarget, eventify } from './lib/events.js';
 import require from 'require';
 import { LineList, Point, Circle, Rect, Size, Line, TransformationList, Rotation, Translation, Scaling, Matrix, BBox } from './lib/geom.js';
 import { Console } from 'console';
@@ -143,7 +143,10 @@ function main(...args) {
       return isNaN(+n) ? n : +n;
     },
     util,
-    path,EventEmitter, EventTarget, eventify,
+    path,
+    EventEmitter,
+    EventTarget,
+    eventify,
     Graph,
     Edge,
     Node,

@@ -1,6 +1,6 @@
 import express from 'express';
 import * as path from 'path';
-import * as util from './lib/misc.js';
+import * as util from 'util';
 import Util from './lib/util.js';
 import bodyParser from 'body-parser';
 import expressWs from 'express-ws';
@@ -78,9 +78,7 @@ async function runMount(dirsIterator) {
       }
     }
     readData(proc.stdout);
-    readData(proc.stderr, data =>
-      console.log('stderr data:', Util.abbreviate(Util.escape(data), Util.getEnv('COLUMNS') || 120))
-    );
+    readData(proc.stderr, data => console.log('stderr data:', Util.abbreviate(Util.escape(data), Util.getEnv('COLUMNS') || 120)));
     let exitCode = await waitChild(proc);
     console.log('exitCode:', exitCode);
     return exitCode;
@@ -163,29 +161,11 @@ async function main() {
 
   const convertToGerber = async (boardFile, opts = {}) => {
     console.log('convertToGerber', { boardFile, opts });
-    let {
-      layers = opts.side == 'outline'
-        ? ['Measures']
-        : opts.drill
-        ? ['Drills', 'Holes']
-        : [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'],
-      format = opts.drill ? 'EXCELLON' : 'GERBER_RS274X',
-      data,
-      fetch = false,
-      front,
-      back
-    } = opts;
+    let { layers = opts.side == 'outline' ? ['Measures'] : opts.drill ? ['Drills', 'Holes'] : [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'], format = opts.drill ? 'EXCELLON' : 'GERBER_RS274X', data, fetch = false, front, back } = opts;
     const base = path.basename(boardFile, '.brd');
     const formatToExt = (layers, format) => {
-      if(
-        opts.drill ||
-        format.startsWith('EXCELLON') ||
-        layers.indexOf('Drills') != -1 ||
-        layers.indexOf('Holes') != -1
-      )
-        return 'TXT';
-      if(layers.indexOf('Bottom') != -1 || format.startsWith('GERBER'))
-        return opts.side == 'outline' ? 'GKO' : front ? 'GTL' : 'GBL';
+      if(opts.drill || format.startsWith('EXCELLON') || layers.indexOf('Drills') != -1 || layers.indexOf('Holes') != -1) return 'TXT';
+      if(layers.indexOf('Bottom') != -1 || format.startsWith('GERBER')) return opts.side == 'outline' ? 'GKO' : front ? 'GTL' : 'GBL';
 
       return 'rs274x';
     };
@@ -275,9 +255,7 @@ async function main() {
       return path.join(opts['output-dir'], `${base}_${side}.${ext}`);
     }
 
-    const params = [...Object.entries(opts)]
-      .filter(([k, v]) => typeof v == 'string' || typeof v == 'number' || (typeof v == 'boolean' && v === true))
-      .map(([k, v]) => `--${k}${typeof v != 'boolean' && v != '' ? '=' + v : ''}`);
+    const params = [...Object.entries(opts)].filter(([k, v]) => typeof v == 'string' || typeof v == 'number' || (typeof v == 'boolean' && v === true)).map(([k, v]) => `--${k}${typeof v != 'boolean' && v != '' ? '=' + v : ''}`);
     console.log('Request /gcode', { gerberFile, fetch, raw });
     //console.warn(`gerberToGcode`, Util.abbreviate(gerberFile), { gcodeFile, opts });
 
@@ -302,8 +280,7 @@ async function main() {
       const gcodeFile = makePath('ngc', sides[0]);
       const svgFile = makePath('svg', sides[0], 'processed');
 
-      for(let [file, to] of sides.map(side => [makePath('svg', side, 'processed'), makePath('svg', side)]))
-        if(fs.existsSync(file)) fs.renameSync(file, to);
+      for(let [file, to] of sides.map(side => [makePath('svg', side, 'processed'), makePath('svg', side)])) if(fs.existsSync(file)) fs.renameSync(file, to);
 
       let files = sides.map(side => [side, makePath('ngc', side)]).filter(([side, file]) => fs.existsSync(file));
       console.log('Response /gcode', { files });
@@ -387,10 +364,7 @@ async function main() {
           'Static request:',
           { path, url, method, headers, query, body } /* Object.keys(req), */,
           ...Util.if(
-            Util.filterOutKeys(
-              req.headers,
-              /(^sec|^accept|^cache|^dnt|-length|^host$|^if-|^connect|^user-agent|-type$|^origin$|^referer$)/
-            ),
+            Util.filterOutKeys(req.headers, /(^sec|^accept|^cache|^dnt|-length|^host$|^if-|^connect|^user-agent|-type$|^origin$|^referer$)/),
             () => [],
             value => ['headers: ', value],
             Util.isEmpty
@@ -415,18 +389,32 @@ async function main() {
     next();
   });*/
 
- /* app.use((req, res, next) => {
+  /* app.use((req, res, next) => {
     console.log('Request', req.url);
     next();
   });*/
+
+  let logfile;
+
   app.use((req, res, next) => {
     let file = req.url.replace(/^\/?/, '');
-    if(fs.existsSync(file)) {
-  let m,data =fs.readFileSync(file, 'utf-8');
 
-  if((m=/[^\n]*'util'[^\n]*/g.exec(data))) {
-  console.log('The file ' + file + ` was requested. (${data.length})`, `match @ ${m.index}: ${m[0]}`);
-}
+    logfile ??= fs.openSync('server.log', 'a+', 0o644);
+    let str;
+    let now = new Date();
+    str = `${now.toISOString().slice(0, 10).replace(/-/g, '')} ${now.toTimeString().slice(0, 8)} ${req.method.padEnd(4)} ${file}\n`;
+
+    let written = fs.writeSync(logfile, str, 0, str.length);
+
+    console.log('Request: ' + file, `(${written} bytes written)`);
+
+    if(fs.existsSync(file)) {
+      const re = /[^\n]*'util'[^\n]*/g;
+      /*let m,
+        data = fs.readFileSync(file, 'utf-8');
+      if((m = re.exec(data))) {
+        console.log('The file ' + file + ` was requested. (${data.length})`, `match @ ${m.index}: ${m[0]}`);
+      }*/
 
       files.add(file);
     }
@@ -674,8 +662,7 @@ async function main() {
         let result;
         const { owner, repo, dir, filter, tab, after } = options;
 
-        if(owner && repo && dir)
-          result = await GithubListContents(owner, repo, dir, filter && new RegExp(filter, 'g'));
+        if(owner && repo && dir) result = await GithubListContents(owner, repo, dir, filter && new RegExp(filter, 'g'));
         /*if(owner && (tab || after))*/ else {
           let proxyUrl = Util.makeURL({
             ...url,
@@ -729,10 +716,7 @@ async function main() {
       opts.names = names;
     }
     let files = await GetFilesList('tmp', opts);
-    console.log(
-      'POST files',
-      util.inspect(files, { breakLength: Infinity, colors: true, maxArrayLength: 10, compact: 1 })
-    );
+    console.log('POST files', util.inspect(files, { breakLength: Infinity, colors: true, maxArrayLength: 10, compact: 1 }));
     res.json({
       files
     });
@@ -770,8 +754,7 @@ async function main() {
     console.log('save body:', typeof body == 'string' ? Util.abbreviate(body, 100) : body);
     let st,
       err,
-      filename =
-        (req.headers['content-disposition'] || '').replace(new RegExp('.*"([^"]*)".*', 'g'), '$1') || 'output.svg';
+      filename = (req.headers['content-disposition'] || '').replace(new RegExp('.*"([^"]*)".*', 'g'), '$1') || 'output.svg';
     filename = 'tmp/' + filename.replace(/^tmp\//, '');
     await fsPromises
       .writeFile(filename, body, { mode: 0x0180, flag: 'w' })
