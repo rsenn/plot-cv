@@ -978,7 +978,7 @@ async function ASTShell(...args) {
   const platform = Util.getPlatform();
   if(platform == 'quickjs') await import('std').then(module => (globalThis.std = module));
 
-  if(platform == 'node') await import('util').then(module => (globalThis.inspect = module.inspect));
+  if(platform == 'node') await import('./lib/misc.js').then(module => (globalThis.inspect = module.inspect));
 
   (await Util.getPlatform()) == 'quickjs'
     ? import('deep.so').then(module => (globalThis.deep = module))

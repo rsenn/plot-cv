@@ -66,8 +66,6 @@
         ".next",
         "*.next/*",
         "quickjs-*",
-        "tmp",
-        "data",
         "Sources/[!p][!l]*",
         "Sources/[^p][^l]*",
         "*/test262/*",

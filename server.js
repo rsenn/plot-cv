@@ -415,14 +415,19 @@ async function main() {
     next();
   });*/
 
-  /*  app.use((req, res, next) => {
+ /* app.use((req, res, next) => {
     console.log('Request', req.url);
     next();
   });*/
   app.use((req, res, next) => {
     let file = req.url.replace(/^\/?/, '');
     if(fs.existsSync(file)) {
-      //  console.log('The file ' + file + ' was requested.');
+  let m,data =fs.readFileSync(file, 'utf-8');
+
+  if((m=/[^\n]*'util'[^\n]*/g.exec(data))) {
+  console.log('The file ' + file + ` was requested. (${data.length})`, `match @ ${m.index}: ${m[0]}`);
+}
+
       files.add(file);
     }
     next();

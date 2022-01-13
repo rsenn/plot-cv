@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import Util from './lib/util.js';
 import * as path from './lib/path.js';
 import { types } from './lib/misc.js';
+import child_process from 'child_process';
 
 export function IfDebug(token) {
   const { DEBUG = '' } = process.env;
@@ -226,4 +227,16 @@ export function FdReader(fd, bufferSize = 1024) {
     stop();
     typeof fd == 'number' ? filesystem.closeSync(fd) : fd.destroy();
   });
+}
+
+export function CopyToClipboard(text) {
+  const { env } = process;
+  let child = child_process.spawn('xclip', ['-in', '-verbose'], { env, stdio: ['pipe', 'inherit', 'inherit'] });
+  let [pipe] = child.stdio;
+
+  let written = fs.writeSync(pipe, text, 0, text.length);
+  fs.closeSync(pipe);
+  let status = child.wait();
+  console.log('child', child);
+  return { written, status };
 }

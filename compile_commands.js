@@ -1,7 +1,7 @@
 import { Console } from 'console';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as util from 'util';
+import * as util from './lib/misc.js';
 import inspect from 'inspect';
 import child_process from './lib/childProcess.js';
 import { ReadFile, ReadJSON, ReadBJSON, ReadDirRecursive, FdReader } from './io-helpers.js';

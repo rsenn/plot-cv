@@ -9,7 +9,7 @@ import { Console } from 'console';
 import JSLexer from './lib/jslexer.js';
 import CLexer from './lib/clexer.js';
 import BNFLexer from './lib/bnflexer.js';
-import { define, curry, toString, escape, quote, unique, split, extendArray } from 'util';
+import { define, curry, toString, escape, quote, unique, split, extendArray } from './lib/misc.js';
 
 extendArray();
 
