@@ -1,6 +1,8 @@
 import * as fs from 'fs';
 //import * as os from 'os';
 //import * as std from 'std';
+import * as bjson from 'bjson';
+import * as mmap from 'mmap';
 import Util from './lib/util.js';
 import * as path from './lib/path.js';
 import { types } from './lib/misc.js';

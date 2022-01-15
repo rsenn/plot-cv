@@ -25,6 +25,7 @@
 #include <sys/inotify.h>
 #include <portmidi.h>
 #include <linux/random.h>
+#include <zlib.h>
 
 static inline int
 escape_char_pred(int c) {
@@ -58,7 +59,7 @@ typedef struct numbers_s {
 
 int
 main() {
-  __int128 i128;
+//  __int128 i128;
   struct timespec ts;
   numbers_t n = {};
   jmp_buf jmpb;
@@ -353,7 +354,7 @@ main() {
   printf("SHUT_RD = %i\n", SHUT_RD);
   // printf("SIG_SETMASK = %i\n", SIG_SETMASK);
   printf("PTRACE_SYSCALL = %i\n", PTRACE_SYSCALL);
-  printf("sizeof(__int128) = %zu\n", sizeof(__int128));
+  //printf("sizeof(__int128) = %zu\n", sizeof(__int128));
   printf("SIGHUP = %i\n", SIGHUP);
   printf("SIGINT = %i\n", SIGINT);
   printf("SIGQUIT = %i\n", SIGQUIT);
@@ -465,5 +466,25 @@ main() {
   printf("IN_ISDIR = %i\n", IN_ISDIR);
   printf("IN_ONESHOT = %i\n", IN_ONESHOT);
   printf("RNDGETENTCNT = %x\n", RNDGETENTCNT);
+  printf("sizeof(z_stream) = %zu\n", sizeof(z_stream));
+  printf("sizeof(gz_header) = %zu\n", sizeof(gz_header));
+
+  z_stream svar;
+  printf("\nz_stream %zu\n", sizeof(svar));
+  printf(".next_in %zu %zu\n", offsetof(z_stream, next_in), sizeof(svar.next_in));
+  printf(".avail_in %zu %zu\n", offsetof(z_stream, avail_in), sizeof(svar.avail_in));
+  printf(".total_in %zu %zu\n", offsetof(z_stream, total_in), sizeof(svar.total_in));
+  printf(".next_out %zu %zu\n", offsetof(z_stream, next_out), sizeof(svar.next_out));
+  printf(".avail_out %zu %zu\n", offsetof(z_stream, avail_out), sizeof(svar.avail_out));
+  printf(".total_out %zu %zu\n", offsetof(z_stream, total_out), sizeof(svar.total_out));
+  printf(".msg %zu %zu\n", offsetof(z_stream, msg), sizeof(svar.msg));
+  printf(".state %zu %zu\n", offsetof(z_stream, state), sizeof(svar.state));
+  printf(".zalloc %zu %zu\n", offsetof(z_stream, zalloc), sizeof(svar.zalloc));
+  printf(".zfree %zu %zu\n", offsetof(z_stream, zfree), sizeof(svar.zfree));
+  printf(".opaque %zu %zu\n", offsetof(z_stream, opaque), sizeof(svar.opaque));
+  printf(".data_type %zu %zu\n", offsetof(z_stream, data_type), sizeof(svar.data_type));
+  printf(".adler %zu %zu\n", offsetof(z_stream, adler), sizeof(svar.adler));
+  printf(".reserved %zu %zu\n", offsetof(z_stream, reserved), sizeof(svar.reserved));
+
   return 0;
 }

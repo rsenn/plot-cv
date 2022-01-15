@@ -454,7 +454,7 @@ function* GenerateStructClass(decl, ffiPrefix = '') {
   let fields = [];
   let offset = 0;
 
-  // console.log('GenerateStructClass', decl);
+ console.log('GenerateStructClass', decl);
   for(let [name, type] of members) {
     if(/reserved/.test(name)) continue;
 
@@ -465,8 +465,11 @@ function* GenerateStructClass(decl, ffiPrefix = '') {
     yield '';
     let subscript = type.subscript ?? '';
     yield `  /* ${offset}: ${type}${desugared} ${name}${subscript} */`;
+    try {
     yield* GenerateGetSet(name, offset, type, ffiPrefix).map(line => `  ${line}`);
+  }catch(e) {}  
     fields.push(name);
+
     offset += RoundTo(type.size, 4);
   }
   yield '';
