@@ -92,7 +92,7 @@ function main(...args) {
 const histfile='.test-rpc-history';
   repl.historyLoad(histfile, false);
 
-  repl.help = () => {};
+  //repl.help = () => {};
   let { log } = console;
   repl.show = arg => std.puts((typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options)) + '\n');
 
