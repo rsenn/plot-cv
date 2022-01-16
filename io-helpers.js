@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 //import * as os from 'os';
 //import * as std from 'std';
-import * as bjson from 'bjson';
-import * as mmap from 'mmap';
+//import * as bjson from 'bjson';
+//import * as mmap from 'mmap';
 import Util from './lib/util.js';
 import * as path from './lib/path.js';
 import { types } from './lib/misc.js';
@@ -65,19 +65,6 @@ export function MapFile(filename) {
   return data;
 }
 
-export function ReadBJSON(filename) {
-  let fd = os.open(filename, os.O_RDONLY);
-  let { size } = os.stat(filename)[0];
-  debug(`ReadBJSON`, { filename, fd, size });
-  let data = mmap.mmap(0, size + 10, mmap.PROT_READ, mmap.MAP_PRIVATE, fd, 0);
-  debug(`ReadBJSON`, { data });
-  let ret = bjson.read(data, 0, size);
-
-  mmap.munmap(data);
-  os.close(fd);
-  return ret;
-}
-
 export function WriteFile(name, data, verbose = true) {
   if(Util.isGenerator(data)) {
     let fd = fs.openSync(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, 0x1a4);
@@ -98,8 +85,23 @@ export function WriteFile(name, data, verbose = true) {
   if(verbose) debug(`Wrote ${name}: ${ret} bytes`);
 }
 
+
+
 export function WriteJSON(name, data) {
   WriteFile(name, JSON.stringify(data, null, 2));
+}
+/*
+export function ReadBJSON(filename) {
+  let fd = os.open(filename, os.O_RDONLY);
+  let { size } = os.stat(filename)[0];
+  debug(`ReadBJSON`, { filename, fd, size });
+  let data = mmap.mmap(0, size + 10, mmap.PROT_READ, mmap.MAP_PRIVATE, fd, 0);
+  debug(`ReadBJSON`, { data });
+  let ret = bjson.read(data, 0, size);
+
+  mmap.munmap(data);
+  os.close(fd);
+  return ret;
 }
 
 export function WriteBJSON(name, data) {
@@ -113,7 +115,7 @@ export function WriteBJSON(name, data) {
 
   return ret;
 }
-
+*/
 export function* DirIterator(...args) {
   let pred = typeof args[0] != 'string' ? Util.predicate(args.shift()) : () => true;
   for(let dir of args) {
