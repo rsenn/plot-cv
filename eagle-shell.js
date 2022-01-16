@@ -13,7 +13,7 @@ import * as fs from 'fs';
 import { Pointer } from './lib/pointer.js';
 import { read as fromXML, write as toXML } from './lib/xml.js';
 import inspect from './lib/objectInspect.js';
-import { IfDebug, LogIfDebug, LoadHistory, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator, Filter, FilterImages, StatFiles, CopyToClipboard } from './io-helpers.js';
+import { IfDebug, LogIfDebug, LoadHistory, MapFile, ReadFile, ReadJSON, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator, Filter, FilterImages, StatFiles, CopyToClipboard } from './io-helpers.js';
 import { GetExponent, GetMantissa, ValueToNumber, NumberToValue } from './lib/eda/values.js';
 import { GetMultipliers, GetFactor, GetColorBands, PartScales, digit2color } from './lib/eda/colorCoding.js';
 import { UnitForName } from './lib/eda/units.js';
@@ -127,6 +127,8 @@ function main(...args) {
     LogIfDebug,
     LoadHistory,
     MapFile,
+    ReadFile,
+    ReadJSON,
     ReadBJSON,
     WriteFile,
     WriteJSON,
