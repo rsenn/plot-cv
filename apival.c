@@ -26,6 +26,7 @@
 #include <portmidi.h>
 #include <linux/random.h>
 #include <zlib.h>
+#include "quickjs/qjs-net/libwebsockets/include/libwebsockets.h"
 
 static inline int
 escape_char_pred(int c) {
@@ -59,7 +60,7 @@ typedef struct numbers_s {
 
 int
 main() {
-//  __int128 i128;
+  //  __int128 i128;
   struct timespec ts;
   numbers_t n = {};
   jmp_buf jmpb;
@@ -354,7 +355,7 @@ main() {
   printf("SHUT_RD = %i\n", SHUT_RD);
   // printf("SIG_SETMASK = %i\n", SIG_SETMASK);
   printf("PTRACE_SYSCALL = %i\n", PTRACE_SYSCALL);
-  //printf("sizeof(__int128) = %zu\n", sizeof(__int128));
+  // printf("sizeof(__int128) = %zu\n", sizeof(__int128));
   printf("SIGHUP = %i\n", SIGHUP);
   printf("SIGINT = %i\n", SIGINT);
   printf("SIGQUIT = %i\n", SIGQUIT);
@@ -485,6 +486,12 @@ main() {
   printf(".data_type %zu %zu\n", offsetof(z_stream, data_type), sizeof(svar.data_type));
   printf(".adler %zu %zu\n", offsetof(z_stream, adler), sizeof(svar.adler));
   printf(".reserved %zu %zu\n", offsetof(z_stream, reserved), sizeof(svar.reserved));
+
+  printf("LWS_CALLBACK_LOCK_POLL = %i\n", LWS_CALLBACK_LOCK_POLL);
+  printf("LWS_CALLBACK_UNLOCK_POLL = %i\n", LWS_CALLBACK_UNLOCK_POLL);
+  printf("LWS_CALLBACK_ADD_POLL_FD = %i\n", LWS_CALLBACK_ADD_POLL_FD);
+  printf("LWS_CALLBACK_DEL_POLL_FD = %i\n", LWS_CALLBACK_DEL_POLL_FD);
+  printf("LWS_CALLBACK_CHANGE_MODE_POLL_FD = %i\n", LWS_CALLBACK_CHANGE_MODE_POLL_FD);
 
   return 0;
 }
