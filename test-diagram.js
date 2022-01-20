@@ -1,11 +1,11 @@
-import { AxisPoints, DrawAxis, Origin, DrawCross, GetRect, Max, X, Y } from './diagram.js';
+import { AxisPoints, DrawAxis, Origin, DrawCross, GetRect, Max, X, Y, Flip } from './diagram.js';
 import { Console } from 'console';
-import { Point, Size, Rect, Line, TickMeter, Mat, Draw, imwrite, CV_8UC3, FILLED } from 'opencv';
+import { Point, Size, Rect, Line, TickMeter, Mat, Draw, imwrite, CV_8UC3, FILLED, CV_RGB } from 'opencv';
 import { TextStyle, DrawText } from './qjs-opencv/js/cvHighGUI.js';
 
 function main(...args) {
   globalThis.console = new Console({
-    inspectOptions: { maxArrayLength: 100, colors: true, depth: Infinity, compact: 1, customInspect: true }
+    inspectOptions: { maxArrayLength: 100, colors: true, depth: Infinity, compact: 0, customInspect: true }
   });
 
   let fontFile = 'qjs-opencv/MiscFixedSC613.ttf',
@@ -15,7 +15,7 @@ function main(...args) {
 
   let size = font.size('X');
 
-  let mat = new Mat(480, 640, CV_8UC3);
+  let mat = new Mat([1024, 800], CV_8UC3);
   let area = new Rect(0, 0, ...mat.size).inset(20);
   let diagramMat = mat(area);
 
@@ -28,16 +28,22 @@ function main(...args) {
     y: AxisPoints(100, 20, Y, font, diagramMat.size)
   };
 
-  console.log('axes', axes);
-
-  let rect = GetRect(diagramMat, axes.x, axes.y);
+  let rect = GetRect(diagramMat, axes.x, axes.y, font);
   console.log('rect', rect);
 
   let origin = Origin(diagramMat, axes.x, axes.y);
-  DrawCross(diagramMat, origin);
+  // DrawCross(diagramMat, origin);
 
-  DrawAxis(diagramMat, axes.x, origin);
-  DrawAxis(diagramMat, axes.y, origin);
+  const { tl, br } = Flip(diagramMat, rect);
+  console.log('rect', { tl, br });
+
+  tl.x += 1;
+  tl.y -= 1;
+
+  //Draw.rectangle(diagramMat, tl, br, CV_RGB(255, 0, 0), FILLED, 8);
+
+  DrawAxis(diagramMat, axes.x, rect, font);
+  DrawAxis(diagramMat, axes.y, rect, font);
 
   console.log('origin', origin);
 
