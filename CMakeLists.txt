@@ -377,6 +377,8 @@ add_executable(test-dlfcn test-dlfcn.c)
 target_link_libraries(test-dlfcn dl)
 ]]
 
+add_subdirectory(qjs-opencv "${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv")
+
 option(BUILD_QUICKJS "Build QuickJS" ON)
 if(BUILD_QUICKJS)
   add_subdirectory(quickjs "${CMAKE_CURRENT_BINARY_DIR}/quickjs")

@@ -258,7 +258,14 @@ function main(...args) {
 
   cmdhist = `.${base}-cmdhistory`;
 
-  let repl = (globalThis.repl = new REPL(base, false));
+  let name =
+    process.env['NAME']
+      .replace(/.*\//, '')
+      .replace(/-/g, ' ')
+      .replace(/\.[^\/.]*$/, '') ?? base;
+  let [prefix, suffix] = name.split(' ');
+
+  let repl = (globalThis.repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false));
 
   for(let file of params['@']) {
     repl.printStatus(`Loading '${file}'...`);

@@ -1,6 +1,7 @@
 import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
+import require from 'require';
 import path from 'path';
 import Util from './lib/util.js';
 import { Console } from 'console';
@@ -91,6 +92,16 @@ function main(...args) {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
   const histfile = '.test-rpc-history';
   repl.historyLoad(histfile, false);
+  repl.directives.i = [
+    (module, ...args) => {
+      console.log('args', args);
+      try {
+        return require(module);
+      } catch(e) {}
+      import(module).then(m => (globalThis[module] = m));
+    },
+    'import module'
+  ];
 
   //repl.help = () => {};
   let { log } = console;
