@@ -258,11 +258,10 @@ function main(...args) {
 
   cmdhist = `.${base}-cmdhistory`;
 
-  let name =
-    process.env['NAME']
-      .replace(/.*\//, '')
-      .replace(/-/g, ' ')
-      .replace(/\.[^\/.]*$/, '') ?? base;
+  let name = (process.env['NAME'] ?? base)
+    .replace(/.*\//, '')
+    .replace(/-/g, ' ')
+    .replace(/\.[^\/.]*$/, '');
   let [prefix, suffix] = name.split(' ');
 
   let repl = (globalThis.repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false));
@@ -278,7 +277,16 @@ function main(...args) {
   //console.log(`repl`, repl);
   //console.log(`debugLog`, Util.getMethods(debugLog, Infinity, 0));
   //repl.historyLoad(null, false);
-  repl.directives.i = [module => require(module), 'import module'];
+  repl.directives.i = [
+    (module, ...args) => {
+      console.log('args', args);
+      try {
+        return require(module);
+      } catch(e) {}
+      import(module).then(m => (globalThis[module] = m));
+    },
+    'import module'
+  ];
 
   repl.debugLog = debugLog;
   repl.exit = () => {

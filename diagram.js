@@ -14,7 +14,7 @@ export function Max(stops, axis, style) {
     if(Array.isArray(stops[0])) stops = stops.map(([label]) => label);
 
     values = stops.map(stop => style.size(stop)[SIZE[axis]]);
-    console.log('Max', values);
+    //console.log('Max', values);
   } else values = stops.map(stop => stop[COORD[axis]]);
 
   return Math.max(...values);
@@ -29,7 +29,7 @@ export function AxisPoints(stops, inc = 10, axis, style, size) {
 
   let max = Max(stops, PERP[axis], style);
   let pos = max + 2 + 10 + (axis == X ? 1 : 0);
-  console.log('AxisPoints', { axis, max, pos });
+  //console.log('AxisPoints', { axis, max, pos });
 
   for(let i = 0; i < n; i++) {
     let point = points[i];
@@ -39,7 +39,7 @@ export function AxisPoints(stops, inc = 10, axis, style, size) {
     positions.push([stops[i], new Point(x, y)]);
   }
 
-  console.log('sizes', sizes);
+  //console.log('sizes', sizes);
   return positions;
 }
 
@@ -53,40 +53,31 @@ export function DrawLine(mat, start, end, color = CV_RGB(0, 0, 0), width = 1, li
   Draw.line(mat, ...points, color, width, lineType);
 }
 
-export function DrawDottedLine(mat, start, end, color = CV_RGB(0, 0, 0)) {
-  let axis = start.x == end.x ? Y : start.y == end.y ? X : null;
-  let i = 0;
+export function DrawDottedLine(mat, start, end, c = CV_RGB(0, 0, 0)) {
+  let a,
+    i = 0,
+    axis = start.x == end.x ? Y : start.y == end.y ? X : null;
   switch (axis) {
     case X: {
-      let r = [start.x, end.x];
+      let r = [start.x, end.x].sort((a, b) => a - b);
       let row = mat.row(mat.rows - start.y);
-
-      for(let pixel of row.colRange(...r.sort())) {
-        if(i & 1) {
-          pixel[0] = color[0];
-          pixel[1] = color[1];
-          pixel[2] = color[2];
-        }
-        i++;
-      }
+      a = row.colRange(...r);
       break;
     }
     case Y: {
-      let r = [mat.rows - start.y, mat.rows - end.y];
+      let r = [mat.rows - start.y, mat.rows - end.y].sort((a, b) => a - b);
       let col = mat.col(start.x);
-
-      console.log(axis, r);
-
-      for(let pixel of col.rowRange(...r.sort())) {
-        if(i & 1) {
-          pixel[0] = color[0];
-          pixel[1] = color[1];
-          pixel[2] = color[2];
-        }
-        i++;
-      }
+      a = col.rowRange(...r);
       break;
     }
+  }
+  for(let p of a) {
+    if(i & 1) {
+      p[0] = c[0];
+      p[1] = c[1];
+      p[2] = c[2];
+    }
+    i++;
   }
 }
 
@@ -112,10 +103,10 @@ export function DrawAxis(mat, axis, rect, style) {
   let factor = maxCoord / max;
   let multiplicator = prop == X ? new Point(factor, 1) : new Point(1, factor);
 
-  console.log('DrawAxis', { max, factor, multiplicator });
+  //console.log('DrawAxis', { max, factor, multiplicator });
   points = points.map(p => p.prod(multiplicator).round());
   points = points.map(p => p.sum(offset));
-  console.log('DrawAxis', { points });
+  //console.log('DrawAxis', { points });
 
   let first = points[0],
     last = points[points.length - 1];
@@ -136,9 +127,9 @@ export function DrawAxis(mat, axis, rect, style) {
     let point3 = { [X]: new Point(point.x, rect.y2), [Y]: new Point(rect.x2, point.y) }[prop];
     // console.log('DrawAxis',prop, {point,point2, point3});
 
-    DrawLine(mat, point, point2, CV_RGB(0, 0, 0), 1, LINE_8);
-
     if(i > 0) DrawDottedLine(mat, point3, point, CV_RGB(200, 200, 200), 1, LINE_8);
+
+    DrawLine(mat, point, point2, CV_RGB(0, 0, 0), 1, LINE_8);
 
     ++i;
   }
@@ -173,8 +164,7 @@ export function Flip(mat, geometry) {
 }
 
 export function GetRect(mat, xAxis, yAxis, style) {
-  console.log('GetRect', xAxis, yAxis);
-  let origin = /*args[0] instanceof Point ? args[0] : */ Origin(mat, xAxis, yAxis);
+  let origin = Origin(mat, xAxis, yAxis);
 
   let end = new Point(mat.cols - 1 - origin.x, mat.rows - 1 - origin.y);
 

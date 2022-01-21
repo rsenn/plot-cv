@@ -1,6 +1,5 @@
 {
   "_moduleAliases": {
-    "node-c-lexer": "node_modules/node-c-lexer/index.js",
     "preact": "lib/dom/preactComponent.js",
     "prop-types": "lib/prop-types.js",
     "react": "lib/dom/preactComponent.js",
@@ -70,8 +69,6 @@
     "wasm-loader": "^1.3.0",
     "highlightjs": "^9.16.2",
     "highlightjs-line-numbers.js": "^2.8.0",
-    "node-c-lexer": "^1.0.5",
-    "node-c-parser": "^1.0.11",
     "node-debugprotocol-client": "^0.1.1",
     "node-exceptions": "^4.0.1",
     "sc-random": "^1.0.0",
