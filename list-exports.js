@@ -336,10 +336,11 @@ function main(...args) {
 
     for(;;) {
       let { stateDepth } = lexer;
-      let { done, value } = lexer.next();
-      if(done) break;
+      let value = lexer.next();
+      //console.log('value', value);
+      if(value < 0 || value == null) break;
       let newState = lexer.topState();
-      tok = value;
+      tok = lexer.token;
       //showToken(tok);
       if(newState != state) {
         if(state == 'TEMPLATE' && lexer.stateDepth > stateDepth) balancers.push(balancer());
