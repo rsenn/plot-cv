@@ -10,7 +10,23 @@ const rulerImg = 'static/ruler/rulerHorizontal.svg';
 const Ruler = forwardRef((props, ref) => {
   //console.log("Ruler props =", props);
   console.log('Ruler props = ', props);
-  const { frictionCoefficient = 0.93, multiplicatorLength = 20, onChanged = () => {}, horizontal = false, styleCursorContainer = {}, cursor = null, incremental = 1, defaultValue = null, longLength = 500, shortLength = 60, backgroundImage = null, disabledDragRuler = false, disabledMouseWheel = false, disabledCursorDrag = false, handlers } = props;
+  const {
+    frictionCoefficient = 0.93,
+    multiplicatorLength = 20,
+    onChanged = () => {},
+    horizontal = false,
+    styleCursorContainer = {},
+    cursor = null,
+    incremental = 1,
+    defaultValue = null,
+    longLength = 500,
+    shortLength = 60,
+    backgroundImage = null,
+    disabledDragRuler = false,
+    disabledMouseWheel = false,
+    disabledCursorDrag = false,
+    handlers
+  } = props;
   console.log('Ruler forwarded ref = ', ref);
   const FRICTION_COEFF = Math.min(0.99, Math.max(0.01, frictionCoefficient));
   const MULTIPLICATOR_LENGTH = multiplicatorLength;
@@ -135,7 +151,9 @@ const Ruler = forwardRef((props, ref) => {
   };
   const onTouchCursor = e => {
     const client = horizontal ? e.touches[0].pageX : e.touches[0].pageY;
-    const offset = horizontal ? inputEl.current.offsetLeft + cursorLength.current / 2 : inputEl.current.offsetTop + cursorLength.current / 2;
+    const offset = horizontal
+      ? inputEl.current.offsetLeft + cursorLength.current / 2
+      : inputEl.current.offsetTop + cursorLength.current / 2;
     draggerJS.current = Math.min(100, Math.max(0, (100 * (client - offset)) / longLength));
     inertiaJS.current = Math.min(totalWidth, Math.max(0, (totalWidth * (client - offset)) / longLength));
     timeJS.current = 150;
@@ -145,7 +163,9 @@ const Ruler = forwardRef((props, ref) => {
     if(!isDragging.current || disabledCursorDrag) return;
     const client = horizontal ? e.clientX : e.clientY;
     if(client === 0) return;
-    const offset = horizontal ? inputEl.current.offsetLeft + cursorLength.current / 2 : inputEl.current.offsetTop + cursorLength.current / 2;
+    const offset = horizontal
+      ? inputEl.current.offsetLeft + cursorLength.current / 2
+      : inputEl.current.offsetTop + cursorLength.current / 2;
     draggerJS.current = Math.min(100, Math.max(0, (100 * (client - offset)) / longLength));
     inertiaJS.current = Math.min(totalWidth, Math.max(0, (totalWidth * (client - offset)) / longLength));
     timeJS.current = 150;

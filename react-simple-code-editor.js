@@ -18,11 +18,7 @@ function _extends() {
 /*       */
 
 /* globalThis global */
-import * as React from './lib/dom/preactComponent.js'; // Tell Babel to transform JSX into h() calls:
-
-/** @jsx h */
-
-const KEYCODE_ENTER = 13;
+import * as React from './lib/dom/preactComponent.js'; // Tell Babel to transform JSX into h() calls: /** @jsx h */ const KEYCODE_ENTER = 13;
 const KEYCODE_TAB = 9;
 const KEYCODE_BACKSPACE = 8;
 const KEYCODE_Y = 89;
@@ -234,7 +230,9 @@ export default class Editor extends React.Component {
             value: nextValue,
             // Move the start cursor if first line in selection was modified
             // It was modified only if it started with a tab
-            selectionStart: startLineText.startsWith(tabCharacter) ? selectionStart - tabCharacter.length : selectionStart,
+            selectionStart: startLineText.startsWith(tabCharacter)
+              ? selectionStart - tabCharacter.length
+              : selectionStart,
             // Move the end cursor by total number of characters removed
             selectionEnd: selectionEnd - (value.length - nextValue.length)
           });
@@ -315,7 +313,12 @@ export default class Editor extends React.Component {
           });
         }
       }
-    } else if(e.keyCode === KEYCODE_PARENS || e.keyCode === KEYCODE_BRACKETS || e.keyCode === KEYCODE_QUOTE || e.keyCode === KEYCODE_BACK_QUOTE) {
+    } else if(
+      e.keyCode === KEYCODE_PARENS ||
+      e.keyCode === KEYCODE_BRACKETS ||
+      e.keyCode === KEYCODE_QUOTE ||
+      e.keyCode === KEYCODE_BACK_QUOTE
+    ) {
       let chars;
 
       if(e.keyCode === KEYCODE_PARENS && e.shiftKey) {
@@ -340,7 +343,12 @@ export default class Editor extends React.Component {
         e.preventDefault();
 
         this._applyEdits({
-          value: value.substring(0, selectionStart) + chars[0] + value.substring(selectionStart, selectionEnd) + chars[1] + value.substring(selectionEnd),
+          value:
+            value.substring(0, selectionStart) +
+            chars[0] +
+            value.substring(selectionStart, selectionEnd) +
+            chars[1] +
+            value.substring(selectionEnd),
           // Update caret position
           selectionStart,
           selectionEnd: selectionEnd + 2

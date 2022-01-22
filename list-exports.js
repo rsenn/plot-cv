@@ -21,7 +21,13 @@ const IntToDWord = ival => (isNaN(ival) === false && ival < 0 ? ival + 429496729
 const IntToBinary = i => (i == -1 || typeof i != 'number' ? i : '0b' + IntToDWord(i).toString(2));
 
 //const code = ["const str = stack.toString().replace(/\\n\\s*at /g, '\\n');", "/^(.*)\\s\\((.*):([0-9]*):([0-9]*)\\)$/.exec(line);" ];
-const code = ["const str = stack.toString().replace(/\\n\\s*at /g, '\\n');", '/Reg.*Ex/i.test(n)', '/\\n/g', 'const [match, pattern, flags] = /^\\/(.*)\\/([a-z]*)$/.exec(token.value);', '/^\\s\\((.*):([0-9]*):([0-9]*)\\)$/.exec(line);'];
+const code = [
+  "const str = stack.toString().replace(/\\n\\s*at /g, '\\n');",
+  '/Reg.*Ex/i.test(n)',
+  '/\\n/g',
+  'const [match, pattern, flags] = /^\\/(.*)\\/([a-z]*)$/.exec(token.value);',
+  '/^\\s\\((.*):([0-9]*):([0-9]*)\\)$/.exec(line);'
+];
 
 extendArray(Array.prototype);
 
@@ -207,6 +213,7 @@ function main(...args) {
     quiet,
     exp,
     relativeTo,
+    match = /.*/gi,
     files = [];
 
   while(args[optind]) {
@@ -218,6 +225,7 @@ function main(...args) {
       else if(/(quiet|^-q)/.test(args[optind])) quiet = true;
       else if(/(export|^-e)/.test(args[optind])) exp = true;
       else if(/(relative|^-r)/.test(args[optind])) relativeTo = path.absolute(args[++optind]);
+      else if(/(match|^-m)/.test(args[optind])) match = new RegExp(args[++optind], 'i');
     } else files.push(args[optind]);
 
     optind++;
@@ -265,7 +273,9 @@ function main(...args) {
       ? (tok, prefix) => {
           const range = tok.charRange;
           const cols = [prefix, `tok[${tok.byteLength}]`, tok.id, tok.type, tok.lexeme, tok.lexeme.length, tok.loc];
-          std.puts(cols.reduce((acc, col, i) => acc + (col + '').replaceAll('\n', '\\n').padEnd(colSizes[i]), '') + '\n');
+          std.puts(
+            cols.reduce((acc, col, i) => acc + (col + '').replaceAll('\n', '\\n').padEnd(colSizes[i]), '') + '\n'
+          );
         }
       : () => {};
 
@@ -291,7 +301,8 @@ function main(...args) {
           case '}':
           case ']':
           case ')': {
-            if(stack.last != table[tok.lexeme]) throw new Error(`top '${stack.last}' != '${tok.lexeme}' [ ${stack.map(s => `'${s}'`).join(', ')} ]`);
+            if(stack.last != table[tok.lexeme])
+              throw new Error(`top '${stack.last}' != '${tok.lexeme}' [ ${stack.map(s => `'${s}'`).join(', ')} ]`);
 
             stack.pop();
             break;
@@ -325,10 +336,11 @@ function main(...args) {
 
     for(;;) {
       let { stateDepth } = lexer;
-      let { done, value } = lexer.next();
-      if(done) break;
+      let value = lexer.next();
+      //console.log('value', value);
+      if(value < 0 || value == null) break;
       let newState = lexer.topState();
-      tok = value;
+      tok = lexer.token;
       //showToken(tok);
       if(newState != state) {
         if(state == 'TEMPLATE' && lexer.stateDepth > stateDepth) balancers.push(balancer());
@@ -405,7 +417,7 @@ function main(...args) {
     if(path.isRelative(source) && !/^(\.|\.\.)\//.test(source)) source = './' + source;
 
     if(exportNames.length) {
-      const names = exportNames.map(t => (t == 'default' ? t + ' as ' + base : t));
+      const names = exportNames.map(t => (t == 'default' ? t + ' as ' + base : t)).filter(n => match.test(n));
       const keyword = exp ? 'export' : 'import';
 
       if(names.length == 1 && /^default as/.test(names[0])) std.puts(keyword + ` ${base} from '${source}'\n`);

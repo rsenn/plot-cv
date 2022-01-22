@@ -361,8 +361,8 @@ export class Type extends Node {
     return /^enum\s/.test(str);
   }
   isPointer() {
-    let str = this + '';
-    return /(?:\(\*\)\(|\*$)/.test(str);
+    let { desugared } = this;
+    return /(?:\(\*\)\(|\*$)/.test(desugared);
   }
 
   isFunction() {
@@ -507,7 +507,7 @@ const { size,unsigned } = this;
     if(this.isEnum()) return SIZEOF_INT;
     if(this.isCompound()) {
       let node;
-     if((node= Type.get(this+'')))
+     if((node= Type.get(this+'')) &&  node !== this)
        return node.size;
     }
           const  desugared = this.desugared || this+'' || this.name;

@@ -13,7 +13,7 @@ import SvgPath from './lib/svg/path.js';
 import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Define, Once, GetOpt, RoundTo, Range } from './qjs-opencv/js/cvUtils.js';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
 
-export function ImagePipeline(input, config) {
+export function ImagePipeline(/*input,*/ config) {
   let contours = [],
     hier = [];
   let contoursDepth;

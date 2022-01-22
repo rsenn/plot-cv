@@ -32,7 +32,7 @@ export async function AsyncFetch(url, params = {}) {
 }
 
 export async function ListProjects(opts = {}) {
-  const { url, descriptions = true, names, filter } = opts;
+  const { url, descriptions = true, names, filter = '.*.(brd|sch|lbr|GBL|GKO|GTL)$' } = opts;
   console.log('ListProjects', { url, descriptions, names, filter });
   let response;
   if(!url) {

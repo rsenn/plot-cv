@@ -1,6 +1,6 @@
 import express from 'express';
 import * as path from 'path';
-import * as util from './lib/misc.js';
+import * as util from 'util';
 import Util from './lib/util.js';
 import bodyParser from 'body-parser';
 import expressWs from 'express-ws';
@@ -10,7 +10,7 @@ import fetch from 'isomorphic-fetch';
 import { exec } from 'promisify-child-process';
 import * as fs from 'fs';
 import { promises as fsPromises } from 'fs';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles } from './io-helpers.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, WriteFile, WriteJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles } from './io-helpers.js';
 import { Console } from 'console';
 import SerialPort from 'serialport';
 import SerialStream from '@serialport/stream';
@@ -389,14 +389,33 @@ async function main() {
     next();
   });*/
 
-  /*  app.use((req, res, next) => {
+  /* app.use((req, res, next) => {
     console.log('Request', req.url);
     next();
   });*/
+
+  let logfile;
+
   app.use((req, res, next) => {
     let file = req.url.replace(/^\/?/, '');
+
+    logfile ??= fs.openSync('server.log', 'a+', 0o644);
+    let str;
+    let now = new Date();
+    str = `${now.toISOString().slice(0, 10).replace(/-/g, '')} ${now.toTimeString().slice(0, 8)} ${req.method.padEnd(4)} ${file}\n`;
+
+    let written = fs.writeSync(logfile, str, 0, str.length);
+
+    console.log('Request: ' + file, `(${written} bytes written)`);
+
     if(fs.existsSync(file)) {
-      //  console.log('The file ' + file + ' was requested.');
+      const re = /[^\n]*'util'[^\n]*/g;
+      /*let m,
+        data = fs.readFileSync(file, 'utf-8');
+      if((m = re.exec(data))) {
+        console.log('The file ' + file + ` was requested. (${data.length})`, `match @ ${m.index}: ${m[0]}`);
+      }*/
+
       files.add(file);
     }
     next();

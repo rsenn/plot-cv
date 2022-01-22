@@ -1,9 +1,18 @@
 import * as fs from 'fs';
-//import * as os from 'os';
-//import * as std from 'std';
 import Util from './lib/util.js';
 import * as path from './lib/path.js';
 import { types } from './lib/misc.js';
+import child_process from 'child_process';
+
+let bjson;
+let mmap;
+
+import('bjson')
+  .then(m => (bjson = m))
+  .catch(() => {});
+import('mmap')
+  .then(m => (mmap = m))
+  .catch(() => {});
 
 export function IfDebug(token) {
   const { DEBUG = '' } = process.env;
@@ -62,19 +71,6 @@ export function MapFile(filename) {
   return data;
 }
 
-export function ReadBJSON(filename) {
-  let fd = os.open(filename, os.O_RDONLY);
-  let { size } = os.stat(filename)[0];
-  debug(`ReadBJSON`, { filename, fd, size });
-  let data = mmap.mmap(0, size + 10, mmap.PROT_READ, mmap.MAP_PRIVATE, fd, 0);
-  debug(`ReadBJSON`, { data });
-  let ret = bjson.read(data, 0, size);
-
-  mmap.munmap(data);
-  os.close(fd);
-  return ret;
-}
-
 export function WriteFile(name, data, verbose = true) {
   if(Util.isGenerator(data)) {
     let fd = fs.openSync(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, 0x1a4);
@@ -97,6 +93,19 @@ export function WriteFile(name, data, verbose = true) {
 
 export function WriteJSON(name, data) {
   WriteFile(name, JSON.stringify(data, null, 2));
+}
+
+export function ReadBJSON(filename) {
+  let fd = os.open(filename, os.O_RDONLY);
+  let { size } = os.stat(filename)[0];
+  debug(`ReadBJSON`, { filename, fd, size });
+  let data = mmap.mmap(0, size + 10, mmap.PROT_READ, mmap.MAP_PRIVATE, fd, 0);
+  debug(`ReadBJSON`, { data });
+  let ret = bjson.read(data, 0, size);
+
+  mmap.munmap(data);
+  os.close(fd);
+  return ret;
 }
 
 export function WriteBJSON(name, data) {
@@ -209,4 +218,33 @@ export function* StatFiles(gen) {
     });
     yield obj;
   }
+}
+
+export function FdReader(fd, bufferSize = 1024) {
+  let buf = new ArrayBuffer(bufferSize);
+  return new Repeater(async (push, stop) => {
+    let ret;
+    do {
+      let r = await waitRead(fd);
+      ret = typeof fd == 'number' ? filesystem.readSync(fd, buf) : fd.read(buf);
+      if(ret > 0) {
+        let data = buf.slice(0, ret);
+        await push(filesystem.bufferToString(data));
+      }
+    } while(ret == bufferSize);
+    stop();
+    typeof fd == 'number' ? filesystem.closeSync(fd) : fd.destroy();
+  });
+}
+
+export function CopyToClipboard(text) {
+  const { env } = process;
+  let child = child_process.spawn('xclip', ['-in', '-verbose'], { env, stdio: ['pipe', 'inherit', 'inherit'] });
+  let [pipe] = child.stdio;
+
+  let written = fs.writeSync(pipe, text, 0, text.length);
+  fs.closeSync(pipe);
+  let status = child.wait();
+  console.log('child', child);
+  return { written, status };
 }

@@ -91,8 +91,16 @@ function main(...args) {
     ['e8 ? ? ? ? bf ? ? ? ? e8 ? ? ? ? 83 25', 'Invalidation/Validation Functions - Pattern 2', '90 90 90 90 90'],
     ['55 41 56 53 41 89 f6 48 89 fd 6a 28', 'Server Validation Thread', '48 31 c0 48 ff c0 c3'],
     ['e8 ? ? ? ? 3d ? ? ? ? 75 12', 'License Validity Checking', '48 31 c0 c3' /*'48 c7 c0 19 01 00 00'*/],
-    ['41 57 41 56 56 57 55 53 b8 28 21 00 00', 'RSA Key Patch (allows any key in right format to work)', '33 c0 fe c0 c3 57 55 53 b8 28 21 00 00'],
-    ['6c 69 63 65 6e 73 65 2e 73 75 62 6c 69 6d 65 68 71 2e 63 6f 6d', 'Disable License Check', '73 75 62 6c 69 6d 65 68 71 2e 6c 6f 63 61 6c 68 6f 73 74 00 00'],
+    [
+      '41 57 41 56 56 57 55 53 b8 28 21 00 00',
+      'RSA Key Patch (allows any key in right format to work)',
+      '33 c0 fe c0 c3 57 55 53 b8 28 21 00 00'
+    ],
+    [
+      '6c 69 63 65 6e 73 65 2e 73 75 62 6c 69 6d 65 68 71 2e 63 6f 6d',
+      'Disable License Check',
+      '73 75 62 6c 69 6d 65 68 71 2e 6c 6f 63 61 6c 68 6f 73 74 00 00'
+    ],
     [
       '48 89 e7 be ? ? ? ? ba ? ? ? ? e8 ? ? ? ? 45 84 e4 74 12',
       'Upgrade required',
@@ -113,8 +121,16 @@ function main(...args) {
       }
     ],
     ['85 db 74 29 0f be b3 0d cc 29', 'Upgrade', '85 db eb'],
-    ['50 be fc d8 20 00 ba ab 10 21 00 31 ff e8 bd 79 18 00 84 c0 74 16 48 8b 05 b9 ed 4a 00 be a7 ae 21 00 31 ff 31 d2 31 c9 41 58 ff e0 58', 'Patch-Sublime-License-Message', '90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90'],
-    ['41 57 41 56 56 57 55 53 B8 28 21 00 00', 'RSA Key Patch (allows any key in right format to work)', '33 C0 FE C0 C3 57 55 53 B8 28 21 00 00']
+    [
+      '50 be fc d8 20 00 ba ab 10 21 00 31 ff e8 bd 79 18 00 84 c0 74 16 48 8b 05 b9 ed 4a 00 be a7 ae 21 00 31 ff 31 d2 31 c9 41 58 ff e0 58',
+      'Patch-Sublime-License-Message',
+      '90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90'
+    ],
+    [
+      '41 57 41 56 56 57 55 53 B8 28 21 00 00',
+      'RSA Key Patch (allows any key in right format to work)',
+      '33 C0 FE C0 C3 57 55 53 B8 28 21 00 00'
+    ]
     //['c3', "Ret"]
   ];
   const replacements = patterns.map(([s, m, r]) => r);
@@ -130,7 +146,8 @@ function main(...args) {
   function searchPattern(str) {
     const results = searchAll(str);
 
-    if(results.length > 1) throw new Error(`Multiple results for pattern '${str}': ${results.map(r => '0x' + r.toString(16)).join(', ')}`);
+    if(results.length > 1)
+      throw new Error(`Multiple results for pattern '${str}': ${results.map(r => '0x' + r.toString(16)).join(', ')}`);
     return results[0];
   }
   function searchAll(str) {

@@ -48,7 +48,7 @@ import { h, html, render, Component, useState, useLayoutEffect, useRef } from '.
 import { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Fence, Zoomable, DisplayList, Ruler, Toggle, ButtonGroup } from './components.js';
 import * as components from './components.js';
 import { Message } from './message.js';
-import { updateMeasures, alignItem, alignAll, scientific, num2color } from './eagle-commands.js';
+import { GetElements, GetInstances, GetPositions, UpdateMeasures, AlignAll, scientific } from './eagle-commands.js';
 import { GetExponent, GetMantissa, ValueToNumber, NumberToValue, GetMultipliers, GetFactor, GetColorBands, BG, digit2color } from './lib/eda/colorCoding.js';
 
 import { useActive, useClickout, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useRecognizers, useDrag, usePinch, useWheel, useMove, useScroll, useGesture, useHover, useMousePosition, usePanZoom, useToggleButtonGroupState } from './lib/hooks.js';
@@ -1478,8 +1478,18 @@ const AppMain = (window.onload = async () => {
     fnmatch,
     PATH_FNM_MULTI,
     rpc: { ...rpc },
-    ...{ GetColorBands, updateMeasures, alignItem, alignAll, scientific, num2color },
-    ...{ GetExponent, GetMantissa, ValueToNumber, NumberToValue, GetMultipliers, GetFactor, GetColorBands, BG, digit2color }
+    ...{ GetColorBands, GetElements, GetInstances, GetPositions, UpdateMeasures, AlignAll, scientific },
+    ...{
+      GetExponent,
+      GetMantissa,
+      ValueToNumber,
+      NumberToValue,
+      GetMultipliers,
+      GetFactor,
+      GetColorBands,
+      BG,
+      digit2color
+    }
   };
 
   if(store.keys().length == 0) {

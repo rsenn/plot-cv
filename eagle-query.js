@@ -17,7 +17,9 @@ function xmlize(obj, depth = 2) {
 const SubstChars = str => str.replace(/\xCE\xBC/g, '\u00B5').replace(/\xCE\xA9/g, '\u2126');
 
 async function main(...args) {
-  globalThis.console = new Console({ inspectOptions: { breakLength: 100, colors: true, depth: Infinity, compact: 2, customInspect: true } });
+  globalThis.console = new Console({
+    inspectOptions: { breakLength: 100, colors: true, depth: Infinity, compact: 2, customInspect: true }
+  });
   if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt2.brd');
   args = unique(args);
   for(let arg of args) {
@@ -34,7 +36,10 @@ async function main(...args) {
   for(let doc of documents) {
     let main = doc.mainElement;
     console.log('main:', main);
-    let parts = [...(main.elements || main.parts)].map(([name, elem]) => [name, typeof elem.value == 'string' ? SubstChars(elem.value) : elem.value]);
+    let parts = [...(main.elements || main.parts)].map(([name, elem]) => [
+      name,
+      typeof elem.value == 'string' ? SubstChars(elem.value) : elem.value
+    ]);
     console.log('parts', console.config({ compact: false }), Object.fromEntries(parts));
     let matchers = [
       [/^R/, /^[0-9.]+([kKmM][Ω\u03A9]?|[Ω\u03A9]?)(|\/[0-9.]+W)/],
@@ -42,7 +47,9 @@ async function main(...args) {
       [/^L/, /^[0-9.]+([nuμ\u03bcm]H?|H?)/]
     ];
 
-    let nameValueMap = new Map(parts.filter(([name, value]) => matchers.some(m => m[0].test(name) && m[1].test(value))));
+    let nameValueMap = new Map(
+      parts.filter(([name, value]) => matchers.some(m => m[0].test(name) && m[1].test(value)))
+    );
     //console.log('nameValueMap', new Map([...nameValueMap].map(([n, v]) => [n, v])));
     for(let [name, value] of nameValueMap) {
       value = (value ? '' + value : '').replace(/[\u0000-\u001F\u007F-\uFFFF]/g, '');
@@ -70,10 +77,16 @@ async function main(...args) {
         console.log('c', { val, rat, count });
         const scal = PartScales[key[0]];
 
-        let bands = key[0] == 'C' ? [' '] /*?? GetColorBands(rat * scal, 2).map(b => `[${b}]`)*/ : [num2color(rat * scal)];
+        let bands =
+          key[0] == 'C' ? [' '] /*?? GetColorBands(rat * scal, 2).map(b => `[${b}]`)*/ : [num2color(rat * scal)];
         //  console.log('c', { bands });
 
-        return [key, (val + '').substring(0, 10).padStart(10, ' ') + UnitForName(key), bands.join(' '), `  × ${count}`].join(' ');
+        return [
+          key,
+          (val + '').substring(0, 10).padStart(10, ' ') + UnitForName(key),
+          bands.join(' '),
+          `  × ${count}`
+        ].join(' ');
       });
   }
   // console.log('components:', components);

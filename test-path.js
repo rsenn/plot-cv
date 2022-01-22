@@ -6,7 +6,9 @@ import path from './lib/path.js';
 let filesystem;
 
 function main(...args) {
-  globalThis.console = new Console({ inspectOptions: { colors: true, maxArrayLength: Infinity, compact: 1, breakLength: Infinity } });
+  globalThis.console = new Console({
+    inspectOptions: { colors: true, maxArrayLength: Infinity, compact: 1, breakLength: Infinity }
+  });
   console.log('main(', ...args, ')');
   //console.log('main', args);
   console.log('path', Object.getOwnPropertyNames(path));

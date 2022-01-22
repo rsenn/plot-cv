@@ -1,99 +1,339 @@
-import {
-  EagleSVGRenderer,
-  SchematicRenderer,
-  BoardRenderer,
-  LibraryRenderer,
-  EagleNodeList,
-  useTrkl,
-  RAD2DEG,
-  DEG2RAD,
-  VERTICAL,
-  HORIZONTAL,
-  HORIZONTAL_VERTICAL,
-  DEBUG,
-  log,
-  setDebug,
-  PinSizes,
-  EscapeClassName,
-  UnescapeClassName,
-  LayerToClass,
-  ElementToClass,
-  ClampAngle,
-  AlignmentAngle,
-  MakeRotation,
-  EagleAlignments,
-  Alignment,
-  SVGAlignments,
-  AlignmentAttrs,
-  RotateTransformation,
-  LayerAttributes,
-  InvertY,
-  PolarToCartesian,
-  CartesianToPolar,
-  RenderArc,
-  CalculateArcRadius,
-  LinesToPath,
-  MakeCoordTransformer,
-  useAttributes,
-  EagleDocument,
-  EagleReference,
-  EagleRef,
-  makeEagleNode,
-  EagleNode,
-  Renderer,
-  EagleProject,
-  EagleElement,
-  makeEagleElement,
-  EagleElementProxy,
-  EagleNodeMap,
-  ImmutablePath,
-  DereferenceError
-} from './lib/eagle.js';
+import { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, EagleNodeList, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, EagleDocument, EagleReference, EagleRef, makeEagleNode, EagleNode, Renderer, EagleProject, EagleElement, makeEagleElement, EagleElementProxy, EagleNodeMap, ImmutablePath, DereferenceError } from './lib/eagle.js';
 import Util from './lib/util.js';
 import * as util from './lib/misc.js';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
+import { EventEmitter, EventTarget, eventify } from './lib/events.js';
 import require from 'require';
 import { LineList, Point, Circle, Rect, Size, Line, TransformationList, Rotation, Translation, Scaling, Matrix, BBox } from './lib/geom.js';
 import { Console } from 'console';
-import REPL from './xrepl.js';
-import {
-  BinaryTree,
-  BucketStore,
-  BucketMap,
-  ComponentMap,
-  CompositeMap,
-  Deque,
-  Enum,
-  HashList,
-  Multimap,
-  Shash,
-  SortedMap,
-  HashMultimap,
-  MultiBiMap,
-  MultiKeyMap,
-  DenseSpatialHash2D,
-  SpatialHash2D,
-  HashMap,
-  SpatialH,
-  SpatialHash,
-  SpatialHashMap,
-  BoxHash
-} from './lib/container.js';
+import REPL from './quickjs/qjs-modules/lib/repl.js';
+import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, Enum, HashList, Multimap, Shash, SortedMap, HashMultimap, MultiBiMap, MultiKeyMap, DenseSpatialHash2D, SpatialHash2D, HashMap, SpatialH, SpatialHash, SpatialHashMap, BoxHash } from './lib/container.js';
 import * as fs from 'fs';
 import { Pointer } from './lib/pointer.js';
 import { read as fromXML, write as toXML } from './lib/xml.js';
 import inspect from './lib/objectInspect.js';
-import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
-import { GetExponent, GetMantissa, ValueToNumber, NumberToValue, GetMultipliers, GetMultiplier, GetFactor, BG, PartScales, digit2color } from './lib/eda/colorCoding.js';
+import { IfDebug, LogIfDebug, LoadHistory, MapFile, ReadFile, ReadJSON, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator, Filter, FilterImages, StatFiles, CopyToClipboard } from './io-helpers.js';
+import { GetExponent, GetMantissa, ValueToNumber, NumberToValue } from './lib/eda/values.js';
+import { GetMultipliers, GetFactor, GetColorBands, PartScales, digit2color } from './lib/eda/colorCoding.js';
 import { UnitForName } from './lib/eda/units.js';
 import CircuitJS from './lib/eda/circuitjs.js';
 import { define, isObject, memoize, unique, atexit } from './lib/misc.js';
 import { HSLA, isHSLA, ImmutableHSLA, RGBA, isRGBA, ImmutableRGBA, ColoredText } from './lib/color.js';
-import { GetColorBands, scientific, num2color, GetParts, GetInstances, GetPositions, GetElements } from './eagle-commands.js';
+import { scientific, num2color, GetParts, GetInstances, GetPositions, GetElements } from './eagle-commands.js';
 import { Edge, Graph, Node } from './lib/geom/graph.js';
+import { MutableXPath as XPath, parseXPath, ImmutableXPath } from './quickjs/qjs-modules/lib/xpath.js';
+import { Predicate } from 'predicate';
+import child_process from 'child_process';
 
 let cmdhist;
+
+function main(...args) {
+  globalThis.console = new Console({
+    inspectOptions: { maxArrayLength: 100, colors: true, depth: Infinity, compact: 1, customInspect: true }
+  });
+
+  let debugLog;
+
+  /* if(Util.getPlatform() == 'quickjs') {
+    globalThis.std = await import('std');
+    globalThis.os = await import('os');
+    globalThis.fs = fs = await import('./lib/filesystem.js');
+  } else {
+    const cb = filesystem => {
+      globalThis.fs = fs = filesystem;
+    };
+    await PortableFileSystem(cb);
+  }*/
+  Util.defineGetterSetter(
+    globalThis,
+    'compact',
+    () => console.options.compact,
+    value => (console.options.compact = value)
+  );
+
+  debugLog = fs.openSync('debug.log', 'a');
+
+  const progName = Util.getArgv()[1];
+  const base = path.basename(progName, path.extname(progName));
+  const histfile = `.${base}-history`;
+
+  let params = Util.getOpt(
+    {
+      debug: [false, null, 'x'],
+      'output-dir': [true, null, 'd'],
+      '@': 'input'
+    },
+    args
+  );
+
+  Object.assign(globalThis, {
+    child_process,
+    SaveLibraries,
+    EagleSVGRenderer,
+    SchematicRenderer,
+    BoardRenderer,
+    LibraryRenderer,
+    EagleNodeList,
+    useTrkl,
+    RAD2DEG,
+    DEG2RAD,
+    VERTICAL,
+    HORIZONTAL,
+    HORIZONTAL_VERTICAL,
+    DEBUG,
+    log,
+    setDebug,
+    PinSizes,
+    EscapeClassName,
+    UnescapeClassName,
+    LayerToClass,
+    ElementToClass,
+    ClampAngle,
+    AlignmentAngle,
+    MakeRotation,
+    EagleAlignments,
+    Alignment,
+    SVGAlignments,
+    AlignmentAttrs,
+    RotateTransformation,
+    LayerAttributes,
+    InvertY,
+    PolarToCartesian,
+    CartesianToPolar,
+    RenderArc,
+    CalculateArcRadius,
+    LinesToPath,
+    MakeCoordTransformer,
+    useAttributes,
+    EagleDocument,
+    EagleReference,
+    EagleRef,
+    makeEagleNode,
+    EagleNode,
+    Renderer,
+    EagleProject,
+    EagleElement,
+    makeEagleElement,
+    EagleElementProxy,
+    EagleNodeMap,
+    ImmutablePath,
+    DereferenceError,
+    GetNames,
+    GetByName,
+    CorrelateSchematicAndBoard,
+    LoadHistory,
+    IfDebug,
+    LogIfDebug,
+    LoadHistory,
+    MapFile,
+    ReadFile,
+    ReadJSON,
+    ReadBJSON,
+    WriteFile,
+    WriteJSON,
+    WriteBJSON,
+    DirIterator,
+    RecursiveDirIterator,
+    Filter,
+    FilterImages,
+    StatFiles,
+    CopyToClipboard,
+    CircuitJS,
+    Eagle2CircuitJS,
+    toNumber(n) {
+      return isNaN(+n) ? n : +n;
+    },
+    util,
+    path,
+    EventEmitter,
+    EventTarget,
+    eventify,
+    Graph,
+    Edge,
+    Node,
+    xml,
+    XPath,
+    ImmutableXPath,
+    parseXPath,
+    Predicate
+  });
+  Object.assign(globalThis, {
+    GetExponent,
+    GetMantissa,
+    ValueToNumber,
+    NumberToValue,
+    GetMultipliers,
+    GetFactor,
+    GetColorBands,
+    UpdateMeasures,
+    AlignItem,
+    AlignAll,
+    scientific,
+    num2color,
+    GetParts,
+    GetInstances,
+    GetPositions,
+    GetElements,
+    GetSheets
+  });
+  Object.assign(globalThis, {
+    define,
+    isObject,
+    memoize,
+    unique
+  });
+  Object.assign(globalThis, {
+    load(filename, project = globalThis.project) {
+      globalThis.document = new EagleDocument(fs.readFileSync(filename, 'utf-8'), project, filename, null, fs);
+    },
+    newProject(filename) {
+      if(!globalThis.project) globalThis.project = new EagleProject(null);
+
+      project.lazyOpen(filename);
+
+      util.lazyProperties(globalThis, {
+        sch: () => project.schematic,
+        brd: () => project.board
+      });
+    }
+  });
+  // globalThis.docs = args.map(arg => (globalThis.doc = load(arg)));
+
+  Object.assign(globalThis, {
+    UpdateMeasures,
+    AlignItem,
+    AlignAll,
+    fixValue,
+    fixValues,
+    coordMap,
+    Util,
+    LineList,
+    Point,
+    Circle,
+    Rect,
+    Size,
+    Line,
+    TransformationList,
+    Rotation,
+    Translation,
+    Scaling,
+    Matrix,
+    BBox,
+    fs,
+    Pointer,
+    deep
+  });
+
+  Object.assign(globalThis, {
+    BinaryTree,
+    BucketStore,
+    BucketMap,
+    ComponentMap,
+    CompositeMap,
+    Deque,
+    Enum,
+    HashList,
+    Multimap,
+    Shash,
+    SortedMap,
+    HashMultimap,
+    MultiBiMap,
+    MultiKeyMap,
+    DenseSpatialHash2D,
+    SpatialHash2D,
+    HashMap,
+    SpatialH,
+    SpatialHash,
+    SpatialHashMap,
+    BoxHash,
+    GetPolygons,
+    FindPolygons,
+    RemovePolygons,
+    quit(arg) {
+      repl.cleanup();
+      Util.exit(arg ?? 0);
+    }
+  });
+
+  cmdhist = `.${base}-cmdhistory`;
+
+  let name = (process.env['NAME'] ?? base)
+    .replace(/.*\//, '')
+    .replace(/-/g, ' ')
+    .replace(/\.[^\/.]*$/, '');
+  let [prefix, suffix] = name.split(' ');
+
+  let repl = (globalThis.repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false));
+
+  for(let file of params['@']) {
+    repl.printStatus(`Loading '${file}'...`);
+    newProject(file);
+  }
+
+  repl.history = LoadHistory(cmdhist);
+  repl.printStatus(`Loaded ${repl.history.length} history entries)`);
+
+  //console.log(`repl`, repl);
+  //console.log(`debugLog`, Util.getMethods(debugLog, Infinity, 0));
+  //repl.historyLoad(null, false);
+  repl.directives.i = [
+    (module, ...args) => {
+      console.log('args', args);
+      try {
+        return require(module);
+      } catch(e) {}
+      import(module).then(m => (globalThis[module] = m));
+    },
+    'import module'
+  ];
+
+  repl.debugLog = debugLog;
+  repl.exit = () => {
+    repl.cleanup();
+    Terminate();
+  };
+  repl.importModule = importModule;
+  repl.debug = (...args) => {
+    let s = '';
+    for(let arg of args) {
+      if(s) s += ' ';
+      if(typeof arg != 'string' || arg.indexOf('\x1b') == -1) s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
+      else s += arg;
+    }
+    fs.writeSync(debugLog, fs.bufferFrom(s + '\n'));
+
+    //    debugLog.puts(s + '\n');
+    fs.flushSync(debugLog);
+  };
+  repl.show = value => {
+    if(Util.isObject(value) && value instanceof EagleNode) {
+      console.log(value.inspect());
+    } else {
+      console.log(value);
+    }
+  };
+
+  // repl.historySet(JSON.parse(std.loadFile(histfile) || '[]'));
+
+  repl.addCleanupHandler(() => {
+    let hist = repl.history.filter((item, i, a) => a.lastIndexOf(item) == i);
+
+    //    fs.writeFileSync(cmdhist, JSON.stringify(hist, null, 2));
+    fs.writeFileSync(
+      cmdhist,
+      hist
+        .filter(entry => (entry + '').trim() != '')
+        .map(entry => entry.replace(/\n/g, '\\\\n') + '\n')
+        .join('')
+    );
+
+    console.log(`EXIT (wrote ${hist.length} history entries)`);
+    Terminate(0);
+  });
+
+  repl.runSync();
+}
 
 Util.define(Array.prototype, {
   findLastIndex(predicate) {
@@ -130,8 +370,8 @@ function Terminate(exitCode) {
   std.exit(exitCode);
 }
 
-function xml(strings,expressions) {
-  let [tag,]=strings;
+function xml(strings, expressions) {
+  let [tag] = strings;
   return e => e.tagName == tag;
 }
 
@@ -416,11 +656,9 @@ function CorrelateSchematicAndBoard(schematic, board) {
 }
 
 function GetSheets(doc_or_proj) {
-  if(!(doc_or_proj instanceof EagleDocument))
-    doc_or_proj = doc_or_proj.schematic;
+  if(!(doc_or_proj instanceof EagleDocument)) doc_or_proj = doc_or_proj.schematic;
 
-
- return doc_or_proj.schematic.sheets.children
+  return [...doc_or_proj.schematic.sheets.children];
 }
 
 function SaveLibraries() {
@@ -597,278 +835,48 @@ async function testEagle(filename) {
   return proj;
 }
 
-async function main(...args) {
-  globalThis.console = new Console({
-    inspectOptions: { maxArrayLength: 100, colors: true, depth: Infinity, compact: 1, customInspect: true }
-  });
+function Eagle2CircuitJS(doc = project.schematic, scale = 50, sheet = 0) {
+  let circ = new CircuitJS();
+  let sheets = GetSheets(doc);
+  console.log('sheets', sheets);
+  let sh = (globalThis.sheet = sheets[sheet]);
+  console.log('sh', sh);
+  let tree = sh.raw;
 
-  let debugLog;
+  for(let [elm, ptr] of deep.iterate(tree, n => 'x1' in n.attributes && n.attributes.layer == 91)) {
+    let ln = new Line(elm.attributes).mul(scale / 2.54).round();
 
-  /* if(Util.getPlatform() == 'quickjs') {
-    globalThis.std = await import('std');
-    globalThis.os = await import('os');
-    globalThis.fs = fs = await import('./lib/filesystem.js');
-  } else {
-    const cb = filesystem => {
-      globalThis.fs = fs = filesystem;
-    };
-    await PortableFileSystem(cb);
-  }*/
+    ptr = ptr.slice(0, -2);
+    let segmentIndex = ptr[ptr.length - 1];
+    let segment = deep.get(tree, ptr);
+    let net = deep.get(tree, ptr.slice(0, -2));
 
-  debugLog = fs.openSync('debug.log', 'a');
+    //console.log('ln',ln,elm.attributes.layer);
+    console.log('segment/net', { segment: segmentIndex, net: net.attributes.name });
 
-  const progName = Util.getArgv()[1];
-  const base = path.basename(progName, path.extname(progName));
-  const histfile = `.${base}-history`;
-
-  let params = Util.getOpt(
-    {
-      debug: [false, null, 'x'],
-      'output-dir': [true, null, 'd'],
-      '@': 'input'
-    },
-    args
-  );
-
-  Object.assign(globalThis, {
-    SaveLibraries,
-    EagleSVGRenderer,
-    SchematicRenderer,
-    BoardRenderer,
-    LibraryRenderer,
-    EagleNodeList,
-    useTrkl,
-    RAD2DEG,
-    DEG2RAD,
-    VERTICAL,
-    HORIZONTAL,
-    HORIZONTAL_VERTICAL,
-    DEBUG,
-    log,
-    setDebug,
-    PinSizes,
-    EscapeClassName,
-    UnescapeClassName,
-    LayerToClass,
-    ElementToClass,
-    ClampAngle,
-    AlignmentAngle,
-    MakeRotation,
-    EagleAlignments,
-    Alignment,
-    SVGAlignments,
-    AlignmentAttrs,
-    RotateTransformation,
-    LayerAttributes,
-    InvertY,
-    PolarToCartesian,
-    CartesianToPolar,
-    RenderArc,
-    CalculateArcRadius,
-    LinesToPath,
-    MakeCoordTransformer,
-    useAttributes,
-    EagleDocument,
-    EagleReference,
-    EagleRef,
-    makeEagleNode,
-    EagleNode,
-    Renderer,
-    EagleProject,
-    EagleElement,
-    makeEagleElement,
-    EagleElementProxy,
-    EagleNodeMap,
-    ImmutablePath,
-    DereferenceError,
-    GetNames,
-    GetByName,
-    CorrelateSchematicAndBoard,
-    ReadFile,
-    LoadHistory,
-    ReadJSON,
-    MapFile,
-    ReadBJSON,
-    WriteFile,
-    WriteJSON,
-    WriteBJSON,
-    DirIterator,
-    RecursiveDirIterator,
-    CircuitJS,
-    toNumber(n) {
-      return isNaN(+n) ? n : +n;
-    },
-    util,
-    path,
-    Graph,
-    Edge,
-    Node,xml
-  });
-  Object.assign(globalThis, {
-    GetExponent,
-    GetMantissa,
-    ValueToNumber,
-    NumberToValue,
-    GetMultipliers,
-    GetFactor,
-    GetColorBands,
-    UpdateMeasures,
-    AlignItem,
-    AlignAll,
-    scientific,
-    num2color,
-    GetParts,
-    GetInstances,
-    GetPositions,
-    GetElements,GetSheets
-  });
-  Object.assign(globalThis, {
-    define,
-    isObject,
-    memoize,
-    unique
-  });
-  Object.assign(globalThis, {
-    load(filename, project = globalThis.project) {
-      globalThis.document = new EagleDocument(fs.readFileSync(filename, 'utf-8'), project, filename, null, fs);
-    },
-    newProject(filename) {
-      if(!globalThis.project) globalThis.project = new EagleProject(null);
-
-      project.lazyOpen(filename);
-    }
-  });
-  // globalThis.docs = args.map(arg => (globalThis.doc = load(arg)));
-
-  Object.assign(globalThis, {
-    UpdateMeasures,
-    AlignItem,
-    AlignAll,
-    fixValue,
-    fixValues,
-    coordMap,
-    Util,
-    LineList,
-    Point,
-    Circle,
-    Rect,
-    Size,
-    Line,
-    TransformationList,
-    Rotation,
-    Translation,
-    Scaling,
-    Matrix,
-    BBox,
-    fs,
-    Pointer,
-    deep
-  });
-
-  Object.assign(globalThis, {
-    BinaryTree,
-    BucketStore,
-    BucketMap,
-    ComponentMap,
-    CompositeMap,
-    Deque,
-    Enum,
-    HashList,
-    Multimap,
-    Shash,
-    SortedMap,
-    HashMultimap,
-    MultiBiMap,
-    MultiKeyMap,
-    DenseSpatialHash2D,
-    SpatialHash2D,
-    HashMap,
-    SpatialH,
-    SpatialHash,
-    SpatialHashMap,
-    BoxHash,
-    ReadJSON,
-    GetPolygons,
-    FindPolygons,
-    RemovePolygons,
-    quit(arg) {
-      repl.cleanup();
-      Util.exit(arg ?? 0);
-    }
-  });
-
-  cmdhist = `.${base}-cmdhistory`;
-
-  let repl = (globalThis.repl = new REPL(base, false));
-
-  //console.log(`repl`, repl);
-  //console.log(`debugLog`, Util.getMethods(debugLog, Infinity, 0));
-  //repl.historyLoad(null, false);
-  repl.directives.i = [module => require(module), 'import module'];
-
-  repl.debugLog = debugLog;
-  repl.exit = () => {
-    repl.cleanup();
-    Terminate();
-  };
-  repl.importModule = importModule;
-  repl.debug = (...args) => {
-    let s = '';
-    for(let arg of args) {
-      if(s) s += ' ';
-      if(typeof arg != 'strping' || arg.indexOf('\x1b') == -1) s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
-      else s += arg;
-    }
-    fs.writeSync(debugLog, fs.bufferFrom(s + '\n'));
-
-    //    debugLog.puts(s + '\n');
-    fs.flushSync(debugLog);
-  };
-  repl.show = value => {
-    if(Util.isObject(value) && value instanceof EagleNode) {
-      console.log(value.inspect());
-    } else {
-      console.log(value);
-    }
-  };
-
-  // repl.historySet(JSON.parse(std.loadFile(histfile) || '[]'));
-
-  repl.addCleanupHandler(() => {
-    let hist = repl.history.filter((item, i, a) => a.lastIndexOf(item) == i);
-
-    //    fs.writeFileSync(cmdhist, JSON.stringify(hist, null, 2));
-    fs.writeFileSync(
-      cmdhist,
-      hist
-        .filter(entry => (entry + '').trim() != '')
-        .map(entry => entry.replace(/\n/g, '\\\\n') + '\n')
-        .join('')
-    );
-
-    console.log(`EXIT (wrote ${hist.length} history entries)`);
-    Terminate(0);
-  });
-
-  for(let file of params['@']) {
-    console.log(`Loading '${file}'...`);
-    newProject(file);
+    circ.add('w', ...ln, 0);
   }
 
-  repl.history = LoadHistory(cmdhist);
-  console.log(`Loaded ${repl.history.length} history entries)`);
+  /*for(let [elm, ptr] of deep.iterate(tree, n => 'x' in n.attributes)) {
+    let pt = new Point(elm.attributes).mul(scale / 2.54).round();
+    console.log(elm.tagName, elm.attributes);
 
-  await repl.run();
+    circ.add('r', ...pt, 0);
+  }*/
+  let instances = sh.children.find(e => e.tagName == 'instances').children;
+
+  console.log('instances', instances);
+  for(let [name, instance] of instances) {
+    console.log(`instance '${name}'`, console.config({ depth: 0 }), instance);
+  }
+  return circ;
 }
 
-Util.callMain(main, true);
-/*
+//Util.callMain(main, true);
+
 try {
   main(...Util.getArgs().slice(1));
 } catch(error) {
   console.log(`FAIL: ${error.message}\n${error.stack}`);
   Util.exit(1);
-} finally {
-  console.log('SUCCESS');
 }
-*/

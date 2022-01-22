@@ -219,9 +219,13 @@ function main(...args) {
 
   const images = opts['input'] ? [opts['input']] : opts['@'];
 
+  let pipeline = new ImagePipeline({});
+
   for(let image of images) {
     console.log('image', image);
     let mat = cv.imread(image);
+
+    let out = pipeline(mat);
 
     console.log('mat', mat);
     //let [w, h] = [...mat.size];
@@ -231,7 +235,7 @@ function main(...args) {
     win.resize(...mat.size);
     win.align(0);
 
-    win.show(mat);
+    win.show(out);
     let k;
     while((k = cv.waitKey(-1))) {
       if(['\n', '\r', 13, 10].indexOf(k) != -1) break;

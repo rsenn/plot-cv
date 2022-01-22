@@ -142,10 +142,12 @@ async function main(...args) {
     let aliases = json._moduleAliases || {};
     for(let alias in aliases) {
       let module = path.join(path.dirname(p), aliases[alias]);
-      if(!filesystem.existsSync(module)) throw new Error(`No such module alias from '${alias}' to '${aliases[alias]}'`);
-      let file = findModule(module);
-      // let st = filesystem.statSync(file);
-      acc.set(alias, file);
+      // if(!filesystem.existsSync(module)) throw new Error(`No such module alias from '${alias}' to '${aliases[alias]}'`);
+      if(filesystem.existsSync(module)) {
+        let file = findModule(module);
+        // let st = filesystem.statSync(file);
+        acc.set(alias, file);
+      }
     }
     return acc;
   }, new Map());

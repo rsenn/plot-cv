@@ -1,8 +1,7 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
 // ==UserScript==
 
-// @name         lib/geom.js
-// @namespace    create-tamper
+// @name         tamper.js
+// @namespace    tamper
 // @version      0.2
 // @description  geom.js, align.js, bbox.js, util.js, graph.js, intersection.js, point.js, line.js, lineList.js, element.js, node.js, trbl.js, rect.js, size.js, iterator.js, pointList.js, matrix.js, circle.js, polygonFinder.js, polygon.js, sweepLine.js, transformation.js, vector.js, simplify.js
 // @author       You
@@ -18,6 +17,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
 (function (globalObj) {
   /* --- concatenated 'lib/geom/align.js' --- */
+  globalThis.Align = {};
   Align.CENTER = 0;
   Align.LEFT = 1;
   Align.RIGHT = 2;
@@ -35,6 +35,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
    * @class      Util (name)
    */
   //if(g) Util.globalObject = g;
+  globalThis.Util = {};
 
   Util.formatAnnotatedObject = function(subject, o) {
     const { indent = '  ', spacing = ' ', separator = ',', newline = '\n', maxlen = 30, depth = 1, level = 0 } = o;
@@ -320,7 +321,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     return key => (value = has.call(target, key) ? get.call(target, key) : ((value = create(key, target)), set.call(target, key, value), value));
   };
 
-  memoize = (fn, storage = new Map()) => {
+  Util.memoize = (fn, storage = new Map()) => {
     let self;
     const getter = typeof storage.get == 'function' ? storage.get : typeof storage == 'function' ? storage : Util.getter(storage);
     const setter = typeof storage.set == 'function' ? storage.set : typeof storage == 'function' ? storage : Util.setter(storage);
@@ -361,7 +362,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     };
   };
 
-  Util.getGlobalObject = memoize(arg => {
+  Util.getGlobalObject = Util.memoize(arg => {
     const retfn = typeof arg == 'function' ? arg : typeof arg == 'string' ? g => g.arg : g => g;
     return Util.tryCatch(
       () => global,
@@ -380,7 +381,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     );
   });
 
-  Util.isDebug = memoize(() => {
+  Util.isDebug = Util.memoize(() => {
     if(process !== undefined && process.env.NODE_ENV === 'production') return false;
     return true;
   });
@@ -760,7 +761,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
   /*
     const { indent = '  ', newline = '\n', depth = 2, spacing = ' ' } = typeof opts == 'object' ? opts : { indent: '', newline: '', depth: typeof opts == 'number' ? opts : 10, spacing: ' ' };
-  
+
     return Util.formatAnnotatedObject(obj, { indent, newline, depth, spacing });
   };*/
   Util.bitArrayToNumbers = function(arr) {
@@ -878,7 +879,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     return text.replace(/(\n)/g, '\n' + space) + '\n';
   };
 
-  define = (obj, ...args) => {
+  Util.define = (obj, ...args) => {
     if(typeof args[0] == 'object') {
       const [arg, overwrite = true] = args;
       let adecl = Object.getOwnPropertyDescriptors(arg);
@@ -918,7 +919,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     let decls = {};
 
     for(let method in methods) {
-      const memoize = memoize(methods.method);
+      const memoize = Util.memoize(methods.method);
 
       decls.method = {
         get() {
@@ -938,7 +939,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
     //console.debug('chain:', ...chain);
 
-    for(let obj of chain) define(dst, obj);
+    for(let obj of chain) Util.define(dst, obj);
 
     return dst;
   };
@@ -1030,19 +1031,19 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   Util.defineGetterSetter = (obj, key, g, s, enumerable = false) => obj.key === undefined && Object.defineProperty(obj, key, { get: g, set: s, enumerable });
 
   Util.extendArray = function(arr = Array.prototype) {
-    /*  define(arr, 'tail', function() {
+    /*  Util.define(arr, 'tail', function() {
         return this[this.length - 1];
       });*/
-    define(arr, 'match', function(pred) {
+    Util.define(arr, 'match', function(pred) {
       return Util.match(this, pred);
     });
 
-    define(arr, 'clear', function() {
+    Util.define(arr, 'clear', function() {
       this.splice(0, this, length);
       return this;
     });
 
-    define(arr, 'unique', function() {
+    Util.define(arr, 'unique', function() {
       return this.filter((item, i, a) => a.indexOf(item) == i);
     });
 
@@ -2221,7 +2222,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     return result;
   };
 
-  Util.getURL = memoize((req = {}) =>
+  Util.getURL = Util.memoize((req = {}) =>
     Util.tryCatch(
       () => process.argv[1],
       () => 'file://' + Util.scriptDir(),
@@ -2693,7 +2694,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
         let idx = arr.findIndex(item => fn(item) == 'prop');
         if(idx != -1)
           prop = idx;
-  
+
         return Reflect.get(arr, idx, receiver);
       }
     });
@@ -3385,7 +3386,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     return fn;
   };
 
-  Util.iterateMembers = function* (obj, predicate = ((name, depth, obj, proto) => true, (depth = 0))) {
+  Util.iterateMembers = function* (obj, predicate = (name, depth, obj, proto) => true, depth = 0) {
     let names = [];
     let pred = Util.predicate(predicate);
     const proto = Object.getPrototypeOf(obj);
@@ -3470,7 +3471,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     ...a,
     [[m]]: Object.getOwnPropertyDescriptor(o, m)
   }));
-  Util.methodNameFilter = (depth = (1, (start = 0))) => Util.and((m, l, o) => typeof o.m == 'function', Util.memberNameFilter(depth, start));
+  Util.methodNameFilter = (depth = 1, start = 0) => Util.and((m, l, o) => typeof o.m == 'function', Util.memberNameFilter(depth, start));
   Util.getMethodNames = (obj, depth = 1, start = 0) => Util.members(Util.methodNameFilter(depth, start))(obj);
   Util.getMethods = Util.objectReducer(Util.methodNameFilter);
   Util.getMethodDescriptors = Util.objectReducer(Util.methodNameFilter, (a, m, o) => ({
@@ -3559,15 +3560,15 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
        const oldPrepareStackTrace = Error.prepareStackTrace;
     Error.prepareStackTrace = (_, stack) => stack;
    try {
-  
+
     throw new Error('my error');
-  
+
    } catch(e) {
     console.log("e.stack",[...e.stack]);
     stack = e.stack;
    }
    Error.prepareStackTrace = oldPrepareStackTrace;
-  
+
    return stack;
   }*/
   Util.exception = function Exception(...args) {
@@ -3592,7 +3593,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     return Object.setPrototypeOf(e, proto);
   };
 
-  define(
+  Util.define(
     Util.exception.prototype,
     {
       toString(color = false) {
@@ -3630,7 +3631,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
   Util.location.palettes = [ [ [ 128, 128, 0 ], [ 255, 0, 255 ], [ 0, 255, 255 ] ], [ [ 9, 119, 18 ], [ 139, 0, 255 ], [ 0, 165, 255 ] ] ];
 
-  define(Util.location.prototype, {
+  Util.define(Util.location.prototype, {
     toString(color = false) {
       let { fileName, lineNumber, columnNumber, functionName } = this;
       fileName = fileName.replace(new RegExp(Util.getURL() + '/', 'g'), '');
@@ -3673,7 +3674,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     if(Util.colorCtor) frame.colorCtor = Util.colorCtor;
     return Object.setPrototypeOf(frame, Util.stackFrame.prototype);
   };
-  define(Util.stackFrame, {
+  Util.define(Util.stackFrame, {
     methodNames: ['getThis', 'getTypeName', 'getFunction', 'getFunctionName', 'getMethodName', 'getFileName', 'getLineNumber', 'getColumnNumber', 'getEvalOrigin', 'isToplevel', 'isEval', 'isNative', 'isConstructor', 'isAsync', 'isPromiseAll', 'getPromiseIndex']
   });
 
@@ -3683,7 +3684,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     }
   });
 
-  define(
+  Util.define(
     Util.stackFrame.prototype,
     {
       getMethodName() {
@@ -3708,7 +3709,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     true
   );
 
-  define(
+  Util.define(
     Util.stackFrame.prototype,
     {
       colorCtor: null,
@@ -4422,9 +4423,9 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
           return Object.freeze(this);
       }
     };
-    
+
     ${imName}.prototype.constructor = ${imName};
-    
+
     return ${imName};`;
 
     for(let p of initialProto) p(orig);
@@ -4905,7 +4906,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
       });
 
     ret = start();
-    return define(ret, timer);
+    return Util.define(ret, timer);
   };
   Util.thenableReject = error => ({
     then: (resolve, reject) => reject(error)
@@ -4969,7 +4970,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
       }
     };
 
-    define(proto, methods, false);
+    Util.define(proto, methods, false);
 
     if(!generators) {
       for(let name in methods) {
@@ -5061,7 +5062,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
       self = Util.printReturnValue(self, {
         print: print || ((returnValue, fn, ...args) => console.debug(`cachedFetch[${cache}] (`, ...args, ...`) =`, ...returnValue))
       });
-    define(self, { fetch, cache, storage, opts });
+    Util.define(self, { fetch, cache, storage, opts });
     return self;
   };
 
@@ -5103,7 +5104,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
       map => Util.weakMapper((obj, ...args) => Util.merge(...args), map),
       () =>
         (obj, ...args) =>
-          define(obj, ...args)
+          Util.define(obj, ...args)
     );
 
     return (obj, ...args) => {
@@ -5191,7 +5192,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
       return fn(...args);
     };
 
-    define(self, { fn, opts });
+    Util.define(self, { fn, opts });
     return self;
   };
 
@@ -6105,7 +6106,6 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   Util.defineGetter(ImmutableLine, Symbol.species, () => ImmutableLine);
 
   /* --- concatenated 'lib/geom/size.js' --- */
-  const getArgs = args => (/*console.debug('getArgs', ...args), */ typeof args[0] == 'number' ? [{ width: args[0], height: args[1] }] : args);
   Size.prototype.width = NaN;
   Size.prototype.height = NaN;
   Size.prototype.units = null;
@@ -7351,7 +7351,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     return sum > 0;
   };
 
-  define(PointList, {
+  Util.define(PointList, {
     /* prettier-ignore */ get [Symbol.species]() {
       return PointList;
     }
@@ -7480,7 +7480,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   /* --- concatenated 'lib/geom/matrix.js' --- */
   /*
   Object.assign(Matrix.prototype, Array.prototype);
-  
+
   Matrix.prototype.splice = Array.prototype.splice;
   Matrix.prototype.slice = Array.prototype.slice;
   */
