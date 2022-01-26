@@ -10,7 +10,7 @@ macro(find_quickjs)
   if(NOT QUICKJS_PREFIX)
     find_file(
       QUICKJS_H quickjs.h
-      PATHS "${CMAKE_INSTALL_PREFIX}/include/quickjs" "/usr/local/include/quickjs"
+      PATHS "${CMAKE_INSTALL_PREFIX}/inclue/quickjs" "/usr/local/include/quickjs"
             "/usr/include/quickjs" "${QUICKJS_ROOT}/include/quickjs"
             "${QuickJS_DIR}/include/quickjs")
 
@@ -200,9 +200,6 @@ macro(configure_quickjs)
                                                            "QuickJS native C modules directory")
   set(QUICKJS_JS_MODULE_DIR "${QUICKJS_JS_MODULE_DIR}" CACHE PATH
                                                              "QuickJS JavaScript modules directory")
-
-  configure_quickjs_module_path()
-
   #variable_watch(QUICKJS_C_MODULE_DIR configure_quickjs_module_path)
   #variable_watch(QUICKJS_JS_MODULE_DIR configure_quickjs_module_path)
 
@@ -215,15 +212,19 @@ macro(configure_quickjs)
   message(STATUS "\tinclude directory: ${QUICKJS_INCLUDE_DIR}")
   message(STATUS "\tC module directory: ${QUICKJS_C_MODULE_DIR}")
   message(STATUS "\tJS module directory: ${QUICKJS_JS_MODULE_DIR}")
-  message(STATUS "\tmodule search path: ${QUICKJS_MODULE_PATH}")
 
+  configure_quickjs_module_path()
 endmacro(configure_quickjs)
-macro(configure_quickjs_module_path)
-  set(MODULE_PATH "${QUICKJS_C_MODULE_DIR}")
-  if(NOT "${QUICKJS_C_MODULE_DIR}" STREQUAL "${QUICKJS_JS_MODULE_DIR}")
-    set(MODULE_PATH "${MODULE_PATH}:${QUICKJS_JS_MODULE_DIR}")
-  endif(NOT "${QUICKJS_C_MODULE_DIR}" STREQUAL "${QUICKJS_JS_MODULE_DIR}")
 
-  string(REPLACE ";" ":" MODULE_PATH "${MODULE_PATH}")
+macro(configure_quickjs_module_path)
+  set(MODULE_PATH "")
+  ADD_UNIQUE(MODULE_PATH "${QUICKJS_C_MODULE_DIR}" "${QUICKJS_JS_MODULE_DIR}")
+ 
+  if(NOT WIN32)
+    string(REPLACE ":" ";" MODULE_PATH "${MODULE_PATH}")
+  endif(NOT WIN32)
+
   set(QUICKJS_MODULE_PATH "${MODULE_PATH}" CACHE PATH "QuickJS modules search path")
+
+  message(STATUS "\tmodule search path: ${QUICKJS_MODULE_PATH}")
 endmacro(configure_quickjs_module_path)

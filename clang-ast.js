@@ -1292,6 +1292,8 @@ export function GetLoc(node) {
 
   // if(!('offset' in loc)) return null;
 
+  return new Location(loc);
+
   return loc;
 }
 
