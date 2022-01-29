@@ -220,6 +220,17 @@ export function* StatFiles(gen) {
   }
 }
 
+export function ReadFd(fd, bufferSize) {
+  function* FdRead() {
+    let ret,
+      buf = new ArrayBuffer(bufferSize);
+    do {
+      if((ret = fs.readSync(fd, buf, 0, buf.byteLength)) > 0) yield ret == buf.byteLength ? buf : buf.slice(0, ret);
+    } while(ret > 0);
+  }
+  return [...FdRead()].reduce((acc,buf) => acc+=toString(buf),'');
+}
+
 export function FdReader(fd, bufferSize = 1024) {
   let buf = new ArrayBuffer(bufferSize);
   return new Repeater(async (push, stop) => {
