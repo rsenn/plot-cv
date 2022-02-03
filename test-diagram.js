@@ -1,8 +1,8 @@
-import { AxisPoints, AxisRange, DrawAxis, Origin, GetRect, X, Y, Flip, DrawRect, ClientRect, ClientArea,ClientMatrix } from './diagram.js';
+import { AxisPoints, AxisRange, DrawAxis, Origin, GetRect, X, Y, Flip, DrawRect, ClientRect, ClientArea, ClientMatrix } from './diagram.js';
 import { Console } from 'console';
-import { Point, Rect, Mat, Draw, Contour, imwrite, transform, CV_8UC3, CV_64FC1, CV_64FC2, FILLED, LINE_AA, LINE_8 } from 'opencv';
+import { Point, Rect, Mat, Draw, Contour, transform, CV_8UC3, CV_64FC1, CV_64FC2, FILLED, LINE_AA, LINE_8, imshow, imwrite, waitKey } from 'opencv';
 import { TextStyle } from './qjs-opencv/js/cvHighGUI.js';
-import { range,srand, randInt } from 'util';
+import { range, srand, randInt } from 'util';
 
 function main(...args) {
   globalThis.console = new Console({
@@ -40,26 +40,28 @@ function main(...args) {
   let origin = Origin(diagramMat, axes.x, axes.y);
 
   console.log('', { rect, origin });
-     let area = ClientArea(diagramMat, axes.x, axes.y, font);
+  let area = ClientArea(diagramMat, axes.x, axes.y, font);
 
   Draw.rectangle(area, new Point(0, 0), new Point(area.cols - 1, area.rows - 1), [255, 0, 255], 2, LINE_8);
 
   let contour = new Contour(range(0, 100, 10).map(x => new Point(x, randInt(100))));
 
-    let matrix = ClientMatrix(diagramMat, axes.x, axes.y, font);
- 
-  console.log('matrix', matrix.array);
-  console.log('matrix', [...matrix]);
-  let contour2 = new Mat(1,contour.length, CV_64FC2);
+  let matrix = ClientMatrix(diagramMat, axes.x, axes.y, font);
+
+  /*console.log('matrix', matrix.array);
+  console.log('matrix', [...matrix]);*/
+  let contour2 = new Mat(1, contour.length, CV_64FC2);
 
   transform(contour.getMat(), contour2, matrix);
-  console.log('contour.getMat()', [...contour.getMat()]);
+  /*console.log('contour.getMat()', [...contour.getMat()]);
   console.log('contour2', [...contour2]);
-  console.log('contour2', [...contour2]);
-  let c=new Contour([...contour2].map(a => new Point(...a)))  ;
+  console.log('contour2', [...contour2]);*/
+  let c = new Contour([...contour2].map(a => new Point(...a)));
   console.log('c', c);
+  
+  console.log('Draw.polylines', Draw.polylines);
 
-  Draw.contours(area, [c], 0, [255, 0, 255], 1, LINE_AA);
+    Draw.polylines(area, [c], 0, [255, 0, 255], 1, LINE_AA);
 
   /* tl.x += 1;
   tl.y -= 1;
@@ -72,6 +74,9 @@ function main(...args) {
   DrawAxis(diagramMat, axes.y, rect, font);
 
   imwrite('diagram.png', mat);
+
+  imshow(args[0], mat);
+  waitKey(-1);
 }
 
 main(...scriptArgs);

@@ -1,4 +1,4 @@
-import { Point, Size, Rect, Line, TickMeter, Mat, Draw,  CV_64FC1,LINE_AA, LINE_8, CV_RGB } from 'opencv';
+import { Point, Size, Rect, Line, TickMeter, Mat, Draw, CV_64FC1, LINE_AA, LINE_8, CV_RGB } from 'opencv';
 import { range, mod } from 'util';
 
 export const X = Symbol.for('x');
@@ -8,7 +8,7 @@ const PERP = { [X]: Y, [Y]: X };
 const COORD = { [X]: 'x', [Y]: 'y' };
 const SIZE = { [X]: 'width', [Y]: 'height' };
 
-export function LinearTransform(sx,sy,tx,ty)  {
+export function LinearTransform(sx, sy, tx, ty) {
   let m = new Mat(2, 3, CV_64FC1);
   Object.assign(m.array, [sx, 0, tx, 0, sy, ty]);
   return m;
@@ -207,10 +207,10 @@ export function ClientArea(mat, xAxis, yAxis, style) {
 }
 
 export function ClientMatrix(mat, xAxis, yAxis, style) {
-  let[minX,maxX]=AxisRange(xAxis);
-  let[minY,maxY]=AxisRange(yAxis);
+  let [minX, maxX] = AxisRange(xAxis);
+  let [minY, maxY] = AxisRange(yAxis);
 
   let clientRect = ClientRect(mat, xAxis, yAxis, style);
 
-  return LinearTransform(clientRect.width / (maxX-minX),-clientRect.height / (maxY-minY),0, clientRect.height);
+  return LinearTransform(clientRect.width / (maxX - minX), -clientRect.height / (maxY - minY), 0, clientRect.height);
 }
