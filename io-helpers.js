@@ -228,7 +228,7 @@ export function ReadFd(fd, bufferSize) {
       if((ret = fs.readSync(fd, buf, 0, buf.byteLength)) > 0) yield ret == buf.byteLength ? buf : buf.slice(0, ret);
     } while(ret > 0);
   }
-  return [...FdRead()].reduce((acc,buf) => acc+=toString(buf),'');
+  return [...FdRead()].reduce((acc, buf) => (acc += toString(buf)), '');
 }
 
 export function FdReader(fd, bufferSize = 1024) {

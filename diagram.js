@@ -1,4 +1,4 @@
-import { Point, Size, Rect, Line, TickMeter, Mat, Draw, LINE_AA, LINE_8, CV_RGB } from 'opencv';
+import { Point, Size, Rect, Line, TickMeter, Mat, Draw,  CV_64FC1,LINE_AA, LINE_8, CV_RGB } from 'opencv';
 import { range, mod } from 'util';
 
 export const X = Symbol.for('x');
@@ -7,6 +7,12 @@ export const Y = Symbol.for('y');
 const PERP = { [X]: Y, [Y]: X };
 const COORD = { [X]: 'x', [Y]: 'y' };
 const SIZE = { [X]: 'width', [Y]: 'height' };
+
+export function LinearTransform(sx,sy,tx,ty)  {
+  let m = new Mat(2, 3, CV_64FC1);
+  Object.assign(m.array, [sx, 0, tx, 0, sy, ty]);
+  return m;
+}
 
 export function Max(stops, axis, style) {
   let values;
@@ -43,14 +49,29 @@ export function AxisPoints(stops, inc = 10, axis, style, size) {
   return positions;
 }
 
+export function AxisRange(axis) {
+  let [start] = axis[0];
+  let [end] = axis[axis.length - 1];
+  return [start, end];
+}
+
 export function DrawLine(mat, start, end, color = CV_RGB(0, 0, 0), width = 1, lineType = LINE_AA) {
   let points = [start, end].map(({ x, y }) => [mod(x, mat.cols), mat.rows - mod(y, mat.rows)]);
 
-  if(lineType == LINE_AA) throw new Error('LINE_AA');
+  // if(lineType == LINE_AA) throw new Error('LINE_AA');
 
   //console.log('DrawLine', inspect({ points, width, lineType }, { compact: 2 }));
 
   Draw.line(mat, ...points, color, width, lineType);
+}
+
+export function DrawRect(mat, [x1, y1], [x2, y2], color = CV_RGB(0, 0, 0), width = 1, lineType = LINE_AA) {
+  console.log('DrawRect', { x1, y1, x2, y2 }, { color, width, lineType });
+
+  DrawLine(mat, [x1, y1], [x2, y1], color, width, lineType);
+  DrawLine(mat, [x2, y1], [x2, y2], color, width, lineType);
+  DrawLine(mat, [x2, y2], [x1, y2], color, width, lineType);
+  DrawLine(mat, [x1, y2], [x1, y1], color, width, lineType);
 }
 
 export function DrawDottedLine(mat, start, end, c = CV_RGB(0, 0, 0)) {
@@ -152,13 +173,15 @@ export function Origin(mat, xAxis, yAxis) {
 }
 
 export function Flip(mat, geometry) {
-  let ctor = geometry.constructor;
   geometry = geometry.clone();
   if(geometry instanceof Rect || geometry instanceof Line) {
-    geometry.y1 = mat.rows - geometry.y1;
-    geometry.y2 = mat.rows - geometry.y2;
+    geometry.y = mat.rows - geometry.y2;
   } else if(geometry instanceof Point) {
     geometry.y = mat.rows - geometry.y;
+  } else if(types.isArrayLike(geometry) || types.isIterable(geometry)) {
+    return [...geometry].map(g => Flip(mat, g));
+  } else {
+    throw new Error(`No such geometry type: ${geometry}`);
   }
   return geometry;
 }
@@ -172,4 +195,22 @@ export function GetRect(mat, xAxis, yAxis, style) {
   let xAdd = Math.ceil(Max(xAxis, X, style) / 2);
 
   return new Rect(...origin, ...end.diff(xAdd, yAdd));
+}
+
+export function ClientRect(mat, xAxis, yAxis, style) {
+  const rect = GetRect(mat, xAxis, yAxis, style);
+  return Flip(mat, rect);
+}
+
+export function ClientArea(mat, xAxis, yAxis, style) {
+  return mat(ClientRect(mat, xAxis, yAxis, style));
+}
+
+export function ClientMatrix(mat, xAxis, yAxis, style) {
+  let[minX,maxX]=AxisRange(xAxis);
+  let[minY,maxY]=AxisRange(yAxis);
+
+  let clientRect = ClientRect(mat, xAxis, yAxis, style);
+
+  return LinearTransform(clientRect.width / (maxX-minX),-clientRect.height / (maxY-minY),0, clientRect.height);
 }
