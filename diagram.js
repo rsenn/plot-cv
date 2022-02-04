@@ -115,7 +115,7 @@ export function DrawAxis(mat, axis, rect, style) {
   let diff = Point.diff(points[1], points[0]);
   let norm = diff.norm();
   let prop = norm.x ? X : Y;
-  let add = prop == X ? new Point(0, -10) : new Point(-10, 0);
+  let add = prop == X ? new Point(0, -8) : new Point(-8, 0);
   let offset = prop == X ? new Point(rect.x, 0) : new Point(0, rect.y);
 
   let max = Max(points, prop);
@@ -131,6 +131,8 @@ export function DrawAxis(mat, axis, rect, style) {
 
   let first = points[0],
     last = points[points.length - 1];
+
+const lineColor=CV_RGB(0, 0, 0);
 
   let i = 0;
   for(let point of points) {
@@ -150,12 +152,12 @@ export function DrawAxis(mat, axis, rect, style) {
 
     if(i > 0) DrawDottedLine(mat, point3, point, CV_RGB(200, 200, 200), 1, LINE_8);
 
-    DrawLine(mat, point, point2, CV_RGB(0, 0, 0), 1, LINE_8);
+    DrawLine(mat, point, point2, lineColor, 1, LINE_8);
 
     ++i;
   }
 
-  DrawLine(mat, first, last, CV_RGB(0, 0, 0), 1, LINE_8);
+  DrawLine(mat, first, last, lineColor, 1, LINE_8);
 }
 
 export function DrawCross(mat, point, radius = 10) {
