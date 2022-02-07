@@ -134,10 +134,7 @@ async function main(...args) {
   let newState = false;
   console.log('strdup:', strdup('BLAH').toString(16));
   console.log('dlsym_(RTLD_DEFAULT, "strdup"):', dlsym(RTLD_DEFAULT, 'strdup').toString(16));
-  console.log(
-    'snprintf(outBuf, outBuf.byteLength, "%p", -1):',
-    snprintf(outBuf, outBuf.byteLength, '%p', 0x7fffffffffffffff)
-  );
+  console.log('snprintf(outBuf, outBuf.byteLength, "%p", -1):', snprintf(outBuf, outBuf.byteLength, '%p', 0x7fffffffffffffff));
   console.log('outBuf:', ArrayBufToString(outBuf));
   console.log('Util.isatty(1):', await Util.isatty(1));
   console.log('F_GETFL:', toHex((flags = fcntl(fd, F_GETFL, 0))));
@@ -202,10 +199,7 @@ async function main(...args) {
   let returnADDR = area + 200;
   strcpy(area + 200, '\x48\x8b\x04\x24\xc3');
   let writeREGS = area + 300;
-  strcpy(
-    area + 300,
-    '\xf3\x0f\x1e\xfa\x48\x89\x07\x48\x89\x5f\x08\x48\x89\x4f\x10\x48\x89\x57\x18\x48\x89\x77\x20\x48\x89\x7f\x28\x48\x89\x6f\x30\x48\x89\x67\x38\x48\x31\xc0\x48\xff\xc0\xc3'
-  );
+  strcpy(area + 300, '\xf3\x0f\x1e\xfa\x48\x89\x07\x48\x89\x5f\x08\x48\x89\x4f\x10\x48\x89\x57\x18\x48\x89\x77\x20\x48\x89\x7f\x28\x48\x89\x6f\x30\x48\x89\x67\x38\x48\x31\xc0\x48\xff\xc0\xc3');
   console.log('writeREGS:', writeREGS.toString(16));
   let ret;
   printf('area: %s\n', StringToHex(area + 0));
@@ -282,10 +276,7 @@ function MakeArray(buf, numBytes) {
 
 function ArrayBufToHex(buf, numBytes = 8) {
   let arr = MakeArray(buf, numBytes);
-  return arr.reduce(
-    (s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
-    ''
-  );
+  return arr.reduce((s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)), '');
 }
 
 function timeval(sec = 0, usec = 0) {

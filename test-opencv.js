@@ -167,11 +167,7 @@ function main(...args) {
   let backgroundColor = 0xd0d0d0;
   let shadowColor = 0x404040;
   let textColor = 0xd3d7cf;
-  let fonts = [
-    '/home/roman/.fonts/gothic.ttf',
-    '/home/roman/.fonts/gothicb.ttf',
-    '/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf'
-  ];
+  let fonts = ['/home/roman/.fonts/gothic.ttf', '/home/roman/.fonts/gothicb.ttf', '/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf'];
   let fontFace = fonts[2];
   let fontSize = 14;
   fonts.forEach(file => Draw.loadFont(file));
@@ -201,8 +197,7 @@ function main(...args) {
   let paramIndexes = [-1, -1];
   let palette = new Array();
   const black = [0x00, 0x00, 0x00, 0xff];
-  for(let i = 0; i < 8; i++)
-    palette[i] = [i & 0x04 ? 0xff : 0x00, i & 0x02 ? 0xff : 0x00, i & 0x01 ? 0xff : 0x00, 0xff];
+  for(let i = 0; i < 8; i++) palette[i] = [i & 0x04 ? 0xff : 0x00, i & 0x02 ? 0xff : 0x00, i & 0x01 ? 0xff : 0x00, 0xff];
   palette[2] = [0x60, 0x60, 0x60, 0xff];
   palette[3] = [0xff, 0xff, 0x0, 0xff];
   for(let i = 8; i < 16; i++) palette[i] = black;
@@ -225,10 +220,7 @@ function main(...args) {
         cv.threshold(src, dst, +params.thres, 255, +params.type);
       },
       function Morphology(src, dst) {
-        let structuringElement = cv.getStructuringElement(
-          cv.MORPH_CROSS,
-          new Size(+params.kernel_size * 2 + 1, +params.kernel_size * 2 + 1)
-        );
+        let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS, new Size(+params.kernel_size * 2 + 1, +params.kernel_size * 2 + 1));
         src.copyTo(dst);
         cv.morphologyEx(dst, dst, cv.MORPH_ERODE, structuringElement);
         dst.xor([255, 255, 255, 0], dst);
@@ -253,15 +245,7 @@ function main(...args) {
         let output = new Mat();
         if(skel.channels > 1) cv.cvtColor(skel, skel, cv.COLOR_BGR2GRAY);
         if(morpho.channels > 1) cv.cvtColor(morpho, morpho, cv.COLOR_BGR2GRAY);
-        cv.HoughLinesP(
-          skel,
-          output,
-          +params.rho,
-          (Math.PI * (+params.theta || 1)) / 180,
-          +params.threshold,
-          +params.minLineLength,
-          +params.maxLineGap
-        );
+        cv.HoughLinesP(skel, output, +params.rho, (Math.PI * (+params.theta || 1)) / 180, +params.threshold, +params.minLineLength, +params.maxLineGap);
         cv.cvtColor(skel, dst, cv.COLOR_GRAY2BGR);
         let i = 0;
         lines.splice(0, lines.length);
@@ -337,14 +321,7 @@ function main(...args) {
       function HoughCircles(src, dst) {
         const morpho = this.outputOf('Morphology');
         const skel = this.outputOf('Skeletonization');
-        const paramArray = [
-          +params.dp || 1,
-          +params.minDist,
-          +params.param1,
-          +params.param2,
-          +params.minRadius,
-          +params.maxRadiMathus
-        ];
+        const paramArray = [+params.dp || 1, +params.minDist, +params.param1, +params.param2, +params.minRadius, +params.maxRadiMathus];
         let circles1 = [] || new Mat();
         let circles2 = [] || new Mat();
         cv.HoughCircles(morpho, circles1, cv.HOUGH_GRADIENT, ...paramArray);
@@ -399,9 +376,7 @@ function main(...args) {
       `params:\n` +
       params
         .map((name, idx) => {
-          return `  ${idx + paramIndexes[0] == paramNav.index ? '\x1b[1;31m' : ''}${name.padEnd(
-            13
-          )}\x1b[0m   \x1b[1;36m${+paramNav.get(name)}\x1b[0m\n`;
+          return `  ${idx + paramIndexes[0] == paramNav.index ? '\x1b[1;31m' : ''}${name.padEnd(13)}\x1b[0m   \x1b[1;36m${+paramNav.get(name)}\x1b[0m\n`;
         })
         .join('');
     DrawText(statusMat(textRect), text, textColor, fontFace, fontSize);
