@@ -150,6 +150,4 @@ try {
 } catch(error) {
   console.log(`FAIL: ${error?.message}\n${error?.stack}`);
   std.exit(1);
-} finally {
-  console.log('SUCCESS');
 }

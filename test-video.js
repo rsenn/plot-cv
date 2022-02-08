@@ -290,10 +290,10 @@ function main(...args) {
       Processor(function AcquireFrame(src, dst) {
         const dstEmpty = dst.empty;
         if(dst.empty) dst0Size = dst.size;
-        // log.info('video', video);
+        log.info('video', video.read, video.constructor.name);
         framePos = video.get('pos_frames');
         video.read(dst);
-        //  log.info('dst', dst);
+      //log.info('dst', dst);
         win.show(dst);
         if(videoSize === undefined || videoSize.empty) videoSize = video.size.area ? video.size : dst.size;
         if(dstEmpty) firstSize = new Size(...videoSize);
@@ -505,6 +505,8 @@ function main(...args) {
       }
       if(sleepMsecs <= 0) break;
     }
+
+    std.gc();
 
     if(paused) video.seekFrames(-1);
 
@@ -719,7 +721,6 @@ function main(...args) {
     log.info('mat=' + mat.toString() + '\n  ' + stack);
   }
   log.info('props:', video.dump());
-  std.gc();
 }
 
 try {

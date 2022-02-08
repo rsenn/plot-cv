@@ -3,6 +3,7 @@ import * as std from 'std';
 import * as os from 'os';
 import { Console } from 'console';
 import { assert } from './lib/misc.js';
+import { WorkerScript } from './workerScript.js';
 
 var worker;
 var counter;
@@ -14,14 +15,26 @@ function TestWorker() {
     prefix: '\x1b[38;5;220mPARENT\x1b[0m'
   });
 
-  worker = new os.Worker('./ws-worker.js');
+  //worker = new os.Worker('./ws-worker.js');
+  worker = new WorkerScript(`
+import { client, server, fetch, setLog, LLL_USER, LLL_NOTICE } from 'net';
+import * as std from 'std';
+import * as os from 'os';
+import { Console } from 'console';
 
+var parent = os.Worker?.parent;
+
+const log = (...args) => console.log('WORKER', ...args);
+
+console.log('parent',parent);
+`);
+
+  console.log('worker', inspect(worker));
+  console.log('worker', Object.getOwnPropertyNames(Object.getPrototypeOf(Object.getPrototypeOf(worker))));
+  console.log('worker', Object.getPrototypeOf(worker).constructor.name);
   counter = 0;
   worker.onmessage = HandleMessage;
-  console.log(
-    'worker',
-    Object.getOwnPropertyNames(Object.getPrototypeOf(worker)).reduce((acc, n) => ({ ...acc, [n]: worker[n] }), {})
-  );
+  // console.log('worker', Object.getOwnPropertyNames(Object.getPrototypeOf(worker)).reduce((acc, n) => ({ ...acc, [n]: worker[n] }), {}));
   //console.log('TestWorker', worker.onmessage);
 
   os.setReadHandler(0, () => {
