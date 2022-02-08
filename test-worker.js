@@ -27,6 +27,8 @@ var parent = os.Worker?.parent;
 const log = (...args) => console.log('WORKER', ...args);
 
 console.log('parent',parent);
+
+parent.postMessage('test');
 `);
 
   console.log('worker', inspect(worker));
@@ -35,7 +37,7 @@ console.log('parent',parent);
   counter = 0;
   worker.onmessage = HandleMessage;
   // console.log('worker', Object.getOwnPropertyNames(Object.getPrototypeOf(worker)).reduce((acc, n) => ({ ...acc, [n]: worker[n] }), {}));
-  //console.log('TestWorker', worker.onmessage);
+  console.log('TestWorker', worker.onmessage);
 
   os.setReadHandler(0, () => {
     let line = process.stdin.getline();
