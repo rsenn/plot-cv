@@ -360,33 +360,12 @@ export function FetchURL(url, options = {}) {
   });
 
   child.wait();
-  /*
-
-
-    let buf=new ArrayBuffer(1024);
-  os.setReadHandler(out, () => {
-let r =fs.readSync(buf, 0, 1024);
-
-if(r > 0) {
-output += toString(buf.slice(0,r))
-  });
-*/
-
-  /*  (async function() { fs.readAllSync(out).then(data=>output=data); })();
-
-  (async function() { fs.readAllSync(err).then(data=>errors=data); })();
-*/
+  
   let status;
 
   status = child.wait();
 
   console.log('FetchURL', { /* output: escape(output), errors,*/ status });
-
-  /*  
-let buf=new ArrayBuffer(1024);
-let r = fs.readSync(child.stdio[1],buf);
-console.log('r', r);
-console.log('buf', buf);*/
-  //let output = fs.readAll(child.stdio[1]);
+ 
   return output;
 }
