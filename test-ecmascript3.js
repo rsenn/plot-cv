@@ -244,12 +244,16 @@ function processFile(file, params) {
   WriteFile(output_file, code);
   function getImports() {
     const imports = [...flat].filter(([path, node]) => isRequire(node) || isImport(node));
-    const importStatements = imports.map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path)).map(path => [path, deep.get(ast, path)]);
+    const importStatements = imports
+      .map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path))
+      .map(path => [path, deep.get(ast, path)]);
     console.log('imports:', new Map(imports.map(([path, node]) => [ESNode.assoc(node).position, node])));
     console.log('importStatements:', importStatements);
     const importedFiles = imports.map(([pos, node]) => Identifier.string(node.source || node.arguments[0]));
     console.log('importedFiles:', importedFiles);
-    let importIdentifiers = importStatements.map(([p, n]) => [p, n.identifiers ? n.identifiers : n]).map(([p, n]) => [p, n.declarations ? n.declarations : n]);
+    let importIdentifiers = importStatements
+      .map(([p, n]) => [p, n.identifiers ? n.identifiers : n])
+      .map(([p, n]) => [p, n.declarations ? n.declarations : n]);
     console.log('importIdentifiers:', importIdentifiers);
     console.log('importIdentifiers:', unique(importIdentifiers.flat()).join(', '));
   }

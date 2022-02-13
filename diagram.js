@@ -132,7 +132,7 @@ export function DrawAxis(mat, axis, rect, style) {
   let first = points[0],
     last = points[points.length - 1];
 
-const lineColor=CV_RGB(0, 0, 0);
+  const lineColor = CV_RGB(0, 0, 0);
 
   let i = 0;
   for(let point of points) {
@@ -142,7 +142,10 @@ const lineColor=CV_RGB(0, 0, 0);
     let dimensions = style.size(text);
     let point2 = point.sum(add);
 
-    let disp = { [X]: new Point(-dimensions.width / 2 + 1, 0), [Y]: new Point(-dimensions.width, dimensions.height / 2 + 2) }[prop];
+    let disp = {
+      [X]: new Point(-dimensions.width / 2 + 1, 0),
+      [Y]: new Point(-dimensions.width, dimensions.height / 2 + 2)
+    }[prop];
     let textpos = point2.sum(disp.ceil());
 
     DrawText(mat, text, textpos, style, CV_RGB(0, 0, 0));

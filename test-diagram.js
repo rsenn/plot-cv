@@ -1,6 +1,35 @@
-import { AxisPoints, AxisRange, DrawAxis, Origin, GetRect, X, Y, Flip, DrawRect, ClientRect, ClientArea, ClientMatrix } from './diagram.js';
+import {
+  AxisPoints,
+  AxisRange,
+  DrawAxis,
+  Origin,
+  GetRect,
+  X,
+  Y,
+  Flip,
+  DrawRect,
+  ClientRect,
+  ClientArea,
+  ClientMatrix
+} from './diagram.js';
 import { Console } from 'console';
-import { Point, Rect, Mat, Draw, Contour, transform, CV_8UC3, CV_64FC1, CV_64FC2, FILLED, LINE_AA, LINE_8, imshow, imwrite, waitKey } from 'opencv';
+import {
+  Point,
+  Rect,
+  Mat,
+  Draw,
+  Contour,
+  transform,
+  CV_8UC3,
+  CV_64FC1,
+  CV_64FC2,
+  FILLED,
+  LINE_AA,
+  LINE_8,
+  imshow,
+  imwrite,
+  waitKey
+} from 'opencv';
 import { TextStyle } from './qjs-opencv/js/cvHighGUI.js';
 import { range, srand, randInt } from 'util';
 
@@ -58,7 +87,7 @@ function main(...args) {
 
   console.log('Draw.polylines', Draw.polylines);
 
-  Draw.polylines(area, [c?? [...contour2]], false, [1, 220, 90], 1, LINE_AA);
+  Draw.polylines(area, [c ?? [...contour2]], false, [1, 220, 90], 1, LINE_AA);
 
   //  Draw.line(area, [0,0],[100,100], [0,255,0], 1, LINE_8);
 

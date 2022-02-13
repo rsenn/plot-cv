@@ -103,7 +103,12 @@ function main(...args) {
     args
   );
   if(params['no-tls'] === true) params.tls = false;
-  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key' } = params;
+  const {
+    address = '0.0.0.0',
+    port = 8999,
+    'ssl-cert': sslCert = 'localhost.crt',
+    'ssl-private-key': sslPrivateKey = 'localhost.key'
+  } = params;
   const listen = params.connect && !params.listen ? false : true;
   const server = !params.client || params.server;
   let name = Util.getArgs()[0];
@@ -119,10 +124,32 @@ function main(...args) {
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     console.log('createWS', { url, callbacks, listen });
 
-    net.setLog((params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1), (level, ...args) => {
-      console.log(...args);
-      if(params.debug) console.log((['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8), ...args);
-    });
+    net.setLog(
+      (params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
+      (level, ...args) => {
+        console.log(...args);
+        if(params.debug)
+          console.log(
+            (
+              [
+                'ERR',
+                'WARN',
+                'NOTICE',
+                'INFO',
+                'DEBUG',
+                'PARSER',
+                'HEADER',
+                'EXT',
+                'CLIENT',
+                'LATENCY',
+                'MINNET',
+                'THREAD'
+              ][Math.log2(level)] ?? level + ''
+            ).padEnd(8),
+            ...args
+          );
+      }
+    );
 
     let options;
     let child, dbg;
@@ -195,7 +222,11 @@ function main(...args) {
 
             const { command, ...rest } = obj;
             // console.log('onMessage', command, rest);
-            const { connect = true, address = '127.0.0.1:' + Math.round(Math.random() * (65535 - 1024)) + 1024, args = [] } = rest;
+            const {
+              connect = true,
+              address = '127.0.0.1:' + Math.round(Math.random() * (65535 - 1024)) + 1024,
+              args = []
+            } = rest;
 
             switch (command) {
               case 'start': {

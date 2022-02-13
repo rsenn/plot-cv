@@ -76,7 +76,12 @@ function main(...args) {
   );
   if(params['no-tls'] === true) params.tls = false;
   //console.log('params', params);
-  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key' } = params;
+  const {
+    address = '0.0.0.0',
+    port = 8999,
+    'ssl-cert': sslCert = 'localhost.crt',
+    'ssl-private-key': sslPrivateKey = 'localhost.key'
+  } = params;
   const listen = params.connect && !params.listen ? false : true;
   const server = !params.client || params.server;
   Object.assign(globalThis, { ...rpc2, rpc });
@@ -119,7 +124,11 @@ function main(...args) {
 
   console.log = repl.printFunction(log);
 
-  let cli = (globalThis.sock = new rpc.Socket(`${address}:${port}`, rpc[`RPC${server ? 'Server' : 'Client'}Connection`], +params.verbose));
+  let cli = (globalThis.sock = new rpc.Socket(
+    `${address}:${port}`,
+    rpc[`RPC${server ? 'Server' : 'Client'}Connection`],
+    +params.verbose
+  ));
 
   cli.register({ Socket, Worker: os.Worker, Repeater, REPL, EventEmitter });
   let logFile = std.open('test-rpc.log', 'w+');
@@ -128,10 +137,31 @@ function main(...args) {
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     //console.log('createWS', { url, callbacks, listen });
     const out = s => logFile.puts(s + '\n');
-    net.setLog((params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1), (level, message) => {
-      //repl.printStatus(...args);
-      if(params.debug) out((['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8) + message);
-    });
+    net.setLog(
+      (params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
+      (level, message) => {
+        //repl.printStatus(...args);
+        if(params.debug)
+          out(
+            (
+              [
+                'ERR',
+                'WARN',
+                'NOTICE',
+                'INFO',
+                'DEBUG',
+                'PARSER',
+                'HEADER',
+                'EXT',
+                'CLIENT',
+                'LATENCY',
+                'MINNET',
+                'THREAD'
+              ][Math.log2(level)] ?? level + ''
+            ).padEnd(8) + message
+          );
+      }
+    );
 
     return [net.client, net.server][+listen]({
       tls: params.tls,
@@ -184,7 +214,13 @@ function main(...args) {
           resp.type = 'application/json';
 
           //console.log('\x1b[38;5;215m*files\x1b[0m', { headers, data, req, resp });
-          let { dir = 'tmp', filter = '.(brd|sch|G[A-Z][A-Z])$', verbose = false, objects = false, key = 'mtime' } = data;
+          let {
+            dir = 'tmp',
+            filter = '.(brd|sch|G[A-Z][A-Z])$',
+            verbose = false,
+            objects = false,
+            key = 'mtime'
+          } = data;
           let absdir = path.realpath(dir);
 
           let components = absdir.split(path.sep);

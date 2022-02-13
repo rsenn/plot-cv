@@ -19,7 +19,10 @@ function main(...arglist) {
       maxStringLength: Infinity
     }
   });
-  let json = fs.readFileSync(arglist[0] ?? '/home/roman/Projects/plot-cv/quickjs/qjs-modules/build/x86_64-linux-profile/compile_commands.json', 'utf-8');
+  let json = fs.readFileSync(
+    arglist[0] ?? '/home/roman/Projects/plot-cv/quickjs/qjs-modules/build/x86_64-linux-profile/compile_commands.json',
+    'utf-8'
+  );
   let compileCommands = JSON.parse(json);
   let prevDirectory;
   let commands = [],
@@ -33,7 +36,9 @@ function main(...arglist) {
     prevDirectory = directory;
   }
 
-  let common = util.arraysInCommon(commands).filter((arg, i) => i > 0 && ['mode', 'output'].indexOf(ArgumentType(arg)) == -1);
+  let common = util
+    .arraysInCommon(commands)
+    .filter((arg, i) => i > 0 && ['mode', 'output'].indexOf(ArgumentType(arg)) == -1);
 
   let i = 0;
   for(let cmd of commands) {

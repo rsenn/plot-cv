@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import Util from './lib/util.js';
 import * as path from './lib/path.js';
-import { types } from './lib/misc.js';
+import { types, toString, quote, escape } from './lib/misc.js';
 import child_process from 'child_process';
 
 let bjson;
@@ -230,22 +230,37 @@ export function ReadFd(fd, bufferSize) {
   }
   return [...FdRead()].reduce((acc, buf) => (acc += toString(buf)), '');
 }
-
+/*
 export function FdReader(fd, bufferSize = 1024) {
   let buf = new ArrayBuffer(bufferSize);
   return new Repeater(async (push, stop) => {
     let ret;
     do {
       let r = await waitRead(fd);
-      ret = typeof fd == 'number' ? filesystem.readSync(fd, buf) : fd.read(buf);
+      ret = typeof fd == 'number' ? fs.readSync(fd, buf) : fd.read(buf);
       if(ret > 0) {
         let data = buf.slice(0, ret);
-        await push(filesystem.bufferToString(data));
+        await push(fs.bufferToString(data));
       }
     } while(ret == bufferSize);
     stop();
-    typeof fd == 'number' ? filesystem.closeSync(fd) : fd.destroy();
+    typeof fd == 'number' ? fs.closeSync(fd) : fd.destroy();
   });
+}*/
+export async function* FdReader(fd, bufferSize = 1024) {
+  let buf = new ArrayBuffer(bufferSize);
+  let ret;
+  do {
+    let r = await waitRead(fd);
+    console.log('r', r);
+    ret = typeof fd == 'number' ? await fs.read(fd, buf) : await fd.read(buf);
+    if(ret > 0) {
+      let data = buf.slice(0, ret);
+      yield fs.bufferToString(data);
+    }
+  } while(ret == bufferSize);
+  typeof fd == 'number' ? await fs.close(fd) : fd.destroy();
+  return;
 }
 
 export function CopyToClipboard(text) {
@@ -258,4 +273,120 @@ export function CopyToClipboard(text) {
   let status = child.wait();
   console.log('child', child);
   return { written, status };
+}
+
+export function ReadCallback(fd, fn = data => {}) {
+  let buf = new ArrayBuffer(1024);
+  os.setReadHandler(fd, () => {
+    let r = fs.readSync(fd, buf, 0, 1024);
+    if(r <= 0) {
+      fs.closeSync(fd);
+      os.setReadHandler(fd, null);
+      return;
+    }
+    let data = buf.slice(0, r);
+    data = toString(data);
+    fn(data);
+  });
+}
+
+export function LogCall(fn, thisObj) {
+  let { name } = fn;
+  return function(...args) {
+    let result;
+    result = fn.apply(thisObj ?? this, args);
+    console.log(
+      'Function ' + name + '(',
+      ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })),
+      ') =',
+      result
+    );
+    return result;
+  };
+}
+
+// 'https://www.discogs.com/sell/order/8369022-364'
+
+export function FetchURL(url, options = {}) {
+  let {
+    headers,
+    proxy,
+    cookies = 'cookies.txt',
+    range,
+    body,
+    version = '1.1',
+    tlsv,
+    'user-agent': userAgent
+  } = options;
+
+  let args = Object.entries(headers ?? {})
+    .reduce((acc, [k, v]) => acc.concat(['-H', `${k}: ${v}`]), [])
+    .concat(Array.isArray(url) ? url : [url]);
+
+  args.push('--compressed');
+  args.unshift('-L', '-k');
+
+  if(body) args.unshift('-d', body);
+  if(version) args.unshift('--http' + version);
+  if(tlsv) args.unshift('--tlsv' + tlsv);
+  if(userAgent) args.unshift('-A', userAgent);
+  if(range) args.unshift('-r', range);
+  if(cookies) args.unshift('-c', cookies);
+  if(proxy) args.unshift('-x', proxy);
+
+  //args.unshift('-v');
+  //args.unshift('-sS');
+  args.unshift('--tcp-fastopen', '--tcp-nodelay');
+
+  console.log('FetchURL', console.config({ maxArrayLength: Infinity, compact: false }), { args });
+
+  let child = child_process.spawn('/opt/diet/bin-x86_64/curl', args, { block: false, stdio: ['inherit', 'pipe', 'pipe'] });
+
+  let [, out, err] = child.stdio;
+
+  console.log('child', { out, err });
+
+  let output = '',
+    errors = '';
+
+  ReadCallback(out, data => {
+    output += data;
+    // console.log('data',data.length);
+  });
+  ReadCallback(err, data => {
+    errors += data;
+    std.err.puts(data);
+    std.err.flush();
+  });
+
+  child.wait();
+  /*
+
+
+    let buf=new ArrayBuffer(1024);
+  os.setReadHandler(out, () => {
+let r =fs.readSync(buf, 0, 1024);
+
+if(r > 0) {
+output += toString(buf.slice(0,r))
+  });
+*/
+
+  /*  (async function() { fs.readAllSync(out).then(data=>output=data); })();
+
+  (async function() { fs.readAllSync(err).then(data=>errors=data); })();
+*/
+  let status;
+
+  status = child.wait();
+
+  console.log('FetchURL', { /* output: escape(output), errors,*/ status });
+
+  /*  
+let buf=new ArrayBuffer(1024);
+let r = fs.readSync(child.stdio[1],buf);
+console.log('r', r);
+console.log('buf', buf);*/
+  //let output = fs.readAll(child.stdio[1]);
+  return output;
 }
