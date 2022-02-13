@@ -406,7 +406,7 @@ async function main() {
 
     let written = fs.writeSync(logfile, str, 0, str.length);
 
-    console.log('Request: ' + file, `(${written} bytes written)`);
+    console.log('Request: /' + file);
 
     if(fs.existsSync(file)) {
       const re = /[^\n]*'util'[^\n]*/g;
