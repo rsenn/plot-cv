@@ -1,20 +1,24 @@
 // ==UserScript==
 
-// @name         discogs.es
+// @name         discogs.js
 // @namespace    discogs
-// @version      0.4
-// @description  discogs.es
+// @version      0.7
+// @description  discogs.js
 // @author       You
 // @match        *://*/*
-// @exclude      *://127.0.0.1*/*
-// @updateURL    http://127.0.0.1:3000/discogs.es
+// @exclude      none
+// @updateURL    http://127.0.0.1:3000/discogs.js
 // @grant        none
 // @run-at       document-end
 // ==/UserScript==
 
 (function () {
   'use strict';
+  //Util.timeit(DiscogsHelpers);
+  DiscogsHelpers();
+})();
 
+async function DiscogsHelpers(g = globalThis) {
   let iframe, overlay, order, thread;
 
   const once = (fn, thisArg, memoFn) => {
@@ -99,29 +103,58 @@
 
   const navigableList = d => Element.findAll('.shortcut_navigable', d);
   const ordersGetList = () => navigableList().filter(e => e.id.startsWith('order'));
+  const orderIdCells = () => navigableList('.shortcut_navigable').map(row => row.children[0]);
 
-  const tableGetRows = t => Element.findAll('.table_block tr', t);
+  const tableGetRows = t => Element.findAll('.table_block tr, table tr', t);
 
   const ordersGetIds = () => [...ordersGetList()].map(r => r.id.replace(/order/, '')).filter(id => /[0-9]-/.test(id));
   const ordersGetURLs = () => ordersGetIds().map(id => 'https://www.discogs.com/sell/order/' + id);
 
-  const getId = elem => elem.getAttribute('id').replace(/order/, '');
+  const orderId = elem =>
+    typeof elem == 'string' ? elem.replace(/.*\//g, '') : elem.getAttribute('id').replace(/order/, '');
   const toURL = item => item.url;
   const toText = async resp => await (await resp).text();
 
   const pageGetRequests = async () => await (await caches.open('fetch')).keys();
   const pageGetResponse = async key => await caches.match(key);
+  const pageFetch = await CachedFetch(fetch, caches); /* ??
+    (async url => {
+      let resp;
+      try {
+        if((resp = await caches.match(key))) return resp;
+      } catch(e) {}
+      resp = await fetch(url);
+      return resp;
+    })*/
+
+  const pageParse = x => {
+    let parser = new DOMParser();
+    return (order = parser.parseFromString(x, 'text/html'));
+  };
+
+  const ordersLoad = async (orders = ordersGetURLs()) => {
+    for await(let order of orders) {
+      let html = await pageFetch(order).then(toText);
+      let doc = await pageParse(html);
+
+      console.log(doc);
+      let messages = messageGetList(doc);
+
+      console.log(`order: ${order} messages:`, messages);
+    }
+  };
 
   const frameLoad = src => {
     makeIFrame(src);
     if(iframe.getAttribute('src') != src) iframe.setAttribute('src', src);
     return iframe;
   };
+
   const cacheLoad = async src => await toText(await pageGetResponse(src));
+
   const cacheParse = async src => {
     let x = await cacheLoad(src);
-    let parser = new DOMParser();
-    return (order = parser.parseFromString(x, 'text/html'));
+    return (order = pageParse(x));
   };
 
   const hasText = obj => (obj.children ?? []).some(child => typeof child == 'text');
@@ -144,9 +177,9 @@
     return thread;
   };
 
-  const messageGetItems = () => Element.findAll('li', messageGetThread());
-  const messageGetObj = () => Element.toObject(messageGetThread());
-  const messageGetList = () => messageGetItems().map(getTextArray);
+  const messageGetItems = doc => Element.findAll('li', messageGetThread(doc));
+  const messageGetObj = doc => Element.toObject(messageGetThread(doc));
+  const messageGetList = doc => messageGetItems(doc).map(getTextArray);
 
   const showElement = (e, state) =>
     e.style.setProperty('display', state === true ? 'block' : state === false ? 'none' : state);
@@ -155,37 +188,48 @@
   const styleElement = (e, styles) => Element.css(e, styles);
   //frameLoad(u=(await pageGetRequests())[2].url)
 
-  const orderIdCells = () => navigableList('.shortcut_navigable').map(row => row.children[0]);
-
   const idFields = () => ordersGetList().map(row => row.firstElementChild.nextElementSibling);
 
   const idToURL = id => 'https://www.discogs.com/sell/order/' + id;
 
-  Object.assign(globalThis, {
+  Object.assign(g, {
+    once,
+    makeOverlay,
+    makeText,
     scaleIFrame,
+    makeIFrame,
+    storeValue,
+    transformOverlay,
+    navigableList,
     ordersGetList,
     tableGetRows,
     ordersGetIds,
     ordersGetURLs,
+    ordersLoad,
+    orderId,
     toURL,
     toText,
     pageGetRequests,
     pageGetResponse,
+    pageFetch,
+    pageParse,
     frameLoad,
-    frameShowThread,
     cacheLoad,
     cacheParse,
+    hasText,
+    getTextChildren,
+    getTextArray,
+    getTextFlat,
     messageGetThread,
+    frameShowThread,
     messageGetItems,
     messageGetObj,
     messageGetList,
-    hasText,
-    getTextChildren,
-    getTextFlat,
     showElement,
     hideElement,
     styleElement,
-    makeText,
-    transformOverlay
+    orderIdCells,
+    idFields,
+    idToURL
   });
-})();
+}
