@@ -340,7 +340,7 @@ export function FetchURL(url, options = {}) {
 
   console.log('FetchURL', console.config({ maxArrayLength: Infinity, compact: false }), { args });
 
-  let child = child_process.spawn('/opt/diet/bin-x86_64/curl', args, { block: false, stdio: ['inherit', 'pipe', 'pipe'] });
+  let child = child_process.spawn('curl', args, { block: false, stdio: ['inherit', 'pipe', 'pipe'] });
 
   let [, out, err] = child.stdio;
 
@@ -358,8 +358,9 @@ export function FetchURL(url, options = {}) {
     std.err.puts(data);
     std.err.flush();
   });
-
-  child.wait();
+let flags =child_process.WNOHANG;
+console.log('flags', flags);
+  child.wait(flags);
   
   let status;
 
