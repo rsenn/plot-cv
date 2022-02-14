@@ -358,15 +358,15 @@ export function FetchURL(url, options = {}) {
     std.err.puts(data);
     std.err.flush();
   });
-let flags =child_process.WNOHANG;
-console.log('flags', flags);
+  let flags = child_process.WNOHANG;
+  console.log('flags', flags);
   child.wait(flags);
-  
+
   let status;
 
   status = child.wait();
 
   console.log('FetchURL', { /* output: escape(output), errors,*/ status });
- 
+
   return output;
 }
