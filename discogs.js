@@ -18,6 +18,8 @@
   DiscogsHelpers();
 })();
 
+globalThis.orderDocuments = {};
+
 async function DiscogsHelpers(g = globalThis) {
   let iframe, overlay, order, thread;
 
@@ -137,10 +139,10 @@ async function DiscogsHelpers(g = globalThis) {
       let html = await pageFetch(order).then(toText);
       let doc = await pageParse(html);
 
-      console.log(doc);
-      let messages = messageGetList(doc);
+      orderDocuments[orderId(order)] = doc;
+      let messages = messageGetItems(doc);
 
-      console.log(`order: ${order} messages:`, messages);
+      console.log(`order: ${orderId(order)}\nmessages:`, getTextArray(messages));
     }
   };
 
@@ -179,7 +181,7 @@ async function DiscogsHelpers(g = globalThis) {
 
   const messageGetItems = doc => Element.findAll('li', messageGetThread(doc));
   const messageGetObj = doc => Element.toObject(messageGetThread(doc));
-  const messageGetList = doc => messageGetItems(doc).map(getTextArray);
+  const messageGetList = (doc,reducer=getTextArray) => messageGetItems(doc).map(getTextArray);
 
   const showElement = (e, state) =>
     e.style.setProperty('display', state === true ? 'block' : state === false ? 'none' : state);
