@@ -78,6 +78,10 @@ class PmDeviceInfo_S extends ArrayBuffer {
 
   toString() {
     const { structVersion, interf, name, input, output, opened, is_virtual } = this;
-    return `PmDeviceInfo_S {\n\t.structVersion = ${structVersion},\n\t.interf = 0x${interf.toString(16)},\n\t.name = 0x${name.toString(16)},\n\t.input = ${input},\n\t.output = ${output},\n\t.opened = ${opened},\n\t.is_virtual = ${is_virtual}\n}`;
+    return `PmDeviceInfo_S {\n\t.structVersion = ${structVersion},\n\t.interf = 0x${interf.toString(
+      16
+    )},\n\t.name = 0x${name.toString(
+      16
+    )},\n\t.input = ${input},\n\t.output = ${output},\n\t.opened = ${opened},\n\t.is_virtual = ${is_virtual}\n}`;
   }
 }

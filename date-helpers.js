@@ -14,5 +14,17 @@ export function parseDate(str) {
 }
 
 export function dateToObject(d) {
-  return { timezoneOffset: d.getTimezoneOffset(), time: d.getTime(), year: d.getYear(), fullYear: d.getFullYear(), month: d.getMonth(), date: d.getDate(), hours: d.getHours(), minutes: d.getMinutes(), seconds: d.getSeconds(), milliseconds: d.getMilliseconds(), day: d.getDay() };
+  return {
+    timezoneOffset: d.getTimezoneOffset(),
+    time: d.getTime(),
+    year: d.getYear(),
+    fullYear: d.getFullYear(),
+    month: d.getMonth(),
+    date: d.getDate(),
+    hours: d.getHours(),
+    minutes: d.getMinutes(),
+    seconds: d.getSeconds(),
+    milliseconds: d.getMilliseconds(),
+    day: d.getDay()
+  };
 }
