@@ -67,6 +67,9 @@ main() {
   fi
 
   for SOURCE; do
+    if [ -L "$SOURCE" ]; then
+      SOURCE=`realpath --relative-to="$PWD" "$SOURCE"`
+    fi
     case "$SOURCE" in
       *.es5.js) continue ;;
       *.html) PARSER=html ;;
