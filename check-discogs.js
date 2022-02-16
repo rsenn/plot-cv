@@ -1,20 +1,121 @@
 import * as cv from 'opencv';
+import * as path from 'path';
 import Console from 'console';
+import { glob } from 'util';
 import { LoadConfig } from './config.js';
-import { FetchURL } from './io-helpers.js';
+import { FetchURL, ReadFile, ReadXML, WriteJSON } from './io-helpers.js';
 
 async function main(...args) {
   globalThis.console = new Console({
     colors: true,
     depth: 3,
     maxArrayLength: 30,
-    compact: 3
+    compact: 1
   });
   let config = LoadConfig();
   let orderId = '8369022-364';
 
   let result;
+  let orders = new Map();
 
+  let addressExpr = /<\/?address[^>]*>/;
+  let totalExpr = /<strong>\s*Total/;
+
+  if(args.length == 0) args = glob('tmp/discogs/*').filter(n => !/\.json$/.test(n));
+
+  for(let file of args) {
+    //    if(/\.json$/.test(file)) continue;
+
+    let data,
+      id = path.basename(file);
+
+    data = await dl(id);
+
+    console.log('Order:   ' + ColorStr([24, 160, 255], 'https://www.discogs.com/sell/order/' + id));
+
+    continue;
+
+    data = ReadFile(file);
+
+    let re = new RegExp('<div class="thread_content">', 'g');
+
+    let address = data.substring(data.search(addressExpr) + 1);
+    address = address.substring(address.indexOf('>') + 1, address.search(addressExpr));
+    address = address.replace(/<br>/g, '\n');
+    address = address.trim();
+    address = address.replace(/\n\s*\n.*/g, '');
+
+    address = address.substring(0, address.indexOf('Paypal address:'));
+
+    console.log('Addresse:\n\t ' + ColorStr([192, 255, 0], address).replace(/\n/g, '\n\t '));
+    function ColorStr(c, str) {
+      return str;
+      return `\x1b[38;2;${c.join(';')}m${str}\x1b[0m`;
+    }
+
+    let total = data.substring(data.search(totalExpr) + 1);
+
+    total = total.substring(total.indexOf('<span'), total.indexOf('</span'));
+
+    total = total.replace(/<[^>]+>/g, '');
+    total = total.trim();
+
+    console.log('Total:\t ' + ColorStr([255, 64, 0], total));
+
+    data = data.replace(/\n\s+/gm, '\n');
+    let parts = data.split(re).slice(1, -1);
+    parts = parts.map(p => p.trim());
+    //parts = parts.map(p => p.split(/<\/?[-0-9A-Za-z]+>/g));
+
+    parts = parts.map(p =>
+      p
+        .split(/<[^>]+>/g)
+        .map(str => str.trim())
+        .filter(str => str.trim() != '')
+    );
+    let columns = [20, 20, 16, 0];
+
+    parts = parts.map(part => {
+      const [date, ago, who, ...what] = part;
+
+      return {
+        date,
+        ago,
+        who,
+        what: what.join('\n'),
+
+        [Symbol.inspect](depth, options) {
+          return (
+            '\n\t ' + [date, ago, who, what.join(' ')].reduce((line, field, i) => line + field.padEnd(columns[i]), '')
+          );
+        }
+      };
+
+      return [date, ago, who, what.join('\n')].reduce((line, field, i) => line + field.padEnd(columns[i]), '');
+    });
+    console.log(
+      `${parts.length} Nachrichten`,
+      console.config({ maxArrayLength: 2, compact: false, stringBreakNewline: true }),
+      parts
+    );
+
+    WriteJSON(file + '.json', parts);
+
+    // console.log(`order #${id}`, obj);
+    orders.set(id, parts);
+    console.log('\n' + '─'.repeat(80) + '\n');
+  }
+
+  //console.log('orders', orders);
+
+  let entries = [...orders.entries()];
+
+  WriteJSON('discogs.json', Object.fromEntries(entries));
+}
+
+main(...scriptArgs.slice(1));
+
+async function dl(orderId) {
   result = await FetchURL('https://www.discogs.com/sell/order/' + orderId, {
     headers: {
       authority: 'www.discogs.com',
@@ -42,5 +143,3 @@ async function main(...args) {
     console.log('chunk', chunk);
   }
 }
-
-main(...scriptArgs.slice(1));

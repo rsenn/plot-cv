@@ -5,13 +5,21 @@ import { types, toString, quote, escape } from './lib/misc.js';
 import child_process from 'child_process';
 
 let bjson;
-let mmap;
 
 import('bjson')
   .then(m => (bjson = m))
   .catch(() => {});
+
+let mmap;
+
 import('mmap')
   .then(m => (mmap = m))
+  .catch(() => {});
+
+let xml;
+
+import('xml')
+  .then(m => (xml = m))
   .catch(() => {});
 
 export function IfDebug(token) {
@@ -62,6 +70,13 @@ export function ReadJSON(filename) {
   return data ? JSON.parse(data) : null;
 }
 
+export function ReadXML(filename) {
+  let data = fs.readFileSync(filename, null);
+
+  if(data) debug(`ReadXML: ${data.length} bytes read from '${filename}'`);
+  return data ? xml.read(data, filename, true) : null;
+}
+
 export function MapFile(filename) {
   let fd = os.open(filename, os.O_RDONLY);
   let { size } = os.stat(filename)[0];
@@ -93,6 +108,10 @@ export function WriteFile(name, data, verbose = true) {
 
 export function WriteJSON(name, data) {
   WriteFile(name, JSON.stringify(data, null, 2));
+}
+
+export function WriteXML(name, data) {
+  return WriteFile(name, xml.write(data));
 }
 
 export function ReadBJSON(filename) {
@@ -305,6 +324,36 @@ export function LogCall(fn, thisObj) {
   };
 }
 
+export function Spawn(file, args, options = {}) {
+  let { block = true, usePath = true, cwd, stdio = ['inherit', 'inherit', 'inherit'], env, uid, gid } = options;
+  let parent = [...stdio];
+
+  for(let i = 0; i < 3; i++) {
+    if(stdio[i] == 'pipe') {
+      let [r, w] = os.pipe();
+      stdio[i] = i == 0 ? r : w;
+      parent[i] = i == 0 ? w : r;
+    } else if(stdio[i] == 'inherit') {
+      stdio[i] = i;
+    }
+  }
+
+  const [stdin, stdout, stderr] = stdio;
+  let pid = os.exec([file, ...args], { block, usePath, cwd, stdin, stdout, stderr, env, uid, gid });
+  for(let i = 0; i < 3; i++) {
+    if(typeof stdio[i] == 'number' && stdio[i] != i) os.close(stdio[i]);
+  }
+
+  return {
+    pid,
+    stdio: parent,
+    wait() {
+      let [ret, status] = os.waitpid(this.pid, os.WNOHANG);
+      return ret;
+    }
+  };
+}
+
 // 'https://www.discogs.com/sell/order/8369022-364'
 
 export function FetchURL(url, options = {}) {
@@ -340,7 +389,7 @@ export function FetchURL(url, options = {}) {
 
   console.log('FetchURL', console.config({ maxArrayLength: Infinity, compact: false }), { args });
 
-  let child = child_process.spawn('curl', args, { block: false, stdio: ['inherit', 'pipe', 'pipe'] });
+  let child = /* child_process.spawn*/ Spawn('curl', args, { block: false, stdio: ['inherit', 'pipe', 'pipe'] });
 
   let [, out, err] = child.stdio;
 

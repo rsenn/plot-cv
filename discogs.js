@@ -181,7 +181,7 @@ async function DiscogsHelpers(g = globalThis) {
 
   const messageGetItems = doc => Element.findAll('li', messageGetThread(doc));
   const messageGetObj = doc => Element.toObject(messageGetThread(doc));
-  const messageGetList = (doc,reducer=getTextArray) => messageGetItems(doc).map(getTextArray);
+  const messageGetList = (doc, reducer = getTextArray) => messageGetItems(doc).map(getTextArray);
 
   const showElement = (e, state) =>
     e.style.setProperty('display', state === true ? 'block' : state === false ? 'none' : state);
