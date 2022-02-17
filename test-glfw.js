@@ -126,6 +126,7 @@ function main(...args) {
     glClear(GL_COLOR_BUFFER_BIT); //clears the window to the color you want.
 
     glEnable(GL_TEXTURE_2D);
+    console.log('textures[0]',textures[0]);
     glBindTexture(GL_TEXTURE_2D, textures[0]);
 
     // Draw a textured quad
