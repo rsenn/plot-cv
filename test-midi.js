@@ -1,8 +1,8 @@
 import { client, setLog, LLL_DEBUG, LLL_WARN } from 'net';
 import { Console } from 'console';
-import { MIDIControlEvent, MIDIFile, MIDIInstrument, MIDIStream, MIDISysExEvent } from './lib/midi.js'
+import { MIDIStream, MIDIEvent } from './lib/midi.js';
 
-const MIDI_NOTE_OFF = 0x80;
+/*const MIDI_NOTE_OFF = 0x80;
 const MIDI_NOTE_ON = 0x90;
 const MIDI_POLYPHONIC_KEY_PRESSURE = 0xA0;
 const MIDI_CONTROL_CHANGE = 0xB0;
@@ -20,7 +20,7 @@ const MIDI_CONTINUE = 0xfb;
 const MIDI_STOP = 0xfc;
 const MIDI_ACTIVE_SENSING = 0xfe;
 const MIDI_RESET = 0xff
-
+*/
 /* MIDIMessageLength -- how many bytes in a message? */
 function MIDIMessageLength(byte) {
   byte &= 0xff;
@@ -38,9 +38,8 @@ function MIDIMessageLength(byte) {
 class MIDIMessage extends ArrayBuffer {
   constructor(bytes) {
     super(bytes.length);
-    let u8=new Uint8Array(this);
-    for(let i = 0; i < bytes.length; i++)
-      u8[i] = bytes[i];
+    let u8 = new Uint8Array(this);
+    for(let i = 0; i < bytes.length; i++) u8[i] = bytes[i];
   }
 
   /* prettier-ignore */ get command() { return new Uint8Array(this)[0] & 0xf0; }
@@ -50,10 +49,9 @@ class MIDIMessage extends ArrayBuffer {
   /* prettier-ignore */ set channel(value) { let a=new Uint8Array(this)[0]; a[0] = (a[0] & 0xf0) | (value & 0x0f); }
 
   /* prettier-ignore */ get data() { return new Uint8Array(this, 1); }
-  
 
-  [Symbol.inspect](depth,opts) {
-    return `MIDIMessage `+inspect([ ...new Uint8Array(this) ], {numberBase: 16 });
+  [Symbol.inspect](depth, opts) {
+    return `MIDIMessage ` + inspect([...new Uint8Array(this)], { numberBase: 16 });
   }
 }
 
@@ -67,17 +65,17 @@ function MIDIMessageRead(byteArr) {
   return null;
 }
 
-
 function MIDIMessageDecode(byteArr) {
-const command =  byteArr[0] & 0xf0;
-const channel = byteArr[0] & 0x0f;  
-const len = MIDIMessageLength(byteArr[0]);
-const data = byteArr.slice(1, len);
-return { command,channel,data };
+  const command = byteArr[0] & 0xf0;
+  const channel = byteArr[0] & 0x0f;
+  const len = MIDIMessageLength(byteArr[0]);
+  const data = byteArr.slice(1, len);
+  return { command, channel, data };
 }
 
 function TCPClient(url) {
   let recvBuf = [];
+  let state = [0];
   return client(url, {
     binary: true,
     onConnect(ws, req) {
@@ -95,19 +93,23 @@ function TCPClient(url) {
       os.setWriteHandler(fd, wr);
     },
     onMessage(ws, data) {
-      console.log('onMessage', { ws, data });
+      // console.log('onMessage', { ws, data });
+      //console.log('onMessage', { MIDIStream, MIDIEvent });
 
-      let bytes = new Uint8Array(data);
+      let stream = new MIDIStream(data);
 
+      //console.log('onMessage', { stream,state });
+      let event = MIDIEvent.read(stream, state);
+
+      console.log('onMessage', { event });
+
+      /* let bytes = new Uint8Array(data);
       for(let byte of bytes) recvBuf.push(byte);
-
       console.log('onMessage', { recvBuf });
-
       let midiMsg;
       while((midiMsg = MIDIMessageRead(recvBuf))) {
-      //  let event = MIDIMessageDecode(midiMsg);
-        console.log('onMessage', { midiMsg });
-      }
+         console.log('onMessage', { midiMsg });
+      }*/
     },
     onError(ws, error) {
       console.log('onError', ws, error);
@@ -119,18 +121,15 @@ function main(...args) {
   globalThis.console = new Console(std.err, {
     inspectOptions: { compact: 1, customInspect: true, numberBase: 16 }
   });
+  console.log('midi', Object.keys({ MIDIEvent, MIDIStream }));
 
   const debug = false;
 
   setLog(((debug ? LLL_DEBUG : LLL_WARN) << 1) - 1, (level, msg) => {
-    let p =
-      ['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][
-        level && Math.log2(level)
-      ] ?? level + '';
+    let p = ['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][level && Math.log2(level)] ?? level + '';
     msg = msg.replace(/\n/g, '\\n').replace(/\r/g, '\\r');
 
-    if(!/POLL/.test(msg) && /MINNET/.test(p))
-      if(debug && /(client|http|read|write)/i.test(msg)) console.log(p.padEnd(8), msg);
+    if(!/POLL/.test(msg) && /MINNET/.test(p)) if (debug && /(client|http|read|write)/i.test(msg)) console.log(p.padEnd(8), msg);
   });
 
   let url = args[0] ?? 'tcp://127.0.0.1:6999';
