@@ -1,14 +1,14 @@
-import { client, setLog } from 'net';
+import { client, setLog,LLL_DEBUG,LLL_WARN } from 'net';
 import { Console } from 'console';
 
 function main(...args) {
   globalThis.console = new Console(std.err, {
-    inspectOptions: { compact: 0, customInspect: true }
+    inspectOptions: { compact: 1, customInspect: true }
   });
 
   const debug = false;
 
-  setLog(((debug ? net.LLL_DEBUG : net.LLL_WARN) << 1) - 1, (level, msg) => {
+  setLog(((debug ? LLL_DEBUG : LLL_WARN) << 1) - 1, (level, msg) => {
     let p =
       ['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][
         level && Math.log2(level)
