@@ -1,25 +1,4 @@
-import {
-  Align,
-  Container,
-  CSSTransformSetters,
-  Element,
-  ElementPosProps,
-  ElementTransformation,
-  isNumber,
-  Line,
-  Matrix,
-  Point,
-  PointList,
-  RandomColor,
-  ScalarValue,
-  Size,
-  Timer,
-  Transition,
-  TransitionList,
-  Tree,
-  Unit,
-  XPath
-} from './lib/dom.js';
+import { Align, Container, CSSTransformSetters, Element, ElementPosProps, ElementTransformation, isNumber, Line, Matrix, Point, PointList, RandomColor, ScalarValue, Size, Timer, Transition, TransitionList, Tree, Unit, XPath } from './lib/dom.js';
 
 window.addEventListener('load', async () => {
   console.log('midi-client.js loaded');
