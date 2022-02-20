@@ -385,7 +385,7 @@ function main(...args) {
 
   delete globalThis.DEBUG;
 
-  globalThis.ws = createWS(Util.parseURL('wss://127.0.0.1:9000/ws'), {}, true);
+  globalThis.ws = createWS(Util.parseURL(`wss://${address}:9000/ws`), {}, true);
   //  Object.defineProperty(globalThis, 'DEBUG', { get: DebugFlags });
 
   /* if(listen) cli.listen(createWS, os);
