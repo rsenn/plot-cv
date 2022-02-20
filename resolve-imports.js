@@ -6,7 +6,7 @@ import inspect from 'inspect';
 import * as path from 'path';
 import { Lexer, Token } from 'lexer';
 import { Console } from 'console';
-import JSLexer from 'jslexer.js';
+import JSLexer from './quickjs/qjs-modules/lib/jslexer.js';
 import {
   getset,
   memoize,
