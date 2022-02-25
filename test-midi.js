@@ -1,6 +1,9 @@
+import * as os from 'os';
+import * as std from 'std';
 import { client, setLog, LLL_DEBUG, LLL_WARN } from 'net';
 import { Console } from 'console';
 import { MIDIStream, MIDIEvent } from './lib/midi.js';
+import { quote,toString } from './lib/misc.js';
 
 /*const MIDI_NOTE_OFF = 0x80;
 const MIDI_NOTE_ON = 0x90;
@@ -75,7 +78,7 @@ function MIDIMessageDecode(byteArr) {
 
 function TCPClient(url) {
   let recvBuf = [];
-  let state = [0];
+  let status = [ ];
   return client(url, {
     binary: true,
     onConnect(ws, req) {
@@ -93,24 +96,16 @@ function TCPClient(url) {
       os.setWriteHandler(fd, wr);
     },
     onMessage(ws, data) {
-      // console.log('onMessage', { ws, data });
-      //console.log('onMessage', { MIDIStream, MIDIEvent });
-
+      console.log('onMessage', { ws, data });
+    try{
       let stream = new MIDIStream(data);
-
-      //console.log('onMessage', { stream,state });
-      let event = MIDIEvent.read(stream, state);
-
+      let event = MIDIEvent.read(stream, status);
       console.log('onMessage', { event });
-
-      /* let bytes = new Uint8Array(data);
-      for(let byte of bytes) recvBuf.push(byte);
-      console.log('onMessage', { recvBuf });
-      let midiMsg;
-      while((midiMsg = MIDIMessageRead(recvBuf))) {
-         console.log('onMessage', { midiMsg });
-      }*/
+    }catch(e) {
+      console.log('onMessage.exception', e.message);
+    }
     },
+
     onError(ws, error) {
       console.log('onError', ws, error);
     }
@@ -133,6 +128,20 @@ function main(...args) {
   });
 
   let url = args[0] ?? 'tcp://127.0.0.1:6999';
+
+  os.signal(os.SIGINT, undefined);
+os.ttySetRaw(0);
+  os.setReadHandler(0, () => {
+    let b=new ArrayBuffer(1);
+    let r=os.read(0, b, 0, 1);
+    if(r==1) {
+      let [num]=new Uint8Array(b);
+      let ch=String.fromCharCode(num);
+      console.log('Read byte ', num, ` ${quote(ch, "'")}`);
+
+      if(num == 4) std.exit(0);
+    }
+  });
 
   TCPClient(url);
 }
