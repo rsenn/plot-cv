@@ -1,3 +1,4 @@
+import * as std from 'std';
 import { Point, Size, Contour, Rect, Line, TickMeter, Mat, CLAHE, Draw } from 'opencv';
 import * as cv from 'opencv';
 import { VideoSource } from './qjs-opencv/js/cvVideo.js';
@@ -44,7 +45,7 @@ import { Profiler } from './time-helpers.js';
 let rainbow;
 let zoom = 1;
 let debug = false;
-let basename = process.argv[1].replace(/\.js$/, '');
+let basename = (globalThis.process ? globalThis.process.argv[1] : scriptArgs[1]).replace(/\.js$/, '');
 
 let simplifyMethods = {
   NTH_POINT: c => c.simplifyNthPoint(2),
@@ -172,7 +173,7 @@ function main(...args) {
     compact: 1
   });
 
-  const { DISPLAY } = process.env;
+  const { DISPLAY } = globalThis.process ? globalThis.process.env : std.getenviron();
   log.info('DISPLAY', DISPLAY);
 
   let opts = GetOpt(
@@ -320,7 +321,7 @@ function main(...args) {
       Processor(function AcquireFrame(src, dst) {
         const dstEmpty = dst.empty;
         if(dst.empty) dst0Size = dst.size;
-        log.info('video', video.read, video.constructor.name);
+       // log.info('video', video.read, video.constructor.name);
         framePos = video.get('pos_frames');
         video.read(dst);
         //log.info('dst', dst);
@@ -546,7 +547,7 @@ function main(...args) {
         }
         default: {
           if(keyCode !== undefined && key != -1)
-            log.info('unhandled', console.config({ numberBase: 16 }), {
+            log.info('unhandled', console.config({ compact:2,numberBase: 16 }), {
               key,
               keyCode,
               modifiers
