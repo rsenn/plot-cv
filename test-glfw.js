@@ -1,9 +1,9 @@
-import { poll, context, CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_PROFILE, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, RESIZABLE, SAMPLES, Window, Monitor } from 'glfw';
+import { poll, context, CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_PROFILE, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, RESIZABLE, SAMPLES, Window } from 'glfw';
 import Util from './lib/util.js';
 import Console from 'console';
 import { glFlush, glBegin, glBindTexture, glClear, glClearColor, glEnable, glEnd, glGenTextures, glTexCoord2f, glTexParameterf, glTexImage2D, glVertex3f, glViewport, GL_COLOR_BUFFER_BIT, GL_LINEAR, GL_QUADS, GL_REPEAT, GL_RGB, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_TEXTURE_WRAP_S, GL_TEXTURE_WRAP_T, GL_UNSIGNED_BYTE, glDisable, glLoadIdentity, glMatrixMode, glOrtho, glPushMatrix, glPopMatrix, GL_LIGHTING, GL_MODELVIEW, GL_PROJECTION } from './gl.js';
-import { RGBA, HSLA } from './lib/color.js';
-import { Mat, imread } from 'opencv';
+import { HSLA } from './lib/color.js';
+import { imread } from 'opencv';
 
 function Mat2Texture(texture_cv) {
   console.log('texture_cv', texture_cv);
@@ -44,10 +44,13 @@ function main(...args) {
 
   console.log(`width: ${width}, height: ${height}, x: ${x}, y: ${y}`);
 
+  if(args.length==0)
+    args.push('Muehleberg.png');
+
   while(args.length > 0) {
     console.log('args[0]:', args[0]);
 
-    let image = imread(args[0] ?? '9b16290d7d9c8f1aca810b6702070189_20170331_112428.jpg');
+    let image = imread(args[0]);
     console.log('image:', image);
     console.log('image.buffer:', image.buffer);
     let texture = Mat2Texture(image);
@@ -80,7 +83,7 @@ function main(...args) {
     glClear(GL_COLOR_BUFFER_BIT); //clears the window to the color you want.
 
     glEnable(GL_TEXTURE_2D);
-    console.log('textures[0]', textures[0]);
+   // console.log('textures[0]', textures[0]);
     glBindTexture(GL_TEXTURE_2D, textures[0]);
 
     // Draw a textured quad
