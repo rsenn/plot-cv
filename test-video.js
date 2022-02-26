@@ -321,7 +321,7 @@ function main(...args) {
       Processor(function AcquireFrame(src, dst) {
         const dstEmpty = dst.empty;
         if(dst.empty) dst0Size = dst.size;
-        log.info('video', video.read, video.constructor.name);
+       // log.info('video', video.read, video.constructor.name);
         framePos = video.get('pos_frames');
         video.read(dst);
         //log.info('dst', dst);
@@ -547,7 +547,7 @@ function main(...args) {
         }
         default: {
           if(keyCode !== undefined && key != -1)
-            log.info('unhandled', console.config({ numberBase: 16 }), {
+            log.info('unhandled', console.config({ compact:2,numberBase: 16 }), {
               key,
               keyCode,
               modifiers

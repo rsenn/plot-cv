@@ -1,3 +1,4 @@
+import * as std from 'std';
 import { Point, Size, Contour, Rect, Line, TickMeter, Mat, CLAHE, Draw } from 'opencv';
 import * as cv from 'opencv';
 import { HSLA } from './lib/color.js';
@@ -163,7 +164,7 @@ function main(...args) {
     maxArrayLength: 30,
     compact: 3
   });
-  const { DISPLAY } = process.env;
+  const { DISPLAY } = globalThis.process ? globalThis.process.env : std.getenviron();
   console.log('DISPLAY', DISPLAY);
   console.log(
     'cv.ALIGN_RIGHT',
