@@ -46,10 +46,10 @@ endif(PNG_LIBRARIES)
 if(BUILD_QUICKJS)
   include(${CMAKE_CURRENT_SOURCE_DIR}/quickjs/defs.cmake)
 else(BUILD_QUICKJS)
-  dump(QUICKJS_PREFIX)
+  #dump(QUICKJS_PREFIX)
 
   find_quickjs()
-  dump(QUICKJS_INCLUDE_DIR)
+  #dump(QUICKJS_INCLUDE_DIR)
 endif(BUILD_QUICKJS)
 
 find_opencv()
@@ -140,7 +140,7 @@ message("C++ standard: ${CXX_STANDARD_VALUE}")
 macro(NOWARN_FLAG FLAG)
   canonicalize(VARNAME "${FLAG}")
   check_c_compiler_flag("${FLAG}" "${VARNAME}")
-  dump(${VARNAME})
+  #dump(${VARNAME})
 
   if(${VARNAME})
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${FLAG}")
@@ -165,8 +165,8 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES ".*Clang.*")
   nowarn_flag(-Wno-deprecated-enum-enum-conversion)
 endif("${CMAKE_CXX_COMPILER_ID}" MATCHES ".*Clang.*")
 
-dump(CMAKE_C_FLAGS CMAKE_CXX_FLAGS)
-dump(CMAKE_CXX_FLAGS_DEBUG)
+#dump(CMAKE_C_FLAGS CMAKE_CXX_FLAGS)
+#dump(CMAKE_CXX_FLAGS_DEBUG)
 
 #[[
 check_c_compiler_flag("-Wno-unused-value" WARN_NO_UNUSED_VALUE)
@@ -323,7 +323,7 @@ list(
   src/matrix.cpp
   src/plot-cv.cpp)
 
-dump(PNG_LIBRARY PNG_LIBRARY_RELEASE)
+#dump(PNG_LIBRARY PNG_LIBRARY_RELEASE)
 
 option(BUILD_CLI "Build command-line interpreter" OFF)
 
