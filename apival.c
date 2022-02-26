@@ -438,9 +438,6 @@ main() {
   printf("pmBadData = %i\n", pmBadData);
   printf("pmInternalError = %i\n", pmInternalError);
   printf("pmBufferMaxSize = %i\n", pmBufferMaxSize);
-  printf("pmNotImplemented = %i\n", pmNotImplemented);
-  printf("pmInterfaceNotSupported = %i\n", pmInterfaceNotSupported);
-  printf("pmNameConflict = %i\n", pmNameConflict);
 
   printf("sizeof(struct inotify_event) = %zu\n", sizeof(struct inotify_event));
   printf("IN_ACCESS = %i\n", IN_ACCESS);
