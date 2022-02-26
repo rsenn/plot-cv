@@ -23,7 +23,8 @@ import('xml')
   .catch(() => {});
 
 export function IfDebug(token) {
-  const { DEBUG = '' } = process.env;
+  const { DEBUG = '' } = globalThis.process ? globalThis.process.env : {}; //std.getenviron();
+
   const tokList = DEBUG.split(/[^A-Za-z0-9_]+/g);
 
   return tokList.indexOf(token) != -1;
@@ -184,7 +185,7 @@ export function* RecursiveDirIterator(dir, pred = (entry, file, dir, depth) => t
 }
 
 export function* ReadDirRecursive(dir, maxDepth = Infinity) {
-  dir = dir.replace(/~/g, process.env['HOME'] ?? std.getenv('HOME'));
+  dir = dir.replace(/~/g, globalThis.process.env['HOME'] ?? std.getenv('HOME'));
   for(let file of fs.readdirSync(dir)) {
     if(['.', '..'].indexOf(file) != -1) continue;
     let entry = `${dir}/${file}`;
@@ -314,7 +315,12 @@ export function LogCall(fn, thisObj) {
   return function(...args) {
     let result;
     result = fn.apply(thisObj ?? this, args);
-    console.log('Function ' + name + '(', ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })), ') =', result);
+    console.log(
+      'Function ' + name + '(',
+      ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })),
+      ') =',
+      result
+    );
     return result;
   };
 }
@@ -352,7 +358,16 @@ export function Spawn(file, args, options = {}) {
 // 'https://www.discogs.com/sell/order/8369022-364'
 
 export function FetchURL(url, options = {}) {
-  let { headers, proxy, cookies = 'cookies.txt', range, body, version = '1.1', tlsv, 'user-agent': userAgent } = options;
+  let {
+    headers,
+    proxy,
+    cookies = 'cookies.txt',
+    range,
+    body,
+    version = '1.1',
+    tlsv,
+    'user-agent': userAgent
+  } = options;
 
   let args = Object.entries(headers ?? {})
     .reduce((acc, [k, v]) => acc.concat(['-H', `${k}: ${v}`]), [])

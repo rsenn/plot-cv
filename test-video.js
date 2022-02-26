@@ -1,3 +1,4 @@
+import * as std from 'std';
 import { Point, Size, Contour, Rect, Line, TickMeter, Mat, CLAHE, Draw } from 'opencv';
 import * as cv from 'opencv';
 import { VideoSource } from './qjs-opencv/js/cvVideo.js';
@@ -44,7 +45,7 @@ import { Profiler } from './time-helpers.js';
 let rainbow;
 let zoom = 1;
 let debug = false;
-let basename = process.argv[1].replace(/\.js$/, '');
+let basename = (globalThis.process ? globalThis.process.argv[1] : scriptArgs[1]).replace(/\.js$/, '');
 
 let simplifyMethods = {
   NTH_POINT: c => c.simplifyNthPoint(2),
@@ -172,7 +173,7 @@ function main(...args) {
     compact: 1
   });
 
-  const { DISPLAY } = process.env;
+  const { DISPLAY } = globalThis.process ? globalThis.process.env : std.getenviron();
   log.info('DISPLAY', DISPLAY);
 
   let opts = GetOpt(
