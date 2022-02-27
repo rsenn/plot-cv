@@ -12,33 +12,8 @@ import Console from 'console';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
 import { SaveConfig, LoadConfig } from './config.js';
 import SvgPath from './lib/svg/path.js';
-import {
-  WeakMapper,
-  Modulo,
-  WeakAssign,
-  BindMethods,
-  BitsToNames,
-  FindKey,
-  Define,
-  Once,
-  GetOpt,
-  RoundTo,
-  Range
-} from './qjs-opencv/js/cvUtils.js';
-import {
-  IfDebug,
-  LogIfDebug,
-  ReadFile,
-  LoadHistory,
-  ReadJSON,
-  MapFile,
-  ReadBJSON,
-  WriteFile,
-  WriteJSON,
-  WriteBJSON,
-  DirIterator,
-  RecursiveDirIterator
-} from './io-helpers.js';
+import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Define, Once, GetOpt, RoundTo, Range } from './qjs-opencv/js/cvUtils.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
 import { MakeSVG, SaveSVG } from './image-helpers.js';
 import { Profiler } from './time-helpers.js';
 
@@ -321,8 +296,9 @@ function main(...args) {
       Processor(function AcquireFrame(src, dst) {
         const dstEmpty = dst.empty;
         if(dst.empty) dst0Size = dst.size;
-       // log.info('video', video.read, video.constructor.name);
+        // log.info('video', video.read, video.constructor.name);
         framePos = video.get('pos_frames');
+        log.info('video', video.read, video.constructor.name);
         video.read(dst);
         //log.info('dst', dst);
         win.show(dst);
@@ -547,7 +523,7 @@ function main(...args) {
         }
         default: {
           if(keyCode !== undefined && key != -1)
-            log.info('unhandled', console.config({ compact:2,numberBase: 16 }), {
+            log.info('unhandled', console.config({ compact: 2, numberBase: 16 }), {
               key,
               keyCode,
               modifiers

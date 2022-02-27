@@ -7,27 +7,7 @@ import * as path from 'path';
 import { Lexer, Token } from 'lexer';
 import { Console } from 'console';
 import JSLexer from 'quickjs/qjs-modules/lib/jslexer.js';
-import {
-  getset,
-  memoize,
-  randInt,
-  getTypeName,
-  getTypeStr,
-  isObject,
-  shorten,
-  toString,
-  toArrayBuffer,
-  define,
-  curry,
-  unique,
-  split,
-  extendArray,
-  camelize,
-  types,
-  getOpt,
-  quote,
-  escape
-} from 'util';
+import { getset, memoize, randInt, getTypeName, getTypeStr, isObject, shorten, toString, toArrayBuffer, define, curry, unique, split, extendArray, camelize, types, getOpt, quote, escape } from 'util';
 
 ('use strict');
 ('use math');
