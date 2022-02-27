@@ -8,7 +8,7 @@ import { Console } from 'console';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
-import * as fs from './lib/filesystem.js';
+import * as fs from 'fs';
 import * as net from 'net';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 import { StartDebugger, ConnectDebugger } from './debugger.js';
@@ -17,6 +17,7 @@ import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl
 globalThis.fs = fs;
 
 extendArray();
+  const scriptName = () => scriptArgs[0].replace(/.*\//g, '').replace(/\.js$/, '');
 
 function ReadJSON(filename) {
   let data = fs.readFileSync(filename, 'utf-8');
@@ -49,7 +50,7 @@ function WriteJSON(name, data) {
   WriteFile(name, JSON.stringify(data, null, 2));
 }
 
-function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = '') {
+function StartREPL(prefix = scriptName(), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, fs, false);
 
   repl.historyLoad(null, false);
@@ -77,8 +78,9 @@ function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = ''
   return repl;
 }
 
+
 function main(...args) {
-  const base = path.basename(Util.getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
+  const base = scriptName().replace(/\.[a-z]*$/, '');
 
   const config = ReadJSON(`.${base}-config`) ?? {};
   globalThis.console = new Console(std.err, {
