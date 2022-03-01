@@ -104,14 +104,14 @@ Object.assign(GLFW.prototype, {
     window.position = new Position(...args);
   },
   resize(...args) {
-     const { window } = this;
-   window.size = new Size(...args);
+    const { window } = this;
+    window.size = new Size(...args);
   },
   setTitle(title) {
-      const { window } = this;
-  window.title = this.title = title;
+    const { window } = this;
+    window.title = this.title = title;
   },
-  beginFrame(clearColor = new RGBA(0, 0, 0, 255)) {
+  begin(clearColor = new RGBA(0, 0, 0, 255)) {
     const { resolution } = this;
     glViewport(0, 0, resolution.width, resolution.height);
 
@@ -120,9 +120,9 @@ Object.assign(GLFW.prototype, {
     glClearColor(...clearColor);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
   },
-  endFrame() {
-       const { window } = this;
- window.swapBuffers();
+  end() {
+    const { window } = this;
+    window.swapBuffers();
     poll();
   }
 });

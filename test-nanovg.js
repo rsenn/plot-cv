@@ -68,24 +68,14 @@ function main(...args) {
   let img2Id = nvg.CreateImage('Muehleberg.png', 0);
 
   let img2Sz = nvg.ImageSize(img2Id);
-  let imgSz = nvg.ImageSize(imgId);
-  //console.log('nvg.ImageSize(img2Id)', img2Sz + '');
-  //console.log('nvg.ImageSize(imgId)', imgSz + '');
-  while(running) {
-    if(window.shouldClose) {
-      //console.log('window.shouldClose:', window.shouldClose);
-      break;
-    }
+  let imgSz = nvg.ImageSize(imgId); 
 
+  while((running &&= !window.shouldClose)) {
     let time = +new Date() / 1000;
     let index = Math.floor((time * 360) / 30);
     let color = new HSLA(index % 360, 100, 50 + 25 * Math.sin(time * 0.1 * Math.PI)).toRGBA();
 
-    context.beginFrame(color);
-
-    /*glViewport(0, 0, width, height);
-    glClearColor(...color.normalize());
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);*/
+    context.begin(color);
 
     nvg.BeginFrame(width, height, 1);
 
@@ -95,7 +85,7 @@ function main(...args) {
 
     let p = nvg.TransformMultiply(nvg.TransformMultiply(m, t), s);
 
-    let pattern = nvg.ImagePattern(0, 0, ...img2Sz, 0, img2Id, 1);
+   // let pattern = nvg.ImagePattern(0, 0, ...img2Sz, 0, img2Id, 1);
 
     let center = new Position(size.width / 2, size.height / 2);
     let imgSz_2 = new Position(img2Sz.width * -0.5, img2Sz.height * -0.5);
@@ -119,7 +109,7 @@ function main(...args) {
 
     nvg.EndFrame();
 
-    context.endFrame();
+    context.end();
     /*window.swapBuffers();
     glfw.poll();*/
     i++;
