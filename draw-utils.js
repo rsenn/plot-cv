@@ -32,9 +32,9 @@ export function GLFW(width, height, options = {}) {
   let window = (glfw.context.current = new Window(resolution.width, resolution.height, 'OpenGL'));
 
   Object.assign(window, { ...GLFW.defaultCallbacks, ...handlers });
-  let { size, position } = window;
+
   nvg.CreateGL3(nvg.STENCIL_STROKES | nvg.ANTIALIAS | nvg.DEBUG);
-  return Object.assign(this, { resolution, window, size, position });
+  return Object.assign(this, { resolution, window });
 }
 
 GLFW.defaultCallbacks = {
@@ -85,6 +85,18 @@ GLFW.defaultCallbacks = {
   }
 };
 
+Object.defineProperties(GLFW.prototype, {
+  size: {
+    get() {
+      return this.window.size;
+    }
+  },
+  position: {
+    get() {
+      return this.window.position;
+    }
+  }
+});
 GLFW.prototype.startFrame = function(clearColor = new RGBA(0, 0, 0, 255)) {
   glViewport(0, 0, width, height);
 
