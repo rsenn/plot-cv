@@ -1,5 +1,5 @@
-import { CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, OPENGL_PROFILE, RESIZABLE, SAMPLES, Window, Size, context, poll } from 'glfw';
-export { Position } from 'glfw';
+import { CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, OPENGL_PROFILE, RESIZABLE, SAMPLES, Window, Size, Position, context, poll } from 'glfw';
+export { Window, Size, Position } from 'glfw';
 import * as nvg from 'nanovg';
 import { RGBA } from './lib/color.js';
 import { glClear, glClearColor, glViewport, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT } from './gl.js';
@@ -13,6 +13,7 @@ export function GLFW(width, height, options = {}) {
     contextVersionMinor = 2,
     openglProfile = OPENGL_CORE_PROFILE,
     openglForwardCompat = true,
+    title = 'OpenGL',
     ...handlers
   } = options;
   const hints = [
@@ -26,13 +27,13 @@ export function GLFW(width, height, options = {}) {
 
   for(let [prop, value] of hints) Window.hint(prop, value);
 
-  let window = (context.current = new Window(resolution.width, resolution.height, 'OpenGL'));
+  let window = (context.current = new Window(resolution.width, resolution.height, title));
 
   Object.assign(window, { ...GLFW.defaultCallbacks, ...handlers });
 
   nvg.CreateGL3(nvg.STENCIL_STROKES | nvg.ANTIALIAS | nvg.DEBUG);
 
-  return Object.assign(this, { resolution, window });
+  return Object.assign(this, { resolution, title, window });
 }
 
 GLFW.defaultCallbacks = {
@@ -98,8 +99,14 @@ Object.defineProperties(GLFW.prototype, {
 
 Object.assign(GLFW.prototype, {
   poll,
+  move(...args) {
+    this.window.position = new Position(...args);
+  },
   resize(...args) {
-    this.size = new Size(...args);
+    this.window.size = new Size(...args);
+  },
+  setTitle(title) {
+    this.window.title = this.title = title;
   },
   beginFrame(clearColor = new RGBA(0, 0, 0, 255)) {
     const { resolution } = this;

@@ -23,6 +23,7 @@ function main(...args) {
 
   let context;
   const { position, size, window } = (context = new GLFW(1280, 900, {
+    title: scriptArgs[0],
     resizable: true,
     handleSize(width, height) {
       console.log('resized', { width, height });
