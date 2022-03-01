@@ -100,13 +100,16 @@ Object.defineProperties(GLFW.prototype, {
 Object.assign(GLFW.prototype, {
   poll,
   move(...args) {
-    this.window.position = new Position(...args);
+    const { window } = this;
+    window.position = new Position(...args);
   },
   resize(...args) {
-    this.window.size = new Size(...args);
+     const { window } = this;
+   window.size = new Size(...args);
   },
   setTitle(title) {
-    this.window.title = this.title = title;
+      const { window } = this;
+  window.title = this.title = title;
   },
   beginFrame(clearColor = new RGBA(0, 0, 0, 255)) {
     const { resolution } = this;
@@ -118,7 +121,8 @@ Object.assign(GLFW.prototype, {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
   },
   endFrame() {
-    this.window.swapBuffers();
+       const { window } = this;
+ window.swapBuffers();
     poll();
   }
 });
