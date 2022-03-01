@@ -1,7 +1,7 @@
 import * as glfw from 'glfw';
 import { glClear, glClearColor, glViewport, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT } from './gl.js';
 import { HSLA } from './lib/color.js';
-import { Mat,  Point } from 'opencv';
+import { Mat, Point } from 'opencv';
 import * as cv from 'opencv';
 import * as nvg from 'nanovg';
 import Console from 'console';
@@ -61,8 +61,8 @@ function main(...args) {
   let imgId = Mat2Image(mat);
   let img2Id = nvg.CreateImage('Muehleberg.png', 0);
 
-  let img2Sz = new glfw.Size(nvg.ImageSize(img2Id));
-  let imgSz = new glfw.Size(nvg.ImageSize(imgId));
+  let img2Sz = /*new glfw.Size*/ nvg.ImageSize(img2Id);
+  let imgSz = /* new glfw.Size*/ nvg.ImageSize(imgId);
   //console.log('nvg.ImageSize(img2Id)', img2Sz + '');
   //console.log('nvg.ImageSize(imgId)', imgSz + '');
   while(running) {
@@ -75,7 +75,6 @@ function main(...args) {
     let time = +new Date() / 1000;
     let index = Math.floor((time * 360) / 30);
     let color = new HSLA(index % 360, 100, 50 + 25 * Math.sin(time * 0.1 * Math.PI)).toRGBA();
-
 
     glClearColor(...color.normalize());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
