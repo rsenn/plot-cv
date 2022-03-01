@@ -1,35 +1,32 @@
-import * as glfw from 'glfw';
+import { CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, OPENGL_PROFILE, RESIZABLE, SAMPLES, Window, Size, context, poll } from 'glfw';
 export { Position } from 'glfw';
-import * as cv from 'opencv';
 import * as nvg from 'nanovg';
 import { RGBA } from './lib/color.js';
-import { Size, Rect } from 'opencv';
 import { glClear, glClearColor, glViewport, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT } from './gl.js';
 
 export function GLFW(width, height, options = {}) {
-  let resolution = new glfw.Size(width, height);
-  const { Window } = glfw;
+  let resolution = new Size(width, height);
   const {
     resizable = false,
     samples = 4,
     contextVersionMajor = 3,
     contextVersionMinor = 2,
-    openglProfile = glfw.OPENGL_CORE_PROFILE,
+    openglProfile = OPENGL_CORE_PROFILE,
     openglForwardCompat = true,
     ...handlers
   } = options;
   const hints = [
-    [glfw.CONTEXT_VERSION_MAJOR, contextVersionMajor],
-    [glfw.CONTEXT_VERSION_MINOR, contextVersionMinor],
-    [glfw.OPENGL_PROFILE, openglProfile],
-    [glfw.OPENGL_FORWARD_COMPAT, openglForwardCompat],
-    [glfw.RESIZABLE, resizable],
-    [glfw.SAMPLES, samples]
+    [CONTEXT_VERSION_MAJOR, contextVersionMajor],
+    [CONTEXT_VERSION_MINOR, contextVersionMinor],
+    [OPENGL_PROFILE, openglProfile],
+    [OPENGL_FORWARD_COMPAT, openglForwardCompat],
+    [RESIZABLE, resizable],
+    [SAMPLES, samples]
   ];
 
   for(let [prop, value] of hints) Window.hint(prop, value);
 
-  let window = (glfw.context.current = new Window(resolution.width, resolution.height, 'OpenGL'));
+  let window = (context.current = new Window(resolution.width, resolution.height, 'OpenGL'));
 
   Object.assign(window, { ...GLFW.defaultCallbacks, ...handlers });
 
@@ -108,7 +105,7 @@ GLFW.prototype.beginFrame = function(clearColor = new RGBA(0, 0, 0, 255)) {
 
 GLFW.prototype.endFrame = function() {
   this.window.swapBuffers();
-  glfw.poll();
+  poll();
 };
 
 export function Mat2Image(mat) {
