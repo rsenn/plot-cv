@@ -98,6 +98,9 @@ Object.defineProperties(GLFW.prototype, {
 
 Object.assign(GLFW.prototype, {
   poll,
+  resize(...args) {
+    this.size = new Size(...args);
+  },
   beginFrame(clearColor = new RGBA(0, 0, 0, 255)) {
     const { resolution } = this;
     glViewport(0, 0, resolution.width, resolution.height);
