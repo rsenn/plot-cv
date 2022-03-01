@@ -197,7 +197,7 @@ function main(...args) {
       .map(hue => new HSLA(hue, 100, 50))
       .map(h => h.toRGBA());
 
-  let win = new Window('gray', cv.WINDOW_NORMAL /*| cv.WINDOW_AUTOSIZE | cv.WINDOW_KEEPRATIO*/);
+  let win = new Window('gray', cv.WINDOW_NORMAL|cv.WINDOW_KEEPRATIO /*| cv.WINDOW_KEEPRATIO | */);
   //console.debug('Mouse :', { MouseEvents, MouseFlags });
 
   const printFlags = flags => [...BitsToNames(MouseFlags)];
@@ -298,7 +298,7 @@ function main(...args) {
         if(dst.empty) dst0Size = dst.size;
         // log.info('video', video.read, video.constructor.name);
         framePos = video.get('pos_frames');
-        log.info('video', video.read, video.constructor.name);
+        //log.info('video', video.read, video.constructor.name);
         video.read(dst);
         //log.info('dst', dst);
         win.show(dst);
@@ -391,6 +391,7 @@ function main(...args) {
 
   let out = new Mat();
   let size;
+  let clientRect = win.imageRect;
 
   const ClearSurface = mat => (mat.setTo([0, 0, 0, 0]), mat);
   const MakeSurface = () =>
@@ -411,6 +412,11 @@ function main(...args) {
     if(frameNo == frameCount) video.set('pos_frames', (frameNo = 0));
 
     let gray = pipeline();
+
+    if(!win.imageRect.equals(clientRect)) {
+      log.info(`resized from ${clientRect} to ${win.imageRect}`);
+      clientRect = win.imageRect;
+    }
 
     showOutput();
 

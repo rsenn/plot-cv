@@ -1,42 +1,5 @@
 import * as glfw from 'glfw';
-import Util from './lib/util.js';
-import {
-  glFlush,
-  glBegin,
-  glBindTexture,
-  glClear,
-  glClearColor,
-  glEnable,
-  glEnd,
-  glGenTextures,
-  glTexCoord2f,
-  glTexParameterf,
-  glTexImage2D,
-  glVertex3f,
-  glViewport,
-  GL_COLOR_BUFFER_BIT,
-  GL_DEPTH_BUFFER_BIT,
-  GL_STENCIL_BUFFER_BIT,
-  GL_LINEAR,
-  GL_QUADS,
-  GL_REPEAT,
-  GL_RGB,
-  GL_TEXTURE_2D,
-  GL_TEXTURE_MAG_FILTER,
-  GL_TEXTURE_MIN_FILTER,
-  GL_TEXTURE_WRAP_S,
-  GL_TEXTURE_WRAP_T,
-  GL_UNSIGNED_BYTE,
-  glDisable,
-  glLoadIdentity,
-  glMatrixMode,
-  glOrtho,
-  glPushMatrix,
-  glPopMatrix,
-  GL_LIGHTING,
-  GL_MODELVIEW,
-  GL_PROJECTION
-} from './gl.js';
+import { glClear, glClearColor, glViewport, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT } from './gl.js';
 import { RGBA, HSLA } from './lib/color.js';
 import { Mat, Size, Point, Rect } from 'opencv';
 import * as cv from 'opencv';
@@ -61,6 +24,30 @@ function GLFW(...args) {
   let { size, position } = window;
   nvg.CreateGL3(nvg.STENCIL_STROKES | nvg.ANTIALIAS | nvg.DEBUG);
   return Object.assign(this, { resolution, window, size, position });
+}
+
+function DrawImage(image, pos) {
+  const size = nvg.ImageSize(image);
+  nvg.Save();
+  if(pos) nvg.Translate(...pos);
+  nvg.BeginPath();
+  nvg.Rect(0, 0, ...size);
+  nvg.FillPaint(nvg.ImagePattern(0, 0, ...size, 0, image, 1));
+  nvg.Fill();
+  nvg.Restore();
+}
+
+function DrawCircle(pos, radius) {
+  nvg.Save();
+  nvg.Translate(...pos);
+  nvg.BeginPath();
+  nvg.StrokeColor(nvg.RGB(255, 255, 255));
+  nvg.StrokeWidth(5);
+  nvg.FillColor(nvg.RGBA(255, 0, 0, 96));
+  nvg.Circle(0, 0, radius);
+  nvg.Fill();
+  nvg.Stroke();
+  nvg.Restore();
 }
 
 function main(...args) {
@@ -180,30 +167,6 @@ function main(...args) {
     nvg.Restore();
 
     DrawCircle(center, 100);
-
-    function DrawImage(image, pos) {
-      const size = nvg.ImageSize(image);
-      nvg.Save();
-      if(pos) nvg.Translate(...pos);
-      nvg.BeginPath();
-      nvg.Rect(0, 0, ...size);
-      nvg.FillPaint(nvg.ImagePattern(0, 0, ...size, 0, image, 1));
-      nvg.Fill();
-      nvg.Restore();
-    }
-
-    function DrawCircle(pos, radius) {
-      nvg.Save();
-      nvg.Translate(...pos);
-      nvg.BeginPath();
-      nvg.StrokeColor(nvg.RGB(255, 255, 255));
-      nvg.StrokeWidth(5);
-      nvg.FillColor(nvg.RGBA(255, 0, 0, 96));
-      nvg.Circle(0, 0, radius);
-      nvg.Fill();
-      nvg.Stroke();
-      nvg.Restore();
-    }
 
     nvg.EndFrame();
 
