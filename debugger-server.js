@@ -17,7 +17,7 @@ import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl
 globalThis.fs = fs;
 
 extendArray();
-  const scriptName = () => scriptArgs[0].replace(/.*\//g, '').replace(/\.js$/, '');
+const scriptName = () => scriptArgs[0].replace(/.*\//g, '').replace(/\.js$/, '');
 
 function ReadJSON(filename) {
   let data = fs.readFileSync(filename, 'utf-8');
@@ -77,7 +77,6 @@ function StartREPL(prefix = scriptName(), suffix = '') {
   repl.run();
   return repl;
 }
-
 
 function main(...args) {
   const base = scriptName().replace(/\.[a-z]*$/, '');

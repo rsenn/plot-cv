@@ -34,6 +34,7 @@ export function GLFW(width, height, options = {}) {
   Object.assign(window, { ...GLFW.defaultCallbacks, ...handlers });
 
   nvg.CreateGL3(nvg.STENCIL_STROKES | nvg.ANTIALIAS | nvg.DEBUG);
+
   return Object.assign(this, { resolution, window });
 }
 
@@ -44,11 +45,11 @@ GLFW.defaultCallbacks = {
   handleSize(width, height) {
     console.log('handleSize', { width, height });
   },
-  handleClose(w) {
-    console.log('handleClose', { w });
+  handleClose(window = this) {
+    console.log('handleClose', { window });
   },
-  handleRefresh(w) {
-    console.log('handleRefresh', { w });
+  handleRefresh(window = this) {
+    //console.log('handleRefresh', { window });
   },
   handleFocus(focused) {
     console.log('handleFocus', { focused });
@@ -57,7 +58,7 @@ GLFW.defaultCallbacks = {
     console.log('handleIconify', { iconified });
   },
   handleFramebufferSize(width, height) {
-    console.log('handleFramebufferSize', { width, height });
+    //console.log('handleFramebufferSize', { width, height });
   },
   handleMouseButton(button, action, mods) {
     console.log('handleMouseButton', { button, action, mods });
@@ -97,7 +98,8 @@ Object.defineProperties(GLFW.prototype, {
     }
   }
 });
-GLFW.prototype.startFrame = function(clearColor = new RGBA(0, 0, 0, 255)) {
+
+GLFW.prototype.beginFrame = function(clearColor = new RGBA(0, 0, 0, 255)) {
   glViewport(0, 0, width, height);
 
   glClearColor(...clearColor);

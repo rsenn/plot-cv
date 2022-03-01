@@ -199,7 +199,7 @@ function main(...args) {
       .map(hue => new HSLA(hue, 100, 50))
       .map(h => h.toRGBA());
 
-  let win = new Window('gray', cv.WINDOW_NORMAL /*| cv.WINDOW_AUTOSIZE */  | cv.WINDOW_KEEPRATIO );
+  let win = new Window('gray', cv.WINDOW_NORMAL /*| cv.WINDOW_AUTOSIZE */ | cv.WINDOW_KEEPRATIO);
   //console.debug('Mouse :', { MouseEvents, MouseFlags });
 
   const printFlags = flags => [...BitsToNames(MouseFlags)];

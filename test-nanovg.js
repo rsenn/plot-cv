@@ -22,6 +22,10 @@ function main(...args) {
   let running = true;
 
   const { position, size, window } = new GLFW(1280, 900, {
+    resizable: true,
+    handleSize(width, height) {
+      console.log('resized', { width, height });
+    },
     handleKey(keyCode) {
       let charCode = keyCode & 0xff;
       console.log(`handleKey`, { keyCode: '0x' + keyCode.toString(16), charCode, char: String.fromCharCode(charCode) });
