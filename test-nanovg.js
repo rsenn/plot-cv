@@ -5,7 +5,7 @@ import { Mat, Point } from 'opencv';
 import * as cv from 'opencv';
 import * as nvg from 'nanovg';
 import Console from 'console';
-import { GLFW, Mat2Image, DrawImage, DrawCircle } from './draw-utils.js';
+import { GLFW, Mat2Image, DrawImage, DrawCircle, Position } from './draw-utils.js';
 
 function main(...args) {
   globalThis.console = new Console({
@@ -61,8 +61,8 @@ function main(...args) {
   let imgId = Mat2Image(mat);
   let img2Id = nvg.CreateImage('Muehleberg.png', 0);
 
-  let img2Sz = /*new glfw.Size*/ nvg.ImageSize(img2Id);
-  let imgSz = /* new glfw.Size*/ nvg.ImageSize(imgId);
+  let img2Sz = nvg.ImageSize(img2Id);
+  let imgSz = nvg.ImageSize(imgId);
   //console.log('nvg.ImageSize(img2Id)', img2Sz + '');
   //console.log('nvg.ImageSize(imgId)', imgSz + '');
   while(running) {
@@ -89,8 +89,8 @@ function main(...args) {
 
     let pattern = nvg.ImagePattern(0, 0, ...img2Sz, 0, img2Id, 1);
 
-    let center = new glfw.Position(size.width / 2, size.height / 2);
-    let imgSz_2 = new glfw.Position(img2Sz.width * -0.5, img2Sz.height * -0.5);
+    let center = new Position(size.width / 2, size.height / 2);
+    let imgSz_2 = new Position(img2Sz.width * -0.5, img2Sz.height * -0.5);
 
     nvg.Save();
 
@@ -103,7 +103,7 @@ function main(...args) {
 
     DrawImage(img2Id, vec);
     nvg.Translate(imgSz_2.width * -1, imgSz_2.height * -1);
-    DrawCircle(new glfw.Position(0, 0), 40);
+    DrawCircle(new Position(0, 0), 40);
 
     nvg.Restore();
 
