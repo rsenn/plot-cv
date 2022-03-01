@@ -1,4 +1,4 @@
-//import * as glfw from 'glfw';
+import * as glfw from 'glfw';
 import { glClear, glClearColor, glViewport, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT } from './gl.js';
 import { HSLA } from './lib/color.js';
 import { Mat, Point } from 'opencv';
@@ -21,8 +21,7 @@ function main(...args) {
   let i = 0;
   let running = true;
 
-let glfw;
-  const { position, size, window } = glfw=new GLFW(1280, 900, {
+  const { position, size, window } = new GLFW(1280, 900, {
     handleKey(keyCode) {
       let charCode = keyCode & 0xff;
       console.log(`handleKey`, { keyCode: '0x' + keyCode.toString(16), charCode, char: String.fromCharCode(charCode) });
@@ -39,45 +38,7 @@ let glfw;
     },
     handleCursorPos(x, y) {
       //console.log(`handleCursorPos`, { x, y });
-    },
-  handlePos(x, y)  {
-  console.log('handlePos', { x, y)  });
-},
-handleSize(width, height)  {
-  console.log('handleSize', { width, height)  });
-},
-handleClose(w)  {
-  console.log('handleClose', { w)  });
-},
-handleRefresh(w)  {
-  console.log('handleRefresh', { w)  });
-},
-handleFocus(focused)  {
-  console.log('handleFocus', { focused)  });
-},
-handleIconify(iconified)  {
-  console.log('handleIconify', { iconified)  });
-},
-handleFramebufferSize(width, height)  {
-  console.log('handleFramebufferSize', { width, height)  });
-},
-handleMouseButton(button, action, mods)  {
-  console.log('handleMouseButton', { button, action, mods)  });
-},
-handleCursorEnter(cur)  {
-  console.log('handleCursorEnter', { cur)  });
-},
-handleScroll(xoffset, yoffset)  {
-  console.log('handleScroll', { xoffset, yoffset)  });
-},
-handleChar(c)  {
-  console.log('handleChar', { c)  });
-},
-handleDrop(argcargv)  {
-  console.log('handleDrop', { argcargv)  });
-},
-
-
+    }
   });
 
   const { width, height } = size;
@@ -115,11 +76,9 @@ handleDrop(argcargv)  {
     let index = Math.floor((time * 360) / 30);
     let color = new HSLA(index % 360, 100, 50 + 25 * Math.sin(time * 0.1 * Math.PI)).toRGBA();
 
-
-glfw.startFrame([...color.normalize()]);
-  /*  glClearColor(...color.normalize());
+    glClearColor(...color.normalize());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-*/
+
     nvg.BeginFrame(width, height, 1);
 
     let m = nvg.CurrentTransform();
@@ -152,8 +111,8 @@ glfw.startFrame([...color.normalize()]);
 
     nvg.EndFrame();
 
-glfw.endFrame();
-
+    window.swapBuffers();
+    glfw.poll();
     i++;
   }
 }
