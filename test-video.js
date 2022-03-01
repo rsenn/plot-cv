@@ -6,7 +6,7 @@ import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './qjs-opencv/
 import { HSLA } from './lib/color.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import fs from 'fs';
-import { format } from './lib/misc.js';
+import { format, memoize } from './lib/misc.js';
 import * as xml from 'xml';
 import Console from 'console';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
@@ -16,6 +16,8 @@ import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Defi
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
 import { MakeSVG, SaveSVG } from './image-helpers.js';
 import { Profiler } from './time-helpers.js';
+import { GLFW, Mat2Image, DrawImage, DrawCircle, Position } from './draw-utils.js';
+import { TCPClient } from './midi-tcp.js';
 
 let rainbow;
 let zoom = 1;
@@ -161,6 +163,7 @@ function main(...args) {
         },
         'h'
       ],
+      opengl: [false, null, 'g'],
       input: [true, (file, current) => [...(current || []), file], 'i'],
       driver: [
         true,
@@ -197,16 +200,7 @@ function main(...args) {
       .map(hue => new HSLA(hue, 100, 50))
       .map(h => h.toRGBA());
 
-  let win = new Window('gray', cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO /*| cv.WINDOW_KEEPRATIO | */);
-  //console.debug('Mouse :', { MouseEvents, MouseFlags });
-
   const printFlags = flags => [...BitsToNames(MouseFlags)];
-  win.setMouseCallback(function (event, x, y, flags) {
-    event = Mouse.printEvent(event);
-    flags = Mouse.printFlags(flags);
-
-    //console.debug('Mouse event:', console.inspect({ event, x, y, flags }, { multiline: false }));
-  });
 
   const videos = opts['input'] ? [opts['input']] : opts['@'];
   log.info('Creating VideoSource:', videos);
@@ -216,6 +210,23 @@ function main(...args) {
     video.size = new Size(...opts['size'].split('x'));
   }
   log.info('video.size', video.size);
+
+  let win;
+
+  if(opts.opengl) {
+    win = new GLFW(video.size.width, video.size.height, {});
+  } else {
+    win = new Window('gray', cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO /*| cv.WINDOW_KEEPRATIO | */);
+
+    win.setMouseCallback(function (event, x, y, flags) {
+      event = Mouse.printEvent(event);
+      flags = Mouse.printFlags(flags);
+
+      //console.debug('Mouse event:', console.inspect({ event, x, y, flags }, { multiline: false }));
+      //console.debug('Mouse :', { MouseEvents, MouseFlags });
+    });
+  }
+
   win.resize(video.size);
 
   let thickness = 1;
@@ -403,6 +414,29 @@ function main(...args) {
     modifiers,
     modifierList;
 
+  let paramNames = Object.keys(params);
+  let paramIndex = -1;
+  let controlMap = memoize(controlNumber => {
+    let paramName = paramNames[++paramIndex];
+    let param = params[paramName];
+
+    console.log('control #' + controlNumber.toString(16) + ' mapped to ' + paramName);
+    return value => (param.alpha = value / 127);
+  });
+
+  let midi = new TCPClient('tcp://127.0.0.1:6999', event => {
+    const { type, param1, param2, channel } = event;
+
+    let control = (channel << 4) | param1;
+    let value = param2;
+
+    console.log('MIDI event', { control, value });
+
+    controlMap(control)(value);
+  });
+
+  log.info('midi client:', midi);
+
   while(running) {
     meter.reset();
     meter.start();
@@ -499,9 +533,12 @@ function main(...args) {
         case '\u0f52': /* up */
         case '\u0f54': /* down */ {
           const method = keyCode & 0x1 ? 'Frames' : 'Msecs';
+          const mod = parseInt(['ctrl', 'shift'].map(n => modifiers[n] | 0).join(''), 2);
+
           const distance =
             (keyCode & 0x1 ? 1 : 1000) *
             (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
+
           const offset = keyCode & 0x2 ? +distance : -distance;
 
           //log.info('seek', { method, distance, offset });

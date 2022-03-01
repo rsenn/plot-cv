@@ -1,10 +1,13 @@
 import { CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, OPENGL_PROFILE, RESIZABLE, SAMPLES, Window, Size, Position, context, poll } from 'glfw';
 export { Window, Size, Position } from 'glfw';
 import * as nvg from 'nanovg';
+import { Mat, cvtColor, COLOR_BGR2RGBA, Rect } from 'opencv';
 import { RGBA } from './lib/color.js';
+import { assert } from 'util';
 import { glClear, glClearColor, glViewport, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT } from './gl.js';
 
 export function GLFW(width, height, options = {}) {
+  console.log('GLFW', { width, height, options });
   let resolution = new Size(width, height);
   const {
     resizable = false,
@@ -94,6 +97,11 @@ Object.defineProperties(GLFW.prototype, {
     get() {
       return this.window.position;
     }
+  },
+  imageRect: {
+    get() {
+      return new Rect(0, 0, ...this.size);
+    }
   }
 });
 
@@ -124,10 +132,27 @@ Object.assign(GLFW.prototype, {
     const { window } = this;
     window.swapBuffers();
     poll();
+  },
+  show(mat) {
+    this.begin();
+    /* let img = Mat2Image(mat);
+     let size = nvg.ImageSize(img);
+ console.log('GLFW.show', {mat,img,size});
+   DrawImage(img);*/
+    //   this.end();
   }
 });
 
 export function Mat2Image(mat) {
+  if(mat.channels == 3) {
+    let tmp = new Mat();
+    cvtColor(mat, tmp, COLOR_BGR2RGBA);
+    mat = tmp;
+  }
+  assert(mat.channels, 4, 'channels == 4');
+  const { cols, rows, depth, channels, step, elemSize, elemSize1 } = mat;
+  console.log('Mat2Image', { depth, channels, step: step / elemSize, cols, rows, elemSize, elemSize1 });
+
   return nvg.CreateImageRGBA(mat.cols, mat.rows, 0, mat.buffer);
 }
 
