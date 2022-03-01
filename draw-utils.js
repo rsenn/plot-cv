@@ -96,17 +96,22 @@ Object.defineProperties(GLFW.prototype, {
   }
 });
 
-GLFW.prototype.beginFrame = function(clearColor = new RGBA(0, 0, 0, 255)) {
-  glViewport(0, 0, width, height);
+Object.assign(GLFW.prototype, {
+  poll,
+  beginFrame(clearColor = new RGBA(0, 0, 0, 255)) {
+    const { resolution } = this;
+    glViewport(0, 0, resolution.width, resolution.height);
 
-  glClearColor(...clearColor);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-};
+    if(clearColor instanceof RGBA) clearColor = clearColor.normalize();
 
-GLFW.prototype.endFrame = function() {
-  this.window.swapBuffers();
-  poll();
-};
+    glClearColor(...clearColor);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+  },
+  endFrame() {
+    this.window.swapBuffers();
+    poll();
+  }
+});
 
 export function Mat2Image(mat) {
   return nvg.CreateImageRGBA(mat.cols, mat.rows, 0, mat.buffer);

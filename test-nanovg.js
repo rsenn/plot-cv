@@ -21,7 +21,8 @@ function main(...args) {
   let i = 0;
   let running = true;
 
-  const { position, size, window } = new GLFW(1280, 900, {
+  let context;
+  const { position, size, window } = (context = new GLFW(1280, 900, {
     resizable: true,
     handleSize(width, height) {
       console.log('resized', { width, height });
@@ -43,7 +44,7 @@ function main(...args) {
     handleCursorPos(x, y) {
       //console.log(`handleCursorPos`, { x, y });
     }
-  });
+  }));
 
   const { width, height } = size;
   const { x, y } = position;
@@ -74,14 +75,16 @@ function main(...args) {
       //console.log('window.shouldClose:', window.shouldClose);
       break;
     }
-    glViewport(0, 0, width, height);
 
     let time = +new Date() / 1000;
     let index = Math.floor((time * 360) / 30);
     let color = new HSLA(index % 360, 100, 50 + 25 * Math.sin(time * 0.1 * Math.PI)).toRGBA();
 
+    context.beginFrame(color);
+
+    /*glViewport(0, 0, width, height);
     glClearColor(...color.normalize());
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);*/
 
     nvg.BeginFrame(width, height, 1);
 
@@ -115,8 +118,9 @@ function main(...args) {
 
     nvg.EndFrame();
 
-    window.swapBuffers();
-    glfw.poll();
+    context.endFrame();
+    /*window.swapBuffers();
+    glfw.poll();*/
     i++;
   }
 }
