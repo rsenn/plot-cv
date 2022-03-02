@@ -3,7 +3,7 @@ import Util from './lib/util.js';
 import path from './lib/path.js';
 import * as deep from './lib/deep.js';
 import { Console } from 'console';
-import REPL from './xrepl.js';
+import REPL from './quickjs/qjs-modules/lib/repl.js';
 import {
   SIZEOF_POINTER,
   Node,
@@ -113,12 +113,13 @@ async function ImportModule(modulePath, ...args) {
 }
 
 function CommandLine() {
-  let log = console.reallog;
+ let log = console.reallog;
+ console.log('CommandLine', CommandLine);
   let outputLog = fs.openSync('output.log', 'w+');
 
   let repl;
   repl = globalThis.repl = new REPL('AST');
-  //console.log('repl', repl);
+  console.log('repl', repl);
 
   let cfg = ReadJSON(config);
 

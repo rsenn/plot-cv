@@ -3,7 +3,7 @@ import * as os from 'os';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
 import Util from './lib/util.js';
-import { toArrayBuffer, toString, escape, quote, define, extendArray } from './lib/misc.js';
+import { daemon, atexit, getpid, toArrayBuffer, toString, escape, quote, define, extendArray } from 'util';
 import { Console } from 'console';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
@@ -18,6 +18,12 @@ globalThis.fs = fs;
 
 extendArray();
 const scriptName = () => scriptArgs[0].replace(/.*\//g, '').replace(/\.js$/, '');
+
+atexit(() => {
+   console.log('atexit', atexit);
+ let { stack } = new Error('');
+  console.log('stack:', stack);
+});
 
 function ReadJSON(filename) {
   let data = fs.readFileSync(filename, 'utf-8');
@@ -53,14 +59,13 @@ function WriteJSON(name, data) {
 function StartREPL(prefix = scriptName(), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, fs, false);
 
-  repl.historyLoad(null, false);
+  repl.historyLoad(null, fs);
   repl.inspectOptions = { ...console.options, compact: 2 };
 
-  repl.help = () => {};
-  let { log } = console;
-  repl.show = arg => std.puts((typeof arg == 'string' ? arg : inspect(arg, repl.inspectOptions)) + '\n');
+   let { log } = console;
+  //repl.show = arg => std.puts(arg);
 
-  repl.cleanup = () => {
+  /* repl.cleanup = () => {
     repl.readlineRemovePrompt();
     Terminal.mousetrackingDisable();
     let numLines = repl.historySave();
@@ -68,7 +73,15 @@ function StartREPL(prefix = scriptName(), suffix = '') {
     repl.printStatus(`EXIT (wrote ${numLines} history entries)`, false);
 
     std.exit(0);
-  };
+  };*/
+  repl.directives.i = [
+    name =>
+      import(name)
+        .then(m => (globalThis[name.replace(/(.*\/|\.[^\/.]+$)/g, '')] = m))
+        .catch(() => repl.printStatus(`ERROR: module '${name}' not found`)),
+    'import a module'
+  ];
+  repl.directives.d = [() => globalThis.daemon(), 'detach'];
 
   console.log = repl.printFunction((...args) => {
     log(console.config(repl.inspectOptions), ...args);
@@ -163,6 +176,7 @@ function main(...args) {
         mimetypes: [
           ['.svgz', 'application/gzip'],
           ['.mjs', 'application/javascript'],
+          ['.es', 'application/javascript'],
           ['.wasm', 'application/octet-stream'],
           ['.eot', 'application/vnd.ms-fontobject'],
           ['.lib', 'application/x-archive'],
@@ -207,6 +221,9 @@ function main(...args) {
 
           protocol.delete(ws);
           sockets.delete(ws);
+        },
+        onError(ws) {
+          console.log('onError', ws);
         },
         onHttp(req, rsp) {
           const { url, method, headers } = req;
@@ -381,7 +398,13 @@ function main(...args) {
     StartDebugger,
     ConnectDebugger,
     DebuggerProtocol,
-    repl: StartREPL()
+    repl: StartREPL(),
+    daemon() {
+      repl.stop();
+      std.puts('\ndetaching...');
+      daemon(1, 0);
+      std.puts(' PID '+getpid()+'\n');
+    }
   });
 
   delete globalThis.DEBUG;
