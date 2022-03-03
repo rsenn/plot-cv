@@ -4,37 +4,7 @@ import path from './lib/path.js';
 import * as deep from './lib/deep.js';
 import { Console } from 'console';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
-import {
-  SIZEOF_POINTER,
-  Node,
-  Type,
-  RecordDecl,
-  EnumDecl,
-  TypedefDecl,
-  VarDecl,
-  FunctionDecl,
-  Location,
-  TypeFactory,
-  SpawnCompiler,
-  AstDump,
-  FindType,
-  Hier,
-  PathOf,
-  NodeType,
-  NodeName,
-  GetLoc,
-  GetType,
-  GetTypeStr,
-  NodePrinter,
-  isNode,
-  SourceDependencies,
-  GetTypeNode,
-  GetFields,
-  PathRemoveLoc,
-  PrintAst,
-  GetParams,
-  List
-} from './clang-ast.js';
+import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, VarDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, FindType, Hier, PathOf, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter, isNode, SourceDependencies, GetTypeNode, GetFields, PathRemoveLoc, PrintAst, GetParams, List } from './clang-ast.js';
 import Tree from './lib/tree.js';
 import { Pointer } from './lib/pointer.js';
 import * as Terminal from './terminal.js';
@@ -42,18 +12,7 @@ import * as ECMAScript from './lib/ecmascript.js';
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import * as fs from './lib/filesystem.js';
 import { extendArray, toString, toArrayBuffer } from './lib/misc.js';
-import {
-  ReadFile,
-  LoadHistory,
-  ReadJSON,
-  MapFile,
-  ReadBJSON,
-  WriteFile,
-  WriteJSON,
-  WriteBJSON,
-  DirIterator,
-  RecursiveDirIterator
-} from './io-helpers.js';
+import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
 
 extendArray(Array.prototype);
 
@@ -113,13 +72,12 @@ async function ImportModule(modulePath, ...args) {
 }
 
 function CommandLine() {
- let log = console.reallog;
- console.log('CommandLine', CommandLine);
-  let outputLog = fs.openSync('output.log', 'w+');
+  let log = console.reallog;
+  // let outputLog = fs.openSync('output.log', 'w+');
 
   let repl;
-  repl = globalThis.repl = new REPL('AST');
-  console.log('repl', repl);
+  repl = globalThis.repl = new REPL('AST', false);
+  //console.log('repl', repl);
 
   let cfg = ReadJSON(config);
 
@@ -187,9 +145,7 @@ function CommandLine() {
   repl = Util.traceProxy(repl);
 
   if(params.exec) repl.evalAndPrint(params.exec);
-  else repl.run();
-
-  console.log('REPL done');
+  else repl.run(false);
 }
 
 function* IncludeAll(dir, maxDepth = Infinity, pred = entry => /\.[ch]$/.test(entry)) {
@@ -1277,7 +1233,7 @@ async function ASTShell(...args) {
     }
   };
 
-  console.log('Loading sources:', sources);
+  console.log('Loading sources:' + sources.map(s => ' ' + s).join(','));
 
   for(let source of sources) {
     let item;
@@ -1309,8 +1265,6 @@ try {
       '\n  ' + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  ')
     );
     console.log('FAIL');
-    Util.exit(1);
-  } else {
-    console.log('SUCCESS');
+    std.exit(1);
   }
 }

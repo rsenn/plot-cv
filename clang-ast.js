@@ -1045,10 +1045,7 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
     args.unshift(compiler ?? 'clang');
   }
 
-  console.log(
-    'SpawnCompiler',
-    args //.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (output ? ` 1>${output}` : '')
-  );
+  //console.log('SpawnCompiler', args /*.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (output ? ` 1>${output}` : '')*/ );
 
   let child = spawn(args, {
     block: false,

@@ -20,8 +20,8 @@ extendArray();
 const scriptName = () => scriptArgs[0].replace(/.*\//g, '').replace(/\.js$/, '');
 
 atexit(() => {
-   console.log('atexit', atexit);
- let { stack } = new Error('');
+  console.log('atexit', atexit);
+  let { stack } = new Error('');
   console.log('stack:', stack);
 });
 
@@ -62,7 +62,7 @@ function StartREPL(prefix = scriptName(), suffix = '') {
   repl.historyLoad(null, fs);
   repl.inspectOptions = { ...console.options, compact: 2 };
 
-   let { log } = console;
+  let { log } = console;
   //repl.show = arg => std.puts(arg);
 
   /* repl.cleanup = () => {
@@ -403,7 +403,7 @@ function main(...args) {
       repl.stop();
       std.puts('\ndetaching...');
       daemon(1, 0);
-      std.puts(' PID '+getpid()+'\n');
+      std.puts(' PID ' + getpid() + '\n');
     }
   });
 
