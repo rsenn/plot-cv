@@ -16,27 +16,7 @@ import { classNames } from './lib/classNames.js';
 /* prettier-ignore */ import { useClick, useIterable, useIterator, useAsyncGenerator, useAsyncIterable, useAsyncIterator, useGenerator, useActive, useClickout, useConditional, useDebouncedCallback, useDebounce, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useForceUpdate, useGetSet, useHover, useMousePosition, useToggleButtonGroupState, useTrkl, useFetch } from './lib/hooks.js';
 /* prettier-ignore */ import { clamp, identity, noop, compose, maybe, snd, toPair, getOffset, getPositionOnElement, isChildOf } from './lib/hooks.js';
 import { JSLexer, Location } from './lib/jslexer.js';
-import {
-  Chooser,
-  DynamicLabel,
-  Button,
-  FileList,
-  Panel,
-  SizedAspectRatioBox,
-  TransformedElement,
-  Canvas,
-  ColorWheel,
-  Slider,
-  CrossHair,
-  FloatingPanel,
-  DropDown,
-  Conditional,
-  Fence,
-  Zoomable,
-  DisplayList,
-  Ruler,
-  Toggle
-} from './components.js';
+import { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Fence, Zoomable, DisplayList, Ruler, Toggle } from './components.js';
 
 let cwd = '.';
 let responses = {};

@@ -11,7 +11,7 @@ import * as Terminal from './terminal.js';
 import * as ECMAScript from './lib/ecmascript.js';
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import * as fs from './lib/filesystem.js';
-import { extendArray, toString, toArrayBuffer } from './lib/misc.js';
+import { isObject, extendArray, toString, toArrayBuffer } from './lib/misc.js';
 import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
 
 extendArray(Array.prototype);
@@ -97,11 +97,10 @@ function CommandLine() {
   };
   repl.show = value => {
     let first;
-    if(Util.isObject(value) && (first = value.first ?? value[0]) && Util.isObject(first) && (first.type || first.kind))
-      console.log(Table(value));
-    else if(typeof value == 'string') console.log(value);
-    else console.log(inspect(value, { ...console.options, depth: 1, hideKeys: ['loc', 'range'] }));
-    std.out.puts('\n');
+    if(typeof value == 'string') return value;
+    else if(isObject(value) && (first = value.first ?? value[0]) && isObject(first) && (first.type || first.kind))
+      return Table(value);
+    else return inspect(value, { ...console.options, depth: 1, hideKeys: ['loc', 'range'] });
   };
   let debugLog = fs.openSync('debug.log', 'a');
   repl.debugLog = debugLog;
@@ -1075,7 +1074,7 @@ async function ASTShell(...args) {
       },
       getLoc(node) {
         let loc;
-        if(Util.isObject(node)) {
+        if(isObject(node)) {
           if('loc' in node) loc = node.loc;
           else {
             if('ast' in node) node = node.ast;
