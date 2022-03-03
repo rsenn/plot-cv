@@ -351,13 +351,15 @@ function ProcessFile(source, log = () => {}, recursive, depth = 0) {
         cond = true;
         imp = token.lexeme == 'export' ? [token] : [];
       }
+console.log(`token[${imp.length}]`,token.loc+'', console.config({breakLength:80, compact: 0}), token);
+      
       if(cond == true) {
-        imp.push(token);
-        if([';'].indexOf(token.lexeme) != -1) {
+        if(imp.indexOf(token) == -1) imp.push(token);
+        //console.log( imp[0].loc+'',console.config({breakLength:80, compact: 0}), NonWS(imp));
+        if(imp.last.lexeme == ';') {
+         console.log('imp',imp[0].loc+'', console.config({breakLength:80, compact: 0}), TokenSequence(imp)+'');
           cond = false;
-          if(impexp == What.IMPORT || imp.some(i => i.lexeme == 'from')) {
-            // console.log('imp',console.config({breakLength:80, compact: 0}), imp);
-
+          if(impexp == What.IMPORT || imp.some(i => IsKeyword('from', i))) {
             if(imp[1].lexeme != '(') {
               let obj = new Import(imp, PathAdjust, depth);
               if(obj) {
@@ -367,6 +369,7 @@ function ProcessFile(source, log = () => {}, recursive, depth = 0) {
             }
           } else {
             let obj = new Export(imp, PathAdjust, depth);
+            //console.log('obj',console.config({breakLength:80, compact: 1}), obj, obj.loc+'');
             if(obj) {
               obj.source = source;
 
@@ -406,7 +409,7 @@ function ProcessFile(source, log = () => {}, recursive, depth = 0) {
     const range = ByteSequence(remove) ?? ByteSequence(tokens);
     let source = loc.file;
     let type = ImpExpType(tokens);
-    let code = toString(BufferFile(source).slice(...range));
+    let code = TokenSequence(tokens).toString(); // toString(BufferFile(source).slice(...range));
     if(def != -1) if (debug >= 2) console.log('AddExport', { source, file, code, range, loc, tokens });
     let len = tokens.length;
     if(o) {
@@ -455,7 +458,13 @@ function ProcessFile(source, log = () => {}, recursive, depth = 0) {
     range[0] = loc.byteOffset;
     let code = toString(BufferFile(source).slice(...range));
     if(debug >= 2)
-      console.log('AddImport', compact(1), { source, /* type, */ file, code, loc, range /*, tokens: NonWS(tokens)*/ });
+      console.log('AddImport', compact(1), {
+        source,
+        /* type, */ file,
+        code,
+        loc,
+        range /*, tokens: NonWS(tokens)*/
+      });
     let imp = Object.setPrototypeOf(
       define(
         { type, file: file && /\./.test(file) ? relativePath(file) : file, range },
@@ -546,6 +555,14 @@ function ProcessFile(source, log = () => {}, recursive, depth = 0) {
     let { byteOffset } = loc;
     let p;
 
+    if(loc.line >= 115)
+      debugLog('impexp', compact(2), {
+        code,
+        range: new NumericRange(...range),
+        replacement,
+        loc: loc + ''
+      });
+
     //  if(bufstr == ' ') throw new Error(`bufstr = ' ' loc: ${loc} ${loc.byteOffset} range: ${range} code: ` + toString(bytebuf.slice(loc.byteOffset, range[1] + 10)));
     if(typeof file == 'string' && !path.isFile(file)) {
       console.log(`\x1b[1;31mInexistent\x1b[0m file '${file}'`);
@@ -571,9 +588,18 @@ function ProcessFile(source, log = () => {}, recursive, depth = 0) {
     list.push(impexp);
 
     if(debug >= 2)
-      debugLog('impexp', compact(2), { code, range: new NumericRange(...range), replacement, loc: loc + '' });
+      debugLog('impexp', compact(2), {
+        code,
+        range: new NumericRange(...range),
+        replacement,
+        loc: loc + ''
+      });
     if(debug > 1)
-      debugLog('impexp', compact(1), { replacement: replacement, range: new NumericRange(...range), loc: loc + '' });
+      debugLog('impexp', compact(1), {
+        replacement: replacement,
+        range: new NumericRange(...range),
+        loc: loc + ''
+      });
 
     map.replaceRange(range, replacement);
   }
@@ -884,12 +910,20 @@ class FileMap extends Array {
       return i;
     };
     if(debug > 2)
-      console.log('FileMap.replaceRange', compact(2, { customInspect: true }), { file, range: [range[0], range[1]] });
+      console.log('FileMap.replaceRange', compact(2, { customInspect: true }), {
+        file,
+        range: [range[0], range[1]]
+      });
     let start = sliceIndex(range[0]);
     let end = sliceIndex(range[1]);
     const { length } = this;
     if(debug > 2)
-      console.log('FileMap.replaceRange', compact(2, { customInspect: true }), { start, end, length, this: this });
+      console.log('FileMap.replaceRange', compact(2, { customInspect: true }), {
+        start,
+        end,
+        length,
+        this: this
+      });
     if(range[0] < this[start][0]) range[0] = this[start][0];
     if(!this[start][0])
       throw new Error(
@@ -1000,7 +1034,9 @@ class FileMap extends Array {
     let last = this.lastChunk();
 
     if(debug > 2)
-      debugLog(`FileMap\x1b[1;35m<${this.file}>\x1b[0m.write`, compact(2), { chunks: [this.at(first), this.at(last)] });
+      debugLog(`FileMap\x1b[1;35m<${this.file}>\x1b[0m.write`, compact(2), {
+        chunks: [this.at(first), this.at(last)]
+      });
 
     for(let i = 0; i < length; i++) {
       let str = this.at(i);
