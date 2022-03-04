@@ -351,13 +351,13 @@ function ProcessFile(source, log = () => {}, recursive, depth = 0) {
         cond = true;
         imp = token.lexeme == 'export' ? [token] : [];
       }
-console.log(`token[${imp.length}]`,token.loc+'', console.config({breakLength:80, compact: 0}), token);
-      
+      console.log(`token[${imp.length}]`, token.loc + '', console.config({ breakLength: 80, compact: 0 }), token);
+
       if(cond == true) {
         if(imp.indexOf(token) == -1) imp.push(token);
         //console.log( imp[0].loc+'',console.config({breakLength:80, compact: 0}), NonWS(imp));
         if(imp.last.lexeme == ';') {
-         console.log('imp',imp[0].loc+'', console.config({breakLength:80, compact: 0}), TokenSequence(imp)+'');
+          console.log('imp', imp[0].loc + '', console.config({ breakLength: 80, compact: 0 }), TokenSequence(imp) + '');
           cond = false;
           if(impexp == What.IMPORT || imp.some(i => IsKeyword('from', i))) {
             if(imp[1].lexeme != '(') {
