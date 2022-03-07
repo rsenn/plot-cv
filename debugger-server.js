@@ -4,7 +4,7 @@ import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
 import Util from './lib/util.js';
 import { daemon, atexit, getpid, toArrayBuffer, toString, escape, quote, define, extendArray } from 'util';
-import { Console } from 'console';
+import { Console } from './quickjs/qjs-modules/lib/console.js';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
@@ -84,7 +84,7 @@ function StartREPL(prefix = scriptName(), suffix = '') {
   repl.directives.d = [() => globalThis.daemon(), 'detach'];
 
   console.log = repl.printFunction((...args) => {
-    log(console.config(repl.inspectOptions), ...args);
+    log("LOG", console.config(repl.inspectOptions), ...args);
   });
 
   repl.run();
