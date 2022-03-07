@@ -1247,7 +1247,7 @@ async function ASTShell(...args) {
 
   WriteFile(unithist, JSON.stringify(hist, null, 2));
 
-  globalThis.$ = items.length == 1 ? items[0] : items;
+ // globalThis.$ = items.length == 1 ? items[0] : items;
   await CommandLine();
 }
 

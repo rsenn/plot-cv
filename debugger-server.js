@@ -3,13 +3,13 @@ import * as os from 'os';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
 import Util from './lib/util.js';
-import { daemon, atexit, getpid, toArrayBuffer, toString, escape, quote, define, extendArray } from 'util';
+import { daemon, atexit, getpid, toArrayBuffer, toString, escape, quote, define, extendArray, getOpt } from 'util';
 import { Console } from './quickjs/qjs-modules/lib/console.js';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from 'fs';
-import * as net from 'net';
+import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server } from 'net';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 import { StartDebugger, ConnectDebugger } from './debugger.js';
 import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
@@ -21,7 +21,7 @@ const scriptName = () => scriptArgs[0].replace(/.*\//g, '').replace(/\.js$/, '')
 
 atexit(() => {
   console.log('atexit', atexit);
-  let { stack } = new Error('');
+  let stack = new Error('').stack;
   console.log('stack:', stack);
 });
 
@@ -57,7 +57,7 @@ function WriteJSON(name, data) {
 }
 
 function StartREPL(prefix = scriptName(), suffix = '') {
-  let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, fs, false);
+  let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
 
   repl.historyLoad(null, fs);
   repl.inspectOptions = { ...console.options, compact: 2 };
@@ -84,7 +84,7 @@ function StartREPL(prefix = scriptName(), suffix = '') {
   repl.directives.d = [() => globalThis.daemon(), 'detach'];
 
   console.log = repl.printFunction((...args) => {
-    log("LOG", console.config(repl.inspectOptions), ...args);
+    log('LOG', console.config(repl.inspectOptions), ...args);
   });
 
   repl.run();
@@ -98,7 +98,7 @@ function main(...args) {
   globalThis.console = new Console(std.err, {
     inspectOptions: { compact: 2, customInspect: true }
   });
-  let params = Util.getOpt(
+  let params = getOpt(
     {
       verbose: [false, (a, v) => (v | 0) + 1, 'v'],
       listen: [false, null, 'l'],
@@ -110,6 +110,7 @@ function main(...args) {
       'no-tls': [false, (v, pv, o) => ((o.tls = false), true), 'T'],
       address: [true, null, 'a'],
       port: [true, null, 'p'],
+      quiet: [false, null, 'q'],
       'ssl-cert': [true, null],
       'ssl-private-key': [true, null],
       '@': 'address,port'
@@ -124,7 +125,7 @@ function main(...args) {
     'ssl-private-key': sslPrivateKey = 'localhost.key'
   } = params;
   const listen = params.connect && !params.listen ? false : true;
-  const server = !params.client || params.server;
+  //const server = !params.client || params.server;
   let name = Util.getArgs()[0];
   name = name
     .replace(/.*\//, '')
@@ -134,41 +135,47 @@ function main(...args) {
   let [prefix, suffix] = name.split(' ');
 
   let protocol = new WeakMap();
+
   let sockets = (globalThis.sockets ??= new Set());
+
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     console.log('createWS', { url, callbacks, listen });
 
-    net.setLog(
-      (params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
-      (level, ...args) => {
-        console.log(...args);
-        if(params.debug)
-          console.log(
-            (
-              [
-                'ERR',
-                'WARN',
-                'NOTICE',
-                'INFO',
-                'DEBUG',
-                'PARSER',
-                'HEADER',
-                'EXT',
-                'CLIENT',
-                'LATENCY',
-                'MINNET',
-                'THREAD'
-              ][Math.log2(level)] ?? level + ''
-            ).padEnd(8),
-            ...args
-          );
-      }
+    setLog(
+      params.quiet ? 0 : (params.debug ? LLL_USER : 0) | (((params.debug ? LLL_NOTICE : LLL_WARN) << 1) - 1),
+      params.quiet
+        ? () => {}
+        : (level, ...args) => {
+            console.log(...args);
+            if(params.debug)
+              console.log(
+                (
+                  [
+                    'ERR',
+                    'WARN',
+                    'NOTICE',
+                    'INFO',
+                    'DEBUG',
+                    'PARSER',
+                    'HEADER',
+                    'EXT',
+                    'CLIENT',
+                    'LATENCY',
+                    'MINNET',
+                    'THREAD'
+                  ][Math.log2(level)] ?? level + ''
+                ).padEnd(8),
+                ...args
+              );
+          }
     );
 
     let options;
     let child, dbg;
-
-    return [net.client, net.server][+listen](
+    let netfn = [client, server][+listen];
+    console.log('createWS', { url, netfn });
+    return netfn(
+      url,
       (options = {
         tls: params.tls,
         sslCert,
@@ -377,24 +384,24 @@ function main(...args) {
         protocol.set(ws, p);*/
         },
         onFd(fd, rd, wr) {
+          console.log('onFd', { fd, rd, wr });
           os.setReadHandler(fd, rd);
           os.setWriteHandler(fd, wr);
-
-          //  console.log('onFd', { fd, rd, wr });
         },
         ...(url && url.host ? url : {})
       })
     );
   });
+  console.log('XX');
 
-  define(globalThis, {
+  /*  define(globalThis, {
     get connections() {
       return [...globalThis.sockets];
     },
     get socklist() {
       return [...globalThis.sockets];
     },
-    net,
+    net: { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server },
     StartDebugger,
     ConnectDebugger,
     DebuggerProtocol,
@@ -406,10 +413,10 @@ function main(...args) {
       std.puts(' PID ' + getpid() + '\n');
     }
   });
-
+*/
   delete globalThis.DEBUG;
 
-  globalThis.ws = createWS(Util.parseURL(`wss://${address}:9000/ws`), {}, true);
+  globalThis.ws = createWS(`wss://${address}:9000/ws`, {}, true);
   //  Object.defineProperty(globalThis, 'DEBUG', { get: DebugFlags });
 
   /* if(listen) cli.listen(createWS, os);
@@ -428,8 +435,6 @@ try {
   main(...scriptArgs.slice(1));
 } catch(error) {
   console.log(`FAIL: ${error?.message ?? error}\n${error?.stack}`);
-  1;
-  std.exit(1);
 } finally {
   //console.log('SUCCESS');
 }
