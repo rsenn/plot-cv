@@ -96,12 +96,14 @@ function CommandLine() {
     }
   };
   repl.show = value => {
-    let first;
-    if(typeof value == 'string') return value;
-    else if(isObject(value) && (first = value.first ?? value[0]) && isObject(first) && (first.type || first.kind))
-      return Table(value);
-    else return inspect(value, { ...console.options, depth: 1, hideKeys: ['loc', 'range'] });
+    let first, str;
+    if(isObject(value) && (first = value.first ?? value[0]) && isObject(first) && ('id' in first || 'kind' in first))
+      str = Table(value);
+    else if(typeof value == 'string') str = value;
+    else str = inspect(value, { ...console.options, depth: 1, hideKeys: ['loc', 'range'], ...cfg.inspectOptions });
+    std.out.puts(str + '\n');
   };
+
   let debugLog = fs.openSync('debug.log', 'a');
   repl.debugLog = debugLog;
 
@@ -1234,9 +1236,12 @@ async function ASTShell(...args) {
 
   console.log('Loading sources:' + sources.map(s => ' ' + s).join(','));
 
+  globalThis['_'] = items;
+
   for(let source of sources) {
     let item;
     item = await ProcessFile(source);
+    globalThis['$'] = item;
     /*    if(/\.js$/.test(source)) item = ParseECMAScript(source);
     else item = await Compile(source);*/
     if(item) {
@@ -1247,7 +1252,7 @@ async function ASTShell(...args) {
 
   WriteFile(unithist, JSON.stringify(hist, null, 2));
 
- // globalThis.$ = items.length == 1 ? items[0] : items;
+  // globalThis.$ = items.length == 1 ? items[0] : items;
   await CommandLine();
 }
 
