@@ -62,7 +62,7 @@ async function testVoronoi(filename) {
   let rlines = edges.filter(e => e.rSite).map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
   let vlines = edges.filter(e => e.va && e.vb).map(({ va, vb, ...edge }) => new Line(va, vb).round(0.127, 4));
   let points2 = vertices.map(v => new Point(v).round(0.127, 4));
-  const add = (arr, ...items) => [...(Util.isArray(arr) ? arr : []), ...items];
+  const add = (arr, ...items) => [...(Array.isArray(arr) ? arr : []), ...items];
 
   const factory = SVG.factory({
     create: tag => ({ tagName: tag }),

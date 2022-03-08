@@ -20,7 +20,7 @@ let filesystem,
   documents = [];
 
 function WriteFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
+  if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
   filesystem.writeFile(name, data + '\n');
@@ -152,13 +152,13 @@ function GetLocation(node) {
 }
 
 function IsStruct(node) {
-  if(Util.isArray(node.inner)) {
+  if(Array.isArray(node.inner)) {
     if(node.inner.some(child => child.kind == 'FieldDecl')) return true;
   }
 }
 
 function ContainsDecls(node) {
-  if(Util.isArray(node.inner)) {
+  if(Array.isArray(node.inner)) {
     if(node.inner.some(child => /Decl/.test(child.kind + ''))) return true;
   }
 }

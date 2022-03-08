@@ -209,7 +209,7 @@ async function processUrl(url, map) {
 Util.callMain(main, true);
 
 function WriteFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
+  if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
   filesystem.writeFile(name, data + '\n');

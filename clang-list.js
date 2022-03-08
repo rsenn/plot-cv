@@ -8,6 +8,8 @@ import path from './lib/path.js';
 import deep from './lib/deep.js';
 import Tree from './lib/tree.js';
 import { Type, Compile, AstDump, NodeType, NodeName, GetLoc, GetTypeStr } from './clang-ast.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, 
+Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 
 //prettier-ignore
 let fs, spawn;
@@ -263,12 +265,12 @@ async function main(...args) {
 
 Util.callMain(main, true);
 
-function WriteFile(name, data, verbose = true) {
+/*function WriteFile(name, data, verbose = true) {
   if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
   let ret = fs.writeFile(name, data);
 
   if(verbose) console.log(`Wrote ${name}: ${ret} bytes`);
-}
+}*/
 
 function writeOutput(name, data) {
   let n = data.length;

@@ -87,12 +87,12 @@ export class NumericParam extends Param {
 export class EnumParam extends NumericParam {
   constructor(...args) {
     let values, init;
-    if(Util.isArray(args[0])) {
+    if(Array.isArray(args[0])) {
       values = args[0];
       init = args[1] || 0;
     } else {
       init = args.shift();
-      values = Util.isArray(args[0]) ? args[0] : args;
+      values = Array.isArray(args[0]) ? args[0] : args;
     }
     super(init, 0, values.length - 1);
     define(this, { values });

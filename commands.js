@@ -45,7 +45,7 @@ export async function ListProjects(opts = {}) {
     response = await GithubListContents(url, null, null, '\\.(brd|sch|lbr)$', opts);
 
     //console.log('GithubListContents response:', response);
-    if(Util.isArray(response)) {
+    if(Array.isArray(response)) {
       let fileList = response.map((file, i) => {
         let project = { ...file, name: response.at(i) };
         return project;

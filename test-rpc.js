@@ -40,7 +40,7 @@ function WriteFile(name, data, verbose = true) {
     return stat?.size;
   }
   if(Util.isIterator(data)) data = [...data];
-  if(Util.isArray(data)) data = data.join('\n');
+  if(Array.isArray(data)) data = data.join('\n');
 
   if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
   let ret = fs.writeFileSync(name, data);

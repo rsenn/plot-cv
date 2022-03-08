@@ -243,7 +243,7 @@ function DrawSVG(...args) {
   if(typeof tag == 'string') {
     // console.log('draw(', ...args, ')');
     e = factory(tag, { stroke: c.hex(), 'stroke-width': 0.1, ...attrs }, children);
-  } else if(Util.isArray(args[0])) {
+  } else if(Array.isArray(args[0])) {
     let items = args.shift();
     // document.querySelector('#main > div > div > div > svg:nth-child(2) > g');
     //   setViewBox(factory.root.ownerSVGElement||factory.root, BBox.from(items));
@@ -713,7 +713,7 @@ function PathToPolyline(path, step = 0.01) {
 
 function PathsToPolylines(paths, step = 0.01) {
   if(typeof paths == 'string') paths = GetPaths(...paths.split(' '));
-  if(!Util.isArray(paths)) paths = [paths];
+  if(!Array.isArray(paths)) paths = [paths];
   return new Map(paths.map(path => [path, PathToPolyline(path, step)]));
 }
 
@@ -765,7 +765,7 @@ function ClipPath(path, clip, mode = ClipperLib.ClipType.ctUnion) {
   let cl = new ClipperLib.Clipper();
   let output = new ClipperLib.Paths();
   const add = (p, clip = false) =>
-    (Util.isArray(p[0]) ? cl.AddPaths : cl.AddPath).call(
+    (Array.isArray(p[0]) ? cl.AddPaths : cl.AddPath).call(
       cl,
       p,
       clip ? ClipperLib.PolyType.ptClip : ClipperLib.PolyType.ptSubject,
@@ -1233,7 +1233,7 @@ const GenerateVoronoi = () => {
   let rlines = edges.filter(e => e.rSite).map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
   let vlines = edges.filter(e => e.va && e.vb).map(({ va, vb, ...edge }) => new Line(va, vb).round(0.127, 4));
   let points2 = vertices.map(v => new Point(v).round(0.127, 4));
-  const add = (arr, ...items) => [...(Util.isArray(arr) ? arr : []), ...items];
+  const add = (arr, ...items) => [...(Array.isArray(arr) ? arr : []), ...items];
   const factory = SVG.factory();
   const lines = [
     ...rlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#000', 'stroke-width': 0.01 }]),
@@ -2575,7 +2575,7 @@ const AppMain = (window.onload = async () => {
         let rect = rects.get(e);
         rects.delete(e);
 
-        if(Util.isArray(rect)) rect.forEach(e => Element.remove(e));
+        if(Array.isArray(rect)) rect.forEach(e => Element.remove(e));
       });
 
       if(bboxes.size) {

@@ -9,15 +9,15 @@ import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from 'fs';
-import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server } from 'net';
+import { setLog, logLevels, LLL_USER, LLL_NOTICE, LLL_WARN, client, server } from 'net';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 import { StartDebugger, ConnectDebugger } from './debugger.js';
 import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 
-globalThis.fs = fs;
+extendArray(Array.prototype);
 
-extendArray();
-const scriptName = () => scriptArgs[0].replace(/.*\//g, '').replace(/\.js$/, '');
+const scriptName = (arg = scriptArgs[0]) => path.basename(arg, path.extname(arg));
 
 atexit(() => {
   console.log('atexit', atexit);
@@ -25,55 +25,12 @@ atexit(() => {
   console.log('stack:', stack);
 });
 
-function ReadJSON(filename) {
-  let data = fs.readFileSync(filename, 'utf-8');
-
-  if(data) console.debug(`${data.length} bytes read from '${filename}'`);
-  return data ? JSON.parse(data) : null;
-}
-
-function WriteFile(name, data, verbose = true) {
-  if(Util.isGenerator(data)) {
-    let fd = fs.openSync(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, 0x1a4);
-    let r = 0;
-    for(let item of data) {
-      r += fs.writeSync(fd, toArrayBuffer(item + ''));
-    }
-    fs.closeSync(fd);
-    let stat = fs.statSync(name);
-    return stat?.size;
-  }
-  if(Util.isIterator(data)) data = [...data];
-  if(Util.isArray(data)) data = data.join('\n');
-
-  if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
-  let ret = fs.writeFileSync(name, data);
-
-  if(verbose) console.log(`Wrote ${name}: ${ret} bytes`);
-}
-
-function WriteJSON(name, data) {
-  WriteFile(name, JSON.stringify(data, null, 2));
-}
-
 function StartREPL(prefix = scriptName(), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
-
   repl.historyLoad(null, fs);
   repl.inspectOptions = { ...console.options, compact: 2 };
-
   let { log } = console;
-  //repl.show = arg => std.puts(arg);
 
-  /* repl.cleanup = () => {
-    repl.readlineRemovePrompt();
-    Terminal.mousetrackingDisable();
-    let numLines = repl.historySave();
-
-    repl.printStatus(`EXIT (wrote ${numLines} history entries)`, false);
-
-    std.exit(0);
-  };*/
   repl.directives.i = [
     name =>
       import(name)
@@ -82,11 +39,9 @@ function StartREPL(prefix = scriptName(), suffix = '') {
     'import a module'
   ];
   repl.directives.d = [() => globalThis.daemon(), 'detach'];
-
   console.log = repl.printFunction((...args) => {
     log('LOG', console.config(repl.inspectOptions), ...args);
   });
-
   repl.run();
   return repl;
 }
@@ -122,7 +77,10 @@ function main(...args) {
     address = '0.0.0.0',
     port = 8999,
     'ssl-cert': sslCert = 'localhost.crt',
-    'ssl-private-key': sslPrivateKey = 'localhost.key'
+    'ssl-private-key': sslPrivateKey = 'localhost.key',
+    quiet = false,
+    debug = false,
+    tls = true
   } = params;
   const listen = params.connect && !params.listen ? false : true;
   //const server = !params.client || params.server;
@@ -142,31 +100,17 @@ function main(...args) {
     console.log('createWS', { url, callbacks, listen });
 
     setLog(
-      params.quiet ? 0 : (params.debug ? LLL_USER : 0) | (((params.debug ? LLL_NOTICE : LLL_WARN) << 1) - 1),
-      params.quiet
+      quiet ? 0 : (debug ? LLL_USER : 0) | (((debug ? LLL_NOTICE : LLL_WARN) << 1) - 1),
+      quiet
         ? () => {}
-        : (level, ...args) => {
-            console.log(...args);
-            if(params.debug)
-              console.log(
-                (
-                  [
-                    'ERR',
-                    'WARN',
-                    'NOTICE',
-                    'INFO',
-                    'DEBUG',
-                    'PARSER',
-                    'HEADER',
-                    'EXT',
-                    'CLIENT',
-                    'LATENCY',
-                    'MINNET',
-                    'THREAD'
-                  ][Math.log2(level)] ?? level + ''
-                ).padEnd(8),
-                ...args
-              );
+        : (level, str) => {
+            if(
+              level != LLL_USER &&
+              str.indexOf('\x1b') == -1 &&
+              /(lws_|^\s\+\+|^(\s+[a-z0-9_]+\s=|\s*[a-z0-9_]+:)\s)/.test(str)
+            )
+              return;
+            if(debug) console.log(logLevels[level].padEnd(10), str.trim());
           }
     );
 
@@ -384,7 +328,7 @@ function main(...args) {
         protocol.set(ws, p);*/
         },
         onFd(fd, rd, wr) {
-          console.log('onFd', { fd, rd, wr });
+          //console.log('onFd', { fd, rd, wr });
           os.setReadHandler(fd, rd);
           os.setWriteHandler(fd, wr);
         },

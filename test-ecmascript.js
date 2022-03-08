@@ -15,7 +15,7 @@ const source = `console.log(...cols.map((col, i) => (col + '').replaceAll('\n', 
 const inspectSymbol = Symbol.for('nodejs.util.inspect.custom');
 
 function WriteFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
+  if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
   data = data.trim();
@@ -163,7 +163,7 @@ function processFile(file, params) {
 
   /*let flat = deep.flatten(ast,
     new Map(),
-    node => node instanceof ESNode || Util.isArray(node),
+    node => node instanceof ESNode || Array.isArray(node),
     (path, value) => {
        node2path.set(value, path);
       return [path, value];
