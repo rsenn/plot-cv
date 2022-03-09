@@ -94,13 +94,13 @@ const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" view
 */
 
 function PrefixRemover(reOrStr, replacement = '') {
-  if(!(Util.isArray(reOrStr) || Util.isIterable(reOrStr))) reOrStr = [reOrStr];
+  if(!(Array.isArray(reOrStr) || Util.isIterable(reOrStr))) reOrStr = [reOrStr];
 
   return arg => reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), arg);
 }
 
 function WriteFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
+  if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
   filesystem.writeFileSync(name, data + '\n');
   console.log(`Wrote ${name}: ${data.length} bytes`);
@@ -233,7 +233,7 @@ async function main(...args) {
         (path, value) => [path, value]
       );
       function removeStatements(statements, predicate = stmt => true) {
-        //  if(Util.isArray(statements)) statements = new Map(statements);
+        //  if(Array.isArray(statements)) statements = new Map(statements);
         // /* prettier-ignore */ console.log('removeStatements:', [...statements].map(mod=> printAst(mod.stmt)));
         // /* prettier-ignore */ console.log('removeStatements:', [...statements].map(([path, stmt]) => stmt));
         let removed = [];
@@ -245,7 +245,7 @@ async function main(...args) {
             deep.unset(ast, path);
           } else {
             console.log('i:', deep.get(ast, path.slice(0, -2)));
-            if(!Util.isArray(node.declarations)) node = node.declarations;
+            if(!Array.isArray(node.declarations)) node = node.declarations;
             else Object.setPrototypeOf(node, VariableDeclaration.prototype);
             deep.set(ast, path, node);
           }

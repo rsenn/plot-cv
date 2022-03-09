@@ -11,7 +11,7 @@ import Cowbird from './lib/parse/cowbird.js';
 import deep from './lib/deep.js';
 
 function WriteFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
+  if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
   fs.writeFileSync(name, data + '\n');

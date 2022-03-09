@@ -101,7 +101,7 @@ const testtmpl = `this is\na test`;
 const source = `console.log(...cols.map((col, i) => (col + '').replaceAll('\n', '\\n').padEnd(colSizes[i])));`;
 const inspectSymbol = Symbol.for('nodejs.util.inspect.custom');
 function WriteFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
+  if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
   data = data.trim();
   if(data != '') {

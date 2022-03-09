@@ -1,13 +1,4 @@
-import {
-  ECMAScriptParser,
-  Printer,
-  PathReplacer,
-  ImportDeclaration,
-  ImportSpecifier,
-  Identifier,
-  Literal,
-  ExportDefaultDeclaration
-} from './lib/ecmascript.js';
+import { ECMAScriptParser, Printer, PathReplacer, ImportDeclaration, ImportSpecifier, Identifier, Literal, ExportDefaultDeclaration } from './lib/ecmascript.js';
 import Util from './lib/util.js';
 import Tree from './lib/tree.js';
 import * as fs from 'fs';

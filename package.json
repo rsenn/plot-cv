@@ -6,7 +6,7 @@
     "react-dom": "node_modules/preact/compat",
     "react-ssr-prepass": "node_modules/preact-ssr-prepass",
     "lib/ecmascript/parser.js": "lib/ecmascript/parser2.js",
-    "lib/ecmascript/lexer.js": "quickjs/qjs-modules/lib/jslexer.js",
+    "lib/ecmascript/lexer.js": "quickjs/qjs-modules/lib/lexer/ecmascript.js",
     "cvVideo.js": "qjs-opencv/js/cvVideo.js",
     "cvUtils.js": "qjs-opencv/js/cvUtils.js",
     "cvPipeline.js": "qjs-opencv/js/cvPipeline.js",

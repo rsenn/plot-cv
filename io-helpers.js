@@ -93,7 +93,7 @@ export function WriteFile(name, data, verbose = true) {
     return stat?.size;
   }
   if(Util.isIterator(data)) data = [...data];
-  if(Util.isArray(data)) data = data.join('\n');
+  if(Array.isArray(data)) data = data.join('\n');
 
   if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
   let ret = fs.writeFileSync(name, data);
@@ -101,8 +101,8 @@ export function WriteFile(name, data, verbose = true) {
   if(verbose) debug(`Wrote ${name}: ${ret} bytes`);
 }
 
-export function WriteJSON(name, data) {
-  WriteFile(name, JSON.stringify(data, null, 2));
+export function WriteJSON(name, data, compact = true) {
+  return WriteFile(name, JSON.stringify(data, ...(compact ? [] : [null, 2])));
 }
 
 export function WriteXML(name, data) {

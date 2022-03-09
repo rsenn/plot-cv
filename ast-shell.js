@@ -3,57 +3,16 @@ import Util from './lib/util.js';
 import path from './lib/path.js';
 import * as deep from './lib/deep.js';
 import { Console } from 'console';
-import REPL from './xrepl.js';
-import {
-  SIZEOF_POINTER,
-  Node,
-  Type,
-  RecordDecl,
-  EnumDecl,
-  TypedefDecl,
-  VarDecl,
-  FunctionDecl,
-  Location,
-  TypeFactory,
-  SpawnCompiler,
-  AstDump,
-  FindType,
-  Hier,
-  PathOf,
-  NodeType,
-  NodeName,
-  GetLoc,
-  GetType,
-  GetTypeStr,
-  NodePrinter,
-  isNode,
-  SourceDependencies,
-  GetTypeNode,
-  GetFields,
-  PathRemoveLoc,
-  PrintAst,
-  GetParams,
-  List
-} from './clang-ast.js';
+import REPL from './quickjs/qjs-modules/lib/repl.js';
+import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, VarDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, FindType, Hier, PathOf, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter, isNode, SourceDependencies, GetTypeNode, GetFields, PathRemoveLoc, PrintAst, GetParams, List } from './clang-ast.js';
 import Tree from './lib/tree.js';
 import { Pointer } from './lib/pointer.js';
 import * as Terminal from './terminal.js';
 import * as ECMAScript from './lib/ecmascript.js';
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import * as fs from './lib/filesystem.js';
-import { extendArray, toString, toArrayBuffer } from './lib/misc.js';
-import {
-  ReadFile,
-  LoadHistory,
-  ReadJSON,
-  MapFile,
-  ReadBJSON,
-  WriteFile,
-  WriteJSON,
-  WriteBJSON,
-  DirIterator,
-  RecursiveDirIterator
-} from './io-helpers.js';
+import { isObject, extendArray, toString, toArrayBuffer } from './lib/misc.js';
+import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
 
 extendArray(Array.prototype);
 
@@ -114,10 +73,10 @@ async function ImportModule(modulePath, ...args) {
 
 function CommandLine() {
   let log = console.reallog;
-  let outputLog = fs.openSync('output.log', 'w+');
+  // let outputLog = fs.openSync('output.log', 'w+');
 
   let repl;
-  repl = globalThis.repl = new REPL('AST');
+  repl = globalThis.repl = new REPL('AST', false);
   //console.log('repl', repl);
 
   let cfg = ReadJSON(config);
@@ -137,13 +96,14 @@ function CommandLine() {
     }
   };
   repl.show = value => {
-    let first;
-    if(Util.isObject(value) && (first = value.first ?? value[0]) && Util.isObject(first) && (first.type || first.kind))
-      console.log(Table(value));
-    else if(typeof value == 'string') console.log(value);
-    else console.log(inspect(value, { ...console.options, depth: 1, hideKeys: ['loc', 'range'] }));
-    std.out.puts('\n');
+    let first, str;
+    if(isObject(value) && (first = value.first ?? value[0]) && isObject(first) && ('id' in first || 'kind' in first))
+      str = Table(value);
+    else if(typeof value == 'string') str = value;
+    else str = inspect(value, { ...console.options, depth: 1, hideKeys: ['loc', 'range'], ...cfg.inspectOptions });
+    std.out.puts(str + '\n');
   };
+
   let debugLog = fs.openSync('debug.log', 'a');
   repl.debugLog = debugLog;
 
@@ -186,9 +146,7 @@ function CommandLine() {
   repl = Util.traceProxy(repl);
 
   if(params.exec) repl.evalAndPrint(params.exec);
-  else repl.run();
-
-  console.log('REPL done');
+  else repl.run(false);
 }
 
 function* IncludeAll(dir, maxDepth = Infinity, pred = entry => /\.[ch]$/.test(entry)) {
@@ -1118,7 +1076,7 @@ async function ASTShell(...args) {
       },
       getLoc(node) {
         let loc;
-        if(Util.isObject(node)) {
+        if(isObject(node)) {
           if('loc' in node) loc = node.loc;
           else {
             if('ast' in node) node = node.ast;
@@ -1276,11 +1234,14 @@ async function ASTShell(...args) {
     }
   };
 
-  console.log('Loading sources:', sources);
+  console.log('Loading sources:' + sources.map(s => ' ' + s).join(','));
+
+  globalThis['_'] = items;
 
   for(let source of sources) {
     let item;
     item = await ProcessFile(source);
+    globalThis['$'] = item;
     /*    if(/\.js$/.test(source)) item = ParseECMAScript(source);
     else item = await Compile(source);*/
     if(item) {
@@ -1291,7 +1252,7 @@ async function ASTShell(...args) {
 
   WriteFile(unithist, JSON.stringify(hist, null, 2));
 
-  globalThis.$ = items.length == 1 ? items[0] : items;
+  // globalThis.$ = items.length == 1 ? items[0] : items;
   await CommandLine();
 }
 
@@ -1308,8 +1269,6 @@ try {
       '\n  ' + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  ')
     );
     console.log('FAIL');
-    Util.exit(1);
-  } else {
-    console.log('SUCCESS');
+    std.exit(1);
   }
 }

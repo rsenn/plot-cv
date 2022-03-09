@@ -153,7 +153,7 @@ class ES6Module {
       if(this[prop]) s += '\n' + t(prop.padStart(13, ' '), 1, 33) + t(': ', 1, 36) + formatProp(this[prop]);
     s += t('\n}', 1, 36);
     function formatProp(value) {
-      if(Util.isArray(value))
+      if(Array.isArray(value))
         return t('[ ', 1, 36) + value.map(mod => formatProp(mod.file)).join(t(', ', 1, 36)) + t(' ]', 1, 36);
       return typeof value == 'string' ? t(value, 1, 32) : Util.inspect(value).replaceAll('\n', '\n  ');
     }
@@ -260,7 +260,7 @@ class ES6ImportExport {
     let type = [/(import|require)/i, /exports?[^a-z]/i].filter(re => re.test(code));
     type = type.map(re => [...re.exec(code)]).map(([m]) => m);
     type = type.map(m => m + '');
-    type = (Util.isArray(type) && type[0]) || type;
+    type = (Array.isArray(type) && type[0]) || type;
     let assoc = ESNode.assoc(obj.node) || ESNode.assoc(n);
     let position = ESNode.assoc(obj.node).position || ESNode.assoc(n).position;
     if(position) {
@@ -452,13 +452,13 @@ function PrintObject(node, t = (n, p) => n) {
 }
 
 function PrefixRemover(reOrStr, replacement = '') {
-  if(!(Util.isArray(reOrStr) || Util.isIterable(reOrStr))) reOrStr = [reOrStr];
+  if(!(Array.isArray(reOrStr) || Util.isIterable(reOrStr))) reOrStr = [reOrStr];
 
   return arg => reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), typeof arg == 'string' ? arg : '');
 }
 
 function DumpFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
+  if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
   fs.writeFileSync(name, data + '\n');
   console.log(`Wrote ${name}: ${data.length} bytes`);
@@ -670,7 +670,7 @@ async function main(...args) {
           arg = args.shift();
           if(typeof arg == 'function') {
             subj = args.shift() || [];
-            subj = Util.isArray(subj) ? subj : [subj];
+            subj = Array.isArray(subj) ? subj : [subj];
             tmp = arg(value, ...subj);
           } else tmp = typeof arg == 'string' ? value[arg] : arg;
           Verbose('AddValue', (arg + '').replace(/\n.*/gm, ''), {
@@ -1490,7 +1490,7 @@ function GetFile(module, position) {
 
 function GetFromValue(...args) {
   if(args[0] == undefined) args.shift();
-  if(Util.isArray(args) && args.length == 1) args = args[0];
+  if(Array.isArray(args) && args.length == 1) args = args[0];
   let [p, n] = args[0] instanceof ESNode ? args.reverse() : args;
   if(!p || (!('length' in p) && typeof p != 'string')) throw new Error('No path:' + p + ' node:' + PrintAst(n));
   if(!n || !(n instanceof ESNode)) throw new Error('No node:' + n + ' path:' + p);
@@ -1501,7 +1501,7 @@ function GetFromValue(...args) {
     p,
     (n, p) =>
       true ||
-      Util.isArray(n) ||
+      Array.isArray(n) ||
       [ExportNamedDeclaration, ImportDeclaration, ObjectPattern, Literal].some(ctor => n instanceof ctor),
     (p, n) => [
       p,

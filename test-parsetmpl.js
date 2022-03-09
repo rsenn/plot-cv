@@ -57,7 +57,7 @@ const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" view
 
 */
 function WriteFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
+  if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
   filesystem.writeFile(name, data + '\n');
@@ -110,7 +110,7 @@ function transformTagged(node) {
       }
 
       if(a.length) {
-        if(!Util.isArray(a[0])) {
+        if(!Array.isArray(a[0])) {
           let tag = a.shift();
           let t = a.length == 0 ? { tag } : { tag, attrs: a };
           if(closing) t.closing = closing;

@@ -1,25 +1,7 @@
 import PortableFileSystem from './lib/filesystem.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import { execStream } from './childProcess.js';
-import {
-  AsyncWrite,
-  AsyncRead,
-  AcquireReader,
-  AcquireWriter,
-  PipeToRepeater,
-  LineReader,
-  WritableRepeater,
-  WriteIterator,
-  ReadFromIterator,
-  TextTransformStream,
-  PipeTo,
-  CreateTransformStream,
-  isStream,
-  CreateWritableStream,
-  LineBufferStream,
-  RepeaterSink,
-  RepeaterSource
-} from './lib/stream/utils.js';
+import { AsyncWrite, AsyncRead, AcquireReader, AcquireWriter, PipeToRepeater, LineReader, WritableRepeater, WriteIterator, ReadFromIterator, TextTransformStream, PipeTo, CreateTransformStream, isStream, CreateWritableStream, LineBufferStream, RepeaterSink, RepeaterSource } from './lib/stream/utils.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
 import fs from 'fs';
@@ -227,7 +209,7 @@ async function processUrl(url, map) {
 Util.callMain(main, true);
 
 function WriteFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
+  if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
   filesystem.writeFile(name, data + '\n');

@@ -466,7 +466,7 @@ async function main(...args) {
     };
     let prevPalette = new Map(palette.entries());
     cmds = cmds.map(cmdStr =>
-      Util.isArray(cmdStr)
+      Array.isArray(cmdStr)
         ? cmdStr
         : cmdStr
             .split(/[^-A-Za-z0-9\.\/]/g)

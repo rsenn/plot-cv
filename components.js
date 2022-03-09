@@ -1,18 +1,5 @@
 import { define, isObject, memoize, unique } from './lib/misc.js';
-import {
-  h,
-  Fragment,
-  html,
-  render,
-  Component,
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  Portal,
-  ReactComponent,
-  toChildArray /*, cloneElement*/
-} from './lib/dom/preactComponent.js';
+import { h, Fragment, html, render, Component, useState, useEffect, useRef, useCallback, Portal, ReactComponent, toChildArray /*, cloneElement*/ } from './lib/dom/preactComponent.js';
 //import { isValidElement } from './lib/compat.mjs';
 
 import { trkl } from './lib/trkl.js';
@@ -20,27 +7,7 @@ import { Element } from './lib/dom.js';
 import path from './lib/path.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
 import { classNames } from './lib/classNames.js';
-import {
-  useActive,
-  useClickout,
-  useDimensions,
-  useDoubleClick,
-  useElement,
-  EventTracker,
-  useEvent,
-  useFocus,
-  useRecognizers,
-  useDrag,
-  usePinch,
-  useWheel,
-  useMove,
-  useScroll,
-  useGesture,
-  useHover,
-  useMousePosition,
-  usePanZoom,
-  useToggleButtonGroupState
-} from './lib/hooks.js';
+import { useActive, useClickout, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useRecognizers, useDrag, usePinch, useWheel, useMove, useScroll, useGesture, useHover, useMousePosition, usePanZoom, useToggleButtonGroupState } from './lib/hooks.js';
 import deepDiff from './lib/deep-diff.js';
 import { useValue } from './lib/repeater/react-hooks.js';
 import RulerDraggable from './ruler-draggable.js';

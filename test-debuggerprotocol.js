@@ -3,15 +3,7 @@ import * as os from 'os';
 import * as deep from './lib/deep.js';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './quickjs/qjs-ffi/lib/fcntl.js';
 import { errno } from 'ffi';
-import {
-  Socket,
-  socket,
-  EAGAIN,
-  AF_INET,
-  SOCK_STREAM,
-  /*ndelay, */ SockAddr,
-  select
-} from './quickjs/qjs-ffi/lib/socket.js';
+import { Socket, socket, EAGAIN, AF_INET, SOCK_STREAM, /*ndelay, */ SockAddr, select } from './quickjs/qjs-ffi/lib/socket.js';
 import { fd_set, FD_SET, FD_CLR, FD_ISSET, FD_ZERO } from './quickjs/qjs-ffi/lib/fd_set.js';
 import timeval from './quickjs/qjs-ffi/lib/timeval.js';
 import Util from './lib/util.js';

@@ -13,12 +13,7 @@ import { trkl } from './lib/trkl.js';
 import Alea from './lib/alea.js';
 import KolorWheel from './lib/KolorWheel.js';
 import { SVG, Element } from './lib/dom.js';
-import github, {
-  GithubListRepositories,
-  GithubRepositories,
-  GithubListContents,
-  ListGithubRepoServer
-} from './lib/github.js';
+import github, { GithubListRepositories, GithubRepositories, GithubListContents, ListGithubRepoServer } from './lib/github.js';
 import { NormalizeResponse, ResponseData, FetchCached, FetchURL } from './lib/fetch.js';
 
 const prng = new Alea(1598127218);
@@ -50,7 +45,7 @@ export async function ListProjects(opts = {}) {
     response = await GithubListContents(url, null, null, '\\.(brd|sch|lbr)$', opts);
 
     //console.log('GithubListContents response:', response);
-    if(Util.isArray(response)) {
+    if(Array.isArray(response)) {
       let fileList = response.map((file, i) => {
         let project = { ...file, name: response.at(i) };
         return project;

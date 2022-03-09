@@ -757,7 +757,7 @@ async function main() {
 
     if(names !== undefined) {
       if(typeof names == 'string') names = names.split(/\n/g);
-      if(Util.isArray(names)) names = names.map(name => name.replace(/.*\//g, ''));
+      if(Array.isArray(names)) names = names.map(name => name.replace(/.*\//g, ''));
       opts.names = names;
     }
     let files = await GetFilesList('tmp', opts);

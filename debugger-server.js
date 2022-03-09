@@ -3,81 +3,48 @@ import * as os from 'os';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
 import Util from './lib/util.js';
-import { toArrayBuffer, toString, escape, quote, define, extendArray } from './lib/misc.js';
-import { Console } from 'console';
+import { daemon, atexit, getpid, toArrayBuffer, toString, escape, quote, define, extendArray, getOpt } from 'util';
+import { Console } from './quickjs/qjs-modules/lib/console.js';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from 'fs';
-import * as net from 'net';
+import { setLog, logLevels, LLL_USER, LLL_NOTICE, LLL_WARN, client, server } from 'net';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 import { StartDebugger, ConnectDebugger } from './debugger.js';
 import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 
-globalThis.fs = fs;
+extendArray(Array.prototype);
 
-extendArray();
-  const scriptName = () => scriptArgs[0].replace(/.*\//g, '').replace(/\.js$/, '');
+const scriptName = (arg = scriptArgs[0]) => path.basename(arg, path.extname(arg));
 
-function ReadJSON(filename) {
-  let data = fs.readFileSync(filename, 'utf-8');
-
-  if(data) console.debug(`${data.length} bytes read from '${filename}'`);
-  return data ? JSON.parse(data) : null;
-}
-
-function WriteFile(name, data, verbose = true) {
-  if(Util.isGenerator(data)) {
-    let fd = fs.openSync(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, 0x1a4);
-    let r = 0;
-    for(let item of data) {
-      r += fs.writeSync(fd, toArrayBuffer(item + ''));
-    }
-    fs.closeSync(fd);
-    let stat = fs.statSync(name);
-    return stat?.size;
-  }
-  if(Util.isIterator(data)) data = [...data];
-  if(Util.isArray(data)) data = data.join('\n');
-
-  if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
-  let ret = fs.writeFileSync(name, data);
-
-  if(verbose) console.log(`Wrote ${name}: ${ret} bytes`);
-}
-
-function WriteJSON(name, data) {
-  WriteFile(name, JSON.stringify(data, null, 2));
-}
+atexit(() => {
+  console.log('atexit', atexit);
+  let stack = new Error('').stack;
+  console.log('stack:', stack);
+});
 
 function StartREPL(prefix = scriptName(), suffix = '') {
-  let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, fs, false);
-
-  repl.historyLoad(null, false);
+  let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
+  repl.historyLoad(null, fs);
   repl.inspectOptions = { ...console.options, compact: 2 };
-
-  repl.help = () => {};
   let { log } = console;
-  repl.show = arg => std.puts((typeof arg == 'string' ? arg : inspect(arg, repl.inspectOptions)) + '\n');
 
-  repl.cleanup = () => {
-    repl.readlineRemovePrompt();
-    Terminal.mousetrackingDisable();
-    let numLines = repl.historySave();
-
-    repl.printStatus(`EXIT (wrote ${numLines} history entries)`, false);
-
-    std.exit(0);
-  };
-
+  repl.directives.i = [
+    name =>
+      import(name)
+        .then(m => (globalThis[name.replace(/(.*\/|\.[^\/.]+$)/g, '')] = m))
+        .catch(() => repl.printStatus(`ERROR: module '${name}' not found`)),
+    'import a module'
+  ];
+  repl.directives.d = [() => globalThis.daemon(), 'detach'];
   console.log = repl.printFunction((...args) => {
-    log(console.config(repl.inspectOptions), ...args);
+    log('LOG', console.config(repl.inspectOptions), ...args);
   });
-
   repl.run();
   return repl;
 }
-
 
 function main(...args) {
   const base = scriptName().replace(/\.[a-z]*$/, '');
@@ -86,7 +53,7 @@ function main(...args) {
   globalThis.console = new Console(std.err, {
     inspectOptions: { compact: 2, customInspect: true }
   });
-  let params = Util.getOpt(
+  let params = getOpt(
     {
       verbose: [false, (a, v) => (v | 0) + 1, 'v'],
       listen: [false, null, 'l'],
@@ -98,6 +65,7 @@ function main(...args) {
       'no-tls': [false, (v, pv, o) => ((o.tls = false), true), 'T'],
       address: [true, null, 'a'],
       port: [true, null, 'p'],
+      quiet: [false, null, 'q'],
       'ssl-cert': [true, null],
       'ssl-private-key': [true, null],
       '@': 'address,port'
@@ -109,10 +77,13 @@ function main(...args) {
     address = '0.0.0.0',
     port = 8999,
     'ssl-cert': sslCert = 'localhost.crt',
-    'ssl-private-key': sslPrivateKey = 'localhost.key'
+    'ssl-private-key': sslPrivateKey = 'localhost.key',
+    quiet = false,
+    debug = false,
+    tls = true
   } = params;
   const listen = params.connect && !params.listen ? false : true;
-  const server = !params.client || params.server;
+  //const server = !params.client || params.server;
   let name = Util.getArgs()[0];
   name = name
     .replace(/.*\//, '')
@@ -122,41 +93,33 @@ function main(...args) {
   let [prefix, suffix] = name.split(' ');
 
   let protocol = new WeakMap();
+
   let sockets = (globalThis.sockets ??= new Set());
+
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     console.log('createWS', { url, callbacks, listen });
 
-    net.setLog(
-      (params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
-      (level, ...args) => {
-        console.log(...args);
-        if(params.debug)
-          console.log(
-            (
-              [
-                'ERR',
-                'WARN',
-                'NOTICE',
-                'INFO',
-                'DEBUG',
-                'PARSER',
-                'HEADER',
-                'EXT',
-                'CLIENT',
-                'LATENCY',
-                'MINNET',
-                'THREAD'
-              ][Math.log2(level)] ?? level + ''
-            ).padEnd(8),
-            ...args
-          );
-      }
+    setLog(
+      quiet ? 0 : (debug ? LLL_USER : 0) | (((debug ? LLL_NOTICE : LLL_WARN) << 1) - 1),
+      quiet
+        ? () => {}
+        : (level, str) => {
+            if(
+              level != LLL_USER &&
+              str.indexOf('\x1b') == -1 &&
+              /(lws_|^\s\+\+|^(\s+[a-z0-9_]+\s=|\s*[a-z0-9_]+:)\s)/.test(str)
+            )
+              return;
+            if(debug) console.log(logLevels[level].padEnd(10), str.trim());
+          }
     );
 
     let options;
     let child, dbg;
-
-    return [net.client, net.server][+listen](
+    let netfn = [client, server][+listen];
+    console.log('createWS', { url, netfn });
+    return netfn(
+      url,
       (options = {
         tls: params.tls,
         sslCert,
@@ -164,6 +127,7 @@ function main(...args) {
         mimetypes: [
           ['.svgz', 'application/gzip'],
           ['.mjs', 'application/javascript'],
+          ['.es', 'application/javascript'],
           ['.wasm', 'application/octet-stream'],
           ['.eot', 'application/vnd.ms-fontobject'],
           ['.lib', 'application/x-archive'],
@@ -208,6 +172,9 @@ function main(...args) {
 
           protocol.delete(ws);
           sockets.delete(ws);
+        },
+        onError(ws) {
+          console.log('onError', ws);
         },
         onHttp(req, rsp) {
           const { url, method, headers } = req;
@@ -361,33 +328,39 @@ function main(...args) {
         protocol.set(ws, p);*/
         },
         onFd(fd, rd, wr) {
+          //console.log('onFd', { fd, rd, wr });
           os.setReadHandler(fd, rd);
           os.setWriteHandler(fd, wr);
-
-          //  console.log('onFd', { fd, rd, wr });
         },
         ...(url && url.host ? url : {})
       })
     );
   });
+  console.log('XX');
 
-  define(globalThis, {
+  /*  define(globalThis, {
     get connections() {
       return [...globalThis.sockets];
     },
     get socklist() {
       return [...globalThis.sockets];
     },
-    net,
+    net: { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server },
     StartDebugger,
     ConnectDebugger,
     DebuggerProtocol,
-    repl: StartREPL()
+    repl: StartREPL(),
+    daemon() {
+      repl.stop();
+      std.puts('\ndetaching...');
+      daemon(1, 0);
+      std.puts(' PID ' + getpid() + '\n');
+    }
   });
-
+*/
   delete globalThis.DEBUG;
 
-  globalThis.ws = createWS(Util.parseURL(`wss://${address}:9000/ws`), {}, true);
+  globalThis.ws = createWS(`wss://${address}:9000/ws`, {}, true);
   //  Object.defineProperty(globalThis, 'DEBUG', { get: DebugFlags });
 
   /* if(listen) cli.listen(createWS, os);
@@ -406,8 +379,6 @@ try {
   main(...scriptArgs.slice(1));
 } catch(error) {
   console.log(`FAIL: ${error?.message ?? error}\n${error?.stack}`);
-  1;
-  std.exit(1);
 } finally {
   //console.log('SUCCESS');
 }

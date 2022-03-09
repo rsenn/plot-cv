@@ -61,4 +61,4 @@ async function main(...args) {
   client.disconnectAdapter();
 }
 
-await main(process.argv);
+main(...scriptArgs.slice());

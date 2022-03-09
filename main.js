@@ -1,12 +1,5 @@
 // prettier-ignore-start
-import {
-  Transformation,
-  Rotation,
-  Translation,
-  Scaling,
-  MatrixTransformation,
-  TransformationList
-} from './lib/geom/transformation.js';
+import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
 import dom from './lib/dom.js';
 import { ReactComponent, Fragment } from './lib/dom/preactComponent.js';
 import { iterator, eventIterator } from './lib/dom/iterator.js';
@@ -52,127 +45,19 @@ import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText }
 //import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
 import * as React from './lib/preact.mjs';
 import { h, html, render, Component, useState, useLayoutEffect, useRef } from './lib/preact.mjs';
-import {
-  Chooser,
-  DynamicLabel,
-  Button,
-  FileList,
-  Panel,
-  SizedAspectRatioBox,
-  TransformedElement,
-  Canvas,
-  ColorWheel,
-  Slider,
-  CrossHair,
-  FloatingPanel,
-  DropDown,
-  Conditional,
-  Fence,
-  Zoomable,
-  DisplayList,
-  Ruler,
-  Toggle,
-  ButtonGroup
-} from './components.js';
+import { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Fence, Zoomable, DisplayList, Ruler, Toggle, ButtonGroup } from './components.js';
 import * as components from './components.js';
 import { Message } from './message.js';
 import { GetElements, GetInstances, GetPositions, UpdateMeasures, AlignAll, scientific } from './eagle-commands.js';
-import {
-  GetExponent,
-  GetMantissa,
-  ValueToNumber,
-  NumberToValue,
-  GetMultipliers,
-  GetFactor,
-  GetColorBands,
-  BG,
-  digit2color
-} from './lib/eda/colorCoding.js';
+import { GetExponent, GetMantissa, ValueToNumber, NumberToValue, GetMultipliers, GetFactor, GetColorBands, BG, digit2color } from './lib/eda/colorCoding.js';
 
-import {
-  useActive,
-  useClickout,
-  useDimensions,
-  useDoubleClick,
-  useElement,
-  EventTracker,
-  useEvent,
-  useFocus,
-  useRecognizers,
-  useDrag,
-  usePinch,
-  useWheel,
-  useMove,
-  useScroll,
-  useGesture,
-  useHover,
-  useMousePosition,
-  usePanZoom,
-  useToggleButtonGroupState
-} from './lib/hooks.js';
+import { useActive, useClickout, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useRecognizers, useDrag, usePinch, useWheel, useMove, useScroll, useGesture, useHover, useMousePosition, usePanZoom, useToggleButtonGroupState } from './lib/hooks.js';
 
 import { WebSocketClient } from './lib/net/websocket-async.js';
 /* prettier-ignore */ import * as ecmascript from './lib/ecmascript.js';
-import {
-  PipeTo,
-  AsyncRead,
-  AsyncWrite,
-  DebugTransformStream,
-  TextEncodeTransformer,
-  TextEncoderStream,
-  TextDecodeTransformer,
-  TextDecoderStream,
-  TransformStreamSink,
-  TransformStreamSource,
-  TransformStreamDefaultController,
-  TransformStream,
-  ArrayWriter,
-  readStream,
-  WriteToRepeater,
-  LogSink,
-  RepeaterSink,
-  StringReader,
-  LineReader,
-  ChunkReader,
-  ByteReader,
-  PipeToRepeater,
-  WritableStream,
-  ReadFromIterator
-} from './lib/stream.js?ts=<?TS?>';
+import { PipeTo, AsyncRead, AsyncWrite, DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater, WritableStream, ReadFromIterator } from './lib/stream.js?ts=<?TS?>';
 import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
-import {
-  useTrkl,
-  RAD2DEG,
-  DEG2RAD,
-  VERTICAL,
-  HORIZONTAL,
-  HORIZONTAL_VERTICAL,
-  DEBUG,
-  log,
-  setDebug,
-  PinSizes,
-  EscapeClassName,
-  UnescapeClassName,
-  LayerToClass,
-  ElementToClass,
-  ClampAngle,
-  AlignmentAngle,
-  MakeRotation,
-  EagleAlignments,
-  Alignment,
-  SVGAlignments,
-  AlignmentAttrs,
-  RotateTransformation,
-  LayerAttributes,
-  InvertY,
-  PolarToCartesian,
-  CartesianToPolar,
-  CalculateArcRadius,
-  LinesToPath,
-  MakeCoordTransformer,
-  useAttributes,
-  RenderArc
-} from './lib/eagle/renderUtils.js';
+import { useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, RenderArc } from './lib/eagle/renderUtils.js';
 import { Wire } from './lib/eagle/components/wire.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
@@ -181,44 +66,12 @@ import { Slot, SlotProvider } from './slots.js';
 import Voronoi from './lib/geom/voronoi.js';
 import GerberParser from './lib/gerber/parser.js';
 import { lazyInitializer } from './lib/lazyInitializer.js';
-import {
-  EagleElementProxy,
-  BoardRenderer,
-  DereferenceError,
-  EagleDocument,
-  EagleElement,
-  EagleNode,
-  EagleNodeList,
-  EagleNodeMap,
-  EagleProject,
-  EagleRef,
-  EagleReference,
-  EagleSVGRenderer,
-  Renderer,
-  SchematicRenderer,
-  LibraryRenderer,
-  makeEagleElement,
-  makeEagleNode
-} from './lib/eagle.js';
+import { EagleElementProxy, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, LibraryRenderer, makeEagleElement, makeEagleNode } from './lib/eagle.js';
 //import PureCache from 'pure-cache';
 import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //const React = {Component, Fragment, create: h, html, render, useLayoutEffect, useRef, useState };
-import commands, {
-  ListProjects,
-  GetLayer,
-  AddLayer,
-  BoardToGerber,
-  GerberToGcode,
-  GcodeToPolylines,
-  ClearCache
-} from './commands.js';
+import commands, { ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ClearCache } from './commands.js';
 import { NormalizeResponse, ResponseData, FetchURL, FetchCached } from './lib/fetch.js';
-import github, {
-  GithubListFiles,
-  GithubListRepositories,
-  GithubRepositories,
-  GithubListContents,
-  ListGithubRepoServer
-} from './lib/github.js';
+import github, { GithubListFiles, GithubListRepositories, GithubRepositories, GithubListContents, ListGithubRepoServer } from './lib/github.js';
 // prettier-ignore-end
 
 /* prettier-ignore */ const { Align, AlignToString, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line,Matrix,  Point, PointList, Polyline, Rect, Select, Size, SVG, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
@@ -390,7 +243,7 @@ function DrawSVG(...args) {
   if(typeof tag == 'string') {
     // console.log('draw(', ...args, ')');
     e = factory(tag, { stroke: c.hex(), 'stroke-width': 0.1, ...attrs }, children);
-  } else if(Util.isArray(args[0])) {
+  } else if(Array.isArray(args[0])) {
     let items = args.shift();
     // document.querySelector('#main > div > div > div > svg:nth-child(2) > g');
     //   setViewBox(factory.root.ownerSVGElement||factory.root, BBox.from(items));
@@ -860,7 +713,7 @@ function PathToPolyline(path, step = 0.01) {
 
 function PathsToPolylines(paths, step = 0.01) {
   if(typeof paths == 'string') paths = GetPaths(...paths.split(' '));
-  if(!Util.isArray(paths)) paths = [paths];
+  if(!Array.isArray(paths)) paths = [paths];
   return new Map(paths.map(path => [path, PathToPolyline(path, step)]));
 }
 
@@ -912,7 +765,7 @@ function ClipPath(path, clip, mode = ClipperLib.ClipType.ctUnion) {
   let cl = new ClipperLib.Clipper();
   let output = new ClipperLib.Paths();
   const add = (p, clip = false) =>
-    (Util.isArray(p[0]) ? cl.AddPaths : cl.AddPath).call(
+    (Array.isArray(p[0]) ? cl.AddPaths : cl.AddPath).call(
       cl,
       p,
       clip ? ClipperLib.PolyType.ptClip : ClipperLib.PolyType.ptSubject,
@@ -1380,7 +1233,7 @@ const GenerateVoronoi = () => {
   let rlines = edges.filter(e => e.rSite).map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
   let vlines = edges.filter(e => e.va && e.vb).map(({ va, vb, ...edge }) => new Line(va, vb).round(0.127, 4));
   let points2 = vertices.map(v => new Point(v).round(0.127, 4));
-  const add = (arr, ...items) => [...(Util.isArray(arr) ? arr : []), ...items];
+  const add = (arr, ...items) => [...(Array.isArray(arr) ? arr : []), ...items];
   const factory = SVG.factory();
   const lines = [
     ...rlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#000', 'stroke-width': 0.01 }]),
@@ -2722,7 +2575,7 @@ const AppMain = (window.onload = async () => {
         let rect = rects.get(e);
         rects.delete(e);
 
-        if(Util.isArray(rect)) rect.forEach(e => Element.remove(e));
+        if(Array.isArray(rect)) rect.forEach(e => Element.remove(e));
       });
 
       if(bboxes.size) {

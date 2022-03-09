@@ -29,7 +29,7 @@ export function StartDebugger(args, connect, address) {
   if(connect) env['QUICKJS_DEBUG_ADDRESS'] = address;
   else env['QUICKJS_DEBUG_LISTEN_ADDRESS'] = address;
 
-console.log('child_process.spawn',child_process.spawn);
+  console.log('child_process.spawn', child_process.spawn);
 
   let child = child_process.spawn('qjsm', args, {
     env,

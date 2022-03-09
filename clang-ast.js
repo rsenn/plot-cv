@@ -1,9 +1,8 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
+import { assert, lazyProperties, define, isObject, memoize, unique } from './lib/misc.js';
 import Util from './lib/util.js';
 import * as path from './lib/path.js';
 import * as deep from './lib/deep.js';
 import { Pointer } from './lib/pointer.js';
-//import Predicate from 'path';
 import { AcquireReader } from './lib/stream/utils.js';
 export let SIZEOF_POINTER = 8;
 export let SIZEOF_INT = 4;
@@ -791,7 +790,7 @@ export class TypedefDecl extends Type {
     else type = node.inner.find(n => /Type/.test(n.kind));
 
     //type ??= GetType(node, ast);
-    Util.assertEqual(inner.length, 1);
+    assert(inner.length, 1);
     // console.log('TypedefDecl.constructor', { node, typeId, type });
 
     if(type?.decl) type = type.decl;
@@ -820,7 +819,7 @@ export class FieldDecl extends Node {
     let inner = (node.inner ?? []).filter(n => !/Comment/.test(n.kind));
     let type = GetType(node, ast);
 
-    Util.assertEqual(inner.length, 1);
+    assert(inner.length, 1);
 
     if(type.decl) type = type.decl;
     if(type.kind && type.kind.endsWith('Type')) type = type.type;
@@ -900,7 +899,7 @@ export class BuiltinType extends Type {
 export class PointerType extends Node {
   constructor(node, ast) {
     super(node, ast);
-    Util.assertEqual(node.inner.length, 1);
+    assert(node.inner.length, 1);
 
     this.type = new Type(node.type, ast);
     this.pointee = TypeFactory(node.inner[0], ast);
@@ -916,7 +915,7 @@ export class ConstantArrayType extends Node {
   constructor(node, ast) {
     super(node, ast);
     let elementType = node.inner[0];
-    Util.assertEqual(node.inner.length, 1);
+    assert(node.inner.length, 1);
     if(elementType.decl) elementType = elementType.decl;
     this.type = new Type(node.type, ast);
     this.elementType = TypeFactory(elementType, ast);
@@ -1045,10 +1044,7 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
     args.unshift(compiler ?? 'clang');
   }
 
-  console.log(
-    'SpawnCompiler',
-    args //.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (output ? ` 1>${output}` : '')
-  );
+  //console.log('SpawnCompiler', args /*.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (output ? ` 1>${output}` : '')*/ );
 
   let child = spawn(args, {
     block: false,
@@ -1155,7 +1151,7 @@ export async function SourceDependencies(...args) {
 
 export async function AstDump(compiler, source, args, force) {
   compiler ??= 'clang';
-  //console.log('AstDump', { compiler, source, args, force });
+  // console.log('AstDump', { compiler, source, args, force });
   let output = path.basename(source, /\.[^.]*$/) + '.ast.json';
   let r;
   let sources = await SourceDependencies(compiler, source, args);
@@ -1175,7 +1171,7 @@ export async function AstDump(compiler, source, args, force) {
     r = await SpawnCompiler(compiler, source, output, ['-Xclang', '-ast-dump=json', '-fsyntax-only', '-I.', ...args]);
   }
 
-  //console.log('AstDump', r);
+  console.log('AstDump', r);
 
   //r.size = (await fs.stat(r.file)).size;
   r = Util.lazyProperties(r, {
@@ -1183,7 +1179,9 @@ export async function AstDump(compiler, source, args, force) {
       return fs.stat(output)?.size;
     },
     json() {
-      let json = fs.readFileSync(output, 'utf-8');
+      console.log(`r.json`, this.file);
+
+      let json = fs.readFileSync(this.file, 'utf-8');
       return json;
     },
     data() {

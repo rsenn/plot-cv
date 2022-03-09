@@ -10,7 +10,7 @@ import * as path from 'path';
 import { inspect } from './lib/misc.js';
 
 function WriteFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
+  if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
   data = data.trim();
