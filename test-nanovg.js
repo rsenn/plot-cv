@@ -47,6 +47,8 @@ function main(...args) {
     }
   }));
 
+  nvg.CreateGL3(nvg.STENCIL_STROKES | nvg.ANTIALIAS | nvg.DEBUG);
+
   const { width, height } = size;
   const { x, y } = position;
 

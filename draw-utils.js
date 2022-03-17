@@ -34,7 +34,6 @@ export function GLFW(width, height, options = {}) {
 
   Object.assign(window, { ...GLFW.defaultCallbacks, ...handlers });
 
-  nvg.CreateGL3(nvg.STENCIL_STROKES | nvg.ANTIALIAS | nvg.DEBUG);
 
   return Object.assign(this, { resolution, title, window });
 }

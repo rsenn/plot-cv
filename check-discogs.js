@@ -28,6 +28,7 @@ async function main(...args) {
 
     let data,
       id = path.basename(file);
+    console.log('fetching order: '+id);
 
     data = await dl(id);
 
@@ -134,7 +135,7 @@ async function dl(orderId) {
       referer: 'https://www.discogs.com/sell/orders',
       'accept-language': 'en-US,en;q=0.9',
       cookie:
-        'sid=deb14330f89995598b4cd37ecd8f0c3d; language2=en; ck_username=diskosenn; session="gZ7nTDR5jpQkxXO7q6F2MuG6Ejw=?_expires=MTY1NjI3NzgxOQ==&auth_token=IktCZ0tWaWdxWkp3cWdubzZkY0RoMXpEb09EIg==&created_at=IjIwMjEtMTItMjhUMjE6MTA6MTkuNDMxNDQzIg==&idp%3Auser_id=ODM2OTAyMg=="; mp_session=ed5700f25fac3c643b872191; ppc_onboard_prompt=seen; __cf_bm=rU7Wrl49zidnmNz1cfYZks5MHHblFsaUHRqkk.3_ehg-1644783026-0-AeEfVFvIDNWHI+ooHhTwSJc44cwl2UZS/5UTnL3Cgew4zlS9OzC3p5rWl/bZMIE35CxnxbE1U8EAbyrRXlpC2+Y='
+         'cookie: sid=deb14330f89995598b4cd37ecd8f0c3d; language2=en; mp_session=ed5700f25fac3c643b872191; OptanonConsent=isIABGlobal=false&datestamp=Mon+Feb+14+2022+09%3A15%3A59+GMT%2B0100+(Central+European+Standard+Time)&version=6.20.0&hosts=&consentId=16f6b226-a0fd-429d-ba34-0bdad57d38f1&interactionCount=1&landingPath=https%3A%2F%2Fwww.discogs.com%2Fsell%2Fundefined&groups=C0001%3A1%2CC0004%3A1%2CC0003%3A1%2CC0002%3A1%2CSTACK8%3A0; currency=USD; ck_username=diskosenn; ppc_onboard_prompt=seen; session="5V0o/D1Lm2v3OYz32dQNvkTeAkE=?_expires=MTY2MjM3NDY4MQ==&auth_token=IktCZ0tWaWdxWkp3cWdubzZkY0RoMXpEb09EIg==&created_at=IjIwMjItMDMtMDlUMTA6NDQ6NDEuMjc3MDkxIg==&idp%3Auser_id=ODM2OTAyMg=="; __cf_bm=87380KFs8sEkEzylVP4kiA2ULlZ5mStrXUTZ7KpJE88-1647469525-0-ASnGsOYRSM4SnY6xqBsIgusJAOyZdwJ/ANWVSqv+VTXPWaTp4+7KNp9xihb9nHpr8Vkcam6hWHB7ESQ4lXD/7E4='
     }
   });
   console.log('result', result);
