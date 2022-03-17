@@ -26,6 +26,7 @@
 #include <portmidi.h>
 #include <linux/random.h>
 #include <zlib.h>
+#include <dns.h>
 #include "quickjs/qjs-net/libwebsockets/include/libwebsockets.h"
 
 static inline int
@@ -587,5 +588,20 @@ main() {
   printf("WSI_TOKEN_SKIPPING_SAW_CR = %i\n", WSI_TOKEN_SKIPPING_SAW_CR);
   printf("WSI_TOKEN_COUNT = %i\n", WSI_TOKEN_COUNT);
   printf("WSI_TOKEN_HTTP_URI_ARGS = %i\n", WSI_TOKEN_HTTP_URI_ARGS);
+  printf("DNS_T_A = %u\n", (uint8_t) DNS_T_A[1]);
+  printf("DNS_T_NS = %u\n", (uint8_t) DNS_T_NS[1]);
+  printf("DNS_T_CNAME = %u\n", (uint8_t) DNS_T_CNAME[1]);
+  printf("DNS_T_SOA = %u\n", (uint8_t) DNS_T_SOA[1]);
+  printf("DNS_T_PTR = %u\n", (uint8_t) DNS_T_PTR[1]);
+  printf("DNS_T_HINFO = %u\n", (uint8_t) DNS_T_HINFO[1]);
+  printf("DNS_T_MX = %u\n", (uint8_t) DNS_T_MX[1]);
+  printf("DNS_T_TXT = %u\n", (uint8_t) DNS_T_TXT[1]);
+  printf("DNS_T_RP = %u\n", (uint8_t) DNS_T_RP[1]);
+  printf("DNS_T_SIG = %u\n", (uint8_t) DNS_T_SIG[1]);
+  printf("DNS_T_KEY = %u\n", (uint8_t) DNS_T_KEY[1]);
+  printf("DNS_T_AAAA = %u\n", (uint8_t) DNS_T_AAAA[1]);
+  printf("DNS_T_AXFR = %u\n", (uint8_t) DNS_T_AXFR[1]);
+  printf("DNS_T_ANY = %u\n", (uint8_t) DNS_T_ANY[1]);
+
   return 0;
 }
