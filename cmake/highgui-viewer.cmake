@@ -10,8 +10,7 @@ add_definitions(-D_GNU_SOURCE=1)
 add_executable(highgui-viewer src/highgui-viewer.cpp ${HIGHGUI_VIEWER_SOURCES})
 target_compile_definitions(highgui-viewer PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${QUICKJS_VERSION}" CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1 ${PLOTCV_DEFS})
 
-target_link_libraries(highgui-viewer ${QUICKJS_OPENCV_A} ${PNG_LIBRARIES} ${OPENCV_FREETYPE_LIBRARY} ${OPENCV_LIBRARIES} ${GLEW_SHARED_LIBRARY_RELEASE} ${GLEW_SHARED_LIBRARIES} quickjs ${LIBDL}
-                      ${LIBM} ${LIBPTHREAD})
+target_link_libraries(highgui-viewer ${QUICKJS_OPENCV_A} ${PNG_LIBRARIES} ${OPENCV_FREETYPE_LIBRARY} ${OPENCV_LIBRARIES} ${GLEW_SHARED_LIBRARY_RELEASE} ${GLEW_SHARED_LIBRARIES} quickjs ${LIBDL} ${LIBM} ${LIBPTHREAD})
 
 add_dependencies(highgui-viewer qjs-opencv)
 install(TARGETS highgui-viewer DESTINATION bin)

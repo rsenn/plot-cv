@@ -104,8 +104,7 @@ check_library_exists(json-cpp ZN4YAML6detail9node_data9reset_mapEv /usr JSON_CPP
 set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE CACHE BOOL "Build installable binaries with -Wl,-rpath=PREFIX" FORCE)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE CACHE BOOL "Add dirs in runtime search path to the install rpath" FORCE)
 
-include_directories(${OPENCV_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/opencv ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/include
-                    ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
+include_directories(${OPENCV_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/opencv ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
 
 foreach(CXX_STANDARD c++17 c++14 c++11)
   string(REPLACE "c++" "CPLUSPLUS" CXX_STANDARD_NUM "${CXX_STANDARD}")
@@ -273,8 +272,7 @@ if(IMGUI_VIEWER)
   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/imgui-viewer.cmake)
 endif(IMGUI_VIEWER)
 
-set(QUICKJS_SOURCES_LIST
-    "quickjs/quickjs.c;quickjs/quickjs.hpp;quickjs/libregexp.c;quickjs/libunicode.c;quickjs/cutils.c;quickjs/quickjs-libc.c;quickjs/quickjs-libc.h;quickjs/quickjs-find-module.c;quickjs/libbf.c")
+set(QUICKJS_SOURCES_LIST "quickjs/quickjs.c;quickjs/quickjs.hpp;quickjs/libregexp.c;quickjs/libunicode.c;quickjs/cutils.c;quickjs/quickjs-libc.c;quickjs/quickjs-libc.h;quickjs/quickjs-find-module.c;quickjs/libbf.c")
 # add_definitions(-D_GNU_SOURCE=1)
 
 macro(find_static_library VAR NAME)
@@ -388,11 +386,6 @@ string(REPLACE "/build/" "/inst/" CMAKE_INSTALL_DIR "${CMAKE_BINARY_DIR}")
 string(TIMESTAMP DATE_TIME "%y%m%d" UTC)
 
 add_custom_target(
-  dist
-  COMMAND rm -rf "${CMAKE_INSTALL_DIR}"
-  COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR="${CMAKE_INSTALL_DIR}"
-  COMMAND tar -C "${CMAKE_INSTALL_DIR}" -J -cf "${CMAKE_PROJECT_NAME}-${DATE_TIME}.tar.xz" .
+  dist COMMAND rm -rf "${CMAKE_INSTALL_DIR}" COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR="${CMAKE_INSTALL_DIR}" COMMAND tar -C "${CMAKE_INSTALL_DIR}" -J -cf "${CMAKE_PROJECT_NAME}-${DATE_TIME}.tar.xz" .
   #COMMAND 7z a -w"${CMAKE_INSTALL_DIR}"  "${CMAKE_PROJECT_NAME}-${DATE_TIME}.tar"  .
-  WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
-  BYPRODUCTS "${CMAKE_INSTALL_DIR}"
-  COMMENT "Install into directory")
+  WORKING_DIRECTORY "${CMAKE_BINARY_DIR}" BYPRODUCTS "${CMAKE_INSTALL_DIR}" COMMENT "Install into directory")
