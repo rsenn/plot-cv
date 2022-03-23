@@ -47,7 +47,7 @@ main() {
     POST_EXPR="$POST_EXPR; s|\s${KW}\s*(| ${KW}(|"
     POST_EXPR="$POST_EXPR; s|^${KW}\s*(|${KW}(|"
   done
-   POST_EXPR="$POST_EXPR;${nl}/^import/ { :lp; /;$/! { N; b lp };  s|\n\s*| |g }"
+   POST_EXPR="/^import/ { :lp; /;$/! { N; b lp };  s|\n\s*| |g };${nl}${POST_EXPR}"
  #POST_EXPR="$POST_EXPR; "':st; /^\s*[gs]et(/ { N; /\n\s*[^{}\n]*$/  N;  /\/\/.*\n/! { /\n\s*},$/ s,\n\s*, ,g } }'
 echo "POST_EXPR='$POST_EXPR'" 1>&2
   SEP=${IFS%"${IFS#?}"}

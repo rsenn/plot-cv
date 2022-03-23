@@ -16,7 +16,9 @@ macro(find_glfw)
   find_library(GLFW_LIBRARY NAMES ${GLFW_LIB_NAMES} DOC "GLFW library" CMAKE_FIND_ROOT_PATH_BOTH)
 
   if(NOT GLFW_LIBRARY)
-    include(FindPkgConfig)
+    if(NOT PKG_CONFIG_FOUND)
+      include(FindPkgConfig)
+    endif(NOT PKG_CONFIG_FOUND)
 
     pkg_search_module(GLFW glfw3)
   endif(NOT GLFW_LIBRARY)

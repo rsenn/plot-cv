@@ -4011,7 +4011,9 @@ Util.stack = function Stack(stack, offset) {
             .map(part => part.trim())
         : frame
     );
-    stack = stack.map(frame => (Array.isArray(frame) ? (frame.length < 2 ? ['', ...frame] : frame).slice(0, 2) : frame));
+    stack = stack.map(frame =>
+      Array.isArray(frame) ? (frame.length < 2 ? ['', ...frame] : frame).slice(0, 2) : frame
+    );
     stack = stack.map(([func, file]) => [
       func,
       file

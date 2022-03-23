@@ -7,7 +7,9 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindGLFW.cmake)
 # include: OpenCV
 
 # glfw
-include(FindPkgConfig)
+if(NOT PKG_CONFIG_FOUND)
+  include(FindPkgConfig)
+endif(NOT PKG_CONFIG_FOUND)
 pkg_check_modules(GLFW3 glfw3 REQUIRED)
 #[[
 

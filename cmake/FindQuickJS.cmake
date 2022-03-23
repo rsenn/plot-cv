@@ -34,7 +34,9 @@ macro(find_quickjs)
 
   # set(CMAKE_INSTALL_PREFIX "${QUICKJS_PREFIX}" CACHE PATH "Install directory")
 
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS Debug Release MinSizeRel RelWithDebInfo)
+  if(CACHE{CMAKE_BUILD_TYPE})
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS Debug Release MinSizeRel RelWithDebInfo)
+  endif(CACHE{CMAKE_BUILD_TYPE})
 
   set(CMAKE_REQUIRED_QUIET TRUE)
 
@@ -136,7 +138,9 @@ macro(find_quickjs)
   endif(NOT QUICKJS_LIBRARY)
 
   if(NOT QUICKJS_LIBRARY)
-    include(FindPkgConfig)
+    if(NOT PKG_CONFIG_FOUND)
+      include(FindPkgConfig)
+    endif(NOT PKG_CONFIG_FOUND)
     pkg_search_module(QUICKJS REQUIRED quickjs)
     message(STATUS "QUICKJS_LIBRARY: ${QUICKJS_LIBRARY} ")
   endif(NOT QUICKJS_LIBRARY)
