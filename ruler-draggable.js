@@ -1,12 +1,4 @@
-import React, {
-  h,
-  useState,
-  useMemo,
-  useEffect,
-  useRef,
-  forwardRef,
-  useImperativeHandle
-} from './lib/dom/preactComponent.js';
+import React, { h, useState, useMemo, useEffect, useRef, forwardRef, useImperativeHandle } from './lib/dom/preactComponent.js';
 import PropTypes from './lib/prop-types.js';
 import { useDebounce } from './lib/hooks/useDebounce.js';
 import Cursor from './cursor.js';

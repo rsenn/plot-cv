@@ -1,35 +1,6 @@
-import {
-  AxisPoints,
-  AxisRange,
-  DrawAxis,
-  Origin,
-  GetRect,
-  X,
-  Y,
-  Flip,
-  DrawRect,
-  ClientRect,
-  ClientArea,
-  ClientMatrix
-} from './diagram.js';
+import { AxisPoints, AxisRange, DrawAxis, Origin, GetRect, X, Y, Flip, DrawRect, ClientRect, ClientArea, ClientMatrix } from './diagram.js';
 import { Console } from 'console';
-import {
-  Point,
-  Rect,
-  Mat,
-  Draw,
-  Contour,
-  transform,
-  CV_8UC3,
-  CV_64FC1,
-  CV_64FC2,
-  FILLED,
-  LINE_AA,
-  LINE_8,
-  imshow,
-  imwrite,
-  waitKey
-} from 'opencv';
+import { Point, Rect, Mat, Draw, Contour, transform, CV_8UC3, CV_64FC1, CV_64FC2, FILLED, LINE_AA, LINE_8, imshow, imwrite, waitKey } from 'opencv';
 import { TextStyle } from './qjs-opencv/js/cvHighGUI.js';
 import { range, srand, randInt } from 'util';
 

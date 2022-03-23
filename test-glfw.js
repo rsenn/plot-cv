@@ -61,14 +61,18 @@ function main(...args) {
   Util.shuffle(textures);
   console.log('textures', textures);
 
-  let hues = range(0, 359,360/16)
+  let hues = range(0, 359, 360 / 16)
     .map(h => new HSLA(h, 100, 50))
     .map(hsla => hsla.toRGBA());
 
   const clamp = (n, min, max) => Math.min(Math.max(min, n), max);
-  const interpolate = (x, y, sigma) => (Array.isArray(x) ? x.map((xx, i) => interpolate(xx, y[i], sigma)) : x * (1.0 - sigma) + y * sigma);
+  const interpolate = (x, y, sigma) =>
+    Array.isArray(x) ? x.map((xx, i) => interpolate(xx, y[i], sigma)) : x * (1.0 - sigma) + y * sigma;
 
-  console.log('hues', hues.map(c => [...c].slice(0,3)));
+  console.log(
+    'hues',
+    hues.map(c => [...c].slice(0, 3))
+  );
 
   while(!window.shouldClose) {
     glViewport(0, 0, width, height);
@@ -90,9 +94,9 @@ function main(...args) {
 
     let color = [...hues[index % 16]]; //.normalize();
 
-    color = interpolate(color, sine >= 0 ? [255,255,255,255] : [0,0,0,255], Math.abs(sine)*0.3).map(Math.round);
+    color = interpolate(color, sine >= 0 ? [255, 255, 255, 255] : [0, 0, 0, 255], Math.abs(sine) * 0.3).map(Math.round);
 
-    glClearColor(...color.map(n => n/255));
+    glClearColor(...color.map(n => n / 255));
     glClear(GL_COLOR_BUFFER_BIT); //clears the window to the color you want.
 
     glEnable(GL_TEXTURE_2D);
