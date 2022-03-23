@@ -1,15 +1,6 @@
 import { define, isObject, memoize, unique } from './lib/misc.js';
 import { ECMAScriptParser, Printer, PathReplacer } from './lib/ecmascript.js';
-import {
-  ObjectPattern,
-  ObjectExpression,
-  ImportDeclaration,
-  ExportNamedDeclaration,
-  VariableDeclaration,
-  estree,
-  ESNode,
-  Literal
-} from './lib/ecmascript.js';
+import { ObjectPattern, ObjectExpression, ImportDeclaration, ExportNamedDeclaration, VariableDeclaration, estree, ESNode, Literal } from './lib/ecmascript.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import Util from './lib/util.js';
 import { ImmutablePath } from './lib/json.js';
