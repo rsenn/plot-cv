@@ -1237,6 +1237,9 @@ export async function AstDump(compiler, source, args, force) {
         this.filter(n => /(?:Var)Decl/.test(n.kind)),
         List.prototype
       );
+    },
+    names(depth = 1) {
+     return this.data.inner.filter(n => 'name' in n).map(n => n.name);
     }
   });
   return r;
