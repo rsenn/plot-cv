@@ -42,11 +42,11 @@ function* SegmentRect(size, seg = new cv.Size(14, 12)) {
   }
 }
 
-function Image2ASCII(img) {
+function Image2ASCII(img,pixelfn = bit => bit ? '1' : '0') {
   let rows = [];
   for(let [[row, col], pixel] of img.entries()) {
     rows[row] ??= '';
-    rows[row] += pixel[0] < 128 ? '1' : '0';
+    rows[row] += pixelfn(pixel[0] < 128);
   }
   return rows.join('\n');
 }
@@ -68,7 +68,13 @@ function main(...args) {
 
   console.log('cv', features2d_names);
 
-  let img = cv.imread(args[0] ?? '/home/roman/Dokumente/nokia5510.png');
+  args[0] ??= '/home/roman/Dokumente/Urzeitcode/font-14x24.png';
+  let name = path.basename(args[0]);
+  let dim = new cv.Size([...name.matchAll(/\d+/g)].map(([n]) => +n));
+  console.log('dim', dim);
+
+
+  let img = cv.imread(args[0]);
   let float = new cv.Mat(),
     canny = new cv.Mat();
   let gray = new cv.Mat();
@@ -92,18 +98,18 @@ function main(...args) {
 
   let chars = '12345V67890V';
 
-  let segments = [...SegmentRect(img.size, new cv.Size(14, 24))];
+  let segments = [...SegmentRect(img.size, dim)];
   console.log('segments', console.config({ compact: 0 }), segments);
   let i = 0;
   for(let segment of segments) {
-    let subsegs = [...SegmentRect(segment, new cv.Size(14, 8))];
+    let subsegs = [...SegmentRect(segment, new cv.Size(dim.width, 8))];
 
     console.log('subsegs', chars[i], console.config({ compact: 0 }), subsegs);
     let j = 0;
     for(let subseg of subsegs) {
       let segimg = img(subseg);
 
-      let asc = Image2ASCII(segimg);
+      let asc = Image2ASCII(segimg, bit => bit ? '██' : '  ');
       console.log(j + '\n' + asc);
       j++;
     }
