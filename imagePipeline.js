@@ -13,7 +13,7 @@ import SvgPath from './lib/svg/path.js';
 import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Define, Once, GetOpt, RoundTo, Range } from './qjs-opencv/js/cvUtils.js';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
 
-export function ImagePipeline(input, config) {
+export function ImagePipeline(/*input,*/ config) {
   let contours = [],
     hier = [];
   let contoursDepth;
@@ -35,7 +35,12 @@ export function ImagePipeline(input, config) {
     dilations: new NumericParam(config.dilations || 0, 0, 10),
     erosions: new NumericParam(config.erosions || 0, 0, 10),
     mode: new EnumParam(config.mode || 3, ['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL']),
-    method: new EnumParam(config.method || 0, ['CHAIN_APPROX_NONE', 'CHAIN_APPROX_SIMPLE', 'CHAIN_APPROX_TC89_L1', 'CHAIN_APPROX_TC89_L189_KCOS']),
+    method: new EnumParam(config.method || 0, [
+      'CHAIN_APPROX_NONE',
+      'CHAIN_APPROX_SIMPLE',
+      'CHAIN_APPROX_TC89_L1',
+      'CHAIN_APPROX_TC89_L189_KCOS'
+    ]),
     maskColor: new EnumParam(config.maskColor || false, ['OFF', 'ON']),
     lineWidth: new NumericParam(config.lineWidth || 1, 0, 10),
     fontThickness: new NumericParam(config.fontThickness || 1, 0, 10)
@@ -111,7 +116,15 @@ export function ImagePipeline(input, config) {
         let edges = pipeline.outputOf('EdgeDetect');
         let mat = new Mat(0, 0, cv.CV_32SC4);
 
-        cv.HoughLinesP(edges, mat, 2, (+params.angleResolution * Math.PI) / 180, +params.threshc, +params.minLineLength, +params.maxLineGap);
+        cv.HoughLinesP(
+          edges,
+          mat,
+          2,
+          (+params.angleResolution * Math.PI) / 180,
+          +params.threshc,
+          +params.minLineLength,
+          +params.maxLineGap
+        );
         pipeline.lines = [...mat]; //.array;
         // console.log('mat', mat);
         //  console.log('lines', lines.slice(0, 10));

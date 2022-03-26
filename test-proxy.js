@@ -33,7 +33,7 @@ const proxyObject = (root, handler) => {
 
           if(key == 'attributes') return prop;
 
-          if(key !== 'attributes' && (isObject(prop) || Util.isArray(prop))) return new node([...path, key]);
+          if(key !== 'attributes' && (isObject(prop) || Array.isArray(prop))) return new node([...path, key]);
 
           return handler && handler.get ? handler.get(prop, key) : prop;
         },

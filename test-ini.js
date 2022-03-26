@@ -12,7 +12,7 @@ import { toXML } from './lib/json.js';
 let filesystem;
 
 function WriteFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
+  if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
   filesystem.writeFile(name, data + '\n');
@@ -71,7 +71,9 @@ async function main(...args) {
       const viewBoxStr = attr && attr.viewBox;
       const viewCoords = (viewBoxStr && viewBoxStr.split(' ')) || [0, 0, svg.attributes.width, svg.attributes.height];
       const [x1, y1, x2, y2] = viewCoords;
-      const viewBox = new Rect(svg.attributes && svg.attributes.viewBox ? { x1, y1, x2, y2 } : ['width', 'height'].map(a => svg.attributes[a]));
+      const viewBox = new Rect(
+        svg.attributes && svg.attributes.viewBox ? { x1, y1, x2, y2 } : ['width', 'height'].map(a => svg.attributes[a])
+      );
       iconSize = viewBox.size; //new Size(viewBox.width, viewBox.height);
       iconAspect = iconSize.aspect();
       const scale = iconAspect > 1 ? size.width / iconSize.width : size.height / iconSize.height;

@@ -63,7 +63,15 @@ globalThis.addEventListener('keypress', e => {
 /******************************************************************************
  * Components                                                                 *
  ******************************************************************************/
-const SourceLine = ({ lineno, text, active, children }) => h(Fragment, {}, [h('pre', { class: classNames('lineno', active && 'active', ['even', 'odd'][lineno % 2]) }, h('a', { name: `line-${lineno}` }, [lineno + ''])), h('pre', { class: classNames('text', active && 'active'), innerHTML: text })]);
+const SourceLine = ({ lineno, text, active, children }) =>
+  h(Fragment, {}, [
+    h(
+      'pre',
+      { class: classNames('lineno', active && 'active', ['even', 'odd'][lineno % 2]) },
+      h('a', { name: `line-${lineno}` }, [lineno + ''])
+    ),
+    h('pre', { class: classNames('text', active && 'active'), innerHTML: text })
+  ]);
 
 const SourceText = ({ text, filename }) => {
   const activeLine = useTrkl(currentLine);
@@ -111,7 +119,11 @@ const SourceFile = props => {
       })) ||
     '';
 
-  return h('div', { class: 'container' }, [h('div', {}, []), h('div', { class: 'header' }, [filename]), h(SourceText, { text, filename })]);
+  return h('div', { class: 'container' }, [
+    h('div', {}, []),
+    h('div', { class: 'header' }, [filename]),
+    h(SourceText, { text, filename })
+  ]);
 };
 
 /******************************************************************************
@@ -167,7 +179,10 @@ function* TokenizeJS(data, filename) {
   lex.setInput(data, filename);
 
   let { tokens } = lex;
-  let colors = Object.entries(tokenColors).reduce((acc, [type, c]) => ({ ...acc, [tokens.indexOf(type) + 1]: c.hex() }), {});
+  let colors = Object.entries(tokenColors).reduce(
+    (acc, [type, c]) => ({ ...acc, [tokens.indexOf(type) + 1]: c.hex() }),
+    {}
+  );
   let prev = {};
   let out = [];
   for(let { id, lexeme, line } of lex) {

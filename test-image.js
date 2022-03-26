@@ -1,3 +1,4 @@
+import * as std from 'std';
 import { Point, Size, Contour, Rect, Line, TickMeter, Mat, CLAHE, Draw } from 'opencv';
 import * as cv from 'opencv';
 import { HSLA } from './lib/color.js';
@@ -138,7 +139,7 @@ function main(...args) {
     maxArrayLength: 30,
     compact: 3
   });
-  const { DISPLAY } = process.env;
+  const { DISPLAY } = globalThis.process ? globalThis.process.env : std.getenviron();
   console.log('DISPLAY', DISPLAY);
   console.log(
     'cv.ALIGN_RIGHT',
@@ -198,7 +199,7 @@ function main(...args) {
       .map(hue => new HSLA(hue, 100, 50))
       .map(h => h.toRGBA());
 
-  let win = new Window('gray', cv.WINDOW_NORMAL | cv.WINDOW_AUTOSIZE /* | cv.WINDOW_KEEPRATIO*/);
+  let win = new Window('gray', cv.WINDOW_NORMAL /*| cv.WINDOW_AUTOSIZE */ | cv.WINDOW_KEEPRATIO);
   //console.debug('Mouse :', { MouseEvents, MouseFlags });
 
   const printFlags = flags => [...BitsToNames(MouseFlags)];
@@ -219,9 +220,13 @@ function main(...args) {
 
   const images = opts['input'] ? [opts['input']] : opts['@'];
 
+  let pipeline = new ImagePipeline({});
+
   for(let image of images) {
     console.log('image', image);
     let mat = cv.imread(image);
+
+    let out = pipeline(mat);
 
     console.log('mat', mat);
     //let [w, h] = [...mat.size];
@@ -231,7 +236,7 @@ function main(...args) {
     win.resize(...mat.size);
     win.align(0);
 
-    win.show(mat);
+    win.show(out);
     let k;
     while((k = cv.waitKey(-1))) {
       if(['\n', '\r', 13, 10].indexOf(k) != -1) break;

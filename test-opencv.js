@@ -1,4 +1,4 @@
-import { Point, Size, Rect, Mat, UMat, Line, CLAHE, TickMeter, Draw } from 'opencv';
+import { Point, Size, Rect, Mat, UMat, Line, CLAHE, TickMeter, Draw, Contour } from 'opencv';
 import * as cv from 'opencv';
 import fs from 'fs';
 import Console from 'console';
@@ -6,6 +6,7 @@ import * as path from 'path';
 import { RGBA, HSLA } from './lib/color.js';
 import Util from './lib/util.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
+import { memoize, range } from './lib/misc.js';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
 import { Window, MouseFlags, MouseEvents, Mouse, TextStyle, DrawText } from './qjs-opencv/js/cvHighGUI.js';
 import * as nvg from 'nanovg';
@@ -15,10 +16,10 @@ let basename = Util.getArgv()[1].replace(/\.js$/, '');
 const RAD2DEG = 180 / Math.PI;
 
 function GLFW(...args) {
-  let resolution, window, size, position;
+  const { GammaRamp, Monitor, Position, Scale, Size, VideoMode, Window, WorkArea } = glfw;
+  let resolution, window;
 
   resolution = new Size(...args);
-  const { Window } = glfw;
   const hints = [
     [glfw.CONTEXT_VERSION_MAJOR, 3],
     [glfw.CONTEXT_VERSION_MINOR, 2],
@@ -34,10 +35,8 @@ function GLFW(...args) {
   glfw.context.current = window;
   this.context = glfw.context;
 
-  size = new Size(window.size);
-  position = new Point(window.position);
-  const rect = new Rect(...position, ...size);
-  console.log(`GLFW`, rect);
+  const { size, position } = window;
+
   nvg.CreateGL3(nvg.STENCIL_STROKES | nvg.ANTIALIAS | nvg.DEBUG);
   return Object.assign(this, { resolution, window, size, position });
 }
@@ -110,10 +109,10 @@ function main(...args) {
   globalThis.console = new Console({
     inspectOptions: {
       maxStringLength: 200,
-      maxArrayLength: 10,
+
       breakLength: 100,
-      compact: 1,
-      depth: 10
+      compact: 0,
+      depth: Infinity
     }
   });
   let running = true;
@@ -152,8 +151,8 @@ function main(...args) {
   console.log('helpRect:', helpRect);
   let screen = new Mat(screenSize, cv.CV_8UC3);
 
-  let gfx = new GLFW(...screenSize);
-  console.log('gfx:', gfx);
+  /* let gfx = new GLFW(...screenSize);
+  console.log('gfx:', gfx);*/
 
   cv.imshow('output', screen);
   cv.moveWindow('output', 0, 0);
@@ -167,7 +166,11 @@ function main(...args) {
   let backgroundColor = 0xd0d0d0;
   let shadowColor = 0x404040;
   let textColor = 0xd3d7cf;
-  let fonts = ['/home/roman/.fonts/gothic.ttf', '/home/roman/.fonts/gothicb.ttf', '/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf'];
+  let fonts = [
+    '/home/roman/.fonts/gothic.ttf',
+    '/home/roman/.fonts/gothicb.ttf',
+    '/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf'
+  ];
   let fontFace = fonts[2];
   let fontSize = 14;
   fonts.forEach(file => Draw.loadFont(file));
@@ -190,6 +193,7 @@ function main(...args) {
     minRadius: new NumericParam(config.minRadius || 0, 1, 250),
     maxRadius: new NumericParam(config.maxRadius || 200, 1, 1000)
   };
+  let contours = [];
   let lineWidth = 1;
   let lines = [];
   let circles = [];
@@ -197,7 +201,8 @@ function main(...args) {
   let paramIndexes = [-1, -1];
   let palette = new Array();
   const black = [0x00, 0x00, 0x00, 0xff];
-  for(let i = 0; i < 8; i++) palette[i] = [i & 0x04 ? 0xff : 0x00, i & 0x02 ? 0xff : 0x00, i & 0x01 ? 0xff : 0x00, 0xff];
+  for(let i = 0; i < 8; i++)
+    palette[i] = [i & 0x04 ? 0xff : 0x00, i & 0x02 ? 0xff : 0x00, i & 0x01 ? 0xff : 0x00, 0xff];
   palette[2] = [0x60, 0x60, 0x60, 0xff];
   palette[3] = [0xff, 0xff, 0x0, 0xff];
   for(let i = 8; i < 16; i++) palette[i] = black;
@@ -220,13 +225,74 @@ function main(...args) {
         cv.threshold(src, dst, +params.thres, 255, +params.type);
       },
       function Morphology(src, dst) {
-        let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS, new Size(+params.kernel_size * 2 + 1, +params.kernel_size * 2 + 1));
+        let structuringElement = cv.getStructuringElement(
+          cv.MORPH_CROSS,
+          new Size(+params.kernel_size * 2 + 1, +params.kernel_size * 2 + 1)
+        );
         src.copyTo(dst);
         cv.morphologyEx(dst, dst, cv.MORPH_ERODE, structuringElement);
         dst.xor([255, 255, 255, 0], dst);
       },
       function Skeletonization(src, dst) {
         cv.skeletonization(src, dst);
+
+        //cv.traceSkeleton(dst, contours);
+        contours = cv.traceSkeleton(dst);
+
+        // contours.sort((a, b) => b.length - a.length);
+        ///* prettier-ignore */ console.log('Skeletonization', console.config({ compact: 1, maxArrayLength: Infinity }), contours.map(c => c.toString()));
+      },
+      function ShowTrace(src, dst) {
+        cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
+        dst.clear();
+
+        //let palette= range(0,359, 360/contours.length).map(hue => new HSLA(hue, 100,50,1.0));
+        let palette = range(0, contours.length - 1)
+          .map(n => [Math.floor(n / 3), ((n % 3) - 1) * 25 + 50])
+          .map(([n, m]) => [(Math.floor(n / 3) * 359 * 9) / (contours.length - 1), ((n % 3) - 1) * 25 + 50, m])
+          .map(([h, s, l]) => new HSLA(h, s, l, 1.0));
+
+        palette = palette.map(c => c.toBGRA());
+
+        // console.log('ShowTrace', console.config({ maxArrayLength: Infinity, depth: 4 }), { palette });
+        // console.log('Draw.contours', Draw.contours);
+
+        //  contours = contours.filter(c => c.length<= 2);
+
+        for(let i = 0; i < contours.length; i++) {
+          const color = palette[i];
+          //Draw.contours(dst, contours, i, color, 1);
+          Draw.polylines(dst, [contours[i]], false, color, 1);
+        }
+
+        console.log('ShowTrace', console.config({ maxArrayLength: Infinity }), { src, dst });
+      },
+      function LineSegmentDetector(src, dst) {
+        let lines = [];
+        let width = [],
+          prec = [],
+          nfa = [];
+        cv.lineSegmentDetector(this.outputOf('Skeletonization'), lines, width, prec, nfa);
+        /* let intersectionMatrix = [];
+        for(let i = 0; i < lines.length; i++) {
+          intersectionMatrix[i] = [];
+          for(let j = 0; j < lines.length; j++) {
+            let pt = [];
+            let b = i == j ? null : lines[i].intersect(lines[j], pt);
+            intersectionMatrix[i][j] = b && pt;
+          }
+        }
+        console.log('LineSegmentDetector', { intersectionMatrix });
+        let lineMap = new Map();
+        let lineMapper = memoize(() => [], lineMap);
+        for(let line of lines) {
+          let { a, b } = line;
+          lineMapper(a + '').push(line);
+          lineMapper(b + '').push(line);
+        }
+        console.log('LineSegmentDetector', console.config({ compact: 3 }), [...lineMap].map(([name, arr]) => [name, arr.length, arr.map(line => [line + '', line.length])]).sort((a, b) => b[1] - a[1]) );
+        */
+        src.copyTo(dst);
       },
       function PixelNeighborhood(src, dst) {
         let neighborhood = new Mat(src.size, cv.CV_8UC1);
@@ -245,7 +311,15 @@ function main(...args) {
         let output = new Mat();
         if(skel.channels > 1) cv.cvtColor(skel, skel, cv.COLOR_BGR2GRAY);
         if(morpho.channels > 1) cv.cvtColor(morpho, morpho, cv.COLOR_BGR2GRAY);
-        cv.HoughLinesP(skel, output, +params.rho, (Math.PI * (+params.theta || 1)) / 180, +params.threshold, +params.minLineLength, +params.maxLineGap);
+        cv.HoughLinesP(
+          skel,
+          output,
+          +params.rho,
+          (Math.PI * (+params.theta || 1)) / 180,
+          +params.threshold,
+          +params.minLineLength,
+          +params.maxLineGap
+        );
         cv.cvtColor(skel, dst, cv.COLOR_GRAY2BGR);
         let i = 0;
         lines.splice(0, lines.length);
@@ -321,7 +395,14 @@ function main(...args) {
       function HoughCircles(src, dst) {
         const morpho = this.outputOf('Morphology');
         const skel = this.outputOf('Skeletonization');
-        const paramArray = [+params.dp || 1, +params.minDist, +params.param1, +params.param2, +params.minRadius, +params.maxRadiMathus];
+        const paramArray = [
+          +params.dp || 1,
+          +params.minDist,
+          +params.param1,
+          +params.param2,
+          +params.minRadius,
+          +params.maxRadiMathus
+        ];
         let circles1 = [] || new Mat();
         let circles2 = [] || new Mat();
         cv.HoughCircles(morpho, circles1, cv.HOUGH_GRADIENT, ...paramArray);
@@ -363,8 +444,8 @@ function main(...args) {
     let params = processorParams.get(processor);
     let srect = new Rect(statusRect.size);
 
-    cv.rectangle(statusMat, srect, backgroundColor, cv.FILLED, true);
-    cv.rectangle(statusMat, srect.inset(3, 0), 0, cv.FILLED, true);
+    Draw.rectangle(statusMat, srect, backgroundColor, cv.FILLED, true);
+    Draw.rectangle(statusMat, srect.inset(3, 0), 0, cv.FILLED, true);
     const inspectOptions = {
       colors: true,
       hideKeys: ['callback']
@@ -376,7 +457,9 @@ function main(...args) {
       `params:\n` +
       params
         .map((name, idx) => {
-          return `  ${idx + paramIndexes[0] == paramNav.index ? '\x1b[1;31m' : ''}${name.padEnd(13)}\x1b[0m   \x1b[1;36m${+paramNav.get(name)}\x1b[0m\n`;
+          return `  ${idx + paramIndexes[0] == paramNav.index ? '\x1b[1;31m' : ''}${name.padEnd(
+            13
+          )}\x1b[0m   \x1b[1;36m${+paramNav.get(name)}\x1b[0m\n`;
         })
         .join('');
     DrawText(statusMat(textRect), text, textColor, fontFace, fontSize);

@@ -28,6 +28,8 @@ prettier() {
 }
 
 main() {
+  nl="
+"
   PRE_EXPR='\|/\*| { :lp; \|\*/|! { N; b lp }; n }'
   #PRE_EXPR='/^\s*[sg]et\s[^\s\t ]\+\s*([^)]*)\s*{/ s|^\(\s*\)|\1/* prettier-ignore */ |'
   #PRE_EXPR="$PRE_EXPR;; "'/^\s*[sg]et\s\+/ s|^\(\s*\)|\1/* prettier-ignore */ |'
@@ -39,15 +41,15 @@ main() {
   #POST_EXPR="$POST_EXPR; /^\s*let\s/ { :lp; /;\s*$/! { N; s,\s*\n\s*, ,g; b lp } }"
   #POST_EXPR="$POST_EXPR; /^\s*const\s/ { :lp; /;\s*$/! { N; s,\s*\n\s*, ,g; b lp } }"
   #POST_EXPR="$POST_EXPR; /^\s*var\s/ { :lp; /;\s*$/! { N; s,\s*\n\s*, ,g; b lp } }"
-  POST_EXPR="$POST_EXPR; /^import/ { :lp; /;$/! { N; b lp };  s|\n\s*| |g }"
   #POST_EXPR="$POST_EXPR; /\*\/\s[gs]et\s/ s|/\* prettier-ignore \*/ ||g"
   POST_EXPR="/^\[warn\]/d"
   for KW in "if" "for" "for await" "do" "while" "catch" "function"; do
     POST_EXPR="$POST_EXPR; s|\s${KW}\s*(| ${KW}(|"
     POST_EXPR="$POST_EXPR; s|^${KW}\s*(|${KW}(|"
   done
-  #POST_EXPR="$POST_EXPR; "':st; /^\s*[gs]et(/ { N; /\n\s*[^{}\n]*$/  N;  /\/\/.*\n/! { /\n\s*},$/ s,\n\s*, ,g } }'
-
+   POST_EXPR="/^import/ { :lp; /;$/! { N; b lp };  s|\n\s*| |g };${nl}${POST_EXPR}"
+ #POST_EXPR="$POST_EXPR; "':st; /^\s*[gs]et(/ { N; /\n\s*[^{}\n]*$/  N;  /\/\/.*\n/! { /\n\s*},$/ s,\n\s*, ,g } }'
+echo "POST_EXPR='$POST_EXPR'" 1>&2
   SEP=${IFS%"${IFS#?}"}
 
   [ -f .prettierrc ] && CONFIG=.prettierrc
@@ -67,6 +69,9 @@ main() {
   fi
 
   for SOURCE; do
+    if [ -L "$SOURCE" ]; then
+      SOURCE=`realpath --relative-to="$PWD" "$SOURCE"`
+    fi
     case "$SOURCE" in
       *.es5.js) continue ;;
       *.html) PARSER=html ;;

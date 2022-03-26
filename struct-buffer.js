@@ -89,6 +89,10 @@ class buffer extends ArrayBuffer {
 
   toString() {
     const { x, p, n, a, op, cookie, deinit, fd } = this;
-    return `struct buffer {\n\t.x = 0x${x.toString(16)},\n\t.p = ${p},\n\t.n = ${n},\n\t.a = ${a},\n\t.op = 0x${op.toString(16)},\n\t.cookie = 0x${cookie.toString(16)},\n\t.deinit = 0x${deinit.toString(16)},\n\t.fd = ${fd}\n}`;
+    return `struct buffer {\n\t.x = 0x${x.toString(
+      16
+    )},\n\t.p = ${p},\n\t.n = ${n},\n\t.a = ${a},\n\t.op = 0x${op.toString(16)},\n\t.cookie = 0x${cookie.toString(
+      16
+    )},\n\t.deinit = 0x${deinit.toString(16)},\n\t.fd = ${fd}\n}`;
   }
 }

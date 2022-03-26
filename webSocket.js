@@ -26,7 +26,7 @@ const sendBuf = client => {
   };
 
   self.send = function(msg, ...args) {
-    if(Util.isArray(msg)) {
+    if(Array.isArray(msg)) {
       msg.forEach(m => self(m));
       return;
     }
@@ -45,7 +45,7 @@ const sendBuf = client => {
 };
 
 function sendTo(sock, msg, ...args) {
-  if(Util.isArray(msg)) {
+  if(Array.isArray(msg)) {
     let lines = msg.map(m => new Message(m).data);
     return sendTo(sock, lines.join('\n'));
   }
@@ -73,7 +73,11 @@ function sendMany(except, msg, ...args) {
     msg = new Message(msg, ...args);
     msg = msg.data;
   }
-  return Promise.all(sockets.filter(sock => !(sock == except || sock.id == except || sock.ws == except)).map(sock => sendTo.call(this, sock, msg)));
+  return Promise.all(
+    sockets
+      .filter(sock => !(sock == except || sock.id == except || sock.ws == except))
+      .map(sock => sendTo.call(this, sock, msg))
+  );
 }
 
 export class Socket {

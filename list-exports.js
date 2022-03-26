@@ -1,255 +1,457 @@
-import { ECMAScriptParser, Printer, PathReplacer, ImportDeclaration, ImportSpecifier, Identifier, Literal, ExportDefaultDeclaration } from './lib/ecmascript.js';
-import Util from './lib/util.js';
-import Tree from './lib/tree.js';
+import * as std from 'std';
 import * as fs from 'fs';
 import * as path from 'path';
-import deep from './lib/deep.js';
-import { Stack } from './lib/stack.js';
-import { WriteFile } from './io-helpers.js';
+import { Lexer, Token } from 'lexer';
 import { Console } from 'console';
-import { inspect } from './lib/misc.js';
-import process from 'process';
+import JSLexer from './quickjs/qjs-modules/lib/jslexer.js';
+import { escape, toString, define, curry, unique, split, extendArray, camelize } from './lib/misc.js';
 
-let lexer, parser, childProcess;
+let buffers = {},
+  modules = {};
+let T;
 
-globalThis.fs = fs;
+('use strict');
+('use math');
 
-function PrintAst(ast, comments, printer = globalThis.printer) {
-  let output = printer.print(ast);
+extendArray(Array.prototype);
 
-  return output;
+const AddUnique = (arr, item) => (arr.indexOf(item) == -1 ? arr.push(item) : null);
+
+const IntToDWord = ival => (isNaN(ival) === false && ival < 0 ? ival + 4294967296 : ival);
+const IntToBinary = i => (i == -1 || typeof i != 'number' ? i : '0b' + IntToDWord(i).toString(2));
+
+//const code = ["const str = stack.toString().replace(/\\n\\s*at /g, '\\n');", "/^(.*)\\s\\((.*):([0-9]*):([0-9]*)\\)$/.exec(line);" ];
+const code = [
+  "const str = stack.toString().replace(/\\n\\s*at /g, '\\n');",
+  '/Reg.*Ex/i.test(n)',
+  '/\\n/g',
+  'const [match, pattern, flags] = /^\\/(.*)\\/([a-z]*)$/.exec(token.value);',
+  '/^\\s\\((.*):([0-9]*):([0-9]*)\\)$/.exec(line);'
+];
+
+extendArray(Array.prototype);
+
+const bufferRef = new WeakMap();
+
+function BufferFile(file) {
+  //console.log('BufferFile', file);
+  if(buffers[file]) return buffers[file];
+  let b = (buffers[file] = fs.readFileSync(file, { flag: 'r' }));
+  //console.log('bufferRef', bufferRef, bufferRef.set, b);
+  if(typeof b == 'object' && b !== null) bufferRef.set(b, file);
+  return b;
 }
 
-let files = {};
+function BufferLengths(file) {
+  return buffers[file].map(b => b.byteLength);
+}
 
-function main(...argv) {
-  globalThis.console = new Console({
-    stdout: process.stdout,
-    stderr: process.stderr,
+function BufferOffsets(file) {
+  return buffers[file].reduce(([pos, list], b) => [pos + b.byteLength, list.concat([pos])], [0, []])[1];
+}
+
+function BufferRanges(file) {
+  return buffers[file].reduce(([pos, list], b) => [pos + b.byteLength, list.concat([[pos, b.byteLength]])], [0, []])[1];
+}
+
+function WriteFile(file, tok) {
+  let f = std.open(file, 'w+');
+  f.puts(tok);
+  console.log('Wrote "' + file + '": ' + tok.length + ' bytes');
+}
+
+function DumpLexer(lex) {
+  const { size, pos, start, line, column, lineStart, lineEnd, columnIndex } = lex;
+
+  return 'Lexer ' + inspect({ start, pos, size });
+}
+function DumpToken(tok) {
+  const { length, offset, chars, loc } = tok;
+
+  return `★ Token ${inspect({ chars, offset, length, loc }, { depth: 1 })}`;
+}
+const What = {
+  IMPORT: 0,
+  EXPORT: 1
+};
+
+const ImportTypes = {
+  IMPORT: 0,
+  IMPORT_DEFAULT: 1,
+  IMPORT_NAMESPACE: 2
+};
+
+const TokIs = curry((type, lexeme, tok) => {
+  if(lexeme != undefined) {
+    if(typeof lexeme == 'string' && tok.lexeme != lexeme) return false;
+    else if(Array.isArray(lexeme) && lexeme.indexOf(tok.lexeme) == -1) return false;
+  }
+  if(type != undefined) {
+    if(typeof type == 'string' && tok.type != type) return false;
+    if(typeof type == 'number' && tok.id != type) return false;
+  }
+  return true;
+});
+
+const IsKeyword = TokIs('keyword');
+const IsPunctuator = TokIs('punctuator');
+const IsIdentifier = TokIs('identifier');
+const IsStringLiteral = TokIs('stringLiteral');
+
+function ImportType(seq) {
+  if(IsKeyword('import', seq[0])) seq.shift();
+  if(IsPunctuator('*', seq[0])) {
+    if(IsKeyword('as', seq[1])) return ImportTypes.IMPORT_NAMESPACE;
+  } else if(IsIdentifier(undefined, seq[0])) {
+    if(IsKeyword('from', seq[1])) return ImportTypes.IMPORT_DEFAULT;
+  }
+  return ImportTypes.IMPORT;
+}
+
+function ImportFile(seq) {
+  let idx = seq.findIndex(tok => IsKeyword('from', tok));
+  while(seq[idx] && seq[idx].type != 'stringLiteral') ++idx;
+  return seq[idx].lexeme.replace(/^['"`](.*)['"`]$/g, '$1');
+}
+
+function ExportName(seq) {
+  let idx = seq.findIndex(tok => IsIdentifier(undefined, tok) || IsKeyword('default', tok));
+  return seq[idx]?.lexeme;
+}
+
+function AddExport(tokens) {
+  let code = tokens.map(tok => tok.lexeme).join('');
+  tokens = tokens.filter(tok => tok.type != 'whitespace');
+  let len = tokens.findIndex(tok => IsIdentifier(undefined, tok) || IsKeyword('default', tok)) + 1;
+  tokens = tokens.slice(0, len);
+  let exp = define(
+    {
+      type: tokens[1]?.lexeme,
+      tokens,
+      exported: ExportName(tokens),
+      range: [+tokens[0]?.loc, +tokens.last?.loc]
+    },
+    { code, loc: tokens[0]?.loc }
+  );
+  return exp;
+}
+
+function AddImport(tokens) {
+  //console.log('tokens:', tokens);
+  let range = [+tokens[0].loc, +tokens.last.loc],
+    code = tokens.map(tok => tok.lexeme).join('');
+  tokens = tokens.filter(tok => tok.type != 'whitespace');
+  let type = ImportType(tokens),
+    file = ImportFile(tokens);
+  const { loc, seq } = tokens[0];
+  let imp = define({ type, file, loc, seq, range }, { tokens, code });
+  imp.local = {
+    [ImportTypes.IMPORT_NAMESPACE]: () => {
+      let idx = tokens.findIndex(tok => IsKeyword('as', tok));
+      return tokens[idx + 1].lexeme;
+    },
+    [ImportTypes.IMPORT_DEFAULT]: () => {
+      let idx = tokens.findIndex(tok => IsKeyword('import', tok));
+      return tokens[idx + 1].lexeme;
+    },
+    [ImportTypes.IMPORT]: () => {
+      let idx = 0,
+        specifier = [],
+        specifiers = [];
+      if(IsKeyword('import', tokens[idx])) ++idx;
+      if(IsPunctuator('{', tokens[idx])) ++idx;
+      for(; !IsKeyword('from', tokens[idx]); ++idx) {
+        if(IsPunctuator([',', '}'], tokens[idx])) {
+          if(specifier.length) specifiers.push(specifier);
+          specifier = [];
+        } else {
+          specifier.push(tokens[idx].lexeme);
+        }
+      }
+      return specifiers;
+    }
+  }[type]();
+
+  return imp;
+}
+
+function PrintES6Import(imp) {
+  return {
+    [ImportTypes.IMPORT_NAMESPACE]: ({ local, file }) => `import * as ${local} from '${file}';`,
+    [ImportTypes.IMPORT_DEFAULT]: ({ local, file }) => `import ${local} from '${file}';`,
+    [ImportTypes.IMPORT]: ({ local, file }) => `import { ${local.join(', ')} } from '${file}';`
+  }[imp.type](imp);
+}
+
+function PrintCJSImport({ type, local, file }) {
+  return {
+    [ImportTypes.IMPORT_NAMESPACE]: () => `const ${local} = require('${file}');`,
+    [ImportTypes.IMPORT_DEFAULT]: () => `const ${local} = require('${file}');`,
+    [ImportTypes.IMPORT]: () => `const { ${local.join(', ')} } = require('${file}');`
+  }[type]();
+}
+
+function main(...args) {
+  globalThis.console = new Console(process.stderr, {
     inspectOptions: {
       colors: true,
-      depth: 2,
-      breakLength: 1000,
-      maxStringLength: 300,
+      depth: 8,
+      breakLength: 160,
+      maxStringLength: Infinity,
       maxArrayLength: Infinity,
       compact: 1,
-      customInspect: true
+      stringBreakNewline: false,
+      hideKeys: [Symbol.toStringTag /*, 'code'*/]
     }
   });
 
-  let params = Util.getOpt(
-    {
-      help: [
-        false,
-        (v, r, o) => {
-          console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
-          console.log(o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n'));
-          Util.exit(0);
-        },
-        'h'
-      ],
-      'output-ast': [true, null, 'a'],
-      output: [true, null, 'o'],
-      debug: [false, (v, r, o, result) => (result.debug | 0) + 1, 'x'],
-      '@': 'input'
-    },
-    argv
-  );
+  let optind = 0,
+    code = 'c',
+    debug,
+    sort,
+    caseSensitive,
+    quiet,
+    exp,
+    relativeTo,
+    match = /.*/gi,
+    files = [];
 
-  if(params.debug >= 2) ECMAScriptParser.instrumentate();
-  Util.defineGettersSetters(globalThis, {
-    printer: Util.once(() => new Printer({ colors: false, indent: 2 }))
-  });
-  const time = () => Date.now() / 1000;
-  if(params['@'].length == 0) params['@'].push(Util.getArgv()[1]);
-  for(let file of params['@']) {
-    let error;
-    const processing = () => ProcessFile(file, params);
-    try {
-      processing();
-    } catch(error) {
-      if(error !== null) throw error;
-    }
-    files[file] = Finish(error);
-    if(error) {
-      Util.putError(error);
-      break;
-    }
+  while(args[optind]) {
+    if(args[optind].startsWith('-')) {
+      if(/code/.test(args[optind])) code = args[++optind];
+      else if(/(debug|^-x)/.test(args[optind])) debug = true;
+      else if(/(sort|^-s)/.test(args[optind])) sort = true;
+      else if(/(case|^-c)/.test(args[optind])) caseSensitive = true;
+      else if(/(quiet|^-q)/.test(args[optind])) quiet = true;
+      else if(/(export|^-e)/.test(args[optind])) exp = true;
+      else if(/(relative|^-r)/.test(args[optind])) relativeTo = path.absolute(args[++optind]);
+      else if(/(match|^-m)/.test(args[optind])) match = new RegExp(args[++optind], 'i');
+    } else files.push(args[optind]);
+
+    optind++;
   }
-  let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
-  Util.exit(Number(files.length == 0));
-}
+  //console.log('files', files);
 
-let error;
+  const RelativePath = file => path.join(path.dirname(process.argv[1]), '..', file);
+
+  if(!files.length) files.push(RelativePath('lib/util.js'));
+
+  for(let file of files) ProcessFile(file);
+
+  function ProcessFile(file) {
+    const log = quiet ? () => {} : (...args) => console.log(`${file}:`, ...args);
+
+    let str = file ? BufferFile(file) : code[1],
+      len = str.length,
+      type = path.extname(file).substring(1),
+      base = camelize(path.basename(file, '.' + type).replace(/[^0-9A-Za-z_]/g, '_'));
+
+    let lex = {
+      js: new JSLexer(str, file)
+    };
+
+    lex.g4 = lex.bnf;
+    lex.ebnf = lex.bnf;
+    lex.l = lex.bnf;
+    lex.y = lex.bnf;
+
+    const lexer = lex[type];
+
+    T = lexer.tokens.reduce((acc, name, id) => ({ ...acc, [name]: id }), {});
+
+    let e = new SyntaxError();
+
+    lexer.handler = lex => {
+      const { loc, mode, pos, start, byteLength, state } = lex;
+      log(' '.repeat(loc.column - 1) + '^');
+    };
+    let tokenList = [],
+      declarations = [];
+    const colSizes = [12, 8, 4, 20, 32, 10, 0];
+
+    const printTok = debug
+      ? (tok, prefix) => {
+          const range = tok.charRange;
+          const cols = [prefix, `tok[${tok.byteLength}]`, tok.id, tok.type, tok.lexeme, tok.lexeme.length, tok.loc];
+          std.puts(
+            cols.reduce((acc, col, i) => acc + (col + '').replaceAll('\n', '\\n').padEnd(colSizes[i]), '') + '\n'
+          );
+        }
+      : () => {};
+
+    let tok,
+      i = 0,
+      mask = IntToBinary(lexer.mask),
+      state = lexer.topState();
+    lexer.beginCode = () => (code == 'js' ? 0b1000 : 0b0100);
+    let tokens = [],
+      start = Date.now();
+    const balancer = () => {
+      let self;
+      let stack = [];
+      const table = { '}': '{', ']': '[', ')': '(' };
+      self = function ParentheseBalancer(tok) {
+        switch (tok?.lexeme) {
+          case '{':
+          case '[':
+          case '(': {
+            stack.push(tok.lexeme);
+            break;
+          }
+          case '}':
+          case ']':
+          case ')': {
+            if(stack.last != table[tok.lexeme])
+              throw new Error(`top '${stack.last}' != '${tok.lexeme}' [ ${stack.map(s => `'${s}'`).join(', ')} ]`);
+
+            stack.pop();
+            break;
+          }
+        }
+      };
+      Object.assign(self, {
+        stack,
+        reset() {
+          stack.clear();
+        },
+        /* prettier-ignore */ get depth() {
+        return stack.length;
+      }
+      });
+
+      return self;
+    };
+    let balancers = [balancer()],
+      imports = [],
+      exports = [],
+      impexp,
+      cond,
+      imp = [],
+      showToken = tok => {
+        if((lexer.constructor != JSLexer && tok.type != 'whitespace') || /^((im|ex)port|from|as)$/.test(tok.lexeme)) {
+          let a = [/*(file + ':' + tok.loc).padEnd(file.length+10),*/ tok.type.padEnd(20, ' '), escape(tok.lexeme)];
+          std.puts(a.join('') + '\n');
+        }
+      };
+
+    for(;;) {
+      let { stateDepth } = lexer;
+      let value = lexer.next();
+      //console.log('value', value);
+      if(value < 0 || value == null) break;
+      let newState = lexer.topState();
+      tok = lexer.token;
+      //showToken(tok);
+      if(newState != state) {
+        if(state == 'TEMPLATE' && lexer.stateDepth > stateDepth) balancers.push(balancer());
+        if(newState == 'TEMPLATE' && lexer.stateDepth < stateDepth) balancers.pop();
+      }
+      let n = balancers.last.depth;
+      if(n == 0 && tok.lexeme == '}' && lexer.stateDepth > 0) {
+        lexer.popState();
+      } else {
+        balancer(tok);
+        if(n > 0 && balancers.last.depth == 0) log('balancer');
+        if(['import', 'export'].indexOf(tok.lexeme) >= 0) {
+          impexp = What[tok.lexeme.toUpperCase()];
+          let prev = tokens[tokens.length - 1];
+          cond = true;
+          imp = [];
+        }
+        if(cond == true) {
+          imp.push(tok);
+          if([';', '\n'].indexOf(tok.lexeme) != -1) {
+            cond = false;
+            if(imp.some(i => i.lexeme == 'from')) {
+              if(impexp == What.IMPORT) imports.push(AddImport(imp));
+            }
+
+            if(impexp == What.EXPORT) exports.push(AddExport(imp));
+          }
+        }
+        printTok(tok, newState);
+        tokens.push(tok);
+      }
+      state = newState;
+    }
+
+    const exportTokens = tokens.reduce((acc, tok, i) => (tok.lexeme == 'export' ? acc.concat([i]) : acc), []);
+    //log('Export tokens', exportTokens);
+
+    let exportNames = exportTokens.map(index => ExportName(tokens.slice(index)));
+    //log('Export names', exportNames);
+
+    /*log('ES6 imports', imports.map(PrintES6Import));
+    log('CJS imports', imports.map(PrintCJSImport));*/
+    let compare = (a, b) => ('' + a).localeCompare('' + b);
+
+    if(!caseSensitive) {
+      let fn = compare;
+      compare = (a, b) =>
+        fn.apply(
+          null,
+          [a, b].map(s => ('' + s).toLowerCase())
+        );
+    }
+
+    if(sort) exportNames.sort(compare);
+    let idx;
+    if((idx = exportNames.indexOf(base)) != -1 && exportNames.indexOf('default') != -1) {
+      exportNames.splice(idx, 1);
+      log(`\x1b[1;31mremoving '${base}'\x1b[0m`);
+    }
+
+    let source = file;
+
+    if(relativeTo) {
+      let rel = path.resolve(relativeTo);
+      source = path.absolute(source);
+
+      if(path.exists(rel) && !path.isDirectory(rel)) rel = path.dirname(rel);
+
+      log('\x1b[1;33mrelativeTo\x1b[0m', { rel, source });
+
+      source = path.relative(source, rel);
+    }
+
+    if(path.isRelative(source) && !/^(\.|\.\.)\//.test(source)) source = './' + source;
+
+    if(exportNames.length) {
+      const names = exportNames.map(t => (t == 'default' ? t + ' as ' + base : t)).filter(n => match.test(n));
+      const keyword = exp ? 'export' : 'import';
+
+      if(names.length == 1 && /^default as/.test(names[0])) std.puts(keyword + ` ${base} from '${source}'\n`);
+      else std.puts(keyword + ` { ${names.join(', ')} } from '${source}'\n`);
+    }
+
+    modules[source] = { imports, exports };
+
+    let fileImports = imports.filter(imp => /\.js$/i.test(imp.source));
+    let splitPoints = unique(fileImports.reduce((acc, imp) => [...acc, ...imp.range], []));
+    buffers[source] = [...split(BufferFile(source), ...splitPoints)].map(b => b ?? toString(b, 0, b.byteLength));
+
+    //log('fileImports', fileImports.map(imp => imp.source));
+
+    let dir = path.dirname(source);
+
+    fileImports.forEach(imp => {
+      let p = path.collapse(path.join(dir, imp.file));
+      //log('p', p);
+
+      AddUnique(files, p);
+    });
+
+    let end = Date.now();
+
+    log(`took ${end - start}ms`);
+
+    std.gc();
+  }
+}
 
 try {
-  const argv = [...(process?.argv ?? scriptArgs)].slice(2);
-  main(...argv);
-} catch(e) {
-  error = e;
-} finally {
-  if(error) {
-    console.log(`FAIL: ${Util.className(error)} ${error.message}`, `\n  ` + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  ').split('\n').slice(0, 10).join('\n'));
-    console.log('FAIL');
-    Util.exit(1);
-  } else {
-    console.log('SUCCESS');
-  }
-}
-
-function ProcessFile(file, params) {
-  let data, b, ret, parser;
-  const { debug } = params;
-  console.log(`Processing file '${file}'...`);
-  if(file == '-') file = '/dev/stdin';
-  if(file && fs.existsSync(file)) {
-    data = fs.readFileSync(file, 'utf8');
-  } else {
-    file = 'stdin';
-    data = fs.readFileSync('/dev/stdin', 'utf8');
-  }
-  if(debug >= 2) ECMAScriptParser.instrumentate();
-  let ast, error;
-  parser = globalThis.parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
-  try {
-    ast = parser.parseProgram();
-  } catch(err) {
-    const tokens = [...parser.processed, ...parser.tokens];
-    const token = tokens[tokens.length - 1];
-    if(err !== null) {
-      throw err;
-    } else {
-      throw new Error(`parseProgram`);
-    }
-  }
-  parser.addCommentsToNodes(ast);
-  params['output-ast'] ??= path.basename(file) + '.ast.json';
-  console.log('output-ast', params['output-ast']);
-  WriteFile(params['output-ast'], JSON.stringify(ast, null, 2));
-  let node2path = new WeakMap();
-  let nodeKeys = [];
-  let commentMap = new Map(
-    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node }]),
-    (a, b) => a - b
-  );
-  let tree = new Tree(ast);
-  ShowOutput(ast, tree, null, file, params);
-}
-
-function Finish(err) {
-  let fail = !!err;
-  if(fail) {
-    err.stack = PathReplacer()('' + err.stack)
-      .split(/\n/g)
-      .filter(s => !/esfactory/.test(s))
-      .join('\n');
-  }
-  if(err) {
-    console.log(parser.lexer.currentLine());
-    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
-  }
-  let t = [];
-  if(globalThis.parser) {
-    lexer = globalThis.parser.lexer;
-    console.log(globalThis.parser.trace());
-  }
-  if(fail) {
-    console.log('\nERR:', err.msg, '\n', parser.lexer.currentLine());
-  }
-  return !fail;
-}
-
-function ShowOutput(ast, tree, flat, file, params) {
-  const output_file = params['output-js'] ?? '/dev/stdout';
-  const flags = deep.RETURN_VALUE_PATH;
-  let nodes = [...deep.select(ast, (node, key) => ['exported', 'imported', 'local'].indexOf(key) != -1, flags), ...deep.select(ast, (node, key) => /Export/.test(node.type), flags)].map(([node, path]) => [node, path.slice(0, -1), deep.get(ast, path.slice(0, -1))]);
-  let names = nodes.filter(([n, p, parent]) => !/Import/.test(parent.type)).map(([node, path, parent]) => (node.declaration && node.declaration.id ? node.declaration.id : node));
-  let defaultExport = deep.find(ast, node => node instanceof ExportDefaultDeclaration, deep.RETURN_VALUE);
-  if(!file.startsWith('./') && !file.startsWith('/') && !file.startsWith('..')) file = './' + file;
-  let importNode = new ImportDeclaration(
-    [
-      ...names
-        .reduce((acc, n) => {
-          let name = NodeToName(n);
-          if(name && acc.indexOf(name) == -1) acc.push(name);
-          return acc;
-        }, [])
-        .map(name => new ImportSpecifier(new Identifier(name)))
-    ],
-    new Literal(`'${file}'`)
-  );
-  let code = PrintAst(importNode).trim() + '\n';
-  if(output_file == '/dev/stdout') fs.writeSync(process.stdout.fd ?? process.stdout, code);
-  else WriteFile(output_file, code);
-}
-
-function NodeType(node) {
-  if(typeof node == 'object') return typeof node.type == 'string' ? node.type : Util.className(node);
-}
-
-function NodeToName(node) {
-  let id;
-  if(Array.isArray(node) && node.length == 2) node = node[0];
-  if(node instanceof ExportDefaultDeclaration) return null;
-  if(typeof node == 'object' && node != null) {
-    if(node instanceof Identifier || node.type == 'Identifier' || 'name' in node) id = node.name;
-    if(!id && node.id && node.id instanceof Identifier) id = node.id;
-    if(!id && node.name) id = node.name;
-    if(!id) id = deep.find(node, (path, key) => ['id', 'exported'].indexOf(key) != -1, deep.RETURN_VALUE);
-    if(id instanceof Identifier) id = Identifier.string(id);
-  } else if(typeof node == 'number' || typeof node == 'string') id = node;
-  if(!id) {
-    let entries = deep.select(node, (n, p) => p[p.length - 1] == 'id' && typeof n == 'object' && n != null && (n.name || (n.type ?? n.kind) == 'Identifier'), deep.RETURN_VALUE_PATH);
-    let idList = deep.select(node, (n, p) => p[p.length - 1] == 'id' && typeof n == 'object' && n != null && (n.type ?? n.kind) == 'Identifier', deep.RETURN_VALUE_PATH);
-    let firstId = idList[0];
-    entries = entries.filter(([n, p]) => p.indexOf('init') == -1);
-    console.log(
-      'entries',
-      entries.map(([n, p]) => [p.join('.'), NodeType(deep.get(node, [...p].slice(0, -1))), n.type, n.name, p.length])
-    );
-    entries = entries.map(([n, p]) => [n.name, p.length, NodeType(deep.get(node, p.slice(0, -1))), [...Ancestors(n, p, (n, k) => [k, NodeType(n) ?? `[${k}]`, n.name])]]);
-    id = entries.map(e => e[0]);
-    console.log('node.type', node.type);
-  }
-  if(!id) {
-    let message =
-      'NodeToName(' +
-      node.kind +
-      ' ' +
-      Util.abbreviate(
-        inspect(node, {
-          breakLength: 1000,
-          multiline: false,
-          compact: 100,
-          depth: 2,
-          colors: true,
-          maxStringLength: 30,
-          maxArrayLength: 2
-        }),
-        500
-      );
-    console.log(message);
-    let e = new Error(message);
-    throw e;
-  }
-  return id;
-}
-
-function* Ancestors(obj, path, t = a => a) {
-  let i = 0;
-  for(let k of path) {
-    if(typeof obj == 'object') yield t(obj, k);
-    try {
-      obj = obj[k];
-    } catch(e) {
-      break;
-    }
-    ++i;
-  }
-}
-
-function NodeParent(obj, path) {
-  let r;
-  for(let n of Ancestors(obj, path)) if(n && n.type) r = n;
-  return r;
+  main(...scriptArgs.slice(1));
+} catch(error) {
+  console.log(`FAIL: ${error.message}\n${error.stack}`);
+  std.exit(1);
 }

@@ -93,7 +93,7 @@ function Proxy(obj) {
     } else if(Util.isPortNumber(v)) {
       p.port = +v;
     } else if(/proto/i.test(prop)) {
-      p.protocol = Util.isArray(v) ? v[0] : v;
+      p.protocol = Array.isArray(v) ? v[0] : v;
       if(/https/.test(p.protocol)) p.protocol = 'http';
     } else if(/(country|source)/i.test(prop)) {
       p[prop] = v;

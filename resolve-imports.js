@@ -1,1726 +1,1441 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
-import { ECMAScriptParser } from './lib/ecmascript.js';
-import ConsoleSetup from './lib/consoleSetup.js';
-import { Lexer, PathReplacer, Location } from './lib/ecmascript.js';
-import Printer from './lib/ecmascript/printer.js';
-import { Token } from './lib/ecmascript/token.js';
-import estree, { ImportSpecifier, VariableDeclaration, VariableDeclarator, ModuleSpecifier, ImportDeclaration, ExportNamedDeclaration, ExportDefaultDeclaration, ExportAllDeclaration, Identifier, MemberExpression, ESNode, CallExpression, ObjectPattern, ArrayPattern, Literal, AssignmentExpression, ExpressionStatement, ClassDeclaration, AssignmentProperty } from './lib/ecmascript/estree.js';
-import Util from './lib/util.js';
-import path from './lib/path.js';
-import { ImmutablePath, Path } from './lib/json.js';
-import deep from './lib/deep.js';
-import Tree from './lib/tree.js';
-import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
-import { Repeater } from './lib/repeater/repeater.js';
-import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater, Reader, ReadAll } from './lib/stream/utils.js';
-import fs from 'fs';
+#!/usr/bin/env qjsm
+import * as os from 'os';
+import * as std from 'std';
+import * as fs from 'fs';
+import inspect from 'inspect';
+import * as path from 'path';
+import { Lexer, Token } from 'lexer';
 import { Console } from 'console';
-import process from 'process';
+import ECMAScriptLexer from 'lib/lexer/ecmascript.js';
+import { getset, memoize, randInt, getTypeName, getTypeStr, isObject, shorten, toString, toArrayBuffer, define, curry, unique, split, extendArray, camelize, types, getOpt, quote, escape } from 'util';
 
-let childProcess, search, files;
-let node2path, flat, value, list;
-const removeModulesDir = PrefixRemover([/node_modules[/]/g, /^\.\//g]);
-let name;
-let parser, printer;
-const g = globalThis;
-const inspectSymbol = Symbol.for('nodejs.util.inspect.custom');
-const packages = new Map();
+('use strict');
+('use math');
 
-let searchExts = ['.js', '.mjs'];
-let exportMap = {};
-let importMap = {};
+class ArgumentError extends Error {
+  constructor(...args) {
+    super(...args);
+    this.stack = null;
+  }
+}
 
-define(Array.prototype, {
-  startsWith(other) {
-    if(other.length > this.length) return false;
-    for(let i = 0; i < other.length; i++) if(this[i] !== other[i]) return false;
+let buffers = {},
+  modules = {},
+  showTiming,
+  removeExports = false,
+  globalExports = 0,
+  showDeps = 0,
+  removeImports = false,
+  removeComments = false,
+  readPackage = false,
+  relativeTo,
+  outputFile,
+  recursive = true,
+  debug = 0,
+  header = [],
+  footer = [],
+  processed = new Set(),
+  bufferRef = new WeakMap(),
+  fileBuffers = new Map(),
+  fileMaps = new Map(),
+  dependencyMap = new Map(),
+  printFiles,
+  logFile = () => {};
+
+let dependencyTree = memoize(arg => [], dependencyMap);
+let bufferMap = getset(bufferRef);
+
+function ReadJSON(filename) {
+  let data = fs.readFileSync(filename, 'utf-8');
+  return data ? JSON.parse(data) : null;
+}
+const ReadPackageJSON = memoize(() => ReadJSON('package.json') ?? { _moduleAliases: {} });
+
+function ResolveAlias(filename) {
+  let { _moduleAliases } = ReadPackageJSON();
+
+  if(filename in _moduleAliases) return _moduleAliases[filename];
+  return filename;
+}
+
+function NormalizePath(p) {
+  p = path.absolute(p);
+  p = path.relative(p, path.getcwd());
+  p = path.normalize(p);
+  if(!path.isAbsolute(p)) if (!p.startsWith('./') && !p.startsWith('../') && p != '..') p = './' + p;
+  return p;
+}
+
+const FileBannerComment = (filename, i) => {
+  let s = '';
+  s += ` ${i ? 'end' : 'start'} of '${/*path.basename*/ filename}' `;
+  let n = Math.floor((80 - 6 - s.length) / 2);
+  s = '/* ' + '-'.repeat(n) + s;
+  s += '-'.repeat(80 - 3 - s.length) + ' */';
+  if(i == 0) s = '\n' + s + '\n';
+  else s = s + '\n';
+  return s;
+};
+
+extendArray(Array.prototype);
+
+const IsBuiltin = moduleName => /^[^\/.]+$/.test(moduleName);
+const compact = (n, more = {}) => console.config({ compact: n, maxArrayLength: 100, ...more });
+const AddUnique = (arr, item) => (arr.indexOf(item) == -1 ? arr.push(item) : null);
+const IntToDWord = ival => (isNaN(ival) === false && ival < 0 ? ival + 4294967296 : ival);
+const IntToBinary = i => (i == -1 || typeof i != 'number' ? i : '0b' + IntToDWord(i).toString(2));
+
+const What = { IMPORT: Symbol.for('import'), EXPORT: Symbol.for('export') };
+const ImportTypes = { IMPORT: 0, IMPORT_DEFAULT: 1, IMPORT_NAMESPACE: 2 };
+const IsOneOf = curry((n, value) => (Array.isArray(n) ? n.some(num => num === value) : n === value));
+const TokIs = curry((type, lexeme, tok) => {
+  if(tok != undefined) {
+    if(lexeme != undefined) if (typeof lexeme == 'string' && !IsOneOf(lexeme, tok.lexeme)) return false;
+    if(type != undefined) {
+      if(typeof type == 'string' && !IsOneOf(type, tok.type)) return false;
+      if(typeof type == 'number' && !IsOneOf(type, tok.id)) return false;
+    }
     return true;
-  },
-  endsWith(other) {
-    let offset = this.length - other.length;
-    if(offset < 0) return false;
-    for(let i = 0; i < other.length; i++) if(this[i + offset] !== other[i]) return false;
-    return true;
-  },
-  removeStart(other) {
-    return this.slice(this.startsWith(other) ? other.length : 0);
-  },
-  removeEnd(other) {
-    return this.slice(0, this.endsWith(other) ? this.length - other.length : this.length);
   }
 });
+const CompareRange = (a, b) =>
+  a === null || b === null
+    ? 0
+    : typeof a[0] == 'number' && typeof b[0] == 'number' && a[0] != b[0]
+    ? a[0] - b[0]
+    : a[1] - b[1];
 
-class ES6Module {
-  /*importedFrom = null;*/
-  root = null;
-
-  static moduleList = new Set();
-
-  static create(file, from, position) {
-    let mod = new ES6Module();
-    mod.file = file;
-    if(position || from) define(mod, { importedFrom: position ? position : from });
-    if(ES6Module.root == null) ES6Module.root = mod;
-    ES6Module.moduleList.add(mod);
-    return mod;
-  }
-
-  static get list() {
-    return [...ES6Module.moduleList];
-  }
-
-  static getOrCreate(file, from, position) {
-    let mod = ES6Module.get(file);
-    if(!mod) mod = ES6Module.create(file, from, position);
-    return mod;
-  }
-
-  static get(file) {
-    return [...ES6Module.moduleList].find(m => m.file === file);
-  }
-  /* prettier-ignore */ get chain() {
-    let ret = [];
-    let tmp,
-      mod = this;
-    while(mod) {
-      ret.push([mod, mod.importedFrom]);
-      tmp = mod.importedFrom;
-      if(tmp === mod) break;
-      mod = tmp;
-    }
-    return ret;
-  }
-
-  toString() {
-    return this.file;
-  }
-  valueOf() {
-    return this.toString();
-  }
-
-  [inspectSymbol]() {
-    const t = (...args) => Util.ansi.text(...args);
-    let s = t(Util.className(this), 1, 31) + t(' {', 1, 36);
-    for(let prop of ['file', 'importedPosition', 'bindings']) if(this[prop]) s += '\n' + t(prop.padStart(13, ' '), 1, 33) + t(': ', 1, 36) + formatProp(this[prop]);
-    s += t('\n}', 1, 36);
-    function formatProp(value) {
-      if(Util.isArray(value)) return t('[ ', 1, 36) + value.map(mod => formatProp(mod.file)).join(t(', ', 1, 36)) + t(' ]', 1, 36);
-      return typeof value == 'string' ? t(value, 1, 32) : Util.inspect(value).replaceAll('\n', '\n  ');
-    }
-    return s;
-  }
-
-  /* prettier-ignore */ get deps() {
-    return [...ES6Module.getDeps(this)];
-  }
-
-  /* prettier-ignore */ get imports() {
-    return [...ES6Module.getImportExport(this, (i) => i == -1)];
-  }
-
-  /* prettier-ignore */ get exports() {
-    return [...ES6Module.getImportExport(this, (i) => i != -1)];
-  }
-
-  /* prettier-ignore */ get bindings() {
-    let imports = [...ES6ImportExport.importExportList].filter(impExp => impExp.fromPath == this.file);
-
-    return new Map(imports.map(imp => [...imp.bindings]).flat().sort((a,b) => a[0].localeCompare(b[0])));
-  }
-
-  static *getDeps(module) {
-    for(let m of ES6Module.moduleList) {
-      if(m === module) continue;
-      if(m.importedFrom.file == module.file) yield m;
-      else if((m.importedFrom + '').startsWith(module.file)) yield m;
-    }
-  }
-
-  static *getImportExport(module, skipFn = idx => idx == -1) {
-    for(let impExp of ES6ImportExport.importExportList) {
-      if(skipFn(['require', 'import'].indexOf(impExp.type))) continue;
-      if(impExp.file == module.file) yield impExp;
-    }
-  }
-
-  static tree(colors = true) {
-    const t = colors ? (...args) => Util.ansi.text(...args) : t => t;
-    let arr = [...ES6Module.moduleList];
-    let modules = new Set(arr);
-    let lines = [];
-    function printModule(module, sym = '') {
-      // if(!modules.has(module)) return;
-      modules.delete(module);
-      if(typeof module.file != 'string') {
-        //console.log('module:', module);
-        throw new Error();
-      }
-      lines.push(t(sym, 1, 36) + t(module.file, 1, 33));
-      let deps = [...ES6Module.getDeps(module)];
-      for(let i = 0; i < deps.length; i++) {
-        //console.log('', { i, sym });
-        printModule(deps[i], sym.replace(/\u251c\u2500/g, '\u2502 ').replace(/\u2514\u2500/g, '  ') + ((i + 1 == deps.length ? '\u2514' : '\u251c') + '\u2500') + ' ');
-      }
-    }
-    printModule(arr[0], '');
-    return lines.join('\n');
-  }
-}
-const IMPORT = 1;
-const EXPORT = 2;
-
-class ES6Env {
-  static getCwd = memoize(() => fs.realpathSync('.') || path.resolve('.'));
-  static get cwd() {
-    return ES6Env.getCwd();
-  }
-
-  static pathTransform(p) {
-    const { cwd } = ES6Env;
-    //console.tog('pathTransform', { p, cwd });
-    if(/(\\|\/)/.test(p)) return path.relative(cwd, p);
-    return p;
-  }
-}
-
-class ES6ImportExport {
-  bindings = null;
-
-  static importExportList = new Set();
-
-  static get list() {
-    return [...ES6ImportExport.importExportList];
-  }
-
-  static create(obj) {
-    let ret = new ES6ImportExport();
-    let nodeClass = Util.className(obj.node);
-    let code = memoize(() => '' + Util.decamelize(nodeClass) + ' ' + PrintAst(obj.node))();
-    let p, n;
-    p = obj.path.slice(0, 2);
-    n = p.apply(obj.ast, true);
-    code = PrintAst(n);
-    if(obj.node instanceof ESNode) n = obj.node;
-    else p = obj.node;
-    let type = [/(import|require)/i, /exports?[^a-z]/i].filter(re => re.test(code));
-    type = type.map(re => [...re.exec(code)]).map(([m]) => m);
-    type = type.map(m => m + '');
-    type = (Util.isArray(type) && type[0]) || type;
-    let assoc = ESNode.assoc(obj.node) || ESNode.assoc(n);
-    let position = ESNode.assoc(obj.node).position || ESNode.assoc(n).position;
-    if(position) {
-      position = position.clone();
-      position.file = ES6Env.pathTransform(position.file);
-    }
-    let bindings = (obj.bindings instanceof Map && obj.bindings) || new Map();
-    ret = Object.assign(ret, { type, bindings, position });
-    let dir = path.relative(ES6Env.cwd, path.dirname(obj.file));
-    ret = define(ret, { ...obj, nodeClass, dir });
-
-    /*    bindings[inspectSymbol] = function() {
-      return Util.inspect(this);
-    };*/
-    obj.importNode = obj.importNode || [];
-
-    let importNode = obj.importNode.filter(p => p instanceof Path);
-    //console.log('importNode:', importNode);
-
-    let importNodes = importNode
-      //   .filter(p => p.length < 3)
-      .map(p => deep.get(obj.ast, p))
-      .map(n => [ESNode.assoc(n).position, PrintAst(n)])
-      .map(([p, n]) => [Util.isGenerator(position) && [...position].map(p => ES6Env.pathTransform(p)).join(':'), n]);
-
-    if(isObject(position) && position.toString) position = position.toString(true, (p, i) => (i == 0 ? path.relative(ES6Env.cwd, p) : p)).replace(/1;33/, '1;34');
-    /* const InspectFn = ret.bindings[inspectSymbol];
-  console.log(Util.ansi.text(Util.ucfirst((type + '').toLowerCase()), 1, 31) + Util.ansi.text(` @ `, 1, 36),
-      InspectFn ? InspectFn.call(ret.bindings) : '',
-      'importNode:',
-      [...obj.importNode].map((n) => [node2path.get(n), PrintAst(n)]).filter(([p, c]) => c.trim() != ''),
-      ...['dir', 'relpath'].reduce((acc, n) => [...acc, Util.ansi.text(n, 38, 5, 197) + Util.ansi.text(' ', 1, 36) + (typeof ret[n] == 'string' ? Util.ansi.text(ret[n], 1, 32) : typeof InspectFn == 'function' ? InspectFn.call(ret) : Util.inspect(ret[n], { multiline: false, newline: '' }).replace(/.*\)\ {/g, '')) + ' '], [])
-    );*/
-    Object.assign(ret, obj);
-    if(ret.file) ret.module = ES6Module.getOrCreate(ret.file, null);
-    if(ret.fromPath) ret.fromModule = ES6Module.getOrCreate(ret.fromPath, position || ret.file);
-
-    ES6ImportExport.importExportList.add(ret);
-
-    //if(ret.bindings instanceof Map) console.log("bindings:", [...ret.bindings]);
-
-    return ret;
-  }
-
-  /* prettier-ignore */ get relpath() {
-    const { file } = this;
-    if(ES6Env.cwd && file) {
-      let r = path.relative(ES6Env.cwd, file);
-      if(!/\//.test(r)) r = './' + r;
-      return r;
-    }
-  }
-
-  /* prettier-ignore */ get fromBase() {
-    return path
-      .basename(this.relpath)
-      .replace(/\.([0-9a-z]{2}|[0-9a-z]{3})$/, '');
-  }
-
-  /* prettier-ignore */ get from() {
-    let { node, path } = this;
-    let value = (node && node.source) || node;
-    path = (value && path.down('source')) || path;
-    while(isObject(value) && value.value) value = value.value;
-    return [value, path];
-  }
-
-  /* prettier-ignore */ set from(value) {
-    let { ast, node, path } = this;
-    if(node.source) {
-      let key = path.last;
-      let parent = path.up();
-      let obj = parent.apply(ast, true);
-      obj[key] = new Literal(value);
-    }
-  }
-  toSource() {
-    return PrintAst(this.node);
-  }
-  /* prettier-ignore */ get code() {
-    return this.toSource();
-  }
-  static get exports() {
-    let ret = [];
-    for(let impExp of ES6ImportExport.importExportList) {
-      if(impExp.exportNode) {
-        //console.log('impExp.bindings:', impExp.bindings);
-
-        if(Util.isIterable(impExp.bindings)) for(const entry of impExp.bindings) if (entry && entry.length) ret.push(entry);
-      }
-    }
-    return Util.accumulate(ret);
-  }
-  [inspectSymbol]() {
-    let { type, position, bindings, path, node, file, from, fromPath, module, relpath } = this;
-    const opts = { colors: true, colon: ': ', multiline: false, quote: '' };
-    if(Util.isIterator(position)) position = [...position].map(p => ES6Env.pathTransform(p)).join(':');
-
-    return Util.inspect(
-      Object.assign(
-        Object.setPrototypeOf(
-          {
-            type,
-            module: module[inspectSymbol]().replace(/\n\s*/g, '\n  '),
-            bindings: Util.inspect(bindings, {
-              colors: true,
-              toString: 'toString'
-            }).replaceAll('\n', '\n  ')
-            /* path: path.join('.'),*/
-            /*node: PrintAst(node) */ //Util.inspect(node, { ...opts, separator: '', newline: '', depth: 0 })
-          },
-          ES6ImportExport.prototype
-        ),
-        { file /*, position */ }
-      ),
-      {
-        ...opts,
-        multiline: true
-      }
-    )
-      .replace(/(.*){(.*)/, '\n$1{\n $2\n')
-      .replace(/\n\s*\n/g, '\n')
-      .replace(/\s*'\s*/g, '');
-
-    let proto = Object.getPrototypeOf(this);
-    let obj = Util.filterOutMembers(this, x => [Util.isFunction /*, isObject*/].some(f => f(x)));
-    return Util.inspect({ ...obj, __proto__: proto }, { multiline: true });
-  }
-  toString() {
-    //console.log('toString', ...Util.getMemberNames(this).map((p) => [p, this[p]]).map(([k, v]) => [k, v + '']).flat());
-    return path.relative(ES6Env.cwd, this.file || '');
-  }
-  [Symbol.toStringTag]() {
-    return path.relative(ES6Env.cwd, this.file || '');
-  }
-}
-
-const isRequire = ([path, node]) => {
-  //console.log("isRequire node:", node);
-
-  return (node instanceof CallExpression || node.type == 'CallExpression') && (node.callee.name == 'require' || PrintAst(node.callee) == 'require');
+const IsKeyword = TokIs('keyword');
+const IsPunctuator = TokIs('punctuator');
+const IsIdentifier = TokIs('identifier');
+const IsStringLiteral = TokIs('stringLiteral');
+const PutsFunction = outFn => str => {
+  let b = toArrayBuffer(str);
+  return outFn(b, b.byteLength);
 };
 
-const isImport = ([path, node]) => node instanceof ImportDeclaration;
-const isES6Export = ([path, node]) => node?.type?.startsWith('Export');
-/*const isCJSExport = ([path, node]) =>
-  node instanceof MemberExpression &&   PrintAst(node).startsWith('module.exports');*/
-const isCJSExport = ([path, node]) => node.left && PrintAst(node.left).startsWith('module.exports'); // node instanceof MemberExpression &&   PrintAst(node).startsWith('module.exports');
+const IsWhiteSpace = str => /^\s*$/.test(str) || str.trim() == '';
 
-const getImport = ([p, n]) => {
-  let r = [];
-  if(n instanceof CallExpression && isObject(n) && n.callee && n.callee.name == 'require') {
-    let idx = p.lastIndexOf('init');
-    let start = idx != -1 ? idx + 1 : p.length;
-    let end = p.length;
-    let imp = [];
-    imp.push(p.down('arguments', 0));
-    imp.push(p.slice(0, idx));
-    while(start < end) {
-      imp.push(p.slice(0, start));
-      start++;
-    }
-    r.push(imp);
-  } /* if(!(n instanceof ImportDeclaration))*/ else {
-    let source = p.concat(['source']);
-    for(let [node, path] of deep.iterate(n, v => v instanceof ModuleSpecifier)) {
-      const name = p.concat([...path, 'name']);
-      const alias = p.concat([...path, 'as']);
-      r.push([source, alias, name]);
-    }
-  }
-  //console.log('getImport', { p, n, r });
-  return r;
-};
-const getExport = ([p, n]) => [n instanceof ExportNamedDeclaration ? p : p.slice(0, 2), p]; /*.map(p => [...p])*/
+const debugLog = (str, ...args) => {
+  const pred = arg => isObject(arg) && 'compact' in arg;
+  let opts = args.filter(pred);
 
-function PrintCode(node) {
-  return PrintObject(node, node => PrintAst(node));
-}
-function PrintObject(node, t = (n, p) => n) {
-  return Object.entries(node)
-    .map(([prop, value]) => [prop, ': ', t(value, prop)])
-    .flat();
-}
+  opts = opts.reduce((acc, opt) => define(acc, opt), opts.shift() ?? {});
 
-function PrefixRemover(reOrStr, replacement = '') {
-  if(!(Util.isArray(reOrStr) || Util.isIterable(reOrStr))) reOrStr = [reOrStr];
+  if(opts.compact === undefined) define(opts, compact(1));
+  if(opts.maxArrayLength === undefined) define(opts, { maxArrayLength: 10 });
+  if(opts.depth === undefined) define(opts, { depth: Infinity });
 
-  return arg => reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), typeof arg == 'string' ? arg : '');
-}
+  args = args.filter(arg => !pred(arg));
 
-function DumpFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
-  if(typeof data != 'string') data = '' + data;
-  fs.writeFileSync(name, data + '\n');
-  console.log(`Wrote ${name}: ${data.length} bytes`);
-}
+  opts.compact = false;
 
-function PrintAst(ast, comments, printer = new Printer({ indent: 4 }, comments)) {
-  return printer.print(ast);
-}
-
-const hl = {
-  id: text => Util.ansi.text(text, 1, 33),
-  punct: text => Util.ansi.text(text, 1, 36),
-  str: text => Util.ansi.text(text, 1, 32)
+  console.log(str, opts, ...args);
 };
 
-function DumpNode(node) {
-  return [hl.id`path` + hl.punct`:`, node2path.get(node), Util.ansi.text(`node`, 1, 33) + `:`, Util.inspect(node, { multiline: false, depth: 4 })];
-}
+const FileWriter = file => {
+  let fd = os.open(file, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o644);
+  return define(FdWriter(fd, file), {
+    close: () => os.close(fd)
+  });
+};
 
-function GenerateFlatMap(ast, root = [], pred = (n, p) => true, t = (p, n) => [root.concat(p).join('.'), n]) {
-  flat = deep.flatten(
-    ast,
-    new Map(),
-    (n, p) => n instanceof ESNode && pred(n, p),
-    (p, n) => t(p, n)
-  );
-  return flat;
-}
-
-function GenerateDistinctVariableDeclarations(variableDeclaration) {
-  const { kind, declarations } = variableDeclaration;
-
-  let ret = [];
-
-  for(let decl of declarations) {
-    ret.push(new VariableDeclaration([decl], kind));
-  }
-  return ret;
-}
-
-async function main(...args) {
-  //console.log('process:',process);
-  let consoleOpts;
-  globalThis.console = new Console(
-    (consoleOpts = {
-      stdout: process.stdout,
-      inspectOptions: { colors: true, depth: 1, compact: false, breakLength: 80 }
-    })
-  );
-  console.options = consoleOpts;
-  let params = Util.getOpt(
-    {
-      output: [true, null, 'o'],
-      debug: [false, null, 'x'],
-      '@': 'input'
-    },
-    args
-  );
-  console.log('params', params);
-  const re = {
-    name: /^(process|readline)$/,
-    path: /(lib\/util.js$|^lib\/)/
+function FdWriter(fd, name) {
+  let fn;
+  fn = (buf, len) => {
+    if(typeof buf == 'string') buf = toArrayBuffer(buf);
+    len ??= buf.byteLength;
+    let result = os.write(fd, buf, 0, len);
+    return result;
   };
-
-  args = params['@'];
-  if(args.length == 0) args = ['lib/geom/point.js', 'lib/geom/size.js', 'lib/geom/trbl.js', 'lib/geom/rect.js', 'lib/dom/element.js'];
-  console.log('args:', args);
-  let r = [];
-  let processed = [];
-  let allImports = [];
-  const dirs = [ES6Env.cwd, ...args.map(arg => path.dirname(arg))];
-  search = MakeSearch(dirs);
-  //console.log('search:', search);
-  let optind = 0;
-
-  while(args.length > 0) {
-    let arg = args.shift();
-    while(/:[0-9]+:?$/.test(arg)) arg = arg.replace(/:[0-9]*$/g, '');
-    let ret;
-    console.log('arg:', arg);
-    if((ret = await processFile(/*ES6Env.pathTransform*/ arg)) < 0) return -ret;
-    optind++;
-  }
-
-  let success = Object.entries(processed).filter(([k, v]) => !!v).length != 0;
-  console.log('processed files:', processed);
-  DumpFile(`${name}.es`, r.join('\n'));
-
-  function FriendlyPrintNode(n) {
-    if(n.type)
-      return Object.defineProperties([GetPosition(n), n.type || Util.className(n), /*st ? st.pathOf(n) : */ undefined, Util.abbreviate(Util.escape(PrintAst(n))), GetName(n) /*|| Symbol.for('default')*/], {
-        inspectSymbol: {
-          value() {
-            let arr = this.reduce((acc, item) => [...acc, (item[inspectSymbol] ?? item.toString).call(item)], []);
-            let [pos, type, path, node, id] = arr;
-            return (
-              '{' +
-              Object.entries({ pos, type, path, node, id })
-                .map(([k, v]) => `\n    ${k}: ${v}`)
-                .join('') +
-              '\n}'
-            );
-            return arr.join('\n  ');
-          }
-        },
-        id: {
-          get() {
-            if(n.id) return Identifier.string(n.id);
-          }
-        }
-      });
-    return n;
-  }
-  function FriendlyPrintNodes(nodes) {
-    return Array.isArray(nodes) ? nodes.map(n => (Array.isArray(n) ? FriendlyPrintNodes(n) : FriendlyPrintNode(n))) : nodes;
-  }
-
-  console.log(`\nModules:\n\n  ` + ES6Module.tree().replaceAll('\n', '\n  '));
-  console.log('exportMap:', exportMap);
-  console.log('importMap(1):', importMap);
-
-  function removeFile(file) {
-    Util.remove(args, file);
-    Util.pushUnique(processed, ES6Env.pathTransform(file));
-  }
-
-  async function processFile(file, depth = 0) {
-    Verbose(`processFile[${depth}] '${file}'`);
-
-    function Verbose(...args) {
-      console.log(...[`${file}:`, ...args]);
+  define(fn, {
+    fd,
+    name,
+    puts: PutsFunction(fn),
+    write: fn,
+    close: () => {},
+    seek: (whence, offset) => os.seek(fd, whence, offset),
+    [Symbol.toStringTag]: `FileWriter< ${fd} >`,
+    inspect() {
+      return inspect({ fd }) ?? this[Symbol.toStringTag];
     }
-
-    let b, ret;
-    if(!name) {
-      name = file;
-      if(/\/(src|index)[^/]*$/.test(name)) name = name.replace(/(src\/|index)[^/]*$/g, '');
-
-      name = path.basename(name).replace(/\.[ce]?[tj]s$/, '');
-    }
-    const module = ES6Module.getOrCreate(file, `<command-line:${optind}>`);
-
-    const moduleDir = removeModulesDir(file);
-    const modulePath = path.relative(ES6Env.cwd, moduleDir);
-    removeFile(file);
-
-    let thisdir = path.dirname(file);
-    let absthisdir = path.resolve(thisdir);
-    let moduleImports, imports;
-    Verbose('processing:', { file, thisdir });
-
-    const result = await ParseFile(file);
-    /// Verbose('result:', result);
-    let { data, error, ast, parser, printer } = result;
-    let flat, map;
-    let st = new Tree(ast);
-
-    let astStr = JSON.stringify(ast, null, 2);
-    fs.writeFileSync(path.basename(file, /\.[^.]+$/) + '.ast.json', astStr);
-    Verbose(`${file} parsed:`, { data, error });
-    function generateFlatAndMap() {
-      console.log('ast:', ast);
-      flat = deep.flatten(ast, new Map(), node => typeof node == 'object' && node != null);
-      console.log(
-        'flat:',
-        [...flat].map(([p, n]) => [p, n])
-      );
-      map = Util.mapAdapter((key, value) =>
-        key !== undefined
-          ? value !== undefined
-            ? value === null
-              ? deep.unset(ast, [...key])
-              : deep.set(ast, [...key], value)
-            : deep.get(ast, [...key])
-          : (function* () {
-              for(let [key, value] of flat.entries()) {
-                yield [key, deep.get(ast, key) /*?? key.apply(ast, true)*/];
-              }
-            })()
-      );
-      node2path = new WeakMap([...flat].map(([path, node]) => [node, path]));
-    }
-
-    try {
-      const getRelative = filename => path.join(thisdir, filename);
-
-      //Verbose('node2path:', node2path);
-
-      const AddValue = (...args) => {
-        let tmp, arg, subj;
-        while(args.length > 0) {
-          arg = args.shift();
-          if(typeof arg == 'function') {
-            subj = args.shift() || [];
-            subj = Util.isArray(subj) ? subj : [subj];
-            tmp = arg(value, ...subj);
-          } else tmp = typeof arg == 'string' ? value[arg] : arg;
-          Verbose('AddValue', (arg + '').replace(/\n.*/gm, ''), {
-            value,
-            tmp,
-            list
-          });
-          if(!tmp) return;
-          if(typeof tmp == 'boolean') tmp = value;
-          if(tmp !== value) list.push(tmp);
-          value = tmp;
-          return value;
-        }
-      };
-      let importNodes;
-      let importValues;
-
-      again: while(true) {
-        generateFlatAndMap();
-
-        //        moduleImports = [...flat];
-        moduleImports = [...flat].filter(([p, n]) => {
-          if(typeof n == 'object' && n != null) {
-            let cl = Util.className(n);
-            if(cl == 'CallExpression') {
-              let o = PrintAst(n);
-              if(o.startsWith('require')) return true;
-            }
-            //          let p = st.pathOf(n);
-            console.log('n:', p + '', cl);
-
-            //          console.log("it:",{p,n}, Util.className(n));
-            if(isRequire([p, n])) return true;
-            if(isImport([p, n])) return true;
-          }
-
-          return false;
-        });
-        console.log(
-          'moduleImports:',
-          moduleImports.map(([p, n]) => [p, PrintAst(n)])
-        );
-
-        function Source(source, file, node) {
-          const obj = new String(source);
-          return Object.defineProperties(obj, {
-            path: {
-              get: Util.once(function () {
-                let ret = SearchModuleInPath(source, file, ESNode.assoc(node).position) || source;
-                delete this.path;
-                this.path = ret;
-                return ret;
-              }),
-              enumerable: true,
-              configurable: true
-            },
-            valueOf: {
-              value() {
-                return this.path;
-              }
-            },
-            toString: {
-              value() {
-                return this + '';
-              }
-            },
-            [inspectSymbol]: {
-              value() {
-                let path = this.path;
-                return this;
-              }
-            }
-          });
-        }
-        //       Verbose(`flat:`, flat);
-        Verbose(`moduleImports:`, moduleImports);
-        let importEntries = moduleImports.map(([p, n]) => [n, GetImportBindings([n, p] /*, a=> a*/)]);
-        //Verbose(`importEntries:`, importEntries);
-        importEntries = new Map(
-          importEntries.map(([node, [parent, bindings]]) => {
-            //Verbose('bindings:', {n,bindings});
-            bindings ??= [];
-            bindings = [...bindings].map(([name, binding]) => [name, binding /*.concat([n])*/]);
-            bindings = bindings.map(([name, [source, imp /*, node*/]]) => [name, [source, typeof imp == 'symbol' ? Symbol.keyFor(imp) : imp, node, parent]]);
-            let assoc = ESNode.assoc(node) || ESNode.assoc(parent);
-
-            let { position } = assoc;
-            bindings = bindings.map(([name, [source, imp, node, parent]]) => [
-              name,
-              Object.defineProperties([source, imp == 'default' ? null : imp, node, st.pathOf(node), position && position.start], {
-                from: {
-                  get() {
-                    return GetFrom(node)[0];
-                  }
-                },
-                imported: {
-                  get() {
-                    const [, id] = this;
-                    return typeof id == 'symbol' ? Symbol.keyFor(id) : id;
-                  }
-                },
-                source: {
-                  get() {
-                    const [source] = this;
-                    return new Source(source, file, node);
-                  }
-                },
-                node: {
-                  get() {
-                    return this[2];
-                  }
-                },
-                position: {
-                  get() {
-                    return this[3];
-                  }
-                },
-                [inspectSymbol]: {
-                  value() {
-                    const [source, imported, node, path, position] = this;
-                    //console.log("position", {file,line,column});
-                    return [source, imported, PrintNode(node, path, position)].join(', ');
-                  }
-                }
-
-                //  return PrintNodes(this);
-                /* const { source, imported, node, position } = this;
-                      return {
-                      imported: imported ?? Symbol.for('default'), //  ...(imported ? { imported } : {}),
-                        position,
-                        source: source[inspectSymbol](),
-                        node: Util.abbreviate(Util.escape(PrintAst(node)))
-                      };*/
-              })
-            ]);
-
-            return [node, new Map(bindings)];
-          })
-        );
-        Verbose(`importEntries[${Util.size(importEntries)}]:`, importEntries);
-
-        importMap[file] = Object.fromEntries([...importEntries].reduce((acc, [n, bindings]) => /*(Array.isArray(bindings) ?*/ [...acc, ...bindings] /*: acc)*/, []));
-
-        function PrintNode(node, path, position) {
-          let type = node.type;
-          let ctxt = Util.colorText;
-          if(type) {
-            path ??= st.pathOf(node);
-            position ??= ESNode.assoc(node).position;
-            if(position?.start) position = position.start;
-            let props = [ctxt(type, 38, 5, 214), path, position].map(a => (a && a[inspectSymbol] ? a[inspectSymbol]() : a));
-            /* console.log("path:", [...path]);*/
-            props[1] = `[ ${props[1]} ]`;
-            //console.log('props:', props);
-            const p = [38, 5, 124] || [1, 31];
-            const b = [0, 37];
-            props = props.reduce((acc, item) => (acc && acc.length ? [...acc, ctxt('\u066d', ...p), item] : [item]), []);
-            return [ctxt('Node', 38, 5, 198), ctxt(`{`, ...b), ...props, ctxt(`}`, ...b)].reduce((acc, item) => (acc ? acc + ' ' + item : item), '');
-          }
-          return node;
-        }
-        function PrintNodes(nodes) {
-          // console.log("PrintNodes",{nodes});
-          return Array.isArray(nodes) ? nodes.map(n => (Array.isArray(n) ? PrintNodes(n) : PrintNode(n))) : PrintNode(nodes);
-        }
-
-        /*   for(let imp of moduleImports) {
-          let expr = ParentExpr(imp);
-          if(!(expr instanceof AssignmentExpression || expr instanceof VariableDeclarator)) {
-            if(imp[0].length == 2) continue;
-            let stmt = Path2Ptr(imp[0].slice(0, 2));
-            let root = Path2Ptr(imp[0].slice(0, 1));
-            let pos = imp[0][1];
-            let source = GetFrom(imp[1], imp[0])[0];
-            let name = source && Util.camelize(path.basename(source));
-            if(name) deep.set(ast, imp[0], new Identifier(name));
-            else throw new Error(`From: ${imp[1].type} ${PrintAst(imp[1])}`);
-            let importStatement = new ImportDeclaration([new ImportSpecifier(new Identifier('default'), new Identifier(name))],
-              new Literal(source)
-            );
-            let assoc = Util.filterKeys(ESNode.assoc(stmt[1]), ['range', 'comments', 'position']);
-            ESNode.assocMap.set(importStatement, assoc);
-            root[1].splice(pos, 0, importStatement);
-            continue again;
-          }
-        }*/
-
-        if(params.debug) {
-          Verbose(`importMap[${Util.size(importMap[file])}]:`, importMap[file]);
-          // Verbose('importEntries:', importEntries);
-        }
-
-        function GetName(node) {
-          // console.log('GetName', { node });
-          /* if(node.left) return GetName(node.left);
-          if(node.declaration) return GetName(node.declaration);
- 
-          */ if(node.property) {
-            let str = PrintAst(node);
-            if(/^module.exports/.test(str)) return str.replace(/^module\.exports\.?/, '');
-          }
-
-          if(node.id) {
-            if(node.id.type == 'Identifier') return Identifier.string(node.id);
-            //console.log("GetName",{type: node.type});
-          }
-          let parent = node.left || node.declaration; /*|| st.parentNode(node)*/
-
-          if(parent) {
-            return GetName(parent);
-          } else if(node.type == 'Program') {
-            return;
-          }
-          if(node.type == 'ExpressionStatement') {
-            node = node.expression;
-
-            if(node && node.type == 'AssignmentExpression') {
-              if(node.right && node.right.type == 'FunctionDeclaration') {
-                const { right } = node;
-                console.log('GetName', { right });
-                return Identifier.string(right.id);
-              }
-            }
-          }
-
-          //console.log('GetName', { type: node.type, node/*, oncode: PrintAst(node)*/ }); throw new Error(`GetName ${node.type}`);
-        }
-
-        function ExportName(exp) {
-          if(exp.type) exp = PrintAst(exp).replace(/^module.exports\.?/, '') || Symbol.for('default');
-          if(typeof exp == 'symbol') return Symbol.keyFor(exp);
-          if(typeof exp == 'string') return exp;
-          console.log('exp:', exp);
-        }
-        function ExportSymbol(exp) {
-          if(exp.type) exp = PrintAst(exp).replace(/^module.exports\.?/, '') || Symbol.for('default');
-          if(exp == 'default') exp = Symbol.for('default');
-          return exp;
-        }
-        /* Verbose(`CJS exports:`,
-          new Map(
-            [...flat]
-              .filter(e => isCJSExport(e))
-              .map(([p, n]) => [p, GetPosition(n), n])
-              .map(([p, pos, n]) => [p, pos, n.left, n.right])
-              .map(([p, pos, exp, val]) => [
-                p,
-                pos,
-                PrintAst(exp).replace(/^module.exports\.?/, '') || Symbol.for('default'),
-                exp,
-                val
-              ])
-              .map(([p, pos, e, ...nodes]) => [e, ...nodes.slice(1, 2)])
-              .map(([p, ...nodes]) => [p, ...FriendlyPrintNodes(nodes)])
-          )
-        );*/
-        let exportNodes = [...flat].filter(e => isCJSExport(e)).map(([p, n]) => [n.left, n.right, n, ...st.anchestors(n)]);
-
-        exportNodes = exportNodes
-          //  .map(e => [...e, GetExportBindings(ast, e)])
-          .map(([exp, ...nodes]) => [
-            ExportSymbol(exp),
-            nodes
-              .reduce((acc, n) => (n.id && [...acc, n.id]) || acc, [])
-              .map(id => Identifier.string(id))
-              .find(n => typeof n == 'string'),
-            ...nodes
-          ]);
-
-        if(params.debug) Verbose(`CJS exports 1:`, exportNodes);
-        exportNodes = exportNodes.map(([exp, name, ...nodes]) => [ExportSymbol(exp), name, ...nodes]);
-        exportMap[file] = Object.fromEntries(
-          exportNodes.map(([exp, name, ...nodes]) => [
-            exp,
-            /*FriendlyPrintNodes*/ nodes /*.slice(0,2)*/
-
-              /*.map(n => [st.pathOf(n), n])
-                .reduce((acc, [p, n]) => [
-                    ...acc,
-                    n,
-                    ...(p[p.length - 1] == 'right'
-                      ? [ st.parentNode(n).left]
-                      : [])
-                  ],
-                  []
-                )*/
-              .map(n => [n, GetName(n) || [n.type]])
-              .map(([n, name]) => [FriendlyPrintNode(n), name /* || Symbol.for('default')*/])
-              .find(([n, name]) => name !== null && name !== undefined)
-          ])
-        );
-
-        Verbose(`CJS exports 2:`, exportMap[file]);
-
-        //Verbose('imports:', imports);
-        importNodes = moduleImports.map(it => getImport(it));
-        //Verbose('importNodes:', importNodes);
-
-        importValues = moduleImports.map(it => {
-          let importIds = getImport(it);
-          //Verbose('importIds:', importIds);
-          let acc = [];
-          for(let importId of importIds) {
-            let ret = [];
-
-            for(let [p, n] of importId.map(p => [p, deep.get(ast, p)])) {
-              if(n instanceof Token) n = n.value;
-              if(n instanceof MemberExpression) n = n.property;
-              if(n instanceof VariableDeclarator) n = n.id;
-              /* if(n instanceof Literal) n = Literal.string(n);
-              if(n instanceof Identifier) n = n.value;*/
-              ret.push([p, n]);
-            }
-            if(ret.length == 2) ret.push([null, new Identifier('default')]);
-
-            acc.push(ret);
-          }
-          return acc;
-        }, []);
-        if(params.debug) Verbose('moduleImports:', moduleImports);
-
-        if(moduleImports.length) {
-          //Verbose('ast.body:', ast.body);
-          let importStatements = moduleImports.map(([, imp]) => imp);
-          //Verbose('importStatements:', importStatements);
-          let declPaths = unique(importStatements.map(stmt => stmt.toString()));
-
-          let declStatements = declPaths
-            .map(p => p.split(/\./g))
-            //  .map(p => new ImmutablePath(p))
-            .map(p => [p, deep.get(ast, p)])
-            .filter(([path, stmt]) => stmt instanceof VariableDeclaration);
-
-          let declCounts = Math.max(...declStatements.map(([p, n]) => n.declarations.length));
-
-          if(declCounts > 1 && declStatements.length > 0) {
-            for(let [path, stmt] of declStatements.reverse()) {
-              let index = path.last;
-              let arr = deep.get(ast, path.up());
-              let decls = GenerateDistinctVariableDeclarations(stmt);
-
-              arr.splice(index, 1, ...decls);
-            }
-            continue;
-          }
-        }
-        break;
-      }
-
-      const useStrict = map.filter(([key, node]) => node instanceof Literal && /use strict/.test(node.value));
-      useStrict.forEach(([path, node]) => deep.unset(ast, path));
-      // Verbose('importNodes:', importNodes);
-      let importDeclarations = importValues.map(ids =>
-        ids.map(a =>
-          a /*.slice(1)*/
-            .map(([p, n]) => n)
-        )
-      );
-
-      //Verbose('moduleImports:', moduleImports);
-
-      imports = moduleImports.map(([path, node]) => [path, node, Literal.string(GetLiteral(node))]).filter(([path, node, module]) => !re.name.test(module));
-
-      //Verbose('imports:', imports);
-
-      imports = imports.map(([path, node], i) => {
-        const assoc = ESNode.assoc(node);
-        //Verbose(`imports[${i}]`, { path, node, assoc });
-
-        const { position } = assoc;
-        const fromPath = GetFromPath([path, node], position || file);
-
-        //   const decls = importDeclarations[i].map(a => a.slice(1).map(n => new Identifier(Literal.string(n))));
-        const importNode = imports[i];
-
-        //Verbose('ES6ImportExport:', { path, node, fromPath, decls, importNode });
-
-        return ES6ImportExport.create({
-          ast,
-          node,
-          importNode,
-          path,
-          file,
-          identifiers: node.right instanceof Identifier ? [node.right.value] : [],
-          position,
-          fromValue: GetFromValue([node, path]),
-          fromPath,
-          bindings: GetImportBindings([node, path])
-        });
-      });
-
-      let statement2module = imports.map(imp => [imp.node, imp]);
-      statement2module = new WeakMap(statement2module);
-
-      //Verbose(`imports YYY:`, imports.map(imp => [imp.path, imp.position || { file: imp.file }]));
-
-      const fromMap = new WeakMap(
-        imports.map((imp, idx) => [
-          imp.node,
-          Util.tryCatch(
-            () => imp.fromPath,
-            v => v,
-            () => Literal.string(GetLiteral(imp.node))
-          )
-        ])
-      );
-
-      //Verbose(`imports XXX:`, imports.map(imp => fromMap.get(imp.node)));
-
-      let remove = imports.filter(imp => fromMap.get(imp.node)).map((imp, idx) => [idx, imp]);
-
-      remove = remove.filter(([idx, imp]) => !IsBuiltinModule(imp.fromPath));
-      //Verbose(`remove:`, remove.map(([idx, imp]) => imp.fromPath));
-      /*  remove.forEach(([i, imp]) => {
-        let nodes = importNodes[i];
-        let { path, node } = imp;
-         deep.set(ast, [...path], new ExpressionStatement(new Literal(`"removed ${PrintAst(node).replace(/;$/, '')}"`)));
-      });*/
-
-      let recurseImports = unique(remove.map(([idx, imp]) => imp || imports[idx]));
-      let recursePaths = recurseImports.map(imp => [ES6Env.cwd, GetFromPath([imp.path, imp.node], file), imp.node]);
-      //Verbose(`recursePaths [${depth}]:`, recursePaths.map(p => p[1]));
-      let recurseFiles = recursePaths.map(paths => path.relative(...paths.slice(0, 2)));
-
-      //Verbose(`recurseFiles [${depth}]:`, recurseFiles);
-      recurseFiles = recurseFiles.filter(f => processed.indexOf(f) == -1);
-      recurseFiles = recurseFiles.filter(f => !re.path.test(f));
-
-      imports = imports.filter(({ file, ...module }) => !re.path.test(file));
-
-      if(recurseFiles.length > 0) {
-        //Verbose(`recurseFiles [${depth}] `, recurseFiles.length, recurseFiles);
-        //Verbose(`${Util.ansi.text(modulePath, 1, 36)}: recurseFiles [${depth}]:`, recurseFiles.map((f) => f));
-        let idx = 0;
-        for(let imp of recurseFiles) {
-          if(processed.indexOf(imp) == -1) {
-            //Verbose(`recurseFiles [${depth}] forEach #${idx}:`, imp);
-            await processFile(imp, (depth || 0) + 1);
-          }
-          idx++;
-        }
-      }
-
-      let exportNodes = [...flat].filter(entry => isCJSExport(entry) || isES6Export(entry));
-      exportNodes = exportNodes.map(([p, n]) => (n instanceof MemberExpression ? p.slice(0, -1) : p)).map(p => [p, deep.get(ast, [...p])]);
-
-      /*      let exportStatements = exportNodes.map(([p, n]) => [
-        p,
-        Util.typeOf(n),
-        ...st.filter(n, n => n instanceof ESNode && PrintAst(n) == 'module.exports')
-      ]);
-
-      if(params.debug) Verbose('exportStatements:', exportStatements);
-*/
-      // Verbose('exportNodes:', exportNodes);
-      let exportPaths = exportNodes.map(getExport);
-      //Verbose('exportPaths:', exportPaths);
-      let exportEntries = exportPaths
-        .map(([path, path2]) => [path, path2, deep.get(ast, [...path])])
-        .map(([p, p2, n]) => [p, p2, n, n instanceof ExpressionStatement ? n.expression : n])
-        .map(([p, p2, n]) => [p, p2, n, n instanceof AssignmentExpression ? n.right : n]);
-
-      let moduleExports = exportEntries.map(([path, path2, node, node2]) => [node != node2 ? 'default' : null, node2]);
-      let exportInstances = moduleExports.map(([name, node], i) =>
-        ES6ImportExport.create({
-          ast,
-          node,
-          exportNode: exportEntries[i][2],
-          path: exportEntries[i][0],
-          file,
-          identifiers: [name],
-          bindings: GetExportBindings(node)
-        })
-      );
-
-      let output = '';
-
-      //  Verbose('exports:',[...ES6ImportExport.exports].map(([name,list]) => [name,list.length]));
-      //      Verbose('exports > 1:', [...ES6ImportExport.exports].filter(([name, list]) => list.length > 1));
-      let e = ES6ImportExport.exports;
-      [...e].filter(([name, list]) => list.length > 1 && name != 'default').map(([name, list]) => list.slice(1).map(node => st.remove(node)));
-      let defaultExports = [...flat].filter(([p, n]) => n instanceof ExportDefaultDeclaration);
-      //[1].map(node => st.replace(node, node.declaration));
-
-      defaultExports.forEach(([p, n]) => st.replace(n, n.declaration));
-      //      Verbose('defaultExports:', defaultExports);
-
-      //moduleImports.forEach(([p, n]) => st.remove(n));
-      moduleImports.forEach(([p, n]) => st.removeAt(p));
-
-      output = PrintAst(ast, parser.comments, printer);
-      r.push(`/*\n * concatenated ${file}\n */\n\n${output}\n`);
-
-      function GetImportBindings([node, path], retMap = /*(arg => arg) ||*/ arg => new Map(arg)) {
-        if(node instanceof ImportDeclaration) {
-          console.log('specifiers:', node.specifiers);
-          return [
-            node,
-            new Map(
-              node.specifiers.map(({ local, imported }) => [
-                Identifier.string(local),
-                [
-                  Literal.string(node.source),
-
-                  Util.ifThenElse(
-                    str => str == 'default',
-                    () => Symbol.for('default'),
-                    s => s
-                  )(imported)
-                  //, src => src == 'default' ? Symbol.for('default') : src , Identifier.string(imported)]])
-                ]
-              ])
-            )
-          ];
-        }
-
-        //console.log("parent:", path.split('.').slice(0, -1).join('.'), path);
-        let code = PrintAst(node);
-
-        console.log('code:', code);
-        if(node instanceof CallExpression || node.type == 'CallExpression' || code.startsWith('require(')) {
-          let source = (node.arguments[0] && Literal.string(node.arguments[0])) || null;
-          let parentPath = path.split('.').slice(0, -1).join('.');
-          console.log('parentPath:', parentPath);
-          let parent = /*deep.get(ast, parentPath); // ??*/ flat.get(parentPath);
-
-          let name = Symbol.for('default');
-
-          if(parent instanceof MemberExpression) {
-            name = PrintAst(parent.property);
-          }
-
-          while(!parent.id) {
-            parentPath = parentPath.split('.').slice(0, -1).join('.');
-
-            parent = deep.get(ast, parentPath); // st.parentNode(parent);
-          }
-          console.log('parent:', parent);
-
-          if('id' in parent) {
-            //console.log("parent.id:", parent.id);
-            //console.log("parent.id.value:", Identifier.string(parent.id));
-            if(typeof Identifier.string(parent.id) == 'string') return [parent, retMap([[Identifier.string(parent.id) || Symbol.for('default'), [source, name]]])];
-
-            if(parent.id.properties) {
-              let { properties } = parent.id;
-              parent.id.properties[0].key = new Identifier('XXX');
-
-              console.log('GetImportBindings:', PrintAst(parent.id));
-
-              return [parent, retMap(properties.map(({ key, value }) => [Identifier.string(key), [source, Identifier.string(value)]]))];
-            }
-          }
-        }
-        console.log('GetImportBindings:', node, node.callee, node.arguments);
-        throw new Error('Unhandled import bindings');
-      }
-
-      function ParentNode([path, node]) {
-        //console.log("ParentNode", { path,node });
-        if(path.length > 0) {
-          path = path.slice(0, -1);
-          node = deep.get(ast, path);
-          return [path, node];
-        }
-        return [null, null];
-      }
-
-      function Path2Ptr(path) {
-        return [[...path], deep.get(ast, [...path])];
-      }
-
-      function IsPtr(arg) {
-        return Array.isArray(arg) && arg.length == 2 && Array.isArray(arg[0]);
-      }
-
-      function ParentExpr(ptr) {
-        //console.log("ParentExpr", ptr);
-        if(ptr && ptr[0]?.last == 'callee') ptr[0] = ptr[0].up();
-
-        if(isRequire(ptr)) {
-          ptr = ParentNode(ptr);
-          if(ptr[1] instanceof MemberExpression) ptr = ParentNode(ptr);
-          return ptr;
-        }
-      }
-      /*function GetExportBindings(node) {
-        let ret = GetExportBindingsX(node);
-        Verbose("exportBindings:", ret, node);
-        return ret;
-      }*/
-      function GetExportBindings(node) {
-        if(node instanceof ExportNamedDeclaration) {
-          if(node.declaration) {
-            const { declaration } = node;
-            if(declaration.id) {
-              const { id } = declaration;
-              return new Map([[Identifier.string(id), node]]);
-            }
-            if(declaration.declarations) {
-              //   Verbose("declarations:", declaration.declarations);
-              return new Map(
-                declaration.declarations.map(({ id, init }) => {
-                  if(id instanceof ArrayPattern) {
-                    const ids = id.elements.map(prop => Identifier.string(prop.key));
-                    const values = init.elements;
-
-                    let ret = Util.zip([ids, values]);
-                    Verbose('ret:', ret);
-                    return ret;
-                  }
-                  return [Identifier.string(id), init];
-                })
-              );
-            }
-          }
-
-          if(node.specifiers) {
-            //Verbose("node.specifiers:", node.specifiers);
-            return new Map(node.specifiers.map(spec => [Identifier.string(spec.exported), spec]));
-          }
-          //  return new Map(node.specifiers.map(({ local, imported }) => [local, imported].map(Identifier.string)));1
-        } else if(node instanceof ExportDefaultDeclaration) {
-          return new Map([['default', node]]);
-        }
-
-        if(node instanceof ExpressionStatement) node = node.expression;
-        let p = st.pathOf(node).join('.');
-        let type = Util.typeOf(node);
-        //       Verbose('GetExportBindings:', {p,type});
-        if(node instanceof AssignmentExpression) {
-          const { left, right } = node;
-
-          if(left instanceof MemberExpression && PrintAst(left).startsWith('module.exports')) return new Map([['default', right]]);
-        }
-        let children = [...deep.iterate(node, n => n && n instanceof ESNode)];
-        children = children.filter(([n, p]) => n instanceof MemberExpression && /^module\.exports/.test(PrintAst(n)));
-        children = children.map(([n, p]) => [st.parentNode(n), p.slice(0, -1)]).filter(([n, p]) => n instanceof AssignmentExpression);
-        let bindings = children.filter(([n, p]) => p[p.length - 1] == 'left').map(([n, p]) => [p, GetPosition(n), Util.escape(/*Util.abbreviate*/ PrintAst(n)), n, new Map([...st.anchestors(n, n => n.type && n.type != 'Program' && [st.pathOf(n), PrintAst(n)])])]);
-        if(Util.size(bindings))
-          Verbose(
-            `GetExportBindings:`,
-            new Map(
-              bindings.map(([p, pos, code, n, ...anchestors], i) => {
-                return [i, { path: p, pos, code, node: n, anchestors }];
-              })
-            )
-          );
-
-        return bindings;
-
-        //    Verbose('GetExportBindings:', { children});
-        //q;
-
-        throw new Error(`Unhandled export bindings: ${p} ${Util.typeOf(node)} ${PrintAst(node)}`);
-      }
-    } catch(err) {
-      Util.putError(err);
-
-      throw err;
-    }
-  }
-}
-
-function FdReader(fd, bufferSize = 1024) {
-  let buf = fs.buffer(bufferSize);
-  return new Repeater(async (push, stop) => {
-    let ret;
-    do {
-      let r = await fs.waitRead(fd);
-      ret = fs.read(fd, buf);
-      if(ret > 0) {
-        let data = buf.slice(0, ret);
-        await push(fs.bufferToString(data));
-      }
-    } while(ret == bufferSize);
-    stop();
-    fs.close(fd);
   });
+  return fn;
 }
 
-async function Prettier(file) {
-  let input = fs.open(file, 'r');
-  let proc = childProcess('sh', ['-c', `node_modules/.bin/prettier --config .prettierrc --parser babel <'${file}' | tee '${file}.prettier'`], {
-    block: false,
-    stdio: [input, 'pipe', 'pipe']
+function DummyWriter(name) {
+  let fn = (buf, len) => len;
+  define(fn, {
+    name,
+    puts: PutsFunction(fn),
+    write: fn,
+    close: () => {},
+    seek: () => {},
+    [Symbol.toStringTag]: `DummyWriter< ${name} >`,
+    inspect() {
+      return inspect({ fd }) ?? this[Symbol.toStringTag];
+    }
   });
-  let sink = RepeaterSink(wr => proc.stdio[1].pipe(wr));
-  let data = '';
-  for await(let r of await sink) data += r;
-  return data;
+  return fn;
 }
 
-async function ParseFile(file) {
-  let data, error, ast, flat;
-  try {
-    data = fs.readFileSync(file);
+function ImportIds(seq) {
+  return seq.filter(tok => IsIdentifier(null, tok));
+}
 
-    //data = await Prettier(file);
-    // console.log('data:', Util.abbreviate(Util.escape(data + ''), 40));
-    //   console.log('data:', data.length, data || Util.abbreviate(Util.escape(data + ''), 40));
-
-    ECMAScriptParser.instrumentate();
-    const debug = await Util.getEnv('DEBUG');
-    console.log('FILE:', file);
-    console.log('DEBUG:', debug);
-    console.log('DATA:', Util.abbreviate(data));
-    parser = new ECMAScriptParser(data.toString(), file, debug ?? false);
-    g.parser = parser;
-    ast = parser.parseProgram();
-    parser.addCommentsToNodes(ast);
-  } catch(err) {
-    console.log('err:', err);
-    error = err;
-  } finally {
-    if(!ast) if (error === undefined) error = new Error(`No ast for file '${file}'`);
+function ImpExpType(seq) {
+  if(seq.some(tok => IsKeyword('import', tok))) return What.IMPORT;
+  if(seq.some(tok => IsKeyword('export', tok))) return What.EXPORT;
+}
+function ImportType(seq) {
+  if(IsKeyword(['import', 'export'], seq[0])) seq.shift();
+  if(IsPunctuator('*', seq[0])) {
+    if(IsKeyword('as', seq[1])) return ImportTypes.IMPORT_NAMESPACE;
+  } else if(IsIdentifier(undefined, seq[0])) {
+    if(IsKeyword('from', seq[1])) return ImportTypes.IMPORT_DEFAULT;
   }
-  if(error) throw error;
-  printer = new Printer({ indent: 4 });
-  g.printer = printer;
-  return { data, error, ast, parser, printer };
+  return ImportTypes.IMPORT;
 }
 
-function GetPosition(node) {
-  let assoc = ESNode.assoc(node);
+function ImportFile(seq) {
+  seq = NonWS(seq);
+  let idx = seq.findIndex(tok => IsKeyword('from', tok));
+  while(seq[idx] && seq[idx].type != 'stringLiteral') ++idx;
+  if(seq[idx])
+    if(seq[idx].type == 'stringLiteral') {
+      let f = seq[idx].lexeme.replace(/^[\'\"\`](.*)[\'\"\`]$/g, '$1');
+      return f;
+    }
+}
 
-  let position = (assoc ?? {}).position?.start;
-  if(!position) {
-    const nodesWithPosition = [...deep.iterate(node, (v, p) => v && v instanceof ESNode)].map(([n, p]) => [Util.typeOf(n), ESNode.assoc(n).position, n]).filter(([type, pos, n]) => pos);
-    let [posNode] = nodesWithPosition;
-    let a = PrintAst(node),
-      b = PrintAst(posNode[2]);
-    if(a.startsWith(b)) position = posNode[1];
-    //console.log('GetPosition', {a,b})
+function ExportName(seq) {
+  let idx = seq.findIndex(tok => IsIdentifier(undefined, tok) || IsKeyword('default', tok));
+
+  while(seq[idx] && seq[idx].type != 'identifier') idx++;
+
+  return seq[idx]?.lexeme;
+}
+
+function ByteSequence(tokens) {
+  if(tokens.length) {
+    let { loc } = tokens[0];
+    let start = loc.byteOffset;
+    let total = tokens.reduce((n, t) => n + t.byteLength, 0);
+    let end = start + total;
+    //let line = toString(BufferFile(loc.file).slice(start, end));
+    return [start, end];
   }
-  if(position.start) position = position.start;
-
-  //   if(Util.typeOf(position) == 'Location')  return [...position].slice(0,2).join(':');
-  return position;
 }
 
-function GetFile(module, position) {
-  let r;
-  let file = isObject(position) && typeof position.file == 'string' ? position.file : position;
-  //if(position instanceof Range) position = position.start;
-  // console.log('GetFile', { module, position, file }, Util.className(position));
-  module = module.replace(/\?.*/g, '');
-  if(module.startsWith('.') && typeof file == 'string' && !path.isAbsolute(module)) module = path.join(path.dirname(file), module);
-  try {
-    if(!fs.exists(module)) {
-      for(let name of MakeNames(module)) {
-        if(fs.exists(name)) {
-          module = name;
+function ModuleLoader(module) {
+  let file;
+
+  if(path.isDirectory(module)) {
+    file = ModuleLoader(path.join(module, 'index.js'));
+  } else if(path.isFile(module)) {
+    file = module;
+  } else if(!/\.js$/.test(module)) {
+    file = ModuleLoader(module + '.js');
+  }
+
+  return file;
+}
+
+function ResolveImports(source, log = () => {}, recursive, depth = 0) {
+  source = path.normalize(source);
+  if(printFiles) std.puts(source + '\n');
+
+  if(readPackage) source = ResolveAlias(source);
+
+  logFile(`Processing ${source}\n`);
+
+  let start = Date.now();
+  const dir = path.dirname(source);
+
+  if(debug >= 2) console.log('ResolveImports', { source });
+
+  let bytebuf = BufferFile(source);
+
+  let len = bytebuf.byteLength,
+    type = path.extname(source).substring(1),
+    base = camelize(path.basename(source, '.' + type).replace(/[^0-9A-Za-z_]/g, '_'));
+
+  let lex = {
+    js: new ECMAScriptLexer(bytebuf, source)
+  };
+  lex.mjs = lex.js;
+  lex.cjs = lex.js;
+  lex.json = lex.js;
+
+  const lexer = lex[type];
+
+  // T = lexer.tokens.reduce((acc, name, id) => ({ ...acc, [name]: id }), {});
+
+  let e = new SyntaxError();
+
+  if(!lexer) throw new Error(`Error lexing: ${source}`);
+
+  lexer.handler = lex => {
+    const { loc, mode, pos, start, byteLength, state } = lex;
+    log(' '.repeat(loc.column - 1) + '^');
+  };
+  let tokenList = [],
+    declarations = [];
+  const colSizes = [12, 8, 4, 20, 32, 10, 0];
+
+  let tok,
+    i = 0,
+    mask = IntToBinary(lexer.mask),
+    state = lexer.topState();
+  lexer.beginCode = () => (code == 'js' ? 0b1000 : 0b0100);
+  const balancer = () => {
+    let self;
+    let stack = [];
+    const table = { '}': '{', ']': '[', ')': '(' };
+    self = function ParentheseBalancer(tok) {
+      switch (tok?.lexeme) {
+        case '{':
+        case '[':
+        case '(': {
+          stack.push(tok.lexeme);
+          break;
+        }
+        case '}':
+        case ']':
+        case ')': {
+          if(stack.last != table[tok.lexeme])
+            throw new Error(`top '${stack.last}' != '${tok.lexeme}' [ ${stack.map(s => `'${s}'`).join(', ')} ]`);
+
+          stack.pop();
           break;
         }
       }
-    }
-    if(fs.exists(module)) r = module;
-    else r = SearchModuleInPath(module, file, position);
-  } catch(err) {
-    console.log(`GetFile(`, module, ', ', position, `) =`, err);
-    throw err;
-  }
-  return r;
-}
+    };
+    Object.assign(self, {
+      stack,
+      reset() {
+        stack.clear();
+      },
+      /* prettier-ignore */ get depth() {
+        return stack.length;
+      }
+    });
 
-function GetFromValue(...args) {
-  if(args[0] == undefined) args.shift();
-  if(Util.isArray(args) && args.length == 1) args = args[0];
-  let [p, n] = args[0] instanceof ESNode ? args.reverse() : args;
-  if(!p || (!('length' in p) && typeof p != 'string')) throw new Error('No path:' + p + ' node:' + PrintAst(n));
-  if(!n || !(n instanceof ESNode)) throw new Error('No node:' + n + ' path:' + p);
-  if(!(n instanceof ESNode)) n = deep.get(ast, n);
-  let pathStr = p.join('.');
-  let flat = GenerateFlatMap(
-    n,
-    p,
-    (n, p) => true || Util.isArray(n) || [ExportNamedDeclaration, ImportDeclaration, ObjectPattern, Literal].some(ctor => n instanceof ctor),
-    (p, n) => [
-      p,
-      Object.setPrototypeOf(
+    return self;
+  };
+  let balancers = [balancer()],
+    imports = [],
+    exports = [],
+    comments = [],
+    impexp,
+    cond,
+    imp = [],
+    showToken = tok => {
+      if(
+        (lexer.constructor != ECMAScriptLexer && tok.type != 'whitespace') ||
+        /^((im|ex)port|from|as)$/.test(tok.lexeme)
+      ) {
+        let a = [/*(file + ':' + tok.loc).padEnd(file.length+10),*/ tok.type.padEnd(20, ' '), escape(tok.lexeme)];
+        std.puts(a.join('') + '\n');
+      }
+    };
+
+  const PathAdjust = s => {
+    let j = path.join(dir, s);
+    j = path.collapse(j);
+    j = path.normalize(j);
+    if(path.isRelative(j)) j = './' + j;
+    return ModuleLoader(j);
+  };
+  let prevToken;
+  for(;;) {
+    let { stateDepth } = lexer;
+    let value = lexer.next();
+    let done = value === undefined;
+    if(done) break;
+    let newState = lexer.topState();
+    if(newState != state) {
+      if(state == 'TEMPLATE' && lexer.stateDepth > stateDepth) balancers.push(balancer());
+      if(newState == 'TEMPLATE' && lexer.stateDepth < stateDepth) balancers.pop();
+    }
+    let n = balancers.last.depth;
+    const { token } = lexer;
+    const { length, seq } = token;
+    /*  if(debug > 1) console.log('token', token);
+    if(debug >= 1) console.log('lexer.mode', lexer.mode);
+*/
+    if(n == 0 && token.lexeme == '}' && lexer.stateDepth > 0) {
+      lexer.popState();
+    } else {
+      balancer(token);
+      if(n > 0 && balancers.last.depth == 0) log('balancer');
+      if(/comment/i.test(token.type)) {
+        comments.push(token);
+      }
+      if(['import', 'export'].indexOf(token.lexeme) >= 0) {
+        impexp = What[token.lexeme.toUpperCase()];
+        cond = true;
+        imp = token.lexeme == 'export' ? [token] : [];
+      }
+      if(debug > 2)
+        console.log(`token[${imp.length}]`, token.loc + '', console.config({ breakLength: 80, compact: 0 }), token);
+
+      if(cond == true) {
+        if(imp.indexOf(token) == -1) imp.push(token);
+        //console.log( imp[0].loc+'',console.config({breakLength:80, compact: 0}), NonWS(imp));
+        if(imp.last.lexeme == ';') {
+          if(debug > 2)
+            console.log(
+              'imp',
+              imp[0].loc + '',
+              console.config({ breakLength: 80, compact: 0 }),
+              TokenSequence(imp) + ''
+            );
+          cond = false;
+          if(impexp == What.IMPORT || imp.some(i => IsKeyword('from', i))) {
+            if(imp[1].lexeme != '(') {
+              let obj = new Import(imp, PathAdjust, depth);
+              if(obj) {
+                obj.source = source;
+                imports.push(obj);
+              }
+            }
+          } else {
+            let obj = new Export(imp, PathAdjust, depth);
+            //console.log('obj',console.config({breakLength:80, compact: 1}), obj, obj.loc+'');
+            if(obj) {
+              obj.source = source;
+
+              exports.push(obj);
+            }
+          }
+        }
+      }
+      prevToken = token;
+    }
+    state = newState;
+  }
+
+  function Export(tokens, relativePath = s => s) {
+    if(tokens[0].seq == tokens[1].seq) tokens.shift();
+    const { loc, seq } = tokens[0];
+    if(!/^(im|ex)port$/i.test(tokens[0].lexeme))
+      throw new Error(`AddExport tokens: ` + inspect(tokens, { compact: false }));
+    let def = tokens.findIndex(tok => IsKeyword('default', tok));
+    let k = 1;
+    while(tokens[k].type == 'whitespace' || IsKeyword(['let', 'class', 'function', 'const'], tokens[k])) k++;
+    while(tokens[k] && tokens[k].type != 'identifier') k++;
+    let name = ExportName(tokens);
+    let exported = def != -1 ? 'default' : name;
+    let file = ImportFile(tokens);
+    if(file == ' ') throw new Error('XXX ' + inspect(tokens, { compact: false }));
+    const idx =
+      def != -1
+        ? def
+        : file
+        ? tokens.findIndex(tok => tok.lexeme == ';')
+        : tokens.slice(1).findIndex(tok => tok.type != 'whitespace');
+    const o = NonWS(tokens)[1].lexeme == '{';
+    const remove = o || def != -1 ? tokens.slice() : tokens.slice(0, def == idx ? idx + 2 : idx + 1);
+    if(remove[0])
+      if(remove[0].lexeme != 'export') throw new Error(`AddExport tokens: ` + inspect(tokens, { compact: false }));
+    const range = ByteSequence(remove) ?? ByteSequence(tokens);
+    let source = loc.file;
+    let type = ImpExpType(tokens);
+    let code = TokenSequence(tokens).toString(); // toString(BufferFile(source).slice(...range));
+    if(def != -1) if (debug >= 2) console.log('AddExport', { source, file, code, range, loc, tokens });
+    let len = tokens.length;
+    if(o) {
+      exported = tokens.filter(tok => tok.type == 'identifier').map(tok => tok.lexeme);
+    }
+    if(NonWS(tokens)[1].lexeme != '{')
+      len = tokens.findIndex(tok => IsIdentifier(undefined, tok) || IsKeyword('default', tok)) + 1;
+    tokens = tokens.slice(0, len);
+    let exp = define(
+      {
+        type: What.EXPORT,
+        file: file && /\./.test(file) ? relativePath(file) : file,
+        tokens,
+        exported,
+        name,
+        range
+      },
+      {
+        code,
+        loc,
+        depth,
+        path() {
+          const { file } = this;
+          if(typeof file == 'string') return relativePath(file);
+        }
+      }
+    );
+    return Object.setPrototypeOf(exp, Export.prototype);
+  }
+  define(Export.prototype, {
+    ids() {
+      return ImportIds(this.tokens).map(({ lexeme }) => lexeme);
+    }
+  });
+
+  function Import(tokens, relativePath = s => s, depth) {
+    tokens = tokens[0].seq === tokens[1].seq ? tokens.slice(1) : tokens.slice();
+    if(!/^(im|ex)port$/i.test(tokens[0].lexeme))
+      throw new Error(`AddImport tokens: ` + inspect(tokens, { compact: false }));
+    const tok = tokens[0];
+    const { loc, seq } = tok;
+    let source = loc.file;
+    let type = ImpExpType(tokens.slice()),
+      file = ImportFile(tokens.slice());
+    const range = ByteSequence(tokens.slice());
+    range[0] = loc.byteOffset;
+    let code = toString(BufferFile(source).slice(...range));
+    if(debug >= 2)
+      console.log('AddImport', compact(1), {
+        source,
+        file,
+        code,
+        loc,
+        range
+      });
+    let imp = Object.setPrototypeOf(
+      define(
+        { type, file: file && /\./.test(file) ? relativePath(file) : file, range },
         {
-          ...Util.filterKeys(n, k => n instanceof CallExpression || (k != 'type' && !(isObject(n[k]) || Util.isFunction(n[k]))))
-        },
-        Object.getPrototypeOf(n)
-      )
-    ]
+          tokens: tokens.slice(),
+          code,
+          loc,
+          depth,
+          path() {
+            const { file } = this;
+            if(typeof file == 'string') return relativePath(file);
+          }
+        }
+      ),
+      Import.prototype
+    );
+    let fn = {
+      [ImportTypes.IMPORT_NAMESPACE]() {
+        return this.tokens[this.tokens.findIndex(tok => IsKeyword('as', tok)) + 1].lexeme;
+      },
+      [ImportTypes.IMPORT_DEFAULT]() {
+        const { tokens } = this;
+        return tokens[tokens.findIndex(tok => IsKeyword('import', tok)) + 1].lexeme;
+      },
+      [ImportTypes.IMPORT]() {
+        const { tokens } = this;
+        let i = 0,
+          s = [],
+          a = [];
+        if(IsKeyword(['import', 'export'], tokens[i])) ++i;
+        if(IsPunctuator('{', tokens[i])) ++i;
+        for(; tokens[i] && !IsKeyword('from', tokens[i]); ++i) {
+          if(IsPunctuator([',', '}'], tokens[i])) {
+            if(s.length) a.push(s);
+            s = [];
+          } else if(IsIdentifier(tokens[i])) {
+            s.push(tokens[i]);
+          }
+        }
+        a = a.flat().filter(tok => tok.type == 'identifier');
+        return a.map(tok => tok.lexeme);
+      }
+    }[type];
+    if(typeof fn == 'function') {
+      let local = fn.call(imp);
+      define(imp, { local });
+    }
+    return imp;
+  }
+
+  define(Import.prototype, {
+    ids() {
+      return ImportIds(this.tokens.slice()).map(({ lexeme }) => lexeme);
+    }
+  });
+
+  let end = Date.now();
+
+  if(showTiming) console.log(`Lexing '${source.replace(/^\.\//, '')}' took ${end - start}ms`);
+  start = Date.now();
+
+  let exportsFrom = exports.filter(exp => exp.tokens).filter(exp => exp.tokens.some(tok => tok.lexeme == 'from'));
+
+  if(path.isRelative(source) && !/^(\.|\.\.)\//.test(source)) source = './' + source;
+
+  // console.log('exportsFrom', exports);
+
+  modules[source] = { imports, exports };
+
+  let allExportsImports = exports.concat(imports).sort((a, b) => a.range[0] - b.range[0]);
+  let fileImports = allExportsImports.filter(imp => typeof imp.file == 'string'); ///\.js$/i.test(imp.file));
+  let splitPoints = unique(fileImports.reduce((acc, imp) => [...acc, ...imp.range], []));
+  buffers[source] = [...split(BufferFile(source), ...splitPoints)].map(b => b ?? toString(b, 0, b.byteLength));
+
+  /*console.log('fileImports', fileImports);*/
+
+  let map = FileMap.for(source);
+
+  for(let impexp of allExportsImports) {
+    const { type, file, range, code, loc } = impexp;
+    const [start, end] = range;
+    // let bytebuf = BufferFile(source);
+    let bufstr = toString(bytebuf.slice(...range));
+    let arrbuf = toArrayBuffer(bufstr);
+
+    let replacement = type == What.EXPORT ? null : /*FileMap.for*/ file;
+    let { byteOffset } = loc;
+    let p;
+
+    if(debug > 2)
+      console.log('impexp', compact(2), { code, range: new NumericRange(...range), replacement, loc: loc + '' });
+
+    //  if(bufstr == ' ') throw new Error(`bufstr = ' ' loc: ${loc} ${loc.byteOffset} range: ${range} code: ` + toString(bytebuf.slice(loc.byteOffset, range[1] + 10)));
+    if(typeof file == 'string' && !path.isFile(file)) {
+      if(debug > 1) console.log(`\x1b[1;31mInexistent\x1b[0m file '${file}'`);
+
+      replacement = null;
+      //  header.push(impexp);
+    } else if(file && path.isFile(file)) {
+      replacement = file;
+      // header.push(impexp);
+    } else if(
+      (typeof replacement == 'string' && !path.isFile(replacement)) ||
+      type == What.IMPORT ||
+      typeof file == 'string'
+    ) {
+      replacement = null;
+      //  header.push(impexp);
+    } else if(code.startsWith('export')) {
+      if(!removeExports) continue;
+      replacement = file;
+    }
+
+    let list = type == What.EXPORT ? footer : header;
+    list.push(impexp);
+
+    if(debug >= 2)
+      console.log('impexp', compact(2), { code, range: new NumericRange(...range), replacement, loc: loc + '' });
+    if(debug > 1) console.log('impexp', compact(1), { range: new NumericRange(...range), loc: loc + '' });
+
+    map.replaceRange(range, replacement);
+  }
+
+  //  debugLog('comments', comments.map(({byteRange, lexeme})=>[byteRange,lexeme,toString(bytebuf.slice(...byteRange))]));
+  //
+  if(removeComments && comments.length) {
+    i = -1;
+    debugLog(`Removing ${comments.length} comments from '${source}'`);
+    for(let { byteRange, lexeme } of comments) {
+      let sl = bytebuf.slice(...byteRange);
+      if(debug > 1) debugLog(`comment[${++i}]`, compact(2), { byteRange, str: toString(sl) });
+
+      map.replaceRange(byteRange, null);
+    }
+  }
+
+  //if(debug > 1) debugLog('map', map.dump());
+
+  //if(debug> 1) console.log('dump map', map.dump());
+
+  end = Date.now();
+
+  // console.log(`Substituting '${source.replace(/^\.\//, '')}' took ${end - start}ms`);
+  processed.add(source);
+
+  if(recursive > 0) {
+    for(let imp of fileImports) {
+      let { file, range, tokens } = imp;
+      if(!/\./.test(file)) {
+        // console.log(`Builtin module '${file}'`);
+        continue;
+      }
+      if(!path.isFile(file)) {
+        console.log(`Path must exist '${file}'`);
+        continue;
+      }
+      if(processed.has(file) || file == source) {
+        //console.log(`Already processed '${file}'`);
+        continue;
+      }
+      file = ModuleLoader(NormalizePath(file));
+
+      processed.add(file);
+
+      AddDep(source, file);
+      ResolveImports(file, log, typeof recursive == 'number' ? recursive - 1 : recursive, depth + 1);
+    }
+  }
+  /*
+  let end = Date.now();
+  console.log(`'${source.replace(/^\.\//, '')}' took ${end - start}ms`);
+*/
+
+  std.gc();
+
+  if(showDeps) {
+    let deps = [...DependencyTree(source, ' ', false, 0, '    ')];
+
+    console.log(`Dependencies of '${source}':\n${SpreadAndJoin(deps)}`);
+  }
+
+  return map;
+}
+
+function AddDep(source, file) {
+  source = NormalizePath(source);
+
+  if(debug > 2) console.log(`Add dependency '${file}' to '${source}'`);
+  dependencyTree(source).push(file);
+}
+
+function NonWS(tokens) {
+  return tokens.filter(tok => tok.type != 'whitespace');
+}
+
+function TokenSequence(tokens) {
+  return define(
+    tokens.map(tok => tok.lexeme),
+    {
+      toString() {
+        return this.join('');
+      }
+    }
   );
-  let literals = [...flat.entries()].filter(([p, n]) => n instanceof Literal);
-  let paths = literals.map(([p, n]) => flat.get(p).value);
-  if(paths) {
-    let v = paths.map(n => n.replace(/^[\u0027\u0022\u0060](.*)[\u0027\u0022\u0060]$/g, '$1'))[0];
-    if(v) {
-      return v;
-    }
+}
+
+function Unquote(lexeme) {
+  return lexeme.replace(/(^[\'\"\`]|[\'\"\`]$)/g, '');
+}
+
+function LiteralSequence(tokens) {
+  return tokens.reduce((acc, tok) => acc + tok.lexeme, '');
+}
+
+function UntilEOL(idx, tokens) {
+  return Until(idx, tokens, TokIs(null, ';'));
+}
+
+function Until(idx, tokens, pred = TokIs(null, [';', '\n'])) {
+  let i;
+  for(i = idx; tokens[i]; i++) {
+    if(pred(tokens[i])) break;
   }
+  return tokens.slice(idx, i);
 }
 
-function GetFrom(node, path) {
-  if(node instanceof CallExpression) {
-    node = node.arguments[0];
-    if(path) path = path.down('arguments', 0);
+function WholeLine(idx, tokens) {
+  let i, j;
+  for(i = idx; tokens[i]; i++) {
+    if([';', '\n'].indexOf(tokens[i].lexeme) != -1) break;
   }
-  if(node instanceof ImportDeclaration) {
-    node = node.source;
-    if(path) path = path.down('source');
+  for(j = idx; j > 0; j--) {
+    const tok = tokens[j - 1];
+    if(!tok || [';', '\n'].indexOf(tokens[j - 1].lexeme) != -1) break;
   }
-  if(node instanceof Literal) {
-    node = Literal.string(node);
-    if(path) path = path.down('value');
+  return tokens.slice(j, i);
+}
+
+function Range(file, start, end) {
+  let buf;
+  if((buf = BufferFile(file))) {
+    this.file = file;
+    this.start = start ?? 0;
+    this.end = end ?? buf.byteLength;
+    return this;
   }
-  return [node, path];
+  return null;
 }
 
-function GetFromBase(path, node) {
-  //console.log('GetFromBase  : ', { path, node });
-  let str = GetFromValue([node, path]);
-  if(typeof str == 'string') str = str.replace(/^\.\//, '');
-  return str;
+Range.prototype.toString = function() {
+  let buf = BufferFile(this.file);
+  return buf.slice(this.start, this.end);
+};
+
+function InRange([start, end], i) {
+  if(i >= start && i < end) return true;
+  return false;
 }
 
-function GetLiteral(node) {
-  return (deep.find(node, n => n instanceof Literal) || {}).value;
-}
-function IsBuiltinModule(name) {
-  return /^(std|os|ffi|net|_http_agent|_http_client|_http_common|_http_incoming|_http_outgoing|_http_server|_stream_duplex|_stream_passthrough|_stream_readable|_stream_transform|_stream_wrap|_tls_common|_tls_wrap|assert|async_hooks|buffer|child_process|cluster|console|constants|crypto|dgram|dns|domain|events|fs|http|http2|https|inspector|module|net|os|path|perf_hooks|process|punycode|querystring|readline|repl|stream|string_decoder|timers|tls|trace_events|tty|url|util|v8|vm|worker_threads|zlib)$/.test(name);
+function IsRange(obj) {
+  return isObject(obj) && ('length' in obj || 'start' in obj || obj instanceof NumericRange);
 }
 
-function GetFromPath([path, node], position) {
-  //console.log('GetFromPath', { path, node, position });
-  let fileName,
-    fromStr = GetFromValue([node, path]);
-
-  if(IsBuiltinModule(fromStr)) return fromStr;
-
-  if(typeof fromStr == 'string') fileName = GetFile(fromStr, position);
-  return fileName;
-}
-
-function GetBase(filename) {
-  return path.basename(filename, /\.[^.]+$/);
-}
-
-function ReaddirRecursive(dir) {
-  let ret = [];
-  for(let entry of fs.readdir(dir)) {
-    if(entry == '.' || entry == '..') continue;
-    let file = path.join(dir, entry);
-    if(fs.stat(file).isDirectory()) {
-      ret = ret.concat(ReaddirRecursive(file));
-      continue;
-    }
-    ret.push(entry);
+class NumericRange extends Array {
+  constructor(start, end) {
+    super(2);
+    if(isNaN(+start)) start = 0;
+    this[0] = +start;
+    if(isNaN(+end)) end = this[0];
+    this[1] = end;
   }
-  return ret;
-}
 
-function Finish(err) {
-  let fail = !!err;
-  if(fail) {
-    err.stack = PathReplacer()('' + err.stack)
-      .split(/\n/g)
-      .filter(s => !/esfactory/.test(s))
-      .join('\n');
+  get start() {
+    return this[0];
   }
-  if(err) {
-    console.log(parser.lexer.currentLine());
-    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n', err.stack);
+  set start(value) {
+    this[0] = +value;
   }
-  let lexer = parser.lexer;
-  let t = [];
-  //console.log(parser.trace() );
-  DumpFile('trace.log', parser.trace());
-  if(fail) {
-    console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
+
+  get end() {
+    return this[1];
   }
-  console.log('Finish: ' + (fail ? 'error' : 'success'));
-  return !fail;
-}
-
-function MakeSearchPath(dirs, extra = 'node_modules') {
-  let r = [];
-  const { cwd } = ES6Env;
-  const addPath = p => {
-    p = path.relative(cwd, p, cwd);
-    if(r.indexOf(p) == -1) r.unshift(p);
-  };
-  let i = 0;
-  for(let cwd of dirs) {
-    let parts = (cwd + '').split(/[\\\/]/g);
-    while(parts.length && parts[parts.length - 1] != '') {
-      const dir = parts.join('/');
-      const extra_dir = path.join(dir, extra);
-      if(extra == 'node_modules') if (i == 0) addPath(dir);
-      if(fs.existsSync(extra_dir)) addPath(extra_dir);
-      i++;
-      parts.pop();
-    }
-    if(extra == 'node_modules') i = 0;
+  set end(value) {
+    this[1] = +value;
   }
-  return r;
-}
 
-function CheckExists(path) {
-  let r = fs.exists(path);
-  //console.log(`CheckExists('${path}') = ${r}`);
-  return r;
-}
+  static from(range) {
+    if(isObject(range) && range instanceof NumericRange) return range;
 
-function HasExtension(path) {
-  return !/^[^.]*$/.test(path.basename(path));
-}
-
-function GetMain(dir) {
-  let pkg;
-  let name = path.basename(dir);
-  let names = ['src/index', 'src/' + name, 'dist/' + name, 'dist/index', 'build/' + name, name, 'index', 'browser'];
-  if((pkg = GetPackage(dir))) {
-    let main = pkg.source || pkg.module || pkg.main;
-    names.unshift(main);
+    try {
+      let r = new NumericRange(...range);
+      range = r;
+    } catch(e) {}
+    console.log('NumericRange.from', range);
+    return range;
   }
-  // console.log("GetMain",{dir,name,names});
-  let indexes = names.reduce((arr, name) => (name ? [...arr, ...MakeNames(name)] : arr), []);
-  //console.log("GetMain",{indexes});
-  for(let index of indexes) {
-    let file = path.join(dir, index);
-    if(fs.exists(file)) return file;
-  }
-}
 
-function FileOrDirectory(relpath, callback = name => {}) {
-  let names = MakeNames(relpath);
-  let index = names.findIndex(name => fs.exists(name));
+  static *holes(ranges, only = false) {
+    let prev = [0, 0];
+    //console.log('ranges', console.config({ compact: 1 }), ranges);
+    let i = -1;
+    for(let range of ranges) {
+      if(IsRange(range)) {
+        range = [...range];
+        console.log('range#' + ++i, inspect(range));
 
-  if(index != -1) callback(names[index]);
-  return index;
-}
+        if(IsRange(prev) && IsRange(range)) {
+          //     if(range[0] < prev[1]) range[0] = prev[1];
+          let [start, end] = range;
 
-function FindModule(relpath) {
-  //console.log('FindModule', { relpath });
+          if(start >= prev[1]) yield new NumericRange(prev[1], start);
+          //  else throw new Error(`Invalid range ` + inspect([start, end]) + ' ' + inspect({ prev: [...prev] }));
+        }
 
-  FileOrDirectory(relpath, name => (relpath = name));
-
-  let st = fs.stat(relpath);
-  let module;
-  const name = path.basename(relpath);
-  let pkg = GetPackage(relpath);
-
-  if(st.isDirectory()) {
-    module = GetMain(relpath);
-    //console.log('FindModule:', { relpath, module });
-
-    if(!CheckExists(module)) {
-      module = null;
-      let entries = ReaddirRecursive(relpath).filter(name => /\.js$/.test(name));
-      if(entries.length == 1) module = path.join(relpath, entries[0]);
-    }
-  } else if(st.isFile()) {
-    module = relpath;
-  }
-  if(!module) throw new Error(`Module '${relpath}' not found`);
-  return module;
-}
-
-const SearchPathGenerator = (pathList = search.path) =>
-  function* (module) {
-    for(let dir of pathList) yield path.join(dir, module);
-  };
-
-const SearchExtsGenerator = (pathGen, extList = searchExts) =>
-  function* (module) {
-    for(let file of pathGen(module)) for (let ext of extList) yield file + ext;
-  };
-
-function SearchModuleInPath(name, _from, position) {
-  // console.log('SearchModuleInPath', { name, _from, position });
-
-  const thisdir = _from ? path.dirname(_from) : '.';
-  const absthisdir = path.resolve(thisdir);
-  const isRelative = /^\.\.?\//.test(name);
-  name = name.replace(/\..?js$/g, '');
-  if(search.aliases.has(name)) return search.aliases.get(name);
-  let names = [name, ...MakeNames(name)];
-  let searchDirs = isRelative ? [thisdir] : [thisdir, ...search.path];
-  for(let dir of searchDirs) {
-    let searchFor = dir.endsWith('node_modules') && !/\//.test(name) ? [name] : names;
-    for(let module of searchFor) {
-      let modPath = path.join(dir, module);
-      let p;
-      if(fs.exists(modPath)) {
-        let st = fs.stat(modPath);
-        if(st.isDirectory()) if (IsPackage(modPath)) AddPackage(modPath);
-        if((p = FindModule(modPath))) return p;
+        if(!only) {
+          if(!(isObect(range) && range instanceof NumericRange)) range = new NumericRange(...range);
+          yield range;
+        }
       }
-      if(!/\.js$/.test(modPath)) {
-        modPath += '.js';
-        if(fs.exists(modPath)) if ((p = FindModule(modPath))) return p;
+      prev = range;
+    }
+  }
+
+  static between([s1, e1], [s2, e2]) {
+    if(s2 > e1) return [e1, s2];
+
+    if(s1 > e2) return [e2, s1];
+  }
+}
+
+define(NumericRange.prototype, {
+  [Symbol.toStringTag]: 'NumericRange',
+  [Symbol.inspect](depth, opts) {
+    const [start, end] = this;
+    let s = '';
+    //s += `\x1b[1;31mNumericRange\x1b[0m(`;
+    const pad = s => (s + '').padEnd(5);
+
+    s += `\x1b[1;36m${pad(start)}\x1b[0m`;
+    s += ` - `;
+    //  s += `\x1b[1;36m${pad(end)}\x1b[0m`;
+    s += `\x1b[1;36m${pad('+' + (end - start))}\x1b[0m`;
+    //s+=`)`;
+    s = `[ ${s} ]`;
+    return s;
+  }
+});
+
+class FileMap extends Array {
+  constructor(file, buf) {
+    super();
+
+    if(typeof file != 'number') {
+      //console.log('FileMap.constructor',{file,buf});
+      this.file = file;
+      buf ??= BufferFile(file);
+      if(!buf) throw new Error(`FileMap buf == ${buf}`);
+      //this.push([new NumericRange(0, buf.byteLength), buf]);
+      this.push([[0, buf.byteLength], buf]);
+      fileMaps.set(file, this);
+    }
+  }
+
+  static empty(file) {
+    if(typeof file == 'string') file = FileMap.for(file);
+
+    if(isObject(file) && file instanceof FileMap) return file.isEmpty();
+  }
+
+  isEmpty() {
+    return false;
+  }
+
+  static for(file, buf) {
+    // console.log('FileMap.for', { file, buf });
+    let m;
+    if(file && (m = fileMaps.get(file))) return m;
+    if(isObject(file) && file instanceof FileMap) return file;
+    else if(file === null && !buf) {
+      let obj = {
+        isEmpty() {
+          return true;
+        },
+        toString() {
+          return '';
+        },
+        [Symbol.toStringTag]: 'FileMap(empty)'
+      };
+      return Object.setPrototypeOf(obj, FileMap.prototype);
+    }
+    if(fileMaps.has(file)) return fileMaps.get(file);
+    return new FileMap(file, buf);
+  }
+
+  splitAt(pos) {
+    let i = this.findIndex(([range, buf]) => range && InRange(range, pos));
+    if(i != -1) {
+      let [range, buf] = this[i];
+      let [start, end] = range;
+      this.splice(i + 1, 0, [[(range[1] = pos), end], buf]);
+      return i + 1;
+    }
+  }
+
+  sliceAt(n) {
+    return Array.prototype.findIndex.call(this, ([range, buf]) => (range ? InRange(range, n) : false));
+  }
+
+  replaceRange(range, file) {
+    if(Array.isArray(range) && !(range instanceof NumericRange)) range = new NumericRange(...range);
+    const sliceIndex = n => {
+      let r;
+      if(this[0] && this[0][0] != null) {
+        const range = new NumericRange(...this[0][0]);
+        if(n < range.start) return 0;
+      }
+      let i;
+      const { length } = this;
+      for(i = 0; i < length; i++) {
+        const [item] = this[i];
+        if(item) {
+          const [s, e] = item;
+          //if (n < s) { --i; break; }
+          if(n < e) break;
+        }
+      }
+      return i;
+    };
+    if(debug > 2)
+      console.log('FileMap.replaceRange', compact(2, { customInspect: true }), {
+        file,
+        range: [range[0], range[1]]
+      });
+    let start = sliceIndex(range[0]);
+    let end = sliceIndex(range[1]);
+    const { length } = this;
+    if(debug > 2)
+      console.log('FileMap.replaceRange', compact(2, { customInspect: true }), {
+        start,
+        end,
+        length,
+        this: this
+      });
+    if(range[0] < this[start][0]) range[0] = this[start][0];
+    if(!this[start][0])
+      throw new Error(
+        `range=${range}\nlength=${this.length}\nstart=${start}\nend=${end}\nthis[${start}]=${inspect(
+          this[start]
+        )}\nthis[${start - 1}]=${inspect(this[start - 1])}\nthis[${start + 1}]=${inspect(this[start + 1])}`
+      );
+    if(range[0] > this[start][0][0]) {
+      if(start == end) {
+        let [range, buf] = this[start];
+        let insert = [new NumericRange(...range), buf];
+        this.splice(++end, 0, insert);
+      }
+      this[start][0][1] = range[0];
+      if(this[end] && this[end][0]) this[end][0][0] = range[1];
+    } else {
+      this[start][0][0] = range[1];
+      this.splice(start, 0, [null, file]);
+      file = null;
+    }
+
+    if(file != null) this.splice(start + 1, 0, [null, file]);
+  }
+
+  dump() {
+    const source = this.file;
+    return (
+      `FileMap {\n\tfile: \x1b[38;5;215m${source},\n\t\x1b[0m[ ` +
+      [...this]
+        .map((item, i) => item.concat([this.at(i)]))
+        .reduce((acc, [range, buf, str], i) => {
+          let s = acc + `\n\t\t[ `;
+          s += ('' + (range ? '[' + NumericRange.from(range) + ']' : range)).padEnd(10);
+          s += ', ';
+          if(isObject(buf) && 'byteLength' in buf) {
+            let filename = bufferRef.get(buf);
+            buf = filename ?? `<this>`;
+          }
+          if(typeof buf == 'string') buf = path.normalize(buf);
+          s += inspect(buf, { maxArrayLength: 30 });
+          s += ` ],`;
+          return s;
+        }, '') +
+      `\n\t]\n}`
+    );
+  }
+
+  at(i) {
+    if(!this[i]) return null;
+
+    const [range, buf] = this[i];
+    if(range && isObject(buf)) {
+      const [start, end] = range;
+      //console.log('buf', buf);
+      return buf.slice(start, end);
+    }
+    if(range == null) {
+      let file = buf;
+      let str = buf;
+      if(typeof str == 'string') {
+        if(!path.isFile(str)) throw Error(`FileMap\x1b[1;35m<${this.file}>\x1b[0m Inexistent file '${str}'`);
+        str = FileMap.for(str);
+      }
+      return str;
+    }
+    if(buf === -1) return null;
+    throw new Error(`at(${i}) ` + inspect({ range, buf }));
+  }
+
+  toArray() {
+    return this.map((s, i) => this.at(i));
+  }
+
+  holes() {
+    let ranges = [...this.map(([range]) => range)].sort(CompareRange);
+    //console.log('ranges', console.config({ depth: Infinity }), ranges);
+    let iter = NumericRange.holes(ranges, true);
+    //console.log('iter', iter);
+    let holes = [...iter];
+    let len = holes.length;
+    for(let i = 0; i < len; i++) {
+      const hole = holes[i];
+      const [range] = this[i];
+      console.log('#' + (i + 1), compact(2), inspect({ hole, range }, { compact: 2, depth: Infinity }));
+    }
+    //console.log('holes', holes);
+    return holes;
+  }
+
+  firstChunk() {
+    return this.findIndex(([range, buf], i) => range && !IsWhiteSpace(toString(buf.slice(...range))));
+  }
+
+  lastChunk() {
+    return this.findLastIndex(([range, buf], i) => range && !IsWhiteSpace(toString(buf.slice(...range))));
+  }
+
+  write(out, depth = 0, serial) {
+    if(debug > 2) debugLog(`FileMap\x1b[1;35m<${this.file}>\x1b[0m.write`, compact(1), { out, depth, serial });
+    let r,
+      written = 0;
+    let { length } = this;
+    serial ??= randInt(0, 1000);
+    if(this.serial === serial) return 0;
+    this.serial = serial;
+    if(typeof out == 'string') out = FileWriter(out);
+    let first = this.firstChunk();
+    let last = this.lastChunk();
+
+    if(debug > 2)
+      debugLog(`FileMap\x1b[1;35m<${this.file}>\x1b[0m.write`, compact(2), {
+        chunks: [this.at(first), this.at(last)]
+      });
+
+    for(let i = 0; i < length; i++) {
+      let str = this.at(i);
+      if(str === null || str === undefined) continue;
+      //console.log('str',str);
+      let len = str.byteLength ?? str.length;
+
+      if(isObject(str)) {
+        if(str instanceof FileMap) {
+          if(str.serial === serial) {
+            r = 0;
+            continue;
+          }
+          r = str.write(out, depth + 1, serial);
+        } else {
+          // console.log('out', out);
+          if(i == first) out.puts(FileBannerComment(this.file, 0));
+
+          r = out.write(str, len);
+          if(i == last) out.puts(FileBannerComment(this.file, 1));
+
+          if(r != len) r = -1;
+        }
+      } else {
+        throw new Error(getTypeName(str));
+      }
+      //debugLog(`FileMap\x1b[1;35m<${this.file}>\x1b[0m.write`, `[${i + 1}/${length}]`, `result=${r}`, compact(1, { customInspect: true }), { depth }, out.inspect());
+      if(r < 0) break;
+      written += r;
+    }
+    return written;
+  }
+
+  toString(fn = FileBannerComment) {
+    const n = this.length;
+    let s = '',
+      i;
+    for(i = 0; i < n; i++) {
+      let str;
+      const [range, buf] = this[i];
+      if(range === null && buf === null) continue;
+      if((str = this.at(i)) === null) continue;
+      if(range === null)
+        if(typeof buf == 'string') /*if(typeof str == 'string')*/ str = fn(buf, 0) + str + fn(buf, 1);
+      s += str;
+    }
+    return s;
+  }
+}
+FileMap.prototype[Symbol.toStringTag] = 'FileMap';
+FileMap.prototype[Symbol.inspect] = function(depth, opts) {
+  let arr = [...this].map(([range, buf], i) => {
+    if(range) {
+      buf = buf.slice(...range);
+    }
+    return [range, isObject(buf) && types.isArrayBuffer(buf) ? this.file : buf]
+      .map((item, i) => inspect(item, { ...opts, compact: 1, customInspect: true }).padEnd(i == 0 ? 31 : 0))
+      .join(', ');
+  });
+  return (
+    `FileMap\x1b[1;35m<${this.file}>\x1b[0m ` + arr.map(item => `[ ${item} ]`).join(',\n  ') ??
+    inspect(arr, {
+      ...opts,
+      compact: 2,
+      maxArrayLength: Infinity,
+
+      customInspect: true,
+      depth: depth + 4
+    })
+  );
+};
+
+function BufferFile(file, buf) {
+  file = path.normalize(file);
+  if(!buf) buf = fileBuffers.get(file) ?? buffers[file];
+
+  if(!buf) buf = buffers[file] ?? fs.readFileSync(file, { flag: 'r' });
+
+  if(typeof buf == 'object' && buf !== null) {
+    bufferRef.set(buf, file);
+    fileBuffers.set(file, buf);
+    buf.file = file;
+  }
+  return buf;
+}
+
+function BufferLengths(file) {
+  return buffers[file].map(b => b.byteLength);
+}
+
+function BufferOffsets(file) {
+  return buffers[file].reduce(([pos, list], b) => [pos + b.byteLength, list.concat([pos])], [0, []])[1];
+}
+
+function BufferRanges(file) {
+  return buffers[file].reduce(([pos, list], b) => [pos + b.byteLength, list.concat([[pos, b.byteLength]])], [0, []])[1];
+}
+
+function WriteFile(file, tok) {
+  let f = std.open(file, 'w+');
+  f.puts(tok);
+  console.log('Wrote "' + file + '": ' + tok.length + ' bytes');
+}
+
+function DumpLexer(lex) {
+  const { size, pos, start, line, column, lineStart, lineEnd, columnIndex } = lex;
+  return 'Lexer ' + inspect({ start, pos, size });
+}
+
+function DumpToken(tok) {
+  const { length, offset, chars, loc } = tok;
+  return `★ Token ${inspect({ chars, offset, length, loc }, { depth: 1 })}`;
+}
+
+function* DependencyTree(
+  root,
+  indent = ' ',
+  spacing = false,
+  depth = 0,
+  pre = '',
+  fn = (name, depth) => `${name} (${depth})`
+) {
+  if(!Array.isArray(dependencyTree(root)))
+    throw new Error(`No such file '${root}' in dependency Map ([${[...dependencyMap.keys()]}])`);
+
+  if(depth == 0) yield pre + stripLeadingDotSlash(fn(root, depth)) + `\n`;
+
+  let a = dependencyMap.get(root);
+  //console.log('a', a);
+  let i = 0,
+    n = a.length;
+
+  for(i = 0; i < n; i++) {
+    if(spacing) yield (pre + indent + `│  ` + '\n').repeat(Number(spacing));
+
+    yield pre +
+      indent +
+      (n == 1 ? `└─ ` : i < n - 1 ? `├─ ` : `└─ `) +
+      stripLeadingDotSlash(fn(a[i], depth + 1)) +
+      '\n';
+
+    yield* DependencyTree(
+      a[i],
+      indent,
+      spacing,
+      depth + 1,
+      pre + indent + (n == 1 ? `   ` : i < n - 1 ? `│  ` : `   `)
+    );
+  }
+
+  function stripLeadingDotSlash(n) {
+    if(n.startsWith('./')) n = n.slice(2);
+    return n;
+  }
+}
+
+function SpreadAndJoin(iterator, separator = '') {
+  return [...iterator].join(separator);
+}
+
+function* PrintUserscriptBanner(fields) {
+  const defaults = {
+    name: 'https://github.com/rsenn',
+    namespace: 'https://github.com/rsenn',
+    version: '1.0',
+    description: '',
+    author: 'Roman L. Senn',
+    match: 'http*://*/*',
+    icon: 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==',
+    grant: 'none'
+  };
+
+  let keys = Object.keys(defaults).concat(Object.keys(fields)).unique();
+  //console.log('keys', keys);
+  yield `// ==UserScript==`;
+  for(let name of keys) {
+    const value = fields[name] ?? defaults[name];
+
+    yield `// @${name.padEnd(12)} ${value}`;
+  }
+  yield `// ==/UserScript==`;
+}
+
+function PrintES6Import(imp) {
+  return {
+    [ImportTypes.IMPORT_NAMESPACE]: ({ local, file }) => `import * as ${local} from '${file}';`,
+    [ImportTypes.IMPORT_DEFAULT]: ({ local, file }) => `import ${local} from '${file}';`,
+    [ImportTypes.IMPORT]: ({ local, file }) => `import { ${local.join(', ')} } from '${file}';`
+  }[imp.type](imp);
+}
+
+function PrintCJSImport({ type, local, file }) {
+  return {
+    [ImportTypes.IMPORT_NAMESPACE]: () => `const ${local} = require('${file}');`,
+    [ImportTypes.IMPORT_DEFAULT]: () => `const ${local} = require('${file}');`,
+    [ImportTypes.IMPORT]: () => `const { ${local.join(', ')} } = require('${file}');`
+  }[type]();
+}
+
+function main(...args) {
+  globalThis.console = new Console(std.err, {
+    inspectOptions: {
+      colors: true,
+      depth: Infinity,
+      stringBreakNewline: true,
+      maxStringLength: 1000,
+      maxArrayLength: 100,
+      compact: false,
+      //reparseable: true,
+      hideKeys: [Symbol.toStringTag /*, 'code'*/]
+    }
+  });
+
+  let optind = 0,
+    code = 'c',
+    exp = true;
+
+  let out = FdWriter(1, 'stdout');
+  let stream = define(
+    { indent: 0 },
+    {
+      lines: [],
+      write(buf, len) {
+        let s = toString(buf, 0, len);
+        return this.puts(s);
+      },
+      puts(s) {
+        let pad = '  '.repeat(this.indent);
+        this.lines.push(...s.split(/\r?\n/g).map(line => pad + line));
+        return s.length;
+      },
+      close() {
+        let prev = '';
+        const isWS = s => s.trim() == '';
+        for(let line of this.lines) {
+          if(!(isWS(line) && isWS(prev))) {
+            //console.log(`Writing ${quote(line, "'")}`);
+            out.puts(line.trimEnd() + '\n');
+          }
+
+          prev = line;
+        }
+        out.close();
       }
     }
+  );
+
+  let params = getOpt(
+    {
+      debug: [false, () => ++debug, 'x'],
+      log: [true, file => (logFile = FileWriter(file)), 'l'],
+      sort: [false, null, 's'],
+      'case-sensitive': [false, null, 'c'],
+      quiet: [false, null, 'q'],
+      export: [false, () => (exp = true), 'e'],
+      'relative-to': [true, arg => (relativeTo = path.absolute(arg)), 'r'],
+      output: [true, file => (outputFile = file), 'o'],
+      'no-recursive': [false, () => (recursive = false), 'R'],
+      'remove-exports': [false, () => (removeExports = true), 'E'],
+      'remove-imports': [false, () => (removeImports = true), 'I'],
+      'remove-comments': [false, () => (removeComments = true), 'C'],
+      'global-exports': [false, () => ++globalExports, 'G'],
+      'show-dependencies': [false, () => ++showDeps, 'd'],
+      'print-files': [false, () => (printFiles = true), 'l'],
+      'read-package': [false, () => (readPackage = true), 'p'],
+      'no-read-package': [false, () => (readPackage = false), 'P'],
+      time: [false, () => (showTiming = true), 't'],
+      '@': 'files'
+    },
+    args
+  );
+  let files = params['@'];
+
+  if(/list-import/.test(scriptArgs[0])) {
+    printFiles = true;
+    outputFile = null;
+    out = DummyWriter('/dev/null');
   }
-  let fromModule = ES6Module.get(_from);
-  if(!fromModule) throw new Error(`Module "${_from}" not found (${name})`, name);
-  let chain = fromModule.chain;
-  throw new URIError(`Module '${name}' imported from '${_from}' not found ` + Util.inspect({ name, chain }, { multiline: false }), name);
-}
 
-function RemoveStatements(ast, statements, predicate = stmt => true) {
-  let removed = [];
-  for(let [path, node] of statements) {
-    if(!predicate(node, path)) continue;
-    deep.unset(ast, path);
-    removed.push(node);
+  const { sort, 'case-sensitive': caseSensitive, quiet } = params;
+
+  if(outputFile) out = FileWriter(outputFile);
+
+  let argList = [...scriptArgs];
+
+  logFile(`Start of: ${argList.join(' ')}\n`);
+
+  if(debug > 1) debugLog('main', { outputFile, out });
+
+  const RelativePath = file => (path.isAbsolute(file) ? file : file.startsWith('./') ? file : './' + file);
+  //const RelativePath = file => path.isAbsolute(file) ? file : file.startsWith('./') ? file.slice(2) : file;
+
+  if(!files.length) throw new ArgumentError('Expecting argument <files...>');
+  //if(!files.length) files.push(RelativePath('lib/util.js'));
+
+  let log = quiet ? () => {} : (...args) => console.log(`${file}:`, ...args);
+  let results = [];
+
+  for(let file of files) {
+    file = RelativePath(file);
+
+    let result = ResolveImports(file, log, recursive, 0);
+
+    if(debug >= 1) console.log('result', compact(false, { depth: Infinity }), result);
+
+    results.push(result);
   }
-  return removed;
-}
+  if(!removeImports) {
+    let bindings = [],
+      importLines = [];
+    const ContainsAny = (arr, tokens) => tokens.some(tok => arr.indexOf(tok) != -1);
+    let lines = header
+      .filter(impexp => IsBuiltin(impexp.file))
+      .filter(hdr => !hdr.code.startsWith('export'))
+      .reduce(
+        ([acc, prev], hdr) => {
+          let { code } = hdr;
+          let disable = ContainsAny(bindings, hdr.ids());
+          if(prev != hdr.source) {
+            acc.push('');
+            acc.push(``);
+          }
+          let duplicate = importLines.indexOf(code) != -1;
+          importLines.push(code);
+          if(!duplicate && disable) code = '';
+          if(!duplicate) {
+            bindings.push(...hdr.ids());
+            acc.push(code);
+          }
+          return [acc, hdr.source];
+        },
+        [[], null]
+      )[0];
+    if(lines.length) lines = [FileBannerComment('header', 0), ...lines, '', FileBannerComment('header', 1)];
+    if(debug > 2) console.log('lines', lines);
 
-function GetBindings(properties) {
-  return properties.filter(node => node).map(node => (node.id ? [node.id.value, node.value.value] : [node, node]));
-}
-
-function ReduceNode([n, p]) {
-  if(n instanceof Token) {
-    n = n.value;
-    p = p.down('value');
+    out.puts(lines.reduce((acc, line) => acc + line.trim() + '\n', ''));
   }
-  if(n instanceof MemberExpression) {
-    n = n.property;
-    p = p.down('property');
+
+  for(let line of PrintUserscriptBanner({
+    name: out.file,
+    'run-at': 'document-start',
+    version: '1.0',
+    description: files.join(', '),
+    downloadURL: `https://localhost:9000/${out.file}`,
+    updateURL: `https://localhost:9000/${out.file}`
+  })) {
+    //std.puts(`line: ${line}\n`);
+    stream.puts(line);
   }
-  if(n instanceof VariableDeclarator) {
-    n = n.id;
-    p = p.down('id');
+  stream.puts("\n(function() {\n  'use strict';\n");
+  ++stream.indent;
+
+  if(out.file) {
+    const nbytes = results[0].write(stream);
+    console.log(`${nbytes} bytes written to '${out.file}'`);
   }
-  if(n instanceof Literal) {
-    n = Literal.string(n);
-    p = p.down('value');
+  if(debug > 3) console.log(`exportedNames`, exportedNames);
+
+  if(globalExports) {
+    let maxDepth = globalExports - 1;
+    let exportedNames = footer.filter(({ depth }) => depth <= maxDepth);
+    // console.log(`footer`, exportedNames.map(impexp =>  [impexp.depth,impexp.name]));
+
+    exportedNames = exportedNames
+      .map(({ name }) => name)
+      .unique()
+      .filter(name => typeof name == 'string');
+
+    stream.puts(`\nObject.assign(globalThis, { ${exportedNames.join(', ')} });\n`);
   }
-  if(n instanceof Identifier) {
-    n = n.value;
-    p = p.down('value');
-  }
-  return [n, p];
+
+  --stream.indent;
+  stream.puts('})();\n');
+  stream.close();
+
+  logFile(`Processed files: ${SpreadAndJoin(dependencyMap.keys(), ' ')}\n`);
 }
 
-function GetDeclarations(ast, paths) {
-  return paths.map(plist => plist.map(p => ReduceNode([p, deep.get(ast, p)])));
-
-  /* let acc = [];
-  let [path, path2] = paths.flat();
-  // console.log('GetDeclarations', {path, path2});
-  path = path.slice(0, path.indexOf('init'));
-  let node = path.apply(ast) || deep.get(ast, [...path]);
-  //console.log('GetDeclarations:', {node});
-  // console.log('node:', node);
-  if(node.id && node.init) return [[node.id, node.init]];
-  if(node.identifiers) node = node.identifiers;
-  if(node.declarations)
-    acc = node.declarations.reduce((acc, decl) => {
-      if(decl.id) decl = decl.id;
-      if(decl.properties) acc = acc.concat(GetBindings(decl.properties));
-      if(decl.value) acc = acc.concat([[Symbol.for('default'), decl.value]]);
-      return acc;
-    }, acc);
-  if(node.properties) acc = acc.concat(GetBindings(node.properties));
-  return acc;*/
+try {
+  main(...scriptArgs.slice(1));
+} catch(error) {
+  console.log(`${error.constructor.name}: ${error.message}${error.stack ? '\n' + error.stack : ''}`);
+  std.exit(1);
 }
-
-function MakeNames(prefix) {
-  if(/\.(njs|es6.js|esm.js|module.js|module.ejs|js|mjs)$/.test(prefix)) return [prefix];
-  return [prefix + '.njs', prefix + '.es6.js', prefix + '.esm.js', prefix + '.module.js', prefix + '.module.ejs', prefix + '.js', prefix + '.mjs', prefix];
-}
-
-function IsPackage(dir) {
-  if(packages.has(dir)) return true;
-  const packageFile = path.join(dir, 'package.json');
-  return fs.exists(packageFile);
-}
-
-function AddPackage(dir) {
-  const packageFile = path.join(dir, 'package.json');
-  const obj = JSON.parse(fs.readFileSync(packageFile));
-  packages.set(dir, obj);
-  return obj;
-}
-
-function GetPackage(dir) {
-  if(packages.has(dir)) return packages.get(dir);
-  if(IsPackage(dir)) return AddPackage(dir);
-}
-
-function ParentPackage(path) {
-  let ret;
-  for(let dir of [...ParentDirs(path)].reverse()) {
-    //console.log("ParentPackage", {dir}, packages.keys());
-    let pkg = GetPackage(dir);
-    if(pkg) ret = dir;
-  }
-  return ret;
-}
-
-function* ParentDirs(dir) {
-  let prev;
-  while(dir && dir != prev) {
-    yield dir;
-    prev = dir;
-    dir = path.dirname(dir);
-  }
-}
-
-function MakeSearch(dirs) {
-  let o = {
-    path: MakeSearchPath(dirs),
-    packages: [] //MakeSearchPath(dirs, 'package.json')
-  };
-  o.aliases = o.packages.reduce((acc, p) => {
-    let json = JSON.parse(fs.readFileSync(p));
-    let aliases = json._moduleAliases || {};
-    for(let alias in aliases) {
-      let module = path.join(path.dirname(p), aliases[alias]);
-      if(!fs.exists(module)) throw new Error(`No such module alias from '${alias}' to '${aliases[alias]}'`);
-      let file = FindModule(module);
-      let st = fs.stat(file);
-      acc.set(alias, file);
-    }
-    return acc;
-  }, new Map());
-  return o;
-}
-
-Util.callMain(main, true);

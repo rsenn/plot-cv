@@ -1,10 +1,11 @@
 import { define, isObject, memoize, unique } from './lib/misc.js';
 import Util from './lib/util.js';
 import * as cv from 'opencv';
+import { EventEmitter, eventify } from './quickjs/qjs-modules/lib/events.js';
 
 const MinMax = (min, max) => value => Math.max(min, Math.min(max, value));
 
-export class Param {
+export class Param extends EventEmitter {
   valueOf() {
     if(typeof this.callback == 'function') this.callback.call(this, this);
 
@@ -20,7 +21,11 @@ export class Param {
   }
 
   createTrackbar(name, win) {
-    cv.createTrackbar(name, win + '', this.value, this.max, value => this.set(value));
+    cv.createTrackbar(name, win + '', this.value, this.max, value => {
+      let old = this.get();
+      this.set(value);
+      if(value != old) this.emit('change', value, old);
+    });
   }
 }
 
@@ -40,7 +45,7 @@ export class NumericParam extends Param {
   set(value) {
     const { clamp, min, step } = this;
     let newValue = this.clamp(min + Util.roundTo(value - min, step, null, 'floor'));
-    console.log(`Param.set oldValue=${this.value} new=${newValue}`);
+    //console.log(`Param.set oldValue=${this.value} new=${newValue}`);
     this.value = newValue;
   }
 
@@ -82,12 +87,12 @@ export class NumericParam extends Param {
 export class EnumParam extends NumericParam {
   constructor(...args) {
     let values, init;
-    if(Util.isArray(args[0])) {
+    if(Array.isArray(args[0])) {
       values = args[0];
       init = args[1] || 0;
     } else {
       init = args.shift();
-      values = Util.isArray(args[0]) ? args[0] : args;
+      values = Array.isArray(args[0]) ? args[0] : args;
     }
     super(init, 0, values.length - 1);
     define(this, { values });

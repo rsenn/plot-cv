@@ -1,8 +1,7 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
 // ==UserScript==
 
-// @name         lib/geom.js
-// @namespace    create-tamper
+// @name         tamper.js
+// @namespace    tamper
 // @version      0.2
 // @description  geom.js, align.js, bbox.js, util.js, graph.js, intersection.js, point.js, line.js, lineList.js, element.js, node.js, trbl.js, rect.js, size.js, iterator.js, pointList.js, matrix.js, circle.js, polygonFinder.js, polygon.js, sweepLine.js, transformation.js, vector.js, simplify.js
 // @author       You
@@ -18,6 +17,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
 (function (globalObj) {
   /* --- concatenated 'lib/geom/align.js' --- */
+  globalThis.Align = {};
   Align.CENTER = 0;
   Align.LEFT = 1;
   Align.RIGHT = 2;
@@ -35,6 +35,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
    * @class      Util (name)
    */
   //if(g) Util.globalObject = g;
+  globalThis.Util = {};
 
   Util.formatAnnotatedObject = function(subject, o) {
     const { indent = '  ', spacing = ' ', separator = ',', newline = '\n', maxlen = 30, depth = 1, level = 0 } = o;
@@ -50,8 +51,10 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     if(subject instanceof Date) return `new Date('${new Date().toISOString()}')`;
     if(typeof subject == 'string') return `'${subject}'`;
     if(typeof subject == 'number') return subject;
-    if(subject != null && subject.y2 !== undefined) return `rect[${spacing}${subject.x}${separator}${subject.y} | ${subject.x2}${separator}${subject.y2} (${subject.w}x${subject.h}) ]`;
-    if(isObject(subject) && 'map' in subject && typeof subject.map == 'function') return `[${nl}${subject.map(i => Util.formatAnnotatedObject(i, opts)).join(separator + nl)}]`;
+    if(subject != null && subject.y2 !== undefined)
+      return `rect[${spacing}${subject.x}${separator}${subject.y} | ${subject.x2}${separator}${subject.y2} (${subject.w}x${subject.h}) ]`;
+    if(isObject(subject) && 'map' in subject && typeof subject.map == 'function')
+      return `[${nl}${subject.map(i => Util.formatAnnotatedObject(i, opts)).join(separator + nl)}]`;
     if(typeof subject === 'string' || subject instanceof String) return `'${subject}'`;
     let longest = '';
     let r = [];
@@ -74,7 +77,10 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
         s = 'null';
       } else if(v && v.length !== undefined) {
         try {
-          s = depth <= 0 ? `Array(${v.length})` : `[ ${v.map(item => Util.formatAnnotatedObject(item, opts)).join(', ')} ]`;
+          s =
+            depth <= 0
+              ? `Array(${v.length})`
+              : `[ ${v.map(item => Util.formatAnnotatedObject(item, opts)).join(', ')} ]`;
         } catch(err) {
           s = `[${v}]`;
         }
@@ -100,7 +106,13 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
       j = separator + (opts.newline != '' ? nl : spacing);
     }
 
-    let ret = '{' + opts.newline + r.map(arr => padding(arr[0]) + arr[0] + ':' + spacing + arr[1]).join(j) + opts.newline + i + '}';
+    let ret =
+      '{' +
+      opts.newline +
+      r.map(arr => padding(arr[0]) + arr[0] + ':' + spacing + arr[1]).join(j) +
+      opts.newline +
+      i +
+      '}';
     return ret;
   };
 
@@ -137,7 +149,10 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
         }
       ].n;
 
-      return new Function(...a, ...`const { curried,thisObj,args} = this; return curried.apply(thisObj, args.concat([${a.join(',')}]))`).bind({ args, thisObj, curried });
+      return new Function(
+        ...a,
+        ...`const { curried,thisObj,args} = this; return curried.apply(thisObj, args.concat([${a.join(',')}]))`
+      ).bind({ args, thisObj, curried });
     };
 
     Object.defineProperties(ret, {
@@ -250,8 +265,18 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     if(target !== undefined) self.target = target;
     return self;
   };
-  Util.remover = target => (typeof target == 'object' && target !== null ? (typeof target.delete == 'function' ? key => target.delete(key) : key => delete target.key) : null);
-  Util.hasFn = target => (typeof target == 'object' && target !== null ? (typeof target.has == 'function' ? key => target.has(key) : key => key in target) : null);
+  Util.remover = target =>
+    typeof target == 'object' && target !== null
+      ? typeof target.delete == 'function'
+        ? key => target.delete(key)
+        : key => delete target.key
+      : null;
+  Util.hasFn = target =>
+    typeof target == 'object' && target !== null
+      ? typeof target.has == 'function'
+        ? key => target.has(key)
+        : key => key in target
+      : null;
 
   Util.adder = target => {
     let self;
@@ -288,7 +313,8 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
       if(!self.fn) {
         if(typeof o == 'string') self.fn = (obj, arg) => (obj == '' ? '' : obj + ', ') + arg;
-        else if(a) self.fn = (obj, arg) => ((obj || (isNum || typeof arg == 'number' ? 0 : '')) + isNum ? +arg : ',' + arg);
+        else if(a)
+          self.fn = (obj, arg) => ((obj || (isNum || typeof arg == 'number' ? 0 : '')) + isNum ? +arg : ',' + arg);
       }
     }
   };
@@ -317,13 +343,18 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
       has = Util.hasFn(target);
     /* prettier-ignore */ set = set || Util.setter(target);
     let value;
-    return key => (value = has.call(target, key) ? get.call(target, key) : ((value = create(key, target)), set.call(target, key, value), value));
+    return key =>
+      (value = has.call(target, key)
+        ? get.call(target, key)
+        : ((value = create(key, target)), set.call(target, key, value), value));
   };
 
-  memoize = (fn, storage = new Map()) => {
+  Util.memoize = (fn, storage = new Map()) => {
     let self;
-    const getter = typeof storage.get == 'function' ? storage.get : typeof storage == 'function' ? storage : Util.getter(storage);
-    const setter = typeof storage.set == 'function' ? storage.set : typeof storage == 'function' ? storage : Util.setter(storage);
+    const getter =
+      typeof storage.get == 'function' ? storage.get : typeof storage == 'function' ? storage : Util.getter(storage);
+    const setter =
+      typeof storage.set == 'function' ? storage.set : typeof storage == 'function' ? storage : Util.setter(storage);
 
     self = function(...args) {
       // let n = args[0]; // just taking one argument here
@@ -361,7 +392,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     };
   };
 
-  Util.getGlobalObject = memoize(arg => {
+  Util.getGlobalObject = Util.memoize(arg => {
     const retfn = typeof arg == 'function' ? arg : typeof arg == 'string' ? g => g.arg : g => g;
     return Util.tryCatch(
       () => global,
@@ -380,7 +411,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     );
   });
 
-  Util.isDebug = memoize(() => {
+  Util.isDebug = Util.memoize(() => {
     if(process !== undefined && process.env.NODE_ENV === 'production') return false;
     return true;
   });
@@ -409,7 +440,8 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
     args = args.reduce((a, p, i) => {
       if(isObject(p) && p[Util.log.methodName]) p = p[Util.log.methodName]();
-      else if(isObject(p) && p[Symbol.for('nodejs.util.inspect.custom')]) p = p[Symbol.for('nodejs.util.inspect.custom')]();
+      else if(isObject(p) && p[Symbol.for('nodejs.util.inspect.custom')])
+        p = p[Symbol.for('nodejs.util.inspect.custom')]();
       else if(typeof p != 'string') {
         if(isObject(p) && typeof p.toString == 'function' && !Util.isNativeFunction(p.toString)) p = p.toString();
         else p = Util.inspect(p, { multiline: false });
@@ -463,7 +495,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     let o;
     const { print = (...args) => (o = c.concat(o, c.text(...args))) } = opts;
 
-    if(Util.isArray(arg)) {
+    if(Array.isArray(arg)) {
       print('[', 1, 36);
 
       for(let item of arg) {
@@ -731,7 +763,21 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   Util.get = Util.curry((obj, prop) => (obj instanceof Map ? obj.get(prop) : obj.prop));
 
   Util.symbols = (() => {
-    const { asyncIterator, hasInstance, isConcatSpreadable, iterator, match, matchAll, replace, search, species, split, toPrimitive, toStringTag, unscopables } = Symbol;
+    const {
+      asyncIterator,
+      hasInstance,
+      isConcatSpreadable,
+      iterator,
+      match,
+      matchAll,
+      replace,
+      search,
+      species,
+      split,
+      toPrimitive,
+      toStringTag,
+      unscopables
+    } = Symbol;
     return {
       inspect: Symbol.for('nodejs.util.inspect.custom'),
       asyncIterator,
@@ -760,7 +806,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
   /*
     const { indent = '  ', newline = '\n', depth = 2, spacing = ' ' } = typeof opts == 'object' ? opts : { indent: '', newline: '', depth: typeof opts == 'number' ? opts : 10, spacing: ' ' };
-  
+
     return Util.formatAnnotatedObject(obj, { indent, newline, depth, spacing });
   };*/
   Util.bitArrayToNumbers = function(arr) {
@@ -847,7 +893,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   };
 
   Util.abbreviate = function(str, max = (40, (suffix = '...'))) {
-    if(Util.isArray(str)) {
+    if(Array.isArray(str)) {
       return Array.prototype.slice.call(str, 0, Math.min(str.length, max)).concat([suffix]);
     }
 
@@ -878,7 +924,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     return text.replace(/(\n)/g, '\n' + space) + '\n';
   };
 
-  define = (obj, ...args) => {
+  Util.define = (obj, ...args) => {
     if(typeof args[0] == 'object') {
       const [arg, overwrite = true] = args;
       let adecl = Object.getOwnPropertyDescriptors(arg);
@@ -918,7 +964,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     let decls = {};
 
     for(let method in methods) {
-      const memoize = memoize(methods.method);
+      const memoize = Util.memoize(methods.method);
 
       decls.method = {
         get() {
@@ -938,7 +984,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
     //console.debug('chain:', ...chain);
 
-    for(let obj of chain) define(dst, obj);
+    for(let obj of chain) Util.define(dst, obj);
 
     return dst;
   };
@@ -966,7 +1012,11 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
           if(deep && Util.isCloneable(value)) {
             let base = Array.isArray(value) ? [] : {};
-            result.key = Util.extend(true, result.hasOwnProperty(key) && !Util.isUnextendable(result.key) ? result.key : base, value);
+            result.key = Util.extend(
+              true,
+              result.hasOwnProperty(key) && !Util.isUnextendable(result.key) ? result.key : base,
+              value
+            );
           } else {
             result.key = value;
           }
@@ -1002,7 +1052,10 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   Util.static = (obj, functions, thisObj, pred = (k, v, f) => true) => {
     for(let [name, fn] of Util.iterateMembers(
       functions,
-      Util.tryPredicate((key, depth) => obj.key === undefined && typeof functions.key == 'function' && pred(key, depth, functions) && [key, value])
+      Util.tryPredicate(
+        (key, depth) =>
+          obj.key === undefined && typeof functions.key == 'function' && pred(key, depth, functions) && [key, value]
+      )
     )) {
       const value = function(...args) {
         return fn.call(thisObj || obj, this, ...args);
@@ -1027,22 +1080,23 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
       configurable: true,
       get: fn
     });
-  Util.defineGetterSetter = (obj, key, g, s, enumerable = false) => obj.key === undefined && Object.defineProperty(obj, key, { get: g, set: s, enumerable });
+  Util.defineGetterSetter = (obj, key, g, s, enumerable = false) =>
+    obj.key === undefined && Object.defineProperty(obj, key, { get: g, set: s, enumerable });
 
   Util.extendArray = function(arr = Array.prototype) {
-    /*  define(arr, 'tail', function() {
+    /*  Util.define(arr, 'tail', function() {
         return this[this.length - 1];
       });*/
-    define(arr, 'match', function(pred) {
+    Util.define(arr, 'match', function(pred) {
       return Util.match(this, pred);
     });
 
-    define(arr, 'clear', function() {
+    Util.define(arr, 'clear', function() {
       this.splice(0, this, length);
       return this;
     });
 
-    define(arr, 'unique', function() {
+    Util.define(arr, 'unique', function() {
       return this.filter((item, i, a) => a.indexOf(item) == i);
     });
 
@@ -1062,7 +1116,13 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   /*define(arr, 'inspect', function(opts = {}) {
       return Util.inspect(this, { depth: 100, ...opts });
     });*/
-  Util.adapter = function(obj, getLength = (obj => obj.length, (getKey = ((obj, index) => obj.key(index), (getItem = ((obj, key) => obj.key, (setItem = (obj, index, value) => (obj.index = value)))))))) {
+  Util.adapter = function(
+    obj,
+    getLength = (obj => obj.length,
+    (getKey =
+      ((obj, index) => obj.key(index),
+      (getItem = ((obj, key) => obj.key, (setItem = (obj, index, value) => (obj.index = value)))))))
+  ) {
     const adapter = obj && {
       /* prettier-ignore */ get length() {
         return getLength(obj);
@@ -1167,7 +1227,11 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     if(map.entries === undefined) {
       map.entries = function* iterator() {
         for(let entry of map) {
-          yield entry.name !== undefined && entry.value !== undefined ? [entry.name, entry.value] : entry[0] !== undefined && entry[1] !== undefined ? entry : [entry, map.entry];
+          yield entry.name !== undefined && entry.value !== undefined
+            ? [entry.name, entry.value]
+            : entry[0] !== undefined && entry[1] !== undefined
+            ? entry
+            : [entry, map.entry];
         }
       };
     }
@@ -1195,7 +1259,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
   Util.objectFrom = function(any) {
     if('toJS' in any) any = any.toJS();
-    else if(Util.isArray(any)) return Util.fromEntries(any);
+    else if(Array.isArray(any)) return Util.fromEntries(any);
     else if('entries' in any) return Util.fromEntries(any.entries());
     return Object.assign({}, any);
   };
@@ -1379,7 +1443,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     for(let v of arr) {
       //console.log("v: ", v, "k:", k);
 
-      /*if(Util.isArray(v)) {
+      /*if(Array.isArray(v)) {
             for(let i = 0; i < v.length; i++)
               if(pred(v[i]))
                 return v[i];
@@ -1396,10 +1460,13 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
     if(pred instanceof RegExp) {
       const re = pred;
-      match = (val, key) => (val && val.tagName !== undefined && re.test(val.tagName)) || (typeof key === 'string' && re.test(key)) || (typeof val === 'string' && re.test(val));
+      match = (val, key) =>
+        (val && val.tagName !== undefined && re.test(val.tagName)) ||
+        (typeof key === 'string' && re.test(key)) ||
+        (typeof val === 'string' && re.test(val));
     }
 
-    if(Util.isArray(arg)) {
+    if(Array.isArray(arg)) {
       if(!(arg instanceof Array)) arg = [...arg];
 
       return arg.reduce((acc, val, key) => {
@@ -1409,7 +1476,10 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     } else if(Util.isMap(arg)) {
       //console.log('Util.match ', { arg });
 
-      return [...arg.keys()].reduce((acc, key) => (match(arg.get(key), key, arg) ? acc.set(key, arg.get(key)) : acc), new Map());
+      return [...arg.keys()].reduce(
+        (acc, key) => (match(arg.get(key), key, arg) ? acc.set(key, arg.get(key)) : acc),
+        new Map()
+      );
     }
 
     return Util.filter(arg, match);
@@ -1453,7 +1523,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
   Util.matchAll = Util.curry(function* (re, str) {
     let match;
-    re = re instanceof RegExp ? re : new RegExp(Util.isArray(re) ? '(' + re.join('|') + ')' : re, 'g');
+    re = re instanceof RegExp ? re : new RegExp(Array.isArray(re) ? '(' + re.join('|') + ')' : re, 'g');
 
     do {
       if((match = re.exec(str))) yield match;
@@ -1461,10 +1531,24 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   });
 
   Util.inspect = (obj, opts = {}) => {
-    const { quote = '"', multiline = true, toString = Symbol.toStringTag || 'toString', /*Util.symbols.toStringTag*/ stringFn = str => str, indent = '', colors = false, stringColor = [1, 36], spacing = '', newline = '\n', padding = ' ', separator = ',', colon = ': ', depth = 10 } = { ...Util.inspect.defaultOpts, ...opts };
+    const {
+      quote = '"',
+      multiline = true,
+      toString = Symbol.toStringTag || 'toString',
+      /*Util.symbols.toStringTag*/ stringFn = str => str,
+      indent = '',
+      colors = false,
+      stringColor = [1, 36],
+      spacing = '',
+      newline = '\n',
+      padding = ' ',
+      separator = ',',
+      colon = ': ',
+      depth = 10
+    } = { ...Util.inspect.defaultOpts, ...opts };
 
     /* if(depth < 0) {
-        if(Util.isArray(obj)) return `[...${obj.length}...]`;
+        if(Array.isArray(obj)) return `[...${obj.length}...]`;
         if(isObject(obj)) return `{ ..${Object.keys(obj).length}.. }`;
         return '' + obj;
       }*/
@@ -1472,7 +1556,10 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
     const { c = Util.coloring(colors) } = opts;
     const { print = (...args) => (out = c.concat(out, c.text(...args))) } = opts;
-    const sep = multiline && depth > 0 ? (space = false) => newline + indent + (space ? '  ' : '') : (space = false) => (space ? spacing : '');
+    const sep =
+      multiline && depth > 0
+        ? (space = false) => newline + indent + (space ? '  ' : '')
+        : (space = false) => (space ? spacing : '');
 
     if(typeof obj == 'number') {
       print(obj + '', 1, 36);
@@ -1545,8 +1632,10 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
           const value = getFn(key);
           if(i > 0) print(sep(true), 36);
           if(typeof key == 'symbol') print(key.toString(), 1, 32);
-          else if(isObject(key) && typeof key.toString == 'function') print(isMap ? `'${key.toString()}'` : key.toString(), 1, isMap ? 36 : 33);
-          else if(typeof key == 'string' || (!isMap && isObject(key) && typeof key.toString == 'function')) print(isMap ? `'${key}'` : key, 1, isMap ? 36 : 33);
+          else if(isObject(key) && typeof key.toString == 'function')
+            print(isMap ? `'${key.toString()}'` : key.toString(), 1, isMap ? 36 : 33);
+          else if(typeof key == 'string' || (!isMap && isObject(key) && typeof key.toString == 'function'))
+            print(isMap ? `'${key}'` : key, 1, isMap ? 36 : 33);
           else
             Util[Symbol.for('nodejs.util.inspect.custom')](key, {
               ...opts,
@@ -1651,9 +1740,12 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
       return ret;
     };
   };
-  Util.if = (value, _then, _else, pred) => Util.ifThenElse(pred || (v => !!v), _then || (() => value), _else || (() => value))(value);
-  Util.ifElse = (value, _else, pred) => Util.ifThenElse(pred || (v => !!v), () => value, _else ? () => _else : () => value)(value);
-  Util.ifThen = (value, _then, pred) => Util.ifThenElse(pred || (v => !!v), _then ? () => _then : () => value, () => value)(value);
+  Util.if = (value, _then, _else, pred) =>
+    Util.ifThenElse(pred || (v => !!v), _then || (() => value), _else || (() => value))(value);
+  Util.ifElse = (value, _else, pred) =>
+    Util.ifThenElse(pred || (v => !!v), () => value, _else ? () => _else : () => value)(value);
+  Util.ifThen = (value, _then, pred) =>
+    Util.ifThenElse(pred || (v => !!v), _then ? () => _then : () => value, () => value)(value);
 
   Util.transform = Util.curry(function* (fn, arr) {
     for(let item of arr) yield fn(item);
@@ -1662,12 +1754,18 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   Util.colorDump = (iterable, textFn) => {
     textFn = textFn || ((color, n) => ('   ' + (n + 1)).slice(-3) + ` ${color}`);
     let j = 0;
-    const filters = 'font-weight: bold; text-shadow: 0px 0px 1px rgba(0,0,0,0.8); filter: drop-shadow(30px 10px 4px #4444dd)';
-    if(!Util.isArray(iterable)) iterable = [...iterable];
+    const filters =
+      'font-weight: bold; text-shadow: 0px 0px 1px rgba(0,0,0,0.8); filter: drop-shadow(30px 10px 4px #4444dd)';
+    if(!Array.isArray(iterable)) iterable = [...iterable];
 
     for(let j = 0; j < iterable.length; j++) {
       const [i, color] = iterable.j.length == 2 ? iterable.j : [j, iterable.j];
-      console.log(`  %c    %c ${color} %c ${textFn(color, i)}`, `background: ${color}; font-size: 18px; ${filters};`, `background: none; color: ${color}; min-width: 120px; ${filters}; `, `color: black; font-size: 12px;`);
+      console.log(
+        `  %c    %c ${color} %c ${textFn(color, i)}`,
+        `background: ${color}; font-size: 18px; ${filters};`,
+        `background: none; color: ${color}; min-width: 120px; ${filters}; `,
+        `color: black; font-size: 12px;`
+      );
     }
   };
 
@@ -1797,7 +1895,8 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
       return !fn(...args);
     };
   Util.isAsync = fn => typeof fn == 'function' && /async/.test(fn + '');
-  /*|| fn() instanceof Promise*/ Util.isArrowFunction = fn => (Util.isFunction(fn) && !('prototype' in fn)) || /\ =>\ /.test(('' + fn).replace(/\n.*/g, ''));
+  /*|| fn() instanceof Promise*/ Util.isArrowFunction = fn =>
+    (Util.isFunction(fn) && !('prototype' in fn)) || /\ =>\ /.test(('' + fn).replace(/\n.*/g, ''));
   Util.isEmptyString = v => Util.isString(v) && (v == '' || v.length == 0);
 
   Util.isEmpty = function(v) {
@@ -1824,12 +1923,20 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   };
 
   Util.validatePassword = function(value) {
-    return value.length > 7 && new RegExp('^(?![d]+$)(?![a-zA-Z]+$)(?![!#$%^&*]+$)[da-zA-Z!#$ %^&*]').test(value) && !/\s/.test(value);
+    return (
+      value.length > 7 &&
+      new RegExp('^(?![d]+$)(?![a-zA-Z]+$)(?![!#$%^&*]+$)[da-zA-Z!#$ %^&*]').test(value) &&
+      !/\s/.test(value)
+    );
   };
 
   Util.clone = function(obj, proto) {
-    if(Util.isArray(obj)) return obj.slice();
-    else if(typeof obj == 'object') return Object.create(proto || obj.constructor.prototype || Object.getPrototypeOf(obj), Object.getOwnPropertyDescriptors(obj));
+    if(Array.isArray(obj)) return obj.slice();
+    else if(typeof obj == 'object')
+      return Object.create(
+        proto || obj.constructor.prototype || Object.getPrototypeOf(obj),
+        Object.getOwnPropertyDescriptors(obj)
+      );
   };
 
   //deep copy
@@ -2221,14 +2328,21 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     return result;
   };
 
-  Util.getURL = memoize((req = {}) =>
+  Util.getURL = Util.memoize((req = {}) =>
     Util.tryCatch(
       () => process.argv[1],
       () => 'file://' + Util.scriptDir(),
       () => {
         let proto = Util.tryCatch(() => (process.env.NODE_ENV === 'production' ? 'https' : null)) || 'http';
-        let port = Util.tryCatch(() => (process.env.PORT ? parseInt(process.env.PORT) : process.env.NODE_ENV === 'production' ? 443 : null)) || 3000;
-        let host = Util.tryCatch(() => global.ip) || Util.tryCatch(() => global.host) || Util.tryCatch(() => window.location.host.replace(/:.*/g, '')) || 'localhost';
+        let port =
+          Util.tryCatch(() =>
+            process.env.PORT ? parseInt(process.env.PORT) : process.env.NODE_ENV === 'production' ? 443 : null
+          ) || 3000;
+        let host =
+          Util.tryCatch(() => global.ip) ||
+          Util.tryCatch(() => global.host) ||
+          Util.tryCatch(() => window.location.host.replace(/:.*/g, '')) ||
+          'localhost';
         if(req && req.headers && req.headers.host !== undefined) host = req.headers.host.replace(/:.*/, '');
         else Util.tryCatch(() => process.env.HOST !== undefined && (host = process.env.HOST));
         if(req.url !== undefined) return req.url;
@@ -2307,7 +2421,13 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
       href(override) {
         if(typeof override === 'object') Object.assign(this, override);
         const qstr = Util.encodeQuery(this.query);
-        return (this.protocol ? `${this.protocol}://` : '') + (this.host ? this.host : '') + (this.port ? `:${this.port}` : '') + `${this.location}` + (qstr != '' ? `?${qstr}` : '');
+        return (
+          (this.protocol ? `${this.protocol}://` : '') +
+          (this.host ? this.host : '') +
+          (this.port ? `:${this.port}` : '') +
+          `${this.location}` +
+          (qstr != '' ? `?${qstr}` : '')
+        );
       }
     };
   };
@@ -2370,7 +2490,8 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
           return resolve(ret, ...args);
         };
   };
-  Util.tryCatch = (fn, resolve = a => a, reject = () => null, ...args) => Util.tryFunction(fn, resolve, reject)(...args);
+  Util.tryCatch = (fn, resolve = a => a, reject = () => null, ...args) =>
+    Util.tryFunction(fn, resolve, reject)(...args);
 
   Util.putError = err => {
     let s = Util.stack(err.stack);
@@ -2430,7 +2551,8 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     promise.clear = clear;
     return promise;
   };
-  Util.timeout = async (msecs, promises, promiseClass = Promise) => await promiseClass.race([Util.waitFor(msecs)].concat(Util.isArray(promises) ? promises : [promises]));
+  Util.timeout = async (msecs, promises, promiseClass = Promise) =>
+    await promiseClass.race([Util.waitFor(msecs)].concat(Array.isArray(promises) ? promises : [promises]));
 
   Util.isServer = function() {
     return !Util.isBrowser();
@@ -2439,7 +2561,8 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   Util.isMobile = function() {
     return true;
   };
-  Util.uniquePred = (cmp = null) => (cmp === null ? (el, i, arr) => arr.indexOf(el) === i : (el, i, arr) => arr.findIndex(item => cmp(el, item)) === i);
+  Util.uniquePred = (cmp = null) =>
+    cmp === null ? (el, i, arr) => arr.indexOf(el) === i : (el, i, arr) => arr.findIndex(item => cmp(el, item)) === i;
   unique = (arr, cmp) => arr.filter(Util.uniquePred(cmp));
 
   Util.histogram = /* new Set()*/ (arr, t, out = false ? {} : new Map(), initVal = () => 0, setVal = v => v) => {
@@ -2464,7 +2587,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
       if(tmp) {
         key = tmp;
-        if(Util.isArray(tmp) && tmp.length >= 2) [key, arg] = tmp.slice(-2);
+        if(Array.isArray(tmp) && tmp.length >= 2) [key, arg] = tmp.slice(-2);
         else arg = tmp;
       }
 
@@ -2499,7 +2622,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
         console.error('isGenerator:', arg);
         yield* arg;
       } else {
-        /* if(Util.isArray(arg))*/
+        /* if(Array.isArray(arg))*/
         for(let item of arg) yield item;
       }
     }
@@ -2518,7 +2641,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   };
 
   Util.remap = (...args) => {
-    const getR = () => (Util.isArray(args[0]) ? args.shift() : args.splice(0, 2));
+    const getR = () => (Array.isArray(args[0]) ? args.shift() : args.splice(0, 2));
     const _from = getR(),
       to = getR();
     const f = [to[1] - to[0], _from[1] - _from[0]];
@@ -2564,7 +2687,10 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   };
 
   Util.isGenerator = function(fn) {
-    return (typeof fn == 'function' && /^[^(]*\*/.test(fn.toString())) || (['function', 'object'].indexOf(typeof fn) != -1 && fn.next !== undefined);
+    return (
+      (typeof fn == 'function' && /^[^(]*\*/.test(fn.toString())) ||
+      (['function', 'object'].indexOf(typeof fn) != -1 && fn.next !== undefined)
+    );
   };
   Util.isIterator = obj => isObject(obj) && typeof obj.next == 'function';
 
@@ -2609,7 +2735,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
         for(let item of a) if(pred(item)) yield item;
       })();
 
-    let isa = Util.isArray(a);
+    let isa = Array.isArray(a);
 
     if(isa)
       return (function* () {
@@ -2693,7 +2819,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
         let idx = arr.findIndex(item => fn(item) == 'prop');
         if(idx != -1)
           prop = idx;
-  
+
         return Reflect.get(arr, idx, receiver);
       }
     });
@@ -2709,7 +2835,10 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   };
 
   Util.isDate = function(d) {
-    return d instanceof Date || (typeof d == 'string' && /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]T[0-9][0-9]:[0-9][0-9]:[0-9][0-9]/.test(d));
+    return (
+      d instanceof Date ||
+      (typeof d == 'string' && /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]T[0-9][0-9]:[0-9][0-9]:[0-9][0-9]/.test(d))
+    );
   };
 
   Util.parseDate = function(d) {
@@ -2880,12 +3009,21 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     return ret;
   };
 
-  Util.isArray = function(obj) {
-    return (obj && !Util.isGetter(obj, 'length') && isObject(obj) && 'length' in obj && !(obj instanceof String) && !(obj instanceof Function) && typeof obj == 'function') || obj instanceof Array;
+  Array.isArray = function(obj) {
+    return (
+      (obj &&
+        !Util.isGetter(obj, 'length') &&
+        isObject(obj) &&
+        'length' in obj &&
+        !(obj instanceof String) &&
+        !(obj instanceof Function) &&
+        typeof obj == 'function') ||
+      obj instanceof Array
+    );
   };
 
   Util.equals = function(a, b) {
-    if(Util.isArray(a) && Util.isArray(b)) {
+    if(Array.isArray(a) && Array.isArray(b)) {
       return a.length == b.length && a.every((e, i) => b.i === e);
     } else if(isObject(a) && isObject(b)) {
       const size_a = Util.size(a);
@@ -2942,7 +3080,20 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   };
 
   Util.getFormFields = function(initialState) {
-    return Util.mergeObjects([initialState, [...document.forms].reduce((acc, { elements }) => [...elements].reduce((acc2, { name, value }) => (name == '' || value == undefined || value == 'undefined' ? acc2 : Object.assign(acc2, { [[name]]: value })), acc), {})]);
+    return Util.mergeObjects([
+      initialState,
+      [...document.forms].reduce(
+        (acc, { elements }) =>
+          [...elements].reduce(
+            (acc2, { name, value }) =>
+              name == '' || value == undefined || value == 'undefined'
+                ? acc2
+                : Object.assign(acc2, { [[name]]: value }),
+            acc
+          ),
+        {}
+      )
+    ]);
   };
 
   Util.mergeObjects = function(objArr, predicate = (dst, src, key) => (src.key == '' ? undefined : src.key)) {
@@ -3005,7 +3156,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     if(pred instanceof RegExp) {
       let re = pred;
       pred = str => re.test(str);
-    } else if(Util.isArray(pred)) {
+    } else if(Array.isArray(pred)) {
       let a = pred;
       pred = str => a.indexOf(str) != -1;
     }
@@ -3030,7 +3181,12 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
   Util.filterOutKeys = function(obj, arr) {
     if(typeof obj != 'object') return obj;
-    const pred = typeof arr == 'function' ? (v, k, o) => arr(k, v, o) : arr instanceof RegExp ? (k, v) => arr.test(k) : /*|| arr.test(v)*/ key => arr.indexOf(key) != -1;
+    const pred =
+      typeof arr == 'function'
+        ? (v, k, o) => arr(k, v, o)
+        : arr instanceof RegExp
+        ? (k, v) => arr.test(k)
+        : /*|| arr.test(v)*/ key => arr.indexOf(key) != -1;
     return Util.filterOutMembers(obj, (v, k, o) => pred(k, v, o));
   };
 
@@ -3048,7 +3204,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   };
 
   Util.entries = function(arg) {
-    if(Util.isArray(arg) || isObject(arg)) {
+    if(Array.isArray(arg) || isObject(arg)) {
       if(typeof arg.entries == 'function') return arg.entries();
       else if(Util.isIterable(arg))
         return (function* () {
@@ -3151,7 +3307,8 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     for(let key of p) o = o.key;
     return o;
   };
-  Util.pushUnique = (arr, ...args) => args.reduce((acc, item) => (arr.indexOf(item) == -1 ? (arr.push(item), acc + 1) : acc), 0);
+  Util.pushUnique = (arr, ...args) =>
+    args.reduce((acc, item) => (arr.indexOf(item) == -1 ? (arr.push(item), acc + 1) : acc), 0);
 
   Util.insertSorted = function(arr, item, cmp = (a, b) => b - a) {
     let i = 0,
@@ -3171,7 +3328,11 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
     const insert =
       /*dest instanceof Map ||
-        dest instanceof WeakMap ||*/ typeof dest.set == 'function' && dest.set.length >= 2 ? (k, v) => dest.set(k, v) : Util.isArray(dest) ? (k, v) => dest.push([k, v]) : (k, v) => (dest.k = v);
+        dest instanceof WeakMap ||*/ typeof dest.set == 'function' && dest.set.length >= 2
+        ? (k, v) => dest.set(k, v)
+        : Array.isArray(dest)
+        ? (k, v) => dest.push([k, v])
+        : (k, v) => (dest.k = v);
 
     let fn;
 
@@ -3191,7 +3352,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
     if(typeof obj.keys == 'function' && Util.isIterator((it = obj.keys()))) {
       return it;
-    } else if(Util.isArray(obj)) {
+    } else if(Array.isArray(obj)) {
       return Array.prototype.keys.call(obj);
     } else if('length' in obj) {
       return Array.prototype[Symbol.iterator].call(obj);
@@ -3203,7 +3364,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
     if(typeof obj.entries == 'function' && Util.isIterator((it = obj.entries()))) {
       return it;
-    } else if(Util.isArray(obj)) {
+    } else if(Array.isArray(obj)) {
       return Array.prototype.entries.call(obj);
     } else if('length' in obj) {
       return (function* () {
@@ -3288,7 +3449,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
       fn[Symbol.iterator] = fn.entries;
 
       fn[Symbol.for('nodejs.util.inspect.custom')] = function() {
-        return new Map(this.map(([key, value]) => [Util.isArray(key) ? key.join('.') : key, value]));
+        return new Map(this.map(([key, value]) => [Array.isArray(key) ? key.join('.') : key, value]));
       };
     }
 
@@ -3385,7 +3546,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     return fn;
   };
 
-  Util.iterateMembers = function* (obj, predicate = ((name, depth, obj, proto) => true, (depth = 0))) {
+  Util.iterateMembers = function* (obj, predicate = (name, depth, obj, proto) => true, depth = 0) {
     let names = [];
     let pred = Util.predicate(predicate);
     const proto = Object.getPrototypeOf(obj);
@@ -3414,7 +3575,8 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
       (m, l, o) => typeof m != 'string' || ['caller', 'callee', 'constructor', 'arguments'].indexOf(m) == -1,
       (name, depth, obj, proto) => obj != Object.prototype
     );
-  Util.getMemberNames = (obj, depth = Number.Infinity, start = 0) => Util.members(Util.memberNameFilter(depth, start))(obj);
+  Util.getMemberNames = (obj, depth = Number.Infinity, start = 0) =>
+    Util.members(Util.memberNameFilter(depth, start))(obj);
   Util.objectReducer =
     (filterFn, accFn = (a, m, o) => ({ ...a, [[m]]: o.m }), accu = {}) =>
     (obj, ...args) =>
@@ -3454,10 +3616,13 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   Util.mapReducer = (setFn, filterFn = (key, value) => true, mapObj = new Map()) => {
     setFn = setFn || Util.setter(mapObj);
     let fn;
-    let next = Util.tryFunction(((acc, mem, idx) => (filterFn(mem, idx) ? (setFn(idx, mem), acc) : null), r => r, () => mapObj));
+    let next = Util.tryFunction(
+      ((acc, mem, idx) => (filterFn(mem, idx) ? (setFn(idx, mem), acc) : null), r => r, () => mapObj)
+    );
 
     fn = function ReduceIntoMap(arg, acc = mapObj) {
-      if(isObject(arg) && typeof o.reduce == 'function') return arg.reduce((acc, arg) => (Util.isArray(arg) ? arg : Util.members(arg)).reduce(reducer, acc), self.map);
+      if(isObject(arg) && typeof o.reduce == 'function')
+        return arg.reduce((acc, arg) => (Array.isArray(arg) ? arg : Util.members(arg)).reduce(reducer, acc), self.map);
       let c = Util.counter();
       for(let mem of arg) acc = next(acc, mem, c());
       return acc;
@@ -3470,7 +3635,8 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     ...a,
     [[m]]: Object.getOwnPropertyDescriptor(o, m)
   }));
-  Util.methodNameFilter = (depth = (1, (start = 0))) => Util.and((m, l, o) => typeof o.m == 'function', Util.memberNameFilter(depth, start));
+  Util.methodNameFilter = (depth = 1, start = 0) =>
+    Util.and((m, l, o) => typeof o.m == 'function', Util.memberNameFilter(depth, start));
   Util.getMethodNames = (obj, depth = 1, start = 0) => Util.members(Util.methodNameFilter(depth, start))(obj);
   Util.getMethods = Util.objectReducer(Util.methodNameFilter);
   Util.getMethodDescriptors = Util.objectReducer(Util.methodNameFilter, (a, m, o) => ({
@@ -3559,15 +3725,15 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
        const oldPrepareStackTrace = Error.prepareStackTrace;
     Error.prepareStackTrace = (_, stack) => stack;
    try {
-  
+
     throw new Error('my error');
-  
+
    } catch(e) {
     console.log("e.stack",[...e.stack]);
     stack = e.stack;
    }
    Error.prepareStackTrace = oldPrepareStackTrace;
-  
+
    return stack;
   }*/
   Util.exception = function Exception(...args) {
@@ -3592,7 +3758,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     return Object.setPrototypeOf(e, proto);
   };
 
-  define(
+  Util.define(
     Util.exception.prototype,
     {
       toString(color = false) {
@@ -3630,7 +3796,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
   Util.location.palettes = [ [ [ 128, 128, 0 ], [ 255, 0, 255 ], [ 0, 255, 255 ] ], [ [ 9, 119, 18 ], [ 139, 0, 255 ], [ 0, 165, 255 ] ] ];
 
-  define(Util.location.prototype, {
+  Util.define(Util.location.prototype, {
     toString(color = false) {
       let { fileName, lineNumber, columnNumber, functionName } = this;
       fileName = fileName.replace(new RegExp(Util.getURL() + '/', 'g'), '');
@@ -3673,8 +3839,25 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     if(Util.colorCtor) frame.colorCtor = Util.colorCtor;
     return Object.setPrototypeOf(frame, Util.stackFrame.prototype);
   };
-  define(Util.stackFrame, {
-    methodNames: ['getThis', 'getTypeName', 'getFunction', 'getFunctionName', 'getMethodName', 'getFileName', 'getLineNumber', 'getColumnNumber', 'getEvalOrigin', 'isToplevel', 'isEval', 'isNative', 'isConstructor', 'isAsync', 'isPromiseAll', 'getPromiseIndex']
+  Util.define(Util.stackFrame, {
+    methodNames: [
+      'getThis',
+      'getTypeName',
+      'getFunction',
+      'getFunctionName',
+      'getMethodName',
+      'getFileName',
+      'getLineNumber',
+      'getColumnNumber',
+      'getEvalOrigin',
+      'isToplevel',
+      'isEval',
+      'isNative',
+      'isConstructor',
+      'isAsync',
+      'isPromiseAll',
+      'getPromiseIndex'
+    ]
   });
 
   Util.memoizedProperties(Util.stackFrame, {
@@ -3683,7 +3866,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     }
   });
 
-  define(
+  Util.define(
     Util.stackFrame.prototype,
     {
       getMethodName() {
@@ -3708,7 +3891,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     true
   );
 
-  define(
+  Util.define(
     Util.stackFrame.prototype,
     {
       colorCtor: null,
@@ -3815,7 +3998,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     else if(!(typeof stack == 'string')) stack = stackToString(stack, 0);
 
     function stackToString(st, start = 0) {
-      if(Util.isArray(st)) {
+      if(Array.isArray(st)) {
         st = [
           ...(function* () {
             for(let i = start; i < st.length; i++) yield st.i;
@@ -3849,7 +4032,9 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
               .map(part => part.trim())
           : frame
       );
-      stack = stack.map(frame => (Util.isArray(frame) ? (frame.length < 2 ? ['', ...frame] : frame).slice(0, 2) : frame));
+      stack = stack.map(frame =>
+        Array.isArray(frame) ? (frame.length < 2 ? ['', ...frame] : frame).slice(0, 2) : frame
+      );
       stack = stack.map(([func, file]) => [
         func,
         file
@@ -3865,21 +4050,23 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
         lineNumber,
         columnNumber
       }));
-      stack = stack.map(({ methodName, functionName: func, fileName: file, columnNumber: column, lineNumber: line }) => ({
-        functionName: func,
-        methodName,
-        fileName: file.replace(new RegExp(Util.getURL() + '/', 'g'), '').replace(/:.*/g, ''),
-        lineNumber: Util.ifThenElse(
-          s => s != '',
-          s => +s,
-          () => undefined
-        )(line + file.replace(/.*[^0-9]([0-9]*)$/g, '$1')),
-        columnNumber: Util.ifThenElse(
-          s => s != '',
-          s => +s,
-          () => undefined
-        )(column)
-      }));
+      stack = stack.map(
+        ({ methodName, functionName: func, fileName: file, columnNumber: column, lineNumber: line }) => ({
+          functionName: func,
+          methodName,
+          fileName: file.replace(new RegExp(Util.getURL() + '/', 'g'), '').replace(/:.*/g, ''),
+          lineNumber: Util.ifThenElse(
+            s => s != '',
+            s => +s,
+            () => undefined
+          )(line + file.replace(/.*[^0-9]([0-9]*)$/g, '$1')),
+          columnNumber: Util.ifThenElse(
+            s => s != '',
+            s => +s,
+            () => undefined
+          )(column)
+        })
+      );
     } else {
       stack = stack.map(frame => new Util.stackFrame(frame));
     }
@@ -3926,7 +4113,9 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     Error.stackTraceLimit = position + limit;
 
     if(position >= Error.stackTraceLimit) {
-      throw new TypeError(`getCallerFile(position) requires position be less then Error.stackTraceLimit but position was: '${position}' and Error.stackTraceLimit was: '${Error.stackTraceLimit}'`);
+      throw new TypeError(
+        `getCallerFile(position) requires position be less then Error.stackTraceLimit but position was: '${position}' and Error.stackTraceLimit was: '${Error.stackTraceLimit}'`
+      );
     }
 
     const oldPrepareStackTrace = Error.prepareStackTrace;
@@ -3979,7 +4168,21 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   };
 
   Util.getCaller = function(index = (1, stack)) {
-    const methods = ['getThis', 'getTypeName', 'getFunction', 'getFunctionName', 'getMethodName', 'getFileName', 'getLineNumber', 'getColumnNumber', 'getEvalOrigin', 'isToplevel', 'isEval', 'isNative', 'isConstructor'];
+    const methods = [
+      'getThis',
+      'getTypeName',
+      'getFunction',
+      'getFunctionName',
+      'getMethodName',
+      'getFileName',
+      'getLineNumber',
+      'getColumnNumber',
+      'getEvalOrigin',
+      'isToplevel',
+      'isEval',
+      'isNative',
+      'isConstructor'
+    ];
     stack = stack || Util.getCallerStack(2, 1 + index, stack);
     let thisIndex = stack.findIndex(f => f.functionName.endsWith('getCaller'));
     index += thisIndex + 1;
@@ -3988,7 +4191,21 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   };
 
   Util.getCallers = function(index = (1, (num = (Number.MAX_SAFE_INTEGER, stack)))) {
-    const methods = ['getThis', 'getTypeName', 'getFunction', 'getFunctionName', 'getMethodName', 'getFileName', 'getLineNumber', 'getColumnNumber', 'getEvalOrigin', 'isToplevel', 'isEval', 'isNative', 'isConstructor'];
+    const methods = [
+      'getThis',
+      'getTypeName',
+      'getFunction',
+      'getFunctionName',
+      'getMethodName',
+      'getFileName',
+      'getLineNumber',
+      'getColumnNumber',
+      'getEvalOrigin',
+      'isToplevel',
+      'isEval',
+      'isNative',
+      'isConstructor'
+    ];
     stack = stack || Util.getCallerStack(2, num + index, stack);
     let thisIndex = stack.findIndex(f => ((f.functionName || f.methodName) + '').endsWith('getCaller'));
     index += thisIndex + 1;
@@ -4044,13 +4261,15 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     const ret = [];
     if(!addOutput) addOutput = arg => ret.push(arg);
     addOutput(Util.filterKeys(tree, key => key !== 'children'));
-    if(typeof tree.children == 'object' && tree.children !== null && tree.children.length) for(let child of tree.children) Util.flatTree(child, addOutput);
+    if(typeof tree.children == 'object' && tree.children !== null && tree.children.length)
+      for(let child of tree.children) Util.flatTree(child, addOutput);
     return ret;
   };
 
   Util.traverseTree = function(tree, fn, depth = (0, (parent = null))) {
     fn(tree, depth, parent);
-    if(isObject(tree.children) && tree.children.length > 0) for(let child of tree.children) Util.traverseTree(child, fn, depth + 1, tree);
+    if(isObject(tree.children) && tree.children.length > 0)
+      for(let child of tree.children) Util.traverseTree(child, fn, depth + 1, tree);
   };
 
   Util.walkTree = function(node, pred, t, depth = (0, (parent = null))) {
@@ -4263,7 +4482,9 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     let matches = [...Util.matchAll(/([^\\]*)(\\u[0-9a-f]{4}|\\)/gi, text)];
 
     if(matches.length) {
-      matches = matches.map(m => [...m].slice(1)).map(([s, t]) => s + String.fromCodePoint(parseInt(t.substring(2), 16)));
+      matches = matches
+        .map(m => [...m].slice(1))
+        .map(([s, t]) => s + String.fromCodePoint(parseInt(t.substring(2), 16)));
       text = matches.join('');
     }
 
@@ -4292,7 +4513,8 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     };
     return text.replace(new RegExp('&([^;]+);', 'gm'), (match, entity) => entities.entity || match);
   };
-  Util.encodeHTMLEntities = (str, charset = '\u00A0-\u9999<>&') => str.replace(new RegExp(`[${charset}](?!#)`, 'gim'), i => '&#' + i.charCodeAt(0) + ';');
+  Util.encodeHTMLEntities = (str, charset = '\u00A0-\u9999<>&') =>
+    str.replace(new RegExp(`[${charset}](?!#)`, 'gim'), i => '&#' + i.charCodeAt(0) + ';');
 
   Util.stripAnsi = function(str) {
     return (str + '').replace(new RegExp('\x1b[[(?);]{0,2}(;?[0-9])*.', 'g'), '');
@@ -4384,8 +4606,11 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   };
 
   Util.immutable = args => {
-    const argsType = typeof args === 'object' && Util.isArray(args) ? 'array' : 'object';
-    const errorText = argsType === 'array' ? "Error! You can't change elements of this array" : "Error! You can't change properties of this object";
+    const argsType = typeof args === 'object' && Array.isArray(args) ? 'array' : 'object';
+    const errorText =
+      argsType === 'array'
+        ? "Error! You can't change elements of this array"
+        : "Error! You can't change properties of this object";
 
     const handler = {
       set: () => {
@@ -4422,9 +4647,9 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
           return Object.freeze(this);
       }
     };
-    
+
     ${imName}.prototype.constructor = ${imName};
-    
+
     return ${imName};`;
 
     for(let p of initialProto) p(orig);
@@ -4475,7 +4700,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
             let out = args.shift() || [''];
 
             for(let arg of args) {
-              if(Util.isArray(arg)) {
+              if(Array.isArray(arg)) {
                 for(let subarg of arg) out[0] += subarg;
               } else out[0] += arg;
             }
@@ -4485,7 +4710,24 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
         }
       : Util.isBrowser()
       ? {
-          palette: ['rgb(0,0,0)', 'rgb(80,0,0)', 'rgb(0,80,0)', 'rgb(80,80,0)', 'rgb(0,0,80)', 'rgb(80,0,80)', 'rgb(0,80,80)', 'rgb(80,80,80)', 'rgb(0,0,0)', 'rgb(160,0,0)', 'rgb(0,160,0)', 'rgb(160,160,0)', 'rgb(0,0,160)', 'rgb(160,0,160)', 'rgb(0,160,160)', 'rgb(160,160,160)'],
+          palette: [
+            'rgb(0,0,0)',
+            'rgb(80,0,0)',
+            'rgb(0,80,0)',
+            'rgb(80,80,0)',
+            'rgb(0,0,80)',
+            'rgb(80,0,80)',
+            'rgb(0,80,80)',
+            'rgb(80,80,80)',
+            'rgb(0,0,0)',
+            'rgb(160,0,0)',
+            'rgb(0,160,0)',
+            'rgb(160,160,0)',
+            'rgb(0,0,160)',
+            'rgb(160,0,160)',
+            'rgb(0,160,160)',
+            'rgb(160,160,160)'
+          ],
           /*Util.range(0, 15).map(i =>
               `rgb(${Util.range(0, 2)
                 .map(bitno => Util.getBit(i, bitno) * (i & 0x08 ? 160 : 80))
@@ -4517,7 +4759,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
             let out = args.shift() || [''];
 
             for(let arg of args) {
-              if(Util.isArray(arg) && typeof arg[0] == 'string') out[0] += arg.shift();
+              if(Array.isArray(arg) && typeof arg[0] == 'string') out[0] += arg.shift();
               else if(isObject(arg)) {
                 out.push(arg);
                 continue;
@@ -4626,14 +4868,18 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
   Util.bindProperties = (proxy, target, props, gen) => {
     if(props instanceof Array) props = Object.fromEntries(props.map(name => [name, name]));
-    const [propMap, propNames] = Util.isArray(props) ? [props.reduce((acc, name) => ({ ...acc, [[name]]: name }), {}), props] : [props, Object.keys(props)];
+    const [propMap, propNames] = Array.isArray(props)
+      ? [props.reduce((acc, name) => ({ ...acc, [[name]]: name }), {}), props]
+      : [props, Object.keys(props)];
     if(!gen) gen = p => v => v === undefined ? target[propMap.p] : (target[propMap.p] = v);
     const propGetSet = propNames
       .map(k => [k, propMap.k])
       .reduce(
         (a, [k, v]) => ({
           ...a,
-          [[k]]: Util.isFunction(v) ? (...args) => v.call(target, k, ...args) : (gen && gen(k)) || ((...args) => (args.length > 0 ? (target.k = args[0]) : target.k))
+          [[k]]: Util.isFunction(v)
+            ? (...args) => v.call(target, k, ...args)
+            : (gen && gen(k)) || ((...args) => (args.length > 0 ? (target.k = args[0]) : target.k))
         }),
         {}
       );
@@ -4681,7 +4927,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     };
   })();
   Object.assign(Util.is, {
-    array: Util.isArray,
+    array: Array.isArray,
     bool: Util.isBool,
     constructor: Util.isConstructor,
     date: Util.isDate,
@@ -4786,7 +5032,8 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
     return isSuccess;
   };
-  Util.toPlainObject = (obj, t = (v, n) => v) => [...Util.getMemberNames(obj)].reduce((acc, k) => ({ ...acc, [[k]]: t(obj.k, k) }), {});
+  Util.toPlainObject = (obj, t = (v, n) => v) =>
+    [...Util.getMemberNames(obj)].reduce((acc, k) => ({ ...acc, [[k]]: t(obj.k, k) }), {});
 
   Util.timer = msecs => {
     let ret, id, rej, createdTime, startTime, stopTime, endTime, res, delay, n, timer;
@@ -4804,7 +5051,13 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
       res((n = remaining()));
     };
 
-    const log = (method, ...args) => console.log(`${Date.now() - createdTime.valueOf()} timer#${id}.${method}`, ...args.map(obj => Util.toPlainObject(obj || {}, v => v || (v instanceof Date ? `+${v.valueOf() - createdTime}` : v))));
+    const log = (method, ...args) =>
+      console.log(
+        `${Date.now() - createdTime.valueOf()} timer#${id}.${method}`,
+        ...args.map(obj =>
+          Util.toPlainObject(obj || {}, v => v || (v instanceof Date ? `+${v.valueOf() - createdTime}` : v))
+        )
+      );
 
     const timeout = (msecs, tmr = timer) => {
       let now = Date.now();
@@ -4905,7 +5158,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
       });
 
     ret = start();
-    return define(ret, timer);
+    return Util.define(ret, timer);
   };
   Util.thenableReject = error => ({
     then: (resolve, reject) => reject(error)
@@ -4969,7 +5222,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
       }
     };
 
-    define(proto, methods, false);
+    Util.define(proto, methods, false);
 
     if(!generators) {
       for(let name in methods) {
@@ -5059,9 +5312,11 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
     if(debug)
       self = Util.printReturnValue(self, {
-        print: print || ((returnValue, fn, ...args) => console.debug(`cachedFetch[${cache}] (`, ...args, ...`) =`, ...returnValue))
+        print:
+          print ||
+          ((returnValue, fn, ...args) => console.debug(`cachedFetch[${cache}] (`, ...args, ...`) =`, ...returnValue))
       });
-    define(self, { fetch, cache, storage, opts });
+    Util.define(self, { fetch, cache, storage, opts });
     return self;
   };
 
@@ -5073,7 +5328,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
         new Proxy(value, {
           get(target, key) {
             let prop = value.key;
-            if(isObject(prop) || Util.isArray(prop)) return new node([...path, key]);
+            if(isObject(prop) || Array.isArray(prop)) return new node([...path, key]);
             return handler && handler.get ? handler.get(prop, key) : prop;
           }
         })
@@ -5103,7 +5358,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
       map => Util.weakMapper((obj, ...args) => Util.merge(...args), map),
       () =>
         (obj, ...args) =>
-          define(obj, ...args)
+          Util.define(obj, ...args)
     );
 
     return (obj, ...args) => {
@@ -5191,7 +5446,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
       return fn(...args);
     };
 
-    define(self, { fn, opts });
+    Util.define(self, { fn, opts });
     return self;
   };
 
@@ -5223,7 +5478,10 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     };
 
     delete self.length;
-    Object.setPrototypeOf(self, Util.extend(Util.consolePrinter.prototype, Util.getMethods(Object.getPrototypeOf(self), 1, 0)));
+    Object.setPrototypeOf(
+      self,
+      Util.extend(Util.consolePrinter.prototype, Util.getMethods(Object.getPrototypeOf(self), 1, 0))
+    );
     self.splice(0, self.length, '');
     self.log = (...args) => log(...args);
     return self;
@@ -5259,7 +5517,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
           } else {
             out[0] += arg.replace(/%/g, '%%');
           }
-        } else if(Util.isArray(arg) && typeof arg[0] == 'string' && /%[cos]/.test(arg[0])) {
+        } else if(Array.isArray(arg) && typeof arg[0] == 'string' && /%[cos]/.test(arg[0])) {
           concat(out, arg);
         } else {
           out[0] += ' %o';
@@ -5314,7 +5572,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
         //  console.debug('arg:', i, typeof(arg) == 'string'  ? Util.abbreviate(arg) : arg);
 
-        if(Util.isArray(arg) && /%c/.test(arg[0])) {
+        if(Array.isArray(arg) && /%c/.test(arg[0])) {
           this.i = i;
           this.add(...arg);
           continue;
@@ -5366,7 +5624,10 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     }
 
     equals(connection) {
-      return (this.node1.equals(connection.node1) && this.node2.equals(connection.node2)) || (this.node2.equals(connection.node1) && this.node1.equals(connection.node2));
+      return (
+        (this.node1.equals(connection.node1) && this.node2.equals(connection.node2)) ||
+        (this.node2.equals(connection.node1) && this.node1.equals(connection.node2))
+      );
     }
   };
 
@@ -5382,7 +5643,9 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     if(p.SymSpecies) return p.SymSpecies;
     return p.constructor;
   };
-  const getArgs = args => (console.debug('getArgs', ...args), typeof args[0] == 'number' ? [{ x: args[0], y: args[1] }] : args);
+  const getArgs = args => (
+    console.debug('getArgs', ...args), typeof args[0] == 'number' ? [{ x: args[0], y: args[1] }] : args
+  );
 
   Object.defineProperties(Point.prototype, {
     X: {
@@ -5611,7 +5874,11 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     if(typeof this != 'object' || this === null) return '';
     if(asArray) return `[${x},${y}]`;
     if(plainObj) return `{x:${x},y:${y}}`;
-    return `${c(showNew ? 'new ' : '', 1, 31)}${c('Point', 1, 33)}${c('(', 1, 36)}${c(x, 1, 32)}${c(',', 1, 36)}${c(y, 1, 32)}${c(')', 1, 36)}`;
+    return `${c(showNew ? 'new ' : '', 1, 31)}${c('Point', 1, 33)}${c('(', 1, 36)}${c(x, 1, 32)}${c(',', 1, 36)}${c(
+      y,
+      1,
+      32
+    )}${c(')', 1, 36)}`;
   };
 
   /*Point.prototype.toSource = function() {
@@ -5691,15 +5958,21 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   ]) {
     Point.name = (point, ...args) => Point.prototype.name.call(point || new Point(point), ...args);
   }
-  Point.toSource = (point, { space = ' ', padding = ' ', separator = ',' }) => `{${padding}x:${space}${point.x}${separator}y:${space}${point.y}${padding}}`;
-  const isPoint = o => o && ((o.x !== undefined && o.y !== undefined) || ((o.left !== undefined || o.right !== undefined) && (o.top !== undefined || o.bottom !== undefined)) || o instanceof Point || Object.getPrototypeOf(o).constructor === Point);
+  Point.toSource = (point, { space = ' ', padding = ' ', separator = ',' }) =>
+    `{${padding}x:${space}${point.x}${separator}y:${space}${point.y}${padding}}`;
+  const isPoint = o =>
+    o &&
+    ((o.x !== undefined && o.y !== undefined) ||
+      ((o.left !== undefined || o.right !== undefined) && (o.top !== undefined || o.bottom !== undefined)) ||
+      o instanceof Point ||
+      Object.getPrototypeOf(o).constructor === Point);
   Point.isPoint = isPoint;
   Util.defineInspect(Point.prototype, 'x', 'y');
 
   Point.bind = (...args) => {
     const keys = ['x', 'y'];
     const [o, p = keys] = args;
-    const { x, y } = (Util.isArray(p) && p.reduce((acc, name, i) => ({ ...acc, [[keys.i]]: name }), {})) || p;
+    const { x, y } = (Array.isArray(p) && p.reduce((acc, name, i) => ({ ...acc, [[keys.i]]: name }), {})) || p;
 
     //  console.debug('Point.bind', { o, x, y });
 
@@ -5713,7 +5986,9 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   Util.defineGetter(ImmutablePoint, Symbol.species, () => ImmutablePoint);
 
   /* --- concatenated 'lib/geom/line.js' --- */
-  const isLine = obj => (isObject(obj) && ['x1', 'y1', 'x2', 'y2'].every(prop => obj.prop !== undefined)) || ['a', 'b'].every(prop => isPoint(obj.prop));
+  const isLine = obj =>
+    (isObject(obj) && ['x1', 'y1', 'x2', 'y2'].every(prop => obj.prop !== undefined)) ||
+    ['a', 'b'].every(prop => isPoint(obj.prop));
 
   /*
   Object.defineProperty(Line.prototype, 'a', { value: new Point(), enumerable: true });
@@ -5898,7 +6173,14 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
   Line.prototype.matchEndpoints = function(arr) {
     const { a, b } = this;
-    return [...arr.entries()].filter(([i, otherLine]) => !Line.prototype.equals.call(this, otherLine) && (Point.prototype.equals.call(a, otherLine.a) || Point.prototype.equals.call(b, otherLine.b) || Point.prototype.equals.call(b, otherLine.a) || Point.prototype.equals.call(a, otherLine.b)));
+    return [...arr.entries()].filter(
+      ([i, otherLine]) =>
+        !Line.prototype.equals.call(this, otherLine) &&
+        (Point.prototype.equals.call(a, otherLine.a) ||
+          Point.prototype.equals.call(b, otherLine.b) ||
+          Point.prototype.equals.call(b, otherLine.a) ||
+          Point.prototype.equals.call(a, otherLine.b))
+    );
   };
 
   Line.prototype.distanceToPointSquared = function(p) {
@@ -5973,7 +6255,11 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   Line.prototype.toString = function(opts = {}) {
     const { separator = ', ', brackets = s => `[ ${s} ]`, pad = 6 } = opts;
     const { x1, y1, x2, y2 } = this;
-    return brackets(Point.toString(this.a || Point(x1, y1), { ...opts, separator, pad })) + separator + brackets(Point.toString(this.b || Point(x2, y2), { ...opts, separator, pad }));
+    return (
+      brackets(Point.toString(this.a || Point(x1, y1), { ...opts, separator, pad })) +
+      separator +
+      brackets(Point.toString(this.b || Point(x2, y2), { ...opts, separator, pad }))
+    );
   };
 
   Line.prototype.toSource = function() {
@@ -6083,7 +6369,20 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     yield this.b;
   };
 
-  for(let name of ['direction', 'round', 'slope', 'angle', 'bbox', 'points', 'inspect', 'toString', 'toObject', 'toSource', 'distanceToPointSquared', 'distanceToPoint']) {
+  for(let name of [
+    'direction',
+    'round',
+    'slope',
+    'angle',
+    'bbox',
+    'points',
+    'inspect',
+    'toString',
+    'toObject',
+    'toSource',
+    'distanceToPointSquared',
+    'distanceToPoint'
+  ]) {
     Line.name = (line, ...args) => Line.prototype.name.call(line || new Line(line), ...args);
   }
   Util.defineInspect(Line.prototype, 'x1', 'y1', 'x2', 'y2');
@@ -6105,7 +6404,6 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   Util.defineGetter(ImmutableLine, Symbol.species, () => ImmutableLine);
 
   /* --- concatenated 'lib/geom/size.js' --- */
-  const getArgs = args => (/*console.debug('getArgs', ...args), */ typeof args[0] == 'number' ? [{ width: args[0], height: args[1] }] : args);
   Size.prototype.width = NaN;
   Size.prototype.height = NaN;
   Size.prototype.units = null;
@@ -6138,7 +6436,8 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
   Size.prototype.toCSS = function(units) {
     let ret = {};
-    units = typeof units == 'string' ? { width: units, height: units } : units || this.units || { width: 'px', height: 'px' };
+    units =
+      typeof units == 'string' ? { width: units, height: units } : units || this.units || { width: 'px', height: 'px' };
     if(this.width !== undefined) ret.width = this.width + (units.width || 'px');
     if(this.height !== undefined) ret.height = this.height + (units.height || 'px');
     return ret;
@@ -6300,11 +6599,16 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
     console.debug('Size.bind', { args, o, t, p, gen });
 
-    const { width, height } = Util.isArray(p) ? p.reduce((acc, name) => ({ ...acc, [[name]]: name }), {}) : p;
+    const { width, height } = Array.isArray(p) ? p.reduce((acc, name) => ({ ...acc, [[name]]: name }), {}) : p;
     return Util.bindProperties(new Size(0, 0), t, { width, height }, gen);
   };
-  for(let method of Util.getMethodNames(Size.prototype)) Size.method = (size, ...args) => Size.prototype.method.call(size || new Size(size), ...args);
-  const isSize = o => o && ((o.width !== undefined && o.height !== undefined) || (o.x !== undefined && o.x2 !== undefined && o.y !== undefined && o.y2 !== undefined) || (o.left !== undefined && o.right !== undefined && o.top !== undefined && o.bottom !== undefined));
+  for(let method of Util.getMethodNames(Size.prototype))
+    Size.method = (size, ...args) => Size.prototype.method.call(size || new Size(size), ...args);
+  const isSize = o =>
+    o &&
+    ((o.width !== undefined && o.height !== undefined) ||
+      (o.x !== undefined && o.x2 !== undefined && o.y !== undefined && o.y2 !== undefined) ||
+      (o.left !== undefined && o.right !== undefined && o.top !== undefined && o.bottom !== undefined));
 
   for(let name of ['toCSS', 'isSquare', 'round', 'sum', 'add', 'diff', 'sub', 'prod', 'mul', 'quot', 'div']) {
     Size.name = (size, ...args) => Size.prototype.name.call(size || new Size(size), ...args);
@@ -6411,7 +6715,9 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
       };
     })
   );
-  const getPoint = memoize(rect => Util.bindProperties(new Point(0, 0), rect, ['x', 'y'], k => v => v !== undefined ? (rect.k = v) : rect.k));
+  const getPoint = memoize(rect =>
+    Util.bindProperties(new Point(0, 0), rect, ['x', 'y'], k => v => v !== undefined ? (rect.k = v) : rect.k)
+  );
 
   Object.defineProperty(Rect.prototype, 'center', {
     get() {
@@ -6580,7 +6886,10 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
     let num = typeof args[0] == 'number' ? args.shift() : 4;
     const { x, y, width, height } = this;
-    let a = num == 2 ? [new Point(x, y), new Point(x + width, y + height)] : [new Point(x, y), new Point(x + width, y), new Point(x + width, y + height), new Point(x, y + height)];
+    let a =
+      num == 2
+        ? [new Point(x, y), new Point(x + width, y + height)]
+        : [new Point(x, y), new Point(x + width, y), new Point(x + width, y + height), new Point(x, y + height)];
     return ctor(a);
   };
 
@@ -6678,7 +6987,8 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   Rect.bind = rect => {
     let obj = new Rect();
   };
-  Rect.inside = (rect, point) => point.x >= rect.x && point.x <= rect.x + rect.width && point.y >= rect.y && point.y <= rect.y + rect.height;
+  Rect.inside = (rect, point) =>
+    point.x >= rect.x && point.x <= rect.x + rect.width && point.y >= rect.y && point.y <= rect.y + rect.height;
 
   Rect.from = function(obj) {
     //const { x1,y1,x2,y2 } = obj;
@@ -6723,7 +7033,8 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   };
 
   Rect.bind = (...args) => {
-    const [o, p, gen = k => v => v === undefined ? o.k : (o.k = v)] = args[0] instanceof Rect ? [new Rect(), ...args] : args;
+    const [o, p, gen = k => v => v === undefined ? o.k : (o.k = v)] =
+      args[0] instanceof Rect ? [new Rect(), ...args] : args;
     const [x, y, width, height] = p || ['x', 'y', 'width', 'height'];
     let pt = Point.bind(o, ['x', 'y'], gen);
     let sz = Size.bind(o, ['width', 'height'], gen);
@@ -6835,7 +7146,9 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   TRBL.toRect = trbl => new Rect(trbl.left, trbl.top, trbl.right - trbl.left, trbl.bottom - trbl.top);
 
   TRBL.prototype.toString = function(unit = 'px') {
-    return '' + this.top + '' + unit + ' ' + this.right + '' + unit + ' ' + this.bottom + '' + unit + ' ' + this.left + unit;
+    return (
+      '' + this.top + '' + unit + ' ' + this.right + '' + unit + ' ' + this.bottom + '' + unit + ' ' + this.left + unit
+    );
   };
 
   TRBL.prototype.toSource = function() {
@@ -6920,12 +7233,20 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     let args = [...arguments];
     const start = args.shift();
     const remove = args.shift();
-    return Array.prototype.splice.apply(this, [start, remove, ...args.map(arg => (arg instanceof Point ? arg : new Point(arg)))]);
+    return Array.prototype.splice.apply(this, [
+      start,
+      remove,
+      ...args.map(arg => (arg instanceof Point ? arg : new Point(arg)))
+    ]);
   };
   PointList.prototype.slice = Array.prototype.slice;
 
   PointList.prototype.removeSegment = function(index) {
-    let indexes = [PointList.prototype.getLineIndex.call(this, index - 1), PointList.prototype.getLineIndex.call(this, index), PointList.prototype.getLineIndex.call(this, index + 1)];
+    let indexes = [
+      PointList.prototype.getLineIndex.call(this, index - 1),
+      PointList.prototype.getLineIndex.call(this, index),
+      PointList.prototype.getLineIndex.call(this, index + 1)
+    ];
     let lines = indexes.map(i => PointList.prototype.getLine.call(this, i));
     let point = Line.intersect(lines[0], lines[2]);
 
@@ -7055,7 +7376,9 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
       y1: first.y,
       y2: first.y,
       toString() {
-        return `{x1:${(this.x1 + '').padStart(4, ' ')},x2:${(this.x2 + '').padStart(4, ' ')},y1:${(this.y1 + '').padStart(4, ' ')},y2:${(this.y2 + '').padStart(4, ' ')}}`;
+        return `{x1:${(this.x1 + '').padStart(4, ' ')},x2:${(this.x2 + '').padStart(4, ' ')},y1:${(
+          this.y1 + ''
+        ).padStart(4, ' ')},y2:${(this.y2 + '').padStart(4, ' ')}}`;
       }
     };
 
@@ -7173,11 +7496,16 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   };
 
   PointList.prototype.sort = function(pred) {
-    return Array.prototype.sort.call(this, pred || ((a, b) => Point.prototype.valueOf.call(a) - Point.prototype.valueOf.call(b)));
+    return Array.prototype.sort.call(
+      this,
+      pred || ((a, b) => Point.prototype.valueOf.call(a) - Point.prototype.valueOf.call(b))
+    );
   };
 
   PointList.prototype.toString = function(sep = (',', prec)) {
-    return Array.prototype.map.call(this, point => (Point.prototype.toString ? Point.prototype.toString.call(point, prec, sep) : point + '')).join(' ');
+    return Array.prototype.map
+      .call(this, point => (Point.prototype.toString ? Point.prototype.toString.call(point, prec, sep) : point + ''))
+      .join(' ');
   };
 
   PointList.prototype[Symbol.toStringTag] = function(sep = (',', prec)) {
@@ -7194,7 +7522,11 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
   PointList.prototype.toSource = function(opts = {}) {
     if(opts.asString) return `new PointList("${this.toString(opts)}")`;
-    let fn = opts.asArray ? p => `[${p.x},${p.y}]` : opts.plainObj ? p => Point.toSource(p, { space: '', padding: ' ', separator: ',' }) : point => Point.prototype.toSource.call(point, { ...opts, plainObj: true });
+    let fn = opts.asArray
+      ? p => `[${p.x},${p.y}]`
+      : opts.plainObj
+      ? p => Point.toSource(p, { space: '', padding: ' ', separator: ',' })
+      : point => Point.prototype.toSource.call(point, { ...opts, plainObj: true });
     return 'new PointList([' + PointList.prototype.map.call(this, fn).join(',') + '])';
   };
 
@@ -7278,7 +7610,19 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     };
   }
 
-  for(let name of ['push', 'splice', 'clone', 'area', 'centroid', 'avg', 'bbox', 'rect', 'xrange', 'yrange', 'boundingRect']) {
+  for(let name of [
+    'push',
+    'splice',
+    'clone',
+    'area',
+    'centroid',
+    'avg',
+    'bbox',
+    'rect',
+    'xrange',
+    'yrange',
+    'boundingRect'
+  ]) {
     PointList.name = points => PointList.prototype.name.call(points);
   }
   Polyline.prototype = new PointList();
@@ -7305,7 +7649,10 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
       nvert = this.length;
 
     for(i = (0, (j = nvert - 1)); i < nvert; j = i++) {
-      if(this.i.y > point.y !== this.j.y > point.y && point.x < ((this.j.x - this.i.x) * (point.y - this.i.y)) / (this.j.y - this.i.y) + this.i.x) {
+      if(
+        this.i.y > point.y !== this.j.y > point.y &&
+        point.x < ((this.j.x - this.i.x) * (point.y - this.i.y)) / (this.j.y - this.i.y) + this.i.x
+      ) {
         c = !c;
       }
     }
@@ -7351,7 +7698,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     return sum > 0;
   };
 
-  define(PointList, {
+  Util.define(PointList, {
     /* prettier-ignore */ get [Symbol.species]() {
       return PointList;
     }
@@ -7408,7 +7755,17 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
         // check if the polygon is closed (the nextLine start point is one of the current start or end point and the nextLine end point is one of the current start or end point)
 
-        if(polygon.length >= 3 && ((currentEndPoint.x === nextLine.x1 && currentEndPoint.y === nextLine.y1 && currentStartPoint.x === nextLine.x2 && currentStartPoint.y === nextLine.y2) || (currentStartPoint.x === nextLine.x1 && currentStartPoint.y === nextLine.y1 && currentEndPoint.x === nextLine.x2 && currentEndPoint.y === nextLine.y2))) {
+        if(
+          polygon.length >= 3 &&
+          ((currentEndPoint.x === nextLine.x1 &&
+            currentEndPoint.y === nextLine.y1 &&
+            currentStartPoint.x === nextLine.x2 &&
+            currentStartPoint.y === nextLine.y2) ||
+            (currentStartPoint.x === nextLine.x1 &&
+              currentStartPoint.y === nextLine.y1 &&
+              currentEndPoint.x === nextLine.x2 &&
+              currentEndPoint.y === nextLine.y2))
+        ) {
           polygons.push(polygon);
           break;
         }
@@ -7480,7 +7837,7 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   /* --- concatenated 'lib/geom/matrix.js' --- */
   /*
   Object.assign(Matrix.prototype, Array.prototype);
-  
+
   Matrix.prototype.splice = Array.prototype.splice;
   Matrix.prototype.slice = Array.prototype.slice;
   */
@@ -7586,7 +7943,14 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     for(let arg of args) {
       if(!(arg instanceof Matrix)) throw new Error('Not a Matrix: ' + arg.constructor);
 
-      this.init([this[0] * arg[0] + this[1] * arg[3], this[0] * arg[1] + this[1] * arg[4], this[0] * arg[2] + this[1] * arg[5] + this[2], this[3] * arg[0] + this[4] * arg[3], this[3] * arg[1] + this[4] * arg[4], this[3] * arg[2] + this[4] * arg[5] + this[5]]);
+      this.init([
+        this[0] * arg[0] + this[1] * arg[3],
+        this[0] * arg[1] + this[1] * arg[4],
+        this[0] * arg[2] + this[1] * arg[5] + this[2],
+        this[3] * arg[0] + this[4] * arg[3],
+        this[3] * arg[1] + this[4] * arg[4],
+        this[3] * arg[2] + this[4] * arg[5] + this[5]
+      ]);
     }
 
     return this;
@@ -7595,7 +7959,15 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   Matrix.prototype.multiply_self = function(...args) {
     for(let m of args) {
       if(!(m instanceof Matrix)) m = new Matrix(m);
-      Matrix.prototype.init.call(this, this[0] * m[0] + this[1] * m[3], this[0] * m[1] + this[1] * m[4], this[0] * m[2] + this[1] * m[5] + this[2], this[3] * m[0] + this[4] * m[3], this[3] * m[1] + this[4] * m[4], this[3] * m[2] + this[4] * m[5] + this[5]);
+      Matrix.prototype.init.call(
+        this,
+        this[0] * m[0] + this[1] * m[3],
+        this[0] * m[1] + this[1] * m[4],
+        this[0] * m[2] + this[1] * m[5] + this[2],
+        this[3] * m[0] + this[4] * m[3],
+        this[3] * m[1] + this[4] * m[4],
+        this[3] * m[2] + this[4] * m[5] + this[5]
+      );
     }
 
     return this;
@@ -7637,12 +8009,26 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   };
 
   Matrix.prototype.determinant = function() {
-    return this[0] * (this[4] * this[8] - this[5] * this[7]) + this[1] * (this[5] * this[6] - this[3] * this[8]) + this[2] * (this[3] * this[7] - this[4] * this[6]);
+    return (
+      this[0] * (this[4] * this[8] - this[5] * this[7]) +
+      this[1] * (this[5] * this[6] - this[3] * this[8]) +
+      this[2] * (this[3] * this[7] - this[4] * this[6])
+    );
   };
 
   Matrix.prototype.invert = function() {
     const det = Matrix.prototype.determinant.call(this);
-    return new Matrix([(this[4] * this[8] - this[5] * this[7]) / det, (this[2] * this[7] - this[1] * this[8]) / det, (this[1] * this[5] - this[2] * this[4]) / det, (this[5] * this[6] - this[3] * this[8]) / det, (this[0] * this[8] - this[2] * this[6]) / det, (this[2] * this[3] - this[0] * this[5]) / det, (this[3] * this[7] - this[4] * this[6]) / det, (this[6] * this[1] - this[0] * this[7]) / det, (this[0] * this[4] - this[1] * this[3]) / det]);
+    return new Matrix([
+      (this[4] * this[8] - this[5] * this[7]) / det,
+      (this[2] * this[7] - this[1] * this[8]) / det,
+      (this[1] * this[5] - this[2] * this[4]) / det,
+      (this[5] * this[6] - this[3] * this[8]) / det,
+      (this[0] * this[8] - this[2] * this[6]) / det,
+      (this[2] * this[3] - this[0] * this[5]) / det,
+      (this[3] * this[7] - this[4] * this[6]) / det,
+      (this[6] * this[1] - this[0] * this[7]) / det,
+      (this[0] * this[4] - this[1] * this[3]) / det
+    ]);
   };
 
   Matrix.prototype.scalar_product = function(f) {
@@ -7732,8 +8118,10 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     const matrix = Object.freeze(this.clone());
 
     return function* (list) {
-      const method = Matrix.prototype['transform_' + what] || (typeof what == 'function' && what) || Matrix.prototype.transform_xy;
-      for(let item of list) yield item instanceof Array ? method.apply(matrix, [...item]) : method.call(matrix, { ...item });
+      const method =
+        Matrix.prototype['transform_' + what] || (typeof what == 'function' && what) || Matrix.prototype.transform_xy;
+      for(let item of list)
+        yield item instanceof Array ? method.apply(matrix, [...item]) : method.call(matrix, { ...item });
     };
   };
 
@@ -7756,7 +8144,10 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   };
 
   Matrix.prototype.transform_xywh = function(x, y, width, height) {
-    return [...Matrix.prototype.transform_xy.call(this, x, y), ...Matrix.prototype.transform_wh.call(this, width, height)];
+    return [
+      ...Matrix.prototype.transform_xy.call(this, x, y),
+      ...Matrix.prototype.transform_wh.call(this, width, height)
+    ];
   };
 
   Matrix.prototype.transform_rect = function(rect) {
@@ -7797,12 +8188,34 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     let xx, yx, xy, yy, tx, ty;
     if(typeof a == 'object' && a.toPoints !== undefined) a = a.toPoints();
     if(typeof b == 'object' && b.toPoints !== undefined) b = b.toPoints();
-    xx = (b[0].x * a[1].y + b[1].x * a[2].y + b[2].x * a[0].y - b[0].x * a[2].y - b[1].x * a[0].y - b[2].x * a[1].y) / (a[0].x * a[1].y + a[1].x * a[2].y + a[2].x * a[0].y - a[0].x * a[2].y - a[1].x * a[0].y - a[2].x * a[1].y);
-    yx = (b[0].y * a[1].y + b[1].y * a[2].y + b[2].y * a[0].y - b[0].y * a[2].y - b[1].y * a[0].y - b[2].y * a[1].y) / (a[0].x * a[1].y + a[1].x * a[2].y + a[2].x * a[0].y - a[0].x * a[2].y - a[1].x * a[0].y - a[2].x * a[1].y);
-    xy = (a[0].x * b[1].x + a[1].x * b[2].x + a[2].x * b[0].x - a[0].x * b[2].x - a[1].x * b[0].x - a[2].x * b[1].x) / (a[0].x * a[1].y + a[1].x * a[2].y + a[2].x * a[0].y - a[0].x * a[2].y - a[1].x * a[0].y - a[2].x * a[1].y);
-    yy = (a[0].x * b[1].y + a[1].x * b[2].y + a[2].x * b[0].y - a[0].x * b[2].y - a[1].x * b[0].y - a[2].x * b[1].y) / (a[0].x * a[1].y + a[1].x * a[2].y + a[2].x * a[0].y - a[0].x * a[2].y - a[1].x * a[0].y - a[2].x * a[1].y);
-    tx = (a[0].x * a[1].y * b[2].x + a[1].x * a[2].y * b[0].x + a[2].x * a[0].y * b[1].x - a[0].x * a[2].y * b[1].x - a[1].x * a[0].y * b[2].x - a[2].x * a[1].y * b[0].x) / (a[0].x * a[1].y + a[1].x * a[2].y + a[2].x * a[0].y - a[0].x * a[2].y - a[1].x * a[0].y - a[2].x * a[1].y);
-    ty = (a[0].x * a[1].y * b[2].y + a[1].x * a[2].y * b[0].y + a[2].x * a[0].y * b[1].y - a[0].x * a[2].y * b[1].y - a[1].x * a[0].y * b[2].y - a[2].x * a[1].y * b[0].y) / (a[0].x * a[1].y + a[1].x * a[2].y + a[2].x * a[0].y - a[0].x * a[2].y - a[1].x * a[0].y - a[2].x * a[1].y);
+    xx =
+      (b[0].x * a[1].y + b[1].x * a[2].y + b[2].x * a[0].y - b[0].x * a[2].y - b[1].x * a[0].y - b[2].x * a[1].y) /
+      (a[0].x * a[1].y + a[1].x * a[2].y + a[2].x * a[0].y - a[0].x * a[2].y - a[1].x * a[0].y - a[2].x * a[1].y);
+    yx =
+      (b[0].y * a[1].y + b[1].y * a[2].y + b[2].y * a[0].y - b[0].y * a[2].y - b[1].y * a[0].y - b[2].y * a[1].y) /
+      (a[0].x * a[1].y + a[1].x * a[2].y + a[2].x * a[0].y - a[0].x * a[2].y - a[1].x * a[0].y - a[2].x * a[1].y);
+    xy =
+      (a[0].x * b[1].x + a[1].x * b[2].x + a[2].x * b[0].x - a[0].x * b[2].x - a[1].x * b[0].x - a[2].x * b[1].x) /
+      (a[0].x * a[1].y + a[1].x * a[2].y + a[2].x * a[0].y - a[0].x * a[2].y - a[1].x * a[0].y - a[2].x * a[1].y);
+    yy =
+      (a[0].x * b[1].y + a[1].x * b[2].y + a[2].x * b[0].y - a[0].x * b[2].y - a[1].x * b[0].y - a[2].x * b[1].y) /
+      (a[0].x * a[1].y + a[1].x * a[2].y + a[2].x * a[0].y - a[0].x * a[2].y - a[1].x * a[0].y - a[2].x * a[1].y);
+    tx =
+      (a[0].x * a[1].y * b[2].x +
+        a[1].x * a[2].y * b[0].x +
+        a[2].x * a[0].y * b[1].x -
+        a[0].x * a[2].y * b[1].x -
+        a[1].x * a[0].y * b[2].x -
+        a[2].x * a[1].y * b[0].x) /
+      (a[0].x * a[1].y + a[1].x * a[2].y + a[2].x * a[0].y - a[0].x * a[2].y - a[1].x * a[0].y - a[2].x * a[1].y);
+    ty =
+      (a[0].x * a[1].y * b[2].y +
+        a[1].x * a[2].y * b[0].y +
+        a[2].x * a[0].y * b[1].y -
+        a[0].x * a[2].y * b[1].y -
+        a[1].x * a[0].y * b[2].y -
+        a[2].x * a[1].y * b[0].y) /
+      (a[0].x * a[1].y + a[1].x * a[2].y + a[2].x * a[0].y - a[0].x * a[2].y - a[1].x * a[0].y - a[2].x * a[1].y);
     this.set_row.call(this, 0, xx, xy, tx);
     this.set_row.call(this, 1, yx, yy, ty);
     this.set_row.call(this, 2, 0, 0, 1);
@@ -7912,7 +8325,28 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   Matrix.rad2deg = radians => (radians * 180) / Math.PI;
   Matrix.deg2rad = degrees => (degrees * Math.PI) / 180;
 
-  for(let name of ['toObject', 'init', 'toArray', 'isIdentity', 'determinant', 'invert', 'multiply', 'scalar_product', 'toSource', 'toString', 'toSVG', 'equals', 'init_identity', 'is_identity', 'init_translate', 'init_scale', 'init_rotate', 'scale_sign', 'decompose', 'transformer']) {
+  for(let name of [
+    'toObject',
+    'init',
+    'toArray',
+    'isIdentity',
+    'determinant',
+    'invert',
+    'multiply',
+    'scalar_product',
+    'toSource',
+    'toString',
+    'toSVG',
+    'equals',
+    'init_identity',
+    'is_identity',
+    'init_translate',
+    'init_scale',
+    'init_rotate',
+    'scale_sign',
+    'decompose',
+    'transformer'
+  ]) {
     Matrix.name = (matrix, ...args) => Matrix.prototype.name.call(matrix || new Matrix(matrix), ...args);
   }
 
@@ -7930,7 +8364,16 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
     };
   }
 
-  for(let name of ['transform_distance', 'transform_xy', 'transform_point', 'transform_points', 'transform_wh', 'transform_size', 'transform_rect', 'affine_transform']) {
+  for(let name of [
+    'transform_distance',
+    'transform_xy',
+    'transform_point',
+    'transform_points',
+    'transform_wh',
+    'transform_size',
+    'transform_rect',
+    'affine_transform'
+  ]) {
     const method = Matrix.prototype.name;
 
     if(method.length == 2) {
@@ -7943,7 +8386,10 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   Util.defineGetter(Matrix, Symbol.species, function() {
     return this;
   });
-  const isMatrix = m => isObject(m) && (m instanceof Matrix || (m.length !== undefined && (m.length == 6 || m.length == 9) && m.every(el => typeof el == 'number')));
+  const isMatrix = m =>
+    isObject(m) &&
+    (m instanceof Matrix ||
+      (m.length !== undefined && (m.length == 6 || m.length == 9) && m.every(el => typeof el == 'number')));
   const ImmutableMatrix = Util.immutableClass(Matrix);
   Util.defineGetter(ImmutableMatrix, Symbol.species, () => ImmutableMatrix);
 
@@ -8129,7 +8575,9 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 
   Object.defineProperty(Transformation, Symbol.hasInstance, {
     value(inst) {
-      return [Transformation, MatrixTransformation, Rotation, Translation, Scaling, TransformationList].some(ctor => Object.getPrototypeOf(inst) == ctor.prototype);
+      return [Transformation, MatrixTransformation, Rotation, Translation, Scaling, TransformationList].some(
+        ctor => Object.getPrototypeOf(inst) == ctor.prototype
+      );
     }
   });
   const ImmutableTransformation = Util.immutableClass(Transformation);
@@ -8137,7 +8585,28 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
   const ImmutableTranslation = Util.immutableClass(Translation);
   const ImmutableScaling = Util.immutableClass(Scaling);
   const ImmutableMatrixTransformation = Util.immutableClass(MatrixTransformation);
-  const { concat, copyWithin, find, findIndex, lastIndexOf, pop, push, shift, unshift, slice, splice, includes, indexOf, entries, filter, map, every, some, reduce, reduceRight } = Array.prototype;
+  const {
+    concat,
+    copyWithin,
+    find,
+    findIndex,
+    lastIndexOf,
+    pop,
+    push,
+    shift,
+    unshift,
+    slice,
+    splice,
+    includes,
+    indexOf,
+    entries,
+    filter,
+    map,
+    every,
+    some,
+    reduce,
+    reduceRight
+  } = Array.prototype;
 
   Util.inherit(
     TransformationList.prototype,

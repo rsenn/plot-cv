@@ -1,10 +1,10 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
+import { assert, lazyProperties, define, isObject, memoize, unique } from './lib/misc.js';
 import Util from './lib/util.js';
 import * as path from './lib/path.js';
 import * as deep from './lib/deep.js';
 import { Pointer } from './lib/pointer.js';
-//import Predicate from 'path';
 import { AcquireReader } from './lib/stream/utils.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 export let SIZEOF_POINTER = 8;
 export let SIZEOF_INT = 4;
 import fs from 'fs';
@@ -361,8 +361,8 @@ export class Type extends Node {
     return /^enum\s/.test(str);
   }
   isPointer() {
-    let str = this + '';
-    return /(?:\(\*\)\(|\*$)/.test(str);
+    let { desugared } = this;
+    return /(?:\(\*\)\(|\*$)/.test(desugared);
   }
 
   isFunction() {
@@ -507,7 +507,7 @@ const { size,unsigned } = this;
     if(this.isEnum()) return SIZEOF_INT;
     if(this.isCompound()) {
       let node;
-     if((node= Type.get(this+'')))
+     if((node= Type.get(this+'')) &&  node !== this)
        return node.size;
     }
           const  desugared = this.desugared || this+'' || this.name;
@@ -776,7 +776,7 @@ export class TypedefDecl extends Type {
     else type = node.inner.find(n => /Type/.test(n.kind));
 
     //type ??= GetType(node, ast);
-    Util.assertEqual(inner.length, 1);
+    assert(inner.length, 1);
     // console.log('TypedefDecl.constructor', { node, typeId, type });
 
     if(type?.decl) type = type.decl;
@@ -805,7 +805,7 @@ export class FieldDecl extends Node {
     let inner = (node.inner ?? []).filter(n => !/Comment/.test(n.kind));
     let type = GetType(node, ast);
 
-    Util.assertEqual(inner.length, 1);
+    assert(inner.length, 1);
 
     if(type.decl) type = type.decl;
     if(type.kind && type.kind.endsWith('Type')) type = type.type;
@@ -885,7 +885,7 @@ export class BuiltinType extends Type {
 export class PointerType extends Node {
   constructor(node, ast) {
     super(node, ast);
-    Util.assertEqual(node.inner.length, 1);
+    assert(node.inner.length, 1);
 
     this.type = new Type(node.type, ast);
     this.pointee = TypeFactory(node.inner[0], ast);
@@ -901,7 +901,7 @@ export class ConstantArrayType extends Node {
   constructor(node, ast) {
     super(node, ast);
     let elementType = node.inner[0];
-    Util.assertEqual(node.inner.length, 1);
+    assert(node.inner.length, 1);
     if(elementType.decl) elementType = elementType.decl;
     this.type = new Type(node.type, ast);
     this.elementType = TypeFactory(elementType, ast);
@@ -1026,10 +1026,7 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
     args.unshift(compiler ?? 'clang');
   }
 
-  console.log(
-    'SpawnCompiler',
-    args //.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (output ? ` 1>${output}` : '')
-  );
+  //console.log('SpawnCompiler', args /*.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (output ? ` 1>${output}` : '')*/ );
 
   let child = spawn(args, {
     block: false,
@@ -1134,7 +1131,7 @@ export async function SourceDependencies(...args) {
 
 export async function AstDump(compiler, source, args, force) {
   compiler ??= 'clang';
-  //console.log('AstDump', { compiler, source, args, force });
+  // console.log('AstDump', { compiler, source, args, force });
   let output = path.basename(source, /\.[^.]*$/) + '.ast.json';
   let r;
   let sources = await SourceDependencies(compiler, source, args);
@@ -1154,15 +1151,17 @@ export async function AstDump(compiler, source, args, force) {
     r = await SpawnCompiler(compiler, source, output, ['-Xclang', '-ast-dump=json', '-fsyntax-only', '-I.', ...args]);
   }
 
-  //console.log('AstDump', r);
+  console.log('AstDump', r);
 
   //r.size = (await fs.stat(r.file)).size;
-  r = Util.lazyProperties(r, {
+  r = lazyProperties(r, {
     size() {
       return fs.stat(output)?.size;
     },
     json() {
-      let json = fs.readFileSync(output, 'utf-8');
+      console.log(`r.json`, this.file);
+
+      let json = fs.readFileSync(this.file, 'utf-8');
       return json;
     },
     data() {
@@ -1185,6 +1184,7 @@ export async function AstDump(compiler, source, args, force) {
         SetFile(node.range?.begin);
         SetFile(node.range?.end);
       }
+      WriteBJSON(this.file.replace('.json', '.bjson'), data);
       return data;
     },
     files() {
@@ -1199,7 +1199,7 @@ export async function AstDump(compiler, source, args, force) {
       return this.data.inner.filter(node => ((node.loc.file !== undefined && ((this.matchFiles && this.matchFiles.test(node.loc.file ?? '')) || !this.nomatchFiles.test(node.loc.file ?? ''))) || (pred2 ? pred2(node.isUsed, node.isImplicit) : false)) && pred(node));
     }
   });
-  r = Util.lazyProperties(r, {
+  r = lazyProperties(r, {
     types() {
       return Object.setPrototypeOf(
         this.filter(
@@ -1237,6 +1237,9 @@ export async function AstDump(compiler, source, args, force) {
         this.filter(n => /(?:Var)Decl/.test(n.kind)),
         List.prototype
       );
+    },
+    names(depth = 1) {
+     return this.data.inner.filter(n => 'name' in n).map(n => n.name);
     }
   });
   return r;
@@ -1291,6 +1294,8 @@ export function GetLoc(node) {
   if('expansionLoc' in loc) loc = loc.expansionLoc;
 
   // if(!('offset' in loc)) return null;
+
+  return new Location(loc);
 
   return loc;
 }

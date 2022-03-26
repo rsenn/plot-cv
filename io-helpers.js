@@ -1,12 +1,24 @@
 import * as fs from 'fs';
-//import * as os from 'os';
-//import * as std from 'std';
 import Util from './lib/util.js';
 import * as path from './lib/path.js';
-import { types } from './lib/misc.js';
+import { types, toString, quote, escape } from './lib/misc.js';
+import child_process from 'child_process';
+
+let bjson;
+
+import('bjson') .then(m => (bjson = m)) .catch(() => {});
+
+let mmap;
+
+import('mmap') .then(m => (mmap = m)) .catch(() => {});
+
+let xml;
+
+import('xml') .then(m => (xml = m)) .catch(() => {});
 
 export function IfDebug(token) {
-  const { DEBUG = '' } = process.env;
+  const { DEBUG = '' } = globalThis.process ? globalThis.process.env : {}; //std.getenviron();
+
   const tokList = DEBUG.split(/[^A-Za-z0-9_]+/g);
 
   return tokList.indexOf(token) != -1;
@@ -53,6 +65,13 @@ export function ReadJSON(filename) {
   return data ? JSON.parse(data) : null;
 }
 
+export function ReadXML(filename) {
+  let data = fs.readFileSync(filename, null);
+
+  if(data) debug(`ReadXML: ${data.length} bytes read from '${filename}'`);
+  return data ? xml.read(data, filename, true) : null;
+}
+
 export function MapFile(filename) {
   let fd = os.open(filename, os.O_RDONLY);
   let { size } = os.stat(filename)[0];
@@ -60,19 +79,6 @@ export function MapFile(filename) {
   let data = mmap.mmap(0, size + 10, mmap.PROT_READ, mmap.MAP_PRIVATE, fd, 0);
   os.close(fd);
   return data;
-}
-
-export function ReadBJSON(filename) {
-  let fd = os.open(filename, os.O_RDONLY);
-  let { size } = os.stat(filename)[0];
-  debug(`ReadBJSON`, { filename, fd, size });
-  let data = mmap.mmap(0, size + 10, mmap.PROT_READ, mmap.MAP_PRIVATE, fd, 0);
-  debug(`ReadBJSON`, { data });
-  let ret = bjson.read(data, 0, size);
-
-  mmap.munmap(data);
-  os.close(fd);
-  return ret;
 }
 
 export function WriteFile(name, data, verbose = true) {
@@ -87,7 +93,7 @@ export function WriteFile(name, data, verbose = true) {
     return stat?.size;
   }
   if(Util.isIterator(data)) data = [...data];
-  if(Util.isArray(data)) data = data.join('\n');
+  if(Array.isArray(data)) data = data.join('\n');
 
   if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
   let ret = fs.writeFileSync(name, data);
@@ -95,8 +101,25 @@ export function WriteFile(name, data, verbose = true) {
   if(verbose) debug(`Wrote ${name}: ${ret} bytes`);
 }
 
-export function WriteJSON(name, data) {
-  WriteFile(name, JSON.stringify(data, null, 2));
+export function WriteJSON(name, data, compact = true) {
+  return WriteFile(name, JSON.stringify(data, ...(compact ? [] : [null, 2])));
+}
+
+export function WriteXML(name, data) {
+  return WriteFile(name, xml.write(data));
+}
+
+export function ReadBJSON(filename) {
+  let fd = os.open(filename, os.O_RDONLY);
+  let { size } = os.stat(filename)[0];
+  debug(`ReadBJSON`, { filename, fd, size });
+  let data = mmap.mmap(0, size + 10, mmap.PROT_READ, mmap.MAP_PRIVATE, fd, 0);
+  debug(`ReadBJSON`, { data });
+  let ret = bjson.read(data, 0, size);
+
+  mmap.munmap(data);
+  os.close(fd);
+  return ret;
 }
 
 export function WriteBJSON(name, data) {
@@ -156,7 +179,7 @@ export function* RecursiveDirIterator(dir, pred = (entry, file, dir, depth) => t
 }
 
 export function* ReadDirRecursive(dir, maxDepth = Infinity) {
-  dir = dir.replace(/~/g, process.env['HOME'] ?? std.getenv('HOME'));
+  dir = dir.replace(/~/g, globalThis.process.env['HOME'] ?? std.getenv('HOME'));
   for(let file of fs.readdirSync(dir)) {
     if(['.', '..'].indexOf(file) != -1) continue;
     let entry = `${dir}/${file}`;
@@ -209,4 +232,185 @@ export function* StatFiles(gen) {
     });
     yield obj;
   }
+}
+
+export function ReadFd(fd, bufferSize) {
+  function* FdRead() {
+    let ret,
+      buf = new ArrayBuffer(bufferSize);
+    do {
+      if((ret = fs.readSync(fd, buf, 0, buf.byteLength)) > 0) yield ret == buf.byteLength ? buf : buf.slice(0, ret);
+    } while(ret > 0);
+  }
+  return [...FdRead()].reduce((acc, buf) => (acc += toString(buf)), '');
+}
+/*
+export function FdReader(fd, bufferSize = 1024) {
+  let buf = new ArrayBuffer(bufferSize);
+  return new Repeater(async (push, stop) => {
+    let ret;
+    do {
+      let r = await waitRead(fd);
+      ret = typeof fd == 'number' ? fs.readSync(fd, buf) : fd.read(buf);
+      if(ret > 0) {
+        let data = buf.slice(0, ret);
+        await push(fs.bufferToString(data));
+      }
+    } while(ret == bufferSize);
+    stop();
+    typeof fd == 'number' ? fs.closeSync(fd) : fd.destroy();
+  });
+}*/
+export async function* FdReader(fd, bufferSize = 1024) {
+  let buf = new ArrayBuffer(bufferSize);
+  let ret;
+  do {
+    let r = await waitRead(fd);
+    console.log('r', r);
+    ret = typeof fd == 'number' ? await fs.read(fd, buf) : await fd.read(buf);
+    if(ret > 0) {
+      let data = buf.slice(0, ret);
+      yield fs.bufferToString(data);
+    }
+  } while(ret == bufferSize);
+  typeof fd == 'number' ? await fs.close(fd) : fd.destroy();
+  return;
+}
+
+export function CopyToClipboard(text) {
+  const { env } = process;
+  let child = child_process.spawn('xclip', ['-in', '-verbose'], { env, stdio: ['pipe', 'inherit', 'inherit'] });
+  let [pipe] = child.stdio;
+
+  let written = fs.writeSync(pipe, text, 0, text.length);
+  fs.closeSync(pipe);
+  let status = child.wait();
+  console.log('child', child);
+  return { written, status };
+}
+
+export function ReadCallback(fd, fn = data => {}) {
+  let buf = new ArrayBuffer(1024);
+  os.setReadHandler(fd, () => {
+    let r = fs.readSync(fd, buf, 0, 1024);
+    if(r <= 0) {
+      fs.closeSync(fd);
+      os.setReadHandler(fd, null);
+      return;
+    }
+    let data = buf.slice(0, r);
+    data = toString(data);
+    fn(data);
+  });
+}
+
+export function LogCall(fn, thisObj) {
+  let { name } = fn;
+  return function(...args) {
+    let result;
+    result = fn.apply(thisObj ?? this, args);
+    console.log(
+      'Function ' + name + '(',
+      ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })),
+      ') =',
+      result
+    );
+    return result;
+  };
+}
+
+export function Spawn(file, args, options = {}) {
+  let { block = true, usePath = true, cwd, stdio = ['inherit', 'inherit', 'inherit'], env, uid, gid } = options;
+  let parent = [...stdio];
+
+  for(let i = 0; i < 3; i++) {
+    if(stdio[i] == 'pipe') {
+      let [r, w] = os.pipe();
+      stdio[i] = i == 0 ? r : w;
+      parent[i] = i == 0 ? w : r;
+    } else if(stdio[i] == 'inherit') {
+      stdio[i] = i;
+    }
+  }
+
+  const [stdin, stdout, stderr] = stdio;
+  let pid = os.exec([file, ...args], { block, usePath, cwd, stdin, stdout, stderr, env, uid, gid });
+  for(let i = 0; i < 3; i++) {
+    if(typeof stdio[i] == 'number' && stdio[i] != i) os.close(stdio[i]);
+  }
+
+  return {
+    pid,
+    stdio: parent,
+    wait() {
+      let [ret, status] = os.waitpid(this.pid, os.WNOHANG);
+      return ret;
+    }
+  };
+}
+
+// 'https://www.discogs.com/sell/order/8369022-364'
+
+export function FetchURL(url, options = {}) {
+  let {
+    headers,
+    proxy,
+    cookies = 'cookies.txt',
+    range,
+    body,
+    version = '1.1',
+    tlsv,
+    'user-agent': userAgent
+  } = options;
+
+  let args = Object.entries(headers ?? {})
+    .reduce((acc, [k, v]) => acc.concat(['-H', `${k}: ${v}`]), [])
+    .concat(Array.isArray(url) ? url : [url]);
+
+  args.push('--compressed');
+  args.unshift('-L', '-k');
+
+  if(body) args.unshift('-d', body);
+  if(version) args.unshift('--http' + version);
+  if(tlsv) args.unshift('--tlsv' + tlsv);
+  if(userAgent) args.unshift('-A', userAgent);
+  if(range) args.unshift('-r', range);
+  if(cookies) args.unshift('-c', cookies);
+  if(proxy) args.unshift('-x', proxy);
+
+  //args.unshift('-v');
+  //args.unshift('-sS');
+  args.unshift('--tcp-fastopen', '--tcp-nodelay');
+
+  console.log('FetchURL', console.config({ maxArrayLength: Infinity, compact: false }), { args });
+
+  let child = /* child_process.spawn*/ Spawn('curl', args, { block: false, stdio: ['inherit', 'pipe', 'pipe'] });
+
+  let [, out, err] = child.stdio;
+
+  console.log('child', { out, err });
+
+  let output = '',
+    errors = '';
+
+  ReadCallback(out, data => {
+    output += data;
+    // console.log('data',data.length);
+  });
+  ReadCallback(err, data => {
+    errors += data;
+    std.err.puts(data);
+    std.err.flush();
+  });
+  let flags = child_process.WNOHANG;
+  console.log('flags', flags);
+  child.wait(flags);
+
+  let status;
+
+  status = child.wait();
+
+  console.log('FetchURL', { /* output: escape(output), errors,*/ status });
+
+  return output;
 }

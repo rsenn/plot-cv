@@ -9,7 +9,8 @@ import { ConsoleSetup } from './lib/consoleSetup.js';
 
 let filesystem;
 
-const code = "Point.toSource = (point, { space = ' ', padding = ' ', separator = ',' }) => `{${padding}x:${space}${point.x}${separator}y:${space}${point.y}${padding}}`;";
+const code =
+  "Point.toSource = (point, { space = ' ', padding = ' ', separator = ',' }) => `{${padding}x:${space}${point.x}${separator}y:${space}${point.y}${padding}}`;";
 
 let args = Util.getArgs();
 let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
@@ -17,7 +18,7 @@ let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
 Util.callMain(main, true);
 
 function WriteFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
+  if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
   filesystem.writeFile(name, data + '\n');
 }
@@ -47,7 +48,9 @@ async function main(...args) {
 
       //    ret = interpreter.run(ast);
       parser.addCommentsToNodes(ast);
-      let imports = [...deep.iterate(ast, node => node instanceof CallExpression && /console.log/.test(printer.print(node)))].map(([node, path]) => node);
+      let imports = [
+        ...deep.iterate(ast, node => node instanceof CallExpression && /console.log/.test(printer.print(node)))
+      ].map(([node, path]) => node);
     } catch(err) {
       error = err;
     }

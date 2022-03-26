@@ -2,96 +2,10 @@
 import { ECMAScriptParser } from './lib/ecmascript/parser.js';
 import { PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
-import {
-  estree,
-  ESNode,
-  Program,
-  ModuleDeclaration,
-  ModuleSpecifier,
-  ImportDeclaration,
-  ImportSpecifier,
-  ImportDefaultSpecifier,
-  ImportNamespaceSpecifier,
-  Super,
-  Expression,
-  FunctionLiteral,
-  Pattern,
-  Identifier,
-  Literal,
-  RegExpLiteral,
-  TemplateLiteral,
-  BigIntLiteral,
-  TaggedTemplateExpression,
-  TemplateElement,
-  ThisExpression,
-  UnaryExpression,
-  UpdateExpression,
-  BinaryExpression,
-  AssignmentExpression,
-  LogicalExpression,
-  MemberExpression,
-  ConditionalExpression,
-  CallExpression,
-  DecoratorExpression,
-  NewExpression,
-  SequenceExpression,
-  Statement,
-  EmptyStatement,
-  DebuggerStatement,
-  LabeledStatement,
-  BlockStatement,
-  FunctionBody,
-  StatementList,
-  ExpressionStatement,
-  Directive,
-  ReturnStatement,
-  ContinueStatement,
-  BreakStatement,
-  IfStatement,
-  SwitchStatement,
-  SwitchCase,
-  WhileStatement,
-  DoWhileStatement,
-  ForStatement,
-  ForInStatement,
-  ForOfStatement,
-  WithStatement,
-  TryStatement,
-  CatchClause,
-  ThrowStatement,
-  Declaration,
-  ClassDeclaration,
-  ClassBody,
-  MethodDefinition,
-  MetaProperty,
-  YieldExpression,
-  FunctionArgument,
-  FunctionDeclaration,
-  ArrowFunctionExpression,
-  VariableDeclaration,
-  VariableDeclarator,
-  ObjectExpression,
-  Property,
-  ArrayExpression,
-  JSXLiteral,
-  AssignmentProperty,
-  ObjectPattern,
-  ArrayPattern,
-  RestElement,
-  AssignmentPattern,
-  AwaitExpression,
-  SpreadElement,
-  ExportNamedDeclaration,
-  ExportSpecifier,
-  AnonymousDefaultExportedFunctionDeclaration,
-  AnonymousDefaultExportedClassDeclaration,
-  ExportDefaultDeclaration,
-  ExportAllDeclaration
-} from './lib/ecmascript/estree.js';
+import { estree, ESNode, Program, ModuleDeclaration, ModuleSpecifier, ImportDeclaration, ImportSpecifier, ImportDefaultSpecifier, ImportNamespaceSpecifier, Super, Expression, FunctionLiteral, Pattern, Identifier, Literal, RegExpLiteral, TemplateLiteral, BigIntLiteral, TaggedTemplateExpression, TemplateElement, ThisExpression, UnaryExpression, UpdateExpression, BinaryExpression, AssignmentExpression, LogicalExpression, MemberExpression, ConditionalExpression, CallExpression, DecoratorExpression, NewExpression, SequenceExpression, Statement, EmptyStatement, DebuggerStatement, LabeledStatement, BlockStatement, FunctionBody, StatementList, ExpressionStatement, Directive, ReturnStatement, ContinueStatement, BreakStatement, IfStatement, SwitchStatement, SwitchCase, WhileStatement, DoWhileStatement, ForStatement, ForInStatement, ForOfStatement, WithStatement, TryStatement, CatchClause, ThrowStatement, Declaration, ClassDeclaration, ClassBody, MethodDefinition, MetaProperty, YieldExpression, FunctionArgument, FunctionDeclaration, ArrowFunctionExpression, VariableDeclaration, VariableDeclarator, ObjectExpression, Property, ArrayExpression, JSXLiteral, AssignmentProperty, ObjectPattern, ArrayPattern, RestElement, AssignmentPattern, AwaitExpression, SpreadElement, ExportNamedDeclaration, ExportSpecifier, AnonymousDefaultExportedFunctionDeclaration, AnonymousDefaultExportedClassDeclaration, ExportDefaultDeclaration, ExportAllDeclaration } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import Tree from './lib/tree.js';
 import fs from 'fs';
-import process from 'process';
 import * as deep from './lib/deep.js';
 import { Console } from 'console';
 import { Stack } from './lib/stack.js';
@@ -129,7 +43,7 @@ globalThis.FormatStack = (stack, start, limit) => {
   );
 };
 function WriteFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
+  if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
   data = data.trim();
@@ -232,7 +146,7 @@ function main(...argv) {
   Util.exit(Number(files.length == 0));
 }
 
-function processFile(file, params) {
+function ParseECMAScript(file, params) {
   let data, b, ret;
   const { debug } = params;
   if(file == '-') file = '/dev/stdin';
@@ -291,6 +205,11 @@ function processFile(file, params) {
     deep.TYPE_OBJECT
   );*/
   parser.addCommentsToNodes(ast);
+  return ast;
+}
+
+function processFile(file, params) {
+  let ast = ParseECMAScript(file, params);
 
   WriteFile(params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json', JSON.stringify(ast /*.toJSON()*/, null, 2));
 

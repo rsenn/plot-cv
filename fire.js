@@ -76,7 +76,12 @@ function Fire() {
 
   for(let y = 0; y < h; y++) {
     for(let x = 0; x < w; x++) {
-      const sum = [pixels[y + 1][Modulo(x - 1, w)], pixels[y + 1][x], pixels[y + 1][Modulo(x + 1, w)], pixels[y + 2][x]].reduce((a, p) => a + (p | 0), 0);
+      const sum = [
+        pixels[y + 1][Modulo(x - 1, w)],
+        pixels[y + 1][x],
+        pixels[y + 1][Modulo(x + 1, w)],
+        pixels[y + 2][x]
+      ].reduce((a, p) => a + (p | 0), 0);
 
       pixels[y][x] = (sum * 15) >>> 6;
     }
@@ -122,7 +127,14 @@ function CreatePalette() {
 function CreatePaletteHSL() {
   const colors = new Array(256);
 
-  const hues = [new HSLA(0, 100, 0), new HSLA(0, 100, 50), new HSLA(30, 100, 50), new HSLA(60, 100, 50), new HSLA(60, 100, 100), new HSLA(60, 100, 100)]; /*.map(hsla => hsla.toRGBA())*/
+  const hues = [
+    new HSLA(0, 100, 0),
+    new HSLA(0, 100, 50),
+    new HSLA(30, 100, 50),
+    new HSLA(60, 100, 50),
+    new HSLA(60, 100, 100),
+    new HSLA(60, 100, 100)
+  ]; /*.map(hsla => hsla.toRGBA())*/
 
   const breakpoints = [0, 51, 80, 154, 205, 256];
   console.log('breakpoints:', breakpoints);
@@ -198,7 +210,9 @@ function Init() {
 
   window.addEventListener('resize', ResizeHandler, true);
 
-  const handler = MouseHandler || Util.instrument(MouseHandler, (duration, name, args, ret) => console.log(`handler time: ${duration}`));
+  const handler =
+    MouseHandler ||
+    Util.instrument(MouseHandler, (duration, name, args, ret) => console.log(`handler time: ${duration}`));
 
   subscribe(MouseIterator(), handler);
 }

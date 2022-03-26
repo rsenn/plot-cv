@@ -2,7 +2,7 @@ import { LineList, Rect, Point } from './lib/geom.js';
 import Util from './lib/util.js';
 import { BG, digit2color, GetColorBands, PartScales } from './lib/eda/colorCoding.js';
 export { GetColorBands } from './lib/eda/colorCoding.js';
-import { map, consume, reduce } from './lib/iterator/helpers.js';
+import { map, consume, reduce } from './lib/iterable.js';
 
 export function GetParts(schematic, t = entries => Object.fromEntries(entries)) {
   return t(map(schematic.getAll('part'), elem => [elem.name, elem]));
@@ -31,7 +31,9 @@ export function GetInstances(schematic, t = entries => /*Object.fromEntries*/ en
 }
 
 export function GetPositions(doc) {
-  let entries = { sch: d => GetInstances(d), brd: d => GetElements(d, e => e).map(([name, elem]) => [name, [elem]]) }[doc.type](doc);
+  let entries = { sch: d => GetInstances(d), brd: d => GetElements(d, e => e).map(([name, elem]) => [name, [elem]]) }[
+    doc.type
+  ](doc);
 
   return entries.map(([name, arr]) => [name, arr.map(({ x, y }) => new Point(x, y))]);
 }

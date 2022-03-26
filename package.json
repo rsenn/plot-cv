@@ -1,14 +1,12 @@
 {
   "_moduleAliases": {
-    "node-c-lexer": "node_modules/node-c-lexer/index.js",
     "preact": "lib/dom/preactComponent.js",
     "prop-types": "lib/prop-types.js",
     "react": "lib/dom/preactComponent.js",
     "react-dom": "node_modules/preact/compat",
     "react-ssr-prepass": "node_modules/preact-ssr-prepass",
-    "util": "lib/util.js",
     "lib/ecmascript/parser.js": "lib/ecmascript/parser2.js",
-    "lib/ecmascript/lexer.js": "quickjs/qjs-modules/lib/jslexer.js",
+    "lib/ecmascript/lexer.js": "quickjs/qjs-modules/lib/lexer/ecmascript.js",
     "cvVideo.js": "qjs-opencv/js/cvVideo.js",
     "cvUtils.js": "qjs-opencv/js/cvUtils.js",
     "cvPipeline.js": "qjs-opencv/js/cvPipeline.js",
@@ -46,7 +44,6 @@
     "htm": "^3.1.0",
     "is-bpg": "^0.1.0",
     "isomorphic-fetch": "^3.0.0",
-    "libbpg-bin": "^1.0.4",
     "module-alias": "^2.2.2",
     "node-bpg": "^1.0.0",
     "preact": "^10",
@@ -71,8 +68,6 @@
     "wasm-loader": "^1.3.0",
     "highlightjs": "^9.16.2",
     "highlightjs-line-numbers.js": "^2.8.0",
-    "node-c-lexer": "^1.0.5",
-    "node-c-parser": "^1.0.11",
     "node-debugprotocol-client": "^0.1.1",
     "node-exceptions": "^4.0.1",
     "sc-random": "^1.0.0",
@@ -97,7 +92,7 @@
     "@babel/core": "^7",
     "@babel/node": "^7",
     "@babel/plugin-proposal-class-properties": "^7",
-    "@babel/plugin-proposal-decorators": "^⁷",
+    "@babel/plugin-proposal-decorators": "^7",
     "@babel/plugin-proposal-export-default-from": "^7",
     "@babel/plugin-syntax-jsx": "^7",
     "@babel/plugin-transform-modules-commonjs": "^7",
@@ -109,7 +104,10 @@
     "babel-node": "^0.0.1-security",
     "babel-plugin-transform-commonjs": "^1.1.6",
     "babel-preset-preact": "^2.0.0",
-    "http": "0.0.0"
+    "free-proxy": "^0.2.0",
+    "http": "0.0.0",
+    "proxy-lists": "https://github.com/chill117/proxy-lists",
+    "proxynova": "^0.1.0"
   },
   "engines": {
     "node": ">= 14"

@@ -1,6 +1,7 @@
 import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
+import require from 'require';
 import path from 'path';
 import Util from './lib/util.js';
 import { Console } from 'console';
@@ -12,13 +13,15 @@ import * as net from 'net';
 import { Socket } from './quickjs/qjs-ffi/lib/socket.js';
 import { EventEmitter } from './lib/events.js';
 import { Repeater } from './lib/repeater/repeater.js';
+import { ReadFile, WriteFile, ReadJSON, WriteJSON, ReadBJSON, WriteBJSON } from './io-helpers.js';
+import { parseDate, dateToObject } from './date-helpers.js';
 
 import rpc from './quickjs/qjs-net/rpc.js';
 import * as rpc2 from './quickjs/qjs-net/rpc.js';
 
 globalThis.fs = fs;
 
-function ReadJSON(filename) {
+/*function ReadJSON(filename) {
   let data = fs.readFileSync(filename, 'utf-8');
 
   if(data) console.debug(`${data.length} bytes read from '${filename}'`);
@@ -37,7 +40,7 @@ function WriteFile(name, data, verbose = true) {
     return stat?.size;
   }
   if(Util.isIterator(data)) data = [...data];
-  if(Util.isArray(data)) data = data.join('\n');
+  if(Array.isArray(data)) data = data.join('\n');
 
   if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
   let ret = fs.writeFileSync(name, data);
@@ -47,7 +50,7 @@ function WriteFile(name, data, verbose = true) {
 
 function WriteJSON(name, data) {
   WriteFile(name, JSON.stringify(data, null, 2));
-}
+}*/
 
 function main(...args) {
   const base = path.basename(Util.getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
@@ -72,12 +75,18 @@ function main(...args) {
     args
   );
   if(params['no-tls'] === true) params.tls = false;
-  console.log('params', params);
-  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key' } = params;
+  //console.log('params', params);
+  const {
+    address = '0.0.0.0',
+    port = 8999,
+    'ssl-cert': sslCert = 'localhost.crt',
+    'ssl-private-key': sslPrivateKey = 'localhost.key'
+  } = params;
   const listen = params.connect && !params.listen ? false : true;
   const server = !params.client || params.server;
   Object.assign(globalThis, { ...rpc2, rpc });
-  let name = Util.getArgs()[0];
+  let name = process.env['NAME'] ?? Util.getArgs()[0];
+  /*console.log('argv[1]',process.argv[1]);*/
   name = name
     .replace(/.*\//, '')
     .replace(/-/g, ' ')
@@ -85,18 +94,28 @@ function main(...args) {
 
   let [prefix, suffix] = name.split(' ');
 
-  let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, fs, false);
+  let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
+  const histfile = '.test-rpc-history';
+  repl.historyLoad(histfile, false);
+  repl.directives.i = [
+    (module, ...args) => {
+      console.log('args', args);
+      try {
+        return require(module);
+      } catch(e) {}
+      import(module).then(m => (globalThis[module] = m));
+    },
+    'import module'
+  ];
 
-  repl.historyLoad(null, false);
-
-  repl.help = () => {};
+  //repl.help = () => {};
   let { log } = console;
   repl.show = arg => std.puts((typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options)) + '\n');
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();
     Terminal.mousetrackingDisable();
-    let numLines = repl.historySave();
+    let numLines = repl.historySave(histfile);
 
     repl.printStatus(`EXIT (wrote ${numLines} history entries)`, false);
 
@@ -105,18 +124,44 @@ function main(...args) {
 
   console.log = repl.printFunction(log);
 
-  let cli = (globalThis.sock = new rpc.Socket(`${address}:${port}`, rpc[`RPC${server ? 'Server' : 'Client'}Connection`], +params.verbose));
+  let cli = (globalThis.sock = new rpc.Socket(
+    `${address}:${port}`,
+    rpc[`RPC${server ? 'Server' : 'Client'}Connection`],
+    +params.verbose
+  ));
 
   cli.register({ Socket, Worker: os.Worker, Repeater, REPL, EventEmitter });
+  let logFile = std.open('test-rpc.log', 'w+');
 
   let connections = new Set();
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
-    console.log('createWS', { url, callbacks, listen });
-
-    net.setLog((params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1), (level, ...args) => {
-      repl.printStatus(...args);
-      if(params.debug) console.log((['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8), ...args);
-    });
+    //console.log('createWS', { url, callbacks, listen });
+    const out = s => logFile.puts(s + '\n');
+    net.setLog(
+      (params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
+      (level, message) => {
+        //repl.printStatus(...args);
+        if(params.debug)
+          out(
+            (
+              [
+                'ERR',
+                'WARN',
+                'NOTICE',
+                'INFO',
+                'DEBUG',
+                'PARSER',
+                'HEADER',
+                'EXT',
+                'CLIENT',
+                'LATENCY',
+                'MINNET',
+                'THREAD'
+              ][Math.log2(level)] ?? level + ''
+            ).padEnd(8) + message
+          );
+      }
+    );
 
     return [net.client, net.server][+listen]({
       tls: params.tls,
@@ -169,7 +214,13 @@ function main(...args) {
           resp.type = 'application/json';
 
           //console.log('\x1b[38;5;215m*files\x1b[0m', { headers, data, req, resp });
-          let { dir = 'tmp', filter = '.(brd|sch|G[A-Z][A-Z])$', verbose = false, objects = false, key = 'mtime' } = data;
+          let {
+            dir = 'tmp',
+            filter = '.(brd|sch|G[A-Z][A-Z])$',
+            verbose = false,
+            objects = false,
+            key = 'mtime'
+          } = data;
           let absdir = path.realpath(dir);
 
           let components = absdir.split(path.sep);
@@ -282,13 +333,18 @@ function main(...args) {
     fs,
     path,
     ReadJSON,
+    WriteJSON,
+    ReadFile,
     WriteFile,
-    WriteJSON
+    ReadBJSON,
+    WriteBJSON,
+    parseDate,
+    dateToObject
   });
 
   define(globalThis, listen ? { server: cli, cli } : { client: cli, cli });
   delete globalThis.DEBUG;
-  Object.defineProperty(globalThis, 'DEBUG', { get: DebugFlags });
+  //Object.defineProperty(globalThis, 'DEBUG', { get: DebugFlags });
 
   if(listen) cli.listen(createWS, os);
   else cli.connect(createWS, os);

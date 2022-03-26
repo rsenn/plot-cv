@@ -85,13 +85,13 @@ const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" view
 */
 
 function PrefixRemover(reOrStr, replacement = '') {
-  if(!(Util.isArray(reOrStr) || Util.isIterable(reOrStr))) reOrStr = [reOrStr];
+  if(!(Array.isArray(reOrStr) || Util.isIterable(reOrStr))) reOrStr = [reOrStr];
 
   return arg => reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), arg);
 }
 
 function WriteFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
+  if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
   filesystem.writeFileSync(name, data + '\n');
   console.log(`Wrote ${name}: ${data.length} bytes`);
@@ -109,7 +109,14 @@ async function main(...args) {
   // cwd = process.cwd() || fs.realpath('.');
   console.log('cwd=', cwd);
 
-  if(args.length == 0) args = [/*'lib/geom/align.js', 'lib/geom/bbox.js','lib/geom/line.js'*/ 'lib/geom/point.js', 'lib/geom/size.js', 'lib/geom/trbl.js', 'lib/geom/rect.js', 'lib/dom/element.js'];
+  if(args.length == 0)
+    args = [
+      /*'lib/geom/align.js', 'lib/geom/bbox.js','lib/geom/line.js'*/ 'lib/geom/point.js',
+      'lib/geom/size.js',
+      'lib/geom/trbl.js',
+      'lib/geom/rect.js',
+      'lib/dom/element.js'
+    ];
   let r = [];
   let processed = [];
   console.log('args=', args);
@@ -142,10 +149,12 @@ async function main(...args) {
     let aliases = json._moduleAliases || {};
     for(let alias in aliases) {
       let module = path.join(path.dirname(p), aliases[alias]);
-      if(!filesystem.existsSync(module)) throw new Error(`No such module alias from '${alias}' to '${aliases[alias]}'`);
-      let file = findModule(module);
-      // let st = filesystem.statSync(file);
-      acc.set(alias, file);
+      // if(!filesystem.existsSync(module)) throw new Error(`No such module alias from '${alias}' to '${aliases[alias]}'`);
+      if(filesystem.existsSync(module)) {
+        let file = findModule(module);
+        // let st = filesystem.statSync(file);
+        acc.set(alias, file);
+      }
     }
     return acc;
   }, new Map());
@@ -215,7 +224,7 @@ async function main(...args) {
         (path, value) => [path, value]
       );
       function removeStatements(statements, predicate = stmt => true) {
-        //  if(Util.isArray(statements)) statements = new Map(statements);
+        //  if(Array.isArray(statements)) statements = new Map(statements);
         // /* prettier-ignore */ console.log('removeStatements:', [...statements].map(mod=> printAst(mod.stmt)));
         // /* prettier-ignore */ console.log('removeStatements:', [...statements].map(([path, stmt]) => stmt));
         let removed = [];
@@ -227,7 +236,7 @@ async function main(...args) {
             deep.unset(ast, path);
           } else {
             console.log('i:', deep.get(ast, path.slice(0, -2)));
-            if(!Util.isArray(node.declarations)) node = node.declarations;
+            if(!Array.isArray(node.declarations)) node = node.declarations;
             else Object.setPrototypeOf(node, VariableDeclaration.prototype);
             deep.set(ast, path, node);
           }
@@ -279,7 +288,9 @@ async function main(...args) {
       let remove = imports.map((imp, idx) => [idx, imp.node]).filter((imp, idx) => !/^lib/.test(imp.fromPath));
       log(
         `remove =`,
-        remove.reduce((acc, [i, imp]) => [...acc, imp /*(imp.fromPath),imp.toSource()*/], []).map(imp => Util.className(imp))
+        remove
+          .reduce((acc, [i, imp]) => [...acc, imp /*(imp.fromPath),imp.toSource()*/], [])
+          .map(imp => Util.className(imp))
       );
 
       removeStatements(remove.map(([idx, node]) => [imports[idx].path, node]));
@@ -293,15 +304,28 @@ async function main(...args) {
         recurseFiles.map(imp => imp.fromPath)
       );
       recurseFiles.forEach(imp => processFile(imp.fromPath));
-      let exports = [...flat.entries()].filter(([key, value]) => value instanceof ExportNamedDeclaration || value.exported === true);
+      let exports = [...flat.entries()].filter(
+        ([key, value]) => value instanceof ExportNamedDeclaration || value.exported === true
+      );
 
       for(let [path, node] of exports) {
         log(`export ${path}`, node);
         deep.set(ast, path, node.declarations[0]);
       }
 
-      exports = exports.map(([p, stmt]) => ((isObject(stmt.declarations) && isObject(stmt.declarations.id) && isObject(stmt.declarations.id.value)) == (isObject(stmt.what) && isObject(stmt.what.value)) ? stmt.declarations : stmt));
-      exports = exports.map(decl => (decl instanceof ObjectPattern ? decl.properties.map(prop => ('id' in prop ? prop.id : prop)) : decl instanceof ObjectExpression ? decl.members.map(prop => ('id' in prop ? prop.id : prop)) : decl));
+      exports = exports.map(([p, stmt]) =>
+        (isObject(stmt.declarations) && isObject(stmt.declarations.id) && isObject(stmt.declarations.id.value)) ==
+        (isObject(stmt.what) && isObject(stmt.what.value))
+          ? stmt.declarations
+          : stmt
+      );
+      exports = exports.map(decl =>
+        decl instanceof ObjectPattern
+          ? decl.properties.map(prop => ('id' in prop ? prop.id : prop))
+          : decl instanceof ObjectExpression
+          ? decl.members.map(prop => ('id' in prop ? prop.id : prop))
+          : decl
+      );
       exports = exports.map(decl => (isObject(decl) && 'id' in decl ? decl.id : decl));
       exports = exports.map(e => e.value);
       log(`exports =`, exports.join(', '));
@@ -383,7 +407,13 @@ function findModule(relpath) {
   let module;
   if(st.isDirectory()) {
     const name = path.basename(relpath);
-    let indexes = [...makeNames(relpath + '/dist/' + name), ...makeNames(relpath + '/dist/index'), ...makeNames(relpath + '/build/' + name), ...makeNames(relpath + '/' + name), ...makeNames(relpath + '/index')];
+    let indexes = [
+      ...makeNames(relpath + '/dist/' + name),
+      ...makeNames(relpath + '/dist/index'),
+      ...makeNames(relpath + '/build/' + name),
+      ...makeNames(relpath + '/' + name),
+      ...makeNames(relpath + '/index')
+    ];
     module = indexes.find(i => checkExists(i));
   } else if(st.isFile()) {
     module = relpath;
@@ -404,7 +434,12 @@ function searchModuleInPath(name, _from) {
   if(moduleAliases.has(name)) return moduleAliases.get(name);
 
   let names = makeNames(name);
-  let indexes = [...makeNames(name + '/dist/' + name), ...makeNames(name + '/build/' + name), ...makeNames(name + '/' + name), ...makeNames(name + '/index')];
+  let indexes = [
+    ...makeNames(name + '/dist/' + name),
+    ...makeNames(name + '/build/' + name),
+    ...makeNames(name + '/' + name),
+    ...makeNames(name + '/index')
+  ];
 
   for(let dir of [thisdir, ...searchPath]) {
     let searchFor = dir.endsWith('node_modules') ? [name] : names;

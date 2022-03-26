@@ -127,7 +127,11 @@ const input = {
     ]);
   },
   name(s, obj, name) {
-    return h('td', { class: `name item` }, h('a', { href: path.normalize(s), onClick }, [s.replace(/\/*$/, '').replace(/.*\//g, '')]));
+    return h(
+      'td',
+      { class: `name item` },
+      h('a', { href: path.normalize(s), onClick }, [s.replace(/\/*$/, '').replace(/.*\//g, '')])
+    );
   },
   size(s, obj, name) {
     return h('td', { class: `size item`, 'data-value': s }, (obj.name ?? '').endsWith('/') ? [] : [HumanSize(+s)]);
@@ -143,7 +147,9 @@ function Item(obj) {
   return h(
     Fragment,
     {},
-    columns.map(name => h(name, { class: `item ${name}` }, [input[name] ? input[name](obj[name], obj, name) : obj[name]]))
+    columns.map(name =>
+      h(name, { class: `item ${name}` }, [input[name] ? input[name](obj[name], obj, name) : obj[name]])
+    )
   );
 }
 
@@ -181,7 +187,9 @@ function TableHeader() {
   return h(
     'tr',
     { class: 'head' },
-    columns.map((name, i) => h('th', { class: `${name} header` }, [h('a', { href: `#?sort=${name}`, onClick }, [titles[i]])]))
+    columns.map((name, i) =>
+      h('th', { class: `${name} header` }, [h('a', { href: `#?sort=${name}`, onClick }, [titles[i]])])
+    )
   );
 }
 
@@ -201,7 +209,10 @@ function Refresh([dir, list]) {
 
   list = list.map(obj => h(TableItem, obj));
 
-  let component = h(Fragment, {}, [h('h1', {}, [`Index of `, h('span', { id: 'dir' }, [dir])]), h('table', { class: 'list preformatted', cellpadding: 2, cellspacing: 0 }, [TableHeader(), ...list])]);
+  let component = h(Fragment, {}, [
+    h('h1', {}, [`Index of `, h('span', { id: 'dir' }, [dir])]),
+    h('table', { class: 'list preformatted', cellpadding: 2, cellspacing: 0 }, [TableHeader(), ...list])
+  ]);
   render(component, document.body);
   console.log('rendered');
 }

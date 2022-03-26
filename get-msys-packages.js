@@ -29,7 +29,12 @@ function concat(...args) {
     )
     .flat();
 }
-const URLS = ['https://repo.msys2.org/mingw/i686/mingw32.db', 'https://repo.msys2.org/mingw/x86_64/mingw64.db', 'https://repo.msys2.org/msys/i686/msys.db', 'https://repo.msys2.org/msys/x86_64/msys.db'];
+const URLS = [
+  'https://repo.msys2.org/mingw/i686/mingw32.db',
+  'https://repo.msys2.org/mingw/x86_64/mingw64.db',
+  'https://repo.msys2.org/msys/i686/msys.db',
+  'https://repo.msys2.org/msys/x86_64/msys.db'
+];
 const BASE_URL = 'https://repo.msys2.org';
 async function main(...args) {
   console.log('main(', ...args, ')');
@@ -91,7 +96,10 @@ async function main(...args) {
 console.log("matches:", matches);*/
     if(pkgs.length == 0 || packages.length == pkgs.length) {
       console.log('re =', re, ' pkgs.length =', pkgs.length, ' pacakges.length =', packages.length);
-      pkgs = Util.filter(packages, (re = new RegExp(arg.startsWith('/') ? name + '-[a-z]+-' + (ver || 'r?[0-9]') : arg, 'gi')));
+      pkgs = Util.filter(
+        packages,
+        (re = new RegExp(arg.startsWith('/') ? name + '-[a-z]+-' + (ver || 'r?[0-9]') : arg, 'gi'))
+      );
       if(pkgs.length == 0 || packages.length == pkgs.length) {
         console.log('re =', re, ' pkgs.length =', pkgs.length, ' pacakges.length =', packages.length);
         console.error(`Number of packages ${pkgs.length} when matching ${re}`);
@@ -201,7 +209,7 @@ async function processUrl(url, map) {
 Util.callMain(main, true);
 
 function WriteFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
+  if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
   filesystem.writeFile(name, data + '\n');

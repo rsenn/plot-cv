@@ -82,8 +82,10 @@ cfg() {
     IFS="$IFS "
     set -- -Wno-dev \
       -G "$generator" \
+    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
       ${prefix:+-DCMAKE_INSTALL_PREFIX="$prefix"} \
       ${VERBOSE:+-DCMAKE_VERBOSE_MAKEFILE=OFF${VERBOSE:-OFF}} \
+      -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
       -DCMAKE_BUILD_TYPE="${TYPE:-Debug}" \
       -DBUILD_SHARED_LIBS=ON \
       ${CC:+-DCMAKE_C_COMPILER="$CC"} \
@@ -387,7 +389,7 @@ cfg-wasm() {
     test '!' -f "$TOOLCHAIN" && TOOLCHAIN=$(find "$EMSCRIPTEN" -iname emscripten.cmake)
     test -f "$TOOLCHAIN" || unset TOOLCHAIN
     : ${prefix:="$EMSCRIPTEN"}
-    : ${builddir=build/emscripten-wasm}
+    : ${builddir=build/wasm32-unknown-emscripten}
 
     CC="$EMCC" \
       cfg \
@@ -454,8 +456,8 @@ cfg-emscripten() {
     export PKG_CONFIG_PATH
     echo PKG_CONFIG_PATH="${PKG_CONFIG_PATH}"
     CC="emcc" CXX="em++" TYPE="Release" \
-      CFLAGS="'-sWASM=1 -sUSE_PTHREADS=0 -sLLD_REPORT_UNDEFINED'" \
-      CXXFLAGS="'-sWASM=1 -sUSE_PTHREADS=0 -sLLD_REPORT_UNDEFINED'" \
+      CFLAGS="'-sUSE_PTHREADS=0'" \
+      CXXFLAGS="'-sUSE_PTHREADS=0'" \
       CMAKE_WRAPPER="emcmake" \
       prefix=/opt/${PWD##*/}-wasm \
       cfg \
