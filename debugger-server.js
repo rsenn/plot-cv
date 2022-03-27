@@ -199,6 +199,7 @@ function main(...args) {
 
             switch (command) {
               case 'start': {
+                console.log('ws',ws);
                 child = ws.child = StartDebugger(args, connect, address);
                 const [, stdout, stderr] = child.stdio;
                 for(let fd of [stdout, stderr]) {
