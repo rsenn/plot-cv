@@ -679,16 +679,12 @@ export class RecordDecl extends Type {
             if(node?.type?.qualType && /( at )/.test(node.type.qualType)) {
               let loc = node.type.qualType.split(/(?:\s*[()]| at )/g)[2];
               let [file, line, column] = loc.split(/:/g).map(i => (!isNaN(+i) ? +i : i));
-              //console.log('deep', deep);
-              //console.log('deep.RETURN_PATH', deep.RETURN_PATH);
-
+           
               let typePaths = deep.select(inner, n => n.line == line, deep.RETURN_PATH);
               let typePath = PathRemoveLoc(typePaths[0]);
-              //console.log('RecordDecl', { typePath });
-              let typeNode = deep.get(inner, typePath);
+               let typeNode = deep.get(inner, typePath);
               type = TypeFactory(typeNode, ast);
-              //  console.log('loc:', { kind, file, line, column, typeNode});
-            } else if(node.kind.startsWith('CXX')) {
+             } else if(node.kind.startsWith('CXX')) {
               type = TypeFactory(node, ast);
             } else if(node.type) {
               type = new Type(node.type, ast);
@@ -702,14 +698,9 @@ export class RecordDecl extends Type {
               throw new Error(`node.kind=${node.kind} `);
             }
           }
-          if(type) acc.push([name, /*node.kind,*/ type]);
+          if(type) acc.push([name, type]);
           else if(name) acc.push([name, node.kind.startsWith('Indirect') ? null : TypeFactory(node, ast)]);
           return acc;
-          /*  return [
-            name,
-            node.kind,
-            node.kind.startsWith('Indirect') ? null : TypeFactory(node, ast)
-          ];*/
         }, []);
     }
   }
