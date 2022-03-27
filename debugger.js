@@ -29,16 +29,20 @@ export function StartDebugger(args, connect, address) {
   if(connect) env['QUICKJS_DEBUG_ADDRESS'] = address;
   else env['QUICKJS_DEBUG_LISTEN_ADDRESS'] = address;
 
-  console.log('child_process.spawn', child_process.spawn);
+  /*  console.log('child_process.spawn', child_process.spawn);
 
   let child = child_process.spawn('qjsm', args, {
     env,
     stdio: ['inherit', 'pipe', 'pipe']
-  });
-  const { pid, stdio } = child;
+  });*/
+  let pipe = os.pipe();
+  let pid = os.exec(['qjsm'].concat(args), { block: false, env, stdout: pipe[1], stderr: pipe[1] });
+
+  os.close(pipe[1]);
+  return { stdio: [undefined, pipe[0], pipe[0]], pid };
+  //const { pid, stdio } = child;
 
   console.log('StartDebugger', child);
-
   return child;
 }
 
