@@ -361,7 +361,7 @@ function main(...args) {
 */
   delete globalThis.DEBUG;
 
-  globalThis.ws = createWS(`wss://${address}:9000/ws`, {}, true);
+  globalThis.ws = createWS(`https://${address}:9000/ws`, {}, true);
   //  Object.defineProperty(globalThis, 'DEBUG', { get: DebugFlags });
 
   /* if(listen) cli.listen(createWS, os);
