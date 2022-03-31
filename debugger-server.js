@@ -61,7 +61,7 @@ function main(...args) {
       client: [false, null, 'C'],
       server: [false, null, 'S'],
       debug: [false, null, 'x'],
-      tls: [false, (v,pv,o)=> ((o.tls=true),true), 't'],
+      tls: [false, (v, pv, o) => ((o.tls = true), true), 't'],
       'no-tls': [false, (v, pv, o) => ((o.tls = false), true), 'T'],
       address: [true, null, 'a'],
       port: [true, null, 'p'],
@@ -151,11 +151,14 @@ function main(...args) {
           ['.m', 'text/x-objective-c'],
           ['.sh', 'text/x-shellscript']
         ],
-        mounts: [['/', '.', 'debugger.html']],
+        mounts: [
+          ['/proxy', 'ipv4:127.0.0.1', null, 'proxy-ws-raw-ws'],
+          ['/', '.', 'debugger.html']
+        ],
         ...url,
         ...callbacks,
         block: false,
-         onConnect(ws, req) {
+        onConnect(ws, req) {
           console.log('debugger-server', { ws, req });
 
           ws.sendMessage = function(msg) {
@@ -329,7 +332,7 @@ function main(...args) {
         protocol.set(ws, p);*/
         },
         onFd(fd, rd, wr) {
-        console.log('onFd', { fd, rd, wr });
+        //  console.log('onFd', { fd, rd, wr });
           os.setReadHandler(fd, rd);
           os.setWriteHandler(fd, wr);
         },
