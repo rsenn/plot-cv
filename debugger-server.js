@@ -61,7 +61,7 @@ function main(...args) {
       client: [false, null, 'C'],
       server: [false, null, 'S'],
       debug: [false, null, 'x'],
-      tls: [false, null, 't'],
+      tls: [false, (v,pv,o)=> ((o.tls=true),true), 't'],
       'no-tls': [false, (v, pv, o) => ((o.tls = false), true), 'T'],
       address: [true, null, 'a'],
       port: [true, null, 'p'],
@@ -153,9 +153,9 @@ function main(...args) {
         ],
         mounts: [['/', '.', 'debugger.html']],
         ...url,
-
         ...callbacks,
-        onConnect(ws, req) {
+        block: false,
+         onConnect(ws, req) {
           console.log('debugger-server', { ws, req });
 
           ws.sendMessage = function(msg) {
