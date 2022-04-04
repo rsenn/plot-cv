@@ -7,7 +7,7 @@ import * as path from './lib/path.js';
 import * as deep from './lib/deep.js';
 import { toString } from './lib/misc.js';
 import child_process from './lib/childProcess.js';
-import { Socket, SockAddr, AF_INET, SOCK_STREAM, IPPROTO_TCP } from './quickjs/qjs-ffi/lib/socket.js';
+import { AsyncSocket, SockAddr, AF_INET, SOCK_STREAM, IPPROTO_TCP } from './quickjs/qjs-ffi/lib/socket.js';
 import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 
@@ -49,7 +49,7 @@ export function StartDebugger(args, connect, address) {
 export function ConnectDebugger(address, callback) {
   let addr = new SockAddr(AF_INET, ...address.split(':'));
   console.log('ConnectDebugger', addr);
-  let sock = new Socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+  let sock = new AsyncSocket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
   let ret = sock.connect(addr);
 
   if(ret >= 0) {

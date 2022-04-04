@@ -441,18 +441,24 @@ function main(...args) {
     meter.reset();
     meter.start();
     let deadline = Date.now() + frameDelay;
-
+       console.log('frameDelay',frameDelay);
+       
     let frameNo = video.get('pos_frames');
     if(frameNo == frameCount) video.set('pos_frames', (frameNo = 0));
 
+
     let gray = pipeline();
+
+console.log('#0 deadline - Date.now()',deadline - Date.now());
 
     if(!win.imageRect.equals(clientRect)) {
       log.info(`resized from ${clientRect} to ${win.imageRect}`);
       clientRect = win.imageRect;
     }
 
-    showOutput();
+       console.log('#1 deadline - Date.now()',deadline - Date.now());
+   showOutput();
+       console.log('#2 deadline - Date.now()',deadline - Date.now());
 
     while(true) {
       let now = Date.now();
@@ -460,7 +466,10 @@ function main(...args) {
 
       sleepMsecs -= 2;
       let key;
-      if((key = cv.waitKeyEx(Math.max(1, sleepMsecs))) != -1) {
+      sleepMsecs =Math.max(1, sleepMsecs);
+      //console.log('sleepMsecs',sleepMsecs);
+      //
+      if((key = cv.waitKeyEx(sleepMsecs)) != -1) {
         keyCode = key;
         keyTime = Date.now();
         modifiers = Object.fromEntries(modifierMap(keyCode));
@@ -574,7 +583,7 @@ function main(...args) {
           break;
         }
       }
-      if(sleepMsecs <= 0) break;
+      if(sleepMsecs <= 1) break;
     }
 
     std.gc();
