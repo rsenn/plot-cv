@@ -9,7 +9,7 @@ import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from 'fs';
-import { setLog, logLevels, LLL_USER, LLL_NOTICE, LLL_WARN, client, server } from 'net';
+import { setLog, logLevels, getSessions, LLL_USER, LLL_NOTICE, LLL_WARN, client, server } from 'net';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 import { StartDebugger, ConnectDebugger } from './debugger.js';
 import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
@@ -28,7 +28,7 @@ atexit(() => {
 function StartREPL(prefix = scriptName(), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
   repl.historyLoad(null, fs);
-  repl.inspectOptions = { ...console.options, compact: 2 };
+  repl.inspectOptions = { ...console.options, maxArrayLength: Infinity, compact: 2 };
   let { log } = console;
 
   repl.directives.i = [
@@ -50,9 +50,11 @@ function main(...args) {
   const base = scriptName().replace(/\.[a-z]*$/, '');
 
   const config = ReadJSON(`.${base}-config`) ?? {};
+
   globalThis.console = new Console(std.err, {
-    inspectOptions: { compact: 2, customInspect: true }
+    inspectOptions: { compact: 2, maxArrayLength: Infinity, customInspect: true }
   });
+
   let params = getOpt(
     {
       verbose: [false, (a, v) => (v | 0) + 1, 'v'],
@@ -84,7 +86,7 @@ function main(...args) {
   } = params;
   const listen = params.connect && !params.listen ? false : true;
   //const server = !params.client || params.server;
-  let name = Util.getArgs()[0];
+  let name = scriptArgs[0];
   name = name
     .replace(/.*\//, '')
     .replace(/-/g, ' ')
@@ -104,12 +106,9 @@ function main(...args) {
       quiet
         ? () => {}
         : (level, str) => {
-            if(
-              level != LLL_USER &&
-              str.indexOf('\x1b') == -1 &&
-              /(lws_|^\s\+\+|^(\s+[a-z0-9_]+\s=|\s*[a-z0-9_]+:)\s)/.test(str)
-            )
-              return;
+            //if(level != LLL_USER && str.indexOf('\x1b') == -1 && /(lws_|^\s\+\+|^(\s+[a-z0-9_]+\s=|\s*[a-z0-9_]+:)\s)/.test(str)) return;
+            //if(/WSI_(DESTROY|CREATE)|FILTER_NETWORK_CONNECTION/.test(str)) return;
+            if(/BIND_PROTOCOL|DROP_PROTOCOL|CHECK_ACCESS_RIGHTS|ADD_HEADERS/.test(str)) return;
             if(debug) console.log(logLevels[level].padEnd(10), str.trim());
           }
     );
@@ -186,6 +185,7 @@ function main(...args) {
         },
         onMessage(ws, data) {
           console.log('onMessage', ws, data);
+          showSessions();
 
           handleCommand(ws, data);
 
@@ -332,7 +332,7 @@ function main(...args) {
         protocol.set(ws, p);*/
         },
         onFd(fd, rd, wr) {
-        //  console.log('onFd', { fd, rd, wr });
+          //  console.log('onFd', { fd, rd, wr });
           os.setReadHandler(fd, rd);
           os.setWriteHandler(fd, wr);
         },
@@ -363,6 +363,35 @@ function main(...args) {
   });
 */
   delete globalThis.DEBUG;
+
+  let inputBuf = new ArrayBuffer(10);
+  os.ttySetRaw(0);
+
+  os.setReadHandler(0, () => {
+    let r = fs.readSync(0, inputBuf, 0, inputBuf.byteLength);
+
+    if(r > 0) {
+      let a = new Uint8Array(inputBuf.slice(0, r));
+
+      //console.log('a', a);
+
+      for(let i = 0; i < a.length; i++) if(a[i] == 13) a[i] = 10;
+
+      if(a.length == 1 && a[0] == 127) a = new Uint8Array([8, 0x20, 8]);
+
+      if(a.length == 1 && a[0] == 27) showSessions();
+      else fs.writeSync(1, a.buffer);
+    }
+  });
+
+  function showSessions() {
+    let sessions = getSessions();
+    console.log(
+      'sessions',
+      console.config({ maxArrayLength: Infinity, depth: 4, customInspect: true, compact: 1 }),
+      sessions
+    );
+  }
 
   globalThis.ws = createWS(`wss://${address}:9000/ws`, {}, true);
   //  Object.defineProperty(globalThis, 'DEBUG', { get: DebugFlags });

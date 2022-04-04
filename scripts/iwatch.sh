@@ -4,6 +4,10 @@ MYNAME=`basename "${ME%.sh}"`
 MYDIR=`dirname "$ME"`
 IFS="
 "
+pushv () 
+{ 
+    eval "shift;$1=\"\${$1+\"\$$1\${IFS%\"\${IFS#?}\"}\"}\$*\""
+}
 
 usage() {
   echo "Usage: $MYNAME [options] <build-directories...>" 1>&2
@@ -15,8 +19,12 @@ iwatch() {
     case "$1" in
       -j*) NJOBS=${1#-j}; shift ;; -j) NJOBS=${2}; shift 2 ;;
       -t*) TOOL=${1#-t}; shift ;; -t) TOOL=${2}; shift 2 ;;
+      -s) pushv SOURCEDIRS "${2}"; shift 2 ;;
+      -s*) pushv SOURCEDIRS "${1#-s}"; shift ;; 
+      -b) pushv BUILDDIRS "${2}"; shift 2 ;;
+      -b*) pushv BUILDDIRS "${1#-b}"; shift ;; 
       *) 
-        if [ -n "$1" -a -d "$1" ]; then
+        if [ -z "$BUILDDIRS" -a -n "$1" -a -d "$1" ]; then
           BUILDDIRS="${BUILDDIRS+$BUILDDIRS$IFS}$1"
         elif [ -z "$TARGET" ]; then
           TARGET="$1"
@@ -24,20 +32,26 @@ iwatch() {
         shift  ;;
     esac
   done
+  echo "SOURCEDIRS:" $SOURCEDIRS 1>&2
+  echo "BUILDDIRS:" $BUILDDIRS 1>&2
   
   if [ -z "$BUILDDIRS" ]; then
     usage
   fi
 
-  set -- 
-  for DIR in $BUILDDIRS; do
-    set -- "$@" "${DIR%%/build/*}"
-  done
-  SOURCEDIRS=$*
+  if [ -z "$SOURCEDIRS" ]; then
+    set -- 
+    for DIR in $BUILDDIRS; do
+      set -- "$@" "${DIR%%/build/*}"
+    done
+    SOURCEDIRS=$*
+  fi
 
   : ${builddir=`ls -td $BUILDDIRS | head -n1`}
   echo "Build dir:" $builddir 1>&2
-  sourcedir=${builddir%%/build/*}
+  : ${SOURCEDIRS=$(ls -td $builddir | sed 's,/build/.*,,')}
+  #sourcedir=${builddir%%/build/*}
+  sourcedir=$(set -- $SOURCEDIRS; echo "$1")
   echo "Source dir:" $sourcedir 1>&2
 
   export builddir sourcedir
@@ -72,7 +86,7 @@ iwatch() {
   #EVENTS=modify,create
   EVENTS=close_write 
 
-  set -- iwatch -v -c "$CMD" -e "$EVENTS" -t '.*\.(h|hpp|c|cpp)$' -x '.*/build/.*' -X'./(\.|tmp|static|lib|.git).*' "$@"
+  set -- iwatch -v -c "$CMD" -e "$EVENTS" -t '.*\.(h|hpp|c|cpp)$' -x '.*/build/.*' -X'./(\.|tmp|static|lib|.git).*' $sourcedir
   for ARG; do 
     case "$ARG" in
       *\ * | *[\$\(\)\|]*) ARG="'$ARG'" ;;
