@@ -441,24 +441,23 @@ function main(...args) {
     meter.reset();
     meter.start();
     let deadline = Date.now() + frameDelay;
-       console.log('frameDelay',frameDelay);
-       
+    console.log('frameDelay', frameDelay);
+
     let frameNo = video.get('pos_frames');
     if(frameNo == frameCount) video.set('pos_frames', (frameNo = 0));
 
-
     let gray = pipeline();
 
-console.log('#0 deadline - Date.now()',deadline - Date.now());
+    console.log('#0 deadline - Date.now()', deadline - Date.now());
 
     if(!win.imageRect.equals(clientRect)) {
       log.info(`resized from ${clientRect} to ${win.imageRect}`);
       clientRect = win.imageRect;
     }
 
-       console.log('#1 deadline - Date.now()',deadline - Date.now());
-   showOutput();
-       console.log('#2 deadline - Date.now()',deadline - Date.now());
+    console.log('#1 deadline - Date.now()', deadline - Date.now());
+    showOutput();
+    console.log('#2 deadline - Date.now()', deadline - Date.now());
 
     while(true) {
       let now = Date.now();
@@ -466,7 +465,7 @@ console.log('#0 deadline - Date.now()',deadline - Date.now());
 
       sleepMsecs -= 2;
       let key;
-      sleepMsecs =Math.max(1, sleepMsecs);
+      sleepMsecs = Math.max(1, sleepMsecs);
       //console.log('sleepMsecs',sleepMsecs);
       //
       if((key = cv.waitKeyEx(sleepMsecs)) != -1) {
