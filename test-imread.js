@@ -42,7 +42,7 @@ function* SegmentRect(size, seg = new cv.Size(14, 12)) {
   }
 }
 
-function Image2ASCII(img,pixelfn = bit => bit ? '1' : '0') {
+function Image2ASCII(img, pixelfn = bit => (bit ? '1' : '0')) {
   let rows = [];
   for(let [[row, col], pixel] of img.entries()) {
     rows[row] ??= '';
@@ -72,7 +72,6 @@ function main(...args) {
   let name = path.basename(args[0]);
   let dim = new cv.Size([...name.matchAll(/\d+/g)].map(([n]) => +n));
   console.log('dim', dim);
-
 
   let img = cv.imread(args[0]);
   let float = new cv.Mat(),
@@ -109,7 +108,7 @@ function main(...args) {
     for(let subseg of subsegs) {
       let segimg = img(subseg);
 
-      let asc = Image2ASCII(segimg, bit => bit ? '██' : '  ');
+      let asc = Image2ASCII(segimg, bit => (bit ? '██' : '  '));
       console.log(j + '\n' + asc);
       j++;
     }
