@@ -43,6 +43,25 @@ let libdirs = [
 let libdirs32 = libdirs.filter(d => /(32$|i[0-9]86)/.test(d));
 let libdirs64 = libdirs.filter(d => !/(32$|i[0-9]86)/.test(d));
 
+const StringGenerator =
+  gen =>
+  (...args) => {
+    let iterator = gen(...args);
+
+    return Object.assign(iterator, {
+      toString() {
+        let result,
+          s = '';
+
+        while((result = iterator.next()) && !result.done) {
+          if(s != '') s += '\n';
+          s += result.value;
+        }
+        return s;
+      }
+    });
+  };
+
 async function ImportModule(modulePath, ...args) {
   let done = false;
   let moduleName = path.basename(modulePath, '.js');
@@ -100,7 +119,13 @@ function CommandLine() {
     if(isObject(value) && (first = value.first ?? value[0]) && isObject(first) && ('id' in first || 'kind' in first))
       str = Table(value);
     else if(typeof value == 'string') str = value;
-    else str = inspect(value, { ...console.options, depth: 1, hideKeys: ['loc', 'range'], ...cfg.inspectOptions });
+    else
+      str = inspect(value, {
+        ...console.options,
+        ...cfg.inspectOptions,
+        ...repl.inspectOptions,
+        hideKeys: ['loc', 'range']
+      });
     std.out.puts(str + '\n');
   };
 
@@ -283,7 +308,39 @@ function Terminate(exitCode) {
   Util.exit(exitCode);
 }
 
-function* GenerateInspectStruct(decl, includes) {
+function Shell(cmd) {
+  let f = std.popen(cmd, 'r');
+  let s = '';
+  while(!f.eof() && !f.error()) {
+    s += f.readAsString();
+  }
+  f.close();
+  return s;
+}
+
+function ParseStructs(text) {
+  const re = /([^\n]*)\r?\n/gmy;
+  let line,
+    fields,
+    structs = [];
+
+  while((line = re.exec(text))) {
+    if(/^\s*$/g.test(line[1])) continue;
+    let columns = line[1].split(/\s+/g);
+
+    if(isNaN(+columns[1])) continue;
+    let [name] = columns;
+    if(fields && name[0] == '.') {
+      let [, offset, size] = columns;
+      fields.push([name, +offset, +size]);
+    } else {
+      structs.push([name, { size: +columns[1], fields: (fields = []) }]);
+    }
+  }
+  return new Map(structs);
+}
+
+const GenerateInspectStruct = StringGenerator(function* (decl, includes) {
   let { name, members } = decl;
 
   includes ??= [decl.loc.file.replace(/^\/usr\/include\//, '')];
@@ -362,7 +419,7 @@ bitsize(const void* p, size_t len) {
 
   yield `  return 0;`;
   yield `}`;
-}
+});
 
 function InspectStruct(decl, includes, compiler = 'clang') {
   if(typeof decl == 'string') {
@@ -1031,6 +1088,12 @@ async function ASTShell(...args) {
     globalThis.files[file] = r;
 
     function nameOrIdPred(name_or_id, pred = n => true) {
+      if(/^(struct|union)\s/.test(name_or_id)) {
+        let idx = name_or_id.indexOf(' ');
+        let tag = name_or_id.substring(0, idx);
+        let name = name_or_id.substring(idx + 1);
+        return node => node.name == name && node.tagUsed == tag;
+      }
       if(typeof name_or_id == 'number') name_or_id = '0x' + name_or_id.toString(16);
       return name_or_id instanceof RegExp
         ? node => name_or_id.test(node.name) && pred(node)
@@ -1047,7 +1110,7 @@ async function ASTShell(...args) {
         let node = this.data.inner.findLast(nameOrIdPred(name_or_id, pred));
 
         node ??= this.classes.findLast(nameOrIdPred(name_or_id, pred));
-        node ??= deep.find(this.data, n => n.name == name_or_id || n.id == name_or_id, deep.RETURN_VALUE);
+        node ??= deep.find(this.data, nameOrIdPred(name_or_id, pred), deep.RETURN_VALUE);
         return node;
       },
       getType(name_or_id) {
@@ -1149,7 +1212,9 @@ async function ASTShell(...args) {
     Constants,
     PrintCArray,
     GetParams,
-    List
+    List,
+    Shell,
+    ParseStructs
   });
 
   Pointer.prototype.chain = function(step, limit = Infinity) {
