@@ -691,7 +691,9 @@ export class RecordDecl extends Type {
             name += ':' + node.inner[0].inner[0].value;
           }
           if(kind.endsWith('Decl')) {
-            if(node?.type?.qualType && /( at )/.test(node.type.qualType)) {
+            if(node.kind.startsWith('Indirect')) {
+              type = null;
+            } else if(node?.type?.qualType && /( at )/.test(node.type.qualType)) {
               let loc = node.type.qualType.split(/(?:\s*[()]| at )/g)[2];
               let [file, line, column] = loc.split(/:/g).map(i => (!isNaN(+i) ? +i : i));
 

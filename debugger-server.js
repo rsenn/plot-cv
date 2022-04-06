@@ -1,5 +1,6 @@
 import * as std from 'std';
 import * as os from 'os';
+import {setInterval} from 'timers';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
 import Util from './lib/util.js';
@@ -392,6 +393,8 @@ function main(...args) {
       sessions
     );
   }
+
+//setInterval(() => console.log('interval'), 5000);
 
   globalThis.ws = createWS(`wss://${address}:9000/ws`, {}, true);
   //  Object.defineProperty(globalThis, 'DEBUG', { get: DebugFlags });

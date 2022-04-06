@@ -33,6 +33,8 @@ main() {
   printf(".module_ns %zu %zu\n", offsetof(JSModuleDef, module_ns), sizeof(((JSModuleDef*)0)->module_ns));
 
   printf("\nJSExportEntry %zu\n", sizeof(JSExportEntry));
+  printf(".u %zu %zu\n", offsetof(JSExportEntry, u), sizeof(((JSExportEntry*)0)->u));
+  printf(".u.local.var_ref %zu %zu\n", offsetof(JSExportEntry, u.local.var_ref), sizeof(((JSExportEntry*)0)->u.local.var_ref));
   printf(".local_name %zu %zu\n", offsetof(JSExportEntry, local_name), sizeof(((JSExportEntry*)0)->local_name));
   printf(".export_name %zu %zu\n", offsetof(JSExportEntry, export_name), sizeof(((JSExportEntry*)0)->export_name));
 
