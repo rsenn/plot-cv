@@ -1,6 +1,6 @@
 import * as std from 'std';
 import * as os from 'os';
-import {setInterval} from 'timers';
+import { setInterval } from 'timers';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
 import Util from './lib/util.js';
@@ -159,13 +159,19 @@ function main(...args) {
         ...callbacks,
         block: false,
         onConnect(ws, req) {
-          console.log('debugger-server', { ws, req });
+          console.log('onConnect', { ws, req });
 
-          ws.sendMessage = function(msg) {
-            let ret = this.send(JSON.stringify(msg));
-            console.log(`ws.sendMessage(`, msg, `) = ${ret}`);
-            return ret;
-          };
+          Object.defineProperties(ws, {
+            sendMessage: {
+              value: function sendMessage(msg) {
+                let ret = this.send(JSON.stringify(msg));
+                console.log(`ws.sendMessage(`, msg, `) = ${ret}`);
+                return ret;
+              },
+              enumerable: false
+            },
+            dbg: { value: null, enumerable: false }
+          });
 
           sockets.add(ws);
         },
@@ -186,7 +192,7 @@ function main(...args) {
         },
         onMessage(ws, data) {
           console.log('onMessage', ws, data);
-          showSessions();
+         // showSessions();
 
           handleCommand(ws, data);
 
@@ -222,7 +228,7 @@ function main(...args) {
 
                     if(r > 0) {
                       let data = toString(buf.slice(0, r));
-                      console.log(`read(${fd}, buf) = ${r} (${quote(data, "'")})`);
+                      //console.log(`read(${fd}, buf) = ${r} (${quote(data, "'")})`);
 
                       ws.sendMessage({
                         type: 'output',
@@ -333,7 +339,7 @@ function main(...args) {
         protocol.set(ws, p);*/
         },
         onFd(fd, rd, wr) {
-          //  console.log('onFd', { fd, rd, wr });
+          //console.log('onFd', { fd, rd, wr });
           os.setReadHandler(fd, rd);
           os.setWriteHandler(fd, wr);
         },
@@ -394,7 +400,7 @@ function main(...args) {
     );
   }
 
-//setInterval(() => console.log('interval'), 5000);
+  //setInterval(() => console.log('interval'), 5000);
 
   globalThis.ws = createWS(`wss://${address}:9000/ws`, {}, true);
   //  Object.defineProperty(globalThis, 'DEBUG', { get: DebugFlags });
