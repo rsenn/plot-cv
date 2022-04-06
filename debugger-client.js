@@ -289,7 +289,7 @@ async function CreateSocket(endpoint) {
   };
 
   if(url.query.port) await Connect();
-  else await Start([url.query.script ?? 'quickjs/qjs-modules/tests/test_dom.js' ]); // 'test-video.js', 'nightwatch.mp4']);
+  else await Start([url.query.script ?? 'quickjs/qjs-modules/tests/test_dom.js']); // 'test-video.js', 'nightwatch.mp4']);
 
   return ws;
 }
