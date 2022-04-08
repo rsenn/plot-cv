@@ -53,7 +53,7 @@ function main(...args) {
   const config = ReadJSON(`.${base}-config`) ?? {};
 
   globalThis.console = new Console(std.err, {
-    inspectOptions: { compact: 2, maxArrayLength: Infinity, customInspect: true }
+    inspectOptions: { depth: Infinity, compact: 2, maxArrayLength: Infinity, customInspect: true }
   });
 
   let params = getOpt(
@@ -159,7 +159,7 @@ function main(...args) {
         ...callbacks,
         block: false,
         onConnect(ws, req) {
-          console.log('onConnect', { ws, req });
+          console.log('onConnect', { ws, req }, req && req.headers);
 
           Object.defineProperties(ws, {
             sendMessage: {
