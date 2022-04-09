@@ -153,6 +153,7 @@ function main(...args) {
         ],
         mounts: [
           ['/proxy', 'ipv4:127.0.0.1', null, 'proxy-ws-raw-ws'],
+          ['/lws', 'https://www.google.ch/',null,'defprot'],
           ['/', '.', 'debugger.html']
         ],
         ...url,
