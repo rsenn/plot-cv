@@ -9,6 +9,7 @@ import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from './lib/filesystem.js';
+import { escape } from './lib/misc.js';
 import * as net from 'net';
 import { Socket } from './quickjs/qjs-ffi/lib/socket.js';
 import { EventEmitter } from './lib/events.js';
@@ -20,38 +21,7 @@ import rpc from './quickjs/qjs-net/rpc.js';
 import * as rpc2 from './quickjs/qjs-net/rpc.js';
 
 globalThis.fs = fs;
-
-/*function ReadJSON(filename) {
-  let data = fs.readFileSync(filename, 'utf-8');
-
-  if(data) console.debug(`${data.length} bytes read from '${filename}'`);
-  return data ? JSON.parse(data) : null;
-}
-
-function WriteFile(name, data, verbose = true) {
-  if(Util.isGenerator(data)) {
-    let fd = fs.openSync(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, 0x1a4);
-    let r = 0;
-    for(let item of data) {
-      r += fs.writeSync(fd, toArrayBuffer(item + ''));
-    }
-    fs.closeSync(fd);
-    let stat = fs.statSync(name);
-    return stat?.size;
-  }
-  if(Util.isIterator(data)) data = [...data];
-  if(Array.isArray(data)) data = data.join('\n');
-
-  if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
-  let ret = fs.writeFileSync(name, data);
-
-  if(verbose) console.log(`Wrote ${name}: ${ret} bytes`);
-}
-
-function WriteJSON(name, data) {
-  WriteFile(name, JSON.stringify(data, null, 2));
-}*/
-
+ 
 function main(...args) {
   const base = path.basename(Util.getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
   const config = ReadJSON(`.${base}-config`) ?? {};
@@ -122,7 +92,9 @@ function main(...args) {
     std.exit(0);
   };
 
-  console.log = repl.printFunction(log);
+  repl.inspectOptions= { ...(repl.inspectOptions ?? console.options), depth: 4, compact: false };
+
+  console.log = (...args) => repl.printStatus(() => log(console.config(repl.inspectOptions), ...args));
 
   let cli = (globalThis.sock = new rpc.Socket(
     `${address}:${port}`,
@@ -131,16 +103,24 @@ function main(...args) {
   ));
 
   cli.register({ Socket, Worker: os.Worker, Repeater, REPL, EventEmitter });
-  let logFile = std.open('test-rpc.log', 'w+');
+  let logFile =
+    {
+      puts(s) {
+        repl.printStatus(() => std.puts(s));
+      }
+    } ?? std.open('test-rpc.log', 'w+');
 
   let connections = new Set();
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
-    //console.log('createWS', { url, callbacks, listen });
+ console.log('createWS', { url, callbacks, listen });
     const out = s => logFile.puts(s + '\n');
     net.setLog(
       (params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
       (level, message) => {
         //repl.printStatus(...args);
+        if(/__lws/.test(message))
+          return;
+        //
         if(params.debug)
           out(
             (
@@ -158,7 +138,7 @@ function main(...args) {
                 'MINNET',
                 'THREAD'
               ][Math.log2(level)] ?? level + ''
-            ).padEnd(8) + message
+            ).padEnd(8) + message.replace(/\n/g, '\\n')
           );
       }
     );
@@ -196,61 +176,57 @@ function main(...args) {
       mounts: [
         ['/', '.', 'debugger.html'],
         function proxy(req, res) {
+          console.log('proxy', { req,res});
           const { url, method, headers } = req;
+          console.log('proxy', { url, method, headers });
           const { status, ok, type } = res;
 
-          console.log('proxy', { url, method, headers }, { status, ok, url, type });
+          console.log('proxy', { status, ok, url, type });
         },
 
         function* config(req, res) {
+          const { body, headers } = req;
           console.log('/config', { req, res });
+          console.log('*config', { body, headers });
           yield '{}';
         },
         function* files(req, resp) {
           const { body, headers } = req;
           const { 'content-type': content_type } = headers;
+          console.log('*files', { body });
           const data = JSON.parse(body);
-
           resp.type = 'application/json';
-
-          //console.log('\x1b[38;5;215m*files\x1b[0m', { headers, data, req, resp });
           let {
             dir = 'tmp',
             filter = '.(brd|sch|G[A-Z][A-Z])$',
             verbose = false,
             objects = false,
-            key = 'mtime'
+            key = 'mtime',
+            limit = null
           } = data;
           let absdir = path.realpath(dir);
-
           let components = absdir.split(path.sep);
-
           if(components.length && components[0] === '') components.shift();
-
           if(components.length < 2 || components[0] != 'home') throw new Error(`Access error`);
-
           console.log('\x1b[38;5;215m*files\x1b[0m', { dir, components, absdir });
-
-          //          if(fs.existsSync(dir)) dir = path.realpath(dir);
-
-          console.log('\x1b[38;5;215m*files\x1b[0m', { absdir });
-
+          console.log('\x1b[38;5;215m*files\x1b[0m', { absdir, filter });
           let names = fs.readdirSync(absdir) ?? [];
-          //console.log('\x1b[38;5;215m*files\x1b[0m', { dir, names });
           if(filter) {
             const re = new RegExp(filter, 'gi');
             names = names.filter(name => re.test(name));
           }
-
+          console.log('\x1b[38;5;215m*files\x1b[0m', { names });
+          if(limit) {
+            let [offset = 0] = limit;
+            let [, length = names.length - start] = limit;
+            names = names.slice(offset, offset + length);
+          }
           let entries = names.map(file => [file, fs.statSync(`${dir}/${file}`)]);
-
           entries = entries.reduce((acc, [file, st]) => {
             let name = file + (st.isDirectory() ? '/' : '');
-
             let obj = {
               name
             };
-
             acc.push([
               name,
               Object.assign(obj, {
@@ -262,7 +238,7 @@ function main(...args) {
             ]);
             return acc;
           }, []);
-
+          console.log('\x1b[38;5;215m*files\x1b[0m', console.config({ depth: 3 }), { entries });
           let cmp = {
             string(a, b) {
               return b[1][key].localeCompare(a[1][key]);
@@ -271,12 +247,9 @@ function main(...args) {
               return b[1][key] - a[1][key];
             }
           }[typeof entries[0][1][key]];
-
           entries = entries.sort(cmp);
-
-          console.log('\x1b[38;5;215m*files\x1b[0m', { entries });
           names = entries.map(([name, obj]) => (objects ? obj : name));
-
+          console.log('\x1b[38;5;215m*files\x1b[0m', console.config({ compact: false }), { names });
           yield JSON.stringify(...[names, ...(verbose ? [null, 2] : [])]);
         }
       ],
