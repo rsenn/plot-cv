@@ -29,8 +29,7 @@ while [ $# -gt 0 ]; do
   case "$1" in
     -mindepth|-maxdepth) LEADING_OPTS="${LEADING_OPTS:+$LEADING_OPTS$NL}${1}$NL${2}"
       shift ;;
-    -name|-iname) OPTS="${OPTS:+$OPTS$NL}${1/name/wholename}$NL$2/CMakeLists.txt"
-      shift ;;
+    #-name|-iname) OPTS="${OPTS:+$OPTS$NL}${1/name/wholename}$NL$2/CMakeLists.txt"; shift ;;
     *) OPTS="${OPTS:+$OPTS$NL}$1" ;;
   esac
     shift

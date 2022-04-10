@@ -112,7 +112,9 @@ function main(...args) {
 
   let connections = new Set();
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
+ 
  console.log('createWS', { url, callbacks, listen });
+ 
     const out = s => logFile.puts(s + '\n');
     net.setLog(
       (params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
