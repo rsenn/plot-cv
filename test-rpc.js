@@ -251,7 +251,7 @@ function main(...args) {
             entries = entries.sort(cmp);
           }
           names = entries.map(([name, obj]) => (objects ? obj : name));
-          console.log('\x1b[38;5;215m*files\x1b[0m',     names  );
+          console.log('\x1b[38;5;215m*files\x1b[0m', names);
           yield JSON.stringify(...[names, ...(verbose ? [null, 2] : [])]);
         }
       ],
