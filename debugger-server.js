@@ -153,8 +153,14 @@ function main(...args) {
         ],
         mounts: [
           ['/proxy', 'ipv4:127.0.0.1', null, 'proxy-ws-raw-ws'],
-          ['/lws', 'https://www.google.ch/',null,'defprot'],
-          ['/', '.', 'debugger.html']
+          ['/lws', 'https://www.google.ch/',null,''],
+          ['/', '.', 'debugger.html'],
+            function* config(req, res) {
+          const { body, headers } = req;
+          console.log('/config', { req, res });
+          console.log('*config', { body, headers });
+          yield '{}';
+        },
         ],
         ...url,
         ...callbacks,
