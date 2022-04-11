@@ -153,14 +153,22 @@ function main(...args) {
         ],
         mounts: [
           ['/proxy', 'ipv4:127.0.0.1', null, 'proxy-ws-raw-ws'],
-          ['/lws', 'https://www.google.ch/',null,''],
+          ['/lws', 'https://www.google.ch/', null, ''],
           ['/', '.', 'debugger.html'],
-            function* config(req, res) {
-          const { body, headers } = req;
-          console.log('/config', { req, res });
-          console.log('*config', { body, headers });
-          yield '{}';
-        },
+          function* config(req, res) {
+            const { body, headers } = req;
+            console.log('/config', { req, res });
+            console.log('*config', { body, headers });
+            yield '{}';
+          },
+          function* files(req, res) {
+            const { body, headers } = req;
+            yield fs
+              .readdirSync('.')
+              .sort()
+              .map(f => f + '\n')
+              .join('');
+          }
         ],
         ...url,
         ...callbacks,
@@ -199,7 +207,7 @@ function main(...args) {
         },
         onMessage(ws, data) {
           console.log('onMessage', ws, data);
-         // showSessions();
+          // showSessions();
 
           handleCommand(ws, data);
 
