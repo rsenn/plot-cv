@@ -10,7 +10,7 @@ import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from 'fs';
-import { setLog, logLevels, getSessions, LLL_USER, LLL_NOTICE, LLL_WARN, client, server } from 'net';
+import { setLog, logLevels, getSessions, LLL_USER, LLL_INFO, LLL_NOTICE, LLL_WARN, client, server } from 'net';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 import { StartDebugger, ConnectDebugger } from './debugger.js';
 import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
@@ -71,6 +71,7 @@ function main(...args) {
       quiet: [false, null, 'q'],
       'ssl-cert': [true, null],
       'ssl-private-key': [true, null],
+      'ssl-ca': [true, null],
       '@': 'address,port'
     },
     args
@@ -81,6 +82,7 @@ function main(...args) {
     port = 8999,
     'ssl-cert': sslCert = 'localhost.crt',
     'ssl-private-key': sslPrivateKey = 'localhost.key',
+    'ssl-ca': sslCA = '/etc/ssl/certs/ca-certificates.crt',
     quiet = false,
     debug = false,
     tls = true
@@ -103,7 +105,7 @@ function main(...args) {
     console.log('createWS', { url, callbacks, listen });
 
     setLog(
-      quiet ? 0 : (debug ? LLL_USER : 0) | (((debug ? LLL_NOTICE : LLL_WARN) << 1) - 1),
+      quiet ? 0 : (debug ? LLL_USER : 0) | (((debug ? LLL_INFO : LLL_WARN) << 1) - 1),
       quiet
         ? () => {}
         : (level, str) => {
@@ -123,7 +125,7 @@ function main(...args) {
       (options = {
         tls: params.tls,
         sslCert,
-        sslPrivateKey,
+        sslPrivateKey,sslCA,
         mimetypes: [
           ['.svgz', 'application/gzip'],
           ['.mjs', 'application/javascript'],
@@ -152,7 +154,7 @@ function main(...args) {
           ['.sh', 'text/x-shellscript']
         ],
         mounts: [
-          ['/proxy', 'ipv4:127.0.0.1', null, 'proxy-ws-raw-ws'],
+          ['/proxy', 'ipv4:127.0.0.1:22', null, 'proxy-ws-raw-ws'],
           ['/lws', 'https://www.google.ch/', null, ''],
           ['/', '.', 'debugger.html'],
           function* config(req, res) {
