@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Lexer, Token } from 'lexer';
 import { Console } from 'console';
-import JSLexer from './quickjs/qjs-modules/lib/jslexer.js';
+import JSLexer from './quickjs/qjs-modules/lib/lexer/ecmascript.js';
 import { escape, toString, define, curry, unique, split, extendArray, camelize } from './lib/misc.js';
 
 let buffers = {},

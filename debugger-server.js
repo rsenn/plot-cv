@@ -105,14 +105,12 @@ function main(...args) {
     console.log('createWS', { url, callbacks, listen });
 
     setLog(
-      quiet ? 0 : (debug ? LLL_USER : 0) | (((debug ? LLL_INFO : LLL_WARN) << 1) - 1),
+      quiet ? 0 : LLL_USER | (((debug ? LLL_INFO : LLL_WARN) << 1) - 1),
       quiet
         ? () => {}
         : (level, str) => {
-            //if(level != LLL_USER && str.indexOf('\x1b') == -1 && /(lws_|^\s\+\+|^(\s+[a-z0-9_]+\s=|\s*[a-z0-9_]+:)\s)/.test(str)) return;
-            //if(/WSI_(DESTROY|CREATE)|FILTER_NETWORK_CONNECTION/.test(str)) return;
             if(/BIND_PROTOCOL|DROP_PROTOCOL|CHECK_ACCESS_RIGHTS|ADD_HEADERS/.test(str)) return;
-            if(debug) console.log(logLevels[level].padEnd(10), str.trim());
+            console.log(logLevels[level].padEnd(10), str.trim());
           }
     );
 
@@ -125,7 +123,8 @@ function main(...args) {
       (options = {
         tls: params.tls,
         sslCert,
-        sslPrivateKey,sslCA,
+        sslPrivateKey,
+        sslCA,
         mimetypes: [
           ['.svgz', 'application/gzip'],
           ['.mjs', 'application/javascript'],
@@ -202,10 +201,36 @@ function main(...args) {
         onError(ws) {
           console.log('onError', ws);
         },
-        onHttp(req, rsp) {
-          const { url, method, headers } = req;
-          console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', rsp, '\n]');
-          return rsp;
+        onHttp(req, resp) {
+          const { method, headers } = req;
+          console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
+          const { body, url } = resp;
+          console.log('\x1b[38;5;33monHttp\x1b[0m', { body });
+
+          const file = url.path.slice(1);
+          const dir = file.replace(/\/[^\/]*$/g, '');
+
+          if(file.endsWith('.js')) {
+                      console.log('onHttp', { file,dir});
+    const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
+
+            resp.body = body.replaceAll(re, (match, p1,p0,  p2, p3, offset) => {
+
+              if(!/[\/\.]/.test(p2)) {
+let fname = `${p2}.js`;
+
+if(!fs.existsSync(dir+'/'+fname))
+return  `/* ${match} */`;
+
+                match = [p1, './'+fname, p3].join('');
+
+              console.log('args', { match, p1, p2, p3, offset });
+            }
+              return match;
+            });
+          }
+
+          return resp;
         },
         onMessage(ws, data) {
           console.log('onMessage', ws, data);
