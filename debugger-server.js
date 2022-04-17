@@ -211,21 +211,19 @@ function main(...args) {
           const dir = file.replace(/\/[^\/]*$/g, '');
 
           if(file.endsWith('.js')) {
-                      console.log('onHttp', { file,dir});
-    const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
+            console.log('onHttp', { file, dir });
+            const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
 
-            resp.body = body.replaceAll(re, (match, p1,p0,  p2, p3, offset) => {
-
+            resp.body = body.replaceAll(re, (match, p1, p0, p2, p3, offset) => {
               if(!/[\/\.]/.test(p2)) {
-let fname = `${p2}.js`;
+                let fname = `${p2}.js`;
 
-if(!fs.existsSync(dir+'/'+fname))
-return  `/* ${match} */`;
+                if(!fs.existsSync(dir + '/' + fname)) return `/* ${match} */`;
 
-                match = [p1, './'+fname, p3].join('');
+                match = [p1, './' + fname, p3].join('');
 
-              console.log('args', { match, p1, p2, p3, offset });
-            }
+                console.log('args', { match, p1, p2, p3, offset });
+              }
               return match;
             });
           }
