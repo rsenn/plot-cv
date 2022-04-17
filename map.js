@@ -14,13 +14,13 @@ var lonLat = new OpenLayers.LonLat(9.5788, 48.9773).transform(
 var zoom = 11;
 map.setCenter(lonLat, zoom);
 */
-import Map from './openlayers/src/ol/Map.js';
+/*import Map from './openlayers/src/ol/Map.js';
 import View from './openlayers/src/ol/View.js';
 import TileLayer from './openlayers/src/ol/layer/Tile.js';
-import XYZ from './openlayers/src/ol/source/XYZ.js';
+import XYZ from './openlayers/src/ol/source/XYZ.js';*/
 
 new Map({
-  target: 'map',
+  target: 'mapdiv',
   layers: [
     new TileLayer({
       source: new XYZ({
