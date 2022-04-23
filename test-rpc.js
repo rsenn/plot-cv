@@ -40,18 +40,13 @@ function main(...args) {
       port: [true, null, 'p'],
       'ssl-cert': [true, null],
       'ssl-private-key': [true, null],
-      '@': 'address,port'
+      '@': 'address,port',
     },
     args
   );
-  if(params['no-tls'] === true) params.tls = false;
+  if (params['no-tls'] === true) params.tls = false;
   //console.log('params', params);
-  const {
-    address = '0.0.0.0',
-    port = 8999,
-    'ssl-cert': sslCert = 'localhost.crt',
-    'ssl-private-key': sslPrivateKey = 'localhost.key'
-  } = params;
+  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key' } = params;
   const listen = params.connect && !params.listen ? false : true;
   const server = !params.client || params.server;
   Object.assign(globalThis, { ...rpc2, rpc });
@@ -72,15 +67,15 @@ function main(...args) {
       console.log('args', args);
       try {
         return require(module);
-      } catch(e) {}
-      import(module).then(m => (globalThis[module] = m));
+      } catch (e) {}
+      import(module).then((m) => (globalThis[module] = m));
     },
-    'import module'
+    'import module',
   ];
 
   //repl.help = () => {};
   let { log } = console;
-  repl.show = arg => std.puts((typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options)) + '\n');
+  repl.show = (arg) => std.puts((typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options)) + '\n');
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();
@@ -96,52 +91,27 @@ function main(...args) {
 
   console.log = (...args) => repl.printStatus(() => log(console.config(repl.inspectOptions), ...args));
 
-  let cli = (globalThis.sock = new rpc.Socket(
-    `${address}:${port}`,
-    rpc[`RPC${server ? 'Server' : 'Client'}Connection`],
-    +params.verbose
-  ));
+  let cli = (globalThis.sock = new rpc.Socket(`${address}:${port}`, rpc[`RPC${server ? 'Server' : 'Client'}Connection`], +params.verbose));
 
   cli.register({ Socket, Worker: os.Worker, Repeater, REPL, EventEmitter });
   let logFile =
     {
       puts(s) {
         repl.printStatus(() => std.puts(s));
-      }
+      },
     } ?? std.open('test-rpc.log', 'w+');
 
   let connections = new Set();
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     console.log('createWS', { url, callbacks, listen });
 
-    const out = s => logFile.puts(s + '\n');
-    net.setLog(
-      (params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
-      (level, message) => {
-        //repl.printStatus(...args);
-        if(/__lws/.test(message)) return;
-        //
-        if(params.debug)
-          out(
-            (
-              [
-                'ERR',
-                'WARN',
-                'NOTICE',
-                'INFO',
-                'DEBUG',
-                'PARSER',
-                'HEADER',
-                'EXT',
-                'CLIENT',
-                'LATENCY',
-                'MINNET',
-                'THREAD'
-              ][Math.log2(level)] ?? level + ''
-            ).padEnd(8) + message.replace(/\n/g, '\\n')
-          );
-      }
-    );
+    const out = (s) => logFile.puts(s + '\n');
+    net.setLog((params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1), (level, message) => {
+      //repl.printStatus(...args);
+      if (/__lws/.test(message)) return;
+      //
+      if (params.debug) out((['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8) + message.replace(/\n/g, '\\n'));
+    });
 
     return [net.client, net.server][+listen]({
       tls: params.tls,
@@ -171,7 +141,7 @@ function main(...args) {
         ['.bat', 'text/x-msdos-batch'],
         ['.mm', 'text/x-objective-c'],
         ['.m', 'text/x-objective-c'],
-        ['.sh', 'text/x-shellscript']
+        ['.sh', 'text/x-shellscript'],
       ],
       mounts: [
         ['/', '.', 'debugger.html'],
@@ -196,36 +166,29 @@ function main(...args) {
           //console.log('*files', { body });
           const data = JSON.parse(body);
           resp.type = 'application/json';
-          let {
-            dir = '.' ?? 'tmp',
-            filter = '.([ch]|js)$' ?? '.(brd|sch|G[A-Z][A-Z])$',
-            verbose = false,
-            objects = false,
-            key = 'mtime',
-            limit = null
-          } = data ?? {};
+          let { dir = '.' ?? 'tmp', filter = '.([ch]|js)$' ?? '.(brd|sch|G[A-Z][A-Z])$', verbose = false, objects = false, key = 'mtime', limit = null } = data ?? {};
           let absdir = path.realpath(dir);
           let components = absdir.split(path.sep);
-          if(components.length && components[0] === '') components.shift();
-          if(components.length < 2 || components[0] != 'home') throw new Error(`Access error`);
+          if (components.length && components[0] === '') components.shift();
+          if (components.length < 2 || components[0] != 'home') throw new Error(`Access error`);
           //console.log('\x1b[38;5;215m*files\x1b[0m', { dir, components, absdir });
           //console.log('\x1b[38;5;215m*files\x1b[0m', { absdir, filter });
           let names = fs.readdirSync(absdir) ?? [];
           //console.log('\x1b[38;5;215m*files\x1b[0m', { names });
-          if(filter) {
+          if (filter) {
             const re = new RegExp(filter, 'gi');
-            names = names.filter(name => re.test(name));
+            names = names.filter((name) => re.test(name));
           }
-          if(limit) {
+          if (limit) {
             let [offset = 0] = limit;
             let [, length = names.length - start] = limit;
             names = names.slice(offset, offset + length);
           }
-          let entries = names.map(file => [file, fs.statSync(`${dir}/${file}`)]);
+          let entries = names.map((file) => [file, fs.statSync(`${dir}/${file}`)]);
           entries = entries.reduce((acc, [file, st]) => {
             let name = file + (st.isDirectory() ? '/' : '');
             let obj = {
-              name
+              name,
             };
             acc.push([
               name,
@@ -233,27 +196,27 @@ function main(...args) {
                 mtime: Util.toUnixTime(st.mtime),
                 time: Util.toUnixTime(st.ctime),
                 mode: `0${(st.mode & 0x09ff).toString(8)}`,
-                size: st.size
-              })
+                size: st.size,
+              }),
             ]);
             return acc;
           }, []);
           //console.log('\x1b[38;5;215m*files\x1b[0m', console.config({ depth: 3 }), { entries });
-          if(entries.length) {
+          if (entries.length) {
             let cmp = {
               string(a, b) {
                 return b[1][key].localeCompare(a[1][key]);
               },
               number(a, b) {
                 return b[1][key] - a[1][key];
-              }
+              },
             }[typeof entries[0][1][key]];
             entries = entries.sort(cmp);
           }
           names = entries.map(([name, obj]) => (objects ? obj : name));
           console.log('\x1b[38;5;215m*files\x1b[0m', names);
           yield JSON.stringify(...[names, ...(verbose ? [null, 2] : [])]);
-        }
+        },
       ],
       ...url,
 
@@ -269,10 +232,37 @@ function main(...args) {
 
         return callbacks.onClose(ws, req);
       },
-      onHttp(req, rsp) {
-        const { url, method, headers } = req;
-        console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', rsp, '\n]');
-        return rsp;
+      onHttp(req, resp) {
+        const { method, headers } = req;
+        console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
+        const { body, url } = resp;
+        console.log('\x1b[38;5;33monHttp\x1b[0m', { body });
+
+        const file = url.path.slice(1);
+        const dir = file.replace(/\/[^\/]*$/g, '');
+
+        if (file.endsWith('.txt')) {
+          resp.body = fs.readFileSync(file,'utf-8');
+
+      }  if (file.endsWith('.js')) {
+          console.log('onHttp', { file, dir });
+          const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
+
+          resp.body = body.replaceAll(re, (match, p1, p0, p2, p3, offset) => {
+            if (!/[\/\.]/.test(p2)) {
+              let fname = `${p2}.js`;
+
+              if (!fs.existsSync(dir + '/' + fname)) return `/* ${match} */`;
+
+              match = [p1, './' + fname, p3].join('');
+
+              console.log('args', { match, p1, p2, p3, offset });
+            }
+            return match;
+          });
+        }
+
+        return resp;
       },
       onMessage(ws, data) {
         console.log('onMessage', ws, data);
@@ -282,7 +272,7 @@ function main(...args) {
         //console.log('onFd',{fd,rd,wr});
         return callbacks.onFd(fd, rd, wr);
       },
-      ...(url && url.host ? url : {})
+      ...(url && url.host ? url : {}),
     });
   });
   globalThis[['connection', 'listener'][+listen]] = cli;
@@ -290,7 +280,7 @@ function main(...args) {
   define(globalThis, {
     get connections() {
       return [...connections];
-    }
+    },
   });
 
   Object.assign(globalThis, {
@@ -314,14 +304,14 @@ function main(...args) {
     ReadBJSON,
     WriteBJSON,
     parseDate,
-    dateToObject
+    dateToObject,
   });
 
   define(globalThis, listen ? { server: cli, cli } : { client: cli, cli });
   delete globalThis.DEBUG;
   //Object.defineProperty(globalThis, 'DEBUG', { get: DebugFlags });
 
-  if(listen) cli.listen(createWS, os);
+  if (listen) cli.listen(createWS, os);
   else cli.connect(createWS, os);
 
   function quit(why) {
@@ -337,7 +327,7 @@ function main(...args) {
 
 try {
   main(...scriptArgs.slice(1));
-} catch(error) {
+} catch (error) {
   console.log(`FAIL: ${error?.message ?? error}\n${error?.stack}`);
   1;
   std.exit(1);
