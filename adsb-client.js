@@ -13,6 +13,7 @@ const PutsFunction = outFn => str => {
   let b = toArrayBuffer(str);
   return outFn(b, b.byteLength);
 };
+
 const FileWriter = file => {
   let fd = os.open(file, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o644);
   return define(FdWriter(fd, file), {
