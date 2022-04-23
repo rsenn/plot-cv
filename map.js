@@ -25,8 +25,8 @@ import OSM from './openlayers/src/ol/source/OSM.js';
 import Projection from './openlayers/src/ol/proj/Projection.js';
 import { addCoordinateTransforms, addProjection, transform } from './openlayers/src/ol/proj.js';
 
-function Connection() {
-  let ws = globalThis.ws=new WebSocket('wss://transistorisiert.ch:8999/ws')
+function Connection(port=12001) {
+  let ws = globalThis.ws=new WebSocket('wss://transistorisiert.ch:'+port);
 ws.onerror = e => {
   console.log('ERROR:',e);
 }
