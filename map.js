@@ -25,6 +25,15 @@ import OSM from './openlayers/src/ol/source/OSM.js';
 import Projection from './openlayers/src/ol/proj/Projection.js';
 import { addCoordinateTransforms, addProjection, transform } from './openlayers/src/ol/proj.js';
 
+function Connection() {
+  let ws = globalThis.ws=new WebSocket('wss://transistorisiert.ch:8999/ws')
+ws.onerror = e => {
+  console.log('ERROR:',e);
+}
+  return ws;
+
+}
+
 function DailyPhase(t) {
   t -= t % (21600 * 1000);
   return Math.floor(t);
@@ -72,7 +81,7 @@ Object.assign(globalThis, {
     addCoordinateTransforms,
     addProjection,
     transform,
-  },
+  },Connection
 });
 
 let planes = (globalThis.planes = []);
