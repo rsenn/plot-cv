@@ -62,8 +62,8 @@ function StartWatch() {
       let new_offset = fs.sizeSync(watch_file);
       let size = new_offset - watch_offset;
       if(size) {
-        let data = globalThis.lastData = ReadRange(watch_file, watch_offset, size);
-        console.log('send',   data );
+        let data = (globalThis.lastData = ReadRange(watch_file, watch_offset, size));
+        console.log('send', data);
         sockets.forEach(ws => ws.send(data));
       }
       watch_offset = new_offset;
@@ -266,18 +266,19 @@ function main(...args) {
 
           ws.sendMessage = value => ws.send(JSON.stringify(value));
 
-          if(globalThis.lastData)
-            ws.sendMessage(globalThis.lastData);
+          if(globalThis.lastData) ws.sendMessage(globalThis.lastData);
         },
         onClose(ws) {
           console.log('onClose', ws);
-          dbg.close();
-
           protocol.delete(ws);
           sockets.delete(ws);
+
+          dbg.close();
         },
         onError(ws) {
           console.log('onError', ws);
+          protocol.delete(ws);
+          sockets.delete(ws);
         },
         onHttp(req, resp) {
           const { method, headers } = req;

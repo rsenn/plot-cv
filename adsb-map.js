@@ -1,4 +1,4 @@
-import Map from './openlayers/src/ol/Map.js';
+import OLMap from './openlayers/src/ol/Map.js';
 import View from './openlayers/src/ol/View.js';
 import TileLayer from './openlayers/src/ol/layer/Tile.js';
 import Layer from './openlayers/src/ol/layer/Layer.js';
@@ -27,6 +27,7 @@ import AnimSequence from './lib/anim-sequence.js';
 import extendArray from './quickjs/qjs-modules/lib/extendArray.js';
 
 import { quarterDay, Time, TimeToStr, FilenameToTime, NextFile, DailyPhase, PhaseFile, DateToUnix, CurrentFile } from './adsb-common.js';
+import { memoize } from './lib/misc.js';
 
 extendArray(Array.prototype);
 
@@ -48,10 +49,8 @@ function InsertSorted(entries, ...values) {
   let [key] = values[0];
   let at = entries.findIndex(([k, v]) => k > key);
 
-  if(at != -1)
-  entries.splice(at, 0, ...values);
-else
-  entries.push(...values);
+  if(at != -1) entries.splice(at, 0, ...values);
+  else entries.push(...values);
 }
 
 async function FetchFile(file, done = data => data) {
@@ -151,18 +150,18 @@ function Refresh() {
   source.clear();
   if(states.length) {
     const [time, list] = states.last;
-         console.log('refresh', list.length);
+    console.log('refresh', list.length);
 
-SetTime(time);
+    SetTime(time);
 
- for(let state of list) {
+    for(let state of list) {
       let obj = Aircraft.fromState(state);
       let style = Aircraft.style(obj.icao24);
 
       source.addFeature(obj);
     }
   }
- }
+}
 
 function Connection(port, onConnect = () => {}) {
   port ??= 12001;
@@ -215,7 +214,7 @@ function Connection(port, onConnect = () => {}) {
             data.length,
             ...arr.map(([time, states]) => ({ time, states /*: states.map(StateToObject)*/ }))
           );
-          if(arr[0]) InsertSorted(states,  ...arr);
+          if(arr[0]) InsertSorted(states, ...arr);
 
           console.log('data.length', data.length);
           Refresh();
@@ -251,8 +250,19 @@ function SetTime(t) {
   let str = TimeToStr(t);
 
   let disp = document.querySelector('.time-display');
+  let row = document.querySelector('.time-row');
 
-  disp.innerText = str.split(' ').join('\n');
+  disp.innerText = str.split(' ').join(' ');
+
+  row.style.setProperty('transition', '');
+  //row.style.setProperty('border', '2px dashed red');
+  row.style.setProperty('box-shadow', '0 0 4px red');
+  /* disp.style.setProperty('transition', 'all 1s ease-out');
+  disp.style.setProperty('border-bottom', 'none');*/
+  setTimeout(() => {
+    row.style.setProperty('transition', 'all 1s ease-in'); //row.style.setProperty('border', '2px dashed white');
+    row.style.setProperty('box-shadow', 'none');
+  }, 1000);
 }
 
 function FlyTo(location, done = () => {}) {
@@ -490,9 +500,7 @@ function CreateMap() {
     })
   });
 
-
-
-/*  tileLayer.on('postrender', function(event) {
+  /*  tileLayer.on('postrender', function(event) {
     const vectorContext = getVectorContext(event);
  
     console.log('tileLayer.postrender', event);
@@ -514,7 +522,7 @@ function CreateMap() {
   name: 'Fish.2 Island',
 });*/
 
-  let map = new Map({
+  let map = new OLMap({
     target: 'mapdiv',
     layers: [tileLayer, vector],
     view
@@ -554,12 +562,12 @@ xhr.send();*/
   svgContainer.style.height = height + 'px';
   svgContainer.style.transformOrigin = 'top left';
   svgContainer.className = 'svg-layer';
-console.log('svgResolution',svgResolution);
+  console.log('svgResolution', svgResolution);
   map.addLayer(
     new Layer({
       render(frameState) {
-   const scale = svgResolution / frameState.viewState.resolution;
-   const center = frameState.viewState.center;
+        const scale = svgResolution / frameState.viewState.resolution;
+        const center = frameState.viewState.center;
         const size = frameState.size;
         const cssTransform = composeCssTransform(
           size[0] / 2,
@@ -583,7 +591,7 @@ console.log('svgResolution',svgResolution);
 function CreateSlider() {
   let element = document.querySelector('.time-point');
   let scale = document.querySelector('.time-scale');
-    console.log('CreateSlider', element);
+  console.log('CreateSlider', element);
 
   let draggable = new PlainDraggable(element, {
     snap: 5,
@@ -692,8 +700,15 @@ window.addEventListener('load', () => {
     console.log('Connected');
     ws.sendCommand('StatePhases');
   });
-CreateSlider();
-SetTime(DateToUnix());
+  CreateSlider();
+  SetTime(DateToUnix());
+  if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    for(let q of ['#timeline', '.time-display' /*,'.time-scale','.time-row'*/]) {
+      let e = document.querySelector(q);
+      //e.style.setProperty('height', '2em');
+      e.style.setProperty('font-size', '2em');
+    }
+  }
 
   return;
 
@@ -762,7 +777,10 @@ class Plane extends Overlay {
   }
 }
 
+let aircraftMap = (globalThis.aircraftMap = new Map());
+
 class Aircraft extends Feature {
+  //static list = memoize(obj => new Aircraft(obj.icao24, [obj.longitude,obj.latitude], obj.true_track), aircraftMap);
   static style = name =>
     new Style({
       image: new Icon({
@@ -801,19 +819,30 @@ class Aircraft extends Feature {
       squawk,
       spi
     } = obj;
-    let aircraft = new Aircraft(icao24, [longitude, latitude], true_track);
-    aircraft.position = [longitude, latitude];
+
+    let aircraft;
+
+    if((aircraft = aircraftMap.get(obj.icao24))) {
+      aircraft.position = [longitude, latitude];
+    } else {
+      aircraft = new Aircraft(icao24, [longitude, latitude], true_track);
+      aircraftMap.set(icao24, aircraft);
+    }
 
     aircraft.setId(icao24);
 
     return aircraft;
   }
 
-  constructor(name, coord,heading = 0) {
+  constructor(name, coord, heading = 0) {
     if(!(coord instanceof Coordinate)) coord = new Coordinate(...coord);
 
     super({ geometry: new Point(coord), name });
 
+    let scale = 0.8;
+    if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      scale = 2;
+    }
 
     this.setStyle(
       new Style({
@@ -822,8 +851,8 @@ class Aircraft extends Feature {
           size: [100, 100],
           offset: [0, 0],
           opacity: 1,
-          scale: 0.8,
-          rotation: (heading*Math.PI)/180
+          scale,
+          rotation: (heading * Math.PI) / 180
         })
       })
     );
