@@ -58,12 +58,12 @@ function StartWatch() {
 
     os.setReadHandler(inotify_fd, () => {
       let ret = os.read(inotify_fd, buf, 0, buf.byteLength);
-      console.log('inotify', { ret, ev });
+      //console.log('inotify', { ret, ev });
       let new_offset = fs.sizeSync(watch_file);
       let size = new_offset - watch_offset;
       if(size) {
-        let data = ReadRange(watch_file, watch_offset, size);
-        console.log('watch', { data });
+        let data = globalThis.lastData = ReadRange(watch_file, watch_offset, size);
+        console.log('send',   data );
         sockets.forEach(ws => ws.send(data));
       }
       watch_offset = new_offset;
@@ -265,6 +265,9 @@ function main(...args) {
           sockets.add(ws);
 
           ws.sendMessage = value => ws.send(JSON.stringify(value));
+
+          if(globalThis.lastData)
+            ws.sendMessage(globalThis.lastData);
         },
         onClose(ws) {
           console.log('onClose', ws);

@@ -48,7 +48,10 @@ function InsertSorted(entries, ...values) {
   let [key] = values[0];
   let at = entries.findIndex(([k, v]) => k > key);
 
+  if(at != -1)
   entries.splice(at, 0, ...values);
+else
+  entries.push(...values);
 }
 
 async function FetchFile(file, done = data => data) {
@@ -110,9 +113,9 @@ Coordinate.prototype.slice = Array.prototype.slice;
 
 const cities = {
   bern: new Coordinate(7.4458, 46.95),
-  zürich: new Coordinate(8.545094, 47.373878),
+  zuerich: new Coordinate(8.545094, 47.373878),
   winterthur: new Coordinate(8.729869, 47.500954),
-  genève: new Coordinate(6.143158, 46.204391),
+  genf: new Coordinate(6.143158, 46.204391),
   zug: new Coordinate(8.515495, 47.166168),
   basel: new Coordinate(7.588576, 47.559601),
   winterthur: new Coordinate(8.737565, 47.49995)
@@ -148,16 +151,18 @@ function Refresh() {
   source.clear();
   if(states.length) {
     const [time, list] = states.last;
-    for(let state of list) {
+         console.log('refresh', list.length);
+
+SetTime(time);
+
+ for(let state of list) {
       let obj = Aircraft.fromState(state);
       let style = Aircraft.style(obj.icao24);
-      console.log('obj', { obj, style });
 
       source.addFeature(obj);
     }
   }
-  // vectorContext.drawFeature(feature2, iconStyle);
-}
+ }
 
 function Connection(port, onConnect = () => {}) {
   port ??= 12001;
@@ -210,7 +215,7 @@ function Connection(port, onConnect = () => {}) {
             data.length,
             ...arr.map(([time, states]) => ({ time, states /*: states.map(StateToObject)*/ }))
           );
-          if(arr[0]) InsertSorted(states, arr[0][0], ...arr);
+          if(arr[0]) InsertSorted(states,  ...arr);
 
           console.log('data.length', data.length);
           Refresh();
@@ -294,13 +299,6 @@ onClick('fly-to-bern', function() {
 });
 */
 const styles = [
-  /* We are using two different styles for the polygons:
-   *  - The first style is for the polygons themselves.
-   *  - The second style is to draw the vertices of the polygons.
-   *    In a custom `geometry` function the vertices of a polygon are
-   *    returned as `MultiPoint` geometry, which will be used to render
-   *    the style.
-   */
   new Style({
     stroke: new Stroke({
       color: 'blue',
@@ -414,7 +412,7 @@ const geojsonObject = {
 };
 
 const source = (globalThis.source = new VectorSource({
-  features: new GeoJSON().readFeatures(geojsonObject)
+  features: [] // new GeoJSON().readFeatures(geojsonObject)
 }));
 
 const vectorLayer = new VectorLayer({
@@ -585,6 +583,7 @@ console.log('svgResolution',svgResolution);
 function CreateSlider() {
   let element = document.querySelector('.time-point');
   let scale = document.querySelector('.time-scale');
+    console.log('CreateSlider', element);
 
   let draggable = new PlainDraggable(element, {
     snap: 5,
@@ -687,14 +686,14 @@ function StateToObject(item) {
 }
 
 CreateMap();
-CreateSlider();
-SetTime(DateToUnix());
 
 window.addEventListener('load', () => {
   ws = Connection(null, ws => {
     console.log('Connected');
     ws.sendCommand('StatePhases');
   });
+CreateSlider();
+SetTime(DateToUnix());
 
   return;
 
@@ -804,6 +803,9 @@ class Aircraft extends Feature {
     } = obj;
     let aircraft = new Aircraft(icao24, [longitude, latitude], true_track);
     aircraft.position = [longitude, latitude];
+
+    aircraft.setId(icao24);
+
     return aircraft;
   }
 
@@ -812,6 +814,7 @@ class Aircraft extends Feature {
 
     super({ geometry: new Point(coord), name });
 
+
     this.setStyle(
       new Style({
         image: new Icon({
@@ -819,7 +822,7 @@ class Aircraft extends Feature {
           size: [100, 100],
           offset: [0, 0],
           opacity: 1,
-          scale: 0.5,
+          scale: 0.8,
           rotation: (heading*Math.PI)/180
         })
       })

@@ -35,10 +35,15 @@
     "sourceType": "module"
   },
   "dependencies": {
+    "@babel/runtime": "^7.17.9",
+    "@babel/runtime-corejs3": "^7.17.9",
     "@s-ui/lint": "^3.43.0",
+    "babel-loader": "^8.2.5",
+    "babel-preset-env": "^1.7.0",
     "body-parser": "^1.19.0",
     "bpg-decoder": "^0.0.7",
     "bpg-stream": "^0.0.2",
+    "core-js": "^3.22.2",
     "express": "^4.17.1",
     "express-ws": "^4.0.0",
     "htm": "^3.1.0",
@@ -52,6 +57,7 @@
     "preact-render-to-string": "^5.1.19",
     "preact-ssr-prepass": "^1",
     "promisify-child-process": "^4.1.1",
+    "regenerator-runtime": "^0.13.9",
     "serialport": "^9.0.1",
     "ws": "^7.3.1"
   },
@@ -88,26 +94,29 @@
   },
   "description": "",
   "devDependencies": {
-    "@babel/cli": "^7",
-    "@babel/core": "^7",
-    "@babel/node": "^7",
-    "@babel/plugin-proposal-class-properties": "^7",
-    "@babel/plugin-proposal-decorators": "^7",
-    "@babel/plugin-proposal-export-default-from": "^7",
-    "@babel/plugin-syntax-jsx": "^7",
-    "@babel/plugin-transform-modules-commonjs": "^7",
-    "@babel/plugin-transform-react-jsx": "^7",
+    "@babel/core": "^7.0.0-0",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/plugin-syntax-class-properties": "^7.2.0",
+    "@babel/plugin-transform-runtime": "^7.17.0",
+    "@babel/polyfill": "^7.4.4",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-react": "^7.0.0",
     "acorn": "^8.1.1",
     "ansi-colors": "^4.1.1",
     "ansi-escapes": "^4.3.1",
     "astring": "^1.7.4",
+    "babel-eslint": "^10.0.1",
     "babel-node": "^0.0.1-security",
     "babel-plugin-transform-commonjs": "^1.1.6",
     "babel-preset-preact": "^2.0.0",
+    "eslint": "^8.14.0",
     "free-proxy": "^0.2.0",
     "http": "0.0.0",
     "proxy-lists": "https://github.com/chill117/proxy-lists",
-    "proxynova": "^0.1.0"
+    "proxynova": "^0.1.0",
+    "webpack": "^5.72.0",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.8.1"
   },
   "engines": {
     "node": ">= 14"
@@ -132,7 +141,7 @@
   "name": "plot-cv",
   "prettier": "./node_modules/@s-ui/lint/.prettierrc.js",
   "scripts": {
-    "build": "next build",
+    "build": "webpack --config webpack.config.js",
     "deploy": "now --target production",
     "lint": "eslint . --ext .js --ext .jsx --ignore-path .eslintignore --fix",
     "now-build": "next build",
@@ -142,7 +151,6 @@
   "stylelint": {
     "extends": "./node_modules/@s-ui/lint/stylelint.config.js"
   },
-  "type": "module",
   "userscript": {
     "dev": "./tmp",
     "entry": "./userscript-test.js",
