@@ -9,6 +9,7 @@ export function Time(t, offset = 0) {
 }
 
 export function TimeToStr(t, offset = 0) {
+  t ??= DateToUnix();
   if(typeof t == 'object' && t != null) {
     if(!(t instanceof Date)) {
       let obj = {};
@@ -27,10 +28,10 @@ export function TimeToStr(t, offset = 0) {
   return dt.toLocaleDateString(localeStr) + ' ' + dt.toLocaleTimeString(localeStr);
 }
 
-export function FilenameToTime(str) {
-  let quarter = str.replace(/\d\d\d\d-\d+-\d+-/, '').replace(/\.txt$/, '') - 1;
-  str = str.replace(/-\d\.txt$/, '');
-  return Math.floor(new Date(str) * 1e-3) + quarter * quarterDay;
+export function FilenameToTime(file) {
+  let quarter = file.replace(/\d\d\d\d-\d+-\d+-/, '').replace(/\.txt$/, '') - 1;
+  file = file.replace(/-\d\.txt$/, '');
+  return Math.floor(new Date(file) * 1e-3) + quarter * quarterDay;
 }
 
 export function DateToUnix(dt = new Date()) {
@@ -43,11 +44,12 @@ export function NextFile(filename) {
   return PhaseFile(t);
 }
 
-export function CurrentFile(filename) {
+export function CurrentFile() {
   return PhaseFile(DateToUnix());
 }
 
 export function DailyPhase(t) {
+  t ??= DateToUnix();
   t -= t % quarterDay;
   return Math.floor(t);
 }
@@ -58,29 +60,4 @@ export function PhaseFile(t = DateToUnix()) {
   let phaseStr = Math.floor((date / (quarterDay * 1000)) % 4) + 1 + '';
   let file = str + '-' + phaseStr + '.txt';
   return file;
-}
-
-export function TransformCoordinates(...args) {
-  if(args.length == 2) return transform(args, 'EPSG:4326', 'EPSG:3857');
-  if(args.length == 4) {
-    let extent = [args.splice(0, 2), args.splice(0, 2)];
-    return extent.reduce((acc, coord) => acc.concat(TransformCoordinates(...coord)), []);
-  }
-
-  //return [...TransformCoordinates(args.slice(0,2)), ...TransformCoordinates(args.slice(2,4))];
-  if(typeof args[0] == 'string') return TransformCoordinates(args[0].split(',').map(n => +n));
-}
-
-export class Coordinate {
-  constructor(lon, lat) {
-    this.lon = lon;
-    this.lat = lat;
-    return new Proxy(this, {
-      get(target, prop, receiver) {
-        if(prop == '0' || prop == '1') return TransformCoordinates(target.lon, target.lat)[+prop];
-
-        return Reflect.get(target, prop, receiver);
-      }
-    });
-  }
 }

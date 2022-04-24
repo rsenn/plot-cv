@@ -2,9 +2,10 @@ import * as std from 'std';
 import * as os from 'os';
 import { memoize, glob } from 'util';
 import * as fs from 'fs';
-import { TimeToStr, NextFile, PhaseFile, CurrentFile } from './adsb-common.js';
+import { quarterDay, localeStr, Time, TimeToStr, FilenameToTime, DateToUnix, NextFile, CurrentFile, DailyPhase, PhaseFile } from './adsb-common.js';
 
-export function TimesForStates(file) {
+export function TimesForPhase(file) {
+  file ??= CurrentFile();
   if(typeof file == 'number' || !/\.txt$/.test(file)) file = PhaseFile(+file);
   let f = std.open(file, 'r');
   if(!f) throw new Error(`Error opening '${file}'`);
@@ -19,7 +20,7 @@ export function TimesForStates(file) {
     let idx = line.indexOf(',');
     let timeStr = line.substring(8, idx);
     let item = [timeStr, null, prevOffset, offset - prevOffset];
-    console.log('TimesForStates', { index, line });
+    //console.log('TimesForPhase', { index, line });
     ret.push(item);
     if(ret.length) ret[index][1] = +timeStr - prevTime;
     prevTime = +timeStr;
@@ -39,17 +40,30 @@ export function ReadRange(file, offset, size) {
 }
 
 export function StateFiles() {
-  return glob(['[[:digit:]]'.repeat(4), '-', '[[:digit:]]'.repeat(2), '-', '[[:digit:]]', '.txt'].join(''));
+  const d = '[[:digit:]]';
+  return glob([d.repeat(4), '-', d.repeat(2), '-', d.repeat(2), '-', d, '.txt'].join('')).map(file => [
+    file,
+    fs.sizeSync(file)
+  ]);
 }
 
-export const timeStateMap = memoize(file => TimesForStates(file));
+export function StatePhases() {
+  let files = StateFiles();
+  return files.map(([file, size]) => FilenameToTime(file));
+}
+
+export const timeStateCache = new Map();
+export const timeStateMap = memoize(file => TimesForPhase(file), timeStateCache);
 
 export function GetStates(file) {
-  timeStateMap.cache.delete(CurrentFile());
+  file ??= CurrentFile();
+  timeStateCache.delete(CurrentFile());
   return timeStateMap(file);
 }
 
 export function GetNearestTime(t) {
+  t ??= DateToUnix();
+
   let file = PhaseFile(t);
   //console.log('GetNearestTime', { t, file });
 
@@ -69,7 +83,7 @@ export function GetNearestTime(t) {
     ++i;
   }
   nearest ??= prevTime;
-  console.log('GetNearestTime', TimeToStr({ t, nearest, diff: t - nearest }));
+  //console.log('GetNearestTime', TimeToStr({ t, nearest, diff: t - nearest }));
   return nearest;
 }
 
@@ -146,4 +160,29 @@ export function ResolveRange(start, end) {
   }
 
   return ranges;
+}
+
+export function GetTimes(start, count = 1) {
+  let times = [],
+    t = GetNearestTime(start);
+  let state,
+    i = 0,
+    file = PhaseFile(t),
+    states = GetStateArray(t),
+    index = GetStateIndex(t);
+
+  do {
+    if(!(state = states[index])) {
+      file = NextFile(file);
+      states = GetStateArray(file);
+      index = 0;
+      state = states[index];
+    }
+    times.push(+state[0]);
+    t += state[1];
+
+    ++index;
+  } while(++i < count);
+
+  return times;
 }

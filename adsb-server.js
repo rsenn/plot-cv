@@ -16,7 +16,7 @@ import { StartDebugger, ConnectDebugger } from './debugger.js';
 import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 import { quarterDay, Time, TimeToStr, FilenameToTime, NextFile, DailyPhase, PhaseFile, DateToUnix, CurrentFile } from './adsb-common.js';
-import { TimesForStates, ReadRange, StateFiles, StatePhases, GetStates, GetNearestTime, GetStateArray, GetStateIndex, DumpState, GetStateByTime, IsRange, GetRange, ResolveRange } from './adsb-store.js';
+import { GetTimes, TimesForPhase, ReadRange, StateFiles, StatePhases, GetStates, GetNearestTime, GetStateArray, GetStateIndex, DumpState, GetStateByTime, IsRange, GetRange, ResolveRange } from './adsb-store.js';
 import { LogWrap, VfnAdapter, VfnDecorator, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, GetProperties, GetKeys, MakeListCommand, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/rpc.js';
 
 extendArray(Array.prototype);
@@ -30,9 +30,11 @@ atexit(() => {
 });
 
 const commands = {
-  TimesForStates,
+  GetTimes,
+  TimesForPhase,
   ReadRange,
   StateFiles,
+  StatePhases,
   GetStates,
   GetNearestTime,
   GetStateArray,
@@ -41,7 +43,8 @@ const commands = {
   GetStateByTime,
   IsRange,
   GetRange,
-  ResolveRange
+  ResolveRange,
+  CurrentFile
 };
 
 let inotify_fd, watch_fd, watch_file;
@@ -296,29 +299,54 @@ function main(...args) {
           console.log('onMessage', ws, data);
           let response;
 
-          if(/^[A-Z]/.test(data)) {
-            let idx = data.indexOf(' ');
-            if(idx == -1) idx = data.length;
+          try {
+            let obj;
 
+<<<<<<< HEAD
             let cmd = data.substring(0, idx);
             let args = idx == data.length ? [] : data.substring(idx + 1).split(/\s+/g);
             console.log('onMessage', { cmd, args });
+=======
+            if(/^[A-Z]/.test(data)) {
+              let idx = data.indexOf(' ');
+              if(idx == -1) idx = data.length;
+>>>>>>> bb2565ec2c0280276022101d2498ad8b0a3be31b
 
-            if(commands[cmd]) {
-              let value = commands[cmd](...args);
-              let response = { type: cmd, value };
-              console.log('Sending response to ' + cmd + '()', response);
-              ws.sendMessage(response);
-              return;
+              let cmd = data.substring(0, idx);
+              let args = idx == data.length ? [] : data.substring(idx + 1).split(/\s+/g);
+
+              obj = { cmd, args };
+            } else if(data[0] == '{') {
+              obj = JSON.parse(data);
             }
-          }
 
+<<<<<<< HEAD
           if(data[0] == 'l') {
             ws.sendMessage({ type: 'list', times: StatePhases() });
             return;
           }
+=======
+            if(obj !== undefined) {
+              const { cmd, args } = obj;
+              console.log('onMessage', { cmd, args });
 
-          try {
+              if(commands[cmd]) {
+                let value = commands[cmd](...args);
+                let response = { type: cmd, value };
+                console.log('Sending response to ' + cmd + '()', response);
+                ws.sendMessage(response);
+                return;
+              } else {
+                throw new Error(`ERROR: Command not found: ${cmd}`);
+              }
+            }
+
+            if(data[0] == 'l') {
+              ws.sendMessage({ type: 'list', times: StateFiles().map(file => FilenameToTime(file)) });
+              return;
+            }
+>>>>>>> bb2565ec2c0280276022101d2498ad8b0a3be31b
+
             let matches = [...data.matchAll(/\d+(-\d+)?/g)].map(([m]) => m);
             let states = [];
             console.log('matches', matches);
