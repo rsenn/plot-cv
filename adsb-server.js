@@ -51,21 +51,22 @@ let inotify_fd, watch_fd, watch_file;
 
 function StartWatch() {
   if(inotify_fd == undefined) {
-    os.setReadHandler(inotify_fd, () => {
+  let ev = new Uint32Array(4);let     ret,
+    buf = ev.buffer;
+       inotify_fd = watch();
+os.setReadHandler(inotify_fd, () => {
       let ret = os.read(inotify_fd, buf, 0, buf.byteLength);
       console.log('ret', ret);
     });
-    inotify_fd ??= watch();
   }
 }
 
 function WatchFile(filename) {
-  let ev = new Uint32Array(4);
-  let wd,
-    ret,
-    buf = ev.buffer;
+   console.log('WatchFile', { filename });
+ let ev = new Uint32Array(4);
+  let wd;
 
-  if(watch_file == filename) return;
+  //if(watch_file == filename) return;
 
   if(typeof watch_fd == 'number') watch(inotify_fd, watch_fd);
 
@@ -76,6 +77,7 @@ function PeriodicCheck() {
   let file = CurrentFile();
   console.log('PeriodicCheck', { file });
 
+if(file != watch_file)
   WatchFile(file);
 
   os.setTimeout(PeriodicCheck, 10000);
