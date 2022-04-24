@@ -1,19 +1,3 @@
-/*map = new OpenLayers.Map('mapdiv');
-map.addLayer(new OpenLayers.Layer.OSM());
-
-var pois = new OpenLayers.Layer.Text('My Points', { location: './textfile.txt', projection: map.displayProjection });
-map.addLayer(pois);
-// create layer switcher widget in top right corner of map.
-var layer_switcher = new OpenLayers.Control.LayerSwitcher({});
-map.addControl(layer_switcher);
-//Set start centrepoint and zoom
-var lonLat = new OpenLayers.LonLat(9.5788, 48.9773).transform(
-  new OpenLayers.Projection('EPSG:4326'), // transform from WGS 1984
-  map.getProjectionObject() // to Spherical Mercator Projection
-);
-var zoom = 11;
-map.setCenter(lonLat, zoom);
-*/
 import Map from './openlayers/src/ol/Map.js';
 import View from './openlayers/src/ol/View.js';
 import TileLayer from './openlayers/src/ol/layer/Tile.js';
@@ -25,15 +9,29 @@ import OSM from './openlayers/src/ol/source/OSM.js';
 import Projection from './openlayers/src/ol/proj/Projection.js';
 import { addCoordinateTransforms, addProjection, transform } from './openlayers/src/ol/proj.js';
 
-function Connection(port=12001) {
-  let ws = globalThis.ws=new WebSocket('wss://transistorisiert.ch:'+port);
-ws.onerror = e => {
-  console.log('ERROR:',e);
-}
+function Connection(port = 12001) {
+  let ws = (globalThis.ws = new WebSocket('wss://transistorisiert.ch:' + port));
+  ws.onerror = e => {
+    console.log('ERROR:', e);
+  };
   return ws;
-
 }
 
+function Time(t, offset = 0) {
+  let dt = t ? new Date(t * 1e3) : new Date();
+  return Math.floor(+dt * 1e-3 + offset);
+}
+function TimeToStr(t, offset = 0) {
+  if(typeof t == 'object' && t != null && !(t instanceof Date)) {
+    let obj = {};
+    for(let [name, value] of Object.entries(t)) {
+      obj[name] = TimeToStr(value);
+    }
+    return obj;
+  }
+  let dt = new Date(Time(t, offset) * 1000);
+  return dt.toISOString();
+}
 function DailyPhase(t) {
   t -= t % (21600 * 1000);
   return Math.floor(t);
@@ -56,14 +54,14 @@ let map = (globalThis.map = new Map({
   layers: [
     new TileLayer({
       source: new XYZ({
-        url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      }),
-    }),
+        url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+      })
+    })
   ],
   view: new View({
     center,
-    zoom: 8,
-  }),
+    zoom: 8
+  })
 }));
 
 Object.assign(globalThis, {
@@ -80,44 +78,74 @@ Object.assign(globalThis, {
     Projection,
     addCoordinateTransforms,
     addProjection,
-    transform,
-  },Connection
+    transform
+  },
+  Connection,
+  Time,
+  TimeToStr
 });
 
 let planes = (globalThis.planes = []);
 let d = Date.parse('2022-04-19T14:59:00Z');
 let data;
-const keys = ['icao24', 'callsign', 'origin_country', 'time_position', 'last_contact', 'longitude', 'latitude', 'baro_altitude', 'on_ground', 'velocity', 'true_track', 'vertical_rate', 'sensors', 'geo_altitude', 'squawk', 'spi', 'position_source'];
+const keys = [
+  'icao24',
+  'callsign',
+  'origin_country',
+  'time_position',
+  'last_contact',
+  'longitude',
+  'latitude',
+  'baro_altitude',
+  'on_ground',
+  'velocity',
+  'true_track',
+  'vertical_rate',
+  'sensors',
+  'geo_altitude',
+  'squawk',
+  'spi',
+  'position_source'
+];
 
-window.addEventListener('load', () => {
-  let filename = PhaseFile(DailyPhase(d));
-  fetch(filename).then((response) => {
-    response.text().then((text) => {
-      data = globalThis.data = text
-        .split(/\n/g)
-        .map((line) => {
-          try {
-            let obj = JSON.parse(line);
-            obj.states = obj.states.map((item) => item.reduce((acc, field, i) => ({ ...acc, [keys[i]]: ['time_position', 'last_contact'].indexOf(keys[i]) != -1 ? new Date(field * 1000) : field }), {}));
-            obj.states.sort((a, b) => b.baro_altitude - a.baro_altitude);
+false &&
+  window.addEventListener('load', () => {
+    let filename = PhaseFile(DailyPhase(d));
+    fetch(filename).then(response => {
+      response.text().then(text => {
+        data = globalThis.data = text
+          .split(/\n/g)
+          .map(line => {
+            try {
+              let obj = JSON.parse(line);
+              obj.states = obj.states.map(item =>
+                item.reduce(
+                  (acc, field, i) => ({
+                    ...acc,
+                    [keys[i]]: ['time_position', 'last_contact'].indexOf(keys[i]) != -1 ? new Date(field * 1000) : field
+                  }),
+                  {}
+                )
+              );
+              obj.states.sort((a, b) => b.baro_altitude - a.baro_altitude);
 
-            return obj;
-          } catch (e) {
-            return null;
-          }
-        })
-        .filter((obj) => !!obj);
+              return obj;
+            } catch(e) {
+              return null;
+            }
+          })
+          .filter(obj => !!obj);
 
         data[0].states.forEach(state => new Plane(state));
 
-      console.log('text', text);
+        console.log('text', text);
+      });
     });
   });
-});
 
 class Plane extends Overlay {
   constructor(obj = {}) {
-    const { longitude, latitude }= obj;
+    const { longitude, latitude } = obj;
     obj = {
       ...obj,
       element: (() => {
@@ -132,7 +160,7 @@ class Plane extends Overlay {
       })(),
       position: transform([longitude, latitude], 'EPSG:4326', 'EPSG:3857'),
       //offset: [-24,-24],
-      positioning: 'center-center',
+      positioning: 'center-center'
     };
     super(obj);
     Object.assign(this, obj);
@@ -146,95 +174,3 @@ class Plane extends Overlay {
     element.firstElementChild.setAttributeNS(null, 'transform', `rotate(${deg})`);
   }
 }
-
-//new Plane();
-
-//Set start centrepoint and zoom
-/*var lonLat = new Point(7.454281, 46.964530 );
-var zoom = 11;
-console.log('map',map);
-map.setCenter(lonLat, zoom);*/
-//map.addLayer(new OSM());
-
-/*import GeoJSON from './openlayers/src/ol/format/GeoJSON.js';
-import Map from './openlayers/src/ol/Map.js';
-import View from './openlayers/src/ol/View.js';
-import {Circle as CircleStyle, Fill, Stroke, Style} from './openlayers/src/ol/style.js';
-import {OSM, Vector as VectorSource} from './openlayers/src/ol/source.js';
-import {Tile as TileLayer, Vector as VectorLayer} from './openlayers/src/ol/layer.js';
-
-const source = new VectorSource({
-  url: 'data/geojson/switzerland.geojson',
-  format: new GeoJSON(),
-});
-const style = new Style({
-  fill: new Fill({
-    color: 'rgba(255, 255, 255, 0.6)',
-  }),
-  stroke: new Stroke({
-    color: '#319FD3',
-    width: 1,
-  }),
-  image: new CircleStyle({
-    radius: 5,
-    fill: new Fill({
-      color: 'rgba(255, 255, 255, 0.6)',
-    }),
-    stroke: new Stroke({
-      color: '#319FD3',
-      width: 1,
-    }),
-  }),
-});
-const vectorLayer = new VectorLayer({
-  source: source,
-  style: style,
-});
-const view = new View({
-  center: [0, 0],
-  zoom: 1,
-});
-const map = new Map({
-  layers: [
-    new TileLayer({
-      source: new OSM(),
-    }),
-    vectorLayer,
-  ],
-  target: 'map',
-  view: view,
-});
-
-const zoomtoswitzerland = document.getElementById('zoomtoswitzerland');
-zoomtoswitzerland.addEventListener(
-  'click',
-  function() {
-    const feature = source.getFeatures()[0];
-    const polygon = feature.getGeometry();
-    view.fit(polygon, {padding: [170, 50, 30, 150]});
-  },
-  false
-);
-
-const zoomtolausanne = document.getElementById('zoomtolausanne');
-zoomtolausanne.addEventListener(
-  'click',
-  function() {
-    const feature = source.getFeatures()[1];
-    const point = feature.getGeometry();
-    view.fit(point, {padding: [170, 50, 30, 150], minResolution: 50});
-  },
-  false
-);
-
-const centerlausanne = document.getElementById('centerlausanne');
-centerlausanne.addEventListener(
-  'click',
-  function() {
-    const feature = source.getFeatures()[1];
-    const point = feature.getGeometry();
-    const size = map.getSize();
-    view.centerOn(point.getCoordinates(), size, [570, 500]);
-  },
-  false
-);*/

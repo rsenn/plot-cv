@@ -4,7 +4,7 @@ import { setInterval } from 'timers';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
 import Util from './lib/util.js';
-import { daemon, atexit, getpid, toArrayBuffer, toString, escape, quote, define, extendArray, getOpt } from 'util';
+import { memoize, daemon, atexit, getpid, toArrayBuffer, toString, escape, quote, define, extendArray, getOpt } from 'util';
 import { Console } from './quickjs/qjs-modules/lib/console.js';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
@@ -20,16 +20,33 @@ extendArray(Array.prototype);
 
 const scriptName = (arg = scriptArgs[0]) => path.basename(arg, path.extname(arg));
 
+function Time(t, offset = 0) {
+  let dt = t ? new Date(t * 1e3) : new Date();
+  return Math.floor(+dt * 1e-3 + offset);
+}
+
+function TimeToStr(t, offset = 0) {
+  if(typeof t == 'object' && t != null && !(t instanceof Date)) {
+    let obj = {};
+    for(let [name, value] of Object.entries(t)) {
+      obj[name] = TimeToStr(value);
+    }
+    return obj;
+  }
+  let dt = new Date(Time(t, offset) * 1000);
+  return dt.toISOString();
+}
+
 function DailyPhase(t) {
-  t -= t % (21600 * 1000);
+  t -= t % 21600;
   return Math.floor(t);
 }
 
 function PhaseFile(t) {
-  let date = new Date(DailyPhase(+t));
+  let date = new Date(DailyPhase(+t * 1000));
   let str = date.toISOString().replace(/T.*/g, '');
 
-  let phaseStr = ((date / (21600 * 1000)) % 4) + 1 + '';
+  let phaseStr = Math.floor((date / (21600 * 1000)) % 4) + 1 + '';
 
   let file = str + '-' + phaseStr + '.txt';
 
@@ -49,9 +66,9 @@ function TimesForStates(file) {
     let time = new Date(+timeStr * 1000);
     let offset = f.tell();
     let diff = time - prevTime;
-    //let {length}=line;
-    let item = [time, diff, offset, line.length];
-    console.log('TimesForStates', { item });
+    let item = [+time * 10e-3, null, offset, line.length];
+    //console.log('TimesForStates',  item );
+    if(ret.length) ret[ret.length - 1][1] = diff;
     ret.push(item);
     prevTime = time;
     ++index;
@@ -59,11 +76,80 @@ function TimesForStates(file) {
   return ret;
 }
 
+function ReadRange(file, offset, size) {
+  let f = std.open(file, 'r');
+  if(f.seek(offset, std.SEEK_SET)) return null;
+
+  let str = f.readAsString(size);
+  f.close();
+  return str;
+}
+const timeStateMap = memoize(file => TimesForStates(file));
+
+function GetNearestTime(t) {
+  let file = PhaseFile(t);
+  console.log('GetNearestTime', { t, file });
+
+  let ts = timeStateMap(file);
+  let prevTime = 0;
+  let nearest;
+  for(let state of ts) {
+    let [time, diff, offset, size] = state;
+    console.log('GetNearestTime', time - t, { time, diff, offset, size });
+    if(t > prevTime && t <= time) {
+      nearest = time;
+      break;
+    }
+    prevTime = time;
+  }
+  nearest ??= prevTime;
+  console.log('GetNearestTime', TimeToStr({ t, nearest, diff: t - nearest }));
+  return nearest;
+}
+
+function GetStateByTime(t) {
+  let file = PhaseFile(t);
+
+  let ts = timeStateMap(file);
+  let prevTime = 0;
+  for(let state of ts) {
+    let [time, diff, offset, size] = state;
+    if(t > prevTime && t <= time) return state; //ReadRange(file, offset, size);
+    prevTime = time;
+  }
+}
+
 atexit(() => {
   console.log('atexit', atexit);
   let stack = new Error('').stack;
   console.log('stack:', stack);
 });
+
+function IsRange(str) {
+  return /^\d+-\d+$/.test(str);
+}
+function GetRange(str) {
+  let matches = [...str.matchAll(/\d+/g)].map(([m]) => +m);
+  return matches.slice(0, 2);
+}
+
+function ResolveRange(start, end) {
+  let span = end - start;
+  console.log('ResolveRange', { start, end, span });
+  let ranges = [];
+  let t = GetNearestTime(start);
+  console.log('ResolveRange', { t, end, length: end - t });
+
+  while(t < end) {
+    let state = GetStateByTime(t);
+    console.log('ResolveRange', { t, state });
+    /*let [time, diff, offset, size] =state;
+    console.log('ResolveRange', { time, diff });*/
+    ranges.push(state);
+  }
+
+  return ranges;
+}
 
 function StartREPL(prefix = scriptName(), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
@@ -271,16 +357,28 @@ function main(...args) {
         },
         onMessage(ws, data) {
           console.log('onMessage', ws, data);
+          try {
+            let matches = [...data.matchAll(/\d+(-\d+)?/g)].map(([m]) => m);
+            let states = [];
+            console.log('matches', matches);
+            for(let match of matches) {
+              if(IsRange(match)) {
+                let range = GetRange(match);
+                console.log('range', range);
 
-          let matches = [...data.matchAll(/\d+/g)].map(([m]) => +m);
-
-          let files = matches.map(m => PhaseFile(m));
-
-          console.log('files', files);
-          files.forEach(file => {
-            TimesForStates(file);
-          });
-          // showSessions();
+                states = states.concat(ResolveRange(...range));
+              } else {
+                let state = GetStateByTime(match);
+                if(state) states.push(state);
+              }
+            }
+            console.log('states', states);
+            for(let state of states) {
+              ws.send(state + '\n');
+            }
+          } catch(error) {
+            console.log('onMessage ERROR', error);
+          }
         },
         onFd(fd, rd, wr) {
           //console.log('onFd', { fd, rd, wr });
@@ -344,7 +442,5 @@ function main(...args) {
 try {
   main(...scriptArgs.slice(1));
 } catch(error) {
-  console.log(`FAIL: ${error?.message ?? error}\n${error?.stack}`);
-} finally {
-  //console.log('SUCCESS');
+  console.log(`FAIL: ${error?.message ?? error}\n${error?.message}`);
 }

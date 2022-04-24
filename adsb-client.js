@@ -139,8 +139,16 @@ async function main(...args) {
 
       let obj = JSON.parse(body);
 
-      obj.states = obj.states.map(item => item.reduce((acc, field, i) => ({ ...acc, [keys[i]]: ['time_position', 'last_contact'].indexOf(keys[i]) != -1 ? new Date(field*1000) :  field }), {}));
-      obj.states.sort((a,b) => b.baro_altitude - a.baro_altitude);
+      obj.states = obj.states.map(item =>
+        item.reduce(
+          (acc, field, i) => ({
+            ...acc,
+            [keys[i]]: ['time_position', 'last_contact'].indexOf(keys[i]) != -1 ? new Date(field * 1000) : field
+          }),
+          {}
+        )
+      );
+      obj.states.sort((a, b) => b.baro_altitude - a.baro_altitude);
 
       console.log('onMessage', console.config({ compact: 1, depth: Infinity, maxArrayLength: Infinity }), obj);
     }
