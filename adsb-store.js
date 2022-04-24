@@ -20,7 +20,7 @@ export function TimesForPhase(file) {
     let idx = line.indexOf(',');
     let timeStr = line.substring(8, idx);
     let item = [timeStr, null, prevOffset, offset - prevOffset];
-    console.log('TimesForPhase', { index, line });
+    //console.log('TimesForPhase', { index, line });
     ret.push(item);
     if(ret.length) ret[index][1] = +timeStr - prevTime;
     prevTime = +timeStr;
@@ -83,7 +83,7 @@ export function GetNearestTime(t) {
     ++i;
   }
   nearest ??= prevTime;
-  console.log('GetNearestTime', TimeToStr({ t, nearest, diff: t - nearest }));
+  //console.log('GetNearestTime', TimeToStr({ t, nearest, diff: t - nearest }));
   return nearest;
 }
 
