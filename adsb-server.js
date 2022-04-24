@@ -47,7 +47,7 @@ const commands = {
   CurrentFile
 };
 
-let inotify_fd, watch_fd, watch_file;
+let inotify_fd, watch_fd, watch_file, watch_offset;
 
 function StartWatch() {
   if(inotify_fd == undefined) {
@@ -55,9 +55,17 @@ function StartWatch() {
     let ret,
       buf = ev.buffer;
     inotify_fd = watch();
+
     os.setReadHandler(inotify_fd, () => {
       let ret = os.read(inotify_fd, buf, 0, buf.byteLength);
-      console.log('ret', ret);
+      console.log('inotify', { ret, ev });
+      let new_offset = fs.sizeSync(watch_file);
+      let size = new_offset - watch_offset;
+
+      let data = ReadRange(watch_file, watch_offset, size);
+      console.log('watch', { data });
+      sockets.forEach(ws => ws.send(data));
+      watch_offset = new_offset;
     });
   }
 }
@@ -71,7 +79,10 @@ function WatchFile(filename) {
 
   if(typeof watch_fd == 'number') watch(inotify_fd, watch_fd);
 
-  return (watch_fd = watch(inotify_fd, filename, IN_MODIFY));
+  watch_fd = watch(inotify_fd, (watch_file = filename), IN_MODIFY);
+  watch_offset = fs.sizeSync(filename);
+
+  return watch_fd;
 }
 
 function PeriodicCheck() {

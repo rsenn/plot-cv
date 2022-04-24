@@ -10,10 +10,14 @@ import Feature from './openlayers/src/ol/Feature.js';
 import Projection from './openlayers/src/ol/proj/Projection.js';
 import VectorLayer from './openlayers/src/ol/layer/Vector.js';
 import VectorSource from './openlayers/src/ol/source/Vector.js';
+import MultiPoint from './openlayers/src/ol/geom/MultiPoint.js';
+import Polygon from './openlayers/src/ol/geom/Polygon.js';
 import LineString from './openlayers/src/ol/geom/LineString.js';
 import Geolocation from './openlayers/src/ol/Geolocation.js';
+import GeoJSON from './openlayers/src/ol/format/GeoJSON.js';
+import {composeCssTransform}  from './openlayers/src/ol/transform.js';
 import Icon from './openlayers/src/ol/style/Icon.js';
-import { Fill, RegularShape, Stroke, Style, Circle as CircleStyle } from './openlayers/src/ol/style.js';
+import { Fill, RegularShape, Stroke, Style, Circle as CircleStyle, Text as TextStyle } from './openlayers/src/ol/style.js';
 import { fromLonLat } from './openlayers/src/ol/proj.js';
 import { ZoomSlider } from './openlayers/src/ol/control.js';
 import { addCoordinateTransforms, addProjection, transform } from './openlayers/src/ol/proj.js';
@@ -27,13 +31,18 @@ import { quarterDay, Time, TimeToStr, FilenameToTime, NextFile, DailyPhase, Phas
 extendArray(Array.prototype);
 
 let data = (globalThis.data = []);
-let center = transform([7.454281, 46.96453], 'EPSG:4326', 'EPSG:3857');
+let center = globalThis.center=transform([7.454281, 46.96453], 'EPSG:4326', 'EPSG:3857');
 let extent = [5.9962, 45.8389, 10.5226, 47.8229];
 let topLeft = [5.9962, 47.8229],
   topRight = [10.5226, 47.8229],
   bottomLeft = [5.9962, 45.8389],
   bottomRight = [10.5226, 45.8389];
 let states = (globalThis.states = []);
+let phases = (globalThis.phases = new Set());
+
+function GetPhases() {
+  return [...phases].sort();
+}
 
 function InsertSorted(entries, ...values) {
   let [key] = values[0];
@@ -133,6 +142,26 @@ const tryCatch = (fn, resolve = a => a, reject = () => null, ...args) => {
   return tryFunction(fn, resolve, reject)(...args);
 };
 
+function Refresh() {
+    //map.render();
+    //
+    source.clear();
+  if(states.length) {
+    const[time,list]=states.last;
+    for(let state of list) {
+      let obj =  Aircraft.fromState(state);
+      let style=Aircraft.style(obj.icao24);
+      console.log('obj', {obj,style});
+
+source.addFeature(obj);
+
+    }}
+    // vectorContext.drawFeature(feature2, iconStyle);
+
+
+
+}
+
 function Connection(port, onConnect = () => {}) {
   port ??= 12001;
   let ws = (globalThis.ws = new WebSocket('wss://transistorisiert.ch:' + port));
@@ -156,13 +185,23 @@ function Connection(port, onConnect = () => {}) {
         response = JSON.parse(e.data); //tryCatch(() => JSON.parse(e.data), d=>d, err => err);
         console.log('onmessage', response);
 
-        if(/^[A-Z]/.test(response.type[0])) {
+        if(response.type && /^[A-Z]/.test(response.type[0])) {
           console.log('return value', response.value);
+          switch(response.type) {
+            case 'StatePhases': {
+              for(let phase of response.value) {
+                phases.add(phase);
+              }
+              break;
+            }
+          }
         } else if(response.type == 'list') {
           console.log('times', response.times);
-        } else if(response.type == 'update') {
+        } else if(response.type == 'update' || 'time' in response) {
           console.log('update', response.states);
           InsertSorted(states, [response.time, response.states]);
+       Refresh();
+
         } else if(response.type == 'array') {
           let arr = response.array;
 
@@ -178,13 +217,16 @@ function Connection(port, onConnect = () => {}) {
           if(arr[0]) InsertSorted(states, arr[0][0], ...arr);
 
           console.log('data.length', data.length);
-        } else if(response.type == 'error') {
+     Refresh();
+            } else if(response.type == 'error') {
           console.log('ERROR response', response.error);
         } else {
           throw new Error(`Invalid response: ${e.data}`);
         }
       } catch(error) {
-        console.log('onmessage ERROR:', error.message, e.data, error.stack);
+        console.log('onmessage ERROR:',error.message);
+        console.log('onmessage ERROR data:', e.data);
+        console.log('onmessage ERROR stack:', error.stack);
       }
       console.log('states.length', states.length);
     }
@@ -255,12 +297,136 @@ onClick('fly-to-bern', function() {
   FlyTo(bern, function() {});
 });
 */
+const styles = [
+  /* We are using two different styles for the polygons:
+   *  - The first style is for the polygons themselves.
+   *  - The second style is to draw the vertices of the polygons.
+   *    In a custom `geometry` function the vertices of a polygon are
+   *    returned as `MultiPoint` geometry, which will be used to render
+   *    the style.
+   */
+  new Style({
+    stroke: new Stroke({
+      color: 'blue',
+      width: 3,
+    }),
+    fill: new Fill({
+      color: 'rgba(0, 0, 255, 0.1)',
+    }),
+  }),
+  new Style({
+    image: new CircleStyle({
+      radius: 5,
+      fill: new Fill({
+        color: 'orange',
+      }),
+    }),
+    geometry: function (feature) {
+      // return the coordinates of the first ring of the polygon
+      const coordinates = feature.getGeometry().getCoordinates()[0];
+      return new MultiPoint(coordinates);
+    },
+  }),
+];
+
+const geojsonObject = {
+  'type': 'FeatureCollection',
+  'crs': {
+    'type': 'name',
+    'properties': {
+      'name': 'EPSG:3857',
+    },
+  },
+  'features': [
+    {
+      'type': 'Feature',
+      'geometry': {
+        'type': 'Polygon',
+        'coordinates': [
+          [
+        [25.801,5.054],
+[25.801,18.943],
+[44.931,32.158],
+[44.882,35.452],
+[25.802,27.867],
+[25.802,39.085],
+[33.192,45.149],
+[32.749,47.847],
+[23.716,44.385],
+[14.864,47.738],
+[14.317,44.946],
+[17.857,42.272],
+[21.289,39.253],
+[21.289,27.867],
+[3.325,35.130],
+[3.085,32.392],
+[21.290,18.942],
+[21.340,5.004],
+[21.872,2.544],
+[23.378,0.150],
+[25.182,2.560],
+[25.801,5.053],
+
+          ].map(([x,y]) => [x*1e-3,y*1e-3]),
+        ],
+      },
+    },
+    {
+      'type': 'Feature',
+      'geometry': {
+        'type': 'Polygon',
+        'coordinates': [
+          [
+            [-2000000, 6e6],
+            [-2e6, 8e6],
+            [0, 8e6],
+            [0, 6e6],
+            [-2e6, 6e6],
+          ].map(([x,y]) => [x*1e-3,y*1e-3]),
+        ],
+      },
+    },
+    {
+      'type': 'Feature',
+      'geometry': {
+        'type': 'Polygon',
+        'coordinates': [[[500000, 6000000], [500000, 7000000], [1500000, 7000000], [1500000, 6000000], [500000, 6000000]] ],
+      },
+    },
+    {
+      'type': 'Feature',
+      'geometry': {
+        'type': 'Polygon',
+        'coordinates': [[[-2000000, -1000000], [-1000000, 1000000], [0, -1000000], [-2000000, -1000000]]],
+      },
+    },
+  ],
+};
+
+const source =globalThis.source= new VectorSource({
+  features: new GeoJSON().readFeatures(geojsonObject),
+});
+
+const vectorLayer = new VectorLayer({
+  source: source,
+  style: styles,
+});
+
+const iconMarkerStyle = new Style({
+  image: new Icon({
+    src: 'static/svg/plane.svg',
+    //size: [100, 100],
+    offset: [0, 0],
+    opacity: 1,
+    scale: 0.35,
+    //color: [10, 98, 240, 1]
+}) });
 
 function CreateMap() {
   const view = new View({
     center,
     zoom: 11,
-    minZoom: 7,
+    minZoom: 3,
     maxZoom: 20,
     extent: TransformCoordinates(extent)
   });
@@ -282,9 +448,11 @@ function CreateMap() {
   );
   let extentVector = [topLeft, topRight, bottomRight, bottomLeft, topLeft].map(a => TransformCoordinates(...a));
   let lineString = new LineString(extentVector);
+
   let feature = new Feature({
     geometry: lineString
   });
+  
   let stroke = new Stroke({
     color: '#ffd705',
     width: 4,
@@ -313,13 +481,43 @@ function CreateMap() {
     })
   });
 
+/*const iconStyle = name =>  new Style({
+  image: new Icon({
+    anchor: [0.5, 0.5],
+    src: 'static/svg/plane.svg',
+    crossOrigin: '',
+    scale: [0, 0],
+    rotation: Math.PI / 4,
+  }),
+  text: new TextStyle({
+    text: name,
+    scale: [0, 0],
+    rotation: Math.PI / 4,
+    textAlign: 'center',
+    textBaseline: 'top',
+  }),
+});*/
+
   tileLayer.on('postrender', function(event) {
     const vectorContext = getVectorContext(event);
     /*  const x = Math.cos((i * Math.PI) / 180) * 3;
   const y = Math.cos((j * Math.PI) / 180) * 4;
   iconStyle.getImage().setScale([x, y]);
   iconStyle.getText().setScale([x, y]);*/
-    //console.log('tileLayer.postrender', event);
+   console.log('tileLayer.postrender', event);
+    if(states.length) {
+    const[time,list]=states.last;
+    for(let state of list) {
+      let obj =  Aircraft.fromState(state);
+      let style=Aircraft.style(obj.icao24);
+      console.log('obj', {obj,style});
+
+/* vectorContext.setStyle(Aircraft.style(obj.icao24));
+      vectorContext.drawGeometry(obj);*/
+
+vectorContext.drawFeature(obj, style);
+
+    }}
     // vectorContext.drawFeature(feature2, iconStyle);
   });
 
@@ -330,7 +528,7 @@ function CreateMap() {
 
   let map = new Map({
     target: 'mapdiv',
-    layers: [tileLayer, vector],
+    layers: [tileLayer, vectorLayer],
     view
   });
 
@@ -349,6 +547,48 @@ function CreateMap() {
     }
   });
 
+
+const svgContainer = globalThis.svgContainer= document.createElement('div');
+/*const xhr = new XMLHttpRequest();
+xhr.open('GET', 'data/world.svg');
+xhr.addEventListener('load', function () {
+  const svg = xhr.responseXML.documentElement;
+  svgContainer.ownerDocument.importNode(svg);
+  svgContainer.appendChild(svg);
+});
+xhr.send();*/
+let el=document.querySelector('.'+map.getAllLayers()[0].getClassName());
+
+const width = /*el.offsetWidth  ||document.body.clientWidth||*/window.innerWidth;
+const height =/* el.offsetHeight||document.body.clientHeight||*/window.innerHeight;
+
+const svgResolution = 360 / width;
+svgContainer.style.width = width + 'px';
+svgContainer.style.height = height + 'px';
+svgContainer.style.transformOrigin = 'top left';
+svgContainer.className = 'svg-layer';
+
+map.addLayer(
+  new Layer({
+    render (frameState) {
+      const scale = svgResolution / frameState.viewState.resolution;
+      const center = frameState.viewState.center;
+      const size = frameState.size;
+      const cssTransform = composeCssTransform(
+        size[0] / 2,
+        size[1] / 2,
+        scale,
+        scale,
+        frameState.viewState.rotation,
+        -center[0] / svgResolution - width / 2,
+        center[1] / svgResolution - height / 2
+      );
+      svgContainer.style.transform = cssTransform;
+      svgContainer.style.opacity = this.getOpacity();
+      return svgContainer;
+    },
+  })
+);
   return map;
 }
 
@@ -359,7 +599,8 @@ function CreateSlider() {
   let draggable = new PlainDraggable(element, {
     snap: 5,
     onDrag(position) {
-      console.log('onDrag', position);
+      const {left} =position;
+      console.log('onDrag', left);
       return true;
       return !!position.snapped; // It is moved only when it is snapped.
     }
@@ -379,7 +620,7 @@ function CreateSlider() {
 
 Object.assign(globalThis, {
   center,
-  PlainDraggable,
+  PlainDraggable,GetPhases,
   OpenLayers: {
     Map,
     View,
@@ -458,8 +699,17 @@ CreateMap();
 CreateSlider();
 SetTime(DateToUnix());
 
-false &&
+
   window.addEventListener('load', () => {
+
+    ws=Connection(null, ws => {
+      console.log('Connected');
+      ws.sendCommand('StatePhases');
+  });
+
+
+    return;
+
     let filename = PhaseFile(DailyPhase(d));
     fetch(filename).then(response => {
       response.text().then(text => {
@@ -526,7 +776,7 @@ class Plane extends Overlay {
 }
 
 class Aircraft extends Feature {
-  static style = new Style({
+  static style = name => new Style({
     image: new Icon({
       anchor: [0.5, 0.5],
       src: 'static/svg/plane.svg',
@@ -534,8 +784,8 @@ class Aircraft extends Feature {
 
       rotation: Math.PI / 4
     }),
-    text: new Text({
-      text: 'Plane',
+    text: new TextStyle({
+      text: name,
       scale: [0, 0],
       rotation: Math.PI / 4,
       textAlign: 'center',
@@ -543,7 +793,30 @@ class Aircraft extends Feature {
     })
   });
 
+  static fromState(state) {
+    let obj =StateToObject(state);
+    const { icao24,  callsign,  origin_country,  time_position,  last_contact,  longitude,  latitude,  baro_altitude,  on_ground,  velocity,  true_track,  vertical_rate,  sensors,  geo_altitude,  squawk,  spi } = obj;
+let aircraft= new Aircraft(icao24, [longitude,latitude]);
+aircraft.position=[longitude,latitude];
+return aircraft;
+
+  }
+
   constructor(name, coord) {
+    if(!(coord instanceof Coordinate))
+      coord = new Coordinate(...coord);
+
     super({ geometry: new Point(coord), name });
+
+    this.setStyle(  new Style({
+  image: new Icon({
+    src: 'static/svg/plane.svg',
+    //size: [100, 100],
+    offset: [0, 0],
+    opacity: 1,
+    scale: 0.35,
+    //color: [10, 98, 240, 1]
+}) }));
   }
 }
+Object.assign(globalThis, { Aircraft});

@@ -77,6 +77,12 @@ body {
 -moz-filter: drop-shadow(2px 2px 2px #808080);
 
 }
+.svg-layer {
+  position:  fixed;
+  top:  0;
+  left:  0;
+  z-index:  10000;
+}
 .time-row { 
   display:  inline;
   padding:  2px;
