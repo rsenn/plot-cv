@@ -4,7 +4,8 @@ import { memoize, glob } from 'util';
 import * as fs from 'fs';
 import { TimeToStr, NextFile, PhaseFile, CurrentFile } from './adsb-common.js';
 
-export function TimesForStates(file) {
+export function TimesForPhase(file) {
+  file ??= CurrentFile();
   if(typeof file == 'number' || !/\.txt$/.test(file)) file = PhaseFile(+file);
   let f = std.open(file, 'r');
   if(!f) throw new Error(`Error opening '${file}'`);
@@ -19,7 +20,7 @@ export function TimesForStates(file) {
     let idx = line.indexOf(',');
     let timeStr = line.substring(8, idx);
     let item = [timeStr, null, prevOffset, offset - prevOffset];
-    console.log('TimesForStates', { index, line });
+    console.log('TimesForPhase', { index, line });
     ret.push(item);
     if(ret.length) ret[index][1] = +timeStr - prevTime;
     prevTime = +timeStr;
@@ -42,9 +43,10 @@ export function StateFiles() {
   return glob(['[[:digit:]]'.repeat(4), '-', '[[:digit:]]'.repeat(2), '-', '[[:digit:]]', '.txt'].join(''));
 }
 
-export const timeStateMap = memoize(file => TimesForStates(file));
+export const timeStateMap = memoize(file => TimesForPhase(file));
 
 export function GetStates(file) {
+  file ??=CurrentFile();
   timeStateMap.cache.delete(CurrentFile());
   return timeStateMap(file);
 }
