@@ -1,4 +1,4 @@
- body {
+body {
   width: 100%;
   height: 100%;
   margin: 0;
@@ -7,19 +7,18 @@
 * {
   box-sizing: content-box;
 }
- 
+
 body {
   display: block;
   /*flex-flow: row;*/
 }
 
-
 #toolbar {
-  position:  fixed;
-  bottom:  0;
-  height:  40px;
-  background:  rgba(255,255,255,0.8);
-  width:  100vw;
+  position: fixed;
+  bottom: 0;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.8);
+  width: 100vw;
 }
 
 /*#toolbar {
@@ -27,9 +26,57 @@ body {
 }*/
 
 #toolbar {
-  display:  inline-flex;
+  display: inline-flex;
   flex-direction: row;
   align-items: baseline;
-  align-content:  flex-start;
-  justify-content:  flex-start;
+  align-content: flex-start;
+  justify-content: flex-start;
+}
+
+#toolbar {
+  display: none;
+}
+
+#timeline {
+  /*height: 80px;*/
+  position: fixed;
+  bottom:  0px;
+  background: hsla(52, 100%, 70%, 0.8);
+  background: rgba(0,0,0,0);
+    width: 100vw;
+  margin: 0 0.5em 0.5em 0.5em;
+}
+
+#timeline {
+ position: fixed;
+}
+
+#timeline {
+  display: block;
+  flex-direction: row;
+}
+
+.time-display {
+  font-size:  1.5em;
+  font-weight:  bold;
+}
+.time-scale {
+  display: block;
+  margin: 0.5em 1em 0.75em 0;
+  height:  0.75em;
+background:  hsla(220, 97%, 60%,0.5);
+   border: 1px inset hsla(220, 97%, 30%,0.5);
+ position: relative;
+}
+.time-point {
+  width: 1em;
+  height: 2em;
+  border-radius: 0.2em;
+  background: hsl(60, 97%, 60%);
+  border: 2px outset hsla(60, 97%, 0%, 1);
+  box-shadow: 10px 5px 5px black;
+  position: absolute;
+  left: 0;
+  top: -0.8em;
+  z-index: 10;
 }

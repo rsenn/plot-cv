@@ -302,15 +302,9 @@ function main(...args) {
           try {
             let obj;
 
-<<<<<<< HEAD
-            let cmd = data.substring(0, idx);
-            let args = idx == data.length ? [] : data.substring(idx + 1).split(/\s+/g);
-            console.log('onMessage', { cmd, args });
-=======
             if(/^[A-Z]/.test(data)) {
               let idx = data.indexOf(' ');
               if(idx == -1) idx = data.length;
->>>>>>> bb2565ec2c0280276022101d2498ad8b0a3be31b
 
               let cmd = data.substring(0, idx);
               let args = idx == data.length ? [] : data.substring(idx + 1).split(/\s+/g);
@@ -320,12 +314,6 @@ function main(...args) {
               obj = JSON.parse(data);
             }
 
-<<<<<<< HEAD
-          if(data[0] == 'l') {
-            ws.sendMessage({ type: 'list', times: StatePhases() });
-            return;
-          }
-=======
             if(obj !== undefined) {
               const { cmd, args } = obj;
               console.log('onMessage', { cmd, args });
@@ -345,7 +333,6 @@ function main(...args) {
               ws.sendMessage({ type: 'list', times: StateFiles().map(file => FilenameToTime(file)) });
               return;
             }
->>>>>>> bb2565ec2c0280276022101d2498ad8b0a3be31b
 
             let matches = [...data.matchAll(/\d+(-\d+)?/g)].map(([m]) => m);
             let states = [];

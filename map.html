@@ -5,7 +5,7 @@
     <link rel="stylesheet" type="text/css" href="static/map.css" />
     <link rel="stylesheet" type="text/css" href="static/css/tiny-date-picker.css" />
     <script src="lib/OpenLayers.js"></script>
-    <script src="lib/tiny-date-picker.js" type="module"></script>
+    <!--  <script src="lib/tiny-date-picker.js" type="module"></script> -->
     <script src="adsb-map.js" type="module"></script>
   </head>
   <body>
@@ -13,6 +13,24 @@
     <div id="toolbar">
       <button onclick="(FlyTo('bern'),void(0));">Fly to Bern</button>
       <button onclick="(FlyTo('london'),void(0))">Fly to London</button>
+    </div>
+    <div id="timeline">
+      <div class="time-display"></div>
+      <div class="time-scale">
+        <div
+          class="time-point plain-draggable"
+          style="
+            will-change: transform;
+            -webkit-tap-highlight-color: transparent;
+            box-shadow: transparent 0px 0px 1px;
+            cursor: grab;
+            user-select: none;
+            transform: translate(648.74px, 0px);
+          "
+        >
+          <div></div>
+        </div>
+      </div>
     </div>
   </body>
 </html>

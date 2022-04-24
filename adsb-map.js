@@ -17,6 +17,8 @@ import { fromLonLat } from './openlayers/src/ol/proj.js';
 import { ZoomSlider } from './openlayers/src/ol/control.js';
 import { addCoordinateTransforms, addProjection, transform } from './openlayers/src/ol/proj.js';
 import { getVectorContext } from './openlayers/src/ol/render.js';
+import PlainDraggable from './lib/plain-draggable.js';
+import AnimSequence from './lib/anim-sequence.js';
 
 import { quarterDay, Time, TimeToStr, FilenameToTime, NextFile, DailyPhase, PhaseFile, DateToUnix, CurrentFile } from './adsb-common.js';
 
@@ -174,6 +176,14 @@ function SetFenceColor(color) {
   vector.setStyle(new OpenLayers.Style({ stroke: new OpenLayers.Stroke({ color, width: 3, lineDash: [2, 4] }) }));
 }
 
+function SetTime(t) {
+  let str = TimeToStr(t);
+
+  let disp = document.querySelector('.time-display');
+
+  disp.innerHTML = str;
+}
+
 function FlyTo(location, done = () => {}) {
   console.log('FlyTo', { location, done });
 
@@ -314,8 +324,25 @@ function CreateMap() {
   return map;
 }
 
+function CreateSlider() {
+  let element = document.querySelector('.time-point');
+  let draggable = new PlainDraggable(element, {
+    snap: 5,
+    onDrag(position) {
+      console.log('onDrag', position);
+      return true;
+      return !!position.snapped; // It is moved only when it is snapped.
+    }
+  });
+  draggable.snap = { step: 40 };
+  draggable.containment = { left: 0, top: 20, width: window.offsetWidth, height: 0 };
+  Object.assign(globalThis, { draggable });
+  return draggable;
+}
+
 Object.assign(globalThis, {
   center,
+  PlainDraggable,
   OpenLayers: {
     Map,
     View,
@@ -390,6 +417,8 @@ function StateToObject(item) {
 }
 
 CreateMap();
+CreateSlider();
+SetTime(DateToUnix());
 
 false &&
   window.addEventListener('load', () => {

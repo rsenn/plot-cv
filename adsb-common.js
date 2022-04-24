@@ -44,6 +44,12 @@ export function NextFile(filename) {
   return PhaseFile(t);
 }
 
+export function PrevFile(filename) {
+  let t = FilenameToTime(filename);
+  t -= quarterDay;
+  return PhaseFile(t);
+}
+
 export function CurrentFile() {
   return PhaseFile(DateToUnix());
 }
