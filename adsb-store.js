@@ -2,7 +2,7 @@ import * as std from 'std';
 import * as os from 'os';
 import { memoize, glob } from 'util';
 import * as fs from 'fs';
-import { TimeToStr, NextFile, PhaseFile, CurrentFile } from './adsb-common.js';
+import { quarterDay, localeStr, Time, TimeToStr, FilenameToTime, DateToUnix, NextFile, CurrentFile, DailyPhase, PhaseFile } from './adsb-common.js';
 
 export function TimesForPhase(file) {
   file ??= CurrentFile();
@@ -46,12 +46,14 @@ export function StateFiles() {
 export const timeStateMap = memoize(file => TimesForPhase(file));
 
 export function GetStates(file) {
-  file ??=CurrentFile();
+  file ??= CurrentFile();
   timeStateMap.cache.delete(CurrentFile());
   return timeStateMap(file);
 }
 
 export function GetNearestTime(t) {
+  t ??= DateToUnix();
+
   let file = PhaseFile(t);
   //console.log('GetNearestTime', { t, file });
 
@@ -148,4 +150,29 @@ export function ResolveRange(start, end) {
   }
 
   return ranges;
+}
+
+export function GetTimes(start, count = 1) {
+  let times = [],
+    t = GetNearestTime(start);
+  let state,
+    i = 0,
+    file = PhaseFile(t),
+    states = GetStateArray(t),
+    index = GetStateIndex(t);
+
+  do {
+    if(!(state = states[index])) {
+      file = NextFile(file);
+      states = GetStateArray(file);
+      index = 0;
+      state = states[index];
+    }
+    times.push(state[0]);
+    t += state[1];
+
+    ++index;
+  } while(++i < count);
+
+  return times;
 }
