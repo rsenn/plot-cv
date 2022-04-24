@@ -69,7 +69,7 @@ function WatchFile(filename) {
 
   if(typeof watch_fd == 'number') watch(inotify_fd, watch_fd);
 
-  return (watch_fd = watch(inotify_fd, file, IN_MODIFY));
+  return (watch_fd = watch(inotify_fd, filename, IN_MODIFY));
 }
 
 function PeriodicCheck() {
