@@ -4,7 +4,7 @@ import { setInterval } from 'timers';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
 import Util from './lib/util.js';
-import { memoize, daemon, atexit, getpid, toArrayBuffer, toString, escape, quote, define, extendArray, getOpt } from 'util';
+import { memoize, daemon, atexit, getpid, toArrayBuffer, toString, escape, quote, define, extendArray, getOpt, glob } from 'util';
 import { Console } from './quickjs/qjs-modules/lib/console.js';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
@@ -15,141 +15,18 @@ import { DebuggerProtocol } from './debuggerprotocol.js';
 import { StartDebugger, ConnectDebugger } from './debugger.js';
 import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
+import { quarterDay, Time, TimeToStr, FilenameToTime, NextFile, DailyPhase, PhaseFile, DateToUnix, CurrentFile } from './adsb-common.js';
+import { TimesForStates, ReadRange, StateFiles, GetStates, GetNearestTime, GetStateArray, GetStateIndex, DumpState, GetStateByTime, IsRange, GetRange, ResolveRange } from './adsb-store.js';
 
 extendArray(Array.prototype);
 
 const scriptName = (arg = scriptArgs[0]) => path.basename(arg, path.extname(arg));
-
-function Time(t, offset = 0) {
-  let dt = t ? new Date(t * 1e3) : new Date();
-  return Math.floor(+dt * 1e-3 + offset);
-}
-
-function TimeToStr(t, offset = 0) {
-  if(typeof t == 'object' && t != null && !(t instanceof Date)) {
-    let obj = {};
-    for(let [name, value] of Object.entries(t)) {
-      obj[name] = TimeToStr(value);
-    }
-    return obj;
-  }
-  let dt = new Date(Time(t, offset) * 1000);
-  return dt.toISOString();
-}
-
-function DailyPhase(t) {
-  t -= t % 21600;
-  return Math.floor(t);
-}
-
-function PhaseFile(t) {
-  let date = new Date(DailyPhase(+t * 1000));
-  let str = date.toISOString().replace(/T.*/g, '');
-
-  let phaseStr = Math.floor((date / (21600 * 1000)) % 4) + 1 + '';
-
-  let file = str + '-' + phaseStr + '.txt';
-
-  return file;
-}
-
-function TimesForStates(file) {
-  let f = std.open(file, 'r');
-
-  let line,
-    prevTime = 0,
-    index = 0;
-  let ret = [];
-  while((line = f.getline())) {
-    let idx = line.indexOf(',');
-    let timeStr = line.substring(8, idx);
-    let time = new Date(+timeStr * 1000);
-    let offset = f.tell();
-    let diff = time - prevTime;
-    let item = [+time * 10e-3, null, offset, line.length];
-    //console.log('TimesForStates',  item );
-    if(ret.length) ret[ret.length - 1][1] = diff;
-    ret.push(item);
-    prevTime = time;
-    ++index;
-  }
-  return ret;
-}
-
-function ReadRange(file, offset, size) {
-  let f = std.open(file, 'r');
-  if(f.seek(offset, std.SEEK_SET)) return null;
-
-  let str = f.readAsString(size);
-  f.close();
-  return str;
-}
-const timeStateMap = memoize(file => TimesForStates(file));
-
-function GetNearestTime(t) {
-  let file = PhaseFile(t);
-  console.log('GetNearestTime', { t, file });
-
-  let ts = timeStateMap(file);
-  let prevTime = 0;
-  let nearest;
-  for(let state of ts) {
-    let [time, diff, offset, size] = state;
-    console.log('GetNearestTime', time - t, { time, diff, offset, size });
-    if(t > prevTime && t <= time) {
-      nearest = time;
-      break;
-    }
-    prevTime = time;
-  }
-  nearest ??= prevTime;
-  console.log('GetNearestTime', TimeToStr({ t, nearest, diff: t - nearest }));
-  return nearest;
-}
-
-function GetStateByTime(t) {
-  let file = PhaseFile(t);
-
-  let ts = timeStateMap(file);
-  let prevTime = 0;
-  for(let state of ts) {
-    let [time, diff, offset, size] = state;
-    if(t > prevTime && t <= time) return state; //ReadRange(file, offset, size);
-    prevTime = time;
-  }
-}
 
 atexit(() => {
   console.log('atexit', atexit);
   let stack = new Error('').stack;
   console.log('stack:', stack);
 });
-
-function IsRange(str) {
-  return /^\d+-\d+$/.test(str);
-}
-function GetRange(str) {
-  let matches = [...str.matchAll(/\d+/g)].map(([m]) => +m);
-  return matches.slice(0, 2);
-}
-
-function ResolveRange(start, end) {
-  let span = end - start;
-  console.log('ResolveRange', { start, end, span });
-  let ranges = [];
-  let t = GetNearestTime(start);
-  console.log('ResolveRange', { t, end, length: end - t });
-
-  while(t < end) {
-    let state = GetStateByTime(t);
-    console.log('ResolveRange', { t, state });
-    /*let [time, diff, offset, size] =state;
-    console.log('ResolveRange', { time, diff });*/
-    ranges.push(state);
-  }
-
-  return ranges;
-}
 
 function StartREPL(prefix = scriptName(), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
@@ -178,7 +55,7 @@ function main(...args) {
   const config = ReadJSON(`.${base}-config`) ?? {};
 
   globalThis.console = new Console(std.err, {
-    inspectOptions: { depth: Infinity, compact: 2, maxArrayLength: Infinity, customInspect: true }
+    inspectOptions: { depth: Infinity, compact: 2, maxArrayLength: Infinity, maxStringLength: 30, customInspect: true }
   });
 
   let params = getOpt(
@@ -315,6 +192,8 @@ function main(...args) {
           });
 
           sockets.add(ws);
+
+          ws.sendMessage = value => ws.send(JSON.stringify(value));
         },
         onClose(ws) {
           console.log('onClose', ws);
@@ -340,6 +219,10 @@ function main(...args) {
             const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
 
             resp.body = body.replaceAll(re, (match, p1, p0, p2, p3, offset) => {
+              if(file == 'rbush.js') {
+                console.log('RBUSH', resp.body);
+              }
+
               if(!/[\/\.]/.test(p2)) {
                 let fname = `${p2}.js`;
 
@@ -357,6 +240,13 @@ function main(...args) {
         },
         onMessage(ws, data) {
           console.log('onMessage', ws, data);
+          let response;
+
+          if(data[0] == 'l') {
+            ws.sendMessage({ type: 'list', times: StateFiles().map(file => FilenameToTime(file)) });
+            return;
+          }
+
           try {
             let matches = [...data.matchAll(/\d+(-\d+)?/g)].map(([m]) => m);
             let states = [];
@@ -372,13 +262,15 @@ function main(...args) {
                 if(state) states.push(state);
               }
             }
-            console.log('states', states);
-            for(let state of states) {
-              ws.send(state + '\n');
-            }
+            let arr = states.map(([time, obj]) => [+time, JSON.parse(obj).states]);
+            //console.log('arr', arr);
+            response = arr;
           } catch(error) {
             console.log('onMessage ERROR', error);
+            response = { type: 'error', error: error.message };
           }
+          if(Array.isArray(response)) response = { type: 'array', array: response };
+          ws.send(JSON.stringify(response));
         },
         onFd(fd, rd, wr) {
           //console.log('onFd', { fd, rd, wr });
