@@ -61,13 +61,12 @@ function StartWatch() {
       console.log('inotify', { ret, ev });
       let new_offset = fs.sizeSync(watch_file);
       let size = new_offset - watch_offset;
-if(size) {
-      let data = ReadRange(watch_file, watch_offset, size);
-      console.log('watch', { data });
-      sockets.forEach(ws => ws.send(data));
-    }
+      if(size) {
+        let data = ReadRange(watch_file, watch_offset, size);
+        console.log('watch', { data });
+        sockets.forEach(ws => ws.send(data));
+      }
       watch_offset = new_offset;
-
     });
   }
 }

@@ -15,7 +15,7 @@ import Polygon from './openlayers/src/ol/geom/Polygon.js';
 import LineString from './openlayers/src/ol/geom/LineString.js';
 import Geolocation from './openlayers/src/ol/Geolocation.js';
 import GeoJSON from './openlayers/src/ol/format/GeoJSON.js';
-import {composeCssTransform}  from './openlayers/src/ol/transform.js';
+import { composeCssTransform } from './openlayers/src/ol/transform.js';
 import Icon from './openlayers/src/ol/style/Icon.js';
 import { Fill, RegularShape, Stroke, Style, Circle as CircleStyle, Text as TextStyle } from './openlayers/src/ol/style.js';
 import { fromLonLat } from './openlayers/src/ol/proj.js';
@@ -31,7 +31,7 @@ import { quarterDay, Time, TimeToStr, FilenameToTime, NextFile, DailyPhase, Phas
 extendArray(Array.prototype);
 
 let data = (globalThis.data = []);
-let center = globalThis.center=transform([7.454281, 46.96453], 'EPSG:4326', 'EPSG:3857');
+let center = (globalThis.center = transform([7.454281, 46.96453], 'EPSG:4326', 'EPSG:3857'));
 let extent = [5.9962, 45.8389, 10.5226, 47.8229];
 let topLeft = [5.9962, 47.8229],
   topRight = [10.5226, 47.8229],
@@ -143,23 +143,20 @@ const tryCatch = (fn, resolve = a => a, reject = () => null, ...args) => {
 };
 
 function Refresh() {
-    //map.render();
-    //
-    source.clear();
+  //map.render();
+  //
+  source.clear();
   if(states.length) {
-    const[time,list]=states.last;
+    const [time, list] = states.last;
     for(let state of list) {
-      let obj =  Aircraft.fromState(state);
-      let style=Aircraft.style(obj.icao24);
-      console.log('obj', {obj,style});
+      let obj = Aircraft.fromState(state);
+      let style = Aircraft.style(obj.icao24);
+      console.log('obj', { obj, style });
 
-source.addFeature(obj);
-
-    }}
-    // vectorContext.drawFeature(feature2, iconStyle);
-
-
-
+      source.addFeature(obj);
+    }
+  }
+  // vectorContext.drawFeature(feature2, iconStyle);
 }
 
 function Connection(port, onConnect = () => {}) {
@@ -187,7 +184,7 @@ function Connection(port, onConnect = () => {}) {
 
         if(response.type && /^[A-Z]/.test(response.type[0])) {
           console.log('return value', response.value);
-          switch(response.type) {
+          switch (response.type) {
             case 'StatePhases': {
               for(let phase of response.value) {
                 phases.add(phase);
@@ -200,8 +197,7 @@ function Connection(port, onConnect = () => {}) {
         } else if(response.type == 'update' || 'time' in response) {
           console.log('update', response.states);
           InsertSorted(states, [response.time, response.states]);
-       Refresh();
-
+          Refresh();
         } else if(response.type == 'array') {
           let arr = response.array;
 
@@ -217,14 +213,14 @@ function Connection(port, onConnect = () => {}) {
           if(arr[0]) InsertSorted(states, arr[0][0], ...arr);
 
           console.log('data.length', data.length);
-     Refresh();
-            } else if(response.type == 'error') {
+          Refresh();
+        } else if(response.type == 'error') {
           console.log('ERROR response', response.error);
         } else {
           throw new Error(`Invalid response: ${e.data}`);
         }
       } catch(error) {
-        console.log('onmessage ERROR:',error.message);
+        console.log('onmessage ERROR:', error.message);
         console.log('onmessage ERROR data:', e.data);
         console.log('onmessage ERROR stack:', error.stack);
       }
@@ -308,108 +304,122 @@ const styles = [
   new Style({
     stroke: new Stroke({
       color: 'blue',
-      width: 3,
+      width: 3
     }),
     fill: new Fill({
-      color: 'rgba(0, 0, 255, 0.1)',
-    }),
+      color: 'rgba(0, 0, 255, 0.1)'
+    })
   }),
   new Style({
     image: new CircleStyle({
       radius: 5,
       fill: new Fill({
-        color: 'orange',
-      }),
+        color: 'orange'
+      })
     }),
-    geometry: function (feature) {
+    geometry: function(feature) {
       // return the coordinates of the first ring of the polygon
       const coordinates = feature.getGeometry().getCoordinates()[0];
       return new MultiPoint(coordinates);
-    },
-  }),
+    }
+  })
 ];
 
 const geojsonObject = {
-  'type': 'FeatureCollection',
-  'crs': {
-    'type': 'name',
-    'properties': {
-      'name': 'EPSG:3857',
-    },
+  type: 'FeatureCollection',
+  crs: {
+    type: 'name',
+    properties: {
+      name: 'EPSG:3857'
+    }
   },
-  'features': [
+  features: [
     {
-      'type': 'Feature',
-      'geometry': {
-        'type': 'Polygon',
-        'coordinates': [
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
           [
-        [25.801,5.054],
-[25.801,18.943],
-[44.931,32.158],
-[44.882,35.452],
-[25.802,27.867],
-[25.802,39.085],
-[33.192,45.149],
-[32.749,47.847],
-[23.716,44.385],
-[14.864,47.738],
-[14.317,44.946],
-[17.857,42.272],
-[21.289,39.253],
-[21.289,27.867],
-[3.325,35.130],
-[3.085,32.392],
-[21.290,18.942],
-[21.340,5.004],
-[21.872,2.544],
-[23.378,0.150],
-[25.182,2.560],
-[25.801,5.053],
-
-          ].map(([x,y]) => [x*1e-3,y*1e-3]),
-        ],
-      },
+            [25.801, 5.054],
+            [25.801, 18.943],
+            [44.931, 32.158],
+            [44.882, 35.452],
+            [25.802, 27.867],
+            [25.802, 39.085],
+            [33.192, 45.149],
+            [32.749, 47.847],
+            [23.716, 44.385],
+            [14.864, 47.738],
+            [14.317, 44.946],
+            [17.857, 42.272],
+            [21.289, 39.253],
+            [21.289, 27.867],
+            [3.325, 35.13],
+            [3.085, 32.392],
+            [21.29, 18.942],
+            [21.34, 5.004],
+            [21.872, 2.544],
+            [23.378, 0.15],
+            [25.182, 2.56],
+            [25.801, 5.053]
+          ].map(([x, y]) => [x * 1e-3, y * 1e-3])
+        ]
+      }
     },
     {
-      'type': 'Feature',
-      'geometry': {
-        'type': 'Polygon',
-        'coordinates': [
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
           [
             [-2000000, 6e6],
             [-2e6, 8e6],
             [0, 8e6],
             [0, 6e6],
-            [-2e6, 6e6],
-          ].map(([x,y]) => [x*1e-3,y*1e-3]),
-        ],
-      },
+            [-2e6, 6e6]
+          ].map(([x, y]) => [x * 1e-3, y * 1e-3])
+        ]
+      }
     },
     {
-      'type': 'Feature',
-      'geometry': {
-        'type': 'Polygon',
-        'coordinates': [[[500000, 6000000], [500000, 7000000], [1500000, 7000000], [1500000, 6000000], [500000, 6000000]] ],
-      },
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [500000, 6000000],
+            [500000, 7000000],
+            [1500000, 7000000],
+            [1500000, 6000000],
+            [500000, 6000000]
+          ]
+        ]
+      }
     },
     {
-      'type': 'Feature',
-      'geometry': {
-        'type': 'Polygon',
-        'coordinates': [[[-2000000, -1000000], [-1000000, 1000000], [0, -1000000], [-2000000, -1000000]]],
-      },
-    },
-  ],
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [-2000000, -1000000],
+            [-1000000, 1000000],
+            [0, -1000000],
+            [-2000000, -1000000]
+          ]
+        ]
+      }
+    }
+  ]
 };
 
-const source =globalThis.source= new VectorSource({
-  features: new GeoJSON().readFeatures(geojsonObject),
-});
+const source = (globalThis.source = new VectorSource({
+  features: new GeoJSON().readFeatures(geojsonObject)
+}));
 
 const vectorLayer = new VectorLayer({
   source: source,
-  style: styles,
+  style: styles
 });
 
 const iconMarkerStyle = new Style({
@@ -418,9 +428,10 @@ const iconMarkerStyle = new Style({
     //size: [100, 100],
     offset: [0, 0],
     opacity: 1,
-    scale: 0.35,
+    scale: 0.35
     //color: [10, 98, 240, 1]
-}) });
+  })
+});
 
 function CreateMap() {
   const view = new View({
@@ -452,7 +463,7 @@ function CreateMap() {
   let feature = new Feature({
     geometry: lineString
   });
-  
+
   let stroke = new Stroke({
     color: '#ffd705',
     width: 4,
@@ -481,45 +492,24 @@ function CreateMap() {
     })
   });
 
-/*const iconStyle = name =>  new Style({
-  image: new Icon({
-    anchor: [0.5, 0.5],
-    src: 'static/svg/plane.svg',
-    crossOrigin: '',
-    scale: [0, 0],
-    rotation: Math.PI / 4,
-  }),
-  text: new TextStyle({
-    text: name,
-    scale: [0, 0],
-    rotation: Math.PI / 4,
-    textAlign: 'center',
-    textBaseline: 'top',
-  }),
-});*/
 
-  tileLayer.on('postrender', function(event) {
+
+/*  tileLayer.on('postrender', function(event) {
     const vectorContext = getVectorContext(event);
-    /*  const x = Math.cos((i * Math.PI) / 180) * 3;
-  const y = Math.cos((j * Math.PI) / 180) * 4;
-  iconStyle.getImage().setScale([x, y]);
-  iconStyle.getText().setScale([x, y]);*/
-   console.log('tileLayer.postrender', event);
+ 
+    console.log('tileLayer.postrender', event);
     if(states.length) {
-    const[time,list]=states.last;
-    for(let state of list) {
-      let obj =  Aircraft.fromState(state);
-      let style=Aircraft.style(obj.icao24);
-      console.log('obj', {obj,style});
+      const [time, list] = states.last;
+      for(let state of list) {
+        let obj = Aircraft.fromState(state);
+        let style = Aircraft.style(obj.icao24);
+        console.log('obj', { obj, style });
 
-/* vectorContext.setStyle(Aircraft.style(obj.icao24));
-      vectorContext.drawGeometry(obj);*/
-
-vectorContext.drawFeature(obj, style);
-
-    }}
-    // vectorContext.drawFeature(feature2, iconStyle);
-  });
+  
+        vectorContext.drawFeature(obj, style);
+      }
+    }
+   });*/
 
   /*const feature2 = new Feature({
   geometry: new Point(fromLonLat([-30, 10])),
@@ -528,7 +518,7 @@ vectorContext.drawFeature(obj, style);
 
   let map = new Map({
     target: 'mapdiv',
-    layers: [tileLayer, vectorLayer],
+    layers: [tileLayer, vector],
     view
   });
 
@@ -547,48 +537,48 @@ vectorContext.drawFeature(obj, style);
     }
   });
 
-
-const svgContainer = globalThis.svgContainer= document.createElement('div');
-/*const xhr = new XMLHttpRequest();
+  const svgContainer = (globalThis.svgContainer = document.createElement('div'));
+  /*const xhr = new XMLHttpRequest();
 xhr.open('GET', 'data/world.svg');
-xhr.addEventListener('load', function () {
+xhr.addEventListener('load', function() {
   const svg = xhr.responseXML.documentElement;
   svgContainer.ownerDocument.importNode(svg);
   svgContainer.appendChild(svg);
 });
 xhr.send();*/
-let el=document.querySelector('.'+map.getAllLayers()[0].getClassName());
+  let el = document.querySelector('.' + map.getAllLayers()[0].getClassName());
 
-const width = /*el.offsetWidth  ||document.body.clientWidth||*/window.innerWidth;
-const height =/* el.offsetHeight||document.body.clientHeight||*/window.innerHeight;
+  const width = /*el.offsetWidth  ||document.body.clientWidth||*/ window.innerWidth;
+  const height = /* el.offsetHeight||document.body.clientHeight||*/ window.innerHeight;
 
-const svgResolution = 360 / width;
-svgContainer.style.width = width + 'px';
-svgContainer.style.height = height + 'px';
-svgContainer.style.transformOrigin = 'top left';
-svgContainer.className = 'svg-layer';
-
-map.addLayer(
-  new Layer({
-    render (frameState) {
-      const scale = svgResolution / frameState.viewState.resolution;
-      const center = frameState.viewState.center;
-      const size = frameState.size;
-      const cssTransform = composeCssTransform(
-        size[0] / 2,
-        size[1] / 2,
-        scale,
-        scale,
-        frameState.viewState.rotation,
-        -center[0] / svgResolution - width / 2,
-        center[1] / svgResolution - height / 2
-      );
-      svgContainer.style.transform = cssTransform;
-      svgContainer.style.opacity = this.getOpacity();
-      return svgContainer;
-    },
-  })
-);
+  const svgResolution = 360 / width;
+  svgContainer.style.width = width + 'px';
+  svgContainer.style.height = height + 'px';
+  svgContainer.style.transformOrigin = 'top left';
+  svgContainer.className = 'svg-layer';
+console.log('svgResolution',svgResolution);
+  map.addLayer(
+    new Layer({
+      render(frameState) {
+   const scale = svgResolution / frameState.viewState.resolution;
+   const center = frameState.viewState.center;
+        const size = frameState.size;
+        const cssTransform = composeCssTransform(
+          size[0] / 2,
+          size[1] / 2,
+          scale,
+          scale,
+          frameState.viewState.rotation,
+          -center[0] / svgResolution - width / 2,
+          center[1] / svgResolution - height / 2
+        );
+        svgContainer.style.transform = cssTransform;
+        svgContainer.style.opacity = this.getOpacity();
+        return svgContainer;
+      }
+    })
+  );
+  map.addLayer(vectorLayer);
   return map;
 }
 
@@ -599,7 +589,7 @@ function CreateSlider() {
   let draggable = new PlainDraggable(element, {
     snap: 5,
     onDrag(position) {
-      const {left} =position;
+      const { left } = position;
       console.log('onDrag', left);
       return true;
       return !!position.snapped; // It is moved only when it is snapped.
@@ -620,7 +610,8 @@ function CreateSlider() {
 
 Object.assign(globalThis, {
   center,
-  PlainDraggable,GetPhases,
+  PlainDraggable,
+  GetPhases,
   OpenLayers: {
     Map,
     View,
@@ -699,49 +690,46 @@ CreateMap();
 CreateSlider();
 SetTime(DateToUnix());
 
-
-  window.addEventListener('load', () => {
-
-    ws=Connection(null, ws => {
-      console.log('Connected');
-      ws.sendCommand('StatePhases');
+window.addEventListener('load', () => {
+  ws = Connection(null, ws => {
+    console.log('Connected');
+    ws.sendCommand('StatePhases');
   });
 
+  return;
 
-    return;
+  let filename = PhaseFile(DailyPhase(d));
+  fetch(filename).then(response => {
+    response.text().then(text => {
+      data = globalThis.data = text
+        .split(/\n/g)
+        .map(line => {
+          try {
+            let obj = JSON.parse(line);
+            obj.states = obj.states.map(item =>
+              item.reduce(
+                (acc, field, i) => ({
+                  ...acc,
+                  [keys[i]]: ['time_position', 'last_contact'].indexOf(keys[i]) != -1 ? new Date(field * 1000) : field
+                }),
+                {}
+              )
+            );
+            obj.states.sort((a, b) => b.baro_altitude - a.baro_altitude);
 
-    let filename = PhaseFile(DailyPhase(d));
-    fetch(filename).then(response => {
-      response.text().then(text => {
-        data = globalThis.data = text
-          .split(/\n/g)
-          .map(line => {
-            try {
-              let obj = JSON.parse(line);
-              obj.states = obj.states.map(item =>
-                item.reduce(
-                  (acc, field, i) => ({
-                    ...acc,
-                    [keys[i]]: ['time_position', 'last_contact'].indexOf(keys[i]) != -1 ? new Date(field * 1000) : field
-                  }),
-                  {}
-                )
-              );
-              obj.states.sort((a, b) => b.baro_altitude - a.baro_altitude);
+            return obj;
+          } catch(e) {
+            return null;
+          }
+        })
+        .filter(obj => !!obj);
 
-              return obj;
-            } catch(e) {
-              return null;
-            }
-          })
-          .filter(obj => !!obj);
+      data[0].states.forEach(state => new Plane(state));
 
-        data[0].states.forEach(state => new Plane(state));
-
-        console.log('text', text);
-      });
+      console.log('text', text);
     });
   });
+});
 
 class Plane extends Overlay {
   constructor(obj = {}) {
@@ -776,47 +764,66 @@ class Plane extends Overlay {
 }
 
 class Aircraft extends Feature {
-  static style = name => new Style({
-    image: new Icon({
-      anchor: [0.5, 0.5],
-      src: 'static/svg/plane.svg',
-      crossOrigin: '',
+  static style = name =>
+    new Style({
+      image: new Icon({
+        anchor: [0.5, 0.5],
+        src: 'static/svg/plane.svg',
+        crossOrigin: '',
 
-      rotation: Math.PI / 4
-    }),
-    text: new TextStyle({
-      text: name,
-      scale: [0, 0],
-      rotation: Math.PI / 4,
-      textAlign: 'center',
-      textBaseline: 'top'
-    })
-  });
+        rotation: Math.PI / 4
+      }),
+      text: new TextStyle({
+        text: name,
+        scale: [0, 0],
+        rotation: Math.PI / 4,
+        textAlign: 'center',
+        textBaseline: 'top'
+      })
+    });
 
   static fromState(state) {
-    let obj =StateToObject(state);
-    const { icao24,  callsign,  origin_country,  time_position,  last_contact,  longitude,  latitude,  baro_altitude,  on_ground,  velocity,  true_track,  vertical_rate,  sensors,  geo_altitude,  squawk,  spi } = obj;
-let aircraft= new Aircraft(icao24, [longitude,latitude]);
-aircraft.position=[longitude,latitude];
-return aircraft;
-
+    let obj = StateToObject(state);
+    const {
+      icao24,
+      callsign,
+      origin_country,
+      time_position,
+      last_contact,
+      longitude,
+      latitude,
+      baro_altitude,
+      on_ground,
+      velocity,
+      true_track,
+      vertical_rate,
+      sensors,
+      geo_altitude,
+      squawk,
+      spi
+    } = obj;
+    let aircraft = new Aircraft(icao24, [longitude, latitude], true_track);
+    aircraft.position = [longitude, latitude];
+    return aircraft;
   }
 
-  constructor(name, coord) {
-    if(!(coord instanceof Coordinate))
-      coord = new Coordinate(...coord);
+  constructor(name, coord,heading = 0) {
+    if(!(coord instanceof Coordinate)) coord = new Coordinate(...coord);
 
     super({ geometry: new Point(coord), name });
 
-    this.setStyle(  new Style({
-  image: new Icon({
-    src: 'static/svg/plane.svg',
-    //size: [100, 100],
-    offset: [0, 0],
-    opacity: 1,
-    scale: 1,
-    //color: [10, 98, 240, 1]
-}) }));
+    this.setStyle(
+      new Style({
+        image: new Icon({
+          src: 'static/svg/plane.svg',
+          size: [100, 100],
+          offset: [0, 0],
+          opacity: 1,
+          scale: 0.5,
+          rotation: (heading*Math.PI)/180
+        })
+      })
+    );
   }
 }
-Object.assign(globalThis, { Aircraft});
+Object.assign(globalThis, { Aircraft });
