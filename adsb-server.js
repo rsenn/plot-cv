@@ -4,7 +4,7 @@ import { setInterval } from 'timers';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
 import Util from './lib/util.js';
-import { memoize, daemon, atexit, getpid, toArrayBuffer, toString, escape, quote, define, extendArray, getOpt, glob } from 'util';
+import { watch, IN_MODIFY, memoize, daemon, atexit, getpid, toArrayBuffer, toString, escape, quote, define, extendArray, getOpt, glob } from 'util';
 import { Console } from './quickjs/qjs-modules/lib/console.js';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
@@ -16,7 +16,7 @@ import { StartDebugger, ConnectDebugger } from './debugger.js';
 import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 import { quarterDay, Time, TimeToStr, FilenameToTime, NextFile, DailyPhase, PhaseFile, DateToUnix, CurrentFile } from './adsb-common.js';
-import { TimesForStates, ReadRange, StateFiles, GetStates, GetNearestTime, GetStateArray, GetStateIndex, DumpState, GetStateByTime, IsRange, GetRange, ResolveRange } from './adsb-store.js';
+import { TimesForStates, ReadRange, StateFiles, StatePhases, GetStates, GetNearestTime, GetStateArray, GetStateIndex, DumpState, GetStateByTime, IsRange, GetRange, ResolveRange } from './adsb-store.js';
 import { LogWrap, VfnAdapter, VfnDecorator, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, GetProperties, GetKeys, MakeListCommand, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/rpc.js';
 
 extendArray(Array.prototype);
@@ -43,6 +43,40 @@ const commands = {
   GetRange,
   ResolveRange
 };
+
+let inotify_fd, watch_fd, watch_file;
+
+function StartWatch() {
+  if(inotify_fd == undefined) {
+    os.setReadHandler(inotify_fd, () => {
+      let ret = os.read(inotify_fd, buf, 0, buf.byteLength);
+      console.log('ret', ret);
+    });
+    inotify_fd ??= watch();
+  }
+}
+
+function WatchFile(filename) {
+  let ev = new Uint32Array(4);
+  let wd,
+    ret,
+    buf = ev.buffer;
+
+  if(watch_file == filename) return;
+
+  if(typeof watch_fd == 'number') watch(inotify_fd, watch_fd);
+
+  return (watch_fd = watch(inotify_fd, file, IN_MODIFY));
+}
+
+function PeriodicCheck() {
+  let file = CurrentFile();
+  console.log('PeriodicCheck', { file });
+
+  WatchFile(file);
+
+  os.setTimeout(PeriodicCheck, 10000);
+}
 
 function StartREPL(prefix = scriptName(), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
@@ -105,6 +139,10 @@ function main(...args) {
     debug = false,
     tls = true
   } = params;
+
+  StartWatch();
+  PeriodicCheck();
+
   const listen = params.connect && !params.listen ? false : true;
   //const server = !params.client || params.server;
   let name = scriptArgs[0];
@@ -264,7 +302,7 @@ function main(...args) {
 
             let cmd = data.substring(0, idx);
             let args = idx == data.length ? [] : data.substring(idx + 1).split(/\s+/g);
-          console.log('onMessage', {cmd,args});
+            console.log('onMessage', { cmd, args });
 
             if(commands[cmd]) {
               let value = commands[cmd](...args);
@@ -276,7 +314,7 @@ function main(...args) {
           }
 
           if(data[0] == 'l') {
-            ws.sendMessage({ type: 'list', times: StateFiles().map(file => FilenameToTime(file)) });
+            ws.sendMessage({ type: 'list', times: StatePhases() });
             return;
           }
 
