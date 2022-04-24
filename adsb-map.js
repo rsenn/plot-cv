@@ -814,7 +814,7 @@ return aircraft;
     //size: [100, 100],
     offset: [0, 0],
     opacity: 1,
-    scale: 0.35,
+    scale: 1,
     //color: [10, 98, 240, 1]
 }) }));
   }
