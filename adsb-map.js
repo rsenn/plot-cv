@@ -135,9 +135,11 @@ function Connection(port, onConnect = () => {}) {
       try {
         response = JSON.parse(e.data); //tryCatch(() => JSON.parse(e.data), d=>d, err => err);
 
-        if(response.type == 'list') {
-          
-  }else      if(response.type == 'array') {
+        if(/^[A-Z]/.test(response.type[0])) {
+          console.log('return value', response.value);
+        } else if(response.type == 'list') {
+          console.log('times', response.times);
+        } else if(response.type == 'array') {
           let arr = response.array;
 
           arr = arr.map(([time, obj]) => [new Date(+time * 1e3), obj]);

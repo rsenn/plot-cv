@@ -17,6 +17,7 @@ import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 import { quarterDay, Time, TimeToStr, FilenameToTime, NextFile, DailyPhase, PhaseFile, DateToUnix, CurrentFile } from './adsb-common.js';
 import { TimesForStates, ReadRange, StateFiles, GetStates, GetNearestTime, GetStateArray, GetStateIndex, DumpState, GetStateByTime, IsRange, GetRange, ResolveRange } from './adsb-store.js';
+import { LogWrap, VfnAdapter, VfnDecorator, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, GetProperties, GetKeys, MakeListCommand, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/rpc.js';
 
 extendArray(Array.prototype);
 
@@ -27,6 +28,21 @@ atexit(() => {
   let stack = new Error('').stack;
   console.log('stack:', stack);
 });
+
+const commands = {
+  TimesForStates,
+  ReadRange,
+  StateFiles,
+  GetStates,
+  GetNearestTime,
+  GetStateArray,
+  GetStateIndex,
+  DumpState,
+  GetStateByTime,
+  IsRange,
+  GetRange,
+  ResolveRange
+};
 
 function StartREPL(prefix = scriptName(), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
@@ -241,6 +257,23 @@ function main(...args) {
         onMessage(ws, data) {
           console.log('onMessage', ws, data);
           let response;
+
+          if(/^[A-Z]/.test(data)) {
+            let idx = data.indexOf(' ');
+            if(idx == -1) idx = data.length;
+
+            let cmd = data.substring(0, idx);
+            let args = idx == data.length ? [] : data.substring(idx + 1).split(/\s+/g);
+          console.log('onMessage', {cmd,args});
+
+            if(commands[cmd]) {
+              let value = commands[cmd](...args);
+              let response = { type: cmd, value };
+              console.log('Sending response to ' + cmd + '()', response);
+              ws.sendMessage(response);
+              return;
+            }
+          }
 
           if(data[0] == 'l') {
             ws.sendMessage({ type: 'list', times: StateFiles().map(file => FilenameToTime(file)) });
