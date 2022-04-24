@@ -20,8 +20,11 @@ import { addCoordinateTransforms, addProjection, transform } from './openlayers/
 import { getVectorContext } from './openlayers/src/ol/render.js';
 import PlainDraggable from './lib/plain-draggable.js';
 import AnimSequence from './lib/anim-sequence.js';
+import extendArray from './quickjs/qjs-modules/lib/extendArray.js';
 
 import { quarterDay, Time, TimeToStr, FilenameToTime, NextFile, DailyPhase, PhaseFile, DateToUnix, CurrentFile } from './adsb-common.js';
+
+extendArray(Array.prototype);
 
 let data = (globalThis.data = []);
 let center = transform([7.454281, 46.96453], 'EPSG:4326', 'EPSG:3857');
@@ -32,7 +35,8 @@ let topLeft = [5.9962, 47.8229],
   bottomRight = [10.5226, 45.8389];
 let states = (globalThis.states = []);
 
-function InsertSorted(entries, key, ...values) {
+function InsertSorted(entries, ...values) {
+  let [key] = values[0];
   let at = entries.findIndex(([k, v]) => k > key);
 
   entries.splice(at, 0, ...values);
@@ -150,6 +154,7 @@ function Connection(port, onConnect = () => {}) {
       let response;
       try {
         response = JSON.parse(e.data); //tryCatch(() => JSON.parse(e.data), d=>d, err => err);
+        console.log('onmessage', response);
 
         if(/^[A-Z]/.test(response.type[0])) {
           console.log('return value', response.value);
@@ -157,7 +162,7 @@ function Connection(port, onConnect = () => {}) {
           console.log('times', response.times);
         } else if(response.type == 'update') {
           console.log('update', response.states);
-          InsertSorted(states, response.time, response.states);
+          InsertSorted(states, [response.time, response.states]);
         } else if(response.type == 'array') {
           let arr = response.array;
 
@@ -170,8 +175,7 @@ function Connection(port, onConnect = () => {}) {
             data.length,
             ...arr.map(([time, states]) => ({ time, states /*: states.map(StateToObject)*/ }))
           );
-if(arr[0])
-          InsertSorted(states, arr[0][0], ...arr);
+          if(arr[0]) InsertSorted(states, arr[0][0], ...arr);
 
           console.log('data.length', data.length);
         } else if(response.type == 'error') {
@@ -180,7 +184,7 @@ if(arr[0])
           throw new Error(`Invalid response: ${e.data}`);
         }
       } catch(error) {
-        console.log('onmessage ERROR:', error.message, e.data,error.stack);
+        console.log('onmessage ERROR:', error.message, e.data, error.stack);
       }
       console.log('states.length', states.length);
     }
@@ -205,7 +209,7 @@ function SetTime(t) {
 
   let disp = document.querySelector('.time-display');
 
-  disp.innerText =str.split(' ').join('\n');
+  disp.innerText = str.split(' ').join('\n');
 }
 
 function FlyTo(location, done = () => {}) {
@@ -365,12 +369,11 @@ function CreateSlider() {
   draggable.autoScroll = { target: document.querySelector('.time-area') };
   Object.assign(globalThis, { draggable });
 
- scale.addEventListener('click', e => {
-    const {clientX}=e;
-          console.log('scale clicked', clientX);
-          draggable.left=clientX-(element.offsetWidth/2);
-
-  })
+  scale.addEventListener('click', e => {
+    const { clientX } = e;
+    console.log('scale clicked', clientX);
+    draggable.left = clientX - element.offsetWidth / 2;
+  });
   return draggable;
 }
 
