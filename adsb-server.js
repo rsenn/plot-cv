@@ -47,29 +47,44 @@ const commands = {
   CurrentFile
 };
 
-let inotify_fd, watch_fd, watch_file;
+let inotify_fd, watch_fd, watch_file, watch_size;
 
 function StartWatch() {
-  if(inotify_fd == undefined) {
-    os.setReadHandler(inotify_fd, () => {
-      let ret = os.read(inotify_fd, buf, 0, buf.byteLength);
-      console.log('ret', ret);
-    });
-    inotify_fd ??= watch();
-  }
-}
-
-function WatchFile(filename) {
+  inotify_fd = watch();
+  console.log('StartWatch', { inotify_fd });
   let ev = new Uint32Array(4);
   let wd,
     ret,
     buf = ev.buffer;
+  os.setReadHandler(inotify_fd, () => {
+    let ret = os.read(inotify_fd, buf, 0, buf.byteLength);
+    let new_size = fs.sizeSync(watch_file);
+    let data = ReadRange(watch_file, watch_size, new_size - watch_size);
+    console.log('WatchHandler', { watch_file, ret, ev });
+    let obj = { type: 'update', ...(JSON.parse(data) ?? {}) };
+    console.log('WatchHandler', { obj });
+    [...sockets].forEach(ws => {
+      try {
+        let ret = ws.sendMessage(obj);
+        console.log('sent', { ws, ret });
+      } catch(error) {
+        ws.close();
+      }
+    });
 
+    watch_size = new_size;
+  });
+}
+
+function WatchFile(filename) {
   if(watch_file == filename) return;
 
   if(typeof watch_fd == 'number') watch(inotify_fd, watch_fd);
 
-  return (watch_fd = watch(inotify_fd, filename, IN_MODIFY));
+  watch_fd = watch(inotify_fd, filename, IN_MODIFY);
+  watch_size = fs.sizeSync(filename);
+  watch_file = filename;
+  return watch_fd;
 }
 
 function PeriodicCheck() {
@@ -234,7 +249,11 @@ function main(...args) {
         ...callbacks,
         block: false,
         onConnect(ws, req) {
-          console.log('onConnect', { ws, req }, req && req.headers);
+          console.log('onConnect', { ws, req });
+
+          sockets.add(ws);
+
+          ws.sendMessage = value => ws.send(JSON.stringify(value));
 
           Object.defineProperties(ws, {
             sendMessage: {

@@ -57,9 +57,38 @@ body {
 }
 
 .time-display {
-  font-size:  1.5em;
-  font-weight:  bold;
+  font-size:  20px;
+  font-weight:  800;
+  font-family: "Lucida Console", "FreeMono",monospace;
+  height:  1em;
 }
+.time-area {
+/*  overflow: hidden;*/
+  width:  100vw;
+}
+.time-button  {
+  color: black;
+ font-size:  1.2em;
+ margin: 0px 3px;
+ 
+ /* border:  1px solid white;*/
+-moz-user-select:  none;user-select:  none;
+-webkit-filter: drop-shadow(2px 2px 3px #808080);
+-moz-filter: drop-shadow(2px 2px 2px #808080);
+
+}
+.time-row { 
+  display:  inline;
+  padding:  2px;
+  box-shadow:  0 0 3px  hsla(220, 97%, 100%,1);
+  background:  hsla(220, 97%, 100%,0.8);
+ /* border:  1px solid rgba(0,0,0,0.5);*/
+}
+.time-button:hover  {
+  color:  hsl(0, 100%, 50%);
+   filter: drop-shadow(0px 0px 2px black);
+  cursor: pointer;
+} 
 .time-scale {
   display: block;
   margin: 0.5em 1em 0.75em 0;
@@ -67,6 +96,7 @@ body {
 background:  hsla(220, 97%, 60%,0.5);
    border: 1px inset hsla(220, 97%, 30%,0.5);
  position: relative;
+  overflow-y: visible;
 }
 .time-point {
   width: 1em;
@@ -77,6 +107,6 @@ background:  hsla(220, 97%, 60%,0.5);
   box-shadow: 10px 5px 5px black;
   position: absolute;
   left: 0;
-  top: -0.8em;
+  top: -0.75em;
   z-index: 10;
 }
