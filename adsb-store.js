@@ -40,14 +40,24 @@ export function ReadRange(file, offset, size) {
 }
 
 export function StateFiles() {
-  return glob(['[[:digit:]]'.repeat(4), '-', '[[:digit:]]'.repeat(2), '-', '[[:digit:]]', '.txt'].join(''));
+  const d = '[[:digit:]]';
+  return glob([d.repeat(4), '-', d.repeat(2), '-', d.repeat(2), '-', d, '.txt'].join('')).map(file => [
+    file,
+    fs.sizeSync(file)
+  ]);
 }
 
-export const timeStateMap = memoize(file => TimesForPhase(file));
+export function StatePhases() {
+  let files = StateFiles();
+  return files.map(([file, size]) => FilenameToTime(file));
+}
+
+export const timeStateCache = new Map();
+export const timeStateMap = memoize(file => TimesForPhase(file), timeStateCache);
 
 export function GetStates(file) {
   file ??= CurrentFile();
-  timeStateMap.cache.delete(CurrentFile());
+  timeStateCache.delete(CurrentFile());
   return timeStateMap(file);
 }
 
@@ -168,7 +178,7 @@ export function GetTimes(start, count = 1) {
       index = 0;
       state = states[index];
     }
-    times.push(state[0]);
+    times.push(+state[0]);
     t += state[1];
 
     ++index;

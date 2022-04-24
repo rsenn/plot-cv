@@ -123,6 +123,12 @@ function Connection(port, onConnect = () => {}) {
   port ??= 12001;
   let ws = (globalThis.ws = new WebSocket('wss://transistorisiert.ch:' + port));
   return Object.assign(ws, {
+    sendCommand(cmd, args = []) {
+      return ws.sendMessage({ cmd, args });
+    },
+    sendMessage(obj) {
+      return ws.send(JSON.stringify(obj));
+    },
     onopen: e => onConnect(ws),
     onerror(e) {
       console.log('ERROR:', e);
