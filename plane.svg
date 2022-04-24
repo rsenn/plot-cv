@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="48" height="48">
+  <defs>
+    <linearGradient xmlns="http://www.w3.org/2000/svg" id="a" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#f00"/>
+      <stop offset=".333" stop-color="#ff0"/>
+      <stop offset=".5" stop-color="#0f0"/>
+      <stop offset=".666" stop-color="#0ff"/>
+      <stop offset=".833" stop-color="#00f"/>
+      <stop offset="1" stop-color="#f0f"/>
+    </linearGradient>
+  </defs>
+  <polygon fill="url(#a)" points="25.801 5.054, 25.801 18.943, 44.931 32.158, 44.882 35.452, 25.802 27.867, 25.802 39.085, 33.192 45.149, 32.749 47.847, 23.716 44.385, 14.864 47.738, 14.317 44.946, 17.857 42.272, 21.289 39.253, 21.289 27.867, 3.325 35.130, 3.085 32.392, 21.290 18.942, 21.340 5.004, 21.872 2.544, 23.378 0.150, 25.182 2.560, 25.801 5.053" style="stroke:#000;stroke-width:.5;stroke-miterlimit:4;stroke-dasharray:none"/>
+</svg>
