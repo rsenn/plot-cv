@@ -1,0 +1,35 @@
+ body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+* {
+  box-sizing: content-box;
+}
+ 
+body {
+  display: block;
+  /*flex-flow: row;*/
+}
+
+
+#toolbar {
+  position:  fixed;
+  bottom:  0;
+  height:  40px;
+  background:  rgba(255,255,255,0.8);
+  width:  100vw;
+}
+
+/*#toolbar {
+  pointer-events: none;
+}*/
+
+#toolbar {
+  display:  inline-flex;
+  flex-direction: row;
+  align-items: baseline;
+  align-content:  flex-start;
+  justify-content:  flex-start;
+}
