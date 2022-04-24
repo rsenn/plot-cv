@@ -12,6 +12,7 @@ import VectorLayer from './openlayers/src/ol/layer/Vector.js';
 import VectorSource from './openlayers/src/ol/source/Vector.js';
 import LineString from './openlayers/src/ol/geom/LineString.js';
 import Geolocation from './openlayers/src/ol/Geolocation.js';
+import Icon from './openlayers/src/ol/style/Icon.js';
 import { Fill, RegularShape, Stroke, Style, Circle as CircleStyle } from './openlayers/src/ol/style.js';
 import { fromLonLat } from './openlayers/src/ol/proj.js';
 import { ZoomSlider } from './openlayers/src/ol/control.js';
@@ -29,6 +30,13 @@ let topLeft = [5.9962, 47.8229],
   topRight = [10.5226, 47.8229],
   bottomLeft = [5.9962, 45.8389],
   bottomRight = [10.5226, 45.8389];
+let states = (globalThis.states = []);
+
+function InsertSorted(entries, key, ...values) {
+  let at = entries.findIndex(([k, v]) => k > key);
+
+  entries.splice(at, 0, ...values);
+}
 
 async function FetchFile(file, done = data => data) {
   let response = await fetch(file);
@@ -147,18 +155,24 @@ function Connection(port, onConnect = () => {}) {
           console.log('return value', response.value);
         } else if(response.type == 'list') {
           console.log('times', response.times);
+        } else if(response.type == 'update') {
+          console.log('update', response.states);
+          InsertSorted(states, response.time, response.states);
         } else if(response.type == 'array') {
           let arr = response.array;
 
           arr = arr.map(([time, obj]) => [new Date(+time * 1e3), obj]);
 
-          //console.log('arr', arr.map(([time, obj]) => [TimeToStr(time), obj]));
+          console.log('arr', arr);
 
           data.splice(
             0,
             data.length,
             ...arr.map(([time, states]) => ({ time, states /*: states.map(StateToObject)*/ }))
           );
+if(arr[0])
+          InsertSorted(states, arr[0][0], ...arr);
+
           console.log('data.length', data.length);
         } else if(response.type == 'error') {
           console.log('ERROR response', response.error);
@@ -166,8 +180,9 @@ function Connection(port, onConnect = () => {}) {
           throw new Error(`Invalid response: ${e.data}`);
         }
       } catch(error) {
-        console.log('onmessage ERROR:', error.message, e.data);
+        console.log('onmessage ERROR:', error.message, e.data,error.stack);
       }
+      console.log('states.length', states.length);
     }
   });
 }
@@ -175,13 +190,22 @@ function Connection(port, onConnect = () => {}) {
 function SetFenceColor(color) {
   vector.setStyle(new OpenLayers.Style({ stroke: new OpenLayers.Stroke({ color, width: 3, lineDash: [2, 4] }) }));
 }
+function SetTimescaleArea(width, offset) {
+  let ruler = document.querySelector('.time-ruler');
+  let scale = document.querySelector('.time-scale');
+  let area = document.querySelector('.time-area');
+
+  scale.style.setProperty('width', `${width}`);
+  /*ruler.style.setProperty('width', '100vw');*/
+  ruler.scrollTo(offset, 0);
+}
 
 function SetTime(t) {
   let str = TimeToStr(t);
 
   let disp = document.querySelector('.time-display');
 
-  disp.innerHTML = str;
+  disp.innerText =str.split(' ').join('\n');
 }
 
 function FlyTo(location, done = () => {}) {
@@ -291,7 +315,7 @@ function CreateMap() {
   const y = Math.cos((j * Math.PI) / 180) * 4;
   iconStyle.getImage().setScale([x, y]);
   iconStyle.getText().setScale([x, y]);*/
-    console.log('tileLayer.postrender', event);
+    //console.log('tileLayer.postrender', event);
     // vectorContext.drawFeature(feature2, iconStyle);
   });
 
@@ -326,6 +350,8 @@ function CreateMap() {
 
 function CreateSlider() {
   let element = document.querySelector('.time-point');
+  let scale = document.querySelector('.time-scale');
+
   let draggable = new PlainDraggable(element, {
     snap: 5,
     onDrag(position) {
@@ -336,7 +362,15 @@ function CreateSlider() {
   });
   draggable.snap = { step: 40 };
   draggable.containment = { left: 0, top: 20, width: window.offsetWidth, height: 0 };
+  draggable.autoScroll = { target: document.querySelector('.time-area') };
   Object.assign(globalThis, { draggable });
+
+ scale.addEventListener('click', e => {
+    const {clientX}=e;
+          console.log('scale clicked', clientX);
+          draggable.left=clientX-(element.offsetWidth/2);
+
+  })
   return draggable;
 }
 
@@ -377,6 +411,7 @@ Object.assign(globalThis, {
   tryFunction,
   TransformCoordinates,
   SetFenceColor,
+  SetTimescaleArea,
   FlyTo,
   Coordinate,
   cities,

@@ -15,20 +15,24 @@
       <button onclick="(FlyTo('london'),void(0))">Fly to London</button>
     </div>
     <div id="timeline">
-      <div class="time-display"></div>
-      <div class="time-scale">
-        <div
-          class="time-point plain-draggable"
-          style="
-            will-change: transform;
-            -webkit-tap-highlight-color: transparent;
-            box-shadow: transparent 0px 0px 1px;
-            cursor: grab;
-            user-select: none;
-            transform: translate(648.74px, 0px);
-          "
-        >
-          <div></div>
+      <div class="time-row"><!-- <span class="time-button time-decrement">  &#x23ee;</span> --> <span class="time-display"></span>
+        <!-- <span class="time-button  time-increment">&#x23ed;</span> -->
+      </div>
+      <div class="time-area">
+        <div class="time-scale">
+          <div
+            class="time-point plain-draggable"
+            style="
+              will-change: transform;
+              -webkit-tap-highlight-color: transparent;
+              box-shadow: transparent 0px 0px 1px;
+              cursor: grab;
+              user-select: none;
+              transform: translate(648.74px, 0px);
+            "
+          >
+            <div></div>
+          </div>
         </div>
       </div>
     </div>
