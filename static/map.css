@@ -51,6 +51,17 @@ body {
   display: none;
 }*/
 
+.notizen {
+  position: fixed;
+  width:  50vw;
+  height: 50vh;
+  top:  25vh;
+  left: 25vw;
+  background:  white;
+  border:  2px solid black;
+  z-index: 999;
+}
+
 #timeline {
   position: fixed;
 }
