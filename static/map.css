@@ -57,7 +57,7 @@ body {
   height: 50vh;
   top:  25vh;
   left: 25vw;
-  background:  white;
+  background:  #fff;
   border:  2px solid black;
   z-index: 999;
 }
