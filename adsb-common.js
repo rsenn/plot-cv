@@ -22,7 +22,7 @@ export function TimeToStr(t, offset = 0) {
     }
   }
   t = Time(t, offset);
-  if(t >= 1651363200) throw new Error(`Invalid time: ${t}`);
+  if(t >= 1967241600) throw new Error(`Invalid time: ${t} >= 1967241600`);
   let dt = new Date(t * 1000);
   //return dt.toISOString().replace(/T(.*)\.\d{3}(.*)/, ' $1$2');
   return dt.toLocaleDateString(localeStr) + ' ' + dt.toLocaleTimeString(localeStr);
