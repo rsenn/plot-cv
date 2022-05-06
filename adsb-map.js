@@ -199,7 +199,7 @@ function Connection(port, onConnect = () => {}) {
         } else if (response.type == 'list') {
           console.log('times', response.times);
         } else if (response.type == 'update' || 'time' in response) {
-          console.log('update', response.states);
+         // console.log('update', response.states);
           InsertSorted(states, [response.time, response.states]);
           Refresh();
         } else if (response.type == 'array') {
