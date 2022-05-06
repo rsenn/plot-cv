@@ -232,6 +232,7 @@ function Connection(port, onConnect = () => {}) {
 function SetFenceColor(color) {
   vector.setStyle(new OpenLayers.Style({ stroke: new OpenLayers.Stroke({ color, width: 3, lineDash: [2, 4] }) }));
 }
+
 function SetTimescaleArea(width, offset) {
   let ruler = document.querySelector('.time-ruler');
   let scale = document.querySelector('.time-scale');
@@ -812,24 +813,124 @@ class Aircraft extends Feature {
   }
 }
 
+const getElement = obj => (typeof obj == 'object' && obj != null && 'elm' in obj ? obj.elm : obj);
+const getElementFn = fn => (elm, ...args) => fn(getElement(elm), ...args);
+
+function findElements(q = '*') {
+  let ret = document.querySelectorAll(q);
+  if (ret) ret = [...ret];
+  return ret;
+}
+
+function getNumber(value) {
+  let ret;
+  ret = parseFloat(value);
+  return ret;
+}
+
+let styleMaps = new WeakMap();
+let styleMapper = memoize(elm => window.getComputedStyle(elm));
+
+const getStyle = getElementFn(function getStyle(elm, prop) {
+  return styleMapper(elm)[prop];
+});
+
+const getStyles = getElementFn(function getStyles(elm) {
+  let names = Object.getOwnPropertyNames(elm.style);
+
+  let wm = {}, styles=styleMapper(elm);
+
+  for(let name of names) 
+    if(isNaN(+name) && styles[name] !== '')
+    wm[name] = styles[name];
+
+  return wm;
+});
+
+const setStyle = getElementFn(function setStyle(elm, prop, value) {
+  let wm = styleMapper(elm);
+  wm[prop] = elm.style[prop] = value;
+
+  return (wm[prop] = window.getComputedStyle(elm)[prop]);
+});
+
+const setStyles = getElementFn(function setStyles(elm, styles) {
+  Object.assign(elm.style, styles);
+  let wm;
+  styleMaps.set(elm, (wm = window.getComputedStyle(elm)));
+  return wm;
+});
+
+const setAttributes = getElementFn(function setAttributes(elm, attrs) {
+  for (let name in attrs) elm.setAttribute(name, attrs[name]);
+});
+
+let layers = (globalThis.layers = new Set());
+
 class HTMLLayer {
+  static maxZ = 10000;
+
   constructor(type = 'div', attributes = {}, parent = document.body) {
     let element = (this.elm = document.createElement(type));
-    for (let name in attributes) element.setAttribute(name, attributes[name]);
+    const { style, ...attrs } = attributes;
+
+    let zIndex = HTMLLayer.maxZ++;
+
+    setAttributes(element, attrs);
+    setStyles(element, { zIndex });
 
     parent.appendChild(element);
     let obj = this;
-    return new Proxy(obj, {
+    let ret = new Proxy(obj, {
       get(target, prop, receiver) {
+        switch (prop) {
+          case 'top':
+          case 'left':
+          case 'bottom':
+          case 'right':
+          case 'width':
+          case 'height': {
+            return getNumber(getStyle(element, prop));
+            break;
+          }
+          case 'style': {
+            return getStyles(element);
+          }
+        }
         if (element.hasAttribute(prop)) return element.getAttribute(prop);
 
         return Reflect.get(target, prop, receiver);
       },
+      set(target, prop, value) {
+        switch (prop) {
+          case 'top':
+          case 'left':
+          case 'bottom':
+          case 'right':
+          case 'width':
+          case 'height': {
+            setStyle(element, prop, value);
+            return;
+          }
+        }
+        if (element.hasAttribute(prop)) return element.setAttribute(prop, value);
+
+        throw new Error(`No such property '${prop}'`);
+        //   return Reflect.set(target, prop, receiver);
+      },
       ownKeys(target) {
-        return [...element.getAttributeNames()].concat(Reflect.ownKeys(target));
+        return [...element.getAttributeNames()] /*.concat(Reflect.ownKeys(target))*/;
       },
     });
+    layers.add(ret);
+    return ret;
+  }
+
+  static get list() {
+    return [...layers];
   }
 }
 
-Object.assign(globalThis, { Aircraft, HTMLLayer });
+HTMLLayer.prototype.elm = null;
+
+Object.assign(globalThis, { Aircraft, HTMLLayer, findElements, getStyle, getStyles, setStyle, setStyles, setAttributes });
