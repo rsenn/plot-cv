@@ -3,14 +3,14 @@ import * as os from 'os';
 import { setInterval } from 'timers';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
- import { randStr,watch, IN_MODIFY, memoize, daemon, atexit, getpid, toArrayBuffer, toString, escape, quote, define, extendArray, getOpt, glob } from 'util';
+import { randStr, watch, IN_MODIFY, memoize, daemon, atexit, getpid, toArrayBuffer, toString, escape, quote, define, extendArray, getOpt, glob, fnmatch } from 'util';
 import { Console } from './quickjs/qjs-modules/lib/console.js';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
-import * as fs from 'fs';
 import { setLog, logLevels, getSessions, LLL_USER, LLL_INFO, LLL_NOTICE, LLL_WARN, client, server } from 'net';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
+import { VirtFS } from './virtfs.js'
 
 extendArray(Array.prototype);
 
@@ -21,46 +21,7 @@ atexit(() => {
   let stack = new Error('').stack;
   console.log('stack:', stack);
 });
-
-let inotify_fd, watch_fd, watch_file, watch_offset;
-
-function StartWatch() {
-  if(inotify_fd == undefined) {
-    let ev = new Uint32Array(4);
-    let ret,
-      buf = ev.buffer;
-    inotify_fd = watch();
-
-    os.setReadHandler(inotify_fd, () => {
-      let ret = os.read(inotify_fd, buf, 0, buf.byteLength);
-      //console.log('inotify', { ret, ev });
-      let new_offset = fs.sizeSync(watch_file);
-      let size = new_offset - watch_offset;
-      if(size) {
-        let data = (globalThis.lastData = ReadRange(watch_file, watch_offset, size));
-        console.log('send', data);
-        sockets.forEach(ws => ws.send(data));
-      }
-      watch_offset = new_offset;
-    });
-  }
-}
-
-function WatchFile(filename) {
-  console.log('WatchFile', { filename });
-  let ev = new Uint32Array(4);
-  let wd;
-
-  //if(watch_file == filename) return;
-
-  if(typeof watch_fd == 'number') watch(inotify_fd, watch_fd);
-
-  watch_fd = watch(inotify_fd, (watch_file = filename), IN_MODIFY);
-  watch_offset = fs.sizeSync(filename);
-
-  return watch_fd;
-}
-
+ 
 function StartREPL(prefix = scriptName(), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
   repl.historyLoad(null, fs);
@@ -107,14 +68,50 @@ function SetNonce(resp, nonce = randStr(32)) {
   return nonce;
 }
 
+function GetArgs(argStr) {
+  const re = /([^/:&?=]+)=([^/:&?]+)/g;
+  let entries = [];
+
+  for(;;) {
+    let [, key, value] = re.exec(argStr) ?? [];
+
+    if(!key) break;
+
+    //console.log('GetArgs', {key,value});
+    entries.push([key, value]);
+  }
+  return entries.reduce((acc, [k, v]) => {
+    acc[k] = v;
+    return acc;
+  }, {});
+}
+
 function main(...args) {
   const base = scriptName().replace(/\.[a-z]*$/, '');
 
   const config = ReadJSON(`.${base}-config`) ?? {};
 
   globalThis.console = new Console(std.err, {
-    inspectOptions: { depth: Infinity, compact: 2, maxArrayLength: Infinity, maxStringLength: 30, customInspect: true }
+    inspectOptions: { depth: Infinity, compact: 1, maxArrayLength: Infinity, maxStringLength: 300, customInspect: true }
   });
+
+  let vfs;
+
+  try {
+    vfs = new VirtFS([
+      'data',
+      'tmp',
+      '../an-tronics/eagle',
+      '../insider/eagle',
+      '../lc-meter/eagle',
+      '../pictest/eagle'
+    ]);
+
+    let testFiles = [...vfs.readdirSync('.')];
+    console.log('vfs.readdirSync', console.config({ compact: false }), testFiles);
+  } catch(err) {
+    console.log('err', err);
+  }
 
   let params = getOpt(
     {
@@ -174,7 +171,7 @@ function main(...args) {
         ? () => {}
         : (level, str) => {
             if(/BIND_PROTOCOL|DROP_PROTOCOL|CHECK_ACCESS_RIGHTS|ADD_HEADERS/.test(str)) return;
-         if(level == LLL_INFO) return;
+            if(level == LLL_INFO) return;
             console.log(logLevels[level].padEnd(10), str.trim());
           }
     );
@@ -218,25 +215,39 @@ function main(...args) {
           ['.m', 'text/x-objective-c'],
           ['.sh', 'text/x-shellscript']
         ],
-        mounts: [
-          ['/proxy', 'ipv4:127.0.0.1:22', null, 'proxy-ws-raw-ws'],
-          ['/lws', 'https://www.google.ch/', null, ''],
-          ['/', '.', 'index.html'],
-          function* config(req, res) {
+        mounts: {
+          ['/']: ['.', 'index.html'],
+          ['/config']: function* config(req, res) {
             const { body, headers } = req;
             console.log('/config', { req, res });
             console.log('*config', { body, headers });
             yield '{}';
           },
-          function* files(req, res) {
-            const { body, headers } = req;
-            yield fs
-              .readdirSync('.')
-              .sort()
-              .map(f => f + '\n')
-              .join('');
+          ['/files']: function* files(req, res) {
+            const { body, headers, url } = req;
+            const { path, query } = url;
+
+            let ret,
+              argObj = {},
+              args = url.path.replace(/.*files./g, '');
+
+            console.log('/files', { args });
+
+            if(args) {
+              argObj = GetArgs(args);
+              console.log('/files', { argObj });
+            }
+
+            if(argObj['filter']) {
+              ret = glob(argObj.filter);
+            } else {
+              ret = fs.readdirSync('.');
+            }
+            ret = [...ret].sort();
+
+            yield ret.map(f => f + '\n').join('');
           }
-        ],
+        },
         ...url,
         ...callbacks,
         block: false,
