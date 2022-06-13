@@ -195,7 +195,7 @@ function main(...args) {
         mounts: [
           ['/proxy', 'ipv4:127.0.0.1:22', null, 'proxy-ws-raw-ws'],
           ['/lws', 'https://www.google.ch/', null, ''],
-          ['/', '.', 'debugger.html'],
+          ['/', '.', 'index.html'],
           function* config(req, res) {
             const { body, headers } = req;
             console.log('/config', { req, res });
