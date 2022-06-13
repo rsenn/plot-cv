@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as path from './lib/path.js';
 
 const mapVFSForProxy = new WeakMap();
 const mapDirsForFS = new WeakMap();

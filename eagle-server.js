@@ -10,7 +10,7 @@ import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import { setLog, logLevels, getSessions, LLL_USER, LLL_INFO, LLL_NOTICE, LLL_WARN, client, server } from 'net';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
-import { VirtFS } from './virtfs.js'
+import { VirtFS } from './virtfs.js';
 
 extendArray(Array.prototype);
 
@@ -21,7 +21,7 @@ atexit(() => {
   let stack = new Error('').stack;
   console.log('stack:', stack);
 });
- 
+
 function StartREPL(prefix = scriptName(), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
   repl.historyLoad(null, fs);
@@ -64,7 +64,10 @@ function GetNonce(resp) {
 }
 
 function SetNonce(resp, nonce = randStr(32)) {
-  resp.headers = { ['content-security-policy']: `script-src ${resp.url.host} 'nonce-${nonce}'` };
+  resp.headers = {
+    ['content-security-policy']: `default-src 'self'; script-src ${resp.url.host}:${resp.url.port} 'nonce-${nonce}'`
+  };
+  //resp.headers = { ['content-security-policy']: `all-src self 'nonce-${nonce}';` };
   return nonce;
 }
 
@@ -216,7 +219,7 @@ function main(...args) {
           ['.sh', 'text/x-shellscript']
         ],
         mounts: {
-          ['/']: ['.', 'index.html'],
+          ['/']: ['/', '.', 'index.html'],
           ['/config']: function* config(req, res) {
             const { body, headers } = req;
             console.log('/config', { req, res });
@@ -241,7 +244,7 @@ function main(...args) {
             if(argObj['filter']) {
               ret = glob(argObj.filter);
             } else {
-              ret = fs.readdirSync('.');
+              ret = vfs.readdirSync('.');
             }
             ret = [...ret].sort();
 
@@ -308,20 +311,14 @@ function main(...args) {
           let { body } = resp;
           if(body === undefined) body = resp.body = ReadFile(file);
 
-          if(file.endsWith('.html') || file == '' || file == '/') {
-            nonce = GetNonce(resp);
+          nonce = GetNonce(resp);
 
+          if(file.endsWith('.html') || file == '' || file == '/') {
             console.log('\x1b[38;5;33monHttp\x1b[0m', { body, nonce });
             resp.body = body.replaceAll('@@=AAABBBCCCZZZ=@@', 'nonce-' + nonce);
             console.log('resp.body', escape(body));
           }
           console.log('resp.headers (1)', resp.headers);
-
-          /*    if(nonce) {
-            let headers = { ['content-security-policy']: `script-src ${host} 'nonce-${nonce}'` };
-
-            console.log('resp.headers (2)', (resp.headers = headers));
-          }*/
 
           return resp;
         },
@@ -342,7 +339,7 @@ function main(...args) {
   os.ttySetRaw(0);
 
   os.setReadHandler(0, () => {
-    let r = fs.readSync(0, inputBuf, 0, inputBuf.byteLength);
+    let r = os.read(0, inputBuf, 0, inputBuf.byteLength);
 
     if(r > 0) {
       let a = new Uint8Array(inputBuf.slice(0, r));
@@ -354,7 +351,7 @@ function main(...args) {
       if(a.length == 1 && a[0] == 127) a = new Uint8Array([8, 0x20, 8]);
 
       if(a.length == 1 && a[0] == 27) showSessions();
-      else fs.writeSync(1, a.buffer);
+      else os.write(1, a.buffer, 0, a.buffer.byteLength);
     }
   });
 
