@@ -3,8 +3,7 @@ import * as os from 'os';
 import { setInterval } from 'timers';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
-import { randStr } from 'util';
-import { watch, IN_MODIFY, memoize, daemon, atexit, getpid, toArrayBuffer, toString, escape, quote, define, extendArray, getOpt, glob } from 'util';
+ import { randStr,watch, IN_MODIFY, memoize, daemon, atexit, getpid, toArrayBuffer, toString, escape, quote, define, extendArray, getOpt, glob } from 'util';
 import { Console } from './quickjs/qjs-modules/lib/console.js';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
@@ -175,6 +174,7 @@ function main(...args) {
         ? () => {}
         : (level, str) => {
             if(/BIND_PROTOCOL|DROP_PROTOCOL|CHECK_ACCESS_RIGHTS|ADD_HEADERS/.test(str)) return;
+         if(level == LLL_INFO) return;
             console.log(logLevels[level].padEnd(10), str.trim());
           }
     );
@@ -186,6 +186,7 @@ function main(...args) {
     return netfn(
       url,
       (options = {
+        errorDocument: '/404.html',
         tls: params.tls,
         sslCert,
         sslPrivateKey,
@@ -281,7 +282,7 @@ function main(...args) {
           console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
           const { url } = resp;
 
-          if(url.path == '' || url.path == '/') url.path = '/index.html';
+          //if(url.path == '' || url.path == '/') url.path = '/index.html';
 
           const { path, host } = url;
           console.log('\x1b[38;5;33monHttp\x1b[0m', { path, host });
@@ -301,7 +302,7 @@ function main(...args) {
 
             console.log('\x1b[38;5;33monHttp\x1b[0m', { body, nonce });
             resp.body = body.replaceAll('@@=AAABBBCCCZZZ=@@', 'nonce-' + nonce);
-            console.log('resp.body', body);
+            console.log('resp.body', escape(body));
           }
           console.log('resp.headers (1)', resp.headers);
 
