@@ -11,14 +11,8 @@ import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from 'fs';
 import { setLog, logLevels, getSessions, LLL_USER, LLL_INFO, LLL_NOTICE, LLL_WARN, client, server } from 'net';
-  import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
-  /*import { DebuggerProtocol } from './debuggerprotocol.js';
-  import { StartDebugger, ConnectDebugger } from './debugger.js';
-  import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
-  import { quarterDay, Time, TimeToStr, FilenameToTime, NextFile, DailyPhase, PhaseFile, DateToUnix, CurrentFile } from './adsb-common.js';
-  import { GetTimes, TimesForPhase, ReadRange, StateFiles, StatePhases, GetStates, GetNearestTime, GetStateArray, GetStateIndex, DumpState, GetStateByTime, IsRange, GetRange, ResolveRange } from './adsb-store.js';
-  import { LogWrap, VfnAdapter, VfnDecorator, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, GetProperties, GetKeys, MakeListCommand, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/rpc.js';
-*/
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
+
 extendArray(Array.prototype);
 
 const scriptName = (arg = scriptArgs[0]) => path.basename(arg, path.extname(arg));
@@ -28,7 +22,6 @@ atexit(() => {
   let stack = new Error('').stack;
   console.log('stack:', stack);
 });
-
 
 let inotify_fd, watch_fd, watch_file, watch_offset;
 
@@ -68,15 +61,6 @@ function WatchFile(filename) {
 
   return watch_fd;
 }
-
-/*function PeriodicCheck() {
-  let file = CurrentFile();
-  console.log('PeriodicCheck', { file });
-
-  if(file != watch_file) WatchFile(file);
-
-  os.setTimeout(PeriodicCheck, 10000);
-}*/
 
 function StartREPL(prefix = scriptName(), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
@@ -263,101 +247,9 @@ function main(...args) {
           protocol.delete(ws);
           sockets.delete(ws);
         },
-        // onHttp(req, resp) {
-        //   const { method, headers } = req;
-        //   console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
-        //   const { body, url } = resp;
-        //   console.log('\x1b[38;5;33monHttp\x1b[0m', { body });
 
-        //   const file = url.path.slice(1);
-        //   const dir = file.replace(/\/[^\/]*$/g, '');
-
-        //   if(file.endsWith('.js')) {
-        //     console.log('onHttp', { file, dir });
-        //     const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
-
-        //     resp.body = body.replaceAll(re, (match, p1, p0, p2, p3, offset) => {
-        //       if(file == 'rbush.js') {
-        //         console.log('RBUSH', resp.body);
-        //       }
-
-        //       if(!/[\/\.]/.test(p2)) {
-        //         let fname = `${p2}.js`;
-
-        //         if(!fs.existsSync(dir + '/' + fname)) return `/* ${match} */`;
-
-        //         match = [p1, './' + fname, p3].join('');
-
-        //         console.log('args', { match, p1, p2, p3, offset });
-        //       }
-        //       return match;
-        //     });
-        //   }
-
-        //   return resp;
-        // },
         onMessage(ws, data) {
           console.log('onMessage', ws, data);
-          let response;
-
-          try {
-            let obj;
-
-            if(/^[A-Z]/.test(data)) {
-              let idx = data.indexOf(' ');
-              if(idx == -1) idx = data.length;
-
-              let cmd = data.substring(0, idx);
-              let args = idx == data.length ? [] : data.substring(idx + 1).split(/\s+/g);
-
-              obj = { cmd, args };
-            } else if(data[0] == '{') {
-              obj = JSON.parse(data);
-            }
-
-            if(obj !== undefined) {
-              const { cmd, args } = obj;
-              console.log('onMessage', { cmd, args });
-
-              if(commands[cmd]) {
-                let value = commands[cmd](...args);
-                let response = { type: cmd, value };
-                console.log('Sending response to ' + cmd + '()', response);
-                ws.sendMessage(response);
-                return;
-              } else {
-                throw new Error(`ERROR: Command not found: ${cmd}`);
-              }
-            }
-
-            if(data[0] == 'l') {
-              ws.sendMessage({ type: 'list', times: StateFiles().map(file => FilenameToTime(file)) });
-              return;
-            }
-
-            let matches = [...data.matchAll(/\d+(-\d+)?/g)].map(([m]) => m);
-            let states = [];
-            console.log('matches', matches);
-            for(let match of matches) {
-              if(IsRange(match)) {
-                let range = GetRange(match);
-                console.log('range', range);
-
-                states = states.concat(ResolveRange(...range));
-              } else {
-                let state = GetStateByTime(match);
-                if(state) states.push(state);
-              }
-            }
-            let arr = states.map(([time, obj]) => [+time, JSON.parse(obj).states]);
-            //console.log('arr', arr);
-            response = arr;
-          } catch(error) {
-            console.log('onMessage ERROR', error);
-            response = { type: 'error', error: error.message };
-          }
-          if(Array.isArray(response)) response = { type: 'array', array: response };
-          ws.send(JSON.stringify(response));
         },
         onFd(fd, rd, wr) {
           //console.log('onFd', { fd, rd, wr });
