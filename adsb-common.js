@@ -22,7 +22,11 @@ export function TimeToStr(t, offset = 0) {
     }
   }
   t = Time(t, offset);
+<<<<<<< HEAD
   if(t >= 1967241600) throw new Error(`Invalid time: ${t} >= 1967241600`);
+=======
+  if(t >= 2282508000) throw new Error(`Invalid time: ${t} (> 2282508000)`);
+>>>>>>> feea8ded234c8df594d73f8da5eff05e69d5469a
   let dt = new Date(t * 1000);
   //return dt.toISOString().replace(/T(.*)\.\d{3}(.*)/, ' $1$2');
   return dt.toLocaleDateString(localeStr) + ' ' + dt.toLocaleTimeString(localeStr);
@@ -35,7 +39,13 @@ export function FilenameToTime(file) {
 }
 
 export function DateToUnix(dt = new Date()) {
+  if(typeof dt != 'object' || dt == null || !(dt instanceof Date)) dt = new Date(dt);
+
   return Math.floor(dt * 1e-3);
+}
+
+export function UnixToDate(epoch = Math.floor(Date.now() * 1e-3)) {
+  return new Date(+epoch * 1e3);
 }
 
 export function NextFile(filename) {

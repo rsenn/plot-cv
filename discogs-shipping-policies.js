@@ -1,6 +1,19 @@
-let g = globalThis;
+// ==UserScript==
+// @name         Discogs shipping policies
+// @namespace    http://transistorisiert.ch/
+// @version      0.1
+// @description  try to take over the world!
+// @author       You
+// @match        https://www.discogs.com/settings/shipping
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=discogs.com
+// @grant        none
+// ==/UserScript==
+//
+//
+let g = {};
+globalThis.discogs = g;
 
-g.setHandler = (
+setHandler = (
   fn = e => {
     const { type } = e;
     console.log(type, e);
@@ -9,15 +22,15 @@ g.setHandler = (
   }
 ) => findAll('select, input').forEach(e => ['change', 'keydown'].forEach(n => (e['on' + n] = fn)));
 
-g.toArray = obj => (Array.isArray(obj) ? obj : [...obj]);
-g.toObject = (arr, t = a => Object.fromEntries(a)) => {
+toArray = obj => (Array.isArray(obj) ? obj : [...obj]);
+toObject = (arr, t = a => Object.fromEntries(a)) => {
   if(!Array.isArray(arr)) if (arr[Symbol.iterator]) arr = [...arr];
   if(Array.isArray(arr) /* && arr[0].length == 2*/) return t(arr);
 
   return arr;
 };
 
-g.defineEntries = entries => dest =>
+defineEntries = entries => dest =>
   Object.defineProperties(
     dest,
     entries.reduce(
@@ -29,7 +42,7 @@ g.defineEntries = entries => dest =>
     )
   );
 
-g.toFn =
+toFn =
   (t = toArray) =>
   fn =>
   (...args) => {
@@ -37,41 +50,41 @@ g.toFn =
     return typeof r == 'object' && r && r[Symbol.iterator] ? t(r) : r;
   };
 
-g.chainFn =
+chainFn =
   (...fns) =>
   (...args) =>
     fns.reduce((acc, fn) => (acc.unshift(fn(...acc)), acc), args)[0];
 
-g.chainFn1 =
+chainFn1 =
   (...fns) =>
   (...args) =>
     fns.reduce((acc, fn) => (acc.unshift(fn(acc)), acc), args);
 
-g.toArrayFn = fn => toFn(toArray)(fn);
-g.toObjectFn = fn => toFn(toObject)(fn);
-g.sliceFn =
+toArrayFn = fn => toFn(toArray)(fn);
+toObjectFn = fn => toFn(toObject)(fn);
+sliceFn =
   (fn, ...range) =>
   (...args) =>
     fn(...args).slice(...range);
-g.trimFn = fn => s => (fn(s) + '').trim();
+trimFn = fn => s => (fn(s) + '').trim();
 
-g.toEntries = toArrayFn(obj => (obj.entries ? obj.entries() : obj));
+toEntries = toArrayFn(obj => (obj.entries ? obj.entries() : obj));
 
-g.fromArrayLike = (t = (item, key, obj) => [key, item]) =>
+fromArrayLike = (t = (item, key, obj) => [key, item]) =>
   toArrayFn(function* (obj) {
     for(let i = 0; obj[i] !== undefined; i++) yield t(obj[i], i, obj);
   });
 
-g.find = (query, root = document) => root.querySelector(query);
-g.getElement = (query, root) => (typeof query == 'string' ? find(query, root) : query);
-g.getElementFn = fn => e => fn(getElement(e));
-g.findAll = toArrayFn((query, root = document) => root.querySelectorAll(query));
-g.getterSetter =
+find = (query, root = document) => root.querySelector(query);
+getElement = (query, root) => (typeof query == 'string' ? find(query, root) : query);
+getElementFn = fn => e => fn(getElement(e));
+findAll = toArrayFn((query, root = document) => root.querySelectorAll(query));
+getterSetter =
   (...fns) =>
   (...args) =>
     (fns[args.length] ?? (() => {}))(...args);
 
-g.up =
+up =
   (n = 1) =>
   node => {
     let i = 0;
@@ -85,7 +98,7 @@ g.up =
     }
     return node;
   };
-g.propertiesFn = style => {
+propertiesFn = style => {
   let fn;
   fn = getterSetter(
     () => [...style],
@@ -94,7 +107,7 @@ g.propertiesFn = style => {
   );
   return fn;
 };
-g.propertyFn = (style, property) => {
+propertyFn = (style, property) => {
   let fn,
     prop = propertiesFn(style);
   fn = (...args) => prop(property, ...args);
@@ -105,69 +118,69 @@ g.propertyFn = (style, property) => {
 
 // getStyle = e=> fromArrayLike((v,k,o) => [k, propertyFn(o)])(e => window.getComputedStyle(getElement(e)), (v,k,o) => [v, propertyFn(o)])))
 
-g.getStyle = chainFn(getElement, e => window.getComputedStyle(e));
-g.toStyle = getElementFn(element => {
+getStyle = chainFn(getElement, e => window.getComputedStyle(e));
+toStyle = getElementFn(element => {
   let fn = propertiesFn(element.style);
 
   return (...args) => (args.length >= 2 ? e.style.setProperty(...args) : fn(...args));
 });
 
-g.propertyProxyFn =
+propertyProxyFn =
   getSetFunction =>
   (obj = {}) =>
     new Proxy(obj, {
       get: (target, prop, receiver) => getSetFunction(prop) ?? Reflect.get(target, prop, receiver),
       ownKeys: target => getSetFunction() ?? Reflect.ownKeys(target)
     });
-g.propertyProxy = (elem, obj = {}) => chainFn1(toStyle, propertyProxyFn)(elem)(obj);
+propertyProxy = (elem, obj = {}) => chainFn1(toStyle, propertyProxyFn)(elem)(obj);
 
-g.getCols = (row, pred = e => !e.disabled) => findAll('input, select', row).filter(pred);
-g.getRows = (e = 'tr.range') =>
+getCols = (row, pred = e => !e.disabled) => findAll('input, select', row).filter(pred);
+getRows = (e = 'tr.range') =>
   findAll(e ?? 'div.h2_wrap > div > table > tbody > tr')
     .map(row => getCols(row, () => true))
     .filter(row => row.length);
-g.numRows = () => getRows().length;
+numRows = () => getRows().length;
 
-g.callIt =
+callIt =
   (t = a => a()) =>
   (fn, ...path) =>
     t(fn);
-g.call = val => (isNaN(+val) ? val : +val);
-g.toNumber = val => (isNaN(+val) ? val : +val);
-g.toString = s => s + '';
+call = val => (isNaN(+val) ? val : +val);
+toNumber = val => (isNaN(+val) ? val : +val);
+toString = s => s + '';
 
-g.getSet = (element, a = 'value') =>
+getSet = (element, a = 'value') =>
   Array.isArray(element)
     ? element.map(e => getSet(e, a))
     : value => (value !== undefined ? element.setAttribute(a, value) : element.getAttribute(a));
-g.recurse = (arr, fn, path = [], root) =>
+recurse = (arr, fn, path = [], root) =>
   Array.isArray(arr)
     ? arr.map((item, key) => recurse(item, fn, path.concat([key]), root ?? arr))
     : fn(arr, path, root ?? arr);
 
-g.getOptions = (element, t = a => a) =>
+getOptions = (element, t = a => a) =>
   [...getElement(element ?? find('select')).children].filter(e => /^option/i.test(e.tagName)).map(t);
-g.makeExpr = (s, f = 'gi') => (typeof s == 'string' ? new RegExp(s, f) : s);
-g.makeExprFn =
+makeExpr = (s, f = 'gi') => (typeof s == 'string' ? new RegExp(s, f) : s);
+makeExprFn =
   fn =>
   (...args) =>
     fn(makeExpr(...args));
 
-g.getCards = () => findAll('.horizontal-card');
-g.getCardTexts = () => getCards().map(e => (e.innerText + '').trim());
-g.getCardPos = () => getCards().indexOf(find('.horizontal-card.selected'));
-g.getCard = pos => (pos !== undefined ? getCards()[pos] : find('.horizontal-card.selected'));
-g.getCardText = pos => (getCard(pos).innerText + '').trim();
+getCards = () => findAll('.horizontal-card');
+getCardTexts = () => getCards().map(e => (e.innerText + '').trim());
+getCardPos = () => getCards().indexOf(find('.horizontal-card.selected'));
+getCard = pos => (pos !== undefined ? getCards()[pos] : find('.horizontal-card.selected'));
+getCardText = pos => (getCard(pos).innerText + '').trim();
 
-g.setCard = pos => findAll('.horizontal-card')[pos].click();
-g.getCardIterator = function* () {
+setCard = pos => findAll('.horizontal-card')[pos].click();
+getCardIterator = function* () {
   let i = 0;
   for(let card of getCards()) {
     setCard(i++);
     yield card;
   }
 };
-g.nextOption = e =>
+nextOption = e =>
   e.dispatchEvent(
     new KeyboardEvent('keydown', {
       code: 'ArrowDown',
@@ -177,11 +190,11 @@ g.nextOption = e =>
       currentTarget: e
     })
   );
-g.numOptions = e => e.options.length;
-g.getOptionTexts = e => getOptions(e, a => a.innerText);
-g.getOptionValues = e => getOptions(e, a => a.getAttribute('value'));
-g.getOptionEntries = e => getOptions(e, a => [a.getAttribute('value'), (a.innerText + '').trim()]);
-g.getOptionIterator = function* (e, t) {
+numOptions = e => e.options.length;
+getOptionTexts = e => getOptions(e, a => a.innerText);
+getOptionValues = e => getOptions(e, a => a.getAttribute('value'));
+getOptionEntries = e => getOptions(e, a => [a.getAttribute('value'), (a.innerText + '').trim()]);
+getOptionIterator = function* (e, t) {
   let i,
     n = numOptions(e);
   t ??= () => getSelectText(e);
@@ -192,70 +205,68 @@ g.getOptionIterator = function* (e, t) {
   }
 };
 
-g.getInputLabel = (e = find('input')) => e.nextElementSibling.innerText;
-g.getInputValue = (e = find('input')) => e.value;
-g.getName = e => e.name;
-g.getSelectValue = (e = find('select')) => e.value;
-g.getSelectPos = (e = find('select')) => findOption(e)(getSelectValue());
-g.getSelectOption = (e = find('select')) => (e.options ? e.options[e.selectedIndex] : null);
-g.getSelectText = (e = find('select')) => g.getSelectOption(e)?.innerText;
-g.getValue = e => (/^select$/i.test(e.tagName) ? getSelectValue(e) : getInputValue(e));
-g.getText = g.trimFn(e =>
-  (({ select: getSelectText, input: getInputLabel }[e.tagName.toLowerCase()] ?? getCardText)(e))
-); //  /^select$/i.test(e.tagName) ? getSelectText(e) : getInputLabel(e)
+getInputLabel = (e = find('input')) => e.nextElementSiblininnerText;
+getInputValue = (e = find('input')) => e.value;
+getName = e => e.name;
+getSelectValue = (e = find('select')) => e.value;
+getSelectPos = (e = find('select')) => findOption(e)(getSelectValue());
+getSelectOption = (e = find('select')) => (e.options ? e.options[e.selectedIndex] : null);
+getSelectText = (e = find('select')) => getSelectOption(e)?.innerText;
+getValue = e => (/^select$/i.test(e.tagName) ? /* getElementsByTagName('')*/ SelectValue(e) : getInputValue(e));
+getText = trimFn(e => (({ select: getSelectText, input: getInputLabel }[e.tagName.toLowerCase()] ?? getCardText)(e))); //  /^select$/i.test(e.tagName) ? getSelectText(e) : getInputLabel(e)
 
-g.getSelections = e => getOptions(e, (t = (o, i) => [o.innerText, /*o.value,*/ o.selected]));
-g.setSelection = (e, i) => (getElement(e).selectedIndex = i); //getSelections(e, o => [e,o.innerText,o.value,i]).findIndex(([e,...s]) => s.some(t => t+'' == i+''));
-g.findOption = e => makeExprFn(expr => getOptionEntries(e).findIndex((a, i) => a.some(t => expr.test(t))));
-g.filterOptions = e => makeExprFn(expr => getOptionEntries(e).filter((a, i) => a.some(t => expr.test(t))));
+getSelections = e => getOptions(e, (t = (o, i) => [o.innerText, /*o.value,*/ o.selected]));
+setSelection = (e, i) => (getElement(e).selectedIndex = i); //getSelections(e, o => [e,o.innerText,o.value,i]).findIndex(([e,...s]) => s.some(t => t+'' == i+''));
+findOption = e => makeExprFn(expr => getOptionEntries(e).findIndex((a, i) => a.some(t => expr.test(t))));
+filterOptions = e => makeExprFn(expr => getOptionEntries(e).filter((a, i) => a.some(t => expr.test(t))));
 
-delete g.rows;
+delete rows;
 
-g.matchNumbers = toArrayFn(str => str.matchAll(/([-+]?[0-9.]+)/g));
-g.parseNumber = v => {
+matchNumbers = toArrayFn(str => str.matchAll(/([-+]?[0-9.]+)/g));
+parseNumber = v => {
   let [m] = matchNumbers(v + '');
   return toNumber(...m);
 };
-g.getPriceText = (price = find('.price-row-price > span')) => (price?.innerText ?? '').trim();
+getPriceText = (price = find('.price-row-price > span')) => (price?.innerText ?? '').trim();
 
-g.getPrice = (price = find('.price-row-price > span')) => parseNumber(g.getPriceText(price));
+getPrice = (price = find('.price-row-price > span')) => parseNumber(getPriceText(price));
 
-g.getCountry = () => findAll('select, input').map(getText).concat([getPriceText()]) /*.map(t => (t+'').strip())*/;
+getCountry = () => findAll('select, input').map(getText).concat([getPriceText()]) /*.map(t => (t+'').strip())*/;
 
-g.get = (obj, path) => path.reduce((acc, key) => acc[key], obj);
-g.setTo = (parent, key, value) => (parent[key] = value);
-g.defineTo = (parent, key, ...fns) =>
+get = (obj, path) => path.reduce((acc, key) => acc[key], obj);
+setTo = (parent, key, value) => (parent[key] = value);
+defineTo = (parent, key, ...fns) =>
   Object.defineProperty(parent, key, {
     get: fns[0],
     set: fns[1] ?? fns[0],
     configurable: true
   });
 
-g.set = (obj, path, value) => setTo(get(obj, path.slice(0, -1)), path[path.length - 1], value);
+set = (obj, path, value) => setTo(get(obj, path.slice(0, -1)), path[path.length - 1], value);
 
-g.getValues = () =>
+getValues = () =>
   recurse(
-    g.y,
+    y,
     callIt(a => {
       let n = a();
       return ({ object: a => a, undefined: a => a }[typeof n] ?? toNumber)(n);
     })
   );
-g.setValues = v => recurse(g.y, (item, path, root) => item(get(v, path) + ''));
+setValues = v => recurse(y, (item, path, root) => item(get(v, path) + ''));
 
-g.defineGetter = (name, fn) =>
+defineGetter = (name, fn) =>
   Object.defineProperties(globalThis, {
     [name]: { get: fn, configurable: true }
   });
 defineGetter('rows', getRows);
-defineGetter('y', () => getSet(g.rows));
-defineGetter('y', () => getSet(g.rows));
+defineGetter('y', () => getSet(rows));
+defineGetter('y', () => getSet(rows));
 defineTo(globalThis, 'values', getValues, setValues);
 
-g.removeRow = () => document.querySelector('td.range_remove > button').click();
-g.addRow = () => document.querySelector('button.add_range').click();
+removeRow = () => document.querySelector('td.range_remove > button').click();
+addRow = () => document.querySelector('button.add_range').click();
 
-g.setNumRows = n => {
+setNumRows = n => {
   while(numRows() < n) addRow();
   while(numRows() > n) removeRow();
 };
