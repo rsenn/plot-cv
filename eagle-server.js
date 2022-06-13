@@ -83,6 +83,31 @@ function StartREPL(prefix = scriptName(), suffix = '') {
   return repl;
 }
 
+function GetHeader(resp, key) {
+  const { headers } = resp;
+  let value;
+  if(typeof headers == 'object' && headers != null) value = headers[key] ?? headers[key.toLowerCase()];
+  return value;
+}
+
+function GetNonce(resp) {
+  let csp, ret;
+
+  if((csp = GetHeader(resp, 'Content-Security-Policy'))) {
+    let m = /'nonce-([^']*)'/.exec(csp) ?? [];
+    ret = m[1];
+  }
+
+  if(!ret) ret = SetNonce(resp);
+
+  return ret;
+}
+
+function SetNonce(resp, nonce = randStr(32)) {
+  resp.headers = { ['content-security-policy']: `script-src ${resp.url.host} 'nonce-${nonce}'` };
+  return nonce;
+}
+
 function main(...args) {
   const base = scriptName().replace(/\.[a-z]*$/, '');
 
@@ -255,25 +280,36 @@ function main(...args) {
           const { method, headers } = req;
           console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
           const { url } = resp;
+
+          if(url.path == '' || url.path == '/') url.path = '/index.html';
+
           const { path, host } = url;
+          console.log('\x1b[38;5;33monHttp\x1b[0m', { path, host });
 
           const file = path.slice(1);
-          const dir = file.replace(/\/[^\/]*$/g, '');
+          const dir = path.replace(/\/[^\/]*$/g, '');
 
           console.log('\x1b[38;5;33monHttp\x1b[0m', { file, dir });
 
           let nonce;
 
+          let { body } = resp;
+          if(body === undefined) body = resp.body = ReadFile(file);
+
           if(file.endsWith('.html') || file == '' || file == '/') {
-            nonce = randStr(32);
-            resp.body = resp.body.replaceAll('@@=AAABBBCCCZZZ=@@', 'nonce-' + nonce);
-            console.log('resp.body', resp.body);
+            nonce = GetNonce(resp);
+
+            console.log('\x1b[38;5;33monHttp\x1b[0m', { body, nonce });
+            resp.body = body.replaceAll('@@=AAABBBCCCZZZ=@@', 'nonce-' + nonce);
+            console.log('resp.body', body);
           }
-          if(nonce) {
+          console.log('resp.headers (1)', resp.headers);
+
+          /*    if(nonce) {
             let headers = { ['content-security-policy']: `script-src ${host} 'nonce-${nonce}'` };
 
-            console.log('resp.headers', (resp.headers = headers));
-          }
+            console.log('resp.headers (2)', (resp.headers = headers));
+          }*/
 
           return resp;
         },
