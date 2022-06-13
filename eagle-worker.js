@@ -1,5 +1,5 @@
-if (false && 'serviceWorker' in navigator) {
-  window.addEventListener('load', async function () {
+if(false && 'serviceWorker' in navigator) {
+  window.addEventListener('load', async function() {
     const script = '/sw.js';
     const { serviceWorker } = navigator;
     window.sw = serviceWorker;
@@ -9,7 +9,7 @@ if (false && 'serviceWorker' in navigator) {
     const { controller } = serviceWorker;
     console.log('Service Worker controller', controller);
     window.swc = controller;
-    controller.addEventListener('message', (event) => {
+    controller.addEventListener('message', event => {
       console.debug('index.html MESSAGE:', event.data);
     });
     console.log('controller.postMessage', controller.postMessage);
@@ -20,7 +20,7 @@ if (false && 'serviceWorker' in navigator) {
       },
       [messageChannel.port2]
     );
-    messageChannel.port1.onmessage = (event) => {
+    messageChannel.port1.onmessage = event => {
       console.log('Message from serviceWorker:', event.data);
     };
     controller.postMessage({

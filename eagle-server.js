@@ -3,7 +3,7 @@ import * as os from 'os';
 import { setInterval } from 'timers';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
-import Util from './lib/util.js';
+import { randStr } from 'util';
 import { watch, IN_MODIFY, memoize, daemon, atexit, getpid, toArrayBuffer, toString, escape, quote, define, extendArray, getOpt, glob } from 'util';
 import { Console } from './quickjs/qjs-modules/lib/console.js';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
@@ -250,6 +250,32 @@ function main(...args) {
 
         onMessage(ws, data) {
           console.log('onMessage', ws, data);
+        },
+        onHttp(req, resp) {
+          const { method, headers } = req;
+          console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
+          const { url } = resp;
+          const { path, host } = url;
+
+          const file = path.slice(1);
+          const dir = file.replace(/\/[^\/]*$/g, '');
+
+          console.log('\x1b[38;5;33monHttp\x1b[0m', { file, dir });
+
+          let nonce;
+
+          if(file.endsWith('.html') || file == '' || file == '/') {
+            nonce = randStr(32);
+            resp.body = resp.body.replaceAll('@@=AAABBBCCCZZZ=@@', 'nonce-' + nonce);
+            console.log('resp.body', resp.body);
+          }
+          if(nonce) {
+            let headers = { ['content-security-policy']: `script-src ${host} 'nonce-${nonce}'` };
+
+            console.log('resp.headers', (resp.headers = headers));
+          }
+
+          return resp;
         },
         onFd(fd, rd, wr) {
           //console.log('onFd', { fd, rd, wr });
