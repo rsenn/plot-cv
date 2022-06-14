@@ -1,5 +1,6 @@
 import * as std from 'std';
 import * as os from 'os';
+import * as fs from 'fs';
 import { setInterval } from 'timers';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
@@ -110,8 +111,8 @@ function main(...args) {
       '../pictest/eagle'
     ]);
 
-    let testFiles = [...vfs.readdirSync('.')];
-    console.log('vfs.readdirSync', console.config({ compact: false }), testFiles);
+    /*  let testFiles = [...vfs.readdirSync('.')];
+    console.log('vfs.readdirSync', console.config({ compact: false }), testFiles);*/
   } catch(err) {
     console.log('err', err);
   }
@@ -230,25 +231,39 @@ function main(...args) {
             const { body, headers, url } = req;
             const { path, query } = url;
 
+            const params = (typeof body == 'string' ? JSON.parse(body) : typeof body == 'object' ? body : null) ?? {};
+
+            console.log('/files', { params });
+
             let ret,
               argObj = {},
               args = url.path.replace(/.*files./g, '');
-
-            console.log('/files', { args });
 
             if(args) {
               argObj = GetArgs(args);
               console.log('/files', { argObj });
             }
 
-            if(argObj['filter']) {
-              ret = glob(argObj.filter);
-            } else {
-              ret = vfs.readdirSync('.');
-            }
-            ret = [...ret].sort();
+            ret = vfs.readdirSync('.', (fileName, filePath) => {
+              let st = fs.statSync(filePath);
+              return Object.assign({ name: fileName, ...st });
+            });
+            res.type = 'application/json';
+            console.log('/files', { args, res });
 
-            yield ret.map(f => f + '\n').join('');
+            if(params.filter) {
+              let re = new RegExp(params.filter, 'gi');
+              ret = ret.filter(({ name }) => re.test(name));
+            }
+
+            yield JSON.stringify(ret.filter(({ mode }) => mode & os.S_IFREG));
+
+            /*  yield '{ "files": [' +
+              ret
+                .filter(({ mode }) => mode & os.S_IFREG)
+                .map(obj => JSON.stringify(obj))
+                .join(',\n') +
+              '] }';*/
           }
         },
         ...url,

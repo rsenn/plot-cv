@@ -34,7 +34,6 @@ export function GLFW(width, height, options = {}) {
 
   Object.assign(window, { ...GLFW.defaultCallbacks, ...handlers });
 
-
   return Object.assign(this, { resolution, title, window });
 }
 

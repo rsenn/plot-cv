@@ -87,14 +87,15 @@ export class VirtFS {
     return handle;
   }
 
-  readdirSync(pathname) {
-    return this.reduce((acc, dir) => {
-      let f = path.concat(dir, pathname);
-      let x = fs.readdirSync(f) ?? [];
-      for(let y of x) acc.push(path.collapse(path.concat(f, y)));
-
-      return acc;
-    }, []);
+  readdirSync(pathname, fn = (fname, fpath) => fname) {
+    return [
+      ...this.reduce((acc, dir) => {
+        let f = path.concat(dir, pathname);
+        let x = fs.readdirSync(f) ?? [];
+        for(let y of x) acc.add(fn(y, path.collapse(path.concat(f, y))));
+        return acc;
+      }, new Set())
+    ];
   }
 
   chdir(pathname) {
@@ -108,6 +109,9 @@ export class VirtFS {
   }
   existsSync(pathname, ...args) {
     return this.search(pathname, found => fs.existsSync(found, ...args));
+  }
+  statSync(pathname, ...args) {
+    return this.search(pathname, found => fs.statSync(found, ...args));
   }
   lstatSync(pathname, ...args) {
     return this.search(pathname, found => fs.lstatSync(found, ...args));
