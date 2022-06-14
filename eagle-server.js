@@ -229,41 +229,31 @@ function main(...args) {
           },
           ['/files']: function* files(req, res) {
             const { body, headers, url } = req;
-            const { path, query } = url;
-
+            const { query } = url;
             const params = (typeof body == 'string' ? JSON.parse(body) : typeof body == 'object' ? body : null) ?? {};
-
-            console.log('/files', { params });
-
+            console.log('/files',console.config({ compact: 0 }), { params });
             let ret,
               argObj = {},
               args = url.path.replace(/.*files./g, '');
-
             if(args) {
               argObj = GetArgs(args);
-              console.log('/files', { argObj });
+              console.log('/files', console.config({ compact: 0 }),{ argObj });
             }
-
             ret = vfs.readdirSync('.', (fileName, filePath) => {
               let st = fs.statSync(filePath);
-              return Object.assign({ name: fileName, ...st });
+              return Object.assign({ name: fileName, dir: path.dirname(filePath), ...st });
             });
             res.type = 'application/json';
-            console.log('/files', { args, res });
-
+            res.status=200;
+            
+                         console.log('/files', console.config({ compact: 0 }),{ args, res });
             if(params.filter) {
               let re = new RegExp(params.filter, 'gi');
               ret = ret.filter(({ name }) => re.test(name));
             }
 
             yield JSON.stringify(ret.filter(({ mode }) => mode & os.S_IFREG));
-
-            /*  yield '{ "files": [' +
-              ret
-                .filter(({ mode }) => mode & os.S_IFREG)
-                .map(obj => JSON.stringify(obj))
-                .join(',\n') +
-              '] }';*/
+ 
           }
         },
         ...url,
@@ -308,18 +298,17 @@ function main(...args) {
         },
         onHttp(req, resp) {
           const { method, headers } = req;
-          console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
+          //console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
           const { url } = resp;
 
-          //if(url.path == '' || url.path == '/') url.path = '/index.html';
-
+ 
           const { path, host } = url;
-          console.log('\x1b[38;5;33monHttp\x1b[0m', { path, host });
+          //console.log('\x1b[38;5;33monHttp\x1b[0m', { path, host });
 
           const file = path.slice(1);
           const dir = path.replace(/\/[^\/]*$/g, '');
 
-          console.log('\x1b[38;5;33monHttp\x1b[0m', { file, dir });
+         // console.log('\x1b[38;5;33monHttp\x1b[0m', { file, dir });
 
           let nonce;
 
@@ -329,11 +318,11 @@ function main(...args) {
           nonce = GetNonce(resp);
 
           if(file.endsWith('.html') || file == '' || file == '/') {
-            console.log('\x1b[38;5;33monHttp\x1b[0m', { body, nonce });
+            //console.log('\x1b[38;5;33monHttp\x1b[0m', { body, nonce });
             resp.body = body.replaceAll('@@=AAABBBCCCZZZ=@@', 'nonce-' + nonce);
-            console.log('resp.body', escape(body));
+           // console.log('resp.body', escape(body));
           }
-          console.log('resp.headers (1)', resp.headers);
+         // console.log('resp.headers (1)', resp.headers);
 
           return resp;
         },
