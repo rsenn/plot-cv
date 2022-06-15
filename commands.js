@@ -41,6 +41,15 @@ export async function ListProjects(opts = {}) {
       .catch(error => ({ error }));
 
     if(isObject(response)) response = response.data;
+
+    if(typeof response == 'string') {
+      console.log('ListProjects', { response }, response.length);
+
+      /*let resp=response.substring(330100);
+      console.log('ListProjects', { resp },resp.length);  */
+
+      response = JSON.parse(response);
+    }
   } else {
     response = await GithubListContents(url, null, null, '\\.(brd|sch|lbr)$', opts);
 
@@ -53,6 +62,7 @@ export async function ListProjects(opts = {}) {
       response = { files: fileList };
     }
   }
+
   //console.log('ListProjects', { response });
   return response;
 }
