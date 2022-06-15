@@ -231,29 +231,28 @@ function main(...args) {
             const { body, headers, url } = req;
             const { query } = url;
             const params = (typeof body == 'string' ? JSON.parse(body) : typeof body == 'object' ? body : null) ?? {};
-            console.log('/files',console.config({ compact: 0 }), { params });
+            console.log('/files', console.config({ compact: 0 }), { params });
             let ret,
               argObj = {},
               args = url.path.replace(/.*files./g, '');
             if(args) {
               argObj = GetArgs(args);
-              console.log('/files', console.config({ compact: 0 }),{ argObj });
+              console.log('/files', console.config({ compact: 0 }), { argObj });
             }
             ret = vfs.readdirSync('.', (fileName, filePath) => {
               let st = fs.statSync(filePath);
               return Object.assign({ name: fileName, dir: path.dirname(filePath), ...st });
             });
             res.type = 'application/json';
-            res.status=200;
-            
-                         console.log('/files', console.config({ compact: 0 }),{ args, res });
+            res.status = 200;
+
+            console.log('/files', console.config({ compact: 0 }), { args, res });
             if(params.filter) {
               let re = new RegExp(params.filter, 'gi');
               ret = ret.filter(({ name }) => re.test(name));
             }
 
             yield JSON.stringify(ret.filter(({ mode }) => mode & os.S_IFREG));
- 
           }
         },
         ...url,
@@ -301,14 +300,13 @@ function main(...args) {
           //console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
           const { url } = resp;
 
- 
           const { path, host } = url;
           //console.log('\x1b[38;5;33monHttp\x1b[0m', { path, host });
 
           const file = path.slice(1);
           const dir = path.replace(/\/[^\/]*$/g, '');
 
-         // console.log('\x1b[38;5;33monHttp\x1b[0m', { file, dir });
+          // console.log('\x1b[38;5;33monHttp\x1b[0m', { file, dir });
 
           let nonce;
 
@@ -320,9 +318,9 @@ function main(...args) {
           if(file.endsWith('.html') || file == '' || file == '/') {
             //console.log('\x1b[38;5;33monHttp\x1b[0m', { body, nonce });
             resp.body = body.replaceAll('@@=AAABBBCCCZZZ=@@', 'nonce-' + nonce);
-           // console.log('resp.body', escape(body));
+            // console.log('resp.body', escape(body));
           }
-         // console.log('resp.headers (1)', resp.headers);
+          // console.log('resp.headers (1)', resp.headers);
 
           return resp;
         },

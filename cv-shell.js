@@ -1,9 +1,10 @@
 import * as cv from 'opencv';
 import Util from './lib/util.js';
-import { toArrayBuffer, toString, escape, quote, define, extendArray, memoize, getFunctionArguments, glob, GLOB_TILDE, fnmatch, wordexp } from './lib/misc.js';
+import { setInterval, toArrayBuffer, toString, escape, quote, define, extendArray, memoize, getFunctionArguments, glob, GLOB_TILDE, fnmatch, wordexp, lazyProperties } from './lib/misc.js';
 import * as misc from './lib/misc.js';
 import * as util from './lib/misc.js';
 import * as deep from './lib/deep.js';
+import trkl from './lib/trkl.js';
 import path from './lib/path.js';
 import { Console } from 'console';
 import REPL from './xrepl.js';
@@ -17,11 +18,19 @@ import { VideoSource, ImageSequence } from './qjs-opencv/js/cvVideo.js';
 import { ImageInfo } from './lib/image-info.js';
 import { MouseEvents, MouseFlags, Mouse, Window, TextStyle, DrawText } from './qjs-opencv/js/cvHighGUI.js';
 //import {   DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles } from './io-helpers.js';
+import { ImagePipeline } from './imagePipeline.js';
+import * as HighGUI from './qjs-opencv/js/cvHighGUI.js';
+import { lazyInitializer } from './lib/lazyInitializer.js';
+import { AutoValue } from './autoValue.js';
 
-let cmdhist;
+let cmdhist,
+  defaultWin = lazyInitializer(() => new HighGUI.Window(path.basename(scriptArgs[0], '.js')));
 
 extendArray();
 
+function getConfFile(base) {
+  return std.getenv('HOME') + '/.' + path.basename(scriptArgs[0], '.js') + '_' + base;
+}
 async function importModule(moduleName, ...args) {
   //console.log('importModule', moduleName, args);
   let done = false;
@@ -38,15 +47,27 @@ async function importModule(moduleName, ...args) {
     });
   // while(!done) std.sleep(50);
 }
-
 function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, fs, false);
   repl.fs = fs;
-  repl.historyLoad(null, false);
+  repl.historyLoad(getConfFile('history'), fs);
   repl.inspectOptions = console.options;
 
   let { log } = console;
-  repl.show = arg => std.puts((typeof arg == 'string' ? arg : inspect(arg, repl.inspectOptions)) + '\n');
+  repl.show = arg => {
+    repl.globalKeys();
+
+    //console.log('repl.show', arg);
+    if(arg instanceof cv.Mat) {
+      let win = defaultWin();
+      win.resize(arg.cols, arg.rows);
+      win.show(arg);
+      cv.waitKey(1);
+      return;
+    }
+
+    std.puts((typeof arg == 'string' ? arg : inspect(arg, repl.inspectOptions)) + '\n');
+  };
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();
@@ -81,6 +102,7 @@ function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = ''
   };
 
   console.log = repl.printFunction((...args) => {
+    console.log('printFunction');
     log(console.config(repl.inspectOptions), ...args);
   });
 
@@ -119,24 +141,52 @@ function main(...args) {
   });
 
   cmdhist = `.${base}-cmdhistory`;
-
   let repl = StartREPL();
+  lazyProperties(repl, {
+    globalKeys() {
+      let a = getKeys();
+      function getKeys() {
+        return new Set(Object.keys(globalThis));
+      }
+      return function globalKeys() {
+        let newKeys = getKeys();
+        let [removed, added] = util.difference(a, newKeys);
+        let changed = util.union(a, newKeys);
+        /* for(let key of removed) console.log(`key '${key}' removed`);
+        for(let key of added) console.log(`key '${key}' added`);*/
+        if(removed.length || added.length) {
+          let newObj = {},
+            oldObj = repl.globalValues() ?? {};
+          for(let k of a) newObj[k] = oldObj[k];
+          for(let k of added) newObj[k] = globalThis[k];
+          for(let k of a) newObj[k] = oldObj[k];
+          repl.globalValues(newObj);
+          a = newKeys;
+        }
+        //return a;
+      };
+    },
+    globalValues() {
+      return AutoValue(getConfFile('global'));
+    }
+  });
   Object.assign(globalThis, {
     cv,
     fs,
+    repl,
     util,
     misc,
     Pointer,
     deep,
     VideoSource,
     ImageSequence,
+    ImagePipeline,
     MouseEvents,
     MouseFlags,
     Mouse,
     Window,
     TextStyle,
     DrawText,
-    repl,
     Util,
     toArrayBuffer,
     toString,
@@ -166,8 +216,13 @@ function main(...args) {
     WriteBJSON,
     DirIterator,
     RecursiveDirIterator,
-    ImageInfo
+    ImageInfo,
+    HighGUI,
+    AutoValue
   });
+  repl.globalKeys();
+
+  setInterval(() => repl.globalKeys(), 500);
 }
 
 Util.callMain(main, true);
