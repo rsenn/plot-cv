@@ -9,6 +9,12 @@ body {
 svg {
   pointer-events: all;
 }
+#preact {
+  max-height: 100vh;
+}
+#doc {
+  display: none;
+}
 /*#container {
   display: flex;
   flex-flow: column nowrap;

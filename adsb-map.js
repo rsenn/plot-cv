@@ -49,7 +49,7 @@ function InsertSorted(entries, ...values) {
   let [key] = values[0];
   let at = entries.findIndex(([k, v]) => k > key);
 
-  if (at != -1) entries.splice(at, 0, ...values);
+  if(at != -1) entries.splice(at, 0, ...values);
   else entries.push(...values);
 }
 
@@ -65,14 +65,14 @@ async function FetchJSON(file, done = data => data) {
 }
 
 function TransformCoordinates(...args) {
-  if (args.length == 2) return transform(args, 'EPSG:4326', 'EPSG:3857');
-  if (args.length == 4) {
+  if(args.length == 2) return transform(args, 'EPSG:4326', 'EPSG:3857');
+  if(args.length == 4) {
     let extent = [args.splice(0, 2), args.splice(0, 2)];
     return extent.reduce((acc, coord) => acc.concat(TransformCoordinates(...coord)), []);
   }
 
   //return [...TransformCoordinates(args.slice(0,2)), ...TransformCoordinates(args.slice(2,4))];
-  if (typeof args[0] == 'string') return TransformCoordinates(args[0].split(',').map(n => +n));
+  if(typeof args[0] == 'string') return TransformCoordinates(args[0].split(',').map(n => +n));
 }
 
 class Coordinate {
@@ -117,15 +117,15 @@ const cities = {
   genf: new Coordinate(6.143158, 46.204391),
   zug: new Coordinate(8.515495, 47.166168),
   basel: new Coordinate(7.588576, 47.559601),
-  winterthur: new Coordinate(8.737565, 47.49995),
+  winterthur: new Coordinate(8.737565, 47.49995)
 };
 
 const tryFunction = (fn, resolve = a => a, reject = () => null) => {
-  if (typeof resolve != 'function') {
+  if(typeof resolve != 'function') {
     let rval = resolve;
     resolve = () => rval;
   }
-  if (typeof reject != 'function') {
+  if(typeof reject != 'function') {
     let cval = reject;
     reject = () => cval;
   }
@@ -133,7 +133,7 @@ const tryFunction = (fn, resolve = a => a, reject = () => null) => {
     let ret;
     try {
       ret = fn(...args);
-    } catch (err) {
+    } catch(err) {
       return reject(err, ...args);
     }
     return resolve(ret, ...args);
@@ -148,13 +148,13 @@ function Refresh() {
   //map.render();
   //
   source.clear();
-  if (states.length) {
+  if(states.length) {
     const [time, list] = states.last;
     console.log('refresh', list.length);
 
     SetTime(time);
 
-    for (let state of list) {
+    for(let state of list) {
       let obj = Aircraft.fromState(state);
       let style = Aircraft.style(obj.icao24);
 
@@ -186,46 +186,50 @@ function Connection(port, onConnect = () => {}) {
         response = JSON.parse(e.data); //tryCatch(() => JSON.parse(e.data), d=>d, err => err);
         console.log('onmessage', response);
 
-        if (response.type && /^[A-Z]/.test(response.type[0])) {
+        if(response.type && /^[A-Z]/.test(response.type[0])) {
           console.log('return value', response.value);
           switch (response.type) {
             case 'StatePhases': {
-              for (let phase of response.value) {
+              for(let phase of response.value) {
                 phases.add(phase);
               }
               break;
             }
           }
-        } else if (response.type == 'list') {
+        } else if(response.type == 'list') {
           console.log('times', response.times);
-        } else if (response.type == 'update' || 'time' in response) {
-         // console.log('update', response.states);
+        } else if(response.type == 'update' || 'time' in response) {
+          // console.log('update', response.states);
           InsertSorted(states, [response.time, response.states]);
           Refresh();
-        } else if (response.type == 'array') {
+        } else if(response.type == 'array') {
           let arr = response.array;
 
           arr = arr.map(([time, obj]) => [new Date(+time * 1e3), obj]);
 
           console.log('arr', arr);
 
-          data.splice(0, data.length, ...arr.map(([time, states]) => ({ time, states /*: states.map(StateToObject)*/ })));
-          if (arr[0]) InsertSorted(states, ...arr);
+          data.splice(
+            0,
+            data.length,
+            ...arr.map(([time, states]) => ({ time, states /*: states.map(StateToObject)*/ }))
+          );
+          if(arr[0]) InsertSorted(states, ...arr);
 
           console.log('data.length', data.length);
           Refresh();
-        } else if (response.type == 'error') {
+        } else if(response.type == 'error') {
           console.log('ERROR response', response.error);
         } else {
           throw new Error(`Invalid response: ${e.data}`);
         }
-      } catch (error) {
+      } catch(error) {
         console.log('onmessage ERROR:', error.message);
         console.log('onmessage ERROR data:', e.data);
         console.log('onmessage ERROR stack:', error.stack);
       }
       console.log('states.length', states.length);
-    },
+    }
   });
 }
 
@@ -265,7 +269,7 @@ function SetTime(t) {
 function FlyTo(location, done = () => {}) {
   console.log('FlyTo', { location, done });
 
-  if (typeof location == 'string') location = cities[location];
+  if(typeof location == 'string') location = cities[location];
 
   const duration = 2000;
   const zoom = view.getZoom();
@@ -273,10 +277,10 @@ function FlyTo(location, done = () => {}) {
   let called = false;
   function callback(complete) {
     --parts;
-    if (called) {
+    if(called) {
       return;
     }
-    if (parts === 0 || !complete) {
+    if(parts === 0 || !complete) {
       called = true;
       done(complete);
     }
@@ -284,18 +288,18 @@ function FlyTo(location, done = () => {}) {
   view.animate(
     {
       center: location,
-      duration: duration,
+      duration: duration
     },
     callback
   );
   view.animate(
     {
       zoom: zoom - 1,
-      duration: duration / 2,
+      duration: duration / 2
     },
     {
       zoom: zoom,
-      duration: duration / 2,
+      duration: duration / 2
     },
     callback
   );
@@ -309,25 +313,25 @@ const styles = [
   new Style({
     stroke: new Stroke({
       color: 'blue',
-      width: 3,
+      width: 3
     }),
     fill: new Fill({
-      color: 'rgba(0, 0, 255, 0.1)',
-    }),
+      color: 'rgba(0, 0, 255, 0.1)'
+    })
   }),
   new Style({
     image: new CircleStyle({
       radius: 5,
       fill: new Fill({
-        color: 'orange',
-      }),
+        color: 'orange'
+      })
     }),
     geometry: function(feature) {
       // return the coordinates of the first ring of the polygon
       const coordinates = feature.getGeometry().getCoordinates()[0];
       return new MultiPoint(coordinates);
-    },
-  }),
+    }
+  })
 ];
 
 const geojsonObject = {
@@ -335,8 +339,8 @@ const geojsonObject = {
   crs: {
     type: 'name',
     properties: {
-      name: 'EPSG:3857',
-    },
+      name: 'EPSG:3857'
+    }
   },
   features: [
     {
@@ -366,10 +370,10 @@ const geojsonObject = {
             [21.872, 2.544],
             [23.378, 0.15],
             [25.182, 2.56],
-            [25.801, 5.053],
-          ].map(([x, y]) => [x * 1e-3, y * 1e-3]),
-        ],
-      },
+            [25.801, 5.053]
+          ].map(([x, y]) => [x * 1e-3, y * 1e-3])
+        ]
+      }
     },
     {
       type: 'Feature',
@@ -381,10 +385,10 @@ const geojsonObject = {
             [-2e6, 8e6],
             [0, 8e6],
             [0, 6e6],
-            [-2e6, 6e6],
-          ].map(([x, y]) => [x * 1e-3, y * 1e-3]),
-        ],
-      },
+            [-2e6, 6e6]
+          ].map(([x, y]) => [x * 1e-3, y * 1e-3])
+        ]
+      }
     },
     {
       type: 'Feature',
@@ -396,10 +400,10 @@ const geojsonObject = {
             [500000, 7000000],
             [1500000, 7000000],
             [1500000, 6000000],
-            [500000, 6000000],
-          ],
-        ],
-      },
+            [500000, 6000000]
+          ]
+        ]
+      }
     },
     {
       type: 'Feature',
@@ -410,21 +414,21 @@ const geojsonObject = {
             [-2000000, -1000000],
             [-1000000, 1000000],
             [0, -1000000],
-            [-2000000, -1000000],
-          ],
-        ],
-      },
-    },
-  ],
+            [-2000000, -1000000]
+          ]
+        ]
+      }
+    }
+  ]
 };
 
 const source = (globalThis.source = new VectorSource({
-  features: [], // new GeoJSON().readFeatures(geojsonObject)
+  features: [] // new GeoJSON().readFeatures(geojsonObject)
 }));
 
 const vectorLayer = new VectorLayer({
   source: source,
-  style: styles,
+  style: styles
 });
 
 const iconMarkerStyle = new Style({
@@ -433,9 +437,9 @@ const iconMarkerStyle = new Style({
     //size: [100, 100],
     offset: [0, 0],
     opacity: 1,
-    scale: 0.35,
+    scale: 0.35
     //color: [10, 98, 240, 1]
-  }),
+  })
 });
 
 function CreateMap() {
@@ -444,7 +448,7 @@ function CreateMap() {
     zoom: 11,
     minZoom: 3,
     maxZoom: 20,
-    extent: TransformCoordinates(extent),
+    extent: TransformCoordinates(extent)
   });
 
   const positionFeature = new Feature();
@@ -453,48 +457,48 @@ function CreateMap() {
       image: new CircleStyle({
         radius: 6,
         fill: new Fill({
-          color: '#3399CC',
+          color: '#3399CC'
         }),
         stroke: new Stroke({
           color: '#fff',
-          width: 2,
-        }),
-      }),
+          width: 2
+        })
+      })
     })
   );
   let extentVector = [topLeft, topRight, bottomRight, bottomLeft, topLeft].map(a => TransformCoordinates(...a));
   let lineString = new LineString(extentVector);
 
   let feature = new Feature({
-    geometry: lineString,
+    geometry: lineString
   });
 
   let stroke = new Stroke({
     color: '#ffd705',
     width: 4,
-    lineDash: [4, 8],
+    lineDash: [4, 8]
   });
   const vector = new VectorLayer({
     source: new VectorSource({
       features: [feature, positionFeature],
-      wrapX: false,
+      wrapX: false
     }),
     style: new Style({
-      stroke,
-    }),
+      stroke
+    })
   });
 
   const geolocation = new Geolocation({
     // enableHighAccuracy must be set to true to have the heading value.
     trackingOptions: {
-      enableHighAccuracy: true,
+      enableHighAccuracy: true
     },
-    projection: view.getProjection(),
+    projection: view.getProjection()
   });
   const tileLayer = new TileLayer({
     source: new XYZ({
-      url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    }),
+      url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+    })
   });
 
   /*  tileLayer.on('postrender', function(event) {
@@ -522,7 +526,7 @@ function CreateMap() {
   let map = new OLMap({
     target: 'mapdiv',
     layers: [tileLayer, vector],
-    view,
+    view
   });
 
   const zoomslider = new ZoomSlider();
@@ -536,8 +540,8 @@ function CreateMap() {
       },
       set(value) {
         view.setZoom(value);
-      },
-    },
+      }
+    }
   });
 
   const svgContainer = (globalThis.svgContainer = document.createElement('div'));
@@ -566,11 +570,19 @@ xhr.send();*/
         const scale = svgResolution / frameState.viewState.resolution;
         const center = frameState.viewState.center;
         const size = frameState.size;
-        const cssTransform = composeCssTransform(size[0] / 2, size[1] / 2, scale, scale, frameState.viewState.rotation, -center[0] / svgResolution - width / 2, center[1] / svgResolution - height / 2);
+        const cssTransform = composeCssTransform(
+          size[0] / 2,
+          size[1] / 2,
+          scale,
+          scale,
+          frameState.viewState.rotation,
+          -center[0] / svgResolution - width / 2,
+          center[1] / svgResolution - height / 2
+        );
         svgContainer.style.transform = cssTransform;
         svgContainer.style.opacity = this.getOpacity();
         return svgContainer;
-      },
+      }
     })
   );
   map.addLayer(vectorLayer);
@@ -589,7 +601,7 @@ function CreateSlider() {
       console.log('onDrag', left);
       return true;
       return !!position.snapped; // It is moved only when it is snapped.
-    },
+    }
   });
   draggable.snap = { step: 40 };
   draggable.containment = { left: 0, top: 20, width: window.offsetWidth, height: 0 };
@@ -630,7 +642,7 @@ Object.assign(globalThis, {
     addCoordinateTransforms,
     addProjection,
     transform,
-    fromLonLat,
+    fromLonLat
   },
   Connection,
   Time,
@@ -647,18 +659,36 @@ Object.assign(globalThis, {
   Coordinate,
   cities,
   FetchFile,
-  FetchJSON,
+  FetchJSON
 });
 
 let planes = (globalThis.planes = []);
 let d = Date.parse('2022-04-19T14:59:00Z');
-const keys = ['icao24', 'callsign', 'origin_country', 'time_position', 'last_contact', 'longitude', 'latitude', 'baro_altitude', 'on_ground', 'velocity', 'true_track', 'vertical_rate', 'sensors', 'geo_altitude', 'squawk', 'spi', 'position_source'];
+const keys = [
+  'icao24',
+  'callsign',
+  'origin_country',
+  'time_position',
+  'last_contact',
+  'longitude',
+  'latitude',
+  'baro_altitude',
+  'on_ground',
+  'velocity',
+  'true_track',
+  'vertical_rate',
+  'sensors',
+  'geo_altitude',
+  'squawk',
+  'spi',
+  'position_source'
+];
 
 function StateToObject(item) {
   return item.reduce(
     (acc, field, i) => ({
       ...acc,
-      [keys[i]]: ['time_position', 'last_contact'].indexOf(keys[i]) != -1 ? new Date(field * 1000) : field,
+      [keys[i]]: ['time_position', 'last_contact'].indexOf(keys[i]) != -1 ? new Date(field * 1000) : field
     }),
     {}
   );
@@ -673,8 +703,8 @@ window.addEventListener('load', () => {
   });
   CreateSlider();
   SetTime(DateToUnix());
-  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-    for (let q of ['#timeline', '.time-display' /*,'.time-scale','.time-row'*/]) {
+  if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    for(let q of ['#timeline', '.time-display' /*,'.time-scale','.time-row'*/]) {
       let e = document.querySelector(q);
       //e.style.setProperty('height', '2em');
       e.style.setProperty('font-size', '2em');
@@ -695,7 +725,7 @@ window.addEventListener('load', () => {
               item.reduce(
                 (acc, field, i) => ({
                   ...acc,
-                  [keys[i]]: ['time_position', 'last_contact'].indexOf(keys[i]) != -1 ? new Date(field * 1000) : field,
+                  [keys[i]]: ['time_position', 'last_contact'].indexOf(keys[i]) != -1 ? new Date(field * 1000) : field
                 }),
                 {}
               )
@@ -703,7 +733,7 @@ window.addEventListener('load', () => {
             obj.states.sort((a, b) => b.baro_altitude - a.baro_altitude);
 
             return obj;
-          } catch (e) {
+          } catch(e) {
             return null;
           }
         })
@@ -733,7 +763,7 @@ class Plane extends Overlay {
       })(),
       position: transform([longitude, latitude], 'EPSG:4326', 'EPSG:3857'),
       //offset: [-24,-24],
-      positioning: 'center-center',
+      positioning: 'center-center'
     };
     super(obj);
     Object.assign(this, obj);
@@ -759,24 +789,41 @@ class Aircraft extends Feature {
         src: 'static/svg/plane.svg',
         crossOrigin: '',
 
-        rotation: Math.PI / 4,
+        rotation: Math.PI / 4
       }),
       text: new TextStyle({
         text: name,
         scale: [0, 0],
         rotation: Math.PI / 4,
         textAlign: 'center',
-        textBaseline: 'top',
-      }),
+        textBaseline: 'top'
+      })
     });
 
   static fromState(state) {
     let obj = StateToObject(state);
-    const { icao24, callsign, origin_country, time_position, last_contact, longitude, latitude, baro_altitude, on_ground, velocity, true_track, vertical_rate, sensors, geo_altitude, squawk, spi } = obj;
+    const {
+      icao24,
+      callsign,
+      origin_country,
+      time_position,
+      last_contact,
+      longitude,
+      latitude,
+      baro_altitude,
+      on_ground,
+      velocity,
+      true_track,
+      vertical_rate,
+      sensors,
+      geo_altitude,
+      squawk,
+      spi
+    } = obj;
 
     let aircraft;
 
-    if ((aircraft = aircraftMap.get(obj.icao24))) {
+    if((aircraft = aircraftMap.get(obj.icao24))) {
       aircraft.position = [longitude, latitude];
     } else {
       aircraft = new Aircraft(icao24, [longitude, latitude], true_track);
@@ -789,12 +836,12 @@ class Aircraft extends Feature {
   }
 
   constructor(name, coord, heading = 0) {
-    if (!(coord instanceof Coordinate)) coord = new Coordinate(...coord);
+    if(!(coord instanceof Coordinate)) coord = new Coordinate(...coord);
 
     super({ geometry: new Point(coord), name });
 
     let scale = 0.8;
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
       scale = 2;
     }
 
@@ -806,19 +853,22 @@ class Aircraft extends Feature {
           offset: [0, 0],
           opacity: 1,
           scale,
-          rotation: (heading * Math.PI) / 180,
-        }),
+          rotation: (heading * Math.PI) / 180
+        })
       })
     );
   }
 }
 
 const getElement = obj => (typeof obj == 'object' && obj != null && 'elm' in obj ? obj.elm : obj);
-const getElementFn = fn => (elm, ...args) => fn(getElement(elm), ...args);
+const getElementFn =
+  fn =>
+  (elm, ...args) =>
+    fn(getElement(elm), ...args);
 
 function findElements(q = '*') {
   let ret = document.querySelectorAll(q);
-  if (ret) ret = [...ret];
+  if(ret) ret = [...ret];
   return ret;
 }
 
@@ -838,11 +888,10 @@ const getStyle = getElementFn(function getStyle(elm, prop) {
 const getStyles = getElementFn(function getStyles(elm) {
   let names = Object.getOwnPropertyNames(elm.style);
 
-  let wm = {}, styles=styleMapper(elm);
+  let wm = {},
+    styles = styleMapper(elm);
 
-  for(let name of names) 
-    if(isNaN(+name) && styles[name] !== '')
-    wm[name] = styles[name];
+  for(let name of names) if(isNaN(+name) && styles[name] !== '') wm[name] = styles[name];
 
   return wm;
 });
@@ -862,7 +911,7 @@ const setStyles = getElementFn(function setStyles(elm, styles) {
 });
 
 const setAttributes = getElementFn(function setAttributes(elm, attrs) {
-  for (let name in attrs) elm.setAttribute(name, attrs[name]);
+  for(let name in attrs) elm.setAttribute(name, attrs[name]);
 });
 
 let layers = (globalThis.layers = new Set());
@@ -897,7 +946,7 @@ class HTMLLayer {
             return getStyles(element);
           }
         }
-        if (element.hasAttribute(prop)) return element.getAttribute(prop);
+        if(element.hasAttribute(prop)) return element.getAttribute(prop);
 
         return Reflect.get(target, prop, receiver);
       },
@@ -913,14 +962,14 @@ class HTMLLayer {
             return;
           }
         }
-        if (element.hasAttribute(prop)) return element.setAttribute(prop, value);
+        if(element.hasAttribute(prop)) return element.setAttribute(prop, value);
 
         throw new Error(`No such property '${prop}'`);
         //   return Reflect.set(target, prop, receiver);
       },
       ownKeys(target) {
         return [...element.getAttributeNames()] /*.concat(Reflect.ownKeys(target))*/;
-      },
+      }
     });
     layers.add(ret);
     return ret;
@@ -933,4 +982,13 @@ class HTMLLayer {
 
 HTMLLayer.prototype.elm = null;
 
-Object.assign(globalThis, { Aircraft, HTMLLayer, findElements, getStyle, getStyles, setStyle, setStyles, setAttributes });
+Object.assign(globalThis, {
+  Aircraft,
+  HTMLLayer,
+  findElements,
+  getStyle,
+  getStyles,
+  setStyle,
+  setStyles,
+  setAttributes
+});

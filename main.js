@@ -1679,9 +1679,24 @@ const AppMain = (window.onload = async () => {
     let urls = url ? url.split(/\n/g) : [null];
     for(url of urls) {
       //console.log('UpdateProjectList:', { ...opts, ...credentials, url });
-      let data = await ListProjects({ ...opts, ...credentials, url });
+      // let data = await ListProjects({ ...opts, ...credentials, url });
+
+      let data = {
+        files: await fetch('files', {
+          method: 'post',
+          body: JSON.stringify({ filter: '.*.(brd|sch|lbr|GBL|GKO|GTL)$' })
+        })
+          .then(resp => resp.text())
+          .then(json => JSON.parse(json))
+      };
+
+      if(typeof data == 'string') data = JSON.parse(data);
+
+      console.log('UpdateProjectList', data);
+
       let files = (typeof data == 'object' && data != null && data.files) || [];
       console.log('files', files);
+
       function File(obj, i) {
         const { name } = obj;
         let file = this instanceof File ? this : Object.create(File.prototype);
