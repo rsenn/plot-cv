@@ -31,6 +31,7 @@ extendArray();
 function getConfFile(base) {
   return std.getenv('HOME') + '/.' + path.basename(scriptArgs[0], '.js') + '_' + base;
 }
+
 async function importModule(moduleName, ...args) {
   //console.log('importModule', moduleName, args);
   let done = false;
