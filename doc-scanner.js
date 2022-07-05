@@ -1,4 +1,4 @@
-import { Contour, CHAIN_APPROX_SIMPLE, COLOR_BGR2GRAY, COLOR_GRAY2BGR, CV_32FC2, Canny, FILLED, FONT_HERSHEY_PLAIN, GaussianBlur, MORPH_RECT, Mat, Point, RETR_TREE,RETR_EXTERNAL, Rect, Size, VideoCapture, approxPolyDP, arcLength, contourArea, cvtColor, dilate, drawContour, drawContours, findContours, getPerspectiveTransform, getStructuringElement, imread, imshow, imwrite, drawCircle, putText, resize, waitKey, warpPerspective } from 'opencv';
+import { Contour, CHAIN_APPROX_SIMPLE, COLOR_BGR2GRAY, COLOR_GRAY2BGR, CV_32FC2, Canny, FILLED, FONT_HERSHEY_PLAIN, GaussianBlur, MORPH_RECT, Mat, Point, RETR_TREE, RETR_EXTERNAL, Rect, Size, VideoCapture, approxPolyDP, arcLength, contourArea, cvtColor, dilate, drawContour, drawContours, findContours, getPerspectiveTransform, getStructuringElement, imread, imshow, imwrite, drawCircle, putText, resize, waitKey, warpPerspective } from 'opencv';
 import { HSLA } from './lib/color/hsla.js';
 import { Console } from 'console';
 
@@ -77,6 +77,7 @@ function getContours(imgMask) {
   }
   return biggest;
 }
+
 function getBiggest(imgMask) {
   let contours = [];
   let hierarchy = [];
@@ -98,22 +99,19 @@ function getBiggest(imgMask) {
     let c = Contour.from(contours[i]);
     //console.log('c', c.toString());
     let area = c.area; //contourArea(contours[i]);
-    let peri = arcLength(c,true);
+    let peri = arcLength(c, true);
     //    if(peri === Infinity) peri = c.arcLength(true);
-      if(peri === Infinity) peri = c.arcLength(true);
-    
+    if(peri === Infinity) peri = c.arcLength(true);
+
     if(peri !== Infinity) {
       let contour = new Contour();
-     console.log('c', c);
-   approxPolyDP(c, contour, 0.02*peri, true);
-        console.log('contour', contour);
+      console.log('c', c);
+      approxPolyDP(c, contour, 0.02 * peri, true);
+      console.log('contour', contour);
 
+      drawContours(imgDilate, [c], 0, i2color(i), 1);
 
-
-     drawContours(imgDilate, [c], 0, i2color(i), 1);
-
-if(contour.length == 4)
-      areas.push([area, peri, contour, i]);
+      if(contour.length == 4) areas.push([area, peri, contour, i]);
     }
   }
 
@@ -121,7 +119,6 @@ if(contour.length == 4)
   //areas.sort((a, b) => b[1] - a[1]);
 
   console.log('areas', areas);
-
 
   let [area, peri, contour, index] = areas[0];
   console.log('area', area);
