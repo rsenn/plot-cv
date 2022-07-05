@@ -25,8 +25,20 @@ import { Edge, Graph, Node } from './lib/geom/graph.js';
 import { MutableXPath as XPath, parseXPath, ImmutableXPath } from './quickjs/qjs-modules/lib/xpath.js';
 import { Predicate } from 'predicate';
 import child_process from 'child_process';
+import {readFileSync} from 'fs';
 
 let cmdhist;
+
+function render(doc) {
+
+  let renderer = new Renderer(doc);
+
+  let svg=renderer.render({});
+
+  return svg;
+
+
+}
 
 function main(...args) {
   globalThis.console = new Console({
@@ -156,7 +168,7 @@ function main(...args) {
     XPath,
     ImmutableXPath,
     parseXPath,
-    Predicate
+    Predicate,render
   });
   Object.assign(globalThis, {
     GetExponent,
