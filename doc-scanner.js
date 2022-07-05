@@ -1,8 +1,12 @@
-import { CHAIN_APPROX_SIMPLE, COLOR_BGR2GRAY, Canny, FILLED, FONT_HERSHEY_PLAIN, GaussianBlur, MORPH_RECT, Mat, Point, RETR_EXTERNAL, Rect, Size, VideoCapture, approxPolyDP, arcLength, contourArea, cvtColor, dilate, drawContours, findContours, getPerspectiveTransform, getStructuringElement, imread, imshow, putText, resize, waitKey, warpPerspective } from 'opencv';
+import { Contour, CHAIN_APPROX_SIMPLE, COLOR_BGR2GRAY, CV_32FC2, Canny, FILLED, FONT_HERSHEY_PLAIN, GaussianBlur, MORPH_RECT, Mat, Point, RETR_EXTERNAL, Rect, Size, VideoCapture, approxPolyDP, arcLength, contourArea, cvtColor, dilate, drawContours, findContours, getPerspectiveTransform, getStructuringElement, imread, imshow, putText, resize, waitKey, warpPerspective } from 'opencv';
 
 import { Console } from 'console';
 
-let imgOriginal, imgGray, imgCanny, imgBlur, imgDilate;
+let imgOriginal,
+  imgGray = new Mat(),
+  imgCanny = new Mat(),
+  imgBlur = new Mat(),
+  imgDilate = new Mat();
 let initialPoints, finalPoints;
 let w = 420,
   h = 596;
@@ -10,10 +14,10 @@ let w = 420,
 function preProcessing(img) {
   cvtColor(img, imgGray, COLOR_BGR2GRAY);
 
-  GaussianBlur(imgGray, imgBlur, Size(3, 3), 3, 0);
+  GaussianBlur(imgGray, imgBlur, new Size(3, 3), 3, 0);
   Canny(imgBlur, imgCanny, 25, 75);
 
-  let kernel = getStructuringElement(MORPH_RECT, Size(3, 3));
+  let kernel = getStructuringElement(MORPH_RECT, new Size(3, 3));
 
   dilate(imgCanny, imgDilate, kernel);
   return imgDilate;
@@ -29,15 +33,24 @@ function getContours(imgMask) {
   let biggest = [];
   let maxArea = -10;
 
+  console.log('contours', contours);
+
   for(let i = 0; i < contours.length; i++) {
-    let area = contourArea(contours[i]);
+    let c = Contour.from(contours[i]);
+    // console.log('c', c);
+    let area = contourArea(c);
 
     console.log('area', area);
 
     if(area >= 1000) {
       console.log('ENTERED LOOP 1');
-      let peri = arcLength(contours[i], true);
-      approxPolyDP(contours[i], contourPoly[i], 0.02 * peri, true);
+      let peri = arcLength(c, true);
+      console.log('peri', peri);
+      if(peri === Infinity) peri = arcLength(c, true);
+      if(peri === Infinity) console.log('c', c);
+      if(peri === Infinity) peri = 50;
+      contourPoly[i] = new Mat(c.length, 1, CV_32FC2);
+      approxPolyDP(c, contourPoly[i], 0.02 * peri, true);
 
       if(area > maxArea && contourPoly[i].length == 4) {
         console.log('ENTERED LOOP 2');
@@ -88,10 +101,44 @@ function getWarp(img, points, w, h) {
 
 function main(...args) {
   globalThis.console = new Console(std.err, {
-    inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 20, maxStringLength: 100, numberBase: 10 }
+    inspectOptions: { compact: false, customInspect: true, maxArrayLength: 20, maxStringLength: 100, numberBase: 10 }
   });
 
   console.log('args', args);
+
+  /*if(args.length == 0)
+    args=[0];
+*/
+  for(let arg of args) {
+    //let cap = new VideoCapture(0);
+    let imgCrop, imgWarp, imgThreshold;
+
+    let path = arg;
+    imgOriginal = imread(path);
+
+    let cropFactor = 10;
+    let roi = new Rect(cropFactor, cropFactor, w - 2 * cropFactor, h - 2 * cropFactor);
+
+    console.log('imgOriginal', imgOriginal);
+
+    imgThreshold = preProcessing(imgOriginal);
+
+    initialPoints = getContours(imgThreshold);
+    console.log('initialPoints', initialPoints);
+
+    finalPoints = reOrder(initialPoints);
+
+    imgWarp = getWarp(imgOriginal, finalPoints, w, h);
+
+    imgCrop = imgWarp(roi);
+
+    imshow('Image', imgOriginal);
+    imshow('ImageThreshold', imgThreshold);
+    imshow('ImageWarp', imgWarp);
+    imshow('ImageCropped', imgCrop);
+
+    waitKey(0);
+  }
 }
 
 main(...scriptArgs.slice(1));
