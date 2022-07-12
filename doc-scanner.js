@@ -82,7 +82,7 @@ function getBiggest(imgMask) {
   let contours = [];
   let hierarchy = [];
 
-  findContours(imgMask, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+  findContours(imgMask, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
   let contourPoly = new Array(contours.length);
   let boundRect = new Array(contours.length);
   let maxArea = -10;
