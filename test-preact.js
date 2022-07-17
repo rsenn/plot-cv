@@ -1,4 +1,3 @@
-import { Component } from './lib/preact.js';
 
 import { html } from './lib/htm.js';
 import { renderToString } from './lib/renderToString.js';
