@@ -241,10 +241,10 @@ function main(...args) {
     while((k = cv.waitKey(-1))) {
       if(['\n', '\r', 13, 10].indexOf(k) != -1) break;
       if(['s', 'S', 115, 83].indexOf(k) != -1) {
-   const {contours}=pipeline;
+        const { contours } = pipeline;
         console.log('contours.length', contours.length);
         saveContours(contours, out.size);
-       // saveLines(lines, out.size);
+        // saveLines(lines, out.size);
         continue;
       }
     }

@@ -141,8 +141,11 @@ export function ImagePipeline(/*input,*/ config) {
         this.outputMat = mat;
       }
     }
-  );Object.defineProperty(pipeline, 'contours', {
-    get() { return contours; }
+  );
+  Object.defineProperty(pipeline, 'contours', {
+    get() {
+      return contours;
+    }
   });
 
   return pipeline;
