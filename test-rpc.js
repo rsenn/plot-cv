@@ -298,7 +298,10 @@ function main(...args) {
               buffers.push(value);
             }
             console.log('req.headers:', req.headers);
-            console.log('buffers:', buffers);
+            //console.log('buffers:', buffers);
+            let data = concat(...buffers);
+            console.log('data:',data);
+            fs.writeFileSync('out.bin', data);
           })();
         }
 
