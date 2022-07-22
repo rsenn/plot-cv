@@ -10,7 +10,7 @@ import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from './lib/filesystem.js';
 import { escape } from './lib/misc.js';
-import { concat } from 'misc';
+import { concat, toString } from 'misc';
 import * as net from 'net';
 import { Socket } from './quickjs/qjs-ffi/lib/socket.js';
 import { EventEmitter } from './lib/events.js';
@@ -298,9 +298,10 @@ function main(...args) {
               buffers.push(value);
             }
             console.log('req.headers:', req.headers);
-            //console.log('buffers:', buffers);
+            console.log('buffers:', buffers);
             let data = concat(...buffers);
-            console.log('data:',data);
+            console.log('data:', data);
+            console.log('data.byteLength:', data.byteLength);
             fs.writeFileSync('out.bin', data);
           })();
         }
