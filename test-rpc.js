@@ -290,8 +290,11 @@ function main(...args) {
             while((r = await req.body.next())) {
               const {value,done}=r;
               console.log('data:', value);
+              console.log('done:', done);
+              if(done) break;
             }
-          })();
+                      console.log('req.headers:', req.headers);
+  })();
         }
 
         const { body, url } = resp;
