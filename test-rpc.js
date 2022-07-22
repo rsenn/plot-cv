@@ -10,6 +10,7 @@ import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from './lib/filesystem.js';
 import { escape } from './lib/misc.js';
+import { concat } from 'misc';
 import * as net from 'net';
 import { Socket } from './quickjs/qjs-ffi/lib/socket.js';
 import { EventEmitter } from './lib/events.js';
@@ -286,16 +287,19 @@ function main(...args) {
           console.log('POST body:', /*typeof req.body, req.body.length, */ req.body);
 
           (async function() {
-            let r;
+            let r,
+              buffers = [];
 
             while((r = await req.body.next())) {
-              const {value,done}=r;
+              const { value, done } = r;
               console.log('data:', value);
               console.log('done:', done);
               if(done) break;
+              buffers.push(value);
             }
-                      console.log('req.headers:', req.headers);
-  })();
+            console.log('req.headers:', req.headers);
+            console.log('buffers:', buffers);
+          })();
         }
 
         const { body, url } = resp;
