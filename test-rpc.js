@@ -120,6 +120,7 @@ function main(...args) {
       (level, message) => {
         //repl.printStatus(...args);
         if(/__lws/.test(message)) return;
+        if(/(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|DROP)/.test(message)) return;
         //
         if(params.debug)
           out(
