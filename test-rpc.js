@@ -173,8 +173,16 @@ function main(...args) {
         ['.m', 'text/x-objective-c'],
         ['.sh', 'text/x-shellscript']
       ],
+      options: {
+        'upload-dir': './uploads',
+        'max-size': 10000000,
+        'basic-auth':
+          'quickjs/qjs-net/libwebsockets/minimal-examples/http-server/minimal-http-server-deaddrop/ba-passwords'
+      },
       mounts: [
         ['/', '.', 'debugger.html'],
+        ['/upload', 'lws-deaddrop', null, 'lws-deaddrop'],
+        ['/get', './uploads', ''],
         function proxy(req, res) {
           console.log('proxy', { req, res });
           const { url, method, headers } = req;
@@ -272,7 +280,19 @@ function main(...args) {
       onHttp(req, resp) {
         const { method, headers } = req;
         console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
-        const { body, url } = resp;
+      
+      if(req.method=='POST') {
+        console.log('POST body:', /*typeof req.body, req.body.length, */req.body); 
+
+        (async function() {
+for(let data of req.body) {
+  console.log('data:',data);
+}
+
+        })();
+      }
+
+           const { body, url } = resp;
         console.log('\x1b[38;5;33monHttp\x1b[0m', { body });
 
         const file = url.path.slice(1);
