@@ -240,10 +240,74 @@ function main(...args) {
     let k;
     while((k = cv.waitKey(-1))) {
       if(['\n', '\r', 13, 10].indexOf(k) != -1) break;
+      if(['s', 'S', 115, 83].indexOf(k) != -1) {
+        const { contours } = pipeline;
+        console.log('contours.length', contours.length);
+        saveContours(contours, out.size);
+        // saveLines(lines, out.size);
+        continue;
+      }
     }
   }
   std.exit(0);
 
+  function saveContours(contours, size) {
+    let points = contours.reduce((acc, contour, i) => {
+      console.log('contour #' + i, contour);
+      //contour =simplifyMethods.PERPENDICULAR_DISTANCE(contour);
+      //contour = simplifyMethods.RADIAL_DISTANCE(contour);
+      let array = contour.toArray();
+      //log.info('array #' + i, array.length);
+      if(array.length >= 3) {
+        let sp = new SvgPath();
+        sp.abs();
+
+        for(let i = 0; i < array.length; i += 1) {
+          const { x, y } = array[i];
+          sp[i == 0 ? 'to' : 'line'](x, y);
+        }
+        let rsp = sp.toRelative();
+        acc.push(rsp.str(2, ' ', ','));
+      }
+      return acc;
+    }, []);
+    let children = points.map(d => ({
+      tagName: 'path',
+      attributes: { d }
+    }));
+    let viewBox = [0, 0, ...size].join(' ');
+    let doc = {
+      tagName: 'svg',
+      children: [{ tagName: 'g', attributes: { stroke: 'black', fill: 'none' }, children }],
+      attributes: {
+        xmlns: 'http://www.w3.org/2000/svg',
+        viewBox
+      }
+    };
+    WriteJSON('contours-' + framePos + '.json', doc);
+    SaveSVG('contours-' + framePos + '.svg', doc);
+  }
+
+  function saveLines(lines, size) {
+    let viewBox = [0, 0, ...size].join(' ');
+    let children = lines
+      .map(coords => new Line(...coords))
+      .map(([x1, y1, x2, y2]) => ({
+        tagName: 'line',
+        attributes: { x1, y1, x2, y2 }
+      }));
+    let doc = {
+      tagName: 'svg',
+      children: [{ tagName: 'g', attributes: { stroke: 'black', fill: 'none' }, children }],
+      attributes: {
+        xmlns: 'http://www.w3.org/2000/svg',
+        viewBox
+      }
+    };
+
+    WriteJSON('lines-' + framePos + '.json', doc);
+    SaveSVG('lines-' + framePos + '.svg', doc);
+  }
   /*   
   let paramNav = new ParamNavigator(params, config.currentParam);
   let dummyArray = [0, 1, 2, 3, 4, 5, 6, 7];

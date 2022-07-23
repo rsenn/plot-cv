@@ -142,6 +142,11 @@ export function ImagePipeline(/*input,*/ config) {
       }
     }
   );
+  Object.defineProperty(pipeline, 'contours', {
+    get() {
+      return contours;
+    }
+  });
 
   return pipeline;
 }

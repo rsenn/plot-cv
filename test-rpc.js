@@ -10,6 +10,7 @@ import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from './lib/filesystem.js';
 import { escape } from './lib/misc.js';
+import { concat, toString } from 'misc';
 import * as net from 'net';
 import { Socket } from './quickjs/qjs-ffi/lib/socket.js';
 import { EventEmitter } from './lib/events.js';
@@ -120,6 +121,7 @@ function main(...args) {
       (level, message) => {
         //repl.printStatus(...args);
         if(/__lws/.test(message)) return;
+        if(/(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|DROP|HTTP_BODY[^_])/.test(message)) return;
         //
         if(params.debug)
           out(
@@ -173,8 +175,16 @@ function main(...args) {
         ['.m', 'text/x-objective-c'],
         ['.sh', 'text/x-shellscript']
       ],
+      options: {
+        'upload-dir': './uploads',
+        'max-size': 10000000,
+        'basic-auth':
+          'quickjs/qjs-net/libwebsockets/minimal-examples/http-server/minimal-http-server-deaddrop/ba-passwords'
+      },
       mounts: [
         ['/', '.', 'debugger.html'],
+        ['/upload', 'lws-deaddrop', null, 'lws-deaddrop'],
+        ['/get', './uploads', ''],
         function proxy(req, res) {
           console.log('proxy', { req, res });
           const { url, method, headers } = req;
@@ -272,6 +282,30 @@ function main(...args) {
       onHttp(req, resp) {
         const { method, headers } = req;
         console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
+
+        if(req.method == 'POST') {
+          console.log('POST body:', /*typeof req.body, req.body.length, */ req.body);
+
+          (async function() {
+            let r,
+              buffers = [];
+
+            while((r = await req.body.next())) {
+              const { value, done } = r;
+              console.log('data:', value);
+              console.log('done:', done);
+              if(done) break;
+              buffers.push(value);
+            }
+            console.log('req.headers:', req.headers);
+            console.log('buffers:', buffers);
+            let data = concat(...buffers);
+            console.log('data:', data);
+            console.log('data.byteLength:', data.byteLength);
+            fs.writeFileSync('out.bin', data);
+          })();
+        }
+
         const { body, url } = resp;
         console.log('\x1b[38;5;33monHttp\x1b[0m', { body });
 
