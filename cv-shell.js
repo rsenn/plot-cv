@@ -60,11 +60,14 @@ function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = ''
 
     //console.log('repl.show', arg);
     if(arg instanceof cv.Mat) {
-      let win = defaultWin();
-      win.resize(arg.cols, arg.rows);
-      win.show(arg);
-      cv.waitKey(1);
-      return;
+      console.log('arg', arg);
+      if(!arg.empty) {
+        let win = defaultWin();
+        win.resize(arg.cols, arg.rows);
+        win.show(arg);
+        cv.waitKey(1);
+        return;
+      }
     }
 
     std.puts((typeof arg == 'string' ? arg : inspect(arg, repl.inspectOptions)) + '\n');
