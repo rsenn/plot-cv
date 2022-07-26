@@ -26,30 +26,44 @@ import { MutableXPath as XPath, parseXPath, ImmutableXPath } from './quickjs/qjs
 import { Predicate } from 'predicate';
 import child_process from 'child_process';
 import { readFileSync } from 'fs';
-
+import { ReactComponent, Fragment, render } from './lib/dom/preactComponent.js';
+import renderToString from './lib/preact-render-to-string.js';
 let cmdhist;
 
-function pick(it, n=1) {
-  let ret=new Array();
+function pick(it, n = 1) {
+  let ret = new Array();
 
-  if(typeof n != 'function')  {let num=n;
-    n=i => i < num;
+  if(typeof n != 'function') {
+    let num = n;
+    n = i => i < num;
   }
-  let i=0;
-  for(i=0; ;i++)   {let  {done,value  
-  }=it.next();
-  if(done)break;
-  if(n(i)) {
-ret.push(value);
-  } else break;
+  let i = 0;
+  for(i = 0; ; i++) {
+    let { done, value } = it.next();
+    if(done) break;
+    if(n(i)) {
+      ret.push(value);
+    } else break;
   }
   return ret;
- }
+}
+
+function append(tag, attrs, children, parent, element) {
+  console.log('append', { tag, attrs, children, parent, element });
+
+  let obj;
+  obj = { tagName: tag, attributes: attrs, children };
+
+  if(parent) parent.children.push(obj);
+
+  return obj;
+}
+
 function render(doc) {
-  let renderer = new Renderer(doc);
+  let renderer = new Renderer(doc, ReactComponent.append);
 
-  let svg = renderer.render({});
-
+  let svg = renderer.render(doc);
+  return renderToString(svg);
   return svg;
 }
 
@@ -182,7 +196,8 @@ function main(...args) {
     ImmutableXPath,
     parseXPath,
     Predicate,
-    render,pick 
+    render,
+    pick
   });
   Object.assign(globalThis, {
     GetExponent,
@@ -200,7 +215,7 @@ function main(...args) {
     GetParts,
     GetInstances,
     GetPositions,
-    GetElements,  
+    GetElements,
     GetSheets
   });
   Object.assign(globalThis, {
@@ -717,7 +732,7 @@ function SaveLibraries() {
   const libraryNames = Util.unique([...schematic.libraries, ...board.libraries].map(([n, e]) => n));
   console.log('libraryNames', libraryNames);
 
-  const libraries = libraryNames.map(name => [name, schematic.libraries[name], board.libraries[name]]);
+  const libraries = libraryNames.map(name => [name, schematic.getLibrary(name), board.getLibrary(name)]);
   for(let [name, ...libs] of libraries) {
     let obj = { symbols: [], packages: [], devicesets: [] };
 

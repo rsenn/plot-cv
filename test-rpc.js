@@ -281,19 +281,19 @@ function main(...args) {
       },
       onHttp(req, resp) {
         const { method, headers } = req;
-     
+
         if(req.method != 'GET') console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
 
         if(req.method != 'GET') {
           console.log(req.method + ' body:', /*typeof req.body, req.body.length, */ req.body);
- 
+
           (async function() {
             let r,
               buffers = [];
 
-            while((r =  req.body.next())) {
-                          console.log('r:', r);
-  const { value, done } = await r;
+            while((r = req.body.next())) {
+              console.log('r:', r);
+              const { value, done } = await r;
               console.log('data:', value);
               console.log('done:', done);
               if(done) break;
@@ -334,7 +334,7 @@ function main(...args) {
             return match;
           });
         }
-/*   if(req.url.path.endsWith('upload')) {
+        /*   if(req.url.path.endsWith('upload')) {
           resp.status = 302;
           resp.headers['Location'] = '/upload.html';
           resp.headers = { ['Location']: '/upload.html' };
