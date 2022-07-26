@@ -61,10 +61,14 @@ function append(tag, attrs, children, parent, element) {
 
 function render(doc) {
   let renderer = new Renderer(doc, ReactComponent.append);
-
+  let str;
   let svg = renderer.render(doc);
-  return renderToString(svg);
-  return svg;
+  try {
+    str = renderToString(svg);
+  } catch(e) {
+    console.log('ERROR:', e);
+  }
+  return str;
 }
 
 function main(...args) {
