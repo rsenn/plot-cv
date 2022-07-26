@@ -2,13 +2,16 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Listing directory</title>
+    <title>Image upload</title>
     <link rel="shortcut icon" type="image/x-icon" sizes="16x16 32x32 64x64" href="static/transistor.ico" />
   </head>
   <body>
-    <form method="POST" action="/upload">
-      <input id="file" type="file" accept="image/*" /><br />
-      <input type="submit" />
+    <form method="POST" action="/upload" enctype="multipart/form-data">
+      <div class="input-group">
+        <label for="files">Select files</label>
+        <input id="file" type="file" multiple />
+      </div>
+      <button class="submit-btn" type="submit">Upload</button>
     </form>
   </body>
 </html>
