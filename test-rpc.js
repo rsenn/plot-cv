@@ -281,7 +281,8 @@ function main(...args) {
       },
       onHttp(req, resp) {
         const { method, headers } = req;
-        console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
+        if(req.method == 'POST') resp.status = 302;
+        if(req.method == 'POST') console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
 
         if(req.method == 'POST') {
           console.log('POST body:', /*typeof req.body, req.body.length, */ req.body);
