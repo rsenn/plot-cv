@@ -29,6 +29,22 @@ import { readFileSync } from 'fs';
 
 let cmdhist;
 
+function pick(it, n=1) {
+  let ret=new Array();
+
+  if(typeof n != 'function')  {let num=n;
+    n=i => i < num;
+  }
+  let i=0;
+  for(i=0; ;i++)   {let  {done,value  
+  }=it.next();
+  if(done)break;
+  if(n(i)) {
+ret.push(value);
+  } else break;
+  }
+  return ret;
+ }
 function render(doc) {
   let renderer = new Renderer(doc);
 
@@ -166,7 +182,7 @@ function main(...args) {
     ImmutableXPath,
     parseXPath,
     Predicate,
-    render
+    render,pick 
   });
   Object.assign(globalThis, {
     GetExponent,
@@ -184,7 +200,7 @@ function main(...args) {
     GetParts,
     GetInstances,
     GetPositions,
-    GetElements,
+    GetElements,  
     GetSheets
   });
   Object.assign(globalThis, {
