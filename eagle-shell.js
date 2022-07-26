@@ -59,7 +59,7 @@ function append(tag, attrs, children, parent, element) {
   return obj;
 }
 
-function render(doc) {
+function render(doc, filename) {
   let renderer = new Renderer(doc, ReactComponent.append);
   let str;
   let svg = renderer.render(doc);
@@ -68,6 +68,9 @@ function render(doc) {
   } catch(e) {
     console.log('ERROR:', e);
   }
+  filename ??= doc.filename+'.svg';
+  if(filename)
+      WriteFile(filename, str);
   return str;
 }
 
