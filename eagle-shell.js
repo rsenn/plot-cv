@@ -60,10 +60,10 @@ function append(tag, attrs, children, parent, element) {
 }
 
 function render(doc, filename) {
-  if(doc  instanceof EagleProject){
+  if(doc instanceof EagleProject) {
     render(doc.schematic);
     render(doc.board);
-return;
+    return;
   }
   let renderer = new Renderer(doc, ReactComponent.append);
   let str;
