@@ -60,6 +60,11 @@ function append(tag, attrs, children, parent, element) {
 }
 
 function render(doc, filename) {
+  if(doc  instanceof EagleProject){
+    render(doc.schematic);
+    render(doc.board);
+return;
+  }
   let renderer = new Renderer(doc, ReactComponent.append);
   let str;
   let svg = renderer.render(doc);
