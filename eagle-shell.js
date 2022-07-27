@@ -68,9 +68,20 @@ function render(doc, filename) {
   } catch(e) {
     console.log('ERROR:', e);
   }
-  filename ??= doc.filename+'.svg';
-  if(filename)
-      WriteFile(filename, str);
+
+  let xml = fromXML(str);
+
+  filename ??=
+    path.basename(doc.filename, '.' + doc.type) +
+    '-' +
+    { sch: 'schematic', brd: 'board', lbr: 'library' }[doc.type] +
+    '.svg';
+
+  if(filename) {
+    let ret;
+    ret = WriteFile(filename, toXML(xml));
+    console.log(`Saving to '${filename}'...`, ret);
+  }
   return str;
 }
 
@@ -204,7 +215,9 @@ function main(...args) {
     parseXPath,
     Predicate,
     render,
-    pick
+    pick,
+    fromXML,
+    toXML
   });
   Object.assign(globalThis, {
     GetExponent,

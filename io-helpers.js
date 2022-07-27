@@ -99,6 +99,7 @@ export function WriteFile(name, data, verbose = true) {
   let ret = fs.writeFileSync(name, data);
 
   if(verbose) debug(`Wrote ${name}: ${ret} bytes`);
+  return ret;
 }
 
 export function WriteJSON(name, data, compact = true) {
