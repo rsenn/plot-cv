@@ -10,7 +10,7 @@ import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from './lib/filesystem.js';
 import { escape } from './lib/misc.js';
-import { concat, toString } from 'misc';
+import { concat, toString, searchArrayBuffer } from 'misc';
 import * as net from 'net';
 import { Socket } from './quickjs/qjs-ffi/lib/socket.js';
 import { EventEmitter } from './lib/events.js';
@@ -26,7 +26,7 @@ globalThis.fs = fs;
 function main(...args) {
   const base = path.basename(Util.getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
   const config = ReadJSON(`.${base}-config`) ?? {};
-  globalThis.console = new Console({ inspectOptions: { compact: 2, customInspect: true } });
+  globalThis.console = new Console({ inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 200 } });
   let params = Util.getOpt(
     {
       verbose: [false, (a, v) => (v | 0) + 1, 'v'],
@@ -294,16 +294,29 @@ function main(...args) {
             while((r = req.body.next())) {
               console.log('r:', r);
               const { value, done } = await r;
-              console.log('data:', value);
+              console.log('value:', value);
+              //console.log('toString(value)', toString(value));
               console.log('done:', done);
               if(done) break;
               buffers.push(value);
             }
             console.log('req.headers:', req.headers);
-            console.log('buffers:', buffers);
+            console.log(
+              'buffers:',
+              buffers.map(b => b.byteLength)
+            );
             let data = concat(...buffers);
             console.log('data:', data);
             console.log('data.byteLength:', data.byteLength);
+            let pos1 = searchArrayBuffer(data, new Uint8Array([13, 10]).buffer);
+            let pos = searchArrayBuffer(data, new Uint8Array([13, 10, 13, 10]).buffer);
+            console.log('pos:', pos);
+
+            console.log('header:', toString(data.slice(0, pos)));
+            let body = data.slice(pos + 4);
+            let pos2 = searchArrayBuffer(body, data.slice(0, pos1));
+            console.log('pos2:', pos2);
+
             fs.writeFileSync('out.bin', data);
           })();
         }
