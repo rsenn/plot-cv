@@ -267,9 +267,14 @@ function main(...args) {
       ...callbacks,
       onConnect(ws, req) {
         console.log('test-rpc', { ws, req });
-        connections.add(ws);
 
-        return callbacks.onConnect(ws, req);
+        console.log('req.url.path', req.url.path);
+
+        connections.add(ws);
+        if(req.url.path.endsWith('uploads')) {
+        } else {
+          return callbacks.onConnect(ws, req);
+        }
       },
       onClose(ws) {
         connections.delete(ws);
@@ -285,18 +290,21 @@ function main(...args) {
           console.log(req.method + ' body:', /*typeof req.body, req.body.length, */ req.body);
           console.log('ws', ws);
 
-          let fp=new FormParser(ws, ['files'], {
-            chunkSize: 8192*256,
-            onContent(name,data) {
+          let fp = new FormParser(ws, ['files'], {
+            chunkSize: 8192 * 256,
+            onContent(name, data) {
               console.log(`onContent(${name})`, this.filename, data.byteLength);
+              fs.writeSync(this.file, data);
             },
-            onOpen(name,filename) {
+            onOpen(name, filename) {
               this.name = name;
               this.filename = filename;
+              this.file = fs.openSync('uploads/' + filename, 'w+', 0o644);
               console.log(`onOpen(${name})`, filename);
             },
             onClose(name) {
-              console.log(`onClose(${this.name})`,  this.filename);
+              fs.closeSync(this.file);
+              console.log(`onClose(${this.name})`, this.filename);
             }
           });
           console.log('fp.socket', fp.socket);
