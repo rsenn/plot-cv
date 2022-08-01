@@ -72,7 +72,6 @@ function main(...args) {
     'import module'
   ];
 
-
   let { log } = console;
   repl.show = arg => std.puts((typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options)) + '\n');
 
@@ -103,7 +102,6 @@ function main(...args) {
 
     const out = s => logFile.puts(s + '\n');
     setLog((params.debug ? LLL_USER : 0) | (((params.debug ? LLL_NOTICE : LLL_WARN) << 1) - 1), (level, message) => {
-
       if(/__lws/.test(message)) return;
       if(/(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|HTTP_BODY)/.test(message)) return;
 
@@ -158,15 +156,8 @@ function main(...args) {
         ['.m', 'text/x-objective-c'],
         ['.sh', 'text/x-shellscript']
       ],
-      options: {
-        'upload-dir': './uploads',
-        'max-size': 10000000,
-        'basic-auth':
-          'quickjs/qjs-net/libwebsockets/minimal-examples/http-server/minimal-http-server-deaddrop/ba-passwords'
-      },
       mounts: [
-        ['/', '.', 'debugger.html'],
-        ['/upload', 'lws-deaddrop', null, 'lws-deaddrop'],
+        ['/', '.', 'upload.html'],
         ['/get', './uploads', ''],
         function proxy(req, res) {
           console.log('proxy', { req, res });
@@ -177,18 +168,9 @@ function main(...args) {
           console.log('proxy', { status, ok, url, type });
         },
 
-        function* config(req, res) {
-          const { body, headers } = req;
-          console.log('/config', { req, res });
-          console.log('*config', { body, headers });
-          yield '{}';
-        },
         function* files(req, resp) {
-                           //console.log('*files',{req,resp});
-   const { body, headers } = req;
+          const { body, headers } = req;
 
-
-                     
           const data = JSON.parse(/*body ??*/ '{}');
           resp.type = 'application/json';
           let {
@@ -203,7 +185,6 @@ function main(...args) {
           let components = absdir.split(path.sep);
           if(components.length && components[0] === '') components.shift();
           if(components.length < 2 || components[0] != 'home') throw new Error(`Access error`);
-
 
           let names = fs.readdirSync(absdir) ?? [];
 
@@ -247,11 +228,11 @@ function main(...args) {
           }
           names = entries.map(([name, obj]) => (objects ? obj : name));
           console.log('\x1b[38;5;215m*files\x1b[0m', names);
-         // console.log('req.headers', req.headers);
+          // console.log('req.headers', req.headers);
           //resp.headers = { ['Content-Type']: 'application/json' };
-  //        resp.headers['Content-Type']= 'application/json';
+          //        resp.headers['Content-Type']= 'application/json';
 
-         // console.log('resp.headers', resp.headers);
+          // console.log('resp.headers', resp.headers);
           yield JSON.stringify(...[names, ...(verbose ? [null, 2] : [])]);
         }
       ],
@@ -279,14 +260,14 @@ function main(...args) {
 
         if(req.url.path.endsWith('files')) {
           //resp.headers= { ['Content-Type']: 'application/json' };
-          resp.type= 'application/json';
+          resp.type = 'application/json';
         }
 
         if(req.method != 'GET') console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
 
         if(req.method != 'GET') {
-        //  console.log(req.method + ' body:',  req.body);
- 
+          //  console.log(req.method + ' body:',  req.body);
+
           let fp = new FormParser(ws, ['files'], {
             chunkSize: 8192 * 256,
             onContent(name, data) {
@@ -304,9 +285,6 @@ function main(...args) {
               console.log(`onClose(${this.name})`, this.filename);
             }
           });
-       
-
-
         }
 
         const { body, url } = resp;
@@ -343,13 +321,11 @@ function main(...args) {
         return callbacks.onMessage(ws, data);
       },
       onFd(fd, rd, wr) {
-
         return callbacks.onFd(fd, rd, wr);
       },
       ...(url && url.host ? url : {})
     });
   });
-
 
   define(globalThis, {
     get connections() {
@@ -376,7 +352,6 @@ function main(...args) {
     parseDate,
     dateToObject
   });
-
 
   delete globalThis.DEBUG;
 
@@ -409,6 +384,4 @@ try {
   1;
   std.exit(1);
 } finally {
-
 }
-
