@@ -9,12 +9,8 @@ import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from './lib/filesystem.js';
-import { escape } from './lib/misc.js';
-import { concat, toString, searchArrayBuffer, define } from 'util';
-import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server, FormParser, URL } from 'net';
-import { Socket } from './quickjs/qjs-ffi/lib/socket.js';
-import { EventEmitter } from './lib/events.js';
-import { Repeater } from './lib/repeater/repeater.js';
+import { toString, define } from 'util';
+import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server, FormParser } from 'net';
 import { ReadFile, WriteFile, ReadJSON, WriteJSON, ReadBJSON, WriteBJSON } from './io-helpers.js';
 import { parseDate, dateToObject } from './date-helpers.js';
 
@@ -103,7 +99,7 @@ function main(...args) {
 
   let connections = new Set();
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
-    console.log('createWS', { url, callbacks, listen });
+    //console.log('createWS', { url, callbacks, listen });
 
     const out = s => logFile.puts(s + '\n');
     setLog((params.debug ? LLL_USER : 0) | (((params.debug ? LLL_NOTICE : LLL_WARN) << 1) - 1), (level, message) => {
@@ -188,14 +184,16 @@ function main(...args) {
           yield '{}';
         },
         function* files(req, resp) {
-          const { body, headers } = req;
-          const { 'content-type': content_type } = headers;
+                           //console.log('*files',{req,resp});
+   const { body, headers } = req;
 
-          const data = JSON.parse(body);
+
+                     
+          const data = JSON.parse(/*body ??*/ '{}');
           resp.type = 'application/json';
           let {
-            dir = '.' ?? 'tmp',
-            filter = '.([ch]|js)$' ?? '.(brd|sch|G[A-Z][A-Z])$',
+            dir = './uploads',
+            filter = '[^.].*' ?? '.(brd|sch|G[A-Z][A-Z])$',
             verbose = false,
             objects = false,
             key = 'mtime',
@@ -249,6 +247,11 @@ function main(...args) {
           }
           names = entries.map(([name, obj]) => (objects ? obj : name));
           console.log('\x1b[38;5;215m*files\x1b[0m', names);
+         // console.log('req.headers', req.headers);
+          //resp.headers = { ['Content-Type']: 'application/json' };
+  //        resp.headers['Content-Type']= 'application/json';
+
+         // console.log('resp.headers', resp.headers);
           yield JSON.stringify(...[names, ...(verbose ? [null, 2] : [])]);
         }
       ],
@@ -274,12 +277,16 @@ function main(...args) {
       onHttp(ws, req, resp) {
         const { method, headers } = req;
 
+        if(req.url.path.endsWith('files')) {
+          //resp.headers= { ['Content-Type']: 'application/json' };
+          resp.type= 'application/json';
+        }
+
         if(req.method != 'GET') console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
 
         if(req.method != 'GET') {
-          console.log(req.method + ' body:',  req.body);
-          console.log('ws', ws);
-
+        //  console.log(req.method + ' body:',  req.body);
+ 
           let fp = new FormParser(ws, ['files'], {
             chunkSize: 8192 * 256,
             onContent(name, data) {
@@ -297,8 +304,7 @@ function main(...args) {
               console.log(`onClose(${this.name})`, this.filename);
             }
           });
-          console.log('fp.socket', fp.socket);
-          console.log('fp.params', fp.params);
+       
 
 
         }
