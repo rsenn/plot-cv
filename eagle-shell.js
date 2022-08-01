@@ -18,7 +18,7 @@ import { GetExponent, GetMantissa, ValueToNumber, NumberToValue } from './lib/ed
 import { GetMultipliers, GetFactor, GetColorBands, PartScales, digit2color } from './lib/eda/colorCoding.js';
 import { UnitForName } from './lib/eda/units.js';
 import CircuitJS from './lib/eda/circuitjs.js';
-import { define, isObject, memoize, unique, atexit } from './lib/misc.js';
+import { atexit, className, define, extendArray, getOpt, glob, GLOB_BRACE, intersect, isObject, memoize, range, unique } from 'util';
 import { HSLA, isHSLA, ImmutableHSLA, RGBA, isRGBA, ImmutableRGBA, ColoredText } from './lib/color.js';
 import { scientific, num2color, GetParts, GetInstances, GetPositions, GetElements } from './eagle-commands.js';
 import { Edge, Graph, Node } from './lib/geom/graph.js';
@@ -29,6 +29,29 @@ import { readFileSync } from 'fs';
 import { ReactComponent, Fragment, render } from './lib/dom/preactComponent.js';
 import renderToString from './lib/preact-render-to-string.js';
 let cmdhist;
+
+extendArray();
+
+function GetFiletime(file, field ='mtime') {
+  let ms=fs.statSync(file)?.[field];
+  return new Date(ms);
+}
+
+function FindProjects(dirPtn = '../*/eagle') {
+  let files = glob(dirPtn + '/*.{sch,brd}', GLOB_BRACE);
+  let entries = files.map(file => [file,GetFiletime(file)]).sort((a,b)=> a[1] - b[1]);
+
+  let names = unique(files.map(fn => fn.replace(/\.(sch|brd)$/i, '')));
+
+  const minIndex = name => Math.min(entries.findIndex( ([filename,time]) => filename== name + '.sch') , entries.findIndex( ([filename,time]) => filename== name + '.brd'));
+  const hasBoth = name => minIndex(name) >= 0;
+
+  return names
+  .map(name => [name,minIndex(name)])
+  .filter(([name,index]) => index >= 0)
+  .sort((a,b) => b[1]-a[1])
+  .map(([name,index]) => name);
+}
 
 function pick(it, n = 1) {
   let ret = new Array();
@@ -120,7 +143,7 @@ function main(...args) {
   const base = path.basename(progName, path.extname(progName));
   const histfile = `.${base}-history`;
 
-  let params = Util.getOpt(
+  let params = getOpt(
     {
       debug: [false, null, 'x'],
       'output-dir': [true, null, 'd'],
@@ -247,7 +270,8 @@ function main(...args) {
     define,
     isObject,
     memoize,
-    unique
+    unique,
+    FindProjects
   });
   Object.assign(globalThis, {
     load(filename, project = globalThis.project) {
@@ -374,7 +398,7 @@ function main(...args) {
     fs.flushSync(debugLog);
   };
   repl.show = value => {
-    if(Util.isObject(value) && value instanceof EagleNode) {
+    if(isObject(value) && value instanceof EagleNode) {
       console.log(value.inspect());
     } else {
       console.log(value);
@@ -401,35 +425,6 @@ function main(...args) {
 
   repl.runSync();
 }
-
-Util.define(Array.prototype, {
-  findLastIndex(predicate) {
-    for(let i = this.length - 1; i >= 0; --i) {
-      const x = this[i];
-      if(predicate(x, i, this)) {
-        return i;
-      }
-    }
-    return -1;
-  },
-  rotateRight(n) {
-    this.unshift(...this.splice(n, this.length - n));
-    return this;
-  },
-  rotateLeft(n) {
-    this.push(...this.splice(0, n));
-    return this;
-  },
-  at(index) {
-    return this[Util.mod(index, this.length)];
-  },
-  /* prettier-ignore */ get head() {
-    return this[this.length-1];
-  },
-  /* prettier-ignore */ get tail() {
-    return this[this.length-1];
-  }
-});
 
 function Terminate(exitCode) {
   console.log('Terminate', exitCode);
@@ -682,13 +677,13 @@ function GetNames(doc, pred) {
       break;
     }
   }
-  return Util.unique(names);
+  return unique(names);
 }
 
 let nameMaps = (() => {
   let assoc = new WeakMap();
 
-  return Util.memoize(doc => {
+  return memoize(doc => {
     let map;
     switch (doc.type) {
       case 'sch': {
@@ -717,7 +712,7 @@ function CorrelateSchematicAndBoard(schematic, board) {
   let documents = [schematic, board];
   let names = documents.map(d => GetNames(d));
   let allNames = Math.max(...names.map(n => n.length));
-  let intersection = Util.intersect(...names);
+  let intersection = intersect(...names);
 
   if(allNames.length > intersection.length)
     console.warn(`WARNING: Only ${intersection.length} names of ${allNames.length} correlate`);
@@ -742,9 +737,9 @@ function SaveLibraries() {
   let layerIds = deep
     .select([schematic.raw, board.raw], e => e && e.layer)
     .map(e => +e.layer)
-    .concat(Util.range(17, 49))
+    .concat(range(17, 49))
     .sort((a, b) => a - b);
-  layerIds = Util.unique(layerIds);
+  layerIds = unique(layerIds);
   let layers = layerIds.map(id => layerMap[id]);
 
   //  console.log('layers', layers);
@@ -754,7 +749,7 @@ function SaveLibraries() {
     layerIds.map(id => [id, layerMap[id].attributes.name])
   );
 
-  const libraryNames = Util.unique([...schematic.libraries, ...board.libraries].map(([n, e]) => n));
+  const libraryNames = unique([...schematic.libraries, ...board.libraries].map(([n, e]) => n));
   console.log('libraryNames', libraryNames);
 
   const libraries = libraryNames.map(name => [name, schematic.getLibrary(name), board.getLibrary(name)]);
@@ -886,7 +881,7 @@ async function testEagle(filename) {
   console.log('saved:', await proj.saveTo('tmp', true));
   for(let doc of proj.documents) {
     let changed = false;
-    console.log('eagle:', Util.className(doc.find('eagle')));
+    console.log('eagle:', className(doc.find('eagle')));
     for(let pkg of doc.find('eagle').getAll('package')) {
       let indexes = [...pkg.children].map((child, i, a) =>
         a
