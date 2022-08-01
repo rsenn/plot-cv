@@ -11,7 +11,7 @@ import * as Terminal from './terminal.js';
 import * as fs from './lib/filesystem.js';
 import { escape } from './lib/misc.js';
 import { concat, toString, searchArrayBuffer } from 'misc';
-import * as net from 'net';
+import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server, FormParser } from 'net';
 import { Socket } from './quickjs/qjs-ffi/lib/socket.js';
 import { EventEmitter } from './lib/events.js';
 import { Repeater } from './lib/repeater/repeater.js';
@@ -54,7 +54,7 @@ function main(...args) {
     'ssl-private-key': sslPrivateKey = 'localhost.key'
   } = params;
   const listen = params.connect && !params.listen ? false : true;
-  const server = !params.client || params.server;
+  const is_server = !params.client || params.server;
   Object.assign(globalThis, { ...rpc2, rpc });
   let name = process.env['NAME'] ?? Util.getArgs()[0];
   /*console.log('argv[1]',process.argv[1]);*/
@@ -99,7 +99,7 @@ function main(...args) {
 
   let cli = (globalThis.sock = new rpc.Socket(
     `${address}:${port}`,
-    rpc[`RPC${server ? 'Server' : 'Client'}Connection`],
+    rpc[`RPC${is_server ? 'Server' : 'Client'}Connection`],
     +params.verbose
   ));
 
@@ -116,36 +116,33 @@ function main(...args) {
     console.log('createWS', { url, callbacks, listen });
 
     const out = s => logFile.puts(s + '\n');
-    net.setLog(
-      (params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
-      (level, message) => {
-        //repl.printStatus(...args);
-        if(/__lws/.test(message)) return;
-        if(/(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|DROP|HTTP_BODY[^_])/.test(message)) return;
-        //
-        if(params.debug)
-          out(
-            (
-              [
-                'ERR',
-                'WARN',
-                'NOTICE',
-                'INFO',
-                'DEBUG',
-                'PARSER',
-                'HEADER',
-                'EXT',
-                'CLIENT',
-                'LATENCY',
-                'MINNET',
-                'THREAD'
-              ][Math.log2(level)] ?? level + ''
-            ).padEnd(8) + message.replace(/\n/g, '\\n')
-          );
-      }
-    );
+    setLog((params.debug ? LLL_USER : 0) | (((params.debug ? LLL_NOTICE : LLL_WARN) << 1) - 1), (level, message) => {
+      //repl.printStatus(...args);
+      if(/__lws/.test(message)) return;
+      if(/(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|DROP|HTTP_BODY)/.test(message)) return;
+      //
+      if(params.debug)
+        out(
+          (
+            [
+              'ERR',
+              'WARN',
+              'NOTICE',
+              'INFO',
+              'DEBUG',
+              'PARSER',
+              'HEADER',
+              'EXT',
+              'CLIENT',
+              'LATENCY',
+              'MINNET',
+              'THREAD'
+            ][Math.log2(level)] ?? level + ''
+          ).padEnd(8) + message.replace(/\n/g, '\\n')
+        );
+    });
 
-    return [net.client, net.server][+listen]({
+    return [client, server][+listen]({
       tls: params.tls,
       sslCert,
       sslPrivateKey,
@@ -279,15 +276,33 @@ function main(...args) {
 
         return callbacks.onClose(ws, req);
       },
-      onHttp(req, resp) {
+      onHttp(ws, req, resp) {
         const { method, headers } = req;
 
         if(req.method != 'GET') console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
 
         if(req.method != 'GET') {
           console.log(req.method + ' body:', /*typeof req.body, req.body.length, */ req.body);
+          console.log('ws', ws);
 
-          (async function() {
+          let fp=new FormParser(ws, ['files'], {
+            chunkSize: 8192*256,
+            onContent(name,data) {
+              console.log(`onContent(${name})`, this.filename, data.byteLength);
+            },
+            onOpen(name,filename) {
+              this.name = name;
+              this.filename = filename;
+              console.log(`onOpen(${name})`, filename);
+            },
+            onClose(name) {
+              console.log(`onClose(${this.name})`,  this.filename);
+            }
+          });
+          console.log('fp.socket', fp.socket);
+          console.log('fp.params', fp.params);
+
+          /*  (async function() {
             let r,
               buffers = [];
 
@@ -318,7 +333,7 @@ function main(...args) {
             console.log('pos2:', pos2);
 
             fs.writeFileSync('out.bin', data);
-          })();
+          })();*/
         }
 
         const { body, url } = resp;
@@ -381,7 +396,6 @@ function main(...args) {
     exit: quit,
     Socket,
     cli,
-    net,
     std,
     os,
     deep,
