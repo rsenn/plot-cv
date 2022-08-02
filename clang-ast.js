@@ -1157,13 +1157,13 @@ export async function AstDump(compiler, source, args, force) {
   //console.log('AstDump', { output, source, sources, existsAndNotEmpty, newer });
   if(!force && existsAndNotEmpty && newer) {
     console.log(`Loading cached '${output}'...`);
-    r = { file: output };
   } else {
     if(fs.existsSync(output)) fs.unlinkSync(output);
 
     console.log(`Compiling '${source}'...`);
-    r = await SpawnCompiler(compiler, source, output, ['-Xclang', '-ast-dump=json', '-fsyntax-only', '-I.', ...args]);
+    let { output, result,errors } = await SpawnCompiler(compiler, source, output, ['-Xclang', '-ast-dump=json', '-fsyntax-only', '-I.', ...args]);
   }
+    r = { file: output };
 
   console.log('AstDump', r);
 
@@ -1179,7 +1179,7 @@ export async function AstDump(compiler, source, args, force) {
       return json;
     },
     data() {
-      //console.log('this.json', this.json);
+       console.log('this.json', this.json);
       let data = JSON.parse(this.json);
       let file;
       let maxDepth = 0;
