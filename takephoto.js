@@ -11,20 +11,21 @@ function main() {
 
   cam.options.photoWidth = 2592;
   cam.options.photoHeight = 1944;
-  cam.options.verbose = true;
+  cam.options.verbose = false;
   cv.namedWindow('Image', cv.WINDOW_NORMAL);
 
-  for(let i = 0; i < 100; i++) {
-    console.log(i);
+  /*for(let i = 0; i < 100; i++)*/ {
+    //console.log(i);
 
-    if(!cam.capturePhoto(image)) {
+    if(cam.capturePhoto(image)) {
       console.log('Camera error');
     }
-    cv.imshow('Image', image);
+    //cv.imshow('Image', image);
     cv.imwrite('photo.png', image);
-    cv.waitKey(30);
+    console.log(`Saved as 'photo.png'.`);
+    //cv.waitKey(30);
   }
-  cv.waitKey();
+  //cv.waitKey();
   cv.destroyWindow('Image');
 }
 
