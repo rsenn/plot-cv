@@ -103,7 +103,7 @@ function main(...args) {
     const out = s => logFile.puts(s + '\n');
     setLog((params.debug ? LLL_USER : 0) | (((params.debug ? LLL_NOTICE : LLL_WARN) << 1) - 1), (level, message) => {
       if(/__lws/.test(message)) return;
-      if(/(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|HTTP_BODY)/.test(message)) return;
+      if(/(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|HTTP_BODY|EVENT_WAIT)/.test(message)) return;
 
       if(params.debug)
         out(
