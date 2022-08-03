@@ -3,7 +3,7 @@ import * as cv from 'opencv';
 
 function main() {
   let image = new cv.Mat();
-  let cam = new cv.PiCamera();
+  let cam = new cv.RaspiCam();
   // cam.options->width=4056;
   // cam.options->height=3040;
   // cam.options->photo_width = 2028;
