@@ -13,6 +13,7 @@ import { getOpt } from 'util';
 import { readFileSync } from 'fs';
 import { ReactComponent, render } from './lib/dom/preactComponent.js';
 import renderToString from './lib/preact-render-to-string.js';
+import { RGBA, isRGBA, ImmutableRGBA, default as rgba } from './lib/color/rgba.js';
 
 function render(doc, filename) {
   if(doc instanceof EagleProject) {
@@ -21,6 +22,26 @@ function render(doc, filename) {
     return;
   }
   let renderer = new Renderer(doc, ReactComponent.append);
+  renderer.setPalette([
+    [0xff, 0xff, 0xff],
+    [0x4b, 0x4b, 0xa5],
+    [0, 0, 0],
+    [0x4b, 0xa5, 0xa5],
+    [0, 0, 0],
+    [0xa5, 0x4b, 0xa5],
+    [0xa5, 0xa5, 0x4b],
+    [0, 0, 0],
+    [0x4b, 0x4b, 0xff],
+    [0x4b, 0xff, 0x4b],
+    [0x4b, 0xff, 0xff],
+    [0xff, 0x4b, 0x4b],
+    [0xff, 0x4b, 0xff],
+    [0xff, 0xff, 0x4b],
+    [0x4b, 0x4b, 0x4b],
+    [0xa5, 0xa5, 0xa5],
+    [0, 0, 0]
+  ]);
+
   let str;
   let svg = renderer.render(doc);
   try {
@@ -30,25 +51,7 @@ function render(doc, filename) {
     console.log('STACK:', e.stack);
   }
   console.log('renderer.palette', renderer.palette);
-  renderer.setPalette([
-    new RGBA(0xff, 0xff, 0xff),
-    new RGBA(0x4b, 0x4b, 0xa5),
-    new RGBA(0, 0, 0),
-    new RGBA(0x4b, 0xa5, 0xa5),
-    new RGBA(0, 0, 0),
-    new RGBA(0xa5, 0x4b, 0xa5),
-    new RGBA(0xa5, 0xa5, 0x4b),
-    new RGBA(0xaf, 0xaf, 0xaf),
-    new RGBA(0x4b, 0x4b, 0xff),
-    new RGBA(0x4b, 0xff, 0x4b),
-    new RGBA(0x4b, 0xff, 0xff),
-    new RGBA(0xff, 0x4b, 0x4b),
-    new RGBA(0xff, 0x4b, 0xff),
-    new RGBA(0xff, 0xff, 0x4b),
-    new RGBA(0x4b, 0x4b, 0x4b),
-    new RGBA(0xa5, 0xa5, 0xa5),
-    new RGBA(0xaf, 0xaf, 0xaf)
-  ]);
+
   let xml = fromXML(str);
 
   filename ??=
