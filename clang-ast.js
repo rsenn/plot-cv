@@ -366,8 +366,8 @@ export class Type extends Node {
     return /^enum\s/.test(str);
   }
   isPointer() {
-    let { desugared } = this;
-    return /(?:\(\*\)\(|\*$)/.test(desugared);
+    let { desugared, qualType } = this;
+    return /(?:\(\*\)\(|\*$)/.test(desugared) || /\*$/.test(qualType);
   }
 
   isFunction() {
