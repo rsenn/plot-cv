@@ -9,17 +9,10 @@ import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from './lib/filesystem.js';
-import { escape } from './lib/misc.js';
-import { concat, toString, searchArrayBuffer } from 'misc';
+import { toString, define } from 'util';
 import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server, FormParser } from 'net';
-import { Socket } from './quickjs/qjs-ffi/lib/socket.js';
-import { EventEmitter } from './lib/events.js';
-import { Repeater } from './lib/repeater/repeater.js';
 import { ReadFile, WriteFile, ReadJSON, WriteJSON, ReadBJSON, WriteBJSON } from './io-helpers.js';
 import { parseDate, dateToObject } from './date-helpers.js';
-
-import rpc from './quickjs/qjs-net/rpc.js';
-import * as rpc2 from './quickjs/qjs-net/rpc.js';
 
 globalThis.fs = fs;
 
@@ -46,7 +39,7 @@ function main(...args) {
     args
   );
   if(params['no-tls'] === true) params.tls = false;
-  //console.log('params', params);
+
   const {
     address = '0.0.0.0',
     port = 8999,
@@ -55,9 +48,9 @@ function main(...args) {
   } = params;
   const listen = params.connect && !params.listen ? false : true;
   const is_server = !params.client || params.server;
-  Object.assign(globalThis, { ...rpc2, rpc });
+
   let name = process.env['NAME'] ?? Util.getArgs()[0];
-  /*console.log('argv[1]',process.argv[1]);*/
+
   name = name
     .replace(/.*\//, '')
     .replace(/-/g, ' ')
@@ -66,7 +59,7 @@ function main(...args) {
   let [prefix, suffix] = name.split(' ');
 
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
-  const histfile = '.test-rpc-history';
+  const histfile = '.upload-server-history';
   repl.historyLoad(histfile, false);
   repl.directives.i = [
     (module, ...args) => {
@@ -79,7 +72,6 @@ function main(...args) {
     'import module'
   ];
 
-  //repl.help = () => {};
   let { log } = console;
   repl.show = arg => std.puts((typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options)) + '\n');
 
@@ -97,30 +89,22 @@ function main(...args) {
 
   console.log = (...args) => repl.printStatus(() => log(console.config(repl.inspectOptions), ...args));
 
-  let cli = (globalThis.sock = new rpc.Socket(
-    `${address}:${port}`,
-    rpc[`RPC${is_server ? 'Server' : 'Client'}Connection`],
-    +params.verbose
-  ));
-
-  cli.register({ Socket, Worker: os.Worker, Repeater, REPL, EventEmitter });
   let logFile =
     {
       puts(s) {
         repl.printStatus(() => std.puts(s));
       }
-    } ?? std.open('test-rpc.log', 'w+');
+    } ?? std.open('upload-server.log', 'w+');
 
   let connections = new Set();
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
-    console.log('createWS', { url, callbacks, listen });
+    //console.log('createWS', { url, callbacks, listen });
 
     const out = s => logFile.puts(s + '\n');
     setLog((params.debug ? LLL_USER : 0) | (((params.debug ? LLL_NOTICE : LLL_WARN) << 1) - 1), (level, message) => {
-      //repl.printStatus(...args);
       if(/__lws/.test(message)) return;
       if(/(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|HTTP_BODY)/.test(message)) return;
-      //
+
       if(params.debug)
         out(
           (
@@ -172,15 +156,8 @@ function main(...args) {
         ['.m', 'text/x-objective-c'],
         ['.sh', 'text/x-shellscript']
       ],
-      options: {
-        'upload-dir': './uploads',
-        'max-size': 10000000,
-        'basic-auth':
-          'quickjs/qjs-net/libwebsockets/minimal-examples/http-server/minimal-http-server-deaddrop/ba-passwords'
-      },
       mounts: [
-        ['/', '.', 'debugger.html'],
-        ['/upload', 'lws-deaddrop', null, 'lws-deaddrop'],
+        ['/', '.', 'upload.html'],
         ['/get', './uploads', ''],
         function proxy(req, res) {
           console.log('proxy', { req, res });
@@ -191,21 +168,14 @@ function main(...args) {
           console.log('proxy', { status, ok, url, type });
         },
 
-        function* config(req, res) {
-          const { body, headers } = req;
-          console.log('/config', { req, res });
-          console.log('*config', { body, headers });
-          yield '{}';
-        },
         function* files(req, resp) {
           const { body, headers } = req;
-          const { 'content-type': content_type } = headers;
-          //console.log('*files', { body });
-          const data = JSON.parse(body);
+
+          const data = JSON.parse(/*body ??*/ '{}');
           resp.type = 'application/json';
           let {
-            dir = '.' ?? 'tmp',
-            filter = '.([ch]|js)$' ?? '.(brd|sch|G[A-Z][A-Z])$',
+            dir = './uploads',
+            filter = '[^.].*' ?? '.(brd|sch|G[A-Z][A-Z])$',
             verbose = false,
             objects = false,
             key = 'mtime',
@@ -215,10 +185,9 @@ function main(...args) {
           let components = absdir.split(path.sep);
           if(components.length && components[0] === '') components.shift();
           if(components.length < 2 || components[0] != 'home') throw new Error(`Access error`);
-          //console.log('\x1b[38;5;215m*files\x1b[0m', { dir, components, absdir });
-          //console.log('\x1b[38;5;215m*files\x1b[0m', { absdir, filter });
+
           let names = fs.readdirSync(absdir) ?? [];
-          //console.log('\x1b[38;5;215m*files\x1b[0m', { names });
+
           if(filter) {
             const re = new RegExp(filter, 'gi');
             names = names.filter(name => re.test(name));
@@ -245,7 +214,7 @@ function main(...args) {
             ]);
             return acc;
           }, []);
-          //console.log('\x1b[38;5;215m*files\x1b[0m', console.config({ depth: 3 }), { entries });
+
           if(entries.length) {
             let cmp = {
               string(a, b) {
@@ -259,6 +228,11 @@ function main(...args) {
           }
           names = entries.map(([name, obj]) => (objects ? obj : name));
           console.log('\x1b[38;5;215m*files\x1b[0m', names);
+          // console.log('req.headers', req.headers);
+          //resp.headers = { ['Content-Type']: 'application/json' };
+          //        resp.headers['Content-Type']= 'application/json';
+
+          // console.log('resp.headers', resp.headers);
           yield JSON.stringify(...[names, ...(verbose ? [null, 2] : [])]);
         }
       ],
@@ -266,7 +240,7 @@ function main(...args) {
 
       ...callbacks,
       onConnect(ws, req) {
-        console.log('test-rpc', { ws, req });
+        console.log('upload-server', { ws, req });
 
         console.log('req.url.path', req.url.path);
 
@@ -284,11 +258,15 @@ function main(...args) {
       onHttp(ws, req, resp) {
         const { method, headers } = req;
 
+        if(req.url.path.endsWith('files')) {
+          //resp.headers= { ['Content-Type']: 'application/json' };
+          resp.type = 'application/json';
+        }
+
         if(req.method != 'GET') console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
 
         if(req.method != 'GET') {
-          console.log(req.method + ' body:', /*typeof req.body, req.body.length, */ req.body);
-          console.log('ws', ws);
+          //  console.log(req.method + ' body:',  req.body);
 
           let fp = new FormParser(ws, ['files'], {
             chunkSize: 8192 * 256,
@@ -307,41 +285,6 @@ function main(...args) {
               console.log(`onClose(${this.name})`, this.filename);
             }
           });
-          console.log('fp.socket', fp.socket);
-          console.log('fp.params', fp.params);
-
-          /*  (async function() {
-            let r,
-              buffers = [];
-
-            while((r = req.body.next())) {
-              console.log('r:', r);
-              const { value, done } = await r;
-              console.log('value:', value);
-              //console.log('toString(value)', toString(value));
-              console.log('done:', done);
-              if(done) break;
-              buffers.push(value);
-            }
-            console.log('req.headers:', req.headers);
-            console.log(
-              'buffers:',
-              buffers.map(b => b.byteLength)
-            );
-            let data = concat(...buffers);
-            console.log('data:', data);
-            console.log('data.byteLength:', data.byteLength);
-            let pos1 = searchArrayBuffer(data, new Uint8Array([13, 10]).buffer);
-            let pos = searchArrayBuffer(data, new Uint8Array([13, 10, 13, 10]).buffer);
-            console.log('pos:', pos);
-
-            console.log('header:', toString(data.slice(0, pos)));
-            let body = data.slice(pos + 4);
-            let pos2 = searchArrayBuffer(body, data.slice(0, pos1));
-            console.log('pos2:', pos2);
-
-            fs.writeFileSync('out.bin', data);
-          })();*/
         }
 
         const { body, url } = resp;
@@ -361,7 +304,7 @@ function main(...args) {
             if(!/[\/\.]/.test(p2)) {
               let fname = `${p2}.js`;
 
-              if(!fs.existsSync(dir + '/' + fname)) return `/* ${match} */`;
+              if(!fs.existsSync(dir + '/' + fname)) return ``;
 
               match = [p1, './' + fname, p3].join('');
 
@@ -370,11 +313,7 @@ function main(...args) {
             return match;
           });
         }
-        /*   if(req.url.path.endsWith('upload')) {
-          resp.status = 302;
-          resp.headers['Location'] = '/upload.html';
-          resp.headers = { ['Location']: '/upload.html' };
-        }*/
+
         return resp;
       },
       onMessage(ws, data) {
@@ -382,13 +321,11 @@ function main(...args) {
         return callbacks.onMessage(ws, data);
       },
       onFd(fd, rd, wr) {
-        //console.log('onFd',{fd,rd,wr});
         return callbacks.onFd(fd, rd, wr);
       },
       ...(url && url.host ? url : {})
     });
   });
-  globalThis[['connection', 'listener'][+listen]] = cli;
 
   define(globalThis, {
     get connections() {
@@ -399,11 +336,8 @@ function main(...args) {
   Object.assign(globalThis, {
     repl,
     Util,
-    ...rpc,
     quit,
     exit: quit,
-    Socket,
-    cli,
     std,
     os,
     deep,
@@ -419,12 +353,18 @@ function main(...args) {
     dateToObject
   });
 
-  define(globalThis, listen ? { server: cli, cli } : { client: cli, cli });
   delete globalThis.DEBUG;
-  //Object.defineProperty(globalThis, 'DEBUG', { get: DebugFlags });
 
-  if(listen) cli.listen(createWS, os);
-  else cli.connect(createWS, os);
+  createWS(
+    { protocol: 'ws', host: '0.0.0.0', port: 8999 },
+    {
+      onFd(fd, rd, wr) {
+        os.setReadHandler(fd, rd);
+        os.setWriteHandler(fd, wr);
+      }
+    },
+    true
+  );
 
   function quit(why) {
     console.log(`quit('${why}')`);
@@ -444,5 +384,4 @@ try {
   1;
   std.exit(1);
 } finally {
-  //console.log('SUCCESS');
 }

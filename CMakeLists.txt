@@ -198,8 +198,8 @@ endif(F_OPT_PIC)
 # if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 
 # option(USE_EFENCE "Enable electric fence" OFF)
-set(DEBUG_OUTPUT TRUE CACHE BOOL "Debug output" FORCE)
-set(DEBUG_MAT FALSE CACHE BOOL "Debug cv::Mat" FORCE)
+#set(DEBUG_OUTPUT TRUE CACHE BOOL "Debug output" FORCE)
+#set(DEBUG_MAT FALSE CACHE BOOL "Debug cv::Mat" FORCE)
 list(APPEND PLOTCV_DEFS DEBUG=1)
 
 # add_definitions(-DDEBUG=1)
