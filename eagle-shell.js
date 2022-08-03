@@ -1,3 +1,4 @@
+#!/usr/bin/env qjsm
 import { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, EagleNodeList, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, EagleDocument, EagleReference, EagleRef, makeEagleNode, EagleNode, Renderer, EagleProject, EagleElement, makeEagleElement, EagleElementProxy, EagleNodeMap, ImmutablePath, DereferenceError } from './lib/eagle.js';
 import Util from './lib/util.js';
 import * as util from './lib/misc.js';
@@ -32,25 +33,29 @@ let cmdhist;
 
 extendArray();
 
-function GetFiletime(file, field ='mtime') {
-  let ms=fs.statSync(file)?.[field];
+function GetFiletime(file, field = 'mtime') {
+  let ms = fs.statSync(file)?.[field];
   return new Date(ms);
 }
 
 function FindProjects(dirPtn = '../*/eagle') {
   let files = glob(dirPtn + '/*.{sch,brd}', GLOB_BRACE);
-  let entries = files.map(file => [file,GetFiletime(file)]).sort((a,b)=> a[1] - b[1]);
+  let entries = files.map(file => [file, GetFiletime(file)]).sort((a, b) => a[1] - b[1]);
 
   let names = unique(files.map(fn => fn.replace(/\.(sch|brd)$/i, '')));
 
-  const minIndex = name => Math.min(entries.findIndex( ([filename,time]) => filename== name + '.sch') , entries.findIndex( ([filename,time]) => filename== name + '.brd'));
+  const minIndex = name =>
+    Math.min(
+      entries.findIndex(([filename, time]) => filename == name + '.sch'),
+      entries.findIndex(([filename, time]) => filename == name + '.brd')
+    );
   const hasBoth = name => minIndex(name) >= 0;
 
   return names
-  .map(name => [name,minIndex(name)])
-  .filter(([name,index]) => index >= 0)
-  .sort((a,b) => b[1]-a[1])
-  .map(([name,index]) => name);
+    .map(name => [name, minIndex(name)])
+    .filter(([name, index]) => index >= 0)
+    .sort((a, b) => b[1] - a[1])
+    .map(([name, index]) => name);
 }
 
 function pick(it, n = 1) {

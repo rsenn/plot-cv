@@ -1,3 +1,4 @@
+#!/usr/bin/env qjsm
 import { define, isObject, memoize, unique } from './lib/misc.js';
 import { ECMAScriptParser, Printer, PathReplacer } from './lib/ecmascript.js';
 import { ObjectPattern, ObjectExpression, ImportDeclaration, ExportNamedDeclaration, VariableDeclaration, estree, ESNode, Literal } from './lib/ecmascript.js';

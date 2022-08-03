@@ -1,3 +1,4 @@
+#!/usr/bin/env qjsm
 import * as cv from 'opencv';
 import Util from './lib/util.js';
 import { setInterval, toArrayBuffer, toString, escape, quote, define, extendArray, memoize, getFunctionArguments, glob, GLOB_TILDE, fnmatch, wordexp, lazyProperties } from './lib/misc.js';
