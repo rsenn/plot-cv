@@ -420,3 +420,7 @@ add_custom_target(
   WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
   BYPRODUCTS "${CMAKE_INSTALL_DIR}"
   COMMENT "Install into directory")
+
+install(FILES convert-imports.js create-tamper.js cv-shell.js eagle2svg.js eagle-shell.js extract-structs.js takephoto.js wscli.js xml2js.js
+        DESTINATION bin
+        PERMISSIONS WORLD_READ WORLD_EXECUTE)

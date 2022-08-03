@@ -1,3 +1,4 @@
+#!/usr/bin/env qjsm
 import * as cv from 'opencv';
 
 function main() {

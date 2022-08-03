@@ -1,3 +1,4 @@
+#!/usr/bin/env qjsm
 import PortableFileSystem from './lib/filesystem.js';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
