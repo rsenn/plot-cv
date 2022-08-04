@@ -28,6 +28,7 @@ import { Predicate } from 'predicate';
 import child_process from 'child_process';
 import { readFileSync } from 'fs';
 import { ReactComponent, Fragment, render } from './lib/dom/preactComponent.js';
+import { Table } from './cli-helpers.js';
 import renderToString from './lib/preact-render-to-string.js';
 let cmdhist;
 
@@ -276,7 +277,7 @@ function main(...args) {
     isObject,
     memoize,
     unique,
-    FindProjects
+    FindProjects,Table
   });
   Object.assign(globalThis, {
     load(filename, project = globalThis.project) {
