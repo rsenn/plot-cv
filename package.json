@@ -26,6 +26,7 @@
     "x/quickjs/qjs-ffi/examples/socket.js": "sockets",
     "quickjs/qjs-ffi/lib/socket.js": "sockets",
     "lib/events.js": "events",
+    "lib/xml/xpath.js": "quickjs/qjs-modules/lib/xpath.js",
     "lib/preact.mjs": "lib/preact.esm.js",
     "lib/preact.js": "lib/preact.esm.js"
   },

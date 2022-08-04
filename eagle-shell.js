@@ -28,6 +28,7 @@ import { Predicate } from 'predicate';
 import child_process from 'child_process';
 import { readFileSync } from 'fs';
 import { ReactComponent, Fragment, render } from './lib/dom/preactComponent.js';
+import { Table } from './cli-helpers.js';
 import renderToString from './lib/preact-render-to-string.js';
 let cmdhist;
 
@@ -118,9 +119,19 @@ function render(doc, filename) {
   return str;
 }
 
+function ShowParts() {
+  return Table(
+    [...project.schematic.parts]
+      .map(e => e.raw.attributes)
+      .filter(attr => !(attr.value === undefined && attr.device==='') || /^IC/.test(attr.name))
+      .map(({ name, deviceset, device, value }) => [name, deviceset, device, value ?? '-']),
+    ['name', 'deviceset', 'device', 'value']
+  );
+}
+
 function main(...args) {
   globalThis.console = new Console({
-    inspectOptions: { maxArrayLength: 100, colors: true, depth: Infinity, compact: 1, customInspect: true }
+    inspectOptions: { maxArrayLength: 100, colors: true, depth: Infinity, compact: 0, customInspect: true }
   });
 
   let debugLog;
@@ -135,12 +146,14 @@ function main(...args) {
     };
     await PortableFileSystem(cb);
   }*/
-  Util.defineGetterSetter(
+  /*  Util.defineGetterSetter(
     globalThis,
     'compact',
     () => console.options.compact,
     value => (console.options.compact = value)
-  );
+  );*/
+  console.options.depth = 10;
+  console.options.compact = 0;
 
   debugLog = fs.openSync('debug.log', 'a');
 
@@ -276,7 +289,9 @@ function main(...args) {
     isObject,
     memoize,
     unique,
-    FindProjects
+    FindProjects,
+    Table,
+    ShowParts
   });
   Object.assign(globalThis, {
     load(filename, project = globalThis.project) {
