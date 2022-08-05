@@ -119,12 +119,23 @@ function render(doc, filename) {
   return str;
 }
 
-function ShowParts() {
+function CollectParts(doc = project.schematic) {
+  return [...doc.parts]
+    .map(e => e.raw.attributes)
+    .filter(attr => !(attr.value === undefined && attr.device === '') || /^IC/.test(attr.name))
+    .map(({ name, deviceset, device, value }) => ({ name, deviceset, device, value: value ?? '-' }));
+}
+
+function ListParts(doc = project.schematic) {
+  let parts = CollectParts(doc);
+  let valueLen = Math.max(...parts.map(p => p.value.length));
+
+  return parts.map(({ name, deviceset, device, value }) => value.padStart(valueLen) + ' ' + device);
+}
+
+function ShowParts(doc = project.schematic) {
   return Table(
-    [...project.schematic.parts]
-      .map(e => e.raw.attributes)
-      .filter(attr => !(attr.value === undefined && attr.device==='') || /^IC/.test(attr.name))
-      .map(({ name, deviceset, device, value }) => [name, deviceset, device, value ?? '-']),
+    CollectParts(doc).map(({ name, deviceset, device, value }) => [name, deviceset, device, value ?? '-']),
     ['name', 'deviceset', 'device', 'value']
   );
 }
@@ -291,6 +302,8 @@ function main(...args) {
     unique,
     FindProjects,
     Table,
+    CollectParts,
+    ListParts,
     ShowParts
   });
   Object.assign(globalThis, {
