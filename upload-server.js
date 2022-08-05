@@ -10,7 +10,7 @@ import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from './lib/filesystem.js';
 import { toString, define } from 'util';
-import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server, FormParser } from 'net';
+import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server, FormParser, Hash } from 'net';
 import { ReadFile, WriteFile, ReadJSON, WriteJSON, ReadBJSON, WriteBJSON } from './io-helpers.js';
 import { parseDate, dateToObject } from './date-helpers.js';
 
@@ -267,22 +267,26 @@ function main(...args) {
 
         if(req.method != 'GET') {
           //  console.log(req.method + ' body:',  req.body);
-
+          let hash;
           let fp = new FormParser(ws, ['files'], {
             chunkSize: 8192 * 256,
-            onContent(name, data) {
-              console.log(`onContent(${name})`, this.filename, data.byteLength);
-              fs.writeSync(this.file, data);
-            },
             onOpen(name, filename) {
               this.name = name;
               this.filename = filename;
               this.file = fs.openSync('uploads/' + filename, 'w+', 0o644);
-              console.log(`onOpen(${name})`, filename);
+              hash = new Hash(Hash.TYPE_SHA1);
+              console.log(`onOpen(${name})`, filename, hash);
             },
+            onContent(name, data) {
+              console.log(`onContent(${name})`, this.filename, data.byteLength);
+              fs.writeSync(this.file, data);
+              hash(data);
+            },
+
             onClose(name) {
               fs.closeSync(this.file);
               console.log(`onClose(${this.name})`, this.filename);
+              console.log(`hash()`, hash());
             }
           });
         }
