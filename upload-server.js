@@ -159,6 +159,7 @@ function main(...args) {
       mimetypes: [
         ['.svgz', 'application/gzip'],
         ['.mjs', 'application/javascript'],
+        ['.js', 'application/javascript'],
         ['.wasm', 'application/octet-stream'],
         ['.eot', 'application/vnd.ms-fontobject'],
         ['.lib', 'application/x-archive'],
@@ -340,33 +341,37 @@ function main(...args) {
         }
 
         const { body, url } = resp;
-        //console.log('\x1b[38;5;33monHttp\x1b[0m', req, resp, { body });
-
+ 
         const file = url.path.slice(1);
         const dir = path.dirname(file); //file.replace(/\/[^\/]*$/g, '');
 
-        if(file.endsWith('.txt')) {
+        if(file.endsWith('.txt') ||file.endsWith('.html')||file.endsWith('.css')) {
           resp.body = fs.readFileSync(file, 'utf-8');
         }
-        if(file.endsWith('.js')) {
-          body = fs.readFileSync(file, 'utf-8');
+        else if(file.endsWith('.js')) {
+         //console.log('\x1b[38;5;33monHttp\x1b[0m',  url.path);
+    let body = fs.readFileSync(file, 'utf-8');
 
-          console.log('onHttp', { file, dir });
-
+ 
           const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
 
           resp.body = body.replaceAll(re, (match, p1, p0, p2, p3, offset) => {
             if(!/[\/\.]/.test(p2)) {
               let fname = `${p2}.js`;
+              let rel = path.relative(fname, dir);
+console.log('onHttp', {match,fname},rel);
 
-              if(!fs.existsSync(dir + '/' + fname)) return ``;
+             // if(!fs.existsSync(  rel)) return ``;
 
-              match = [p1, './' + fname, p3].join('');
+              match = [p1, rel, p3].join('');
 
               console.log('args', { match, p1, p2, p3, offset });
             }
             return match;
           });
+        } else {
+                    console.log('onHttp unknown', { file, dir });
+
         }
 
         return resp;
