@@ -1,18 +1,40 @@
 import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
+import * as xml from 'xml';
 import path from 'path';
 import { Console } from 'console';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from './lib/filesystem.js';
-import { toString, define ,toUnixTime,getOpt,randStr} from 'util';
+import { toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric } from 'util';
 import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server, FormParser, Hash } from 'net';
 import { ReadFile, WriteFile, ReadJSON, WriteJSON, ReadBJSON, WriteBJSON } from './io-helpers.js';
 import { parseDate, dateToObject } from './date-helpers.js';
 
 globalThis.fs = fs;
+
+function ReadExif(file) {
+  let [rdf, stdout] = os.pipe();
+
+  os.exec(['exiv2', '-e', 'X-', 'ex', file], { stdout });
+
+  let xmpdat = fs.readAllSync(rdf);
+  console.log('xmpdat', xmpdat);
+
+  let xmp = xml.read(xmpdat);
+  console.log('xmp', xmp);
+  let flat = Object.fromEntries(
+    deep
+      .flatten(xmp, [])
+      .filter(([k, v]) => v !== '' && /attributes.*:/.test(k) && !/\.xmlns/.test(k) && !isObject(v))
+      .map(([k, v]) => [k.replace(/.*\.attributes\./g, ''), v])
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([k, v]) => [k, isNaN(+v) ? (isNaN(Date.parse(v)) ? v : new Date(v)) : +v])
+  );
+  return flat;
+}
 
 function main(...args) {
   const base = path.basename(scriptArgs[0], '.js').replace(/\.[a-z]*$/, '');
@@ -265,13 +287,14 @@ function main(...args) {
 
         if(req.method != 'GET') {
           //  console.log(req.method + ' body:',  req.body);
-          let hash,tmpnam;
+          let hash, tmpnam, ext;
           let fp = new FormParser(ws, ['files'], {
             chunkSize: 8192 * 256,
             onOpen(name, filename) {
               this.name = name;
               this.filename = filename;
-              this.file = fs.openSync('uploads/' + (tmpnam = randStr(20)+'.tmp'), 'w+', 0o644);
+              ext = path.extname(filename);
+              this.file = fs.openSync('uploads/' + (tmpnam = randStr(20) + '.tmp'), 'w+', 0o644);
               hash = new Hash(Hash.TYPE_SHA1);
               console.log(`onOpen(${name})`, filename, hash);
             },
@@ -282,11 +305,28 @@ function main(...args) {
             },
 
             onClose(name) {
-                          hash.finalize();
-                          let sha1=hash.toString();
-                console.log(`hash()`,hash.valueOf(), sha1 );
-fs.closeSync(this.file);
-              fs.renameSync('uploads/'+tmpnam, 'uploads/'+sha1);
+              hash.finalize();
+              let sha1 = hash.toString();
+              console.log(`hash()`, hash.valueOf(), sha1);
+              fs.closeSync(this.file);
+              let f = 'uploads/' + sha1;
+              fs.renameSync('uploads/' + tmpnam, f + ext);
+              let flat = ReadExif(f + ext); /*
+              os.exec(['exiv2', '-f', '-e', 'X', 'ex', f + ext]);
+              let xmpdat = fs.readFileSync(f + '.xmp');
+              console.log('xmpdat', xmpdat);
+
+              let xmp = xml.read(xmpdat);
+              console.log('xmp', xmp);
+              let flat = Object.fromEntries(
+                deep
+                  .flatten(xmp, [])
+                  .filter(([k, v]) => v !== '' && /attributes.*:/.test(k) && !/\.xmlns/.test(k) && !isObject(v))
+                  .map(([k, v]) => [k.replace(/.*\.attributes\./g, ''), v])
+                  .sort((a, b) => a[0].localeCompare(b[0]))
+                  .map(([k, v]) => [k, isNaN(+v) ? (isNaN(Date.parse(v)) ? v : new Date(v)) : +v])
+              );*/
+              console.log('flat', flat);
 
               console.log(`onClose(${this.name})`, this.filename);
             }

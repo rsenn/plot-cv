@@ -1,3 +1,6 @@
+import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
+
+
 window.addEventListener('load', e => {
   console.log('upload.js loaded!');
 
