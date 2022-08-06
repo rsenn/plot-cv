@@ -1,15 +1,13 @@
 import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
-import require from 'require';
 import path from 'path';
-import Util from './lib/util.js';
 import { Console } from 'console';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from './lib/filesystem.js';
-import { toString, define } from 'util';
+import { toString, define ,toUnixTime,getOpt,randStr} from 'util';
 import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server, FormParser, Hash } from 'net';
 import { ReadFile, WriteFile, ReadJSON, WriteJSON, ReadBJSON, WriteBJSON } from './io-helpers.js';
 import { parseDate, dateToObject } from './date-helpers.js';
@@ -17,10 +15,10 @@ import { parseDate, dateToObject } from './date-helpers.js';
 globalThis.fs = fs;
 
 function main(...args) {
-  const base = path.basename(Util.getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
+  const base = path.basename(scriptArgs[0], '.js').replace(/\.[a-z]*$/, '');
   const config = ReadJSON(`.${base}-config`) ?? {};
   globalThis.console = new Console({ inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 200 } });
-  let params = Util.getOpt(
+  let params = getOpt(
     {
       verbose: [false, (a, v) => (v | 0) + 1, 'v'],
       listen: [false, null, 'l'],
@@ -49,7 +47,7 @@ function main(...args) {
   const listen = params.connect && !params.listen ? false : true;
   const is_server = !params.client || params.server;
 
-  let name = process.env['NAME'] ?? Util.getArgs()[0];
+  let name = process.env['NAME'] ?? base;
 
   name = name
     .replace(/.*\//, '')
@@ -105,7 +103,7 @@ function main(...args) {
       if(/__lws/.test(message)) return;
       if(/(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|HTTP_BODY|EVENT_WAIT)/.test(message)) return;
 
-      if(params.debug)
+      if(params.debug || level <= LLL_WARN)
         out(
           (
             [
@@ -206,8 +204,8 @@ function main(...args) {
             acc.push([
               name,
               Object.assign(obj, {
-                mtime: Util.toUnixTime(st.mtime),
-                time: Util.toUnixTime(st.ctime),
+                mtime: toUnixTime(st.mtime),
+                time: toUnixTime(st.ctime),
                 mode: `0${(st.mode & 0x09ff).toString(8)}`,
                 size: st.size
               })
@@ -267,26 +265,30 @@ function main(...args) {
 
         if(req.method != 'GET') {
           //  console.log(req.method + ' body:',  req.body);
-          let hash;
+          let hash,tmpnam;
           let fp = new FormParser(ws, ['files'], {
             chunkSize: 8192 * 256,
             onOpen(name, filename) {
               this.name = name;
               this.filename = filename;
-              this.file = fs.openSync('uploads/' + filename, 'w+', 0o644);
+              this.file = fs.openSync('uploads/' + (tmpnam = randStr(20)+'.tmp'), 'w+', 0o644);
               hash = new Hash(Hash.TYPE_SHA1);
               console.log(`onOpen(${name})`, filename, hash);
             },
             onContent(name, data) {
               console.log(`onContent(${name})`, this.filename, data.byteLength);
               fs.writeSync(this.file, data);
-              hash(data);
+              hash.update(data);
             },
 
             onClose(name) {
-              fs.closeSync(this.file);
+                          hash.finalize();
+                          let sha1=hash.toString();
+                console.log(`hash()`,hash.valueOf(), sha1 );
+fs.closeSync(this.file);
+              fs.renameSync('uploads/'+tmpnam, 'uploads/'+sha1);
+
               console.log(`onClose(${this.name})`, this.filename);
-              console.log(`hash()`, hash());
             }
           });
         }
@@ -339,7 +341,6 @@ function main(...args) {
 
   Object.assign(globalThis, {
     repl,
-    Util,
     quit,
     exit: quit,
     std,
@@ -354,7 +355,9 @@ function main(...args) {
     ReadBJSON,
     WriteBJSON,
     parseDate,
-    dateToObject
+    dateToObject,
+    Hash,
+    FormParser
   });
 
   delete globalThis.DEBUG;
