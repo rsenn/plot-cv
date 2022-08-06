@@ -299,7 +299,7 @@ function main(...args) {
       onHttp(ws, req, resp) {
         const { peer, address, port } = ws;
         const { method, headers } = req;
-        console.log('\x1b[38;5;33monHttp\x1b[0m', {ws,req});
+      //  console.log('\x1b[38;5;33monHttp\x1b[0m', {ws,req});
      //   console.log('\x1b[38;5;33monHttp\x1b[0m', { address, port });
 
         if(req.url.path.endsWith('files')) {
@@ -310,7 +310,7 @@ function main(...args) {
         // if(req.method != 'GET') console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
 
         if(req.method != 'GET') {
-           console.log(req.method + ' body:',  req.body);
+           //console.log(req.method + ' body:',  req.body);
           let hash, tmpnam, ext,progress=0;
           let fp = new FormParser(ws, ['files', 'uuid'], {
             chunkSize: 8192 /** 256*/,
