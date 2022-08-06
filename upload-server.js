@@ -20,11 +20,15 @@ function ReadExif(file) {
 
   os.exec(['exiv2', '-e', 'X-', 'ex', file], { stdout });
 
+  os.close(stdout);
+
+
   let xmpdat = fs.readAllSync(rdf);
-  console.log('xmpdat', xmpdat);
+  os.close(rdf);
+ // console.log('xmpdat', xmpdat);
 
   let xmp = xml.read(xmpdat);
-  console.log('xmp', xmp);
+ // console.log('xmp', xmp);
   let flat = Object.fromEntries(
     deep
       .flatten(xmp, [])
@@ -283,7 +287,7 @@ function main(...args) {
           resp.type = 'application/json';
         }
 
-        if(req.method != 'GET') console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
+       // if(req.method != 'GET') console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
 
         if(req.method != 'GET') {
           //  console.log(req.method + ' body:',  req.body);
@@ -311,21 +315,7 @@ function main(...args) {
               fs.closeSync(this.file);
               let f = 'uploads/' + sha1;
               fs.renameSync('uploads/' + tmpnam, f + ext);
-              let flat = ReadExif(f + ext); /*
-              os.exec(['exiv2', '-f', '-e', 'X', 'ex', f + ext]);
-              let xmpdat = fs.readFileSync(f + '.xmp');
-              console.log('xmpdat', xmpdat);
-
-              let xmp = xml.read(xmpdat);
-              console.log('xmp', xmp);
-              let flat = Object.fromEntries(
-                deep
-                  .flatten(xmp, [])
-                  .filter(([k, v]) => v !== '' && /attributes.*:/.test(k) && !/\.xmlns/.test(k) && !isObject(v))
-                  .map(([k, v]) => [k.replace(/.*\.attributes\./g, ''), v])
-                  .sort((a, b) => a[0].localeCompare(b[0]))
-                  .map(([k, v]) => [k, isNaN(+v) ? (isNaN(Date.parse(v)) ? v : new Date(v)) : +v])
-              );*/
+              let flat = ReadExif(f + ext);  
               console.log('flat', flat);
 
               console.log(`onClose(${this.name})`, this.filename);
@@ -334,7 +324,7 @@ function main(...args) {
         }
 
         const { body, url } = resp;
-        console.log('\x1b[38;5;33monHttp\x1b[0m', req, resp, { body });
+       //console.log('\x1b[38;5;33monHttp\x1b[0m', req, resp, { body });
 
         const file = url.path.slice(1);
         const dir = file.replace(/\/[^\/]*$/g, '');
@@ -343,7 +333,7 @@ function main(...args) {
           resp.body = fs.readFileSync(file, 'utf-8');
         }
         if(file.endsWith('.js')) {
-          console.log('onHttp', { file, dir });
+         // console.log('onHttp', { file, dir });
           const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
 
           resp.body = body.replaceAll(re, (match, p1, p0, p2, p3, offset) => {
