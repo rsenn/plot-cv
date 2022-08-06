@@ -42,7 +42,7 @@ function UploadFile(files) {
 
   for(let file of files) formData.append('file', file);
 
-  fetch('upload.html', { method: 'POST', body: formData }).then(response => {
+  fetch('upload'/*+'.html'*/, { method: 'POST', body: formData }).then(response => {
     console.log('response', response);
   });
 }

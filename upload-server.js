@@ -129,7 +129,7 @@ function main(...args) {
     const out = s => logFile.puts(s + '\n');
     setLog((params.debug ? LLL_USER : 0) | (((params.debug ? LLL_NOTICE : LLL_WARN) << 1) - 1), (level, message) => {
       if(/__lws/.test(message)) return;
-      if(/(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|HTTP_BODY|EVENT_WAIT)/.test(message)) return;
+      if(/(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT)/.test(message)) return;
 
       if(params.debug || level <= LLL_WARN)
         out(
@@ -186,6 +186,11 @@ function main(...args) {
       mounts: [
         ['/', '.', 'upload.html'],
         ['/get', './uploads', ''],
+             // ['/upload', 'lws-deaddrop', null, 'lws-deaddrop'],
+   function *upload(req,res) {
+          console.log('upload', { req, res });
+
+        }, 
         function proxy(req, res) {
           console.log('proxy', { req, res });
           const { url, method, headers } = req;
@@ -294,6 +299,7 @@ function main(...args) {
       onHttp(ws, req, resp) {
         const { peer, address, port } = ws;
         const { method, headers } = req;
+        console.log('\x1b[38;5;33monHttp\x1b[0m', {ws,req});
      //   console.log('\x1b[38;5;33monHttp\x1b[0m', { address, port });
 
         if(req.url.path.endsWith('files')) {
@@ -304,21 +310,23 @@ function main(...args) {
         // if(req.method != 'GET') console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
 
         if(req.method != 'GET') {
-          //  console.log(req.method + ' body:',  req.body);
-          let hash, tmpnam, ext;
+           console.log(req.method + ' body:',  req.body);
+          let hash, tmpnam, ext,progress=0;
           let fp = new FormParser(ws, ['files', 'uuid'], {
-            chunkSize: 8192 * 256,
+            chunkSize: 8192 /** 256*/,
             onOpen(name, filename) {
-              console.log(`onOpen(${name})`, this.uuid);
+            //  console.log(`onOpen()`, this.uuid);
               this.name = name;
               this.filename = filename;
               ext = path.extname(filename).toLowerCase();
               this.file = fs.openSync('uploads/' + (tmpnam = randStr(20) + '.tmp'), 'w+', 0o644);
               hash = new Hash(Hash.TYPE_SHA1);
-              console.log(`onOpen(${name})`, filename, hash);
+              console.log(`onOpen()`, filename);
             },
             onContent(name, data) {
-              console.log(`onContent(${name})`, this.filename, data.byteLength);
+              progress+= data.byteLength;
+             // console.log(`onContent()`);
+              console.log(`onContent()`, this.filename, progress);
               fs.writeSync(this.file, data);
               hash.update(data);
             },
@@ -373,6 +381,7 @@ console.log('onHttp', {match,fname},rel);
                     console.log('onHttp unknown', { file, dir });
 
         }
+        console.log('\x1b[38;5;33monHttp\x1b[0m', {resp});
 
         return resp;
       },
