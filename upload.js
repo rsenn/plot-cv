@@ -1,5 +1,9 @@
 import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
+import { randStr } from './lib/misc.js';
 
+const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => util.randStr(n, '0123456789abcdef'), rng).join('-');
+
+let uuid;
 
 window.addEventListener('load', e => {
   console.log('upload.js loaded!');
@@ -29,6 +33,7 @@ function UploadFile(files) {
   //file??=   document.querySelector('#file');
 
   const formData = new FormData();
+  formData.append('uuid', uuid);
 
   for(let file of files) formData.append('file', file);
 
@@ -40,7 +45,14 @@ function UploadFile(files) {
 function CreateWS() {
   let ws = new WebSocket(document.location.href.replace(/\/[^/]*$/, '/uploads').replace(/^[^:]*/, 'ws'));
   ws.onmessage = e => {
-    console.log('onmessage', e);
+    const { data } = e;
+    let command = JSON.parse(data);
+    console.log('onmessage', command);
+    switch (command.type) {
+      case 'uuid':
+        uuid = command.data;
+        break;
+    }
   };
 
   return ws;

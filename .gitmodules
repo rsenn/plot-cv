@@ -10,3 +10,6 @@
 	path = lib
 	url = git@github.com:rsenn/libweb.git
 	branch = main
+[submodule "openlayers"]
+	path = openlayers
+	url = https://github.com/openlayers/openlayers

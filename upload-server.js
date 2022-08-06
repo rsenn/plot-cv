@@ -8,12 +8,13 @@ import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from './lib/filesystem.js';
-import { toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric } from 'util';
+import { toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer } from 'util';
 import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server, FormParser, Hash } from 'net';
 import { ReadFile, WriteFile, ReadJSON, WriteJSON, ReadBJSON, WriteBJSON } from './io-helpers.js';
 import { parseDate, dateToObject } from './date-helpers.js';
 
 globalThis.fs = fs;
+const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 
 function ReadExif(file) {
   let [rdf, stdout] = os.pipe();
@@ -22,17 +23,17 @@ function ReadExif(file) {
 
   os.close(stdout);
 
-
   let xmpdat = fs.readAllSync(rdf);
   os.close(rdf);
- // console.log('xmpdat', xmpdat);
+  // console.log('xmpdat', xmpdat);
 
   let xmp = xml.read(xmpdat);
- // console.log('xmp', xmp);
+  // console.log('xmp', xmp);
   let flat = Object.fromEntries(
     deep
       .flatten(xmp, [])
       .filter(([k, v]) => v !== '' && /attributes.*:/.test(k) && !/\.xmlns/.test(k) && !isObject(v))
+      .filter(([k, v]) => /(GPS|[XY]Dim|[XY]Res|Date$|Make$|Model$)/.test(k))
       .map(([k, v]) => [k.replace(/.*\.attributes\./g, ''), v])
       .sort((a, b) => a[0].localeCompare(b[0]))
       .map(([k, v]) => [k, isNaN(+v) ? (isNaN(Date.parse(v)) ? v : new Date(v)) : +v])
@@ -121,6 +122,7 @@ function main(...args) {
     } ?? std.open('upload-server.log', 'w+');
 
   let connections = new Set();
+  let by_uuid = {};
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     //console.log('createWS', { url, callbacks, listen });
 
@@ -264,10 +266,19 @@ function main(...args) {
 
       ...callbacks,
       onConnect(ws, req) {
-        console.log('upload-server', { ws, req });
+        const { peer, address, port } = ws;
 
-        console.log('req.url.path', req.url.path);
+      //  console.log('\x1b[38;5;33monConnect\x1b[0m', { address, port });
+       
+        ws.sendCommand = function(data) {
+          if(!isArrayBuffer(data) /*&& isObject(data)*/) data = JSON.stringify(data);
 
+          return this.send(data);
+        };
+        let data = MakeUUID();
+
+        ws.sendCommand({ type: 'uuid', data });
+        by_uuid[data] = ws;
         connections.add(ws);
         if(req.url.path.endsWith('uploads')) {
         } else {
@@ -280,24 +291,27 @@ function main(...args) {
         return callbacks.onClose(ws, req);
       },
       onHttp(ws, req, resp) {
+        const { peer, address, port } = ws;
         const { method, headers } = req;
+     //   console.log('\x1b[38;5;33monHttp\x1b[0m', { address, port });
 
         if(req.url.path.endsWith('files')) {
           //resp.headers= { ['Content-Type']: 'application/json' };
           resp.type = 'application/json';
         }
 
-       // if(req.method != 'GET') console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
+        // if(req.method != 'GET') console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
 
         if(req.method != 'GET') {
           //  console.log(req.method + ' body:',  req.body);
           let hash, tmpnam, ext;
-          let fp = new FormParser(ws, ['files'], {
+          let fp = new FormParser(ws, ['files', 'uuid'], {
             chunkSize: 8192 * 256,
             onOpen(name, filename) {
+              console.log(`onOpen(${name})`, this.uuid);
               this.name = name;
               this.filename = filename;
-              ext = path.extname(filename);
+              ext = path.extname(filename).toLowerCase();
               this.file = fs.openSync('uploads/' + (tmpnam = randStr(20) + '.tmp'), 'w+', 0o644);
               hash = new Hash(Hash.TYPE_SHA1);
               console.log(`onOpen(${name})`, filename, hash);
@@ -315,8 +329,10 @@ function main(...args) {
               fs.closeSync(this.file);
               let f = 'uploads/' + sha1;
               fs.renameSync('uploads/' + tmpnam, f + ext);
-              let flat = ReadExif(f + ext);  
-              console.log('flat', flat);
+              let exif = ReadExif(f + ext);
+              console.log('exif', exif);
+              const { filename } = this;
+              by_uuid[this.uuid].sendCommand({ type: 'upload', filename, storage: f + ext, exif });
 
               console.log(`onClose(${this.name})`, this.filename);
             }
@@ -324,16 +340,19 @@ function main(...args) {
         }
 
         const { body, url } = resp;
-       //console.log('\x1b[38;5;33monHttp\x1b[0m', req, resp, { body });
+        //console.log('\x1b[38;5;33monHttp\x1b[0m', req, resp, { body });
 
         const file = url.path.slice(1);
-        const dir = file.replace(/\/[^\/]*$/g, '');
+        const dir = path.dirname(file); //file.replace(/\/[^\/]*$/g, '');
 
         if(file.endsWith('.txt')) {
           resp.body = fs.readFileSync(file, 'utf-8');
         }
         if(file.endsWith('.js')) {
-         // console.log('onHttp', { file, dir });
+          body = fs.readFileSync(file, 'utf-8');
+
+          console.log('onHttp', { file, dir });
+
           const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
 
           resp.body = body.replaceAll(re, (match, p1, p0, p2, p3, offset) => {
@@ -366,6 +385,12 @@ function main(...args) {
   define(globalThis, {
     get connections() {
       return [...connections];
+    },
+    get by_uuid() {
+      return by_uuid;
+    },
+    uuid(data) {
+      return by_uuid[data];
     }
   });
 
