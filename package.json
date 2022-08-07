@@ -53,6 +53,8 @@
     "module-alias": "^2.2.2",
     "node-bpg": "^1.0.0",
     "ol": "^6.15.1",
+    "ol-layerswitcher": "https://github.com/walkermatt/ol-layerswitcher",
+    "openlayers-ext": "^3.1.5",
     "preact": "^10",
     "preact-compat": "^3",
     "preact-context": "^1.1.4",
