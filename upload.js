@@ -1,3 +1,15 @@
+import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
+import { randStr } from './lib/misc.js';
+import { isElement, createElement } from './dom-helpers.js';
+import { DragArea, DropArea, Card, List, RUG } from './lib/upload.js';
+
+const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => util.randStr(n, '0123456789abcdef'), rng).join('-');
+
+let uuid;
+
+Object.assign(globalThis, { isElement, createElement, React });
+Object.assign(globalThis, { DragArea, DropArea, Card, List, RUG });
+
 window.addEventListener('load', e => {
   console.log('upload.js loaded!');
 
@@ -26,10 +38,11 @@ function UploadFile(files) {
   //file??=   document.querySelector('#file');
 
   const formData = new FormData();
+  formData.append('uuid', uuid);
 
   for(let file of files) formData.append('file', file);
 
-  fetch('upload.html', { method: 'POST', body: formData }).then(response => {
+  fetch('upload'/*+'.html'*/, { method: 'POST', body: formData }).then(response => {
     console.log('response', response);
   });
 }
@@ -37,7 +50,14 @@ function UploadFile(files) {
 function CreateWS() {
   let ws = new WebSocket(document.location.href.replace(/\/[^/]*$/, '/uploads').replace(/^[^:]*/, 'ws'));
   ws.onmessage = e => {
-    console.log('onmessage', e);
+    const { data } = e;
+    let command = JSON.parse(data);
+    console.log('onmessage', command);
+    switch (command.type) {
+      case 'uuid':
+        uuid = command.data;
+        break;
+    }
   };
 
   return ws;

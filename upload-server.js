@@ -1,26 +1,51 @@
 import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
-import require from 'require';
+import * as xml from 'xml';
 import path from 'path';
-import Util from './lib/util.js';
 import { Console } from 'console';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from './lib/filesystem.js';
-import { toString, define } from 'util';
+import { toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer } from 'util';
 import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server, FormParser, Hash } from 'net';
 import { ReadFile, WriteFile, ReadJSON, WriteJSON, ReadBJSON, WriteBJSON } from './io-helpers.js';
 import { parseDate, dateToObject } from './date-helpers.js';
 
 globalThis.fs = fs;
+const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
+
+function ReadExif(file) {
+  let [rdf, stdout] = os.pipe();
+
+  os.exec(['exiv2', '-e', 'X-', 'ex', file], { stdout });
+
+  os.close(stdout);
+
+  let xmpdat = fs.readAllSync(rdf);
+  os.close(rdf);
+  // console.log('xmpdat', xmpdat);
+
+  let xmp = xml.read(xmpdat);
+  // console.log('xmp', xmp);
+  let flat = Object.fromEntries(
+    deep
+      .flatten(xmp, [])
+      .filter(([k, v]) => v !== '' && /attributes.*:/.test(k) && !/\.xmlns/.test(k) && !isObject(v))
+      .filter(([k, v]) => /(GPS|[XY]Dim|[XY]Res|Date$|Make$|Model$)/.test(k))
+      .map(([k, v]) => [k.replace(/.*\.attributes\./g, ''), v])
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([k, v]) => [k, isNaN(+v) ? (isNaN(Date.parse(v)) ? v : new Date(v)) : +v])
+  );
+  return flat;
+}
 
 function main(...args) {
-  const base = path.basename(Util.getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
+  const base = path.basename(scriptArgs[0], '.js').replace(/\.[a-z]*$/, '');
   const config = ReadJSON(`.${base}-config`) ?? {};
   globalThis.console = new Console({ inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 200 } });
-  let params = Util.getOpt(
+  let params = getOpt(
     {
       verbose: [false, (a, v) => (v | 0) + 1, 'v'],
       listen: [false, null, 'l'],
@@ -49,7 +74,7 @@ function main(...args) {
   const listen = params.connect && !params.listen ? false : true;
   const is_server = !params.client || params.server;
 
-  let name = process.env['NAME'] ?? Util.getArgs()[0];
+  let name = process.env['NAME'] ?? base;
 
   name = name
     .replace(/.*\//, '')
@@ -97,15 +122,16 @@ function main(...args) {
     } ?? std.open('upload-server.log', 'w+');
 
   let connections = new Set();
+  let by_uuid = {};
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     //console.log('createWS', { url, callbacks, listen });
 
     const out = s => logFile.puts(s + '\n');
     setLog((params.debug ? LLL_USER : 0) | (((params.debug ? LLL_NOTICE : LLL_WARN) << 1) - 1), (level, message) => {
       if(/__lws/.test(message)) return;
-      if(/(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|HTTP_BODY|EVENT_WAIT)/.test(message)) return;
+      if(/(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT)/.test(message)) return;
 
-      if(params.debug)
+      if(params.debug || level <= LLL_WARN)
         out(
           (
             [
@@ -133,6 +159,7 @@ function main(...args) {
       mimetypes: [
         ['.svgz', 'application/gzip'],
         ['.mjs', 'application/javascript'],
+        ['.js', 'application/javascript'],
         ['.wasm', 'application/octet-stream'],
         ['.eot', 'application/vnd.ms-fontobject'],
         ['.lib', 'application/x-archive'],
@@ -159,6 +186,10 @@ function main(...args) {
       mounts: [
         ['/', '.', 'upload.html'],
         ['/get', './uploads', ''],
+        // ['/upload', 'lws-deaddrop', null, 'lws-deaddrop'],
+        function* upload(req, res) {
+          console.log('upload', { req, res });
+        },
         function proxy(req, res) {
           console.log('proxy', { req, res });
           const { url, method, headers } = req;
@@ -206,8 +237,8 @@ function main(...args) {
             acc.push([
               name,
               Object.assign(obj, {
-                mtime: Util.toUnixTime(st.mtime),
-                time: Util.toUnixTime(st.ctime),
+                mtime: toUnixTime(st.mtime),
+                time: toUnixTime(st.ctime),
                 mode: `0${(st.mode & 0x09ff).toString(8)}`,
                 size: st.size
               })
@@ -240,10 +271,19 @@ function main(...args) {
 
       ...callbacks,
       onConnect(ws, req) {
-        console.log('upload-server', { ws, req });
+        const { peer, address, port } = ws;
 
-        console.log('req.url.path', req.url.path);
+        //  console.log('\x1b[38;5;33monConnect\x1b[0m', { address, port });
 
+        ws.sendCommand = function(data) {
+          if(!isArrayBuffer(data) /*&& isObject(data)*/) data = JSON.stringify(data);
+
+          return this.send(data);
+        };
+        let data = MakeUUID();
+
+        ws.sendCommand({ type: 'uuid', data });
+        by_uuid[data] = ws;
         connections.add(ws);
         if(req.url.path.endsWith('uploads')) {
         } else {
@@ -256,67 +296,91 @@ function main(...args) {
         return callbacks.onClose(ws, req);
       },
       onHttp(ws, req, resp) {
+        const { peer, address, port } = ws;
         const { method, headers } = req;
+        //  console.log('\x1b[38;5;33monHttp\x1b[0m', {ws,req});
+        //   console.log('\x1b[38;5;33monHttp\x1b[0m', { address, port });
 
         if(req.url.path.endsWith('files')) {
           //resp.headers= { ['Content-Type']: 'application/json' };
           resp.type = 'application/json';
         }
 
-        if(req.method != 'GET') console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
+        // if(req.method != 'GET') console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
 
         if(req.method != 'GET') {
-          //  console.log(req.method + ' body:',  req.body);
-          let hash;
-          let fp = new FormParser(ws, ['files'], {
-            chunkSize: 8192 * 256,
+          //console.log(req.method + ' body:',  req.body);
+          let hash,
+            tmpnam,
+            ext,
+            progress = 0;
+          let fp = new FormParser(ws, ['files', 'uuid'], {
+            chunkSize: 8192 /** 256*/,
             onOpen(name, filename) {
+              //  console.log(`onOpen()`, this.uuid);
               this.name = name;
               this.filename = filename;
-              this.file = fs.openSync('uploads/' + filename, 'w+', 0o644);
+              ext = path.extname(filename).toLowerCase();
+              this.file = fs.openSync('uploads/' + (tmpnam = randStr(20) + '.tmp'), 'w+', 0o644);
               hash = new Hash(Hash.TYPE_SHA1);
-              console.log(`onOpen(${name})`, filename, hash);
+              console.log(`onOpen()`, filename);
             },
             onContent(name, data) {
-              console.log(`onContent(${name})`, this.filename, data.byteLength);
+              progress += data.byteLength;
+              // console.log(`onContent()`);
+              console.log(`onContent()`, this.filename, progress);
               fs.writeSync(this.file, data);
-              hash(data);
+              hash.update(data);
             },
 
             onClose(name) {
+              hash.finalize();
+              let sha1 = hash.toString();
+              console.log(`hash()`, hash.valueOf(), sha1);
               fs.closeSync(this.file);
+              let f = 'uploads/' + sha1;
+              fs.renameSync('uploads/' + tmpnam, f + ext);
+              let exif = ReadExif(f + ext);
+              console.log('exif', exif);
+              const { filename } = this;
+              by_uuid[this.uuid].sendCommand({ type: 'upload', filename, storage: f + ext, exif });
+
               console.log(`onClose(${this.name})`, this.filename);
-              console.log(`hash()`, hash());
             }
           });
         }
 
         const { body, url } = resp;
-        console.log('\x1b[38;5;33monHttp\x1b[0m', req, resp, { body });
 
         const file = url.path.slice(1);
-        const dir = file.replace(/\/[^\/]*$/g, '');
+        const dir = path.dirname(file); //file.replace(/\/[^\/]*$/g, '');
 
-        if(file.endsWith('.txt')) {
+        if(file.endsWith('.txt') || file.endsWith('.html') || file.endsWith('.css')) {
           resp.body = fs.readFileSync(file, 'utf-8');
-        }
-        if(file.endsWith('.js')) {
-          console.log('onHttp', { file, dir });
+        } else if(file.endsWith('.js')) {
+          //console.log('\x1b[38;5;33monHttp\x1b[0m',  url.path);
+          let body = fs.readFileSync(file, 'utf-8');
+
           const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
 
           resp.body = body.replaceAll(re, (match, p1, p0, p2, p3, offset) => {
             if(!/[\/\.]/.test(p2)) {
               let fname = `${p2}.js`;
+              let rel = path.relative(fname, dir);
+              console.log('onHttp', { match, fname }, rel);
 
-              if(!fs.existsSync(dir + '/' + fname)) return ``;
+              // if(!fs.existsSync(  rel)) return ``;
 
-              match = [p1, './' + fname, p3].join('');
+              match = [p1, rel, p3].join('');
 
               console.log('args', { match, p1, p2, p3, offset });
             }
             return match;
           });
+        } else {
+          console.log('onHttp unknown', { file, dir });
         }
+        console.log('\x1b[38;5;33monHttp\x1b[0m', { resp });
 
         return resp;
       },
@@ -334,12 +398,17 @@ function main(...args) {
   define(globalThis, {
     get connections() {
       return [...connections];
+    },
+    get by_uuid() {
+      return by_uuid;
+    },
+    uuid(data) {
+      return by_uuid[data];
     }
   });
 
   Object.assign(globalThis, {
     repl,
-    Util,
     quit,
     exit: quit,
     std,
@@ -354,7 +423,9 @@ function main(...args) {
     ReadBJSON,
     WriteBJSON,
     parseDate,
-    dateToObject
+    dateToObject,
+    Hash,
+    FormParser
   });
 
   delete globalThis.DEBUG;
