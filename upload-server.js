@@ -186,11 +186,10 @@ function main(...args) {
       mounts: [
         ['/', '.', 'upload.html'],
         ['/get', './uploads', ''],
-             // ['/upload', 'lws-deaddrop', null, 'lws-deaddrop'],
-   function *upload(req,res) {
+        // ['/upload', 'lws-deaddrop', null, 'lws-deaddrop'],
+        function* upload(req, res) {
           console.log('upload', { req, res });
-
-        }, 
+        },
         function proxy(req, res) {
           console.log('proxy', { req, res });
           const { url, method, headers } = req;
@@ -274,8 +273,8 @@ function main(...args) {
       onConnect(ws, req) {
         const { peer, address, port } = ws;
 
-      //  console.log('\x1b[38;5;33monConnect\x1b[0m', { address, port });
-       
+        //  console.log('\x1b[38;5;33monConnect\x1b[0m', { address, port });
+
         ws.sendCommand = function(data) {
           if(!isArrayBuffer(data) /*&& isObject(data)*/) data = JSON.stringify(data);
 
@@ -299,8 +298,8 @@ function main(...args) {
       onHttp(ws, req, resp) {
         const { peer, address, port } = ws;
         const { method, headers } = req;
-      //  console.log('\x1b[38;5;33monHttp\x1b[0m', {ws,req});
-     //   console.log('\x1b[38;5;33monHttp\x1b[0m', { address, port });
+        //  console.log('\x1b[38;5;33monHttp\x1b[0m', {ws,req});
+        //   console.log('\x1b[38;5;33monHttp\x1b[0m', { address, port });
 
         if(req.url.path.endsWith('files')) {
           //resp.headers= { ['Content-Type']: 'application/json' };
@@ -310,12 +309,15 @@ function main(...args) {
         // if(req.method != 'GET') console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
 
         if(req.method != 'GET') {
-           //console.log(req.method + ' body:',  req.body);
-          let hash, tmpnam, ext,progress=0;
+          //console.log(req.method + ' body:',  req.body);
+          let hash,
+            tmpnam,
+            ext,
+            progress = 0;
           let fp = new FormParser(ws, ['files', 'uuid'], {
             chunkSize: 8192 /** 256*/,
             onOpen(name, filename) {
-            //  console.log(`onOpen()`, this.uuid);
+              //  console.log(`onOpen()`, this.uuid);
               this.name = name;
               this.filename = filename;
               ext = path.extname(filename).toLowerCase();
@@ -324,8 +326,8 @@ function main(...args) {
               console.log(`onOpen()`, filename);
             },
             onContent(name, data) {
-              progress+= data.byteLength;
-             // console.log(`onContent()`);
+              progress += data.byteLength;
+              // console.log(`onContent()`);
               console.log(`onContent()`, this.filename, progress);
               fs.writeSync(this.file, data);
               hash.update(data);
@@ -349,27 +351,25 @@ function main(...args) {
         }
 
         const { body, url } = resp;
- 
+
         const file = url.path.slice(1);
         const dir = path.dirname(file); //file.replace(/\/[^\/]*$/g, '');
 
-        if(file.endsWith('.txt') ||file.endsWith('.html')||file.endsWith('.css')) {
+        if(file.endsWith('.txt') || file.endsWith('.html') || file.endsWith('.css')) {
           resp.body = fs.readFileSync(file, 'utf-8');
-        }
-        else if(file.endsWith('.js')) {
-         //console.log('\x1b[38;5;33monHttp\x1b[0m',  url.path);
-    let body = fs.readFileSync(file, 'utf-8');
+        } else if(file.endsWith('.js')) {
+          //console.log('\x1b[38;5;33monHttp\x1b[0m',  url.path);
+          let body = fs.readFileSync(file, 'utf-8');
 
- 
           const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
 
           resp.body = body.replaceAll(re, (match, p1, p0, p2, p3, offset) => {
             if(!/[\/\.]/.test(p2)) {
               let fname = `${p2}.js`;
               let rel = path.relative(fname, dir);
-console.log('onHttp', {match,fname},rel);
+              console.log('onHttp', { match, fname }, rel);
 
-             // if(!fs.existsSync(  rel)) return ``;
+              // if(!fs.existsSync(  rel)) return ``;
 
               match = [p1, rel, p3].join('');
 
@@ -378,10 +378,9 @@ console.log('onHttp', {match,fname},rel);
             return match;
           });
         } else {
-                    console.log('onHttp unknown', { file, dir });
-
+          console.log('onHttp unknown', { file, dir });
         }
-        console.log('\x1b[38;5;33monHttp\x1b[0m', {resp});
+        console.log('\x1b[38;5;33monHttp\x1b[0m', { resp });
 
         return resp;
       },

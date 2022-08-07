@@ -500,12 +500,12 @@ function CreateMap() {
       url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
     })
   });
-const rasterLayer=new TileLayer({
-  source: new  XYZ({
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    maxZoom: 19
-  })
-});
+  const rasterLayer = new TileLayer({
+    source: new XYZ({
+      url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      maxZoom: 19
+    })
+  });
   /*  tileLayer.on('postrender', function(event) {
     const vectorContext = getVectorContext(event);
  
@@ -530,14 +530,25 @@ const rasterLayer=new TileLayer({
 
   let map = new OLMap({
     target: 'mapdiv',
-    layers: [tileLayer, rasterLayer/*,vector*/],
+    layers: [tileLayer, rasterLayer /*,vector*/],
     view
   });
 
   const zoomslider = new ZoomSlider();
   map.addControl(zoomslider);
 
-  Object.assign(globalThis, { tileLayer,rasterLayer,view, vector, map, extentVector, lineString, feature, stroke, positionFeature });
+  Object.assign(globalThis, {
+    tileLayer,
+    rasterLayer,
+    view,
+    vector,
+    map,
+    extentVector,
+    lineString,
+    feature,
+    stroke,
+    positionFeature
+  });
   Object.defineProperties(globalThis, {
     zoom: {
       get() {
