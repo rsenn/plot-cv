@@ -367,7 +367,7 @@ function main(...args) {
             if(!/[\/\.]/.test(p2)) {
               let fname = `${p2}.js`;
               let rel = path.relative(fname, dir);
-              console.log('onHttp', { match, fname }, rel);
+             // console.log('onHttp', { match, fname }, rel);
 
               // if(!fs.existsSync(  rel)) return ``;
 
@@ -380,7 +380,7 @@ function main(...args) {
         } else {
           console.log('onHttp unknown', { file, dir });
         }
-        console.log('\x1b[38;5;33monHttp\x1b[0m', { resp });
+        //console.log('\x1b[38;5;33monHttp\x1b[0m', { resp });
 
         return resp;
       },

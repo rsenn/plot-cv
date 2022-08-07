@@ -13,3 +13,9 @@
 [submodule "openlayers"]
 	path = openlayers
 	url = https://github.com/openlayers/openlayers
+[submodule "ol-layerswitcher"]
+	path = ol-layerswitcher
+	url = https://github.com/walkermatt/ol-layerswitcher
+[submodule "ol-ext"]
+	path = ol-ext
+	url = https://github.com/Viglino/ol-ext
