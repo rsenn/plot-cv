@@ -1,6 +1,8 @@
 import { OLMap, View, TileLayer, Layer, Point, Overlay, XYZ, OSM, Feature, Projection, VectorLayer, VectorSource, MultiPoint, Polygon, LineString, Geolocation, GeoJSON, composeCssTransform, Icon, Fill, fromLonLat, ZoomSlider, addCoordinateTransforms, getVectorContext, transform, Style, Stroke, CircleStyle, RegularShape, addProjection, LayerGroup } from './lib/ol.js';
 
 import LayerSwitcher /* , { BaseLayerOptions, GroupLayerOptions }*/ from './lib/ol-layerswitcher.js';
+import { assert, lazyProperties, define, isObject, memoize, unique } from './lib/misc.js';
+import {  Element } from './lib/dom.js';
 
 let data = (globalThis.data = []);
 let center = (globalThis.center = transform([7.454281, 46.96453], 'EPSG:4326', 'EPSG:3857'));
@@ -9,6 +11,11 @@ let topLeft = [5.9962, 47.8229],
   topRight = [10.5226, 47.8229],
   bottomLeft = [5.9962, 45.8389],
   bottomRight = [10.5226, 45.8389];
+
+  lazyProperties(globalThis, { 
+locationDisplay: () =>  document.body.appendChild(Element.create('div', { style: { position: 'fixed', bottom: '20px', right: '20px', minWidth: '200px', height: '50px', background: 'white', border: '1px solid black' }}, []))
+  });
+
 
 function TransformCoordinates(...args) {
   if(args.length == 2) return transform(args, 'EPSG:4326', 'EPSG:3857');
@@ -21,9 +28,12 @@ function TransformCoordinates(...args) {
 }
 
 class Coordinate {
-  constructor(lon, lat) {
+  constructor(lon, lat, type) {
     this.lon = lon;
     this.lat = lat;
+
+    if(typeof type == 'string')
+      this.type = type;
   }
 
   get [0]() {
@@ -149,14 +159,7 @@ function CreateMap() {
     })
   );
   let extentVector = [topLeft, topRight, bottomRight, bottomLeft, topLeft].map(a => TransformCoordinates(...a));
-  /*  let lineString = 
-
-  let feature = 
-  let stroke = new Stroke({
-    color: '#ffd705',
-    width: 4,
-    lineDash: [4, 8]
-  });*/
+ 
   const vector = new VectorLayer({
     source: new VectorSource({
       features: [
@@ -176,12 +179,17 @@ function CreateMap() {
     })
   });
 
-  /*const geolocation = new Geolocation({
+  const geolocation = new Geolocation({
     trackingOptions: {
       enableHighAccuracy: true
     },
     projection: view.getProjection()
-  });*/
+  }); 
+
+  geolocation.on('change', function(e) {
+   locationDisplay.innerHTML = geolocation.getPosition();
+});
+
   const tileLayer = new TileLayer({
     title: 'OSM',
     type: 'base',
@@ -248,7 +256,7 @@ function CreateMap() {
     map,
     extentVector,
     positionFeature,
-    layerSwitcher
+    layerSwitcher,geolocation
   });
   Object.defineProperties(globalThis, {
     zoom: {
