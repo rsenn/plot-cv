@@ -367,7 +367,7 @@ function main(...args) {
             if(!/[\/\.]/.test(p2)) {
               let fname = `${p2}.js`;
               let rel = path.relative(fname, dir);
-             // console.log('onHttp', { match, fname }, rel);
+              // console.log('onHttp', { match, fname }, rel);
 
               // if(!fs.existsSync(  rel)) return ``;
 

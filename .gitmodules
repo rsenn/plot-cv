@@ -19,3 +19,6 @@
 [submodule "ol-ext"]
 	path = ol-ext
 	url = https://github.com/Viglino/ol-ext
+[submodule "ol-map-marker"]
+	path = ol-map-marker
+	url = https://github.com/moovspace/map-marker-openlayers
