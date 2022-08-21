@@ -1,11 +1,13 @@
 import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
-import { randStr } from './lib/misc.js';
+import { randStr, assert, lazyProperties, define, isObject, memoize, unique } from './lib/misc.js';
+
 import { isElement, createElement } from './dom-helpers.js';
 import { DragArea, DropArea, Card, List, RUG } from './lib/upload.js';
+import { Element } from './lib/dom.js';
 
 const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => util.randStr(n, '0123456789abcdef'), rng).join('-');
 
-let uuid;
+let uuid, input;
 
 Object.assign(globalThis, { isElement, createElement, React });
 Object.assign(globalThis, { DragArea, DropArea, Card, List, RUG });
@@ -21,6 +23,14 @@ window.addEventListener('load', e => {
 
     UploadFiles();
     return false;
+  });
+
+  input = document.querySelector('input[type=file]');
+  input.addEventListener('change', e => {
+    const { srcElement, target } = e;
+    console.log('input.change', e);
+    console.log('target.files', target.files);
+    console.log('srcElement.value', srcElement.value);
   });
 
   globalThis.ws = CreateWS();
@@ -48,7 +58,7 @@ function UploadFile(files) {
 }
 
 function CreateWS() {
-  let ws = new WebSocket(document.location.href.replace(/\/[^/]*$/, '/uploads').replace(/^[^:]*/, 'ws'));
+  let ws = new WebSocket(document.location.href.replace(/\/[^/]*$/, '/uploads').replace(/^http/, 'ws'));
   ws.onmessage = e => {
     const { data } = e;
     let command = JSON.parse(data);
@@ -56,6 +66,10 @@ function CreateWS() {
     switch (command.type) {
       case 'uuid':
         uuid = command.data;
+        break;
+      case 'upload':
+        const { type, filename, exif, storage } = command;
+
         break;
     }
   };

@@ -285,15 +285,15 @@ function main(...args) {
         ws.sendCommand({ type: 'uuid', data });
         by_uuid[data] = ws;
         connections.add(ws);
-        if(req.url.path.endsWith('uploads')) {
+        if(!req.url || req.url.path.endsWith('uploads')) {
         } else {
           return callbacks.onConnect(ws, req);
         }
       },
-      onClose(ws) {
+      onClose(ws, reason) {
         connections.delete(ws);
 
-        return callbacks.onClose(ws, req);
+        return callbacks.onClose(ws, reason);
       },
       onHttp(ws, req, resp) {
         const { peer, address, port } = ws;
@@ -343,22 +343,52 @@ function main(...args) {
               let exif = ReadExif(f + ext);
               console.log('exif', exif);
               const { filename } = this;
-              by_uuid[this.uuid].sendCommand({ type: 'upload', filename, storage: f + ext, exif });
+
+              let ws = by_uuid[this.uuid];
+
+              if(ws) ws.sendCommand({ type: 'upload', filename, storage: f + ext, exif });
 
               console.log(`onClose(${this.name})`, this.filename);
+            },
+            onFinalize() {
+              console.log(`onFinalize() form parser`);
+              resp.body = 'done!\r\n';
             }
           });
         }
 
         const { body, url } = resp;
+        const { referer } = req.headers;
 
-        const file = url.path.slice(1);
+        let file = url.path.slice(1);
         const dir = path.dirname(file); //file.replace(/\/[^\/]*$/g, '');
 
         if(file.endsWith('.txt') || file.endsWith('.html') || file.endsWith('.css')) {
           resp.body = fs.readFileSync(file, 'utf-8');
         } else if(file.endsWith('.js')) {
-          //console.log('\x1b[38;5;33monHttp\x1b[0m',  url.path);
+          console.log('\x1b[38;5;33monHttp\x1b[0m', file);
+          let file1 = file;
+          if(/qjs-modules\/lib/.test(file)) {
+            let file2 = file.replace(/.*qjs-modules\//g, '');
+            if(fs.existsSync(file2)) {
+              file = file2;
+            }
+          }
+
+          if(!fs.existsSync(file)) {
+            let file2 = 'quickjs/qjs-modules/lib/' + file;
+            console.log('inexistent file', file, file2, fs.existsSync(file2), referer);
+            if(fs.existsSync(file2)) {
+              file = file2;
+            }
+          }
+
+          if(file1 != file) {
+            resp.headers['Location'] = file;
+            return resp;
+          }
+
+          //
           let body = fs.readFileSync(file, 'utf-8');
 
           const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
@@ -367,7 +397,7 @@ function main(...args) {
             if(!/[\/\.]/.test(p2)) {
               let fname = `${p2}.js`;
               let rel = path.relative(fname, dir);
-              // console.log('onHttp', { match, fname }, rel);
+              console.log('onHttp', { match, fname }, rel);
 
               // if(!fs.existsSync(  rel)) return ``;
 
@@ -436,7 +466,9 @@ function main(...args) {
       onFd(fd, rd, wr) {
         os.setReadHandler(fd, rd);
         os.setWriteHandler(fd, wr);
-      }
+      },
+      onClose(ws, reason) {},
+      onMessage(ws, data) {}
     },
     true
   );
