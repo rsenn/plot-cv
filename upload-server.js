@@ -366,27 +366,30 @@ function main(...args) {
         if(file.endsWith('.txt') || file.endsWith('.html') || file.endsWith('.css')) {
           resp.body = fs.readFileSync(file, 'utf-8');
         } else if(file.endsWith('.js')) {
-          console.log('\x1b[38;5;33monHttp\x1b[0m', file);
           let file1 = file;
-          if(/qjs-modules\/lib/.test(file)) {
+          if(/qjs-modules\/lib/.test(file) && !/(dom|util)\.js/.test(file)) {
             let file2 = file.replace(/.*qjs-modules\//g, '');
             if(fs.existsSync(file2)) {
               file = file2;
             }
-          }
-
-          if(!fs.existsSync(file)) {
-            let file2 = 'quickjs/qjs-modules/lib/' + file;
-            console.log('inexistent file', file, file2, fs.existsSync(file2), referer);
-            if(fs.existsSync(file2)) {
-              file = file2;
+          } else if(!fs.existsSync(file)) {
+            for(let dir of ['quickjs/qjs-modules', 'quickjs/qjs-modules/lib', '.', 'lib']) {
+              let file2 = dir + '/' + file;
+              console.log('inexistent file', file, file2, fs.existsSync(file2), referer);
+              if(fs.existsSync(file2)) {
+                file = file2;
+                break;
+              }
             }
           }
 
           if(file1 != file) {
-            resp.headers['Location'] = file;
+            console.log('\x1b[38;5;214monHttp\x1b[0m', file1, '->', file);
+            resp.status = 302;
+            resp.headers = { ['Location']: '/' + file };
             return resp;
           }
+          console.log('\x1b[38;5;33monHttp\x1b[0m', file1, file);
 
           //
           let body = fs.readFileSync(file, 'utf-8');
