@@ -8,7 +8,7 @@ import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from './lib/filesystem.js';
-import { toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer } from 'util';
+import { toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE } from 'util';
 import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server, FormParser, Hash } from 'net';
 import { ReadFile, WriteFile, ReadJSON, WriteJSON, ReadBJSON, WriteBJSON } from './io-helpers.js';
 import { parseDate, dateToObject } from './date-helpers.js';
@@ -205,66 +205,86 @@ function main(...args) {
           const data = JSON.parse(/*body ??*/ '{}');
           resp.type = 'application/json';
           let {
-            dir = './uploads',
+            dirs = ['./uploads/*.{sch,brd,lbr}', '/mnt/extext/Photos/*APPLE/*.{JPG,PNG,GIF,AAE,MOV,HEIC,MP4,WEBP}'],
             filter = '[^.].*' ?? '.(brd|sch|G[A-Z][A-Z])$',
-            verbose = false,
-            objects = false,
+            verbose = true,
+            objects = true,
             key = 'mtime',
             limit = null
           } = data ?? {};
-          let absdir = path.realpath(dir);
-          let components = absdir.split(path.sep);
-          if(components.length && components[0] === '') components.shift();
-          if(components.length < 2 || components[0] != 'home') throw new Error(`Access error`);
 
-          let names = fs.readdirSync(absdir) ?? [];
+          let results = [];
+          for(let dir of dirs) {
+            let st,
+              names = [];
+            if((st = fs.statSync(dir)) && st.isDirectory()) {
+              let absdir = path.realpath(dir);
+              let components = absdir.split(path.sep);
+              if(components.length && components[0] === '') components.shift();
+              if(components.length < 2 || components[0] != 'home') throw new Error(`Access error`);
 
-          if(filter) {
-            const re = new RegExp(filter, 'gi');
-            names = names.filter(name => re.test(name));
+              names = fs.readdirSync(absdir) ?? [];
+            } else {
+              console.log('glob(', dir, ')');
+              names = glob(dir, GLOB_BRACE);
+            }
+            if(!Array.isArray(names)) continue;
+            console.log('names', names);
+
+            names = names.sort((a, b) => ('' + b) < ('' + a));
+
+            if(filter) {
+              const re = new RegExp(filter, 'gi');
+              names = names.filter(name => re.test(name));
+            }
+            if(limit) {
+              let [offset = 0] = limit;
+              let [, length = names.length - start] = limit;
+              names = names.slice(offset, offset + length);
+            }
+
+            let entries = names.map(file => [file, fs.statSync(st ? `${dir}/${file}` : file)]);
+            entries = entries.reduce((acc, [file, st]) => {
+              let name = file + (st && st.isDirectory() ? '/' : '');
+              let obj = {
+                name
+              };
+              acc.push([
+                name,
+                Object.assign(obj, {
+                  mtime: toUnixTime(st.mtime),
+                  time: toUnixTime(st.ctime),
+                  mode: `0${(st.mode & 0x09ff).toString(8)}`,
+                  size: st.size
+                })
+              ]);
+              return acc;
+            }, []);
+
+            if(entries.length) {
+              let cmp = {
+                string(a, b) {
+                  return a[1][key].localeCompare(b[1][key]);
+                },
+                number(a, b) {
+                  return a[1][key] - b[1][key];
+                }
+              }[typeof entries[0][1][key]];
+              entries = entries.sort(cmp);
+            }
+            names = entries.map(([name, obj]) => (objects ? obj : name));
+
+            results.push({ dir, names });
+            console.log('\x1b[38;5;215m*files\x1b[0m', names);
+            // console.log('req.headers', req.headers);
+            //resp.headers = { ['Content-Type']: 'application/json' };
+            //        resp.headers['Content-Type']= 'application/json';
+
+            // console.log('resp.headers', resp.headers);
+            //
           }
-          if(limit) {
-            let [offset = 0] = limit;
-            let [, length = names.length - start] = limit;
-            names = names.slice(offset, offset + length);
-          }
-          let entries = names.map(file => [file, fs.statSync(`${dir}/${file}`)]);
-          entries = entries.reduce((acc, [file, st]) => {
-            let name = file + (st.isDirectory() ? '/' : '');
-            let obj = {
-              name
-            };
-            acc.push([
-              name,
-              Object.assign(obj, {
-                mtime: toUnixTime(st.mtime),
-                time: toUnixTime(st.ctime),
-                mode: `0${(st.mode & 0x09ff).toString(8)}`,
-                size: st.size
-              })
-            ]);
-            return acc;
-          }, []);
 
-          if(entries.length) {
-            let cmp = {
-              string(a, b) {
-                return b[1][key].localeCompare(a[1][key]);
-              },
-              number(a, b) {
-                return b[1][key] - a[1][key];
-              }
-            }[typeof entries[0][1][key]];
-            entries = entries.sort(cmp);
-          }
-          names = entries.map(([name, obj]) => (objects ? obj : name));
-          console.log('\x1b[38;5;215m*files\x1b[0m', names);
-          // console.log('req.headers', req.headers);
-          //resp.headers = { ['Content-Type']: 'application/json' };
-          //        resp.headers['Content-Type']= 'application/json';
-
-          // console.log('resp.headers', resp.headers);
-          yield JSON.stringify(...[names, ...(verbose ? [null, 2] : [])]);
+          yield JSON.stringify(...[results, ...(verbose ? [null, 2] : [])]);
         }
       ],
       ...url,
@@ -334,14 +354,19 @@ function main(...args) {
             },
 
             onClose(name) {
-              hash.finalize();
-              let sha1 = hash.toString();
-              console.log(`hash()`, hash.valueOf(), sha1);
-              fs.closeSync(this.file);
-              let f = 'uploads/' + sha1;
-              fs.renameSync('uploads/' + tmpnam, f + ext);
-              let exif = ReadExif(f + ext);
-              console.log('exif', exif);
+              let sha1;
+              if(hash) {
+                hash.finalize();
+                sha1 = hash.toString();
+                console.log(`hash()`, hash.valueOf(), sha1);
+              }
+              if(this.file) fs.closeSync(this.file);
+              if(sha1) {
+                let f = 'uploads/' + sha1;
+                fs.renameSync('uploads/' + tmpnam, f + ext);
+                let exif = ReadExif(f + ext);
+                console.log('exif', exif);
+              }
               const { filename } = this;
 
               let ws = by_uuid[this.uuid];
