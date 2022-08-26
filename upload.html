@@ -8,12 +8,14 @@
     <link rel="stylesheet" href="static/css/upload.css" />
   </head>
   <body>
-    <form method="POST" action="upload" enctype="multipart/form-data">
+ <div id="drop-area">
+   <form method="POST" action="upload" enctype="multipart/form-data">
       <div class="input-group">
         <label for="files">Select files</label>
-        <input id="file" type="file" name="files" multiple capture="environment" />
+        <input id="file" type="file" name="files" multiple  accept="image/*"   capture="environment" />
       </div>
       <button class="submit-btn" type="submit">Upload</button>
-    </form>
+    </form> 
+  </div>
   </body>
 </html>

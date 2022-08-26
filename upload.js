@@ -3,14 +3,16 @@ import { randStr, assert, lazyProperties, define, isObject, memoize, unique } fr
 
 import { isElement, createElement } from './dom-helpers.js';
 import { DragArea, DropArea, Card, List, RUG } from './lib/upload.js';
-import { Element } from './lib/dom.js';
+import * as dom from './lib/dom.js';
+import * as geom from './lib/geom.js';
+import * as transformation from './lib/geom/transformation.js';
 
 const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => util.randStr(n, '0123456789abcdef'), rng).join('-');
 
 let uuid, input;
 
-Object.assign(globalThis, { isElement, createElement, React });
-Object.assign(globalThis, { DragArea, DropArea, Card, List, RUG });
+Object.assign(globalThis, { isElement, createElement, React, dom, geom, transformation });
+Object.assign(globalThis, { DragArea, DropArea, Card, List, RUG, FileAction });
 
 window.addEventListener('load', e => {
   console.log('upload.js loaded!');
@@ -35,6 +37,14 @@ window.addEventListener('load', e => {
 
   globalThis.ws = CreateWS();
 });
+
+function FileAction(cmd, file, contents) {
+  return fetch('file', {
+    method: 'POST',
+    body: JSON.stringify({ action: cmd, file, contents }),
+    headers: { ['Content-Type']: 'application/json' }
+  }).then(r => r.text());
+}
 
 function UploadFiles() {
   let input = document.querySelector('#file');
