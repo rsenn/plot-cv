@@ -7,7 +7,8 @@ import { Console } from 'console';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
-import * as fs from './lib/filesystem.js';
+import * as fs from 'fs';
+import { link, unlink, error } from 'misc';
 import { toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE } from 'util';
 import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server, FormParser, Hash } from 'net';
 import { parseDate, dateToObject } from './date-helpers.js';
@@ -22,17 +23,30 @@ const defaultDirs = [
   ['/home/roman/Bilder', new RegExp('.(jpg|jpeg|png|heic|tif|tiff)$', 'i')]
 ];
 
-function ReadExif(file) {
+function parseDegMinSec(s) {
+  let matches = [...s.matchAll(/([0-9.]*)\s*([^\s0-9]+)/g)].map(([m, ...rest]) => rest);
+  let r;
+
+  if(matches && matches.length) {
+    r = 0;
+    for(let [value, unit] of matches) {
+      let [rdf, stdout] = os.pipe();
+      let mul = { deg: 1, ["'"]: 1 / 60, ['"']: 1 / 3600, N: 1, W: 1, S: -1, E: -1 }[unit];
+      if(value === '') value = 1;
+      // console.log('parseDegMinSec', {value,unit,mul}); r+= +value * mul;
+    }
+  }
+  return r;
+}
+
+function ReadExiv2(file) {
+  console.log('ReadExiv2', file);
   let [rdf, stdout] = os.pipe();
-
   os.exec(['exiv2', '-e', 'X-', 'ex', file], { stdout });
-
   os.close(stdout);
-
   let xmpdat = fs.readAllSync(rdf);
-  os.close(rdf);
+  fs.closeSync(rdf);
   // console.log('xmpdat', xmpdat);
-
   let xmp = xml.read(xmpdat);
   // console.log('xmp', xmp);
   let flat = Object.fromEntries(
@@ -45,6 +59,52 @@ function ReadExif(file) {
       .map(([k, v]) => [k, isNaN(+v) ? (isNaN(Date.parse(v)) ? v : new Date(v)) : +v])
   );
   return flat;
+}
+
+function ReadExiftool(file) {
+  console.log('ReadExiftool', file);
+  let [rdf, stdout] = os.pipe();
+
+  os.exec(['exiftool', '-S', '-ee', file], { stdout });
+
+  os.close(stdout);
+
+  let out = fs.readAllSync(rdf);
+  fs.closeSync(rdf);
+
+  let a = out.split(/\r?\n/g).filter(l => l != '');
+
+  a = a.map(line => [line, line.indexOf(': ')]).map(([line, idx]) => [line.slice(0, idx), line.slice(idx + 2)]);
+  let o = Object.fromEntries(a);
+
+  //console.log('ReadExiftool',o);
+  return o;
+}
+
+function HeifConvert(src, dst, quality = 100) {
+  console.log('HeifConvert', src, dst);
+  let [rd, stdout] = os.pipe();
+
+  os.exec(['heif-convert', '-q', quality + '', src, dst], { stdout, stderr: stdout });
+  os.close(stdout);
+
+  let out = fs.readAllSync(rd);
+  fs.closeSync(rd);
+
+  console.log('HeifConvert', out);
+}
+
+function MagickResize(src, dst, rotate = 0) {
+  console.log('MagickResize', src, dst);
+  let [rd, stdout] = os.pipe();
+
+  os.exec(['convert-im6.q16', src, '-resize', 'x256', ...(rotate ? ['-rotate', '-' + rotate] : []), dst], { stdout });
+  os.close(stdout);
+
+  let out = fs.readAllSync(rd);
+  fs.closeSync(rd);
+
+  console.log('MagickResize', out);
 }
 
 function main(...args) {
@@ -148,7 +208,7 @@ function main(...args) {
     const out = s => logFile.puts(s + '\n');
     setLog((params.debug ? LLL_USER : 0) | (((params.debug ? LLL_NOTICE : LLL_WARN) << 1) - 1), (level, message) => {
       if(/__lws/.test(message)) return;
-      if(/(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT)/.test(message)) return;
+      if(/(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|writable|WRITEABLE|_BODY[^_])/.test(message)) return;
 
       if(params.debug || level <= LLL_WARN)
         out(
@@ -206,9 +266,10 @@ function main(...args) {
         ['/', '.', 'upload.html'],
         ['/get', './uploads', ''],
         // ['/upload', 'lws-deaddrop', null, 'lws-deaddrop'],
-        function* upload(req, res) {
-          console.log('upload', { req, res });
-        },
+        /*function* upload(arg) {
+          console.log('upload', arg);
+          yield 'done!';
+        },*/
         function proxy(req, res) {
           console.log('proxy', { req, res });
           const { url, method, headers } = req;
@@ -340,10 +401,12 @@ function main(...args) {
 
           return this.send(data);
         };
-        let data = MakeUUID();
+        if(!ws.uuid) {
+          let data = (ws.uuid = MakeUUID());
 
-        ws.sendCommand({ type: 'uuid', data });
-        by_uuid[data] = ws;
+          ws.sendCommand({ type: 'uuid', data });
+          by_uuid[data] = ws;
+        }
         connections.add(ws);
         if(!req.url || req.url.path.endsWith('uploads')) {
         } else {
@@ -355,87 +418,133 @@ function main(...args) {
 
         return callbacks.onClose(ws, reason);
       },
-      onRead(data) {
-        /*   const req = this;
-        console.log('onRead', { req, data });*/
-      },
-      onPost(data) {
-        const req = this;
+      /*      onRead(data) {
+         const req = this;
+        console.log('onRead', { req, data }); 
+      },*/
+      /* onPost(data) {
+       const req = this;
         try {
           req.json = JSON.parse(data);
         } catch(error) {
           console.log('onPost', { req, data, error });
         }
-      },
+      },*/
       onHttp(ws, req, resp) {
         const { peer, address, port } = ws;
         const { method, headers } = req;
-        //  console.log('\x1b[38;5;33monHttp\x1b[0m', {ws,req});
-        //   console.log('\x1b[38;5;33monHttp\x1b[0m', { address, port });
 
         if(req.url.path.endsWith('files')) {
-          console.log('req.body', req.body);
-          //resp.headers= { ['Content-Type']: 'application/json' };
           resp.type = 'application/json';
         }
 
-        // if(req.method != 'GET') console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
-
         if(req.method != 'GET') {
-          //console.log(req.method + ' body:',  req.body);
-          let hash,
+          let fp, hash,
             tmpnam,
             ext,
             progress = 0;
-          let fp;
+          console.log(req.method, headers);
+          if(req.url.path.endsWith('upload')) resp.status = 200;
+          resp.type = 'text/raw';
 
-          if(!req.url.path.endsWith('files'))
-            fp = new FormParser(ws, ['files', 'uuid'], {
-              chunkSize: 8192 /** 256*/,
-              onOpen(name, filename) {
-                //  console.log(`onOpen()`, this.uuid);
-                this.name = name;
-                this.filename = filename;
-                ext = path.extname(filename).toLowerCase();
-                this.file = fs.openSync('uploads/' + (tmpnam = randStr(20) + '.tmp'), 'w+', 0o644);
-                hash = new Hash(Hash.TYPE_SHA1);
-                //console.log(`onOpen()`, filename);
-              },
-              onContent(name, data) {
-                progress += data.byteLength;
-                // console.log(`onContent()`);
-                //console.log(`onContent()`, this.filename, progress);
-                fs.writeSync(this.file, data);
-                hash.update(data);
-              },
+          fp = new FormParser(ws, ['files', 'uuid'], {
+            chunkSize: 8192 /** 256*/,
+            onOpen(name, filename) {
+             /* if(this.file) {
+                this.onclose.call(this, name);
+              }*/
 
-              onClose(name) {
-                let sha1;
-                if(hash) {
-                  hash.finalize();
-                  sha1 = hash.toString();
-                  //console.log(`hash()`, hash.valueOf(), sha1);
-                }
-                if(this.file) fs.closeSync(this.file);
-                if(sha1) {
-                  let f = 'uploads/' + sha1;
-                  fs.renameSync('uploads/' + tmpnam, f + ext);
-                  let exif = ReadExif(f + ext);
-                  //console.log('exif', exif);
-                }
-                const { filename } = this;
+              this.name = name;
+              this.filename = filename;
+              ext = path.extname(filename).toLowerCase();
 
-                let ws = by_uuid[this.uuid];
+              this.file = fs.openSync((this.temp = 'uploads/' + (tmpnam = randStr(20) + '.tmp')), 'w+', 0o644);
+              hash = new Hash(Hash.TYPE_SHA1);
+              console.log(`onOpen(${name})`, this.temp);
+            },
+            onContent(name, data) {
+              // console.log(`onContent(${this.filename})`,data.byteLength);
+              progress += data.byteLength;
 
-                if(ws) ws.sendCommand({ type: 'upload', filename, storage: f + ext, exif });
+              let ws2 = by_uuid[ws.uuid ?? this.uuid];
 
-                //console.log(`onClose(${this.name})`, this.filename);
-              },
-              onFinalize() {
-                //console.log(`onFinalize() form parser`);
-                resp.body = 'done!\r\n';
+              if(ws2) ws2.sendCommand({ type: 'progress', done: progress, total: +headers['content-length'] });
+
+              fs.writeSync(this.file, data);
+              hash.update(data);
+            },
+
+            onClose(name) {
+              console.log(`onClose(${this.filename})`, this.uuid);
+              let exif, cache, sha1;
+              if(hash) {
+                hash.finalize();
+                sha1 = hash.toString();
               }
-            });
+              if(this.file) {
+                fs.closeSync(this.file);
+                this.file = null;
+              }
+              // console.log(`hash()`, sha1);
+              if(sha1) {
+                let f = x => 'uploads/' + sha1 + x;
+                let ret = link(this.temp, f(ext));
+                let { errno } = error();
+                //  console.log('link', this.temp, f, '=', ret, std.strerror(errno));
+                let json = f('.json');
+
+                if(fs.existsSync(json) && (cache = ReadJSON(json))) {
+                  exif = cache.exif;
+                } else {
+                  if(!/(png|svg|gif|tga)$/i.test(ext)) {
+                    try {
+                      exif = ReadExiftool(f(ext));
+                    } catch(e) {
+                      try {
+                        exif = ReadExiftool(this.temp);
+                      } catch(e) {}
+                    }
+                  }
+                  let obj = { filename: this.filename, storage: f(ext), uploaded: Date.now(), address, exif };
+                  if(!/jpe?g$/.test(ext)) {
+                    HeifConvert(f(ext), f('.jpg'));
+                    if(fs.existsSync(f('.jpg'))) obj.jpg = f('.jpg');
+                  }
+                  /*       if(!/png$/i.test(ext)) {
+                    HeifConvert(f(ext), f('.png'));
+                    if(fs.existsSync(f('.png'))) obj.png = f('.png');
+                  }*/
+
+                  MagickResize(obj.jpg ?? f(ext), f('.thumb.png'), obj.exif.Rotation ?? 0);
+                  if(fs.existsSync(f('.thumb.png'))) obj.thumbnail = f('.thumb.png');
+
+                  WriteJSON(json, obj);
+                  console.log(`by_uuid`, by_uuid);
+                  console.log(`uuid`, ws.uuid ?? this.uuid);
+                  cache = obj;
+                }
+
+                if(ret == 0 || errno == 17) {
+                  unlink(this.temp);
+                  this.temp = null;
+                }
+                this.filename = f(ext);
+              } /*else {
+                throw new Error('no hash for ' + this.temp);
+              }*/
+              const { filename } = this;
+
+              let ws2 = by_uuid[ws.uuid ?? this.uuid];
+
+              if(ws2) ws2.sendCommand({ type: 'upload', ...(cache ?? {}), filename, exif });
+
+              console.log(`onClose(${this.name})`, filename);
+            },
+            onFinalize() {
+              console.log(`onFinalize() form parser`, this.uuid);
+              resp.body = `done: ${progress} bytes read\r\n`;
+            }
+          });
         }
 
         const { body, url } = resp;
@@ -491,8 +600,6 @@ function main(...args) {
             }
             return match;
           });
-        } else {
-          console.log('onHttp unknown', { file, dir });
         }
         //console.log('\x1b[38;5;33monHttp\x1b[0m', { resp });
 

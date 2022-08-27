@@ -47,8 +47,8 @@ function TransformCoordinates(...args) {
 class Coordinate {
   static from(arg) {
     try {
-          if(arg.getGeometry) arg = arg.getGeometry();
-  if(arg.getCoordinates) arg = arg.getCoordinates();
+      if(arg.getGeometry) arg = arg.getGeometry();
+      if(arg.getCoordinates) arg = arg.getCoordinates();
     } catch(e) {}
 
     try {
