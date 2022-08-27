@@ -5,14 +5,21 @@
     <title>Image upload</title>
     <link rel="shortcut icon" type="image/x-icon" sizes="16x16 32x32 64x64" href="static/transistor.ico" />
     <script type="module" src="./upload.js"></script>
+    <link rel="stylesheet" href="static/css/upload.css" />
   </head>
   <body>
-    <form method="POST" action="upload" enctype="multipart/form-data">
+ <div id="drop-area">
+   <form method="POST" action="upload" enctype="multipart/form-data">
       <div class="input-group">
-        <label for="files">Select files</label>
-        <input id="file" type="file" name="files" multiple />
+        <label for="files">Fotos auswählen und hochladen</label>
+        <input id="file" type="file" name="files" multiple  accept="image/*"   capture="environment" />
+        <div style="display:  inline-flex;flex-flow: row;">
+        <img src="static/svg/upload-arrow.svg" />
+        <img src="static/svg/hand-touch.svg" />
       </div>
+  </div>
       <button class="submit-btn" type="submit">Upload</button>
-    </form>
+    </form> 
+  </div>
   </body>
 </html>

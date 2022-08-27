@@ -11,6 +11,7 @@ let topLeft = [5.9962, 47.8229],
   topRight = [10.5226, 47.8229],
   bottomLeft = [5.9962, 45.8389],
   bottomRight = [10.5226, 45.8389];
+let vectorLayer;
 
 lazyProperties(globalThis, {
   locationDisplay: () =>
@@ -44,6 +45,21 @@ function TransformCoordinates(...args) {
 }
 
 class Coordinate {
+  static from(arg) {
+    try {
+      if(arg.getGeometry) arg = arg.getGeometry();
+      if(arg.getCoordinates) arg = arg.getCoordinates();
+    } catch(e) {}
+
+    try {
+      return new Coordinate(...arg);
+    } catch(e) {
+      try {
+        return new Coordinate(arg.lon, arg.lat, arg.type);
+      } catch(e) {}
+    }
+  }
+
   constructor(lon, lat, type) {
     this.lon = lon;
     this.lat = lat;
@@ -149,6 +165,41 @@ function FlyTo(location, done = () => {}) {
   );
 }
 
+function CreateMarkerLayer(features) {
+  const iconStyle = (globalThis.iconStyle ??= new Style({
+    image: new Icon({
+      anchor: [1, 1],
+      anchorXUnits: 'fraction',
+      anchorYUnits: 'fraction',
+      src: 'static/svg/map-pin.svg',
+      scale: 1
+    })
+  }));
+
+  //features=features.map(f =>  new Feature(f));
+  globalThis.features = features;
+
+  features.forEach(f => f.setStyle(iconStyle));
+
+  console.log('features', features);
+
+  let source = (globalThis.vectorSource = new VectorSource({ features }));
+  if(vectorLayer) {
+    vectorLayer.setSource(source);
+  } else {
+    vectorLayer = globalThis.vectorLayer = new VectorLayer({
+      source
+    });
+  }
+
+  return vectorLayer;
+}
+
+function Get(feature) {
+  let g = feature.getGeometry();
+  return g.getCoordinates();
+}
+
 function CreateMap() {
   const view = new View({
     center,
@@ -249,11 +300,17 @@ function CreateMap() {
       maxZoom: 12
     })
   });
+
   let map = new OLMap({
     target: 'mapdiv',
     layers: [tileLayer, rasterLayer, worldStreetMap, worldTopoMap, natGeoWorldMap].reverse(),
     view
   });
+  const markerLayer = (globalThis.markerLayer ??= CreateMarkerLayer(
+    Object.entries(cities).map(([name, geometry]) => new Feature({ name, geometry: new Point([...geometry]) }))
+  ));
+
+  map.addLayer(markerLayer);
 
   const zoomslider = new ZoomSlider();
   map.addControl(zoomslider);
@@ -324,7 +381,8 @@ Object.assign(globalThis, {
 
   FlyTo,
   Coordinate,
-  cities
+  cities,
+  Get
 });
 
 CreateMap();

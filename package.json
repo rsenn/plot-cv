@@ -1,4 +1,4 @@
-{
+  {
   "_moduleAliases": {
     "preact": "lib/dom/preactComponent.js",
     "prop-types": "lib/prop-types.js",
@@ -17,6 +17,7 @@
     "lib/path.js": "path",
     "lib/xml.js": "xml",
     "lib/filesystem.js": "fs",
+    "fs.js": "lib/filesystem.js",
     "lib/misc.js": "util",
     "lib/childProcess.js": "child_process",
     "./lib/childProcess.js": "child_process",
@@ -27,7 +28,6 @@
     "quickjs/qjs-ffi/lib/socket.js": "sockets",
     "lib/events.js": "events",
     "lib/xml/xpath.js": "quickjs/qjs-modules/lib/xpath.js",
-    "lib/preact.mjs": "lib/preact.esm.js",
     "lib/preact.js": "lib/preact.esm.js"
   },
   "author": "Roman Senn <roman.l.senn@gmail.com>",
