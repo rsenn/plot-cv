@@ -6,6 +6,7 @@ import { Attribution, Control, FullScreen, MousePosition, OverviewMap, Rotate, S
 import { Layer as HTMLLayer } from './lib/dom/layer.js';
 import LayerSwitcher /* , { BaseLayerOptions, GroupLayerOptions }*/ from './lib/ol-layerswitcher.js';
 import { default as Polygon, fromExtent as polygonFromExtent } from './openlayers/src/ol/geom/Polygon.js';
+import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
 
 export function TransformCoordinates(...args) {
   if(args.length == 2) return transform(args, 'EPSG:4326', 'EPSG:3857');
@@ -15,6 +16,10 @@ export function TransformCoordinates(...args) {
   }
 
   if(typeof args[0] == 'string') return TransformCoordinates(args[0].split(',').map(n => +n));
+}
+
+export function ParseCoordinates(str) {
+  return transform(parseGPSLocation(str) ?? str, 'EPSG:4326', 'EPSG:3857');
 }
 
 export class Coordinate {

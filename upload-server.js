@@ -13,6 +13,7 @@ import { toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isA
 import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server, FormParser, Hash } from 'net';
 import { parseDate, dateToObject } from './date-helpers.js';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
+import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
 
 globalThis.fs = fs;
 const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
@@ -22,21 +23,6 @@ const defaultDirs = [
   '/mnt/extext/Photos/*APPLE/*.{JPG,PNG,GIF,AAE,MOV,HEIC,MP4,WEBP}',
   ['/home/roman/Bilder', new RegExp('.(jpg|jpeg|png|heic|tif|tiff)$', 'i')]
 ];
-
-function parseDegMinSec(s) {
-  let matches = [...s.matchAll(/([0-9.]*)\s*([^\s0-9]+)/g)].map(([m, ...rest]) => rest);
-  let r;
-
-  if(matches && matches.length) {
-    r = 0;
-    for(let [value, unit] of matches) {
-      let mul = { deg: 1, ["'"]: 1 / 60, ['"']: 1 / 3600, N: 1, W: 1, S: -1, E: -1 }[unit];
-      if(value === '') value = 1;
-      // console.log('parseDegMinSec', {value,unit,mul}); r+= +value * mul;
-    }
-  }
-  return r;
-}
 
 function ReadExiv2(file) {
   console.log('ReadExiv2', file);

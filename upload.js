@@ -7,6 +7,8 @@ import * as geom from './lib/geom.js';
 import * as transformation from './lib/geom/transformation.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
 import trkl from './lib/trkl.js';
+import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
+import { ParseCoordinates, TransformCoordinates, Coordinate, Pin, Markers, OpenlayersMap } from './ol-helpers.js';
 
 const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 
@@ -17,7 +19,22 @@ let fileList = (globalThis.fileList = trkl([])),
   uploads = (globalThis.uploads = []);
 
 Object.assign(globalThis, { isElement, createElement, React, dom, geom, transformation });
-Object.assign(globalThis, { DragArea, DropArea, Card, List, RUG, FileAction });
+Object.assign(globalThis, {
+  ParseCoordinates,
+  TransformCoordinates,
+  Coordinate,
+  Pin,
+  Markers,
+  OpenlayersMap,
+  DragArea,
+  DropArea,
+  Card,
+  List,
+  RUG,
+  FileAction,
+  parseGPSLocation,
+  parseDegMinSec
+});
 
 export function prioritySort(arr, predicates = []) {
   const matchPred = item => predicates.findIndex(p => p(item));
