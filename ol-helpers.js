@@ -1,7 +1,10 @@
-import { Point, Feature, VectorLayer, VectorSource, LineString, transform } from './lib/ol.js';
+import { Link,OLMap,TileLayer,XYZ,View,Point, Feature, VectorLayer, VectorSource,ZoomSlider, LineString, transform } from './lib/ol.js';
 import { ObjectWrapper, BiDirMap } from './object-helpers.js';
 import { define, isObject, isFunction, isInstanceOf, ArrayFacade } from './lib/misc.js';
 import { add, closestOnCircle, closestOnSegment, createStringXY, degreesToStringHDMS, format, equals, rotate, scale, squaredDistance, distance, squaredDistanceToSegment, toStringHDMS, toStringXY, wrapX, getWorldsAway } from './openlayers/src/ol/coordinate.js';
+import { Attribution, Control, FullScreen, MousePosition, OverviewMap, Rotate, ScaleLine, Zoom,  ZoomToExtent, defaults } from './openlayers/src/ol/control.js';
+import { Layer as HTMLLayer } from './lib/dom/layer.js';
+import LayerSwitcher /* , { BaseLayerOptions, GroupLayerOptions }*/ from './lib/ol-layerswitcher.js';
 
 export function TransformCoordinates(...args) {
   if(args.length == 2) return transform(args, 'EPSG:4326', 'EPSG:3857');
@@ -90,7 +93,7 @@ export class Pin {
     if(isInstanceOf(args[0], Feature)) {
       feature = args[0];
     } else {
-      const [properties, style, position] = args;
+      let [properties, style, position] = args;
       if(typeof properties == 'string') properties = { name: properties };
       feature = new Feature({ ...properties, geometry: new Point([...position]) });
       feature.setStyle(style);
@@ -153,5 +156,78 @@ export class Markers extends ArrayFacade {
       console.log('pin.feature', pin.feature);
       source.addFeature(pin.feature);
     }
+  }
+}
+
+export class OpenlayersMap {
+  //  static from = ObjectWrapper((...args) => OpenlayersMap.create(...args), OpenlayersMap.prototype);
+
+  static create(target = 'mapdiv') {
+    let map = new OLMap({
+      target,
+      controls: [
+new ZoomSlider(),
+ new LayerSwitcher({
+    reverse: true,
+    groupSelectStyle: 'group'
+  })
+],
+      layers: [
+        new TileLayer({
+          title: 'OSM',
+          type: 'base',
+          visible: false,
+          source: new XYZ({
+            url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+          })
+        }),
+        new TileLayer({
+          title: 'Satellit',
+          type: 'base',
+          visible: true,
+          source: new XYZ({
+            url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            maxZoom: 19
+          })
+        }),
+        new TileLayer({
+          title: 'Strassenkarte',
+          type: 'base',
+          visible: false,
+          source: new XYZ({
+            url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+            maxZoom: 20
+          })
+        }),
+        new TileLayer({
+          title: 'Topographie',
+          type: 'base',
+          visible: false,
+          source: new XYZ({
+            url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+            maxZoom: 20
+          })
+        }),
+        new TileLayer({
+          title: 'National Geographic',
+          type: 'base',
+          visible: false,
+          source: new XYZ({
+            url: 'http://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',
+            maxZoom: 12
+          })
+        })
+      ],
+      view: new View({
+        center: transform([7.454281, 46.96453], 'EPSG:4326', 'EPSG:3857'),
+        zoom: 11,
+        minZoom: 3,
+        maxZoom: 20,
+        extent: TransformCoordinates([5.9962, 45.8389, 10.5226, 47.8229])
+      })
+    });
+    map.addInteraction(new Link({ animate: true,prefix: 'm' }));
+
+    return map;
   }
 }

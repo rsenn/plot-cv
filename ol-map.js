@@ -3,8 +3,9 @@ import { OLMap, View, TileLayer, Layer, Point, Overlay, XYZ, OSM, Feature, Proje
 import LayerSwitcher /* , { BaseLayerOptions, GroupLayerOptions }*/ from './lib/ol-layerswitcher.js';
 import { assert, lazyProperties, define, isObject, memoize, unique, arrayFacade } from './lib/misc.js';
 import { Element } from './lib/dom.js';
-import { TransformCoordinates, Coordinate, Pin, Markers } from './ol-helpers.js';
+import { TransformCoordinates, Coordinate, Pin, Markers, OpenlayersMap } from './ol-helpers.js'
 import { ObjectWrapper, BiDirMap } from './object-helpers.js';
+import { Layer as HTMLLayer } from './lib/dom/layer.js';
 
 let data = (globalThis.data = []);
 let center = (globalThis.center = transform([7.454281, 46.96453], 'EPSG:4326', 'EPSG:3857'));
@@ -14,7 +15,7 @@ let topLeft = [5.9962, 47.8229],
   bottomLeft = [5.9962, 45.8389],
   bottomRight = [10.5226, 45.8389];
 
-lazyProperties(globalThis, {
+/*lazyProperties(globalThis, {
   locationDisplay: () =>
     document.body.appendChild(
       Element.create(
@@ -33,7 +34,7 @@ lazyProperties(globalThis, {
         []
       )
     )
-});
+});*/
 
 const cities = {
   bern: new Coordinate(7.4458, 46.95),
@@ -70,18 +71,16 @@ function SetFenceColor(color) {
 
 function FlyTo(location, done = () => {}) {
   console.log('FlyTo', { location, done });
-
   if(typeof location == 'string') location = cities[location];
-
   const duration = 2000;
   const zoom = view.getZoom();
   let parts = 2;
   let called = false;
   function callback(complete) {
     --parts;
-    if(called) {
+    if(called) 
       return;
-    }
+  
     if(parts === 0 || !complete) {
       called = true;
       done(complete);
@@ -107,7 +106,7 @@ function FlyTo(location, done = () => {}) {
   );
 }
 
-function CreateMarkerLayer(features) {
+/*function CreateMarkerLayer(features) {
   const iconStyle = new Style({
     image: new Icon({
       anchor: [1, 1],
@@ -117,20 +116,15 @@ function CreateMarkerLayer(features) {
       scale: 1
     })
   });
-
   globalThis.features = features;
-
   features.forEach(f => f.setStyle(iconStyle));
   globalThis.markers = new Markers(map);
-
   let vectorLayer = new VectorLayer({
     source: new VectorSource({ features })
   });
-
   Object.assign(globalThis, { features, vectorLayer, iconStyle });
-
   return vectorLayer;
-}
+}*/
 
 function Get(feature) {
   let g = feature.getGeometry();
@@ -138,13 +132,7 @@ function Get(feature) {
 }
 
 function CreateMap() {
-  const view = new View({
-    center,
-    zoom: 11,
-    minZoom: 3,
-    maxZoom: 20,
-    extent: TransformCoordinates(extent)
-  });
+  
 
   const positionFeature = new Feature();
   positionFeature.setStyle(
@@ -181,6 +169,9 @@ function CreateMap() {
       })
     })
   });
+ 
+  let map =   OpenlayersMap.create( );
+let view=map.getView();
 
   const geolocation = new Geolocation({
     trackingOptions: {
@@ -192,61 +183,7 @@ function CreateMap() {
   geolocation.on('change', function(e) {
     locationDisplay.innerHTML = geolocation.getPosition();
   });
-
-  const tileLayer = new TileLayer({
-    title: 'OSM',
-    type: 'base',
-    visible: false,
-    source: new XYZ({
-      url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-    })
-  });
-  const rasterLayer = new TileLayer({
-    title: 'Satellit',
-    type: 'base',
-    visible: true,
-    source: new XYZ({
-      url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      maxZoom: 19
-    })
-  });
-  const worldStreetMap = new TileLayer({
-    title: 'Strassenkarte',
-    type: 'base',
-    visible: false,
-    source: new XYZ({
-      url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
-      maxZoom: 20
-    })
-  });
-  const worldTopoMap = new TileLayer({
-    title: 'Topographie',
-    type: 'base',
-    visible: false,
-    source: new XYZ({
-      url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
-      maxZoom: 20
-    })
-  });
-  const natGeoWorldMap = new TileLayer({
-    title: 'National Geographic',
-    type: 'base',
-    visible: false,
-    source: new XYZ({
-      url: 'http://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',
-      maxZoom: 12
-    })
-  });
-
-  /* const markerLayer = CreateMarkerLayer(
-    Object.entries(cities).map(([name, geometry]) => new Feature({ name, geometry: new Point([...geometry]) }))
-  );*/
-  let map = new OLMap({
-    target: 'mapdiv',
-    layers: [tileLayer, rasterLayer, worldStreetMap, worldTopoMap, natGeoWorldMap, vector],
-    view
-  });
-
+ 
   globalThis.markers = Markers.create(map);
 
   globalThis.pins = Object.entries(cities).map(([name, geometry]) =>
@@ -267,25 +204,34 @@ function CreateMap() {
 
   markers.add(...pins);
 
+  const hereMarker = Pin.create(
+    'You are here',
+    new Style({
+      image: new CircleStyle({
+        radius: 6,
+        fill: new Fill({
+          color: '#3399CC'
+        }),
+        stroke: new Stroke({
+          color: '#fff',
+          width: 2
+        })
+      })
+    }),
+    [...new Coordinate(7.45425, 46.96483)]
+  );
+
+  Object.assign(globalThis, { hereMarker });
+
+  markers.add(hereMarker);
   //map.addLayer(markerLayer);
-
-  const zoomslider = new ZoomSlider();
-  map.addControl(zoomslider);
-  const layerSwitcher = new LayerSwitcher({
-    reverse: true,
-    groupSelectStyle: 'group'
-  });
-  map.addControl(layerSwitcher);
-
+ 
   Object.assign(globalThis, {
-    tileLayer,
-    rasterLayer,
+   
     view,
-    vector,
-    map,
+     map,
     extentVector,
-    positionFeature,
-    layerSwitcher,
+    positionFeature, 
     geolocation
   });
   Object.defineProperties(globalThis, {
@@ -351,7 +297,7 @@ Object.assign(globalThis, {
   isObject,
   memoize,
   unique,
-  arrayFacade
+  HTMLLayer
 });
 
 CreateMap();
