@@ -77,11 +77,11 @@ const PropertyList = ({ data, filter, ...props }) => {
   return h('div', { class: 'property-list' }, [h(Table, { rows })]);
 };
 
-const FileItem = ({ file,ref, ...props }) => {
+const FileItem = ({ file, ref, ...props }) => {
   const { name, lastModified, size, type } = file;
   let upload = useTrkl(file.upload);
-    ref ??= trkl();
-/*  ref.subscribe(v => {
+  ref ??= trkl();
+  /*  ref.subscribe(v => {
     console.log('ref', v);
     let rect = (file.rect = dom.Element.rect(v));
     console.log('rect', rect);
@@ -96,14 +96,13 @@ const FileItem = ({ file,ref, ...props }) => {
          */ /^(Orientation|ImageSize|Model|GPS(Position|DestBearing|GPSSpeed|GPSSpeedRef|ImgDir)|DateTimeOriginal|FileSize|Flash$|Distance|ISO|ExposureTime|Lens(Info)|FocalLength$|ShutterSpeed|ApertureValue|Megapixels)/.test(
           k
         )
-    })
+    }),
     /*,
-     */,
-    h('img', upload?.thumbnail ? { src: upload.thumbnail } : {})
+     */ h('img', upload?.thumbnail ? { src: upload.thumbnail } : {})
   ]);
 };
 
-const FileList = ({ files,ref,...props }) => {
+const FileList = ({ files, ref, ...props }) => {
   let list = useTrkl(files);
   return h(
     'ul',
@@ -119,7 +118,7 @@ window.addEventListener('load', e => {
   drop = document.querySelector('#drop-area');
   let preact = document.querySelector('#preact');
 
-  render(h(FileList, { files: fileList, ref: globalThis.listElem=createRef() }, []), preact);
+  render(h(FileList, { files: fileList, ref: (globalThis.listElem = createRef()) }, []), preact);
 
   drop.addEventListener('click', e => {
     console.log('drop.click', e);
