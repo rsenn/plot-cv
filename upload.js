@@ -1,4 +1,4 @@
-import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
+import React, { h, html, render, Fragment, Component, createRef, useState, useLayoutEffect, useRef, toChildArray } from './lib/dom/preactComponent.js';
 import { randStr, assert, lazyProperties, define, isObject, memoize, unique } from './lib/misc.js';
 import { isElement, createElement } from './dom-helpers.js';
 import { DragArea, DropArea, Card, List, RUG } from './lib/upload.js';
@@ -77,11 +77,17 @@ const PropertyList = ({ data, filter, ...props }) => {
   return h('div', { class: 'property-list' }, [h(Table, { rows })]);
 };
 
-const FileItem = ({ file, ...props }) => {
+const FileItem = ({ file,ref, ...props }) => {
   const { name, lastModified, size, type } = file;
   let upload = useTrkl(file.upload);
-  //console.log('FileItem', file);
-  return h('li', {}, [
+    ref ??= trkl();
+/*  ref.subscribe(v => {
+    console.log('ref', v);
+    let rect = (file.rect = dom.Element.rect(v));
+    console.log('rect', rect);
+  });
+*/
+  return h('li', { ref }, [
     h('h2', {}, [name]),
     h(PropertyList, {
       data: upload?.exif ?? {},
@@ -90,18 +96,19 @@ const FileItem = ({ file, ...props }) => {
          */ /^(Orientation|ImageSize|Model|GPS(Position|DestBearing|GPSSpeed|GPSSpeedRef|ImgDir)|DateTimeOriginal|FileSize|Flash$|Distance|ISO|ExposureTime|Lens(Info)|FocalLength$|ShutterSpeed|ApertureValue|Megapixels)/.test(
           k
         )
-    }) /*,
-    h(Table, { rows: Object.entries(upload,exit ?? {}) })
-    */,
+    })
+    /*,
+     */,
     h('img', upload?.thumbnail ? { src: upload.thumbnail } : {})
   ]);
 };
 
-const FileList = ({ files }) => {
+const FileList = ({ files,ref,...props }) => {
+  let list = useTrkl(files);
   return h(
     'ul',
-    {},
-    useTrkl(files).map(file => h(FileItem, { file }))
+    { ref },
+    list.map(file => h(FileItem, { file }))
   );
 };
 
@@ -112,7 +119,7 @@ window.addEventListener('load', e => {
   drop = document.querySelector('#drop-area');
   let preact = document.querySelector('#preact');
 
-  render(h(FileList, { files: fileList }, []), preact);
+  render(h(FileList, { files: fileList, ref: globalThis.listElem=createRef() }, []), preact);
 
   drop.addEventListener('click', e => {
     console.log('drop.click', e);
