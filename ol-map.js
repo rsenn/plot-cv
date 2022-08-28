@@ -1,8 +1,10 @@
 import { OLMap, View, TileLayer, Layer, Point, Overlay, XYZ, OSM, Feature, Projection, VectorLayer, VectorSource, MultiPoint, Polygon, LineString, Geolocation, GeoJSON, composeCssTransform, Icon, Fill, fromLonLat, ZoomSlider, addCoordinateTransforms, getVectorContext, transform, Style, Stroke, CircleStyle, RegularShape, addProjection, LayerGroup } from './lib/ol.js';
 
 import LayerSwitcher /* , { BaseLayerOptions, GroupLayerOptions }*/ from './lib/ol-layerswitcher.js';
-import { assert, lazyProperties, define, isObject, memoize, unique } from './lib/misc.js';
+import { assert, lazyProperties, define, isObject, memoize, unique, arrayFacade } from './lib/misc.js';
 import { Element } from './lib/dom.js';
+import { TransformCoordinates, Coordinate, Pin, Markers } from './ol-helpers.js';
+import { ObjectWrapper, BiDirMap } from './object-helpers.js';
 
 let data = (globalThis.data = []);
 let center = (globalThis.center = transform([7.454281, 46.96453], 'EPSG:4326', 'EPSG:3857'));
@@ -11,7 +13,6 @@ let topLeft = [5.9962, 47.8229],
   topRight = [10.5226, 47.8229],
   bottomLeft = [5.9962, 45.8389],
   bottomRight = [10.5226, 45.8389];
-let vectorLayer;
 
 lazyProperties(globalThis, {
   locationDisplay: () =>
@@ -34,68 +35,6 @@ lazyProperties(globalThis, {
     )
 });
 
-function TransformCoordinates(...args) {
-  if(args.length == 2) return transform(args, 'EPSG:4326', 'EPSG:3857');
-  if(args.length == 4) {
-    let extent = [args.splice(0, 2), args.splice(0, 2)];
-    return extent.reduce((acc, coord) => acc.concat(TransformCoordinates(...coord)), []);
-  }
-
-  if(typeof args[0] == 'string') return TransformCoordinates(args[0].split(',').map(n => +n));
-}
-
-class Coordinate {
-  static from(arg) {
-    try {
-      if(arg.getGeometry) arg = arg.getGeometry();
-      if(arg.getCoordinates) arg = arg.getCoordinates();
-    } catch(e) {}
-
-    try {
-      return new Coordinate(...arg);
-    } catch(e) {
-      try {
-        return new Coordinate(arg.lon, arg.lat, arg.type);
-      } catch(e) {}
-    }
-  }
-
-  constructor(lon, lat, type) {
-    this.lon = lon;
-    this.lat = lat;
-
-    if(typeof type == 'string') this.type = type;
-  }
-
-  get [0]() {
-    return this.convertTo('EPSG:3857')[0];
-  }
-  get [1]() {
-    return this.convertTo('EPSG:3857')[1];
-  }
-
-  get length() {
-    return 2;
-  }
-
-  convertTo(destType) {
-    return transform([this.lon, this.lat], this.type, destType);
-  }
-
-  *[Symbol.iterator]() {
-    yield* this.convertTo('EPSG:3857');
-  }
-  get [Symbol.toStringTag]() {
-    return `Coordinate ${this.lon},${this.lat}`;
-  }
-  toString() {
-    return `${this.lon},${this.lat}`;
-  }
-}
-
-Coordinate.prototype.type = 'EPSG:4326';
-Coordinate.prototype.slice = Array.prototype.slice;
-
 const cities = {
   bern: new Coordinate(7.4458, 46.95),
   zuerich: new Coordinate(8.545094, 47.373878),
@@ -103,7 +42,9 @@ const cities = {
   genf: new Coordinate(6.143158, 46.204391),
   zug: new Coordinate(8.515495, 47.166168),
   basel: new Coordinate(7.588576, 47.559601),
-  winterthur: new Coordinate(8.737565, 47.49995)
+  winterthur: new Coordinate(8.737565, 47.49995),
+  hinterkappelen: new Coordinate(7.37736, 46.96792),
+  wankdorf: new Coordinate(7.46442, 46.96662)
 };
 
 function Refresh() {
@@ -166,7 +107,7 @@ function FlyTo(location, done = () => {}) {
 }
 
 function CreateMarkerLayer(features) {
-  const iconStyle = (globalThis.iconStyle ??= new Style({
+  const iconStyle = new Style({
     image: new Icon({
       anchor: [1, 1],
       anchorXUnits: 'fraction',
@@ -174,23 +115,18 @@ function CreateMarkerLayer(features) {
       src: 'static/svg/map-pin.svg',
       scale: 1
     })
-  }));
+  });
 
-  //features=features.map(f =>  new Feature(f));
   globalThis.features = features;
 
   features.forEach(f => f.setStyle(iconStyle));
+  globalThis.markers = new Markers(map);
 
-  console.log('features', features);
+  let vectorLayer = new VectorLayer({
+    source: new VectorSource({ features })
+  });
 
-  let source = (globalThis.vectorSource = new VectorSource({ features }));
-  if(vectorLayer) {
-    vectorLayer.setSource(source);
-  } else {
-    vectorLayer = globalThis.vectorLayer = new VectorLayer({
-      source
-    });
-  }
+  Object.assign(globalThis, { features, vectorLayer, iconStyle });
 
   return vectorLayer;
 }
@@ -301,16 +237,36 @@ function CreateMap() {
     })
   });
 
+  /* const markerLayer = CreateMarkerLayer(
+    Object.entries(cities).map(([name, geometry]) => new Feature({ name, geometry: new Point([...geometry]) }))
+  );*/
   let map = new OLMap({
     target: 'mapdiv',
-    layers: [tileLayer, rasterLayer, worldStreetMap, worldTopoMap, natGeoWorldMap].reverse(),
+    layers: [tileLayer, rasterLayer, worldStreetMap, worldTopoMap, natGeoWorldMap, vector],
     view
   });
-  const markerLayer = (globalThis.markerLayer ??= CreateMarkerLayer(
-    Object.entries(cities).map(([name, geometry]) => new Feature({ name, geometry: new Point([...geometry]) }))
-  ));
 
-  map.addLayer(markerLayer);
+  globalThis.markers = Markers.create(map);
+
+  globalThis.pins = Object.entries(cities).map(([name, geometry]) =>
+    Pin.create(
+      name,
+      new Style({
+        image: new Icon({
+          anchor: [1, 1],
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'fraction',
+          src: 'static/svg/map-pin.svg',
+          scale: 1
+        })
+      }),
+      geometry
+    )
+  );
+
+  markers.add(...pins);
+
+  //map.addLayer(markerLayer);
 
   const zoomslider = new ZoomSlider();
   map.addControl(zoomslider);
@@ -382,7 +338,19 @@ Object.assign(globalThis, {
   FlyTo,
   Coordinate,
   cities,
-  Get
+  Get,
+  fromLonLat,
+  ObjectWrapper,
+  BiDirMap,
+  Markers,
+  Pin,
+  assert,
+  lazyProperties,
+  define,
+  isObject,
+  memoize,
+  unique,
+  arrayFacade
 });
 
 CreateMap();
