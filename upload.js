@@ -20,7 +20,7 @@ Object.assign(globalThis, { DragArea, DropArea, Card, List, RUG, FileAction });
 
 function setLabel(text) {
   globalThis.uploadLabel ??= document.querySelector('form label');
-  globalThis.uploadLabel.innerText = text;
+  globalThis.uploadLabel.innerHTML = text;
 }
 window.addEventListener('load', e => {
   console.log('upload.js loaded!');
@@ -39,7 +39,7 @@ window.addEventListener('load', e => {
     let { files } = target;
     fileList = globalThis.fileList = files = [...files];
     e.preventDefault();
-    setLabel(`${fileList.length} files selected`);
+    setLabel(`${fileList.length} Fotos ausgew&auml;hlt`);
 
     UploadFiles(files)
       .catch(err => {
