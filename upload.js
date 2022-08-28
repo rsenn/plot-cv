@@ -1,17 +1,18 @@
 import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
 import { randStr, assert, lazyProperties, define, isObject, memoize, unique } from './lib/misc.js';
-
 import { isElement, createElement } from './dom-helpers.js';
 import { DragArea, DropArea, Card, List, RUG } from './lib/upload.js';
 import * as dom from './lib/dom.js';
 import * as geom from './lib/geom.js';
 import * as transformation from './lib/geom/transformation.js';
+import { useTrkl } from './lib/hooks/useTrkl.js';
+import trkl from './lib/trkl.js';
 
 const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 
 let uuid, input;
 
-let fileList = [],
+let fileList =globalThis.fileList= trkl([]),
   progress = 0,
   uploads = (globalThis.uploads = []);
 
@@ -22,11 +23,19 @@ function setLabel(text) {
   globalThis.uploadLabel ??= document.querySelector('form label');
   globalThis.uploadLabel.innerHTML = text;
 }
+
+const FileList = ({ files }) => {
+  return h('ul', {}, useTrkl(files).map(file => h('li', {}, [file.name ?? file.filename])));
+}
+
 window.addEventListener('load', e => {
   console.log('upload.js loaded!');
   input ??= document.querySelector('input[type=file]');
   let form = document.querySelector('form');
   let drop = document.querySelector('#drop-area');
+  let preact = document.querySelector('#preact');
+
+  render(h(FileList, { files:fileList}, []), preact);
 
   drop.addEventListener('click', e => {
     console.log('drop.click', e);
@@ -37,7 +46,7 @@ window.addEventListener('load', e => {
   input.addEventListener('change', e => {
     const { target } = e;
     let { files } = target;
-    fileList = globalThis.fileList = files = [...files];
+    fileList(files = [...files]);
     e.preventDefault();
     setLabel(`${fileList.length} Fotos ausgew&auml;hlt`);
 
@@ -125,7 +134,8 @@ function CreateWS() {
       switch (command.type) {
         case 'uuid':
           uuid = command.data;
-          break;
+                console.log('UUID', uuid);
+    break;
         case 'progress':
           const { done, total } = command;
           progress = done;
@@ -133,28 +143,28 @@ function CreateWS() {
         case 'upload':
           const { address, thumbnail, uploaded, filename, exif, storage } = command;
           let upload = { address, thumbnail, uploaded, filename, exif, storage };
-          console.log('upload', upload);
+          console.log('UPLOAD', upload);
 
           uploads.push(upload);
           break;
         default:
-          console.log('onmessage', command);
+          console.log('UNHANDLED', command);
 
           break;
       }
     }
   };
   ws.onopen = e => {
-    console.log('onopen', e);
+  //  console.log('onopen', e);
   };
   ws.onclose = e => {
     globalThis.ws = null;
-    console.log('onclose', e);
+ //   console.log('onclose', e);
     restart();
   };
   ws.onerror = e => {
     globalThis.ws = null;
-    console.log('onerror', e);
+  //  console.log('onerror', e);
     restart();
   };
 }
