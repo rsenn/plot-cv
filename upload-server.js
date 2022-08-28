@@ -457,7 +457,11 @@ function main(...args) {
           fp = new FormParser(ws, ['files', 'uuid'], {
             chunkSize: 8192 /** 256*/,
             onOpen(name, filename) {
+<<<<<<< HEAD
+              /* if(this.file) {
+=======
               if(this.file) {
+>>>>>>> 70cfcd5547daffebc2b1091197621bb62ef9827f
                 this.onclose.call(this, name);
               }
 
