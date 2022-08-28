@@ -1,4 +1,6 @@
 {
     "git.ignoreLimitWarning": true,
-    "editor.fontFamily": "'Ubuntu Mono', 'monospace', monospace, 'Droid Sans Fallback'"
+    "editor.fontFamily": "'Ubuntu Mono', 'monospace', monospace, 'Droid Sans Fallback'",
+    "editor.fontSize": 15,
+    "editor.tabSize": 2
 }
