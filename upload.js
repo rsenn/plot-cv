@@ -19,6 +19,11 @@ let fileList = (globalThis.fileList = trkl([])),
 Object.assign(globalThis, { isElement, createElement, React, dom, geom, transformation });
 Object.assign(globalThis, { DragArea, DropArea, Card, List, RUG, FileAction });
 
+export function prioritySort(arr, predicates=[]){
+  const matchPred = item => predicates.findIndex(p => p(item));
+ return [...arr].sort((a,b) => matchPred(a) - matchPred(b));
+}
+
 function setLabel(text) {
   globalThis.uploadLabel ??= document.querySelector('form label');
   globalThis.uploadLabel.innerHTML = text;
@@ -30,7 +35,7 @@ const Table = ({ rows }) => {
     { cellspacing: 0, cellpadding: 0 },
     rows.map(row =>
       h(
-        'tr',
+        'tr', 
         {},
         row.map(cell => h('td', {}, [cell]))
       )
@@ -42,7 +47,16 @@ const PropertyList = ({ data, filter, ...props }) => {
   /*let filter= useTrkl(props.filter);*/
   let rows = Array.isArray(data) ? data : data.entries ? [...data.entries()] : Object.entries(data);
   if(filter) rows = rows.filter(filter);
-
+rows=prioritySort(rows, [
+  ([k,v]) => /GPSPos/.test(k),
+  ([k,v]) => /GPS/.test(k),
+  ([k,v]) => /Orientation/.test(k),
+  ([k,v]) => /ImageSize/.test(k),
+  ([k,v]) => /FileSize/.test(k),
+  ([k,v]) => /Model/.test(k),
+  ([k,v]) => /Megapixels/.test(k),
+  ([k,v]) => /.*/.test(k)
+  ]);
   return h('div', { class: 'property-list' }, [h(Table, { rows })]);
 };
 

@@ -30,7 +30,6 @@ function parseDegMinSec(s) {
   if(matches && matches.length) {
     r = 0;
     for(let [value, unit] of matches) {
-      let [rdf, stdout] = os.pipe();
       let mul = { deg: 1, ["'"]: 1 / 60, ['"']: 1 / 3600, N: 1, W: 1, S: -1, E: -1 }[unit];
       if(value === '') value = 1;
       // console.log('parseDegMinSec', {value,unit,mul}); r+= +value * mul;
