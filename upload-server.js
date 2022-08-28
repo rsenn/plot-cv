@@ -519,11 +519,13 @@ function main(...args) {
 
                     if(exif) {
                       const { ImageSize, ImageHeight, ImageWidth } = exif;
-                      let width = (ImageWidth * ImageHeight) / 256;
-                      let height = 256;
-                      if(width > 256) {
+                      let aspect = ImageWidth / ImageHeight;
+                      if(aspect >= 1) {
                         width = 256;
-                        height = (ImageHeight * ImageWidth) / 256;
+                        height = width / aspect;
+                      } else {
+                        height = 256;
+                        width = height * aspect;
                       }
                     }
                     MagickResize(obj.jpg ?? f(ext), f('.thumb.jpg'), obj.exif?.Rotation ?? 0, width, height);
