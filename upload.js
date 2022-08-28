@@ -10,7 +10,7 @@ import trkl from './lib/trkl.js';
 
 const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 
-let uuid, input;
+let uuid, input, drop;
 
 let fileList = (globalThis.fileList = trkl([])),
   progress = 0,
@@ -24,11 +24,53 @@ function setLabel(text) {
   globalThis.uploadLabel.innerHTML = text;
 }
 
+const Table = ({ rows }) => {
+  return h(
+    'table',
+    { cellspacing: 0, cellpadding: 2 },
+    rows.map(row =>
+      h(
+        'tr',
+        {},
+        row.map(cell => h('td', {}, [cell]))
+      )
+    )
+  );
+};
+
+const PropertyList = ({ data, filter, ...props }) => {
+  /*let filter= useTrkl(props.filter);*/
+  let rows = Array.isArray(data) ? data : data.entries ? [...data.entries()] : Object.entries(data);
+  if(filter) rows = rows.filter(filter);
+
+  return h('div', { class: 'property-list' }, [h(Table, { rows })]);
+};
+
+const FileItem = ({ file, ...props }) => {
+  const { name, lastModified, size, type } = file;
+  let upload = useTrkl(file.upload);
+  console.log('FileItem', file);
+  return h('li', {}, [
+    h('h2', {}, [name]),
+    h(PropertyList, {
+      data: upload?.exif ?? {},
+      filter: ([k, v]) =>
+        /*        /^(Make|Model|GPS|Date|Created|FileSize|Flash|Focal|Distance|ISO|Exposure|Lens|Shutter|White|FNumber|Aperture|Megapixels)/.test(
+         */ /^(Orientation|ImageSize|Model|GPS(Position|DestBearing|GPSSpeed|GPSSpeedRef|ImgDir)|DateTimeOriginal|FileSize|Flash$|Distance|ISO|ExposureTime|Lens(Info)|FocalLength$|ShutterSpeed|ApertureValue|Megapixels)/.test(
+          k
+        )
+    }) /*,
+    h(Table, { rows: Object.entries(upload,exit ?? {}) })
+    */,
+    h('img', upload?.thumbnail ? { src: upload.thumbnail } : {})
+  ]);
+};
+
 const FileList = ({ files }) => {
   return h(
     'ul',
     {},
-    useTrkl(files).map(file => h('li', {}, [file.name ?? file.filename]))
+    useTrkl(files).map(file => h(FileItem, { file }))
   );
 };
 
@@ -36,7 +78,7 @@ window.addEventListener('load', e => {
   console.log('upload.js loaded!');
   input ??= document.querySelector('input[type=file]');
   let form = document.querySelector('form');
-  let drop = document.querySelector('#drop-area');
+  drop = document.querySelector('#drop-area');
   let preact = document.querySelector('#preact');
 
   render(h(FileList, { files: fileList }, []), preact);
@@ -96,8 +138,7 @@ function UploadFiles(files) {
   console.log('UploadFiles', files);
   files ??= input.files;
 
-  // for(let file of input.files)
-  return UploadFile(files);
+  if(files.length > 0) return UploadFile(files);
 }
 
 // upload JPEG files
@@ -111,10 +152,27 @@ function UploadFile(files) {
 
   for(let file of files) formData.append('file', file);
 
-  return fetch('upload' /*+'.html' */, { method: 'POST', body: formData }).then(response => {
+  fileList([...files].map(f => ((f.upload = trkl(null)), f)));
+
+  return fetch('upload' /*+'.html' */, { method: 'POST', body: formData }).catch(err => {
+    console.log('POST done!');
+  }) /*.then(response => {
     console.log('response', response);
     return response.text();
-  });
+  })*/;
+}
+
+function UploadDone(upload) {
+  let list = fileList();
+  let found = list.findIndex(({ name }) => name == upload.filename);
+
+  uploads.push(upload);
+
+  if(found != -1) {
+    list[found].upload(upload);
+
+    // fileList([...list]);
+  }
 }
 
 function CreateWS() {
@@ -138,6 +196,10 @@ function CreateWS() {
       switch (command.type) {
         case 'uuid':
           uuid = command.data;
+          input.disabled = false;
+          drop.style.filter = '';
+          drop.style.opacity = '';
+
           console.log('UUID', uuid);
           break;
         case 'progress':
@@ -148,8 +210,7 @@ function CreateWS() {
           const { address, thumbnail, uploaded, filename, exif, storage } = command;
           let upload = { address, thumbnail, uploaded, filename, exif, storage };
           console.log('UPLOAD', upload);
-
-          uploads.push(upload);
+          UploadDone(upload);
           break;
         default:
           console.log('UNHANDLED', command);

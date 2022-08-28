@@ -94,14 +94,17 @@ function HeifConvert(src, dst, quality = 100) {
   console.log('HeifConvert', out);
 }
 
-function MagickResize(src, dst, rotate = 0) {
-  console.log('MagickResize', src, dst);
+function MagickResize(src, dst, rotate = 0, width, height) {
+  console.log('MagickResize', { width, height, dst, rotate });
   let [rd, stdout] = os.pipe();
 
-  os.exec(['convert-im6.q16', src, '-resize', 'x256', ...(rotate ? ['-rotate', '-' + rotate] : []), dst], {
-    stdout,
-    stderr: stdout
-  });
+  os.exec(
+    ['convert-im6.q16', src, '-resize', width + 'x' + height, ...(rotate ? ['-rotate', '-' + rotate] : []), dst],
+    {
+      stdout,
+      stderr: stdout
+    }
+  );
   os.close(stdout);
 
   let out = fs.readAllSync(rd);
@@ -464,7 +467,7 @@ function main(...args) {
 
               this.file = fs.openSync((this.temp = 'uploads/' + (tmpnam = randStr(20) + '.tmp')), 'w+', 0o644);
               hash = new Hash(Hash.TYPE_SHA1);
-              console.log(`onOpen(${filename})`, this.temp);
+              //console.log(`onOpen(${filename})`, this.temp);
             },
             onContent(name, data) {
               // console.log(`onContent(${this.filename})`,data.byteLength);
@@ -477,9 +480,9 @@ function main(...args) {
               if(ws2) ws2.sendCommand({ type: 'progress', done: progress, total: +headers['content-length'] });
             },
 
-            onClose(name) {
+            onClose(name, file) {
               try {
-                console.log(`onClose(${this.filename})`, this.uuid);
+                // console.log(`onClose[1](${name}, ${file})`, this.uuid);
                 let exif, cache, sha1;
                 if(hash) {
                   hash.finalize();
@@ -489,14 +492,11 @@ function main(...args) {
                   fs.closeSync(this.file);
                   this.file = null;
                 }
-                // console.log(`hash()`, sha1);
                 if(sha1) {
                   let f = x => 'uploads/' + sha1 + x;
                   let ret = link(this.temp, f(ext));
                   let { errno } = error();
-                  //  console.log('link', this.temp, f, '=', ret, std.strerror(errno));
                   let json = f('.json');
-
                   if(fs.existsSync(json) && (cache = ReadJSON(json))) {
                     exif = cache.exif;
                   } else {
@@ -514,35 +514,34 @@ function main(...args) {
                       HeifConvert(f(ext), f('.jpg'));
                       if(fs.existsSync(f('.jpg'))) obj.jpg = f('.jpg');
                     }
-                    /*       if(!/png$/i.test(ext)) {
-                    HeifConvert(f(ext), f('.png'));
-                    if(fs.existsSync(f('.png'))) obj.png = f('.png');
-                  }*/
+                    let width = '',
+                      height = '256';
 
-                    MagickResize(obj.jpg ?? f(ext), f('.thumb.png'), obj.exif?.Rotation ?? 0);
-                    if(fs.existsSync(f('.thumb.png'))) obj.thumbnail = f('.thumb.png');
-
+                    if(exif) {
+                      const { ImageSize, ImageHeight, ImageWidth } = exif;
+                      let width = (ImageWidth * ImageHeight) / 256;
+                      let height = 256;
+                      if(width > 256) {
+                        width = 256;
+                        height = (ImageHeight * ImageWidth) / 256;
+                      }
+                    }
+                    MagickResize(obj.jpg ?? f(ext), f('.thumb.jpg'), obj.exif?.Rotation ?? 0, width, height);
+                    if(fs.existsSync(f('.thumb.jpg'))) obj.thumbnail = f('.thumb.jpg');
                     WriteJSON(json, obj);
                     console.log(`by_uuid`, by_uuid);
                     console.log(`uuid`, ws.uuid ?? this.uuid);
                     cache = obj;
                   }
-
                   if(ret == 0 || errno == 17) {
                     unlink(this.temp);
                     this.temp = null;
                   }
-                  //this.filename = f(ext);
-                } /*else {
-                throw new Error('no hash for ' + this.temp);
-              }*/
+                }
                 const { filename } = this;
-
                 let ws2 = by_uuid[ws.uuid ?? this.uuid];
-
                 if(ws2) ws2.sendCommand({ type: 'upload', ...(cache ?? {}), filename, exif });
-
-                console.log(`onClose(${this.filename})`);
+                //  console.log(`onClose[2](${name}, ${file})`);
               } catch(e) {
                 console.log(`onClose ERROR:`, e.message);
               }

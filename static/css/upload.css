@@ -568,10 +568,35 @@ ul {
 }
 
 ul li {
-  background: hsla(0, 0%, 100%, 1);
-    border: 1px solid hsla(245, 40%, 60%, 1);
-   /*font-family: Monospace, fixed, 'Misc Fixed', MiscFixedSC613;*/
-  font-size: 0.8em;
-  padding: 0.5em;
+ /* border: 1px solid hsla(245, 100%, 30%, 1);*/
+  border-radius:  1em;
+  background: hsla(245, 100%, 69%, 0.3);  padding: 0.5em;
   margin: 0 0 1em 2em;
+  position:  relative;
+  display:  flex;
+  flex-direction:  column;
+  align-items:  stretch;
+  justify-content: flex-start;
+
+}
+ul h2{
+  margin: 0 0;
+  font-size: 0.97em;
+    text-align:  center;
+}
+
+ul li table{
+ /* border:  1px outset #333;*/
+}
+ul li {
+   /*border:  1px solid hsla(245,0%,0%,1);*/
+/*  box-shadow: inset 1px 1px hsla(245,30%,60%,0.8); */
+}
+.property-list {
+  font-size: 0.6rem;
+    margin: 0.5em 0 1em 0;
+  box-shadow: 0px 1px 4px hsla(245,30%,60%,0.8);
+  background:  white;
+  border-radius:  0.6rem;
+padding: 1em;
 }
