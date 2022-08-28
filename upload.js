@@ -27,7 +27,7 @@ function setLabel(text) {
 const Table = ({ rows }) => {
   return h(
     'table',
-    { cellspacing: 0, cellpadding: 2 },
+    { cellspacing: 0, cellpadding: 0 },
     rows.map(row =>
       h(
         'tr',
@@ -49,7 +49,7 @@ const PropertyList = ({ data, filter, ...props }) => {
 const FileItem = ({ file, ...props }) => {
   const { name, lastModified, size, type } = file;
   let upload = useTrkl(file.upload);
-  console.log('FileItem', file);
+  //console.log('FileItem', file);
   return h('li', {}, [
     h('h2', {}, [name]),
     h(PropertyList, {

@@ -524,8 +524,8 @@ function main(...args) {
                         width = 256;
                         height = width / aspect;
                       } else {
-                        height = 256;
-                        width = height * aspect;
+                       /* height = 256;
+                        width = height * aspect;*/
                       }
                     }
                     MagickResize(obj.jpg ?? f(ext), f('.thumb.jpg'), obj.exif?.Rotation ?? 0, width, height);
