@@ -439,7 +439,8 @@ function main(...args) {
         }
 
         if(req.method != 'GET') {
-          let fp, hash,
+          let fp,
+            hash,
             tmpnam,
             ext,
             progress = 0;
@@ -450,7 +451,7 @@ function main(...args) {
           fp = new FormParser(ws, ['files', 'uuid'], {
             chunkSize: 8192 /** 256*/,
             onOpen(name, filename) {
-             /* if(this.file) {
+              /* if(this.file) {
                 this.onclose.call(this, name);
               }*/
 
