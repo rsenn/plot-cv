@@ -47,7 +47,7 @@ const cities = {
   wankdorf: new Coordinate(7.46442, 46.96662)
 };
 
-function Refresh() {
+/*function Refresh() {
   source.clear();
   if(states.length) {
     const [time, list] = states.last;
@@ -63,8 +63,9 @@ function Refresh() {
     }
   }
 }
+*/
 function SetFenceColor(color) {
-  vector.setStyle(new OpenLayers.Style({ stroke: new OpenLayers.Stroke({ color, width: 3, lineDash: [2, 4] }) }));
+  vector.setStyle(new Style({ stroke: new Stroke({ color, width: 3, lineDash: [2, 4] }) }));
 }
 
 function FlyTo(location, done = () => {}) {
