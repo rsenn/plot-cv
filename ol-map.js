@@ -1,8 +1,11 @@
 import { OLMap, View, TileLayer, Layer, Point, Overlay, XYZ, OSM, Feature, Projection, VectorLayer, VectorSource, MultiPoint, Polygon, LineString, Geolocation, GeoJSON, composeCssTransform, Icon, Fill, fromLonLat, ZoomSlider, addCoordinateTransforms, getVectorContext, transform, Style, Stroke, CircleStyle, RegularShape, addProjection, LayerGroup } from './lib/ol.js';
 
 import LayerSwitcher /* , { BaseLayerOptions, GroupLayerOptions }*/ from './lib/ol-layerswitcher.js';
-import { assert, lazyProperties, define, isObject, memoize, unique } from './lib/misc.js';
+import { assert, lazyProperties, define, isObject, memoize, unique, arrayFacade } from './lib/misc.js';
 import { Element } from './lib/dom.js';
+import { TransformCoordinates, Coordinate, Pin, Markers, OpenlayersMap } from './ol-helpers.js';
+import { ObjectWrapper, BiDirMap } from './object-helpers.js';
+import { Layer as HTMLLayer } from './lib/dom/layer.js';
 
 let data = (globalThis.data = []);
 let center = (globalThis.center = transform([7.454281, 46.96453], 'EPSG:4326', 'EPSG:3857'));
@@ -11,9 +14,8 @@ let topLeft = [5.9962, 47.8229],
   topRight = [10.5226, 47.8229],
   bottomLeft = [5.9962, 45.8389],
   bottomRight = [10.5226, 45.8389];
-let vectorLayer;
 
-lazyProperties(globalThis, {
+/*lazyProperties(globalThis, {
   locationDisplay: () =>
     document.body.appendChild(
       Element.create(
@@ -32,69 +34,7 @@ lazyProperties(globalThis, {
         []
       )
     )
-});
-
-function TransformCoordinates(...args) {
-  if(args.length == 2) return transform(args, 'EPSG:4326', 'EPSG:3857');
-  if(args.length == 4) {
-    let extent = [args.splice(0, 2), args.splice(0, 2)];
-    return extent.reduce((acc, coord) => acc.concat(TransformCoordinates(...coord)), []);
-  }
-
-  if(typeof args[0] == 'string') return TransformCoordinates(args[0].split(',').map(n => +n));
-}
-
-class Coordinate {
-  static from(arg) {
-    try {
-      if(arg.getGeometry) arg = arg.getGeometry();
-      if(arg.getCoordinates) arg = arg.getCoordinates();
-    } catch(e) {}
-
-    try {
-      return new Coordinate(...arg);
-    } catch(e) {
-      try {
-        return new Coordinate(arg.lon, arg.lat, arg.type);
-      } catch(e) {}
-    }
-  }
-
-  constructor(lon, lat, type) {
-    this.lon = lon;
-    this.lat = lat;
-
-    if(typeof type == 'string') this.type = type;
-  }
-
-  get [0]() {
-    return this.convertTo('EPSG:3857')[0];
-  }
-  get [1]() {
-    return this.convertTo('EPSG:3857')[1];
-  }
-
-  get length() {
-    return 2;
-  }
-
-  convertTo(destType) {
-    return transform([this.lon, this.lat], this.type, destType);
-  }
-
-  *[Symbol.iterator]() {
-    yield* this.convertTo('EPSG:3857');
-  }
-  get [Symbol.toStringTag]() {
-    return `Coordinate ${this.lon},${this.lat}`;
-  }
-  toString() {
-    return `${this.lon},${this.lat}`;
-  }
-}
-
-Coordinate.prototype.type = 'EPSG:4326';
-Coordinate.prototype.slice = Array.prototype.slice;
+});*/
 
 const cities = {
   bern: new Coordinate(7.4458, 46.95),
@@ -103,10 +43,12 @@ const cities = {
   genf: new Coordinate(6.143158, 46.204391),
   zug: new Coordinate(8.515495, 47.166168),
   basel: new Coordinate(7.588576, 47.559601),
-  winterthur: new Coordinate(8.737565, 47.49995)
+  winterthur: new Coordinate(8.737565, 47.49995),
+  hinterkappelen: new Coordinate(7.37736, 46.96792),
+  wankdorf: new Coordinate(7.46442, 46.96662)
 };
 
-function Refresh() {
+/*function Refresh() {
   source.clear();
   if(states.length) {
     const [time, list] = states.last;
@@ -122,24 +64,22 @@ function Refresh() {
     }
   }
 }
+*/
 function SetFenceColor(color) {
-  vector.setStyle(new OpenLayers.Style({ stroke: new OpenLayers.Stroke({ color, width: 3, lineDash: [2, 4] }) }));
+  vector.setStyle(new Style({ stroke: new Stroke({ color, width: 3, lineDash: [2, 4] }) }));
 }
 
 function FlyTo(location, done = () => {}) {
   console.log('FlyTo', { location, done });
-
   if(typeof location == 'string') location = cities[location];
-
   const duration = 2000;
   const zoom = view.getZoom();
   let parts = 2;
   let called = false;
   function callback(complete) {
     --parts;
-    if(called) {
-      return;
-    }
+    if(called) return;
+
     if(parts === 0 || !complete) {
       called = true;
       done(complete);
@@ -165,8 +105,8 @@ function FlyTo(location, done = () => {}) {
   );
 }
 
-function CreateMarkerLayer(features) {
-  const iconStyle = (globalThis.iconStyle ??= new Style({
+/*function CreateMarkerLayer(features) {
+  const iconStyle = new Style({
     image: new Icon({
       anchor: [1, 1],
       anchorXUnits: 'fraction',
@@ -174,26 +114,16 @@ function CreateMarkerLayer(features) {
       src: 'static/svg/map-pin.svg',
       scale: 1
     })
-  }));
-
-  //features=features.map(f =>  new Feature(f));
+  });
   globalThis.features = features;
-
   features.forEach(f => f.setStyle(iconStyle));
-
-  console.log('features', features);
-
-  let source = (globalThis.vectorSource = new VectorSource({ features }));
-  if(vectorLayer) {
-    vectorLayer.setSource(source);
-  } else {
-    vectorLayer = globalThis.vectorLayer = new VectorLayer({
-      source
-    });
-  }
-
+  globalThis.markers = new Markers(map);
+  let vectorLayer = new VectorLayer({
+    source: new VectorSource({ features })
+  });
+  Object.assign(globalThis, { features, vectorLayer, iconStyle });
   return vectorLayer;
-}
+}*/
 
 function Get(feature) {
   let g = feature.getGeometry();
@@ -201,14 +131,6 @@ function Get(feature) {
 }
 
 function CreateMap() {
-  const view = new View({
-    center,
-    zoom: 11,
-    minZoom: 3,
-    maxZoom: 20,
-    extent: TransformCoordinates(extent)
-  });
-
   const positionFeature = new Feature();
   positionFeature.setStyle(
     new Style({
@@ -245,6 +167,9 @@ function CreateMap() {
     })
   });
 
+  let map = OpenlayersMap.create();
+  let view = map.getView();
+
   const geolocation = new Geolocation({
     trackingOptions: {
       enableHighAccuracy: true
@@ -256,79 +181,53 @@ function CreateMap() {
     locationDisplay.innerHTML = geolocation.getPosition();
   });
 
-  const tileLayer = new TileLayer({
-    title: 'OSM',
-    type: 'base',
-    visible: false,
-    source: new XYZ({
-      url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-    })
-  });
-  const rasterLayer = new TileLayer({
-    title: 'Satellit',
-    type: 'base',
-    visible: true,
-    source: new XYZ({
-      url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      maxZoom: 19
-    })
-  });
-  const worldStreetMap = new TileLayer({
-    title: 'Strassenkarte',
-    type: 'base',
-    visible: false,
-    source: new XYZ({
-      url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
-      maxZoom: 20
-    })
-  });
-  const worldTopoMap = new TileLayer({
-    title: 'Topographie',
-    type: 'base',
-    visible: false,
-    source: new XYZ({
-      url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
-      maxZoom: 20
-    })
-  });
-  const natGeoWorldMap = new TileLayer({
-    title: 'National Geographic',
-    type: 'base',
-    visible: false,
-    source: new XYZ({
-      url: 'http://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',
-      maxZoom: 12
-    })
-  });
+  globalThis.markers = Markers.create(map);
 
-  let map = new OLMap({
-    target: 'mapdiv',
-    layers: [tileLayer, rasterLayer, worldStreetMap, worldTopoMap, natGeoWorldMap].reverse(),
-    view
-  });
-  const markerLayer = (globalThis.markerLayer ??= CreateMarkerLayer(
-    Object.entries(cities).map(([name, geometry]) => new Feature({ name, geometry: new Point([...geometry]) }))
-  ));
+  globalThis.pins = Object.entries(cities).map(([name, geometry]) =>
+    Pin.create(
+      name,
+      new Style({
+        image: new Icon({
+          anchor: [1, 1],
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'fraction',
+          src: 'static/svg/map-pin.svg',
+          scale: 1
+        })
+      }),
+      geometry
+    )
+  );
 
-  map.addLayer(markerLayer);
+  markers.add(...pins);
 
-  const zoomslider = new ZoomSlider();
-  map.addControl(zoomslider);
-  const layerSwitcher = new LayerSwitcher({
-    reverse: true,
-    groupSelectStyle: 'group'
-  });
-  map.addControl(layerSwitcher);
+  const hereMarker = Pin.create(
+    'You are here',
+    new Style({
+      image: new CircleStyle({
+        radius: 6,
+        fill: new Fill({
+          color: '#3399CC'
+        }),
+        stroke: new Stroke({
+          color: '#fff',
+          width: 2
+        })
+      })
+    }),
+    [...new Coordinate(7.45425, 46.96483)]
+  );
+
+  Object.assign(globalThis, { hereMarker });
+
+  markers.add(hereMarker);
+  //map.addLayer(markerLayer);
 
   Object.assign(globalThis, {
-    tileLayer,
-    rasterLayer,
     view,
-    vector,
     map,
     extentVector,
     positionFeature,
-    layerSwitcher,
     geolocation
   });
   Object.defineProperties(globalThis, {
@@ -382,7 +281,19 @@ Object.assign(globalThis, {
   FlyTo,
   Coordinate,
   cities,
-  Get
+  Get,
+  fromLonLat,
+  ObjectWrapper,
+  BiDirMap,
+  Markers,
+  Pin,
+  assert,
+  lazyProperties,
+  define,
+  isObject,
+  memoize,
+  unique,
+  HTMLLayer
 });
 
 CreateMap();

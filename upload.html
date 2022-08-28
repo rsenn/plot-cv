@@ -8,18 +8,21 @@
     <link rel="stylesheet" href="static/css/upload.css" />
   </head>
   <body>
- <div id="drop-area">
-   <form method="POST" action="upload" enctype="multipart/form-data">
-      <div class="input-group">
-        <label for="files">Fotos auswählen und hochladen</label>
-        <input id="file" type="file" name="files" multiple  accept="image/*"   capture="environment" />
-        <div style="display:  inline-flex;flex-flow: row;">
-        <img src="static/svg/upload-arrow.svg" />
-        <img src="static/svg/hand-touch.svg" />
-      </div>
-  </div>
-      <button class="submit-btn" type="submit">Upload</button>
-    </form> 
-  </div>
+    <div id="drop-area" style="filter: saturate(0); opacity: 0.5;">
+      <form method="POST" action="upload" enctype="multipart/form-data">
+        <div class="input-group">
+          <label
+           for="files">Fotos auswählen und hochladen</label>
+          <input id="file" type="file" name="files" multiple accept="image/*" capture="environment" disabled />
+          <div style="display:  inline-flex;flex-flow: row;">
+            <img src="static/svg/upload-arrow.svg" />
+            <img src="static/svg/hand-touch.svg" />
+          </div>
+        </div>
+        <button class="submit-btn" type="submit">Upload</button>
+      </form>
+    </div>
+    <div id="preact">
+    </div>
   </body>
 </html>

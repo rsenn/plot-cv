@@ -87,9 +87,7 @@ char* progname;
 /* When non-zero, this global means the user is done using this program. */
 int done;
 
-char*
-dupstr(s)
-char* s;
+char* dupstr(s) char* s;
 {
   char* r;
 
@@ -98,9 +96,7 @@ char* s;
   return (r);
 }
 
-int
-main(argc, argv)
-int argc;
+int main(argc, argv) int argc;
 char** argv;
 {
   char *line, *s;
@@ -132,9 +128,7 @@ char** argv;
 }
 
 /* Execute a command line. */
-int
-execute_line(line)
-char* line;
+int execute_line(line) char* line;
 {
   register int i;
   COMMAND* command;
@@ -168,9 +162,7 @@ char* line;
 
 /* Look up NAME as the name of a command, and return a pointer to that
    command.  Return a NULL pointer if NAME isn't a command name. */
-COMMAND*
-find_command(name)
-char* name;
+COMMAND* find_command(name) char* name;
 {
   register int i;
 
@@ -183,9 +175,7 @@ char* name;
 
 /* Strip whitespace from the start and end of STRING.  Return a pointer
    into STRING. */
-char*
-stripwhite(string)
-char* string;
+char* stripwhite(string) char* string;
 {
   register char *s, *t;
 
@@ -284,9 +274,7 @@ int state;
 static char syscom[1024];
 
 /* List the file(s) named in arg. */
-int
-com_list(arg)
-char* arg;
+int com_list(arg) char* arg;
 {
   if(!arg)
     arg = "";
@@ -295,9 +283,7 @@ char* arg;
   return (system(syscom));
 }
 
-int
-com_view(arg)
-char* arg;
+int com_view(arg) char* arg;
 {
   if(!valid_argument("view", arg))
     return 1;
@@ -311,17 +297,13 @@ char* arg;
   return (system(syscom));
 }
 
-int
-com_rename(arg)
-char* arg;
+int com_rename(arg) char* arg;
 {
   too_dangerous("rename");
   return (1);
 }
 
-int
-com_stat(arg)
-char* arg;
+int com_stat(arg) char* arg;
 {
   struct stat finfo;
 
@@ -347,9 +329,7 @@ char* arg;
   return (0);
 }
 
-int
-com_delete(arg)
-char* arg;
+int com_delete(arg) char* arg;
 {
   too_dangerous("delete");
   return (1);
@@ -357,9 +337,7 @@ char* arg;
 
 /* Print out help for ARG, or for all of the commands if ARG is
    not present. */
-int
-com_help(arg)
-char* arg;
+int com_help(arg) char* arg;
 {
   register int i;
   int printed = 0;
@@ -392,9 +370,7 @@ char* arg;
 }
 
 /* Change to the directory ARG. */
-int
-com_cd(arg)
-char* arg;
+int com_cd(arg) char* arg;
 {
   if(chdir(arg) == -1) {
     perror(arg);
@@ -406,9 +382,7 @@ char* arg;
 }
 
 /* Print out the current working directory. */
-int
-com_pwd(ignore)
-char* ignore;
+int com_pwd(ignore) char* ignore;
 {
   char dir[1024], *s;
 
@@ -423,9 +397,7 @@ char* ignore;
 }
 
 /* The user wishes to quit using this program.  Just set DONE non-zero. */
-int
-com_quit(arg)
-char* arg;
+int com_quit(arg) char* arg;
 {
   done = 1;
   return (0);
@@ -437,9 +409,7 @@ void too_dangerous(caller) char* caller;
 
 /* Return non-zero if ARG is a valid argument for CALLER, else print
    an error message and return zero. */
-int
-valid_argument(caller, arg)
-char *caller, *arg;
+int valid_argument(caller, arg) char *caller, *arg;
 {
   if(!arg || !*arg) {
     fprintf(stderr, "%s: Argument required.\n", caller);
