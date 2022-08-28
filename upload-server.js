@@ -469,10 +469,10 @@ function main(...args) {
 
               let ws2 = by_uuid[ws.uuid ?? this.uuid];
 
-              if(ws2) ws2.sendCommand({ type: 'progress', done: progress, total: +headers['content-length'] });
-
               fs.writeSync(this.file, data);
               hash.update(data);
+                            if(ws2) ws2.sendCommand({ type: 'progress', done: progress, total: +headers['content-length'] });
+
             },
 
             onClose(name) {

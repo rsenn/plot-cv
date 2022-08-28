@@ -11,7 +11,7 @@ const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '01
 
 let uuid, input;
 
-let fileList=[];
+let fileList=[],progress=0,uploads=globalThis.uploads=[];
 
 Object.assign(globalThis, { isElement, createElement, React, dom, geom, transformation });
 Object.assign(globalThis, { DragArea, DropArea, Card, List, RUG, FileAction });
@@ -124,9 +124,16 @@ function CreateWS() {
         case 'uuid':
           uuid = command.data;
           break;
+          case 'progress':
+                   const {done,total } = command;
+                   progress=done;
+ break;
         case 'upload':
           const { address,thumbnail, uploaded, filename, exif, storage } = command;
-console.log('upload', { address,thumbnail, uploaded, filename, exif, storage });
+          let upload={ address,thumbnail, uploaded, filename, exif, storage };
+console.log('upload', upload);
+
+uploads.push(upload);
           break;
           default:       console.log('onmessage', command);
 
