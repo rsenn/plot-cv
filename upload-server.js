@@ -523,7 +523,7 @@ function main(...args) {
                         width = 256;
                         height = width / aspect;
                       } else {
-                       /* height = 256;
+                        /* height = 256;
                         width = height * aspect;*/
                       }
                     }
