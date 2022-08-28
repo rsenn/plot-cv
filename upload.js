@@ -12,7 +12,7 @@ const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '01
 
 let uuid, input;
 
-let fileList =globalThis.fileList= trkl([]),
+let fileList = (globalThis.fileList = trkl([])),
   progress = 0,
   uploads = (globalThis.uploads = []);
 
@@ -25,8 +25,12 @@ function setLabel(text) {
 }
 
 const FileList = ({ files }) => {
-  return h('ul', {}, useTrkl(files).map(file => h('li', {}, [file.name ?? file.filename])));
-}
+  return h(
+    'ul',
+    {},
+    useTrkl(files).map(file => h('li', {}, [file.name ?? file.filename]))
+  );
+};
 
 window.addEventListener('load', e => {
   console.log('upload.js loaded!');
@@ -35,7 +39,7 @@ window.addEventListener('load', e => {
   let drop = document.querySelector('#drop-area');
   let preact = document.querySelector('#preact');
 
-  render(h(FileList, { files:fileList}, []), preact);
+  render(h(FileList, { files: fileList }, []), preact);
 
   drop.addEventListener('click', e => {
     console.log('drop.click', e);
@@ -46,7 +50,7 @@ window.addEventListener('load', e => {
   input.addEventListener('change', e => {
     const { target } = e;
     let { files } = target;
-    fileList(files = [...files]);
+    fileList((files = [...files]));
     e.preventDefault();
     setLabel(`${fileList.length} Fotos ausgew&auml;hlt`);
 
@@ -134,8 +138,8 @@ function CreateWS() {
       switch (command.type) {
         case 'uuid':
           uuid = command.data;
-                console.log('UUID', uuid);
-    break;
+          console.log('UUID', uuid);
+          break;
         case 'progress':
           const { done, total } = command;
           progress = done;
@@ -155,16 +159,16 @@ function CreateWS() {
     }
   };
   ws.onopen = e => {
-  //  console.log('onopen', e);
+    //  console.log('onopen', e);
   };
   ws.onclose = e => {
     globalThis.ws = null;
- //   console.log('onclose', e);
+    //   console.log('onclose', e);
     restart();
   };
   ws.onerror = e => {
     globalThis.ws = null;
-  //  console.log('onerror', e);
+    //  console.log('onerror', e);
     restart();
   };
 }
