@@ -11,6 +11,8 @@ const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '01
 
 let uuid, input;
 
+let fileList=[];
+
 Object.assign(globalThis, { isElement, createElement, React, dom, geom, transformation });
 Object.assign(globalThis, { DragArea, DropArea, Card, List, RUG, FileAction });
 
@@ -33,9 +35,9 @@ window.addEventListener('load', e => {
   input.addEventListener('change', e => {
     const { target } = e;
     let { files } = target;
-    globalThis.files = files = [...files];
+    fileList = globalThis.fileList=files = [...files];
     e.preventDefault();
-    setLabel(`${files.length} files selected`);
+    setLabel(`${fileList.length} files selected`);
 
     UploadFiles(files)
       .catch(err => {
@@ -118,15 +120,17 @@ function CreateWS() {
 
     if(typeof data == 'string') {
       let command = JSON.parse(data);
-      console.log('onmessage', command);
       switch (command.type) {
         case 'uuid':
           uuid = command.data;
           break;
         case 'upload':
-          const { type, filename, exif, storage } = command;
-
+          const { address,thumbnail, uploaded, filename, exif, storage } = command;
+console.log('upload', { address,thumbnail, uploaded, filename, exif, storage });
           break;
+          default:       console.log('onmessage', command);
+
+break;
       }
     }
   };

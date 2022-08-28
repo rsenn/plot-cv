@@ -1,10 +1,11 @@
-import { Link,OLMap,TileLayer,XYZ,View,Point, Feature, VectorLayer, VectorSource,ZoomSlider, LineString, transform } from './lib/ol.js';
+import { Link, OLMap, TileLayer, XYZ, View, Point, Feature, VectorLayer, VectorSource, ZoomSlider, LineString, transform } from './lib/ol.js';
 import { ObjectWrapper, BiDirMap } from './object-helpers.js';
 import { define, isObject, isFunction, isInstanceOf, ArrayFacade } from './lib/misc.js';
 import { add, closestOnCircle, closestOnSegment, createStringXY, degreesToStringHDMS, format, equals, rotate, scale, squaredDistance, distance, squaredDistanceToSegment, toStringHDMS, toStringXY, wrapX, getWorldsAway } from './openlayers/src/ol/coordinate.js';
-import { Attribution, Control, FullScreen, MousePosition, OverviewMap, Rotate, ScaleLine, Zoom,  ZoomToExtent, defaults } from './openlayers/src/ol/control.js';
+import { Attribution, Control, FullScreen, MousePosition, OverviewMap, Rotate, ScaleLine, Zoom, ZoomToExtent, defaults } from './openlayers/src/ol/control.js';
 import { Layer as HTMLLayer } from './lib/dom/layer.js';
 import LayerSwitcher /* , { BaseLayerOptions, GroupLayerOptions }*/ from './lib/ol-layerswitcher.js';
+import { default as Polygon,   fromExtent as polygonFromExtent } from './openlayers/src/ol/geom/Polygon.js'
 
 export function TransformCoordinates(...args) {
   if(args.length == 2) return transform(args, 'EPSG:4326', 'EPSG:3857');
@@ -166,12 +167,12 @@ export class OpenlayersMap {
     let map = new OLMap({
       target,
       controls: [
-new ZoomSlider(),
- new LayerSwitcher({
-    reverse: true,
-    groupSelectStyle: 'group'
-  })
-],
+        new ZoomSlider(),
+        new LayerSwitcher({
+          reverse: true,
+          groupSelectStyle: 'group'
+        })
+      ],
       layers: [
         new TileLayer({
           title: 'OSM',
@@ -226,7 +227,7 @@ new ZoomSlider(),
         extent: TransformCoordinates([5.9962, 45.8389, 10.5226, 47.8229])
       })
     });
-    map.addInteraction(new Link({ animate: true,prefix: 'm' }));
+    map.addInteraction(new Link({ animate: true, prefix: 'm' }));
 
     return map;
   }

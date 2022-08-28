@@ -98,7 +98,7 @@ function MagickResize(src, dst, rotate = 0) {
   console.log('MagickResize', src, dst);
   let [rd, stdout] = os.pipe();
 
-  os.exec(['convert-im6.q16', src, '-resize', 'x256', ...(rotate ? ['-rotate', '-' + rotate] : []), dst], { stdout });
+  os.exec(['convert-im6.q16', src, '-resize', 'x256', ...(rotate ? ['-rotate', '-' + rotate] : []), dst], { stdout,stderr:stdout });
   os.close(stdout);
 
   let out = fs.readAllSync(rd);
@@ -208,7 +208,7 @@ function main(...args) {
     const out = s => logFile.puts(s + '\n');
     setLog((params.debug ? LLL_USER : 0) | (((params.debug ? LLL_NOTICE : LLL_WARN) << 1) - 1), (level, message) => {
       if(/__lws/.test(message)) return;
-      if(/(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|writable|WRITEABLE|_BODY[^_])/.test(message)) return;
+      if(/(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|_BODY[^_])/.test(message)) return;
 
       if(params.debug || level <= LLL_WARN)
         out(
@@ -451,9 +451,9 @@ function main(...args) {
           fp = new FormParser(ws, ['files', 'uuid'], {
             chunkSize: 8192 /** 256*/,
             onOpen(name, filename) {
-              /* if(this.file) {
+               if(this.file) {
                 this.onclose.call(this, name);
-              }*/
+              } 
 
               this.name = name;
               this.filename = filename;
@@ -461,7 +461,7 @@ function main(...args) {
 
               this.file = fs.openSync((this.temp = 'uploads/' + (tmpnam = randStr(20) + '.tmp')), 'w+', 0o644);
               hash = new Hash(Hash.TYPE_SHA1);
-              console.log(`onOpen(${name})`, this.temp);
+              console.log(`onOpen(${filename})`, this.temp);
             },
             onContent(name, data) {
               // console.log(`onContent(${this.filename})`,data.byteLength);
@@ -476,6 +476,7 @@ function main(...args) {
             },
 
             onClose(name) {
+              try{
               console.log(`onClose(${this.filename})`, this.uuid);
               let exif, cache, sha1;
               if(hash) {
@@ -516,7 +517,7 @@ function main(...args) {
                     if(fs.existsSync(f('.png'))) obj.png = f('.png');
                   }*/
 
-                  MagickResize(obj.jpg ?? f(ext), f('.thumb.png'), obj.exif.Rotation ?? 0);
+                  MagickResize(obj.jpg ?? f(ext), f('.thumb.png'), obj.exif?.Rotation ?? 0);
                   if(fs.existsSync(f('.thumb.png'))) obj.thumbnail = f('.thumb.png');
 
                   WriteJSON(json, obj);
@@ -529,7 +530,7 @@ function main(...args) {
                   unlink(this.temp);
                   this.temp = null;
                 }
-                this.filename = f(ext);
+                //this.filename = f(ext);
               } /*else {
                 throw new Error('no hash for ' + this.temp);
               }*/
@@ -540,10 +541,14 @@ function main(...args) {
               if(ws2) ws2.sendCommand({ type: 'upload', ...(cache ?? {}), filename, exif });
 
               console.log(`onClose(${this.name})`, filename);
+            }catch(e) {
+                            console.log(`onClose ERROR:`,e.message);
+
+            }
             },
             onFinalize() {
               console.log(`onFinalize() form parser`, this.uuid);
-              resp.body = `done: ${progress} bytes read\r\n`;
+               resp.body = `done: ${progress} bytes read\r\n`;
             }
           });
         }

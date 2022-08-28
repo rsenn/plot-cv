@@ -3,7 +3,7 @@ import { OLMap, View, TileLayer, Layer, Point, Overlay, XYZ, OSM, Feature, Proje
 import LayerSwitcher /* , { BaseLayerOptions, GroupLayerOptions }*/ from './lib/ol-layerswitcher.js';
 import { assert, lazyProperties, define, isObject, memoize, unique, arrayFacade } from './lib/misc.js';
 import { Element } from './lib/dom.js';
-import { TransformCoordinates, Coordinate, Pin, Markers, OpenlayersMap } from './ol-helpers.js'
+import { TransformCoordinates, Coordinate, Pin, Markers, OpenlayersMap } from './ol-helpers.js';
 import { ObjectWrapper, BiDirMap } from './object-helpers.js';
 import { Layer as HTMLLayer } from './lib/dom/layer.js';
 
@@ -78,9 +78,8 @@ function FlyTo(location, done = () => {}) {
   let called = false;
   function callback(complete) {
     --parts;
-    if(called) 
-      return;
-  
+    if(called) return;
+
     if(parts === 0 || !complete) {
       called = true;
       done(complete);
@@ -132,8 +131,6 @@ function Get(feature) {
 }
 
 function CreateMap() {
-  
-
   const positionFeature = new Feature();
   positionFeature.setStyle(
     new Style({
@@ -169,9 +166,9 @@ function CreateMap() {
       })
     })
   });
- 
-  let map =   OpenlayersMap.create( );
-let view=map.getView();
+
+  let map = OpenlayersMap.create();
+  let view = map.getView();
 
   const geolocation = new Geolocation({
     trackingOptions: {
@@ -183,7 +180,7 @@ let view=map.getView();
   geolocation.on('change', function(e) {
     locationDisplay.innerHTML = geolocation.getPosition();
   });
- 
+
   globalThis.markers = Markers.create(map);
 
   globalThis.pins = Object.entries(cities).map(([name, geometry]) =>
@@ -225,13 +222,12 @@ let view=map.getView();
 
   markers.add(hereMarker);
   //map.addLayer(markerLayer);
- 
+
   Object.assign(globalThis, {
-   
     view,
-     map,
+    map,
     extentVector,
-    positionFeature, 
+    positionFeature,
     geolocation
   });
   Object.defineProperties(globalThis, {
