@@ -542,7 +542,7 @@ function main(...args) {
 
                 if(ws2) ws2.sendCommand({ type: 'upload', ...(cache ?? {}), filename, exif });
 
-                console.log(`onClose(${this.name})`, filename);
+                console.log(`onClose(${this.filename})`);
               } catch(e) {
                 console.log(`onClose ERROR:`, e.message);
               }
