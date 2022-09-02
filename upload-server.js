@@ -289,12 +289,14 @@ function main(...args) {
         function* files(req, resp) {
           let { body, headers, json } = req;
 
-          const data = json ? json : JSON.parse(body ?? '{}');
+          console.log('body', body);
+
+          const data = {}; //json ? json : JSON.parse(body ?? '{}');
           resp.type = 'application/json';
           let {
             dirs = defaultDirs,
             filter = '[^.].*' ?? '.(brd|sch|G[A-Z][A-Z])$',
-            verbose = true,
+            verbose = false,
             objects = true,
             key = 'mtime',
             limit = null
@@ -427,7 +429,7 @@ function main(...args) {
 
         if(req.url.path.endsWith('files')) {
           resp.type = 'application/json';
-        }
+        } else
 
         if(req.method != 'GET') {
           let fp,

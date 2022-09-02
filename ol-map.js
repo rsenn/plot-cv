@@ -1,11 +1,15 @@
 import { OLMap, View, TileLayer, Layer, Point, Overlay, XYZ, OSM, Feature, Projection, VectorLayer, VectorSource, MultiPoint, Polygon, LineString, Geolocation, GeoJSON, composeCssTransform, Icon, Fill, fromLonLat, ZoomSlider, addCoordinateTransforms, getVectorContext, transform, Style, Stroke, CircleStyle, RegularShape, addProjection, LayerGroup } from './lib/ol.js';
-
 import LayerSwitcher /* , { BaseLayerOptions, GroupLayerOptions }*/ from './lib/ol-layerswitcher.js';
 import { assert, lazyProperties, define, isObject, memoize, unique, arrayFacade } from './lib/misc.js';
 import { Element } from './lib/dom.js';
-import { TransformCoordinates, Coordinate, Pin, Markers, OpenlayersMap } from './ol-helpers.js';
+import { add, closestOnCircle, closestOnSegment, createStringXY, degreesToStringHDMS, format, equals, rotate, scale, squaredDistance, distance, squaredDistanceToSegment, toStringHDMS, toStringXY, wrapX, getWorldsAway } from './openlayers/src/ol/coordinate.js'
+
+import {  toLonLat, equivalent, getTransformFromProjections, getTransform, transformExtent, transformWithProjections, setUserProjection, clearUserProjection, getUserProjection, useGeographic, toUserCoordinate, fromUserCoordinate, toUserExtent, fromUserExtent, toUserResolution, fromUserResolution, createSafeCoordinateTransform, addCommon } from './openlayers/src/ol/proj.js'
+
+import { TransformCoordinates, Coordinate, Pin, Markers, OpenlayersMap, Popup } from './ol-helpers.js';
 import { ObjectWrapper, BiDirMap } from './object-helpers.js';
 import { Layer as HTMLLayer } from './lib/dom/layer.js';
+import { h, forwardRef, Fragment, React, ReactComponent, Portal, toChildArray } from './lib/dom/preactComponent.js';
 
 let data = (globalThis.data = []);
 let center = (globalThis.center = transform([7.454281, 46.96453], 'EPSG:4326', 'EPSG:3857'));
@@ -240,6 +244,18 @@ function CreateMap() {
       }
     }
   });
+
+
+/**
+ * Add a click handler to the map to render the popup.
+ */
+map.on('singleclick', function (evt) {
+  const coordinate = evt.coordinate;
+  const hdms = toStringHDMS(toLonLat(coordinate));
+globalThis.evt=evt;
+  //content.innerHTML = '<p>You clicked here:</p><code>' + hdms + '</code>';
+  overlay.setPosition(coordinate);
+});
   return map;
 }
 
@@ -287,13 +303,21 @@ Object.assign(globalThis, {
   BiDirMap,
   Markers,
   Pin,
+  Popup,
   assert,
   lazyProperties,
   define,
   isObject,
   memoize,
   unique,
-  HTMLLayer
+  HTMLLayer,
+  h,
+  forwardRef,
+  Fragment,
+  React,
+  ReactComponent,
+  Portal,
+  toChildArray
 });
 
 CreateMap();
