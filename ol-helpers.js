@@ -170,7 +170,7 @@ export class Popup {
   static from = ObjectWrapper((...args) => new Popup(...args), Popup.prototype);
 
   static create(content, offset = [0, 0], position, positioning = 'center-center') {
-    let layer = new HTMLLayer('div', { class: 'ol-popup' }, document.body);
+    let layer = new HTMLLayer('div', { class: 'ol-popup' });
     let { elm: element } = layer;
 
     let component = h(Fragment, {}, [
@@ -179,17 +179,20 @@ export class Popup {
         id: 'popup-closer',
         class: 'ol-popup-closer'
       }),
-      h('div', {
-        class: 'popup-content'
-      }, toChildArray(content))
+      h(
+        'div',
+        {
+          class: 'popup-content'
+        },
+        toChildArray(content)
+      )
     ]);
 
     layer.render(component);
 
     let overlay = new Overlay({ element, offset, position, positioning });
 
-    if(globalThis.map)
-      globalThis.map.addOverlay(overlay);
+    if(globalThis.map) globalThis.map.addOverlay(overlay);
 
     return Object.assign(Popup.from(overlay), { layer, component, content });
   }

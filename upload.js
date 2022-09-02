@@ -9,6 +9,7 @@ import { useTrkl } from './lib/hooks/useTrkl.js';
 import trkl from './lib/trkl.js';
 import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
 import { ParseCoordinates, TransformCoordinates, Coordinate, Pin, Markers, OpenlayersMap } from './ol-helpers.js';
+import { Layer as HTMLLayer } from './lib/dom/layer.js';
 
 const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 
@@ -118,39 +119,57 @@ window.addEventListener('load', e => {
   drop = document.querySelector('#drop-area');
   let preact = document.querySelector('#preact');
 
-  render(h(FileList, { files: fileList, ref: (globalThis.listElem = createRef()) }, []), preact);
+  try {
+    render(h(FileList, { files: fileList, ref: (globalThis.listElem = createRef()) }, []), preact);
+  } catch(e) {
+    console.log('Render ERROR:', e.message);
+  }
+  try {
+    drop.addEventListener('click', e => {
+      console.log('drop.click', e);
+      globalThis.e = e;
 
-  drop.addEventListener('click', e => {
-    console.log('drop.click', e);
+      if(input) input.click(e);
+    });
+    drop.addEventListener('drop', e => {
+      console.log('drop.drop', e);
+      e.preventDefault();
+      return false;
+    });
+  } catch(e) {
+    console.log('drop ERROR:', e.message);
+  }
+  try {
+    input.addEventListener('change', e => {
+      const { target } = e;
+      let { files } = target;
+      fileList((files = [...files]));
+      e.preventDefault();
+      setLabel(`${fileList.length} Fotos ausgew&auml;hlt`);
 
-    input.click(e);
-  });
+      UploadFiles(files)
+        .catch(err => {
+          console.log('UploadFiles ERROR:', err);
+        })
+        .then(resp => {
+          console.log('UploadFiles response:', resp);
+        });
+      return false;
+    });
+  } catch(e) {
+    console.log('input ERROR:', e.message);
+  }
+  try {
+    form.addEventListener('submit', e => {
+      console.log('form.submit', e);
+      e.preventDefault();
 
-  input.addEventListener('change', e => {
-    const { target } = e;
-    let { files } = target;
-    fileList((files = [...files]));
-    e.preventDefault();
-    setLabel(`${fileList.length} Fotos ausgew&auml;hlt`);
-
-    UploadFiles(files)
-      .catch(err => {
-        console.log('UploadFiles ERROR:', err);
-      })
-      .then(resp => {
-        console.log('UploadFiles response:', resp);
-      });
-    return false;
-  });
-
-  form.addEventListener('submit', e => {
-    console.log('form.submit', e);
-    e.preventDefault();
-
-    UploadFiles();
-    return false;
-  });
-
+      UploadFiles();
+      return false;
+    });
+  } catch(e) {
+    console.log('submit ERROR:', e.message);
+  }
   input ??= document.querySelector('input[type=file]');
   /*  input.addEventListener('change', e => {
     const { srcElement, target } = e;
@@ -233,10 +252,11 @@ function CreateWS() {
       switch (command.type) {
         case 'uuid':
           uuid = command.data;
-          input.disabled = false;
-          drop.style.filter = '';
-          drop.style.opacity = '';
-
+          if(input) input.disabled = false;
+          if(drop) {
+            drop.style.filter = '';
+            drop.style.opacity = '';
+          }
           console.log('UUID', uuid);
           break;
         case 'progress':

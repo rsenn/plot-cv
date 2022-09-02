@@ -429,9 +429,7 @@ function main(...args) {
 
         if(req.url.path.endsWith('files')) {
           resp.type = 'application/json';
-        } else
-
-        if(req.method != 'GET') {
+        } else if(req.method != 'GET') {
           let fp,
             hash,
             tmpnam,

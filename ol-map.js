@@ -2,9 +2,9 @@ import { OLMap, View, TileLayer, Layer, Point, Overlay, XYZ, OSM, Feature, Proje
 import LayerSwitcher /* , { BaseLayerOptions, GroupLayerOptions }*/ from './lib/ol-layerswitcher.js';
 import { assert, lazyProperties, define, isObject, memoize, unique, arrayFacade } from './lib/misc.js';
 import { Element } from './lib/dom.js';
-import { add, closestOnCircle, closestOnSegment, createStringXY, degreesToStringHDMS, format, equals, rotate, scale, squaredDistance, distance, squaredDistanceToSegment, toStringHDMS, toStringXY, wrapX, getWorldsAway } from './openlayers/src/ol/coordinate.js'
+import { add, closestOnCircle, closestOnSegment, createStringXY, degreesToStringHDMS, format, equals, rotate, scale, squaredDistance, distance, squaredDistanceToSegment, toStringHDMS, toStringXY, wrapX, getWorldsAway } from './openlayers/src/ol/coordinate.js';
 
-import {  toLonLat, equivalent, getTransformFromProjections, getTransform, transformExtent, transformWithProjections, setUserProjection, clearUserProjection, getUserProjection, useGeographic, toUserCoordinate, fromUserCoordinate, toUserExtent, fromUserExtent, toUserResolution, fromUserResolution, createSafeCoordinateTransform, addCommon } from './openlayers/src/ol/proj.js'
+import { toLonLat, equivalent, getTransformFromProjections, getTransform, transformExtent, transformWithProjections, setUserProjection, clearUserProjection, getUserProjection, useGeographic, toUserCoordinate, fromUserCoordinate, toUserExtent, fromUserExtent, toUserResolution, fromUserResolution, createSafeCoordinateTransform, addCommon } from './openlayers/src/ol/proj.js';
 
 import { TransformCoordinates, Coordinate, Pin, Markers, OpenlayersMap, Popup } from './ol-helpers.js';
 import { ObjectWrapper, BiDirMap } from './object-helpers.js';
@@ -245,17 +245,26 @@ function CreateMap() {
     }
   });
 
+  let popup;
+  // = Popup.create(h(Fragment, {}, ['blah']), [0, 0], cities.hinterkappelen);
 
-/**
- * Add a click handler to the map to render the popup.
- */
-map.on('singleclick', function (evt) {
-  const coordinate = evt.coordinate;
-  const hdms = toStringHDMS(toLonLat(coordinate));
-globalThis.evt=evt;
-  //content.innerHTML = '<p>You clicked here:</p><code>' + hdms + '</code>';
-  overlay.setPosition(coordinate);
-});
+  /**
+   * Add a click handler to the map to render the popup.
+   */
+  map.on('singleclick', function(evt) {
+    const coordinate = evt.coordinate;
+    const hdms = toStringHDMS(toLonLat(coordinate));
+    globalThis.evt = evt;
+
+    console.log('Clicked at ' + coordinate);
+
+    let features = (globalThis.features = map.getFeaturesAtPixel(evt.pixel_));
+
+    if(features && features.length) console.log('features', features);
+    //content.innerHTML = '<p>You clicked here:</p><code>' + hdms + '</code>';
+
+    if(popup?.overlay) popup.overlay.setPosition(coordinate);
+  });
   return map;
 }
 
