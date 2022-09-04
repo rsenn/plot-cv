@@ -3,7 +3,6 @@ import * as util from './lib/misc.js';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
 import * as fs from 'fs';
-
 import { log, EagleDocument, Renderer, EagleProject } from './lib/eagle.js';
 import require from 'require';
 import { Console } from 'console';
@@ -70,7 +69,7 @@ function render(doc, filename) {
 
 function main(...args) {
   globalThis.console = new Console({
-    inspectOptions: { maxArrayLength: 100, colors: true, depth: Infinity, compact: 1, customInspect: true }
+    inspectOptions: { maxArrayLength: 100, colors: true, depth: 10, compact: 1, customInspect: true }
   });
   console.log('args', args);
 
@@ -95,5 +94,4 @@ try {
   main(...scriptArgs.slice(1));
 } catch(error) {
   console.log(`FAIL: ${error.message}\n${error.stack}`);
-  std.exit(1);
 }

@@ -19,7 +19,7 @@ import { GetExponent, GetMantissa, ValueToNumber, NumberToValue } from './lib/ed
 import { GetMultipliers, GetFactor, GetColorBands, PartScales, digit2color } from './lib/eda/colorCoding.js';
 import { UnitForName } from './lib/eda/units.js';
 import CircuitJS from './lib/eda/circuitjs.js';
-import { atexit, className, define, extendArray, getOpt, glob, GLOB_BRACE, intersect, isObject, memoize, range, unique } from 'util';
+import { className, define, extendArray, getOpt, glob, GLOB_BRACE, intersect, isObject, memoize, range, unique } from 'util';
 import { HSLA, isHSLA, ImmutableHSLA, RGBA, isRGBA, ImmutableRGBA, ColoredText } from './lib/color.js';
 import { scientific, num2color, GetParts, GetInstances, GetPositions, GetElements } from './eagle-commands.js';
 import { Edge, Graph, Node } from './lib/geom/graph.js';

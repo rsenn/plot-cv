@@ -265,6 +265,12 @@ function CreateMap() {
 
     if(popup?.overlay) popup.overlay.setPosition(coordinate);
   });
+
+  fetch('uploads').then(async response => {
+    let json = await response.json();
+    globalThis.uploads = json.filter(u => u.exif.GPSPosition);
+  });
+
   return map;
 }
 

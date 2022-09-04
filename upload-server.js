@@ -24,6 +24,14 @@ const defaultDirs = [
   ['/home/roman/Bilder', new RegExp('.(jpg|jpeg|png|heic|tif|tiff)$', 'i')]
 ];
 
+const allowedDirs = defaultDirs.map(dd => GetDir(Array.isArray(dd) ? dd[0] : dd)).map(d => path.resolve(d));
+
+function GetDir(dir) {
+  let a = path.toArray(dir);
+  let i = a.findIndex(n => /[*{}]/.test(n));
+  return i != -1 ? path.slice(dir, 0, i) : dir;
+}
+
 function ReadExiv2(file) {
   console.log('ReadExiv2', file);
   let [rdf, stdout] = os.pipe();
@@ -101,7 +109,11 @@ function MagickResize(src, dst, rotate = 0, width, height) {
 function main(...args) {
   const base = path.basename(scriptArgs[0], '.js').replace(/\.[a-z]*$/, '');
   const config = ReadJSON(`.${base}-config`) ?? {};
-  globalThis.console = new Console({ inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 200 } });
+
+  console.log('allowedDirs', allowedDirs);
+  globalThis.console = new Console({
+    inspectOptions: { compact: 2, depth: Infinity, customInspect: true, maxArrayLength: 200 }
+  });
   let params = getOpt(
     {
       verbose: [false, (a, v) => (v | 0) + 1, 'v'],
@@ -167,7 +179,7 @@ function main(...args) {
     std.exit(0);
   };
 
-  repl.inspectOptions = { ...(repl.inspectOptions ?? console.options), depth: 4, compact: false };
+  repl.inspectOptions = { ...(repl.inspectOptions ?? console.options), depth: Infinity, compact: false };
 
   console.log = (...args) => repl.printStatus(() => log(console.config(repl.inspectOptions), ...args));
 
@@ -199,7 +211,12 @@ function main(...args) {
     const out = s => logFile.puts(s + '\n');
     setLog((params.debug ? LLL_USER : 0) | (((params.debug ? LLL_NOTICE : LLL_WARN) << 1) - 1), (level, message) => {
       if(/__lws/.test(message)) return;
-      if(/(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|_BODY[^_])/.test(message)) return;
+      if(
+        /(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|HTTP_WRITEABLE|SERVER-HTTP.*writable|_BODY[^_])/.test(
+          message
+        )
+      )
+        return;
 
       if(params.debug || level <= LLL_WARN)
         out(
@@ -270,11 +287,24 @@ function main(...args) {
           console.log('proxy', { status, ok, url, type });
         },
         function* file(req, resp) {
-          let { body, headers, json } = req;
+          let { body, headers, json, url } = req;
+          let { query } = url;
 
-          const data = json ? json : JSON.parse(body ?? '{}');
+          if(typeof body == 'string') query = { ...query, ...(JSON.parse(body) ?? {}) };
 
-          let { action = 'load', charset = 'utf-8', binary = false, file, contents } = data;
+          console.log('*file', { query, body });
+
+          let { action = 'load', charset = 'utf-8', binary = false, file, contents } = query;
+
+          file = path.collapse(file);
+
+          //    console.log(`allowed:`, allowedDirs.map(dir => path.isin(file, dir)));
+          let allowed = allowedDirs.some(dir => path.isin(file, dir));
+
+          if(!allowed) {
+            console.log(`Not allowed: '${file}'`);
+            throw new Error(`Not allowed: '${file}'`);
+          }
 
           switch (action) {
             case 'load':
@@ -285,6 +315,20 @@ function main(...args) {
               yield 'done!\r\n';
               break;
           }
+        },
+        function* uploads(req, resp) {
+          resp.type = 'application/json';
+          console.log('uploads', req, resp);
+          console.log('req.url', req.url);
+          console.log('req.url.query', req.url.query);
+          let result = [];
+
+          for(let entry of glob('uploads/*.json')) {
+            let json = ReadJSON(entry);
+            result.push(json);
+          }
+
+          yield JSON.stringify(result);
         },
         function* files(req, resp) {
           let { body, headers, json } = req;
@@ -403,8 +447,8 @@ function main(...args) {
         connections.add(ws);
         if(!req.url || req.url.path.endsWith('uploads')) {
         } else {
-          return callbacks.onConnect(ws, req);
         }
+        if(callbacks.onConnect) return callbacks.onConnect(ws, req);
       },
       onClose(ws, reason) {
         connections.delete(ws);
@@ -424,6 +468,7 @@ function main(...args) {
         }
       },*/
       onHttp(ws, req, resp) {
+        console.log('onHttp', { req });
         const { peer, address, port } = ws;
         const { method, headers } = req;
 
