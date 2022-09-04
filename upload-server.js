@@ -18,11 +18,7 @@ import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
 globalThis.fs = fs;
 const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 
-const defaultDirs = [
-  './uploads/*.{sch,brd,lbr}',
-  '/mnt/extext/Photos/*APPLE/*.{JPG,PNG,GIF,AAE,MOV,HEIC,MP4,WEBP}',
-  ['/home/roman/Bilder', new RegExp('.(jpg|jpeg|png|heic|tif|tiff)$', 'i')]
-];
+const defaultDirs = ['./uploads/*.{sch,brd,lbr}', '/mnt/extext/Photos/*APPLE/*.{JPG,PNG,GIF,AAE,MOV,HEIC,MP4,WEBP}', ['/home/roman/Bilder', new RegExp('.(jpg|jpeg|png|heic|tif|tiff)$', 'i')]];
 
 const allowedDirs = defaultDirs.map(dd => GetDir(Array.isArray(dd) ? dd[0] : dd)).map(d => path.resolve(d));
 
@@ -91,13 +87,10 @@ function MagickResize(src, dst, rotate = 0, width, height) {
   console.log('MagickResize', { width, height, dst, rotate });
   let [rd, stdout] = os.pipe();
 
-  os.exec(
-    ['convert-im6.q16', src, '-resize', width + 'x' + height, ...(rotate ? ['-rotate', '-' + rotate] : []), dst],
-    {
-      stdout,
-      stderr: stdout
-    }
-  );
+  os.exec(['convert-im6.q16', src, '-resize', width + 'x' + height, ...(rotate ? ['-rotate', '-' + rotate] : []), dst], {
+    stdout,
+    stderr: stdout
+  });
   os.close(stdout);
 
   let out = fs.readAllSync(rd);
@@ -134,12 +127,7 @@ function main(...args) {
   );
   if(params['no-tls'] === true) params.tls = false;
 
-  const {
-    address = '0.0.0.0',
-    port = 8999,
-    'ssl-cert': sslCert = 'localhost.crt',
-    'ssl-private-key': sslPrivateKey = 'localhost.key'
-  } = params;
+  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key' } = params;
   const listen = params.connect && !params.listen ? false : true;
   const is_server = !params.client || params.server;
 
@@ -211,32 +199,9 @@ function main(...args) {
     const out = s => logFile.puts(s + '\n');
     setLog((params.debug ? LLL_USER : 0) | (((params.debug ? LLL_NOTICE : LLL_WARN) << 1) - 1), (level, message) => {
       if(/__lws/.test(message)) return;
-      if(
-        /(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|HTTP_WRITEABLE|SERVER-HTTP.*writable|_BODY[^_])/.test(
-          message
-        )
-      )
-        return;
+      if(/(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|HTTP_WRITEABLE|SERVER-HTTP.*writable|_BODY[^_])/.test(message)) return;
 
-      if(params.debug || level <= LLL_WARN)
-        out(
-          (
-            [
-              'ERR',
-              'WARN',
-              'NOTICE',
-              'INFO',
-              'DEBUG',
-              'PARSER',
-              'HEADER',
-              'EXT',
-              'CLIENT',
-              'LATENCY',
-              'MINNET',
-              'THREAD'
-            ][Math.log2(level)] ?? level + ''
-          ).padEnd(8) + message.replace(/\n/g, '\\n')
-        );
+      if(params.debug || level <= LLL_WARN) out((['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8) + message.replace(/\n/g, '\\n'));
     });
 
     return [client, server][+listen]({
@@ -337,14 +302,7 @@ function main(...args) {
 
           const data = {}; //json ? json : JSON.parse(body ?? '{}');
           resp.type = 'application/json';
-          let {
-            dirs = defaultDirs,
-            filter = '[^.].*' ?? '.(brd|sch|G[A-Z][A-Z])$',
-            verbose = false,
-            objects = true,
-            key = 'mtime',
-            limit = null
-          } = data ?? {};
+          let { dirs = defaultDirs, filter = '[^.].*' ?? '.(brd|sch|G[A-Z][A-Z])$', verbose = false, objects = true, key = 'mtime', limit = null } = data ?? {};
           let results = [];
           for(let dir of dirs) {
             let st,

@@ -65,16 +65,7 @@ const PropertyList = ({ data, filter, ...props }) => {
   /*let filter= useTrkl(props.filter);*/
   let rows = Array.isArray(data) ? data : data.entries ? [...data.entries()] : Object.entries(data);
   if(filter) rows = rows.filter(filter);
-  rows = prioritySort(rows, [
-    ([k, v]) => /GPSPos/.test(k),
-    ([k, v]) => /GPS/.test(k),
-    ([k, v]) => /Orientation/.test(k),
-    ([k, v]) => /ImageSize/.test(k),
-    ([k, v]) => /FileSize/.test(k),
-    ([k, v]) => /Model/.test(k),
-    ([k, v]) => /Megapixels/.test(k),
-    ([k, v]) => /.*/.test(k)
-  ]);
+  rows = prioritySort(rows, [([k, v]) => /GPSPos/.test(k), ([k, v]) => /GPS/.test(k), ([k, v]) => /Orientation/.test(k), ([k, v]) => /ImageSize/.test(k), ([k, v]) => /FileSize/.test(k), ([k, v]) => /Model/.test(k), ([k, v]) => /Megapixels/.test(k), ([k, v]) => /.*/.test(k)]);
   return h('div', { class: 'property-list' }, [h(Table, { rows })]);
 };
 
@@ -94,9 +85,7 @@ const FileItem = ({ file, ref, ...props }) => {
       data: upload?.exif ?? {},
       filter: ([k, v]) =>
         /*        /^(Make|Model|GPS|Date|Created|FileSize|Flash|Focal|Distance|ISO|Exposure|Lens|Shutter|White|FNumber|Aperture|Megapixels)/.test(
-         */ /^(Orientation|ImageSize|Model|GPS(Position|DestBearing|GPSSpeed|GPSSpeedRef|ImgDir)|DateTimeOriginal|FileSize|Flash$|Distance|ISO|ExposureTime|Lens(Info)|FocalLength$|ShutterSpeed|ApertureValue|Megapixels)/.test(
-          k
-        )
+         */ /^(Orientation|ImageSize|Model|GPS(Position|DestBearing|GPSSpeed|GPSSpeedRef|ImgDir)|DateTimeOriginal|FileSize|Flash$|Distance|ISO|ExposureTime|Lens(Info)|FocalLength$|ShutterSpeed|ApertureValue|Megapixels)/.test(k)
     }),
     /*,
      */ h('img', upload?.thumbnail ? { src: upload.thumbnail } : {})
@@ -232,9 +221,7 @@ function UploadDone(upload) {
 }
 
 function CreateWS() {
-  let ws = (globalThis.ws ??= new WebSocket(
-    document.location.href.replace(/\/[^/]*$/, '/uploads').replace(/^http/, 'ws')
-  ));
+  let ws = (globalThis.ws ??= new WebSocket(document.location.href.replace(/\/[^/]*$/, '/uploads').replace(/^http/, 'ws')));
   console.log('CreateWS', ws);
   let tid;
   const restart = (delay = 10) => {

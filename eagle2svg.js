@@ -50,14 +50,11 @@ function render(doc, filename) {
     console.log('STACK:', e.stack);
   }
   console.log('renderer.palette', renderer.palette);
+  console.log('str', str);
 
   let xml = fromXML(str);
 
-  filename ??=
-    path.basename(doc.filename, '.' + doc.type) +
-    '-' +
-    { sch: 'schematic', brd: 'board', lbr: 'library' }[doc.type] +
-    '.svg';
+  filename ??= path.basename(doc.filename, '.' + doc.type) + '-' + { sch: 'schematic', brd: 'board', lbr: 'library' }[doc.type] + '.svg';
 
   if(filename) {
     let ret;
