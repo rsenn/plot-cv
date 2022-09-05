@@ -331,9 +331,10 @@ function main(...args) {
           yield JSON.stringify(result);
         },
         function* files(req, resp) {
-          let { body, headers, json } = req;
+          let { body, headers, json, url } = req;
+          let { query } = url;
 
-          console.log('body', body);
+          console.log('*files', { body, query });
 
           const data = {}; //json ? json : JSON.parse(body ?? '{}');
           resp.type = 'application/json';
