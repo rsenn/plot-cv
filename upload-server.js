@@ -212,7 +212,7 @@ function main(...args) {
     setLog((params.debug ? LLL_USER : 0) | (((params.debug ? LLL_NOTICE : LLL_WARN) << 1) - 1), (level, message) => {
       if(/__lws/.test(message)) return;
       if(
-        /(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|HTTP_WRITEABLE|SERVER-HTTP.*writable|_BODY[^_])/.test(
+        /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|HTTP_WRITEABLE|SERVER-HTTP.*writable|_BODY[^_])/.test(
           message
         )
       )
