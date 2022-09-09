@@ -500,7 +500,12 @@ function CreateMap() {
       url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
     })
   });
-
+  const rasterLayer = new TileLayer({
+    source: new XYZ({
+      url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      maxZoom: 19
+    })
+  });
   /*  tileLayer.on('postrender', function(event) {
     const vectorContext = getVectorContext(event);
  
@@ -525,14 +530,25 @@ function CreateMap() {
 
   let map = new OLMap({
     target: 'mapdiv',
-    layers: [tileLayer, vector],
+    layers: [tileLayer, rasterLayer /*,vector*/],
     view
   });
 
   const zoomslider = new ZoomSlider();
   map.addControl(zoomslider);
 
-  Object.assign(globalThis, { view, vector, map, extentVector, lineString, feature, stroke, positionFeature });
+  Object.assign(globalThis, {
+    tileLayer,
+    rasterLayer,
+    view,
+    vector,
+    map,
+    extentVector,
+    lineString,
+    feature,
+    stroke,
+    positionFeature
+  });
   Object.defineProperties(globalThis, {
     zoom: {
       get() {
@@ -701,7 +717,7 @@ window.addEventListener('load', () => {
     console.log('Connected');
     ws.sendCommand('StatePhases');
   });
-  CreateSlider();
+  ///CreateSlider();
   SetTime(DateToUnix());
   if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
     for(let q of ['#timeline', '.time-display' /*,'.time-scale','.time-row'*/]) {

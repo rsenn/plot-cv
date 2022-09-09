@@ -12,14 +12,14 @@ import REPL from './quickjs/qjs-modules/lib/repl.js';
 import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, Enum, HashList, Multimap, Shash, SortedMap, HashMultimap, MultiBiMap, MultiKeyMap, DenseSpatialHash2D, SpatialHash2D, HashMap, SpatialH, SpatialHash, SpatialHashMap, BoxHash } from './lib/container.js';
 import * as fs from 'fs';
 import { Pointer } from './lib/pointer.js';
-import { read as fromXML, write as toXML } from './lib/xml.js';
+import { read as fromXML, write as writeXML } from './lib/xml.js';
 import inspect from './lib/objectInspect.js';
 import { IfDebug, LogIfDebug, LoadHistory, MapFile, ReadFile, ReadJSON, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator, Filter, FilterImages, StatFiles, CopyToClipboard } from './io-helpers.js';
 import { GetExponent, GetMantissa, ValueToNumber, NumberToValue } from './lib/eda/values.js';
 import { GetMultipliers, GetFactor, GetColorBands, PartScales, digit2color } from './lib/eda/colorCoding.js';
 import { UnitForName } from './lib/eda/units.js';
 import CircuitJS from './lib/eda/circuitjs.js';
-import { atexit, className, define, extendArray, getOpt, glob, GLOB_BRACE, intersect, isObject, memoize, range, unique } from 'util';
+import { className, define, extendArray, getOpt, glob, GLOB_BRACE, intersect, isObject, memoize, range, unique } from 'util';
 import { HSLA, isHSLA, ImmutableHSLA, RGBA, isRGBA, ImmutableRGBA, ColoredText } from './lib/color.js';
 import { scientific, num2color, GetParts, GetInstances, GetPositions, GetElements } from './eagle-commands.js';
 import { Edge, Graph, Node } from './lib/geom/graph.js';
@@ -27,12 +27,23 @@ import { MutableXPath as XPath, parseXPath, ImmutableXPath } from './quickjs/qjs
 import { Predicate } from 'predicate';
 import child_process from 'child_process';
 import { readFileSync } from 'fs';
-import { ReactComponent, Fragment, render } from './lib/dom/preactComponent.js';
+import { ReactComponent, Fragment, render, h, forwardRef, React, toChildArray } from './lib/dom/preactComponent.js';
 import { Table } from './cli-helpers.js';
 import renderToString from './lib/preact-render-to-string.js';
+import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
+
 let cmdhist;
 
 extendArray();
+
+function toXML(obj) {
+  deep.forEach(obj, a => Array.isArray(a.children) && a.children.length == 0 && delete a.children);
+  return writeXML(obj);
+}
+
+function renderToXML(component) {
+  return fromXML(renderToString(component));
+}
 
 function GetFiletime(file, field = 'mtime') {
   let ms = fs.statSync(file)?.[field];
@@ -113,18 +124,29 @@ function render(doc, filename) {
 
   if(filename) {
     let ret;
-    ret = WriteFile(filename, toXML(xml));
+    ret = WriteFile(filename, (str = toXML(xml)));
     console.log(`Saving to '${filename}'...`, ret);
   }
   return str;
 }
 
-function ShowParts() {
+function CollectParts(doc = project.schematic) {
+  return [...doc.parts]
+    .map(e => e.raw.attributes)
+    .filter(attr => !(attr.value === undefined && attr.device === '') || /^IC/.test(attr.name))
+    .map(({ name, deviceset, device, value }) => ({ name, deviceset, device, value: value ?? '-' }));
+}
+
+function ListParts(doc = project.schematic) {
+  let parts = CollectParts(doc);
+  let valueLen = Math.max(...parts.map(p => p.value.length));
+
+  return parts.map(({ name, deviceset, device, value }) => value.padStart(valueLen) + ' ' + device);
+}
+
+function ShowParts(doc = project.schematic) {
   return Table(
-    [...project.schematic.parts]
-      .map(e => e.raw.attributes)
-      .filter(attr => !(attr.value === undefined && attr.device==='') || /^IC/.test(attr.name))
-      .map(({ name, deviceset, device, value }) => [name, deviceset, device, value ?? '-']),
+    CollectParts(doc).map(({ name, deviceset, device, value }) => [name, deviceset, device, value ?? '-']),
     ['name', 'deviceset', 'device', 'value']
   );
 }
@@ -291,8 +313,14 @@ function main(...args) {
     unique,
     FindProjects,
     Table,
-    ShowParts
+    CollectParts,
+    ListParts,
+    ShowParts,
+    setDebug
   });
+
+  Object.assign(globalThis, { h, forwardRef, Fragment, React, ReactComponent, toChildArray });
+
   Object.assign(globalThis, {
     load(filename, project = globalThis.project) {
       globalThis.document = new EagleDocument(fs.readFileSync(filename, 'utf-8'), project, filename, null, fs);
@@ -365,6 +393,9 @@ function main(...args) {
       Util.exit(arg ?? 0);
     }
   });
+
+  Object.assign(globalThis, { PrimitiveComponents, ElementNameToComponent, ElementToComponent });
+  Object.assign(globalThis, { renderToString, renderToXML });
 
   cmdhist = `.${base}-cmdhistory`;
 
