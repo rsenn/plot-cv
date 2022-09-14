@@ -10,7 +10,7 @@ import * as Terminal from './terminal.js';
 import * as fs from 'fs';
 import { link, unlink, error } from 'misc';
 import { toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE } from 'util';
-import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server, FormParser, Hash } from 'net';
+import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, client, server, FormParser, Hash } from 'net';
 import { parseDate, dateToObject } from './date-helpers.js';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
@@ -209,12 +209,11 @@ function main(...args) {
     //console.log('createWS', { url, callbacks, listen });
 
     const out = s => logFile.puts(s + '\n');
-    setLog((params.debug ? LLL_USER : 0) | (((params.debug ? LLL_NOTICE : LLL_WARN) << 1) - 1), (level, message) => {
+    setLog((params.debug ? LLL_USER : 0) | (((params.debug ? LLL_INFO : LLL_WARN) << 1) - 1), (level, message) => {
       if(/__lws/.test(message)) return;
+      if(level == LLL_INFO && !/proxy/.test(message)) return;
       if(
-        /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|HTTP_WRITEABLE|SERVER-HTTP.*writable|_BODY[^_])/.test(
-          message
-        )
+        /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|_BODY[^_])/.test(message)
       )
         return;
 
@@ -273,6 +272,9 @@ function main(...args) {
       mounts: [
         ['/', '.', 'upload.html'],
         ['/get', './uploads', ''],
+        ['/warmcat', 'http://warmcat.com/', 'index.html'],
+        ['/distrelec', 'https://www.distrelec.ch/', 'login'],
+        ['/hasura', 'http://wild-beauty.herokuapp.com/v1/', 'graphql'],
         // ['/upload', 'lws-deaddrop', null, 'lws-deaddrop'],
         /*function* upload(arg) {
           console.log('upload', arg);
@@ -469,7 +471,7 @@ function main(...args) {
         }
       },*/
       onHttp(ws, req, resp) {
-        console.log('onHttp', { req });
+        console.log('onHttp', console.config({ compact: 0 }), req);
         const { peer, address, port } = ws;
         const { method, headers } = req;
 
