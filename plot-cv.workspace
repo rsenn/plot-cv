@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Workspace Name="plot-cv">
+	<Project Name="plot-cv" Path="plot-cv.project" Active="No"/>
+	<Project Name="qjs-ffi" Path="quickjs/qjs-ffi/qjs-ffi.project" Active="No"/>
+	<Project Name="qjs-glfw" Path="quickjs/qjs-glfw/qjs-glfw.project" Active="No"/>
+	<Project Name="qjs-imgui" Path="quickjs/qjs-imgui/qjs-imgui.project" Active="No"/>
+	<Project Name="qjs-modules" Path="quickjs/qjs-modules/qjs-modules.project" Active="No"/>
+	<Project Name="qjs-nanovg" Path="quickjs/qjs-nanovg/qjs-nanovg.project" Active="No"/>
+	<Project Name="qjs-net" Path="quickjs/qjs-net/qjs-net.project" Active="No"/>
+	<Project Name="qjs-opencv" Path="qjs-opencv/qjs-opencv.project" Active="No"/>
+	<Project Name="quickjs" Path="quickjs/quickjs.project" Active="No"/>
+	<BuildMatrix>
+		<WorkspaceConfiguration Name="Debug" Selected="yes">
+			<Project Name="plot-cv" ConfigName="Debug"/>
+			<Project Name="qjs-ffi" ConfigName="Debug"/>
+			<Project Name="qjs-glfw" ConfigName="Debug"/>
+			<Project Name="qjs-imgui" ConfigName="Debug"/>
+			<Project Name="qjs-modules" ConfigName="Debug"/>
+			<Project Name="qjs-nanovg" ConfigName="Debug"/>
+			<Project Name="qjs-net" ConfigName="Debug"/>
+			<Project Name="qjs-opencv" ConfigName="Debug"/>
+			<Project Name="quickjs" ConfigName="Debug"/>
+		</WorkspaceConfiguration>
+	</BuildMatrix>
+</CodeLite_Workspace>

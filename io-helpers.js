@@ -32,10 +32,25 @@ export function LogIfDebug(token, loggerFn) {
 
 const debug = LogIfDebug('io-helpers', (...args) => console.log(...args));
 
+export function ReadFd(fd, binary) {
+  let ab = new ArrayBuffer(1024);
+  let out = '';
+  for(;;) {
+    let ret = fs.readSync(fd, ab, 0, 1024);
+
+    if(ret <= 0) break;
+
+    out += toString(ab.slice(0, ret));
+
+    debug(`Read #${fd}: ${ret} bytes`);
+  }
+  return out;
+}
+
 export function ReadFile(name, binary) {
   let ret = fs.readFileSync(name, binary ? null : 'utf-8');
 
-  debug(`Read ${name}: ${ret.length} bytes`);
+  debug(`Read ${name}: ${ret?.byteLength} bytes`);
   return ret;
 }
 
@@ -235,7 +250,7 @@ export function* StatFiles(gen) {
   }
 }
 
-export function ReadFd(fd, bufferSize) {
+/*export function ReadFd(fd, bufferSize) {
   function* FdRead() {
     let ret,
       buf = new ArrayBuffer(bufferSize);
@@ -244,7 +259,7 @@ export function ReadFd(fd, bufferSize) {
     } while(ret > 0);
   }
   return [...FdRead()].reduce((acc, buf) => (acc += toString(buf)), '');
-}
+}*/
 /*
 export function FdReader(fd, bufferSize = 1024) {
   let buf = new ArrayBuffer(bufferSize);

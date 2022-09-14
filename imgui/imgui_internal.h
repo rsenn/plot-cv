@@ -611,20 +611,20 @@ enum ImGuiButtonFlags_ {
   ImGuiButtonFlags_PressedOnRelease = 1 << 3,      // return true on release (default requires click+release)
   ImGuiButtonFlags_PressedOnDoubleClick = 1 << 4,  // return true on double-click (default requires click+release)
   ImGuiButtonFlags_FlattenChildren = 1 << 5,       // allow interactions even if a child window is overlapping
-  ImGuiButtonFlags_AllowItemOverlap = 1 << 6, // require previous frame HoveredId to either match id or be null before being
-                                              // usable, use along with SetItemAllowOverlap()
+  ImGuiButtonFlags_AllowItemOverlap = 1 << 6,  // require previous frame HoveredId to either match id or be null before being
+                                               // usable, use along with SetItemAllowOverlap()
   ImGuiButtonFlags_DontClosePopups = 1 << 7,   // disable automatically closing parent popup on press // [UNUSED]
   ImGuiButtonFlags_Disabled = 1 << 8,          // disable interactions
   ImGuiButtonFlags_AlignTextBaseLine = 1 << 9, // vertically align button to match text baseline - ButtonEx() only // FIXME:
                                                // Should be removed and handled by SmallButton(), not possible currently because
                                                // of DC.CursorPosPrevLine
-  ImGuiButtonFlags_NoKeyModifiers = 1 << 10, // disable interaction if a key modifier is held
+  ImGuiButtonFlags_NoKeyModifiers = 1 << 10,   // disable interaction if a key modifier is held
   ImGuiButtonFlags_NoHoldingActiveID =
       1 << 11, // don't set ActiveId while holding the mouse (ImGuiButtonFlags_PressedOnClick only)
   ImGuiButtonFlags_PressedOnDragDropHold = 1 << 12, // press when held into while we are drag and dropping another item (used by
                                                     // e.g. tree nodes, collapsing headers)
-  ImGuiButtonFlags_NoNavFocus = 1 << 13,    // don't override navigation focus when activated
-  ImGuiButtonFlags_NoHoveredOnNav = 1 << 14 // don't report as hovered when navigated on
+  ImGuiButtonFlags_NoNavFocus = 1 << 13,            // don't override navigation focus when activated
+  ImGuiButtonFlags_NoHoveredOnNav = 1 << 14         // don't report as hovered when navigated on
 };
 
 enum ImGuiSliderFlags_ { ImGuiSliderFlags_None = 0, ImGuiSliderFlags_Vertical = 1 << 0 };
@@ -746,13 +746,13 @@ enum ImGuiNavMoveFlags_ {
   ImGuiNavMoveFlags_None = 0,
   ImGuiNavMoveFlags_LoopX = 1 << 0, // On failed request, restart from opposite side
   ImGuiNavMoveFlags_LoopY = 1 << 1,
-  ImGuiNavMoveFlags_WrapX = 1 << 2,             // On failed request, request from opposite side one line down
-                                                // (when NavDir==right) or one line up (when NavDir==left)
-  ImGuiNavMoveFlags_WrapY = 1 << 3,             // This is not super useful for provided for completeness
-  ImGuiNavMoveFlags_AllowCurrentNavId = 1 << 4, // Allow scoring and considering the current NavId as a move target candidate.
-                                                // This is used when the move source is offset (e.g. pressing PageDown actually
-                                                // needs to send a Up move request, if we are pressing PageDown from the
-                                                // bottom-most item we need to stay in place)
+  ImGuiNavMoveFlags_WrapX = 1 << 2,              // On failed request, request from opposite side one line down
+                                                 // (when NavDir==right) or one line up (when NavDir==left)
+  ImGuiNavMoveFlags_WrapY = 1 << 3,              // This is not super useful for provided for completeness
+  ImGuiNavMoveFlags_AllowCurrentNavId = 1 << 4,  // Allow scoring and considering the current NavId as a move target candidate.
+                                                 // This is used when the move source is offset (e.g. pressing PageDown actually
+                                                 // needs to send a Up move request, if we are pressing PageDown from the
+                                                 // bottom-most item we need to stay in place)
   ImGuiNavMoveFlags_AlsoScoreVisibleSet = 1 << 5 // Store alternate result in NavMoveResultLocalVisibleSet that only comprise
                                                  // elements that are already fully visible.
 };

@@ -6,12 +6,16 @@
     <link rel="stylesheet" type="text/css" href="static/map.css" />
     <link rel="stylesheet" type="text/css" href="static/css/tiny-date-picker.css" />
       <link rel="stylesheet" type="text/css" href="static/css/ol-layerswitcher.css" />
+      <link rel="stylesheet" type="text/css" href="static/css/ol-popup.css" />
      
     <script src="ol-map.js" type="module"></script>
-    <!-- <script src="public/bundle.js"></script> -->
+      <script src="upload.js" type="module"></script>
+  <!-- <script src="public/bundle.js"></script> -->
   </head>
   <body>
+    <div id="drop-area">
     <div id="mapdiv"></div>
+  </div>
     <div id="toolbar">
       <button onclick="(FlyTo('bern'),void(0));">Fly to Bern</button>
       <button onclick="(FlyTo('london'),void(0))">Fly to London</button>
@@ -39,5 +43,7 @@
       </div>
     </div>
     <!--    <div class="notizen"></div> -->
+      <div id="preact"></div>
+
   </body>
 </html>

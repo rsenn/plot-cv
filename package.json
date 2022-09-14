@@ -1,4 +1,4 @@
-  {
+{
   "_moduleAliases": {
     "preact": "lib/dom/preactComponent.js",
     "prop-types": "lib/prop-types.js",
@@ -51,6 +51,7 @@
     "is-bpg": "^0.1.0",
     "isomorphic-fetch": "^3.0.0",
     "module-alias": "^2.2.2",
+    "next": "^12.2.5",
     "node-bpg": "^1.0.0",
     "ol": "^6.15.1",
     "ol-layerswitcher": "https://github.com/walkermatt/ol-layerswitcher",
@@ -61,6 +62,8 @@
     "preact-render-to-string": "^5.1.19",
     "preact-ssr-prepass": "^1",
     "promisify-child-process": "^4.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-sortable-hoc": "^2.0.0",
     "react-upload-gallery": "^0.4.1",
     "regenerator-runtime": "^0.13.9",

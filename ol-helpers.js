@@ -1,4 +1,4 @@
-import { Link, OLMap, TileLayer, XYZ, View, Point, Feature, VectorLayer, VectorSource, ZoomSlider, LineString, transform } from './lib/ol.js';
+import { Link, OLMap, TileLayer, XYZ, View, Point, Feature, VectorLayer, VectorSource, ZoomSlider, LineString, transform, Overlay } from './lib/ol.js';
 import { ObjectWrapper, BiDirMap } from './object-helpers.js';
 import { define, isObject, isFunction, isInstanceOf, ArrayFacade } from './lib/misc.js';
 import { add, closestOnCircle, closestOnSegment, createStringXY, degreesToStringHDMS, format, equals, rotate, scale, squaredDistance, distance, squaredDistanceToSegment, toStringHDMS, toStringXY, wrapX, getWorldsAway } from './openlayers/src/ol/coordinate.js';
@@ -7,6 +7,7 @@ import { Layer as HTMLLayer } from './lib/dom/layer.js';
 import LayerSwitcher /* , { BaseLayerOptions, GroupLayerOptions }*/ from './lib/ol-layerswitcher.js';
 import { default as Polygon, fromExtent as polygonFromExtent } from './openlayers/src/ol/geom/Polygon.js';
 import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
+import { h, forwardRef, Fragment, React, ReactComponent, Portal, toChildArray } from './lib/dom/preactComponent.js';
 
 export function TransformCoordinates(...args) {
   if(args.length == 2) return transform(args, 'EPSG:4326', 'EPSG:3857');
@@ -162,6 +163,51 @@ export class Markers extends ArrayFacade {
       console.log('pin.feature', pin.feature);
       source.addFeature(pin.feature);
     }
+  }
+}
+
+export class Popup {
+  static from = ObjectWrapper((...args) => new Popup(...args), Popup.prototype);
+
+  static create(content, offset = [0, 0], position, positioning = 'center-center') {
+    let layer = new HTMLLayer('div', { class: 'ol-popup' });
+    let { elm: element } = layer;
+
+    let component = h(Fragment, {}, [
+      h('a', {
+        href: '#',
+        id: 'popup-closer',
+        class: 'ol-popup-closer'
+      }),
+      h(
+        'div',
+        {
+          class: 'popup-content'
+        },
+        toChildArray(content)
+      )
+    ]);
+
+    layer.render(component);
+
+    let overlay = new Overlay({ element, offset, position, positioning });
+
+    if(globalThis.map) globalThis.map.addOverlay(overlay);
+
+    return Object.assign(Popup.from(overlay), { layer, component, content });
+  }
+
+  get overlay() {
+    return Popup.from.unwrap(this);
+  }
+
+  get position() {
+    const { overlay } = this;
+    return overlay?.getPosition();
+  }
+  get position() {
+    const { overlay } = this;
+    return overlay?.getPosition();
   }
 }
 

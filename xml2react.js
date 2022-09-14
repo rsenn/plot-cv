@@ -25,7 +25,9 @@ function* xml2h(xml, depth = 0) {
   let sep = ',\n' + '  '.repeat(depth);
   let nl = '\n' + '  '.repeat(depth);
   let separate = it => injectSeparator(it, sep, nl);
-  yield `h('${tagName}', {`;
+
+  if(typeof tagName == 'symbol') yield `h(${tagName.description}, {`;
+  else yield `h('${tagName}', {`;
 
   let i = 0,
     j = 0;
@@ -60,11 +62,23 @@ function main(...args) {
     depth: Infinity
   });
 
+  if(args.length == 0) args = ['/dev/stdin'];
+
   for(let arg of args) {
-    let data = ReadFile(arg);
-    let [doctype, xml] = readXML(data);
+    console.log('arg', arg);
+
+    let data = arg == '/dev/stdin' ? ReadFd(0) : ReadFile(arg);
+
+    console.log('data', data);
+
+    let xml = readXML(data);
 
     console.log('xml', xml);
+
+    if(Array.isArray(xml)) {
+      if(xml.length == 1) xml = xml[0];
+      else if(xml.length > 1) xml = { tagName: Symbol.for('Fragment'), attributes: {}, children: xml };
+    }
 
     let str = '';
     for(let frag of xml2h(xml)) {
@@ -74,4 +88,4 @@ function main(...args) {
   }
 }
 
-main(scriptArgs.slice(1));
+main(...scriptArgs.slice(1));

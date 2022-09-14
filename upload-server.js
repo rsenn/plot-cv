@@ -10,7 +10,7 @@ import * as Terminal from './terminal.js';
 import * as fs from 'fs';
 import { link, unlink, error } from 'misc';
 import { toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE } from 'util';
-import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server, FormParser, Hash } from 'net';
+import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, client, server, FormParser, Hash } from 'net';
 import { parseDate, dateToObject } from './date-helpers.js';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
@@ -23,6 +23,14 @@ const defaultDirs = [
   '/mnt/extext/Photos/*APPLE/*.{JPG,PNG,GIF,AAE,MOV,HEIC,MP4,WEBP}',
   ['/home/roman/Bilder', new RegExp('.(jpg|jpeg|png|heic|tif|tiff)$', 'i')]
 ];
+
+const allowedDirs = defaultDirs.map(dd => GetDir(Array.isArray(dd) ? dd[0] : dd)).map(d => path.resolve(d));
+
+function GetDir(dir) {
+  let a = path.toArray(dir);
+  let i = a.findIndex(n => /[*{}]/.test(n));
+  return i != -1 ? path.slice(dir, 0, i) : dir;
+}
 
 function ReadExiv2(file) {
   console.log('ReadExiv2', file);
@@ -101,7 +109,11 @@ function MagickResize(src, dst, rotate = 0, width, height) {
 function main(...args) {
   const base = path.basename(scriptArgs[0], '.js').replace(/\.[a-z]*$/, '');
   const config = ReadJSON(`.${base}-config`) ?? {};
-  globalThis.console = new Console({ inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 200 } });
+
+  console.log('allowedDirs', allowedDirs);
+  globalThis.console = new Console({
+    inspectOptions: { compact: 2, depth: Infinity, customInspect: true, maxArrayLength: 200 }
+  });
   let params = getOpt(
     {
       verbose: [false, (a, v) => (v | 0) + 1, 'v'],
@@ -167,7 +179,7 @@ function main(...args) {
     std.exit(0);
   };
 
-  repl.inspectOptions = { ...(repl.inspectOptions ?? console.options), depth: 4, compact: false };
+  repl.inspectOptions = { ...(repl.inspectOptions ?? console.options), depth: Infinity, compact: false };
 
   console.log = (...args) => repl.printStatus(() => log(console.config(repl.inspectOptions), ...args));
 
@@ -197,9 +209,13 @@ function main(...args) {
     //console.log('createWS', { url, callbacks, listen });
 
     const out = s => logFile.puts(s + '\n');
-    setLog((params.debug ? LLL_USER : 0) | (((params.debug ? LLL_NOTICE : LLL_WARN) << 1) - 1), (level, message) => {
+    setLog((params.debug ? LLL_USER : 0) | (((params.debug ? LLL_INFO : LLL_WARN) << 1) - 1), (level, message) => {
       if(/__lws/.test(message)) return;
-      if(/(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|_BODY[^_])/.test(message)) return;
+      if(level == LLL_INFO && !/proxy/.test(message)) return;
+      if(
+        /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|_BODY[^_])/.test(message)
+      )
+        return;
 
       if(params.debug || level <= LLL_WARN)
         out(
@@ -256,6 +272,9 @@ function main(...args) {
       mounts: [
         ['/', '.', 'upload.html'],
         ['/get', './uploads', ''],
+        ['/warmcat', 'http://warmcat.com/', 'index.html'],
+        ['/distrelec', 'https://www.distrelec.ch/', 'login'],
+        ['/hasura', 'http://wild-beauty.herokuapp.com/v1/', 'graphql'],
         // ['/upload', 'lws-deaddrop', null, 'lws-deaddrop'],
         /*function* upload(arg) {
           console.log('upload', arg);
@@ -270,11 +289,24 @@ function main(...args) {
           console.log('proxy', { status, ok, url, type });
         },
         function* file(req, resp) {
-          let { body, headers, json } = req;
+          let { body, headers, json, url } = req;
+          let { query } = url;
 
-          const data = json ? json : JSON.parse(body ?? '{}');
+          if(typeof body == 'string') query = { ...query, ...(JSON.parse(body) ?? {}) };
 
-          let { action = 'load', charset = 'utf-8', binary = false, file, contents } = data;
+          console.log('*file', { query, body });
+
+          let { action = 'load', charset = 'utf-8', binary = false, file, contents } = query;
+
+          file = path.collapse(file);
+
+          //    console.log(`allowed:`, allowedDirs.map(dir => path.isin(file, dir)));
+          let allowed = allowedDirs.some(dir => path.isin(file, dir));
+
+          if(!allowed) {
+            console.log(`Not allowed: '${file}'`);
+            throw new Error(`Not allowed: '${file}'`);
+          }
 
           switch (action) {
             case 'load':
@@ -286,15 +318,32 @@ function main(...args) {
               break;
           }
         },
-        function* files(req, resp) {
-          let { body, headers, json } = req;
+        function* uploads(req, resp) {
+          resp.type = 'application/json';
+          console.log('uploads', req, resp);
+          console.log('req.url', req.url);
+          console.log('req.url.query', req.url.query);
+          let result = [];
 
-          const data = json ? json : JSON.parse(body ?? '{}');
+          for(let entry of glob('uploads/*.json')) {
+            let json = ReadJSON(entry);
+            result.push(json);
+          }
+
+          yield JSON.stringify(result);
+        },
+        function* files(req, resp) {
+          let { body, headers, json, url } = req;
+          let { query } = url;
+
+          console.log('*files', { body, query });
+
+          const data = {}; //json ? json : JSON.parse(body ?? '{}');
           resp.type = 'application/json';
           let {
             dirs = defaultDirs,
             filter = '[^.].*' ?? '.(brd|sch|G[A-Z][A-Z])$',
-            verbose = true,
+            verbose = false,
             objects = true,
             key = 'mtime',
             limit = null
@@ -401,8 +450,8 @@ function main(...args) {
         connections.add(ws);
         if(!req.url || req.url.path.endsWith('uploads')) {
         } else {
-          return callbacks.onConnect(ws, req);
         }
+        if(callbacks.onConnect) return callbacks.onConnect(ws, req);
       },
       onClose(ws, reason) {
         connections.delete(ws);
@@ -422,14 +471,13 @@ function main(...args) {
         }
       },*/
       onHttp(ws, req, resp) {
+        console.log('onHttp', console.config({ compact: 0 }), req);
         const { peer, address, port } = ws;
         const { method, headers } = req;
 
         if(req.url.path.endsWith('files')) {
           resp.type = 'application/json';
-        }
-
-        if(req.method != 'GET') {
+        } else if(req.method != 'GET') {
           let fp,
             hash,
             tmpnam,
