@@ -533,7 +533,7 @@ IMGUI_API void TextUnformatted(const char* text,
                                                              // text) but: A) doesn't require null terminated string if
                                                              // 'text_end' is specified, B) it's faster, no memory copy is done,
                                                              // no buffer size limits, recommended for long chunks of text.
-IMGUI_API void Text(const char* fmt, ...) IM_FMTARGS(1); // simple formatted text
+IMGUI_API void Text(const char* fmt, ...) IM_FMTARGS(1);     // simple formatted text
 IMGUI_API void TextV(const char* fmt, va_list args) IM_FMTLIST(1);
 IMGUI_API void TextColored(const ImVec4& col, const char* fmt, ...)
     IM_FMTARGS(2); // shortcut for PushStyleColor(ImGuiCol_Text, col); Text(fmt, ...); PopStyleColor();
@@ -1184,8 +1184,8 @@ IMGUI_API int GetKeyPressedAmount(int key_index,
                                   float repeat_delay,
                                   float rate); // uses provided repeat rate/delay. return a count, most often 0 or 1 but might
                                                // be >1 if RepeatRate is small enough that DeltaTime > RepeatRate
-IMGUI_API bool IsMouseDown(int button); // is mouse button held (0=left, 1=right, 2=middle)
-IMGUI_API bool IsAnyMouseDown();        // is any mouse button held
+IMGUI_API bool IsMouseDown(int button);        // is mouse button held (0=left, 1=right, 2=middle)
+IMGUI_API bool IsAnyMouseDown();               // is any mouse button held
 IMGUI_API bool IsMouseClicked(int button,
                               bool repeat = false); // did mouse button clicked (went from !Down to
                                                     // Down) (0=left, 1=right, 2=middle)
@@ -1242,8 +1242,8 @@ IMGUI_API void
 LoadIniSettingsFromDisk(const char* ini_filename); // call after CreateContext() and before the first call to NewFrame().
                                                    // NewFrame() automatically calls LoadIniSettingsFromDisk(io.IniFilename).
 IMGUI_API void LoadIniSettingsFromMemory(const char* ini_data,
-                                         size_t ini_size = 0); // call after CreateContext() and before the first call to
-                                                               // NewFrame() to provide .ini data from your own data source.
+                                         size_t ini_size = 0);  // call after CreateContext() and before the first call to
+                                                                // NewFrame() to provide .ini data from your own data source.
 IMGUI_API void SaveIniSettingsToDisk(const char* ini_filename); // this is automatically called (if io.IniFilename is not empty)
                                                                 // a few seconds after any modification that should be reflected
                                                                 // in the .ini file (and also by DestroyContext).
@@ -1277,8 +1277,8 @@ enum ImGuiWindowFlags_ {
   ImGuiWindowFlags_NoScrollbar = 1 << 3,       // Disable scrollbars (window can still scroll with mouse or programmatically)
   ImGuiWindowFlags_NoScrollWithMouse = 1 << 4, // Disable user vertically scrolling with mouse wheel. On child window, mouse
                                                // wheel will be forwarded to the parent unless NoScrollbar is also set.
-  ImGuiWindowFlags_NoCollapse = 1 << 5,       // Disable user collapsing window by double-clicking on it
-  ImGuiWindowFlags_AlwaysAutoResize = 1 << 6, // Resize every window to its content every frame
+  ImGuiWindowFlags_NoCollapse = 1 << 5,        // Disable user collapsing window by double-clicking on it
+  ImGuiWindowFlags_AlwaysAutoResize = 1 << 6,  // Resize every window to its content every frame
   ImGuiWindowFlags_NoBackground = 1 << 7,    // Disable drawing background color (WindowBg, etc.) and outside border. Similar as
                                              // using SetNextWindowBgAlpha(0.0f).
   ImGuiWindowFlags_NoSavedSettings = 1 << 8, // Never load/save settings in .ini file
@@ -1288,16 +1288,16 @@ enum ImGuiWindowFlags_ {
       1 << 11, // Allow horizontal scrollbar to appear (off by default). You may use
                // SetNextWindowContentSize(ImVec2(width,0.0f)); prior to calling Begin() to specify
                // width. Read code in imgui_demo in the "Horizontal Scrolling" section.
-  ImGuiWindowFlags_NoFocusOnAppearing = 1 << 12,    // Disable taking focus when transitioning from hidden to visible state
-  ImGuiWindowFlags_NoBringToFrontOnFocus = 1 << 13, // Disable bringing window to front when taking focus (e.g. clicking on it
-                                                    // or programmatically giving it focus)
-  ImGuiWindowFlags_AlwaysVerticalScrollbar = 1 << 14,   // Always show vertical scrollbar (even if ContentSize.y < Size.y)
+  ImGuiWindowFlags_NoFocusOnAppearing = 1 << 12,      // Disable taking focus when transitioning from hidden to visible state
+  ImGuiWindowFlags_NoBringToFrontOnFocus = 1 << 13,   // Disable bringing window to front when taking focus (e.g. clicking on it
+                                                      // or programmatically giving it focus)
+  ImGuiWindowFlags_AlwaysVerticalScrollbar = 1 << 14, // Always show vertical scrollbar (even if ContentSize.y < Size.y)
   ImGuiWindowFlags_AlwaysHorizontalScrollbar = 1 << 15, // Always show horizontal scrollbar (even if ContentSize.x < Size.x)
   ImGuiWindowFlags_AlwaysUseWindowPadding = 1 << 16, // Ensure child windows without border uses style.WindowPadding (ignored by
                                                      // default for non-bordered child windows, because more convenient)
-  ImGuiWindowFlags_NoNavInputs = 1 << 18, // No gamepad/keyboard navigation within the window
-  ImGuiWindowFlags_NoNavFocus = 1 << 19,  // No focusing toward this window with gamepad/keyboard
-                                          // navigation (e.g. skipped by CTRL+TAB)
+  ImGuiWindowFlags_NoNavInputs = 1 << 18,            // No gamepad/keyboard navigation within the window
+  ImGuiWindowFlags_NoNavFocus = 1 << 19,             // No focusing toward this window with gamepad/keyboard
+                                                     // navigation (e.g. skipped by CTRL+TAB)
   ImGuiWindowFlags_UnsavedDocument =
       1 << 20, // Append '*' to title without affecting the ID, as a convenience to avoid using the
                // ### operator. When used in a tab/docking context, tab is selected on closure and
@@ -1339,23 +1339,23 @@ enum ImGuiInputTextFlags_ {
   ImGuiInputTextFlags_CallbackHistory = 1 << 7,    // Callback on pressing Up/Down arrows (for history handling)
   ImGuiInputTextFlags_CallbackAlways =
       1 << 8, // Callback on each iteration. User code may query cursor position, modify text buffer.
-  ImGuiInputTextFlags_CallbackCharFilter = 1 << 9, // Callback on character inputs to replace or discard them. Modify
-                                                   // 'EventChar' to replace or discard, or return 1 in callback to discard.
+  ImGuiInputTextFlags_CallbackCharFilter = 1 << 9,   // Callback on character inputs to replace or discard them. Modify
+                                                     // 'EventChar' to replace or discard, or return 1 in callback to discard.
   ImGuiInputTextFlags_AllowTabInput = 1 << 10,       // Pressing TAB input a '\t' character into the text field
   ImGuiInputTextFlags_CtrlEnterForNewLine = 1 << 11, // In multi-line mode, unfocus with Enter, add new line with Ctrl+Enter
                                                      // (default is opposite: unfocus with Ctrl+Enter, add line with Enter).
-  ImGuiInputTextFlags_NoHorizontalScroll = 1 << 12, // Disable following the cursor horizontally
-  ImGuiInputTextFlags_AlwaysInsertMode = 1 << 13,   // Insert mode
-  ImGuiInputTextFlags_ReadOnly = 1 << 14,           // Read-only mode
-  ImGuiInputTextFlags_Password = 1 << 15,           // Password mode, display all characters as '*'
+  ImGuiInputTextFlags_NoHorizontalScroll = 1 << 12,  // Disable following the cursor horizontally
+  ImGuiInputTextFlags_AlwaysInsertMode = 1 << 13,    // Insert mode
+  ImGuiInputTextFlags_ReadOnly = 1 << 14,            // Read-only mode
+  ImGuiInputTextFlags_Password = 1 << 15,            // Password mode, display all characters as '*'
   ImGuiInputTextFlags_NoUndoRedo = 1 << 16, // Disable undo/redo. Note that input text owns the text data while active, if you
                                             // want to provide your own undo/redo stack you need e.g. to call ClearActiveID().
   ImGuiInputTextFlags_CharsScientific = 1 << 17, // Allow 0123456789.+-*/eE (Scientific notation input)
   ImGuiInputTextFlags_CallbackResize = 1 << 18,  // Callback on buffer capacity changes request (beyond 'buf_size' parameter
-                                                // value), allowing the string to grow. Notify when the string wants to be
-                                                // resized (for string types which hold a cache of their Size). You will be
-                                                // provided a new BufSize in the callback and NEED to honor it. (see
-                                                // misc/cpp/imgui_stdlib.h for an example of using this)
+                                                 // value), allowing the string to grow. Notify when the string wants to be
+                                                 // resized (for string types which hold a cache of their Size). You will be
+                                                 // provided a new BufSize in the callback and NEED to honor it. (see
+                                                 // misc/cpp/imgui_stdlib.h for an example of using this)
   // [Internal]
   ImGuiInputTextFlags_Multiline = 1 << 20 // For internal use by InputTextMultiline()
 };
@@ -1368,9 +1368,9 @@ enum ImGuiTreeNodeFlags_ {
   ImGuiTreeNodeFlags_AllowItemOverlap = 1 << 2, // Hit testing to allow subsequent widgets to overlap this one
   ImGuiTreeNodeFlags_NoTreePushOnOpen = 1 << 3, // Don't do a TreePush() when open (e.g. for CollapsingHeader) = no extra indent
                                                 // nor pushing on ID stack
-  ImGuiTreeNodeFlags_NoAutoOpenOnLog = 1 << 4, // Don't automatically and temporarily open node when Logging is active (by
-                                               // default logging will automatically open tree nodes)
-  ImGuiTreeNodeFlags_DefaultOpen = 1 << 5,       // Default node to be open
+  ImGuiTreeNodeFlags_NoAutoOpenOnLog = 1 << 4,  // Don't automatically and temporarily open node when Logging is active (by
+                                                // default logging will automatically open tree nodes)
+  ImGuiTreeNodeFlags_DefaultOpen = 1 << 5,      // Default node to be open
   ImGuiTreeNodeFlags_OpenOnDoubleClick = 1 << 6, // Need double-click to open node
   ImGuiTreeNodeFlags_OpenOnArrow = 1 << 7, // Only open when clicking on the arrow part. If ImGuiTreeNodeFlags_OpenOnDoubleClick
                                            // is also set, single-click arrow or double-click all box to open.
@@ -1480,8 +1480,8 @@ enum ImGuiHoveredFlags_ {
   // window is normally blocking access to this item/window. FIXME-TODO: Unavailable yet.
   ImGuiHoveredFlags_AllowWhenBlockedByActiveItem = 1 << 5, // Return true even if an active item is blocking access to this
                                                            // item/window. Useful for Drag and Drop patterns.
-  ImGuiHoveredFlags_AllowWhenOverlapped = 1 << 6, // Return true even if the position is overlapped by another window
-  ImGuiHoveredFlags_AllowWhenDisabled = 1 << 7,   // Return true even if the item is disabled
+  ImGuiHoveredFlags_AllowWhenOverlapped = 1 << 6,          // Return true even if the position is overlapped by another window
+  ImGuiHoveredFlags_AllowWhenDisabled = 1 << 7,            // Return true even if the item is disabled
   ImGuiHoveredFlags_RectOnly = ImGuiHoveredFlags_AllowWhenBlockedByPopup | ImGuiHoveredFlags_AllowWhenBlockedByActiveItem |
                                ImGuiHoveredFlags_AllowWhenOverlapped,
   ImGuiHoveredFlags_RootAndChildWindows = ImGuiHoveredFlags_RootWindow | ImGuiHoveredFlags_ChildWindows
@@ -3048,7 +3048,7 @@ enum ImDrawListFlags_ {
   ImDrawListFlags_None = 0,
   ImDrawListFlags_AntiAliasedLines = 1 << 0, // Lines are anti-aliased (*2 the number of triangles for 1.0f wide line, otherwise
                                              // *3 the number of triangles)
-  ImDrawListFlags_AntiAliasedFill = 1 << 1 // Filled shapes have anti-aliased edges (*2 the number of vertices)
+  ImDrawListFlags_AntiAliasedFill = 1 << 1   // Filled shapes have anti-aliased edges (*2 the number of vertices)
 };
 
 // Draw command list
