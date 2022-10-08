@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "_moduleAliases": {
     "preact": "lib/dom/preactComponent.js",
     "prop-types": "lib/prop-types.js",
