@@ -16,6 +16,8 @@ import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile,
 import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
 
 globalThis.fs = fs;
+globalThis.logFilter = /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|_BODY[^_]|WRITABLE)/;
+
 const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 
 const defaultDirs = [
@@ -213,7 +215,7 @@ function main(...args) {
       if(/__lws/.test(message)) return;
       if(level == LLL_INFO && !/proxy/.test(message)) return;
       if(
-        /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|_BODY[^_])/.test(message)
+        logFilter.test(message)
       )
         return;
 

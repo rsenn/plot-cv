@@ -14,7 +14,7 @@ import * as fs from 'fs';
 import { Pointer } from './lib/pointer.js';
 import { read as fromXML, write as writeXML } from './lib/xml.js';
 import inspect from './lib/objectInspect.js';
-import { IfDebug, LogIfDebug, LoadHistory, MapFile, ReadFile, ReadJSON, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator, Filter, FilterImages, StatFiles, CopyToClipboard } from './io-helpers.js';
+import { IfDebug, LogIfDebug, ReadFd, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 import { GetExponent, GetMantissa, ValueToNumber, NumberToValue } from './lib/eda/values.js';
 import { GetMultipliers, GetFactor, GetColorBands, PartScales, digit2color } from './lib/eda/colorCoding.js';
 import { UnitForName } from './lib/eda/units.js';
@@ -151,6 +151,19 @@ function ShowParts(doc = project.schematic) {
   );
 }
 
+function EaglePrint(file, output) {
+  output ??= ModifyPath(file, (dir, base, ext) => [dir, base, ext + '.pdf']);
+  let argv = [
+    '/opt/eagle-7.2.0/bin/eagle',
+    '-N-',
+    '-C',
+    `PRINT landscape 0.8 -1 -0 -caption FILE '${output}' sheets all paper a4; QUIT`,
+    file
+  ];
+
+  return child_process.spawn(argv[0], argv, { block: false });
+}
+
 function main(...args) {
   globalThis.console = new Console({
     inspectOptions: { maxArrayLength: 100, colors: true, depth: Infinity, compact: 0, customInspect: true }
@@ -250,22 +263,45 @@ function main(...args) {
     LoadHistory,
     IfDebug,
     LogIfDebug,
-    LoadHistory,
-    MapFile,
+    ReadFd,
     ReadFile,
+    LoadHistory,
     ReadJSON,
-    ReadBJSON,
+    ReadXML,
+    MapFile,
     WriteFile,
     WriteJSON,
+    WriteXML,
+    ReadBJSON,
     WriteBJSON,
     DirIterator,
     RecursiveDirIterator,
+    ReadDirRecursive,
     Filter,
     FilterImages,
+    SortFiles,
     StatFiles,
+    FdReader,
+    CopyToClipboard,
+    ReadCallback,
+    LogCall,
+    Spawn,
+    FetchURL,
     CopyToClipboard,
     CircuitJS,
+    PutRowsColumns,
+    GetLibrary,
+    ElementName,
+    GetUsedPackages,
+    Package2Circuit,
+    Eagle2Circuit,
     Eagle2CircuitJS,
+    ModifyPath,
+    AppendToFilename,
+    SetSVGBackground,
+    SVGFileSetBackground,
+    SVGResave,
+    FileFunction,
     toNumber(n) {
       return isNaN(+n) ? n : +n;
     },
@@ -316,6 +352,7 @@ function main(...args) {
     CollectParts,
     ListParts,
     ShowParts,
+    EaglePrint,
     setDebug
   });
 
@@ -960,6 +997,149 @@ async function testEagle(filename) {
   desc = new Map(desc);
   console.log('descriptions', [...Util.map(desc, ([k, v]) => [k, v])]);
   return proj;
+}
+
+function ModifyPath(p, fn = (dir, base, ext) => [dir, base, ext]) {
+  let [dir, base, ext] = (() => {
+    let { dir, base, ext } = path.toObject(p);
+    return fn(dir, base, ext);
+  })();
+
+  return path.fromObject({ dir, base, ext });
+}
+
+function AppendToFilename(p, str = '') {
+  return ModifyPath(p, (dir, base, ext) => [dir, base + str, ext]);
+}
+
+function SetSVGBackground(xml, color = '#ffffff') {
+  let svgNode;
+  let bgRect = deep.find(xml, (e, n) => e.tagName == 'rect' && e.attributes.id == 'background-rect', deep.RETURN_PATH);
+
+  if(bgRect) throw new Error('background-rect alreay set');
+
+  if((svgNode = deep.find(xml, (e, n) => e.tagName == 'svg', deep.RETURN_VALUE))) {
+    let defs = deep.find(xml, (e, n) => e.tagName == 'defs', deep.RETURN_PATH);
+    let gpath = deep.find(xml, (e, n) => e.tagName == 'g', deep.RETURN_PATH);
+    let children = deep.get(xml, defs.slice(0, -1));
+
+    //console.log('SetSVGBackground',{gpath});
+
+    let { viewBox } = svgNode.attributes;
+    let rect = Rect.fromString(viewBox);
+    let pos = defs[defs.length - 1] ?? 0;
+    //console.log('SetSVGBackground',{viewBox,rect,pos});
+
+    children.splice(pos + 1, 0, {
+      tagName: 'rect',
+      attributes: { id: 'background-rect', fill: '#fff', ...rect.toObject() }
+    });
+
+    return xml;
+  }
+}
+
+const FileFunction = (fn, rfn = ReadFile, wfn = WriteFile, namefn = n => n, ...args) => {
+  return (filename, ...args) => {
+    let data = rfn(filename, ...args);
+
+    let output = fn(data, ...args);
+
+    return wfn(namefn(filename), output, ...args);
+  };
+};
+
+const SVGFileSetBackground = FileFunction(
+  SetSVGBackground,
+  ReadXML,
+  WriteXML,
+  n => AppendToFilename(n, '.with-background'),
+  false
+);
+const SVGResave = FileFunction(
+  data => data,
+  ReadXML,
+  WriteXML,
+  n => n,
+  false
+);
+
+function PutRowsColumns(rows) {
+  let columnLength = rows.reduce((acc, row) => {
+    for(let i = 0; i < row.length; i++) acc[i] = Math.max(acc[i] | 0, (row[i] + '').length);
+    return acc;
+  }, []);
+  console.log('columnLength', columnLength);
+  columnLength[columnLength.length - 1] = 0;
+
+  return rows.map(row => row.map((col, i) => (col + '').padEnd(columnLength[i], ' ')).join(' ')).join('\n');
+}
+
+function GetLibrary(e) {
+  let depth = 0;
+  while((e = e.parentNode)) {
+    const { tagName } = e;
+    if(tagName == 'library') return e;
+    if(tagName == 'eagle') break;
+    //console.log('GetLibrary', { e, depth });
+    depth++;
+  }
+}
+
+function ElementName(e) {
+  let n = e.name;
+  n = n.replace(/[^A-Za-z0-9_]/g, '_');
+
+  if(!/^[A-Za-z]/i.test(n)) {
+    if(e.tagName == 'package') n = n.replace(/^[0-9]+_/g, '');
+    let lib = GetLibrary(e);
+    if(lib && lib.name) n = lib.name + n;
+  }
+  n = n.replace(/([0-9])_([A-Za-z])/g, '$1$2');
+
+  if(e.tagName == 'package') n = n.toLowerCase();
+  if(e.tagName == 'package') n = n.replace(/_[0-9]+x[0-9]+$/g, '');
+  return n;
+}
+
+function Package2Circuit(p) {
+  let points = p.pads.map(({ x, y }) => new Point(x, y)).map(pt => pt.div(2.54));
+
+  let half = points.filter(pt => [...pt].some(coord => coord != 0 && Math.abs(coord) < 1));
+
+  if(half.length) {
+    let t = new Translation(...half[0]).invert();
+    // console.log('t', t);
+    points = points.map(pt => pt.transform(t));
+  }
+
+  return [ElementName(p), points.join(' ')];
+}
+
+function Elements2Circuit(p) {
+  return [ElementName(p), [...p.pads.list].map(({ x, y }) => `${x / 2.54},${y / 2.54}`).join(' ')];
+}
+
+function GetUsedPackages(doc = project.board) {
+  return unique(doc.elements.list.map(e => e.package));
+}
+
+function Eagle2Circuit(doc = project.board, width = 100, height = 100) {
+  let o = '';
+
+  o += `# Stripboard
+# board <width>,<height>
+
+board ${width},${height}
+
+`;
+
+  o += `# Packages
+# <package name> <pin coordinates relative to pin 0>
+
+`;
+  o += PutRowsColumns(GetUsedPackages(doc).map(Package2Circuit));
+  return o;
 }
 
 function Eagle2CircuitJS(doc = project.schematic, scale = 50, sheet = 0) {
