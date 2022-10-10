@@ -6,7 +6,6 @@ import { IfDebug, LogIfDebug, ReadFd, ReadFile, LoadHistory, ReadJSON, ReadXML, 
 
 const StrDecode = s => ((s = s.slice(1, -1)), unescape(s));
 const StrFmt = s => (s[0] == '"' && s[s.length - 1] == '"' ? StrDecode(s) : s == 'NULL' ? null : !isNaN(+s) ? +s : s);
-const allFiles = new Set();
 
 function main(...args) {
   globalThis.console = new Console({ inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 200 } });
@@ -14,6 +13,8 @@ function main(...args) {
   if(!args.length) args = ['strace.log'];
 
   for(let logfile of args) {
+    const allFiles = new Set();
+    const fileFuncs = new Set();
     let fd = fs.fopen(logfile, 'r');
     let line;
     console.log('fd', fd);
@@ -42,14 +43,17 @@ function main(...args) {
       //console.log('result', result);
       if(files) {
         //console.log('files', files);
+        if(files.length) fileFuncs.add(fnName);
         for(let file of files) allFiles.add(file);
       }
     }
-  }
-  const sorted = [...allFiles].sort();
 
-  console.log('allFiles', sorted.join('\n'));
-  WriteFile('output.files', sorted.join('\n'));
+    const sorted = [...allFiles].sort();
+
+    // console.log('fileFuncs', [...fileFuncs].join('\n'));
+    WriteFile(logfile + '.files', sorted.join('\n'));
+    WriteFile(logfile + '.funcs', [...fileFuncs].join('\n'));
+  }
 }
 
 main(...scriptArgs.slice(1));
