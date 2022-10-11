@@ -31,6 +31,7 @@ import { ReactComponent, Fragment, render, h, forwardRef, React, toChildArray } 
 import { Table } from './cli-helpers.js';
 import renderToString from './lib/preact-render-to-string.js';
 import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
+import { EagleToGerber, GerberToGcode } from './pcb-conversion.js';
 
 let cmdhist;
 
@@ -431,7 +432,13 @@ function main(...args) {
     }
   });
 
-  Object.assign(globalThis, { PrimitiveComponents, ElementNameToComponent, ElementToComponent });
+  Object.assign(globalThis, {
+    PrimitiveComponents,
+    ElementNameToComponent,
+    ElementToComponent,
+    EagleToGerber,
+    GerberToGcode
+  });
   Object.assign(globalThis, { renderToString, renderToXML });
 
   cmdhist = `.${base}-cmdhistory`;
