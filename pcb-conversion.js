@@ -2,9 +2,9 @@ import * as path from 'path';
 import * as util from 'util';
 import { exec, spawn } from 'child_process';
 import * as fs from 'fs';
-//import fsPromises from 'fs';
-//import PortableChildProcess from './lib/childProcess.js';
 import child_process from 'child_process';
+import { ExecTool } from './os-helpers.js';
+export { ExecTool } from './os-helpers.js';
 
 export function EagleToGerber(boardFile, opts = {}) {
   console.log('convertToGerber', { boardFile, opts });

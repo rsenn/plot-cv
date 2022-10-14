@@ -32,6 +32,7 @@ import { Table } from './cli-helpers.js';
 import renderToString from './lib/preact-render-to-string.js';
 import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
 import { EagleToGerber, GerberToGcode } from './pcb-conversion.js';
+import { ExecTool } from './os-helpers.js';
 
 let cmdhist;
 
@@ -437,7 +438,8 @@ function main(...args) {
     ElementNameToComponent,
     ElementToComponent,
     EagleToGerber,
-    GerberToGcode
+    GerberToGcode,
+    ExecTool
   });
   Object.assign(globalThis, { renderToString, renderToXML });
 
