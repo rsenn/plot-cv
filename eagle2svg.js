@@ -20,8 +20,9 @@ function render(doc, filename) {
     render(doc.board);
     return;
   }
-  let renderer = new Renderer(doc, ReactComponent.append);
-  renderer.setPalette([
+  let renderer = new Renderer(doc, ReactComponent.append, true);
+
+  /* renderer.setPalette([
     [0xff, 0xff, 0xff],
     [0x4b, 0x4b, 0xa5],
     [0, 0, 0],
@@ -39,7 +40,7 @@ function render(doc, filename) {
     [0x4b, 0x4b, 0x4b],
     [0xa5, 0xa5, 0xa5],
     [0, 0, 0]
-  ]);
+  ].map(([r,g,b]) => new RGBA(r,g,b)));*/
 
   let str;
   let svg = renderer.render(doc);

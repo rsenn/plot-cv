@@ -98,7 +98,7 @@ export function MapFile(filename) {
 
 export function WriteFile(name, data, verbose = true) {
   if(Util.isGenerator(data)) {
-    let fd = fs.openSync(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, 0x1a4);
+    let fd = fs.openSync(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, 0o644);
     let r = 0;
     for(let item of data) {
       r += fs.writeSync(fd, toArrayBuffer(item + ''));
@@ -107,6 +107,8 @@ export function WriteFile(name, data, verbose = true) {
     let stat = fs.statSync(name);
     return stat?.size;
   }
+  if(fs.existsSync(name)) fs.unlinkSync(name);
+
   if(Util.isIterator(data)) data = [...data];
   if(Array.isArray(data)) data = data.join('\n');
 
