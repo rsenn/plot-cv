@@ -1,4 +1,5 @@
-import { LogWrap, VfnAdapter, VfnDecorator, Memoize, DebugFlags, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, isThenable, hasHandler, callHandler, parseURL, GetProperties, GetKeys, getPropertyDescriptors, define, setHandlers, statusResponse, objectCommand, MakeListCommand, getPrototypeName, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/rpc.js';
+import { LogWrap, VfnAdapter, VfnDecorator, 
+    Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, isThenable, hasHandler, callHandler, parseURL, GetProperties, GetKeys, getPropertyDescriptors, define, setHandlers, statusResponse, objectCommand, MakeListCommand, getPrototypeName, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/rpc.js';
 import { h, options, html, render, Component, createContext, createRef, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue, forwardRef, Fragment, React, ReactComponent, Portal, toChildArray } from './lib/dom/preactComponent.js';
 import Util from './lib/util.js';
 import { once, streamify, filter, map, throttle, distinct, subscribe } from './lib/async/events.js';
@@ -10,8 +11,7 @@ import path from './lib/path.js';
 Object.assign(globalThis, {
   callHandler,
   Connection,
-  DebugFlags,
-  DefaultConstructor,
+   DefaultConstructor,
   define,
   DeserializeSymbols,
   DeserializeValue,
@@ -22,12 +22,10 @@ Object.assign(globalThis, {
   getPrototypeName,
   hasHandler,
   isThenable,
-  ListDirectory,
   LogWrap,
   MakeListCommand,
   Mapper,
-  Memoize,
-  MessageReceiver,
+   MessageReceiver,
   MessageTransceiver,
   MessageTransmitter,
   objectCommand,
