@@ -141,7 +141,7 @@ export function WriteFile(name, data, verbose = true) {
   return ret;
 }
 
-export function WriteJSON(name, data, compact = true) {
+export function WriteJSON(name, data, compact = false) {
   return WriteFile(
     name,
     JSON.stringify(data, ...(compact ? [] : [null, 2]))

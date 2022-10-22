@@ -69,6 +69,17 @@ function GetDir(dir) {
   let i = a.findIndex(n => /[*{}]/.test(n));
   return i != -1 ? path.slice(dir, 0, i) : dir;
 }
+
+function DateStr(date) {
+  let str = date.toISOString();
+  let ti = str.indexOf('T');
+  return (
+    str.substring(0, ti) /*.replace(/-/g, '')*/ +
+    ' ' +
+    str.substring(ti + 1, ti + 1 + 8) //.replace(/:/g, '')
+  );
+}
+
 function ModeStr(mode) {
   return (
     (mode & (0o120000 == 0o120000)
@@ -156,10 +167,10 @@ const HTMLTableColumn = ({
 }) => h(tag, props, children);
 
 const FileLink = ({ file, ...props }) => {
-  return h('a', { href: 'file/' + file }, [file]);
+  return h('a', { href: 'file/uploads/' + file }, [file]);
 };
 const FileObject = ({ file, stat = {}, ...props }) => {
-  stat ??= fs.lstatSync(file);
+  stat ??= fs.lstatSync('uploads/' + file);
   // console.log('FileObject', { file, stat });
   let isDir = stat.isDirectory();
 
@@ -173,7 +184,7 @@ const FileObject = ({ file, stat = {}, ...props }) => {
     ]),
     h(HTMLTableColumn, { class: 'size' }, [stat.size + '']),
     h(HTMLTableColumn, { class: 'date' }, [
-      new Date(stat.atime) + ''
+      DateStr(new Date(stat.atime))
     ])
   ]);
 };
@@ -611,7 +622,9 @@ function main(...args) {
               yield 'done!\r\n';
               break;
             case 'list':
-              let files = fs.readdirSync('.');
+              let files = fs
+                .readdirSync('uploads')
+                .filter(f => !/^\.$/.test(f));
               let component = h(
                 HTMLPage,
                 {

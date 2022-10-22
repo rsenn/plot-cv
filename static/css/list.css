@@ -20,6 +20,13 @@ th {
   color: white;
 }
 
+a {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
 .hidden {
   display: none;
 }
@@ -39,16 +46,19 @@ th {
 
 table {
   display: inline-table;
-  border: dashed 1px;
+   /*border: dotted #ccc 1px;*/
 }
 
 table,form {
   margin: 1em;
 }
 
-table th,
-table td {
-  border: solid 1px;
+table th  {
+  border: solid black 1px;
+}
+ table td {
+  border: dotted #ccc 1px;
+  color: #444;
 }
 
 td.size {
