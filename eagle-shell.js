@@ -39,7 +39,13 @@ let cmdhist;
 extendArray();
 
 function toXML(obj) {
-  deep.forEach(obj, a => Array.isArray(a.children) && a.children.length == 0 && delete a.children);
+  deep.forEach(
+    obj,
+    a =>
+      Array.isArray(a.children) &&
+      a.children.length == 0 &&
+      delete a.children
+  );
   return writeXML(obj);
 }
 
@@ -54,14 +60,22 @@ function GetFiletime(file, field = 'mtime') {
 
 function FindProjects(dirPtn = '../*/eagle') {
   let files = glob(dirPtn + '/*.{sch,brd}', GLOB_BRACE);
-  let entries = files.map(file => [file, GetFiletime(file)]).sort((a, b) => a[1] - b[1]);
+  let entries = files
+    .map(file => [file, GetFiletime(file)])
+    .sort((a, b) => a[1] - b[1]);
 
-  let names = unique(files.map(fn => fn.replace(/\.(sch|brd)$/i, '')));
+  let names = unique(
+    files.map(fn => fn.replace(/\.(sch|brd)$/i, ''))
+  );
 
   const minIndex = name =>
     Math.min(
-      entries.findIndex(([filename, time]) => filename == name + '.sch'),
-      entries.findIndex(([filename, time]) => filename == name + '.brd')
+      entries.findIndex(
+        ([filename, time]) => filename == name + '.sch'
+      ),
+      entries.findIndex(
+        ([filename, time]) => filename == name + '.brd'
+      )
     );
   const hasBoth = name => minIndex(name) >= 0;
 
@@ -91,7 +105,13 @@ function pick(it, n = 1) {
 }
 
 function append(tag, attrs, children, parent, element) {
-  console.log('append', { tag, attrs, children, parent, element });
+  console.log('append', {
+    tag,
+    attrs,
+    children,
+    parent,
+    element
+  });
 
   let obj;
   obj = { tagName: tag, attributes: attrs, children };
@@ -121,7 +141,9 @@ function render(doc, filename) {
   filename ??=
     path.basename(doc.filename, '.' + doc.type) +
     '-' +
-    { sch: 'schematic', brd: 'board', lbr: 'library' }[doc.type] +
+    { sch: 'schematic', brd: 'board', lbr: 'library' }[
+      doc.type
+    ] +
     '.svg';
 
   if(filename) {
@@ -135,26 +157,51 @@ function render(doc, filename) {
 function CollectParts(doc = project.schematic) {
   return [...doc.parts]
     .map(e => e.raw.attributes)
-    .filter(attr => !(attr.value === undefined && attr.device === '') || /^IC/.test(attr.name))
-    .map(({ name, deviceset, device, value }) => ({ name, deviceset, device, value: value ?? '-' }));
+    .filter(
+      attr =>
+        !(attr.value === undefined && attr.device === '') ||
+        /^IC/.test(attr.name)
+    )
+    .map(({ name, deviceset, device, value }) => ({
+      name,
+      deviceset,
+      device,
+      value: value ?? '-'
+    }));
 }
 
 function ListParts(doc = project.schematic) {
   let parts = CollectParts(doc);
-  let valueLen = Math.max(...parts.map(p => p.value.length));
+  let valueLen = Math.max(
+    ...parts.map(p => p.value.length)
+  );
 
-  return parts.map(({ name, deviceset, device, value }) => value.padStart(valueLen) + ' ' + device);
+  return parts.map(
+    ({ name, deviceset, device, value }) =>
+      value.padStart(valueLen) + ' ' + device
+  );
 }
 
 function ShowParts(doc = project.schematic) {
   return Table(
-    CollectParts(doc).map(({ name, deviceset, device, value }) => [name, deviceset, device, value ?? '-']),
+    CollectParts(doc).map(
+      ({ name, deviceset, device, value }) => [
+        name,
+        deviceset,
+        device,
+        value ?? '-'
+      ]
+    ),
     ['name', 'deviceset', 'device', 'value']
   );
 }
 
 function EaglePrint(file, output) {
-  output ??= ModifyPath(file, (dir, base, ext) => [dir, base, ext + '.pdf']);
+  output ??= ModifyPath(file, (dir, base, ext) => [
+    dir,
+    base,
+    ext + '.pdf'
+  ]);
   let argv = [
     '/opt/eagle-7.2.0/bin/eagle',
     '-N-',
@@ -163,12 +210,20 @@ function EaglePrint(file, output) {
     file
   ];
 
-  return child_process.spawn(argv[0], argv, { block: false });
+  return child_process.spawn(argv[0], argv, {
+    block: false
+  });
 }
 
 function main(...args) {
   globalThis.console = new Console({
-    inspectOptions: { maxArrayLength: 100, colors: true, depth: Infinity, compact: 0, customInspect: true }
+    inspectOptions: {
+      maxArrayLength: 100,
+      colors: true,
+      depth: Infinity,
+      compact: 0,
+      customInspect: true
+    }
   });
 
   let debugLog;
@@ -195,7 +250,10 @@ function main(...args) {
   debugLog = fs.openSync('debug.log', 'a');
 
   const progName = Util.getArgv()[1];
-  const base = path.basename(progName, path.extname(progName));
+  const base = path.basename(
+    progName,
+    path.extname(progName)
+  );
   const histfile = `.${base}-history`;
 
   let params = getOpt(
@@ -358,14 +416,28 @@ function main(...args) {
     setDebug
   });
 
-  Object.assign(globalThis, { h, forwardRef, Fragment, React, ReactComponent, toChildArray });
+  Object.assign(globalThis, {
+    h,
+    forwardRef,
+    Fragment,
+    React,
+    ReactComponent,
+    toChildArray
+  });
 
   Object.assign(globalThis, {
     load(filename, project = globalThis.project) {
-      globalThis.document = new EagleDocument(fs.readFileSync(filename, 'utf-8'), project, filename, null, fs);
+      globalThis.document = new EagleDocument(
+        fs.readFileSync(filename, 'utf-8'),
+        project,
+        filename,
+        null,
+        fs
+      );
     },
     newProject(filename) {
-      if(!globalThis.project) globalThis.project = new EagleProject(null);
+      if(!globalThis.project)
+        globalThis.project = new EagleProject(null);
 
       project.lazyOpen(filename);
 
@@ -451,7 +523,10 @@ function main(...args) {
     .replace(/\.[^\/.]*$/, '');
   let [prefix, suffix] = name.split(' ');
 
-  let repl = (globalThis.repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false));
+  let repl = (globalThis.repl = new REPL(
+    `\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`,
+    false
+  ));
 
   for(let file of params['@']) {
     repl.printStatus(`Loading '${file}'...`);
@@ -459,7 +534,9 @@ function main(...args) {
   }
 
   repl.history = LoadHistory(cmdhist);
-  repl.printStatus(`Loaded ${repl.history.length} history entries)`);
+  repl.printStatus(
+    `Loaded ${repl.history.length} history entries)`
+  );
 
   //console.log(`repl`, repl);
   //console.log(`debugLog`, Util.getMethods(debugLog, Infinity, 0));
@@ -485,8 +562,15 @@ function main(...args) {
     let s = '';
     for(let arg of args) {
       if(s) s += ' ';
-      if(typeof arg != 'string' || arg.indexOf('\x1b') == -1)
-        s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
+      if(
+        typeof arg != 'string' ||
+        arg.indexOf('\x1b') == -1
+      )
+        s += inspect(arg, {
+          depth: Infinity,
+          depth: 6,
+          compact: false
+        });
       else s += arg;
     }
     fs.writeSync(debugLog, fs.bufferFrom(s + '\n'));
@@ -505,7 +589,9 @@ function main(...args) {
   // repl.historySet(JSON.parse(std.loadFile(histfile) || '[]'));
 
   repl.addCleanupHandler(() => {
-    let hist = repl.history.filter((item, i, a) => a.lastIndexOf(item) == i);
+    let hist = repl.history.filter(
+      (item, i, a) => a.lastIndexOf(item) == i
+    );
 
     //    fs.writeFileSync(cmdhist, JSON.stringify(hist, null, 2));
     fs.writeFileSync(
@@ -516,7 +602,9 @@ function main(...args) {
         .join('')
     );
 
-    console.log(`EXIT (wrote ${hist.length} history entries)`);
+    console.log(
+      `EXIT (wrote ${hist.length} history entries)`
+    );
     Terminate(0);
   });
 
@@ -587,11 +675,17 @@ function UpdateMeasures(board) {
     let rect = new Rect(bounds.rect);
     let lines = rect.toLines(lines => new LineList(lines));
     let { plain } = board;
-    plain.remove(e => e.tagName == 'wire' && e.attributes.layer == '47');
+    plain.remove(
+      e => e.tagName == 'wire' && e.attributes.layer == '47'
+    );
     plain.append(
       ...lines.map(line => ({
         tagName: 'wire',
-        attributes: { ...line.toObject(), layer: 47, width: 0 }
+        attributes: {
+          ...line.toObject(),
+          layer: 47,
+          width: 0
+        }
       }))
     );
     //console.log('no measures:', { bounds, lines }, [...plain]);
@@ -608,7 +702,9 @@ function AlignItem(item) {
   let geometry = item.geometry;
   if(item.tagName == 'element') {
     let pkg = item['package'];
-    let transformation = item.transformation().filter(tr => tr.type != 'translate');
+    let transformation = item
+      .transformation()
+      .filter(tr => tr.type != 'translate');
     let matrix = transformation.toMatrix();
     //console.log('AlignItem:', { transformation, matrix });
     offsetPos = new Point(pkg.pads[0]).transform(matrix);
@@ -620,7 +716,10 @@ function AlignItem(item) {
     let padPos = oldPos.sum(offsetPos);
     inchPos = padPos.quot(2.54);
     // console.log('AlignItem:', { padPos, inchPos });
-    let newPos = padPos.round(2.54).diff(offsetPos).round(0.0001, 4);
+    let newPos = padPos
+      .round(2.54)
+      .diff(offsetPos)
+      .round(0.0001, 4);
     let diff = newPos.diff(oldPos);
     let before = item.parentNode.toXML();
     //console.log('geometry:', Object.entries(Object.getOwnPropertyDescriptors(geometry)).map(([name, { value }]) => [name, value && Object.getOwnPropertyDescriptors(value)]), geometry.x1);
@@ -652,14 +751,18 @@ function AlignItem(item) {
 function AlignAll(doc = globalThis.document) {
   if(!doc) return false;
 
-  let items = doc.getAll(doc.type == 'brd' ? 'element' : 'instance');
+  let items = doc.getAll(
+    doc.type == 'brd' ? 'element' : 'instance'
+  );
   let changed = false;
   items = [...items];
   console.log('items:', items);
   for(let item of items) changed |= AlignItem(item);
   let signals_nets = doc.getAll(/(signals|nets)/);
   //console.log('signals_nets:', signals_nets);
-  for(let net of signals_nets) for (let item of net.getAll('wire')) changed |= AlignItem(item);
+  for(let net of signals_nets)
+    for(let item of net.getAll('wire'))
+      changed |= AlignItem(item);
   return !!changed;
 }
 
@@ -676,16 +779,24 @@ function fixValue(element) {
       break;
     }
     case 'L': {
-      newValue = value.replace(/^([0-9.]+)(?:[\x7F-\xFF]*\xB5|\xEF\xBF\xBD)(H.*)/, '$1\u00B5$2');
+      newValue = value.replace(
+        /^([0-9.]+)(?:[\x7F-\xFF]*\xB5|\xEF\xBF\xBD)(H.*)/,
+        '$1\u00B5$2'
+      );
       break;
     }
     case 'C': {
-      newValue = value.replace(/^([0-9.]+)(?:[\x7F-\xFF]*\xB5|\xEF\xBF\xBD)(F.*)/, '$1\u00B5$2');
+      newValue = value.replace(
+        /^([0-9.]+)(?:[\x7F-\xFF]*\xB5|\xEF\xBF\xBD)(F.*)/,
+        '$1\u00B5$2'
+      );
       break;
     }
   }
   if(newValue && newValue != value) {
-    console.log(`element ${element} value changed from '${value}' to '${newValue}'`);
+    console.log(
+      `element ${element} value changed from '${value}' to '${newValue}'`
+    );
     element.attributes['value'] = newValue;
   }
 }
@@ -706,7 +817,12 @@ function coordMap(doc) {
         let [a, b] = points.map(p => new Point(p));
 
         //   console.log(`signal '${signal.name}' wire #${signal.wires.indexOf(wire)}:`, points);
-        console.log(`signal '${signal.name}' wire #${signal.wires.indexOf(wire)}:`, { a, b });
+        console.log(
+          `signal '${
+            signal.name
+          }' wire #${signal.wires.indexOf(wire)}:`,
+          { a, b }
+        );
 
         map.set(a.toString(), [signal.name, wire, b]);
         map.set(b.toString(), [signal.name, wire, a]);
@@ -714,17 +830,30 @@ function coordMap(doc) {
     }
     for(let element of doc.board.elements.children) {
       let pos = new Point(element.geometry);
-      let transform = element.transformation().filter(t => t.type != 'translate');
-      console.log(`element '${element.name}':`, pos, transform);
+      let transform = element
+        .transformation()
+        .filter(t => t.type != 'translate');
+      console.log(
+        `element '${element.name}':`,
+        pos,
+        transform
+      );
       let i = 0;
       let { contactrefs } = element;
       console.log(`contactrefs `, contactrefs);
       for(let pad of element.pads.list) {
         let { geometry } = pad;
-        console.log(`pad '${element.name}.${pad.name}':`, geometry);
+        console.log(
+          `pad '${element.name}.${pad.name}':`,
+          geometry
+        );
         let padPos = new Point(geometry);
         let cref = contactrefs[pad.name];
-        map.set(padPos.toString(), [cref?.parentNode ?? null, element, pad /*, cref*/]);
+        map.set(padPos.toString(), [
+          cref?.parentNode ?? null,
+          element,
+          pad /*, cref*/
+        ]);
       }
     }
   }
@@ -734,11 +863,20 @@ function coordMap(doc) {
 }
 
 function GetPolygons(d = doc) {
-  return [...d.getAll(e => e.tagName == 'polygon' && [1, 16].indexOf(+e.attributes.layer) != -1)];
+  return [
+    ...d.getAll(
+      e =>
+        e.tagName == 'polygon' &&
+        [1, 16].indexOf(+e.attributes.layer) != -1
+    )
+  ];
 }
 
 function FindPolygons() {
-  return (globalThis.polygons = docs.map(doc => [doc, GetPolygons(doc).map(e => e.path)]));
+  return (globalThis.polygons = docs.map(doc => [
+    doc,
+    GetPolygons(doc).map(e => e.path)
+  ]));
 }
 
 function RemovePolygons(p = polygons) {
@@ -755,7 +893,9 @@ function GetNames(doc, pred) {
 
   switch (doc.type) {
     case 'sch': {
-      list = doc.sheets.map(sheet => [...sheet.instances.list]).flat();
+      list = doc.sheets
+        .map(sheet => [...sheet.instances.list])
+        .flat();
       list = [...list].filter(pred);
       names = list.map(e => e.attributes.part);
       break;
@@ -768,8 +908,17 @@ function GetNames(doc, pred) {
     }
     default: {
       names = deep
-        .select(doc.raw, e => e.attributes.name, deep.RETURN_VALUE_PATH)
-        .filter(([v, p]) => ['symbol', 'device', 'package'].indexOf(v.tagName) != -1)
+        .select(
+          doc.raw,
+          e => e.attributes.name,
+          deep.RETURN_VALUE_PATH
+        )
+        .filter(
+          ([v, p]) =>
+            ['symbol', 'device', 'package'].indexOf(
+              v.tagName
+            ) != -1
+        )
         .map(([v, p]) => v.attributes.name);
       break;
     }
@@ -784,7 +933,11 @@ let nameMaps = (() => {
     let map;
     switch (doc.type) {
       case 'sch': {
-        map = new Map(doc.sheets.map(sheet => [...sheet.instances]).flat());
+        map = new Map(
+          doc.sheets
+            .map(sheet => [...sheet.instances])
+            .flat()
+        );
         break;
       }
       case 'brd': {
@@ -812,23 +965,35 @@ function CorrelateSchematicAndBoard(schematic, board) {
   let intersection = intersect(...names);
 
   if(allNames.length > intersection.length)
-    console.warn(`WARNING: Only ${intersection.length} names of ${allNames.length} correlate`);
+    console.warn(
+      `WARNING: Only ${intersection.length} names of ${allNames.length} correlate`
+    );
   console.log(`intersection`, intersection);
 
-  return /*new Map*/ intersection.map(name => [name, documents.map(doc => GetByName(doc, name))]);
+  return /*new Map*/ intersection.map(name => [
+    name,
+    documents.map(doc => GetByName(doc, name))
+  ]);
 }
 
 function GetSheets(doc_or_proj) {
-  if(!(doc_or_proj instanceof EagleDocument)) doc_or_proj = doc_or_proj.schematic;
+  if(!(doc_or_proj instanceof EagleDocument))
+    doc_or_proj = doc_or_proj.schematic;
 
   return [...doc_or_proj.schematic.sheets.children];
 }
 
 function SaveLibraries() {
   const { schematic, board } = project;
-  const layerMap = /*Object.values*/ [...schematic.layers, ...board.layers]
+  const layerMap = /*Object.values*/ [
+    ...schematic.layers,
+    ...board.layers
+  ]
     .filter(([n, e]) => e.active)
-    .reduce((acc, [n, e]) => ({ ...acc, [e.number]: e.raw }), {});
+    .reduce(
+      (acc, [n, e]) => ({ ...acc, [e.number]: e.raw }),
+      {}
+    );
   const entities = ['symbols', 'packages', 'devicesets'];
 
   let layerIds = deep
@@ -846,34 +1011,55 @@ function SaveLibraries() {
     layerIds.map(id => [id, layerMap[id].attributes.name])
   );
 
-  const libraryNames = unique([...schematic.libraries, ...board.libraries].map(([n, e]) => n));
+  const libraryNames = unique(
+    [...schematic.libraries, ...board.libraries].map(
+      ([n, e]) => n
+    )
+  );
   console.log('libraryNames', libraryNames);
 
-  const libraries = libraryNames.map(name => [name, schematic.getLibrary(name), board.getLibrary(name)]);
+  const libraries = libraryNames.map(name => [
+    name,
+    schematic.getLibrary(name),
+    board.getLibrary(name)
+  ]);
   for(let [name, ...libs] of libraries) {
     let obj = { symbols: [], packages: [], devicesets: [] };
 
     let xml = {
       tagName: 'library',
-      children: [{ tagName: 'description', attributes: {}, children: [`${name}.lbr library`] }],
+      children: [
+        {
+          tagName: 'description',
+          attributes: {},
+          children: [`${name}.lbr library`]
+        }
+      ],
       attributes: { name }
     };
 
     for(let lib of libs) {
       if(lib) {
         for(let entity of entities) {
-          if(lib[entity]) obj[entity] = [...obj[entity], ...lib[entity]];
+          if(lib[entity])
+            obj[entity] = [...obj[entity], ...lib[entity]];
         }
       }
     }
     for(let entity of entities) {
-      obj[entity] = obj[entity].reduce((acc, [n, e]) => ({ ...acc, [n]: e.raw }), {});
+      obj[entity] = obj[entity].reduce(
+        (acc, [n, e]) => ({ ...acc, [n]: e.raw }),
+        {}
+      );
     }
 
     for(let entity of entities) {
       obj[entity] = Object.values(obj[entity]);
 
-      xml.children.push({ tagName: entity, children: obj[entity] });
+      xml.children.push({
+        tagName: entity,
+        children: obj[entity]
+      });
     }
 
     // console.log('', console.config({ compact: 3, depth: 4 }), xml);
@@ -882,7 +1068,11 @@ function SaveLibraries() {
       tagName: '?xml',
       attributes: { version: '1.0', encoding: 'utf-8' },
       children: [
-        { tagName: '!DOCTYPE eagle SYSTEM "eagle.dtd"', attributes: {}, children: [] },
+        {
+          tagName: '!DOCTYPE eagle SYSTEM "eagle.dtd"',
+          attributes: {},
+          children: []
+        },
         {
           tagName: 'eagle',
           attributes: { version: '6.4.1' },
@@ -895,8 +1085,14 @@ function SaveLibraries() {
                   tagName: 'settings',
                   attributes: {},
                   children: [
-                    { tagName: 'setting', attributes: { alwaysvectorfont: 'no' } },
-                    { tagName: 'setting', attributes: { verticaltext: 'up' } }
+                    {
+                      tagName: 'setting',
+                      attributes: { alwaysvectorfont: 'no' }
+                    },
+                    {
+                      tagName: 'setting',
+                      attributes: { verticaltext: 'up' }
+                    }
                   ]
                 },
                 {
@@ -942,12 +1138,22 @@ async function testEagle(filename) {
   console.log('proj.documents', proj.documents);
   let { board, schematic } = proj;
   const packages = {
-    board: (board && board.elements && [...board.elements].map(([name, e]) => e.package)) || [],
+    board:
+      (board &&
+        board.elements &&
+        [...board.elements].map(
+          ([name, e]) => e.package
+        )) ||
+      [],
     schematic:
       (schematic &&
         schematic.sheets &&
         [...schematic.sheets]
-          .map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined))
+          .map(e =>
+            [...e.instances]
+              .map(([name, i]) => i.part.device.package)
+              .filter(p => p !== undefined)
+          )
           .flat()) ||
       []
   };
@@ -969,11 +1175,13 @@ async function testEagle(filename) {
   let cmds = [];
   for(let [name, elem] of elements) {
     cmds.push(`MOVE ${elem.name} ${elem.pos};`);
-    if(elem.rot) cmds.push(`ROTATE ${elem.rot} ${elem.name};`);
+    if(elem.rot)
+      cmds.push(`ROTATE ${elem.rot} ${elem.name};`);
   }
   console.log('proj.board', proj.board);
   if(proj.board) UpdateMeasures(proj.board);
-  if(AlignAll(board) || AlignAll(schematic)) console.log('Saved:', await proj.saveTo('tmp', true));
+  if(AlignAll(board) || AlignAll(schematic))
+    console.log('Saved:', await proj.saveTo('tmp', true));
   console.log('documents', proj.documents);
   console.log('saved:', await proj.saveTo('tmp', true));
   for(let doc of proj.documents) {
@@ -983,12 +1191,17 @@ async function testEagle(filename) {
       let indexes = [...pkg.children].map((child, i, a) =>
         a
           .slice(i + 1)
-          .map((child2, i2) => [i2 + i + 1, Util.equals(child.raw, child2.raw)])
+          .map((child2, i2) => [
+            i2 + i + 1,
+            Util.equals(child.raw, child2.raw)
+          ])
           .filter(([index, equal]) => equal)
           .map(([index]) => index)
       );
       indexes = indexes.flat().reverse();
-      let paths = indexes.map(i => pkg.path.down('children', i));
+      let paths = indexes.map(i =>
+        pkg.path.down('children', i)
+      );
       console.log('indexes', pkg.name, paths);
       paths.forEach(i => deep.unset(doc.raw, [...i]));
       changed = changed || indexes.length > 0;
@@ -998,17 +1211,29 @@ async function testEagle(filename) {
       console.log('Saved:', doc.filename);
     }
   }
-  let desc = proj.documents.map(doc => [doc.filename, doc.find('description')]);
+  let desc = proj.documents.map(doc => [
+    doc.filename,
+    doc.find('description')
+  ]);
   console.log('desc', desc);
   desc = desc
     .map(([file, e]) => [file, e && e.xpath()])
-    .map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
+    .map(([file, xpath]) => [
+      file,
+      xpath &&
+        xpath.toCode('', { spacing: '', function: true })
+    ]);
   desc = new Map(desc);
-  console.log('descriptions', [...Util.map(desc, ([k, v]) => [k, v])]);
+  console.log('descriptions', [
+    ...Util.map(desc, ([k, v]) => [k, v])
+  ]);
   return proj;
 }
 
-function ModifyPath(p, fn = (dir, base, ext) => [dir, base, ext]) {
+function ModifyPath(
+  p,
+  fn = (dir, base, ext) => [dir, base, ext]
+) {
   let [dir, base, ext] = (() => {
     let { dir, base, ext } = path.toObject(p);
     return fn(dir, base, ext);
@@ -1018,18 +1243,42 @@ function ModifyPath(p, fn = (dir, base, ext) => [dir, base, ext]) {
 }
 
 function AppendToFilename(p, str = '') {
-  return ModifyPath(p, (dir, base, ext) => [dir, base + str, ext]);
+  return ModifyPath(p, (dir, base, ext) => [
+    dir,
+    base + str,
+    ext
+  ]);
 }
 
 function SetSVGBackground(xml, color = '#ffffff') {
   let svgNode;
-  let bgRect = deep.find(xml, (e, n) => e.tagName == 'rect' && e.attributes.id == 'background-rect', deep.RETURN_PATH);
+  let bgRect = deep.find(
+    xml,
+    (e, n) =>
+      e.tagName == 'rect' &&
+      e.attributes.id == 'background-rect',
+    deep.RETURN_PATH
+  );
 
   if(bgRect) throw new Error('background-rect alreay set');
 
-  if((svgNode = deep.find(xml, (e, n) => e.tagName == 'svg', deep.RETURN_VALUE))) {
-    let defs = deep.find(xml, (e, n) => e.tagName == 'defs', deep.RETURN_PATH);
-    let gpath = deep.find(xml, (e, n) => e.tagName == 'g', deep.RETURN_PATH);
+  if(
+    (svgNode = deep.find(
+      xml,
+      (e, n) => e.tagName == 'svg',
+      deep.RETURN_VALUE
+    ))
+  ) {
+    let defs = deep.find(
+      xml,
+      (e, n) => e.tagName == 'defs',
+      deep.RETURN_PATH
+    );
+    let gpath = deep.find(
+      xml,
+      (e, n) => e.tagName == 'g',
+      deep.RETURN_PATH
+    );
     let children = deep.get(xml, defs.slice(0, -1));
 
     //console.log('SetSVGBackground',{gpath});
@@ -1041,14 +1290,24 @@ function SetSVGBackground(xml, color = '#ffffff') {
 
     children.splice(pos + 1, 0, {
       tagName: 'rect',
-      attributes: { id: 'background-rect', fill: '#fff', ...rect.toObject() }
+      attributes: {
+        id: 'background-rect',
+        fill: '#fff',
+        ...rect.toObject()
+      }
     });
 
     return xml;
   }
 }
 
-const FileFunction = (fn, rfn = ReadFile, wfn = WriteFile, namefn = n => n, ...args) => {
+const FileFunction = (
+  fn,
+  rfn = ReadFile,
+  wfn = WriteFile,
+  namefn = n => n,
+  ...args
+) => {
   return (filename, ...args) => {
     let data = rfn(filename, ...args);
 
@@ -1075,13 +1334,22 @@ const SVGResave = FileFunction(
 
 function PutRowsColumns(rows) {
   let columnLength = rows.reduce((acc, row) => {
-    for(let i = 0; i < row.length; i++) acc[i] = Math.max(acc[i] | 0, (row[i] + '').length);
+    for(let i = 0; i < row.length; i++)
+      acc[i] = Math.max(acc[i] | 0, (row[i] + '').length);
     return acc;
   }, []);
   console.log('columnLength', columnLength);
   columnLength[columnLength.length - 1] = 0;
 
-  return rows.map(row => row.map((col, i) => (col + '').padEnd(columnLength[i], ' ')).join(' ')).join('\n');
+  return rows
+    .map(row =>
+      row
+        .map((col, i) =>
+          (col + '').padEnd(columnLength[i], ' ')
+        )
+        .join(' ')
+    )
+    .join('\n');
 }
 
 function GetLibrary(e) {
@@ -1100,21 +1368,27 @@ function ElementName(e) {
   n = n.replace(/[^A-Za-z0-9_]/g, '_');
 
   if(!/^[A-Za-z]/i.test(n)) {
-    if(e.tagName == 'package') n = n.replace(/^[0-9]+_/g, '');
+    if(e.tagName == 'package')
+      n = n.replace(/^[0-9]+_/g, '');
     let lib = GetLibrary(e);
     if(lib && lib.name) n = lib.name + n;
   }
   n = n.replace(/([0-9])_([A-Za-z])/g, '$1$2');
 
   if(e.tagName == 'package') n = n.toLowerCase();
-  if(e.tagName == 'package') n = n.replace(/_[0-9]+x[0-9]+$/g, '');
+  if(e.tagName == 'package')
+    n = n.replace(/_[0-9]+x[0-9]+$/g, '');
   return n;
 }
 
 function Package2Circuit(p) {
-  let points = p.pads.map(({ x, y }) => new Point(x, y)).map(pt => pt.div(2.54));
+  let points = p.pads
+    .map(({ x, y }) => new Point(x, y))
+    .map(pt => pt.div(2.54));
 
-  let half = points.filter(pt => [...pt].some(coord => coord != 0 && Math.abs(coord) < 1));
+  let half = points.filter(pt =>
+    [...pt].some(coord => coord != 0 && Math.abs(coord) < 1)
+  );
 
   if(half.length) {
     let t = new Translation(...half[0]).invert();
@@ -1126,14 +1400,23 @@ function Package2Circuit(p) {
 }
 
 function Elements2Circuit(p) {
-  return [ElementName(p), [...p.pads.list].map(({ x, y }) => `${x / 2.54},${y / 2.54}`).join(' ')];
+  return [
+    ElementName(p),
+    [...p.pads.list]
+      .map(({ x, y }) => `${x / 2.54},${y / 2.54}`)
+      .join(' ')
+  ];
 }
 
 function GetUsedPackages(doc = project.board) {
   return unique(doc.elements.list.map(e => e.package));
 }
 
-function Eagle2Circuit(doc = project.board, width = 100, height = 100) {
+function Eagle2Circuit(
+  doc = project.board,
+  width = 100,
+  height = 100
+) {
   let o = '';
 
   o += `# Stripboard
@@ -1147,11 +1430,17 @@ board ${width},${height}
 # <package name> <pin coordinates relative to pin 0>
 
 `;
-  o += PutRowsColumns(GetUsedPackages(doc).map(Package2Circuit));
+  o += PutRowsColumns(
+    GetUsedPackages(doc).map(Package2Circuit)
+  );
   return o;
 }
 
-function Eagle2CircuitJS(doc = project.schematic, scale = 50, sheet = 0) {
+function Eagle2CircuitJS(
+  doc = project.schematic,
+  scale = 50,
+  sheet = 0
+) {
   let circ = new CircuitJS();
   let sheets = GetSheets(doc);
   console.log('sheets', sheets);
@@ -1159,8 +1448,13 @@ function Eagle2CircuitJS(doc = project.schematic, scale = 50, sheet = 0) {
   console.log('sh', sh);
   let tree = sh.raw;
 
-  for(let [elm, ptr] of deep.iterate(tree, n => 'x1' in n.attributes && n.attributes.layer == 91)) {
-    let ln = new Line(elm.attributes).mul(scale / 2.54).round();
+  for(let [elm, ptr] of deep.iterate(
+    tree,
+    n => 'x1' in n.attributes && n.attributes.layer == 91
+  )) {
+    let ln = new Line(elm.attributes)
+      .mul(scale / 2.54)
+      .round();
 
     ptr = ptr.slice(0, -2);
     let segmentIndex = ptr[ptr.length - 1];
@@ -1168,7 +1462,10 @@ function Eagle2CircuitJS(doc = project.schematic, scale = 50, sheet = 0) {
     let net = deep.get(tree, ptr.slice(0, -2));
 
     //console.log('ln',ln,elm.attributes.layer);
-    console.log('segment/net', { segment: segmentIndex, net: net.attributes.name });
+    console.log('segment/net', {
+      segment: segmentIndex,
+      net: net.attributes.name
+    });
 
     circ.add('w', ...ln, 0);
   }
@@ -1179,11 +1476,17 @@ function Eagle2CircuitJS(doc = project.schematic, scale = 50, sheet = 0) {
 
     circ.add('r', ...pt, 0);
   }*/
-  let instances = sh.children.find(e => e.tagName == 'instances').children;
+  let instances = sh.children.find(
+    e => e.tagName == 'instances'
+  ).children;
 
   console.log('instances', instances);
   for(let [name, instance] of instances) {
-    console.log(`instance '${name}'`, console.config({ depth: 0 }), instance);
+    console.log(
+      `instance '${name}'`,
+      console.config({ depth: 0 }),
+      instance
+    );
   }
   return circ;
 }
