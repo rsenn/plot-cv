@@ -156,9 +156,9 @@ async function LoadSVG(filename) {
       let pos = new Rect(...rel.sum(rect.upperLeft), rect.width, rect.height);
 
       Element.move(elem, pos.upperLeft);
- //     Element.setRect(elem, pos);
+      //     Element.setRect(elem, pos);
 
-     // console.log('drag', { rel, pos });
+      // console.log('drag', { rel, pos });
     }
   }; //elem=body.children[body.children.length-1];
 
