@@ -1,3 +1,24 @@
+body, h4 {
+    font-family: Helvetica;
+}
+div.svg {
+  padding:   0;
+  border:  1px dotted rgba(192,192,192,1);
+  background:  rgba(255,255,255,1);
+  box-shadow:  0px 0px 6px rgba(100,100,100,0.5);
+  margin:  0.5em;
+}
+div.svg > svg {
+   margin:  0.5em;
+
+}
+div.svg > h4 {
+  background:  black;
+  color:  white;
+  padding:  0.25em;
+  margin:  0 0 0.5em 0;
+  border-bottom:  1px solid rgba(192,192,192,1);
+}
 .upload {
   font-family: Helvetica;
   font-size: 16px;

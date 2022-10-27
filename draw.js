@@ -5,7 +5,7 @@ import { PinSizes, Circle } from './lib/eagle/components/circle.js';
 import trkl from './lib/trkl.js';
 import { Matrix, isMatrix, ImmutableMatrix } from './lib/geom/matrix.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
-import { Point, isPoint, ImmutablePoint } from './lib/geom/point.js';
+import { Point, isPoint, Rect } from './lib/geom.js';
 import { Element, isElement } from './lib/dom/element.js';
 import { once, streamify, filter, map, throttle, distinct, subscribe } from './lib/async/events.js';
 import { Arc, ArcTo } from './lib/geom/arc.js';
@@ -113,9 +113,66 @@ function TouchEvents(element) {
   return streamify(['mousemove', 'mouseup'], element, e => !e.type.endsWith('up'));
 }
 
+async function LoadSVG(filename) {
+  let response = await fetch(filename);
+  let data = await response.text();
+
+  //console.log('LoadSVG', { filename, data });
+
+  let elem = Element.create('div', { class: 'svg' }, document.body);
+
+  const { body } = document;
+
+  elem.innerHTML = data;
+
+  elem.insertBefore(Element.create('h4', { innerHTML: filename }, []), elem.children[0]);
+
+  let zoomPos = 0,
+    zoomFactor = 1;
+
+  elem.onmousewheel = e => {
+    const { deltaY, screenX: x, screenY: y } = e;
+    zoomPos -= deltaY / 1000;
+    zoomFactor = Math.pow(10, zoomPos);
+    console.log('wheel', { x, y, zoomFactor });
+
+    Element.setCSS(elem, {
+      transform: `translate(${-x}px, ${-y}px) scale(${zoomFactor}, ${zoomFactor}) translate(${x / zoomFactor}px, ${
+        y / zoomFactor
+      }px) `
+    });
+  };
+
+  elem.onmousedown = async e => {
+    const { clientX: startX, clientY: startY, target, currentTarget } = e;
+
+    let rect = new Rect(Element.getRect(elem));
+
+    for await(let ev of TouchEvents(document.body)) {
+      let { clientX: x, clientY: y } = ev;
+
+      let rel = new Point({ x: x - startX, y: y - startY });
+
+      let pos = new Rect(...rel.sum(rect.upperLeft), rect.width, rect.height);
+
+      Element.move(elem, pos.upperLeft);
+ //     Element.setRect(elem, pos);
+
+     // console.log('drag', { rel, pos });
+    }
+  }; //elem=body.children[body.children.length-1];
+
+  Element.setCSS(elem, { position: 'absolute', left: '0px', top: '0px' });
+  //elem.style.setProperty('position', 'absolute');
+  //console.log('LoadSVG', { elem });
+
+  return elem;
+}
+
 Object.assign(globalThis, {
   Matrix,
   Point,
+  Rect,
   Element,
   CreateElement,
   GetPosition,
@@ -123,7 +180,8 @@ Object.assign(globalThis, {
   TouchEvents,
   Arc,
   ArcTo,
-  Tracked
+  Tracked,
+  LoadSVG
 });
 
 window.addEventListener('load', e => {

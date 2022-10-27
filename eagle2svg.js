@@ -14,13 +14,15 @@ import { ReactComponent, render } from './lib/dom/preactComponent.js';
 import renderToString from './lib/preact-render-to-string.js';
 import { RGBA, isRGBA, ImmutableRGBA, default as rgba } from './lib/color/rgba.js';
 
+let debugFlag = false;
+
 function render(doc, filename) {
   if(doc instanceof EagleProject) {
     render(doc.schematic);
     render(doc.board);
     return;
   }
-  let renderer = new Renderer(doc, ReactComponent.append, true);
+  let renderer = new Renderer(doc, ReactComponent.append, debugFlag);
 
   /* renderer.setPalette([
     [0xff, 0xff, 0xff],
@@ -77,7 +79,7 @@ function main(...args) {
 
   let params = getOpt(
     {
-      debug: [false, null, 'x'],
+      debug: [false, value => (debugFlag = value), 'x'],
       'output-dir': [true, null, 'd'],
       '@': 'input'
     },

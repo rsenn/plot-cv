@@ -39,9 +39,7 @@ function GetRow(element) {
 function GetField(row, field) {
   let columns = [...row.children];
 
-  let idx = columns.findIndex(
-    c => c.getAttribute('class') == field
-  );
+  let idx = columns.findIndex(c => c.getAttribute('class') == field);
   if(idx != -1) return columns[idx].innerText;
 }
 

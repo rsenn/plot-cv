@@ -12,7 +12,7 @@ import REPL from './quickjs/qjs-modules/lib/repl.js';
 import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, Enum, HashList, Multimap, Shash, SortedMap, HashMultimap, MultiBiMap, MultiKeyMap, DenseSpatialHash2D, SpatialHash2D, HashMap, SpatialH, SpatialHash, SpatialHashMap, BoxHash } from './lib/container.js';
 import * as fs from 'fs';
 import { Pointer } from './lib/pointer.js';
-import { read as fromXML, write as writeXML } from './lib/xml.js';
+import { read as fromXML, write as writeXML } from 'xml';
 import inspect from './lib/objectInspect.js';
 import { IfDebug, LogIfDebug, ReadFd, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 import { GetExponent, GetMantissa, ValueToNumber, NumberToValue } from './lib/eda/values.js';
@@ -342,7 +342,8 @@ function main(...args) {
     render,
     pick,
     fromXML,
-    toXML
+    toXML,
+    writeXML
   });
   Object.assign(globalThis, {
     GetExponent,
@@ -467,7 +468,13 @@ function main(...args) {
     GerberToGcode,
     ExecTool
   });
-  Object.assign(globalThis, { renderToString, renderToXML });
+  Object.assign(globalThis, {
+    renderToString(arg) {
+      //  return renderToString(arg);
+      return writeXML(fromXML(renderToString(arg)));
+    },
+    renderToXML
+  });
 
   cmdhist = `.${base}-cmdhistory`;
 

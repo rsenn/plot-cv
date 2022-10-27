@@ -5,14 +5,7 @@ import { unescape } from 'misc';
 import { IfDebug, LogIfDebug, ReadFd, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 
 const StrDecode = s => ((s = s.slice(1, -1)), unescape(s));
-const StrFmt = s =>
-  s[0] == '"' && s[s.length - 1] == '"'
-    ? StrDecode(s)
-    : s == 'NULL'
-    ? null
-    : !isNaN(+s)
-    ? +s
-    : s;
+const StrFmt = s => (s[0] == '"' && s[s.length - 1] == '"' ? StrDecode(s) : s == 'NULL' ? null : !isNaN(+s) ? +s : s);
 
 function main(...args) {
   globalThis.console = new Console({
@@ -34,38 +27,24 @@ function main(...args) {
 
     while((line = fd.getline())) {
       let argIndex = line.indexOf('(');
-      let fnIndex = line
-        .substring(0, argIndex)
-        .indexOf(' ');
+      let fnIndex = line.substring(0, argIndex).indexOf(' ');
       let fnName = line.substring(fnIndex + 1, argIndex);
 
       if(argIndex == -1) continue;
       let resultIndex = line.indexOf(' = ');
 
-      let argLastIndex = line
-        .substring(
-          0,
-          resultIndex != -1 ? resultIndex : line.length
-        )
-        .indexOf(')');
+      let argLastIndex = line.substring(0, resultIndex != -1 ? resultIndex : line.length).indexOf(')');
 
       let args = line
         .substring(argIndex + 1, argLastIndex)
         .split(/, /g)
         .map(StrFmt);
-      let result =
-        resultIndex != -1
-          ? line.substring(resultIndex + 3)
-          : null;
+      let result = resultIndex != -1 ? line.substring(resultIndex + 3) : null;
 
       const re = /([^\(]*)\(([^,]+(\)|,\s*)*|\s+=\s+)/g;
 
-      const strings = args.filter(
-        arg => typeof arg == 'string'
-      );
-      const files = strings.filter(
-        str => !allFiles.has(str) && fs.existsSync(str)
-      );
+      const strings = args.filter(arg => typeof arg == 'string');
+      const files = strings.filter(str => !allFiles.has(str) && fs.existsSync(str));
       //console.log(fnName, args);
       //console.log('result', result);
       if(files) {
@@ -79,10 +58,7 @@ function main(...args) {
 
     // console.log('fileFuncs', [...fileFuncs].join('\n'));
     WriteFile(logfile + '.files', sorted.join('\n'));
-    WriteFile(
-      logfile + '.funcs',
-      [...fileFuncs].join('\n')
-    );
+    WriteFile(logfile + '.funcs', [...fileFuncs].join('\n'));
   }
 }
 
