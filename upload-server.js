@@ -446,6 +446,10 @@ function main(...args) {
 
           console.log('proxy', { status, ok, url, type });
         },
+        function* config(req, resp) {
+          console.log('*config', { req, resp });
+          yield '{}';
+        },
         function* file(req, resp) {
           let { body, headers, json, url } = req;
           let { query } = url;
@@ -548,9 +552,12 @@ body, * {
           let { body, headers, json, url } = req;
           let { query } = url;
 
-          console.log('*files', { body, query });
+          define(globalThis, { filesRequest: { req, resp, body, query } });
 
-          const data = {}; //json ? json : JSON.parse(body ?? '{}');
+          console.log('*files', { req, resp, body, query });
+
+          const data = query ?? {}; //json ? json : JSON.parse(body ?? '{}');
+
           resp.type = 'application/json';
           let {
             dirs = defaultDirs,
@@ -558,7 +565,8 @@ body, * {
             verbose = false,
             objects = true,
             key = 'mtime',
-            limit = null
+            limit = null,
+            flat = false
           } = data ?? {};
           let results = [];
           for(let dir of dirs) {
@@ -633,7 +641,12 @@ body, * {
               entries = entries.sort(cmp);
             }
             names = entries.map(([name, obj]) => (objects ? obj : name));
-            results.push({ dir, names });
+
+            if(names.length > 0) {
+              //console.log('files result', { dir, names });
+              if(flat) names.map(({ name }) => results.push({ name: path.normalize(path.join(dir, name)) }));
+              else results.push({ dir, names });
+            }
           }
 
           // yield '\n]';

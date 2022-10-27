@@ -44,7 +44,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/OpenCV.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/quickjs/cmake/FindQuickJS.cmake)
 
 option(BUILD_QUICKJS "Build quickjs library" ON)
-
+option(BUILD_QJS_OPENCV "Build qjs-opencv module" ON)
 if(PNG_LIBRARIES)
   message(STATUS "Found libpng library: ${PNG_LIBRARIES}")
 endif(PNG_LIBRARIES)
