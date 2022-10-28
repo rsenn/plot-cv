@@ -120,13 +120,9 @@ async function LoadSVG(filename) {
   //console.log('LoadSVG', { filename, data });
 
   let elem = Element.create('div', { class: 'svg' }, document.body);
-
   const { body } = document;
-
   elem.innerHTML = data;
-
   elem.insertBefore(Element.create('h4', { innerHTML: filename }, []), elem.children[0]);
-
   let zoomPos = 0,
     zoomFactor = 1;
 
@@ -135,7 +131,6 @@ async function LoadSVG(filename) {
     zoomPos -= deltaY / 1000;
     zoomFactor = Math.pow(10, zoomPos);
     console.log('wheel', { x, y, zoomFactor });
-
     Element.setCSS(elem, {
       transform: `translate(${-x}px, ${-y}px) scale(${zoomFactor}, ${zoomFactor}) translate(${x / zoomFactor}px, ${
         y / zoomFactor
@@ -145,26 +140,16 @@ async function LoadSVG(filename) {
 
   elem.onmousedown = async e => {
     const { clientX: startX, clientY: startY, target, currentTarget } = e;
-
     let rect = new Rect(Element.getRect(elem));
-
     for await(let ev of TouchEvents(document.body)) {
       let { clientX: x, clientY: y } = ev;
-
       let rel = new Point({ x: x - startX, y: y - startY });
-
       let pos = new Rect(...rel.sum(rect.upperLeft), rect.width, rect.height);
-
       Element.move(elem, pos.upperLeft);
-      //     Element.setRect(elem, pos);
-
-      // console.log('drag', { rel, pos });
     }
-  }; //elem=body.children[body.children.length-1];
+  }; 
 
   Element.setCSS(elem, { position: 'absolute', left: '0px', top: '0px' });
-  //elem.style.setProperty('position', 'absolute');
-  //console.log('LoadSVG', { elem });
 
   return elem;
 }
