@@ -9,6 +9,8 @@ import { Point, isPoint, Rect } from './lib/geom.js';
 import { Element, isElement } from './lib/dom/element.js';
 import { once, streamify, filter, map, throttle, distinct, subscribe } from './lib/async/events.js';
 import { Arc, ArcTo } from './lib/geom/arc.js';
+import { unique } from './lib/misc.js';
+import { KolorWheel } from './lib/KolorWheel.js';
 
 let ref = (globalThis.ref = trkl(null));
 let svgElem;
@@ -113,6 +115,29 @@ function TouchEvents(element) {
   return streamify(['mousemove', 'mouseup'], element, e => !e.type.endsWith('up'));
 }
 
+function GetSignalNames() {
+  return unique(Element.findAll(`*[data-signal]`).map(e => e.getAttribute('data-signal'))).sort((a, b) =>
+    a == 'GND' ? -1 : a == 'VCC' ? (b != 'GND' ? -1 : 1) : 1 ?? a.localeCompare(b)
+  );
+}
+
+function ColorSignals() {
+  let names = GetSignalNames();
+  let palette = MakePalette(names.length);
+  console.log('ColorSignals', { names, palette });
+  let i = 0;
+  for(let name of names) {
+    ColorSignal(name, palette[i++]);
+  }
+}
+
+function ColorSignal(signalName, color) {
+  for(let elem of Element.findAll(`*[data-signal=${signalName.replace(/([\$])/g, '\\$1')}]`)) {
+    //console.log('ColorSignal', elem);
+    elem.setAttribute('stroke', color);
+  }
+}
+
 async function LoadSVG(filename) {
   let response = await fetch(filename);
   let data = await response.text();
@@ -147,11 +172,21 @@ async function LoadSVG(filename) {
       let pos = new Rect(...rel.sum(rect.upperLeft), rect.width, rect.height);
       Element.move(elem, pos.upperLeft);
     }
-  }; 
+  };
 
   Element.setCSS(elem, { position: 'absolute', left: '0px', top: '0px' });
 
   return elem;
+}
+
+function MakePalette(num) {
+  let result = [];
+  new KolorWheel('#0000ff').abs(0, -1, -1, num - 1).each(function () {
+    result.push(this.getHex());
+  });
+  result.push('#000000');
+  result.reverse();
+  return result;
 }
 
 Object.assign(globalThis, {
@@ -166,7 +201,12 @@ Object.assign(globalThis, {
   Arc,
   ArcTo,
   Tracked,
-  LoadSVG
+  LoadSVG,
+  ColorSignal,
+  GetSignalNames,
+  KolorWheel,
+  MakePalette,
+  ColorSignals
 });
 
 window.addEventListener('load', e => {
