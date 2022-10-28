@@ -22,7 +22,7 @@ div.svg > h4 {
 
 @font-face {
   font-family: 'Fixed';
-  src:      url('../fonts/miscfs__.ttf') format('truetype');
+  src:      url('../fonts/misc-fixed.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
