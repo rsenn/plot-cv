@@ -254,6 +254,7 @@ window.addEventListener('load', e => {
       console.log('mousedown', { x, y, target, currentTarget });
     });
   });
+
   let component = h(SVG, { ref, viewBox: new BBox(0, 0, 160, 100) }, [
     h('circle', { cx: 30, cy: 30, r: 2, stroke: 'red', 'stroke-width': 0.1, fill: 'none' }),
     h(Path, { points: anchorPoints }, []),
