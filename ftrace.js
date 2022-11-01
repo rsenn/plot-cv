@@ -15,15 +15,32 @@ function main(...args) {
   for(let logfile of args) {
     const allFiles = new Set();
     const fileFuncs = new Set();
+    const processes = {};
     let fd = fs.fopen(logfile, 'r');
     let line;
     console.log('fd', fd);
 
     while((line = fd.getline())) {
+      let pidLen = line.indexOf(' ');
+      let pidStr = line.substring(0, pidLen);
+      let pidNum = +pidStr;
+
       let argIndex = line.indexOf('(');
       let fnIndex = line.substring(0, argIndex).indexOf(' ');
       let fnName = line.substring(fnIndex + 1, argIndex);
 
+      //  if(/ /.test(fnName))
+      if(/ /.test(fnName)) {
+        if(/resumed>/.test(line) && processes[pidNum]) {
+          line = processes[pidNum].replace(/<unfini.*/g, '') + line.replace(/.*resumed>/g, '');
+          delete processes[pidNum];
+          argIndex = line.indexOf('(');
+          fnIndex = line.substring(0, argIndex).indexOf(' ');
+          fnName = line.substring(fnIndex + 1, argIndex);
+        } else {
+          throw new Error(`Parsing line: '${line}'\nPrevious: '${processes[pidNum]}'`);
+        }
+      }
       if(argIndex == -1) continue;
       let resultIndex = line.indexOf(' = ');
 
@@ -46,6 +63,7 @@ function main(...args) {
         if(files.length) fileFuncs.add(fnName);
         for(let file of files) allFiles.add(file);
       }
+      processes[pidNum] = line;
     }
 
     const sorted = [...allFiles].sort();
