@@ -1,13 +1,12 @@
-import React, { h, html, render, Fragment, Component, createRef, useState, useLayoutEffect, useRef, toChildArray } from './lib/dom/preactComponent.js';
+import React, { h, render, Component } from './lib/dom/preactComponent.js';
 import { SVG } from './lib/eagle/components/svg.js';
 import { BBox } from './lib/geom/bbox.js';
-import { PinSizes, Circle } from './lib/eagle/components/circle.js';
 import trkl from './lib/trkl.js';
-import { Matrix, isMatrix, ImmutableMatrix } from './lib/geom/matrix.js';
+import { Matrix } from './lib/geom/matrix.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
-import { Point, isPoint, Rect } from './lib/geom.js';
-import { Element, isElement } from './lib/dom/element.js';
-import { once, streamify, filter, map, throttle, distinct, subscribe } from './lib/async/events.js';
+import { Point, Rect } from './lib/geom.js';
+import { Element } from './lib/dom/element.js';
+import { streamify, map, subscribe } from './lib/async/events.js';
 import { Arc, ArcTo } from './lib/geom/arc.js';
 import { unique } from './lib/misc.js';
 import { KolorWheel } from './lib/KolorWheel.js';
@@ -112,7 +111,12 @@ function FindPoint(pos) {
 }
 
 function TouchEvents(element) {
-  return streamify(['mousemove', 'mouseup'], element, e => !e.type.endsWith('up'));
+  const isTouch = 'ontouchstart' in svgElem;
+  return streamify(
+    isTouch ? ['touchmove', 'touchend'] : ['mousemove', 'mouseup'],
+    element,
+    isTouch ? e => !e.type.endsWith('end') : e => !e.type.endsWith('up')
+  );
 }
 
 function GetSignalNames() {
@@ -150,10 +154,11 @@ async function LoadSVG(filename) {
   elem.insertBefore(Element.create('h4', { innerHTML: filename }, []), elem.children[0]);
   let zoomPos = 0,
     zoomFactor = 1;
+    const isTouch = 'ontouchstart' in elem;
 
   elem.onmousewheel = ZoomHandler;
 
-  elem.onmousedown = MoveHandler;
+  elem[isTouch ? 'ontouchstart' : 'onmousedown'] = MoveHandler;
 
   function ZoomHandler(e) {
     const { deltaY, screenX: x, screenY: y } = e;
@@ -222,7 +227,9 @@ window.addEventListener('load', e => {
     svgCTM = globalThis.svgCTM = Matrix.fromDOM(svgElem.getScreenCTM()).invert();
     screenCTM = globalThis.screenCTM = Matrix.fromDOM(svgElem.getScreenCTM());
 
-    svgElem.addEventListener('mousedown', async e => {
+    const isTouch = 'ontouchstart' in svgElem;
+
+    svgElem.addEventListener(isTouch ? 'touchstart' : 'mousedown', async e => {
       const { clientX: x, clientY: y, target, currentTarget } = e;
 
       let xy,

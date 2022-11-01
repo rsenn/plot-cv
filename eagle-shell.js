@@ -121,6 +121,7 @@ function render(doc, filename) {
   } catch(e) {
     console.log('ERROR:', e);
   }
+  console.log('render', { str });
 
   let xml = fromXML(str);
 
