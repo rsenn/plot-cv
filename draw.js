@@ -1,21 +1,100 @@
-import React, { h, render, Component } from './lib/dom/preactComponent.js';
-import { SVG } from './lib/eagle/components/svg.js';
+import React, { h, render, Component, isComponent } from './lib/dom/preactComponent.js';
+import { SVG as SVGComponent } from './lib/eagle/components/svg.js';
 import { BBox } from './lib/geom/bbox.js';
 import trkl from './lib/trkl.js';
 import { Matrix } from './lib/geom/matrix.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
-import { Point, Rect } from './lib/geom.js';
+import { Point, Rect,PointList } from './lib/geom.js';
 import { Element } from './lib/dom/element.js';
+import { SVG } from './lib/dom/svg.js';
 import { streamify, map, subscribe } from './lib/async/events.js';
 import { Arc, ArcTo } from './lib/geom/arc.js';
-import { unique } from './lib/misc.js';
+import { unique, define } from './lib/misc.js';
 import { KolorWheel } from './lib/KolorWheel.js';
+import Cache from './lib/lscache.js';
+import { makeLocalStorage, logStoreAdapter, makeLocalStore, makeDummyStorage, getLocalStorage, makeAutoStoreHandler } from './lib/autoStore.js';
 
 let ref = (globalThis.ref = trkl(null));
 let svgElem;
 let screenCTM, svgCTM;
 let anchorPoints = (globalThis.anchorPoints = trkl([]));
 let arc = (globalThis.arc = Tracked({ start: { x: 10, y: 10 }, end: { x: 20, y: 20 }, curve: 90 }));
+let ls = (globalThis.ls = new Storage());
+
+function Storage() {
+  let ls = localStorage;
+  return new Proxy(
+    {},
+    {
+      get(target, prop, receiver) {
+        if(typeof prop == 'string') {
+          let value = ls.getItem(prop);
+          if(typeof value == 'string') return JSON.parse(value);
+        }
+      },
+      set(target, prop, value) {
+        if(typeof prop == 'string') ls.setItem(prop, JSON.stringify(value));
+      },
+      ownKeys(target) {
+        let i,
+          ret = [];
+        for(i = 0; i < ls.length; i++) ret.push(ls.key(i));
+        return ret;
+      }
+    }
+  );
+}
+
+function* WalkUp(elem) {
+  do {
+    yield elem;
+  } while((elem = elem.parentElement));
+}
+
+function IterateSome(iter, pred = elem => false) {
+  let i = 0;
+  for(let elem of iter) {
+    let ret;
+    if((ret = pred(elem, i++))) return ret;
+  }
+}
+
+function GetAllPropertyNames(obj) {
+  const ret = new Set();
+  do {
+    if(obj == Object.prototype) break;
+    for(let name of Object.getOwnPropertyNames(obj)) ret.add(name);
+  } while((obj = Object.getPrototypeOf(obj)));
+
+  return [...ret];
+}
+
+function CloneObject(obj, pred = (key, value) => true) {
+  let names = GetAllPropertyNames(obj);
+  let ret = {};
+  for(let name of names) {
+    if(!pred(name, obj[name])) continue;
+    let value = obj[name];
+    if(typeof value == 'function' && name != 'constructor') value = (...args) => value.call(obj, ...args);
+
+    ret[name] = value;
+  }
+  return ret;
+}
+
+const Table = ({ rows }) => {
+  return h(
+    'table',
+    { cellspacing: 0, cellpadding: 0 },
+    rows.map(row =>
+      h(
+        'tr',
+        {},
+        row.map(cell => h('td', {}, [cell]))
+      )
+    )
+  );
+};
 
 function Observable(obj, change = (prop, value) => {}) {
   return new Proxy(obj, {
@@ -86,6 +165,13 @@ function AddPoint(pt) {
   anchorPoints(anchorPoints().concat([pt]));
 }
 
+function GetElementSignal(elem) {
+  return elem.getAttribute('data-signal');
+}
+
+function GetElementsBySignal(signalName) {
+  return Element.findAll(`*[data-signal=${signalName.replace(/([\$])/g, '\\$1')}]`);
+}
 function CreateElement(pos) {
   let { x, y } = pos;
 
@@ -110,8 +196,8 @@ function FindPoint(pos) {
   return pt;
 }
 
-function TouchEvents(element) {
-  const isTouch = 'ontouchstart' in svgElem;
+function MouseEvents(element) {
+  const isTouch = 'ontouchstart' in element;
   return streamify(
     isTouch ? ['touchmove', 'touchend'] : ['mousemove', 'mouseup'],
     element,
@@ -119,10 +205,42 @@ function TouchEvents(element) {
   );
 }
 
+async function* TouchEvents(element) {
+  let touches;
+  for await(let event of MouseEvents(element)) {
+    const { type } = event;
+    // console.log('TouchEvents', { type,event });
+
+    if('touches' in event && event.touches.length) {
+      touches = [...event.touches];
+
+      for(let touch of touches) {
+        //define(globalThis, { event, touch });
+        yield define(CloneObject(event), CloneObject(touch));
+      }
+    } else {
+      if(type.endsWith('end')) event = define(event, CloneObject(touches[touches.length - 1]));
+
+      yield event;
+    }
+  }
+}
+
 function GetSignalNames() {
   return unique(Element.findAll(`*[data-signal]`).map(e => e.getAttribute('data-signal'))).sort((a, b) =>
     a == 'GND' ? -1 : a == 'VCC' ? (b != 'GND' ? -1 : 1) : 1 ?? a.localeCompare(b)
   );
+}
+
+function GetSignalColor(signalName) {
+  for(let elem of Element.findAll(`*[data-signal=${signalName.replace(/([\$])/g, '\\$1')}]`)) {
+    let stroke = elem.getAttribute('stroke');
+    if(stroke) return stroke;
+  }
+}
+
+function* GetSignalEntries() {
+  for(let name of GetSignalNames()) yield [name, GetSignalColor(name)];
 }
 
 function ColorSignals() {
@@ -154,7 +272,7 @@ async function LoadSVG(filename) {
   elem.insertBefore(Element.create('h4', { innerHTML: filename }, []), elem.children[0]);
   let zoomPos = 0,
     zoomFactor = 1;
-    const isTouch = 'ontouchstart' in elem;
+  const isTouch = 'ontouchstart' in elem;
 
   elem.onmousewheel = ZoomHandler;
 
@@ -164,18 +282,26 @@ async function LoadSVG(filename) {
     const { deltaY, screenX: x, screenY: y } = e;
     zoomPos -= deltaY / 1000;
     zoomFactor = Math.pow(10, zoomPos);
-    console.log('wheel', { x, y, zoomFactor });
+
+    //console.log('wheel', { x, y, zoomFactor });
+
     Element.setCSS(elem, {
       transform: `translate(${-x}px, ${-y}px) scale(${zoomFactor}, ${zoomFactor}) translate(${x / zoomFactor}px, ${
         y / zoomFactor
       }px) `
     });
   }
+
   async function MoveHandler(e) {
-    const { clientX: startX, clientY: startY, target, currentTarget } = e;
+    let { clientX: startX, clientY: startY, type, touches, target, currentTarget } = e;
+    startX ??= touches[0].clientX;
+    startY ??= touches[0].clientY;
+
+    console.log('MoveHandler', { type, startX, startY, touches });
     let rect = new Rect(Element.getRect(elem));
     for await(let ev of TouchEvents(document.body)) {
       let { clientX: x, clientY: y } = ev;
+      console.log('MoveHandler', { x, y });
       let rel = new Point({ x: x - startX, y: y - startY });
       let pos = new Rect(...rel.sum(rect.upperLeft), rect.width, rect.height);
       Element.move(elem, pos.upperLeft);
@@ -199,12 +325,14 @@ function MakePalette(num) {
 
 Object.assign(globalThis, {
   Matrix,
-  Point,
+  Point,PointList,
   Rect,
   Element,
+  SVG,
   CreateElement,
   GetPosition,
   FindPoint,
+  MouseEvents,
   TouchEvents,
   Arc,
   ArcTo,
@@ -212,12 +340,30 @@ Object.assign(globalThis, {
   LoadSVG,
   ColorSignal,
   GetSignalNames,
+  GetSignalColor,
   KolorWheel,
   MakePalette,
-  ColorSignals
+  ColorSignals,
+  Table,
+  GetSignalEntries,
+  define,
+  WalkUp,
+  IterateSome,
+  GetAllPropertyNames,
+  CloneObject,
+  Cache,
+  makeLocalStorage,
+  logStoreAdapter,
+  makeLocalStore,
+  makeDummyStorage,
+  getLocalStorage,
+  makeAutoStoreHandler,
+  Storage,
+  GetElementSignal,
+  GetElementsBySignal
 });
 
-window.addEventListener('load', e => {
+window.addEventListener('load', async e => {
   let element = document.querySelector('#preact');
 
   ref.subscribe(value => {
@@ -230,6 +376,9 @@ window.addEventListener('load', e => {
     const isTouch = 'ontouchstart' in svgElem;
 
     svgElem.addEventListener(isTouch ? 'touchstart' : 'mousedown', async e => {
+      const { type } = e;
+      console.log('on' + type, e);
+
       const { clientX: x, clientY: y, target, currentTarget } = e;
 
       let xy,
@@ -266,7 +415,7 @@ window.addEventListener('load', e => {
     });
   });
 
-  let component = h(SVG, { ref, viewBox: new BBox(0, 0, 160, 100) }, [
+  let component = h(SVGComponent, { ref, viewBox: new BBox(0, 0, 160, 100) }, [
     h('circle', { cx: 30, cy: 30, r: 2, stroke: 'red', 'stroke-width': 0.1, fill: 'none' }),
     h(Path, { points: anchorPoints }, []),
     h(AnchorPoints, { points: anchorPoints }, []),
@@ -277,7 +426,28 @@ window.addEventListener('load', e => {
 
   setTimeout(() => {
     LoadSVG('Mind-Synchronizing-Generator-PinHdrPot-board.svg').then(() => {
-      setTimeout(() => {}, 100);
+      setTimeout(() => {
+        Element.find('svg > #bg').style.setProperty('pointer-events', 'none');
+
+        ColorSignals();
+      }, 1000);
     }, 100);
   });
+
+  for await(let event of streamify(['mousemove', 'touchmove'], document.body, e => true)) {
+    const { clientX: x, clientY: y, target, currentTarget } = event;
+
+    let elements = [...document.elementsFromPoint(x, y)].filter(IsSVGElement);
+
+    if(elements.length) {
+      let signals = elements.map(e => [e, GetElementSignal(e)]).filter(([e, sig]) => sig != null);
+      let signal = (signals[0] ?? [])[1];
+
+      console.log('move', { x, y, signal });
+    }
+
+    function IsSVGElement(elem) {
+      return IterateSome(WalkUp(elem), (e, i) => i > 0 && e.tagName == 'svg');
+    }
+  }
 });

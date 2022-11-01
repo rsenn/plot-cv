@@ -332,15 +332,15 @@ const filesystem = {
 
 async function LoadFile(file) {
   let { url, name } = typeof file == 'string' ? { url: file, name: file.replace(/.*\//g, '') } : GetProject(file);
-console.log(`LoadFile ${name}`);
- // url = /:\/\//.test(url) ? url : /^(tmp|data|static)\//.test(url) ? '/' + url : `/data/${name}`;
+  console.log(`LoadFile ${name}`);
+  // url = /:\/\//.test(url) ? url : /^(tmp|data|static)\//.test(url) ? '/' + url : `/data/${name}`;
   url = `/file?action=load&file=${file}`; // /:\/\//.test(url) ? url : /^(tmp|data|static)\//.test(url) ? '/' + url : `/data/${name}`;
   let response = await FetchURL(url);
   let xml = await response.text();
-  console.log(`LoadFile ${name}`, {xml});
+  console.log(`LoadFile ${name}`, { xml });
   let doc = new EagleDocument(xml, null, name, null, filesystem);
-   console.log(`LoadFile ${name}`, {doc,xml});
- if(/\.brd$/.test(name)) window.board = doc;
+  console.log(`LoadFile ${name}`, { doc, xml });
+  if(/\.brd$/.test(name)) window.board = doc;
   if(/\.sch$/.test(name)) window.schematic = doc;
   if(/\.lbr$/.test(name)) window.libraries = add(window.libraries, doc);
   return doc;

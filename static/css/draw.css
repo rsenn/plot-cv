@@ -2,6 +2,9 @@ body,
 h4 {
   font-family: Helvetica;
 }
+body {
+  padding: 0.5em;
+}
 div.svg {
   padding: 0;
   border: 1px dotted rgba(192, 192, 192, 1);
@@ -32,6 +35,11 @@ div.svg > h4 {
   cursor: grabbing;
 }*/
 
-svg {
+svg, div.svg {
   user-select: none;
+}
+body > span {
+  position: fixed;
+  bottom: 0px;
+  margin: 0 0 0.5em 0;
 }
