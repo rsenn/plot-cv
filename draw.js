@@ -151,7 +151,11 @@ async function LoadSVG(filename) {
   let zoomPos = 0,
     zoomFactor = 1;
 
-  elem.onmousewheel = e => {
+  elem.onmousewheel = ZoomHandler;
+
+  elem.onmousedown = MoveHandler;
+
+  function ZoomHandler(e) {
     const { deltaY, screenX: x, screenY: y } = e;
     zoomPos -= deltaY / 1000;
     zoomFactor = Math.pow(10, zoomPos);
@@ -161,9 +165,8 @@ async function LoadSVG(filename) {
         y / zoomFactor
       }px) `
     });
-  };
-
-  elem.onmousedown = async e => {
+  }
+  async function MoveHandler(e) {
     const { clientX: startX, clientY: startY, target, currentTarget } = e;
     let rect = new Rect(Element.getRect(elem));
     for await(let ev of TouchEvents(document.body)) {
@@ -172,7 +175,7 @@ async function LoadSVG(filename) {
       let pos = new Rect(...rel.sum(rect.upperLeft), rect.width, rect.height);
       Element.move(elem, pos.upperLeft);
     }
-  };
+  }
 
   Element.setCSS(elem, { position: 'absolute', left: '0px', top: '0px' });
 
@@ -222,33 +225,34 @@ window.addEventListener('load', e => {
     svgElem.addEventListener('mousedown', async e => {
       const { clientX: x, clientY: y, target, currentTarget } = e;
 
-      let pos = new Point(...svgCTM.transform_xy(x, y));
+      let xy,
+        pt,
+        pos = new Point(...svgCTM.transform_xy(x, y));
 
       if(target.tagName != 'svg') {
         Object.assign(globalThis, { target });
 
-        let xy = GetPosition(target);
-        let pt = FindPoint(xy);
+        xy = GetPosition(target);
+        pt = FindPoint(xy);
+      }
 
-        if(pt) {
-          console.log('touchstart', { xy, pt });
+      if(!pt) AddPoint(pos);
+      else MovePoint();
+      //   console.log('touchstart', { xy, pt });
 
-          for await(let ev of TouchEvents(svgElem)) {
-            let { clientX, clientY } = ev;
-            let tpos = new Point(...svgCTM.transform_xy(clientX, clientY));
+      async function MovePoint() {
+        for await(let ev of TouchEvents(svgElem)) {
+          let { clientX, clientY } = ev;
+          let tpos = new Point(...svgCTM.transform_xy(clientX, clientY));
 
-            let diff = tpos.diff(pos);
+          let diff = tpos.diff(pos);
 
-            pt.x = tpos.x;
-            pt.y = tpos.y;
-            anchorPoints([...anchorPoints()]);
+          pt.x = tpos.x;
+          pt.y = tpos.y;
+          anchorPoints([...anchorPoints()]);
 
-            console.log('touch', { pt, diff });
-          }
+          console.log('touch', { pt, diff });
         }
-      } else {
-        AddPoint(pos);
-        //CreateElement(new Point(x,y));
       }
 
       console.log('mousedown', { x, y, target, currentTarget });
@@ -263,4 +267,10 @@ window.addEventListener('load', e => {
   ]);
 
   render(component, element);
+
+  setTimeout(() => {
+    LoadSVG('Mind-Synchronizing-Generator-PinHdrPot-board.svg').then(() => {
+      setTimeout(() => {}, 100);
+    }, 100);
+  });
 });
