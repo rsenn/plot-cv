@@ -280,7 +280,7 @@ function ColorSignals() {
 
 function RenderPalette(props) {
   let data = useTrkl(props.data);
-  let names=GetSignalNames();
+  let names = GetSignalNames();
   return h(
     Table,
     {},
@@ -477,7 +477,7 @@ window.addEventListener('load', async e => {
           pt.y = tpos.y;
           anchorPoints([...anchorPoints()]);
 
-          console.log('touch', { pt, diff });
+          // console.log('touch', { pt, diff });
         }
       }
 
@@ -518,7 +518,7 @@ window.addEventListener('load', async e => {
 
       if(signal) globalThis.elements = GetElementsBySignal(signal);
 
-      console.log('move', { x, y, signal });
+      // console.log('move', { x, y, signal });
     }
 
     function IsSVGElement(elem) {

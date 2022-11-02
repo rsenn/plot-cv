@@ -10,6 +10,7 @@ import { TransformCoordinates, Coordinate, Pin, Markers, OpenlayersMap, Popup, P
 import { ObjectWrapper, BiDirMap } from './object-helpers.js';
 import { Layer as HTMLLayer } from './lib/dom/layer.js';
 import { h, forwardRef, Fragment, React, ReactComponent, Portal, toChildArray } from './lib/dom/preactComponent.js';
+import { parseDegMinSec, parseGPSLocation, parseDMS } from './string-helpers.js';
 
 let data = (globalThis.data = []);
 let center = (globalThis.center = transform([7.454281, 46.96453], 'EPSG:4326', 'EPSG:3857'));
@@ -206,7 +207,8 @@ function CreateMap() {
     map,
     extentVector,
     positionFeature,
-    geolocation
+    geolocation,
+    parseDMS
   });
   Object.defineProperties(globalThis, {
     zoom: {
@@ -328,7 +330,8 @@ Object.assign(globalThis, {
   React,
   ReactComponent,
   Portal,
-  toChildArray
+  toChildArray,
+  ParseCoordinates
 });
 
 CreateMap();
