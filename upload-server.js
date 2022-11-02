@@ -200,14 +200,8 @@ function ReadExiv2(file) {
 
 function ReadExiftool(file) {
   console.log('ReadExiftool', file);
-  let [rdf, stdout] = os.pipe();
 
-  os.exec(['exiftool', '-S', '-ee', file], { stdout });
-
-  os.close(stdout);
-
-  let out = fs.readAllSync(rdf);
-  fs.closeSync(rdf);
+  let out = Execute('exiftool', '-S', '-ee', file);
 
   let a = out.split(/\r?\n/g).filter(l => l != '');
 
@@ -220,18 +214,24 @@ function ReadExiftool(file) {
 
 function HeifConvert(src, dst, quality = 100) {
   console.log('HeifConvert', src, dst);
-  let [rd, stdout] = os.pipe();
 
-  os.exec(['heif-convert', '-q', quality + '', src, dst], {
+  let out = Execute('heif-convert', '-q', quality + '', src, dst);
+
+  console.log('HeifConvert', out);
+}
+
+function Execute(...args) {
+  let [rd, stdout] = os.pipe();
+  let pid = os.exec(args, {
+    block: false,
     stdout,
     stderr: stdout
   });
   os.close(stdout);
-
+  os.waitpid(pid, os.WNOHANG);
   let out = fs.readAllSync(rd);
   fs.closeSync(rd);
-
-  console.log('HeifConvert', out);
+  return out;
 }
 
 function MagickResize(src, dst, rotate = 0, width, height) {
@@ -243,17 +243,14 @@ function MagickResize(src, dst, rotate = 0, width, height) {
   });
   let [rd, stdout] = os.pipe();
 
-  os.exec(
-    ['convert-im6.q16', src, '-resize', width + 'x' + height, ...(rotate ? ['-rotate', '-' + rotate] : []), dst],
-    {
-      stdout,
-      stderr: stdout
-    }
+  let out = Execute(
+    'convert-im6',
+    src,
+    '-resize',
+    width + 'x' + height,
+    ...(rotate ? ['-rotate', '-' + rotate] : []),
+    dst
   );
-  os.close(stdout);
-
-  let out = fs.readAllSync(rd);
-  fs.closeSync(rd);
 
   console.log('MagickResize', out);
 }
@@ -715,6 +712,7 @@ body, * {
           fp = new FormParser(ws, ['files', 'uuid'], {
             chunkSize: 8192 /** 256*/,
             onOpen(name, filename) {
+              console.log(`onOpen(${name}, ${filename})`);
               if(this.file) {
                 this.onclose.call(this, name);
               }
@@ -725,7 +723,6 @@ body, * {
 
               this.file = fs.openSync((this.temp = 'uploads/' + (tmpnam = randStr(20) + '.tmp')), 'w+', 0o644);
               hash = new Hash(Hash.TYPE_SHA1);
-              //console.log(`onOpen(${filename})`, this.temp);
             },
             onContent(name, data) {
               // console.log(`onContent(${this.filename})`,data.byteLength);
@@ -745,7 +742,7 @@ body, * {
 
             onClose(name, file) {
               try {
-                // console.log(`onClose[1](${name}, ${file})`, this.uuid);
+                console.log(`onClose[1](${name}, ${file})`, this.uuid);
                 let exif, cache, sha1;
                 if(hash) {
                   hash.finalize();
@@ -935,7 +932,9 @@ body, * {
     parseDate,
     dateToObject,
     Hash,
-    FormParser
+    FormParser,
+    ExecTool,
+    Execute
   });
 
   delete globalThis.DEBUG;

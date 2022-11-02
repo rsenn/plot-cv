@@ -106,7 +106,7 @@ function main(...args) {
 
     setLog(
       quiet ? 0 : LLL_USER | (((debug ? LLL_INFO : LLL_WARN) << 1) - 1),
-      (quiet || !params.debug)
+      quiet || !params.debug
         ? () => {}
         : (level, str) => {
             if(/BIND_PROTOCOL|DROP_PROTOCOL|CHECK_ACCESS_RIGHTS|ADD_HEADERS/.test(str)) return;
