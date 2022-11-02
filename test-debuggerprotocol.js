@@ -65,7 +65,7 @@ async function main(...args) {
   console.log('debug', debug);
 
   os.setReadHandler(+sock, () => {
-    console.log('debug.read', debug.read);
+    //console.log('debug.read', debug.read);
     debug.read();
     if(sock.eof) os.setReadHandler(+sock, null);
   });

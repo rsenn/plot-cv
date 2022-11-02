@@ -280,11 +280,12 @@ function ColorSignals() {
 
 function RenderPalette(props) {
   let data = useTrkl(props.data);
+  let names=GetSignalNames();
   return h(
     Table,
     {},
 
-    (data ?? []).map((color, i) => [i + '', h('td', { style: { background: color, 'min-width': '1em' } })])
+    (data ?? []).map((color, i) => [names[i] ?? i + '', h('td', { style: { background: color, 'min-width': '1em' } })])
   );
 }
 

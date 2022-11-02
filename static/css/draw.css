@@ -4,6 +4,7 @@ h4 {
 }
 body {
   padding: 0.5em;
+  overflow: hidden;
 }
 div.svg {
   padding: 0;
@@ -47,8 +48,13 @@ table {
     border-collapse: collapse;
 }
 
+body table {
+    position: fixed;
+    bottom: 2em;
+}
+
 table td, table th {
   padding: 2px;
   border: 1px solid #555;
-  text-align: right;
+  text-align: left;
 }
