@@ -17,6 +17,7 @@ import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
 import { h, html, render, Component, useState, useLayoutEffect, useRef } from './lib/preact.mjs';
 import renderToString from './lib/preact-render-to-string.js';
 import { exec, spawn } from 'child_process';
+import { Execute } from './os-helpers.js';
 
 globalThis.fs = fs;
 globalThis.logFilter =
@@ -47,14 +48,17 @@ function GetMime(file) {
 
 const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 
-const defaultDirs = [
+const defaultDirs = (globalThis.defaultDirs = [
   '.',
+  ...glob('../*/eagle'),
   './uploads/*.{sch,brd,lbr}',
   '/mnt/extext/Photos/*APPLE/*.{JPG,PNG,GIF,AAE,MOV,HEIC,MP4,WEBP}',
   ['/home/roman/Bilder', new RegExp('.(jpg|jpeg|png|heic|tif|tiff)$', 'i')]
-];
+]);
 
-const allowedDirs = defaultDirs.map(dd => GetDir(Array.isArray(dd) ? dd[0] : dd)).map(d => path.resolve(d));
+const allowedDirs = (globalThis.allowedDirs = defaultDirs
+  .map(dd => GetDir(Array.isArray(dd) ? dd[0] : dd))
+  .map(d => path.resolve(d)));
 
 function GetDir(dir) {
   let a = path.toArray(dir);
@@ -201,7 +205,7 @@ function ReadExiv2(file) {
 function ReadExiftool(file) {
   console.log('ReadExiftool', file);
 
-  let out = Execute('exiftool', '-S', '-ee', file);
+  let [ret, out] = Execute('exiftool', '-S', '-ee', file);
 
   let a = out.split(/\r?\n/g).filter(l => l != '');
 
@@ -214,24 +218,11 @@ function ReadExiftool(file) {
 
 function HeifConvert(src, dst, quality = 100) {
   console.log('HeifConvert', src, dst);
+  let args = ['heif-convert', '-q', quality + '', src, dst];
+  let [ret, out] = Execute(...args);
 
-  let out = Execute('heif-convert', '-q', quality + '', src, dst);
-
-  console.log('HeifConvert', out);
-}
-
-function Execute(...args) {
-  let [rd, stdout] = os.pipe();
-  let pid = os.exec(args, {
-    block: false,
-    stdout,
-    stderr: stdout
-  });
-  os.close(stdout);
-  os.waitpid(pid, os.WNOHANG);
-  let out = fs.readAllSync(rd);
-  fs.closeSync(rd);
-  return out;
+  console.log('HeifConvert', { args, ret, out });
+  return [ret, out];
 }
 
 function MagickResize(src, dst, rotate = 0, width, height) {
@@ -241,18 +232,11 @@ function MagickResize(src, dst, rotate = 0, width, height) {
     dst,
     rotate
   });
-  let [rd, stdout] = os.pipe();
+  let args = ['convert', src, '-resize', width + 'x' + height, ...(rotate ? ['-rotate', '-' + rotate] : []), dst];
+  let [ret, out] = Execute(...args);
 
-  let out = Execute(
-    'convert-im6',
-    src,
-    '-resize',
-    width + 'x' + height,
-    ...(rotate ? ['-rotate', '-' + rotate] : []),
-    dst
-  );
-
-  console.log('MagickResize', out);
+  console.log('MagickResize', { args, ret, out });
+  return [ret, out];
 }
 
 function main(...args) {
@@ -693,7 +677,8 @@ body, * {
         }
       },*/
       onHttp(ws, req, resp) {
-        console.log('onHttp', console.config({ compact: 0 }), req);
+        if(req.method != 'GET') console.log('onHttp', console.config({ compact: 0 }), req);
+
         const { peer, address, port } = ws;
         const { method, headers } = req;
 
@@ -736,6 +721,8 @@ body, * {
                 ws2.sendCommand({
                   type: 'progress',
                   done: progress,
+                  name,
+                  filename: this.filename,
                   total: +headers['content-length']
                 });
             },
@@ -794,10 +781,12 @@ body, * {
                         width = height * aspect;*/
                       }
                     }
+
                     MagickResize(obj.jpg ?? f(ext), f('.thumb.jpg'), obj.exif?.Rotation ?? 0, width, height);
+
                     if(fs.existsSync(f('.thumb.jpg'))) obj.thumbnail = f('.thumb.jpg');
                     WriteJSON(json, obj);
-                    console.log(`by_uuid`, by_uuid);
+                    // console.log(`by_uuid`, by_uuid);
                     console.log(`uuid`, ws.uuid ?? this.uuid);
                     cache = obj;
                   }

@@ -19,3 +19,22 @@ export function ExecTool(cmd, ...args) {
   return str;
   return parseInt(str);
 }
+
+export function Execute(...args) {
+  let [rd, stdout] = os.pipe();
+  let pid = os.exec(args, {
+    block: false,
+    stdout,
+    stderr: stdout
+  });
+  os.close(stdout);
+
+  let [ret, status] = os.waitpid(pid, os.WNOHANG);
+
+  let out = fs.readAllSync(rd);
+  fs.closeSync(rd);
+
+  if(ret != pid) [ret, status] = os.waitpid(pid, 0);
+
+  return [(status & 0xff00) / 256, out];
+}

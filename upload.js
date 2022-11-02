@@ -34,7 +34,8 @@ Object.assign(globalThis, {
   RUG,
   FileAction,
   parseGPSLocation,
-  parseDegMinSec
+  parseDegMinSec,
+  ListFiles
 });
 
 export function prioritySort(arr, predicates = []) {
@@ -47,16 +48,22 @@ function setLabel(text) {
   globalThis.uploadLabel.innerHTML = text;
 }
 
-const Table = ({ rows }) => {
+function isComponent(obj) {
+  if(typeof obj == 'object' && obj !== null) return 'props' in obj;
+}
+
+const Table = ({ children, rows, ...props }) => {
   return h(
     'table',
-    { cellspacing: 0, cellpadding: 0 },
-    rows.map(row =>
-      h(
-        'tr',
-        {},
-        row.map(cell => h('td', {}, [cell]))
-      )
+    { cellspacing: 0, cellpadding: 0, ...props },
+    (rows ?? children).map(row =>
+      Array.isArray(row)
+        ? h(
+            'tr',
+            {},
+            row.map(cell => (isComponent(cell) ? cell : h('td', {}, [cell])))
+          )
+        : row
     )
   );
 };
@@ -99,7 +106,12 @@ const FileItem = ({ file, ref, ...props }) => {
         )
     }),
     /*,
-     */ h('img', upload?.thumbnail ? { src: upload.thumbnail } : {})
+     */ h('img', upload?.thumbnail ? { src: `file?action=load&file=${upload.thumbnail}` } : {}),
+    upload?.exif?.GPSPosition
+      ? h(Table, { class: 'gps' }, [
+          ...parseGPSLocation(upload.exif.GPSPosition).map((coord, i) => [i ? 'longitude' : 'latitude', coord])
+        ])
+      : null
   ]);
 };
 
@@ -126,7 +138,7 @@ window.addEventListener('load', e => {
   }
   try {
     drop.addEventListener('click', e => {
-      console.log('drop.click', e);
+      //console.log('drop.click', e);
       globalThis.e = e;
 
       if(input) input.click(e);
@@ -197,6 +209,23 @@ function UploadFiles(files) {
   if(files.length > 0) return UploadFile(files);
 }
 
+async function ListFiles() {
+  let resp = await fetch('uploads').then(r => r.json());
+  return resp
+    .map(upload => ({ name: upload.filename, upload }))
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .filter(r => r.upload?.exif?.GPSPosition)
+    .map(file => {
+      let pos;
+      if(file.upload?.exif?.GPSPosition) {
+        pos = parseGPSLocation(file.upload?.exif?.GPSPosition);
+      }
+      if(Array.isArray(pos) && !(pos[0] == 0 && pos[1] == 0)) file.position = new Coordinate(...pos);
+      return file;
+    })
+    .filter(file => 'position' in file);
+}
+
 // upload JPEG files
 function UploadFile(files) {
   //file??=   document.querySelector('#file');
@@ -261,6 +290,7 @@ function CreateWS() {
           break;
         case 'progress':
           const { done, total } = command;
+          console.log('PROGRESS', command);
           progress = done;
           break;
         case 'upload':
