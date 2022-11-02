@@ -1,15 +1,16 @@
-import React, { h, render, Component, isComponent } from './lib/dom/preactComponent.js';
+import React, { Fragment, h, render, Component } from './lib/dom/preactComponent.js';
 import { SVG as SVGComponent } from './lib/eagle/components/svg.js';
 import { BBox } from './lib/geom/bbox.js';
 import trkl from './lib/trkl.js';
 import { Matrix } from './lib/geom/matrix.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
-import { Point, Rect,PointList } from './lib/geom.js';
+import { Align, Point, Rect, PointList, Size } from './lib/geom.js';
 import { Element } from './lib/dom/element.js';
 import { SVG } from './lib/dom/svg.js';
+import { HSLA, RGBA } from './lib/color.js';
 import { streamify, map, subscribe } from './lib/async/events.js';
 import { Arc, ArcTo } from './lib/geom/arc.js';
-import { unique, define } from './lib/misc.js';
+import { unique, define, range } from './lib/misc.js';
 import { KolorWheel } from './lib/KolorWheel.js';
 import Cache from './lib/lscache.js';
 import { makeLocalStorage, logStoreAdapter, makeLocalStore, makeDummyStorage, getLocalStorage, makeAutoStoreHandler } from './lib/autoStore.js';
@@ -20,6 +21,10 @@ let screenCTM, svgCTM;
 let anchorPoints = (globalThis.anchorPoints = trkl([]));
 let arc = (globalThis.arc = Tracked({ start: { x: 10, y: 10 }, end: { x: 20, y: 20 }, curve: 90 }));
 let ls = (globalThis.ls = new Storage());
+
+function isComponent(obj) {
+  if(typeof obj == 'object' && obj !== null) return 'props' in obj;
+}
 
 function Storage() {
   let ls = localStorage;
@@ -82,16 +87,18 @@ function CloneObject(obj, pred = (key, value) => true) {
   return ret;
 }
 
-const Table = ({ rows }) => {
+const Table = props => {
   return h(
     'table',
     { cellspacing: 0, cellpadding: 0 },
-    rows.map(row =>
-      h(
-        'tr',
-        {},
-        row.map(cell => h('td', {}, [cell]))
-      )
+    (props.rows ?? props.children).map(row =>
+      Array.isArray(row)
+        ? h(
+            'tr',
+            {},
+            row.map(cell => (isComponent(cell) ? cell : h('td', {}, [cell])))
+          )
+        : row
     )
   );
 };
@@ -172,14 +179,29 @@ function GetElementSignal(elem) {
 function GetElementsBySignal(signalName) {
   return Element.findAll(`*[data-signal=${signalName.replace(/([\$])/g, '\\$1')}]`);
 }
-function CreateElement(pos) {
-  let { x, y } = pos;
 
-  Element.create(
+function SortElementsByPosition(elements) {
+  let entries = elements.map(e => [e, new Point(Element.rect(e).corners()[0])]);
+  globalThis.entries = entries;
+  entries.sort((a, b) => a[1].valueOf(-16) - b[1].valueOf(-16));
+  console.log('SortElementsByPosition', { entries });
+  return entries.map(([e, rect]) => e);
+}
+
+function CreateElement(pos, size) {
+  let { x, y } = new Point(pos);
+  let { width, height } = size ? new Size(size) : {};
+
+  let style = { background: 'red', left: `${x}px`, top: `${y}px`, position: 'fixed', margin: `0 0 0 0` };
+
+  if(width) style.width = `${width}px`;
+  if(height) style.height = `${height}px`;
+
+  return Element.create(
     'div',
     {
       innerHTML: 'x',
-      style: { background: 'red', left: `${x}px`, top: `${y}px`, position: 'fixed', margin: `0 0 0 0` }
+      style
     },
     document.body
   );
@@ -246,11 +268,24 @@ function* GetSignalEntries() {
 function ColorSignals() {
   let names = GetSignalNames();
   let palette = MakePalette(names.length);
+
+  globalThis.palette(palette);
+
   console.log('ColorSignals', { names, palette });
   let i = 0;
   for(let name of names) {
     ColorSignal(name, palette[i++]);
   }
+}
+
+function RenderPalette(props) {
+  let data = useTrkl(props.data);
+  return h(
+    Table,
+    {},
+
+    (data ?? []).map((color, i) => [i + '', h('td', { style: { background: color, 'min-width': '1em' } })])
+  );
 }
 
 function ColorSignal(signalName, color) {
@@ -313,7 +348,7 @@ async function LoadSVG(filename) {
   return elem;
 }
 
-function MakePalette(num) {
+function MakePalette2(num) {
   let result = [];
   new KolorWheel('#0000ff').abs(0, -1, -1, num - 1).each(function () {
     result.push(this.getHex());
@@ -323,9 +358,36 @@ function MakePalette(num) {
   return result;
 }
 
+function MakePalette(num) {
+  //let cl=new range(0,350, (360/num)).reverse().map(r => new HSLA(r, 100,50,1));
+  let signalColors = `#000000
+#e02231
+#ff9b00
+#e4e20b
+#68db19
+#197dff
+#a138ff
+#b6b6b6`.split('\n');
+  let result = [];
+  signalColors.shift();
+  signalColors.shift();
+  signalColors.pop();
+
+  for(let i = 0; i < num - 2; i++) result.push(signalColors[i % signalColors.length]);
+
+  //let result=cl.map(c => c.toRGBA()+'')
+  result.unshift('#e02231');
+  result.unshift('#000000');
+  //result.reverse();
+  globalThis.palette(result);
+  return result;
+}
+
 Object.assign(globalThis, {
   Matrix,
-  Point,PointList,
+  Point,
+  PointList,
+  Align,
   Rect,
   Element,
   SVG,
@@ -343,10 +405,12 @@ Object.assign(globalThis, {
   GetSignalColor,
   KolorWheel,
   MakePalette,
+  RenderPalette,
   ColorSignals,
   Table,
   GetSignalEntries,
   define,
+  range,
   WalkUp,
   IterateSome,
   GetAllPropertyNames,
@@ -360,7 +424,12 @@ Object.assign(globalThis, {
   makeAutoStoreHandler,
   Storage,
   GetElementSignal,
-  GetElementsBySignal
+  GetElementsBySignal,
+  SortElementsByPosition,
+  h,
+  isComponent,
+  RGBA,
+  HSLA
 });
 
 window.addEventListener('load', async e => {
@@ -415,11 +484,14 @@ window.addEventListener('load', async e => {
     });
   });
 
-  let component = h(SVGComponent, { ref, viewBox: new BBox(0, 0, 160, 100) }, [
-    h('circle', { cx: 30, cy: 30, r: 2, stroke: 'red', 'stroke-width': 0.1, fill: 'none' }),
-    h(Path, { points: anchorPoints }, []),
-    h(AnchorPoints, { points: anchorPoints }, []),
-    h(EllipticArc, { data: arc }, [])
+  let component = h(Fragment, {}, [
+    h(SVGComponent, { ref, viewBox: new BBox(0, 0, 160, 100) }, [
+      h('circle', { cx: 30, cy: 30, r: 2, stroke: 'red', 'stroke-width': 0.1, fill: 'none' }),
+      h(Path, { points: anchorPoints }, []),
+      h(AnchorPoints, { points: anchorPoints }, []),
+      h(EllipticArc, { data: arc }, [])
+    ]),
+    h(RenderPalette, { data: (globalThis.palette = trkl([])) })
   ]);
 
   render(component, element);
@@ -442,6 +514,8 @@ window.addEventListener('load', async e => {
     if(elements.length) {
       let signals = elements.map(e => [e, GetElementSignal(e)]).filter(([e, sig]) => sig != null);
       let signal = (signals[0] ?? [])[1];
+
+      if(signal) globalThis.elements = GetElementsBySignal(signal);
 
       console.log('move', { x, y, signal });
     }

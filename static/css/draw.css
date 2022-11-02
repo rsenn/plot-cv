@@ -43,3 +43,12 @@ body > span {
   bottom: 0px;
   margin: 0 0 0.5em 0;
 }
+table {
+    border-collapse: collapse;
+}
+
+table td, table th {
+  padding: 2px;
+  border: 1px solid #555;
+  text-align: right;
+}
