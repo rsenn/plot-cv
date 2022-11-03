@@ -1,4 +1,4 @@
-import { LogWrap, VfnAdapter, VfnDecorator, Memoize, DebugFlags, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, isThenable, hasHandler, callHandler, parseURL, GetProperties, GetKeys, getPropertyDescriptors, define, setHandlers, statusResponse, objectCommand, MakeListCommand, getPrototypeName, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/rpc.js';
+import { LogWrap, VfnAdapter, VfnDecorator, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, isThenable, hasHandler, callHandler, parseURL, GetProperties, GetKeys, getPropertyDescriptors, define, setHandlers, statusResponse, objectCommand, MakeListCommand, getPrototypeName, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/rpc.js';
 import { h, options, html, render, Component, createContext, createRef, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue, forwardRef, Fragment, React, ReactComponent, Portal, toChildArray } from './lib/dom/preactComponent.js';
 import Util from './lib/util.js';
 import { once, streamify, filter, map, throttle, distinct, subscribe } from './lib/async/events.js';
@@ -10,7 +10,6 @@ import path from './lib/path.js';
 Object.assign(globalThis, {
   callHandler,
   Connection,
-  DebugFlags,
   DefaultConstructor,
   define,
   DeserializeSymbols,
@@ -22,11 +21,9 @@ Object.assign(globalThis, {
   getPrototypeName,
   hasHandler,
   isThenable,
-  ListDirectory,
   LogWrap,
   MakeListCommand,
   Mapper,
-  Memoize,
   MessageReceiver,
   MessageTransceiver,
   MessageTransmitter,
@@ -68,7 +65,11 @@ globalThis.addEventListener('load', async () => {
 });
 
 async function StartSocket() {
-  let url = Util.makeURL({ location: '/rpc/ws', protocol: 'wss', port: undefined });
+  let url = Util.makeURL({
+    location: '/rpc/ws',
+    protocol: 'wss',
+    port: undefined
+  });
 
   console.log('Connect to', url);
   let ws = (globalThis.ws = new WebSocket(url));
@@ -200,18 +201,35 @@ function GetDir() {
 function Refresh([dir, list]) {
   list = list.filter(({ name }) => !/^\.\/$/.test(name));
 
-  if(!list.some(({ name }) => /^\.\.\/$/.test(name))) list.unshift({ name: '../', mtime: 0, time: 0, mode: 0 });
+  if(!list.some(({ name }) => /^\.\.\/$/.test(name)))
+    list.unshift({
+      name: '../',
+      mtime: 0,
+      time: 0,
+      mode: 0
+    });
   //if(!list.some(({ name }) => /^\.\/$/.test(name))) list.unshift({ name: './', mtime: 0, time: 0, mode: 0 });
   const names = list.map(({ name }) => name);
   console.log('Refresh', { names });
 
-  list = list.map(({ name, ...obj }) => ({ ...obj, name: dir + '/' + name }));
+  list = list.map(({ name, ...obj }) => ({
+    ...obj,
+    name: dir + '/' + name
+  }));
 
   list = list.map(obj => h(TableItem, obj));
 
   let component = h(Fragment, {}, [
     h('h1', {}, [`Index of `, h('span', { id: 'dir' }, [dir])]),
-    h('table', { class: 'list preformatted', cellpadding: 2, cellspacing: 0 }, [TableHeader(), ...list])
+    h(
+      'table',
+      {
+        class: 'list preformatted',
+        cellpadding: 2,
+        cellspacing: 0
+      },
+      [TableHeader(), ...list]
+    )
   ]);
   render(component, document.body);
   console.log('rendered');
@@ -221,7 +239,10 @@ async function ListDirectory(dir = '.', options = { objects: true }) {
   dir = path.normalize(dir);
 
   const { filter = '.*', key = 'mtime', ...opts } = typeof options == 'string' ? { filter: options } : options;
-  let response = await fetch('rpc/files', { method: 'POST', body: JSON.stringify({ dir, filter, key, ...opts }) });
+  let response = await fetch('rpc/files', {
+    method: 'POST',
+    body: JSON.stringify({ dir, filter, key, ...opts })
+  });
   try {
     return [dir, await response.json()];
   } catch(e) {

@@ -20,7 +20,8 @@ export function TransformCoordinates(...args) {
 }
 
 export function ParseCoordinates(str) {
-  return transform(parseGPSLocation(str) ?? str, 'EPSG:4326', 'EPSG:3857');
+  return new Coordinate(...parseGPSLocation(str).reverse(), 'EPSG:4326');
+  // return transform(parseGPSLocation(str) ?? str, 'EPSG:4326', 'EPSG:3857');
 }
 
 export class Coordinate {
@@ -100,7 +101,7 @@ export class Pin {
     if(isInstanceOf(args[0], Feature)) {
       feature = args[0];
     } else {
-      let [properties, style, position] = args;
+      let [properties, style, position] = args.length == 1 ? [, , args[0]] : args;
       if(typeof properties == 'string') properties = { name: properties };
       feature = new Feature({ ...properties, geometry: new Point([...position]) });
       feature.setStyle(style);
@@ -154,14 +155,27 @@ export class Markers extends ArrayFacade {
     return feature ? Pin.from(feature) : undefined;
   }
 
+  get length() {
+    const { source } = this;
+    return source.getFeatures().length;
+  }
+
   add(...items) {
     const { source } = this;
 
     for(let item of items) {
       let pin = Pin.from(item);
-      console.log('Markers.add', { pin });
-      console.log('pin.feature', pin.feature);
+      /* console.log('Markers.add', { pin });
+      console.log('pin.feature', pin.feature);*/
       source.addFeature(pin.feature);
+    }
+  }
+  remove(...items) {
+    const { source } = this;
+
+    for(let item of items) {
+      let pin = Pin.from(item);
+      source.removeFeature(pin.feature);
     }
   }
 }

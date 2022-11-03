@@ -44,7 +44,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/OpenCV.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/quickjs/cmake/FindQuickJS.cmake)
 
 option(BUILD_QUICKJS "Build quickjs library" ON)
-
+option(BUILD_QJS_OPENCV "Build qjs-opencv module" ON)
 if(PNG_LIBRARIES)
   message(STATUS "Found libpng library: ${PNG_LIBRARIES}")
 endif(PNG_LIBRARIES)
@@ -396,7 +396,9 @@ add_executable(test-dlfcn test-dlfcn.c)
 target_link_libraries(test-dlfcn dl)
 ]]
 
-add_subdirectory(qjs-opencv "${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv")
+if(BUILD_QJS_OPENCV)
+  add_subdirectory(qjs-opencv "${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv")
+endif(BUILD_QJS_OPENCV)
 
 option(BUILD_QUICKJS "Build QuickJS" ON)
 if(BUILD_QUICKJS)
@@ -421,6 +423,11 @@ add_custom_target(
   BYPRODUCTS "${CMAKE_INSTALL_DIR}"
   COMMENT "Install into directory")
 
-install(FILES convert-imports.js create-tamper.js cv-shell.js eagle2svg.js eagle-shell.js extract-structs.js takephoto.js wscli.js xml2js.js
+install(FILES 
+       eagle2gerber.js xml2react.js
+       convert-imports.js create-tamper.js cv-shell.js eagle2svg.js eagle-shell.js extract-structs.js takephoto.js wscli.js xml2js.js
         DESTINATION bin
-        PERMISSIONS WORLD_READ WORLD_EXECUTE)
+        PERMISSIONS 
+        OWNER_READ OWNER_WRITE OWNER_EXECUTE
+        GROUP_READ GROUP_EXECUTE
+        WORLD_READ WORLD_EXECUTE)

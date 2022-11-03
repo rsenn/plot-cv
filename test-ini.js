@@ -19,7 +19,13 @@ function WriteFile(name, data) {
 }
 
 async function main(...args) {
-  globalThis.console = new Console({ inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 200 } });
+  globalThis.console = new Console({
+    inspectOptions: {
+      compact: 2,
+      customInspect: true,
+      maxArrayLength: 200
+    }
+  });
 
   if(!args.length) args = [path.gethome() + '/Sources/pictest/build/mplab/7segtest-16f876a-xc8-debug.mcp'];
 
@@ -41,7 +47,10 @@ async function main(...args) {
 
     let sections = data[0].reduce((acc, sdata) => {
       console.log('sdata:', sdata);
-      return { ...acc, [sdata[0]]: createMap(sdata[1] || []) };
+      return {
+        ...acc,
+        [sdata[0]]: createMap(sdata[1] || [])
+      };
     }, {});
 
     const flat = deep.flatten(
@@ -107,7 +116,10 @@ async function main(...args) {
         xy.y += size.height + spacing;
       }
 
-      const ideskEntry = makeIDeskEntry({ ...desktopEntry, Icon: iconFile });
+      const ideskEntry = makeIDeskEntry({
+        ...desktopEntry,
+        Icon: iconFile
+      });
       WriteFile(lnkFile, ideskEntry);
       console.log(`Wrote '${lnkFile}'.`);
       console.log(`ideskEntry: `, ideskEntry);

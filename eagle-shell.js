@@ -12,7 +12,7 @@ import REPL from './quickjs/qjs-modules/lib/repl.js';
 import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, Enum, HashList, Multimap, Shash, SortedMap, HashMultimap, MultiBiMap, MultiKeyMap, DenseSpatialHash2D, SpatialHash2D, HashMap, SpatialH, SpatialHash, SpatialHashMap, BoxHash } from './lib/container.js';
 import * as fs from 'fs';
 import { Pointer } from './lib/pointer.js';
-import { read as fromXML, write as writeXML } from './lib/xml.js';
+import { read as fromXML, write as writeXML } from 'xml';
 import inspect from './lib/objectInspect.js';
 import { IfDebug, LogIfDebug, ReadFd, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 import { GetExponent, GetMantissa, ValueToNumber, NumberToValue } from './lib/eda/values.js';
@@ -31,6 +31,8 @@ import { ReactComponent, Fragment, render, h, forwardRef, React, toChildArray } 
 import { Table } from './cli-helpers.js';
 import renderToString from './lib/preact-render-to-string.js';
 import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
+import { EagleToGerber, GerberToGcode } from './pcb-conversion.js';
+import { ExecTool } from './os-helpers.js';
 
 let cmdhist;
 
@@ -89,7 +91,13 @@ function pick(it, n = 1) {
 }
 
 function append(tag, attrs, children, parent, element) {
-  console.log('append', { tag, attrs, children, parent, element });
+  console.log('append', {
+    tag,
+    attrs,
+    children,
+    parent,
+    element
+  });
 
   let obj;
   obj = { tagName: tag, attributes: attrs, children };
@@ -113,6 +121,7 @@ function render(doc, filename) {
   } catch(e) {
     console.log('ERROR:', e);
   }
+  console.log('render', { str });
 
   let xml = fromXML(str);
 
@@ -134,7 +143,12 @@ function CollectParts(doc = project.schematic) {
   return [...doc.parts]
     .map(e => e.raw.attributes)
     .filter(attr => !(attr.value === undefined && attr.device === '') || /^IC/.test(attr.name))
-    .map(({ name, deviceset, device, value }) => ({ name, deviceset, device, value: value ?? '-' }));
+    .map(({ name, deviceset, device, value }) => ({
+      name,
+      deviceset,
+      device,
+      value: value ?? '-'
+    }));
 }
 
 function ListParts(doc = project.schematic) {
@@ -161,12 +175,20 @@ function EaglePrint(file, output) {
     file
   ];
 
-  return child_process.spawn(argv[0], argv, { block: false });
+  return child_process.spawn(argv[0], argv, {
+    block: false
+  });
 }
 
 function main(...args) {
   globalThis.console = new Console({
-    inspectOptions: { maxArrayLength: 100, colors: true, depth: Infinity, compact: 0, customInspect: true }
+    inspectOptions: {
+      maxArrayLength: 100,
+      colors: true,
+      depth: Infinity,
+      compact: 0,
+      customInspect: true
+    }
   });
 
   let debugLog;
@@ -321,7 +343,8 @@ function main(...args) {
     render,
     pick,
     fromXML,
-    toXML
+    toXML,
+    writeXML
   });
   Object.assign(globalThis, {
     GetExponent,
@@ -356,7 +379,14 @@ function main(...args) {
     setDebug
   });
 
-  Object.assign(globalThis, { h, forwardRef, Fragment, React, ReactComponent, toChildArray });
+  Object.assign(globalThis, {
+    h,
+    forwardRef,
+    Fragment,
+    React,
+    ReactComponent,
+    toChildArray
+  });
 
   Object.assign(globalThis, {
     load(filename, project = globalThis.project) {
@@ -431,8 +461,21 @@ function main(...args) {
     }
   });
 
-  Object.assign(globalThis, { PrimitiveComponents, ElementNameToComponent, ElementToComponent });
-  Object.assign(globalThis, { renderToString, renderToXML });
+  Object.assign(globalThis, {
+    PrimitiveComponents,
+    ElementNameToComponent,
+    ElementToComponent,
+    EagleToGerber,
+    GerberToGcode,
+    ExecTool
+  });
+  Object.assign(globalThis, {
+    renderToString(arg) {
+      //  return renderToString(arg);
+      return writeXML(fromXML(renderToString(arg)));
+    },
+    renderToXML
+  });
 
   cmdhist = `.${base}-cmdhistory`;
 
@@ -477,7 +520,11 @@ function main(...args) {
     for(let arg of args) {
       if(s) s += ' ';
       if(typeof arg != 'string' || arg.indexOf('\x1b') == -1)
-        s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
+        s += inspect(arg, {
+          depth: Infinity,
+          depth: 6,
+          compact: false
+        });
       else s += arg;
     }
     fs.writeSync(debugLog, fs.bufferFrom(s + '\n'));
@@ -582,7 +629,11 @@ function UpdateMeasures(board) {
     plain.append(
       ...lines.map(line => ({
         tagName: 'wire',
-        attributes: { ...line.toObject(), layer: 47, width: 0 }
+        attributes: {
+          ...line.toObject(),
+          layer: 47,
+          width: 0
+        }
       }))
     );
     //console.log('no measures:', { bounds, lines }, [...plain]);
@@ -846,7 +897,13 @@ function SaveLibraries() {
 
     let xml = {
       tagName: 'library',
-      children: [{ tagName: 'description', attributes: {}, children: [`${name}.lbr library`] }],
+      children: [
+        {
+          tagName: 'description',
+          attributes: {},
+          children: [`${name}.lbr library`]
+        }
+      ],
       attributes: { name }
     };
 
@@ -864,7 +921,10 @@ function SaveLibraries() {
     for(let entity of entities) {
       obj[entity] = Object.values(obj[entity]);
 
-      xml.children.push({ tagName: entity, children: obj[entity] });
+      xml.children.push({
+        tagName: entity,
+        children: obj[entity]
+      });
     }
 
     // console.log('', console.config({ compact: 3, depth: 4 }), xml);
@@ -873,7 +933,11 @@ function SaveLibraries() {
       tagName: '?xml',
       attributes: { version: '1.0', encoding: 'utf-8' },
       children: [
-        { tagName: '!DOCTYPE eagle SYSTEM "eagle.dtd"', attributes: {}, children: [] },
+        {
+          tagName: '!DOCTYPE eagle SYSTEM "eagle.dtd"',
+          attributes: {},
+          children: []
+        },
         {
           tagName: 'eagle',
           attributes: { version: '6.4.1' },
@@ -886,8 +950,14 @@ function SaveLibraries() {
                   tagName: 'settings',
                   attributes: {},
                   children: [
-                    { tagName: 'setting', attributes: { alwaysvectorfont: 'no' } },
-                    { tagName: 'setting', attributes: { verticaltext: 'up' } }
+                    {
+                      tagName: 'setting',
+                      attributes: { alwaysvectorfont: 'no' }
+                    },
+                    {
+                      tagName: 'setting',
+                      attributes: { verticaltext: 'up' }
+                    }
                   ]
                 },
                 {
@@ -1032,7 +1102,11 @@ function SetSVGBackground(xml, color = '#ffffff') {
 
     children.splice(pos + 1, 0, {
       tagName: 'rect',
-      attributes: { id: 'background-rect', fill: '#fff', ...rect.toObject() }
+      attributes: {
+        id: 'background-rect',
+        fill: '#fff',
+        ...rect.toObject()
+      }
     });
 
     return xml;
@@ -1159,7 +1233,10 @@ function Eagle2CircuitJS(doc = project.schematic, scale = 50, sheet = 0) {
     let net = deep.get(tree, ptr.slice(0, -2));
 
     //console.log('ln',ln,elm.attributes.layer);
-    console.log('segment/net', { segment: segmentIndex, net: net.attributes.name });
+    console.log('segment/net', {
+      segment: segmentIndex,
+      net: net.attributes.name
+    });
 
     circ.add('w', ...ln, 0);
   }

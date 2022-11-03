@@ -8,7 +8,13 @@ const StrDecode = s => ((s = s.slice(1, -1)), unescape(s));
 const StrFmt = s => (s[0] == '"' && s[s.length - 1] == '"' ? StrDecode(s) : s == 'NULL' ? null : !isNaN(+s) ? +s : s);
 
 function main(...args) {
-  globalThis.console = new Console({ inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 200 } });
+  globalThis.console = new Console({
+    inspectOptions: {
+      compact: 2,
+      customInspect: true,
+      maxArrayLength: 200
+    }
+  });
 
   if(!args.length) args = ['strace.log'];
 
