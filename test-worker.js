@@ -12,7 +12,8 @@ var counter;
 globalThis.console = new Console({
   colors: true,
   compact: 1,
-  prefix: '\x1b[38;5;220mPARENT\x1b[0m'
+  prefix: '\x1b[38;5;220mPARENT\x1b[0m',
+  maxStringLength: 100
 });
 
 function TestWorker() {
@@ -27,7 +28,8 @@ function TestWorker() {
     globalThis.console = new Console({
       colors: true,
       compact: 2,
-      prefix: '\x1b[38;5;220mCHILD\x1b[0m'
+      prefix: '\x1b[38;5;220mCHILD\x1b[0m',
+      maxStringLength:100,
     });
 
     var parent = os.Worker?.parent;
