@@ -17,6 +17,7 @@ export class WorkerScript {
       worker.onmessage = worker.onmessage.fn;
     };
   }
+ 
 
   set onmessage(fn) {
     const worker = this.#worker;
