@@ -6,7 +6,7 @@ export class WorkerScript {
   #cleanup = null;
 
   constructor(script) {
-    let file = fs.tempnamSync() + '.js';
+    let file = 'tmp-worker.js';
 
     if(!(fs.writeFileSync(file, script) > 0)) throw new Error(`Error writing '${file}'`);
 

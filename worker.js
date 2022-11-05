@@ -1,17 +1,20 @@
-/* Worker code for test_worker.js */
 import * as std from 'std';
 import * as os from 'os';
+import * as fs from 'fs';
 import { Console } from 'console';
-import * as cv from 'opencv';
+import { ProcessPool } from './process-pool.js';
 
 var parent = os.Worker.parent;
 
 function WorkerMain() {
-  globalThis.console = new Console({
+  let out = fs.fopen('worker.out.txt', 'w+');
+
+  globalThis.console = new Console(out, {
     colors: true,
     compact: 1,
     prefix: '\x1b[38;5;128mWORKER\x1b[0m'
   });
+  console.log('WorkerMain', { out });
 
   console.log('WorkerMain', parent);
 
@@ -31,6 +34,8 @@ function HandleMessage(e) {
   console.log('Worker HandleMessage', ev);
 
   switch (ev.type) {
+    case 'exec':
+      break;
     case 'abort':
       parent.postMessage({ type: 'done' });
       break;
