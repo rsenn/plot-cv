@@ -6,7 +6,7 @@ import { TransformationList } from './lib/geom/transformation.js';
 import { streamify, once, subscribe } from './lib/async/events.js';
 
 function main() {
-  Object.assign(globalThis, { crosskit, RGBA, HSLA, Util, Matrix });
+  Object.assign(globalThis, { crosskit, RGBA, HSLA, Util, Matrix, TransformationList });
 
   const w = 320;
   const h = 200;
