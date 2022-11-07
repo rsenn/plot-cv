@@ -2,7 +2,7 @@ import { crosskit, CANVAS } from './lib/crosskit.js';
 import { RGBA, HSLA } from './lib/color.js';
 import { Matrix } from './lib/geom/matrix.js';
 //import { Element } from './lib/dom/element.js';
-//import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
+import { TransformationList } from './lib/geom/transformation.js';
 import { streamify, once, subscribe } from './lib/async/events.js';
 
 function main() {
