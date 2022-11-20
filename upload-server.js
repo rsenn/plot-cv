@@ -9,7 +9,7 @@ import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from 'fs';
 import { link, unlink, error } from 'misc';
-import { toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE } from 'util';
+import { toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE, waitFor } from 'util';
 import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, client, server, FormParser, Hash, Response } from 'net';
 import { parseDate, dateToObject } from './date-helpers.js';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
@@ -18,10 +18,28 @@ import { h, html, render, Component, useState, useLayoutEffect, useRef } from '.
 import renderToString from './lib/preact-render-to-string.js';
 import { exec, spawn } from 'child_process';
 import { Execute } from './os-helpers.js';
+import trkl from './lib/trkl.js';
 
 globalThis.fs = fs;
 globalThis.logFilter =
-  /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|_BODY[^_]|WRITABLE)/;
+  /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|WRITABLE)/;
+
+trkl.property(globalThis, 'logLevel').subscribe(value =>
+  setLog(value, (level, message) => {
+    if(/__lws/.test(message)) return;
+    if(level == LLL_INFO && !/proxy/.test(message)) return;
+    if(logFilter.test(message)) return;
+
+    //if(params.debug || level <= LLL_WARN)
+    out(
+      (
+        ['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][
+          Math.log2(level)
+        ] ?? level + ''
+      ).padEnd(8) + message.replace(/\n/g, '\\n')
+    );
+  })
+);
 
 function ExecTool(cmd, ...args) {
   let child = spawn(cmd, args, { stdio: [0, 'pipe', 2] });
@@ -293,6 +311,7 @@ function main(...args) {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
   const histfile = '.upload-server-history';
   repl.historyLoad(histfile, false);
+  repl.loadSaveOptions();
   repl.directives.i = [
     (module, ...args) => {
       console.log('args', args);
@@ -350,32 +369,10 @@ function main(...args) {
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     //console.log('createWS', { url, callbacks, listen });
 
-    const out = s => logFile.puts(s + '\n');
-    setLog((params.debug ? LLL_USER : 0) | (((params.debug ? LLL_INFO : LLL_WARN) << 1) - 1), (level, message) => {
-      if(/__lws/.test(message)) return;
-      if(level == LLL_INFO && !/proxy/.test(message)) return;
-      if(logFilter.test(message)) return;
+    globalThis.out = s => logFile.puts(s + '\n');
 
-      if(params.debug || level <= LLL_WARN)
-        out(
-          (
-            [
-              'ERR',
-              'WARN',
-              'NOTICE',
-              'INFO',
-              'DEBUG',
-              'PARSER',
-              'HEADER',
-              'EXT',
-              'CLIENT',
-              'LATENCY',
-              'MINNET',
-              'THREAD'
-            ][Math.log2(level)] ?? level + ''
-          ).padEnd(8) + message.replace(/\n/g, '\\n')
-        );
-    });
+    logLevel = (params.debug ? LLL_USER : 0) | (((params.debug ? LLL_INFO : LLL_WARN) << 1) - 1);
+    console.log('createWS', { logLevel });
 
     return [client, server][+listen]({
       tls: params.tls,
@@ -415,15 +412,35 @@ function main(...args) {
         ['/distrelec', 'https://www.distrelec.ch/', 'login'],
         ['/hasura', 'http://wild-beauty.herokuapp.com/v1/', 'graphql'],
         // ['/upload', 'lws-deaddrop', null, 'lws-deaddrop'],
-        /*function* upload(arg) {
-          console.log('upload', arg);
+        async function* test(req, resp) {
+          resp.type = 'text/plain';
+
+          console.log('*test', { req, resp });
+
+          let bodyStr = '';
+          if(req.method == 'POST') {
+            console.log('req.body', req.body);
+            //              console.log('req.body.next()', await req.body.next());
+
+            for await(let chunk of req.body) {
+              console.log('chunk', chunk);
+              bodyStr += toString(chunk);
+            }
+          }
+          console.log('bodyStr', bodyStr);
+
+          for(let i = 0; i < 10; i++) {
+            yield `line #${i}\n`;
+            await waitFor((10 - i + 1) * 10);
+          }
+
           yield 'done!';
-        },*/
-        function proxy(req, res) {
-          console.log('proxy', { req, res });
+        },
+        function proxy(req, resp) {
+          console.log('proxy', { req, resp });
           const { url, method, headers } = req;
           console.log('proxy', { url, method, headers });
-          const { status, ok, type } = res;
+          const { status, ok, type } = resp;
 
           console.log('proxy', { status, ok, url, type });
         },
@@ -677,14 +694,16 @@ body, * {
         }
       },*/
       onHttp(ws, req, resp) {
-        if(req.method != 'GET') console.log('onHttp', console.config({ compact: 0 }), req);
+        /* if(req.method != 'GET')*/ console.log('onHttp', console.config({ compact: 0 }), req);
+
+        define(globalThis, { req, resp });
 
         const { peer, address, port } = ws;
         const { method, headers } = req;
 
         if(req.url.path.endsWith('files')) {
           resp.type = 'application/json';
-        } else if(req.method != 'GET') {
+        } else if(req.method != 'GET' && req.headers['content-type'] == 'application/x-www-form-urlencoded') {
           let fp,
             hash,
             tmpnam,
@@ -876,7 +895,7 @@ body, * {
             return match;
           });
         }
-        //console.log('\x1b[38;5;33monHttp\x1b[0m', { resp });
+        console.log('\x1b[38;5;33monHttp\x1b[0m', { resp });
 
         return resp;
       },

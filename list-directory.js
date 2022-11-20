@@ -1,7 +1,7 @@
 import { LogWrap, VfnAdapter, VfnDecorator, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, isThenable, hasHandler, callHandler, parseURL, GetProperties, GetKeys, getPropertyDescriptors, define, setHandlers, statusResponse, objectCommand, MakeListCommand, getPrototypeName, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/rpc.js';
 import { h, options, html, render, Component, createContext, createRef, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue, forwardRef, Fragment, React, ReactComponent, Portal, toChildArray } from './lib/dom/preactComponent.js';
 import Util from './lib/util.js';
-import { once, streamify, filter, map, throttle, distinct, subscribe } from './lib/async/events.js';
+import { once, streamify, filter, map, throttle, distinct, subscribe } from './lib/async.js';
 import { Element } from './lib/dom/element.js';
 import iterify from './lib/async/iterify.js';
 import trkl from './lib/trkl.js';
@@ -65,11 +65,8 @@ globalThis.addEventListener('load', async () => {
 });
 
 async function StartSocket() {
-  let url = Util.makeURL({
-    location: '/rpc/ws',
-    protocol: 'wss',
-    port: undefined
-  });
+  let origin = new URL(window.location.href);
+  let url = new URL('/ws', Object.assign(origin, { protocol: origin.protocol.replace('http', 'ws') }));
 
   console.log('Connect to', url);
   let ws = (globalThis.ws = new WebSocket(url));
@@ -239,9 +236,9 @@ async function ListDirectory(dir = '.', options = { objects: true }) {
   dir = path.normalize(dir);
 
   const { filter = '.*', key = 'mtime', ...opts } = typeof options == 'string' ? { filter: options } : options;
-  let response = await fetch('rpc/files', {
-    method: 'POST',
-    body: JSON.stringify({ dir, filter, key, ...opts })
+  let response = await fetch('files?filter=.*', {
+    method: 'GET'
+    // body: JSON.stringify({ dir, filter, key, ...opts })
   });
   try {
     return [dir, await response.json()];

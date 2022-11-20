@@ -1,5 +1,26 @@
+import React, { Fragment, h, render, Component } from './lib/dom/preactComponent.js';
+
+const Table = props =>
+  h(
+    'table',
+    { cellspacing: 0, cellpadding: 0 },
+    (props.rows ?? props.children).map(row =>
+      Array.isArray(row)
+        ? h(
+            'tr',
+            {},
+            row.map(cell => (isComponent(cell) ? cell : h('td', {}, [cell])))
+          )
+        : row
+    )
+  );
+
 window.addEventListener('load', e => {
   console.log('Loaded.');
+
+  let element = document.querySelector('#preact');
+
+  render(h(Table, {}, []), element);
 
   let filterInput = document.forms[0].elements.filter;
 
@@ -88,3 +109,4 @@ Object.assign(globalThis, {
   RemoveRow,
   Pattern2Regexp
 });
+1;

@@ -1,13 +1,33 @@
-import { client, server, fetch, setLog } from 'net';
+import { client, server, fetch, setLog, LLL_ALL } from 'net';
 import { concat, escape, quote, toString, toArrayBuffer } from './lib/misc.js';
 import Util from './lib/util.js';
 import { Console } from 'console';
 
+const print = (...args) => console.log(...args);
+
 function CreateServer() {
   print('SERVER');
+
+  setLog(LLL_ALL, (level, ...args) =>
+    console.log(
+      (
+        ['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][
+          Math.log2(level)
+        ] ?? level + ''
+      ).padEnd(8),
+      ...args
+    )
+  );
+
   server({
     port: 3300,
-    mounts: [['/', '.', 'index.html']],
+    mounts: [
+      ['/', '.', 'index.html'],
+      async function* test(req, resp) {
+        console.log('*test', { req, resp });
+        yield 'test\r\n';
+      }
+    ],
     onConnect: socket => {
       print('Client connected');
       print('Socket: ' + socket);
@@ -95,8 +115,9 @@ function getJSON() {
 }
 
 function main(...args) {
-  globalThis.console = new Console({ inspectOptions: { compact: 2, customInspect: true } });
+  globalThis.console = new Console({ inspectOptions: { compact: 0, customInspect: true } });
   let ws;
+
   switch (args[0]) {
     case 's':
       ws = CreateServer();
