@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "_moduleAliases": {
     "preact": "lib/dom/preactComponent.js",
     "prop-types": "lib/prop-types.js",
@@ -16,6 +17,7 @@
     "lib/deep.js": "deep",
     "lib/path.js": "path",
     "lib/xml.js": "xml",
+    "lib/lexer.js": "lexer",
     "lib/filesystem.js": "fs",
     "fs.js": "lib/filesystem.js",
     "lib/misc.js": "util",

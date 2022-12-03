@@ -14,14 +14,17 @@ import { ReactComponent, render } from './lib/dom/preactComponent.js';
 import renderToString from './lib/preact-render-to-string.js';
 import { RGBA, isRGBA, ImmutableRGBA, default as rgba } from './lib/color/rgba.js';
 
+let debugFlag = false;
+
 function render(doc, filename) {
   if(doc instanceof EagleProject) {
     render(doc.schematic);
     render(doc.board);
     return;
   }
-  let renderer = new Renderer(doc, ReactComponent.append);
-  renderer.setPalette([
+  let renderer = new Renderer(doc, ReactComponent.append, debugFlag);
+
+  /* renderer.setPalette([
     [0xff, 0xff, 0xff],
     [0x4b, 0x4b, 0xa5],
     [0, 0, 0],
@@ -39,7 +42,7 @@ function render(doc, filename) {
     [0x4b, 0x4b, 0x4b],
     [0xa5, 0xa5, 0xa5],
     [0, 0, 0]
-  ]);
+  ].map(([r,g,b]) => new RGBA(r,g,b)));*/
 
   let str;
   let svg = renderer.render(doc);
@@ -76,7 +79,7 @@ function main(...args) {
 
   let params = getOpt(
     {
-      debug: [false, null, 'x'],
+      debug: [false, value => (debugFlag = value), 'x'],
       'output-dir': [true, null, 'd'],
       '@': 'input'
     },

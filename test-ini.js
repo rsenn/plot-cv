@@ -1,28 +1,33 @@
 import INIGrammar from './grammar-INI.js';
-import PortableFileSystem from './lib/filesystem.js';
+import fs from 'fs';
 import Util from './lib/util.js';
 import path from './lib/path.js';
 import { Point, Size, Rect, BBox } from './lib/geom.js';
 import deep from './lib/deep.js';
-import ConsoleSetup from './lib/consoleSetup.js';
+import { Console } from 'console';
 import tXml from './lib/tXml.js';
-import { XPath } from './lib/xml.js';
+import { XPath } from './lib/xml/xpath.js';
 import { toXML } from './lib/json.js';
-
-let filesystem;
 
 function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
-  filesystem.writeFile(name, data + '\n');
+  fs.writeFileSync(name, data + '\n');
 
   console.log(`Wrote ${name}: ${data.length} bytes`);
 }
 
 async function main(...args) {
-  await PortableFileSystem(fs => (filesystem = fs));
-  await ConsoleSetup({ depth: 4 });
+  globalThis.console = new Console({
+    inspectOptions: {
+      compact: 2,
+      customInspect: true,
+      maxArrayLength: 200
+    }
+  });
+
+  if(!args.length) args = [path.gethome() + '/Sources/pictest/build/mplab/7segtest-16f876a-xc8-debug.mcp'];
 
   let xy = new Point();
   let size = new Size(128, 128);
@@ -33,7 +38,7 @@ async function main(...args) {
   let iconSize, iconAspect;
 
   for(let filename of args) {
-    let src = filesystem.readFile(filename);
+    let src = fs.readFileSync(filename);
 
     //console.log('src:', src);
     let [done, data, pos] = INIGrammar.ini(src, 0);
@@ -42,7 +47,10 @@ async function main(...args) {
 
     let sections = data[0].reduce((acc, sdata) => {
       console.log('sdata:', sdata);
-      return { ...acc, [sdata[0]]: createMap(sdata[1] || []) };
+      return {
+        ...acc,
+        [sdata[0]]: createMap(sdata[1] || [])
+      };
     }, {});
 
     const flat = deep.flatten(
@@ -64,7 +72,7 @@ async function main(...args) {
       const svgFile = '/home/roman/mnt/ubuntu/' + desktopEntry.Icon.replace(/\.[a-z]*$/, '') + '.svg';
       const iconFile = '/home/lexy/.logos/' + path.basename(svgFile, '.svg') + '.png';
       console.log(' :', { svgFile, iconFile });
-      let svgData = tXml(filesystem.readFile(svgFile));
+      let svgData = tXml(fs.readFileSync(svgFile));
 
       let svg = svgData[0] || { attributes: {} };
       const attr = svg && svg.attributes;
@@ -108,7 +116,10 @@ async function main(...args) {
         xy.y += size.height + spacing;
       }
 
-      const ideskEntry = makeIDeskEntry({ ...desktopEntry, Icon: iconFile });
+      const ideskEntry = makeIDeskEntry({
+        ...desktopEntry,
+        Icon: iconFile
+      });
       WriteFile(lnkFile, ideskEntry);
       console.log(`Wrote '${lnkFile}'.`);
       console.log(`ideskEntry: `, ideskEntry);

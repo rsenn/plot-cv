@@ -80,11 +80,11 @@ export function ReadJSON(filename) {
   return data ? JSON.parse(data) : null;
 }
 
-export function ReadXML(filename) {
+export function ReadXML(filename, ...args) {
   let data = fs.readFileSync(filename, null);
 
   if(data) debug(`ReadXML: ${data.length} bytes read from '${filename}'`);
-  return data ? xml.read(data, filename, true) : null;
+  return data ? xml.read(data, filename, ...args) : null;
 }
 
 export function MapFile(filename) {
@@ -98,7 +98,7 @@ export function MapFile(filename) {
 
 export function WriteFile(name, data, verbose = true) {
   if(Util.isGenerator(data)) {
-    let fd = fs.openSync(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, 0x1a4);
+    let fd = fs.openSync(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, 0o644);
     let r = 0;
     for(let item of data) {
       r += fs.writeSync(fd, toArrayBuffer(item + ''));
@@ -107,6 +107,8 @@ export function WriteFile(name, data, verbose = true) {
     let stat = fs.statSync(name);
     return stat?.size;
   }
+  if(fs.existsSync(name)) fs.unlinkSync(name);
+
   if(Util.isIterator(data)) data = [...data];
   if(Array.isArray(data)) data = data.join('\n');
 
@@ -121,8 +123,8 @@ export function WriteJSON(name, data, compact = true) {
   return WriteFile(name, JSON.stringify(data, ...(compact ? [] : [null, 2])));
 }
 
-export function WriteXML(name, data) {
-  return WriteFile(name, xml.write(data));
+export function WriteXML(name, data, ...args) {
+  return WriteFile(name, xml.write(data, ...args));
 }
 
 export function ReadBJSON(filename) {

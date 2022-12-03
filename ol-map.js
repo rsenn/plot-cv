@@ -6,10 +6,11 @@ import { add, closestOnCircle, closestOnSegment, createStringXY, degreesToString
 
 import { toLonLat, equivalent, getTransformFromProjections, getTransform, transformExtent, transformWithProjections, setUserProjection, clearUserProjection, getUserProjection, useGeographic, toUserCoordinate, fromUserCoordinate, toUserExtent, fromUserExtent, toUserResolution, fromUserResolution, createSafeCoordinateTransform, addCommon } from './openlayers/src/ol/proj.js';
 
-import { TransformCoordinates, Coordinate, Pin, Markers, OpenlayersMap, Popup } from './ol-helpers.js';
+import { TransformCoordinates, Coordinate, Pin, Markers, OpenlayersMap, Popup, ParseCoordinates } from './ol-helpers.js';
 import { ObjectWrapper, BiDirMap } from './object-helpers.js';
 import { Layer as HTMLLayer } from './lib/dom/layer.js';
 import { h, forwardRef, Fragment, React, ReactComponent, Portal, toChildArray } from './lib/dom/preactComponent.js';
+import { parseDegMinSec, parseGPSLocation, parseDMS } from './string-helpers.js';
 
 let data = (globalThis.data = []);
 let center = (globalThis.center = transform([7.454281, 46.96453], 'EPSG:4326', 'EPSG:3857'));
@@ -109,26 +110,6 @@ function FlyTo(location, done = () => {}) {
   );
 }
 
-/*function CreateMarkerLayer(features) {
-  const iconStyle = new Style({
-    image: new Icon({
-      anchor: [1, 1],
-      anchorXUnits: 'fraction',
-      anchorYUnits: 'fraction',
-      src: 'static/svg/map-pin.svg',
-      scale: 1
-    })
-  });
-  globalThis.features = features;
-  features.forEach(f => f.setStyle(iconStyle));
-  globalThis.markers = new Markers(map);
-  let vectorLayer = new VectorLayer({
-    source: new VectorSource({ features })
-  });
-  Object.assign(globalThis, { features, vectorLayer, iconStyle });
-  return vectorLayer;
-}*/
-
 function Get(feature) {
   let g = feature.getGeometry();
   return g.getCoordinates();
@@ -186,24 +167,18 @@ function CreateMap() {
   });
 
   globalThis.markers = Markers.create(map);
+  globalThis.mapPinStyle ??= new Style({
+    image: new Icon({
+      anchor: [1, 1],
+      anchorXUnits: 'fraction',
+      anchorYUnits: 'fraction',
+      src: 'static/svg/map-pin.svg',
+      scale: 1
+    })
+  });
+  globalThis.pins = Object.entries(cities).map(([name, geometry]) => Pin.create(name, mapPinStyle, geometry));
 
-  globalThis.pins = Object.entries(cities).map(([name, geometry]) =>
-    Pin.create(
-      name,
-      new Style({
-        image: new Icon({
-          anchor: [1, 1],
-          anchorXUnits: 'fraction',
-          anchorYUnits: 'fraction',
-          src: 'static/svg/map-pin.svg',
-          scale: 1
-        })
-      }),
-      geometry
-    )
-  );
-
-  markers.add(...pins);
+  //markers.add(...pins);
 
   const hereMarker = Pin.create(
     'You are here',
@@ -232,7 +207,8 @@ function CreateMap() {
     map,
     extentVector,
     positionFeature,
-    geolocation
+    geolocation,
+    parseDMS
   });
   Object.defineProperties(globalThis, {
     zoom: {
@@ -256,11 +232,21 @@ function CreateMap() {
     const hdms = toStringHDMS(toLonLat(coordinate));
     globalThis.evt = evt;
 
-    console.log('Clicked at ' + coordinate);
+    let lonlat = new Coordinate(...coordinate, 'EPSG:3857').toLonLat();
+
+    console.log('Clicked at', lonlat);
 
     let features = (globalThis.features = map.getFeaturesAtPixel(evt.pixel_));
 
-    if(features && features.length) console.log('features', features);
+    if(features && features.length) {
+      console.log('features', features);
+
+      if(features.length == 1) {
+        let [feature] = features;
+
+        globalThis.feature = feature;
+      }
+    }
     //content.innerHTML = '<p>You clicked here:</p><code>' + hdms + '</code>';
 
     if(popup?.overlay) popup.overlay.setPosition(coordinate);
@@ -268,7 +254,19 @@ function CreateMap() {
 
   fetch('uploads').then(async response => {
     let json = await response.json();
-    globalThis.uploads = json.filter(u => u.exif.GPSPosition);
+    globalThis.uploads = json
+      .filter(u => u?.exif?.GPSPosition)
+      .map(u => {
+        u.position = ParseCoordinates(u.exif.GPSPosition);
+        u.pin = Pin.create(u.filename, mapPinStyle, u.position);
+
+        //if(u.filename != '') u.popup =Popup.create(u.filename??'<no filename>', [0,0], u.position);
+
+        markers.add(u.pin);
+
+        return u;
+      });
+    console.log('uploads', globalThis.uploads);
   });
 
   return map;
@@ -332,7 +330,8 @@ Object.assign(globalThis, {
   React,
   ReactComponent,
   Portal,
-  toChildArray
+  toChildArray,
+  ParseCoordinates
 });
 
 CreateMap();

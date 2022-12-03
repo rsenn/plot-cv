@@ -1,3 +1,24 @@
+body, h4 {
+    font-family: Helvetica;
+}
+div.svg {
+  padding:   0;
+  border:  1px dotted rgba(192,192,192,1);
+  background:  rgba(255,255,255,1);
+  box-shadow:  0px 0px 6px rgba(100,100,100,0.5);
+  margin:  0.5em;
+}
+div.svg > svg {
+   margin:  0.5em;
+
+}
+div.svg > h4 {
+  background:  black;
+  color:  white;
+  padding:  0.25em;
+  margin:  0 0 0.5em 0;
+  border-bottom:  1px solid rgba(192,192,192,1);
+}
 .upload {
   font-family: Helvetica;
   font-size: 16px;
@@ -571,6 +592,8 @@ ul {
 ul li {
   /* border: 1px solid hsla(245, 100%, 30%, 1);*/
   border-radius: 1em;
+ /* border-bottom-left-radius: 1em;
+  border-bottom-right-radius: 1em;*/
   background: hsla(245, 100%, 69%, 0.3);
   margin: 0 0 1em 2em;
   position: relative;
@@ -585,6 +608,7 @@ ul h2 {
   margin: 0 0;
   font-size: 0.97em;
   text-align: center;
+  padding: 2px;
 }
 h2 {
   background: black;
@@ -593,8 +617,8 @@ h2 {
   display: block;
 }
 ul li h2 {
-  border-top-left-radius: 1em;
-  border-top-right-radius: 1em;
+ /* border-top-left-radius: 1em;
+  border-top-right-radius: 1em;*/
 }
 
 ul li table {
@@ -602,7 +626,7 @@ ul li table {
 }
 ul li {
   /*border:  1px solid hsla(245,0%,0%,1);*/
-  /*  box-shadow: inset 1px 1px hsla(245,30%,60%,0.8); */
+  box-shadow: 0px 0px 3px hsla(245,30%,30%,0.8); 
   min-width: 100px;
 }
 
@@ -637,4 +661,14 @@ ul li img {
 .property-list table {
   border-collapse: collapse;
   margin: 1em;
+}
+table.gps {
+    border-collapse: collapse;
+    background: white;
+}
+
+table.gps td, table.gps th {
+  padding: 2px;
+  border: 1px solid #555;
+  text-align: left;
 }
