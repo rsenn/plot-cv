@@ -22,6 +22,8 @@ window.addEventListener('load', e => {
 
   render(h(Table, {}, []), element);
 
+
+if(document.forms[0]) {
   let filterInput = document.forms[0].elements.filter;
 
   filterInput.addEventListener('change', e => {
@@ -32,6 +34,7 @@ window.addEventListener('load', e => {
     const { target, currentTarget } = e;
     console.log('Input:', target.value);
   });
+   } 
 });
 
 function Pattern2Regexp(pattern, flags = 'i') {

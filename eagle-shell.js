@@ -493,6 +493,7 @@ function main(...args) {
   }
 
   repl.history = LoadHistory(cmdhist);
+  repl.loadSaveOptions();
   repl.printStatus(`Loaded ${repl.history.length} history entries)`);
 
   //console.log(`repl`, repl);

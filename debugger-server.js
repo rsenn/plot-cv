@@ -29,6 +29,7 @@ atexit(() => {
 function StartREPL(prefix = scriptName(), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
   repl.historyLoad(null, fs);
+  repl.loadSaveOptions();
   repl.inspectOptions = { ...console.options, maxArrayLength: Infinity, compact: 2 };
   let { log } = console;
 

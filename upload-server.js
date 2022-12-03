@@ -419,10 +419,10 @@ function main(...args) {
 
           let bodyStr = '';
           if(req.method == 'POST') {
-            console.log('req.body', req.body);
+            //console.log('req.body', req.body);
             //              console.log('req.body.next()', await req.body.next());
 
-            for await(let chunk of req.body) {
+            for await(let chunk of await req.body) {
               console.log('chunk', chunk);
               bodyStr += toString(chunk);
             }
@@ -694,9 +694,10 @@ body, * {
         }
       },*/
       onHttp(ws, req, resp) {
-        /* if(req.method != 'GET')*/ console.log('onHttp', console.config({ compact: 0 }), req);
+        /* if(req.method != 'GET')*/ //console.log('onHttp', console.config({ compact: 0 }), ws);
+        console.log('onHttp', console.config({ compact: 0 }), {ws,req});
 
-        define(globalThis, { req, resp });
+        define(globalThis, { ws, req, resp });
 
         const { peer, address, port } = ws;
         const { method, headers } = req;

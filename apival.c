@@ -617,6 +617,8 @@ main() {
   printf("O_WRONLY: 0o%o\n", O_WRONLY);
   printf("EAGAIN: %i\n", EAGAIN);
   printf("EWOULDBLOCK: %i\n", EWOULDBLOCK);
+  printf("SIG_IGN: %i\n", SIG_IGN);
+  printf("SIGINT: %i\n", SIGINT);
  
 
   return 0;

@@ -20,6 +20,7 @@
     "lib/lexer.js": "lexer",
     "lib/filesystem.js": "fs",
     "fs.js": "lib/filesystem.js",
+    "dom": "quickjs/qjs-modules/lib/dom.js",
     "lib/misc.js": "util",
     "lib/childProcess.js": "child_process",
     "./lib/childProcess.js": "child_process",

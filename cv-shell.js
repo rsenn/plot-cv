@@ -53,6 +53,7 @@ function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = ''
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, fs, false);
   repl.fs = fs;
   repl.historyLoad(getConfFile('history'), fs);
+  repl.loadSaveOptions();
   repl.inspectOptions = console.options;
 
   let { log } = console;
