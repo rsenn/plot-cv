@@ -549,13 +549,9 @@ body, * {
         function* files(req, resp) {
           let { body, headers, json, url } = req;
           let { query } = url;
-
           define(globalThis, { filesRequest: { req, resp, body, query } });
-
           console.log('*files', { req, resp, body, query });
-
-          const data = query ?? {}; //json ? json : JSON.parse(body ?? '{}');
-
+          const data = query ?? {};
           resp.type = 'application/json';
           let {
             dirs = defaultDirs,
@@ -573,7 +569,7 @@ body, * {
             if(Array.isArray(dir)) {
               let [, re] = dir;
               let absdir = path.realpath(dir[0]);
-              names = [...RecursiveDirIterator(absdir, n => re.test(n))]; //.map(n => path.relative(n, absdir));
+              names = [...RecursiveDirIterator(absdir, n => re.test(n))];
               dir = path.relative(absdir, path.getcwd());
             } else if((st = fs.statSync(dir)) && st.isDirectory()) {
               let absdir = path.realpath(dir);
@@ -626,7 +622,6 @@ body, * {
               ]);
               return acc;
             }, []);
-
             if(entries.length) {
               let cmp = {
                 string(a, b) {
@@ -639,15 +634,11 @@ body, * {
               entries = entries.sort(cmp);
             }
             names = entries.map(([name, obj]) => (objects ? obj : name));
-
             if(names.length > 0) {
-              //console.log('files result', { dir, names });
               if(flat) names.map(({ name }) => results.push({ name: path.normalize(path.join(dir, name)) }));
               else results.push({ dir, names });
             }
           }
-
-          // yield '\n]';
           yield JSON.stringify(...[results, ...(verbose ? [null, 2] : [])]);
         }
       ],
@@ -695,7 +686,7 @@ body, * {
       },*/
       onHttp(ws, req, resp) {
         /* if(req.method != 'GET')*/ //console.log('onHttp', console.config({ compact: 0 }), ws);
-        console.log('onHttp', console.config({ compact: 0 }), {ws,req});
+        console.log('onHttp', console.config({ compact: 0 }), { ws, req });
 
         define(globalThis, { ws, req, resp });
 
