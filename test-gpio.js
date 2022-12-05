@@ -1,4 +1,5 @@
 import { GPIO } from 'gpio';
+import { Console } from 'console';
 
 function main(...args) {
   globalThis.console = new Console({
