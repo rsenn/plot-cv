@@ -15,6 +15,11 @@ function main(...args) {
   gpio.initPin(1, GPIO.INPUT);
   const value = gpio.getPin(1);
   console.log('Pin #1 value:', value);
+
+  const u32 = new Uint32Array(gpio.buffer);
+  console.log('u32:', u32);
+  const u8= new Uint8Array(gpio.buffer);
+  console.log('u8:', u8);
 }
 
 try {
