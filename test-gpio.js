@@ -4,7 +4,7 @@ function main(...args) {
   globalThis.console = new Console({
     colors: true,
     compact: 1,
-    radix: 2
+    numberBase: 2
   });
   const gpio = new GPIO();
   console.log('gpio.initPin', gpio.initPin);
