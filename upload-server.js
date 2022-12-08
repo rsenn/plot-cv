@@ -4,11 +4,12 @@ import * as deep from './lib/deep.js';
 import * as xml from 'xml';
 import * as path from 'path';
 import { Console } from 'console';
+import { Directory, BOTH, TYPE_DIR, TYPE_LNK, TYPE_REG, TYPE_MASK } from 'directory';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from 'fs';
-import { link, unlink, error } from 'misc';
+import { link, unlink, error, fnmatch, FNM_EXTMATCH } from 'misc';
 import { toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE, waitFor } from 'util';
 import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, client, server, FormParser, Hash, Response } from 'net';
 import { parseDate, dateToObject } from './date-helpers.js';
@@ -19,6 +20,7 @@ import renderToString from './lib/preact-render-to-string.js';
 import { exec, spawn } from 'child_process';
 import { Execute } from './os-helpers.js';
 import trkl from './lib/trkl.js';
+import { concat, consume, every, filter, find, findIndex, forEach, iterator, includes, indexOf, lastIndexOf, map, reduce, some, accumulate, take } from './lib/iterator/helpers.js'
 
 globalThis.fs = fs;
 globalThis.logFilter =
@@ -547,6 +549,28 @@ body, * {
           yield JSON.stringify(result);
         },
         function* files(req, resp) {
+          const { filter = '*', root = '.', type = TYPE_DIR | TYPE_REG | TYPE_LNK, limit = '0' } = req.url.query;
+
+          console.log('*files', { root, filter, type });
+          const [offset = 0, size = Infinity] = limit.split(',').map(n => +n);
+
+          console.log('*files', { offset, size });
+
+          let i = 0,
+            dir = new Directory(root, BOTH, +type);
+
+          for(let [name, type] of dir) {
+            if(i >= offset && i < offset + size) {
+              if(fnmatch(filter, name, FNM_EXTMATCH)) continue;
+
+              yield path.normalize(path.join(root, name)) + (+type == TYPE_DIR ? '/' : '') + '\r\n';
+            }
+            ++i;
+          }
+
+          //yield '\r\n';
+        },
+        function* files2(req, resp) {
           let { body, headers, json, url } = req;
           let { query } = url;
           define(globalThis, { filesRequest: { req, resp, body, query } });

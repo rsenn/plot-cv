@@ -22,19 +22,18 @@ window.addEventListener('load', e => {
 
   render(h(Table, {}, []), element);
 
+  if(document.forms[0]) {
+    let filterInput = document.forms[0].elements.filter;
 
-if(document.forms[0]) {
-  let filterInput = document.forms[0].elements.filter;
-
-  filterInput.addEventListener('change', e => {
-    const { target, currentTarget } = e;
-    console.log('Changed:', target.value);
-  });
-  filterInput.addEventListener('input', e => {
-    const { target, currentTarget } = e;
-    console.log('Input:', target.value);
-  });
-   } 
+    filterInput.addEventListener('change', e => {
+      const { target, currentTarget } = e;
+      console.log('Changed:', target.value);
+    });
+    filterInput.addEventListener('input', e => {
+      const { target, currentTarget } = e;
+      console.log('Input:', target.value);
+    });
+  }
 });
 
 function Pattern2Regexp(pattern, flags = 'i') {
