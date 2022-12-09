@@ -4,8 +4,9 @@ import { Console } from 'console';
 function main(...args) {
   globalThis.console = new Console({
     colors: true,
-    compact: 1,
-    numberBase: 2
+    compact: false,
+    numberBase: 2,
+    maxArrayLength: Infinity,
   });
   const gpio = new GPIO();
   console.log('gpio.initPin', gpio.initPin);
