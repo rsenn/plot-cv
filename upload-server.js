@@ -20,7 +20,7 @@ import renderToString from './lib/preact-render-to-string.js';
 import { exec, spawn } from 'child_process';
 import { Execute } from './os-helpers.js';
 import trkl from './lib/trkl.js';
-import { concat, consume, every, filter, find, findIndex, forEach, iterator, includes, indexOf, lastIndexOf, map, reduce, some, accumulate, take } from './lib/iterator/helpers.js'
+import {  take } from './lib/iterator/helpers.js'
 
 globalThis.fs = fs;
 globalThis.logFilter =
@@ -719,7 +719,7 @@ body, * {
 
         if(req.url.path.endsWith('files')) {
           resp.type = 'application/json';
-        } else if(req.method != 'GET' && req.headers['content-type'] == 'application/x-www-form-urlencoded') {
+        } else if(req.method != 'GET' && (req.headers['content-type'] == 'application/x-www-form-urlencoded'|| req.headers['content-type'].startsWith('multipart/form-data'))) {
           let fp,
             hash,
             tmpnam,
