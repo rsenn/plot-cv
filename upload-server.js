@@ -670,9 +670,9 @@ body, * {
 
       ...callbacks,
       onConnect(ws, req) {
-        const { peer, address, port } = ws;
+        const { peer, address, port, protocol } = ws;
 
-        //  console.log('\x1b[38;5;33monConnect\x1b[0m', { address, port });
+        console.log('\x1b[38;5;33monConnect\x1b[0m', { address, port,protocol});
 
         ws.sendCommand = function(data) {
           if(!isArrayBuffer(data) /*&& isObject(data)*/) data = JSON.stringify(data);
@@ -710,7 +710,7 @@ body, * {
       },*/
       onHttp(ws, req, resp) {
         /* if(req.method != 'GET')*/ //console.log('onHttp', console.config({ compact: 0 }), ws);
-        console.log('onHttp', console.config({ compact: 0 }), { ws, req });
+        console.log('\x1b[38;5;220monHttp(1)\x1b[0m', console.config({ compact: 0 }), { req });
 
         define(globalThis, { ws, req, resp });
 
@@ -911,7 +911,7 @@ body, * {
             return match;
           });
         }
-        console.log('\x1b[38;5;33monHttp\x1b[0m', { resp });
+        console.log('\x1b[38;5;27monHttp(2)\x1b[0m', { resp });
 
         return resp;
       },

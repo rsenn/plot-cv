@@ -1,7 +1,7 @@
 import { crosskit, CANVAS } from './lib/crosskit.js';
 import { RGBA, HSLA } from './lib/color.js';
 import { Matrix } from './lib/geom/matrix.js';
-//import { Element } from './lib/dom/element.js';
+
 import { TransformationList } from './lib/geom/transformation.js';
 import { streamify, once, subscribe } from './lib/async/events.js';
 
@@ -34,8 +34,7 @@ function main() {
   const buffer = new ArrayBuffer(w * (h + 2));
   const palette = CreatePalette();
   const paletteHSL = CreatePaletteHSL();
-  /*const paletteX = palette.map(color => color.hex());
-  const palette32 = Uint32Array.from(palette, c => +c);*/
+
   const pixels = Array.from({ length: h + 2 }).map((v, i) => new Uint8ClampedArray(buffer, i * w, w));
   const { context } = crosskit;
   const image = context.createImageData(w, h);
@@ -58,8 +57,8 @@ function main() {
   async function Loop() {
     const delay = 1000 / fps;
     const log = (t, name) => globalThis.doLog && console.log(`${name} timing: ${t.toFixed(3)}ms`);
-    const fire = (...args) => Fire(...args); //Util.instrument(Fire, log);
-    const redraw = (...args) => Redraw(...args); //Util.instrument(Redraw, log);
+    const fire = (...args) => Fire(...args);
+    const redraw = (...args) => Redraw(...args);
 
     await once(window, 'load');
 
@@ -98,9 +97,7 @@ function main() {
     let i = 0;
     let t = [...matrix];
 
-    /* context.transform(...t);
-    console.log("t:", context.currentTransform);
-  */
+
     for(let y = 0; y < h; y++) {
       for(let x = 0; x < w; x++) {
         const c = palette[pixels[y][x]];
@@ -120,10 +117,10 @@ function main() {
     for(let i = 0; i < 64; i++) {
       const value = i * 4;
 
-      colors[i] = new RGBA(value, 0, 0); // black to red
-      colors[i + 64] = new RGBA(255, value, 0); // red to yellow
-      colors[i + 128] = new RGBA(255, 255, value); // yellow to white
-      colors[i + 192] = new RGBA(255, 255, 255); // all white
+      colors[i] = new RGBA(value, 0, 0);
+      colors[i + 64] = new RGBA(255, value, 0);
+      colors[i + 128] = new RGBA(255, 255, value);
+      colors[i + 192] = new RGBA(255, 255, 255);
     }
     return colors;
   }
@@ -138,7 +135,7 @@ function main() {
       new HSLA(60, 100, 50),
       new HSLA(60, 100, 100),
       new HSLA(60, 100, 100)
-    ]; /*.map(hsla => hsla.toRGBA())*/
+    ];
 
     const breakpoints = [0, 51, 80, 154, 205, 256];
     console.log('breakpoints:', breakpoints);
@@ -146,7 +143,6 @@ function main() {
     for(let i = 0; i < 256; i++) {
       const hue = (v => (v == -1 ? () => hues.length - 2 : v => v))(breakpoints.findIndex(b => i < b));
       const range = breakpoints[hue] - 1 - breakpoints[hue - 1];
-      //console.log("hue:", {i,hue, range});
 
       colors[i] = HSLA.blend(hues[hue - 1], hues[hue], (i - breakpoints[hue - 1]) / range).toRGBA();
     }
@@ -184,7 +180,7 @@ function main() {
     let { target, buttons, type } = e;
 
     if('touches' in e) {
-      //console.log(`${e.type}`, ...e.touches);
+
       for(let touch of [...e.touches]) {
         const { clientX, clientY } = touch;
         MouseHandler({
@@ -203,7 +199,6 @@ function main() {
     const x = Math.round((e.offsetX * w) / rect.width);
     const y = Math.round((e.offsetY * h) / rect.height);
 
-    //console.log(`${e.type} @ ${x},${y}`);
 
     try {
       if(/(down|start)$/.test(type)) rc = pixels[y][x] > 0x30 ? 0 : RandomByte() | 0x80;
@@ -238,7 +233,7 @@ function main() {
     window.addEventListener('resize', ResizeHandler, true);
 
     const handler =
-      MouseHandler; /*|| Util.instrument(MouseHandler, (duration, name, args, ret) => console.log(`handler time: ${duration}`))*/
+      MouseHandler;
 
     subscribe(MouseIterator(), handler);
   }
@@ -247,3 +242,4 @@ function main() {
 }
 
 main();
+
