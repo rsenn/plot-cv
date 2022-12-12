@@ -97,7 +97,6 @@ function main() {
     let i = 0;
     let t = [...matrix];
 
-
     for(let y = 0; y < h; y++) {
       for(let x = 0; x < w; x++) {
         const c = palette[pixels[y][x]];
@@ -180,7 +179,6 @@ function main() {
     let { target, buttons, type } = e;
 
     if('touches' in e) {
-
       for(let touch of [...e.touches]) {
         const { clientX, clientY } = touch;
         MouseHandler({
@@ -198,7 +196,6 @@ function main() {
 
     const x = Math.round((e.offsetX * w) / rect.width);
     const y = Math.round((e.offsetY * h) / rect.height);
-
 
     try {
       if(/(down|start)$/.test(type)) rc = pixels[y][x] > 0x30 ? 0 : RandomByte() | 0x80;
@@ -232,8 +229,7 @@ function main() {
 
     window.addEventListener('resize', ResizeHandler, true);
 
-    const handler =
-      MouseHandler;
+    const handler = MouseHandler;
 
     subscribe(MouseIterator(), handler);
   }
@@ -242,4 +238,3 @@ function main() {
 }
 
 main();
-

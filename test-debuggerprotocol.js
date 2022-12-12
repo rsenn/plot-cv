@@ -77,10 +77,10 @@ async function main(...args) {
   retValue(ret);*/
 
   //  IOLoop();
-  //  
-  if(sock.errno){
-      console.log(`error connecting to ${addr}:`, sock.error.message);
-std.exit(1);
+  //
+  if(sock.errno) {
+    console.log(`error connecting to ${addr}:`, sock.error.message);
+    std.exit(1);
   }
 
   console.log('debuggerprotocol', sock);
