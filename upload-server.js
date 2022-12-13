@@ -20,7 +20,14 @@ import renderToString from './lib/preact-render-to-string.js';
 import { exec, spawn } from 'child_process';
 import { Execute } from './os-helpers.js';
 import trkl from './lib/trkl.js';
-import {  take } from './lib/iterator/helpers.js'
+import { take } from './lib/iterator/helpers.js';
+import { extendArray, extendGenerator, extendAsyncGenerator } from 'util';
+
+extendArray();
+extendGenerator();
+extendGenerator(Object.getPrototypeOf(new Map().keys()));
+extendGenerator(Object.getPrototypeOf(new Directory('.')));
+extendAsyncGenerator();
 
 globalThis.fs = fs;
 globalThis.logFilter =
@@ -66,6 +73,19 @@ function GetMime(file) {
   return output;
 }
 
+function Matcher(pattern, t = arg => arg) {
+  return (...args) => pattern == t(...args) || 0 == fnmatch(pattern, t(...args), FNM_EXTMATCH);
+}
+
+function KeyOrValueMatcher(pattern) {
+  let matcher = Matcher(pattern);
+  return ([key, value]) => matcher(key) || matcher(value);
+}
+
+function GetRootDirectories(pattern = '*') {
+  return allowedDirs.keys().filter(Matcher(pattern));
+}
+
 const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 
 const defaultDirs = (globalThis.defaultDirs = [
@@ -76,9 +96,13 @@ const defaultDirs = (globalThis.defaultDirs = [
   ['/home/roman/Bilder', new RegExp('.(jpg|jpeg|png|heic|tif|tiff)$', 'i')]
 ]);
 
-const allowedDirs = (globalThis.allowedDirs = defaultDirs
-  .map(dd => GetDir(Array.isArray(dd) ? dd[0] : dd))
-  .map(d => path.resolve(d)));
+const allowedDirs = (globalThis.allowedDirs = new Map(
+  defaultDirs
+    .map(dd => GetDir(Array.isArray(dd) ? dd[0] : dd))
+    .map(d => path.resolve(d))
+    .map(d => path.relative(d))
+    .map(d => [DirName(d), d])
+));
 
 function GetDir(dir) {
   let a = path.toArray(dir);
@@ -86,6 +110,15 @@ function GetDir(dir) {
   return i != -1 ? path.slice(dir, 0, i) : dir;
 }
 
+function DirName(name) {
+  let p = path.relative(name);
+
+  p = path.slice(
+    p,
+    path.toArray(p).findIndex(it => it != '..')
+  );
+  return p;
+}
 function DateStr(date) {
   let str = date.toISOString();
   let ti = str.indexOf('T');
@@ -263,7 +296,6 @@ function main(...args) {
   const base = path.basename(scriptArgs[0], '.js').replace(/\.[a-z]*$/, '');
   const config = ReadJSON(`.${base}-config`) ?? {};
 
-  // console.log('allowedDirs', allowedDirs);
   globalThis.console = new Console({
     inspectOptions: {
       compact: 2,
@@ -549,24 +581,32 @@ body, * {
           yield JSON.stringify(result);
         },
         function* files(req, resp) {
-          const { filter = '*', root = '.', type = TYPE_DIR | TYPE_REG | TYPE_LNK, limit = '0' } = req.url.query;
+          const { filter = '*', root, type = TYPE_DIR | TYPE_REG | TYPE_LNK, limit = '0' } = req.url.query;
 
           console.log('*files', { root, filter, type });
           const [offset = 0, size = Infinity] = limit.split(',').map(n => +n);
 
           console.log('*files', { offset, size });
 
-          let i = 0,
-            dir = new Directory(root, BOTH, +type);
+          let i = 0;
+          let f = Matcher(filter);
 
-          for(let [name, type] of dir) {
-            if(i >= offset && i < offset + size) {
-              if(fnmatch(filter, name, FNM_EXTMATCH)) continue;
+          let gen = (function* iter() {
+            if(!root) {
+              for(let name of allowedDirs.keys().filter(f)) yield name + '/\r\n';
+            } else {
+              for(let [key, value] of allowedDirs.entries().filter(KeyOrValueMatcher(root))) {
+                let dir = new Directory(value, BOTH, +type);
 
-              yield path.normalize(path.join(root, name)) + (+type == TYPE_DIR ? '/' : '') + '\r\n';
+                yield key + ':\r\n';
+
+                for(let [name, type] of dir.filter(([name, type]) => f(name)))
+                  yield name + (+type == TYPE_DIR ? '/' : '') + '\r\n';
+              }
             }
-            ++i;
-          }
+          })();
+
+          yield* gen.range(offset, size);
 
           //yield '\r\n';
         },
@@ -670,9 +710,9 @@ body, * {
 
       ...callbacks,
       onConnect(ws, req) {
-        const { peer, address, port } = ws;
+        const { peer, address, port, protocol } = ws;
 
-        //  console.log('\x1b[38;5;33monConnect\x1b[0m', { address, port });
+        console.log('\x1b[38;5;33monConnect\x1b[0m', { address, port, protocol });
 
         ws.sendCommand = function(data) {
           if(!isArrayBuffer(data) /*&& isObject(data)*/) data = JSON.stringify(data);
@@ -710,7 +750,7 @@ body, * {
       },*/
       onHttp(ws, req, resp) {
         /* if(req.method != 'GET')*/ //console.log('onHttp', console.config({ compact: 0 }), ws);
-        console.log('onHttp', console.config({ compact: 0 }), { ws, req });
+        console.log('\x1b[38;5;220monHttp(1)\x1b[0m', console.config({ compact: 0 }), { req });
 
         define(globalThis, { ws, req, resp });
 
@@ -718,8 +758,12 @@ body, * {
         const { method, headers } = req;
 
         if(req.url.path.endsWith('files')) {
-          resp.type = 'application/json';
-        } else if(req.method != 'GET' && (req.headers['content-type'] == 'application/x-www-form-urlencoded'|| req.headers['content-type'].startsWith('multipart/form-data'))) {
+          //resp.type = 'application/json';
+        } else if(
+          req.method != 'GET' &&
+          (req.headers['content-type'] == 'application/x-www-form-urlencoded' ||
+            req.headers['content-type'].startsWith('multipart/form-data'))
+        ) {
           let fp,
             hash,
             tmpnam,
@@ -911,7 +955,7 @@ body, * {
             return match;
           });
         }
-        console.log('\x1b[38;5;33monHttp\x1b[0m', { resp });
+        console.log('\x1b[38;5;2m7onHttp(2)\x1b[0m', { resp });
 
         return resp;
       },
@@ -958,7 +1002,25 @@ body, * {
     Hash,
     FormParser,
     ExecTool,
-    Execute
+    Execute,
+    extendGenerator,
+    extendArray,
+    extendAsyncGenerator,
+    Matcher,
+    ExecTool,
+    GetMime,
+    Matcher,
+    KeyOrValueMatcher,
+    GetRootDirectories,
+    GetDir,
+    DirName,
+    DateStr,
+    ModeStr,
+    ReadExiv2,
+    ReadExiftool,
+    HeifConvert,
+    MagickResize,
+    Directory
   });
 
   delete globalThis.DEBUG;

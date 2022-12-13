@@ -21,7 +21,7 @@ let fileList = (globalThis.fileList = trkl([])),
 
 Object.assign(globalThis, { isElement, createElement, React, dom, geom, transformation });
 Object.assign(globalThis, {
-/*  ParseCoordinates,
+  /*  ParseCoordinates,
   TransformCoordinates,
   Coordinate,
   Pin,

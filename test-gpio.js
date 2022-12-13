@@ -6,7 +6,7 @@ function main(...args) {
     colors: true,
     compact: false,
     numberBase: 2,
-    maxArrayLength: Infinity,
+    maxArrayLength: Infinity
   });
   const gpio = new GPIO();
   console.log('gpio.initPin', gpio.initPin);
