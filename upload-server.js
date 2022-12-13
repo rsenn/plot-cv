@@ -758,7 +758,7 @@ body, * {
         const { method, headers } = req;
 
         if(req.url.path.endsWith('files')) {
-          resp.type = 'application/json';
+          //resp.type = 'application/json';
         } else if(
           req.method != 'GET' &&
           (req.headers['content-type'] == 'application/x-www-form-urlencoded' ||

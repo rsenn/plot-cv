@@ -93,7 +93,7 @@ async function* ListFiles(filter='@(*.sch|*.brd|*.lbr)') {
 async function Accumulate(gen) {
   let a = [];
   for await(let item of await gen) {
-    a.push(item);
+    a.insert(item);
   }
   return a;
 }
