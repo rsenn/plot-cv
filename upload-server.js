@@ -45,7 +45,7 @@ trkl.property(globalThis, 'logLevel').subscribe(value =>
         ['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][
           Math.log2(level)
         ] ?? level + ''
-      ).padEnd(8) + message.replace(/\n/g, '\\n')
+      ).padEnd(8) + message.replace(/\n/g, '\\n').replace(/\r/g, '\\r')
     );
   })
 );
@@ -580,7 +580,20 @@ body, * {
 
           yield JSON.stringify(result);
         },
-        function* files(req, resp) {
+        async function* files(req, resp) {
+          const { body } = req;
+          console.log('*files', { body });
+
+          let n;
+
+          while((n = await body.next())) {
+            let { value, done } = n;
+            console.log('body', { value, done });
+          }
+          /*for await(let chunk of await body) {
+console.log('body', { chunk});
+}*/
+
           const { filter = '*', root, type = TYPE_DIR | TYPE_REG | TYPE_LNK, limit = '0' } = req.url.query;
 
           console.log('*files', { root, filter, type });
@@ -955,7 +968,7 @@ body, * {
             return match;
           });
         }
-        console.log('\x1b[38;5;2m7onHttp(2)\x1b[0m', { resp });
+        console.log('\x1b[38;5;212monHttp(2)\x1b[0m', { resp });
 
         return resp;
       },
