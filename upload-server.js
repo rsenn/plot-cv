@@ -35,8 +35,8 @@ globalThis.logFilter =
 
 trkl.property(globalThis, 'logLevel').subscribe(value =>
   setLog(value, (level, message) => {
-    if(/__lws/.test(message)) return;
-    if(level == LLL_INFO && !/proxy/.test(message)) return;
+    if(/__lws|serve_(generator|resolved)|writable|WRITEABLE/.test(message)) return;
+     if(level == LLL_INFO && !/proxy/.test(message)) return;
     if(logFilter.test(message)) return;
 
     //if(params.debug || level <= LLL_WARN)
@@ -49,6 +49,12 @@ trkl.property(globalThis, 'logLevel').subscribe(value =>
     );
   })
 );
+
+async function AsyncCollect(iter) {
+  let ret = [];
+  for await(let chunk of await iter) ret.push(chunk);
+  return ret;
+}
 
 function ExecTool(cmd, ...args) {
   let child = spawn(cmd, args, { stdio: [0, 'pipe', 2] });
@@ -581,18 +587,22 @@ body, * {
           yield JSON.stringify(result);
         },
         async function* files(req, resp) {
-          const { body } = req;
-          console.log('*files', { body });
+          if(req.body) {
+            let chunks = [];
+            const { body } = req;
+            console.log('*files', { body });
 
-          let n;
+          /*  let n,
+              i = 0;
 
-          while((n = await body.next())) {
-            let { value, done } = n;
-            console.log('body', { value, done });
+            while((n = await body.next())) {
+              let { value, done } = n;
+              if(done) break;
+              console.log(`body(${i++})`, { value, done });
+              chunks.push(value);
+            }
+            console.log('*files', { chunks });*/
           }
-          /*for await(let chunk of await body) {
-console.log('body', { chunk});
-}*/
 
           const { filter = '*', root, type = TYPE_DIR | TYPE_REG | TYPE_LNK, limit = '0' } = req.url.query;
 
@@ -604,22 +614,23 @@ console.log('body', { chunk});
           let i = 0;
           let f = Matcher(filter);
 
-          let gen = (function* iter() {
-            if(!root) {
-              for(let name of allowedDirs.keys().filter(f)) yield name + '/\r\n';
-            } else {
-              for(let [key, value] of allowedDirs.entries().filter(KeyOrValueMatcher(root))) {
-                let dir = new Directory(value, BOTH, +type);
+          /*  let gen = (function* iter() {*/
+          if(!root) {
+            for(let name of allowedDirs.keys().filter(f)) yield name + '/\r\n';
+          } else {
+            for(let [key, value] of allowedDirs.entries().filter(KeyOrValueMatcher(root))) {
+              let dir = new Directory(value, BOTH, +type);
 
-                yield key + ':\r\n';
+              yield key + ':\r\n';
 
-                for(let [name, type] of dir.filter(([name, type]) => f(name)))
-                  yield name + (+type == TYPE_DIR ? '/' : '') + '\r\n';
-              }
+              for(let [name, type] of dir.filter(([name, type]) => f(name)))
+                yield name + (+type == TYPE_DIR ? '/' : '') + '\r\n';
             }
-          })();
+          }
+          /* })();
+          console.log('*files', { i,f,gen });
 
-          yield* gen.range(offset, size);
+          yield* gen.range(offset, size);*/
 
           //yield '\r\n';
         },
@@ -771,6 +782,7 @@ console.log('body', { chunk});
         const { method, headers } = req;
 
         if(req.url.path.endsWith('files')) {
+          return ;
           //resp.type = 'application/json';
         } else if(
           req.method != 'GET' &&
@@ -968,7 +980,10 @@ console.log('body', { chunk});
             return match;
           });
         }
-        console.log('\x1b[38;5;212monHttp(2)\x1b[0m', { resp });
+        {
+          let { body } = resp;
+          console.log('\x1b[38;5;212monHttp(2)\x1b[0m', { body });
+        }
 
         return resp;
       },
