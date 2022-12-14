@@ -621,14 +621,14 @@ main() {
   printf("EWOULDBLOCK: %i\n", EWOULDBLOCK);
   printf("SIG_IGN: %i\n", SIG_IGN);
   printf("SIGINT: %i\n", SIGINT);
-printf("%s = %d\n", "FNM_NOESCAPE", FNM_NOESCAPE);
-printf("%s = %d\n", "FNM_PATHNAME", FNM_PATHNAME);
-printf("%s = %d\n", "FNM_PERIOD", FNM_PERIOD);
-printf("%s = %d\n", "FNM_EXTMATCH", FNM_EXTMATCH);
-printf("%s = %d\n", "FNM_NOMATCH", FNM_NOMATCH);
-printf("%s = %d\n", "FNM_FILE_NAME", FNM_FILE_NAME);
-printf("%s = %d\n", "FNM_LEADING_DIR", FNM_LEADING_DIR);
-printf("%s = %d\n", "FNM_CASEFOLD", FNM_CASEFOLD);
+  printf("%s = %d\n", "FNM_NOESCAPE", FNM_NOESCAPE);
+  printf("%s = %d\n", "FNM_PATHNAME", FNM_PATHNAME);
+  printf("%s = %d\n", "FNM_PERIOD", FNM_PERIOD);
+  printf("%s = %d\n", "FNM_EXTMATCH", FNM_EXTMATCH);
+  printf("%s = %d\n", "FNM_NOMATCH", FNM_NOMATCH);
+  printf("%s = %d\n", "FNM_FILE_NAME", FNM_FILE_NAME);
+  printf("%s = %d\n", "FNM_LEADING_DIR", FNM_LEADING_DIR);
+  printf("%s = %d\n", "FNM_CASEFOLD", FNM_CASEFOLD);
 
   return 0;
 }
