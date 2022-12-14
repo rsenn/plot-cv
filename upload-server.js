@@ -590,7 +590,7 @@ body, * {
           if(req.body) {
             let chunks = [];
             const { body } = req;
-            console.log('*files', { body });
+            console.log('*files.body', body);
 
           /*  let n,
               i = 0;
@@ -605,11 +605,12 @@ body, * {
           }
 
           const { filter = '*', root, type = TYPE_DIR | TYPE_REG | TYPE_LNK, limit = '0' } = req.url.query;
-
-          console.log('*files', { root, filter, type });
+ 
+  console.log('*files', { root, filter, type });
+  
           const [offset = 0, size = Infinity] = limit.split(',').map(n => +n);
 
-          console.log('*files', { offset, size });
+         // console.log('*files', { offset, size });
 
           let i = 0;
           let f = Matcher(filter);
