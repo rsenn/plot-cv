@@ -36,7 +36,7 @@ globalThis.logFilter =
 trkl.property(globalThis, 'logLevel').subscribe(value =>
   setLog(value, (level, message) => {
     if(/__lws|serve_(generator|resolved)|writable|WRITEABLE/.test(message)) return;
-     if(level == LLL_INFO && !/proxy/.test(message)) return;
+    if(level == LLL_INFO && !/proxy/.test(message)) return;
     if(logFilter.test(message)) return;
 
     //if(params.debug || level <= LLL_WARN)
@@ -590,27 +590,18 @@ body, * {
           if(req.body) {
             let chunks = [];
             const { body } = req;
-            console.log('*files.body', body);
 
-          /*  let n,
-              i = 0;
-
-            while((n = await body.next())) {
-              let { value, done } = n;
-              if(done) break;
-              console.log(`body(${i++})`, { value, done });
-              chunks.push(value);
-            }
-            console.log('*files', { chunks });*/
+            // console.log('*files await req.arrayBuffer()', await req.arrayBuffer());
+            console.log('*files await req.text()', await req.text());
           }
 
           const { filter = '*', root, type = TYPE_DIR | TYPE_REG | TYPE_LNK, limit = '0' } = req.url.query;
- 
-  console.log('*files', { root, filter, type });
-  
+
+          console.log('*files', { root, filter, type });
+
           const [offset = 0, size = Infinity] = limit.split(',').map(n => +n);
 
-         // console.log('*files', { offset, size });
+          // console.log('*files', { offset, size });
 
           let i = 0;
           let f = Matcher(filter);
@@ -783,7 +774,7 @@ body, * {
         const { method, headers } = req;
 
         if(req.url.path.endsWith('files')) {
-          return ;
+          return;
           //resp.type = 'application/json';
         } else if(
           req.method != 'GET' &&
