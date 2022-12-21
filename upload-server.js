@@ -4,12 +4,13 @@ import * as deep from './lib/deep.js';
 import * as xml from 'xml';
 import * as path from 'path';
 import { Console } from 'console';
+import { Directory, BOTH, TYPE_DIR, TYPE_LNK, TYPE_REG, TYPE_MASK } from 'directory';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from 'fs';
-import { link, unlink, error } from 'misc';
-import { toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE } from 'util';
+import { link, unlink, error, fnmatch, FNM_EXTMATCH } from 'misc';
+import { toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE, waitFor } from 'util';
 import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, client, server, FormParser, Hash, Response } from 'net';
 import { parseDate, dateToObject } from './date-helpers.js';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
@@ -18,10 +19,42 @@ import { h, html, render, Component, useState, useLayoutEffect, useRef } from '.
 import renderToString from './lib/preact-render-to-string.js';
 import { exec, spawn } from 'child_process';
 import { Execute } from './os-helpers.js';
+import trkl from './lib/trkl.js';
+import { take } from './lib/iterator/helpers.js';
+import { extendArray, extendGenerator, extendAsyncGenerator } from 'util';
+
+extendArray();
+extendGenerator();
+extendGenerator(Object.getPrototypeOf(new Map().keys()));
+extendGenerator(Object.getPrototypeOf(new Directory('.')));
+extendAsyncGenerator();
 
 globalThis.fs = fs;
 globalThis.logFilter =
-  /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|_BODY[^_]|WRITABLE)/;
+  /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|WRITABLE)/;
+
+trkl.property(globalThis, 'logLevel').subscribe(value =>
+  setLog(value, (level, message) => {
+    if(/__lws|serve_(generator|resolved)|writable|WRITEABLE/.test(message)) return;
+    if(level == LLL_INFO && !/proxy/.test(message)) return;
+    if(logFilter.test(message)) return;
+
+    //if(params.debug || level <= LLL_WARN)
+    out(
+      (
+        ['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][
+          Math.log2(level)
+        ] ?? level + ''
+      ).padEnd(8) + message.replace(/\n/g, '\\n').replace(/\r/g, '\\r')
+    );
+  })
+);
+
+async function AsyncCollect(iter) {
+  let ret = [];
+  for await(let chunk of await iter) ret.push(chunk);
+  return ret;
+}
 
 function ExecTool(cmd, ...args) {
   let child = spawn(cmd, args, { stdio: [0, 'pipe', 2] });
@@ -46,6 +79,19 @@ function GetMime(file) {
   return output;
 }
 
+function Matcher(pattern, t = arg => arg) {
+  return (...args) => pattern == t(...args) || 0 == fnmatch(pattern, t(...args), FNM_EXTMATCH);
+}
+
+function KeyOrValueMatcher(pattern) {
+  let matcher = Matcher(pattern);
+  return ([key, value]) => matcher(key) || matcher(value);
+}
+
+function GetRootDirectories(pattern = '*') {
+  return allowedDirs.keys().filter(Matcher(pattern));
+}
+
 const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 
 const defaultDirs = (globalThis.defaultDirs = [
@@ -56,9 +102,13 @@ const defaultDirs = (globalThis.defaultDirs = [
   ['/home/roman/Bilder', new RegExp('.(jpg|jpeg|png|heic|tif|tiff)$', 'i')]
 ]);
 
-const allowedDirs = (globalThis.allowedDirs = defaultDirs
-  .map(dd => GetDir(Array.isArray(dd) ? dd[0] : dd))
-  .map(d => path.resolve(d)));
+const allowedDirs = (globalThis.allowedDirs = new Map(
+  defaultDirs
+    .map(dd => GetDir(Array.isArray(dd) ? dd[0] : dd))
+    .map(d => path.resolve(d))
+    .map(d => path.relative(d))
+    .map(d => [DirName(d), d])
+));
 
 function GetDir(dir) {
   let a = path.toArray(dir);
@@ -66,6 +116,15 @@ function GetDir(dir) {
   return i != -1 ? path.slice(dir, 0, i) : dir;
 }
 
+function DirName(name) {
+  let p = path.relative(name);
+
+  p = path.slice(
+    p,
+    path.toArray(p).findIndex(it => it != '..')
+  );
+  return p;
+}
 function DateStr(date) {
   let str = date.toISOString();
   let ti = str.indexOf('T');
@@ -243,7 +302,6 @@ function main(...args) {
   const base = path.basename(scriptArgs[0], '.js').replace(/\.[a-z]*$/, '');
   const config = ReadJSON(`.${base}-config`) ?? {};
 
-  // console.log('allowedDirs', allowedDirs);
   globalThis.console = new Console({
     inspectOptions: {
       compact: 2,
@@ -293,6 +351,7 @@ function main(...args) {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
   const histfile = '.upload-server-history';
   repl.historyLoad(histfile, false);
+  repl.loadSaveOptions();
   repl.directives.i = [
     (module, ...args) => {
       console.log('args', args);
@@ -350,32 +409,10 @@ function main(...args) {
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     //console.log('createWS', { url, callbacks, listen });
 
-    const out = s => logFile.puts(s + '\n');
-    setLog((params.debug ? LLL_USER : 0) | (((params.debug ? LLL_INFO : LLL_WARN) << 1) - 1), (level, message) => {
-      if(/__lws/.test(message)) return;
-      if(level == LLL_INFO && !/proxy/.test(message)) return;
-      if(logFilter.test(message)) return;
+    globalThis.out = s => logFile.puts(s + '\n');
 
-      if(params.debug || level <= LLL_WARN)
-        out(
-          (
-            [
-              'ERR',
-              'WARN',
-              'NOTICE',
-              'INFO',
-              'DEBUG',
-              'PARSER',
-              'HEADER',
-              'EXT',
-              'CLIENT',
-              'LATENCY',
-              'MINNET',
-              'THREAD'
-            ][Math.log2(level)] ?? level + ''
-          ).padEnd(8) + message.replace(/\n/g, '\\n')
-        );
-    });
+    logLevel = (params.debug ? LLL_USER : 0) | (((params.debug ? LLL_INFO : LLL_WARN) << 1) - 1);
+    console.log('createWS', { logLevel });
 
     return [client, server][+listen]({
       tls: params.tls,
@@ -415,15 +452,35 @@ function main(...args) {
         ['/distrelec', 'https://www.distrelec.ch/', 'login'],
         ['/hasura', 'http://wild-beauty.herokuapp.com/v1/', 'graphql'],
         // ['/upload', 'lws-deaddrop', null, 'lws-deaddrop'],
-        /*function* upload(arg) {
-          console.log('upload', arg);
+        async function* test(req, resp) {
+          resp.type = 'text/plain';
+
+          console.log('*test', { req, resp });
+
+          let bodyStr = '';
+          if(req.method == 'POST') {
+            //console.log('req.body', req.body);
+            //              console.log('req.body.next()', await req.body.next());
+
+            for await(let chunk of await req.body) {
+              console.log('chunk', chunk);
+              bodyStr += toString(chunk);
+            }
+          }
+          console.log('bodyStr', bodyStr);
+
+          for(let i = 0; i < 10; i++) {
+            yield `line #${i}\n`;
+            await waitFor((10 - i + 1) * 10);
+          }
+
           yield 'done!';
-        },*/
-        function proxy(req, res) {
-          console.log('proxy', { req, res });
+        },
+        function proxy(req, resp) {
+          console.log('proxy', { req, resp });
           const { url, method, headers } = req;
           console.log('proxy', { url, method, headers });
-          const { status, ok, type } = res;
+          const { status, ok, type } = resp;
 
           console.log('proxy', { status, ok, url, type });
         },
@@ -529,16 +586,52 @@ body, * {
 
           yield JSON.stringify(result);
         },
-        function* files(req, resp) {
+        async function* files(req, resp) {
+          if(req.body) {
+            let chunks = [];
+            const { body } = req;
+
+            // console.log('*files await req.arrayBuffer()', await req.arrayBuffer());
+            console.log('*files await req.text()', await req.text());
+          }
+
+          const { filter = '*', root, type = TYPE_DIR | TYPE_REG | TYPE_LNK, limit = '0' } = req.url.query;
+
+          console.log('*files', { root, filter, type });
+
+          const [offset = 0, size = Infinity] = limit.split(',').map(n => +n);
+
+          // console.log('*files', { offset, size });
+
+          let i = 0;
+          let f = Matcher(filter);
+
+          /*  let gen = (function* iter() {*/
+          if(!root) {
+            for(let name of allowedDirs.keys().filter(f)) yield name + '/\r\n';
+          } else {
+            for(let [key, value] of allowedDirs.entries().filter(KeyOrValueMatcher(root))) {
+              let dir = new Directory(value, BOTH, +type);
+
+              yield key + ':\r\n';
+
+              for(let [name, type] of dir.filter(([name, type]) => f(name)))
+                yield name + (+type == TYPE_DIR ? '/' : '') + '\r\n';
+            }
+          }
+          /* })();
+          console.log('*files', { i,f,gen });
+
+          yield* gen.range(offset, size);*/
+
+          //yield '\r\n';
+        },
+        function* files2(req, resp) {
           let { body, headers, json, url } = req;
           let { query } = url;
-
           define(globalThis, { filesRequest: { req, resp, body, query } });
-
           console.log('*files', { req, resp, body, query });
-
-          const data = query ?? {}; //json ? json : JSON.parse(body ?? '{}');
-
+          const data = query ?? {};
           resp.type = 'application/json';
           let {
             dirs = defaultDirs,
@@ -556,7 +649,7 @@ body, * {
             if(Array.isArray(dir)) {
               let [, re] = dir;
               let absdir = path.realpath(dir[0]);
-              names = [...RecursiveDirIterator(absdir, n => re.test(n))]; //.map(n => path.relative(n, absdir));
+              names = [...RecursiveDirIterator(absdir, n => re.test(n))];
               dir = path.relative(absdir, path.getcwd());
             } else if((st = fs.statSync(dir)) && st.isDirectory()) {
               let absdir = path.realpath(dir);
@@ -609,7 +702,6 @@ body, * {
               ]);
               return acc;
             }, []);
-
             if(entries.length) {
               let cmp = {
                 string(a, b) {
@@ -622,15 +714,11 @@ body, * {
               entries = entries.sort(cmp);
             }
             names = entries.map(([name, obj]) => (objects ? obj : name));
-
             if(names.length > 0) {
-              //console.log('files result', { dir, names });
               if(flat) names.map(({ name }) => results.push({ name: path.normalize(path.join(dir, name)) }));
               else results.push({ dir, names });
             }
           }
-
-          // yield '\n]';
           yield JSON.stringify(...[results, ...(verbose ? [null, 2] : [])]);
         }
       ],
@@ -638,9 +726,9 @@ body, * {
 
       ...callbacks,
       onConnect(ws, req) {
-        const { peer, address, port } = ws;
+        const { peer, address, port, protocol } = ws;
 
-        //  console.log('\x1b[38;5;33monConnect\x1b[0m', { address, port });
+        console.log('\x1b[38;5;33monConnect\x1b[0m', { address, port, protocol });
 
         ws.sendCommand = function(data) {
           if(!isArrayBuffer(data) /*&& isObject(data)*/) data = JSON.stringify(data);
@@ -677,14 +765,22 @@ body, * {
         }
       },*/
       onHttp(ws, req, resp) {
-        if(req.method != 'GET') console.log('onHttp', console.config({ compact: 0 }), req);
+        /* if(req.method != 'GET')*/ //console.log('onHttp', console.config({ compact: 0 }), ws);
+        console.log('\x1b[38;5;220monHttp(1)\x1b[0m', console.config({ compact: 0 }), { req });
+
+        define(globalThis, { ws, req, resp });
 
         const { peer, address, port } = ws;
         const { method, headers } = req;
 
         if(req.url.path.endsWith('files')) {
-          resp.type = 'application/json';
-        } else if(req.method != 'GET') {
+          return;
+          //resp.type = 'application/json';
+        } else if(
+          req.method != 'GET' &&
+          (req.headers['content-type'] == 'application/x-www-form-urlencoded' ||
+            req.headers['content-type'].startsWith('multipart/form-data'))
+        ) {
           let fp,
             hash,
             tmpnam,
@@ -876,7 +972,10 @@ body, * {
             return match;
           });
         }
-        //console.log('\x1b[38;5;33monHttp\x1b[0m', { resp });
+        {
+          let { body } = resp;
+          console.log('\x1b[38;5;212monHttp(2)\x1b[0m', { body });
+        }
 
         return resp;
       },
@@ -923,7 +1022,25 @@ body, * {
     Hash,
     FormParser,
     ExecTool,
-    Execute
+    Execute,
+    extendGenerator,
+    extendArray,
+    extendAsyncGenerator,
+    Matcher,
+    ExecTool,
+    GetMime,
+    Matcher,
+    KeyOrValueMatcher,
+    GetRootDirectories,
+    GetDir,
+    DirName,
+    DateStr,
+    ModeStr,
+    ReadExiv2,
+    ReadExiftool,
+    HeifConvert,
+    MagickResize,
+    Directory
   });
 
   delete globalThis.DEBUG;

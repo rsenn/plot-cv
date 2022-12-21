@@ -7,8 +7,10 @@
       body {
         height: 0px;
         background: rgba(128, 128, 128);
+        overflow: hidden;
       }
       canvas {
+        position: fixed;
         bottom: 0;
         width: calc(100% - 16px);
         height: auto;
@@ -18,5 +20,7 @@
     <script type="module" src="./fire.js"></script>
     <script src="./fire.js"></script>
   </head>
-  <body></body>
+  <body>
+    <div></div>
+  </body>
 </html>

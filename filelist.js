@@ -1,16 +1,122 @@
+import React, { Fragment, h, render, Component } from './lib/dom/preactComponent.js';
+import   extendArray from './quickjs/qjs-modules/lib/extendArray.js'
+import useAsyncIterator from './lib/hooks/useAsyncIterator.js'
+import useAsyncGenerator from './lib/hooks/useAsyncGenerator.js'
+
+extendArray();
+
+const Table = props =>
+  h(
+    'table',
+    { cellspacing: 0, cellpadding: 0 },
+    (props.rows ?? props.children).map(row =>
+      Array.isArray(row)
+        ? h(
+            'tr',
+            {},
+            row.map(cell => (isComponent(cell) ? cell : h('td', {}, [cell])))
+          )
+        : row
+    )
+  );
+
+  const FileTable = props => {
+
+/*let data = useAsyncGenerator(() => ConcatDir(ListFiles()));
+
+ console.log('data', data);
+
+return h(Table, {}, Array.isArray(data) ? data : []);*/
+  }
+
+async function* ReadIterator(st) {
+  let d,
+    rd = await st.getReader();
+  for(;;) {
+    d = await rd.read();
+    if(d.done) break;
+    yield d.value;
+  }
+  rd.releaseLock();
+  return d.value;
+}
+
+async function* LineIterator(it) {
+  let i,
+    j,
+    s = '';
+  for await(let chunk of await it) {
+    s += chunk;
+    for(j = 0; (i = s.indexOf('\n', j)) != -1; j += i + 1) yield s.substring(j, i).trimEnd();
+    if(j > 0) {
+      s = s.slice(j);
+      j = 0;
+    }
+  }
+  if(s !== '') yield s.trimEnd();
+}
+
+async function* ConcatDir(it) {
+  let dir;
+  for await(let line of await it) {
+    if(line.endsWith(':')) {
+      dir = line.slice(0, -1);
+      continue;
+    }
+    yield dir + '/' + line;
+  }
+}
+
+async function MapDir(it) {
+  let a,map=new Map();
+  for await(let line of await it) {
+    if(line.endsWith(':')) {
+      map.set( line.slice(0, -1),  a=[]);
+       continue;
+    }
+    a.insert(line);
+  }
+  return map;
+}
+
+async function* ListFiles(filter='@(*.sch|*.brd|*.lbr)') {
+  let response = await fetch(`files?root=*/eagle&filter=${filter}`);
+
+  let { writable, readable } = new TextDecoderStream();
+  response.body.pipeTo(writable);
+
+  yield* await LineIterator(ReadIterator(readable));
+
+  return response;
+}
+
+async function Accumulate(gen) {
+  let a = [];
+  for await(let item of await gen) {
+    a.insert(item);
+  }
+  return a;
+}
+
 window.addEventListener('load', e => {
   console.log('Loaded.');
 
-  let filterInput = document.forms[0].elements.filter;
+  let element = document.querySelector('#preact');
 
-  filterInput.addEventListener('change', e => {
-    const { target, currentTarget } = e;
-    console.log('Changed:', target.value);
-  });
-  filterInput.addEventListener('input', e => {
-    const { target, currentTarget } = e;
-    console.log('Input:', target.value);
-  });
+  render(h(FileTable, {}, []), element);
+
+  if(document.forms[0]) {
+    let filterInput = document.forms[0].elements.filter;
+
+    filterInput.addEventListener('change', e => {
+      const { target, currentTarget } = e;
+      console.log('Changed:', target.value);
+    });
+    filterInput.addEventListener('input', e => {
+      const { target, currentTarget } = e;
+      console.log('Input:', target.value);
+    });
+  }
 });
 
 function Pattern2Regexp(pattern, flags = 'i') {
@@ -86,5 +192,8 @@ Object.assign(globalThis, {
   GetField,
   FilterTable,
   RemoveRow,
-  Pattern2Regexp
+  Pattern2Regexp,
+  ListFiles,
+  Accumulate,
+  ConcatDir,MapDir
 });

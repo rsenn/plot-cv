@@ -68,6 +68,7 @@ function main(...args) {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
   const histfile = '.test-rpc-history';
   repl.historyLoad(histfile, false);
+  repl.loadSaveOptions();
   repl.directives.i = [
     (module, ...args) => {
       console.log('args', args);

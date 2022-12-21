@@ -8,7 +8,7 @@ import * as transformation from './lib/geom/transformation.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
 import trkl from './lib/trkl.js';
 import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
-import { ParseCoordinates, TransformCoordinates, Coordinate, Pin, Markers, OpenlayersMap } from './ol-helpers.js';
+//import { ParseCoordinates, TransformCoordinates, Coordinate, Pin, Markers, OpenlayersMap } from './ol-helpers.js';
 import { Layer as HTMLLayer } from './lib/dom/layer.js';
 
 const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
@@ -21,12 +21,12 @@ let fileList = (globalThis.fileList = trkl([])),
 
 Object.assign(globalThis, { isElement, createElement, React, dom, geom, transformation });
 Object.assign(globalThis, {
-  ParseCoordinates,
+  /*  ParseCoordinates,
   TransformCoordinates,
   Coordinate,
   Pin,
   Markers,
-  OpenlayersMap,
+  OpenlayersMap,*/
   DragArea,
   DropArea,
   Card,

@@ -74,12 +74,13 @@ import { NormalizeResponse, ResponseData, FetchURL, FetchCached } from './lib/fe
 import github, { GithubListFiles, GithubListRepositories, GithubRepositories, GithubListContents, ListGithubRepoServer } from './lib/github.js';
 // prettier-ignore-end
 
-/* prettier-ignore */ const { Align, AlignToString, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line,Matrix,  Point, PointList, Polyline, Rect, Select, Size, SVG, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
+/* prettier-ignore */ const { Align, AlignToString, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix,  isPoint, isRect, isSize, Line,Matrix,  Point, PointList, Polyline, Rect, Select, Size, SVG, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
 
 import { classNames } from './lib/classNames.js';
 import rpc from './quickjs/qjs-net/rpc.js';
 import * as rpc2 from './quickjs/qjs-net/rpc.js';
 import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
+import { errors, types, isObject, SyscallError, extendArray, toString, btoa, atob, assert, escape, quote, memoize, getset, modifier, getter, setter, gettersetter, hasGetSet, mapObject, once, atexit, waitFor, define, weakAssign, getConstructorChain, hasPrototype, filter, curry, split, unique, getFunctionArguments, randInt, randFloat, randStr, toBigInt, lazyProperty, lazyProperties, getOpt, toUnixTime, unixTime, fromUnixTime, range, repeater, repeat, chunkArray, camelize, decamelize, Location, format, formatWithOptions, isNumeric, functionName, className, isArrowFunction, immutableClass, isArray, ArrayFacade, arrayFacade, bits, dupArrayBuffer, getTypeName, isArrayBuffer, isBigDecimal, isBigFloat, isBigInt, isBool, isCFunction, isConstructor, isEmptyString, isError, isException, isExtensible, isFunction, isHTMLDDA, isInstanceOf, isInteger, isJobPending, isLiveObject, isNull, isNumber, isUndefined, isString, isUninitialized, isSymbol, isUncatchableError, isRegisteredClass, rand, randi, randf, srand, toArrayBuffer } from './lib/misc.js';
 
 Util.colorCtor = ColoredText;
 const elementDefaultAttributes = {
@@ -924,7 +925,7 @@ function NextDocument(n = 1) {
   let i;
   const { projects } = globalThis;
   if(typeof globalThis.projectIndex != 'number') globalThis.projectIndex = projects.indexOf(project);
-  const cond = Util.isObject(n) && n instanceof RegExp ? (idx, i) => !n.test(projects[idx]?.name) : (idx, i) => i < n;
+  const cond = isObject(n) && n instanceof RegExp ? (idx, i) => !n.test(projects[idx]?.name) : (idx, i) => i < n;
   let start = projectIndex;
   for(i = 0; cond(++projectIndex, i); ++i) {
     //LogJS.verbose(`NextDocument skip ${i} [${projectIndex}] ${projects[projectIndex].name}`);
@@ -1698,6 +1699,9 @@ const AppMain = (window.onload = async () => {
       console.log('UpdateProjectList', data);
 
       let files = (typeof data == 'object' && data != null && data.files) || [];
+
+      if(isObject(files) && 'files' in files) files = files.files;
+
       console.log('files', files);
 
       function File(obj, i) {
@@ -1716,6 +1720,7 @@ const AppMain = (window.onload = async () => {
         return this.name;
       };
       if(files) {
+        // console.log(`files`,files);
         list = list.concat(files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i)));
         let svgs = list.reduce((acc, file) => {
           if(/\.lbr$/i.test(file.name)) return acc;
@@ -1729,9 +1734,9 @@ const AppMain = (window.onload = async () => {
         //      console.log('filesData:', files);
 
         for(let svgFile of files) {
-          if(Util.isObject(svgFile) && svgFile.mtime !== undefined) {
+          if(isObject(svgFile) && svgFile.mtime !== undefined) {
             const f = list.find(i => i.svg === svgFile.name);
-            if(Util.isObject(f) && f.mtime !== undefined) {
+            if(isObject(f) && f.mtime !== undefined) {
               const delta = svgFile.mtime - f.mtime;
 
               f.modified = delta < 0;
@@ -1948,7 +1953,7 @@ const AppMain = (window.onload = async () => {
     let setVisible = props.visible || element.handlers.visible,
       visible = useTrkl(setVisible);
     const isVisible = visible === true || (visible !== false && Util.is.on(visible));
-    if(Util.isObject(element) && 'visible' in element) setVisible = value => (element.visible = value);
+    if(isObject(element) && 'visible' in element) setVisible = value => (element.visible = value);
     let [solo, setSolo] = useState(null);
 
     const onMouseDown = Util.debounce(e => {
@@ -2022,7 +2027,7 @@ const AppMain = (window.onload = async () => {
           {
             className: classNames(className, 'number'),
             style: {
-              background: color || (Util.isObject(element) && element.color)
+              background: color || (isObject(element) && element.color)
             },
             ...props
           },

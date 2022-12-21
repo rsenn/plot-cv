@@ -1,3 +1,4 @@
+#define _GNU_SOURCE 1
 #include <stdio.h>
 #include <stddef.h>
 #include <sys/socket.h>
@@ -27,6 +28,7 @@
 #include <linux/random.h>
 #include <zlib.h>
 #include <fcntl.h>
+#include <fnmatch.h>
 //#include <dns.h>
 #include "quickjs/qjs-net/libwebsockets/include/libwebsockets.h"
 
@@ -588,7 +590,7 @@ main() {
   printf("WSI_TOKEN_COUNT = 0o%o\n", WSI_TOKEN_COUNT);
   printf("WSI_TOKEN_HTTP_URI_ARGS = 0o%o\n", WSI_TOKEN_HTTP_URI_ARGS);
   printf("--fcntl flags\n");
- 
+
   printf("FD_CLOEXEC: 0o%o\n", FD_CLOEXEC);
   printf("F_DUPFD: 0o%o\n", F_DUPFD);
   printf("F_DUPFD_CLOEXEC: 0o%o\n", F_DUPFD_CLOEXEC);
@@ -617,7 +619,16 @@ main() {
   printf("O_WRONLY: 0o%o\n", O_WRONLY);
   printf("EAGAIN: %i\n", EAGAIN);
   printf("EWOULDBLOCK: %i\n", EWOULDBLOCK);
- 
+  printf("SIG_IGN: %i\n", SIG_IGN);
+  printf("SIGINT: %i\n", SIGINT);
+  printf("%s = %d\n", "FNM_NOESCAPE", FNM_NOESCAPE);
+  printf("%s = %d\n", "FNM_PATHNAME", FNM_PATHNAME);
+  printf("%s = %d\n", "FNM_PERIOD", FNM_PERIOD);
+  printf("%s = %d\n", "FNM_EXTMATCH", FNM_EXTMATCH);
+  printf("%s = %d\n", "FNM_NOMATCH", FNM_NOMATCH);
+  printf("%s = %d\n", "FNM_FILE_NAME", FNM_FILE_NAME);
+  printf("%s = %d\n", "FNM_LEADING_DIR", FNM_LEADING_DIR);
+  printf("%s = %d\n", "FNM_CASEFOLD", FNM_CASEFOLD);
 
   return 0;
 }

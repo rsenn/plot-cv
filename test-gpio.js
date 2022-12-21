@@ -1,6 +1,13 @@
 import { GPIO } from 'gpio';
+import { Console } from 'console';
 
 function main(...args) {
+  globalThis.console = new Console({
+    colors: true,
+    compact: false,
+    numberBase: 2,
+    maxArrayLength: Infinity
+  });
   const gpio = new GPIO();
   console.log('gpio.initPin', gpio.initPin);
   /*console.log('gpio.setPin', gpio.setPin);
@@ -15,6 +22,11 @@ function main(...args) {
   gpio.initPin(1, GPIO.INPUT);
   const value = gpio.getPin(1);
   console.log('Pin #1 value:', value);
+
+  const u32 = new Uint32Array(gpio.buffer);
+  console.log('u32:', u32);
+  const u8 = new Uint8Array(gpio.buffer);
+  console.log('u8:', u8);
 }
 
 try {
