@@ -448,7 +448,7 @@ function main(...args) {
       mounts: [
         ['/', '.', 'upload.html'],
         ['/get', './uploads', ''],
-        ['/warmcat', 'http://warmcat.com/', 'index.html'],
+        ['/warmcat', 'https://warmcat.com/', 'index.html'],
         ['/distrelec', 'https://www.distrelec.ch/', 'login'],
         ['/hasura', 'http://wild-beauty.herokuapp.com/v1/', 'graphql'],
         // ['/upload', 'lws-deaddrop', null, 'lws-deaddrop'],
@@ -755,7 +755,7 @@ body, * {
       },
       /*      onRead(data) {
          const req = this;
-        console.log('onRead', { req, data }); 
+        console.log('onRead', { req, data });
       },*/
       /* onPost(data) {
        const req = this;
