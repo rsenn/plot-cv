@@ -601,7 +601,7 @@ body, * {
 
           const [offset = 0, size = Infinity] = limit.split(',').map(n => +n);
 
-          // console.log('*files', { offset, size });
+          console.log('*files', { offset, size });
 
           let i = 0;
           let f = Matcher(filter);
@@ -619,6 +619,7 @@ body, * {
                 yield name + (+type == TYPE_DIR ? '/' : '') + '\r\n';
             }
           }
+          console.log('*files', { i, f });
           /* })();
           console.log('*files', { i,f,gen });
 
