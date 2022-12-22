@@ -11,7 +11,7 @@ import * as Terminal from './terminal.js';
 import * as fs from 'fs';
 import { link, unlink, error, fnmatch, FNM_EXTMATCH } from 'misc';
 import { toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE, waitFor } from 'util';
-import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, client, server, FormParser, Hash, Response } from 'net';
+import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, client, server, FormParser, Hash, Response, Socket } from 'net';
 import { parseDate, dateToObject } from './date-helpers.js';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
@@ -727,6 +727,7 @@ body, * {
 
       ...callbacks,
       onConnect(ws, req) {
+        console.log('onConnect\x1b');
         const { peer, address, port, protocol } = ws;
 
         console.log('\x1b[38;5;33monConnect\x1b[0m', { address, port, protocol });
@@ -743,9 +744,7 @@ body, * {
           by_uuid[data] = ws;
         }
         connections.add(ws);
-        if(!req.url || req.url.path.endsWith('uploads')) {
-        } else {
-        }
+
         if(callbacks.onConnect) return callbacks.onConnect(ws, req);
       },
       onClose(ws, reason) {
@@ -1041,7 +1040,8 @@ body, * {
     ReadExiftool,
     HeifConvert,
     MagickResize,
-    Directory
+    Directory,
+    net: { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, client, server, FormParser, Hash, Response, Socket }
   });
 
   delete globalThis.DEBUG;

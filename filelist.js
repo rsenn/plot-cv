@@ -1,7 +1,7 @@
 import React, { Fragment, h, render, Component } from './lib/dom/preactComponent.js';
-import   extendArray from './quickjs/qjs-modules/lib/extendArray.js'
-import useAsyncIterator from './lib/hooks/useAsyncIterator.js'
-import useAsyncGenerator from './lib/hooks/useAsyncGenerator.js'
+import extendArray from './quickjs/qjs-modules/lib/extendArray.js';
+import useAsyncIterator from './lib/hooks/useAsyncIterator.js';
+import useAsyncGenerator from './lib/hooks/useAsyncGenerator.js';
 
 extendArray();
 
@@ -20,14 +20,13 @@ const Table = props =>
     )
   );
 
-  const FileTable = props => {
-
-/*let data = useAsyncGenerator(() => ConcatDir(ListFiles()));
+const FileTable = props => {
+  /*let data = useAsyncGenerator(() => ConcatDir(ListFiles()));
 
  console.log('data', data);
 
 return h(Table, {}, Array.isArray(data) ? data : []);*/
-  }
+};
 
 async function* ReadIterator(st) {
   let d,
@@ -68,18 +67,19 @@ async function* ConcatDir(it) {
 }
 
 async function MapDir(it) {
-  let a,map=new Map();
+  let a,
+    map = new Map();
   for await(let line of await it) {
     if(line.endsWith(':')) {
-      map.set( line.slice(0, -1),  a=[]);
-       continue;
+      map.set(line.slice(0, -1), (a = []));
+      continue;
     }
     a.insert(line);
   }
   return map;
 }
 
-async function* ListFiles(filter='@(*.sch|*.brd|*.lbr)') {
+async function* ListFiles(filter = '@(*.sch|*.brd|*.lbr)') {
   let response = await fetch(`files?root=*/eagle&filter=${filter}`);
 
   let { writable, readable } = new TextDecoderStream();
@@ -195,5 +195,6 @@ Object.assign(globalThis, {
   Pattern2Regexp,
   ListFiles,
   Accumulate,
-  ConcatDir,MapDir
+  ConcatDir,
+  MapDir
 });

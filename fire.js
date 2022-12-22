@@ -1,12 +1,64 @@
 import { crosskit, CANVAS } from './lib/crosskit.js';
 import { RGBA, HSLA } from './lib/color.js';
-import { Matrix } from './lib/geom/matrix.js';
+import { WebSocketIterator, WebSocketURL, CreateWebSocket, ReconnectingWebSocket, StreamReadIterator } from './lib/async/websocket.js';
+import { once, streamify, throttle, distinct, subscribe } from './lib/async/events.js';
+import { memoize, define, isUndefined, properties, keys } from './lib/misc.js';
+import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater, Reader, ReadAll, default as utils } from './lib/stream/utils.js';
+import { Intersection, Matrix, isRect, Rect, TransformationList, Vector } from './lib/geom.js';
+import { Element, isElement } from './lib/dom/element.js';
 
-import { TransformationList } from './lib/geom/transformation.js';
-import { streamify, once, subscribe } from './lib/async/events.js';
+function NewWS() {
+  let url = WebSocketURL('/ws', { mirror: currentFile });
+  return CreateWebSocket(url, 'lws-mirror-protocol');
+}
 
 function main() {
-  Object.assign(globalThis, { crosskit, RGBA, HSLA, Util, Matrix, TransformationList });
+  define(globalThis, { crosskit, RGBA, HSLA, Util, Matrix, TransformationList });
+  define(globalThis, { WebSocketIterator, WebSocketURL, CreateWebSocket, NewWS, ReconnectingWebSocket });
+  define(globalThis, { define, isUndefined, properties, keys });
+  define(globalThis, { once, streamify, throttle, distinct, subscribe });
+  define(globalThis, { Intersection, Matrix, isRect, Rect, TransformationList, Vector });
+  define(globalThis, {
+    isStream,
+    AcquireReader,
+    AcquireWriter,
+    ArrayWriter,
+    readStream,
+    PipeTo,
+    WritableRepeater,
+    WriteIterator,
+    AsyncWrite,
+    AsyncRead,
+    ReadFromIterator,
+    WriteToRepeater,
+    LogSink,
+    StringReader,
+    LineReader,
+    DebugTransformStream,
+    CreateWritableStream,
+    CreateTransformStream,
+    RepeaterSource,
+    RepeaterSink,
+    LineBufferStream,
+    TextTransformStream,
+    ChunkReader,
+    ByteReader,
+    PipeToRepeater,
+    Reader,
+    ReadAll,
+    StreamReadIterator
+  });
+
+  define(
+    globalThis,
+    properties(
+      {
+        currentURL: () => new URL(import.meta.url),
+        currentFile: () => globalThis.currentURL.pathname.replace(/^\//, '')
+      },
+      { memoize: true }
+    )
+  );
 
   const w = 320;
   const h = 200;
@@ -19,6 +71,13 @@ function main() {
     h,
     alpha: false
   });
+
+  function Reparent(canvas = document.getElementsByTagName('canvas')[0]) {
+    canvas.parentElement.removeChild(canvas);
+    document.getElementById('canvas').appendChild(canvas);
+  }
+
+  Reparent();
 
   crosskit.clear();
   crosskit.rect({
@@ -51,7 +110,10 @@ function main() {
     context,
     image,
     fps,
-    matrix
+    matrix,
+    Reparent,
+    dom: { Element },
+    geom: { Rect }
   });
 
   async function Loop() {
@@ -217,7 +279,12 @@ function main() {
 
   function ResizeHandler(e) {
     rect = element.getBoundingClientRect();
-    console.log('rect', rect);
+    console.log('ResizeHandler', { e, rect });
+  }
+
+  function OrientationChange(e) {
+    rect = element.getBoundingClientRect();
+    console.log('OrientationChange', { e, rect });
   }
 
   Object.assign(globalThis, { RandomByte });
@@ -227,7 +294,38 @@ function main() {
 
     rect = element.getBoundingClientRect();
 
+    define(
+      globalThis,
+      properties({
+        canvasElement: () => Element.find('canvas'),
+        divElement: () => Element.find('body > div:first-child')
+      }),
+      properties({
+        windowRect: () => new Rect(window.innerWidth, window.innerHeight),
+        bodyRect: () => Element.rect('body').round(0),
+        canvasRect: () => Element.rect('canvas').round(0),
+        divRect: () => Element.rect('body > div:first-child').round(0)
+      }),
+      {
+        getRect
+      },
+      properties({
+        transform: [
+          () => new TransformationList(Element.getCSS('body > div:first-child').transform),
+          value => Element.setCSS('body > div:first-child', { transform: value + '' })
+        ]
+      })
+    );
+
+    (async function() {
+      for await(let event of streamify(['orientationchange', 'resize'], document)) {
+        console.log(event.type, event);
+        globalThis[event.type] = event;
+      }
+    })();
+
     window.addEventListener('resize', ResizeHandler, true);
+    window.addEventListener('orientationchange', OrientationChange, true);
 
     const handler = MouseHandler;
 
@@ -238,3 +336,7 @@ function main() {
 }
 
 main();
+
+function getRect(elem) {
+  return new Rect((elem ?? divElement).getBoundingClientRect()).round(1);
+}

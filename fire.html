@@ -4,23 +4,63 @@
     <title>Fire</title>
     <link rel="shortcut icon" type="image/x-icon" sizes="16x16 32x32 128x128" href="static/fire.ico" />
     <style type="text/css">
-      body {
-        height: 0px;
-        background: rgba(128, 128, 128);
+      body,
+      html {
         overflow: hidden;
+        padding: 0;
+        margin: 0;
+      }
+      body {
+        height: 100vh;
+        width:  100vw;
+        background: rgba(128, 128, 128);
+      }
+      canvas,
+      #canvas {
+        user-select: none;
       }
       canvas {
-        position: fixed;
-        bottom: 0;
-        width: calc(100% - 16px);
-        height: auto;
-        max-height: calc(100vh - 16px);
+        /* border: 2px solid green;*/
+      }
+      #canvas {
+        /* border: 2px solid red;*/
+        background: hsla(0, 100%, 30%, 0.5);
+        overflow: hidden;
+      }
+      @media (orientation: portrait) {
+        canvas {
+          height: auto;
+          width: 100vh;
+        }
+        #canvas {
+          position: absolute;
+          left: 0;
+          top:  0;
+          width: 100vh;
+          height: 100wh;
+          transform: translateY(400px) translateX(-420px) rotate(90deg);
+
+          min-height: 100vmin;
+          min-width: 100vmax;
+
+          margin-left:  -6px;
+          margin-top: 25px;
+        }
+      }
+      @media (orientation: landscape) {
+        canvas {
+          position: fixed;
+          bottom: 0;
+          height: auto;
+          max-height: calc(100vh - 16px);
+          width: calc(100% - 16px);
+        }
       }
     </style>
     <script type="module" src="./fire.js"></script>
-    <script src="./fire.js"></script>
+    <!-- <script src="./fire.js"></script> -->
   </head>
   <body>
-    <div></div>
+    <div id="canvas"></div>
   </body>
 </html>
