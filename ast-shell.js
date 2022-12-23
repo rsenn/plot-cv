@@ -1081,8 +1081,15 @@ async function ASTShell(...args) {
   });
 
   async function Compile(file, ...args) {
-    //console.log('args', args);
-    let r = await AstDump(params.compiler, file, [...globalThis.flags, ...args], params.force);
+    console.log('Compiling', { file, args });
+    let r;
+
+    try {
+      r = await AstDump(params.compiler, file, [...globalThis.flags, ...args], params.force);
+    } catch(e) {
+      console.log('Compile ERROR:', e.message);
+      return e;
+    }
     r.source = file;
 
     globalThis.files[file] = r;

@@ -7,7 +7,7 @@ import { AcquireReader } from './lib/stream/utils.js';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 export let SIZEOF_POINTER = 8;
 export let SIZEOF_INT = 4;
-import fs from 'fs';
+import * as fs from 'fs';
 
 function FileTime(filename) {
   let st = fs.statSync(filename);
@@ -1018,7 +1018,7 @@ export function TypeFactory(node, ast, cache = true) {
 }
 
 export async function SpawnCompiler(compiler, input, output, args = []) {
-  // console.log(`SpawnCompiler`, { compiler, input, output, args });
+  //console.log(`SpawnCompiler`, { compiler, input, output, args });
   let base = path.basename(input, path.extname(input));
 
   args.push(input);
@@ -1038,7 +1038,10 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
     args.unshift(compiler ?? 'clang');
   }
 
-  //console.log('SpawnCompiler', args /*.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (output ? ` 1>${output}` : '')*/ );
+  console.log(
+    'SpawnCompiler',
+    args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (output ? ` 1>${output}` : '')
+  );
 
   let child = spawn(args, {
     block: false,
@@ -1067,8 +1070,8 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
       }
     });
   }
-  let result = await child.wait();
-  //console.log('SpawnCompiler child.wait():', result);
+  let [status, exitcode] = await child.wait();
+  console.log('SpawnCompiler child.wait():', { status, exitcode });
 
   done = true;
   let errorLines = errors.split(/\n/g).filter(line => line.trim() != '');
@@ -1116,7 +1119,7 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
       os.setReadHandler(fd, null);
     }
   }
-  let ret = { output, result, errors: errorLines };
+  let ret = { output, exitcode, errors: errorLines };
   // console.log('SpawnCompiler return', ret);
 
   return ret;
@@ -1146,7 +1149,7 @@ export async function SourceDependencies(...args) {
 export async function AstDump(compiler, source, args, force) {
   compiler ??= 'clang';
   // console.log('AstDump', { compiler, source, args, force });
-  let output = path.basename(source, /\.[^.]*$/) + '.ast.json';
+  let output = path.basename(source, path.extname(source)) + '.ast.json';
   let r;
   let sources = await SourceDependencies(compiler, source, args);
   let newer;
@@ -1154,24 +1157,32 @@ export async function AstDump(compiler, source, args, force) {
 
   if(existsAndNotEmpty) newer = Newer(output, ...sources);
 
-  //console.log('AstDump', { output, source, sources, existsAndNotEmpty, newer });
+  //console.log('AstDump', { output, source, sources,force, existsAndNotEmpty, newer });
+  console.log('AstDump', { output });
+
   if(!force && existsAndNotEmpty && newer) {
     console.log(`Loading cached '${output}'...`);
   } else {
-    if(fs.existsSync(output)) fs.unlinkSync(output);
+    console.log(`Compiling '${source}' to '${output}'...`);
 
-    console.log(`Compiling '${source}'...`);
-    let { output, result, errors } = await SpawnCompiler(compiler, source, output, [
+    try {
+      if(fs.existsSync(output)) fs.unlinkSync(output);
+    } catch(e) {}
+
+    console.log(`Compiling...`, { source, compiler });
+
+    let { exitcode, errors, ...result } = await SpawnCompiler(compiler, source, output, [
       '-Xclang',
       '-ast-dump=json',
       '-fsyntax-only',
       '-I.',
       ...args
     ]);
+    console.log(`Compiling '${source}'...`, { output, exitcode, ...result });
   }
   r = { file: output };
 
-  console.log('AstDump', r);
+  console.log('AstDump', { ...r });
 
   //r.size = (await fs.stat(r.file)).size;
   r = lazyProperties(r, {

@@ -2,9 +2,9 @@ import { crosskit, CANVAS } from './lib/crosskit.js';
 import { RGBA, HSLA } from './lib/color.js';
 import { WebSocketIterator, WebSocketURL, CreateWebSocket, ReconnectingWebSocket, StreamReadIterator } from './lib/async/websocket.js';
 import { once, streamify, throttle, distinct, subscribe } from './lib/async/events.js';
-import { memoize, define, isUndefined, properties, keys } from './lib/misc.js';
+import { memoize, define, isUndefined, properties, keys, unique } from './lib/misc.js';
 import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater, Reader, ReadAll, default as utils } from './lib/stream/utils.js';
-import { Intersection, Matrix, isRect, Rect, TransformationList, Vector } from './lib/geom.js';
+import { Intersection, Matrix, isRect, Rect, Point, Line, TransformationList, Vector } from './lib/geom.js';
 import { Element, isElement } from './lib/dom/element.js';
 
 function NewWS() {
@@ -17,7 +17,7 @@ function main() {
   define(globalThis, { WebSocketIterator, WebSocketURL, CreateWebSocket, NewWS, ReconnectingWebSocket });
   define(globalThis, { define, isUndefined, properties, keys });
   define(globalThis, { once, streamify, throttle, distinct, subscribe });
-  define(globalThis, { Intersection, Matrix, isRect, Rect, TransformationList, Vector });
+  define(globalThis, { Intersection, Matrix, isRect, Rect, Point, Line, TransformationList, Vector });
   define(globalThis, {
     isStream,
     AcquireReader,
@@ -77,6 +77,60 @@ function main() {
     document.getElementById('canvas').appendChild(canvas);
   }
 
+  function GetElementMatrix(element) {
+    let { transform } = Element.getCSS(divElement);
+
+    return Matrix.fromCSS(transform);
+  }
+
+  function SetCrosshair(pos) {
+    let ch = Element.find('#crosshair');
+    let rect = Element.getRect(ch);
+
+    console.log('SetCrosshair', { ch, rect, pos });
+    rect.x = pos.x - rect.width / 2;
+    rect.y = pos.y - rect.height / 2;
+
+    Element.setRect(ch, rect);
+  }
+
+  function EventPositions(eventOrTouch) {
+    let positions = unique(
+      keys(eventOrTouch, 2)
+        .filter(n => typeof n == 'string' && /[XY]$/.test(n))
+        .map(n => n.slice(0, -1))
+    );
+
+    return positions.reduce((acc, key) => {
+      acc[key] = new Point(eventOrTouch[key + 'X'], eventOrTouch[key + 'Y']);
+      return acc;
+    }, {});
+  }
+
+  async function* MouseIterator(element) {
+    for(;;) {
+      yield await once(element, 'mousedown', 'touchstart');
+
+      for await(let event of streamify(['mouseup', 'mousemove', 'touchend', 'touchmove'], element)) {
+        if('touches' in event) {
+          if(event.touches.length) {
+            globalThis.mouseEvent = event;
+
+            yield* [...event.touches].map(EventPositions)
+            //.map(({ client }) => client)
+            ;
+          }
+          /*const{clientX:x,clientY:y}=touch;
+          yield {x,y};
+         } */
+        } else {
+          const { type, clientX: x, clientY: y } = event;
+          yield { type, x, y };
+        }
+        if(/(up|end)$/.test(event.type)) break;
+      }
+    }
+  }
   Reparent();
 
   crosskit.clear();
@@ -113,7 +167,12 @@ function main() {
     matrix,
     Reparent,
     dom: { Element },
-    geom: { Rect }
+    geom: { Rect },
+    MouseIterator,
+    MouseHandler,
+    GetElementMatrix,
+    SetCrosshair,
+    EventPositions
   });
 
   async function Loop() {
@@ -266,17 +325,6 @@ function main() {
     } catch(e) {}
   }
 
-  async function* MouseIterator() {
-    for(;;) {
-      yield await once(element, 'mousedown', 'touchstart');
-
-      for await(let event of streamify(['mouseup', 'mousemove', 'touchend', 'touchmove'], element)) {
-        yield event;
-        if(/(up|end)$/.test(event.type)) break;
-      }
-    }
-  }
-
   function ResizeHandler(e) {
     rect = element.getBoundingClientRect();
     console.log('ResizeHandler', { e, rect });
@@ -329,7 +377,7 @@ function main() {
 
     const handler = MouseHandler;
 
-    subscribe(MouseIterator(), handler);
+    subscribe(MouseIterator(element), handler);
   }
 
   Loop();

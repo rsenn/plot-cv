@@ -12,7 +12,7 @@
       }
       body {
         height: 100vh;
-        width:  100vw;
+        width: 100vw;
         background: rgba(128, 128, 128);
       }
       canvas,
@@ -35,7 +35,7 @@
         #canvas {
           position: absolute;
           left: 0;
-          top:  0;
+          top: 0;
           width: 100vh;
           height: 100wh;
           transform: translateY(400px) translateX(-420px) rotate(90deg);
@@ -43,7 +43,7 @@
           min-height: 100vmin;
           min-width: 100vmax;
 
-          margin-left:  -6px;
+          margin-left: -6px;
           margin-top: 25px;
         }
       }
@@ -62,5 +62,20 @@
   </head>
   <body>
     <div id="canvas"></div>
+    <svg id="crosshair" width="25" height="25" version="1.1">
+      <defs  >
+         
+      </defs>
+      <g   transform="translate(-127 -127)">
+        <path
+          d="M137 127h5v9h-5zm-10 10h9v5h-9zm16 0h9v5h-9zm-6 6h5v9h-5z"
+          style="fill-rule: evenodd"
+        />
+        <path
+          d="M138 128h3v7h-3zm-10 10h7v3h-7zm16 0h7v3h-7zm-6 6h3v7h-3z"
+          style="fill: #11e5f4; fill-rule: evenodd"
+        />
+      </g>
+    </svg>
   </body>
 </html>
