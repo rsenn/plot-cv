@@ -116,9 +116,8 @@ function main() {
           if(event.touches.length) {
             globalThis.mouseEvent = event;
 
-            yield* [...event.touches].map(EventPositions)
+            yield* [...event.touches].map(EventPositions);
             //.map(({ client }) => client)
-            ;
           }
           /*const{clientX:x,clientY:y}=touch;
           yield {x,y};

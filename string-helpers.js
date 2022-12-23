@@ -1,3 +1,22 @@
+export function* findAllIndexes(haystack, needle) {
+  let { length: n } = needle;
+  for(let i, j = 0; (i = haystack.indexOf(needle, j)) != -1; j = i + n) yield i;
+}
+
+export function* findAllIndexesReverse(haystack, needle) {
+  let { length: n } = needle;
+  for(let i, j; (i = haystack.lastIndexOf(needle, j)) != -1; j = i - n) yield i;
+}
+
+export function countSubstring(haystack, needle) {
+  let ret = 0,
+    { length: n } = needle;
+
+  for(let i, j = 0; (i = haystack.indexOf(needle, j)) != -1; j = i + n) ++ret;
+
+  return ret;
+}
+
 export function parseDegMinSec(s) {
   let matches = [...s.matchAll(/([0-9.]*)\s*([^\s0-9]+)/g)].map(([m, ...rest]) => rest);
   let r;

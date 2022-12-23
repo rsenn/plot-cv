@@ -8,6 +8,7 @@ import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile,
 export let SIZEOF_POINTER = 8;
 export let SIZEOF_INT = 4;
 import * as fs from 'fs';
+import { countSubstring, findAllIndexes } from './string-helpers.js';
 
 function FileTime(filename) {
   let st = fs.statSync(filename);
@@ -187,37 +188,24 @@ export class Node {
 const getTypeFromNode = memoize((node, ast) => new Type(node.type, ast), new WeakMap());
 
 export function PathOf(node, ast = $.data) {
-  return new Pointer(deep.find(ast, n => n == node, deep.RETURN_PATH));
+  return new Pointer(deep.pathOf(ast, node, deep.RETURN_PATH));
 }
 
-export function Hier(node_or_path, ast = $.data) {
+export function* Hier(node_or_path, t = (p, ast, abort) => p.deref(ast), ast = $.data) {
   let p;
   if(node_or_path && node_or_path.kind) p = PathOf(node_or_path, ast);
   else p = new Pointer(node_or_path);
+  let hier = p
+    .hier()
+    .reverse()
+    .filter(p => p.at(-1) != 'inner');
 
-  console.log(p.hier());
-  console.log(
-    p
-      .hier()
-      .map(p => [p, p.deref(ast)])
-      .filter(([p, n]) => !Array.isArray(n))
-      .map(
-        ([p, n]) =>
-          p +
-          '\n' +
-          '\x1b[1;31m' +
-          n.kind +
-          '\x1b[0m ' +
-          inspect(n, {
-            depth: 0,
-            maxArrayLength: 10,
-            maxStringLength: 80,
-            compact: 1,
-            hideKeys: ['kind']
-          })
-      )
-      .join('\n\n')
-  );
+  for(let pp of hier) {
+    let doAbort = false;
+    let abortFn = () => (doAbort = true);
+    yield t(pp, ast, abortFn);
+    if(doAbort) break;
+  }
 }
 
 export function FindType(typeName, ast = $.data) {
@@ -921,21 +909,121 @@ export class ConstantArrayType extends Node {
   }
 }
 
+export class Range {
+  #begin = undefined;
+  #end = undefined;
+
+  constructor(begin, end) {
+    if(begin !== undefined) this.begin = begin;
+    if(end !== undefined) this.end = end;
+  }
+
+  /* prettier-ignore */ get begin() { return this.#begin; }
+  /* prettier-ignore */ set begin(v) { this.#begin = Location.from(v); }
+
+  /* prettier-ignore */ get end() { return this.#end; }
+  /* prettier-ignore */ set end(v) { this.#end = Location.from(v); }
+
+  toString(opts = { printFile: true }) {
+    opts.onlyOffset = true;
+    return this.#begin.toString(opts) + '-' + this.#end.toString({ ...opts, printFile: false });
+  }
+
+  [Symbol.inspect](depth, opts) {
+    const { begin, end } = this;
+    return inspect(
+      {
+        file: begin.file ?? end.file,
+        begin: new Location({ ...begin.toObject(), file: undefined, line: undefined, col: undefined }),
+        end: new Location({ ...end.toObject(), file: undefined, line: undefined, col: undefined }),
+        [Symbol.toStringTag]: 'Range'
+      },
+      { ...opts, compact: false, customInspect: true, onlyOffset: true }
+    );
+  }
+
+  get length() {
+    return this.#end - this.#begin;
+  }
+
+  toArray() {
+    return [this.#begin, this.#end];
+  }
+
+  toObject() {
+    const { begin, end } = this;
+    return { begin: begin.toObject(), end: end.toObject() };
+  }
+
+  *[Symbol.iterator]() {
+    yield +this.#begin;
+    yield +this.#end;
+  }
+}
+
+Range.prototype[Symbol.toStringTag] = 'Range';
+
 export class Location {
+  #line = undefined;
+  #column = undefined;
+  #offset = undefined;
+  file = undefined;
+
+  static at(file, offset) {
+    let data = fs.readFileSync(file, 'utf-8').slice(0, offset);
+    let lastLine = data.slice(data.lastIndexOf('\n') + 1);
+
+    return new this({ line: countSubstring(data, '\n') + 1, col: lastLine.length + 1, file, offset });
+  }
+
+  static from(loc) {
+    if(typeof loc == 'object' && loc != null && loc instanceof Location) return loc;
+    try {
+      return new Location(loc);
+    } catch(e) {
+      console.log('ERROR', e.message, loc);
+      throw e;
+    }
+  }
+
   constructor(loc) {
     const { line, col, file, offset } = loc;
-    Object.assign(this, { line, col, file, offset });
+
+    if('line' in loc) this.#line = loc.line;
+    if('col' in loc) this.#column = loc.col;
+    if('file' in loc) this.file = loc.file;
+    if('offset' in loc) this.#offset = loc.offset;
   }
+
+  update(other) {
+    for(let prop of ['file', 'offset', 'line', 'column']) {
+      if(other[prop]) this[prop] = other[prop];
+    }
+  }
+
+  /* prettier-ignore */ get line() { return this.#line; }
+  /* prettier-ignore */ set line(v) { if(v != this.#line) this.#column = undefined; this.#line = v; }
+
+  /* prettier-ignore */ get column() { return this.#column; }
+  /* prettier-ignore */ set column(v) { this.#column = v; }
+
+  /* prettier-ignore */ get offset() { return this.#offset; }
+  /* prettier-ignore */ set offset(v) { if(this.#offset - v < this.#column) this.#column -= this.#offset - v; else { this.#column = undefined; this.#line = undefined; } this.#offset = v; }
 
   [Symbol.for('nodejs.util.inspect.custom')](depth, opts = {}) {
     const text = opts.colors ? (t, ...c) => '\x1b[' + c.join(';') + 'm' + t + '\x1b[m' : t => t;
-    return text('Location', 38, 5, 111) + ' [ ' + this.toString() + ' ]';
+    return text('Location', 38, 5, 111) + ' ' + this.toString(opts);
   }
 
-  toString() {
-    const { file, line, col } = this;
-    if(file == undefined) return '<builtin>';
-    return [file, line, col].join(':');
+  toString(opts = { printFile: true, onlyOffset: false }) {
+    let file = this.file,
+      col = this.#column,
+      line = this.#line;
+    const { printFile = true, onlyOffset = false } = opts;
+
+    if(line !== undefined && col !== undefined && !onlyOffset)
+      return [file ?? '<builtin>', line, col].slice(printFile ? 0 : 1).join(':');
+    return `${printFile && file ? file + '@' : ''}${this.#offset}`;
   }
 
   [Symbol.toPrimitive](hint) {
@@ -946,6 +1034,16 @@ export class Location {
       default:
         return this.toString();
     }
+  }
+
+  toObject() {
+    let ret = {};
+    if(this.file) ret.file = this.file;
+    if(this.#column) ret.col = this.#column;
+    if(this.#line) ret.line = this.#line;
+    /*if(typeof this.#offset == 'number')*/ ret.offset = this.#offset;
+
+    return ret;
   }
 
   localeCompare(other) {
@@ -1196,7 +1294,6 @@ export async function AstDump(compiler, source, args, force) {
       return json;
     },
     data() {
-      console.log('this.json', this.json);
       let data = JSON.parse(this.json);
       let file;
       let maxDepth = 0;
@@ -1323,8 +1420,50 @@ export function NodeName(n, name) {
   return name;
 }
 
+export function* RawLocation(path) {
+  for(let node of Hier(path)) {
+    if(node.loc) {
+      yield node.loc;
+    } else if(node.range) {
+      yield node.range.begin;
+      yield node.range.end;
+    }
+  }
+}
+
+export function* RawRange(path) {
+  for(let node of Hier(path)) if(node.range) yield node.range;
+}
+
+export function CompleteLocation(path) {
+  let a = [];
+  for(let raw of RawLocation(path)) {
+    a.push(raw);
+    if(raw.file) break;
+  }
+  if(a[0].offset) a = a.filter(l => !(l.offset > a[0].offset));
+  let loc = {};
+  for(let raw of a.reverse()) Object.assign(loc, raw);
+  return new Location(loc);
+}
+
+export function CompleteRange(path) {
+  let a = [];
+  for(let raw of RawRange(path)) {
+    a.push(raw);
+  }
+  if(a[0].begin.offset) a = a.filter(l => !(l.begin.offset > a[0].begin.offset));
+  let range = { begin: {}, end: {} };
+  for(let { begin, end } of a.reverse()) {
+    Object.assign(range.begin, begin);
+    Object.assign(range.end, end);
+    //console.log('CompleteRange',range)
+  }
+  return new Range(range.begin, range.end);
+}
+
 export function GetLoc(node) {
-  let loc;
+  let loc, ret;
   if('loc' in node) loc = node.loc;
   else if('range' in node) loc = node.range;
   else return null;
@@ -1333,9 +1472,9 @@ export function GetLoc(node) {
 
   // if(!('offset' in loc)) return null;
 
-  return new Location(loc);
+  ret = new Location(loc);
 
-  return loc;
+  return ret;
 }
 
 /*export function GetType(node, ast) {
@@ -1383,6 +1522,16 @@ export function GetTypeStr(node) {
   return type;
 }
 
+export class NodeError extends Error {
+  constructor(message, node) {
+    super(message);
+
+    this.node = node;
+  }
+}
+
+NodeError.prototype[Symbol.toStringTag] = 'NodeError';
+
 export function NodePrinter(ast) {
   let out = '';
   let depth = 0;
@@ -1423,13 +1572,13 @@ export function NodePrinter(ast) {
       value(node) {
         let fn = this.nodePrinter[node.kind];
         let oldlen = out.length;
-        if(!fn) throw new Error(`No such printer for ${node.kind} (${inspect(node)})`);
+        if(!fn) throw (this.error = new NodeError(`No such printer for ${node.kind}`, node));
         this.node = node;
 
         let success = fn.call(this.nodePrinter, node, this.ast);
 
-        let loc = GetLoc(node);
-        let location = new Location(node);
+        let { loc } = node;
+        //  let location = new Location(node);
 
         if(loc?.line !== undefined) {
           const { line, column } = loc;
@@ -1442,19 +1591,8 @@ export function NodePrinter(ast) {
           };
         }
         if(out.length == oldlen) {
-          console.log('printer error', { loc, location }, this.loc);
-          throw new Error(
-            `Node printer for ${node.kind} (${this.loc}) failed: ${inspect(
-              { ...node, loc: this.loc + '' },
-              {
-                ...console.options,
-                depth: 10,
-                compact: 1,
-                breakLength: 80,
-                hideKeys: ['range']
-              }
-            )}`
-          );
+          console.log(`printer error at ${loc}`, node);
+          throw (this.error = new NodeError(`Node printer for ${node.kind} (${this.loc}) failed\n`, node));
         }
         // else console.log('out:', out);
         return out;
@@ -1504,6 +1642,11 @@ export function NodePrinter(ast) {
 
           //    trim();
         }
+        BuiltinAttr(builtin_attr) {
+          const { implicit } = builtin_attr;
+          //console.log('BuiltinAttr', builtin_attr);
+          put(`/***BuiltinAttr***/`);
+        }
         BreakStmt(break_stmt) {
           put('break');
         }
@@ -1520,6 +1663,9 @@ export function NodePrinter(ast) {
             printer.print(inner);
           }
           put(')');
+        }
+        RecoveryExpr(recovery_expr) {
+          return this.CallExpr(recovery_expr);
         }
         CaseStmt(case_stmt) {
           put(`case `);
@@ -1801,6 +1947,7 @@ export function NodePrinter(ast) {
         NullStmt(null_stmt) {
           put(';');
         }
+
         ParagraphComment(paragraph_comment) {
           for(let inner of paragraph_comment.inner) {
             printer.print(inner);
@@ -2016,7 +2163,10 @@ export function NodePrinter(ast) {
         FunctionNoProtoType(function_no_proto_type) {}
         FunctionProtoType(function_proto_type) {}
         FunctionTemplateDecl(function_template_decl) {}
-        GCCAsmStmt(gcc_asm_stmt) {}
+        GCCAsmStmt(gcc_asm_stmt) {
+          put('__asm__ ');
+          for(let inner of gcc_asm_stmt.inner) printer.print(inner);
+        }
         GNUInlineAttr(gnu_inline_attr) {}
         GNUNullExpr(gnu_null_expr) {
           put(`NULL`);
@@ -2027,7 +2177,11 @@ export function NodePrinter(ast) {
         IndirectGotoStmt(indirect_goto_stmt) {}
         InjectedClassNameType(injected_class_name_type) {}
         LambdaExpr(lambda_expr) {}
-        LinkageSpecDecl(linkage_spec_decl) {}
+        LinkageSpecDecl(linkage_spec_decl) {
+          const { language } = linkage_spec_decl;
+          put(language ? `extern "${language}" ` : `extern `);
+          for(let inner of linkage_spec_decl.inner) printer.print(inner);
+        }
         LValueReferenceType(l_value_reference_type) {}
         MaterializeTemporaryExpr(materialize_temporary_expr) {
           for(let inner of materialize_temporary_expr.inner) printer.print(inner);
@@ -2042,7 +2196,10 @@ export function NodePrinter(ast) {
         NoInlineAttr(no_inline_attr) {}
         NonTypeTemplateParmDecl(non_type_template_parm_decl) {}
         OffsetOfExpr(offset_of_expr) {}
-        OpaqueValueExpr(opaque_value_expr) {}
+        OpaqueValueExpr(opaque_value_expr) {
+          //console.log('OpaqueValueExpr',opaque_value_expr);
+          put(`/***FIXME: OpaqueValueExpr***/`);
+        }
         OwnerAttr(owner_attr) {}
         PackedAttr(packed_attr) {}
         PackExpansionExpr(pack_expansion_expr) {}
