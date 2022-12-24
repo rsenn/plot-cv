@@ -35,7 +35,8 @@ globalThis.logFilter =
 
 trkl.property(globalThis, 'logLevel').subscribe(value =>
   setLog(value, (level, message) => {
-    if(/__lws|xserve_(generator|resolved)|x(writable|WRITEABLE|lws_)/.test(message)) return;
+    if(/__lws|serve_(resolved|generator|promise|response)|(\([123]\).*writable|x\([/]\).*WRITEABLE)|lws_/.test(message))
+      return;
     if(level == LLL_INFO && !/proxy/.test(message)) return;
     if(logFilter.test(message)) return;
 
@@ -179,9 +180,9 @@ const FilterForm = ({ ...props }) =>
         size: 20,
         name: 'filter',
         value: '.*' /*,
-        onchange: e => {
-          console.log('onchange', e);
-        }*/
+          onchange: e => {
+            console.log('onchange', e);
+          }*/
       },
       []
     ),
@@ -546,11 +547,11 @@ function main(...args) {
                 {
                   title: 'File list',
                   style: `
-body, * {
-  font-family: MiscFixedSC613,Fixed,"Courier New";
-}
+  body, * {
+    font-family: MiscFixedSC613,Fixed,"Courier New";
+  }
 
-                `,
+                  `,
                   scripts: ['filelist.js']
                 },
                 [
@@ -587,17 +588,14 @@ body, * {
           yield JSON.stringify(result);
         },
         async function* files(req, resp) {
-                    //console.log('*files',{req,resp});
- if(req.body) {
-           /* let chunks = [];
+          //console.log('*files',{req,resp});
+          console.log('*files query =', req.url.query);
+          /*if(req.body) {
+           let chunks = [];
             const { body } = req;
-
-            throw new Error('*files throw test');
-
             // console.log('*files await req.arrayBuffer()', await req.arrayBuffer());
-            console.log('*files await req.text()', await req.text());*/
-          }
-
+            //console.log('*files await req.text()', await req.text());
+          }*/
           const { filter = '*', root, type = TYPE_DIR | TYPE_REG | TYPE_LNK, limit = '0' } = req.url.query;
 
           console.log('*files', { root, filter, type });
@@ -624,9 +622,9 @@ body, * {
           }
           console.log('*files', { i, f });
           /* })();
-          console.log('*files', { i,f,gen });
+            console.log('*files', { i,f,gen });
 
-          yield* gen.range(offset, size);*/
+            yield* gen.range(offset, size);*/
 
           //yield '\r\n';
         },
@@ -756,27 +754,27 @@ body, * {
         return callbacks.onClose(ws, reason);
       },
       /*      onRead(data) {
-         const req = this;
-        console.log('onRead', { req, data });
-      },*/
+           const req = this;
+          console.log('onRead', { req, data });
+        },*/
       /* onPost(data) {
-       const req = this;
-        try {
-          req.json = JSON.parse(data);
-        } catch(error) {
-          console.log('onPost', { req, data, error });
-        }
-      },*/
+         const req = this;
+          try {
+            req.json = JSON.parse(data);
+          } catch(error) {
+            console.log('onPost', { req, data, error });
+          }
+        },*/
       onHttp(ws, req, resp) {
         /* if(req.method != 'GET')*/ //console.log('onHttp', console.config({ compact: 0 }), ws);
-     //   console.log('\x1b[38;5;220monHttp(1)\x1b[0m', console.config({ compact: 0 }), { req });
+        //   console.log('\x1b[38;5;220monHttp(1)\x1b[0m', console.config({ compact: 0 }), { req });
 
         define(globalThis, { ws, req, resp });
 
         const { peer, address, port } = ws;
         const { method, headers } = req;
 
-        if((req.url.path??'').endsWith('files')) {
+        if((req.url.path ?? '').endsWith('files')) {
           return;
           //resp.type = 'application/json';
         } else if(
@@ -877,7 +875,7 @@ body, * {
                         height = width / aspect;
                       } else {
                         /* height = 256;
-                        width = height * aspect;*/
+                          width = height * aspect;*/
                       }
                     }
 
