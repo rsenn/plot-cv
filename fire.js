@@ -107,6 +107,32 @@ function main() {
     }, {});
   }
 
+  function ProcessPosition(pos) {
+    let vertical = canvasRect.aspect() < 1;
+    let ret;
+    let { width: xres, height: yres } = canvasElement;
+    let fx, fy;
+
+    if(canvasRect.inside(pos)) {
+      let dx = pos.x - canvasRect.x;
+      let dy = pos.y - canvasRect.y;
+
+      ret = new Point(dx, dy);
+
+      if(!vertical) {
+        fx = xres / canvasRect.width;
+        fy = yres / canvasRect.height;
+      } else {
+        fx = xres / canvasRect.height;
+        fy = yres / canvasRect.width;
+      }
+
+      ret.mul(new Point(fx, fy));
+    }
+
+    return ret;
+  }
+
   async function* MouseIterator(element) {
     for(;;) {
       yield await once(element, 'mousedown', 'touchstart');
@@ -171,7 +197,8 @@ function main() {
     MouseHandler,
     GetElementMatrix,
     SetCrosshair,
-    EventPositions
+    EventPositions,
+    ProcessPosition
   });
 
   async function Loop() {
