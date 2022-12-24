@@ -35,7 +35,9 @@ globalThis.logFilter =
 
 trkl.property(globalThis, 'logLevel').subscribe(value =>
   setLog(value, (level, message) => {
-    if(/__lws|serve_(resolved|generator|promise|response)|(\([123]\).*writable|x\([/]\).*WRITEABLE)|lws_/.test(message))
+    if(
+      /__lws|serve_(resolved|generator|promise|response)|(\([123]\).*writable|x\([/]\).*WRITEABLE)|lws_/.test(message)
+    )
       return;
     if(level == LLL_INFO && !/proxy/.test(message)) return;
     if(logFilter.test(message)) return;

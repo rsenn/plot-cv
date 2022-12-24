@@ -4,12 +4,18 @@ import { WebSocketIterator, WebSocketURL, CreateWebSocket, ReconnectingWebSocket
 import { once, streamify, throttle, distinct, subscribe } from './lib/async/events.js';
 import { memoize, define, isUndefined, properties, keys, unique } from './lib/misc.js';
 import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater, Reader, ReadAll, default as utils } from './lib/stream/utils.js';
-import { Intersection, Matrix, isRect, Rect, Point, Line, TransformationList, Vector } from './lib/geom.js';
+import { Intersection, Matrix, isRect, Rect, Size, Point, Line, TransformationList, Vector } from './lib/geom.js';
 import { Element, isElement } from './lib/dom/element.js';
 
 function NewWS() {
   let url = WebSocketURL('/ws', { mirror: currentFile });
-  return CreateWebSocket(url, 'lws-mirror-protocol');
+  let ws = new ReconnectingWebSocket(url, 'lws-mirror-protocol');
+  (async function() {
+    for await(let chunk of ws) {
+      console.log('WS receive:', chunk);
+    }
+  })();
+  return (globalThis.ws = ws);
 }
 
 function main() {
@@ -17,7 +23,7 @@ function main() {
   define(globalThis, { WebSocketIterator, WebSocketURL, CreateWebSocket, NewWS, ReconnectingWebSocket });
   define(globalThis, { define, isUndefined, properties, keys });
   define(globalThis, { once, streamify, throttle, distinct, subscribe });
-  define(globalThis, { Intersection, Matrix, isRect, Rect, Point, Line, TransformationList, Vector });
+  define(globalThis, { Intersection, Matrix, isRect, Rect, Size, Point, Line, TransformationList, Vector });
   define(globalThis, {
     isStream,
     AcquireReader,
@@ -107,30 +113,26 @@ function main() {
     }, {});
   }
 
+  function PositionMatrix(canvas = canvasElement, rect = canvasRect) {
+    let vertical = rect.aspect() < 1;
+    let topLeft = rect.toPoints()[vertical ? 1 : 0];
+    let m = Matrix.identity().scale(canvas.width, canvas.height);
+
+    m = m.rotate(-Math.PI / 2);
+
+    m = m.scale(1 / rect.width, 1 / rect.height);
+    m = m.translate(-topLeft.x, -topLeft.y);
+
+    return m;
+  }
+
+  function PositionProcessor(canvas = canvasElement, rect = canvasRect) {
+    let m = PositionMatrix(canvas, rect);
+    return pos => new Point(...m.transform_point(pos).round(1));
+  }
+
   function ProcessPosition(pos) {
-    let vertical = canvasRect.aspect() < 1;
-    let ret;
-    let { width: xres, height: yres } = canvasElement;
-    let fx, fy;
-
-    if(canvasRect.inside(pos)) {
-      let dx = pos.x - canvasRect.x;
-      let dy = pos.y - canvasRect.y;
-
-      ret = new Point(dx, dy);
-
-      if(!vertical) {
-        fx = xres / canvasRect.width;
-        fy = yres / canvasRect.height;
-      } else {
-        fx = xres / canvasRect.height;
-        fy = yres / canvasRect.width;
-      }
-
-      ret.mul(new Point(fx, fy));
-    }
-
-    return ret;
+    return PositionProcessor()(pos);
   }
 
   async function* MouseIterator(element) {
@@ -138,6 +140,7 @@ function main() {
       yield await once(element, 'mousedown', 'touchstart');
 
       for await(let event of streamify(['mouseup', 'mousemove', 'touchend', 'touchmove'], element)) {
+        event.preventDefault();
         if('touches' in event) {
           if(event.touches.length) {
             globalThis.mouseEvent = event;
@@ -198,6 +201,8 @@ function main() {
     GetElementMatrix,
     SetCrosshair,
     EventPositions,
+    PositionProcessor,
+    PositionMatrix,
     ProcessPosition
   });
 
@@ -310,7 +315,7 @@ function main() {
     return ((n % m) + m) % m;
   }
 
-  let element, rect, rc;
+  let element, rect, rc, mouseTransform;
 
   function Blaze(x, y) {
     for(let ty = y - 1; ty < y + 1; ty++) {
@@ -352,12 +357,14 @@ function main() {
   }
 
   function ResizeHandler(e) {
-    rect = element.getBoundingClientRect();
+    rect = canvasRect;
+    mouseTransform = PositionProcessor();
     console.log('ResizeHandler', { e, rect });
   }
 
   function OrientationChange(e) {
-    rect = element.getBoundingClientRect();
+    rect = canvasRect;
+    mouseTransform = PositionProcessor();
     console.log('OrientationChange', { e, rect });
   }
 
@@ -365,8 +372,6 @@ function main() {
 
   function Init() {
     window.canvas = element = document.querySelector('canvas');
-
-    rect = element.getBoundingClientRect();
 
     define(
       globalThis,
@@ -391,6 +396,9 @@ function main() {
       })
     );
 
+    rect = canvasRect;
+    mouseTransform = PositionProcessor();
+
     (async function() {
       for await(let event of streamify(['orientationchange', 'resize'], document)) {
         console.log(event.type, event);
@@ -401,10 +409,27 @@ function main() {
     window.addEventListener('resize', ResizeHandler, true);
     window.addEventListener('orientationchange', OrientationChange, true);
 
-    const handler = MouseHandler;
+    /*   const handler = MouseHandler;
 
-    subscribe(MouseIterator(element), handler);
+    subscribe(MouseIterator(element), handler);*/
   }
+
+  (async function() {
+    for await(let ev of MouseIterator(window)) {
+      if(ev.client) {
+        //console.log('mouse event', ev.client);
+        if(rect.inside(ev.client)) {
+          let pt = mouseTransform(ev.client);
+          try {
+            //console.log('blaze', ...pt);
+            rc = pixels[pt.y][pt.x] > 0x30 ? 0 : RandomByte() | 0x80;
+
+            Blaze(pt.x, pt.y);
+          } catch(e) {}
+        }
+      }
+    }
+  })();
 
   Loop();
 }
