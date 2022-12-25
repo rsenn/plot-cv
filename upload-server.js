@@ -11,7 +11,7 @@ import * as Terminal from './terminal.js';
 import * as fs from 'fs';
 import { link, unlink, error, fnmatch, FNM_EXTMATCH } from 'misc';
 import { toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE, waitFor } from 'util';
-import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, client, server, FormParser, Hash, Response } from 'net';
+import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, client, server, FormParser, Hash, Response, Socket } from 'net';
 import { parseDate, dateToObject } from './date-helpers.js';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
@@ -35,7 +35,10 @@ globalThis.logFilter =
 
 trkl.property(globalThis, 'logLevel').subscribe(value =>
   setLog(value, (level, message) => {
-    if(/__lws|serve_(generator|resolved)|writable|WRITEABLE/.test(message)) return;
+    if(
+      /__lws|serve_(resolved|generator|promise|response)|(\([123]\).*writable|x\([/]\).*WRITEABLE)|lws_/.test(message)
+    )
+      return;
     if(level == LLL_INFO && !/proxy/.test(message)) return;
     if(logFilter.test(message)) return;
 
@@ -179,9 +182,9 @@ const FilterForm = ({ ...props }) =>
         size: 20,
         name: 'filter',
         value: '.*' /*,
-        onchange: e => {
-          console.log('onchange', e);
-        }*/
+          onchange: e => {
+            console.log('onchange', e);
+          }*/
       },
       []
     ),
@@ -546,11 +549,11 @@ function main(...args) {
                 {
                   title: 'File list',
                   style: `
-body, * {
-  font-family: MiscFixedSC613,Fixed,"Courier New";
-}
+  body, * {
+    font-family: MiscFixedSC613,Fixed,"Courier New";
+  }
 
-                `,
+                  `,
                   scripts: ['filelist.js']
                 },
                 [
@@ -587,21 +590,21 @@ body, * {
           yield JSON.stringify(result);
         },
         async function* files(req, resp) {
-          if(req.body) {
-            let chunks = [];
+          //console.log('*files',{req,resp});
+          console.log('*files query =', req.url.query);
+          /*if(req.body) {
+           let chunks = [];
             const { body } = req;
-
             // console.log('*files await req.arrayBuffer()', await req.arrayBuffer());
-            console.log('*files await req.text()', await req.text());
-          }
-
+            //console.log('*files await req.text()', await req.text());
+          }*/
           const { filter = '*', root, type = TYPE_DIR | TYPE_REG | TYPE_LNK, limit = '0' } = req.url.query;
 
           console.log('*files', { root, filter, type });
 
           const [offset = 0, size = Infinity] = limit.split(',').map(n => +n);
 
-          // console.log('*files', { offset, size });
+          console.log('*files', { offset, size });
 
           let i = 0;
           let f = Matcher(filter);
@@ -619,10 +622,11 @@ body, * {
                 yield name + (+type == TYPE_DIR ? '/' : '') + '\r\n';
             }
           }
+          console.log('*files', { i, f });
           /* })();
-          console.log('*files', { i,f,gen });
+            console.log('*files', { i,f,gen });
 
-          yield* gen.range(offset, size);*/
+            yield* gen.range(offset, size);*/
 
           //yield '\r\n';
         },
@@ -726,6 +730,7 @@ body, * {
 
       ...callbacks,
       onConnect(ws, req) {
+        console.log('onConnect\x1b');
         const { peer, address, port, protocol } = ws;
 
         console.log('\x1b[38;5;33monConnect\x1b[0m', { address, port, protocol });
@@ -742,9 +747,7 @@ body, * {
           by_uuid[data] = ws;
         }
         connections.add(ws);
-        if(!req.url || req.url.path.endsWith('uploads')) {
-        } else {
-        }
+
         if(callbacks.onConnect) return callbacks.onConnect(ws, req);
       },
       onClose(ws, reason) {
@@ -753,27 +756,27 @@ body, * {
         return callbacks.onClose(ws, reason);
       },
       /*      onRead(data) {
-         const req = this;
-        console.log('onRead', { req, data });
-      },*/
+           const req = this;
+          console.log('onRead', { req, data });
+        },*/
       /* onPost(data) {
-       const req = this;
-        try {
-          req.json = JSON.parse(data);
-        } catch(error) {
-          console.log('onPost', { req, data, error });
-        }
-      },*/
+         const req = this;
+          try {
+            req.json = JSON.parse(data);
+          } catch(error) {
+            console.log('onPost', { req, data, error });
+          }
+        },*/
       onHttp(ws, req, resp) {
         /* if(req.method != 'GET')*/ //console.log('onHttp', console.config({ compact: 0 }), ws);
-        console.log('\x1b[38;5;220monHttp(1)\x1b[0m', console.config({ compact: 0 }), { req });
+        //   console.log('\x1b[38;5;220monHttp(1)\x1b[0m', console.config({ compact: 0 }), { req });
 
         define(globalThis, { ws, req, resp });
 
         const { peer, address, port } = ws;
         const { method, headers } = req;
 
-        if(req.url.path.endsWith('files')) {
+        if((req.url.path ?? '').endsWith('files')) {
           return;
           //resp.type = 'application/json';
         } else if(
@@ -874,7 +877,7 @@ body, * {
                         height = width / aspect;
                       } else {
                         /* height = 256;
-                        width = height * aspect;*/
+                          width = height * aspect;*/
                       }
                     }
 
@@ -1040,7 +1043,8 @@ body, * {
     ReadExiftool,
     HeifConvert,
     MagickResize,
-    Directory
+    Directory,
+    net: { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, client, server, FormParser, Hash, Response, Socket }
   });
 
   delete globalThis.DEBUG;

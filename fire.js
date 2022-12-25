@@ -1,12 +1,70 @@
 import { crosskit, CANVAS } from './lib/crosskit.js';
 import { RGBA, HSLA } from './lib/color.js';
-import { Matrix } from './lib/geom/matrix.js';
+import { WebSocketIterator, WebSocketURL, CreateWebSocket, ReconnectingWebSocket, StreamReadIterator } from './lib/async/websocket.js';
+import { once, streamify, throttle, distinct, subscribe } from './lib/async/events.js';
+import { memoize, define, isUndefined, properties, keys, unique } from './lib/misc.js';
+import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater, Reader, ReadAll, default as utils } from './lib/stream/utils.js';
+import { Intersection, Matrix, isRect, Rect, Size, Point, Line, TransformationList, Vector } from './lib/geom.js';
+import { Element, isElement } from './lib/dom/element.js';
 
-import { TransformationList } from './lib/geom/transformation.js';
-import { streamify, once, subscribe } from './lib/async/events.js';
+function NewWS() {
+  let url = WebSocketURL('/ws', { mirror: currentFile });
+  let ws = new ReconnectingWebSocket(url, 'lws-mirror-protocol');
+  (async function() {
+    for await(let chunk of ws) {
+      console.log('WS receive:', chunk);
+    }
+  })();
+  return (globalThis.ws = ws);
+}
 
 function main() {
-  Object.assign(globalThis, { crosskit, RGBA, HSLA, Util, Matrix, TransformationList });
+  define(globalThis, { crosskit, RGBA, HSLA, Util, Matrix, TransformationList });
+  define(globalThis, { WebSocketIterator, WebSocketURL, CreateWebSocket, NewWS, ReconnectingWebSocket });
+  define(globalThis, { define, isUndefined, properties, keys });
+  define(globalThis, { once, streamify, throttle, distinct, subscribe });
+  define(globalThis, { Intersection, Matrix, isRect, Rect, Size, Point, Line, TransformationList, Vector });
+  define(globalThis, {
+    isStream,
+    AcquireReader,
+    AcquireWriter,
+    ArrayWriter,
+    readStream,
+    PipeTo,
+    WritableRepeater,
+    WriteIterator,
+    AsyncWrite,
+    AsyncRead,
+    ReadFromIterator,
+    WriteToRepeater,
+    LogSink,
+    StringReader,
+    LineReader,
+    DebugTransformStream,
+    CreateWritableStream,
+    CreateTransformStream,
+    RepeaterSource,
+    RepeaterSink,
+    LineBufferStream,
+    TextTransformStream,
+    ChunkReader,
+    ByteReader,
+    PipeToRepeater,
+    Reader,
+    ReadAll,
+    StreamReadIterator
+  });
+
+  define(
+    globalThis,
+    properties(
+      {
+        currentURL: () => new URL(import.meta.url),
+        currentFile: () => globalThis.currentURL.pathname.replace(/^\//, '')
+      },
+      { memoize: true }
+    )
+  );
 
   const w = 320;
   const h = 200;
@@ -19,6 +77,89 @@ function main() {
     h,
     alpha: false
   });
+
+  function Reparent(canvas = document.getElementsByTagName('canvas')[0]) {
+    canvas.parentElement.removeChild(canvas);
+    document.getElementById('canvas').appendChild(canvas);
+  }
+
+  function GetElementMatrix(element) {
+    let { transform } = Element.getCSS(divElement);
+
+    return Matrix.fromCSS(transform);
+  }
+
+  function SetCrosshair(pos) {
+    let ch = Element.find('#crosshair');
+    let rect = Element.getRect(ch);
+
+    console.log('SetCrosshair', { ch, rect, pos });
+    rect.x = pos.x - rect.width / 2;
+    rect.y = pos.y - rect.height / 2;
+
+    Element.setRect(ch, rect);
+  }
+
+  function EventPositions(eventOrTouch) {
+    let positions = unique(
+      keys(eventOrTouch, 2)
+        .filter(n => typeof n == 'string' && /[XY]$/.test(n))
+        .map(n => n.slice(0, -1))
+    );
+
+    return positions.reduce((acc, key) => {
+      acc[key] = new Point(eventOrTouch[key + 'X'], eventOrTouch[key + 'Y']);
+      return acc;
+    }, {});
+  }
+
+  function PositionMatrix(canvas = canvasElement, rect = canvasRect) {
+    let vertical = rect.aspect() < 1;
+    let topLeft = rect.toPoints()[vertical ? 1 : 0];
+    let m = Matrix.identity().scale(canvas.width, canvas.height);
+
+    m = m.rotate(-Math.PI / 2);
+
+    m = m.scale(1 / rect.width, 1 / rect.height);
+    m = m.translate(-topLeft.x, -topLeft.y);
+
+    return m;
+  }
+
+  function PositionProcessor(canvas = canvasElement, rect = canvasRect) {
+    let m = PositionMatrix(canvas, rect);
+    return pos => new Point(...m.transform_point(pos).round(1));
+  }
+
+  function ProcessPosition(pos) {
+    return PositionProcessor()(pos);
+  }
+
+  async function* MouseIterator(element) {
+    for(;;) {
+      yield await once(element, 'mousedown', 'touchstart');
+
+      for await(let event of streamify(['mouseup', 'mousemove', 'touchend', 'touchmove'], element)) {
+        event.preventDefault();
+        if('touches' in event) {
+          if(event.touches.length) {
+            globalThis.mouseEvent = event;
+
+            yield* [...event.touches].map(EventPositions);
+            //.map(({ client }) => client)
+          }
+          /*const{clientX:x,clientY:y}=touch;
+          yield {x,y};
+         } */
+        } else {
+          const { type, clientX: x, clientY: y } = event;
+          yield { type, x, y };
+        }
+        if(/(up|end)$/.test(event.type)) break;
+      }
+    }
+  }
+  Reparent();
 
   crosskit.clear();
   crosskit.rect({
@@ -51,7 +192,18 @@ function main() {
     context,
     image,
     fps,
-    matrix
+    matrix,
+    Reparent,
+    dom: { Element },
+    geom: { Rect },
+    MouseIterator,
+    MouseHandler,
+    GetElementMatrix,
+    SetCrosshair,
+    EventPositions,
+    PositionProcessor,
+    PositionMatrix,
+    ProcessPosition
   });
 
   async function Loop() {
@@ -163,7 +315,7 @@ function main() {
     return ((n % m) + m) % m;
   }
 
-  let element, rect, rc;
+  let element, rect, rc, mouseTransform;
 
   function Blaze(x, y) {
     for(let ty = y - 1; ty < y + 1; ty++) {
@@ -204,20 +356,16 @@ function main() {
     } catch(e) {}
   }
 
-  async function* MouseIterator() {
-    for(;;) {
-      yield await once(element, 'mousedown', 'touchstart');
-
-      for await(let event of streamify(['mouseup', 'mousemove', 'touchend', 'touchmove'], element)) {
-        yield event;
-        if(/(up|end)$/.test(event.type)) break;
-      }
-    }
+  function ResizeHandler(e) {
+    rect = canvasRect;
+    mouseTransform = PositionProcessor();
+    console.log('ResizeHandler', { e, rect });
   }
 
-  function ResizeHandler(e) {
-    rect = element.getBoundingClientRect();
-    console.log('rect', rect);
+  function OrientationChange(e) {
+    rect = canvasRect;
+    mouseTransform = PositionProcessor();
+    console.log('OrientationChange', { e, rect });
   }
 
   Object.assign(globalThis, { RandomByte });
@@ -225,16 +373,69 @@ function main() {
   function Init() {
     window.canvas = element = document.querySelector('canvas');
 
-    rect = element.getBoundingClientRect();
+    define(
+      globalThis,
+      properties({
+        canvasElement: () => Element.find('canvas'),
+        divElement: () => Element.find('body > div:first-child')
+      }),
+      properties({
+        windowRect: () => new Rect(window.innerWidth, window.innerHeight),
+        bodyRect: () => Element.rect('body').round(0),
+        canvasRect: () => Element.rect('canvas').round(0),
+        divRect: () => Element.rect('body > div:first-child').round(0)
+      }),
+      {
+        getRect
+      },
+      properties({
+        transform: [
+          () => new TransformationList(Element.getCSS('body > div:first-child').transform),
+          value => Element.setCSS('body > div:first-child', { transform: value + '' })
+        ]
+      })
+    );
+
+    rect = canvasRect;
+    mouseTransform = PositionProcessor();
+
+    (async function() {
+      for await(let event of streamify(['orientationchange', 'resize'], document)) {
+        console.log(event.type, event);
+        globalThis[event.type] = event;
+      }
+    })();
 
     window.addEventListener('resize', ResizeHandler, true);
+    window.addEventListener('orientationchange', OrientationChange, true);
 
-    const handler = MouseHandler;
+    /*   const handler = MouseHandler;
 
-    subscribe(MouseIterator(), handler);
+    subscribe(MouseIterator(element), handler);*/
   }
+
+  (async function() {
+    for await(let ev of MouseIterator(window)) {
+      if(ev.client) {
+        //console.log('mouse event', ev.client);
+        if(rect.inside(ev.client)) {
+          let pt = mouseTransform(ev.client);
+          try {
+            //console.log('blaze', ...pt);
+            rc = pixels[pt.y][pt.x] > 0x30 ? 0 : RandomByte() | 0x80;
+
+            Blaze(pt.x, pt.y);
+          } catch(e) {}
+        }
+      }
+    }
+  })();
 
   Loop();
 }
 
 main();
+
+function getRect(elem) {
+  return new Rect((elem ?? divElement).getBoundingClientRect()).round(1);
+}

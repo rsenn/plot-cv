@@ -4,7 +4,7 @@ import path from './lib/path.js';
 import * as deep from './lib/deep.js';
 import { Console } from 'console';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
-import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, VarDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, FindType, Hier, PathOf, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter, isNode, SourceDependencies, GetTypeNode, GetFields, PathRemoveLoc, PrintAst, GetParams, List } from './clang-ast.js';
+import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, VarDecl, FunctionDecl, Location, Range, TypeFactory, SpawnCompiler, AstDump, FindType, Hier, PathOf, NodeType, NodeName, GetLoc, CompleteLocation, RawLocation, CompleteRange, RawRange, GetType, GetTypeStr, NodePrinter, isNode, SourceDependencies, GetTypeNode, GetFields, PathRemoveLoc, PrintAst, GetParams, List } from './clang-ast.js';
 import Tree from './lib/tree.js';
 import { Pointer } from './lib/pointer.js';
 import * as Terminal from './terminal.js';
@@ -104,16 +104,33 @@ function CommandLine() {
 
   repl.importModule = ImportModule;
   repl.history = LoadHistory(cmdhist);
-  repl.directives = {
-    c(...args) {
-      Compile(...args);
-      return false;
-    },
-    l(...args) {
-      ProcessFile(...args);
-      return false;
-    }
-  };
+  Object.assign(repl.directives, {
+    c: [
+      (...args) => {
+        Compile(...args);
+        return false;
+      },
+      'compile source'
+    ],
+    l: [
+      (...args) => {
+        ProcessFile(...args);
+        return false;
+      },
+      'load source file'
+    ],
+    i: [
+      (module, ...args) => {
+        console.log('args', args);
+        try {
+          return require(module);
+        } catch(e) {}
+        import(module).then(m => (globalThis[module] = m));
+      },
+      'import module'
+    ]
+  });
+  repl.inspectOptions = console.options;
   repl.show = value => {
     let first, str;
     if(isObject(value) && (first = value.first ?? value[0]) && isObject(first) && ('id' in first || 'kind' in first))
@@ -121,7 +138,6 @@ function CommandLine() {
     else if(typeof value == 'string') str = value;
     else
       str = inspect(value, {
-        ...console.options,
         ...cfg.inspectOptions,
         ...repl.inspectOptions,
         hideKeys: ['loc', 'range']
@@ -280,12 +296,14 @@ function Table(list, pred = (n, l) => true) {
   );
 }
 
-function PrintRange(range) {
+function PrintRange(range, file) {
   if('range' in range) range = range.range;
 
   const { begin, end } = range;
 
-  let data = fs.readFileSync(begin.file, 'utf-8');
+  file ??= begin.file ?? $.source;
+
+  let data = fs.readFileSync(file, 'utf-8');
   return data ? data.slice(begin.offset, end.offset + (end.tokLen | 0)) : null;
 }
 
@@ -300,6 +318,34 @@ function OverlapRange(r1, r2) {
   if(InRange(r2[0], r1) || InRange(r2[1], r1)) return true;
 
   return false;
+}
+
+function ParentNode(node, ast = $.data) {
+  let p = PathOf(node, ast);
+
+  return p.up(2).deref(ast);
+}
+
+function NextSibling(node, ast = $.data) {
+  let p = PathOf(node, ast);
+  p[p.length - 1] += 1;
+
+  return p.deref(ast);
+}
+
+function PreviousSibling(node, ast = $.data) {
+  let p = PathOf(node, ast);
+  p[p.length - 1] += 1;
+  return p.deref(ast);
+}
+
+function FirstChild(node, ast = $.data) {
+  return PathOf(node, ast).down('inner', 0).deref(ast);
+}
+
+function LastChild(node, ast = $.data) {
+  let a = PathOf(node, ast).down('inner').deref(ast);
+  return a[a.length - 1];
 }
 
 function Terminate(exitCode) {
@@ -1081,8 +1127,15 @@ async function ASTShell(...args) {
   });
 
   async function Compile(file, ...args) {
-    //console.log('args', args);
-    let r = await AstDump(params.compiler, file, [...globalThis.flags, ...args], params.force);
+    console.log('Compiling', { file, args });
+    let r;
+
+    try {
+      r = await AstDump(params.compiler, file, [...globalThis.flags, ...args], params.force);
+    } catch(e) {
+      console.log('Compile ERROR:', e.message);
+      return e;
+    }
     r.source = file;
 
     globalThis.files[file] = r;
@@ -1138,19 +1191,7 @@ async function ASTShell(...args) {
         if(result) return new VarDecl(result, this.data);
       },
       getLoc(node) {
-        let loc;
-        if(isObject(node)) {
-          if('loc' in node) loc = node.loc;
-          else {
-            if('ast' in node) node = node.ast;
-            if('loc' in node) loc = node.loc;
-          }
-        }
-
-        if(loc) {
-          if(!(loc instanceof Location)) loc = new Location(loc);
-        }
-        return loc;
+        return CompleteLocation(node);
       }
     });
     Util.defineGetter(
@@ -1184,6 +1225,10 @@ async function ASTShell(...args) {
     NodeType,
     NodeName,
     GetLoc,
+    RawLocation,
+    CompleteLocation,
+    RawRange,
+    CompleteRange,
     GetTypeStr,
     ReadFile,
     MapFile,
@@ -1194,6 +1239,11 @@ async function ASTShell(...args) {
     WriteBJSON,
     PrintRange,
     OverlapRange,
+    ParentNode,
+    NextSibling,
+    PreviousSibling,
+    FirstChild,
+    LastChild,
     GenerateInspectStruct,
     GenerateStructClass,
     InspectStruct,
@@ -1252,6 +1302,7 @@ async function ASTShell(...args) {
     PathOf,
     FunctionDecl,
     Location,
+    Range,
     TypeFactory,
     SpawnCompiler,
     AstDump,
@@ -1274,7 +1325,7 @@ async function ASTShell(...args) {
     Namespaces,
     UnsetLoc
   });
-  globalThis.util = Util;
+  //globalThis.Util = Util;
   globalThis.F = arg => $.getFunction(arg);
   globalThis.T = arg => $.getType(arg);
 
