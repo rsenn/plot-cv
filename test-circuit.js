@@ -17,12 +17,12 @@ function main(...args) {
   let { comments, elements } = circuit;
   let { lines } = parser;
   //console.log('lines', lines);
-  console.log('elements', elements);
-  console.log(
+  //console.log('elements', elements);
+  /*console.log(
     'comments',
     console.config({ compact: 2 }),
     elements.reduce((acc, el) => acc.concat([comments.get(el), el]), []).filter(n => n !== undefined)
-  );
+  );*/
   let writer = new CircuitFileWriter(circuit);
   let f = openSync('out.circuit', 'w+');
 

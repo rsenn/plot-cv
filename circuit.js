@@ -234,13 +234,8 @@ export class CircuitFileParser {
     let match = /^board (\d+),(\d+)$/.exec(line);
     if(!match) return false;
     let [gridW, gridH] = match.slice(1).map(n => +n);
-    console.log('parseBoard', this.circuit);
-
     let board = new Board(gridW, gridH);
-    console.log('parseBoard', { gridW, gridH, board });
-    this.circuit.board = board;
-    /*this.layout.gridW = gridW;
-    this.layout.gridH = gridH;*/
+     this.circuit.board = board;
     return board;
   }
 
@@ -269,17 +264,13 @@ export class CircuitFileParser {
       const pkgPosRx = /(-?\d+),(-?\d+)/g;
       if((m = pkgPosRx.exec(s))) {
         let via = new Via(...m.slice(1).map(n => +n));
-        //console.log('parsePackage', { s, via });
-        v.push(via);
+         v.push(via);
       } else {
-        //console.log('parsePackage', { s });
-
         return false;
       }
     }
 
-    console.log('parsePackage', { pkgName, pkgPos });
-
+    //console.log('parsePackage', { pkgName, pkgPos });
     let pkg = new Package(pkgName, v);
     this.circuit.packageToPosMap.set(pkgName, pkg);
     return pkg;
