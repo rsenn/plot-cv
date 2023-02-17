@@ -316,6 +316,7 @@ function main(...args) {
     ElementName,
     GetUsedPackages,
     Package2Circuit,
+    Elements2Circuit,
     Eagle2Circuit,
     Eagle2CircuitJS,
     ModifyPath,
@@ -864,7 +865,7 @@ function CorrelateSchematicAndBoard(schematic, board) {
 function GetSheets(doc_or_proj) {
   if(!(doc_or_proj instanceof EagleDocument)) doc_or_proj = doc_or_proj.schematic;
 
-  return [...doc_or_proj.schematic.sheets.children];
+  return [...doc_or_proj.schematic.sheets];
 }
 
 function SaveLibraries() {
@@ -1191,6 +1192,26 @@ function Package2Circuit(p) {
   return [ElementName(p), points.join(' ')];
 }
 
+function Contactref2Circuit(cref) {
+  let padIndex = cref.element.pads.list.raw.filter(e => e.tagName == 'pad').indexOf(cref.pad.raw);
+  let { name } = cref.element;
+  return `${name.toLowerCase()}.${padIndex + 1}`;
+}
+
+function Signal2Circuit(s) {
+  let { name, contactrefs } = s;
+
+  let contacts = '';
+  let [firstContact, ...restOfContacts] = contactrefs;
+
+  if(restOfContacts.length == 0) return '';
+
+  for(let contact of restOfContacts) {
+    contacts += `${Contactref2Circuit(firstContact)}\t${Contactref2Circuit(contact)}\n`;
+  }
+  return `# Signal ${name}\n` + contacts + '\n';
+}
+
 function Elements2Circuit(p) {
   return [ElementName(p), [...p.pads.list].map(({ x, y }) => `${x / 2.54},${y / 2.54}`).join(' ')];
 }
@@ -1214,6 +1235,10 @@ board ${width},${height}
 
 `;
   o += PutRowsColumns(GetUsedPackages(doc).map(Package2Circuit));
+  o += '\n\n';
+
+  for(let signal of doc.signals.list) o += Signal2Circuit(signal);
+
   return o;
 }
 
