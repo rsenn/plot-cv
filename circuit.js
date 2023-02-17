@@ -65,9 +65,7 @@ Board.prototype[Symbol.toStringTag] = 'Board';
 export class Package extends Array {
   constructor(name, pos) {
     super();
-    //console.log('Package.constructor', { name,pos})
     this.name = name;
-
     for(let p of pos) this.push(p);
   }
 
@@ -235,7 +233,7 @@ export class CircuitFileParser {
     if(!match) return false;
     let [gridW, gridH] = match.slice(1).map(n => +n);
     let board = new Board(gridW, gridH);
-     this.circuit.board = board;
+    this.circuit.board = board;
     return board;
   }
 
@@ -264,7 +262,7 @@ export class CircuitFileParser {
       const pkgPosRx = /(-?\d+),(-?\d+)/g;
       if((m = pkgPosRx.exec(s))) {
         let via = new Via(...m.slice(1).map(n => +n));
-         v.push(via);
+        v.push(via);
       } else {
         return false;
       }
