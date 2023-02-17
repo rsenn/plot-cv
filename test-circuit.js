@@ -25,7 +25,7 @@ function main(...args) {
   );
   let writer = new CircuitFileWriter(circuit);
   let f = openSync('out.circuit', 'w+');
-  //console.log('f', f.puts);
+
   writer.write(s => f.puts(s));
   closeSync(f);
 }

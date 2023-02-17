@@ -4,7 +4,8 @@ import { define } from 'util';
 export class Comment {
   constructor(s) {
     this.s = s;
-  }  concat(other) {
+  }
+  concat(other) {
     return new Comment((this.s ? this.s + '\n' : '') + other);
   }
   toString() {
@@ -16,11 +17,12 @@ export class Comment {
 }
 
 Comment.prototype[Symbol.toStringTag] = 'Comment';
-  class Empty {
+
+class Empty {
   constructor(s) {
     this.s = s;
-  } 
-   concat(other) {
+  }
+  concat(other) {
     return new Empty((this.s ? this.s + '\n' : '') + other);
   }
   toString() {
@@ -42,6 +44,7 @@ export class Via {
   add(other) {
     return new Via(other.x + this.x, other.y + this.y);
   }
+
   toString() {
     const { x, y } = this;
     return `${x},${y}`;
@@ -122,12 +125,6 @@ export class Circuit {
     define(this, { elements: [] });
   }
 }
-
-/*export class Layout {
-  constructor() {
-    this.circuit = new Circuit();
-  }
-}*/
 
 export class CircuitFileWriter {
   constructor(circuit) {
@@ -231,7 +228,6 @@ export class CircuitFileParser {
   parseCommentOrEmpty(line) {
     if(/^\s*#.*$/.test(line)) return new Comment(line);
     if(/^\s*$/.test(line)) return new Empty(line);
-
   }
 
   parseBoard(line) {
