@@ -8,7 +8,6 @@ import * as transformation from './lib/geom/transformation.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
 import trkl from './lib/trkl.js';
 import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
-//import { ParseCoordinates, TransformCoordinates, Coordinate, Pin, Markers, OpenlayersMap } from './ol-helpers.js';
 import { Layer as HTMLLayer } from './lib/dom/layer.js';
 
 const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
@@ -220,7 +219,10 @@ async function ListFiles() {
       if(file.upload?.exif?.GPSPosition) {
         pos = parseGPSLocation(file.upload?.exif?.GPSPosition);
       }
-      if(Array.isArray(pos) && !(pos[0] == 0 && pos[1] == 0)) file.position = new Coordinate(...pos);
+      if(Array.isArray(pos) && !(pos[0] == 0 && pos[1] == 0))
+        try {
+          file.position = new Coordinate(...pos);
+        } catch(e) {}
       return file;
     })
     .filter(file => 'position' in file);

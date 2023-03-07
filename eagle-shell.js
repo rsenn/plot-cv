@@ -315,7 +315,8 @@ function main(...args) {
     GetLibrary,
     ElementName,
     GetUsedPackages,
-    Package2Circuit,GetRotation,
+    Package2Circuit,
+    GetRotation,
     Eagle2Circuit,
     Eagle2CircuitJS,
     ModifyPath,
@@ -1178,19 +1179,19 @@ function ElementName(e) {
 }
 
 function GetRotation(element) {
-  let {rot}=element;
-  let mirror=false;
-  let angle=0;
+  let { rot } = element;
+  let mirror = false;
+  let angle = 0;
 
   if(typeof rot == 'string' && rot.indexOf('M') != -1) {
-    mirror=true;
-    rot=rot.replace(/M/g, '');
+    mirror = true;
+    rot = rot.replace(/M/g, '');
   }
   if(typeof rot == 'string' && rot.indexOf('R') != -1) {
-        rot=rot.replace(/R/g, '');
-angle=+rot;
+    rot = rot.replace(/R/g, '');
+    angle = +rot;
   }
-  return [mirror,angle];
+  return [mirror, angle];
 }
 
 function Package2Circuit(p) {

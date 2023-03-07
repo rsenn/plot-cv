@@ -578,16 +578,22 @@ function main(...args) {
         function* uploads(req, resp) {
           resp.type = 'application/json';
           console.log('uploads', req, resp);
-          console.log('req.url', req.url);
-          console.log('req.url.query', req.url.query);
+
+          const { limit = '0,100', pretty = 0 } = req.url.query ?? {};
+
+          let [start, end] = limit.split(/,/g).map(s => +s);
+
+          console.log('uploads', { start, end });
+
           let result = [];
 
-          for(let entry of glob('uploads/*.json')) {
+          for(let entry of glob('uploads/*.json').slice(start, end)) {
             let json = ReadJSON(entry);
             result.push(json);
           }
 
-          yield JSON.stringify(result);
+          console.log('uploads', console.config({ depth: 1, compact: 2, maxArrayLength: 10 }), result);
+          yield JSON.stringify(result, ...(+pretty ? [null, 2] : []));
         },
         async function* files(req, resp) {
           //console.log('*files',{req,resp});
@@ -977,7 +983,7 @@ function main(...args) {
         }
         {
           let { body } = resp;
-          console.log('\x1b[38;5;212monHttp(2)\x1b[0m', { body });
+          //console.log('\x1b[38;5;212monHttp(2)\x1b[0m', { body });
         }
 
         return resp;
