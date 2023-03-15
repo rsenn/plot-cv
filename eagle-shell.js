@@ -33,6 +33,7 @@ import renderToString from './lib/preact-render-to-string.js';
 import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
 import { EagleToGerber, GerberToGcode } from './pcb-conversion.js';
 import { ExecTool } from './os-helpers.js';
+import * as components from './lib/eagle/components.js';
 
 let cmdhist;
 
@@ -226,6 +227,8 @@ function main(...args) {
     },
     args
   );
+
+  Object.assign(globalThis, { components});
 
   Object.assign(globalThis, {
     child_process,

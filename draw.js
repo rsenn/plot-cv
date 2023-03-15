@@ -8,7 +8,7 @@ import { Align, Point, Rect, PointList, Size } from './lib/geom.js';
 import { Element } from './lib/dom/element.js';
 import { SVG } from './lib/dom/svg.js';
 import { HSLA, RGBA } from './lib/color.js';
-import { streamify, map, subscribe } from './lib/async/events.js';
+import { streamify,  subscribe } from './lib/async/events.js';
 import { Arc, ArcTo } from './lib/geom/arc.js';
 import { unique, define, range } from './lib/misc.js';
 import { KolorWheel } from './lib/KolorWheel.js';
@@ -177,7 +177,7 @@ function GetElementSignal(elem) {
 }
 
 function GetElementsBySignal(signalName) {
-  return Element.findAll(`*[data-signal=${signalName.replace(/([\$])/g, '\\$1')}]`);
+  return Element.findAll('*[data-signal='+signalName.replace(/(\$)/g, '\\$1')+']');
 }
 
 function SortElementsByPosition(elements) {
@@ -255,7 +255,7 @@ function GetSignalNames() {
 }
 
 function GetSignalColor(signalName) {
-  for(let elem of Element.findAll(`*[data-signal=${signalName.replace(/([\$])/g, '\\$1')}]`)) {
+  for(let elem of Element.findAll('*[data-signal='+signalName.replace(/(\$)/g, '\\$1')+']')) {
     let stroke = elem.getAttribute('stroke');
     if(stroke) return stroke;
   }
@@ -290,7 +290,7 @@ function RenderPalette(props) {
 }
 
 function ColorSignal(signalName, color) {
-  for(let elem of Element.findAll(`*[data-signal=${signalName.replace(/([\$])/g, '\\$1')}]`)) {
+  for(let elem of Element.findAll('*[data-signal='+signalName.replace(/(\$)/g, '\\$1')+']')) {
     //console.log('ColorSignal', elem);
     elem.setAttribute('stroke', color);
   }
