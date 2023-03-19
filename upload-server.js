@@ -516,7 +516,7 @@ function main(...args) {
             file = path.collapse(file);
             console.log(
               `allowedDirs:`,
-              allowedDirs//.map(dir => path.normalize(dir))
+              allowedDirs //.map(dir => path.normalize(dir))
             );
 
             //    console.log(`allowed:`, allowedDirs.map(dir => path.isin(file, dir)));
@@ -587,7 +587,7 @@ function main(...args) {
 
           let result = [];
 
-          for(let entry of glob('uploads/*.json').slice(start, end)) {
+          for(let entry of (glob('uploads/*.json') ?? []).slice(start, end)) {
             let json = ReadJSON(entry);
             result.push(json);
           }

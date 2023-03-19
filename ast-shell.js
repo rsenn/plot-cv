@@ -244,8 +244,7 @@ function Table(list, pred = (n, l) => true) {
           const { qualType } = n.type;
           return qualType.replace(/\s*\(.*$/g, '');
         }
-        if(n[typeKey])
-          return n[typeKey];
+        if(n[typeKey]) return n[typeKey];
       },
       function numArgs(n) {
         let params = GetParams(n);

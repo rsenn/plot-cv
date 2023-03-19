@@ -119,8 +119,12 @@ export function WriteFile(name, data, verbose = true) {
   return ret;
 }
 
-export function WriteJSON(name, data, compact = true) {
-  return WriteFile(name, JSON.stringify(data, ...(compact ? [] : [null, 2])));
+export function WriteJSON(name, data, ...args) {
+  const [compact]= args;
+  if(typeof compact == 'boolean')
+    args=compact ? [] : [null, 2];
+
+  return WriteFile(name, JSON.stringify(data, ...args));
 }
 
 export function WriteXML(name, data, ...args) {
