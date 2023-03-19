@@ -585,9 +585,10 @@ function main(...args) {
 
           console.log('uploads', { start, end });
 
-          let result = [];
+          let result = [],
+            entries = glob('uploads/*.json');
 
-          for(let entry of (glob('uploads/*.json') ?? []).slice(start, end)) {
+          for(let entry of (Array.isArray(entries) ? entries : []).slice(start, end)) {
             let json = ReadJSON(entry);
             result.push(json);
           }
@@ -920,6 +921,10 @@ function main(...args) {
             }
           });
         }
+
+        //throw new Error(`http ${method} request`);
+
+        if(!req.headers || typeof req.headers != 'object') console.log('No headers', req);
 
         const { body, url } = resp;
         const { referer } = req.headers;
