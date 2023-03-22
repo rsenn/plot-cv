@@ -418,6 +418,7 @@ function main(...args) {
     console.log('createWS', { logLevel });
 
     return [client, server][+listen]({
+      block: false,
       tls: params.tls,
       sslCert,
       sslPrivateKey,
@@ -519,8 +520,8 @@ function main(...args) {
               allowedDirs //.map(dir => path.normalize(dir))
             );
 
-            //    console.log(`allowed:`, allowedDirs.map(dir => path.isin(file, dir)));
-            let allowed = allowedDirs.some(dir => path.isin(file, path.normalize(dir)));
+                //console.log(`allowed:`, allowedDirs/*.map(dir => path.isin(file, dir))*/);
+            let allowed = [...allowedDirs].some(([dir]) => path.isin(file, path.normalize(dir)));
 
             if(!allowed) {
               console.log(`Not allowed: '${file}'`);
@@ -532,8 +533,9 @@ function main(...args) {
             case 'load':
               let mime = GetMime(file);
               resp.type = mime;
+              resp.headers = { 'content-type': mime };
               let data = fs.readFileSync(file, 1 | binary ? null : charset);
-              console.log(`*file.load`, { data });
+              console.log(`*file.load`, { data, mime  });
               yield data;
               resp.body = data;
               //yield
@@ -789,7 +791,7 @@ function main(...args) {
         } else if(
           req.method != 'GET' &&
           (req.headers['content-type'] == 'application/x-www-form-urlencoded' ||
-            req.headers['content-type'].startsWith('multipart/form-data'))
+            (req.headers['content-type'] ?? '').startsWith('multipart/form-data'))
         ) {
           let fp,
             hash,
