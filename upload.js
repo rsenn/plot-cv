@@ -209,11 +209,14 @@ function UploadFiles(files) {
 }
 
 async function ListFiles() {
-  let resp = await fetch('uploads').then(r => r.json());
+  let resp = await fetch('uploads?limit=0,10&pretty=1').then(r => r.json());
+
+    //console.log('resp', resp);
+
   return resp
-    .map(upload => ({ name: upload.filename, upload }))
+    .map(upload => ({ name: upload.filename, ...upload }))
     .sort((a, b) => a.name.localeCompare(b.name))
-    .filter(r => r.upload?.exif?.GPSPosition)
+    // .filter(r => r.upload?.exif?.GPSPosition)
     .map(file => {
       let pos;
       if(file.upload?.exif?.GPSPosition) {
@@ -225,7 +228,8 @@ async function ListFiles() {
         } catch(e) {}
       return file;
     })
-    .filter(file => 'position' in file);
+    //.filter(file => 'position' in file)
+    ;
 }
 
 // upload JPEG files

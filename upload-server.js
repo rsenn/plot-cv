@@ -592,6 +592,11 @@ function main(...args) {
 
           for(let entry of (Array.isArray(entries) ? entries : []).slice(start, end)) {
             let json = ReadJSON(entry);
+
+const {storage,filename,uploaded,address,exif,thumbnail}=json;
+
+json.size=fs.sizeSync(storage);
+
             result.push(json);
           }
 
