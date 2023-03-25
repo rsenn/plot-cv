@@ -664,6 +664,22 @@ main() {
   printf("MYSQL_TYPE_VAR_STRING = %d\n", MYSQL_TYPE_VAR_STRING);
   printf("MYSQL_TYPE_STRING = %d\n", MYSQL_TYPE_STRING);
   printf("MYSQL_TYPE_GEOMETRY = %d\n", MYSQL_TYPE_GEOMETRY);
+  printf("%s",
+   "import REPL from 'repl';\n"
+    "import fs from 'fs';\n"
+    "const history = '%s/.%s_history';\n"
+    "globalThis.repl = new REPL((__filename ?? '%s').replace(/.*\\//g, '').replace(/\\.js$/g, ''), false);\n"
+    "repl.loadSaveOptions();\n"
+    "repl.historyLoad(null, fs);\n"
+    "repl.directives = { i: [\n"
+    "  (name => import(name).then(m => {\n"
+    "    let id = name.slice(name.lastIndexOf('/') + 1).replace(/\\.[^\\/.]+$/g, '');\n"
+    "    globalThis[id] = m;\n"
+    "  }).catch(() => repl.printStatus(`ERROR: module '${name}' not found\\n`))),\n"
+    " 'import a module'\n"
+    "] };\n"
+    "repl.show = console.log;\n"
+    "repl.runSync();\n");
 
   return 0;
 }

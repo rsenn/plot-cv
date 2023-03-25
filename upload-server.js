@@ -520,7 +520,7 @@ function main(...args) {
               allowedDirs //.map(dir => path.normalize(dir))
             );
 
-                //console.log(`allowed:`, allowedDirs/*.map(dir => path.isin(file, dir))*/);
+            //console.log(`allowed:`, allowedDirs/*.map(dir => path.isin(file, dir))*/);
             let allowed = [...allowedDirs].some(([dir]) => path.isin(file, path.normalize(dir)));
 
             if(!allowed) {
@@ -535,7 +535,7 @@ function main(...args) {
               resp.type = mime;
               resp.headers = { 'content-type': mime };
               let data = fs.readFileSync(file, 1 | binary ? null : charset);
-              console.log(`*file.load`, { data, mime  });
+              console.log(`*file.load`, { data, mime });
               yield data;
               resp.body = data;
               //yield
@@ -593,9 +593,9 @@ function main(...args) {
           for(let entry of (Array.isArray(entries) ? entries : []).slice(start, end)) {
             let json = ReadJSON(entry);
 
-const {storage,filename,uploaded,address,exif,thumbnail}=json;
+            const { storage, filename, uploaded, address, exif, thumbnail } = json;
 
-json.size=fs.sizeSync(storage);
+            json.size = fs.sizeSync(storage);
 
             result.push(json);
           }

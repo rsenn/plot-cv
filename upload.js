@@ -105,7 +105,7 @@ const FileItem = ({ file, ref, ...props }) => {
         )
     }),
     /*,
-     */ h('img', upload?.thumbnail ? { src: `file?action=load&file=${upload.thumbnail}` } : {}),
+     */ h('img', upload?.thumbnail ? { src: `file/${upload.thumbnail}` } : {}),
     upload?.exif?.GPSPosition
       ? h(Table, { class: 'gps' }, [
           ...parseGPSLocation(upload.exif.GPSPosition).map((coord, i) => [i ? 'longitude' : 'latitude', coord])
