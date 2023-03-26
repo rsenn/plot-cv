@@ -383,7 +383,7 @@ function main(...args) {
   let meter = new TickMeter();
   let prevTime;
   let frameDelay = Math.floor(1000 / video.fps);
-  log.info('frameDelay:', frameDelay);
+  //log.info('frameDelay:', frameDelay);
 
   if(frameShow === undefined) frameShow = Modulo(-1, pipeline.size);
 
@@ -441,23 +441,23 @@ function main(...args) {
     meter.reset();
     meter.start();
     let deadline = Date.now() + frameDelay;
-    console.log('frameDelay', frameDelay);
+    //console.log('frameDelay', frameDelay);
 
     let frameNo = video.get('pos_frames');
     if(frameNo == frameCount) video.set('pos_frames', (frameNo = 0));
 
     let gray = pipeline();
 
-    console.log('#0 deadline - Date.now()', deadline - Date.now());
+    //console.log('#0 deadline - Date.now()', deadline - Date.now());
 
     if(!win.imageRect.equals(clientRect)) {
       log.info(`resized from ${clientRect} to ${win.imageRect}`);
       clientRect = win.imageRect;
     }
 
-    console.log('#1 deadline - Date.now()', deadline - Date.now());
+    //console.log('#1 deadline - Date.now()', deadline - Date.now());
     showOutput();
-    console.log('#2 deadline - Date.now()', deadline - Date.now());
+    //console.log('#2 deadline - Date.now()', deadline - Date.now());
 
     while(true) {
       let now = Date.now();

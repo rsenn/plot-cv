@@ -232,17 +232,19 @@ function Structs(nodes) {
 
 function Table(list, pred = (n, l) => true) {
   let entries = [...list].map((n, i) => (n ? [i, LocationString(GetLoc(n)), n] : undefined)).filter(e => e);
-  let keys = ['id', 'kind', 'name'].filter(k => !!k);
+  let typeKey = 'type' in list[0] ? 'type' : 'kind';
+  let keys = ['id', typeKey, 'name'].filter(k => !!k);
   let items = entries.filter(([i, l, n]) => pred(n, l));
   const first = items[0][2];
-  if(/Function/.test(first.kind)) {
+  if(/Function/.test(first[typeKey])) {
     keys = [
       ...keys,
       function returnType(n) {
-        if(n.type) {
+        if(n.type && typeof n.type == 'object') {
           const { qualType } = n.type;
           return qualType.replace(/\s*\(.*$/g, '');
         }
+        if(n[typeKey]) return n[typeKey];
       },
       function numArgs(n) {
         let params = GetParams(n);

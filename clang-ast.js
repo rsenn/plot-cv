@@ -828,17 +828,14 @@ export class FunctionDecl extends Node {
     let type = node.type?.qualType;
     let returnType = type.replace(/\s?\(.*/, '');
 
-    // console.log('ast:', ast);
-
-    let tmp = deep.find(ast ?? $.data, n => typeof n == 'object' && n && n.name == returnType);
+    let tmp = deep.find(ast ?? $.data, n => typeof n == 'object' && n && n.name == returnType, deep.RETURN_VALUE);
 
     if(tmp) returnType = tmp;
 
-    // console.log('FunctionDecl', { type, returnType,tmp });
+    //console.log('FunctionDecl', { type, returnType, tmp });
 
     this.returnType = returnType.kind ? TypeFactory(returnType, ast) : new Type(returnType, ast);
     this.parameters = parameters && /*new Map*/ parameters.map(({ name, type }) => [name, new Type(type, ast)]);
-
     this.body = body;
   }
 

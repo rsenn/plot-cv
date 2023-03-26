@@ -33,6 +33,7 @@ import renderToString from './lib/preact-render-to-string.js';
 import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
 import { EagleToGerber, GerberToGcode } from './pcb-conversion.js';
 import { ExecTool } from './os-helpers.js';
+import * as components from './lib/eagle/components.js';
 
 let cmdhist;
 
@@ -227,6 +228,8 @@ function main(...args) {
     args
   );
 
+  Object.assign(globalThis, { components});
+
   Object.assign(globalThis, {
     child_process,
     SaveLibraries,
@@ -316,6 +319,7 @@ function main(...args) {
     ElementName,
     GetUsedPackages,
     Package2Circuit,
+    GetRotation,
     Eagle2Circuit,
     Eagle2CircuitJS,
     ModifyPath,
@@ -864,7 +868,7 @@ function CorrelateSchematicAndBoard(schematic, board) {
 function GetSheets(doc_or_proj) {
   if(!(doc_or_proj instanceof EagleDocument)) doc_or_proj = doc_or_proj.schematic;
 
-  return [...doc_or_proj.schematic.sheets.children];
+  return [...doc_or_proj.schematic.sheets];
 }
 
 function SaveLibraries() {
@@ -1177,22 +1181,87 @@ function ElementName(e) {
   return n;
 }
 
+function GetRotation(element) {
+  let { rot } = element;
+  let mirror = false;
+  let angle = 0;
+
+  if(typeof rot == 'string' && rot.indexOf('M') != -1) {
+    mirror = true;
+    rot = rot.replace(/M/g, '');
+  }
+  if(typeof rot == 'string' && rot.indexOf('R') != -1) {
+    rot = rot.replace(/R/g, '');
+    angle = +rot;
+  }
+  return [mirror, angle];
+}
+
 function Package2Circuit(p) {
-  let points = p.pads.map(({ x, y }) => new Point(x, y)).map(pt => pt.div(2.54));
+  let points = p.pads
+    .map(({ x, y }) => new Point(x, y))
+    .map(pt => pt.div(2.54))
+    .map(pt => pt.toFixed(1));
+
+  let xpoints = points.map(({ x }) => x),
+    ypoints = points.map(({ y }) => y);
+
+  if(unique(ypoints).length > unique(xpoints).length) {
+    points = points.map(pt => pt.rotate(Math.PI / 2).toFixed(1));
+    console.log('Package2Circuit(1)', { points });
+  }
 
   let half = points.filter(pt => [...pt].some(coord => coord != 0 && Math.abs(coord) < 1));
 
   if(half.length) {
     let t = new Translation(...half[0]).invert();
-    // console.log('t', t);
-    points = points.map(pt => pt.transform(t));
+    // console.log('t', t);    points = points.map(pt => pt.transform(t));
   }
+
+  let xoffs = unique(xpoints.map(x => Math.abs(x % 1)));
+  let yoffs = unique(ypoints.map(y => Math.abs(y % 1)));
+
+  if(xoffs.length == 1 && xoffs[0] != 0) {
+    points = points.map(({ x, y }) => new Point(x - xoffs[0], y));
+  }
+  if(yoffs.length == 1 && yoffs[0] != 0) {
+    points = points.map(({ x, y }) => new Point(x, y - yoffs[0]));
+  }
+
+  if(xoffs.length > 1 || yoffs.length > 1 /* || p.name.startsWith('DIL28')*/)
+    console.log('Package2Circuit(2)', { points, xpoints: unique(xpoints), ypoints: unique(ypoints) });
 
   return [ElementName(p), points.join(' ')];
 }
 
-function Elements2Circuit(p) {
-  return [ElementName(p), [...p.pads.list].map(({ x, y }) => `${x / 2.54},${y / 2.54}`).join(' ')];
+function Contactref2Circuit(cref) {
+  let padIndex = cref.element.pads.list.raw.filter(e => e.tagName == 'pad').indexOf(cref.pad.raw);
+  let { name } = cref.element;
+  return `${name}.${padIndex + 1}`;
+}
+
+function Signal2Circuit(s) {
+  let { name, contactrefs } = s;
+
+  let contacts = '';
+  let [firstContact, ...restOfContacts] = contactrefs;
+
+  if(restOfContacts.length == 0) return '';
+
+  for(let contact of restOfContacts) {
+    contacts += `${Contactref2Circuit(firstContact)}\t${Contactref2Circuit(contact)}\n`;
+  }
+  return `# Signal ${name}\n` + contacts + '\n';
+}
+
+function Element2Circuit(element) {
+  let [packageName] = Package2Circuit(element.package);
+  let name = ElementName(element);
+  let { x, y } = element;
+
+  return `${name.padEnd(8)} ${packageName.padEnd(16)}${(x / 2.54).toFixed(0)},${(y / 2.54).toFixed(0)}\n`;
+
+  // return [ElementName(element), [...element.pads.list].map(({ x, y }) => `${x / 2.54},${y / 2.54}`).join(' ')];
 }
 
 function GetUsedPackages(doc = project.board) {
@@ -1213,7 +1282,21 @@ board ${width},${height}
 # <package name> <pin coordinates relative to pin 0>
 
 `;
+
   o += PutRowsColumns(GetUsedPackages(doc).map(Package2Circuit));
+  o += '\n\n';
+
+  o += `# Components
+# <component name> <package name> <absolute position of component pin 0>
+`;
+  for(let element of doc.elements.list) o += Element2Circuit(element);
+
+  o += `
+# Connections
+# <from component name>.<pin index> <to component name>.<pin index>
+`;
+  for(let signal of doc.signals.list) o += Signal2Circuit(signal);
+
   return o;
 }
 

@@ -31,6 +31,8 @@
 #include <fnmatch.h>
 //#include <dns.h>
 #include "quickjs/qjs-net/libwebsockets/include/libwebsockets.h"
+#include <mariadb/mysql.h>
+
 
 static inline int
 escape_char_pred(int c) {
@@ -629,6 +631,55 @@ main() {
   printf("%s = %d\n", "FNM_FILE_NAME", FNM_FILE_NAME);
   printf("%s = %d\n", "FNM_LEADING_DIR", FNM_LEADING_DIR);
   printf("%s = %d\n", "FNM_CASEFOLD", FNM_CASEFOLD);
+
+  printf("MYSQL_TYPE_DECIMAL = %d\n", MYSQL_TYPE_DECIMAL);
+  printf("MYSQL_TYPE_TINY = %d\n", MYSQL_TYPE_TINY);
+  printf("MYSQL_TYPE_SHORT = %d\n", MYSQL_TYPE_SHORT);
+  printf("MYSQL_TYPE_LONG = %d\n", MYSQL_TYPE_LONG);
+  printf("MYSQL_TYPE_FLOAT = %d\n", MYSQL_TYPE_FLOAT);
+  printf("MYSQL_TYPE_DOUBLE = %d\n", MYSQL_TYPE_DOUBLE);
+  printf("MYSQL_TYPE_NULL = %d\n", MYSQL_TYPE_NULL);
+  printf("MYSQL_TYPE_TIMESTAMP = %d\n", MYSQL_TYPE_TIMESTAMP);
+  printf("MYSQL_TYPE_LONGLONG = %d\n", MYSQL_TYPE_LONGLONG);
+  printf("MYSQL_TYPE_INT24 = %d\n", MYSQL_TYPE_INT24);
+  printf("MYSQL_TYPE_DATE = %d\n", MYSQL_TYPE_DATE);
+  printf("MYSQL_TYPE_TIME = %d\n", MYSQL_TYPE_TIME);
+  printf("MYSQL_TYPE_DATETIME = %d\n", MYSQL_TYPE_DATETIME);
+  printf("MYSQL_TYPE_YEAR = %d\n", MYSQL_TYPE_YEAR);
+  printf("MYSQL_TYPE_NEWDATE = %d\n", MYSQL_TYPE_NEWDATE);
+  printf("MYSQL_TYPE_VARCHAR = %d\n", MYSQL_TYPE_VARCHAR);
+  printf("MYSQL_TYPE_BIT = %d\n", MYSQL_TYPE_BIT);
+  printf("MYSQL_TYPE_TIMESTAMP2 = %d\n", MYSQL_TYPE_TIMESTAMP2);
+  printf("MYSQL_TYPE_DATETIME2 = %d\n", MYSQL_TYPE_DATETIME2);
+  printf("MYSQL_TYPE_TIME2 = %d\n", MYSQL_TYPE_TIME2);
+  //printf("MYSQL_TYPE_BLOB_COMPRESSED = %d\n", MYSQL_TYPE_BLOB_COMPRESSED);
+  //printf("MYSQL_TYPE_VARCHAR_COMPRESSED = %d\n", MYSQL_TYPE_VARCHAR_COMPRESSED);
+  printf("MYSQL_TYPE_NEWDECIMAL = %d\n", MYSQL_TYPE_NEWDECIMAL);
+  printf("MYSQL_TYPE_ENUM = %d\n", MYSQL_TYPE_ENUM);
+  printf("MYSQL_TYPE_SET = %d\n", MYSQL_TYPE_SET);
+  printf("MYSQL_TYPE_TINY_BLOB = %d\n", MYSQL_TYPE_TINY_BLOB);
+  printf("MYSQL_TYPE_MEDIUM_BLOB = %d\n", MYSQL_TYPE_MEDIUM_BLOB);
+  printf("MYSQL_TYPE_LONG_BLOB = %d\n", MYSQL_TYPE_LONG_BLOB);
+  printf("MYSQL_TYPE_BLOB = %d\n", MYSQL_TYPE_BLOB);
+  printf("MYSQL_TYPE_VAR_STRING = %d\n", MYSQL_TYPE_VAR_STRING);
+  printf("MYSQL_TYPE_STRING = %d\n", MYSQL_TYPE_STRING);
+  printf("MYSQL_TYPE_GEOMETRY = %d\n", MYSQL_TYPE_GEOMETRY);
+  printf("%s",
+   "import REPL from 'repl';\n"
+    "import fs from 'fs';\n"
+    "const history = '%s/.%s_history';\n"
+    "globalThis.repl = new REPL((__filename ?? '%s').replace(/.*\\//g, '').replace(/\\.js$/g, ''), false);\n"
+    "repl.loadSaveOptions();\n"
+    "repl.historyLoad(null, fs);\n"
+    "repl.directives = { i: [\n"
+    "  (name => import(name).then(m => {\n"
+    "    let id = name.slice(name.lastIndexOf('/') + 1).replace(/\\.[^\\/.]+$/g, '');\n"
+    "    globalThis[id] = m;\n"
+    "  }).catch(() => repl.printStatus(`ERROR: module '${name}' not found\\n`))),\n"
+    " 'import a module'\n"
+    "] };\n"
+    "repl.show = console.log;\n"
+    "repl.runSync();\n");
 
   return 0;
 }

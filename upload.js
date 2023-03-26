@@ -8,7 +8,6 @@ import * as transformation from './lib/geom/transformation.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
 import trkl from './lib/trkl.js';
 import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
-//import { ParseCoordinates, TransformCoordinates, Coordinate, Pin, Markers, OpenlayersMap } from './ol-helpers.js';
 import { Layer as HTMLLayer } from './lib/dom/layer.js';
 
 const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
@@ -106,7 +105,7 @@ const FileItem = ({ file, ref, ...props }) => {
         )
     }),
     /*,
-     */ h('img', upload?.thumbnail ? { src: `file?action=load&file=${upload.thumbnail}` } : {}),
+     */ h('img', upload?.thumbnail ? { src: `file/${upload.thumbnail}` } : {}),
     upload?.exif?.GPSPosition
       ? h(Table, { class: 'gps' }, [
           ...parseGPSLocation(upload.exif.GPSPosition).map((coord, i) => [i ? 'longitude' : 'latitude', coord])
@@ -210,20 +209,28 @@ function UploadFiles(files) {
 }
 
 async function ListFiles() {
-  let resp = await fetch('uploads').then(r => r.json());
-  return resp
-    .map(upload => ({ name: upload.filename, upload }))
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .filter(r => r.upload?.exif?.GPSPosition)
-    .map(file => {
-      let pos;
-      if(file.upload?.exif?.GPSPosition) {
-        pos = parseGPSLocation(file.upload?.exif?.GPSPosition);
-      }
-      if(Array.isArray(pos) && !(pos[0] == 0 && pos[1] == 0)) file.position = new Coordinate(...pos);
-      return file;
-    })
-    .filter(file => 'position' in file);
+  let resp = await fetch('uploads?limit=0,10&pretty=1').then(r => r.json());
+
+  //console.log('resp', resp);
+
+  return (
+    resp
+      .map(upload => ({ name: upload.filename, ...upload }))
+      .sort((a, b) => a.name.localeCompare(b.name))
+      // .filter(r => r.upload?.exif?.GPSPosition)
+      .map(file => {
+        let pos;
+        if(file.upload?.exif?.GPSPosition) {
+          pos = parseGPSLocation(file.upload?.exif?.GPSPosition);
+        }
+        if(Array.isArray(pos) && !(pos[0] == 0 && pos[1] == 0))
+          try {
+            file.position = new Coordinate(...pos);
+          } catch(e) {}
+        return file;
+      })
+    //.filter(file => 'position' in file)
+  );
 }
 
 // upload JPEG files

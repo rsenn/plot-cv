@@ -348,6 +348,7 @@ function ResolveImports(source, log = () => {}, recursive, depth = 0) {
     return ModuleLoader(j);
   };
   let prevToken;
+
   for(;;) {
     let { stateDepth } = lexer;
     let value = lexer.next();
@@ -360,6 +361,9 @@ function ResolveImports(source, log = () => {}, recursive, depth = 0) {
     }
     let n = balancers.last.depth;
     const { token } = lexer;
+
+    if(!token) break;
+
     const { length, seq } = token;
     /*  if(debug > 1) console.log('token', token);
     if(debug >= 1) console.log('lexer.mode', lexer.mode);
