@@ -429,7 +429,7 @@ add_custom_target(
 
 install(FILES 
        eagle2gerber.js xml2react.js
-       convert-imports.js create-tamper.js cv-shell.js eagle2svg.js eagle-shell.js extract-structs.js takephoto.js wscli.js xml2js.js
+       convert-imports.js create-tamper.js cv-shell.js eagle2svg.js eagle-shell.js extract-structs.js takephoto.js xml2js.js
         DESTINATION bin
         PERMISSIONS 
         OWNER_READ OWNER_WRITE OWNER_EXECUTE
