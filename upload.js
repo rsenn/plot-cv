@@ -211,25 +211,26 @@ function UploadFiles(files) {
 async function ListFiles() {
   let resp = await fetch('uploads?limit=0,10&pretty=1').then(r => r.json());
 
-    //console.log('resp', resp);
+  //console.log('resp', resp);
 
-  return resp
-    .map(upload => ({ name: upload.filename, ...upload }))
-    .sort((a, b) => a.name.localeCompare(b.name))
-    // .filter(r => r.upload?.exif?.GPSPosition)
-    .map(file => {
-      let pos;
-      if(file.upload?.exif?.GPSPosition) {
-        pos = parseGPSLocation(file.upload?.exif?.GPSPosition);
-      }
-      if(Array.isArray(pos) && !(pos[0] == 0 && pos[1] == 0))
-        try {
-          file.position = new Coordinate(...pos);
-        } catch(e) {}
-      return file;
-    })
+  return (
+    resp
+      .map(upload => ({ name: upload.filename, ...upload }))
+      .sort((a, b) => a.name.localeCompare(b.name))
+      // .filter(r => r.upload?.exif?.GPSPosition)
+      .map(file => {
+        let pos;
+        if(file.upload?.exif?.GPSPosition) {
+          pos = parseGPSLocation(file.upload?.exif?.GPSPosition);
+        }
+        if(Array.isArray(pos) && !(pos[0] == 0 && pos[1] == 0))
+          try {
+            file.position = new Coordinate(...pos);
+          } catch(e) {}
+        return file;
+      })
     //.filter(file => 'position' in file)
-    ;
+  );
 }
 
 // upload JPEG files

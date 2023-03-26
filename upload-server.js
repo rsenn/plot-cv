@@ -36,7 +36,7 @@ globalThis.logFilter =
 trkl.property(globalThis, 'logLevel').subscribe(value =>
   setLog(value, (level, message) => {
     if(
-      /__lws|serve_(resolved|generator|promise|response)|(\([123]\).*writable|x\([/]\).*WRITEABLE)|lws_/.test(message)
+      /__lws|serve_(resolved|generator|promise|response)|XX(\([123]\).*writable|x\([/]\).*WRITEABLE)|lws_/.test(message)
     )
       return;
     if(level == LLL_INFO && !/proxy/.test(message)) return;
@@ -463,9 +463,6 @@ function main(...args) {
 
           let bodyStr = '';
           if(req.method == 'POST') {
-            //console.log('req.body', req.body);
-            //              console.log('req.body.next()', await req.body.next());
-
             for await(let chunk of await req.body) {
               console.log('chunk', chunk);
               bodyStr += toString(chunk);
@@ -550,12 +547,9 @@ function main(...args) {
                 HTMLPage,
                 {
                   title: 'File list',
-                  style: `
-  body, * {
-    font-family: MiscFixedSC613,Fixed,"Courier New";
-  }
-
-                  `,
+                  style: `body, * {
+  font-family: MiscFixedSC613,Fixed,"Courier New";
+}`,
                   scripts: ['filelist.js']
                 },
                 [
@@ -580,23 +574,15 @@ function main(...args) {
         function* uploads(req, resp) {
           resp.type = 'application/json';
           console.log('uploads', req, resp);
-
           const { limit = '0,100', pretty = 0 } = req.url.query ?? {};
-
           let [start, end] = limit.split(/,/g).map(s => +s);
-
           console.log('uploads', { start, end });
-
           let result = [],
             entries = glob('uploads/*.json');
-
           for(let entry of (Array.isArray(entries) ? entries : []).slice(start, end)) {
             let json = ReadJSON(entry);
-
             const { storage, filename, uploaded, address, exif, thumbnail } = json;
-
             json.size = fs.sizeSync(storage);
-
             result.push(json);
           }
 
@@ -604,45 +590,24 @@ function main(...args) {
           yield JSON.stringify(result, ...(+pretty ? [null, 2] : []));
         },
         async function* files(req, resp) {
-          //console.log('*files',{req,resp});
           console.log('*files query =', req.url.query);
-          /*if(req.body) {
-           let chunks = [];
-            const { body } = req;
-            // console.log('*files await req.arrayBuffer()', await req.arrayBuffer());
-            //console.log('*files await req.text()', await req.text());
-          }*/
           const { filter = '*', root, type = TYPE_DIR | TYPE_REG | TYPE_LNK, limit = '0' } = req.url.query;
-
           console.log('*files', { root, filter, type });
-
           const [offset = 0, size = Infinity] = limit.split(',').map(n => +n);
-
           console.log('*files', { offset, size });
-
           let i = 0;
           let f = Matcher(filter);
-
-          /*  let gen = (function* iter() {*/
           if(!root) {
             for(let name of allowedDirs.keys().filter(f)) yield name + '/\r\n';
           } else {
             for(let [key, value] of allowedDirs.entries().filter(KeyOrValueMatcher(root))) {
               let dir = new Directory(value, BOTH, +type);
-
               yield key + ':\r\n';
-
               for(let [name, type] of dir.filter(([name, type]) => f(name)))
                 yield name + (+type == TYPE_DIR ? '/' : '') + '\r\n';
             }
           }
           console.log('*files', { i, f });
-          /* })();
-            console.log('*files', { i,f,gen });
-
-            yield* gen.range(offset, size);*/
-
-          //yield '\r\n';
         },
         function* files2(req, resp) {
           let { body, headers, json, url } = req;
@@ -789,6 +754,10 @@ function main(...args) {
 
         const { peer, address, port } = ws;
         const { method, headers } = req;
+
+        //resp.headers['Server'] = 'upload-server';
+        resp.headers = { Server: 'upload-server' };
+        //console.log('onHttp resp.headers', resp.headers, resp.headers['Server']);
 
         if((req.url.path ?? '').endsWith('files')) {
           return;
