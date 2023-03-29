@@ -412,11 +412,7 @@ function main(...args) {
 
   function showSessions() {
     let sessions = getSessions();
-    console.log(
-      'sessions',
-      console.config({ maxArrayLength: Infinity, depth: 4, customInspect: true, compact: 1 }),
-      sessions
-    );
+    console.log('sessions', console.config({ maxArrayLength: Infinity, depth: 4, customInspect: true, compact: 1 }), sessions);
   }
 
   //setInterval(() => console.log('interval'), 5000);

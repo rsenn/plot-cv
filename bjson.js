@@ -31,8 +31,7 @@ async function main(...args) {
 
   let output = params.output ? filesystem.openSync(params.output, 'w+') : filesystem.stdout;
 
-  if(params.output && params['@'].length > 1)
-    throw new Error(`Output file specified as '${params.output}', but got ${params['@'].length} input files`);
+  if(params.output && params['@'].length > 1) throw new Error(`Output file specified as '${params.output}', but got ${params['@'].length} input files`);
 
   console.log('params', params);
   if(params.output && !('indent' in params)) space = '';

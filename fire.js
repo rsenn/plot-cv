@@ -1,8 +1,9 @@
 import { crosskit, CANVAS } from './lib/crosskit.js';
 import { RGBA, HSLA } from './lib/color.js';
+import { timer } from './lib/async/helpers.js';
 import { WebSocketIterator, WebSocketURL, CreateWebSocket, ReconnectingWebSocket, StreamReadIterator } from './lib/async/websocket.js';
 import { once, streamify, throttle, distinct, subscribe } from './lib/async/events.js';
-import { memoize, define, isUndefined, properties, keys, unique } from './lib/misc.js';
+import { memoize, define, isUndefined, properties, keys, unique, randStr, randInt } from './lib/misc.js';
 import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater, Reader, ReadAll, default as utils } from './lib/stream/utils.js';
 import { Intersection, Matrix, isRect, Rect, Size, Point, Line, TransformationList, Vector } from './lib/geom.js';
 import { Element, isElement } from './lib/dom/element.js';
@@ -12,11 +13,16 @@ function NewWS() {
   let ws = new ReconnectingWebSocket(url, 'lws-mirror-protocol');
   (async function() {
     for await(let chunk of ws) {
-      console.log('WS receive:', chunk);
+      let data = JSON.parse(chunk);
+
+      if(data.cid != globalThis.cid) console.log('WS receive:', data);
     }
   })();
   return (globalThis.ws = ws);
 }
+
+const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
+const MakeClientID = (rng = Math.random) => [4, 4, 4, 4].map(n => randStr(n, ['ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz', '.-$'][randInt(0, 3)]), rng).join('');
 
 function main() {
   define(globalThis, { crosskit, RGBA, HSLA, Util, Matrix, TransformationList });
@@ -24,7 +30,9 @@ function main() {
   define(globalThis, { define, isUndefined, properties, keys });
   define(globalThis, { once, streamify, throttle, distinct, subscribe });
   define(globalThis, { Intersection, Matrix, isRect, Rect, Size, Point, Line, TransformationList, Vector });
-  define(globalThis, {
+  define(globalThis, {timer,
+    MakeUUID,
+    MakeClientID,
     isStream,
     AcquireReader,
     AcquireWriter,
@@ -118,7 +126,7 @@ function main() {
     let topLeft = rect.toPoints()[vertical ? 1 : 0];
     let m = Matrix.identity().scale(canvas.width, canvas.height);
 
-    m = m.rotate(-Math.PI / 2);
+    if(vertical) m = m.rotate(-Math.PI / 2);
 
     m = m.scale(1 / rect.width, 1 / rect.height);
     m = m.translate(-topLeft.x, -topLeft.y);
@@ -128,37 +136,38 @@ function main() {
 
   function PositionProcessor(canvas = canvasElement, rect = canvasRect) {
     let m = PositionMatrix(canvas, rect);
-    return pos => new Point(...m.transform_point(pos).round(1));
+    return pos => new Point(...m.transform_point(new Point(pos))).round(1);
   }
 
   function ProcessPosition(pos) {
     return PositionProcessor()(pos);
   }
 
-  async function* MouseIterator(element) {
-    for(;;) {
-      yield await once(element, 'mousedown', 'touchstart');
+  async function* MovementIterator(element) {
+    let ev = await once(element, 'mousedown', 'touchstart');
+    let type = ev.type.slice(0, 5);
+    yield ev;
+    console.log(type + ' start');
+    for await(let event of streamify(['mouseup', 'mousemove', 'touchend', 'touchmove'], element)) {
+      //event.preventDefault();
+      if('touches' in event) {
+        if(event.touches.length) {
+          globalThis.mouseEvent = event;
 
-      for await(let event of streamify(['mouseup', 'mousemove', 'touchend', 'touchmove'], element)) {
-        event.preventDefault();
-        if('touches' in event) {
-          if(event.touches.length) {
-            globalThis.mouseEvent = event;
-
-            yield* [...event.touches].map(EventPositions);
-            //.map(({ client }) => client)
-          }
-          /*const{clientX:x,clientY:y}=touch;
-          yield {x,y};
-         } */
-        } else {
-          const { type, clientX: x, clientY: y } = event;
-          yield { type, x, y };
+          yield* [...event.touches].map(EventPositions);
         }
-        if(/(up|end)$/.test(event.type)) break;
+      } else {
+        const { type, clientX: x, clientY: y } = event;
+        let obj = { type, x, y };
+        yield obj;
+      }
+      if(/(up|end)$/.test(event.type)) {
+        console.log(type + ' end');
+        break;
       }
     }
   }
+
   Reparent();
 
   crosskit.clear();
@@ -196,7 +205,7 @@ function main() {
     Reparent,
     dom: { Element },
     geom: { Rect },
-    MouseIterator,
+    MovementIterator,
     MouseHandler,
     GetElementMatrix,
     SetCrosshair,
@@ -231,12 +240,7 @@ function main() {
 
     for(let y = 0; y < h; y++) {
       for(let x = 0; x < w; x++) {
-        const sum = [
-          pixels[y + 1][Modulo(x - 1, w)],
-          pixels[y + 1][x],
-          pixels[y + 1][Modulo(x + 1, w)],
-          pixels[y + 2][x]
-        ].reduce((a, p) => a + (p | 0), 0);
+        const sum = [pixels[y + 1][Modulo(x - 1, w)], pixels[y + 1][x], pixels[y + 1][Modulo(x + 1, w)], pixels[y + 2][x]].reduce((a, p) => a + (p | 0), 0);
 
         pixels[y][x] = (sum * 15) >>> 6;
       }
@@ -279,14 +283,7 @@ function main() {
   function CreatePaletteHSL() {
     const colors = new Array(256);
 
-    const hues = [
-      new HSLA(0, 100, 0),
-      new HSLA(0, 100, 50),
-      new HSLA(30, 100, 50),
-      new HSLA(60, 100, 50),
-      new HSLA(60, 100, 100),
-      new HSLA(60, 100, 100)
-    ];
+    const hues = [new HSLA(0, 100, 0), new HSLA(0, 100, 50), new HSLA(30, 100, 50), new HSLA(60, 100, 50), new HSLA(60, 100, 100), new HSLA(60, 100, 100)];
 
     const breakpoints = [0, 51, 80, 154, 205, 256];
     console.log('breakpoints:', breakpoints);
@@ -389,10 +386,7 @@ function main() {
         getRect
       },
       properties({
-        transform: [
-          () => new TransformationList(Element.getCSS('body > div:first-child').transform),
-          value => Element.setCSS('body > div:first-child', { transform: value + '' })
-        ]
+        transform: [() => new TransformationList(Element.getCSS('body > div:first-child').transform), value => Element.setCSS('body > div:first-child', { transform: value + '' })]
       })
     );
 
@@ -411,23 +405,53 @@ function main() {
 
     /*   const handler = MouseHandler;
 
-    subscribe(MouseIterator(element), handler);*/
+    subscribe(MovementIterator(element), handler);*/
   }
 
+  globalThis.ws = (globalThis.rws ??= NewWS()).ws;
+
   (async function() {
-    for await(let ev of MouseIterator(window)) {
-      if(ev.client) {
-        //console.log('mouse event', ev.client);
-        if(rect.inside(ev.client)) {
-          let pt = mouseTransform(ev.client);
+    let trail = [],
+      start,last;
+    for(;;) {
+      let prev, pt;
+
+      for await(let ev of MovementIterator(window)) {
+        if(!globalThis.cid) {
+          globalThis.cid ??= MakeClientID();
+
+          ws.send(JSON.stringify({ type: 'hello', cid }));
+        }
+
+        if(rect.inside(ev)) {
+          let pt = (globalThis.mousePos = mouseTransform(ev));
+          let diff = pt,t;
+          if(prev) diff = pt.diff(prev);
+
+          start ??= (t = Date.now());
+
+          //trail.push({ ...pt, time: Date.now()  -start  });
+          trail.push(t - start + '/' + (prev && diff.x > 0 ? '+' : '') + diff.x + ',' + (prev && diff.y > 0 ? '+' : '') + diff.y);
+
+last=t;
           try {
             //console.log('blaze', ...pt);
             rc = pixels[pt.y][pt.x] > 0x30 ? 0 : RandomByte() | 0x80;
 
             Blaze(pt.x, pt.y);
+
           } catch(e) {}
+          prev = pt;
         }
       }
+    }
+
+    function SendTrail() {
+      ws.send(JSON.stringify({ type: 'blaze', start, trail: trail.join(' ') }));
+
+      trail.splice(0, trail.length);
+      start = undefined;
+      prev = undefined;
     }
   })();
 

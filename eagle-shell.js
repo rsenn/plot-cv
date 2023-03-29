@@ -126,11 +126,7 @@ function render(doc, filename) {
 
   let xml = fromXML(str);
 
-  filename ??=
-    path.basename(doc.filename, '.' + doc.type) +
-    '-' +
-    { sch: 'schematic', brd: 'board', lbr: 'library' }[doc.type] +
-    '.svg';
+  filename ??= path.basename(doc.filename, '.' + doc.type) + '-' + { sch: 'schematic', brd: 'board', lbr: 'library' }[doc.type] + '.svg';
 
   if(filename) {
     let ret;
@@ -168,13 +164,7 @@ function ShowParts(doc = project.schematic) {
 
 function EaglePrint(file, output) {
   output ??= ModifyPath(file, (dir, base, ext) => [dir, base, ext + '.pdf']);
-  let argv = [
-    '/opt/eagle-7.2.0/bin/eagle',
-    '-N-',
-    '-C',
-    `PRINT landscape 0.8 -1 -0 -caption FILE '${output}' sheets all paper a4; QUIT`,
-    file
-  ];
+  let argv = ['/opt/eagle-7.2.0/bin/eagle', '-N-', '-C', `PRINT landscape 0.8 -1 -0 -caption FILE '${output}' sheets all paper a4; QUIT`, file];
 
   return child_process.spawn(argv[0], argv, {
     block: false
@@ -228,7 +218,7 @@ function main(...args) {
     args
   );
 
-  Object.assign(globalThis, { components});
+  Object.assign(globalThis, { components });
 
   Object.assign(globalThis, {
     child_process,
@@ -716,10 +706,7 @@ function fixValue(element) {
 
   switch (element.name[0]) {
     case 'R': {
-      newValue = value.replace(
-        /^([0-9.]+)([mkM]?)(?:\xEF\xBF\xBD|\xC2\xA9|\x26\xC2*\xA9+|\u2126?[\x80-\xFF]+)([\x00-\x7F]*)/,
-        '$1$2\u2126$3'
-      );
+      newValue = value.replace(/^([0-9.]+)([mkM]?)(?:\xEF\xBF\xBD|\xC2\xA9|\x26\xC2*\xA9+|\u2126?[\x80-\xFF]+)([\x00-\x7F]*)/, '$1$2\u2126$3');
       break;
     }
     case 'L': {
@@ -858,8 +845,7 @@ function CorrelateSchematicAndBoard(schematic, board) {
   let allNames = Math.max(...names.map(n => n.length));
   let intersection = intersect(...names);
 
-  if(allNames.length > intersection.length)
-    console.warn(`WARNING: Only ${intersection.length} names of ${allNames.length} correlate`);
+  if(allNames.length > intersection.length) console.warn(`WARNING: Only ${intersection.length} names of ${allNames.length} correlate`);
   console.log(`intersection`, intersection);
 
   return /*new Map*/ intersection.map(name => [name, documents.map(doc => GetByName(doc, name))]);
@@ -873,9 +859,7 @@ function GetSheets(doc_or_proj) {
 
 function SaveLibraries() {
   const { schematic, board } = project;
-  const layerMap = /*Object.values*/ [...schematic.layers, ...board.layers]
-    .filter(([n, e]) => e.active)
-    .reduce((acc, [n, e]) => ({ ...acc, [e.number]: e.raw }), {});
+  const layerMap = /*Object.values*/ [...schematic.layers, ...board.layers].filter(([n, e]) => e.active).reduce((acc, [n, e]) => ({ ...acc, [e.number]: e.raw }), {});
   const entities = ['symbols', 'packages', 'devicesets'];
 
   let layerIds = deep
@@ -1009,13 +993,7 @@ async function testEagle(filename) {
   let { board, schematic } = proj;
   const packages = {
     board: (board && board.elements && [...board.elements].map(([name, e]) => e.package)) || [],
-    schematic:
-      (schematic &&
-        schematic.sheets &&
-        [...schematic.sheets]
-          .map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined))
-          .flat()) ||
-      []
+    schematic: (schematic && schematic.sheets && [...schematic.sheets].map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)).flat()) || []
   };
   let parts = (schematic && schematic.parts) || [];
   let sheets = (schematic && schematic.sheets) || [];
@@ -1066,9 +1044,7 @@ async function testEagle(filename) {
   }
   let desc = proj.documents.map(doc => [doc.filename, doc.find('description')]);
   console.log('desc', desc);
-  desc = desc
-    .map(([file, e]) => [file, e && e.xpath()])
-    .map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
+  desc = desc.map(([file, e]) => [file, e && e.xpath()]).map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
   desc = new Map(desc);
   console.log('descriptions', [...Util.map(desc, ([k, v]) => [k, v])]);
   return proj;
@@ -1128,13 +1104,7 @@ const FileFunction = (fn, rfn = ReadFile, wfn = WriteFile, namefn = n => n, ...a
   };
 };
 
-const SVGFileSetBackground = FileFunction(
-  SetSVGBackground,
-  ReadXML,
-  WriteXML,
-  n => AppendToFilename(n, '.with-background'),
-  false
-);
+const SVGFileSetBackground = FileFunction(SetSVGBackground, ReadXML, WriteXML, n => AppendToFilename(n, '.with-background'), false);
 const SVGResave = FileFunction(
   data => data,
   ReadXML,
@@ -1228,8 +1198,7 @@ function Package2Circuit(p) {
     points = points.map(({ x, y }) => new Point(x, y - yoffs[0]));
   }
 
-  if(xoffs.length > 1 || yoffs.length > 1 /* || p.name.startsWith('DIL28')*/)
-    console.log('Package2Circuit(2)', { points, xpoints: unique(xpoints), ypoints: unique(ypoints) });
+  if(xoffs.length > 1 || yoffs.length > 1 /* || p.name.startsWith('DIL28')*/) console.log('Package2Circuit(2)', { points, xpoints: unique(xpoints), ypoints: unique(ypoints) });
 
   return [ElementName(p), points.join(' ')];
 }

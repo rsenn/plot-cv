@@ -36,11 +36,7 @@ async function main(...args) {
       Symbol: { species: Symbol.for('species') },
       console: {
         log(...args) {
-          console.debug(
-            'console.log(',
-            ...args.map(arg => `'${arg}'`).reduce((acc, arg) => (acc ? [...acc, ',', arg] : [arg]), null),
-            ')'
-          );
+          console.debug('console.log(', ...args.map(arg => `'${arg}'`).reduce((acc, arg) => (acc ? [...acc, ',', arg] : [arg]), null), ')');
         }
       },
       trkl

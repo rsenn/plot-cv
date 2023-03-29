@@ -23,8 +23,7 @@ var ENVIRONMENT_IS_NODE = false;
 var ENVIRONMENT_IS_SHELL = false;
 ENVIRONMENT_IS_WEB = typeof window === 'object';
 ENVIRONMENT_IS_WORKER = typeof importScripts === 'function';
-ENVIRONMENT_IS_NODE =
-  typeof process === 'object' && typeof require === 'function' && !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_WORKER;
+ENVIRONMENT_IS_NODE = typeof process === 'object' && typeof require === 'function' && !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_WORKER;
 ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIRONMENT_IS_WORKER;
 var scriptDirectory = '';
 function locateFile(path) {
@@ -147,12 +146,8 @@ if(ENVIRONMENT_IS_NODE) {
   };
 } else {
 }
-var out =
-  Module['print'] ||
-  (typeof console !== 'undefined' ? console.log.bind(console) : typeof print !== 'undefined' ? print : null);
-var err =
-  Module['printErr'] ||
-  (typeof printErr !== 'undefined' ? printErr : (typeof console !== 'undefined' && console.warn.bind(console)) || out);
+var out = Module['print'] || (typeof console !== 'undefined' ? console.log.bind(console) : typeof print !== 'undefined' ? print : null);
+var err = Module['printErr'] || (typeof printErr !== 'undefined' ? printErr : (typeof console !== 'undefined' && console.warn.bind(console)) || out);
 for(key in moduleOverrides) {
   if(moduleOverrides.hasOwnProperty(key)) {
     Module[key] = moduleOverrides[key];
@@ -354,8 +349,7 @@ try {
 }
 var TOTAL_STACK = Module['TOTAL_STACK'] || 5242880;
 var TOTAL_MEMORY = Module['TOTAL_MEMORY'] || 16777216;
-if(TOTAL_MEMORY < TOTAL_STACK)
-  err('TOTAL_MEMORY should be larger than TOTAL_STACK, was ' + TOTAL_MEMORY + '! (TOTAL_STACK=' + TOTAL_STACK + ')');
+if(TOTAL_MEMORY < TOTAL_STACK) err('TOTAL_MEMORY should be larger than TOTAL_STACK, was ' + TOTAL_MEMORY + '! (TOTAL_STACK=' + TOTAL_STACK + ')');
 if(Module['buffer']) {
   buffer = Module['buffer'];
 } else {
@@ -579,12 +573,7 @@ function integrateWasmJS() {
           abort(reason);
         });
     }
-    if(
-      !Module['wasmBinary'] &&
-      typeof WebAssembly.instantiateStreaming === 'function' &&
-      !isDataURI(wasmBinaryFile) &&
-      typeof fetch === 'function'
-    ) {
+    if(!Module['wasmBinary'] && typeof WebAssembly.instantiateStreaming === 'function' && !isDataURI(wasmBinaryFile) && typeof fetch === 'function') {
       WebAssembly.instantiateStreaming(fetch(wasmBinaryFile, { credentials: 'same-origin' }), info)
         .then(receiveInstantiatedSource)
         .catch(function (reason) {

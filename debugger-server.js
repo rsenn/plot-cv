@@ -242,11 +242,7 @@ function main(...args) {
 
             const { command, ...rest } = obj;
             // console.log('onMessage', command, rest);
-            const {
-              connect = true,
-              address = '127.0.0.1:' + Math.round(Math.random() * (65535 - 1024)) + 1024,
-              args = []
-            } = rest;
+            const { connect = true, address = '127.0.0.1:' + Math.round(Math.random() * (65535 - 1024)) + 1024, args = [] } = rest;
 
             switch (command) {
               case 'start': {
@@ -434,11 +430,7 @@ function main(...args) {
 
   function showSessions() {
     let sessions = getSessions();
-    console.log(
-      'sessions',
-      console.config({ maxArrayLength: Infinity, depth: 4, customInspect: true, compact: 1 }),
-      sessions
-    );
+    console.log('sessions', console.config({ maxArrayLength: Infinity, depth: 4, customInspect: true, compact: 1 }), sessions);
   }
 
   //setInterval(() => console.log('interval'), 5000);

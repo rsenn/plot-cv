@@ -34,18 +34,13 @@ async function main(...args) {
     R: []
   };
   for(let doc of documents) {
-    let parts = [...(doc.elements || doc.parts)].map(([name, elem]) => [
-      name,
-      typeof elem.value == 'string' ? SubstChars(elem.value) : elem.value
-    ]);
+    let parts = [...(doc.elements || doc.parts)].map(([name, elem]) => [name, typeof elem.value == 'string' ? SubstChars(elem.value) : elem.value]);
     let matchers = [
       [/^R/, /^[0-9.]+([kKmM][Ω\u03A9]?|[Ω\u03A9]?)(|\/[0-9.]+W)/],
       [/^C/, /^[0-9.]+([pnuμ\u03bcm]F?|F?)(|\/[0-9.]+V)/],
       [/^L/, /^[0-9.]+([nuμ\u03bcm]H?|H?)/]
     ];
-    let nameValueMap = new Map(
-      parts.filter(([name, value]) => matchers.some(m => m[0].test(name) && m[1].test(value)))
-    );
+    let nameValueMap = new Map(parts.filter(([name, value]) => matchers.some(m => m[0].test(name) && m[1].test(value))));
     for(let [name, value] of nameValueMap) {
       value = (value ? '' + value : '').replace(/[\u0000-\u001F]/g, '');
       components[name[0]].push(value.replace(/[ΩFH]$/, '').replace(/^\./, '0.'));
@@ -69,14 +64,8 @@ async function main(...args) {
         //inductorColor=new HSLA({ h: 90, s: 90, l: 50, a: 1 }).toRGBA();
         //inductorColor=new HSLA({ h: 117, s: 70, l: 60, a: 1 }).toRGBA();
 
-        let bands =
-          key[0] == 'C' ? [' '] : [num2color(rat * scal, key[0] == 'L' ? [...inductorColor].slice(0, 3) : undefined)];
-        return [
-          key,
-          (val + '').substring(0, 10).padStart(10, ' ') + UnitForName(key),
-          bands.join(' '),
-          `  × ${count}`
-        ].join(' ');
+        let bands = key[0] == 'C' ? [' '] : [num2color(rat * scal, key[0] == 'L' ? [...inductorColor].slice(0, 3) : undefined)];
+        return [key, (val + '').substring(0, 10).padStart(10, ' ') + UnitForName(key), bands.join(' '), `  × ${count}`].join(' ');
       });
   }
   console.log(

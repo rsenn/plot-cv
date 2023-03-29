@@ -47,12 +47,7 @@ function main(...args) {
   );
   if(params['no-tls'] === true) params.tls = false;
   //console.log('params', params);
-  const {
-    address = '0.0.0.0',
-    port = 8999,
-    'ssl-cert': sslCert = 'localhost.crt',
-    'ssl-private-key': sslPrivateKey = 'localhost.key'
-  } = params;
+  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key' } = params;
   const listen = params.connect && !params.listen ? false : true;
   const is_server = !params.client || params.server;
   Object.assign(globalThis, { ...rpc2, rpc });
@@ -98,11 +93,7 @@ function main(...args) {
 
   console.log = (...args) => repl.printStatus(() => log(console.config(repl.inspectOptions), ...args));
 
-  let cli = (globalThis.sock = new rpc.Socket(
-    `${address}:${port}`,
-    rpc[`RPC${is_server ? 'Server' : 'Client'}Connection`],
-    +params.verbose
-  ));
+  let cli = (globalThis.sock = new rpc.Socket(`${address}:${port}`, rpc[`RPC${is_server ? 'Server' : 'Client'}Connection`], +params.verbose));
 
   cli.register({ Socket, Worker: os.Worker, Repeater, REPL, EventEmitter });
   let logFile =
@@ -123,24 +114,7 @@ function main(...args) {
       if(/(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|HTTP_BODY)/.test(message)) return;
       //
       if(params.debug)
-        out(
-          (
-            [
-              'ERR',
-              'WARN',
-              'NOTICE',
-              'INFO',
-              'DEBUG',
-              'PARSER',
-              'HEADER',
-              'EXT',
-              'CLIENT',
-              'LATENCY',
-              'MINNET',
-              'THREAD'
-            ][Math.log2(level)] ?? level + ''
-          ).padEnd(8) + message.replace(/\n/g, '\\n')
-        );
+        out((['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8) + message.replace(/\n/g, '\\n'));
     });
 
     return [client, server][+listen]({
@@ -176,8 +150,7 @@ function main(...args) {
       options: {
         'upload-dir': './uploads',
         'max-size': 10000000,
-        'basic-auth':
-          'quickjs/qjs-net/libwebsockets/minimal-examples/http-server/minimal-http-server-deaddrop/ba-passwords'
+        'basic-auth': 'quickjs/qjs-net/libwebsockets/minimal-examples/http-server/minimal-http-server-deaddrop/ba-passwords'
       },
       mounts: [
         ['/', '.', 'debugger.html'],
@@ -204,14 +177,7 @@ function main(...args) {
           //console.log('*files', { body });
           const data = JSON.parse(body);
           resp.type = 'application/json';
-          let {
-            dir = '.' ?? 'tmp',
-            filter = '.([ch]|js)$' ?? '.(brd|sch|G[A-Z][A-Z])$',
-            verbose = false,
-            objects = false,
-            key = 'mtime',
-            limit = null
-          } = data ?? {};
+          let { dir = '.' ?? 'tmp', filter = '.([ch]|js)$' ?? '.(brd|sch|G[A-Z][A-Z])$', verbose = false, objects = false, key = 'mtime', limit = null } = data ?? {};
           let absdir = path.realpath(dir);
           let components = absdir.split(path.sep);
           if(components.length && components[0] === '') components.shift();

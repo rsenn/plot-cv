@@ -106,11 +106,7 @@ const FileItem = ({ file, ref, ...props }) => {
     }),
     /*,
      */ h('img', upload?.thumbnail ? { src: `file/${upload.thumbnail}` } : {}),
-    upload?.exif?.GPSPosition
-      ? h(Table, { class: 'gps' }, [
-          ...parseGPSLocation(upload.exif.GPSPosition).map((coord, i) => [i ? 'longitude' : 'latitude', coord])
-        ])
-      : null
+    upload?.exif?.GPSPosition ? h(Table, { class: 'gps' }, [...parseGPSLocation(upload.exif.GPSPosition).map((coord, i) => [i ? 'longitude' : 'latitude', coord])]) : null
   ]);
 };
 
@@ -268,9 +264,7 @@ function UploadDone(upload) {
 }
 
 function CreateWS() {
-  let ws = (globalThis.ws ??= new WebSocket(
-    document.location.href.replace(/\/[^/]*$/, '/uploads').replace(/^http/, 'ws')
-  ));
+  let ws = (globalThis.ws ??= new WebSocket(document.location.href.replace(/\/[^/]*$/, '/uploads').replace(/^http/, 'ws')));
   console.log('CreateWS', ws);
   let tid;
   const restart = (delay = 10) => {
