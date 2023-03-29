@@ -435,7 +435,7 @@ function main(...args) {
 
   //setInterval(() => console.log('interval'), 5000);
 
-  globalThis.ws = createWS(`wss://${address}:9000/ws`, {}, true);
+  globalThis.ws = createWS(`wss://${address}:8998/ws`, {}, true);
   //  Object.defineProperty(globalThis, 'DEBUG', { get: DebugFlags });
 
   /* if(listen) cli.listen(createWS, os);
