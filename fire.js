@@ -6,7 +6,8 @@ import { once, streamify, throttle, distinct, subscribe } from './lib/async/even
 import { memoize, define, isUndefined, properties, keys, unique, randStr, randInt } from './lib/misc.js';
 import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater, Reader, ReadAll, default as utils } from './lib/stream/utils.js';
 import { Intersection, Matrix, isRect, Rect, Size, Point, Line, TransformationList, Vector } from './lib/geom.js';
-import { Element, isElement } from './lib/dom/element.js';
+import { Element, isElement, SVG } from './lib/dom.js';
+import React, { h, html, render, Fragment, Component, createRef, useState, useLayoutEffect, useRef, toChildArray } from './lib/dom/preactComponent.js';
 
 function NewWS() {
   let url = WebSocketURL('/ws', { mirror: currentFile });
@@ -22,7 +23,10 @@ function NewWS() {
 }
 
 const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
-const MakeClientID = (rng = Math.random) => [4, 4, 4, 4].map(n => randStr(n, ['ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz', '.-$'][randInt(0, 3)]), rng).join('');
+const MakeClientID = (rng = Math.random) =>
+  [4, 4, 4, 4]
+    .map(n => randStr(n, ['ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz', '.-$'][randInt(0, 3)]), rng)
+    .join('');
 
 function main() {
   define(
@@ -36,15 +40,15 @@ function main() {
     )
   );
 
-  const w = 320;
-  const h = 200;
+  const width = 320;
+  const height = 200;
   const parent = document.body;
 
   crosskit.init({
     renderer: CANVAS,
     parent,
-    w,
-    h,
+    w: width,
+    h: height,
     alpha: false
   });
 
@@ -136,20 +140,20 @@ function main() {
   crosskit.rect({
     x: 0,
     y: 0,
-    w,
-    h,
+    width,
+    height,
     fill: 'black',
     stroke: 'black',
     angle: 0
   });
 
-  const buffer = new ArrayBuffer(w * (h + 2));
+  const buffer = new ArrayBuffer(width * (height + 2));
   const palette = CreatePalette();
   const paletteHSL = CreatePaletteHSL();
 
-  const pixels = Array.from({ length: h + 2 }).map((v, i) => new Uint8ClampedArray(buffer, i * w, w));
+  const pixels = Array.from({ length: height + 2 }).map((v, i) => new Uint8ClampedArray(buffer, i * width, width));
   const { context } = crosskit;
-  const image = context.createImageData(w, h);
+  const image = context.createImageData(width, height);
 
   const { now, waitFor, animationFrame } = Util;
   const fps = 50;
@@ -195,14 +199,19 @@ function main() {
   }
 
   function Fire() {
-    for(let x = 0; x < w; x++) {
-      pixels[h][x] = 255 - (RandomByte() % 128);
-      pixels[h + 1][x] = 255 - (RandomByte() % 128);
+    for(let x = 0; x < width; x++) {
+      pixels[height][x] = 255 - (RandomByte() % 128);
+      pixels[height + 1][x] = 255 - (RandomByte() % 128);
     }
 
-    for(let y = 0; y < h; y++) {
-      for(let x = 0; x < w; x++) {
-        const sum = [pixels[y + 1][Modulo(x - 1, w)], pixels[y + 1][x], pixels[y + 1][Modulo(x + 1, w)], pixels[y + 2][x]].reduce((a, p) => a + (p | 0), 0);
+    for(let y = 0; y < height; y++) {
+      for(let x = 0; x < width; x++) {
+        const sum = [
+          pixels[y + 1][Modulo(x - 1, width)],
+          pixels[y + 1][x],
+          pixels[y + 1][Modulo(x + 1, width)],
+          pixels[y + 2][x]
+        ].reduce((a, p) => a + (p | 0), 0);
 
         pixels[y][x] = (sum * 15) >>> 6;
       }
@@ -215,8 +224,8 @@ function main() {
     let i = 0;
     let t = [...matrix];
 
-    for(let y = 0; y < h; y++) {
-      for(let x = 0; x < w; x++) {
+    for(let y = 0; y < height; y++) {
+      for(let x = 0; x < width; x++) {
         const c = palette[pixels[y][x]];
         data[i++] = c.r;
         data[i++] = c.g;
@@ -245,7 +254,14 @@ function main() {
   function CreatePaletteHSL() {
     const colors = new Array(256);
 
-    const hues = [new HSLA(0, 100, 0), new HSLA(0, 100, 50), new HSLA(30, 100, 50), new HSLA(60, 100, 50), new HSLA(60, 100, 100), new HSLA(60, 100, 100)];
+    const hues = [
+      new HSLA(0, 100, 0),
+      new HSLA(0, 100, 50),
+      new HSLA(30, 100, 50),
+      new HSLA(60, 100, 50),
+      new HSLA(60, 100, 100),
+      new HSLA(60, 100, 100)
+    ];
 
     const breakpoints = [0, 51, 80, 154, 205, 256];
     console.log('breakpoints:', breakpoints);
@@ -305,8 +321,8 @@ function main() {
 
     globalThis.pointerEvent = e;
 
-    const x = Math.round((e.offsetX * w) / rect.width);
-    const y = Math.round((e.offsetY * h) / rect.height);
+    const x = Math.round((e.offsetX * width) / rect.width);
+    const y = Math.round((e.offsetY * height) / rect.height);
 
     try {
       if(/(down|start)$/.test(type)) rc = pixels[y][x] > 0x30 ? 0 : RandomByte() | 0x80;
@@ -348,9 +364,37 @@ function main() {
         getRect
       },
       properties({
-        transform: [() => new TransformationList(Element.getCSS('body > div:first-child').transform), value => Element.setCSS('body > div:first-child', { transform: value + '' })]
+        transform: [
+          () => new TransformationList(Element.getCSS('body > div:first-child').transform),
+          value => Element.setCSS('body > div:first-child', { transform: value + '' })
+        ]
       })
     );
+
+    const SVGComponent = props => {
+      const rect = Element.rect(document.body).round(1);
+      const { center, width, height } = rect;
+
+      return h(
+        'svg',
+        { version: '1.1', xmlns: 'http://www.w3.org/2000/svg', viewBox: [...rect].join(' '), width, height },
+        [
+          h('circle', {
+            cx: center.x,
+            cy: center.y,
+            r: 250,
+            stroke: '#0f0',
+            'stroke-width': 1,
+            fill: `rgba(80,80,80,0.3)`
+          })
+        ]
+      );
+    };
+
+    let svgContainer = Element.create('div', {}, document.body);
+    Element.setCSS(svgContainer, { position: 'absolute', top: 0, left: 0, zIndex: 99999999, pointerEvents: 'none' });
+
+    /*render(h(SVGComponent), svgContainer);*/
 
     rect = canvasRect;
     mouseTransform = PositionProcessor();
@@ -394,8 +438,8 @@ function main() {
 
           start ??= t = Date.now();
 
-          //trail.push({ ...pt, time: Date.now()  -start  });
-          trail.push(t - start + '/' + (prev && diff.x > 0 ? '+' : '') + diff.x + ',' + (prev && diff.y > 0 ? '+' : '') + diff.y);
+          trail.push({ ...pt, time: Date.now() - start });
+          // trail.push(t - start + '/' + (prev && diff.x > 0 ? '+' : '') + diff.x + ',' + (prev && diff.y > 0 ? '+' : '') + diff.y);
 
           last = t;
           try {
@@ -407,14 +451,19 @@ function main() {
           prev = pt;
         }
       }
-    }
 
-    function SendTrail() {
-      ws.send(JSON.stringify({ type: 'blaze', start, trail: trail.join(' ') }));
+      SendTrail();
 
-      trail.splice(0, trail.length);
-      start = undefined;
-      prev = undefined;
+      function SendTrail() {
+        if(trail.length) {
+          const payload = { type: 'blaze', start, trail: [...trail] };
+          console.log('SendTrail', payload);
+          ws.send(JSON.stringify(payload));
+        }
+        trail.splice(0, trail.length);
+        start = undefined;
+        prev = undefined;
+      }
     }
   })();
 
@@ -458,6 +507,23 @@ define(globalThis, {
   Reader,
   ReadAll,
   StreamReadIterator
+});
+
+define(globalThis, {
+  Element,
+  isElement,
+  SVG,
+  React,
+  h,
+  html,
+  render,
+  Fragment,
+  Component,
+  createRef,
+  useState,
+  useLayoutEffect,
+  useRef,
+  toChildArray
 });
 
 main();

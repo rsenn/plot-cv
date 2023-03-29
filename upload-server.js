@@ -948,10 +948,6 @@ function main(...args) {
         console.log('onMessage', ws, data);
         return callbacks.onMessage(ws, data);
       },
-      onFd(fd, rd, wr) {
-        console.log('onFd', fd, rd, wr);
-        return callbacks.onFd(fd, rd, wr);
-      },
       ...(url && url.host ? url : {})
     });
   });
@@ -1016,7 +1012,7 @@ function main(...args) {
     { protocol: 'ws', host: '0.0.0.0', port: 8999 },
     {
       onFd(fd, rd, wr) {
-        console.log('onFd', fd, rd, wr);
+        //console.log('onFd', fd, rd, wr);
         os.setReadHandler(fd, rd);
         os.setWriteHandler(fd, wr);
       },
