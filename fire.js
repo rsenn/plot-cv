@@ -25,44 +25,6 @@ const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '01
 const MakeClientID = (rng = Math.random) => [4, 4, 4, 4].map(n => randStr(n, ['ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz', '.-$'][randInt(0, 3)]), rng).join('');
 
 function main() {
-  define(globalThis, { crosskit, RGBA, HSLA, Util, Matrix, TransformationList });
-  define(globalThis, { WebSocketIterator, WebSocketURL, CreateWebSocket, NewWS, ReconnectingWebSocket });
-  define(globalThis, { define, isUndefined, properties, keys });
-  define(globalThis, { once, streamify, throttle, distinct, subscribe });
-  define(globalThis, { Intersection, Matrix, isRect, Rect, Size, Point, Line, TransformationList, Vector });
-  define(globalThis, {timer,
-    MakeUUID,
-    MakeClientID,
-    isStream,
-    AcquireReader,
-    AcquireWriter,
-    ArrayWriter,
-    readStream,
-    PipeTo,
-    WritableRepeater,
-    WriteIterator,
-    AsyncWrite,
-    AsyncRead,
-    ReadFromIterator,
-    WriteToRepeater,
-    LogSink,
-    StringReader,
-    LineReader,
-    DebugTransformStream,
-    CreateWritableStream,
-    CreateTransformStream,
-    RepeaterSource,
-    RepeaterSink,
-    LineBufferStream,
-    TextTransformStream,
-    ChunkReader,
-    ByteReader,
-    PipeToRepeater,
-    Reader,
-    ReadAll,
-    StreamReadIterator
-  });
-
   define(
     globalThis,
     properties(
@@ -412,7 +374,8 @@ function main() {
 
   (async function() {
     let trail = [],
-      start,last;
+      start,
+      last;
     for(;;) {
       let prev, pt;
 
@@ -425,21 +388,21 @@ function main() {
 
         if(rect.inside(ev)) {
           let pt = (globalThis.mousePos = mouseTransform(ev));
-          let diff = pt,t;
+          let diff = pt,
+            t;
           if(prev) diff = pt.diff(prev);
 
-          start ??= (t = Date.now());
+          start ??= t = Date.now();
 
           //trail.push({ ...pt, time: Date.now()  -start  });
           trail.push(t - start + '/' + (prev && diff.x > 0 ? '+' : '') + diff.x + ',' + (prev && diff.y > 0 ? '+' : '') + diff.y);
 
-last=t;
+          last = t;
           try {
             //console.log('blaze', ...pt);
             rc = pixels[pt.y][pt.x] > 0x30 ? 0 : RandomByte() | 0x80;
 
             Blaze(pt.x, pt.y);
-
           } catch(e) {}
           prev = pt;
         }
@@ -457,6 +420,45 @@ last=t;
 
   Loop();
 }
+
+define(globalThis, { crosskit, RGBA, HSLA, Util, Matrix, TransformationList });
+define(globalThis, { WebSocketIterator, WebSocketURL, CreateWebSocket, NewWS, ReconnectingWebSocket });
+define(globalThis, { define, isUndefined, properties, keys });
+define(globalThis, { once, streamify, throttle, distinct, subscribe });
+define(globalThis, { Intersection, Matrix, isRect, Rect, Size, Point, Line, TransformationList, Vector });
+define(globalThis, {
+  timer,
+  MakeUUID,
+  MakeClientID,
+  isStream,
+  AcquireReader,
+  AcquireWriter,
+  ArrayWriter,
+  readStream,
+  PipeTo,
+  WritableRepeater,
+  WriteIterator,
+  AsyncWrite,
+  AsyncRead,
+  ReadFromIterator,
+  WriteToRepeater,
+  LogSink,
+  StringReader,
+  LineReader,
+  DebugTransformStream,
+  CreateWritableStream,
+  CreateTransformStream,
+  RepeaterSource,
+  RepeaterSink,
+  LineBufferStream,
+  TextTransformStream,
+  ChunkReader,
+  ByteReader,
+  PipeToRepeater,
+  Reader,
+  ReadAll,
+  StreamReadIterator
+});
 
 main();
 
