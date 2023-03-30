@@ -18,8 +18,7 @@ export class VirtFS {
 
         let obj = vfs;
 
-        if(prop in VirtFS.prototype && typeof VirtFS.prototype[prop] == 'function')
-          return VirtFS.prototype[prop].bind(vfs);
+        if(prop in VirtFS.prototype && typeof VirtFS.prototype[prop] == 'function') return VirtFS.prototype[prop].bind(vfs);
         if(!(prop in VirtFS.prototype) && typeof fs[prop] == 'function') return fs[prop];
 
         return Reflect.get(target, prop, receiver);

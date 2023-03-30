@@ -9,14 +9,7 @@ function CreateServer() {
   print('SERVER');
 
   setLog(LLL_ALL, (level, ...args) =>
-    console.log(
-      (
-        ['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][
-          Math.log2(level)
-        ] ?? level + ''
-      ).padEnd(8),
-      ...args
-    )
+    console.log((['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8), ...args)
   );
 
   server({

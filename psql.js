@@ -67,19 +67,7 @@ export function PQconnectdbParams(keywords, values, expand_dbname) {
  *
  * @return   {Number}
  */
-define(
-  'PQsetdbLogin',
-  dlsym(libpq, 'PQsetdbLogin'),
-  null,
-  'void *',
-  'char *',
-  'char *',
-  'char *',
-  'char *',
-  'char *',
-  'char *',
-  'char *'
-);
+define('PQsetdbLogin', dlsym(libpq, 'PQsetdbLogin'), null, 'void *', 'char *', 'char *', 'char *', 'char *', 'char *', 'char *', 'char *');
 export function PQsetdbLogin(pghost, pgport, pgoptions, pgtty, dbName, login, pwd) {
   return call('PQsetdbLogin', pghost, pgport, pgoptions, pgtty, dbName, login, pwd);
 }
@@ -582,41 +570,9 @@ export function PQexec(conn, query) {
  *
  * @return   {Number}
  */
-define(
-  'PQexecParams',
-  dlsym(libpq, 'PQexecParams'),
-  null,
-  'void *',
-  'void *',
-  'char *',
-  'int',
-  'void *',
-  'void *',
-  'void *',
-  'void *',
-  'int'
-);
-export function PQexecParams(
-  conn,
-  command,
-  nParams,
-  paramTypes,
-  paramValues,
-  paramLengths,
-  paramFormats,
-  resultFormat
-) {
-  return call(
-    'PQexecParams',
-    conn,
-    command,
-    nParams,
-    paramTypes,
-    paramValues,
-    paramLengths,
-    paramFormats,
-    resultFormat
-  );
+define('PQexecParams', dlsym(libpq, 'PQexecParams'), null, 'void *', 'void *', 'char *', 'int', 'void *', 'void *', 'void *', 'void *', 'int');
+export function PQexecParams(conn, command, nParams, paramTypes, paramValues, paramLengths, paramFormats, resultFormat) {
+  return call('PQexecParams', conn, command, nParams, paramTypes, paramValues, paramLengths, paramFormats, resultFormat);
 }
 
 /**
@@ -648,19 +604,7 @@ export function PQprepare(conn, stmtName, query, nParams, paramTypes) {
  *
  * @return   {Number}
  */
-define(
-  'PQexecPrepared',
-  dlsym(libpq, 'PQexecPrepared'),
-  null,
-  'void *',
-  'void *',
-  'char *',
-  'int',
-  'void *',
-  'void *',
-  'void *',
-  'int'
-);
+define('PQexecPrepared', dlsym(libpq, 'PQexecPrepared'), null, 'void *', 'void *', 'char *', 'int', 'void *', 'void *', 'void *', 'int');
 export function PQexecPrepared(conn, stmtName, nParams, paramValues, paramLengths, paramFormats, resultFormat) {
   return call('PQexecPrepared', conn, stmtName, nParams, paramValues, paramLengths, paramFormats, resultFormat);
 }
@@ -692,41 +636,9 @@ export function PQsendQuery(conn, query) {
  *
  * @return   {Number}
  */
-define(
-  'PQsendQueryParams',
-  dlsym(libpq, 'PQsendQueryParams'),
-  null,
-  'int',
-  'void *',
-  'char *',
-  'int',
-  'void *',
-  'void *',
-  'void *',
-  'void *',
-  'int'
-);
-export function PQsendQueryParams(
-  conn,
-  command,
-  nParams,
-  paramTypes,
-  paramValues,
-  paramLengths,
-  paramFormats,
-  resultFormat
-) {
-  return call(
-    'PQsendQueryParams',
-    conn,
-    command,
-    nParams,
-    paramTypes,
-    paramValues,
-    paramLengths,
-    paramFormats,
-    resultFormat
-  );
+define('PQsendQueryParams', dlsym(libpq, 'PQsendQueryParams'), null, 'int', 'void *', 'char *', 'int', 'void *', 'void *', 'void *', 'void *', 'int');
+export function PQsendQueryParams(conn, command, nParams, paramTypes, paramValues, paramLengths, paramFormats, resultFormat) {
+  return call('PQsendQueryParams', conn, command, nParams, paramTypes, paramValues, paramLengths, paramFormats, resultFormat);
 }
 
 /**
@@ -758,19 +670,7 @@ export function PQsendPrepare(conn, stmtName, query, nParams, paramTypes) {
  *
  * @return   {Number}
  */
-define(
-  'PQsendQueryPrepared',
-  dlsym(libpq, 'PQsendQueryPrepared'),
-  null,
-  'int',
-  'void *',
-  'char *',
-  'int',
-  'void *',
-  'void *',
-  'void *',
-  'int'
-);
+define('PQsendQueryPrepared', dlsym(libpq, 'PQsendQueryPrepared'), null, 'int', 'void *', 'char *', 'int', 'void *', 'void *', 'void *', 'int');
 export function PQsendQueryPrepared(conn, stmtName, nParams, paramValues, paramLengths, paramFormats, resultFormat) {
   return call('PQsendQueryPrepared', conn, stmtName, nParams, paramValues, paramLengths, paramFormats, resultFormat);
 }
@@ -1041,15 +941,7 @@ export function PQresultErrorMessage(res) {
  *
  * @return   {String}
  */
-define(
-  'PQresultVerboseErrorMessage',
-  dlsym(libpq, 'PQresultVerboseErrorMessage'),
-  null,
-  'char *',
-  'void *',
-  'int',
-  'int'
-);
+define('PQresultVerboseErrorMessage', dlsym(libpq, 'PQresultVerboseErrorMessage'), null, 'char *', 'void *', 'int', 'int');
 export function PQresultVerboseErrorMessage(res, verbosity, show_context) {
   return call('PQresultVerboseErrorMessage', res, verbosity, show_context);
 }
@@ -1504,18 +1396,7 @@ export function PQprint(fout, res, ps) {
  * @param    {Number}        printHeader
  * @param    {Number}        quiet
  */
-define(
-  'PQdisplayTuples',
-  dlsym(libpq, 'PQdisplayTuples'),
-  null,
-  'void',
-  'void *',
-  'void *',
-  'int',
-  'char *',
-  'int',
-  'int'
-);
+define('PQdisplayTuples', dlsym(libpq, 'PQdisplayTuples'), null, 'void', 'void *', 'void *', 'int', 'char *', 'int', 'int');
 export function PQdisplayTuples(res, fp, fillAlign, fieldSep, printHeader, quiet) {
   call('PQdisplayTuples', res, fp, fillAlign, fieldSep, printHeader, quiet);
 }
@@ -1603,16 +1484,7 @@ export function PQencryptPassword(passwd, user) {
  *
  * @return   {String}
  */
-define(
-  'PQencryptPasswordConn',
-  dlsym(libpq, 'PQencryptPasswordConn'),
-  null,
-  'char *',
-  'void *',
-  'char *',
-  'char *',
-  'char *'
-);
+define('PQencryptPasswordConn', dlsym(libpq, 'PQencryptPasswordConn'), null, 'char *', 'void *', 'char *', 'char *', 'char *');
 export function PQencryptPasswordConn(conn, passwd, user, algorithm) {
   return call('PQencryptPasswordConn', conn, passwd, user, algorithm);
 }

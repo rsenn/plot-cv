@@ -288,12 +288,7 @@ export class CircuitFileParser {
     let p = new Via(x, y).add(this.offset);
     let i = 0;
     for(let v of this.circuit.packageToPosMap.get(packageName)) {
-      if(
-        p.x + v.x < 0 ||
-        p.x + v.x >= this.circuit.board.width ||
-        p.y + v.y < 0 ||
-        p.y + v.y >= this.circuit.board.height
-      )
+      if(p.x + v.x < 0 || p.x + v.x >= this.circuit.board.width || p.y + v.y < 0 || p.y + v.y >= this.circuit.board.height)
         throw new Error(`Component pin outside of board: ${componentName}.${i + 1}`);
 
       ++i;
@@ -323,9 +318,7 @@ export class CircuitFileParser {
       let dontCarePinIdx = +m[1];
 
       if(dontCarePinIdx < 1 || dontCarePinIdx > packagePosVec.length)
-        throw new Error(
-          `Invalid "Don't Care" pin number for ${componentName}: ${dontCarePinIdx}. Must be between 1 and ${packagePosVec.length} (including)`
-        );
+        throw new Error(`Invalid "Don't Care" pin number for ${componentName}: ${dontCarePinIdx}. Must be between 1 and ${packagePosVec.length} (including)`);
       component.dontCarePinIdxSet.add(--dontCarePinIdx);
     }
     component.dontCarePinIdxSet.name = componentName;
@@ -355,19 +348,13 @@ export class CircuitFileParser {
   }
 
   checkConnectionPoint(connectionPoint) {
-    if(!this.circuit.components.has(connectionPoint.componentName))
-      throw new Error(`Unknown component: ${connectionPoint.componentName}`);
+    if(!this.circuit.components.has(connectionPoint.componentName)) throw new Error(`Unknown component: ${connectionPoint.componentName}`);
 
     let component = this.circuit.components.get(connectionPoint.componentName);
     let packagePosVec = this.circuit.packageToPosMap.get(component.packageName);
     let pinIdx1Base = connectionPoint.pinIdx + 1;
     if(pinIdx1Base < 1 || pinIdx1Base > packagePosVec.length)
-      throw new Error(
-        `Invalid pin number for ${connectionPoint.componentName}.${pinIdx1Base}. Must be between 1 and ${packagePosVec.length} (including)`
-      );
-    if(component.dontCarePinIdxSet.has(connectionPoint.pinIdx))
-      throw new Error(
-        `Invalid pin number for {connectionPoint.componentName}.{pinIdx1Base}. Pin has been set as "Don't Care"`
-      );
+      throw new Error(`Invalid pin number for ${connectionPoint.componentName}.${pinIdx1Base}. Must be between 1 and ${packagePosVec.length} (including)`);
+    if(component.dontCarePinIdxSet.has(connectionPoint.pinIdx)) throw new Error(`Invalid pin number for {connectionPoint.componentName}.{pinIdx1Base}. Pin has been set as "Don't Care"`);
   }
 }

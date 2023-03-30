@@ -32,9 +32,7 @@ async function main(...args) {
     hideKeys: ['loc', 'range', Symbol.for('nodejs.util.inspect.custom')]
   };
 
-  await import(Util.getPlatform() == 'quickjs' ? 'inspect.so' : './lib/misc.js').then(
-    module => (globalThis.inspect = module.inspect)
-  );
+  await import(Util.getPlatform() == 'quickjs' ? 'inspect.so' : './lib/misc.js').then(module => (globalThis.inspect = module.inspect));
   const dumpObj = (obj, depth, options) =>
     '{' +
     Object.entries(obj)

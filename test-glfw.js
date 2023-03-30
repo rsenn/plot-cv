@@ -66,8 +66,7 @@ function main(...args) {
     .map(hsla => hsla.toRGBA());
 
   const clamp = (n, min, max) => Math.min(Math.max(min, n), max);
-  const interpolate = (x, y, sigma) =>
-    Array.isArray(x) ? x.map((xx, i) => interpolate(xx, y[i], sigma)) : x * (1.0 - sigma) + y * sigma;
+  const interpolate = (x, y, sigma) => (Array.isArray(x) ? x.map((xx, i) => interpolate(xx, y[i], sigma)) : x * (1.0 - sigma) + y * sigma);
 
   console.log(
     'hues',

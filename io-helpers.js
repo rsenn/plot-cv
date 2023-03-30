@@ -120,9 +120,8 @@ export function WriteFile(name, data, verbose = true) {
 }
 
 export function WriteJSON(name, data, ...args) {
-  const [compact]= args;
-  if(typeof compact == 'boolean')
-    args=compact ? [] : [null, 2];
+  const [compact] = args;
+  if(typeof compact == 'boolean') args = compact ? [] : [null, 2];
 
   return WriteFile(name, JSON.stringify(data, ...args));
 }
@@ -331,12 +330,7 @@ export function LogCall(fn, thisObj) {
   return function(...args) {
     let result;
     result = fn.apply(thisObj ?? this, args);
-    console.log(
-      'Function ' + name + '(',
-      ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })),
-      ') =',
-      result
-    );
+    console.log('Function ' + name + '(', ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })), ') =', result);
     return result;
   };
 }
@@ -374,16 +368,7 @@ export function Spawn(file, args, options = {}) {
 // 'https://www.discogs.com/sell/order/8369022-364'
 
 export function FetchURL(url, options = {}) {
-  let {
-    headers,
-    proxy,
-    cookies = 'cookies.txt',
-    range,
-    body,
-    version = '1.1',
-    tlsv,
-    'user-agent': userAgent
-  } = options;
+  let { headers, proxy, cookies = 'cookies.txt', range, body, version = '1.1', tlsv, 'user-agent': userAgent } = options;
 
   let args = Object.entries(headers ?? {})
     .reduce((acc, [k, v]) => acc.concat(['-H', `${k}: ${v}`]), [])

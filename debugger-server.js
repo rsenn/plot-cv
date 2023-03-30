@@ -3,8 +3,7 @@ import * as os from 'os';
 import { setInterval } from 'timers';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
-import Util from './lib/util.js';
-import { daemon, atexit, getpid, toArrayBuffer, toString, escape, quote, define, extendArray, getOpt } from 'util';
+import { daemon, atexit, getpid, toString, escape, quote, define, extendArray, getOpt } from 'util';
 import { Console } from './quickjs/qjs-modules/lib/console.js';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
@@ -14,7 +13,7 @@ import { setLog, logLevels, getSessions, LLL_USER, LLL_INFO, LLL_NOTICE, LLL_WAR
 import { DebuggerProtocol } from './debuggerprotocol.js';
 import { StartDebugger, ConnectDebugger } from './debugger.js';
 import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
+import { ReadJSON, WriteJSON } from './io-helpers.js';
 
 extendArray(Array.prototype);
 
@@ -204,15 +203,15 @@ function main(...args) {
         },
         onHttp(req, resp) {
           const { method, headers } = req;
-          console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
+          //console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
           const { body, url } = resp;
-          console.log('\x1b[38;5;33monHttp\x1b[0m', { body });
+          //console.log('\x1b[38;5;33monHttp\x1b[0m', { body });
 
           const file = url.path.slice(1);
           const dir = file.replace(/\/[^\/]*$/g, '');
 
           if(file.endsWith('.js')) {
-            console.log('onHttp', { file, dir });
+            //console.log('onHttp', { file, dir });
             const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
 
             resp.body = body.replaceAll(re, (match, p1, p0, p2, p3, offset) => {
@@ -223,7 +222,7 @@ function main(...args) {
 
                 match = [p1, './' + fname, p3].join('');
 
-                console.log('args', { match, p1, p2, p3, offset });
+                //console.log('args', { match, p1, p2, p3, offset });
               }
               return match;
             });
@@ -390,26 +389,6 @@ function main(...args) {
   });
   console.log('XX');
 
-  /*  define(globalThis, {
-    get connections() {
-      return [...globalThis.sockets];
-    },
-    get socklist() {
-      return [...globalThis.sockets];
-    },
-    net: { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server },
-    StartDebugger,
-    ConnectDebugger,
-    DebuggerProtocol,
-    repl: StartREPL(),
-    daemon() {
-      repl.stop();
-      std.puts('\ndetaching...');
-      daemon(1, 0);
-      std.puts(' PID ' + getpid() + '\n');
-    }
-  });
-*/
   delete globalThis.DEBUG;
 
   let inputBuf = new ArrayBuffer(10);
@@ -436,14 +415,37 @@ function main(...args) {
     let sessions = getSessions();
     console.log(
       'sessions',
-      console.config({ maxArrayLength: Infinity, depth: 4, customInspect: true, compact: 1 }),
+      console.config({ maxArrayLength: Infinity, depth: 4, customInspect: true, compact: 0 }),
       sessions
     );
   }
 
   //setInterval(() => console.log('interval'), 5000);
 
-  globalThis.ws = createWS(`wss://${address}:9000/ws`, {}, true);
+  globalThis.ws = createWS(`wss://${address}:8998/ws`, {}, true);
+
+  define(globalThis, {
+    get connections() {
+      return [...globalThis.sockets];
+    },
+    get socklist() {
+      return [...globalThis.sockets];
+    },
+    net: { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server },
+    StartDebugger,
+    ConnectDebugger,
+    DebuggerProtocol,
+    repl: StartREPL(),
+    daemon() {
+      repl.stop();
+      std.puts('\ndetaching...');
+      daemon(1, 0);
+      std.puts(' PID ' + getpid() + '\n');
+    }
+  });
+
+  //let repl = StartREPL();
+
   //  Object.defineProperty(globalThis, 'DEBUG', { get: DebugFlags });
 
   /* if(listen) cli.listen(createWS, os);

@@ -9,11 +9,7 @@ export { ExecTool } from './os-helpers.js';
 export function EagleToGerber(boardFile, opts = {}) {
   console.log('convertToGerber', { boardFile, opts });
   let {
-    layers = opts.side == 'outline'
-      ? ['Measures']
-      : opts.drill
-      ? ['Drills', 'Holes']
-      : [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'],
+    layers = opts.side == 'outline' ? ['Measures'] : opts.drill ? ['Drills', 'Holes'] : [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'],
     format = opts.drill ? 'EXCELLON' : 'GERBER_RS274X',
     data,
     fetch = false,
@@ -23,10 +19,8 @@ export function EagleToGerber(boardFile, opts = {}) {
   } = opts;
   const base = path.basename(boardFile, '.brd');
   const formatToExt = (layers, format) => {
-    if(opts.drill || format.startsWith('EXCELLON') || layers.indexOf('Drills') != -1 || layers.indexOf('Holes') != -1)
-      return 'TXT';
-    if(layers.indexOf('Bottom') != -1 || format.startsWith('GERBER'))
-      return opts.side == 'outline' ? 'GKO' : front ? 'GTL' : 'GBL';
+    if(opts.drill || format.startsWith('EXCELLON') || layers.indexOf('Drills') != -1 || layers.indexOf('Holes') != -1) return 'TXT';
+    if(layers.indexOf('Bottom') != -1 || format.startsWith('GERBER')) return opts.side == 'outline' ? 'GKO' : front ? 'GTL' : 'GBL';
 
     return 'rs274x';
   };
