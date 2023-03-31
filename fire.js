@@ -9,25 +9,6 @@ import { Intersection, Matrix, isRect, Rect, Size, Point, Line, TransformationLi
 import { Element, isElement, SVG } from './lib/dom.js';
 import React, { h, html, render, Fragment, Component, createRef, useState, useLayoutEffect, useRef, toChildArray } from './lib/dom/preactComponent.js';
 
-function NewWS() {
-  let url = WebSocketURL('/ws', { mirror: currentFile });
-  let ws = new ReconnectingWebSocket(url, 'lws-mirror-protocol');
-  (async function() {
-    for await(let chunk of ws) {
-      let data = JSON.parse(chunk);
-
-      if(data.cid != globalThis.cid) console.log('WS receive:', data);
-    }
-  })();
-  return (globalThis.ws = ws);
-}
-
-const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
-const MakeClientID = (rng = Math.random) =>
-  [4, 4, 4, 4]
-    .map(n => randStr(n, ['ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz', '.-$'][randInt(0, 3)]), rng)
-    .join('');
-
 function main() {
   define(
     globalThis,
@@ -470,6 +451,31 @@ function main() {
   Loop();
 }
 
+function getRect(elem) {
+  return new Rect((elem ?? divElement).getBoundingClientRect()).round(1);
+}
+function NewWS() {
+  let url = WebSocketURL('/ws', { mirror: currentFile });
+  let ws = new ReconnectingWebSocket(url, 'lws-mirror-protocol');
+  (async function() {
+    for await(let chunk of ws) {
+      let data = JSON.parse(chunk);
+
+      if(data.cid != globalThis.cid) console.log('WS receive:', data);
+    }
+  })();
+  return (globalThis.ws = ws);
+}
+
+function MakeUUID(rng = Math.random) {
+  return [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
+}
+function MakeClientID(rng = Math.random) {
+  return [4, 4, 4, 4]
+    .map(n => randStr(n, ['ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz', '.-$'][randInt(0, 3)]), rng)
+    .join('');
+}
+
 define(globalThis, { crosskit, RGBA, HSLA, Util, Matrix, TransformationList });
 define(globalThis, { WebSocketIterator, WebSocketURL, CreateWebSocket, NewWS, ReconnectingWebSocket });
 define(globalThis, { define, isUndefined, properties, keys });
@@ -527,7 +533,3 @@ define(globalThis, {
 });
 
 main();
-
-function getRect(elem) {
-  return new Rect((elem ?? divElement).getBoundingClientRect()).round(1);
-}
