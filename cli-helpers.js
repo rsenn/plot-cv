@@ -28,7 +28,7 @@ export function Table(rows, keys) {
       '─┼─'
     ) +
     '\n' +
-    rows.reduce((acc, row) => {
+    [...rows].reduce((acc, row) => {
       return acc + pad(row).slice(0, repl.columns) + '\n';
     }, '')
   );

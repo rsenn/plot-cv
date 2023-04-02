@@ -3,12 +3,15 @@ import Util from './lib/util.js';
 import { BG, digit2color, GetColorBands, PartScales } from './lib/eda/colorCoding.js';
 export { GetColorBands } from './lib/eda/colorCoding.js';
 import { map, consume, reduce } from './lib/iterable.js';
-export function GetParts(schematic, t = entries => Object.fromEntries(entries)) {
+
+export function GetParts(schematic = project.schematic, t = entries => Object.fromEntries(entries)) {
   return t(map(schematic.getAll('part'), elem => [elem.name, elem]));
 }
-export function GetElements(board, t = entries => Object.fromEntries(entries)) {
+
+export function GetElements(board = project.board, t = entries => Object.fromEntries(entries)) {
   return t(map(board.getAll('element'), elem => [elem.name, elem]));
 }
+
 export function GetInstances(schematic, t = entries => entries) {
   let entries = Object.entries(
     reduce(
@@ -24,11 +27,13 @@ export function GetInstances(schematic, t = entries => entries) {
   );
   return t(entries);
 }
+
 export function GetPositions(doc) {
   let entries = { sch: d => GetInstances(d), brd: d => GetElements(d, e => e).map(([name, elem]) => [name, [elem]]) }[doc.type](doc);
   return entries.map(([name, arr]) => [name, arr.map(({ x, y }) => new Point(x, y))]);
 }
-export function UpdateMeasures(board) {
+
+export function UpdateMeasures(board = project.board) {
   if(!board) return false;
   let bounds = board.getBounds();
   let measures = board.getMeasures();
@@ -48,6 +53,7 @@ export function UpdateMeasures(board) {
   }
   return !measures;
 }
+
 export function AlignItem(item) {
   console.debug('AlignItem', item);
   let geometry = item.geometry;
@@ -64,6 +70,7 @@ export function AlignItem(item) {
   }
   return changed;
 }
+
 export function AlignAll(doc) {
   if(!doc) return false;
   let items = doc.getAll(doc.type == 'brd' ? 'element' : 'instance');
@@ -73,6 +80,7 @@ export function AlignAll(doc) {
   for(let net of signals_nets) for (let item of net.getAll('wire')) changed |= AlignItem(item);
   return !!changed;
 }
+
 export function scientific(value) {
   let sci = [GetMantissa(value), GetExponent(value)];
   define(sci, {
@@ -83,12 +91,15 @@ export function scientific(value) {
   });
   return sci;
 }
+
 const text = (() => {
   const ansi = Util.coloring(true);
   return (...args) => ansi.text(...args);
 })();
+
 const verticalRectangles = ['█', '□', '\u2588\u258d', '□', '▯'];
 const largeSquares = ['■', '□'];
+
 export function num2color(num, bg, square = false) {
   let sym = square ? largeSquares : verticalRectangles;
   let bands = typeof num == 'number' ? GetColorBands(num) : num;
