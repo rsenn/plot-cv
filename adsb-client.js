@@ -109,19 +109,22 @@ async function main(...args) {
 
     let file = std.open(PhaseFile(phase), 'a');
 
-    let response = await fetch('https://opensky-network.org/api/states/all?lamin=45.8389&lomin=5.9962&lamax=47.8229&lomax=10.5226', {
-      sslCert: 'localhost.crt',
-      sslPrivateKey: 'localhost.key',
-      sslCA: '/etc/ssl/certs/ca-certificates.crt',
-      onMessage(req, res) {
-        console('URL:', req.url);
-        let buf;
-        for(let chunk of res) {
-          buf = buf ? concat(buf, chunk) : chunk;
+    let response = await fetch(
+      'https://opensky-network.org/api/states/all?lamin=45.8389&lomin=5.9962&lamax=47.8229&lomax=10.5226',
+      {
+        sslCert: 'localhost.crt',
+        sslPrivateKey: 'localhost.key',
+        sslCA: '/etc/ssl/certs/ca-certificates.crt',
+        onMessage(req, res) {
+          console('URL:', req.url);
+          let buf;
+          for(let chunk of res) {
+            buf = buf ? concat(buf, chunk) : chunk;
+          }
+          //let obj = (new Function('return '+body+';'))();
         }
-        //let obj = (new Function('return '+body+';'))();
       }
-    });
+    );
 
     function ProcessResponse(buf) {
       /*  let decoder = new TextDecoder('utf-8');

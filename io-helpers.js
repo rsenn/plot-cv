@@ -96,7 +96,7 @@ export function MapFile(filename) {
 }
 
 export function WriteFile(name, data, verbose = true) {
-  if(types.isIterable(data)) {
+  if(typeof data == 'object' && data !== null && Symbol.iterator in data) {
     let fd = fs.openSync(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, 0o644);
     let r = 0;
     for(let item of data) {
@@ -108,7 +108,6 @@ export function WriteFile(name, data, verbose = true) {
   }
   if(fs.existsSync(name)) fs.unlinkSync(name);
 
-  if(types.isIterable(data)) data = [...data];
   if(Array.isArray(data)) data = data.join('\n');
 
   if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
