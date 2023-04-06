@@ -5,8 +5,9 @@ import { kill, SIGUSR1 } from 'os';
 import { getOpt, showHelp } from 'util';
 import { basename, extname } from 'path';
 import { nodeTypes, Parser, Node, NodeList, NamedNodeMap, Element, Document, Attr, Text, TokenList, Factory, Serializer } from './quickjs/qjs-modules/lib/dom.js';
-import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
+//import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
 import { BBox, isBBox } from './lib/geom/bbox.js';
+import { Size, isSize } from './lib/geom/size.js';
 import { TreeWalker, TreeIterator } from 'tree_walker';
 
 let debug = 0;
@@ -26,8 +27,12 @@ Object.assign(globalThis, {
   Serializer,
   TreeIterator,
   BBox,
+  isBBox,
   ProcessPath,
-  getViewBox
+  getViewBox,
+  getWidthHeight,
+  Size,
+  isSize
 });
 
 Object.assign(globalThis, {
@@ -65,16 +70,42 @@ function* ProcessPath(d) {
   }
 }
 
-function getViewBox(svgElem) {
+function unitConvToMM(value) {
+  if(/pt\s*$/i.test(value)) return +value.replace(/\s*pt\s*$/gi, '') / 2.83464566929133858267;
+  if(/pc\s*$/i.test(value)) return +value.replace(/\s*pc\s*$/gi, '') * 4.23333;
+  if(/in\s*$/i.test(value)) return +value.replace(/\s*in\s*$/gi, '') * 25.4;
+  if(/in\s*$/i.test(value)) return +value.replace(/\s*in\s*$/gi, '') * 25.4;
+  if(/mil\s*$/i.test(value)) return +value.replace(/\s*mil\s*$/gi, '') * 0.0254;
+  if(/cm\s*$/i.test(value)) return +value.replace(/\s*cm\s*$/gi, '') * 10;
+  if(/px\s*$/i.test(value) || !isNaN(+value)) return +(value + '').replace(/\s*px\s*$/gi, '') / 3.77952755953127906261;
+}
+
+function unitConvToPx(value) {
+  return MillimeterToPixel(unitConvToMM(value));
+}
+
+function MillimeterToPixel(value) {
+  return value * 3.77952755953127906261;
+}
+
+function getViewBox(svgElem = svg) {
   if(svgElem.hasAttribute('viewBox')) {
     let viewBox = svgElem.getAttribute('viewBox');
     return BBox.fromString(viewBox + '');
   }
 
-  let width = svgElem.getAttribute('width');
-  let height = svgElem.getAttribute('height');
+  return new BBox(0, 0, ...getWidthHeight(svgElem));
+}
 
-  return new BBox(0, 0, +width, +height);
+function getWidthHeight(svgElem = svg) {
+  if(svgElem.hasAttribute('width') && svgElem.hasAttribute('height')) {
+    let width = svgElem.getAttribute('width');
+    let height = svgElem.getAttribute('height');
+
+    return new Size(unitConvToPx(width), unitConvToPx(height));
+  }
+
+  return new Size(...getViewBox(svgElem).size);
 }
 
 function main(...args) {
@@ -104,7 +135,7 @@ function main(...args) {
 
     let svg = (globalThis.svg = xml.querySelector('svg'));
 
-    let vbOld = getViewBox(svg);
+    let vbOld = getViewBox(svg) ?? getWidthHeight(svg);
 
     let vbNew = vbOld.inset(0);
 

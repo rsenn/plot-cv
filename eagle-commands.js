@@ -29,9 +29,7 @@ export function GetInstances(schematic, t = entries => entries) {
 }
 
 export function GetPositions(doc) {
-  let entries = { sch: d => GetInstances(d), brd: d => GetElements(d, e => e).map(([name, elem]) => [name, [elem]]) }[
-    doc.type
-  ](doc);
+  let entries = { sch: d => GetInstances(d), brd: d => GetElements(d, e => e).map(([name, elem]) => [name, [elem]]) }[doc.type](doc);
   return entries.map(([name, arr]) => [name, arr.map(({ x, y }) => new Point(x, y))]);
 }
 

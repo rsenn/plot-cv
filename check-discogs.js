@@ -86,19 +86,13 @@ async function main(...args) {
         what: what.join('\n'),
 
         [Symbol.inspect](depth, options) {
-          return (
-            '\n\t ' + [date, ago, who, what.join(' ')].reduce((line, field, i) => line + field.padEnd(columns[i]), '')
-          );
+          return '\n\t ' + [date, ago, who, what.join(' ')].reduce((line, field, i) => line + field.padEnd(columns[i]), '');
         }
       };
 
       return [date, ago, who, what.join('\n')].reduce((line, field, i) => line + field.padEnd(columns[i]), '');
     });
-    console.log(
-      `${parts.length} Nachrichten`,
-      console.config({ maxArrayLength: 2, compact: false, stringBreakNewline: true }),
-      parts
-    );
+    console.log(`${parts.length} Nachrichten`, console.config({ maxArrayLength: 2, compact: false, stringBreakNewline: true }), parts);
 
     WriteJSON(file + '.json', parts);
 
@@ -124,10 +118,8 @@ async function dl(orderId) {
       'sec-ch-ua-mobile': '?0',
       'sec-ch-ua-platform': '"Linux"',
       'upgrade-insecure-requests': '1',
-      'user-agent':
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.74 Safari/537.36',
-      accept:
-        'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+      'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.74 Safari/537.36',
+      accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
       'sec-fetch-site': 'same-origin',
       'sec-fetch-mode': 'navigate',
       'sec-fetch-user': '?1',

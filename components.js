@@ -102,20 +102,7 @@ export const MouseEvents = h => ({
   onMouseUp: h
 });
 
-export const Overlay = ({
-  className = 'overlay',
-  title,
-  tooltip,
-  active = true,
-  enable = trkl(true),
-  visible = trkl(true),
-  toggle,
-  state,
-  onPush,
-  text,
-  children,
-  ...props
-}) => {
+export const Overlay = ({ className = 'overlay', title, tooltip, active = true, enable = trkl(true), visible = trkl(true), toggle, state, onPush, text, children, ...props }) => {
   const [pushed, setPushed] = typeof state == 'function' ? [useTrkl(state), state] : useState(false);
   const enabled = useTrkl(enable);
   const events = enabled
@@ -281,8 +268,7 @@ export const FloatingPanel = ({ children, className, onSize, onHide, style = {},
     const tmpSize = onSize();
     noUpdate = true;
     // if(tmpSize.width != width || tmpSize.height != height)
-    if(isObject(tmpSize) && (tmpSize.width === undefined || tmpSize.height === undefined))
-      if(width !== undefined && height !== undefined) onSize({ width, height });
+    if(isObject(tmpSize) && (tmpSize.width === undefined || tmpSize.height === undefined)) if (width !== undefined && height !== undefined) onSize({ width, height });
     noUpdate = false;
   }
   const hasOnHide = typeof onHide == 'function' && typeof onHide.subscribe == 'function';
@@ -336,8 +322,7 @@ export const Item = ({ className = 'item', title, tooltip, label, icon, children
   return h(Overlay, { className, ...props }, h(Label, { text: icon }, label));
 };
 
-export const Icon = ({ className = 'icon', caption, image, ...props }) =>
-  h(Container, { className, ...props }, h('img', { src: image }));
+export const Icon = ({ className = 'icon', caption, image, ...props }) => h(Container, { className, ...props }, h('img', { src: image }));
 
 export const Progress = ({ className, percent, ...props }) =>
   h(
@@ -535,18 +520,7 @@ export const File = ({ label, name, description, i, key, className = 'file', onP
   );
 };
 
-export const Chooser = ({
-  className = 'list',
-  itemClass = 'item',
-  tooltip = () => '',
-  itemComponent = Overlay,
-  itemFilter,
-  items,
-  sortCompare,
-  onChange = () => {},
-  onPush = () => {},
-  ...props
-}) => {
+export const Chooser = ({ className = 'list', itemClass = 'item', tooltip = () => '', itemComponent = Overlay, itemFilter, items, sortCompare, onChange = () => {}, onPush = () => {}, ...props }) => {
   const [active, setActive] = useState(-1);
   const [filter, setFilter] = useState('*');
   const [list, setList] = /*useState(items);*/ trkl.is(items) ? useState(items()) : [items];
@@ -566,10 +540,7 @@ export const Chooser = ({
     setFilter(itemFilter());
     itemFilter.subscribe(value => setFilter(value));
   }
-  const list2re = list =>
-    list
-      .map(part => Util.tryCatch(() => new RegExp(part.trim().replace(/\./g, '\\.').replace(/\*/g, '.*'), 'i')))
-      .filter(r => r !== null);
+  const list2re = list => list.map(part => Util.tryCatch(() => new RegExp(part.trim().replace(/\./g, '\\.').replace(/\*/g, '.*'), 'i'))).filter(r => r !== null);
   const bar = html``;
   const preFilter = filter
     .replace(/\|/g, ' | ')
@@ -600,10 +571,7 @@ export const Chooser = ({
       return h(itemComponent, {
         key: i,
         i,
-        className:
-          typeof itemClass == 'function'
-            ? itemClass(value)
-            : classNames(itemClass || className + '-item', (name + '').replace(/.*\./, '')),
+        className: typeof itemClass == 'function' ? itemClass(value) : classNames(itemClass || className + '-item', (name + '').replace(/.*\./, '')),
         active: i == active,
         onPush: pushHandler(i),
         label: name.replace(new RegExp('.*/'), ''),
@@ -628,8 +596,7 @@ export const Chooser = ({
 const ToolTipFn = ({ name, data, ...item }) => {
   let tooltip = `name\t${name.replace(new RegExp('.*/', 'g'), '')}`;
 
-  for(let field of ['type', 'size', 'sha', 'path'])
-    if(item[field] !== undefined) tooltip += `\n${field}\t${item[field]}`;
+  for(let field of ['type', 'size', 'sha', 'path']) if(item[field] !== undefined) tooltip += `\n${field}\t${item[field]}`;
   if(typeof data == 'object' && data != null) {
     //console.log('data',data);
     data = Object.entries(data)
@@ -641,22 +608,7 @@ const ToolTipFn = ({ name, data, ...item }) => {
   return tooltip;
 };
 
-export const FileList = ({
-  files,
-  onChange,
-  onActive,
-  filter,
-  showSearch,
-  focusSearch,
-  currentInput,
-  changeInput,
-  tag = 'div',
-  listTag = 'div',
-  sortKey,
-  sortOrder,
-  makeSortCompare,
-  ...props
-}) => {
+export const FileList = ({ files, onChange, onActive, filter, showSearch, focusSearch, currentInput, changeInput, tag = 'div', listTag = 'div', sortKey, sortOrder, makeSortCompare, ...props }) => {
   const [active, setActive] = useState(true);
   const [items, setItems] = useState(files());
   const key = useTrkl(sortKey);
@@ -701,8 +653,7 @@ export const FileList = ({
   ]);
 };
 
-export const Panel = ({ className, children, ...props }) =>
-  h(Container, { className: classNames('panel', className), ...props }, children);
+export const Panel = ({ className, children, ...props }) => h(Container, { className: classNames('panel', className), ...props }, children);
 
 export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className }, children) =>
   enable
@@ -787,11 +738,7 @@ export const SizedAspectRatioBox = ({
       h(
         AspectRatioBox,
         {
-          outsideClassName: classNames(
-            'aspect-ratio-box-outside',
-            className && className + '-outside',
-            outsideClassName
-          ),
+          outsideClassName: classNames('aspect-ratio-box-outside', className && className + '-outside', outsideClassName),
           outsideProps,
           insideClassName: insideClassName || className,
           onClick,
@@ -802,16 +749,7 @@ export const SizedAspectRatioBox = ({
     ]
   );
 
-export const TransformedElement = ({
-  type = 'div',
-  id,
-  aspect,
-  listener,
-  style = { position: 'relative' },
-  className,
-  children = [],
-  ...props
-}) => {
+export const TransformedElement = ({ type = 'div', id, aspect, listener, style = { position: 'relative' }, className, children = [], ...props }) => {
   /*  const [transform, setTransform] = useState(new TransformationList());
   //console.debug('TransformedElement:', { aspect });
   //
@@ -838,19 +776,7 @@ export const TransformedElement = ({
   );
 };
 
-export const Slider = ({
-  min = 0,
-  max = 100,
-  value: initialValue = 0,
-  step = 1,
-  name = 'slider',
-  orient = 'horizontal',
-  label,
-  onChange = value => {},
-  style = {},
-  length,
-  ...props
-}) => {
+export const Slider = ({ min = 0, max = 100, value: initialValue = 0, step = 1, name = 'slider', orient = 'horizontal', label, onChange = value => {}, style = {}, length, ...props }) => {
   const [value, setValue] = useState(initialValue);
   const onInput = e => {
     const { target } = e;

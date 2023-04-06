@@ -21,9 +21,7 @@ function ReadSVG(file) {
 }
 
 function ReadGerber(file) {
-  let p = file.endsWith('TXT')
-    ? new GerberParser(5, undefined, 'drill')
-    : new GerberParser(undefined, undefined, 'gerber');
+  let p = file.endsWith('TXT') ? new GerberParser(5, undefined, 'drill') : new GerberParser(undefined, undefined, 'gerber');
   return p.parseSync(fs.readFileSync('tmp/Mind-Synchronizing-Generator-PinHdrPot-Cinch.GBL', 'utf-8'));
 }
 
