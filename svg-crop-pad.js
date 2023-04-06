@@ -1,12 +1,15 @@
+#!/usr/bin/env qjsm
 import { IfDebug, LogIfDebug, ReadFd, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 import { Console } from 'console';
 import { kill, SIGUSR1 } from 'os';
-import { getOpt } from 'util';
+import { getOpt, showHelp } from 'util';
 import { basename, extname } from 'path';
 import { nodeTypes, Parser, Node, NodeList, NamedNodeMap, Element, Document, Attr, Text, TokenList, Factory, Serializer } from './quickjs/qjs-modules/lib/dom.js';
 import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
 import { BBox, isBBox } from './lib/geom/bbox.js';
 import { TreeWalker, TreeIterator } from 'tree_walker';
+
+let debug = 0;
 
 Object.assign(globalThis, {
   nodeTypes,
@@ -77,17 +80,22 @@ function getViewBox(svgElem) {
 function main(...args) {
   globalThis.console = new Console({ depth: 2, customInspect: true, compact: false });
 
+  let opts;
   let params = getOpt(
-    {
+    (opts = {
+      help: [false, (_x, _y, opts) => showHelp(opts), 'h'],
+      debug: [false, () => ++debug, 'x'],
       size: [true, null, 's'],
       padding: [true, null, 'p'],
       '@': 'files'
-    },
+    }),
     args
   );
   let files = params['@'];
   let parser = (globalThis.parser = new Parser());
   let serializer = (globalThis.serializer = new Serializer());
+
+  if(files.length == 0) showHelp(opts, 1);
 
   for(let file of files) {
     console.log('Processing:', file);
