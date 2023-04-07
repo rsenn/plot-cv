@@ -83,7 +83,7 @@ function main() {
 
   function PositionProcessor(canvas = canvasElement, rect = canvasRect) {
     let m = PositionMatrix(canvas, rect);
-    return pos => new Point(...m.transform_point(new Point(pos))).round(1);
+    return pos => new Point(...m.transformPoint(new Point(pos))).round(1);
   }
 
   function ProcessPosition(pos) {

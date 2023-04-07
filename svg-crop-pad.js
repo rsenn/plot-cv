@@ -1,7 +1,7 @@
 #!/usr/bin/env qjsm
 import { Console } from 'console';
 import { kill, SIGUSR1 } from 'os';
-import { getOpt, showHelp, isObject } from 'util';
+import { getOpt, showHelp, isObject, mapWrapper } from 'util';
 import { basename, extname } from 'path';
 import { Entities, nodeTypes, Prototypes, Factory, Parser, Serializer, Interface, Node, NodeList, NamedNodeMap, Element, Document, Attr, Text, Comment, TokenList, CSSStyleDeclaration, GetType } from './quickjs/qjs-modules/lib/dom.js';
 //import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
@@ -13,6 +13,14 @@ import { Matrix, isMatrix, ImmutableMatrix } from './lib/geom/matrix.js';
 import { Point } from './lib/geom/point.js';
 import { PointList } from './lib/geom/pointList.js';
 import { SvgPath } from './lib/svg/path.js';
+import extendGenerator from 'extendGenerator';
+import extendArray from 'extendArray';
+import { basename } from './lib/path.js';
+import { read as readXML, write as writeXML } from 'xml';
+import * as xml from 'xml';
+
+extendGenerator();
+extendArray();
 
 function parseSVGPath(s) {
   let { length, segment } = {
@@ -51,8 +59,8 @@ function parseSVGPath(s) {
   return new PointList(
     r.commands
       .map(c => c.args)
-      .filter(a => a.length >= 2)
-      .map(a => new Point(...a))
+      .filter(a => a.length >= 2 && (!isNaN(+a[0]) || !isNaN(+a[1])))
+      .map(([x, y]) => new Point(x, y))
   );
 }
 
@@ -82,18 +90,29 @@ Object.assign(globalThis, {
   isBBox,
   Size,
   isSize,
-  parseSVGPath,
   Matrix,
   Point,
   PointList,
-  PositionedElements,
-  AllParents,
+  parseSVGPath,
+  NumericArgs,
   ParentPaths,
+  CumulativePaths,
+  AllParents,
   GetTransform,
   AllTransforms,
-  GetMatrix,
+  GetXY,
   GetPoints,
-  CumulativePaths
+  GetMatrix,
+  PositionedElements,
+  HasParent,
+  GetBounds,
+  ProcessPath,
+  unitConvToMM,
+  unitConv,
+  unitConvTo,
+  getViewBox,
+  getWidthHeight,
+  XML2String
 });
 
 Object.assign(globalThis, {
@@ -142,22 +161,74 @@ function AllTransforms(elem) {
   return t;
 }
 
+function GetXY(elem) {
+  return new Point(+elem.getAttribute('x'), +elem.getAttribute('y'));
+}
+
 function GetPoints(elem) {
   let t = [];
+
+  if(elem.tagName == 'symbol') return GetPoints(elem.firstElementChild);
+
+  if(elem.hasAttribute('xlink:href')) {
+    let e, points, xy, m, id;
+    id = elem.getAttribute('xlink:href');
+    xy = GetXY(elem);
+    m = new Matrix().translate(...xy);
+
+    if((e = Node.document(elem).querySelector(id))) return GetPoints(e).transform(m);
+  }
+
   if(elem.hasAttribute('d')) return parseSVGPath(elem.getAttribute('d'));
-  if(elem.hasAttribute('x') && elem.hasAttribute('y'))
-    return new PointList([new Point(+elem.getAttribute('x'), +elem.getAttribute('y'))]);
-  throw new Error(`Failed getting point data for element ${elem}`);
+  if(elem.hasAttribute('x') && elem.hasAttribute('y')) return new PointList([GetXY(elem)]);
+
+  throw new Error(`Failed getting point data for element ${XML2String(elem)}`);
 }
 
 function GetMatrix(elem) {
   return Matrix.multiply(...AllTransforms(elem));
 }
 
-function* PositionedElements(svgElem = svg) {
-  for(let [value, path] of deep.iterate(Node.raw(svg), e => ['d', 'x', 'y'].some(n => e.attributes[n]))) {
-    yield deref(path)(svg);
+function* PositionedElements(svgElem = svg, skip) {
+  skip ??= (() => {
+    let defs = svgElem.querySelector('defs');
+    let defsPath = Node.path(defs).slice(Node.path(svgElem).length);
+    return (v, p) => p.slice(0, defsPath.length).equal(defsPath);
+  })();
+
+  for(let [value, path] of deep.iterate(Node.raw(svgElem), e => ['d', 'x', 'y'].some(n => e.attributes[n]))) {
+    if(skip(value, path)) continue;
+    yield deref(path)(svgElem);
   }
+}
+
+function HasParent(elem, other) {
+  let e = Node.path(elem);
+  let o = Node.path(other);
+
+  for(let i = 0; i < o.length; i++) {
+    if(o[i] != e[i]) return false;
+  }
+  return true;
+}
+
+let positioned = (globalThis.positioned = new Set());
+let positionedProps = (globalThis.positionedProps = mapWrapper(new WeakMap()));
+
+function GetBounds(svgElem = svg) {
+  let bb = new BBox();
+
+  for(let element of PositionedElements(svgElem)) {
+    let matrix = GetMatrix(element);
+    let points = GetPoints(element);
+
+    positioned.add(element);
+    positionedProps.set(element, { matrix, points });
+
+    for(let point of points.clone().transform(matrix)) bb.update(point, 0, element);
+  }
+
+  return bb;
 }
 
 function* ProcessPath(d) {
@@ -219,6 +290,10 @@ function getViewBox(svgElem = svg) {
   //return new BBox(0, 0, ...getWidthHeight(svgElem));
 }
 
+function XML2String(elem) {
+  return new Serializer().serializeToString(elem);
+}
+
 function getWidthHeight(svgElem = svg, t = a => a) {
   if(svgElem.hasAttribute('width') && svgElem.hasAttribute('height')) {
     let width = svgElem.getAttribute('width');
@@ -247,7 +322,7 @@ function main(...args) {
     getWidthHeight
   });
 
-  globalThis.console = new Console(std.err, { depth: 2, customInspect: true, compact: false });
+  //  globalThis.console = new Console(std.err, { depth: 2, customInspect: false, compact: false, protoChain: true });
 
   let opts;
   let params = (globalThis.params = getOpt(
@@ -299,9 +374,7 @@ function main(...args) {
         let conv = writeUnits.map(unitConv);
         console.log('writeUnits', writeUnits);
         console.log('conv', conv[0](1), conv[1](1));
-        let pad = (globalThis.pad = [...NumericArgs(params.padding)]).map(
-          (a, i) => (i & 1 ? xfactor : yfactor) * conv[(i & 1) ^ 1](a)
-        );
+        let pad = (globalThis.pad = [...NumericArgs(params.padding)]).map((a, i) => (i & 1 ? xfactor : yfactor) * conv[(i & 1) ^ 1](a));
         console.log('pad', pad);
 
         viewBox = globalThis.viewBox = viewBox.outset(...pad);

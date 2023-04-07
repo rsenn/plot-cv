@@ -6529,7 +6529,7 @@ Point.prototype.inside = function(rect) {
 };
 Point.prototype.transform = function(m, round = true) {
   if(Util.isObject(m) && typeof m.toMatrix == 'function') m = m.toMatrix();
-  //if(Util.isObject(m) && typeof m.transform_point == 'function') return m.transform_point(this);
+  //if(Util.isObject(m) && typeof m.transformPoint == 'function') return m.transformPoint(this);
 
   const x = m[0] * this.x + m[1] * this.y + m[2];
   const y = m[3] * this.x + m[4] * this.y + m[5];
@@ -8050,7 +8050,7 @@ Rect.prototype.bbox = function() {
 
 Rect.prototype.transform = function(m) {
   if(Util.isObject(m) && typeof m.toMatrix == 'function') m = m.toMatrix();
-  Matrix.prototype.transform_rect.call(m, this);
+  Matrix.prototype.transformRect.call(m, this);
 
   // if(round) Rect.prototype.round.call(this, 1e-13, 13);
   return this;
@@ -8131,13 +8131,13 @@ Rect.bind = (...args) => {
   return proxy;
 };
 
-Rect.scale = Util.curry((rect, sx, sy) => Matrix.scale(sx, sy).transform_rect(rect));
+Rect.scale = Util.curry((rect, sx, sy) => Matrix.scale(sx, sy).transformRect(rect));
 Rect.resize = Util.curry((rect, width, height) => {
   rect.width = width;
   rect.height = height;
   return rect;
 });
-Rect.translate = Util.curry((rect, x, y) => Matrix.translate(f, f).transform_rect(rect));
+Rect.translate = Util.curry((rect, x, y) => Matrix.translate(f, f).transformRect(rect));
 
 for(let f of ['scale', 'resize', 'translate']) {
   Rect.prototype[f] = function(...args) {

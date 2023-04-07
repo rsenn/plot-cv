@@ -5740,7 +5740,7 @@
 
   Point.prototype.transform = function(m) {
     if(isObject(m) && typeof m.toMatrix == 'function') m = m.toMatrix();
-    if(isObject(m) && typeof m.transform_point == 'function') return m.transform_point(this);
+    if(isObject(m) && typeof m.transformPoint == 'function') return m.transformPoint(this);
     const x = m[0] * this.x + m[1] * this.y + m[2];
     const y = m[3] * this.x + m[4] * this.y + m[5];
     this.x = x;
@@ -6767,7 +6767,7 @@
 
   Rect.prototype.transform = function(m) {
     if(isObject(m) && typeof m.toMatrix == 'function') m = m.toMatrix();
-    Matrix.prototype.transform_rect.call(m, this);
+    Matrix.prototype.transformRect.call(m, this);
     return this;
   };
 
@@ -6837,14 +6837,14 @@
     let proxy = new Rect(pt, sz);
     return proxy;
   };
-  Rect.scale = Util.curry((rect, sx, sy) => Matrix.scale(sx, sy).transform_rect(rect));
+  Rect.scale = Util.curry((rect, sx, sy) => Matrix.scale(sx, sy).transformRect(rect));
 
   Rect.resize = Util.curry((rect, width, height) => {
     rect.width = width;
     rect.height = height;
     return rect;
   });
-  Rect.translate = Util.curry((rect, x, y) => Matrix.translate(f, f).transform_rect(rect));
+  Rect.translate = Util.curry((rect, x, y) => Matrix.translate(f, f).transformRect(rect));
 
   for(let f of ['scale', 'resize', 'translate']) {
     Rect.prototype.f = function(...args) {
@@ -7225,8 +7225,8 @@
   PointList.prototype.transform = function(m) {
     if(isObject(m) && typeof m.toMatrix == 'function') m = m.toMatrix();
 
-    if(isObject(m) && typeof m.transform_point == 'function') {
-      this.forEach(p => m.transform_point(p));
+    if(isObject(m) && typeof m.transformPoint == 'function') {
+      this.forEach(p => m.transformPoint(p));
       return this;
     }
 
@@ -7684,7 +7684,7 @@
     return this;
   };
 
-  Matrix.prototype.set_row = function(...args) {
+  Matrix.prototype.setRow = function(...args) {
     const start = args.shift() * 3;
     const end = Math.max(3, args.length);
 
@@ -7785,7 +7785,7 @@
     ]);
   };
 
-  Matrix.prototype.scalar_product = function(f) {
+  Matrix.prototype.scalarProduct = function(f) {
     return new Matrix({
       xx: this[0] * f,
       xy: this[1] * f,
@@ -7842,7 +7842,7 @@
     return Array.prototype.every.call((n, i) => other.i == n);
   };
 
-  Matrix.prototype.transform_distance = function(d) {
+  Matrix.prototype.transformDistance = function(d) {
     const k = 'x' in d && 'y' in d ? ['x', 'y'] : 'width' in d && 'height' in d ? ['width', 'height'] : [0, 1];
     const x = this[0] * d[k[0]] + this[2] * d[k[1]];
     const y = this[1] * d[k[0]] + this[3] * d[k[1]];
@@ -7851,13 +7851,13 @@
     return d;
   };
 
-  Matrix.prototype.transform_xy = function(x, y) {
+  Matrix.prototype.transformXY = function(x, y) {
     const m0 = this.row(0);
     const m1 = this.row(1);
     return [m0[0] * x + m0[1] * y + m0[2], m1[0] * x + m1[1] * y + m0[2]];
   };
 
-  Matrix.prototype.transform_point = function(p) {
+  Matrix.prototype.transformPoint = function(p) {
     const k = 'x' in p && 'y' in p ? ['x', 'y'] : [0, 1];
     const m0 = this.row(0);
     const m1 = this.row(1);
@@ -7872,22 +7872,22 @@
     const matrix = Object.freeze(this.clone());
 
     return function* (list) {
-      const method = Matrix.prototype['transform_' + what] || (typeof what == 'function' && what) || Matrix.prototype.transform_xy;
+      const method = Matrix.prototype['transform_' + what] || (typeof what == 'function' && what) || Matrix.prototype.transformXY;
       for(let item of list) yield item instanceof Array ? method.apply(matrix, [...item]) : method.call(matrix, { ...item });
     };
   };
 
-  Matrix.prototype.transform_points = function* (list) {
-    for(let i = 0; i < list.length; i++) yield Matrix.prototype.transform_point.call(this, { ...list.i });
+  Matrix.prototype.transformPoints = function* (list) {
+    for(let i = 0; i < list.length; i++) yield Matrix.prototype.transformPoint.call(this, { ...list.i });
   };
 
-  Matrix.prototype.transform_wh = function(width, height) {
+  Matrix.prototype.transformWH = function(width, height) {
     const w = this[0] * width + this[1] * height;
     const h = this[3] * width + this[4] * height;
     return [w, h];
   };
 
-  Matrix.prototype.transform_size = function(s) {
+  Matrix.prototype.transformSize = function(s) {
     const w = this[0] * s.width + this[1] * s.height;
     const h = this[3] * s.width + this[4] * s.height;
     s.width = w;
@@ -7895,14 +7895,14 @@
     return s;
   };
 
-  Matrix.prototype.transform_xywh = function(x, y, width, height) {
-    return [...Matrix.prototype.transform_xy.call(this, x, y), ...Matrix.prototype.transform_wh.call(this, width, height)];
+  Matrix.prototype.transformXYWH = function(x, y, width, height) {
+    return [...Matrix.prototype.transformXY.call(this, x, y), ...Matrix.prototype.transformWH.call(this, width, height)];
   };
 
-  Matrix.prototype.transform_rect = function(rect) {
+  Matrix.prototype.transformRect = function(rect) {
     let { x1, y1, x2, y2 } = rect;
-    [x1, y1] = Matrix.prototype.transform_xy.call(this, x1, y1);
-    [x2, y2] = Matrix.prototype.transform_xy.call(this, x2, y2);
+    [x1, y1] = Matrix.prototype.transformXY.call(this, x1, y1);
+    [x2, y2] = Matrix.prototype.transformXY.call(this, x2, y2);
     let xrange = [x1, x2];
     let yrange = [y1, y2];
     [x1, x2] = [Math.min, Math.max].map(fn => fn(...xrange));
@@ -7911,29 +7911,29 @@
     return rect;
   };
 
-  Matrix.prototype.point_transformer = function() {
+  Matrix.prototype.pointTransformer = function() {
     const matrix = this;
-    return point => matrix.transform_point(point);
+    return point => matrix.transformPoint(point);
   };
 
   Matrix.prototype.transformer = function() {
     const matrix = this;
     return {
-      point: point => matrix.transform_point(point),
-      xy: (x, y) => matrix.transform_xy(x, y),
-      size: s => matrix.transform_size(s),
-      wh: (w, h) => matrix.transform_wh(w, h),
-      rect: rect => matrix.transform_rect(rect),
-      points: list => matrix.transform_points(list),
-      distance: d => matrix.transform_distance(d)
+      point: point => matrix.transformPoint(point),
+      xy: (x, y) => matrix.transformXY(x, y),
+      size: s => matrix.transformSize(s),
+      wh: (w, h) => matrix.transformWH(w, h),
+      rect: rect => matrix.transformRect(rect),
+      points: list => matrix.transformPoints(list),
+      distance: d => matrix.transformDistance(d)
     };
   };
 
-  Matrix.prototype.scale_sign = function() {
+  Matrix.prototype.scaleSign = function() {
     return this[0] * this[4] < 0 || this[1] * this[3] > 0 ? -1 : 1;
   };
 
-  Matrix.prototype.affine_transform = function(a, b) {
+  Matrix.prototype.affineTransform = function(a, b) {
     let xx, yx, xy, yy, tx, ty;
     if(typeof a == 'object' && a.toPoints !== undefined) a = a.toPoints();
     if(typeof b == 'object' && b.toPoints !== undefined) b = b.toPoints();
@@ -7955,15 +7955,15 @@
     ty =
       (a[0].x * a[1].y * b[2].y + a[1].x * a[2].y * b[0].y + a[2].x * a[0].y * b[1].y - a[0].x * a[2].y * b[1].y - a[1].x * a[0].y * b[2].y - a[2].x * a[1].y * b[0].y) /
       (a[0].x * a[1].y + a[1].x * a[2].y + a[2].x * a[0].y - a[0].x * a[2].y - a[1].x * a[0].y - a[2].x * a[1].y);
-    this.set_row.call(this, 0, xx, xy, tx);
-    this.set_row.call(this, 1, yx, yy, ty);
-    this.set_row.call(this, 2, 0, 0, 1);
+    this.setRow.call(this, 0, xx, xy, tx);
+    this.setRow.call(this, 1, yx, yy, ty);
+    this.setRow.call(this, 2, 0, 0, 1);
     return this;
   };
 
   Matrix.getAffineTransform = (a, b) => {
     let matrix = new Matrix();
-    matrix.affine_transform(a, b);
+    matrix.affineTransform(a, b);
     return matrix;
   };
 
@@ -7989,7 +7989,7 @@
 
     //if(useLU) {
 
-    let sign = Matrix.prototype.scale_sign.call(this);
+    let sign = Matrix.prototype.scaleSign.call(this);
 
     rotation = (Math.atan2(this[3], this[4]) + Math.atan2(-sign * this[1], sign * this[0])) / 2;
     const cos = Math.cos(rotation),
@@ -8030,31 +8030,31 @@
     };
   };
 
-  Matrix.prototype.init_identity = function() {
+  Matrix.prototype.initIdentity = function() {
     return Matrix.prototype.init.call(this, 1, 0, 0, 0, 1, 0, 0, 0, 1);
   };
 
-  Matrix.prototype.is_identity = function() {
+  Matrix.prototype.isIdentity = function() {
     return Matrix.prototype.equals.call(this, [1, 0, 0, 0, 1, 0, 0, 0, 1]);
   };
 
-  Matrix.prototype.init_translate = function(tx, ty) {
+  Matrix.prototype.initTranslate = function(tx, ty) {
     return Matrix.prototype.init.call(this, 1, 0, tx, 0, 1, ty);
   };
 
-  Matrix.prototype.init_scale = function(sx, sy) {
+  Matrix.prototype.initScale = function(sx, sy) {
     if(sy === undefined) sy = sx;
     return Matrix.prototype.init.call(this, sx, 0, 0, 0, sy, 0);
   };
 
-  Matrix.prototype.init_rotate = function(angle, deg = false) {
+  Matrix.prototype.initRotate = function(angle, deg = false) {
     const rad = deg ? Matrix.deg2rad(angle) : angle;
     const s = Math.sin(rad);
     const c = Math.cos(rad);
     return Matrix.prototype.init.call(this, c, -s, 0, s, c, 0);
   };
 
-  Matrix.prototype.init_skew = function(x, y, deg = false) {
+  Matrix.prototype.initSkew = function(x, y, deg = false) {
     const ax = Math.tan(deg ? Matrix.deg2rad(x) : x);
     const ay = Math.tan(deg ? Matrix.deg2rad(y) : y);
     return Matrix.prototype.init.call(this, 1, ax, 0, ay, 1, 0);
@@ -8072,17 +8072,17 @@
     'determinant',
     'invert',
     'multiply',
-    'scalar_product',
+    'scalarProduct',
     'toSource',
     'toString',
     'toSVG',
     'equals',
-    'init_identity',
-    'is_identity',
-    'init_translate',
-    'init_scale',
-    'init_rotate',
-    'scale_sign',
+    'initIdentity',
+    'isIdentity',
+    'initTranslate',
+    'initScale',
+    'initRotate',
+    'scaleSign',
     'decompose',
     'transformer'
   ]) {
@@ -8103,7 +8103,7 @@
     };
   }
 
-  for(let name of ['transform_distance', 'transform_xy', 'transform_point', 'transform_points', 'transform_wh', 'transform_size', 'transform_rect', 'affine_transform']) {
+  for(let name of ['transformDistance', 'transformXY', 'transformPoint', 'transformPoints', 'transformWH', 'transformSize', 'transformRect', 'affineTransform']) {
     const method = Matrix.prototype.name;
 
     if(method.length == 2) {
@@ -8161,8 +8161,8 @@
 
   Circle.prototype.transform = function(m) {
     if(isObject(m) && typeof m.toMatrix == 'function') m = m.toMatrix();
-    Matrix.prototype.transform_point.call(m, this);
-    this.radius = Matrix.prototype.transform_wh.call(m, this.radius, this.radius)[0];
+    Matrix.prototype.transformPoint.call(m, this);
+    this.radius = Matrix.prototype.transformWH.call(m, this.radius, this.radius)[0];
     return this;
   };
   Util.defineInspect(Circle.prototype, 'x', 'y', 'radius');
