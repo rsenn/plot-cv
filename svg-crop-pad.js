@@ -1,7 +1,7 @@
 #!/usr/bin/env qjsm
 import { Console } from 'console';
 import { kill, SIGUSR1 } from 'os';
-import { getOpt, showHelp, isObject, mapWrapper, startInteractive,define } from 'util';
+import { getOpt, showHelp, isObject, mapWrapper, startInteractive, define } from 'util';
 import { basename, extname } from 'path';
 import { Entities, nodeTypes, Prototypes, Factory, Parser, Serializer, Interface, Node, NodeList, NamedNodeMap, Element, Document, Attr, Text, Comment, TokenList, CSSStyleDeclaration, GetType } from './quickjs/qjs-modules/lib/dom.js';
 //import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
@@ -92,9 +92,7 @@ function pathToPoints(path) {
   for(let i = 0; i < length; i++) {
     let pt,
       cmd = splitted[i];
-const MakePoint=(x,y) => Object.assign(new Point(x,y),{cmd});
-
-
+    const MakePoint = (x, y) => Object.assign(new Point(x, y), { cmd });
 
     switch (cmd[0].toLowerCase()) {
       case 'z':
@@ -111,7 +109,7 @@ const MakePoint=(x,y) => Object.assign(new Point(x,y),{cmd});
         break;
       default:
         pt = MakePoint(...cmd.slice(-2).map(n => +n));
-      if(cmd[0].toLowerCase()=='m') lastmove=[...pt];
+        if(cmd[0].toLowerCase() == 'm') lastmove = [...pt];
         break;
     }
 
@@ -198,7 +196,7 @@ Object.assign(globalThis, {
     filename ??= basename(globalThis.file, extname(globalThis.file)) + '.out.svg';
     const str = serializer.serializeToString(document);
 
-    let ret = WriteFile(filename, str);
+    let ret = WriteFile(filename, str, { mode: 0o755 });
     console.log(`'${filename}' written.`);
     return ret;
   }
@@ -271,9 +269,8 @@ function GetPoints(elem) {
 
       return pa;*/
     } catch(e) {
-console.log('ERROR',e.message+'\n'+e.stack);
-return null;
-
+      console.log('ERROR', e.message + '\n' + e.stack);
+      return null;
     }
 
     let svgP = parseSVGPath(elem.getAttribute('d'));
@@ -534,7 +531,7 @@ function main(...args) {
       svg.setAttribute('width', w + writeUnits[0]);
       svg.setAttribute('height', h + writeUnits[1]);
 
-      WriteFile(basename(file, '.svg') + '.out.svg', serializer.serializeToString(document));
+      WriteFile(basename(file, '.svg') + '.out.svg', serializer.serializeToString(document), { mode: 0o755 });
     }
 
     if(params.interactive) kill(process.pid, SIGUSR1);
