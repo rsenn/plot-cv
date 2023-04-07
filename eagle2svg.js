@@ -52,11 +52,7 @@ function render(doc, filename) {
     console.log('ERROR:', e);
     console.log('STACK:', e.stack);
   }
-  console.log('renderer.palette', renderer.palette);
-  //console.log('str', str);
-
-  console.log('render', { svg, str });
-  let xml = fromXML(str);
+    let xml = fromXML(str);
 
   filename ??=
     path.basename(doc.filename, '.' + doc.type) +
@@ -74,10 +70,9 @@ function render(doc, filename) {
 
 function main(...args) {
   globalThis.console = new Console({
-    inspectOptions: { maxArrayLength: 100, colors: true, depth: 2, compact: 1, customInspect: true }
+    inspectOptions: { maxArrayLength: 100, colors: true, depth: 2, compact: 0, customInspect: true }
   });
-  console.log('args', args);
-
+ 
   let params = getOpt(
     {
       debug: [false, value => (debugFlag = value), 'x'],
@@ -86,11 +81,10 @@ function main(...args) {
     },
     args
   );
+  
   for(let arg of args) {
     let doc = EagleDocument.open(arg, { readFileSync });
-
-    console.log('doc', doc);
-
+ 
     render(doc);
   }
 }
