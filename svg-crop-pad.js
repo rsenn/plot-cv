@@ -17,7 +17,7 @@ import { SvgPath } from './lib/svg/path.js';
 import extendGenerator from 'extendGenerator';
 import extendArray from 'extendArray';
 import { read as readXML, write as writeXML } from 'xml';
-import * as xml from 'xml';
+import * as deep from 'deep';
 
 extendGenerator();
 extendArray();
@@ -256,7 +256,7 @@ function GetPoints(elem) {
     xy = GetXY(elem);
     m = new Matrix().translate(...xy);
 
-    if((e = Node.document(elem).querySelector(id))) return GetPoints(e).transform(m);
+    if((e = Node.document(elem).querySelector(id))) return GetPoints(e).map(p => p.transform(m));
   }
 
   if(elem.hasAttribute('d')) {
@@ -297,6 +297,16 @@ function GetMatrix(elem) {
   return Matrix.multiply(...AllTransforms(elem));
 }
 
+function IsClipPath(elem) {
+  let p = [...AllParents(elem)];
+  console.log(
+    'IsClipPath',
+    p.map(e => e.tagName)
+  );
+
+  return p.some(e => e.tagName == 'clipPath');
+}
+
 function* PositionedElements(svgElem = svg, skip) {
   skip ??= (() => {
     let defs = svgElem.querySelector('defs');
@@ -304,9 +314,15 @@ function* PositionedElements(svgElem = svg, skip) {
     return (v, p) => p.slice(0, defsPath.length).equal(defsPath);
   })();
 
-  for(let [value, path] of deep.iterate(Node.raw(svgElem), e => ['d', 'x', 'y'].some(n => e.attributes[n]))) {
+  for(let [value, path] of deep.iterate(Node.raw(svgElem), e => ['d', 'x', 'y'].some(n => n in e.attributes))) {
     if(skip(value, path)) continue;
-    yield deref(path)(svgElem);
+    let elem = deref(path)(svgElem);
+
+    /*if(IsClipPath(elem)) {
+      console.log('PositionedElements skipping', elem);
+      continue;
+    }*/
+    yield elem;
   }
 }
 
@@ -459,6 +475,7 @@ function main(...args) {
       unit: [true, a => (unit = a), 'u'],
       precision: [true, a => (precision = +a), 'a'],
       'print-size': [false, null, 'P'],
+      bounds: [false, null, 'b'],
       size: [true, a => (size = unitConvToMM(a)), 's'],
       interactive: [false, null, 'y'],
       padding: [true, null, 'p'],
@@ -495,6 +512,9 @@ function main(...args) {
     if(params['print-size']) {
       size.units = ['', ''];
       print(file, size.toString({ separator: 'x' }));
+    } else if(params['bounds']) {
+      let bb = (globalThis.bb = GetBounds(svg));
+      print(file, bb);
     } else {
       let newViewBox,
         viewBox = (globalThis.viewBox = viewBoxOld.inset(0));
