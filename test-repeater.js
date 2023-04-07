@@ -68,11 +68,7 @@ function main() {
 
     await loop;
 
-    let x = [
-      new Repeater(genRepFunc('x', 20, 100 * scale)),
-      new Repeater(genRepFunc('y', 20, 100 * scale)),
-      new Repeater(genRepFunc('z', 20, 100 * scale))
-    ];
+    let x = [new Repeater(genRepFunc('x', 20, 100 * scale)), new Repeater(genRepFunc('y', 20, 100 * scale)), new Repeater(genRepFunc('z', 20, 100 * scale))];
     let latest = Repeater.latest(x);
 
     await (async () => {

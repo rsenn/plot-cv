@@ -27,10 +27,10 @@ let dst = new PointList([
   { x: 0, y: 0 }
 ]);
 
-m.affine_transform(src, dst);
+m.affineTransform(src, dst);
 let affine = m.decompose(false);
 
 console.log(
-  'affine_transform = ',
+  'affineTransform = ',
   inspect(affine, (v, k) => typeof v != 'function' && k != 'toString')
 );

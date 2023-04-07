@@ -5,6 +5,10 @@
       "shell_cmd": "(  node --experimental-modules '${file}') 2>&1",
     },
     {
+      "name": "Run with qjsm",
+      "shell_cmd": "(qjsm '${file}') 2>&1",
+    },
+    {
       "name": "Run with NVM Node.JS 14.x",
       "shell_cmd": "(. ~/.nvm/nvm.sh; nvm use 14;  set -x;  node --experimental-modules '${file}') 2>&1",
     },
@@ -81,8 +85,7 @@
     "sublimegdb_exec_cmd": "-exec-run",
     "sublimegdb_i_know_how_to_use_gdb_thank_you_very_much": true,
     "sublimegdb_workingdir": "${folder:${project_path:${file}}}",
-    "tab_size": 2,
-    /*"debug.configurations": []*/
+    "tab_size": 2
   },
   "debugger_configurations": [],
 }

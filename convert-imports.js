@@ -1,3 +1,4 @@
+#!/usr/bin/env qjsm
 import { ECMAScriptParser, Printer, PathReplacer, ImportDeclaration, ImportSpecifier, Identifier, Literal, ExportDefaultDeclaration, ESNode } from './lib/ecmascript.js';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
 import deep from 'deep';
@@ -72,9 +73,7 @@ function main(...args) {
 
       switch (target) {
         case 'import': {
-          let node = new ImportDeclaration(
-            names.map(([local, imported]) => new ImportSpecifier(new Identifier(imported), new Identifier(local)))
-          );
+          let node = new ImportDeclaration(names.map(([local, imported]) => new ImportSpecifier(new Identifier(imported), new Identifier(local))));
           let x = deep.get(ast, path);
           let y = deep.get(ast, path.slice(0, -1));
           let z = deep.get(ast, path.slice(0, -2));

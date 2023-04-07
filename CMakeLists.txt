@@ -44,7 +44,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/OpenCV.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/quickjs/cmake/FindQuickJS.cmake)
 
 option(BUILD_QUICKJS "Build quickjs library" ON)
-
+option(BUILD_QJS_OPENCV "Build qjs-opencv module" ON)
 if(PNG_LIBRARIES)
   message(STATUS "Found libpng library: ${PNG_LIBRARIES}")
 endif(PNG_LIBRARIES)
@@ -117,29 +117,33 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/opencv ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
 
-foreach(CXX_STANDARD c++17 c++14 c++11)
-  string(REPLACE "c++" "CPLUSPLUS" CXX_STANDARD_NUM "${CXX_STANDARD}")
-  set(CMAKE_REQUIRED_QUIET TRUE)
-  check_cxx_compiler_flag("-std=${CXX_STANDARD}"
-                          CXX_STANDARD_${CXX_STANDARD_NUM})
-  set(CMAKE_REQUIRED_QUIET FALSE)
-  if(CXX_STANDARD_${CXX_STANDARD_NUM})
-    string(REGEX REPLACE "\\+" "x" CXX_STANDARD_NAME "${CXX_STANDARD_VALUE}")
-    string(TOUPPER "${CXX_STANDARD_NAME}" CXX_STANDARD_NAME)
-    string(REGEX REPLACE "CXX" "" CXX_STANDARD_VERSION "${CXX_STANDARD_NAME}")
+if(NOT CXX_STANDARD_FLAG)
+	foreach(CXX_STANDARD c++17 c++14 c++11)
+	  string(REPLACE "c++" "CPLUSPLUS" CXX_STANDARD_NUM "${CXX_STANDARD}")
+	  set(CMAKE_REQUIRED_QUIET TRUE)
+	  check_cxx_compiler_flag("-std=${CXX_STANDARD}"
+				  CXX_STANDARD_${CXX_STANDARD_NUM})
+	  set(CMAKE_REQUIRED_QUIET FALSE)
+	  if(CXX_STANDARD_${CXX_STANDARD_NUM})
+	    string(REGEX REPLACE "\\+" "x" CXX_STANDARD_NAME "${CXX_STANDARD_VALUE}")
+	    string(TOUPPER "${CXX_STANDARD_NAME}" CXX_STANDARD_NAME)
+	    string(REGEX REPLACE "CXX" "" CXX_STANDARD_VERSION "${CXX_STANDARD_NAME}")
 
-    if(NOT CXX_STANDARD_NAME STREQUAL "")
-      add_definitions(-D"${CXX_STANDARD_NAME}")
-    endif(NOT CXX_STANDARD_NAME STREQUAL "")
-    # add_definitions(-DCXX_STANDARD=${CXX_STANDARD_VERSION})
+	    if(NOT CXX_STANDARD_NAME STREQUAL "")
+	      add_definitions(-D"${CXX_STANDARD_NAME}")
+	    endif(NOT CXX_STANDARD_NAME STREQUAL "")
+	    # add_definitions(-DCXX_STANDARD=${CXX_STANDARD_VERSION})
 
-    set(CXX_STANDARD_VALUE "${CXX_STANDARD}" CACHE STRING "C++ standard" FORCE)
-    set(CXX_STANDARD_FLAG "-std=${CXX_STANDARD}"
-        CACHE STRING "C++ standard argument" FORCE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_STANDARD_FLAG}")
-    break()
-  endif(CXX_STANDARD_${CXX_STANDARD_NUM})
-endforeach()
+	    set(CXX_STANDARD_VALUE "${CXX_STANDARD}" CACHE STRING "C++ standard" FORCE)
+	    set(CXX_STANDARD_FLAG "-std=${CXX_STANDARD}"
+		CACHE STRING "C++ standard argument" FORCE)
+	    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_STANDARD_FLAG}")
+	    break()
+	  endif(CXX_STANDARD_${CXX_STANDARD_NUM})
+	endforeach()
+else(NOT CXX_STANDARD_FLAG)
+	string(REPLACE "-std=" "" CXX_STANDARD_VALUE "${CXX_STANDARD_FLAG}")
+endif(NOT CXX_STANDARD_FLAG)
 
 message("C++ standard: ${CXX_STANDARD_VALUE}")
 
@@ -198,8 +202,8 @@ endif(F_OPT_PIC)
 # if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 
 # option(USE_EFENCE "Enable electric fence" OFF)
-set(DEBUG_OUTPUT TRUE CACHE BOOL "Debug output" FORCE)
-set(DEBUG_MAT FALSE CACHE BOOL "Debug cv::Mat" FORCE)
+#set(DEBUG_OUTPUT TRUE CACHE BOOL "Debug output" FORCE)
+#set(DEBUG_MAT FALSE CACHE BOOL "Debug cv::Mat" FORCE)
 list(APPEND PLOTCV_DEFS DEBUG=1)
 
 # add_definitions(-DDEBUG=1)
@@ -396,7 +400,9 @@ add_executable(test-dlfcn test-dlfcn.c)
 target_link_libraries(test-dlfcn dl)
 ]]
 
-add_subdirectory(qjs-opencv "${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv")
+if(BUILD_QJS_OPENCV)
+  add_subdirectory(qjs-opencv "${CMAKE_CURRENT_BINARY_DIR}/qjs-opencv")
+endif(BUILD_QJS_OPENCV)
 
 option(BUILD_QUICKJS "Build QuickJS" ON)
 if(BUILD_QUICKJS)
@@ -420,3 +426,12 @@ add_custom_target(
   WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
   BYPRODUCTS "${CMAKE_INSTALL_DIR}"
   COMMENT "Install into directory")
+
+install(FILES 
+       eagle2gerber.js xml2react.js
+       convert-imports.js create-tamper.js cv-shell.js eagle2svg.js eagle-shell.js extract-structs.js takephoto.js xml2js.js
+        DESTINATION bin
+        PERMISSIONS 
+        OWNER_READ OWNER_WRITE OWNER_EXECUTE
+        GROUP_READ GROUP_EXECUTE
+        WORLD_READ WORLD_EXECUTE)

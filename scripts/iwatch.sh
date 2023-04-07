@@ -19,6 +19,7 @@ iwatch() {
     case "$1" in
       -j*) NJOBS=${1#-j}; shift ;; -j) NJOBS=${2}; shift 2 ;;
       -t*) TOOL=${1#-t}; shift ;; -t) TOOL=${2}; shift 2 ;;
+      -r|--recursive) RECURSIVE=true; shift ;; 
       -s) pushv SOURCEDIRS "${2}"; shift 2 ;;
       -s*) pushv SOURCEDIRS "${1#-s}"; shift ;; 
       -b) pushv BUILDDIRS "${2}"; shift 2 ;;
@@ -86,7 +87,7 @@ iwatch() {
   #EVENTS=modify,create
   EVENTS=close_write 
 
-  set -- iwatch -v -c "$CMD" -e "$EVENTS" -t '.*\.(h|hpp|c|cpp)$' -x '.*/build/.*' -X'./(\.|tmp|static|lib|.git).*' $sourcedir
+  set -- iwatch ${RECURSIVE:+-r} -v -c "$CMD" -e "$EVENTS" -t '.*\.(h|hpp|c|cpp|js)$' -x '.*/build/.*' -X'./(\.|tmp|static|.git|CMakeFiles).*' $sourcedir
   for ARG; do 
     case "$ARG" in
       *\ * | *[\$\(\)\|]*) ARG="'$ARG'" ;;

@@ -76,9 +76,11 @@ body {
   font-weight: 800;
   font-family: 'Lucida Console', 'FreeMono', monospace;
   height: 1em;
+  display: none;
 }
 .time-area {
   /*  overflow: hidden;*/
+  display:  none;
   width: 100vw;
 }
 .time-button {

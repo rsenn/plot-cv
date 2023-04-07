@@ -78,11 +78,7 @@ function ProcessDocument(resp) {
   console.log('ProcessDocument', { doc });
 
   let raw = Node.raw(doc.body);
-  console.log(
-    'ProcessDocument',
-    console.config({ compact: 10, maxArrayLength: Number.MAX_SAFE_INTEGER, depth: Infinity, customInspect: true }),
-    { raw }
-  );
+  console.log('ProcessDocument', console.config({ compact: 10, maxArrayLength: Number.MAX_SAFE_INTEGER, depth: Infinity, customInspect: true }), { raw });
 
   let entries = select(
     raw,

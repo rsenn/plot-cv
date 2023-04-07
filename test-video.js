@@ -266,12 +266,7 @@ function main(...args) {
     dilations: new NumericParam(config.dilations || 0, 0, 10),
     erosions: new NumericParam(config.erosions || 0, 0, 10),
     mode: new EnumParam(config.mode || 3, ['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL']),
-    method: new EnumParam(config.method || 0, [
-      'CHAIN_APPROX_NONE',
-      'CHAIN_APPROX_SIMPLE',
-      'CHAIN_APPROX_TC89_L1',
-      'CHAIN_APPROX_TC89_L189_KCOS'
-    ]),
+    method: new EnumParam(config.method || 0, ['CHAIN_APPROX_NONE', 'CHAIN_APPROX_SIMPLE', 'CHAIN_APPROX_TC89_L1', 'CHAIN_APPROX_TC89_L189_KCOS']),
     maskColor: new EnumParam(config.maskColor || false, ['OFF', 'ON']),
     lineWidth: new NumericParam(config.lineWidth || 1, 0, 10),
     fontThickness: new NumericParam(config.fontThickness || 1, 0, 10)
@@ -315,8 +310,7 @@ function main(...args) {
         win.show(dst);
         if(videoSize === undefined || videoSize.empty) videoSize = video.size.area ? video.size : dst.size;
         if(dstEmpty) firstSize = new Size(...videoSize);
-        if(dst.size && !videoSize.equals(dst.size))
-          throw new Error(`AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`);
+        if(dst.size && !videoSize.equals(dst.size)) throw new Error(`AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`);
       }),
       Processor(function Grayscale(src, dst) {
         let channels = [];
@@ -351,15 +345,7 @@ function main(...args) {
         let edges = pipeline.outputOf('EdgeDetect');
         let mat = new Mat(0, 0, cv.CV_32SC4);
 
-        cv.HoughLinesP(
-          edges,
-          mat,
-          2,
-          (+params.angleResolution * Math.PI) / 180,
-          +params.threshc,
-          +params.minLineLength,
-          +params.maxLineGap
-        );
+        cv.HoughLinesP(edges, mat, 2, (+params.angleResolution * Math.PI) / 180, +params.threshc, +params.minLineLength, +params.maxLineGap);
         lines = [...mat]; //.array;
         // log.info('mat', mat);
         //  log.info('lines', lines.slice(0, 10));
@@ -383,7 +369,7 @@ function main(...args) {
   let meter = new TickMeter();
   let prevTime;
   let frameDelay = Math.floor(1000 / video.fps);
-  log.info('frameDelay:', frameDelay);
+  //log.info('frameDelay:', frameDelay);
 
   if(frameShow === undefined) frameShow = Modulo(-1, pipeline.size);
 
@@ -405,8 +391,7 @@ function main(...args) {
   let clientRect = win.imageRect;
 
   const ClearSurface = mat => (mat.setTo([0, 0, 0, 0]), mat);
-  const MakeSurface = () =>
-    Once((...args) => new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)), null, ClearSurface);
+  const MakeSurface = () => Once((...args) => new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)), null, ClearSurface);
   const MakeComposite = Once(() => new Mat());
   let surface = MakeSurface();
   let keyCode,
@@ -441,23 +426,23 @@ function main(...args) {
     meter.reset();
     meter.start();
     let deadline = Date.now() + frameDelay;
-    console.log('frameDelay', frameDelay);
+    //console.log('frameDelay', frameDelay);
 
     let frameNo = video.get('pos_frames');
     if(frameNo == frameCount) video.set('pos_frames', (frameNo = 0));
 
     let gray = pipeline();
 
-    console.log('#0 deadline - Date.now()', deadline - Date.now());
+    //console.log('#0 deadline - Date.now()', deadline - Date.now());
 
     if(!win.imageRect.equals(clientRect)) {
       log.info(`resized from ${clientRect} to ${win.imageRect}`);
       clientRect = win.imageRect;
     }
 
-    console.log('#1 deadline - Date.now()', deadline - Date.now());
+    //console.log('#1 deadline - Date.now()', deadline - Date.now());
     showOutput();
-    console.log('#2 deadline - Date.now()', deadline - Date.now());
+    //console.log('#2 deadline - Date.now()', deadline - Date.now());
 
     while(true) {
       let now = Date.now();
@@ -472,10 +457,7 @@ function main(...args) {
         keyCode = key;
         keyTime = Date.now();
         modifiers = Object.fromEntries(modifierMap(keyCode));
-        modifierList = modifierMap(keyCode).reduce(
-          (acc, [modifier, active]) => (active ? [...acc, modifier] : acc),
-          []
-        );
+        modifierList = modifierMap(keyCode).reduce((acc, [modifier, active]) => (active ? [...acc, modifier] : acc), []);
         let ch = String.fromCodePoint(keyCode & 0xff);
         log.info(`keypress [${modifierList}] 0x${(keyCode & ~0xd000).toString(16)} '${ch}'`);
       }
@@ -543,9 +525,7 @@ function main(...args) {
           const method = keyCode & 0x1 ? 'Frames' : 'Msecs';
           const mod = parseInt(['ctrl', 'shift'].map(n => modifiers[n] | 0).join(''), 2);
 
-          const distance =
-            (keyCode & 0x1 ? 1 : 1000) *
-            (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
+          const distance = (keyCode & 0x1 ? 1 : 1000) * (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
 
           const offset = keyCode & 0x2 ? +distance : -distance;
 
@@ -553,13 +533,7 @@ function main(...args) {
           video['seek' + method](offset);
           let pos = video.position(method);
 
-          log.info(
-            'seek' +
-              method +
-              ' ' +
-              offset +
-              ` distance = ${distance} pos = ${pos} (${RoundTo(video.position('%'), 0.001)}%)`
-          );
+          log.info('seek' + method + ' ' + offset + ` distance = ${distance} pos = ${pos} (${RoundTo(video.position('%'), 0.001)}%)`);
           break;
         }
         case 'i' /* invert */:
@@ -616,9 +590,7 @@ function main(...args) {
     } else {
       let ids = [...getToplevel(hier)];
 
-      let palette = Object.fromEntries(
-        [...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]])
-      );
+      let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]]));
       let hierObj = new Hierarchy(hier);
     }
     font.draw(over, video.time + ' ⏩', tPos, { r: 0, g: 255, b: 0, a: 255 }, +params.fontThickness);
@@ -773,20 +745,7 @@ function main(...args) {
     SaveSVG('lines-' + framePos + '.svg', doc);
   }
 
-  const {
-    ksize,
-    thresh1,
-    thresh2,
-    apertureSize,
-    L2gradient,
-    dilations,
-    erosions,
-    mode,
-    method,
-    lineWidth,
-    minLineLength,
-    maxLineGap
-  } = params;
+  const { ksize, thresh1, thresh2, apertureSize, L2gradient, dilations, erosions, mode, method, lineWidth, minLineLength, maxLineGap } = params;
   SaveConfig(
     Object.entries({
       frameShow,
@@ -808,10 +767,7 @@ function main(...args) {
 
   for(let mat of Mat.list || []) {
     let stack = Mat.backtrace(mat)
-      .filter(
-        frame =>
-          frame.functionName != '<anonymous>' && (frame.lineNumber !== undefined || /test-video/.test(frame.fileName))
-      )
+      .filter(frame => frame.functionName != '<anonymous>' && (frame.lineNumber !== undefined || /test-video/.test(frame.fileName)))
       .map(frame => frame.toString())
       .join('\n  ');
 

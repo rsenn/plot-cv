@@ -9,16 +9,7 @@ import { glClear, glClearColor, glViewport, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER
 export function GLFW(width, height, options = {}) {
   console.log('GLFW', { width, height, options });
   let resolution = new Size(width, height);
-  const {
-    resizable = false,
-    samples = 4,
-    contextVersionMajor = 3,
-    contextVersionMinor = 2,
-    openglProfile = OPENGL_CORE_PROFILE,
-    openglForwardCompat = true,
-    title = 'OpenGL',
-    ...handlers
-  } = options;
+  const { resizable = false, samples = 4, contextVersionMajor = 3, contextVersionMinor = 2, openglProfile = OPENGL_CORE_PROFILE, openglForwardCompat = true, title = 'OpenGL', ...handlers } = options;
   const hints = [
     [CONTEXT_VERSION_MAJOR, contextVersionMajor],
     [CONTEXT_VERSION_MINOR, contextVersionMinor],

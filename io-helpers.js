@@ -1,7 +1,6 @@
 import * as fs from 'fs';
-import Util from './lib/util.js';
 import * as path from './lib/path.js';
-import { types, toString, quote, escape } from './lib/misc.js';
+import { types, toString, quote, escape, predicate } from './lib/misc.js';
 import child_process from 'child_process';
 
 let bjson;
@@ -32,10 +31,25 @@ export function LogIfDebug(token, loggerFn) {
 
 const debug = LogIfDebug('io-helpers', (...args) => console.log(...args));
 
+export function ReadFd(fd, binary) {
+  let ab = new ArrayBuffer(1024);
+  let out = '';
+  for(;;) {
+    let ret = fs.readSync(fd, ab, 0, 1024);
+
+    if(ret <= 0) break;
+
+    out += toString(ab.slice(0, ret));
+
+    debug(`Read #${fd}: ${ret} bytes`);
+  }
+  return out;
+}
+
 export function ReadFile(name, binary) {
   let ret = fs.readFileSync(name, binary ? null : 'utf-8');
 
-  debug(`Read ${name}: ${ret.length} bytes`);
+  debug(`Read ${name}: ${ret?.byteLength} bytes`);
   return ret;
 }
 
@@ -65,11 +79,11 @@ export function ReadJSON(filename) {
   return data ? JSON.parse(data) : null;
 }
 
-export function ReadXML(filename) {
+export function ReadXML(filename, ...args) {
   let data = fs.readFileSync(filename, null);
 
   if(data) debug(`ReadXML: ${data.length} bytes read from '${filename}'`);
-  return data ? xml.read(data, filename, true) : null;
+  return data ? xml.read(data, filename, ...args) : null;
 }
 
 export function MapFile(filename) {
@@ -82,8 +96,8 @@ export function MapFile(filename) {
 }
 
 export function WriteFile(name, data, verbose = true) {
-  if(Util.isGenerator(data)) {
-    let fd = fs.openSync(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, 0x1a4);
+  if(typeof data == 'object' && data !== null && Symbol.iterator in data) {
+    let fd = fs.openSync(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, 0o644);
     let r = 0;
     for(let item of data) {
       r += fs.writeSync(fd, toArrayBuffer(item + ''));
@@ -92,21 +106,26 @@ export function WriteFile(name, data, verbose = true) {
     let stat = fs.statSync(name);
     return stat?.size;
   }
-  if(Util.isIterator(data)) data = [...data];
+  if(fs.existsSync(name)) fs.unlinkSync(name);
+
   if(Array.isArray(data)) data = data.join('\n');
 
   if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
   let ret = fs.writeFileSync(name, data);
 
   if(verbose) debug(`Wrote ${name}: ${ret} bytes`);
+  return ret;
 }
 
-export function WriteJSON(name, data, compact = true) {
-  return WriteFile(name, JSON.stringify(data, ...(compact ? [] : [null, 2])));
+export function WriteJSON(name, data, ...args) {
+  const [compact] = args;
+  if(typeof compact == 'boolean') args = compact ? [] : [null, 2];
+
+  return WriteFile(name, JSON.stringify(data, ...args));
 }
 
-export function WriteXML(name, data) {
-  return WriteFile(name, xml.write(data));
+export function WriteXML(name, data, ...args) {
+  return WriteFile(name, xml.write(data, ...args));
 }
 
 export function ReadBJSON(filename) {
@@ -135,7 +154,7 @@ export function WriteBJSON(name, data) {
 }
 
 export function* DirIterator(...args) {
-  let pred = typeof args[0] != 'string' ? Util.predicate(args.shift()) : () => true;
+  let pred = typeof args[0] != 'string' ? predicate(args.shift()) : () => true;
   for(let dir of args) {
     dir = dir.replace(/~/g, std.getenv('HOME'));
     let entries = os.readdir(dir)[0] ?? [];
@@ -234,7 +253,7 @@ export function* StatFiles(gen) {
   }
 }
 
-export function ReadFd(fd, bufferSize) {
+/*export function ReadFd(fd, bufferSize) {
   function* FdRead() {
     let ret,
       buf = new ArrayBuffer(bufferSize);
@@ -243,7 +262,7 @@ export function ReadFd(fd, bufferSize) {
     } while(ret > 0);
   }
   return [...FdRead()].reduce((acc, buf) => (acc += toString(buf)), '');
-}
+}*/
 /*
 export function FdReader(fd, bufferSize = 1024) {
   let buf = new ArrayBuffer(bufferSize);
@@ -309,12 +328,7 @@ export function LogCall(fn, thisObj) {
   return function(...args) {
     let result;
     result = fn.apply(thisObj ?? this, args);
-    console.log(
-      'Function ' + name + '(',
-      ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })),
-      ') =',
-      result
-    );
+    console.log('Function ' + name + '(', ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })), ') =', result);
     return result;
   };
 }
@@ -352,16 +366,7 @@ export function Spawn(file, args, options = {}) {
 // 'https://www.discogs.com/sell/order/8369022-364'
 
 export function FetchURL(url, options = {}) {
-  let {
-    headers,
-    proxy,
-    cookies = 'cookies.txt',
-    range,
-    body,
-    version = '1.1',
-    tlsv,
-    'user-agent': userAgent
-  } = options;
+  let { headers, proxy, cookies = 'cookies.txt', range, body, version = '1.1', tlsv, 'user-agent': userAgent } = options;
 
   let args = Object.entries(headers ?? {})
     .reduce((acc, [k, v]) => acc.concat(['-H', `${k}: ${v}`]), [])

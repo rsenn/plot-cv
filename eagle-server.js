@@ -26,6 +26,7 @@ atexit(() => {
 function StartREPL(prefix = scriptName(), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
   repl.historyLoad(null, fs);
+  repl.loadSaveOptions();
   repl.inspectOptions = { ...console.options, maxArrayLength: Infinity, compact: 2 };
   let { log } = console;
 
@@ -102,14 +103,7 @@ function main(...args) {
   let vfs;
 
   try {
-    vfs = new VirtFS([
-      'data',
-      'tmp',
-      '../an-tronics/eagle',
-      '../insider/eagle',
-      '../lc-meter/eagle',
-      '../pictest/eagle'
-    ]);
+    vfs = new VirtFS(['data', 'tmp', '../an-tronics/eagle', '../insider/eagle', '../lc-meter/eagle', '../pictest/eagle']);
 
     /*  let testFiles = [...vfs.readdirSync('.')];
     console.log('vfs.readdirSync', console.config({ compact: false }), testFiles);*/
@@ -359,11 +353,7 @@ function main(...args) {
 
   function showSessions() {
     let sessions = getSessions();
-    console.log(
-      'sessions',
-      console.config({ maxArrayLength: Infinity, depth: 4, customInspect: true, compact: 1 }),
-      sessions
-    );
+    console.log('sessions', console.config({ maxArrayLength: Infinity, depth: 4, customInspect: true, compact: 1 }), sessions);
   }
 
   //setInterval(() => console.log('interval'), 5000);

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Fotos hochladen</title>
+    <link rel="shortcut icon" type="image/x-icon" sizes="16x16 32x32 64x64" href="static/transistor.ico" />
+    <script type="module" src="./upload.js"></script>
+    <link rel="stylesheet" href="static/css/upload.css" />
+  </head>
+  <body>
+    <div id="drop-area" style="filter: saturate(0); opacity: 0.5;">
+      <form method="POST" action="upload" enctype="multipart/form-data">
+        <div class="input-group">
+          <label
+           for="files">Fotos auswählen und hochladen</label> <!-- capture="environment" -->
+          <input id="file" type="file" name="files" multiple accept=".heic,image/*,capture=camera" disabled />
+          <div style="display:  inline-flex;flex-flow: row;">
+            <img src="static/svg/upload-arrow.svg" />
+            <img src="static/svg/hand-touch.svg" />
+          </div>
+        </div>
+        <button class="submit-btn" type="submit">Upload</button>
+      </form>
+    </div>
+    <div id="preact">
+    </div>
+  </body>
+</html>

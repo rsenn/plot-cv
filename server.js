@@ -78,9 +78,7 @@ async function runMount(dirsIterator) {
       }
     }
     readData(proc.stdout);
-    readData(proc.stderr, data =>
-      console.log('stderr data:', Util.abbreviate(Util.escape(data), Util.getEnv('COLUMNS') || 120))
-    );
+    readData(proc.stderr, data => console.log('stderr data:', Util.abbreviate(Util.escape(data), Util.getEnv('COLUMNS') || 120)));
     let exitCode = await waitChild(proc);
     console.log('exitCode:', exitCode);
     return exitCode;
@@ -164,11 +162,7 @@ async function main() {
   const convertToGerber = async (boardFile, opts = {}) => {
     console.log('convertToGerber', { boardFile, opts });
     let {
-      layers = opts.side == 'outline'
-        ? ['Measures']
-        : opts.drill
-        ? ['Drills', 'Holes']
-        : [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'],
+      layers = opts.side == 'outline' ? ['Measures'] : opts.drill ? ['Drills', 'Holes'] : [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'],
       format = opts.drill ? 'EXCELLON' : 'GERBER_RS274X',
       data,
       fetch = false,
@@ -177,15 +171,8 @@ async function main() {
     } = opts;
     const base = path.basename(boardFile, '.brd');
     const formatToExt = (layers, format) => {
-      if(
-        opts.drill ||
-        format.startsWith('EXCELLON') ||
-        layers.indexOf('Drills') != -1 ||
-        layers.indexOf('Holes') != -1
-      )
-        return 'TXT';
-      if(layers.indexOf('Bottom') != -1 || format.startsWith('GERBER'))
-        return opts.side == 'outline' ? 'GKO' : front ? 'GTL' : 'GBL';
+      if(opts.drill || format.startsWith('EXCELLON') || layers.indexOf('Drills') != -1 || layers.indexOf('Holes') != -1) return 'TXT';
+      if(layers.indexOf('Bottom') != -1 || format.startsWith('GERBER')) return opts.side == 'outline' ? 'GKO' : front ? 'GTL' : 'GBL';
 
       return 'rs274x';
     };
@@ -302,8 +289,7 @@ async function main() {
       const gcodeFile = makePath('ngc', sides[0]);
       const svgFile = makePath('svg', sides[0], 'processed');
 
-      for(let [file, to] of sides.map(side => [makePath('svg', side, 'processed'), makePath('svg', side)]))
-        if(fs.existsSync(file)) fs.renameSync(file, to);
+      for(let [file, to] of sides.map(side => [makePath('svg', side, 'processed'), makePath('svg', side)])) if(fs.existsSync(file)) fs.renameSync(file, to);
 
       let files = sides.map(side => [side, makePath('ngc', side)]).filter(([side, file]) => fs.existsSync(file));
       console.log('Response /gcode', { files });
@@ -387,10 +373,7 @@ async function main() {
           'Static request:',
           { path, url, method, headers, query, body } /* Object.keys(req), */,
           ...Util.if(
-            Util.filterOutKeys(
-              req.headers,
-              /(^sec|^accept|^cache|^dnt|-length|^host$|^if-|^connect|^user-agent|-type$|^origin$|^referer$)/
-            ),
+            Util.filterOutKeys(req.headers, /(^sec|^accept|^cache|^dnt|-length|^host$|^if-|^connect|^user-agent|-type$|^origin$|^referer$)/),
             () => [],
             value => ['headers: ', value],
             Util.isEmpty
@@ -428,9 +411,7 @@ async function main() {
     logfile ??= fs.openSync('server.log', 'a+', 0o644);
     let str;
     let now = new Date();
-    str = `${now.toISOString().slice(0, 10).replace(/-/g, '')} ${now.toTimeString().slice(0, 8)} ${req.method.padEnd(
-      4
-    )} ${file}\n`;
+    str = `${now.toISOString().slice(0, 10).replace(/-/g, '')} ${now.toTimeString().slice(0, 8)} ${req.method.padEnd(4)} ${file}\n`;
 
     let written = fs.writeSync(logfile, str, 0, str.length);
 
@@ -690,8 +671,7 @@ async function main() {
         let result;
         const { owner, repo, dir, filter, tab, after } = options;
 
-        if(owner && repo && dir)
-          result = await GithubListContents(owner, repo, dir, filter && new RegExp(filter, 'g'));
+        if(owner && repo && dir) result = await GithubListContents(owner, repo, dir, filter && new RegExp(filter, 'g'));
         /*if(owner && (tab || after))*/ else {
           let proxyUrl = Util.makeURL({
             ...url,
@@ -745,10 +725,7 @@ async function main() {
       opts.names = names;
     }
     let files = await GetFilesList('tmp', opts);
-    console.log(
-      'POST files',
-      util.inspect(files, { breakLength: Infinity, colors: true, maxArrayLength: 10, compact: 1 })
-    );
+    console.log('POST files', util.inspect(files, { breakLength: Infinity, colors: true, maxArrayLength: 10, compact: 1 }));
     res.json({
       files
     });
@@ -786,8 +763,7 @@ async function main() {
     console.log('save body:', typeof body == 'string' ? Util.abbreviate(body, 100) : body);
     let st,
       err,
-      filename =
-        (req.headers['content-disposition'] || '').replace(new RegExp('.*"([^"]*)".*', 'g'), '$1') || 'output.svg';
+      filename = (req.headers['content-disposition'] || '').replace(new RegExp('.*"([^"]*)".*', 'g'), '$1') || 'output.svg';
     filename = 'tmp/' + filename.replace(/^tmp\//, '');
     await fsPromises
       .writeFile(filename, body, { mode: 0x0180, flag: 'w' })

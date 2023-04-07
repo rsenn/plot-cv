@@ -23,8 +23,8 @@ newPath.rel();
 
 let t = new Matrix();
 
-t.init_translate(translate[0], translate[1]);
-//console.log(`t:` + t.init_translate, translate);
+t.initTranslate(translate[0], translate[1]);
+//console.log(`t:` + t.initTranslate, translate);
 
 for(let i = 0; i < path.length; i++) {
   const c = path[i];
@@ -53,7 +53,7 @@ for(let i = 0; i < path.length; i++) {
   let points = [new Point(x, y), new Point(x1, y1), new Point(x2, y2)];
   //console.log(`path[${i}]:`, c);
 
-  if(!relative) points = points.map(p => (p.x !== undefined ? t.transform_point({ x: p.x, y: p.y }) : p));
+  if(!relative) points = points.map(p => (p.x !== undefined ? t.transformPoint({ x: p.x, y: p.y }) : p));
 
   if(command == 'A') points[0] = new Point(x, y);
 

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<head>
+  <title>OpenLayers Simplest Example</title>
+  <!-- <script type="module" src="https://unpkg.com/ol@6.15.1/index.js"></script> -->
+</head>
+<body>
+  <div id="map" style="height: 250px"></div>
+  <script type="module">
+    import * as ol from './lib/ol.js';
+    map = new ol.Map('map');
+    map.addLayer(new ol.Layer.OSM());
+    map.zoomToMaxExtent();
+  </script>
+</body>

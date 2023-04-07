@@ -44,7 +44,7 @@
 
         inputElement.addEventListener('keydown', e => {
           const { data, target, key } = e;
-          if (key == 'Enter') {
+          if(key == 'Enter') {
             setTimeout(() => {
               const { value } = target;
               console.log('changed:', { value, e });
@@ -63,7 +63,7 @@
       globalThis.bitCount = bitCount;
       function mortonNumber(x, y) {
         let z = 0;
-        for (
+        for(
           let i = 0;
           i < 16;
           i++ // unroll for more speed...

@@ -209,11 +209,7 @@ function Connection(port, onConnect = () => {}) {
 
           console.log('arr', arr);
 
-          data.splice(
-            0,
-            data.length,
-            ...arr.map(([time, states]) => ({ time, states /*: states.map(StateToObject)*/ }))
-          );
+          data.splice(0, data.length, ...arr.map(([time, states]) => ({ time, states /*: states.map(StateToObject)*/ })));
           if(arr[0]) InsertSorted(states, ...arr);
 
           console.log('data.length', data.length);
@@ -500,7 +496,12 @@ function CreateMap() {
       url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
     })
   });
-
+  const rasterLayer = new TileLayer({
+    source: new XYZ({
+      url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      maxZoom: 19
+    })
+  });
   /*  tileLayer.on('postrender', function(event) {
     const vectorContext = getVectorContext(event);
  
@@ -525,14 +526,25 @@ function CreateMap() {
 
   let map = new OLMap({
     target: 'mapdiv',
-    layers: [tileLayer, vector],
+    layers: [tileLayer, rasterLayer /*,vector*/],
     view
   });
 
   const zoomslider = new ZoomSlider();
   map.addControl(zoomslider);
 
-  Object.assign(globalThis, { view, vector, map, extentVector, lineString, feature, stroke, positionFeature });
+  Object.assign(globalThis, {
+    tileLayer,
+    rasterLayer,
+    view,
+    vector,
+    map,
+    extentVector,
+    lineString,
+    feature,
+    stroke,
+    positionFeature
+  });
   Object.defineProperties(globalThis, {
     zoom: {
       get() {
@@ -570,15 +582,7 @@ xhr.send();*/
         const scale = svgResolution / frameState.viewState.resolution;
         const center = frameState.viewState.center;
         const size = frameState.size;
-        const cssTransform = composeCssTransform(
-          size[0] / 2,
-          size[1] / 2,
-          scale,
-          scale,
-          frameState.viewState.rotation,
-          -center[0] / svgResolution - width / 2,
-          center[1] / svgResolution - height / 2
-        );
+        const cssTransform = composeCssTransform(size[0] / 2, size[1] / 2, scale, scale, frameState.viewState.rotation, -center[0] / svgResolution - width / 2, center[1] / svgResolution - height / 2);
         svgContainer.style.transform = cssTransform;
         svgContainer.style.opacity = this.getOpacity();
         return svgContainer;
@@ -701,7 +705,7 @@ window.addEventListener('load', () => {
     console.log('Connected');
     ws.sendCommand('StatePhases');
   });
-  CreateSlider();
+  ///CreateSlider();
   SetTime(DateToUnix());
   if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
     for(let q of ['#timeline', '.time-display' /*,'.time-scale','.time-row'*/]) {
@@ -802,24 +806,8 @@ class Aircraft extends Feature {
 
   static fromState(state) {
     let obj = StateToObject(state);
-    const {
-      icao24,
-      callsign,
-      origin_country,
-      time_position,
-      last_contact,
-      longitude,
-      latitude,
-      baro_altitude,
-      on_ground,
-      velocity,
-      true_track,
-      vertical_rate,
-      sensors,
-      geo_altitude,
-      squawk,
-      spi
-    } = obj;
+    const { icao24, callsign, origin_country, time_position, last_contact, longitude, latitude, baro_altitude, on_ground, velocity, true_track, vertical_rate, sensors, geo_altitude, squawk, spi } =
+      obj;
 
     let aircraft;
 

@@ -1,3 +1,4 @@
+#!/usr/bin/env qjsm
 import { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, EagleNodeList, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, EagleDocument, EagleReference, EagleRef, makeEagleNode, EagleNode, Renderer, EagleProject, EagleElement, makeEagleElement, EagleElementProxy, EagleNodeMap, ImmutablePath, DereferenceError } from './lib/eagle.js';
 import Util from './lib/util.js';
 import * as util from './lib/misc.js';
@@ -11,14 +12,14 @@ import REPL from './quickjs/qjs-modules/lib/repl.js';
 import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, Enum, HashList, Multimap, Shash, SortedMap, HashMultimap, MultiBiMap, MultiKeyMap, DenseSpatialHash2D, SpatialHash2D, HashMap, SpatialH, SpatialHash, SpatialHashMap, BoxHash } from './lib/container.js';
 import * as fs from 'fs';
 import { Pointer } from './lib/pointer.js';
-import { read as fromXML, write as toXML } from './lib/xml.js';
+import { read as fromXML, write as writeXML } from 'xml';
 import inspect from './lib/objectInspect.js';
-import { IfDebug, LogIfDebug, LoadHistory, MapFile, ReadFile, ReadJSON, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator, Filter, FilterImages, StatFiles, CopyToClipboard } from './io-helpers.js';
+import { IfDebug, LogIfDebug, ReadFd, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 import { GetExponent, GetMantissa, ValueToNumber, NumberToValue } from './lib/eda/values.js';
 import { GetMultipliers, GetFactor, GetColorBands, PartScales, digit2color } from './lib/eda/colorCoding.js';
 import { UnitForName } from './lib/eda/units.js';
 import CircuitJS from './lib/eda/circuitjs.js';
-import { define, isObject, memoize, unique, atexit } from './lib/misc.js';
+import { className, define, extendArray, getOpt, glob, GLOB_BRACE, intersect, isObject, memoize, range, unique, lazyProperties, entries, isJSFunction, weakAssign } from 'util';
 import { HSLA, isHSLA, ImmutableHSLA, RGBA, isRGBA, ImmutableRGBA, ColoredText } from './lib/color.js';
 import { scientific, num2color, GetParts, GetInstances, GetPositions, GetElements } from './eagle-commands.js';
 import { Edge, Graph, Node } from './lib/geom/graph.js';
@@ -26,48 +27,199 @@ import { MutableXPath as XPath, parseXPath, ImmutableXPath } from './quickjs/qjs
 import { Predicate } from 'predicate';
 import child_process from 'child_process';
 import { readFileSync } from 'fs';
+import { ReactComponent, Fragment, render, h, forwardRef, React, toChildArray } from './lib/dom/preactComponent.js';
+import { Table } from './cli-helpers.js';
+import renderToString from './lib/preact-render-to-string.js';
+import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
+import { EagleToGerber, GerberToGcode } from './pcb-conversion.js';
+import { ExecTool } from './os-helpers.js';
+import * as components from './lib/eagle/components.js';
 
 let cmdhist;
 
-function render(doc) {
-  let renderer = new Renderer(doc);
+extendArray();
 
-  let svg = renderer.render({});
+function GetGlobalFunctions() {
+  return entries(globalThis)
+    .filter(([k, v]) => isJSFunction(v))
+    .map(([k]) => k);
+}
 
-  return svg;
+function toXML(obj) {
+  deep.forEach(obj, a => Array.isArray(a.children) && a.children.length == 0 && delete a.children);
+  return writeXML(obj);
+}
+
+function renderToXML(component) {
+  return fromXML(renderToString(component));
+}
+
+function GetFiletime(file, field = 'mtime') {
+  if(Array.isArray(file)) return file.map(file => [file, GetFiletime(file, field)]);
+  let ms = fs.statSync(file)?.[field];
+  return new Date(ms);
+}
+
+function FindProjects(dirPtn = '../*/eagle', sortDirection = -1, sortField = 'mtime') {
+  let files = glob(dirPtn + '/*.{sch,brd}', GLOB_BRACE);
+  let entries = SortFiles(files, sortDirection, sortField);
+
+  let names = unique(files.map(fn => fn.replace(/\.(sch|brd)$/i, '')));
+
+  const minIndex = name =>
+    Math.min(
+      entries.findIndex(file => file == name + '.sch'),
+      entries.findIndex(file => file == name + '.brd')
+    );
+  const hasBoth = name => minIndex(name) >= 0;
+
+  return names
+    .map(name => [name, minIndex(name)])
+    .filter(([name, index]) => index >= 0)
+    .sort((a, b) => b[1] - a[1])
+    .map(([name, index]) => name);
+}
+
+function SortFiles(files, direction = 1, statField = 'mtime') {
+  if(typeof direction == 'boolean') direction = direction ? 1 : -1;
+  return GetFiletime(files, statField)
+    .sort((a, b) => direction * (a[1] - b[1]))
+    .map(([file]) => file);
+}
+
+function pick(it, n = 1) {
+  let ret = new Array();
+
+  if(typeof n != 'function') {
+    let num = n;
+    n = i => i < num;
+  }
+  let i = 0;
+  for(i = 0; ; i++) {
+    let { done, value } = it.next();
+    if(done) break;
+    if(n(i)) {
+      ret.push(value);
+    } else break;
+  }
+  return ret;
+}
+
+function append(tag, attrs, children, parent, element) {
+  console.log('append', {
+    tag,
+    attrs,
+    children,
+    parent,
+    element
+  });
+
+  let obj;
+  obj = { tagName: tag, attributes: attrs, children };
+
+  if(parent) parent.children.push(obj);
+
+  return obj;
+}
+
+function render(doc, filename) {
+  if(doc instanceof EagleProject) {
+    render(doc.schematic);
+    render(doc.board);
+    return;
+  }
+  let renderer = new Renderer(doc, ReactComponent.append);
+  let str;
+  let svg = renderer.render(doc);
+  try {
+    str = renderToString(svg);
+  } catch(e) {
+    console.log('ERROR:', e);
+  }
+  console.log('render', { str });
+
+  let xml = fromXML(str);
+
+  filename ??= path.basename(doc.filename, '.' + doc.type) + '-' + { sch: 'schematic', brd: 'board', lbr: 'library' }[doc.type] + '.svg';
+
+  if(filename) {
+    let ret;
+    ret = WriteFile(filename, (str = toXML(xml)));
+    console.log(`Saving to '${filename}'...`, ret);
+  }
+  return str;
+}
+
+function CollectParts(doc = project.schematic) {
+  return [...doc.parts]
+    .map(e => e.raw.attributes)
+    .filter(attr => !(attr.value === undefined && attr.device === '') || /^IC/.test(attr.name))
+    .map(({ name, deviceset, device, value }) => ({
+      name,
+      deviceset,
+      device,
+      value: value ?? '-'
+    }));
+}
+
+function CollectElements(doc = project.board) {
+  return doc.elements
+    .map(e => e.raw.attributes)
+    .map(({ name, library, package: pkg, value }) => ({
+      name,
+      library,
+      ['package']: pkg,
+      value
+    }));
+}
+
+function CollectPartsElements(proj = project) {
+  return project.board.elements
+    .map(e => [e, project.schematic.parts[e.name]])
+    .map(a => a.map(e => e.raw.attributes))
+    .map(([{ x, y, ...element }, part]) => weakAssign(element, part));
+}
+
+function ListParts(doc = project.schematic) {
+  let parts = CollectParts(doc);
+  let valueLen = Math.max(...parts.map(p => p.value.length));
+
+  return parts.map(({ name, deviceset, device, value }) => value.padStart(valueLen) + ' ' + device);
+}
+
+function ShowParts(doc = project.schematic) {
+  return Table(
+    CollectParts(doc).map(({ name, deviceset, device, value }) => [name, deviceset, device, value ?? '-']),
+    ['name', 'deviceset', 'device', 'value']
+  );
+}
+
+function EaglePrint(file, output) {
+  output ??= ModifyPath(file, (dir, base, ext) => [dir, base, ext + '.pdf']);
+  let argv = ['/opt/eagle-7.2.0/bin/eagle', '-N-', '-C', `PRINT landscape 0.8 -1 -0 -caption FILE '${output}' sheets all paper a4; QUIT`, file];
+
+  return child_process.spawn(argv[0], argv, {
+    block: false
+  });
 }
 
 function main(...args) {
   globalThis.console = new Console({
-    inspectOptions: { maxArrayLength: 100, colors: true, depth: Infinity, compact: 1, customInspect: true }
+    inspectOptions: {
+      maxArrayLength: 100,
+      colors: true,
+      depth: 10,
+      compact: 0,
+      customInspect: true
+    }
   });
 
-  let debugLog;
+  let debugLog = fs.openSync('debug.log', 'a');
 
-  /* if(Util.getPlatform() == 'quickjs') {
-    globalThis.std = await import('std');
-    globalThis.os = await import('os');
-    globalThis.fs = fs = await import('./lib/filesystem.js');
-  } else {
-    const cb = filesystem => {
-      globalThis.fs = fs = filesystem;
-    };
-    await PortableFileSystem(cb);
-  }*/
-  Util.defineGetterSetter(
-    globalThis,
-    'compact',
-    () => console.options.compact,
-    value => (console.options.compact = value)
-  );
-
-  debugLog = fs.openSync('debug.log', 'a');
-
-  const progName = Util.getArgv()[1];
-  const base = path.basename(progName, path.extname(progName));
+  const base = path.basename(__filename, path.extname(__filename));
   const histfile = `.${base}-history`;
 
-  let params = Util.getOpt(
+  let params = getOpt(
     {
       debug: [false, null, 'x'],
       'output-dir': [true, null, 'd'],
@@ -75,6 +227,8 @@ function main(...args) {
     },
     args
   );
+
+  Object.assign(globalThis, { components, Console, GetGlobalFunctions });
 
   Object.assign(globalThis, {
     child_process,
@@ -91,7 +245,6 @@ function main(...args) {
     HORIZONTAL,
     HORIZONTAL_VERTICAL,
     DEBUG,
-    log,
     setDebug,
     PinSizes,
     EscapeClassName,
@@ -134,22 +287,47 @@ function main(...args) {
     LoadHistory,
     IfDebug,
     LogIfDebug,
-    LoadHistory,
-    MapFile,
+    ReadFd,
     ReadFile,
+    LoadHistory,
     ReadJSON,
-    ReadBJSON,
+    ReadXML,
+    MapFile,
     WriteFile,
     WriteJSON,
+    WriteXML,
+    ReadBJSON,
     WriteBJSON,
     DirIterator,
     RecursiveDirIterator,
+    ReadDirRecursive,
     Filter,
     FilterImages,
+    SortFiles,
     StatFiles,
+    FdReader,
+    CopyToClipboard,
+    ReadCallback,
+    LogCall,
+    Spawn,
+    FetchURL,
     CopyToClipboard,
     CircuitJS,
+    PutRowsColumns,
+    GetLibrary,
+    ElementName,
+    GetUsedPackages,
+    GetPackagePitch,
+    Package2Circuit,
+    GetRotation,
+    Eagle2Circuit,
     Eagle2CircuitJS,
+    ModifyPath,
+    AppendToFilename,
+    SetSVGBackground,
+    SVGFileSetBackground,
+    SVGResave,
+    FileFunction,
     toNumber(n) {
       return isNaN(+n) ? n : +n;
     },
@@ -166,7 +344,11 @@ function main(...args) {
     ImmutableXPath,
     parseXPath,
     Predicate,
-    render
+    render,
+    pick,
+    fromXML,
+    toXML,
+    writeXML
   });
   Object.assign(globalThis, {
     GetExponent,
@@ -191,21 +373,66 @@ function main(...args) {
     define,
     isObject,
     memoize,
-    unique
+    unique,
+    FindProjects,
+    Table,
+    CollectParts,
+    ListParts,
+    ShowParts,
+    CollectElements,
+    CollectPartsElements,
+    EaglePrint,
+    setDebug
   });
+
+  Object.assign(globalThis, {
+    h,
+    forwardRef,
+    Fragment,
+    React,
+    ReactComponent,
+    toChildArray,
+    GetFiletime,
+    Terminate,
+    Contactref2Circuit,
+    Signal2Circuit,
+    Element2Circuit,
+    SortFiles
+  });
+
   Object.assign(globalThis, {
     load(filename, project = globalThis.project) {
       globalThis.document = new EagleDocument(fs.readFileSync(filename, 'utf-8'), project, filename, null, fs);
     },
     newProject(filename) {
-      if(!globalThis.project) globalThis.project = new EagleProject(null);
+      if(globalThis.project) {
+        globalThis.project.closeAll();
+        delete globalThis.project;
+        delete globalThis.sch;
+        delete globalThis.brd;
+      }
 
-      project.lazyOpen(filename);
+      globalThis.project = new EagleProject(filename);
 
-      util.lazyProperties(globalThis, {
+      //project.lazyOpen(filename);
+
+      lazyProperties(globalThis, {
         sch: () => project.schematic,
         brd: () => project.board
       });
+    },
+    nextProject() {
+      if(globalThis.projectNames.length > globalThis.projectIndex + 1) {
+        globalThis.newProject(globalThis.projectNames[++globalThis.projectIndex]);
+        return globalThis.project;
+      }
+    }
+  });
+
+  lazyProperties(globalThis, {
+    projectNames() {
+      this.projectIndex = -1;
+      return FindProjects(undefined, 1);
     }
   });
   // globalThis.docs = args.map(arg => (globalThis.doc = load(arg)));
@@ -266,6 +493,22 @@ function main(...args) {
     }
   });
 
+  Object.assign(globalThis, {
+    PrimitiveComponents,
+    ElementNameToComponent,
+    ElementToComponent,
+    EagleToGerber,
+    GerberToGcode,
+    ExecTool
+  });
+  Object.assign(globalThis, {
+    renderToString(arg) {
+      //  return renderToString(arg);
+      return writeXML(fromXML(renderToString(arg)));
+    },
+    renderToXML
+  });
+
   cmdhist = `.${base}-cmdhistory`;
 
   let name = (process.env['NAME'] ?? base)
@@ -282,7 +525,12 @@ function main(...args) {
   }
 
   repl.history = LoadHistory(cmdhist);
+  repl.loadSaveOptions();
   repl.printStatus(`Loaded ${repl.history.length} history entries)`);
+
+  let log = console.log;
+
+  console.log = (...args) => repl.printStatus(() => log(...args));
 
   //console.log(`repl`, repl);
   //console.log(`debugLog`, Util.getMethods(debugLog, Infinity, 0));
@@ -309,7 +557,11 @@ function main(...args) {
     for(let arg of args) {
       if(s) s += ' ';
       if(typeof arg != 'string' || arg.indexOf('\x1b') == -1)
-        s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
+        s += inspect(arg, {
+          depth: Infinity,
+          depth: 6,
+          compact: false
+        });
       else s += arg;
     }
     fs.writeSync(debugLog, fs.bufferFrom(s + '\n'));
@@ -318,7 +570,7 @@ function main(...args) {
     fs.flushSync(debugLog);
   };
   repl.show = value => {
-    if(Util.isObject(value) && value instanceof EagleNode) {
+    if(isObject(value) && value instanceof EagleNode) {
       console.log(value.inspect());
     } else {
       console.log(value);
@@ -345,35 +597,6 @@ function main(...args) {
 
   repl.runSync();
 }
-
-Util.define(Array.prototype, {
-  findLastIndex(predicate) {
-    for(let i = this.length - 1; i >= 0; --i) {
-      const x = this[i];
-      if(predicate(x, i, this)) {
-        return i;
-      }
-    }
-    return -1;
-  },
-  rotateRight(n) {
-    this.unshift(...this.splice(n, this.length - n));
-    return this;
-  },
-  rotateLeft(n) {
-    this.push(...this.splice(0, n));
-    return this;
-  },
-  at(index) {
-    return this[Util.mod(index, this.length)];
-  },
-  /* prettier-ignore */ get head() {
-    return this[this.length-1];
-  },
-  /* prettier-ignore */ get tail() {
-    return this[this.length-1];
-  }
-});
 
 function Terminate(exitCode) {
   console.log('Terminate', exitCode);
@@ -443,7 +666,11 @@ function UpdateMeasures(board) {
     plain.append(
       ...lines.map(line => ({
         tagName: 'wire',
-        attributes: { ...line.toObject(), layer: 47, width: 0 }
+        attributes: {
+          ...line.toObject(),
+          layer: 47,
+          width: 0
+        }
       }))
     );
     //console.log('no measures:', { bounds, lines }, [...plain]);
@@ -521,10 +748,7 @@ function fixValue(element) {
 
   switch (element.name[0]) {
     case 'R': {
-      newValue = value.replace(
-        /^([0-9.]+)([mkM]?)(?:\xEF\xBF\xBD|\xC2\xA9|\x26\xC2*\xA9+|\u2126?[\x80-\xFF]+)([\x00-\x7F]*)/,
-        '$1$2\u2126$3'
-      );
+      newValue = value.replace(/^([0-9.]+)([mkM]?)(?:\xEF\xBF\xBD|\xC2\xA9|\x26\xC2*\xA9+|\u2126?[\x80-\xFF]+)([\x00-\x7F]*)/, '$1$2\u2126$3');
       break;
     }
     case 'L': {
@@ -626,13 +850,13 @@ function GetNames(doc, pred) {
       break;
     }
   }
-  return Util.unique(names);
+  return unique(names);
 }
 
 let nameMaps = (() => {
   let assoc = new WeakMap();
 
-  return Util.memoize(doc => {
+  return memoize(doc => {
     let map;
     switch (doc.type) {
       case 'sch': {
@@ -661,10 +885,9 @@ function CorrelateSchematicAndBoard(schematic, board) {
   let documents = [schematic, board];
   let names = documents.map(d => GetNames(d));
   let allNames = Math.max(...names.map(n => n.length));
-  let intersection = Util.intersect(...names);
+  let intersection = intersect(...names);
 
-  if(allNames.length > intersection.length)
-    console.warn(`WARNING: Only ${intersection.length} names of ${allNames.length} correlate`);
+  if(allNames.length > intersection.length) console.warn(`WARNING: Only ${intersection.length} names of ${allNames.length} correlate`);
   console.log(`intersection`, intersection);
 
   return /*new Map*/ intersection.map(name => [name, documents.map(doc => GetByName(doc, name))]);
@@ -673,22 +896,20 @@ function CorrelateSchematicAndBoard(schematic, board) {
 function GetSheets(doc_or_proj) {
   if(!(doc_or_proj instanceof EagleDocument)) doc_or_proj = doc_or_proj.schematic;
 
-  return [...doc_or_proj.schematic.sheets.children];
+  return [...doc_or_proj.schematic.sheets];
 }
 
 function SaveLibraries() {
   const { schematic, board } = project;
-  const layerMap = /*Object.values*/ [...schematic.layers, ...board.layers]
-    .filter(([n, e]) => e.active)
-    .reduce((acc, [n, e]) => ({ ...acc, [e.number]: e.raw }), {});
+  const layerMap = /*Object.values*/ [...schematic.layers, ...board.layers].filter(([n, e]) => e.active).reduce((acc, [n, e]) => ({ ...acc, [e.number]: e.raw }), {});
   const entities = ['symbols', 'packages', 'devicesets'];
 
   let layerIds = deep
     .select([schematic.raw, board.raw], e => e && e.layer)
     .map(e => +e.layer)
-    .concat(Util.range(17, 49))
+    .concat(range(17, 49))
     .sort((a, b) => a - b);
-  layerIds = Util.unique(layerIds);
+  layerIds = unique(layerIds);
   let layers = layerIds.map(id => layerMap[id]);
 
   //  console.log('layers', layers);
@@ -698,16 +919,22 @@ function SaveLibraries() {
     layerIds.map(id => [id, layerMap[id].attributes.name])
   );
 
-  const libraryNames = Util.unique([...schematic.libraries, ...board.libraries].map(([n, e]) => n));
+  const libraryNames = unique([...schematic.libraries, ...board.libraries].map(([n, e]) => n));
   console.log('libraryNames', libraryNames);
 
-  const libraries = libraryNames.map(name => [name, schematic.libraries[name], board.libraries[name]]);
+  const libraries = libraryNames.map(name => [name, schematic.getLibrary(name), board.getLibrary(name)]);
   for(let [name, ...libs] of libraries) {
     let obj = { symbols: [], packages: [], devicesets: [] };
 
     let xml = {
       tagName: 'library',
-      children: [{ tagName: 'description', attributes: {}, children: [`${name}.lbr library`] }],
+      children: [
+        {
+          tagName: 'description',
+          attributes: {},
+          children: [`${name}.lbr library`]
+        }
+      ],
       attributes: { name }
     };
 
@@ -725,7 +952,10 @@ function SaveLibraries() {
     for(let entity of entities) {
       obj[entity] = Object.values(obj[entity]);
 
-      xml.children.push({ tagName: entity, children: obj[entity] });
+      xml.children.push({
+        tagName: entity,
+        children: obj[entity]
+      });
     }
 
     // console.log('', console.config({ compact: 3, depth: 4 }), xml);
@@ -734,7 +964,11 @@ function SaveLibraries() {
       tagName: '?xml',
       attributes: { version: '1.0', encoding: 'utf-8' },
       children: [
-        { tagName: '!DOCTYPE eagle SYSTEM "eagle.dtd"', attributes: {}, children: [] },
+        {
+          tagName: '!DOCTYPE eagle SYSTEM "eagle.dtd"',
+          attributes: {},
+          children: []
+        },
         {
           tagName: 'eagle',
           attributes: { version: '6.4.1' },
@@ -747,8 +981,14 @@ function SaveLibraries() {
                   tagName: 'settings',
                   attributes: {},
                   children: [
-                    { tagName: 'setting', attributes: { alwaysvectorfont: 'no' } },
-                    { tagName: 'setting', attributes: { verticaltext: 'up' } }
+                    {
+                      tagName: 'setting',
+                      attributes: { alwaysvectorfont: 'no' }
+                    },
+                    {
+                      tagName: 'setting',
+                      attributes: { verticaltext: 'up' }
+                    }
                   ]
                 },
                 {
@@ -795,13 +1035,7 @@ async function testEagle(filename) {
   let { board, schematic } = proj;
   const packages = {
     board: (board && board.elements && [...board.elements].map(([name, e]) => e.package)) || [],
-    schematic:
-      (schematic &&
-        schematic.sheets &&
-        [...schematic.sheets]
-          .map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined))
-          .flat()) ||
-      []
+    schematic: (schematic && schematic.sheets && [...schematic.sheets].map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)).flat()) || []
   };
   let parts = (schematic && schematic.parts) || [];
   let sheets = (schematic && schematic.sheets) || [];
@@ -830,7 +1064,7 @@ async function testEagle(filename) {
   console.log('saved:', await proj.saveTo('tmp', true));
   for(let doc of proj.documents) {
     let changed = false;
-    console.log('eagle:', Util.className(doc.find('eagle')));
+    console.log('eagle:', className(doc.find('eagle')));
     for(let pkg of doc.find('eagle').getAll('package')) {
       let indexes = [...pkg.children].map((child, i, a) =>
         a
@@ -852,12 +1086,248 @@ async function testEagle(filename) {
   }
   let desc = proj.documents.map(doc => [doc.filename, doc.find('description')]);
   console.log('desc', desc);
-  desc = desc
-    .map(([file, e]) => [file, e && e.xpath()])
-    .map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
+  desc = desc.map(([file, e]) => [file, e && e.xpath()]).map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
   desc = new Map(desc);
   console.log('descriptions', [...Util.map(desc, ([k, v]) => [k, v])]);
   return proj;
+}
+
+function ModifyPath(p, fn = (dir, base, ext) => [dir, base, ext]) {
+  let [dir, base, ext] = (() => {
+    let { dir, base, ext } = path.toObject(p);
+    return fn(dir, base, ext);
+  })();
+
+  return path.fromObject({ dir, base, ext });
+}
+
+function AppendToFilename(p, str = '') {
+  return ModifyPath(p, (dir, base, ext) => [dir, base + str, ext]);
+}
+
+function SetSVGBackground(xml, color = '#ffffff') {
+  let svgNode;
+  let bgRect = deep.find(xml, (e, n) => e.tagName == 'rect' && e.attributes.id == 'background-rect', deep.RETURN_PATH);
+
+  if(bgRect) throw new Error('background-rect alreay set');
+
+  if((svgNode = deep.find(xml, (e, n) => e.tagName == 'svg', deep.RETURN_VALUE))) {
+    let defs = deep.find(xml, (e, n) => e.tagName == 'defs', deep.RETURN_PATH);
+    let gpath = deep.find(xml, (e, n) => e.tagName == 'g', deep.RETURN_PATH);
+    let children = deep.get(xml, defs.slice(0, -1));
+
+    //console.log('SetSVGBackground',{gpath});
+
+    let { viewBox } = svgNode.attributes;
+    let rect = Rect.fromString(viewBox);
+    let pos = defs[defs.length - 1] ?? 0;
+    //console.log('SetSVGBackground',{viewBox,rect,pos});
+
+    children.splice(pos + 1, 0, {
+      tagName: 'rect',
+      attributes: {
+        id: 'background-rect',
+        fill: '#fff',
+        ...rect.toObject()
+      }
+    });
+
+    return xml;
+  }
+}
+
+const FileFunction = (fn, rfn = ReadFile, wfn = WriteFile, namefn = n => n, ...args) => {
+  return (filename, ...args) => {
+    let data = rfn(filename, ...args);
+
+    let output = fn(data, ...args);
+
+    return wfn(namefn(filename), output, ...args);
+  };
+};
+
+const SVGFileSetBackground = FileFunction(SetSVGBackground, ReadXML, WriteXML, n => AppendToFilename(n, '.with-background'), false);
+const SVGResave = FileFunction(
+  data => data,
+  ReadXML,
+  WriteXML,
+  n => n,
+  false
+);
+
+function PutRowsColumns(rows) {
+  let columnLength = rows.reduce((acc, row) => {
+    for(let i = 0; i < row.length; i++) acc[i] = Math.max(acc[i] | 0, (row[i] + '').length);
+    return acc;
+  }, []);
+  console.log('columnLength', columnLength);
+  columnLength[columnLength.length - 1] = 0;
+
+  return rows.map(row => row.map((col, i) => (col + '').padEnd(columnLength[i], ' ')).join(' ')).join('\n');
+}
+
+function GetLibrary(e) {
+  let depth = 0;
+  while((e = e.parentNode)) {
+    const { tagName } = e;
+    if(tagName == 'library') return e;
+    if(tagName == 'eagle') break;
+    //console.log('GetLibrary', { e, depth });
+    depth++;
+  }
+}
+
+function ElementName(e) {
+  let n = e.name;
+  n = n.replace(/[^A-Za-z0-9_]/g, '_');
+
+  if(!/^[A-Za-z]/i.test(n)) {
+    if(e.tagName == 'package') n = n.replace(/^[0-9]+_/g, '');
+    let lib = GetLibrary(e);
+    if(lib && lib.name) n = lib.name + n;
+  }
+  n = n.replace(/([0-9])_([A-Za-z])/g, '$1$2');
+
+  if(e.tagName == 'package') n = n.toLowerCase();
+  if(e.tagName == 'package') n = n.replace(/_[0-9]+x[0-9]+$/g, '');
+  return n;
+}
+
+function GetRotation(element) {
+  let { rot } = element;
+  let mirror = false;
+  let angle = 0;
+
+  if(typeof rot == 'string' && rot.indexOf('M') != -1) {
+    mirror = true;
+    rot = rot.replace(/M/g, '');
+  }
+  if(typeof rot == 'string' && rot.indexOf('R') != -1) {
+    rot = rot.replace(/R/g, '');
+    angle = +rot;
+  }
+  return [mirror, angle];
+}
+
+function Package2Circuit(p) {
+  let points = p.pads
+    .map(({ x, y }) => new Point(x, y))
+    .map(pt => pt.div(2.54))
+    .map(pt => pt.toFixed(1));
+
+  let xpoints = points.map(({ x }) => x),
+    ypoints = points.map(({ y }) => y);
+
+  if(unique(ypoints).length > unique(xpoints).length) {
+    points = points.map(pt => pt.rotate(Math.PI / 2).toFixed(1));
+    console.log('Package2Circuit(1)', { points });
+  }
+
+  let half = points.filter(pt => [...pt].some(coord => coord != 0 && Math.abs(coord) < 1));
+
+  if(half.length) {
+    let t = new Translation(...half[0]).invert();
+    // console.log('t', t);    points = points.map(pt => pt.transform(t));
+  }
+
+  let xoffs = unique(xpoints.map(x => Math.abs(x % 1)));
+  let yoffs = unique(ypoints.map(y => Math.abs(y % 1)));
+
+  if(xoffs.length == 1 && xoffs[0] != 0) {
+    points = points.map(({ x, y }) => new Point(x - xoffs[0], y));
+  }
+  if(yoffs.length == 1 && yoffs[0] != 0) {
+    points = points.map(({ x, y }) => new Point(x, y - yoffs[0]));
+  }
+
+  if(xoffs.length > 1 || yoffs.length > 1 /* || p.name.startsWith('DIL28')*/) console.log('Package2Circuit(2)', { points, xpoints: unique(xpoints), ypoints: unique(ypoints) });
+
+  return [ElementName(p), points.join(' ')];
+}
+
+function Contactref2Circuit(cref) {
+  let padIndex = cref.element.pads.list.raw.filter(e => e.tagName == 'pad').indexOf(cref.pad.raw);
+  let { name } = cref.element;
+  return `${name}.${padIndex + 1}`;
+}
+
+function Signal2Circuit(s) {
+  let { name, contactrefs } = s;
+
+  let contacts = '';
+  let [firstContact, ...restOfContacts] = contactrefs;
+
+  if(restOfContacts.length == 0) return '';
+
+  for(let contact of restOfContacts) {
+    contacts += `${Contactref2Circuit(firstContact)}\t${Contactref2Circuit(contact)}\n`;
+  }
+  return `# Signal ${name}\n` + contacts + '\n';
+}
+
+function Element2Circuit(element) {
+  let [packageName] = Package2Circuit(element.package);
+  let name = ElementName(element);
+  let { x, y } = element;
+
+  return `${name.padEnd(8)} ${packageName.padEnd(16)}${(x / 2.54).toFixed(0)},${(y / 2.54).toFixed(0)}\n`;
+
+  // return [ElementName(element), [...element.pads.list].map(({ x, y }) => `${x / 2.54},${y / 2.54}`).join(' ')];
+}
+
+function GetUsedPackages(doc = project.board) {
+  return unique(doc.elements.list.map(e => e.package));
+}
+
+function GetPackagePitch(pkg) {
+  let points = pkg.pads.list.map(pad => new Point(pad));
+
+  if(points.length == 2) return Point.distance(...points);
+
+  let smallest = Infinity;
+
+  for(let i = 0; i < points.length; i++) {
+    for(let j = 0; j < points.length; j++) {
+      if(i == j) continue;
+
+      let dist = Point.distance(points[i], points[j]);
+      if(smallest > dist) smallest = dist;
+    }
+  }
+
+  if(Number.isFinite(smallest)) return smallest;
+}
+
+function Eagle2Circuit(doc = project.board, width = 100, height = 100) {
+  let o = '';
+
+  o += `# Stripboard
+# board <width>,<height>
+
+board ${width},${height}
+
+`;
+
+  o += `# Packages
+# <package name> <pin coordinates relative to pin 0>
+
+`;
+
+  o += PutRowsColumns(GetUsedPackages(doc).map(Package2Circuit));
+  o += '\n\n';
+
+  o += `# Components
+# <component name> <package name> <absolute position of component pin 0>
+`;
+  for(let element of doc.elements.list) o += Element2Circuit(element);
+
+  o += `
+# Connections
+# <from component name>.<pin index> <to component name>.<pin index>
+`;
+  for(let signal of doc.signals.list) o += Signal2Circuit(signal);
+
+  return o;
 }
 
 function Eagle2CircuitJS(doc = project.schematic, scale = 50, sheet = 0) {
@@ -877,7 +1347,10 @@ function Eagle2CircuitJS(doc = project.schematic, scale = 50, sheet = 0) {
     let net = deep.get(tree, ptr.slice(0, -2));
 
     //console.log('ln',ln,elm.attributes.layer);
-    console.log('segment/net', { segment: segmentIndex, net: net.attributes.name });
+    console.log('segment/net', {
+      segment: segmentIndex,
+      net: net.attributes.name
+    });
 
     circ.add('w', ...ln, 0);
   }

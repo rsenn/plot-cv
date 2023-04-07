@@ -96,10 +96,7 @@ async function main(...args) {
 console.log("matches:", matches);*/
     if(pkgs.length == 0 || packages.length == pkgs.length) {
       console.log('re =', re, ' pkgs.length =', pkgs.length, ' pacakges.length =', packages.length);
-      pkgs = Util.filter(
-        packages,
-        (re = new RegExp(arg.startsWith('/') ? name + '-[a-z]+-' + (ver || 'r?[0-9]') : arg, 'gi'))
-      );
+      pkgs = Util.filter(packages, (re = new RegExp(arg.startsWith('/') ? name + '-[a-z]+-' + (ver || 'r?[0-9]') : arg, 'gi')));
       if(pkgs.length == 0 || packages.length == pkgs.length) {
         console.log('re =', re, ' pkgs.length =', pkgs.length, ' pacakges.length =', packages.length);
         console.error(`Number of packages ${pkgs.length} when matching ${re}`);

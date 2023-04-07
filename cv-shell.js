@@ -1,3 +1,4 @@
+#!/usr/bin/env qjsm
 import * as cv from 'opencv';
 import Util from './lib/util.js';
 import { setInterval, toArrayBuffer, toString, escape, quote, define, extendArray, memoize, getFunctionArguments, glob, GLOB_TILDE, fnmatch, wordexp, lazyProperties } from './lib/misc.js';
@@ -52,6 +53,7 @@ function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = ''
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, fs, false);
   repl.fs = fs;
   repl.historyLoad(getConfFile('history'), fs);
+  repl.loadSaveOptions();
   repl.inspectOptions = console.options;
 
   let { log } = console;
@@ -60,11 +62,14 @@ function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = ''
 
     //console.log('repl.show', arg);
     if(arg instanceof cv.Mat) {
-      let win = defaultWin();
-      win.resize(arg.cols, arg.rows);
-      win.show(arg);
-      cv.waitKey(1);
-      return;
+      console.log('arg', arg);
+      if(!arg.empty) {
+        let win = defaultWin();
+        win.resize(arg.cols, arg.rows);
+        win.show(arg);
+        cv.waitKey(1);
+        return;
+      }
     }
 
     std.puts((typeof arg == 'string' ? arg : inspect(arg, repl.inspectOptions)) + '\n');

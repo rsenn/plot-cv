@@ -65,7 +65,7 @@ async function main(...args) {
   console.log('debug', debug);
 
   os.setReadHandler(+sock, () => {
-    console.log('debug.read', debug.read);
+    //console.log('debug.read', debug.read);
     debug.read();
     if(sock.eof) os.setReadHandler(+sock, null);
   });
@@ -77,6 +77,11 @@ async function main(...args) {
   retValue(ret);*/
 
   //  IOLoop();
+  //
+  if(sock.errno) {
+    console.log(`error connecting to ${addr}:`, sock.error.message);
+    std.exit(1);
+  }
 
   console.log('debuggerprotocol', sock);
 
@@ -142,10 +147,7 @@ function MakeArray(buf, numBytes) {
 function ArrayBufToHex(buf, numBytes = 8) {
   if(typeof buf == 'object' && buf != null && buf instanceof ArrayBuffer) {
     let arr = MakeArray(buf, numBytes);
-    return arr.reduce(
-      (s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
-      ''
-    );
+    return arr.reduce((s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)), '');
   }
   return buf;
 }

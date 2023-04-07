@@ -10,7 +10,8 @@ import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from './lib/filesystem.js';
 import { escape } from './lib/misc.js';
-import * as net from 'net';
+import { concat, toString, searchArrayBuffer } from 'misc';
+import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server, FormParser } from 'net';
 import { Socket } from './quickjs/qjs-ffi/lib/socket.js';
 import { EventEmitter } from './lib/events.js';
 import { Repeater } from './lib/repeater/repeater.js';
@@ -25,7 +26,7 @@ globalThis.fs = fs;
 function main(...args) {
   const base = path.basename(Util.getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
   const config = ReadJSON(`.${base}-config`) ?? {};
-  globalThis.console = new Console({ inspectOptions: { compact: 2, customInspect: true } });
+  globalThis.console = new Console({ inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 200 } });
   let params = Util.getOpt(
     {
       verbose: [false, (a, v) => (v | 0) + 1, 'v'],
@@ -46,14 +47,9 @@ function main(...args) {
   );
   if(params['no-tls'] === true) params.tls = false;
   //console.log('params', params);
-  const {
-    address = '0.0.0.0',
-    port = 8999,
-    'ssl-cert': sslCert = 'localhost.crt',
-    'ssl-private-key': sslPrivateKey = 'localhost.key'
-  } = params;
+  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key' } = params;
   const listen = params.connect && !params.listen ? false : true;
-  const server = !params.client || params.server;
+  const is_server = !params.client || params.server;
   Object.assign(globalThis, { ...rpc2, rpc });
   let name = process.env['NAME'] ?? Util.getArgs()[0];
   /*console.log('argv[1]',process.argv[1]);*/
@@ -67,6 +63,7 @@ function main(...args) {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
   const histfile = '.test-rpc-history';
   repl.historyLoad(histfile, false);
+  repl.loadSaveOptions();
   repl.directives.i = [
     (module, ...args) => {
       console.log('args', args);
@@ -96,11 +93,7 @@ function main(...args) {
 
   console.log = (...args) => repl.printStatus(() => log(console.config(repl.inspectOptions), ...args));
 
-  let cli = (globalThis.sock = new rpc.Socket(
-    `${address}:${port}`,
-    rpc[`RPC${server ? 'Server' : 'Client'}Connection`],
-    +params.verbose
-  ));
+  let cli = (globalThis.sock = new rpc.Socket(`${address}:${port}`, rpc[`RPC${is_server ? 'Server' : 'Client'}Connection`], +params.verbose));
 
   cli.register({ Socket, Worker: os.Worker, Repeater, REPL, EventEmitter });
   let logFile =
@@ -115,35 +108,16 @@ function main(...args) {
     console.log('createWS', { url, callbacks, listen });
 
     const out = s => logFile.puts(s + '\n');
-    net.setLog(
-      (params.debug ? net.LLL_USER : 0) | (((params.debug ? net.LLL_NOTICE : net.LLL_WARN) << 1) - 1),
-      (level, message) => {
-        //repl.printStatus(...args);
-        if(/__lws/.test(message)) return;
-        //
-        if(params.debug)
-          out(
-            (
-              [
-                'ERR',
-                'WARN',
-                'NOTICE',
-                'INFO',
-                'DEBUG',
-                'PARSER',
-                'HEADER',
-                'EXT',
-                'CLIENT',
-                'LATENCY',
-                'MINNET',
-                'THREAD'
-              ][Math.log2(level)] ?? level + ''
-            ).padEnd(8) + message.replace(/\n/g, '\\n')
-          );
-      }
-    );
+    setLog((params.debug ? LLL_USER : 0) | (((params.debug ? LLL_NOTICE : LLL_WARN) << 1) - 1), (level, message) => {
+      //repl.printStatus(...args);
+      if(/__lws/.test(message)) return;
+      if(/(Unhandled|PROXY-|VHOST_CERT_AGING|BIND|HTTP_BODY)/.test(message)) return;
+      //
+      if(params.debug)
+        out((['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8) + message.replace(/\n/g, '\\n'));
+    });
 
-    return [net.client, net.server][+listen]({
+    return [client, server][+listen]({
       tls: params.tls,
       sslCert,
       sslPrivateKey,
@@ -173,8 +147,15 @@ function main(...args) {
         ['.m', 'text/x-objective-c'],
         ['.sh', 'text/x-shellscript']
       ],
+      options: {
+        'upload-dir': './uploads',
+        'max-size': 10000000,
+        'basic-auth': 'quickjs/qjs-net/libwebsockets/minimal-examples/http-server/minimal-http-server-deaddrop/ba-passwords'
+      },
       mounts: [
         ['/', '.', 'debugger.html'],
+        ['/upload', 'lws-deaddrop', null, 'lws-deaddrop'],
+        ['/get', './uploads', ''],
         function proxy(req, res) {
           console.log('proxy', { req, res });
           const { url, method, headers } = req;
@@ -196,14 +177,7 @@ function main(...args) {
           //console.log('*files', { body });
           const data = JSON.parse(body);
           resp.type = 'application/json';
-          let {
-            dir = '.' ?? 'tmp',
-            filter = '.([ch]|js)$' ?? '.(brd|sch|G[A-Z][A-Z])$',
-            verbose = false,
-            objects = false,
-            key = 'mtime',
-            limit = null
-          } = data ?? {};
+          let { dir = '.' ?? 'tmp', filter = '.([ch]|js)$' ?? '.(brd|sch|G[A-Z][A-Z])$', verbose = false, objects = false, key = 'mtime', limit = null } = data ?? {};
           let absdir = path.realpath(dir);
           let components = absdir.split(path.sep);
           if(components.length && components[0] === '') components.shift();
@@ -260,20 +234,85 @@ function main(...args) {
       ...callbacks,
       onConnect(ws, req) {
         console.log('test-rpc', { ws, req });
-        connections.add(ws);
 
-        return callbacks.onConnect(ws, req);
+        console.log('req.url.path', req.url.path);
+
+        connections.add(ws);
+        if(req.url.path.endsWith('uploads')) {
+        } else {
+          return callbacks.onConnect(ws, req);
+        }
       },
       onClose(ws) {
         connections.delete(ws);
 
         return callbacks.onClose(ws, req);
       },
-      onHttp(req, resp) {
+      onHttp(ws, req, resp) {
         const { method, headers } = req;
-        console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
+
+        if(req.method != 'GET') console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
+
+        if(req.method != 'GET') {
+          console.log(req.method + ' body:', /*typeof req.body, req.body.length, */ req.body);
+          console.log('ws', ws);
+
+          let fp = new FormParser(ws, ['files'], {
+            chunkSize: 8192 * 256,
+            onContent(name, data) {
+              console.log(`onContent(${name})`, this.filename, data.byteLength);
+              fs.writeSync(this.file, data);
+            },
+            onOpen(name, filename) {
+              this.name = name;
+              this.filename = filename;
+              this.file = fs.openSync('uploads/' + filename, 'w+', 0o644);
+              console.log(`onOpen(${name})`, filename);
+            },
+            onClose(name) {
+              fs.closeSync(this.file);
+              console.log(`onClose(${this.name})`, this.filename);
+            }
+          });
+          console.log('fp.socket', fp.socket);
+          console.log('fp.params', fp.params);
+
+          /*  (async function() {
+            let r,
+              buffers = [];
+
+            while((r = req.body.next())) {
+              console.log('r:', r);
+              const { value, done } = await r;
+              console.log('value:', value);
+              //console.log('toString(value)', toString(value));
+              console.log('done:', done);
+              if(done) break;
+              buffers.push(value);
+            }
+            console.log('req.headers:', req.headers);
+            console.log(
+              'buffers:',
+              buffers.map(b => b.byteLength)
+            );
+            let data = concat(...buffers);
+            console.log('data:', data);
+            console.log('data.byteLength:', data.byteLength);
+            let pos1 = searchArrayBuffer(data, new Uint8Array([13, 10]).buffer);
+            let pos = searchArrayBuffer(data, new Uint8Array([13, 10, 13, 10]).buffer);
+            console.log('pos:', pos);
+
+            console.log('header:', toString(data.slice(0, pos)));
+            let body = data.slice(pos + 4);
+            let pos2 = searchArrayBuffer(body, data.slice(0, pos1));
+            console.log('pos2:', pos2);
+
+            fs.writeFileSync('out.bin', data);
+          })();*/
+        }
+
         const { body, url } = resp;
-        console.log('\x1b[38;5;33monHttp\x1b[0m', { body });
+        console.log('\x1b[38;5;33monHttp\x1b[0m', req, resp, { body });
 
         const file = url.path.slice(1);
         const dir = file.replace(/\/[^\/]*$/g, '');
@@ -298,7 +337,11 @@ function main(...args) {
             return match;
           });
         }
-
+        /*   if(req.url.path.endsWith('upload')) {
+          resp.status = 302;
+          resp.headers['Location'] = '/upload.html';
+          resp.headers = { ['Location']: '/upload.html' };
+        }*/
         return resp;
       },
       onMessage(ws, data) {
@@ -328,7 +371,6 @@ function main(...args) {
     exit: quit,
     Socket,
     cli,
-    net,
     std,
     os,
     deep,
