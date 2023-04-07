@@ -95,9 +95,13 @@ export function MapFile(filename) {
   return data;
 }
 
-export function WriteFile(name, data, verbose = true) {
+export function WriteFile(name, data, opts={}) {
+  const{mode=0o644, verbose=true}=opts;
+  if(types.isArrayBuffer(data))
+    data=[data];
+  
   if(typeof data == 'object' && data !== null && Symbol.iterator in data) {
-    let fd = fs.openSync(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, 0o644);
+    let fd = fs.openSync(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, mode);
     let r = 0;
     for(let item of data) {
       r += fs.writeSync(fd, toArrayBuffer(item + ''));
