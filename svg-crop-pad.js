@@ -196,7 +196,7 @@ Object.assign(globalThis, {
     filename ??= basename(globalThis.file, extname(globalThis.file)) + '.out.svg';
     const str = serializer.serializeToString(document);
 
-    let ret = WriteFile(filename, str, { mode: 0o755 });
+    let ret = WriteFile(filename, str);
     console.log(`'${filename}' written.`);
     return ret;
   }
@@ -531,7 +531,7 @@ function main(...args) {
       svg.setAttribute('width', w + writeUnits[0]);
       svg.setAttribute('height', h + writeUnits[1]);
 
-      WriteFile(basename(file, '.svg') + '.out.svg', serializer.serializeToString(document), { mode: 0o755 });
+      WriteFile(basename(file, '.svg') + '.out.svg', serializer.serializeToString(document));
     }
 
     if(params.interactive) kill(process.pid, SIGUSR1);
