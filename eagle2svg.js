@@ -55,9 +55,14 @@ function render(doc, filename) {
   console.log('renderer.palette', renderer.palette);
   //console.log('str', str);
 
+  console.log('render', { svg, str });
   let xml = fromXML(str);
 
-  filename ??= path.basename(doc.filename, '.' + doc.type) + '-' + { sch: 'schematic', brd: 'board', lbr: 'library' }[doc.type] + '.svg';
+  filename ??=
+    path.basename(doc.filename, '.' + doc.type) +
+    '-' +
+    { sch: 'schematic', brd: 'board', lbr: 'library' }[doc.type] +
+    '.svg';
 
   if(filename) {
     let ret;
@@ -69,7 +74,7 @@ function render(doc, filename) {
 
 function main(...args) {
   globalThis.console = new Console({
-    inspectOptions: { maxArrayLength: 100, colors: true, depth: 10, compact: 1, customInspect: true }
+    inspectOptions: { maxArrayLength: 100, colors: true, depth: 2, compact: 1, customInspect: true }
   });
   console.log('args', args);
 
