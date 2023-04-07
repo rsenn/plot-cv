@@ -351,9 +351,8 @@ function main(...args) {
 
     let xml = (globalThis.document = parser.parseFromFile((globalThis.file = file), 'utf-8'));
 
-   // console.log('xml', console.config({ customInspect: false }), xml);
+    // console.log('xml', console.config({ customInspect: false }), xml);
     let svg = (globalThis.svg = xml.querySelector('svg'));
-
 
     let sizeUnit = (globalThis.size = getWidthHeight(svg));
     let size = (globalThis.size = getWidthHeight(svg, unitConvToMM).round(precision));
