@@ -309,7 +309,7 @@ function IsClipPath(elem) {
 
 function HasClipPath(elem) {
   let p = [...AllParents(elem), elem];
-  
+
   return p.some(e => e.hasAttribute('clip-path'));
 }
 
@@ -324,7 +324,8 @@ function* PositionedElements(svgElem = svg, skip) {
     if(skip(value, path)) continue;
     let elem = deref(path)(svgElem);
 
-   if(HasClipPath(elem)) {
+    /* skip them for now */
+    if(HasClipPath(elem)) {
       console.log('PositionedElements skipping', elem);
       continue;
     }
