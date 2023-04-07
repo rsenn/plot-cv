@@ -307,6 +307,12 @@ function IsClipPath(elem) {
   return p.some(e => e.tagName == 'clipPath');
 }
 
+function HasClipPath(elem) {
+  let p = [...AllParents(elem), elem];
+
+  return p.some(e => e.hasAttribute('clip-path'));
+}
+
 function* PositionedElements(svgElem = svg, skip) {
   skip ??= (() => {
     let defs = svgElem.querySelector('defs');
@@ -318,10 +324,11 @@ function* PositionedElements(svgElem = svg, skip) {
     if(skip(value, path)) continue;
     let elem = deref(path)(svgElem);
 
-    /*if(IsClipPath(elem)) {
+    /* skip them for now */
+    if(HasClipPath(elem)) {
       console.log('PositionedElements skipping', elem);
       continue;
-    }*/
+    }
     yield elem;
   }
 }
