@@ -1,7 +1,7 @@
 #!/usr/bin/env qjsm
 import { Console } from 'console';
 import { kill, SIGUSR1 } from 'os';
-import { getOpt, showHelp, isObject, mapWrapper } from 'util';
+import { getOpt, showHelp, isObject, mapWrapper, startInteractive } from 'util';
 import { basename, extname } from 'path';
 import { Entities, nodeTypes, Prototypes, Factory, Parser, Serializer, Interface, Node, NodeList, NamedNodeMap, Element, Document, Attr, Text, Comment, TokenList, CSSStyleDeclaration, GetType } from './quickjs/qjs-modules/lib/dom.js';
 //import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
@@ -15,7 +15,6 @@ import { PointList } from './lib/geom/pointList.js';
 import { SvgPath } from './lib/svg/path.js';
 import extendGenerator from 'extendGenerator';
 import extendArray from 'extendArray';
-import { basename } from './lib/path.js';
 import { read as readXML, write as writeXML } from 'xml';
 import * as xml from 'xml';
 
@@ -284,7 +283,7 @@ function unitConvTo(value, unit) {
 function getViewBox(svgElem = svg) {
   if(svgElem.hasAttribute('viewBox')) {
     let viewBox = svgElem.getAttribute('viewBox');
-    return BBox.fromString(viewBox + '');
+    return BBox.fromSVG(viewBox + '');
   }
 
   //return new BBox(0, 0, ...getWidthHeight(svgElem));
@@ -352,7 +351,9 @@ function main(...args) {
 
     let xml = (globalThis.document = parser.parseFromFile((globalThis.file = file), 'utf-8'));
 
+   // console.log('xml', console.config({ customInspect: false }), xml);
     let svg = (globalThis.svg = xml.querySelector('svg'));
+
 
     let sizeUnit = (globalThis.size = getWidthHeight(svg));
     let size = (globalThis.size = getWidthHeight(svg, unitConvToMM).round(precision));
@@ -368,23 +369,33 @@ function main(...args) {
       size.units = ['', ''];
       print(file, size.toString({ separator: 'x' }));
     } else {
-      let viewBox = (globalThis.viewBox = viewBoxOld.inset(0));
+      let newViewBox,
+        viewBox = (globalThis.viewBox = viewBoxOld.inset(0));
 
       if(params.padding) {
-        let conv = writeUnits.map(unitConv);
-        console.log('writeUnits', writeUnits);
-        console.log('conv', conv[0](1), conv[1](1));
-        let pad = (globalThis.pad = [...NumericArgs(params.padding)]).map((a, i) => (i & 1 ? xfactor : yfactor) * conv[(i & 1) ^ 1](a));
+        let conv = writeUnits.map(u => unitConv(u));
+
+        let pad = (globalThis.pad = [...NumericArgs(params.padding)]).map((a, i) => {
+          let f = i & 1 ? xfactor : yfactor;
+          let u = writeUnits[(i & 1) ^ 1];
+
+          let idx = (i & 1) ^ 1;
+
+          console.log('idx', idx, u, conv[idx]);
+
+          return conv[idx](a) * f;
+        });
+
         console.log('pad', pad);
 
-        viewBox = globalThis.viewBox = viewBox.outset(...pad);
+        newViewBox = globalThis.newViewBox = viewBox.outset(...pad);
       }
 
-      svg.setAttribute('viewBox', viewBox.toSVG());
+      svg.setAttribute('viewBox', (newViewBox ??= viewBox).toSVG());
 
-      const { width, height } = viewBox;
-      console.log('viewBox', { width, height });
-      console.log('viewBox', viewBox);
+      const { width, height } = newViewBox;
+      console.log('viewBox', viewBox, viewBox.toSVG());
+      console.log('newViewBox', newViewBox, newViewBox.toSVG());
 
       let w = (globalThis.w = width / xfactor);
       let h = (globalThis.h = height / yfactor);
@@ -400,4 +411,9 @@ function main(...args) {
   }
 }
 
-main(...scriptArgs.slice(1));
+try {
+  main(...scriptArgs.slice(1));
+} catch(e) {
+  console.log('ERROR', e.message + '\n' + e.stack);
+  startInteractive();
+}
