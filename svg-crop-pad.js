@@ -326,7 +326,7 @@ function* PositionedElements(svgElem = svg, skip) {
 
     /* skip them for now */
     if(HasClipPath(elem)) {
-      console.log('PositionedElements skipping', elem);
+      //console.log('PositionedElements skipping', elem);
       continue;
     }
     yield elem;
