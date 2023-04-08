@@ -224,6 +224,7 @@ function* AllParents(elem) {
     if(obj.tagName[0] != '?') yield obj;
     obj = deref(p)(obj);
   }
+  if(obj) yield obj;
 }
 
 function AllTransforms(elem, getter = getTransformationMatrix) {
