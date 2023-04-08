@@ -7,6 +7,7 @@ import { Entities, nodeTypes, Prototypes, Factory, Parser, Serializer, Interface
 //import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
 import { BBox, isBBox } from './lib/geom/bbox.js';
 import { Size, isSize } from './lib/geom/size.js';
+import { Rect } from './lib/geom/rect.js';
 import { TreeIterator } from 'tree_walker';
 import { WriteFile } from './io-helpers.js';
 import { Matrix, isMatrix, ImmutableMatrix } from './lib/geom/matrix.js';
@@ -483,6 +484,7 @@ function main(...args) {
       unit: [true, a => (unit = a), 'u'],
       precision: [true, a => (precision = +a), 'a'],
       'print-size': [false, null, 'P'],
+      'print-viewbox': [false, null, 'V'],
       bounds: [false, null, 'b'],
       size: [true, a => (size = unitConvToMM(a)), 's'],
       interactive: [false, null, 'y'],
@@ -527,6 +529,10 @@ function main(...args) {
       print(file, size.toString({ separator: ' x ', unit: 'mm' }));
     }
 
+    if(params['print-viewbox']) {
+      print(file, viewBoxOld.toSVG());
+    }
+
     if(params['bounds']) {
       let bb = (globalThis.bb = GetBounds(svg));
       print(
@@ -557,7 +563,7 @@ function main(...args) {
       newViewBox = globalThis.newViewBox = viewBox.outset(...pad);
     }
 
-    svg.setAttribute('viewBox', (newViewBox ??= viewBox).toSVG());
+    svg.setAttribute('viewBox', (newViewBox ??= viewBox).toRect(Rect.prototype).roundTo(precision).toString());
 
     const { width, height } = newViewBox;
     console.log('viewBox', viewBox, viewBox.toSVG());
@@ -567,8 +573,8 @@ function main(...args) {
     let h = (globalThis.h = height / yfactor);
     console.log('attributes', { w, h });
 
-    svg.setAttribute('width', w + writeUnits[0]);
-    svg.setAttribute('height', h + writeUnits[1]);
+    svg.setAttribute('width', roundTo(w, 0.001) + writeUnits[0]);
+    svg.setAttribute('height', roundTo(h, 0.001) + writeUnits[1]);
 
     WriteFile(basename(file, '.svg') + '.out.svg', serializer.serializeToString(document));
 
