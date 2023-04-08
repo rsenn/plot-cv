@@ -19,7 +19,7 @@ import { GetExponent, GetMantissa, ValueToNumber, NumberToValue } from './lib/ed
 import { GetMultipliers, GetFactor, GetColorBands, PartScales, digit2color } from './lib/eda/colorCoding.js';
 import { UnitForName } from './lib/eda/units.js';
 import CircuitJS from './lib/eda/circuitjs.js';
-import { className, define, extendArray, getOpt, glob, GLOB_BRACE, intersect, isObject, memoize, range, unique } from 'util';
+import { className, define, extendArray, getOpt, glob, GLOB_BRACE, intersect, isObject, memoize, range, unique, lazyProperties, entries, isJSFunction, weakAssign } from 'util';
 import { HSLA, isHSLA, ImmutableHSLA, RGBA, isRGBA, ImmutableRGBA, ColoredText } from './lib/color.js';
 import { scientific, num2color, GetParts, GetInstances, GetPositions, GetElements } from './eagle-commands.js';
 import { Edge, Graph, Node } from './lib/geom/graph.js';
@@ -39,6 +39,12 @@ let cmdhist;
 
 extendArray();
 
+function GetGlobalFunctions() {
+  return entries(globalThis)
+    .filter(([k, v]) => isJSFunction(v))
+    .map(([k]) => k);
+}
+
 function toXML(obj) {
   deep.forEach(obj, a => Array.isArray(a.children) && a.children.length == 0 && delete a.children);
   return writeXML(obj);
@@ -49,20 +55,21 @@ function renderToXML(component) {
 }
 
 function GetFiletime(file, field = 'mtime') {
+  if(Array.isArray(file)) return file.map(file => [file, GetFiletime(file, field)]);
   let ms = fs.statSync(file)?.[field];
   return new Date(ms);
 }
 
-function FindProjects(dirPtn = '../*/eagle') {
+function FindProjects(dirPtn = '../*/eagle', sortDirection = -1, sortField = 'mtime') {
   let files = glob(dirPtn + '/*.{sch,brd}', GLOB_BRACE);
-  let entries = files.map(file => [file, GetFiletime(file)]).sort((a, b) => a[1] - b[1]);
+  let entries = SortFiles(files, sortDirection, sortField);
 
   let names = unique(files.map(fn => fn.replace(/\.(sch|brd)$/i, '')));
 
   const minIndex = name =>
     Math.min(
-      entries.findIndex(([filename, time]) => filename == name + '.sch'),
-      entries.findIndex(([filename, time]) => filename == name + '.brd')
+      entries.findIndex(file => file == name + '.sch'),
+      entries.findIndex(file => file == name + '.brd')
     );
   const hasBoth = name => minIndex(name) >= 0;
 
@@ -71,6 +78,13 @@ function FindProjects(dirPtn = '../*/eagle') {
     .filter(([name, index]) => index >= 0)
     .sort((a, b) => b[1] - a[1])
     .map(([name, index]) => name);
+}
+
+function SortFiles(files, direction = 1, statField = 'mtime') {
+  if(typeof direction == 'boolean') direction = direction ? 1 : -1;
+  return GetFiletime(files, statField)
+    .sort((a, b) => direction * (a[1] - b[1]))
+    .map(([file]) => file);
 }
 
 function pick(it, n = 1) {
@@ -148,6 +162,24 @@ function CollectParts(doc = project.schematic) {
     }));
 }
 
+function CollectElements(doc = project.board) {
+  return doc.elements
+    .map(e => e.raw.attributes)
+    .map(({ name, library, package: pkg, value }) => ({
+      name,
+      library,
+      ['package']: pkg,
+      value
+    }));
+}
+
+function CollectPartsElements(proj = project) {
+  return project.board.elements
+    .map(e => [e, project.schematic.parts[e.name]])
+    .map(a => a.map(e => e.raw.attributes))
+    .map(([{ x, y, ...element }, part]) => weakAssign(element, part));
+}
+
 function ListParts(doc = project.schematic) {
   let parts = CollectParts(doc);
   let valueLen = Math.max(...parts.map(p => p.value.length));
@@ -176,37 +208,15 @@ function main(...args) {
     inspectOptions: {
       maxArrayLength: 100,
       colors: true,
-      depth: Infinity,
+      depth: 10,
       compact: 0,
       customInspect: true
     }
   });
 
-  let debugLog;
+  let debugLog = fs.openSync('debug.log', 'a');
 
-  /* if(Util.getPlatform() == 'quickjs') {
-    globalThis.std = await import('std');
-    globalThis.os = await import('os');
-    globalThis.fs = fs = await import('./lib/filesystem.js');
-  } else {
-    const cb = filesystem => {
-      globalThis.fs = fs = filesystem;
-    };
-    await PortableFileSystem(cb);
-  }*/
-  /*  Util.defineGetterSetter(
-    globalThis,
-    'compact',
-    () => console.options.compact,
-    value => (console.options.compact = value)
-  );*/
-  console.options.depth = 10;
-  console.options.compact = 0;
-
-  debugLog = fs.openSync('debug.log', 'a');
-
-  const progName = Util.getArgv()[1];
-  const base = path.basename(progName, path.extname(progName));
+  const base = path.basename(__filename, path.extname(__filename));
   const histfile = `.${base}-history`;
 
   let params = getOpt(
@@ -218,7 +228,7 @@ function main(...args) {
     args
   );
 
-  Object.assign(globalThis, { components });
+  Object.assign(globalThis, { components, Console, GetGlobalFunctions });
 
   Object.assign(globalThis, {
     child_process,
@@ -235,7 +245,6 @@ function main(...args) {
     HORIZONTAL,
     HORIZONTAL_VERTICAL,
     DEBUG,
-    log,
     setDebug,
     PinSizes,
     EscapeClassName,
@@ -308,6 +317,7 @@ function main(...args) {
     GetLibrary,
     ElementName,
     GetUsedPackages,
+    GetPackagePitch,
     Package2Circuit,
     GetRotation,
     Eagle2Circuit,
@@ -369,6 +379,8 @@ function main(...args) {
     CollectParts,
     ListParts,
     ShowParts,
+    CollectElements,
+    CollectPartsElements,
     EaglePrint,
     setDebug
   });
@@ -379,7 +391,13 @@ function main(...args) {
     Fragment,
     React,
     ReactComponent,
-    toChildArray
+    toChildArray,
+    GetFiletime,
+    Terminate,
+    Contactref2Circuit,
+    Signal2Circuit,
+    Element2Circuit,
+    SortFiles
   });
 
   Object.assign(globalThis, {
@@ -387,14 +405,34 @@ function main(...args) {
       globalThis.document = new EagleDocument(fs.readFileSync(filename, 'utf-8'), project, filename, null, fs);
     },
     newProject(filename) {
-      if(!globalThis.project) globalThis.project = new EagleProject(null);
+      if(globalThis.project) {
+        globalThis.project.closeAll();
+        delete globalThis.project;
+        delete globalThis.sch;
+        delete globalThis.brd;
+      }
 
-      project.lazyOpen(filename);
+      globalThis.project = new EagleProject(filename);
 
-      util.lazyProperties(globalThis, {
+      //project.lazyOpen(filename);
+
+      lazyProperties(globalThis, {
         sch: () => project.schematic,
         brd: () => project.board
       });
+    },
+    nextProject() {
+      if(globalThis.projectNames.length > globalThis.projectIndex + 1) {
+        globalThis.newProject(globalThis.projectNames[++globalThis.projectIndex]);
+        return globalThis.project;
+      }
+    }
+  });
+
+  lazyProperties(globalThis, {
+    projectNames() {
+      this.projectIndex = -1;
+      return FindProjects(undefined, 1);
     }
   });
   // globalThis.docs = args.map(arg => (globalThis.doc = load(arg)));
@@ -489,6 +527,10 @@ function main(...args) {
   repl.history = LoadHistory(cmdhist);
   repl.loadSaveOptions();
   repl.printStatus(`Loaded ${repl.history.length} history entries)`);
+
+  let log = console.log;
+
+  console.log = (...args) => repl.printStatus(() => log(...args));
 
   //console.log(`repl`, repl);
   //console.log(`debugLog`, Util.getMethods(debugLog, Infinity, 0));
@@ -1235,6 +1277,25 @@ function Element2Circuit(element) {
 
 function GetUsedPackages(doc = project.board) {
   return unique(doc.elements.list.map(e => e.package));
+}
+
+function GetPackagePitch(pkg) {
+  let points = pkg.pads.list.map(pad => new Point(pad));
+
+  if(points.length == 2) return Point.distance(...points);
+
+  let smallest = Infinity;
+
+  for(let i = 0; i < points.length; i++) {
+    for(let j = 0; j < points.length; j++) {
+      if(i == j) continue;
+
+      let dist = Point.distance(points[i], points[j]);
+      if(smallest > dist) smallest = dist;
+    }
+  }
+
+  if(Number.isFinite(smallest)) return smallest;
 }
 
 function Eagle2Circuit(doc = project.board, width = 100, height = 100) {

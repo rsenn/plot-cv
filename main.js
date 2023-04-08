@@ -504,7 +504,7 @@ function DrawArc(start, end, angle) {
   //console.log('angles:', angles);
   let matrices = angles.map(a => new Rotation(a).toMatrix());
 
-  let slopes = matrices.map(m => new Point(m.transform_point(line.slope)).normal());
+  let slopes = matrices.map(m => new Point(m.transformPoint(line.slope)).normal());
 
   slopes[1].mul(-1);
   //console.log('slopes:', slopes);
@@ -1289,14 +1289,14 @@ const MakeFitAction = index => async event => {
   //console.debug(`FitAct(${index})`, { buttons, type, target });
   let oldSize = Element.rect('#fence');
   let matrix = transform().invert().toMatrix();
-  oldSize = matrix.transform_rect(oldSize);
+  oldSize = matrix.transformRect(oldSize);
   let topBar = Element.rect('.buttons');
   let clientArea = Element.rect('#main');
   let f = oldSize.fit(clientArea);
   let factors = new Size(oldSize).fitFactors(new Size(clientArea));
   let t = new TransformationList().scale(factors[index], factors[index]);
   matrix = t.toMatrix();
-  let newSize = matrix.transform_rect(new Rect(oldSize));
+  let newSize = matrix.transformRect(new Rect(oldSize));
   let align = 0;
   if(newSize.width > clientArea.width) align |= Align.LEFT;
   else align |= Align.CENTER;

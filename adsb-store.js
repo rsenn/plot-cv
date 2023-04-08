@@ -41,10 +41,7 @@ export function ReadRange(file, offset, size) {
 
 export function StateFiles() {
   const d = '[[:digit:]]';
-  return glob([d.repeat(4), '-', d.repeat(2), '-', d.repeat(2), '-', d, '.txt'].join('')).map(file => [
-    file,
-    fs.sizeSync(file)
-  ]);
+  return glob([d.repeat(4), '-', d.repeat(2), '-', d.repeat(2), '-', d, '.txt'].join('')).map(file => [file, fs.sizeSync(file)]);
 }
 
 export function StatePhases() {

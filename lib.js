@@ -157,7 +157,7 @@ Point.prototype.inside = function(rect) {
   return this.x >= rect.x && this.x < rect.x + rect.width && this.y >= rect.y && this.y < rect.y + rect.height;
 };
 Point.prototype.transform = function(m) {
-  Matrix.prototype.transform_point.call(m, this);
+  Matrix.prototype.transformPoint.call(m, this);
   return this;
 };
 Point.prototype.normalize = function(minmax) {

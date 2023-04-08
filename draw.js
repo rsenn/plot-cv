@@ -445,7 +445,7 @@ window.addEventListener('load', async e => {
 
       let xy,
         pt,
-        pos = new Point(...svgCTM.transform_xy(x, y));
+        pos = new Point(...svgCTM.transformXY(x, y));
 
       if(target.tagName != 'svg') {
         Object.assign(globalThis, { target });
@@ -461,7 +461,7 @@ window.addEventListener('load', async e => {
       async function MovePoint() {
         for await(let ev of TouchEvents(svgElem)) {
           let { clientX, clientY } = ev;
-          let tpos = new Point(...svgCTM.transform_xy(clientX, clientY));
+          let tpos = new Point(...svgCTM.transformXY(clientX, clientY));
 
           let diff = tpos.diff(pos);
 

@@ -1,7 +1,6 @@
 import * as fs from 'fs';
-import Util from './lib/util.js';
 import * as path from './lib/path.js';
-import { types, toString, quote, escape } from './lib/misc.js';
+import { types, toString, quote, escape, predicate } from './lib/misc.js';
 import child_process from 'child_process';
 
 let bjson;
@@ -96,9 +95,12 @@ export function MapFile(filename) {
   return data;
 }
 
-export function WriteFile(name, data, verbose = true) {
-  if(Util.isGenerator(data)) {
-    let fd = fs.openSync(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, 0o644);
+export function WriteFile(name, data, opts = {}) {
+  const { mode = 0o644, verbose = true } = opts;
+  if(types.isArrayBuffer(data)) data = [data];
+
+  if(typeof data == 'object' && data !== null && Symbol.iterator in data) {
+    let fd = fs.openSync(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, mode);
     let r = 0;
     for(let item of data) {
       r += fs.writeSync(fd, toArrayBuffer(item + ''));
@@ -109,7 +111,6 @@ export function WriteFile(name, data, verbose = true) {
   }
   if(fs.existsSync(name)) fs.unlinkSync(name);
 
-  if(Util.isIterator(data)) data = [...data];
   if(Array.isArray(data)) data = data.join('\n');
 
   if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
@@ -156,7 +157,7 @@ export function WriteBJSON(name, data) {
 }
 
 export function* DirIterator(...args) {
-  let pred = typeof args[0] != 'string' ? Util.predicate(args.shift()) : () => true;
+  let pred = typeof args[0] != 'string' ? predicate(args.shift()) : () => true;
   for(let dir of args) {
     dir = dir.replace(/~/g, std.getenv('HOME'));
     let entries = os.readdir(dir)[0] ?? [];
