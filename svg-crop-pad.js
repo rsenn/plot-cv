@@ -1,7 +1,7 @@
 #!/usr/bin/env qjsm
 import { Console } from 'console';
 import { kill, SIGUSR1 } from 'os';
-import { getOpt, showHelp, isObject, mapWrapper, startInteractive, define } from 'util';
+import { getOpt, showHelp, isObject, mapWrapper, startInteractive, define, roundTo } from 'util';
 import { basename, extname } from 'path';
 import { Entities, nodeTypes, Prototypes, Factory, Parser, Serializer, Interface, Node, NodeList, NamedNodeMap, Element, Document, Attr, Text, Comment, TokenList, CSSStyleDeclaration, GetType } from './quickjs/qjs-modules/lib/dom.js';
 //import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
@@ -450,7 +450,7 @@ function getTransformationMatrix(e) {
 function main(...args) {
   let debug = 0;
   let unit = 'mm';
-  let precision = 1;
+  let precision = 1e-3;
   let size = 0;
   let padding = 0;
 
@@ -501,70 +501,75 @@ function main(...args) {
   for(let file of files) {
     if(params.debug >= 1) console.log('Processing:', file);
 
-    let xml,svg;
+    let xml, svg;
 
-try {
-    xml = (globalThis.document = parser.parseFromFile((globalThis.file = file), 'utf-8'));
+    try {
+      xml = globalThis.document = parser.parseFromFile((globalThis.file = file), 'utf-8');
 
-    // console.log('xml', console.config({ customInspect: false }), xml);
-    svg = (globalThis.svg = xml.querySelector('svg'));
-}catch(e) {
-  console.log(`ERROR loading '${file}'`, e.message+'\n'+e.stack);
-}
+      // console.log('xml', console.config({ customInspect: false }), xml);
+      svg = globalThis.svg = xml.querySelector('svg');
+    } catch(e) {
+      console.log(`ERROR loading '${file}'`, e.message + '\n' + e.stack);
+    }
     let sizeUnit = (globalThis.size = getWidthHeight(svg));
     let size = (globalThis.size = getWidthHeight(svg, unitConvToMM).round(precision));
     let writeUnits = (globalThis.writeUnits = [sizeUnit.units.width, sizeUnit.units.height]);
 
     let viewBoxOld = (globalThis.viewBoxOld = getViewBox(svg) ?? size);
     //console.log('viewBox', { viewBoxOld });
-   // console.log('size', { size }, size.units);
+    // console.log('size', { size }, size.units);
     let xfactor = (globalThis.xfactor = viewBoxOld.width / sizeUnit.width);
     let yfactor = (globalThis.yfactor = viewBoxOld.height / sizeUnit.height);
 
     if(params['print-size']) {
       size.units = ['', ''];
-      print(file, size.toString({ separator: ' x ' , unit: 'mm'}));
-    } else if(params['bounds']) {
-      let bb = (globalThis.bb = GetBounds(svg));
-      print(file, bb);
-    } else {
-      let newViewBox,
-        viewBox = (globalThis.viewBox = viewBoxOld.inset(0));
-
-      if(params.padding) {
-        let conv = writeUnits.map(u => unitConv(u));
-
-        let pad = (globalThis.pad = [...NumericArgs(params.padding)]).map((a, i) => {
-          let f = i & 1 ? xfactor : yfactor;
-          let u = writeUnits[(i & 1) ^ 1];
-
-          let idx = (i & 1) ^ 1;
-
-          console.log('idx', idx, u, conv[idx]);
-
-          return conv[idx](a) * f;
-        });
-
-        console.log('pad', pad);
-
-        newViewBox = globalThis.newViewBox = viewBox.outset(...pad);
-      }
-
-      svg.setAttribute('viewBox', (newViewBox ??= viewBox).toSVG());
-
-      const { width, height } = newViewBox;
-      console.log('viewBox', viewBox, viewBox.toSVG());
-      console.log('newViewBox', newViewBox, newViewBox.toSVG());
-
-      let w = (globalThis.w = width / xfactor);
-      let h = (globalThis.h = height / yfactor);
-      console.log('attributes', { w, h });
-
-      svg.setAttribute('width', w + writeUnits[0]);
-      svg.setAttribute('height', h + writeUnits[1]);
-
-      WriteFile(basename(file, '.svg') + '.out.svg', serializer.serializeToString(document));
+      print(file, size.toString({ separator: ' x ', unit: 'mm' }));
     }
+
+    if(params['bounds']) {
+      let bb = (globalThis.bb = GetBounds(svg));
+      print(
+        file,
+        bb.round(n => roundTo(n, precision)).toSVG()
+      );
+    }
+
+    let newViewBox,
+      viewBox = (globalThis.viewBox = viewBoxOld.inset(0));
+
+    if(params.padding) {
+      let conv = writeUnits.map(u => unitConv(u));
+
+      let pad = (globalThis.pad = [...NumericArgs(params.padding)]).map((a, i) => {
+        let f = i & 1 ? xfactor : yfactor;
+        let u = writeUnits[(i & 1) ^ 1];
+
+        let idx = (i & 1) ^ 1;
+
+        console.log('idx', idx, u, conv[idx]);
+
+        return conv[idx](a) * f;
+      });
+
+      console.log('pad', pad);
+
+      newViewBox = globalThis.newViewBox = viewBox.outset(...pad);
+    }
+
+    svg.setAttribute('viewBox', (newViewBox ??= viewBox).toSVG());
+
+    const { width, height } = newViewBox;
+    console.log('viewBox', viewBox, viewBox.toSVG());
+    console.log('newViewBox', newViewBox, newViewBox.toSVG());
+
+    let w = (globalThis.w = width / xfactor);
+    let h = (globalThis.h = height / yfactor);
+    console.log('attributes', { w, h });
+
+    svg.setAttribute('width', w + writeUnits[0]);
+    svg.setAttribute('height', h + writeUnits[1]);
+
+    WriteFile(basename(file, '.svg') + '.out.svg', serializer.serializeToString(document));
 
     if(params.interactive) kill(process.pid, SIGUSR1);
   }
