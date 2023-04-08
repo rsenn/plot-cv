@@ -52,13 +52,7 @@ function render(doc, filename) {
     console.log('ERROR:', e);
     console.log('STACK:', e.stack);
   }
-    let xml = fromXML(str);
-
-  filename ??=
-    path.basename(doc.filename, '.' + doc.type) +
-    '-' +
-    { sch: 'schematic', brd: 'board', lbr: 'library' }[doc.type] +
-    '.svg';
+  let xml = fromXML(str);
 
   if(filename) {
     let ret;
@@ -72,7 +66,7 @@ function main(...args) {
   globalThis.console = new Console({
     inspectOptions: { maxArrayLength: 100, colors: true, depth: 2, compact: 0, customInspect: true }
   });
- 
+
   let params = getOpt(
     {
       debug: [false, value => (debugFlag = value), 'x'],
@@ -81,11 +75,14 @@ function main(...args) {
     },
     args
   );
-  
+
   for(let arg of args) {
     let doc = EagleDocument.open(arg, { readFileSync });
- 
-    render(doc);
+    let file = path.basename(doc.filename, '.' + doc.type) + '-' + { sch: 'schematic', brd: 'board', lbr: 'library' }[doc.type] + '.svg';
+
+    if(params['output-dir']) file = path.join(params['output-dir'], file);
+
+    render(doc, file);
   }
 }
 
