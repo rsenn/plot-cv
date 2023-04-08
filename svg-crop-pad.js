@@ -326,7 +326,7 @@ function* PositionedElements(svgElem = svg, skip) {
 
     /* skip them for now */
     if(HasClipPath(elem)) {
-      console.log('PositionedElements skipping', elem);
+      //console.log('PositionedElements skipping', elem);
       continue;
     }
     yield elem;
@@ -501,24 +501,29 @@ function main(...args) {
   for(let file of files) {
     if(params.debug >= 1) console.log('Processing:', file);
 
-    let xml = (globalThis.document = parser.parseFromFile((globalThis.file = file), 'utf-8'));
+    let xml,svg;
+
+try {
+    xml = (globalThis.document = parser.parseFromFile((globalThis.file = file), 'utf-8'));
 
     // console.log('xml', console.config({ customInspect: false }), xml);
-    let svg = (globalThis.svg = xml.querySelector('svg'));
-
+    svg = (globalThis.svg = xml.querySelector('svg'));
+}catch(e) {
+  console.log(`ERROR loading '${file}'`, e.message+'\n'+e.stack);
+}
     let sizeUnit = (globalThis.size = getWidthHeight(svg));
     let size = (globalThis.size = getWidthHeight(svg, unitConvToMM).round(precision));
     let writeUnits = (globalThis.writeUnits = [sizeUnit.units.width, sizeUnit.units.height]);
 
     let viewBoxOld = (globalThis.viewBoxOld = getViewBox(svg) ?? size);
-    console.log('viewBox', { viewBoxOld });
-    console.log('size', { size }, size.units);
+    //console.log('viewBox', { viewBoxOld });
+   // console.log('size', { size }, size.units);
     let xfactor = (globalThis.xfactor = viewBoxOld.width / sizeUnit.width);
     let yfactor = (globalThis.yfactor = viewBoxOld.height / sizeUnit.height);
 
     if(params['print-size']) {
       size.units = ['', ''];
-      print(file, size.toString({ separator: 'x' }));
+      print(file, size.toString({ separator: ' x ' , unit: 'mm'}));
     } else if(params['bounds']) {
       let bb = (globalThis.bb = GetBounds(svg));
       print(file, bb);
