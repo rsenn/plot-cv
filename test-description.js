@@ -1,15 +1,9 @@
-import { colorCtor } from './lib/misc.js';
-import PortableFileSystem from './lib/filesystem.js';
-import ConsoleSetup from './lib/consoleSetup.js';
-import Util from './lib/util.js';
 import { ColoredText } from './lib/color/coloredText.js';
 Util.colorCtor = ColoredText;
 //prettier-ignore
 let filesystem ;
 
 async function main(...args) {
-  await ConsoleSetup();
-  filesystem = await PortableFileSystem();
 
   let file;
   let str;

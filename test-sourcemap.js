@@ -1,14 +1,9 @@
-import { exit } from './lib/misc.js';
 import { SourceMap } from './lib/sourceMap.js';
-import PortableFileSystem from './lib/filesystem.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 
 //prettier-ignore
 let filesystem;
 
 async function main(...args) {
-  await ConsoleSetup();
-  filesystem = await PortableFileSystem();
 
   console.log('sourceMap');
 
@@ -24,6 +19,6 @@ async function main(...args) {
 
 main(...scriptArgs.slice(1));
 
-/*  .then(() => Util.exit(0))
-  .catch(() => Util.exit(1));
+/*  .then(() => process.exit(0))
+  .catch(() => process.exit(1));
 */

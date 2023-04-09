@@ -1,4 +1,3 @@
-import ConsoleSetup from './lib/consoleSetup.js';
 import { Contour } from 'opencv';
 import * as cv from 'opencv';
 import { Rect } from 'opencv';
@@ -27,14 +26,6 @@ Object.defineProperty(Point.prototype, 'distance', {
 });
 
 async function main(...args) {
-  await ConsoleSetup({
-    breakLength: 120,
-    maxStringLength: 200,
-    multiline: 1,
-    alignMap: true,
-    colors: true,
-    compact: 2
-  });
 
   function testPointVector() {
     let pv = new Contour();

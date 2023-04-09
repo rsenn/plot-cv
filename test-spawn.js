@@ -1,7 +1,4 @@
-import { escape } from './lib/misc.js';
 import PortableSpawn from './lib/spawn.js';
-import PortableFileSystem from './lib/filesystem.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 import inspect from './lib/objectInspect.js';
 
 //prettier-ignore
@@ -9,8 +6,6 @@ let filesystem, spawn;
 
 async function main(...args) {
   console.log('main(', ...args, ')');
-  await ConsoleSetup({ breakLength: 80, depth: Infinity });
-  await PortableFileSystem(fs => (filesystem = fs));
   spawn = await PortableSpawn();
 
   console.log('spawn:', spawn);

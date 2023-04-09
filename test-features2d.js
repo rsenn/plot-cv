@@ -1,10 +1,8 @@
-import { getArgv, tryCatch } from './lib/misc.js';
 import * as cv from 'opencv';
 import Console from 'console';
 import * as path from 'path';
-import Util from './lib/util.js';
 
-let basename = Util.getArgv()[1].replace(/\.js$/, '');
+let basename = process.argv[1].replace(/\.js$/, '');
 
 function main(...args) {
   globalThis.console = new Console({

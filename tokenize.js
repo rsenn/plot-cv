@@ -1,5 +1,5 @@
 import tokenRules from './token-rules.js';
-import Lexer from './lib/lexer.js';
+import { Lexer } from './lib/lexer.js';
 var lexer = new Lexer();
 
 var line = 1,
@@ -42,7 +42,6 @@ export async function* tokenize(streamOfText) {
       keyword: false
     })
   );
-  lexer.addRule(tokenRules['while'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'WHILE', keyword: true }));
   lexer.addRule(tokenRules['while'], lexeme => token({ lexeme, loc: { line, column }, tokenClass: 'WHILE', keyword: true }));
   lexer.addRule(tokenRules['volatile'], lexeme =>
     token({

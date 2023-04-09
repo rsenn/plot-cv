@@ -1,6 +1,4 @@
-import { define, getMemberNames, getMethodNames, isObject, once, randStr, tryCatch, weakMapper } from './lib/misc.js';
 import { Message } from './message.js';
-import Util from './lib/util.js';
 import { Alea } from './lib/alea.js';
 import { TimeoutError } from './lib/repeater/timers.js';
 import * as Timers from './lib/repeater/timers.js';

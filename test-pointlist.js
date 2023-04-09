@@ -1,4 +1,3 @@
-import { className, getMethods } from './lib/misc.js';
 import inspect from 'inspect';
 import { Point, Rect, PointList, Line, Vector } from './lib/geom.js';
 

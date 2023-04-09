@@ -1,12 +1,8 @@
-import { callMain, chunkArray, getEnv, isNumeric, putError, toSource } from './lib/misc.js';
 import inspect from 'inspect';
-import PortableFileSystem from './lib/filesystem.js';
-import Util from './lib/util.js';
 import { XMLIterator } from './lib/xml/util.js';
 import tXml from './lib/tXml.js';
 import toSource from './lib/tosource.js';
 import { ColorMap } from './lib/draw/colorMap.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 
 //prettier-ignore
 let filesystem;
@@ -57,8 +53,6 @@ async function main(...args) {
   //console.log('Environment:', Util.toSource(envEntries, { quote: '"'}).replaceAll('\n', "\\n"));
   console.log('Environment:', inspect(envMap));
 
-  filesystem = await PortableFileSystem();
-  await ConsoleSetup();
 
   console.log('OK');
   let colors, keys;

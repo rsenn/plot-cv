@@ -1,4 +1,3 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
 import { ECMAScriptParser, PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
 import { ESNode, ImportDeclaration, Identifier, TemplateLiteral, CallExpression } from './lib/ecmascript/estree.js';
@@ -211,7 +210,6 @@ function processFile(file, params) {
     console.log('importIdentifiers:', unique(importIdentifiers.flat()).join(', '));
   }
 
-  //  await ConsoleSetup({ depth: Infinity });
   const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral);
 
   //console.log('templates:', templates);

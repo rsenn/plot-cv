@@ -1,7 +1,6 @@
-import { getArgs } from './lib/misc.js';
 import { RGBA } from './lib/color/rgba.js';
 
-let args = Util.getArgs();
+let args = scriptArgs;
 
 let colorStr = args.shift() || '#00f';
 let color = new RGBA(colorStr);

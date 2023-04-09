@@ -1,5 +1,3 @@
-import { assert, lazyProperties, define, isObject, memoize, unique } from './lib/misc.js';
-import Util from './lib/util.js';
 import * as path from './lib/path.js';
 import * as deep from './lib/deep.js';
 import { Pointer } from './lib/pointer.js';
@@ -24,7 +22,7 @@ function Older(file, other) {
 }
 
 function GetSubscripts(str) {
-  let matches = [...Util.matchAll(/\[([0-9]*)\]/g, str)];
+  let matches = [...matchAll(/\[([0-9]*)\]/g, str)];
   return matches.map(m => [m.index, +m[1]]);
 }
 

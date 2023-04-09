@@ -1,8 +1,5 @@
-import { safeCall } from './lib/misc.js';
 import { Environment, ECMAScriptParser, Printer } from './lib/ecmascript.js';
-import Util from './lib/util.js';
 import trkl from './lib/trkl.js';
-import PortableFileSystem from './lib/filesystem.js';
 
 const code = `
  let testObj = {};
@@ -20,7 +17,6 @@ console.log('testValues', testValues);
 let filesystem;
 
 async function main(...args) {
-  filesystem = await PortableFileSystem();
 
   let file = 'test-trkl.js';
 

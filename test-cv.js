@@ -1,4 +1,3 @@
-import { className, getArgv, getMethodNames, repeat, tryCatch } from './lib/misc.js';
 import { Point } from 'opencv';
 import { Size } from 'opencv';
 import { Rect } from 'opencv';
@@ -12,7 +11,6 @@ import inspect from './lib/objectInspect.js';
 import path from './lib/path.js';
 import fs from './lib/filesystem.js';
 import RGBA from './lib/color/rgba.js';
-import Util from './lib/util.js';
 import Console from 'console';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
@@ -39,11 +37,11 @@ function WriteImage(name, mat) {
 function SaveConfig(configObj) {
   configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v]));
 
-  return filesystem.writeFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'), JSON.stringify(configObj, null, 2) + '\n');
+  return filesystem.writeFile(process.argv[1].replace(/\.js$/, '.config.json'), JSON.stringify(configObj, null, 2) + '\n');
 }
 
 function LoadConfig() {
-  let str = filesystem.readFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'), 'utf-8');
+  let str = filesystem.readFile(process.argv[1].replace(/\.js$/, '.config.json'), 'utf-8');
   let configObj = JSON.parse(str ?? '{}');
 
   configObj = Object.fromEntries(

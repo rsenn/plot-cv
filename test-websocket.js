@@ -1,13 +1,9 @@
-import { exit, getKeys, isConstructor } from './lib/misc.js';
 import WebSocket from 'ws';
 import WebSocketAsync from './lib/net/websocket-async.js';
-import ConsoleSetup from './lib/consoleSetup.js';
-import Util from './lib/util.js';
 
 import { Message } from './message.js';
 
 async function main() {
-  await ConsoleSetup({ breakLength: 200 });
 
   console.log('WebSocket:', WebSocket, Util.isConstructor(WebSocket));
 
@@ -74,7 +70,7 @@ async function main() {
 */
 
   // Close the connection.
-  Util.exit(0);
+  process.exit(0);
   dump();
 }
 

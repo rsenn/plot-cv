@@ -1,6 +1,4 @@
-import { abbreviate, coloring } from './lib/misc.js';
 import { LineList, Rect, Point } from './lib/geom.js';
-import Util from './lib/util.js';
 import { BG, digit2color, GetColorBands, PartScales } from './lib/eda/colorCoding.js';
 export { GetColorBands } from './lib/eda/colorCoding.js';
 import { map, consume, reduce } from './lib/iterable.js';

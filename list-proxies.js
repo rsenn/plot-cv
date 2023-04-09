@@ -1,15 +1,12 @@
-import { coloring, exit, getOpt, insertSorted, isBrowser, isIpAddress, isPortNumber, randStr, toSource } from './lib/misc.js';
 import ProxyList from './node_modules/free-proxy/index.js';
 import ProxyLists from './node_modules/proxy-lists/index.js';
 import proxynova from './node_modules/proxynova/index.js';
-import Util from './lib/util.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import url from 'url';
 import net from 'net';
 import http from 'http';
 import https from 'https';
 import querystring from 'querystring';
-import ConsoleSetup from './lib/consoleSetup.js';
 import fetch from 'isomorphic-fetch';
 import deep from './lib/deep.js';
 import { promises as fsPromises } from 'fs';
@@ -158,7 +155,6 @@ Proxy.prototype[Symbol.for('nodejs.util.inspect.custom')] = function() {
 };
 
 async function main(...args) {
-  await ConsoleSetup({ depth: 2, breakLength: 120 });
   /*let sock = await new TCPSocket('178.238.229.236', 80);
   await AcquireWriter(sock, w => w.write('CONNECT github.com:443 HTTP/1.1\r\n\r\n'));
   await AcquireReader(sock, async r => {
@@ -168,7 +164,7 @@ async function main(...args) {
   console.log("sock:", sock);*/
   /*let h = await new HTTPRequest('http://www.google.com', '178.238.229.236', 80);
   console.log('h:', h);
-  Util.exit(0);*/
+  process.exit(0);*/
 
   let params = Util.getOpt(
     {

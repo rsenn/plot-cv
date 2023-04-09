@@ -1,5 +1,3 @@
-import ConsoleSetup from './lib/consoleSetup.js';
-import PortableFileSystem from './lib/filesystem.js';
 import parse from 'bash-parser';
 
 const consoleOpts = {
@@ -10,8 +8,6 @@ const consoleOpts = {
 };
 
 async function main(...args) {
-  await ConsoleSetup();
-  await PortableFileSystem();
 
   console.options = consoleOpts;
 

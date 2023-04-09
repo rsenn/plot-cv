@@ -1,7 +1,6 @@
 import inspect from 'inspect';
 import { define, isObject, memoize, unique } from './lib/misc.js';
 import { ECMAScriptParser } from './lib/ecmascript.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 import { Lexer, PathReplacer, Location } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
 import { Token } from './lib/ecmascript/token.js';
@@ -489,30 +488,27 @@ async function main(...args) {
 
   function FriendlyPrintNode(n) {
     if(n.type)
-      return Object.defineProperties(
-        [GetPosition(n), n.type || className(n), /*st ? st.pathOf(n) : */ undefined, abbreviate(escape(PrintAst(n))), GetName(n) /*|| Symbol.for('default')*/],
-        {
-          inspectSymbol: {
-            value() {
-              let arr = this.reduce((acc, item) => [...acc, (item[inspectSymbol] ?? item.toString).call(item)], []);
-              let [pos, type, path, node, id] = arr;
-              return (
-                '{' +
-                Object.entries({ pos, type, path, node, id })
-                  .map(([k, v]) => `\n    ${k}: ${v}`)
-                  .join('') +
-                '\n}'
-              );
-              return arr.join('\n  ');
-            }
-          },
-          id: {
-            get() {
-              if(n.id) return Identifier.string(n.id);
-            }
+      return Object.defineProperties([GetPosition(n), n.type || className(n), /*st ? st.pathOf(n) : */ undefined, abbreviate(escape(PrintAst(n))), GetName(n) /*|| Symbol.for('default')*/], {
+        inspectSymbol: {
+          value() {
+            let arr = this.reduce((acc, item) => [...acc, (item[inspectSymbol] ?? item.toString).call(item)], []);
+            let [pos, type, path, node, id] = arr;
+            return (
+              '{' +
+              Object.entries({ pos, type, path, node, id })
+                .map(([k, v]) => `\n    ${k}: ${v}`)
+                .join('') +
+              '\n}'
+            );
+            return arr.join('\n  ');
+          }
+        },
+        id: {
+          get() {
+            if(n.id) return Identifier.string(n.id);
           }
         }
-      );
+      });
     return n;
   }
   function FriendlyPrintNodes(nodes) {

@@ -1,6 +1,5 @@
 import * as el from './editline.js';
 import * as ffi from 'ffi';
-import ConsoleSetup from './lib/consoleSetup.js';
 
 function hex(num) {
   return '0x' + ('0000000' + num.toString(16)).slice(-16);
@@ -11,7 +10,6 @@ Number.prototype.toHex = function() {
 };
 
 async function main(...args) {
-  await ConsoleSetup({ depth: Infinity });
 
   console.log('el.handle', el.handle);
 

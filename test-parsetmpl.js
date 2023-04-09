@@ -1,15 +1,11 @@
-import { abbreviate, className, exit } from './lib/misc.js';
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
 import { estree, ESNode, Literal, TemplateLiteral, CallExpression, ImportDeclaration, Identifier, ObjectPattern } from './lib/ecmascript/estree.js';
-import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import { Path } from './lib/json.js';
 import { SortedMap } from './lib/container/sortedMap.js';
-import PortableFileSystem from './lib/filesystem.js';
 import { ImmutablePath } from './lib/json.js';
-import { ConsoleSetup } from './lib/consoleSetup.js';
 
 let filesystem;
 
@@ -218,10 +214,8 @@ async function main(...args) {
   const stdout = (await import('process')).stdout;
 
   const breakLength = stdout.columns || process.env.COLUMNS || 80;
-  await ConsoleSetup({ breakLength, maxStringLength: breakLength, depth: 5 });
   console.log('breakLength:', breakLength);
 
-  filesystem = await PortableFileSystem();
 
   if(args.length == 0) args.push('./lib/ecmascript/parser.js');
   for(let file of args) {
@@ -287,12 +281,12 @@ async function main(...args) {
     }
     files[file] = finish(error);
 
-    if(error) Util.exit(1);
+    if(error) process.exit(1);
 
     console.log('files:', files);
   }
   let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
-  Util.exit(Number(files.length == 0));
+  process.exit(Number(files.length == 0));
 }
 
 function finish(err) {

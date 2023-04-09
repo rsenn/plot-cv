@@ -3,13 +3,11 @@ import inspect from 'inspect';
 import { define, isObject, memoize, unique } from './lib/misc.js';
 import { ECMAScriptParser, Printer, PathReplacer } from './lib/ecmascript.js';
 import { ObjectPattern, ObjectExpression, ImportDeclaration, ExportNamedDeclaration, VariableDeclaration, estree, ESNode, Literal } from './lib/ecmascript.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 import { ImmutablePath } from './lib/json.js';
 import deep from './lib/deep.js';
 import filesystem from 'fs';
 import path from './lib/path.js';
 import { SortedMap } from './lib/container/sortedMap.js';
-import PortableFileSystem from './lib/filesystem.js';
 
 const code = `export const Progress = ({ className, percent, ...props }) => html\`<\x24{Overlay} className=\x24{classNames('progress', 'center', className)} text=\x24{percent + '%'} style=\x24{{
   position: 'relative',
@@ -103,7 +101,6 @@ function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments))
 }
 
 async function main(...args) {
-  await ConsoleSetup({ depth: 5 });
 
   cwd = process.cwd();
 

@@ -1,9 +1,5 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
-import PortableFileSystem from './lib/fs.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 import PortableSpawn from './lib/spawn.js';
 import { AcquireReader } from './lib/stream/utils.js';
-import Util from './lib/util.js';
 import path from './lib/path.js';
 import deep from './lib/deep.js';
 import Tree from './lib/tree.js';
@@ -47,8 +43,6 @@ const ReadBJSON = async filename =>
 
 async function main(...args) {
   console.log('main(', ...args, ')');
-  await ConsoleSetup({ breakLength: 120, depth: 10 });
-  await PortableFileSystem(fs => (fs = fs));
   await PortableSpawn(fn => (spawn = fn));
 
   let params = getOpt(
@@ -187,7 +181,7 @@ async function main(...args) {
         let entries = [...flat];
         let mainNodes = sysinc ? entries : entries.filter(NoSystemIncludes);
 
-        let typedefs = [...Util.filter(mainNodes, ([path, decl]) => decl.kind == 'TypedefDecl')];
+        let typedefs = [...filter(mainNodes, ([path, decl]) => decl.kind == 'TypedefDecl')];
 
         const names = decls => [...decls].map(([path, decl]) => decl.name);
         const declarations = decls => [...decls].map(([path, decl, loc]) => [decl.name, loc.toString()]);

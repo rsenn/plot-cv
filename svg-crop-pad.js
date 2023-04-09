@@ -4,7 +4,6 @@ import { kill, SIGUSR1 } from 'os';
 import { getOpt, showHelp, isObject, mapWrapper, startInteractive, define, roundTo } from 'util';
 import { basename, extname } from 'path';
 import { Entities, nodeTypes, Prototypes, Factory, Parser, Serializer, Interface, Node, NodeList, NamedNodeMap, Element, Document, Attr, Text, Comment, TokenList, CSSStyleDeclaration, GetType } from './quickjs/qjs-modules/lib/dom.js';
-//import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
 import { BBox, isBBox } from './lib/geom/bbox.js';
 import { Size, isSize } from './lib/geom/size.js';
 import { Rect } from './lib/geom/rect.js';

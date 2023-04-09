@@ -200,7 +200,6 @@ export function beg_of_line(count, key) {
 /**
  * @function begin_undo_group
  *
- *
  * @return   {Number}
  */
 define('rl_begin_undo_group', dlsym(libreadline, 'rl_begin_undo_group'), null, 'int');
@@ -358,7 +357,6 @@ export function callback_handler_install(prompt, linefunc) {
 /**
  * @function callback_handler_remove
  *
- *
  * @return   {Number}
  */
 define('rl_callback_handler_remove', dlsym(libreadline, 'rl_callback_handler_remove'), null, 'void');
@@ -368,7 +366,6 @@ export function callback_handler_remove() {
 /**
  * @function callback_read_char
  *
- *
  * @return   {Number}
  */
 define('rl_callback_read_char', dlsym(libreadline, 'rl_callback_read_char'), null, 'void');
@@ -377,7 +374,6 @@ export function callback_read_char() {
 }
 /**
  * @function callback_sigcleanup
- *
  *
  * @return   {Number}
  */
@@ -424,7 +420,6 @@ export function character_len(c, pos) {
 /**
  * @function check_signals
  *
- *
  * @return   {Number}
  */
 define('rl_check_signals', dlsym(libreadline, 'rl_check_signals'), null, 'void');
@@ -433,7 +428,6 @@ export function check_signals() {
 }
 /**
  * @function cleanup_after_signal
- *
  *
  * @return   {Number}
  */
@@ -444,7 +438,6 @@ export function cleanup_after_signal() {
 /**
  * @function clear_history
  *
- *
  * @return   {Number}
  */
 define('rl_clear_history', dlsym(libreadline, 'rl_clear_history'), null, 'void');
@@ -454,7 +447,6 @@ export function clear_history() {
 /**
  * @function clear_message
  *
- *
  * @return   {Number}
  */
 define('rl_clear_message', dlsym(libreadline, 'rl_clear_message'), null, 'int');
@@ -463,7 +455,6 @@ export function clear_message() {
 }
 /**
  * @function clear_pending_input
- *
  *
  * @return   {Number}
  */
@@ -486,7 +477,6 @@ export function clear_screen(count, key) {
 /**
  * @function clear_signals
  *
- *
  * @return   {Number}
  */
 define('rl_clear_signals', dlsym(libreadline, 'rl_clear_signals'), null, 'int');
@@ -495,7 +485,6 @@ export function clear_signals() {
 }
 /**
  * @function clear_visible_line
- *
  *
  * @return   {Number}
  */
@@ -600,7 +589,6 @@ export function copy_text(from, to) {
 /**
  * @function crlf
  *
- *
  * @return   {Number}
  */
 define('rl_crlf', dlsym(libreadline, 'rl_crlf'), null, 'int');
@@ -658,7 +646,6 @@ export function delete_text(from, to) {
 /**
  * @function deprep_terminal
  *
- *
  * @return   {Number}
  */
 define('rl_deprep_terminal', dlsym(libreadline, 'rl_deprep_terminal'), null, 'void');
@@ -680,7 +667,6 @@ export function digit_argument(ignore, key) {
 /**
  * @function ding
  *
- *
  * @return   {Number}
  */
 define('rl_ding', dlsym(libreadline, 'rl_ding'), null, 'int');
@@ -689,7 +675,6 @@ export function ding() {
 }
 /**
  * @function discard_argument
- *
  *
  * @return   {Number}
  */
@@ -735,7 +720,6 @@ export function do_lowercase_version(ignore1, ignore2) {
 }
 /**
  * @function do_undo
- *
  *
  * @return   {Number}
  */
@@ -864,7 +848,6 @@ export function endOfLine(count, key) {
 /**
  * @function end_undo_group
  *
- *
  * @return   {Number}
  */
 define('rl_end_undo_group', dlsym(libreadline, 'rl_end_undo_group'), null, 'int');
@@ -918,7 +901,6 @@ export function extend_line_buffer(len) {
 }
 /**
  * @function forced_update_display
- *
  *
  * @return   {Number}
  */
@@ -1011,7 +993,6 @@ export function free_keymap(map) {
 /**
  * @function free_line_state
  *
- *
  * @return   {Number}
  */
 define('rl_free_line_state', dlsym(libreadline, 'rl_free_line_state'), null, 'void');
@@ -1020,7 +1001,6 @@ export function free_line_state() {
 }
 /**
  * @function free_undo_list
- *
  *
  * @return   {Number}
  */
@@ -1069,7 +1049,6 @@ export function function_of_keyseq_len(keyseq, len, map, type) {
 /**
  * @function funmap_names
  *
- *
  * @return   {Number}
  */
 define('rl_funmap_names', dlsym(libreadline, 'rl_funmap_names'), null, 'void *');
@@ -1103,7 +1082,6 @@ export function get_keymap_name(map) {
 }
 /**
  * @function get_keymap_name_from_edit_mode
- *
  *
  * @return   {String}
  */
@@ -1220,7 +1198,6 @@ export function history_substr_search_forward(count, ignore) {
 /**
  * @function initialize
  *
- *
  * @return   {Number}
  */
 define('rl_initialize', dlsym(libreadline, 'rl_initialize'), null, 'int');
@@ -1229,7 +1206,6 @@ export function initialize() {
 }
 /**
  * @function initialize_funmap
- *
  *
  * @return   {Number}
  */
@@ -1382,7 +1358,6 @@ export function killWord(count, key) {
 /**
  * @function list_funmap_names
  *
- *
  * @return   {Number}
  */
 define('rl_list_funmap_names', dlsym(libreadline, 'rl_list_funmap_names'), null, 'void');
@@ -1416,7 +1391,6 @@ export function macro_dumper(print_readably) {
 /**
  * @function maybe_replace_line
  *
- *
  * @return   {Number}
  */
 define('rl_maybe_replace_line', dlsym(libreadline, 'rl_maybe_replace_line'), null, 'int');
@@ -1426,7 +1400,6 @@ export function maybe_replace_line() {
 /**
  * @function maybe_save_line
  *
- *
  * @return   {Number}
  */
 define('rl_maybe_save_line', dlsym(libreadline, 'rl_maybe_save_line'), null, 'int');
@@ -1435,7 +1408,6 @@ export function maybe_save_line() {
 }
 /**
  * @function maybe_unsave_line
- *
  *
  * @return   {Number}
  */
@@ -1578,7 +1550,6 @@ export function old_menu_complete(count, invoking_key) {
 /**
  * @function on_new_line
  *
- *
  * @return   {Number}
  */
 define('rl_on_new_line', dlsym(libreadline, 'rl_on_new_line'), null, 'int');
@@ -1587,7 +1558,6 @@ export function on_new_line() {
 }
 /**
  * @function on_new_line_with_prompt
- *
  *
  * @return   {Number}
  */
@@ -1620,7 +1590,6 @@ export function parse_and_bind(string) {
 }
 /**
  * @function pending_signal
- *
  *
  * @return   {Number}
  */
@@ -1724,7 +1693,6 @@ export function read_init_file(filename) {
 /**
  * @function read_key
  *
- *
  * @return   {Number}
  */
 define('rl_read_key', dlsym(libreadline, 'rl_read_key'), null, 'int');
@@ -1734,7 +1702,6 @@ export function read_key() {
 /**
  * @function redisplay
  *
- *
  * @return   {Number}
  */
 define('rl_redisplay', dlsym(libreadline, 'rl_redisplay'), null, 'void');
@@ -1743,7 +1710,6 @@ export function redisplay() {
 }
 /**
  * @function redraw_prompt_last_line
- *
  *
  * @return   {Number}
  */
@@ -1778,7 +1744,6 @@ export function replace_line(text, clear_undo) {
 /**
  * @function reset_after_signal
  *
- *
  * @return   {Number}
  */
 define('rl_reset_after_signal', dlsym(libreadline, 'rl_reset_after_signal'), null, 'void');
@@ -1788,7 +1753,6 @@ export function reset_after_signal() {
 /**
  * @function reset_line_state
  *
- *
  * @return   {Number}
  */
 define('rl_reset_line_state', dlsym(libreadline, 'rl_reset_line_state'), null, 'int');
@@ -1797,7 +1761,6 @@ export function reset_line_state() {
 }
 /**
  * @function reset_screen_size
- *
  *
  * @return   {Number}
  */
@@ -1819,7 +1782,6 @@ export function reset_terminal(terminal_name) {
 /**
  * @function resize_terminal
  *
- *
  * @return   {Number}
  */
 define('rl_resize_terminal', dlsym(libreadline, 'rl_resize_terminal'), null, 'void');
@@ -1840,7 +1802,6 @@ export function restart_output(count, key) {
 }
 /**
  * @function restore_prompt
- *
  *
  * @return   {Number}
  */
@@ -1899,7 +1860,6 @@ export function rubout_or_delete(count, key) {
 /**
  * @function save_prompt
  *
- *
  * @return   {Number}
  */
 define('rl_save_prompt', dlsym(libreadline, 'rl_save_prompt'), null, 'void');
@@ -1954,7 +1914,6 @@ export function set_keymap(map) {
 }
 /**
  * @function set_keymap_from_edit_mode
- *
  *
  * @return   {Number}
  */
@@ -2022,7 +1981,6 @@ export function set_screen_size(rows, cols) {
 }
 /**
  * @function set_signals
- *
  *
  * @return   {Number}
  */
@@ -2503,7 +2461,6 @@ export function vi_char_search(count, key) {
 }
 /**
  * @function vi_check
- *
  *
  * @return   {Number}
  */

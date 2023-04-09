@@ -1,4 +1,3 @@
-//import Util from './lib/util.js';
 
 const BPG_OUTPUT_FORMAT_RGB24 = 1;
 const BPG_OUTPUT_FORMAT_RGBA32 = 2;

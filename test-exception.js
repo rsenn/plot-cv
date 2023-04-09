@@ -1,6 +1,4 @@
 
-import PortableFileSystem from './lib/filesystem.js';
-import { ConsoleSetup } from './lib/consoleSetup.js';
 
 let filesystem;
 let globalThis;
@@ -13,11 +11,9 @@ main(...scriptArgs.slice(1));
 });
 
 async function main(...args) {
-  await PortableFileSystem(fs => (filesystem = fs));
 
   console.log('main args =', args);
 
-  await ConsoleSetup({ depth: 3 });
 
   globalThis = globalThis;
 

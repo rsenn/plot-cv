@@ -41,8 +41,6 @@ import serial from './serial.js';
 import { toXML, ImmutablePath, MutablePath, arrayDiff, objectDiff } from './lib/json.js';
 import { Object2Array, XmlObject, XmlAttr, ImmutableXPath, MutableXPath } from './lib/xml.js';
 import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
-//import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
-//import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
 import * as React from './lib/preact.mjs';
 import { h, html, render, Component, useState, useLayoutEffect, useRef } from './lib/preact.mjs';
 import { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Fence, Zoomable, DisplayList, Ruler, Toggle, ButtonGroup } from './components.js';
@@ -67,7 +65,6 @@ import Voronoi from './lib/geom/voronoi.js';
 import GerberParser from './lib/gerber/parser.js';
 import { lazyInitializer } from './lib/lazyInitializer.js';
 import { EagleElementProxy, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, LibraryRenderer, makeEagleElement, makeEagleNode } from './lib/eagle.js';
-//import PureCache from 'pure-cache';
 import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //const React = {Component, Fragment, create: h, html, render, useLayoutEffect, useRef, useState };
 import commands, { ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ClearCache } from './commands.js';
 import { NormalizeResponse, ResponseData, FetchURL, FetchCached } from './lib/fetch.js';
@@ -474,7 +471,6 @@ const groupProps = memoize(() => {
   const prng = new Alea(234234800);
   const randomColor = () => HSLA.random([240, -120], [100, 100], [30, 75], [1, 1], prng).hex();
   return [
-    { stroke: randomColor(), transform },
     { stroke: randomColor(), transform },
     { stroke: randomColor(), transform }
   ];

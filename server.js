@@ -1,9 +1,7 @@
-import { abbreviate, className, decodeHTMLEntities, escape, exit, filterOutKeys, getEnv, getMethods, hashString, isEmpty, isObject, makeURL, parseURL, putError, randStr, toUnixTime, tryCatch, tryFunction, unixTime, waitFor, weakAssign, weakMapper } from './lib/misc.js';
 import inspect from 'inspect';
 import express from 'express';
 import * as path from 'path';
 import * as util from 'util';
-import Util from './lib/util.js';
 import bodyParser from 'body-parser';
 import expressWs from 'express-ws';
 import { Alea } from './lib/alea.js';
@@ -16,10 +14,8 @@ import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, WriteFil
 import { Console } from 'console';
 import SerialPort from 'serialport';
 import SerialStream from '@serialport/stream';
-//import SerialBinding from '@serialport/bindings';
 import Socket from './webSocket.js';
 import WebSocket from 'ws';
-import PortableFileSystem from './lib/filesystem.js';
 import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import { Message } from './message.js';
@@ -124,7 +120,7 @@ async function main() {
   ).then(exitCode => {
     console.log('runMount', { exitCode });
     if(exitCode == 127) {
-      Util.exit(127);
+      process.exit(127);
     }
     return exitCode;
   });*/

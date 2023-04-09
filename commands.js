@@ -1,8 +1,6 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
 import dom from './lib/dom.js';
 import geom from './lib/geom.js';
 import { BBox, Rect, Point, Polyline, Line, PointList, isPoint } from './lib/geom.js';
-import Util from './lib/util.js';
 import path from './lib/path.js';
 import { parseGcode } from './lib/gcode.js';
 import React, { Component } from './lib/dom/preactComponent.js';
@@ -174,7 +172,7 @@ export const GcodeToPolylines = (data, opts = {}) => {
   const { fill = false, color, side } = opts;
   //console.debug('GcodeToPolylines', { data, opts });
 
-  let gc = [...Util.filter(parseGcode(data), g => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args)];
+  let gc = [...filter(parseGcode(data), g => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args)];
   let polylines = [];
   let polyline = null;
   let bb = new BBox();

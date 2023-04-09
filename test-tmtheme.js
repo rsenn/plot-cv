@@ -1,6 +1,3 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
-import ConsoleSetup from './lib/consoleSetup.js';
-import PortableFileSystem from './lib/filesystem.js';
 import path from './lib/path.js';
 import * as bjson from 'bjson';
 import parse from './lib/xml/parse.js';
@@ -158,8 +155,6 @@ function Object2Element(object, path = []) {
 }
 
 async function main(...args) {
-  await PortableFileSystem(fs => (filesystem = fs));
-  await ConsoleSetup({ depth: 4 });
 
   for(let file of args) {
     let base = path.basename(file, /\.[^.]*$/);

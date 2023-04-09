@@ -1,11 +1,9 @@
-import { callMain, className, copyTextToClipboard, isBrowser, repeat, tryCatch } from './lib/misc.js';
 import { Mat, Point, Size, Rect, RotatedRect, Line, Contour } from 'opencv';
 import * as cv from 'opencv';
 import * as std from 'std';
 import { PointIterator } from 'opencv';
 import inspect from './lib/objectInspect.js';
 import path from './lib/path.js';
-import Util from './lib/util.js';
 import Console from 'console';
 
 async function main(...args) {

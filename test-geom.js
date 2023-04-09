@@ -1,9 +1,6 @@
-import { getMethodNames, getPrototypeChain } from './lib/misc.js';
 import { Voronoi, Matrix, Point, PointList } from './lib/geom.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 
 async function main(...args) {
-  await ConsoleSetup({ colors: true, depth: 6, breakLength: 80 });
   let file = 'lib/geom/point.js';
 
   if(args.length == 0) args = ['0,0', '50,100', '100,100', '100,50'];

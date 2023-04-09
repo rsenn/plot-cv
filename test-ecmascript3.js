@@ -1,4 +1,3 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
 import { ECMAScriptParser, Lexer, PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
 import { estree, ESNode, Program, ModuleDeclaration, ModuleSpecifier, ImportDeclaration, ImportSpecifier, ImportDefaultSpecifier, ImportNamespaceSpecifier, Super, Expression, FunctionLiteral, Pattern, Identifier, Literal, RegExpLiteral, TemplateLiteral, BigIntLiteral, TaggedTemplateExpression, TemplateElement, ThisExpression, UnaryExpression, UpdateExpression, BinaryExpression, AssignmentExpression, LogicalExpression, MemberExpression, ConditionalExpression, CallExpression, DecoratorExpression, NewExpression, SequenceExpression, Statement, EmptyStatement, DebuggerStatement, LabeledStatement, BlockStatement, FunctionBody, StatementList, ExpressionStatement, Directive, ReturnStatement, ContinueStatement, BreakStatement, IfStatement, SwitchStatement, SwitchCase, WhileStatement, DoWhileStatement, ForStatement, ForInStatement, ForOfStatement, WithStatement, TryStatement, CatchClause, ThrowStatement, Declaration, ClassDeclaration, ClassBody, MethodDefinition, MetaProperty, YieldExpression, FunctionArgument, FunctionDeclaration, ArrowFunctionExpression, VariableDeclaration, VariableDeclarator, ObjectExpression, Property, ArrayExpression, JSXLiteral, AssignmentProperty, ObjectPattern, ArrayPattern, RestElement, AssignmentPattern, AwaitExpression, SpreadElement, ExportNamedDeclaration, ExportSpecifier, AnonymousDefaultExportedFunctionDeclaration, AnonymousDefaultExportedClassDeclaration, ExportDefaultDeclaration, ExportAllDeclaration } from './lib/ecmascript/estree.js';
@@ -6,10 +5,8 @@ import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import { Path } from './lib/json.js';
 import { SortedMap } from './lib/container/sortedMap.js';
-import PortableFileSystem from './lib/fs.js';
 import { ImmutablePath } from './lib/json.js';
 import Tree from './lib/tree.js';
-import { ConsoleSetup } from './lib/consoleSetup.js';
 let fs;
 const testfn = () => true;
 const testtmpl = `this is\na test`;
@@ -30,13 +27,6 @@ function printAst(ast, comments, printer = globalThis.printer) {
 }
 let files = {};
 async function main(...args) {
-  await ConsoleSetup({
-    colors: true,
-    depth: 8,
-    compact: 1,
-    customInspect: false
-  });
-  await PortableFileSystem(fs => (fs = fs));
   let params = getOpt(
     {
       ['output-ast']: [true, null, 'a'],
@@ -192,7 +182,7 @@ function finish(err) {
   console.log('finish: ' + (fail ? 'error' : 'success'));
   return !fail;
 }
-main(...Util.getArgv().slice(1))
+main(...process.argv.slice(1))
   .then(() => console.log('SUCCESS'))
   .catch(error => {
     console.log(`FAIL:${error.message}${error.stack}`);

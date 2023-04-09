@@ -1,4 +1,3 @@
-import { histogram } from './lib/misc.js';
 import { unique } from './lib/misc.js';
 import { EagleDocument } from './lib/eagle.js';
 import { toXML } from './lib/json.js';

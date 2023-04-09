@@ -17,7 +17,6 @@ import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJS
 import { VideoSource, ImageSequence } from './qjs-opencv/js/cvVideo.js';
 import { ImageInfo } from './lib/image-info.js';
 import { MouseEvents, MouseFlags, Mouse, Window, TextStyle, DrawText } from './qjs-opencv/js/cvHighGUI.js';
-//import {   DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles } from './io-helpers.js';
 import { ImagePipeline } from './imagePipeline.js';
 import * as HighGUI from './qjs-opencv/js/cvHighGUI.js';
 import { lazyInitializer } from './lib/lazyInitializer.js';

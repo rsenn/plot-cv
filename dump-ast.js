@@ -1,15 +1,11 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
 import { EagleDocument, EagleProject } from './lib/eagle.js';
-import PortableFileSystem from './lib/filesystem.js';
 import { LineList, Rect } from './lib/geom.js';
 import { toXML, ImmutablePath } from './lib/json.js';
-import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import path from './lib/path.js';
 import { Graph } from './lib/fd-graph.js';
 import ptr from './lib/json-ptr.js';
 import LogJS from './lib/log.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 import tXml from './lib/tXml.js';
 import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 import { Reader, ReadAll } from './lib/stream/utils.js';
@@ -206,7 +202,7 @@ function RelativeTo(to, k) {
   return k;
 }
 function GetNodeProps([k, v]) {
-  let props = [...Util.getMemberNames(v)].map(n => [n, v[n]]).filter(([n, v]) => !isObject(v) && v != '');
+  let props = [...getMemberNames(v)].map(n => [n, v[n]]).filter(([n, v]) => !isObject(v) && v != '');
 
   if(props.filter(([prop, value]) => prop != 'kind').length) return Object.fromEntries(props);
 }
@@ -305,7 +301,7 @@ function processCallExpr(loc, func, ...args) {
   if(fmtIndex == -1) return;
   const fmtStr = args[fmtIndex];
   const fmtArgs = args.slice(fmtIndex + 1);
-  let matches = [...Util.matchAll(/(%([-#0 +'I]?)([0-9.]*)[diouxXeEfFgGaAcspnm%](hh|h|l|ll|q|L|j|z|Z|t|))/g, fmtStr)];
+  let matches = [...matchAll(/(%([-#0 +'I]?)([0-9.]*)[diouxXeEfFgGaAcspnm%](hh|h|l|ll|q|L|j|z|Z|t|))/g, fmtStr)];
   let ranges = [];
   let last = 0;
   for(let match of matches) {
@@ -324,12 +320,6 @@ const typeRe =
 async function main(...args) {
   const cols = await getEnv('COLUMNS');
   // console.log('cols:', cols, process.env.COLUMNS);
-  await ConsoleSetup({
-    colors: true,
-    depth: 10,
-    breakLength: 138
-  });
-  await PortableFileSystem(fs => (filesystem = fs));
   await PortableChildProcess(cp => (childProcess = cp));
 
   if(args.length == 0) args.unshift('/home/roman/Sources/c-utils/genmakefile.c');
@@ -386,10 +376,8 @@ async function main(...args) {
     );
 
     console.log('ids:', ids);
-    await ConsoleSetup({ colors: true, depth: 4, maxArrayLength: Infinity });
     console.log('idLists:', idLists);
 
-    //
     //
     generateFlat();
 
@@ -454,11 +442,6 @@ async function main(...args) {
     );*/
 
     let fmtfns = [...flat].filter(([k, v]) => typeof v == 'string' && re.test(v)).map(([k, v]) => k.slice(0, -1));
-    await ConsoleSetup({
-      colors: true,
-      depth: 4,
-      breakLength: 138
-    });
     //console.log('allf:', allf.map(([k, v]) =>   NodeToString(v, 'expansionLoc')));
     console.log(
       'allst:',
@@ -488,11 +471,6 @@ async function main(...args) {
       processCallExpr(loc, ...inner);
       //    console.log('inner:',  inner);
     }
-    await ConsoleSetup({
-      colors: true,
-      depth: 6,
-      breakLength: 138
-    });
     //console.log('ranges:', [...GetNodes(ast, (n, k) => n.kind != 'TranslationUnitDecl' && GetLocation(n) && !GetLocation(n).includedFrom && [undefined, null, arg].contains(GetLocation(n).file))]);
   }
 }

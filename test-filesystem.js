@@ -1,8 +1,4 @@
-import { filter, getArgs, getMethodNames, randStr } from './lib/misc.js';
 import inspect from 'inspect';
-import Util from './lib/util.js';
-import PortableFileSystem, { SEEK_SET, SEEK_END } from './lib/filesystem.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 
 import TinyTest, { run, assert, assertEquals } from './lib/tinyTest.js';
 
@@ -146,8 +142,6 @@ const tests = {
 };
 
 async function main(...args) {
-  await ConsoleSetup({ colors: true, depth: Infinity });
-  await PortableFileSystem(fs => (filesystem = fs));
   //  globalThis.console = {};
 
   console.log('Console:', Object.getPrototypeOf(console));
@@ -159,10 +153,10 @@ async function main(...args) {
       ['a', 1],
       ['b', 2]
     ]),
-    { u: undefined, n: null, args: Util.getArgs(), filesystem }
+    { u: undefined, n: null, args: scriptArgs, filesystem }
   );
   tmpdir = `/tmp/${Util.randStr(10)}`;
-  TinyTest.run(Util.filter(tests, t => t));
+  TinyTest.run(filter(tests, t => t));
   return;
   console.log(
     Util.getMethodNames(filesystem)

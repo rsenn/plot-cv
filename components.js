@@ -1,6 +1,4 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
 import { h, Fragment, html, render, Component, useState, useEffect, useRef, useCallback, Portal, ReactComponent, toChildArray /*, cloneElement*/ } from './lib/dom/preactComponent.js';
-//import { isValidElement } from './lib/compat.mjs';
 
 import { trkl } from './lib/trkl.js';
 import { Element } from './lib/dom.js';

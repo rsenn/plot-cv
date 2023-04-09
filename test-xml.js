@@ -1,7 +1,5 @@
 import inspect from 'inspect';
 import { define, isObject, memoize, unique } from './lib/misc.js';
-import PortableFileSystem from './lib/filesystem.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 import * as deep from './lib/deep.js';
 import path from './lib/path.js';
 import tXml from './lib/tXml.js';
@@ -65,9 +63,7 @@ const GeneratePalette = (counts = { h: 3, s: 3, l: 5 }, deltas = { h: 360, s: 10
 };
 
 async function main(...args) {
-  await ConsoleSetup({ depth: 10 });
   let colors, keys;
-  filesystem = await PortableFileSystem();
 
   let params = getOpt(
     {

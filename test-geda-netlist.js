@@ -1,11 +1,8 @@
-import { escape } from './lib/misc.js';
 import inspect from 'inspect';
 import gedaNetlistGrammar from './grammar-geda-netlist.js';
-import PortableFileSystem from './lib/filesystem.js';
 import path from './lib/path.js';
 import { Point, Size, Rect, BBox } from './lib/geom.js';
 import deep from './lib/deep.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 import tXml from './lib/tXml.js';
 import { XPath } from './lib/xml.js';
 import { toXML } from './lib/json.js';
@@ -22,8 +19,6 @@ function WriteFile(name, data) {
 }
 
 async function main(...args) {
-  await PortableFileSystem(fs => (filesystem = fs));
-  await ConsoleSetup({ depth: Infinity });
 
   let xy = new Point();
   let size = new Size(128, 128);

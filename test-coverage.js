@@ -1,5 +1,3 @@
-import { abbreviate, exit, getArgs } from './lib/misc.js';
-import Util from './lib/util.js';
 
 function readFile(path) {
   let ret;
@@ -83,4 +81,4 @@ function main(args) {
   return 0;
 }
 
-Util.exit(main(Util.getArgs()));
+process.exit(main(scriptArgs));

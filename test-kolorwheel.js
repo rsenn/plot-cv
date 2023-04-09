@@ -1,9 +1,6 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
 import KolorWheel from './lib/KolorWheel.js';
 import { RGBA, HSLA } from './lib/color.js';
 import Alea from './lib/alea.js';
-import ConsoleSetup from './lib/consoleSetup.js';
-import PortableFileSystem from './lib/filesystem.js';
 
 const prng = new Alea(Date.now());
 
@@ -187,8 +184,6 @@ function* Gradient(start, end, steps = 10) {
 }
 // for gradient
 async function main(...args) {
-  await PortableFileSystem(fs => (filesystem = fs));
-  await ConsoleSetup({ depth: 4, breakLength: 60 });
 
   const palette = GeneratePalette(5);
   console.log('palette:', palette);

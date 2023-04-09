@@ -1,4 +1,3 @@
-import { entries, weakAssign } from './lib/misc.js';
 import INIGrammar from './grammar-INI.js';
 import fs from 'fs';
 import path from './lib/path.js';

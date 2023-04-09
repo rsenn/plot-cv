@@ -1,16 +1,11 @@
-import { getArgv, getPlatform, ttyGetWinSize } from './lib/misc.js';
-import Util from './lib/util.js';
-import PortableFileSystem from './lib/filesystem.js';
 
-//import inspect from 'inspect.so';
 
 async function main(...args) {
   /*console.log('platform:', Util.getPlatform());
-  console.log('argv:', Util.getArgv());
+  console.log('argv:', process.argv);
   let os = await import('os');
   console.log('os.ttyGetWinSize:', os.ttyGetWinSize);*/
 
-  await PortableFileSystem();
 
   /*let std = [0, 1, 2].map(fd => filesystem.readlink(`/proc/self/fd/${fd}`));
   console.log('std:', std.join(', '));

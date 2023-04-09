@@ -1,4 +1,3 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
 import { Repeater } from './lib/repeater/repeater.js';
 export { EventEmitter, EventTarget } from './lib/events.js';
 

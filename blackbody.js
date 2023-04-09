@@ -1,6 +1,4 @@
-import { roundTo } from './lib/misc.js';
 import { RGBA, HSLA } from './lib/color.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 
 const blackbody_color = new Map([
   [1000, [1, 0.18172716, 0]],
@@ -248,7 +246,6 @@ const blackbody_color = new Map([
 ]);
 
 async function main(arg = '3400k') {
-  await ConsoleSetup({ colors: true, depth: Infinity });
 
   const colorTemp = roundTo(parseInt(arg), 100);
 

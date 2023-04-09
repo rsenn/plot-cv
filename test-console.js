@@ -1,9 +1,5 @@
-import { callMain, define, getArgs } from './lib/misc.js';
-import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 
 async function main(...args) {
-  await ConsoleSetup({
     breakLength: 120,
     maxStringLength: 200
   });
@@ -18,7 +14,7 @@ async function main(...args) {
   console.log('console.log', console.log);
 
   if(1) {
-    let args = Util.getArgs();
+    let args = scriptArgs;
     let path = args[0];
     let fn = function(...args) {
       return args;

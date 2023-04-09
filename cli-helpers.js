@@ -1,4 +1,3 @@
-import { padTrunc } from './lib/misc.js';
 export function Table(rows, keys) {
   let sizes = {};
 

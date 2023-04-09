@@ -1,6 +1,3 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
-import ConsoleSetup from './lib/consoleSetup.js';
-import PortableFileSystem from './lib/filesystem.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 
@@ -61,8 +58,6 @@ const proxyObject = (root, handler) => {
 };
 
 async function main() {
-  //  await ConsoleSetup({ breakLength: 120, depth: 10 });
-  await PortableFileSystem(console.log);
 
   let str = filesystem.readFile('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
 

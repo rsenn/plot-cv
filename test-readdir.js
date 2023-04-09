@@ -1,5 +1,3 @@
-import PortableFileSystem, { SEEK_SET, SEEK_END } from './lib/filesystem.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 import ObjectInspect from './lib/objectInspect.js';
 
 let filesystem;
@@ -30,8 +28,6 @@ function* ReadDirRecursive(dir, maxDepth = Infinity) {
 }
 
 async function main(...args) {
-  await ConsoleSetup({ colors: true, depth: Infinity });
-  await PortableFileSystem(fs => (filesystem = fs));
   /*
   let files = filesystem.readdir('src').map(file => `src/${file}`);
 

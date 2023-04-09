@@ -1,4 +1,3 @@
-import { pushUnique, randInt } from './lib/misc.js';
 import { Point } from 'opencv';
 import { Size } from 'opencv';
 import { Rect } from 'opencv';
@@ -10,19 +9,12 @@ import { Contour } from 'opencv';
 import { SliceIterator } from 'opencv';
 import * as draw from 'opencv';
 import RGBA from './lib/color/rgba.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
 
 let filesystem;
 
 async function main(...args) {
-  await ConsoleSetup({
-    maxStringLength: 200,
-    maxArrayLength: 10,
-    breakLength: 100,
-    compact: 1
-  });
   let types = [
     ['CV_8U', cv.CV_8U],
     ['CV_8UC3', cv.CV_8UC3],

@@ -1,9 +1,7 @@
-import { abbreviate } from './lib/misc.js';
 import { Lexer } from './lib/parse/lexer.js';
 import { Grammar } from './lib/parse/grammar.js';
 import { Parser } from './lib/parse/parser.js';
 import Ebnf2Parser from './lib/parse/ebnf2.js';
-//import CGrammar from './test-grammar.json';
 import { Console } from 'console';
 import * as fs from 'fs';
 import path from './lib/path.js';

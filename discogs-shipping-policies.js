@@ -9,7 +9,6 @@
 // @grant        none
 // ==/UserScript==
 //
-//
 let g = {};
 globalThis.discogs = g;
 
@@ -252,7 +251,6 @@ defineGetter = (name, fn) =>
     [name]: { get: fn, configurable: true }
   });
 defineGetter('rows', getRows);
-defineGetter('y', () => getSet(rows));
 defineGetter('y', () => getSet(rows));
 defineTo(globalThis, 'values', getValues, setValues);
 

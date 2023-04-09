@@ -1609,7 +1609,6 @@ Object.assign(globalThis, {
     Component,
     createContext,
     createElement,
-    createElement,
     createRef,
     Fragment,
     html,

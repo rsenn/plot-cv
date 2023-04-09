@@ -1,10 +1,8 @@
-import { abbreviate, className, getArgv } from './lib/misc.js';
 import inspect from 'inspect';
 import * as net from 'net';
 import { Contour } from 'opencv';
 import { Mat } from 'opencv';
 import PortableConsole from './lib/consoleSetup.js';
-import Util from './lib/util.js';
 const { client, server, fetch } = net;
 
 PortableConsole(console => console.log('net: ', { client, server, fetch }));
@@ -81,7 +79,7 @@ g.process = async function process(contours, hier, ...args) {
   return response;
 };
 
-/*let args = Util.getArgv();
+/*let args = process.argv;
 console.log('args:', args);
 
 if(args.length >= 1) process([new Contour()], [], {});

@@ -1,7 +1,3 @@
-import { define, env } from './lib/misc.js';
-import PortableFileSystem from './lib/filesystem.js';
-import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 import path from './lib/path.js';
 import PortableChildProcess from './lib/childProcess.js';
 
@@ -68,8 +64,6 @@ async function DumpDeps(sources, includeDirs = []) {
 }
 
 async function main(...sources) {
-  await ConsoleSetup({ colors: true, depth: 8, breakLength: 138 });
-  await PortableFileSystem(fs => (filesystem = fs));
   await PortableChildProcess(cp => (childProcess = cp));
 
   const env = await Util.env;

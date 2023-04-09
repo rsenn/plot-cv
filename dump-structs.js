@@ -1,9 +1,5 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
-import PortableFileSystem from './lib/filesystem.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 import PortableSpawn from './lib/spawn.js';
 import { AcquireReader } from './lib/stream/utils.js';
-import Util from './lib/util.js';
 import path from './lib/path.js';
 import deep from './lib/deep.js';
 import Tree from './lib/tree.js';
@@ -33,8 +29,6 @@ define(Array.prototype, {
 
 async function main(...args) {
   console.log('dump-structs', ...args);
-  await ConsoleSetup({ breakLength: 120, depth: 10 });
-  await PortableFileSystem(fs => (filesystem = fs));
   await PortableSpawn(fn => console.log('PortableSpawn', (globalThis.spawn = spawn = fn)));
 
   let params = getOpt(
@@ -148,7 +142,7 @@ async function main(...args) {
           const NoSystemIncludes = ([p, n, l]) => !/^\/usr/.test(l.file + '');
           let mainNodes = params['system-includes'] ? entries : entries.filter(NoSystemIncludes);
 
-          let typedefs = [...Util.filter(mainNodes, ([path, decl]) => decl.kind == 'TypedefDecl')];
+          let typedefs = [...filter(mainNodes, ([path, decl]) => decl.kind == 'TypedefDecl')];
 
           Type.declarations = new Map([...entries].filter(([p, n]) => isObject(n) && /Decl/.test(n.kind) && n.name).map(([p, n]) => [n.name, n]));
 

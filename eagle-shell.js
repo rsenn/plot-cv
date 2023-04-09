@@ -1,7 +1,6 @@
 #!/usr/bin/env qjsm
 import { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, EagleNodeList, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, EagleDocument, EagleReference, EagleRef, makeEagleNode, EagleNode, Renderer, EagleProject, EagleElement, makeEagleElement, EagleElementProxy, EagleNodeMap, ImmutablePath, DereferenceError } from './lib/eagle.js';
-import Util from './lib/util.js';
-import * as util from './lib/misc.js';
+import {abbreviate, callMain, equals, exit, getArgs, getMethods, map }from './lib/misc.js';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
 import { EventEmitter, EventTarget, eventify } from './lib/events.js';
@@ -1088,7 +1087,7 @@ async function testEagle(filename) {
   console.log('desc', desc);
   desc = desc.map(([file, e]) => [file, e && e.xpath()]).map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
   desc = new Map(desc);
-  console.log('descriptions', [...Util.map(desc, ([k, v]) => [k, v])]);
+  console.log('descriptions', [...map(desc, ([k, v]) => [k, v])]);
   return proj;
 }
 
@@ -1373,7 +1372,7 @@ function Eagle2CircuitJS(doc = project.schematic, scale = 50, sheet = 0) {
 //callMain(main, true);
 
 try {
-  main(...Util.getArgs().slice(1));
+  main(...scriptArgs.slice(1));
 } catch(error) {
   console.log(`FAIL: ${error.message}\n${error.stack}`);
   exit(1);

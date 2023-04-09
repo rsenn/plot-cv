@@ -1,18 +1,14 @@
-import { abbreviate, exit, getArgs, putError } from './lib/misc.js';
 import { ECMAScriptParser, ECMAScriptInterpreter } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
 import { CallExpression } from './lib/ecmascript/estree.js';
-import Util from './lib/util.js';
 import deep from './lib/deep.js';
-import PortableFileSystem from './lib/filesystem.js';
-import { ConsoleSetup } from './lib/consoleSetup.js';
 
 let filesystem;
 
 const code = "Point.toSource = (point, { space = ' ', padding = ' ', separator = ',' }) => `{${padding}x:${space}${point.x}${separator}y:${space}${point.y}${padding}}`;";
 
-let args = Util.getArgs();
+let args = scriptArgs;
 let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
 
 main(...scriptArgs.slice(1));
@@ -30,8 +26,6 @@ function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments))
 globalThis.parser = null;
 
 async function main(...args) {
-  await PortableFileSystem(fs => (filesystem = fs));
-  await ConsoleSetup({ depth: 10 });
   if(args.length == 0) args.push('-');
   for(let file of args) {
     let data, b, ret;
@@ -66,11 +60,11 @@ async function main(...args) {
       console.log(pos && pos.toString ? error.pos.toString() : pos);
       Util.putError(error);
 
-      Util.exit(1);
+      process.exit(1);
     }
   }
   let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
-  Util.exit(Number(files.length == 0));
+  process.exit(Number(files.length == 0));
 }
 function finish(err) {
   let fail = !!err;

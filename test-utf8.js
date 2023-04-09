@@ -1,5 +1,3 @@
-import ConsoleSetup from './lib/consoleSetup.js';
-import PortableFileSystem from './lib/filesystem.js';
 
 function* BytesToUTF8(bytes) {
   let state = 0,
@@ -30,8 +28,6 @@ function CodePointsToString(codePoints) {
 }
 
 async function main(...args) {
-  await ConsoleSetup({ depth: 20, colors: true, breakLength: 80 });
-  await PortableFileSystem();
 
   let data = filesystem.readFile(args[0] ?? 'utf8.txt', null);
   console.log('data:', data);

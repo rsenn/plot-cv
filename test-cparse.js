@@ -1,10 +1,7 @@
-import { abbreviate, escape, randInt } from './lib/misc.js';
 import Alea from './lib/alea.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 import cparse from './lib/cparse.js';
 import cpp from './lib/cpp.js';
 import path from './lib/path.js';
-import PortableFileSystem from './lib/filesystem.js';
 import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 
 let filesystem,
@@ -74,8 +71,6 @@ function StripPP(code) {
 }
 
 async function main(...args) {
-  await ConsoleSetup({ depth: 10, breakLength: 80 });
-  await PortableFileSystem(fs => (filesystem = fs));
   await PortableChildProcess(cp => (childProcess = cp));
 
   const file = 'quickjs/hello.c' || getSource();

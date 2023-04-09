@@ -1,12 +1,8 @@
-import { colorCtor, getEnv, getStackFrame, platform } from './lib/misc.js';
 import { EagleDocument, Renderer } from './lib/eagle.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 import { render, Component } from './lib/preact.js';
 import { ColoredText } from './lib/color/coloredText.js';
 import { RGBA } from './lib/color.js';
-import Util from './lib/util.js';
-import PortableFileSystem from './lib/filesystem.js';
 import renderToString from './lib/preact-render-to-string.js';
 
 let filesystem;
@@ -54,8 +50,6 @@ async function testRenderBoard(file) {
 }
 
 async function main(...args) {
-  await ConsoleSetup({ depth: 10 });
-  await PortableFileSystem(fs => (filesystem = fs));
 
   if(Util.platform == 'quickjs')
     await import('os').then(({ setTimeout, setInterval, clearInterval, clearTimeout }) => {

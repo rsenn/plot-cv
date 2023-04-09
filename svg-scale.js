@@ -1,7 +1,3 @@
-import { clear, filter, merge, unique } from './lib/misc.js';
-import PortableFileSystem from './lib/filesystem.js';
-import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 import deep from './lib/deep.js';
 import path from './lib/path.js';
 import { Size, Rect } from './lib/geom.js';
@@ -122,7 +118,7 @@ function scaleSVG(file, size) {
     }
 
     if(attributes) {
-      attributes = Util.filter(attributes, (value, key) => key.indexOf(':') == -1);
+      attributes = filter(attributes, (value, key) => key.indexOf(':') == -1);
 
       if('style' in attributes) {
         let style = parseStyle(attributes.style);
@@ -200,8 +196,6 @@ function scaleSVG(file, size) {
 }
 
 async function main(...args) {
-  await ConsoleSetup({ depth: 10 });
-  filesystem = await PortableFileSystem();
 
   let size, arg;
 
