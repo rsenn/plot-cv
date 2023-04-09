@@ -1,5 +1,3 @@
-import filesystem from 'fs';
-import inspect from 'inspect';
 // prettier-ignore-start
 import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
 import dom from './lib/dom.js';
@@ -16,7 +14,7 @@ import { ClipperLib } from './lib/clipper-lib.js';
 import Shape from './lib/clipper.js';
 import { devtools } from './lib/devtools.js';
 import tlite from './lib/tlite.js';
-import { debounceAsync } from './lib/async/debounce.js';
+import debounce from './lib/async/debounce.js';
 import { SvgPath } from './lib/svg/path.js';
 import objectInspect from './lib/objectInspect.js';
 import tXml from './lib/tXml.js';
@@ -40,8 +38,8 @@ import { BinaryTree } from './lib/container/binaryTree.js';
 import LogJS from './lib/log.js';
 import serial from './serial.js';
 import { toXML, ImmutablePath, MutablePath, arrayDiff, objectDiff } from './lib/json.js';
-import { Object2Array, XmlObject, XmlAttr, ImmutableXPath, MutableXPath } from './lib/xml.js';
-import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
+import { XmlObject, XmlAttr, ImmutableXPath, MutableXPath } from './lib/xml.js';
+import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA } from './lib/color.js';
 import * as React from './lib/preact.mjs';
 import { h, html, render, Component, useState, useLayoutEffect, useRef } from './lib/preact.mjs';
 import { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Fence, Zoomable, DisplayList, Ruler, Toggle, ButtonGroup } from './components.js';
@@ -75,12 +73,11 @@ import github, { GithubListFiles, GithubListRepositories, GithubRepositories, Gi
 /* prettier-ignore */ const { Align, AlignToString, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix,  isPoint, isRect, isSize, Line,Matrix,  Point, PointList, Polyline, Rect, Select, Size, SVG, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
 
 import { classNames } from './lib/classNames.js';
-import rpc from './quickjs/qjs-net/rpc.js';
-import * as rpc2 from './quickjs/qjs-net/rpc.js';
+//import rpc from './quickjs/qjs-net/js/rpc.js';
+import * as rpc2 from './quickjs/qjs-net/js/rpc.js';
 import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
-import { errors, types, isObject, SyscallError, extendArray, toString, btoa, atob, assert, escape, quote, memoize, getset, modifier, getter, setter, gettersetter, hasGetSet, mapObject, once, atexit, waitFor, define, weakAssign, getConstructorChain, hasPrototype, filter, curry, split, unique, getFunctionArguments, randInt, randFloat, randStr, toBigInt, lazyProperty, lazyProperties, getOpt, toUnixTime, unixTime, fromUnixTime, range, repeater, repeat, chunkArray, camelize, decamelize, Location, format, formatWithOptions, isNumeric, functionName, className, isArrowFunction, immutableClass, isArray, ArrayFacade, arrayFacade, bits, dupArrayBuffer, getTypeName, isArrayBuffer, isBigDecimal, isBigFloat, isBigInt, isBool, isCFunction, isConstructor, isEmptyString, isError, isException, isExtensible, isFunction, isHTMLDDA, isInstanceOf, isInteger, isJobPending, isLiveObject, isNull, isNumber, isUndefined, isString, isUninitialized, isSymbol, isUncatchableError, isRegisteredClass, rand, randi, randf, srand, toArrayBuffer } from './lib/misc.js';
+import { errors, types, isObject, toString, btoa, atob, assert, escape, quote, memoize, getset, modifier, getter, setter, gettersetter, hasGetSet, mapObject, once, atexit, waitFor, define, weakAssign, getConstructorChain, hasPrototype, filter, curry, split, unique, getFunctionArguments, randInt, randFloat, randStr, toBigInt, lazyProperty, lazyProperties, getOpt, toUnixTime, unixTime, fromUnixTime, range, repeater, repeat, chunkArray, camelize, decamelize, Location, format, formatWithOptions, isNumeric, functionName, className, isArrowFunction, immutableClass, isArray, ArrayFacade, arrayFacade, bits, dupArrayBuffer, getTypeName, isArrayBuffer, isBigDecimal, isBigFloat, isBigInt, isBool, isCFunction, isConstructor, isEmptyString, isError, isException, isExtensible, isFunction, isHTMLDDA, isInstanceOf, isInteger, isJobPending, isLiveObject, isNull, isNumber, isUndefined, isString, isUninitialized, isSymbol, isUncatchableError, isRegisteredClass, rand, randi, randf, srand, toArrayBuffer, getMethods, isoDate } from './lib/misc.js';
 
-colorCtor = ColoredText;
 const elementDefaultAttributes = {
   stroke: 'red',
   fill: 'none',
@@ -90,7 +87,7 @@ const elementDefaultAttributes = {
 };
 
 /* prettier-ignore */
-//extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement }, { toXML, XmlObject, XmlAttr }, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, ColoredText, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon, Circle } );
+//extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement }, { toXML, XmlObject, XmlAttr }, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon, Circle } );
 const Timer = { ...Timers, once: dom.Timer };
 
 let currentProj = trkl.property(window, 'project');
@@ -168,8 +165,16 @@ const GetProject = arg => {
 };
 let elementChildren = null;
 let elementGeometries = null;
-//let zoomValue = getSet(() => ZoomFactor(config.zoomLog()), value => config.zoomLog(ZoomLog(value)));
-let zoomValue = deriveGetSet(config.zoomLog, ZoomFactor, ZoomLog);
+let zoomValue = getset(
+  () => ZoomFactor(config.zoomLog()),
+  value => config.zoomLog(ZoomLog(value))
+);
+//
+/*let zoomValue= getset(
+  () => ZoomFactor(config.zoomLog()),
+  v => config.zoomLog(ZoomLog(v))
+  );*/
+//let zoomValue = deriveGetSet(config.zoomLog, ZoomFactor, ZoomLog);
 
 config.zoomLog.subscribe(AdjustZoom);
 
@@ -1456,7 +1461,7 @@ const BindGlobal = once(arg => trkl.bind(window, arg));
 const AppMain = (window.onload = async () => {
   const { sortOrder, sortKey } = config;
   //prettier-ignore
-  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, MutablePath, ImmutablePath, MutablePath,arrayDiff, objectDiff, Object2Array, XmlObject, XmlAttr, MutableXPath,ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient,    PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc,
+  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounce, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, MutablePath, ImmutablePath, MutablePath,arrayDiff, objectDiff,  XmlObject, XmlAttr, MutableXPath,ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient,    PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc,
  CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes , Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer,EagleElementProxy,  BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, 
  ...github, classNames , BinaryTree, normalizePath, reverseNormalizedPath, reverseSubPath, reversePath, ...commands,  DEBUG, objectInspect, SvgPath, renderToString , ...ecmascript };
 
@@ -1509,7 +1514,7 @@ const AppMain = (window.onload = async () => {
     ...commands,
     fnmatch,
     PATH_FNM_MULTI,
-    rpc: { ...rpc },
+
     ...{ GetColorBands, GetElements, GetInstances, GetPositions, UpdateMeasures, AlignAll, scientific },
     ...{
       GetExponent,
@@ -1562,7 +1567,7 @@ const AppMain = (window.onload = async () => {
   //console.debug('Dupes:', getMemberNames(window).filter(m => importedNames.indexOf(m) != -1));
 
   //prettier-ignore
-  weakAssign(window, { rpc });
+  weakAssign(window, { rpc:rpc2 });
   weakAssign(window, imports);
   weakAssign(window.Element, getMethods(dom.Element));
   weakAssign(window, dom, geom, imports, localFunctions);
@@ -2103,7 +2108,7 @@ const AppMain = (window.onload = async () => {
           ]
         ),
         h(Button, {
-          fn: debounceAsync(async e => {
+          fn: debounce(async e => {
             /*console.log("CAM button",{e});
               if(e.type.endsWith('up')) return false;*/
             let r;
@@ -2338,7 +2343,7 @@ const AppMain = (window.onload = async () => {
       listTag: 'nav',
       files: projects,
       onActive: open,
-      onChange: debounceAsync(async (e, p, i) => await ChooseDocument(p, i), 5000, {
+      onChange: debounce(async (e, p, i) => await ChooseDocument(p, i), 5000, {
         leading: true
       }),
       filter: config.searchFilter,

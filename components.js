@@ -1,5 +1,5 @@
+import { define, isObject, memoize, unique,tryCatch,roundTo } from './lib/misc.js';
 import { h, Fragment, html, render, Component, useState, useEffect, useRef, useCallback, Portal, ReactComponent, toChildArray /*, cloneElement*/ } from './lib/dom/preactComponent.js';
-
 import { trkl } from './lib/trkl.js';
 import { Element } from './lib/dom.js';
 import path from './lib/path.js';
@@ -9,6 +9,7 @@ import { useActive, useClickout, useDimensions, useDoubleClick, useElement, Even
 import deepDiff from './lib/deep-diff.js';
 import { useValue } from './lib/repeater/react-hooks.js';
 import RulerDraggable from './ruler-draggable.js';
+import { wordWrap } from './string-helpers.js'
 
 export const Ruler = ({ handleChange, style = {}, class: className }) => {
   const refRuler = useRef();

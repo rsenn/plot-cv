@@ -1,3 +1,4 @@
+import { define, isObject, memoize, unique } from './lib/misc.js';
 import dom from './lib/dom.js';
 import geom from './lib/geom.js';
 import { BBox, Rect, Point, Polyline, Line, PointList, isPoint } from './lib/geom.js';

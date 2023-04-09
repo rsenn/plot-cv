@@ -1,6 +1,6 @@
 #!/usr/bin/env qjsm
 import { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, EagleNodeList, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, EagleDocument, EagleReference, EagleRef, makeEagleNode, EagleNode, Renderer, EagleProject, EagleElement, makeEagleElement, EagleElementProxy, EagleNodeMap, ImmutablePath, DereferenceError } from './lib/eagle.js';
-import {abbreviate, callMain, equals, exit, getArgs, getMethods, map }from './lib/misc.js';
+import { abbreviate, getMethods, map } from './lib/misc.js';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
 import { EventEmitter, EventTarget, eventify } from './lib/events.js';
@@ -22,7 +22,7 @@ import { className, define, extendArray, getOpt, glob, GLOB_BRACE, intersect, is
 import { HSLA, isHSLA, ImmutableHSLA, RGBA, isRGBA, ImmutableRGBA, ColoredText } from './lib/color.js';
 import { scientific, num2color, GetParts, GetInstances, GetPositions, GetElements } from './eagle-commands.js';
 import { Edge, Graph, Node } from './lib/geom/graph.js';
-import { MutableXPath as XPath, parseXPath, ImmutableXPath } from './quickjs/qjs-modules/lib/xpath.js';
+import { MutableXPath as XPath, parseXPath, ImmutableXPath } from './lib/xml/xpath.js';
 import { Predicate } from 'predicate';
 import child_process from 'child_process';
 import { readFileSync } from 'fs';
@@ -227,7 +227,7 @@ function main(...args) {
     args
   );
 
-  Object.assign(globalThis, { components, Console, GetGlobalFunctions });
+  Object.assign(globalThis, { components, Console, GetGlobalFunctions, className });
 
   Object.assign(globalThis, {
     child_process,
@@ -330,7 +330,6 @@ function main(...args) {
     toNumber(n) {
       return isNaN(+n) ? n : +n;
     },
-    util,
     path,
     EventEmitter,
     EventTarget,
@@ -488,7 +487,7 @@ function main(...args) {
     RemovePolygons,
     quit(arg) {
       repl.cleanup();
-      exit(arg ?? 0);
+      process.exit(arg ?? 0);
     }
   });
 
@@ -1068,7 +1067,7 @@ async function testEagle(filename) {
       let indexes = [...pkg.children].map((child, i, a) =>
         a
           .slice(i + 1)
-          .map((child2, i2) => [i2 + i + 1, equals(child.raw, child2.raw)])
+          .map((child2, i2) => [i2 + i + 1, child.raw === child2.raw])
           .filter(([index, equal]) => equal)
           .map(([index]) => index)
       );
@@ -1375,5 +1374,5 @@ try {
   main(...scriptArgs.slice(1));
 } catch(error) {
   console.log(`FAIL: ${error.message}\n${error.stack}`);
-  exit(1);
+  process.exit(1);
 }

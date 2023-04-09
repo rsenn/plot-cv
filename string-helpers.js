@@ -138,3 +138,33 @@ function decDegFromMatch(m) {
 function inRange(value, a, b) {
   return value >= a && value <= b;
 }
+
+export function wordWrap(str, width, delimiter)  {
+  // use this on single lines of text only
+  if(str.length > width) {
+    let p = width;
+    for(; p > 0 && str[p] != ' '; p--) {}
+    if(p > 0) {
+      let left = str.substring(0, p);
+      let right = str.substring(p + 1);
+      return left + delimiter + wordWrap(right, width, delimiter);
+    }
+  }
+  return str;
+}
+
+export function decodeHTMLEntities(text) {
+  let entities = {
+    amp: '&',
+    apos: "'",
+    '#x27': "'",
+    '#x2F': '/',
+    '#39': "'",
+    '#47': '/',
+    lt: '<',
+    gt: '>',
+    nbsp: ' ',
+    quot: '"'
+  };
+  return text.replace(new RegExp('&([^;]+);', 'gm'), (match, entity) => entities[entity] || match);
+};
