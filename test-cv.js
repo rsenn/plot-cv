@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import { Point } from 'opencv';
 import { Size } from 'opencv';
 import { Rect } from 'opencv';
@@ -14,8 +15,8 @@ import RGBA from './lib/color/rgba.js';
 import Console from 'console';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
+import { tryCatch,className } from './lib/misc.js';
 
-let filesystem;
 /*function saveMat(name, mat) {
   let ext = mat.channels == 1 ? 'pgm' : 'ppm';
   let p = mat.channels == 1 ? 'P2' : 'P3';
@@ -41,7 +42,7 @@ function SaveConfig(configObj) {
 }
 
 function LoadConfig() {
-  let str = filesystem.readFile(process.argv[1].replace(/\.js$/, '.config.json'), 'utf-8');
+  let str = filesystem.readFileSync(process.argv[1].replace(/\.js$/, '.config.json'), 'utf-8');
   let configObj = JSON.parse(str ?? '{}');
 
   configObj = Object.fromEntries(
@@ -63,7 +64,6 @@ function main(...args) {
 
   // console.log('cv', cv);
   //console.log('Object.keys(cv)', Object.keys(cv));
-  console.log('Util.getMethodNames(cv)', Util.getMethodNames(cv, Infinity, 0));
   console.log('cv.HoughLines', cv.HoughLines);
   console.log('cv.ALIGN_RIGHT', cv.ALIGN_RIGHT);
 
@@ -77,7 +77,7 @@ function main(...args) {
   let image;
 
   const moduleNames = ['Rect', 'Point', 'Size', 'Line', 'Mat', 'Contour', 'PointIterator', 'Draw'];
-  for(let moduleName of moduleNames) Util.tryCatch(() => eval(`globalThis[moduleName] = ${moduleName};`));
+  for(let moduleName of moduleNames) tryCatch(() => eval(`globalThis[moduleName] = ${moduleName};`));
   let ctors = new Map(moduleNames.map(name => [name, globalThis[name]]));
   console.log('globalThis:', Object.keys(globalThis));
   console.log('modules:', inspect(ctors));
@@ -204,7 +204,7 @@ function main(...args) {
       console.log('values(): ', line.values());
       console.log(
         'toPoints(): ',
-        [...line.toPoints()].map(p => Util.className(p))
+        [...line.toPoints()].map(p => className(p))
       );
       console.log('toString(): ', line.toString());
       console.log('new Line(50,50,320-50,240-25): ', new Line(50, 50, 320 - 50, 240 - 25));
@@ -216,9 +216,10 @@ function main(...args) {
     }
     if(globalThis.Rect) {
       let r = new Rect(50, 100, 350, 200);
-      console.log('r.br(): ', r.br());
-      console.log('r.tl(): ', r.tl());
-      console.log('r.area(): ', r.area());
+
+      console.log('r.br(): ', r.br);
+      console.log('r.tl(): ', r.tl);
+      console.log('r.area(): ', r.area);
       if(globalThis.Point) {
         let pt = new Point(75, 150);
         console.log(`r.contains(${pt}): `, r.contains(pt));
@@ -226,7 +227,7 @@ function main(...args) {
         console.log(`r.contains(${pt}): `, r.contains(pt));
       }
       r = new Rect(50, 50, 0, 0);
-      console.log('r.empty(): ', r.empty());
+      console.log('r.empty(): ', r.empty);
     }
   }
   if(0) {

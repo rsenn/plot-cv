@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import inspect from 'inspect';
 import express from 'express';
 import * as path from 'path';
@@ -618,7 +619,7 @@ async function main() {
       data = {},
       time = 0;
     Util.tryCatch(
-      () => filesystem.readFile(configFile),
+      () => filesystem.readFileSync(configFile),
       c => {
         str = c;
         let stat = safeStat(configFile);

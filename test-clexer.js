@@ -1,5 +1,5 @@
 import tokenize from './tokenize.js';
-import { abbreviate} from './lib/misc.js';
+import { abbreviate } from './lib/misc.js';
 import fs from 'fs';
 
 const consoleOpts = {
@@ -9,7 +9,7 @@ const consoleOpts = {
   maxArrayLength: Infinity
 };
 
-async function main(...args) {
+function main(...args) {
   console.options = consoleOpts;
 
   let code = fs.readFileSync(args[0] ?? 'pa_devs.c', 'utf-8');
@@ -17,7 +17,7 @@ async function main(...args) {
 
   let i = 0;
 
-  for await(let token of tokenize(code)) {
+  for(let token of tokenize(code)) {
     console.log(`token #${i}`, token);
     i++;
   }

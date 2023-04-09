@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import deep from './lib/deep.js';
 import path from './lib/path.js';
 import tXml from './lib/tXml.js';
@@ -10,11 +11,10 @@ import inspect from './lib/objectInspect.js';
 import { TransformationList, Point, Size, Matrix } from './lib/geom.js';
 import { SVG } from './lib/dom/svg.js';
 
-let filesystem;
 let prng = new Alea().seed(Date.now());
 
 function readXML(filename) {
-  let data = filesystem.readFile(filename);
+  let data = filesystem.readFileSync(filename);
   let xml = tXml(data);
 
   return xml;

@@ -1,8 +1,8 @@
+import filesystem from 'fs';
 import inspect from 'inspect';
 
 import TinyTest, { run, assert, assertEquals } from './lib/tinyTest.js';
 
-let filesystem;
 let tmpdir;
 let buffer, buffer2;
 let handle;
@@ -58,12 +58,12 @@ const tests = {
     assertEquals(filesystem.close(handle), 0);
   },
   'filesystem.readFile': () => {
-    assertEquals(filesystem.readFile(tmpdir + '/rdwr'), data);
+    assertEquals(filesystem.readFileSync(tmpdir + '/rdwr'), data);
   },
   'filesystem.writeFile': () => {
     let name = tmpdir + '/wrf';
     let ret = filesystem.writeFile(name, data);
-    let d = filesystem.readFile(name, null);
+    let d = filesystem.readFileSync(name, null);
 
     assertEquals(filesystem.bufferToString(d), data);
   },

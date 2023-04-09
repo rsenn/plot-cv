@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import * as deep from './lib/deep.js';
 import * as fs from './lib/filesystem.js';
 import * as path from './lib/path.js';

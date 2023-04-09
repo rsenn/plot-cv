@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
@@ -7,7 +8,6 @@ import { Path } from './lib/json.js';
 import { SortedMap } from './lib/container/sortedMap.js';
 import { ImmutablePath } from './lib/json.js';
 
-let filesystem;
 
 const code = `export const Progress = ({ className, percent, ...props }) =>  h(Overlay,
     {
@@ -222,7 +222,7 @@ async function main(...args) {
     let data, b, ret;
     if(file == '-') file = '/dev/stdin';
 
-    if(filesystem.exists(file)) data = filesystem.readFile(file);
+    if(filesystem.exists(file)) data = filesystem.readFileSync(file);
 
     console.log(`opened '${file}':`, Util.abbreviate(data));
     let ast, error;

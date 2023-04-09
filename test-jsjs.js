@@ -1,10 +1,10 @@
+import filesystem from 'fs';
 import { ECMAScriptParser, ECMAScriptInterpreter } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
 import { CallExpression } from './lib/ecmascript/estree.js';
 import deep from './lib/deep.js';
 
-let filesystem;
 
 const code = "Point.toSource = (point, { space = ' ', padding = ' ', separator = ',' }) => `{${padding}x:${space}${point.x}${separator}y:${space}${point.y}${padding}}`;";
 
@@ -29,7 +29,7 @@ async function main(...args) {
   if(args.length == 0) args.push('-');
   for(let file of args) {
     let data, b, ret;
-    data = file == '-' ? code : filesystem.readFile(file);
+    data = file == '-' ? code : filesystem.readFileSync(file);
     console.log(`read ${file}:`, Util.abbreviate(data).replaceAll('\n', '\\n'));
     let ast, error;
     globalThis.parser = new ECMAScriptParser(data, file);

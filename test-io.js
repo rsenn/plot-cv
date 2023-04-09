@@ -1,7 +1,7 @@
+import filesystem from 'fs';
 import ObjectInspect from './lib/objectInspect.js';
 import { Repeater } from './lib/repeater/repeater.js';
 
-let filesystem;
 let tmpdir;
 let buffer, buffer2;
 let handle;

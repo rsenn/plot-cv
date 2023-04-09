@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import inspect from 'inspect';
 import { define, isObject, memoize, unique } from './lib/misc.js';
 import * as deep from './lib/deep.js';
@@ -15,12 +16,11 @@ import * as jsondiff from './lib/json/diff.js';
 import KolorWheel from './lib/KolorWheel.js';
 import distanceChecker from './lib/color/distanceChecker.js';
 
-let filesystem;
 let prng = new Alea().seed(Date.now());
 
 function readXML(filename) {
   //console.log('readXML', filename);
-  let data = filesystem.readFile(filename);
+  let data = filesystem.readFileSync(filename);
   let xml = tXml(data);
   //console.log('xml:', xml);
   return xml;

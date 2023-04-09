@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import inspect from 'inspect';
 import gedaNetlistGrammar from './grammar-geda-netlist.js';
 import path from './lib/path.js';
@@ -7,7 +8,6 @@ import tXml from './lib/tXml.js';
 import { XPath } from './lib/xml.js';
 import { toXML } from './lib/json.js';
 
-let filesystem;
 
 function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');
@@ -29,7 +29,7 @@ async function main(...args) {
   let iconSize, iconAspect;
 
   for(let filename of args) {
-    let src = filesystem.readFile(filename);
+    let src = filesystem.readFileSync(filename);
     let base = path.basename(filename, /\.[^.]*$/);
 
     //console.log('src:', escape(src));

@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import deep from './lib/deep.js';
 import path from './lib/path.js';
 import { Size, Rect } from './lib/geom.js';
@@ -8,11 +9,10 @@ import { parse as parsePath } from './lib/svg/path-parser.js';
 
 let prng = new Alea(Date.now());
 
-let filesystem;
 
 function readXML(filename) {
   //console.log('readXML', filename);
-  let data = filesystem.readFile(filename);
+  let data = filesystem.readFileSync(filename);
   let xml = tXml(data);
   //console.log('xml:', xml);
   return xml;

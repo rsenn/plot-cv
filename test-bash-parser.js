@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import parse from 'bash-parser';
 
 const consoleOpts = {
@@ -11,7 +12,7 @@ async function main(...args) {
 
   console.options = consoleOpts;
 
-  const data = filesystem.readFile('../cfg.sh');
+  const data = filesystem.readFileSync('../cfg.sh');
 
   const ast = parse(data ?? 'echo ciao;');
   console.log('ast:', ast);

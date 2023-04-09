@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 
 function* BytesToUTF8(bytes) {
   let state = 0,
@@ -29,7 +30,7 @@ function CodePointsToString(codePoints) {
 
 async function main(...args) {
 
-  let data = filesystem.readFile(args[0] ?? 'utf8.txt', null);
+  let data = filesystem.readFileSync(args[0] ?? 'utf8.txt', null);
   console.log('data:', data);
 
   let bytes = new Uint8Array(data);

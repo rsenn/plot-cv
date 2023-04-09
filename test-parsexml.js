@@ -1,9 +1,10 @@
+import filesystem from 'fs';
 import { parse2 } from './lib/xml/parse.js';
 import { toXML } from './lib/json.js';
 
 async function main(...args) {
 
-  let data = filesystem.readFile(args[0] ?? 'BreadboardContacts.out.xml', 'utf-8');
+  let data = filesystem.readFileSync(args[0] ?? 'BreadboardContacts.out.xml', 'utf-8');
   console.log('data:', data);
 
   // let result = parse2(Util.bufferToString(data));

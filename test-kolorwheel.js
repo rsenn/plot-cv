@@ -1,5 +1,6 @@
 import KolorWheel from './lib/KolorWheel.js';
 import { RGBA, HSLA } from './lib/color.js';
+import { unique } from './lib/misc.js';
 import Alea from './lib/alea.js';
 
 const prng = new Alea(Date.now());

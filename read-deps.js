@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import path from './lib/path.js';
 import PortableChildProcess from './lib/childProcess.js';
 
@@ -19,7 +20,7 @@ Util.define(Array.prototype, {
 });
 
 function DummyPreproc(source) {
-  let data = filesystem.readFile(source);
+  let data = filesystem.readFileSync(source);
 
   let lines = data.split(/\n/g).map((line, i) => [i + 1, line]);
   let pp = lines.filter(([no, str]) => /^\s*#/.test(str));

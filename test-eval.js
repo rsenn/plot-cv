@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import { Environment, ECMAScriptParser, Printer } from './lib/ecmascript.js';
 import trkl from './lib/trkl.js';
 
@@ -14,13 +15,12 @@ console.log('testObj.prop1', testObj.prop1);
 console.log('testValues', testValues);
  `;
 
-let filesystem;
 
 async function main(...args) {
 
   let file = 'test-trkl.js';
 
-  let data = /* code ||*/ filesystem.readFile(file).toString();
+  let data = /* code ||*/ filesystem.readFileSync(file).toString();
 
   let parser = new ECMAScriptParser(data, code ? args[0].replace(/.*\//g, '') : file, true);
   let ast = parser.parseProgram();

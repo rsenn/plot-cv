@@ -1,10 +1,10 @@
+import filesystem from 'fs';
 import path from './lib/path.js';
 import * as bjson from 'bjson';
 import parse from './lib/xml/parse.js';
 import Tree from './lib/tree.js';
 import { toXML } from './lib/json/util.js';
 
-let filesystem;
 
 function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');
@@ -159,7 +159,7 @@ async function main(...args) {
   for(let file of args) {
     let base = path.basename(file, /\.[^.]*$/);
 
-    let data = filesystem.readFile(file);
+    let data = filesystem.readFileSync(file);
     console.log('data:', data);
     let xml = parse(data);
 

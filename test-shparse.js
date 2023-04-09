@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import REPL from './repl.js';
 import * as Terminal from './terminal.js';
 import * as path from 'path';
@@ -45,12 +46,12 @@ async function main(...args) {
       });
       console.log('cmd:', cmd.join(' '));
 
-      input = await filesystem.readFile(base + '.json', 'utf-8');
+      input = await filesystem.readFileSync(base + '.json', 'utf-8');
 
       break;
     }
     case '.json': {
-      input = await filesystem.readFile(file, 'utf-8');
+      input = await filesystem.readFileSync(file, 'utf-8');
       break;
       //    break;
     }

@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import inspect from 'inspect';
 // prettier-ignore-start
 import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';

@@ -1,15 +1,15 @@
+import filesystem from 'fs';
 import { Point, PointList, Line, BBox } from './lib/geom.js';
 import { SVG } from './lib/dom.js';
 import { toXML } from './lib/json.js';
 import Voronoi from './lib/geom/voronoi.js';
 import { EagleDocument } from './lib/eagle.js';
 
-let filesystem;
 
 async function testVoronoi(filename) {
 
   //console.log('Loading document: ' + filename);
-  let doc = new EagleDocument(filesystem.readFile(filename), null, filename);
+  let doc = new EagleDocument(filesystem.readFileSync(filename), null, filename);
 
   //console.log('doc', doc);
   let points = new PointList();

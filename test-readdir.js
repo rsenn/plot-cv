@@ -1,6 +1,6 @@
+import filesystem from 'fs';
 import ObjectInspect from './lib/objectInspect.js';
 
-let filesystem;
 let tmpdir;
 let buffer, buffer2;
 let handle;

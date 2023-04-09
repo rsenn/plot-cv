@@ -1,3 +1,4 @@
+import { define, isObject, memoize, unique } from './lib/misc.js';
 import * as cv from 'opencv';
 import { EventEmitter, eventify } from './quickjs/qjs-modules/lib/events.js';
 

@@ -1,6 +1,6 @@
+import filesystem from 'fs';
 import { WritableStream } from './lib/stream/writableStream.js';
 
-let filesystem;
 
 async function main() {
 

@@ -1,7 +1,7 @@
+import filesystem from 'fs';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 
-let filesystem;
 
 class Node {
   constructor(raw, path) {
@@ -59,7 +59,7 @@ const proxyObject = (root, handler) => {
 
 async function main() {
 
-  let str = filesystem.readFile('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
+  let str = filesystem.readFileSync('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
 
   let xml = tXml(str);
   //console.log('xml:', abbreviate(xml));
@@ -93,4 +93,4 @@ async function main() {
   }
 }
 
-main(getArgs());
+main(...scriptArgs.slice(1));

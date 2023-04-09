@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import Alea from './lib/alea.js';
 import cparse from './lib/cparse.js';
 import cpp from './lib/cpp.js';
@@ -90,7 +91,7 @@ async function main(...args) {
   console.log('out:', proc.stdout);
 
   //const src =   ReadAll(proc.stdout);
-  const src = filesystem.readFile(file);
+  const src = filesystem.readFileSync(file);
 
   const findInclude = FindIncludeFunc(file);
   let code;
@@ -100,7 +101,7 @@ async function main(...args) {
       file = findInclude(file);
       // console.log('completion_func', file);
 
-      const code = filesystem.readFile(file);
+      const code = filesystem.readFileSync(file);
       console.log('include_func', {
         file,
         code: abbreviate(escape(code + ''), 40)
@@ -131,7 +132,7 @@ async function main(...args) {
 
   e = pp.run(src);
 
-  //const src = filesystem.readFile('out.e');
+  //const src = filesystem.readFileSync('out.e');
 
   console.log('Source code:', code);
 

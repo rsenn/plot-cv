@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 #!/usr/bin/env qjsm
 import deep from './lib/deep.js';
 import path from './lib/path.js';
@@ -9,12 +10,11 @@ import Alea from './lib/alea.js';
 import * as diff from './lib/json/diff.js';
 import inspect from './lib/objectInspect.js';
 
-let filesystem;
 let prng = new Alea().seed(Date.now());
 
 function readXML(filename) {
   //console.log('readXML', filename);
-  let data = filesystem.readFile(filename);
+  let data = filesystem.readFileSync(filename);
   let xml = tXml(data);
   //console.log('xml:', xml);
   return xml;

@@ -77,7 +77,6 @@
   },
   "oldDeps": {
     "@deque/dot": "^1.1.5",
-    "@serialport/bindings": "^9.0.2",
     "@serialport/stream": "^9.0.1",
     "preact-fluid": "^0.9.1",
     "sort-order": "^1.0.1",

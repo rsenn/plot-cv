@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';

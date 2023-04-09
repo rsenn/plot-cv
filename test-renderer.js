@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import { EagleDocument, Renderer } from './lib/eagle.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
 import { render, Component } from './lib/preact.js';
@@ -5,7 +6,6 @@ import { ColoredText } from './lib/color/coloredText.js';
 import { RGBA } from './lib/color.js';
 import renderToString from './lib/preact-render-to-string.js';
 
-let filesystem;
 
 Util.colorCtor = ColoredText;
 
@@ -21,7 +21,7 @@ function WriteFile(name, data) {
 const debug = (Util.getEnv('APP_ENV') + '').startsWith('devel');
 
 async function testRenderSchematic(file) {
-  let doc = new EagleDocument(filesystem.readFile(`${file}.sch`));
+  let doc = new EagleDocument(filesystem.readFileSync(`${file}.sch`));
 
   let renderer = new Renderer(doc, ReactComponent.append, debug);
 
@@ -37,7 +37,7 @@ async function testRenderSchematic(file) {
 }
 
 async function testRenderBoard(file) {
-  let doc = new EagleDocument(filesystem.readFile(`${file}.brd`).toString(), null, `${file}.brd`);
+  let doc = new EagleDocument(filesystem.readFileSync(`${file}.brd`).toString(), null, `${file}.brd`);
   let renderer = new Renderer(doc, ReactComponent.append, debug);
 
   let output = renderer.render();

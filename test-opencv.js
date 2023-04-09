@@ -11,7 +11,7 @@ import { Window, MouseFlags, MouseEvents, Mouse, TextStyle, DrawText } from './q
 import * as nvg from 'nanovg';
 import * as glfw from 'glfw';
 
-let basename = getArgv()[1].replace(/\.js$/, '');
+let basename =__filename.replace(/\.js$/, '');
 const RAD2DEG = 180 / Math.PI;
 
 function GLFW(...args) {

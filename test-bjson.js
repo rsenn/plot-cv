@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import deep from './lib/deep.js';
 import path from './lib/path.js';
 import tXml from './lib/tXml.js';
@@ -10,7 +11,6 @@ import inspect from './lib/objectInspect.js';
 import * as zlib from './quickjs/ffi/examples/zlib.js';
 import * as ffi from 'ffi';
 
-let filesystem;
 let prng = new Alea().seed(Date.now());
 
 /*class Uint64 {
@@ -56,7 +56,7 @@ let prng = new Alea().seed(Date.now());
 }*/
 
 async function readBJSON(filename) {
-  let data = filesystem.readFile(filename, null);
+  let data = filesystem.readFileSync(filename, null);
   let obj = await import('bjson.so')
     .then(({ read }) => read(data, 0, data.byteLength))
     .catch(err => console.log(err));
@@ -96,7 +96,7 @@ function deflate(buffer, level = 9) {
 
 function readXML(filename) {
   //console.log('readXML', filename);
-  let data = filesystem.readFile(filename);
+  let data = filesystem.readFileSync(filename);
   let xml = tXml(data);
   //console.log('xml:', xml);
   return xml;

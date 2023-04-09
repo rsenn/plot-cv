@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import REPL from './repl.js';
 import * as Terminal from './terminal.js';
 import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter } from './clang-ast.js';
@@ -6,7 +7,7 @@ const consoleOpts = { depth: 5, compact: 2, hideKeys: ['range', 'loc'] };
 async function main(...args) {
 
   let name = args[0] ?? 'main';
-  let json = JSON.parse(filesystem.readFile('example_gl3.ast.json', 'utf-8'));
+  let json = JSON.parse(filesystem.readFileSync('example_gl3.ast.json', 'utf-8'));
   let fns = json.inner.filter(n => n.kind == 'FunctionDecl' && n.name == name);
 
   //fns = fns.filter(n => n.inner && n.inner.find(n => n.kind == 'CompoundStmt'));

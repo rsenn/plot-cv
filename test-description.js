@@ -1,5 +1,6 @@
+import filesystem from 'fs';
 import { ColoredText } from './lib/color/coloredText.js';
-Util.colorCtor = ColoredText;
+import { matchAll } from './lib/misc.js'
 //prettier-ignore
 let filesystem ;
 
@@ -9,10 +10,10 @@ async function main(...args) {
   let str;
   try {
     for(file of args) {
-      str = filesystem.readFile(file);
+      str = filesystem.readFileSync(file);
 
       function getDesc(str) {
-        let r = [...Util.matchAll('<(/)?(board|schematic|library)[ >]', str)]
+        let r = [...matchAll('<(/)?(board|schematic|library)[ >]', str)]
           .map(m => m.index)
           .sort((a, b) => a - b)
           .slice(0, 2);
@@ -29,7 +30,7 @@ async function main(...args) {
       let description = getDesc(str);
 
       console.log(`description:\n` + description);
-      //r = [...Util.matchAll('<\\/?(description)[^>]*>', str)];
+      //r = [...matchAll('<\\/?(description)[^>]*>', str)];
     }
   } catch(err) {
     console.log('err:', err);

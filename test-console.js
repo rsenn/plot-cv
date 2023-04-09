@@ -1,8 +1,5 @@
 
 async function main(...args) {
-    breakLength: 120,
-    maxStringLength: 200
-  });
 
   console.log(`console`, inspect(console, { customInspect: true, showHidden: true, compact: false }));
 

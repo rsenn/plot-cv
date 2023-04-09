@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import { EagleDocument, EagleProject } from './lib/eagle.js';
 import { LineList, Rect } from './lib/geom.js';
 import { toXML, ImmutablePath } from './lib/json.js';
@@ -26,7 +27,7 @@ function WriteFile(name, data) {
 
 class Location {
   static primary = null;
-  static contents = memoize(file => filesystem.readFile(file).toString());
+  static contents = memoize(file => filesystem.readFileSync(file).toString());
 
   constructor(file, begin, end) {
     let data = Location.contents(file);
@@ -291,7 +292,7 @@ async function DumpAst(source) {
     WriteFile(outfile, data);
   } else {
     console.log(`Reading '${outfile}' ...`);
-    data = filesystem.readFile(outfile);
+    data = filesystem.readFileSync(outfile);
   }
   return JSON.parse(data);
 }

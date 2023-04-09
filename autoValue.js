@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import trkl from './lib/trkl.js';
 import * as fs from './lib/filesystem.js';
 import { ReadJSON, WriteJSON } from './io-helpers.js';

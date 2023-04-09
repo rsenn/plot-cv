@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import Lexer from './lib/ecmascript/lexer.js';
 
 let args = scriptArgs;
@@ -16,7 +17,7 @@ function main(args) {
     let data, b, ret;
     if(file == '-') file = '/dev/stdin';
     //console.log('file:', file);
-    data = filesystem.readFile(file);
+    data = filesystem.readFileSync(file);
     //console.log('opened:', data);
     let token, error;
 

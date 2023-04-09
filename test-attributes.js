@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import inspect from 'inspect';
 import { XMLIterator } from './lib/xml/util.js';
 import tXml from './lib/tXml.js';
@@ -5,11 +6,10 @@ import toSource from './lib/tosource.js';
 import { ColorMap } from './lib/draw/colorMap.js';
 
 //prettier-ignore
-let filesystem;
 
 function readXML(filename) {
   //console.log('readXML', filename);
-  let data = filesystem.readFile(filename);
+  let data = filesystem.readFileSync(filename);
   let xml = tXml(data);
   //console.log('xml:', xml);
   return xml;

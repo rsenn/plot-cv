@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import PortableSpawn from './lib/spawn.js';
 import { AcquireReader } from './lib/stream/utils.js';
 import path from './lib/path.js';
@@ -88,7 +89,7 @@ async function main(...args) {
 
       if(times[1] >= times[0]) {
         console.log('Reading cached AST from:', outfile);
-        json = filesystem.readFile(outfile);
+        json = filesystem.readFileSync(outfile);
         ast = JSON.parse(json);
       } else {
         json = await AstDump(file, args);

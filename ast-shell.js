@@ -1,3 +1,4 @@
+import filesystem from 'fs';
 import PortableSpawn from './lib/spawn.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
