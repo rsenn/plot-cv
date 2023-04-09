@@ -1,4 +1,4 @@
-import Util from './lib/util.js';
+import { escape } from './lib/misc.js';
 import PortableSpawn from './lib/spawn.js';
 import PortableFileSystem from './lib/filesystem.js';
 import ConsoleSetup from './lib/consoleSetup.js';
@@ -26,11 +26,11 @@ async function main(...args) {
 
   while((r = await child.stdout.read(ab, 0, bufSize))) {
     if(!(r > 0 && r == bufSize)) console.log('r:', r);
-    console.log('data:', Util.escape(ArrayBufToString(ab, 0, r)));
+    console.log('data:', escape(ArrayBufToString(ab, 0, r)));
   }
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));
 
 function ArrayBufToString(buf, offset, length) {
   let arr = new Uint8Array(buf, offset, length);

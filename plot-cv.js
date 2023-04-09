@@ -1,3 +1,5 @@
+import { abbreviate, className, getArgv } from './lib/misc.js';
+import inspect from 'inspect';
 import * as net from 'net';
 import { Contour } from 'opencv';
 import { Mat } from 'opencv';
@@ -40,7 +42,7 @@ g.process = async function process(contours, hier, ...args) {
   let m = images.imgVector;
   /*  console.log('Images: ', typeof images);
   console.log('Images: ', Object.keys(images));
-  console.log('Images: ', Util.inspect(images));
+  console.log('Images: ', inspect(images));
   console.log('rest.length: ', rest.length);
   console.log('rest: ', ...rest);*/
   const { cols, rows } = m;

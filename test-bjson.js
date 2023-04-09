@@ -1,3 +1,4 @@
+import { define, getArgs, getOpt } from './lib/misc.js';
 import PortableFileSystem from './lib/filesystem.js';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
@@ -187,4 +188,4 @@ async function main(...args) {
     throw err;
   }
 }
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

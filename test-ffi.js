@@ -1,3 +1,4 @@
+import { bitsToNames, className, define, filterKeys, getMethodNames, isatty, ttyGetWinSize } from './lib/misc.js';
 import * as std from 'std';
 import * as os from 'os';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './quickjs/qjs-ffi/lib/fcntl.js';
@@ -229,7 +230,7 @@ async function main(...args) {
   // longjmp(jb, 1337);
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));
 
 function toHex(n, b = 2) {
   console.log('toHex:', n);

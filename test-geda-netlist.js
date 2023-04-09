@@ -1,6 +1,7 @@
+import { escape } from './lib/misc.js';
+import inspect from 'inspect';
 import gedaNetlistGrammar from './grammar-geda-netlist.js';
 import PortableFileSystem from './lib/filesystem.js';
-import Util from './lib/util.js';
 import path from './lib/path.js';
 import { Point, Size, Rect, BBox } from './lib/geom.js';
 import deep from './lib/deep.js';
@@ -36,7 +37,7 @@ async function main(...args) {
     let src = filesystem.readFile(filename);
     let base = path.basename(filename, /\.[^.]*$/);
 
-    //console.log('src:', Util.escape(src));
+    //console.log('src:', escape(src));
     const result = gedaNetlistGrammar.geda_netlist(src, 0);
     let [done, data, pos] = result;
 
@@ -73,7 +74,7 @@ async function main(...args) {
 
     let output = { components, nets };
 
-    let json = Util.inspect(output, {
+    let json = inspect(output, {
       multiline: true,
       depth: 2,
       json: true,
@@ -84,4 +85,4 @@ async function main(...args) {
   }
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

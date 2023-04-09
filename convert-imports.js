@@ -1,3 +1,4 @@
+import { define, exit, getArgs, getOpt } from './lib/misc.js';
 #!/usr/bin/env qjsm
 import { ECMAScriptParser, Printer, PathReplacer, ImportDeclaration, ImportSpecifier, Identifier, Literal, ExportDefaultDeclaration, ESNode } from './lib/ecmascript.js';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';

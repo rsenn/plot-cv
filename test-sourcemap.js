@@ -1,3 +1,4 @@
+import { exit } from './lib/misc.js';
 import { SourceMap } from './lib/sourceMap.js';
 import PortableFileSystem from './lib/filesystem.js';
 import ConsoleSetup from './lib/consoleSetup.js';
@@ -21,7 +22,7 @@ async function main(...args) {
   }
 }
 
-Util.callMain(main);
+main(...scriptArgs.slice(1));
 
 /*  .then(() => Util.exit(0))
   .catch(() => Util.exit(1));

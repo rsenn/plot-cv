@@ -1,3 +1,4 @@
+import { className, exit, getArgs } from './lib/misc.js';
 import Lexer from './lib/ecmascript/lexer.js';
 import Util from './lib/util.js';
 

@@ -42,7 +42,7 @@ const WriteBJSON = async (filename, obj) =>
 const ReadBJSON = async filename =>
   await import('bjson.so').then(({ read }) => {
     let data = fs.readFileSync(filename, null);
-    return Util.instrument(read)(data, 0, data.byteLength);
+    return instrument(read)(data, 0, data.byteLength);
   });
 
 async function main(...args) {
@@ -51,7 +51,7 @@ async function main(...args) {
   await PortableFileSystem(fs => (fs = fs));
   await PortableSpawn(fn => (spawn = fn));
 
-  let params = Util.getOpt(
+  let params = getOpt(
     {
       output: [true, null, 'o'],
       xml: [true, null, 'X'],
@@ -100,7 +100,7 @@ async function main(...args) {
 
   async function processFiles(...files) {
     for(let file of files) {
-      const start = /*await Util.now(); //*/ await Util.hrtime();
+      const start = /*await now(); //*/ await hrtime();
       console.log('start:', start);
       let json, ast;
       let base = path.basename(file, /\.[^./]*$/);
@@ -127,7 +127,7 @@ async function main(...args) {
         async () => await ReadAST(outfile).catch(() => 0),
         async () => {
           if((json = await AstDump(file, args))) {
-            ast = await Util.instrument(JSON.parse)(json);
+            ast = await instrument(JSON.parse)(json);
             await WriteBJSON(boutfile, ast).catch(err => {
               console.error(err);
               WriteFile(outfile, json);
@@ -172,7 +172,7 @@ async function main(...args) {
           idmap[n.id] = entry;
           id2path[n.id] = p;
         }
-        //Util.removeKeys(entries[locations.length][1], ['loc','range']);
+        //removeKeys(entries[locations.length][1], ['loc','range']);
         entry[2] = l;
         locations.push(l);
       }
@@ -194,15 +194,15 @@ async function main(...args) {
 
         if(params.debug) {
           let nodeTypes = [...nodes].map(([p, n]) => n.kind);
-          let hist = Util.histogram(nodeTypes, new Map());
+          let hist = histogram(nodeTypes, new Map());
           console.log('histogram:', new Map([...hist].sort((a, b) => a[1] - b[1])));
         }
 
         let namedNodes = mainNodes.filter(([p, n]) => 'name' in n);
 
-        let loc_name = Util.intersect(
+        let loc_name = intersect(
           /*namedNodes
-            .filter(([p, n]) => /Decl/.test(n.kind + '') && Util.isNumeric(p[p.length - 1]))
+            .filter(([p, n]) => /Decl/.test(n.kind + '') && isNumeric(p[p.length - 1]))
             .map(([p]) => p) ||*/
           typedefs.map(([p]) => p),
           namedNodes.map(([p]) => p)
@@ -237,7 +237,7 @@ async function main(...args) {
         for(let decl of decls.filter(([path, node, id, name, type, kind]) => !/ParmVar/.test(kind))) {
           const line = decl
             .slice(2)
-            .map((field, i) => (Util.abbreviate(field, [Infinity, Infinity, 20, Infinity, Infinity, Infinity][i]) + '').padEnd([6, 25, 20, 20, 40, 0][i]))
+            .map((field, i) => (abbreviate(field, [Infinity, Infinity, 20, Infinity, Infinity, Infinity][i]) + '').padEnd([6, 25, 20, 20, 40, 0][i]))
             .join(' ');
 
           console.log(line);
@@ -247,7 +247,7 @@ async function main(...args) {
   }
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));
 
 /*function WriteFile(name, data, verbose = true) {
   if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';

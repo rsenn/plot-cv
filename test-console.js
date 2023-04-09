@@ -1,3 +1,4 @@
+import { callMain, define, getArgs } from './lib/misc.js';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 
@@ -59,7 +60,7 @@ async function main(...args) {
 
   return 'done';
 }
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));
 /*
 console.log('TEST\n');
 print('TEST\n');

@@ -1,4 +1,4 @@
-import Util from './lib/util.js';
+import { abbreviate, escape, randInt } from './lib/misc.js';
 import Alea from './lib/alea.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import cparse from './lib/cparse.js';
@@ -42,7 +42,7 @@ const FindIncludeFunc = source => {
   };
 };
 
-const getSource = () => sources[Util.randInt(0, sources.length - 1, prng)];
+const getSource = () => sources[randInt(0, sources.length - 1, prng)];
 
 function* Reader(input) {
   const buffer = new ArrayBuffer(1024);
@@ -108,13 +108,13 @@ async function main(...args) {
       const code = filesystem.readFile(file);
       console.log('include_func', {
         file,
-        code: Util.abbreviate(Util.escape(code + ''), 40)
+        code: abbreviate(escape(code + ''), 40)
       });
 
       resolve(code);
     },
     completion_func(text, arr, state) {
-      // console.log('completion_func', { text: Util.abbreviate(text), arr: arr.map(s => Util.abbreviate(s)), state });
+      // console.log('completion_func', { text: abbreviate(text), arr: arr.map(s => abbreviate(s)), state });
       code = text;
     },
     error_func(error) {
@@ -148,7 +148,7 @@ async function main(...args) {
   console.log(ast);
 }
 
-Util.callMain(main, e => {
+main(...scriptArgs.slice(1));
   console.log('STACK:', e.stack);
   console.log('ERROR:', e, '\n', [...e.stack][2].functionName);
 });

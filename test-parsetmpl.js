@@ -1,3 +1,4 @@
+import { abbreviate, className, exit } from './lib/misc.js';
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
@@ -40,7 +41,7 @@ const code = `export const Progress = ({ className, percent, ...props }) =>  h(O
 const testfn = () => true;
 const testtmpl = `this is\na test`;
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));
 
 /*
 const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg">

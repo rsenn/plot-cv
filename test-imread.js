@@ -2,7 +2,6 @@ import * as cv from 'opencv';
 import Console from 'console';
 import * as path from 'path';
 import { range } from 'util';
-import Util from './lib/util.js';
 import { RGBA, HSLA } from './lib/color.js';
 
 function Grayscale(src, dst) {

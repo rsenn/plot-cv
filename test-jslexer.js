@@ -2,7 +2,6 @@ import Lexer from './lib/jslexer.js';
 import { Console } from 'console';
 import { escape } from './lib/misc.js';
 import { h, Component } from './lib/dom/preactComponent.js';
-import Util from './lib/util.js';
 import fs from 'fs';
 
 const testfn = () => true;
@@ -42,7 +41,7 @@ function main(arg) {
   }
 }
 try {
-  main(...Util.getArgs().slice(1));
+  main(...getArgs().slice(1));
 } catch(error) {
   console.log(`FAIL: ${error.message}\n${error.stack}`);
 } finally {

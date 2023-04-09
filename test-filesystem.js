@@ -1,3 +1,5 @@
+import { filter, getArgs, getMethodNames, randStr } from './lib/misc.js';
+import inspect from 'inspect';
 import Util from './lib/util.js';
 import PortableFileSystem, { SEEK_SET, SEEK_END } from './lib/filesystem.js';
 import ConsoleSetup from './lib/consoleSetup.js';
@@ -99,7 +101,7 @@ const tests = {
     let st;
     assert(filesystem.stat(tmpdir).isDirectory());
     st = filesystem.stat(tmpdir + '/file');
-    // console.log("st:", Util.inspect(st));
+    // console.log("st:", inspect(st));
     assert(st.isFile());
   },
   'filesystem.lstat': () => {
@@ -169,4 +171,4 @@ async function main(...args) {
   );
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

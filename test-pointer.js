@@ -1,3 +1,4 @@
+import { exit } from './lib/misc.js';
 import Util from './lib/util.js';
 import { Pointer } from './lib/pointer.js';
 import * as deep from './lib/deep.js';

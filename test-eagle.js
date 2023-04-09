@@ -1,3 +1,4 @@
+import { abbreviate, className, equals, exit, proxyClone, proxyTree } from './lib/misc.js';
 import { EagleDocument, EagleProject } from './lib/eagle.js';
 import PortableFileSystem from './lib/filesystem.js';
 import { LineList, Rect } from './lib/geom.js';
@@ -282,4 +283,4 @@ async function main(...args) {
   }
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

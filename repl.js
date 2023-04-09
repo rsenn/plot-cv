@@ -48,15 +48,15 @@ export default function REPL(title = 'QuickJS') {
       //console.log('', { input, output });
     });
   else {
-    input = Util.stdio(0);
-    output = Util.stdio(1) ?? process.stdout;
+    input = stdio(0);
+    output = stdio(1) ?? process.stdout;
   }
 
-  var tty_set_raw = Util.once(fd => os.ttySetRaw(fd));
-  var put_banner = Util.once(() => std.puts('QuickJS - Type "\\h" for this.help\n'));
+  var tty_set_raw = once(fd => os.ttySetRaw(fd));
+  var put_banner = once(() => std.puts('QuickJS - Type "\\h" for this.help\n'));
 
-  /*Util.ttySetRaw(input);
-  Util.ttySetRaw(output);
+  /*ttySetRaw(input);
+  ttySetRaw(output);
 */
   var thisObj = this;
 
@@ -250,8 +250,8 @@ export default function REPL(title = 'QuickJS') {
     /* get the terminal size */
     termWidth = 80;
     if(isatty(this.term_fd)) {
-      if(Util.ttyGetWinSize) {
-        await Util.ttyGetWinSize(1).then(tab => {
+      if(ttyGetWinSize) {
+        await ttyGetWinSize(1).then(tab => {
           repl.debug('termInit', { tab });
           termWidth = tab[0];
         });
@@ -261,12 +261,12 @@ export default function REPL(title = 'QuickJS') {
     }
 
     /* install a Ctrl-C signal handler */
-    Util.signal('SIGINT', sigintHandler);
+    signal('SIGINT', sigintHandler);
 
     /* install a handler to read stdin */
     term_read_buf = new Uint8Array(1);
 
-    Util.setReadHandler(input ?? this.term_fd, () => repl.termReadHandler());
+    setReadHandler(input ?? this.term_fd, () => repl.termReadHandler());
 
     repl.debug('termInit');
     repl.debug('this.term_fd', this.term_fd);
@@ -1129,7 +1129,7 @@ export default function REPL(title = 'QuickJS') {
           return;
         case -3:
           /* uninstall a Ctrl-C signal handler */
-          Util.signal('SIGINT', null);
+          signal('SIGINT', null);
           /* uninstall the stdin read handler */
           fs.setReadHandler(this.term_fd, null);
           return;
@@ -1537,7 +1537,7 @@ export default function REPL(title = 'QuickJS') {
       //      puts(error.stack+'');
 
       if(error instanceof Error || typeof error?.message == 'string') {
-        repl.debug((error?.type ?? Util.className(error)) + ': ' + error?.message);
+        repl.debug((error?.type ?? className(error)) + ': ' + error?.message);
         if(error?.stack) output += error?.stack;
       } else {
         output += 'Throw: ' + error;
@@ -1549,10 +1549,10 @@ export default function REPL(title = 'QuickJS') {
 
     /* set the last result */
     globalThis._ = repl.result = result;
-    if(Util.isPromise(result)) {
+    if(isPromise(result)) {
       result.then(value => {
         result.resolved = true;
-        repl.printStatus(`Promise resolved to:`, Util.typeOf(value), console.config({ depth: 1, multiline: true }), value);
+        repl.printStatus(`Promise resolved to:`, typeOf(value), console.config({ depth: 1, multiline: true }), value);
         globalThis.$ = value;
       });
     }
@@ -1623,7 +1623,7 @@ export default function REPL(title = 'QuickJS') {
     repl.historyAdd(history.splice(histidx, historyIndex - histidx).join('\n'));
     //repl.debug('handleCmd', {histidx}, history.slice(histidx));
     /* run the garbage collector after each command */
-    if(Util.getPlatform() == 'quickjs') std.gc();
+    if(getPlatform() == 'quickjs') std.gc();
   }
 
   function colorizeJs(str) {
@@ -2006,7 +2006,7 @@ export default function REPL(title = 'QuickJS') {
     repl.termInit();
     repl.cmdStart(title);
 
-    Util.setReadHandler(input, () => repl.termReadHandler());
+    setReadHandler(input, () => repl.termReadHandler());
   }
 
   function wrapPrintFunction(fn, thisObj) {

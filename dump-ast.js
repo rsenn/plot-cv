@@ -142,7 +142,7 @@ function GetLocation(node) {
   }
   if(loc.begin) loc = loc.begin;
   if(loc.expansionLoc) loc = loc.expansionLoc;
-  if(Util.isEmpty(loc)) return null;
+  if(isEmpty(loc)) return null;
   return loc;
 }
 
@@ -322,7 +322,7 @@ const typeRe =
   /^(array|buffer|build_type_t|config_t|dirs_t|dir_t|exts_t|fd_t|HMAP_DB|int64|intptr_t|lang_type|machine_type|MAP_NODE_T|MAP_PAIR_T|MAP_T|os_type|range|rdir_t|set_iterator_t|set_t|sighandler_t_ref|sigset_t|sourcedir|sourcefile|ssize_t|stralloc|strarray|strlist|system_type|target|tools_t|TUPLE|uint32|uint64)$/;
 
 async function main(...args) {
-  const cols = await Util.getEnv('COLUMNS');
+  const cols = await getEnv('COLUMNS');
   // console.log('cols:', cols, process.env.COLUMNS);
   await ConsoleSetup({
     colors: true,
@@ -474,7 +474,7 @@ async function main(...args) {
         return null;
       })
       .filter(k => !!k)
-      .map(k => [k, Util.clone(deep.get(ast, k))]);
+      .map(k => [k, clone(deep.get(ast, k))]);
     for(let [key, value] of fmtc) {
       const loc = value.range.begin.spellingLoc || value.range.begin;
       const call = NodeToString(value, 'spellingLoc');
@@ -497,4 +497,4 @@ async function main(...args) {
   }
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

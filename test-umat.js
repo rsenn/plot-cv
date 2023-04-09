@@ -1,3 +1,4 @@
+import { pushUnique, randInt } from './lib/misc.js';
 import { Point } from 'opencv';
 import { Size } from 'opencv';
 import { Rect } from 'opencv';
@@ -9,7 +10,6 @@ import { Contour } from 'opencv';
 import { SliceIterator } from 'opencv';
 import * as draw from 'opencv';
 import RGBA from './lib/color/rgba.js';
-import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
@@ -51,8 +51,8 @@ async function main(...args) {
   let { width, height } = size;
   let mat = new Mat(input.size, cv.CV_8UC3);
   let thresh = 100;
-  const RandomPoint = () => new Point(Util.randInt(0, width - 1), Util.randInt(0, height - 1));
-  const RandomColor = () => [Util.randInt(0, 255), Util.randInt(0, 255), Util.randInt(0, 255), 255];
+  const RandomPoint = () => new Point(randInt(0, width - 1), randInt(0, height - 1));
+  const RandomColor = () => [randInt(0, 255), randInt(0, 255), randInt(0, 255), 255];
 
   let gray = new Mat();
   cv.cvtColor(input, gray, cv.COLOR_BGR2GRAY);
@@ -111,10 +111,10 @@ async function main(...args) {
     /*    console.log('line.angle:', (line.angle * 180) / Math.PI);
     console.log('line.length:', line.length);*/
 
-    Util.pushUnique(ygrid[GetY(y1)], line);
-    Util.pushUnique(xgrid[GetY(x1)], line);
-    Util.pushUnique(ygrid[GetY(y2)], line);
-    Util.pushUnique(xgrid[GetY(x2)], line);
+    pushUnique(ygrid[GetY(y1)], line);
+    pushUnique(xgrid[GetY(x1)], line);
+    pushUnique(ygrid[GetY(y2)], line);
+    pushUnique(xgrid[GetY(x2)], line);
   }
   ygrid = ygrid.map((lines, row) => [row * 5, lines]).filter(([row, lines]) => lines.length > 1);
 
@@ -194,4 +194,4 @@ async function main(...args) {
   }
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

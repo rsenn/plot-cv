@@ -28,4 +28,4 @@ async function main(...args) {
   console.log('output:', printer.output);
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

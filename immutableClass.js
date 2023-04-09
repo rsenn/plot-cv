@@ -1,3 +1,4 @@
+import { defineGetterSetter, fnName, isArrowFunction } from './lib/misc.js';
 /* jshint esversion: 6 */
 
 const immutableClass = (orig, ...proto) => {

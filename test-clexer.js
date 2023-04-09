@@ -1,4 +1,4 @@
-import Util from './lib/util.js';
+import { abbreviate } from './lib/misc.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import tokenize from './tokenize.js';
 import PortableFileSystem from './lib/filesystem.js';
@@ -16,7 +16,7 @@ async function main(...args) {
   console.options = consoleOpts;
 
   let code = filesystem.readFile(args[0] ?? 'pa_devs.c', 'utf-8');
-  console.log(Util.abbreviate(code));
+  console.log(abbreviate(code));
   let i = 0;
 
   for await(let token of tokenize(code)) {
@@ -25,4 +25,4 @@ async function main(...args) {
   }
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

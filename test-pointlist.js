@@ -1,5 +1,6 @@
+import { className, getMethods } from './lib/misc.js';
+import inspect from 'inspect';
 import { Point, Rect, PointList, Line, Vector } from './lib/geom.js';
-import Util from './lib/util.js';
 
 //let args = [...process.argv].slice(2);
 
@@ -35,8 +36,8 @@ let points = new PointList(
 );
 //console.log("points:", points);
 
-//console.log('points:', Util.className(points));
-const methods = Util.getMethods(Array.prototype, false, (key, value) => (typeof key == 'string' && key.startsWith('_') ? undefined : [key == 'length' ? 'size' : key, value]));
+//console.log('points:', className(points));
+const methods = getMethods(Array.prototype, false, (key, value) => (typeof key == 'string' && key.startsWith('_') ? undefined : [key == 'length' ? 'size' : key, value]));
 //console.log('Array.prototype getMethods:', methods);
 g47;
 
@@ -80,7 +81,7 @@ for(let list of lists) {
   //console.log('l.xIntercept:', l.xIntercept());
   //console.log('l2.yIntercept:', l2.yIntercept());
   //console.log('l2.xIntercept:', l2.xIntercept());
-  //console.log('l.functions:' + Util.inspect(l.functions(), { multiline: false }));
+  //console.log('l.functions:' + inspect(l.functions(), { multiline: false }));
   //console.log('l.functions:', l.functions());
   //console.log('l.dot:', l.dot);
   //console.log('l.cross:', l.cross);
@@ -109,5 +110,5 @@ for(let list of lists) {
 /*
 let v = new Vector([1,2]);
 //console.log("vec:", v.slice(1));
-//console.log("vec:", Util.getMethods(Object.getPrototypeOf(v), 1));
+//console.log("vec:", getMethods(Object.getPrototypeOf(v), 1));
 */

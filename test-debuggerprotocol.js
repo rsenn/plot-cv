@@ -6,12 +6,11 @@ import { errno } from 'ffi';
 import { Socket, socket, EAGAIN, AF_INET, SOCK_STREAM, /*ndelay, */ SockAddr, select } from './quickjs/qjs-ffi/lib/socket.js';
 import { fd_set, FD_SET, FD_CLR, FD_ISSET, FD_ZERO } from './quickjs/qjs-ffi/lib/fd_set.js';
 import timeval from './quickjs/qjs-ffi/lib/timeval.js';
-import Util from './lib/util.js';
 import { Console } from 'console';
 import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 
-Util.define(Array.prototype, {
+define(Array.prototype, {
   contains(item) {
     return this.indexOf(item) != -1;
   }
@@ -28,7 +27,7 @@ async function main(...args) {
     }
   });
   console.log('console.options', console.options);
-  let params = Util.getOpt(
+  let params = getOpt(
     {
       listen: [false, null, 'l'],
       debug: [false, null, 'x'],

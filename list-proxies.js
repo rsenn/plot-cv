@@ -1,3 +1,4 @@
+import { coloring, exit, getOpt, insertSorted, isBrowser, isIpAddress, isPortNumber, randStr, toSource } from './lib/misc.js';
 import ProxyList from './node_modules/free-proxy/index.js';
 import ProxyLists from './node_modules/proxy-lists/index.js';
 import proxynova from './node_modules/proxynova/index.js';
@@ -280,7 +281,7 @@ async function main(...args) {
     //proxies.sort((a, b) => a.time - b.time);
   })();
 }
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));
 
 async function writeResults(results, format = 'txt', outputName = 'proxies') {
   let filename = outputName + '.' + format;

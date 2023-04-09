@@ -1,3 +1,4 @@
+import inspect from 'inspect';
 // prettier-ignore-start
 import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
 import dom from './lib/dom.js';
@@ -13,7 +14,6 @@ import { ColorMap } from './lib/draw/colorMap.js';
 import { ClipperLib } from './lib/clipper-lib.js';
 import Shape from './lib/clipper.js';
 import { devtools } from './lib/devtools.js';
-import Util from './lib/util.js';
 import tlite from './lib/tlite.js';
 import { debounceAsync } from './lib/async/debounce.js';
 import { SvgPath } from './lib/svg/path.js';
@@ -82,7 +82,7 @@ import * as rpc2 from './quickjs/qjs-net/rpc.js';
 import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
 import { errors, types, isObject, SyscallError, extendArray, toString, btoa, atob, assert, escape, quote, memoize, getset, modifier, getter, setter, gettersetter, hasGetSet, mapObject, once, atexit, waitFor, define, weakAssign, getConstructorChain, hasPrototype, filter, curry, split, unique, getFunctionArguments, randInt, randFloat, randStr, toBigInt, lazyProperty, lazyProperties, getOpt, toUnixTime, unixTime, fromUnixTime, range, repeater, repeat, chunkArray, camelize, decamelize, Location, format, formatWithOptions, isNumeric, functionName, className, isArrowFunction, immutableClass, isArray, ArrayFacade, arrayFacade, bits, dupArrayBuffer, getTypeName, isArrayBuffer, isBigDecimal, isBigFloat, isBigInt, isBool, isCFunction, isConstructor, isEmptyString, isError, isException, isExtensible, isFunction, isHTMLDDA, isInstanceOf, isInteger, isJobPending, isLiveObject, isNull, isNumber, isUndefined, isString, isUninitialized, isSymbol, isUncatchableError, isRegisteredClass, rand, randi, randf, srand, toArrayBuffer } from './lib/misc.js';
 
-Util.colorCtor = ColoredText;
+colorCtor = ColoredText;
 const elementDefaultAttributes = {
   stroke: 'red',
   fill: 'none',
@@ -92,7 +92,7 @@ const elementDefaultAttributes = {
 };
 
 /* prettier-ignore */
-//Util.extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement }, { toXML, XmlObject, XmlAttr }, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, ColoredText, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon, Circle } );
+//extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement }, { toXML, XmlObject, XmlAttr }, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, ColoredText, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon, Circle } );
 const Timer = { ...Timers, once: dom.Timer };
 
 let currentProj = trkl.property(window, 'project');
@@ -123,7 +123,7 @@ const documentSize = trkl('');
 const loading = trkl(false);
 const filePanel = trkl(false);
 
-const SaveConfig = Util.debounce(() => {
+const SaveConfig = debounce(() => {
   let obj = store.toObject();
 
   return fetch('config', {
@@ -133,7 +133,7 @@ const SaveConfig = Util.debounce(() => {
   }).then(res => res.json());
 }, 5 * 1000);
 
-const LoadConfig = Util.once(() =>
+const LoadConfig = once(() =>
   fetch('config')
     .then(ResponseData)
     .then(r => (console.log('config:', r), r))
@@ -170,8 +170,8 @@ const GetProject = arg => {
 };
 let elementChildren = null;
 let elementGeometries = null;
-//let zoomValue = Util.getSet(() => ZoomFactor(config.zoomLog()), value => config.zoomLog(ZoomLog(value)));
-let zoomValue = Util.deriveGetSet(config.zoomLog, ZoomFactor, ZoomLog);
+//let zoomValue = getSet(() => ZoomFactor(config.zoomLog()), value => config.zoomLog(ZoomLog(value)));
+let zoomValue = deriveGetSet(config.zoomLog, ZoomFactor, ZoomLog);
 
 config.zoomLog.subscribe(AdjustZoom);
 
@@ -195,7 +195,7 @@ tlite(() => ({
 const utf8Decoder = new TextDecoder('utf-8');
 let svgOwner, parent;
 
-const svgFactory = Util.memoize((parent, delegate) => {
+const svgFactory = memoize((parent, delegate) => {
   parent = parent ? Element.find(parent) : project.svgElement.parentElement;
   const factory = SVG.factory({
     ...delegate,
@@ -446,13 +446,13 @@ const GerberLayers = {
   TXT: 'Drill file'
 };
 
-let svgDocFactory = Util.memoize((id = '#geom') =>
+let svgDocFactory = memoize((id = '#geom') =>
   SVG.factory(Element.find(id)).initialize('svg', {
     width: window.innerWidth,
     height: window.innerHeight /*, style: "pointer-events: none;"*/
   })
 );
-let svgGroupFactory = Util.memoize((props = {}) =>
+let svgGroupFactory = memoize((props = {}) =>
   svgDocFactory().setRoot('g', {
     stroke: '#f00',
     'stroke-width': 3,
@@ -469,7 +469,7 @@ const maxZIndex = () =>
       .map(z => +z)
   );
 
-const groupProps = Util.memoize(() => {
+const groupProps = memoize(() => {
   let transform = `translate(300,-50)`;
   const prng = new Alea(234234800);
   const randomColor = () => HSLA.random([240, -120], [100, 100], [30, 75], [1, 1], prng).hex();
@@ -520,7 +520,7 @@ function DrawArc(start, end, angle) {
   let lines2 = [new Line(p1, center), new Line(p2, center)];
 
   let norms = [p1, p2].map(p => p.diff(center)).map(p => p.normal());
-  angles = norms.map(p => Util.mod(p.toAngle(true), 360));
+  angles = norms.map(p => mod(p.toAngle(true), 360));
   //console.log('angles:', angles);
   //console.log('angles abs:', Math.abs(angles[0] - angles[1]));
   //console.log('angle :', angle);
@@ -529,7 +529,7 @@ function DrawArc(start, end, angle) {
 
   let range = norms.map(({ x, y }) => new Point(x * radius, y * radius).sum(center));
   let deg = (angle * 180) / Math.PI;
-  let approx = Util.range(0, deg, 10).map(a => Point.fromAngle((a * Math.PI) / 180 - angle, radius - 30));
+  let approx = range(0, deg, 10).map(a => Point.fromAngle((a * Math.PI) / 180 - angle, radius - 30));
 
   //console.log('range:', range);
   //console.log('approx:', approx);
@@ -763,7 +763,7 @@ function ClipPath(path, clip, mode = ClipperLib.ClipType.ctUnion) {
   return output;
 }
 
-function saveItemStates(itemList, get = item => Util.is.on(item.visible())) {
+function saveItemStates(itemList, get = item => is.on(item.visible())) {
   return itemList.map(item => [item, get(item)]);
 }
 
@@ -775,7 +775,7 @@ function EagleMaps(project) {
   let transformPath = p => p.replace(/\s*➟\s*/g, '/').replace(/\/([0-9]+)/g, '/[$1]');
   let dom2path = [...Element.findAll('*[data-path]', project.object)].map(e => [e, new ImmutableXPath(transformPath(e.getAttribute('data-path')))]);
   // console.debug('dom2path:', dom2path);
-  dom2path = Util.mapFunction(new WeakMap(dom2path));
+  dom2path = mapFunction(new WeakMap(dom2path));
 
   let dom2eagle = node => {
     let p;
@@ -785,25 +785,25 @@ function EagleMaps(project) {
   let path2dom = p => Element.find(`[data-path='${CSS.escape(p)}']`, project.element);
 
   let mapElements = {
-    /*    eagle: Util.unique(eagle2dom.map(([e, d]) => e)),
-    dom: Util.unique(eagle2dom.map(([e, d]) => d), (a, b) => a.isSameNode(b))*/
+    /*    eagle: unique(eagle2dom.map(([e, d]) => e)),
+    dom: unique(eagle2dom.map(([e, d]) => d), (a, b) => a.isSameNode(b))*/
   };
   let maps = { dom2path, dom2eagle, eagle2dom, path2dom };
-  /*  maps.eagle2dom = Util.mapFunction(new WeakMap(mapElements.eagle.map(eagle => [
+  /*  maps.eagle2dom = mapFunction(new WeakMap(mapElements.eagle.map(eagle => [
         eagle,
         eagle2dom.filter(([e, d]) => e === eagle).map(([e, d]) => d)
       ])
     )
   );
   //console.debug('maps.eagle2dom:', maps.eagle2dom);*/
-  //) maps.dom2eagle = Util.mapFunction(new WeakMap(eagle2dom.map(([k, v]) => [v, k])));
-  const [path2component, component2path] = project.renderer.maps.map(Util.mapFunction);
+  //) maps.dom2eagle = mapFunction(new WeakMap(eagle2dom.map(([k, v]) => [v, k])));
+  const [path2component, component2path] = project.renderer.maps.map(mapFunction);
   const { /*path2obj, obj2path, */ path2eagle, eagle2path /*, eagle2obj, obj2eagle */ } = project.doc.maps;
   const [component2eagle, eagle2component] = [
-    Util.mapAdapter((key, value) => (value === undefined ? path2eagle(component2path(key)) : undefined)),
-    Util.mapAdapter((key, value) => (value === undefined ? path2component(eagle2path(key) + '') : undefined))
+    mapAdapter((key, value) => (value === undefined ? path2eagle(component2path(key)) : undefined)),
+    mapAdapter((key, value) => (value === undefined ? path2component(eagle2path(key) + '') : undefined))
   ];
-  Util.weakAssign(maps, {
+  weakAssign(maps, {
     path2eagle,
     eagle2path,
     path2component,
@@ -811,10 +811,10 @@ function EagleMaps(project) {
   });
 
   /* const [component2dom, dom2component] = [
-    Util.mapAdapter((key, value) =>
+    mapAdapter((key, value) =>
       value === undefined ? eagle2dom(component2eagle(key)) : undefined
     ),
-    Util.mapAdapter((key, value) =>
+    mapAdapter((key, value) =>
       value === undefined ? eagle2component(dom2eagle(key)) : undefined
     )
   ]; */
@@ -831,12 +831,12 @@ function EagleMaps(project) {
 }
 
 function* PackageNames(doc = project.doc) {
-  const tokenize = Util.matchAll(/([A-Za-z]+|[0-9,]+|[^0-9A-Za-z]+)/g);
+  const tokenize = matchAll(/([A-Za-z]+|[0-9,]+|[^0-9A-Za-z]+)/g);
   let packages = doc.packages && doc.packages.length ? doc.packages : [...doc.getAll('package')];
   let names = packages
     .map(e => [e, e.getBounds()])
     .map(([e, b]) => [e, b.width, b.height, Math.max(b.width, b.height), b.height > b.width])
-    .map(([e, w, h, m, v]) => [e, e.name, [...tokenize(e.name)], Util.roundTo(w, 0.01), Util.roundTo(h, 0.01), Math.floor(m), v ? 'V' : '']);
+    .map(([e, w, h, m, v]) => [e, e.name, [...tokenize(e.name)], roundTo(w, 0.01), roundTo(h, 0.01), Math.floor(m), v ? 'V' : '']);
 
   for(let [element, name, matches, w, h, size, orientation] of names) {
     let tokens = matches.map(({ index, ...match }) => match[0] + '');
@@ -919,9 +919,9 @@ async function LoadDocument(project, parentElem) {
   currentProj(project);
   LogJS.info(`${project.name} loaded.`);
   const topPlace = 'tPlace';
-  elementChildren = Util.memoize(() => ElementChildren(topPlace, ent => Object.fromEntries(ent)));
-  elementGeometries = Util.memoize(() => ElementGeometries(topPlace, ent => Object.fromEntries(ent)));
-  //polygonGeometries = Util.memoize(() => Object.entries(elementGeometries()).map(([name, lineList]) => [name, lineList.toPolygon((pts) => new Polyline(pts))]));
+  elementChildren = memoize(() => ElementChildren(topPlace, ent => Object.fromEntries(ent)));
+  elementGeometries = memoize(() => ElementGeometries(topPlace, ent => Object.fromEntries(ent)));
+  //polygonGeometries = memoize(() => Object.entries(elementGeometries()).map(([name, lineList]) => [name, lineList.toPolygon((pts) => new Polyline(pts))]));
 
   documentTitle(project.doc.file.replace(/.*\//g, ''));
   let s = project.doc.type != 'lbr' && project.doc.dimensions;
@@ -937,7 +937,7 @@ async function LoadDocument(project, parentElem) {
   docElem.innerHTML = '';
   //console.log('doc.basename', doc.basename);
 
-  Util.memoizedProperties(window, {
+  memoizedProperties(window, {
     renamePackages() {
       let names = [...PackageNames(doc)];
       //console.log('Package names', names);
@@ -978,7 +978,7 @@ async function LoadDocument(project, parentElem) {
             let fn;
             const handler = layer.handlers.visible;
             fn = function(v) {
-              if(v !== undefined) handler(Util.is.on(v) ? 'yes' : 'no');
+              if(v !== undefined) handler(is.on(v) ? 'yes' : 'no');
               else return handler();
             };
             fn.subscribe = handler.subscribe;
@@ -1073,7 +1073,7 @@ async function LoadDocument(project, parentElem) {
       return (e = SVG.create('g', { ...props, transform }, svg));
     };
 
-    project.makeFactory = Util.memoize(id =>
+    project.makeFactory = memoize(id =>
       SVG.factory(() =>
         project.makeGroup({
           ...((id !== undefined && { id }) || {}),
@@ -1112,7 +1112,7 @@ async function LoadDocument(project, parentElem) {
     })(defaultTransform);
   }
 
-  Util.tryCatch(async () => {
+  tryCatch(async () => {
     let { name, data, doc, svg, bbox } = project;
     let bounds = doc.getBounds();
     let rect = bounds.toRect(Rect.prototype);
@@ -1130,10 +1130,10 @@ async function LoadDocument(project, parentElem) {
     //  window.size = project.doc.type == 'lbr' ? {} : css;
     AdjustZoom();
     project.status = SaveSVG();
-  }, Util.putError);
+  }, putError);
 
   /* sizeListener.subscribe(value => {
-    //console.log('sizeListener', { value }, Util.getCallers());
+    //console.log('sizeListener', { value }, getCallers());
   });
 */
   return project;
@@ -1327,7 +1327,7 @@ function AdjustZoom(l = config.zoomLog()) {
   window.transform = t;
 }
 const CreateGrblSocket = async (port = 'tnt1') => {
-  let url = Util.makeURL({
+  let url = makeURL({
     location: '/serial',
     protocol: 'ws',
     query: { port }
@@ -1363,8 +1363,8 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
   // log = log || ((...args) => console.log(...args));
   socketURL =
     socketURL ||
-    Util.makeURL({
-      location: Util.parseURL(window.location.href).location + 'ws',
+    makeURL({
+      location: parseURL(window.location.href).location + 'ws',
       protocol: window.location.href.startsWith('https') ? 'wss' : 'ws'
     });
   let ws = new WebSocketClient();
@@ -1388,10 +1388,10 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
     //console.log('WebSocket event:', event);
     if(event.type == 'message') {
       const { data } = event;
-      //   console.log('data:', Util.abbreviate(data, 40));
+      //   console.log('data:', abbreviate(data, 40));
       let msg = new Message(data);
       window.msg = msg;
-      // LogJS.info('WebSocket recv: ' + Util.inspect(msg));
+      // LogJS.info('WebSocket recv: ' + inspect(msg));
       HandleMessage(msg);
       ws.dataAvailable !== 0;
     } else {
@@ -1454,7 +1454,7 @@ const AuthorizationDialog = ({ onAuth, ...props }) => {
   );
 };
 
-const BindGlobal = Util.once(arg => trkl.bind(window, arg));
+const BindGlobal = once(arg => trkl.bind(window, arg));
 
 const AppMain = (window.onload = async () => {
   const { sortOrder, sortKey } = config;
@@ -1562,15 +1562,15 @@ const AppMain = (window.onload = async () => {
       .catch(e => {});
   }
   const importedNames = Object.keys(imports);
-  //console.debug('Dupes:', Util.getMemberNames(window).filter(m => importedNames.indexOf(m) != -1));
+  //console.debug('Dupes:', getMemberNames(window).filter(m => importedNames.indexOf(m) != -1));
 
   //prettier-ignore
-  Util.weakAssign(window, { rpc });
-  Util.weakAssign(window, imports);
-  Util.weakAssign(window.Element, Util.getMethods(dom.Element));
-  Util.weakAssign(window, dom, geom, imports, localFunctions);
-  Util.weakAssign(window, {
-    functions: Util.filter(localFunctions, v => typeof v == 'function'),
+  weakAssign(window, { rpc });
+  weakAssign(window, imports);
+  weakAssign(window.Element, getMethods(dom.Element));
+  weakAssign(window, dom, geom, imports, localFunctions);
+  weakAssign(window, {
+    functions: filter(localFunctions, v => typeof v == 'function'),
     dom,
     geom,
     config,
@@ -1579,8 +1579,8 @@ const AppMain = (window.onload = async () => {
   });
   Error.stackTraceLimit = 100;
 
-  Util.weakAssign(window, {
-    TestArc: () => Util.timer(2000).then(() => DrawArc({ x: 50, y: 150 }, { x: 350, y: 300 }, 120 * (Math.PI / 180)))
+  weakAssign(window, {
+    TestArc: () => timer(2000).then(() => DrawArc({ x: 50, y: 150 }, { x: 350, y: 300 }, 120 * (Math.PI / 180)))
   });
 
   const timestamps = new Repeater(async (push, stop) => {
@@ -1711,7 +1711,7 @@ const AppMain = (window.onload = async () => {
   /*(async function() {
     while(true) {
       await CreateWebSocket(null, null, ws => (window.socket = ws)).catch(console.error);
-      await Util.waitFor(1000);
+      await waitFor(1000);
     }
   })();*/
 
@@ -1805,7 +1805,7 @@ const AppMain = (window.onload = async () => {
     class extends LogJS.BaseAppender {
       log(type, time, msg) {
         let d = new Date(time);
-        if(typeof window.pushlog == 'function') window.pushlog([type, Util.isoDate(d).replace(/-/g, ''), d.toLocaleTimeString(navigator.language || 'de'), msg]);
+        if(typeof window.pushlog == 'function') window.pushlog([type, isoDate(d).replace(/-/g, ''), d.toLocaleTimeString(navigator.language || 'de'), msg]);
       }
     }
   );
@@ -1896,11 +1896,11 @@ const AppMain = (window.onload = async () => {
   const Layer = ({ title, name, label, i, color, element, className, ...props }) => {
     let setVisible = props.visible || element.handlers.visible,
       visible = useTrkl(setVisible);
-    const isVisible = visible === true || (visible !== false && Util.is.on(visible));
+    const isVisible = visible === true || (visible !== false && is.on(visible));
     if(isObject(element) && 'visible' in element) setVisible = value => (element.visible = value);
     let [solo, setSolo] = useState(null);
 
-    const onMouseDown = Util.debounce(e => {
+    const onMouseDown = debounce(e => {
       //console.log('onMouseDown', e);
       /* if(e.buttons & 1)*/ {
         setVisible((setTo = !isVisible));
@@ -1921,8 +1921,8 @@ const AppMain = (window.onload = async () => {
             while(!target.hasAttribute('id') && target.parentElement) target = target.parentElement;
             //console.log('Double click', { solo, i, target });
             let layers = [...layerList()];
-            let visibleLayers = layers.filter(l => Util.is.on(l.visible()));
-            let hiddenLayers = layers.filter(l => !Util.is.on(l.visible()));
+            let visibleLayers = layers.filter(l => is.on(l.visible()));
+            let hiddenLayers = layers.filter(l => !is.on(l.visible()));
             //console.log('Layer.onClick', { visibleLayers, hiddenLayers, solo });
 
             if(solo) {
@@ -1934,7 +1934,7 @@ const AppMain = (window.onload = async () => {
 
               //console.debug('restoreData:', restoreData);
             } else {
-              let saved = saveItemStates(layers, item => Util.is.on(item.visible()));
+              let saved = saveItemStates(layers, item => is.on(item.visible()));
               //console.debug('saved:', saved);
               setSolo(saved);
               //console.debug('layers:', layers);
@@ -2172,7 +2172,7 @@ const AppMain = (window.onload = async () => {
                       if(side == 'outline') {
                         //console.debug('outline', gc.svg);
                         let xmlData = tXml(gc.svg);
-                        let svgPath = Util.tail(xmlData[0].children).children[0];
+                        let svgPath = tail(xmlData[0].children).children[0];
                         let points = SVG.pathToPoints(svgPath.attributes);
                         //console.debug('points:', points);
                         bbox = new Rect(new BBox().update(points)).round(0.001);
@@ -2210,7 +2210,7 @@ const AppMain = (window.onload = async () => {
                         }
                       });
                       /*
-                      layer.sublayers = Util.histogram(Element.walk(layer.dom, (e, acc) => (e.tagName.endsWith('g') ? acc : [...acc, e]), []),
+                      layer.sublayers = histogram(Element.walk(layer.dom, (e, acc) => (e.tagName.endsWith('g') ? acc : [...acc, e]), []),
                         e => e.getAttribute('style'),
                         new Map(),
                         () => new Set()
@@ -2218,17 +2218,17 @@ const AppMain = (window.onload = async () => {
                     }
                   }
 
-                  //console.debug('GerberToGcode side =', side, ' gc =', gc.file, ' svg =', Util.abbreviate(gc.svg));
+                  //console.debug('GerberToGcode side =', side, ' gc =', gc.file, ' svg =', abbreviate(gc.svg));
                 }
               } catch(e) {
-                Util.putError(e);
+                putError(e);
               }
             }
             gcode(project.gcode);
 
             function makeLayerName(name, side) {
               const prefix = side == 'front' ? 't-' : side == 'back' ? 'b-' : '';
-              return Util.camelize(prefix + path.basename(name, /\.[^.]+$/).replace(new RegExp(`_${side}`), ''));
+              return camelize(prefix + path.basename(name, /\.[^.]+$/).replace(new RegExp(`_${side}`), ''));
             }
           }, 100),
           'data-tooltip': 'Generate Gerber RS274-X CAM data',
@@ -2380,7 +2380,7 @@ const AppMain = (window.onload = async () => {
           //console.log('Command:', cmdStr);
           LogJS.info(`> ${cmdStr}`);
           let result = fn();
-          LogJS.info(`= ${Util.toSource(result)}`);
+          LogJS.info(`= ${toSource(result)}`);
         }
       }) /*])*/
     ]),
@@ -2438,16 +2438,16 @@ const AppMain = (window.onload = async () => {
         e = e.parentElement;
       }
     }
-    let zIndex = Util.find(
-      Util.map(WalkUp(event.target), e => e.style.getPropertyValue('z-index')),
+    let zIndex = find(
+      map(WalkUp(event.target), e => e.style.getPropertyValue('z-index')),
       z => /^[0-9]/.test(z)
     );
-    if(zIndex > 0) Util.clear(event.elements);
+    if(zIndex > 0) clear(event.elements);
     for(let e of event.elements)
       Element.walkUp(e)
         .slice(1)
-        .forEach(p => Util.remove(event.elements, p));
-    Util.remove(event.elements, document.documentElement);
+        .forEach(p => remove(event.elements, p));
+    remove(event.elements, document.documentElement);
 
     event.layers = new Map(
       event.elements.map(e => [
@@ -2466,16 +2466,16 @@ const AppMain = (window.onload = async () => {
     event.classes = new Map(
       event.elements.map(e => [
         e,
-        Util.ifThenElse(
+        ifThenElse(
           v => v,
           l => l.map(e => e.classList.value),
           () => ''
         )(Element.walkUp(e, (e, depth) => !e.classList.value.startsWith('aspect') && e.classList.value))
       ])
     );
-    Util.removeIf(event.classes, classes => classes == '');
-    Util.removeIf(event.elements, e => e.tagName == 'polyline');
-    Util.removeIf(event.elements, e => !(event.classes.has(e) || event.colors.has(e)));
+    removeIf(event.classes, classes => classes == '');
+    removeIf(event.elements, e => e.tagName == 'polyline');
+    removeIf(event.elements, e => !(event.classes.has(e) || event.colors.has(e)));
     const group =
       project &&
       project.makeGroup &&
@@ -2490,8 +2490,8 @@ const AppMain = (window.onload = async () => {
       });
 
     if(prevEvent && group) {
-      let u = Util.union(prevEvent.elements, event.elements, (a, b) => a.isSameNode(b));
-      let [remove, add] = Util.difference(prevEvent.elements, event.elements, (a, b) => a.findIndex(Node.prototype.isSameNode, b) != -1);
+      let u = union(prevEvent.elements, event.elements, (a, b) => a.isSameNode(b));
+      let [remove, add] = difference(prevEvent.elements, event.elements, (a, b) => a.findIndex(Node.prototype.isSameNode, b) != -1);
 
       //  console.log('difference:', [remove,add], 'union:', u);
       //  console.log('add:', add);
@@ -2540,7 +2540,7 @@ const AppMain = (window.onload = async () => {
         /* console.log('event.elements:', event.elements);
         //console.log('event.classes:', event.classes);
         //console.log('event.target:', zIndex);*/
-        //  console.log('rects:', Util.clone(bboxes));
+        //  console.log('rects:', clone(bboxes));
       }
     }
   }
@@ -2601,7 +2601,7 @@ const AppMain = (window.onload = async () => {
         let translation = new Translation();
         let transformList = new TransformationList([translation]).concat(transform());
 
-        let setStyle = Util.once(() =>
+        let setStyle = once(() =>
           Element.setCSS(box, {
             cursor: 'move',
             'pointer-events': 'none',
@@ -2708,7 +2708,7 @@ const AppMain = (window.onload = async () => {
         y,
         ...event
       } = e;
-      // LogJS.info(`${type} ` + /* Util.toSource(e)+ */ ` ${x},${y} → ${Element.xpath(target)}`);
+      // LogJS.info(`${type} ` + /* toSource(e)+ */ ` ${x},${y} → ${Element.xpath(target)}`);
     }
   };
   processEvents();
@@ -2764,7 +2764,7 @@ const AppMain = (window.onload = async () => {
     const wheelPos = -dy.toFixed(2);
     let zoomVal = config.zoomLog();
 
-    zoomVal = altKey || ctrlKey || shiftKey ? 0 : Util.clamp(-100, 300, zoomVal + wheelPos * 0.1);
+    zoomVal = altKey || ctrlKey || shiftKey ? 0 : clamp(-100, 300, zoomVal + wheelPos * 0.1);
     config.zoomLog(zoomVal);
     AdjustZoom();
   });

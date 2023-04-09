@@ -1,7 +1,6 @@
 import { define, isObject, memoize, unique } from './lib/misc.js';
 import KolorWheel from './lib/KolorWheel.js';
 import { RGBA, HSLA } from './lib/color.js';
-import Util from './lib/util.js';
 import Alea from './lib/alea.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import PortableFileSystem from './lib/filesystem.js';
@@ -165,10 +164,10 @@ for(let color of allColors) {
 
 const GeneratePalette = numColors => {
   let ret = [];
-  let base = new HSLA(Util.randInt(0, 360, prng), 100, 50).toRGBA();
-  let offsets = Util.range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360], []);
+  let base = new HSLA(randInt(0, 360, prng), 100, 50).toRGBA();
+  let offsets = range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + randInt(20, 80)) % 360], []);
   offsets = offsets.sort((a, b) => a - b);
-  //offsets = Util.shuffle(offsets, prng);
+  //offsets = shuffle(offsets, prng);
   //console.log('offsets:', offsets);
 
   new KolorWheel(base.hex()).rel(offsets, 0, 0).each(function () {
@@ -227,11 +226,11 @@ async function main(...args) {
   console.log(new RGBA('#006dcf').toHSLA());
   console.log();
   let rainbow = [];
-  for(let h of Util.range(0, 300, 300 / 100)) rainbow.push(new HSLA(h, 100, 60));
+  for(let h of range(0, 300, 300 / 100)) rainbow.push(new HSLA(h, 100, 60));
 
   console.log(rainbow);
   console.log(
-    Util.chunkArray(
+    chunkArray(
       rainbow.map(c => c.hex()).map(c => `"${c}"`),
       8
     )
@@ -240,4 +239,4 @@ async function main(...args) {
   );
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

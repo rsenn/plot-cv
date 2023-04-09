@@ -1,3 +1,5 @@
+import { callMain, chunkArray, getEnv, isNumeric, putError, toSource } from './lib/misc.js';
+import inspect from 'inspect';
 import PortableFileSystem from './lib/filesystem.js';
 import Util from './lib/util.js';
 import { XMLIterator } from './lib/xml/util.js';
@@ -53,7 +55,7 @@ async function main(...args) {
   let envEntries = Util.chunkArray(await Promise.all(varNames.reduce((acc, n) => [...acc, n, Util.getEnv(n)], [])), 2);
   let envMap = new Map(envEntries);
   //console.log('Environment:', Util.toSource(envEntries, { quote: '"'}).replaceAll('\n', "\\n"));
-  console.log('Environment:', Util.inspect(envMap));
+  console.log('Environment:', inspect(envMap));
 
   filesystem = await PortableFileSystem();
   await ConsoleSetup();
@@ -100,5 +102,5 @@ async function main(...args) {
 
   console.log('numeric: ' + printSet([...numeric.values()].sort()));
 }
-Util.callMain(main);
+main(...scriptArgs.slice(1));
 //Util.callMain(main);

@@ -69,7 +69,7 @@ async function ImportModule(modulePath, ...args) {
     done = true;
     module = Object.create(
       null,
-      Util.getMemberNames(module, Infinity, 0).reduce(
+      getMemberNames(module, Infinity, 0).reduce(
         (acc, item) => ({
           ...acc,
           [item]: { value: module[item], enumerable: true }
@@ -180,9 +180,9 @@ function CommandLine() {
     std.exit(0);
   });
 
-  Util.atexit(() => repl.cleanup());
+  atexit(() => repl.cleanup());
 
-  repl = Util.traceProxy(repl);
+  repl = traceProxy(repl);
 
   if(params.exec) repl.evalAndPrint(params.exec);
   else repl.run(false);
@@ -207,7 +207,7 @@ function LocationString(loc) {
   }
 }
 
-const TypeMap = Util.weakMapper(node => new Type(node));
+const TypeMap = weakMapper(node => new Type(node));
 
 function Structs(nodes) {
   return nodes
@@ -260,7 +260,7 @@ function Table(list, pred = (n, l) => true) {
   let width = names.reduce((acc, name) => (acc ? acc + 3 + sizes[name] : sizes[name]), 0);
   if(width > repl.termWidth) sizes['Params'] -= width - repl.termWidth;
 
-  const trunc = names.map((name, i) => Util.padTrunc((i == 0 ? -1 : 1) * sizes[name]));
+  const trunc = names.map((name, i) => padTrunc((i == 0 ? -1 : 1) * sizes[name]));
   const pad = (cols, pad, sep) => {
     if(!Array.isArray(cols)) cols = names.map((key, i) => cols[key]);
     return cols
@@ -338,7 +338,7 @@ function LastChild(node, ast = $.data) {
 function Terminate(exitCode) {
   console.log('Terminate', exitCode);
 
-  Util.exit(exitCode);
+  exit(exitCode);
 }
 
 function Shell(cmd) {
@@ -504,7 +504,7 @@ function InspectStruct(decl, includes, compiler = 'clang') {
 
     result.unshift([name, '-', +size]);
 
-    Util.define(result, {
+    define(result, {
       toString(sep = ' ') {
         return this.map(line => line.join(sep).replace('.', ' ')).join('\n');
       }
@@ -641,7 +641,7 @@ export class FFI_Function {
     const { prefix, name, returnType, parameters } = this;
     fp ??= (name, lib) => `${prefix}dlsym(${lib ?? 'RTLD_DEFAULT'}, '${name}')`;
     let code = `'${name}', ${fp(name, lib)}, null, '${returnType}'`;
-    console.log('function', Util.colorText(name, 1, 33), 'returnType:', Util.colorText(returnType, 1, 31));
+    console.log('function', colorText(name, 1, 33), 'returnType:', colorText(returnType, 1, 31));
     let paramIndex = 0;
     for(let [paramName, type] of parameters) {
       ++paramIndex;
@@ -739,7 +739,7 @@ export async function CommandRead(args) {
   let output = '';
   let done = false;
   let buf = new ArrayBuffer(1024);
-  if(Util.platform == 'quickjs') {
+  if(platform == 'quickjs') {
     let { fd } = child.stdout;
     //return await (async function() {
     for(;;) {
@@ -776,9 +776,9 @@ export async function LibraryExports(file) {
   let output = await CommandRead(['/opt/diet/bin/objdump', '-T', file]);
   output = output.replace(/.*DYNAMIC SYMBOL TABLE:\s/m, '');
   let lines = output.split(/\n/g).filter(line => /\sBase\s/.test(line));
-  let columns = Util.colIndexes(lines[0]);
+  let columns = colIndexes(lines[0]);
 
-  let entries = lines.map(line => Util.colSplit(line, columns).map(column => column.trimEnd()));
+  let entries = lines.map(line => colSplit(line, columns).map(column => column.trimEnd()));
   entries.sort((a, b) => a[0].localeCompare(b[0]));
 
   return entries.map(entry => entry[entry.length - 1].trimStart());
@@ -817,7 +817,7 @@ function ParseECMAScript(file, params = {}) {
     file = 'stdin';
     data = source;
   }
-  console.log('OK, data: ', Util.abbreviate(Util.escape(data)));
+  console.log('OK, data: ', abbreviate(escape(data)));
   if(debug) ECMAScriptParser.instrumentate();
   console.log('ECMAScriptParser:', ECMAScriptParser);
 
@@ -948,7 +948,7 @@ function MemberNames(members, flags = 0) {
     }
   }
   if(flags & MemberNames.UPPER) {
-    ret = ret.map(name => Util.decamelize(name, '_').toUpperCase());
+    ret = ret.map(name => decamelize(name, '_').toUpperCase());
   }
   return ret;
 }
@@ -1039,18 +1039,18 @@ async function ASTShell(...args) {
 
   globalThis.files = files = {};
 
-  const platform = Util.getPlatform();
+  const platform = getPlatform();
   if(platform == 'quickjs') await import('std').then(module => (globalThis.std = module));
 
   if(platform == 'node') await import('./lib/misc.js').then(module => (globalThis.inspect = module.inspect));
 
-  (await Util.getPlatform()) == 'quickjs' ? import('deep.so').then(module => (globalThis.deep = module)) : import('./lib/deep.js').then(module => (globalThis.deep = module['default']));
+  (await getPlatform()) == 'quickjs' ? import('deep.so').then(module => (globalThis.deep = module)) : import('./lib/deep.js').then(module => (globalThis.deep = module['default']));
 
-  base = path.basename(Util.getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
+  base = path.basename(getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
   cmdhist = `.${base}-cmdhistory`;
   config = `.${base}-config`;
 
-  params = globalThis.params = Util.getOpt(
+  params = globalThis.params = getOpt(
     {
       include: [true, (a, p) => (p || []).concat([a]), 'I'],
       define: [true, (a, p) => (p || []).concat([a]), 'D'],
@@ -1074,7 +1074,7 @@ async function ASTShell(...args) {
   libs = params.libs || [];
   sources = params['@'] || [];
 
-  Util.define(globalThis, {
+  define(globalThis, {
     defs,
     includes,
     libs,
@@ -1112,7 +1112,7 @@ async function ASTShell(...args) {
         : node => node.name == name_or_id && pred(node);
     }
 
-    Util.bindMethods(r, {
+    bindMethods(r, {
       select(name_or_id, pred = n => true) {
         return this.data.inner.filter(nameOrIdPred(name_or_id, pred));
       },
@@ -1147,12 +1147,12 @@ async function ASTShell(...args) {
         return CompleteLocation(node);
       }
     });
-    Util.defineGetter(
+    defineGetter(
       r,
       'tree',
-      Util.memoize(() => new Tree(r.data))
+      memoize(() => new Tree(r.data))
     );
-    return Util.define(r, {
+    return define(r, {
       pathOf(needle, maxDepth = 10) {
         if('ast' in needle) needle = needle.ast;
 
@@ -1277,7 +1277,7 @@ async function ASTShell(...args) {
   globalThis.F = arg => $.getFunction(arg);
   globalThis.T = arg => $.getType(arg);
 
-  Util.lazyProperty(globalThis, 'P', () => {
+  lazyProperty(globalThis, 'P', () => {
     let printer = NodePrinter($.data);
 
     return node => {
@@ -1292,7 +1292,7 @@ async function ASTShell(...args) {
   let hist = ReadJSON(unithist) || [];
 
   const pushUnique = (arr, item) => {
-    if(Util.findIndex(arr, elem => deep.equals(elem, item)) === -1) {
+    if(findIndex(arr, elem => deep.equals(elem, item)) === -1) {
       arr.push(item);
       return true;
     }

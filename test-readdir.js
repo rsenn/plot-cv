@@ -1,4 +1,3 @@
-import Util from './lib/util.js';
 import PortableFileSystem, { SEEK_SET, SEEK_END } from './lib/filesystem.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import ObjectInspect from './lib/objectInspect.js';
@@ -43,4 +42,4 @@ async function main(...args) {
   console.log('readdir', [...Filter(ReadDirRecursive('.', 2), /\.[ch]$/)]);
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

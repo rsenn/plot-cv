@@ -58,7 +58,7 @@ export const Ruler = ({ handleChange, style = {}, class: className }) => {
       },
       ['Up']
     ),
-    h('div', {}, [Util.roundTo(value, 0.001, 3)]),
+    h('div', {}, [roundTo(value, 0.001, 3)]),
     h(
       RulerDraggable,
       {
@@ -496,9 +496,9 @@ export const File = ({ label, name, description, i, key, className = 'file', onP
   }
   label = label.replace(/([^\s])-([^\s])/g, '$1 $2');
   //if(icon) label = label.replace(/\.[^.]*$/, '');
-  label = h(Label, { text: Util.wordWrap(label, 50, '\n') });
+  label = h(Label, { text: wordWrap(label, 50, '\n') });
   if(description) {
-    let s = Util.multiParagraphWordWrap(Util.stripXML(Util.decodeHTMLEntities(description)), 60, '\n');
+    let s = multiParagraphWordWrap(stripXML(decodeHTMLEntities(description)), 60, '\n');
     let d = s.split(/\n/g).slice(0, 1);
     label = h('div', {}, [
       label,
@@ -540,7 +540,7 @@ export const Chooser = ({ className = 'list', itemClass = 'item', tooltip = () =
     setFilter(itemFilter());
     itemFilter.subscribe(value => setFilter(value));
   }
-  const list2re = list => list.map(part => Util.tryCatch(() => new RegExp(part.trim().replace(/\./g, '\\.').replace(/\*/g, '.*'), 'i'))).filter(r => r !== null);
+  const list2re = list => list.map(part => tryCatch(() => new RegExp(part.trim().replace(/\./g, '\\.').replace(/\*/g, '.*'), 'i'))).filter(r => r !== null);
   const bar = html``;
   const preFilter = filter
     .replace(/\|/g, ' | ')
@@ -603,7 +603,7 @@ const ToolTipFn = ({ name, data, ...item }) => {
       .filter(([name, value]) => !isNaN(value) && value != null)
       .map(([name, value]) => `${name}: ${value}`)
       .join('\n');
-  } else data = Util.abbreviate(data);
+  } else data = abbreviate(data);
   if(data) tooltip += `\ndata\t${data}`;
   return tooltip;
 };

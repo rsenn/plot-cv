@@ -1,3 +1,5 @@
+import { callMain, inspect.defaultOpts, toSource, typeOf } from './lib/misc.js';
+import inspect from 'inspect';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import Util from './lib/util.js';

@@ -1,5 +1,4 @@
 import { define, isObject, memoize, unique } from './lib/misc.js';
-import Util from './lib/util.js';
 import { Repeater } from './lib/repeater/repeater.js';
 export { EventEmitter, EventTarget } from './lib/events.js';
 
@@ -18,7 +17,7 @@ export function Emitter(target) {
   return define(emitter, { listeners, target });
 }
 
-export function EventIterator(events, target = Util.tryCatch(() => window)) {
+export function EventIterator(events, target = tryCatch(() => window)) {
   let emitter = new Emitter(target);
   if(typeof events == 'string') events = EventIterator[events + 'Events'] || events.split(/,/g);
 

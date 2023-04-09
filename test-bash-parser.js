@@ -20,4 +20,4 @@ async function main(...args) {
   const ast = parse(data ?? 'echo ciao;');
   console.log('ast:', ast);
 }
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

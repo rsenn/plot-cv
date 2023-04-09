@@ -3,7 +3,6 @@ import ConsoleSetup from './lib/consoleSetup.js';
 import PortableFileSystem from './lib/filesystem.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
-import Util from './lib/util.js';
 
 let filesystem;
 
@@ -23,7 +22,7 @@ class NodeList {
 
 const proxyObject = (root, handler) => {
   const ptr = path => path.reduce((a, i) => a[i], root);
-  const nodes = Util.weakMapper(
+  const nodes = weakMapper(
     (value, path) =>
       new Proxy(handler && handler.construct ? handler.construct(value, path) : value, {
         get(target, key) {
@@ -68,7 +67,7 @@ async function main() {
   let str = filesystem.readFile('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
 
   let xml = tXml(str);
-  //console.log('xml:', Util.abbreviate(xml));
+  //console.log('xml:', abbreviate(xml));
 
   let p = proxyObject(xml[0], {
     construct(value, path) {
@@ -99,4 +98,4 @@ async function main() {
   }
 }
 
-main(Util.getArgs());
+main(getArgs());

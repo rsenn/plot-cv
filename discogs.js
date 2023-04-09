@@ -1,3 +1,4 @@
+import { timeit } from './lib/misc.js';
 // ==UserScript==
 
 // @name         discogs.js

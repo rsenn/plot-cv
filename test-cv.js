@@ -1,3 +1,4 @@
+import { className, getArgv, getMethodNames, repeat, tryCatch } from './lib/misc.js';
 import { Point } from 'opencv';
 import { Size } from 'opencv';
 import { Rect } from 'opencv';
@@ -234,7 +235,7 @@ function main(...args) {
     console.log(`std.gc`, std.gc);
     console.log(`args`, args);
     //console.log(`path`, inspect(path));
-    console.log(`console`, Util.inspect(console));
+    console.log(`console`, inspect(console));
     console.log(`filesystem.realpath('.')`, filesystem.realpath('.'));
     console.log(`filesystem.chdir('..')`, filesystem.chdir('..'));
     console.log(`filesystem.getcwd('.')`, filesystem.getcwd());
@@ -243,4 +244,4 @@ function main(...args) {
   return 'done';
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

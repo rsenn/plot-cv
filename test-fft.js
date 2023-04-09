@@ -1,4 +1,3 @@
-import Util from './lib/util.js';
 import { dlopen, dlsym, RTLD_NOW, RTLD_DEFAULT, toPointer } from 'ffi';
 import * as ffi from 'ffi';
 import * as std from 'std';
@@ -109,4 +108,4 @@ function main(...args) {
   );
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

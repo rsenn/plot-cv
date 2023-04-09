@@ -1,3 +1,4 @@
+import { makeURL, memoize, parseURL } from './lib/misc.js';
 import { WebSocketClient } from './lib/net/websocket-async.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';

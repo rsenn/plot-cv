@@ -1,3 +1,4 @@
+import { abbreviate, className, decodeAnsi, defineGettersSetters, escape, exit, getArgs, getArgv, getOpt, instrument, isPrimitive, once, putError, safeCall } from './lib/misc.js';
 //import 'module-alias/register.js';
 import { ECMAScriptParser } from './lib/ecmascript/parser.js';
 import { PathReplacer } from './lib/ecmascript.js';

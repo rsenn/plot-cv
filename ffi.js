@@ -23,7 +23,6 @@
 import * as std from 'std';
 import * as os from 'os';
 import { debug, dlopen, dlerror, dlclose, dlsym, define, call, toString, toArrayBuffer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_NODELETE, RTLD_NOLOAD, RTLD_DEEPBIND, RTLD_DEFAULT, RTLD_NEXT } from 'ffi';
-import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 
 async function main(...args) {
@@ -331,4 +330,4 @@ async function main(...args) {
   console.log('b = ', buf2str(b, ret));
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

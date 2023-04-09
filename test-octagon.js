@@ -1,6 +1,5 @@
 import { Point, Polygon, MakePolygon, Line, LineList } from './lib/geom.js';
 import { SVG } from './lib/dom.js';
-import Util from './lib/util.js';
 import { Console } from 'console';
 import fs from 'fs';
 import * as xml from 'xml';
@@ -47,4 +46,4 @@ function main(...args) {
   fs.writeFileSync('output.svg', svg);
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

@@ -1,5 +1,5 @@
+import { roundTo } from './lib/misc.js';
 import { RGBA, HSLA } from './lib/color.js';
-import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 
 const blackbody_color = new Map([
@@ -250,7 +250,7 @@ const blackbody_color = new Map([
 async function main(arg = '3400k') {
   await ConsoleSetup({ colors: true, depth: Infinity });
 
-  const colorTemp = Util.roundTo(parseInt(arg), 100);
+  const colorTemp = roundTo(parseInt(arg), 100);
 
   const eq2_gamma = 1.0,
     contrast = 1.0,
@@ -262,7 +262,7 @@ async function main(arg = '3400k') {
   const [r = 1.0, g = 1.0, b = 1.0] = gamma;
 
   console.log('Gamma RGB:', { r, g, b });
-  console.log(`-vf eq2=${[eq2_gamma, contrast, brightness, saturation, r, g, b, weight].map(n => Util.roundTo(n, 0.0001, 5)).join(':')}`);
+  console.log(`-vf eq2=${[eq2_gamma, contrast, brightness, saturation, r, g, b, weight].map(n => roundTo(n, 0.0001, 5)).join(':')}`);
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

@@ -1,3 +1,4 @@
+import { atexit } from './lib/misc.js';
 import REPL from './repl.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import PortableFileSystem from './lib/filesystem.js';
@@ -33,4 +34,4 @@ async function main(...args) {
   await CommandLine();
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

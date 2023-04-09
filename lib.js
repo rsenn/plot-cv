@@ -1,3 +1,4 @@
+import { rotateRight } from './lib/misc.js';
 export function Point(arg) {
   let args = arg instanceof Array ? arg : [...arguments];
   let p = !this || this === Point ? {} : this;

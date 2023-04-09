@@ -1,3 +1,4 @@
+import { getArgs, getOpt, isEmpty, isObject, predicate, stack } from './lib/misc.js';
 #!/usr/bin/env qjsm
 import PortableFileSystem from './lib/filesystem.js';
 import Util from './lib/util.js';
@@ -174,8 +175,8 @@ async function main(...args) {
     WriteFile(xmlfile, toXML(xmlData));
   } catch(err) {
     let st = Util.stack(err.stack);
-    // console.log(err.message, '\n', st.toString()); //st.map(f =>  Util.inspect(f)));
+    // console.log(err.message, '\n', st.toString()); //st.map(f =>  inspect(f)));
     throw err;
   }
 }
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

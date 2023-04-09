@@ -489,7 +489,7 @@ function main(...args) {
     RemovePolygons,
     quit(arg) {
       repl.cleanup();
-      Util.exit(arg ?? 0);
+      exit(arg ?? 0);
     }
   });
 
@@ -533,7 +533,7 @@ function main(...args) {
   console.log = (...args) => repl.printStatus(() => log(...args));
 
   //console.log(`repl`, repl);
-  //console.log(`debugLog`, Util.getMethods(debugLog, Infinity, 0));
+  //console.log(`debugLog`, getMethods(debugLog, Infinity, 0));
   //repl.historyLoad(null, false);
   repl.directives.i = [
     (module, ...args) => {
@@ -722,7 +722,7 @@ function AlignItem(item) {
   }
   if(changed) {
     console.log(item);
-    /*    console.log('after:', Util.abbreviate(item.parentNode.toXML()));
+    /*    console.log('after:', abbreviate(item.parentNode.toXML()));
      console.log('align\n', item.xpath(), '\n newPos:', newPos, '\n diff:', diff, '\n attr:', item.raw.attributes);*/
   }
   return changed;
@@ -1069,7 +1069,7 @@ async function testEagle(filename) {
       let indexes = [...pkg.children].map((child, i, a) =>
         a
           .slice(i + 1)
-          .map((child2, i2) => [i2 + i + 1, Util.equals(child.raw, child2.raw)])
+          .map((child2, i2) => [i2 + i + 1, equals(child.raw, child2.raw)])
           .filter(([index, equal]) => equal)
           .map(([index]) => index)
       );
@@ -1370,11 +1370,11 @@ function Eagle2CircuitJS(doc = project.schematic, scale = 50, sheet = 0) {
   return circ;
 }
 
-//Util.callMain(main, true);
+//callMain(main, true);
 
 try {
   main(...Util.getArgs().slice(1));
 } catch(error) {
   console.log(`FAIL: ${error.message}\n${error.stack}`);
-  Util.exit(1);
+  exit(1);
 }

@@ -1,3 +1,4 @@
+import { colorCtor } from './lib/misc.js';
 import PortableFileSystem from './lib/filesystem.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import Util from './lib/util.js';
@@ -40,4 +41,4 @@ async function main(...args) {
     console.log('err:', err);
   }
 }
-Util.callMain(main);
+main(...scriptArgs.slice(1));

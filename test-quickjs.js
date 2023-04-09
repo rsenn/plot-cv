@@ -1,3 +1,4 @@
+import { callMain, className, copyTextToClipboard, isBrowser, repeat, tryCatch } from './lib/misc.js';
 import { Mat, Point, Size, Rect, RotatedRect, Line, Contour } from 'opencv';
 import * as cv from 'opencv';
 import * as std from 'std';
@@ -299,7 +300,7 @@ async function main(...args) {
 
   return 'done';
 }
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));
 /*
 console.log('TEST\n');
 print('TEST\n');

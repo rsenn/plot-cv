@@ -1,3 +1,4 @@
+import { bufferToString, typeOf } from './lib/misc.js';
 import { parse2 } from './lib/xml/parse.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import PortableFileSystem from './lib/filesystem.js';
@@ -22,4 +23,4 @@ async function main(...args) {
   console.log('xml:', xml);
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

@@ -1,3 +1,4 @@
+import { escape, exit, getArgs, getArgv, getNow, getPlatform, isAsync, now, scriptName, trace, waitFor } from './lib/misc.js';
 import { Util } from './lib/util.js';
 import { sleep } from 'os';
 import ConsoleSetup from './lib/consoleSetup.js';
@@ -54,4 +55,4 @@ async function main(...args) {
   Util.exit(0);
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

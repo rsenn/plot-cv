@@ -1,4 +1,3 @@
-import Util from './lib/util.js';
 import PortableFileSystem from './lib/filesystem.js';
 import { WritableStream } from './lib/stream/writableStream.js';
 
@@ -13,4 +12,4 @@ async function main() {
   ws = await filesystem.open('tmp/test.txt', 'w');
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

@@ -1,6 +1,5 @@
 import ConsoleSetup from './lib/consoleSetup.js';
 import PortableFileSystem from './lib/filesystem.js';
-import Util from './lib/util.js';
 import MultiBiMap from './lib/container/multibimap.js';
 import MultiKeyMap from './lib/container/multikeymap.js';
 import HashMultimap from './lib/container/Hash-Multimap.js';
@@ -26,4 +25,4 @@ async function main(...args) {
   console.log('hashMulti', [...hashMulti]);
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

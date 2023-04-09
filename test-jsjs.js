@@ -1,3 +1,4 @@
+import { abbreviate, exit, getArgs, putError } from './lib/misc.js';
 import { ECMAScriptParser, ECMAScriptInterpreter } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
@@ -14,7 +15,7 @@ const code = "Point.toSource = (point, { space = ' ', padding = ' ', separator =
 let args = Util.getArgs();
 let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));
 
 function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');

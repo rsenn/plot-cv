@@ -1,3 +1,4 @@
+import { exit } from './lib/misc.js';
 import { parseModule } from 'esprima';
 import Util from './lib/util.js';
 import { Console } from 'console';

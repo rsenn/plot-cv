@@ -1,4 +1,4 @@
-import Util from './lib/util.js';
+import { getMethodNames } from './lib/misc.js';
 import PortableFileSystem, { SEEK_SET, SEEK_END } from './lib/filesystem.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import ObjectInspect from './lib/objectInspect.js';
@@ -30,10 +30,10 @@ async function main(...args) {
 
   return;
   console.log(
-    Util.getMethodNames(filesystem)
+    getMethodNames(filesystem)
       .map(n => `  'filesystem.${n}': null,`)
       .join('\n')
   );
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

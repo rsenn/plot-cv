@@ -1,3 +1,5 @@
+import { abbreviate, className, decodeHTMLEntities, escape, exit, filterOutKeys, getEnv, getMethods, hashString, isEmpty, isObject, makeURL, parseURL, putError, randStr, toUnixTime, tryCatch, tryFunction, unixTime, waitFor, weakAssign, weakMapper } from './lib/misc.js';
+import inspect from 'inspect';
 import express from 'express';
 import * as path from 'path';
 import * as util from 'util';
@@ -759,7 +761,7 @@ async function main() {
 
     const { body } = req;
     console.log('req.headers:', req.headers);
-    console.log('body:', Util.abbreviate(body), Util.className(body), Util.inspect(body));
+    console.log('body:', Util.abbreviate(body), Util.className(body), inspect(body));
     console.log('save body:', typeof body == 'string' ? Util.abbreviate(body, 100) : body);
     let st,
       err,
@@ -797,4 +799,4 @@ try {
 } catch(err) {
   Util.putError(err);
 }*/
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

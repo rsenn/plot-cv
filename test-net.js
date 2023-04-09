@@ -1,3 +1,4 @@
+import { getMemberNames, randInt, repeat } from './lib/misc.js';
 import { Console } from 'console';
 import { client, server, fetch } from 'net';
 import { Contour } from 'opencv';

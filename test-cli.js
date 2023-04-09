@@ -1,3 +1,4 @@
+import { getMemberNames } from './lib/misc.js';
 import Util from './lib/util.js';
 import { Rect } from 'opencv';
 import { Point } from 'opencv';
@@ -56,4 +57,4 @@ async function main(...args) {
   let i = 0;
   for(let p of ct1.concat(ct2)) console.log(`p[${i++}]:`, p);
 }
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

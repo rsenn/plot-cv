@@ -1,5 +1,5 @@
+import { getMethodNames, getPrototypeChain } from './lib/misc.js';
 import { Voronoi, Matrix, Point, PointList } from './lib/geom.js';
-import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 
 async function main(...args) {
@@ -14,7 +14,7 @@ async function main(...args) {
 
   let list = new PointList(args);
 
-  console.log('list:', list); // , Util.getMethodNames(list, 1,1), Util.getPrototypeChain(list));
+  console.log('list:', list); // , getMethodNames(list, 1,1), getPrototypeChain(list));
 
   list = list.rotate(1);
 
@@ -74,4 +74,4 @@ async function main(...args) {
   console.log('matrix:', Matrix.identity());
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

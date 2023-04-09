@@ -1,3 +1,4 @@
+import { getArgs } from './lib/misc.js';
 import Util from './lib/util.js';
 import PortableFileSystem from './lib/filesystem.js';
 import { Point, PointList, Line, BBox } from './lib/geom.js';

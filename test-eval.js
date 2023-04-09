@@ -1,3 +1,4 @@
+import { safeCall } from './lib/misc.js';
 import { Environment, ECMAScriptParser, Printer } from './lib/ecmascript.js';
 import Util from './lib/util.js';
 import trkl from './lib/trkl.js';
@@ -56,4 +57,4 @@ async function main(...args) {
   console.log(`wrote '${outputFile}'`, await filesystem.writeFile('output.es', output));
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

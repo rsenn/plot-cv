@@ -68,4 +68,4 @@ async function main(...args) {
   console.log('BytesToUTF8:', CodePointsToString(g));
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

@@ -1,4 +1,3 @@
-import Util from './lib/util.js';
 
 import PortableFileSystem from './lib/filesystem.js';
 import { ConsoleSetup } from './lib/consoleSetup.js';
@@ -6,7 +5,7 @@ import { ConsoleSetup } from './lib/consoleSetup.js';
 let filesystem;
 let globalThis;
 
-Util.callMain(main, error => {
+main(...scriptArgs.slice(1));
   let { message, stack } = error;
 
   console.log('ERROR message =', message);

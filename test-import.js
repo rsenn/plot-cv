@@ -1,4 +1,3 @@
-import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import PortableFileSystem from './lib/filesystem.js';
 import path from './lib/path.js';
@@ -25,4 +24,4 @@ async function main(...args) {
   return;
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

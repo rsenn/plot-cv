@@ -1,3 +1,4 @@
+import { className, isGenerator, isIterable } from './lib/misc.js';
 import Tree from './lib/tree.js';
 import { Util } from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
@@ -61,4 +62,4 @@ async function main(...args) {
   console.log('treeObj:', treeObj);
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

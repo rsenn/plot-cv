@@ -1,5 +1,4 @@
 import * as el from './editline.js';
-import Util from './lib/util.js';
 import * as ffi from 'ffi';
 import ConsoleSetup from './lib/consoleSetup.js';
 
@@ -23,4 +22,4 @@ async function main(...args) {
   console.log('b', b);
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

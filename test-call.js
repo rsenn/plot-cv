@@ -1,4 +1,3 @@
-import Util from './lib/util.js';
 import PortableFileSystem from './lib/filesystem.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 
@@ -29,4 +28,4 @@ async function main(...args) {
   console.log('ret2:', ret2);
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

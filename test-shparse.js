@@ -66,4 +66,4 @@ async function main(...args) {
   console.log('json:', json);
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

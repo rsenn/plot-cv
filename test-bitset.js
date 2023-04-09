@@ -1,5 +1,4 @@
 import { RGBA, HSLA } from './lib/color.js';
-import Util from './lib/util.js';
 
 function extendBits(arr, bits) {
   const mask = (1 << bits) - 1;
@@ -35,7 +34,7 @@ function printBinary(arr, base = 2) {
     console.log((i++ + '').padStart(3, ' ') + ': ' + prefix + ('0'.repeat(pad) + Math.abs(num).toString(base)).slice(-pad));
   }
 }
-let arr = new Uint32Array(Util.range(0, 15));
+let arr = new Uint32Array(range(0, 15));
 let bits = extendBits(arr, 8);
 
 andBinary(bits, 0x7f7f7f, 8);

@@ -1,5 +1,4 @@
 import { define, isObject, memoize, unique } from './lib/misc.js';
-import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import PortableFileSystem from './lib/filesystem.js';
 import path from './lib/path.js';
@@ -110,7 +109,7 @@ function Element2Object(element, key) {
 }
 
 function Object2Element(object, path = []) {
-  let type = Util.typeOf(object);
+  let type = typeOf(object);
   //console.log('Object2Element', { type,  path });
   switch (type) {
     case 'Comment': {
@@ -139,7 +138,7 @@ function Object2Element(object, path = []) {
       //console.log('Object2Element Dict', object.length);
       for(let i = 0; i < object.length; i++) {
         const entry = object[i];
-        const entryType = Util.typeOf(entry);
+        const entryType = typeOf(entry);
         //console.log('Object2Element Dict', { entryType, entry });
         if(entryType == 'Pair' || (entry instanceof Array && entry.length == 2)) {
           const [key, value] = entry;
@@ -229,4 +228,4 @@ async function main(...args) {
   return;
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

@@ -164,7 +164,7 @@ export class Node {
 
   /*  [Symbol.for("nodejs.util.inspect.custom")](depth, opts = {}) {
     const text = opts.colors ? (t, ...c) => '\x1b[' + c.join(';') + 'm' + t + '\x1b[m' : t => t;
-    const type = this.constructor?.name ?? Util.className(this);
+    const type = this.constructor?.name ?? className(this);
 
     return (text(type, 1, 31) +
       ' ' +
@@ -175,7 +175,7 @@ export class Node {
   toJSON(obj) {
     const { kind } = this;
     obj ??= { kind };
-    if(!obj.kind) obj.kind = Util.className(this);
+    if(!obj.kind) obj.kind = className(this);
     return obj;
   }
 
@@ -280,8 +280,8 @@ export class Type extends Node {
     }
 
     if(node instanceof Node) {
-      //console.log('node', Util.className(node), node);
-      Util.putStack();
+      //console.log('node', className(node), node);
+      putStack();
       throw new Error();
     }
 
@@ -324,7 +324,7 @@ export class Type extends Node {
 
     if(typeAlias) typeAlias = +typeAlias;
 
-    Util.weakAssign(this, { name, desugared, typeAlias, qualType });
+    weakAssign(this, { name, desugared, typeAlias, qualType });
 
     if(this.isPointer()) {
       let ptr = (name ?? this + '').replace(/\*$/, '').trimEnd();
@@ -387,7 +387,7 @@ export class Type extends Node {
 
     return name;
     /*
-    let match = Util.if(/^([^\(\)]*)(\(?\*\)?\s*)(\(.*\)$|)/g.exec(str),
+    let match = if(/^([^\(\)]*)(\(?\*\)?\s*)(\(.*\)$|)/g.exec(str),
       (m) => [...m].slice(1),
       () => []
       );
@@ -486,7 +486,7 @@ const { size,unsigned } = this;
       let decl = Type.declarations.get(str);
       if(decl.kind == 'EnumDecl') return 'int';
     } else {
-      throw new Error(`No ffi type '${str}' ${size} ${Util.className(this)} ${this.ast.kind}`);
+      throw new Error(`No ffi type '${str}' ${size} ${className(this)} ${this.ast.kind}`);
     }
   }
 
@@ -583,7 +583,7 @@ const { size,unsigned } = this;
     const { name, size } = this;
     let props = {...this} ?? Object.getOwnPropertyNames(this).reduce((acc,name) => ({...acc, [name]: this[name] }), {});
     if(size) props.size = size;
-    return (text(this.constructor?.name ?? Util.className(this), 1, 31) +
+    return (text(this.constructor?.name ?? className(this), 1, 31) +
       ' ' +
       inspect(props, depth, { ...opts, compact: false, customInspect: true, numberBase: 16 })
     );
@@ -1040,7 +1040,7 @@ export function TypeFactory(node, ast, cache = true) {
 
   // console.log('TypeFactory:', { node });
 
-  Util.assert(
+  assert(
     node.kind,
     `Not an AST node: ${inspect(node, {
       colors: false,
@@ -1126,7 +1126,7 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
     errors = '';
   let done = false;
 
-  if(Util.platform == 'quickjs') {
+  if(platform == 'quickjs') {
     let { fd } = child.stderr;
     //console.log('SpawnCompiler child.stderr:', child.stderr);
     //console.log('SpawnCompiler child.stdout:', child.stdout);

@@ -1,3 +1,4 @@
+import { abbreviate } from './lib/misc.js';
 #!/usr/bin/env qjsm
 import { Console } from 'console';
 import path from 'path';

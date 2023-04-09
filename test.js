@@ -330,4 +330,4 @@ async function main(...args) {
   //console.log('points: ', points.map(p => `{x:${p.x},y:${p.y}}`).join(', '));
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

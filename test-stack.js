@@ -1,3 +1,4 @@
+import { getCallerStack, getStackFrame } from './lib/misc.js';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 
@@ -24,4 +25,4 @@ async function main(...args) {
   /*console.log('test:', 1);*/
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

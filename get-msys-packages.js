@@ -1,3 +1,4 @@
+import { escape, filter, getOrCreate, isNumeric, parseURL, pushUnique, tryCatch, unique } from './lib/misc.js';
 import PortableFileSystem from './lib/filesystem.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import { execStream } from './childProcess.js';
@@ -203,7 +204,7 @@ async function processUrl(url, map) {
   }
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));
 
 function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');

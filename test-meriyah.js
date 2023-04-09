@@ -1,3 +1,4 @@
+import { exit } from './lib/misc.js';
 import { parseScript } from 'meriyah';
 import Util from './lib/util.js';
 import { Console } from 'console';

@@ -1,3 +1,4 @@
+import { abbreviate } from './lib/misc.js';
 import * as path from 'path';
 import * as util from 'util';
 import { exec, spawn } from 'child_process';

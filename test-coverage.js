@@ -1,3 +1,4 @@
+import { abbreviate, exit, getArgs } from './lib/misc.js';
 import Util from './lib/util.js';
 
 function readFile(path) {

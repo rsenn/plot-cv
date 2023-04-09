@@ -1,3 +1,4 @@
+import { colorCtor, getEnv, getStackFrame, platform } from './lib/misc.js';
 import { EagleDocument, Renderer } from './lib/eagle.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
 import ConsoleSetup from './lib/consoleSetup.js';

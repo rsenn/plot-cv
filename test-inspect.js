@@ -1,3 +1,4 @@
+import { getArgv, getPlatform, ttyGetWinSize } from './lib/misc.js';
 import Util from './lib/util.js';
 import PortableFileSystem from './lib/filesystem.js';
 
@@ -93,4 +94,4 @@ async function main(...args) {
   console.log('inspect', inspect(obj, options));
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

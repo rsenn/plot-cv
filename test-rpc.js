@@ -3,7 +3,6 @@ import * as os from 'os';
 import * as deep from './lib/deep.js';
 import require from 'require';
 import path from 'path';
-import Util from './lib/util.js';
 import { Console } from 'console';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
@@ -24,10 +23,10 @@ import * as rpc2 from './quickjs/qjs-net/rpc.js';
 globalThis.fs = fs;
 
 function main(...args) {
-  const base = path.basename(Util.getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
+  const base = path.basename(getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
   const config = ReadJSON(`.${base}-config`) ?? {};
   globalThis.console = new Console({ inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 200 } });
-  let params = Util.getOpt(
+  let params = getOpt(
     {
       verbose: [false, (a, v) => (v | 0) + 1, 'v'],
       listen: [false, null, 'l'],
@@ -51,7 +50,7 @@ function main(...args) {
   const listen = params.connect && !params.listen ? false : true;
   const is_server = !params.client || params.server;
   Object.assign(globalThis, { ...rpc2, rpc });
-  let name = process.env['NAME'] ?? Util.getArgs()[0];
+  let name = process.env['NAME'] ?? getArgs()[0];
   /*console.log('argv[1]',process.argv[1]);*/
   name = name
     .replace(/.*\//, '')
@@ -204,8 +203,8 @@ function main(...args) {
             acc.push([
               name,
               Object.assign(obj, {
-                mtime: Util.toUnixTime(st.mtime),
-                time: Util.toUnixTime(st.ctime),
+                mtime: toUnixTime(st.mtime),
+                time: toUnixTime(st.ctime),
                 mode: `0${(st.mode & 0x09ff).toString(8)}`,
                 size: st.size
               })

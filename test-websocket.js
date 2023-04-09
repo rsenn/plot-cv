@@ -1,3 +1,4 @@
+import { exit, getKeys, isConstructor } from './lib/misc.js';
 import WebSocket from 'ws';
 import WebSocketAsync from './lib/net/websocket-async.js';
 import ConsoleSetup from './lib/consoleSetup.js';
@@ -77,4 +78,4 @@ async function main() {
   dump();
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));
