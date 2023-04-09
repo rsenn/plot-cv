@@ -434,9 +434,16 @@ async function main() {
 
     let written = fs.writeSync(logfile, str, 0, str.length);
 
-    // console.log('Request: /' + file);
+    console.log('Request: /' + file);
 
     if(fs.existsSync(file)) {
+      if(/\/.*\.js$/.test(file)) {
+        console.log('JS replace: /' + file);
+        let s = ReadFile(file);
+        res.type('application/javascript; charset=UTF-8');
+        res.send(importReplacer.replace(s, file));
+        return;
+      }
       const re = /[^\n]*'util'[^\n]*/g;
       /*let m,
         data = fs.readFileSync(file, 'utf-8');
