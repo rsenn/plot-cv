@@ -13,12 +13,14 @@ import { WriteFile } from './io-helpers.js';
 import { Matrix, isMatrix, ImmutableMatrix } from './lib/geom/matrix.js';
 import { Transformation, ImmutableTransformation, Rotation, ImmutableRotation, Translation, ImmutableTranslation, Scaling, ImmutableScaling, MatrixTransformation, ImmutableMatrixTransformation, TransformationList, ImmutableTransformationList } from './lib/geom/transformation.js';
 import { Point } from './lib/geom/point.js';
+import { RGBA } from './lib/color/rgba.js';
 import { PointList } from './lib/geom/pointList.js';
 import { SvgPath } from './lib/svg/path.js';
 import extendGenerator from 'extendGenerator';
 import extendArray from 'extendArray';
 import { read as readXML, write as writeXML } from 'xml';
 import * as deep from 'deep';
+import { SyntaxError, parseSVG, makeAbsolute } from './lib/svg/path-parser.js';
 
 extendGenerator();
 extendArray();
@@ -68,7 +70,7 @@ function splitPath(ps) {
     if(!isNaN(+m)) m = +m;
     else if(i == 0) m = m.toUpperCase();
     if(typeof m == 'string') cmds.push([m]);
-    else cmds.last.push(m);
+    else cmds[cmds.length - 1].push(m);
     ++i;
   }
   return cmds;
@@ -175,11 +177,15 @@ Object.assign(globalThis, {
   getTransformationList,
   AllTransforms,
   ElementTransformMatrix,
+  ElementTransformLists,
   ElementTransformList,
+  DecomposeTransformList,
+  TransformedElements,
   GetXY,
   GetPoints,
   GetMatrix,
   GetTransformedPoints,
+  GetSVGPath,
   PositionedElements,
   HasParent,
   GetBounds,
@@ -228,15 +234,36 @@ function* AllParents(elem) {
   if(obj) yield obj;
 }
 
-function AllTransforms(elem, getter = getTransformationMatrix) {
+function AllTransforms(elem, getter = e => getTransformationMatrix(e)) {
   let t = [];
   for(let e of AllParents(elem)) if(e.hasAttribute('transform')) t.push(getter(e));
   if(elem.hasAttribute('transform')) t.push(getter(elem));
   return t;
 }
 
+function ElementTransformLists(elem) {
+  let map = new Map();
+
+  for(let e of AllTransforms(elem, e => e)) {
+    map.set(e, getTransformationList(e));
+  }
+  return map;
+}
+
+function DecomposeTransformList(elem) {
+  let list = getTransformationList(elem);
+
+  if(list.length == 1 && list[0].type == 'matrix') {
+    let tl = list.decompose();
+    //console.log(`Setting '${list}' to ${tl}`);
+    elem.setAttribute('transform', tl + '');
+  }
+}
+
 function ElementTransformList(elem) {
-  return new TransformationList().concat(...AllTransforms(e, getTransformationList));
+  let ret = new TransformationList();
+  for(let tl of ElementTransformLists(elem).values()) ret = ret.concat(tl);
+  return ret;
 }
 
 function ElementTransformMatrix(elem) {
@@ -288,6 +315,34 @@ function GetPoints(elem) {
   throw new Error(`Failed getting point data for element ${XML2String(elem)}`);
 }
 
+function GetSVGPath(elem) {
+  return parseSVGPath(elem.getAttribute('d'));
+}
+
+function PathCmdTransform(matrix, cmd) {
+  let args = {
+    M: (x, y) => matrix.transformXY(x, y),
+    Z: (x, y) => matrix.transformXY(x, y),
+    L: (x, y) => matrix.transformXY(x, y),
+    H: x => matrix.transformXY(x, 0)[0],
+    V: y => matrix.transformXY(0, y)[1],
+    C: (x1, y1, x2, y2, x, y) => [...matrix.transformXY(x1, y1), ...matrix.transformXY(x2, y2), ...matrix.transformXY(x, y)],
+    S: (x2, y2, x, y) => [...matrix.transformXY(x2, y2), ...matrix.transformXY(x, y)],
+    Q: (x1, y1, x, y) => [...matrix.transformXY(x1, y1), ...matrix.transformXY(x, y)],
+    T: (x, y) => matrix.transformXY(x, y),
+    A: (rx, ry, xAxisRotation, largeArcFlag, sweepFlag, x, y) => [...matrix.transformWH(rx, ry), xAxisRotation, largeArcFlag, sweepFlag, ...matrix.transformXY(x, y)]
+  }[cmd.name](...cmd.args);
+
+  //console.log('PathCmdTransform', { cmd, args });
+  return { name: cmd.name, args };
+}
+
+function PathTransform(matrix, path) {
+  let ret = new SvgPath();
+  ret.commands = path.commands.map(cmd => PathCmdTransform(matrix, cmd));
+  return ret;
+}
+
 function GetTransformedPoints(elem) {
   let matrix = ElementTransformMatrix(elem);
   let points = new PointList(GetPoints(elem));
@@ -333,6 +388,10 @@ function* PositionedElements(svgElem = svg, skip) {
     }
     yield elem;
   }
+}
+
+function* TransformedElements(svgElem = svg) {
+  for(let q of deep.iterate(Node.raw(svgElem), e => 'transform' in e.attributes, deep.RETURN_PATH)) yield q.reduce((obj, p) => obj[p], svgElem);
 }
 
 function HasParent(elem, other) {
@@ -471,7 +530,12 @@ function main(...args) {
     Scaling,
     MatrixTransformation,
     TransformationList,
-    deref
+    deref,
+    parseSVGPath,
+    parseSVG,
+    splitPath,
+    PathCmdTransform,
+    PathTransform
   });
 
   //  globalThis.console = new Console(std.err, { depth: 2, customInspect: false, compact: false, protoChain: true });
@@ -535,10 +599,7 @@ function main(...args) {
 
     if(params['bounds']) {
       let bb = (globalThis.bb = GetBounds(svg));
-      print(
-        file,
-        bb.round(n => roundTo(n, precision)).toSVG()
-      );
+      print(file, bb.round(n => roundTo(n, precision)).toSVG());
     }
 
     let newViewBox,
@@ -575,6 +636,8 @@ function main(...args) {
 
     svg.setAttribute('width', roundTo(w, 0.001) + writeUnits[0]);
     svg.setAttribute('height', roundTo(h, 0.001) + writeUnits[1]);
+
+    for(let transformed of TransformedElements()) DecomposeTransformList(transformed);
 
     WriteFile(basename(file, '.svg') + '.out.svg', serializer.serializeToString(document));
 
