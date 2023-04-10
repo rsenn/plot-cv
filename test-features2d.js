@@ -1,9 +1,9 @@
 import * as cv from 'opencv';
 import Console from 'console';
 import * as path from 'path';
-import Util from './lib/util.js';
+import {tryCatch}from './lib/misc.js';
 
-let basename = Util.getArgv()[1].replace(/\.js$/, '');
+let basename = process.argv[1].replace(/\.js$/, '');
 
 function main(...args) {
   globalThis.console = new Console({
@@ -50,7 +50,7 @@ function main(...args) {
 
   /*let instances=Object.entries(detectors).reduce((acc,[name,ctor]) => ({ ...acc, [name]: new ctor() }), {});
 console.log("instances",instances);*/
-  let img = cv.imread('class-ab-amp-schematic.jpg');
+  let img = cv.imread('Muehleberg.png');
 
   for(let name of detectorNames) {
     const CTOR = detectors[name];
@@ -77,13 +77,13 @@ console.log("instances",instances);*/
     console.log('img', img);
     let keypoints, keypoints2, descriptors;
 
-    Util.tryCatch(
+    tryCatch(
       () => f2d.compute(img, (keypoints = []), (descriptors = [])),
       r => r,
       e => console.log('ERROR', e.message)
     );
 
-    Util.tryCatch(
+    tryCatch(
       () => f2d.detect(img, (keypoints2 = [])),
       r => r,
       e => console.log('ERROR', e.message)
@@ -95,12 +95,14 @@ console.log("instances",instances);*/
     console.log('f2d.defaultName', f2d.defaultName);
 
     let gray = new cv.Mat();
+
     cv.cvtColor(img, gray, cv.COLOR_BGR2GRAY);
     cv.cvtColor(gray, img, cv.COLOR_GRAY2BGR);
+      console.log('img', img);
 
-    cv.drawKeypoints(img, keypoints2, gray, [255, 120, 0], cv.DRAW_RICH_KEYPOINTS);
+    cv.drawKeypoints(img, keypoints2, img, [255, 120, 0], cv.DRAW_RICH_KEYPOINTS);
 
-    cv.imshow('img', gray);
+    cv.imshow('img', img);
 
     cv.resizeWindow('img', img.cols / 4, img.rows / 4);
     cv.moveWindow('img', 0, 0);

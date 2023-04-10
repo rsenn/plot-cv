@@ -1,4 +1,3 @@
-import { getOpt } from './lib/misc.js';
 import path from './lib/path.js';
 import filesystem from 'fs';
 import { Console } from 'console';

@@ -1,5 +1,4 @@
 import { parseScript } from 'meriyah';
-import Util from './lib/util.js';
 import { Console } from 'console';
 import fs from 'fs';
 import * as path from 'path';
@@ -55,14 +54,14 @@ function main(...args) {
 }
 let error;
 try {
-  main(...Util.getArgv().slice(1));
+  main(...process.argv.slice(1));
 } catch(e) {
   error = e;
 } finally {
   if(error) {
     console.log(`FAIL: ${error.message}\n${error.stack}`);
     console.log('FAIL');
-    Util.exit(1);
+    process.exit(1);
   } else {
     console.log('SUCCESS');
   }

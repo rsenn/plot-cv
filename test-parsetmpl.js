@@ -1,16 +1,13 @@
+import filesystem from 'fs';
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
 import { estree, ESNode, Literal, TemplateLiteral, CallExpression, ImportDeclaration, Identifier, ObjectPattern } from './lib/ecmascript/estree.js';
-import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import { Path } from './lib/json.js';
 import { SortedMap } from './lib/container/sortedMap.js';
-import PortableFileSystem from './lib/filesystem.js';
 import { ImmutablePath } from './lib/json.js';
-import { ConsoleSetup } from './lib/consoleSetup.js';
 
-let filesystem;
 
 const code = `export const Progress = ({ className, percent, ...props }) =>  h(Overlay,
     {
@@ -40,7 +37,7 @@ const code = `export const Progress = ({ className, percent, ...props }) =>  h(O
 const testfn = () => true;
 const testtmpl = `this is\na test`;
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));
 
 /*
 const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg">
@@ -217,17 +214,15 @@ async function main(...args) {
   const stdout = (await import('process')).stdout;
 
   const breakLength = stdout.columns || process.env.COLUMNS || 80;
-  await ConsoleSetup({ breakLength, maxStringLength: breakLength, depth: 5 });
   console.log('breakLength:', breakLength);
 
-  filesystem = await PortableFileSystem();
 
   if(args.length == 0) args.push('./lib/ecmascript/parser.js');
   for(let file of args) {
     let data, b, ret;
     if(file == '-') file = '/dev/stdin';
 
-    if(filesystem.exists(file)) data = filesystem.readFile(file);
+    if(filesystem.exists(file)) data = filesystem.readFileSync(file);
 
     console.log(`opened '${file}':`, Util.abbreviate(data));
     let ast, error;
@@ -286,12 +281,12 @@ async function main(...args) {
     }
     files[file] = finish(error);
 
-    if(error) Util.exit(1);
+    if(error) process.exit(1);
 
     console.log('files:', files);
   }
   let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
-  Util.exit(Number(files.length == 0));
+  process.exit(Number(files.length == 0));
 }
 
 function finish(err) {

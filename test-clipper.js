@@ -4,15 +4,17 @@ import { SVG } from './lib/dom.js';
 import { parse } from './lib/svg/path-parser.js';
 import Shape from './lib/clipper.js';
 import { Console } from 'console';
+
 globalThis.console = new Console({
   inspectOptions: {
     maxStringLength: 200,
     maxArrayLength: 10,
     breakLength: 100,
-    compact: 2,
+    compact: 1,
     depth: 10
   }
 });
+
 const d =
   'M 193.54706,178.86683 163.80521,218.90155 116.21174,233.8085 68.945718,217.89373 40.061173,177.23615 40.591015,127.36556 70.332862,87.330839 117.92634,72.423889 165.19236,88.338658 194.0769,128.99624 Z';
 
@@ -31,11 +33,16 @@ function testOffset() {
   let lightened = ClipperLib.JS.Lighten(path, 10);
   let perimeter = ClipperLib.JS.PerimeterOfPath(path, 1);
 
+
   const offset = new ClipperLib.ClipperOffset();
   const outer = new ClipperLib.Paths();
+
+
   offset.AddPath(path, ClipperLib.JoinType.jtRound, ClipperLib.EndType.etOpenRound);
+  console.log('offset',offset);
 
   offset.Execute(outer, 1);
+  console.log('outer',outer);
 
   let points = new PointList(outer[0].map(({ X, Y }) => new Point(X, Y)));
   //console.log('data2:', data2.toPath());

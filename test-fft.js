@@ -1,10 +1,8 @@
-import Util from './lib/util.js';
 import { dlopen, dlsym, RTLD_NOW, RTLD_DEFAULT, toPointer } from 'ffi';
 import * as ffi from 'ffi';
 import * as std from 'std';
 import * as dsp from './lib/dsp/util.js';
 import FFT from './lib/dsp/fft.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 
 export function define(so, name, rtype, ...args) {
   if(so == null || so == undefined) so = ffi.RTLD_DEFAULT;
@@ -63,7 +61,6 @@ const sf_open = define(libsndfile, 'sf_open', 'void *', 'char *', 'int', 'void *
 const sf_readf_float = define(libsndfile, 'sf_readf_float', 'int', 'void *', 'ulong');
 
 function main(...args) {
-  ConsoleSetup({ depth: 20, colors: true, breakLength: 80 });
   console.log('test');
 
   let info = new sf_info_t();
@@ -109,4 +106,4 @@ function main(...args) {
   );
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

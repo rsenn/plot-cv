@@ -1,4 +1,5 @@
-/*const fs = require('fs');
+import filesystem from 'fs';
+/* 
 //#const bpgdec = require("./static/wasm/bpgdec.wasm.js");
 const bpgdec = require("./static/wasm/bpgdec.js");
 
@@ -6,8 +7,7 @@ console.error("bpgdec: ", bpgdec);
 
 */
 
-const fs = require('fs');
-const bytes = filesystem.readFile('./static/wasm/bpgdec.wasm');
+const bytes = filesystem.readFileSync('./static/wasm/bpgdec.wasm');
 //console.log('bytes: ', bytes);
 
 let importObject = {

@@ -20,6 +20,7 @@
     "lib/lexer.js": "lexer",
     "lib/filesystem.js": "fs",
     "fs.js": "lib/filesystem.js",
+    "quickjs/qjs-modules/lib/pointer.js": "pointer",
     "quickjs/qjs-modules/lib/fs.js": "fs",
     "lib/misc.js": "util",
     "quickjs/qjs-modules/lib/extendArray.js": "extendArray",
@@ -77,7 +78,6 @@
   },
   "oldDeps": {
     "@deque/dot": "^1.1.5",
-    "@serialport/bindings": "^9.0.2",
     "@serialport/stream": "^9.0.1",
     "preact-fluid": "^0.9.1",
     "sort-order": "^1.0.1",

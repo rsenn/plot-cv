@@ -1,5 +1,4 @@
 import { define, isObject, memoize, unique } from './lib/misc.js';
-import Util from './lib/util.js';
 import * as cv from 'opencv';
 import { EventEmitter, eventify } from './quickjs/qjs-modules/lib/events.js';
 
@@ -44,7 +43,7 @@ export class NumericParam extends Param {
 
   set(value) {
     const { clamp, min, step } = this;
-    let newValue = this.clamp(min + Util.roundTo(value - min, step, null, 'floor'));
+    let newValue = this.clamp(min + roundTo(value - min, step, null, 'floor'));
     //console.log(`Param.set oldValue=${this.value} new=${newValue}`);
     this.value = newValue;
   }
@@ -56,7 +55,7 @@ export class NumericParam extends Param {
 
   /* prettier-ignore */ set alpha(a) {
     const { min, max, step, clamp } = this;
-    this.value = this.clamp(min + Util.roundTo((max - min) * a, step, null, 'floor'));
+    this.value = this.clamp(min + roundTo((max - min) * a, step, null, 'floor'));
   }
 
   /* prettier-ignore */ get range() {
@@ -113,9 +112,9 @@ export class EnumParam extends NumericParam {
 export function ParamNavigator(map, index = 0) {
   if(!new.target) return new ParamNavigator(map);
 
-  if(!(map instanceof Map)) map = Util.toMap(map);
+  if(!(map instanceof Map)) map = toMap(map);
 
-  const mod = Util.mod(map.size);
+  const mod = mod(map.size);
 
   // console.log('map:', map);
 

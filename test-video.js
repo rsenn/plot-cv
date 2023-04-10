@@ -158,8 +158,8 @@ function main(...args) {
       help: [
         false,
         () => {
-          console.log(`Usage: ${Util.getArgv()[0]} [OPTIONS] <video|device>`);
-          Util.exit(0);
+          console.log(`Usage: ${getArgv()[0]} [OPTIONS] <video|device>`);
+          exit(0);
         },
         'h'
       ],

@@ -1,11 +1,7 @@
-import Util from './lib/util.js';
-import PortableFileSystem, { SEEK_SET, SEEK_END } from './lib/filesystem.js';
-import ConsoleSetup from './lib/consoleSetup.js';
+import filesystem from 'fs';
 import ObjectInspect from './lib/objectInspect.js';
 import { Repeater } from './lib/repeater/repeater.js';
-//import TinyTest, { run, assert, assertEquals } from './lib/tinyTest.js';
 
-let filesystem;
 let tmpdir;
 let buffer, buffer2;
 let handle;
@@ -23,17 +19,15 @@ function FileReader(path, bufferSize = 1024) {
 }
 
 async function main(...args) {
-  await ConsoleSetup({ colors: true, depth: Infinity });
-  await PortableFileSystem(fs => (filesystem = fs));
 
   for await(let data of await FileReader('test-io.js', 64)) console.log('data:', filesystem.bufferToString(data));
 
   return;
   console.log(
-    Util.getMethodNames(filesystem)
+    getMethodNames(filesystem)
       .map(n => `  'filesystem.${n}': null,`)
       .join('\n')
   );
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

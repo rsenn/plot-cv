@@ -1,5 +1,4 @@
 import React from './lib/dom/preactComponent.js';
-//import cursorPng from '../assets/cursor.png'
 const cursorPng = 'static/ruler/cursor.png';
 
 const Cursor = ({ horizontal }) =>

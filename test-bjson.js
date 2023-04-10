@@ -1,6 +1,4 @@
-import PortableFileSystem from './lib/filesystem.js';
-import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
+import filesystem from 'fs';
 import deep from './lib/deep.js';
 import path from './lib/path.js';
 import tXml from './lib/tXml.js';
@@ -13,7 +11,6 @@ import inspect from './lib/objectInspect.js';
 import * as zlib from './quickjs/ffi/examples/zlib.js';
 import * as ffi from 'ffi';
 
-let filesystem;
 let prng = new Alea().seed(Date.now());
 
 /*class Uint64 {
@@ -59,7 +56,7 @@ let prng = new Alea().seed(Date.now());
 }*/
 
 async function readBJSON(filename) {
-  let data = filesystem.readFile(filename, null);
+  let data = filesystem.readFileSync(filename, null);
   let obj = await import('bjson.so')
     .then(({ read }) => read(data, 0, data.byteLength))
     .catch(err => console.log(err));
@@ -99,7 +96,7 @@ function deflate(buffer, level = 9) {
 
 function readXML(filename) {
   //console.log('readXML', filename);
-  let data = filesystem.readFile(filename);
+  let data = filesystem.readFileSync(filename);
   let xml = tXml(data);
   //console.log('xml:', xml);
   return xml;
@@ -127,7 +124,6 @@ function WriteFile(name, data) {
   // if(typeof data != 'string') data = '' + data;
 
   //
-  //
   filesystem.writeFile(name, data);
   console.log(`Wrote ${name}: ${data.length} bytes`);
 }
@@ -137,8 +133,6 @@ const push_front = (arr, ...items) => [...items, ...(arr || [])];
 const tail = arr => arr[arr.length - 1];
 
 async function main(...args) {
-  await ConsoleSetup({ depth: 20, colors: true, breakLength: 80 });
-  filesystem = await PortableFileSystem();
 
   let params = Util.getOpt(
     {
@@ -152,11 +146,11 @@ async function main(...args) {
       'no-remove-empty': [false, null, 'E'],
       '@': 'input,output,xml'
     },
-    Util.getArgs().slice(1)
+    scriptArgs.slice(1)
   );
   console.log('main', args, params);
   if(params['@'].length == 0 && !params.input) {
-    console.log(`Usage: ${Util.getArgs()[0]} <...files>`);
+    console.log(`Usage: ${scriptArgs[0]} <...files>`);
     return 1;
   }
 
@@ -187,4 +181,4 @@ async function main(...args) {
     throw err;
   }
 }
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

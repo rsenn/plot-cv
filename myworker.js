@@ -66,7 +66,6 @@ function worker_main() {
       k: new NumericParam(config.k ?? 24, 0, 100),
       thres1: new NumericParam(config.thres1 ?? 10, 0, 300),
       thres2: new NumericParam(config.thres2 ?? 20, 0, 300),
-      thres2: new NumericParam(config.thres2 ?? 20, 0, 300),
       rho: new NumericParam(config.rho ?? 1, 1, 100),
       theta: new NumericParam(config.theta ?? 180, 1, 360),
       threshold: new NumericParam(config.threshold ?? 10, 0, 100),

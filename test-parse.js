@@ -2,8 +2,6 @@ import { Lexer } from './lib/parse/lexer.js';
 import { Grammar } from './lib/parse/grammar.js';
 import { Parser } from './lib/parse/parser.js';
 import Ebnf2Parser from './lib/parse/ebnf2.js';
-//import CGrammar from './test-grammar.json';
-import Util from './lib/util.js';
 import { Console } from 'console';
 import * as fs from 'fs';
 import path from './lib/path.js';
@@ -64,7 +62,7 @@ async function main(...args) {
   console.log('cowbird:', cowbirdGrammar);
 
   let data = fs.readFileSync('../pictest/build/mplab/7segtest-16f876a-xc8-debug.mcp');
-  console.log('data:', Util.abbreviate(data, 100));
+  console.log('data:', abbreviate(data, 100));
   let parser = new Cowbird(cowbirdGrammar, 'ini', true);
   console.log('parser:', parser);
 
@@ -74,4 +72,4 @@ async function main(...args) {
   return;
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

@@ -1,5 +1,4 @@
 import { ECMAScriptParser, Printer, PathReplacer, ImportDeclaration, ImportSpecifier, Identifier, Literal, ExportDefaultDeclaration } from './lib/ecmascript.js';
-import Util from './lib/util.js';
 import Tree from './lib/tree.js';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -36,14 +35,14 @@ function main(...argv) {
     }
   });
 
-  let params = Util.getOpt(
+  let params = getOpt(
     {
       help: [
         false,
         (v, r, o) => {
-          console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
+          console.log(`Usage: ${getArgs()[0]} [OPTIONS]\n`);
           console.log(o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n'));
-          Util.exit(0);
+          exit(0);
         },
         'h'
       ],
@@ -56,11 +55,11 @@ function main(...argv) {
   );
 
   if(params.debug >= 2) ECMAScriptParser.instrumentate();
-  Util.defineGettersSetters(globalThis, {
-    printer: Util.once(() => new Printer({ colors: false, indent: 2 }))
+  defineGettersSetters(globalThis, {
+    printer: once(() => new Printer({ colors: false, indent: 2 }))
   });
   const time = () => Date.now() / 1000;
-  if(params['@'].length == 0) params['@'].push(Util.getArgv()[1]);
+  if(params['@'].length == 0) params['@'].push(getArgv()[1]);
   for(let file of params['@']) {
     let error;
     const processing = () => ProcessFile(file, params);
@@ -71,12 +70,12 @@ function main(...argv) {
     }
     files[file] = Finish(error);
     if(error) {
-      Util.putError(error);
+      putError(error);
       break;
     }
   }
   let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
-  Util.exit(Number(files.length == 0));
+  exit(Number(files.length == 0));
 }
 
 let error;
@@ -89,11 +88,11 @@ try {
 } finally {
   if(error) {
     console.log(
-      `FAIL: ${Util.className(error)} ${error.message}`,
+      `FAIL: ${className(error)} ${error.message}`,
       `\n  ` + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  ').split('\n').slice(0, 10).join('\n')
     );
     console.log('FAIL');
-    Util.exit(1);
+    exit(1);
   } else {
     console.log('SUCCESS');
   }
@@ -148,7 +147,7 @@ function Finish(err) {
   }
   if(err) {
     console.log(parser.lexer.currentLine());
-    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
+    console.log(className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
   }
   let t = [];
   if(globalThis.parser) {
@@ -188,7 +187,7 @@ function ShowOutput(ast, tree, flat, file, params) {
 }
 
 function NodeType(node) {
-  if(typeof node == 'object') return typeof node.type == 'string' ? node.type : Util.className(node);
+  if(typeof node == 'object') return typeof node.type == 'string' ? node.type : className(node);
 }
 
 function NodeToName(node) {
@@ -220,7 +219,7 @@ function NodeToName(node) {
       'NodeToName(' +
       node.kind +
       ' ' +
-      Util.abbreviate(
+      abbreviate(
         inspect(node, {
           breakLength: 1000,
           multiline: false,

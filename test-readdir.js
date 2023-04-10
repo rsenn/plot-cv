@@ -1,9 +1,6 @@
-import Util from './lib/util.js';
-import PortableFileSystem, { SEEK_SET, SEEK_END } from './lib/filesystem.js';
-import ConsoleSetup from './lib/consoleSetup.js';
+import filesystem from 'fs';
 import ObjectInspect from './lib/objectInspect.js';
 
-let filesystem;
 let tmpdir;
 let buffer, buffer2;
 let handle;
@@ -31,8 +28,6 @@ function* ReadDirRecursive(dir, maxDepth = Infinity) {
 }
 
 async function main(...args) {
-  await ConsoleSetup({ colors: true, depth: Infinity });
-  await PortableFileSystem(fs => (filesystem = fs));
   /*
   let files = filesystem.readdir('src').map(file => `src/${file}`);
 
@@ -43,4 +38,4 @@ async function main(...args) {
   console.log('readdir', [...Filter(ReadDirRecursive('.', 2), /\.[ch]$/)]);
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

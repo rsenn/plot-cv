@@ -2,7 +2,6 @@ import React, { h, useState, useMemo, useEffect, useRef, forwardRef, useImperati
 import PropTypes from './lib/prop-types.js';
 import { useDebounce } from './lib/hooks/useDebounce.js';
 import Cursor from './cursor.js';
-import Util from './lib/util.js';
 import { classNames } from './lib/classNames.js';
 
 const rulerImgVertical = 'static/ruler/rulerVertical.svg';

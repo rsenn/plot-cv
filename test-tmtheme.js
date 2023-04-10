@@ -1,14 +1,10 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
-import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
-import PortableFileSystem from './lib/filesystem.js';
+import filesystem from 'fs';
 import path from './lib/path.js';
 import * as bjson from 'bjson';
 import parse from './lib/xml/parse.js';
 import Tree from './lib/tree.js';
 import { toXML } from './lib/json/util.js';
 
-let filesystem;
 
 function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');
@@ -110,7 +106,7 @@ function Element2Object(element, key) {
 }
 
 function Object2Element(object, path = []) {
-  let type = Util.typeOf(object);
+  let type = typeOf(object);
   //console.log('Object2Element', { type,  path });
   switch (type) {
     case 'Comment': {
@@ -139,7 +135,7 @@ function Object2Element(object, path = []) {
       //console.log('Object2Element Dict', object.length);
       for(let i = 0; i < object.length; i++) {
         const entry = object[i];
-        const entryType = Util.typeOf(entry);
+        const entryType = typeOf(entry);
         //console.log('Object2Element Dict', { entryType, entry });
         if(entryType == 'Pair' || (entry instanceof Array && entry.length == 2)) {
           const [key, value] = entry;
@@ -159,13 +155,11 @@ function Object2Element(object, path = []) {
 }
 
 async function main(...args) {
-  await PortableFileSystem(fs => (filesystem = fs));
-  await ConsoleSetup({ depth: 4 });
 
   for(let file of args) {
     let base = path.basename(file, /\.[^.]*$/);
 
-    let data = filesystem.readFile(file);
+    let data = filesystem.readFileSync(file);
     console.log('data:', data);
     let xml = parse(data);
 
@@ -229,4 +223,4 @@ async function main(...args) {
   return;
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

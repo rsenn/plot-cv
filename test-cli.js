@@ -1,4 +1,3 @@
-import Util from './lib/util.js';
 import { Rect } from 'opencv';
 import { Point } from 'opencv';
 import { Size } from 'opencv';
@@ -7,14 +6,12 @@ import { PointIterator } from 'opencv';
 import { Contour } from 'opencv';
 import { Line } from 'opencv';
 import { Draw, drawLine, drawCircle } from 'opencv';
-import ConsoleSetup from './lib/consoleSetup.js';
 
 import inspect from './lib/objectInspect.js';
 
 let filesystem;
 
 async function main(...args) {
-  await ConsoleSetup({ colors: true, depth: Infinity });
   //import { Contour } from "contour";
   const { circle, contour, line, polygon, rect } = Draw;
 
@@ -56,4 +53,4 @@ async function main(...args) {
   let i = 0;
   for(let p of ct1.concat(ct2)) console.log(`p[${i++}]:`, p);
 }
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

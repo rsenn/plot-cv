@@ -1,7 +1,6 @@
-import PortableFileSystem from './lib/filesystem.js';
-import Util from './lib/util.js';
 import { Console } from 'console';
 import path from './lib/path.js';
+import { getMethodNames } from './lib/misc.js';
 
 let filesystem;
 
@@ -12,9 +11,10 @@ function main(...args) {
   console.log('main(', ...args, ')');
   //console.log('main', args);
   console.log('path', Object.getOwnPropertyNames(path));
-  console.log('path', Util.getMethodNames(path));
+  console.log('path', 
+    getMethodNames(path));
 
-  let filename = Util.getArgv()[1];
+  let filename = process.argv[1];
   let cwd = path.absolute('.');
   console.log(`path.relative('/', '${cwd}')`, path.relative('/', cwd));
 

@@ -1,4 +1,3 @@
-import Util from './lib/util.js';
 import { Pointer } from './lib/pointer.js';
 import * as deep from './lib/deep.js';
 import { Console } from 'console';
@@ -25,14 +24,14 @@ function main(...args) {
 
 let error;
 try {
-  main(...Util.getArgv().slice(1));
+  main(...process.argv.slice(1));
 } catch(e) {
   error = e;
 } finally {
   if(error) {
     console.log(`FAIL: ${error.message}\n${error.stack}`);
     console.log('FAIL');
-    Util.exit(1);
+    process.exit(1);
   } else {
     console.log('SUCCESS');
   }

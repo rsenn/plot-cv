@@ -4,7 +4,6 @@ import * as std from 'std';
 import { PointIterator } from 'opencv';
 import inspect from './lib/objectInspect.js';
 import path from './lib/path.js';
-import Util from './lib/util.js';
 import Console from 'console';
 
 async function main(...args) {
@@ -299,7 +298,7 @@ async function main(...args) {
 
   return 'done';
 }
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));
 /*
 console.log('TEST\n');
 print('TEST\n');

@@ -2,7 +2,6 @@ import { define, isObject, memoize, unique } from './lib/misc.js';
 import dom from './lib/dom.js';
 import geom from './lib/geom.js';
 import { BBox, Rect, Point, Polyline, Line, PointList, isPoint } from './lib/geom.js';
-import Util from './lib/util.js';
 import path from './lib/path.js';
 import { parseGcode } from './lib/gcode.js';
 import React, { Component } from './lib/dom/preactComponent.js';
@@ -118,7 +117,7 @@ export async function BoardToGerber(proj, opts = { fetch: true }) {
     if(response) result.data = response;
   }
 
-  //console.debug('BoardToGerber result =', Util.filterOutKeys(result, ['headers', 'code']));
+  //console.debug('BoardToGerber result =', filterOutKeys(result, ['headers', 'code']));
   return result;
 }
 
@@ -163,7 +162,7 @@ export async function GerberToGcode(project, allOpts = {}) {
 
   //  console.debug('GerberToGcode result =', result);
   if(!result.data)
-    Util.lazyProperty(result, 'data', async () => {
+    lazyProperty(result, 'data', async () => {
       let response = await FetchCached('static/' + response.file).then(ResponseData);
       return response;
     });
@@ -174,7 +173,7 @@ export const GcodeToPolylines = (data, opts = {}) => {
   const { fill = false, color, side } = opts;
   //console.debug('GcodeToPolylines', { data, opts });
 
-  let gc = [...Util.filter(parseGcode(data), g => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args)];
+  let gc = [...filter(parseGcode(data), g => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args)];
   let polylines = [];
   let polyline = null;
   let bb = new BBox();
@@ -222,7 +221,7 @@ export const GcodeToPolylines = (data, opts = {}) => {
     //console.log('polylines(2):', polylines);
     polylines = polylines.map(pl => geom.simplify(pl, 0.02, true));
     //console.log('polylines(3):', polylines);
-    polylines = polylines.map(pl => Util.chunkArray(pl, 2).map(pt => new Point(...pt)));
+    polylines = polylines.map(pl => chunkArray(pl, 2).map(pt => new Point(...pt)));
     //console.log('polylines(4):', polylines);
     polylines = polylines.map(pl => new Polyline([]).push(...pl));
     let inside = new Map(polylines.map((polyline2, i) => [polyline2, polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2))]));
@@ -270,24 +269,24 @@ export const GcodeToPolylines = (data, opts = {}) => {
 
 export function GeneratePalette(numColors) {
   let ret = [];
-  let base = new HSLA(Util.randInt(0, 360, prng), 100, 50).toRGBA();
-  let offsets = Util.range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360], []);
+  let base = new HSLA(randInt(0, 360, prng), 100, 50).toRGBA();
+  let offsets = range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + randInt(20, 80)) % 360], []);
   offsets = offsets.sort((a, b) => a - b);
-  //offsets = Util.shuffle(offsets, prng);
-  //Util.log('offsets:', offsets);
+  //offsets = shuffle(offsets, prng);
+  //log('offsets:', offsets);
 
   new KolorWheel(base.hex()).rel(offsets, 0, 0).each(function () {
     const hex = this.getHex();
     const rgba = new RGBA(hex);
     const hsla = rgba.toHSLA();
-    //Util.log(hex, rgba.toString(), hsla.toString());
+    //log(hex, rgba.toString(), hsla.toString());
     ret.push(hsla);
   });
   return ret;
 }
 
 export async function ClearCache(match = /.*/) {
-  let pred = Util.predicate(match);
+  let pred = predicate(match);
   let cache = await caches.open('fetch');
   for(let request of await cache.keys()) {
     if(pred(request.url)) {
@@ -298,9 +297,9 @@ export async function ClearCache(match = /.*/) {
 }
 
 export async function ListCache(match = /.*/) {
-  let pred = Util.predicate(match);
+  let pred = predicate(match);
   let cache = await caches.open('fetch');
-  let baseUrl = Util.makeURL({ location: '/' });
+  let baseUrl = makeURL({ location: '/' });
   let result = [];
 
   for await(let request of await cache.keys()) {
@@ -317,19 +316,19 @@ export async function ShowCache(match = /.*/) {
 }
 
 export async function GetCache(match = /.*/, key = 'fetch') {
-  let pred = Util.predicate(match);
+  let pred = predicate(match);
   let cache = await caches.open(key);
-  let baseUrl = Util.makeURL({ location: '/' });
+  let baseUrl = makeURL({ location: '/' });
   let entries = [];
 
   for(let request of await cache.keys()) {
     let response = await cache.match(request);
     let time = Date.parse(response.headers.get('date')) / 1000;
-    let headers = new Map(Util.map(response.headers.keys(), k => [k, response.headers.get(k)]));
+    let headers = new Map(map(response.headers.keys(), k => [k, response.headers.get(k)]));
     delete response.headers;
-    let methods = Util.bindMethods(Util.getMethods(response), response);
+    let methods = bindMethods(getMethods(response), response);
 
-    response = Object.assign(Util.getMembers(response), {
+    response = Object.assign(getMembers(response), {
       headers,
       time,
       ...methods

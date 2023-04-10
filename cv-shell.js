@@ -1,6 +1,6 @@
+import filesystem from 'fs';
 #!/usr/bin/env qjsm
 import * as cv from 'opencv';
-import Util from './lib/util.js';
 import { setInterval, toArrayBuffer, toString, escape, quote, define, extendArray, memoize, getFunctionArguments, glob, GLOB_TILDE, fnmatch, wordexp, lazyProperties } from './lib/misc.js';
 import * as misc from './lib/misc.js';
 import * as util from './lib/misc.js';
@@ -18,7 +18,6 @@ import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJS
 import { VideoSource, ImageSequence } from './qjs-opencv/js/cvVideo.js';
 import { ImageInfo } from './lib/image-info.js';
 import { MouseEvents, MouseFlags, Mouse, Window, TextStyle, DrawText } from './qjs-opencv/js/cvHighGUI.js';
-//import {   DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles } from './io-helpers.js';
 import { ImagePipeline } from './imagePipeline.js';
 import * as HighGUI from './qjs-opencv/js/cvHighGUI.js';
 import { lazyInitializer } from './lib/lazyInitializer.js';
@@ -49,7 +48,7 @@ async function importModule(moduleName, ...args) {
     });
   // while(!done) std.sleep(50);
 }
-function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = '') {
+function StartREPL(prefix = path.basename(getArgs()[0], '.js'), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, fs, false);
   repl.fs = fs;
   repl.historyLoad(getConfFile('history'), fs);
@@ -124,11 +123,11 @@ function main(...args) {
 
   debugLog = fs.openSync('debug.log', 'a');
 
-  const progName = Util.getArgv()[1];
+  const progName = getArgv()[1];
   const base = path.basename(progName, path.extname(progName));
   const histfile = `.${base}-history`;
 
-  let params = Util.getOpt(
+  let params = getOpt(
     {
       debug: [false, null, 'x'],
       'output-dir': [true, null, 'd'],
@@ -231,4 +230,4 @@ function main(...args) {
   setInterval(() => repl.globalKeys(), 500);
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

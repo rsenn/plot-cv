@@ -1,15 +1,13 @@
+import inspect from 'inspect';
 #!/usr/bin/env qjsm
 import { define, isObject, memoize, unique } from './lib/misc.js';
 import { ECMAScriptParser, Printer, PathReplacer } from './lib/ecmascript.js';
 import { ObjectPattern, ObjectExpression, ImportDeclaration, ExportNamedDeclaration, VariableDeclaration, estree, ESNode, Literal } from './lib/ecmascript.js';
-import ConsoleSetup from './lib/consoleSetup.js';
-import Util from './lib/util.js';
 import { ImmutablePath } from './lib/json.js';
 import deep from './lib/deep.js';
 import filesystem from 'fs';
 import path from './lib/path.js';
 import { SortedMap } from './lib/container/sortedMap.js';
-import PortableFileSystem from './lib/filesystem.js';
 
 const code = `export const Progress = ({ className, percent, ...props }) => html\`<\x24{Overlay} className=\x24{classNames('progress', 'center', className)} text=\x24{percent + '%'} style=\x24{{
   position: 'relative',
@@ -49,8 +47,8 @@ class ES6Module {
 class ES6ImportExport {
   static create(obj) {
     let ret = new.target ? this : obj;
-    let nodeClass = Util.className(obj.node);
-    let type = Util.decamelize(nodeClass).split('-')[0];
+    let nodeClass = className(obj.node);
+    let type = decamelize(nodeClass).split('-')[0];
     let position = ESNode.assoc(obj.node).position;
     ret = define(ret, { position, nodeClass, type }, obj);
 
@@ -77,7 +75,7 @@ class ES6ImportExport {
   }
 }
 console.log('main');
-Util.callMain(main);
+main(...scriptArgs.slice(1));
 
 /*
 const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg">
@@ -86,7 +84,7 @@ const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" view
 */
 
 function PrefixRemover(reOrStr, replacement = '') {
-  if(!(Array.isArray(reOrStr) || Util.isIterable(reOrStr))) reOrStr = [reOrStr];
+  if(!(Array.isArray(reOrStr) || isIterable(reOrStr))) reOrStr = [reOrStr];
 
   return arg => reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), arg);
 }
@@ -103,7 +101,6 @@ function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments))
 }
 
 async function main(...args) {
-  await ConsoleSetup({ depth: 5 });
 
   cwd = process.cwd();
 
@@ -124,7 +121,7 @@ async function main(...args) {
   console.log('test', path.dirname('/usr/bin/ls'));
   console.log('test', path.resolve('/proc/self/../ls'));
   const argDirs = [...args].map(arg => path.dirname(arg));
-  // console.log('argDirs',Util.inspect(argDirs));
+  // console.log('argDirs',inspect(argDirs));
 
   const dirs = [cwd].concat(argDirs); /*.map(p => path.resolve(p))*/
   console.log('dirs=', dirs);
@@ -164,7 +161,7 @@ async function main(...args) {
   while(args.length > 0) processFile(args.shift());
   // console.log("result:",r);
 
-  for(let ids of exportMap.values()) r.push(`Util.weakAssign(globalObj, { ${unique(ids).join(', ')} });`);
+  for(let ids of exportMap.values()) r.push(`weakAssign(globalObj, { ${unique(ids).join(', ')} });`);
 
   const script = `// ==UserScript==
 
@@ -291,7 +288,7 @@ async function main(...args) {
         `remove =`,
         remove
           .reduce((acc, [i, imp]) => [...acc, imp /*(imp.fromPath),imp.toSource()*/], [])
-          .map(imp => Util.className(imp))
+          .map(imp => className(imp))
       );
 
       removeStatements(remove.map(([idx, node]) => [imports[idx].path, node]));
@@ -334,8 +331,8 @@ async function main(...args) {
       exportMap.set(modulePath, unique(exports.flat()));
     } catch(err) {
       console.error(err.message);
-      Util.putStack(err.stack);
-      Util.exit(1);
+      putStack(err.stack);
+      exit(1);
     }
     let output = '';
     output = printAst(ast, parser.comments, printer).trim();
@@ -351,7 +348,7 @@ async function main(...args) {
 
   console.log('processed:', ...processed);
   console.log('exportMap:', exportMap);
-  Util.exit(Number(processed.length == 0));
+  exit(Number(processed.length == 0));
 }
 
 function finish(err) {
@@ -364,7 +361,7 @@ function finish(err) {
   }
   if(err) {
     console.log(parser.lexer.currentLine());
-    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
+    console.log(className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
   }
   let lexer = parser.lexer;
   let t = [];

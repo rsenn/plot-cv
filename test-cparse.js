@@ -1,10 +1,8 @@
-import Util from './lib/util.js';
+import filesystem from 'fs';
 import Alea from './lib/alea.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 import cparse from './lib/cparse.js';
 import cpp from './lib/cpp.js';
 import path from './lib/path.js';
-import PortableFileSystem from './lib/filesystem.js';
 import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 
 let filesystem,
@@ -42,7 +40,7 @@ const FindIncludeFunc = source => {
   };
 };
 
-const getSource = () => sources[Util.randInt(0, sources.length - 1, prng)];
+const getSource = () => sources[randInt(0, sources.length - 1, prng)];
 
 function* Reader(input) {
   const buffer = new ArrayBuffer(1024);
@@ -74,8 +72,6 @@ function StripPP(code) {
 }
 
 async function main(...args) {
-  await ConsoleSetup({ depth: 10, breakLength: 80 });
-  await PortableFileSystem(fs => (filesystem = fs));
   await PortableChildProcess(cp => (childProcess = cp));
 
   const file = 'quickjs/hello.c' || getSource();
@@ -95,7 +91,7 @@ async function main(...args) {
   console.log('out:', proc.stdout);
 
   //const src =   ReadAll(proc.stdout);
-  const src = filesystem.readFile(file);
+  const src = filesystem.readFileSync(file);
 
   const findInclude = FindIncludeFunc(file);
   let code;
@@ -105,16 +101,16 @@ async function main(...args) {
       file = findInclude(file);
       // console.log('completion_func', file);
 
-      const code = filesystem.readFile(file);
+      const code = filesystem.readFileSync(file);
       console.log('include_func', {
         file,
-        code: Util.abbreviate(Util.escape(code + ''), 40)
+        code: abbreviate(escape(code + ''), 40)
       });
 
       resolve(code);
     },
     completion_func(text, arr, state) {
-      // console.log('completion_func', { text: Util.abbreviate(text), arr: arr.map(s => Util.abbreviate(s)), state });
+      // console.log('completion_func', { text: abbreviate(text), arr: arr.map(s => abbreviate(s)), state });
       code = text;
     },
     error_func(error) {
@@ -136,7 +132,7 @@ async function main(...args) {
 
   e = pp.run(src);
 
-  //const src = filesystem.readFile('out.e');
+  //const src = filesystem.readFileSync('out.e');
 
   console.log('Source code:', code);
 
@@ -148,7 +144,7 @@ async function main(...args) {
   console.log(ast);
 }
 
-Util.callMain(main, e => {
+main(...scriptArgs.slice(1));
   console.log('STACK:', e.stack);
   console.log('ERROR:', e, '\n', [...e.stack][2].functionName);
 });

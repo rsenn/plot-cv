@@ -1,7 +1,7 @@
+import filesystem from 'fs';
 import Lexer from './lib/ecmascript/lexer.js';
-import Util from './lib/util.js';
 
-let args = Util.getArgs();
+let args = scriptArgs;
 if(args.length == 0) args.push('-');
 
 let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
@@ -17,7 +17,7 @@ function main(args) {
     let data, b, ret;
     if(file == '-') file = '/dev/stdin';
     //console.log('file:', file);
-    data = filesystem.readFile(file);
+    data = filesystem.readFileSync(file);
     //console.log('opened:', data);
     let token, error;
 
@@ -42,5 +42,5 @@ function main(args) {
 
   //console.log("files:", files);
   let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
-  Util.exit(Number(files.length == 0));
+  process.exit(Number(files.length == 0));
 }

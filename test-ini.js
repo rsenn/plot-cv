@@ -1,6 +1,5 @@
 import INIGrammar from './grammar-INI.js';
 import fs from 'fs';
-import Util from './lib/util.js';
 import path from './lib/path.js';
 import { Point, Size, Rect, BBox } from './lib/geom.js';
 import deep from './lib/deep.js';
@@ -89,7 +88,7 @@ async function main(...args) {
       newSize = newSize.round();
 
       Object.assign(svg.attributes, { width, height });
-      Util.weakAssign(svg.attributes, {
+      weakAssign(svg.attributes, {
         viewBox: new BBox(0, 0, iconSize.width, iconSize.height)
       });
       WriteFile(svgFile, toXML(svgData));
@@ -161,7 +160,7 @@ async function main(...args) {
     let out = '';
     for(let section in sections) {
       out += `[${section}]\r\n`;
-      for(let [key, value] of Util.entries(sections[section])) {
+      for(let [key, value] of entries(sections[section])) {
         out += `${key}=${value}\r\n`;
       }
     }
@@ -185,4 +184,4 @@ end`;
   }
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

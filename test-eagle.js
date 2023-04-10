@@ -1,13 +1,10 @@
 import { EagleDocument, EagleProject } from './lib/eagle.js';
-import PortableFileSystem from './lib/filesystem.js';
 import { LineList, Rect } from './lib/geom.js';
 import { toXML } from './lib/json.js';
-import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import { Graph } from './lib/fd-graph.js';
 import ptr from './lib/json-ptr.js';
 import LogJS from './lib/log.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 import fs from 'fs';
 
 let filesystem = fs;
@@ -269,7 +266,6 @@ async function testEagle(filename) {
   return proj;
 }
 async function main(...args) {
-  //  await ConsoleSetup({ breakLength: 120, depth: 10 });
   if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3');
   for(let arg of args) {
     //arg = arg.replace(/\.(brd|sch|lbr)$/i, '');
@@ -277,9 +273,9 @@ async function main(...args) {
       let project = await testEagle(arg);
     } catch(err) {
       console.log('Err:', err.message, typeof err.stack == 'string' ? err.stack : [...err.stack].map(f => f + ''));
-      Util.exit(1);
+      process.exit(1);
     }
   }
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

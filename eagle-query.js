@@ -2,7 +2,6 @@ import { unique } from './lib/misc.js';
 import { EagleDocument } from './lib/eagle.js';
 import { toXML } from './lib/json.js';
 import fs from 'fs';
-import Util from './lib/util.js';
 import { Console } from 'console';
 import { digit2color, GetColorBands, ValueToNumber, NumberToValue, PartScales } from './lib/eda/colorCoding.js';
 import { UnitForName } from './lib/eda/units.js';
@@ -50,7 +49,7 @@ async function main(...args) {
   let values = {};
   for(let key in components) {
     components[key].sort();
-    let hist = Util.histogram(components[key], new Map());
+    let hist = histogram(components[key], new Map());
 
     histograms[key] = new Map([...hist].sort((a, b) => b[1] - a[1]));
     values[key] = [...histograms[key]]
@@ -79,4 +78,4 @@ async function main(...args) {
   return;
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

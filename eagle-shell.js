@@ -1,7 +1,6 @@
 #!/usr/bin/env qjsm
 import { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, EagleNodeList, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, EagleDocument, EagleReference, EagleRef, makeEagleNode, EagleNode, Renderer, EagleProject, EagleElement, makeEagleElement, EagleElementProxy, EagleNodeMap, ImmutablePath, DereferenceError } from './lib/eagle.js';
-import Util from './lib/util.js';
-import * as util from './lib/misc.js';
+import { abbreviate, getMethods, map } from './lib/misc.js';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
 import { EventEmitter, EventTarget, eventify } from './lib/events.js';
@@ -23,7 +22,7 @@ import { className, define, extendArray, getOpt, glob, GLOB_BRACE, intersect, is
 import { HSLA, isHSLA, ImmutableHSLA, RGBA, isRGBA, ImmutableRGBA, ColoredText } from './lib/color.js';
 import { scientific, num2color, GetParts, GetInstances, GetPositions, GetElements } from './eagle-commands.js';
 import { Edge, Graph, Node } from './lib/geom/graph.js';
-import { MutableXPath as XPath, parseXPath, ImmutableXPath } from './quickjs/qjs-modules/lib/xpath.js';
+import { MutableXPath as XPath, parseXPath, ImmutableXPath } from './lib/xml/xpath.js';
 import { Predicate } from 'predicate';
 import child_process from 'child_process';
 import { readFileSync } from 'fs';
@@ -228,7 +227,7 @@ function main(...args) {
     args
   );
 
-  Object.assign(globalThis, { components, Console, GetGlobalFunctions });
+  Object.assign(globalThis, { components, Console, GetGlobalFunctions, className });
 
   Object.assign(globalThis, {
     child_process,
@@ -331,7 +330,6 @@ function main(...args) {
     toNumber(n) {
       return isNaN(+n) ? n : +n;
     },
-    util,
     path,
     EventEmitter,
     EventTarget,
@@ -489,7 +487,7 @@ function main(...args) {
     RemovePolygons,
     quit(arg) {
       repl.cleanup();
-      Util.exit(arg ?? 0);
+      process.exit(arg ?? 0);
     }
   });
 
@@ -533,7 +531,7 @@ function main(...args) {
   console.log = (...args) => repl.printStatus(() => log(...args));
 
   //console.log(`repl`, repl);
-  //console.log(`debugLog`, Util.getMethods(debugLog, Infinity, 0));
+  //console.log(`debugLog`, getMethods(debugLog, Infinity, 0));
   //repl.historyLoad(null, false);
   repl.directives.i = [
     (module, ...args) => {
@@ -722,7 +720,7 @@ function AlignItem(item) {
   }
   if(changed) {
     console.log(item);
-    /*    console.log('after:', Util.abbreviate(item.parentNode.toXML()));
+    /*    console.log('after:', abbreviate(item.parentNode.toXML()));
      console.log('align\n', item.xpath(), '\n newPos:', newPos, '\n diff:', diff, '\n attr:', item.raw.attributes);*/
   }
   return changed;
@@ -1069,7 +1067,7 @@ async function testEagle(filename) {
       let indexes = [...pkg.children].map((child, i, a) =>
         a
           .slice(i + 1)
-          .map((child2, i2) => [i2 + i + 1, Util.equals(child.raw, child2.raw)])
+          .map((child2, i2) => [i2 + i + 1, child.raw === child2.raw])
           .filter(([index, equal]) => equal)
           .map(([index]) => index)
       );
@@ -1088,7 +1086,7 @@ async function testEagle(filename) {
   console.log('desc', desc);
   desc = desc.map(([file, e]) => [file, e && e.xpath()]).map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
   desc = new Map(desc);
-  console.log('descriptions', [...Util.map(desc, ([k, v]) => [k, v])]);
+  console.log('descriptions', [...map(desc, ([k, v]) => [k, v])]);
   return proj;
 }
 
@@ -1370,11 +1368,11 @@ function Eagle2CircuitJS(doc = project.schematic, scale = 50, sheet = 0) {
   return circ;
 }
 
-//Util.callMain(main, true);
+//callMain(main, true);
 
 try {
-  main(...Util.getArgs().slice(1));
+  main(...scriptArgs.slice(1));
 } catch(error) {
   console.log(`FAIL: ${error.message}\n${error.stack}`);
-  Util.exit(1);
+  process.exit(1);
 }

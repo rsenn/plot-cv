@@ -1,11 +1,7 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
-import ConsoleSetup from './lib/consoleSetup.js';
-import PortableFileSystem from './lib/filesystem.js';
+import filesystem from 'fs';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
-import Util from './lib/util.js';
 
-let filesystem;
 
 class Node {
   constructor(raw, path) {
@@ -23,7 +19,7 @@ class NodeList {
 
 const proxyObject = (root, handler) => {
   const ptr = path => path.reduce((a, i) => a[i], root);
-  const nodes = Util.weakMapper(
+  const nodes = weakMapper(
     (value, path) =>
       new Proxy(handler && handler.construct ? handler.construct(value, path) : value, {
         get(target, key) {
@@ -62,13 +58,11 @@ const proxyObject = (root, handler) => {
 };
 
 async function main() {
-  //  await ConsoleSetup({ breakLength: 120, depth: 10 });
-  await PortableFileSystem(console.log);
 
-  let str = filesystem.readFile('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
+  let str = filesystem.readFileSync('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
 
   let xml = tXml(str);
-  //console.log('xml:', Util.abbreviate(xml));
+  //console.log('xml:', abbreviate(xml));
 
   let p = proxyObject(xml[0], {
     construct(value, path) {
@@ -99,4 +93,4 @@ async function main() {
   }
 }
 
-main(Util.getArgs());
+main(...scriptArgs.slice(1));

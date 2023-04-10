@@ -1,18 +1,15 @@
-import Util from './lib/util.js';
-import PortableFileSystem from './lib/filesystem.js';
+import filesystem from 'fs';
 import { Point, PointList, Line, BBox } from './lib/geom.js';
 import { SVG } from './lib/dom.js';
 import { toXML } from './lib/json.js';
 import Voronoi from './lib/geom/voronoi.js';
 import { EagleDocument } from './lib/eagle.js';
 
-let filesystem;
 
 async function testVoronoi(filename) {
-  filesystem = await PortableFileSystem();
 
   //console.log('Loading document: ' + filename);
-  let doc = new EagleDocument(filesystem.readFile(filename), null, filename);
+  let doc = new EagleDocument(filesystem.readFileSync(filename), null, filename);
 
   //console.log('doc', doc);
   let points = new PointList();
@@ -128,7 +125,7 @@ async function testVoronoi(filename) {
   //console.log('svg:', svgFile);
 }
 (() => {
-  let args = Util.getArgs();
+  let args = scriptArgs;
   if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd');
   for(let arg of args) {
     try {

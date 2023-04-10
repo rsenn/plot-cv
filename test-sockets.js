@@ -1,8 +1,8 @@
+import filesystem from 'fs';
 import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
-import Util from './lib/util.js';
 import { toArrayBuffer, toString, quote, escape } from './lib/misc.js';
 import { Console } from 'console';
 import inspect from './lib/objectInspect.js';

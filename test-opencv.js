@@ -4,7 +4,6 @@ import fs from 'fs';
 import Console from 'console';
 import * as path from 'path';
 import { RGBA, HSLA } from './lib/color.js';
-import Util from './lib/util.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { memoize, range } from './lib/misc.js';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
@@ -12,7 +11,7 @@ import { Window, MouseFlags, MouseEvents, Mouse, TextStyle, DrawText } from './q
 import * as nvg from 'nanovg';
 import * as glfw from 'glfw';
 
-let basename = Util.getArgv()[1].replace(/\.js$/, '');
+let basename =__filename.replace(/\.js$/, '');
 const RAD2DEG = 180 / Math.PI;
 
 function GLFW(...args) {
@@ -117,7 +116,7 @@ function main(...args) {
   });
   let running = true;
 
-  console.log('Util.getMethodNames(cv)', Util.getMethodNames(cv, Infinity, 0));
+  console.log('getMethodNames(cv)', getMethodNames(cv, Infinity, 0));
   console.log('cv.HoughLines', cv.HoughLines);
 
   let line = new Line(0, 0, 50, 50);
@@ -453,7 +452,7 @@ function main(...args) {
       // console.log(`param '${name}' callback`, param);
     })
   );
-  let processorParams = Util.weakMapper(processor => []);
+  let processorParams = weakMapper(processor => []);
   pipeline.before = () => paramAccumulator.clear();
   pipeline.after = () => processorParams.set(pipeline.getProcessor(), paramAccumulator.keys());
   pipeline();
@@ -530,7 +529,7 @@ function main(...args) {
         pipeline.recalc(frameShow);
         break;
       case 0x20:
-        frameShow = Util.mod(frameShow + 1, pipeline.size);
+        frameShow = mod(frameShow + 1, pipeline.size);
         pipeline.step();
         break;
       default: {

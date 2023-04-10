@@ -39,10 +39,7 @@ trkl.property(globalThis, 'logLevel').subscribe(value =>
     if(logFilter.test(message)) return;
 
     //if(params.debug || level <= LLL_WARN)
-    out(
-      (['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8) +
-        message.replace(/\n/g, '\\n').replace(/\r/g, '\\r')
-    );
+    out((['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8) + message.replace(/\n/g, '\\n').replace(/\r/g, '\\r'));
   })
 );
 
@@ -90,13 +87,7 @@ function GetRootDirectories(pattern = '*') {
 
 const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 
-const defaultDirs = (globalThis.defaultDirs = [
-  '.',
-  ...glob('../*/eagle'),
-  './uploads/*.{sch,brd,lbr}',
-  '/mnt/extext/Photos/*APPLE/*.{JPG,PNG,GIF,AAE,MOV,HEIC,MP4,WEBP}',
-  ['/home/roman/Bilder', new RegExp('.(jpg|jpeg|png|heic|tif|tiff)$', 'i')]
-]);
+const defaultDirs = (globalThis.defaultDirs = ['.', ...glob('../*/eagle'), './uploads/*.{sch,brd,lbr}', '/mnt/extext/Photos/*APPLE/*.{JPG,PNG,GIF,AAE,MOV,HEIC,MP4,WEBP}', ['/home/roman/Bilder', new RegExp('.(jpg|jpeg|png|heic|tif|tiff)$', 'i')]]);
 
 const allowedDirs = (globalThis.allowedDirs = new Map(
   defaultDirs
@@ -130,18 +121,7 @@ function DateStr(date) {
 }
 
 function ModeStr(mode) {
-  return (
-    (mode & (0o120000 == 0o120000) ? 'l' : mode & 0o40000 ? 'd' : '-') +
-    (mode & 0b100000000 ? 'r' : '-') +
-    (mode & 0b010000000 ? 'w' : '-') +
-    (mode & 0b001000000 ? 'x' : '-') +
-    (mode & 0b100000 ? 'r' : '-') +
-    (mode & 0b010000 ? 'w' : '-') +
-    (mode & 0b001000 ? 'x' : '-') +
-    (mode & 0b100 ? 'r' : '-') +
-    (mode & 0b010 ? 'w' : '-') +
-    (mode & 0b001 ? 'x' : '-')
-  );
+  return (mode & (0o120000 == 0o120000) ? 'l' : mode & 0o40000 ? 'd' : '-') + (mode & 0b100000000 ? 'r' : '-') + (mode & 0b010000000 ? 'w' : '-') + (mode & 0b001000000 ? 'x' : '-') + (mode & 0b100000 ? 'r' : '-') + (mode & 0b010000 ? 'w' : '-') + (mode & 0b001000 ? 'x' : '-') + (mode & 0b100 ? 'r' : '-') + (mode & 0b010 ? 'w' : '-') + (mode & 0b001 ? 'x' : '-');
 }
 
 const HTMLPage = ({ title, style, scripts = [], children, ...props }) => {
@@ -737,7 +717,12 @@ function main(...args) {
         //resp.headers['Server'] = 'upload-server';
         resp.headers = { Server: 'upload-server' };
         //console.log('onHttp resp.headers', resp.headers, resp.headers['Server']);
+        //
+        if(globalThis.onRequest) globalThis.onRequest(req, resp);
 
+        /* if((req.url.path ?? '').endsWith('.js')) 
+      console.log('onHttp', req.url.path);
+*/
         if((req.url.path ?? '').endsWith('files')) {
           return;
           //resp.type = 'application/json';
@@ -920,19 +905,13 @@ function main(...args) {
             if(!/[\/\.]/.test(p2)) {
               let fname = `${p2}.js`;
               let rel = path.relative(fname, dir);
-              console.log('onHttp', { match, fname }, rel);
+              //console.log('onHttp', { match, fname }, rel);
 
               // if(!fs.existsSync(  rel)) return ``;
 
               match = [p1, rel, p3].join('');
 
-              console.log('args', {
-                match,
-                p1,
-                p2,
-                p3,
-                offset
-              });
+              //console.log('args', { match, p1, p2, p3, offset });
             }
             return match;
           });

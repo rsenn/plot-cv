@@ -1,7 +1,6 @@
+import filesystem from 'fs';
+import inspect from 'inspect';
 import { define, isObject, memoize, unique } from './lib/misc.js';
-import PortableFileSystem from './lib/filesystem.js';
-import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 import * as deep from './lib/deep.js';
 import path from './lib/path.js';
 import tXml from './lib/tXml.js';
@@ -17,12 +16,11 @@ import * as jsondiff from './lib/json/diff.js';
 import KolorWheel from './lib/KolorWheel.js';
 import distanceChecker from './lib/color/distanceChecker.js';
 
-let filesystem;
 let prng = new Alea().seed(Date.now());
 
 function readXML(filename) {
   //console.log('readXML', filename);
-  let data = filesystem.readFile(filename);
+  let data = filesystem.readFileSync(filename);
   let xml = tXml(data);
   //console.log('xml:', xml);
   return xml;
@@ -34,9 +32,9 @@ const push_front = (arr, ...items) => [...items, ...(arr || [])];
 
 const GeneratePalette = (counts = { h: 3, s: 3, l: 5 }, deltas = { h: 360, s: 100, l: 30 }, prng) => {
   let ret = [];
-  let base = new HSLA(Util.randInt(-deltas.h / 2, deltas.h / 2, prng), 100, 50).toRGBA();
+  let base = new HSLA(randInt(-deltas.h / 2, deltas.h / 2, prng), 100, 50).toRGBA();
   const makeRange = (count, delta) =>
-    Util.range(0, count - 1)
+    range(0, count - 1)
       .map(v => (v * delta) / (count - 1) - delta / 2)
       .map(Math.round);
   let ranges = {
@@ -47,7 +45,7 @@ const GeneratePalette = (counts = { h: 3, s: 3, l: 5 }, deltas = { h: 360, s: 10
   //const numColors = ranges.reduce((acc, r) => acc * r.length, 1);
   //ranges.push(numColors);
   console.log('ranges:', ranges);
-  console.log('ranges:', Util.chunkArray(ranges.h, 3));
+  console.log('ranges:', chunkArray(ranges.h, 3));
   new KolorWheel(base.hex())
     .rel(ranges.h, 0, 0)
     .rel(0, ranges.s, 0)
@@ -65,11 +63,9 @@ const GeneratePalette = (counts = { h: 3, s: 3, l: 5 }, deltas = { h: 360, s: 10
 };
 
 async function main(...args) {
-  await ConsoleSetup({ depth: 10 });
   let colors, keys;
-  filesystem = await PortableFileSystem();
 
-  let params = Util.getOpt(
+  let params = getOpt(
     {
       output: [true, null, 'o'],
       '@': 'input,'
@@ -98,7 +94,7 @@ async function main(...args) {
     let json = JSON.stringify(xml, null, '  ');
     let st;
     let { rdev, ino, mtime, atime } = (st = filesystem.stat(filename));
-    console.log('stat:', Util.inspect(st), Object.keys(st));
+    console.log('stat:', inspect(st), Object.keys(st));
     //prng = new Alea().seed((ino * 256 + rdev) ^ mtime.valueOf());
 
     console.log('prng.uint32():', prng.uint32());
@@ -200,7 +196,7 @@ async function main(...args) {
       for(let [path, color] of pal) {
         color = typeof color == 'function' ? color() : color;
         //  color = color && color.toRGBA ? color.toRGBA() : color;
-        // console.log('UpdatePalette:', newObj, path, Util.inspect(color, { multiline: false }));
+        // console.log('UpdatePalette:', newObj, path, inspect(color, { multiline: false }));
         let key = path.last;
         let parent = deep.get(xmlData, path.up());
         let oldValue = parent[key];
@@ -226,11 +222,11 @@ async function main(...args) {
         //if(seed) rng.mash(...seed);
         const keys = [...palette.keys()];
         let values = keys.reduce((acc, key) => [...acc, palette.get(key)], []);
-        values = Util.shuffle(values, rng);
+        values = shuffle(values, rng);
         keys.forEach((key, i) => palette.set(key, values[i]));
       },
       remap(channel, start, end) {
-        return palette.remapChannel(channel, Util.remap(mm[channel], start, end));
+        return palette.remapChannel(channel, remap(mm[channel], start, end));
       },
       set(...args) {
         let colors = '#' + args.join(',');
@@ -259,35 +255,35 @@ async function main(...args) {
         }
       },
       grayscale(amount = 1.0) {
-        return palette.remapChannel('s', s => Util.clamp(0, 100, 100 - (100 - s) * amount));
+        return palette.remapChannel('s', s => clamp(0, 100, 100 - (100 - s) * amount));
       },
       normalize() {
         return this.remap('l', 50, 75);
       },
       huerotate(by) {
-        return palette.remapChannel('h', v => Util.mod(v + by, 360));
+        return palette.remapChannel('h', v => mod(v + by, 360));
       },
       lighten(by) {
-        return palette.remapChannel('l', l => Util.clamp(0, 100, l + by));
+        return palette.remapChannel('l', l => clamp(0, 100, l + by));
       },
       brighter(by) {
-        return palette.remapChannel('l', l => Util.clamp(0, 100, 100 - (100 - l) * by));
+        return palette.remapChannel('l', l => clamp(0, 100, 100 - (100 - l) * by));
       },
       darker(by) {
-        return palette.remapChannel('l', l => Util.clamp(0, 100, l * by));
+        return palette.remapChannel('l', l => clamp(0, 100, l * by));
       },
       desaturate(by) {
-        return palette.remapChannel('s', s => Util.clamp(0, 100, s - s * by));
+        return palette.remapChannel('s', s => clamp(0, 100, s - s * by));
       },
       saturate(by) {
-        return palette.remapChannel('s', s => Util.clamp(0, 100, 100 - (100 - s) * by));
+        return palette.remapChannel('s', s => clamp(0, 100, 100 - (100 - s) * by));
       },
       generate(...seed) {
         let rng = prng.clone();
         if(seed) rng.mash(...seed);
         let i = 0;
         let sz = 1 << Math.ceil(Math.log2(palette.size));
-        let gcd = [3, 4, 6, 8, 12, 16, 32].map(n => Util.greatestCommonDenominator(sz, n));
+        let gcd = [3, 4, 6, 8, 12, 16, 32].map(n => greatestCommonDenominator(sz, n));
         let numHues = 8;
         let step = Math.ceil(Math.pow(sz, 1 / 2) / 1.85);
         console.log('sz:', sz);
@@ -316,7 +312,7 @@ async function main(...args) {
             .flat();
           if(/(background)/i.test(key)) continue;
           prng();
-          color = Util.draw(newPal, 1, rng);
+          color = draw(newPal, 1, rng);
           if(false)
             if(true || !color) {
               let hues = [hashes[0][0] - 0.4, hashes[0][0] + 0.4];
@@ -335,7 +331,7 @@ async function main(...args) {
           const rgba = color.toRGBA();
           const hex = rgba.hex();
           palette.set(path, color);
-          palette.remapChannel('l', Util.remap(mm.l, [50, 75]));
+          palette.remapChannel('l', remap(mm.l, [50, 75]));
         }
         return palette;
       },
@@ -361,7 +357,7 @@ async function main(...args) {
         const getHSLA = idx_or_hex => colors[typeof idx_or_hex == 'string' ? hex2idx[idx_or_hex] : idx_or_hex] || palette.get(idx2path[idx_or_hex]);
         console.log('changed ', [...changed].join(', '));
         colors = [...palette.entries()].map(([path, color], idx) => color);
-        /* prettier-ignore */ console.log('colors = ', Util.inspect(colors.map((c) => [...c]), { multiline: false, colors: false }));
+        /* prettier-ignore */ console.log('colors = ', inspect(colors.map((c) => [...c]), { multiline: false, colors: false }));
         // let idx2hex = colors.map( (color,i) =>  color.hex());
         hex2idx = Object.fromEntries(colors.map((color, i) => [color.hex(), i]));
         console.log(`hex2idx`, hex2idx);
@@ -369,7 +365,7 @@ async function main(...args) {
         idx2hue = colors.map((color, i) => color.h);
         console.log(`idx2hue`, idx2hue);
         /* prettier-ignore */ const getIds4Hue = (hue) => idx2hue.map((h, i) => [i, h]) .filter(([i, h]) => h == hue).map(([i, h]) => i);
-        /* prettier-ignore */ let hues = Util.histogram(colors, (v, i) => [v.h, v], new Map(), () => new Set(), (v, i) => [v.h, i]);
+        /* prettier-ignore */ let hues = histogram(colors, (v, i) => [v.h, v], new Map(), () => new Set(), (v, i) => [v.h, i]);
         // console.log(`hues`, hues);
 
         let hueIds = [...hues.entries()]
@@ -386,13 +382,13 @@ async function main(...args) {
           .reduce((acc, [idx, hue, ids = getIds4Hue(hue)]) => [...acc, [idx, hue, ids.split(',').map(p => +p)]], []);
         //console.log(`hueData`, hueData);
 
-        //console.log(`zhistogram`, Util.histogram(colors, (c, i) => [c.h, i], new Map(), () => new Set(), i => [colors[i].h, i] ) ); //new Map(Object.entries(idx2hue).map(([idx,hue]) => [+idx,+hue])));
+        //console.log(`zhistogram`, histogram(colors, (c, i) => [c.h, i], new Map(), () => new Set(), i => [colors[i].h, i] ) ); //new Map(Object.entries(idx2hue).map(([idx,hue]) => [+idx,+hue])));
         console.log(`hueCounts`, hueCounts);
 
         const removeHues = hueCounts.filter(([idx, count]) => count < 2);
         console.log(`removeHues`, removeHues);
         const removeIds = removeHues.map(([idx]) => idx).sort((a, b) => b - a);
-        console.log(`removeIds.reverse()`, /*Util.histogram*/ [...removeIds].reverse());
+        console.log(`removeIds.reverse()`, /*histogram*/ [...removeIds].reverse());
 
         //console.log(`removeIds`, removeIds);
         const colorsRGBA = [...palette.entries()].map(([path, c], i) => [i, c.toRGBA()]); //[...palette.entries()].map(([path,c], i) => [i, c.toRGBA()]).filter(([i, c]) => removeIds.indexOf(i) == -1);
@@ -415,7 +411,7 @@ async function main(...args) {
 
             if(isObject(r) && r.index !== undefined) {
               const { value, index, distance } = r;
-              // console.log('i=', i, 'r', Util.inspect({ value, index, distance }, { multiline: false }));
+              // console.log('i=', i, 'r', inspect({ value, index, distance }, { multiline: false }));
 
               const nearColor = getHSLA(index) || idx2hsla[index];
               let [removedColor] = colors.splice(i, 1, nearColor);
@@ -423,7 +419,7 @@ async function main(...args) {
               deep.set(newObj, path, newColor);
               let [fromColor, toColor] = [removedColor.hex(), newColor].map(c => new RGBA(c).toHSLA());
 
-              console.info(`changed #${i}`, fromColor, ` -> #${index} `, toColor, ` Δ ${Util.roundTo(distance, 0.1, 2)}`);
+              console.info(`changed #${i}`, fromColor, ` -> #${index} `, toColor, ` Δ ${roundTo(distance, 0.1, 2)}`);
               return removedColor;
             }
           });
@@ -443,7 +439,7 @@ async function main(...args) {
     cmds.forEach(cmd => {
       cmd = cmd.map(p => (/^.?time?$/i.test(p) ? +mtime : /^now$/i.test(p) ? Date.now() : /^p?r?a?n[dg]o?m?$/i.test(p) ? prng.uint32() : p));
       console.log('Command ', cmd);
-      //  Util.putStack();
+      //  putStack();
       let ret = handlers[cmd[0]](...cmd.slice(1));
 
       if(ret) palette = ret;
@@ -453,7 +449,7 @@ async function main(...args) {
     });
 
     // Change UUID
-    const mkuuid = () => [8, 4, 4, 4, 12].map(n => Util.randStr(n, '0123456789abcdef')).join('-');
+    const mkuuid = () => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef')).join('-');
 
     const change = (key, value) => {
       let ptr = new Path(deep.find(newObj, (v, p) => v.children && v.children[0] == key)?.path);
@@ -471,9 +467,9 @@ async function main(...args) {
     outfile = outfile || basename + '.xml';
     filesystem.writeFile(outfile, toXML(newObj));
   } catch(err) {
-    let st = Util.stack(err.stack);
-    // console.log(err.message, '\n', st.toString()); //st.map(f =>  Util.inspect(f)));
+    let st = stack(err.stack);
+    // console.log(err.message, '\n', st.toString()); //st.map(f =>  inspect(f)));
     throw err;
   }
 }
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));
