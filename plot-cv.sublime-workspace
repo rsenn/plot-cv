@@ -1,1 +1,1055 @@
-{}
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+		{
+			"contents": "  parseSVGPath(s)\n  parseValues = args =>\n   (_, c, args) =>\n  splitPath(ps)\n  pathToAbsolute(path)\n  pathToPoints(path)\n  isUpper = s =>\nMakePoint = (x, y) =>\n  n =>\n  pointsToAbsolute(it)\n  isUpper = s =>\n  save(filename)\nNumericArgs(s, t = a => a)\n  deref = p => obj =>\n(o, k) =>\nParentPaths(p)\nCumulativePaths(p)\nAllParents(elem)\nAllTransforms(elem, getter = getTransformationMatrix)\nElementTransformList(elem)\nElementTransformMatrix(elem)\nGetXY(elem)\nGetPoints(elem)\n  p =>\n  c =>\n  a =>\n([x, y]) =>\nGetTransformedPoints(elem)\nGetMatrix(elem)\nIsClipPath(elem)\n  e =>\n  e =>\nHasClipPath(elem)\n  e =>\nPositionedElements(svgElem = svg, skip)\n() =>\n   (v, p) =>\n   e =>\n  n =>\nHasParent(elem, other)\nGetBounds(svgElem = svg)\nProcessPath(d)\n  unitConvToMM(value)\n  pc: mm =>\n  px: mm =>\n  pt: mm =>\n  in: mm =>\n  mil: mm =>\n  cm: mm =>\n  mm: mm =>\n  m: mm =>\n  unitConv(unit)\n   value =>\n  unitConvTo(value, unit)\n  getViewBox(svgElem = svg)\nXML2String(elem)\n  getWidthHeight(svgElem = svg, t = a => a)\n  getTransformationList(e)\n  getTransformationMatrix(e)\n  main(...args)\n   (_x, _y, opts) =>\n   () =>\n   a =>\n   a =>\n   a =>\n  print = (file, ...args) =>\n  print = (file, ...args) =>\n  n =>\n  u =>\n(a, i) =>",
+			"settings":
+			{
+				"buffer_size": 1210,
+				"line_ending": "Unix",
+				"name": "𝌆 Outline",
+				"scratch": true
+			},
+			"undo_stack":
+			[
+				[
+					1,
+					2,
+					"outline_refresh",
+					{
+						"path": "/home/janos/Projects/plot-cv/svg-crop-pad.js",
+						"symkeys":
+						[
+							[
+								1504,
+								1528
+							],
+							[
+								1748,
+								1769
+							],
+							[
+								1995,
+								2011
+							],
+							[
+								2565,
+								2587
+							],
+							[
+								2886,
+								2916
+							],
+							[
+								3076,
+								3103
+							],
+							[
+								3240,
+								3254
+							],
+							[
+								3360,
+								3381
+							],
+							[
+								3813,
+								3817
+							],
+							[
+								3977,
+								4007
+							],
+							[
+								4059,
+								4073
+							],
+							[
+								5097,
+								5111
+							],
+							[
+								5362,
+								5398
+							],
+							[
+								5509,
+								5528
+							],
+							[
+								5538,
+								5547
+							],
+							[
+								5561,
+								5585
+							],
+							[
+								5671,
+								5699
+							],
+							[
+								5789,
+								5815
+							],
+							[
+								5975,
+								6037
+							],
+							[
+								6212,
+								6247
+							],
+							[
+								6339,
+								6376
+							],
+							[
+								6457,
+								6477
+							],
+							[
+								6553,
+								6577
+							],
+							[
+								6919,
+								6923
+							],
+							[
+								7382,
+								7386
+							],
+							[
+								7411,
+								7415
+							],
+							[
+								7480,
+								7491
+							],
+							[
+								7696,
+								7731
+							],
+							[
+								7873,
+								7897
+							],
+							[
+								7953,
+								7978
+							],
+							[
+								8057,
+								8061
+							],
+							[
+								8095,
+								8099
+							],
+							[
+								8129,
+								8155
+							],
+							[
+								8214,
+								8218
+							],
+							[
+								8252,
+								8301
+							],
+							[
+								8316,
+								8321
+							],
+							[
+								8449,
+								8459
+							],
+							[
+								8572,
+								8577
+							],
+							[
+								8599,
+								8603
+							],
+							[
+								8860,
+								8891
+							],
+							[
+								9180,
+								9213
+							],
+							[
+								9613,
+								9637
+							],
+							[
+								9992,
+								10020
+							],
+							[
+								10636,
+								10645
+							],
+							[
+								10662,
+								10671
+							],
+							[
+								10703,
+								10712
+							],
+							[
+								10731,
+								10740
+							],
+							[
+								10754,
+								10764
+							],
+							[
+								10780,
+								10789
+							],
+							[
+								10803,
+								10812
+							],
+							[
+								10819,
+								10827
+							],
+							[
+								10842,
+								10865
+							],
+							[
+								10876,
+								10885
+							],
+							[
+								10930,
+								10962
+							],
+							[
+								11040,
+								11074
+							],
+							[
+								11270,
+								11295
+							],
+							[
+								11352,
+								11402
+							],
+							[
+								11672,
+								11705
+							],
+							[
+								11805,
+								11840
+							],
+							[
+								11917,
+								11939
+							],
+							[
+								12559,
+								12577
+							],
+							[
+								12620,
+								12626
+							],
+							[
+								12660,
+								12665
+							],
+							[
+								12707,
+								12712
+							],
+							[
+								12829,
+								12834
+							],
+							[
+								13129,
+								13155
+							],
+							[
+								13256,
+								13282
+							],
+							[
+								14588,
+								14592
+							],
+							[
+								14778,
+								14782
+							],
+							[
+								14870,
+								14879
+							]
+						],
+						"symlist":
+						[
+							"function parseSVGPath(s)",
+							"parseValues = args =>",
+							" (_, c, args) =>",
+							"function splitPath(ps)",
+							"function* pathToAbsolute(path)",
+							"function pathToPoints(path)",
+							"isUpper = s =>",
+							"MakePoint = (x, y) =>",
+							"n =>",
+							"function* pointsToAbsolute(it)",
+							"isUpper = s =>",
+							"save(filename)",
+							"function* NumericArgs(s, t = a => a)",
+							"deref = p => obj =>",
+							"(o, k) =>",
+							"function* ParentPaths(p)",
+							"function* CumulativePaths(p)",
+							"function* AllParents(elem)",
+							"function AllTransforms(elem, getter = getTransformationMatrix)",
+							"function ElementTransformList(elem)",
+							"function ElementTransformMatrix(elem)",
+							"function GetXY(elem)",
+							"function GetPoints(elem)",
+							"p =>",
+							"c =>",
+							"a =>",
+							"([x, y]) =>",
+							"function GetTransformedPoints(elem)",
+							"function GetMatrix(elem)",
+							"function IsClipPath(elem)",
+							"e =>",
+							"e =>",
+							"function HasClipPath(elem)",
+							"e =>",
+							"function* PositionedElements(svgElem = svg, skip)",
+							"() =>",
+							" (v, p) =>",
+							" e =>",
+							"n =>",
+							"function HasParent(elem, other)",
+							"function GetBounds(svgElem = svg)",
+							"function* ProcessPath(d)",
+							"function unitConvToMM(value)",
+							"pc: mm =>",
+							"px: mm =>",
+							"pt: mm =>",
+							"in: mm =>",
+							"mil: mm =>",
+							"cm: mm =>",
+							"mm: mm =>",
+							"m: mm =>",
+							"function unitConv(unit)",
+							" value =>",
+							"function unitConvTo(value, unit)",
+							"function getViewBox(svgElem = svg)",
+							"function XML2String(elem)",
+							"function getWidthHeight(svgElem = svg, t = a => a)",
+							"function getTransformationList(e)",
+							"function getTransformationMatrix(e)",
+							"function main(...args)",
+							" (_x, _y, opts) =>",
+							" () =>",
+							" a =>",
+							" a =>",
+							" a =>",
+							"print = (file, ...args) =>",
+							"print = (file, ...args) =>",
+							"n =>",
+							"u =>",
+							"(a, i) =>"
+						]
+					},
+					"AwAAAAAAAAAAAAAAugQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALoEAAAgIHBhcnNlU1ZHUGF0aChzKQogIHBhcnNlVmFsdWVzID0gYXJncyA9PgogICAoXywgYywgYXJncykgPT4KICBzcGxpdFBhdGgocHMpCiAgcGF0aFRvQWJzb2x1dGUocGF0aCkKICBwYXRoVG9Qb2ludHMocGF0aCkKICBpc1VwcGVyID0gcyA9PgpNYWtlUG9pbnQgPSAoeCwgeSkgPT4KICBuID0+CiAgcG9pbnRzVG9BYnNvbHV0ZShpdCkKICBpc1VwcGVyID0gcyA9PgogIHNhdmUoZmlsZW5hbWUpCk51bWVyaWNBcmdzKHMsIHQgPSBhID0+IGEpCiAgZGVyZWYgPSBwID0+IG9iaiA9PgoobywgaykgPT4KUGFyZW50UGF0aHMocCkKQ3VtdWxhdGl2ZVBhdGhzKHApCkFsbFBhcmVudHMoZWxlbSkKQWxsVHJhbnNmb3JtcyhlbGVtLCBnZXR0ZXIgPSBnZXRUcmFuc2Zvcm1hdGlvbk1hdHJpeCkKRWxlbWVudFRyYW5zZm9ybUxpc3QoZWxlbSkKRWxlbWVudFRyYW5zZm9ybU1hdHJpeChlbGVtKQpHZXRYWShlbGVtKQpHZXRQb2ludHMoZWxlbSkKICBwID0+CiAgYyA9PgogIGEgPT4KKFt4LCB5XSkgPT4KR2V0VHJhbnNmb3JtZWRQb2ludHMoZWxlbSkKR2V0TWF0cml4KGVsZW0pCklzQ2xpcFBhdGgoZWxlbSkKICBlID0+CiAgZSA9PgpIYXNDbGlwUGF0aChlbGVtKQogIGUgPT4KUG9zaXRpb25lZEVsZW1lbnRzKHN2Z0VsZW0gPSBzdmcsIHNraXApCigpID0+CiAgICh2LCBwKSA9PgogICBlID0+CiAgbiA9PgpIYXNQYXJlbnQoZWxlbSwgb3RoZXIpCkdldEJvdW5kcyhzdmdFbGVtID0gc3ZnKQpQcm9jZXNzUGF0aChkKQogIHVuaXRDb252VG9NTSh2YWx1ZSkKICBwYzogbW0gPT4KICBweDogbW0gPT4KICBwdDogbW0gPT4KICBpbjogbW0gPT4KICBtaWw6IG1tID0+CiAgY206IG1tID0+CiAgbW06IG1tID0+CiAgbTogbW0gPT4KICB1bml0Q29udih1bml0KQogICB2YWx1ZSA9PgogIHVuaXRDb252VG8odmFsdWUsIHVuaXQpCiAgZ2V0Vmlld0JveChzdmdFbGVtID0gc3ZnKQpYTUwyU3RyaW5nKGVsZW0pCiAgZ2V0V2lkdGhIZWlnaHQoc3ZnRWxlbSA9IHN2ZywgdCA9IGEgPT4gYSkKICBnZXRUcmFuc2Zvcm1hdGlvbkxpc3QoZSkKICBnZXRUcmFuc2Zvcm1hdGlvbk1hdHJpeChlKQogIG1haW4oLi4uYXJncykKICAgKF94LCBfeSwgb3B0cykgPT4KICAgKCkgPT4KICAgYSA9PgogICBhID0+CiAgIGEgPT4KICBwcmludCA9IChmaWxlLCAuLi5hcmdzKSA9PgogIHByaW50ID0gKGZpbGUsIC4uLmFyZ3MpID0+CiAgbiA9PgogIHUgPT4KKGEsIGkpID0+AAAAAAAAAAC6BAAAAAAAAAAAAAA",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8"
+				]
+			]
+		},
+		{
+			"contents": "ushd #!/usr/bin/env qjsm\nimport { Console } from 'console';\nimport { kill, SIGUSR1 } from 'os';\nimport { getOpt, showHelp, isObject, mapWrapper, startInteractive, define, roundTo } from 'util';\nimport { basename, extname } from 'path';\nimport { Entities, nodeTypes, Prototypes, Factory, Parser, Serializer, Interface, Node, NodeList, NamedNodeMap, Element, Document, Attr, Text, Comment, TokenList, CSSStyleDeclaration, GetType } from './quickjs/qjs-modules/lib/dom.js';\n//import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';\nimport { BBox, isBBox } from './lib/geom/bbox.js';\nimport { Size, isSize } from './lib/geom/size.js';\nimport { TreeIterator } from 'tree_walker';\nimport { WriteFile } from './io-helpers.js';\nimport { Matrix, isMatrix, ImmutableMatrix } from './lib/geom/matrix.js';\nimport { Transformation, ImmutableTransformation, Rotation, ImmutableRotation, Translation, ImmutableTranslation, Scaling, ImmutableScaling, MatrixTransformation, ImmutableMatrixTransformation, TransformationList, ImmutableTransformationList } from './lib/geom/transformation.js';\nimport { Point } from './lib/geom/point.js';\nimport { PointList } from './lib/geom/pointList.js';\nimport { SvgPath } from './lib/svg/path.js';\nimport extendGenerator from 'extendGenerator';\nimport extendArray from 'extendArray';\nimport { read as readXML, write as writeXML } from 'xml';\nimport * as deep from 'deep';\n\nextendGenerator();\nextendArray();\n\nfunction parseSVGPath(s) {\n  let { length, segment } = {\n    length: { a: 7, c: 6, h: 1, l: 2, m: 2, q: 4, s: 4, t: 2, v: 1, z: 0 },\n    segment: /([astvzqmhlc])([^astvzqmhlc]*)/gi\n  };\n\n  const n = /-?[0-9]*\\.?[0-9]+(?:e[-+]?\\d+)?/gi;\n  const parseValues = args => {\n    let nm = args.match(n);\n    return nm ? nm.map(Number) : [];\n  };\n  let r = new SvgPath();\n\n  if(typeof s != 'string' && isObject(s) && typeof s.getAttribute == 'function') s = s.getAttribute('d');\n\n  s.replace(segment, (_, c, args) => {\n    let t = c.toLowerCase();\n    args = parseValues(args);\n    //overloaded moveTo\n    if(t == 'm' && args.length > 2) {\n      r.cmd(...[c].concat(args.splice(0, 2)));\n      t = 'l';\n      c = c == 'm' ? 'l' : 'L';\n    }\n    while(true) {\n      if(args.length == length[t]) {\n        args.unshift(c);\n        r.cmd(...args);\n        return;\n      }\n      if(args.length < length[t]) throw new Error(`malformed path data (${args.length} < ${length[t]}): ${c} ${args}`);\n      r.cmd(...[c].concat(args.splice(0, length[t])));\n    }\n  });\n  return r;\n}\n\nfunction splitPath(ps) {\n  let i = 0,\n    cmds = [];\n  for(let [m] of ps.matchAll(/([a-zA-Z]|-?[0-9]*(?:\\.[0-9]+|))/g)) {\n    if(m === '') continue;\n    if(!isNaN(+m)) m = +m;\n    else if(i == 0) m = m.toUpperCase();\n    if(typeof m == 'string') cmds.push([m]);\n    else cmds.last.push(m);\n    ++i;\n  }\n  return cmds;\n}\n\nfunction* pathToAbsolute(path) {\n  let prev = [0, 0];\n  for(let [cmd, x, y] of splitPath(path)) {\n    yield [cmd, x + prev[0], y + prev[1]];\n\n    prev = [x ?? prev[0], y ?? prev[1]];\n  }\n}\n\nfunction pathToPoints(path) {\n  let result = [],\n    splitted = splitPath(path);\n  let { length } = splitted;\n  let lastmove;\n  let prev = new Point(0, 0);\n  const isUpper = s => s.toUpperCase() == s;\n  for(let i = 0; i < length; i++) {\n    let pt,\n      cmd = splitted[i];\n    const MakePoint = (x, y) => Object.assign(new Point(x, y), { cmd });\n\n    switch (cmd[0].toLowerCase()) {\n      case 'z':\n        pt = MakePoint(+lastmove[1], +lastmove[2]);\n        break;\n      case 'v':\n        pt = MakePoint(0, +cmd[1]);\n        break;\n      case 'h':\n        pt = MakePoint(+cmd[1], 0);\n        break;\n      case 'z':\n        pt = MakePoint(undefined, undefined);\n        break;\n      default:\n        pt = MakePoint(...cmd.slice(-2).map(n => +n));\n        if(cmd[0].toLowerCase() == 'm') lastmove = [...pt];\n        break;\n    }\n\n    define(pt, { cmd });\n\n    result.push(pt);\n  }\n  return result;\n}\n\nfunction* pointsToAbsolute(it) {\n  let prev = new Point(0, 0),\n    i = 0;\n  const isUpper = s => s.toUpperCase() == s;\n\n  for(let pt of it) {\n    let p = isUpper(pt.cmd[0]) ? pt.clone() : pt.sum(prev);\n    p.round();\n    p.cmd = pt.cmd;\n    yield (prev = p);\n  }\n}\n\nObject.assign(globalThis, {\n  Entities,\n  nodeTypes,\n  Prototypes,\n  Factory,\n  Parser,\n  Serializer,\n  Interface,\n  Node,\n  NodeList,\n  NamedNodeMap,\n  Element,\n  Document,\n  Attr,\n  Text,\n  Comment,\n  TokenList,\n  CSSStyleDeclaration,\n  GetType\n});\nObject.assign(globalThis, {\n  TreeIterator,\n  BBox,\n  isBBox,\n  Size,\n  isSize,\n  Matrix,\n  Point,\n  PointList,\n  parseSVGPath,\n  splitPath,\n  pathToPoints,\n  pointsToAbsolute,\n  NumericArgs,\n  ParentPaths,\n  CumulativePaths,\n  AllParents,\n  getTransformationMatrix,\n  getTransformationList,\n  AllTransforms,\n  ElementTransformMatrix,\n  ElementTransformList,\n  GetXY,\n  GetPoints,\n  GetMatrix,\n  GetTransformedPoints,\n  PositionedElements,\n  HasParent,\n  GetBounds,\n  ProcessPath,\n  unitConvToMM,\n  unitConv,\n  unitConvTo,\n  getViewBox,\n  getWidthHeight,\n  XML2String\n});\n\nObject.assign(globalThis, {\n  save(filename) {\n    filename ??= basename(globalThis.file, extname(globalThis.file)) + '.out.svg';\n    const str = serializer.serializeToString(document);\n\n    let ret = WriteFile(filename, str);\n    console.log(`'${filename}' written.`);\n    return ret;\n  }\n});\n\nfunction* NumericArgs(s, t = a => a) {\n  for(let [m] of s.matchAll(/(\\s+|[-+.0-9]+|[^-+.0-9\\s]+)[a-z]*/g)) if(m.trim() != '') yield t(m);\n}\n\nconst deref = p => obj => p.reduce((o, k) => o[k], obj);\n\nfunction* ParentPaths(p) {\n  let plen = p.length;\n  for(let i = 2; i <= plen; i += 2) yield p.slice(0, i);\n}\n\nfunction* CumulativePaths(p) {\n  let plen = p.length;\n  for(let i = 2; i <= plen; i += 2) yield p.slice(i - 2, i);\n}\n\nfunction* AllParents(elem) {\n  let obj = Node.document(elem);\n  for(let p of CumulativePaths(Node.path(elem))) {\n    if(obj.tagName[0] != '?') yield obj;\n    obj = deref(p)(obj);\n  }\n}\n\nfunction AllTransforms(elem, getter = getTransformationMatrix) {\n  let t = [];\n  for(let e of AllParents(elem)) if(e.hasAttribute('transform')) t.push(getter(e));\n  if(elem.hasAttribute('transform')) t.push(getter(elem));\n  return t;\n}\n\nfunction ElementTransformList(elem) {\n  return new TransformationList().concat(...AllTransforms(e, getTransformationList));\n}\n\nfunction ElementTransformMatrix(elem) {\n  return Matrix.multiply(...AllTransforms(elem, getTransformationMatrix));\n}\n\nfunction GetXY(elem) {\n  return new Point(+elem.getAttribute('x'), +elem.getAttribute('y'));\n}\n\nfunction GetPoints(elem) {\n  let t = [];\n\n  if(elem.tagName == 'symbol') return GetPoints(elem.firstElementChild);\n\n  if(elem.hasAttribute('xlink:href')) {\n    let e, points, xy, m, id;\n    id = elem.getAttribute('xlink:href');\n    xy = GetXY(elem);\n    m = new Matrix().translate(...xy);\n\n    if((e = Node.document(elem).querySelector(id))) return GetPoints(e).map(p => p.transform(m));\n  }\n\n  if(elem.hasAttribute('d')) {\n    try {\n      let pp = pathToPoints(elem.getAttribute('d'));\n      return pp;\n      /*      let pa = Object.setPrototypeOf(pp, PointList.prototype);\n\n      pa.points = pp;\n\n      return pa;*/\n    } catch(e) {\n      console.log('ERROR', e.message + '\\n' + e.stack);\n      return null;\n    }\n\n    let svgP = parseSVGPath(elem.getAttribute('d'));\n    return new PointList(\n      svgP.commands\n        .map(c => c.args)\n        .filter(a => a.length >= 2 && (!isNaN(+a[0]) || !isNaN(+a[1])))\n        .map(([x, y]) => new Point(x, y))\n    );\n  }\n  if(elem.hasAttribute('x') && elem.hasAttribute('y')) return new PointList([GetXY(elem)]);\n\n  throw new Error(`Failed getting point data for element ${XML2String(elem)}`);\n}\n\nfunction GetTransformedPoints(elem) {\n  let matrix = ElementTransformMatrix(elem);\n  let points = new PointList(GetPoints(elem));\n\n  return points.clone().transform(matrix);\n}\n\nfunction GetMatrix(elem) {\n  return Matrix.multiply(...AllTransforms(elem));\n}\n\nfunction IsClipPath(elem) {\n  let p = [...AllParents(elem)];\n  console.log(\n    'IsClipPath',\n    p.map(e => e.tagName)\n  );\n\n  return p.some(e => e.tagName == 'clipPath');\n}\n\nfunction HasClipPath(elem) {\n  let p = [...AllParents(elem), elem];\n\n  return p.some(e => e.hasAttribute('clip-path'));\n}\n\nfunction* PositionedElements(svgElem = svg, skip) {\n  skip ??= (() => {\n    let defs = svgElem.querySelector('defs');\n    let defsPath = Node.path(defs).slice(Node.path(svgElem).length);\n    return (v, p) => p.slice(0, defsPath.length).equal(defsPath);\n  })();\n\n  for(let [value, path] of deep.iterate(Node.raw(svgElem), e => ['d', 'x', 'y'].some(n => n in e.attributes))) {\n    if(skip(value, path)) continue;\n    let elem = deref(path)(svgElem);\n\n    /* skip them for now */\n    if(HasClipPath(elem)) {\n      //console.log('PositionedElements skipping', elem);\n      continue;\n    }\n    yield elem;\n  }\n}\n\nfunction HasParent(elem, other) {\n  let e = Node.path(elem);\n  let o = Node.path(other);\n\n  for(let i = 0; i < o.length; i++) {\n    if(o[i] != e[i]) return false;\n  }\n  return true;\n}\n\nlet positioned = (globalThis.positioned = new Set());\nlet positionedProps = (globalThis.positionedProps = mapWrapper(new WeakMap()));\n\nfunction GetBounds(svgElem = svg) {\n  let bb = new BBox();\n\n  for(let element of PositionedElements(svgElem)) {\n    /*let matrix = GetMatrix(element);\n    let points = GetPoints(element);\n\n    positioned.add(element);\n    positionedProps.set(element, { matrix, points });\n\n    for(let point of points.clone().transform(matrix))*/\n    for(let point of GetTransformedPoints(element)) bb.update(point, 0, element);\n  }\n\n  return bb;\n}\n\nfunction* ProcessPath(d) {\n  let c,\n    i = 0,\n    a = [];\n  for(let [m] of d.matchAll(/(\\s+|[-+.0-9]+|[^-+.0-9\\s]+)/g)) {\n    if(m.trim() == '') continue;\n    const n = +m;\n    if(isNaN(n)) {\n      c = m;\n      i = 0;\n      a = [];\n      continue;\n    }\n    if(c.toLowerCase() == 'v') i = 1;\n    i &= 1;\n    a[i] = n;\n    if(++i >= 2 || 'VvHh'.indexOf(c) != -1) yield a;\n  }\n}\n\nfunction unitConvToMM(value) {\n  if(/pt\\s*$/i.test(value)) return (+value.replace(/\\s*pt\\s*$/gi, '') * 3) / 8.5;\n  if(/pc\\s*$/i.test(value)) return +value.replace(/\\s*pc\\s*$/gi, '') * 4.23333;\n  if(/in\\s*$/i.test(value)) return +value.replace(/\\s*in\\s*$/gi, '') * 25.4;\n  if(/mil\\s*$/i.test(value)) return +value.replace(/\\s*mil\\s*$/gi, '') * 0.0254;\n  if(/cm\\s*$/i.test(value)) return +value.replace(/\\s*cm\\s*$/gi, '') * 10;\n  if(/mm\\s*$/i.test(value)) return +value.replace(/\\s*mm\\s*$/gi, '');\n  if(/px\\s*$/i.test(value) || !isNaN(+value)) return +(value + '').replace(/\\s*px\\s*$/gi, '') / 3.77952755953127906261;\n}\n\nconst MillimeterTo = {\n  pc: mm => mm * 0.23622,\n  px: mm => mm * 3.77952755953127906261,\n  pt: mm => (mm * 8.5) / 3,\n  in: mm => mm / 25.4,\n  mil: mm => mm / 0.0254,\n  cm: mm => mm * 1e-1,\n  mm: mm => mm,\n  m: mm => mm * 1e-3\n};\n\nfunction unitConv(unit) {\n  return value => MillimeterTo[unit](unitConvToMM(value));\n}\n\nfunction unitConvTo(value, unit) {\n  let mm = unitConvToMM(value);\n  return MillimeterTo[unit](mm) + unit;\n}\n\nfunction getViewBox(svgElem = svg) {\n  if(svgElem.hasAttribute('viewBox')) {\n    let viewBox = svgElem.getAttribute('viewBox');\n    return BBox.fromSVG(viewBox + '');\n  }\n\n  //return new BBox(0, 0, ...getWidthHeight(svgElem));\n}\n\nfunction XML2String(elem) {\n  return new Serializer().serializeToString(elem);\n}\n\nfunction getWidthHeight(svgElem = svg, t = a => a) {\n  if(svgElem.hasAttribute('width') && svgElem.hasAttribute('height')) {\n    let width = svgElem.getAttribute('width');\n    let height = svgElem.getAttribute('height');\n\n    return new Size(t(width), t(height));\n  }\n\n  return new Size(...getViewBox(svgElem).size);\n}\n\nfunction getTransformationList(e) {\n  if(e.hasAttribute('transform')) return new TransformationList(e.getAttribute('transform'));\n}\n\nfunction getTransformationMatrix(e) {\n  let tl;\n\n  if((tl = getTransformationList(e))) return tl.toMatrix();\n}\n\nfunction main(...args) {\n  let debug = 0;\n  let unit = 'mm';\n  let precision = 1e-3;\n  let size = 0;\n  let padding = 0;\n\n  Object.assign(globalThis, {\n    NumericArgs,\n    ProcessPath,\n    unitConvToMM,\n    unitConvTo,\n    MillimeterTo,\n    getViewBox,\n    getWidthHeight,\n    getTransformationMatrix,\n    Transformation,\n    Rotation,\n    Translation,\n    Scaling,\n    MatrixTransformation,\n    TransformationList,\n    deref\n  });\n\n  //  globalThis.console = new Console(std.err, { depth: 2, customInspect: false, compact: false, protoChain: true });\n\n  let opts;\n  let params = (globalThis.params = getOpt(\n    (opts = {\n      help: [false, (_x, _y, opts) => showHelp(opts), 'h'],\n      debug: [false, () => ++debug, 'x'],\n      unit: [true, a => (unit = a), 'u'],\n      precision: [true, a => (precision = +a), 'a'],\n      'print-size': [false, null, 'P'],\n      bounds: [false, null, 'b'],\n      size: [true, a => (size = unitConvToMM(a)), 's'],\n      interactive: [false, null, 'y'],\n      padding: [true, null, 'p'],\n      '@': 'files'\n    }),\n    args\n  ));\n  let files = params['@'];\n  let parser = (globalThis.parser = new Parser());\n  let serializer = (globalThis.serializer = new Serializer());\n  let print = (file, ...args) => std.puts(args.join(' ') + '\\n');\n\n  if(files.length == 0) showHelp(opts, 1);\n  if(files.length > 1) print = (file, ...args) => std.puts(file + ': ' + args.join(' ') + '\\n');\n\n  for(let file of files) {\n    if(params.debug >= 1) console.log('Processing:', file);\n\n    let xml, svg;\n\n    try {\n      xml = globalThis.document = parser.parseFromFile((globalThis.file = file), 'utf-8');\n\n      // console.log('xml', console.config({ customInspect: false }), xml);\n      svg = globalThis.svg = xml.querySelector('svg');\n    } catch(e) {\n      console.log(`ERROR loading '${file}'`, e.message + '\\n' + e.stack);\n    }\n    let sizeUnit = (globalThis.size = getWidthHeight(svg));\n    let size = (globalThis.size = getWidthHeight(svg, unitConvToMM).round(precision));\n    let writeUnits = (globalThis.writeUnits = [sizeUnit.units.width, sizeUnit.units.height]);\n\n    let viewBoxOld = (globalThis.viewBoxOld = getViewBox(svg) ?? new BBox(size));\n    //console.log('viewBox', { viewBoxOld });\n    // console.log('size', { size }, size.units);\n    let xfactor = (globalThis.xfactor = viewBoxOld.width / sizeUnit.width);\n    let yfactor = (globalThis.yfactor = viewBoxOld.height / sizeUnit.height);\n\n    if(params['print-size']) {\n      size.units = ['', ''];\n      print(file, size.toString({ separator: ' x ', unit: 'mm' }));\n    }\n\n    if(params['bounds']) {\n      let bb = (globalThis.bb = GetBounds(svg));\n      print(\n        file,\n        bb.round(n => roundTo(n, precision)).toSVG()\n      );\n    }\n\n    let newViewBox,\n      viewBox = (globalThis.viewBox = viewBoxOld.inset(0));\n\n    if(params.padding) {\n      let conv = writeUnits.map(u => unitConv(u));\n\n      let pad = (globalThis.pad = [...NumericArgs(params.padding)]).map((a, i) => {\n        let f = i & 1 ? xfactor : yfactor;\n        let u = writeUnits[(i & 1) ^ 1];\n\n        let idx = (i & 1) ^ 1;\n\n        console.log('idx', idx, u, conv[idx]);\n\n        return conv[idx](a) * f;\n      });\n\n      console.log('pad', pad);\n\n      newViewBox = globalThis.newViewBox = viewBox.outset(...pad);\n    }\n\n    svg.setAttribute('viewBox', (newViewBox ??= viewBox).toSVG());\n\n    const { width, height } = newViewBox;\n    //console.log('viewBox', viewBox, viewBox.toSVG());\n    //console.log('newViewBox', newViewBox, newViewBox.toSVG());\n\n    let w = (globalThis.w = width / xfactor);\n    let h = (globalThis.h = height / yfactor);\n    //console.log('attributes', { w, h });\n\n    svg.setAttribute('width', w + writeUnits[0]);\n    svg.setAttribute('height', h + writeUnits[1]);\n\n    WriteFile(basename(file, '.svg') + '.out.svg', serializer.serializeToString(document));\n\n    if(params.interactive) kill(process.pid, SIGUSR1);\n  }\n}\n\ntry {\n  main(...scriptArgs.slice(1));\n} catch(e) {\n  console.log('ERROR', e.message + '\\n' + e.stack);\n  startInteractive();\n}\n",
+			"file": "svg-crop-pad.js",
+			"file_size": 15960,
+			"file_write_time": 133254578060294139,
+			"settings":
+			{
+				"buffer_size": 15965,
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+				[
+					1,
+					1,
+					"insert",
+					{
+						"characters": "ushd"
+					},
+					"BAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAACAAAAAAAAAAAAAAACAAAAAAAAAAMAAAAAAAAAAAAAAAMAAAAAAAAABAAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					2,
+					1,
+					"insert",
+					{
+						"characters": " "
+					},
+					"AQAAAAQAAAAAAAAABQAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAABAAAAAAAAAAEAAAAAAAAAAAAAAAAAPC/"
+				]
+			]
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"OUTLIN",
+				"Browse Mode: Outline (Right)"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/janos/Projects/plot-cv"
+	],
+	"file_history":
+	[
+	],
+	"find":
+	{
+		"height": 0.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"\n      t = 'l';"
+		],
+		"reverse": false,
+		"scrollbar_highlights": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"use_gitignore": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"selected": true,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1210,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": "./",
+									"selector": "text.html, text.xml"
+								},
+								{
+									"rhs_empty": true,
+									"selector": "punctuation.accessor"
+								}
+							],
+							"current_file": "/home/janos/Projects/plot-cv/svg-crop-pad.js",
+							"function_name_status_row": -1,
+							"outline_rename_mode": false,
+							"symkeys":
+							[
+								[
+									1504,
+									1528
+								],
+								[
+									1748,
+									1769
+								],
+								[
+									1995,
+									2011
+								],
+								[
+									2565,
+									2587
+								],
+								[
+									2886,
+									2916
+								],
+								[
+									3076,
+									3103
+								],
+								[
+									3240,
+									3254
+								],
+								[
+									3360,
+									3381
+								],
+								[
+									3813,
+									3817
+								],
+								[
+									3977,
+									4007
+								],
+								[
+									4059,
+									4073
+								],
+								[
+									5097,
+									5111
+								],
+								[
+									5362,
+									5398
+								],
+								[
+									5509,
+									5528
+								],
+								[
+									5538,
+									5547
+								],
+								[
+									5561,
+									5585
+								],
+								[
+									5671,
+									5699
+								],
+								[
+									5789,
+									5815
+								],
+								[
+									5975,
+									6037
+								],
+								[
+									6212,
+									6247
+								],
+								[
+									6339,
+									6376
+								],
+								[
+									6457,
+									6477
+								],
+								[
+									6553,
+									6577
+								],
+								[
+									6919,
+									6923
+								],
+								[
+									7382,
+									7386
+								],
+								[
+									7411,
+									7415
+								],
+								[
+									7480,
+									7491
+								],
+								[
+									7696,
+									7731
+								],
+								[
+									7873,
+									7897
+								],
+								[
+									7953,
+									7978
+								],
+								[
+									8057,
+									8061
+								],
+								[
+									8095,
+									8099
+								],
+								[
+									8129,
+									8155
+								],
+								[
+									8214,
+									8218
+								],
+								[
+									8252,
+									8301
+								],
+								[
+									8316,
+									8321
+								],
+								[
+									8449,
+									8459
+								],
+								[
+									8572,
+									8577
+								],
+								[
+									8599,
+									8603
+								],
+								[
+									8860,
+									8891
+								],
+								[
+									9180,
+									9213
+								],
+								[
+									9613,
+									9637
+								],
+								[
+									9992,
+									10020
+								],
+								[
+									10636,
+									10645
+								],
+								[
+									10662,
+									10671
+								],
+								[
+									10703,
+									10712
+								],
+								[
+									10731,
+									10740
+								],
+								[
+									10754,
+									10764
+								],
+								[
+									10780,
+									10789
+								],
+								[
+									10803,
+									10812
+								],
+								[
+									10819,
+									10827
+								],
+								[
+									10842,
+									10865
+								],
+								[
+									10876,
+									10885
+								],
+								[
+									10930,
+									10962
+								],
+								[
+									11040,
+									11074
+								],
+								[
+									11270,
+									11295
+								],
+								[
+									11352,
+									11402
+								],
+								[
+									11672,
+									11705
+								],
+								[
+									11805,
+									11840
+								],
+								[
+									11917,
+									11939
+								],
+								[
+									12559,
+									12577
+								],
+								[
+									12620,
+									12626
+								],
+								[
+									12660,
+									12665
+								],
+								[
+									12707,
+									12712
+								],
+								[
+									12829,
+									12834
+								],
+								[
+									13129,
+									13155
+								],
+								[
+									13256,
+									13282
+								],
+								[
+									14588,
+									14592
+								],
+								[
+									14778,
+									14782
+								],
+								[
+									14870,
+									14879
+								]
+							],
+							"symlist":
+							[
+								"  parseSVGPath(s)",
+								"  parseValues = args =>",
+								"\t(_, c, args) =>",
+								"  splitPath(ps)",
+								"  pathToAbsolute(path)",
+								"  pathToPoints(path)",
+								"  isUpper = s =>",
+								"MakePoint = (x, y) =>",
+								"  n =>",
+								"  pointsToAbsolute(it)",
+								"  isUpper = s =>",
+								"  save(filename)",
+								"NumericArgs(s, t = a => a)",
+								"  deref = p => obj =>",
+								"(o, k) =>",
+								"ParentPaths(p)",
+								"CumulativePaths(p)",
+								"AllParents(elem)",
+								"AllTransforms(elem, getter = getTransformationMatrix)",
+								"ElementTransformList(elem)",
+								"ElementTransformMatrix(elem)",
+								"GetXY(elem)",
+								"GetPoints(elem)",
+								"  p =>",
+								"  c =>",
+								"  a =>",
+								"([x, y]) =>",
+								"GetTransformedPoints(elem)",
+								"GetMatrix(elem)",
+								"IsClipPath(elem)",
+								"  e =>",
+								"  e =>",
+								"HasClipPath(elem)",
+								"  e =>",
+								"PositionedElements(svgElem = svg, skip)",
+								"() =>",
+								"\t(v, p) =>",
+								"\te =>",
+								"  n =>",
+								"HasParent(elem, other)",
+								"GetBounds(svgElem = svg)",
+								"ProcessPath(d)",
+								"  unitConvToMM(value)",
+								"  pc: mm =>",
+								"  px: mm =>",
+								"  pt: mm =>",
+								"  in: mm =>",
+								"  mil: mm =>",
+								"  cm: mm =>",
+								"  mm: mm =>",
+								"  m: mm =>",
+								"  unitConv(unit)",
+								"\tvalue =>",
+								"  unitConvTo(value, unit)",
+								"  getViewBox(svgElem = svg)",
+								"XML2String(elem)",
+								"  getWidthHeight(svgElem = svg, t = a => a)",
+								"  getTransformationList(e)",
+								"  getTransformationMatrix(e)",
+								"  main(...args)",
+								"\t(_x, _y, opts) =>",
+								"\t() =>",
+								"\ta =>",
+								"\ta =>",
+								"\ta =>",
+								"  print = (file, ...args) =>",
+								"  print = (file, ...args) =>",
+								"  n =>",
+								"  u =>",
+								"(a, i) =>"
+							],
+							"syntax": "Packages/Outline/outline.hidden-tmLanguage",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1680983511.5,
+							"tabs_extra_last_activated_sheet_index": 0,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"stack_multiselect": false,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"sheets":
+			[
+				{
+					"buffer": 1,
+					"file": "svg-crop-pad.js",
+					"selected": true,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 15965,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1694,
+								1695
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": "./",
+									"selector": "text.html, text.xml"
+								},
+								{
+									"rhs_empty": true,
+									"selector": "punctuation.accessor"
+								}
+							],
+							"function_name_status_row": 28,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1680984490.64,
+							"tabs_extra_last_activated_sheet_index": 0,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"stack_multiselect": false,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				2,
+				0,
+				3,
+				2
+			],
+			[
+				0,
+				0,
+				2,
+				2
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.2,
+			0.8,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			0.5,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "plot-cv.sublime-project",
+	"replace":
+	{
+		"height": 44.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"svg-cr",
+				"svg-crop-pad.js"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 1,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
