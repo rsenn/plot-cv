@@ -581,7 +581,7 @@ function main(...args) {
     let size = (globalThis.size = getWidthHeight(svg, unitConvToMM).round(precision));
     let writeUnits = (globalThis.writeUnits = [sizeUnit.units.width, sizeUnit.units.height]);
 
-    let viewBoxOld = (globalThis.viewBoxOld = getViewBox(svg) ?? size);
+    let viewBoxOld = (globalThis.viewBoxOld = getViewBox(svg) ?? new BBox(size));
     //console.log('viewBox', { viewBoxOld });
     // console.log('size', { size }, size.units);
     let xfactor = (globalThis.xfactor = viewBoxOld.width / sizeUnit.width);
@@ -626,12 +626,12 @@ function main(...args) {
     svg.setAttribute('viewBox', (newViewBox ??= viewBox).toRect(Rect.prototype).roundTo(precision).toString());
 
     const { width, height } = newViewBox;
-    console.log('viewBox', viewBox, viewBox.toSVG());
-    console.log('newViewBox', newViewBox, newViewBox.toSVG());
+    //console.log('viewBox', viewBox, viewBox.toSVG());
+    //console.log('newViewBox', newViewBox, newViewBox.toSVG());
 
     let w = (globalThis.w = width / xfactor);
     let h = (globalThis.h = height / yfactor);
-    console.log('attributes', { w, h });
+    //console.log('attributes', { w, h });
 
     svg.setAttribute('width', roundTo(w, 0.001) + writeUnits[0]);
     svg.setAttribute('height', roundTo(h, 0.001) + writeUnits[1]);
