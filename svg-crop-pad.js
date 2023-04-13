@@ -20,6 +20,7 @@ import extendArray from 'extendArray';
 import { read as readXML, write as writeXML } from 'xml';
 import * as deep from 'deep';
 import { SyntaxError, parseSVG, makeAbsolute } from './lib/svg/path-parser.js';
+import { iterateTree} from './dom-helpers.js';
 
 extendGenerator();
 extendArray();
@@ -191,7 +192,8 @@ Object.assign(globalThis, {
   ProcessPath,
   unitConvToMM,
   unitConv,
-  unitConvTo,
+  unitConvFactor,
+  unitConvFunction,
   getViewBox,
   getWidthHeight,
   XML2String
@@ -443,34 +445,67 @@ function* ProcessPath(d) {
   }
 }
 
-function unitConvToMM(value) {
-  if(/pt\s*$/i.test(value)) return (+value.replace(/\s*pt\s*$/gi, '') * 3) / 8.5;
-  if(/pc\s*$/i.test(value)) return +value.replace(/\s*pc\s*$/gi, '') * 4.23333;
-  if(/in\s*$/i.test(value)) return +value.replace(/\s*in\s*$/gi, '') * 25.4;
-  if(/mil\s*$/i.test(value)) return +value.replace(/\s*mil\s*$/gi, '') * 0.0254;
-  if(/cm\s*$/i.test(value)) return +value.replace(/\s*cm\s*$/gi, '') * 10;
-  if(/mm\s*$/i.test(value)) return +value.replace(/\s*mm\s*$/gi, '');
-  if(/px\s*$/i.test(value) || !isNaN(+value)) return +(value + '').replace(/\s*px\s*$/gi, '') / 3.77952755953127906261;
-}
-
-const MillimeterTo = {
-  pc: mm => mm * 0.23622,
-  px: mm => mm * 3.77952755953127906261,
-  pt: mm => (mm * 8.5) / 3,
-  in: mm => mm / 25.4,
-  mil: mm => mm / 0.0254,
-  cm: mm => mm * 1e-1,
-  mm: mm => mm,
-  m: mm => mm * 1e-3
+/* prettier-ignore */
+const ToMillimeter = {
+  pt: 3l / 8.5l,
+  pc: 25.4l/6l,
+  in: 25.4l,
+  mil: 1l /25.4e3l,
+  cm: 10l,
+  mm: 1l,
+  px: 25.4l/96l
 };
 
-function unitConv(unit) {
-  return value => MillimeterTo[unit](unitConvToMM(value));
+function getUnit(str, defaultUnit) {
+  const m = /[a-z]+/g.exec(str);
+  return m ? m[0] : defaultUnit;
+  }
+function getValue(str) {
+  const m = /[a-z]+/g.exec(str);
+  return m  ? str.slice(0, m.index) : str;
+  }
+
+function unitConvToMM(value, defaultUnit = 'px') {
+value=  value + '';
+const unit =getUnit(value, defaultUnit);
+value =getValue(value);
+
+  console.log('unixConvToMM', { unit, value });
+
+  if(unit in ToMillimeter) return value * ToMillimeter[unit];
+
+  throw new Error(`No such unit '${unit}'`);
 }
 
-function unitConvTo(value, unit) {
-  let mm = unitConvToMM(value);
-  return MillimeterTo[unit](mm) + unit;
+/* prettier-ignore */
+const MillimeterTo = {
+  pt: 8.5l / 3l,
+  pc: 6l/25.4l,
+  in: 1l /25.4l,
+  px: 96l/25.4l,
+  mil: 25.4e3l,
+  cm: 0.1l,
+  mm: 1l,
+  m: 0.001l
+};
+
+
+for(let k of Object.keys(ToMillimeter))
+
+  if(ToMillimeter[k] * MillimeterTo[k] != 1l)
+    throw new Error(`Invalid unit conv factor for '${k} (${k} -> mm = ${ToMillimeter[k]}) mm -> ${k} = ${MillimeterTo[k]}`)
+
+
+function unitConvFactor(from, to) {
+  return ToMillimeter[from] * MillimeterTo[to];
+}
+
+function unitConvFunction(toUnit = 'mm', fromUnit = 'px') {
+  return value => unitConvToMM(value, fromUnit) * MillimeterTo[toUnit];
+}
+
+function unitConv(unit) {
+  return value => MillimeterTo[unit] * unitConvToMM(value);
 }
 
 function getViewBox(svgElem = svg) {
@@ -491,7 +526,7 @@ function getWidthHeight(svgElem = svg, t = a => a) {
     let width = svgElem.getAttribute('width');
     let height = svgElem.getAttribute('height');
 
-    return new Size(t(width), t(height));
+    return new Size(t(width, 'px'), t(height,'px'));
   }
 
   return new Size(...getViewBox(svgElem).size);
@@ -518,7 +553,9 @@ function main(...args) {
     NumericArgs,
     ProcessPath,
     unitConvToMM,
-    unitConvTo,
+    unitConv,
+    unitConvFunction,
+    unitConvFactor,
     MillimeterTo,
     getViewBox,
     getWidthHeight,
@@ -534,7 +571,7 @@ function main(...args) {
     parseSVG,
     splitPath,
     PathCmdTransform,
-    PathTransform
+    PathTransform,Rect,iterateTree
   });
 
   //  globalThis.console = new Console(std.err, { depth: 2, customInspect: false, compact: false, protoChain: true });
@@ -606,6 +643,7 @@ function main(...args) {
 
     if(params.padding) {
       let conv = writeUnits.map(u => unitConv(u));
+      console.log('conv', { writeUnits, conv });
 
       let pad = (globalThis.pad = [...NumericArgs(params.padding)]).map((a, i) => {
         let f = i & 1 ? xfactor : yfactor;
@@ -615,19 +653,20 @@ function main(...args) {
 
         console.log('idx', idx, u, conv[idx]);
 
-        return conv[idx](a) * f;
+        return Number(conv[idx](a) * f);
       });
 
       console.log('pad', pad);
 
       newViewBox = globalThis.newViewBox = viewBox.outset(...pad);
-    }
+  }
 
     svg.setAttribute('viewBox', (newViewBox ??= viewBox).toRect(Rect.prototype).roundTo(precision).toString());
+  console.log('viewBox', {viewBox,pad,precision,newViewBox});
 
     const { width, height } = newViewBox;
-    //console.log('viewBox', viewBox, viewBox.toSVG());
-    //console.log('newViewBox', newViewBox, newViewBox.toSVG());
+    
+   console.log('newViewBox', newViewBox, newViewBox.toSVG());
 
     let w = (globalThis.w = width / xfactor);
     let h = (globalThis.h = height / yfactor);
@@ -638,7 +677,8 @@ function main(...args) {
 
     for(let transformed of TransformedElements()) DecomposeTransformList(transformed);
 
-    WriteFile(basename(file, '.svg') + '.out.svg', serializer.serializeToString(document));
+    save(basename(file, '.svg') + '.out.svg');
+    //WriteFile(basename(file, '.svg') + '.out.svg', serializer.serializeToString(document));
 
     if(params.interactive) kill(process.pid, SIGUSR1);
   }

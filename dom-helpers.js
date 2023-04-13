@@ -21,3 +21,51 @@ export function createElement(tag, attrs = {}, children = []) {
 
   return e;
 }
+
+export function* upTo(iter, stopBefore) {
+  for(let value of iter) {
+    if(value === stopBefore) break;
+    yield value;
+  }
+}
+
+export function* parents(node, upTo) {
+  while((node = node.parentNode)) yield node;
+}
+
+export function iterateTree(root, whatToShow = -1, filter /* = { acceptNode: () => true }*/) {
+  let walker;
+
+  try {
+    walker = new TreeWalker(root, whatToShow, filter);
+  } catch(e) {
+    walker = document.createTreeWalker(root, whatToShow, filter);
+  }
+ 
+  let ret = {
+    walker,
+    parents: [],
+    next() {
+      let node, parent = walker.currentNode;
+
+      if((node = walker.firstChild())) {
+        this.parents.push(parent);
+        return { value: node, done: false };
+      }
+
+      for(;;) {
+        if((node = walker.nextSibling())) return { value: node, done: false };
+
+        if(!(node = walker.parentNode())) return { done: true };
+
+        parent = this.parents.pop();
+
+        if(parent !== node) console.log('parent =', this.parent, 'node =', node);
+      }
+    },
+    [Symbol.iterator]() {
+      return this;
+    }
+  };
+  return ret;
+}

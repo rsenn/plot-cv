@@ -39,7 +39,7 @@ import LogJS from './lib/log.js';
 import serial from './serial.js';
 import { toXML, ImmutablePath, MutablePath, arrayDiff, objectDiff } from './lib/json.js';
 import { XmlObject, XmlAttr } from './lib/xml.js';
-import { ImmutableXPath, MutableXPath, XPath,parseXPath, buildXPath } from './quickjs/qjs-modules/lib/xpath.js';
+import { ImmutableXPath, MutableXPath, XPath, parseXPath, buildXPath } from './quickjs/qjs-modules/lib/xpath.js';
 import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA } from './lib/color.js';
 import * as React from './lib/preact.mjs';
 import { h, html, render, Component, useState, useLayoutEffect, useRef } from './lib/preact.mjs';
