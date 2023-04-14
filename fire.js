@@ -23,10 +23,34 @@ class DrawList extends LinkedList {
     return this.insertBefore(item, it => it.time > item.time);
   }
 
+  prev(upto = performance.now()) {
+    let prev;
+    for(let item of this) {
+      if(item.time >= upto) return prev;
+      prev = item;
+    }
+  }
+
+  next(upto = performance.now()) {
+    for(let item of this) if(item.time >= upto) return item;
+  }
+
+  diff(upto = performance.now()) {
+    let p = this.prev(upto),
+      n = this.next(upto);
+
+    return {
+      x: n.x - p.x,
+      y: n.y - p.y,
+      time: n.time - p.time
+    };
+  }
+
   *dequeue(upto = performance.now()) {
-    let predicate = typeof upto == 'number' ? it => it.time < upto : upto;
-    while(this.head) {
-      if(!predicate(this.head)) break;
+    let head,
+      predicate = typeof upto == 'number' ? it => it.time < upto : upto;
+    while((head = this.head)) {
+      if(!predicate(head)) break;
       yield this.removeHead();
     }
   }
@@ -84,7 +108,7 @@ function main() {
 
   define(
     globalThis,
-    { LinkedList, List, AllParents, TransformationList, getTransformationList, DecomposeTransformList, drawRect, miscfixed6x13 },
+    { Bresenham, LinkedList, List, AllParents, TransformationList, getTransformationList, DecomposeTransformList, drawRect, miscfixed6x13 },
     //    {fire},
     properties(
       {
@@ -176,7 +200,6 @@ function main() {
           globalThis.mouseEvent = event;
 
           for(let touch of event.touches) {
-            console.log('touch', touch);
             globalThis.touch = touch;
             const { force, radiusX, radiusY, clientX: x, clientY: y, ...obj } = touch;
             yield { ...obj, type: 'touch', force, radiusX, radiusY, x, y };
@@ -276,6 +299,20 @@ function main() {
         pixels[y][x] = (sum * 15) >>> 6;
       }
     }
+
+    for(let draw of drawList.dequeue()) {
+      draw.value = 255 - 0x10; //(RandomByte() % 128);
+      if(draw.size > 1) {
+        if(draw.x > 0) pixels[draw.y][draw.x - 1] = draw.value;
+        if(draw.x < 319) pixels[draw.y][draw.x + 1] = draw.value;
+        if(draw.y > 0) pixels[draw.y - 1][draw.x] = draw.value;
+
+        if(draw.y < 199) pixels[draw.y + 1][draw.x] = draw.value;
+      }
+      pixels[draw.y][draw.x] = draw.value;
+
+      //Blaze(draw.x, draw.y, 255 - (RandomByte() % 128));
+    }
   }
 
   async function Redraw() {
@@ -349,27 +386,70 @@ function main() {
     return drawList.insert({ x, y, time });
   }
 
-  function Blaze(x, y, r = rc) {
-    for(let ty = y - 1; ty < y + 1; ty++) {
-      for(let tx = x - 1; tx < x + 1; tx++) {
-        pixels[ty][tx] = r;
+  function* Bresenham(x0, y0, x1, y1) {
+    var dx = Math.abs(x1 - x0),
+      dy = Math.abs(y1 - y0),
+      sx = x0 < x1 ? 1 : -1,
+      sy = y0 < y1 ? 1 : -1,
+      err = dx - dy;
 
-        Draw(tx, ty);
+    while(x0 != x1 || y0 != y1) {
+      var e2 = 2 * err;
+      if(e2 > dy * -1) {
+        err -= dy;
+        x0 += sx;
       }
+      if(e2 < dx) {
+        err += dx;
+        y0 += sy;
+      }
+      yield [x0, y0];
     }
-
-    pixels[y + 1][x] = r;
   }
 
-  async function ReplayTrail(trail, time = performance.now() + 20) {
-    drawList.queue(trail, time);
+  function Blaze(x, y, r) {
+    let v = pixels[y][x];
+    r ??= 255 - v;
+    PutArray(x - 1, y - 1, [
+      [0, r, 0],
+      [r, r, r],
+      [0, r, 0]
+    ]);
 
-    for(let blaze of trail) {
-      let { x, y, time } = blaze;
-      // console.log('ReplayTrail', { x, y, time, rc });
-      if(time > 3) await waitFor(time);
+    /*    for(let ty = y - 1; ty < y + 1; ty++) 
+      for(let tx = x - 1; tx < x + 1; tx++) 
+        pixels[ty][tx] = r;*/
 
-      Blaze(x, y, 0x80);
+    // pixels[y + 1][x] = r;
+  }
+
+  function ReplayTrail(trail, time = performance.now() + 20) {
+    let prev,
+      ret = [];
+
+    for(let pt of trail) {
+      // console.log('ReplayTrail', {pt});
+
+      if(prev) {
+        let index = ret.length;
+        let i = 0;
+        for(let [x, y] of Bresenham(prev.x, prev.y, pt.x, pt.y)) {
+    /*      if(i++ > 0) */ret.push({ x, y, time: 0, size: 2 });
+        }
+        if(ret[index] !== undefined) {
+          ret[index].time = pt.time;
+        }
+        if(ret[ret.length - 1]) ret[ret.length - 1].size = 2;
+      } else {
+        pt.size = 2;
+        ret.push(pt);
+      }
+      prev = pt;
+    }
+
+    if(ret[0] !== undefined) {
+      ret[0].time = 0;
+      drawList.queue(ret, time);
     }
   }
 
@@ -386,10 +466,23 @@ function main() {
     }
   }
 
+  function PutArray2(x, y, a) {
+    let rows = a.length * 2;
+    let cols = a[0].length * 2;
+    let w = pixels[0].length;
+    let h = pixels.length;
+
+    for(let ty = 0; ty < rows; ++ty) {
+      for(let tx = 0; tx < cols; ++tx) {
+        pixels[(y + ty) % h][(x + tx) % w] = a[ty >> 1][tx >> 1];
+      }
+    }
+  }
+
   function ResizeHandler(e) {
     rect = canvasRect;
     mouseTransform = PositionProcessor();
-    console.log('ResizeHandler', { e, rect });
+    // console.log('ResizeHandler', { e, rect });
   }
 
   function OrientationChange(e) {
@@ -470,8 +563,8 @@ function main() {
     console.log('KeyHandler', { xpos, key });
 
     if(key in miscfixed6x13) {
-      PutArray(xpos, 220, miscfixed6x13[key]);
-      xpos += 7;
+      PutArray2(xpos, 100, miscfixed6x13[key]);
+      xpos += 14;
     }
   }
 
@@ -525,15 +618,23 @@ function main() {
           if(prev) diff = pt.diff(prev);
 
           //start ??= t = Date.now();
+          let time = timegen();
+          let obj = { ...pt, time };
+          trail.push(obj);
 
-          trail.push({ ...pt, time: timegen() });
+          if(prev) {
+            //console.log('inserting', { prev, pt });
+            for(let [x, y] of Bresenham(prev.x, prev.y, pt.x, pt.y)) {
+              // console.log('inserting', { x, y });
+              drawList.insert({ x, y, time });
+            }
+          } else drawList.insert(obj);
 
           last = t;
           try {
             //console.log('blaze', ...pt);
-            rc = pixels[pt.y][pt.x] > 0x30 ? 0 : RandomByte() | 0x80;
-
-            Blaze(pt.x, pt.y);
+            //  rc = pixels[pt.y][pt.x] > 0x30 ? 0 : RandomByte() | 0x80;
+            //Blaze(pt.x, pt.y);
           } catch(e) {}
           prev = pt;
         }
@@ -566,13 +667,19 @@ function NewWS() {
   let url = WebSocketURL('/ws', { mirror: currentFile });
   let ws = new ReconnectingWebSocket(url, 'lws-mirror-protocol');
   (async function() {
+    let chunks = '';
     for await(let chunk of ws) {
-      let data = (globalThis.received = JSON.parse(chunk));
+      chunks += chunk;
 
-      if(data.trail) ReplayTrail(data.trail);
+      if(/}\s*$/.test(chunks)) {
+        let data = (globalThis.received = JSON.parse(chunks));
 
-      if(data.cid != globalThis.cid) {
-        console.log('WS receive:', data);
+        if(data.trail) ReplayTrail(data.trail);
+
+        if(data.cid != globalThis.cid) {
+          console.log('WS receive:', data);
+        }
+        chunks = '';
       }
     }
   })();
@@ -639,7 +746,8 @@ define(globalThis, {
   useState,
   useLayoutEffect,
   useRef,
-  toChildArray
+  toChildArray,
+  randInt
 });
 
 main();
