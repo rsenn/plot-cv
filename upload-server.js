@@ -525,7 +525,7 @@ function main(...args) {
               let mime = GetMime(file);
               resp.type = mime;
               resp.headers = { 'content-type': mime };
-              let data = ReadFile(file, 1 | binary ? null : charset);
+              let data = ReadFile(file, true);
               console.log(`*file.load`, { data, mime });
               yield data;
               resp.body = data;
@@ -898,7 +898,7 @@ function main(...args) {
         const dir = path.dirname(file); //file.replace(/\/[^\/]*$/g, '');
 
         if(file.endsWith('.txt') || file.endsWith('.html') || file.endsWith('.css')) {
-          resp.body = ReadFile(file, 'utf-8');
+          resp.body = ReadFile(file);
         } else if(file.endsWith('.js')) {
           let file1 = file;
           if(/qjs-modules\/lib/.test(file) && !/(dom|util)\.js/.test(file)) {

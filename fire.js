@@ -8,7 +8,11 @@ import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo
 import { Intersection, Matrix, isRect, Rect, Size, Point, Line, TransformationList, Vector } from './lib/geom.js';
 import { Element, isElement, SVG } from './lib/dom.js';
 import React, { h, html, render, Fragment, Component, createRef, useState, useLayoutEffect, useRef, toChildArray } from './lib/dom/preactComponent.js';
+import { waitFor } from './lib/misc.js';
+import miscfixed6x13 from './static/json/miscfixed6x13.js';
+import { List } from './lib/list.js';
 //import { fire } from './fire/build/fire-debug.js';
+import { LinkedList } from './lib/container/linkedList.js';
 
 function* AllParents(elem) {
   let obj = elem.ownerDocument;
@@ -34,20 +38,25 @@ function DecomposeTransformList(elem) {
   }
 }
 
-lazyProperties(globalThis, {
-  svgLayer: () => {
-    let e = SVG.create('svg', { xmlns: 'http://www.w3.org/2000/svg', viewBox: new Rect(0, 0, 300, 300) }, document.body);
-    Element.move(e, new Point(0, 0), 'fixed');
-    return e;
-  }
-});
-
-function drawRect(rect) {}
+function drawRect(rect, stroke = '#0f0') {
+  let svg = svgLayer;
+  const { x, y, width, height } = new Rect(rect);
+  return SVG.create('rect', { x, y, width, height, stroke, 'stroke-width': '1', fill: 'none' }, svg);
+}
 
 function main() {
+  lazyProperties(globalThis, {
+    svgLayer: () => {
+      let e = SVG.create('svg', { xmlns: 'http://www.w3.org/2000/svg', viewBox: new Rect(0, 0, window.innerWidth, window.innerHeight) }, document.body);
+      Element.move(e, new Point(0, 0), 'absolute');
+      Element.setCSS(e, { 'pointer-events': 'none' });
+      return e;
+    }
+  });
+
   define(
     globalThis,
-    { AllParents, TransformationList, getTransformationList, DecomposeTransformList },
+    { LinkedList, List, AllParents, TransformationList, getTransformationList, DecomposeTransformList, drawRect, miscfixed6x13 },
     //    {fire},
     properties(
       {
@@ -138,7 +147,13 @@ function main() {
         if(event.touches.length) {
           globalThis.mouseEvent = event;
 
-          yield* [...event.touches].map(EventPositions);
+          for(let touch of event.touches) {
+            globalThis.touch = touch;
+            const { clientX: x, clientY: y } = touch;
+            yield { type: 'touch', x, y };
+          }
+
+          // yield* [...event.touches].map(EventPositions);
         }
       } else {
         const { type, clientX: x, clientY: y } = event;
@@ -190,13 +205,16 @@ function main() {
     dom: { Element },
     geom: { Rect },
     MovementIterator,
-    MouseHandler,
     GetElementMatrix,
     SetCrosshair,
     EventPositions,
     PositionProcessor,
     PositionMatrix,
-    ProcessPosition
+    ProcessPosition,
+    PutArray,
+    waitFor,
+    ReplayTrail,
+    Blaze
   });
 
   async function Loop() {
@@ -298,43 +316,37 @@ function main() {
 
   let element, rect, rc, mouseTransform;
 
-  function Blaze(x, y) {
+  function Blaze(x, y, r = rc) {
     for(let ty = y - 1; ty < y + 1; ty++) {
       for(let tx = x - 1; tx < x + 1; tx++) {
-        pixels[ty][tx] = rc;
+        pixels[ty][tx] = r;
       }
     }
 
-    pixels[y + 1][x] = rc;
+    pixels[y + 1][x] = r;
   }
 
-  function MouseHandler(e) {
-    let { target, buttons, type } = e;
+  async function ReplayTrail(trail) {
+    for(let blaze of trail) {
+      let { x, y, time } = blaze;
+      // console.log('ReplayTrail', { x, y, time, rc });
+      if(time > 3) await waitFor(time);
 
-    if('touches' in e) {
-      for(let touch of [...e.touches]) {
-        const { clientX, clientY } = touch;
-        MouseHandler({
-          type,
-          target,
-          buttons,
-          offsetX: Math.trunc(clientX) - rect.x,
-          offsetY: Math.trunc(clientY) - rect.y
-        });
-      }
-      return;
+      Blaze(x, y, 0x80);
     }
+  }
 
-    globalThis.pointerEvent = e;
+  function PutArray(x, y, a) {
+    let rows = a.length;
+    let cols = a[0].length;
+    let w = pixels[0].length;
+    let h = pixels.length;
 
-    const x = Math.round((e.offsetX * width) / rect.width);
-    const y = Math.round((e.offsetY * height) / rect.height);
-
-    try {
-      if(/(down|start)$/.test(type)) rc = pixels[y][x] > 0x30 ? 0 : RandomByte() | 0x80;
-
-      Blaze(x, y);
-    } catch(e) {}
+    for(let ty = 0; ty < rows; ++ty) {
+      for(let tx = 0; tx < cols; ++tx) {
+        pixels[(y + ty) % h][(x + tx) % w] += a[ty][tx] / 2;
+      }
+    }
   }
 
   function ResizeHandler(e) {
@@ -408,17 +420,52 @@ function main() {
     window.addEventListener('resize', ResizeHandler, true);
     window.addEventListener('orientationchange', OrientationChange, true);
 
-    /*   const handler = MouseHandler;
-
+    /*  
     subscribe(MovementIterator(element), handler);*/
   }
 
   globalThis.ws = (globalThis.rws ??= NewWS()).ws;
 
+  let str = '';
+  let xpos = 0;
+  function KeyHandler(key) {
+    //str+=key;
+    console.log('KeyHandler', { xpos, key });
+
+    if(key in miscfixed6x13) {
+      PutArray(xpos, 220, miscfixed6x13[key]);
+      xpos += 7;
+    }
+  }
+
+  (async () => {
+    for await(let e of streamify(['keydown', 'keyup'], window)) {
+      const { type, key, keyCode, repeat, ctrlKey, shiftKey, altKey, metaKey } = (globalThis.keyEvent = e);
+
+      if(!ctrlKey && !altKey && !metaKey) e.preventDefault();
+
+      // console.log('event', { type, key, charCode: key.codePointAt(0), keyCode, repeat, ctrlKey, shiftKey, altKey, metaKey });
+
+      //if(key in miscfixed6x13 || keyCode < 0x20) {
+      KeyHandler(key);
+    }
+  })();
+
   (async function() {
-    let trail = [],
-      start,
+    const timegen = (() => {
+      let t = Date.now();
+      let prev = 0;
+      return () => {
+        let tmp = t;
+        t = Date.now() - prev;
+        prev += t;
+        return t;
+      };
+    })();
+    let trail = (globalThis.trail = []),
+      start = timegen(),
       last;
+
     for(;;) {
       let prev, pt;
 
@@ -437,7 +484,8 @@ function main() {
 
           start ??= t = Date.now();
 
-          trail.push({ ...pt, time: Date.now() - start });
+          trail.push({ ...pt, time: timegen() });
+
           // trail.push(t - start + '/' + (prev && diff.x > 0 ? '+' : '') + diff.x + ',' + (prev && diff.y > 0 ? '+' : '') + diff.y);
 
           last = t;
@@ -455,7 +503,7 @@ function main() {
 
       function SendTrail() {
         if(trail.length) {
-          const payload = { type: 'blaze', start, trail: [...trail] };
+          const payload = (globalThis.payload = { type: 'blaze', start, trail: [...trail] });
           console.log('SendTrail', payload);
           ws.send(JSON.stringify(payload));
         }
@@ -472,14 +520,19 @@ function main() {
 function getRect(elem) {
   return new Rect((elem ?? divElement).getBoundingClientRect()).round(1);
 }
+
 function NewWS() {
   let url = WebSocketURL('/ws', { mirror: currentFile });
   let ws = new ReconnectingWebSocket(url, 'lws-mirror-protocol');
   (async function() {
     for await(let chunk of ws) {
-      let data = JSON.parse(chunk);
+      let data = (globalThis.received = JSON.parse(chunk));
 
-      if(data.cid != globalThis.cid) console.log('WS receive:', data);
+      if(data.trail) ReplayTrail(data.trail);
+
+      if(data.cid != globalThis.cid) {
+        console.log('WS receive:', data);
+      }
     }
   })();
   return (globalThis.ws = ws);

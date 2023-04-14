@@ -13,7 +13,7 @@
       body {
         height: 100vh;
         width: 100vw;
-        background: rgba(128, 128, 128);
+        background: rgba(0, 0, 0, 0.9);
       }
       canvas,
       #canvas {
@@ -23,8 +23,7 @@
         /* border: 2px solid green;*/
       }
       #canvas {
-        /* border: 2px solid red;*/
-        background: hsla(0, 100%, 30%, 0.5);
+        /*background: hsla(0, 100%, 30%, 0.5);*/
         overflow: hidden;
       }
       @media (orientation: portrait) {
@@ -38,13 +37,13 @@
           top: 0;
           width: 100vh;
           height: 100wh;
-          transform:  rotate(90deg);
+          transform: translate(-19%,29.6%) rotate(90deg);
 
           min-height: 100vmin;
           min-width: 100vmax;
 
-          margin-left: -6px;
-          margin-top: 25px;
+/*          margin-left: -6px;
+          margin-top: 25px;*/
         }
       }
       @media (orientation: landscape) {
