@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 import { EagleDocument, Renderer } from './lib/eagle.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
 import { render, Component } from './lib/preact.js';

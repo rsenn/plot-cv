@@ -3,12 +3,11 @@ import { Point, Size, Contour, Rect, Line, TickMeter, Mat, CLAHE, Draw } from 'o
 import * as cv from 'opencv';
 import { HSLA } from './lib/color.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
-import fs from 'fs';
 import { format, once, memoize } from './lib/misc.js';
 import * as xml from 'xml';
 import Console from 'console';
 import SvgPath from './lib/svg/path.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, RecursiveDirIterator } from './io-helpers.js';
 import { MakeSVG, SaveSVG } from './image-helpers.js';
 import { Profiler } from './time-helpers.js';
 import { SaveConfig, LoadConfig } from './config.js';

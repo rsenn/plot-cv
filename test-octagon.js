@@ -1,7 +1,7 @@
 import { Point, Polygon, MakePolygon, Line, LineList } from './lib/geom.js';
 import { SVG } from './lib/dom.js';
 import { Console } from 'console';
-import fs from 'fs';
+import { ReadFile, WriteFile } from './io-helpers.js';
 import * as xml from 'xml';
 import SvgPath from './lib/svg/path.js';
 
@@ -43,7 +43,7 @@ function main(...args) {
 
 </svg>`;
 
-  fs.writeFileSync('output.svg', svg);
+  WriteFile('output.svg', svg);
 }
 
 main(...scriptArgs.slice(1));

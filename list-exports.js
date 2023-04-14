@@ -1,3 +1,4 @@
+mport { ReadFile, WriteFile } from './io-helpers.js';
 import * as std from 'std';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -36,7 +37,7 @@ const bufferRef = new WeakMap();
 function BufferFile(file) {
   //console.log('BufferFile', file);
   if(buffers[file]) return buffers[file];
-  let b = (buffers[file] = fs.readFileSync(file, { flag: 'r' }));
+  let b = (buffers[file] = ReadFile(file, { flag: 'r' }));
   //console.log('bufferRef', bufferRef, bufferRef.set, b);
   if(typeof b == 'object' && b !== null) bufferRef.set(b, file);
   return b;

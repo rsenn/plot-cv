@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 import deep from './lib/deep.js';
 import path from './lib/path.js';
 import tXml from './lib/tXml.js';

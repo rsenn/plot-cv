@@ -1,3 +1,4 @@
+mport { ReadFile, WriteFile } from './io-helpers.js';
 import { ECMAScriptParser } from './lib/ecmascript/parser.js';
 import { PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
@@ -47,7 +48,7 @@ function WriteFile(name, data) {
   data = data.trim();
 
   if(data != '') {
-    fs.writeFileSync(name, data + '\n');
+    WriteFile(name, data + '\n');
     console.log(`Wrote ${name}: ${data.length} bytes`);
   }
 }
@@ -149,7 +150,7 @@ function ParseECMAScript(file, params) {
   const { debug } = params;
   if(file == '-') file = '/dev/stdin';
   if(file && fs.existsSync(file)) {
-    data = fs.readFileSync(file, 'utf8');
+    data = ReadFile(file, 'utf8');
     console.log('opened:', file);
   } else {
     file = 'stdin';

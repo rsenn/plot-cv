@@ -4,7 +4,7 @@ import path from './lib/path.js';
 import deep from './lib/deep.js';
 import Tree from './lib/tree.js';
 import { Type, Compile, AstDump, NodeType, NodeName, GetLoc, GetTypeStr } from './clang-ast.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 
 //prettier-ignore
 let fs, spawn;
@@ -37,7 +37,7 @@ const WriteBJSON = async (filename, obj) =>
 
 const ReadBJSON = async filename =>
   await import('bjson.so').then(({ read }) => {
-    let data = fs.readFileSync(filename, null);
+    let data = ReadFile(filename, null);
     return instrument(read)(data, 0, data.byteLength);
   });
 
@@ -101,7 +101,7 @@ async function main(...args) {
       let outfile = base + '.ast.json';
       let boutfile = base + '.ast.bjson';
 
-      async function ReadAST(outfile, load = f => fs.readFileSync(f), save = WriteFile, parse = JSON.parse) {
+      async function ReadAST(outfile, load = f => ReadFile(f), save = WriteFile, parse = JSON.parse) {
         let st = [file, outfile].map(name => fs.stat(name));
         let times = st.map(stat => (stat && stat.mtime) || 0);
         let cached = times[1] >= times[0];

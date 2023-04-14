@@ -1,3 +1,4 @@
+import { DirIterator, RecursiveDirIterator, ReadDirRecursive } from './dir-helpers.js';
 import filesystem from 'fs';
 import PortableSpawn from './lib/spawn.js';
 import Util from './lib/util.js';
@@ -13,7 +14,7 @@ import * as ECMAScript from './lib/ecmascript.js';
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import * as fs from './lib/filesystem.js';
 import { isObject, extendArray, toString, toArrayBuffer } from './lib/misc.js';
-import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
+import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, RecursiveDirIterator } from './io-helpers.js';
 
 extendArray(Array.prototype);
 
@@ -166,7 +167,7 @@ function CommandLine() {
   repl.addCleanupHandler(() => {
     Terminal.mousetrackingDisable();
     let hist = repl.history.filter((item, i, a) => a.lastIndexOf(item) == i);
-    fs.writeFileSync(
+    WriteFile(
       cmdhist,
       hist
         .filter(entry => (entry + '').trim() != '')
@@ -291,7 +292,7 @@ function PrintRange(range, file) {
 
   file ??= begin.file ?? $.source;
 
-  let data = fs.readFileSync(file, 'utf-8');
+  let data = ReadFile(file, 'utf-8');
   return data ? data.slice(begin.offset, end.offset + (end.tokLen | 0)) : null;
 }
 
@@ -812,7 +813,7 @@ function ParseECMAScript(file, params = {}) {
   const { debug } = params;
   if(file == '-') file = '/dev/stdin';
   if(file && fs.existsSync(file)) {
-    data = fs.readFileSync(file, 'utf8');
+    data = ReadFile(file, 'utf8');
     console.log('opened:', file);
   } else {
     file = 'stdin';
@@ -851,7 +852,7 @@ function ParseECMAScript(file, params = {}) {
 
 /*function ParseECMAScript(file, debug = false) {
   console.log(`Parsing '${file}'...`);
-  let data = fs.readFileSync(file, 'utf-8');
+  let data = ReadFile(file, 'utf-8');
   let ast, error;
   let parser;
   console.log('data', data);

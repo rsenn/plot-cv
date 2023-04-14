@@ -8,10 +8,12 @@ import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo
 import { Intersection, Matrix, isRect, Rect, Size, Point, Line, TransformationList, Vector } from './lib/geom.js';
 import { Element, isElement, SVG } from './lib/dom.js';
 import React, { h, html, render, Fragment, Component, createRef, useState, useLayoutEffect, useRef, toChildArray } from './lib/dom/preactComponent.js';
+import { fire } from './fire/build/fire-debug.js';
 
 function main() {
   define(
     globalThis,
+    {fire},
     properties(
       {
         currentURL: () => new URL(import.meta.url),
@@ -187,7 +189,12 @@ function main() {
 
     for(let y = 0; y < height; y++) {
       for(let x = 0; x < width; x++) {
-        const sum = [pixels[y + 1][Modulo(x - 1, width)], pixels[y + 1][x], pixels[y + 1][Modulo(x + 1, width)], pixels[y + 2][x]].reduce((a, p) => a + (p | 0), 0);
+        const sum = [
+          pixels[y + 1][Modulo(x - 1, width)],
+          pixels[y + 1][x],
+          pixels[y + 1][Modulo(x + 1, width)],
+          pixels[y + 2][x]
+        ].reduce((a, p) => a + (p | 0), 0);
 
         pixels[y][x] = (sum * 15) >>> 6;
       }
@@ -230,7 +237,14 @@ function main() {
   function CreatePaletteHSL() {
     const colors = new Array(256);
 
-    const hues = [new HSLA(0, 100, 0), new HSLA(0, 100, 50), new HSLA(30, 100, 50), new HSLA(60, 100, 50), new HSLA(60, 100, 100), new HSLA(60, 100, 100)];
+    const hues = [
+      new HSLA(0, 100, 0),
+      new HSLA(0, 100, 50),
+      new HSLA(30, 100, 50),
+      new HSLA(60, 100, 50),
+      new HSLA(60, 100, 100),
+      new HSLA(60, 100, 100)
+    ];
 
     const breakpoints = [0, 51, 80, 154, 205, 256];
     console.log('breakpoints:', breakpoints);
@@ -333,7 +347,10 @@ function main() {
         getRect
       },
       properties({
-        transform: [() => new TransformationList(Element.getCSS('body > div:first-child').transform), value => Element.setCSS('body > div:first-child', { transform: value + '' })]
+        transform: [
+          () => new TransformationList(Element.getCSS('body > div:first-child').transform),
+          value => Element.setCSS('body > div:first-child', { transform: value + '' })
+        ]
       })
     );
 
@@ -341,16 +358,20 @@ function main() {
       const rect = Element.rect(document.body).round(1);
       const { center, width, height } = rect;
 
-      return h('svg', { version: '1.1', xmlns: 'http://www.w3.org/2000/svg', viewBox: [...rect].join(' '), width, height }, [
-        h('circle', {
-          cx: center.x,
-          cy: center.y,
-          r: 250,
-          stroke: '#0f0',
-          'stroke-width': 1,
-          fill: `rgba(80,80,80,0.3)`
-        })
-      ]);
+      return h(
+        'svg',
+        { version: '1.1', xmlns: 'http://www.w3.org/2000/svg', viewBox: [...rect].join(' '), width, height },
+        [
+          h('circle', {
+            cx: center.x,
+            cy: center.y,
+            r: 250,
+            stroke: '#0f0',
+            'stroke-width': 1,
+            fill: `rgba(80,80,80,0.3)`
+          })
+        ]
+      );
     };
 
     let svgContainer = Element.create('div', {}, document.body);
@@ -452,7 +473,9 @@ function MakeUUID(rng = Math.random) {
   return [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 }
 function MakeClientID(rng = Math.random) {
-  return [4, 4, 4, 4].map(n => randStr(n, ['ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz', '.-$'][randInt(0, 3)]), rng).join('');
+  return [4, 4, 4, 4]
+    .map(n => randStr(n, ['ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz', '.-$'][randInt(0, 3)]), rng)
+    .join('');
 }
 
 define(globalThis, { crosskit, RGBA, HSLA, Util, Matrix, TransformationList });

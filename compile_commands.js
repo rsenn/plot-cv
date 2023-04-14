@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as util from './lib/misc.js';
 import inspect from 'inspect';
 import child_process from './lib/childProcess.js';
-import { ReadFile, ReadJSON, ReadBJSON, ReadDirRecursive, FdReader } from './io-helpers.js';
+import { ReadFile, ReadJSON, ReadBJSON, FdReader } from './io-helpers.js';
 import { CompileCommand, ArgumentType } from './lib/compileCommand.js';
 
 function main(...arglist) {
@@ -19,7 +19,7 @@ function main(...arglist) {
       maxStringLength: Infinity
     }
   });
-  let json = fs.readFileSync(arglist[0] ?? '/home/roman/Projects/plot-cv/quickjs/qjs-modules/build/x86_64-linux-profile/compile_commands.json', 'utf-8');
+  let json = ReadFile(arglist[0] ?? '/home/roman/Projects/plot-cv/quickjs/qjs-modules/build/x86_64-linux-profile/compile_commands.json', 'utf-8');
   let compileCommands = JSON.parse(json);
   let prevDirectory;
   let commands = [],

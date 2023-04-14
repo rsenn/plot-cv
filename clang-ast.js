@@ -2,7 +2,7 @@ import * as path from './lib/path.js';
 import * as deep from './lib/deep.js';
 import { Pointer } from './lib/pointer.js';
 import { AcquireReader } from './lib/stream/utils.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 export let SIZEOF_POINTER = 8;
 export let SIZEOF_INT = 4;
 import * as fs from 'fs';
@@ -952,7 +952,7 @@ export class Location {
   file = undefined;
 
   static at(file, offset) {
-    let data = fs.readFileSync(file, 'utf-8').slice(0, offset);
+    let data = ReadFile(file, 'utf-8').slice(0, offset);
     let lastLine = data.slice(data.lastIndexOf('\n') + 1);
 
     return new this({ line: countSubstring(data, '\n') + 1, col: lastLine.length + 1, file, offset });
@@ -1256,7 +1256,7 @@ export async function AstDump(compiler, source, args, force) {
     json() {
       console.log(`r.json`, this.file);
 
-      let json = fs.readFileSync(this.file, 'utf-8');
+      let json = ReadFile(this.file, 'utf-8');
       return json;
     },
     data() {

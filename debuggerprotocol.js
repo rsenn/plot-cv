@@ -1,3 +1,4 @@
+mport { ReadFile, WriteFile } from './io-helpers.js';
 import filesystem from 'fs';
 import * as deep from './lib/deep.js';
 import * as fs from './lib/filesystem.js';
@@ -30,7 +31,7 @@ export class DebuggerProtocol extends EventEmitter {
   getFile(filename) {
     const { files } = this;
     if(!(filename in files)) {
-      let data = fs.readFileSync(filename, 'utf-8');
+      let data = ReadFile(filename, 'utf-8');
       if(typeof data == 'string') data = data.split(/\r?\n/g);
       //console.log('getFile', {filename,data});
       files[filename] = data;

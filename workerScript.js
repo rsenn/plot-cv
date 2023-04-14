@@ -1,3 +1,4 @@
+mport { ReadFile, WriteFile } from './io-helpers.js';
 import { Worker } from 'os';
 import * as fs from 'fs';
 
@@ -8,7 +9,7 @@ export class WorkerScript {
   constructor(script) {
     let file = 'tmp-worker.js';
 
-    if(!(fs.writeFileSync(file, script) > 0)) throw new Error(`Error writing '${file}'`);
+    if(!(WriteFile(file, script) > 0)) throw new Error(`Error writing '${file}'`);
 
     let worker = (this.#worker = new Worker(file));
     this.#cleanup = () => {

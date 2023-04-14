@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 
 function readFile(path) {
   let ret;

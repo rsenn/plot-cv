@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 /* 
 //#const bpgdec = require("./static/wasm/bpgdec.wasm.js");
 const bpgdec = require("./static/wasm/bpgdec.js");

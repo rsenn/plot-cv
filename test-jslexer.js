@@ -2,7 +2,7 @@ import Lexer from './lib/jslexer.js';
 import { Console } from 'console';
 import { escape } from './lib/misc.js';
 import { h, Component } from './lib/dom/preactComponent.js';
-import fs from 'fs';
+import { ReadFile, WriteFile } from './io-helpers.js';
 
 const testfn = () => true;
 const testtmpl = `this is
@@ -17,7 +17,7 @@ const Code = `
 
 function main(arg) {
   let file = arg || './lib/misc.js';
-  let data = fs.readFileSync(file, 'utf-8');
+  let data = ReadFile(file, 'utf-8');
   //console.log('data:', data);
 
   let lexer = new Lexer();

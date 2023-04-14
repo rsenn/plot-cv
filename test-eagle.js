@@ -5,7 +5,6 @@ import deep from './lib/deep.js';
 import { Graph } from './lib/fd-graph.js';
 import ptr from './lib/json-ptr.js';
 import LogJS from './lib/log.js';
-import fs from 'fs';
 
 let filesystem = fs;
 

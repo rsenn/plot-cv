@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 import { Point } from 'opencv';
 import { Size } from 'opencv';
 import { Rect } from 'opencv';

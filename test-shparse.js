@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 import REPL from './repl.js';
 import * as Terminal from './terminal.js';
 import * as path from 'path';

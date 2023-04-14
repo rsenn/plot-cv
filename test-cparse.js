@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 import Alea from './lib/alea.js';
 import cparse from './lib/cparse.js';
 import cpp from './lib/cpp.js';

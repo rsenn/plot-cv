@@ -1,3 +1,4 @@
+mport { ReadFile, WriteFile } from './io-helpers.js';
 import * as fs from 'fs';
 import * as path from './lib/path.js';
 
@@ -101,7 +102,7 @@ export class VirtFS {
     return this.search(pathname, found => fs.chdir(found));
   }
   readFileSync(pathname, ...args) {
-    return this.search(pathname, found => fs.readFileSync(found, ...args));
+    return this.search(pathname, found => ReadFile(found, ...args));
   }
   fopen(pathname, ...args) {
     return this.search(pathname, found => fs.fopen(found, ...args));

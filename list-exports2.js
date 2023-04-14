@@ -104,10 +104,10 @@ function ProcessFile(file, params) {
   console.log(`Processing file '${file}'...`);
   if(file == '-') file = '/dev/stdin';
   if(file && fs.existsSync(file)) {
-    data = fs.readFileSync(file, 'utf8');
+    data = ReadFile(file, 'utf8');
   } else {
     file = 'stdin';
-    data = fs.readFileSync('/dev/stdin', 'utf8');
+    data = ReadFile('/dev/stdin', 'utf8');
   }
   if(debug >= 2) ECMAScriptParser.instrumentate();
   let ast, error;

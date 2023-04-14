@@ -13,7 +13,7 @@ import * as fs from 'fs';
 import { Pointer } from './lib/pointer.js';
 import { read as fromXML, write as writeXML } from 'xml';
 import inspect from './lib/objectInspect.js';
-import { IfDebug, LogIfDebug, ReadFd, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
+import { IfDebug, LogIfDebug, ReadFd, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 import { GetExponent, GetMantissa, ValueToNumber, NumberToValue } from './lib/eda/values.js';
 import { GetMultipliers, GetFactor, GetColorBands, PartScales, digit2color } from './lib/eda/colorCoding.js';
 import { UnitForName } from './lib/eda/units.js';
@@ -400,7 +400,7 @@ function main(...args) {
 
   Object.assign(globalThis, {
     load(filename, project = globalThis.project) {
-      globalThis.document = new EagleDocument(fs.readFileSync(filename, 'utf-8'), project, filename, null, fs);
+      globalThis.document = new EagleDocument(ReadFile(filename, 'utf-8'), project, filename, null, fs);
     },
     newProject(filename) {
       if(globalThis.project) {
@@ -580,8 +580,8 @@ function main(...args) {
   repl.addCleanupHandler(() => {
     let hist = repl.history.filter((item, i, a) => a.lastIndexOf(item) == i);
 
-    //    fs.writeFileSync(cmdhist, JSON.stringify(hist, null, 2));
-    fs.writeFileSync(
+    //    WriteFile(cmdhist, JSON.stringify(hist, null, 2));
+    WriteFile(
       cmdhist,
       hist
         .filter(entry => (entry + '').trim() != '')
@@ -608,7 +608,7 @@ function xml(strings, expressions) {
 }
 
 /*function LoadHistory(filename) {
-  let contents = fs.readFileSync(filename, 'utf-8');
+  let contents = ReadFile(filename, 'utf-8');
   let data;
 
   const parse = () => {

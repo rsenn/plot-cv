@@ -1,40 +1,21 @@
-import inspect from 'inspect';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import { ImmutablePath, PathMapper, toXML, TreeObserver } from './lib/json.js';
-import filesystem from 'fs';
 import { XMLIterator } from './lib/xml/util.js';
 import { parseXPath, ImmutableXPath } from './lib/xml/xpath.js';
+import { ReadFile, WriteFile } from './io-helpers.js';
 
 //import { ImmutableXPath, parseXPath, XMLIterator } from './lib/xml.js';
 
-const inspect = (arg, depth = 10, colors = true, breakLength = Number.Infinity) =>
-  util.inspect(arg, {
-    depth,
-    breakLength,
-    compact: true,
-    showProxy: true,
-    colors
-  });
 const printNode = node => {
   let s = toXML(node).replace(/\n.*/g, '');
   return s;
 };
 
-Util.inspect.defaultOpts = {
-  spacing: '',
-  separator: '\x1b[1;36m, ',
-  stringColor: [1, 36],
-  colon: '܃',
-  padding: ' ',
-  quote: '',
-  depth: 1
-};
-
 const CH = 'children';
 
 function main(...args) {
-  let str = filesystem.readFileSync(args.length ? args[0] : '../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
+  let str = ReadFile(args.length ? args[0] : '../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
   let xml = tXml(str)[0];
   const mapper = new PathMapper(xml, parseXPath);
   let observer = new TreeObserver(mapper, false);

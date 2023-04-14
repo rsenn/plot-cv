@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 import { Point, PointList, Line, BBox } from './lib/geom.js';
 import { SVG } from './lib/dom.js';
 import { toXML } from './lib/json.js';

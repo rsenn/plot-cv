@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 import REPL from './repl.js';
 import * as Terminal from './terminal.js';
 import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter } from './clang-ast.js';

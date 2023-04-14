@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 import path from './lib/path.js';
 import * as bjson from 'bjson';
 

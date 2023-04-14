@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 import Lexer from './lib/ecmascript/lexer.js';
 
 let args = scriptArgs;

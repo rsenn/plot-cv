@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 import { ECMAScriptParser, ECMAScriptInterpreter } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';

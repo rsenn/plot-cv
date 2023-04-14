@@ -1,6 +1,5 @@
 import { Util } from './lib/util.js';
 import { sleep } from 'os';
-import filesystem from 'fs';
 
 /*console.log(Util.escape(read('/proc/self/cmdline')));
 console.log(Util.escape(read('/etc/hosts')));*/

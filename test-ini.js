@@ -1,5 +1,4 @@
 import INIGrammar from './grammar-INI.js';
-import fs from 'fs';
 import path from './lib/path.js';
 import { Point, Size, Rect, BBox } from './lib/geom.js';
 import deep from './lib/deep.js';
@@ -7,15 +6,7 @@ import { Console } from 'console';
 import tXml from './lib/tXml.js';
 import { XPath } from './lib/xml/xpath.js';
 import { toXML } from './lib/json.js';
-
-function WriteFile(name, data) {
-  if(Array.isArray(data)) data = data.join('\n');
-  if(typeof data != 'string') data = '' + data;
-
-  fs.writeFileSync(name, data + '\n');
-
-  console.log(`Wrote ${name}: ${data.length} bytes`);
-}
+import { ReadFile, WriteFile } from './io-helpers.js';
 
 async function main(...args) {
   globalThis.console = new Console({
@@ -37,7 +28,7 @@ async function main(...args) {
   let iconSize, iconAspect;
 
   for(let filename of args) {
-    let src = fs.readFileSync(filename);
+    let src = ReadFile(filename);
 
     //console.log('src:', src);
     let [done, data, pos] = INIGrammar.ini(src, 0);
@@ -71,7 +62,7 @@ async function main(...args) {
       const svgFile = '/home/roman/mnt/ubuntu/' + desktopEntry.Icon.replace(/\.[a-z]*$/, '') + '.svg';
       const iconFile = '/home/lexy/.logos/' + path.basename(svgFile, '.svg') + '.png';
       console.log(' :', { svgFile, iconFile });
-      let svgData = tXml(fs.readFileSync(svgFile));
+      let svgData = tXml(ReadFile(svgFile));
 
       let svg = svgData[0] || { attributes: {} };
       const attr = svg && svg.attributes;

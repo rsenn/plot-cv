@@ -1,6 +1,5 @@
 import { Point, Size, Rect, Mat, UMat, Line, CLAHE, TickMeter, Draw, Contour } from 'opencv';
 import * as cv from 'opencv';
-import fs from 'fs';
 import Console from 'console';
 import * as path from 'path';
 import { RGBA, HSLA } from './lib/color.js';

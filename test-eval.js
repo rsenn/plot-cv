@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 import { Environment, ECMAScriptParser, Printer } from './lib/ecmascript.js';
 import trkl from './lib/trkl.js';
 

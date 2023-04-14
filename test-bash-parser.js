@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 import parse from 'bash-parser';
 
 const consoleOpts = {

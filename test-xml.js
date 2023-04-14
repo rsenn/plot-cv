@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 import inspect from 'inspect';
 import { define, isObject, memoize, unique } from './lib/misc.js';
 import * as deep from './lib/deep.js';

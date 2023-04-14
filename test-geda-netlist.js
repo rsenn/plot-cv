@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 import inspect from 'inspect';
 import gedaNetlistGrammar from './grammar-geda-netlist.js';
 import path from './lib/path.js';

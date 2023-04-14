@@ -1,3 +1,4 @@
+import { DirIterator, RecursiveDirIterator, ReadDirRecursive } from './dir-helpers.js';
 import filesystem from 'fs';
 //import inspect from 'inspect';
 import express from 'express';
@@ -11,7 +12,7 @@ import fetch from 'isomorphic-fetch';
 import { exec } from 'promisify-child-process';
 import * as fs from 'fs';
 import { promises as fsPromises } from 'fs';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, WriteFile, WriteJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles } from './io-helpers.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, WriteFile, WriteJSON, Filter, FilterImages, SortFiles, StatFiles } from './io-helpers.js';
 import { Console } from 'console';
 import SerialPort from 'serialport';
 import SerialStream from '@serialport/stream';
@@ -446,7 +447,7 @@ async function main() {
       }
       const re = /[^\n]*'util'[^\n]*/g;
       /*let m,
-        data = fs.readFileSync(file, 'utf-8');
+        data = ReadFile(file, 'utf-8');
       if((m = re.exec(data))) {
         console.log('The file ' + file + ` was requested. (${data.length})`, `match @ ${m.index}: ${m[0]}`);
       }*/
@@ -782,7 +783,7 @@ async function main() {
     //  req.on('end', () => waitFor(500).then(() => end()));
 
     function end() {
-      data = fs.readFileSync(filename).toString();
+      data = ReadFile(filename).toString();
       console.log('req end', { data });
       res.end(data + '\n\nUpload complete');
       next();

@@ -1,6 +1,5 @@
 import child_process from 'child_process';
 import { Repeater } from './lib/repeater/repeater.js';
-import filesystem from 'fs';
 
 let childProcess;
 

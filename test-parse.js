@@ -1,3 +1,4 @@
+mport { ReadFile, WriteFile } from './io-helpers.js';
 import { Lexer } from './lib/parse/lexer.js';
 import { Grammar } from './lib/parse/grammar.js';
 import { Parser } from './lib/parse/parser.js';
@@ -12,7 +13,7 @@ function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
-  fs.writeFileSync(name, data + '\n');
+  WriteFile(name, data + '\n');
 
   console.log(`Wrote ${name}: ${data.length} bytes`);
 }
@@ -35,7 +36,7 @@ async function main(...args) {
   ] = args;
   let basename = path.basename(filename, path.extname(filename));
 
-  let src = fs.readFileSync(filename, 'utf-8');
+  let src = ReadFile(filename, 'utf-8');
   console.log('src:', src);
 
   let grammar = new Grammar(src, filename);
@@ -61,7 +62,7 @@ async function main(...args) {
   let cowbirdGrammar = grammar.toCowbird();
   console.log('cowbird:', cowbirdGrammar);
 
-  let data = fs.readFileSync('../pictest/build/mplab/7segtest-16f876a-xc8-debug.mcp');
+  let data = ReadFile('../pictest/build/mplab/7segtest-16f876a-xc8-debug.mcp');
   console.log('data:', abbreviate(data, 100));
   let parser = new Cowbird(cowbirdGrammar, 'ini', true);
   console.log('parser:', parser);

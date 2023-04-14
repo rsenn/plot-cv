@@ -1,3 +1,4 @@
+import { DirIterator, RecursiveDirIterator, ReadDirRecursive } from './dir-helpers.js';
 import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
@@ -13,7 +14,7 @@ import { link, unlink, error, fnmatch, FNM_EXTMATCH } from 'misc';
 import { toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE, waitFor } from 'util';
 import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, client, server, FormParser, Hash, Response, Socket } from 'net';
 import { parseDate, dateToObject } from './date-helpers.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
 import { h, html, render, Component, useState, useLayoutEffect, useRef } from './lib/preact.mjs';
 import renderToString from './lib/preact-render-to-string.js';
@@ -39,7 +40,10 @@ trkl.property(globalThis, 'logLevel').subscribe(value =>
     if(logFilter.test(message)) return;
 
     //if(params.debug || level <= LLL_WARN)
-    out((['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8) + message.replace(/\n/g, '\\n').replace(/\r/g, '\\r'));
+    out(
+      (['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8) +
+        message.replace(/\n/g, '\\n').replace(/\r/g, '\\r')
+    );
   })
 );
 
@@ -87,7 +91,13 @@ function GetRootDirectories(pattern = '*') {
 
 const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 
-const defaultDirs = (globalThis.defaultDirs = ['.', ...glob('../*/eagle'), './uploads/*.{sch,brd,lbr}', '/mnt/extext/Photos/*APPLE/*.{JPG,PNG,GIF,AAE,MOV,HEIC,MP4,WEBP}', ['/home/roman/Bilder', new RegExp('.(jpg|jpeg|png|heic|tif|tiff)$', 'i')]]);
+const defaultDirs = (globalThis.defaultDirs = [
+  '.',
+  ...glob('../*/eagle'),
+  './uploads/*.{sch,brd,lbr}',
+  '/mnt/extext/Photos/*APPLE/*.{JPG,PNG,GIF,AAE,MOV,HEIC,MP4,WEBP}',
+  ['/home/roman/Bilder', new RegExp('.(jpg|jpeg|png|heic|tif|tiff)$', 'i')]
+]);
 
 const allowedDirs = (globalThis.allowedDirs = new Map(
   defaultDirs
@@ -121,7 +131,18 @@ function DateStr(date) {
 }
 
 function ModeStr(mode) {
-  return (mode & (0o120000 == 0o120000) ? 'l' : mode & 0o40000 ? 'd' : '-') + (mode & 0b100000000 ? 'r' : '-') + (mode & 0b010000000 ? 'w' : '-') + (mode & 0b001000000 ? 'x' : '-') + (mode & 0b100000 ? 'r' : '-') + (mode & 0b010000 ? 'w' : '-') + (mode & 0b001000 ? 'x' : '-') + (mode & 0b100 ? 'r' : '-') + (mode & 0b010 ? 'w' : '-') + (mode & 0b001 ? 'x' : '-');
+  return (
+    (mode & (0o120000 == 0o120000) ? 'l' : mode & 0o40000 ? 'd' : '-') +
+    (mode & 0b100000000 ? 'r' : '-') +
+    (mode & 0b010000000 ? 'w' : '-') +
+    (mode & 0b001000000 ? 'x' : '-') +
+    (mode & 0b100000 ? 'r' : '-') +
+    (mode & 0b010000 ? 'w' : '-') +
+    (mode & 0b001000 ? 'x' : '-') +
+    (mode & 0b100 ? 'r' : '-') +
+    (mode & 0b010 ? 'w' : '-') +
+    (mode & 0b001 ? 'x' : '-')
+  );
 }
 
 const HTMLPage = ({ title, style, scripts = [], children, ...props }) => {
@@ -394,7 +415,7 @@ function main(...args) {
         ['.svgz', 'application/gzip'],
         ['.mjs', 'application/javascript'],
         ['.js', 'application/javascript'],
-        ['.wasm', 'application/octet-stream'],
+        ['.wasm', 'application/wasm'],
         ['.eot', 'application/vnd.ms-fontobject'],
         ['.lib', 'application/x-archive'],
         ['.bz2', 'application/x-bzip2'],
@@ -499,14 +520,14 @@ function main(...args) {
               let mime = GetMime(file);
               resp.type = mime;
               resp.headers = { 'content-type': mime };
-              let data = fs.readFileSync(file, 1 | binary ? null : charset);
+              let data = ReadFile(file, 1 | binary ? null : charset);
               console.log(`*file.load`, { data, mime });
               yield data;
               resp.body = data;
               //yield
               break;
             case 'save':
-              fs.writeFileSync(file, contents);
+              WriteFile(file, contents);
               yield 'done!\r\n';
               break;
             case 'list':
@@ -869,7 +890,7 @@ function main(...args) {
         const dir = path.dirname(file); //file.replace(/\/[^\/]*$/g, '');
 
         if(file.endsWith('.txt') || file.endsWith('.html') || file.endsWith('.css')) {
-          resp.body = fs.readFileSync(file, 'utf-8');
+          resp.body = ReadFile(file, 'utf-8');
         } else if(file.endsWith('.js')) {
           let file1 = file;
           if(/qjs-modules\/lib/.test(file) && !/(dom|util)\.js/.test(file)) {
@@ -897,7 +918,7 @@ function main(...args) {
           //console.log('\x1b[38;5;33monHttp\x1b[0m', file1, file);
 
           //
-          let body = fs.readFileSync(file, 'utf-8');
+          let body = ReadFile(file, 'utf-8');
 
           const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
 

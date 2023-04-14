@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 import { ColoredText } from './lib/color/coloredText.js';
 import { matchAll } from './lib/misc.js'
 //prettier-ignore

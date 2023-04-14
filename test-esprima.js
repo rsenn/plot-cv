@@ -1,6 +1,6 @@
 import { parseModule } from 'esprima';
 import { Console } from 'console';
-import fs from 'fs';
+import { ReadFile, WriteFile } from './io-helpers.js';
 import * as path from 'path';
 
 function main(...args) {
@@ -19,7 +19,7 @@ function main(...args) {
     let error;
     let ast;
     try {
-      let code = fs.readFileSync(arg, 'utf8');
+      let code =ReadFile(arg, 'utf8');
       ast = parseModule(code, {
         module: true,
         next: true,
@@ -46,7 +46,7 @@ function main(...args) {
     if(!error) {
       let outputFile = path.basename(arg, path.extname(arg)) + '.ast.json';
       console.log(`Parsing '${arg}' succeeded, writing AST to '${outputFile}'`);
-      fs.writeFileSync(outputFile, JSON.stringify(ast, null, 2));
+      WriteFile(outputFile, JSON.stringify(ast, null, 2));
     } else {
       throw error;
     }

@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 import require from 'require';
 import { isJpeg, jpegProps } from './lib/jpeg.js';
 

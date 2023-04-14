@@ -1,3 +1,4 @@
+mport { ReadFile, WriteFile } from './io-helpers.js';
 import inspect from 'inspect';
 import { define, isObject, memoize, unique } from './lib/misc.js';
 import { ECMAScriptParser } from './lib/ecmascript.js';
@@ -399,7 +400,7 @@ function PrefixRemover(reOrStr, replacement = '') {
 function DumpFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
-  fs.writeFileSync(name, data + '\n');
+  WriteFile(name, data + '\n');
   console.log(`Wrote ${name}: ${data.length} bytes`);
 }
 
@@ -556,7 +557,7 @@ async function main(...args) {
     let st = new Tree(ast);
 
     let astStr = JSON.stringify(ast, null, 2);
-    fs.writeFileSync(path.basename(file, /\.[^.]+$/) + '.ast.json', astStr);
+    WriteFile(path.basename(file, /\.[^.]+$/) + '.ast.json', astStr);
     Verbose(`${file} parsed:`, { data, error });
     function generateFlatAndMap() {
       console.log('ast:', ast);
@@ -1291,7 +1292,7 @@ async function Prettier(file) {
 async function ParseFile(file) {
   let data, error, ast, flat;
   try {
-    data = fs.readFileSync(file);
+    data = ReadFile(file);
 
     //data = await Prettier(file);
     // console.log('data:', abbreviate(escape(data + ''), 40));
@@ -1677,7 +1678,7 @@ function IsPackage(dir) {
 
 function AddPackage(dir) {
   const packageFile = path.join(dir, 'package.json');
-  const obj = JSON.parse(fs.readFileSync(packageFile));
+  const obj = JSON.parse(ReadFile(packageFile));
   packages.set(dir, obj);
   return obj;
 }
@@ -1712,7 +1713,7 @@ function MakeSearch(dirs) {
     packages: [] //MakeSearchPath(dirs, 'package.json')
   };
   o.aliases = o.packages.reduce((acc, p) => {
-    let json = JSON.parse(fs.readFileSync(p));
+    let json = JSON.parse(ReadFile(p));
     let aliases = json._moduleAliases || {};
     for(let alias in aliases) {
       let module = path.join(path.dirname(p), aliases[alias]);

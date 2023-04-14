@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
@@ -307,7 +306,7 @@ function main(...args) {
             let pos2 = searchArrayBuffer(body, data.slice(0, pos1));
             console.log('pos2:', pos2);
 
-            fs.writeFileSync('out.bin', data);
+            WriteFile('out.bin', data);
           })();*/
         }
 
@@ -318,7 +317,7 @@ function main(...args) {
         const dir = file.replace(/\/[^\/]*$/g, '');
 
         if(file.endsWith('.txt')) {
-          resp.body = fs.readFileSync(file, 'utf-8');
+          resp.body = ReadFile(file, 'utf-8');
         }
         if(file.endsWith('.js')) {
           console.log('onHttp', { file, dir });

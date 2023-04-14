@@ -3,7 +3,6 @@ import { Point, PointList } from './lib/geom.js';
 import { SVG } from './lib/dom.js';
 import { parse } from './lib/svg/path-parser.js';
 import Shape from './lib/clipper.js';
-import { Console } from 'console';
 
 globalThis.console = new Console({
   inspectOptions: {
@@ -33,16 +32,14 @@ function testOffset() {
   let lightened = ClipperLib.JS.Lighten(path, 10);
   let perimeter = ClipperLib.JS.PerimeterOfPath(path, 1);
 
-
   const offset = new ClipperLib.ClipperOffset();
   const outer = new ClipperLib.Paths();
 
-
   offset.AddPath(path, ClipperLib.JoinType.jtRound, ClipperLib.EndType.etOpenRound);
-  console.log('offset',offset);
+  console.log('offset', offset);
 
   offset.Execute(outer, 1);
-  console.log('outer',outer);
+  console.log('outer', outer);
 
   let points = new PointList(outer[0].map(({ X, Y }) => new Point(X, Y)));
   //console.log('data2:', data2.toPath());

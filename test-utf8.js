@@ -1,4 +1,4 @@
-import filesystem from 'fs';
+import { ReadFile, WriteFile } from './io-helpers.js';
 
 function* BytesToUTF8(bytes) {
   let state = 0,
@@ -28,9 +28,8 @@ function CodePointsToString(codePoints) {
   return s;
 }
 
-async function main(...args) {
-
-  let data = filesystem.readFileSync(args[0] ?? 'utf8.txt', null);
+function main(...args) {
+  let data = ReadFile(args[0] ?? 'utf8.txt', null);
   console.log('data:', data);
 
   let bytes = new Uint8Array(data);

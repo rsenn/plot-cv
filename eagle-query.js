@@ -1,3 +1,4 @@
+mport { ReadFile, WriteFile } from './io-helpers.js';
 import { unique } from './lib/misc.js';
 import { EagleDocument } from './lib/eagle.js';
 import { toXML } from './lib/json.js';
@@ -22,7 +23,7 @@ async function main(...args) {
   if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt2.brd');
   args = unique(args);
   for(let arg of args) {
-    let data = fs.readFileSync(arg);
+    let data = ReadFile(arg);
     console.log(`loaded '${arg}'`);
     let doc = new EagleDocument(data, null, arg);
     documents.push(doc);

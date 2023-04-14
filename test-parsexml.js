@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 import { parse2 } from './lib/xml/parse.js';
 import { toXML } from './lib/json.js';
 

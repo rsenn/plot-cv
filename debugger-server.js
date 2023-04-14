@@ -335,7 +335,7 @@ function main(...args) {
               }
               case 'file': {
                 const { path } = rest;
-                const data = fs.readFileSync(path, 'utf-8');
+                const data = ReadFile(path, 'utf-8');
                 //ws.send(JSON.stringify({ type: 'response', response: { command: 'file', path, data } }));
 
                 const lexer = new Lexer(data, path);

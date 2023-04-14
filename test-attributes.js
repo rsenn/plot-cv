@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 import inspect from 'inspect';
 import { XMLIterator } from './lib/xml/util.js';
 import tXml from './lib/tXml.js';

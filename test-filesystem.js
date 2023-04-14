@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 import inspect from 'inspect';
 
 import TinyTest, { run, assert, assertEquals } from './lib/tinyTest.js';

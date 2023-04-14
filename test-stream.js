@@ -1,4 +1,3 @@
-import filesystem from 'fs';
 import { WritableStream } from './lib/stream/writableStream.js';
 
 

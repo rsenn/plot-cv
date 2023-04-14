@@ -1,0 +1,21 @@
+{
+  "options": {
+    "noAssert": true,
+    "importMemory": true,
+    "sourceMap": true
+  },
+  "targets": {
+    "debug": {
+      "outFile": "build/fire-debug.wasm",
+      "textFile": "build/fire-debug.wat",
+      "debug": true
+    },
+    "release": {
+      "outFile": "build/fire.wasm",
+      "textFile": "build/fire.wat",
+      "optimizeLevel": 3,
+      "shrinkLevel": 0,
+      "converge": false
+    }
+  }
+}
