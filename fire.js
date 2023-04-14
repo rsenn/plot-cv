@@ -14,6 +14,34 @@ import { List } from './lib/list.js';
 //import { fire } from './fire/build/fire-debug.js';
 import { LinkedList } from './lib/container/linkedList.js';
 
+class DrawList extends LinkedList {
+  constructor() {
+    super();
+  }
+
+  insert(item) {
+    return this.insertBefore(item, it => it.time > item.time);
+  }
+
+  *dequeue(upto = performance.now()) {
+    let predicate = typeof upto == 'number' ? it => it.time < upto : upto;
+    while(this.head) {
+      if(!predicate(this.head)) break;
+      yield this.removeHead();
+    }
+  }
+
+  queue(trail, t = performance.now()) {
+    trail[0].time = 0;
+    for(let item of trail) {
+      t += item.time;
+      this.insert({ ...item, time: t });
+    }
+  }
+}
+
+let drawList = (globalThis.drawList = new DrawList());
+
 function* AllParents(elem) {
   let obj = elem.ownerDocument;
 
@@ -148,9 +176,10 @@ function main() {
           globalThis.mouseEvent = event;
 
           for(let touch of event.touches) {
+            console.log('touch', touch);
             globalThis.touch = touch;
-            const { clientX: x, clientY: y } = touch;
-            yield { type: 'touch', x, y };
+            const { force, radiusX, radiusY, clientX: x, clientY: y, ...obj } = touch;
+            yield { ...obj, type: 'touch', force, radiusX, radiusY, x, y };
           }
 
           // yield* [...event.touches].map(EventPositions);
@@ -316,17 +345,25 @@ function main() {
 
   let element, rect, rc, mouseTransform;
 
+  function Draw(x, y, time = performance.now()) {
+    return drawList.insert({ x, y, time });
+  }
+
   function Blaze(x, y, r = rc) {
     for(let ty = y - 1; ty < y + 1; ty++) {
       for(let tx = x - 1; tx < x + 1; tx++) {
         pixels[ty][tx] = r;
+
+        Draw(tx, ty);
       }
     }
 
     pixels[y + 1][x] = r;
   }
 
-  async function ReplayTrail(trail) {
+  async function ReplayTrail(trail, time = performance.now() + 20) {
+    drawList.queue(trail, time);
+
     for(let blaze of trail) {
       let { x, y, time } = blaze;
       // console.log('ReplayTrail', { x, y, time, rc });
@@ -455,21 +492,26 @@ function main() {
     const timegen = (() => {
       let t = Date.now();
       let prev = 0;
-      return () => {
-        let tmp = t;
-        t = Date.now() - prev;
-        prev += t;
-        return t;
-      };
+      return Object.assign(
+        () => {
+          let tmp = t;
+          t = Date.now() - prev;
+          prev += t;
+          return t;
+        },
+        { start: t }
+      );
     })();
-    let trail = (globalThis.trail = []),
-      start = timegen(),
-      last;
+    const trail = (globalThis.trail = []);
 
     for(;;) {
-      let prev, pt;
+      let prev,
+        pt,
+        start = timegen(),
+        last;
 
       for await(let ev of MovementIterator(window)) {
+        globalThis.movement = ev;
         if(!globalThis.cid) {
           globalThis.cid ??= MakeClientID();
 
@@ -482,11 +524,9 @@ function main() {
             t;
           if(prev) diff = pt.diff(prev);
 
-          start ??= t = Date.now();
+          //start ??= t = Date.now();
 
           trail.push({ ...pt, time: timegen() });
-
-          // trail.push(t - start + '/' + (prev && diff.x > 0 ? '+' : '') + diff.x + ',' + (prev && diff.y > 0 ? '+' : '') + diff.y);
 
           last = t;
           try {
@@ -501,9 +541,10 @@ function main() {
 
       SendTrail();
 
-      function SendTrail() {
+      function SendTrail(start = timegen.start) {
         if(trail.length) {
-          const payload = (globalThis.payload = { type: 'blaze', start, trail: [...trail] });
+          trail[0].time = 0;
+          const payload = (globalThis.payload = { type: 'blaze', cid: globalThis.cid, start, trail: [...trail] });
           console.log('SendTrail', payload);
           ws.send(JSON.stringify(payload));
         }
