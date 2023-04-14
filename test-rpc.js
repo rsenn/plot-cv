@@ -17,8 +17,8 @@ import { Repeater } from './lib/repeater/repeater.js';
 import { ReadFile, WriteFile, ReadJSON, WriteJSON, ReadBJSON, WriteBJSON } from './io-helpers.js';
 import { parseDate, dateToObject } from './date-helpers.js';
 
-import rpc from './quickjs/qjs-net/rpc.js';
-import * as rpc2 from './quickjs/qjs-net/rpc.js';
+import rpc from './quickjs/qjs-net/js/rpc.js';
+import * as rpc2 from './quickjs/qjs-net/js/rpc.js';
 
 globalThis.fs = fs;
 

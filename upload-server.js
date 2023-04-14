@@ -1,4 +1,3 @@
-import { DirIterator, RecursiveDirIterator, ReadDirRecursive } from './dir-helpers.js';
 import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
@@ -23,6 +22,7 @@ import { Execute } from './os-helpers.js';
 import trkl from './lib/trkl.js';
 import { take } from './lib/iterator/helpers.js';
 import { extendArray, extendGenerator, extendAsyncGenerator } from 'util';
+import { RecursiveDirIterator } from './dir-helpers.js';
 
 extendArray();
 extendGenerator();
@@ -304,7 +304,8 @@ function main(...args) {
       compact: 2,
       depth: Infinity,
       customInspect: true,
-      maxArrayLength: 200
+      maxArrayLength: 200,
+      protoChain: true
     }
   });
   let params = getOpt(
@@ -368,11 +369,15 @@ function main(...args) {
     std.exit(0);
   };
 
-  repl.inspectOptions = {
-    ...(repl.inspectOptions ?? console.options),
-    depth: Infinity,
-    compact: false
-  };
+  console.options = Object.assign(
+    repl.inspectOptions,
+    { ...console.options },
+    {
+      depth: Infinity,
+      compact: 1
+    }
+  );
+  repl.inspectOptions.hideKeys.push(Symbol.inspect);
 
   console.log = (...args) => repl.printStatus(() => log(console.config(repl.inspectOptions), ...args));
 
@@ -728,7 +733,10 @@ function main(...args) {
         },*/
       onHttp(ws, req, resp) {
         /* if(req.method != 'GET')*/ //console.log('onHttp', console.config({ compact: 0 }), ws);
-        //   console.log('\x1b[38;5;220monHttp(1)\x1b[0m', console.config({ compact: 0 }), { req });
+
+        /*    console.log('\x1b[38;5;220monHttp(1)\x1b[0m', `req =`, console.config(repl.inspectOptions), req);
+        console.log('\x1b[38;5;220monHttp(1)\x1b[0m', `resp =`, console.config(repl.inspectOptions), resp);*/
+        //        console.log('\x1b[38;5;220monHttp(1)\x1b[0m', console.config(repl.inspectOptions), { req, resp });
 
         define(globalThis, { ws, req, resp });
 
@@ -918,7 +926,7 @@ function main(...args) {
           //console.log('\x1b[38;5;33monHttp\x1b[0m', file1, file);
 
           //
-          let body = ReadFile(file, 'utf-8');
+          let body = ReadFile(file);
 
           const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
 

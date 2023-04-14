@@ -3,17 +3,52 @@ import { RGBA, HSLA } from './lib/color.js';
 import { timer } from './lib/async/helpers.js';
 import { WebSocketIterator, WebSocketURL, CreateWebSocket, ReconnectingWebSocket, StreamReadIterator } from './lib/async/websocket.js';
 import { once, streamify, throttle, distinct, subscribe } from './lib/async/events.js';
-import { memoize, define, isUndefined, properties, keys, unique, randStr, randInt } from './lib/misc.js';
+import { lazyProperties, memoize, define, isUndefined, properties, keys, unique, randStr, randInt } from './lib/misc.js';
 import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater, Reader, ReadAll, default as utils } from './lib/stream/utils.js';
 import { Intersection, Matrix, isRect, Rect, Size, Point, Line, TransformationList, Vector } from './lib/geom.js';
 import { Element, isElement, SVG } from './lib/dom.js';
 import React, { h, html, render, Fragment, Component, createRef, useState, useLayoutEffect, useRef, toChildArray } from './lib/dom/preactComponent.js';
-import { fire } from './fire/build/fire-debug.js';
+//import { fire } from './fire/build/fire-debug.js';
+
+function* AllParents(elem) {
+  let obj = elem.ownerDocument;
+
+  while(elem) {
+    yield elem;
+    if(elem.isSameNode(obj)) break;
+    elem = elem.parentElement;
+  }
+}
+
+function getTransformationList(e) {
+  let css = Element.getCSS(e);
+  if(css.transform) return new TransformationList(css.transform);
+}
+function DecomposeTransformList(elem) {
+  let list = getTransformationList(elem);
+
+  if(list && list.length == 1 && list[0].type == 'matrix') {
+    let tl = list.decompose();
+    console.log(`Setting '${list}' to ${tl}`);
+    elem.style.transform = tl;
+  }
+}
+
+lazyProperties(globalThis, {
+  svgLayer: () => {
+    let e = SVG.create('svg', { xmlns: 'http://www.w3.org/2000/svg', viewBox: new Rect(0, 0, 300, 300) }, document.body);
+    Element.move(e, new Point(0, 0), 'fixed');
+    return e;
+  }
+});
+
+function drawRect(rect) {}
 
 function main() {
   define(
     globalThis,
-    {fire},
+    { AllParents, TransformationList, getTransformationList, DecomposeTransformList },
+    //    {fire},
     properties(
       {
         currentURL: () => new URL(import.meta.url),
@@ -189,12 +224,7 @@ function main() {
 
     for(let y = 0; y < height; y++) {
       for(let x = 0; x < width; x++) {
-        const sum = [
-          pixels[y + 1][Modulo(x - 1, width)],
-          pixels[y + 1][x],
-          pixels[y + 1][Modulo(x + 1, width)],
-          pixels[y + 2][x]
-        ].reduce((a, p) => a + (p | 0), 0);
+        const sum = [pixels[y + 1][Modulo(x - 1, width)], pixels[y + 1][x], pixels[y + 1][Modulo(x + 1, width)], pixels[y + 2][x]].reduce((a, p) => a + (p | 0), 0);
 
         pixels[y][x] = (sum * 15) >>> 6;
       }
@@ -237,14 +267,7 @@ function main() {
   function CreatePaletteHSL() {
     const colors = new Array(256);
 
-    const hues = [
-      new HSLA(0, 100, 0),
-      new HSLA(0, 100, 50),
-      new HSLA(30, 100, 50),
-      new HSLA(60, 100, 50),
-      new HSLA(60, 100, 100),
-      new HSLA(60, 100, 100)
-    ];
+    const hues = [new HSLA(0, 100, 0), new HSLA(0, 100, 50), new HSLA(30, 100, 50), new HSLA(60, 100, 50), new HSLA(60, 100, 100), new HSLA(60, 100, 100)];
 
     const breakpoints = [0, 51, 80, 154, 205, 256];
     console.log('breakpoints:', breakpoints);
@@ -347,10 +370,7 @@ function main() {
         getRect
       },
       properties({
-        transform: [
-          () => new TransformationList(Element.getCSS('body > div:first-child').transform),
-          value => Element.setCSS('body > div:first-child', { transform: value + '' })
-        ]
+        transform: [() => new TransformationList(Element.getCSS('body > div:first-child').transform), value => Element.setCSS('body > div:first-child', { transform: value + '' })]
       })
     );
 
@@ -358,20 +378,16 @@ function main() {
       const rect = Element.rect(document.body).round(1);
       const { center, width, height } = rect;
 
-      return h(
-        'svg',
-        { version: '1.1', xmlns: 'http://www.w3.org/2000/svg', viewBox: [...rect].join(' '), width, height },
-        [
-          h('circle', {
-            cx: center.x,
-            cy: center.y,
-            r: 250,
-            stroke: '#0f0',
-            'stroke-width': 1,
-            fill: `rgba(80,80,80,0.3)`
-          })
-        ]
-      );
+      return h('svg', { version: '1.1', xmlns: 'http://www.w3.org/2000/svg', viewBox: [...rect].join(' '), width, height }, [
+        h('circle', {
+          cx: center.x,
+          cy: center.y,
+          r: 250,
+          stroke: '#0f0',
+          'stroke-width': 1,
+          fill: `rgba(80,80,80,0.3)`
+        })
+      ]);
     };
 
     let svgContainer = Element.create('div', {}, document.body);
@@ -473,9 +489,7 @@ function MakeUUID(rng = Math.random) {
   return [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 }
 function MakeClientID(rng = Math.random) {
-  return [4, 4, 4, 4]
-    .map(n => randStr(n, ['ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz', '.-$'][randInt(0, 3)]), rng)
-    .join('');
+  return [4, 4, 4, 4].map(n => randStr(n, ['ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz', '.-$'][randInt(0, 3)]), rng).join('');
 }
 
 define(globalThis, { crosskit, RGBA, HSLA, Util, Matrix, TransformationList });

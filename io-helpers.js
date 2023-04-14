@@ -52,14 +52,17 @@ export function ReadFile(name, binary) {
     return loadFile(name, binary ? null : 'utf-8');
   }
 
-  let f = open(name, 'rb');
-  f.seek(0, SEEK_END);
-  let size = f.tell();
-  let buf = new ArrayBuffer(size);
-  let ret = f.read(buf, 0, size);
+  let f;
 
-  console.debug(`Read ${name}: ${ret?.byteLength} bytes`);
-  return buf;
+  if((f = open(name, 'rb'))) {
+    f.seek(0, SEEK_END);
+    let size = f.tell();
+    let buf = new ArrayBuffer(size);
+    let ret = f.read(buf, 0, size);
+
+    console.debug(`Read ${name}: ${ret?.byteLength} bytes`);
+    return buf;
+  }
 }
 
 export function LoadHistory(filename) {

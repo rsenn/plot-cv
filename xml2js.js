@@ -41,7 +41,6 @@ const push_front = (arr, ...items) => [...items, ...(arr || [])];
 const tail = arr => arr[arr.length - 1];
 
 async function main(...args) {
-
   let params = Util.getOpt(
     {
       output: [true, null, 'o'],
