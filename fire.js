@@ -13,6 +13,7 @@ import miscfixed6x13 from './static/json/miscfixed6x13.js';
 import { List } from './lib/list.js';
 //import { fire } from './fire/build/fire-debug.js';
 import { LinkedList } from './lib/container/linkedList.js';
+import { wasmBrowserInstantiate } from './wasm-helpers.js';
 
 class DrawList extends LinkedList {
   constructor() {
@@ -747,7 +748,8 @@ define(globalThis, {
   useLayoutEffect,
   useRef,
   toChildArray,
-  randInt
+  randInt,
+  wasmBrowserInstantiate
 });
 
 main();

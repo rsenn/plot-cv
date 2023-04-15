@@ -41,12 +41,13 @@ export function iterateTree(root, whatToShow = -1, filter /* = { acceptNode: () 
   } catch(e) {
     walker = document.createTreeWalker(root, whatToShow, filter);
   }
- 
+
   let ret = {
     walker,
     parents: [],
     next() {
-      let node, parent = walker.currentNode;
+      let node,
+        parent = walker.currentNode;
 
       if((node = walker.firstChild())) {
         this.parents.push(parent);
@@ -69,3 +70,25 @@ export function iterateTree(root, whatToShow = -1, filter /* = { acceptNode: () 
   };
   return ret;
 }
+
+export const domConsoleLog = (() => {
+  let consoleElement;
+
+  return function domConsoleLog(string) {
+    if(!consoleElement) {
+      // Set up a console element in the dom
+      consoleElement = document.createElement('pre');
+      consoleElement.style = `border: 1px solid black`;
+      consoleElement.textContent = `\n  DOM Console: `;
+      document.body.appendChild(consoleElement);
+    }
+
+    console.log(string);
+
+    if(string === undefined) {
+      string = 'undefined';
+    }
+
+    consoleElement.textContent = `${consoleElement.textContent} \n  ${string}  `;
+  };
+})();
