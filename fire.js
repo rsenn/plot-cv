@@ -14,6 +14,8 @@ import { List } from './lib/list.js';
 import { LinkedList } from './lib/container/linkedList.js';
 import { wasmBrowserInstantiate } from './wasm-helpers.js';
 //import lscache from './lib/lscache.js';
+import { useTrkl } from './lib/hooks/useTrkl.js';
+import trkl from './lib/trkl.js';
 
 let lsgs = (globalThis.lsgs = getset([key => localStorage.getItem(key), (key, value) => localStorage.setItem(key, value)]));
 
@@ -187,7 +189,7 @@ function drawRect(rect, stroke = '#0f0') {
 function GetElementMatrix(element) {
   let { transform } = Element.getCSS(element);
 
-  return Matrix.fromCSS(transform);
+  return Matrix.fromCSS(transform || '');
 }
 
 function SetCrosshair(pos) {
@@ -367,14 +369,14 @@ async function* MoveIterator(eventIterator) {
 }
 
 function main() {
-  lazyProperties(globalThis, {
+  /* lazyProperties(globalThis, {
     svgLayer: () => {
       let e = SVG.create('svg', { xmlns: 'http://www.w3.org/2000/svg', viewBox: new Rect(0, 0, window.innerWidth, window.innerHeight) }, document.body);
       Element.move(e, new Point(0, 0), 'absolute');
       Element.setCSS(e, { 'pointer-events': 'none' });
       return e;
     }
-  });
+  });*/
 
   define(
     globalThis,
@@ -486,14 +488,6 @@ function main() {
       pixels[height + 1][x] = 255 - (RandomByte() % 128);
     }
 
-    for(let y = 0; y < height; y++) {
-      for(let x = 0; x < width; x++) {
-        const sum = [pixels[y + 1][Modulo(x - 1, width)], pixels[y + 1][x], pixels[y + 1][Modulo(x + 1, width)], pixels[y + 2][x]].reduce((a, p) => a + (p | 0), 0);
-
-        pixels[y][x] = (sum * 15) >>> 6;
-      }
-    }
-
     for(let draw of drawList.dequeue()) {
       draw.value = 255 - 0x10; //(RandomByte() % 128);
       if(draw.size > 1) {
@@ -506,6 +500,14 @@ function main() {
       pixels[draw.y][draw.x] = draw.value;
 
       //Blaze(draw.x, draw.y, 255 - (RandomByte() % 128));
+    }
+
+    for(let y = 0; y < height; y++) {
+      for(let x = 0; x < width; x++) {
+        const sum = [pixels[y + 1][Modulo(x - 1, width)], pixels[y + 1][x], pixels[y + 1][Modulo(x + 1, width)], pixels[y + 2][x]].reduce((a, p) => a + (p | 0), 0);
+
+        pixels[y][x] = (sum * 15) >>> 6;
+      }
     }
   }
 
@@ -658,7 +660,9 @@ function main() {
         divElement: () => Element.find('body > div:first-child')
       }),
       properties({
-        windowRect: () => new Rect(window.innerWidth, window.innerHeight),
+        windowRect: () => new Rect(0, 0, window.innerWidth, window.innerHeight),
+        windowSize: () => new Size(window.innerWidth, window.innerHeight),
+        scrollPos: () => new Point(window.scrollX, window.scrollY),
         bodyRect: () => Element.rect('body').round(0),
         canvasRect: () => Element.rect('canvas').round(0),
         divRect: () => Element.rect('body > div:first-child').round(0)
@@ -671,27 +675,33 @@ function main() {
       })
     );
 
-    const SVGComponent = props => {
-      const rect = Element.rect(document.body).round(1);
-      const { center, width, height } = rect;
+    globalThis.circle = trkl(new Point(0, 0));
 
-      return h('svg', { version: '1.1', xmlns: 'http://www.w3.org/2000/svg', viewBox: [...rect].join(' '), width, height }, [
+    const SVGComponent = ({ circle, ...props }) => {
+      let rect = new Rect(0, 0, canvasElement.width, canvasElement.height);
+
+      const { r = 10, x, y, width = 1, stroke = '#0f0', fill = `rgba(80,80,80,0.3)` } = useTrkl(globalThis.circle);
+
+      return h('svg', { version: '1.1', xmlns: 'http://www.w3.org/2000/svg', viewBox: [...rect].join(' '), width: rect.width, height: rect.height }, [
         h('circle', {
-          cx: center.x,
-          cy: center.y,
-          r: 250,
-          stroke: '#0f0',
-          'stroke-width': 1,
-          fill: `rgba(80,80,80,0.3)`
+          cx: x,
+          cy: y,
+          r,
+          stroke,
+          'stroke-width': width,
+          fill
         })
       ]);
     };
 
     let svgContainer = Element.create('div', {}, document.body);
+
     Element.setCSS(svgContainer, { position: 'absolute', top: 0, left: 0, zIndex: 99999999, pointerEvents: 'none' });
+    render(h(SVGComponent), svgContainer);
 
-    /*render(h(SVGComponent), svgContainer);*/
-
+    globalThis.svg = svgContainer.firstElementChild;
+    Element.setCSS(svg, { position: 'absolute', width: canvasRect.width + 'px', height: canvasRect.height + 'px' });
+    Element.setCSS(svgContainer, { position: 'fixed', left: canvasRect.x + 'px', top: canvasRect.y + 'px' });
     rect = canvasRect;
     mouseTransform = PositionProcessor();
 
@@ -735,11 +745,21 @@ function main() {
 
     if(e.type == 'scroll') {
       const { scrollX, scrollY } = window;
-      event.scrollX = scrollX;
-      event.scrollY = scrollY;
 
-      window.scrollY = 0;
-      window.scrollX = 0;
+      let scrollingElement = e.target.scrollingElement ?? e.target;
+
+      const { scrollLeft, scrollTop } = e.target;
+
+      event = /* CopyObject(e); //*/ { evtype: 'scroll', target: TargetName(e.target), currentTarget: TargetName(e.currentTarget) };
+
+      event.scrollX = scrollLeft ?? scrollX;
+      event.scrollY = scrollTop ?? scrollY;
+
+      let pos = (event.scrollPos = new Point(event.scrollX, event.scrollY));
+
+      let t = (divElement.style.transform = `translate(${pos.x}px,${pos.y}px)`);
+      event.transform = t;
+      event.rects = GetRects().filter(([name, rect, pos]) => /*rect.x!=0 || rect.y != 0 ||*/ pos.x != 0 || pos.y != 0);
     }
 
     SendWS({ type: 'event', event });
@@ -839,7 +859,11 @@ function main() {
     }
   }
 
-  Loop();
+  tryCatch(
+    () => Loop(),
+    () => null,
+    error => SendWS({ type: 'exception', cid: globalThis.cid, message: error.message, stack: error.stack })
+  );
 }
 
 function getRect(elem) {
@@ -933,8 +957,9 @@ function TargetName(e) {
 function GetRects() {
   let rects = [];
   for(let element of [...AllParents(Element.find('canvas'))]) {
-    rects.push([ElementName(element), Element.rect(element)]);
+    rects.push([ElementName(element), Element.rect(element), new Point(element.scrollLeft, element.scrollTop)]);
   }
+  rects.push(['window', new Rect(0, 0, window.innerWidth, window.innerHeight), new Point(window.scrollX, window.scrollY)]);
 
   return rects;
 }
