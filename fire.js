@@ -330,12 +330,14 @@ async function* MovementIterator(element) {
     //event.preventDefault();
     if('touches' in event) {
       if(event.touches.length) {
+        let i=0;
         globalThis.mouseEvent = event;
 
         for(let touch of event.touches) {
           globalThis.touch = touch;
           const { force, radiusX, radiusY, clientX: x, clientY: y, ...obj } = touch;
-          yield { ...obj, type: 'touch', force, radiusX, radiusY, x, y };
+          yield { ...obj, type: 'touch', index:i,force, radiusX, radiusY, x, y };
+          ++i;
         }
 
         // yield* [...event.touches].map(EventPositions);
@@ -357,11 +359,12 @@ async function* MoveIterator(eventIterator) {
     if('touches' in event) {
       if(event.touches.length) {
         globalThis.touchEvent = event;
-
+let i=0;
         for(let touch of event.touches) {
           globalThis.touch = touch;
           const { force, radiusX, radiusY, clientX: x, clientY: y, ...obj } = touch;
-          yield { ...obj, type: 'touch', force, radiusX, radiusY, x, y };
+          yield { ...obj, type: 'touch',index:i, force, radiusX, radiusY, x, y };
+          ++i;
         }
       }
     } else throw new Error(`No such property: touches`);
@@ -429,6 +432,7 @@ function main() {
   const paletteHSL = CreatePaletteHSL();
 
   const pixels = Array.from({ length: height + 2 }).map((v, i) => new Uint8ClampedArray(buffer, i * width, width));
+  const seedlist =globalThis.seedlist= new DrawList();
   const { context } = crosskit;
   const image = context.createImageData(width, height);
 
@@ -488,7 +492,20 @@ function main() {
       pixels[height + 1][x] = 255 - (RandomByte() % 128);
     }
 
+
+    for(let seed of seedlist) {
+      try{
+        pixels[seed.y][seed.x] = 255 - (RandomByte() % 128);
+      }catch(e) {}
+  }
+
+    for(let seed of seedlist.dequeue()) {
+  }
+
     for(let draw of drawList.dequeue()) {
+
+
+
       draw.value = 255 - 0x10; //(RandomByte() % 128);
       if(draw.size > 1) {
         if(draw.x > 0) pixels[draw.y][draw.x - 1] = draw.value;
@@ -498,6 +515,10 @@ function main() {
         if(draw.y < 199) pixels[draw.y + 1][draw.x] = draw.value;
       }
       pixels[draw.y][draw.x] = draw.value;
+
+draw.time+=40;
+
+seedlist.insert(draw);
 
       //Blaze(draw.x, draw.y, 255 - (RandomByte() % 128));
     }
@@ -637,7 +658,7 @@ function main() {
     let { width, height } = Element.getCSS(body);
     console.log('ResizeHandler', { event, rect, width, height });
 
-    SendWS({ type: 'event', event });
+    //SendWS({ type: 'event',eventType: 'resize',windowSize });
 
     mouseTransform = PositionProcessor();
   }
@@ -676,11 +697,14 @@ function main() {
     );
 
     globalThis.circle = trkl(new Point(0, 0));
+    globalThis.points = trkl([]);
 
-    const SVGComponent = ({ circle, ...props }) => {
+    const SVGPolyline = ({ points, ...props }) => h('polyline', { points: points.map(pt => [...pt].join(',')).join(' '), ...props });
+
+    const SVGComponent = ({ circle, points, ...props }) => {
       let rect = new Rect(0, 0, canvasElement.width, canvasElement.height);
 
-      const { r = 10, x, y, width = 1, stroke = '#0f0', fill = `rgba(80,80,80,0.3)` } = useTrkl(globalThis.circle);
+      const { r = 10, x, y, width = '1', stroke = '#0f0', fill = `rgba(80,80,80,0.3)` } = useTrkl(circle);
 
       return h('svg', { version: '1.1', xmlns: 'http://www.w3.org/2000/svg', viewBox: [...rect].join(' '), width: rect.width, height: rect.height }, [
         h('circle', {
@@ -690,14 +714,15 @@ function main() {
           stroke,
           'stroke-width': width,
           fill
-        })
+        }),
+        h(SVGPolyline, { points: useTrkl(points), stroke, 'stroke-width': width })
       ]);
     };
 
     let svgContainer = Element.create('div', {}, document.body);
 
     Element.setCSS(svgContainer, { position: 'absolute', top: 0, left: 0, zIndex: 99999999, pointerEvents: 'none' });
-    render(h(SVGComponent), svgContainer);
+    render(h(SVGComponent, { circle: globalThis.circle, points: globalThis.points }), svgContainer);
 
     globalThis.svg = svgContainer.firstElementChild;
     Element.setCSS(svg, { position: 'absolute', width: canvasRect.width + 'px', height: canvasRect.height + 'px' });
@@ -743,6 +768,13 @@ function main() {
     console.log('e.target', e.target);
     console.log('event', event);
 
+    if(e.type=='resize') {
+      console.log('resize', windowSize);
+          SendWS({ type: 'event', eventType:e.type, windowSize });
+
+      return;
+    }
+
     if(e.type == 'scroll') {
       const { scrollX, scrollY } = window;
 
@@ -759,10 +791,10 @@ function main() {
 
       let t = (divElement.style.transform = `translate(${pos.x}px,${pos.y}px)`);
       event.transform = t;
-      event.rects = GetRects().filter(([name, rect, pos]) => /*rect.x!=0 || rect.y != 0 ||*/ pos.x != 0 || pos.y != 0);
+      //event.rects = GetRects().filter(([name, rect, pos]) => /*rect.x!=0 || rect.y != 0 ||*/ pos.x != 0 || pos.y != 0);
     }
 
-    SendWS({ type: 'event', event });
+    SendWS({ type: 'event', eventType: e.type, event });
     return false;
   });
 

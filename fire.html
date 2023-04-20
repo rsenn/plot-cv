@@ -20,8 +20,11 @@
         background: rgba(0, 0, 0, 0.9);
       }
       canvas,
-      #canvas {
+      #canvas,svg {
         user-select: none;
+      }
+      svg {
+        pointer-events: none;
       }
 
       /*  @media (orientation: portrait) {
