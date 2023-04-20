@@ -6,9 +6,13 @@
     <style type="text/css">
       body,
       html {
-        overflow: hidden;
         padding: 0;
         margin: 0;
+      }
+      html,
+      body,
+      #page {
+        overflow: hidden;
       }
       body {
         height: 100vh;
@@ -19,31 +23,45 @@
       #canvas {
         user-select: none;
       }
-      canvas {
-        /* border: 2px solid green;*/
-      }
-      #canvas {
-        /*background: hsla(0, 100%, 30%, 0.5);*/
-        overflow: hidden;
-      }
-      @media (orientation: portrait) {
+
+      /*  @media (orientation: portrait) {
         canvas {
-          height: auto;
-          width: 100vh;
+          height: 100vw;
+          width: auto;
         }
         #canvas {
           position: relative;
           left: 0;
           top: 0;
+          text-align: center;
+        }
+        #canvas {
+          height: 100%;
+          width: 100%;
+        }
+        #page {
+          overflow: visible;
+          transform: rotate(90deg);
+          height: 100vw;
           width: 100vh;
-          height: 100wh;
-          transform: translate(-19%,29.6%) scale(0.8) rotate(90deg);
-
-          min-height: 100vmin;
-          min-width: 100vmax;
-
-/*          margin-left: -6px;
-          margin-top: 25px;*/
+          position: relative;
+          top: 58.1648vw;
+          left: -58.1648vw;
+        }
+      } */
+      @media (orientation: portrait) {
+        #canvas {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100vw;
+          height: 100%;
+          overflow: hidden;
+        }
+        canvas {
+          transform: translate(-50%, -50%) rotate(90deg) translate(50vh, -50vw);
+          height: 80vw;
+          width: auto;
         }
       }
       @media (orientation: landscape) {

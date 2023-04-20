@@ -107,31 +107,10 @@ export function MapFile(filename) {
   return data;
 }
 
-export function WriteFile(name, data, opts = {}) {
-  const { mode = 0o644, verbose = true } = opts;
-  if(types.isArrayBuffer(data)) data = [data];
-
-  if(typeof data == 'object' && data !== null && Symbol.iterator in data) {
-    let fd = os.open(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, mode);
-    let r = 0;
-    for(let item of data) {
-      let b = toArrayBuffer(item + '');
-      r += os.write(fd, b, 0, b.byteLength);
-    }
-    os.close(fd);
-    let [stat, err] = os.stat(name);
-    return stat?.size;
-  }
-
-  os.remove(name);
-
-  if(Array.isArray(data)) data = data.join('\n');
-
-  if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
-  let ret = WriteFile(name, data);
-
-  if(verbose) debug(`Wrote ${name}: ${ret} bytes`);
-  return ret;
+export function WriteFile(file, tok) {
+  let f = std.open(file, 'w+');
+  let r = types.isArrayBuffer(tok) ? f.write(tok, 0, tok.byteLength) : f.puts(tok);
+  console.log('Wrote "' + file + '": ' + tok.length + ' bytes' + ` (${r})`);
 }
 
 export function WriteJSON(name, data, ...args) {

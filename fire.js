@@ -3,17 +3,104 @@ import { RGBA, HSLA } from './lib/color.js';
 import { timer } from './lib/async/helpers.js';
 import { WebSocketIterator, WebSocketURL, CreateWebSocket, ReconnectingWebSocket, StreamReadIterator } from './lib/async/websocket.js';
 import { once, streamify, throttle, distinct, subscribe } from './lib/async/events.js';
-import { lazyProperties, memoize, define, isUndefined, properties, keys, unique, randStr, randInt } from './lib/misc.js';
-import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater, Reader, ReadAll, default as utils } from './lib/stream/utils.js';
+import { propertyLookup, tryCatch, tryFunction, chain, chainRight, getset, gettersetter, lazyProperties, memoize, define, isUndefined, properties, keys, unique, randStr, randInt, waitFor, isFunction, getPrototypeChain, getConstructorChain, isCFunction, isJSFunction, isObject } from './lib/misc.js';
+import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater, Reader, ReadAll } from './lib/stream/utils.js';
 import { Intersection, Matrix, isRect, Rect, Size, Point, Line, TransformationList, Vector } from './lib/geom.js';
 import { Element, isElement, SVG } from './lib/dom.js';
 import React, { h, html, render, Fragment, Component, createRef, useState, useLayoutEffect, useRef, toChildArray } from './lib/dom/preactComponent.js';
-import { waitFor } from './lib/misc.js';
 import miscfixed6x13 from './static/json/miscfixed6x13.js';
 import { List } from './lib/list.js';
 //import { fire } from './fire/build/fire-debug.js';
 import { LinkedList } from './lib/container/linkedList.js';
 import { wasmBrowserInstantiate } from './wasm-helpers.js';
+//import lscache from './lib/lscache.js';
+
+let lsgs = (globalThis.lsgs = getset([key => localStorage.getItem(key), (key, value) => localStorage.setItem(key, value)]));
+
+const lstore = (globalThis.lstore = propertyLookup(
+  ...(globalThis.lsgs2 = lsgs.transform(
+    tryFunction(
+      v => JSON.parse(v ?? ''),
+      v => v,
+      () => null
+    ),
+    o => JSON.stringify(o || null)
+  ))
+));
+
+// For random numbers, use "x = 181 * x + 359" from
+// Tom Dickens "Random Number Generator for Microcontrollers"
+// https://web.archive.org/web/20170323204917/http://home.earthlink.net/~tdickens/68hc11/random/68hc11random.html
+let scratch = 0;
+
+function RandomByte() {
+  const value = 181 * scratch + 359;
+  scratch = value >>> 0;
+  return (value >>> 8) & 0xff;
+}
+
+function Modulo(n, m) {
+  return ((n % m) + m) % m;
+}
+
+function isNativeObject(obj) {
+  return isCFunction(obj.constructor);
+}
+
+function Object2JSON(obj) {
+  if(typeof obj.tagName == 'string') return ElementName(obj);
+  if(obj instanceof EventTarget) return '#' + TargetName(obj).toLowerCase();
+}
+
+function CopyObject(obj) {
+  let ret = {};
+  for(let proto of [obj, ...getPrototypeChain(obj)].reverse()) {
+    for(let prop of Object.getOwnPropertyNames(proto)) {
+      if(prop == '__proto__') continue;
+      if(typeof prop == 'symbol') continue;
+      if(isFunction(obj[prop])) continue;
+      let v = obj[prop];
+      if(isObject(v)) {
+        v = Object2JSON(v);
+
+        v ??= isNativeObject(v) ? {} : CopyObject(v);
+      }
+      ret[prop] = v;
+    }
+  }
+  return ret;
+}
+
+function CreatePalette() {
+  const colors = new Array(256);
+
+  for(let i = 0; i < 64; i++) {
+    const value = i * 4;
+
+    colors[i] = new RGBA(value, 0, 0);
+    colors[i + 64] = new RGBA(255, value, 0);
+    colors[i + 128] = new RGBA(255, 255, value);
+    colors[i + 192] = new RGBA(255, 255, 255);
+  }
+  return colors;
+}
+
+function CreatePaletteHSL() {
+  const colors = new Array(256);
+
+  const hues = [new HSLA(0, 100, 0), new HSLA(0, 100, 50), new HSLA(30, 100, 50), new HSLA(60, 100, 50), new HSLA(60, 100, 100), new HSLA(60, 100, 100)];
+
+  const breakpoints = [0, 51, 80, 154, 205, 256];
+  console.log('breakpoints:', breakpoints);
+
+  for(let i = 0; i < 256; i++) {
+    const hue = (v => (v == -1 ? () => hues.length - 2 : v => v))(breakpoints.findIndex(b => i < b));
+    const range = breakpoints[hue] - 1 - breakpoints[hue - 1];
+
+    colors[i] = HSLA.blend(hues[hue - 1], hues[hue], (i - breakpoints[hue - 1]) / range).toRGBA();
+  }
+  return colors;
+}
 
 class DrawList extends LinkedList {
   constructor() {
@@ -97,6 +184,188 @@ function drawRect(rect, stroke = '#0f0') {
   return SVG.create('rect', { x, y, width, height, stroke, 'stroke-width': '1', fill: 'none' }, svg);
 }
 
+function GetElementMatrix(element) {
+  let { transform } = Element.getCSS(element);
+
+  return Matrix.fromCSS(transform);
+}
+
+function SetCrosshair(pos) {
+  let ch = Element.find('#crosshair');
+  let rect = Element.getRect(ch);
+
+  console.log('SetCrosshair', { ch, rect, pos });
+  rect.x = pos.x - rect.width / 2;
+  rect.y = pos.y - rect.height / 2;
+
+  Element.setRect(ch, rect);
+}
+
+function EventPositions(eventOrTouch) {
+  let positions = unique(
+    keys(eventOrTouch, 2)
+      .filter(n => typeof n == 'string' && /[XY]$/.test(n))
+      .map(n => n.slice(0, -1))
+  );
+
+  return positions.reduce((acc, key) => {
+    acc[key] = new Point(eventOrTouch[key + 'X'], eventOrTouch[key + 'Y']);
+    return acc;
+  }, {});
+}
+
+function PositionMatrix(canvas = Element.find('canvas'), rect) {
+  rect ??= Element.rect(canvas);
+  let vertical = rect.aspect() < 1;
+  let topLeft = rect.toPoints()[vertical ? 1 : 0];
+  let m = Matrix.identity().scale(canvas.width, canvas.height);
+
+  if(vertical) m = m.rotate(-Math.PI / 2);
+
+  m = m.scale(1 / rect.width, 1 / rect.height);
+  m = m.translate(-topLeft.x, -topLeft.y);
+
+  return m;
+}
+
+function PositionProcessor(canvas = Element.find('canvas'), rect) {
+  rect ??= Element.rect(canvas);
+  let m = PositionMatrix(canvas, rect);
+  return pos => new Point(...m.transformPoint(new Point(pos))).round(1);
+}
+
+function ProcessPosition(pos) {
+  return PositionProcessor()(pos);
+}
+
+function TouchTransformer(tfn = (x, y) => [x, y]) {
+  return touch => {
+    let [x, y] = tfn(touch.clientX, touch.clientY);
+
+    touch.x = x;
+    touch.y = y;
+    return touch;
+  };
+}
+
+async function* TouchPrinter(iter) {
+  for await(let event of iter) {
+    let n = event.touches?.length;
+    console.log('TouchPrinter', event);
+    for(let i = 0; i < n; i++) {
+      const { x, y } = event.touches[i];
+      console.log('touch #' + i, { x, y });
+    }
+    yield event;
+  }
+}
+
+function MouseToTouch(event) {
+  switch (event.type) {
+    case 'mouseup':
+      delete event.type;
+      Object.defineProperty(event, 'type', { value: 'touchend', configurable: true, enumerable: true });
+      break;
+    case 'mousedown':
+      delete event.type;
+      Object.defineProperty(event, 'type', { value: 'touchstart', configurable: true, enumerable: true });
+      break;
+    case 'mousemove':
+      delete event.type;
+      Object.defineProperty(event, 'type', { value: 'touchmove', configurable: true, enumerable: true });
+      break;
+  }
+  if(!('touches' in event)) {
+    event.touches = [{ clientX: event.clientX, clientY: event.clientY, x: event.x, y: event.y }];
+  }
+
+  return event;
+}
+async function* CatchIterator(it) {
+  try {
+    for await(let item of it) yield item;
+  } catch(error) {
+    console.log('CatchIterator ERROR: ' + error.message + '\n' + error.stack);
+  }
+}
+
+async function* TouchIterator(element, t) {
+  let rect = Element.rect(element);
+
+  if(!t) {
+    let matrix = PositionMatrix();
+    //GetElementMatrix(canvasElement.parentElement).invert();
+    // console.log('TouchIterator', { matrix }, matrix.decompose());
+
+    t = TouchTransformer((x, y) => matrix.transformXY(x, y).map(Math.floor));
+  }
+  //console.log('TouchIterator', { rect, element });
+
+  let ev = MouseToTouch(await once(element, ['mousedown', 'touchstart']));
+  let type = ev.type.slice(0, 5);
+  if(ev.touches) [...ev.touches].forEach(t);
+  yield ev;
+
+  for await(let event of streamify(['touchend', 'touchmove', 'mouseup', 'mousemove'], element)) {
+    event.preventDefault();
+
+    MouseToTouch(event);
+
+    if(event.touches) [...event.touches].forEach(t);
+
+    yield event;
+
+    if(event.type.endsWith('end')) break;
+  }
+}
+
+async function* MovementIterator(element) {
+  let ev = await once(element, 'mousedown', 'touchstart');
+  let type = ev.type.slice(0, 5);
+  yield ev;
+  console.log(type + ' start');
+  for await(let event of streamify(['mouseup', 'mousemove', 'touchend', 'touchmove'], element)) {
+    //event.preventDefault();
+    if('touches' in event) {
+      if(event.touches.length) {
+        globalThis.mouseEvent = event;
+
+        for(let touch of event.touches) {
+          globalThis.touch = touch;
+          const { force, radiusX, radiusY, clientX: x, clientY: y, ...obj } = touch;
+          yield { ...obj, type: 'touch', force, radiusX, radiusY, x, y };
+        }
+
+        // yield* [...event.touches].map(EventPositions);
+      }
+    } else {
+      const { type, clientX: x, clientY: y } = event;
+      let obj = { type, x, y };
+      yield obj;
+    }
+    if(/(up|end)$/.test(event.type)) {
+      console.log(type + ' end');
+      break;
+    }
+  }
+}
+
+async function* MoveIterator(eventIterator) {
+  for await(let event of eventIterator) {
+    if('touches' in event) {
+      if(event.touches.length) {
+        globalThis.touchEvent = event;
+
+        for(let touch of event.touches) {
+          globalThis.touch = touch;
+          const { force, radiusX, radiusY, clientX: x, clientY: y, ...obj } = touch;
+          yield { ...obj, type: 'touch', force, radiusX, radiusY, x, y };
+        }
+      }
+    } else throw new Error(`No such property: touches`);
+  }
+}
+
 function main() {
   lazyProperties(globalThis, {
     svgLayer: () => {
@@ -113,12 +382,15 @@ function main() {
     //    {fire},
     properties(
       {
+        cid: () => lstore.cid || (lstore.cid = MakeClientID()),
         currentURL: () => new URL(import.meta.url),
         currentFile: () => globalThis.currentURL.pathname.replace(/^\//, '')
       },
       { memoize: true }
     )
   );
+
+  LoadWASM();
 
   const width = 320;
   const height = 200;
@@ -135,89 +407,6 @@ function main() {
   function Reparent(canvas = document.getElementsByTagName('canvas')[0]) {
     canvas.parentElement.removeChild(canvas);
     document.getElementById('canvas').appendChild(canvas);
-  }
-
-  function GetElementMatrix(element) {
-    let { transform } = Element.getCSS(divElement);
-
-    return Matrix.fromCSS(transform);
-  }
-
-  function SetCrosshair(pos) {
-    let ch = Element.find('#crosshair');
-    let rect = Element.getRect(ch);
-
-    console.log('SetCrosshair', { ch, rect, pos });
-    rect.x = pos.x - rect.width / 2;
-    rect.y = pos.y - rect.height / 2;
-
-    Element.setRect(ch, rect);
-  }
-
-  function EventPositions(eventOrTouch) {
-    let positions = unique(
-      keys(eventOrTouch, 2)
-        .filter(n => typeof n == 'string' && /[XY]$/.test(n))
-        .map(n => n.slice(0, -1))
-    );
-
-    return positions.reduce((acc, key) => {
-      acc[key] = new Point(eventOrTouch[key + 'X'], eventOrTouch[key + 'Y']);
-      return acc;
-    }, {});
-  }
-
-  function PositionMatrix(canvas = canvasElement, rect = canvasRect) {
-    let vertical = rect.aspect() < 1;
-    let topLeft = rect.toPoints()[vertical ? 1 : 0];
-    let m = Matrix.identity().scale(canvas.width, canvas.height);
-
-    if(vertical) m = m.rotate(-Math.PI / 2);
-
-    m = m.scale(1 / rect.width, 1 / rect.height);
-    m = m.translate(-topLeft.x, -topLeft.y);
-
-    return m;
-  }
-
-  function PositionProcessor(canvas = canvasElement, rect = canvasRect) {
-    let m = PositionMatrix(canvas, rect);
-    return pos => new Point(...m.transformPoint(new Point(pos))).round(1);
-  }
-
-  function ProcessPosition(pos) {
-    return PositionProcessor()(pos);
-  }
-
-  async function* MovementIterator(element) {
-    let ev = await once(element, 'mousedown', 'touchstart');
-    let type = ev.type.slice(0, 5);
-    yield ev;
-    console.log(type + ' start');
-    for await(let event of streamify(['mouseup', 'mousemove', 'touchend', 'touchmove'], element)) {
-      //event.preventDefault();
-      if('touches' in event) {
-        if(event.touches.length) {
-          globalThis.mouseEvent = event;
-
-          for(let touch of event.touches) {
-            globalThis.touch = touch;
-            const { force, radiusX, radiusY, clientX: x, clientY: y, ...obj } = touch;
-            yield { ...obj, type: 'touch', force, radiusX, radiusY, x, y };
-          }
-
-          // yield* [...event.touches].map(EventPositions);
-        }
-      } else {
-        const { type, clientX: x, clientY: y } = event;
-        let obj = { type, x, y };
-        yield obj;
-      }
-      if(/(up|end)$/.test(event.type)) {
-        console.log(type + ' end');
-        break;
-      }
-    }
   }
 
   Reparent();
@@ -257,6 +446,10 @@ function main() {
     Reparent,
     dom: { Element },
     geom: { Rect },
+    MouseToTouch,
+    CatchIterator,
+    TouchIterator,
+    TouchPrinter,
     MovementIterator,
     GetElementMatrix,
     SetCrosshair,
@@ -335,52 +528,6 @@ function main() {
     context.putImageData(image, 0, 0);
   }
 
-  function CreatePalette() {
-    const colors = new Array(256);
-
-    for(let i = 0; i < 64; i++) {
-      const value = i * 4;
-
-      colors[i] = new RGBA(value, 0, 0);
-      colors[i + 64] = new RGBA(255, value, 0);
-      colors[i + 128] = new RGBA(255, 255, value);
-      colors[i + 192] = new RGBA(255, 255, 255);
-    }
-    return colors;
-  }
-
-  function CreatePaletteHSL() {
-    const colors = new Array(256);
-
-    const hues = [new HSLA(0, 100, 0), new HSLA(0, 100, 50), new HSLA(30, 100, 50), new HSLA(60, 100, 50), new HSLA(60, 100, 100), new HSLA(60, 100, 100)];
-
-    const breakpoints = [0, 51, 80, 154, 205, 256];
-    console.log('breakpoints:', breakpoints);
-
-    for(let i = 0; i < 256; i++) {
-      const hue = (v => (v == -1 ? () => hues.length - 2 : v => v))(breakpoints.findIndex(b => i < b));
-      const range = breakpoints[hue] - 1 - breakpoints[hue - 1];
-
-      colors[i] = HSLA.blend(hues[hue - 1], hues[hue], (i - breakpoints[hue - 1]) / range).toRGBA();
-    }
-    return colors;
-  }
-
-  // For random numbers, use "x = 181 * x + 359" from
-  // Tom Dickens "Random Number Generator for Microcontrollers"
-  // https://web.archive.org/web/20170323204917/http://home.earthlink.net/~tdickens/68hc11/random/68hc11random.html
-  let scratch = 0;
-
-  function RandomByte() {
-    const value = 181 * scratch + 359;
-    scratch = value >>> 0;
-    return (value >>> 8) & 0xff;
-  }
-
-  function Modulo(n, m) {
-    return ((n % m) + m) % m;
-  }
-
   let element, rect, rc, mouseTransform;
 
   function Draw(x, y, time = performance.now()) {
@@ -435,7 +582,7 @@ function main() {
         let index = ret.length;
         let i = 0;
         for(let [x, y] of Bresenham(prev.x, prev.y, pt.x, pt.y)) {
-    /*      if(i++ > 0) */ret.push({ x, y, time: 0, size: 2 });
+          /*      if(i++ > 0) */ ret.push({ x, y, time: 0, size: 2 });
         }
         if(ret[index] !== undefined) {
           ret[index].time = pt.time;
@@ -480,10 +627,17 @@ function main() {
     }
   }
 
-  function ResizeHandler(e) {
-    rect = canvasRect;
+  function ResizeHandler(event) {
+    let { body } = document;
+    let rect = Element.rect('canvas');
+
+    Element.setCSS(body, { width: rect.x2 + 'px', height: rect.y2 + 'px' });
+    let { width, height } = Element.getCSS(body);
+    console.log('ResizeHandler', { event, rect, width, height });
+
+    SendWS({ type: 'event', event });
+
     mouseTransform = PositionProcessor();
-    // console.log('ResizeHandler', { e, rect });
   }
 
   function OrientationChange(e) {
@@ -551,11 +705,46 @@ function main() {
     window.addEventListener('resize', ResizeHandler, true);
     window.addEventListener('orientationchange', OrientationChange, true);
 
+    ResizeHandler();
     /*  
     subscribe(MovementIterator(element), handler);*/
   }
 
-  globalThis.ws = (globalThis.rws ??= NewWS()).ws;
+  globalThis.ws = (globalThis.rws ??= NewWS({
+    onOpen() {
+      console.log('WS connected!');
+      /* if(!globalThis.cid) 
+        globalThis.cid = lstore.cid || (lstore.cid=MakeClientID());*/
+      const { cid } = globalThis;
+      SendWS({ type: 'hello', cid });
+
+      SendWS({ type: 'rects', cid, rects: GetRects() });
+    }
+  })).ws;
+
+  function handleEvents(a, handler) {
+    for(let type of a) window.addEventListener(type, handler);
+  }
+
+  handleEvents(['reset', 'resize', 'scroll'], e => {
+    e.preventDefault();
+    globalThis.event = e;
+    let event = CopyObject(e);
+    console.log('e.target', e.target);
+    console.log('event', event);
+
+    if(e.type == 'scroll') {
+      const { scrollX, scrollY } = window;
+      event.scrollX = scrollX;
+      event.scrollY = scrollY;
+
+      window.scrollY = 0;
+      window.scrollX = 0;
+    }
+
+    SendWS({ type: 'event', event });
+    return false;
+  });
 
   let str = '';
   let xpos = 0;
@@ -582,7 +771,18 @@ function main() {
     }
   })();
 
-  (async function() {
+  /* (globalThis.it = CatchIterator(TouchPrinter(TouchIterator(window)))),
+    (globalThis.events = []),
+    (async () => {
+      for await(let v of it) events.push(v);
+    })();*/
+
+  //false &&
+  //
+  InputHandler();
+
+  //
+  async function InputHandler() {
     const timegen = (() => {
       let t = Date.now();
       let prev = 0;
@@ -597,50 +797,32 @@ function main() {
       );
     })();
     const trail = (globalThis.trail = []);
-
     for(;;) {
       let prev,
         pt,
         start = timegen(),
         last;
-
-      for await(let ev of MovementIterator(window)) {
+      for await(let ev of /*CatchIterator*/ MoveIterator(/*TouchPrinter*/ TouchIterator(window))) {
         globalThis.movement = ev;
-        if(!globalThis.cid) {
-          globalThis.cid ??= MakeClientID();
-
-          ws.send(JSON.stringify({ type: 'hello', cid }));
-        }
-
         if(rect.inside(ev)) {
           let pt = (globalThis.mousePos = mouseTransform(ev));
           let diff = pt,
             t;
           if(prev) diff = pt.diff(prev);
-
-          //start ??= t = Date.now();
           let time = timegen();
           let obj = { ...pt, time };
           trail.push(obj);
-
           if(prev) {
-            //console.log('inserting', { prev, pt });
             for(let [x, y] of Bresenham(prev.x, prev.y, pt.x, pt.y)) {
-              // console.log('inserting', { x, y });
               drawList.insert({ x, y, time });
             }
           } else drawList.insert(obj);
-
           last = t;
           try {
-            //console.log('blaze', ...pt);
-            //  rc = pixels[pt.y][pt.x] > 0x30 ? 0 : RandomByte() | 0x80;
-            //Blaze(pt.x, pt.y);
           } catch(e) {}
           prev = pt;
         }
       }
-
       SendTrail();
 
       function SendTrail(start = timegen.start) {
@@ -648,14 +830,14 @@ function main() {
           trail[0].time = 0;
           const payload = (globalThis.payload = { type: 'blaze', cid: globalThis.cid, start, trail: [...trail] });
           console.log('SendTrail', payload);
-          ws.send(JSON.stringify(payload));
+          SendWS(payload);
         }
         trail.splice(0, trail.length);
         start = undefined;
         prev = undefined;
       }
     }
-  })();
+  }
 
   Loop();
 }
@@ -664,26 +846,58 @@ function getRect(elem) {
   return new Rect((elem ?? divElement).getBoundingClientRect()).round(1);
 }
 
-function NewWS() {
+function ParseJSON(s) {
+  let r;
+  try {
+    r = JSON.parse(s);
+  } catch(error) {
+    console.log('JSON parse error: ' + error.message + '\n' + error.stack);
+  }
+  return r;
+}
+
+function NewWS(handlers) {
   let url = WebSocketURL('/ws', { mirror: currentFile });
-  let ws = new ReconnectingWebSocket(url, 'lws-mirror-protocol');
+  let ws = new ReconnectingWebSocket(url, 'lws-mirror-protocol', handlers ?? {});
+
   (async function() {
     let chunks = '';
     for await(let chunk of ws) {
       chunks += chunk;
 
       if(/}\s*$/.test(chunks)) {
-        let data = (globalThis.received = JSON.parse(chunks));
+        let data = (globalThis.received = ParseJSON(chunks));
 
-        if(data.trail) ReplayTrail(data.trail);
+        if(data.type != 'event') console.log('WS receive:', data);
 
-        if(data.cid != globalThis.cid) {
-          console.log('WS receive:', data);
+        switch (data.type) {
+          case 'event':
+            break;
+          case 'blaze': {
+            ReplayTrail(data.trail);
+            break;
+          }
+          case 'eval': {
+            if(data.cid && globalThis.cid != data.cid) break;
+
+            let result, exception;
+
+            try {
+              result = eval(data.code);
+            } catch(error) {
+              exception = error;
+            }
+
+            SendWS({ type: 'result', ...(exception ? { error: exception.message } : { result }) });
+            break;
+          }
         }
+
         chunks = '';
       }
     }
   })();
+
   return (globalThis.ws = ws);
 }
 
@@ -694,12 +908,53 @@ function MakeClientID(rng = Math.random) {
   return [4, 4, 4, 4].map(n => randStr(n, ['ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz', '.-$'][randInt(0, 3)]), rng).join('');
 }
 
+async function LoadWASM(file = 'fire/build/fire.wasm') {
+  let t = Date.now();
+  let {
+    module,
+    instance: { exports }
+  } = await wasmBrowserInstantiate(file);
+
+  console.log(`WASM module loaded. Took ${Date.now() - t}ms`);
+
+  return (globalThis.wasm = { module, exports });
+}
+
+function ElementName(e) {
+  let s = e.outerHTML.substring(1).substring(0, e.tagName.length);
+  if(e.id) s += '#' + e.id;
+  return s;
+}
+
+function TargetName(e) {
+  return getConstructorChain(e)[0].name.replace('HTML', '');
+}
+
+function GetRects() {
+  let rects = [];
+  for(let element of [...AllParents(Element.find('canvas'))]) {
+    rects.push([ElementName(element), Element.rect(element)]);
+  }
+
+  return rects;
+}
+
+function SendWS(msg) {
+  if(ws.readyState != ws.OPEN) return;
+  if(!('cid' in msg)) msg = { cid: globalThis.cid, ...msg };
+
+  console.log('WS send:', msg);
+  if(typeof msg != 'string') msg = JSON.stringify(msg);
+
+  return ws.send(msg);
+}
 define(globalThis, { crosskit, RGBA, HSLA, Util, Matrix, TransformationList });
 define(globalThis, { WebSocketIterator, WebSocketURL, CreateWebSocket, NewWS, ReconnectingWebSocket });
 define(globalThis, { define, isUndefined, properties, keys });
 define(globalThis, { once, streamify, throttle, distinct, subscribe });
 define(globalThis, { Intersection, Matrix, isRect, Rect, Size, Point, Line, TransformationList, Vector });
 define(globalThis, {
+  LoadWASM,
   timer,
   MakeUUID,
   MakeClientID,
@@ -749,7 +1004,20 @@ define(globalThis, {
   useRef,
   toChildArray,
   randInt,
-  wasmBrowserInstantiate
+  wasmBrowserInstantiate,
+  CopyObject,
+  getPrototypeChain,
+  getConstructorChain,
+  isJSFunction,
+  isCFunction,
+  ElementName,
+  TargetName,
+  GetRects,
+  SendWS,
+  getset,
+  gettersetter,
+  chain,
+  chainRight
 });
 
 main();
