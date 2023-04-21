@@ -33,6 +33,7 @@ import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from 
 import { EagleToGerber, GerberToGcode } from './pcb-conversion.js';
 import { ExecTool } from './os-helpers.js';
 import * as components from './lib/eagle/components.js';
+import { DirIterator, RecursiveDirIterator, ReadDirRecursive } from './dir-helpers.js';
 
 let cmdhist;
 
@@ -568,13 +569,12 @@ function main(...args) {
     fs.flushSync(debugLog);
   };
   repl.show = value => {
-    if(isObject(value) && value instanceof EagleNode) {
-      console.log(value.inspect());
-    } else {
-      console.log(value);
+    if(isObject(value)) {
+      let insp = value.inspect ?? value[Symbol.inspect];
+      if(typeof insp == 'function') return insp.call(value);
     }
+    return inspect(value, { customInspect: false, protoChain: true });
   };
-
   // repl.historySet(JSON.parse(std.loadFile(histfile) || '[]'));
 
   repl.addCleanupHandler(() => {

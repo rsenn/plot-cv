@@ -48,9 +48,7 @@ export function ReadFd(fd, binary) {
 }
 
 export function ReadFile(name, binary) {
-  if(!binary) {
-    return loadFile(name, binary ? null : 'utf-8');
-  }
+  if(!binary || binary == 'utf-8') return loadFile(name);
 
   let f;
 
@@ -66,7 +64,7 @@ export function ReadFile(name, binary) {
 }
 
 export function LoadHistory(filename) {
-  let contents = ReadFile(filename, 'utf-8');
+  let contents = ReadFile(filename, false);
   let data;
 
   const parse = () => {
@@ -85,7 +83,7 @@ export function LoadHistory(filename) {
 }
 
 export function ReadJSON(filename) {
-  let data = ReadFile(filename, 'utf-8');
+  let data = ReadFile(filename, false);
 
   if(data) debug(`ReadJSON: ${data.length} bytes read from '${filename}'`);
   return data ? JSON.parse(data) : null;
@@ -263,6 +261,7 @@ export function Spawn(file, args, options = {}) {
   }
 
   const [stdin, stdout, stderr] = stdio;
+
   let pid = os.exec([file, ...args], { block, usePath, cwd, stdin, stdout, stderr, env, uid, gid });
   for(let i = 0; i < 3; i++) {
     if(typeof stdio[i] == 'number' && stdio[i] != i) os.close(stdio[i]);
@@ -271,9 +270,18 @@ export function Spawn(file, args, options = {}) {
   return {
     pid,
     stdio: parent,
+    get stdin() {
+      return this.stdio[0];
+    },
+    get stdout() {
+      return this.stdio[1];
+    },
+    get stderr() {
+      return this.stdio[2];
+    },
     wait() {
       let [ret, status] = os.waitpid(this.pid, os.WNOHANG);
-      return ret;
+      return [ret, status];
     }
   };
 }
@@ -304,7 +312,7 @@ export function FetchURL(url, options = {}) {
 
   console.log('FetchURL', console.config({ maxArrayLength: Infinity, compact: false }), { args });
 
-  let child = /* child_process.spawn*/ Spawn('curl', args, { block: false, stdio: ['inherit', 'pipe', 'pipe'] });
+  let child = child_process.spawn('curl', args, { block: false, stdio: ['inherit', 'pipe', 'pipe'] });
 
   let [, out, err] = child.stdio;
 
