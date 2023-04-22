@@ -731,12 +731,12 @@ function main(...args) {
             console.log('onPost', { req, data, error });
           }
         },*/
-      onHttp(ws, req, resp) {
-        /* if(req.method != 'GET')*/ //console.log('onHttp', console.config({ compact: 0 }), ws);
+      onRequest(ws, req, resp) {
+        /* if(req.method != 'GET')*/ //console.log('onRequest', console.config({ compact: 0 }), ws);
 
-        /*    console.log('\x1b[38;5;220monHttp(1)\x1b[0m', `req =`, console.config(repl.inspectOptions), req);
-        console.log('\x1b[38;5;220monHttp(1)\x1b[0m', `resp =`, console.config(repl.inspectOptions), resp);*/
-        //        console.log('\x1b[38;5;220monHttp(1)\x1b[0m', console.config(repl.inspectOptions), { req, resp });
+        /*    console.log('\x1b[38;5;220monRequest(1)\x1b[0m', `req =`, console.config(repl.inspectOptions), req);
+        console.log('\x1b[38;5;220monRequest(1)\x1b[0m', `resp =`, console.config(repl.inspectOptions), resp);*/
+        //        console.log('\x1b[38;5;220monRequest(1)\x1b[0m', console.config(repl.inspectOptions), { req, resp });
 
         define(globalThis, { ws, req, resp });
 
@@ -745,12 +745,12 @@ function main(...args) {
 
         //resp.headers['Server'] = 'upload-server';
         resp.headers = { Server: 'upload-server' };
-        //console.log('onHttp resp.headers', resp.headers, resp.headers['Server']);
+        //console.log('onRequest resp.headers', resp.headers, resp.headers['Server']);
         //
         if(globalThis.onRequest) globalThis.onRequest(req, resp);
 
         /* if((req.url.path ?? '').endsWith('.js')) 
-      console.log('onHttp', req.url.path);
+      console.log('onRequest', req.url.path);
 */
         if((req.url.path ?? '').endsWith('files')) {
           return;
@@ -918,12 +918,12 @@ function main(...args) {
           }
 
           if(file1 != file) {
-            //  console.log('\x1b[38;5;214monHttp\x1b[0m', file1, '->', file);
+            //  console.log('\x1b[38;5;214monRequest\x1b[0m', file1, '->', file);
             resp.status = 302;
             resp.headers = { ['Location']: '/' + file };
             return resp;
           }
-          //console.log('\x1b[38;5;33monHttp\x1b[0m', file1, file);
+          //console.log('\x1b[38;5;33monRequest\x1b[0m', file1, file);
 
           //
           let body = ReadFile(file);
@@ -934,7 +934,7 @@ function main(...args) {
             if(!/[\/\.]/.test(p2)) {
               let fname = `${p2}.js`;
               let rel = path.relative(fname, dir);
-              //console.log('onHttp', { match, fname }, rel);
+              //console.log('onRequest', { match, fname }, rel);
 
               // if(!fs.existsSync(  rel)) return ``;
 
@@ -947,7 +947,7 @@ function main(...args) {
         }
         {
           let { body } = resp;
-          //console.log('\x1b[38;5;212monHttp(2)\x1b[0m', { body });
+          //console.log('\x1b[38;5;212monRequest(2)\x1b[0m', { body });
         }
 
         return resp;
