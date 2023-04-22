@@ -220,11 +220,12 @@ function PositionMatrix(canvas = Element.find('canvas'), rect) {
   rect ??= Element.rect(canvas);
   let vertical = rect.aspect() < 1;
   let topLeft = rect.toPoints()[vertical ? 1 : 0];
-  let m = Matrix.identity().scale(canvas.width, canvas.height);
+  let m = Matrix.identity(); /*.scale(canvas.width, canvas.height)*/
 
   if(vertical) m = m.rotate(-Math.PI / 2);
 
-  m = m.scale(1 / rect.width, 1 / rect.height);
+  m = m.scale(canvas.width / rect.width, canvas.height / rect.height);
+  // m = m.scale(1 / rect.width, 1 / rect.height);
   m = m.translate(-topLeft.x, -topLeft.y);
 
   return m;
@@ -253,13 +254,30 @@ function TouchTransformer(tfn = (x, y) => [x, y]) {
 async function* TouchPrinter(iter) {
   for await(let event of iter) {
     let n = event.touches?.length;
-    console.log('TouchPrinter', event);
+    // console.log('TouchPrinter', event);
+    //
+
+    let t = [];
     for(let i = 0; i < n; i++) {
       const { x, y } = event.touches[i];
-      console.log('touch #' + i, { x, y });
+      t.push({ x, y });
     }
+    console.log('TouchPrinter', ...t);
     yield event;
   }
+}
+
+async function* GenericPrinter(iter) {
+  for await(let item of iter) {
+    console.log('GenericPrinter', item);
+    yield item;
+  }
+}
+
+function Transformer(t) {
+  return async function* (iter) {
+    for await(let item of iter) yield t(item);
+  };
 }
 
 function MouseToTouch(event) {
@@ -293,54 +311,45 @@ async function* CatchIterator(it) {
 
 async function* TouchIterator(element, t) {
   let rect = Element.rect(element);
+  let ev = MouseToTouch(await once(element, ['mousedown', 'touchstart']));
+  let type = ev.type.slice(0, 5);
 
   if(!t) {
     let matrix = PositionMatrix();
-    //GetElementMatrix(canvasElement.parentElement).invert();
-    // console.log('TouchIterator', { matrix }, matrix.decompose());
-
+    console.log('TouchIterator', { matrix }, matrix.decompose());
     t = TouchTransformer((x, y) => matrix.transformXY(x, y).map(Math.floor));
   }
-  //console.log('TouchIterator', { rect, element });
 
-  let ev = MouseToTouch(await once(element, ['mousedown', 'touchstart']));
-  let type = ev.type.slice(0, 5);
   if(ev.touches) [...ev.touches].forEach(t);
   yield ev;
 
-  for await(let event of streamify(['touchend', 'touchmove', 'mouseup', 'mousemove'], element)) {
-    event.preventDefault();
-
+  for await(let event of streamify(['touchend', 'touchmove', 'mouseup', 'mousemove'], element, { passive: false, capture: true })) {
+    if(event.cancelable) event.preventDefault();
+    event.stopPropagation();
     MouseToTouch(event);
-
     if(event.touches) [...event.touches].forEach(t);
-
     yield event;
-
     if(event.type.endsWith('end')) break;
   }
 }
 
-async function* MovementIterator(element) {
+/*async function* MovementIterator(element) {
   let ev = await once(element, 'mousedown', 'touchstart');
   let type = ev.type.slice(0, 5);
   yield ev;
   console.log(type + ' start');
-  for await(let event of streamify(['mouseup', 'mousemove', 'touchend', 'touchmove'], element)) {
-    //event.preventDefault();
+  for await(let event of streamify(['mouseup', 'mousemove', 'touchend', 'touchmove'], element, { passive: false, capture: true })) {
     if('touches' in event) {
       if(event.touches.length) {
-        let i=0;
+        let i = 0;
         globalThis.mouseEvent = event;
 
         for(let touch of event.touches) {
           globalThis.touch = touch;
           const { force, radiusX, radiusY, clientX: x, clientY: y, ...obj } = touch;
-          yield { ...obj, type: 'touch', index:i,force, radiusX, radiusY, x, y };
+          yield { ...obj, type: 'touch', index: i, force, radiusX, radiusY, x, y };
           ++i;
         }
-
-        // yield* [...event.touches].map(EventPositions);
       }
     } else {
       const { type, clientX: x, clientY: y } = event;
@@ -352,18 +361,16 @@ async function* MovementIterator(element) {
       break;
     }
   }
-}
+}*/
 
 async function* MoveIterator(eventIterator) {
   for await(let event of eventIterator) {
     if('touches' in event) {
       if(event.touches.length) {
-        globalThis.touchEvent = event;
-let i=0;
+        let i = 0;
         for(let touch of event.touches) {
-          globalThis.touch = touch;
-          const { force, radiusX, radiusY, clientX: x, clientY: y, ...obj } = touch;
-          yield { ...obj, type: 'touch',index:i, force, radiusX, radiusY, x, y };
+          const { force, radiusX, radiusY, ...obj } = touch;
+          yield { ...obj, type: 'touch', index: i, force, radiusX, radiusY };
           ++i;
         }
       }
@@ -372,19 +379,9 @@ let i=0;
 }
 
 function main() {
-  /* lazyProperties(globalThis, {
-    svgLayer: () => {
-      let e = SVG.create('svg', { xmlns: 'http://www.w3.org/2000/svg', viewBox: new Rect(0, 0, window.innerWidth, window.innerHeight) }, document.body);
-      Element.move(e, new Point(0, 0), 'absolute');
-      Element.setCSS(e, { 'pointer-events': 'none' });
-      return e;
-    }
-  });*/
-
   define(
     globalThis,
     { Bresenham, LinkedList, List, AllParents, TransformationList, getTransformationList, DecomposeTransformList, drawRect, miscfixed6x13 },
-    //    {fire},
     properties(
       {
         cid: () => lstore.cid || (lstore.cid = MakeClientID()),
@@ -432,7 +429,7 @@ function main() {
   const paletteHSL = CreatePaletteHSL();
 
   const pixels = Array.from({ length: height + 2 }).map((v, i) => new Uint8ClampedArray(buffer, i * width, width));
-  const seedlist =globalThis.seedlist= new DrawList();
+  const seedlist = (globalThis.seedlist = new DrawList());
   const { context } = crosskit;
   const image = context.createImageData(width, height);
 
@@ -440,7 +437,7 @@ function main() {
   const fps = 50;
   const matrix = new Matrix().translate(160, 100).scale(0.5);
 
-  Object.assign(globalThis, {
+  /*  Object.assign(globalThis, {
     buffer,
     palette,
     paletteHSL,
@@ -456,7 +453,6 @@ function main() {
     CatchIterator,
     TouchIterator,
     TouchPrinter,
-    MovementIterator,
     GetElementMatrix,
     SetCrosshair,
     EventPositions,
@@ -467,7 +463,7 @@ function main() {
     waitFor,
     ReplayTrail,
     Blaze
-  });
+  });*/
 
   async function Loop() {
     const delay = 1000 / fps;
@@ -492,33 +488,32 @@ function main() {
       pixels[height + 1][x] = 255 - (RandomByte() % 128);
     }
 
-
     for(let seed of seedlist) {
-      try{
+      try {
         pixels[seed.y][seed.x] = 255 - (RandomByte() % 128);
-      }catch(e) {}
-  }
+      } catch(e) {}
+    }
 
     for(let seed of seedlist.dequeue()) {
-  }
+    }
 
     for(let draw of drawList.dequeue()) {
-
-
-
       draw.value = 255 - 0x10; //(RandomByte() % 128);
-      if(draw.size > 1) {
-        if(draw.x > 0) pixels[draw.y][draw.x - 1] = draw.value;
-        if(draw.x < 319) pixels[draw.y][draw.x + 1] = draw.value;
-        if(draw.y > 0) pixels[draw.y - 1][draw.x] = draw.value;
 
-        if(draw.y < 199) pixels[draw.y + 1][draw.x] = draw.value;
-      }
-      pixels[draw.y][draw.x] = draw.value;
+      try {
+        pixels[draw.y][draw.x] = draw.value;
 
-draw.time+=40;
+        if(draw.size > 1) {
+          if(draw.x > 0) pixels[draw.y][draw.x - 1] = draw.value;
+          if(draw.x < 319) pixels[draw.y][draw.x + 1] = draw.value;
+          if(draw.y > 0) pixels[draw.y - 1][draw.x] = draw.value;
 
-seedlist.insert(draw);
+          if(draw.y < 199) pixels[draw.y + 1][draw.x] = draw.value;
+        }
+      } catch(e) {}
+      draw.time += 40;
+
+      seedlist.insert(draw);
 
       //Blaze(draw.x, draw.y, 255 - (RandomByte() % 128));
     }
@@ -654,11 +649,9 @@ seedlist.insert(draw);
     let { body } = document;
     let rect = Element.rect('canvas');
 
-    Element.setCSS(body, { width: rect.x2 + 'px', height: rect.y2 + 'px' });
-    let { width, height } = Element.getCSS(body);
-    console.log('ResizeHandler', { event, rect, width, height });
+    let { width, height } = Element.getRect(body);
 
-    //SendWS({ type: 'event',eventType: 'resize',windowSize });
+    console.log('ResizeHandler', { event, rect, width, height });
 
     mouseTransform = PositionProcessor();
   }
@@ -676,10 +669,14 @@ seedlist.insert(draw);
 
     define(
       globalThis,
-      properties({
-        canvasElement: () => Element.find('canvas'),
-        divElement: () => Element.find('body > div:first-child')
-      }),
+      properties(
+        {
+          canvasElement: () => Element.find('canvas'),
+          divElement: () => Element.find('body > div:first-child'),
+          htmlElement: () => document.documentElement
+        },
+        { memoize: true }
+      ),
       properties({
         windowRect: () => new Rect(0, 0, window.innerWidth, window.innerHeight),
         windowSize: () => new Size(window.innerWidth, window.innerHeight),
@@ -719,30 +716,26 @@ seedlist.insert(draw);
       ]);
     };
 
-    let svgContainer = Element.create('div', {}, document.body);
+    let svgContainer = Element.create('div', { class: 'overlay' }, document.body);
 
-    Element.setCSS(svgContainer, { position: 'absolute', top: 0, left: 0, zIndex: 99999999, pointerEvents: 'none' });
     render(h(SVGComponent, { circle: globalThis.circle, points: globalThis.points }), svgContainer);
 
     globalThis.svg = svgContainer.firstElementChild;
-    Element.setCSS(svg, { position: 'absolute', width: canvasRect.width + 'px', height: canvasRect.height + 'px' });
-    Element.setCSS(svgContainer, { position: 'fixed', left: canvasRect.x + 'px', top: canvasRect.y + 'px' });
+    Element.setCSS(svg, { width: canvasRect.width + 'px', height: canvasRect.height + 'px' });
+    Element.setCSS(svgContainer, { position: 'absolute', left: canvasRect.x + 'px', top: canvasRect.y + 'px' });
     rect = canvasRect;
     mouseTransform = PositionProcessor();
 
     (async function() {
-      for await(let event of streamify(['orientationchange', 'resize'], document)) {
-        console.log(event.type, event);
-        globalThis[event.type] = event;
-      }
+      ResizeHandler();
+
+      for await(let event of streamify(['orientationchange', 'resize'], window)) ({ resize: ResizeHandler, orientationchange: OrientationChange }[event.type](event));
     })();
 
-    window.addEventListener('resize', ResizeHandler, true);
-    window.addEventListener('orientationchange', OrientationChange, true);
+    syncHeight();
+    window.addEventListener('resize', syncHeight);
 
-    ResizeHandler();
-    /*  
-    subscribe(MovementIterator(element), handler);*/
+    SetLocked(true);
   }
 
   globalThis.ws = (globalThis.rws ??= NewWS({
@@ -760,17 +753,15 @@ seedlist.insert(draw);
   function handleEvents(a, handler) {
     for(let type of a) window.addEventListener(type, handler);
   }
-
-  handleEvents(['reset', 'resize', 'scroll'], e => {
+  handleEvents(['reset', 'scroll'], e => {
     e.preventDefault();
     globalThis.event = e;
     let event = CopyObject(e);
-    console.log('e.target', e.target);
-    console.log('event', event);
 
-    if(e.type=='resize') {
-      console.log('resize', windowSize);
-          SendWS({ type: 'event', eventType:e.type, windowSize });
+    if(e.type == 'resize') {
+      //console.log('resize', windowSize);
+
+      SendWS({ type: 'event', eventType: e.type, windowSize });
 
       return;
     }
@@ -811,10 +802,12 @@ seedlist.insert(draw);
   }
 
   (async () => {
-    for await(let e of streamify(['keydown', 'keyup'], window)) {
+    for await(let e of streamify(['keydown', 'keyup'], window, { passive: false })) {
       const { type, key, keyCode, repeat, ctrlKey, shiftKey, altKey, metaKey } = (globalThis.keyEvent = e);
 
-      if(!ctrlKey && !altKey && !metaKey) e.preventDefault();
+      if(!ctrlKey && !altKey && !metaKey) {
+        if(e.cancelable) e.preventDefault();
+      }
 
       // console.log('event', { type, key, charCode: key.codePointAt(0), keyCode, repeat, ctrlKey, shiftKey, altKey, metaKey });
 
@@ -823,14 +816,6 @@ seedlist.insert(draw);
     }
   })();
 
-  /* (globalThis.it = CatchIterator(TouchPrinter(TouchIterator(window)))),
-    (globalThis.events = []),
-    (async () => {
-      for await(let v of it) events.push(v);
-    })();*/
-
-  //false &&
-  //
   InputHandler();
 
   //
@@ -854,10 +839,10 @@ seedlist.insert(draw);
         pt,
         start = timegen(),
         last;
-      for await(let ev of /*CatchIterator*/ MoveIterator(/*TouchPrinter*/ TouchIterator(window))) {
+      for await(let ev of GenericPrinter(/*Transformer(ev => new Point(ev))*/ MoveIterator(/*TouchPrinter*/ TouchIterator(window)))) {
         globalThis.movement = ev;
         if(rect.inside(ev)) {
-          let pt = (globalThis.mousePos = mouseTransform(ev));
+          let pt = (globalThis.mousePos = new Point(ev));
           let diff = pt,
             t;
           if(prev) diff = pt.diff(prev);
@@ -1000,17 +985,29 @@ function SendWS(msg) {
   if(ws.readyState != ws.OPEN) return;
   if(!('cid' in msg)) msg = { cid: globalThis.cid, ...msg };
 
-  console.log('WS send:', msg);
   if(typeof msg != 'string') msg = JSON.stringify(msg);
+
+  console.log('WS send:', JSON.parse(msg));
 
   return ws.send(msg);
 }
+
+function syncHeight() {
+  htmlElement.style.setProperty('--window-inner-height', `${window.innerHeight}px`);
+}
+
+function SetLocked(state) {
+  htmlElement.classList[state ? 'add' : 'remove']('is-locked');
+}
+
 define(globalThis, { crosskit, RGBA, HSLA, Util, Matrix, TransformationList });
 define(globalThis, { WebSocketIterator, WebSocketURL, CreateWebSocket, NewWS, ReconnectingWebSocket });
 define(globalThis, { define, isUndefined, properties, keys });
 define(globalThis, { once, streamify, throttle, distinct, subscribe });
 define(globalThis, { Intersection, Matrix, isRect, Rect, Size, Point, Line, TransformationList, Vector });
 define(globalThis, {
+  syncHeight,
+  SetLocked,
   LoadWASM,
   timer,
   MakeUUID,
