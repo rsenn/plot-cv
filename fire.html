@@ -41,6 +41,22 @@
         z-index: 99999999;
       }
 
+      #crosshair {
+        position: fixed;
+      }
+
+      .overlay {
+        position: absolute;
+      }
+
+      canvas {
+        cursor: crosshair;
+      }
+
+      canvas.pressed {
+        cursor: grab;
+      }
+
       html.is-locked,
       html.is-locked body {
         /* want to fix the height to the window height */
@@ -76,9 +92,7 @@
           align-items: flex-end;
         }
       }
-      .measure {
-        height: var(--height);
-      }
+
       #crosshair {
         opacity: 0;
         pointer-events: none;
@@ -89,12 +103,12 @@
     <!--  <script type="module" src="./fire/build/fire-debug.js"></script>  -->
   </head>
   <body class="center">
-    <div id="canvas" class="measure"></div>
+    <div id="canvas"></div>
     <svg id="crosshair" width="25" height="25" version="1.1">
       <defs></defs>
       <g transform="translate(-127 -127)">
-        <path d="M137 127h5v9h-5zm-10 10h9v5h-9zm16 0h9v5h-9zm-6 6h5v9h-5z" style="fill-rule: evenodd" />
-        <path d="M138 128h3v7h-3zm-10 10h7v3h-7zm16 0h7v3h-7zm-6 6h3v7h-3z" style="fill: #11e5f4; fill-rule: evenodd" />
+        <!-- <path d="M137 127h5v9h-5zm-10 10h9v5h-9zm16 0h9v5h-9zm-6 6h5v9h-5z" style="fill-rule: evenodd" /> -->
+        <path d="M138 128h3v7h-3zm-10 10h7v3h-7zm16 0h7v3h-7zm-6 6h3v7h-3z" style="fill: #11e5f480; fill-rule: evenodd" />
       </g>
     </svg>
   </body>

@@ -30,6 +30,10 @@ const lstore = (globalThis.lstore = propertyLookup(
   ))
 ));
 
+/*function SetLocked(state) {
+  htmlElement.classList[state ? 'add' : 'remove']('is-locked');
+}*/
+
 // For random numbers, use "x = 181 * x + 359" from
 // Tom Dickens "Random Number Generator for Microcontrollers"
 // https://web.archive.org/web/20170323204917/http://home.earthlink.net/~tdickens/68hc11/random/68hc11random.html
@@ -220,13 +224,32 @@ function PositionMatrix(canvas = Element.find('canvas'), rect) {
   rect ??= Element.rect(canvas);
   let vertical = rect.aspect() < 1;
   let topLeft = rect.toPoints()[vertical ? 1 : 0];
-  let m = Matrix.identity(); /*.scale(canvas.width, canvas.height)*/
+  let m = Matrix.identity();
+
+  m = m.scale(canvas.width, canvas.height);
 
   if(vertical) m = m.rotate(-Math.PI / 2);
 
-  m = m.scale(canvas.width / rect.width, canvas.height / rect.height);
-  // m = m.scale(1 / rect.width, 1 / rect.height);
+  m = m.scale(1 / rect.width, 1 / rect.height);
   m = m.translate(-topLeft.x, -topLeft.y);
+
+  return m;
+}
+
+function PositionMatrix2(element = canvasElement) {
+  let { rotate } = GetElementMatrix(element).decompose();
+  let m = Matrix.identity();
+
+  m = m.scale(element.width, element.height);
+  m = m.scale(1 / element.offsetWidth, 1 / element.offsetHeight);
+
+  m = m.rotate(-rotate);
+
+  let { x, y } = element.getBoundingClientRect();
+
+  m = m.translate(-x, -y);
+
+  if(Math.abs(rotate) > Number.EPSILON) m = m.translate(-canvasElement.offsetHeight, 0);
 
   return m;
 }
@@ -314,8 +337,10 @@ async function* TouchIterator(element, t) {
   let ev = MouseToTouch(await once(element, ['mousedown', 'touchstart']));
   let type = ev.type.slice(0, 5);
 
+  globalThis.pressed = true;
+
   if(!t) {
-    let matrix = PositionMatrix();
+    let matrix = PositionMatrix2();
     console.log('TouchIterator', { matrix }, matrix.decompose());
     t = TouchTransformer((x, y) => matrix.transformXY(x, y).map(Math.floor));
   }
@@ -331,6 +356,8 @@ async function* TouchIterator(element, t) {
     yield event;
     if(event.type.endsWith('end')) break;
   }
+
+  globalThis.pressed = false;
 }
 
 /*async function* MovementIterator(element) {
@@ -384,7 +411,7 @@ function main() {
     { Bresenham, LinkedList, List, AllParents, TransformationList, getTransformationList, DecomposeTransformList, drawRect, miscfixed6x13 },
     properties(
       {
-        cid: () => lstore.cid || (lstore.cid = MakeClientID()),
+        cid: () => lstore.cid || (lstore.cid = randStr(16, '0123456789abcdef')),
         currentURL: () => new URL(import.meta.url),
         currentFile: () => globalThis.currentURL.pathname.replace(/^\//, '')
       },
@@ -588,37 +615,6 @@ function main() {
 
     // pixels[y + 1][x] = r;
   }
-
-  function ReplayTrail(trail, time = performance.now() + 20) {
-    let prev,
-      ret = [];
-
-    for(let pt of trail) {
-      // console.log('ReplayTrail', {pt});
-
-      if(prev) {
-        let index = ret.length;
-        let i = 0;
-        for(let [x, y] of Bresenham(prev.x, prev.y, pt.x, pt.y)) {
-          /*      if(i++ > 0) */ ret.push({ x, y, time: 0, size: 2 });
-        }
-        if(ret[index] !== undefined) {
-          ret[index].time = pt.time;
-        }
-        if(ret[ret.length - 1]) ret[ret.length - 1].size = 2;
-      } else {
-        pt.size = 2;
-        ret.push(pt);
-      }
-      prev = pt;
-    }
-
-    if(ret[0] !== undefined) {
-      ret[0].time = 0;
-      drawList.queue(ret, time);
-    }
-  }
-
   function PutArray(x, y, a) {
     let rows = a.length;
     let cols = a[0].length;
@@ -645,98 +641,7 @@ function main() {
     }
   }
 
-  function ResizeHandler(event) {
-    let { body } = document;
-    let rect = Element.rect('canvas');
-
-    let { width, height } = Element.getRect(body);
-
-    console.log('ResizeHandler', { event, rect, width, height });
-
-    mouseTransform = PositionProcessor();
-  }
-
-  function OrientationChange(e) {
-    rect = canvasRect;
-    mouseTransform = PositionProcessor();
-    console.log('OrientationChange', { e, rect });
-  }
-
   Object.assign(globalThis, { RandomByte });
-
-  function Init() {
-    window.canvas = element = document.querySelector('canvas');
-
-    define(
-      globalThis,
-      properties(
-        {
-          canvasElement: () => Element.find('canvas'),
-          divElement: () => Element.find('body > div:first-child'),
-          htmlElement: () => document.documentElement
-        },
-        { memoize: true }
-      ),
-      properties({
-        windowRect: () => new Rect(0, 0, window.innerWidth, window.innerHeight),
-        windowSize: () => new Size(window.innerWidth, window.innerHeight),
-        scrollPos: () => new Point(window.scrollX, window.scrollY),
-        bodyRect: () => Element.rect('body').round(0),
-        canvasRect: () => Element.rect('canvas').round(0),
-        divRect: () => Element.rect('body > div:first-child').round(0)
-      }),
-      {
-        getRect
-      },
-      properties({
-        transform: [() => new TransformationList(Element.getCSS('body > div:first-child').transform), value => Element.setCSS('body > div:first-child', { transform: value + '' })]
-      })
-    );
-
-    globalThis.circle = trkl(new Point(0, 0));
-    globalThis.points = trkl([]);
-
-    const SVGPolyline = ({ points, ...props }) => h('polyline', { points: points.map(pt => [...pt].join(',')).join(' '), ...props });
-
-    const SVGComponent = ({ circle, points, ...props }) => {
-      let rect = new Rect(0, 0, canvasElement.width, canvasElement.height);
-
-      const { r = 10, x, y, width = '1', stroke = '#0f0', fill = `rgba(80,80,80,0.3)` } = useTrkl(circle);
-
-      return h('svg', { version: '1.1', xmlns: 'http://www.w3.org/2000/svg', viewBox: [...rect].join(' '), width: rect.width, height: rect.height }, [
-        h('circle', {
-          cx: x,
-          cy: y,
-          r,
-          stroke,
-          'stroke-width': width,
-          fill
-        }),
-        h(SVGPolyline, { points: useTrkl(points), stroke, 'stroke-width': width })
-      ]);
-    };
-
-    let svgContainer = Element.create('div', { class: 'overlay' }, document.body);
-
-    render(h(SVGComponent, { circle: globalThis.circle, points: globalThis.points }), svgContainer);
-
-    globalThis.svg = svgContainer.firstElementChild;
-    Element.setCSS(svg, { width: canvasRect.width + 'px', height: canvasRect.height + 'px' });
-    Element.setCSS(svgContainer, { position: 'absolute', left: canvasRect.x + 'px', top: canvasRect.y + 'px' });
-    rect = canvasRect;
-    mouseTransform = PositionProcessor();
-
-    (async function() {
-      ResizeHandler();
-
-      for await(let event of streamify(['orientationchange', 'resize'], window)) ({ resize: ResizeHandler, orientationchange: OrientationChange }[event.type](event));
-    })();
-
-    syncHeight();
-    window.addEventListener('resize', syncHeight);
-
-    SetLocked(true);
-  }
 
   globalThis.ws = (globalThis.rws ??= NewWS({
     onOpen() {
@@ -749,46 +654,7 @@ function main() {
       SendWS({ type: 'rects', cid, rects: GetRects() });
     }
   })).ws;
-
-  function handleEvents(a, handler) {
-    for(let type of a) window.addEventListener(type, handler);
-  }
-  handleEvents(['reset', 'scroll'], e => {
-    e.preventDefault();
-    globalThis.event = e;
-    let event = CopyObject(e);
-
-    if(e.type == 'resize') {
-      //console.log('resize', windowSize);
-
-      SendWS({ type: 'event', eventType: e.type, windowSize });
-
-      return;
-    }
-
-    if(e.type == 'scroll') {
-      const { scrollX, scrollY } = window;
-
-      let scrollingElement = e.target.scrollingElement ?? e.target;
-
-      const { scrollLeft, scrollTop } = e.target;
-
-      event = /* CopyObject(e); //*/ { evtype: 'scroll', target: TargetName(e.target), currentTarget: TargetName(e.currentTarget) };
-
-      event.scrollX = scrollLeft ?? scrollX;
-      event.scrollY = scrollTop ?? scrollY;
-
-      let pos = (event.scrollPos = new Point(event.scrollX, event.scrollY));
-
-      let t = (divElement.style.transform = `translate(${pos.x}px,${pos.y}px)`);
-      event.transform = t;
-      //event.rects = GetRects().filter(([name, rect, pos]) => /*rect.x!=0 || rect.y != 0 ||*/ pos.x != 0 || pos.y != 0);
-    }
-
-    SendWS({ type: 'event', eventType: e.type, event });
-    return false;
-  });
-
+  
   let str = '';
   let xpos = 0;
   function KeyHandler(key) {
@@ -833,15 +699,17 @@ function main() {
         { start: t }
       );
     })();
+
     const trail = (globalThis.trail = []);
+
     for(;;) {
       let prev,
         pt,
         start = timegen(),
         last;
-      for await(let ev of GenericPrinter(/*Transformer(ev => new Point(ev))*/ MoveIterator(/*TouchPrinter*/ TouchIterator(window)))) {
+      for await(let ev of /*GenericPrinter*/ MoveIterator(TouchIterator(window))) {
         globalThis.movement = ev;
-        if(rect.inside(ev)) {
+        if(gfxRect.inside(ev)) {
           let pt = (globalThis.mousePos = new Point(ev));
           let diff = pt,
             t;
@@ -883,9 +751,109 @@ function main() {
   );
 }
 
-function getRect(elem) {
-  return new Rect((elem ?? divElement).getBoundingClientRect()).round(1);
+function Init() {
+  // window.canvas = element = document.querySelector('canvas');
+
+  define(
+    globalThis,
+    properties(
+      {
+        canvasElement: () => Element.find('canvas'),
+        divElement: () => Element.find('body > div:first-child'),
+        htmlElement: () => document.documentElement,
+        gfxRect: () => new Rect(0, 0, canvasElement.width, canvasElement.height)
+      },
+      { memoize: true }
+    ),
+    properties({
+      windowRect: () => new Rect(0, 0, window.innerWidth, window.innerHeight),
+      windowSize: () => new Size(window.innerWidth, window.innerHeight),
+      scrollPos: () => new Point(window.scrollX, window.scrollY),
+      bodyRect: () => Element.rect('body').round(0),
+      canvasRect: () => Element.rect('canvas').round(0)
+    }),
+    properties({
+      transform: [() => new TransformationList(Element.getCSS('body > div:first-child').transform), value => Element.setCSS('body > div:first-child', { transform: value + '' })]
+    })
+  );
+
+  const SetLocked = ToggleClass(htmlElement, 'is-locked');
+  const SetPressed = ToggleClass(canvasElement, 'pressed');
+
+  define(globalThis, properties({ pressed: [SetPressed, SetPressed] }));
+
+  globalThis.circle = trkl(new Point(0, 0));
+  globalThis.points = trkl([]);
+
+  const SVGPolyline = ({ points, ...props }) => h('polyline', { points: points.map(pt => [...pt].join(',')).join(' '), ...props });
+
+  const SVGComponent = ({ circle, points, ...props }) => {
+    let rect = new Rect(0, 0, canvasElement.width, canvasElement.height);
+
+    const { r = 10, x, y, width = '1', stroke = '#0f0', fill = `rgba(80,80,80,0.3)` } = useTrkl(circle);
+
+    return h('svg', { version: '1.1', xmlns: 'http://www.w3.org/2000/svg', viewBox: [...rect].join(' '), width: rect.width, height: rect.height }, [
+      h('circle', {
+        cx: x,
+        cy: y,
+        r,
+        stroke,
+        'stroke-width': width,
+        fill
+      }),
+      h(SVGPolyline, { points: useTrkl(points), stroke, 'stroke-width': width })
+    ]);
+  };
+
+  let svgContainer = globalThis.svgContainer = Element.create('div', { class: 'overlay' }, document.body);
+
+  render(h(SVGComponent, { circle: globalThis.circle, points: globalThis.points }), svgContainer);
+
+  globalThis.svg = svgContainer.firstElementChild;
+  
+
+
+//  Element.setCSS(svgContainer, { position: 'absolute', left: canvasRect.x + 'px', top: canvasRect.y + 'px' });
+  /*  rect = canvasRect;
+    mouseTransform = PositionProcessor();*/
+
+  (async function() {
+    ResizeHandler();
+
+    for await(let event of streamify(['orientationchange', 'resize'], window)) {
+      ({ resize: ResizeHandler, orientationchange: OrientationChange }[event.type](event));
+
+    }
+  })();
+
+  syncHeight();
+  window.addEventListener('resize', syncHeight);
+
+  SetLocked(true);
 }
+
+function ResizeHandler(event) {
+  let { body } = document;
+  let rect = Element.rect('canvas');
+
+  let { width, height } = Element.getRect(body);
+
+  console.log('ResizeHandler', { event, rect, width, height });
+
+  Element.setCSS(svg, { width: canvasElement.offsetWidth + 'px', height: canvasElement.offsetHeight + 'px', transform: 'rotate(90deg)' });
+
+  //mouseTransform = PositionProcessor();
+}
+
+function OrientationChange(e) {
+  rect = canvasRect;
+  mouseTransform = PositionProcessor();
+  console.log('OrientationChange', { e, rect });
+}
+
+/*function getRect(elem) {
+  return new Rect((elem ?? divElement).getBoundingClientRect()).round(1);
+}*/
 
 function ParseJSON(s) {
   let r;
@@ -895,6 +863,36 @@ function ParseJSON(s) {
     console.log('JSON parse error: ' + error.message + '\n' + error.stack);
   }
   return r;
+}
+
+function ReplayTrail(trail, time = performance.now() + 20) {
+  let prev,
+    ret = [];
+
+  for(let pt of trail) {
+    // console.log('ReplayTrail', {pt});
+
+    if(prev) {
+      let index = ret.length;
+      let i = 0;
+      for(let [x, y] of Bresenham(prev.x, prev.y, pt.x, pt.y)) {
+        /*      if(i++ > 0) */ ret.push({ x, y, time: 0, size: 2 });
+      }
+      if(ret[index] !== undefined) {
+        ret[index].time = pt.time;
+      }
+      if(ret[ret.length - 1]) ret[ret.length - 1].size = 2;
+    } else {
+      pt.size = 2;
+      ret.push(pt);
+    }
+    prev = pt;
+  }
+
+  if(ret[0] !== undefined) {
+    ret[0].time = 0;
+    drawList.queue(ret, time);
+  }
 }
 
 function NewWS(handlers) {
@@ -909,7 +907,9 @@ function NewWS(handlers) {
       if(/}\s*$/.test(chunks)) {
         let data = (globalThis.received = ParseJSON(chunks));
 
-        if(data.type != 'event') console.log('WS receive:', data);
+        if(data.type != 'event') 
+if(!data.cid || globalThis.cid != data.cid)
+          console.log('WS receive:', data);
 
         switch (data.type) {
           case 'event':
@@ -987,17 +987,17 @@ function SendWS(msg) {
 
   if(typeof msg != 'string') msg = JSON.stringify(msg);
 
-  console.log('WS send:', JSON.parse(msg));
+  //console.log('WS send:', JSON.parse(msg));
 
   return ws.send(msg);
 }
 
-function syncHeight() {
-  htmlElement.style.setProperty('--window-inner-height', `${window.innerHeight}px`);
+function ToggleClass(element, name) {
+  return (...args) => element.classList[args.length > 0 ? (args[0] ? 'add' : 'remove') : 'contains'](name);
 }
 
-function SetLocked(state) {
-  htmlElement.classList[state ? 'add' : 'remove']('is-locked');
+function syncHeight() {
+  htmlElement.style.setProperty('--window-inner-height', `${window.innerHeight}px`);
 }
 
 define(globalThis, { crosskit, RGBA, HSLA, Util, Matrix, TransformationList });
@@ -1006,8 +1006,11 @@ define(globalThis, { define, isUndefined, properties, keys });
 define(globalThis, { once, streamify, throttle, distinct, subscribe });
 define(globalThis, { Intersection, Matrix, isRect, Rect, Size, Point, Line, TransformationList, Vector });
 define(globalThis, {
+  GetElementMatrix,
+  PositionMatrix,
+  PositionMatrix2,
   syncHeight,
-  SetLocked,
+  ToggleClass,
   LoadWASM,
   timer,
   MakeUUID,
