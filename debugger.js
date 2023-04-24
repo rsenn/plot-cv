@@ -6,10 +6,6 @@ import { AsyncSocket, SockAddr, AF_INET, SOCK_STREAM, IPPROTO_TCP } from './quic
 import {assert, define, toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 
-console.log('toString', ArrayBufferToString(new Uint8Array([0x61, 0x62, 0x64, 0x65, 0x66, 0x20, 0xc3, 0xa4, 0xc3, 0xb6, 0xc3, 0xbc]).buffer));
-console.log('toArrayBuffer', StringToArrayBuffer('blah äöü'));
-console.log('child_process', child_process.spawn + '');
-
 var worker;
 var counter;
 let sockets = (globalThis.sockets ??= new Set());
@@ -89,7 +85,7 @@ export function ConnectDebugger(address, callback) {
   define(sock, { sendMessage: msg =>  sock.send(msg.length.toString(16).padStart(8, '0')+'\n'+msg) });
 
 
-    DebuggerProtocol.send(sock, typeof msg == 'string' ? msg : JSON.stringify(msg)) });
+ // DebuggerProtocol.send(sock, typeof msg == 'string' ? msg : JSON.stringify(msg)) });
 
   console.log('ConnectDebugger', { ret, sock });
 
@@ -156,7 +152,7 @@ variables(variablesReference, options={}) {
   sendRequest(command, args = {}) {
     const request_seq = ++this.#seq;
 
-    this.sendMessage({ type: 'request', request: { request_seq, command, args } });
+    this.sendMessage(JSON.stringify({ type: 'request', request: { request_seq, command, args } }));
 
     return new Promise(
       (resolve, reject) =>
