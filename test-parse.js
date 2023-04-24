@@ -5,7 +5,7 @@ import { Parser } from './lib/parse/parser.js';
 import Ebnf2Parser from './lib/parse/ebnf2.js';
 import { Console } from 'console';
 import * as fs from 'fs';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import Cowbird from './lib/parse/cowbird.js';
 import deep from './lib/deep.js';
 

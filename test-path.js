@@ -1,5 +1,5 @@
 import { Console } from 'console';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import { getMethodNames } from './lib/misc.js';
 
 let filesystem;

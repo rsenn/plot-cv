@@ -8,7 +8,7 @@ import * as deep from './lib/deep.js';
 import * as fs from './lib/filesystem.js';
 */
 import trkl from './lib/trkl.js';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import { Console } from 'console';
 import REPL from './xrepl.js';
 import { Pointer } from './lib/pointer.js';

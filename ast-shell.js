@@ -2,7 +2,7 @@ import { DirIterator, RecursiveDirIterator, ReadDirRecursive } from './dir-helpe
 import filesystem from 'fs';
 //import PortableSpawn from './lib/spawn.js';
 import Util from './lib/util.js';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import * as deep from './lib/deep.js';
 import { Console } from 'console';
 import REPL from './quickjs/qjs-modules/lib/repl.js';

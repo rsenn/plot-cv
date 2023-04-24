@@ -20,7 +20,7 @@ import objectInspect from './lib/objectInspect.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import Alea from './lib/alea.js';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import { TimeoutError } from './lib/repeater/timers.js';
 import * as Timers from './lib/repeater/timers.js';
 import asyncHelpers from './lib/async/helpers.js';
@@ -77,7 +77,7 @@ import { classNames } from './lib/classNames.js';
 //import rpc from './quickjs/qjs-net/js/rpc.js';
 import * as rpc2 from './quickjs/qjs-net/js/rpc.js';
 import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
-import { errors, types, isObject, toString, btoa, atob, assert, escape, quote, memoize, getset, modifier, getter, setter, gettersetter, hasGetSet, mapObject, once, atexit, waitFor, define, weakAssign, getConstructorChain, hasPrototype, filter, curry, split, unique, getFunctionArguments, randInt, randFloat, randStr, toBigInt, lazyProperty, lazyProperties, getOpt, toUnixTime, unixTime, fromUnixTime, range, repeater, repeat, chunkArray, camelize, decamelize, Location, format, formatWithOptions, isNumeric, functionName, className, isArrowFunction, immutableClass, isArray, ArrayFacade, arrayFacade, bits, dupArrayBuffer, getTypeName, isArrayBuffer, isBigDecimal, isBigFloat, isBigInt, isBool, isCFunction, isConstructor, isEmptyString, isError, isException, isExtensible, isFunction, isHTMLDDA, isInstanceOf, isInteger, isJobPending, isLiveObject, isNull, isNumber, isUndefined, isString, isUninitialized, isSymbol, isUncatchableError, isRegisteredClass, rand, randi, randf, srand, toArrayBuffer, getMethods, isoDate } from './lib/misc.js';
+import { errors, types, isObject, toString, btoa, atob, assert, escape, quote, memoize, getset, modifier, getter, setter, gettersetter, hasGetSet, mapObject, once, atexit, waitFor, define, weakDefine, getConstructorChain, hasPrototype, filter, curry, split, unique, getFunctionArguments, randInt, randFloat, randStr, toBigInt, lazyProperty, lazyProperties, getOpt, toUnixTime, unixTime, fromUnixTime, range, repeater, repeat, chunkArray, camelize, decamelize, Location, format, formatWithOptions, isNumeric, functionName, className, isArrowFunction, immutableClass, isArray, ArrayFacade, arrayFacade, bits, dupArrayBuffer, getTypeName, isArrayBuffer, isBigDecimal, isBigFloat, isBigInt, isBool, isCFunction, isConstructor, isEmptyString, isError, isException, isExtensible, isFunction, isHTMLDDA, isInstanceOf, isInteger, isJobPending, isLiveObject, isNull, isNumber, isUndefined, isString, isUninitialized, isSymbol, isUncatchableError, isRegisteredClass, rand, randi, randf, srand, toArrayBuffer, getMethods, isoDate } from './lib/misc.js';
 
 const elementDefaultAttributes = {
   stroke: 'red',
@@ -806,7 +806,7 @@ function EagleMaps(project) {
     mapAdapter((key, value) => (value === undefined ? path2eagle(component2path(key)) : undefined)),
     mapAdapter((key, value) => (value === undefined ? path2component(eagle2path(key) + '') : undefined))
   ];
-  weakAssign(maps, {
+  weakDefine(maps, {
     path2eagle,
     eagle2path,
     path2component,
@@ -1568,11 +1568,11 @@ const AppMain = (window.onload = async () => {
   //console.debug('Dupes:', getMemberNames(window).filter(m => importedNames.indexOf(m) != -1));
 
   //prettier-ignore
-  weakAssign(window, { rpc:rpc2 });
-  weakAssign(window, imports);
-  weakAssign(window.Element, getMethods(dom.Element));
-  weakAssign(window, dom, geom, imports, localFunctions);
-  weakAssign(window, {
+  weakDefine(window, { rpc:rpc2 });
+  weakDefine(window, imports);
+  weakDefine(window.Element, getMethods(dom.Element));
+  weakDefine(window, dom, geom, imports, localFunctions);
+  weakDefine(window, {
     functions: filter(localFunctions, v => typeof v == 'function'),
     dom,
     geom,
@@ -1582,7 +1582,7 @@ const AppMain = (window.onload = async () => {
   });
   Error.stackTraceLimit = 100;
 
-  weakAssign(window, {
+  weakDefine(window, {
     TestArc: () => timer(2000).then(() => DrawArc({ x: 50, y: 150 }, { x: 350, y: 300 }, 120 * (Math.PI / 180)))
   });
 

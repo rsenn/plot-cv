@@ -1,19 +1,19 @@
 import { WebSocketClient } from './lib/net/websocket-async.js';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
-/* prettier-ignore */ import { toString, toArrayBuffer, extendArray } from './lib/misc.js';
-/* prettier-ignore */ import React, {h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
-/* prettier-ignore */ import { EventEmitter, EventTarget } from './lib/events.js';
-/* prettier-ignore */ import { DroppingBuffer, FixedBuffer, MAX_QUEUE_LENGTH, Repeater, RepeaterOverflowError, SlidingBuffer } from './lib/repeater/repeater.js';
-/* prettier-ignore */ import { useAsyncIter, useRepeater, useResult, useValue } from './lib/repeater/react-hooks.js';
-/* prettier-ignore */ import { TimeoutError, delay, interval, timeout } from './lib/repeater/timers.js';
-/* prettier-ignore */ import { InMemoryPubSub } from './lib/repeater/pubsub.js';
-/* prettier-ignore */ import { semaphore, throttler } from './lib/repeater/limiters.js';
+import { toString, toArrayBuffer, memoize } from './lib/misc.js';
+import { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
+import { EventEmitter, EventTarget } from './lib/events.js';
+import { DroppingBuffer, FixedBuffer, MAX_QUEUE_LENGTH, Repeater, RepeaterOverflowError, SlidingBuffer } from './lib/repeater/repeater.js';
+import { useAsyncIter, useRepeater, useResult, useValue } from './lib/repeater/react-hooks.js';
+import { TimeoutError, delay, interval, timeout } from './lib/repeater/timers.js';
+import { InMemoryPubSub } from './lib/repeater/pubsub.js';
+import { semaphore, throttler } from './lib/repeater/limiters.js';
 import { trkl } from './lib/trkl.js';
 import { classNames } from './lib/classNames.js';
-/* prettier-ignore */ import { HSLA, RGBA, Point, isPoint, Size, isSize, Line, isLine, Rect, isRect, PointList, Polyline, Matrix, isMatrix, BBox, TRBL, Timer, Tree, Node, XPath, Element, isElement, CSS, SVG, Container, Layer, Renderer, Select, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementWHProps, ElementXYProps, Align, Anchor, dom, isNumber, Unit, ScalarValue, ElementTransformation, CSSTransformSetters, Transition, TransitionList, RandomColor } from './lib/dom.js';
-/* prettier-ignore */ import { useClick, useIterable, useIterator, useAsyncGenerator, useAsyncIterable, useAsyncIterator, useGenerator, useActive, useClickout, useConditional, useDebouncedCallback, useDebounce, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useForceUpdate, useGetSet, useHover, useMousePosition, useToggleButtonGroupState, useTrkl, useFetch } from './lib/hooks.js';
-/* prettier-ignore */ import { clamp, identity, noop, compose, maybe, snd, toPair, getOffset, getPositionOnElement, isChildOf } from './lib/hooks.js';
+import { HSLA, RGBA, Point, isPoint, Size, isSize, Line, isLine, Rect, isRect, PointList, Polyline, Matrix, isMatrix, BBox, TRBL, Timer, Tree, Node, XPath, Element, isElement, CSS, SVG, Container, Layer, Renderer, Select, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementWHProps, ElementXYProps, Align, Anchor, dom, isNumber, Unit, ScalarValue, ElementTransformation, CSSTransformSetters, Transition, TransitionList, RandomColor } from './lib/dom.js';
+import { useClick, useIterable, useIterator, useAsyncGenerator, useAsyncIterable, useAsyncIterator, useGenerator, useActive, useClickout, useConditional, useDebouncedCallback, useDebounce, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useForceUpdate, useGetSet, useHover, useMousePosition, useToggleButtonGroupState, useTrkl, useFetch } from './lib/hooks.js';
+import { clamp, identity, noop, compose, maybe, snd, toPair, getOffset, getPositionOnElement, isChildOf } from './lib/hooks.js';
 import { JSLexer, Location } from './lib/jslexer.js';
 import { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Fence, Zoomable, DisplayList, Ruler, Toggle } from './components.js';
 
@@ -30,15 +30,14 @@ currentLine.id = 'currentLine';
 currentSource.subscribe(source => console.log('currentSource set to', source));
 currentLine.subscribe(line => console.log('currentLine set to', line));
 
-const doRender = Util.memoize(RenderUI);
+const doRender = memoize(RenderUI);
 
 window.addEventListener('load', e => {
-  url = Util.parseURL();
-  console.log('URL', url);
-  let socketURL = Util.makeURL({
-    location: url.location + '/ws',
-    protocol: url.protocol == 'https' ? 'wss' : 'ws'
-  });
+  url = new URL(document.location.href);
+
+  let socketURL = new URL('ws', url);
+  socketURL.protocol = socketURL.protocol.replace('http', 'ws');
+  console.log('socketURL', socketURL);
 
   (async () => {
     globalThis.ws = await CreateSocket(socketURL);
@@ -109,7 +108,7 @@ const SourceFile = props => {
     (file &&
       !/^<.*>$/.test(file) &&
       useFetch(filename, resp => {
-        console.log('Fetch', resp.status, Util.makeURL({ location: '/' + filename }));
+        console.log('Fetch', resp.status, new URL(filename, document.location.href));
         return resp.text();
       })) ||
     '';
@@ -128,7 +127,7 @@ async function LoadSource(filename) {
   } catch(e) {}
 }
 
-/* prettier-ignore */ Object.assign(globalThis, { Connect,DebuggerProtocol, LoadSource, Util, toString, toArrayBuffer, extendArray, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, EventEmitter, EventTarget, Element, isElement, path });
+/* prettier-ignore */ Object.assign(globalThis, { Connect,DebuggerProtocol, LoadSource, Util, toString, toArrayBuffer, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, EventEmitter, EventTarget, Element, isElement, path });
 /* prettier-ignore */ Object.assign(globalThis, { DroppingBuffer, FixedBuffer, MAX_QUEUE_LENGTH, Repeater, RepeaterOverflowError, SlidingBuffer, useAsyncIter, useRepeater, useResult, useValue, TimeoutError, delay, interval, timeout, InMemoryPubSub, semaphore, throttler, trkl });
 /* prettier-ignore */ Object.assign(globalThis, { HSLA, RGBA, Point, isPoint, Size, isSize, Line, isLine, Rect, isRect, PointList, Polyline, Matrix, isMatrix, BBox, TRBL, Timer, Tree, Node, XPath, Element, isElement, CSS, SVG, Container, Layer, Renderer, Select, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementWHProps, ElementXYProps, Align, Anchor, dom, isNumber, Unit, ScalarValue, ElementTransformation, CSSTransformSetters, Transition, TransitionList, RandomColor });
 /* prettier-ignore */ Object.assign(globalThis, {   useIterable, useIterator, useAsyncGenerator, useAsyncIterable, useAsyncIterator, useGenerator, useActive, useClickout, useConditional, useDebouncedCallback, useDebounce, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useForceUpdate, useGetSet, useHover, useMousePosition, useToggleButtonGroupState, useTrkl, useFetch });
@@ -145,7 +144,7 @@ function Connect(address) {
 }
 
 function Initiate(command, address, connect = false, args) {
-  address ??= `${url.query.address ?? '127.0.0.1'}:${url.query.port ?? 9901}`;
+  address ??= `${url.searchParams.get('address') ?? '127.0.0.1'}:${url.searchParams.get('port') ?? 9901}`;
   console.log('Initiate', { command, address, connect, args });
   return ws.send(JSON.stringify({ command, connect, address, args }));
 }
@@ -276,8 +275,8 @@ async function CreateSocket(endpoint) {
     return this.send(JSON.stringify(msg));
   };
 
-  if(url.query.port) await Connect();
-  else await Start([url.query.script ?? 'quickjs/qjs-modules/tests/test_dom.js']); // 'test-video.js', 'nightwatch.mp4']);
+  if(url.searchParams.has('port')) await Connect();
+  else await Start([url.searchParams.get('script') ?? 'quickjs/qjs-modules/tests/test_dom.js']); // 'test-video.js', 'nightwatch.mp4']);
 
   return ws;
 }

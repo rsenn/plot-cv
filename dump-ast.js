@@ -3,7 +3,7 @@ import { EagleDocument, EagleProject } from './lib/eagle.js';
 import { LineList, Rect } from './lib/geom.js';
 import { toXML, ImmutablePath } from './lib/json.js';
 import deep from './lib/deep.js';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import { Graph } from './lib/fd-graph.js';
 import ptr from './lib/json-ptr.js';
 import LogJS from './lib/log.js';

@@ -17,7 +17,10 @@ import { wasmBrowserInstantiate } from './wasm-helpers.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
 import trkl from './lib/trkl.js';
 
-let lsgs = (globalThis.lsgs = getset([key => localStorage.getItem(key), (key, value) => localStorage.setItem(key, value)]));
+let lsgs = (globalThis.lsgs = getset([
+  key => localStorage.getItem(key),
+  (key, value) => localStorage.setItem(key, value)
+]));
 
 const lstore = (globalThis.lstore = propertyLookup(
   ...(globalThis.lsgs2 = lsgs.transform(
@@ -94,7 +97,14 @@ function CreatePalette() {
 function CreatePaletteHSL() {
   const colors = new Array(256);
 
-  const hues = [new HSLA(0, 100, 0), new HSLA(0, 100, 50), new HSLA(30, 100, 50), new HSLA(60, 100, 50), new HSLA(60, 100, 100), new HSLA(60, 100, 100)];
+  const hues = [
+    new HSLA(0, 100, 0),
+    new HSLA(0, 100, 50),
+    new HSLA(30, 100, 50),
+    new HSLA(60, 100, 50),
+    new HSLA(60, 100, 100),
+    new HSLA(60, 100, 100)
+  ];
 
   const breakpoints = [0, 51, 80, 154, 205, 256];
   console.log('breakpoints:', breakpoints);
@@ -341,14 +351,17 @@ async function* TouchIterator(element, t) {
 
   if(!t) {
     let matrix = PositionMatrix2();
-    console.log('TouchIterator', { matrix }, matrix.decompose());
+    //console.log('TouchIterator', { matrix }, matrix.decompose());
     t = TouchTransformer((x, y) => matrix.transformXY(x, y).map(Math.floor));
   }
 
   if(ev.touches) [...ev.touches].forEach(t);
   yield ev;
 
-  for await(let event of streamify(['touchend', 'touchmove', 'mouseup', 'mousemove'], element, { passive: false, capture: true })) {
+  for await(let event of streamify(['touchend', 'touchmove', 'mouseup', 'mousemove'], element, {
+    passive: false,
+    capture: true
+  })) {
     if(event.cancelable) event.preventDefault();
     event.stopPropagation();
     MouseToTouch(event);
@@ -359,36 +372,6 @@ async function* TouchIterator(element, t) {
 
   globalThis.pressed = false;
 }
-
-/*async function* MovementIterator(element) {
-  let ev = await once(element, 'mousedown', 'touchstart');
-  let type = ev.type.slice(0, 5);
-  yield ev;
-  console.log(type + ' start');
-  for await(let event of streamify(['mouseup', 'mousemove', 'touchend', 'touchmove'], element, { passive: false, capture: true })) {
-    if('touches' in event) {
-      if(event.touches.length) {
-        let i = 0;
-        globalThis.mouseEvent = event;
-
-        for(let touch of event.touches) {
-          globalThis.touch = touch;
-          const { force, radiusX, radiusY, clientX: x, clientY: y, ...obj } = touch;
-          yield { ...obj, type: 'touch', index: i, force, radiusX, radiusY, x, y };
-          ++i;
-        }
-      }
-    } else {
-      const { type, clientX: x, clientY: y } = event;
-      let obj = { type, x, y };
-      yield obj;
-    }
-    if(/(up|end)$/.test(event.type)) {
-      console.log(type + ' end');
-      break;
-    }
-  }
-}*/
 
 async function* MoveIterator(eventIterator) {
   for await(let event of eventIterator) {
@@ -408,7 +391,17 @@ async function* MoveIterator(eventIterator) {
 function main() {
   define(
     globalThis,
-    { Bresenham, LinkedList, List, AllParents, TransformationList, getTransformationList, DecomposeTransformList, drawRect, miscfixed6x13 },
+    {
+      Bresenham,
+      LinkedList,
+      List,
+      AllParents,
+      TransformationList,
+      getTransformationList,
+      DecomposeTransformList,
+      drawRect,
+      miscfixed6x13
+    },
     properties(
       {
         cid: () => lstore.cid || (lstore.cid = randStr(16, '0123456789abcdef')),
@@ -547,7 +540,12 @@ function main() {
 
     for(let y = 0; y < height; y++) {
       for(let x = 0; x < width; x++) {
-        const sum = [pixels[y + 1][Modulo(x - 1, width)], pixels[y + 1][x], pixels[y + 1][Modulo(x + 1, width)], pixels[y + 2][x]].reduce((a, p) => a + (p | 0), 0);
+        const sum = [
+          pixels[y + 1][Modulo(x - 1, width)],
+          pixels[y + 1][x],
+          pixels[y + 1][Modulo(x + 1, width)],
+          pixels[y + 2][x]
+        ].reduce((a, p) => a + (p | 0), 0);
 
         pixels[y][x] = (sum * 15) >>> 6;
       }
@@ -654,7 +652,7 @@ function main() {
       SendWS({ type: 'rects', cid, rects: GetRects() });
     }
   })).ws;
-  
+
   let str = '';
   let xpos = 0;
   function KeyHandler(key) {
@@ -706,8 +704,10 @@ function main() {
       let prev,
         pt,
         start = timegen(),
-        last;
-      for await(let ev of /*GenericPrinter*/ MoveIterator(TouchIterator(window))) {
+        last,
+        iter = chainRight(MoveIterator, /*GenericPrinter, */ TouchIterator)(window);
+
+      for await(let ev of iter) {
         globalThis.movement = ev;
         if(gfxRect.inside(ev)) {
           let pt = (globalThis.mousePos = new Point(ev));
@@ -773,7 +773,10 @@ function Init() {
       canvasRect: () => Element.rect('canvas').round(0)
     }),
     properties({
-      transform: [() => new TransformationList(Element.getCSS('body > div:first-child').transform), value => Element.setCSS('body > div:first-child', { transform: value + '' })]
+      transform: [
+        () => new TransformationList(Element.getCSS('body > div:first-child').transform),
+        value => Element.setCSS('body > div:first-child', { transform: value + '' })
+      ]
     })
   );
 
@@ -785,35 +788,44 @@ function Init() {
   globalThis.circle = trkl(new Point(0, 0));
   globalThis.points = trkl([]);
 
-  const SVGPolyline = ({ points, ...props }) => h('polyline', { points: points.map(pt => [...pt].join(',')).join(' '), ...props });
+  const SVGPolyline = ({ points, ...props }) =>
+    h('polyline', { points: points.map(pt => [...pt].join(',')).join(' '), ...props });
 
   const SVGComponent = ({ circle, points, ...props }) => {
     let rect = new Rect(0, 0, canvasElement.width, canvasElement.height);
 
     const { r = 10, x, y, width = '1', stroke = '#0f0', fill = `rgba(80,80,80,0.3)` } = useTrkl(circle);
 
-    return h('svg', { version: '1.1', xmlns: 'http://www.w3.org/2000/svg', viewBox: [...rect].join(' '), width: rect.width, height: rect.height }, [
-      h('circle', {
-        cx: x,
-        cy: y,
-        r,
-        stroke,
-        'stroke-width': width,
-        fill
-      }),
-      h(SVGPolyline, { points: useTrkl(points), stroke, 'stroke-width': width })
-    ]);
+    return h(
+      'svg',
+      {
+        version: '1.1',
+        xmlns: 'http://www.w3.org/2000/svg',
+        viewBox: [...rect].join(' '),
+        width: rect.width,
+        height: rect.height
+      },
+      [
+        h('circle', {
+          cx: x,
+          cy: y,
+          r,
+          stroke,
+          'stroke-width': width,
+          fill
+        }),
+        h(SVGPolyline, { points: useTrkl(points), stroke, 'stroke-width': width })
+      ]
+    );
   };
 
-  let svgContainer = globalThis.svgContainer = Element.create('div', { class: 'overlay' }, document.body);
+  let svgContainer = (globalThis.svgContainer = Element.create('div', { class: 'overlay' }, document.body));
 
   render(h(SVGComponent, { circle: globalThis.circle, points: globalThis.points }), svgContainer);
 
   globalThis.svg = svgContainer.firstElementChild;
-  
 
-
-//  Element.setCSS(svgContainer, { position: 'absolute', left: canvasRect.x + 'px', top: canvasRect.y + 'px' });
+  //  Element.setCSS(svgContainer, { position: 'absolute', left: canvasRect.x + 'px', top: canvasRect.y + 'px' });
   /*  rect = canvasRect;
     mouseTransform = PositionProcessor();*/
 
@@ -821,8 +833,7 @@ function Init() {
     ResizeHandler();
 
     for await(let event of streamify(['orientationchange', 'resize'], window)) {
-      ({ resize: ResizeHandler, orientationchange: OrientationChange }[event.type](event));
-
+      ResizeHandler();
     }
   })();
 
@@ -832,28 +843,17 @@ function Init() {
   SetLocked(true);
 }
 
-function ResizeHandler(event) {
-  let { body } = document;
-  let rect = Element.rect('canvas');
+function ResizeHandler() {
+  let { width, height } = Element.rect('body');
 
-  let { width, height } = Element.getRect(body);
+  console.log('ResizeHandler', { width, height });
 
-  console.log('ResizeHandler', { event, rect, width, height });
-
-  Element.setCSS(svg, { width: canvasElement.offsetWidth + 'px', height: canvasElement.offsetHeight + 'px', transform: 'rotate(90deg)' });
-
-  //mouseTransform = PositionProcessor();
+  Element.setCSS(svg, {
+    width: canvasElement.offsetWidth + 'px',
+    height: canvasElement.offsetHeight + 'px',
+    transform: 'rotate(90deg)'
+  });
 }
-
-function OrientationChange(e) {
-  rect = canvasRect;
-  mouseTransform = PositionProcessor();
-  console.log('OrientationChange', { e, rect });
-}
-
-/*function getRect(elem) {
-  return new Rect((elem ?? divElement).getBoundingClientRect()).round(1);
-}*/
 
 function ParseJSON(s) {
   let r;
@@ -900,16 +900,15 @@ function NewWS(handlers) {
   let ws = new ReconnectingWebSocket(url, 'lws-mirror-protocol', handlers ?? {});
 
   (async function() {
-    let chunks = '';
+    let chunks = '',
+      data;
     for await(let chunk of ws) {
       chunks += chunk;
 
       if(/}\s*$/.test(chunks)) {
-        let data = (globalThis.received = ParseJSON(chunks));
+        if(!(data = globalThis.received = ParseJSON(chunks))) continue;
 
-        if(data.type != 'event') 
-if(!data.cid || globalThis.cid != data.cid)
-          console.log('WS receive:', data);
+        if(data.type != 'event') if (!data.cid || globalThis.cid != data.cid) console.log('WS receive:', data);
 
         switch (data.type) {
           case 'event':
@@ -946,7 +945,9 @@ function MakeUUID(rng = Math.random) {
   return [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 }
 function MakeClientID(rng = Math.random) {
-  return [4, 4, 4, 4].map(n => randStr(n, ['ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz', '.-$'][randInt(0, 3)]), rng).join('');
+  return [4, 4, 4, 4]
+    .map(n => randStr(n, ['ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz', '.-$'][randInt(0, 3)]), rng)
+    .join('');
 }
 
 async function LoadWASM(file = 'fire/build/fire.wasm') {
@@ -976,7 +977,11 @@ function GetRects() {
   for(let element of [...AllParents(Element.find('canvas'))]) {
     rects.push([ElementName(element), Element.rect(element), new Point(element.scrollLeft, element.scrollTop)]);
   }
-  rects.push(['window', new Rect(0, 0, window.innerWidth, window.innerHeight), new Point(window.scrollX, window.scrollY)]);
+  rects.push([
+    'window',
+    new Rect(0, 0, window.innerWidth, window.innerHeight),
+    new Point(window.scrollX, window.scrollY)
+  ]);
 
   return rects;
 }

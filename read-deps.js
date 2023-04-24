@@ -1,5 +1,5 @@
 import filesystem from 'fs';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import PortableChildProcess from './lib/childProcess.js';
 
 let filesystem,

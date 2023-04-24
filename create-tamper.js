@@ -6,7 +6,7 @@ import { ObjectPattern, ObjectExpression, ImportDeclaration, ExportNamedDeclarat
 import { ImmutablePath } from './lib/json.js';
 import deep from './lib/deep.js';
 import filesystem from 'fs';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import { SortedMap } from './lib/container/sortedMap.js';
 
 const code = `export const Progress = ({ className, percent, ...props }) => html\`<\x24{Overlay} className=\x24{classNames('progress', 'center', className)} text=\x24{percent + '%'} style=\x24{{
@@ -161,7 +161,7 @@ async function main(...args) {
   while(args.length > 0) processFile(args.shift());
   // console.log("result:",r);
 
-  for(let ids of exportMap.values()) r.push(`weakAssign(globalObj, { ${unique(ids).join(', ')} });`);
+  for(let ids of exportMap.values()) r.push(`weakDefine(globalObj, { ${unique(ids).join(', ')} });`);
 
   const script = `// ==UserScript==
 

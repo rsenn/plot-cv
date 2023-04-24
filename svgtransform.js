@@ -1,6 +1,6 @@
 import filesystem from 'fs';
 import deep from './lib/deep.js';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import tXml from './lib/tXml.js';
 import { toXML } from './lib/xml.js';
 import Tree from './lib/tree.js';

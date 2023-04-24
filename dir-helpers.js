@@ -1,7 +1,7 @@
 import { getenv } from 'std';
 import * as fs from 'fs';
 import * as os from 'os';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import { predicate } from './lib/misc.js';
 
 export function* DirIterator(...args) {

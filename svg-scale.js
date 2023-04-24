@@ -1,6 +1,6 @@
 import filesystem from 'fs';
 import deep from './lib/deep.js';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import { Size, Rect } from './lib/geom.js';
 import { XPath, tXml, toXML } from './lib/xml.js';
 import { CSS } from './lib/dom.js';

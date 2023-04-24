@@ -1,4 +1,4 @@
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import filesystem from 'fs';
 import { Console } from 'console';
 

@@ -1,6 +1,6 @@
 import PortableSpawn from './lib/spawn.js';
 import { AcquireReader } from './lib/stream/utils.js';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import deep from './lib/deep.js';
 import Tree from './lib/tree.js';
 import { Type, Compile, AstDump, NodeType, NodeName, GetLoc, GetTypeStr } from './clang-ast.js';
