@@ -1,4 +1,4 @@
-import { define, isObject,mod, memoize, unique } from './lib/misc.js';
+import { define, isObject, mod, memoize, unique, roundTo } from './lib/misc.js';
 import * as cv from 'opencv';
 import { EventEmitter, eventify } from './quickjs/qjs-modules/lib/events.js';
 
@@ -112,7 +112,7 @@ export class EnumParam extends NumericParam {
 export function ParamNavigator(map, index = 0) {
   if(!new.target) return new ParamNavigator(map);
 
-console.log('ParamNavigator',map);
+  console.log('ParamNavigator', map);
   if(!(map instanceof Map)) map = new Map(Object.entries(map));
 
   // console.log('map:', map);
@@ -121,11 +121,11 @@ console.log('ParamNavigator',map);
     map,
     index,
     next() {
-      this.index = mod(map.size, this.index + 1);
+      this.index = mod(this.index + 1, map.size);
       // console.log('ParamNavigator index =', this.index);
     },
     prev() {
-      this.index = mod(map.size, this.index - 1);
+      this.index = mod(this.index - 1, map.size);
       // console.log('ParamNavigator index =', this.index);
     },
     setCallback(fn, thisObj) {

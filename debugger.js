@@ -1,9 +1,9 @@
 import { Console } from 'console';
-import { btoa,toString } from './lib/misc.js';
+import { btoa, toString } from './lib/misc.js';
 import * as os from 'os';
 //import child_process from './lib/childProcess.js';
 import { AsyncSocket, SockAddr, AF_INET, SOCK_STREAM, IPPROTO_TCP } from './quickjs/qjs-ffi/lib/socket.js';
-import {assert, define, toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
+import { assert, define, toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 
 var worker;
@@ -60,7 +60,7 @@ export function ConnectDebugger(address, callback) {
       while(offset < len) {
         if((ret = await sock.recv(dataBuf, offset, len - offset)) <= 0) {
           sock.close();
-          return ;
+          return;
         }
         offset += ret;
       }
@@ -73,19 +73,17 @@ export function ConnectDebugger(address, callback) {
     sock.onmessage = callback;
 
     (async (s, it) => {
-      console.log('\x1b[1;35mprocessing messages\x1b[0m', { s,it});
+      console.log('\x1b[1;35mprocessing messages\x1b[0m', { s, it });
       for await(let message of it) s.onmessage(message);
       console.log('\x1b[1;36mprocessing end!\x1b[0m', strerror(error().errno));
-      
     })(sock, iter());
   } else {
     define(sock, { [Symbol.asyncIterator]: iter });
   }
 
-  define(sock, { sendMessage: msg =>  sock.send(msg.length.toString(16).padStart(8, '0')+'\n'+msg) });
+  define(sock, { sendMessage: msg => sock.send(msg.length.toString(16).padStart(8, '0') + '\n' + msg) });
 
-
- // DebuggerProtocol.send(sock, typeof msg == 'string' ? msg : JSON.stringify(msg)) });
+  // DebuggerProtocol.send(sock, typeof msg == 'string' ? msg : JSON.stringify(msg)) });
 
   console.log('ConnectDebugger', { ret, sock });
 
@@ -97,7 +95,7 @@ export class DebuggerDispatcher {
   #responses = {};
 
   constructor(sock) {
-     const orig = sock.onmessage;
+    const orig = sock.onmessage;
 
     console.log('DebuggerDispatcher', { orig });
 
@@ -135,10 +133,9 @@ export class DebuggerDispatcher {
     return this.sendRequest('evaluate', { frameId, expression });
   }
 
-
-variables(variablesReference, options={}) {
-  return this.sendRequest('variables', {variablesReference,...options  })
-}
+  variables(variablesReference, options = {}) {
+    return this.sendRequest('variables', { variablesReference, ...options });
+  }
 
   scopes(frameId) {
     return this.sendRequest('scopes', { frameId });
