@@ -1,23 +1,26 @@
 #!/usr/bin/env qjsm
 import { Console } from 'console';
 import { kill, SIGUSR1 } from 'os';
-import { getOpt, showHelp, isObject, mapWrapper, startInteractive, define } from 'util';
+import { getOpt, showHelp, isObject, mapWrapper, startInteractive, define, roundTo } from 'util';
 import { basename, extname } from 'path';
 import { Entities, nodeTypes, Prototypes, Factory, Parser, Serializer, Interface, Node, NodeList, NamedNodeMap, Element, Document, Attr, Text, Comment, TokenList, CSSStyleDeclaration, GetType } from './quickjs/qjs-modules/lib/dom.js';
-//import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
 import { BBox, isBBox } from './lib/geom/bbox.js';
 import { Size, isSize } from './lib/geom/size.js';
+import { Rect } from './lib/geom/rect.js';
 import { TreeIterator } from 'tree_walker';
 import { WriteFile } from './io-helpers.js';
 import { Matrix, isMatrix, ImmutableMatrix } from './lib/geom/matrix.js';
 import { Transformation, ImmutableTransformation, Rotation, ImmutableRotation, Translation, ImmutableTranslation, Scaling, ImmutableScaling, MatrixTransformation, ImmutableMatrixTransformation, TransformationList, ImmutableTransformationList } from './lib/geom/transformation.js';
 import { Point } from './lib/geom/point.js';
+import { RGBA } from './lib/color/rgba.js';
 import { PointList } from './lib/geom/pointList.js';
 import { SvgPath } from './lib/svg/path.js';
 import extendGenerator from 'extendGenerator';
 import extendArray from 'extendArray';
 import { read as readXML, write as writeXML } from 'xml';
 import * as deep from 'deep';
+import { SyntaxError, parseSVG, makeAbsolute } from './lib/svg/path-parser.js';
+import { iterateTree} from './dom-helpers.js';
 
 extendGenerator();
 extendArray();
@@ -67,7 +70,7 @@ function splitPath(ps) {
     if(!isNaN(+m)) m = +m;
     else if(i == 0) m = m.toUpperCase();
     if(typeof m == 'string') cmds.push([m]);
-    else cmds.last.push(m);
+    else cmds[cmds.length - 1].push(m);
     ++i;
   }
   return cmds;
@@ -174,18 +177,23 @@ Object.assign(globalThis, {
   getTransformationList,
   AllTransforms,
   ElementTransformMatrix,
+  ElementTransformLists,
   ElementTransformList,
+  DecomposeTransformList,
+  TransformedElements,
   GetXY,
   GetPoints,
   GetMatrix,
   GetTransformedPoints,
+  GetSVGPath,
   PositionedElements,
   HasParent,
   GetBounds,
   ProcessPath,
   unitConvToMM,
   unitConv,
-  unitConvTo,
+  unitConvFactor,
+  unitConvFunction,
   getViewBox,
   getWidthHeight,
   XML2String
@@ -224,17 +232,39 @@ function* AllParents(elem) {
     if(obj.tagName[0] != '?') yield obj;
     obj = deref(p)(obj);
   }
+  if(obj) yield obj;
 }
 
-function AllTransforms(elem, getter = getTransformationMatrix) {
+function AllTransforms(elem, getter = e => getTransformationMatrix(e)) {
   let t = [];
   for(let e of AllParents(elem)) if(e.hasAttribute('transform')) t.push(getter(e));
   if(elem.hasAttribute('transform')) t.push(getter(elem));
   return t;
 }
 
+function ElementTransformLists(elem) {
+  let map = new Map();
+
+  for(let e of AllTransforms(elem, e => e)) {
+    map.set(e, getTransformationList(e));
+  }
+  return map;
+}
+
+function DecomposeTransformList(elem) {
+  let list = getTransformationList(elem);
+
+  if(list.length == 1 && list[0].type == 'matrix') {
+    let tl = list.decompose();
+    //console.log(`Setting '${list}' to ${tl}`);
+    elem.setAttribute('transform', tl + '');
+  }
+}
+
 function ElementTransformList(elem) {
-  return new TransformationList().concat(...AllTransforms(e, getTransformationList));
+  let ret = new TransformationList();
+  for(let tl of ElementTransformLists(elem).values()) ret = ret.concat(tl);
+  return ret;
 }
 
 function ElementTransformMatrix(elem) {
@@ -286,6 +316,34 @@ function GetPoints(elem) {
   throw new Error(`Failed getting point data for element ${XML2String(elem)}`);
 }
 
+function GetSVGPath(elem) {
+  return parseSVGPath(elem.getAttribute('d'));
+}
+
+function PathCmdTransform(matrix, cmd) {
+  let args = {
+    M: (x, y) => matrix.transformXY(x, y),
+    Z: (x, y) => matrix.transformXY(x, y),
+    L: (x, y) => matrix.transformXY(x, y),
+    H: x => matrix.transformXY(x, 0)[0],
+    V: y => matrix.transformXY(0, y)[1],
+    C: (x1, y1, x2, y2, x, y) => [...matrix.transformXY(x1, y1), ...matrix.transformXY(x2, y2), ...matrix.transformXY(x, y)],
+    S: (x2, y2, x, y) => [...matrix.transformXY(x2, y2), ...matrix.transformXY(x, y)],
+    Q: (x1, y1, x, y) => [...matrix.transformXY(x1, y1), ...matrix.transformXY(x, y)],
+    T: (x, y) => matrix.transformXY(x, y),
+    A: (rx, ry, xAxisRotation, largeArcFlag, sweepFlag, x, y) => [...matrix.transformWH(rx, ry), xAxisRotation, largeArcFlag, sweepFlag, ...matrix.transformXY(x, y)]
+  }[cmd.name](...cmd.args);
+
+  //console.log('PathCmdTransform', { cmd, args });
+  return { name: cmd.name, args };
+}
+
+function PathTransform(matrix, path) {
+  let ret = new SvgPath();
+  ret.commands = path.commands.map(cmd => PathCmdTransform(matrix, cmd));
+  return ret;
+}
+
 function GetTransformedPoints(elem) {
   let matrix = ElementTransformMatrix(elem);
   let points = new PointList(GetPoints(elem));
@@ -331,6 +389,10 @@ function* PositionedElements(svgElem = svg, skip) {
     }
     yield elem;
   }
+}
+
+function* TransformedElements(svgElem = svg) {
+  for(let q of deep.iterate(Node.raw(svgElem), e => 'transform' in e.attributes, deep.RETURN_PATH)) yield q.reduce((obj, p) => obj[p], svgElem);
 }
 
 function HasParent(elem, other) {
@@ -383,34 +445,67 @@ function* ProcessPath(d) {
   }
 }
 
-function unitConvToMM(value) {
-  if(/pt\s*$/i.test(value)) return (+value.replace(/\s*pt\s*$/gi, '') * 3) / 8.5;
-  if(/pc\s*$/i.test(value)) return +value.replace(/\s*pc\s*$/gi, '') * 4.23333;
-  if(/in\s*$/i.test(value)) return +value.replace(/\s*in\s*$/gi, '') * 25.4;
-  if(/mil\s*$/i.test(value)) return +value.replace(/\s*mil\s*$/gi, '') * 0.0254;
-  if(/cm\s*$/i.test(value)) return +value.replace(/\s*cm\s*$/gi, '') * 10;
-  if(/mm\s*$/i.test(value)) return +value.replace(/\s*mm\s*$/gi, '');
-  if(/px\s*$/i.test(value) || !isNaN(+value)) return +(value + '').replace(/\s*px\s*$/gi, '') / 3.77952755953127906261;
-}
-
-const MillimeterTo = {
-  pc: mm => mm * 0.23622,
-  px: mm => mm * 3.77952755953127906261,
-  pt: mm => (mm * 8.5) / 3,
-  in: mm => mm / 25.4,
-  mil: mm => mm / 0.0254,
-  cm: mm => mm * 1e-1,
-  mm: mm => mm,
-  m: mm => mm * 1e-3
+/* prettier-ignore */
+const ToMillimeter = {
+  pt: 3l / 8.5l,
+  pc: 25.4l/6l,
+  in: 25.4l,
+  mil: 1l /25.4e3l,
+  cm: 10l,
+  mm: 1l,
+  px: 25.4l/96l
 };
 
-function unitConv(unit) {
-  return value => MillimeterTo[unit](unitConvToMM(value));
+function getUnit(str, defaultUnit) {
+  const m = /[a-z]+/g.exec(str);
+  return m ? m[0] : defaultUnit;
+  }
+function getValue(str) {
+  const m = /[a-z]+/g.exec(str);
+  return m  ? str.slice(0, m.index) : str;
+  }
+
+function unitConvToMM(value, defaultUnit = 'px') {
+value=  value + '';
+const unit =getUnit(value, defaultUnit);
+value =getValue(value);
+
+  console.log('unixConvToMM', { unit, value });
+
+  if(unit in ToMillimeter) return value * ToMillimeter[unit];
+
+  throw new Error(`No such unit '${unit}'`);
 }
 
-function unitConvTo(value, unit) {
-  let mm = unitConvToMM(value);
-  return MillimeterTo[unit](mm) + unit;
+/* prettier-ignore */
+const MillimeterTo = {
+  pt: 8.5l / 3l,
+  pc: 6l/25.4l,
+  in: 1l /25.4l,
+  px: 96l/25.4l,
+  mil: 25.4e3l,
+  cm: 0.1l,
+  mm: 1l,
+  m: 0.001l
+};
+
+
+for(let k of Object.keys(ToMillimeter))
+
+  if(ToMillimeter[k] * MillimeterTo[k] != 1l)
+    throw new Error(`Invalid unit conv factor for '${k} (${k} -> mm = ${ToMillimeter[k]}) mm -> ${k} = ${MillimeterTo[k]}`)
+
+
+function unitConvFactor(from, to) {
+  return ToMillimeter[from] * MillimeterTo[to];
+}
+
+function unitConvFunction(toUnit = 'mm', fromUnit = 'px') {
+  return value => unitConvToMM(value, fromUnit) * MillimeterTo[toUnit];
+}
+
+function unitConv(unit) {
+  return value => MillimeterTo[unit] * unitConvToMM(value);
 }
 
 function getViewBox(svgElem = svg) {
@@ -431,7 +526,7 @@ function getWidthHeight(svgElem = svg, t = a => a) {
     let width = svgElem.getAttribute('width');
     let height = svgElem.getAttribute('height');
 
-    return new Size(t(width), t(height));
+    return new Size(t(width, 'px'), t(height,'px'));
   }
 
   return new Size(...getViewBox(svgElem).size);
@@ -450,7 +545,7 @@ function getTransformationMatrix(e) {
 function main(...args) {
   let debug = 0;
   let unit = 'mm';
-  let precision = 1;
+  let precision = 1e-3;
   let size = 0;
   let padding = 0;
 
@@ -458,7 +553,9 @@ function main(...args) {
     NumericArgs,
     ProcessPath,
     unitConvToMM,
-    unitConvTo,
+    unitConv,
+    unitConvFunction,
+    unitConvFactor,
     MillimeterTo,
     getViewBox,
     getWidthHeight,
@@ -469,7 +566,12 @@ function main(...args) {
     Scaling,
     MatrixTransformation,
     TransformationList,
-    deref
+    deref,
+    parseSVGPath,
+    parseSVG,
+    splitPath,
+    PathCmdTransform,
+    PathTransform,Rect,iterateTree
   });
 
   //  globalThis.console = new Console(std.err, { depth: 2, customInspect: false, compact: false, protoChain: true });
@@ -482,6 +584,7 @@ function main(...args) {
       unit: [true, a => (unit = a), 'u'],
       precision: [true, a => (precision = +a), 'a'],
       'print-size': [false, null, 'P'],
+      'print-viewbox': [false, null, 'V'],
       bounds: [false, null, 'b'],
       size: [true, a => (size = unitConvToMM(a)), 's'],
       interactive: [false, null, 'y'],
@@ -501,70 +604,81 @@ function main(...args) {
   for(let file of files) {
     if(params.debug >= 1) console.log('Processing:', file);
 
-    let xml,svg;
+    let xml, svg;
 
-try {
-    xml = (globalThis.document = parser.parseFromFile((globalThis.file = file), 'utf-8'));
+    try {
+      xml = globalThis.document = parser.parseFromFile((globalThis.file = file), 'utf-8');
 
-    // console.log('xml', console.config({ customInspect: false }), xml);
-    svg = (globalThis.svg = xml.querySelector('svg'));
-}catch(e) {
-  console.log(`ERROR loading '${file}'`, e.message+'\n'+e.stack);
-}
+      // console.log('xml', console.config({ customInspect: false }), xml);
+      svg = globalThis.svg = xml.querySelector('svg');
+    } catch(e) {
+      console.log(`ERROR loading '${file}'`, e.message + '\n' + e.stack);
+    }
     let sizeUnit = (globalThis.size = getWidthHeight(svg));
     let size = (globalThis.size = getWidthHeight(svg, unitConvToMM).round(precision));
     let writeUnits = (globalThis.writeUnits = [sizeUnit.units.width, sizeUnit.units.height]);
 
-    let viewBoxOld = (globalThis.viewBoxOld = getViewBox(svg) ?? size);
+    let viewBoxOld = (globalThis.viewBoxOld = getViewBox(svg) ?? new BBox(size));
     //console.log('viewBox', { viewBoxOld });
-   // console.log('size', { size }, size.units);
+    // console.log('size', { size }, size.units);
     let xfactor = (globalThis.xfactor = viewBoxOld.width / sizeUnit.width);
     let yfactor = (globalThis.yfactor = viewBoxOld.height / sizeUnit.height);
 
     if(params['print-size']) {
       size.units = ['', ''];
-      print(file, size.toString({ separator: ' x ' , unit: 'mm'}));
-    } else if(params['bounds']) {
-      let bb = (globalThis.bb = GetBounds(svg));
-      print(file, bb);
-    } else {
-      let newViewBox,
-        viewBox = (globalThis.viewBox = viewBoxOld.inset(0));
-
-      if(params.padding) {
-        let conv = writeUnits.map(u => unitConv(u));
-
-        let pad = (globalThis.pad = [...NumericArgs(params.padding)]).map((a, i) => {
-          let f = i & 1 ? xfactor : yfactor;
-          let u = writeUnits[(i & 1) ^ 1];
-
-          let idx = (i & 1) ^ 1;
-
-          console.log('idx', idx, u, conv[idx]);
-
-          return conv[idx](a) * f;
-        });
-
-        console.log('pad', pad);
-
-        newViewBox = globalThis.newViewBox = viewBox.outset(...pad);
-      }
-
-      svg.setAttribute('viewBox', (newViewBox ??= viewBox).toSVG());
-
-      const { width, height } = newViewBox;
-      console.log('viewBox', viewBox, viewBox.toSVG());
-      console.log('newViewBox', newViewBox, newViewBox.toSVG());
-
-      let w = (globalThis.w = width / xfactor);
-      let h = (globalThis.h = height / yfactor);
-      console.log('attributes', { w, h });
-
-      svg.setAttribute('width', w + writeUnits[0]);
-      svg.setAttribute('height', h + writeUnits[1]);
-
-      WriteFile(basename(file, '.svg') + '.out.svg', serializer.serializeToString(document));
+      print(file, size.toString({ separator: ' x ', unit: 'mm' }));
     }
+
+    if(params['print-viewbox']) {
+      print(file, viewBoxOld.toSVG());
+    }
+
+    if(params['bounds']) {
+      let bb = (globalThis.bb = GetBounds(svg));
+      print(file, bb.round(n => roundTo(n, precision)).toSVG());
+    }
+
+    let newViewBox,
+      viewBox = (globalThis.viewBox = viewBoxOld.inset(0));
+
+    if(params.padding) {
+      let conv = writeUnits.map(u => unitConv(u));
+      console.log('conv', { writeUnits, conv });
+
+      let pad = (globalThis.pad = [...NumericArgs(params.padding)]).map((a, i) => {
+        let f = i & 1 ? xfactor : yfactor;
+        let u = writeUnits[(i & 1) ^ 1];
+
+        let idx = (i & 1) ^ 1;
+
+        console.log('idx', idx, u, conv[idx]);
+
+        return Number(conv[idx](a) * f);
+      });
+
+      console.log('pad', pad);
+
+      newViewBox = globalThis.newViewBox = viewBox.outset(...pad);
+  }
+
+    svg.setAttribute('viewBox', (newViewBox ??= viewBox).toRect(Rect.prototype).roundTo(precision).toString());
+  console.log('viewBox', {viewBox,pad,precision,newViewBox});
+
+    const { width, height } = newViewBox;
+    
+   console.log('newViewBox', newViewBox, newViewBox.toSVG());
+
+    let w = (globalThis.w = width / xfactor);
+    let h = (globalThis.h = height / yfactor);
+    //console.log('attributes', { w, h });
+
+    svg.setAttribute('width', roundTo(w, 0.001) + writeUnits[0]);
+    svg.setAttribute('height', roundTo(h, 0.001) + writeUnits[1]);
+
+    for(let transformed of TransformedElements()) DecomposeTransformList(transformed);
+
+    save(basename(file, '.svg') + '.out.svg');
+    //WriteFile(basename(file, '.svg') + '.out.svg', serializer.serializeToString(document));
 
     if(params.interactive) kill(process.pid, SIGUSR1);
   }

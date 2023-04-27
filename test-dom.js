@@ -56,7 +56,7 @@ Object.assign(globalThis, {
   }
 });
 
-(name =>
+/*(name =>
   fetch(name)
     .then(r => r.text())
     .then(r => {
@@ -64,3 +64,4 @@ Object.assign(globalThis, {
       globalThis.doc = p.parseFromString(r);
       console.log(`Loaded '${name}':`, dom.Node.raw(globalThis.doc));
     }))('data/LeoStick.brd');
+*/

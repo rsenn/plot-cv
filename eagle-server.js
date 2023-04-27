@@ -10,7 +10,7 @@ import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import { setLog, logLevels, getSessions, LLL_USER, LLL_INFO, LLL_NOTICE, LLL_WARN, client, server } from 'net';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 import { VirtFS } from './virtfs.js';
 
 extendArray(Array.prototype);
@@ -289,18 +289,18 @@ function main(...args) {
         onMessage(ws, data) {
           console.log('onMessage', ws, data);
         },
-        onHttp(req, resp) {
+        onRequest(req, resp) {
           const { method, headers } = req;
-          //console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
+          //console.log('\x1b[38;5;33monRequest\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
           const { url } = resp;
 
           const { path, host } = url;
-          //console.log('\x1b[38;5;33monHttp\x1b[0m', { path, host });
+          //console.log('\x1b[38;5;33monRequest\x1b[0m', { path, host });
 
           const file = path.slice(1);
           const dir = path.replace(/\/[^\/]*$/g, '');
 
-          // console.log('\x1b[38;5;33monHttp\x1b[0m', { file, dir });
+          // console.log('\x1b[38;5;33monRequest\x1b[0m', { file, dir });
 
           let nonce;
 
@@ -310,7 +310,7 @@ function main(...args) {
           nonce = GetNonce(resp);
 
           if(file.endsWith('.html') || file == '' || file == '/') {
-            //console.log('\x1b[38;5;33monHttp\x1b[0m', { body, nonce });
+            //console.log('\x1b[38;5;33monRequest\x1b[0m', { body, nonce });
             resp.body = body.replaceAll('@@=AAABBBCCCZZZ=@@', 'nonce-' + nonce);
             // console.log('resp.body', escape(body));
           }

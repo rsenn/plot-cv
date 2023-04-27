@@ -4,7 +4,7 @@ import * as os from 'os';
 import Console from 'console';
 import { TextDecoder, TextEncoder } from 'textcode';
 import { waitFor, memoize, toArrayBuffer, define, concat, toString } from 'util';
-import { IfDebug, LogIfDebug, LoadHistory, ReadXML, MapFile, WriteFile, WriteJSON, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, Filter, FilterImages, StatFiles, FdReader, CopyToClipboard, LogCall, FetchURL } from './io-helpers.js';
+import { IfDebug, LogIfDebug, LoadHistory, ReadXML, MapFile, WriteFile, WriteJSON, ReadBJSON, WriteBJSON, Filter, FilterImages, StatFiles, FdReader, CopyToClipboard, LogCall, FetchURL } from './io-helpers.js';
 import { ReadableStream, WritableStream } from 'stream';
 import { FileSystemReadableFileStream, FileSystemWritableFileStream } from './quickjs/qjs-modules/lib/streams.js';
 import inspect from 'inspect';

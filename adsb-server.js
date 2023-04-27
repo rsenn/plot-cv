@@ -3,7 +3,6 @@ import * as os from 'os';
 import { setInterval } from 'timers';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
-import Util from './lib/util.js';
 import { watch, IN_MODIFY, memoize, daemon, atexit, getpid, toArrayBuffer, toString, escape, quote, define, extendArray, getOpt, glob } from 'util';
 import { Console } from './quickjs/qjs-modules/lib/console.js';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
@@ -14,10 +13,10 @@ import { setLog, logLevels, getSessions, LLL_USER, LLL_INFO, LLL_NOTICE, LLL_WAR
 import { DebuggerProtocol } from './debuggerprotocol.js';
 import { StartDebugger, ConnectDebugger } from './debugger.js';
 import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 import { quarterDay, Time, TimeToStr, FilenameToTime, NextFile, DailyPhase, PhaseFile, DateToUnix, CurrentFile } from './adsb-common.js';
 import { GetTimes, TimesForPhase, ReadRange, StateFiles, StatePhases, GetStates, GetNearestTime, GetStateArray, GetStateIndex, DumpState, GetStateByTime, IsRange, GetRange, ResolveRange } from './adsb-store.js';
-import { LogWrap, VfnAdapter, VfnDecorator, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, GetProperties, GetKeys, MakeListCommand, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/rpc.js';
+import { LogWrap, VfnAdapter, VfnDecorator, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, GetProperties, GetKeys, MakeListCommand, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/js/rpc.js';
 
 extendArray(Array.prototype);
 
@@ -281,17 +280,17 @@ function main(...args) {
           protocol.delete(ws);
           sockets.delete(ws);
         },
-        onHttp(req, resp) {
+        onRequest(req, resp) {
           const { method, headers } = req;
-          console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
+          console.log('\x1b[38;5;33monRequest\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
           const { body, url } = resp;
-          console.log('\x1b[38;5;33monHttp\x1b[0m', { body });
+          console.log('\x1b[38;5;33monRequest\x1b[0m', { body });
 
           const file = url.path.slice(1);
           const dir = file.replace(/\/[^\/]*$/g, '');
 
           if(file.endsWith('.js')) {
-            console.log('onHttp', { file, dir });
+            console.log('onRequest', { file, dir });
             const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
 
             resp.body = body.replaceAll(re, (match, p1, p0, p2, p3, offset) => {

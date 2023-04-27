@@ -363,7 +363,6 @@ function MakePalette(num) {
 #b6b6b6`.split('\n');
   let result = [];
   signalColors.shift();
-  signalColors.shift();
   signalColors.pop();
 
   for(let i = 0; i < num - 2; i++) result.push(signalColors[i % signalColors.length]);

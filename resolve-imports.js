@@ -1,3 +1,4 @@
+mport { ReadFile, WriteFile } from './io-helpers.js';
 #!/usr/bin/env qjsm
 import * as os from 'os';
 import * as std from 'std';
@@ -46,7 +47,7 @@ let dependencyTree = memoize(arg => [], dependencyMap);
 let bufferMap = getset(bufferRef);
 
 function ReadJSON(filename) {
-  let data = fs.readFileSync(filename, 'utf-8');
+  let data = ReadFile(filename, 'utf-8');
   return data ? JSON.parse(data) : null;
 }
 const ReadPackageJSON = memoize(() => ReadJSON('package.json') ?? { _moduleAliases: {} });
@@ -1100,7 +1101,7 @@ function BufferFile(file, buf) {
   file = path.normalize(file);
   if(!buf) buf = fileBuffers.get(file) ?? buffers[file];
 
-  if(!buf) buf = buffers[file] ?? fs.readFileSync(file, { flag: 'r' });
+  if(!buf) buf = buffers[file] ?? ReadFile(file, { flag: 'r' });
 
   if(typeof buf == 'object' && buf !== null) {
     bufferRef.set(buf, file);

@@ -1,7 +1,5 @@
 import { Environment, ECMAScriptParser, Printer } from './lib/ecmascript.js';
-import Util from './lib/util.js';
 import trkl from './lib/trkl.js';
-import PortableFileSystem from './lib/filesystem.js';
 
 const code = `
  let testObj = {};
@@ -16,14 +14,12 @@ console.log('testObj.prop1', testObj.prop1);
 console.log('testValues', testValues);
  `;
 
-let filesystem;
 
 async function main(...args) {
-  filesystem = await PortableFileSystem();
 
   let file = 'test-trkl.js';
 
-  let data = /* code ||*/ filesystem.readFile(file).toString();
+  let data = /* code ||*/ filesystem.readFileSync(file).toString();
 
   let parser = new ECMAScriptParser(data, code ? args[0].replace(/.*\//g, '') : file, true);
   let ast = parser.parseProgram();
@@ -56,4 +52,4 @@ async function main(...args) {
   console.log(`wrote '${outputFile}'`, await filesystem.writeFile('output.es', output));
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

@@ -1,24 +1,24 @@
 #!/usr/bin/env qjsm
-import * as cv from 'opencv';
-import Util from './lib/util.js';
-import { setInterval, toArrayBuffer, toString, escape, quote, define, extendArray, memoize, getFunctionArguments, glob, GLOB_TILDE, fnmatch, wordexp, lazyProperties } from './lib/misc.js';
-import * as misc from './lib/misc.js';
+import filesystem from 'fs';
+import { difference,union, getOpt,setInterval, toArrayBuffer, toString, escape, quote, define, extendArray, memoize, getFunctionArguments, glob, GLOB_TILDE, fnmatch, wordexp, lazyProperties } from './lib/misc.js';
+/*import * as misc from './lib/misc.js';
 import * as util from './lib/misc.js';
+import * as cv from 'opencv';
 import * as deep from './lib/deep.js';
+import * as fs from './lib/filesystem.js';
+*/
 import trkl from './lib/trkl.js';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import { Console } from 'console';
 import REPL from './xrepl.js';
-import * as fs from './lib/filesystem.js';
 import { Pointer } from './lib/pointer.js';
 import * as Terminal from './terminal.js';
 import { read as fromXML, write as toXML } from './lib/xml.js';
 import inspect from './lib/objectInspect.js';
-import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive } from './io-helpers.js';
+import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON } from './io-helpers.js';
 import { VideoSource, ImageSequence } from './qjs-opencv/js/cvVideo.js';
 import { ImageInfo } from './lib/image-info.js';
 import { MouseEvents, MouseFlags, Mouse, Window, TextStyle, DrawText } from './qjs-opencv/js/cvHighGUI.js';
-//import {   DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles } from './io-helpers.js';
 import { ImagePipeline } from './imagePipeline.js';
 import * as HighGUI from './qjs-opencv/js/cvHighGUI.js';
 import { lazyInitializer } from './lib/lazyInitializer.js';
@@ -49,18 +49,16 @@ async function importModule(moduleName, ...args) {
     });
   // while(!done) std.sleep(50);
 }
-function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = '') {
-  let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, fs, false);
-  repl.fs = fs;
-  repl.historyLoad(getConfFile('history'), fs);
+function StartREPL(prefix = path.basename(scriptArgs[0], '.js'), suffix = '') {
+  let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, undefined, false);
+   repl.historyLoad(getConfFile('history'));
   repl.loadSaveOptions();
   repl.inspectOptions = console.options;
 
   let { log } = console;
-  repl.show = arg => {
-    repl.globalKeys();
 
-    //console.log('repl.show', arg);
+  /*repl.show = arg => {
+    repl.globalKeys();
     if(arg instanceof cv.Mat) {
       console.log('arg', arg);
       if(!arg.empty) {
@@ -73,7 +71,7 @@ function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = ''
     }
 
     std.puts((typeof arg == 'string' ? arg : inspect(arg, repl.inspectOptions)) + '\n');
-  };
+  };*/
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();
@@ -107,11 +105,10 @@ function StartREPL(prefix = path.basename(Util.getArgs()[0], '.js'), suffix = ''
     ]
   };
 
-  console.log = repl.printFunction((...args) => {
-    console.log('printFunction');
-    log(console.config(repl.inspectOptions), ...args);
+  /*console.log = repl.printFunction((...args) => {
+     log(console.config(repl.inspectOptions), ...args);
   });
-
+*/
   repl.run();
   return repl;
 }
@@ -122,13 +119,13 @@ function main(...args) {
   });
   let debugLog;
 
-  debugLog = fs.openSync('debug.log', 'a');
+  debugLog = std.open('debug.log', 'a');
 
-  const progName = Util.getArgv()[1];
+  const progName = scriptArgs[0];
   const base = path.basename(progName, path.extname(progName));
   const histfile = `.${base}-history`;
 
-  let params = Util.getOpt(
+  let params = getOpt(
     {
       debug: [false, null, 'x'],
       'output-dir': [true, null, 'd'],
@@ -156,8 +153,8 @@ function main(...args) {
       }
       return function globalKeys() {
         let newKeys = getKeys();
-        let [removed, added] = util.difference(a, newKeys);
-        let changed = util.union(a, newKeys);
+        let [removed, added] = difference(a, newKeys);
+        let changed = union(a, newKeys);
         /* for(let key of removed) console.log(`key '${key}' removed`);
         for(let key of added) console.log(`key '${key}' added`);*/
         if(removed.length || added.length) {
@@ -176,14 +173,9 @@ function main(...args) {
       return AutoValue(getConfFile('global'));
     }
   });
+ 
   Object.assign(globalThis, {
-    cv,
-    fs,
-    repl,
-    util,
-    misc,
     Pointer,
-    deep,
     VideoSource,
     ImageSequence,
     ImagePipeline,
@@ -193,7 +185,6 @@ function main(...args) {
     Window,
     TextStyle,
     DrawText,
-    Util,
     toArrayBuffer,
     toString,
     escape,
@@ -220,15 +211,13 @@ function main(...args) {
     WriteFile,
     WriteJSON,
     WriteBJSON,
-    DirIterator,
-    RecursiveDirIterator,
     ImageInfo,
     HighGUI,
     AutoValue
   });
   repl.globalKeys();
 
-  setInterval(() => repl.globalKeys(), 500);
+  //setInterval(() => repl.globalKeys(), 500);
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

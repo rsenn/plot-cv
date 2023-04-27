@@ -1,11 +1,7 @@
-import Util from './lib/util.js';
-import PortableFileSystem from './lib/filesystem.js';
 import { WritableStream } from './lib/stream/writableStream.js';
 
-let filesystem;
 
 async function main() {
-  await PortableFileSystem(fs => (filesystem = fs));
 
   let s = await filesystem.open('tmp/7seg-2.54.brd');
   let r = await filesystem.read(s);
@@ -13,4 +9,4 @@ async function main() {
   ws = await filesystem.open('tmp/test.txt', 'w');
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

@@ -1,7 +1,6 @@
 #!/usr/bin/env qjsm
 import { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, EagleNodeList, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, EagleDocument, EagleReference, EagleRef, makeEagleNode, EagleNode, Renderer, EagleProject, EagleElement, makeEagleElement, EagleElementProxy, EagleNodeMap, ImmutablePath, DereferenceError } from './lib/eagle.js';
-import Util from './lib/util.js';
-import * as util from './lib/misc.js';
+import { abbreviate, getMethods } from './lib/misc.js';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
 import { EventEmitter, EventTarget, eventify } from './lib/events.js';
@@ -13,17 +12,17 @@ import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, 
 import * as fs from 'fs';
 import { Pointer } from './lib/pointer.js';
 import { read as fromXML, write as writeXML } from 'xml';
-import inspect from './lib/objectInspect.js';
-import { IfDebug, LogIfDebug, ReadFd, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
+import inspect from 'inspect';
+import { IfDebug, LogIfDebug, ReadFd, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 import { GetExponent, GetMantissa, ValueToNumber, NumberToValue } from './lib/eda/values.js';
 import { GetMultipliers, GetFactor, GetColorBands, PartScales, digit2color } from './lib/eda/colorCoding.js';
 import { UnitForName } from './lib/eda/units.js';
 import CircuitJS from './lib/eda/circuitjs.js';
-import { className, define, extendArray, getOpt, glob, GLOB_BRACE, intersect, isObject, memoize, range, unique, lazyProperties, entries, isJSFunction, weakAssign } from 'util';
+import { className, define, extendArray, getOpt, glob, GLOB_BRACE, intersect, isObject, memoize, range, unique, lazyProperties, entries, isJSFunction, weakDefine } from 'util';
 import { HSLA, isHSLA, ImmutableHSLA, RGBA, isRGBA, ImmutableRGBA, ColoredText } from './lib/color.js';
 import { scientific, num2color, GetParts, GetInstances, GetPositions, GetElements } from './eagle-commands.js';
 import { Edge, Graph, Node } from './lib/geom/graph.js';
-import { MutableXPath as XPath, parseXPath, ImmutableXPath } from './quickjs/qjs-modules/lib/xpath.js';
+import { MutableXPath as XPath, parseXPath, ImmutableXPath } from './lib/xml/xpath.js';
 import { Predicate } from 'predicate';
 import child_process from 'child_process';
 import { readFileSync } from 'fs';
@@ -34,6 +33,7 @@ import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from 
 import { EagleToGerber, GerberToGcode } from './pcb-conversion.js';
 import { ExecTool } from './os-helpers.js';
 import * as components from './lib/eagle/components.js';
+import { DirIterator, RecursiveDirIterator, ReadDirRecursive } from './dir-helpers.js';
 
 let cmdhist;
 
@@ -177,7 +177,7 @@ function CollectPartsElements(proj = project) {
   return project.board.elements
     .map(e => [e, project.schematic.parts[e.name]])
     .map(a => a.map(e => e.raw.attributes))
-    .map(([{ x, y, ...element }, part]) => weakAssign(element, part));
+    .map(([{ x, y, ...element }, part]) => weakDefine(element, part));
 }
 
 function ListParts(doc = project.schematic) {
@@ -228,7 +228,7 @@ function main(...args) {
     args
   );
 
-  Object.assign(globalThis, { components, Console, GetGlobalFunctions });
+  Object.assign(globalThis, { components, Console, GetGlobalFunctions, className });
 
   Object.assign(globalThis, {
     child_process,
@@ -331,7 +331,6 @@ function main(...args) {
     toNumber(n) {
       return isNaN(+n) ? n : +n;
     },
-    util,
     path,
     EventEmitter,
     EventTarget,
@@ -402,7 +401,7 @@ function main(...args) {
 
   Object.assign(globalThis, {
     load(filename, project = globalThis.project) {
-      globalThis.document = new EagleDocument(fs.readFileSync(filename, 'utf-8'), project, filename, null, fs);
+      globalThis.document = new EagleDocument(ReadFile(filename, 'utf-8'), project, filename, null, fs);
     },
     newProject(filename) {
       if(globalThis.project) {
@@ -489,7 +488,7 @@ function main(...args) {
     RemovePolygons,
     quit(arg) {
       repl.cleanup();
-      Util.exit(arg ?? 0);
+      process.exit(arg ?? 0);
     }
   });
 
@@ -532,26 +531,11 @@ function main(...args) {
 
   console.log = (...args) => repl.printStatus(() => log(...args));
 
-  //console.log(`repl`, repl);
-  //console.log(`debugLog`, Util.getMethods(debugLog, Infinity, 0));
-  //repl.historyLoad(null, false);
-  repl.directives.i = [
-    (module, ...args) => {
-      console.log('args', args);
-      try {
-        return require(module);
-      } catch(e) {}
-      import(module).then(m => (globalThis[module] = m));
-    },
-    'import module'
-  ];
-
   repl.debugLog = debugLog;
   repl.exit = () => {
     repl.cleanup();
     Terminate();
   };
-  repl.importModule = importModule;
   repl.debug = (...args) => {
     let s = '';
     for(let arg of args) {
@@ -570,20 +554,19 @@ function main(...args) {
     fs.flushSync(debugLog);
   };
   repl.show = value => {
-    if(isObject(value) && value instanceof EagleNode) {
-      console.log(value.inspect());
-    } else {
-      console.log(value);
+    if(isObject(value)) {
+      let insp = value.inspect ?? value[Symbol.inspect];
+      if(typeof insp == 'function') return insp.call(value);
     }
+    return inspect(value, { customInspect: false, protoChain: true, getters: true });
   };
-
   // repl.historySet(JSON.parse(std.loadFile(histfile) || '[]'));
 
   repl.addCleanupHandler(() => {
     let hist = repl.history.filter((item, i, a) => a.lastIndexOf(item) == i);
 
-    //    fs.writeFileSync(cmdhist, JSON.stringify(hist, null, 2));
-    fs.writeFileSync(
+    //    WriteFile(cmdhist, JSON.stringify(hist, null, 2));
+    WriteFile(
       cmdhist,
       hist
         .filter(entry => (entry + '').trim() != '')
@@ -607,48 +590,6 @@ function Terminate(exitCode) {
 function xml(strings, expressions) {
   let [tag] = strings;
   return e => e.tagName == tag;
-}
-
-/*function LoadHistory(filename) {
-  let contents = fs.readFileSync(filename, 'utf-8');
-  let data;
-
-  const parse = () => {
-    try {
-      data = JSON.parse(contents);
-    } catch(e) {}
-    if(data) return data;
-    try {
-      data = contents.split(/\n/g);
-    } catch(e) {}
-    if(data) return data;
-  };
-
-  return (parse() ?? []).filter(entry => (entry + '').trim() != '').map(entry => entry.replace(/\\n/g, '\n'));
-}
-
-function ReadJSON(filename) {
-  let data = std.loadFile(filename);
-
-  if(data) console.log(`ReadJSON('${filename}') ${data.length} bytes read`);
-  return data ? JSON.parse(data) : null;
-}*/
-
-async function importModule(moduleName, ...args) {
-  //console.log('importModule', moduleName, args);
-  let done = false;
-  return await import(moduleName)
-    .then(module => {
-      //console.log('import', { module });
-      done = true;
-      Object.assign(globalThis, { [moduleName]: module });
-      return module;
-    })
-    .catch(e => {
-      console.error(moduleName + ':', e);
-      done = true;
-    });
-  // while(!done) std.sleep(50);
 }
 
 function UpdateMeasures(board) {
@@ -722,7 +663,7 @@ function AlignItem(item) {
   }
   if(changed) {
     console.log(item);
-    /*    console.log('after:', Util.abbreviate(item.parentNode.toXML()));
+    /*    console.log('after:', abbreviate(item.parentNode.toXML()));
      console.log('align\n', item.xpath(), '\n newPos:', newPos, '\n diff:', diff, '\n attr:', item.raw.attributes);*/
   }
   return changed;
@@ -1069,7 +1010,7 @@ async function testEagle(filename) {
       let indexes = [...pkg.children].map((child, i, a) =>
         a
           .slice(i + 1)
-          .map((child2, i2) => [i2 + i + 1, Util.equals(child.raw, child2.raw)])
+          .map((child2, i2) => [i2 + i + 1, child.raw === child2.raw])
           .filter(([index, equal]) => equal)
           .map(([index]) => index)
       );
@@ -1088,7 +1029,7 @@ async function testEagle(filename) {
   console.log('desc', desc);
   desc = desc.map(([file, e]) => [file, e && e.xpath()]).map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
   desc = new Map(desc);
-  console.log('descriptions', [...Util.map(desc, ([k, v]) => [k, v])]);
+  console.log('descriptions', [...map(desc, ([k, v]) => [k, v])]);
   return proj;
 }
 
@@ -1370,11 +1311,11 @@ function Eagle2CircuitJS(doc = project.schematic, scale = 50, sheet = 0) {
   return circ;
 }
 
-//Util.callMain(main, true);
+//callMain(main, true);
 
 try {
-  main(...Util.getArgs().slice(1));
+  main(...scriptArgs.slice(1));
 } catch(error) {
   console.log(`FAIL: ${error.message}\n${error.stack}`);
-  Util.exit(1);
+  process.exit(1);
 }

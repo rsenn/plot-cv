@@ -1,6 +1,4 @@
-import ConsoleSetup from './lib/consoleSetup.js';
 import REPL from './repl.js';
-import PortableFileSystem from './lib/filesystem.js';
 import * as Terminal from './terminal.js';
 import * as path from 'path';
 import PortableSpawn from './lib/spawn.js';
@@ -20,8 +18,6 @@ function WriteFile(name, data) {
 }
 
 async function main(...args) {
-  await ConsoleSetup(consoleOpts);
-  await PortableFileSystem();
   await PortableSpawn();
 
   console.options = {
@@ -49,12 +45,12 @@ async function main(...args) {
       });
       console.log('cmd:', cmd.join(' '));
 
-      input = await filesystem.readFile(base + '.json', 'utf-8');
+      input = await filesystem.readFileSync(base + '.json', 'utf-8');
 
       break;
     }
     case '.json': {
-      input = await filesystem.readFile(file, 'utf-8');
+      input = await filesystem.readFileSync(file, 'utf-8');
       break;
       //    break;
     }
@@ -66,4 +62,4 @@ async function main(...args) {
   console.log('json:', json);
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

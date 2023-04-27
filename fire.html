@@ -6,75 +6,109 @@
     <style type="text/css">
       body,
       html {
-        overflow: hidden;
         padding: 0;
         margin: 0;
       }
-      body {
-        height: 100vh;
-        width: 100vw;
-        background: rgba(128, 128, 128);
-      }
-      canvas,
-      #canvas {
-        user-select: none;
-      }
-      canvas {
-        /* border: 2px solid green;*/
-      }
-      #canvas {
-        /* border: 2px solid red;*/
-        background: hsla(0, 100%, 30%, 0.5);
+      html,
+      body,
+      #page {
         overflow: hidden;
       }
+      body {
+        background: rgba(0, 0, 0, 0.9);
+      }
+      body {
+        width: 100%;
+        height: 100%;
+        position: relative;
+      }
+      canvas,
+      #canvas,
+      .overlay,
+      svg {
+        user-select: none;
+      }
+      .overlay,
+      svg {
+        pointer-events: none;
+      }
+
+      .center {
+        display: flex;
+        justify-content: center;
+      }
+      .overlay {
+        z-index: 99999999;
+      }
+
+      #crosshair {
+        position: fixed;
+      }
+
+      .overlay {
+        position: absolute;
+      }
+
+      canvas {
+        cursor: crosshair;
+      }
+
+      canvas.pressed {
+        cursor: grab;
+      }
+
+      html.is-locked,
+      html.is-locked body {
+        /* want to fix the height to the window height */
+        height: calc(var(--window-inner-height) - 1px);
+
+        /* want to block all overflowing content */
+        overflow: hidden;
+
+        /* want to exclude padding from the height */
+        box-sizing: border-box;
+      }
+
       @media (orientation: portrait) {
         canvas {
-          height: auto;
-          width: 100vh;
+          height: 100vmin;
+          width: auto;
+          transform: rotate(90deg);
         }
-        #canvas {
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 100vh;
-          height: 100wh;
-          transform: translateY(400px) translateX(-420px) rotate(90deg);
-
-          min-height: 100vmin;
-          min-width: 100vmax;
-
-          margin-left: -6px;
-          margin-top: 25px;
+        .center {
+          flex-direction: column;
+          align-items: center;
         }
       }
       @media (orientation: landscape) {
         canvas {
-          position: fixed;
-          bottom: 0;
           height: auto;
-          max-height: calc(100vh - 16px);
-          width: calc(100% - 16px);
+          max-height: 100vh;
+          width: 100vw;
         }
+
+        .center {
+          flex-direction: row;
+          align-items: flex-end;
+        }
+      }
+
+      #crosshair {
+        opacity: 0;
+        pointer-events: none;
+        user-select: none;
       }
     </style>
     <script type="module" src="./fire.js"></script>
-    <!-- <script src="./fire.js"></script> -->
+    <!--  <script type="module" src="./fire/build/fire-debug.js"></script>  -->
   </head>
-  <body>
+  <body class="center">
     <div id="canvas"></div>
     <svg id="crosshair" width="25" height="25" version="1.1">
-      <defs  >
-         
-      </defs>
-      <g   transform="translate(-127 -127)">
-        <path
-          d="M137 127h5v9h-5zm-10 10h9v5h-9zm16 0h9v5h-9zm-6 6h5v9h-5z"
-          style="fill-rule: evenodd"
-        />
-        <path
-          d="M138 128h3v7h-3zm-10 10h7v3h-7zm16 0h7v3h-7zm-6 6h3v7h-3z"
-          style="fill: #11e5f4; fill-rule: evenodd"
-        />
+      <defs></defs>
+      <g transform="translate(-127 -127)">
+        <!-- <path d="M137 127h5v9h-5zm-10 10h9v5h-9zm16 0h9v5h-9zm-6 6h5v9h-5z" style="fill-rule: evenodd" /> -->
+        <path d="M138 128h3v7h-3zm-10 10h7v3h-7zm16 0h7v3h-7zm-6 6h3v7h-3z" style="fill: #11e5f480; fill-rule: evenodd" />
       </g>
     </svg>
   </body>

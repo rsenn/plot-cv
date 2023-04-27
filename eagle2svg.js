@@ -77,7 +77,7 @@ function main(...args) {
   );
 
   for(let arg of args) {
-    let doc = EagleDocument.open(arg, { readFileSync });
+    let doc = EagleDocument.open(arg, f => readFileSync(f, 'utf-8'));
     let file = path.basename(doc.filename, '.' + doc.type) + '-' + { sch: 'schematic', brd: 'board', lbr: 'library' }[doc.type] + '.svg';
 
     if(params['output-dir']) file = path.join(params['output-dir'], file);

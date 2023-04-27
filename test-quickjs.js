@@ -1,13 +1,13 @@
-import { Mat, Point, Size, Rect, RotatedRect, Line, Contour } from 'opencv';
+import { Mat, Point, Size, Rect, RotatedRect, Line, Contour,CV_32FC1, CV_32FC4, CV_8SC3, CV_8SC4, CV_8UC3, CV_8UC4
+ } from 'opencv';
 import * as cv from 'opencv';
 import * as std from 'std';
-import { PointIterator } from 'opencv';
 import inspect from './lib/objectInspect.js';
-import path from './lib/path.js';
-import Util from './lib/util.js';
+import * as path from './lib/path.js';
+import { className, isBrowser, repeat, tryCatch } from './lib/misc.js';
 import Console from 'console';
 
-async function main(...args) {
+function main(...args) {
   //std.print("TEST PRINT\n");
   globalThis.console = new Console({
     inspectOptions: {
@@ -16,7 +16,7 @@ async function main(...args) {
       depth: Infinity
     }
   });
-  console.log('console', Util.className(console));
+  console.log('console', className(console));
   console.log('console.log', console.log);
   let entries = Object.fromEntries(Object.entries(cv).filter(([k, v]) => k.startsWith('CV_')));
   console.log(console.config({ depth: 1, compact: 1 }), entries);
@@ -30,11 +30,11 @@ async function main(...args) {
   );
 
   console.log('start');
-  console.log('isBrowser:', Util.isBrowser());
-  //console.log('Util.copyTextToClipboard()', await Util.copyTextToClipboard('TEST'));
+  console.log('isBrowser:', isBrowser());
+  //console.log('copyTextToClipboard()', await copyTextToClipboard('TEST'));
   // console.log('modules:', inspect({ Point, Size, Rect }));
   const moduleNames = ['Rect', 'Point', 'Size', 'Line', 'Mat', 'Contour', 'PointIterator', 'Draw'];
-  for(let moduleName of moduleNames) Util.tryCatch(() => eval(`globalThis[moduleName] = ${moduleName};`));
+  for(let moduleName of moduleNames) tryCatch(() => eval(`globalThis[moduleName] = ${moduleName};`));
 
   let ctors = new Map(moduleNames.map(name => [name, globalThis[name]]));
   console.log('globalThis:', Object.keys(globalThis));
@@ -76,11 +76,11 @@ async function main(...args) {
   let it = c[Symbol.iterator]();
 
   console.log('contour[Symbol.iterator]:', c[Symbol.iterator]);
-  console.log('contour[Symbol.iterator]():', Util.className(it));
+  console.log('contour[Symbol.iterator]():', className(it));
   console.log('contour.get(0):', c[0]);
   console.log('[...contour]:', [...c]);
   console.log('contour.length:', c.length);
-  console.log('contour:', Util.className(c));
+  console.log('contour:', className(c));
   /*  let rect = new Rect(10, 100, 50, 250);
   const { x, y, width, height } = rect;
   console.log(`rect`, inspect(rect));
@@ -107,13 +107,13 @@ async function main(...args) {
     const { x, y, width, height } = rr;
     console.log('rect:', x, y, width, height);
   }
-  let mat = new Mat(new Size(10, 10), cv.CV_8UC4);
-  console.log(`cv.CV_8UC3`, toHex(cv.CV_8UC3), cv.CV_8UC3);
-  console.log(`cv.CV_8UC4`, toHex(cv.CV_8UC4), cv.CV_8UC4);
-  console.log(`cv.CV_8SC3`, toHex(cv.CV_8SC3), cv.CV_8SC3);
-  console.log(`cv.CV_8SC4`, toHex(cv.CV_8SC4), cv.CV_8SC4);
-  console.log(`cv.CV_32FC1`, toHex(cv.CV_32FC1), cv.CV_32FC1);
-  console.log(`cv.CV_32FC4`, toHex(cv.CV_32FC4), cv.CV_32FC4);
+  let mat = new Mat(new Size(10, 10), CV_8UC4);
+  console.log(`CV_8UC3`, toHex(CV_8UC3), CV_8UC3);
+  console.log(`CV_8UC4`, toHex(CV_8UC4), CV_8UC4);
+  console.log(`CV_8SC3`, toHex(CV_8SC3), CV_8SC3);
+  console.log(`CV_8SC4`, toHex(CV_8SC4), CV_8SC4);
+  console.log(`CV_32FC1`, toHex(CV_32FC1), CV_32FC1);
+  console.log(`CV_32FC4`, toHex(CV_32FC4), CV_32FC4);
   console.log(`0x3ff`, toHex(0x3ff));
   console.log(`inspect(mat)`, inspect(mat));
   console.log(`mat.channels`, mat.channels);
@@ -200,7 +200,7 @@ async function main(...args) {
         console.log(`roi.set(${r},${c},0x${v.toString(16)})`, roi.set(r, c, v));
       }
 
-    roi.setTo(...Util.repeat(4 * 5, 0xffffffff));
+    roi.setTo(...repeat(4 * 5, 0xffffffff));
   }
 
   i = 0;
@@ -208,8 +208,8 @@ async function main(...args) {
     console.log(`mat[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
   }
 
-  let fmat = new Mat(new Size(10, 10), cv.CV_32FC1);
-  const values = Util.repeat(fmat.rows * fmat.cols, 0.5);
+  let fmat = new Mat(new Size(10, 10), CV_32FC1);
+  const values = repeat(fmat.rows * fmat.cols, 0.5);
   console.log(`fmat setTo`, values);
   fmat.setTo(...values);
   for(let [[row, col], value] of fmat.entries()) {
@@ -234,7 +234,7 @@ async function main(...args) {
     console.log('values(): ', line.values());
     console.log(
       'toPoints(): ',
-      [...line.toPoints()].map(p => Util.className(p))
+      [...line.toPoints()].map(p => className(p))
     );
 
     console.log('toString(): ', line.toString());
@@ -299,15 +299,5 @@ async function main(...args) {
 
   return 'done';
 }
-Util.callMain(main, true);
-/*
-console.log('TEST\n');
-print('TEST\n');
-let retVal;
-//retVal =  main().catch(err => console.log("Error:", err, err.stack)).then(ret => (console.log("Resolved:", ret),ret));
-retVal = main();
-console.log('retVal:', retVal);
-retVal;
-1;
-//Util.callMain(main, true);
-*/
+
+main(...scriptArgs.slice(1));

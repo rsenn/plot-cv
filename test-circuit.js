@@ -1,5 +1,4 @@
 import { Console } from 'console';
-import { openSync, puts, closeSync } from 'fs';
 import { Circuit, CircuitFileParser, CircuitFileWriter } from './circuit.js';
 
 function main(...args) {

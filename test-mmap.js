@@ -1,5 +1,4 @@
 import * as os from 'os';
-import * as fs from 'fs';
 import { exec, spawn } from 'child_process';
 import { Console } from 'console';
 import { mmap, munmap, mprotect, PROT_READ, PROT_WRITE, MAP_PRIVATE, msync, MS_SYNC } from 'mmap';

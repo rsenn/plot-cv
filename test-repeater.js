@@ -1,4 +1,3 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
 import * as std from 'std';
 import * as os from 'os';
 
@@ -6,7 +5,6 @@ import { Repeater } from './lib/repeater/repeater.js';
 import { delay } from './lib/repeater/timers.js';
 import { Console } from 'console';
 import { waitFor } from './quickjs/qjs-modules/lib/util.js';
-import Util from './lib/util.js';
 
 const { setTimeout, clearTimeout } = os;
 Object.assign(globalThis, { setTimeout, clearTimeout });
@@ -38,7 +36,7 @@ function main() {
     });
 
     let b = new Repeater(async (push, stop) => {
-      for(let num of Util.range(1, 20)) {
+      for(let num of range(1, 20)) {
         await waitFor(5 * scale);
         push(`b #${num}`);
       }
@@ -46,7 +44,7 @@ function main() {
     });
 
     let c = new Repeater(async (push, stop) => {
-      for(let num of Util.range(1, 5)) push(`c #${num}`);
+      for(let num of range(1, 5)) push(`c #${num}`);
       stop();
     });
 
@@ -60,7 +58,7 @@ function main() {
       console.log('stopped');
     })();
 
-    for(let num of Util.range(1, 10)) {
+    for(let num of range(1, 10)) {
       await waitFor(10 * scale);
       pushEvent(`a #${num}`);
     }
@@ -85,8 +83,8 @@ function main() {
 
   function genRepFunc(name, num, ms) {
     return async (push, stop) => {
-      for(let n of Util.range(1, num)) {
-        await waitFor(Util.randInt(ms));
+      for(let n of range(1, num)) {
+        await waitFor(randInt(ms));
         push(`${name} #${n}`);
       }
       stop();

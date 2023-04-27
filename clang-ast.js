@@ -1,10 +1,9 @@
-import { assert, lazyProperties, define, isObject, memoize, unique } from './lib/misc.js';
-import Util from './lib/util.js';
 import * as path from './lib/path.js';
 import * as deep from './lib/deep.js';
 import { Pointer } from './lib/pointer.js';
 import { AcquireReader } from './lib/stream/utils.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
+import { errors, types, isObject, isAsync, inspectSymbol, toString, btoa, atob, assert, escape, quote, memoize, chain, chainRight, chainArray, getset, modifier, getter, setter, gettersetter, hasFn, remover, getOrCreate, hasGetSet, mapObject, once, atexit, waitFor, define, defineGetter, defineGetterSetter, defineGettersSetters, prototypeIterator, keys, entries, values, getMethodNames, getMethods, properties, weakDefine, getPrototypeChain, getConstructorChain, hasPrototype, filter, filterKeys, curry, clamp, split, matchAll, bindProperties, immutableClass, instrument, hash, catchable, isNumeric, isIndex, numericIndex, histogram, propertyLookupHandlers, propertyLookup, abbreviate, tryFunction, tryCatch, mapAdapter, mapFunction, mapWrapper, weakMapper, wrapGenerator, wrapGeneratorMethods, unique, getFunctionArguments, stripAnsi, padAnsi, padStartAnsi, padEndAnsi, randInt, randFloat, randStr, toBigInt, roundDigits, roundTo, lazyProperty, lazyProperties, getOpt, isoDate, toUnixTime, unixTime, fromUnixTime, range, repeater, repeat, chunkArray, ucfirst, lcfirst, camelize, decamelize, shorten, arraysInCommon, arrayFacade, mod, pushUnique, inserter, intersect, symmetricDifference, partitionArray, difference, intersection, union, partition, format, formatWithOptions, functionName, className, isArrowFunction, predicate, isArray, bits, dupArrayBuffer, getTypeName, isArrayBuffer, isBigDecimal, isBigFloat, isBigInt, isBool, isJSFunction, isCFunction, isConstructor, isEmptyString, isError, isException, isExtensible, isFunction, isHTMLDDA, isInstanceOf, isInteger, isJobPending, isLiveObject, isNull, isNumber, isUndefined, isString, isUninitialized, isSymbol, isUncatchableError, isRegisteredClass, rand, randi, randf, srand, toArrayBuffer } from './lib/misc.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 export let SIZEOF_POINTER = 8;
 export let SIZEOF_INT = 4;
 import * as fs from 'fs';
@@ -24,7 +23,7 @@ function Older(file, other) {
 }
 
 function GetSubscripts(str) {
-  let matches = [...Util.matchAll(/\[([0-9]*)\]/g, str)];
+  let matches = [...matchAll(/\[([0-9]*)\]/g, str)];
   return matches.map(m => [m.index, +m[1]]);
 }
 
@@ -164,7 +163,7 @@ export class Node {
 
   /*  [Symbol.for("nodejs.util.inspect.custom")](depth, opts = {}) {
     const text = opts.colors ? (t, ...c) => '\x1b[' + c.join(';') + 'm' + t + '\x1b[m' : t => t;
-    const type = this.constructor?.name ?? Util.className(this);
+    const type = this.constructor?.name ?? className(this);
 
     return (text(type, 1, 31) +
       ' ' +
@@ -175,7 +174,7 @@ export class Node {
   toJSON(obj) {
     const { kind } = this;
     obj ??= { kind };
-    if(!obj.kind) obj.kind = Util.className(this);
+    if(!obj.kind) obj.kind = className(this);
     return obj;
   }
 
@@ -280,8 +279,8 @@ export class Type extends Node {
     }
 
     if(node instanceof Node) {
-      //console.log('node', Util.className(node), node);
-      Util.putStack();
+      //console.log('node', className(node), node);
+      putStack();
       throw new Error();
     }
 
@@ -324,7 +323,7 @@ export class Type extends Node {
 
     if(typeAlias) typeAlias = +typeAlias;
 
-    Util.weakAssign(this, { name, desugared, typeAlias, qualType });
+    weakDefine(this, { name, desugared, typeAlias, qualType });
 
     if(this.isPointer()) {
       let ptr = (name ?? this + '').replace(/\*$/, '').trimEnd();
@@ -387,7 +386,7 @@ export class Type extends Node {
 
     return name;
     /*
-    let match = Util.if(/^([^\(\)]*)(\(?\*\)?\s*)(\(.*\)$|)/g.exec(str),
+    let match = if(/^([^\(\)]*)(\(?\*\)?\s*)(\(.*\)$|)/g.exec(str),
       (m) => [...m].slice(1),
       () => []
       );
@@ -486,7 +485,7 @@ const { size,unsigned } = this;
       let decl = Type.declarations.get(str);
       if(decl.kind == 'EnumDecl') return 'int';
     } else {
-      throw new Error(`No ffi type '${str}' ${size} ${Util.className(this)} ${this.ast.kind}`);
+      throw new Error(`No ffi type '${str}' ${size} ${className(this)} ${this.ast.kind}`);
     }
   }
 
@@ -583,7 +582,7 @@ const { size,unsigned } = this;
     const { name, size } = this;
     let props = {...this} ?? Object.getOwnPropertyNames(this).reduce((acc,name) => ({...acc, [name]: this[name] }), {});
     if(size) props.size = size;
-    return (text(this.constructor?.name ?? Util.className(this), 1, 31) +
+    return (text(this.constructor?.name ?? className(this), 1, 31) +
       ' ' +
       inspect(props, depth, { ...opts, compact: false, customInspect: true, numberBase: 16 })
     );
@@ -954,7 +953,7 @@ export class Location {
   file = undefined;
 
   static at(file, offset) {
-    let data = fs.readFileSync(file, 'utf-8').slice(0, offset);
+    let data = ReadFile(file, 'utf-8').slice(0, offset);
     let lastLine = data.slice(data.lastIndexOf('\n') + 1);
 
     return new this({ line: countSubstring(data, '\n') + 1, col: lastLine.length + 1, file, offset });
@@ -1040,7 +1039,7 @@ export function TypeFactory(node, ast, cache = true) {
 
   // console.log('TypeFactory:', { node });
 
-  Util.assert(
+  assert(
     node.kind,
     `Not an AST node: ${inspect(node, {
       colors: false,
@@ -1117,7 +1116,7 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
 
   console.log('SpawnCompiler', args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (output ? ` 1>${output}` : ''));
 
-  let child = spawn(args, {
+  let child = Spawn(args.shift(), args, {
     block: false,
     stdio: ['inherit', output ? 'inherit' : 'pipe', 'pipe']
   });
@@ -1126,15 +1125,13 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
     errors = '';
   let done = false;
 
-  if(Util.platform == 'quickjs') {
-    let { fd } = child.stderr;
-    //console.log('SpawnCompiler child.stderr:', child.stderr);
-    //console.log('SpawnCompiler child.stdout:', child.stdout);
-    await PipeReader(child.stderr.fd, data => (errors += data ?? ''));
+  if(true) {
+    let fd = child.stdio[2];
+    await PipeReader(child.stdio[2], data => (errors += data ?? ''));
 
-    if(child.stdout) {
+    if(child.stdio[1] != 'inherit') {
       output = '';
-      await PipeReader(child.stdout.fd, data => (output += data ?? ''));
+      await PipeReader(child.stdio[1], data => (output += data ?? ''));
     }
   } else {
     AcquireReader(child.stderr, async reader => {
@@ -1145,7 +1142,6 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
     });
   }
   let [status, exitcode] = await child.wait();
-  console.log('SpawnCompiler child.wait():', { status, exitcode });
 
   done = true;
   let errorLines = errors.split(/\n/g).filter(line => line.trim() != '');
@@ -1258,7 +1254,7 @@ export async function AstDump(compiler, source, args, force) {
     json() {
       console.log(`r.json`, this.file);
 
-      let json = fs.readFileSync(this.file, 'utf-8');
+      let json = ReadFile(this.file, 'utf-8');
       return json;
     },
     data() {

@@ -5,7 +5,6 @@ import { VideoSource } from './qjs-opencv/js/cvVideo.js';
 import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './qjs-opencv/js/cvHighGUI.js';
 import { HSLA } from './lib/color.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
-import fs from 'fs';
 import { format, memoize } from './lib/misc.js';
 import * as xml from 'xml';
 import Console from 'console';
@@ -13,7 +12,7 @@ import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
 import { SaveConfig, LoadConfig } from './config.js';
 import SvgPath from './lib/svg/path.js';
 import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Define, Once, GetOpt, RoundTo, Range } from './qjs-opencv/js/cvUtils.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON } from './io-helpers.js';
 import { MakeSVG, SaveSVG } from './image-helpers.js';
 import { Profiler } from './time-helpers.js';
 import { GLFW, Mat2Image, DrawImage, DrawCircle, Position } from './draw-utils.js';
@@ -158,8 +157,8 @@ function main(...args) {
       help: [
         false,
         () => {
-          console.log(`Usage: ${Util.getArgv()[0]} [OPTIONS] <video|device>`);
-          Util.exit(0);
+          console.log(`Usage: ${getArgv()[0]} [OPTIONS] <video|device>`);
+          exit(0);
         },
         'h'
       ],

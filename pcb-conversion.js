@@ -1,3 +1,4 @@
+import { ReadFile, WriteFile } from './io-helpers.js';
 import * as path from 'path';
 import * as util from 'util';
 import { exec, spawn } from 'child_process';
@@ -48,7 +49,7 @@ export function EagleToGerber(boardFile, opts = {}) {
   if(code !== 0) throw new Error(output);
   if(output) output = output.replace(/\s*\r*\n/g, '\n');
   let result = { code, output };
-  if(opts.fetch) result.data = fs.readFileSync(GetVFSPath(gerberFile)); // await (await fs.readFile(GetVFSPath(gerberFile))).toString();
+  if(opts.fetch) result.data = ReadFile(GetVFSPath(gerberFile)); // await (await fs.readFile(GetVFSPath(gerberFile))).toString();
   result.file = gerberFile;
   console.log('convertToGerber result =', result);
   return result;*/

@@ -1,7 +1,6 @@
+import { ReadFile } from './io-helpers.js';
 import * as deep from './lib/deep.js';
-import * as fs from './lib/filesystem.js';
 import * as path from './lib/path.js';
-import Util from './lib/util.js';
 import { toString, define, escape, quote } from './lib/misc.js';
 import { EventEmitter } from './lib/events.js';
 
@@ -30,7 +29,7 @@ export class DebuggerProtocol extends EventEmitter {
   getFile(filename) {
     const { files } = this;
     if(!(filename in files)) {
-      let data = fs.readFileSync(filename, 'utf-8');
+      let data = ReadFile(filename, 'utf-8');
       if(typeof data == 'string') data = data.split(/\r?\n/g);
       //console.log('getFile', {filename,data});
       files[filename] = data;

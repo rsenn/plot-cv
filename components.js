@@ -1,16 +1,15 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
+import { define, isObject, memoize, unique, tryCatch, roundTo } from './lib/misc.js';
 import { h, Fragment, html, render, Component, useState, useEffect, useRef, useCallback, Portal, ReactComponent, toChildArray /*, cloneElement*/ } from './lib/dom/preactComponent.js';
-//import { isValidElement } from './lib/compat.mjs';
-
 import { trkl } from './lib/trkl.js';
 import { Element } from './lib/dom.js';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
 import { classNames } from './lib/classNames.js';
 import { useActive, useClickout, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useRecognizers, useDrag, usePinch, useWheel, useMove, useScroll, useGesture, useHover, useMousePosition, usePanZoom, useToggleButtonGroupState } from './lib/hooks.js';
 import deepDiff from './lib/deep-diff.js';
 import { useValue } from './lib/repeater/react-hooks.js';
 import RulerDraggable from './ruler-draggable.js';
+import { wordWrap } from './string-helpers.js';
 
 export const Ruler = ({ handleChange, style = {}, class: className }) => {
   const refRuler = useRef();
@@ -58,7 +57,7 @@ export const Ruler = ({ handleChange, style = {}, class: className }) => {
       },
       ['Up']
     ),
-    h('div', {}, [Util.roundTo(value, 0.001, 3)]),
+    h('div', {}, [roundTo(value, 0.001, 3)]),
     h(
       RulerDraggable,
       {
@@ -496,9 +495,9 @@ export const File = ({ label, name, description, i, key, className = 'file', onP
   }
   label = label.replace(/([^\s])-([^\s])/g, '$1 $2');
   //if(icon) label = label.replace(/\.[^.]*$/, '');
-  label = h(Label, { text: Util.wordWrap(label, 50, '\n') });
+  label = h(Label, { text: wordWrap(label, 50, '\n') });
   if(description) {
-    let s = Util.multiParagraphWordWrap(Util.stripXML(Util.decodeHTMLEntities(description)), 60, '\n');
+    let s = multiParagraphWordWrap(stripXML(decodeHTMLEntities(description)), 60, '\n');
     let d = s.split(/\n/g).slice(0, 1);
     label = h('div', {}, [
       label,
@@ -540,7 +539,7 @@ export const Chooser = ({ className = 'list', itemClass = 'item', tooltip = () =
     setFilter(itemFilter());
     itemFilter.subscribe(value => setFilter(value));
   }
-  const list2re = list => list.map(part => Util.tryCatch(() => new RegExp(part.trim().replace(/\./g, '\\.').replace(/\*/g, '.*'), 'i'))).filter(r => r !== null);
+  const list2re = list => list.map(part => tryCatch(() => new RegExp(part.trim().replace(/\./g, '\\.').replace(/\*/g, '.*'), 'i'))).filter(r => r !== null);
   const bar = html``;
   const preFilter = filter
     .replace(/\|/g, ' | ')
@@ -603,7 +602,7 @@ const ToolTipFn = ({ name, data, ...item }) => {
       .filter(([name, value]) => !isNaN(value) && value != null)
       .map(([name, value]) => `${name}: ${value}`)
       .join('\n');
-  } else data = Util.abbreviate(data);
+  } else data = abbreviate(data);
   if(data) tooltip += `\ndata\t${data}`;
   return tooltip;
 };

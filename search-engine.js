@@ -44,8 +44,8 @@ function* Search(query, fn) {
         onConnect(ws, req) {
           console.log('onConnect', console.config({ compact: 1 }), { ws, req });
         },
-        onHttp(req, resp) {
-          //console.log('onHttp', console.config({ compact: 0 }), { req, resp });
+        onRequest(req, resp) {
+          //console.log('onRequest', console.config({ compact: 0 }), { req, resp });
           let { body } = resp;
           resp.text().then(data => {
             console.log('data', console.config({ maxStringLength: 100 }), { data: escape(data) });

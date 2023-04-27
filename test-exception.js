@@ -1,12 +1,9 @@
-import Util from './lib/util.js';
 
-import PortableFileSystem from './lib/filesystem.js';
-import { ConsoleSetup } from './lib/consoleSetup.js';
 
 let filesystem;
 let globalThis;
 
-Util.callMain(main, error => {
+main(...scriptArgs.slice(1));
   let { message, stack } = error;
 
   console.log('ERROR message =', message);
@@ -14,11 +11,9 @@ Util.callMain(main, error => {
 });
 
 async function main(...args) {
-  await PortableFileSystem(fs => (filesystem = fs));
 
   console.log('main args =', args);
 
-  await ConsoleSetup({ depth: 3 });
 
   globalThis = globalThis;
 

@@ -1,9 +1,8 @@
-//import 'module-alias/register.js';
+mport { ReadFile, WriteFile } from './io-helpers.js';
 import { ECMAScriptParser } from './lib/ecmascript/parser.js';
 import { PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
 import { estree, ESNode, Program, ModuleDeclaration, ModuleSpecifier, ImportDeclaration, ImportSpecifier, ImportDefaultSpecifier, ImportNamespaceSpecifier, Super, Expression, FunctionLiteral, Pattern, Identifier, Literal, RegExpLiteral, TemplateLiteral, BigIntLiteral, TaggedTemplateExpression, TemplateElement, ThisExpression, UnaryExpression, UpdateExpression, BinaryExpression, AssignmentExpression, LogicalExpression, MemberExpression, ConditionalExpression, CallExpression, DecoratorExpression, NewExpression, SequenceExpression, Statement, EmptyStatement, DebuggerStatement, LabeledStatement, BlockStatement, FunctionBody, StatementList, ExpressionStatement, Directive, ReturnStatement, ContinueStatement, BreakStatement, IfStatement, SwitchStatement, SwitchCase, WhileStatement, DoWhileStatement, ForStatement, ForInStatement, ForOfStatement, WithStatement, TryStatement, CatchClause, ThrowStatement, Declaration, ClassDeclaration, ClassBody, MethodDefinition, MetaProperty, YieldExpression, FunctionArgument, FunctionDeclaration, ArrowFunctionExpression, VariableDeclaration, VariableDeclarator, ObjectExpression, Property, ArrayExpression, JSXLiteral, AssignmentProperty, ObjectPattern, ArrayPattern, RestElement, AssignmentPattern, AwaitExpression, SpreadElement, ExportNamedDeclaration, ExportSpecifier, AnonymousDefaultExportedFunctionDeclaration, AnonymousDefaultExportedClassDeclaration, ExportDefaultDeclaration, ExportAllDeclaration } from './lib/ecmascript/estree.js';
-import Util from './lib/util.js';
 import Tree from './lib/tree.js';
 import fs from 'fs';
 import * as deep from './lib/deep.js';
@@ -49,7 +48,7 @@ function WriteFile(name, data) {
   data = data.trim();
 
   if(data != '') {
-    fs.writeFileSync(name, data + '\n');
+    WriteFile(name, data + '\n');
     console.log(`Wrote ${name}: ${data.length} bytes`);
   }
 }
@@ -80,9 +79,9 @@ function main(...argv) {
       help: [
         false,
         (v, r, o) => {
-          console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
+          console.log(`Usage: ${scriptArgs[0]} [OPTIONS]\n`);
           console.log(o.map(([name, [arg, fn, ch]]) => ('  --' + name + ', -' + ch).padEnd(20)).join('\n'));
-          Util.exit(0);
+          process.exit(0);
         },
         'h'
       ],
@@ -111,7 +110,7 @@ function main(...argv) {
 
   const time = () => Date.now() / 1000;
 
-  if(params['@'].length == 0) params['@'].push(Util.getArgv()[1]);
+  if(params['@'].length == 0) params['@'].push(process.argv[1]);
 
   for(let file of params['@']) {
     let error;
@@ -136,14 +135,14 @@ function main(...argv) {
 
     if(error) {
       Util.putError(error);
-      //Util.exit(1);
+      //process.exit(1);
       break;
     }
 
     console.log('files:', files);
   }
   let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
-  Util.exit(Number(files.length == 0));
+  process.exit(Number(files.length == 0));
 }
 
 function ParseECMAScript(file, params) {
@@ -151,7 +150,7 @@ function ParseECMAScript(file, params) {
   const { debug } = params;
   if(file == '-') file = '/dev/stdin';
   if(file && fs.existsSync(file)) {
-    data = fs.readFileSync(file, 'utf8');
+    data = ReadFile(file, 'utf8');
     console.log('opened:', file);
   } else {
     file = 'stdin';
@@ -238,7 +237,6 @@ function processFile(file, params) {
 
   WriteFile(output_file, code);
 
-  //  await ConsoleSetup({ depth: Infinity });
   const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral);
 
   //console.log('templates:', templates);
@@ -279,7 +277,7 @@ try {
   if(error) {
     console.log('FAIL: ' + error.message, '\n  ' + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  '));
     console.log('FAIL');
-    Util.exit(1);
+    process.exit(1);
   } else {
     console.log('SUCCESS');
   }

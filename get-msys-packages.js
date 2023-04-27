@@ -1,13 +1,10 @@
-import PortableFileSystem from './lib/filesystem.js';
-import ConsoleSetup from './lib/consoleSetup.js';
+import filesystem from 'fs';
 import { execStream } from './childProcess.js';
 import { AsyncWrite, AsyncRead, AcquireReader, AcquireWriter, PipeToRepeater, LineReader, WritableRepeater, WriteIterator, ReadFromIterator, TextTransformStream, PipeTo, CreateTransformStream, isStream, CreateWritableStream, LineBufferStream, RepeaterSink, RepeaterSource } from './lib/stream/utils.js';
-import Util from './lib/util.js';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import fs from 'fs';
 
 //prettier-ignore
-let filesystem;
 
 function alt_main(...args) {
   throw new Error('blah');
@@ -38,8 +35,6 @@ const URLS = [
 const BASE_URL = 'https://repo.msys2.org';
 async function main(...args) {
   console.log('main(', ...args, ')');
-  await ConsoleSetup({ breakLength: 80 });
-  await PortableFileSystem(fs => (filesystem = fs));
 
   let ret;
   let a,
@@ -49,7 +44,7 @@ async function main(...args) {
   console.log('args:', args);
   while(args.length > 0) {
     a = [
-      ...Util.filter(
+      ...filter(
         urls.map(url => url.replace(BASE_URL + '/', '')),
         new RegExp(args[0])
       )
@@ -90,13 +85,13 @@ async function main(...args) {
     }
 
     let re = new RegExp(arg.startsWith('/') ? name + '-' + (ver || 'r?[0-9]') : arg, 'gi');
-    let matches = [...Util.filter(names, item => re.test(item[0]))];
+    let matches = [...filter(names, item => re.test(item[0]))];
     let pkgs = matches.map(loc => 'https://repo.msys2.org/' + loc.join(''));
     /*console.log("re:", re+'');
 console.log("matches:", matches);*/
     if(pkgs.length == 0 || packages.length == pkgs.length) {
       console.log('re =', re, ' pkgs.length =', pkgs.length, ' pacakges.length =', packages.length);
-      pkgs = Util.filter(packages, (re = new RegExp(arg.startsWith('/') ? name + '-[a-z]+-' + (ver || 'r?[0-9]') : arg, 'gi')));
+      pkgs = filter(packages, (re = new RegExp(arg.startsWith('/') ? name + '-[a-z]+-' + (ver || 'r?[0-9]') : arg, 'gi')));
       if(pkgs.length == 0 || packages.length == pkgs.length) {
         console.log('re =', re, ' pkgs.length =', pkgs.length, ' pacakges.length =', packages.length);
         console.error(`Number of packages ${pkgs.length} when matching ${re}`);
@@ -203,7 +198,7 @@ async function processUrl(url, map) {
   }
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));
 
 function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');

@@ -1,8 +1,7 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
+mport { ReadFile, WriteFile } from './io-helpers.js';
 import { ECMAScriptParser, PathReplacer } from './lib/ecmascript.js';
 import Printer from './lib/ecmascript/printer.js';
 import { ESNode, ImportDeclaration, Identifier, TemplateLiteral, CallExpression } from './lib/ecmascript/estree.js';
-import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import Tree from './lib/tree.js';
 import { Console } from 'console';
@@ -21,14 +20,14 @@ function WriteFile(name, data) {
   data = data.trim();
 
   if(data != '') {
-    fs.writeFileSync(name, data + '\n');
+    WriteFile(name, data + '\n');
     console.log(`Wrote ${name}: ${data.length} bytes`);
   }
 }
 
 function printAst(ast, comments, printer = globalThis.printer) {
   let output = printer.print(ast);
-  //console.log('printAst:', Util.abbreviate(output), Util.decodeAnsi(output));
+  //console.log('printAst:', abbreviate(output), decodeAnsi(output));
   return output;
 }
 
@@ -49,16 +48,16 @@ async function main(...args) {
   });
   console.log('console.options', console.options);
 
-  let params = Util.getOpt(
+  let params = getOpt(
     {
       'output-ast': [true, null, 'a'],
       'output-js': [true, null, 'o'],
       help: [
         false,
         (v, r, o) => {
-          console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
+          console.log(`Usage: ${getArgs()[0]} [OPTIONS]\n`);
           console.log(o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n'));
-          Util.exit(0);
+          exit(0);
         },
         'h'
       ],
@@ -76,16 +75,16 @@ async function main(...args) {
   );
 
   //  params.debug ??= true;
-  console.log(`Platform: ${Util.getPlatform()}`);
+  console.log(`Platform: ${getPlatform()}`);
 
-  /*await Util.signal('SIGINT', () => {
+  /*await signal('SIGINT', () => {
     console.log(`Got SIGINT. (${os.SIGINT})`);
-    Util.putStack();
-    Util.exit(1);
+    putStack();
+    exit(1);
   }).then(() => console.log(`SIGINT (${os.SIGINT}) handler installed`));*/
 
-  Util.defineGettersSetters(globalThis, {
-    printer: Util.once(() => new Printer({ colors: false, indent: 2 }))
+  defineGettersSetters(globalThis, {
+    printer: once(() => new Printer({ colors: false, indent: 2 }))
   });
 
   console.log('params', params);
@@ -97,7 +96,7 @@ async function main(...args) {
 
     const processing = () => processFile(file, params);
 
-    // Util.safeCall(processFile, file, params);
+    // safeCall(processFile, file, params);
     try {
       await processing(); //.catch(err => console.log('processFile ERROR:', err));
     } catch(err) {
@@ -112,15 +111,15 @@ async function main(...args) {
     // files[file] = finish(error);
 
     if(error) {
-      Util.putError(error);
-      //Util.exit(1);
+      putError(error);
+      //exit(1);
       break;
     }
 
     console.log('files:', files);
   }
   let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
-  Util.exit(Number(files.length == 0));
+  exit(Number(files.length == 0));
 }
 
 function processFile(file, params) {
@@ -128,20 +127,20 @@ function processFile(file, params) {
   const { debug } = params;
   if(file == '-') file = '/dev/stdin';
   if(file && fs.existsSync(file)) {
-    data = fs.readFileSync(file, 'utf8');
+    data = ReadFile(file, 'utf8');
     console.log('opened:', file);
   } else {
     file = 'stdin';
     data = source;
   }
   console.log('OK, data: ', data);
-  console.log('OK, data: ', Util.abbreviate(Util.escape(data)));
+  console.log('OK, data: ', abbreviate(escape(data)));
 
   let ast, error;
   globalThis.parser = null;
   globalThis.parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
 
-  // console.log('prototypeChain:', Util.getPrototypeChain(parser));
+  // console.log('prototypeChain:', getPrototypeChain(parser));
 
   try {
     ast = parser.parseProgram();
@@ -186,13 +185,13 @@ function processFile(file, params) {
   let tree = new Tree(ast);
 
   let flat = tree.flat(null, ([path, node]) => {
-    return !Util.isPrimitive(node);
+    return !isPrimitive(node);
   });
 
   WriteFile(params['output-ast'] ?? file + '.ast.json', JSON.stringify(ast /*.toJSON()*/, null, 2));
 
   const code = printAst(ast, parser.comments, printer);
-  //console.log('code:', Util.abbreviate(Util.escape(code)));
+  //console.log('code:', abbreviate(escape(code)));
 
   WriteFile(output_file, code);
 
@@ -212,7 +211,6 @@ function processFile(file, params) {
     console.log('importIdentifiers:', unique(importIdentifiers.flat()).join(', '));
   }
 
-  //  await ConsoleSetup({ depth: Infinity });
   const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral);
 
   //console.log('templates:', templates);
@@ -229,7 +227,7 @@ function finish(err) {
 
   if(err) {
     console.log(parser.lexer.currentLine());
-    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
+    console.log(className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
   }
 
   let lexer = parser.lexer;
@@ -243,9 +241,9 @@ function finish(err) {
   return !fail;
 }
 
-main(...Util.getArgs().slice(1))
+main(...getArgs().slice(1))
   .then(() => console.log('SUCCESS'))
   .catch(error => {
     console.log(`FAIL: ${error.message}\n${error.stack}`);
-    Util.exit(1);
+    exit(1);
   });

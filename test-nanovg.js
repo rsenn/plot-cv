@@ -1,9 +1,9 @@
-import * as glfw from 'glfw';
+import * as glfw from 'glfw.so';
 import { glClear, glClearColor, glViewport, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT } from './gl.js';
 import { HSLA } from './lib/color.js';
-import { Mat, Point } from 'opencv';
-import * as cv from 'opencv';
-import * as nvg from 'nanovg';
+import { Mat, Point } from 'opencv.so';
+import * as cv from 'opencv.so';
+import * as nvg from 'nanovg.so';
 import Console from 'console';
 import { GLFW, Mat2Image, DrawImage, DrawCircle, Position } from './draw-utils.js';
 
@@ -58,8 +58,8 @@ function main(...args) {
 
   mat.setTo([11, 22, 33, 255]);
 
-  cv.line(mat, new Point(10, 10), new Point(size.width - 10, size.height - 10), [255, 255, 0, 255], 4, cv.LINE_AA);
-  cv.line(mat, new Point(size.width - 10, 10), new Point(10, size.height - 10), [255, 0, 0, 255], 4, cv.LINE_AA);
+  cv.drawLine(mat, new Point(10, 10), new Point(size.width - 10, size.height - 10), [255, 255, 0, 255], 4, cv.LINE_AA);
+  cv.drawLine(mat, new Point(size.width - 10, 10), new Point(10, size.height - 10), [255, 0, 0, 255], 4, cv.LINE_AA);
 
   let image2 = cv.imread('Architektur.png');
 
@@ -68,6 +68,8 @@ function main(...args) {
   let pixels;
   let imgId = Mat2Image(mat);
   let img2Id = nvg.CreateImage('Muehleberg.png', 0);
+
+  console.log(``, { imgId, img2Id });
 
   let img2Sz = nvg.ImageSize(img2Id);
   let imgSz = nvg.ImageSize(imgId);
@@ -121,8 +123,6 @@ function main(...args) {
 try {
   main(...scriptArgs.slice(1));
 } catch(error) {
-  //console.log(`FAIL: ${error.message}\n${error.stack}`);
+  console.log(error ? `FAIL: ${error.message}\n${error.stack}` : `FAIL: ${error}`);
   std.exit(1);
-} finally {
-  //console.log('SUCCESS');
 }

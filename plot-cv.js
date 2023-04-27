@@ -1,8 +1,8 @@
+import inspect from 'inspect';
 import * as net from 'net';
 import { Contour } from 'opencv';
 import { Mat } from 'opencv';
 import PortableConsole from './lib/consoleSetup.js';
-import Util from './lib/util.js';
 const { client, server, fetch } = net;
 
 PortableConsole(console => console.log('net: ', { client, server, fetch }));
@@ -40,7 +40,7 @@ g.process = async function process(contours, hier, ...args) {
   let m = images.imgVector;
   /*  console.log('Images: ', typeof images);
   console.log('Images: ', Object.keys(images));
-  console.log('Images: ', Util.inspect(images));
+  console.log('Images: ', inspect(images));
   console.log('rest.length: ', rest.length);
   console.log('rest: ', ...rest);*/
   const { cols, rows } = m;
@@ -79,7 +79,7 @@ g.process = async function process(contours, hier, ...args) {
   return response;
 };
 
-/*let args = Util.getArgv();
+/*let args = process.argv;
 console.log('args:', args);
 
 if(args.length >= 1) process([new Contour()], [], {});

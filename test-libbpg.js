@@ -1,4 +1,3 @@
-//import Util from './lib/util.js';
 
 const BPG_OUTPUT_FORMAT_RGB24 = 1;
 const BPG_OUTPUT_FORMAT_RGBA32 = 2;
@@ -70,7 +69,7 @@ class BPGImageInfo extends ArrayBuffer {
   }
 }
 
-Object.assign(window, {
+Object.assign(globalThis, {
   BPG_OUTPUT_FORMAT_RGB24,
   BPG_OUTPUT_FORMAT_RGBA32,
   BPG_OUTPUT_FORMAT_RGB48,

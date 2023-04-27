@@ -1,7 +1,7 @@
+mport { ReadFile, WriteFile } from './io-helpers.js';
 import Lexer from './lib/ecmascript/lexer.js';
 import { Console } from 'console';
 import { h, Component } from './lib/dom/preactComponent.js';
-import Util from './lib/util.js';
 import fs from 'fs';
 
 const testfn = () => true;
@@ -17,7 +17,7 @@ const Code = `
 
 function main(arg) {
   let file = arg || './lib/ecmascript/parser.js';
-  let data = fs.readFileSync(file);
+  let data = ReadFile(file);
   console.log('data:', data);
 
   let lexer = new Lexer(data.toString(), file);
@@ -33,7 +33,7 @@ function main(arg) {
   }
 }
 try {
-  main(...Util.getArgs());
+  main(...getArgs());
 } catch(error) {
   console.log(`FAIL: ${error.message}\n${error.stack}`);
 } finally {

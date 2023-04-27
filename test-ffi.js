@@ -3,8 +3,6 @@ import * as os from 'os';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './quickjs/qjs-ffi/lib/fcntl.js';
 import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toArrayBuffer, toPointer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_NODELETE, RTLD_NOLOAD, RTLD_DEEPBIND, RTLD_DEFAULT, RTLD_NEXT } from 'ffi';
 import * as ffi from 'ffi';
-import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 
 function foreign(name, ret, ...args) {
   let fp = dlsym(RTLD_DEFAULT, name);
@@ -115,7 +113,6 @@ class Registers extends ArrayBuffer {
 }
 
 async function main(...args) {
-  await ConsoleSetup({
     //breakLength: 120,
     maxStringLength: 200,
     multiline: 1,
@@ -179,7 +176,6 @@ async function main(...args) {
   console.log('sprintf:', sprintf(out, '%p', rfds));
   console.log('out:', MakeArray(out, 1).toString());
   console.log('rfds.toPointer():', rfds.toPointer());
-  console.log('rfds.toPointer():', rfds.toPointer());
   console.log('BigInt methods:', Util.getMethodNames(BigInt));
   console.log('BigInt toString(16):', BigInt(1337).toString(16));
 
@@ -229,7 +225,7 @@ async function main(...args) {
   // longjmp(jb, 1337);
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));
 
 function toHex(n, b = 2) {
   console.log('toHex:', n);

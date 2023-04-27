@@ -1,15 +1,12 @@
+import inspect from 'inspect';
 import gedaNetlistGrammar from './grammar-geda-netlist.js';
-import PortableFileSystem from './lib/filesystem.js';
-import Util from './lib/util.js';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import { Point, Size, Rect, BBox } from './lib/geom.js';
 import deep from './lib/deep.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 import tXml from './lib/tXml.js';
 import { XPath } from './lib/xml.js';
 import { toXML } from './lib/json.js';
 
-let filesystem;
 
 function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');
@@ -21,8 +18,6 @@ function WriteFile(name, data) {
 }
 
 async function main(...args) {
-  await PortableFileSystem(fs => (filesystem = fs));
-  await ConsoleSetup({ depth: Infinity });
 
   let xy = new Point();
   let size = new Size(128, 128);
@@ -33,10 +28,10 @@ async function main(...args) {
   let iconSize, iconAspect;
 
   for(let filename of args) {
-    let src = filesystem.readFile(filename);
+    let src = filesystem.readFileSync(filename);
     let base = path.basename(filename, /\.[^.]*$/);
 
-    //console.log('src:', Util.escape(src));
+    //console.log('src:', escape(src));
     const result = gedaNetlistGrammar.geda_netlist(src, 0);
     let [done, data, pos] = result;
 
@@ -73,7 +68,7 @@ async function main(...args) {
 
     let output = { components, nets };
 
-    let json = Util.inspect(output, {
+    let json = inspect(output, {
       multiline: true,
       depth: 2,
       json: true,
@@ -84,4 +79,4 @@ async function main(...args) {
   }
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

@@ -88,8 +88,8 @@ function CreateServer({ host = '127.0.0.1', port = 9900, sslCert = 'localhost.cr
       let client = WSClient.get(ws.fd);
       log(`Server.onPong client#${client.id} (${ws.fd})` + (data ? ' Data: ' + data : ''));
     },
-    onHttp(ws, data) {
-      log(`Server.onHttp ws`, ws, data ? ' Data: ' + data : '');
+    onRequest(ws, data) {
+      log(`Server.onRequest ws`, ws, data ? ' Data: ' + data : '');
     },
     onBody(ws) {
       log(`Server.onBody ws`, ws);

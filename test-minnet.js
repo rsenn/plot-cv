@@ -1,6 +1,5 @@
 import { client, server, fetch, setLog, LLL_ALL } from 'net';
 import { concat, escape, quote, toString, toArrayBuffer } from './lib/misc.js';
-import Util from './lib/util.js';
 import { Console } from 'console';
 
 const print = (...args) => console.log(...args);

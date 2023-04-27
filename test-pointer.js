@@ -1,5 +1,5 @@
-import Util from './lib/util.js';
 import { Pointer } from './lib/pointer.js';
+import { getMethodNames } from './lib/misc.js';
 import * as deep from './lib/deep.js';
 import { Console } from 'console';
 
@@ -7,6 +7,7 @@ function main(...args) {
   globalThis.console = new Console({
     stdout: process.stdout,
     inspectOptions: {
+      compact: 1,
       colors: true,
       depth: Infinity,
       maxArrayLength: 100,
@@ -17,22 +18,24 @@ function main(...args) {
   let obj = {};
   let obj2 = { children: [, , , { tag: 'TEST' }] };
   console.log('ptr', ptr);
+  console.log('deep', deep);
+  console.log('ptr', getMethodNames(ptr, 1, 1));
 
-  deep.set(obj, ptr.concat('children'), [1, 1234]);
+  deep.set(obj, ptr.concat(['children']), [1, 1234]);
   console.log('obj', obj);
   console.log('ptr.deref(obj2)', ptr.deref(obj2));
 }
 
 let error;
 try {
-  main(...Util.getArgv().slice(1));
+  main(...process.argv.slice(1));
 } catch(e) {
   error = e;
 } finally {
   if(error) {
     console.log(`FAIL: ${error.message}\n${error.stack}`);
     console.log('FAIL');
-    Util.exit(1);
+    process.exit(1);
   } else {
     console.log('SUCCESS');
   }

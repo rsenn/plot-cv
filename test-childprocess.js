@@ -1,9 +1,5 @@
-import Util from './lib/util.js';
-//import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 import child_process from 'child_process';
-import ConsoleSetup from './lib/consoleSetup.js';
 import { Repeater } from './lib/repeater/repeater.js';
-import filesystem from 'fs';
 
 let childProcess;
 
@@ -54,9 +50,7 @@ function FdReader(fd, bufferSize = 1024) {
 }
 
 async function main(...args) {
-  await ConsoleSetup({ inspectOptions: { colors: true, depth: 0 } });
   // await PortableChildProcess(p => (childProcess = p));
-  //filesystem  = await PortableFileSystem();
 
   let proc = child_process.spawn('ls', ['-la'], {
     block: false,

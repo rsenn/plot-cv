@@ -1,8 +1,9 @@
-const fs = require('fs');
-const { isJpeg, jpegProps } = require('./lib/jpeg.js');
+import require from 'require';
+import { isJpeg, jpegProps } from './lib/jpeg.js';
 
-let data = filesystem.readFile('1072.jpg');
+let data = filesystem.readFileSync('blah.jpg');
+console.log('data:', data);
 
-let props = jpegProps(data);
+let props = jpegProps(new Uint8Array(data));
 
-//console.log('props:', props);
+console.log('props:', props);

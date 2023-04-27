@@ -1,4 +1,3 @@
-import Util from './lib/util.js';
 
 export class Message {
   static SENDER_ID = 0x2609;

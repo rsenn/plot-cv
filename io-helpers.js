@@ -1,7 +1,16 @@
-import * as fs from 'fs';
 import * as path from './lib/path.js';
-import { types, toString, quote, escape, predicate } from './lib/misc.js';
-import child_process from 'child_process';
+import { define, weakDefine, properties, types, toString, quote, escape, predicate } from './lib/misc.js';
+
+weakDefine(
+  globalThis,
+  properties(
+    {
+      os: () => process.importModule('os'),
+      std: () => process.importModule('std')
+    },
+    { memoize: true }
+  )
+);
 
 let bjson;
 
@@ -16,7 +25,7 @@ let xml;
 import('xml') .then(m => (xml = m)) .catch(() => {});
 
 export function IfDebug(token) {
-  const { DEBUG = '' } = globalThis.process ? globalThis.process.env : {}; //std.getenviron();
+  const { DEBUG = '' } = globalThis.process ? globalThis.process.env : {}; //getenviron();
 
   const tokList = DEBUG.split(/[^A-Za-z0-9_]+/g);
 
@@ -34,8 +43,9 @@ const debug = LogIfDebug('io-helpers', (...args) => console.log(...args));
 export function ReadFd(fd, binary) {
   let ab = new ArrayBuffer(1024);
   let out = '';
+
   for(;;) {
-    let ret = fs.readSync(fd, ab, 0, 1024);
+    let ret = os.read(fd, ab, 0, ab.byteLength);
 
     if(ret <= 0) break;
 
@@ -46,15 +56,51 @@ export function ReadFd(fd, binary) {
   return out;
 }
 
-export function ReadFile(name, binary) {
-  let ret = fs.readFileSync(name, binary ? null : 'utf-8');
+export function IsStdio(obj) {
+  return Object.getPrototypeOf(obj) === Object.getPrototypeOf(std.out);
+}
 
-  debug(`Read ${name}: ${ret?.byteLength} bytes`);
-  return ret;
+export function ReadClose(file, binary) {
+  if(IsStdio(file)) {
+    if(!binary) return file.readAsString();
+
+    return (function* () {
+      while(!file.eof()) {
+        let ab = new ArrayBuffer(typeof binary == 'number' ? binary : 1024);
+        let r = file.read(ab, 0, ab.byteLength);
+
+        if(r == 0) break;
+        if(r < 0 || file.error()) throw new Error(`Error reading file`);
+
+        yield ab.slice(0, r);
+      }
+    })();
+  }
+  throw new Error(`Unkown type of file: ${obj}`);
+}
+
+export function ReadFile(name, binary) {
+  if(!binary || binary == 'utf-8') return std.loadFile(name);
+
+  let f;
+
+  if((f = std.open(name, 'rb'))) {
+    f.seek(0, std.SEEK_END);
+    let size = f.tell();
+    let buf = new ArrayBuffer(size);
+    let ret = f.read(buf, 0, size);
+
+    console.debug(`Read ${name}: ${ret?.byteLength} bytes`);
+    return buf;
+  }
+}
+
+export function ReadAny(obj, binary) {
+  return { number: ReadFd, string: ReadFile, object: ReadClose }[typeof obj](obj, binary);
 }
 
 export function LoadHistory(filename) {
-  let contents = fs.readFileSync(filename, 'utf-8');
+  let contents = ReadFile(filename, false);
   let data;
 
   const parse = () => {
@@ -73,14 +119,14 @@ export function LoadHistory(filename) {
 }
 
 export function ReadJSON(filename) {
-  let data = fs.readFileSync(filename, 'utf-8');
+  let data = ReadAny(filename, false);
 
   if(data) debug(`ReadJSON: ${data.length} bytes read from '${filename}'`);
   return data ? JSON.parse(data) : null;
 }
 
-export function ReadXML(filename, ...args) {
-  let data = fs.readFileSync(filename, null);
+export function ReadXML(filename) {
+  let data = ReadAny(filename, false);
 
   if(data) debug(`ReadXML: ${data.length} bytes read from '${filename}'`);
   return data ? xml.read(data, filename, ...args) : null;
@@ -95,40 +141,45 @@ export function MapFile(filename) {
   return data;
 }
 
-export function WriteFile(name, data, opts = {}) {
-  const { mode = 0o644, verbose = true } = opts;
-  if(types.isArrayBuffer(data)) data = [data];
+export function WriteFile(file, data) {
+  let f = std.open(file, 'w+');
+  let r = typeof data == 'string' ? f.puts(data) : f.write(data, 0, data.byteLength);
 
-  if(typeof data == 'object' && data !== null && Symbol.iterator in data) {
-    let fd = fs.openSync(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, mode);
-    let r = 0;
-    for(let item of data) {
-      r += fs.writeSync(fd, toArrayBuffer(item + ''));
-    }
-    fs.closeSync(fd);
-    let stat = fs.statSync(name);
-    return stat?.size;
+  console.log('Wrote "' + file + '": ' + data.length + ' bytes' + ` (${r})`);
+}
+
+export function WriteFd(fd, data, offset, length) {
+  if(typeof data == 'string') data = toArrayBuffer(data);
+
+  return os.write(fd, data, offset ?? 0, length ?? data.byteLength);
+}
+
+export function WriteClose(file, data, offset, length) {
+  if(IsStdio(file)) {
+    let r;
+    r = typeof data == 'string' ? file.puts(data) : file.write(data, offset ?? 0, length ?? data.byteLength);
+
+    if(r <= 0 || file.error()) throw new Error(`Error writing file`);
+
+    file.close();
+    return r;
   }
-  if(fs.existsSync(name)) fs.unlinkSync(name);
+  throw new Error(`Unkown type of file: ${obj}`);
+}
 
-  if(Array.isArray(data)) data = data.join('\n');
-
-  if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
-  let ret = fs.writeFileSync(name, data);
-
-  if(verbose) debug(`Wrote ${name}: ${ret} bytes`);
-  return ret;
+export function WriteAny(obj, ...args) {
+  return { number: WriteFd, string: WriteFile, object: WriteClose }[typeof obj](obj, ...args);
 }
 
 export function WriteJSON(name, data, ...args) {
   const [compact] = args;
   if(typeof compact == 'boolean') args = compact ? [] : [null, 2];
 
-  return WriteFile(name, JSON.stringify(data, ...args));
+  return WriteAny(name, JSON.stringify(data, ...args));
 }
 
 export function WriteXML(name, data, ...args) {
-  return WriteFile(name, xml.write(data, ...args));
+  return WriteAny(name, xml.write(data, ...args));
 }
 
 export function ReadBJSON(filename) {
@@ -156,63 +207,6 @@ export function WriteBJSON(name, data) {
   return ret;
 }
 
-export function* DirIterator(...args) {
-  let pred = typeof args[0] != 'string' ? predicate(args.shift()) : () => true;
-  for(let dir of args) {
-    dir = dir.replace(/~/g, std.getenv('HOME'));
-    let entries = os.readdir(dir)[0] ?? [];
-    for(let entry of entries.sort()) {
-      let file = path.join(dir, entry);
-      let lst = os.lstat(file)[0];
-      let st = os.stat(file)[0];
-      let is_dir = (st?.mode & os.S_IFMT) == os.S_IFDIR;
-      let is_symlink = (lst?.mode & os.S_IFMT) == os.S_IFLNK;
-
-      if(is_dir) file += '/';
-      if(!pred(entry, file, is_dir, is_symlink)) continue;
-      yield file;
-    }
-  }
-}
-
-export function* RecursiveDirIterator(dir, pred = (entry, file, dir, depth) => true, depth = 0) {
-  let re;
-  if(typeof pred != 'function') {
-    if(!pred) pred = '.*';
-    if(typeof pred == 'string') pred = new RegExp(pred, 'gi');
-    re = pred;
-    pred = (entry, file, dir, depth) => re.test(entry) || re.test(file);
-  }
-  if(!dir.endsWith('/')) dir += '/';
-  dir = dir.replace(/~/g, std.getenv('HOME'));
-  for(let file of fs.readdirSync(dir)) {
-    if(['.', '..'].indexOf(file) != -1) continue;
-    let entry = `${dir}${file}`;
-    let isDir = false;
-    let st = fs.statSync(entry);
-    isDir = st && st.isDirectory();
-    if(isDir) entry += '/';
-    let show = pred(entry, file, dir, depth);
-    if(show) {
-      yield entry;
-    }
-    if(isDir) yield* RecursiveDirIterator(entry, pred, depth + 1);
-  }
-}
-
-export function* ReadDirRecursive(dir, maxDepth = Infinity) {
-  dir = dir.replace(/~/g, globalThis.process.env['HOME'] ?? std.getenv('HOME'));
-  for(let file of fs.readdirSync(dir)) {
-    if(['.', '..'].indexOf(file) != -1) continue;
-    let entry = `${dir}/${file}`;
-    let isDir = false;
-    let st = fs.statSync(entry);
-    isDir = st && st.isDirectory();
-    yield isDir ? entry + '/' : entry;
-    if(maxDepth > 0 && isDir) yield* ReadDirRecursive(entry, maxDepth - 1);
-  }
-}
-
 export function* Filter(gen, regEx = /.*/) {
   for(let item of gen) if(regEx.test(item)) yield item;
 }
@@ -227,7 +221,7 @@ export function SortFiles(arr, field = 'ctime') {
 
 export function* StatFiles(gen) {
   for(let file of gen) {
-    let stat = fs.statSync(file);
+    let [stat, err] = os.stat(file);
     let obj = define(
       { file, stat },
       {
@@ -256,67 +250,43 @@ export function* StatFiles(gen) {
   }
 }
 
-/*export function ReadFd(fd, bufferSize) {
-  function* FdRead() {
-    let ret,
-      buf = new ArrayBuffer(bufferSize);
-    do {
-      if((ret = fs.readSync(fd, buf, 0, buf.byteLength)) > 0) yield ret == buf.byteLength ? buf : buf.slice(0, ret);
-    } while(ret > 0);
-  }
-  return [...FdRead()].reduce((acc, buf) => (acc += toString(buf)), '');
-}*/
-/*
-export function FdReader(fd, bufferSize = 1024) {
-  let buf = new ArrayBuffer(bufferSize);
-  return new Repeater(async (push, stop) => {
-    let ret;
-    do {
-      let r = await waitRead(fd);
-      ret = typeof fd == 'number' ? fs.readSync(fd, buf) : fd.read(buf);
-      if(ret > 0) {
-        let data = buf.slice(0, ret);
-        await push(fs.bufferToString(data));
-      }
-    } while(ret == bufferSize);
-    stop();
-    typeof fd == 'number' ? fs.closeSync(fd) : fd.destroy();
-  });
-}*/
 export async function* FdReader(fd, bufferSize = 1024) {
   let buf = new ArrayBuffer(bufferSize);
   let ret;
   do {
     let r = await waitRead(fd);
     console.log('r', r);
-    ret = typeof fd == 'number' ? await fs.read(fd, buf) : await fd.read(buf);
+    ret = typeof fd == 'number' ? await os.read(fd, buf, 0, bufferSize) : await fd.read(buf, 0, bufferSize);
     if(ret > 0) {
       let data = buf.slice(0, ret);
-      yield fs.bufferToString(data);
+      yield toString(data);
     }
   } while(ret == bufferSize);
-  typeof fd == 'number' ? await fs.close(fd) : fd.destroy();
+  typeof fd == 'number' ? await os.close(fd) : fd.close();
   return;
 }
 
 export function CopyToClipboard(text) {
-  const { env } = process;
-  let child = child_process.spawn('xclip', ['-in', '-verbose'], { env, stdio: ['pipe', 'inherit', 'inherit'] });
-  let [pipe] = child.stdio;
+  return import('child_process').then(child_process => {
+    const { env } = process;
 
-  let written = fs.writeSync(pipe, text, 0, text.length);
-  fs.closeSync(pipe);
-  let status = child.wait();
-  console.log('child', child);
-  return { written, status };
+    let child = child_process.spawn('xclip', ['-in', '-verbose'], { env, stdio: ['pipe', 'inherit', 'inherit'] });
+    let [pipe] = child.stdio;
+
+    let written = os.write(pipe, text, 0, text.length);
+    os.close(pipe);
+    let status = child.wait();
+    console.log('child', child);
+    return { written, status };
+  });
 }
 
 export function ReadCallback(fd, fn = data => {}) {
   let buf = new ArrayBuffer(1024);
   os.setReadHandler(fd, () => {
-    let r = fs.readSync(fd, buf, 0, 1024);
+    let r = os.read(fd, buf, 0, 1024);
     if(r <= 0) {
-      fs.closeSync(fd);
+      os.close(fd);
       os.setReadHandler(fd, null);
       return;
     }
@@ -331,7 +301,12 @@ export function LogCall(fn, thisObj) {
   return function(...args) {
     let result;
     result = fn.apply(thisObj ?? this, args);
-    console.log('Function ' + name + '(', ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })), ') =', result);
+    console.log(
+      'Function ' + name + '(',
+      ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })),
+      ') =',
+      result
+    );
     return result;
   };
 }
@@ -351,6 +326,7 @@ export function Spawn(file, args, options = {}) {
   }
 
   const [stdin, stdout, stderr] = stdio;
+
   let pid = os.exec([file, ...args], { block, usePath, cwd, stdin, stdout, stderr, env, uid, gid });
   for(let i = 0; i < 3; i++) {
     if(typeof stdio[i] == 'number' && stdio[i] != i) os.close(stdio[i]);
@@ -359,9 +335,18 @@ export function Spawn(file, args, options = {}) {
   return {
     pid,
     stdio: parent,
+    get stdin() {
+      return this.stdio[0];
+    },
+    get stdout() {
+      return this.stdio[1];
+    },
+    get stderr() {
+      return this.stdio[2];
+    },
     wait() {
       let [ret, status] = os.waitpid(this.pid, os.WNOHANG);
-      return ret;
+      return [ret, status];
     }
   };
 }
@@ -369,7 +354,16 @@ export function Spawn(file, args, options = {}) {
 // 'https://www.discogs.com/sell/order/8369022-364'
 
 export function FetchURL(url, options = {}) {
-  let { headers, proxy, cookies = 'cookies.txt', range, body, version = '1.1', tlsv, 'user-agent': userAgent } = options;
+  let {
+    headers,
+    proxy,
+    cookies = 'cookies.txt',
+    range,
+    body,
+    version = '1.1',
+    tlsv,
+    'user-agent': userAgent
+  } = options;
 
   let args = Object.entries(headers ?? {})
     .reduce((acc, [k, v]) => acc.concat(['-H', `${k}: ${v}`]), [])
@@ -392,7 +386,7 @@ export function FetchURL(url, options = {}) {
 
   console.log('FetchURL', console.config({ maxArrayLength: Infinity, compact: false }), { args });
 
-  let child = /* child_process.spawn*/ Spawn('curl', args, { block: false, stdio: ['inherit', 'pipe', 'pipe'] });
+  let child = child_process.spawn('curl', args, { block: false, stdio: ['inherit', 'pipe', 'pipe'] });
 
   let [, out, err] = child.stdio;
 
@@ -407,8 +401,8 @@ export function FetchURL(url, options = {}) {
   });
   ReadCallback(err, data => {
     errors += data;
-    std.err.puts(data);
-    std.err.flush();
+    err.puts(data);
+    err.flush();
   });
   let flags = child_process.WNOHANG;
   console.log('flags', flags);
