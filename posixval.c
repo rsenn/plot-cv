@@ -81,5 +81,14 @@
 
 int
 main(int argc, char* argv[]) {
+  printf("S_IFMT = 0x%04x\n", S_IFMT);
+  printf("S_IFSOCK = 0x%04x\n", S_IFSOCK);
+  printf("S_IFLNK = 0x%04x\n", S_IFLNK);
+  printf("S_IFREG = 0x%04x\n", S_IFREG);
+  printf("S_IFBLK = 0x%04x\n", S_IFBLK);
+  printf("S_IFDIR = 0x%04x\n", S_IFDIR);
+  printf("S_IFCHR = 0x%04x\n", S_IFCHR);
+  printf("S_IFIFO = 0x%04x\n", S_IFIFO);
+
   return 0;
 }
