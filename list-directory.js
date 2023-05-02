@@ -4,7 +4,7 @@ import { once, streamify, filter, map, throttle, distinct, subscribe } from './l
 import { Element } from './lib/dom/element.js';
 import iterify from './lib/async/iterify.js';
 import trkl from './lib/trkl.js';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 
 Object.assign(globalThis, {
   callHandler,

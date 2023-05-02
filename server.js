@@ -21,7 +21,7 @@ import WebSocket from 'ws';
 import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import { Message } from './message.js';
-import { lazyProperties, memoize, abbreviate, className, escape, getMethods, isObject, randStr, toUnixTime, tryCatch, tryFunction, unixTime, waitFor, weakAssign, weakMapper, filter, filterKeys, matchAll } from './lib/misc.js';
+import { lazyProperties, memoize, abbreviate, className, escape, getMethods, isObject, randStr, toUnixTime, tryCatch, tryFunction, unixTime, waitFor, weakDefine, weakMapper, filter, filterKeys, matchAll } from './lib/misc.js';
 import importReplacer from './importReplacer.js';
 
 const rotateLeft = n => x => (x << n) | ((x >> (32 - n)) & ~((-1 >> n) << n));
@@ -695,7 +695,7 @@ async function main() {
 
         if(args.length > 0) {
           const [owner, repo, dir, filter] = args;
-          weakAssign(options, { owner, repo, dir, filter });
+          weakDefine(options, { owner, repo, dir, filter });
         }
 
         console.log(`GET ${location}`, { args, query, options });

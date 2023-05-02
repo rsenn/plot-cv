@@ -1,7 +1,16 @@
-import { err, getenv, getenviron, loadFile, open, SEEK_END } from 'std';
-import * as os from 'os';
-import path from './lib/path.js';
-import { types, toString, quote, escape, predicate } from './lib/misc.js';
+import * as path from './lib/path.js';
+import { define, weakDefine, properties, types, toString, quote, escape, predicate } from './lib/misc.js';
+
+weakDefine(
+  globalThis,
+  properties(
+    {
+      os: () => process.importModule('os'),
+      std: () => process.importModule('std')
+    },
+    { memoize: true }
+  )
+);
 
 let bjson;
 
@@ -47,15 +56,36 @@ export function ReadFd(fd, binary) {
   return out;
 }
 
-export function ReadFile(name, binary) {
-  if(!binary) {
-    return loadFile(name, binary ? null : 'utf-8');
+export function IsStdio(obj) {
+  return Object.getPrototypeOf(obj) === Object.getPrototypeOf(std.out);
+}
+
+export function ReadClose(file, binary) {
+  if(IsStdio(file)) {
+    if(!binary) return file.readAsString();
+
+    return (function* () {
+      while(!file.eof()) {
+        let ab = new ArrayBuffer(typeof binary == 'number' ? binary : 1024);
+        let r = file.read(ab, 0, ab.byteLength);
+
+        if(r == 0) break;
+        if(r < 0 || file.error()) throw new Error(`Error reading file`);
+
+        yield ab.slice(0, r);
+      }
+    })();
   }
+  throw new Error(`Unkown type of file: ${obj}`);
+}
+
+export function ReadFile(name, binary) {
+  if(!binary || binary == 'utf-8') return std.loadFile(name);
 
   let f;
 
-  if((f = open(name, 'rb'))) {
-    f.seek(0, SEEK_END);
+  if((f = std.open(name, 'rb'))) {
+    f.seek(0, std.SEEK_END);
     let size = f.tell();
     let buf = new ArrayBuffer(size);
     let ret = f.read(buf, 0, size);
@@ -65,8 +95,12 @@ export function ReadFile(name, binary) {
   }
 }
 
+export function ReadAny(obj, binary) {
+  return { number: ReadFd, string: ReadFile, object: ReadClose }[typeof obj](obj, binary);
+}
+
 export function LoadHistory(filename) {
-  let contents = ReadFile(filename, 'utf-8');
+  let contents = ReadFile(filename, false);
   let data;
 
   const parse = () => {
@@ -85,14 +119,14 @@ export function LoadHistory(filename) {
 }
 
 export function ReadJSON(filename) {
-  let data = ReadFile(filename, 'utf-8');
+  let data = ReadAny(filename, false);
 
   if(data) debug(`ReadJSON: ${data.length} bytes read from '${filename}'`);
   return data ? JSON.parse(data) : null;
 }
 
-export function ReadXML(filename, ...args) {
-  let data = ReadFile(filename, null);
+export function ReadXML(filename) {
+  let data = ReadAny(filename, false);
 
   if(data) debug(`ReadXML: ${data.length} bytes read from '${filename}'`);
   return data ? xml.read(data, filename, ...args) : null;
@@ -107,42 +141,45 @@ export function MapFile(filename) {
   return data;
 }
 
-export function WriteFile(name, data, opts = {}) {
-  const { mode = 0o644, verbose = true } = opts;
-  if(types.isArrayBuffer(data)) data = [data];
+export function WriteFile(file, data) {
+  let f = std.open(file, 'w+');
+  let r = typeof data == 'string' ? f.puts(data) : f.write(data, 0, data.byteLength);
 
-  if(typeof data == 'object' && data !== null && Symbol.iterator in data) {
-    let fd = os.open(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, mode);
-    let r = 0;
-    for(let item of data) {
-      let b = toArrayBuffer(item + '');
-      r += os.write(fd, b, 0, b.byteLength);
-    }
-    os.close(fd);
-    let [stat, err] = os.stat(name);
-    return stat?.size;
+  console.log('Wrote "' + file + '": ' + data.length + ' bytes' + ` (${r})`);
+}
+
+export function WriteFd(fd, data, offset, length) {
+  if(typeof data == 'string') data = toArrayBuffer(data);
+
+  return os.write(fd, data, offset ?? 0, length ?? data.byteLength);
+}
+
+export function WriteClose(file, data, offset, length) {
+  if(IsStdio(file)) {
+    let r;
+    r = typeof data == 'string' ? file.puts(data) : file.write(data, offset ?? 0, length ?? data.byteLength);
+
+    if(r <= 0 || file.error()) throw new Error(`Error writing file`);
+
+    file.close();
+    return r;
   }
+  throw new Error(`Unkown type of file: ${obj}`);
+}
 
-  os.remove(name);
-
-  if(Array.isArray(data)) data = data.join('\n');
-
-  if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
-  let ret = WriteFile(name, data);
-
-  if(verbose) debug(`Wrote ${name}: ${ret} bytes`);
-  return ret;
+export function WriteAny(obj, ...args) {
+  return { number: WriteFd, string: WriteFile, object: WriteClose }[typeof obj](obj, ...args);
 }
 
 export function WriteJSON(name, data, ...args) {
   const [compact] = args;
   if(typeof compact == 'boolean') args = compact ? [] : [null, 2];
 
-  return WriteFile(name, JSON.stringify(data, ...args));
+  return WriteAny(name, JSON.stringify(data, ...args));
 }
 
 export function WriteXML(name, data, ...args) {
-  return WriteFile(name, xml.write(data, ...args));
+  return WriteAny(name, xml.write(data, ...args));
 }
 
 export function ReadBJSON(filename) {
@@ -264,7 +301,12 @@ export function LogCall(fn, thisObj) {
   return function(...args) {
     let result;
     result = fn.apply(thisObj ?? this, args);
-    console.log('Function ' + name + '(', ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })), ') =', result);
+    console.log(
+      'Function ' + name + '(',
+      ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })),
+      ') =',
+      result
+    );
     return result;
   };
 }
@@ -284,6 +326,7 @@ export function Spawn(file, args, options = {}) {
   }
 
   const [stdin, stdout, stderr] = stdio;
+
   let pid = os.exec([file, ...args], { block, usePath, cwd, stdin, stdout, stderr, env, uid, gid });
   for(let i = 0; i < 3; i++) {
     if(typeof stdio[i] == 'number' && stdio[i] != i) os.close(stdio[i]);
@@ -292,9 +335,18 @@ export function Spawn(file, args, options = {}) {
   return {
     pid,
     stdio: parent,
+    get stdin() {
+      return this.stdio[0];
+    },
+    get stdout() {
+      return this.stdio[1];
+    },
+    get stderr() {
+      return this.stdio[2];
+    },
     wait() {
       let [ret, status] = os.waitpid(this.pid, os.WNOHANG);
-      return ret;
+      return [ret, status];
     }
   };
 }
@@ -302,7 +354,16 @@ export function Spawn(file, args, options = {}) {
 // 'https://www.discogs.com/sell/order/8369022-364'
 
 export function FetchURL(url, options = {}) {
-  let { headers, proxy, cookies = 'cookies.txt', range, body, version = '1.1', tlsv, 'user-agent': userAgent } = options;
+  let {
+    headers,
+    proxy,
+    cookies = 'cookies.txt',
+    range,
+    body,
+    version = '1.1',
+    tlsv,
+    'user-agent': userAgent
+  } = options;
 
   let args = Object.entries(headers ?? {})
     .reduce((acc, [k, v]) => acc.concat(['-H', `${k}: ${v}`]), [])
@@ -325,7 +386,7 @@ export function FetchURL(url, options = {}) {
 
   console.log('FetchURL', console.config({ maxArrayLength: Infinity, compact: false }), { args });
 
-  let child = /* child_process.spawn*/ Spawn('curl', args, { block: false, stdio: ['inherit', 'pipe', 'pipe'] });
+  let child = child_process.spawn('curl', args, { block: false, stdio: ['inherit', 'pipe', 'pipe'] });
 
   let [, out, err] = child.stdio;
 

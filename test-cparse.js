@@ -1,7 +1,7 @@
 import Alea from './lib/alea.js';
 import cparse from './lib/cparse.js';
 import cpp from './lib/cpp.js';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 
 let filesystem,

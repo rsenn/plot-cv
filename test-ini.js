@@ -1,5 +1,5 @@
 import INIGrammar from './grammar-INI.js';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import { Point, Size, Rect, BBox } from './lib/geom.js';
 import deep from './lib/deep.js';
 import { Console } from 'console';
@@ -79,7 +79,7 @@ async function main(...args) {
       newSize = newSize.round();
 
       Object.assign(svg.attributes, { width, height });
-      weakAssign(svg.attributes, {
+      weakDefine(svg.attributes, {
         viewBox: new BBox(0, 0, iconSize.width, iconSize.height)
       });
       WriteFile(svgFile, toXML(svgData));

@@ -1,8 +1,8 @@
 import { DirIterator, RecursiveDirIterator, ReadDirRecursive } from './dir-helpers.js';
 import filesystem from 'fs';
-import PortableSpawn from './lib/spawn.js';
+//import PortableSpawn from './lib/spawn.js';
 import Util from './lib/util.js';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import * as deep from './lib/deep.js';
 import { Console } from 'console';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
@@ -13,8 +13,8 @@ import * as Terminal from './terminal.js';
 import * as ECMAScript from './lib/ecmascript.js';
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import * as fs from './lib/filesystem.js';
-import { isObject, extendArray, toString, toArrayBuffer } from './lib/misc.js';
-import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON } from './io-helpers.js';
+import { isObject, extendArray, toString, toArrayBuffer, weakMapper, getOpt, define, lazyProperty, bindMethods, defineGetter, memoize, pushUnique } from './lib/misc.js';
+import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, Spawn } from './io-helpers.js';
 
 extendArray(Array.prototype);
 
@@ -182,7 +182,7 @@ function CommandLine() {
     std.exit(0);
   });
 
-  atexit(() => repl.cleanup());
+  //atexit(() => repl.cleanup());
 
   repl = traceProxy(repl);
 
@@ -225,7 +225,7 @@ function Structs(nodes) {
 
 function Table(list, pred = (n, l) => true) {
   let entries = [...list].map((n, i) => (n ? [i, LocationString(GetLoc(n)), n] : undefined)).filter(e => e);
-  let typeKey = 'type' in list[0] ? 'type' : 'kind';
+  let typeKey = 'kind' in list[0] ? 'kind' : 'type';
   let keys = ['id', typeKey, 'name'].filter(k => !!k);
   let items = entries.filter(([i, l, n]) => pred(n, l));
   const first = items[0][2];
@@ -251,7 +251,7 @@ function Table(list, pred = (n, l) => true) {
   }
   keys = ['n', ...keys, 'location'];
   const names = keys.map(k => (typeof k == 'function' ? k.name : k));
-  let rows = items.map(([i, l, n]) => Object.fromEntries([['n', i], ...keys.slice(1, -1).map((k, j) => [names[j + 1], typeof k == 'string' ? n[k] : k(n) ?? '']), ['location', l]]));
+  let rows = items.map(([i, l, n]) => Object.fromEntries([['n', i], ...keys.slice(1, -1).map((k, j) => [names[j + 1], (typeof k == 'string' ? n[k] : k(n)) ?? '']), ['location', l]]));
   let sizes = {};
   for(let row of rows) {
     for(let [j, i] of names.entries()) {
@@ -261,6 +261,16 @@ function Table(list, pred = (n, l) => true) {
   }
   let width = names.reduce((acc, name) => (acc ? acc + 3 + sizes[name] : sizes[name]), 0);
   if(width > repl.termWidth) sizes['Params'] -= width - repl.termWidth;
+
+  function padTrunc(len, pad = ' ') {
+    let m = 'pad' + (len >= 0 ? 'End' : 'Start');
+    len = Math.abs(len);
+
+    return s => {
+      s = s + '';
+      return s.length > len ? s.slice(0, len) : s[m](len, pad);
+    };
+  }
 
   const trunc = names.map((name, i) => padTrunc((i == 0 ? -1 : 1) * sizes[name]));
   const pad = (cols, pad, sep) => {
@@ -734,7 +744,7 @@ function FdReader(fd, bufferSize = 1024) {
 }
 
 export async function CommandRead(args) {
-  let child = spawn(args, {
+  let child = Spawn(args, {
     block: false,
     stdio: ['inherit', 'pipe', 'inherit']
   });
@@ -743,7 +753,6 @@ export async function CommandRead(args) {
   let buf = new ArrayBuffer(1024);
   if(platform == 'quickjs') {
     let { fd } = child.stdout;
-    //return await (async function() {
     for(;;) {
       1;
       let r;
@@ -752,9 +761,7 @@ export async function CommandRead(args) {
       if(r > 0 && r < buf.byteLength) break;
     }
     let result = await child.wait();
-    //console.log('child.wait():', result);
     return output.trimEnd();
-    //})();
   } else {
     AcquireReader(child.stdout, async reader => {
       let r;
@@ -767,7 +774,6 @@ export async function CommandRead(args) {
     let buf = new ArrayBuffer(1024);
     let r = os.read(fd, buf, 0, buf.byteLength);
     output += fs.bufferToString(buf.slice(0, r));
-    //if(r > 0) console.log('r:', r, 'output:', output.slice(-100));
     return r;
   }
 }
@@ -1023,7 +1029,8 @@ async function ASTShell(...args) {
     hideKeys: ['loc', 'range']
   };
   globalThis.console = new Console({ stdout: process.stdout, inspectOptions });
-  await PortableSpawn(fn => (spawn = fn));
+
+  //await PortableSpawn(fn => (spawn = fn));
 
   /*  await import('bjson').then(module => {
     const { read, write } = module;
@@ -1041,14 +1048,14 @@ async function ASTShell(...args) {
 
   globalThis.files = files = {};
 
-  const platform = getPlatform();
+  /*  const platform = getPlatform();
   if(platform == 'quickjs') await import('std').then(module => (globalThis.std = module));
 
   if(platform == 'node') await import('./lib/misc.js').then(module => (globalThis.inspect = module.inspect));
 
   (await getPlatform()) == 'quickjs' ? import('deep.so').then(module => (globalThis.deep = module)) : import('./lib/deep.js').then(module => (globalThis.deep = module['default']));
-
-  base = path.basename(getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
+*/
+  base = path.basename(args[0], '.js').replace(/\.[a-z]*$/, '');
   cmdhist = `.${base}-cmdhistory`;
   config = `.${base}-config`;
 
@@ -1059,6 +1066,7 @@ async function ASTShell(...args) {
       libs: [true, (a, p) => (p || []).concat([a]), 'l'],
       debug: [false, null, 'x'],
       force: [false, null, 'f'],
+      target: [true, null, 't'],
       exec: [true, null, 'e'],
       'system-includes': [false, null, 's'],
       'no-remove-empty': [false, null, 'E'],
@@ -1081,7 +1089,7 @@ async function ASTShell(...args) {
     includes,
     libs,
     /* prettier-ignore */ get flags() {
-      return [...includes.filter(v => typeof v == 'string').map(v => `-I${v}`), ...defs.map(d => `-D${d}`), ...libs.map(l => `-l${l}`)];
+      return [ ...(params.target? [`--target=${params.target}`] : []),  ...includes.filter(v => typeof v == 'string').map(v => `-I${v}`), ...defs.map(d => `-D${d}`), ...libs.map(l => `-l${l}`)];
     }
   });
 
@@ -1089,10 +1097,13 @@ async function ASTShell(...args) {
     console.log('Compiling', { file, args });
     let r;
 
+    /* if(params.target)
+      args.unshift(`--target=${params.target}`);*/
+
     try {
       r = await AstDump(params.compiler, file, [...globalThis.flags, ...args], params.force);
     } catch(e) {
-      console.log('Compile ERROR:', e.message);
+      console.log('Compile ERROR:', e.message + '\n' + e.stack);
       return e;
     }
     r.source = file;
@@ -1114,41 +1125,42 @@ async function ASTShell(...args) {
         : node => node.name == name_or_id && pred(node);
     }
 
-    bindMethods(r, {
-      select(name_or_id, pred = n => true) {
-        return this.data.inner.filter(nameOrIdPred(name_or_id, pred));
-      },
-      getByIdOrName(name_or_id, pred = n => true) {
-        let node = this.data.inner.findLast(nameOrIdPred(name_or_id, pred));
+    r,
+      {
+        select(name_or_id, pred = n => true) {
+          return this.data.inner.filter(nameOrIdPred(name_or_id, pred));
+        },
+        getByIdOrName(name_or_id, pred = n => true) {
+          let node = this.data.inner.findLast(nameOrIdPred(name_or_id, pred));
 
-        node ??= this.classes.findLast(nameOrIdPred(name_or_id, pred));
-        node ??= deep.find(this.data, nameOrIdPred(name_or_id, pred), deep.RETURN_VALUE);
-        return node;
-      },
-      getType(name_or_id) {
-        let result = this.getByIdOrName(name_or_id, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind)) ?? GetType(name_or_id, this.data);
+          node ??= this.classes.findLast(nameOrIdPred(name_or_id, pred));
+          node ??= deep.find(this.data, nameOrIdPred(name_or_id, pred), deep.RETURN_VALUE);
+          return node;
+        },
+        getType(name_or_id) {
+          let result = this.getByIdOrName(name_or_id, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind)) ?? GetType(name_or_id, this.data);
 
-        if(result) {
-          let type = TypeFactory(result, this.data);
-          if(type) result = type;
+          if(result) {
+            let type = TypeFactory(result, this.data);
+            if(type) result = type;
+          }
+          return result;
+        },
+
+        getFunction(name_or_id) {
+          let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
+
+          if(result) return new FunctionDecl(result, this.data);
+        },
+        getVariable(name_or_id) {
+          let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(VarDecl)/.test(n.kind));
+
+          if(result) return new VarDecl(result, this.data);
+        },
+        getLoc(node) {
+          return CompleteLocation(node);
         }
-        return result;
-      },
-
-      getFunction(name_or_id) {
-        let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
-
-        if(result) return new FunctionDecl(result, this.data);
-      },
-      getVariable(name_or_id) {
-        let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(VarDecl)/.test(n.kind));
-
-        if(result) return new VarDecl(result, this.data);
-      },
-      getLoc(node) {
-        return CompleteLocation(node);
-      }
-    });
+      };
     defineGetter(
       r,
       'tree',
@@ -1180,13 +1192,6 @@ async function ASTShell(...args) {
     RawRange,
     CompleteRange,
     GetTypeStr,
-    ReadFile,
-    MapFile,
-    ReadJSON,
-    ReadBJSON,
-    WriteFile,
-    WriteJSON,
-    WriteBJSON,
     PrintRange,
     OverlapRange,
     ParentNode,
@@ -1288,17 +1293,11 @@ async function ASTShell(...args) {
       return printer.print(node);
     };
   });
+  console.log('Loading history');
 
   const unithist = `.${base}-unithistory`;
   let items = [];
   let hist = ReadJSON(unithist) || [];
-
-  const pushUnique = (arr, item) => {
-    if(findIndex(arr, elem => deep.equals(elem, item)) === -1) {
-      arr.push(item);
-      return true;
-    }
-  };
 
   console.log('Loading sources:' + sources.map(s => ' ' + s).join(','));
 

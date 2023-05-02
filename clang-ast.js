@@ -2,6 +2,7 @@ import * as path from './lib/path.js';
 import * as deep from './lib/deep.js';
 import { Pointer } from './lib/pointer.js';
 import { AcquireReader } from './lib/stream/utils.js';
+import { errors, types, isObject, isAsync, inspectSymbol, toString, btoa, atob, assert, escape, quote, memoize, chain, chainRight, chainArray, getset, modifier, getter, setter, gettersetter, hasFn, remover, getOrCreate, hasGetSet, mapObject, once, atexit, waitFor, define, defineGetter, defineGetterSetter, defineGettersSetters, prototypeIterator, keys, entries, values, getMethodNames, getMethods, properties, weakDefine, getPrototypeChain, getConstructorChain, hasPrototype, filter, filterKeys, curry, clamp, split, matchAll, bindProperties, immutableClass, instrument, hash, catchable, isNumeric, isIndex, numericIndex, histogram, propertyLookupHandlers, propertyLookup, abbreviate, tryFunction, tryCatch, mapAdapter, mapFunction, mapWrapper, weakMapper, wrapGenerator, wrapGeneratorMethods, unique, getFunctionArguments, stripAnsi, padAnsi, padStartAnsi, padEndAnsi, randInt, randFloat, randStr, toBigInt, roundDigits, roundTo, lazyProperty, lazyProperties, getOpt, isoDate, toUnixTime, unixTime, fromUnixTime, range, repeater, repeat, chunkArray, ucfirst, lcfirst, camelize, decamelize, shorten, arraysInCommon, arrayFacade, mod, pushUnique, inserter, intersect, symmetricDifference, partitionArray, difference, intersection, union, partition, format, formatWithOptions, functionName, className, isArrowFunction, predicate, isArray, bits, dupArrayBuffer, getTypeName, isArrayBuffer, isBigDecimal, isBigFloat, isBigInt, isBool, isJSFunction, isCFunction, isConstructor, isEmptyString, isError, isException, isExtensible, isFunction, isHTMLDDA, isInstanceOf, isInteger, isJobPending, isLiveObject, isNull, isNumber, isUndefined, isString, isUninitialized, isSymbol, isUncatchableError, isRegisteredClass, rand, randi, randf, srand, toArrayBuffer } from './lib/misc.js';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 export let SIZEOF_POINTER = 8;
 export let SIZEOF_INT = 4;
@@ -322,7 +323,7 @@ export class Type extends Node {
 
     if(typeAlias) typeAlias = +typeAlias;
 
-    weakAssign(this, { name, desugared, typeAlias, qualType });
+    weakDefine(this, { name, desugared, typeAlias, qualType });
 
     if(this.isPointer()) {
       let ptr = (name ?? this + '').replace(/\*$/, '').trimEnd();
@@ -1115,7 +1116,7 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
 
   console.log('SpawnCompiler', args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (output ? ` 1>${output}` : ''));
 
-  let child = spawn(args, {
+  let child = Spawn(args.shift(), args, {
     block: false,
     stdio: ['inherit', output ? 'inherit' : 'pipe', 'pipe']
   });
@@ -1124,15 +1125,13 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
     errors = '';
   let done = false;
 
-  if(platform == 'quickjs') {
-    let { fd } = child.stderr;
-    //console.log('SpawnCompiler child.stderr:', child.stderr);
-    //console.log('SpawnCompiler child.stdout:', child.stdout);
-    await PipeReader(child.stderr.fd, data => (errors += data ?? ''));
+  if(true) {
+    let fd = child.stdio[2];
+    await PipeReader(child.stdio[2], data => (errors += data ?? ''));
 
-    if(child.stdout) {
+    if(child.stdio[1] != 'inherit') {
       output = '';
-      await PipeReader(child.stdout.fd, data => (output += data ?? ''));
+      await PipeReader(child.stdio[1], data => (output += data ?? ''));
     }
   } else {
     AcquireReader(child.stderr, async reader => {
@@ -1143,7 +1142,6 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
     });
   }
   let [status, exitcode] = await child.wait();
-  console.log('SpawnCompiler child.wait():', { status, exitcode });
 
   done = true;
   let errorLines = errors.split(/\n/g).filter(line => line.trim() != '');

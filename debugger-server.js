@@ -1,17 +1,16 @@
 import * as std from 'std';
 import * as os from 'os';
-import { setInterval } from 'timers';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
-import { daemon, atexit, getpid, toString, escape, quote, define, extendArray, getOpt } from 'util';
+import { daemon, atexit, getpid, toString, escape, quote, define, extendArray, getOpt, setInterval, clearInterval } from 'util';
 import { Console } from './quickjs/qjs-modules/lib/console.js';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from 'fs';
-import { setLog, logLevels, getSessions, LLL_USER, LLL_INFO, LLL_NOTICE, LLL_WARN, client, server } from 'net';
+import { setLog, logLevels, getSessions, LLL_USER, LLL_INFO, LLL_NOTICE, LLL_WARN, createServer } from 'net';
 import { DebuggerProtocol } from './debuggerprotocol.js';
-import { StartDebugger, ConnectDebugger } from './debugger.js';
+import { StartDebugger, ConnectDebugger, DebuggerDispatcher } from './debugger.js';
 import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
 import { ReadJSON, WriteJSON } from './io-helpers.js';
 
@@ -25,6 +24,13 @@ atexit(() => {
   console.log('stack:', stack);
 });
 
+function checkChildExited(pid = child.pid) {
+  let [ret, status] = os.waitpid(pid, os.WNOHANG);
+  let exited = (status & 0x7f) == 0;
+  //console.log('child', { pid, ret, exited });
+  return !exited ? false : (status >>> 8) & 0xff;
+}
+
 function StartREPL(prefix = scriptName(), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
   repl.historyLoad(null, fs);
@@ -32,13 +38,6 @@ function StartREPL(prefix = scriptName(), suffix = '') {
   repl.inspectOptions = { ...console.options, maxArrayLength: Infinity, compact: 2 };
   let { log } = console;
 
-  repl.directives.i = [
-    name =>
-      import(name)
-        .then(m => (globalThis[name.replace(/(.*\/|\.[^\/.]+$)/g, '')] = m))
-        .catch(() => repl.printStatus(`ERROR: module '${name}' not found`)),
-    'import a module'
-  ];
   repl.directives.d = [() => globalThis.daemon(), 'detach'];
   console.log = repl.printFunction((...args) => {
     log('LOG', console.config(repl.inspectOptions), ...args);
@@ -115,10 +114,9 @@ function main(...args) {
     );
 
     let options;
-    let child, dbg;
-    let netfn = [client, server][+listen];
-    console.log('createWS', { url, netfn });
-    return netfn(
+    let dbg;
+    console.log('createWS', { url });
+    return createServer(
       url,
       (options = {
         tls: params.tls,
@@ -201,17 +199,17 @@ function main(...args) {
         onError(ws) {
           console.log('onError', ws);
         },
-        onHttp(req, resp) {
+        onRequest(req, resp) {
           const { method, headers } = req;
-          //console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
+          //console.log('\x1b[38;5;33monRequest\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
           const { body, url } = resp;
-          //console.log('\x1b[38;5;33monHttp\x1b[0m', { body });
+          //console.log('\x1b[38;5;33monRequest\x1b[0m', { body });
 
           const file = url.path.slice(1);
           const dir = file.replace(/\/[^\/]*$/g, '');
 
           if(file.endsWith('.js')) {
-            //console.log('onHttp', { file, dir });
+            //console.log('onRequest', { file, dir });
             const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
 
             resp.body = body.replaceAll(re, (match, p1, p0, p2, p3, offset) => {
@@ -231,13 +229,15 @@ function main(...args) {
           return resp;
         },
         onMessage(ws, data) {
-          console.log('onMessage', ws, data);
+          let child = ws.child;
           // showSessions();
 
           handleCommand(ws, data);
 
           function handleCommand(ws, data) {
             let obj = JSON.parse(data);
+
+            console.log('onMessage', obj);
 
             const { command, ...rest } = obj;
             // console.log('onMessage', command, rest);
@@ -246,7 +246,7 @@ function main(...args) {
             switch (command) {
               case 'start': {
                 console.log('ws', ws);
-                child = /*ws.child = */ StartDebugger(args, connect, address);
+                child = StartDebugger(args, connect, address);
                 const [, stdout, stderr] = child.stdio;
                 for(let fd of [stdout, stderr]) {
                   //console.log(`fcntl(${fd}, F_GETFL)`);
@@ -258,6 +258,7 @@ function main(...args) {
                 for(let i = 1; i <= 2; i++) {
                   let fd = child.stdio[i];
                   console.log('os.setReadHandler', fd);
+
                   os.setReadHandler(fd, () => {
                     let buf = new ArrayBuffer(1024);
                     let r = os.read(fd, buf, 0, buf.byteLength);
@@ -274,15 +275,46 @@ function main(...args) {
                     }
                   });
                 }
-                console.log('child', child.pid);
 
                 os.sleep(1000);
+
+                let tid;
+
+                tid = setInterval(() => {
+                  let exitCode;
+                  if((exitCode = checkChildExited(child.pid)) !== false) {
+                    ws.sendMessage({
+                      type: 'error',
+                      command: 'start',
+                      message: `child process ${child.pid} exited with exitcode ${exitCode}`
+                    });
+                    clearInterval(tid);
+                  }
+                }, 1000);
+
+                if(checkChildExited(child.pid) !== false) {
+                  ws.sendMessage({ type: 'error', command: 'start', message: `unable to start debugger` });
+                  break;
+                }
+
+                ws.sendMessage({
+                  type: 'response',
+                  response: {
+                    command: 'start',
+                    args,
+                    cwd,
+                    address
+                  }
+                });
+
+                break;
               }
               case 'connect': {
                 dbg = ws.dbg = ConnectDebugger(address, (dbg, sock) => {
                   console.log('wait() =', child.wait());
                   console.log('child', child);
                 });
+                console.log('dbg', dbg);
                 os.setWriteHandler(+dbg, async () => {
                   os.setWriteHandler(+dbg, null);
                   console.log(`connected to ${address}`, dbg);
@@ -423,9 +455,10 @@ function main(...args) {
     get socklist() {
       return [...globalThis.sockets];
     },
-    net: { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server },
+    net: { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, createServer },
     StartDebugger,
     ConnectDebugger,
+    DebuggerDispatcher,
     DebuggerProtocol,
     repl: StartREPL(),
     daemon() {

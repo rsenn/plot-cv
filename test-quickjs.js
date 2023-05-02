@@ -3,7 +3,7 @@ import { Mat, Point, Size, Rect, RotatedRect, Line, Contour,CV_32FC1, CV_32FC4, 
 import * as cv from 'opencv';
 import * as std from 'std';
 import inspect from './lib/objectInspect.js';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import { className, isBrowser, repeat, tryCatch } from './lib/misc.js';
 import Console from 'console';
 

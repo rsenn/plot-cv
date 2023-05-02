@@ -2,7 +2,7 @@ import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
 import require from 'require';
-import path from 'path';
+import * as path from 'path';
 import { Console } from 'console';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
@@ -247,10 +247,10 @@ function main(...args) {
 
         return callbacks.onClose(ws, req);
       },
-      onHttp(ws, req, resp) {
+      onRequest(ws, req, resp) {
         const { method, headers } = req;
 
-        if(req.method != 'GET') console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
+        if(req.method != 'GET') console.log('\x1b[38;5;33monRequest\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
 
         if(req.method != 'GET') {
           console.log(req.method + ' body:', /*typeof req.body, req.body.length, */ req.body);
@@ -311,7 +311,7 @@ function main(...args) {
         }
 
         const { body, url } = resp;
-        console.log('\x1b[38;5;33monHttp\x1b[0m', req, resp, { body });
+        console.log('\x1b[38;5;33monRequest\x1b[0m', req, resp, { body });
 
         const file = url.path.slice(1);
         const dir = file.replace(/\/[^\/]*$/g, '');
@@ -320,7 +320,7 @@ function main(...args) {
           resp.body = ReadFile(file, 'utf-8');
         }
         if(file.endsWith('.js')) {
-          console.log('onHttp', { file, dir });
+          console.log('onRequest', { file, dir });
           const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
 
           resp.body = body.replaceAll(re, (match, p1, p0, p2, p3, offset) => {

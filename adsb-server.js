@@ -280,17 +280,17 @@ function main(...args) {
           protocol.delete(ws);
           sockets.delete(ws);
         },
-        onHttp(req, resp) {
+        onRequest(req, resp) {
           const { method, headers } = req;
-          console.log('\x1b[38;5;33monHttp\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
+          console.log('\x1b[38;5;33monRequest\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
           const { body, url } = resp;
-          console.log('\x1b[38;5;33monHttp\x1b[0m', { body });
+          console.log('\x1b[38;5;33monRequest\x1b[0m', { body });
 
           const file = url.path.slice(1);
           const dir = file.replace(/\/[^\/]*$/g, '');
 
           if(file.endsWith('.js')) {
-            console.log('onHttp', { file, dir });
+            console.log('onRequest', { file, dir });
             const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
 
             resp.body = body.replaceAll(re, (match, p1, p0, p2, p3, offset) => {

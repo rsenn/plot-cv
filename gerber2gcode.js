@@ -1,6 +1,6 @@
 #!/usr/bin/env qjsm
 import { Console } from 'console';
-import path from 'path';
+import * as path from 'path';
 import fs from 'fs';
 import { exec, spawn } from 'child_process';
 import { getOpt } from 'util';

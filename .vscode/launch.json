@@ -1,87 +1,72 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "quickjs",
-            "request": "launch",
-            "name": "Launch QuickJS",
-            "runtimeExecutable": "/usr/local/bin/qjsm",
-            "program": "${workspaceFolder}/${relativeFile}",
-            "args": [
-                "${workspaceFolder}/test-ecmascript2.js"
-            ],
-            "work"
-        },
-        {
-            "type": "quickjs",
-            "request": "launch",
-            "name": "Attach QuickJS",
-            "localRoot": "${workspaceFolder}/",
-            "mode": "connect",
-            "program": "${workspaceFolder}/test-ecmascript2.js",
-            "runtimeExecutable": "/usr/local/bin/qjsm",
-            "attach": true,
-            "address": "127.0.0.1",
-            "port": 45224
-        },
-        {
-            "name": "Extension",
-            "type": "extensionHost",
-            "request": "launch",
-            "runtimeExecutable": "${execPath}",
-            "args": [
-                "--extensionDevelopmentPath=${workspaceFolder}"
-            ],
-            "outFiles": [
-                "${workspaceFolder}/out/**/*.js"
-            ],
-            "preLaunchTask": "npm: watch"
-        },
-        {
-            "name": "Server",
-            "type": "node",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/../vscode-quickjs-debug/src/debugAdapter.ts",
-            "runtimeExecutable": "node",
-            "args": [
-                "--server=4711"
-            ],
-            "outFiles": [
-                "${workspaceFolder}/out/**/*.js"
-            ]
-        },
-        {
-            "name": "Launch QuickJS",
-            "type": "quickjs",
-            "request": "launch",
-            "program": "${workspaceFolder}/${relativeFile}",
-            "runtimeExecutable": "/usr/local/bin/qjsm"
-        },
-        {
-            "name": "Attach QuickJS (connect)",
-            "type": "quickjs",
-            "request": "launch",
-            "program": "${workspaceFolder}/test-ecmascript2.js",
-            "runtimeExecutable": "/usr/bin/env",
-            "runtimeArgs": [
-                "QUICKJS_DEBUG_ADDRESS=127.0.0.1:9001",
-                "/usr/local/bin/qjsm"
-            ],
-            "localRoot": "${workspaceFolder}",
-            "mode": "connect",
-            "attach": true,
-            "address": "127.0.0.1",
-            "port": 9000
-        }
-    ],
-    "compounds": [
-        {
-            "name": "Extension + Server",
-            "configurations": [
-                "Extension",
-                "Server"
-            ]
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "quickjs",
+      "request": "launch",
+      "name": "Launch QuickJS",
+      "runtimeExecutable": "/usr/local/bin/qjsm",
+      "cwd": "${workspaceFolder}/",
+      "localRoot": "${workspaceFolder}",
+      "program": "${workspaceFolder}/${relativeFile}",
+      "args": ["../an-tronics/eagle/555-PWM-Motor-Speed-Controller-alt.brd"]
+    },
+    {
+      "type": "quickjs",
+      "request": "launch",
+      "name": "Attach QuickJS",
+      "localRoot": "${workspaceFolder}/",
+      "mode": "connect",
+      "program": "${workspaceFolder}/test-ecmascript2.js",
+      "runtimeExecutable": "/usr/local/bin/qjsm",
+      "attach": true,
+      "address": "127.0.0.1",
+      "port": 45224
+    },
+    {
+      "name": "Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
+      "outFiles": ["${workspaceFolder}/out/**/*.js"],
+      "preLaunchTask": "npm: watch"
+    },
+    {
+      "name": "Server",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "program": "${workspaceFolder}/../vscode-quickjs-debug/src/debugAdapter.ts",
+      "runtimeExecutable": "node",
+      "args": ["--server=4711"],
+      "outFiles": ["${workspaceFolder}/out/**/*.js"]
+    },
+    {
+      "name": "Launch QuickJS",
+      "type": "quickjs",
+      "request": "launch",
+      "program": "${workspaceFolder}/${relativeFile}",
+      "runtimeExecutable": "/usr/local/bin/qjsm"
+    },
+    {
+      "name": "Attach QuickJS (connect)",
+      "type": "quickjs",
+      "request": "launch",
+      "program": "${workspaceFolder}/test-ecmascript2.js",
+      "runtimeExecutable": "/usr/bin/env",
+      "runtimeArgs": ["QUICKJS_DEBUG_ADDRESS=127.0.0.1:9001", "/usr/local/bin/qjsm"],
+      "localRoot": "${workspaceFolder}",
+      "mode": "connect",
+      "attach": true,
+      "address": "127.0.0.1",
+      "port": 9000
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Extension + Server",
+      "configurations": ["Extension", "Server"]
+    }
+  ]
 }

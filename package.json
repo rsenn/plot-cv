@@ -73,6 +73,7 @@
     "react-upload-gallery": "^0.4.1",
     "regenerator-runtime": "^0.13.9",
     "serialport": "^9.0.1",
+    "through": "^2.3.8",
     "uppie": "^1.1.4",
     "ws": "^7.3.1"
   },

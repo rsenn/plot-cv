@@ -97,8 +97,8 @@ export function TCPClient(url, handler = event => {}) {
     onClose(ws, reason) {
       console.log('onClose', { ws, reason });
     },
-    onHttp(req, resp) {
-      console.log('onHttp', { req, resp });
+    onRequest(req, resp) {
+      console.log('onRequest', { req, resp });
     },
     onFd(fd, rd, wr) {
       //console.log('onFd', fd, rd, wr);

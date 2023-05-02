@@ -1,7 +1,7 @@
 import inspect from 'inspect';
 import { define, isObject, memoize, unique } from './lib/misc.js';
 import * as deep from './lib/deep.js';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import tXml from './lib/tXml.js';
 import { XPath } from './lib/xml.js';
 

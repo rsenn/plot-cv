@@ -1,12 +1,12 @@
-import { define, isObject,mod, memoize, unique } from './lib/misc.js';
-import * as cv from 'opencv';
-import { EventEmitter, eventify } from './quickjs/qjs-modules/lib/events.js';
+import { define, isObject, mod, memoize, unique, roundTo } from "./lib/misc.js";
+import * as cv from "opencv";
+import { EventEmitter, eventify } from "./quickjs/qjs-modules/lib/events.js";
 
 const MinMax = (min, max) => value => Math.max(min, Math.min(max, value));
 
 export class Param extends EventEmitter {
   valueOf() {
-    if(typeof this.callback == 'function') this.callback.call(this, this);
+    if(typeof this.callback == "function") this.callback.call(this, this);
 
     return this.get();
   }
@@ -16,14 +16,14 @@ export class Param extends EventEmitter {
   }
 
   toString() {
-    return '' + this.valueOf();
+    return "" + this.valueOf();
   }
 
   createTrackbar(name, win) {
-    cv.createTrackbar(name, win + '', this.value, this.max, value => {
+    cv.createTrackbar(name, win + "", this.value, this.max, value => {
       let old = this.get();
       this.set(value);
-      if(value != old) this.emit('change', value, old);
+      if(value != old) this.emit("change", value, old);
     });
   }
 }
@@ -43,7 +43,7 @@ export class NumericParam extends Param {
 
   set(value) {
     const { clamp, min, step } = this;
-    let newValue = this.clamp(min + roundTo(value - min, step, null, 'floor'));
+    let newValue = this.clamp(min + roundTo(value - min, step, null, "floor"));
     //console.log(`Param.set oldValue=${this.value} new=${newValue}`);
     this.value = newValue;
   }
@@ -103,7 +103,7 @@ export class EnumParam extends NumericParam {
 
   set(newVal) {
     let i;
-    if(typeof newVal == 'number') i = newVal;
+    if(typeof newVal == "number") i = newVal;
     else if((i = this.values.indexOf(newVal)) == -1) throw new Error(`No such value '${newVal}' in [${this.values}]`);
     super.set(i);
   }
@@ -112,7 +112,7 @@ export class EnumParam extends NumericParam {
 export function ParamNavigator(map, index = 0) {
   if(!new.target) return new ParamNavigator(map);
 
-console.log('ParamNavigator',map);
+  console.log("ParamNavigator", map);
   if(!(map instanceof Map)) map = new Map(Object.entries(map));
 
   // console.log('map:', map);
@@ -121,11 +121,11 @@ console.log('ParamNavigator',map);
     map,
     index,
     next() {
-      this.index = mod(map.size, this.index + 1);
+      this.index = mod(this.index + 1, map.size);
       // console.log('ParamNavigator index =', this.index);
     },
     prev() {
-      this.index = mod(map.size, this.index - 1);
+      this.index = mod(this.index - 1, map.size);
       // console.log('ParamNavigator index =', this.index);
     },
     setCallback(fn, thisObj) {

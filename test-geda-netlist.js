@@ -1,6 +1,6 @@
 import inspect from 'inspect';
 import gedaNetlistGrammar from './grammar-geda-netlist.js';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import { Point, Size, Rect, BBox } from './lib/geom.js';
 import deep from './lib/deep.js';
 import tXml from './lib/tXml.js';

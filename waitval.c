@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <sys/wait.h>
 #include <signal.h>
+#include <stdint.h>
 
 int
 main() {
@@ -38,6 +39,8 @@ main() {
   printf("#define %-9s %2i\n", "SIGIO", SIGIO);
   printf("#define %-9s %2i\n", "SIGPWR", SIGPWR);
   printf("#define %-9s %2i\n", "SIGSYS", SIGSYS);
+  uint16_t x = UINT16_MAX;
+  printf("(signed)x = %i\n", (int16_t)x);
 
   return 0;
 }

@@ -1,7 +1,5 @@
-mport { ReadFile, WriteFile } from './io-helpers.js';
-import filesystem from 'fs';
+import { ReadFile } from './io-helpers.js';
 import * as deep from './lib/deep.js';
-import * as fs from './lib/filesystem.js';
 import * as path from './lib/path.js';
 import { toString, define, escape, quote } from './lib/misc.js';
 import { EventEmitter } from './lib/events.js';

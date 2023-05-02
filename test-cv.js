@@ -8,7 +8,7 @@ import { Line } from 'opencv';
 import { CLAHE } from 'opencv';
 import * as draw from 'opencv';
 import inspect from './lib/objectInspect.js';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
 import fs from './lib/filesystem.js';
 import RGBA from './lib/color/rgba.js';
 import Console from 'console';
