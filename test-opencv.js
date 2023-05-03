@@ -1,17 +1,17 @@
-import { Point, Size, Rect, Mat, UMat, Line, CLAHE, TickMeter, Draw, Contour } from "opencv";
-import * as cv from "opencv";
-import Console from "console";
-import * as path from "path";
-import { RGBA, HSLA } from "./lib/color.js";
-import { NumericParam, EnumParam, ParamNavigator } from "./param.js";
-import { memoize, range, getMethodNames, weakMapper, mod } from "./lib/misc.js";
-import { Pipeline, Processor } from "./qjs-opencv/js/cvPipeline.js";
-import { Window, MouseFlags, MouseEvents, Mouse, TextStyle, DrawText } from "./qjs-opencv/js/cvHighGUI.js";
-import * as nvg from "nanovg";
-import * as glfw from "glfw";
-import { Repeater } from "./lib/repeater/repeater.js";
+import { Point, Size, Rect, Mat, UMat, Line, CLAHE, TickMeter, Draw, Contour } from 'opencv';
+import * as cv from 'opencv';
+import Console from 'console';
+import * as path from 'path';
+import { RGBA, HSLA } from './lib/color.js';
+import { NumericParam, EnumParam, ParamNavigator } from './param.js';
+import { memoize, range, getMethodNames, weakMapper, mod } from './lib/misc.js';
+import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
+import { Window, MouseFlags, MouseEvents, Mouse, TextStyle, DrawText } from './qjs-opencv/js/cvHighGUI.js';
+import * as nvg from 'nanovg';
+import * as glfw from 'glfw';
+import { Repeater } from './lib/repeater/repeater.js';
 
-let basename = __filename.replace(/\.js$/, "");
+let basename = __filename.replace(/\.js$/, '');
 const RAD2DEG = 180 / Math.PI;
 
 function GLFW(...args) {
@@ -30,7 +30,7 @@ function GLFW(...args) {
 
   for(let [prop, value] of hints) Window.hint(prop, value);
 
-  window = new Window(resolution.width, resolution.height, "OpenGL");
+  window = new Window(resolution.width, resolution.height, 'OpenGL');
   glfw.context.current = window;
   this.context = glfw.context;
 
@@ -42,26 +42,26 @@ function GLFW(...args) {
 
 function WriteImage(name, mat) {
   cv.imwrite(name, mat);
-  console.log("Wrote '" + name + "' (" + mat.size + ").");
+  console.log("Wrote '" + name + "' (" + mat.size + ').');
 }
 
 function SaveConfig(configObj) {
   configObj = Object.fromEntries(Object.entries(configObj).map(([k, v]) => [k, +v]));
-  let file = std.open(basename + ".config.json", "w+b");
-  file.puts(JSON.stringify(configObj, null, 2) + "\n");
+  let file = std.open(basename + '.config.json', 'w+b');
+  file.puts(JSON.stringify(configObj, null, 2) + '\n');
   file.close();
-  console.log("Saved config to '" + basename + ".config.json" + "'", inspect(configObj, { compact: false }));
+  console.log("Saved config to '" + basename + '.config.json' + "'", inspect(configObj, { compact: false }));
 }
 
 function LoadConfig() {
-  let str = std.loadFile(basename + ".config.json");
-  let configObj = JSON.parse(str || "{}");
+  let str = std.loadFile(basename + '.config.json');
+  let configObj = JSON.parse(str || '{}');
   configObj = Object.fromEntries(
     Object.entries(configObj)
       .map(([k, v]) => [k, +v])
       .filter(([k, v]) => !isNaN(v))
   );
-  console.log("LoadConfig:", inspect(configObj, { compact: false }));
+  console.log('LoadConfig:', inspect(configObj, { compact: false }));
   return configObj;
 }
 
@@ -72,7 +72,7 @@ function InspectMat(mat) {
 
 function ToHex(number) {
   if(number < 0) number = 0xffffffff + number + 1;
-  return "0x" + number.toString(16);
+  return '0x' + number.toString(16);
 }
 
 function Accumulator(callback) {
@@ -81,7 +81,7 @@ function Accumulator(callback) {
   self = function(name, value) {
     if(name in accu) return;
     accu[name] = value;
-    if(typeof callback == "function") callback(name, value);
+    if(typeof callback == 'function') callback(name, value);
   };
   Object.assign(self, {
     accu,
@@ -116,21 +116,21 @@ async function main(...args) {
   });
   let running = true;
 
-  console.log("getMethodNames(cv)", getMethodNames(cv, Infinity, 0));
-  console.log("cv.HoughLines", cv.HoughLines);
+  console.log('getMethodNames(cv)', getMethodNames(cv, Infinity, 0));
+  console.log('cv.HoughLines', cv.HoughLines);
 
   let line = new Line(0, 0, 50, 50);
-  console.log("line", line);
+  console.log('line', line);
   let clahe = new CLAHE();
-  console.log("clahe", clahe);
-  cv.namedWindow("output", cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO);
-  let trackbar = "";
-  let file = args[0] || "../an-tronics/images/fm/4tr.jpg";
+  console.log('clahe', clahe);
+  cv.namedWindow('output', cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO);
+  let trackbar = '';
+  let file = args[0] || '../an-tronics/images/fm/4tr.jpg';
   let image = cv.imread(file);
   let resolution = image.size;
   let scaled;
-  console.log("Symbol.inspect", Symbol.inspect);
-  console.log("resolution", resolution);
+  console.log('Symbol.inspect', Symbol.inspect);
+  console.log('resolution', resolution);
   if(resolution.width > 1200) {
     let f = 1024 / resolution.width;
     scaled = new Size(resolution.width * f, resolution.height * f);
@@ -142,20 +142,20 @@ async function main(...args) {
   let outputMat = new Mat(outputRect.size, cv.CV_8UC3);
   let statusRect = new Rect(0, resolution.height, resolution.width, 200);
   let statusMat = new Mat(statusRect.size, cv.CV_8UC3);
-  console.log("statusRect:", statusRect);
+  console.log('statusRect:', statusRect);
   let [textRect, helpRect] = new Rect(statusRect.size).inset(5).vsplit(-20);
   let screenSize = new Size(resolution.width, resolution.height + 200);
-  console.log("statusRect", statusRect);
-  console.log("textRect", textRect);
-  console.log("helpRect:", helpRect);
+  console.log('statusRect', statusRect);
+  console.log('textRect', textRect);
+  console.log('helpRect:', helpRect);
   let screen = new Mat(screenSize, cv.CV_8UC3);
 
   /* let gfx = new GLFW(...screenSize);
   console.log('gfx:', gfx);*/
 
-  cv.imshow("output", screen);
-  cv.moveWindow("output", 0, 0);
-  cv.resizeWindow("output", screenSize.width);
+  cv.imshow('output', screen);
+  cv.moveWindow('output', 0, 0);
+  cv.resizeWindow('output', screenSize.width);
   /*
 
   let mouseEvents = {
@@ -180,7 +180,7 @@ async function main(...args) {
     zoomPanMatrix,
     zoomPanRect;
   let drag = {};
-  cv.setMouseCallback("output", (event, x, y, flags) => {
+  cv.setMouseCallback('output', (event, x, y, flags) => {
     //console.log('MouseCallback', {event,x,y,flags});
 
     if(event == 1) {
@@ -232,9 +232,9 @@ async function main(...args) {
   let shadowColor = 0x404040;
   let textColor = 0xd3d7cf;
   let fonts = [
-    "/home/roman/.fonts/gothic.ttf",
-    "/home/roman/.fonts/gothicb.ttf",
-    "/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf"
+    '/home/roman/.fonts/gothic.ttf',
+    '/home/roman/.fonts/gothicb.ttf',
+    '/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf'
   ];
   let fontFace = fonts[2];
   let fontSize = 14;
@@ -260,7 +260,9 @@ async function main(...args) {
     startContour: new NumericParam(0, 0, 1000),
     numContours: new NumericParam(1000, 0, 1000)
   };
-  let contours = [];
+  let contours = [],
+    mapping,
+    neighborhood;
   let lineWidth = 1;
   let lines = [];
   let circles = [];
@@ -273,7 +275,7 @@ async function main(...args) {
   palette[2] = [0x60, 0x60, 0x60, 0xff];
   palette[3] = [0xff, 0xff, 0x0, 0xff];
   for(let i = 8; i < 16; i++) palette[i] = black;
-  let pipeline = new Pipeline(
+  let pipeline = (globalThis.pipeline = new Pipeline(
     [
       function AcquireFrame(src, dst) {
         image = cv.imread(file);
@@ -303,18 +305,31 @@ async function main(...args) {
       },
       function Skeletonization(src, dst) {
         cv.skeletonization(src, dst);
-        console.log("Skeletonization", dst);
+        console.log('Skeletonization', dst);
       },
       function SkeletonTracing(src, dst) {
-        let count = cv.traceSkeleton(src, (contours = []));
+        let count = cv.traceSkeleton(
+          src,
+          (contours = globalThis.contours = []),
+          (neighborhood = globalThis.neighborhood = new Mat()),
+          (mapping = globalThis.mapping = new Mat())
+        );
 
-        console.log("SkeletonTracing", console.config({ maxArrayLength: 5, depth: 2, compact: 2 }), {
+        console.log('SkeletonTracing', console.config({ maxArrayLength: 5, depth: 3, compact: 2 }), {
           count,
           contours
         });
 
-        cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
-        dst.clear();
+  /*   neighborhood.copyTo(dst);
+     dst.mul(31);*/
+     mapping.convertTo(dst, cv.CV_8UC1, 255.0/(contours.length-1));
+
+        cv.cvtColor(dst, dst, cv.COLOR_GRAY2BGR);
+     //   cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
+       
+return;
+        //cv.cvtColor(this.outputOf('Skeletonization'), dst, cv.COLOR_GRAY2BGR);
+        // dst.clear();
 
         let start = params.startContour;
         let end = start + params.numContours;
@@ -323,25 +338,29 @@ async function main(...args) {
         //let palette= range(0,359, 360/contours.length).map(hue => new HSLA(hue, 100,50,1.0));
         let palette = range(0, n - 1)
           .map(n => [Math.floor(n / 3), ((n % 3) - 1) * 25 + 50])
-          .map(([n, m]) => [(Math.floor(n / 3) * 359 * 9) / (n - 1), ((n % 3) - 1) * 25 + 50, m])
+          .map(([n, m]) => [(Math.floor(n / 3) * 359 * 9) / (n - 1), ((n % 3) - 1) * 25 + 60, m])
           .map(([h, s, l]) => new HSLA(h, s, l, 1.0));
 
         palette = palette.map(c => c.toBGRA());
 
         for(let i = 0; i < n; i++) {
-          const color = palette[i];
+          const color = [0, 0, 255] ?? palette[i];
 
           Draw.polylines(dst, [contours[i + start]], false, color, 1, cv.LINE_8);
         }
 
-        console.log("ShowTrace", console.config({ maxArrayLength: Infinity }), { src, dst });
+        console.log('ShowTrace', console.config({ maxArrayLength: Infinity }), { src, dst });
       },
       function LineSegmentDetector(src, dst) {
-        let lines = [];
+        let lines = new cv.Mat(0, 0, cv.CV_32FC4);
         let width = [],
           prec = [],
           nfa = [];
-        cv.lineSegmentDetector(this.outputOf("Skeletonization"), lines, width, prec, nfa);
+        let lsd = new cv.LineSegmentDetector();
+        src = this.outputOf('Skeletonization');
+        lsd.detect(src, lines, width, prec, nfa);
+
+        //        cv.lineSegmentDetector(this.outputOf("Skeletonization"), lines, width, prec, nfa);
         /* let intersectionMatrix = [];
         for(let i = 0; i < lines.length; i++) {
           intersectionMatrix[i] = [];
@@ -361,22 +380,26 @@ async function main(...args) {
         }
         console.log('LineSegmentDetector', console.config({ compact: 3 }), [...lineMap].map(([name, arr]) => [name, arr.length, arr.map(line => [line + '', line.length])]).sort((a, b) => b[1] - a[1]) );
         */
-        src.copyTo(dst);
+        cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
+        dst.setTo([0xff, 0xff, 0xff]);
+        console.log('LineSegmentDetector', console.config({ maxArrayLength: Infinity }), { src, dst });
+
+        lsd.drawSegments(dst, lines);
       },
       function PixelNeighborhood(src, dst) {
         let neighborhood = new Mat(src.size, cv.CV_8UC1);
         cv.pixelNeighborhood(src, neighborhood);
         let endpoints = cv.pixelFindValue(src, 1);
-        console.log("endpoints", endpoints);
+        console.log('endpoints', endpoints);
         let linepoints = cv.pixelFindValue(src, 2);
         //console.log('linepoints', linepoints);
-        cv.imwrite("neighborhood.png", neighborhood, palette);
-        let im = cv.imread("neighborhood.png");
+        cv.imwrite('neighborhood.png', neighborhood, palette);
+        let im = cv.imread('neighborhood.png');
         im.copyTo(dst);
       },
       function HoughLinesP(src, dst) {
-        const skel = this.outputOf("Skeletonization");
-        const morpho = this.outputOf("Morphology");
+        const skel = this.outputOf('Skeletonization');
+        const morpho = this.outputOf('Morphology');
         let output = new Mat();
         if(skel.channels > 1) cv.cvtColor(skel, skel, cv.COLOR_BGR2GRAY);
         if(morpho.channels > 1) cv.cvtColor(morpho, morpho, cv.COLOR_BGR2GRAY);
@@ -435,8 +458,8 @@ async function main(...args) {
           return [color.b, color.g, color.r];
         };
 
-        console.log("angle2Color(100):", angle2Color(100));
-        console.log("angle2Color(360):", angle2Color(0));
+        console.log('angle2Color(100):', angle2Color(100));
+        console.log('angle2Color(360):', angle2Color(0));
         /*
         console.log('v',
           [...v.slice(0, 4), ...h.slice(0, 4)].map(l => [
@@ -462,8 +485,8 @@ async function main(...args) {
         cv.dilate(morpho, morpho, kern);
       },
       function HoughCircles(src, dst) {
-        const morpho = this.outputOf("Morphology");
-        const skel = this.outputOf("Skeletonization");
+        const morpho = this.outputOf('Morphology');
+        const skel = this.outputOf('Skeletonization');
         const paramArray = [
           +params.dp || 1,
           +params.minDist,
@@ -476,7 +499,7 @@ async function main(...args) {
         let circles2 = [] || new Mat();
         cv.HoughCircles(morpho, circles1, cv.HOUGH_GRADIENT, ...paramArray);
         cv.HoughCircles(skel, circles2, cv.HOUGH_GRADIENT, ...paramArray);
-        this.outputOf("HoughLinesP").copyTo(dst);
+        this.outputOf('HoughLinesP').copyTo(dst);
         let i = 0;
         for(let [x, y, r] of circles1) {
           let p = new Point(x, y);
@@ -504,7 +527,7 @@ async function main(...args) {
         RedrawWindow();
       }
     }
-  );
+  ));
   function RedrawStatus() {
     //console.log(`pipeline.images =`, new Map(pipeline.imageEntries()));
     let i = pipeline.currentProcessor;
@@ -515,7 +538,7 @@ async function main(...args) {
     Draw.rectangle(statusMat, srect.inset(3, 0), 0, cv.FILLED, true);
     const inspectOptions = {
       colors: true,
-      hideKeys: ["callback"]
+      hideKeys: ['callback']
     };
     let text =
       `#${i}: ` +
@@ -524,13 +547,13 @@ async function main(...args) {
       `params:\n` +
       params
         .map((name, idx) => {
-          return `  ${idx + paramIndexes[0] == paramNav.index ? "\x1b[1;31m" : ""}${name.padEnd(
+          return `  ${idx + paramIndexes[0] == paramNav.index ? '\x1b[1;31m' : ''}${name.padEnd(
             13
           )}\x1b[0m   \x1b[1;36m${+paramNav.get(name)}\x1b[0m\n`;
         })
-        .join("");
+        .join('');
     DrawText(statusMat(textRect), text, textColor, fontFace, fontSize);
-    DrawText(statusMat(helpRect), "< prev, > next, + increment, - decrement, DEL reset", textColor, fontFace, fontSize);
+    DrawText(statusMat(helpRect), '< prev, > next, + increment, - decrement, DEL reset', textColor, fontFace, fontSize);
   }
   function Scale(mat, f = 1) {
     if(f == 1) return mat;
@@ -545,9 +568,9 @@ async function main(...args) {
   function RedrawWindow() {
     let i = pipeline.currentProcessor;
     cv.vconcat([Scale(outputMat, scaleFactor), statusMat], screen);
-    cv.imshow("output", screen);
-    cv.resizeWindow("output", screenSize.width, screenSize.height);
-    cv.setWindowTitle("output", `#${i}: ` + pipeline.names[i]);
+    cv.imshow('output', screen);
+    cv.resizeWindow('output', screenSize.width, screenSize.height);
+    cv.setWindowTitle('output', `#${i}: ` + pipeline.names[i]);
   }
   function Recalc() {
     console.log(`pipeline.recalc(${frameShow}/${pipeline.size})`);
@@ -580,7 +603,7 @@ async function main(...args) {
   Recalc();
   while(true) {
     key = cv.waitKeyEx(-1);
-    if(key === "q" || key === 113 || key === "\x1b" || key === 0x100071 || key === -1) break;
+    if(key === 'q' || key === 113 || key === '\x1b' || key === 0x100071 || key === -1) break;
     switch (key & 0xfff) {
       case 0xf08 /* backspace */:
       case 0x08 /* backspace */:
@@ -652,13 +675,13 @@ async function main(...args) {
         pipeline.step();
         break;
       default: {
-        //if(key !== -1) console.log('key:', ToHex(key));
+        if(key !== -1) console.log('key:', ToHex(key));
         break;
       }
     }
   }
   SaveConfig({ frameShow, paramIndex: paramNav.index, ...params });
-  console.log("EXIT");
+  console.log('EXIT');
 }
 try {
   main(...scriptArgs.slice(1));
@@ -666,5 +689,5 @@ try {
   console.log(`FAIL: ${error.message}\n${error.stack}`);
   std.exit(1);
 } finally {
-  console.log("SUCCESS");
+  console.log('SUCCESS');
 }
