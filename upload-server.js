@@ -754,20 +754,19 @@ function main(...args) {
             console.log('onPost', { req, data, error });
           }
         },*/
-      onRequest(ws, req, resp) {
-        /* if(req.method != 'GET')*/ //console.log('onRequest', console.config({ compact: 0 }), ws);
+      onRequest( req, resp) {
+console.log('onRequest', console.config({ compact: 0 }), req,resp);
 
         /*    console.log('\x1b[38;5;220monRequest(1)\x1b[0m', `req =`, console.config(repl.inspectOptions), req);
         console.log('\x1b[38;5;220monRequest(1)\x1b[0m', `resp =`, console.config(repl.inspectOptions), resp);*/
         //        console.log('\x1b[38;5;220monRequest(1)\x1b[0m', console.config(repl.inspectOptions), { req, resp });
 
-        define(globalThis, { ws, req, resp });
+        define(globalThis, {  req, resp });
 
-        const { peer, address, port } = ws;
-        const { method, headers } = req;
-
-        //resp.headers['Server'] = 'upload-server';
-        resp.headers = { Server: 'upload-server' };
+         const { method, headers } = req;
+if(resp.headers)
+       resp.headers['Server'] = 'upload-server';
+        //resp.headers = { Server: 'upload-server' };
         //console.log('onRequest resp.headers', resp.headers, resp.headers['Server']);
         //
         if(globalThis.onRequest) globalThis.onRequest(req, resp);
