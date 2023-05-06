@@ -149,6 +149,9 @@ cv.cvtColor(image2, image2, cv.COLOR_BGR2BGRA);
 
   console.log('FPS:');
 
+  let floatValue=0.0,alphaValue=127;
+
+
   while((running &&= !window.shouldClose)) {
     let index = Math.floor(timer.ticks(360) / 30);
 
@@ -214,12 +217,17 @@ cv.cvtColor(image2, image2, cv.COLOR_BGR2BGRA);
 
     ImGui.NewFrame();
 
-    ImGui.Begin('This is a window', null, ImGui.WindowFlags.MenuBar);
+    ImGui.Begin('Parameters', null, ImGui.WindowFlags.MenuBar);
 
     ImGui.SetWindowSize([400, 300]);
     ImGui.PushItemWidth(ImGui.GetFontSize() * -12);
 
-    ImGui.Text('This is some Text');
+    ImGui.Text('Adjust values for this processing step:');
+
+    ImGui.SliderFloat('Value', val => (val === undefined ? floatValue : (floatValue = val)), 0.0, 1.0, "%.3f");
+    ImGui.SliderInt('Alpha', val => (val === undefined ? Math.floor(alphaValue) : (alphaValue = Math.floor(val))),0, 255);
+
+
     ImGui.End();
 
     ImGui.Render();
