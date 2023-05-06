@@ -145,22 +145,23 @@ function main(...args) {
 
     nvg.BeginFrame(width, height, 1);
 
-    Clear();
+    Clear(nvg.RGB(...color));
 
     let m;
     nvg.CurrentTransform((m = []));
-    let s;
-    nvg.TransformScale((s = []), 2, 0.8);
 
-    let t, p, r, a;
+    let p, a;
     nvg.TransformIdentity((p = []));
-    nvg.TransformTranslate((t = []), -50, 100);
 
     //   nvg.Scale(2,1);
-    nvg.TransformRotate((r = []), ((timer.ticks(180) % 360) * Math.PI) / 180);
 
-    nvg.TransformMultiply(p, t, s, r);
-    console.log('Transform', { m, s, p, t, r });
+    nvg.TransformMultiply(
+      p,
+      nvg.TransformTranslate(-50, 100),
+      nvg.TransformRotate(((timer.ticks(180) % 360) * Math.PI) / 180),
+      nvg.TransformScale(2, 0.5)
+    );
+    console.log('Transform', p);
 
     nvg.TransformPoint((a = []), p, 0, 0);
 
