@@ -15,7 +15,7 @@ import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Defi
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON } from './io-helpers.js';
 import { MakeSVG, SaveSVG } from './image-helpers.js';
 import { Profiler } from './time-helpers.js';
-import { GLFW, Mat2Image, DrawImage, DrawCircle, Position } from './draw-utils.js';
+import { GLFW, Mat2Image, DrawImage, DrawCircle } from './draw-utils.js';
 import { TCPClient } from './midi-tcp.js';
 
 let rainbow;
