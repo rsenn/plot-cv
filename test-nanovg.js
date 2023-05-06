@@ -1,5 +1,5 @@
 import * as glfw from 'glfw';
-import {  context, poll, Position, Window, CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_PROFILE, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, RESIZABLE, SAMPLES } from 'glfw';
+import { context, poll, Position, Window, CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_PROFILE, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, RESIZABLE, SAMPLES } from 'glfw';
 import { glClear, glClearColor, glViewport, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT } from './gl.js';
 import { HSLA } from './lib/color.js';
 import { Mat, Point, Size } from 'opencv.so';
@@ -37,9 +37,15 @@ function main(...args) {
       Window.hint(prop, value);
 
     window = glfw.context.current = new Window(1280, 900, 'ImGui test');
-    context = { begin() {}, end() {  window.swapBuffers(); poll(); }  };
+    context = {
+      begin() {},
+      end() {
+        window.swapBuffers();
+        poll();
+      }
+    };
   } else {
-      context = new GLFW(1280, 900, {
+    context = new GLFW(1280, 900, {
       title: scriptArgs[0],
       resizable: true,
       handleSize(width, height) {
@@ -163,6 +169,33 @@ function main(...args) {
     DrawCircle(center, 100);
 
     nvg.EndFrame();
+
+    ImGui.NewFrame();
+
+    ImGui.Begin('This is a window', null, ImGui.WindowFlags.MenuBar);
+
+    ImGui.SetWindowSize([400, 300]);
+    ImGui.PushItemWidth(ImGui.GetFontSize() * -12);
+
+    ImGui.Text('This is some Text');
+    ImGui.End();
+
+    ImGui.Render();
+
+    let data = ImGui.GetDrawData();
+
+    ImGui.RenderDrawData(data);
+
+    let { id,Valid, CmdListsCount, TotalIdxCount, TotalVtxCount, DisplayPos, DisplaySize, FramebufferScale } = data;
+    console.log('data', id, {
+      Valid,
+      CmdListsCount,
+      TotalIdxCount,
+      TotalVtxCount,
+      DisplayPos,
+      DisplaySize,
+      FramebufferScale
+    });
 
     context.end();
     /*window.swapBuffers();
