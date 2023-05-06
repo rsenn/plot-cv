@@ -283,8 +283,8 @@ function main(...args) {
         viewBox
       }
     };
-    WriteJSON('contours-' + framePos + '.json', doc);
-    SaveSVG('contours-' + framePos + '.svg', doc);
+    WriteJSON('contours.json', doc);
+    SaveSVG('contours.svg', doc);
   }
 
   function saveLines(lines, size) {

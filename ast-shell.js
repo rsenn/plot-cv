@@ -139,7 +139,7 @@ function CommandLine() {
     else if(typeof value == 'string') str = value;
     else
       str = inspect(value, {
-        ...cfg.inspectOptions,
+        ...(cfg?.inspectOptions ?? {}),
         ...repl.inspectOptions,
         hideKeys: ['loc', 'range']
       });

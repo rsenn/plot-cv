@@ -1,5 +1,5 @@
 import { CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, OPENGL_PROFILE, RESIZABLE, SAMPLES, Window, Size, Position, context, poll } from 'glfw';
-export { Window, Size, Position } from 'glfw';
+//export { Window, Size, Position } from 'glfw';
 import * as nvg from 'nanovg';
 import { Mat, cvtColor, COLOR_BGR2RGBA, Rect } from 'opencv';
 import { RGBA } from './lib/color.js';
@@ -9,7 +9,16 @@ import { glClear, glClearColor, glViewport, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER
 export function GLFW(width, height, options = {}) {
   console.log('GLFW', { width, height, options });
   let resolution = new Size(width, height);
-  const { resizable = false, samples = 4, contextVersionMajor = 3, contextVersionMinor = 2, openglProfile = OPENGL_CORE_PROFILE, openglForwardCompat = true, title = 'OpenGL', ...handlers } = options;
+  const {
+    resizable = false,
+    samples = 4,
+    contextVersionMajor = 3,
+    contextVersionMinor = 2,
+    openglProfile = OPENGL_CORE_PROFILE,
+    openglForwardCompat = true,
+    title = 'OpenGL',
+    ...handlers
+  } = options;
   const hints = [
     [CONTEXT_VERSION_MAJOR, contextVersionMajor],
     [CONTEXT_VERSION_MINOR, contextVersionMinor],
@@ -156,15 +165,12 @@ export function DrawImage(image, pos) {
   nvg.Restore();
 }
 
-export function DrawCircle(pos, radius) {
-  nvg.Save();
-  nvg.Translate(...pos);
+export function DrawCircle([x, y], radius, strokeWidth = 5, stroke = [255, 255, 255], fill = [255, 0, 0, 96]) {
   nvg.BeginPath();
-  nvg.StrokeColor(nvg.RGB(255, 255, 255));
-  nvg.StrokeWidth(5);
-  nvg.FillColor(nvg.RGBA(255, 0, 0, 96));
-  nvg.Circle(0, 0, radius);
+  nvg.StrokeColor(nvg.RGB(...stroke));
+  nvg.StrokeWidth(strokeWidth);
+  nvg.FillColor(nvg.RGBA(...fill));
+  nvg.Circle(x, y, radius);
   nvg.Fill();
   nvg.Stroke();
-  nvg.Restore();
 }

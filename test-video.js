@@ -15,7 +15,7 @@ import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Defi
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON } from './io-helpers.js';
 import { MakeSVG, SaveSVG } from './image-helpers.js';
 import { Profiler } from './time-helpers.js';
-import { GLFW, Mat2Image, DrawImage, DrawCircle, Position } from './draw-utils.js';
+import { GLFW, Mat2Image, DrawImage, DrawCircle } from './draw-utils.js';
 import { TCPClient } from './midi-tcp.js';
 
 let rainbow;
@@ -80,7 +80,7 @@ function getBitDepth(mat) {
   }
 }
 
-const MakeMatFor = WeakMapper((...args) => new Mat(...args));
+const MakeMatFor = WeakMapper((processor, ...args) => new Mat(...args));
 
 function minMax(mat) {
   const ret = cv.minMaxLoc(mat);
@@ -425,7 +425,7 @@ function main(...args) {
     meter.reset();
     meter.start();
     let deadline = Date.now() + frameDelay;
-    //console.log('frameDelay', frameDelay);
+    console.log('prevTime', prevTime);
 
     let frameNo = video.get('pos_frames');
     if(frameNo == frameCount) video.set('pos_frames', (frameNo = 0));
@@ -532,7 +532,7 @@ function main(...args) {
           video['seek' + method](offset);
           let pos = video.position(method);
 
-          log.info('seek' + method + ' ' + offset + ` distance = ${distance} pos = ${pos} (${RoundTo(video.position('%'), 0.001)}%)`);
+          log.info('seek' + method + ' ' + offset + ` distance = ${distance} pos = ${video.position('frames')} time = \x1b[1;36m${video.position('ms')}\x1b[0m (${video.position('%').toFixed(2)}%)`);
           break;
         }
         case 'i' /* invert */:

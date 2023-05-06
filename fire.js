@@ -17,10 +17,7 @@ import { wasmBrowserInstantiate } from './wasm-helpers.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
 import trkl from './lib/trkl.js';
 
-let lsgs = (globalThis.lsgs = getset([
-  key => localStorage.getItem(key),
-  (key, value) => localStorage.setItem(key, value)
-]));
+let lsgs = (globalThis.lsgs = getset([key => localStorage.getItem(key), (key, value) => localStorage.setItem(key, value)]));
 
 const lstore = (globalThis.lstore = propertyLookup(
   ...(globalThis.lsgs2 = lsgs.transform(
@@ -97,14 +94,7 @@ function CreatePalette() {
 function CreatePaletteHSL() {
   const colors = new Array(256);
 
-  const hues = [
-    new HSLA(0, 100, 0),
-    new HSLA(0, 100, 50),
-    new HSLA(30, 100, 50),
-    new HSLA(60, 100, 50),
-    new HSLA(60, 100, 100),
-    new HSLA(60, 100, 100)
-  ];
+  const hues = [new HSLA(0, 100, 0), new HSLA(0, 100, 50), new HSLA(30, 100, 50), new HSLA(60, 100, 50), new HSLA(60, 100, 100), new HSLA(60, 100, 100)];
 
   const breakpoints = [0, 51, 80, 154, 205, 256];
   console.log('breakpoints:', breakpoints);
@@ -540,12 +530,7 @@ function main() {
 
     for(let y = 0; y < height; y++) {
       for(let x = 0; x < width; x++) {
-        const sum = [
-          pixels[y + 1][Modulo(x - 1, width)],
-          pixels[y + 1][x],
-          pixels[y + 1][Modulo(x + 1, width)],
-          pixels[y + 2][x]
-        ].reduce((a, p) => a + (p | 0), 0);
+        const sum = [pixels[y + 1][Modulo(x - 1, width)], pixels[y + 1][x], pixels[y + 1][Modulo(x + 1, width)], pixels[y + 2][x]].reduce((a, p) => a + (p | 0), 0);
 
         pixels[y][x] = (sum * 15) >>> 6;
       }
@@ -773,10 +758,7 @@ function Init() {
       canvasRect: () => Element.rect('canvas').round(0)
     }),
     properties({
-      transform: [
-        () => new TransformationList(Element.getCSS('body > div:first-child').transform),
-        value => Element.setCSS('body > div:first-child', { transform: value + '' })
-      ]
+      transform: [() => new TransformationList(Element.getCSS('body > div:first-child').transform), value => Element.setCSS('body > div:first-child', { transform: value + '' })]
     })
   );
 
@@ -788,8 +770,7 @@ function Init() {
   globalThis.circle = trkl(new Point(0, 0));
   globalThis.points = trkl([]);
 
-  const SVGPolyline = ({ points, ...props }) =>
-    h('polyline', { points: points.map(pt => [...pt].join(',')).join(' '), ...props });
+  const SVGPolyline = ({ points, ...props }) => h('polyline', { points: points.map(pt => [...pt].join(',')).join(' '), ...props });
 
   const SVGComponent = ({ circle, points, ...props }) => {
     let rect = new Rect(0, 0, canvasElement.width, canvasElement.height);
@@ -945,9 +926,7 @@ function MakeUUID(rng = Math.random) {
   return [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 }
 function MakeClientID(rng = Math.random) {
-  return [4, 4, 4, 4]
-    .map(n => randStr(n, ['ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz', '.-$'][randInt(0, 3)]), rng)
-    .join('');
+  return [4, 4, 4, 4].map(n => randStr(n, ['ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz', '.-$'][randInt(0, 3)]), rng).join('');
 }
 
 async function LoadWASM(file = 'fire/build/fire.wasm') {
@@ -977,11 +956,7 @@ function GetRects() {
   for(let element of [...AllParents(Element.find('canvas'))]) {
     rects.push([ElementName(element), Element.rect(element), new Point(element.scrollLeft, element.scrollTop)]);
   }
-  rects.push([
-    'window',
-    new Rect(0, 0, window.innerWidth, window.innerHeight),
-    new Point(window.scrollX, window.scrollY)
-  ]);
+  rects.push(['window', new Rect(0, 0, window.innerWidth, window.innerHeight), new Point(window.scrollX, window.scrollY)]);
 
   return rects;
 }
