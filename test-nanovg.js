@@ -48,6 +48,7 @@ function main(...args) {
       Window.hint(prop, value);
 
     window = glfw.context.current = new Window(1280, 900, 'ImGui test');
+
     context = {
       begin() {},
       end() {
@@ -55,6 +56,11 @@ function main(...args) {
         poll();
       }
     };
+
+     window.handleCharMods  = (char, mods) => {
+        console.log(`handleCharMods`, { char, mods });
+      };
+
   } else {
     context = new GLFW(1280, 900, {
       title: scriptArgs[0],
@@ -151,15 +157,17 @@ function main(...args) {
     nvg.CurrentTransform((m = []));
 
     let p, a;
-    nvg.TransformIdentity((p = []));
+ p=   nvg.TransformIdentity();
 
     //   nvg.Scale(2,1);
 
     nvg.TransformMultiply(
       p,
-      nvg.TransformTranslate(-50, 100),
-      nvg.TransformRotate(((timer.ticks(180) % 360) * Math.PI) / 180),
-      nvg.TransformScale(2, 0.5)
+      nvg.TransformTranslate(0, 100),
+      nvg.TransformRotate(((timer.ticks(200) % 360) * Math.PI) / 180),
+      nvg.TransformRotate(nvg.DegToRad(45)),
+      nvg.TransformScale(2, 0.5),
+      nvg.TransformRotate(nvg.DegToRad(-45)),
     );
     console.log('Transform', p);
 
