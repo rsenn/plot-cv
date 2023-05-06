@@ -7,7 +7,7 @@ find_sources() {
    if [ $# -le 0 ]; then
      SAVE_PWD=`pwd`
      cd "$THISDIR/.."
-     for SUBDIR in qjs-* quickjs quickjs/qjs-*; do
+     for SUBDIR in {.,qjs-*,quickjs,quickjs/qjs-*}{,/{lib,examples,tests}}; do
        test -d "$SUBDIR" &&
        set -- "$@" "$SUBDIR"
      done

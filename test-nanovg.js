@@ -1,11 +1,13 @@
-import * as glfw from 'glfw.so';
+import * as glfw from 'glfw';
+import {  context, poll, Position, Window, CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_PROFILE, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, RESIZABLE, SAMPLES } from 'glfw';
 import { glClear, glClearColor, glViewport, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT } from './gl.js';
 import { HSLA } from './lib/color.js';
-import { Mat, Point } from 'opencv.so';
+import { Mat, Point, Size } from 'opencv.so';
 import * as cv from 'opencv.so';
-import * as nvg from 'nanovg.so';
+import * as nvg from 'nanovg';
 import Console from 'console';
-import { GLFW, Mat2Image, DrawImage, DrawCircle, Position } from './draw-utils.js';
+import { GLFW, Mat2Image, DrawImage, DrawCircle } from './draw-utils.js';
+import * as ImGui from 'imgui';
 
 function main(...args) {
   globalThis.console = new Console({
@@ -21,40 +23,67 @@ function main(...args) {
   let i = 0;
   let running = true;
 
-  let context;
-  const { position, size, window } = (context = new GLFW(1280, 900, {
-    title: scriptArgs[0],
-    resizable: true,
-    handleSize(width, height) {
-      console.log('resized', { width, height });
-    },
-    handleKey(keyCode) {
-      let charCode = keyCode & 0xff;
-      console.log(`handleKey`, { keyCode: '0x' + keyCode.toString(16), charCode, char: String.fromCharCode(charCode) });
-      let char = String.fromCodePoint(charCode);
+  let context, window, position, size;
 
-      let handler = { '\x00': () => (running = false), Q: () => (running = false) }[char];
-      if(handler) handler();
-    },
-    handleCharMods(char, mods) {
-      console.log(`handleCharMods`, { char, mods });
-    },
-    handleMouseButton(button, action, mods) {
-      console.log(`handleMouseButton`, { button, action, mods });
-    },
-    handleCursorPos(x, y) {
-      //console.log(`handleCursorPos`, { x, y });
-    }
-  }));
+  if(true) {
+    for(let [prop, value] of [
+      [CONTEXT_VERSION_MAJOR, 3],
+      [CONTEXT_VERSION_MINOR, 2],
+      [OPENGL_PROFILE, OPENGL_CORE_PROFILE],
+      [OPENGL_FORWARD_COMPAT, true],
+      [RESIZABLE, true],
+      [SAMPLES, 4]
+    ])
+      Window.hint(prop, value);
+
+    window = glfw.context.current = new Window(1280, 900, 'ImGui test');
+    context = { begin() {}, end() {  window.swapBuffers(); poll(); }  };
+  } else {
+      context = new GLFW(1280, 900, {
+      title: scriptArgs[0],
+      resizable: true,
+      handleSize(width, height) {
+        console.log('resized', { width, height });
+      },
+      handleKey(keyCode) {
+        let charCode = keyCode & 0xff;
+        console.log(`handleKey`, {
+          keyCode: '0x' + keyCode.toString(16),
+          charCode,
+          char: String.fromCharCode(charCode)
+        });
+        let char = String.fromCodePoint(charCode);
+
+        let handler = { '\x00': () => (running = false), Q: () => (running = false) }[char];
+        if(handler) handler();
+      },
+      handleCharMods(char, mods) {
+        console.log(`handleCharMods`, { char, mods });
+      },
+      handleMouseButton(button, action, mods) {
+        console.log(`handleMouseButton`, { button, action, mods });
+      },
+      handleCursorPos(x, y) {
+        //console.log(`handleCursorPos`, { x, y });
+      }
+    });
+    window = context.window;
+  }
+
+  position = window.position;
+  size = window.size;
 
   nvg.CreateGL3(nvg.STENCIL_STROKES | nvg.ANTIALIAS | nvg.DEBUG);
+
+  ImGui.Init(ImGui.ImplGlfw, ImGui.ImplOpenGL3);
+  ImGui.CreateContext(window);
 
   const { width, height } = size;
   const { x, y } = position;
 
   //console.log(`width: ${width}, height: ${height}, x: ${x}, y: ${y}`);
 
-  let mat = new Mat(size, cv.CV_8UC4);
+  let mat = new Mat(new Size(width, height), cv.CV_8UC4);
 
   mat.setTo([11, 22, 33, 255]);
 
@@ -74,10 +103,26 @@ function main(...args) {
   let img2Sz = nvg.ImageSize(img2Id);
   let imgSz = nvg.ImageSize(imgId);
 
+  const timer = {
+    ticks(rate = 1000) {
+      const t = Date.now();
+
+      return ((t - (this.start ??= t)) * rate) / 1000;
+    },
+    frame() {
+      const t = Date.now();
+      const { prev = this.start } = this;
+      this.prev = t;
+      return (this.fps = +(1000 / (t - prev)).toFixed(1));
+    }
+  };
+
+  console.log('FPS:');
+
   while((running &&= !window.shouldClose)) {
-    let time = +new Date() / 1000;
-    let index = Math.floor((time * 360) / 30);
-    let color = new HSLA(index % 360, 100, 50 + 25 * Math.sin(time * 0.1 * Math.PI)).toRGBA();
+    let index = Math.floor(timer.ticks(360) / 30);
+
+    let color = new HSLA(index % 360, 100, 50 + 25 * Math.sin(timer.ticks(0.1) * Math.PI)).toRGBA();
 
     context.begin(color);
 
@@ -100,12 +145,18 @@ function main(...args) {
     nvg.Scale(0.5, 0.5);
     nvg.Translate(...imgSz_2);
 
-    let phi = ((i % 360) / 180) * Math.PI;
+    let phi = ((timer.ticks(60) % 360) / 180) * Math.PI;
     let vec = [Math.cos(phi), Math.sin(phi)].map(n => n * 100);
 
     DrawImage(img2Id, vec);
-    nvg.Translate(imgSz_2.width * -1, imgSz_2.height * -1);
-    DrawCircle(new Position(0, 0), 40);
+    //  nvg.Translate(imgSz_2.width * -1, imgSz_2.height * -1);
+    nvg.Restore();
+    nvg.Save();
+
+    nvg.Translate(size.width / 4, size.height / 4);
+    nvg.Rotate(((timer.ticks(180) % 360) * Math.PI) / 180);
+
+    DrawCircle([0, 100], 40, 2, [0, 0, 0], [255, 255, 0, 192]);
 
     nvg.Restore();
 
@@ -117,6 +168,8 @@ function main(...args) {
     /*window.swapBuffers();
     glfw.poll();*/
     i++;
+
+    timer.frame();
   }
 }
 

@@ -18,7 +18,7 @@ function GLFW(...args) {
   const { GammaRamp, Monitor, Position, Scale, Size, VideoMode, Window, WorkArea } = glfw;
   let resolution, window;
 
-  resolution = new Size(...args);
+  resolution = new glfw.Size(...args);
   const hints = [
     [glfw.CONTEXT_VERSION_MAJOR, 3],
     [glfw.CONTEXT_VERSION_MINOR, 2],
@@ -28,9 +28,9 @@ function GLFW(...args) {
     [glfw.SAMPLES, 4]
   ];
 
-  for(let [prop, value] of hints) Window.hint(prop, value);
+  for(let [prop, value] of hints) glfw.Window.hint(prop, value);
 
-  window = new Window(resolution.width, resolution.height, 'OpenGL');
+  window = new glfw.Window(resolution.width, resolution.height, 'OpenGL');
   glfw.context.current = window;
   this.context = glfw.context;
 
@@ -123,7 +123,13 @@ async function main(...args) {
   console.log('line', line);
   let clahe = new CLAHE();
   console.log('clahe', clahe);
-  cv.namedWindow('output', cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO);
+
+  let window = new Window('output', cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO);
+  // cv.namedWindow('output', cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO);
+  //
+  //
+  window.onkey = keyhandler;
+  //
   let trackbar = '';
   let file = args[0] || '../an-tronics/images/fm/4tr.jpg';
   let image = cv.imread(file);
@@ -153,15 +159,14 @@ async function main(...args) {
   /* let gfx = new GLFW(...screenSize);
   console.log('gfx:', gfx);*/
 
-  cv.imshow('output', screen);
-  cv.moveWindow('output', 0, 0);
-  cv.resizeWindow('output', screenSize.width);
-  /*
+  window.show(screen);
+  window.move(0, 0);
+  window.resize(screenSize);
 
-  let mouseEvents = {
+  /* let mouseEvents = {
     [Symbol.asyncIterator]() {
       let resolve;
-      cv. ('output', (event, x, y, flags) => resolve({ event, x, y, flags }));
+   cv.setMouseCallback('output', (event, x, y, flags) => resolve({ event, x, y, flags }));
       return {
         next() {
           return new Promise(r => resolve = value =>  r({value, done: false }));
@@ -320,14 +325,14 @@ async function main(...args) {
           contours
         });
 
-  /*   neighborhood.copyTo(dst);
+        /*   neighborhood.copyTo(dst);
      dst.mul(31);*/
-     mapping.convertTo(dst, cv.CV_8UC1, 255.0/(contours.length-1));
+        mapping.convertTo(dst, cv.CV_8UC1, 255.0 / (contours.length - 1));
 
         cv.cvtColor(dst, dst, cv.COLOR_GRAY2BGR);
-     //   cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
-       
-return;
+        //   cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
+
+        return;
         //cv.cvtColor(this.outputOf('Skeletonization'), dst, cv.COLOR_GRAY2BGR);
         // dst.clear();
 
@@ -568,9 +573,9 @@ return;
   function RedrawWindow() {
     let i = pipeline.currentProcessor;
     cv.vconcat([Scale(outputMat, scaleFactor), statusMat], screen);
-    cv.imshow('output', screen);
-    cv.resizeWindow('output', screenSize.width, screenSize.height);
-    cv.setWindowTitle('output', `#${i}: ` + pipeline.names[i]);
+    window.show(screen);
+    window.resize(screenSize);
+    window.setTitle(`#${i}: ` + pipeline.names[i]);
   }
   function Recalc() {
     console.log(`pipeline.recalc(${frameShow}/${pipeline.size})`);
@@ -601,10 +606,13 @@ return;
   delete pipeline.before;
   delete pipeline.after;
   Recalc();
-  while(true) {
-    key = cv.waitKeyEx(-1);
-    if(key === 'q' || key === 113 || key === '\x1b' || key === 0x100071 || key === -1) break;
-    switch (key & 0xfff) {
+
+  function keyhandler(event) {
+    console.log('onkey', event);
+    const { scancode } = event;
+    if(scancode === 'q' || scancode === 113 || scancode === '\x1b' || scancode === 0x100071 || scancode === -1)
+      running = false;
+    switch (scancode & 0xfff) {
       case 0xf08 /* backspace */:
       case 0x08 /* backspace */:
         if(frameShow > 0) {
@@ -660,7 +668,7 @@ return;
       case 0x38: /* 8 */
       case 0x39: /* 9 */
       case 0x30 /* 0 */:
-        let v = key & 0xf || 10;
+        let v = scancode & 0xf || 10;
         paramNav.param.alpha = v / 10;
         console.log(`Param ${paramNav.name}: ${+paramNav.param}`);
         Recalc();
@@ -675,11 +683,16 @@ return;
         pipeline.step();
         break;
       default: {
-        if(key !== -1) console.log('key:', ToHex(key));
+        if(scancode !== -1) console.log('scancode:', ToHex(scancode));
         break;
       }
     }
+
+    while(running) {
+      window.update();
+    }
   }
+  
   SaveConfig({ frameShow, paramIndex: paramNav.index, ...params });
   console.log('EXIT');
 }
