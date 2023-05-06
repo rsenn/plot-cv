@@ -1,4 +1,4 @@
-mport { ReadFile, WriteFile } from './io-helpers.js';
+import { ReadFile, WriteFile } from './io-helpers.js';
 import fs from 'fs';
 import { memoize } from './lib/misc.js';
 

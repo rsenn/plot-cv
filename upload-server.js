@@ -31,27 +31,18 @@ extendGenerator(Object.getPrototypeOf(new Directory('.')));
 extendAsyncGenerator();
 
 globalThis.fs = fs;
-globalThis.logFilter =
-  /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|WRITABLE)/;
+globalThis.logFilter = /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|WRITABLE)/;
 
 trkl.property(globalThis, 'logLevel').subscribe(value =>
   setLog(value, (level, message) => {
-    if(
-      /__lws|serve_(resolved|generator|promise|response)|XXbl(\([123]\).*writable|x\([/]\).*WRITEABLE)|lws_/.test(
-        message
-      )
-    )
-      return;
+    if(/__lws|serve_(resolved|generator|promise|response)|XXbl(\([123]\).*writable|x\([/]\).*WRITEABLE)|lws_/.test(message)) return;
     if(level == LLL_INFO && !/proxy/.test(message)) return;
     if(logFilter.test(message)) return;
 
     //if(params.debug || level <= LLL_WARN)
     out(
-      (
-        ['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][
-          Math.log2(level)
-        ] ?? level + ''
-      ).padEnd(8) + message.replace(/\n/g, '\\n').replace(/\r/g, '\\r')
+      (['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8) +
+        message.replace(/\n/g, '\\n').replace(/\r/g, '\\r')
     );
   })
 );
@@ -337,12 +328,7 @@ function main(...args) {
   );
   if(params['no-tls'] === true) params.tls = false;
 
-  const {
-    address = '0.0.0.0',
-    port = 8999,
-    'ssl-cert': sslCert = 'localhost.crt',
-    'ssl-private-key': sslPrivateKey = 'localhost.key'
-  } = params;
+  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key' } = params;
   const listen = params.connect && !params.listen ? false : true;
   const is_server = !params.client || params.server;
 
@@ -611,8 +597,7 @@ function main(...args) {
             for(let [key, value] of allowedDirs.entries().filter(KeyOrValueMatcher(root))) {
               let dir = new Directory(value, BOTH, +type);
               yield key + ':\r\n';
-              for(let [name, type] of dir.filter(([name, type]) => f(name)))
-                yield name + (+type == TYPE_DIR ? '/' : '') + '\r\n';
+              for(let [name, type] of dir.filter(([name, type]) => f(name))) yield name + (+type == TYPE_DIR ? '/' : '') + '\r\n';
             }
           }
           console.log('*files', { i, f });
@@ -624,15 +609,7 @@ function main(...args) {
           console.log('*files', { req, resp, body, query });
           const data = query ?? {};
           resp.type = 'application/json';
-          let {
-            dirs = defaultDirs,
-            filter = '[^.].*' ?? '.(brd|sch|G[A-Z][A-Z])$',
-            verbose = false,
-            objects = true,
-            key = 'mtime',
-            limit = null,
-            flat = false
-          } = data ?? {};
+          let { dirs = defaultDirs, filter = '[^.].*' ?? '.(brd|sch|G[A-Z][A-Z])$', verbose = false, objects = true, key = 'mtime', limit = null, flat = false } = data ?? {};
           let results = [];
           for(let dir of dirs) {
             let st,
@@ -754,18 +731,17 @@ function main(...args) {
             console.log('onPost', { req, data, error });
           }
         },*/
-      onRequest( req, resp) {
-console.log('onRequest', console.config({ compact: 0 }), req,resp);
+      onRequest(req, resp) {
+        console.log('onRequest', console.config({ compact: 0 }), req, resp);
 
         /*    console.log('\x1b[38;5;220monRequest(1)\x1b[0m', `req =`, console.config(repl.inspectOptions), req);
         console.log('\x1b[38;5;220monRequest(1)\x1b[0m', `resp =`, console.config(repl.inspectOptions), resp);*/
         //        console.log('\x1b[38;5;220monRequest(1)\x1b[0m', console.config(repl.inspectOptions), { req, resp });
 
-        define(globalThis, {  req, resp });
+        define(globalThis, { req, resp });
 
-         const { method, headers } = req;
-if(resp.headers)
-       resp.headers['Server'] = 'upload-server';
+        const { method, headers } = req;
+        if(resp.headers) resp.headers['Server'] = 'upload-server';
         //resp.headers = { Server: 'upload-server' };
         //console.log('onRequest resp.headers', resp.headers, resp.headers['Server']);
         //
@@ -777,11 +753,7 @@ if(resp.headers)
         if((req.url.path ?? '').endsWith('files')) {
           return;
           //resp.type = 'application/json';
-        } else if(
-          req.method != 'GET' &&
-          (req.headers['content-type'] == 'application/x-www-form-urlencoded' ||
-            (req.headers['content-type'] ?? '').startsWith('multipart/form-data'))
-        ) {
+        } else if(req.method != 'GET' && (req.headers['content-type'] == 'application/x-www-form-urlencoded' || (req.headers['content-type'] ?? '').startsWith('multipart/form-data'))) {
           let fp,
             hash,
             tmpnam,
