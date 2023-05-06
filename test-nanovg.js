@@ -2,8 +2,8 @@ import * as glfw from 'glfw';
 import { context, poll, Position, Window, CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_PROFILE, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, RESIZABLE, SAMPLES } from 'glfw';
 import { glClear, glClearColor, glViewport, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT } from './gl.js';
 import { HSLA } from './lib/color.js';
-import { Mat, Point, Size } from 'opencv.so';
-import * as cv from 'opencv.so';
+import { Mat, Point, Size, Rect,imread } from 'opencv';
+import * as cv from 'opencv';
 import * as nvg from 'nanovg';
 import Console from 'console';
 import { GLFW, Mat2Image, DrawImage, DrawCircle } from './draw-utils.js';
@@ -108,12 +108,19 @@ function main(...args) {
 
   let mat = new Mat(new Size(width, height), cv.CV_8UC4);
 
+
   mat.setTo([11, 22, 33, 255]);
+
+
+  let image2 = cv.imread('Architektur.png');
+
+cv.cvtColor(image2, image2, cv.COLOR_BGR2BGRA);
+ 
+  image2.copyTo(mat(new Rect(image2.size)));
+
 
   cv.drawLine(mat, new Point(10, 10), new Point(size.width - 10, size.height - 10), [255, 255, 0, 255], 4, cv.LINE_AA);
   cv.drawLine(mat, new Point(size.width - 10, 10), new Point(10, size.height - 10), [255, 0, 0, 255], 4, cv.LINE_AA);
-
-  let image2 = cv.imread('Architektur.png');
 
   let { buffer } = mat;
 
@@ -169,7 +176,7 @@ function main(...args) {
       nvg.TransformScale(2, 0.5),
       nvg.TransformRotate(nvg.DegToRad(-45)),
     );
-    console.log('Transform', p);
+    //console.log('Transform', p);
 
     nvg.TransformPoint((a = []), p, 0, 0);
 
@@ -187,7 +194,7 @@ function main(...args) {
     let phi = ((timer.ticks(60) % 360) / 180) * Math.PI;
     let vec = [Math.cos(phi), Math.sin(phi)].map(n => n * 100);
 
-    DrawImage(img2Id, vec);
+    DrawImage(imgId, vec);
     //  nvg.Translate(imgSz_2.width * -1, imgSz_2.height * -1);
     nvg.Restore();
     nvg.Save();
