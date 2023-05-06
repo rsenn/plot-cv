@@ -224,6 +224,7 @@ cv.cvtColor(image2, image2, cv.COLOR_BGR2BGRA);
 
     ImGui.Text('Adjust values for this processing step:');
 
+    ImGui.DragFloat('Value', val => (val === undefined ? floatValue : (floatValue = val)), 0.0, 1.0, "%.3f");
     ImGui.SliderFloat('Value', val => (val === undefined ? floatValue : (floatValue = val)), 0.0, 1.0, "%.3f");
     ImGui.SliderInt('Alpha', val => (val === undefined ? Math.floor(alphaValue) : (alphaValue = Math.floor(val))),0, 255);
 
