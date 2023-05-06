@@ -9,6 +9,17 @@ import Console from 'console';
 import { GLFW, Mat2Image, DrawImage, DrawCircle } from './draw-utils.js';
 import * as ImGui from 'imgui';
 
+function Clear(color = nvg.RGB(0, 0, 0)) {
+  const { size } = context.current;
+
+  nvg.Save();
+  nvg.BeginPath();
+  nvg.Rect(0, 0, ...size);
+  nvg.FillColor(color);
+  nvg.Fill();
+  nvg.Restore();
+}
+
 function main(...args) {
   globalThis.console = new Console({
     inspectOptions: {
@@ -134,11 +145,24 @@ function main(...args) {
 
     nvg.BeginFrame(width, height, 1);
 
-    let m = nvg.CurrentTransform();
-    let t = nvg.TransformTranslate([], 10, 20);
-    let s = nvg.TransformScale([], 3, 3);
+    Clear();
 
-    let p = nvg.TransformMultiply(nvg.TransformMultiply(m, t), s);
+    let m;
+    nvg.CurrentTransform((m = []));
+    let s;
+    nvg.TransformScale((s = []), 2, 0.8);
+
+    let t, p, r, a;
+    nvg.TransformIdentity((p = []));
+    nvg.TransformTranslate((t = []), -50, 100);
+
+    //   nvg.Scale(2,1);
+    nvg.TransformRotate((r = []), ((timer.ticks(180) % 360) * Math.PI) / 180);
+
+    nvg.TransformMultiply(p, t, s, r);
+    console.log('Transform', { m, s, p, t, r });
+
+    nvg.TransformPoint((a = []), p, 0, 0);
 
     // let pattern = nvg.ImagePattern(0, 0, ...img2Sz, 0, img2Id, 1);
 
@@ -160,9 +184,11 @@ function main(...args) {
     nvg.Save();
 
     nvg.Translate(size.width / 4, size.height / 4);
+    /*   nvg.Scale(2,1);
     nvg.Rotate(((timer.ticks(180) % 360) * Math.PI) / 180);
-
-    DrawCircle([0, 100], 40, 2, [0, 0, 0], [255, 255, 0, 192]);
+  nvg.Scale(0.5,1);
+ */
+    DrawCircle(a, 40, 2, [0, 0, 0], [255, 255, 0, 192]);
 
     nvg.Restore();
 
@@ -186,17 +212,9 @@ function main(...args) {
 
     ImGui.RenderDrawData(data);
 
-    let { id,Valid, CmdListsCount, TotalIdxCount, TotalVtxCount, DisplayPos, DisplaySize, FramebufferScale } = data;
-    console.log('data', id, {
-      Valid,
-      CmdListsCount,
-      TotalIdxCount,
-      TotalVtxCount,
-      DisplayPos,
-      DisplaySize,
-      FramebufferScale
-    });
-
+    /* let { id,Valid, CmdListsCount, TotalIdxCount, TotalVtxCount, DisplayPos, DisplaySize, FramebufferScale } = data;
+    console.log('data', id, {Valid, CmdListsCount, TotalIdxCount, TotalVtxCount, DisplayPos, DisplaySize, FramebufferScale });
+*/
     context.end();
     /*window.swapBuffers();
     glfw.poll();*/
