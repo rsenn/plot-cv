@@ -2,7 +2,7 @@ import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
-import { bindMethods, decorate, daemon, atexit, getpid, toString, escape, quote, define, extendArray, getOpt, setInterval, clearInterval, memoize, lazyProperties, propertyLookup } from 'util';
+import { isObject, bindMethods, decorate, daemon, atexit, getpid, toString, escape, quote, define, extendArray, getOpt, setInterval, clearInterval, memoize, lazyProperties, propertyLookup } from 'util';
 import { Console } from './quickjs/qjs-modules/lib/console.js';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
@@ -14,13 +14,14 @@ import { DebuggerProtocol } from './debuggerprotocol.js';
 import { StartDebugger, ConnectDebugger, DebuggerDispatcher, LoadAST, FindFunctions } from './debugger.js';
 import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
 import { ReadJSON, WriteJSON, ReadFile } from './io-helpers.js';
+import { Table } from './cli-helpers.js';
 
 extendArray(Array.prototype);
 
 const scriptName = (arg = scriptArgs[0]) => path.basename(arg, path.extname(arg));
 
 atexit(() => {
-  console.log('atexit', atexit);
+  console.log('atexit', os.kill(os.SIGKILL, globalThis.child.pid));
   let stack = new Error('').stack;
   console.log('stack:', stack);
 });
@@ -35,21 +36,19 @@ function checkChildExited(pid = child.pid) {
 function StartREPL(prefix = scriptName(), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
   repl.historyLoad(null, fs);
-  // (console.options = repl.inspectOptions).maxArrayLength = Infinity;
   let { log } = console;
 
   repl.directives.d = [() => globalThis.daemon(), 'detach'];
-  console.log = repl.printFunction((...args) => {
-    let obj;
-    if(/resolved/.test(args[0]))
-      if((obj = args.find(a => typeof a == 'object'))) {
-        if(Array.isArray(obj)) {
-          for(let item of obj) console.log('item:', item);
-        }
-        return;
-      }
-    if(!/result#/.test(args[0]) || /resolved/.test(args[0])) log('LOG', console.config({ ...repl.inspectOptions, compact: 20 }), ...args);
-  });
+
+  console.log = repl.printFunction(log.bind(console, console.config({ compact: 2 })));
+  let { show } = repl;
+
+  repl.show = arg => {
+    if(isObject(arg) && arg[Symbol.for('print')]) return arg.toString ? arg.toString() : arg + '';
+
+    return show.call(repl, arg);
+  };
+
   repl.loadSaveOptions();
   repl.run();
   return repl;
@@ -479,36 +478,42 @@ function main(...args) {
     NewDebugger(args, address) {
       address ??= mkaddr();
 
-      const child = globalThis.listeners[address] || StartDebugger(args, false, address);
+      const child = (globalThis.child = globalThis.listeners[address] || StartDebugger(args, false, address));
       let dispatch;
 
       globalThis.script = args[0];
 
-      files[script].match(/main/).then(fns => {
-        console.log('matched /main/', fns);
+      files[script].match(/main$/gi).then(fns => {
+        console.log(
+          'matched /main$/gi',
+          fns.map(({ name }) => name)
+        );
 
-        dispatch.breakpoints(fns);
+        dispatch.breakpoints(fns).then(() => dispatch.continue());
       });
 
       os.sleep(500);
       const sock = ConnectDebugger(address, {
-        onMessage(msg) {
+        async onMessage(msg) {
           switch (msg.type) {
             case 'event': {
               const { event } = msg;
-              if(event.type == 'StoppedEvent') {
-                dispatch.stackTrace().then(st => {
+              console.log('onEvent', msg);
+
+              switch (event.type) {
+                case 'StoppedEvent': {
+                  const st = (globalThis.stack = await dispatch.stackTrace());
                   let [top] = st;
                   let { id, name, filename, line } = top;
                   repl.printStatus(`#${id} ${name}@${filename}:${line}  ` + files[filename].line(line));
-                });
-                return;
+                  break;
+                }
               }
-              break;
+              return;
             }
           }
           console.log('onMessage', msg);
-          /*g*/
+          return;
         }
       });
 
@@ -523,6 +528,20 @@ function main(...args) {
             },
             async stackTrace(frame) {
               return (await member.call(this, ...args)).map(frame => (typeof frame.filename == 'string' && (frame.filename = relative(absolute(frame.filename))), frame));
+            },
+            async variables(frame, scopes) {
+              if(Array.isArray(frame)) {
+                let arr = [];
+                for(let fr of frame) arr.push(await this.variables(fr, scopes));
+                return arr;
+              }
+              let vars = {};
+              if(!Array.isArray(scopes)) scopes = scopes ? [scopes] : [0, 1, 2];
+
+              for(let scope of scopes) {
+                vars[['global', 'local', 'closure'][scope]] = await member.call(this, frame * 4 + scope);
+              }
+              return vars;
             }
           }[prop] || member),
         DebuggerDispatcher.prototype
@@ -541,6 +560,7 @@ function main(...args) {
     DebuggerProtocol,
     FindFunctions,
     LoadAST,
+    Table,
     files: propertyLookup(
       (globalThis.fileCache = {}),
       memoize(
@@ -561,17 +581,21 @@ function main(...args) {
                 match(re) {
                   if(typeof re == 'string') re = new RegExp(re, 'gi');
 
-                  const { functionCache } = globalThis;
-
-                  if(functionCache) return functionCache.filter(({ name }) => re.test(name));
-
-                  return this.functions.then(() => this.match(re));
+                  return this.functions.then(fns =>
+                    define(
+                      fns.filter(({ name }) => re.test(name)),
+                      { [Symbol.toStringTag]: 'FunctionList', file }
+                    )
+                  );
                 }
               },
               {
                 // estree: () => ,
                 async functions() {
-                  return (globalThis.functionCache = [...FindFunctions(await LoadAST(file))].map(([name, loc]) => ({ name, ...loc })));
+                  return (globalThis.functionCache = [...FindFunctions(await LoadAST(file))].map(([name, loc]) => ({
+                    name,
+                    ...loc
+                  })));
                 }
               } /*,
           { async: true }*/

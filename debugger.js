@@ -94,36 +94,57 @@ export class DebuggerDispatcher {
   #seq = 0;
   #responses = {};
 
+
   constructor(sock) {
     const orig = sock.onmessage;
 
     console.log('DebuggerDispatcher', { orig });
 
     sock.onmessage = msg => {
-      const { request_seq, body } = msg;
+      const { type, event, request_seq, body } = msg;
+
+      switch (type) {
+        case 'response':
+          return this.#responses[request_seq](msg);
+          break;
+        case 'event':
+          const name = event.type.slice(0, event.type.indexOf('Event')).toLowerCase();
+          const handler = this['on' + name];
+          console.log('DebuggerDispatcher', { name, handler });
+
+          if(handler) return handler.call(sock, event);
+        default:
+          return orig.call(sock, msg);
+      }
 
       //console.log('Message from debugger', msg);
-      if(request_seq in this.#responses) this.#responses[request_seq](msg);
-      else orig.call(sock, msg);
+      //if(request_seq in this.#responses) this.#responses[request_seq](msg);
     };
 
     define(this, { sendMessage: msg => (process.env.DEBUG && console.log('Sending:', msg), sock.sendMessage((msg = JSON.stringify(msg)))) });
   }
 
   stepIn() {
-    return this.sendRequest('stepIn');
+    return this.sendRequest('stepIn').then(resp => this.waitRun());
   }
-
   stepOut() {
-    return this.sendRequest('stepOut');
+    return this.sendRequest('stepOut').then(resp => this.waitRun());
   }
-
   next() {
-    return this.sendRequest('next');
+    return this.sendRequest('next').then(resp => this.waitRun());
+  }
+  continue() {
+    return this.sendRequest('continue').then(resp => this.waitRun());
   }
 
-  continue() {
-    return this.sendRequest('continue');
+  async waitRun() {
+    this.running = true;
+    console.log('DebuggerDispatcher.running', this.running);
+    const event = await waitEvent('stopped');
+    this.running = false;
+    console.log('DebuggerDispatcher.stopped', event);
+    const trace = await this.stackTrace();
+    return trace;
   }
 
   pause() {
@@ -161,6 +182,15 @@ export class DebuggerDispatcher {
     let { body } = await this.sendRequest('stackTrace');
 
     return body;
+  }
+
+  waitEvent(name) {
+    const prop = 'on' + name.toLowerCase();
+
+    return new Promise(resolve => {
+      this[prop] = resolve;
+      console.log('waitEvent', { name, prop });
+    });
   }
 
   sendRequest(command, args = {}) {
