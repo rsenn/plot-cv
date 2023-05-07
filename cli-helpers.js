@@ -19,7 +19,7 @@ function padTrunc(...args) {
 
 export function Table(rows, keys, t = (cell, column) => (cell + '').replace(/\n.*/g, '').trim()) {
   let sizes = {};
-  const names = keys;
+  const names = keys || Object.keys(rows[0]);
   let getfn = k => (typeof k == 'function' ? k : row => row[k]);
   for(let row of rows) {
     for(let key of names) {
