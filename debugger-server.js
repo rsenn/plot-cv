@@ -40,7 +40,15 @@ function StartREPL(prefix = scriptName(), suffix = '') {
 
   repl.directives.d = [() => globalThis.daemon(), 'detach'];
   console.log = repl.printFunction((...args) => {
-    if(!/result#/.test(args[0])) log('LOG', console.config(repl.inspectOptions), ...args);
+    let obj;
+    if(/resolved/.test(args[0]))
+      if((obj = args.find(a => typeof a == 'object'))) {
+        if(Array.isArray(obj)) {
+          for(let item of obj) console.log('item:', item);
+        }
+        return;
+      }
+    if(!/result#/.test(args[0]) || /resolved/.test(args[0])) log('LOG', console.config({ ...repl.inspectOptions, compact: 20 }), ...args);
   });
   repl.loadSaveOptions();
   repl.run();
@@ -87,8 +95,11 @@ function main(...args) {
     debug = false,
     tls = true
   } = params;
+
   const listen = params.connect && !params.listen ? false : true;
+
   //const server = !params.client || params.server;
+
   let name = scriptArgs[0];
   name = name
     .replace(/.*\//, '')
@@ -100,6 +111,7 @@ function main(...args) {
   let protocol = new WeakMap();
 
   let sockets = (globalThis.sockets ??= new Set());
+  console.log(name, params['@']);
 
   const createWS = (globalThis.createWS = (url, callbacks, listen) => {
     console.log('createWS', { url, callbacks, listen });
@@ -470,24 +482,28 @@ function main(...args) {
       const child = globalThis.listeners[address] || StartDebugger(args, false, address);
       let dispatch;
 
-      os.sleep(500);
+      globalThis.script = args[0];
 
+      files[script].match(/main/).then(fns => {
+        console.log('matched /main/', fns);
+
+        dispatch.breakpoints(fns);
+      });
+
+      os.sleep(500);
       const sock = ConnectDebugger(address, {
         onMessage(msg) {
           switch (msg.type) {
             case 'event': {
               const { event } = msg;
-
               if(event.type == 'StoppedEvent') {
                 dispatch.stackTrace().then(st => {
                   let [top] = st;
                   let { id, name, filename, line } = top;
-
                   repl.printStatus(`#${id} ${name}@${filename}:${line}  ` + files[filename].line(line));
                 });
                 return;
               }
-
               break;
             }
           }
