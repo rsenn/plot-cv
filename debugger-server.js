@@ -2,17 +2,18 @@ import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
-import { daemon, atexit, getpid, toString, escape, quote, define, extendArray, getOpt, setInterval, clearInterval } from 'util';
+import { bindMethods, decorate, daemon, atexit, getpid, toString, escape, quote, define, extendArray, getOpt, setInterval, clearInterval, memoize, lazyProperties, propertyLookup } from 'util';
 import { Console } from './quickjs/qjs-modules/lib/console.js';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
+import { Location } from 'location';
 import * as fs from 'fs';
 import { setLog, logLevels, getSessions, LLL_USER, LLL_INFO, LLL_NOTICE, LLL_WARN, createServer } from 'net';
 import { DebuggerProtocol } from './debuggerprotocol.js';
-import { StartDebugger, ConnectDebugger, DebuggerDispatcher } from './debugger.js';
+import { StartDebugger, ConnectDebugger, DebuggerDispatcher, LoadAST, FindFunctions } from './debugger.js';
 import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
-import { ReadJSON, WriteJSON } from './io-helpers.js';
+import { ReadJSON, WriteJSON, ReadFile } from './io-helpers.js';
 
 extendArray(Array.prototype);
 
@@ -34,14 +35,14 @@ function checkChildExited(pid = child.pid) {
 function StartREPL(prefix = scriptName(), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
   repl.historyLoad(null, fs);
-  repl.loadSaveOptions();
-  repl.inspectOptions = { ...console.options, maxArrayLength: Infinity, compact: 2 };
+  // (console.options = repl.inspectOptions).maxArrayLength = Infinity;
   let { log } = console;
 
   repl.directives.d = [() => globalThis.daemon(), 'detach'];
   console.log = repl.printFunction((...args) => {
-    log('LOG', console.config(repl.inspectOptions), ...args);
+    if(!/result#/.test(args[0])) log('LOG', console.config(repl.inspectOptions), ...args);
   });
+  repl.loadSaveOptions();
   repl.run();
   return repl;
 }
@@ -52,7 +53,7 @@ function main(...args) {
   const config = ReadJSON(`.${base}-config`) ?? {};
 
   globalThis.console = new Console(std.err, {
-    inspectOptions: { depth: Infinity, compact: 2, maxArrayLength: Infinity, customInspect: true }
+    inspectOptions: { depth: Infinity, compact: 1, maxArrayLength: Infinity, customInspect: true }
   });
 
   let params = getOpt(
@@ -237,7 +238,7 @@ function main(...args) {
           function handleCommand(ws, data) {
             let obj = JSON.parse(data);
 
-            console.log('onMessage', obj);
+            console.log('onMessage(x)', obj);
 
             const { command, ...rest } = obj;
             // console.log('onMessage', command, rest);
@@ -448,6 +449,12 @@ function main(...args) {
 
   globalThis.ws = createWS(`wss://${address}:8998/ws`, {}, true);
 
+  const mkaddr = (
+    (port = 8777) =>
+    () =>
+      `127.0.0.1:${port--}`
+  )();
+
   define(globalThis, {
     get connections() {
       return [...globalThis.sockets];
@@ -456,10 +463,112 @@ function main(...args) {
       return [...globalThis.sockets];
     },
     net: { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, createServer },
+
+    NewDebugger(args, address) {
+      address ??= mkaddr();
+
+      const child = globalThis.listeners[address] || StartDebugger(args, false, address);
+      let dispatch;
+
+      os.sleep(500);
+
+      const sock = ConnectDebugger(address, {
+        onMessage(msg) {
+          switch (msg.type) {
+            case 'event': {
+              const { event } = msg;
+
+              if(event.type == 'StoppedEvent') {
+                dispatch.stackTrace().then(st => {
+                  let [top] = st;
+                  let { id, name, filename, line } = top;
+
+                  repl.printStatus(`#${id} ${name}@${filename}:${line}  ` + files[filename].line(line));
+                });
+                return;
+              }
+
+              break;
+            }
+          }
+          console.log('onMessage', msg);
+          /*g*/
+        }
+      });
+
+      decorate(
+        (member, obj, prop) =>
+          ({
+            async breakpoints(...args) {
+              if(!(typeof args[0] == 'string')) args.unshift(globalThis.script);
+              args[0] = absolute(args[0]);
+
+              return await member.call(this, ...args);
+            },
+            async stackTrace(frame) {
+              return (await member.call(this, ...args)).map(frame => (typeof frame.filename == 'string' && (frame.filename = relative(absolute(frame.filename))), frame));
+            }
+          }[prop] || member),
+        DebuggerDispatcher.prototype
+      );
+
+      dispatch = globalThis.dispatch = new DebuggerDispatcher(sock);
+
+      Object.assign(globalThis, bindMethods(dispatch, DebuggerDispatcher.prototype, {}));
+      Object.assign(globalThis, { args, script: args[0] });
+
+      return sock; //dispatch;
+    },
     StartDebugger,
     ConnectDebugger,
     DebuggerDispatcher,
     DebuggerProtocol,
+    FindFunctions,
+    LoadAST,
+    files: propertyLookup(
+      (globalThis.fileCache = {}),
+      memoize(
+        (file, source) => (
+          (source ??= ReadFile(file)),
+          define(
+            {
+              source,
+              indexlist: [...source.matchAll(/(^|\n|$)/g)].map(m => m.index)
+            },
+            lazyProperties(
+              {
+                line(i) {
+                  const { source, indexlist } = this;
+                  const [start, end] = indexlist.slice(i - 1, i + 1);
+                  return source.slice(start + (i > 1 ? 1 : 0), end);
+                },
+                match(re) {
+                  if(typeof re == 'string') re = new RegExp(re, 'gi');
+
+                  const { functionCache } = globalThis;
+
+                  if(functionCache) return functionCache.filter(({ name }) => re.test(name));
+
+                  return this.functions.then(() => this.match(re));
+                }
+              },
+              {
+                // estree: () => ,
+                async functions() {
+                  return (globalThis.functionCache = [...FindFunctions(await LoadAST(file))].map(([name, loc]) => ({ name, ...loc })));
+                }
+              } /*,
+          { async: true }*/
+            )
+          )
+        )
+      )
+    ),
+    async repeat(n, fn, ...args) {
+      let r;
+      for(let i = 0; i < n; i++) r = await fn(...args);
+      return r;
+    },
     repl: StartREPL(),
     daemon() {
       repl.stop();
@@ -469,13 +578,6 @@ function main(...args) {
     }
   });
 
-  //let repl = StartREPL();
-
-  //  Object.defineProperty(globalThis, 'DEBUG', { get: DebugFlags });
-
-  /* if(listen) cli.listen(createWS, os);
-  else cli.connect(createWS, os);
-*/
   function quit(why) {
     console.log(`quit('${why}')`);
 
