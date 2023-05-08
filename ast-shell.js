@@ -14,7 +14,7 @@ import * as ECMAScript from './lib/ecmascript.js';
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import * as fs from './lib/filesystem.js';
 import { isObject, extendArray, toString, toArrayBuffer, weakMapper, getOpt, define, lazyProperty, bindMethods, defineGetter, memoize, pushUnique } from './lib/misc.js';
-import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, Spawn } from './io-helpers.js';
+import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, Shell, Spawn } from './io-helpers.js';
 
 extendArray(Array.prototype);
 
@@ -351,16 +351,6 @@ function Terminate(exitCode) {
   console.log('Terminate', exitCode);
 
   exit(exitCode);
-}
-
-function Shell(cmd) {
-  let f = std.popen(cmd, 'r');
-  let s = '';
-  while(!f.eof() && !f.error()) {
-    s += f.readAsString();
-  }
-  f.close();
-  return s;
 }
 
 function ParseStructs(text) {
