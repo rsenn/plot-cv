@@ -15,38 +15,39 @@ function padTrunc(...args) {
     len ??= s.length;
     return s.length > len ? s.slice(0, len) : s['pad' + (end ? 'End' : 'Start')](len, ' ');
   }
+
 }
 
 export function Table(rows, keys, t = (cell, column) => (cell + '').replace(/\n.*/g, '').trim()) {
   let sizes = {};
-  const names = keys || Object.keys(rows[0]);
+   keys = keys || Object.keys(rows[0]);
   let getfn = k => (typeof k == 'function' ? k : row => row[k]);
   for(let row of rows) {
-    for(let key of names) {
+    for(let key of keys) {
       const col = t(row[key] /*getfn(key)(row)*/, key);
       if((sizes[key] ?? 0) < col.length) sizes[key] = col.length;
       if((sizes[key] ?? 0) < key.length) sizes[key] = key.length;
     }
   }
-  let width = names.reduce((acc, name) => (acc ? acc + 3 + sizes[name] : sizes[name]), 0);
+  let width = keys.reduce((acc, name) => (acc ? acc + 3 + sizes[name] : sizes[name]), 0);
   if(width > repl.termWidth) sizes['Params'] -= width - repl.termWidth;
 
-  const trunc = names.map((name, i) => padTrunc(/*i == 0 ? -1 :*/ 1 * sizes[name]));
+  const trunc = keys.map((name, i) => padTrunc(/*i == 0 ? -1 :*/ 1 * sizes[name]));
   const pad = (cols, space, sep) =>
     cols
       .map((s, col) => trunc[col](t(s, col), space))
       .join(sep ?? ' │ ')
       .trimEnd();
 
-  if(!Array.isArray(rows[0])) rows = rows.map(cols => names.map((key, i) => getfn(key)(cols)));
+  if(!Array.isArray(rows[0])) rows = rows.map(cols => keys.map((key, i) => getfn(key)(cols)));
 
   return define(
     {
       toString() {
         return [
-          pad(this.names),
+          pad(this.keys),
           pad(
-            this.names.map(() => ' '),
+            this.keys.map(() => ' '),
             '─',
             '─┼─'
           )
@@ -56,6 +57,8 @@ export function Table(rows, keys, t = (cell, column) => (cell + '').replace(/\n.
           .join('\n');
       }
     },
-    { rows, names, [Symbol.toStringTag]: 'Table', [Symbol.for('print')]: true }
+    { rows, keys, [Symbol.toStringTag]: 'Table', [Symbol.for('print')]: true }
   );
 }
+
+ 
