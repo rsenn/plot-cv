@@ -7,6 +7,7 @@ import { assert, define, toString as ArrayBufferToString, toArrayBuffer as Strin
 import { DebuggerProtocol } from './debuggerprotocol.js';
 import { readAll } from 'fs';
 import { relative, absolute } from 'path';
+import { IfDebug, LogIfDebug, ReadFd, IsStdio, ReadClose, ReadFile, ReadAny, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteFd, WriteClose, WriteAny, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL, Shell } from './io-helpers.js'
 
 var worker;
 var counter;
