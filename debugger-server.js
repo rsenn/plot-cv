@@ -14,7 +14,7 @@ import { DebuggerProtocol } from './debuggerprotocol.js';
 import { StartDebugger, ConnectDebugger, DebuggerDispatcher, LoadAST, FindFunctions } from './debugger.js';
 import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
 import { ReadJSON, WriteJSON, ReadFile } from './io-helpers.js';
-import { Table } from './cli-helpers.js';
+import { Table,List } from './cli-helpers.js';
 
 extendArray(Array.prototype);
 
@@ -560,7 +560,7 @@ function main(...args) {
     DebuggerProtocol,
     FindFunctions,
     LoadAST,
-    Table,
+    Table,List,
     files: propertyLookup(
       (globalThis.fileCache = {}),
       memoize(

@@ -15,12 +15,11 @@ function padTrunc(...args) {
     len ??= s.length;
     return s.length > len ? s.slice(0, len) : s['pad' + (end ? 'End' : 'Start')](len, ' ');
   }
-
 }
 
 export function Table(rows, keys, t = (cell, column) => (cell + '').replace(/\n.*/g, '').trim()) {
   let sizes = {};
-   keys = keys || Object.keys(rows[0]);
+  keys = keys || Object.keys(rows[0]);
   let getfn = k => (typeof k == 'function' ? k : row => row[k]);
   for(let row of rows) {
     for(let key of keys) {
@@ -61,4 +60,35 @@ export function Table(rows, keys, t = (cell, column) => (cell + '').replace(/\n.
   );
 }
 
- 
+export function List(items, keys, t = (item, field) => (item + '').replace(/\n.*/g, '').trim()) {
+  let sizes = {};
+  keys = keys || Object.keys(items[0]);
+  let getfn = k => (typeof k == 'function' ? k : item => item[k]);
+  for(let item of items) {
+    for(let key of keys) {
+      const str = t(getfn(key)(item), key);
+      if((sizes[key] ?? 0) < str.length) sizes[key] = str.length;
+      if((sizes[key] ?? 0) < key.length) sizes[key] = key.length;
+    }
+  }
+  let width = keys.reduce((acc, name) => (acc ? acc + 3 + sizes[name] : sizes[name]), 0);
+  if(width > repl.termWidth) sizes['Params'] -= width - repl.termWidth;
+
+  const trunc = keys.map((name, i) => padTrunc(1 * sizes[name]));
+  const pad = (fields, space, sep) =>
+    fields
+      .map((s, str) => trunc[str](t(s, str), space))
+      .join(sep ?? ' ')
+      .trimEnd();
+
+  if(!Array.isArray(items[0])) items = items.map(fields => keys.map((key, i) => getfn(key)(fields)));
+
+  return define(
+    {
+      toString() {
+        return [...this.items].map(item => pad(item, ' ', ' ').slice(0, repl.columns)).join('\n');
+      }
+    },
+    { items, keys, [Symbol.toStringTag]: 'List', [Symbol.for('print')]: true }
+  );
+}
