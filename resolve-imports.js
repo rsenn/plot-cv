@@ -1,4 +1,4 @@
-mport { ReadFile, WriteFile } from './io-helpers.js';
+import { ReadFile, WriteFile } from './io-helpers.js';
 #!/usr/bin/env qjsm
 import * as os from 'os';
 import * as std from 'std';

@@ -247,6 +247,6 @@ function main(...args) {
 try {
   main(...scriptArgs.slice(1));
 } catch(error) {
-  console.log(error ? `FAIL: ${error.message}\n${error.stack}` : `FAIL: ${error}`);
+  console.log(error ? 'FAIL: ' + error.message + '\n' + error.stack : 'FAIL: ' + error);
   std.exit(1);
 }

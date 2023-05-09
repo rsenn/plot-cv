@@ -1,4 +1,4 @@
-import { client, server, fetch, setLog, LLL_USER, LLL_NOTICE } from 'net';
+import { client, createServer, fetch, setLog, LLL_USER, LLL_NOTICE } from 'net';
 import * as std from 'std';
 import * as os from 'os';
 import { Console } from 'console';
@@ -57,7 +57,7 @@ function CreateServer({ host = '127.0.0.1', port = 9900, sslCert = 'localhost.cr
     logfile.flush();
   });
 
-  server({
+  createServer({
     host,
     port,
     sslCert,
