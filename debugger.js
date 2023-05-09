@@ -1,127 +1,94 @@
 import { Console } from 'console';
-import { btoa, toString, bindMethods } from './lib/misc.js';
-import * as os from 'os';
+import { toString } from './lib/misc.js';
+import { Worker, close, exec, pipe, setReadHandler, sleep } from 'os';
 //import child_process from './lib/childProcess.js';
-import { AsyncSocket, SockAddr, AF_INET, SOCK_STREAM, IPPROTO_TCP } from './quickjs/qjs-ffi/lib/socket.js';
-import { assert, define, toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
+import { assert, define, toString as ArrayBufferToString, btoa, keys } from './lib/misc.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 import { readAll } from 'fs';
-import { relative, absolute } from 'path';
+import { Spawn, WriteFile } from './io-helpers.js';
+import { URLWorker } from './os-helpers.js';
+import { Location, ECMAScriptDefines, ECMAScriptRules, ECMAScriptLexer, Lexer } from './quickjs/qjs-modules/lib/lexer/ecmascript.js';
+import { consume as consumeSync } from './lib/iterator/helpers.js';
+import { consume } from './lib/async/helpers.js';
 
 var worker;
 var counter;
 let sockets = (globalThis.sockets ??= new Set());
 let listeners = (globalThis.listeners = {});
 
-export function StartDebugger(args, connect, address) {
-  let env = process.env ?? {};
-  address ??= '127.0.0.1:9901';
-  env['DISPLAY'] ??= ':0.0';
-  if(connect) env['QUICKJS_DEBUG_ADDRESS'] = address;
-  else env['QUICKJS_DEBUG_LISTEN_ADDRESS'] = address;
+export function ECMAScriptSyntaxHighlighter(input, filename) {
+  const lexer = new ECMAScriptLexer(input, filename);
+  let prev = 0,
+    s = '';
+  consumeSync(lexer.values(), ({ id, type, lexeme }) => {
+    const color = {
+      shebang: 32,
+      comment: 32,
+      regexpLiteral: 35,
+      templateLiteral: 35,
+      templateLiteralHead: 35,
+      templateLiteralPart: 35,
+      templateLiteralTail: 35,
+      punctuator: 36,
+      numericLiteral: 36,
+      stringLiteral: 36,
+      booleanLiteral: 31,
+      nullLiteral: 35,
+      keyword: 31,
+      identifier: 33,
+      privateIdentifier: 33,
+      whitespace: 0
+    }[type];
 
-  console.log('StartDebugger', { args, connect, address });
+    if(color || lexeme.indexOf('\n') != -1) if (prev != color) lexeme = '\x1b[' + (color ? '1;' : '') + color + 'm' + lexeme;
+    s += lexeme;
+    if(color) prev = color;
+  });
 
-  let pipe = os.pipe();
-  let pid = os.exec(['qjsm'].concat(args), { block: false, env, stdout: pipe[1], stderr: pipe[1] });
-
-  os.close(pipe[1]);
-  let child = { stdio: [undefined, pipe[0], pipe[0]], pid };
-
-  if(!connect) listeners[address] = child;
-  //console.log('StartDebugger', child);
-  return child;
-}
-
-export function ConnectDebugger(address, callback) {
-  const addr = new SockAddr(AF_INET, ...address.split(':'));
-  const sock = new AsyncSocket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-  const ret = sock.connect(addr);
-
-  if(typeof callback != 'function' && typeof callback == 'object') callback = callback.onMessage;
-  console.log('ConnectDebugger', { ret, callback });
-
-  if(ret >= 0) {
-    sock.ndelay(true);
-    console.log('Connected', +sock, 'to', sock.remote);
-    sockets.add(sock);
-    console.log('sockets', sockets);
-  }
-
-  let iter = async function* () {
-    let ret,
-      lenBuf = new ArrayBuffer(9);
-
-    while((ret = await sock.recv(lenBuf, 0, 9)) > 0) {
-      let len = parseInt(ArrayBufferToString(lenBuf, 0, ret), 16);
-      let dataBuf = new ArrayBuffer(len);
-      let offset = 0;
-      while(offset < len) {
-        if((ret = await sock.recv(dataBuf, offset, len - offset)) <= 0) {
-          sock.close();
-          return;
-        }
-        offset += ret;
-      }
-      let obj = JSON.parse(ArrayBufferToString(dataBuf));
-      yield obj;
-    }
-  };
-
-  if(callback) {
-    sock.onmessage = callback;
-
-    (async (s, it) => {
-      console.log('\x1b[1;35mprocessing messages\x1b[0m', { s, it });
-      for await(let message of it) s.onmessage(message);
-      console.log('\x1b[1;36mprocessing end!\x1b[0m', strerror(error().errno));
-    })(sock, iter());
-  } else {
-    define(sock, { [Symbol.asyncIterator]: iter });
-  }
-
-  define(sock, { sendMessage: msg => sock.send(msg.length.toString(16).padStart(8, '0') + '\n' + msg) });
-
-  // DebuggerProtocol.send(sock, typeof msg == 'string' ? msg : JSON.stringify(msg)) });
-
-  console.log('ConnectDebugger', { ret, sock });
-
-  return sock;
+  if(prev) s += '\x1b[0m';
+  return s;
 }
 
 export class DebuggerDispatcher {
   #seq = 0;
   #responses = {};
+  #promise = null;
 
+  constructor(conn, debug = process.env.DEBUG) {
+    // const orig = sock.onmessage;
 
-  constructor(sock) {
-    const orig = sock.onmessage;
+    console.log('DebuggerDispatcher', { conn, debug });
+    const copts = console.config({ maxStringLength: Infinity, maxArrayLength: Infinity });
 
-    console.log('DebuggerDispatcher', { orig });
+    (async function() {
+      for await(let msg of conn) {
+        if(debug) console.log('\x1b[38;5;28mRECEIVE\x1b[0m ', copts, msg);
 
-    sock.onmessage = msg => {
-      const { type, event, request_seq, body } = msg;
+        const { type, event, request_seq, body } = msg;
 
-      switch (type) {
-        case 'response':
-          return this.#responses[request_seq](msg);
-          break;
-        case 'event':
-          const name = event.type.slice(0, event.type.indexOf('Event')).toLowerCase();
-          const handler = this['on' + name];
-          console.log('DebuggerDispatcher', { name, handler });
+        switch (type) {
+          case 'response':
+            this.#responses[request_seq](msg);
+            break;
+          case 'event':
+            const name = event.type.slice(0, event.type.indexOf('Event')).toLowerCase();
+            const handler = conn['on' + name] ?? this['on' + name];
+            console.log('DebuggerDispatcher', { name, handler });
 
-          if(handler) return handler.call(sock, event);
-        default:
-          return orig.call(sock, msg);
+            if(handler) handler.call(sock, event);
+            break;
+          default:
+            console.log('DebuggerDispatcher', { msg });
+            if(sock.onmessage) sock.onmessage(msg);
+            break;
+        }
       }
+      console.log('\x1b[38;5;129mCLOSED\x1b[0m ');
+    })();
 
-      //console.log('Message from debugger', msg);
-      //if(request_seq in this.#responses) this.#responses[request_seq](msg);
-    };
-
-    define(this, { sendMessage: msg => (process.env.DEBUG && console.log('Sending:', msg), sock.sendMessage((msg = JSON.stringify(msg)))) });
+    define(this, {
+      sendMessage: msg => (debug && console.log('\x1b[38;5;51mSEND\x1b[0m  ', copts, msg), conn.sendMessage((msg = JSON.stringify(msg))))
+    });
   }
 
   stepIn() {
@@ -159,7 +126,9 @@ export class DebuggerDispatcher {
     if(Array.isArray(breakpoints)) {
       if(typeof breakpoints[0] == 'number') breakpoints = breakpoints.map(n => ({ line: n }));
     }
-    return this.sendMessage(breakpoints ? { type: 'breakpoints', breakpoints: { path, breakpoints } } : { type: 'breakpoints', path });
+    const msg = breakpoints ? { type: 'breakpoints', breakpoints: { path, breakpoints } } : { type: 'breakpoints', path };
+    this.sendMessage(msg);
+    return msg;
   }
 
   async evaluate(frameId, expression) {
@@ -218,11 +187,11 @@ function TestWorker() {
     prefix: '\x1b[38;5;220mPARENT\x1b[0m'
   });
   console.log('scriptArgs', scriptArgs);
-  worker = new os.Worker('./ws-worker.js');
+  worker = new Worker('./ws-worker.js');
   counter = 0;
   worker.onmessage = WorkerMessage;
   console.log('TestWorker', worker.onmessage);
-  os.setReadHandler(0, () => {
+  setReadHandler(0, () => {
     let line = process.stdin.getline();
     worker.postMessage({ line });
   });
@@ -240,7 +209,7 @@ function WorkerMessage(e) {
           console.log('START', message.start);
           const { args, connect, address } = message.start;
           let child = StartDebugger(args, connect, address);
-          os.sleep(1000);
+          sleep(1000);
           sock = ConnectDebugger(address);
           break;
         }
@@ -280,13 +249,83 @@ function send(id, body) {
 }
 
 export async function LoadAST(source) {
+  const script = `import * as std from 'std';
+import { Worker } from 'os';
+import { existsSync, readerSync } from 'fs';
+import { Spawn } from './io-helpers.js';
+import inspect from 'inspect';
+import { Console } from 'console';
+import { toString, gettid } from 'util';
+
+globalThis.console = new Console({ inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 200, prefix: '\\x1b[2K\\x1b[G\\x1b[1;33mWORKER\\x1b[0m ' } });
+
+const worker = Worker.parent;
+
+worker.onmessage = async ({ data }) => {
+  const { type, source } = data;
+
+  switch(type) {
+    case 'gettid': {
+      worker.postMessage({ tid: gettid() });
+      break;
+    }
+    case 'quit': {
+      worker.onmessage = null;
+      console.log('quitting thread ('+gettid()+')...');
+      break;
+    }
+    default: {
+      const ast = await loadAST(source);
+      worker.postMessage({ ast });
+      break;
+    } 
+  }
+};
+
+async function loadAST(source) {
+  if(!existsSync(source)) return null;
   const { stdout, wait } = Spawn('meriyah', [source], { block: false, stdio: ['inherit', 'pipe', 'inherit'] });
+  
+  let s = '';
+  for(let chunk of readerSync(stdout))
+    s += toString(chunk);
 
-  const data = await readAll(stdout, 16384);
+  const [pid, status] = wait();
+  const { length } = s;
+  //console.log('loadAST', { source, length, status });
+  
+  return JSON.parse(s);
+}`;
 
-  console.log('wait() =', wait());
+  WriteFile('load-ast.js', script);
 
-  return JSON.parse(data);
+  let worker = new URLWorker(script);
+  worker.postMessage({ source });
+  const { value, done } = await worker.next();
+
+  worker.postMessage({ type: 'quit' });
+
+  console.log('worker.next()', console.config({ maxStringLength: 10 }), { value, done });
+  const { data } = value;
+  return ({ string: JSON.parse }[typeof data.ast] ?? (a => a))(data.ast);
+}
+
+export function* GetArguments(node) {
+  for(let param of node.params) {
+    let name = '';
+
+    if(param.type == 'AssignmentPattern') param = param.left;
+
+    if(param.type == 'RestElement') {
+      name += '...';
+      param = param.argument;
+    }
+
+    if(param.type == 'Identifier') name += param.name;
+
+    if(name !== '') yield name;
+    else yield param;
+  }
 }
 
 export function* FindFunctions(ast) {
@@ -299,6 +338,6 @@ export function* FindFunctions(ast) {
 
     name ??= v.id?.name;
 
-    if(name) yield [name, v.loc.start];
+    if(name) yield [name, v.loc.start, [...GetArguments(v)], v.start];
   }
 }

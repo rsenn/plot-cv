@@ -1,7 +1,7 @@
 import { WebSocketClient } from './lib/net/websocket-async.js';
 import * as path from './lib/path.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
-import { toString, toArrayBuffer, memoize } from './lib/misc.js';
+import { toString, toArrayBuffer, memoize, randInt, rand } from './lib/misc.js';
 import { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
 import { EventEmitter, EventTarget } from './lib/events.js';
 import { DroppingBuffer, FixedBuffer, MAX_QUEUE_LENGTH, Repeater, RepeaterOverflowError, SlidingBuffer } from './lib/repeater/repeater.js';
@@ -63,7 +63,11 @@ globalThis.addEventListener('keypress', e => {
  ******************************************************************************/
 const SourceLine = ({ lineno, text, active, children }) =>
   h(Fragment, {}, [
-    h('pre', { class: classNames('lineno', active && 'active', ['even', 'odd'][lineno % 2]) }, h('a', { name: `line-${lineno}` }, [lineno + ''])),
+    h(
+      'pre',
+      { class: classNames('lineno', active && 'active', ['even', 'odd'][lineno % 2]) },
+      h('a', { name: `line-${lineno}` }, [lineno + ''])
+    ),
     h('pre', { class: classNames('text', active && 'active'), innerHTML: text })
   ]);
 
@@ -75,7 +79,7 @@ const SourceText = ({ text, filename }) => {
     tokens = TokenizeJS(text, filename);
     lines = [...tokens];
   } catch(e) {
-    console.log('Error tokenizing:', e.message);
+    console.log('Error tokenizing:', e.message + '\n' + e.stack);
   }
 
   lines ??= text.split(/\n/g).map(line => [[null, line]]);
@@ -102,8 +106,9 @@ const SourceText = ({ text, filename }) => {
 const SourceFile = props => {
   console.log('props.file', currentSource());
   const file = useTrkl(currentSource);
-  console.log('file', file);
-  const filename = file ? path.relative(cwd, file, cwd) : null;
+
+  console.log('file', { cwd, file });
+  const filename = file; /*? path.relative(cwd, file, cwd) : null*/
   let text =
     (file &&
       !/^<.*>$/.test(file) &&
@@ -113,7 +118,11 @@ const SourceFile = props => {
       })) ||
     '';
 
-  return h('div', { class: 'container' }, [h('div', {}, []), h('div', { class: 'header' }, [filename]), h(SourceText, { text, filename })]);
+  return h('div', { class: 'container' }, [
+    h('div', {}, []),
+    h('div', { class: 'header' }, [filename]),
+    h(SourceText, { text, filename })
+  ]);
 };
 
 /******************************************************************************
@@ -127,7 +136,7 @@ async function LoadSource(filename) {
   } catch(e) {}
 }
 
-/* prettier-ignore */ Object.assign(globalThis, { Connect,DebuggerProtocol, LoadSource, Util, toString, toArrayBuffer, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, EventEmitter, EventTarget, Element, isElement, path });
+/* prettier-ignore */ Object.assign(globalThis, { Connect,DebuggerProtocol, LoadSource,  toString, toArrayBuffer, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, EventEmitter, EventTarget, Element, isElement, path });
 /* prettier-ignore */ Object.assign(globalThis, { DroppingBuffer, FixedBuffer, MAX_QUEUE_LENGTH, Repeater, RepeaterOverflowError, SlidingBuffer, useAsyncIter, useRepeater, useResult, useValue, TimeoutError, delay, interval, timeout, InMemoryPubSub, semaphore, throttler, trkl });
 /* prettier-ignore */ Object.assign(globalThis, { HSLA, RGBA, Point, isPoint, Size, isSize, Line, isLine, Rect, isRect, PointList, Polyline, Matrix, isMatrix, BBox, TRBL, Timer, Tree, Node, XPath, Element, isElement, CSS, SVG, Container, Layer, Renderer, Select, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementWHProps, ElementXYProps, Align, Anchor, dom, isNumber, Unit, ScalarValue, ElementTransformation, CSSTransformSetters, Transition, TransitionList, RandomColor });
 /* prettier-ignore */ Object.assign(globalThis, {   useIterable, useIterator, useAsyncGenerator, useAsyncIterable, useAsyncIterator, useGenerator, useActive, useClickout, useConditional, useDebouncedCallback, useDebounce, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useForceUpdate, useGetSet, useHover, useMousePosition, useToggleButtonGroupState, useTrkl, useFetch });
@@ -144,7 +153,8 @@ function Connect(address) {
 }
 
 function Initiate(command, address, connect = false, args) {
-  address ??= `${url.searchParams.get('address') ?? '127.0.0.1'}:${url.searchParams.get('port') ?? 9901}`;
+  address ??= `${url.searchParams.get('address') ?? '127.0.0.1'}:${(globalThis.port ??=
+    url.searchParams.get('port') ?? (Math.floor(rand()) % 900) + 9000)}`;
   console.log('Initiate', { command, address, connect, args });
   return ws.send(JSON.stringify({ command, connect, address, args }));
 }
@@ -169,7 +179,10 @@ function* TokenizeJS(data, filename) {
   lex.setInput(data, filename);
 
   let { tokens } = lex;
-  let colors = Object.entries(tokenColors).reduce((acc, [type, c]) => ({ ...acc, [tokens.indexOf(type) + 1]: c.hex() }), {});
+  let colors = Object.entries(tokenColors).reduce(
+    (acc, [type, c]) => ({ ...acc, [tokens.indexOf(type) + 1]: c.hex() }),
+    {}
+  );
   let prev = {};
   let out = [];
   for(let { id, lexeme, line } of lex) {
@@ -262,7 +275,7 @@ async function CreateSocket(endpoint) {
 
         if(responses[request_seq]) responses[request_seq](data);
       } else {
-        console.log('WS', data);
+        console.log('WS', ws);
       }
       if(['end', 'error'].indexOf(data.type) >= 0) {
         document.body.innerHTML = '';
@@ -388,6 +401,6 @@ function RenderUI() {
     h('footer', {}, [])
   ]);
   const { body } = document;
-  let r = render(component, body);
-  console.log('rendered', r);
+  render(component, body);
+  console.log('rendered', component);
 }

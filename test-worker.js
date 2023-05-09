@@ -17,9 +17,11 @@ globalThis.console = new Console({
 });
 
 function TestWorker() {
-  //worker = new os.Worker('./ws-worker.js');
-  worker = new WorkerScript(`
-    import { client, server, fetch, setLog, LLL_USER, LLL_NOTICE } from 'net';
+  worker = new os.Worker('./workertest.js');
+
+  if(false)
+    worker = new WorkerScript(`
+    import { client, createServer, fetch, setLog, LLL_USER, LLL_NOTICE } from 'net';
     import * as std from 'std';
     import * as os from 'os';
     import { Console } from 'console';
@@ -40,7 +42,7 @@ function TestWorker() {
     console.log('parent',parent);
 
     parent.onmessage = msg => {
-      console.log('Message:',msg);
+      console.log('Message:', msg);
 
       const [id,data]=msg.data;
       switch(data.type) {
@@ -63,7 +65,8 @@ function TestWorker() {
 
   let pw = new PromiseWorker(worker);
 
-  let resp = pw.postMessage({ type: 'exec', args: ['ls', '-la'] });
+  let resp = pw.postMessage({ source: 'test-nanovg.js' });
+  //pw.postMessage({ type: 'exec', args: ['ls', '-la'] });
 
   console.log('resp', resp);
   resp.then(response => {

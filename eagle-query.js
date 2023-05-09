@@ -1,4 +1,4 @@
-mport { ReadFile, WriteFile } from './io-helpers.js';
+import { ReadFile, WriteFile } from './io-helpers.js';
 import { unique } from './lib/misc.js';
 import { EagleDocument } from './lib/eagle.js';
 import { toXML } from './lib/json.js';

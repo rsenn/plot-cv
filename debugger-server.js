@@ -2,19 +2,22 @@ import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
-import { isObject, bindMethods, decorate, daemon, atexit, getpid, toString, escape, quote, define, extendArray, getOpt, setInterval, clearInterval, memoize, lazyProperties, propertyLookup } from 'util';
+import { tryCatch, filterKeys, isObject, bindMethods, decorate, daemon, atexit, getpid, toString, escape, quote, define, extendArray, getOpt, setInterval, clearInterval, memoize, lazyProperties, propertyLookup, types } from 'util';
 import { Console } from './quickjs/qjs-modules/lib/console.js';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import { Location } from 'location';
-import * as fs from 'fs';
+import { existsSync, readSync, writeSync, reader } from 'fs';
 import { setLog, logLevels, getSessions, LLL_USER, LLL_INFO, LLL_NOTICE, LLL_WARN, createServer } from 'net';
 import { DebuggerProtocol } from './debuggerprotocol.js';
-import { StartDebugger, ConnectDebugger, DebuggerDispatcher, LoadAST, FindFunctions } from './debugger.js';
+import { ECMAScriptSyntaxHighlighter, DebuggerDispatcher, LoadAST, GetArguments, FindFunctions } from './debugger.js';
 import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
-import { ReadJSON, WriteJSON, ReadFile } from './io-helpers.js';
-import { Table } from './cli-helpers.js';
+import { ReadJSON, WriteJSON, ReadFile, Spawn } from './io-helpers.js';
+import { Table, List } from './cli-helpers.js';
+import { map, consume } from './lib/async/helpers.js';
+import { AsyncSocket, SockAddr, AF_INET, SOCK_STREAM, IPPROTO_TCP } from './quickjs/qjs-ffi/lib/socket.js';
+import { RepeaterOverflowError, FixedBuffer, SlidingBuffer, DroppingBuffer, MAX_QUEUE_LENGTH, Repeater } from './lib/repeater/repeater.js';
 
 extendArray(Array.prototype);
 
@@ -26,16 +29,54 @@ atexit(() => {
   console.log('stack:', stack);
 });
 
-function checkChildExited(pid = child.pid) {
-  let [ret, status] = os.waitpid(pid, os.WNOHANG);
-  let exited = (status & 0x7f) == 0;
-  //console.log('child', { pid, ret, exited });
-  return !exited ? false : (status >>> 8) & 0xff;
+const signalName = n =>
+  'SIG' +
+  [
+    ,
+    'HUP',
+    'INT',
+    'QUIT',
+    'ILL',
+    'TRAP',
+    'ABRT',
+    'BUS',
+    'FPE',
+    'KILL',
+    'USR1',
+    'SEGV',
+    'USR2',
+    'PIPE',
+    'ALRM',
+    'TERM',
+    'STKFLT',
+    'CHLD',
+    'CONT',
+    'STOP',
+    'TSTP',
+    'TTIN',
+    'TTOU',
+    'URG',
+    'XCPU',
+    'XFSZ',
+    'VTALRM',
+    'PROF',
+    'WINCH',
+    'IO',
+    'PWR',
+    'SYS'
+  ][n];
+
+function checkChildExited(pid, status) {
+  const terminated = pid > 0;
+  const termsig = status & 0x7f;
+  const exitcode = (status >>> 8) & 0xff;
+
+  return terminated ? (termsig ? `signalled ${signalName(termsig)}` : `exitcode ${exitcode}`) : null;
 }
 
 function StartREPL(prefix = scriptName(), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
-  repl.historyLoad(null, fs);
+  repl.historyLoad(null);
   let { log } = console;
 
   repl.directives.d = [() => globalThis.daemon(), 'detach'];
@@ -54,6 +95,178 @@ function StartREPL(prefix = scriptName(), suffix = '') {
   return repl;
 }
 
+export function StartDebugger(args, connect, address) {
+  let env = process.env ?? {};
+
+  address ??= '127.0.0.1:9901';
+
+  env['DISPLAY'] ??= ':0.0';
+
+  if(connect) env['QUICKJS_DEBUG_ADDRESS'] = address;
+  else env['QUICKJS_DEBUG_LISTEN_ADDRESS'] = address;
+
+  const child = Spawn('qjsm', args, { block: false, env, stdio: ['inherit', 'pipe', 'pipe'] });
+
+  if(!connect) listeners[address] = child;
+
+  console.log('StartDebugger', { args, connect, address }, child);
+
+  return define(child, { args });
+}
+
+export function ConnectDebugger(address, callback) {
+  const addr = new SockAddr(AF_INET, ...address.split(':'));
+  const sock = new AsyncSocket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+  const ret = sock.connect(addr);
+
+  if(typeof callback != 'function' && typeof callback == 'object') callback = callback.onMessage;
+  console.log('ConnectDebugger', { ret });
+
+  if(ret >= 0) {
+    sock.ndelay(true);
+    console.log('Connected', +sock, 'to', sock.remote);
+    sockets.add(sock);
+    console.log('sockets', sockets);
+  }
+
+  const dbg = {
+    sock,
+    addr,
+    [Symbol.asyncIterator]: () =>
+      new Repeater(async (push, stop) => {
+        let ret,
+          lenBuf = new ArrayBuffer(9);
+        console.log('Debugger[Symbol.asyncIterator]');
+
+        while((ret = await sock.recv(lenBuf, 0, 9)) > 0) {
+          let len = parseInt(toString(lenBuf, 0, ret), 16);
+          let dataBuf = new ArrayBuffer(len);
+          let offset = 0;
+          while(offset < len) {
+            if((ret = await sock.recv(dataBuf, offset, len - offset)) <= 0) {
+              sock.close();
+              console.log('sock.recv() =', ret);
+              break;
+            }
+            offset += ret;
+          }
+          if(ret <= 0) break;
+          let obj = JSON.parse(toString(dataBuf));
+          push(obj);
+        }
+        console.log('sock.recv() =', ret);
+        stop(ret);
+      })
+  };
+
+  /* if(callback) {
+    sock.onmessage = callback;
+
+   return consume(dbg, message => sock.onmessage(message));
+  }  */
+
+  define(dbg, { sendMessage: msg => sock.send(msg.length.toString(16).padStart(8, '0') + '\n' + msg) });
+
+  console.log('ConnectDebugger', dbg);
+
+  return dbg;
+}
+
+const mkaddr = (
+  (port = 8777) =>
+  () =>
+    `127.0.0.1:${port--}`
+)();
+
+function NewDebugger(args, skipToMain = false, address) {
+  address ??= mkaddr();
+
+  const child = (globalThis.child = globalThis.listeners[address] || StartDebugger(args, false, address));
+  let dispatch;
+
+  globalThis.script = args[0];
+
+  os.sleep(500);
+
+  if(skipToMain)
+    files[script].match(/main$/gi).then(fns => {
+      console.log(
+        'matched /main$/gi',
+        fns.map(({ name }) => name)
+      );
+
+      dispatch.breakpoints(fns).then(() => dispatch.continue());
+    });
+
+  const dbg = ConnectDebugger(address);
+
+  dbg.onstopped = async msg => {
+    /*switch (msg.type) {
+      case 'event': {
+        const { event } = msg;
+        console.log('\x1b[38;5;226mEVENT\x1b[0m ', msg);
+
+        switch (event.type) {
+          case 'StoppedEvent': {
+    */ const st = (globalThis.stack = await dispatch.stackTrace());
+    let [top] = st;
+    let { id, name, filename, line } = top;
+    repl.printStatus(`#${id} ${name}@${filename}:${line}  ` + files[filename].line(line));
+    /*        break;
+          }
+        }*/
+  };
+
+  define(dbg, { child, args });
+
+  decorate(
+    (member, obj, prop) =>
+      ({
+        async breakpoints(...args) {
+          if(!(typeof args[0] == 'string')) args.unshift(globalThis.script);
+
+          let [file, breakpoints] = args;
+          file = absolute(file);
+
+          if(types.isPromise(breakpoints)) breakpoints = await breakpoints;
+
+          if(Array.isArray(breakpoints)) {
+            breakpoints = breakpoints.map(b => filterKeys(b, ['name', 'line']));
+          }
+
+          return await member.call(this, file, breakpoints);
+        },
+        async stackTrace(frame) {
+          return (await member.call(this, ...args)).map(frame => (typeof frame.filename == 'string' && (frame.filename = relative(absolute(frame.filename))), frame));
+        },
+        async variables(frame, scopes) {
+          if(Array.isArray(frame)) {
+            let arr = [];
+            for(let fr of frame) arr.push(await this.variables(fr, scopes));
+            return arr;
+          }
+          let vars = {};
+          if(!Array.isArray(scopes)) scopes = scopes ? [scopes] : [0, 1, 2];
+
+          for(let scope of scopes) {
+            vars[['global', 'local', 'closure'][scope]] = await member.call(this, frame * 4 + scope);
+          }
+          return vars;
+        }
+      }[prop] || member),
+    DebuggerDispatcher.prototype
+  );
+
+  dispatch = globalThis.dispatch = new DebuggerDispatcher(dbg);
+
+  Object.assign(globalThis, bindMethods(dispatch, DebuggerDispatcher.prototype, {}));
+  Object.assign(globalThis, { args, script: args[0] });
+
+  //  consume(dbg, dbg.onmessage);
+
+  return dbg; //dispatch;
+}
 function main(...args) {
   const base = scriptName().replace(/\.[a-z]*$/, '');
 
@@ -112,7 +325,7 @@ function main(...args) {
   let sockets = (globalThis.sockets ??= new Set());
   console.log(name, params['@']);
 
-  const createWS = (globalThis.createWS = (url, callbacks, listen) => {
+  function createWS(url, callbacks, listen) {
     console.log('createWS', { url, callbacks, listen });
 
     setLog(
@@ -196,14 +409,14 @@ function main(...args) {
               },
               enumerable: false
             },
-            dbg: { value: null, enumerable: false }
+            dbg: { value: null, writable: true, enumerable: false }
           });
 
           sockets.add(ws);
         },
         onClose(ws) {
-          console.log('onClose', ws);
-          dbg.close();
+          console.log('onClose', { ws, dbg });
+          dbg?.close();
 
           protocol.delete(ws);
           sockets.delete(ws);
@@ -228,7 +441,7 @@ function main(...args) {
               if(!/[\/\.]/.test(p2)) {
                 let fname = `${p2}.js`;
 
-                if(!fs.existsSync(dir + '/' + fname)) return `/* ${match} */`;
+                if(!existsSync(dir + '/' + fname)) return `/* ${match} */`;
 
                 match = [p1, './' + fname, p3].join('');
 
@@ -258,8 +471,8 @@ function main(...args) {
             switch (command) {
               case 'start': {
                 console.log('ws', ws);
-                child = StartDebugger(args, connect, address);
-                const [, stdout, stderr] = child.stdio;
+                child = ws.child = StartDebugger(args, connect, address);
+                const { stdout, stderr } = child;
                 for(let fd of [stdout, stderr]) {
                   //console.log(`fcntl(${fd}, F_GETFL)`);
                   let flags = fcntl(fd, F_GETFL);
@@ -267,6 +480,10 @@ function main(...args) {
                   flags |= O_NONBLOCK;
                   fcntl(fd, F_SETFL, flags);
                 }
+
+                const forward = (fd, name) =>
+                  consume(reader(fd), buf => {
+                    /*
                 for(let i = 1; i <= 2; i++) {
                   let fd = child.stdio[i];
                   console.log('os.setReadHandler', fd);
@@ -275,40 +492,48 @@ function main(...args) {
                     let buf = new ArrayBuffer(1024);
                     let r = os.read(fd, buf, 0, buf.byteLength);
 
-                    if(r > 0) {
-                      let data = toString(buf.slice(0, r));
-                      //console.log(`read(${fd}, buf) = ${r} (${quote(data, "'")})`);
+                    if(r > 0) {*/
+                    let data = toString(buf.slice(0, r));
+                    //console.log(`read(${fd}, buf) = ${r} (${quote(data, "'")})`);
 
-                      ws.sendMessage({
-                        type: 'output',
-                        channel: ['stdout', 'stderr'][i - 1],
-                        data
-                      });
-                    }
+                    ws.sendMessage({
+                      type: 'output',
+                      channel: name,
+                      data
+                    });
+                    /* }
                   });
-                }
+                }*/
+                  });
+                /* forward(stdout, 'stdout');
+                forward(stderr, 'stderr');*/
+                define(globalThis, { stdout, stderr, reader });
 
                 os.sleep(1000);
 
-                let tid;
+                let tid, exited;
 
                 tid = setInterval(() => {
-                  let exitCode;
-                  if((exitCode = checkChildExited(child.pid)) !== false) {
+                  let [pid, status] = child.wait();
+
+                  if((exited = checkChildExited(pid, status))) {
                     ws.sendMessage({
                       type: 'error',
                       command: 'start',
-                      message: `child process ${child.pid} exited with exitcode ${exitCode}`
+                      message: `child process ${pid} ${exited}`
                     });
                     clearInterval(tid);
                   }
                 }, 1000);
 
-                if(checkChildExited(child.pid) !== false) {
-                  ws.sendMessage({ type: 'error', command: 'start', message: `unable to start debugger` });
+                let [pid, status] = child.wait();
+
+                if((exited = checkChildExited(pid, status))) {
+                  ws.sendMessage({ type: 'error', command: 'start', message: `unable to start debugger: ${exited}` });
                   break;
                 }
 
+                const cwd = process.cwd();
                 ws.sendMessage({
                   type: 'response',
                   response: {
@@ -349,7 +574,7 @@ function main(...args) {
                   while(dbg.open) {
                     try {
                       msg = await DebuggerProtocol.read(dbg);
-                      console.log('DebuggerProtocol.read() =', escape(msg));
+                      console.log('DebuggerProtocol.read() =', msg);
                       if(typeof msg == 'string') {
                         let ret;
                         ret = ws.send(msg);
@@ -426,7 +651,8 @@ function main(...args) {
         ...(url && url.host ? url : {})
       })
     );
-  });
+  }
+
   console.log('XX');
 
   delete globalThis.DEBUG;
@@ -435,7 +661,7 @@ function main(...args) {
   os.ttySetRaw(0);
 
   os.setReadHandler(0, () => {
-    let r = fs.readSync(0, inputBuf, 0, inputBuf.byteLength);
+    let r = readSync(0, inputBuf, 0, inputBuf.byteLength);
 
     if(r > 0) {
       let a = new Uint8Array(inputBuf.slice(0, r));
@@ -447,7 +673,7 @@ function main(...args) {
       if(a.length == 1 && a[0] == 127) a = new Uint8Array([8, 0x20, 8]);
 
       if(a.length == 1 && a[0] == 27) showSessions();
-      else fs.writeSync(1, a.buffer);
+      else writeSync(1, a.buffer);
     }
   });
 
@@ -458,13 +684,7 @@ function main(...args) {
 
   //setInterval(() => console.log('interval'), 5000);
 
-  globalThis.ws = createWS(`wss://${address}:8998/ws`, {}, true);
-
-  const mkaddr = (
-    (port = 8777) =>
-    () =>
-      `127.0.0.1:${port--}`
-  )();
+  globalThis.server = createWS(`wss://${address}:8998/ws`, {}, true);
 
   define(globalThis, {
     get connections() {
@@ -474,86 +694,7 @@ function main(...args) {
       return [...globalThis.sockets];
     },
     net: { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, createServer },
-
-    NewDebugger(args, address) {
-      address ??= mkaddr();
-
-      const child = (globalThis.child = globalThis.listeners[address] || StartDebugger(args, false, address));
-      let dispatch;
-
-      globalThis.script = args[0];
-
-      files[script].match(/main$/gi).then(fns => {
-        console.log(
-          'matched /main$/gi',
-          fns.map(({ name }) => name)
-        );
-
-        dispatch.breakpoints(fns).then(() => dispatch.continue());
-      });
-
-      os.sleep(500);
-      const sock = ConnectDebugger(address, {
-        async onMessage(msg) {
-          switch (msg.type) {
-            case 'event': {
-              const { event } = msg;
-              console.log('onEvent', msg);
-
-              switch (event.type) {
-                case 'StoppedEvent': {
-                  const st = (globalThis.stack = await dispatch.stackTrace());
-                  let [top] = st;
-                  let { id, name, filename, line } = top;
-                  repl.printStatus(`#${id} ${name}@${filename}:${line}  ` + files[filename].line(line));
-                  break;
-                }
-              }
-              return;
-            }
-          }
-          console.log('onMessage', msg);
-          return;
-        }
-      });
-
-      decorate(
-        (member, obj, prop) =>
-          ({
-            async breakpoints(...args) {
-              if(!(typeof args[0] == 'string')) args.unshift(globalThis.script);
-              args[0] = absolute(args[0]);
-
-              return await member.call(this, ...args);
-            },
-            async stackTrace(frame) {
-              return (await member.call(this, ...args)).map(frame => (typeof frame.filename == 'string' && (frame.filename = relative(absolute(frame.filename))), frame));
-            },
-            async variables(frame, scopes) {
-              if(Array.isArray(frame)) {
-                let arr = [];
-                for(let fr of frame) arr.push(await this.variables(fr, scopes));
-                return arr;
-              }
-              let vars = {};
-              if(!Array.isArray(scopes)) scopes = scopes ? [scopes] : [0, 1, 2];
-
-              for(let scope of scopes) {
-                vars[['global', 'local', 'closure'][scope]] = await member.call(this, frame * 4 + scope);
-              }
-              return vars;
-            }
-          }[prop] || member),
-        DebuggerDispatcher.prototype
-      );
-
-      dispatch = globalThis.dispatch = new DebuggerDispatcher(sock);
-
-      Object.assign(globalThis, bindMethods(dispatch, DebuggerDispatcher.prototype, {}));
-      Object.assign(globalThis, { args, script: args[0] });
-
-      return sock; //dispatch;
-    },
+    NewDebugger,
     StartDebugger,
     ConnectDebugger,
     DebuggerDispatcher,
@@ -561,11 +702,16 @@ function main(...args) {
     FindFunctions,
     LoadAST,
     Table,
+    List,
     files: propertyLookup(
       (globalThis.fileCache = {}),
       memoize(
         (file, source) => (
-          (source ??= ReadFile(file)),
+          (source ??= tryCatch(
+            () => ECMAScriptSyntaxHighlighter(ReadFile(file), file),
+            s => s,
+            () => ReadFile(file)
+          )),
           define(
             {
               source,
@@ -592,13 +738,15 @@ function main(...args) {
               {
                 // estree: () => ,
                 async functions() {
-                  return (globalThis.functionCache = [...FindFunctions(await LoadAST(file))].map(([name, loc]) => ({
+                  return (globalThis.functionCache = [...FindFunctions((globalThis.ast = await LoadAST(file)))].map(([name, loc, params, start]) => ({
                     name,
-                    ...loc
+                    ...loc,
+                    start,
+                    params
                   })));
                 }
-              } /*,
-          { async: true }*/
+              },
+              { async: false }
             )
           )
         )

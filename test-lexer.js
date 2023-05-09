@@ -1,4 +1,4 @@
-mport { ReadFile, WriteFile } from './io-helpers.js';
+import { ReadFile, WriteFile } from './io-helpers.js';
 import Lexer from './lib/ecmascript/lexer.js';
 import { Console } from 'console';
 import { h, Component } from './lib/dom/preactComponent.js';

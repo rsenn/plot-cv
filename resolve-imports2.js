@@ -1,4 +1,4 @@
-mport { ReadFile, WriteFile } from './io-helpers.js';
+import { ReadFile, WriteFile } from './io-helpers.js';
 import inspect from 'inspect';
 import { define, isObject, memoize, unique } from './lib/misc.js';
 import { ECMAScriptParser } from './lib/ecmascript.js';
