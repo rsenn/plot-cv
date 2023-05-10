@@ -2,7 +2,7 @@ import { Console } from 'console';
 import { toString } from './lib/misc.js';
 import { Worker, close, exec, pipe, setReadHandler, sleep } from 'os';
 //import child_process from './lib/childProcess.js';
-import { assert, define, toString as ArrayBufferToString, btoa, keys } from './lib/misc.js';
+import { assert, define, toString as ArrayBufferToString, btoa, keys, error } from './lib/misc.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 import { readAll } from 'fs';
 import { Spawn, WriteFile } from './io-helpers.js';
@@ -53,16 +53,18 @@ export class DebuggerDispatcher {
   #seq = 0;
   #responses = {};
   #promise = null;
+  onclose = () => console.log('CLOSED');
+  onerror = ({ errno, message }) => console.log('ERROR', { errno, message });
 
-  constructor(conn, debug = process.env.DEBUG) {
+  constructor(conn) {
     // const orig = sock.onmessage;
 
-    console.log('DebuggerDispatcher', { conn, debug });
-    const copts = console.config({ maxStringLength: Infinity, maxArrayLength: Infinity });
+    console.log('DebuggerDispatcher', { conn });
+    const copts = console.config({ maxStringLength: Infinity, maxArrayLength: Infinity, compact: 100 });
 
-    (async function() {
-      for await(let msg of conn) {
-        if(debug) console.log('\x1b[38;5;28mRECEIVE\x1b[0m ', copts, msg);
+    conn
+      .process(msg => {
+        if(process.env.DEBUG) console.log('\x1b[38;5;220mRECEIVE\x1b[0m ', copts, msg);
 
         const { type, event, request_seq, body } = msg;
 
@@ -72,22 +74,31 @@ export class DebuggerDispatcher {
             break;
           case 'event':
             const name = event.type.slice(0, event.type.indexOf('Event')).toLowerCase();
-            const handler = conn['on' + name] ?? this['on' + name];
-            console.log('DebuggerDispatcher', { name, handler });
 
-            if(handler) handler.call(sock, event);
+            for(let obj of [this, conn]) {
+              const handler = obj['on' + name];
+
+              if(handler) {
+                if(handler.call(obj, event) === false) {
+                  if(obj['on' + name] === handler) delete obj['on' + name];
+                }
+                break;
+              }
+            }
             break;
           default:
-            console.log('DebuggerDispatcher', { msg });
+            //console.log('DebuggerDispatcher', { msg });
             if(sock.onmessage) sock.onmessage(msg);
             break;
         }
-      }
-      console.log('\x1b[38;5;129mCLOSED\x1b[0m ');
-    })();
+      })
+      .then(ret => {
+        if(ret == 0) this.onclose && this.onclose();
+        if(ret < 0) this.onerror && this.onerror(error());
+      });
 
     define(this, {
-      sendMessage: msg => (debug && console.log('\x1b[38;5;51mSEND\x1b[0m  ', copts, msg), conn.sendMessage((msg = JSON.stringify(msg))))
+      sendMessage: msg => (process.env.DEBUG && console.log('\x1b[38;5;33mSEND\x1b[0m    ', copts, msg), conn.sendMessage((msg = JSON.stringify(msg))))
     });
   }
 
@@ -105,13 +116,13 @@ export class DebuggerDispatcher {
   }
 
   async waitRun() {
+    process.env.DEBUG && console.log('\x1b[38;5;118mRUNNING\x1b[0m  ');
     this.running = true;
-    console.log('DebuggerDispatcher.running', this.running);
     const event = await waitEvent('stopped');
+    process.env.DEBUG && console.log('\x1b[38;5;124mSTOPPED\x1b[0m  ');
     this.running = false;
-    console.log('DebuggerDispatcher.stopped', event);
     const trace = await this.stackTrace();
-    return trace;
+    return [event, trace];
   }
 
   pause() {
@@ -157,8 +168,7 @@ export class DebuggerDispatcher {
     const prop = 'on' + name.toLowerCase();
 
     return new Promise(resolve => {
-      this[prop] = resolve;
-      console.log('waitEvent', { name, prop });
+      this[prop] = arg => (resolve(arg), false);
     });
   }
 

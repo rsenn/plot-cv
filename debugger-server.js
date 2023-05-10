@@ -2,7 +2,7 @@ import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
-import { tryCatch, filterKeys, isObject, bindMethods, decorate, daemon, atexit, getpid, toString, escape, quote, define, extendArray, getOpt, setInterval, clearInterval, memoize, lazyProperties, propertyLookup, types } from 'util';
+import { tryCatch, once, filterKeys, isObject, bindMethods, decorate, daemon, atexit, getpid, toString, escape, quote, define, extendArray, getOpt, setInterval, clearInterval, memoize, lazyProperties, propertyLookup, types } from 'util';
 import { Console } from './quickjs/qjs-modules/lib/console.js';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
@@ -133,31 +133,29 @@ export function ConnectDebugger(address, callback) {
   const dbg = {
     sock,
     addr,
-    [Symbol.asyncIterator]: () =>
-      new Repeater(async (push, stop) => {
-        let ret,
-          lenBuf = new ArrayBuffer(9);
-        console.log('Debugger[Symbol.asyncIterator]');
+    async process(callback) {
+      let ret,
+        lenBuf = new ArrayBuffer(9);
 
-        while((ret = await sock.recv(lenBuf, 0, 9)) > 0) {
-          let len = parseInt(toString(lenBuf, 0, ret), 16);
-          let dataBuf = new ArrayBuffer(len);
-          let offset = 0;
-          while(offset < len) {
-            if((ret = await sock.recv(dataBuf, offset, len - offset)) <= 0) {
-              sock.close();
-              console.log('sock.recv() =', ret);
-              break;
-            }
-            offset += ret;
+      while((ret = await sock.recv(lenBuf, 0, 9)) > 0) {
+        let len = parseInt(toString(lenBuf, 0, ret), 16);
+        let dataBuf = new ArrayBuffer(len);
+        let offset = 0;
+        while(offset < len) {
+          ret = await sock.recv(dataBuf, offset, len - offset);
+          if(ret <= 0) {
+            sock.close();
+            break;
           }
-          if(ret <= 0) break;
-          let obj = JSON.parse(toString(dataBuf));
-          push(obj);
+          offset += ret;
         }
-        console.log('sock.recv() =', ret);
-        stop(ret);
-      })
+        if(ret <= 0) break;
+        let s = toString(dataBuf);
+        let obj = JSON.parse(s);
+        callback(obj);
+      }
+      return ret;
+    }
   };
 
   /* if(callback) {
@@ -189,34 +187,23 @@ function NewDebugger(args, skipToMain = false, address) {
 
   os.sleep(500);
 
-  if(skipToMain)
-    files[script].match(/main$/gi).then(fns => {
-      console.log(
-        'matched /main$/gi',
-        fns.map(({ name }) => name)
-      );
-
-      dispatch.breakpoints(fns).then(() => dispatch.continue());
-    });
-
   const dbg = ConnectDebugger(address);
 
-  dbg.onstopped = async msg => {
-    /*switch (msg.type) {
-      case 'event': {
-        const { event } = msg;
-        console.log('\x1b[38;5;226mEVENT\x1b[0m ', msg);
+  if(skipToMain)
+    dbg.onstopped = once(async () => {
+      let fns = await files[script].match(/main$/gi);
+      console.log('matched /main$/gi', fns /*.map(({ name }) => name)*/);
 
-        switch (event.type) {
-          case 'StoppedEvent': {
-    */ const st = (globalThis.stack = await dispatch.stackTrace());
+      await dispatch.breakpoints(script, fns);
+      await dispatch.continue();
+    });
+
+  /* dbg.onstopped = async msg => {
+  const st = (globalThis.stack = await dispatch.stackTrace());
     let [top] = st;
     let { id, name, filename, line } = top;
     repl.printStatus(`#${id} ${name}@${filename}:${line}  ` + files[filename].line(line));
-    /*        break;
-          }
-        }*/
-  };
+  };*/
 
   define(dbg, { child, args });
 
@@ -238,7 +225,23 @@ function NewDebugger(args, skipToMain = false, address) {
           return await member.call(this, file, breakpoints);
         },
         async stackTrace(frame) {
-          return (await member.call(this, ...args)).map(frame => (typeof frame.filename == 'string' && (frame.filename = relative(absolute(frame.filename))), frame));
+          return (await member.call(this, frame)).map(frame => (typeof frame.filename == 'string' && (frame.filename = relative(absolute(frame.filename))), frame));
+        },
+        async waitRun() {
+          const [event, stack] = await member.call(this);
+          let [top] = stack;
+          let { id, name, filename, line } = top;
+          let params;
+          try {
+            params = (await files[script].functions).find(f => f.name == name)?.params;
+          } catch(e) {}
+          if(params) name += `(${params.join(', ')})`;
+
+          repl.printStatus(`#${(id + '').padStart(2)} at ${name.padEnd(30)} in ${filename}:${line}  ` + files[filename].line(line));
+
+          define(globalThis, { file: filename, line });
+
+          return [event, stack];
         },
         async variables(frame, scopes) {
           if(Array.isArray(frame)) {
@@ -261,7 +264,21 @@ function NewDebugger(args, skipToMain = false, address) {
   dispatch = globalThis.dispatch = new DebuggerDispatcher(dbg);
 
   Object.assign(globalThis, bindMethods(dispatch, DebuggerDispatcher.prototype, {}));
-  Object.assign(globalThis, { args, script: args[0] });
+  Object.assign(globalThis, {
+    args,
+    script: args[0],
+    async value(name) {
+      let stack = await dispatch.stackTrace();
+
+      for(let frame of stack) {
+        let { local } = await dispatch.variables(frame.id, 1);
+
+        let v = local.find(v => v.name == name);
+
+        return v;
+      }
+    }
+  });
 
   //  consume(dbg, dbg.onmessage);
 
@@ -720,6 +737,7 @@ function main(...args) {
             lazyProperties(
               {
                 line(i) {
+                  if(i === undefined) return '';
                   const { source, indexlist } = this;
                   const [start, end] = indexlist.slice(i - 1, i + 1);
                   return source.slice(start + (i > 1 ? 1 : 0), end);
