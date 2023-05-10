@@ -303,7 +303,8 @@ export function LogCall(fn, thisObj) {
 
 export function Spawn(file, args, options = {}) {
   let { block = true, usePath = true, cwd, stdio = ['inherit', 'inherit', 'inherit'], env, uid, gid } = options;
-  let child,parent = [...stdio];
+  let child,
+    parent = [...stdio];
 
   for(let i = 0; i < 3; i++) {
     if(stdio[i] == 'pipe') {
@@ -318,13 +319,13 @@ export function Spawn(file, args, options = {}) {
   const [stdin, stdout, stderr] = stdio;
 
   let pid = exec([file, ...args], { block, usePath, cwd, stdin, stdout, stderr, env, uid, gid });
-      console.log('exec(' + inspect([file, ...args])+ ', ...) =', pid);
+  console.log('exec(' + inspect([file, ...args]) + ', ...) =', pid);
 
   for(let i = 0; i < 3; i++) {
     if(typeof stdio[i] == 'number' && stdio[i] != i) close(stdio[i]);
   }
 
-   child= {
+  child = {
     pid,
     stdio: parent,
     get stdin() {
@@ -341,7 +342,7 @@ export function Spawn(file, args, options = {}) {
     },
     wait() {
       const { waiting, exited, termsig } = child;
-       
+
       if(!waiting) return [pid, (exited << 8) | termsig];
 
       assert(exited, undefined, 'exited');
@@ -350,9 +351,9 @@ export function Spawn(file, args, options = {}) {
       const [ret, status] = waitpid(pid, WNOHANG);
       const signal = status & 0x7f;
 
-      console.log('waitpid(' + pid + ', WNOHANG) =', [ret, status]);
-
       if(ret == pid) {
+        console.log('waitpid(' + pid + ', WNOHANG) =', [ret, status]);
+
         if(signal == 0) child.exited = (status >>> 8) & 0xff;
         else if(status & (0xff == 0x7f)) child.stopped = true;
         else child.termsig = signal;

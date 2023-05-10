@@ -74,6 +74,14 @@ function checkChildExited(pid, status) {
   return terminated ? (termsig ? `signalled ${signalName(termsig)}` : `exitcode ${exitcode}`) : null;
 }
 
+function GetLoc(node) {
+  if(node.loc?.start?.line) {
+    const { line, column } = node.loc.start;
+    const [charOffset] = node.range ?? [node.start];
+    return new Location(line, column + 1, charOffset);
+  }
+}
+
 function StartREPL(prefix = scriptName(), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
   repl.historyLoad(null);
@@ -85,7 +93,19 @@ function StartREPL(prefix = scriptName(), suffix = '') {
   let { show } = repl;
 
   repl.show = arg => {
-    if(isObject(arg) && arg[Symbol.for('print')]) return arg.toString ? arg.toString() : arg + '';
+    if(isObject(arg)) {
+      if(arg[Symbol.for('print')]) return arg.toString ? arg.toString() : arg + '';
+
+      if(Array.isArray(arg) && typeof arg[0] == 'object' && !Array.isArray(arg[0])) {
+        if(arg.length == 2 && Array.isArray(arg[1])) {
+          const [event, stack] = arg;
+          if(['type', 'reason'].every(k => k in event)) if (['id', 'name', 'line'].every(k => k in stack[0])) return [List([event]), List(stack)];
+        }
+
+        if(arg.length >= 2 && arg.map(item => Object.keys(item)).reduce((acc, keys, i) => (i == 0 ? keys : acc ? keys.equal(acc) && keys : false))) return repl.show(Table(arg));
+        if(arg.length >= 2 && Object.keys(arg[0]).some(key => arg.every(a => key in a))) return repl.show(Table(arg));
+      }
+    }
 
     return show.call(repl, arg);
   };
@@ -171,6 +191,100 @@ export function ConnectDebugger(address, callback) {
   return dbg;
 }
 
+async function PrintStackFrame(frame) {
+  if(frame === undefined) frame = 0;
+  if(typeof frame == 'number') frame = (await stackTrace())[frame];
+  //console.log('PrintStackFrame', frame);
+
+  let { id, name, filename, line } = frame;
+  let params;
+  try {
+    params = (await files[filename].functions).find(f => f.name == name)?.params;
+  } catch(e) {}
+  if(params) name += `(${params.join(', ')})`;
+  let loc = line !== undefined ? new Location(filename, line) : undefined;
+  let code = line !== undefined ? files[filename].line(line) : undefined;
+  return [`#${id}`, ` at ${name.padEnd(30)}`, loc ? ' in ' + loc : ''].concat(code ? [code] : []);
+}
+
+async function PrintStack(stack) {
+  stack ??= await stackTrace();
+  let frames = [];
+  for(let frame of stack) {
+    frames.push(await PrintStackFrame(frame));
+  }
+  return List(frames);
+}
+
+decorate(
+  (member, obj, prop) =>
+    ({
+      async breakpoints(...args) {
+        if(!(typeof args[0] == 'string')) args.unshift(globalThis.script);
+
+        let [file, breakpoints] = args;
+        file = absolute(file);
+
+        if(types.isPromise(breakpoints)) breakpoints = await breakpoints;
+
+        if(Array.isArray(breakpoints)) {
+          breakpoints = breakpoints.map(b => filterKeys(b, ['name', 'line']));
+        }
+
+        return await member.call(this, file, breakpoints);
+      },
+      async stackTrace(frame) {
+        return (await member.call(this, frame)).map(frame => (typeof frame.filename == 'string' && (frame.filename = relative(absolute(frame.filename))), frame));
+      },
+      async scopes(n) {
+        //let v = await this.variables(n);
+        //console.log('scopes', {v});
+        let stack = await this.stackTrace();
+        if(n >= stack.length) return null;
+        let scopes = [];
+        for(let scope of await member.call(this, n)) {
+          const variables = await this.variables(scope.reference);
+          scope.variables = variables.length;
+          scopes.push(scope);
+        }
+        return scopes;
+      },
+      async waitRun() {
+        const [event, stack] = await member.call(this);
+
+        PrintStackFrame(stack[0]);
+        const { filename, line } = stack[0];
+        define(globalThis, { file: filename, line });
+
+        return [event, stack];
+      },
+      async variables(n, depth = 0) {
+        const list = await member.call(this, n);
+        const ret = [];
+        const add = item => (item.variablesReference === 0 && delete item.variablesReference, ret.push(item));
+        for(let item of list) {
+          add(item);
+
+          if(depth > 0) {
+            if(item.variablesReference > 0) {
+              let children = await this.variables(item.variablesReference, depth - 1);
+              for(let child of children) {
+                if(!isNaN(child.name)) child.name = '  [' + child.name + ']';
+                else child.name = '  .' + child.name;
+
+                if(child.value?.startsWith('function ')) continue;
+                add(child);
+              }
+            }
+          }
+        }
+
+        return ret;
+      }
+    }[prop] || member),
+  DebuggerDispatcher.prototype
+);
+
 const mkaddr = (
   (port = 8777) =>
   () =>
@@ -207,66 +321,15 @@ function NewDebugger(args, skipToMain = false, address) {
 
   define(dbg, { child, args });
 
-  decorate(
-    (member, obj, prop) =>
-      ({
-        async breakpoints(...args) {
-          if(!(typeof args[0] == 'string')) args.unshift(globalThis.script);
-
-          let [file, breakpoints] = args;
-          file = absolute(file);
-
-          if(types.isPromise(breakpoints)) breakpoints = await breakpoints;
-
-          if(Array.isArray(breakpoints)) {
-            breakpoints = breakpoints.map(b => filterKeys(b, ['name', 'line']));
-          }
-
-          return await member.call(this, file, breakpoints);
-        },
-        async stackTrace(frame) {
-          return (await member.call(this, frame)).map(frame => (typeof frame.filename == 'string' && (frame.filename = relative(absolute(frame.filename))), frame));
-        },
-        async waitRun() {
-          const [event, stack] = await member.call(this);
-          let [top] = stack;
-          let { id, name, filename, line } = top;
-          let params;
-          try {
-            params = (await files[script].functions).find(f => f.name == name)?.params;
-          } catch(e) {}
-          if(params) name += `(${params.join(', ')})`;
-
-          repl.printStatus(`#${(id + '').padStart(2)} at ${name.padEnd(30)} in ${filename}:${line}  ` + files[filename].line(line));
-
-          define(globalThis, { file: filename, line });
-
-          return [event, stack];
-        },
-        async variables(frame, scopes) {
-          if(Array.isArray(frame)) {
-            let arr = [];
-            for(let fr of frame) arr.push(await this.variables(fr, scopes));
-            return arr;
-          }
-          let vars = {};
-          if(!Array.isArray(scopes)) scopes = scopes ? [scopes] : [0, 1, 2];
-
-          for(let scope of scopes) {
-            vars[['global', 'local', 'closure'][scope]] = await member.call(this, frame * 4 + scope);
-          }
-          return vars;
-        }
-      }[prop] || member),
-    DebuggerDispatcher.prototype
-  );
-
   dispatch = globalThis.dispatch = new DebuggerDispatcher(dbg);
 
   Object.assign(globalThis, bindMethods(dispatch, DebuggerDispatcher.prototype, {}));
   Object.assign(globalThis, {
     args,
     script: args[0],
+    GetLoc,
+    PrintStackFrame,
+    PrintStack,
     async value(name) {
       let stack = await dispatch.stackTrace();
 
@@ -491,9 +554,7 @@ function main(...args) {
                 child = ws.child = StartDebugger(args, connect, address);
                 const { stdout, stderr } = child;
                 for(let fd of [stdout, stderr]) {
-                  //console.log(`fcntl(${fd}, F_GETFL)`);
                   let flags = fcntl(fd, F_GETFL);
-                  //console.log(`fcntl(${fd}, F_SETFL, 0x${flags.toString(16)})`);
                   flags |= O_NONBLOCK;
                   fcntl(fd, F_SETFL, flags);
                 }
@@ -569,51 +630,46 @@ function main(...args) {
                   console.log('child', child);
                 });
                 console.log('dbg', dbg);
-                os.setWriteHandler(+dbg, async () => {
-                  os.setWriteHandler(+dbg, null);
-                  console.log(`connected to ${address}`, dbg);
+                sockets.add(dbg);
 
-                  sockets.add(dbg);
+                const cwd = process.cwd();
+                let connected;
 
-                  const cwd = process.cwd();
-                  ws.sendMessage({
-                    type: 'response',
-                    response: {
-                      command: 'start',
-                      args,
-                      cwd,
-                      address
-                    }
-                  });
-
-                  let msg;
-
-                  while(dbg.open) {
-                    try {
-                      msg = await DebuggerProtocol.read(dbg);
-                      console.log('DebuggerProtocol.read() =', msg);
-                      if(typeof msg == 'string') {
-                        let ret;
-                        ret = ws.send(msg);
-                        console.log(`ws.send(${quote(msg, "'")}) = ${ret}`);
-                      } else {
-                        console.log('closed socket', dbg);
-                        sockets.delete(dbg);
-                        ws.sendMessage({
-                          type: 'end',
-                          reason: 'closed'
-                        });
+                dbg.process(msg => {
+                  if(!connected) {
+                    connected = true;
+                    ws.sendMessage({
+                      type: 'response',
+                      response: {
+                        command: 'start',
+                        args,
+                        cwd,
+                        address
                       }
-                    } catch(error) {
-                      const { message, stack } = error;
+                    });
+                  }
+                  try {
+                    console.log('Debugger.read() =',console.config({compact: false,maxStringLength: 200}), msg);
+                    msg=JSON.stringify(msg);
+                    if(typeof msg == 'string') {
+                      let ret;
+                      ret = ws.send(msg);
+                      console.log(`ws.send(${quote(msg, "'")}) = ${ret}`);
+                    } else {
+                      console.log('closed socket', dbg);
+                      sockets.delete(dbg);
                       ws.sendMessage({
-                        type: 'error',
-                        error: { message, stack }
+                        type: 'end',
+                        reason: 'closed'
                       });
-                      dbg.close();
-                      break;
                     }
-                    if(msg === null) break;
+                  } catch(error) {
+                    const { message, stack } = error;
+                    ws.sendMessage({
+                      type: 'error',
+                      error: { message, stack }
+                    });
+                    dbg.close();
                   }
                 });
                 console.log('dbg', dbg);
@@ -651,8 +707,9 @@ function main(...args) {
                 break;
               }
               default: {
-                console.log('send to debugger', data);
-                DebuggerProtocol.send(dbg, data);
+                console.log('send to debugger', {command, data});
+                dbg.sendMessage(data);
+                //DebuggerProtocol.send(dbg, data);
                 break;
               }
             }
@@ -740,7 +797,11 @@ function main(...args) {
                   if(i === undefined) return '';
                   const { source, indexlist } = this;
                   const [start, end] = indexlist.slice(i - 1, i + 1);
-                  return source.slice(start + (i > 1 ? 1 : 0), end);
+                  let line = source.slice(start + (i > 1 ? 1 : 0), end);
+
+                  if([...line.matchAll(/\x1b([^A-Za-z]*[A-Za-z])/g)].last != '\x1b[0m') line += '\x1b[0m';
+
+                  return line;
                 },
                 match(re) {
                   if(typeof re == 'string') re = new RegExp(re, 'gi');
@@ -770,9 +831,17 @@ function main(...args) {
         )
       )
     ),
-    async repeat(n, fn, ...args) {
+    async repeat(cond, fn, ...args) {
       let r;
-      for(let i = 0; i < n; i++) r = await fn(...args);
+      if(typeof cond == 'number') {
+        let n = cond;
+        cond = (r, i) => i >= n || r === true;
+      }
+      for(let i = 0; ; i++) {
+        r = await fn(...args);
+
+        if(cond(r, i)) break;
+      }
       return r;
     },
     repl: StartREPL(),

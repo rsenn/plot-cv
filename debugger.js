@@ -21,7 +21,7 @@ export function ECMAScriptSyntaxHighlighter(input, filename) {
   let prev = 0,
     s = '';
   consumeSync(lexer.values(), ({ id, type, lexeme }) => {
-    const color = {
+    let color = {
       shebang: 32,
       comment: 32,
       regexpLiteral: 35,
@@ -37,12 +37,17 @@ export function ECMAScriptSyntaxHighlighter(input, filename) {
       keyword: 31,
       identifier: 33,
       privateIdentifier: 33,
-      whitespace: 0
+      whitespace: false
     }[type];
 
-    if(color || lexeme.indexOf('\n') != -1) if (prev != color) lexeme = '\x1b[' + (color ? '1;' : '') + color + 'm' + lexeme;
+    if(lexeme.indexOf('\n') != -1) color = 0;
+
+    if(color !== false) {
+      if(prev != color) lexeme = '\x1b[' + (color ? '1;' : '') + color + 'm' + lexeme;
+      prev = color;
+    }
+
     s += lexeme;
-    if(color) prev = color;
   });
 
   if(prev) s += '\x1b[0m';
