@@ -357,7 +357,7 @@ function main(...args) {
   ];
 
   let { log } = console;
-  repl.show = arg => std.puts((typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options)) + '\n');
+  repl.show = arg => typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options) + '\n';
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();

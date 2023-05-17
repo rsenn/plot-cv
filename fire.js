@@ -626,7 +626,7 @@ function main() {
 
   Object.assign(globalThis, { RandomByte });
 
-  globalThis.ws = (globalThis.rws ??= NewWS({
+  NewWS({
     onOpen() {
       console.log('WS connected!');
       /* if(!globalThis.cid) 
@@ -636,7 +636,7 @@ function main() {
 
       SendWS({ type: 'rects', cid, rects: GetRects() });
     }
-  })).ws;
+  });
 
   let str = '';
   let xpos = 0;
@@ -878,16 +878,25 @@ function ReplayTrail(trail, time = performance.now() + 20) {
 
 function NewWS(handlers) {
   let url = WebSocketURL('/ws', { mirror: currentFile });
-  let ws = new ReconnectingWebSocket(url, 'lws-mirror-protocol', handlers ?? {});
+  let rws = new ReconnectingWebSocket(url, 'lws-mirror-protocol', handlers ?? {});
+
+  define(globalThis, {
+    get ws() {
+      return rws.socket;
+    }
+  });
 
   (async function() {
     let chunks = '',
       data;
-    for await(let chunk of ws) {
+    for await(let chunk of rws) {
       chunks += chunk;
 
       if(/}\s*$/.test(chunks)) {
-        if(!(data = globalThis.received = ParseJSON(chunks))) continue;
+        if(!(data = ParseJSON(chunks))) {
+          chunks = chunks.slice(chunks.indexOf('{'));
+          continue;
+        }
 
         if(data.type != 'event') if (!data.cid || globalThis.cid != data.cid) console.log('WS receive:', data);
 
@@ -912,6 +921,10 @@ function NewWS(handlers) {
             SendWS({ type: 'result', ...(exception ? { error: exception.message } : { result }) });
             break;
           }
+          default: {
+            console.log('WS received:', data);
+            break;
+          }
         }
 
         chunks = '';
@@ -919,7 +932,7 @@ function NewWS(handlers) {
     }
   })();
 
-  return (globalThis.ws = ws);
+  return rws;
 }
 
 function MakeUUID(rng = Math.random) {

@@ -6,15 +6,15 @@ import { SEEK_END, loadFile, open as fopen, out as stdout, popen } from 'std';
 
 let bjson;
 
-import('bjson') .then(m => (bjson = m)) .catch(() => {});
+//import('bjson') .then(m => (bjson = m)) .catch(() => {});
 
 let mmap;
 
-import('mmap') .then(m => (mmap = m)) .catch(() => {});
+//import('mmap') .then(m => (mmap = m)) .catch(() => {});
 
 let xml;
 
-import('xml') .then(m => (xml = m)) .catch(() => {});
+//import('xml') .then(m => (xml = m)) .catch(() => {});
 
 export function IfDebug(token) {
   const { DEBUG = '' } = globalThis.process ? globalThis.process.env : {}; //getenviron();

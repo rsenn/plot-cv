@@ -357,8 +357,8 @@ function ResolveImports(source, log = () => {}, recursive, depth = 0) {
     if(!token) break;
 
     const { length, seq } = token;
-    /*  if(debug > 1) console.log('token', token);
-    if(debug >= 1) console.log('lexer.mode', lexer.mode);
+     if(debug > 1) console.log('token', token);
+   /*  if(debug >= 1) console.log('lexer.mode', lexer.mode);
 */
     if(n == 0 && token.lexeme == '}' && lexer.stateDepth > 0) {
       lexer.popState();

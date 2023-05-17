@@ -2,7 +2,7 @@ import { Console } from 'console';
 import { toString } from './lib/misc.js';
 import { Worker, close, exec, pipe, setReadHandler, sleep } from 'os';
 //import child_process from './lib/childProcess.js';
-import { assert, define, toString as ArrayBufferToString, btoa, keys, error } from './lib/misc.js';
+import { assert, define, toString as ArrayBufferToString, btoa, keys, error, isFunction} from './lib/misc.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 import { readAll } from 'fs';
 import { Spawn, WriteFile } from './io-helpers.js';
@@ -66,9 +66,10 @@ export class DebuggerDispatcher {
 
     console.log('DebuggerDispatcher', { conn });
     const copts = console.config({ maxStringLength: Infinity, maxArrayLength: Infinity, compact: 100 });
+let ret;
 
-    conn
-      .process(msg => {
+    try {
+     let v=  conn.process(msg => {
         if(process.env.DEBUG) console.log('\x1b[38;5;220mRECEIVE\x1b[0m ', copts, msg);
 
         const { type, event, request_seq, body } = msg;
@@ -96,11 +97,18 @@ export class DebuggerDispatcher {
             if(sock.onmessage) sock.onmessage(msg);
             break;
         }
-      })
-      .then(ret => {
-        if(ret == 0) this.onclose && this.onclose();
-        if(ret < 0) this.onerror && this.onerror(error());
       });
+      console.log('process(handler) returned:',v);
+
+     isFunction(v.then) && v.then(r => ret=r);
+    } catch(err) {
+      console.log('process(handler) threw:', err.message + '\n' + err.stack);
+      ret = -1;
+    } finally {
+      if(ret == 0) isFunction(this.onclose) && this.onclose();
+      if(ret < 0) isFunction(this.onerror) && this.onerror(error());
+      console.log('process(handler) function returned:', ret);
+    }
 
     define(this, {
       sendMessage: msg => (process.env.DEBUG && console.log('\x1b[38;5;33mSEND\x1b[0m    ', copts, msg), conn.sendMessage((msg = JSON.stringify(msg))))

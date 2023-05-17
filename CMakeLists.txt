@@ -428,6 +428,7 @@ add_custom_target(
   COMMENT "Install into directory")
 
 install(FILES 
+  meriyah.js
        eagle2gerber.js xml2react.js
        convert-imports.js create-tamper.js cv-shell.js eagle2svg.js eagle-shell.js extract-structs.js takephoto.js xml2js.js
         DESTINATION bin

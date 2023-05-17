@@ -153,28 +153,33 @@ export function ConnectDebugger(address, callback) {
   const dbg = {
     sock,
     addr,
-    async process(callback) {
+    async  process(callback) {
       let ret,
         lenBuf = new ArrayBuffer(9);
-
-      while((ret = await sock.recv(lenBuf, 0, 9)) > 0) {
-        let len = parseInt(toString(lenBuf, 0, ret), 16);
-        let dataBuf = new ArrayBuffer(len);
-        let offset = 0;
-        while(offset < len) {
-          ret = await sock.recv(dataBuf, offset, len - offset);
-          if(ret <= 0) {
-            sock.close();
-            break;
+      try {
+        while((ret = await sock.recv(lenBuf, 0, 9)) > 0) {
+          let len = parseInt(toString(lenBuf, 0, ret), 16);
+          let dataBuf = new ArrayBuffer(len);
+          let offset = 0;
+          while(offset < len) {
+            ret = await sock.recv(dataBuf, offset, len - offset);
+            if(ret <= 0) {
+              sock.close();
+              break;
+            }
+            offset += ret;
           }
-          offset += ret;
+          if(ret <= 0) break;
+          let s = toString(dataBuf);
+          let obj = JSON.parse(s);
+          callback(obj);
         }
-        if(ret <= 0) break;
-        let s = toString(dataBuf);
-        let obj = JSON.parse(s);
-        callback(obj);
+      } catch(error) {
+        console.log('Socket error:');
+      } finally {
+        sock.close();
+        return ret;
       }
-      return ret;
     }
   };
 
@@ -508,12 +513,12 @@ function main(...args) {
           const { method, headers } = req;
           //console.log('\x1b[38;5;33monRequest\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
           const { body, url } = resp;
-          //console.log('\x1b[38;5;33monRequest\x1b[0m', { body });
 
           const file = url.path.slice(1);
           const dir = file.replace(/\/[^\/]*$/g, '');
+         console.log('\x1b[38;5;33monRequest\x1b[0m', { file,dir, body });
 
-          if(file.endsWith('.js')) {
+          if(file.endsWith('.js') && resp.body) {
             //console.log('onRequest', { file, dir });
             const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
 
@@ -649,8 +654,8 @@ function main(...args) {
                     });
                   }
                   try {
-                    console.log('Debugger.read() =',console.config({compact: false,maxStringLength: 200}), msg);
-                    msg=JSON.stringify(msg);
+                    console.log('Debugger.read() =', console.config({ compact: false, maxStringLength: 200 }), msg);
+                    msg = JSON.stringify(msg);
                     if(typeof msg == 'string') {
                       let ret;
                       ret = ws.send(msg);
@@ -707,8 +712,8 @@ function main(...args) {
                 break;
               }
               default: {
-                console.log('send to debugger', {command, data});
-                dbg.sendMessage(data);
+                console.log('send to debugger', { command, data });
+                ws.dbg.sendMessage(data);
                 //DebuggerProtocol.send(dbg, data);
                 break;
               }
