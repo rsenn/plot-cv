@@ -1,4 +1,4 @@
-mport { ReadFile, WriteFile } from './io-helpers.js';
+import { ReadFile, WriteFile } from './io-helpers.js';
 import * as std from 'std';
 import * as fs from 'fs';
 import * as path from 'path';

@@ -2,7 +2,7 @@ import * as glfw from 'glfw';
 import { context, poll, Position, Window, CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_PROFILE, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, RESIZABLE, SAMPLES } from 'glfw';
 import { glClear, glClearColor, glViewport, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT } from './gl.js';
 import { HSLA } from './lib/color.js';
-import { Mat, Point, Size, Rect,imread } from 'opencv';
+import { Mat, Point, Size, Rect, imread } from 'opencv';
 import * as cv from 'opencv';
 import * as nvg from 'nanovg';
 import Console from 'console';
@@ -57,10 +57,9 @@ function main(...args) {
       }
     };
 
-     window.handleCharMods  = (char, mods) => {
-        console.log(`handleCharMods`, { char, mods });
-      };
-
+    window.handleCharMods = (char, mods) => {
+      console.log(`handleCharMods`, { char, mods });
+    };
   } else {
     context = new GLFW(1280, 900, {
       title: scriptArgs[0],
@@ -108,16 +107,13 @@ function main(...args) {
 
   let mat = new Mat(new Size(width, height), cv.CV_8UC4);
 
-
   mat.setTo([11, 22, 33, 255]);
-
 
   let image2 = cv.imread('Architektur.png');
 
-cv.cvtColor(image2, image2, cv.COLOR_BGR2BGRA);
- 
-  image2.copyTo(mat(new Rect(image2.size)));
+  cv.cvtColor(image2, image2, cv.COLOR_BGR2BGRA);
 
+  image2.copyTo(mat(new Rect(image2.size)));
 
   cv.drawLine(mat, new Point(10, 10), new Point(size.width - 10, size.height - 10), [255, 255, 0, 255], 4, cv.LINE_AA);
   cv.drawLine(mat, new Point(size.width - 10, 10), new Point(10, size.height - 10), [255, 0, 0, 255], 4, cv.LINE_AA);
@@ -149,8 +145,8 @@ cv.cvtColor(image2, image2, cv.COLOR_BGR2BGRA);
 
   console.log('FPS:');
 
-  let floatValue=0.0,alphaValue=127;
-
+  let floatValue = 0.0,
+    alphaValue = 127;
 
   while((running &&= !window.shouldClose)) {
     let index = Math.floor(timer.ticks(360) / 30);
@@ -167,7 +163,7 @@ cv.cvtColor(image2, image2, cv.COLOR_BGR2BGRA);
     nvg.CurrentTransform((m = []));
 
     let p, a;
- p=   nvg.TransformIdentity();
+    p = nvg.TransformIdentity();
 
     //   nvg.Scale(2,1);
 
@@ -177,7 +173,7 @@ cv.cvtColor(image2, image2, cv.COLOR_BGR2BGRA);
       nvg.TransformRotate(((timer.ticks(200) % 360) * Math.PI) / 180),
       nvg.TransformRotate(nvg.DegToRad(45)),
       nvg.TransformScale(2, 0.5),
-      nvg.TransformRotate(nvg.DegToRad(-45)),
+      nvg.TransformRotate(nvg.DegToRad(-45))
     );
     //console.log('Transform', p);
 
@@ -224,10 +220,9 @@ cv.cvtColor(image2, image2, cv.COLOR_BGR2BGRA);
 
     ImGui.Text('Adjust values for this processing step:');
 
-    ImGui.DragFloat('Value', val => (val === undefined ? floatValue : (floatValue = val)), 0.0, 1.0, "%.3f");
-    ImGui.SliderFloat('Value', val => (val === undefined ? floatValue : (floatValue = val)), 0.0, 1.0, "%.3f");
-    ImGui.SliderInt('Alpha', val => (val === undefined ? Math.floor(alphaValue) : (alphaValue = Math.floor(val))),0, 255);
-
+    ImGui.DragFloat('Value', val => (val === undefined ? floatValue : (floatValue = val)), 0.0, 1.0, '%.3f');
+    ImGui.SliderFloat('Value', val => (val === undefined ? floatValue : (floatValue = val)), 0.0, 1.0, '%.3f');
+    ImGui.SliderInt('Alpha', val => (val === undefined ? Math.floor(alphaValue) : (alphaValue = Math.floor(val))), 0, 255);
 
     ImGui.End();
 
@@ -252,6 +247,6 @@ cv.cvtColor(image2, image2, cv.COLOR_BGR2BGRA);
 try {
   main(...scriptArgs.slice(1));
 } catch(error) {
-  console.log(error ? `FAIL: ${error.message}\n${error.stack}` : `FAIL: ${error}`);
+  console.log(error ? 'FAIL: ' + error.message + '\n' + error.stack : 'FAIL: ' + error);
   std.exit(1);
 }

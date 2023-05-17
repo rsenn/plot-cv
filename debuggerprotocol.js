@@ -1,14 +1,12 @@
-import { ReadFile } from './io-helpers.js';
+/*import { ReadFile } from './io-helpers.js';*/
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
 import { toString, define, escape, quote } from './lib/misc.js';
-import { EventEmitter } from './lib/events.js';
 
 const cfg = (obj = {}) => console.config({ compact: false, breakLength: Infinity, ...obj });
 
-export class DebuggerProtocol extends EventEmitter {
+export class DebuggerProtocol {
   constructor(sock) {
-    super();
     define(this, { sock });
     this.seq = 0;
     this.requests = new Map();
@@ -26,7 +24,7 @@ export class DebuggerProtocol extends EventEmitter {
     }
   }
 
-  getFile(filename) {
+  /*getFile(filename) {
     const { files } = this;
     if(!(filename in files)) {
       let data = ReadFile(filename, 'utf-8');
@@ -35,7 +33,7 @@ export class DebuggerProtocol extends EventEmitter {
       files[filename] = data;
     }
     return files[filename];
-  }
+  }*/
 
   handleResponse(message) {
     const { type, request_seq, ...response } = message;
@@ -152,8 +150,9 @@ export class DebuggerProtocol extends EventEmitter {
     }
     let len = toString(lengthBuf);
     let size = parseInt(len, 16);
+    //console.log('async DebuggerProtocol.read', {r,len,size });
     let jsonBuf = new ArrayBuffer(size);
-    console.log('read size', isNaN(size) ? quote(len, "'") : size);
+    // console.log('read size', isNaN(size) ? quote(len, "'") : size);
     let n = 0;
     while(n < size) {
       r = await sock.recv(jsonBuf, n, size - n);
@@ -164,10 +163,12 @@ export class DebuggerProtocol extends EventEmitter {
       n += r;
     }
     //console.log('read r =', r);
+    console.log('async DebuggerProtocol.read', { r, len, size });
     return toString(jsonBuf.slice(0, n));
   }
 
   static send(sock, msg) {
+    console.log('DebuggerProtocol.send', { sock, msg });
     const data = toHex(msg.length, 8) + '\n' + msg;
     console.log('data', escape(data));
     return sock.send(data);

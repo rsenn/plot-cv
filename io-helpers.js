@@ -1,16 +1,8 @@
 import * as path from './lib/path.js';
-import { define, weakDefine, properties, types, toString, quote, escape, predicate } from './lib/misc.js';
-
-weakDefine(
-  globalThis,
-  properties(
-    {
-      os: () => process.importModule('os'),
-      std: () => process.importModule('std')
-    },
-    { memoize: true }
-  )
-);
+import { strerror } from 'std';
+import { define, weakDefine, properties, types, toString, quote, escape, predicate, error, assert } from './lib/misc.js';
+import { O_CREAT, O_RDONLY, O_TRUNC, O_WRONLY, WNOHANG, close, exec, open, pipe, read, setReadHandler, stat, waitpid, write } from 'os';
+import { SEEK_END, loadFile, open as fopen, out as stdout, popen } from 'std';
 
 let bjson;
 
@@ -45,7 +37,7 @@ export function ReadFd(fd, binary) {
   let out = '';
 
   for(;;) {
-    let ret = os.read(fd, ab, 0, ab.byteLength);
+    let ret = read(fd, ab, 0, ab.byteLength);
 
     if(ret <= 0) break;
 
@@ -57,7 +49,7 @@ export function ReadFd(fd, binary) {
 }
 
 export function IsStdio(obj) {
-  return Object.getPrototypeOf(obj) === Object.getPrototypeOf(std.out);
+  return Object.getPrototypeOf(obj) === Object.getPrototypeOf(stdout);
 }
 
 export function ReadClose(file, binary) {
@@ -80,12 +72,12 @@ export function ReadClose(file, binary) {
 }
 
 export function ReadFile(name, binary) {
-  if(!binary || binary == 'utf-8') return std.loadFile(name);
+  if(!binary || binary == 'utf-8') return loadFile(name);
 
   let f;
 
-  if((f = std.open(name, 'rb'))) {
-    f.seek(0, std.SEEK_END);
+  if((f = fopen(name, 'rb'))) {
+    f.seek(0, SEEK_END);
     let size = f.tell();
     let buf = new ArrayBuffer(size);
     let ret = f.read(buf, 0, size);
@@ -133,17 +125,20 @@ export function ReadXML(filename) {
 }
 
 export function MapFile(filename) {
-  let fd = os.open(filename, os.O_RDONLY);
-  let { size } = os.stat(filename)[0];
+  let fd = open(filename, O_RDONLY);
+  let { size } = stat(filename)[0];
   debug(`MapFile`, { filename, fd, size });
   let data = mmap.mmap(0, size + 10, mmap.PROT_READ, mmap.MAP_PRIVATE, fd, 0);
-  os.close(fd);
+  close(fd);
   return data;
 }
 
 export function WriteFile(file, data) {
-  let f = std.open(file, 'w+');
+  let f = fopen(file, 'w+');
   let r = typeof data == 'string' ? f.puts(data) : f.write(data, 0, data.byteLength);
+
+  if(f.error()) throw new Error(`Error writing file '${file}': ${strerror(error().errno)}`);
+  f.close();
 
   console.log('Wrote "' + file + '": ' + data.length + ' bytes' + ` (${r})`);
 }
@@ -151,7 +146,7 @@ export function WriteFile(file, data) {
 export function WriteFd(fd, data, offset, length) {
   if(typeof data == 'string') data = toArrayBuffer(data);
 
-  return os.write(fd, data, offset ?? 0, length ?? data.byteLength);
+  return write(fd, data, offset ?? 0, length ?? data.byteLength);
 }
 
 export function WriteClose(file, data, offset, length) {
@@ -183,26 +178,26 @@ export function WriteXML(name, data, ...args) {
 }
 
 export function ReadBJSON(filename) {
-  let fd = os.open(filename, os.O_RDONLY);
-  let { size } = os.stat(filename)[0];
+  let fd = open(filename, O_RDONLY);
+  let { size } = stat(filename)[0];
   debug(`ReadBJSON`, { filename, fd, size });
   let data = mmap.mmap(0, size + 10, mmap.PROT_READ, mmap.MAP_PRIVATE, fd, 0);
   debug(`ReadBJSON`, { data });
   let ret = bjson.read(data, 0, size);
 
   mmap.munmap(data);
-  os.close(fd);
+  close(fd);
   return ret;
 }
 
 export function WriteBJSON(name, data) {
   let buf = bjson.write(data);
   let size = buf.byteLength;
-  let fd = os.open(name, os.O_WRONLY | os.O_CREAT | os.O_TRUNC);
+  let fd = open(name, O_WRONLY | O_CREAT | O_TRUNC);
 
-  let ret = os.write(fd, buf, 0, size);
+  let ret = write(fd, buf, 0, size);
   debug('WriteBJSON', { name, fd, size, ret });
-  os.close(fd);
+  close(fd);
 
   return ret;
 }
@@ -221,7 +216,7 @@ export function SortFiles(arr, field = 'ctime') {
 
 export function* StatFiles(gen) {
   for(let file of gen) {
-    let [stat, err] = os.stat(file);
+    let [stat, err] = stat(file);
     let obj = define(
       { file, stat },
       {
@@ -256,13 +251,13 @@ export async function* FdReader(fd, bufferSize = 1024) {
   do {
     let r = await waitRead(fd);
     console.log('r', r);
-    ret = typeof fd == 'number' ? await os.read(fd, buf, 0, bufferSize) : await fd.read(buf, 0, bufferSize);
+    ret = typeof fd == 'number' ? await read(fd, buf, 0, bufferSize) : await fd.read(buf, 0, bufferSize);
     if(ret > 0) {
       let data = buf.slice(0, ret);
       yield toString(data);
     }
   } while(ret == bufferSize);
-  typeof fd == 'number' ? await os.close(fd) : fd.close();
+  typeof fd == 'number' ? await close(fd) : fd.close();
   return;
 }
 
@@ -273,8 +268,8 @@ export function CopyToClipboard(text) {
     let child = child_process.spawn('xclip', ['-in', '-verbose'], { env, stdio: ['pipe', 'inherit', 'inherit'] });
     let [pipe] = child.stdio;
 
-    let written = os.write(pipe, text, 0, text.length);
-    os.close(pipe);
+    let written = write(pipe, text, 0, text.length);
+    close(pipe);
     let status = child.wait();
     console.log('child', child);
     return { written, status };
@@ -283,11 +278,11 @@ export function CopyToClipboard(text) {
 
 export function ReadCallback(fd, fn = data => {}) {
   let buf = new ArrayBuffer(1024);
-  os.setReadHandler(fd, () => {
-    let r = os.read(fd, buf, 0, 1024);
+  setReadHandler(fd, () => {
+    let r = read(fd, buf, 0, 1024);
     if(r <= 0) {
-      os.close(fd);
-      os.setReadHandler(fd, null);
+      close(fd);
+      setReadHandler(fd, null);
       return;
     }
     let data = buf.slice(0, r);
@@ -301,23 +296,19 @@ export function LogCall(fn, thisObj) {
   return function(...args) {
     let result;
     result = fn.apply(thisObj ?? this, args);
-    console.log(
-      'Function ' + name + '(',
-      ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })),
-      ') =',
-      result
-    );
+    console.log('Function ' + name + '(', ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })), ') =', result);
     return result;
   };
 }
 
 export function Spawn(file, args, options = {}) {
   let { block = true, usePath = true, cwd, stdio = ['inherit', 'inherit', 'inherit'], env, uid, gid } = options;
-  let parent = [...stdio];
+  let child,
+    parent = [...stdio];
 
   for(let i = 0; i < 3; i++) {
     if(stdio[i] == 'pipe') {
-      let [r, w] = os.pipe();
+      let [r, w] = pipe();
       stdio[i] = i == 0 ? r : w;
       parent[i] = i == 0 ? w : r;
     } else if(stdio[i] == 'inherit') {
@@ -327,12 +318,14 @@ export function Spawn(file, args, options = {}) {
 
   const [stdin, stdout, stderr] = stdio;
 
-  let pid = os.exec([file, ...args], { block, usePath, cwd, stdin, stdout, stderr, env, uid, gid });
+  let pid = exec([file, ...args], { block, usePath, cwd, stdin, stdout, stderr, env, uid, gid });
+  console.log('exec(' + inspect([file, ...args]) + ', ...) =', pid);
+
   for(let i = 0; i < 3; i++) {
-    if(typeof stdio[i] == 'number' && stdio[i] != i) os.close(stdio[i]);
+    if(typeof stdio[i] == 'number' && stdio[i] != i) close(stdio[i]);
   }
 
-  return {
+  child = {
     pid,
     stdio: parent,
     get stdin() {
@@ -344,26 +337,41 @@ export function Spawn(file, args, options = {}) {
     get stderr() {
       return this.stdio[2];
     },
+    get waiting() {
+      return this.exited === undefined && this.termsig === undefined && this.stopped === undefined;
+    },
     wait() {
-      let [ret, status] = os.waitpid(this.pid, os.WNOHANG);
+      const { waiting, exited, termsig } = child;
+
+      if(!waiting) return [pid, (exited << 8) | termsig];
+
+      assert(exited, undefined, 'exited');
+      assert(termsig, undefined, 'signalled');
+
+      const [ret, status] = waitpid(pid, WNOHANG);
+      const signal = status & 0x7f;
+
+      if(ret == pid) {
+        console.log('waitpid(' + pid + ', WNOHANG) =', [ret, status]);
+
+        if(signal == 0) child.exited = (status >>> 8) & 0xff;
+        else if(status & (0xff == 0x7f)) child.stopped = true;
+        else child.termsig = signal;
+      }
+
+      if(ret < 0) throw new Error(`waitpid: ${strerror(-ret)}`);
+
       return [ret, status];
     }
   };
+
+  return child;
 }
 
 // 'https://www.discogs.com/sell/order/8369022-364'
 
 export function FetchURL(url, options = {}) {
-  let {
-    headers,
-    proxy,
-    cookies = 'cookies.txt',
-    range,
-    body,
-    version = '1.1',
-    tlsv,
-    'user-agent': userAgent
-  } = options;
+  let { headers, proxy, cookies = 'cookies.txt', range, body, version = '1.1', tlsv, 'user-agent': userAgent } = options;
 
   let args = Object.entries(headers ?? {})
     .reduce((acc, [k, v]) => acc.concat(['-H', `${k}: ${v}`]), [])
@@ -415,4 +423,14 @@ export function FetchURL(url, options = {}) {
   console.log('FetchURL', { /* output: escape(output), errors,*/ status });
 
   return output;
+}
+
+export function Shell(cmd) {
+  let f = popen(cmd, 'r');
+  let s = '';
+  while(!f.eof() && !f.error()) {
+    s += f.readAsString();
+  }
+  f.close();
+  return s;
 }

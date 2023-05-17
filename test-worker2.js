@@ -1,11 +1,9 @@
 /* os.Worker API test */
-import * as std from 'std';
-import * as os from 'os';
+import { Worker, setReadHandler } from 'os';
 import { Console } from 'console';
 import { assert } from 'util';
 
-var worker;
-var counter;
+let worker;
 
 function TestWorker() {
   globalThis.console = new Console({
@@ -14,44 +12,19 @@ function TestWorker() {
     prefix: '\x1b[38;5;220mPARENT\x1b[0m'
   });
 
-  worker = new os.Worker('./ws-worker.js');
+  worker = new Worker(scriptArgs[1] ?? './workertest.js');
 
-  worker.onmessage = HandleMessage;
+  worker.onmessage = e => console.log('worker.onmessage', e);
 
-  console.log('worker', worker);
-  console.log('worker', worker.onmessage);
+  setReadHandler(0, () => {
+    let source = process.stdin.getline();
 
-  /*  os.setReadHandler(0, () => {
-    let line = process.stdin.getline();
-
-    worker.postMessage({ line });
-  });*/
+    worker.postMessage({ source });
+  });
 }
 
-function HandleMessage(e) {
-  console.log('HandleMessage', e);
-  /*  var ev = e.data;
-  switch (ev.type) {
-    case 'num':
-      assert(ev.num, counter);
-      counter++;
-      if(counter == 10) {
-        let sab = new SharedArrayBuffer(10);
-        let buf = new Uint8Array(sab);
-        worker.postMessage({ type: 'sab', buf: buf });
-        counter = 0;
-      }
-      break;
-    case 'sab_done':
-      {
-        let buf = ev.buf;
-        assert(buf[2], 10);
-        worker.postMessage({ type: 'abort' });
-      }
-      break;
-    case 'done':
-      break;
-  }*/
+try {
+  TestWorker();
+} catch(err) {
+  console.log('ERROR: ' + err.message + '\n' + err.stack);
 }
-
-TestWorker();

@@ -127,7 +127,6 @@ function* walkContours(hier, id) {
     id = h[cv.HIER_NEXT];
   }
 }
-1;
 
 function main(...args) {
   let start;

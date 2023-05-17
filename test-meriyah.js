@@ -1,4 +1,4 @@
-mport { ReadFile, WriteFile } from './io-helpers.js';
+import { ReadFile, WriteFile } from './io-helpers.js';
 import { parseScript } from 'meriyah';
 import { Console } from 'console';
 import fs from 'fs';
