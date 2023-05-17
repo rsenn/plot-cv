@@ -394,6 +394,7 @@ byte_firstnot(const void* p, size_t len, unsigned char v) {
     if(*x != v) break;
   return x - (const unsigned char*)p;
 }
+
 size_t
 byte_lastnot(const void* p, size_t len, unsigned char v) {
   const unsigned char* x;
@@ -401,6 +402,7 @@ byte_lastnot(const void* p, size_t len, unsigned char v) {
     if(*x != v) break;
   return x - (const unsigned char*)p;
 }
+
 size_t
 bit_firstnot(unsigned char v, unsigned char b) {
   int i;
@@ -408,6 +410,7 @@ bit_firstnot(unsigned char v, unsigned char b) {
     if((v & 1) == !b) break;
   return i;
 }
+
 size_t
 bit_lastnot(unsigned char v, unsigned char b) {
   int i;
@@ -415,22 +418,26 @@ bit_lastnot(unsigned char v, unsigned char b) {
     if(!!(v & (1 << i)) == !b) break;
   return i >= 0 ? i : 8;
 }
+
 size_t
 firstnot(const void* p, size_t len, unsigned char v) {
  const char* x = p;
  size_t i = byte_firstnot(p, len, v);
  return i * 8 + bit_firstnot(x[i], v);
 }
+
 size_t
 lastnot(const void* p, size_t len, unsigned char v) {
  const unsigned char* x = p;
  size_t i = byte_lastnot(p, len, v);
  return i * 8 + bit_lastnot(x[i], v);
 }
+
 size_t
 bitsize(const void* p, size_t len) {
  return lastnot(p, len, 0xff) + 1 - firstnot(p, len, 0xff);
 }
+
 `;
 
   for(let include of includes) yield `#include "${include}"`;
@@ -914,6 +921,7 @@ function GetImports(ast = $.data) {
   }
   return r;
 }
+
 function GetIdentifiers(nodes, key = null) {
   const r = [];
   for(let node of nodes) {

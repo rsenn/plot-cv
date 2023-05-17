@@ -49,6 +49,7 @@ async function importModule(moduleName, ...args) {
     });
   // while(!done) std.sleep(50);
 }
+
 function StartREPL(prefix = path.basename(scriptArgs[0], '.js'), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, undefined, false);
    repl.historyLoad(getConfFile('history'));

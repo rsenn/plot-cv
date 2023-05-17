@@ -26,6 +26,7 @@ function concat(...args) {
     )
     .flat();
 }
+
 const URLS = [
   'https://repo.msys2.org/mingw/i686/mingw32.db',
   'https://repo.msys2.org/mingw/x86_64/mingw64.db',

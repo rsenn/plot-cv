@@ -7,6 +7,7 @@ function wrap(parser, name) {
     return r;
   };
 }
+
 function ini(...args) {
   return wrap(seq(any(choice(LINE_COMMENT, section)), eof()), 'ini')(...args);
 }

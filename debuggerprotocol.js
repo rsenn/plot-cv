@@ -225,6 +225,7 @@ function toHex(n, b = 2) {
   let s = (+n).toString(16);
   return '0'.repeat(Math.ceil(s.length / b) * b - s.length) + s;
 }
+
 function MakeArray(buf, numBytes) {
   switch (numBytes) {
     case 8:

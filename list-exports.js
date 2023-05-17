@@ -66,11 +66,13 @@ function DumpLexer(lex) {
 
   return 'Lexer ' + inspect({ start, pos, size });
 }
+
 function DumpToken(tok) {
   const { length, offset, chars, loc } = tok;
 
   return `★ Token ${inspect({ chars, offset, length, loc }, { depth: 1 })}`;
 }
+
 const What = {
   IMPORT: 0,
   EXPORT: 1

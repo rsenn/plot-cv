@@ -8,6 +8,7 @@ function wrap(parser, name) {
     return r;
   };
 }
+
 function geda_netlist(...args) {
   return wrap(seq(components, nets, eof()), 'geda_netlist')(...args);
 }

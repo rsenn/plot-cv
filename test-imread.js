@@ -146,6 +146,7 @@ function main(...args) {
 
   console.log('EXIT');
 }
+
 try {
   main(...scriptArgs.slice(1));
 } catch(error) {

@@ -10,6 +10,7 @@ function Resampler(fromSampleRate, toSampleRate, channels, outputBufferSize, noR
   this.noReturn = !!noReturn;
   this.initialize();
 }
+
 Resampler.prototype.initialize = function() {
   //Perform some checks:
   if(this.fromSampleRate > 0 && this.toSampleRate > 0 && this.channels > 0) {

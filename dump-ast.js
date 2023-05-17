@@ -180,6 +180,7 @@ function GetOwned(ast, key) {
 function GetHeight(key) {
   return key.filter(prop => prop == 'inner').length;
 }
+
 function GetDepth(node) {
   let maxLen = 0;
   for(let [v, k] of deep.iterate(node, v => isObject(v))) {
@@ -192,16 +193,20 @@ function GetDepth(node) {
 function GetKey([k, v]) {
   return k;
 }
+
 function GetValue([k, v]) {
   return v;
 }
+
 function GetValueKey([v, k]) {
   return [k, v];
 }
+
 function RelativeTo(to, k) {
   if(k.startsWith(to)) return k.slice(to.length);
   return k;
 }
+
 function GetNodeProps([k, v]) {
   let props = [...getMemberNames(v)].map(n => [n, v[n]]).filter(([n, v]) => !isObject(v) && v != '');
 
@@ -315,6 +320,7 @@ function processCallExpr(loc, func, ...args) {
   //console.log('ranges:', ranges);
   //console.log('parts:', parts);
 }
+
 const typeRe =
   /^(array|buffer|build_type_t|config_t|dirs_t|dir_t|exts_t|fd_t|HMAP_DB|int64|intptr_t|lang_type|machine_type|MAP_NODE_T|MAP_PAIR_T|MAP_T|os_type|range|rdir_t|set_iterator_t|set_t|sighandler_t_ref|sigset_t|sourcedir|sourcefile|ssize_t|stralloc|strarray|strlist|system_type|target|tools_t|TUPLE|uint32|uint64)$/;
 

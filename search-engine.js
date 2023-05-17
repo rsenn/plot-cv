@@ -24,6 +24,7 @@ function CreateDocument(xml, filename) {
   let doc = parser.parseFromString(xml, filename, { tolerant: true });
   return doc;
 }
+
 let clients = new Set();
 
 function* Search(query, fn) {
@@ -100,6 +101,7 @@ function ProcessDocument(resp) {
   console.log('elements', console.config({ maxArrayLength: Number.MAX_SAFE_INTEGER }), elements);
   return elements;
 }
+
 /*
 async function* SearchQuery(arg) {
   let ita = [...Search(arg)];

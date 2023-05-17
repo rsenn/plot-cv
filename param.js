@@ -137,6 +137,7 @@ export function ParamNavigator(map, index = 0) {
     }
   });
 }
+
 define(ParamNavigator.prototype, {
   nameOf(param) {
     for(let [name, value] of this.map) if(value === param) return name;

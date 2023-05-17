@@ -32,6 +32,7 @@ function deconflict(s) {
   return out.map((s, i) => [tags[i], s]);
   return tags.reduce((acc, tag, i) => ({ ...acc, [tag]: out[i] }), {});
 }
+
 function deconflictFile(file) {
   let s = ReadFile(file, 'utf-8');
   let [[name1, a], [name2, b]] = deconflict(s);

@@ -174,6 +174,7 @@ function getTransformationList(e) {
   let css = Element.getCSS(e);
   if(css.transform) return new TransformationList(css.transform);
 }
+
 function DecomposeTransformList(elem) {
   let list = getTransformationList(elem);
 
@@ -324,6 +325,7 @@ function MouseToTouch(event) {
 
   return event;
 }
+
 async function* CatchIterator(it) {
   try {
     for await(let item of it) yield item;
@@ -938,6 +940,7 @@ function NewWS(handlers) {
 function MakeUUID(rng = Math.random) {
   return [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 }
+
 function MakeClientID(rng = Math.random) {
   return [4, 4, 4, 4].map(n => randStr(n, ['ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz', '.-$'][randInt(0, 3)]), rng).join('');
 }

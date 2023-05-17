@@ -24,6 +24,7 @@ function readXML(filename) {
   //console.log('xml:', xml);
   return xml;
 }
+
 //TODO: Test with tmScheme (XML) and ColorMap
 
 const push_back = (arr, ...items) => [...(arr || []), ...items];
@@ -471,4 +472,5 @@ async function main(...args) {
     throw err;
   }
 }
+
 main(...scriptArgs.slice(1));

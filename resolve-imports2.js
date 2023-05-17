@@ -166,6 +166,7 @@ class ES6Module {
     return lines.join('\n');
   }
 }
+
 const IMPORT = 1;
 const EXPORT = 2;
 
@@ -385,6 +386,7 @@ const getExport = ([p, n]) => [n instanceof ExportNamedDeclaration ? p : p.slice
 function PrintCode(node) {
   return PrintObject(node, node => PrintAst(node));
 }
+
 function PrintObject(node, t = (n, p) => n) {
   return Object.entries(node)
     .map(([prop, value]) => [prop, ': ', t(value, prop)])
@@ -1420,6 +1422,7 @@ function GetFromBase(path, node) {
 function GetLiteral(node) {
   return (deep.find(node, n => n instanceof Literal) || {}).value;
 }
+
 function IsBuiltinModule(name) {
   return /^(std|os|ffi|net|_http_agent|_http_client|_http_common|_http_incoming|_http_outgoing|_http_server|_stream_duplex|_stream_passthrough|_stream_readable|_stream_transform|_stream_wrap|_tls_common|_tls_wrap|assert|async_hooks|buffer|child_process|cluster|console|constants|crypto|dgram|dns|domain|events|fs|http|http2|https|inspector|module|net|os|path|perf_hooks|process|punycode|querystring|readline|repl|stream|string_decoder|timers|tls|trace_events|tty|url|util|v8|vm|worker_threads|zlib)$/.test(
     name

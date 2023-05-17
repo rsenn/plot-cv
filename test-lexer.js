@@ -32,6 +32,7 @@ function main(arg) {
     console.log('ERROR:', err.message, err.stack);
   }
 }
+
 try {
   main(...getArgs());
 } catch(error) {
