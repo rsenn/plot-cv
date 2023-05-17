@@ -35,4 +35,5 @@ async function main(...args) {
     console.log('err:', err);
   }
 }
+
 main(...scriptArgs.slice(1));

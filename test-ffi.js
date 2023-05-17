@@ -233,6 +233,7 @@ function toHex(n, b = 2) {
   let s = (+n).toString(16);
   return '0'.repeat(Math.ceil(s.length / b) * b - s.length) + s;
 }
+
 function StringToHex(str, bytes = 1) {
   if(typeof str != 'string') str = toString(str);
   let buf = StringToArrayBuffer(str, bytes);

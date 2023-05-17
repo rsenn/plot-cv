@@ -111,6 +111,7 @@ console.log("instances",instances);*/
 
   console.log('EXIT');
 }
+
 try {
   main(...scriptArgs.slice(1));
 } catch(error) {

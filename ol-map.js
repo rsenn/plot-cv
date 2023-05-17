@@ -69,6 +69,7 @@ const cities = {
     }
   }
 }
+
 */
 function SetFenceColor(color) {
   vector.setStyle(new Style({ stroke: new Stroke({ color, width: 3, lineDash: [2, 4] }) }));

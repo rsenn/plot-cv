@@ -123,6 +123,7 @@ export function GetStateByTime(t) {
 export function IsRange(str) {
   return /^\d+-\d+$/.test(str);
 }
+
 export function GetRange(str) {
   let matches = [...str.matchAll(/\d+/g)].map(([m]) => +m);
   return matches.slice(0, 2);

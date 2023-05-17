@@ -18,6 +18,7 @@ function Newer(file, ...other) {
   //console.log('Newer', { file, other });
   return other.every(other => FileTime(file) > FileTime(other));
 }
+
 function Older(file, other) {
   return FileTime(file) < FileTime(other);
 }
@@ -398,6 +399,7 @@ export class Type extends Node {
     return name;
   }*/
 }
+
   getPointer(ast) {
     const target = this.pointer;
 
@@ -2539,12 +2541,15 @@ export function GetFields(node) {
       .concat([deep.get(node, ptr).name])
   );
 }
+
 export function GetParams(node) {
   return (node?.inner ?? []).filter(child => child.kind.startsWith('Parm'));
 }
+
 export function PathRemoveLoc(path) {
   let idx = path.findIndex(p => p == 'loc' || p == 'range');
   if(idx != -1) path = path.slice(0, idx);
   return path;
 }
+
 //export default AstDump;

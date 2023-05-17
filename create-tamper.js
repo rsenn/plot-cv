@@ -74,6 +74,7 @@ class ES6ImportExport {
     return this.toSource();
   }
 }
+
 console.log('main');
 main(...scriptArgs.slice(1));
 

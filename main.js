@@ -300,6 +300,7 @@ function setViewBox(svgOwner, box) {
     ...rect.toRect()
   });
 }
+
 const ElementToXML = (e, predicate) => {
   if(globalThis.XMLSerializer) return new XMLSerializer().serializeToString(e);
 
@@ -1329,6 +1330,7 @@ function AdjustZoom(l = config.zoomLog()) {
   }
   window.transform = t;
 }
+
 const CreateGrblSocket = async (port = 'tnt1') => {
   let url = makeURL({
     location: '/serial',

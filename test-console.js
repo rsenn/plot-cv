@@ -53,6 +53,7 @@ async function main(...args) {
 
   return 'done';
 }
+
 main(...scriptArgs.slice(1));
 /*
 console.log('TEST\n');

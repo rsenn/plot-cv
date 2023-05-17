@@ -11,7 +11,7 @@ import { Location } from 'location';
 import { existsSync, readSync, writeSync, reader } from 'fs';
 import { setLog, logLevels, getSessions, LLL_USER, LLL_INFO, LLL_NOTICE, LLL_WARN, createServer } from 'net';
 import { DebuggerProtocol } from './debuggerprotocol.js';
-import { ECMAScriptSyntaxHighlighter, DebuggerDispatcher, LoadAST, GetArguments, FindFunctions } from './debugger.js';
+import { TrivialSyntaxHighlighter, ECMAScriptSyntaxHighlighter, DebuggerDispatcher, LoadAST, GetArguments, FindFunctions } from './debugger.js';
 import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
 import { ReadJSON, WriteJSON, ReadFile, Spawn } from './io-helpers.js';
 import { Table, List } from './cli-helpers.js';
@@ -153,7 +153,7 @@ export function ConnectDebugger(address, callback) {
   const dbg = {
     sock,
     addr,
-    async  process(callback) {
+    async process(callback) {
       let ret,
         lenBuf = new ArrayBuffer(9);
       try {
@@ -352,6 +352,7 @@ function NewDebugger(args, skipToMain = false, address) {
 
   return dbg; //dispatch;
 }
+
 function main(...args) {
   const base = scriptName().replace(/\.[a-z]*$/, '');
 
@@ -516,7 +517,7 @@ function main(...args) {
 
           const file = url.path.slice(1);
           const dir = file.replace(/\/[^\/]*$/g, '');
-         console.log('\x1b[38;5;33monRequest\x1b[0m', { file,dir, body });
+          console.log('\x1b[38;5;33monRequest\x1b[0m', { file, dir, body });
 
           if(file.endsWith('.js') && resp.body) {
             //console.log('onRequest', { file, dir });
@@ -773,6 +774,7 @@ function main(...args) {
       return [...globalThis.sockets];
     },
     net: { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, createServer },
+    TrivialSyntaxHighlighter,
     NewDebugger,
     StartDebugger,
     ConnectDebugger,

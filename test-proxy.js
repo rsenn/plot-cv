@@ -10,6 +10,7 @@ class Node {
     this.path = path;
   }
 }
+
 class NodeList {
   constructor(raw, path) {
     this.raw = raw;

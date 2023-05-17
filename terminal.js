@@ -63,10 +63,12 @@ export function commandSequence(f, seq) {
   escapeSequence(f, seq);
   filesystem.flush(f);
 }
+
 export function commandNumberChar(n, c) {
   escapeNumberChar(terminal, n, c);
   filesystem.flush(terminal);
 }
+
 export function commandChar(c) {
   escapeChar(terminal, c);
   filesystem.flush(terminal);

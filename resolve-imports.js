@@ -50,6 +50,7 @@ function ReadJSON(filename) {
   let data = ReadFile(filename, 'utf-8');
   return data ? JSON.parse(data) : null;
 }
+
 const ReadPackageJSON = memoize(() => ReadJSON('package.json') ?? { _moduleAliases: {} });
 
 function ResolveAlias(filename) {
@@ -183,6 +184,7 @@ function ImpExpType(seq) {
   if(seq.some(tok => IsKeyword('import', tok))) return What.IMPORT;
   if(seq.some(tok => IsKeyword('export', tok))) return What.EXPORT;
 }
+
 function ImportType(seq) {
   if(IsKeyword(['import', 'export'], seq[0])) seq.shift();
   if(IsPunctuator('*', seq[0])) {
@@ -1076,6 +1078,7 @@ class FileMap extends Array {
     return s;
   }
 }
+
 FileMap.prototype[Symbol.toStringTag] = 'FileMap';
 FileMap.prototype[Symbol.inspect] = function(depth, opts) {
   let arr = [...this].map(([range, buf], i) => {

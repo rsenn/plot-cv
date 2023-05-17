@@ -7,4 +7,5 @@ function wrap(parser, name) {
     return r;
   };
 }
+
 export default {};

@@ -122,4 +122,5 @@ function encodeBody(body) {
 
   return ':' + JSON.stringify(body);
 }
+
 export default Message;

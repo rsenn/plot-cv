@@ -1,8 +1,7 @@
 import { Console } from 'console';
-import { toString } from './lib/misc.js';
 import { Worker, close, exec, pipe, setReadHandler, sleep } from 'os';
 //import child_process from './lib/childProcess.js';
-import { assert, define, toString as ArrayBufferToString, btoa, keys, error, isFunction} from './lib/misc.js';
+import { toString, ansiStyles, assert, define, toString as ArrayBufferToString, btoa, keys, error, isFunction } from './lib/misc.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 import { readAll } from 'fs';
 import { Spawn, WriteFile } from './io-helpers.js';
@@ -15,6 +14,27 @@ var worker;
 var counter;
 let sockets = (globalThis.sockets ??= new Set());
 let listeners = (globalThis.listeners = {});
+
+const { redBright, greenBright, cyanBright, yellowBright, magentaBright } = ansiStyles;
+const syntaxPalette = [{ open: '' /*'\x1b[0m'*/ }, redBright, greenBright, yellowBright, cyanBright, magentaBright].map(c => c.open);
+
+export function* TrivialSyntaxHighlighter(input) {
+  const re =
+    /(\n|\t| )|(\b(?:arguments|as|async|await|break|case|catch|class|const|constructor|continue|debugger|default|delete|do|else|enum|eval|export|extends|false|finally|for|from|function|get|identifier|if|implements|import|in|instanceof|interface|let|meta|new|null|number|of|package|private|protected|public|return|set|static|string|super|switch|target|this|throw|true|try|typeof|var|void|while|with|yield)\b)|(\/\*(?:[^*]\/|[^\/])*\*\/|\b\/\/[^\n]*\n)|([A-Za-z_][A-Za-z_0-9]*)|("(?:\\"|[^"\n])*"|'(?:\\'|[^'\n])*'|[^\sA-Za-z_'"])/g;
+  let match;
+
+  while((match = re.exec(input))) {
+    let tokenType = match.findIndex((m, i) => i > 0 && m !== undefined);
+    const { index } = match;
+    let str = match[tokenType] ?? match[0];
+
+    if(syntaxPalette[tokenType-1]) str = syntaxPalette[tokenType-1] + str + '\x1b[0m';
+
+    /* if(tokenType != -1)
+    console.log((index+':').padEnd(4)+(tokenType+'').padStart(2) +' '+ str);*/
+    yield str;
+  }
+}
 
 export function ECMAScriptSyntaxHighlighter(input, filename) {
   const lexer = new ECMAScriptLexer(input, filename);
@@ -65,11 +85,15 @@ export class DebuggerDispatcher {
     // const orig = sock.onmessage;
 
     console.log('DebuggerDispatcher', { conn });
-    const copts = console.config({ maxStringLength: Infinity, maxArrayLength: Infinity, compact: 100 });
-let ret;
+    const copts = console.config({
+      maxStringLength: Infinity,
+      maxArrayLength: Infinity,
+      compact: 100
+    });
+    let ret;
 
     try {
-     let v=  conn.process(msg => {
+      let v = conn.process(msg => {
         if(process.env.DEBUG) console.log('\x1b[38;5;220mRECEIVE\x1b[0m ', copts, msg);
 
         const { type, event, request_seq, body } = msg;
@@ -98,9 +122,9 @@ let ret;
             break;
         }
       });
-      console.log('process(handler) returned:',v);
+      console.log('process(handler) returned:', v);
 
-     isFunction(v.then) && v.then(r => ret=r);
+      isFunction(v.then) && v.then(r => (ret = r));
     } catch(err) {
       console.log('process(handler) threw:', err.message + '\n' + err.stack);
       ret = -1;
@@ -307,7 +331,7 @@ worker.onmessage = async ({ data }) => {
 
 async function loadAST(source) {
   if(!existsSync(source)) return null;
-  const { stdout, wait } = Spawn('meriyah', [source], { block: false, stdio: ['inherit', 'pipe', 'inherit'] });
+  const { stdout, wait } = Spawn('meriyah', ['-l', source], { block: false, stdio: ['inherit', 'pipe', 'inherit'] });
   
   let s = '';
   for(let chunk of readerSync(stdout))

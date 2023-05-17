@@ -363,6 +363,7 @@ async function main(...args) {
               prototypeOutput.push(`export function ${name}(${paramNames.join(', ')}) {
   ${ret == 'void' ? '' : 'return '}call('${name}'${paramNames.map(n => `, ${n}`).join('')});
 }
+
 `);
             }
           }
@@ -583,6 +584,7 @@ function ByteLength2TypedArray(byteLength) {
       return 'Uint8Array';
   }
 }
+
 function ByteLength2Value(byteLength) {
   switch (byteLength) {
     case 8:

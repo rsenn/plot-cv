@@ -300,6 +300,7 @@ function FlyTo(location, done = () => {}) {
     callback
   );
 }
+
 /*
 onClick('fly-to-bern', function() {
   FlyTo(bern, function() {});

@@ -53,4 +53,5 @@ async function main(...args) {
   let i = 0;
   for(let p of ct1.concat(ct2)) console.log(`p[${i++}]:`, p);
 }
+
 main(...scriptArgs.slice(1));

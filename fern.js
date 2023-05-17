@@ -5,6 +5,7 @@ function pick(p) {
   }
   return p.length - 1;
 }
+
 // the iterated function system (IFS) "code" for Barnsley's fern.
 // consists of four matrices and a probability for each.
 var fern_M = [
@@ -40,10 +41,12 @@ function ifs(M, p, niter) {
     }
   }
 }
+
 ctx.fillStyle = 'black';
 function point(x, y) {
   ctx.fillRect(x * W, y * H, 1, 1);
 }
+
 ifs(fern_M, fern_P, 16000);
 function cumsum(a) {
   var r = [];
@@ -54,6 +57,7 @@ function cumsum(a) {
   }
   return r;
 }
+
 function mul(m, p) {
   var r = [];
   for(var j = 0; j < m.length; j++) {

@@ -15,18 +15,21 @@ function extendBits(arr, bits) {
   }
   return r;
 }
+
 function andBinary(arr, value, n, s = 0) {
   n = n || arr.length;
   for(let i = s; i < s + n; i++) {
     arr[i] &= value;
   }
 }
+
 function orBinary(arr, value, n, s = 0) {
   n = n || arr.length;
   for(let i = s; i < s + n; i++) {
     arr[i] |= value;
   }
 }
+
 function printBinary(arr, base = 2) {
   const prefix = base == 2 ? '0b' : base == '16' ? '0x' : base == 8 ? '0o' : '';
   const pad = base == 2 ? 24 : base == '16' ? 6 : base == 8 ? '0o' : 9;
@@ -35,6 +38,7 @@ function printBinary(arr, base = 2) {
     console.log((i++ + '').padStart(3, ' ') + ': ' + prefix + ('0'.repeat(pad) + Math.abs(num).toString(base)).slice(-pad));
   }
 }
+
 let arr = new Uint32Array(range(0, 15));
 let bits = extendBits(arr, 8);
 
