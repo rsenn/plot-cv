@@ -2,13 +2,14 @@
 import process from 'process';
 import { readFileSync, createWriteStream } from 'fs';
 import { getOpt, showHelp } from './lib/misc.js';
-import { parseScript } from './lib/meriyah.js';
+import { ParseError, parseScript } from './lib/meriyah.js';
 
 const { stdout, stderr, argv } = process;
 
 let opts,
   params,
-  stream = stdout;
+  stream = stdout,
+  ast;
 
 params = getOpt(
   (opts = {
@@ -19,7 +20,7 @@ params = getOpt(
     ranges: [false, null, 'r'],
     loc: [false, null, 'l'],
     indent: [true, null, 'i'],
-    '@': 'args'
+    '@': ''
   }),
   argv.slice(2)
 );
@@ -33,6 +34,21 @@ if('output' in params) stream = createWriteStream(params.output || args[0] + '.a
 const { indent = stream.isTTY ? 2 : undefined, help, output, ...parseOpts } = params;
 
 const input = readFileSync(args[0], 'utf8');
-const ast = parseScript(input, parseOpts);
+
+if(!('next' in parseOpts)) parseOpts.next = true;
+
+for(;;) {
+  try {
+    ast = parseScript(input, parseOpts);
+  } catch(error) {
+    if(/module goal/.test(error.message)) {
+      parseOpts.module = true;
+      continue;
+    }
+    console.log('ERROR: ' + error.message + '\n' + error.stack);
+    throw error;
+  }
+  break;
+}
 
 stream.write(JSON.stringify(ast, ...(indent > 0 ? [null, +indent] : [])) + '\n');
