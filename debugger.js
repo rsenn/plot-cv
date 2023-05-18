@@ -1,4 +1,3 @@
-import { Console } from 'console';
 import { Worker, close, exec, pipe, setReadHandler, sleep } from 'os';
 //import child_process from './lib/childProcess.js';
 import { toString, ansiStyles, assert, define, toString as ArrayBufferToString, btoa, keys, error, isFunction } from './lib/misc.js';
@@ -227,17 +226,15 @@ export class DebuggerDispatcher {
 Object.assign(DebuggerDispatcher.prototype, { [Symbol.toStringTag]: 'DebuggerDispatcher' });
 Object.setPrototypeOf(DebuggerDispatcher.prototype, null);
 
-function TestWorker() {
+/*function TestWorker() {
   globalThis.console = new Console({
     colors: true,
     compact: 1,
     prefix: '\x1b[38;5;220mPARENT\x1b[0m'
   });
-  //console.log('scriptArgs', scriptArgs);
   worker = new Worker('./ws-worker.js');
   counter = 0;
   worker.onmessage = WorkerMessage;
-  //console.log('TestWorker', worker.onmessage);
   setReadHandler(0, () => {
     let line = process.stdin.getline();
     worker.postMessage({ line });
@@ -246,7 +243,6 @@ function TestWorker() {
 
 let sock, connection;
 function WorkerMessage(e) {
-  //console.log('WorkerMessage', e);
   var ev = e.data;
   const { message, id } = ev;
   switch (ev.type) {
@@ -293,7 +289,7 @@ function WorkerMessage(e) {
 
 function send(id, body) {
   worker.postMessage({ type: 'send', id, body });
-}
+}*/
 
 export async function LoadAST(source) {
   const script = `import * as std from 'std';
