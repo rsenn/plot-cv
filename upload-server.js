@@ -31,18 +31,38 @@ extendGenerator(Object.getPrototypeOf(new Directory('.')));
 extendAsyncGenerator();
 
 globalThis.fs = fs;
-globalThis.logFilter = /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|WRITABLE)/;
+globalThis.logFilter =
+  /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|WRITABLE)/;
 
 trkl.property(globalThis, 'logLevel').subscribe(value =>
   setLog(value, (level, message) => {
-    if(/__lws|serve_(resolved|generator|promise|response)|XXbl(\([123]\).*writable|x\([/]\).*WRITEABLE)|lws_/.test(message)) return;
+    if(
+      /__lws|serve_(resolved|generator|promise|response)|XXbl(\([123]\).*writable|x\([/]\).*WRITEABLE)|lws_/.test(
+        message
+      )
+    )
+      return;
     if(level == LLL_INFO && !/proxy/.test(message)) return;
     if(logFilter.test(message)) return;
 
     //if(params.debug || level <= LLL_WARN)
     out(
-      (['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8) +
-        message.replace(/\n/g, '\\n').replace(/\r/g, '\\r')
+      (
+        [
+          'ERR',
+          'WARN',
+          'NOTICE',
+          'INFO',
+          'DEBUG',
+          'PARSER',
+          'HEADER',
+          'EXT',
+          'CLIENT',
+          'LATENCY',
+          'MINNET',
+          'THREAD'
+        ][Math.log2(level)] ?? level + ''
+      ).padEnd(8) + message.replace(/\n/g, '\\n').replace(/\r/g, '\\r')
     );
   })
 );
@@ -89,7 +109,8 @@ function GetRootDirectories(pattern = '*') {
   return allowedDirs.keys().filter(Matcher(pattern));
 }
 
-const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
+const MakeUUID = (rng = Math.random) =>
+  [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 
 const defaultDirs = (globalThis.defaultDirs = [
   '.',
@@ -266,7 +287,9 @@ function ReadExiftool(file) {
 
   let a = out.split(/\r?\n/g).filter(l => l != '');
 
-  a = a.map(line => [line, line.indexOf(': ')]).map(([line, idx]) => [line.slice(0, idx), line.slice(idx + 2)]);
+  a = a
+    .map(line => [line, line.indexOf(': ')])
+    .map(([line, idx]) => [line.slice(0, idx), line.slice(idx + 2)]);
   let o = Object.fromEntries(a);
 
   //console.log('ReadExiftool',o);
@@ -289,7 +312,14 @@ function MagickResize(src, dst, rotate = 0, width, height) {
     dst,
     rotate
   });
-  let args = ['convert', src, '-resize', width + 'x' + height, ...(rotate ? ['-rotate', '-' + rotate] : []), dst];
+  let args = [
+    'convert',
+    src,
+    '-resize',
+    width + 'x' + height,
+    ...(rotate ? ['-rotate', '-' + rotate] : []),
+    dst
+  ];
   let [ret, out] = Execute(...args);
 
   console.log('MagickResize', { args, ret, out });
@@ -329,7 +359,12 @@ function main(...args) {
   );
   if(params['no-tls'] === true) params.tls = false;
 
-  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key' } = params;
+  const {
+    address = '0.0.0.0',
+    port = 8999,
+    'ssl-cert': sslCert = 'localhost.crt',
+    'ssl-private-key': sslPrivateKey = 'localhost.key'
+  } = params;
   const listen = params.connect && !params.listen ? false : true;
   const is_server = !params.client || params.server;
 
@@ -358,7 +393,8 @@ function main(...args) {
   ];
 
   let { log } = console;
-  repl.show = arg => typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options) + '\n';
+  repl.show = arg =>
+    typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options) + '\n';
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();
@@ -380,7 +416,8 @@ function main(...args) {
   );
   repl.inspectOptions.hideKeys.push(Symbol.inspect);
 
-  console.log = (...args) => repl.printStatus(() => log(console.config(repl.inspectOptions), ...args));
+  console.log = (...args) =>
+    repl.printStatus(() => log(console.config(repl.inspectOptions), ...args));
 
   let logFile =
     {
@@ -581,12 +618,21 @@ function main(...args) {
             result.push(json);
           }
 
-          console.log('uploads', console.config({ depth: 1, compact: 2, maxArrayLength: 10 }), result);
+          console.log(
+            'uploads',
+            console.config({ depth: 1, compact: 2, maxArrayLength: 10 }),
+            result
+          );
           yield JSON.stringify(result, ...(+pretty ? [null, 2] : []));
         },
         async function* files(req, resp) {
           console.log('*files query =', req.url.query);
-          const { filter = '*', root, type = TYPE_DIR | TYPE_REG | TYPE_LNK, limit = '0' } = req.url.query;
+          const {
+            filter = '*',
+            root,
+            type = TYPE_DIR | TYPE_REG | TYPE_LNK,
+            limit = '0'
+          } = req.url.query;
           console.log('*files', { root, filter, type });
           const [offset = 0, size = Infinity] = limit.split(',').map(n => +n);
           console.log('*files', { offset, size });
@@ -598,7 +644,8 @@ function main(...args) {
             for(let [key, value] of allowedDirs.entries().filter(KeyOrValueMatcher(root))) {
               let dir = new Directory(value, BOTH, +type);
               yield key + ':\r\n';
-              for(let [name, type] of dir.filter(([name, type]) => f(name))) yield name + (+type == TYPE_DIR ? '/' : '') + '\r\n';
+              for(let [name, type] of dir.filter(([name, type]) => f(name)))
+                yield name + (+type == TYPE_DIR ? '/' : '') + '\r\n';
             }
           }
           console.log('*files', { i, f });
@@ -610,7 +657,15 @@ function main(...args) {
           console.log('*files', { req, resp, body, query });
           const data = query ?? {};
           resp.type = 'application/json';
-          let { dirs = defaultDirs, filter = '[^.].*' ?? '.(brd|sch|G[A-Z][A-Z])$', verbose = false, objects = true, key = 'mtime', limit = null, flat = false } = data ?? {};
+          let {
+            dirs = defaultDirs,
+            filter = '[^.].*' ?? '.(brd|sch|G[A-Z][A-Z])$',
+            verbose = false,
+            objects = true,
+            key = 'mtime',
+            limit = null,
+            flat = false
+          } = data ?? {};
           let results = [];
           for(let dir of dirs) {
             let st,
@@ -684,7 +739,10 @@ function main(...args) {
             }
             names = entries.map(([name, obj]) => (objects ? obj : name));
             if(names.length > 0) {
-              if(flat) names.map(({ name }) => results.push({ name: path.normalize(path.join(dir, name)) }));
+              if(flat)
+                names.map(({ name }) =>
+                  results.push({ name: path.normalize(path.join(dir, name)) })
+                );
               else results.push({ dir, names });
             }
           }
@@ -754,7 +812,11 @@ function main(...args) {
         if((req.url.path ?? '').endsWith('files')) {
           return;
           //resp.type = 'application/json';
-        } else if(req.method != 'GET' && (req.headers['content-type'] == 'application/x-www-form-urlencoded' || (req.headers['content-type'] ?? '').startsWith('multipart/form-data'))) {
+        } else if(
+          req.method != 'GET' &&
+          (req.headers['content-type'] == 'application/x-www-form-urlencoded' ||
+            (req.headers['content-type'] ?? '').startsWith('multipart/form-data'))
+        ) {
           let fp,
             hash,
             tmpnam,
@@ -776,7 +838,11 @@ function main(...args) {
               this.filename = filename;
               ext = path.extname(filename).toLowerCase();
 
-              this.file = fs.openSync((this.temp = 'uploads/' + (tmpnam = randStr(20) + '.tmp')), 'w+', 0o644);
+              this.file = fs.openSync(
+                (this.temp = 'uploads/' + (tmpnam = randStr(20) + '.tmp')),
+                'w+',
+                0o644
+              );
               hash = new Hash(Hash.TYPE_SHA1);
             },
             onContent(name, data) {
@@ -852,7 +918,13 @@ function main(...args) {
                       }
                     }
 
-                    MagickResize(obj.jpg ?? f(ext), f('.thumb.jpg'), obj.exif?.Rotation ?? 0, width, height);
+                    MagickResize(
+                      obj.jpg ?? f(ext),
+                      f('.thumb.jpg'),
+                      obj.exif?.Rotation ?? 0,
+                      width,
+                      height
+                    );
 
                     if(fs.existsSync(f('.thumb.jpg'))) obj.thumbnail = f('.thumb.jpg');
                     WriteJSON(json, obj);
@@ -1010,7 +1082,18 @@ function main(...args) {
     HeifConvert,
     MagickResize,
     Directory,
-    net: { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, FormParser, Hash, Response, Socket, ...net }
+    net: {
+      setLog,
+      LLL_USER,
+      LLL_NOTICE,
+      LLL_WARN,
+      LLL_INFO,
+      FormParser,
+      Hash,
+      Response,
+      Socket,
+      ...net
+    }
   });
 
   delete globalThis.DEBUG;
@@ -1037,7 +1120,7 @@ function main(...args) {
     repl.cleanup(why);
   }
 
-  repl.runSync();
+  repl.run();
 }
 
 try {
