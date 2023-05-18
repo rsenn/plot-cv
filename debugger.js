@@ -16,24 +16,26 @@ let sockets = (globalThis.sockets ??= new Set());
 let listeners = (globalThis.listeners = {});
 
 const { redBright, greenBright, cyanBright, yellowBright, magentaBright } = ansiStyles;
-const syntaxPalette = [{ open: '' /*'\x1b[0m'*/ }, redBright, greenBright, yellowBright, cyanBright, magentaBright].map(c => c.open);
+const syntaxPalette = [{ open: '\x1b[0m' }, redBright, greenBright, yellowBright, cyanBright, magentaBright].map(c => c.open);
 
-export function* TrivialSyntaxHighlighter(input) {
+export function TrivialSyntaxHighlighter(input) {
   const re =
     /(\n|\t| )|(\b(?:arguments|as|async|await|break|case|catch|class|const|constructor|continue|debugger|default|delete|do|else|enum|eval|export|extends|false|finally|for|from|function|get|identifier|if|implements|import|in|instanceof|interface|let|meta|new|null|number|of|package|private|protected|public|return|set|static|string|super|switch|target|this|throw|true|try|typeof|var|void|while|with|yield)\b)|(\/\*(?:[^*]\/|[^\/])*\*\/|\b\/\/[^\n]*\n)|([A-Za-z_][A-Za-z_0-9]*)|("(?:\\"|[^"\n])*"|'(?:\\'|[^'\n])*'|[^\sA-Za-z_'"])/g;
-  let match;
+  let match,
+    prev,
+    s = '';
 
   while((match = re.exec(input))) {
     let tokenType = match.findIndex((m, i) => i > 0 && m !== undefined);
     const { index } = match;
     let str = match[tokenType] ?? match[0];
 
-    if(syntaxPalette[tokenType-1]) str = syntaxPalette[tokenType-1] + str + '\x1b[0m';
+    if(tokenType == 1 || tokenType != prev) if (syntaxPalette[tokenType - 1]) str = syntaxPalette[tokenType - 1] + str;
 
-    /* if(tokenType != -1)
-    console.log((index+':').padEnd(4)+(tokenType+'').padStart(2) +' '+ str);*/
-    yield str;
+    s += str;
+    prev = tokenType;
   }
+  return s;
 }
 
 export function ECMAScriptSyntaxHighlighter(input, filename) {
@@ -103,16 +105,14 @@ export class DebuggerDispatcher {
             this.#responses[request_seq](msg);
             break;
           case 'event':
-            const name = event.type.slice(0, event.type.indexOf('Event')).toLowerCase();
+            const prop = 'on' + event.type.slice(0, event.type.indexOf('Event')).toLowerCase();
 
-            for(let obj of [this, conn]) {
-              const handler = obj['on' + name];
-
-              if(handler) {
-                if(handler.call(obj, event) === false) {
-                  if(obj['on' + name] === handler) delete obj['on' + name];
-                }
-                break;
+            for(let receiver of [this, conn]) {
+              if(!receiver[prop]) continue;
+              if(receiver[prop]) {
+                const callback = receiver[prop];
+                if(process.env.DEBUG) console.log('\x1b[38;5;56mEVENT\x1b[0m ', { prop, event });
+                if(callback.call(receiver, event) === false) if (receiver[prop] === callback) delete receiver[prop];
               }
             }
             break;
@@ -233,11 +233,11 @@ function TestWorker() {
     compact: 1,
     prefix: '\x1b[38;5;220mPARENT\x1b[0m'
   });
-  console.log('scriptArgs', scriptArgs);
+  //console.log('scriptArgs', scriptArgs);
   worker = new Worker('./ws-worker.js');
   counter = 0;
   worker.onmessage = WorkerMessage;
-  console.log('TestWorker', worker.onmessage);
+  //console.log('TestWorker', worker.onmessage);
   setReadHandler(0, () => {
     let line = process.stdin.getline();
     worker.postMessage({ line });
@@ -246,7 +246,7 @@ function TestWorker() {
 
 let sock, connection;
 function WorkerMessage(e) {
-  console.log('WorkerMessage', e);
+  //console.log('WorkerMessage', e);
   var ev = e.data;
   const { message, id } = ev;
   switch (ev.type) {
@@ -352,7 +352,6 @@ async function loadAST(source) {
 
   worker.postMessage({ type: 'quit' });
 
-  console.log('worker.next()', console.config({ maxStringLength: 10 }), { value, done });
   const { data } = value;
   return ({ string: JSON.parse }[typeof data.ast] ?? (a => a))(data.ast);
 }

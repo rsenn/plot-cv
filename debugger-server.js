@@ -96,14 +96,17 @@ function StartREPL(prefix = scriptName(), suffix = '') {
     if(isObject(arg)) {
       if(arg[Symbol.for('print')]) return arg.toString ? arg.toString() : arg + '';
 
-      if(Array.isArray(arg) && typeof arg[0] == 'object' && !Array.isArray(arg[0])) {
-        if(arg.length == 2 && Array.isArray(arg[1])) {
-          const [event, stack] = arg;
-          if(['type', 'reason'].every(k => k in event)) if (['id', 'name', 'line'].every(k => k in stack[0])) return [List([event]), List(stack)];
-        }
+      //if(Array.isArray(arg) && typeof arg[0] == 'object' &&  Array.isArray(arg[0])) {
+      if(Array.isArray(arg) && typeof arg[0] == 'object') {
+        if(!Array.isArray(arg[0]) && (arg.length !== 2 || !Array.isArray(arg[1]))) {
+          if(arg.length == 2 && Array.isArray(arg[1])) {
+            const [event, stack] = arg;
+            if(['type', 'reason'].every(k => k in event)) if (['id', 'name', 'line'].every(k => k in stack[0])) return [List([event]), List(stack)];
+          }
 
-        if(arg.length >= 2 && arg.map(item => Object.keys(item)).reduce((acc, keys, i) => (i == 0 ? keys : acc ? keys.equal(acc) && keys : false))) return repl.show(Table(arg));
-        if(arg.length >= 2 && Object.keys(arg[0]).some(key => arg.every(a => key in a))) return repl.show(Table(arg));
+          if(arg.length >= 2 && arg.map(item => Object.keys(item)).reduce((acc, keys, i) => (i == 0 ? keys : acc ? keys.equal(acc) && keys : false))) return repl.show(Table(arg));
+          if(arg.length >= 2 && Object.keys(arg[0]).some(key => arg.every(a => key in a))) return repl.show(Table(arg));
+        }
       }
     }
 
@@ -175,7 +178,7 @@ export function ConnectDebugger(address, callback) {
           callback(obj);
         }
       } catch(error) {
-        console.log('Socket error:');
+        console.log('Socket error:', error.message + '\n' + error.stack);
       } finally {
         sock.close();
         return ret;
@@ -189,7 +192,9 @@ export function ConnectDebugger(address, callback) {
    return consume(dbg, message => sock.onmessage(message));
   }  */
 
-  define(dbg, { sendMessage: msg => sock.send(msg.length.toString(16).padStart(8, '0') + '\n' + msg) });
+  define(dbg, {
+    sendMessage: msg => sock.send(msg.length.toString(16).padStart(8, '0') + '\n' + msg)
+  });
 
   console.log('ConnectDebugger', dbg);
 
@@ -198,8 +203,6 @@ export function ConnectDebugger(address, callback) {
 
 async function PrintStackFrame(frame) {
   if(frame === undefined) frame = 0;
-  if(typeof frame == 'number') frame = (await stackTrace())[frame];
-  //console.log('PrintStackFrame', frame);
 
   let { id, name, filename, line } = frame;
   let params;
@@ -256,9 +259,13 @@ decorate(
       },
       async waitRun() {
         const [event, stack] = await member.call(this);
+        define(globalThis, { event, stack });
+        //console.log('waitRun', { event, stack });
 
-        PrintStackFrame(stack[0]);
+        repl.printStatus((await PrintStackFrame(stack[0])).join(' ') + '\n');
+
         const { filename, line } = stack[0];
+
         define(globalThis, { file: filename, line });
 
         return [event, stack];
@@ -287,8 +294,22 @@ decorate(
         return ret;
       }
     }[prop] || member),
+
   DebuggerDispatcher.prototype
 );
+
+/*decorate((member, obj, prop) => {
+  return async function(...args) {
+    let result = await member.call(this, ...args);
+ 
+    if(Array.isArray(result) && Array.isArray(result[1]) && 'id' in result[1][0]) {
+      let [event, stack] = result;
+      const { filename, line, name } = stack[0];
+      repl.printStatus(filename + ':' + line + ': ' + files[filename].line(line) + '\n');
+    }
+    return result;
+  };
+}, DebuggerDispatcher.prototype);*/
 
 const mkaddr = (
   (port = 8777) =>
@@ -308,21 +329,22 @@ function NewDebugger(args, skipToMain = false, address) {
 
   const dbg = ConnectDebugger(address);
 
-  if(skipToMain)
+  if(skipToMain) {
     dbg.onstopped = once(async () => {
       let fns = await files[script].match(/main$/gi);
       console.log('matched /main$/gi', fns /*.map(({ name }) => name)*/);
 
-      await dispatch.breakpoints(script, fns);
-      await dispatch.continue();
-    });
+      dbg.onstopped = null;
+      let resp;
+      console.log('breakpoints()', { script, fns });
+      resp = await dispatch.breakpoints(script, fns);
+      console.log('breakpoints() response:', resp);
 
-  /* dbg.onstopped = async msg => {
-  const st = (globalThis.stack = await dispatch.stackTrace());
-    let [top] = st;
-    let { id, name, filename, line } = top;
-    repl.printStatus(`#${id} ${name}@${filename}:${line}  ` + files[filename].line(line));
-  };*/
+      resp = await dispatch.continue();
+      console.log('continue() response:', resp);
+    });
+  }
+  //dbg.onstopped ??= OnStopped;
 
   define(dbg, { child, args });
 
@@ -351,6 +373,13 @@ function NewDebugger(args, skipToMain = false, address) {
   //  consume(dbg, dbg.onmessage);
 
   return dbg; //dispatch;
+}
+
+async function OnStopped(msg) {
+  const st = (globalThis.stack = await dispatch.stackTrace());
+  let [top] = st;
+  let { id, name, filename, line } = top;
+  repl.printStatus(`#${id} ${name}@${filename}:${line}  ` + files[filename].line(line));
 }
 
 function main(...args) {
@@ -409,10 +438,10 @@ function main(...args) {
   let protocol = new WeakMap();
 
   let sockets = (globalThis.sockets ??= new Set());
-  console.log(name, params['@']);
+  //console.log(name, params['@']);
 
   function createWS(url, callbacks, listen) {
-    console.log('createWS', { url, callbacks, listen });
+    //console.log('createWS', { url, callbacks, listen });
 
     setLog(
       quiet ? 0 : LLL_USER | (((debug ? LLL_INFO : LLL_WARN) << 1) - 1),
@@ -613,7 +642,11 @@ function main(...args) {
                 let [pid, status] = child.wait();
 
                 if((exited = checkChildExited(pid, status))) {
-                  ws.sendMessage({ type: 'error', command: 'start', message: `unable to start debugger: ${exited}` });
+                  ws.sendMessage({
+                    type: 'error',
+                    command: 'start',
+                    message: `unable to start debugger: ${exited}`
+                  });
                   break;
                 }
 
@@ -786,57 +819,55 @@ function main(...args) {
     List,
     files: propertyLookup(
       (globalThis.fileCache = {}),
-      memoize(
-        (file, source) => (
-          (source ??= tryCatch(
-            () => ECMAScriptSyntaxHighlighter(ReadFile(file), file),
-            s => s,
-            () => ReadFile(file)
-          )),
-          define(
+      memoize((file, source) => {
+        source ??= tryCatch(
+          () => TrivialSyntaxHighlighter(ReadFile(file)),
+          s => s,
+          () => ReadFile(file)
+        );
+        return define(
+          {
+            source,
+            indexlist: [...source.matchAll(/(^|\n|$)/g)].map(m => m.index)
+          },
+          lazyProperties(
             {
-              source,
-              indexlist: [...source.matchAll(/(^|\n|$)/g)].map(m => m.index)
+              line(i) {
+                if(i === undefined) return '';
+                const { source, indexlist } = this;
+                const [start, end] = indexlist.slice(i - 1, i + 1);
+                let line = source.slice(start + (i > 1 ? 1 : 0), end);
+
+                if([...line.matchAll(/\x1b([^A-Za-z]*[A-Za-z])/g)].last != '\x1b[0m') line += '\x1b[0m';
+
+                return line;
+              },
+              match(re) {
+                if(typeof re == 'string') re = new RegExp(re, 'gi');
+
+                return this.functions.then(fns =>
+                  define(
+                    fns.filter(({ name }) => re.test(name)),
+                    { [Symbol.toStringTag]: 'FunctionList', file }
+                  )
+                );
+              }
             },
-            lazyProperties(
-              {
-                line(i) {
-                  if(i === undefined) return '';
-                  const { source, indexlist } = this;
-                  const [start, end] = indexlist.slice(i - 1, i + 1);
-                  let line = source.slice(start + (i > 1 ? 1 : 0), end);
-
-                  if([...line.matchAll(/\x1b([^A-Za-z]*[A-Za-z])/g)].last != '\x1b[0m') line += '\x1b[0m';
-
-                  return line;
-                },
-                match(re) {
-                  if(typeof re == 'string') re = new RegExp(re, 'gi');
-
-                  return this.functions.then(fns =>
-                    define(
-                      fns.filter(({ name }) => re.test(name)),
-                      { [Symbol.toStringTag]: 'FunctionList', file }
-                    )
-                  );
-                }
-              },
-              {
-                // estree: () => ,
-                async functions() {
-                  return (globalThis.functionCache = [...FindFunctions((globalThis.ast = await LoadAST(file)))].map(([name, loc, params, start]) => ({
-                    name,
-                    ...loc,
-                    start,
-                    params
-                  })));
-                }
-              },
-              { async: false }
-            )
+            {
+              // estree: () => ,
+              async functions() {
+                return (globalThis.functionCache = [...FindFunctions((globalThis.ast = await LoadAST(file)))].map(([name, loc, params, start]) => ({
+                  name,
+                  ...loc,
+                  start,
+                  params
+                })));
+              }
+            },
+            { async: false }
           )
-        )
-      )
+        );
+      })
     ),
     async repeat(cond, fn, ...args) {
       let r;
