@@ -543,7 +543,7 @@ function main(...args) {
 
           if(file) {
             file = path.absolute(file);
-            file = path.collapse(file);
+            file = path.normalize(file);
             console.log(
               `allowedDirs:`,
               allowedDirs //.map(dir => path.normalize(dir))

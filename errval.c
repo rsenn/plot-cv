@@ -77,6 +77,5 @@ main() {
   printf("EOWNERDEAD = %i\n", EOWNERDEAD);
   printf("ENOTRECOVERABLE = %i\n", ENOTRECOVERABLE);
 
-
   return 0;
 }

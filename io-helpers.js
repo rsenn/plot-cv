@@ -152,7 +152,10 @@ export function WriteFd(fd, data, offset, length) {
 export function WriteClose(file, data, offset, length) {
   if(IsStdio(file)) {
     let r;
-    r = typeof data == 'string' ? file.puts(data) : file.write(data, offset ?? 0, length ?? data.byteLength);
+    r =
+      typeof data == 'string'
+        ? file.puts(data)
+        : file.write(data, offset ?? 0, length ?? data.byteLength);
 
     if(r <= 0 || file.error()) throw new Error(`Error writing file`);
 
@@ -251,7 +254,10 @@ export async function* FdReader(fd, bufferSize = 1024) {
   do {
     let r = await waitRead(fd);
     console.log('r', r);
-    ret = typeof fd == 'number' ? await read(fd, buf, 0, bufferSize) : await fd.read(buf, 0, bufferSize);
+    ret =
+      typeof fd == 'number'
+        ? await read(fd, buf, 0, bufferSize)
+        : await fd.read(buf, 0, bufferSize);
     if(ret > 0) {
       let data = buf.slice(0, ret);
       yield toString(data);
@@ -265,7 +271,10 @@ export function CopyToClipboard(text) {
   return import('child_process').then(child_process => {
     const { env } = process;
 
-    let child = child_process.spawn('xclip', ['-in', '-verbose'], { env, stdio: ['pipe', 'inherit', 'inherit'] });
+    let child = child_process.spawn('xclip', ['-in', '-verbose'], {
+      env,
+      stdio: ['pipe', 'inherit', 'inherit']
+    });
     let [pipe] = child.stdio;
 
     let written = write(pipe, text, 0, text.length);
@@ -296,13 +305,26 @@ export function LogCall(fn, thisObj) {
   return function(...args) {
     let result;
     result = fn.apply(thisObj ?? this, args);
-    console.log('Function ' + name + '(', ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })), ') =', result);
+    console.log(
+      'Function ' + name + '(',
+      ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })),
+      ') =',
+      result
+    );
     return result;
   };
 }
 
 export function Spawn(file, args, options = {}) {
-  let { block = true, usePath = true, cwd, stdio = ['inherit', 'inherit', 'inherit'], env, uid, gid } = options;
+  let {
+    block = true,
+    usePath = true,
+    cwd,
+    stdio = ['inherit', 'inherit', 'inherit'],
+    env,
+    uid,
+    gid
+  } = options;
   let child,
     parent = [...stdio];
 
@@ -319,7 +341,7 @@ export function Spawn(file, args, options = {}) {
   const [stdin, stdout, stderr] = stdio;
 
   let pid = exec([file, ...args], { block, usePath, cwd, stdin, stdout, stderr, env, uid, gid });
-  console.log('exec(' + inspect([file, ...args]) + ', ...) =', pid);
+  //console.log('exec(' + inspect([file, ...args]) + ', ...) =', pid);
 
   for(let i = 0; i < 3; i++) {
     if(typeof stdio[i] == 'number' && stdio[i] != i) close(stdio[i]);
@@ -371,7 +393,16 @@ export function Spawn(file, args, options = {}) {
 // 'https://www.discogs.com/sell/order/8369022-364'
 
 export function FetchURL(url, options = {}) {
-  let { headers, proxy, cookies = 'cookies.txt', range, body, version = '1.1', tlsv, 'user-agent': userAgent } = options;
+  let {
+    headers,
+    proxy,
+    cookies = 'cookies.txt',
+    range,
+    body,
+    version = '1.1',
+    tlsv,
+    'user-agent': userAgent
+  } = options;
 
   let args = Object.entries(headers ?? {})
     .reduce((acc, [k, v]) => acc.concat(['-H', `${k}: ${v}`]), [])
@@ -394,7 +425,10 @@ export function FetchURL(url, options = {}) {
 
   console.log('FetchURL', console.config({ maxArrayLength: Infinity, compact: false }), { args });
 
-  let child = child_process.spawn('curl', args, { block: false, stdio: ['inherit', 'pipe', 'pipe'] });
+  let child = child_process.spawn('curl', args, {
+    block: false,
+    stdio: ['inherit', 'pipe', 'pipe']
+  });
 
   let [, out, err] = child.stdio;
 

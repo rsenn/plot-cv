@@ -435,7 +435,7 @@ function main(...args) {
     let dir = path.dirname(source);
 
     fileImports.forEach(imp => {
-      let p = path.collapse(path.join(dir, imp.file));
+      let p = path.normalize(path.join(dir, imp.file));
       //log('p', p);
 
       AddUnique(files, p);

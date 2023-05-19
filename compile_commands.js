@@ -1,10 +1,8 @@
 import { Console } from 'console';
 import * as fs from 'fs';
 import * as path from 'path';
-import { types, mapFunction, gettersetter, getScreenSize, arraysInCommon, startInteractive, unique } from './lib/misc.js';
-import inspect from 'inspect';
+import { define, properties, types, mapFunction, gettersetter, arraysInCommon, unique } from './lib/misc.js';
 import child_process from './lib/childProcess.js';
-import { ReadFile, ReadJSON, ReadBJSON, FdReader } from './io-helpers.js';
 import { CompileCommand, MakeCommand, MakeCommands, ArgumentType } from './lib/compileCommand.js';
 import { DirIterator, RecursiveDirIterator, ReadDirRecursive } from './dir-helpers.js';
 
@@ -97,13 +95,14 @@ const binutils = (globalThis.binutils = {
 });
 
 function main(...arglist) {
-  let { width, height } = getScreenSize({});
-  globalThis.console = new Console(process.stdout, {
+  const { stdout, stderr } = process;
+  globalThis.console = new Console({
+    stdout,
+    stderr,
     inspectOptions: {
       colors: true,
       depth: Infinity,
       compact: false,
-      breakLength: width,
       maxArrayLength: Infinity,
       maxStringLength: Infinity
     }
@@ -113,11 +112,11 @@ function main(...arglist) {
     '/home/roman/Projects/plot-cv/quickjs/qjs-modules/build/x86_64-linux-debug/compile_commands.json';
 
   let builddir = path.dirname(file);
-  let json = ReadFile(file, 'utf-8');
+  let json = fs.readFileSync(file, 'utf-8');
   let compileCommands = JSON.parse(json);
   let prevDirectory;
   let directories = new Set(),
-    workingDir = path.getcwd();
+    workingDir = process.cwd();
 
   for(let { directory, command } of compileCommands) {
     let cmd = MakeCommand(command, directory);
@@ -144,7 +143,7 @@ function main(...arglist) {
 
   let i = 0;
   for(let cmd of commands) {
-    cmd.remove(...common);
+    //cmd.remove(...common);
     let { program, output, source } = cmd;
 
     targetMap(cmd.outputFile, cmd);
@@ -156,12 +155,15 @@ function main(...arglist) {
   common.unshift(program);
   let newCmd = common.join(' ');
 
-  let commonCmd = new CompileCommand(newCmd);
+  let commonCmd = (globalThis.commonCmd = new CompileCommand(newCmd));
 
   const { defines, includePaths, flags } = commonCmd;
 
-  const CFLAGS = [...defines.map(d => '-D' + d), ...includePaths.map(i => '-I' + i), ...flags];
-  console.log('CFLAGS', CFLAGS);
+  define(globalThis, {
+    get CFLAGS() {
+      return [...defines.map(d => '-D' + d), ...includePaths.map(i => '-I' + i), ...flags];
+    }
+  });
 
   let linkFiles = [...directories].flatMap(dir => [
     ...RecursiveDirIterator(dir, (entry, file) => /link\.txt$/.test(file))
@@ -170,7 +172,7 @@ function main(...arglist) {
   console.log('linkFiles', linkFiles);
 
   for(let file of linkFiles) {
-    const string = ReadFile(file);
+    const string = fs.readFileSync(file, 'utf-8');
     let [cmd] = MakeCommands(string, file.replace(/\/CMakeFiles\/.*/g, ''));
 
     const { output, objects } = cmd;
@@ -186,22 +188,22 @@ function main(...arglist) {
         }
       });
     }
-    console.log('cmd', console.config({ compact: 2 }), cmd);
+    console.log('cmd', cmd);
 
     (globalThis.linkCommands ??= []).push(cmd);
   }
 
   console.log('commands', commands);
 
-  os.kill(process.pid, os.SIGUSR1);
+  process.kill(process.pid, 10);
   //startInteractive();
 }
 
 try {
-  main(...scriptArgs.slice(1));
+  main(...process.argv.slice(2));
 } catch(error) {
   console.log(`FAIL: ${error.message}\n${error.stack}`);
-  std.exit(1);
+  process.exit(1);
 } finally {
   console.log('SUCCESS');
 }

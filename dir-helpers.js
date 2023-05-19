@@ -1,13 +1,12 @@
-import { getenv } from 'std';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from './lib/path.js';
-import { define, predicate, valuePointer, stringPointer } from './lib/misc.js';
+import { define, predicate } from './lib/misc.js';
 
 export function* DirIterator(...args) {
   let pred = typeof args[0] != 'string' ? predicate(args.shift()) : () => true;
   for(let dir of args) {
-    dir = dir.replace(/~/g, getenv('HOME'));
+    dir = dir.replace(/~/g, process.env.HOME);
     let entries = os.readdir(dir)[0] ?? [];
     for(let entry of entries.sort()) {
       let file = path.join(dir, entry);
@@ -32,7 +31,7 @@ export function* RecursiveDirIterator(dir, pred = (entry, file, dir, depth) => t
     pred = (entry, file, dir, depth) => re.test(entry) || re.test(file);
   }
   if(!dir.endsWith('/')) dir += '/';
-  dir = dir.replace(/~/g, getenv('HOME'));
+  dir = dir.replace(/~/g, process.env.HOME);
   for(let file of fs.readdirSync(dir)) {
     if(['.', '..'].indexOf(file) != -1) continue;
     let entry = `${dir}${file}`;
@@ -65,7 +64,7 @@ export class Path {
   #string = null;
 
   constructor(str) {
-    if(typeof str == 'string') str = path.collapse(str);
+    if(typeof str == 'string') str = path.normalize(str);
     this.#string = str;
   }
 
@@ -209,7 +208,7 @@ function operators_set(proto, ...op_list) {
       new_op_list.push(a);
     }
   }
-  proto[Symbol.operatorSet] = Operators.create.call(null, ...new_op_list);
+  //proto[Symbol.operatorSet] = Operators.create.call(null, ...new_op_list);
 }
 
 //Path.prototype[Symbol.operatorSet] = Operators.create

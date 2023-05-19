@@ -336,7 +336,7 @@ function ResolveImports(source, log = () => {}, recursive, depth = 0) {
 
   const PathAdjust = s => {
     let j = path.join(dir, s);
-    j = path.collapse(j);
+    j = path.normalize(j);
     j = path.normalize(j);
     if(path.isRelative(j)) j = './' + j;
     return ModuleLoader(j);

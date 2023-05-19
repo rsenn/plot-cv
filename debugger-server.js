@@ -11,13 +11,14 @@ import { Location } from 'location';
 import { existsSync, readSync, writeSync, reader } from 'fs';
 import { setLog, logLevels, getSessions, LLL_USER, LLL_INFO, LLL_NOTICE, LLL_WARN, createServer } from 'net';
 import { DebuggerProtocol } from './debuggerprotocol.js';
-import { TrivialSyntaxHighlighter, ECMAScriptSyntaxHighlighter, DebuggerDispatcher, LoadAST, GetArguments, FindFunctions } from './debugger.js';
+import { TrivialSyntaxHighlighter, DebuggerDispatcher, GetArguments, FindFunctions } from './debugger.js';
 import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
 import { ReadJSON, WriteJSON, ReadFile, Spawn } from './io-helpers.js';
 import { Table, List } from './cli-helpers.js';
 import { map, consume } from './lib/async/helpers.js';
 import { AsyncSocket, SockAddr, AF_INET, SOCK_STREAM, IPPROTO_TCP } from './quickjs/qjs-ffi/lib/socket.js';
 import { RepeaterOverflowError, FixedBuffer, SlidingBuffer, DroppingBuffer, MAX_QUEUE_LENGTH, Repeater } from './lib/repeater/repeater.js';
+import { URLWorker } from './os-helpers.js';
 
 extendArray(Array.prototype);
 
@@ -84,6 +85,66 @@ function GetLoc(node) {
     const [charOffset] = node.range ?? [node.start];
     return new Location(line, column + 1, charOffset);
   }
+}
+
+export async function LoadAST(source) {
+  const script = `import * as std from 'std';
+import { Worker } from 'os';
+import { existsSync, readerSync } from 'fs';
+import { Spawn } from './io-helpers.js';
+import { Console } from 'console';
+import { toString, gettid } from 'util';
+
+globalThis.console = new Console({ inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 200, prefix: '\\x1b[2K\\x1b[G\\x1b[1;33mWORKER\\x1b[0m ' } });
+
+const worker = Worker.parent;
+
+worker.onmessage = async ({ data }) => {
+  const { type, source } = data;
+
+  switch(type) {
+    case 'gettid': {
+      worker.postMessage({ tid: gettid() });
+      break;
+    }
+    case 'quit': {
+      worker.onmessage = null;
+      console.log('quitting thread ('+gettid()+')...');
+      break;
+    }
+    default: {
+      const ast = await loadAST(source);
+      worker.postMessage({ ast });
+      break;
+    } 
+  }
+};
+
+async function loadAST(source) {
+  if(!existsSync(source)) return null;
+  const { stdout, wait } = Spawn('meriyah', ['-l', source], { block: false, stdio: ['inherit', 'pipe', 'inherit'] });
+  
+  let s = '';
+  for(let chunk of readerSync(stdout))
+    s += toString(chunk);
+
+  const [pid, status] = wait();
+  const { length } = s;
+  //console.log('loadAST', { source, length, status });
+  
+  return JSON.parse(s);
+}`;
+
+  //WriteFile('load-ast.js', script);
+
+  let worker = new URLWorker(script);
+  worker.postMessage({ source });
+  const { value, done } = await worker.next();
+
+  worker.postMessage({ type: 'quit' });
+
+  const { data } = value;
+  return ({ string: JSON.parse }[typeof data.ast] ?? (a => a))(data.ast);
 }
 
 function StartREPL(prefix = scriptName(), suffix = '') {
@@ -694,7 +755,7 @@ function main(...args) {
                   console.log('wait() =', child.wait());
                   console.log('child', child);
                 });
-                console.log('dbg', dbg);
+                console.log('connect commant', {ws,dbg});
                 sockets.add(dbg);
 
                 const cwd = process.cwd();
@@ -777,7 +838,10 @@ function main(...args) {
               }
               default: {
                 console.log('send to debugger', { command, data });
-                ws.dbg.sendMessage(data);
+                console.log('send to debugger', ws.dbg);
+
+                ws.dbg?.sendMessage(data);
+
                 //DebuggerProtocol.send(dbg, data);
                 break;
               }
