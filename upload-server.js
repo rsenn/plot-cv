@@ -11,7 +11,7 @@ import * as Terminal from './terminal.js';
 import * as fs from 'fs';
 import { link, unlink, error, fnmatch, FNM_EXTMATCH } from 'misc';
 import { toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE, waitFor } from 'util';
-import net, { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, FormParser, Hash, Response, Socket } from 'net';
+import { createServer, setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, FormParser, Hash, Response, Socket } from 'net';
 import { parseDate, dateToObject } from './date-helpers.js';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
@@ -447,9 +447,9 @@ function main(...args) {
     globalThis.out = s => logFile.puts(s + '\n');
 
     logLevel = (params.debug ? LLL_USER : 0) | (((params.debug ? LLL_INFO : LLL_WARN) << 1) - 1);
-    console.log('createWS', { logLevel }, net.createServer);
+    console.log('createWS', { logLevel }, createServer);
 
-    return net.createServer({
+    return createServer({
       block: false,
       tls: params.tls,
       sslCert,
@@ -1083,6 +1083,7 @@ function main(...args) {
     MagickResize,
     Directory,
     net: {
+      createServer,
       setLog,
       LLL_USER,
       LLL_NOTICE,
@@ -1091,8 +1092,7 @@ function main(...args) {
       FormParser,
       Hash,
       Response,
-      Socket,
-      ...net
+      Socket
     }
   });
 
