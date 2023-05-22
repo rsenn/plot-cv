@@ -5,12 +5,12 @@ import * as xml from 'xml';
 import * as path from 'path';
 import { Console } from 'console';
 import { Directory, BOTH, TYPE_DIR, TYPE_LNK, TYPE_REG, TYPE_MASK } from 'directory';
-import REPL from './quickjs/qjs-modules/lib/repl.js';
+import { REPL } from 'repl';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from 'fs';
 import { link, unlink, error, fnmatch, FNM_EXTMATCH } from 'misc';
-import { toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE, waitFor } from 'util';
+import { keys, toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE, waitFor } from 'util';
 import { createServer, setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, FormParser, Hash, Response, Socket } from 'net';
 import { parseDate, dateToObject } from './date-helpers.js';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
@@ -27,7 +27,7 @@ import { RecursiveDirIterator } from './dir-helpers.js';
 extendArray();
 extendGenerator();
 extendGenerator(Object.getPrototypeOf(new Map().keys()));
-extendGenerator(Object.getPrototypeOf(new Directory('.')));
+//extendGenerator(Object.getPrototypeOf(new Directory('.')));
 extendAsyncGenerator();
 
 globalThis.fs = fs;
@@ -626,15 +626,20 @@ function main(...args) {
           yield JSON.stringify(result, ...(+pretty ? [null, 2] : []));
         },
         async function* files(req, resp) {
-          console.log('*files query =', req.url.query);
+          const { url, method, body } = req;
+          console.log('*files', { body });
+          console.log('*files query =', url.query);
           const {
             filter = '*',
             root,
             type = TYPE_DIR | TYPE_REG | TYPE_LNK,
             limit = '0'
-          } = req.url.query;
+          } = url.query;
+
           console.log('*files', { root, filter, type });
+
           const [offset = 0, size = Infinity] = limit.split(',').map(n => +n);
+
           console.log('*files', { offset, size });
           let i = 0;
           let f = Matcher(filter);
@@ -644,8 +649,11 @@ function main(...args) {
             for(let [key, value] of allowedDirs.entries().filter(KeyOrValueMatcher(root))) {
               let dir = new Directory(value, BOTH, +type);
               yield key + ':\r\n';
-              for(let [name, type] of dir.filter(([name, type]) => f(name)))
-                yield name + (+type == TYPE_DIR ? '/' : '') + '\r\n';
+
+              console.log('dir', dir, keys(dir, 0, 2), dir + '');
+
+              for(let [name, type] of dir)
+                if(f(name)) yield name + (+type == TYPE_DIR ? '/' : '') + '\r\n';
             }
           }
           console.log('*files', { i, f });
