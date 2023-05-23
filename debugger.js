@@ -1,5 +1,6 @@
 import { toString, ansiStyles, assert, define, error, isFunction } from './lib/misc.js';
 import { consume as consumeSync } from './lib/iterator/helpers.js';
+import { Pointer } from './lib/pointer.js';
 
 var worker;
 var counter;
@@ -332,16 +333,59 @@ export function* GetArguments(node) {
   }
 }
 
-export function* FindFunctions(ast) {
-  for(let [v, p] of deep.iterate(ast, v => /^Func/.test(v.type))) {
-    let name;
+export function GetFunctionName(ast, p) {
+  try {
+    let ptr = new Pointer(p);
+    let h = ptr.hier().filter(p => (n => !Array.isArray(n)) (deep.get(ast, p)));
+    // console.log('h',h);
+    // 
+  let start= 1+  h.slice(0,-1).findLastIndex(ptr => (n => /Func/.test(n.type))(deep.get(ast,ptr)));
+h=h.slice(start);
 
-    try {
+    // 
+    return     h.map(p => (n => n.id ?? n.key ?? n)(deep.get(ast, p))).map(s => (s && s.name) || s)
+      .filter(s => typeof s == 'string')
+      .join('.');
+  } catch(e) {}
+  let name;
+  try {
+    if(p.last == 'value') name = deep.get(ast, p.slice(0, -1).concat(['key', 'name']));
+  } catch(e) {}
+  let parent = deep.get(ast, p.slice(0, -1));
+
+  if(parent.type == 'Property') {
+    if(parent.key.type == 'Literal') {
+      name ??= parent.key.value;
+    }
+  }
+  name ??= v.id?.name;
+  return name;
+}
+
+export function* FindFunctions(ast) {
+  FindFunctions.paths ??= new WeakMap();
+
+  for(let [v, p] of deep.iterate(ast, v => /^(Arrow|)Func/.test(v.type))) {
+    let name = GetFunctionName(ast, p);
+    let parent = deep.get(ast, p.slice(0, -1));
+
+    /*    try {
       if(p.last == 'value') name = deep.get(ast, p.slice(0, -1).concat(['key', 'name']));
     } catch(e) {}
 
-    name ??= v.id?.name;
+    if(parent.type == 'Property') {
+      if(parent.key.type == 'Literal') {
+        name ??= parent.key.value;
+      }
+    }*/
 
-    if(name) yield [name, v.loc.start, [...GetArguments(v)], v.start];
+    if(v.async) name = 'async ' + name;
+
+    if(v.loc.start) {
+      let { line, column } = v.loc.start;
+      ++column;
+
+      /*if(name)*/ yield [name, { line, column }, [...GetArguments(v)], v.expression, p];
+    }
   }
 }

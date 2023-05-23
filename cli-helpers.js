@@ -17,7 +17,11 @@ function padTrunc(...args) {
   }
 }
 
-export function Table(rows, keys, t = (cell, column) => abbreviate((cell === undefined ? '–' : cell + '').replace(/\n.*/g, ''))) {
+export function Table(
+  rows,
+  keys,
+  t = (cell, column) => abbreviate((cell === undefined ? '–' : cell + '').replace(/\n.*/g, ''))
+) {
   let sizes = {};
   keys = keys || Object.keys(rows[0]);
   let getfn = k => (typeof k == 'function' ? k : row => row[k]);
@@ -46,7 +50,7 @@ export function Table(rows, keys, t = (cell, column) => abbreviate((cell === und
         return [
           pad(this.keys),
           pad(
-            this.keys.map(() => ' '),
+            this.keys.map(() => ''),
             '─',
             '─┼─'
           )
@@ -60,7 +64,11 @@ export function Table(rows, keys, t = (cell, column) => abbreviate((cell === und
   );
 }
 
-export function List(items, keys, t = (item, field) => (item === undefined ? '–' : item + '').replace(/[\r\n].*/g, '')) {
+export function List(
+  items,
+  keys,
+  t = (item, field) => (item === undefined ? '–' : item + '').replace(/[\r\n].*/g, '')
+) {
   let sizes = {};
   keys = keys || Object.keys(items[0]);
   let getfn = k => (typeof k == 'function' ? k : item => item[k]);
@@ -81,7 +89,8 @@ export function List(items, keys, t = (item, field) => (item === undefined ? '�
       .join(sep ?? ' ')
       .trimEnd();
 
-  if(!Array.isArray(items[0])) items = items.map(fields => keys.map((key, i) => getfn(key)(fields)));
+  if(!Array.isArray(items[0]))
+    items = items.map(fields => keys.map((key, i) => getfn(key)(fields)));
 
   return define(
     {

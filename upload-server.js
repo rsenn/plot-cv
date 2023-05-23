@@ -664,7 +664,7 @@ function main(...args) {
           define(globalThis, { filesRequest: { req, resp, body, query } });
           console.log('*files', { req, resp, body, query });
           const data = query ?? {};
-          resp.type = 'application/json';
+          // XXX: resp.type = 'application/json';
           let {
             dirs = defaultDirs,
             filter = '[^.].*' ?? '.(brd|sch|G[A-Z][A-Z])$',
@@ -754,7 +754,10 @@ function main(...args) {
               else results.push({ dir, names });
             }
           }
-          yield JSON.stringify(...[results, ...(verbose ? [null, 2] : [])]);
+          const s=JSON.stringify(...[results, ...(verbose ? [null, 2] : [])]);
+          console.log('files2 reply length:',s.length);
+          console.log('files2 reply:',s.slice(-100));
+          yield s;
         }
       ],
       ...url,
@@ -808,7 +811,7 @@ function main(...args) {
         define(globalThis, { req, resp });
 
         const { method, headers } = req;
-        if(resp.headers) resp.headers['Server'] = 'upload-server';
+        if(resp && resp.headers) resp.headers['Server'] = 'upload-server';
         //resp.headers = { Server: 'upload-server' };
         //console.log('onRequest resp.headers', resp.headers, resp.headers['Server']);
         //
@@ -970,63 +973,61 @@ function main(...args) {
 
         if(!req.headers || typeof req.headers != 'object') console.log('No headers', req);
 
-        const { body, url } = resp;
+        const { body, url } = resp ?? {};
         const { referer } = req.headers;
 
-        let file = url.path.slice(1);
-        const dir = path.dirname(file); //file.replace(/\/[^\/]*$/g, '');
+        if(url) {
+          let file = url.path.slice(1);
+          const dir = path.dirname(file); //file.replace(/\/[^\/]*$/g, '');
 
-        if(file.endsWith('.txt') || file.endsWith('.html') || file.endsWith('.css')) {
-          resp.body = ReadFile(file);
-        } else if(file.endsWith('.js')) {
-          let file1 = file;
-          if(/qjs-modules\/lib/.test(file) && !/(dom|util)\.js/.test(file)) {
-            let file2 = file.replace(/.*qjs-modules\//g, '');
-            if(fs.existsSync(file2)) {
-              file = file2;
-            }
-          } else if(!fs.existsSync(file)) {
-            for(let dir of ['quickjs/qjs-modules', 'quickjs/qjs-modules/lib', '.', 'lib']) {
-              let file2 = dir + '/' + file;
-              console.log('inexistent file', file, file2, fs.existsSync(file2), referer);
+          if(file.endsWith('.txt') || file.endsWith('.html') || file.endsWith('.css')) {
+            resp.body = ReadFile(file);
+          } else if(file.endsWith('.js')) {
+            let file1 = file;
+            if(/qjs-modules\/lib/.test(file) && !/(dom|util)\.js/.test(file)) {
+              let file2 = file.replace(/.*qjs-modules\//g, '');
               if(fs.existsSync(file2)) {
                 file = file2;
-                break;
+              }
+            } else if(!fs.existsSync(file)) {
+              for(let dir of ['quickjs/qjs-modules', 'quickjs/qjs-modules/lib', '.', 'lib']) {
+                let file2 = dir + '/' + file;
+                console.log('inexistent file', file, file2, fs.existsSync(file2), referer);
+                if(fs.existsSync(file2)) {
+                  file = file2;
+                  break;
+                }
               }
             }
-          }
 
-          if(file1 != file) {
-            //  console.log('\x1b[38;5;214monRequest\x1b[0m', file1, '->', file);
-            resp.status = 302;
-            resp.headers = { ['Location']: '/' + file };
-            return resp;
-          }
-          //console.log('\x1b[38;5;33monRequest\x1b[0m', file1, file);
-
-          //
-          let body = ReadFile(file);
-
-          const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
-
-          resp.body = body.replaceAll(re, (match, p1, p0, p2, p3, offset) => {
-            if(!/[\/\.]/.test(p2)) {
-              let fname = `${p2}.js`;
-              let rel = path.relative(fname, dir);
-              //console.log('onRequest', { match, fname }, rel);
-
-              // if(!fs.existsSync(  rel)) return ``;
-
-              match = [p1, rel, p3].join('');
-
-              //console.log('args', { match, p1, p2, p3, offset });
+            if(file1 != file) {
+              //  console.log('\x1b[38;5;214monRequest\x1b[0m', file1, '->', file);
+              resp.status = 302;
+              resp.headers = { ['Location']: '/' + file };
+              return resp;
             }
-            return match;
-          });
-        }
-        {
-          let { body } = resp;
-          //console.log('\x1b[38;5;212monRequest(2)\x1b[0m', { body });
+            //console.log('\x1b[38;5;33monRequest\x1b[0m', file1, file);
+
+            //
+            let body = ReadFile(file);
+
+            const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
+
+            resp.body = body.replaceAll(re, (match, p1, p0, p2, p3, offset) => {
+              if(!/[\/\.]/.test(p2)) {
+                let fname = `${p2}.js`;
+                let rel = path.relative(fname, dir);
+                //console.log('onRequest', { match, fname }, rel);
+
+                // if(!fs.existsSync(  rel)) return ``;
+
+                match = [p1, rel, p3].join('');
+
+                //console.log('args', { match, p1, p2, p3, offset });
+              }
+              return match;
+            });
+          }
         }
 
         return resp;
