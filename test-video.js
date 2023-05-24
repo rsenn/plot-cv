@@ -17,11 +17,12 @@ import { MakeSVG, SaveSVG } from './image-helpers.js';
 import { Profiler } from './time-helpers.js';
 import { GLFW, Mat2Image, DrawImage, DrawCircle } from './draw-utils.js';
 import { TCPClient } from './midi-tcp.js';
+import process from 'process';
 
 let rainbow;
 let zoom = 1;
 let debug = false;
-let basename = (globalThis.process ? globalThis.process.argv[1] : scriptArgs[1]).replace(
+let basename = (process ? process.argv[1] : scriptArgs[1]).replace(
   /\.js$/,
   ''
 );
@@ -144,7 +145,8 @@ function main(...args) {
     colors: true,
     depth: 1,
     maxArrayLength: 30,
-    compact: 1
+    compact: 1 ,
+    hideKeys: [Symbol.toStringTag]
   });
   let f = std.open('test-video.log', 'w');
   console.log('f.write', f.write);
@@ -472,7 +474,7 @@ function main(...args) {
     meter.reset();
     meter.start();
     let deadline = Date.now() + frameDelay;
-    console.log('prevTime', prevTime);
+    //console.log('prevTime', prevTime);
 
     let frameNo = video.get('pos_frames');
     if(frameNo == frameCount) video.set('pos_frames', (frameNo = 0));

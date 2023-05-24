@@ -1,6 +1,7 @@
 import { toString, ansiStyles, assert, define, error, isFunction } from './lib/misc.js';
 import { consume as consumeSync } from './lib/iterator/helpers.js';
 import { Pointer } from './lib/pointer.js';
+import process from 'process';
 
 var worker;
 var counter;

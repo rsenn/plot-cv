@@ -6,7 +6,7 @@ import { tryCatch, once, filterKeys, isObject, bindMethods, decorate, daemon, at
 import { Console } from './quickjs/qjs-modules/lib/console.js';
 import { REPL } from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
-import * as Terminal from './terminal.js';
+import * as Terminal from 'terminal';
 import { Location } from 'location';
 import { existsSync, readSync, writeSync, reader } from 'fs';
 import { setLog, logLevels, getSessions, LLL_USER, LLL_INFO, LLL_NOTICE, LLL_WARN, createServer } from 'net';
@@ -16,9 +16,10 @@ import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl
 import { ReadJSON, WriteJSON, ReadFile, Spawn } from './io-helpers.js';
 import { Table, List } from './cli-helpers.js';
 import { map, consume } from './lib/async/helpers.js';
-import { AsyncSocket, SockAddr, AF_INET, SOCK_STREAM, IPPROTO_TCP } from './quickjs/qjs-ffi/lib/socket.js';
+import { AsyncSocket, SockAddr, AF_INET, SOCK_STREAM, IPPROTO_TCP } from 'sockets';
 import { RepeaterOverflowError, FixedBuffer, SlidingBuffer, DroppingBuffer, MAX_QUEUE_LENGTH, Repeater } from './lib/repeater/repeater.js';
 import { URLWorker } from './os-helpers.js';
+import process from 'process';
 
 extendArray(Array.prototype);
 

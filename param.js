@@ -1,4 +1,4 @@
-import { define, isObject, mod, memoize, unique, roundTo } from "./lib/misc.js";
+import { define, isObject, mod, memoize, unique, roundTo } from "util";
 import * as cv from "opencv";
 import { EventEmitter, eventify } from "./quickjs/qjs-modules/lib/events.js";
 
@@ -11,9 +11,9 @@ export class Param extends EventEmitter {
     return this.get();
   }
 
-  [Symbol.toStringTag]() {
+  /*[Symbol.toStringTag]() {
     return this.toString();
-  }
+  }*/
 
   toString() {
     return "" + this.valueOf();
@@ -27,6 +27,8 @@ export class Param extends EventEmitter {
     });
   }
 }
+
+define(Param.prototype, { get [Symbol.toStringTag]() { return this.toString(); } });
 
 export class NumericParam extends Param {
   constructor(value = 0, min = 0, max = 1, step = 1) {

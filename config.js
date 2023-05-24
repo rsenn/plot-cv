@@ -1,5 +1,6 @@
 import { ReadFile, WriteFile } from './io-helpers.js';
 import fs from 'fs';
+import process from 'process';
 import { memoize } from './lib/misc.js';
 
 let basename = memoize(() => process.argv[1].replace(/\.js$/, ''));
