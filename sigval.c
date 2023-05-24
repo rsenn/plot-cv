@@ -35,6 +35,7 @@ main() {
   printf("%-10s = %d\n", "SIGPWR", SIGPWR);
   printf("%-10s = %d\n", "SIGSYS", SIGSYS);
   printf("sizeof(struct sigaction) = %zu\n", sizeof(struct sigaction));
+  printf("sizeof(sigset_t) = %zu\n", sizeof(sigset_t));
   printf("NSIG = %zu\n", NSIG);
   printf("SIGRTMAX = %zu\n", SIGRTMAX);
   printf("SIGRTMIN = %zu\n", SIGRTMIN);
