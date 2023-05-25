@@ -1,7 +1,7 @@
 #!/usr/bin/env qjsm
 import process from 'process';
 import { readFileSync, createWriteStream } from 'fs';
-import { getOpt, showHelp } from './lib/misc.js';
+import { getOpt, showHelp } from 'util';
 import { ParseError, parseScript } from './lib/meriyah.js';
 
 const { stdout, stderr, argv } = process;
