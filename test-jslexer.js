@@ -40,6 +40,7 @@ function main(arg) {
     console.log('ERROR:', err.message, err.stack);
   }
 }
+
 try {
   main(...getArgs().slice(1));
 } catch(error) {

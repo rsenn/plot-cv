@@ -105,6 +105,7 @@ function Proxy(obj) {
   //console.log('new proxy:', p);
   return p;
 }
+
 Proxy.prototype.defaultTimeout = 30000;
 Proxy.prototype.valueOf = function() {
   return this.time;
@@ -277,6 +278,7 @@ async function main(...args) {
     //proxies.sort((a, b) => a.time - b.time);
   })();
 }
+
 main(...scriptArgs.slice(1));
 
 async function writeResults(results, format = 'txt', outputName = 'proxies') {

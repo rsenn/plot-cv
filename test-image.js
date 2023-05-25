@@ -105,15 +105,19 @@ function* getParents(hier, id) {
     id = hier.parent(id);
   }
 }
+
 function getContourDepth(hier, id) {
   return [...getParents(hier, id)].length;
 }
+
 function findRoot(hier) {
   return hier.findIndex(h => h[cv.HIER_PREV] == -1 && h[cv.HIER_PARENT] == -1);
 }
+
 function* getToplevel(hier) {
   for(let [i, h] of hier.entries()) if(h[cv.HIER_PARENT] == -1) yield i;
 }
+
 function* walkContours(hier, id) {
   id = id || findRoot(hier);
   let h;

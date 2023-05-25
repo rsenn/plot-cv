@@ -38,7 +38,7 @@ include(FindPNG)
 if(NOT PKG_CONFIG_FOUND)
   include(FindPkgConfig)
 endif(NOT PKG_CONFIG_FOUND)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Functions.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/MoreFunctions.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/OpenCV.cmake)
 #include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindPNG.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/quickjs/cmake/FindQuickJS.cmake)
@@ -428,6 +428,7 @@ add_custom_target(
   COMMENT "Install into directory")
 
 install(FILES 
+  meriyah.js
        eagle2gerber.js xml2react.js
        convert-imports.js create-tamper.js cv-shell.js eagle2svg.js eagle-shell.js extract-structs.js takephoto.js xml2js.js
         DESTINATION bin

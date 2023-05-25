@@ -49,6 +49,7 @@ function _catchError(error, vnode) {
 
   throw error;
 }
+
 var options = { __e: _catchError, __v: 0 };
 
 Object.assign(globalThis, { options });
@@ -239,6 +240,7 @@ function updateParentDomPointers(vnode) {
     return updateParentDomPointers(vnode);
   }
 }
+
 var rerenderQueue = [];
 var defer = typeof Promise == 'function' ? Promise.prototype.then.bind(Promise.resolve()) : setTimeout;
 var prevDebounce;
@@ -267,6 +269,7 @@ function process() {
     });
   }
 }
+
 process.__r = 0;
 
 function diffChildren(parentDom, renderResult, newParentVNode, oldParentVNode, globalContext, isSvg, excessDomChildren, commitQueue, oldDom, isHydrating) {
@@ -891,6 +894,7 @@ function unmount(vnode, parentVNode, skipRemove) {
 function doRender(props, state, context) {
   return this.constructor(props, context);
 }
+
 var IS_HYDRATE = EMPTY_OBJ;
 
 function render(vnode, parentDom, replaceNode) {
@@ -952,6 +956,7 @@ function cloneElement(vnode, props, children) {
 
   return createVNode(vnode.type, normalizedProps, key || vnode.key, ref || vnode.ref, null);
 }
+
 var i = 0;
 
 function createContext(defaultValue, contextId) {
@@ -1264,6 +1269,7 @@ function flushAfterPaintEffects() {
 
   afterPaintEffects = [];
 }
+
 var HAS_RAF = typeof requestAnimationFrame == 'function';
 
 function afterNextFrame(callback) {

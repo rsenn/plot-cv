@@ -22,6 +22,7 @@ function waitRead(file) {
     });
   }
 }
+
 function waitExit(proc) {
   if(typeof proc == 'object' && proc != null && 'once' in proc) {
     return new Promise((resolve, reject) => {
@@ -77,4 +78,5 @@ async function main(...args) {
   console.log('childProcess.errno:', proc.errno);
   console.log('childProcess.errstr:', proc.errstr);
 }
+
 main().catch(err => console.log('error:', err.message, err.stack));

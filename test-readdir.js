@@ -13,6 +13,7 @@ extendGenerator();
 function* Filter(gen, regEx = /.*/) {
   for(let item of gen) if(regEx.test(item)) yield item;
 }
+
 Object.assign(globalThis, { DirIterator, RecursiveDirIterator, ReadDirRecursive });
 
 function main(...args) {

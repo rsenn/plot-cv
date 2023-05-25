@@ -92,7 +92,7 @@ export class VirtFS {
       ...this.reduce((acc, dir) => {
         let f = path.concat(dir, pathname);
         let x = fs.readdirSync(f) ?? [];
-        for(let y of x) acc.add(fn(y, path.collapse(path.concat(f, y))));
+        for(let y of x) acc.add(fn(y, path.normalize(path.concat(f, y))));
         return acc;
       }, new Set())
     ];

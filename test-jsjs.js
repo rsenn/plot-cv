@@ -65,6 +65,7 @@ async function main(...args) {
   let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
   process.exit(Number(files.length == 0));
 }
+
 function finish(err) {
   let fail = !!err;
   if(fail) {

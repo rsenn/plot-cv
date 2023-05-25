@@ -1,95 +1,107 @@
-import * as std from 'std';
-import * as os from 'os';
-
+import { fail, assert, assertEquals, eq, assertStrictEquals, tests } from './lib/tinytest.js';
 import { Repeater } from './lib/repeater/repeater.js';
-import { delay } from './lib/repeater/timers.js';
-import { Console } from 'console';
-import { waitFor } from './quickjs/qjs-modules/lib/util.js';
 
-const { setTimeout, clearTimeout } = os;
-Object.assign(globalThis, { setTimeout, clearTimeout });
+import('console').then( ({ Console }) => (globalThis.console = new Console({ inspectOptions: { compact: 2 } })) );
 
-function main() {
-  globalThis.console = new Console(std.err, {
-    inspectOptions: {
-      colors: true,
-      depth: 1,
-      maxArrayLength: 30,
-      compact: 3
+tests({
+  async 'next() value'() {
+    const gen = new Repeater(async (push, stop) => push(await push(undefined)));
+
+    await gen.next();
+    eq((await gen.next('value#1')).value, 'value#1');
+  },
+  async 'await push'() {
+    let step = 0;
+    const gen = new Repeater(async (push, stop) => {
+      await push(step);
+      step++;
+      await push(step);
+      step++;
+      await push(step);
+    });
+
+    eq((await gen.next('value#1')).value, 0);
+    eq(step, 0);
+    eq((await gen.next('value#2')).value, 1);
+    eq(step, 1);
+    eq((await gen.next('value#3')).value, 2);
+    eq(step, 2);
+  },
+  async 'return()'() {
+    const gen = new Repeater(async (push, stop) => {
+      for(let i = 0; i < 10; i++) await push(i);
+    });
+
+    eq((await gen.next('value#1')).value, 0);
+    eq((await gen.next('value#2')).value, 1);
+    eq((await gen.return('value#3')).value, 'value#3');
+
+    eq((await gen.next()).done, true);
+    eq((await gen.next()).value, undefined);
+  },
+  async 'throw()+rethrow'() {
+    const gen = new Repeater(async (push, stop) => {
+      for(let i = 0; i < 10; i++) await push(i);
+    });
+
+    eq((await gen.next('value#1')).value, 0);
+    eq((await gen.next('value#2')).value, 1);
+
+    try {
+      let pr = gen.throw(new Error('value#3'));
+      console.log('pr', pr);
+      pr = await pr;
+      console.log('pr', pr);
+    } catch(err) {
+      eq(err.message, 'value#3');
+
+      eq((await gen.next()).done, true);
+      eq((await gen.next()).value, undefined);
     }
-  });
-  const scale = 1;
-
-  (async function() {
-    let pushEvent, stopEvent;
-    console.log('Repeater', Repeater);
-    console.log('waitFor', waitFor);
-
-    // await waitFor(0);
-    console.log('setTimeout', globalThis.setTimeout);
-    console.log('clearTimeout', globalThis.clearTimeout);
-
-    let a = new Repeater(async (push, stop) => {
-      pushEvent = push;
-      stopEvent = stop;
-      await stop;
-    });
-
-    let b = new Repeater(async (push, stop) => {
-      for(let num of range(1, 20)) {
-        await waitFor(5 * scale);
-        push(`b #${num}`);
-      }
-      stop();
-    });
-
-    let c = new Repeater(async (push, stop) => {
-      for(let num of range(1, 5)) push(`c #${num}`);
-      stop();
-    });
-
-    //a.next();
-    let repeat = Repeater.merge([a, b, Repeater.zip([c, delay(20 * scale)])]);
-
-    let loop = (async () => {
-      for await(let value of repeat) {
-        console.log('value:', value);
-      }
-      console.log('stopped');
-    })();
-
-    for(let num of range(1, 10)) {
-      await waitFor(10 * scale);
-      pushEvent(`a #${num}`);
-    }
-    stopEvent();
-
-    await loop;
-
-    let x = [new Repeater(genRepFunc('x', 20, 100 * scale)), new Repeater(genRepFunc('y', 20, 100 * scale)), new Repeater(genRepFunc('z', 20, 100 * scale))];
-    let latest = Repeater.latest(x);
-
-    await (async () => {
+  },
+  async 'throw()+catch/stop()'() {
+    const gen = new Repeater(async (push, stop) => {
       try {
-        for await(let tuple of latest) {
-          console.log('tuple:', console.config({ compact: 2 }), tuple);
-        }
-      } catch(error) {
-        console.log('error:', error);
+        for(let i = 0; i < 10; i++) await push(i);
+      } catch(e) {
+        stop(new Error('stop+' + e.message));
       }
-      console.log('stopped');
-    })();
-  })();
+    });
 
-  function genRepFunc(name, num, ms) {
-    return async (push, stop) => {
-      for(let n of range(1, num)) {
-        await waitFor(randInt(ms));
-        push(`${name} #${n}`);
+    eq((await gen.next('value#1')).value, 0);
+    eq((await gen.next('value#2')).value, 1);
+
+    try {
+      let pr = gen.throw(new Error('value#3'));
+      console.log('pr', pr);
+      pr = await pr;
+      console.log('pr', pr);
+    } catch(err) {
+      eq(err.message, 'stop+value#3');
+
+      eq((await gen.next()).done, true);
+      eq((await gen.next()).value, undefined);
+    }
+  },
+  async 'throw()+handled'() {
+    const gen = new Repeater(async (push, stop) => {
+      try {
+        for(let i = 0; i < 10; i++) await push(i);
+      } catch(e) {
+        push(Infinity);
+        stop();
       }
-      stop();
-    };
+    });
+
+    eq((await gen.next('value#1')).value, 0);
+    eq((await gen.next('value#2')).value, 1);
+
+      let r =await gen.throw(new Error('value#3'));
+      eq(r.done, false);
+      eq(r.value, Infinity);
+
+    r =await gen.next();
+      eq(r.done, true);
+      eq(r.value, undefined);
   }
-}
-
-main();
+});

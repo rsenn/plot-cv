@@ -7,6 +7,7 @@ function wrap(parser, name) {
     return r;
   };
 }
+
 function primaryExpression(...args) {
   return wrap(
     choice(

@@ -22,10 +22,12 @@ function WriteFile(name, data) {
     console.log(`Wrote${name}${data.length}bytes`);
   }
 }
+
 function printAst(ast, comments, printer = globalThis.printer) {
   let output = printer.print(ast);
   return output;
 }
+
 let files = {};
 async function main(...args) {
   let params = getOpt(
@@ -97,6 +99,7 @@ async function main(...args) {
   let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
   exit(Number(files.length == 0));
 }
+
 function processFile(file, params) {
   let data, b, ret;
   const { debug } = params;
@@ -161,6 +164,7 @@ function processFile(file, params) {
   }
   const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral);
 }
+
 function finish(err) {
   let fail = !!err;
   if(fail) {
@@ -183,6 +187,7 @@ function finish(err) {
   console.log('finish: ' + (fail ? 'error' : 'success'));
   return !fail;
 }
+
 main(...process.argv.slice(1))
   .then(() => console.log('SUCCESS'))
   .catch(error => {

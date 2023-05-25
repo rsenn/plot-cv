@@ -50,6 +50,7 @@ function ReadJSON(filename) {
   let data = ReadFile(filename, 'utf-8');
   return data ? JSON.parse(data) : null;
 }
+
 const ReadPackageJSON = memoize(() => ReadJSON('package.json') ?? { _moduleAliases: {} });
 
 function ResolveAlias(filename) {
@@ -183,6 +184,7 @@ function ImpExpType(seq) {
   if(seq.some(tok => IsKeyword('import', tok))) return What.IMPORT;
   if(seq.some(tok => IsKeyword('export', tok))) return What.EXPORT;
 }
+
 function ImportType(seq) {
   if(IsKeyword(['import', 'export'], seq[0])) seq.shift();
   if(IsPunctuator('*', seq[0])) {
@@ -334,7 +336,7 @@ function ResolveImports(source, log = () => {}, recursive, depth = 0) {
 
   const PathAdjust = s => {
     let j = path.join(dir, s);
-    j = path.collapse(j);
+    j = path.normalize(j);
     j = path.normalize(j);
     if(path.isRelative(j)) j = './' + j;
     return ModuleLoader(j);
@@ -357,8 +359,8 @@ function ResolveImports(source, log = () => {}, recursive, depth = 0) {
     if(!token) break;
 
     const { length, seq } = token;
-    /*  if(debug > 1) console.log('token', token);
-    if(debug >= 1) console.log('lexer.mode', lexer.mode);
+     if(debug > 1) console.log('token', token);
+   /*  if(debug >= 1) console.log('lexer.mode', lexer.mode);
 */
     if(n == 0 && token.lexeme == '}' && lexer.stateDepth > 0) {
       lexer.popState();
@@ -1076,6 +1078,7 @@ class FileMap extends Array {
     return s;
   }
 }
+
 FileMap.prototype[Symbol.toStringTag] = 'FileMap';
 FileMap.prototype[Symbol.inspect] = function(depth, opts) {
   let arr = [...this].map(([range, buf], i) => {

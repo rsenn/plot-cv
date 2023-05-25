@@ -86,6 +86,7 @@ function Table2Array(table = 'table') {
   }
   return rows;
 }
+
 function Row2Obj(row) {
   let columns = [...row.children];
   let obj = {};
@@ -110,6 +111,7 @@ function HumanSize(n) {
   if(n >= 1e3) return Round(n / 1e3) + 'K';
   return n;
 }
+
 const input = {
   mode(s, obj, name) {
     return h('td', { class: `mode item`, 'data-value': s }, [

@@ -31,6 +31,7 @@ export function Point(arg) {
     return p;
   }
 }
+
 Point.prototype.move = function(x, y) {
   this.x += x;
   this.y += y;
@@ -212,6 +213,7 @@ export function Size(arg) {
   if(isNaN(obj.height)) obj.height = undefined;
   if(!(obj instanceof Size)) return obj;
 }
+
 Size.convertUnits = (size, w = 'window' in global ? window : null) => {
   if(w === null) return size;
   const view = {
@@ -297,6 +299,7 @@ export function Line(x1, y1, x2, y2) {
   if(!isLine(obj)) console.log('ERROR: is not a line: ', [...arguments]);
   if(!(this instanceof Line)) return obj;
 }
+
 export const isLine = obj => ['x1', 'y1', 'x2', 'y2'].every(prop => obj[prop] !== undefined);
 Line.isLine = isLine;
 Line.intersect = (a, b) => {
@@ -472,6 +475,7 @@ export function Rect(arg) {
     return ret;
   }
 }
+
 Rect.prototype.clone = function() {
   return new Rect(this.x, this.y, this.width, this.height);
 };
@@ -491,6 +495,7 @@ if(Rect.prototype.isSquare === undefined) {
     return Math.abs(this.width - this.height) < 1;
   };
 }
+
 Rect.prototype.constructor = Rect;
 Rect.prototype.area = function() {
   return this.width * this.height;
@@ -600,6 +605,7 @@ function PointList(points) {
     return ret;
   }
 }
+
 PointList.prototype = new Array();
 PointList.prototype.push = function() {
   const args = [...arguments];

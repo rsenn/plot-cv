@@ -22,12 +22,52 @@ header {
   height: 46px;
 }
 
+.header {
+  font-family:  sans-serif,sans,"Arial";
+}
+
 main {
   flex: auto;
 }
 
 footer {
   height: 100px;
+}
+
+pre {
+  margin: 0px;
+  font-size: 16px;
+}
+
+body {
+  height:  100vh;
+  width:  100vw;
+}
+
+.source {
+  overflow: visible;
+    display: inline-flex;
+    flex-direction: column;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+justify-items: stretch;
+    overflow: scroll;
+    /*margin-bottom: -30px;*/
+}
+.lineno {
+   color: rgb(192,192,192);
+ }
+
+/*.container {
+  overflow: hidden;
+}*/
+
+
+ main, .source   {
+  background-color: rgba(0,0,0,1.0);
 }
 /*
 canvas {
@@ -37,9 +77,6 @@ canvas {
   max-height: calc(100vh - 16px);
 }
 
-pre {
-  margin: 0px;
-}
 
 .lineno {
   float: left;
@@ -118,12 +155,14 @@ main {
   background: hsl(200, 100%, 30%);
   border: 1px solid black;
   margin: -1px 0 0 0;
-  font-size: 1.5em;
   padding: 2px;
 }
+.header {
+  font-size: 1rem;
+}
 
-.text {
-  box-sizing: border-box;
+main, .source, .text, pre {
+  box-sizing: content-box;
 }
 .text.active {
   border: 1px dashed hsl(20, 100%, 60%);
@@ -177,7 +216,7 @@ span.punctuator {
 span.comment {
   color: #0f0;
 }
-span.stringLiteral {
+span.stringLiteral, span.string {
   color: #0ff;
 }
 span.templateLiteral {

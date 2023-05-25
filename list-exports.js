@@ -66,11 +66,13 @@ function DumpLexer(lex) {
 
   return 'Lexer ' + inspect({ start, pos, size });
 }
+
 function DumpToken(tok) {
   const { length, offset, chars, loc } = tok;
 
   return `★ Token ${inspect({ chars, offset, length, loc }, { depth: 1 })}`;
 }
+
 const What = {
   IMPORT: 0,
   EXPORT: 1
@@ -433,7 +435,7 @@ function main(...args) {
     let dir = path.dirname(source);
 
     fileImports.forEach(imp => {
-      let p = path.collapse(path.join(dir, imp.file));
+      let p = path.normalize(path.join(dir, imp.file));
       //log('p', p);
 
       AddUnique(files, p);

@@ -102,6 +102,7 @@ for(let i = 0; i < path.length; i++) {
     }
   }
 }
+
 const data = newPath.str().trim();
 
 //console.log(`<path d="${data}" />`);

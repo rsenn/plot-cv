@@ -5,13 +5,13 @@ import * as xml from 'xml';
 import * as path from 'path';
 import { Console } from 'console';
 import { Directory, BOTH, TYPE_DIR, TYPE_LNK, TYPE_REG, TYPE_MASK } from 'directory';
-import REPL from './quickjs/qjs-modules/lib/repl.js';
+import { REPL } from 'repl';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import * as fs from 'fs';
 import { link, unlink, error, fnmatch, FNM_EXTMATCH } from 'misc';
-import { toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE, waitFor } from 'util';
-import net, { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, FormParser, Hash, Response, Socket } from 'net';
+import { keys, toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE, waitFor } from 'util';
+import { createServer, setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, FormParser, Hash, Response, Socket } from 'net';
 import { parseDate, dateToObject } from './date-helpers.js';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
@@ -27,22 +27,42 @@ import { RecursiveDirIterator } from './dir-helpers.js';
 extendArray();
 extendGenerator();
 extendGenerator(Object.getPrototypeOf(new Map().keys()));
-extendGenerator(Object.getPrototypeOf(new Directory('.')));
+//extendGenerator(Object.getPrototypeOf(new Directory('.')));
 extendAsyncGenerator();
 
 globalThis.fs = fs;
-globalThis.logFilter = /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|WRITABLE)/;
+globalThis.logFilter =
+  /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|WRITABLE)/;
 
 trkl.property(globalThis, 'logLevel').subscribe(value =>
   setLog(value, (level, message) => {
-    if(/__lws|serve_(resolved|generator|promise|response)|XXbl(\([123]\).*writable|x\([/]\).*WRITEABLE)|lws_/.test(message)) return;
+    if(
+      /__lws|serve_(resolved|generator|promise|response)|XXbl(\([123]\).*writable|x\([/]\).*WRITEABLE)|lws_/.test(
+        message
+      )
+    )
+      return;
     if(level == LLL_INFO && !/proxy/.test(message)) return;
     if(logFilter.test(message)) return;
 
     //if(params.debug || level <= LLL_WARN)
     out(
-      (['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8) +
-        message.replace(/\n/g, '\\n').replace(/\r/g, '\\r')
+      (
+        [
+          'ERR',
+          'WARN',
+          'NOTICE',
+          'INFO',
+          'DEBUG',
+          'PARSER',
+          'HEADER',
+          'EXT',
+          'CLIENT',
+          'LATENCY',
+          'MINNET',
+          'THREAD'
+        ][Math.log2(level)] ?? level + ''
+      ).padEnd(8) + message.replace(/\n/g, '\\n').replace(/\r/g, '\\r')
     );
   })
 );
@@ -89,7 +109,8 @@ function GetRootDirectories(pattern = '*') {
   return allowedDirs.keys().filter(Matcher(pattern));
 }
 
-const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
+const MakeUUID = (rng = Math.random) =>
+  [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 
 const defaultDirs = (globalThis.defaultDirs = [
   '.',
@@ -122,6 +143,7 @@ function DirName(name) {
   );
   return p;
 }
+
 function DateStr(date) {
   let str = date.toISOString();
   let ti = str.indexOf('T');
@@ -265,7 +287,9 @@ function ReadExiftool(file) {
 
   let a = out.split(/\r?\n/g).filter(l => l != '');
 
-  a = a.map(line => [line, line.indexOf(': ')]).map(([line, idx]) => [line.slice(0, idx), line.slice(idx + 2)]);
+  a = a
+    .map(line => [line, line.indexOf(': ')])
+    .map(([line, idx]) => [line.slice(0, idx), line.slice(idx + 2)]);
   let o = Object.fromEntries(a);
 
   //console.log('ReadExiftool',o);
@@ -288,7 +312,14 @@ function MagickResize(src, dst, rotate = 0, width, height) {
     dst,
     rotate
   });
-  let args = ['convert', src, '-resize', width + 'x' + height, ...(rotate ? ['-rotate', '-' + rotate] : []), dst];
+  let args = [
+    'convert',
+    src,
+    '-resize',
+    width + 'x' + height,
+    ...(rotate ? ['-rotate', '-' + rotate] : []),
+    dst
+  ];
   let [ret, out] = Execute(...args);
 
   console.log('MagickResize', { args, ret, out });
@@ -328,7 +359,12 @@ function main(...args) {
   );
   if(params['no-tls'] === true) params.tls = false;
 
-  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key' } = params;
+  const {
+    address = '0.0.0.0',
+    port = 8999,
+    'ssl-cert': sslCert = 'localhost.crt',
+    'ssl-private-key': sslPrivateKey = 'localhost.key'
+  } = params;
   const listen = params.connect && !params.listen ? false : true;
   const is_server = !params.client || params.server;
 
@@ -357,7 +393,8 @@ function main(...args) {
   ];
 
   let { log } = console;
-  repl.show = arg => std.puts((typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options)) + '\n');
+  repl.show = arg =>
+    typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options) + '\n';
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();
@@ -379,7 +416,8 @@ function main(...args) {
   );
   repl.inspectOptions.hideKeys.push(Symbol.inspect);
 
-  console.log = (...args) => repl.printStatus(() => log(console.config(repl.inspectOptions), ...args));
+  console.log = (...args) =>
+    repl.printStatus(() => log(console.config(repl.inspectOptions), ...args));
 
   let logFile =
     {
@@ -409,9 +447,9 @@ function main(...args) {
     globalThis.out = s => logFile.puts(s + '\n');
 
     logLevel = (params.debug ? LLL_USER : 0) | (((params.debug ? LLL_INFO : LLL_WARN) << 1) - 1);
-    console.log('createWS', { logLevel }, net.createServer);
+    console.log('createWS', { logLevel }, createServer);
 
-    return net.createServer({
+    return createServer({
       block: false,
       tls: params.tls,
       sslCert,
@@ -505,7 +543,7 @@ function main(...args) {
 
           if(file) {
             file = path.absolute(file);
-            file = path.collapse(file);
+            file = path.normalize(file);
             console.log(
               `allowedDirs:`,
               allowedDirs //.map(dir => path.normalize(dir))
@@ -580,14 +618,28 @@ function main(...args) {
             result.push(json);
           }
 
-          console.log('uploads', console.config({ depth: 1, compact: 2, maxArrayLength: 10 }), result);
+          console.log(
+            'uploads',
+            console.config({ depth: 1, compact: 2, maxArrayLength: 10 }),
+            result
+          );
           yield JSON.stringify(result, ...(+pretty ? [null, 2] : []));
         },
         async function* files(req, resp) {
-          console.log('*files query =', req.url.query);
-          const { filter = '*', root, type = TYPE_DIR | TYPE_REG | TYPE_LNK, limit = '0' } = req.url.query;
+          const { url, method, body } = req;
+          console.log('*files', { body });
+          console.log('*files query =', url.query);
+          const {
+            filter = '*',
+            root,
+            type = TYPE_DIR | TYPE_REG | TYPE_LNK,
+            limit = '0'
+          } = url.query;
+
           console.log('*files', { root, filter, type });
+
           const [offset = 0, size = Infinity] = limit.split(',').map(n => +n);
+
           console.log('*files', { offset, size });
           let i = 0;
           let f = Matcher(filter);
@@ -597,7 +649,11 @@ function main(...args) {
             for(let [key, value] of allowedDirs.entries().filter(KeyOrValueMatcher(root))) {
               let dir = new Directory(value, BOTH, +type);
               yield key + ':\r\n';
-              for(let [name, type] of dir.filter(([name, type]) => f(name))) yield name + (+type == TYPE_DIR ? '/' : '') + '\r\n';
+
+              console.log('dir', dir, keys(dir, 0, 2), dir + '');
+
+              for(let [name, type] of dir)
+                if(f(name)) yield name + (+type == TYPE_DIR ? '/' : '') + '\r\n';
             }
           }
           console.log('*files', { i, f });
@@ -608,8 +664,16 @@ function main(...args) {
           define(globalThis, { filesRequest: { req, resp, body, query } });
           console.log('*files', { req, resp, body, query });
           const data = query ?? {};
-          resp.type = 'application/json';
-          let { dirs = defaultDirs, filter = '[^.].*' ?? '.(brd|sch|G[A-Z][A-Z])$', verbose = false, objects = true, key = 'mtime', limit = null, flat = false } = data ?? {};
+          // XXX: resp.type = 'application/json';
+          let {
+            dirs = defaultDirs,
+            filter = '[^.].*' ?? '.(brd|sch|G[A-Z][A-Z])$',
+            verbose = false,
+            objects = true,
+            key = 'mtime',
+            limit = null,
+            flat = false
+          } = data ?? {};
           let results = [];
           for(let dir of dirs) {
             let st,
@@ -683,11 +747,17 @@ function main(...args) {
             }
             names = entries.map(([name, obj]) => (objects ? obj : name));
             if(names.length > 0) {
-              if(flat) names.map(({ name }) => results.push({ name: path.normalize(path.join(dir, name)) }));
+              if(flat)
+                names.map(({ name }) =>
+                  results.push({ name: path.normalize(path.join(dir, name)) })
+                );
               else results.push({ dir, names });
             }
           }
-          yield JSON.stringify(...[results, ...(verbose ? [null, 2] : [])]);
+          const s=JSON.stringify(...[results, ...(verbose ? [null, 2] : [])]);
+          console.log('files2 reply length:',s.length);
+          console.log('files2 reply:',s.slice(-100));
+          yield s;
         }
       ],
       ...url,
@@ -741,7 +811,7 @@ function main(...args) {
         define(globalThis, { req, resp });
 
         const { method, headers } = req;
-        if(resp.headers) resp.headers['Server'] = 'upload-server';
+        if(resp && resp.headers) resp.headers['Server'] = 'upload-server';
         //resp.headers = { Server: 'upload-server' };
         //console.log('onRequest resp.headers', resp.headers, resp.headers['Server']);
         //
@@ -753,7 +823,11 @@ function main(...args) {
         if((req.url.path ?? '').endsWith('files')) {
           return;
           //resp.type = 'application/json';
-        } else if(req.method != 'GET' && (req.headers['content-type'] == 'application/x-www-form-urlencoded' || (req.headers['content-type'] ?? '').startsWith('multipart/form-data'))) {
+        } else if(
+          req.method != 'GET' &&
+          (req.headers['content-type'] == 'application/x-www-form-urlencoded' ||
+            (req.headers['content-type'] ?? '').startsWith('multipart/form-data'))
+        ) {
           let fp,
             hash,
             tmpnam,
@@ -775,7 +849,11 @@ function main(...args) {
               this.filename = filename;
               ext = path.extname(filename).toLowerCase();
 
-              this.file = fs.openSync((this.temp = 'uploads/' + (tmpnam = randStr(20) + '.tmp')), 'w+', 0o644);
+              this.file = fs.openSync(
+                (this.temp = 'uploads/' + (tmpnam = randStr(20) + '.tmp')),
+                'w+',
+                0o644
+              );
               hash = new Hash(Hash.TYPE_SHA1);
             },
             onContent(name, data) {
@@ -851,7 +929,13 @@ function main(...args) {
                       }
                     }
 
-                    MagickResize(obj.jpg ?? f(ext), f('.thumb.jpg'), obj.exif?.Rotation ?? 0, width, height);
+                    MagickResize(
+                      obj.jpg ?? f(ext),
+                      f('.thumb.jpg'),
+                      obj.exif?.Rotation ?? 0,
+                      width,
+                      height
+                    );
 
                     if(fs.existsSync(f('.thumb.jpg'))) obj.thumbnail = f('.thumb.jpg');
                     WriteJSON(json, obj);
@@ -889,63 +973,61 @@ function main(...args) {
 
         if(!req.headers || typeof req.headers != 'object') console.log('No headers', req);
 
-        const { body, url } = resp;
+        const { body, url } = resp ?? {};
         const { referer } = req.headers;
 
-        let file = url.path.slice(1);
-        const dir = path.dirname(file); //file.replace(/\/[^\/]*$/g, '');
+        if(url) {
+          let file = url.path.slice(1);
+          const dir = path.dirname(file); //file.replace(/\/[^\/]*$/g, '');
 
-        if(file.endsWith('.txt') || file.endsWith('.html') || file.endsWith('.css')) {
-          resp.body = ReadFile(file);
-        } else if(file.endsWith('.js')) {
-          let file1 = file;
-          if(/qjs-modules\/lib/.test(file) && !/(dom|util)\.js/.test(file)) {
-            let file2 = file.replace(/.*qjs-modules\//g, '');
-            if(fs.existsSync(file2)) {
-              file = file2;
-            }
-          } else if(!fs.existsSync(file)) {
-            for(let dir of ['quickjs/qjs-modules', 'quickjs/qjs-modules/lib', '.', 'lib']) {
-              let file2 = dir + '/' + file;
-              console.log('inexistent file', file, file2, fs.existsSync(file2), referer);
+          if(file.endsWith('.txt') || file.endsWith('.html') || file.endsWith('.css')) {
+            resp.body = ReadFile(file);
+          } else if(file.endsWith('.js')) {
+            let file1 = file;
+            if(/qjs-modules\/lib/.test(file) && !/(dom|util)\.js/.test(file)) {
+              let file2 = file.replace(/.*qjs-modules\//g, '');
               if(fs.existsSync(file2)) {
                 file = file2;
-                break;
+              }
+            } else if(!fs.existsSync(file)) {
+              for(let dir of ['quickjs/qjs-modules', 'quickjs/qjs-modules/lib', '.', 'lib']) {
+                let file2 = dir + '/' + file;
+                console.log('inexistent file', file, file2, fs.existsSync(file2), referer);
+                if(fs.existsSync(file2)) {
+                  file = file2;
+                  break;
+                }
               }
             }
-          }
 
-          if(file1 != file) {
-            //  console.log('\x1b[38;5;214monRequest\x1b[0m', file1, '->', file);
-            resp.status = 302;
-            resp.headers = { ['Location']: '/' + file };
-            return resp;
-          }
-          //console.log('\x1b[38;5;33monRequest\x1b[0m', file1, file);
-
-          //
-          let body = ReadFile(file);
-
-          const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
-
-          resp.body = body.replaceAll(re, (match, p1, p0, p2, p3, offset) => {
-            if(!/[\/\.]/.test(p2)) {
-              let fname = `${p2}.js`;
-              let rel = path.relative(fname, dir);
-              //console.log('onRequest', { match, fname }, rel);
-
-              // if(!fs.existsSync(  rel)) return ``;
-
-              match = [p1, rel, p3].join('');
-
-              //console.log('args', { match, p1, p2, p3, offset });
+            if(file1 != file) {
+              //  console.log('\x1b[38;5;214monRequest\x1b[0m', file1, '->', file);
+              resp.status = 302;
+              resp.headers = { ['Location']: '/' + file };
+              return resp;
             }
-            return match;
-          });
-        }
-        {
-          let { body } = resp;
-          //console.log('\x1b[38;5;212monRequest(2)\x1b[0m', { body });
+            //console.log('\x1b[38;5;33monRequest\x1b[0m', file1, file);
+
+            //
+            let body = ReadFile(file);
+
+            const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
+
+            resp.body = body.replaceAll(re, (match, p1, p0, p2, p3, offset) => {
+              if(!/[\/\.]/.test(p2)) {
+                let fname = `${p2}.js`;
+                let rel = path.relative(fname, dir);
+                //console.log('onRequest', { match, fname }, rel);
+
+                // if(!fs.existsSync(  rel)) return ``;
+
+                match = [p1, rel, p3].join('');
+
+                //console.log('args', { match, p1, p2, p3, offset });
+              }
+              return match;
+            });
+          }
         }
 
         return resp;
@@ -1009,7 +1091,18 @@ function main(...args) {
     HeifConvert,
     MagickResize,
     Directory,
-    net: { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, FormParser, Hash, Response, Socket, ...net }
+    net: {
+      createServer,
+      setLog,
+      LLL_USER,
+      LLL_NOTICE,
+      LLL_WARN,
+      LLL_INFO,
+      FormParser,
+      Hash,
+      Response,
+      Socket
+    }
   });
 
   delete globalThis.DEBUG;
@@ -1036,7 +1129,7 @@ function main(...args) {
     repl.cleanup(why);
   }
 
-  repl.runSync();
+  repl.run();
 }
 
 try {

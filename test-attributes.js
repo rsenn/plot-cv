@@ -13,6 +13,7 @@ function readXML(filename) {
   //console.log('xml:', xml);
   return xml;
 }
+
 //TODO: Test with tmScheme (XML) and ColorMap
 
 const push_back = (arr, ...items) => [...(arr || []), ...items];
@@ -95,5 +96,6 @@ async function main(...args) {
 
   console.log('numeric: ' + printSet([...numeric.values()].sort()));
 }
+
 main(...scriptArgs.slice(1));
 //Util.callMain(main);

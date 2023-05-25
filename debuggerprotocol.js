@@ -47,7 +47,8 @@ export class DebuggerProtocol {
           const { id, name, filename, line } = frame;
           let code, location, wd;
           wd = process.cwd();
-          location = filename && filename[0] == '/' ? path.relative(filename, process.cwd()) : filename;
+          location =
+            filename && filename[0] == '/' ? path.relative(filename, process.cwd()) : filename;
           if(typeof line == 'number') {
             code = this.getFile(location)?.[line - 1];
             location += ':' + line;
@@ -218,13 +219,19 @@ export class DebuggerProtocol {
 }
 
 function retValue(ret, ...args) {
-  console.log(...args, `ret =`, ret, ...(ret == -1 ? [' errno =', errno(), ' error =', std.strerror(errno())] : []));
+  console.log(
+    ...args,
+    `ret =`,
+    ret,
+    ...(ret == -1 ? [' errno =', errno(), ' error =', std.strerror(errno())] : [])
+  );
 }
 
 function toHex(n, b = 2) {
   let s = (+n).toString(16);
   return '0'.repeat(Math.ceil(s.length / b) * b - s.length) + s;
 }
+
 function MakeArray(buf, numBytes) {
   switch (numBytes) {
     case 8:
@@ -242,7 +249,8 @@ function ArrayBufToHex(buf, numBytes = 8) {
   if(typeof buf == 'object' && buf != null && buf instanceof ArrayBuffer) {
     let arr = MakeArray(buf, numBytes);
     return arr.reduce(
-      (s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
+      (s, code) =>
+        (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
       ''
     );
   }

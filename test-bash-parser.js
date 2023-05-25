@@ -16,4 +16,5 @@ async function main(...args) {
   const ast = parse(data ?? 'echo ciao;');
   console.log('ast:', ast);
 }
+
 main(...scriptArgs.slice(1));

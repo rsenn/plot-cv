@@ -142,6 +142,7 @@ function GetRow(element) {
     { element }
   );
 }
+
 function GetField(row, field) {
   let columns = [...row.children];
 

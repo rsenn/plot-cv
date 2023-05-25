@@ -52,6 +52,7 @@ function main(...args) {
     }
   }
 }
+
 let error;
 try {
   main(...process.argv.slice(1));

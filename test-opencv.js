@@ -665,6 +665,7 @@ async function main(...args) {
   SaveConfig({ frameShow, paramIndex: paramNav.index, ...params });
   console.log('EXIT');
 }
+
 try {
   main(...scriptArgs.slice(1));
 } catch(error) {

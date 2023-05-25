@@ -158,6 +158,7 @@ for(let color of allColors) {
   keyList.push(keys);
   //
 }
+
 //console.log("keyList:", keyList);
 
 const GeneratePalette = numColors => {
@@ -183,6 +184,7 @@ function* Gradient(start, end, steps = 10) {
 
   for(var n = 0; n < steps; n++) yield target.get(n).getHex();
 }
+
 // for gradient
 async function main(...args) {
 

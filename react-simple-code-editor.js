@@ -62,6 +62,7 @@ const cssText =
     color: transparent !important;
   }
 }
+
 `;
 export default class Editor extends React.Component {
   static defaultProps = {
@@ -501,6 +502,7 @@ export default class Editor extends React.Component {
     );
   }
 }
+
 const styles = {
   container: {
     position: 'relative',

@@ -19,6 +19,7 @@ function readXML(filename) {
 
   return xml;
 }
+
 function WriteFile(name, data) {
   console.log('WriteFile', { name });
   if(!data.endsWith('\n')) data += '\n';
@@ -219,4 +220,5 @@ async function main(...args) {
     throw err;
   }
 }
+
 main(...scriptArgs.slice(1));

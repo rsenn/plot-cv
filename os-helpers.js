@@ -1,11 +1,11 @@
 import { WNOHANG, Worker, close, exec, pipe, read, waitpid } from 'os';
 import * as fs from 'fs';
-import { spawn } from 'child_process';
+import { Spawn } from './io-helpers.js';
 import { define, toString, btoa } from './lib/misc.js';
 import { RepeaterOverflowError, FixedBuffer, SlidingBuffer, DroppingBuffer, MAX_QUEUE_LENGTH, Repeater } from './lib/repeater/repeater.js';
 
 export function ExecTool(cmd, ...args) {
-  let child = spawn(cmd, args, { stdio: [0, 'pipe', 2] });
+  let child = Spawn(cmd, args, { stdio: [0, 'pipe', 2] });
   let [stdin, stdout, stderr] = child.stdio;
   let r;
   let b = new ArrayBuffer(1024);
@@ -40,10 +40,14 @@ export function Execute(...args) {
 }
 
 export function URLWorker(script) {
-  const dataURL = s => `data:application/javascript;charset=utf-8;base64,` + btoa(s).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
+  const dataURL = s =>
+    `data:application/javascript;charset=utf-8;base64,` +
+    btoa(s).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
 
   const url = dataURL(script);
   const w = new Worker(url);
 
-  return define(new Repeater((push, stop) => (w.onmessage = push)), { postMessage: msg => w.postMessage(msg) });
+  return define(new Repeater((push, stop) => (w.onmessage = push)), {
+    postMessage: msg => w.postMessage(msg)
+  });
 }
