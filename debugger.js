@@ -1,6 +1,7 @@
 import { toString, ansiStyles, assert, define, error, isFunction } from './lib/misc.js';
 import { consume as consumeSync } from './lib/iterator/helpers.js';
 import { Pointer } from './lib/pointer.js';
+import * as deep from './lib/deep.js';
 import process from 'process';
 
 var worker;
@@ -9,14 +10,9 @@ let sockets = (globalThis.sockets ??= new Set());
 let listeners = (globalThis.listeners = {});
 
 const { redBright, greenBright, cyanBright, yellowBright, magentaBright } = ansiStyles;
-const syntaxPalette = [
-  { open: '\x1b[0m' },
-  redBright,
-  greenBright,
-  yellowBright,
-  cyanBright,
-  magentaBright
-].map(c => c.open);
+const syntaxPalette = [{ open: '\x1b[0m' }, redBright, greenBright, yellowBright, cyanBright, magentaBright].map(
+  c => c.open
+);
 
 export function TrivialTokenizer(input) {
   const re =
@@ -30,10 +26,7 @@ export function TrivialTokenizer(input) {
     const { index } = match;
     let str = match[tokenType] ?? match[0];
 
-    ret.push([
-      [undefined, 'whitespace', 'keyword', 'comment', 'identifier', 'string'][tokenType],
-      str
-    ]);
+    ret.push([[undefined, 'whitespace', 'keyword', 'comment', 'identifier', 'string'][tokenType], str]);
     prev = tokenType;
   }
   return ret;
@@ -51,8 +44,7 @@ export function TrivialSyntaxHighlighter(input) {
     const { index } = match;
     let str = match[tokenType] ?? match[0];
 
-    if(tokenType == 1 || tokenType != prev)
-      if(syntaxPalette[tokenType - 1]) str = syntaxPalette[tokenType - 1] + str;
+    if(tokenType == 1 || tokenType != prev) if (syntaxPalette[tokenType - 1]) str = syntaxPalette[tokenType - 1] + str;
 
     s += str;
     prev = tokenType;
@@ -130,8 +122,7 @@ export class DebuggerDispatcher {
               if(receiver[prop]) {
                 const callback = receiver[prop];
                 if(process.env.DEBUG) console.log('\x1b[38;5;56mEVENT\x1b[0m ', { prop, event });
-                if(callback.call(receiver, event) === false)
-                  if(receiver[prop] === callback) delete receiver[prop];
+                if(callback.call(receiver, event) === false) if (receiver[prop] === callback) delete receiver[prop];
               }
             }
             break;
@@ -337,14 +328,16 @@ export function* GetArguments(node) {
 export function GetFunctionName(ast, p) {
   try {
     let ptr = new Pointer(p);
-    let h = ptr.hier().filter(p => (n => !Array.isArray(n)) (deep.get(ast, p)));
+    let h = ptr.hier().filter(p => (n => !Array.isArray(n))(deep.get(ast, p)));
     // console.log('h',h);
-    // 
-  let start= 1+  h.slice(0,-1).findLastIndex(ptr => (n => /Func/.test(n.type))(deep.get(ast,ptr)));
-h=h.slice(start);
+    //
+    let start = 1 + h.slice(0, -1).findLastIndex(ptr => (n => /Func/.test(n.type))(deep.get(ast, ptr)));
+    h = h.slice(start);
 
-    // 
-    return     h.map(p => (n => n.id ?? n.key ?? n)(deep.get(ast, p))).map(s => (s && s.name) || s)
+    //
+    return h
+      .map(p => (n => n.id ?? n.key ?? n)(deep.get(ast, p)))
+      .map(s => (s && s.name) || s)
       .filter(s => typeof s == 'string')
       .join('.');
   } catch(e) {}
