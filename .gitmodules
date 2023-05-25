@@ -18,3 +18,7 @@
 [submodule "ol-map-marker"]
 	path = ol-map-marker
 	url = https://github.com/moovspace/map-marker-openlayers
+[submodule "lib"]
+	path = lib
+	url = git@github.com:rsenn/libweb.git
+	branch = main

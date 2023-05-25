@@ -143,8 +143,11 @@ main() {
   // printf("sizeof(struct sockaddr_un) = %zu\n", sizeof(struct sockaddr_un));
   char map[256];
 
-  for(size_t i = 0; i < 256; i++) map[i] = escape_char_pred(i);
-  for(size_t i = 0; i < 256; i++) { printf("%s0x%02x", i > 0 ? ", " : "", map[i]); }
+  for(size_t i = 0; i < 256; i++)
+    map[i] = escape_char_pred(i);
+  for(size_t i = 0; i < 256; i++) {
+    printf("%s0x%02x", i > 0 ? ", " : "", map[i]);
+  }
   // printf("PATH_MAX = 0o%o\n", PATH_MAX);
   // printf("LWS_PRE = 0o%o\n", LWS_PRE);
   // printf("NSIG = 0o%o\n", NSIG);

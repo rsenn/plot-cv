@@ -142,10 +142,12 @@ char* line;
 
   /* Isolate the command word. */
   i = 0;
-  while(line[i] && whitespace(line[i])) i++;
+  while(line[i] && whitespace(line[i]))
+    i++;
   word = line + i;
 
-  while(line[i] && !whitespace(line[i])) i++;
+  while(line[i] && !whitespace(line[i]))
+    i++;
 
   if(line[i])
     line[i++] = '\0';
@@ -158,7 +160,8 @@ char* line;
   }
 
   /* Get argument to command, if any. */
-  while(whitespace(line[i])) i++;
+  while(whitespace(line[i]))
+    i++;
 
   word = line + i;
 
@@ -196,7 +199,8 @@ char* string;
     return (s);
 
   t = s + strlen(s) - 1;
-  while(t > s && whitespace(*t)) t--;
+  while(t > s && whitespace(*t))
+    t--;
   *++t = '\0';
 
   return s;

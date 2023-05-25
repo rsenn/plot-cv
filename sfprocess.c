@@ -131,7 +131,8 @@ process_data(double* data, int count, int channels) {
   */
 
   for(chan = 0; chan < channels; chan++)
-    for(k = chan; k < count; k += channels) data[k] *= channel_gain[chan];
+    for(k = chan; k < count; k += channels)
+      data[k] *= channel_gain[chan];
 
   return;
 } /* process_data */
