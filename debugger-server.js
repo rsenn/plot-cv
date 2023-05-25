@@ -125,7 +125,7 @@ worker.onmessage = async ({ data }) => {
 
 async function loadAST(source) {
   if(!existsSync(source)) return null;
-  const { stdout, wait } = Spawn('meriyah', ['-l', source], { block: false, stdio: ['inherit', 'pipe', 'inherit'] });
+  const { stdout, wait } = Spawn('meriyah.js', ['-l', source], { block: false, stdio: ['inherit', 'pipe', 'inherit'] });
   
   let s = '';
   for(let chunk of readerSync(stdout))
@@ -419,7 +419,12 @@ decorate(
           }
         }
 
-        return define(ret, { [Symbol.for('print')]: true,  toString() { return Table(this, ['name','value','type','variablesReference']); } });
+        return define(ret, {
+          [Symbol.for('print')]: true,
+          toString() {
+            return Table(this, ['name', 'value', 'type', 'variablesReference']);
+          }
+        });
       }
     }[prop] || member),
 
