@@ -6,10 +6,6 @@
 	path = quickjs
 	url = git@github.com:rsenn/quickjs.git
 	branch = main
-[submodule "lib"]
-	path = lib
-	url = git@github.com:rsenn/libweb.git
-	branch = main
 [submodule "openlayers"]
 	path = openlayers
 	url = https://github.com/openlayers/openlayers
@@ -22,3 +18,7 @@
 [submodule "ol-map-marker"]
 	path = ol-map-marker
 	url = https://github.com/moovspace/map-marker-openlayers
+[submodule "lib"]
+	path = lib
+	url = git@github.com:rsenn/libweb.git
+	branch = main
