@@ -11,7 +11,7 @@ import * as nvg from 'nanovg';
 import * as glfw from 'glfw';
 import { Repeater } from './lib/repeater/repeater.js';
 
-let basename = __filename.replace(/\.js$/, '');
+let basename = scriptArgs[0].replace(/\.js$/, '');
 const RAD2DEG = 180 / Math.PI;
 
 function GLFW(...args) {
