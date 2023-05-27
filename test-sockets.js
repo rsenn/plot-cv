@@ -7,7 +7,7 @@ import { Console } from 'console';
 import inspect from './lib/objectInspect.js';
 import * as fs from './lib/filesystem.js';
 import * as net from 'net';
-import { Socket, SockAddr, AF_INET, SOCK_STREAM, IPPROTO_TCP } from './quickjs/qjs-ffi/lib/socket.js';
+import { Socket, AsyncSocket, SockAddr, AF_INET, SOCK_STREAM, IPPROTO_TCP } from 'sockets';
 import { define } from './lib/misc.js';
 
 globalThis.fs = fs;
@@ -17,8 +17,10 @@ async function main(...args) {
     inspectOptions: { compact: 2, customInspect: true }
   });
 
-  let sock = new Socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-  sock.ndelay(true);
+  let sock = new AsyncSocket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+   console.log('new Socket() =', sock);
+   console.log('sock.ndelay:', sock.ndelay);
+ sock.ndelay(true);
 
   let addr = new SockAddr(AF_INET, '127.0.0.1', 22);
 
