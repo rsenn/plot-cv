@@ -2,6 +2,7 @@ import { Point, Size, Rect, Mat, UMat, Line, CLAHE, TickMeter, Draw, Contour } f
 import * as cv from 'opencv';
 import Console from 'console';
 import * as path from 'path';
+import * as std from 'std';
 import { RGBA, HSLA } from './lib/color.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { memoize, range, getMethodNames, weakMapper, mod } from './lib/misc.js';
