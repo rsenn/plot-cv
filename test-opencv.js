@@ -349,8 +349,9 @@ async function main(...args) {
           prec = [],
           nfa = [];
         let lsd = new cv.LineSegmentDetector();
-        src = this.outputOf('Skeletonization');
+        src = this.outputOf('Grayscale');
         lsd.detect(src, lines, width, prec, nfa);
+        console.log('LineSegmentDetector', console.config({ maxArrayLength: Infinity }), { width, prec, nfa });
 
         //        cv.lineSegmentDetector(this.outputOf("Skeletonization"), lines, width, prec, nfa);
         /* let intersectionMatrix = [];
