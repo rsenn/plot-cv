@@ -5,6 +5,7 @@ import { define, properties, types, mapFunction, gettersetter, arraysInCommon, u
 import child_process from './lib/childProcess.js';
 import { CompileCommand, MakeCommand, MakeCommands, ArgumentType } from './lib/compileCommand.js';
 import { DirIterator, RecursiveDirIterator, ReadDirRecursive } from './dir-helpers.js';
+import process from 'process';
 
 const commands = (globalThis.commands = []);
 const cmdMap = (globalThis.cmdMap = mapFunction(new WeakMap()));
