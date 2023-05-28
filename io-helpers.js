@@ -1,8 +1,9 @@
 import * as path from './lib/path.js';
 import { strerror } from 'std';
 import { define, weakDefine, properties, types, toString, quote, escape, predicate, error, assert } from './lib/misc.js';
-import { O_CREAT, O_RDONLY, O_TRUNC, O_WRONLY, WNOHANG, close, exec, open, pipe, read, setReadHandler, stat, waitpid, write } from 'os';
+import { O_CREAT, O_RDONLY, O_TRUNC, O_WRONLY, close, exec, open, pipe, read, setReadHandler, stat, waitpid, write } from 'os';
 import { SEEK_END, loadFile, open as fopen, out as stdout, popen } from 'std';
+import { spawn } from 'child_process';
 
 let bjson;
 
@@ -271,7 +272,7 @@ export function CopyToClipboard(text) {
   return import('child_process').then(child_process => {
     const { env } = process;
 
-    let child = child_process.spawn('xclip', ['-in', '-verbose'], {
+    let child = spawn('xclip', ['-in', '-verbose'], {
       env,
       stdio: ['pipe', 'inherit', 'inherit']
     });
@@ -314,8 +315,16 @@ export function LogCall(fn, thisObj) {
     return result;
   };
 }
+ 
 
-export function Spawn(file, args, options = {}) {
+ export function Spawn(...args) {
+  const child=spawn(...args);
+
+  define(child, { get stdin() { return this.stdio[0]; },get stdout() { return this.stdio[1]; },get stderr() { return this.stdio[2]; } });
+
+  return child;
+}
+/*export function Spawn(file, args, options = {}) {
   let {
     block = true,
     usePath = true,
@@ -339,9 +348,9 @@ export function Spawn(file, args, options = {}) {
   }
 
   const [stdin, stdout, stderr] = stdio;
-
-  let pid = exec([file, ...args], { block, usePath, cwd, stdin, stdout, stderr, env, uid, gid });
-  //console.log('exec(' + inspect([file, ...args]) + ', ...) =', pid);
+  const opts = { block, usePath, cwd, stdin, stdout, stderr, env, uid, gid };
+  let pid = exec([file, ...args], opts);
+  console.log('exec(' + inspect([file, ...args]) + ', ' + inspect(opts) + ') =', pid);
 
   for(let i = 0; i < 3; i++) {
     if(typeof stdio[i] == 'number' && stdio[i] != i) close(stdio[i]);
@@ -388,7 +397,7 @@ export function Spawn(file, args, options = {}) {
   };
 
   return child;
-}
+}*/
 
 // 'https://www.discogs.com/sell/order/8369022-364'
 
@@ -425,7 +434,7 @@ export function FetchURL(url, options = {}) {
 
   console.log('FetchURL', console.config({ maxArrayLength: Infinity, compact: false }), { args });
 
-  let child = child_process.spawn('curl', args, {
+  let child = spawn('curl', args, {
     block: false,
     stdio: ['inherit', 'pipe', 'pipe']
   });
