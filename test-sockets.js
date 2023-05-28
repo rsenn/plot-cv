@@ -1,14 +1,12 @@
 import * as std from 'std';
 import * as os from 'os';
-import * as deep from './lib/deep.js';
-import * as path from './lib/path.js';
-import { toArrayBuffer, toString, quote, escape } from './lib/misc.js';
+import * as deep from 'deep';
+import * as path from 'path';
+import { define, toArrayBuffer, toString, quote, escape } from 'util';
 import { Console } from 'console';
-import inspect from './lib/objectInspect.js';
-import * as fs from './lib/filesystem.js';
-import * as net from 'net';
+import inspect from 'inspect';
+import * as fs from 'fs';
 import { Socket, AsyncSocket, SockAddr, AF_INET, SOCK_STREAM, IPPROTO_TCP } from 'sockets';
-import { define } from './lib/misc.js';
 
 globalThis.fs = fs;
 
@@ -22,7 +20,7 @@ async function main(...args) {
    console.log('sock.ndelay:', sock.ndelay);
  sock.ndelay(true);
 
-  let addr = new SockAddr(AF_INET, '127.0.0.1', 22);
+  let addr = new SockAddr(AF_INET, '192.168.178.23', 22);
 
   let ret = sock.connect(addr);
   console.log('connect() =', ret, sock.errno);
