@@ -1,7 +1,7 @@
 import { strerror } from 'std';
-import { define, toString, escape, error, assert } from './lib/misc.js';
+import { define, toString, escape, error, assert, properties } from './lib/misc.js';
 import { O_CREAT, O_RDONLY, O_TRUNC, O_WRONLY, close, open, pipe, read, setReadHandler, stat, waitpid, write } from 'os';
-import { SEEK_END, loadFile, open as fopen, out as stdout, popen } from 'std';
+import { SEEK_END, loadFile, fdopen, open as fopen, out as stdout, popen } from 'std';
 import { spawn } from 'child_process';
 
 let bjson;
@@ -314,12 +314,22 @@ export function LogCall(fn, thisObj) {
     return result;
   };
 }
- 
 
- export function Spawn(...args) {
-  const child=spawn(...args);
+export function Spawn(...args) {
+  const child = spawn(...args);
 
-  define(child, { get stdin() { return this.stdio[0]; },get stdout() { return this.stdio[1]; },get stderr() { return this.stdio[2]; } });
+  //define(child, { get stdin() { return this.stdio[0]; },get stdout() { return this.stdio[1]; },get stderr() { return this.stdio[2]; } });
+  define(
+    child,
+    properties(
+      {
+        stdin() { return fdopen(this.stdio[0], 'r'); },
+        stdout() { return fdopen(this.stdio[1], 'w'); },
+        stderr() { return fdopen(this.stdio[2], 'w'); }
+      },
+      { memo: true }
+    )
+  );
 
   return child;
 }

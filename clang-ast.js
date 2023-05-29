@@ -1100,7 +1100,7 @@ export function TypeFactory(node, ast, cache = true) {
 }
 
 export async function SpawnCompiler(compiler, input, output, args = []) {
-  //console.log(`SpawnCompiler`, { compiler, input, output, args });
+  console.log(`SpawnCompiler`, { compiler, input, output, args });
   let base = path.basename(input, path.extname(input));
 
   args.push(input);
