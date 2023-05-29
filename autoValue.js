@@ -1,6 +1,5 @@
-import filesystem from 'fs';
 import trkl from './lib/trkl.js';
-import * as fs from './lib/filesystem.js';
+import { sizeSync } from 'fs';
 import { ReadJSON, WriteJSON } from './io-helpers.js';
 
 export function AutoValue(filename = getConfFile('cache'), read_fn = ReadJSON, write_fn = WriteJSON) {
@@ -27,7 +26,7 @@ export function AutoValue(filename = getConfFile('cache'), read_fn = ReadJSON, w
   };
   self.save = () => {
     save(value);
-    let size = fs.sizeSync(filename);
+    let size = sizeSync(filename);
     //console.log(`Wrote ${size} bytes to  '${filename}'`);
     return self;
   };
