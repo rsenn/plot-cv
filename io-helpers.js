@@ -1,6 +1,6 @@
 import { strerror } from 'std';
 import { define, toString, escape, error, assert } from './lib/misc.js';
-import { O_CREAT, O_RDONLY, O_TRUNC, O_WRONLY, close, exec, open, pipe, read, setReadHandler, stat, waitpid, write } from 'os';
+import { O_CREAT, O_RDONLY, O_TRUNC, O_WRONLY, close, open, pipe, read, setReadHandler, stat, waitpid, write } from 'os';
 import { SEEK_END, loadFile, open as fopen, out as stdout, popen } from 'std';
 import { spawn } from 'child_process';
 
