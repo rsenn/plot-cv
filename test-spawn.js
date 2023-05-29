@@ -7,15 +7,14 @@ async function ReadProcess(...args) {
     block: false,
     stdio: ['inherit', 'pipe', 'inherit']
   });
-  let data = await readAll(child.stdio[1]);
+
+  let data = await readAll(child.stdout);
 
   child.wait();
   return data;
 }
 
-
-
-console.log('data',  await ReadProcess('gcc', '-M', '-I.', 'sigval.c'));
+console.log('data', await ReadProcess('gcc', '-M', '-I.', 'sigval.c'));
 
 //console.log('child', child);
 //console.log('child', keys(child).reduce((acc, k) => ({ ...acc, [k]: child[k] }), {}));

@@ -16,9 +16,9 @@ async function main(...args) {
   });
 
   let sock = new AsyncSocket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-   console.log('new Socket() =', sock);
-   console.log('sock.ndelay:', sock.ndelay);
- sock.ndelay(true);
+  console.log('new Socket() =', sock);
+  console.log('sock.ndelay:', sock.ndelay);
+  sock.ndelay(true);
 
   let addr = new SockAddr(AF_INET, '192.168.178.23', 22);
 

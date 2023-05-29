@@ -323,9 +323,15 @@ export function Spawn(...args) {
     child,
     properties(
       {
-        stdin() { return fdopen(this.stdio[0], 'r'); },
-        stdout() { return fdopen(this.stdio[1], 'w'); },
-        stderr() { return fdopen(this.stdio[2], 'w'); }
+        stdin() {
+          return this.stdio[0] >= 0 ? fdopen(this.stdio[0], 'w') : null;
+        },
+        stdout() {
+          return this.stdio[1] >= 0 ? fdopen(this.stdio[1], 'r') : null;
+        },
+        stderr() {
+          return this.stdio[2] >= 0 ? fdopen(this.stdio[2], 'r') : null;
+        }
       },
       { memo: true }
     )

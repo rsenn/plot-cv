@@ -754,9 +754,9 @@ function main(...args) {
               else results.push({ dir, names });
             }
           }
-          const s=JSON.stringify(...[results, ...(verbose ? [null, 2] : [])]);
-          console.log('files2 reply length:',s.length);
-          console.log('files2 reply:',s.slice(-100));
+          const s = JSON.stringify(...[results, ...(verbose ? [null, 2] : [])]);
+          console.log('files2 reply length:', s.length);
+          console.log('files2 reply:', s.slice(-100));
           yield s;
         }
       ],
