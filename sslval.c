@@ -1,0 +1,20 @@
+#include <openssl/ssl.h>
+
+int
+main(int argc, char* argv[]) {
+  printf("SSL_ERROR_NONE = %d\n", SSL_ERROR_NONE);
+  printf("SSL_ERROR_SSL = %d\n", SSL_ERROR_SSL);
+  printf("SSL_ERROR_WANT_READ = %d\n", SSL_ERROR_WANT_READ);
+  printf("SSL_ERROR_WANT_WRITE = %d\n", SSL_ERROR_WANT_WRITE);
+  printf("SSL_ERROR_WANT_X509_LOOKUP = %d\n", SSL_ERROR_WANT_X509_LOOKUP);
+  printf("SSL_ERROR_SYSCALL = %d\n", SSL_ERROR_SYSCALL);
+  printf("SSL_ERROR_ZERO_RETURN = %d\n", SSL_ERROR_ZERO_RETURN);
+  printf("SSL_ERROR_WANT_CONNECT = %d\n", SSL_ERROR_WANT_CONNECT);
+  printf("SSL_ERROR_WANT_ACCEPT = %d\n", SSL_ERROR_WANT_ACCEPT);
+  printf("SSL_ERROR_WANT_ASYNC = %d\n", SSL_ERROR_WANT_ASYNC);
+  printf("SSL_ERROR_WANT_ASYNC = %d\n", SSL_ERROR_WANT_ASYNC);
+  printf("SSL_ERROR_WANT_ASYNC_JOB = %d\n", SSL_ERROR_WANT_ASYNC_JOB);
+  printf("SSL_ERROR_WANT_CLIENT_HELLO_CB = %d\n", SSL_ERROR_WANT_CLIENT_HELLO_CB);
+
+  return 0;
+}
