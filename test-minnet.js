@@ -3,6 +3,8 @@ import { escape, quote, toString, toArrayBuffer } from './lib/misc.js';
 import { Console } from 'console';
 import * as os from 'os';
 
+setLog(LLL_USER, (level, message) => console.log('LWS', message));
+
 const console = new Console({ inspectOptions: { compact: 0, customInspect: true } });
 
 const print = (...args) => console.log(...args);
@@ -56,9 +58,6 @@ function CreateServer() {
       print('Pong: ', data);
     },
     onFd(fd, rd, wr) {
-      console.log('onFd', fd, rd, wr);
-      console.log('os',os);
-      console.log('os.setReadHandler', os?.setReadHandler);
       os.setReadHandler(fd, rd);
       os.setWriteHandler(fd, wr);
     }
