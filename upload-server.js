@@ -7,7 +7,7 @@ import { Console } from 'console';
 import { Directory, BOTH, TYPE_DIR, TYPE_LNK, TYPE_REG, TYPE_MASK } from 'directory';
 import { REPL } from 'repl';
 import inspect from './lib/objectInspect.js';
-import * as Terminal from './terminal.js';
+import * as Terminal from 'terminal';
 import * as fs from 'fs';
 import { link, unlink, error, fnmatch, FNM_EXTMATCH } from 'misc';
 import { keys, toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE, waitFor } from 'util';
@@ -754,9 +754,9 @@ function main(...args) {
               else results.push({ dir, names });
             }
           }
-          const s=JSON.stringify(...[results, ...(verbose ? [null, 2] : [])]);
-          console.log('files2 reply length:',s.length);
-          console.log('files2 reply:',s.slice(-100));
+          const s = JSON.stringify(...[results, ...(verbose ? [null, 2] : [])]);
+          console.log('files2 reply length:', s.length);
+          console.log('files2 reply:', s.slice(-100));
           yield s;
         }
       ],

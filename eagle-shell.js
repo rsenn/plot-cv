@@ -216,7 +216,7 @@ function main(...args) {
 
   let debugLog = fs.openSync('debug.log', 'a');
 
-  const base = path.basename(__filename, path.extname(__filename));
+  const base = path.basename(__scriptArgs[0], path.extname(__scriptArgs[0]));
   const histfile = `.${base}-history`;
 
   let params = getOpt(

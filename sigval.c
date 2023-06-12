@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <signal.h>
+#include <stddef.h>
 
 int
 main() {
@@ -34,7 +35,15 @@ main() {
   printf("%-10s = %d\n", "SIGIO", SIGIO);
   printf("%-10s = %d\n", "SIGPWR", SIGPWR);
   printf("%-10s = %d\n", "SIGSYS", SIGSYS);
+  typedef struct sigaction sa_t;
+  struct sigaction *sa = 0;
   printf("sizeof(struct sigaction) = %zu\n", sizeof(struct sigaction));
+  printf("offsetof(struct sigaction, sa_handler) = %zu\n", offsetof(struct sigaction, sa_handler));
+  printf("sizeof(sa->sa_handler) = %zu\n", sizeof(sa->sa_handler));
+  printf("offsetof(struct sigaction, sa_mask) = %zu\n", offsetof(struct sigaction, sa_mask));
+  printf("sizeof(sa->sa_mask) = %zu\n", sizeof(sa->sa_mask));
+  printf("offsetof(struct sigaction, sa_flags) = %zu\n", offsetof(struct sigaction, sa_flags));
+  printf("sizeof(sa->sa_flags) = %zu\n", sizeof(sa->sa_flags));
   printf("sizeof(sigset_t) = %zu\n", sizeof(sigset_t));
   printf("NSIG = %zu\n", NSIG);
   printf("SIGRTMAX = %zu\n", SIGRTMAX);

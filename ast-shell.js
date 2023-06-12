@@ -5,7 +5,7 @@ import Util from './lib/util.js';
 import * as path from './lib/path.js';
 import * as deep from './lib/deep.js';
 import { Console } from 'console';
-import REPL from './quickjs/qjs-modules/lib/repl.js';
+import { REPL } from 'repl';
 import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, VarDecl, FunctionDecl, Location, Range, TypeFactory, SpawnCompiler, AstDump, FindType, Hier, PathOf, NodeType, NodeName, GetLoc, CompleteLocation, RawLocation, CompleteRange, RawRange, GetType, GetTypeStr, NodePrinter, isNode, SourceDependencies, GetTypeNode, GetFields, PathRemoveLoc, PrintAst, GetParams, List } from './clang-ast.js';
 import Tree from './lib/tree.js';
 import { Pointer } from './lib/pointer.js';

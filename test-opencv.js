@@ -2,6 +2,7 @@ import { Point, Size, Rect, Mat, UMat, Line, CLAHE, TickMeter, Draw, Contour } f
 import * as cv from 'opencv';
 import Console from 'console';
 import * as path from 'path';
+import * as std from 'std';
 import { RGBA, HSLA } from './lib/color.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { memoize, range, getMethodNames, weakMapper, mod } from './lib/misc.js';
@@ -11,7 +12,7 @@ import * as nvg from 'nanovg';
 import * as glfw from 'glfw';
 import { Repeater } from './lib/repeater/repeater.js';
 
-let basename = __filename.replace(/\.js$/, '');
+let basename = scriptArgs[0].replace(/\.js$/, '');
 const RAD2DEG = 180 / Math.PI;
 
 function GLFW(...args) {
@@ -349,8 +350,9 @@ async function main(...args) {
           prec = [],
           nfa = [];
         let lsd = new cv.LineSegmentDetector();
-        src = this.outputOf('Skeletonization');
+        src = this.outputOf('Grayscale');
         lsd.detect(src, lines, width, prec, nfa);
+        console.log('LineSegmentDetector', console.config({ maxArrayLength: Infinity }), { width, prec, nfa });
 
         //        cv.lineSegmentDetector(this.outputOf("Skeletonization"), lines, width, prec, nfa);
         /* let intersectionMatrix = [];

@@ -1,33 +1,24 @@
-import PortableSpawn from './lib/spawn.js';
-import inspect from './lib/objectInspect.js';
+import { Spawn } from './io-helpers.js';
+import { keys, quote } from 'util';
+import { readAll } from 'fs';
 
-//prettier-ignore
-let filesystem, spawn;
+async function ReadProcess(...args) {
+  let child = Spawn(args.shift(), args, {
+    block: false,
+    stdio: ['inherit', 'pipe', 'inherit']
+  });
 
-async function main(...args) {
-  console.log('main(', ...args, ')');
-  spawn = await PortableSpawn();
+  let data = await readAll(child.stdout);
 
-  console.log('spawn:', spawn);
-
-  let child = spawn(['ls', '-la' /*, 'CMakeLists.txt'*/]);
-
-  console.log('test:', 234);
-  console.log('child:', inspect(child));
-  console.log('child.wait():', await child.wait());
-  const bufSize = 100;
-  let ab = new ArrayBuffer(bufSize);
-  let r;
-
-  while((r = await child.stdout.read(ab, 0, bufSize))) {
-    if(!(r > 0 && r == bufSize)) console.log('r:', r);
-    console.log('data:', escape(ArrayBufToString(ab, 0, r)));
-  }
+  child.wait();
+  return data;
 }
 
-main(...scriptArgs.slice(1));
+console.log('data', await ReadProcess('gcc', '-M', '-I.', 'sigval.c'));
 
-function ArrayBufToString(buf, offset, length) {
-  let arr = new Uint8Array(buf, offset, length);
-  return arr.reduce((s, code) => s + String.fromCodePoint(code), '');
-}
+//console.log('child', child);
+//console.log('child', keys(child).reduce((acc, k) => ({ ...acc, [k]: child[k] }), {}));
+//console.log('child', console.config({ customInspect: false }), child);
+//
+//console.log('data', quote(data));
+//console.log('child.wait() =', child.wait());
