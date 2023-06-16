@@ -12,26 +12,8 @@ const print = (...args) => console.log(...args);
 function CreateServer() {
   print('SERVER');
 
-  setLog(LLL_ALL, (level, ...args) => 
-      console.log(
-        (level ?? 
-          [
-            'ERR',
-            'WARN',
-            'NOTICE',
-            'INFO',
-            'DEBUG',
-            'PARSER',
-            'HEADER',
-            'EXT',
-            'CLIENT',
-            'LATENCY',
-            'MINNET',
-            'THREAD'
-          ][Math.log2(level)] ?? level + ''
-        ).padEnd(8),
-        ...args
-      )
+  setLog(LLL_ALL, (level, ...args) =>
+    console.log((level ?? ['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8), ...args)
   );
 
   createServer({

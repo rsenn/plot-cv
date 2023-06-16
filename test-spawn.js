@@ -24,14 +24,14 @@ function ReadProcess(...args) {
 
   for(;;) {
     //let r = read(stdout.fileno(), ab, 1024);
-    
+
     let r = ReadFile(hnd, ab, 1024, u32.buffer, 0);
     //let r = stdout.read(ab, 0, 1024);
     console.log('r', r);
-    
+
     console.log('u32', u32);
     if(u32[0] == 0) break;
-    
+
     console.log('output', toString(ab.slice(0, u32[0])));
   }
   console.log('done!');
