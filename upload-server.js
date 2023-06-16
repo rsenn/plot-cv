@@ -17,7 +17,6 @@ import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile,
 import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
 import { h, html, render, Component, useState, useLayoutEffect, useRef } from './lib/preact.mjs';
 import renderToString from './lib/preact-render-to-string.js';
-import { Execute } from './os-helpers.js';
 import { spawn } from 'child_process';
 import trkl from './lib/trkl.js';
 import { take } from './lib/iterator/helpers.js';
@@ -270,11 +269,10 @@ function MagickResize(src, dst, rotate = 0, width, height) {
     dst,
     rotate
   });
-  let args = ['convert', src, '-resize', width + 'x' + height, ...(rotate ? ['-rotate', '-' + rotate] : []), dst];
-  let [ret, out] = Execute(...args);
-
-  console.log('MagickResize', { args, ret, out });
-  return [ret, out];
+  let child = spawn('convert', [ src, '-resize', width + 'x' + height, ...(rotate ? ['-rotate', '-' + rotate] : []), dst], { block: false });
+  
+  console.log('MagickResize', {child });
+  child.wait();
 }
 
 function main(...args) {
@@ -981,7 +979,6 @@ function main(...args) {
     Hash,
     FormParser,
     ExecTool,
-    Execute,
     extendGenerator,
     extendArray,
     extendAsyncGenerator,
