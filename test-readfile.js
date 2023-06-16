@@ -8,6 +8,7 @@ function foreign(name, ret, ...args) {
 }
 
 export const ReadFile = foreign('ReadFile', 'long', 'long', 'buffer', 'ulong', 'buffer', 'long');
+export const read = foreign('_read', 'long', 'long', 'buffer', 'ulong');
 
 if(/test-readfile\.js$/.test(scriptArgs[0])) {
   let hnd = _get_osfhandle(0);
