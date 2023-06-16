@@ -17,8 +17,8 @@ import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile,
 import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
 import { h, html, render, Component, useState, useLayoutEffect, useRef } from './lib/preact.mjs';
 import renderToString from './lib/preact-render-to-string.js';
-import { exec, spawn } from 'child_process';
 import { Execute } from './os-helpers.js';
+import { spawn } from 'child_process';
 import trkl from './lib/trkl.js';
 import { take } from './lib/iterator/helpers.js';
 import { extendArray, extendGenerator, extendAsyncGenerator } from 'util';
@@ -224,11 +224,8 @@ const FileTable = ({ files, ...props }) => {
 
 function ReadExiv2(file) {
   console.log('ReadExiv2', file);
-  let [rdf, stdout] = os.pipe();
-  os.exec(['exiv2', '-e', 'X-', 'ex', file], { stdout });
-  os.close(stdout);
-  let xmpdat = fs.readAllSync(rdf);
-  fs.closeSync(rdf);
+  let xmpdat = ExecTool('exiv2', '-e', 'X-', 'ex', file);
+
   // console.log('xmpdat', xmpdat);
   let xmp = xml.read(xmpdat);
   // console.log('xmp', xmp);
@@ -247,7 +244,7 @@ function ReadExiv2(file) {
 function ReadExiftool(file) {
   console.log('ReadExiftool', file);
 
-  let [ret, out] = Execute('exiftool', '-S', '-ee', file);
+  let out = ExecTool('exiftool', '-S', '-ee', file);
 
   let a = out.split(/\r?\n/g).filter(l => l != '');
 
@@ -260,11 +257,10 @@ function ReadExiftool(file) {
 
 function HeifConvert(src, dst, quality = 100) {
   console.log('HeifConvert', src, dst);
-  let args = ['heif-convert', '-q', quality + '', src, dst];
-  let [ret, out] = Execute(...args);
+  let child = spawn('heif-convert', ['-q', quality + '', src, dst], { block: false, stdio: ['inherit', 'inherit', 'inherit'] });
 
-  console.log('HeifConvert', { args, ret, out });
-  return [ret, out];
+  console.log('HeifConvert', child);
+  child.wait();
 }
 
 function MagickResize(src, dst, rotate = 0, width, height) {

@@ -14,7 +14,7 @@ import RGBA from './lib/color/rgba.js';
 import Console from 'console';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
-import { tryCatch,className } from './lib/misc.js';
+import { tryCatch, className } from './lib/misc.js';
 
 /*function saveMat(name, mat) {
   let ext = mat.channels == 1 ? 'pgm' : 'ppm';
