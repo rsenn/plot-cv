@@ -9,7 +9,7 @@ import { REPL } from 'repl';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from 'terminal';
 import * as fs from 'fs';
-import { link, unlink, error, fnmatch, FNM_EXTMATCH } from 'misc';
+import { unlink, error, fnmatch, FNM_EXTMATCH } from 'misc';
 import { keys, toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE, waitFor } from 'util';
 import { createServer, setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, FormParser, Hash, Response, Socket } from 'net';
 import { parseDate, dateToObject } from './date-helpers.js';
@@ -269,9 +269,9 @@ function MagickResize(src, dst, rotate = 0, width, height) {
     dst,
     rotate
   });
-  let child = spawn('convert', [ src, '-resize', width + 'x' + height, ...(rotate ? ['-rotate', '-' + rotate] : []), dst], { block: false });
-  
-  console.log('MagickResize', {child });
+  let child = spawn('convert', [src, '-resize', width + 'x' + height, ...(rotate ? ['-rotate', '-' + rotate] : []), dst], { block: false });
+
+  console.log('MagickResize', { child });
   child.wait();
 }
 
@@ -801,7 +801,7 @@ function main(...args) {
                 }
                 if(sha1) {
                   let f = x => 'uploads/' + sha1 + x;
-                  let ret = link(this.temp, f(ext));
+                  let ret = os.rename(this.temp, (this.temp = f(ext)));
                   let { errno } = error();
                   let json = f('.json');
                   if(fs.existsSync(json) && (cache = ReadJSON(json))) {
