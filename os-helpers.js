@@ -1,4 +1,4 @@
-import { WNOHANG, Worker, close, exec, pipe, read, waitpid } from 'os';
+import { Worker, close, exec, pipe, read, waitpid } from 'os';
 import { popen } from 'std';
 import * as fs from 'fs';
 import { Spawn } from './io-helpers.js';
@@ -51,7 +51,7 @@ export function Execute(...args) {
   });
   close(stdout);
 
-  let [ret, status] = waitpid(pid, WNOHANG);
+  let [ret, status] = waitpid(pid, 1);
 
   let out = fs.readAllSync(rd);
   fs.closeSync(rd);
