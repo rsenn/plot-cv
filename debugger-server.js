@@ -481,6 +481,17 @@ async function OnStopped(msg) {
   repl.printStatus(`#${id} ${name}@${filename}:${line}  ` + files[filename].line(line));
 }
 
+function URLWorker(script) {
+  const dataURL = s => `data:application/javascript;charset=utf-8;base64,` + btoa(s).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
+
+  const url = dataURL(script);
+  const w = new os.Worker(url);
+
+  return define(new Repeater((push, stop) => (w.onmessage = push)), {
+    postMessage: msg => w.postMessage(msg)
+  });
+}
+
 function main(...args) {
   const base = scriptName().replace(/\.[a-z]*$/, '');
 
