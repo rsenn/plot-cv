@@ -4,7 +4,6 @@ import Printer from './lib/ecmascript/printer.js';
 import { CallExpression } from './lib/ecmascript/estree.js';
 import deep from './lib/deep.js';
 
-
 const code = "Point.toSource = (point, { space = ' ', padding = ' ', separator = ',' }) => `{${padding}x:${space}${point.x}${separator}y:${space}${point.y}${padding}}`;";
 
 let args = scriptArgs;

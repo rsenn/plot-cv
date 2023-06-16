@@ -1,6 +1,4 @@
-
 async function main(...args) {
-
   console.log(`console`, inspect(console, { customInspect: true, showHidden: true, compact: false }));
 
   let c = console;

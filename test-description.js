@@ -1,10 +1,9 @@
 import { ColoredText } from './lib/color/coloredText.js';
-import { matchAll } from './lib/misc.js'
+import { matchAll } from './lib/misc.js';
 //prettier-ignore
 let filesystem ;
 
 async function main(...args) {
-
   let file;
   let str;
   try {

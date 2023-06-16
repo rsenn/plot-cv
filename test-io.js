@@ -18,7 +18,6 @@ function FileReader(path, bufferSize = 1024) {
 }
 
 async function main(...args) {
-
   for await(let data of await FileReader('test-io.js', 64)) console.log('data:', filesystem.bufferToString(data));
 
   return;
