@@ -1,22 +1,22 @@
 import { WNOHANG, Worker, close, exec, pipe, read, waitpid } from 'os';
+import { popen } from 'std';
 import * as fs from 'fs';
 import { Spawn } from './io-helpers.js';
 import { define, toString, btoa } from './lib/misc.js';
 import { RepeaterOverflowError, FixedBuffer, SlidingBuffer, DroppingBuffer, MAX_QUEUE_LENGTH, Repeater } from './lib/repeater/repeater.js';
 import { ReadFile } from './readfile.js';
 
-export function ExecTool(cmd, ...args) {
+/*export function ExecTool(cmd, ...args) {
   let child = Spawn(cmd, args, { stdio: [0, 'pipe', 2] });
   let [stdin, stdout, stderr] = child.stdio;
   let r;
   let b = new ArrayBuffer(1024);
   r = child.wait();
-  // console.log('ExecTool', { args, chil ELECTRA® Shape-Based PCB Autorouter v6.56 |d });
 
   let lpNumberOfBytesRead = new Uint32Array(2);
   let str = '';
   for(;;) {
-    let r = ReadFile(stdout, b, 1024, lpNumberOfBytesRead);
+    let r = ReadFile(stdout, b, 1024, lpNumberOfBytesRead.buffer, 0);
     if(lpNumberOfBytesRead[0] > 0) {
       let data = b.slice(0, lpNumberOfBytesRead[0]);
       str += toString(data);
@@ -27,6 +27,19 @@ export function ExecTool(cmd, ...args) {
 
   return str;
   return parseInt(str);
+}*/
+
+export function ExecTool(cmd, ...args) {
+  let f = popen([cmd, ...args].join(' '), 'r');
+  let s = '';
+  for(;;) {
+    let line = f.getline();
+
+    if(line === null) break;
+    s += line + '\n';
+  }
+  f.close();
+  return s;
 }
 
 export function Execute(...args) {
