@@ -9,7 +9,7 @@ import { REPL } from 'repl';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from 'terminal';
 import * as fs from 'fs';
-import { unlink, error, fnmatch, FNM_EXTMATCH } from 'misc';
+import { unlink, error, fnmatch } from 'misc';
 import { keys, toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE, waitFor } from 'util';
 import { createServer, setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, FormParser, Hash, Response, Socket } from 'net';
 import { parseDate, dateToObject } from './date-helpers.js';
@@ -61,7 +61,7 @@ function GetMime(file) {
 }
 
 function Matcher(pattern, t = arg => arg) {
-  return (...args) => pattern == t(...args) || 0 == fnmatch(pattern, t(...args), FNM_EXTMATCH);
+  return (...args) => pattern == t(...args) || 0 == fnmatch(pattern, t(...args), 0);
 }
 
 function KeyOrValueMatcher(pattern) {
