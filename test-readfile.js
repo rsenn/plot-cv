@@ -10,13 +10,13 @@ function foreign(name, ret, ...args) {
 export const ReadFile = foreign('ReadFile', 'long', 'long', 'buffer', 'ulong', 'buffer', 'long');
 
 if(/test-readfile\.js$/.test(scriptArgs[0])) {
-	let hnd = _get_osfhandle(0);
+  let hnd = _get_osfhandle(0);
 
-	console.log('hnd', hnd);
+  console.log('hnd', hnd);
 
-	let ab = new ArrayBuffer(1024);
-	let lpNumberOfBytesRead = new Uint32Array(2);
+  let ab = new ArrayBuffer(1024);
+  let lpNumberOfBytesRead = new Uint32Array(2);
 
-	console.log('ReadFile() =', ReadFile(hnd, ab, 1024, lpNumberOfBytesRead.buffer, null));
-	console.log('lpNumberOfBytesRead', lpNumberOfBytesRead);
+  console.log('ReadFile() =', ReadFile(hnd, ab, 1024, lpNumberOfBytesRead.buffer, null));
+  console.log('lpNumberOfBytesRead', lpNumberOfBytesRead);
 }
