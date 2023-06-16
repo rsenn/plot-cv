@@ -7,7 +7,6 @@ import { Path } from './lib/json.js';
 import { SortedMap } from './lib/container/sortedMap.js';
 import { ImmutablePath } from './lib/json.js';
 
-
 const code = `export const Progress = ({ className, percent, ...props }) =>  h(Overlay,
     {
       className: classNames('progress', 'center', className),
@@ -214,7 +213,6 @@ async function main(...args) {
 
   const breakLength = stdout.columns || process.env.COLUMNS || 80;
   console.log('breakLength:', breakLength);
-
 
   if(args.length == 0) args.push('./lib/ecmascript/parser.js');
   for(let file of args) {
