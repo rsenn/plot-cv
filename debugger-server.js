@@ -2,7 +2,7 @@ import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
-import { tryCatch, once, filterKeys, isObject, bindMethods, decorate, daemon, atexit, getpid, toString, escape, quote, define, extendArray, getOpt, setInterval, clearInterval, memoize, lazyProperties, propertyLookup, types } from 'util';
+import { tryCatch, once, filterKeys, isObject, bindMethods, decorate, atexit, getpid, toString, escape, quote, define, extendArray, getOpt, setInterval, clearInterval, memoize, lazyProperties, propertyLookup, types } from 'util';
 import { Console } from './quickjs/qjs-modules/lib/console.js';
 import { REPL } from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
@@ -154,7 +154,7 @@ function StartREPL(prefix = scriptName(), suffix = '') {
   repl.historyLoad(null);
   let { log } = console;
 
-  repl.directives.d = [() => globalThis.daemon(), 'detach'];
+  //repl.directives.d = [() => globalThis.daemon(), 'detach'];
 
   console.log = repl.printFunction(log.bind(console, console.config({ compact: 2 })));
   let { show } = repl;
@@ -1019,13 +1019,13 @@ function main(...args) {
       }
       return r;
     },
-    repl: StartREPL(),
+    repl: StartREPL()/*,
     daemon() {
       repl.stop();
       std.puts('\ndetaching...');
       daemon(1, 0);
       std.puts(' PID ' + getpid() + '\n');
-    }
+    }*/
   });
 
   function quit(why) {
