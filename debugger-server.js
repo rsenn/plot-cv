@@ -18,7 +18,6 @@ import { Table, List } from './cli-helpers.js';
 import { map, consume } from './lib/async/helpers.js';
 import { AsyncSocket, SockAddr, AF_INET, SOCK_STREAM, IPPROTO_TCP } from 'sockets';
 import { RepeaterOverflowError, FixedBuffer, SlidingBuffer, DroppingBuffer, MAX_QUEUE_LENGTH, Repeater } from './lib/repeater/repeater.js';
-import { URLWorker } from './os-helpers.js';
 import process from 'process';
 
 extendArray(Array.prototype);
