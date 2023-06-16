@@ -877,7 +877,7 @@ function main(...args) {
         protocol.set(ws, p);*/
         },
         onFd(fd, rd, wr) {
-          //console.log('onFd', { fd, rd, wr });
+          console.log('onFd', { fd, rd, wr });
           os.setReadHandler(fd, rd);
           os.setWriteHandler(fd, wr);
         },
