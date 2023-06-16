@@ -22,6 +22,7 @@ let u32 = new Uint32Array(2);
 let hnd = _get_osfhandle(stdout.fileno());
 console.log('hnd', hnd);
 
+for(;;) {
 let r = ReadFile(hnd, ab, 1024, u32.buffer, 0);
 console.log('r', r);
 console.log('u32', u32);
