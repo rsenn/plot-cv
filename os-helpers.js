@@ -29,19 +29,6 @@ import { ReadFile } from './readfile.js';
   return parseInt(str);
 }*/
 
-export function ExecTool(cmd, ...args) {
-  let f = popen([cmd, ...args].join(' '), 'r');
-  let s = '';
-  for(;;) {
-    let line = f.getline();
-
-    if(line === null) break;
-    s += line + '\n';
-  }
-  f.close();
-  return s;
-}
-
 export function Execute(...args) {
   let [rd, stdout] = pipe();
   let pid = exec(args, {

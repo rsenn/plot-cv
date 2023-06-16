@@ -17,7 +17,7 @@ for(let i = 0; i < 10; i++) {
 }
 
 let bl = rects.map(rect => {
-  const [ left, top ] = [...rect];
+  const [left, top] = [...rect];
   const { width, height } = rect;
   //console.log({ left, top });
   return [left, top, width, height];
@@ -29,8 +29,8 @@ let bl = rects.map(rect => {
 
 let ap = new Autoplacer({ bodies: bl });
 
-//console.log('ap.next():', ap.next());
+console.log('ap.next():', ap.next());
 
 ap.next();
 
-//console.log('ap:', ap.bodies_);
+console.log('ap:', ap.bodies_);
