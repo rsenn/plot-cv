@@ -2,7 +2,7 @@ import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
-import { tryCatch, once, filterKeys, isObject, bindMethods, decorate, daemon, atexit, getpid, toString, escape, quote, define, extendArray, getOpt, setInterval, clearInterval, memoize, lazyProperties, propertyLookup, types } from 'util';
+import { tryCatch, once, filterKeys, isObject, bindMethods, decorate, atexit, getpid, toString, escape, quote, define, extendArray, getOpt, setInterval, clearInterval, memoize, lazyProperties, propertyLookup, types } from 'util';
 import { Console } from './quickjs/qjs-modules/lib/console.js';
 import { REPL } from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
@@ -18,7 +18,6 @@ import { Table, List } from './cli-helpers.js';
 import { map, consume } from './lib/async/helpers.js';
 import { AsyncSocket, SockAddr, AF_INET, SOCK_STREAM, IPPROTO_TCP } from 'sockets';
 import { RepeaterOverflowError, FixedBuffer, SlidingBuffer, DroppingBuffer, MAX_QUEUE_LENGTH, Repeater } from './lib/repeater/repeater.js';
-import { URLWorker } from './os-helpers.js';
 import process from 'process';
 
 extendArray(Array.prototype);
@@ -155,7 +154,7 @@ function StartREPL(prefix = scriptName(), suffix = '') {
   repl.historyLoad(null);
   let { log } = console;
 
-  repl.directives.d = [() => globalThis.daemon(), 'detach'];
+  //repl.directives.d = [() => globalThis.daemon(), 'detach'];
 
   console.log = repl.printFunction(log.bind(console, console.config({ compact: 2 })));
   let { show } = repl;
@@ -479,6 +478,17 @@ async function OnStopped(msg) {
   let [top] = st;
   let { id, name, filename, line } = top;
   repl.printStatus(`#${id} ${name}@${filename}:${line}  ` + files[filename].line(line));
+}
+
+function URLWorker(script) {
+  const dataURL = s => `data:application/javascript;charset=utf-8;base64,` + btoa(s).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
+
+  const url = dataURL(script);
+  const w = new os.Worker(url);
+
+  return define(new Repeater((push, stop) => (w.onmessage = push)), {
+    postMessage: msg => w.postMessage(msg)
+  });
 }
 
 function main(...args) {
@@ -867,7 +877,7 @@ function main(...args) {
         protocol.set(ws, p);*/
         },
         onFd(fd, rd, wr) {
-          //console.log('onFd', { fd, rd, wr });
+          console.log('onFd', { fd, rd, wr });
           os.setReadHandler(fd, rd);
           os.setWriteHandler(fd, wr);
         },
@@ -1009,13 +1019,13 @@ function main(...args) {
       }
       return r;
     },
-    repl: StartREPL(),
+    repl: StartREPL()/*,
     daemon() {
       repl.stop();
       std.puts('\ndetaching...');
       daemon(1, 0);
       std.puts(' PID ' + getpid() + '\n');
-    }
+    }*/
   });
 
   function quit(why) {

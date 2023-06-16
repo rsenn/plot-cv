@@ -1,5 +1,5 @@
 import { RGBA, HSLA } from './lib/color.js';
-import { range} from './lib/misc.js';
+import { range } from './lib/misc.js';
 
 function extendBits(arr, bits) {
   const mask = (1 << bits) - 1;

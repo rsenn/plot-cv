@@ -3,6 +3,7 @@ import { Point, PointList } from './lib/geom.js';
 import { SVG } from './lib/dom.js';
 import { parse } from './lib/svg/path-parser.js';
 import Shape from './lib/clipper.js';
+import { Console } from 'console';
 
 globalThis.console = new Console({
   inspectOptions: {

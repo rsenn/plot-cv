@@ -9,16 +9,15 @@ import { REPL } from 'repl';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from 'terminal';
 import * as fs from 'fs';
-import { link, unlink, error, fnmatch, FNM_EXTMATCH } from 'misc';
+import { unlink, error, fnmatch } from 'misc';
 import { keys, toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE, waitFor } from 'util';
 import { createServer, setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, FormParser, Hash, Response, Socket } from 'net';
 import { parseDate, dateToObject } from './date-helpers.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL, ExecTool } from './io-helpers.js';
 import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
 import { h, html, render, Component, useState, useLayoutEffect, useRef } from './lib/preact.mjs';
 import renderToString from './lib/preact-render-to-string.js';
-import { exec, spawn } from 'child_process';
-import { Execute } from './os-helpers.js';
+import { spawn } from 'child_process';
 import trkl from './lib/trkl.js';
 import { take } from './lib/iterator/helpers.js';
 import { extendArray, extendGenerator, extendAsyncGenerator } from 'util';
@@ -31,38 +30,18 @@ extendGenerator(Object.getPrototypeOf(new Map().keys()));
 extendAsyncGenerator();
 
 globalThis.fs = fs;
-globalThis.logFilter =
-  /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|WRITABLE)/;
+globalThis.logFilter = /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|WRITABLE)/;
 
 trkl.property(globalThis, 'logLevel').subscribe(value =>
   setLog(value, (level, message) => {
-    if(
-      /__lws|serve_(resolved|generator|promise|response)|XXbl(\([123]\).*writable|x\([/]\).*WRITEABLE)|lws_/.test(
-        message
-      )
-    )
-      return;
+    if(/__lws|serve_(resolved|generator|promise|response)|XXbl(\([123]\).*writable|x\([/]\).*WRITEABLE)|lws_/.test(message)) return;
     if(level == LLL_INFO && !/proxy/.test(message)) return;
     if(logFilter.test(message)) return;
 
     //if(params.debug || level <= LLL_WARN)
     out(
-      (
-        [
-          'ERR',
-          'WARN',
-          'NOTICE',
-          'INFO',
-          'DEBUG',
-          'PARSER',
-          'HEADER',
-          'EXT',
-          'CLIENT',
-          'LATENCY',
-          'MINNET',
-          'THREAD'
-        ][Math.log2(level)] ?? level + ''
-      ).padEnd(8) + message.replace(/\n/g, '\\n').replace(/\r/g, '\\r')
+      (['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8) +
+        message.replace(/\n/g, '\\n').replace(/\r/g, '\\r')
     );
   })
 );
@@ -71,21 +50,6 @@ async function AsyncCollect(iter) {
   let ret = [];
   for await(let chunk of await iter) ret.push(chunk);
   return ret;
-}
-
-function ExecTool(cmd, ...args) {
-  let child = spawn(cmd, args, { stdio: [0, 'pipe', 2] });
-  let [stdin, stdout, stderr] = child.stdio;
-  let r;
-  let b = new ArrayBuffer(1024);
-  r = child.wait();
-  // console.log('ExecTool', { args, child });
-
-  r = os.read(stdout, b, 0, 1024);
-  let data = b.slice(0, r);
-  let str = toString(data);
-
-  return str;
 }
 
 function GetMime(file) {
@@ -97,7 +61,7 @@ function GetMime(file) {
 }
 
 function Matcher(pattern, t = arg => arg) {
-  return (...args) => pattern == t(...args) || 0 == fnmatch(pattern, t(...args), FNM_EXTMATCH);
+  return (...args) => pattern == t(...args) || 0 == fnmatch(pattern, t(...args), 0);
 }
 
 function KeyOrValueMatcher(pattern) {
@@ -109,8 +73,7 @@ function GetRootDirectories(pattern = '*') {
   return allowedDirs.keys().filter(Matcher(pattern));
 }
 
-const MakeUUID = (rng = Math.random) =>
-  [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
+const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 
 const defaultDirs = (globalThis.defaultDirs = [
   '.',
@@ -260,11 +223,8 @@ const FileTable = ({ files, ...props }) => {
 
 function ReadExiv2(file) {
   console.log('ReadExiv2', file);
-  let [rdf, stdout] = os.pipe();
-  os.exec(['exiv2', '-e', 'X-', 'ex', file], { stdout });
-  os.close(stdout);
-  let xmpdat = fs.readAllSync(rdf);
-  fs.closeSync(rdf);
+  let xmpdat = ExecTool('exiv2', '-e', 'X-', 'ex', file);
+
   // console.log('xmpdat', xmpdat);
   let xmp = xml.read(xmpdat);
   // console.log('xmp', xmp);
@@ -283,13 +243,11 @@ function ReadExiv2(file) {
 function ReadExiftool(file) {
   console.log('ReadExiftool', file);
 
-  let [ret, out] = Execute('exiftool', '-S', '-ee', file);
+  let out = ExecTool('exiftool', '-S', '-ee', file);
 
   let a = out.split(/\r?\n/g).filter(l => l != '');
 
-  a = a
-    .map(line => [line, line.indexOf(': ')])
-    .map(([line, idx]) => [line.slice(0, idx), line.slice(idx + 2)]);
+  a = a.map(line => [line, line.indexOf(': ')]).map(([line, idx]) => [line.slice(0, idx), line.slice(idx + 2)]);
   let o = Object.fromEntries(a);
 
   //console.log('ReadExiftool',o);
@@ -298,11 +256,10 @@ function ReadExiftool(file) {
 
 function HeifConvert(src, dst, quality = 100) {
   console.log('HeifConvert', src, dst);
-  let args = ['heif-convert', '-q', quality + '', src, dst];
-  let [ret, out] = Execute(...args);
+  let child = spawn('heif-convert', ['-q', quality + '', src, dst], { block: false, stdio: ['inherit', 'inherit', 'inherit'] });
 
-  console.log('HeifConvert', { args, ret, out });
-  return [ret, out];
+  console.log('HeifConvert', child);
+  child.wait();
 }
 
 function MagickResize(src, dst, rotate = 0, width, height) {
@@ -312,18 +269,10 @@ function MagickResize(src, dst, rotate = 0, width, height) {
     dst,
     rotate
   });
-  let args = [
-    'convert',
-    src,
-    '-resize',
-    width + 'x' + height,
-    ...(rotate ? ['-rotate', '-' + rotate] : []),
-    dst
-  ];
-  let [ret, out] = Execute(...args);
+  let child = spawn('convert', [src, '-resize', width + 'x' + height, ...(rotate ? ['-rotate', '-' + rotate] : []), dst], { block: false });
 
-  console.log('MagickResize', { args, ret, out });
-  return [ret, out];
+  console.log('MagickResize', { child });
+  child.wait();
 }
 
 function main(...args) {
@@ -359,12 +308,7 @@ function main(...args) {
   );
   if(params['no-tls'] === true) params.tls = false;
 
-  const {
-    address = '0.0.0.0',
-    port = 8999,
-    'ssl-cert': sslCert = 'localhost.crt',
-    'ssl-private-key': sslPrivateKey = 'localhost.key'
-  } = params;
+  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key' } = params;
   const listen = params.connect && !params.listen ? false : true;
   const is_server = !params.client || params.server;
 
@@ -393,8 +337,7 @@ function main(...args) {
   ];
 
   let { log } = console;
-  repl.show = arg =>
-    typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options) + '\n';
+  repl.show = arg => (typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options) + '\n');
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();
@@ -416,8 +359,7 @@ function main(...args) {
   );
   repl.inspectOptions.hideKeys.push(Symbol.inspect);
 
-  console.log = (...args) =>
-    repl.printStatus(() => log(console.config(repl.inspectOptions), ...args));
+  console.log = (...args) => repl.printStatus(() => log(console.config(repl.inspectOptions), ...args));
 
   let logFile =
     {
@@ -618,23 +560,14 @@ function main(...args) {
             result.push(json);
           }
 
-          console.log(
-            'uploads',
-            console.config({ depth: 1, compact: 2, maxArrayLength: 10 }),
-            result
-          );
+          console.log('uploads', console.config({ depth: 1, compact: 2, maxArrayLength: 10 }), result);
           yield JSON.stringify(result, ...(+pretty ? [null, 2] : []));
         },
         async function* files(req, resp) {
           const { url, method, body } = req;
           console.log('*files', { body });
           console.log('*files query =', url.query);
-          const {
-            filter = '*',
-            root,
-            type = TYPE_DIR | TYPE_REG | TYPE_LNK,
-            limit = '0'
-          } = url.query;
+          const { filter = '*', root, type = TYPE_DIR | TYPE_REG | TYPE_LNK, limit = '0' } = url.query;
 
           console.log('*files', { root, filter, type });
 
@@ -652,8 +585,7 @@ function main(...args) {
 
               console.log('dir', dir, keys(dir, 0, 2), dir + '');
 
-              for(let [name, type] of dir)
-                if(f(name)) yield name + (+type == TYPE_DIR ? '/' : '') + '\r\n';
+              for(let [name, type] of dir) if(f(name)) yield name + (+type == TYPE_DIR ? '/' : '') + '\r\n';
             }
           }
           console.log('*files', { i, f });
@@ -665,15 +597,7 @@ function main(...args) {
           console.log('*files', { req, resp, body, query });
           const data = query ?? {};
           // XXX: resp.type = 'application/json';
-          let {
-            dirs = defaultDirs,
-            filter = '[^.].*' ?? '.(brd|sch|G[A-Z][A-Z])$',
-            verbose = false,
-            objects = true,
-            key = 'mtime',
-            limit = null,
-            flat = false
-          } = data ?? {};
+          let { dirs = defaultDirs, filter = '[^.].*' ?? '.(brd|sch|G[A-Z][A-Z])$', verbose = false, objects = true, key = 'mtime', limit = null, flat = false } = data ?? {};
           let results = [];
           for(let dir of dirs) {
             let st,
@@ -747,10 +671,7 @@ function main(...args) {
             }
             names = entries.map(([name, obj]) => (objects ? obj : name));
             if(names.length > 0) {
-              if(flat)
-                names.map(({ name }) =>
-                  results.push({ name: path.normalize(path.join(dir, name)) })
-                );
+              if(flat) names.map(({ name }) => results.push({ name: path.normalize(path.join(dir, name)) }));
               else results.push({ dir, names });
             }
           }
@@ -823,11 +744,7 @@ function main(...args) {
         if((req.url.path ?? '').endsWith('files')) {
           return;
           //resp.type = 'application/json';
-        } else if(
-          req.method != 'GET' &&
-          (req.headers['content-type'] == 'application/x-www-form-urlencoded' ||
-            (req.headers['content-type'] ?? '').startsWith('multipart/form-data'))
-        ) {
+        } else if(req.method != 'GET' && (req.headers['content-type'] == 'application/x-www-form-urlencoded' || (req.headers['content-type'] ?? '').startsWith('multipart/form-data'))) {
           let fp,
             hash,
             tmpnam,
@@ -849,11 +766,7 @@ function main(...args) {
               this.filename = filename;
               ext = path.extname(filename).toLowerCase();
 
-              this.file = fs.openSync(
-                (this.temp = 'uploads/' + (tmpnam = randStr(20) + '.tmp')),
-                'w+',
-                0o644
-              );
+              this.file = fs.openSync((this.temp = 'uploads/' + (tmpnam = randStr(20) + '.tmp')), 'w+', 0o644);
               hash = new Hash(Hash.TYPE_SHA1);
             },
             onContent(name, data) {
@@ -888,7 +801,7 @@ function main(...args) {
                 }
                 if(sha1) {
                   let f = x => 'uploads/' + sha1 + x;
-                  let ret = link(this.temp, f(ext));
+                  let ret = os.rename(this.temp, (this.temp = f(ext)));
                   let { errno } = error();
                   let json = f('.json');
                   if(fs.existsSync(json) && (cache = ReadJSON(json))) {
@@ -929,13 +842,7 @@ function main(...args) {
                       }
                     }
 
-                    MagickResize(
-                      obj.jpg ?? f(ext),
-                      f('.thumb.jpg'),
-                      obj.exif?.Rotation ?? 0,
-                      width,
-                      height
-                    );
+                    MagickResize(obj.jpg ?? f(ext), f('.thumb.jpg'), obj.exif?.Rotation ?? 0, width, height);
 
                     if(fs.existsSync(f('.thumb.jpg'))) obj.thumbnail = f('.thumb.jpg');
                     WriteJSON(json, obj);
@@ -1072,7 +979,6 @@ function main(...args) {
     Hash,
     FormParser,
     ExecTool,
-    Execute,
     extendGenerator,
     extendArray,
     extendAsyncGenerator,

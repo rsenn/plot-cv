@@ -1,5 +1,4 @@
-import { Mat, Point, Size, Rect, RotatedRect, Line, Contour,CV_32FC1, CV_32FC4, CV_8SC3, CV_8SC4, CV_8UC3, CV_8UC4
- } from 'opencv';
+import { Mat, Point, Size, Rect, RotatedRect, Line, Contour, CV_32FC1, CV_32FC4, CV_8SC3, CV_8SC4, CV_8UC3, CV_8UC4 } from 'opencv';
 import * as cv from 'opencv';
 import * as std from 'std';
 import inspect from './lib/objectInspect.js';

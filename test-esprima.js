@@ -19,7 +19,7 @@ function main(...args) {
     let error;
     let ast;
     try {
-      let code =ReadFile(arg, 'utf8');
+      let code = ReadFile(arg, 'utf8');
       ast = parseModule(code, {
         module: true,
         next: true,

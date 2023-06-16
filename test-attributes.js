@@ -53,7 +53,6 @@ async function main(...args) {
   //console.log('Environment:', Util.toSource(envEntries, { quote: '"'}).replaceAll('\n', "\\n"));
   console.log('Environment:', inspect(envMap));
 
-
   console.log('OK');
   let colors, keys;
   let attributes = new Map();

@@ -22,3 +22,6 @@
 	path = lib
 	url = git@github.com:rsenn/libweb.git
 	branch = main
+[submodule "node-debugprotocol-client"]
+	path = node-debugprotocol-client
+	url = https://github.com/gins3000/node-debugprotocol-client

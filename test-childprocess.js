@@ -1,5 +1,6 @@
 import child_process from 'child_process';
 import { Repeater } from './lib/repeater/repeater.js';
+import { readSync, closeSync, bufferToString } from 'fs';
 
 let childProcess;
 
@@ -39,14 +40,14 @@ function FdReader(fd, bufferSize = 1024) {
     let ret;
     do {
       let r = await waitRead(fd);
-      ret = typeof fd == 'number' ? filesystem.readSync(fd, buf) : fd.read(buf);
+      ret = typeof fd == 'number' ? readSync(fd, buf) : fd.read(buf);
       if(ret > 0) {
         let data = buf.slice(0, ret);
-        await push(filesystem.bufferToString(data));
+        await push(bufferToString(data));
       }
     } while(ret == bufferSize);
     stop();
-    typeof fd == 'number' ? filesystem.closeSync(fd) : fd.destroy();
+    typeof fd == 'number' ? closeSync(fd) : fd.destroy();
   });
 }
 

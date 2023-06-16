@@ -1,11 +1,8 @@
-
-
 async function main(...args) {
   /*console.log('platform:', Util.getPlatform());
   console.log('argv:', process.argv);
   let os = await import('os');
   console.log('os.ttyGetWinSize:', os.ttyGetWinSize);*/
-
 
   /*let std = [0, 1, 2].map(fd => filesystem.readlink(`/proc/self/fd/${fd}`));
   console.log('std:', std.join(', '));

@@ -10,7 +10,6 @@ Number.prototype.toHex = function() {
 };
 
 async function main(...args) {
-
   console.log('el.handle', el.handle);
 
   let rl_meta_chars = ffi.dlsym(el.handle, 'rl_meta_chars');

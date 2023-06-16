@@ -1,7 +1,6 @@
 import { Console } from 'console';
 import { selectorGroup, selector, simpleSelectorSequence, typeSelector, keyframeSelector } from './grammar-css3.js';
 
-
 function main(...args) {
   globalThis.console = new Console(process.stderr, {
     inspectOptions: {

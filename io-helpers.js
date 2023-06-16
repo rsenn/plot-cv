@@ -152,10 +152,7 @@ export function WriteFd(fd, data, offset, length) {
 export function WriteClose(file, data, offset, length) {
   if(IsStdio(file)) {
     let r;
-    r =
-      typeof data == 'string'
-        ? file.puts(data)
-        : file.write(data, offset ?? 0, length ?? data.byteLength);
+    r = typeof data == 'string' ? file.puts(data) : file.write(data, offset ?? 0, length ?? data.byteLength);
 
     if(r <= 0 || file.error()) throw new Error(`Error writing file`);
 
@@ -254,10 +251,7 @@ export async function* FdReader(fd, bufferSize = 1024) {
   do {
     let r = await waitRead(fd);
     console.log('r', r);
-    ret =
-      typeof fd == 'number'
-        ? await read(fd, buf, 0, bufferSize)
-        : await fd.read(buf, 0, bufferSize);
+    ret = typeof fd == 'number' ? await read(fd, buf, 0, bufferSize) : await fd.read(buf, 0, bufferSize);
     if(ret > 0) {
       let data = buf.slice(0, ret);
       yield toString(data);
@@ -305,18 +299,15 @@ export function LogCall(fn, thisObj) {
   return function(...args) {
     let result;
     result = fn.apply(thisObj ?? this, args);
-    console.log(
-      'Function ' + name + '(',
-      ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })),
-      ') =',
-      result
-    );
+    console.log('Function ' + name + '(', ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })), ') =', result);
     return result;
   };
 }
 
 export function Spawn(...args) {
   const child = spawn(...args);
+
+  console.log('child.stdio', child.stdio);
 
   //define(child, { get stdin() { return this.stdio[0]; },get stdout() { return this.stdio[1]; },get stderr() { return this.stdio[2]; } });
   define(
@@ -333,7 +324,7 @@ export function Spawn(...args) {
           return this.stdio[2] >= 0 ? fdopen(this.stdio[2], 'r') : null;
         }
       },
-      { memo: true }
+      { memoize: true }
     )
   );
 
@@ -417,16 +408,7 @@ export function Spawn(...args) {
 // 'https://www.discogs.com/sell/order/8369022-364'
 
 export function FetchURL(url, options = {}) {
-  let {
-    headers,
-    proxy,
-    cookies = 'cookies.txt',
-    range,
-    body,
-    version = '1.1',
-    tlsv,
-    'user-agent': userAgent
-  } = options;
+  let { headers, proxy, cookies = 'cookies.txt', range, body, version = '1.1', tlsv, 'user-agent': userAgent } = options;
 
   let args = Object.entries(headers ?? {})
     .reduce((acc, [k, v]) => acc.concat(['-H', `${k}: ${v}`]), [])
@@ -488,6 +470,19 @@ export function Shell(cmd) {
   let s = '';
   while(!f.eof() && !f.error()) {
     s += f.readAsString();
+  }
+  f.close();
+  return s;
+}
+
+export function ExecTool(cmd, ...args) {
+  let f = popen([cmd, ...args].join(' '), 'r');
+  let s = '';
+  for(;;) {
+    let line = f.getline();
+
+    if(line === null) break;
+    s += line + '\n';
   }
   f.close();
   return s;
