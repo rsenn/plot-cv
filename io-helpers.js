@@ -318,6 +318,8 @@ export function LogCall(fn, thisObj) {
 export function Spawn(...args) {
   const child = spawn(...args);
 
+  console.log('child.stdio', child.stdio);
+
   //define(child, { get stdin() { return this.stdio[0]; },get stdout() { return this.stdio[1]; },get stderr() { return this.stdio[2]; } });
   define(
     child,
@@ -333,7 +335,7 @@ export function Spawn(...args) {
           return this.stdio[2] >= 0 ? fdopen(this.stdio[2], 'r') : null;
         }
       },
-      { memo: true }
+      { memoize: true }
     )
   );
 

@@ -1,16 +1,38 @@
 import { Spawn } from './io-helpers.js';
-import { keys, quote } from 'util';
-import { readAll } from 'fs';
+import { keys, quote, toString } from 'util';
+import { readAll,readSync, readAllSync } from 'fs';
+import { Console } from 'console';
+import { read } from 'os';
+import { ReadFile } from './test-readfile.js';
+import { _get_osfhandle } from 'misc';
 
-async function ReadProcess(...args) {
+globalThis.console = new Console({ inspectOptions: {  colors: true, compact: false } });
+
+function ReadProcess(...args) {
   let child = Spawn(args.shift(), args, {
     block: false,
     stdio: ['inherit', 'pipe', 'inherit']
   });
+  let {stdout}=child;
+  console.log('stdout', stdout);
+    console.log('child.stdout', child.stdout);
+  console.log('stdout.fileno()', stdout.fileno());
+let ab = new ArrayBuffer(1024);
+let u32 = new Uint32Array(2);
+let hnd = _get_osfhandle(stdout.fileno());
+console.log('hnd', hnd);
 
-  let data = await readAll(child.stdout);
+let r = ReadFile(hnd, ab, 1024, u32.buffer, 0);
+console.log('r', r);
+console.log('u32', u32);
+console.log('output', toString(ab.slice(0,u32[0])));
 
   child.wait();
+
+  
+  let data = readAllSync(stdout.fileno());
+console.log('data', data);
+
   return data;
 }
 
