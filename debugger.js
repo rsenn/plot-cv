@@ -2,7 +2,8 @@ import { toString, ansiStyles, assert, define, error, isFunction } from './lib/m
 import { consume as consumeSync } from './lib/iterator/helpers.js';
 import { Pointer } from './lib/pointer.js';
 import * as deep from './lib/deep.js';
-import process from 'process';
+
+globalThis.process ??= { env: {} };
 
 var worker;
 var counter;
@@ -10,9 +11,7 @@ let sockets = (globalThis.sockets ??= new Set());
 let listeners = (globalThis.listeners = {});
 
 const { redBright, greenBright, cyanBright, yellowBright, magentaBright } = ansiStyles;
-const syntaxPalette = [{ open: '\x1b[0m' }, redBright, greenBright, yellowBright, cyanBright, magentaBright].map(
-  c => c.open
-);
+const syntaxPalette = [{ open: '\x1b[0m' }, redBright, greenBright, yellowBright, cyanBright, magentaBright].map(c => c.open);
 
 export function TrivialTokenizer(input) {
   const re =
@@ -145,10 +144,7 @@ export class DebuggerDispatcher {
     }
 
     define(this, {
-      sendMessage: msg => (
-        process.env.DEBUG && console.log('\x1b[38;5;33mSEND\x1b[0m    ', msg),
-        conn.sendMessage((msg = JSON.stringify(msg)))
-      )
+      sendMessage: msg => (process.env.DEBUG && console.log('\x1b[38;5;33mSEND\x1b[0m    ', msg), conn.sendMessage((msg = JSON.stringify(msg))))
     });
   }
 
@@ -187,9 +183,7 @@ export class DebuggerDispatcher {
     if(Array.isArray(breakpoints)) {
       if(typeof breakpoints[0] == 'number') breakpoints = breakpoints.map(n => ({ line: n }));
     }
-    const msg = breakpoints
-      ? { type: 'breakpoints', breakpoints: { path, breakpoints } }
-      : { type: 'breakpoints', path };
+    const msg = breakpoints ? { type: 'breakpoints', breakpoints: { path, breakpoints } } : { type: 'breakpoints', path };
     this.sendMessage(msg);
     return msg;
   }

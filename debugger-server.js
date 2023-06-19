@@ -74,11 +74,7 @@ function checkChildExited(pid, status) {
   const termsig = status & 0x7f;
   const exitcode = (status >>> 8) & 0xff;
 
-  return terminated
-    ? termsig
-      ? `signalled ${signalName(termsig)}`
-      : `exitcode ${exitcode}`
-    : null;
+  return terminated ? (termsig ? `signalled ${signalName(termsig)}` : `exitcode ${exitcode}`) : null;
 }
 
 function GetLoc(node) {
@@ -168,16 +164,12 @@ function StartREPL(prefix = scriptName(), suffix = '') {
         if(!Array.isArray(arg[0]) && (arg.length !== 2 || !Array.isArray(arg[1]))) {
           if(arg.length == 2 && Array.isArray(arg[1])) {
             const [event, stack] = arg;
-            if(['type', 'reason'].every(k => k in event))
-              if(['id', 'name', 'line'].every(k => k in stack[0]))
-                return [List([event]), List(stack)];
+            if(['type', 'reason'].every(k => k in event)) if (['id', 'name', 'line'].every(k => k in stack[0])) return [List([event]), List(stack)];
           }
 
           if(
             arg.length >= 2 /*Object.keys(arg[0]).some(key => arg.every(a => key in a)) ||*/ &&
-            arg
-              .map(item => Object.keys(item))
-              .reduce((acc, keys, i) => (i == 0 ? keys : acc ? keys.equal(acc) && keys : false))
+            arg.map(item => Object.keys(item)).reduce((acc, keys, i) => (i == 0 ? keys : acc ? keys.equal(acc) && keys : false))
           )
             return repl.show(Table(arg));
         }
@@ -361,13 +353,7 @@ decorate(
         return await member.call(this, file, breakpoints);
       },
       async stackTrace(frame) {
-        return (await member.call(this, frame)).map(
-          frame => (
-            typeof frame.filename == 'string' &&
-              (frame.filename = relative(absolute(frame.filename))),
-            frame
-          )
-        );
+        return (await member.call(this, frame)).map(frame => (typeof frame.filename == 'string' && (frame.filename = relative(absolute(frame.filename))), frame));
       },
       async scopes(n) {
         //let v = await this.variables(n);
@@ -398,9 +384,7 @@ decorate(
       async variables(n, depth = 0) {
         const list = await member.call(this, n);
         const ret = [];
-        const add = item => (
-          item.variablesReference === 0 && delete item.variablesReference, ret.push(item)
-        );
+        const add = item => (item.variablesReference === 0 && delete item.variablesReference, ret.push(item));
         for(let item of list) {
           add(item);
 
@@ -452,8 +436,7 @@ const mkaddr = (
 function NewDebugger(args, skipToMain = false, address) {
   address ??= mkaddr();
 
-  const child = (globalThis.child =
-    globalThis.listeners[address] || StartDebugger(args, false, address));
+  const child = (globalThis.child = globalThis.listeners[address] || StartDebugger(args, false, address));
   let dispatch;
 
   globalThis.script = args[0];
@@ -690,11 +673,7 @@ function main(...args) {
 
             const { command, ...rest } = obj;
             // console.log('onMessage', command, rest);
-            const {
-              connect = true,
-              address = '127.0.0.1:' + Math.round(Math.random() * (65535 - 1024)) + 1024,
-              args = []
-            } = rest;
+            const { connect = true, address = '127.0.0.1:' + Math.round(Math.random() * (65535 - 1024)) + 1024, args = [] } = rest;
 
             switch (command) {
               case 'start': {
@@ -801,11 +780,7 @@ function main(...args) {
                     });
                   }
                   try {
-                    console.log(
-                      'Debugger.read() =',
-                      console.config({ compact: false, maxStringLength: 200 }),
-                      msg
-                    );
+                    console.log('Debugger.read() =', console.config({ compact: false, maxStringLength: 200 }), msg);
                     msg = JSON.stringify(msg);
                     if(typeof msg == 'string') {
                       let ret;
@@ -877,7 +852,7 @@ function main(...args) {
         protocol.set(ws, p);*/
         },
         onFd(fd, rd, wr) {
-          console.log('onFd', { fd, rd, wr });
+          //console.log('onFd', { fd, rd, wr });
           os.setReadHandler(fd, rd);
           os.setWriteHandler(fd, wr);
         },
@@ -912,11 +887,7 @@ function main(...args) {
 
   function showSessions() {
     let sessions = getSessions();
-    console.log(
-      'sessions',
-      console.config({ maxArrayLength: Infinity, depth: 4, customInspect: true, compact: 0 }),
-      sessions
-    );
+    console.log('sessions', console.config({ maxArrayLength: Infinity, depth: 4, customInspect: true, compact: 0 }), sessions);
   }
 
   //setInterval(() => console.log('interval'), 5000);
@@ -967,8 +938,7 @@ function main(...args) {
                 const [start, end] = indexlist.slice(i - 1, i + 1);
                 let line = source.slice(start + (i > 1 ? 1 : 0), end);
 
-                if([...line.matchAll(/\x1b([^A-Za-z]*[A-Za-z])/g)].last != '\x1b[0m')
-                  line += '\x1b[0m';
+                if([...line.matchAll(/\x1b([^A-Za-z]*[A-Za-z])/g)].last != '\x1b[0m') line += '\x1b[0m';
 
                 return line;
               },
@@ -986,9 +956,7 @@ function main(...args) {
             {
               // estree: () => ,
               async functions() {
-                return (globalThis.functionCache = [
-                  ...FindFunctions((globalThis.ast = await LoadAST(file)))
-                ].map(([name, loc, params, expression, path]) =>
+                return (globalThis.functionCache = [...FindFunctions((globalThis.ast = await LoadAST(file)))].map(([name, loc, params, expression, path]) =>
                   define(
                     {
                       name,
@@ -1019,7 +987,7 @@ function main(...args) {
       }
       return r;
     },
-    repl: StartREPL()/*,
+    repl: StartREPL() /*,
     daemon() {
       repl.stop();
       std.puts('\ndetaching...');
