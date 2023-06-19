@@ -7,7 +7,7 @@ import { EventEmitter, EventTarget, eventify } from './lib/events.js';
 import require from 'require';
 import { LineList, Point, Circle, Rect, Size, Line, TransformationList, Rotation, Translation, Scaling, Matrix, BBox } from './lib/geom.js';
 import { Console } from 'console';
-import REPL from './quickjs/qjs-modules/lib/repl.js';
+import { REPL } from 'repl';
 import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, Enum, HashList, Multimap, Shash, SortedMap, HashMultimap, MultiBiMap, MultiKeyMap, DenseSpatialHash2D, SpatialHash2D, HashMap, SpatialH, SpatialHash, SpatialHashMap, BoxHash } from './lib/container.js';
 import * as fs from 'fs';
 import { Pointer } from './lib/pointer.js';
@@ -31,7 +31,7 @@ import { Table } from './cli-helpers.js';
 import renderToString from './lib/preact-render-to-string.js';
 import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
 import { EagleToGerber, GerberToGcode } from './pcb-conversion.js';
-import { ExecTool } from './os-helpers.js';
+import { ExecTool } from './io-helpers.js';
 import * as components from './lib/eagle/components.js';
 import { DirIterator, RecursiveDirIterator, ReadDirRecursive } from './dir-helpers.js';
 
@@ -216,7 +216,7 @@ function main(...args) {
 
   let debugLog = fs.openSync('debug.log', 'a');
 
-  const base = path.basename(__scriptArgs[0], path.extname(__scriptArgs[0]));
+  const base = path.basename(scriptArgs[0], path.extname(scriptArgs[0]));
   const histfile = `.${base}-history`;
 
   let params = getOpt(
@@ -578,7 +578,7 @@ function main(...args) {
     Terminate(0);
   });
 
-  repl.runSync();
+  repl.run();
 }
 
 function Terminate(exitCode) {
