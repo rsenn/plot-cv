@@ -1,3 +1,4 @@
+import { define } from './lib/misc.js';
 
 const FWD = 0,
   REV = 1;
