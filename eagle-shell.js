@@ -151,8 +151,8 @@ function render(doc, filename) {
 }
 
 function CollectParts(doc = project.schematic) {
-  return [...doc.parts]
-    .map(e => e.raw.attributes)
+  return [...doc.parts.raw]
+    .map(e => e.attributes)
     .filter(attr => !(attr.value === undefined && attr.device === '') || /^IC/.test(attr.name))
     .map(({ name, deviceset, device, value }) => ({
       name,
@@ -163,8 +163,8 @@ function CollectParts(doc = project.schematic) {
 }
 
 function CollectElements(doc = project.board) {
-  return doc.elements
-    .map(e => e.raw.attributes)
+  return doc.elements.raw
+    .map(e => e.attributes)
     .map(({ name, library, package: pkg, value }) => ({
       name,
       library,
@@ -174,9 +174,9 @@ function CollectElements(doc = project.board) {
 }
 
 function CollectPartsElements(proj = project) {
-  return project.board.elements
-    .map(e => [e, project.schematic.parts[e.name]])
-    .map(a => a.map(e => e.raw.attributes))
+  return proj.board.elements.raw
+    .map(e => [e, proj.schematic.parts[e.name]?.raw])
+    .map(a => a.map(e => e?.attributes ?? {}))
     .map(([{ x, y, ...element }, part]) => weakDefine(element, part));
 }
 
@@ -518,11 +518,6 @@ function main(...args) {
 
   let repl = (globalThis.repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false));
 
-  for(let file of params['@']) {
-    repl.printStatus(`Loading '${file}'...`);
-    newProject(file);
-  }
-
   repl.history = LoadHistory(cmdhist);
   repl.loadSaveOptions();
   repl.printStatus(`Loaded ${repl.history.length} history entries)`);
@@ -558,7 +553,7 @@ function main(...args) {
       let insp = value.inspect ?? value[Symbol.inspect];
       if(typeof insp == 'function') return insp.call(value);
     }
-    return inspect(value, { customInspect: false, protoChain: true, getters: true });
+    return inspect(value, { customInspect: false, /*protoChain: true,*/ getters: true,  ...console.options });
   };
   // repl.historySet(JSON.parse(std.loadFile(histfile) || '[]'));
 
@@ -578,7 +573,13 @@ function main(...args) {
     Terminate(0);
   });
 
+
   repl.run();
+
+  for(let file of params['@']) {
+    repl.printStatus(`Loading '${file}'...`);
+    newProject(file);
+  }
 }
 
 function Terminate(exitCode) {
