@@ -24,7 +24,7 @@ export function unitConvToMM(value, defaultUnit = 'px') {
   const unit = getUnit(value, defaultUnit);
   value = getValue(value);
 
-  console.log('unixConvToMM', { unit, value });
+  //console.log('unixConvToMM', { unit, value });
 
   if (unit in ToMillimeter) return value * ToMillimeter[unit];
 
