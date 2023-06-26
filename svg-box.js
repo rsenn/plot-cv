@@ -53,7 +53,7 @@ function text(str, attrs = {}, spanAttrs = {}) {
   );
 }
 
- function line(...args) {
+function line(...args) {
   let l = new Line(...args);
   let p = new SvgPath();
 
@@ -61,7 +61,7 @@ function text(str, attrs = {}, spanAttrs = {}) {
   p.line(...l.b);
 
   return xml('path', { d: p.str(), ...strokeStyle() });
-} 
+}
 
 function measure(...args) {
   let l = new Line(...args);
@@ -102,11 +102,12 @@ function rect(...args) {
 }
 
 function main(...args) {
-let orientation='landscape';
- let params =  getOpt(
-     {
-       landscape: [false, () => orientation = 'landscape', 'l'],
-       portrait: [false, () => orientation = 'portrait', 'p'],
+  let orientation = 'landscape';
+  let params = getOpt(
+    {
+      landscape: [false, () => (orientation = 'landscape'), 'l'],
+      portrait: [false, () => (orientation = 'portrait'), 'p'],
+      inner: [false, null, 'i'],
       '@': 'args'
     },
     args
@@ -116,11 +117,20 @@ let orientation='landscape';
     Number(unitConvToMM(a, 'mm'))
   );
 
+  if(params.inner) {
+    width += thickness * 2;
+    height += thickness * 2;
+    depth += thickness * 2;
+  }
+
   console.log('svg-box', { width, height, depth });
 
   console.log('1px', px(1));
 
-  let dimensions = orientation == 'landscape' ? { width: '297mm', height: '210mm' } : { width: '210mm', height: '297mm' };
+  let dimensions =
+    orientation == 'landscape'
+      ? { width: '297mm', height: '210mm' }
+      : { width: '210mm', height: '297mm' };
   let size = new Size(dimensions.width, dimensions.height);
   const f = 8;
   const g = f - px(1);
@@ -135,10 +145,7 @@ let orientation='landscape';
       ...(my ? [measure(r.x - 10, r.y, r.x - 10, r.y2)] : [])
     );
 
-  const pushline = (l ) =>
-    elements.push(
-      line(l) 
-    );
+  const pushlines = (...l) => elements.push(...l.map(o => line(o)));
 
   const pushtext = (t, p) =>
     elements.push(text(t, { transform: `translate(${p})`, 'font-size': 6 }));
@@ -153,36 +160,31 @@ let orientation='landscape';
   pushrect(r);
   pushtext('Oben/Unten', r.center);
 
-let [t,,u]=r.clone().inset(4,0).toLines();
+  let [t, , u] = r.clone().inset(4, 0).toLines();
 
-pushline(t);
-pushline(u);
+  pushlines(t, u);
 
-let [,w,,v]=r.clone().inset(4,4).toLines();
+  let [, w, , v] = r.clone().inset(4, 4).toLines();
 
-pushline(v);
-pushline(w);
+  pushlines(v, w);
 
   let r2 = new Rect(r.x, r.y2 + 10, width, depth - thickness * 2);
 
   pushrect(r2, false, true);
   pushtext('Vorne', r2.center);
 
+  let [, y, , x] = r2.clone().inset(0, 4).toLines();
 
-let [,y,,x]=r2.clone().inset(0,4).toLines();
-
-pushline(x);
-pushline(y);
+  pushlines(x, y);
 
   r2.y += r2.height + 1;
 
   pushrect(r2, false, true);
   pushtext('Hinten', r2.center);
 
-  [,y,,x]=r2.clone().inset(0,4).toLines();
+  [, y, , x] = r2.clone().inset(0, 4).toLines();
 
-pushline(x);
-pushline(y);
+  pushlines(x, y);
 
   let r3 = new Rect(r2.x, r2.y2 + 20, height - thickness * 2, depth - thickness * 2);
 
