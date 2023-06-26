@@ -72,22 +72,26 @@ function measure(...args) {
   let l = new Line(...args);
   let p = new SvgPath();
 
-  p.to(...l.a);
-  p.line(...l.b);
+  p.to(0, 0);
+  p.line(...l.slope);
 
   let xy = l.pointAt(0.5).sum(0, 0.5);
 
   return xml('g', {}, [
     text(
-      `${(l.getLength()/10).toFixed(1).replace('.',',')}cm`,
+      `${(l.getLength() / 10).toFixed(1).replace('.', ',')}cm`,
       {
-        transform: `translate(${xy}) rotate(${l.y1 == l.y2 ? 0 : 90}) translate(0, ${
-          (l.y1 == l.y2 ? 1 : 1.2) * 2
-        }) `
+        transform: `translate(${xy}) rotate(${l.y1 == l.y2 ? 0 : 90}) translate(0, ${(l.y1 == l.y2 ? -l.slope.normalize().x : 0.8) * 1.5})`,
+        'dominant-baseline': l.y1 == l.y2 && l.slope.normalize().x == 1 ? 'text-bottom' : 'hanging'
       },
       {}
     ),
-    xml('path', { d: p.str(), ...strokeStyle(), ...measureStyle })
+    xml('path', {
+      d: p.str(),
+      ...strokeStyle(),
+      ...measureStyle,
+      transform: `translate(${l.a}) scale(${l.y1 == l.y2 ? 1 : -1},1) `
+    })
   ]);
 }
 
@@ -108,23 +112,22 @@ function rect(...args) {
 
 function main(...args) {
   let orientation = 'landscape';
-  let arrows=true;
+  let arrows = true;
   let params = getOpt(
     {
       landscape: [false, () => (orientation = 'landscape'), 'l'],
       portrait: [false, () => (orientation = 'portrait'), 'p'],
       inner: [false, null, 'i'],
-      'no-arrows': [false, () => arrows=false, 'A'],
+      'no-arrows': [false, () => (arrows = false), 'A'],
       output: [true, null, 'o'],
+      'bottom-inside': [false, null, 'b'],
       gap: [true, null, 'g'],
       '@': 'args'
     },
     args
   );
-let {gap=1, output='output.svg'}=params;
-  let [width = 210, height = 45, depth = 36, thickness = 4] = params['@'].map(a =>
-    Number(unitConvToMM(a, 'mm'))
-  );
+  let { gap = 1, output = 'output.svg', 'bottom-inside': bottomInside = false } = params;
+  let [width = 210, height = 45, depth = 36, thickness = 4] = params['@'].map(a => Number(unitConvToMM(a, 'mm')));
 
   if(params.inner) {
     width += thickness * 2;
@@ -136,81 +139,108 @@ let {gap=1, output='output.svg'}=params;
 
   console.log('1px', px(1));
 
-  let dimensions =
-    orientation == 'landscape'
-      ? { width: '297mm', height: '210mm' }
-      : { width: '210mm', height: '297mm' };
+  let dimensions = orientation == 'landscape' ? { width: '297mm', height: '210mm' } : { width: '210mm', height: '297mm' };
   let size = new Size(dimensions.width, dimensions.height);
-  
 
   const f = 32;
   const g = f - px(1);
   const d = +px(2);
-const e= Math.sqrt(0.5)*0.5;
+  const e = Math.sqrt(0.5) * 0.5 * f;
 
   let elements = [];
 
-  const pushrect = (r, mx = true, my = true) =>
+  const pushrect = (r, mx = -1, my = -1) =>
     elements.push(
       rect(r),
-      ...(mx ? [measure(r.x, r.y - 10, r.x2, r.y - 10)] : []),
-      ...(my ? [measure(r.x2 + 10, r.y, r.x2 + 10, r.y2)] : [])
+      ...(mx ? [mx < 0 || mx === true ? measure(r.x, r.y - 10, r.x2, r.y - 10) : measure(r.x2, r.y2 + 10, r.x, r.y2 + 10)] : []),
+      ...(my ? [my < 0 || my === true ? measure(r.x - 10, r.y, r.x - 10, r.y2) : measure(r.x2 + 10, r.y2, r.x2 + 10, r.y)] : [])
     );
 
   const pushlines = (...l) => elements.push(...l.map(o => line(o)));
 
-  const pushtext = (t, p) =>
-    elements.push(text(t, { transform: `translate(${p})`, 'font-size': 6 }));
+  const pushtext = (t, p) => elements.push(text(t, { transform: `translate(${p})`, 'font-size': 6 }));
 
   let sz = new Size(...size);
   let r = new Rect(0, 0, width, height);
+  let r2, r3;
   // console.log('svg-box', { width, height, depth });
+  const bb = new BBox();
 
-  r.align(sz, Align.CENTER | Align.TOP);
+  //r.align(sz, Align.CENTER | Align.TOP);
+  r.x += 20;
   r.y += 20;
 
   pushrect(r);
-  pushtext('Oben/Unten', r.center);
+  pushtext(bottomInside ? 'Deckel' : 'Deckel/Boden', r.center);
 
-  let [t, , u] = r.clone().inset(4, 0).toLines();
+  let [t, , u] = r.clone().inset(thickness, 0).toLines();
 
   pushlines(t, u);
 
-  let [, w, , v] = r.clone().inset(4, 4).toLines();
+  let [, w, , v] = r.clone().inset(thickness, thickness).toLines();
 
   pushlines(v, w);
 
-  let r2 = new Rect(r.x, r.y2 + 10, width, depth - thickness * 2);
+  if(bottomInside) {
+    let bottom = r.clone().inset(thickness, thickness);
+    bottom.x = r.x2 + +gap;
+    pushrect(bottom, -1, 1);
+    pushtext('Boden', bottom.center);
+    /*r=bottom;
+  r.y += 20;*/
+  }
 
-  pushrect(r2, false, true);
-  pushtext('Vorne', r2.center);
+  frontBack(r.x, r.y2 + 10);
 
-  let [, y, , x] = r2.clone().inset(0, 4).toLines();
+  function frontBack(x, y) {
+    let r = new Rect(x, y, width, depth - thickness * (bottomInside ? 1 : 2));
 
-  pushlines(x, y);
+    pushrect(r, false, true);
+    pushtext('Vorne', r.center);
 
-  r2.y += r2.height + +gap;
+    let [, u, , t] = r.clone().inset(0, thickness).toLines();
 
-  pushrect(r2, false, true);
-  pushtext('Hinten', r2.center);
+    pushlines(t, u);
 
-  [, y, , x] = r2.clone().inset(0, 4).toLines();
+    if(bottomInside) pushlines(r.clone().inset(thickness, thickness).toLines()[2]);
 
-  pushlines(x, y);
+    r2 = r.clone();
 
-  let r3 = new Rect(r2.x, r2.y2 + 20, height - thickness * 2, depth - thickness * 2);
+    r.y += r.height + +gap;
 
-  pushrect(r3, true, false);
-  pushtext('Links', r3.center);
+    pushrect(r, false, true);
+    pushtext('Hinten', r.center);
 
-  r3.x += r3.width + +gap;
+    [, u, , t] = r.clone().inset(0, 4).toLines();
 
-  pushrect(r3, true, true);
-  pushtext('Rechts', r3.center);
+    pushlines(t, u);
 
-  const bb = new BBox(r);
+    if(bottomInside) pushlines(r.clone().inset(thickness, thickness).toLines()[2]);
+    bb.updateXY(r.x, r.y);
+    return r;
+  }
 
-  bb.updateXY(r3.x2, r3.y2);
+  leftRight(r2.x2 + +gap, r2.y);
+
+  function leftRight(x, y) {
+    let r = new Rect(x, y, height - thickness * 2, depth - thickness * (bottomInside ? 1 : 2));
+
+    pushrect(r, 1, false);
+
+    if(bottomInside) pushlines(r.clone().inset(4, 0).toLines()[2]);
+
+    pushtext('Links', r.center);
+
+    r3 = r.clone();
+
+    r.x += r.width + +gap;
+
+    pushrect(r, 1, 1);
+
+    if(bottomInside) pushlines(r.clone().inset(4, 0).toLines()[2]);
+    pushtext('Rechts', r.center);
+    bb.updateXY(r.x, r.y);
+  }
 
   const br = new Rect(bb.toRect());
   console.log('br', br + '');
@@ -238,7 +268,7 @@ const e= Math.sqrt(0.5)*0.5;
           'marker',
           { id: 'a', orient: 'auto' },
           xml('path', {
-            d: `M 0,${f*-0.25} v ${1.25 * f} M 0,0 h ${-0.25 * f} M ${-e * f},${-e * f} l ${f*e*2},${f*e*2}` ,
+            d: `M 0,${f * -0.25} v ${1.25 * f} M 0,0 h ${-0.25 * f} M ${-e},${-e} l ${e * 2},${e * 2}`,
             //d: `M 0,${f} v ${-2 * f}` + (arrows ? ` M ${d + g},${g} l ${-g},${-g} l ${g},${-g}` : ''),
             ...markerStyle()
           })
@@ -247,8 +277,8 @@ const e= Math.sqrt(0.5)*0.5;
           'marker',
           { id: 'b', orient: 'auto' },
           xml('path', {
-            d: `M 0,${f*-0.25} v ${1.25 * f} M 0,0 h ${0.25 * f} M ${-e * f},${-e * f} l ${f*e*2},${f*e*2}` ,
-           // d: `M 0,${f} v ${-2 * f}`+ (arrows ? ` M ${-d - g},${g} l ${g},${-g} l ${-g},${-g}` : ''),
+            d: `M 0,${f * -0.25} v ${1.25 * f} M 0,0 h ${0.25 * f} M ${-e},${-e} l ${e * 2},${e * 2}`,
+            // d: `M 0,${f} v ${-2 * f}`+ (arrows ? ` M ${-d - g},${g} l ${g},${-g} l ${-g},${-g}` : ''),
             ...markerStyle()
           })
         )
