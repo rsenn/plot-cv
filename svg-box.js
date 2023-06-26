@@ -39,7 +39,7 @@ function text(str, attrs = {}, spanAttrs = {}) {
     'text',
     {
       'font-weight': 500,
-      'font-size': '0.5mm',
+      'font-size': 3,
       'font-family': 'Century Gothic',
       'letter-spacing': 0,
       'word-spacing': 0,
@@ -60,7 +60,12 @@ function line(...args) {
   p.to(...l.a);
   p.line(...l.b);
 
-  return xml('path', { d: p.str(), ...strokeStyle() });
+  return xml('path', {
+    d: p.str(),
+    ...strokeStyle(),
+    'stroke-dasharray': '0.52916667,0.52916667',
+    'stroke-dashoffset': 0
+  });
 }
 
 function measure(...args) {
@@ -74,10 +79,10 @@ function measure(...args) {
 
   return xml('g', {}, [
     text(
-      `${l.getLength()}mm`,
+      `${(l.getLength()/10).toFixed(1).replace('.',',')}cm`,
       {
         transform: `translate(${xy}) rotate(${l.y1 == l.y2 ? 0 : 90}) translate(0, ${
-          l.y1 == l.y2 ? 1 : 1.5
+          (l.y1 == l.y2 ? 1 : 1.2) * 2
         }) `
       },
       {}
@@ -103,17 +108,20 @@ function rect(...args) {
 
 function main(...args) {
   let orientation = 'landscape';
+  let arrows=true;
   let params = getOpt(
     {
       landscape: [false, () => (orientation = 'landscape'), 'l'],
       portrait: [false, () => (orientation = 'portrait'), 'p'],
       inner: [false, null, 'i'],
+      'no-arrows': [false, () => arrows=false, 'A'],
       output: [true, null, 'o'],
+      gap: [true, null, 'g'],
       '@': 'args'
     },
     args
   );
-
+let {gap=1, output='output.svg'}=params;
   let [width = 210, height = 45, depth = 36, thickness = 4] = params['@'].map(a =>
     Number(unitConvToMM(a, 'mm'))
   );
@@ -133,9 +141,12 @@ function main(...args) {
       ? { width: '297mm', height: '210mm' }
       : { width: '210mm', height: '297mm' };
   let size = new Size(dimensions.width, dimensions.height);
-  const f = 8;
+  
+
+  const f = 32;
   const g = f - px(1);
   const d = +px(2);
+const e= Math.sqrt(0.5)*0.5;
 
   let elements = [];
 
@@ -143,7 +154,7 @@ function main(...args) {
     elements.push(
       rect(r),
       ...(mx ? [measure(r.x, r.y - 10, r.x2, r.y - 10)] : []),
-      ...(my ? [measure(r.x - 10, r.y, r.x - 10, r.y2)] : [])
+      ...(my ? [measure(r.x2 + 10, r.y, r.x2 + 10, r.y2)] : [])
     );
 
   const pushlines = (...l) => elements.push(...l.map(o => line(o)));
@@ -178,7 +189,7 @@ function main(...args) {
 
   pushlines(x, y);
 
-  r2.y += r2.height + 1;
+  r2.y += r2.height + +gap;
 
   pushrect(r2, false, true);
   pushtext('Hinten', r2.center);
@@ -189,12 +200,12 @@ function main(...args) {
 
   let r3 = new Rect(r2.x, r2.y2 + 20, height - thickness * 2, depth - thickness * 2);
 
-  pushrect(r3);
+  pushrect(r3, true, false);
   pushtext('Links', r3.center);
 
-  r3.x += r3.width + 1;
+  r3.x += r3.width + +gap;
 
-  pushrect(r3, true, false);
+  pushrect(r3, true, true);
   pushtext('Rechts', r3.center);
 
   const bb = new BBox(r);
@@ -227,7 +238,8 @@ function main(...args) {
           'marker',
           { id: 'a', orient: 'auto' },
           xml('path', {
-            d: `M 0,${f} v ${-2 * f} M ${d + g},${g} l ${-g},${-g} l ${g},${-g}`,
+            d: `M 0,${f*-0.25} v ${1.25 * f} M 0,0 h ${-0.25 * f} M ${-e * f},${-e * f} l ${f*e*2},${f*e*2}` ,
+            //d: `M 0,${f} v ${-2 * f}` + (arrows ? ` M ${d + g},${g} l ${-g},${-g} l ${g},${-g}` : ''),
             ...markerStyle()
           })
         ),
@@ -235,7 +247,8 @@ function main(...args) {
           'marker',
           { id: 'b', orient: 'auto' },
           xml('path', {
-            d: `M 0,${f} v ${-2 * f} M ${-d - g},${g} l ${g},${-g} l ${-g},${-g}`,
+            d: `M 0,${f*-0.25} v ${1.25 * f} M 0,0 h ${0.25 * f} M ${-e * f},${-e * f} l ${f*e*2},${f*e*2}` ,
+           // d: `M 0,${f} v ${-2 * f}`+ (arrows ? ` M ${-d - g},${g} l ${g},${-g} l ${-g},${-g}` : ''),
             ...markerStyle()
           })
         )
@@ -244,7 +257,7 @@ function main(...args) {
     ]
   );
 
-  WriteFile(params.output ?? 'output.svg', write(obj));
+  WriteFile(output, write(obj));
 }
 
 main(...scriptArgs.slice(1));
