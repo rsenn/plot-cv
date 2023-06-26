@@ -53,15 +53,15 @@ function text(str, attrs = {}, spanAttrs = {}) {
   );
 }
 
-/*function line(...args) {
+ function line(...args) {
   let l = new Line(...args);
   let p = new SvgPath();
 
   p.to(...l.a);
   p.line(...l.b);
 
-  return xml('path', { d: p.str(), ...strokeStyle(), ...measureStyle });
-}*/
+  return xml('path', { d: p.str(), ...strokeStyle() });
+} 
 
 function measure(...args) {
   let l = new Line(...args);
@@ -135,6 +135,11 @@ let orientation='landscape';
       ...(my ? [measure(r.x - 10, r.y, r.x - 10, r.y2)] : [])
     );
 
+  const pushline = (l ) =>
+    elements.push(
+      line(l) 
+    );
+
   const pushtext = (t, p) =>
     elements.push(text(t, { transform: `translate(${p})`, 'font-size': 6 }));
 
@@ -148,15 +153,36 @@ let orientation='landscape';
   pushrect(r);
   pushtext('Oben/Unten', r.center);
 
+let [t,,u]=r.clone().inset(4,0).toLines();
+
+pushline(t);
+pushline(u);
+
+let [,w,,v]=r.clone().inset(4,4).toLines();
+
+pushline(v);
+pushline(w);
+
   let r2 = new Rect(r.x, r.y2 + 10, width, depth - thickness * 2);
 
   pushrect(r2, false, true);
   pushtext('Vorne', r2.center);
 
+
+let [,y,,x]=r2.clone().inset(0,4).toLines();
+
+pushline(x);
+pushline(y);
+
   r2.y += r2.height + 1;
 
   pushrect(r2, false, true);
   pushtext('Hinten', r2.center);
+
+  [,y,,x]=r2.clone().inset(0,4).toLines();
+
+pushline(x);
+pushline(y);
 
   let r3 = new Rect(r2.x, r2.y2 + 20, height - thickness * 2, depth - thickness * 2);
 
