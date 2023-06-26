@@ -108,6 +108,7 @@ function main(...args) {
       landscape: [false, () => (orientation = 'landscape'), 'l'],
       portrait: [false, () => (orientation = 'portrait'), 'p'],
       inner: [false, null, 'i'],
+      output: [true, null, 'o'],
       '@': 'args'
     },
     args
@@ -243,7 +244,7 @@ function main(...args) {
     ]
   );
 
-  WriteFile('output.svg', write(obj));
+  WriteFile(params.output ?? 'output.svg', write(obj));
 }
 
 main(...scriptArgs.slice(1));
