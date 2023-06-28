@@ -15,7 +15,7 @@ const syntaxPalette = [{ open: '\x1b[0m' }, redBright, greenBright, yellowBright
 
 export function TrivialTokenizer(input) {
   const re =
-    /(\n|\t| )|(\b(?:arguments|as|async|await|break|case|catch|class|const|constructor|continue|debugger|default|delete|do|else|enum|eval|export|extends|false|finally|for|from|function|get|identifier|if|implements|import|in|instanceof|interface|let|meta|new|null|number|of|package|private|protected|public|return|set|static|string|super|switch|target|this|throw|true|try|typeof|var|void|while|with|yield)\b)|(\/\*(?:[^*]\/|[^\/])*\*\/|\b\/\/[^\n]*\n)|([A-Za-z_][A-Za-z_0-9]*)|("(?:\\"|[^"\n])*"|'(?:\\'|[^'\n])*'|[^\sA-Za-z_'"])/g;
+    /(\n|\t| )|(\b(?:arguments|as|async|await|break|case|catch|class|const|constructor|continue|debugger|default|delete|do|else|enum|eval|export|extends|false|finally|for|from|function|get|identifier|if|implements|import|in|instanceof|interface|let|meta|new|null|number|of|package|private|protected|public|return|set|static|string|super|switch|target|this|throw|true|try|typeof|var|void|while|with|yield)\b)|(\/\*(?:[^*]\/|[^\/])*\*\/|\/\/[^\n]*\n)|([A-Za-z_][A-Za-z_0-9]*)|("(?:\\"|[^"\n])*"|'(?:\\'|[^'\n])*'|[^\sA-Za-z_'"])/g;
   let match,
     prev,
     ret = [];
@@ -33,7 +33,7 @@ export function TrivialTokenizer(input) {
 
 export function TrivialSyntaxHighlighter(input) {
   const re =
-    /(\n|\t| )|(\b(?:arguments|as|async|await|break|case|catch|class|const|constructor|continue|debugger|default|delete|do|else|enum|eval|export|extends|false|finally|for|from|function|get|identifier|if|implements|import|in|instanceof|interface|let|meta|new|null|number|of|package|private|protected|public|return|set|static|string|super|switch|target|this|throw|true|try|typeof|var|void|while|with|yield)\b)|(\/\*(?:[^*]\/|[^\/])*\*\/|\b\/\/[^\n]*\n)|([A-Za-z_][A-Za-z_0-9]*)|("(?:\\"|[^"\n])*"|'(?:\\'|[^'\n])*'|[^\sA-Za-z_'"])/g;
+    /(\n|\t| )|(\b(?:arguments|as|async|await|break|case|catch|class|const|constructor|continue|debugger|default|delete|do|else|enum|eval|export|extends|false|finally|for|from|function|get|identifier|if|implements|import|in|instanceof|interface|let|meta|new|null|number|of|package|private|protected|public|return|set|static|string|super|switch|target|this|throw|true|try|typeof|var|void|while|with|yield)\b)|(\/\*(?:[^*]\/|[^\/])*\*\/|\/\/[^\n]*\n)|([A-Za-z_][A-Za-z_0-9]*)|("(?:\\"|[^"\n])*"|'(?:\\'|[^'\n])*'|[^\sA-Za-z_'"])/g;
   let match,
     prev,
     s = '';
@@ -104,7 +104,7 @@ export class DebuggerDispatcher {
 
     try {
       let v = conn.process(msg => {
-        if(process.env.DEBUG) console.log('\x1b[38;5;220mRECEIVE\x1b[0m ', msg);
+        if(process.env.DEBUG) console.log('\x1b[38;5;220mRECEIVE\x1b[0m ', console.config({ compact: -1, depth: 10 }), msg);
 
         const { type, event, request_seq, body } = msg;
 
@@ -144,7 +144,12 @@ export class DebuggerDispatcher {
     }
 
     define(this, {
-      sendMessage: msg => (process.env.DEBUG && console.log('\x1b[38;5;33mSEND\x1b[0m    ', msg), conn.sendMessage((msg = JSON.stringify(msg))))
+      sendMessage: async msg => {
+        if(process.env.DEBUG) console.log('\x1b[38;5;33mSEND\x1b[0m    ', msg);
+        const ret = await conn.sendMessage((msg = JSON.stringify(msg)));
+        console.log('sendMessage() returned:', ret);
+        return ret;
+      }
     });
   }
 
@@ -218,10 +223,10 @@ export class DebuggerDispatcher {
     });
   }
 
-  sendRequest(command, args = {}) {
+  async sendRequest(command, args = {}) {
     const request_seq = ++this.#seq;
 
-    this.sendMessage({ type: 'request', request: { request_seq, command, args } });
+    await this.sendMessage({ type: 'request', request: { request_seq, command, args } });
 
     return new Promise(
       (resolve, reject) =>

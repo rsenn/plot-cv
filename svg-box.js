@@ -4,7 +4,7 @@ import { Rect, Size, Point, Line, Align, BBox } from './lib/geom.js';
 import { getUnit, getValue, unitConvToMM, unitConvFactor, unitConvFunction, unitConv } from './measure-unit.js';
 import { SvgPath } from './lib/svg/path.js';
 import { getOpt } from './lib/misc.js';
-import { Arc, ArcTo } from './lib/geom/arc.js'
+import { Arc, ArcTo } from './lib/geom/arc.js';
 
 const px = n => unitConvToMM(`${n}px`, 'mm').toFixed(6);
 const pt = (n, to = 'mm') => unitConvToMM(`${n}pt`, 'mm').toFixed(6);
