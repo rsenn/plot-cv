@@ -1,14 +1,15 @@
 import * as std from 'std';
 import * as os from 'os';
 import * as deep from './lib/deep.js';
-import * as path from './lib/path.js';
-import { tryCatch, once, filterKeys, isObject, bindMethods, decorate, atexit, getpid, toString, escape, quote, define, extendArray, getOpt, setInterval, clearInterval, memoize, lazyProperties, propertyLookup, types } from 'util';
+import { basename, extname, relative, absolute } from './lib/path.js';
+import { setTimeout, setInterval, clearInterval } from 'timers';
+import { mod, tryCatch, once, filterKeys, isObject, bindMethods, decorate, atexit, getpid, toString, escape, quote, define, extendArray, getOpt, memoize, lazyProperties, propertyLookup, types, btoa } from 'util';
 import { Console } from './quickjs/qjs-modules/lib/console.js';
 import { REPL } from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from 'terminal';
 import { Location } from 'location';
-import { existsSync, readSync, writeSync, reader } from 'fs';
+import { existsSync, readSync, writeSync, reader, readerSync } from 'fs';
 import { setLog, logLevels, getSessions, LLL_USER, LLL_INFO, LLL_NOTICE, LLL_WARN, createServer } from 'net';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 import { TrivialSyntaxHighlighter, DebuggerDispatcher, GetArguments, GetFunctionName, FindFunctions } from './debugger.js';
@@ -22,7 +23,7 @@ import process from 'process';
 
 extendArray(Array.prototype);
 
-const scriptName = (arg = scriptArgs[0]) => path.basename(arg, path.extname(arg));
+const scriptName = (arg = scriptArgs[0]) => basename(arg, extname(arg));
 const children = new Set();
 
 atexit(() => {
@@ -85,7 +86,7 @@ function GetLoc(node) {
   }
 }
 
-export async function LoadAST(source) {
+/*export async function LoadAST(source) {
   const script = `import * as std from 'std';
 import { Worker } from 'os';
 import { existsSync, readerSync } from 'fs';
@@ -143,14 +144,26 @@ async function loadAST(source) {
 
   const { data } = value;
   return ({ string: JSON.parse }[typeof data.ast] ?? (a => a))(data.ast);
+}*/
+
+async function LoadAST(source) {
+  if(!existsSync(source)) return null;
+  const child = Spawn('meriyah', ['-l', source], { block: false, stdio: ['inherit', 'pipe', 'inherit'] });
+
+  let s = '';
+  for(let chunk of readerSync(child.stdout)) s += toString(chunk);
+
+  const status = child.wait();
+  const { length } = s;
+  //console.log('loadAST', { source, length, status });
+
+  return JSON.parse(s);
 }
 
 function StartREPL(prefix = scriptName(), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false);
   repl.historyLoad(null);
   let { log } = console;
-
-  //repl.directives.d = [() => globalThis.daemon(), 'detach'];
 
   console.log = repl.printFunction(log.bind(console, console.config({ compact: 2 })));
   let { show } = repl;
@@ -180,6 +193,7 @@ function StartREPL(prefix = scriptName(), suffix = '') {
   };
 
   repl.loadSaveOptions();
+  repl.printPromise = () => {};
   repl.run();
   return repl;
 }
@@ -243,6 +257,9 @@ export function ConnectDebugger(address, skipToMain = true, callback) {
           if(ret <= 0) break;
           let s = toString(dataBuf);
           let obj = JSON.parse(s);
+
+          //console.log('process():', console.config({ depth: 2, compact: 2 }), obj);
+
           callback(obj);
         }
       } catch(error) {
@@ -283,8 +300,10 @@ function LaunchDebugger(dbg, skipToMain = true) {
       resp = await dispatch.breakpoints(script, fns);
       console.log('breakpoints() response:', resp);
 
-      resp = await dispatch.continue();
-      console.log('continue() response:', resp);
+      setTimeout(async () => {
+        resp = await dispatch.continue();
+        console.log('continue() response:', resp);
+      }, 100);
     });
   }
   //dbg.onstopped ??= OnStopped;
@@ -322,7 +341,7 @@ async function PrintStackFrame(frame) {
   } catch(e) {}
   if(params) name += `(${params.join(', ')})`;
   let loc = line !== undefined ? new Location(filename, line) : undefined;
-  let code = line !== undefined ? files[filename].line(line) : undefined;
+  let code = line !== undefined ? files[filename].line(line - 1) : undefined;
   return [`#${id}`, ` at ${name.padEnd(30)}`, loc ? ' in ' + loc : ''].concat(code ? [code] : []);
 }
 
@@ -347,7 +366,7 @@ decorate(
         if(types.isPromise(breakpoints)) breakpoints = await breakpoints;
 
         if(Array.isArray(breakpoints)) {
-          breakpoints = breakpoints.map(b => filterKeys(b, ['name', 'line']));
+          breakpoints = breakpoints.map(b => filterKeys(b, ['name', 'line', 'column']));
         }
 
         return await member.call(this, file, breakpoints);
@@ -928,15 +947,17 @@ function main(...args) {
         return define(
           {
             source,
-            indexlist: [...source.matchAll(/(^|\n|$)/g)].map(m => m.index)
+            indexlist: [...source.matchAll(/^[^\n]*/gm)].map(m => m.index)
           },
           lazyProperties(
             {
-              line(i) {
+              line(i, j) {
                 if(i === undefined) return '';
                 const { source, indexlist } = this;
-                const [start, end] = indexlist.slice(i - 1, i + 1);
-                let line = source.slice(start + (i > 1 ? 1 : 0), end);
+                j ??= i + 1;
+                const m = mod(indexlist.length - 1);
+                const [start, end] = [indexlist[m(i)], indexlist[m(j)]];
+                let line = source.slice(start, (end ?? 0) - 1);
 
                 if([...line.matchAll(/\x1b([^A-Za-z]*[A-Za-z])/g)].last != '\x1b[0m') line += '\x1b[0m';
 

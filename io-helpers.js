@@ -72,6 +72,8 @@ export function ReadClose(file, binary) {
 }
 
 export function ReadFile(name, binary) {
+  //console.log('ReadFile', { name, binary });
+
   if(!binary || binary == 'utf-8') return loadFile(name);
 
   let f;
@@ -308,7 +310,7 @@ export function LogCall(fn, thisObj) {
 export function Spawn(...args) {
   const child = spawn(...args);
 
-  console.log('child.stdio', child.stdio);
+  //console.log('child.stdio', child.stdio);
 
   //define(child, { get stdin() { return this.stdio[0]; },get stdout() { return this.stdio[1]; },get stderr() { return this.stdio[2]; } });
   define(
