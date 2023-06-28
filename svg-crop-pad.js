@@ -21,6 +21,7 @@ import { read as readXML, write as writeXML } from 'xml';
 import * as deep from 'deep';
 import { SyntaxError, parseSVG, makeAbsolute } from './lib/svg/path-parser.js';
 import { iterateTree} from './dom-helpers.js';
+import { getUnit, getValue, unitConvToMM, unitConvFactor, unitConvFunction, unitConv } from './measure-unit.js'
 
 extendGenerator();
 extendArray();
@@ -445,8 +446,7 @@ function* ProcessPath(d) {
   }
 }
 
-/* prettier-ignore */
-const ToMillimeter = {
+/*const ToMillimeter = {
   pt: 3l / 8.5l,
   pc: 25.4l/6l,
   in: 25.4l,
@@ -459,25 +459,24 @@ const ToMillimeter = {
 function getUnit(str, defaultUnit) {
   const m = /[a-z]+/g.exec(str);
   return m ? m[0] : defaultUnit;
-  }
+}
 function getValue(str) {
   const m = /[a-z]+/g.exec(str);
-  return m  ? str.slice(0, m.index) : str;
-  }
+  return m ? str.slice(0, m.index) : str;
+}
 
 function unitConvToMM(value, defaultUnit = 'px') {
-value=  value + '';
-const unit =getUnit(value, defaultUnit);
-value =getValue(value);
+  value = value + '';
+  const unit = getUnit(value, defaultUnit);
+  value = getValue(value);
 
   console.log('unixConvToMM', { unit, value });
 
-  if(unit in ToMillimeter) return value * ToMillimeter[unit];
+  if (unit in ToMillimeter) return value * ToMillimeter[unit];
 
   throw new Error(`No such unit '${unit}'`);
 }
 
-/* prettier-ignore */
 const MillimeterTo = {
   pt: 8.5l / 3l,
   pc: 6l/25.4l,
@@ -491,10 +490,8 @@ const MillimeterTo = {
 
 
 for(let k of Object.keys(ToMillimeter))
-
   if(ToMillimeter[k] * MillimeterTo[k] != 1l)
     throw new Error(`Invalid unit conv factor for '${k} (${k} -> mm = ${ToMillimeter[k]}) mm -> ${k} = ${MillimeterTo[k]}`)
-
 
 function unitConvFactor(from, to) {
   return ToMillimeter[from] * MillimeterTo[to];
@@ -506,7 +503,7 @@ function unitConvFunction(toUnit = 'mm', fromUnit = 'px') {
 
 function unitConv(unit) {
   return value => MillimeterTo[unit] * unitConvToMM(value);
-}
+}*/
 
 function getViewBox(svgElem = svg) {
   if(svgElem.hasAttribute('viewBox')) {
@@ -556,7 +553,6 @@ function main(...args) {
     unitConv,
     unitConvFunction,
     unitConvFactor,
-    MillimeterTo,
     getViewBox,
     getWidthHeight,
     getTransformationMatrix,

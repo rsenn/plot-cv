@@ -36,7 +36,7 @@ main() {
   printf("%-10s = %d\n", "SIGPWR", SIGPWR);
   printf("%-10s = %d\n", "SIGSYS", SIGSYS);
   typedef struct sigaction sa_t;
-  struct sigaction *sa = 0;
+  struct sigaction* sa = 0;
   printf("sizeof(struct sigaction) = %zu\n", sizeof(struct sigaction));
   printf("offsetof(struct sigaction, sa_handler) = %zu\n", offsetof(struct sigaction, sa_handler));
   printf("sizeof(sa->sa_handler) = %zu\n", sizeof(sa->sa_handler));

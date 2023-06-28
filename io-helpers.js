@@ -140,7 +140,8 @@ export function WriteFile(file, data) {
   if(f.error()) throw new Error(`Error writing file '${file}': ${strerror(error().errno)}`);
   f.close();
 
-  console.log('Wrote "' + file + '": ' + data.length + ' bytes' + ` (${r})`);
+  //console.log('Wrote "' + file + '": ' + data.length + ' bytes' + ` (${r})`);
+  return r;
 }
 
 export function WriteFd(fd, data, offset, length) {

@@ -10,7 +10,8 @@ import { read as fromXML, write as toXML } from './lib/xml.js';
 import { WriteFile } from './io-helpers.js';
 import { getOpt } from 'util';
 import { readFileSync } from 'fs';
-import { ReactComponent, render } from './lib/dom/preactComponent.js';
+import { render } from './lib/preact.mjs';
+import { append } from './lib/preact/append.js';
 import renderToString from './lib/preact-render-to-string.js';
 import { RGBA, isRGBA, ImmutableRGBA, default as rgba } from './lib/color/rgba.js';
 
@@ -22,7 +23,7 @@ function render(doc, filename) {
     render(doc.board);
     return;
   }
-  let renderer = new Renderer(doc, ReactComponent.append, debugFlag);
+  let renderer = new Renderer(doc, append, debugFlag);
 
   /* renderer.setPalette([
     [0xff, 0xff, 0xff],
@@ -64,7 +65,7 @@ function render(doc, filename) {
 
 function main(...args) {
   globalThis.console = new Console({
-    inspectOptions: { maxArrayLength: 100, colors: true, depth: 2, compact: 0, customInspect: true }
+    inspectOptions: { maxArrayLength: 100, colors: true, depth: 2, compact: false, customInspect: true }
   });
 
   let params = getOpt(
