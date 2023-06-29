@@ -161,7 +161,7 @@ async function LoadAST(source) {
 }
 
 function StartREPL(prefix = scriptName(), suffix = '') {
-  let repl = new REPL(`\x1b[1;35m${prefix} \x1b[1;33m${suffix}\x1b[0m`, false);
+  let repl = new REPL(console.options.color ? `\x1b[1;35m${prefix} \x1b[1;33m${suffix}\x1b[0m` : `${prefix} ${suffix}`, false);
   repl.historyLoad(null);
   let { log } = console;
 
