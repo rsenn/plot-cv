@@ -142,7 +142,7 @@ function main(...args) {
   let fd = 1;
   let newState = false;
   console.log('strdup:', strdup('BLAH').toString(16));
-  console.log('dlsym_(RTLD_DEFAULT, "strdup"):', dlsym(RTLD_DEFAULT, 'strdup').toString(16));
+  console.log('dlsym_(RTLD_DEFAULT, "strdup"):', dlsym(RTLD_DEFAULT, 'strdup')?.toString(16));
   console.log('snprintf(outBuf, outBuf.byteLength, "%p", -1):', snprintf(outBuf, outBuf.byteLength, '%p', 0x7fffffffffffffff));
   console.log('outBuf:', ArrayBufToString(outBuf));
   console.log('os.isatty(1):', os.isatty(1));
