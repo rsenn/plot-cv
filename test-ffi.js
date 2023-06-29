@@ -3,19 +3,18 @@ import * as os from 'os';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './quickjs/qjs-ffi/lib/fcntl.js';
 import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toArrayBuffer, toPointer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_DEFAULT, RTLD_NEXT } from 'ffi';
 import * as ffi from 'ffi';
-import { weakDefine, filterKeys, entries, partition, className, getMethodNames } from 'util';
+import { weakDefine, filterKeys, entries,  className, getMethodNames } from 'util';
 import { Console } from 'console';
 
 function bitsToNames(flags, map = (name, flag) => name) {
-  const entries = [...entries(flags)];
-
   return function* (value) {
-    for(let [name, flag] of entries) if(value & flag && (value & flag) == flag) yield map(name, flag);
+    for(let [name, flag] of entries(flags)) if(value & flag && (value & flag) == flag) yield map(name, flag);
   };
 }
 
 function foreign(name, ret, ...args) {
   let fp = dlsym(RTLD_DEFAULT, name);
+  console.log(`function '${name}' address: 0x${toHex(fp)}`)
   define(name, fp, null, ret, ...args);
   return (...args) => call(name, ...args);
 }
@@ -27,7 +26,7 @@ let strdup = foreign('strdup', 'void *', 'string');
 let dlopen_ = foreign('dlopen', 'void *', 'string', 'int');
 let dlsym_ = foreign('dlsym', 'void *', 'string');
 let snprintf = foreign('snprintf', 'int', 'buffer', 'size_t', 'string', 'void *');
-let mmap = foreign('mmap', 'ulong', 'pointer', 'size_t', 'int', 'int', 'int', 'size_t');
+let mmap = foreign('mmap', 'buffer', 'pointer', 'size_t', 'int', 'int', 'int', 'size_t');
 let munmap = foreign('munmap', 'void', 'ulong', 'ulong');
 let fork = foreign('fork', 'int');
 let strcpy = foreign('strcpy', 'pointer', 'pointer', 'pointer');
@@ -183,8 +182,7 @@ function main(...args) {
   console.log('timeval:', t.slice());
   console.log('select:', toHex(select(4, rfds, wfds, efds, t)));
   console.log('toHex:', toHex(1, 8));
-  console.log('toHex:', [...partition(toHex(1, 8), 2)]);
-  console.log('BigUint64Array.BYTES_PER_ELEMENT:', BigUint64Array.BYTES_PER_ELEMENT1);
+   console.log('BigUint64Array.BYTES_PER_ELEMENT:', BigUint64Array.BYTES_PER_ELEMENT1);
   let out = new ArrayBuffer(100);
   console.log('sprintf:', sprintf(out, '%p', rfds));
   console.log('out:', MakeArray(out, 1).toString());
@@ -196,12 +194,19 @@ function main(...args) {
 
   let base_addr = 0x7f0000000000 - 1024;
 
-  let area = mmap((0x2000000 || 0x7f0000000000) - 8192, 8192, 0x7, 0x02 | MAP_ANONYMOUS, -1, 0);
-  console.log('area:', area.toString(16));
+  let mmapped = mmap(null, 8192, 0x7, 0x02 | MAP_ANONYMOUS, -1, 0);
+  console.log('mmapped:', mmapped.toString(16));
+
+  let area = new ArrayBuffer(8192);
+  console.log('area:', toPointer(area));
+
+
   let fp = dlsym(RTLD_DEFAULT, 'strchr');
   console.log('fp:', fp.toString(16));
   strcpy(area, '\x48\x31\xc0\xc3');
+
   //  strcpy(area+0, '\x48\x31\xc0\x48\xff\xc0\xc3');
+  console.log('area:',area);
 
   let returnRAX = area + 100;
   strcpy(area + 100, '\x48\x31\xc0\x48\xff\xc0\xc3');
@@ -241,8 +246,6 @@ function main(...args) {
 main(...scriptArgs.slice(1));
 
 function toHex(n, b = 2) {
-  console.log('toHex:', n);
-
   let s = (+n).toString(16);
   return '0'.repeat(Math.ceil(s.length / b) * b - s.length) + s;
 }
