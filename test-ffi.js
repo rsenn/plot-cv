@@ -30,6 +30,8 @@ let mmap = foreign('mmap', 'buffer', 'pointer', 'size_t', 'int', 'int', 'int', '
 let munmap = foreign('munmap', 'void', 'ulong', 'ulong');
 let fork = foreign('fork', 'int');
 let strcpy = foreign('strcpy', 'pointer', 'pointer', 'pointer');
+let strncpy = foreign('strncpy', 'pointer', 'pointer', 'pointer', 'size_t');
+let strlcpy = foreign('strlcpy', 'pointer', 'pointer', 'pointer', 'size_t');
 let setjmp = foreign('setjmp', 'int', 'pointer');
 let longjmp = foreign('longjmp', 'int', 'pointer', 'int');
 let printf = foreign('printf', 'int', 'string', 'pointer', 'pointer');
@@ -125,7 +127,8 @@ function main(...args) {
       //breakLength: 120,
       maxStringLength: 200,
       multiline: 1,
-      alignMap: true
+      alignMap: true,
+      numberBase: 16
     }
   });
   printf('%p %s\n', 0xdeadbeef00000000, '0xdeadbeef');
@@ -174,7 +177,10 @@ function main(...args) {
   console.log('u8.buffer.toPointer().toString():', u8.buffer.toPointer().toString());
   // const ptr = u8.buffer.toPointer();
   const ptr = ffi.toPointer(u8.buffer);
-  console.log('ptr:', ptr);
+
+  console.log('console.options.numberBase', console.options.numberBase);
+  console.log('ptr:', +ptr);
+  console.log('100 + +ptr:', 100 + +ptr);
   console.log('toString:', ffi.toString(ptr));
 
   console.log('timeval:', t.slice());
@@ -195,25 +201,27 @@ function main(...args) {
   let mmapped = mmap(null, 8192, 0x7, 0x02 | MAP_ANONYMOUS, -1, 0);
   console.log('mmapped:', mmapped.toString(16));
 
-  let area = new ArrayBuffer(8192);
-  console.log('area:', toPointer(area));
+  let buf = new ArrayBuffer(8192);
+  let area = toPointer(buf);
+  console.log('area:', area);
 
   let fp = dlsym(RTLD_DEFAULT, 'strchr');
   console.log('fp:', fp.toString(16));
-  strcpy(area, '\x48\x31\xc0\xc3');
+  strcpy(buf, '\x48\x31\x70\x73');
+  //strlcpy(area, '\x48\x31\xc0\xc3', 4);
 
   //  strcpy(area+0, '\x48\x31\xc0\x48\xff\xc0\xc3');
-  console.log('area:', area);
+  console.log('buf:', buf);
 
-  let returnRAX = area + 100;
-  strcpy(area + 100, '\x48\x31\xc0\x48\xff\xc0\xc3');
-  let returnADDR = area + 200;
-  strcpy(area + 200, '\x48\x8b\x04\x24\xc3');
-  let writeREGS = area + 300;
-  strcpy(area + 300, '\xf3\x0f\x1e\xfa\x48\x89\x07\x48\x89\x5f\x08\x48\x89\x4f\x10\x48\x89\x57\x18\x48\x89\x77\x20\x48\x89\x7f\x28\x48\x89\x6f\x30\x48\x89\x67\x38\x48\x31\xc0\x48\xff\xc0\xc3');
+  let returnRAX = +area + 100;
+  strcpy(returnRAX, '\x48\x31\xc0\x48\xff\xc0\xc3');
+  let returnADDR = +area + 200;
+  strcpy(returnADDR, '\x48\x8b\x04\x24\xc3');
+  let writeREGS = +area + 300;
+  strcpy(writeREGS, '\xf3\x0f\x1e\xfa\x48\x89\x07\x48\x89\x5f\x08\x48\x89\x4f\x10\x48\x89\x57\x18\x48\x89\x77\x20\x48\x89\x7f\x28\x48\x89\x6f\x30\x48\x89\x67\x38\x48\x31\xc0\x48\xff\xc0\xc3');
   console.log('writeREGS:', writeREGS.toString(16));
   let ret;
-  printf('area: %s\n', StringToHex(area + 0));
+  printf('area: %s\n', StringToHex(+area + 0));
 
   printf('returnRAX: %p\n', +returnRAX);
   printf('returnADDR: %s\n', StringToHex(returnADDR));
