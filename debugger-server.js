@@ -652,12 +652,12 @@ function main(...args) {
         },
         onRequest(req, resp) {
           const { method, headers } = req;
-          //console.log('\x1b[38;5;33monRequest\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
+          //console.log('\x1b[1;36monRequest\x1b[0m [\n  ', req, ',\n  ', resp, '\n]');
           const { body, url } = resp;
 
           const file = url.path.slice(1);
           const dir = file.replace(/\/[^\/]*$/g, '');
-          console.log('\x1b[38;5;33monRequest\x1b[0m', { file, dir, body });
+          console.log('\x1b[1;36monRequest\x1b[0m', { file, dir, body });
 
           if(file.endsWith('.js') && resp.body) {
             //console.log('onRequest', { file, dir });
