@@ -1,8 +1,19 @@
 import * as std from 'std';
 import * as os from 'os';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './quickjs/qjs-ffi/lib/fcntl.js';
-import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toArrayBuffer, toPointer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_NODELETE, RTLD_NOLOAD, RTLD_DEEPBIND, RTLD_DEFAULT, RTLD_NEXT } from 'ffi';
+import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toArrayBuffer, toPointer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_DEFAULT, RTLD_NEXT } from 'ffi';
 import * as ffi from 'ffi';
+import {weakDefine,filterKeys} from 'util';
+import {Console} from 'console';
+
+function bitsToNames(flags, map = (name, flag) => name)  {
+  const entries = [...Util.entries(flags)];
+
+  return function* (value) {
+    for(let [name, flag] of entries) if(value & flag && (value & flag) == flag) yield map(name, flag);
+  };
+};
+
 
 function foreign(name, ret, ...args) {
   let fp = dlsym(RTLD_DEFAULT, name);
@@ -25,7 +36,7 @@ let setjmp = foreign('setjmp', 'int', 'pointer');
 let longjmp = foreign('longjmp', 'int', 'pointer', 'int');
 let printf = foreign('printf', 'int', 'string', 'pointer', 'pointer');
 
-Util.define(ArrayBuffer.prototype, {
+weakDefine(ArrayBuffer.prototype, {
   toPointer(hint = 'string') {
     let out = new ArrayBuffer(100);
     sprintf(out, '%p', this);
@@ -112,19 +123,20 @@ class Registers extends ArrayBuffer {
   }
 }
 
-async function main(...args) {
+function main(...args) {
+  globalThis.console = new Console({ inspectOptions: {
     //breakLength: 120,
     maxStringLength: 200,
     multiline: 1,
     alignMap: true
-  });
+  }});
   printf('%p %s\n', 0xdeadbeef00000000, '0xdeadbeef');
 
   console.log(getpid());
 
   for(let [name, value] of Object.entries(ffi)) console.log(`ffi.${name}:`, value);
   console.log(`ffi:`, ffi);
-  const flagNames = Util.bitsToNames(Util.filterKeys(fcntl, /^O_/));
+  const flagNames = bitsToNames(filterKeys(fcntl, /^O_/));
   let outBuf = new ArrayBuffer(256);
   let flags;
   let fd = 1;
@@ -133,14 +145,14 @@ async function main(...args) {
   console.log('dlsym_(RTLD_DEFAULT, "strdup"):', dlsym(RTLD_DEFAULT, 'strdup').toString(16));
   console.log('snprintf(outBuf, outBuf.byteLength, "%p", -1):', snprintf(outBuf, outBuf.byteLength, '%p', 0x7fffffffffffffff));
   console.log('outBuf:', ArrayBufToString(outBuf));
-  console.log('Util.isatty(1):', await Util.isatty(1));
+  console.log('Util.isatty(1):', os.isatty(1));
   console.log('F_GETFL:', toHex((flags = fcntl(fd, F_GETFL, 0))));
 
   if(newState) flags |= O_NONBLOCK;
   else flags &= ~O_NONBLOCK;
 
   console.log('fcntl:', [...flagNames(flags)]);
-  console.log('ttyGetWinSize:', await Util.ttyGetWinSize(1));
+  console.log('ttyGetWinSize:', os.ttyGetWinSize(1));
 
   console.log('F_SETFL:', fcntl(fd, F_SETFL, flags));
   console.log('F_GETFL:', toHex(fcntl(fd, F_GETFL, 0)));

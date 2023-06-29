@@ -54,7 +54,7 @@ function FdReader(fd, bufferSize = 1024) {
 async function main(...args) {
   // await PortableChildProcess(p => (childProcess = p));
 
-  let proc = child_process.spawn('ls', ['-la'], {
+  let proc = child_process.spawn('list-r', ['-l'], {
     block: false,
     stdio: ['pipe', 'pipe', 'pipe']
   });
