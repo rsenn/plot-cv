@@ -36,9 +36,7 @@ let printf = foreign('printf', 'int', 'string', 'pointer', 'pointer');
 
 weakDefine(ArrayBuffer.prototype, {
   toPointer(hint = 'string') {
-    let out = new ArrayBuffer(100);
-    sprintf(out, '%p', this);
-    let ret = ArrayBufToString(out);
+    let ret = toPointer(this);
     switch (hint) {
       case 'bigint':
         ret = BigInt(ret);
