@@ -3,17 +3,16 @@ import * as os from 'os';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './quickjs/qjs-ffi/lib/fcntl.js';
 import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toArrayBuffer, toPointer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_DEFAULT, RTLD_NEXT } from 'ffi';
 import * as ffi from 'ffi';
-import {weakDefine,filterKeys} from 'util';
-import {Console} from 'console';
+import { weakDefine, filterKeys, entries, partition, className, getMethodNames } from 'util';
+import { Console } from 'console';
 
-function bitsToNames(flags, map = (name, flag) => name)  {
-  const entries = [...Util.entries(flags)];
+function bitsToNames(flags, map = (name, flag) => name) {
+  const entries = [...entries(flags)];
 
   return function* (value) {
     for(let [name, flag] of entries) if(value & flag && (value & flag) == flag) yield map(name, flag);
   };
-};
-
+}
 
 function foreign(name, ret, ...args) {
   let fp = dlsym(RTLD_DEFAULT, name);
@@ -124,12 +123,14 @@ class Registers extends ArrayBuffer {
 }
 
 function main(...args) {
-  globalThis.console = new Console({ inspectOptions: {
-    //breakLength: 120,
-    maxStringLength: 200,
-    multiline: 1,
-    alignMap: true
-  }});
+  globalThis.console = new Console({
+    inspectOptions: {
+      //breakLength: 120,
+      maxStringLength: 200,
+      multiline: 1,
+      alignMap: true
+    }
+  });
   printf('%p %s\n', 0xdeadbeef00000000, '0xdeadbeef');
 
   console.log(getpid());
@@ -145,7 +146,7 @@ function main(...args) {
   console.log('dlsym_(RTLD_DEFAULT, "strdup"):', dlsym(RTLD_DEFAULT, 'strdup').toString(16));
   console.log('snprintf(outBuf, outBuf.byteLength, "%p", -1):', snprintf(outBuf, outBuf.byteLength, '%p', 0x7fffffffffffffff));
   console.log('outBuf:', ArrayBufToString(outBuf));
-  console.log('Util.isatty(1):', os.isatty(1));
+  console.log('os.isatty(1):', os.isatty(1));
   console.log('F_GETFL:', toHex((flags = fcntl(fd, F_GETFL, 0))));
 
   if(newState) flags |= O_NONBLOCK;
@@ -182,13 +183,13 @@ function main(...args) {
   console.log('timeval:', t.slice());
   console.log('select:', toHex(select(4, rfds, wfds, efds, t)));
   console.log('toHex:', toHex(1, 8));
-  console.log('toHex:', [...Util.partition(toHex(1, 8), 2)]);
+  console.log('toHex:', [...partition(toHex(1, 8), 2)]);
   console.log('BigUint64Array.BYTES_PER_ELEMENT:', BigUint64Array.BYTES_PER_ELEMENT1);
   let out = new ArrayBuffer(100);
   console.log('sprintf:', sprintf(out, '%p', rfds));
   console.log('out:', MakeArray(out, 1).toString());
   console.log('rfds.toPointer():', rfds.toPointer());
-  console.log('BigInt methods:', Util.getMethodNames(BigInt));
+  console.log('BigInt methods:', getMethodNames(BigInt));
   console.log('BigInt toString(16):', BigInt(1337).toString(16));
 
   const MAP_ANONYMOUS = 0x20;
@@ -279,7 +280,7 @@ function MakeArray(buf, numBytes) {
         return new Uint8Array(buf);
     }
   } catch(error) {
-    console.error(`MakeArray(${Util.className(buf)}[${buf.byteLength}], ${numBytes}): ${error.message}`);
+    console.error(`MakeArray(${className(buf)}[${buf.byteLength}], ${numBytes}): ${error.message}`);
   }
 }
 
