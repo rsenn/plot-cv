@@ -3,7 +3,7 @@ import * as os from 'os';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './quickjs/qjs-ffi/lib/fcntl.js';
 import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toArrayBuffer, toPointer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_DEFAULT, RTLD_NEXT } from 'ffi';
 import * as ffi from 'ffi';
-import { weakDefine, filterKeys, entries,  className, getMethodNames } from 'util';
+import { weakDefine, filterKeys, entries, className, getMethodNames } from 'util';
 import { Console } from 'console';
 
 function bitsToNames(flags, map = (name, flag) => name) {
@@ -14,7 +14,7 @@ function bitsToNames(flags, map = (name, flag) => name) {
 
 function foreign(name, ret, ...args) {
   let fp = dlsym(RTLD_DEFAULT, name);
-  console.log(`function '${name}' address: 0x${toHex(fp)}`)
+  console.log(`function '${name}' address: 0x${toHex(fp)}`);
   define(name, fp, null, ret, ...args);
   return (...args) => call(name, ...args);
 }
@@ -180,7 +180,7 @@ function main(...args) {
   console.log('timeval:', t.slice());
   console.log('select:', toHex(select(4, rfds, wfds, efds, t)));
   console.log('toHex:', toHex(1, 8));
-   console.log('BigUint64Array.BYTES_PER_ELEMENT:', BigUint64Array.BYTES_PER_ELEMENT1);
+  console.log('BigUint64Array.BYTES_PER_ELEMENT:', BigUint64Array.BYTES_PER_ELEMENT1);
   let out = new ArrayBuffer(100);
   console.log('sprintf:', sprintf(out, '%p', rfds));
   console.log('out:', MakeArray(out, 1).toString());
@@ -198,13 +198,12 @@ function main(...args) {
   let area = new ArrayBuffer(8192);
   console.log('area:', toPointer(area));
 
-
   let fp = dlsym(RTLD_DEFAULT, 'strchr');
   console.log('fp:', fp.toString(16));
   strcpy(area, '\x48\x31\xc0\xc3');
 
   //  strcpy(area+0, '\x48\x31\xc0\x48\xff\xc0\xc3');
-  console.log('area:',area);
+  console.log('area:', area);
 
   let returnRAX = area + 100;
   strcpy(area + 100, '\x48\x31\xc0\x48\xff\xc0\xc3');
