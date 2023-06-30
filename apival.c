@@ -30,7 +30,7 @@
 #include <stdlib.h>
 #include <libwebsockets.h>
 #include <errno.h>
-#include <portmidi.h>
+//#include <portmidi.h>
 #include <zlib.h>
 #include <fcntl.h>
 //#include <dns.h>
