@@ -37,6 +37,8 @@ main() {
   printf("%-10s = %d\n", "SIGSYS", SIGSYS);
   typedef struct sigaction sa_t;
   struct sigaction* sa = 0;
+  printf("sizeof(sigset_t) = %zu\n", sizeof(sigset_t));
+  printf("sizeof(((sigset_t*)0)->sig[0]) = %zu\n", sizeof(((sigset_t*)0)->sig[0]));
   printf("sizeof(struct sigaction) = %zu\n", sizeof(struct sigaction));
   printf("offsetof(struct sigaction, sa_handler) = %zu\n", offsetof(struct sigaction, sa_handler));
   printf("sizeof(sa->sa_handler) = %zu\n", sizeof(sa->sa_handler));
@@ -44,8 +46,10 @@ main() {
   printf("sizeof(sa->sa_mask) = %zu\n", sizeof(sa->sa_mask));
   printf("offsetof(struct sigaction, sa_flags) = %zu\n", offsetof(struct sigaction, sa_flags));
   printf("sizeof(sa->sa_flags) = %zu\n", sizeof(sa->sa_flags));
-  printf("sizeof(sigset_t) = %zu\n", sizeof(sigset_t));
+  printf("offsetof(struct sigaction, sa_restorer) = %zu\n", offsetof(struct sigaction, sa_restorer));
+  printf("sizeof(sa->sa_restorer) = %zu\n", sizeof(sa->sa_restorer));
   printf("NSIG = %zu\n", NSIG);
   printf("SIGRTMAX = %zu\n", SIGRTMAX);
   printf("SIGRTMIN = %zu\n", SIGRTMIN);
+  printf("_SIGSET_WORDS = %zu\n", _SIGSET_WORDS);
 }
