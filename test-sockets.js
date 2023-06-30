@@ -23,7 +23,7 @@ async function main(...args) {
 
   //sock.ndelay(true);
 
-  let addr = new SockAddr(AF_INET, '192.168.178.23', 22);
+  let addr = new SockAddr(AF_INET, ...(args.length ? args  : [ '192.168.178.23', 22] ));
 
   let ret = sock.connect(addr);
   console.log('connect() =', ret, sock.errno);
@@ -42,4 +42,4 @@ async function main(...args) {
   sock.close();
 }
 
-main().catch(err => console.log('error:', err.message, err.stack));
+main(...scriptArgs.slice(1)).catch(err => console.log('error:', err.message, err.stack));
