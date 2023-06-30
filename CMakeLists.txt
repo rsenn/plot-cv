@@ -49,10 +49,8 @@ endif(PNG_LIBRARIES)
 if(BUILD_QUICKJS)
   include(${CMAKE_CURRENT_SOURCE_DIR}/quickjs/defs.cmake)
 else(BUILD_QUICKJS)
-  #dump(QUICKJS_PREFIX)
 
   find_quickjs()
-  #dump(QUICKJS_INCLUDE_DIR)
 endif(BUILD_QUICKJS)
 
 find_opencv()
@@ -363,12 +361,10 @@ endif(BUILD_CLI)
 
 #add_executable(test-qjs test-qjs.c)
 #target_link_libraries(test-qjs quickjs pthread dl m)
-#target_compile_definitions(test-qjs PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${QUICKJS_VERSION}"
 #                                            CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1 ${PLOTCV_DEFS})
 
 option(ADDITIONAL_PROGS "Build other OpenCV programs" OFF)
 
-# option(QUICKJS_MODULES "Build .so modules for quickjs" "${BUILD_SHARED_LIBS}")
 option(QUICKJS_MODULES "Build .so modules for quickjs" ON)
 
 if(QUICKJS_MODULES)
