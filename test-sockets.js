@@ -1,41 +1,40 @@
-import * as std from 'std';
-import * as os from 'os';
-import * as deep from 'deep';
-import * as path from 'path';
-import { define, toArrayBuffer, toString, quote, escape,keys } from 'util';
+import { toString, escape } from 'util';
 import { Console } from 'console';
-import inspect from 'inspect';
-import * as fs from 'fs';
 import { Socket, AsyncSocket, SockAddr, AF_INET, SOCK_STREAM, IPPROTO_TCP } from 'sockets';
 
-globalThis.fs = fs;
+class TCPSocket extends AsyncSocket {
+  constructor() {
+    super(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    this.ndelay(true);
+  }
+
+  connect(address, port) {
+    return super.connect(new SockAddr(AF_INET, address, port));
+  }
+
+  bind(address, port) {
+    return super.bind(new SockAddr(AF_INET, address, port));
+  }
+}
 
 async function main(...args) {
   globalThis.console = new Console({
     inspectOptions: { compact: 2, customInspect: true }
   });
 
-  let sock = new AsyncSocket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+  let sock = new TCPSocket(); // new AsyncSocket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-  console.log('new Socket() =', sock);
+  /*console.log('new Socket() =', sock);
   console.log('sock:', Object.getOwnPropertyNames(sock.__proto__).reduce((acc,k) => sock[k] === undefined ? acc : ({...acc, [k]: sock[k] }), {}));
-  console.log('sock.nonblock:', sock.nonblock);
+  console.log('sock.nonblock:', sock.nonblock);*/
 
-  //sock.ndelay(true);
+  let ret = await sock.connect(new SockAddr(...(args.length ? args : ['192.168.178.23', 22])));
 
-  let addr = new SockAddr(AF_INET, ...(args.length ? args  : [ '192.168.178.23', 22] ));
+  console.log('connect() =', ret);
 
-  let ret = sock.connect(addr);
-  console.log('connect() =', ret, sock.errno);
-
-  //await sock.waitWrite();
-  /*ret = await sock.send('TEST\n');
-
- console.log('connected',ret,sock);*/
-
-  //await sock.waitRead();
   let buf = new ArrayBuffer(1024);
   ret = await sock.recv(buf);
+
   console.log('sock.recv() =', ret);
   console.log('buf =', escape(toString(buf, 0, ret)));
 
