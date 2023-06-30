@@ -2,7 +2,7 @@ import * as std from 'std';
 import * as os from 'os';
 import * as deep from 'deep';
 import * as path from 'path';
-import { define, toArrayBuffer, toString, quote, escape } from 'util';
+import { define, toArrayBuffer, toString, quote, escape,keys } from 'util';
 import { Console } from 'console';
 import inspect from 'inspect';
 import * as fs from 'fs';
@@ -16,9 +16,12 @@ async function main(...args) {
   });
 
   let sock = new AsyncSocket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
   console.log('new Socket() =', sock);
-  console.log('sock.ndelay:', sock.ndelay);
-  sock.ndelay(true);
+  console.log('sock:', Object.getOwnPropertyNames(sock.__proto__).reduce((acc,k) => sock[k] === undefined ? acc : ({...acc, [k]: sock[k] }), {}));
+  console.log('sock.nonblock:', sock.nonblock);
+
+  //sock.ndelay(true);
 
   let addr = new SockAddr(AF_INET, '192.168.178.23', 22);
 
