@@ -67,7 +67,7 @@ import { lazyInitializer } from './lib/lazyInitializer.js';
 import { EagleElementProxy, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, LibraryRenderer, makeEagleElement, makeEagleNode } from './lib/eagle.js';
 import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //const React = {Component, Fragment, create: h, html, render, useLayoutEffect, useRef, useState };
 import commands, { ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ClearCache } from './commands.js';
-import { NormalizeResponse, ResponseData, FetchURL, FetchCached } from './lib/fetch.js';
+import { NormalizeResponse, ResponseData, FetchCached } from './lib/fetch.js';
 import github, { GithubListFiles, GithubListRepositories, GithubRepositories, GithubListContents, ListGithubRepoServer } from './lib/github.js';
 // prettier-ignore-end
 

@@ -7,7 +7,7 @@ import { getOpt } from 'util';
 import { Entities, nodeTypes, Prototypes, Factory, Parser, Serializer, Interface, Node, NodeList, NamedNodeMap, Element, Document, Attr, Text, Comment, TokenList, GetType } from './quickjs/qjs-modules/lib/dom.js';
 import { PointList, ImmutablePointList } from './lib/geom/pointList.js';
 import { SyntaxError, parse as parsePath, parseSVG, makeAbsolute } from './lib/svg/path-parser.js';
-import { IfDebug, LogIfDebug, ReadFd, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
+import { IfDebug, LogIfDebug, ReadFd, ReadFile, LoadHistory, ReadJSON, ReadXML, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, FdReader, CopyToClipboard, LogCall, Spawn } from './io-helpers.js';
 import GerberParser from './lib/gerber/parser.js';
 
 let extToSide = { GTL: 'front', GBL: 'back', GKO: 'outline', TXT: 'drill' };

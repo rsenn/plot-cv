@@ -13,7 +13,7 @@ import Alea from './lib/alea.js';
 import KolorWheel from './lib/KolorWheel.js';
 import { SVG, Element } from './lib/dom.js';
 import github, { GithubListRepositories, GithubRepositories, GithubListContents, ListGithubRepoServer } from './lib/github.js';
-import { NormalizeResponse, ResponseData, FetchCached, FetchURL } from './lib/fetch.js';
+import { NormalizeResponse, ResponseData, FetchCached } from './lib/fetch.js';
 
 const prng = new Alea(1598127218);
 
