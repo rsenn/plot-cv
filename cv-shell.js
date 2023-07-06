@@ -5,12 +5,12 @@ import { difference,union, getOpt,setInterval, toArrayBuffer, toString, escape, 
 import trkl from './lib/trkl.js';
 import * as path from './lib/path.js';
 import { Console } from 'console';
-import REPL from 'repl';
+import { REPL } from 'repl';
 import { Pointer } from './lib/pointer.js';
 import * as Terminal from 'terminal';
 import { read as fromXML, write as toXML } from './lib/xml.js';
 import inspect from './lib/objectInspect.js';
-import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON } from './io-helpers.js';
+import { ReadFile, LoadHistory, ReadJSON, ReadBJSON, WriteFile, WriteJSON, WriteBJSON } from './io-helpers.js';
 import { VideoSource, ImageSequence } from './qjs-opencv/js/cvVideo.js';
 import { ImageInfo } from './lib/image-info.js';
 import { ImagePipeline } from './imagePipeline.js';
@@ -200,13 +200,11 @@ function main(...args) {
     ReadFile,
     LoadHistory,
     ReadJSON,
-    MapFile,
     ReadBJSON,
     WriteFile,
     WriteJSON,
     WriteBJSON,
     ImageInfo,
-    HighGUI,
     AutoValue
   });
   repl.globalKeys();

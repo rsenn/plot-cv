@@ -7,7 +7,7 @@ import { format, once, memoize } from './lib/misc.js';
 import * as xml from 'xml';
 import Console from 'console';
 import SvgPath from './lib/svg/path.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON } from './io-helpers.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadBJSON, WriteFile, WriteJSON, WriteBJSON } from './io-helpers.js';
 import { MakeSVG, SaveSVG } from './image-helpers.js';
 import { Profiler } from './time-helpers.js';
 import { SaveConfig, LoadConfig } from './config.js';
