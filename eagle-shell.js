@@ -13,7 +13,8 @@ import * as fs from 'fs';
 import { Pointer } from './lib/pointer.js';
 import { read as fromXML, write as writeXML } from 'xml';
 import inspect from 'inspect';
-import { IfDebug, LogIfDebug, ReadFd, ReadFile, LoadHistory, ReadJSON, ReadXML, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, FdReader, CopyToClipboard,  LogCall, Spawn } from './io-helpers.js';
+import { IfDebug, LogIfDebug, ReadFd, ReadFile, LoadHistory, ReadJSON, ReadXML, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, FdReader, CopyToClipboard, LogCall } from './io-helpers.js';
+import { Spawn } from './os-helpers.js';
 import { GetExponent, GetMantissa, ValueToNumber, NumberToValue } from './lib/eda/values.js';
 import { GetMultipliers, GetFactor, GetColorBands, PartScales, digit2color } from './lib/eda/colorCoding.js';
 import { UnitForName } from './lib/eda/units.js';
@@ -31,7 +32,7 @@ import { Table } from './cli-helpers.js';
 import renderToString from './lib/preact-render-to-string.js';
 import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
 import { EagleToGerber, GerberToGcode } from './pcb-conversion.js';
-import { ExecTool } from './io-helpers.js';
+import { ExecTool } from './os-helpers.js';
 import * as components from './lib/eagle/components.js';
 import { DirIterator, RecursiveDirIterator, ReadDirRecursive } from './dir-helpers.js';
 
@@ -550,7 +551,7 @@ function main(...args) {
       let insp = value.inspect ?? value[Symbol.inspect];
       if(typeof insp == 'function') return insp.call(value);
     }
-    return inspect(value, { customInspect: false, /*protoChain: true,*/ getters: true,  ...console.options });
+    return inspect(value, { customInspect: false, /*protoChain: true,*/ getters: true, ...console.options });
   };
   // repl.historySet(JSON.parse(std.loadFile(histfile) || '[]'));
 
@@ -569,7 +570,6 @@ function main(...args) {
     console.log(`EXIT (wrote ${hist.length} history entries)`);
     Terminate(0);
   });
-
 
   repl.run();
 

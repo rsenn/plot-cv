@@ -31,7 +31,7 @@ import { Iterator } from './lib/iterator.js';
 import { Functional } from './lib/functional.js';
 import { makeLocalStorage } from './lib/autoStore.js';
 import { Repeater } from './lib/repeater/repeater.js';
-
+import { useRepeater, useAsyncIter, useResult, useValue } from './lib/repeater/react-hooks.js';
 import { Portal } from './lib/dom/preactComponent.js';
 import renderToString from './lib/preact-render-to-string.js';
 import { BinaryTree } from './lib/container/binaryTree.js';
@@ -49,8 +49,6 @@ import { Message } from './message.js';
 import { GetElements, GetInstances, GetPositions, UpdateMeasures, AlignAll, scientific } from './eagle-commands.js';
 import { GetExponent, GetMantissa, ValueToNumber, NumberToValue, GetMultipliers, GetFactor, GetColorBands, BG, digit2color } from './lib/eda/colorCoding.js';
 
-
-
 import { WebSocketClient } from './lib/net/websocket-async.js';
 /* prettier-ignore */ import * as ecmascript from './lib/ecmascript.js';
 import { PipeTo, AsyncRead, AsyncWrite, DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater, WritableStream, ReadFromIterator } from './lib/stream.js?ts=<?TS?>';
@@ -59,7 +57,7 @@ import { useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, D
 import { Wire } from './lib/eagle/components/wire.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
-import {  EventIterator } from './lib/iterator/event.js';
+import { EventIterator } from './lib/iterator/event.js';
 import { Slot, SlotProvider } from './slots.js';
 import Voronoi from './lib/geom/voronoi.js';
 import GerberParser from './lib/gerber/parser.js';
@@ -78,6 +76,7 @@ import { classNames } from './lib/classNames.js';
 import * as rpc2 from './quickjs/qjs-net/js/rpc.js';
 import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
 import { errors, types, isObject, toString, btoa, atob, assert, escape, quote, memoize, getset, modifier, getter, setter, gettersetter, hasGetSet, mapObject, once, atexit, waitFor, define, weakDefine, getConstructorChain, hasPrototype, filter, curry, split, unique, getFunctionArguments, randInt, randFloat, randStr, toBigInt, lazyProperty, lazyProperties, getOpt, toUnixTime, unixTime, fromUnixTime, range, repeater, repeat, chunkArray, camelize, decamelize, Location, format, formatWithOptions, isNumeric, functionName, className, isArrowFunction, immutableClass, isArray, ArrayFacade, arrayFacade, bits, dupArrayBuffer, getTypeName, isArrayBuffer, isBigDecimal, isBigFloat, isBigInt, isBool, isCFunction, isConstructor, isEmptyString, isError, isException, isExtensible, isFunction, isHTMLDDA, isInstanceOf, isInteger, isJobPending, isLiveObject, isNull, isNumber, isUndefined, isString, isUninitialized, isSymbol, isUncatchableError, isRegisteredClass, rand, randi, randf, srand, toArrayBuffer, getMethods, isoDate } from './lib/misc.js';
+import { useDimensions } from './lib/hooks/useDimensions.js';
 
 const elementDefaultAttributes = {
   stroke: 'red',
@@ -1464,9 +1463,9 @@ const BindGlobal = once(arg => trkl.bind(window, arg));
 const AppMain = (window.onload = async () => {
   const { sortOrder, sortKey } = config;
   //prettier-ignore
-  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounce, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, buildXPath, parseXPath,MutablePath, ImmutablePath, MutablePath,arrayDiff, objectDiff,  XmlObject, XmlAttr, MutableXPath,ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient,    PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc,
- CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes , Wire, Instance, SchematicSymbol,  Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer,EagleElementProxy,  BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, 
- ...github, classNames , BinaryTree, normalizePath, reverseNormalizedPath, reverseSubPath, reversePath, ...commands,  DEBUG, objectInspect, SvgPath, renderToString , ...ecmascript };
+  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounce, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, MutablePath, ImmutablePath, MutablePath,arrayDiff, objectDiff,  XmlObject, XmlAttr, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, FileList, Message, WebSocketClient,    PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc,
+ CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes , Wire, Instance, SchematicSymbol,  Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer,EagleElementProxy,  BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, 
+ classNames , BinaryTree, normalizePath, reverseNormalizedPath, reverseSubPath, reversePath, ...commands,  DEBUG, objectInspect, SvgPath, renderToString , ...ecmascript };
 
   const localFunctions = {
     PackageChildren,
@@ -2401,7 +2400,8 @@ const AppMain = (window.onload = async () => {
     })
   ]);
   console.log('DUMMY', (window.preactComponent = preactComponent));
-  React.render(preactComponent, Element.find('#preact'));
+
+  render(preactComponent, Element.find('#preact'));
 
   let move, resize;
   let box;

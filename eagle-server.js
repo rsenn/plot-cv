@@ -10,7 +10,8 @@ import REPL from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
 import * as Terminal from './terminal.js';
 import { setLog, logLevels, getSessions, LLL_USER, LLL_INFO, LLL_NOTICE, LLL_WARN, client, server } from 'net';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, LogCall, Spawn } from './io-helpers.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, LogCall } from './io-helpers.js';
+import { Spawn } from './os-helpers.js';
 import { VirtFS } from './virtfs.js';
 
 extendArray(Array.prototype);

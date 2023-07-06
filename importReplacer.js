@@ -1,5 +1,6 @@
 import { memoize, unique, filter } from './lib/misc.js';
 import { ReadJSON } from './io-helpers.js';
+import * as path from 'path';
 
 export const importReplacer = {
   replacementMap: memoize(() =>

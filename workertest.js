@@ -1,7 +1,7 @@
 import * as std from 'std';
 import { Worker } from 'os';
 import { readerSync, readAllSync } from 'fs';
-import { Spawn } from './io-helpers.js';
+import { Spawn } from './os-helpers.js';
 import inspect from 'inspect';
 import { Console } from 'console';
 

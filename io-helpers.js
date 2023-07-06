@@ -1,5 +1,4 @@
 import { define, toString, escape, error, assert, properties } from './lib/misc.js';
-import { fdopen, popen } from 'std';
 import { spawn } from 'child_process';
 import { writeFileSync, readFileSync, closeSync, statSync } from 'fs';
 
@@ -254,56 +253,4 @@ export function LogCall(fn, thisObj) {
     console.log('Function ' + name + '(', ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })), ') =', result);
     return result;
   };
-}
-
-export function Spawn(...args) {
-  const child = spawn(...args);
-
-  //console.log('child.stdio', child.stdio);
-
-  //define(child, { get stdin() { return this.stdio[0]; },get stdout() { return this.stdio[1]; },get stderr() { return this.stdio[2]; } });
-  define(
-    child,
-    properties(
-      {
-        stdin() {
-          return this.stdio[0] >= 0 ? fdopen(this.stdio[0], 'w') : null;
-        },
-        stdout() {
-          return this.stdio[1] >= 0 ? fdopen(this.stdio[1], 'r') : null;
-        },
-        stderr() {
-          return this.stdio[2] >= 0 ? fdopen(this.stdio[2], 'r') : null;
-        }
-      },
-      { memoize: true }
-    )
-  );
-
-  return child;
-}
-
-export function Shell(cmd) {
-  let f = popen(cmd, 'r');
-  let s = '';
-
-  while(!f.eof() && !f.error()) s += f.readAsString();
-
-  f.close();
-  return s;
-}
-
-export function ExecTool(cmd, ...args) {
-  let f = popen([cmd, ...args].join(' '), 'r');
-  let s = '';
-
-  for(;;) {
-    let line = f.getline();
-
-    if(line === null) break;
-    s += line + '\n';
-  }
-
-  f.close();
-  return s;
 }

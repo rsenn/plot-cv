@@ -26,6 +26,10 @@ import importReplacer from './importReplacer.js';
 
 const rotateLeft = n => x => (x << n) | ((x >> (32 - n)) & ~((-1 >> n) << n));
 
+const moduleAliases = {
+  'lib/preact.mjs': 'lib/preact.module.js'
+};
+
 function hashString(string, bits = 32, mask = 0xffffffff) {
   let ret = 0;
   let bitc = 0;
@@ -388,7 +392,7 @@ async function main() {
         return res.redirect('/' + overridePath);
       }
     }
-    if(/lib\/preact.js/.test(req.url)) req.url = '/lib/preact.mjs';
+    //if(/lib\/preact.js/.test(req.url)) req.url = '/lib/preact.mjs';
 
     if(!/lib\//.test(req.url)) {
       const { path, url, method, headers, query, body } = req;
@@ -434,23 +438,25 @@ async function main() {
     str = `${now.toISOString().slice(0, 10).replace(/-/g, '')} ${now.toTimeString().slice(0, 8)} ${req.method.padEnd(4)} ${file}\n`;
 
     let written = fs.writeSync(logfile, str, 0, str.length);
+    let exists = fs.existsSync(file);
+    let isJS = /\.(|m)js$/.test(file);
 
-    console.log('Request: /' + file);
+    if(!(exists && isJS)) console.log('Request: /' + file);
 
-    if(fs.existsSync(file)) {
-      if(/\/.*\.js$/.test(file)) {
-        console.log('JS replace: /' + file);
+    if(exists) {
+      if(isJS) {
+        if(file in moduleAliases) {
+          console.log('JS \x1b[1;31malias\x1b[0m: ' + file + ' -> ' + moduleAliases[file]);
+          file = moduleAliases[file];
+        } else {
+          console.log('JS replace: ' + file);
+        }
+
         let s = ReadFile(file);
         res.type('application/javascript; charset=UTF-8');
         res.send(importReplacer.replace(s, file));
         return;
       }
-      const re = /[^\n]*'util'[^\n]*/g;
-      /*let m,
-        data = ReadFile(file, 'utf-8');
-      if((m = re.exec(data))) {
-        console.log('The file ' + file + ` was requested. (${data.length})`, `match @ ${m.index}: ${m[0]}`);
-      }*/
 
       files.add(file);
     }
@@ -495,7 +501,8 @@ async function main() {
       }
     })
   );
-  app.get(/\/[^\/]*\.js$/, async (req, res) => res.sendFile(path.join(p, req.path)));
+
+  //app.get(/\/[^\/]*\.js$/, async (req, res) => res.sendFile(path.join(p, req.path)));
 
   //app.get('/components.js', async (req, res) => res.sendFile(path.join(p, 'components.js')));
 
@@ -667,6 +674,7 @@ async function main() {
 
     res.json({ config, time, hash: hashString(str) });
   });
+
   app.post(/\/config/, async (req, res) => {
     const { body } = req;
     let text = body.toString();

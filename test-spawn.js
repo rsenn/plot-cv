@@ -1,4 +1,4 @@
-import { Spawn } from './io-helpers.js';
+import { Spawn } from './os-helpers.js';
 import { keys, quote, toString } from 'util';
 import { readAll, readSync, readAllSync } from 'fs';
 import { Console } from 'console';

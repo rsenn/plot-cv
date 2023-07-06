@@ -2,7 +2,8 @@ import fs from 'fs';
 import * as path from 'path';
 import { Console } from 'console';
 import { unescape } from 'misc';
-import { IfDebug, LogIfDebug, ReadFd, ReadFile, LoadHistory, ReadJSON, ReadXML, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, FdReader, CopyToClipboard, LogCall, Spawn } from './io-helpers.js';
+import { IfDebug, LogIfDebug, ReadFd, ReadFile, LoadHistory, ReadJSON, ReadXML, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, FdReader, CopyToClipboard, LogCall } from './io-helpers.js';
+import { Spawn } from './os-helpers.js';
 
 const StrDecode = s => ((s = s.slice(1, -1)), unescape(s));
 const StrFmt = s => (s[0] == '"' && s[s.length - 1] == '"' ? StrDecode(s) : s == 'NULL' ? null : !isNaN(+s) ? +s : s);

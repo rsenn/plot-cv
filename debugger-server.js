@@ -14,7 +14,8 @@ import { setLog, logLevels, getSessions, LLL_USER, LLL_INFO, LLL_NOTICE, LLL_WAR
 import { DebuggerProtocol } from './debuggerprotocol.js';
 import { TrivialSyntaxHighlighter, DebuggerDispatcher, GetArguments, GetFunctionName, FindFunctions } from './debugger.js';
 import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
-import { ReadJSON, WriteJSON, ReadFile, Spawn } from './io-helpers.js';
+import { ReadJSON, WriteJSON, ReadFile } from './io-helpers.js';
+import { Spawn } from './os-helpers.js';
 import { Table, List } from './cli-helpers.js';
 import { map, consume } from './lib/async/helpers.js';
 import { AsyncSocket, SockAddr, AF_INET, SOCK_STREAM, IPPROTO_TCP } from 'sockets';
@@ -90,7 +91,7 @@ function GetLoc(node) {
   const script = `import * as std from 'std';
 import { Worker } from 'os';
 import { existsSync, readerSync } from 'fs';
-import { Spawn } from './io-helpers.js';
+import { Spawn } from './os-helpers.js';
 import { Console } from 'console';
 import { toString, gettid } from 'util';
 

@@ -14,7 +14,8 @@ import * as ECMAScript from './lib/ecmascript.js';
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import * as fs from './lib/filesystem.js';
 import { isObject, extendArray, toString, toArrayBuffer, weakMapper, getOpt, define, lazyProperty, bindMethods, defineGetter, memoize, pushUnique } from './lib/misc.js';
-import { ReadFile, LoadHistory, ReadJSON, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, Shell, Spawn } from './io-helpers.js';
+import { ReadFile, LoadHistory, ReadJSON, ReadBJSON, WriteFile, WriteJSON, WriteBJSON } from './io-helpers.js';
+import { Shell, Spawn } from './os-helpers.js';
 
 extendArray(Array.prototype);
 

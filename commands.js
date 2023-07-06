@@ -341,7 +341,6 @@ export async function GetCache(match = /.*/, key = 'fetch') {
 }
 
 export default {
-  FetchURL,
   ListProjects,
   FindLayer,
   GetLayer,

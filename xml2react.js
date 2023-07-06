@@ -1,6 +1,7 @@
 #!/usr/bin/env qjsm
 import { read as readXML } from 'xml';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, LogCall, Spawn } from './io-helpers.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, LogCall } from './io-helpers.js';
+import { Spawn } from './os-helpers.js';
 import { Console } from 'console';
 
 function* injectSeparator(iter, sep = ', ', pad = ' ') {

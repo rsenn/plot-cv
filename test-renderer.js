@@ -4,6 +4,7 @@ import { render, Component } from './lib/preact.js';
 import { ColoredText } from './lib/color/coloredText.js';
 import { RGBA } from './lib/color.js';
 import renderToString from './lib/preact-render-to-string.js';
+import * as filesystem from 'fs';
 
 
 Util.colorCtor = ColoredText;
