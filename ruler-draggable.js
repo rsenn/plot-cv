@@ -7,9 +7,7 @@ import { classNames } from './lib/classNames.js';
 const rulerImgVertical = 'static/ruler/rulerVertical.svg';
 const rulerImg = 'static/ruler/rulerHorizontal.svg';
 const Ruler = forwardRef((props, ref) => {
-  //console.log("Ruler props =", props);
-  console.log('Ruler props = ', props);
-  const {
+   const {
     frictionCoefficient = 0.93,
     multiplicatorLength = 20,
     onChanged = () => {},
@@ -26,8 +24,7 @@ const Ruler = forwardRef((props, ref) => {
     disabledCursorDrag = false,
     handlers
   } = props;
-  console.log('Ruler forwarded ref = ', ref);
-  const FRICTION_COEFF = Math.min(0.99, Math.max(0.01, frictionCoefficient));
+   const FRICTION_COEFF = Math.min(0.99, Math.max(0.01, frictionCoefficient));
   const MULTIPLICATOR_LENGTH = multiplicatorLength;
   const totalWidth = longLength * MULTIPLICATOR_LENGTH;
   const timerID = useRef(null);

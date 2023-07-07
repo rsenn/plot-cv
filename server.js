@@ -84,12 +84,11 @@ function GetDirMap(dirs = mountDirs, pred = '.*\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$
     }
   }
   return dirs.reduce((acc, dir) => {
-    for(let entry of ReadDirRecursive(dir)) {
+    for(let entry of ReadDirRecursive(dir, 0)) {
       if(entry.endsWith('/')) continue;
       if(!pred(entry)) continue;
       let relative = entry.startsWith(dir + '/') ? entry.slice(dir.length + 1) : entry;
       acc[relative] = dir;
-      dirs[relative] = dir;
     }
     return acc;
   }, {});
@@ -158,7 +157,7 @@ async function main() {
     inspectOptions: {
       breakLength: 120,
       maxStringLength: Infinity,
-      maxArrayLength: 10,
+      maxArrayLength: Infinity,
       compact: 2,
       depth: 1
     }
@@ -508,6 +507,11 @@ async function main() {
     console.log('FILE', { action, file });
 
     dirmap ??= GetDirMap(mountDirs);
+
+  /*  console.log('dirs:', unique(Object.values(dirmap)));
+    console.log('names:', unique(Object.keys(dirmap)).filter(n => /\//.test(n)));*/
+
+
     let dir = dirmap[file];
 
     if(!dir) return res.status(400).send('No such file');

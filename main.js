@@ -941,7 +941,7 @@ function NextDocument(n = 1) {
 }
 
 async function LoadDocument(project, parentElem) {
-  console.log('LoadDocument', project);
+  console.log('LoadDocument', project.name);
   open(false);
   gcode(null);
 
