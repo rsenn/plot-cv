@@ -103,7 +103,7 @@ import { classNames } from './lib/classNames.js';
 //import rpc from './quickjs/qjs-net/js/rpc.js';
 import * as rpc2 from './quickjs/qjs-net/js/rpc.js';
 import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
-import { tryCatch, tryFunction, mapFunction, mapAdapter, properties, keys, entries, values, errors, types, isObject, toString, btoa, atob, assert, escape, quote, memoize, getset, modifier, getter, setter, gettersetter, hasGetSet, mapObject, once, atexit, waitFor, define, weakDefine, getConstructorChain, hasPrototype, filter, curry, split, unique, getFunctionArguments, randInt, randFloat, randStr, toBigInt, lazyProperty, lazyProperties, getOpt, toUnixTime, unixTime, fromUnixTime, range, repeater, repeat, chunkArray, camelize, decamelize, Location, format, formatWithOptions, isNumeric, functionName, className, isArrowFunction, immutableClass, isArray, ArrayFacade, arrayFacade, bits, dupArrayBuffer, getTypeName, isArrayBuffer, isBigDecimal, isBigFloat, isBigInt, isBool, isCFunction, isConstructor, isEmptyString, isError, isException, isExtensible, isFunction, isHTMLDDA, isInstanceOf, isInteger, isJobPending, isLiveObject, isNull, isNumber, isUndefined, isString, isUninitialized, isSymbol, isUncatchableError, isRegisteredClass, rand, randi, randf, srand, toArrayBuffer, getMethods, isoDate, clamp } from './lib/misc.js';
+import { roundTo, tryCatch, tryFunction, mapFunction, mapAdapter, properties, keys, entries, values, errors, types, isObject, toString, btoa, atob, assert, escape, quote, memoize, getset, modifier, getter, setter, gettersetter, hasGetSet, mapObject, once, atexit, waitFor, define, weakDefine, getConstructorChain, hasPrototype, filter, curry, split, unique, getFunctionArguments, randInt, randFloat, randStr, toBigInt, lazyProperty, lazyProperties, getOpt, toUnixTime, unixTime, fromUnixTime, range, repeater, repeat, chunkArray, camelize, decamelize, Location, format, formatWithOptions, isNumeric, functionName, className, isArrowFunction, immutableClass, isArray, ArrayFacade, arrayFacade, bits, dupArrayBuffer, getTypeName, isArrayBuffer, isBigDecimal, isBigFloat, isBigInt, isBool, isCFunction, isConstructor, isEmptyString, isError, isException, isExtensible, isFunction, isHTMLDDA, isInstanceOf, isInteger, isJobPending, isLiveObject, isNull, isNumber, isUndefined, isString, isUninitialized, isSymbol, isUncatchableError, isRegisteredClass, rand, randi, randf, srand, toArrayBuffer, getMethods, isoDate, clamp } from './lib/misc.js';
 import { useDimensions } from './lib/hooks/useDimensions.js';
 
 const elementDefaultAttributes = {
@@ -363,15 +363,18 @@ const filesystem = {
 
 async function LoadFile(file) {
   let { url, name } = typeof file == 'string' ? { url: file, name: file.replace(/.*\//g, '') } : GetProject(file);
+
   console.log(`LoadFile ${name}`);
+
   // url = /:\/\//.test(url) ? url : /^(tmp|data|static)\//.test(url) ? '/' + url : `/data/${name}`;
   url = `/file?action=load&file=${file}`; // /:\/\//.test(url) ? url : /^(tmp|data|static)\//.test(url) ? '/' + url : `/data/${name}`;
 
   let response = await FetchURL(url);
   let xml = await response.text();
-  console.log(`LoadFile ${name}`, { xml });
+  //console.log(`LoadFile ${name}`, { xml });
   let doc = new EagleDocument(xml, null, name, null, filesystem);
-  console.log(`LoadFile ${name}`, { doc, xml });
+
+  //console.log(`LoadFile ${name}`, { doc, xml });
   if(/\.brd$/.test(name)) window.board = doc;
   if(/\.sch$/.test(name)) window.schematic = doc;
   if(/\.lbr$/.test(name)) window.libraries = add(window.libraries, doc);
@@ -1502,7 +1505,7 @@ const AppMain = (window.onload = async () => {
  CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes , Wire, Instance, SchematicSymbol,  Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer,EagleElementProxy,  BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, 
  classNames , BinaryTree, normalizePath, reverseNormalizedPath, reverseSubPath, reversePath, ...commands,  DEBUG, objectInspect, SvgPath, renderToString , ...ecmascript };
 
-  Object.assign(globalThis, { className, functionName, keys, entries, values, tryCatch, tryFunction });
+  Object.assign(globalThis, { roundTo, define, properties, className, functionName, keys, entries, values, tryCatch, tryFunction });
 
   const localFunctions = {
     PackageChildren,
@@ -2604,10 +2607,12 @@ const AppMain = (window.onload = async () => {
           let edges = Element.rect(box).toPoints();
           let corners = [edges[0], edges[2]].map((p, i) => [i, p.distance(new Point(start).sum(x, y)), p]);
           let edge = corners.sort((a, b) => a[1] - b[1])[0];
+
           window.resize = resize = Element.resizeRelative(box, null, edge[0] ? -1 : 1, size => {
             //    console.log('resizeRelative:', { elemId, size });
             if(elemId == 'console') config.logSize(size);
           });
+
           box.style.cursor = `nwse-resize`;
           //console.log('RESIZE:', { resize, box, corners, edge });
           return true;
