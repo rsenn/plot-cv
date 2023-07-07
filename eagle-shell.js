@@ -518,8 +518,7 @@ function main(...args) {
 
   repl.history = LoadHistory(cmdhist);
   repl.loadSaveOptions();
-  repl.printStatus(`Loaded ${repl.history.length} history entries)`);
-
+ 
   let log = console.log;
 
   console.log = (...args) => repl.printStatus(() => log(...args));
