@@ -1,6 +1,6 @@
-import { Pointer } from './lib/pointer.js';
-import { getMethodNames } from './lib/misc.js';
-import * as deep from './lib/deep.js';
+import { Pointer } from 'pointer.dll';
+import { getMethodNames } from 'util';
+import * as deep from 'deep.dll';
 import { Console } from 'console';
 
 function main(...args) {
@@ -8,7 +8,6 @@ function main(...args) {
     stdout: process.stdout,
     inspectOptions: {
       compact: 1,
-      colors: true,
       depth: Infinity,
       maxArrayLength: 100,
       breakLength: 10000
