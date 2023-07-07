@@ -529,7 +529,9 @@ async function main(...args) {
           return `  ${idx + paramIndexes[0] == paramNav.index ? '\x1b[1;31m' : ''}${name.padEnd(13)}\x1b[0m   \x1b[1;36m${+paramNav.get(name)}\x1b[0m\n`;
         })
         .join('');
+
     DrawText(statusMat(textRect), text, textColor, fontFace, fontSize);
+    
     DrawText(statusMat(helpRect), '< prev, > next, + increment, - decrement, DEL reset', textColor, fontFace, fontSize);
   }
   function Scale(mat, f = 1) {
