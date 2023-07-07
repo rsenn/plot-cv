@@ -340,6 +340,28 @@ export async function GetCache(match = /.*/, key = 'fetch') {
   return entries;
 }
 
+export async function FetchURL(url, allOpts = {}) {
+  let { nocache = false, ...opts } = allOpts;
+  let result;
+  let ret;
+  if(opts.method && opts.method.toUpperCase() == 'POST') nocache = true;
+  let { fetch } = globalThis;
+  if(/tmp\//.test(url)) {
+    url = url.replace(/.*tmp\//g, '/tmp/');
+  } else if(/^\//.test(url)) {
+  } else if(/:\/\//.test(url)) {
+  } else {
+    url = '/static/' + url;
+  }
+  try {
+    if(!ret) ret = result = await fetch(url, opts);
+  } catch(error) {
+    console.log('FetchURL ERROR:', error.message + '\n' + error.stack);
+    throw error;
+  }
+  return ret;
+}
+
 export default {
   ListProjects,
   FindLayer,

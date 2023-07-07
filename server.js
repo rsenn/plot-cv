@@ -3,15 +3,16 @@ import filesystem from 'fs';
 //import inspect from 'inspect';
 import express from 'express';
 import * as path from 'path';
-import * as util from 'util';
+import { inspect } from 'util';
 import bodyParser from 'body-parser';
 import expressWs from 'express-ws';
 import { Alea } from './lib/alea.js';
 import crypto from 'crypto';
 import fetch from 'isomorphic-fetch';
 import { exec } from 'promisify-child-process';
+import { execFileSync } from 'child_process';
 import * as fs from 'fs';
-import { promises as fsPromises } from 'fs';
+import { promises as fsPromises, existsSync } from 'fs';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, WriteFile, WriteJSON, Filter, FilterImages, SortFiles, StatFiles } from './io-helpers.js';
 import { Console } from 'console';
 import SerialPort from 'serialport';
@@ -21,14 +22,22 @@ import WebSocket from 'ws';
 import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import { Message } from './message.js';
-import { lazyProperties, memoize, abbreviate, className, escape, getMethods, isObject, randStr, toUnixTime, tryCatch, tryFunction, unixTime, waitFor, weakDefine, weakMapper, filter, filterKeys, matchAll } from './lib/misc.js';
+import { unique, lazyProperties, memoize, abbreviate, className, escape, getMethods, isObject, randStr, toUnixTime, tryCatch, tryFunction, unixTime, waitFor, weakDefine, weakMapper, filter, filterKeys, matchAll } from './lib/misc.js';
 import importReplacer from './importReplacer.js';
 
 const rotateLeft = n => x => (x << n) | ((x >> (32 - n)) & ~((-1 >> n) << n));
 
 const moduleAliases = {
-  'lib/preact.mjs': 'lib/preact.module.js'
+  'xlib/preact.mjs': 'lib/preact.module.js'
 };
+
+function GetMimeType(file) {
+  try {
+    let str = execFileSync('file', ['-i', file], { encoding: 'utf-8' });
+    return str.replace(/.*:\s+/, '').trimEnd();
+  } catch(error) {}
+  return null;
+}
 
 function hashString(string, bits = 32, mask = 0xffffffff) {
   let ret = 0;
@@ -45,9 +54,9 @@ function hashString(string, bits = 32, mask = 0xffffffff) {
 }
 
 //SerialStream.Binding = SerialBinding;
-let names = [],
+let dirmap,
+  names = [],
   dirs = {};
-
 let childProcess;
 const port = process.env.PORT || 3000;
 
@@ -65,6 +74,26 @@ const p = path.join(path.dirname(process.argv[1]), '.');
 
 let mountDirs = ['data', '../an-tronics/eagle', '../insider/eagle', '../lc-meter/eagle', '../pictest/eagle'];
 let tmpDir = './tmp';
+
+function GetDirMap(dirs = mountDirs, pred = '.*\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$') {
+  if(typeof pred != 'function') {
+    if(typeof pred == 'string') pred = new RegExp(pred, 'i');
+    if(typeof pred == 'object' && pred !== null && pred instanceof RegExp) {
+      const re = pred;
+      pred = ent => re.test(ent);
+    }
+  }
+  return dirs.reduce((acc, dir) => {
+    for(let entry of ReadDirRecursive(dir)) {
+      if(entry.endsWith('/')) continue;
+      if(!pred(entry)) continue;
+      let relative = entry.startsWith(dir + '/') ? entry.slice(dir.length + 1) : entry;
+      acc[relative] = dir;
+      dirs[relative] = dir;
+    }
+    return acc;
+  }, {});
+}
 
 async function waitChild(proc) {
   const { pid, stdout, stderr, wait } = proc;
@@ -129,8 +158,9 @@ async function main() {
     inspectOptions: {
       breakLength: 120,
       maxStringLength: Infinity,
-      maxArrayLength: 30,
-      compact: 2
+      maxArrayLength: 10,
+      compact: 2,
+      depth: 1
     }
   });
   await PortableChildProcess(cp => (childProcess = cp));
@@ -441,15 +471,15 @@ async function main() {
     let exists = fs.existsSync(file);
     let isJS = /\.(|m)js$/.test(file);
 
-    if(!(exists && isJS)) console.log('Request: /' + file);
+    //if(!(exists && isJS)) console.log('Request: /' + file);
 
     if(exists) {
       if(isJS) {
         if(file in moduleAliases) {
-          console.log('JS \x1b[1;31malias\x1b[0m: ' + file + ' -> ' + moduleAliases[file]);
+          //console.log('JS \x1b[1;31malias\x1b[0m: ' + file + ' -> ' + moduleAliases[file]);
           file = moduleAliases[file];
         } else {
-          console.log('JS replace: ' + file);
+          //console.log('JS replace: ' + file);
         }
 
         let s = ReadFile(file);
@@ -470,6 +500,38 @@ async function main() {
   app.use('/components', express.static(path.join(p, 'components')));
   app.use('/lib', express.static(path.join(p, 'lib')));
   app.use('/tmp', express.static(path.join(p, 'tmp')));
+
+  app.use('/file', async (req, res) => {
+    const { query } = req;
+    const { action, file } = query ?? {};
+
+    console.log('FILE', { action, file });
+
+    dirmap ??= GetDirMap(mountDirs);
+    let dir = dirmap[file];
+
+    if(!dir) return res.status(400).send('No such file');
+
+    let p = path.join(dir, file);
+
+    if(!existsSync(p)) return res.status(404).send('No such file');
+
+    let mime = GetMimeType(p);
+
+    //console.log('FILE', { p, mime });
+
+    switch (action) {
+      case 'load': {
+        if(mime) res.type(mime);
+        res.sendFile(path.resolve(p));
+        break;
+      }
+      default: {
+        res.status(404).send('No such action!');
+        break;
+      }
+    }
+  });
 
   app.use('/', express.static(p));
 
@@ -543,37 +605,21 @@ async function main() {
 
   async function GetFilesList(dir = './tmp', opts = {}) {
     let { filter = '.*\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$', descriptions = false, names } = opts;
-    const re = new RegExp(filter, 'i');
-    const f = ent => re.test(ent);
 
-    console.log('GetFilesList()', { filter, descriptions }, ...(names ? [names.length] : []));
+    //console.log('GetFilesList()', { filter, descriptions }, ...(names ? [names.length] : []));
 
-    let dirmap = {};
+    dirmap = GetDirMap(mountDirs, filter);
+    names = Object.keys(dirmap);
+    //console.log('GetFilesList()', { dirs: unique( Object.values(dirmap)), names});
 
-    //    if(!names) names = [...(await fsPromises.readdir(dir))].filter(f);
-    dirmap = mountDirs.reduce((acc, dir) => {
-      console.log('ReadDirRecursive', dir);
-      for(let entry of ReadDirRecursive(dir)) {
-        if(entry.endsWith('/')) continue;
-        if(!f(entry)) continue;
-        let relative = entry.startsWith(dir + '/') ? entry.slice(dir.length + 1) : entry;
-        acc[relative] = dir;
-        dirs[relative] = dir;
-      }
-      return acc;
-    }, {});
-
-    //   console.log('dirmap', dirmap);
-    if(!names) names = Object.keys(dirmap);
-    console.log('names', names.length);
     return Promise.all(
       names
         //.map(entry => dirs[entry] +'/'+entry)
         .reduce((acc, file) => {
-          let dir = dirs[file];
+          let dir = dirmap[file];
           let abs = dir + '/' + file;
           let description = descriptions ? descMap(file) : descMap.get(file);
-          //   console.log('descMap:', util.inspect(descMap, { depth: 1 }));
+          //   console.log('descMap:', inspect(descMap, { depth: 1 }));
           let obj = {
             name: file,
             //file,
@@ -766,7 +812,8 @@ async function main() {
       opts.names = names;
     }
     let files = await GetFilesList('tmp', opts);
-    console.log('POST files', util.inspect(files, { breakLength: Infinity, colors: true, maxArrayLength: 10, compact: 1 }));
+
+    console.log('POST files', inspect(files, { breakLength: Infinity, colors: true, maxArrayLength: 10, compact: 1 }));
     res.json({
       files
     });

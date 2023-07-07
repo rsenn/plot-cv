@@ -549,9 +549,9 @@ function main(...args) {
   repl.show = value => {
     if(isObject(value)) {
       let insp = value.inspect ?? value[Symbol.inspect];
-      if(typeof insp == 'function') return insp.call(value);
+      if(typeof insp == 'function') return insp.call(value, 0, repl.inspectOptions);
     }
-    return inspect(value, { customInspect: false, /*protoChain: true,*/ getters: true, ...console.options });
+    return inspect(value, { customInspect: false, /*protoChain: true,*/ getters: true, ...repl.inspectOptions });
   };
   // repl.historySet(JSON.parse(std.loadFile(histfile) || '[]'));
 

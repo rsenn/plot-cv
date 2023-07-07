@@ -6,7 +6,6 @@ import { RGBA } from './lib/color.js';
 import renderToString from './lib/preact-render-to-string.js';
 import * as filesystem from 'fs';
 
-
 Util.colorCtor = ColoredText;
 
 function WriteFile(name, data) {
@@ -50,7 +49,6 @@ async function testRenderBoard(file) {
 }
 
 async function main(...args) {
-
   if(Util.platform == 'quickjs')
     await import('os').then(({ setTimeout, setInterval, clearInterval, clearTimeout }) => {
       Object.assign(globalThis, {
