@@ -312,6 +312,7 @@ function calcViewBox(box) {
   const { width, height, x, y } = box;
   let { x1, y1, x2, y2 } = new Rect(x, y, width, height);
   const rect = new BBox(x1, y1 - y2, x2 - x1, y2);
+  console.log('calcViewBox', rect);
   return rect;
 }
 
@@ -944,11 +945,9 @@ async function LoadDocument(project, parentElem) {
   console.log('LoadDocument', project.name);
   open(false);
   gcode(null);
-
   if(typeof project == 'string') project = GetProject(project);
 
   config.currentProject(project.name);
-
   project.doc = await LoadFile(project).catch(err => console.error(err));
 
   currentProj(project);
@@ -956,22 +955,16 @@ async function LoadDocument(project, parentElem) {
   const topPlace = 'tPlace';
   elementChildren = memoize(() => ElementChildren(topPlace, ent => Object.fromEntries(ent)));
   elementGeometries = memoize(() => ElementGeometries(topPlace, ent => Object.fromEntries(ent)));
-  //polygonGeometries = memoize(() => Object.entries(elementGeometries()).map(([name, lineList]) => [name, lineList.toPolygon((pts) => new Polyline(pts))]));
-
   documentTitle(project.doc.file.replace(/.*\//g, ''));
   let s = project.doc.type != 'lbr' && project.doc.dimensions;
-
   if(s) documentSize(s.round(0.01).toString({ unit: 'mm' }));
 
   const { doc } = project;
-
   window.eagle = doc;
   window.project = project;
   Element.remove('#fence');
   let docElem = Element.find('#doc');
   docElem.innerHTML = '';
-  //console.log('doc.basename', doc.basename);
-
   define(
     window,
     properties(
@@ -986,24 +979,16 @@ async function LoadDocument(project, parentElem) {
     )
   );
   let Component;
-
-  if(/*doc.type != 'lbr'*/ true) {
-    project.renderer = new Renderer(doc, ReactComponent.append, /* false && */ config.debugFlag());
-
+  if(true) {
+    project.renderer = new Renderer(doc, ReactComponent.append, config.debugFlag());
     config.showGrid = trkl(true);
     config.showGrid.subscribe(value => {
       let obj = { ...project.renderer.grid, visible: value };
-      //console.log('config.showGrid:', obj);
       project.renderer.grid = obj;
     });
-
-    //console.log('project.renderer', project.renderer);
     let style = { width: '100%', height: '100%', position: 'relative' };
     Component = project.renderer.render(doc, null, {});
-
-    //console.log('renderer.render =', Component);
-
-    let usedLayers = [...doc.layers.list].filter(layer => layer.elements.size > 0);
+    let usedLayers = [...doc.layers.list]/*.filter(layer => layer.elements.size > 0)*/;
 
     Timer.once(250).then(() =>
       layerList(
@@ -1029,16 +1014,11 @@ async function LoadDocument(project, parentElem) {
     LogJS.info(`${project.name} rendered.`);
     window.component = project.component = Component;
   }
-
   let element = Element.find('#main');
 
   if(project.renderer) {
-    //console.debug('testRender:', Component);
-    //
     let r = project.renderer.rect || project.renderer.bounds;
     let size = (project.dimensions = project.renderer.size);
-    //console.debug('project.renderer:', project.renderer);
-    //console.debug('r:', r);
     let aspectRatio = 1;
     if(project.doc.type != 'lbr') {
       if(r) {
@@ -1048,44 +1028,30 @@ async function LoadDocument(project, parentElem) {
     } else {
       sizeListener({});
     }
-    //console.
     aspectListener(aspectRatio);
-    //console.debug('aspectRatio:', aspectRatio);
-    Component =
-      // h(Zoomable, { /*className: 'zoomable',*/ style: size.toCSS('mm') }, [Component]) ||
-      h(
-        Fence,
-        {
-          style: {},
-          sizeListener,
-          aspectListener,
-          listener: transform,
-          'data-name': project.name
-        },
-        [Component]
-      );
-  }
 
+    Component = h(
+      Fence,
+      {
+        style: {},
+        sizeListener,
+        aspectListener,
+        listener: transform,
+        'data-name': project.name
+      },
+      [Component]
+    );
+  }
   let svgElement;
 
   if(window.component) {
-    //[...element.children].forEach(Element.remove);
-
     React.render(Component, element);
 
     let object = ReactComponent.toObject(Component);
     project.object = object;
     let rendered = object.children[0];
-    //console.debug('LoadDocument rendered:', rendered);
 
-    setTimeout(() => {
-      SaveSVG();
-    }, 500);
-
-    //console.debug('LoadDocument element:', element);
-    //console.debug('LoadDocument  project:', project);
-
-    //path2eagle: path2obj, eagle2path: obj2path
+    setTimeout(() => SaveSVG(), 500);
 
     project.maps = {
       ...project.doc.maps,
@@ -1093,24 +1059,25 @@ async function LoadDocument(project, parentElem) {
     };
 
     project.rendered = rendered;
+
     window.project.element = element;
     window.project.svgElement = svgElement = Element.find('svg', element);
+
     project.grid = Element.find('g.grid', project.element);
     project.bbox = SVG.bbox(project.grid);
     project.aspectRatio = aspect;
   }
+
   let svg = Element.find('svg', '#main');
 
   if(svg) {
     project.makeGroup = function({ transform, ...props } = {}) {
       let e;
       if(props.id && (e = Element.find(`#${props.id}`))) return e;
-
       let groupElement = Element.find('g.elements', svg) || Element.find('g.instances', svg);
       transform = (groupElement ? groupElement.getAttribute('transform') : '') + (transform ? ' ' + transform : '');
       return (e = SVG.create('g', { ...props, transform }, svg));
     };
-
     project.makeFactory = memoize(id =>
       SVG.factory(() =>
         project.makeGroup({
@@ -1119,25 +1086,18 @@ async function LoadDocument(project, parentElem) {
         })
       )
     );
-
     project.makeFactory();
 
     let center = SVG.bbox(svgElement).center.round();
     let defaultTransform = `translate(${center.x},${center.y}) scale(2.54,2.54)`;
-
     function xx() {
       let g = SVG.create('g', {});
-
       project.svgElement.appendChild(g);
       let ll = geometries.R4 && geometries.R4.lines.toSVG(ReactComponent.append, () => h('g', { ...elementDefaultAttributes, defaultTransform }));
-
       render(ll, g);
     }
-    /*xx();*/
-
     window.AddElement = (function (transform) {
       const root = project.svgElement;
-
       let list = [];
 
       return (tag, attr, children = []) => {
@@ -1150,15 +1110,44 @@ async function LoadDocument(project, parentElem) {
     })(defaultTransform);
   }
 
+  let viewBox = new Rect(svgElement.getAttribute('viewBox').split(/\s+/g));
+  let bgRects = [...svgElement.querySelector('#bg').children];
+
+  const setRect = rect => {
+    svgElement.setAttribute('viewBox', rect + '');
+    ['x', 'y', 'width', 'height'].forEach(k => bgRects.forEach(elem => elem.setAttribute(k, rect[k])));
+  };
+
+  let r = (globalThis.viewBox = {
+    /* prettier-ignore */ get x() { return viewBox.x; },
+    /* prettier-ignore */ set x(value) { viewBox.x = value; setRect(viewBox); },
+    /* prettier-ignore */ get y() { return viewBox.y; },
+    /* prettier-ignore */ set y(value) { viewBox.y = value; setRect(viewBox); },
+    /* prettier-ignore */ get x1() { return viewBox.x1; },
+    /* prettier-ignore */ set x1(value) { viewBox.x1 = value; setRect(viewBox); },
+    /* prettier-ignore */ get y1() { return viewBox.y1; },
+    /* prettier-ignore */ set y1(value) { viewBox.y1 = value; setRect(viewBox); },
+    /* prettier-ignore */ get x2() { return viewBox.x2; },
+    /* prettier-ignore */ set x2(value) { viewBox.x2 = value; setRect(viewBox); },
+    /* prettier-ignore */ get y2() { return viewBox.y2; },
+    /* prettier-ignore */ set y2(value) { viewBox.y2 = value; setRect(viewBox); },
+    /* prettier-ignore */ get width() { return viewBox.width; },
+    /* prettier-ignore */ set width(value) { viewBox.width = value; setRect(viewBox); },
+    /* prettier-ignore */ get height() { return viewBox.height; },
+    /* prettier-ignore */ set height(value) { viewBox.height = value; setRect(viewBox); }
+  });
+
   tryCatch(
     () => {
       let { name, data, doc, svg, bbox } = project;
       let bounds = doc.getBounds();
       let rect = bounds.toRect(Rect.prototype);
+      console.log('rect', rect);
       const { width, height } = rect;
       let size = new Size(width, height);
 
       size.mul(doc.type == 'brd' ? 2 : 1.5);
+
       let svgrect = SVG.bbox(project.svgElement);
       let measures = (doc.measures || doc.getBounds()).rect;
 
@@ -1172,11 +1161,6 @@ async function LoadDocument(project, parentElem) {
     a => a,
     err => console.log('ERROR: ' + err.message + '\n' + err.stack)
   );
-
-  /* sizeListener.subscribe(value => {
-    //console.log('sizeListener', { value }, getCallers());
-  });
-*/
   return project;
 }
 
@@ -1333,6 +1317,7 @@ const MakeFitAction = index => async event => {
   oldSize = matrix.transformRect(oldSize);
   let topBar = Element.rect('.buttons');
   let clientArea = Element.rect('#main');
+  console.log('MakeFitAction', clientArea)
   let f = oldSize.fit(clientArea);
   let factors = new Size(oldSize).fitFactors(new Size(clientArea));
   let t = new TransformationList().scale(factors[index], factors[index]);

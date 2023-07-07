@@ -617,7 +617,7 @@ async function main() {
 
     dirmap = GetDirMap(mountDirs, filter);
     names = Object.keys(dirmap);
-    
+
     if(limit !== '') {
       limit = (limit + '').split(/[^0-9]+/g);
       if(limit.length > 0) {
@@ -856,8 +856,8 @@ async function main() {
 */
 
     const { body } = req;
-    console.log('req.headers:', req.headers);
-    console.log('body:', abbreviate(body), className(body), inspect(body));
+    //console.log('req.headers:', req.headers);
+    //console.log('body:', abbreviate(body), className(body), inspect(body));
     console.log('save body:', typeof body == 'string' ? abbreviate(body, 100) : body);
     let st,
       err,
