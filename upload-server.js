@@ -921,6 +921,8 @@ function main(...args) {
 
             const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
 
+            console.log('body', body);
+
             resp.body = body.replaceAll(re, (match, p1, p0, p2, p3, offset) => {
               if(!/[\/\.]/.test(p2)) {
                 let fname = `${p2}.js`;
