@@ -2,10 +2,6 @@ import { define, toString, escape, error, assert, properties } from './lib/misc.
 import { spawn } from 'child_process';
 import { writeFileSync, readFileSync, closeSync, statSync } from 'fs';
 
-let bjson;
-
-//import('bjson') .then(m => (bjson = m)) .catch(() => {});
-
 let xml;
 
 //import('xml') .then(m => (xml = m)) .catch(() => {});
@@ -153,19 +149,16 @@ export function WriteXML(name, data, ...args) {
   return WriteAny(name, xml.write(data, ...args));
 }
 
-export function ReadBJSON(filename) {
+export async function ReadBJSON(filename) {
+  const { read } = await import('bjson');
   let data = readFileSync(filename);
   const { byteLength: size } = data;
-
-  let ret = bjson.read(data, 0, size);
-
-  return ret;
+  return read(data, 0, size);
 }
 
-export function WriteBJSON(name, value) {
-  let data = bjson.write(value);
-
-  return writeFileSync(name, data);
+export async function WriteBJSON(name, value) {
+  const { write } = await import('bjson');
+  return writeFileSync(name, write(value));
 }
 
 export function* Filter(gen, regEx = /.*/) {
