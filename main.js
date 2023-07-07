@@ -61,6 +61,8 @@ import { EagleElementProxy, BoardRenderer, DereferenceError, EagleDocument, Eagl
 import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //const React = {Component, Fragment, create: h, html, render, useLayoutEffect, useRef, useState };
 import commands, { ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ClearCache, FetchURL } from './commands.js';
 import { NormalizeResponse, ResponseData, FetchCached } from './lib/fetch.js';
+import { MutableXPath, findXPath, parseXPath, XPath, ImmutableXPath } from './lib/xml/xpath.js';
+
 const {
   Align,
   AlignToString,
@@ -101,7 +103,7 @@ import { classNames } from './lib/classNames.js';
 //import rpc from './quickjs/qjs-net/js/rpc.js';
 import * as rpc2 from './quickjs/qjs-net/js/rpc.js';
 import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
-import { properties, keys, entries, values, errors, types, isObject, toString, btoa, atob, assert, escape, quote, memoize, getset, modifier, getter, setter, gettersetter, hasGetSet, mapObject, once, atexit, waitFor, define, weakDefine, getConstructorChain, hasPrototype, filter, curry, split, unique, getFunctionArguments, randInt, randFloat, randStr, toBigInt, lazyProperty, lazyProperties, getOpt, toUnixTime, unixTime, fromUnixTime, range, repeater, repeat, chunkArray, camelize, decamelize, Location, format, formatWithOptions, isNumeric, functionName, className, isArrowFunction, immutableClass, isArray, ArrayFacade, arrayFacade, bits, dupArrayBuffer, getTypeName, isArrayBuffer, isBigDecimal, isBigFloat, isBigInt, isBool, isCFunction, isConstructor, isEmptyString, isError, isException, isExtensible, isFunction, isHTMLDDA, isInstanceOf, isInteger, isJobPending, isLiveObject, isNull, isNumber, isUndefined, isString, isUninitialized, isSymbol, isUncatchableError, isRegisteredClass, rand, randi, randf, srand, toArrayBuffer, getMethods, isoDate, clamp } from './lib/misc.js';
+import { tryCatch, tryFunction, mapFunction, mapAdapter, properties, keys, entries, values, errors, types, isObject, toString, btoa, atob, assert, escape, quote, memoize, getset, modifier, getter, setter, gettersetter, hasGetSet, mapObject, once, atexit, waitFor, define, weakDefine, getConstructorChain, hasPrototype, filter, curry, split, unique, getFunctionArguments, randInt, randFloat, randStr, toBigInt, lazyProperty, lazyProperties, getOpt, toUnixTime, unixTime, fromUnixTime, range, repeater, repeat, chunkArray, camelize, decamelize, Location, format, formatWithOptions, isNumeric, functionName, className, isArrowFunction, immutableClass, isArray, ArrayFacade, arrayFacade, bits, dupArrayBuffer, getTypeName, isArrayBuffer, isBigDecimal, isBigFloat, isBigInt, isBool, isCFunction, isConstructor, isEmptyString, isError, isException, isExtensible, isFunction, isHTMLDDA, isInstanceOf, isInteger, isJobPending, isLiveObject, isNull, isNumber, isUndefined, isString, isUninitialized, isSymbol, isUncatchableError, isRegisteredClass, rand, randi, randf, srand, toArrayBuffer, getMethods, isoDate, clamp } from './lib/misc.js';
 import { useDimensions } from './lib/hooks/useDimensions.js';
 
 const elementDefaultAttributes = {
@@ -973,14 +975,11 @@ async function LoadDocument(project, parentElem) {
       {
         renamePackages() {
           let names = [...PackageNames(doc)];
-          //console.log('Package names', names);
           let changes = names.filter(a => a[0] != a[1]);
-          //console.log('Commands:\n' + changes.map(([oldName, newName]) => `RENAME ${oldName} ${newName};`).join('\n'));
-          //console.log('Expressions:\n' + changes.map(([oldName, newName]) => `s|="${oldName}"|="${newName}"|g;`).join('\n'));
           return names;
         }
       },
-      { memoize: true }
+      { memoize: true, configurable: true }
     )
   );
   let Component;
@@ -1148,25 +1147,28 @@ async function LoadDocument(project, parentElem) {
     })(defaultTransform);
   }
 
-  tryCatch(async () => {
-    let { name, data, doc, svg, bbox } = project;
-    let bounds = doc.getBounds();
-    let rect = bounds.toRect(Rect.prototype);
-    let size = new Size(r);
-    // currentProj(project);
-    size.mul(doc.type == 'brd' ? 2 : 1.5);
-    let svgrect = SVG.bbox(project.svgElement);
-    let measures = (doc.measures || doc.getBounds()).rect;
-    //console.debug('measures:', measures);
-    Element.attr(project.svgElement, {
-      'data-filename': project.name,
-      'data-aspect': project.aspectRatio
-    });
-    // let css = size.div(0.26458333333719).toCSS({ width: 'px', height: 'px' });
-    //  window.size = project.doc.type == 'lbr' ? {} : css;
-    AdjustZoom();
-    project.status = SaveSVG();
-  }, putError);
+  tryCatch(
+    () => {
+      let { name, data, doc, svg, bbox } = project;
+      let bounds = doc.getBounds();
+      let rect = bounds.toRect(Rect.prototype);
+      const { width, height } = rect;
+      let size = new Size(width, height);
+
+      size.mul(doc.type == 'brd' ? 2 : 1.5);
+      let svgrect = SVG.bbox(project.svgElement);
+      let measures = (doc.measures || doc.getBounds()).rect;
+
+      Element.attr(project.svgElement, {
+        'data-filename': project.name,
+        'data-aspect': project.aspectRatio
+      });
+      AdjustZoom();
+      project.status = SaveSVG();
+    },
+    a => a,
+    err => console.log('ERROR: ' + err.message + '\n' + err.stack)
+  );
 
   /* sizeListener.subscribe(value => {
     //console.log('sizeListener', { value }, getCallers());
@@ -1500,7 +1502,7 @@ const AppMain = (window.onload = async () => {
  CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes , Wire, Instance, SchematicSymbol,  Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer,EagleElementProxy,  BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, 
  classNames , BinaryTree, normalizePath, reverseNormalizedPath, reverseSubPath, reversePath, ...commands,  DEBUG, objectInspect, SvgPath, renderToString , ...ecmascript };
 
-  Object.assign(globalThis, { className, functionName, keys, entries, values });
+  Object.assign(globalThis, { className, functionName, keys, entries, values, tryCatch, tryFunction });
 
   const localFunctions = {
     PackageChildren,
@@ -2255,8 +2257,8 @@ const AppMain = (window.onload = async () => {
 
                   //console.debug('GerberToGcode side =', side, ' gc =', gc.file, ' svg =', abbreviate(gc.svg));
                 }
-              } catch(e) {
-                putError(e);
+              } catch(err) {
+                console.log('ERROR: ' + err.message + '\n' + err.stack);
               }
             }
             gcode(project.gcode);
