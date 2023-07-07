@@ -1715,7 +1715,6 @@ const AppMain = (window.onload = async () => {
         return this.name;
       };
       if(files) {
-        // console.log(`files`,files);
         list = list.concat(files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i)));
         let svgs = list.reduce((acc, file) => {
           if(/\.lbr$/i.test(file.name)) return acc;
@@ -1725,8 +1724,7 @@ const AppMain = (window.onload = async () => {
         }, []);
 
         data = await ListProjects({ descriptions: false, names: svgs });
-        files = globalThis.files = (data && data.files) || [];
-        //      console.log('filesData:', files);
+        files = globalThis.files = data || [];
 
         for(let svgFile of files) {
           if(isObject(svgFile) && svgFile.mtime !== undefined) {

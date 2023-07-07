@@ -77,12 +77,18 @@ let tmpDir = './tmp';
 
 function GetDirMap(dirs = mountDirs, pred = '.*\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$') {
   if(typeof pred != 'function') {
-    if(typeof pred == 'string') pred = new RegExp(pred, 'i');
+    if(typeof pred == 'string') {
+      const expr = pred;
+      console.log('expr', expr);
+      pred = new RegExp(expr, 'i');
+    }
     if(typeof pred == 'object' && pred !== null && pred instanceof RegExp) {
       const re = pred;
+      console.log('re', re);
       pred = ent => re.test(ent);
     }
   }
+  console.log('pred', pred + '');
   return dirs.reduce((acc, dir) => {
     for(let entry of ReadDirRecursive(dir, 0)) {
       if(entry.endsWith('/')) continue;
@@ -508,9 +514,8 @@ async function main() {
 
     dirmap ??= GetDirMap(mountDirs);
 
-  /*  console.log('dirs:', unique(Object.values(dirmap)));
+    /*  console.log('dirs:', unique(Object.values(dirmap)));
     console.log('names:', unique(Object.keys(dirmap)).filter(n => /\//.test(n)));*/
-
 
     let dir = dirmap[file];
 
@@ -608,43 +613,46 @@ async function main() {
   const descMap = weakMapper(getDescription, new Map());
 
   async function GetFilesList(dir = './tmp', opts = {}) {
-    let { filter = '.*\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$', descriptions = false, names } = opts;
-
-    //console.log('GetFilesList()', { filter, descriptions }, ...(names ? [names.length] : []));
+    let { filter = '.*\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$', descriptions = false, names, limit = '' } = opts;
 
     dirmap = GetDirMap(mountDirs, filter);
     names = Object.keys(dirmap);
-    //console.log('GetFilesList()', { dirs: unique( Object.values(dirmap)), names});
+    
+    if(limit !== '') {
+      limit = (limit + '').split(/[^0-9]+/g);
+      if(limit.length > 0) {
+        if(limit.length == 1) limit.unshift(0);
+        limit = limit.map(n => +n);
+        const [start, count] = limit;
+        names = names.slice(start, start + count);
+      }
+    }
 
     return Promise.all(
-      names
-        //.map(entry => dirs[entry] +'/'+entry)
-        .reduce((acc, file) => {
-          let dir = dirmap[file];
-          let abs = dir + '/' + file;
-          let description = descriptions ? descMap(file) : descMap.get(file);
-          //   console.log('descMap:', inspect(descMap, { depth: 1 }));
-          let obj = {
-            name: file,
-            //file,
-            dir: dirs[file]
-          };
-          if(typeof description == 'string') obj.description = description;
-          acc.push(
-            fsPromises
-              .stat(abs)
-              .then(({ ctime, mtime, mode, size }) =>
-                Object.assign(obj, {
-                  mtime: toUnixTime(mtime),
-                  time: toUnixTime(ctime),
-                  mode: `0${(mode & 0x09ff).toString(8)}`,
-                  size
-                })
-              )
-              .catch(err => {})
-          );
-          return acc;
-        }, [])
+      names.reduce((acc, file) => {
+        let dir = dirmap[file];
+        let abs = dir + '/' + file;
+        let description = descriptions ? descMap(file) : descMap.get(file);
+        let obj = {
+          name: file,
+          dir: dirs[file]
+        };
+        if(typeof description == 'string') obj.description = description;
+        acc.push(
+          fsPromises
+            .stat(abs)
+            .then(({ ctime, mtime, mode, size }) =>
+              Object.assign(obj, {
+                mtime: toUnixTime(mtime),
+                time: toUnixTime(ctime),
+                mode: `0${(mode & 0x09ff).toString(8)}`,
+                size
+              })
+            )
+            .catch(err => {})
+        );
+        return acc;
+      }, [])
     ).then(a => a.filter(i => i != null));
   }
 
@@ -806,8 +814,8 @@ async function main() {
   app.get(/^\/files/, async (req, res) => res.json({ files: await GetFilesList() }));
   app.post(/^\/(files|list)(.html|)/, async (req, res) => {
     const { body } = req;
-    let { filter = '.*', descriptions, names } = body;
-    let opts = { filter };
+    let { filter, descriptions, names, limit } = body;
+    let opts = { filter, limit };
     if(descriptions) opts.descriptions = descriptions;
 
     if(names !== undefined) {
@@ -817,10 +825,8 @@ async function main() {
     }
     let files = await GetFilesList('tmp', opts);
 
-    console.log('POST files', inspect(files, { breakLength: Infinity, colors: true, maxArrayLength: 10, compact: 1 }));
-    res.json({
-      files
-    });
+    //console.log('POST files', inspect(files, { breakLength: Infinity, colors: true, maxArrayLength: 10, compact: 1 }));
+    res.json(files);
   });
 
   app.get('/index.html', async (req, res) => {

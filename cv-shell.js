@@ -1,7 +1,7 @@
 #!/usr/bin/env qjsm
 import { MouseEvents, MouseFlags, Mouse, Window, TextStyle, DrawText } from './qjs-opencv/js/cvHighGUI.js';
 import filesystem from 'fs';
-import { difference,union, getOpt,setInterval, toArrayBuffer, toString, escape, quote, define, extendArray, memoize, getFunctionArguments, glob, GLOB_TILDE, fnmatch, wordexp, lazyProperties } from './lib/misc.js';
+import { difference, union, getOpt, setInterval, toArrayBuffer, toString, escape, quote, define, extendArray, memoize, getFunctionArguments, glob, GLOB_TILDE, fnmatch, wordexp, lazyProperties } from './lib/misc.js';
 import trkl from './lib/trkl.js';
 import * as path from './lib/path.js';
 import { Console } from 'console';
@@ -45,7 +45,7 @@ async function importModule(moduleName, ...args) {
 
 function StartREPL(prefix = path.basename(scriptArgs[0], '.js'), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, undefined, false);
-   repl.historyLoad(getConfFile('history'));
+  repl.historyLoad(getConfFile('history'));
   repl.loadSaveOptions();
   repl.inspectOptions = console.options;
 
@@ -167,7 +167,7 @@ function main(...args) {
       return AutoValue(getConfFile('global'));
     }
   });
- 
+
   Object.assign(globalThis, {
     Pointer,
     VideoSource,

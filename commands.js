@@ -62,7 +62,7 @@ export async function ListProjects(opts = {}) {
     }
   }
 
-  //console.log('ListProjects', { response });
+  console.log('ListProjects', { response });
   return response;
 }
 

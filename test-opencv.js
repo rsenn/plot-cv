@@ -531,7 +531,7 @@ async function main(...args) {
         .join('');
 
     DrawText(statusMat(textRect), text, textColor, fontFace, fontSize);
-    
+
     DrawText(statusMat(helpRect), '< prev, > next, + increment, - decrement, DEL reset', textColor, fontFace, fontSize);
   }
   function Scale(mat, f = 1) {
