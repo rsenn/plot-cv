@@ -989,7 +989,7 @@ async function LoadDocument(project, parentElem) {
     });
     let style = { width: '100%', height: '100%', position: 'relative' };
     Component = project.renderer.render(doc, null, {});
-    let usedLayers = [...doc.layers.list]/*.filter(layer => layer.elements.size > 0)*/;
+    let usedLayers = [...doc.layers.list]; /*.filter(layer => layer.elements.size > 0)*/
 
     Timer.once(250).then(() =>
       layerList(
@@ -1318,7 +1318,7 @@ const MakeFitAction = index => async event => {
   oldSize = matrix.transformRect(oldSize);
   let topBar = Element.rect('.buttons');
   let clientArea = Element.rect('#main');
-  console.log('MakeFitAction', clientArea)
+  console.log('MakeFitAction', clientArea);
   let f = oldSize.fit(clientArea);
   let factors = new Size(oldSize).fitFactors(new Size(clientArea));
   let t = new TransformationList().scale(factors[index], factors[index]);
@@ -1921,8 +1921,8 @@ const AppMain = (window.onload = async () => {
     let setVisible = props.visible || element.handlers.visible,
       visible = useTrkl(setVisible);
 
-    const isVisible = visible === true || (visible !== false && ({ yes: true }) [visible]);
-    
+    const isVisible = visible === true || (visible !== false && { yes: true }[visible]);
+
     if(isObject(element) && 'visible' in element) setVisible = value => (element.visible = value);
     let [solo, setSolo] = useState(null);
 
