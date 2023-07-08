@@ -1,68 +1,249 @@
-import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
-import dom from './lib/dom.js';
-import { ReactComponent, Fragment } from './lib/dom/preactComponent.js';
-import { iterator, eventIterator } from './lib/dom/iterator.js';
-import keysim from './lib/dom/keysim.js';
-import geom, { isBBox, BBox, Polygon, Circle, LineList, Arc } from './lib/geom.js';
-import { normalizePath, reverseNormalizedPath, reverseSubPath, reversePath } from './lib/svg/pathReverse.js';
-import { FixedMedium } from './lib/svg/fixedMedium.js';
-import { TouchListener } from './lib/touchHandler.js';
-import { trkl } from './lib/trkl.js';
-import { ColorMap } from './lib/draw/colorMap.js';
+import { AddLayer } from './commands.js';
+import { BoardToGerber } from './commands.js';
+import { ClearCache } from './commands.js';
+import { FetchURL } from './commands.js';
+import { GcodeToPolylines } from './commands.js';
+import { GerberToGcode } from './commands.js';
+import { GetLayer } from './commands.js';
+import { ListProjects } from './commands.js';
+import commands from './commands.js';
+import { Button } from './components.js';
+import { ButtonGroup } from './components.js';
+import { Chooser } from './components.js';
+import { ColorWheel } from './components.js';
+import { Conditional } from './components.js';
+import { CrossHair } from './components.js';
+import { DisplayList } from './components.js';
+import { DropDown } from './components.js';
+import { DynamicLabel } from './components.js';
+import { Fence } from './components.js';
+import { File } from './components.js';
+import { FileList } from './components.js';
+import { FloatingPanel } from './components.js';
+import { Item } from './components.js';
+import { Label } from './components.js';
+import { MouseEvents } from './components.js';
+import { Overlay } from './components.js';
+import { Panel } from './components.js';
+import { Ruler } from './components.js';
+import { Slider } from './components.js';
+import { Toggle } from './components.js';
+import { AlignAll } from './eagle-commands.js';
+import { GetElements } from './eagle-commands.js';
+import { GetInstances } from './eagle-commands.js';
+import { GetPositions } from './eagle-commands.js';
+import { scientific } from './eagle-commands.js';
+import { UpdateMeasures } from './eagle-commands.js';
+import Alea from './lib/alea.js';
+import debounce from './lib/async/debounce.js';
+import asyncHelpers from './lib/async/helpers.js';
+import { makeLocalStorage } from './lib/autoStore.js';
+import { classNames } from './lib/classNames.js';
 import { ClipperLib } from './lib/clipper-lib.js';
 import Shape from './lib/clipper.js';
-import { devtools } from './lib/devtools.js';
-import tlite from './lib/tlite.js';
-import debounce from './lib/async/debounce.js';
-import { SvgPath } from './lib/svg/path.js';
-import objectInspect from './lib/objectInspect.js';
-import tXml from './lib/tXml.js';
+import { HSLA } from './lib/color.js';
+import { ImmutableHSLA } from './lib/color.js';
+import { ImmutableRGBA } from './lib/color.js';
+import { isHSLA } from './lib/color.js';
+import { isRGBA } from './lib/color.js';
+import { RGBA } from './lib/color.js';
+import { BinaryTree } from './lib/container/binaryTree.js';
 import deep from './lib/deep.js';
-import Alea from './lib/alea.js';
-import * as path from './lib/path.js';
-import { TimeoutError } from './lib/repeater/timers.js';
-import * as Timers from './lib/repeater/timers.js';
-import asyncHelpers from './lib/async/helpers.js';
+import { devtools } from './lib/devtools.js';
+import dom from './lib/dom.js';
 import { Cache } from './lib/dom/cache.js';
 import { CacheStorage } from './lib/dom/cacheStorage.js';
-import { InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter } from './lib/gcode.js';
-import { Iterator } from './lib/iterator.js';
-import { Functional } from './lib/functional.js';
-import { makeLocalStorage } from './lib/autoStore.js';
-import { Repeater } from './lib/repeater/repeater.js';
-import { useRepeater, useAsyncIter, useResult, useValue } from './lib/repeater/react-hooks.js';
+import { eventIterator } from './lib/dom/iterator.js';
+import { iterator } from './lib/dom/iterator.js';
+import keysim from './lib/dom/keysim.js';
+import { Fragment } from './lib/dom/preactComponent.js';
 import { Portal } from './lib/dom/preactComponent.js';
-import renderToString from './lib/preact-render-to-string.js';
-import { BinaryTree } from './lib/container/binaryTree.js';
-import LogJS from './lib/log.js';
-import serial from './serial.js';
-import { toXML, ImmutablePath, MutablePath, arrayDiff, objectDiff } from './lib/json.js';
-import { XmlObject, XmlAttr } from './lib/xml.js';
-import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA } from './lib/color.js';
-import * as React from './lib/preact.mjs';
-import { h, html, render, Component, useState, useLayoutEffect, useRef } from './lib/preact.mjs';
-import { Ruler, ClickHandler, ToggleHandler, MouseEvents, Overlay, Container, Button, Toggle, ButtonGroup, FloatingPanel, Label, DynamicLabel, Item, Icon, Progress, SchematicIcon, BoardIcon, LibraryIcon, GCodeIcon, FileIcons, Conditional, ShowHide, EditBox, File, Chooser, FileList, Panel, WrapInAspectBox, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Slider, Canvas, ColorWheel, CrossHair, MoveCursor, DropDown, Fence, Zoomable, DisplayList } from './components.js';
-import { Message } from './message.js';
-import { GetElements, GetInstances, GetPositions, UpdateMeasures, AlignAll, scientific } from './eagle-commands.js';
-import { GetExponent, GetMantissa, ValueToNumber, NumberToValue, GetMultipliers, GetFactor, GetColorBands, BG, digit2color } from './lib/eda/colorCoding.js';
-import { WebSocketClient } from './lib/net/websocket-async.js';
-import * as ecmascript from './lib/ecmascript.js';
-import { PipeTo, AsyncRead, AsyncWrite, DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater, WritableStream, ReadFromIterator } from './lib/stream.js?ts=<?TS?>';
-import { useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, RenderArc } from './lib/eagle/renderUtils.js';
-import { Wire } from './lib/eagle/components/wire.js';
+import { ReactComponent } from './lib/dom/preactComponent.js';
+import { ColorMap } from './lib/draw/colorMap.js';
+import { BoardRenderer } from './lib/eagle.js';
+import { DereferenceError } from './lib/eagle.js';
+import { EagleDocument } from './lib/eagle.js';
+import { EagleElement } from './lib/eagle.js';
+import { EagleElementProxy } from './lib/eagle.js';
+import { EagleNode } from './lib/eagle.js';
+import { EagleNodeList } from './lib/eagle.js';
+import { EagleNodeMap } from './lib/eagle.js';
+import { EagleProject } from './lib/eagle.js';
+import { EagleRef } from './lib/eagle.js';
+import { EagleReference } from './lib/eagle.js';
+import { EagleSVGRenderer } from './lib/eagle.js';
+import { LibraryRenderer } from './lib/eagle.js';
+import { makeEagleElement } from './lib/eagle.js';
+import { makeEagleNode } from './lib/eagle.js';
+import { Renderer } from './lib/eagle.js';
+import { SchematicRenderer } from './lib/eagle.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
-import { EventIterator } from './lib/iterator/event.js';
-import { Slot, SlotProvider } from './slots.js';
+import { Wire } from './lib/eagle/components/wire.js';
+import { Alignment } from './lib/eagle/renderUtils.js';
+import { AlignmentAngle } from './lib/eagle/renderUtils.js';
+import { AlignmentAttrs } from './lib/eagle/renderUtils.js';
+import { CalculateArcRadius } from './lib/eagle/renderUtils.js';
+import { CartesianToPolar } from './lib/eagle/renderUtils.js';
+import { ClampAngle } from './lib/eagle/renderUtils.js';
+import { DEBUG } from './lib/eagle/renderUtils.js';
+import { DEG2RAD } from './lib/eagle/renderUtils.js';
+import { EagleAlignments } from './lib/eagle/renderUtils.js';
+import { ElementToClass } from './lib/eagle/renderUtils.js';
+import { EscapeClassName } from './lib/eagle/renderUtils.js';
+import { HORIZONTAL } from './lib/eagle/renderUtils.js';
+import { HORIZONTAL_VERTICAL } from './lib/eagle/renderUtils.js';
+import { InvertY } from './lib/eagle/renderUtils.js';
+import { LayerAttributes } from './lib/eagle/renderUtils.js';
+import { LayerToClass } from './lib/eagle/renderUtils.js';
+import { LinesToPath } from './lib/eagle/renderUtils.js';
+import { log } from './lib/eagle/renderUtils.js';
+import { MakeCoordTransformer } from './lib/eagle/renderUtils.js';
+import { MakeRotation } from './lib/eagle/renderUtils.js';
+import { PinSizes } from './lib/eagle/renderUtils.js';
+import { PolarToCartesian } from './lib/eagle/renderUtils.js';
+import { RAD2DEG } from './lib/eagle/renderUtils.js';
+import { RenderArc } from './lib/eagle/renderUtils.js';
+import { RotateTransformation } from './lib/eagle/renderUtils.js';
+import { setDebug } from './lib/eagle/renderUtils.js';
+import { SVGAlignments } from './lib/eagle/renderUtils.js';
+import { UnescapeClassName } from './lib/eagle/renderUtils.js';
+import { useAttributes } from './lib/eagle/renderUtils.js';
+import { useTrkl } from './lib/eagle/renderUtils.js';
+import { VERTICAL } from './lib/eagle/renderUtils.js';
+import * as ecmascript from './lib/ecmascript.js';
+import { BG } from './lib/eda/colorCoding.js';
+import { digit2color } from './lib/eda/colorCoding.js';
+import { GetColorBands } from './lib/eda/colorCoding.js';
+import { GetExponent } from './lib/eda/colorCoding.js';
+import { GetFactor } from './lib/eda/colorCoding.js';
+import { GetMantissa } from './lib/eda/colorCoding.js';
+import { GetMultipliers } from './lib/eda/colorCoding.js';
+import { NumberToValue } from './lib/eda/colorCoding.js';
+import { ValueToNumber } from './lib/eda/colorCoding.js';
+import { FetchCached } from './lib/fetch.js';
+import { NormalizeResponse } from './lib/fetch.js';
+import { ResponseData } from './lib/fetch.js';
+import { fnmatch } from './lib/fnmatch.js';
+import { PATH_FNM_MULTI } from './lib/fnmatch.js';
+import { Functional } from './lib/functional.js';
+import { GCodeLineStream } from './lib/gcode.js';
+import { GcodeObject } from './lib/gcode.js';
+import { GcodeParser } from './lib/gcode.js';
+import { gcodetogeometry } from './lib/gcode.js';
+import { gcodeToObject } from './lib/gcode.js';
+import { Interpreter } from './lib/gcode.js';
+import { InterpretGcode } from './lib/gcode.js';
+import { noop } from './lib/gcode.js';
+import { objectToGcode } from './lib/gcode.js';
+import { parseFile } from './lib/gcode.js';
+import { parseFileSync } from './lib/gcode.js';
+import { parseGcode } from './lib/gcode.js';
+import { parseStream } from './lib/gcode.js';
+import { parseString } from './lib/gcode.js';
+import { parseStringSync } from './lib/gcode.js';
+import { Arc } from './lib/geom.js';
+import { BBox } from './lib/geom.js';
+import { Circle } from './lib/geom.js';
+import { isBBox } from './lib/geom.js';
+import { LineList } from './lib/geom.js';
+import { Polygon } from './lib/geom.js';
+import geom from './lib/geom.js';
+import { MatrixTransformation } from './lib/geom/transformation.js';
+import { Rotation } from './lib/geom/transformation.js';
+import { Scaling } from './lib/geom/transformation.js';
+import { Transformation } from './lib/geom/transformation.js';
+import { TransformationList } from './lib/geom/transformation.js';
+import { Translation } from './lib/geom/transformation.js';
 import Voronoi from './lib/geom/voronoi.js';
 import GerberParser from './lib/gerber/parser.js';
-import { lazyInitializer } from './lib/lazyInitializer.js';
-import { EagleElementProxy, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, LibraryRenderer, makeEagleElement, makeEagleNode } from './lib/eagle.js';
-import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //const React = {Component, Fragment, create: h, html, render, useLayoutEffect, useRef, useState };
-import commands, { ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ClearCache, FetchURL } from './commands.js';
-import { NormalizeResponse, ResponseData, FetchCached } from './lib/fetch.js';
-import { MutableXPath, findXPath, parseXPath, XPath, ImmutableXPath } from './lib/xml/xpath.js';
+import { useDimensions } from './lib/hooks/useDimensions.js';
 import { useDoubleClick } from './lib/hooks/useDoubleClick.js';
+import { Iterator } from './lib/iterator.js';
+import { EventIterator } from './lib/iterator/event.js';
+import { arrayDiff } from './lib/json.js';
+import { ImmutablePath } from './lib/json.js';
+import { MutablePath } from './lib/json.js';
+import { objectDiff } from './lib/json.js';
+import { toXML } from './lib/json.js';
+import { lazyInitializer } from './lib/lazyInitializer.js';
+import LogJS from './lib/log.js';
+import { BaseCache } from './lib/lscache.js';
+import { brcache } from './lib/lscache.js';
+import { CachedFetch } from './lib/lscache.js';
+import { lscache } from './lib/lscache.js';
+import { bits } from './lib/misc.js';
+import { camelize } from './lib/misc.js';
+import { clamp } from './lib/misc.js';
+import { className } from './lib/misc.js';
+import { define } from './lib/misc.js';
+import { entries } from './lib/misc.js';
+import { escape } from './lib/misc.js';
+import { filter } from './lib/misc.js';
+import { format } from './lib/misc.js';
+import { functionName } from './lib/misc.js';
+import { getMethods } from './lib/misc.js';
+import { getset } from './lib/misc.js';
+import { isArray } from './lib/misc.js';
+import { isObject } from './lib/misc.js';
+import { isoDate } from './lib/misc.js';
+import { keys } from './lib/misc.js';
+import { mapAdapter } from './lib/misc.js';
+import { mapFunction } from './lib/misc.js';
+import { memoize } from './lib/misc.js';
+import { modifier } from './lib/misc.js';
+import { once } from './lib/misc.js';
+import { properties } from './lib/misc.js';
+import { rand } from './lib/misc.js';
+import { range } from './lib/misc.js';
+import { repeat } from './lib/misc.js';
+import { repeater } from './lib/misc.js';
+import { roundTo } from './lib/misc.js';
+import { split } from './lib/misc.js';
+import { toString } from './lib/misc.js';
+import { tryCatch } from './lib/misc.js';
+import { tryFunction } from './lib/misc.js';
+import { unique } from './lib/misc.js';
+import { values } from './lib/misc.js';
+import { waitFor } from './lib/misc.js';
+import { weakDefine } from './lib/misc.js';
+import { WebSocketClient } from './lib/net/websocket-async.js';
+import objectInspect from './lib/objectInspect.js';
+import * as path from './lib/path.js';
+import renderToString from './lib/preact-render-to-string.js';
+import { Component } from './lib/preact.mjs';
+import { h } from './lib/preact.mjs';
+import { html } from './lib/preact.mjs';
+import { render } from './lib/preact.mjs';
+import { useLayoutEffect } from './lib/preact.mjs';
+import { useRef } from './lib/preact.mjs';
+import { useState } from './lib/preact.mjs';
+import * as React from './lib/preact.mjs';
+import { useResult } from './lib/repeater/react-hooks.js';
+import { Repeater } from './lib/repeater/repeater.js';
+import { TimeoutError } from './lib/repeater/timers.js';
+import * as Timers from './lib/repeater/timers.js';
+import { FixedMedium } from './lib/svg/fixedMedium.js';
+import { SvgPath } from './lib/svg/path.js';
+import { normalizePath } from './lib/svg/pathReverse.js';
+import { reverseNormalizedPath } from './lib/svg/pathReverse.js';
+import { reversePath } from './lib/svg/pathReverse.js';
+import { reverseSubPath } from './lib/svg/pathReverse.js';
+import tlite from './lib/tlite.js';
+import { TouchListener } from './lib/touchHandler.js';
+import { trkl } from './lib/trkl.js';
+import tXml from './lib/tXml.js';
+import { XmlAttr } from './lib/xml.js';
+import { XmlObject } from './lib/xml.js';
+import { ImmutableXPath } from './lib/xml/xpath.js';
+import { XPath } from './lib/xml/xpath.js';
+import { Message } from './message.js';
+import * as rpc2 from './quickjs/qjs-net/js/rpc.js';
+import serial from './serial.js';
+import { Slot } from './slots.js';
+import { SlotProvider } from './slots.js';
+import { PipeTo, AsyncRead, AsyncWrite, DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater, WritableStream, ReadFromIterator } from './lib/stream.js?ts=<?TS?>';
+//const React = {Component, Fragment, create: h, html, render, useLayoutEffect, useRef, useState };
 
 const {
   Align,
@@ -99,14 +280,7 @@ const {
   TRBL,
   Tree
 } = { ...dom, ...geom };
-
-import { classNames } from './lib/classNames.js';
 //import rpc from './quickjs/qjs-net/js/rpc.js';
-import * as rpc2 from './quickjs/qjs-net/js/rpc.js';
-import { fnmatch, PATH_FNM_MULTI } from './lib/fnmatch.js';
-import { roundTo, tryCatch, tryFunction, mapFunction, mapAdapter, properties, keys, entries, values, errors, types, isObject, toString, btoa, atob, assert, escape, quote, memoize, getset, modifier, getter, setter, gettersetter, hasGetSet, mapObject, once, atexit, waitFor, define, weakDefine, getConstructorChain, hasPrototype, filter, curry, split, unique, getFunctionArguments, randInt, randFloat, randStr, toBigInt, lazyProperty, lazyProperties, getOpt, toUnixTime, unixTime, fromUnixTime, range, repeater, repeat, chunkArray, camelize, decamelize, Location, format, formatWithOptions, isNumeric, functionName, className, isArrowFunction, immutableClass, isArray, ArrayFacade, arrayFacade, bits, dupArrayBuffer, getTypeName, isArrayBuffer, isBigDecimal, isBigFloat, isBigInt, isBool, isCFunction, isConstructor, isEmptyString, isError, isException, isExtensible, isFunction, isHTMLDDA, isInstanceOf, isInteger, isJobPending, isLiveObject, isNull, isNumber, isUndefined, isString, isUninitialized, isSymbol, isUncatchableError, isRegisteredClass, rand, randi, randf, srand, toArrayBuffer, getMethods, isoDate, clamp } from './lib/misc.js';
-import { useDimensions } from './lib/hooks/useDimensions.js';
-
 const elementDefaultAttributes = {
   stroke: 'red',
   fill: 'none',
@@ -375,7 +549,7 @@ async function LoadFile(file) {
   let xml = await response.text();
 
   //console.log(`LoadFile ${name}`, { xml });
-  
+
   let doc = new EagleDocument(xml, null, name, null, filesystem);
 
   //console.log(`LoadFile ${name}`, { doc, xml });
@@ -440,10 +614,10 @@ async function LoadSVG(filename) {
   return element.firstElementChild;
 }
 
-  function LoadImage(filename) {
+function LoadImage(filename) {
   let element = Element.create('img', { src: filename }, 'body');
 
-  Element.setCSS(element, {  position: 'fixed', bottom: '4em', right: '4em',   'z-index': 100000000 } )
+  Element.setCSS(element, { position: 'fixed', bottom: '4em', right: '4em', 'z-index': 100000000 });
 
   return element;
 }
@@ -1325,7 +1499,7 @@ const MakeFitAction = index => async event => {
   let clientArea = Element.rect('#main');
 
   //console.log('MakeFitAction', clientArea);
-  
+
   let f = oldSize.fit(clientArea);
   let factors = new Size(oldSize).fitFactors(new Size(clientArea));
   let t = new TransformationList().scale(factors[index], factors[index]);
@@ -1494,11 +1668,29 @@ const BindGlobal = once(arg => trkl.bind(window, arg));
 const AppMain = (window.onload = async () => {
   const { sortOrder, sortKey } = config;
   //prettier-ignore
-  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounce, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, MutablePath, ImmutablePath, MutablePath,arrayDiff, objectDiff,  XmlObject, XmlAttr, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, FileList, Message, WebSocketClient,    PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc,
+  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, tlite, debounce, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, MutablePath, ImmutablePath, MutablePath,arrayDiff, objectDiff,  XmlObject, XmlAttr, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, FileList, Message, WebSocketClient,    PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc,
  CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes , Wire, Instance, SchematicSymbol,  Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer,EagleElementProxy,  BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, 
  classNames , BinaryTree, normalizePath, reverseNormalizedPath, reverseSubPath, reversePath, ...commands,  DEBUG, objectInspect, SvgPath, renderToString , ...ecmascript };
 
-  Object.assign(globalThis, { open,ClearCache,brcache, lscache, BaseCache, CachedFetch,FetchURL, roundTo, define, properties, className, functionName, keys, entries, values, tryCatch, tryFunction });
+  Object.assign(globalThis, {
+    open,
+    ClearCache,
+    brcache,
+    lscache,
+    BaseCache,
+    CachedFetch,
+    FetchURL,
+    roundTo,
+    define,
+    properties,
+    className,
+    functionName,
+    keys,
+    entries,
+    values,
+    tryCatch,
+    tryFunction
+  });
 
   const localFunctions = {
     PackageChildren,
@@ -2308,7 +2500,7 @@ const AppMain = (window.onload = async () => {
       }),
       h(Consumer, {})
     ]),
-    
+
     /*  h('div', { style: { display: 'inline-flex', flexFlow: 'row', alignItems: 'stretch', height: '100px', padding: '10px' } }, [
         h(ColorWheel, {}),
         h(Slider, {
@@ -2335,72 +2527,78 @@ const AppMain = (window.onload = async () => {
           }
         })
       ]),*/
-    h(FileList, {
-      listTag: 'nav',
-      files: projects,
-      onActive: open,
-      onChange: debounce(async (e, p, i) => await ChooseDocument(p, i), 5000, {
-        leading: true
-      }),
-      filter: config.searchFilter,
-      showSearch,
-      changeInput,
-      focusSearch,
-      sortKey,
-      sortOrder,
-      makeSortCompare: key =>
-        key == 'name' || !key
-          ? function(a, b) {
-              let nameA = a.name,
-                nameB = b.name;
-              let extA = path.extname(nameA),
-                extB = path.extname(nameB);
-              if(extA == '.lbr' && extB != '.lbr') return -1;
-              if(extA != '.lbr' && extB == '.lbr') return 1;
-              return nameA.localeCompare(nameB);
-            }
-          : function(a, b) {
-              let valueA = a[key],
-                valueB = b[key];
-              return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
-            },
-      currentInput: currentSearch
-    }, [h(
-      ButtonGroup,
+    h(
+      FileList,
       {
-        className: 'small',
-        onChange(event) {
-          let { currentTarget, target } = event;
-          let key = target.getAttribute('data-key');
-
-          console.log('Sort order changed', key);
-          config.sortKey(key);
-        }
+        listTag: 'nav',
+        files: projects,
+        onActive: open,
+        onChange: debounce(async (e, p, i) => await ChooseDocument(p, i), 5000, {
+          leading: true
+        }),
+        filter: config.searchFilter,
+        showSearch,
+        changeInput,
+        focusSearch,
+        sortKey,
+        sortOrder,
+        makeSortCompare: key =>
+          key == 'name' || !key
+            ? function(a, b) {
+                let nameA = a.name,
+                  nameB = b.name;
+                let extA = path.extname(nameA),
+                  extB = path.extname(nameB);
+                if(extA == '.lbr' && extB != '.lbr') return -1;
+                if(extA != '.lbr' && extB == '.lbr') return 1;
+                return nameA.localeCompare(nameB);
+              }
+            : function(a, b) {
+                let valueA = a[key],
+                  valueB = b[key];
+                return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+              },
+        currentInput: currentSearch
       },
       [
-        props =>
-          h('img', {
-            src: 'static/svg/sort-name-2.svg',
-            alt: 'Name',
-            'data-key': 'name',
-            ...props
-          }),
-        props =>
-          h('img', {
-            src: 'static/svg/sort-time-2.svg',
-            alt: 'Modification time',
-            'data-key': 'mtime',
-            ...props
-          }),
-        props =>
-          h('img', {
-            src: 'static/svg/sort-size-2.svg',
-            alt: 'Size',
-            'data-key': 'size',
-            ...props
-          })
+        h(
+          ButtonGroup,
+          {
+            className: 'small',
+            onChange(event) {
+              let { currentTarget, target } = event;
+              let key = target.getAttribute('data-key');
+
+              console.log('Sort order changed', key);
+              config.sortKey(key);
+            }
+          },
+          [
+            props =>
+              h('img', {
+                src: 'static/svg/sort-name-2.svg',
+                alt: 'Name',
+                'data-key': 'name',
+                ...props
+              }),
+            props =>
+              h('img', {
+                src: 'static/svg/sort-time-2.svg',
+                alt: 'Modification time',
+                'data-key': 'mtime',
+                ...props
+              }),
+            props =>
+              h('img', {
+                src: 'static/svg/sort-size-2.svg',
+                alt: 'Size',
+                'data-key': 'size',
+                ...props
+              })
+          ]
+        )
       ]
-    )]),
+    ),
 
     h(CrossHair, { ...crosshair }),
     h(FloatingPanel, { onSize: config.logSize, className: 'no-select', id: 'console' }, [

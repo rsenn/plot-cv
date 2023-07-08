@@ -1,8 +1,9 @@
-import { ECMAScriptParser, ECMAScriptInterpreter } from './lib/ecmascript.js';
-import Lexer, { PathReplacer } from './lib/ecmascript.js';
-import Printer from './lib/ecmascript/printer.js';
-import { CallExpression } from './lib/ecmascript/estree.js';
 import deep from './lib/deep.js';
+import { ECMAScriptInterpreter } from './lib/ecmascript.js';
+import { ECMAScriptParser } from './lib/ecmascript.js';
+import { PathReplacer } from './lib/ecmascript.js';
+import { CallExpression } from './lib/ecmascript/estree.js';
+import Printer from './lib/ecmascript/printer.js';
 
 const code = "Point.toSource = (point, { space = ' ', padding = ' ', separator = ',' }) => `{${padding}x:${space}${point.x}${separator}y:${space}${point.y}${padding}}`;";
 

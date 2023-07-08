@@ -1,5 +1,5 @@
-import { ReadFile, WriteFile } from './io-helpers.js';
 import * as fs from 'fs';
+import { ReadFile } from './io-helpers.js';
 import * as path from './lib/path.js';
 
 const mapVFSForProxy = new WeakMap();

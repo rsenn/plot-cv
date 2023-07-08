@@ -1,8 +1,11 @@
-import { client, createServer, fetch, setLog, LLL_USER, LLL_NOTICE } from 'net';
-import * as std from 'std';
+import { client } from 'net';
+import { createServer } from 'net';
+import { LLL_NOTICE } from 'net';
+import { LLL_USER } from 'net';
+import { setLog } from 'net';
 import * as os from 'os';
 import { Console } from 'console';
-
+import * as std from 'std';
 var parent = os.Worker?.parent;
 
 const log = (...args) => console.log('WORKER', ...args);

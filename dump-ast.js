@@ -1,17 +1,10 @@
 import filesystem from 'fs';
-import { EagleDocument, EagleProject } from './lib/eagle.js';
-import { LineList, Rect } from './lib/geom.js';
-import { toXML, ImmutablePath } from './lib/json.js';
+import PortableChildProcess from './lib/childProcess.js';
 import deep from './lib/deep.js';
-import * as path from './lib/path.js';
-import { Graph } from './lib/fd-graph.js';
 import ptr from './lib/json-ptr.js';
-import LogJS from './lib/log.js';
-import tXml from './lib/tXml.js';
-import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
-import { Reader, ReadAll } from './lib/stream/utils.js';
-import { Repeater } from './lib/repeater/repeater.js';
-
+import { ImmutablePath } from './lib/json.js';
+import * as path from './lib/path.js';
+import { ReadAll } from './lib/stream/utils.js';
 let filesystem,
   childProcess,
   documents = [];

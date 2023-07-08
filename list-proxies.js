@@ -1,17 +1,16 @@
+import { promises as fsPromises } from 'fs';
+import http from 'http';
+import https from 'https';
+import fetch from 'isomorphic-fetch';
+import net from 'net';
+import url from 'url';
+import deep from './lib/deep.js';
+import { Repeater } from './lib/repeater/repeater.js';
+import { AcquireReader } from './lib/stream.js';
+import { AcquireWriter } from './lib/stream.js';
 import ProxyList from './node_modules/free-proxy/index.js';
 import ProxyLists from './node_modules/proxy-lists/index.js';
 import proxynova from './node_modules/proxynova/index.js';
-import { Repeater } from './lib/repeater/repeater.js';
-import url from 'url';
-import net from 'net';
-import http from 'http';
-import https from 'https';
-import querystring from 'querystring';
-import fetch from 'isomorphic-fetch';
-import deep from './lib/deep.js';
-import { promises as fsPromises } from 'fs';
-import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater } from './lib/stream.js';
-
 function TCPSocket(host, port) {
   const defaultTimeout = 30000;
   const tcp = new net.Socket();

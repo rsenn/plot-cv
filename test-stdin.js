@@ -1,6 +1,5 @@
 import * as os from 'os';
 import * as std from 'std';
-
 os.ttySetRaw(0);
 
 let ab = new ArrayBuffer(1024);

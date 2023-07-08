@@ -1,7 +1,6 @@
 import filesystem from 'fs';
-import * as path from './lib/path.js';
 import PortableChildProcess from './lib/childProcess.js';
-
+import * as path from './lib/path.js';
 let filesystem,
   childProcess,
   documents = [];

@@ -1,15 +1,32 @@
-import { ReadFile, WriteFile } from './io-helpers.js';
-#!/usr/bin/env qjsm
-import * as os from 'os';
-import * as std from 'std';
 import * as fs from 'fs';
-import inspect from 'inspect';
+import * as os from 'os';
 import * as path from 'path';
-import { Lexer, Token } from 'lexer';
+import { camelize } from 'util';
+import { curry } from 'util';
+import { define } from 'util';
+import { escape } from 'util';
+import { extendArray } from 'util';
+import { getOpt } from 'util';
+import { getset } from 'util';
+import { getTypeName } from 'util';
+import { isObject } from 'util';
+import { memoize } from 'util';
+import { quote } from 'util';
+import { randInt } from 'util';
+import { split } from 'util';
+import { toArrayBuffer } from 'util';
+import { toString } from 'util';
+import { types } from 'util';
+import { unique } from 'util';
+import { ReadFile } from './io-helpers.js';
+import { WriteFile } from './io-helpers.js';
 import { Console } from 'console';
+import inspect from 'inspect';
+import { Lexer } from 'lexer';
+import { Token } from 'lexer';
 import ECMAScriptLexer from 'lib/lexer/ecmascript.js';
-import { getset, memoize, randInt, getTypeName, getTypeStr, isObject, shorten, toString, toArrayBuffer, define, curry, unique, split, extendArray, camelize, types, getOpt, quote, escape } from 'util';
-
+import * as std from 'std';
+#!/usr/bin/env qjsm
 ('use strict');
 ('use math');
 
@@ -82,6 +99,7 @@ const FileBannerComment = (filename, i) => {
 extendArray(Array.prototype);
 
 const IsBuiltin = moduleName => /^[^\/.]+$/.test(moduleName);
+
 const compact = (n, more = {}) => console.config({ compact: n, maxArrayLength: 100, ...more });
 const AddUnique = (arr, item) => (arr.indexOf(item) == -1 ? arr.push(item) : null);
 const IntToDWord = ival => (isNaN(ival) === false && ival < 0 ? ival + 4294967296 : ival);

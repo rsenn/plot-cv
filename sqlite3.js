@@ -1,4 +1,8 @@
-import { dlopen, define, dlerror, dlclose, dlsym, call, errno, RTLD_NOW } from 'ffi';
+import { call } from 'ffi';
+import { define } from 'ffi';
+import { dlopen } from 'ffi';
+import { dlsym } from 'ffi';
+import { RTLD_NOW } from 'ffi';
 
 const libsqlite3 = dlopen('libsqlite3.so.0', RTLD_NOW);
 
@@ -42,6 +46,7 @@ export const SQLITE_DONE = 101; /* sqlite3_step() has finished executing */
  * @return   {Number}
  */
 define('sqlite3_close', dlsym(libsqlite3, 'sqlite3_close'), null, 'int', 'void *');
+
 export function sqlite3_close(arg1) {
   return call('sqlite3_close', arg1);
 }

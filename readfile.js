@@ -1,7 +1,10 @@
-import { define, dlsym, call, RTLD_DEFAULT } from 'ffi';
+import { platform } from 'os';
+import { read } from 'os';
+import { call } from 'ffi';
+import { define } from 'ffi';
+import { dlsym } from 'ffi';
+import { RTLD_DEFAULT } from 'ffi';
 import { _get_osfhandle } from 'misc';
-import { platform, read } from 'os';
-
 function foreign(name, ret, ...args) {
   let fp = dlsym(RTLD_DEFAULT, name);
   define(name, fp, null, ret, ...args);

@@ -1,9 +1,15 @@
-import * as std from 'std';
-import * as os from 'os';
-import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './quickjs/qjs-ffi/lib/fcntl.js';
-import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toArrayBuffer, toPointer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_NODELETE, RTLD_NOLOAD, RTLD_DEEPBIND, RTLD_DEFAULT, RTLD_NEXT } from 'ffi';
+import { F_GETFL } from './quickjs/qjs-ffi/lib/fcntl.js';
+import { F_SETFL } from './quickjs/qjs-ffi/lib/fcntl.js';
+import { fcntl } from './quickjs/qjs-ffi/lib/fcntl.js';
+import { O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
+import { call } from 'ffi';
+import { define } from 'ffi';
+import { dlopen } from 'ffi';
+import { dlsym } from 'ffi';
+import { RTLD_DEFAULT } from 'ffi';
+import { toPointer } from 'ffi';
+import { toString } from 'ffi';
 import * as ffi from 'ffi';
-
 function foreign(name, ret, ...args) {
   let fp = dlsym(RTLD_DEFAULT, name);
   define(name, fp, null, ret, ...args);

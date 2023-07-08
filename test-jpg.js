@@ -1,6 +1,4 @@
-import require from 'require';
-import { isJpeg, jpegProps } from './lib/jpeg.js';
-
+import { jpegProps } from './lib/jpeg.js';
 let data = filesystem.readFileSync('blah.jpg');
 console.log('data:', data);
 

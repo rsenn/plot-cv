@@ -1,18 +1,32 @@
-import { Point, Size, Rect, Mat, UMat, Line, CLAHE, TickMeter, Draw, Contour } from 'opencv';
-import * as cv from 'opencv';
+import { HSLA } from './lib/color.js';
+import { RGBA } from './lib/color.js';
+import { getMethodNames } from './lib/misc.js';
+import { memoize } from './lib/misc.js';
+import { mod } from './lib/misc.js';
+import { range } from './lib/misc.js';
+import { weakMapper } from './lib/misc.js';
+import { NumericParam } from './param.js';
+import { ParamNavigator } from './param.js';
+import { DrawText } from './qjs-opencv/js/cvHighGUI.js';
+import { Mouse } from './qjs-opencv/js/cvHighGUI.js';
+import { Window } from './qjs-opencv/js/cvHighGUI.js';
+import { Pipeline } from './qjs-opencv/js/cvPipeline.js';
+import { Processor } from './qjs-opencv/js/cvPipeline.js';
 import Console from 'console';
-import * as path from 'path';
-import * as std from 'std';
-import { RGBA, HSLA } from './lib/color.js';
-import { NumericParam, EnumParam, ParamNavigator } from './param.js';
-import { memoize, range, getMethodNames, weakMapper, mod } from './lib/misc.js';
-import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
-import { Window, MouseFlags, MouseEvents, Mouse, TextStyle, DrawText } from './qjs-opencv/js/cvHighGUI.js';
-import * as nvg from 'nanovg';
 import * as glfw from 'glfw';
-import { Repeater } from './lib/repeater/repeater.js';
-
+import * as nvg from 'nanovg';
+import { CLAHE } from 'opencv';
+import { Contour } from 'opencv';
+import { Draw } from 'opencv';
+import { Line } from 'opencv';
+import { Mat } from 'opencv';
+import { Point } from 'opencv';
+import { Rect } from 'opencv';
+import { Size } from 'opencv';
+import * as cv from 'opencv';
+import * as std from 'std';
 let basename = scriptArgs[0].replace(/\.js$/, '');
+
 const RAD2DEG = 180 / Math.PI;
 
 function GLFW(...args) {

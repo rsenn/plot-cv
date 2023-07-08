@@ -1,11 +1,11 @@
-import { ECMAScriptParser } from './lib/ecmascript.js';
-import Lexer, { PathReplacer } from './lib/ecmascript.js';
-import Printer from './lib/ecmascript/printer.js';
-import { estree, ESNode, Literal, TemplateLiteral, CallExpression, ImportDeclaration, Identifier, ObjectPattern } from './lib/ecmascript/estree.js';
 import deep from './lib/deep.js';
+import { ECMAScriptParser } from './lib/ecmascript.js';
+import { PathReplacer } from './lib/ecmascript.js';
+import { ESNode } from './lib/ecmascript/estree.js';
+import { Literal } from './lib/ecmascript/estree.js';
+import { TemplateLiteral } from './lib/ecmascript/estree.js';
+import Printer from './lib/ecmascript/printer.js';
 import { Path } from './lib/json.js';
-import { SortedMap } from './lib/container/sortedMap.js';
-import { ImmutablePath } from './lib/json.js';
 
 const code = `export const Progress = ({ className, percent, ...props }) =>  h(Overlay,
     {

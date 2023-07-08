@@ -1,15 +1,42 @@
-import * as path from './lib/path.js';
+import * as fs from 'fs';
+import { ReadFile } from './io-helpers.js';
+import { WriteBJSON } from './io-helpers.js';
 import * as deep from './lib/deep.js';
+import { assert } from './lib/misc.js';
+import { bits } from './lib/misc.js';
+import { className } from './lib/misc.js';
+import { define } from './lib/misc.js';
+import { entries } from './lib/misc.js';
+import { errors } from './lib/misc.js';
+import { filter } from './lib/misc.js';
+import { format } from './lib/misc.js';
+import { isArray } from './lib/misc.js';
+import { isFunction } from './lib/misc.js';
+import { isObject } from './lib/misc.js';
+import { isString } from './lib/misc.js';
+import { keys } from './lib/misc.js';
+import { lazyProperties } from './lib/misc.js';
+import { matchAll } from './lib/misc.js';
+import { memoize } from './lib/misc.js';
+import { mod } from './lib/misc.js';
+import { predicate } from './lib/misc.js';
+import { range } from './lib/misc.js';
+import { repeat } from './lib/misc.js';
+import { split } from './lib/misc.js';
+import { toString } from './lib/misc.js';
+import { types } from './lib/misc.js';
+import { union } from './lib/misc.js';
+import { unique } from './lib/misc.js';
+import { values } from './lib/misc.js';
+import { weakDefine } from './lib/misc.js';
+import * as path from './lib/path.js';
 import { Pointer } from './lib/pointer.js';
 import { AcquireReader } from './lib/stream/utils.js';
-import { errors, types, isObject, isAsync, inspectSymbol, toString, btoa, atob, assert, escape, quote, memoize, chain, chainRight, chainArray, getset, modifier, getter, setter, gettersetter, hasFn, remover, getOrCreate, hasGetSet, mapObject, once, atexit, waitFor, define, defineGetter, defineGetterSetter, defineGettersSetters, prototypeIterator, keys, entries, values, getMethodNames, getMethods, properties, weakDefine, getPrototypeChain, getConstructorChain, hasPrototype, filter, filterKeys, curry, clamp, split, matchAll, bindProperties, immutableClass, instrument, hash, catchable, isNumeric, isIndex, numericIndex, histogram, propertyLookupHandlers, propertyLookup, abbreviate, tryFunction, tryCatch, mapAdapter, mapFunction, mapWrapper, weakMapper, wrapGenerator, wrapGeneratorMethods, unique, getFunctionArguments, stripAnsi, padAnsi, padStartAnsi, padEndAnsi, randInt, randFloat, randStr, toBigInt, roundDigits, roundTo, lazyProperty, lazyProperties, getOpt, isoDate, toUnixTime, unixTime, fromUnixTime, range, repeater, repeat, chunkArray, ucfirst, lcfirst, camelize, decamelize, shorten, arraysInCommon, arrayFacade, mod, pushUnique, inserter, intersect, symmetricDifference, partitionArray, difference, intersection, union, partition, format, formatWithOptions, functionName, className, isArrowFunction, predicate, isArray, bits, dupArrayBuffer, getTypeName, isArrayBuffer, isBigDecimal, isBigFloat, isBigInt, isBool, isJSFunction, isCFunction, isConstructor, isEmptyString, isError, isException, isExtensible, isFunction, isHTMLDDA, isInstanceOf, isInteger, isJobPending, isLiveObject, isNull, isNumber, isUndefined, isString, isUninitialized, isSymbol, isUncatchableError, isRegisteredClass, rand, randi, randf, srand, toArrayBuffer } from './lib/misc.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, LogCall } from './io-helpers.js';
 import { Spawn } from './os-helpers.js';
+import { countSubstring } from './string-helpers.js';
+
 export let SIZEOF_POINTER = 8;
 export let SIZEOF_INT = 4;
-import * as fs from 'fs';
-import { countSubstring, findAllIndexes } from './string-helpers.js';
-
 function FileTime(filename) {
   let st = fs.statSync(filename);
   return st ? st.mtime ?? st.time : -1;
@@ -468,6 +495,7 @@ export class Type extends Node {
     for(const type of [str, desugared])
       if(["void", "sint8", "sint16", "sint32", "sint64", "uint8", "uint16", "uint32", "uint64", "float", "double", "schar", "uchar", "sshort", "ushort", "sint", "uint", "slong", "ulong", "longdouble", "pointer", "int", "long", "short", "char", "size_t", "unsigned char", "unsigned int", "unsigned long", "void *", "char *", "string"].indexOf(type) != -1)
         return type;
+
 const { size,unsigned } = this;
 
     if(size == SIZEOF_POINTER && !this.isPointer())

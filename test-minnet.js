@@ -1,8 +1,14 @@
-import { client, createServer, fetch, setLog, LLL_USER, LLL_ERR, LLL_INFO, LLL_WARN, LLL_ALL } from 'net';
-import { escape, quote, toString, toArrayBuffer } from './lib/misc.js';
-import { Console } from 'console';
+import { client } from 'net';
+import { createServer } from 'net';
+import { fetch } from 'net';
+import { LLL_ALL } from 'net';
+import { LLL_USER } from 'net';
+import { setLog } from 'net';
 import * as os from 'os';
-
+import { escape } from './lib/misc.js';
+import { quote } from './lib/misc.js';
+import { toString } from './lib/misc.js';
+import { Console } from 'console';
 setLog(LLL_USER, (level, message) => console.log('LWS', message));
 
 const console = new Console({ inspectOptions: { compact: 0, customInspect: true } });

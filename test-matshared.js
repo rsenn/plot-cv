@@ -1,11 +1,12 @@
-import { Mat, CV_8UC4 } from 'opencv';
 import { toPointer } from 'util';
-
+import { CV_8UC4 } from 'opencv';
+import { Mat } from 'opencv';
 let buf = new SharedArrayBuffer(640 * 480 * 4);
 
 console.log('toPointer(buf)', toPointer(buf));
 
 let m = new Mat(480, 640, CV_8UC4, buf);
+
 const { elemSize, elemSize1 } = m;
 
 console.log('m', m);

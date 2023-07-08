@@ -1,14 +1,15 @@
-import { ReadFile, WriteFile } from './io-helpers.js';
-import { ECMAScriptParser } from './lib/ecmascript/parser.js';
-import { Printer, PathReplacer } from './lib/ecmascript.js';
-import { ESNode, ImportDeclaration, CallExpression } from './lib/ecmascript/estree.js';
-import deep from './lib/deep.js';
-import Tree from './lib/tree.js';
-import { Console } from 'console';
 import fs from 'fs';
 import * as path from 'path';
+import { ReadFile } from './io-helpers.js';
+import { WriteFile } from './io-helpers.js';
+import { PathReplacer } from './lib/ecmascript.js';
+import { Printer } from './lib/ecmascript.js';
+import { CallExpression } from './lib/ecmascript/estree.js';
+import { ImportDeclaration } from './lib/ecmascript/estree.js';
+import { ECMAScriptParser } from './lib/ecmascript/parser.js';
 import { inspect } from './lib/misc.js';
-
+import Tree from './lib/tree.js';
+import { Console } from 'console';
 function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;

@@ -1,7 +1,11 @@
-import { define, toString, escape, error, assert, properties } from './lib/misc.js';
 import { spawn } from 'child_process';
-import { writeFileSync, readFileSync, closeSync, statSync } from 'fs';
-
+import { closeSync } from 'fs';
+import { readFileSync } from 'fs';
+import { statSync } from 'fs';
+import { writeFileSync } from 'fs';
+import { define } from './lib/misc.js';
+import { error } from './lib/misc.js';
+import { toString } from './lib/misc.js';
 let xml;
 
 //import('xml') .then(m => (xml = m)) .catch(() => {});

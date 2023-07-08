@@ -1,7 +1,38 @@
-import { Contour, CHAIN_APPROX_SIMPLE, COLOR_BGR2GRAY, COLOR_GRAY2BGR, CV_32FC2, Canny, FILLED, FONT_HERSHEY_PLAIN, GaussianBlur, MORPH_RECT, Mat, Point, RETR_TREE, RETR_EXTERNAL, Rect, Size, VideoCapture, approxPolyDP, arcLength, contourArea, cvtColor, dilate, drawContour, drawContours, findContours, getPerspectiveTransform, getStructuringElement, imread, imshow, imwrite, drawCircle, putText, resize, waitKey, warpPerspective } from 'opencv';
 import { HSLA } from './lib/color/hsla.js';
 import { Console } from 'console';
-
+import { approxPolyDP } from 'opencv';
+import { arcLength } from 'opencv';
+import { Canny } from 'opencv';
+import { CHAIN_APPROX_SIMPLE } from 'opencv';
+import { COLOR_BGR2GRAY } from 'opencv';
+import { COLOR_GRAY2BGR } from 'opencv';
+import { Contour } from 'opencv';
+import { contourArea } from 'opencv';
+import { CV_32FC2 } from 'opencv';
+import { cvtColor } from 'opencv';
+import { dilate } from 'opencv';
+import { drawCircle } from 'opencv';
+import { drawContour } from 'opencv';
+import { drawContours } from 'opencv';
+import { FILLED } from 'opencv';
+import { findContours } from 'opencv';
+import { FONT_HERSHEY_PLAIN } from 'opencv';
+import { GaussianBlur } from 'opencv';
+import { getPerspectiveTransform } from 'opencv';
+import { getStructuringElement } from 'opencv';
+import { imread } from 'opencv';
+import { imshow } from 'opencv';
+import { imwrite } from 'opencv';
+import { Mat } from 'opencv';
+import { MORPH_RECT } from 'opencv';
+import { Point } from 'opencv';
+import { putText } from 'opencv';
+import { Rect } from 'opencv';
+import { RETR_EXTERNAL } from 'opencv';
+import { Size } from 'opencv';
+import { VideoCapture } from 'opencv';
+import { waitKey } from 'opencv';
+import { warpPerspective } from 'opencv';
 let imgOriginal,
   imgGray = new Mat(),
   imgCanny = new Mat(),

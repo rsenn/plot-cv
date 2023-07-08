@@ -1,4 +1,4 @@
-import { forwardRef, h, Fragment, toChildArray } from './lib/preact.module.js';
+import { h } from './lib/preact.module.js';
 import { renderToString } from './lib/renderToString.js';
 
 const TestComponent = props => h('div', { id: 'test' }, ['test']);

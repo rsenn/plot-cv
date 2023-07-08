@@ -1,20 +1,15 @@
-#!/usr/bin/env qjsm
-import * as os from 'os';
-import * as std from 'std';
-import * as fs from 'fs';
-import inspect from 'inspect';
-import * as path from 'path';
-import { Predicate } from 'predicate';
-import { Location, Lexer, Token } from 'lexer';
-import { Console } from 'console';
-import JSLexer from './lib/jslexer.js';
 import CLexer from './lib/clexer.js';
-import BNFLexer from './lib/bnflexer.js';
-import { define, curry, toString, escape, quote, unique, split, extendArray } from './lib/misc.js';
-
+import { escape } from './lib/misc.js';
+import { extendArray } from './lib/misc.js';
+import { Console } from 'console';
+import inspect from 'inspect';
+import { Lexer } from 'lexer';
+import * as std from 'std';
+#!/usr/bin/env qjsm
 extendArray();
 
 const NonWS = t => t.type != 'whitespace';
+
 const WS = t => t.type == 'whitespace';
 
 function parse(lexer, fn = (tok, arr) => {}, ...args) {

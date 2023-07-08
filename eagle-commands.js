@@ -1,8 +1,14 @@
-import { LineList, Rect, Point } from './lib/geom.js';
-import { BG, digit2color, GetColorBands, PartScales } from './lib/eda/colorCoding.js';
-export { GetColorBands } from './lib/eda/colorCoding.js';
-import { map, consume, reduce } from './lib/iterable.js';
+import { BG } from './lib/eda/colorCoding.js';
+import { digit2color } from './lib/eda/colorCoding.js';
+import { GetColorBands } from './lib/eda/colorCoding.js';
+import { LineList } from './lib/geom.js';
+import { Point } from './lib/geom.js';
+import { Rect } from './lib/geom.js';
+import { map } from './lib/iterable.js';
+import { reduce } from './lib/iterable.js';
+import { abbreviate } from './lib/misc.js';
 
+export { GetColorBands } from './lib/eda/colorCoding.js';
 export function GetParts(schematic = project.schematic, t = entries => Object.fromEntries(entries)) {
   return t(map(schematic.getAll('part'), elem => [elem.name, elem]));
 }
@@ -63,8 +69,8 @@ export function AlignItem(item) {
   geometry.add(diff);
   let changed = !diff.isNull();
   if(changed) {
-    console.log('before:', Util.abbreviate(before));
-    console.log('after:', Util.abbreviate(item.parentNode.toXML()));
+    console.log('before:', abbreviate(before));
+    console.log('after:', abbreviate(item.parentNode.toXML()));
     console.log('align\n', item.xpath(), '\n newPos:', newPos, '\n diff:', diff, '\n attr:', item.raw.attributes);
   }
   return changed;
@@ -92,11 +98,12 @@ export function scientific(value) {
 }
 
 const text = (() => {
-  const ansi = Util.coloring(true);
-  return (...args) => ansi.text(...args);
+  //const ansi = coloring(true);
+  return (...args) => args.join(''); //ansi.text(...args);
 })();
 
 const verticalRectangles = ['█', '□', '\u2588\u258d', '□', '▯'];
+
 const largeSquares = ['■', '□'];
 
 export function num2color(num, bg, square = false) {

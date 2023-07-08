@@ -1,17 +1,15 @@
-import { Contour } from 'opencv';
-import * as cv from 'opencv';
-import { Rect } from 'opencv';
-import { Point } from 'opencv';
-import { Size } from 'opencv';
-import { Mat } from 'opencv';
-import { PointIterator } from 'opencv';
-
 import { HSLA } from './lib/color/hsla.js';
+import { RGBA } from './lib/color/rgba.js';
 import { Line } from './lib/geom/line.js';
 import { Matrix } from './lib/geom/matrix.js';
 import { PointList } from './lib/geom/pointList.js';
-import { RGBA } from './lib/color/rgba.js';
 import inspect from './lib/objectInspect.js';
+import { Contour } from 'opencv';
+import { Mat } from 'opencv';
+import { Point } from 'opencv';
+import { Rect } from 'opencv';
+import { Size } from 'opencv';
+import * as cv from 'opencv';
 
 const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA, Matrix };
 

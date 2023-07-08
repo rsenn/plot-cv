@@ -1,8 +1,8 @@
-import React, { Fragment, h, render, Component } from './lib/dom/preactComponent.js';
-import extendArray from './quickjs/qjs-modules/lib/extendArray.js';
-import useAsyncIterator from './lib/hooks/useAsyncIterator.js';
+import { Component } from './lib/dom/preactComponent.js';
+import { h } from './lib/dom/preactComponent.js';
+import { render } from './lib/dom/preactComponent.js';
 import useAsyncGenerator from './lib/hooks/useAsyncGenerator.js';
-
+import extendArray from './quickjs/qjs-modules/lib/extendArray.js';
 extendArray();
 
 const Table = props =>

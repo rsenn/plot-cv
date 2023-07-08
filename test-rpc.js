@@ -1,25 +1,36 @@
-import * as std from 'std';
+import { client } from 'net';
+import { FormParser } from 'net';
+import { LLL_NOTICE } from 'net';
+import { LLL_USER } from 'net';
+import { LLL_WARN } from 'net';
+import { server } from 'net';
+import { setLog } from 'net';
 import * as os from 'os';
-import * as deep from './lib/deep.js';
-import require from 'require';
 import * as path from 'path';
-import { Console } from 'console';
-import REPL from './quickjs/qjs-modules/lib/repl.js';
-import inspect from './lib/objectInspect.js';
-import * as Terminal from './terminal.js';
-import * as fs from './lib/filesystem.js';
-import { escape } from './lib/misc.js';
-import { concat, toString, searchArrayBuffer } from 'misc';
-import { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, client, server, FormParser } from 'net';
-import { Socket } from './quickjs/qjs-ffi/lib/socket.js';
+import { dateToObject } from './date-helpers.js';
+import { parseDate } from './date-helpers.js';
+import { ReadBJSON } from './io-helpers.js';
+import { ReadFile } from './io-helpers.js';
+import { ReadJSON } from './io-helpers.js';
+import { WriteBJSON } from './io-helpers.js';
+import { WriteFile } from './io-helpers.js';
+import { WriteJSON } from './io-helpers.js';
+import * as deep from './lib/deep.js';
 import { EventEmitter } from './lib/events.js';
+import * as fs from './lib/filesystem.js';
+import inspect from './lib/objectInspect.js';
 import { Repeater } from './lib/repeater/repeater.js';
-import { ReadFile, WriteFile, ReadJSON, WriteJSON, ReadBJSON, WriteBJSON } from './io-helpers.js';
-import { parseDate, dateToObject } from './date-helpers.js';
-
-import rpc from './quickjs/qjs-net/js/rpc.js';
+import { Socket } from './quickjs/qjs-ffi/lib/socket.js';
+import REPL from './quickjs/qjs-modules/lib/repl.js';
 import * as rpc2 from './quickjs/qjs-net/js/rpc.js';
-
+import rpc from './quickjs/qjs-net/js/rpc.js';
+import * as Terminal from './terminal.js';
+import { Console } from 'console';
+import { concat } from 'misc';
+import { searchArrayBuffer } from 'misc';
+import { toString } from 'misc';
+import require from 'require';
+import * as std from 'std';
 globalThis.fs = fs;
 
 function main(...args) {

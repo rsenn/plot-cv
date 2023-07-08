@@ -1,4 +1,6 @@
-import { h, useState, useRef } from './lib/dom/preactComponent.js';
+import { h } from './lib/dom/preactComponent.js';
+import { useRef } from './lib/dom/preactComponent.js';
+import { useState } from './lib/dom/preactComponent.js';
 
 export function Ruler() {
   const refRuler = useRef();

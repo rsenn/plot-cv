@@ -1,11 +1,25 @@
-import { Mat, Point, Size, Rect, RotatedRect, Line, Contour, CV_32FC1, CV_32FC4, CV_8SC3, CV_8SC4, CV_8UC3, CV_8UC4 } from 'opencv';
-import * as cv from 'opencv';
-import * as std from 'std';
+import { className } from './lib/misc.js';
+import { isBrowser } from './lib/misc.js';
+import { repeat } from './lib/misc.js';
+import { tryCatch } from './lib/misc.js';
 import inspect from './lib/objectInspect.js';
 import * as path from './lib/path.js';
-import { className, isBrowser, repeat, tryCatch } from './lib/misc.js';
 import Console from 'console';
-
+import { Contour } from 'opencv';
+import { CV_32FC1 } from 'opencv';
+import { CV_32FC4 } from 'opencv';
+import { CV_8SC3 } from 'opencv';
+import { CV_8SC4 } from 'opencv';
+import { CV_8UC3 } from 'opencv';
+import { CV_8UC4 } from 'opencv';
+import { Line } from 'opencv';
+import { Mat } from 'opencv';
+import { Point } from 'opencv';
+import { Rect } from 'opencv';
+import { RotatedRect } from 'opencv';
+import { Size } from 'opencv';
+import * as cv from 'opencv';
+import * as std from 'std';
 function main(...args) {
   //std.print("TEST PRINT\n");
   globalThis.console = new Console({

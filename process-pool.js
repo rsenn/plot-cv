@@ -1,7 +1,8 @@
-import * as std from 'std';
-import * as os from 'os';
 import * as fs from 'fs';
-import { setInterval, toString } from 'util';
+import * as os from 'os';
+import { setInterval } from 'util';
+import { toString } from 'util';
+import * as std from 'std';
 
 export class ProcessPool {
   #processes = new Map();

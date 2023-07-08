@@ -1,9 +1,8 @@
+import { readFileSync } from 'fs';
 import Alea from './lib/alea.js';
 import cparse from './lib/cparse.js';
 import cpp from './lib/cpp.js';
 import * as path from './lib/path.js';
-import { readFileSync } from 'fs';
-
 let filesystem,
   childProcess,
   prng = new Alea(318);
@@ -25,6 +24,7 @@ const sources = [
   'quickjs/quickjs-libc.c',
   'quickjs/repl.c'
 ];
+
 const includeDirs = ['/opt/diet/include', '.'];
 
 const FindIncludeFunc = source => {

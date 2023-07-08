@@ -1,5 +1,5 @@
-import { define, abbreviate } from './lib/misc.js';
-
+import { abbreviate } from './lib/misc.js';
+import { define } from './lib/misc.js';
 function padTrunc(...args) {
   let [len, s] = args;
   const end = len >= 0;

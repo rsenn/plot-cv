@@ -1,5 +1,3 @@
-import { WritableStream } from './lib/stream/writableStream.js';
-
 
 async function main() {
 

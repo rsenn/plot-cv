@@ -1,12 +1,16 @@
-import PortableSpawn from './lib/spawn.js';
-import { AcquireReader } from './lib/stream/utils.js';
-import * as path from './lib/path.js';
+import { AstDump } from './clang-ast.js';
+import { GetLoc } from './clang-ast.js';
+import { GetTypeStr } from './clang-ast.js';
+import { Type } from './clang-ast.js';
+import { ReadBJSON } from './io-helpers.js';
+import { ReadFile } from './io-helpers.js';
+import { WriteBJSON } from './io-helpers.js';
+import { WriteFile } from './io-helpers.js';
 import deep from './lib/deep.js';
+import * as path from './lib/path.js';
+import PortableSpawn from './lib/spawn.js';
 import Tree from './lib/tree.js';
-import { Type, Compile, AstDump, NodeType, NodeName, GetLoc, GetTypeStr } from './clang-ast.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, LogCall } from './io-helpers.js';
 import { Spawn } from './os-helpers.js';
-
 //prettier-ignore
 let fs, spawn;
 

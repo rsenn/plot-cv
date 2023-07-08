@@ -1,5 +1,12 @@
-import { filter2D, Mat, invert, imread, imshow, waitKey, COLOR_BGR2GRAY, COLOR_GRAY2BGR, cvtColor, skeletonization } from 'opencv';
-
+import { COLOR_BGR2GRAY } from 'opencv';
+import { COLOR_GRAY2BGR } from 'opencv';
+import { cvtColor } from 'opencv';
+import { imread } from 'opencv';
+import { imshow } from 'opencv';
+import { invert } from 'opencv';
+import { Mat } from 'opencv';
+import { skeletonization } from 'opencv';
+import { waitKey } from 'opencv';
 function main(...args) {
   let m = imread('../an-tronics/images/fm/4tr.jpg');
 

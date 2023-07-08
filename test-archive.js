@@ -1,6 +1,4 @@
 import { Archive } from 'archive';
-import { toString } from 'misc';
-
 function main(...args) {
   console.log('Archive.version', Archive.version);
 

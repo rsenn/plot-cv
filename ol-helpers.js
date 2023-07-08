@@ -1,13 +1,29 @@
-import { Link, OLMap, TileLayer, XYZ, View, Point, Feature, VectorLayer, VectorSource, ZoomSlider, LineString, transform, Overlay } from './lib/ol.js';
-import { ObjectWrapper, BiDirMap } from './object-helpers.js';
-import { define, isObject, isFunction, isInstanceOf, ArrayFacade } from './lib/misc.js';
-import { add, closestOnCircle, closestOnSegment, createStringXY, degreesToStringHDMS, format, equals, rotate, scale, squaredDistance, distance, squaredDistanceToSegment, toStringHDMS, toStringXY, wrapX, getWorldsAway } from './openlayers/src/ol/coordinate.js';
-import { Attribution, Control, FullScreen, MousePosition, OverviewMap, Rotate, ScaleLine, Zoom, ZoomToExtent, defaults } from './openlayers/src/ol/control.js';
 import { Layer as HTMLLayer } from './lib/dom/layer.js';
+import { Fragment } from './lib/dom/preactComponent.js';
+import { h } from './lib/dom/preactComponent.js';
+import { toChildArray } from './lib/dom/preactComponent.js';
+import { ArrayFacade } from './lib/misc.js';
+import { define } from './lib/misc.js';
+import { isInstanceOf } from './lib/misc.js';
+import { Feature } from './lib/ol.js';
+import { LineString } from './lib/ol.js';
+import { Link } from './lib/ol.js';
+import { OLMap } from './lib/ol.js';
+import { Overlay } from './lib/ol.js';
+import { Point } from './lib/ol.js';
+import { TileLayer } from './lib/ol.js';
+import { transform } from './lib/ol.js';
+import { VectorLayer } from './lib/ol.js';
+import { VectorSource } from './lib/ol.js';
+import { View } from './lib/ol.js';
+import { XYZ } from './lib/ol.js';
+import { ZoomSlider } from './lib/ol.js';
+import { ObjectWrapper } from './object-helpers.js';
+import { Zoom } from './openlayers/src/ol/control.js';
+import { add } from './openlayers/src/ol/coordinate.js';
+import { distance } from './openlayers/src/ol/coordinate.js';
+import { parseGPSLocation } from './string-helpers.js';
 import LayerSwitcher /* , { BaseLayerOptions, GroupLayerOptions }*/ from './lib/ol-layerswitcher.js';
-import { default as Polygon, fromExtent as polygonFromExtent } from './openlayers/src/ol/geom/Polygon.js';
-import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
-import { h, forwardRef, Fragment, React, ReactComponent, Portal, toChildArray } from './lib/dom/preactComponent.js';
 
 export function TransformCoordinates(...args) {
   if(args.length == 2) return transform(args, 'EPSG:4326', 'EPSG:3857');

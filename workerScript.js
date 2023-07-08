@@ -1,6 +1,6 @@
-import { ReadFile, WriteFile } from './io-helpers.js';
-import { Worker } from 'os';
 import * as fs from 'fs';
+import { Worker } from 'os';
+import { WriteFile } from './io-helpers.js';
 
 export class WorkerScript {
   #worker = null;

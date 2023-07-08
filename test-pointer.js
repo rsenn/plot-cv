@@ -1,8 +1,7 @@
-import { Pointer } from 'pointer.dll';
 import { getMethodNames } from 'util';
-import * as deep from 'deep.dll';
 import { Console } from 'console';
-
+import * as deep from 'deep.dll';
+import { Pointer } from 'pointer.dll';
 function main(...args) {
   globalThis.console = new Console({
     stdout: process.stdout,

@@ -1,10 +1,9 @@
-import * as std from 'std';
+import { readAllSync } from 'fs';
 import { Worker } from 'os';
-import { readerSync, readAllSync } from 'fs';
 import { Spawn } from './os-helpers.js';
-import inspect from 'inspect';
 import { Console } from 'console';
-
+import inspect from 'inspect';
+import * as std from 'std';
 globalThis.console = new Console(std.open('workertest.log', 'a+'), {
   inspectOptions: {
     compact: 2,

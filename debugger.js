@@ -1,8 +1,12 @@
-import { toString, ansiStyles, assert, define, error, isFunction } from './lib/misc.js';
-import { consume as consumeSync } from './lib/iterator/helpers.js';
-import { Pointer } from './lib/pointer.js';
 import * as deep from './lib/deep.js';
-
+import { consume as consumeSync } from './lib/iterator/helpers.js';
+import { ansiStyles } from './lib/misc.js';
+import { assert } from './lib/misc.js';
+import { define } from './lib/misc.js';
+import { error } from './lib/misc.js';
+import { isFunction } from './lib/misc.js';
+import { toString } from './lib/misc.js';
+import { Pointer } from './lib/pointer.js';
 globalThis.process ??= { env: {} };
 
 var worker;
@@ -11,6 +15,7 @@ let sockets = (globalThis.sockets ??= new Set());
 let listeners = (globalThis.listeners = {});
 
 const { redBright, greenBright, cyanBright, yellowBright, magentaBright } = ansiStyles;
+
 const syntaxPalette = [{ open: '\x1b[0m' }, redBright, greenBright, yellowBright, cyanBright, magentaBright].map(c => c.open);
 
 export function TrivialTokenizer(input) {

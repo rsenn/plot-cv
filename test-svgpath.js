@@ -1,7 +1,9 @@
+import { Matrix } from './lib/dom.js';
+import { Point } from './lib/dom.js';
+import { SVG } from './lib/dom.js';
+import { makeAbsolute } from './lib/svg/path-parser.js';
+import { parseSVG } from './lib/svg/path-parser.js';
 import require from 'require';
-import { HSLA, isNumber, Unit, ScalarValue, ElementTransformation, CSSTransformSetters, Transition, TransitionList, RandomColor, Point, Size, Line, Rect, PointList, Polyline, Matrix, BBox, TRBL, Timer, Tree, Node, XPath, Element, CSS, SVG, Container, Layer, Select, ElementPosProps, Align, default as dom } from './lib/dom.js';
-import { parseSVG, makeAbsolute } from './lib/svg/path-parser.js';
-import { Console } from 'console';
 
 const SvgPath = require('./lib/svg/path.js');
 const PointAtLength = require('point-at-length');

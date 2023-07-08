@@ -1,6 +1,5 @@
-import tokenRules from './token-rules.js';
 import { Lexer } from './lib/lexer.js';
-
+import tokenRules from './token-rules.js';
 function makeLexer(...args) {
   var lexer = new Lexer(...args);
 

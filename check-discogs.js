@@ -1,11 +1,12 @@
-import * as cv from 'opencv';
+import { spawn } from 'child_process';
+import { WNOHANG } from 'child_process';
 import * as path from 'path';
-import Console from 'console';
 import { glob } from 'util';
 import { LoadConfig } from './config.js';
-import { FetchURL, ReadFile, ReadXML, WriteJSON } from './io-helpers.js';
-import { spawn, WNOHANG } from 'child_process';
-
+import { FetchURL } from './io-helpers.js';
+import { ReadFile } from './io-helpers.js';
+import { WriteJSON } from './io-helpers.js';
+import Console from 'console';
 function ReadCallback(fd, fn = data => {}) {
   let buf = new ArrayBuffer(1024);
   setReadHandler(fd, () => {

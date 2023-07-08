@@ -1,5 +1,10 @@
-import { choice, seq, token, char, regex, option, any, many, eof, ignore, concat, invert } from './lib/parse/fn.js';
-
+import { any } from './lib/parse/fn.js';
+import { choice } from './lib/parse/fn.js';
+import { eof } from './lib/parse/fn.js';
+import { ignore } from './lib/parse/fn.js';
+import { regex } from './lib/parse/fn.js';
+import { seq } from './lib/parse/fn.js';
+import { token } from './lib/parse/fn.js';
 function wrap(parser, name) {
   return (str, pos) => {
     let r = parser(str, pos);

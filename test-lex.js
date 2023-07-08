@@ -1,5 +1,4 @@
 import Lexer from './lib/ecmascript/lexer.js';
-
 let args = scriptArgs;
 if(args.length == 0) args.push('-');
 

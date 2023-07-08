@@ -1,9 +1,8 @@
-#!/usr/bin/env qjsm
-import { Console } from 'console';
+import { spawn } from 'child_process';
 import * as path from 'path';
-import { exec, spawn } from 'child_process';
 import { getOpt } from 'util';
-
+import { Console } from 'console';
+#!/usr/bin/env qjsm
 let optionsArray = [{ front: true }, { back: true }, { side: 'outline' }, { drill: true }];
 
 export function EagleToGerber(boardFile, opts = {}) {

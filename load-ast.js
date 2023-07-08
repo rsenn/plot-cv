@@ -1,10 +1,11 @@
-import * as std from 'std';
+import { existsSync } from 'fs';
+import { readerSync } from 'fs';
 import { Worker } from 'os';
-import { existsSync, readerSync } from 'fs';
+import { gettid } from 'util';
+import { toString } from 'util';
 import { Spawn } from './os-helpers.js';
 import { Console } from 'console';
-import { toString, gettid } from 'util';
-
+import * as std from 'std';
 globalThis.console = new Console({
   inspectOptions: {
     compact: 2,

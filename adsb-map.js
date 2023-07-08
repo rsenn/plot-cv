@@ -1,34 +1,43 @@
-import OLMap from './openlayers/src/ol/Map.js';
-import View from './openlayers/src/ol/View.js';
-import TileLayer from './openlayers/src/ol/layer/Tile.js';
-import Layer from './openlayers/src/ol/layer/Layer.js';
-import Point from './openlayers/src/ol/geom/Point.js';
-import Overlay from './openlayers/src/ol/Overlay.js';
-import XYZ from './openlayers/src/ol/source/XYZ.js';
-import OSM from './openlayers/src/ol/source/OSM.js';
-import Feature from './openlayers/src/ol/Feature.js';
-import Projection from './openlayers/src/ol/proj/Projection.js';
-import VectorLayer from './openlayers/src/ol/layer/Vector.js';
-import VectorSource from './openlayers/src/ol/source/Vector.js';
-import MultiPoint from './openlayers/src/ol/geom/MultiPoint.js';
-import Polygon from './openlayers/src/ol/geom/Polygon.js';
-import LineString from './openlayers/src/ol/geom/LineString.js';
-import Geolocation from './openlayers/src/ol/Geolocation.js';
-import GeoJSON from './openlayers/src/ol/format/GeoJSON.js';
-import { composeCssTransform } from './openlayers/src/ol/transform.js';
-import Icon from './openlayers/src/ol/style/Icon.js';
-import { Fill, RegularShape, Stroke, Style, Circle as CircleStyle, Text as TextStyle } from './openlayers/src/ol/style.js';
-import { fromLonLat } from './openlayers/src/ol/proj.js';
-import { ZoomSlider } from './openlayers/src/ol/control.js';
-import { addCoordinateTransforms, addProjection, transform } from './openlayers/src/ol/proj.js';
-import { getVectorContext } from './openlayers/src/ol/render.js';
-import PlainDraggable from './lib/plain-draggable.js';
-import AnimSequence from './lib/anim-sequence.js';
-import extendArray from './quickjs/qjs-modules/lib/extendArray.js';
-
-import { quarterDay, Time, TimeToStr, FilenameToTime, NextFile, DailyPhase, PhaseFile, DateToUnix, CurrentFile } from './adsb-common.js';
+import { CurrentFile } from './adsb-common.js';
+import { DailyPhase } from './adsb-common.js';
+import { DateToUnix } from './adsb-common.js';
+import { PhaseFile } from './adsb-common.js';
+import { Time } from './adsb-common.js';
+import { TimeToStr } from './adsb-common.js';
 import { memoize } from './lib/misc.js';
-
+import PlainDraggable from './lib/plain-draggable.js';
+import { ZoomSlider } from './openlayers/src/ol/control.js';
+import Feature from './openlayers/src/ol/Feature.js';
+import GeoJSON from './openlayers/src/ol/format/GeoJSON.js';
+import Geolocation from './openlayers/src/ol/Geolocation.js';
+import LineString from './openlayers/src/ol/geom/LineString.js';
+import MultiPoint from './openlayers/src/ol/geom/MultiPoint.js';
+import Point from './openlayers/src/ol/geom/Point.js';
+import Polygon from './openlayers/src/ol/geom/Polygon.js';
+import Layer from './openlayers/src/ol/layer/Layer.js';
+import TileLayer from './openlayers/src/ol/layer/Tile.js';
+import VectorLayer from './openlayers/src/ol/layer/Vector.js';
+import OLMap from './openlayers/src/ol/Map.js';
+import Overlay from './openlayers/src/ol/Overlay.js';
+import { addCoordinateTransforms } from './openlayers/src/ol/proj.js';
+import { addProjection } from './openlayers/src/ol/proj.js';
+import { fromLonLat } from './openlayers/src/ol/proj.js';
+import { transform } from './openlayers/src/ol/proj.js';
+import Projection from './openlayers/src/ol/proj/Projection.js';
+import { getVectorContext } from './openlayers/src/ol/render.js';
+import OSM from './openlayers/src/ol/source/OSM.js';
+import VectorSource from './openlayers/src/ol/source/Vector.js';
+import XYZ from './openlayers/src/ol/source/XYZ.js';
+import { Circle as CircleStyle } from './openlayers/src/ol/style.js';
+import { Fill } from './openlayers/src/ol/style.js';
+import { RegularShape } from './openlayers/src/ol/style.js';
+import { Stroke } from './openlayers/src/ol/style.js';
+import { Style } from './openlayers/src/ol/style.js';
+import { Text as TextStyle } from './openlayers/src/ol/style.js';
+import Icon from './openlayers/src/ol/style/Icon.js';
+import { composeCssTransform } from './openlayers/src/ol/transform.js';
+import View from './openlayers/src/ol/View.js';
+import extendArray from './quickjs/qjs-modules/lib/extendArray.js';
 extendArray(Array.prototype);
 
 let data = (globalThis.data = []);
@@ -669,6 +678,7 @@ Object.assign(globalThis, {
 
 let planes = (globalThis.planes = []);
 let d = Date.parse('2022-04-19T14:59:00Z');
+
 const keys = [
   'icao24',
   'callsign',

@@ -1,6 +1,4 @@
 import { Util } from './lib/util.js';
-import { sleep } from 'os';
-
 /*console.log(Util.escape(read('/proc/self/cmdline')));
 console.log(Util.escape(read('/etc/hosts')));*/
 //console.log(globalThis.options());

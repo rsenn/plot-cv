@@ -1,7 +1,8 @@
+import { assert } from './lib/tinyTest.js';
+import { assertEquals } from './lib/tinyTest.js';
+import { run } from './lib/tinyTest.js';
+import TinyTest from './lib/tinyTest.js';
 import inspect from 'inspect';
-
-import TinyTest, { run, assert, assertEquals } from './lib/tinyTest.js';
-
 let tmpdir;
 let buffer, buffer2;
 let handle;

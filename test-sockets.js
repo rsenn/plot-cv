@@ -1,13 +1,15 @@
-import * as std from 'std';
+import * as fs from 'fs';
 import * as os from 'os';
-import * as deep from 'deep';
-import * as path from 'path';
-import { define, toArrayBuffer, toString, quote, escape } from 'util';
+import { escape } from 'util';
+import { toString } from 'util';
 import { Console } from 'console';
 import inspect from 'inspect';
-import * as fs from 'fs';
-import { Socket, AsyncSocket, SockAddr, AF_INET, SOCK_STREAM, IPPROTO_TCP } from 'sockets';
-
+import { AF_INET } from 'sockets';
+import { AsyncSocket } from 'sockets';
+import { IPPROTO_TCP } from 'sockets';
+import { SOCK_STREAM } from 'sockets';
+import { SockAddr } from 'sockets';
+import { Socket } from 'sockets';
 globalThis.fs = fs;
 
 async function main(...args) {

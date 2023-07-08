@@ -1,9 +1,8 @@
-import { ReadFile, WriteFile } from './io-helpers.js';
-import { parseScript } from 'meriyah';
-import { Console } from 'console';
-import fs from 'fs';
 import * as path from 'path';
-
+import { ReadFile } from './io-helpers.js';
+import { WriteFile } from './io-helpers.js';
+import { Console } from 'console';
+import { parseScript } from 'meriyah';
 function main(...args) {
   globalThis.console = new Console({
     stdout: process.stdout,

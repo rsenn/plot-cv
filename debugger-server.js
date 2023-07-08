@@ -1,30 +1,78 @@
-import * as std from 'std';
+import { existsSync } from 'fs';
+import { reader } from 'fs';
+import { readerSync } from 'fs';
+import { readSync } from 'fs';
+import { writeSync } from 'fs';
+import { createServer } from 'net';
+import { getSessions } from 'net';
+import { LLL_INFO } from 'net';
+import { LLL_NOTICE } from 'net';
+import { LLL_USER } from 'net';
+import { LLL_WARN } from 'net';
+import { logLevels } from 'net';
+import { setLog } from 'net';
+import { Worker } from 'os';
 import * as os from 'os';
-import * as deep from './lib/deep.js';
-import { basename, extname, relative, absolute } from './lib/path.js';
-import { setTimeout, setInterval, clearInterval } from 'timers';
-import { mod, tryCatch, once, filterKeys, isObject, bindMethods, decorate, atexit, getpid, toString, escape, quote, define, extendArray, getOpt, memoize, lazyProperties, propertyLookup, types, btoa } from 'util';
-import { Console } from './quickjs/qjs-modules/lib/console.js';
-import { REPL } from './quickjs/qjs-modules/lib/repl.js';
-import inspect from './lib/objectInspect.js';
-import * as Terminal from 'terminal';
-import { Location } from 'location';
-import { existsSync, readSync, writeSync, reader, readerSync } from 'fs';
-import { setLog, logLevels, getSessions, LLL_USER, LLL_INFO, LLL_NOTICE, LLL_WARN, createServer } from 'net';
+import { clearInterval } from 'timers';
+import { setInterval } from 'timers';
+import { setTimeout } from 'timers';
+import { atexit } from 'util';
+import { bindMethods } from 'util';
+import { btoa } from 'util';
+import { decorate } from 'util';
+import { define } from 'util';
+import { extendArray } from 'util';
+import { filterKeys } from 'util';
+import { getOpt } from 'util';
+import { getpid } from 'util';
+import { gettid } from 'util';
+import { isObject } from 'util';
+import { lazyProperties } from 'util';
+import { memoize } from 'util';
+import { mod } from 'util';
+import { once } from 'util';
+import { propertyLookup } from 'util';
+import { quote } from 'util';
+import { toString } from 'util';
+import { tryCatch } from 'util';
+import { types } from 'util';
+import { List } from './cli-helpers.js';
+import { Table } from './cli-helpers.js';
+import { DebuggerDispatcher } from './debugger.js';
+import { FindFunctions } from './debugger.js';
+import { GetFunctionName } from './debugger.js';
+import { TrivialSyntaxHighlighter } from './debugger.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
-import { TrivialSyntaxHighlighter, DebuggerDispatcher, GetArguments, GetFunctionName, FindFunctions } from './debugger.js';
-import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
-import { ReadJSON, WriteJSON, ReadFile } from './io-helpers.js';
+import { ReadFile } from './io-helpers.js';
+import { ReadJSON } from './io-helpers.js';
+import { WriteJSON } from './io-helpers.js';
+import { consume } from './lib/async/helpers.js';
+import { map } from './lib/async/helpers.js';
+import inspect from './lib/objectInspect.js';
+import { absolute } from './lib/path.js';
+import { basename } from './lib/path.js';
+import { extname } from './lib/path.js';
+import { relative } from './lib/path.js';
+import { Repeater } from './lib/repeater/repeater.js';
 import { Spawn } from './os-helpers.js';
-import { Table, List } from './cli-helpers.js';
-import { map, consume } from './lib/async/helpers.js';
-import { AsyncSocket, SockAddr, AF_INET, SOCK_STREAM, IPPROTO_TCP } from 'sockets';
-import { RepeaterOverflowError, FixedBuffer, SlidingBuffer, DroppingBuffer, MAX_QUEUE_LENGTH, Repeater } from './lib/repeater/repeater.js';
+import { F_GETFL } from './quickjs/qjs-ffi/lib/fcntl.js';
+import { F_SETFL } from './quickjs/qjs-ffi/lib/fcntl.js';
+import { fcntl } from './quickjs/qjs-ffi/lib/fcntl.js';
+import { O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
+import { REPL } from './quickjs/qjs-modules/lib/repl.js';
+import { Console } from 'console';
+import { Location } from 'location';
 import process from 'process';
-
+import { AF_INET } from 'sockets';
+import { AsyncSocket } from 'sockets';
+import { IPPROTO_TCP } from 'sockets';
+import { SOCK_STREAM } from 'sockets';
+import { SockAddr } from 'sockets';
+import * as std from 'std';
 extendArray(Array.prototype);
 
 const scriptName = (arg = scriptArgs[0]) => basename(arg, extname(arg));
+
 const children = new Set();
 
 atexit(() => {
@@ -89,12 +137,6 @@ function GetLoc(node) {
 
 /*export async function LoadAST(source) {
   const script = `import * as std from 'std';
-import { Worker } from 'os';
-import { existsSync, readerSync } from 'fs';
-import { Spawn } from './os-helpers.js';
-import { Console } from 'console';
-import { toString, gettid } from 'util';
-
 globalThis.console = new Console({ inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 200, prefix: '\\x1b[2K\\x1b[G\\x1b[1;33mWORKER\\x1b[0m ' } });
 
 const worker = Worker.parent;
