@@ -7,7 +7,7 @@
 #include "quickjs/libbf.h"
 #include "quickjs/quickjs.h"
 #include "quickjs/cutils.c"
-#include "quickjs/quickjs.c"
+#include "quickjs/qjs-modules/quickjs-internal.h"
 
 int
 main(int argc, char* argv[]) {
@@ -71,6 +71,10 @@ main(int argc, char* argv[]) {
   printf("JS_CLASS_ASYNC_FROM_SYNC_ITERATOR = %d\n", JS_CLASS_ASYNC_FROM_SYNC_ITERATOR);
   printf("JS_CLASS_ASYNC_GENERATOR_FUNCTION = %d\n", JS_CLASS_ASYNC_GENERATOR_FUNCTION);
   printf("JS_CLASS_ASYNC_GENERATOR = %d\n", JS_CLASS_ASYNC_GENERATOR);
+  int divi=-9, quot=10, result;
+
+  result=((divi % quot) + quot) % quot;
+  printf("%d %% %d = %d\n", divi,quot,result);
 
   return 0;
 }

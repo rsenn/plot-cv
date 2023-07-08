@@ -96,11 +96,17 @@ export function ReadJSON(filename) {
   return data ? JSON.parse(data) : null;
 }
 
-export function ReadXML(filename) {
+export async function ReadXML(filename, ...args) {
+  const { read } = await import('xml');
   let data = ReadAny(filename, false);
 
   if(data) debug(`ReadXML: ${data.length} bytes read from '${filename}'`);
-  return data ? xml.read(data, filename, ...args) : null;
+  return data ? read(data, filename, ...args) : null;
+}
+
+export async function WriteXML(name, data, ...args) {
+  const { write } = await import('xml');
+  return WriteAny(name, write(data, ...args));
 }
 
 export function WriteFile(file, data) {
@@ -143,10 +149,6 @@ export function WriteJSON(name, data, ...args) {
   if(typeof compact == 'boolean') args = compact ? [] : [null, 2];
 
   return WriteAny(name, JSON.stringify(data, ...args));
-}
-
-export function WriteXML(name, data, ...args) {
-  return WriteAny(name, xml.write(data, ...args));
 }
 
 export async function ReadBJSON(filename) {

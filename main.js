@@ -62,6 +62,7 @@ import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //c
 import commands, { ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ClearCache, FetchURL } from './commands.js';
 import { NormalizeResponse, ResponseData, FetchCached } from './lib/fetch.js';
 import { MutableXPath, findXPath, parseXPath, XPath, ImmutableXPath } from './lib/xml/xpath.js';
+import { useDoubleClick } from './lib/hooks/useDoubleClick.js';
 
 const {
   Align,
@@ -1919,7 +1920,9 @@ const AppMain = (window.onload = async () => {
   const Layer = ({ title, name, label, i, color, element, className, ...props }) => {
     let setVisible = props.visible || element.handlers.visible,
       visible = useTrkl(setVisible);
-    const isVisible = visible === true || (visible !== false && is.on(visible));
+
+    const isVisible = visible === true || (visible !== false && ({ yes: true }) [visible]);
+    
     if(isObject(element) && 'visible' in element) setVisible = value => (element.visible = value);
     let [solo, setSolo] = useState(null);
 
