@@ -289,6 +289,11 @@ const elementDefaultAttributes = {
   'stroke-width': 0.1
 };
 
+const is = {
+  on(arg) { return ['yes','1','true','on'].indexOf(arg+'') != -1; },
+  off(arg) { return !this.on(arg); }
+};
+
 /* prettier-ignore */
 //extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement }, { toXML, XmlObject, XmlAttr }, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon, Circle } );
 const Timer = { ...Timers, once: dom.Timer };
@@ -2151,7 +2156,7 @@ const AppMain = (window.onload = async () => {
             //console.log('Layer.onClick', { visibleLayers, hiddenLayers, solo });
 
             if(solo) {
-              onMouseDown.clear();
+             //onMouseDown.clear();
               let restoreData = solo;
 
               setSolo(null);
