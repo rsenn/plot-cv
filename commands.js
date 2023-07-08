@@ -350,7 +350,7 @@ export async function FetchURL(url, allOpts = {}) {
     url = url.replace(/.*tmp\//g, '/tmp/');
   } else if(/^\//.test(url)) {
   } else if(/:\/\//.test(url)) {
-  } else {
+  } else if(!/[\?&=]/.test(url)) {
     url = '/static/' + url;
   }
   try {

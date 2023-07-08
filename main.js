@@ -369,11 +369,13 @@ async function LoadFile(file) {
   console.log(`LoadFile ${name}`);
 
   // url = /:\/\//.test(url) ? url : /^(tmp|data|static)\//.test(url) ? '/' + url : `/data/${name}`;
-  url = `/file?action=load&file=${file}`; // /:\/\//.test(url) ? url : /^(tmp|data|static)\//.test(url) ? '/' + url : `/data/${name}`;
+  url = `file?action=load&file=${file}`; // /:\/\//.test(url) ? url : /^(tmp|data|static)\//.test(url) ? '/' + url : `/data/${name}`;
 
   let response = await FetchURL(url);
   let xml = await response.text();
+
   //console.log(`LoadFile ${name}`, { xml });
+  
   let doc = new EagleDocument(xml, null, name, null, filesystem);
 
   //console.log(`LoadFile ${name}`, { doc, xml });
@@ -1318,7 +1320,9 @@ const MakeFitAction = index => async event => {
   oldSize = matrix.transformRect(oldSize);
   let topBar = Element.rect('.buttons');
   let clientArea = Element.rect('#main');
-  console.log('MakeFitAction', clientArea);
+
+  //console.log('MakeFitAction', clientArea);
+  
   let f = oldSize.fit(clientArea);
   let factors = new Size(oldSize).fitFactors(new Size(clientArea));
   let t = new TransformationList().scale(factors[index], factors[index]);
