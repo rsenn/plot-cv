@@ -96,7 +96,7 @@ export async function BoardToGerber(proj, opts = { fetch: true }) {
   let params = { ...opts, board: proj.name, raw: false },
     response,
     result;
-  response = await FetchURL(`/gerber/${opts.side ? '?side=' + opts.side : ''}`, {
+  response = await FetchURL(`gerber/${opts.side ? '?side=' + opts.side : ''}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(params)
@@ -137,7 +137,7 @@ export async function GerberToGcode(project, allOpts = {}) {
   let response,
     result = (project.gcode[side] = {});
   if(typeof side == 'string') request[side] = 1;
-  response = await FetchURL(`/gcode${side ? '?side=' + side : ''}`, {
+  response = await FetchURL(`gcode${side ? '?side=' + side : ''}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(request)

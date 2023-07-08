@@ -607,7 +607,7 @@ const ToolTipFn = ({ name, data, ...item }) => {
   return tooltip;
 };
 
-export const FileList = ({ files, onChange, onActive, filter, showSearch, focusSearch, currentInput, changeInput, tag = 'div', listTag = 'div', sortKey, sortOrder, makeSortCompare, ...props }) => {
+export const FileList = ({ files, onChange, onActive, filter, showSearch, focusSearch, currentInput, changeInput, tag = 'div', listTag = 'div', sortKey, sortOrder, makeSortCompare,children, ...props }) => {
   const [active, setActive] = useState(true);
   const [items, setItems] = useState(files());
   const key = useTrkl(sortKey);
@@ -621,7 +621,7 @@ export const FileList = ({ files, onChange, onActive, filter, showSearch, focusS
   onActive.subscribe(value => setActive(value));
   const className = classNames('sidebar', active ? 'active' : 'inactive');
 
-  return h(tag, { className }, [
+  return h(tag, { className }, [...children,
     h(Conditional, {
       component: EditBox,
       type: 'form',

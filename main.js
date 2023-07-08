@@ -440,8 +440,11 @@ async function LoadSVG(filename) {
   return element.firstElementChild;
 }
 
-async function LoadImage(filename) {
+  function LoadImage(filename) {
   let element = Element.create('img', { src: filename }, 'body');
+
+  Element.setCSS(element, {  position: 'fixed', bottom: '4em', right: '4em',   'z-index': 100000000 } )
+
   return element;
 }
 
@@ -1495,7 +1498,7 @@ const AppMain = (window.onload = async () => {
  CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes , Wire, Instance, SchematicSymbol,  Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer,EagleElementProxy,  BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, 
  classNames , BinaryTree, normalizePath, reverseNormalizedPath, reverseSubPath, reversePath, ...commands,  DEBUG, objectInspect, SvgPath, renderToString , ...ecmascript };
 
-  Object.assign(globalThis, { roundTo, define, properties, className, functionName, keys, entries, values, tryCatch, tryFunction });
+  Object.assign(globalThis, { open,ClearCache,brcache, lscache, BaseCache, CachedFetch,FetchURL, roundTo, define, properties, className, functionName, keys, entries, values, tryCatch, tryFunction });
 
   const localFunctions = {
     PackageChildren,
@@ -2305,42 +2308,7 @@ const AppMain = (window.onload = async () => {
       }),
       h(Consumer, {})
     ]),
-    h(
-      ButtonGroup,
-      {
-        className: 'small',
-        onChange(event) {
-          let { currentTarget, target } = event;
-          let key = target.getAttribute('data-key');
-
-          console.log('Sort order changed', key);
-          config.sortKey(key);
-        }
-      },
-      [
-        props =>
-          h('img', {
-            src: 'static/svg/sort-name-2.svg',
-            alt: 'Name',
-            'data-key': 'name',
-            ...props
-          }),
-        props =>
-          h('img', {
-            src: 'static/svg/sort-time-2.svg',
-            alt: 'Modification time',
-            'data-key': 'mtime',
-            ...props
-          }),
-        props =>
-          h('img', {
-            src: 'static/svg/sort-size-2.svg',
-            alt: 'Size',
-            'data-key': 'size',
-            ...props
-          })
-      ]
-    ),
+    
     /*  h('div', { style: { display: 'inline-flex', flexFlow: 'row', alignItems: 'stretch', height: '100px', padding: '10px' } }, [
         h(ColorWheel, {}),
         h(Slider, {
@@ -2397,7 +2365,42 @@ const AppMain = (window.onload = async () => {
               return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
             },
       currentInput: currentSearch
-    }),
+    }, [h(
+      ButtonGroup,
+      {
+        className: 'small',
+        onChange(event) {
+          let { currentTarget, target } = event;
+          let key = target.getAttribute('data-key');
+
+          console.log('Sort order changed', key);
+          config.sortKey(key);
+        }
+      },
+      [
+        props =>
+          h('img', {
+            src: 'static/svg/sort-name-2.svg',
+            alt: 'Name',
+            'data-key': 'name',
+            ...props
+          }),
+        props =>
+          h('img', {
+            src: 'static/svg/sort-time-2.svg',
+            alt: 'Modification time',
+            'data-key': 'mtime',
+            ...props
+          }),
+        props =>
+          h('img', {
+            src: 'static/svg/sort-size-2.svg',
+            alt: 'Size',
+            'data-key': 'size',
+            ...props
+          })
+      ]
+    )]),
 
     h(CrossHair, { ...crosshair }),
     h(FloatingPanel, { onSize: config.logSize, className: 'no-select', id: 'console' }, [
