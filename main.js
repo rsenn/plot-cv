@@ -290,8 +290,12 @@ const elementDefaultAttributes = {
 };
 
 const is = {
-  on(arg) { return ['yes','1','true','on'].indexOf(arg+'') != -1; },
-  off(arg) { return !this.on(arg); }
+  on(arg) {
+    return ['yes', '1', 'true', 'on'].indexOf(arg + '') != -1;
+  },
+  off(arg) {
+    return !this.on(arg);
+  }
 };
 
 /* prettier-ignore */
@@ -2156,7 +2160,7 @@ const AppMain = (window.onload = async () => {
             //console.log('Layer.onClick', { visibleLayers, hiddenLayers, solo });
 
             if(solo) {
-             //onMouseDown.clear();
+              //onMouseDown.clear();
               let restoreData = solo;
 
               setSolo(null);

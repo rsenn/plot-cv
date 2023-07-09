@@ -1,3 +1,4 @@
+#!/usr/bin/env qjsm
 import child_process from 'child_process';
 import * as fs from 'fs';
 import { className } from 'util';
@@ -169,7 +170,7 @@ import { Predicate } from 'predicate';
 import { REPL } from 'repl';
 import { read as fromXML } from 'xml';
 import { write as writeXML } from 'xml';
-#!/usr/bin/env qjsm
+
 let cmdhist;
 
 extendArray();
@@ -575,7 +576,6 @@ function main(...args) {
     fixValue,
     fixValues,
     coordMap,
-    Util,
     LineList,
     Point,
     Circle,
