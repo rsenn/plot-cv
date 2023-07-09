@@ -13,7 +13,7 @@ export function SaveConfig(configObj) {
 }
 
 export function LoadConfig(name = process.argv[1].replace(/\.js$/, '.config.json')) {
-  let str = ReadFile(name, 'utf-8');
+  let str = ReadFile(name, false);
   let configObj = JSON.parse(str ?? '{}');
 
   configObj = Object.fromEntries(
