@@ -30,7 +30,9 @@ export const Ruler = ({ handleChange, style = {}, class: className }) => {
 
   handlers.subscribe(value => {
     if(!commands && isObject(value)) commands = value;
-    /*console.log('trkl handlers value =', value);
+// ========================================================================== //
+//     /*console.log('trkl handlers value =', value);P
+
     //console.log('commands =', commands);*/
   });
 

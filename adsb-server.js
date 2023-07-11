@@ -12,7 +12,7 @@ import { setInterval } from 'timers';
 import { atexit } from 'util';
 import { daemon } from 'util';
 import { define } from 'util';
-import { extendArray } from 'util';
+import extendArray from 'extendArray';
 import { getOpt } from 'util';
 import { glob } from 'util';
 import { IN_MODIFY } from 'util';
