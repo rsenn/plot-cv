@@ -1,35 +1,11 @@
-import { client } from 'net';
-import { LLL_USER } from 'net';
-import { logLevels } from 'net';
-import { setLog } from 'net';
-import { URL } from 'net';
+import { client, LLL_USER, logLevels, setLog, URL } from 'net';
 import * as os from 'os';
 import { escape } from 'util';
-import { extendArray } from 'util';
-import { Repeater } from './lib/repeater/repeater.js';
-import { Document } from './quickjs/qjs-modules/lib/dom.js';
-import { Node } from './quickjs/qjs-modules/lib/dom.js';
-import { Parser } from './quickjs/qjs-modules/lib/dom.js';
+import { Node, Parser } from './quickjs/qjs-modules/lib/dom.js';
 import Console from 'console';
-<<<<<<< HEAD
-import { toArrayBuffer, define, escape, quote } from 'util';
-import inspect from 'inspect';
-import { read as readXML, write as writeXML } from 'xml';
-import { nodeTypes, Parser, Node, NodeList, NamedNodeMap, Element, Document, Attr, Text, TokenList } from './quickjs/qjs-modules/lib/dom.js';
-import { get, set, unset, select, find, iterate, RETURN_PATH, RETURN_VALUE_PATH, RETURN_PATH_VALUE } from 'deep';
-import  extendArray from 'extendArray';
-import { Repeater } from './lib/repeater/repeater.js';
+import { get, select, RETURN_PATH_VALUE } from 'deep';
+import extendArray from 'extendArray';
 
-=======
-import { find } from 'deep';
-import { get } from 'deep';
-import { RETURN_PATH } from 'deep';
-import { RETURN_PATH_VALUE } from 'deep';
-import { select } from 'deep';
-import { set } from 'deep';
-import inspect from 'inspect';
-import * as std from 'std';
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
 extendArray(Array.prototype);
 
 const SearchEngines = [
