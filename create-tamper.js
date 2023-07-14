@@ -1,38 +1,12 @@
-<<<<<<< HEAD
-import inspect from 'inspect';
-import { define, isObject, memoize, unique } from './lib/misc.js';
-import { ECMAScriptParser, Printer, PathReplacer, ObjectPattern, ObjectExpression, ImportDeclaration, ExportNamedDeclaration, VariableDeclaration, estree, ESNode, Literal } from './lib/ecmascript.js';
-import { ImmutablePath } from './lib/json.js';
-import deep from './lib/deep.js';
-=======
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
+#!/usr/bin/env qjsm
 import filesystem from 'fs';
 import { SortedMap } from './lib/container/sortedMap.js';
-<<<<<<< HEAD
-#!/usr/bin/env qjsm
-
-
-=======
 import deep from './lib/deep.js';
-import { ECMAScriptParser } from './lib/ecmascript.js';
-import { ESNode } from './lib/ecmascript.js';
-import { ExportNamedDeclaration } from './lib/ecmascript.js';
-import { ImportDeclaration } from './lib/ecmascript.js';
-import { Literal } from './lib/ecmascript.js';
-import { ObjectExpression } from './lib/ecmascript.js';
-import { ObjectPattern } from './lib/ecmascript.js';
-import { PathReplacer } from './lib/ecmascript.js';
-import { Printer } from './lib/ecmascript.js';
-import { VariableDeclaration } from './lib/ecmascript.js';
+import { ECMAScriptParser, ESNode, ExportNamedDeclaration, ImportDeclaration, Literal, ObjectExpression, ObjectPattern, PathReplacer, Printer, VariableDeclaration } from './lib/ecmascript.js';
 import { ImmutablePath } from './lib/json.js';
-import { define } from './lib/misc.js';
-import { isObject } from './lib/misc.js';
-import { memoize } from './lib/misc.js';
-import { unique } from './lib/misc.js';
+import { define, isObject, memoize, unique } from './lib/misc.js';
 import * as path from './lib/path.js';
-import inspect from 'inspect';
-#!/usr/bin/env qjsm
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
+
 const code = `export const Progress = ({ className, percent, ...props }) => html\`<\x24{Overlay} className=\x24{classNames('progress', 'center', className)} text=\x24{percent + '%'} style=\x24{{
   position: 'relative',
   width: '100%',

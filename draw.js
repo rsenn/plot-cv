@@ -1,40 +1,20 @@
-<<<<<<< HEAD
-import { Fragment, h, render, Component } from './lib/dom/preactComponent.js';
-=======
-import { streamify } from './lib/async/events.js';
-import { subscribe } from './lib/async/events.js';
-import { getLocalStorage } from './lib/autoStore.js';
-import { logStoreAdapter } from './lib/autoStore.js';
-import { makeAutoStoreHandler } from './lib/autoStore.js';
-import { makeDummyStorage } from './lib/autoStore.js';
-import { makeLocalStorage } from './lib/autoStore.js';
-import { makeLocalStore } from './lib/autoStore.js';
-import { HSLA } from './lib/color.js';
-import { RGBA } from './lib/color.js';
+import { streamify, subscribe } from './lib/async/events.js';
+import { getLocalStorage, logStoreAdapter, makeAutoStoreHandler, makeDummyStorage, makeLocalStorage, makeLocalStore } from './lib/autoStore.js';
+import { HSLA, RGBA } from './lib/color.js';
 import { Element } from './lib/dom/element.js';
-import { Component } from './lib/dom/preactComponent.js';
-import { Fragment } from './lib/dom/preactComponent.js';
-import { h } from './lib/dom/preactComponent.js';
-import { render } from './lib/dom/preactComponent.js';
+import { Fragment, h, render } from './lib/dom/preactComponent.js';
 import { SVG } from './lib/dom/svg.js';
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
 import { SVG as SVGComponent } from './lib/eagle/components/svg.js';
-import { Align } from './lib/geom.js';
-import { Point } from './lib/geom.js';
-import { PointList } from './lib/geom.js';
-import { Rect } from './lib/geom.js';
-import { Size } from './lib/geom.js';
-import { Arc } from './lib/geom/arc.js';
-import { ArcTo } from './lib/geom/arc.js';
+import { Align, Point, PointList, Rect, Size } from './lib/geom.js';
+import { Arc, ArcTo } from './lib/geom/arc.js';
 import { BBox } from './lib/geom/bbox.js';
 import { Matrix } from './lib/geom/matrix.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
 import { KolorWheel } from './lib/KolorWheel.js';
 import Cache from './lib/lscache.js';
-import { define } from './lib/misc.js';
-import { range } from './lib/misc.js';
-import { unique } from './lib/misc.js';
+import { define, range, unique } from './lib/misc.js';
 import trkl from './lib/trkl.js';
+
 let ref = (globalThis.ref = trkl(null));
 let svgElem;
 let screenCTM, svgCTM;

@@ -1,35 +1,25 @@
-import filesystem from 'fs';
-import PortableChildProcess from './lib/childProcess.js';
+import fs from 'fs';
+import { spawn } from 'child_process';
 import deep from './lib/deep.js';
-import ptr from './lib/json-ptr.js';
-<<<<<<< HEAD
-import LogJS from './lib/log.js';
-import tXml from './lib/tXml.js';
-import { default as PortableChildProcess, SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
-import { Reader, ReadAll } from './lib/stream/utils.js';
-import { Repeater } from './lib/repeater/repeater.js';
-
-=======
-import { ImmutablePath } from './lib/json.js';
-import * as path from './lib/path.js';
 import { ReadAll } from './lib/stream/utils.js';
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
-let filesystem,
-  childProcess,
-  documents = [];
+import { ImmutablePath } from './lib/json.js';
+import { memoize,define } from './lib/misc.js';
+import * as path from './lib/path.js';
+
+let  documents = [];
 
 function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
-  filesystem.writeFile(name, data + '\n');
+  fs.writeFileSync(name, data + '\n');
 
   console.log(`Wrote ${name}: ${data.length} bytes`);
 }
 
 class Location {
   static primary = null;
-  static contents = memoize(file => filesystem.readFileSync(file).toString());
+  static contents = memoize(file => fs.readFileSync(file).toString());
 
   constructor(file, begin, end) {
     let data = Location.contents(file);
@@ -47,8 +37,8 @@ class Location {
         .substring(0, obj.offset)
         .split(/\n/g).length;
     if(!('file' in ret)) ret.file = Location.primary;
-    ret.file = path.relative(filesystem.getcwd(), ret.file);
-    if('includedFrom' in ret) ret.includedFrom = path.relative(filesystem.getcwd(), ret.includedFrom);
+    ret.file = path.relative(process.cwd(), ret.file);
+    if('includedFrom' in ret) ret.includedFrom = path.relative(process.cwd(), ret.includedFrom);
 
     return ret;
   }
@@ -81,7 +71,7 @@ class Location {
 
     let ret = [];
     /* console.log('file:', file);
-    console.log('filesystem.getcwd():', filesystem.getcwd());*/
+    console.log('process.cwd():', process.cwd());*/
     if(typeof file == 'string') ret.unshift(file);
     if(line && col) ret = ret.concat([line, col]);
     else ret.push(offset);
@@ -283,23 +273,23 @@ define(Array.prototype, {
 
 async function DumpAst(source) {
   let outfile = path.basename(source) + '.ast.json';
-  let stat = { in: filesystem.stat(source), out: filesystem.stat(outfile) };
+  let stat = { in: fs.stat(source), out: fs.stat(outfile) };
   let data;
 
   if(stat.in.mtimeMs > stat.out.mtimeMs) {
     console.log(`Generating '${outfile}' ...`);
 
-    let stderr = filesystem.open('ast.err', 'w+');
-    let proc = childProcess('clang', ['-Xclang', '-ast-dump=json', '-fsyntax-only', source], {
+    let stderr = fs.open('ast.err', 'w+');
+    let proc = spawn('clang', ['-Xclang', '-ast-dump=json', '-fsyntax-only', source], {
       block: false,
       stdio: [null, 'pipe', stderr]
     });
     data = await ReadAll(proc.stdout);
-    filesystem.close(stderr);
+    fs.close(stderr);
     WriteFile(outfile, data);
   } else {
     console.log(`Reading '${outfile}' ...`);
-    data = filesystem.readFileSync(outfile);
+    data = fs.readFileSync(outfile);
   }
   return JSON.parse(data);
 }
@@ -329,7 +319,7 @@ const typeRe =
 async function main(...args) {
   const cols = await getEnv('COLUMNS');
   // console.log('cols:', cols, process.env.COLUMNS);
-  await PortableChildProcess(cp => (childProcess = cp));
+
 
   if(args.length == 0) args.unshift('/home/roman/Sources/c-utils/genmakefile.c');
 

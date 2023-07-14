@@ -1,88 +1,25 @@
-import { existsSync } from 'fs';
-import { reader } from 'fs';
-import { readerSync } from 'fs';
-import { readSync } from 'fs';
-import { writeSync } from 'fs';
-import { createServer } from 'net';
-import { getSessions } from 'net';
-import { LLL_INFO } from 'net';
-import { LLL_NOTICE } from 'net';
-import { LLL_USER } from 'net';
-import { LLL_WARN } from 'net';
-import { logLevels } from 'net';
-import { setLog } from 'net';
-import { Worker } from 'os';
+import { existsSync, reader, readerSync, readSync, writeSync } from 'fs';
+import { createServer, getSessions, LLL_INFO, LLL_NOTICE, LLL_USER, LLL_WARN, logLevels, setLog } from 'net';
 import * as os from 'os';
-<<<<<<< HEAD
-import * as deep from './lib/deep.js';
-import { basename, extname, relative, absolute } from './lib/path.js';
-import { setTimeout, setInterval, clearInterval } from 'timers';
-import { mod, tryCatch, once, filterKeys, isObject, bindMethods, decorate, atexit, getpid, toString, escape, quote, define, getOpt, memoize, lazyProperties, propertyLookup, types, btoa } from 'util';
-import { Console } from './quickjs/qjs-modules/lib/console.js';
-import { REPL } from './quickjs/qjs-modules/lib/repl.js';
-=======
-import { clearInterval } from 'timers';
-import { setInterval } from 'timers';
-import { setTimeout } from 'timers';
-import { atexit } from 'util';
-import { bindMethods } from 'util';
-import { btoa } from 'util';
-import { decorate } from 'util';
-import { define } from 'util';
-import { extendArray } from 'util';
-import { filterKeys } from 'util';
-import { getOpt } from 'util';
-import { getpid } from 'util';
-import { gettid } from 'util';
-import { isObject } from 'util';
-import { lazyProperties } from 'util';
-import { memoize } from 'util';
-import { mod } from 'util';
-import { once } from 'util';
-import { propertyLookup } from 'util';
-import { quote } from 'util';
-import { toString } from 'util';
-import { tryCatch } from 'util';
-import { types } from 'util';
-import { List } from './cli-helpers.js';
-import { Table } from './cli-helpers.js';
-import { DebuggerDispatcher } from './debugger.js';
-import { FindFunctions } from './debugger.js';
-import { GetFunctionName } from './debugger.js';
-import { TrivialSyntaxHighlighter } from './debugger.js';
+import { clearInterval, setInterval, setTimeout } from 'timers';
+import { atexit, bindMethods, btoa, decorate, define, filterKeys, getOpt, isObject, lazyProperties, memoize, mod, once, propertyLookup, quote, toString, tryCatch, types } from 'util';
+import { List, Table } from './cli-helpers.js';
+import { DebuggerDispatcher, FindFunctions, GetFunctionName, TrivialSyntaxHighlighter } from './debugger.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
-import { ReadFile } from './io-helpers.js';
-import { ReadJSON } from './io-helpers.js';
-import { WriteJSON } from './io-helpers.js';
-import { consume } from './lib/async/helpers.js';
-import { map } from './lib/async/helpers.js';
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
-import inspect from './lib/objectInspect.js';
-import { absolute } from './lib/path.js';
-import { basename } from './lib/path.js';
-import { extname } from './lib/path.js';
-import { relative } from './lib/path.js';
+import { ReadFile, ReadJSON, WriteJSON } from './io-helpers.js';
+import { consume, map } from './lib/async/helpers.js';
+import { absolute, basename, extname, relative } from './lib/path.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import { Spawn } from './os-helpers.js';
-import { F_GETFL } from './quickjs/qjs-ffi/lib/fcntl.js';
-import { F_SETFL } from './quickjs/qjs-ffi/lib/fcntl.js';
-import { fcntl } from './quickjs/qjs-ffi/lib/fcntl.js';
-import { O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
+import { F_GETFL, F_SETFL, fcntl, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
 import { REPL } from './quickjs/qjs-modules/lib/repl.js';
 import { Console } from 'console';
 import { Location } from 'location';
 import process from 'process';
-<<<<<<< HEAD
 import extendArray from 'extendArray';
-
-=======
-import { AF_INET } from 'sockets';
-import { AsyncSocket } from 'sockets';
-import { IPPROTO_TCP } from 'sockets';
-import { SOCK_STREAM } from 'sockets';
-import { SockAddr } from 'sockets';
+import { AF_INET, AsyncSocket, IPPROTO_TCP, SOCK_STREAM, SockAddr } from 'sockets';
 import * as std from 'std';
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
+
 extendArray(Array.prototype);
 
 const scriptName = (arg = scriptArgs[0]) => basename(arg, extname(arg));
@@ -149,63 +86,7 @@ function GetLoc(node) {
   }
 }
 
-<<<<<<< HEAD
-=======
-/*export async function LoadAST(source) {
-  const script = `import * as std from 'std';
-globalThis.console = new Console({ inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 200, prefix: '\\x1b[2K\\x1b[G\\x1b[1;33mWORKER\\x1b[0m ' } });
-
-const worker = Worker.parent;
-
-worker.onmessage = async ({ data }) => {
-  const { type, source } = data;
-
-  switch(type) {
-    case 'gettid': {
-      worker.postMessage({ tid: gettid() });
-      break;
-    }
-    case 'quit': {
-      worker.onmessage = null;
-      console.log('quitting thread ('+gettid()+')...');
-      break;
-    }
-    default: {
-      const ast = await loadAST(source);
-      worker.postMessage({ ast });
-      break;
-    } 
-  }
-};
-
-async function loadAST(source) {
-  if(!existsSync(source)) return null;
-  const { stdout, wait } = Spawn('meriyah.js', ['-l', source], { block: false, stdio: ['inherit', 'pipe', 'inherit'] });
-  
-  let s = '';
-  for(let chunk of readerSync(stdout))
-    s += toString(chunk);
-
-  const [pid, status] = wait();
-  const { length } = s;
-  //console.log('loadAST', { source, length, status });
-  
-  return JSON.parse(s);
-}`;
-
-  //WriteFile('load-ast.js', script);
-
-  let worker = new URLWorker(script);
-  worker.postMessage({ source });
-  const { value, done } = await worker.next();
-
-  worker.postMessage({ type: 'quit' });
-
-  const { data } = value;
-  return ({ string: JSON.parse }[typeof data.ast] ?? (a => a))(data.ast);
-}*/
-
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
+ 
 async function LoadAST(source) {
   if(!existsSync(source)) return null;
   const child = Spawn('meriyah', ['-l', source], { block: false, stdio: ['inherit', 'pipe', 'inherit'] });

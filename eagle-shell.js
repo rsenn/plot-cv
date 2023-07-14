@@ -1,211 +1,47 @@
 #!/usr/bin/env qjsm
 import child_process from 'child_process';
 import * as fs from 'fs';
-import { className } from 'util';
-import { define } from 'util';
-import { entries } from 'util';
-import { extendArray } from 'util';
-import { getOpt } from 'util';
-import { glob } from 'util';
-import { GLOB_BRACE } from 'util';
-import { intersect } from 'util';
-import { isJSFunction } from 'util';
-import { isObject } from 'util';
-import { lazyProperties } from 'util';
-import { memoize } from 'util';
-import { range } from 'util';
-import { unique } from 'util';
-import { weakDefine } from 'util';
+import { className, define, entries, getOpt, glob, GLOB_BRACE, intersect, difference, isObject, lazyProperties, memoize, range, unique, weakDefine } from 'util';
 import { Table } from './cli-helpers.js';
-import { DirIterator } from './dir-helpers.js';
-import { ReadDirRecursive } from './dir-helpers.js';
-import { RecursiveDirIterator } from './dir-helpers.js';
-import { GetElements } from './eagle-commands.js';
-import { GetInstances } from './eagle-commands.js';
-import { GetParts } from './eagle-commands.js';
-import { GetPositions } from './eagle-commands.js';
-import { num2color } from './eagle-commands.js';
-import { scientific } from './eagle-commands.js';
-import { CopyToClipboard } from './io-helpers.js';
-import { FdReader } from './io-helpers.js';
-import { Filter } from './io-helpers.js';
-import { FilterImages } from './io-helpers.js';
-import { IfDebug } from './io-helpers.js';
-import { LoadHistory } from './io-helpers.js';
-import { LogCall } from './io-helpers.js';
-import { LogIfDebug } from './io-helpers.js';
-import { ReadBJSON } from './io-helpers.js';
-import { ReadFd } from './io-helpers.js';
-import { ReadFile } from './io-helpers.js';
-import { ReadJSON } from './io-helpers.js';
-import { ReadXML } from './io-helpers.js';
-import { SortFiles } from './io-helpers.js';
-import { StatFiles } from './io-helpers.js';
-import { WriteBJSON } from './io-helpers.js';
-import { WriteFile } from './io-helpers.js';
-import { WriteJSON } from './io-helpers.js';
-import { WriteXML } from './io-helpers.js';
-import { BinaryTree } from './lib/container.js';
-import { BoxHash } from './lib/container.js';
-import { BucketMap } from './lib/container.js';
-import { BucketStore } from './lib/container.js';
-import { ComponentMap } from './lib/container.js';
-import { CompositeMap } from './lib/container.js';
-import { DenseSpatialHash2D } from './lib/container.js';
-import { Deque } from './lib/container.js';
-import { Enum } from './lib/container.js';
-import { HashList } from './lib/container.js';
-import { HashMap } from './lib/container.js';
-import { HashMultimap } from './lib/container.js';
-import { MultiBiMap } from './lib/container.js';
-import { MultiKeyMap } from './lib/container.js';
-import { Multimap } from './lib/container.js';
-import { Shash } from './lib/container.js';
-import { SortedMap } from './lib/container.js';
-import { SpatialH } from './lib/container.js';
-import { SpatialHash } from './lib/container.js';
-import { SpatialHash2D } from './lib/container.js';
-import { SpatialHashMap } from './lib/container.js';
+import { DirIterator, ReadDirRecursive, RecursiveDirIterator } from './dir-helpers.js';
+import { GetElements, GetInstances, GetParts, GetPositions, num2color, scientific } from './eagle-commands.js';
+import { CopyToClipboard, FdReader, Filter, FilterImages, IfDebug, LoadHistory, LogCall, LogIfDebug, ReadBJSON, ReadFd, ReadFile, ReadJSON, ReadXML, SortFiles, StatFiles, WriteBJSON, WriteFile, WriteJSON, WriteXML } from './io-helpers.js';
+import { BinaryTree, BoxHash, BucketMap, BucketStore, ComponentMap, CompositeMap, DenseSpatialHash2D, Deque, Enum, HashList, HashMap, HashMultimap, MultiBiMap, MultiKeyMap, Multimap, Shash, SortedMap, SpatialH, SpatialHash, SpatialHash2D, SpatialHashMap } from './lib/container.js';
 import * as deep from './lib/deep.js';
-import { forwardRef } from './lib/dom/preactComponent.js';
-import { Fragment } from './lib/dom/preactComponent.js';
-import { h } from './lib/dom/preactComponent.js';
-import { React } from './lib/dom/preactComponent.js';
-import { ReactComponent } from './lib/dom/preactComponent.js';
-import { render } from './lib/dom/preactComponent.js';
-import { toChildArray } from './lib/dom/preactComponent.js';
-import { Alignment } from './lib/eagle.js';
-import { AlignmentAngle } from './lib/eagle.js';
-import { AlignmentAttrs } from './lib/eagle.js';
-import { BoardRenderer } from './lib/eagle.js';
-import { CalculateArcRadius } from './lib/eagle.js';
-import { CartesianToPolar } from './lib/eagle.js';
-import { ClampAngle } from './lib/eagle.js';
-import { DEBUG } from './lib/eagle.js';
-import { DEG2RAD } from './lib/eagle.js';
-import { DereferenceError } from './lib/eagle.js';
-import { EagleAlignments } from './lib/eagle.js';
-import { EagleDocument } from './lib/eagle.js';
-import { EagleElement } from './lib/eagle.js';
-import { EagleElementProxy } from './lib/eagle.js';
-import { EagleNode } from './lib/eagle.js';
-import { EagleNodeList } from './lib/eagle.js';
-import { EagleNodeMap } from './lib/eagle.js';
-import { EagleProject } from './lib/eagle.js';
-import { EagleRef } from './lib/eagle.js';
-import { EagleReference } from './lib/eagle.js';
-import { EagleSVGRenderer } from './lib/eagle.js';
-import { ElementToClass } from './lib/eagle.js';
-import { EscapeClassName } from './lib/eagle.js';
-import { HORIZONTAL } from './lib/eagle.js';
-import { HORIZONTAL_VERTICAL } from './lib/eagle.js';
-import { ImmutablePath } from './lib/eagle.js';
-import { InvertY } from './lib/eagle.js';
-import { LayerAttributes } from './lib/eagle.js';
-import { LayerToClass } from './lib/eagle.js';
-import { LibraryRenderer } from './lib/eagle.js';
-import { LinesToPath } from './lib/eagle.js';
-import { log } from './lib/eagle.js';
-import { MakeCoordTransformer } from './lib/eagle.js';
-import { makeEagleElement } from './lib/eagle.js';
-import { makeEagleNode } from './lib/eagle.js';
-import { MakeRotation } from './lib/eagle.js';
-import { PinSizes } from './lib/eagle.js';
-import { PolarToCartesian } from './lib/eagle.js';
-import { RAD2DEG } from './lib/eagle.js';
-import { RenderArc } from './lib/eagle.js';
-import { Renderer } from './lib/eagle.js';
-import { RotateTransformation } from './lib/eagle.js';
-import { SchematicRenderer } from './lib/eagle.js';
-import { setDebug } from './lib/eagle.js';
-import { SVGAlignments } from './lib/eagle.js';
-import { UnescapeClassName } from './lib/eagle.js';
-import { useAttributes } from './lib/eagle.js';
-import { useTrkl } from './lib/eagle.js';
-import { VERTICAL } from './lib/eagle.js';
-import { ElementNameToComponent } from './lib/eagle/components.js';
-import { ElementToComponent } from './lib/eagle/components.js';
-import { PrimitiveComponents } from './lib/eagle/components.js';
-import * as components from './lib/eagle/components.js';
+import { forwardRef, Fragment, h, React, ReactComponent, render, toChildArray } from './lib/dom/preactComponent.js';
+import { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, setDebug, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, EagleRef, EagleNode, makeEagleElement, DereferenceError, EagleNodeList, useTrkl, EagleDocument, EagleReference, makeEagleNode, Renderer, EagleProject, EagleElement, EagleElementProxy, EagleNodeMap, ImmutablePath } from './lib/eagle.js';
+import { PrimitiveComponents, ElementNameToComponent, ElementToComponent, RenderElement, polarToCartesian, Background, Board, PinSizes } from './lib/eagle/components.js';
 import CircuitJS from './lib/eda/circuitjs.js';
-import { GetColorBands } from './lib/eda/colorCoding.js';
-import { GetFactor } from './lib/eda/colorCoding.js';
-import { GetMultipliers } from './lib/eda/colorCoding.js';
-import { GetExponent } from './lib/eda/values.js';
-import { GetMantissa } from './lib/eda/values.js';
-import { NumberToValue } from './lib/eda/values.js';
-import { ValueToNumber } from './lib/eda/values.js';
-import { EventEmitter } from './lib/events.js';
-import { eventify } from './lib/events.js';
-import { EventTarget } from './lib/events.js';
-import { BBox } from './lib/geom.js';
-import { Circle } from './lib/geom.js';
-import { Line } from './lib/geom.js';
-import { LineList } from './lib/geom.js';
-import { Matrix } from './lib/geom.js';
-import { Point } from './lib/geom.js';
-import { Rect } from './lib/geom.js';
-import { Rotation } from './lib/geom.js';
-import { Scaling } from './lib/geom.js';
-import { Size } from './lib/geom.js';
-import { TransformationList } from './lib/geom.js';
-import { Translation } from './lib/geom.js';
-import { Edge } from './lib/geom/graph.js';
-import { Graph } from './lib/geom/graph.js';
-import { Node } from './lib/geom/graph.js';
-import { abbreviate } from './lib/misc.js';
+import { GetColorBands, GetFactor, GetMultipliers } from './lib/eda/colorCoding.js';
+import { GetExponent, GetMantissa, NumberToValue, ValueToNumber } from './lib/eda/values.js';
+import { EventEmitter, eventify, EventTarget } from './lib/events.js';
+import { BBox, Circle, Line, LineList, Matrix, Point, Rect, Rotation, Scaling, Size, TransformationList, Translation } from './lib/geom.js';
+import { Edge, Graph, Node } from './lib/geom/graph.js';
 import * as path from './lib/path.js';
 import { Pointer } from './lib/pointer.js';
 import renderToString from './lib/preact-render-to-string.js';
-import { ImmutableXPath } from './lib/xml/xpath.js';
-import { MutableXPath as XPath } from './lib/xml/xpath.js';
-import { parseXPath } from './lib/xml/xpath.js';
-import { ExecTool } from './os-helpers.js';
-import { Spawn } from './os-helpers.js';
-import { EagleToGerber } from './pcb-conversion.js';
-import { GerberToGcode } from './pcb-conversion.js';
+import { ImmutableXPath, MutableXPath as XPath, parseXPath } from './lib/xml/xpath.js';
+import { ExecTool, Spawn } from './os-helpers.js';
+import { EagleToGerber, GerberToGcode } from './pcb-conversion.js';
 import { Console } from 'console';
 import inspect from 'inspect';
-<<<<<<< HEAD
-import { IfDebug, LogIfDebug, ReadFd, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
-import { GetExponent, GetMantissa, ValueToNumber, NumberToValue } from './lib/eda/values.js';
-import { GetMultipliers, GetFactor, GetColorBands, PartScales, digit2color } from './lib/eda/colorCoding.js';
-import { UnitForName } from './lib/eda/units.js';
-import CircuitJS from './lib/eda/circuitjs.js';
-import { className, define,  getOpt, glob, GLOB_BRACE, intersect, isObject, memoize, range, unique, lazyProperties, entries, isJSFunction, weakDefine } from 'util';
-import  extendArray from 'extendArray';
-import { HSLA, isHSLA, ImmutableHSLA, RGBA, isRGBA, ImmutableRGBA, ColoredText } from './lib/color.js';
-import { scientific, num2color, GetParts, GetInstances, GetPositions, GetElements } from './eagle-commands.js';
-import { Edge, Graph, Node } from './lib/geom/graph.js';
-import { MutableXPath as XPath, parseXPath, ImmutableXPath } from './lib/xml/xpath.js';
-import { Predicate } from 'predicate';
-import child_process from 'child_process';
-import { readFileSync } from 'fs';
-import { ReactComponent, Fragment, render, h, forwardRef, React, toChildArray } from './lib/dom/preactComponent.js';
-import { Table } from './cli-helpers.js';
-import renderToString from './lib/preact-render-to-string.js';
-import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
-import { EagleToGerber, GerberToGcode } from './pcb-conversion.js';
-import { ExecTool } from './io-helpers.js';
-import * as components from './lib/eagle/components.js';
-import { DirIterator, RecursiveDirIterator, ReadDirRecursive } from './dir-helpers.js';
-import process from 'process';
-=======
 import { Predicate } from 'predicate';
 import { REPL } from 'repl';
-import { read as fromXML } from 'xml';
-import { write as writeXML } from 'xml';
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
+import { read as fromXML, write as writeXML } from 'xml';
+import extendArray from 'extendArray';
 
 let cmdhist;
 
 extendArray();
 
-function GetGlobalFunctions() {
-  return entries(globalThis)
-    .filter(([k, v]) => isJSFunction(v))
-    .map(([k]) => k);
-}
+const GetGlobalFunctions = (() => {
+  const a = Object.getOwnPropertyNames(globalThis);
+  return () => {
+    const b = Object.getOwnPropertyNames(globalThis);
+
+    return difference(a, b)[1];
+  };
+})();
 
 function toXML(obj) {
   deep.forEach(obj, a => Array.isArray(a.children) && a.children.length == 0 && delete a.children);
@@ -390,7 +226,7 @@ function main(...args) {
     args
   );
 
-  Object.assign(globalThis, { components, Console, GetGlobalFunctions, className });
+  Object.assign(globalThis, { Console, GetGlobalFunctions, className });
 
   Object.assign(globalThis, {
     child_process,
@@ -651,7 +487,6 @@ function main(...args) {
   });
 
   Object.assign(globalThis, {
-    PrimitiveComponents,
     ElementNameToComponent,
     ElementToComponent,
     EagleToGerber,

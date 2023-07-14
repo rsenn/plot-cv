@@ -1,39 +1,15 @@
-import { Button } from './components.js';
-import { Panel } from './components.js';
-import { DebuggerDispatcher } from './debugger.js';
-import { TrivialTokenizer } from './debugger.js';
-import { ReconnectingWebSocket } from './lib/async/websocket.js';
-import { WebSocketURL } from './lib/async/websocket.js';
-import { classNames } from './lib/classNames.js';
-import { dom } from './lib/dom.js';
-import { Element } from './lib/dom.js';
-import { Line } from './lib/dom.js';
-import { RGBA } from './lib/dom.js';
-import { Component } from './lib/dom/preactComponent.js';
-import { Fragment } from './lib/dom/preactComponent.js';
-import { h } from './lib/dom/preactComponent.js';
-import { render } from './lib/dom/preactComponent.js';
-import { toChildArray } from './lib/dom/preactComponent.js';
-import { useClick } from './lib/hooks.js';
-import { useFetch } from './lib/hooks.js';
-import { useTrkl } from './lib/hooks.js';
-import { JSLexer } from './lib/jslexer.js';
-import { define } from './lib/misc.js';
-import { memoize } from './lib/misc.js';
-import { rand } from './lib/misc.js';
-import { WebSocketClient } from './lib/net/websocket-async.js';
-import * as path from './lib/path.js';
-import { trkl } from './lib/trkl.js';
-<<<<<<< HEAD
-import { classNames } from './lib/classNames.js';
-import { HSLA, RGBA, Point, isPoint, Size, isSize, Line, isLine, Rect, isRect, PointList, Polyline, Matrix, isMatrix, BBox, TRBL, Timer, Tree, Node, XPath, Element, isElement, CSS, SVG, Container, Layer, Renderer, Select, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementWHProps, ElementXYProps, Align, Anchor, dom, isNumber, Unit, ScalarValue, ElementTransformation, CSSTransformSetters, Transition, TransitionList, RandomColor } from './lib/dom.js';
-import { useClick, useIterable, useIterator, useAsyncGenerator, useAsyncIterable, useAsyncIterator, useGenerator, useActive, useClickout, useConditional, useDebouncedCallback, useDebounce, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useForceUpdate, useGetSet, useHover, useMousePosition, useToggleButtonGroupState, useTrkl, useFetch, clamp, identity, noop, compose, maybe, snd, toPair, getOffset, getPositionOnElement, isChildOf } from './lib/hooks.js';
-import { JSLexer, Location } from './lib/jslexer.js';
-import { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Fence, Zoomable, DisplayList, Ruler, Toggle } from './components.js';
+#!/usr/bin/env qjsm
+import { Button, Panel } from './components.js';
+import { DebuggerDispatcher, TrivialTokenizer } from './debugger.js';
 import { ReconnectingWebSocket, WebSocketURL } from './lib/async/websocket.js';
-
-=======
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
+import { classNames } from './lib/classNames.js';
+import { Element, RGBA } from './lib/dom.js';
+import { Fragment, h, render, toChildArray } from './lib/dom/preactComponent.js';
+import { useFetch, useTrkl } from './lib/hooks.js';
+import { JSLexer } from './lib/jslexer.js';
+import { define, memoize, rand } from './lib/misc.js';
+import { trkl } from './lib/trkl.js';
+ 
 let cwd = '.';
 let responses = {};
 let currentSource = trkl(null);

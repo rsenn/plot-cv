@@ -1,40 +1,10 @@
-<<<<<<< HEAD
-import { CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, OPENGL_PROFILE, RESIZABLE, SAMPLES, Window, Size, Position, context, poll } from 'glfw';
-import * as nvg from 'nanovg';
-import { Mat, cvtColor, COLOR_BGR2RGBA, Rect } from 'opencv';
-import { RGBA } from './lib/color.js';
 import { assert } from 'util';
-import { glClear, glClearColor, glViewport, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT } from './gl.js';
-//export { Window, Size, Position } from 'glfw';
-
-=======
-import { assert } from 'util';
-import { GL_COLOR_BUFFER_BIT } from './gl.js';
-import { GL_DEPTH_BUFFER_BIT } from './gl.js';
-import { GL_STENCIL_BUFFER_BIT } from './gl.js';
-import { glClear } from './gl.js';
-import { glClearColor } from './gl.js';
-import { glViewport } from './gl.js';
+import { GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT, glClear, glClearColor, glViewport } from './gl.js';
 import { RGBA } from './lib/color.js';
-import { context } from 'glfw';
-import { CONTEXT_VERSION_MAJOR } from 'glfw';
-import { CONTEXT_VERSION_MINOR } from 'glfw';
-import { OPENGL_CORE_PROFILE } from 'glfw';
-import { OPENGL_FORWARD_COMPAT } from 'glfw';
-import { OPENGL_PROFILE } from 'glfw';
-import { poll } from 'glfw';
-import { Position } from 'glfw';
-import { RESIZABLE } from 'glfw';
-import { SAMPLES } from 'glfw';
-import { Size } from 'glfw';
-import { Window } from 'glfw';
+import { context, CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, OPENGL_PROFILE, poll, Position, RESIZABLE, SAMPLES, Size, Window } from 'glfw';
 import * as nvg from 'nanovg';
-import { COLOR_BGR2RGBA } from 'opencv';
-import { cvtColor } from 'opencv';
-import { Mat } from 'opencv';
-import { Rect } from 'opencv';
+import { COLOR_BGR2RGBA, cvtColor, Mat, Rect } from 'opencv';
 //export { Window, Size, Position } from 'glfw';
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
 
 export function GLFW(width, height, options = {}) {
   console.log('GLFW', { width, height, options });
