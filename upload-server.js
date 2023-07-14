@@ -1,12 +1,12 @@
 import * as std from 'std';
 import * as os from 'os';
-import * as deep from './lib/deep.js';
+import * as deep from 'deep';
 import * as xml from 'xml';
 import * as path from 'path';
 import { Console } from 'console';
 import { Directory, BOTH, TYPE_DIR, TYPE_LNK, TYPE_REG, TYPE_MASK } from 'directory';
 import { REPL } from 'repl';
-import inspect from './lib/objectInspect.js';
+import inspect from 'inspect';
 import * as Terminal from 'terminal';
 import * as fs from 'fs';
 import { unlink, error, fnmatch } from 'misc';
@@ -20,7 +20,9 @@ import renderToString from './lib/preact-render-to-string.js';
 import { spawn } from 'child_process';
 import trkl from './lib/trkl.js';
 import { take } from './lib/iterator/helpers.js';
-import { extendArray, extendGenerator, extendAsyncGenerator } from 'util';
+import extendArray from 'extendArray';
+import extendGenerator from 'extendGenerator';
+import extendAsyncGenerator from 'extendAsyncGenerator';
 import { RecursiveDirIterator } from './dir-helpers.js';
 
 extendArray();
@@ -567,7 +569,7 @@ function main(...args) {
           const { url, method, body } = req;
           console.log('*files', { body });
           console.log('*files query =', url.query);
-          const { filter = '*', root, type = TYPE_DIR | TYPE_REG | TYPE_LNK, limit = '0' } = url.query;
+          const { filter = '*', root, type = TYPE_DIR | TYPE_REG | TYPE_LNK, limit = '0' } = url.query ?? {};
 
           console.log('*files', { root, filter, type });
 

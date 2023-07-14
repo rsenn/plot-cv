@@ -9,10 +9,9 @@ import expressWs from 'express-ws';
 import { Alea } from './lib/alea.js';
 import crypto from 'crypto';
 import fetch from 'isomorphic-fetch';
-import { exec } from 'promisify-child-process';
+import { exec, spawn } from 'promisify-child-process';
 import * as fs from 'fs';
 import { promises as fsPromises } from 'fs';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, WriteFile, WriteJSON, Filter, FilterImages, SortFiles, StatFiles } from './io-helpers.js';
 import { Console } from 'console';
 import SerialPort from 'serialport';
 import SerialStream from '@serialport/stream';
@@ -38,6 +37,31 @@ function hashString(string, bits = 32, mask = 0xffffffff) {
     ret = rot(ret) & mask;
   }
   return ret & 0x7fffffff;
+}
+
+function decodeHTMLEntities(text) {
+  let entities = {
+    amp: '&',
+    apos: "'",
+    '#x27': "'",
+    '#x2F': '/',
+    '#39': "'",
+    '#47': '/',
+    lt: '<',
+    gt: '>',
+    nbsp: ' ',
+    quot: '"'
+  };
+  return text.replace(new RegExp('&([^;]+);', 'gm'), (match, entity) => entities[entity] || match);
+}
+
+async function MimeType(path) {
+  const child = exec(`file -i '${path}' 2>/dev/null`, {});
+  let output = '';
+  child.stdout.on('data', data => (output += data));
+
+  await child;
+  return output.replace(new RegExp(path + '[:\\s]+', 'gy'), '').trimEnd();
 }
 
 //SerialStream.Binding = SerialBinding;
@@ -437,10 +461,12 @@ async function main() {
 
     console.log('Request: /' + file);
 
+    let found;
+
     if(fs.existsSync(file)) {
       if(/\/.*\.js$/.test(file)) {
         console.log('JS replace: /' + file);
-        let s = ReadFile(file);
+        let s = fs.readFileSync(file, 'utf-8');
         res.type('application/javascript; charset=UTF-8');
         res.send(importReplacer.replace(s, file));
         return;
@@ -453,7 +479,12 @@ async function main() {
       }*/
 
       files.add(file);
+    } else if((found = FindFile(file))) {
+      found = path.resolve(found);
+      res.sendFile(found);
+      return;
     }
+
     next();
   });
   app.use('/static', express.static(path.join(p, 'static')));
@@ -473,9 +504,27 @@ async function main() {
       const exists = fs.existsSync(file);
       //console.log('FILE', file,exists);
 
-      if(exists) return mnt;
+      if(exists) return file;
     }
   }
+
+  app.get('/file', async (req, res) => {
+    const { action, file } = req.query;
+
+    let p = FindFile(file);
+    p = path.resolve(p);
+
+    let mime = await MimeType(p);
+    console.log('DATA', { action, file, p, mime });
+
+    switch (action) {
+      case 'load': {
+        res.type(mime);
+        res.sendFile(p);
+        break;
+      }
+    }
+  });
 
   app.get(/^\/?(data|tmp|vfs)\//, async (req, res) => {
     const file = req.url.replace(/^\/?(data|tmp|vfs)\//, '');
@@ -528,7 +577,7 @@ async function main() {
       .map(re => re.exec(chunk))
       .map(m => m && m.index);
     let d = chunk.substring(...indexes);
-    if(d.startsWith('<description')) return Util.decodeHTMLEntities(d.substring(a[0].length));
+    if(d.startsWith('<description')) return decodeHTMLEntities(d.substring(a[0].length));
     return '';
   }
 
@@ -687,8 +736,7 @@ async function main() {
         const { body } = req;
         console.log('req', Object.keys(req));
         console.log('req.url', req.url);
-        const location = req.url + ''; // Util.parseURL(req.url);
-        ///const { location, query } = url;
+        const location = req.url + '';
         const { query } = req;
         let args = location.split(/\//g).filter(p => !/(^github$|^$)/.test(p));
         let options = { /*...query,*/ ...body };
@@ -706,12 +754,8 @@ async function main() {
 
         if(owner && repo && dir) result = await GithubListContents(owner, repo, dir, filter && new RegExp(filter, 'g'));
         /*if(owner && (tab || after))*/ else {
-          let proxyUrl = Util.makeURL({
-            ...url,
-            protocol: 'https',
-            host: 'github.com',
-            location: ['', ...args].join('/')
-          });
+          let proxyUrl = `https://github.com${['', ...args].join('/')}`;
+
           console.log(`PROXY ${proxyUrl}`);
 
           let response = await fetch(proxyUrl);
@@ -792,7 +836,7 @@ async function main() {
 
     const { body } = req;
     console.log('req.headers:', req.headers);
-    console.log('body:', abbreviate(body), className(body), inspect(body));
+    console.log('body:', body);
     console.log('save body:', typeof body == 'string' ? abbreviate(body, 100) : body);
     let st,
       err,

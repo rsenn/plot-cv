@@ -1,11 +1,11 @@
 #!/usr/bin/env qjsm
 import { MouseEvents, MouseFlags, Mouse, Window, TextStyle, DrawText } from './qjs-opencv/js/cvHighGUI.js';
 import filesystem from 'fs';
-import { difference,union, getOpt,setInterval, toArrayBuffer, toString, escape, quote, define, extendArray, memoize, getFunctionArguments, glob, GLOB_TILDE, fnmatch, wordexp, lazyProperties } from './lib/misc.js';
+import { difference, union, getOpt, setInterval, toArrayBuffer, toString, escape, quote, define,  memoize, getFunctionArguments, glob, GLOB_TILDE, fnmatch, wordexp, lazyProperties } from './lib/misc.js';
 import trkl from './lib/trkl.js';
 import * as path from './lib/path.js';
 import { Console } from 'console';
-import REPL from 'repl';
+import { REPL } from 'repl';
 import { Pointer } from './lib/pointer.js';
 import * as Terminal from 'terminal';
 import { read as fromXML, write as toXML } from './lib/xml.js';
@@ -16,6 +16,7 @@ import { ImageInfo } from './lib/image-info.js';
 import { ImagePipeline } from './imagePipeline.js';
 import { lazyInitializer } from './lib/lazyInitializer.js';
 import { AutoValue } from './autoValue.js';
+import extendArray from 'extendArray';
 
 let cmdhist,
   defaultWin = lazyInitializer(() => new Window(path.basename(scriptArgs[0], '.js')));
@@ -206,7 +207,6 @@ function main(...args) {
     WriteJSON,
     WriteBJSON,
     ImageInfo,
-    HighGUI,
     AutoValue
   });
   repl.globalKeys();

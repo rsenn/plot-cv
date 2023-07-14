@@ -18,7 +18,8 @@ import { GetExponent, GetMantissa, ValueToNumber, NumberToValue } from './lib/ed
 import { GetMultipliers, GetFactor, GetColorBands, PartScales, digit2color } from './lib/eda/colorCoding.js';
 import { UnitForName } from './lib/eda/units.js';
 import CircuitJS from './lib/eda/circuitjs.js';
-import { className, define, extendArray, getOpt, glob, GLOB_BRACE, intersect, isObject, memoize, range, unique, lazyProperties, entries, isJSFunction, weakDefine } from 'util';
+import { className, define,  getOpt, glob, GLOB_BRACE, intersect, isObject, memoize, range, unique, lazyProperties, entries, isJSFunction, weakDefine } from 'util';
+import  extendArray from 'extendArray';
 import { HSLA, isHSLA, ImmutableHSLA, RGBA, isRGBA, ImmutableRGBA, ColoredText } from './lib/color.js';
 import { scientific, num2color, GetParts, GetInstances, GetPositions, GetElements } from './eagle-commands.js';
 import { Edge, Graph, Node } from './lib/geom/graph.js';
@@ -34,6 +35,7 @@ import { EagleToGerber, GerberToGcode } from './pcb-conversion.js';
 import { ExecTool } from './io-helpers.js';
 import * as components from './lib/eagle/components.js';
 import { DirIterator, RecursiveDirIterator, ReadDirRecursive } from './dir-helpers.js';
+import process from 'process';
 
 let cmdhist;
 
@@ -443,7 +445,6 @@ function main(...args) {
     fixValue,
     fixValues,
     coordMap,
-    Util,
     LineList,
     Point,
     Circle,

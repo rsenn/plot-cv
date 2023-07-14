@@ -5,6 +5,7 @@ import deep from './lib/deep.js';
 import Tree from './lib/tree.js';
 import { Type, Compile, AstDump, NodeType, NodeName, GetLoc, GetTypeStr } from './clang-ast.js';
 import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
+import { WriteBJSON, ReadBJSON } from './io-helpers.js';
 
 //prettier-ignore
 let fs, spawn;
@@ -27,19 +28,6 @@ define(Array.prototype, {
     return true;
   }
 });
-
-const WriteBJSON = async (filename, obj) =>
-  await import('bjson.so').then(({ write }) => {
-    let data = write(obj);
-    WriteFile(filename, data);
-    return data.byteLength;
-  });
-
-const ReadBJSON = async filename =>
-  await import('bjson.so').then(({ read }) => {
-    let data = ReadFile(filename, null);
-    return instrument(read)(data, 0, data.byteLength);
-  });
 
 async function main(...args) {
   console.log('main(', ...args, ')');

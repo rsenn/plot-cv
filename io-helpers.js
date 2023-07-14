@@ -180,29 +180,17 @@ export function WriteXML(name, data, ...args) {
   return WriteAny(name, xml.write(data, ...args));
 }
 
-export function ReadBJSON(filename) {
-  let fd = open(filename, O_RDONLY);
-  let { size } = stat(filename)[0];
-  debug(`ReadBJSON`, { filename, fd, size });
-  let data = mmap.mmap(0, size + 10, mmap.PROT_READ, mmap.MAP_PRIVATE, fd, 0);
-  debug(`ReadBJSON`, { data });
-  let ret = bjson.read(data, 0, size);
-
-  mmap.munmap(data);
-  close(fd);
-  return ret;
+export async function WriteBJSON(filename, obj) {
+  let { write } = await import('bjson.so');
+  let data = write(obj);
+  WriteFile(filename, data);
+  return data.byteLength;
 }
 
-export function WriteBJSON(name, data) {
-  let buf = bjson.write(data);
-  let size = buf.byteLength;
-  let fd = open(name, O_WRONLY | O_CREAT | O_TRUNC);
-
-  let ret = write(fd, buf, 0, size);
-  debug('WriteBJSON', { name, fd, size, ret });
-  close(fd);
-
-  return ret;
+export async function ReadBJSON(filename) {
+  let { read } = await import('bjson.so');
+  let data = ReadFile(filename, null);
+  return read(data, 0, data.byteLength);
 }
 
 export function* Filter(gen, regEx = /.*/) {

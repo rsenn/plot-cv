@@ -18,14 +18,12 @@ import GeoJSON from './openlayers/src/ol/format/GeoJSON.js';
 import { composeCssTransform } from './openlayers/src/ol/transform.js';
 import Icon from './openlayers/src/ol/style/Icon.js';
 import { Fill, RegularShape, Stroke, Style, Circle as CircleStyle, Text as TextStyle } from './openlayers/src/ol/style.js';
-import { fromLonLat } from './openlayers/src/ol/proj.js';
+import { fromLonLat, addCoordinateTransforms, addProjection, transform } from './openlayers/src/ol/proj.js';
 import { ZoomSlider } from './openlayers/src/ol/control.js';
-import { addCoordinateTransforms, addProjection, transform } from './openlayers/src/ol/proj.js';
 import { getVectorContext } from './openlayers/src/ol/render.js';
 import PlainDraggable from './lib/plain-draggable.js';
 import AnimSequence from './lib/anim-sequence.js';
 import extendArray from './quickjs/qjs-modules/lib/extendArray.js';
-
 import { quarterDay, Time, TimeToStr, FilenameToTime, NextFile, DailyPhase, PhaseFile, DateToUnix, CurrentFile } from './adsb-common.js';
 import { memoize } from './lib/misc.js';
 

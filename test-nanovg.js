@@ -7,6 +7,7 @@ import * as cv from 'opencv';
 import * as nvg from 'nanovg';
 import Console from 'console';
 import { GLFW, Mat2Image, DrawImage, DrawCircle } from './draw-utils.js';
+import { className } from 'util';
 import * as ImGui from 'imgui';
 
 function Clear(color = nvg.RGB(0, 0, 0)) {
@@ -220,10 +221,10 @@ function main(...args) {
 
     ImGui.Text('Adjust values for this processing step:');
 
-    ImGui.DragFloat('Value', val => (val === undefined ? floatValue : (floatValue = val)), 0.0, 1.0, '%.3f');
+   /* ImGui.DragFloat('Value', val => (val === undefined ? floatValue : (floatValue = val)), 0.0, 1.0, '%.3f');
     ImGui.SliderFloat('Value', val => (val === undefined ? floatValue : (floatValue = val)), 0.0, 1.0, '%.3f');
     ImGui.SliderInt('Alpha', val => (val === undefined ? Math.floor(alphaValue) : (alphaValue = Math.floor(val))), 0, 255);
-
+*/
     ImGui.End();
 
     ImGui.Render();
@@ -247,6 +248,8 @@ function main(...args) {
 try {
   main(...scriptArgs.slice(1));
 } catch(error) {
-  console.log(error ? 'FAIL: ' + error.message + '\n' + error.stack : 'FAIL: ' + error);
+  console.log(`Exception (${className(error)}): `,error);
+  console.log( 'FAIL: ' + error.message + '\n' + error.stack);
+  //os.kill(process.pid, os.SIGUSR1);
   std.exit(1);
 }

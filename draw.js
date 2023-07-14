@@ -1,4 +1,4 @@
-import React, { Fragment, h, render, Component } from './lib/dom/preactComponent.js';
+import { Fragment, h, render, Component } from './lib/dom/preactComponent.js';
 import { SVG as SVGComponent } from './lib/eagle/components/svg.js';
 import { BBox } from './lib/geom/bbox.js';
 import trkl from './lib/trkl.js';

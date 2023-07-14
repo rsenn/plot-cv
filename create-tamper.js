@@ -1,13 +1,13 @@
 import inspect from 'inspect';
-#!/usr/bin/env qjsm
 import { define, isObject, memoize, unique } from './lib/misc.js';
-import { ECMAScriptParser, Printer, PathReplacer } from './lib/ecmascript.js';
-import { ObjectPattern, ObjectExpression, ImportDeclaration, ExportNamedDeclaration, VariableDeclaration, estree, ESNode, Literal } from './lib/ecmascript.js';
+import { ECMAScriptParser, Printer, PathReplacer, ObjectPattern, ObjectExpression, ImportDeclaration, ExportNamedDeclaration, VariableDeclaration, estree, ESNode, Literal } from './lib/ecmascript.js';
 import { ImmutablePath } from './lib/json.js';
 import deep from './lib/deep.js';
 import filesystem from 'fs';
 import * as path from './lib/path.js';
 import { SortedMap } from './lib/container/sortedMap.js';
+#!/usr/bin/env qjsm
+
 
 const code = `export const Progress = ({ className, percent, ...props }) => html\`<\x24{Overlay} className=\x24{classNames('progress', 'center', className)} text=\x24{percent + '%'} style=\x24{{
   position: 'relative',

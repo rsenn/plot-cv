@@ -9,7 +9,6 @@ import { Console } from 'console';
 import { read as fromXML, write as toXML } from './lib/xml.js';
 import { WriteFile } from './io-helpers.js';
 import { getOpt } from 'util';
-import { readFileSync } from 'fs';
 import { render } from './lib/preact.mjs';
 import { append } from './lib/preact/append.js';
 import renderToString from './lib/preact-render-to-string.js';

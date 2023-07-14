@@ -3,7 +3,7 @@ import * as os from 'os';
 import * as deep from './lib/deep.js';
 import { basename, extname, relative, absolute } from './lib/path.js';
 import { setTimeout, setInterval, clearInterval } from 'timers';
-import { mod, tryCatch, once, filterKeys, isObject, bindMethods, decorate, atexit, getpid, toString, escape, quote, define, extendArray, getOpt, memoize, lazyProperties, propertyLookup, types, btoa } from 'util';
+import { mod, tryCatch, once, filterKeys, isObject, bindMethods, decorate, atexit, getpid, toString, escape, quote, define, getOpt, memoize, lazyProperties, propertyLookup, types, btoa } from 'util';
 import { Console } from './quickjs/qjs-modules/lib/console.js';
 import { REPL } from './quickjs/qjs-modules/lib/repl.js';
 import inspect from './lib/objectInspect.js';
@@ -20,6 +20,7 @@ import { map, consume } from './lib/async/helpers.js';
 import { AsyncSocket, SockAddr, AF_INET, SOCK_STREAM, IPPROTO_TCP } from 'sockets';
 import { RepeaterOverflowError, FixedBuffer, SlidingBuffer, DroppingBuffer, MAX_QUEUE_LENGTH, Repeater } from './lib/repeater/repeater.js';
 import process from 'process';
+import extendArray from 'extendArray';
 
 extendArray(Array.prototype);
 
@@ -86,66 +87,6 @@ function GetLoc(node) {
   }
 }
 
-/*export async function LoadAST(source) {
-  const script = `import * as std from 'std';
-import { Worker } from 'os';
-import { existsSync, readerSync } from 'fs';
-import { Spawn } from './io-helpers.js';
-import { Console } from 'console';
-import { toString, gettid } from 'util';
-
-globalThis.console = new Console({ inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 200, prefix: '\\x1b[2K\\x1b[G\\x1b[1;33mWORKER\\x1b[0m ' } });
-
-const worker = Worker.parent;
-
-worker.onmessage = async ({ data }) => {
-  const { type, source } = data;
-
-  switch(type) {
-    case 'gettid': {
-      worker.postMessage({ tid: gettid() });
-      break;
-    }
-    case 'quit': {
-      worker.onmessage = null;
-      console.log('quitting thread ('+gettid()+')...');
-      break;
-    }
-    default: {
-      const ast = await loadAST(source);
-      worker.postMessage({ ast });
-      break;
-    } 
-  }
-};
-
-async function loadAST(source) {
-  if(!existsSync(source)) return null;
-  const { stdout, wait } = Spawn('meriyah.js', ['-l', source], { block: false, stdio: ['inherit', 'pipe', 'inherit'] });
-  
-  let s = '';
-  for(let chunk of readerSync(stdout))
-    s += toString(chunk);
-
-  const [pid, status] = wait();
-  const { length } = s;
-  //console.log('loadAST', { source, length, status });
-  
-  return JSON.parse(s);
-}`;
-
-  //WriteFile('load-ast.js', script);
-
-  let worker = new URLWorker(script);
-  worker.postMessage({ source });
-  const { value, done } = await worker.next();
-
-  worker.postMessage({ type: 'quit' });
-
-  const { data } = value;
-  return ({ string: JSON.parse }[typeof data.ast] ?? (a => a))(data.ast);
-}*/
-
 async function LoadAST(source) {
   if(!existsSync(source)) return null;
   const child = Spawn('meriyah', ['-l', source], { block: false, stdio: ['inherit', 'pipe', 'inherit'] });
@@ -169,6 +110,12 @@ function StartREPL(prefix = scriptName(), suffix = '') {
   let { show } = repl;
 
   repl.show = arg => {
+    /*console.log('repl.show', arg);
+    if(types.isPromise(arg)) {
+      repl.printStatus('Promise');
+      arg.then(val => repl.printStatus(repl.show(val)));
+      return;
+    }*/
     if(isObject(arg)) {
       if(arg[Symbol.for('print')]) return arg.toString ? arg.toString() : arg + '';
 
@@ -193,7 +140,7 @@ function StartREPL(prefix = scriptName(), suffix = '') {
   };
 
   repl.loadSaveOptions();
-  repl.printPromise = () => {};
+  //repl.printPromise = () => {};
   repl.run();
   return repl;
 }
@@ -232,7 +179,7 @@ export function ConnectDebugger(address, skipToMain = true, callback) {
     sock.ndelay(true);
     console.log('Connected', +sock, 'to', sock.remote);
     sockets.add(sock);
-    console.log('sockets', sockets);
+    //console.log('sockets', sockets);
   }
 
   const dbg = {
@@ -268,18 +215,9 @@ export function ConnectDebugger(address, skipToMain = true, callback) {
         sock.close();
         return ret;
       }
-    }
-  };
-
-  /* if(callback) {
-    sock.onmessage = callback;
-
-   return consume(dbg, message => sock.onmessage(message));
-  }  */
-
-  define(dbg, {
+    },
     sendMessage: msg => sock.send(msg.length.toString(16).padStart(8, '0') + '\n' + msg)
-  });
+  };
 
   console.log('ConnectDebugger', dbg);
 

@@ -145,9 +145,8 @@ export class DebuggerDispatcher {
 
     define(this, {
       sendMessage: async msg => {
-        if(process.env.DEBUG) console.log('\x1b[38;5;33mSEND\x1b[0m    ', msg);
         const ret = await conn.sendMessage((msg = JSON.stringify(msg)));
-        console.log('sendMessage() returned:', ret);
+        if(process.env.DEBUG) console.log('\x1b[38;5;33mSEND\x1b[0m (' + ret + ') ' + msg);
         return ret;
       }
     });

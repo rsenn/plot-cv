@@ -2,12 +2,12 @@ import { fetch, client, setLog, logLevels, LLL_USER, URL } from 'net';
 import * as std from 'std';
 import * as os from 'os';
 import Console from 'console';
-import { toArrayBuffer, define, extendArray, escape, quote } from 'util';
+import { toArrayBuffer, define, escape, quote } from 'util';
 import inspect from 'inspect';
 import { read as readXML, write as writeXML } from 'xml';
 import { nodeTypes, Parser, Node, NodeList, NamedNodeMap, Element, Document, Attr, Text, TokenList } from './quickjs/qjs-modules/lib/dom.js';
 import { get, set, unset, select, find, iterate, RETURN_PATH, RETURN_VALUE_PATH, RETURN_PATH_VALUE } from 'deep';
-
+import  extendArray from 'extendArray';
 import { Repeater } from './lib/repeater/repeater.js';
 
 extendArray(Array.prototype);

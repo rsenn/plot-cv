@@ -4,7 +4,7 @@ import geom from './lib/geom.js';
 import { BBox, Rect, Point, Polyline, Line, PointList, isPoint } from './lib/geom.js';
 import * as path from './lib/path.js';
 import { parseGcode } from './lib/gcode.js';
-import React, { Component } from './lib/dom/preactComponent.js';
+import  { Component } from './lib/dom/preactComponent.js';
 import components from './components.js';
 import Voronoi from './lib/geom/voronoi.js';
 import { makeEagleNode } from './lib/eagle.js';
@@ -12,7 +12,7 @@ import { trkl } from './lib/trkl.js';
 import Alea from './lib/alea.js';
 import KolorWheel from './lib/KolorWheel.js';
 import { SVG, Element } from './lib/dom.js';
-import github, { GithubListRepositories, GithubRepositories, GithubListContents, ListGithubRepoServer } from './lib/github.js';
+import { GithubListRepositories, GithubRepositories, GithubListContents, ListGithubRepoServer } from './lib/github.js';
 import { NormalizeResponse, ResponseData, FetchCached, FetchURL } from './lib/fetch.js';
 
 const prng = new Alea(1598127218);

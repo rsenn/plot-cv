@@ -8,7 +8,7 @@ import { Graph } from './lib/fd-graph.js';
 import ptr from './lib/json-ptr.js';
 import LogJS from './lib/log.js';
 import tXml from './lib/tXml.js';
-import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
+import { default as PortableChildProcess, SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 import { Reader, ReadAll } from './lib/stream/utils.js';
 import { Repeater } from './lib/repeater/repeater.js';
 
