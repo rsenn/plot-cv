@@ -32,23 +32,13 @@ import { weakDefine } from './lib/misc.js';
 import * as path from './lib/path.js';
 import { Pointer } from './lib/pointer.js';
 import { AcquireReader } from './lib/stream/utils.js';
-<<<<<<< HEAD
-import { errors, types, isObject, isAsync, inspectSymbol, toString, btoa, atob, assert, escape, quote, memoize, chain, chainRight, chainArray, getset, modifier, getter, setter, gettersetter, hasFn, remover, getOrCreate, hasGetSet, mapObject, once, atexit, waitFor, define, defineGetter, defineGetterSetter, defineGettersSetters, prototypeIterator, keys, entries, values, getMethodNames, getMethods, properties, weakDefine, getPrototypeChain, getConstructorChain, hasPrototype, filter, filterKeys, curry, clamp, split, matchAll, bindProperties, immutableClass, instrument, hash, catchable, isNumeric, isIndex, numericIndex, histogram, propertyLookupHandlers, propertyLookup, abbreviate, tryFunction, tryCatch, mapAdapter, mapFunction, mapWrapper, weakMapper, wrapGenerator, wrapGeneratorMethods, unique, getFunctionArguments, stripAnsi, padAnsi, padStartAnsi, padEndAnsi, randInt, randFloat, randStr, toBigInt, roundDigits, roundTo, lazyProperty, lazyProperties, getOpt, isoDate, toUnixTime, unixTime, fromUnixTime, range, repeater, repeat, chunkArray, ucfirst, lcfirst, camelize, decamelize, shorten, arraysInCommon, arrayFacade, mod, pushUnique, inserter, intersect, symmetricDifference, partitionArray, difference, intersection, union, partition, format, formatWithOptions, functionName, className, isArrowFunction, predicate, isArray, bits, dupArrayBuffer, getTypeName, isArrayBuffer, isBigDecimal, isBigFloat, isBigInt, isBool, isJSFunction, isCFunction, isConstructor, isEmptyString, isError, isException, isExtensible, isFunction, isHTMLDDA, isInstanceOf, isInteger, isJobPending, isLiveObject, isNull, isNumber, isUndefined, isString, isUninitialized, isSymbol, isUncatchableError, isRegisteredClass, rand, randi, randf, srand, toArrayBuffer } from './lib/misc.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, ExecTool, FetchURL } from './io-helpers.js';
-import * as fs from 'fs';
-import { countSubstring, findAllIndexes } from './string-helpers.js';
-import { consume } from './lib/async/helpers.js';
-
-export let SIZEOF_POINTER = 8;
-export let SIZEOF_INT = 4;
-
-=======
+ 
 import { Spawn } from './os-helpers.js';
 import { countSubstring } from './string-helpers.js';
 
 export let SIZEOF_POINTER = 8;
 export let SIZEOF_INT = 4;
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
+
 function FileTime(filename) {
   let st = fs.statSync(filename);
   return st ? st.mtime ?? st.time : -1;
@@ -1159,11 +1149,7 @@ export async function SpawnCompiler(compiler, input, outfile, args = []) {
 
   if(args.indexOf('-ast-dump=json') != -1) {
     args.unshift(compiler ?? 'clang');
-<<<<<<< HEAD
     args = ['sh', '-c', 'exec ' + args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (outfile ? ` 1>${outfile}` : '')];
-=======
-    args = ['sh', '-c', 'exec ' + args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (output ? ` 1>${output}` : '')];
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
   } else {
     if(outfile) {
       args.unshift(outfile);
@@ -1172,11 +1158,7 @@ export async function SpawnCompiler(compiler, input, outfile, args = []) {
     args.unshift(compiler ?? 'clang');
   }
 
-<<<<<<< HEAD
-  //console.log('SpawnCompiler', args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' '));
-=======
-  console.log('SpawnCompiler', args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (output ? ` 1>${output}` : ''));
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
+  console.log('SpawnCompiler', args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (outfile ? ` 1>${outfile}` : ''));
 
   let child = Spawn(args.shift(), args, {
     block: false,
@@ -1287,12 +1269,8 @@ export async function AstDump(compiler, source, args, force) {
     console.log(`Compiling...`, console.config({ compact: true }), { source, compiler });
 
     let { exitcode, errors, ...result } = await SpawnCompiler(compiler, source, output, ['-Xclang', '-ast-dump=json', '-fsyntax-only', '-I.', ...args]);
-<<<<<<< HEAD
 
     //console.log(`Compiling '${source}'...`, console.config({compact: true }), { output, exitcode, ...result });
-=======
-    console.log(`Compiling '${source}'...`, { output, exitcode, ...result });
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
   }
   r = { file: output };
 
@@ -1305,7 +1283,7 @@ export async function AstDump(compiler, source, args, force) {
     json() {
       console.log(`r.json`, this.file);
 
-      let json = ReadFile(this.file, 'utf-8');
+      let json = fs.readFileSync(this.file, 'utf-8');
       return json;
     },
     data() {

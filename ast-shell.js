@@ -1,22 +1,4 @@
-<<<<<<< HEAD
-import { DirIterator, RecursiveDirIterator, ReadDirRecursive } from './dir-helpers.js';
-import filesystem from 'fs';
-import Util from './lib/util.js';
-import * as path from './lib/path.js';
-import * as deep from './lib/deep.js';
-import { Console } from 'console';
-import { REPL } from 'repl';
-import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, VarDecl, FunctionDecl, Location, Range, TypeFactory, SpawnCompiler, AstDump, FindType, Hier, PathOf, NodeType, NodeName, GetLoc, CompleteLocation, RawLocation, CompleteRange, RawRange, GetType, GetTypeStr, NodePrinter, isNode, SourceDependencies, GetTypeNode, GetFields, PathRemoveLoc, PrintAst, GetParams, List } from './clang-ast.js';
-import Tree from './lib/tree.js';
-import { Pointer } from './lib/pointer.js';
-import * as Terminal from './terminal.js';
-import * as ECMAScript from './lib/ecmascript.js';
-import * as fs from './lib/filesystem.js';
-import { isObject, toString, toArrayBuffer, weakMapper, getOpt, define, lazyProperty, bindMethods, defineGetter, memoize, pushUnique } from './lib/misc.js';
-import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, Shell, Spawn } from './io-helpers.js';
-import extendArray from 'extendArray';
-
-=======
+ 
 import { AstDump } from './clang-ast.js';
 import { CompleteLocation } from './clang-ast.js';
 import { CompleteRange } from './clang-ast.js';
@@ -64,7 +46,7 @@ import * as ECMAScript from './lib/ecmascript.js';
 import * as fs from './lib/filesystem.js';
 import { define } from './lib/misc.js';
 import { defineGetter } from './lib/misc.js';
-import { extendArray } from './lib/misc.js';
+import { extendArray } from 'extendArray';
 import { getOpt } from './lib/misc.js';
 import { isObject } from './lib/misc.js';
 import { lazyProperty } from './lib/misc.js';
@@ -83,7 +65,8 @@ import * as Terminal from './terminal.js';
 import { Console } from 'console';
 import { REPL } from 'repl';
 //import PortableSpawn from './lib/spawn.js';
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
+
+
 extendArray(Array.prototype);
 
 globalThis.fs = fs;

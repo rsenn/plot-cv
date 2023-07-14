@@ -8,7 +8,7 @@ import { waitpid } from 'os';
 import { Worker } from 'os';
 import { btoa } from './lib/misc.js';
 import { define } from './lib/misc.js';
-import { toString } from './lib/misc.js';
+import { toString, properties } from './lib/misc.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import { ReadFile } from './readfile.js';
 import { fdopen } from 'std';
