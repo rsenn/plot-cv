@@ -1,37 +1,12 @@
 import Alea from './lib/alea.js';
-import { Element } from './lib/dom.js';
-import { SVG } from './lib/dom.js';
-import dom from './lib/dom.js';
-import { FetchCached } from './lib/fetch.js';
-import { NormalizeResponse } from './lib/fetch.js';
-import { ResponseData } from './lib/fetch.js';
+import { Element, SVG, default as dom } from './lib/dom.js';
+import { FetchCached, NormalizeResponse, ResponseData } from './lib/fetch.js';
 import { parseGcode } from './lib/gcode.js';
-<<<<<<< HEAD
-import  { Component } from './lib/dom/preactComponent.js';
-import components from './components.js';
-=======
-import { BBox } from './lib/geom.js';
-import { isPoint } from './lib/geom.js';
-import { Point } from './lib/geom.js';
-import { Polyline } from './lib/geom.js';
-import geom from './lib/geom.js';
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
-import Voronoi from './lib/geom/voronoi.js';
-import { GithubListContents } from './lib/github.js';
-import { GithubListRepositories } from './lib/github.js';
-import { GithubRepositories } from './lib/github.js';
-import { ListGithubRepoServer } from './lib/github.js';
+import { BBox, isPoint, Point, Polyline, default as geom } from './lib/geom.js';
+import { GithubListContents, GithubListRepositories, GithubRepositories, ListGithubRepoServer } from './lib/github.js';
 import KolorWheel from './lib/KolorWheel.js';
-<<<<<<< HEAD
-import { SVG, Element } from './lib/dom.js';
-import { GithubListRepositories, GithubRepositories, GithubListContents, ListGithubRepoServer } from './lib/github.js';
-import { NormalizeResponse, ResponseData, FetchCached, FetchURL } from './lib/fetch.js';
-=======
-import { isObject } from './lib/misc.js';
-import { lazyProperty } from './lib/misc.js';
-import * as path from './lib/path.js';
+import { isObject, lazyProperty } from './lib/misc.js';
 import { trkl } from './lib/trkl.js';
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
 
 const prng = new Alea(1598127218);
 

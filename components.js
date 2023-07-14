@@ -1,28 +1,14 @@
-<<<<<<< HEAD
-import { define, isObject, memoize, unique, tryCatch, roundTo } from './lib/misc.js';
-import { h, Fragment, html, render, Component, useState, useEffect, useRef, useCallback, Portal, ReactComponent, toChildArray } from './lib/dom/preactComponent.js';
-import { trkl } from './lib/trkl.js';
-=======
 import { classNames } from './lib/classNames.js';
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
 import { Element } from './lib/dom.js';
-import { useDimensions } from './lib/hooks.js';
-import { useElement } from './lib/hooks.js';
-import { useEvent } from './lib/hooks.js';
-import { useMove } from './lib/hooks.js';
-import { usePanZoom } from './lib/hooks.js';
-import { useWheel } from './lib/hooks.js';
+import { useDimensions, useElement, useEvent, usePanZoom } from './lib/hooks.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
-import { define } from './lib/misc.js';
-import { isObject } from './lib/misc.js';
-import { roundTo } from './lib/misc.js';
-import { tryCatch } from './lib/misc.js';
+import { isObject, roundTo, tryCatch } from './lib/misc.js';
 import * as path from './lib/path.js';
 import { useValue } from './lib/repeater/react-hooks.js';
 import { trkl } from './lib/trkl.js';
 import RulerDraggable from './ruler-draggable.js';
 import { wordWrap } from './string-helpers.js';
-import { h, Fragment, html, render, Component, useState, useEffect, useRef, useCallback, Portal, ReactComponent, toChildArray /*, cloneElement*/ } from './lib/dom/preactComponent.js';
+import { h, Fragment, html, useState, useEffect, useRef, useCallback, Portal, ReactComponent, toChildArray } from './lib/dom/preactComponent.js';
 
 export const Ruler = ({ handleChange, style = {}, class: className }) => {
   const refRuler = useRef();

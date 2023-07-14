@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import * as os from 'os';
+
 import { glob } from 'util';
 import { memoize } from 'util';
 import { CurrentFile } from './adsb-common.js';
@@ -7,7 +7,7 @@ import { DateToUnix } from './adsb-common.js';
 import { FilenameToTime } from './adsb-common.js';
 import { NextFile } from './adsb-common.js';
 import { PhaseFile } from './adsb-common.js';
-import { Time } from './adsb-common.js';
+
 import { TimeToStr } from './adsb-common.js';
 import * as std from 'std';
 

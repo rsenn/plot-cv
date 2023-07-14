@@ -1,65 +1,16 @@
 import * as fs from 'fs';
-import { client } from 'net';
-import { getSessions } from 'net';
-import { LLL_INFO } from 'net';
-import { LLL_USER } from 'net';
-import { LLL_WARN } from 'net';
-import { logLevels } from 'net';
-import { server } from 'net';
-import { setLog } from 'net';
+import { client, LLL_INFO, LLL_USER, LLL_WARN, logLevels, createServer, setLog, getSessions } from 'net';
 import * as os from 'os';
-import { setInterval } from 'timers';
-import { atexit } from 'util';
-import { daemon } from 'util';
-import { define } from 'util';
-import extendArray from 'extendArray';
-import { getOpt } from 'util';
-import { glob } from 'util';
-import { IN_MODIFY } from 'util';
-import { watch } from 'util';
-import { CurrentFile } from './adsb-common.js';
-import { FilenameToTime } from './adsb-common.js';
-import { Time } from './adsb-common.js';
-import { DumpState } from './adsb-store.js';
-import { GetNearestTime } from './adsb-store.js';
-import { GetRange } from './adsb-store.js';
-import { GetStateArray } from './adsb-store.js';
-import { GetStateByTime } from './adsb-store.js';
-import { GetStateIndex } from './adsb-store.js';
-import { GetStates } from './adsb-store.js';
-import { GetTimes } from './adsb-store.js';
-import { IsRange } from './adsb-store.js';
-import { ReadRange } from './adsb-store.js';
-import { ResolveRange } from './adsb-store.js';
-import { StateFiles } from './adsb-store.js';
-import { StatePhases } from './adsb-store.js';
-import { TimesForPhase } from './adsb-store.js';
-import { ReadJSON } from './io-helpers.js';
-import { WriteJSON } from './io-helpers.js';
-import inspect from './lib/objectInspect.js';
+import { atexit, daemon, getOpt, IN_MODIFY, watch } from 'util';
+import { CurrentFile, FilenameToTime } from './adsb-common.js';
+import { DumpState, GetNearestTime, GetRange, GetStateArray, GetStateByTime, GetStateIndex, GetStates, GetTimes, IsRange, ReadRange, ResolveRange, StateFiles, StatePhases, TimesForPhase } from './adsb-store.js';
+import { ReadJSON, WriteJSON } from './io-helpers.js';
 import * as path from './lib/path.js';
-<<<<<<< HEAD
-import { watch, IN_MODIFY, memoize, daemon, atexit, getpid, toArrayBuffer, toString, escape, quote, define, getOpt, glob } from 'util';
 import { Console } from './quickjs/qjs-modules/lib/console.js';
-import REPL from './quickjs/qjs-modules/lib/repl.js';
-import inspect from './lib/objectInspect.js';
-import * as Terminal from './terminal.js';
-import * as fs from 'fs';
-import { setLog, logLevels, getSessions, LLL_USER, LLL_INFO, LLL_NOTICE, LLL_WARN, client, server } from 'net';
-import { DebuggerProtocol } from './debuggerprotocol.js';
-import { StartDebugger, ConnectDebugger } from './debugger.js';
-import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
-import { quarterDay, Time, TimeToStr, FilenameToTime, NextFile, DailyPhase, PhaseFile, DateToUnix, CurrentFile } from './adsb-common.js';
-import { GetTimes, TimesForPhase, ReadRange, StateFiles, StatePhases, GetStates, GetNearestTime, GetStateArray, GetStateIndex, DumpState, GetStateByTime, IsRange, GetRange, ResolveRange } from './adsb-store.js';
-import { LogWrap, VfnAdapter, VfnDecorator, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, GetProperties, GetKeys, MakeListCommand, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/js/rpc.js';
+import { REPL } from './quickjs/qjs-modules/lib/repl.js';
+import * as std from 'std';
 import extendArray from 'extendArray';
 
-=======
-import { Console } from './quickjs/qjs-modules/lib/console.js';
-import REPL from './quickjs/qjs-modules/lib/repl.js';
-import * as std from 'std';
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
 extendArray(Array.prototype);
 
 const scriptName = (arg = scriptArgs[0]) => path.basename(arg, path.extname(arg));
@@ -231,7 +182,7 @@ function main(...args) {
 
     let options;
     let child, dbg;
-    let netfn = [client, server][+listen];
+    let netfn = [client, createServer][+listen];
     console.log('createWS', { url, netfn });
     return netfn(
       url,

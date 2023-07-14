@@ -1,23 +1,10 @@
-import { AstDump } from './clang-ast.js';
-import { GetLoc } from './clang-ast.js';
-import { GetTypeStr } from './clang-ast.js';
-import { Type } from './clang-ast.js';
-import { ReadBJSON } from './io-helpers.js';
-import { ReadFile } from './io-helpers.js';
-import { WriteBJSON } from './io-helpers.js';
-import { WriteFile } from './io-helpers.js';
+import { AstDump, GetLoc, GetTypeStr } from './clang-ast.js';
+import { ReadBJSON, ReadFile, WriteBJSON, WriteFile } from './io-helpers.js';
+import { define } from 'util';
 import deep from './lib/deep.js';
 import * as path from './lib/path.js';
-import PortableSpawn from './lib/spawn.js';
 import Tree from './lib/tree.js';
-<<<<<<< HEAD
-import { Type, Compile, AstDump, NodeType, NodeName, GetLoc, GetTypeStr } from './clang-ast.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
-import { WriteBJSON, ReadBJSON } from './io-helpers.js';
 
-=======
-import { Spawn } from './os-helpers.js';
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
 //prettier-ignore
 let fs, spawn;
 
@@ -42,7 +29,6 @@ define(Array.prototype, {
 
 async function main(...args) {
   console.log('main(', ...args, ')');
-  await PortableSpawn(fn => (spawn = fn));
 
   let params = getOpt(
     {

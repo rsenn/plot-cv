@@ -3,50 +3,23 @@ import { execFileSync } from 'child_process';
 import crypto from 'crypto';
 import expressWs from 'express-ws';
 import express from 'express';
-import { existsSync } from 'fs';
-import { promises as fsPromises } from 'fs';
 import * as fs from 'fs';
-import filesystem from 'fs';
+import fsPromises from 'fs/promises';
 import fetch from 'isomorphic-fetch';
-<<<<<<< HEAD
-import { exec, spawn } from 'promisify-child-process';
-import * as fs from 'fs';
-import { promises as fsPromises } from 'fs';
-import { Console } from 'console';
-=======
-import * as path from 'path';
 import { exec } from 'promisify-child-process';
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
+import { Console } from 'console';
+import * as path from 'path';
 import SerialPort from 'serialport';
-import { inspect } from 'util';
 import WebSocket from 'ws';
 import { ReadDirRecursive } from './dir-helpers.js';
 import importReplacer from './importReplacer.js';
 import { ReadFile } from './io-helpers.js';
 import { Alea } from './lib/alea.js';
 import PortableChildProcess from './lib/childProcess.js';
-import { abbreviate } from './lib/misc.js';
-import { className } from './lib/misc.js';
-import { escape } from './lib/misc.js';
-import { filter } from './lib/misc.js';
-import { filterKeys } from './lib/misc.js';
-import { getMethods } from './lib/misc.js';
-import { isObject } from './lib/misc.js';
-import { matchAll } from './lib/misc.js';
-import { randStr } from './lib/misc.js';
-import { toUnixTime } from './lib/misc.js';
-import { tryCatch } from './lib/misc.js';
-import { tryFunction } from './lib/misc.js';
-import { unique } from './lib/misc.js';
-import { unixTime } from './lib/misc.js';
-import { waitFor } from './lib/misc.js';
-import { weakDefine } from './lib/misc.js';
-import { weakMapper } from './lib/misc.js';
+import { abbreviate, escape, filter, filterKeys, getMethods, isObject, matchAll, randStr, toUnixTime, tryCatch, tryFunction, unique, unixTime, weakDefine, weakMapper } from './lib/misc.js';
 import { Repeater } from './lib/repeater/repeater.js';
-import { Message } from './message.js';
 import Socket from './webSocket.js';
 import SerialStream from '@serialport/stream';
-import { Console } from 'console';
 //import inspect from 'inspect';
 
 const rotateLeft = n => x => (x << n) | ((x >> (32 - n)) & ~((-1 >> n) << n));
@@ -535,29 +508,15 @@ async function main() {
         } else {
           //console.log('JS replace: ' + file);
         }
-
-<<<<<<< HEAD
-    console.log('Request: /' + file);
-
-    let found;
-
-    if(fs.existsSync(file)) {
-      if(/\/.*\.js$/.test(file)) {
-        console.log('JS replace: /' + file);
-        let s = fs.readFileSync(file, 'utf-8');
-=======
+ 
         let s = ReadFile(file);
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
-        res.type('application/javascript; charset=UTF-8');
+         res.type('application/javascript; charset=UTF-8');
         res.send(importReplacer.replace(s, file));
         return;
       }
 
       files.add(file);
-    } else if((found = FindFile(file))) {
-      found = path.resolve(found);
-      res.sendFile(found);
-      return;
+ 
     }
 
     next();
@@ -588,7 +547,7 @@ async function main() {
 
     let p = path.join(dir, file);
 
-    if(!existsSync(p)) return res.status(404).send('No such file');
+    if(!fs.existsSync(p)) return res.status(404).send('No such file');
 
     let mime = GetMimeType(p);
 
@@ -787,7 +746,7 @@ async function main() {
   });
   const configFile = 'config.json';
   const safeStat = tryFunction(
-    f => filesystem.stat(f),
+    f => fs.stat(f),
     st => st,
     () => {}
   );
@@ -797,7 +756,7 @@ async function main() {
       data = {},
       time = 0;
     tryCatch(
-      () => filesystem.readFileSync(configFile),
+      () => fs.readFileSync(configFile),
       c => {
         str = c;
         let stat = safeStat(configFile);
@@ -820,7 +779,7 @@ async function main() {
     const { body } = req;
     let text = body.toString();
     console.log('text:', text);
-    let ret = filesystem.writeFile(configFile, text);
+    let ret = fs.writeFile(configFile, text);
     console.log('ret:', ret);
     let stat = safeStat(configFile);
     res.json({
@@ -934,13 +893,8 @@ async function main() {
 */
 
     const { body } = req;
-<<<<<<< HEAD
     console.log('req.headers:', req.headers);
-    console.log('body:', body);
-=======
-    //console.log('req.headers:', req.headers);
     //console.log('body:', abbreviate(body), className(body), inspect(body));
->>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
     console.log('save body:', typeof body == 'string' ? abbreviate(body, 100) : body);
     let st,
       err,

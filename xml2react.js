@@ -1,8 +1,8 @@
-import { ReadFd } from './io-helpers.js';
-import { ReadFile } from './io-helpers.js';
+#!/usr/bin/env qjsm
+import { ReadFd, ReadFile } from './io-helpers.js';
 import { Console } from 'console';
 import { read as readXML } from 'xml';
-#!/usr/bin/env qjsm
+
 function* injectSeparator(iter, sep = ', ', pad = ' ') {
   let i = 0;
   for(let item of iter) {
@@ -60,7 +60,8 @@ function* xml2h(xml, depth = 0) {
 function main(...args) {
   globalThis.console = new Console({
     colors: true,
-    depth: Infinity
+    maxStringLength: 100,
+    depth:2
   });
 
   if(args.length == 0) args = ['/dev/stdin'];
@@ -70,7 +71,7 @@ function main(...args) {
 
     let data = arg == '/dev/stdin' ? ReadFd(0) : ReadFile(arg);
 
-    console.log('data', data);
+    console.log('data', { data });
 
     let xml = readXML(data);
 

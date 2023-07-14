@@ -1,11 +1,11 @@
 import * as deep from './lib/deep.js';
-import { consume as consumeSync } from './lib/iterator/helpers.js';
+
 import { ansiStyles } from './lib/misc.js';
-import { assert } from './lib/misc.js';
+
 import { define } from './lib/misc.js';
 import { error } from './lib/misc.js';
 import { isFunction } from './lib/misc.js';
-import { toString } from './lib/misc.js';
+
 import { Pointer } from './lib/pointer.js';
 globalThis.process ??= { env: {} };
 
