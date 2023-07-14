@@ -1,14 +1,18 @@
-import { h, useState, useMemo, useEffect, useRef, forwardRef, useImperativeHandle } from './lib/dom/preactComponent.js';
-import PropTypes from './lib/prop-types.js';
-import { useDebounce } from './lib/hooks/useDebounce.js';
 import Cursor from './cursor.js';
 import { classNames } from './lib/classNames.js';
+import { forwardRef } from './lib/dom/preactComponent.js';
+import { h } from './lib/dom/preactComponent.js';
+import { useEffect } from './lib/dom/preactComponent.js';
+import { useImperativeHandle } from './lib/dom/preactComponent.js';
+import { useMemo } from './lib/dom/preactComponent.js';
+import { useRef } from './lib/dom/preactComponent.js';
+import { useState } from './lib/dom/preactComponent.js';
+import { useDebounce } from './lib/hooks/useDebounce.js';
+import PropTypes from './lib/prop-types.js';
 
 const rulerImgVertical = 'static/ruler/rulerVertical.svg';
 const rulerImg = 'static/ruler/rulerHorizontal.svg';
 const Ruler = forwardRef((props, ref) => {
-  //console.log("Ruler props =", props);
-  console.log('Ruler props = ', props);
   const {
     frictionCoefficient = 0.93,
     multiplicatorLength = 20,
@@ -26,7 +30,6 @@ const Ruler = forwardRef((props, ref) => {
     disabledCursorDrag = false,
     handlers
   } = props;
-  console.log('Ruler forwarded ref = ', ref);
   const FRICTION_COEFF = Math.min(0.99, Math.max(0.01, frictionCoefficient));
   const MULTIPLICATOR_LENGTH = multiplicatorLength;
   const totalWidth = longLength * MULTIPLICATOR_LENGTH;
@@ -345,6 +348,7 @@ const Ruler = forwardRef((props, ref) => {
       </div>
     );*/
 });
+
 export default Ruler;
 /*
 Ruler.propTypes = {

@@ -1,6 +1,6 @@
-import tokenize from './tokenize.js';
+import { ReadFile } from './io-helpers.js';
 import { abbreviate } from './lib/misc.js';
-import { ReadFile, WriteFile } from './io-helpers.js';
+import tokenize from './tokenize.js';
 
 const consoleOpts = {
   depth: Infinity,

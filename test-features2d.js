@@ -1,8 +1,6 @@
-import * as cv from 'opencv';
-import Console from 'console';
-import * as path from 'path';
 import { tryCatch } from './lib/misc.js';
-
+import Console from 'console';
+import * as cv from 'opencv';
 let basename = process.argv[1].replace(/\.js$/, '');
 
 function main(...args) {

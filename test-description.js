@@ -1,6 +1,5 @@
-import { ColoredText } from './lib/color/coloredText.js';
-import { matchAll } from './lib/misc.js';
 import { readFileSync } from 'fs';
+import { matchAll } from './lib/misc.js';
 //prettier-ignore
 let filesystem ;
 

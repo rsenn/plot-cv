@@ -1,29 +1,67 @@
-import { DirIterator, RecursiveDirIterator, ReadDirRecursive } from './dir-helpers.js';
-import filesystem from 'fs';
-//import inspect from 'inspect';
-import express from 'express';
-import * as path from 'path';
-import * as util from 'util';
 import bodyParser from 'body-parser';
-import expressWs from 'express-ws';
-import { Alea } from './lib/alea.js';
+import { execFileSync } from 'child_process';
 import crypto from 'crypto';
+import expressWs from 'express-ws';
+import express from 'express';
+import { existsSync } from 'fs';
+import { promises as fsPromises } from 'fs';
+import * as fs from 'fs';
+import filesystem from 'fs';
 import fetch from 'isomorphic-fetch';
+<<<<<<< HEAD
 import { exec, spawn } from 'promisify-child-process';
 import * as fs from 'fs';
 import { promises as fsPromises } from 'fs';
 import { Console } from 'console';
+=======
+import * as path from 'path';
+import { exec } from 'promisify-child-process';
+>>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
 import SerialPort from 'serialport';
-import SerialStream from '@serialport/stream';
-import Socket from './webSocket.js';
+import { inspect } from 'util';
 import WebSocket from 'ws';
-import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
+import { ReadDirRecursive } from './dir-helpers.js';
+import importReplacer from './importReplacer.js';
+import { ReadFile } from './io-helpers.js';
+import { Alea } from './lib/alea.js';
+import PortableChildProcess from './lib/childProcess.js';
+import { abbreviate } from './lib/misc.js';
+import { className } from './lib/misc.js';
+import { escape } from './lib/misc.js';
+import { filter } from './lib/misc.js';
+import { filterKeys } from './lib/misc.js';
+import { getMethods } from './lib/misc.js';
+import { isObject } from './lib/misc.js';
+import { matchAll } from './lib/misc.js';
+import { randStr } from './lib/misc.js';
+import { toUnixTime } from './lib/misc.js';
+import { tryCatch } from './lib/misc.js';
+import { tryFunction } from './lib/misc.js';
+import { unique } from './lib/misc.js';
+import { unixTime } from './lib/misc.js';
+import { waitFor } from './lib/misc.js';
+import { weakDefine } from './lib/misc.js';
+import { weakMapper } from './lib/misc.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import { Message } from './message.js';
-import { lazyProperties, memoize, abbreviate, className, escape, getMethods, isObject, randStr, toUnixTime, tryCatch, tryFunction, unixTime, waitFor, weakDefine, weakMapper, filter, filterKeys, matchAll } from './lib/misc.js';
-import importReplacer from './importReplacer.js';
+import Socket from './webSocket.js';
+import SerialStream from '@serialport/stream';
+import { Console } from 'console';
+//import inspect from 'inspect';
 
 const rotateLeft = n => x => (x << n) | ((x >> (32 - n)) & ~((-1 >> n) << n));
+
+const moduleAliases = {
+  'xlib/preact.mjs': 'lib/preact.module.js'
+};
+
+function GetMimeType(file) {
+  try {
+    let str = execFileSync('file', ['-i', file], { encoding: 'utf-8' });
+    return str.replace(/.*:\s+/, '').trimEnd();
+  } catch(error) {}
+  return null;
+}
 
 function hashString(string, bits = 32, mask = 0xffffffff) {
   let ret = 0;
@@ -65,9 +103,9 @@ async function MimeType(path) {
 }
 
 //SerialStream.Binding = SerialBinding;
-let names = [],
+let dirmap,
+  names = [],
   dirs = {};
-
 let childProcess;
 const port = process.env.PORT || 3000;
 
@@ -85,6 +123,31 @@ const p = path.join(path.dirname(process.argv[1]), '.');
 
 let mountDirs = ['data', '../an-tronics/eagle', '../insider/eagle', '../lc-meter/eagle', '../pictest/eagle'];
 let tmpDir = './tmp';
+
+function GetDirMap(dirs = mountDirs, pred = '.*\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$') {
+  if(typeof pred != 'function') {
+    if(typeof pred == 'string') {
+      const expr = pred;
+      console.log('expr', expr);
+      pred = new RegExp(expr, 'i');
+    }
+    if(typeof pred == 'object' && pred !== null && pred instanceof RegExp) {
+      const re = pred;
+      console.log('re', re);
+      pred = ent => re.test(ent);
+    }
+  }
+  console.log('pred', pred + '');
+  return dirs.reduce((acc, dir) => {
+    for(let entry of ReadDirRecursive(dir, 0)) {
+      if(entry.endsWith('/')) continue;
+      if(!pred(entry)) continue;
+      let relative = entry.startsWith(dir + '/') ? entry.slice(dir.length + 1) : entry;
+      acc[relative] = dir;
+    }
+    return acc;
+  }, {});
+}
 
 async function waitChild(proc) {
   const { pid, stdout, stderr, wait } = proc;
@@ -149,8 +212,9 @@ async function main() {
     inspectOptions: {
       breakLength: 120,
       maxStringLength: Infinity,
-      maxArrayLength: 30,
-      compact: 2
+      maxArrayLength: Infinity,
+      compact: 2,
+      depth: 1
     }
   });
   await PortableChildProcess(cp => (childProcess = cp));
@@ -412,7 +476,7 @@ async function main() {
         return res.redirect('/' + overridePath);
       }
     }
-    if(/lib\/preact.js/.test(req.url)) req.url = '/lib/preact.mjs';
+    //if(/lib\/preact.js/.test(req.url)) req.url = '/lib/preact.mjs';
 
     if(!/lib\//.test(req.url)) {
       const { path, url, method, headers, query, body } = req;
@@ -458,7 +522,21 @@ async function main() {
     str = `${now.toISOString().slice(0, 10).replace(/-/g, '')} ${now.toTimeString().slice(0, 8)} ${req.method.padEnd(4)} ${file}\n`;
 
     let written = fs.writeSync(logfile, str, 0, str.length);
+    let exists = fs.existsSync(file);
+    let isJS = /\.(|m)js$/.test(file);
 
+    //if(!(exists && isJS)) console.log('Request: /' + file);
+
+    if(exists) {
+      if(isJS) {
+        if(file in moduleAliases) {
+          //console.log('JS \x1b[1;31malias\x1b[0m: ' + file + ' -> ' + moduleAliases[file]);
+          file = moduleAliases[file];
+        } else {
+          //console.log('JS replace: ' + file);
+        }
+
+<<<<<<< HEAD
     console.log('Request: /' + file);
 
     let found;
@@ -467,16 +545,13 @@ async function main() {
       if(/\/.*\.js$/.test(file)) {
         console.log('JS replace: /' + file);
         let s = fs.readFileSync(file, 'utf-8');
+=======
+        let s = ReadFile(file);
+>>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
         res.type('application/javascript; charset=UTF-8');
         res.send(importReplacer.replace(s, file));
         return;
       }
-      const re = /[^\n]*'util'[^\n]*/g;
-      /*let m,
-        data = ReadFile(file, 'utf-8');
-      if((m = re.exec(data))) {
-        console.log('The file ' + file + ` was requested. (${data.length})`, `match @ ${m.index}: ${m[0]}`);
-      }*/
 
       files.add(file);
     } else if((found = FindFile(file))) {
@@ -495,6 +570,42 @@ async function main() {
   app.use('/components', express.static(path.join(p, 'components')));
   app.use('/lib', express.static(path.join(p, 'lib')));
   app.use('/tmp', express.static(path.join(p, 'tmp')));
+
+  app.use('/file', async (req, res) => {
+    const { query } = req;
+    const { action, file } = query ?? {};
+
+    console.log('FILE', { action, file });
+
+    dirmap ??= GetDirMap(mountDirs);
+
+    /*  console.log('dirs:', unique(Object.values(dirmap)));
+    console.log('names:', unique(Object.keys(dirmap)).filter(n => /\//.test(n)));*/
+
+    let dir = dirmap[file];
+
+    if(!dir) return res.status(400).send('No such file');
+
+    let p = path.join(dir, file);
+
+    if(!existsSync(p)) return res.status(404).send('No such file');
+
+    let mime = GetMimeType(p);
+
+    //console.log('FILE', { p, mime });
+
+    switch (action) {
+      case 'load': {
+        if(mime) res.type(mime);
+        res.sendFile(path.resolve(p));
+        break;
+      }
+      default: {
+        res.status(404).send('No such action!');
+        break;
+      }
+    }
+  });
 
   app.use('/', express.static(p));
 
@@ -544,7 +655,8 @@ async function main() {
       }
     })
   );
-  app.get(/\/[^\/]*\.js$/, async (req, res) => res.sendFile(path.join(p, req.path)));
+
+  //app.get(/\/[^\/]*\.js$/, async (req, res) => res.sendFile(path.join(p, req.path)));
 
   //app.get('/components.js', async (req, res) => res.sendFile(path.join(p, 'components.js')));
 
@@ -584,59 +696,46 @@ async function main() {
   const descMap = weakMapper(getDescription, new Map());
 
   async function GetFilesList(dir = './tmp', opts = {}) {
-    let { filter = '.*\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$', descriptions = false, names } = opts;
-    const re = new RegExp(filter, 'i');
-    const f = ent => re.test(ent);
+    let { filter = '.*\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$', descriptions = false, names, limit = '' } = opts;
 
-    console.log('GetFilesList()', { filter, descriptions }, ...(names ? [names.length] : []));
+    dirmap = GetDirMap(mountDirs, filter);
+    names = Object.keys(dirmap);
 
-    let dirmap = {};
-
-    //    if(!names) names = [...(await fsPromises.readdir(dir))].filter(f);
-    dirmap = mountDirs.reduce((acc, dir) => {
-      console.log('ReadDirRecursive', dir);
-      for(let entry of ReadDirRecursive(dir)) {
-        if(entry.endsWith('/')) continue;
-        if(!f(entry)) continue;
-        let relative = entry.startsWith(dir + '/') ? entry.slice(dir.length + 1) : entry;
-        acc[relative] = dir;
-        dirs[relative] = dir;
+    if(limit !== '') {
+      limit = (limit + '').split(/[^0-9]+/g);
+      if(limit.length > 0) {
+        if(limit.length == 1) limit.unshift(0);
+        limit = limit.map(n => +n);
+        const [start, count] = limit;
+        names = names.slice(start, start + count);
       }
-      return acc;
-    }, {});
+    }
 
-    //   console.log('dirmap', dirmap);
-    if(!names) names = Object.keys(dirmap);
-    console.log('names', names.length);
     return Promise.all(
-      names
-        //.map(entry => dirs[entry] +'/'+entry)
-        .reduce((acc, file) => {
-          let dir = dirs[file];
-          let abs = dir + '/' + file;
-          let description = descriptions ? descMap(file) : descMap.get(file);
-          //   console.log('descMap:', util.inspect(descMap, { depth: 1 }));
-          let obj = {
-            name: file,
-            //file,
-            dir: dirs[file]
-          };
-          if(typeof description == 'string') obj.description = description;
-          acc.push(
-            fsPromises
-              .stat(abs)
-              .then(({ ctime, mtime, mode, size }) =>
-                Object.assign(obj, {
-                  mtime: toUnixTime(mtime),
-                  time: toUnixTime(ctime),
-                  mode: `0${(mode & 0x09ff).toString(8)}`,
-                  size
-                })
-              )
-              .catch(err => {})
-          );
-          return acc;
-        }, [])
+      names.reduce((acc, file) => {
+        let dir = dirmap[file];
+        let abs = dir + '/' + file;
+        let description = descriptions ? descMap(file) : descMap.get(file);
+        let obj = {
+          name: file,
+          dir: dirs[file]
+        };
+        if(typeof description == 'string') obj.description = description;
+        acc.push(
+          fsPromises
+            .stat(abs)
+            .then(({ ctime, mtime, mode, size }) =>
+              Object.assign(obj, {
+                mtime: toUnixTime(mtime),
+                time: toUnixTime(ctime),
+                mode: `0${(mode & 0x09ff).toString(8)}`,
+                size
+              })
+            )
+            .catch(err => {})
+        );
+        return acc;
+      }, [])
     ).then(a => a.filter(i => i != null));
   }
 
@@ -716,6 +815,7 @@ async function main() {
 
     res.json({ config, time, hash: hashString(str) });
   });
+
   app.post(/\/config/, async (req, res) => {
     const { body } = req;
     let text = body.toString();
@@ -792,8 +892,8 @@ async function main() {
   app.get(/^\/files/, async (req, res) => res.json({ files: await GetFilesList() }));
   app.post(/^\/(files|list)(.html|)/, async (req, res) => {
     const { body } = req;
-    let { filter = '.*', descriptions, names } = body;
-    let opts = { filter };
+    let { filter, descriptions, names, limit } = body;
+    let opts = { filter, limit };
     if(descriptions) opts.descriptions = descriptions;
 
     if(names !== undefined) {
@@ -802,10 +902,9 @@ async function main() {
       opts.names = names;
     }
     let files = await GetFilesList('tmp', opts);
-    console.log('POST files', util.inspect(files, { breakLength: Infinity, colors: true, maxArrayLength: 10, compact: 1 }));
-    res.json({
-      files
-    });
+
+    //console.log('POST files', inspect(files, { breakLength: Infinity, colors: true, maxArrayLength: 10, compact: 1 }));
+    res.json(files);
   });
 
   app.get('/index.html', async (req, res) => {
@@ -835,8 +934,13 @@ async function main() {
 */
 
     const { body } = req;
+<<<<<<< HEAD
     console.log('req.headers:', req.headers);
     console.log('body:', body);
+=======
+    //console.log('req.headers:', req.headers);
+    //console.log('body:', abbreviate(body), className(body), inspect(body));
+>>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
     console.log('save body:', typeof body == 'string' ? abbreviate(body, 100) : body);
     let st,
       err,

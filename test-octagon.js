@@ -1,10 +1,13 @@
-import { Point, Polygon, MakePolygon, Line, LineList } from './lib/geom.js';
+import { WriteFile } from './io-helpers.js';
 import { SVG } from './lib/dom.js';
-import { Console } from 'console';
-import { ReadFile, WriteFile } from './io-helpers.js';
-import * as xml from 'xml';
+import { Line } from './lib/geom.js';
+import { LineList } from './lib/geom.js';
+import { MakePolygon } from './lib/geom.js';
+import { Point } from './lib/geom.js';
+import { Polygon } from './lib/geom.js';
 import SvgPath from './lib/svg/path.js';
-
+import { Console } from 'console';
+import * as xml from 'xml';
 function PathFromPoints(points, pos = new Point(0, 0)) {
   let path = new SvgPath();
 

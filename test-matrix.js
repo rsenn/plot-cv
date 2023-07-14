@@ -1,6 +1,5 @@
 import { Matrix } from './js/matrix.js';
 import { PointList } from './js/pointList.js';
-
 let m = new Matrix();
 
 let rows = m.rows();

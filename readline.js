@@ -1,4 +1,8 @@
-import { dlopen, dlsym, RTLD_NOW, define, call } from 'ffi';
+import { call } from 'ffi';
+import { define } from 'ffi';
+import { dlopen } from 'ffi';
+import { dlsym } from 'ffi';
+import { RTLD_NOW } from 'ffi';
 
 const libreadline = dlopen('libreadline.so.8', RTLD_NOW);
 
@@ -10,6 +14,7 @@ const libreadline = dlopen('libreadline.so.8', RTLD_NOW);
  * @return   {String}
  */
 define('readline', dlsym(libreadline, 'readline'), null, 'string', 'string');
+
 export function readline(prompt) {
   return call('readline', prompt);
 }

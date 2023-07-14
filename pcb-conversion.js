@@ -1,11 +1,12 @@
-import { ReadFile, WriteFile } from './io-helpers.js';
+import { exec } from 'child_process';
+import { spawn } from 'child_process';
+import * as fs from 'fs';
 import * as path from 'path';
 import * as util from 'util';
-import { exec, spawn } from 'child_process';
-import * as fs from 'fs';
-import child_process from 'child_process';
-import { ExecTool } from './io-helpers.js';
-export { ExecTool } from './io-helpers.js';
+import { ReadFile } from './io-helpers.js';
+import { ExecTool } from './os-helpers.js';
+
+export { ExecTool } from './os-helpers.js';
 
 export function EagleToGerber(boardFile, opts = {}) {
   console.log('convertToGerber', { boardFile, opts });

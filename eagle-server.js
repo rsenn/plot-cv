@@ -1,19 +1,40 @@
-import * as std from 'std';
-import * as os from 'os';
 import * as fs from 'fs';
+import { client } from 'net';
+import { getSessions } from 'net';
+import { LLL_INFO } from 'net';
+import { LLL_USER } from 'net';
+import { LLL_WARN } from 'net';
+import { logLevels } from 'net';
+import { server } from 'net';
+import { setLog } from 'net';
+import * as os from 'os';
 import { setInterval } from 'timers';
-import * as deep from './lib/deep.js';
+import { atexit } from 'util';
+import { daemon } from 'util';
+import { define } from 'util';
+import { escape } from 'util';
+import { extendArray } from 'util';
+import { getOpt } from 'util';
+import { glob } from 'util';
+import { randStr } from 'util';
+import { ReadFile } from './io-helpers.js';
+import { ReadJSON } from './io-helpers.js';
+import { WriteJSON } from './io-helpers.js';
+import inspect from './lib/objectInspect.js';
 import * as path from './lib/path.js';
+<<<<<<< HEAD
 import { randStr, watch, IN_MODIFY, memoize, daemon, atexit, getpid, toArrayBuffer, toString, escape, quote, define, getOpt, glob, fnmatch } from 'util';
+=======
+>>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
 import { Console } from './quickjs/qjs-modules/lib/console.js';
 import REPL from './quickjs/qjs-modules/lib/repl.js';
-import inspect from './lib/objectInspect.js';
-import * as Terminal from './terminal.js';
-import { setLog, logLevels, getSessions, LLL_USER, LLL_INFO, LLL_NOTICE, LLL_WARN, client, server } from 'net';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
 import { VirtFS } from './virtfs.js';
+<<<<<<< HEAD
 import extendArray from 'extendArray';
 
+=======
+import * as std from 'std';
+>>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
 extendArray(Array.prototype);
 
 const scriptName = (arg = scriptArgs[0]) => path.basename(arg, path.extname(arg));

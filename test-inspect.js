@@ -1,8 +1,6 @@
-import { Console } from 'console';
 import { range } from './lib/misc.js';
-
-
- function main(...args) {
+import { Console } from 'console';
+function main(...args) {
   
   globalThis.console = new Console({ inspectOptions: {
     colors: true,

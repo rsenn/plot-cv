@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #!/usr/bin/env qjsm
 import { MouseEvents, MouseFlags, Mouse, Window, TextStyle, DrawText } from './qjs-opencv/js/cvHighGUI.js';
 import filesystem from 'fs';
@@ -6,8 +7,53 @@ import trkl from './lib/trkl.js';
 import * as path from './lib/path.js';
 import { Console } from 'console';
 import { REPL } from 'repl';
+=======
+import { AutoValue } from './autoValue.js';
+import { ImagePipeline } from './imagePipeline.js';
+import { LoadHistory } from './io-helpers.js';
+import { ReadBJSON } from './io-helpers.js';
+import { ReadFile } from './io-helpers.js';
+import { ReadJSON } from './io-helpers.js';
+import { WriteBJSON } from './io-helpers.js';
+import { WriteFile } from './io-helpers.js';
+import { WriteJSON } from './io-helpers.js';
+import { ImageInfo } from './lib/image-info.js';
+import { lazyInitializer } from './lib/lazyInitializer.js';
+import { define } from './lib/misc.js';
+import { difference } from './lib/misc.js';
+import { escape } from './lib/misc.js';
+import { extendArray } from './lib/misc.js';
+import { fnmatch } from './lib/misc.js';
+import { getFunctionArguments } from './lib/misc.js';
+import { getOpt } from './lib/misc.js';
+import { glob } from './lib/misc.js';
+import { GLOB_TILDE } from './lib/misc.js';
+import { lazyProperties } from './lib/misc.js';
+import { memoize } from './lib/misc.js';
+import { quote } from './lib/misc.js';
+import { setInterval } from './lib/misc.js';
+import { toArrayBuffer } from './lib/misc.js';
+import { toString } from './lib/misc.js';
+import { union } from './lib/misc.js';
+import { wordexp } from './lib/misc.js';
+import inspect from './lib/objectInspect.js';
+import * as path from './lib/path.js';
+>>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
 import { Pointer } from './lib/pointer.js';
+import { read as fromXML } from './lib/xml.js';
+import { write as toXML } from './lib/xml.js';
+import { DrawText } from './qjs-opencv/js/cvHighGUI.js';
+import { Mouse } from './qjs-opencv/js/cvHighGUI.js';
+import { MouseEvents } from './qjs-opencv/js/cvHighGUI.js';
+import { MouseFlags } from './qjs-opencv/js/cvHighGUI.js';
+import { TextStyle } from './qjs-opencv/js/cvHighGUI.js';
+import { Window } from './qjs-opencv/js/cvHighGUI.js';
+import { ImageSequence } from './qjs-opencv/js/cvVideo.js';
+import { VideoSource } from './qjs-opencv/js/cvVideo.js';
+import { Console } from 'console';
+import { REPL } from 'repl';
 import * as Terminal from 'terminal';
+<<<<<<< HEAD
 import { read as fromXML, write as toXML } from './lib/xml.js';
 import inspect from './lib/objectInspect.js';
 import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON } from './io-helpers.js';
@@ -18,6 +64,9 @@ import { lazyInitializer } from './lib/lazyInitializer.js';
 import { AutoValue } from './autoValue.js';
 import extendArray from 'extendArray';
 
+=======
+#!/usr/bin/env qjsm
+>>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
 let cmdhist,
   defaultWin = lazyInitializer(() => new Window(path.basename(scriptArgs[0], '.js')));
 
@@ -46,7 +95,7 @@ async function importModule(moduleName, ...args) {
 
 function StartREPL(prefix = path.basename(scriptArgs[0], '.js'), suffix = '') {
   let repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, undefined, false);
-   repl.historyLoad(getConfFile('history'));
+  repl.historyLoad(getConfFile('history'));
   repl.loadSaveOptions();
   repl.inspectOptions = console.options;
 
@@ -168,7 +217,7 @@ function main(...args) {
       return AutoValue(getConfFile('global'));
     }
   });
- 
+
   Object.assign(globalThis, {
     Pointer,
     VideoSource,
@@ -201,7 +250,6 @@ function main(...args) {
     ReadFile,
     LoadHistory,
     ReadJSON,
-    MapFile,
     ReadBJSON,
     WriteFile,
     WriteJSON,

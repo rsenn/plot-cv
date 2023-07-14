@@ -1,5 +1,6 @@
-import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
-
+import { Component } from './lib/dom/preactComponent.js';
+import { h } from './lib/dom/preactComponent.js';
+import { render } from './lib/dom/preactComponent.js';
 /** Redirect rendering of descendants into the given CSS selector.
  *  @example
  *    <Portal into="body">

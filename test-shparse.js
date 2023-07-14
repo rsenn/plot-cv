@@ -1,5 +1,3 @@
-import REPL from './repl.js';
-import * as Terminal from './terminal.js';
 import * as path from 'path';
 import PortableSpawn from './lib/spawn.js';
 

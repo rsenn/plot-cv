@@ -1,28 +1,62 @@
-#!/usr/bin/env qjsm
-import { Console } from 'console';
-import { kill, SIGUSR1 } from 'os';
-import { getOpt, showHelp, isObject, mapWrapper, startInteractive, define, roundTo } from 'util';
-import { basename, extname } from 'path';
-import { Entities, nodeTypes, Prototypes, Factory, Parser, Serializer, Interface, Node, NodeList, NamedNodeMap, Element, Document, Attr, Text, Comment, TokenList, CSSStyleDeclaration, GetType } from './quickjs/qjs-modules/lib/dom.js';
-import { BBox, isBBox } from './lib/geom/bbox.js';
-import { Size, isSize } from './lib/geom/size.js';
-import { Rect } from './lib/geom/rect.js';
-import { TreeIterator } from 'tree_walker';
+import { kill } from 'os';
+import { SIGUSR1 } from 'os';
+import { basename } from 'path';
+import { extname } from 'path';
+import { define } from 'util';
+import { getOpt } from 'util';
+import { isObject } from 'util';
+import { mapWrapper } from 'util';
+import { roundTo } from 'util';
+import { showHelp } from 'util';
+import { startInteractive } from 'util';
+import { iterateTree } from './dom-helpers.js';
 import { WriteFile } from './io-helpers.js';
-import { Matrix, isMatrix, ImmutableMatrix } from './lib/geom/matrix.js';
-import { Transformation, ImmutableTransformation, Rotation, ImmutableRotation, Translation, ImmutableTranslation, Scaling, ImmutableScaling, MatrixTransformation, ImmutableMatrixTransformation, TransformationList, ImmutableTransformationList } from './lib/geom/transformation.js';
+import { BBox } from './lib/geom/bbox.js';
+import { isBBox } from './lib/geom/bbox.js';
+import { Matrix } from './lib/geom/matrix.js';
 import { Point } from './lib/geom/point.js';
-import { RGBA } from './lib/color/rgba.js';
 import { PointList } from './lib/geom/pointList.js';
+import { Rect } from './lib/geom/rect.js';
+import { isSize } from './lib/geom/size.js';
+import { Size } from './lib/geom/size.js';
+import { MatrixTransformation } from './lib/geom/transformation.js';
+import { Rotation } from './lib/geom/transformation.js';
+import { Scaling } from './lib/geom/transformation.js';
+import { Transformation } from './lib/geom/transformation.js';
+import { TransformationList } from './lib/geom/transformation.js';
+import { Translation } from './lib/geom/transformation.js';
+import { parseSVG } from './lib/svg/path-parser.js';
 import { SvgPath } from './lib/svg/path.js';
-import extendGenerator from 'extendGenerator';
-import extendArray from 'extendArray';
-import { read as readXML, write as writeXML } from 'xml';
+import { getUnit } from './measure-unit.js';
+import { getValue } from './measure-unit.js';
+import { unitConv } from './measure-unit.js';
+import { unitConvFactor } from './measure-unit.js';
+import { unitConvFunction } from './measure-unit.js';
+import { unitConvToMM } from './measure-unit.js';
+import { Attr } from './quickjs/qjs-modules/lib/dom.js';
+import { Comment } from './quickjs/qjs-modules/lib/dom.js';
+import { CSSStyleDeclaration } from './quickjs/qjs-modules/lib/dom.js';
+import { Document } from './quickjs/qjs-modules/lib/dom.js';
+import { Element } from './quickjs/qjs-modules/lib/dom.js';
+import { Entities } from './quickjs/qjs-modules/lib/dom.js';
+import { Factory } from './quickjs/qjs-modules/lib/dom.js';
+import { GetType } from './quickjs/qjs-modules/lib/dom.js';
+import { Interface } from './quickjs/qjs-modules/lib/dom.js';
+import { NamedNodeMap } from './quickjs/qjs-modules/lib/dom.js';
+import { Node } from './quickjs/qjs-modules/lib/dom.js';
+import { NodeList } from './quickjs/qjs-modules/lib/dom.js';
+import { nodeTypes } from './quickjs/qjs-modules/lib/dom.js';
+import { Parser } from './quickjs/qjs-modules/lib/dom.js';
+import { Prototypes } from './quickjs/qjs-modules/lib/dom.js';
+import { Serializer } from './quickjs/qjs-modules/lib/dom.js';
+import { Text } from './quickjs/qjs-modules/lib/dom.js';
+import { TokenList } from './quickjs/qjs-modules/lib/dom.js';
+import { Console } from 'console';
 import * as deep from 'deep';
-import { SyntaxError, parseSVG, makeAbsolute } from './lib/svg/path-parser.js';
-import { iterateTree} from './dom-helpers.js';
-import { getUnit, getValue, unitConvToMM, unitConvFactor, unitConvFunction, unitConv } from './measure-unit.js'
-
+import extendArray from 'extendArray';
+import extendGenerator from 'extendGenerator';
+import { TreeIterator } from 'tree_walker';
+#!/usr/bin/env qjsm
 extendGenerator();
 extendArray();
 
@@ -487,8 +521,6 @@ const MillimeterTo = {
   mm: 1l,
   m: 0.001l
 };
-
-
 for(let k of Object.keys(ToMillimeter))
   if(ToMillimeter[k] * MillimeterTo[k] != 1l)
     throw new Error(`Invalid unit conv factor for '${k} (${k} -> mm = ${ToMillimeter[k]}) mm -> ${k} = ${MillimeterTo[k]}`)

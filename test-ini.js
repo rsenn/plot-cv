@@ -1,13 +1,15 @@
 import INIGrammar from './grammar-INI.js';
-import * as path from './lib/path.js';
-import { Point, Size, Rect, BBox } from './lib/geom.js';
+import { ReadFile } from './io-helpers.js';
+import { WriteFile } from './io-helpers.js';
 import deep from './lib/deep.js';
-import { Console } from 'console';
-import tXml from './lib/tXml.js';
-import { XPath } from './lib/xml/xpath.js';
+import { BBox } from './lib/geom.js';
+import { Point } from './lib/geom.js';
+import { Rect } from './lib/geom.js';
+import { Size } from './lib/geom.js';
 import { toXML } from './lib/json.js';
-import { ReadFile, WriteFile } from './io-helpers.js';
-
+import * as path from './lib/path.js';
+import tXml from './lib/tXml.js';
+import { Console } from 'console';
 async function main(...args) {
   globalThis.console = new Console({
     inspectOptions: {

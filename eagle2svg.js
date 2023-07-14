@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #!/usr/bin/env qjsm
 import * as util from './lib/misc.js';
 import * as deep from './lib/deep.js';
@@ -9,11 +10,24 @@ import { Console } from 'console';
 import { read as fromXML, write as toXML } from './lib/xml.js';
 import { WriteFile } from './io-helpers.js';
 import { getOpt } from 'util';
+=======
+import { readFileSync } from 'fs';
+import { getOpt } from 'util';
+import { WriteFile } from './io-helpers.js';
+import { RGBA } from './lib/color/rgba.js';
+import { EagleDocument } from './lib/eagle.js';
+import { EagleProject } from './lib/eagle.js';
+import { log } from './lib/eagle.js';
+import { Renderer } from './lib/eagle.js';
+import * as path from './lib/path.js';
+import renderToString from './lib/preact-render-to-string.js';
+>>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
 import { render } from './lib/preact.mjs';
 import { append } from './lib/preact/append.js';
-import renderToString from './lib/preact-render-to-string.js';
-import { RGBA, isRGBA, ImmutableRGBA, default as rgba } from './lib/color/rgba.js';
-
+import { read as fromXML } from './lib/xml.js';
+import { write as toXML } from './lib/xml.js';
+import { Console } from 'console';
+#!/usr/bin/env qjsm
 let debugFlag = false;
 
 function render(doc, filename) {

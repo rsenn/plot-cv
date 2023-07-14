@@ -1,6 +1,12 @@
-import { Rect, Point, Size, Mat, PointIterator, Contour, Line, Draw, drawLine, drawCircle } from 'opencv';
-import inspect from 'inspect';
-
+import { Contour } from 'opencv';
+import { Draw } from 'opencv';
+import { drawCircle } from 'opencv';
+import { drawLine } from 'opencv';
+import { Line } from 'opencv';
+import { Mat } from 'opencv';
+import { Point } from 'opencv';
+import { Rect } from 'opencv';
+import { Size } from 'opencv';
 async function main(...args) {
   //import { Contour } from "contour";
   const { circle, contour, line, polygon, rect } = Draw;

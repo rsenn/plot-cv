@@ -1,9 +1,7 @@
+import { Alea } from './lib/alea.js';
 import Autoplacer from './lib/autoplacer/autoplacer.js';
 import { BBox } from './lib/geom/bbox.js';
-import { TRBL } from './lib/geom/trbl.js';
 import { Rect } from './lib/geom/rect.js';
-import { Alea } from './lib/alea.js';
-
 let rg = new Alea(1337);
 
 let bb = new BBox();

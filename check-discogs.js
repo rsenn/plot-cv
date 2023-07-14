@@ -1,9 +1,71 @@
-import * as cv from 'opencv';
+import { spawn } from 'child_process';
+import { WNOHANG } from 'child_process';
 import * as path from 'path';
-import Console from 'console';
 import { glob } from 'util';
 import { LoadConfig } from './config.js';
-import { FetchURL, ReadFile, ReadXML, WriteJSON } from './io-helpers.js';
+import { FetchURL } from './io-helpers.js';
+import { ReadFile } from './io-helpers.js';
+import { WriteJSON } from './io-helpers.js';
+import Console from 'console';
+function ReadCallback(fd, fn = data => {}) {
+  let buf = new ArrayBuffer(1024);
+  setReadHandler(fd, () => {
+    let r = read(fd, buf, 0, 1024);
+    if(r <= 0) {
+      close(fd);
+      setReadHandler(fd, null);
+      return;
+    }
+    let data = buf.slice(0, r);
+    data = toString(data);
+    fn(data);
+  });
+}
+
+function FetchURL(url, options = {}) {
+  let { headers, proxy, cookies = 'cookies.txt', range, body, version = '1.1', tlsv, 'user-agent': userAgent } = options;
+
+  let args = Object.entries(headers ?? {})
+    .reduce((acc, [k, v]) => acc.concat(['-H', `${k}: ${v}`]), [])
+    .concat(Array.isArray(url) ? url : [url]);
+
+  args.push('--compressed');
+  args.unshift('-L', '-k');
+
+  if(body) args.unshift('-d', body);
+  if(version) args.unshift('--http' + version);
+  if(tlsv) args.unshift('--tlsv' + tlsv);
+  if(userAgent) args.unshift('-A', userAgent);
+  if(range) args.unshift('-r', range);
+  if(cookies) args.unshift('-c', cookies);
+  if(proxy) args.unshift('-x', proxy);
+
+  args.unshift('--tcp-fastopen', '--tcp-nodelay');
+
+  console.log('FetchURL', console.config({ maxArrayLength: Infinity, compact: false }), { args });
+
+  let child = spawn('curl', args, {
+    block: false,
+    stdio: ['inherit', 'pipe', 'pipe']
+  });
+
+  let [, out, err] = child.stdio;
+
+  console.log('child', { out, err });
+  let output = '',
+    errors = '';
+
+  ReadCallback(out, data => (output += data));
+  ReadCallback(err, data => ((errors += data), err.puts(data), err.flush()));
+
+  child.wait(WNOHANG);
+  let status;
+
+  status = child.wait();
+  console.log('FetchURL', { status });
+
+  return output;
+}
 
 async function main(...args) {
   globalThis.console = new Console({

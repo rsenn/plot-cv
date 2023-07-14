@@ -1,27 +1,19 @@
 #define _GNU_SOURCE 1
 #include <stdio.h>
 #include <stddef.h>
-#ifdef _WIN32
-#include <winsock2.h>
-#else
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/select.h>
-#include <netpacket/packet.h>
+#include <sys/time.h>
 #include <sys/mman.h>
 #include <sys/un.h>
+#include <netpacket/packet.h>
 #include <termios.h>
-#include <glob.h>
-#include <sys/ptrace.h>
-#include <sys/inotify.h>
-#include <linux/random.h>
-#include <fnmatch.h>
-#endif
-#include <sys/time.h>
 #include <fcntl.h>
 #include <math.h>
 #include <time.h>
 #include <setjmp.h>
+#include <glob.h>
 #include <signal.h>
 #include <unistd.h>
 #include <inttypes.h>
@@ -30,9 +22,13 @@
 #include <stdlib.h>
 #include <libwebsockets.h>
 #include <errno.h>
-//#include <portmidi.h>
+#include <sys/ptrace.h>
+#include <sys/inotify.h>
+#include <portmidi.h>
+#include <linux/random.h>
 #include <zlib.h>
 #include <fcntl.h>
+#include <fnmatch.h>
 //#include <dns.h>
 #include "quickjs/qjs-net/libwebsockets/include/libwebsockets.h"
 #include <mariadb/mysql.h>
@@ -95,7 +91,7 @@ main() {
   // printf("const CLOCK_PROCESS_CPUTIME_ID = %d;\n", CLOCK_PROCESS_CPUTIME_ID);
   // printf("const CLOCK_THREAD_CPUTIME_ID = %d;\n", CLOCK_THREAD_CPUTIME_ID);
   // printf("sizeof(long long) = %zu\n", sizeof(long long));
-  printf("sizeof(struct termios) = %zu\n", sizeof(struct termios));
+  // printf("sizeof(struct termios) = %zu\n", sizeof(struct termios));
   // printf("%-10s = %d\n", "SIGHUP", SIGHUP);
   // printf("%-10s = %d\n", "SIGINT", SIGINT);
   // printf("%-10s = %d\n", "SIGQUIT", SIGQUIT);

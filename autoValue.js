@@ -1,6 +1,7 @@
-import trkl from './lib/trkl.js';
 import { sizeSync } from 'fs';
-import { ReadJSON, WriteJSON } from './io-helpers.js';
+import { ReadJSON } from './io-helpers.js';
+import { WriteJSON } from './io-helpers.js';
+import trkl from './lib/trkl.js';
 
 export function AutoValue(filename = getConfFile('cache'), read_fn = ReadJSON, write_fn = WriteJSON) {
   let self, value;

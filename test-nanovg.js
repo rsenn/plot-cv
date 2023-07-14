@@ -1,15 +1,34 @@
-import * as glfw from 'glfw';
-import { context, poll, Position, Window, CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_PROFILE, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, RESIZABLE, SAMPLES } from 'glfw';
-import { glClear, glClearColor, glViewport, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT } from './gl.js';
+import { DrawCircle } from './draw-utils.js';
+import { DrawImage } from './draw-utils.js';
+import { GLFW } from './draw-utils.js';
+import { Mat2Image } from './draw-utils.js';
 import { HSLA } from './lib/color.js';
-import { Mat, Point, Size, Rect, imread } from 'opencv';
-import * as cv from 'opencv';
-import * as nvg from 'nanovg';
 import Console from 'console';
+<<<<<<< HEAD
 import { GLFW, Mat2Image, DrawImage, DrawCircle } from './draw-utils.js';
 import { className } from 'util';
+=======
+import { context } from 'glfw';
+import { CONTEXT_VERSION_MAJOR } from 'glfw';
+import { CONTEXT_VERSION_MINOR } from 'glfw';
+import { OPENGL_CORE_PROFILE } from 'glfw';
+import { OPENGL_FORWARD_COMPAT } from 'glfw';
+import { OPENGL_PROFILE } from 'glfw';
+import { poll } from 'glfw';
+import { Position } from 'glfw';
+import { RESIZABLE } from 'glfw';
+import { SAMPLES } from 'glfw';
+import { Window } from 'glfw';
+import * as glfw from 'glfw';
+>>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
 import * as ImGui from 'imgui';
-
+import * as nvg from 'nanovg';
+import { imread } from 'opencv';
+import { Mat } from 'opencv';
+import { Point } from 'opencv';
+import { Rect } from 'opencv';
+import { Size } from 'opencv';
+import * as cv from 'opencv';
 function Clear(color = nvg.RGB(0, 0, 0)) {
   const { size } = context.current;
 

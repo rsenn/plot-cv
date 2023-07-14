@@ -1,5 +1,7 @@
-import { Voronoi, Matrix, Point, PointList } from './lib/geom.js';
-
+import { Matrix } from './lib/geom.js';
+import { Point } from './lib/geom.js';
+import { PointList } from './lib/geom.js';
+import { Voronoi } from './lib/geom.js';
 async function main(...args) {
   let file = 'lib/geom/point.js';
 

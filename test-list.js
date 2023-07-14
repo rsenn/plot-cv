@@ -1,7 +1,6 @@
-import { List } from 'list';
 import { define } from 'util';
 import { Console } from 'console';
-
+import { List } from 'list';
 globalThis.console = new Console({
   inspectOptions: {
     compact: 2,

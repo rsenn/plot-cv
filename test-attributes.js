@@ -1,9 +1,8 @@
-import inspect from 'inspect';
-import { XMLIterator } from './lib/xml/util.js';
-import tXml from './lib/tXml.js';
-import toSource from './lib/tosource.js';
 import { ColorMap } from './lib/draw/colorMap.js';
-
+import toSource from './lib/tosource.js';
+import tXml from './lib/tXml.js';
+import { XMLIterator } from './lib/xml/util.js';
+import inspect from 'inspect';
 //prettier-ignore
 
 function readXML(filename) {
@@ -17,6 +16,7 @@ function readXML(filename) {
 //TODO: Test with tmScheme (XML) and ColorMap
 
 const push_back = (arr, ...items) => [...(arr || []), ...items];
+
 const push_front = (arr, ...items) => [...items, ...(arr || [])];
 
 async function main(...args) {

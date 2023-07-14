@@ -13,7 +13,8 @@ import { unlink, error, fnmatch } from 'misc';
 import { keys, toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE, waitFor } from 'util';
 import { createServer, setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, FormParser, Hash, Response, Socket } from 'net';
 import { parseDate, dateToObject } from './date-helpers.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL, ExecTool } from './io-helpers.js';
+import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML,  WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, LogCall } from './io-helpers.js';
+import {   ExecTool } from './os-helpers.js';
 import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
 import { h, html, render, Component, useState, useLayoutEffect, useRef } from './lib/preact.mjs';
 import renderToString from './lib/preact-render-to-string.js';
@@ -94,7 +95,7 @@ const allowedDirs = (globalThis.allowedDirs = new Map(
 ));
 
 function GetDir(dir) {
-  let a = path.toArray(dir);
+  let a = dir.split(new RegExp(path.sep+'+', 'g'));
   let i = a.findIndex(n => /[*{}]/.test(n));
   return i != -1 ? path.slice(dir, 0, i) : dir;
 }
@@ -104,7 +105,7 @@ function DirName(name) {
 
   p = path.slice(
     p,
-    path.toArray(p).findIndex(it => it != '..')
+    p.split(new RegExp(path.sep+'+', 'g')).findIndex(it => it != '..')
   );
   return p;
 }

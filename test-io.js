@@ -1,6 +1,4 @@
-import ObjectInspect from './lib/objectInspect.js';
 import { Repeater } from './lib/repeater/repeater.js';
-
 let tmpdir;
 let buffer, buffer2;
 let handle;

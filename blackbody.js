@@ -1,4 +1,3 @@
-import { RGBA, HSLA } from './lib/color.js';
 
 const blackbody_color = new Map([
   [1000, [1, 0.18172716, 0]],

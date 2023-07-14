@@ -1,11 +1,18 @@
-import { Worker, close, exec, pipe, read, waitpid } from 'os';
-import { popen } from 'std';
+import { spawn } from 'child_process';
 import * as fs from 'fs';
-import { Spawn } from './io-helpers.js';
-import { define, toString, btoa } from './lib/misc.js';
-import { RepeaterOverflowError, FixedBuffer, SlidingBuffer, DroppingBuffer, MAX_QUEUE_LENGTH, Repeater } from './lib/repeater/repeater.js';
+import { close } from 'os';
+import { exec } from 'os';
+import { pipe } from 'os';
+import { read } from 'os';
+import { waitpid } from 'os';
+import { Worker } from 'os';
+import { btoa } from './lib/misc.js';
+import { define } from './lib/misc.js';
+import { toString } from './lib/misc.js';
+import { Repeater } from './lib/repeater/repeater.js';
 import { ReadFile } from './readfile.js';
-
+import { fdopen } from 'std';
+import { popen } from 'std';
 /*export function ExecTool(cmd, ...args) {
   let child = Spawn(cmd, args, { stdio: [0, 'pipe', 2] });
   let [stdin, stdout, stderr] = child.stdio;
@@ -57,4 +64,56 @@ export function URLWorker(script) {
   return define(new Repeater((push, stop) => (w.onmessage = push)), {
     postMessage: msg => w.postMessage(msg)
   });
+}
+
+export function Spawn(...args) {
+  const child = spawn(...args);
+
+  //console.log('child.stdio', child.stdio);
+
+  //define(child, { get stdin() { return this.stdio[0]; },get stdout() { return this.stdio[1]; },get stderr() { return this.stdio[2]; } });
+  define(
+    child,
+    properties(
+      {
+        stdin() {
+          return this.stdio[0] >= 0 ? fdopen(this.stdio[0], 'w') : null;
+        },
+        stdout() {
+          return this.stdio[1] >= 0 ? fdopen(this.stdio[1], 'r') : null;
+        },
+        stderr() {
+          return this.stdio[2] >= 0 ? fdopen(this.stdio[2], 'r') : null;
+        }
+      },
+      { memoize: true }
+    )
+  );
+
+  return child;
+}
+
+export function Shell(cmd) {
+  let f = popen(cmd, 'r');
+  let s = '';
+
+  while(!f.eof() && !f.error()) s += f.readAsString();
+
+  f.close();
+  return s;
+}
+
+export function ExecTool(cmd, ...args) {
+  let f = popen([cmd, ...args].join(' '), 'r');
+  let s = '';
+
+  for(;;) {
+    let line = f.getline();
+
+    if(line === null) break;
+    s += line + '\n';
+  }
+
+  f.close();
+  return s;
 }

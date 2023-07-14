@@ -1,6 +1,8 @@
-import { define, isObject, mod, memoize, unique, roundTo } from "util";
-import * as cv from "opencv";
-import { EventEmitter, eventify } from "./quickjs/qjs-modules/lib/events.js";
+import { define } from 'util';
+import { mod } from 'util';
+import { roundTo } from 'util';
+import { EventEmitter } from './quickjs/qjs-modules/lib/events.js';
+import * as cv from 'opencv';
 
 const MinMax = (min, max) => value => Math.max(min, Math.min(max, value));
 

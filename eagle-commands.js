@@ -1,9 +1,22 @@
+<<<<<<< HEAD
 import { LineList, Rect, Point } from './lib/geom.js';
 import { BG, digit2color, GetColorBands, PartScales } from './lib/eda/colorCoding.js';
 import { map, consume, reduce } from './lib/iterable.js';
 import { abbreviate } from './lib/misc.js';
 export { GetColorBands } from './lib/eda/colorCoding.js';
+=======
+import { BG } from './lib/eda/colorCoding.js';
+import { digit2color } from './lib/eda/colorCoding.js';
+import { GetColorBands } from './lib/eda/colorCoding.js';
+import { LineList } from './lib/geom.js';
+import { Point } from './lib/geom.js';
+import { Rect } from './lib/geom.js';
+import { map } from './lib/iterable.js';
+import { reduce } from './lib/iterable.js';
+import { abbreviate } from './lib/misc.js';
+>>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
 
+export { GetColorBands } from './lib/eda/colorCoding.js';
 export function GetParts(schematic = project.schematic, t = entries => Object.fromEntries(entries)) {
   return t(map(schematic.getAll('part'), elem => [elem.name, elem]));
 }
@@ -92,9 +105,17 @@ export function scientific(value) {
   return sci;
 }
 
+<<<<<<< HEAD
 const text = s => s;
+=======
+const text = (() => {
+  //const ansi = coloring(true);
+  return (...args) => args.join(''); //ansi.text(...args);
+})();
+>>>>>>> 2ab56534ac2add9d02547ce8cdd95c749155e8df
 
 const verticalRectangles = ['█', '□', '\u2588\u258d', '□', '▯'];
+
 const largeSquares = ['■', '□'];
 
 export function num2color(num, bg, square = false) {

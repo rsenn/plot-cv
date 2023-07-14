@@ -1,8 +1,7 @@
+import { ReadFile } from './io-helpers.js';
+import { h } from './lib/dom/preactComponent.js';
 import Lexer from './lib/jslexer.js';
-import { Console } from 'console';
 import { escape } from './lib/misc.js';
-import { h, Component } from './lib/dom/preactComponent.js';
-import { ReadFile, WriteFile } from './io-helpers.js';
 
 const testfn = () => true;
 const testtmpl = `this is

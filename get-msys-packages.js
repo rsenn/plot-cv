@@ -1,9 +1,9 @@
 import filesystem from 'fs';
-import { execStream } from './childProcess.js';
-import { AsyncWrite, AsyncRead, AcquireReader, AcquireWriter, PipeToRepeater, LineReader, WritableRepeater, WriteIterator, ReadFromIterator, TextTransformStream, PipeTo, CreateTransformStream, isStream, CreateWritableStream, LineBufferStream, RepeaterSink, RepeaterSource } from './lib/stream/utils.js';
-import * as path from './lib/path.js';
 import fs from 'fs';
-
+import { execStream } from './childProcess.js';
+import * as path from './lib/path.js';
+import { LineBufferStream } from './lib/stream/utils.js';
+import { RepeaterSink } from './lib/stream/utils.js';
 //prettier-ignore
 
 function alt_main(...args) {
@@ -33,6 +33,7 @@ const URLS = [
   'https://repo.msys2.org/msys/i686/msys.db',
   'https://repo.msys2.org/msys/x86_64/msys.db'
 ];
+
 const BASE_URL = 'https://repo.msys2.org';
 async function main(...args) {
   console.log('main(', ...args, ')');

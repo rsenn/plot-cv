@@ -1,7 +1,8 @@
 import child_process from 'child_process';
+import { bufferToString } from 'fs';
+import { closeSync } from 'fs';
+import { readSync } from 'fs';
 import { Repeater } from './lib/repeater/repeater.js';
-import { readSync, closeSync, bufferToString } from 'fs';
-
 let childProcess;
 
 function waitRead(file) {
@@ -54,7 +55,7 @@ function FdReader(fd, bufferSize = 1024) {
 async function main(...args) {
   // await PortableChildProcess(p => (childProcess = p));
 
-  let proc = child_process.spawn('list-r', ['-l'], {
+  let proc = child_process.spawn('ls', ['-la'], {
     block: false,
     stdio: ['pipe', 'pipe', 'pipe']
   });

@@ -1,7 +1,9 @@
+import { closeSync } from 'fs';
+import { openSync } from 'fs';
+import { Circuit } from './circuit.js';
+import { CircuitFileParser } from './circuit.js';
+import { CircuitFileWriter } from './circuit.js';
 import { Console } from 'console';
-import { Circuit, CircuitFileParser, CircuitFileWriter } from './circuit.js';
-import { openSync, closeSync } from 'fs';
-
 function main(...args) {
   globalThis.console = new Console({
     inspectOptions: {

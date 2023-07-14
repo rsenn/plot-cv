@@ -1,11 +1,12 @@
-import { EagleDocument, EagleProject } from './lib/eagle.js';
-import { LineList, Rect } from './lib/geom.js';
-import { toXML } from './lib/json.js';
 import deep from './lib/deep.js';
+import { EagleDocument } from './lib/eagle.js';
+import { EagleProject } from './lib/eagle.js';
 import { Graph } from './lib/fd-graph.js';
+import { LineList } from './lib/geom.js';
+import { Rect } from './lib/geom.js';
 import ptr from './lib/json-ptr.js';
+import { toXML } from './lib/json.js';
 import LogJS from './lib/log.js';
-
 let filesystem = fs;
 
 function xmlize(obj, depth = 2) {

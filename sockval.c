@@ -1,17 +1,14 @@
 #include <stdio.h>
 #include <stddef.h>
-#ifdef _WIN32
-#include <winsock2.h>
-typedef int socklen_t;
-#else
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/select.h>
 #include <sys/poll.h>
 #include <sys/time.h>
 #include <termio.h>
-#endif
-#include <stdint.h>
+#include <fcntl.h>
+#include <math.h>
+#include <float.h>
 
 //#ifndef OFFSETOF
 #define OFFSETOF(type, field) ((size_t) & ((type*)0)->field)
@@ -21,18 +18,76 @@ typedef int socklen_t;
 #define BYTE_TO_BINARY(byte) \
   (byte & 0x80 ? '1' : '0'), (byte & 0x40 ? '1' : '0'), (byte & 0x20 ? '1' : '0'), (byte & 0x10 ? '1' : '0'), \
       (byte & 0x08 ? '1' : '0'), (byte & 0x04 ? '1' : '0'), (byte & 0x02 ? '1' : '0'), (byte & 0x01 ? '1' : '0')
+enum test { A, B, C, D };
 
+typedef int dim2[10][20];
 int
 main() {
   struct sockaddr_in sa;
   struct timeval tv;
+  struct termio tio;
+  struct termios tios;
   struct pollfd pfd;
+  typedef int dim1[10];
+
+  dim2 test;
+
+  printf("sizeof(enum test) = %zx\n", sizeof(enum test));
+  printf("FLT_RADIX = %zx\n", FLT_RADIX);
 
   printf("%d %lu\n", FD_SETSIZE, sizeof(struct timeval));
   printf("sa.sin_family %lu %lu\n", OFFSETOF(struct sockaddr_in, sin_port), sizeof(sa.sin_family));
   printf("sa.sin_port %lu %lu\n", OFFSETOF(struct sockaddr_in, sin_port), sizeof(sa.sin_port));
   printf("sa.sin_addr %lu %lu\n", OFFSETOF(struct sockaddr_in, sin_addr), sizeof(sa.sin_addr));
   printf("sizeof(sa) %lu\n", sizeof(struct sockaddr_in));
+  printf("sizeof(struct termio) %lu\n", sizeof(struct termio));
+  printf("sizeof(tio.c_iflag) %lu\n", sizeof(tio.c_iflag));
+  printf("OFFSETOF(struct termio,c_line) %lu\n", OFFSETOF(struct termio, c_line));
+  printf("sizeof(tio.c_line) %lu\n", sizeof(tio.c_line));
+  printf("OFFSETOF(struct termio,c_cc) %lu\n", OFFSETOF(struct termio, c_cc));
+  printf("sizeof(tio.c_cc) %lu\n", sizeof(tio.c_cc));
+
+  printf("sizeof(struct termios) %lu\n", sizeof(struct termios));
+  printf("sizeof(tios.c_iflag) %lu\n", sizeof(tios.c_iflag));
+  printf("OFFSETOF(struct termios,c_line) %lu\n", OFFSETOF(struct termios, c_line));
+  printf("sizeof(tios.c_line) %lu\n", sizeof(tios.c_line));
+  printf("OFFSETOF(struct termios,c_cc) %lu\n", OFFSETOF(struct termios, c_cc));
+  printf("sizeof(tios.c_cc) %lu\n", sizeof(tios.c_cc));
+  /*printf("OFFSETOF(struct termios,c_ispeed) %lu\n", OFFSETOF(struct termios,c_ispeed));
+  printf("sizeof(tios.c_ispeed) %lu\n", sizeof(tios.c_ispeed));
+  printf("OFFSETOF(struct termios,c_ospeed) %lu\n", OFFSETOF(struct termios,c_ospeed));
+  printf("sizeof(tios.c_ospeed) %lu\n", sizeof(tios.c_ospeed));*/
+  /*int32_t     num = 0x80000000;
+  printf("num = %s\n", "0x80000000");
+  printf("num %i\n", num);
+  printf("s|%s|'0x%08x'|\n", "0x80000000", (uint32_t)num);
+  printf("-num 0x%08x\n", num);
+  num = 0x80045430;
+  printf("num = %s\n", "0x80045430");
+  printf("num %i\n", num);
+  printf("s|%s|'0x%08x'|\n", "0x80045430", (uint32_t)num);
+  printf("-num 0x%08x\n", num);
+  num = 0x80045432;
+  printf("num = %s\n", "0x80045432");
+  printf("num %i\n", num);
+  printf("s|%s|'0x%08x'|\n", "0x80045432", (uint32_t)num);
+  printf("-num 0x%08x\n", num);
+  num = 0x80045438;
+  printf("num = %s\n", "0x80045438");
+  printf("num %i\n", num);
+  printf("s|%s|'0x%08x'|\n", "0x80045438", (uint32_t)num);
+  printf("-num 0x%08x\n", num);
+  num = 0x80045439;
+  printf("num = %s\n", "0x80045439");
+  printf("num %i\n", num);
+  printf("s|%s|'0x%08x'|\n", "0x80045439", (uint32_t)num);
+  printf("-num 0x%08x\n", num);
+  num = 0x80045440;
+  printf("num = %s\n", "0x80045440");
+  printf("num %i\n", num);
+  printf("s|%s|'0x%08x'|\n", "0x80045440", (uint32_t)num);
+  printf("-num 0x%08x\n", num);
+*/
 
   printf("SOL_SOCKET %lu\n", SOL_SOCKET);
 #ifdef O_ACCMODE
@@ -121,6 +176,12 @@ main() {
   printf("sizeof(int) %lu\n", sizeof(int));
   printf("sizeof(long) %lu\n", sizeof(long));
   printf("sizeof(long long) %lu\n", sizeof(long long));
+  float nan_f = NAN;
+  double nan_d = NAN;
+  printf("(uint32_t)NAN = %08x\n", *(uint32_t*)&nan_f);
+  printf("(uint64_t)NAN = %016llx\n", *(uint64_t*)&nan_d);
+  enum { A = 1, B = 2, C = 3 } e;
+  printf("sizeof(e) %lu\n", sizeof(e));
   printf("sizeof(off_t) %lu\n", sizeof(off_t));
   printf("POLLIN  0b" BYTE_TO_BINARY_PATTERN "\n", BYTE_TO_BINARY(POLLIN));
   printf("POLLPRI 0b" BYTE_TO_BINARY_PATTERN "\n", BYTE_TO_BINARY(POLLPRI));
@@ -131,57 +192,4 @@ main() {
   printf("#define POLLOUT\t%d\n", POLLOUT);
   printf("#define POLLERR\t%d\n", POLLERR);
   printf("#define POLLHUP\t%d\n", POLLHUP);
-  printf("EAGAIN = %d\n", EAGAIN);
-  printf("EWOULDBLOCK = %d\n", EWOULDBLOCK);
-  printf("WSAEINTR = %d\n", WSAEINTR);
-  printf("WSAEBADF = %d\n", WSAEBADF);
-  printf("WSAEACCES = %d\n", WSAEACCES);
-  printf("WSAEFAULT = %d\n", WSAEFAULT);
-  printf("WSAEINVAL = %d\n", WSAEINVAL);
-  printf("WSAEMFILE = %d\n", WSAEMFILE);
-  printf("WSAEWOULDBLOCK = %d\n", WSAEWOULDBLOCK);
-  printf("WSAEINPROGRESS = %d\n", WSAEINPROGRESS);
-  printf("WSAEALREADY = %d\n", WSAEALREADY);
-  printf("WSAENOTSOCK = %d\n", WSAENOTSOCK);
-  printf("WSAEDESTADDRREQ = %d\n", WSAEDESTADDRREQ);
-  printf("WSAEMSGSIZE = %d\n", WSAEMSGSIZE);
-  printf("WSAEPROTOTYPE = %d\n", WSAEPROTOTYPE);
-  printf("WSAENOPROTOOPT = %d\n", WSAENOPROTOOPT);
-  printf("WSAEPROTONOSUPPORT = %d\n", WSAEPROTONOSUPPORT);
-  printf("WSAESOCKTNOSUPPORT = %d\n", WSAESOCKTNOSUPPORT);
-  printf("WSAEOPNOTSUPP = %d\n", WSAEOPNOTSUPP);
-  printf("WSAEPFNOSUPPORT = %d\n", WSAEPFNOSUPPORT);
-  printf("WSAEAFNOSUPPORT = %d\n", WSAEAFNOSUPPORT);
-  printf("WSAEADDRINUSE = %d\n", WSAEADDRINUSE);
-  printf("WSAEADDRNOTAVAIL = %d\n", WSAEADDRNOTAVAIL);
-  printf("WSAENETDOWN = %d\n", WSAENETDOWN);
-  printf("WSAENETUNREACH = %d\n", WSAENETUNREACH);
-  printf("WSAENETRESET = %d\n", WSAENETRESET);
-  printf("WSAECONNABORTED = %d\n", WSAECONNABORTED);
-  printf("WSAECONNRESET = %d\n", WSAECONNRESET);
-  printf("WSAENOBUFS = %d\n", WSAENOBUFS);
-  printf("WSAEISCONN = %d\n", WSAEISCONN);
-  printf("WSAENOTCONN = %d\n", WSAENOTCONN);
-  printf("WSAESHUTDOWN = %d\n", WSAESHUTDOWN);
-  printf("WSAETOOMANYREFS = %d\n", WSAETOOMANYREFS);
-  printf("WSAETIMEDOUT = %d\n", WSAETIMEDOUT);
-  printf("WSAECONNREFUSED = %d\n", WSAECONNREFUSED);
-  printf("WSAELOOP = %d\n", WSAELOOP);
-  printf("WSAENAMETOOLONG = %d\n", WSAENAMETOOLONG);
-  printf("WSAEHOSTDOWN = %d\n", WSAEHOSTDOWN);
-  printf("WSAEHOSTUNREACH = %d\n", WSAEHOSTUNREACH);
-  printf("WSAENOTEMPTY = %d\n", WSAENOTEMPTY);
-  printf("WSAEPROCLIM = %d\n", WSAEPROCLIM);
-  printf("WSAEUSERS = %d\n", WSAEUSERS);
-  printf("WSAEDQUOT = %d\n", WSAEDQUOT);
-  printf("WSAESTALE = %d\n", WSAESTALE);
-  printf("WSAEREMOTE = %d\n", WSAEREMOTE);
-  printf("WSAEDISCON = %d\n", WSAEDISCON);
-  printf("WSAENOMORE = %d\n", WSAENOMORE);
-  printf("WSAECANCELLED = %d\n", WSAECANCELLED);
-  printf("WSAEINVALIDPROCTABLE = %d\n", WSAEINVALIDPROCTABLE);
-  printf("WSAEINVALIDPROVIDER = %d\n", WSAEINVALIDPROVIDER);
-  printf("WSAEPROVIDERFAILEDINIT = %d\n", WSAEPROVIDERFAILEDINIT);
-  printf("WSAEREFUSED = %d\n", WSAEREFUSED);
-  return 0;
 }

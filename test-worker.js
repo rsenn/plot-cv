@@ -1,11 +1,10 @@
-/* os.Worker API test */
-import * as std from 'std';
 import * as os from 'os';
-import { Console } from 'console';
 import { assert } from './lib/misc.js';
-import { WorkerScript } from './workerScript.js';
 import { PromiseWorker } from './promise-worker.js';
-
+import { WorkerScript } from './workerScript.js';
+import { Console } from 'console';
+import * as std from 'std';
+/* os.Worker API test */
 var worker;
 var counter;
 

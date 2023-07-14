@@ -1,10 +1,16 @@
-import { Console } from 'console';
 import * as fs from 'fs';
 import * as path from 'path';
-import { define, properties, types, mapFunction, gettersetter, arraysInCommon, unique } from './lib/misc.js';
-import child_process from './lib/childProcess.js';
-import { CompileCommand, MakeCommand, MakeCommands, ArgumentType } from './lib/compileCommand.js';
-import { DirIterator, RecursiveDirIterator, ReadDirRecursive } from './dir-helpers.js';
+import { DirIterator } from './dir-helpers.js';
+import { RecursiveDirIterator } from './dir-helpers.js';
+import { ArgumentType } from './lib/compileCommand.js';
+import { CompileCommand } from './lib/compileCommand.js';
+import { MakeCommand } from './lib/compileCommand.js';
+import { MakeCommands } from './lib/compileCommand.js';
+import { arraysInCommon } from './lib/misc.js';
+import { define } from './lib/misc.js';
+import { mapFunction } from './lib/misc.js';
+import { types } from './lib/misc.js';
+import { Console } from 'console';
 import process from 'process';
 
 const commands = (globalThis.commands = []);

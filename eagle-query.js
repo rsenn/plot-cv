@@ -1,14 +1,15 @@
-import { ReadFile, WriteFile } from './io-helpers.js';
-import { unique } from './lib/misc.js';
+import { num2color } from './eagle-commands.js';
+import { scientific } from './eagle-commands.js';
+import { ReadFile } from './io-helpers.js';
+import { HSLA } from './lib/color.js';
+import { RGBA } from './lib/color.js';
 import { EagleDocument } from './lib/eagle.js';
-import { toXML } from './lib/json.js';
-import fs from 'fs';
-import { Console } from 'console';
-import { digit2color, GetColorBands, ValueToNumber, NumberToValue, PartScales } from './lib/eda/colorCoding.js';
+import { PartScales } from './lib/eda/colorCoding.js';
+import { ValueToNumber } from './lib/eda/colorCoding.js';
 import { UnitForName } from './lib/eda/units.js';
-import { num2color, scientific } from './eagle-commands.js';
-import { RGBA, HSLA } from './lib/color.js';
-
+import { toXML } from './lib/json.js';
+import { unique } from './lib/misc.js';
+import { Console } from 'console';
 let documents = [];
 
 function xmlize(obj, depth = 2) {

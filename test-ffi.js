@@ -1,20 +1,17 @@
-import * as std from 'std';
-import * as os from 'os';
-import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './quickjs/qjs-ffi/lib/fcntl.js';
-import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toArrayBuffer, toPointer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_DEFAULT, RTLD_NEXT } from 'ffi';
+import { F_GETFL } from './quickjs/qjs-ffi/lib/fcntl.js';
+import { F_SETFL } from './quickjs/qjs-ffi/lib/fcntl.js';
+import { fcntl } from './quickjs/qjs-ffi/lib/fcntl.js';
+import { O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
+import { call } from 'ffi';
+import { define } from 'ffi';
+import { dlopen } from 'ffi';
+import { dlsym } from 'ffi';
+import { RTLD_DEFAULT } from 'ffi';
+import { toPointer } from 'ffi';
+import { toString } from 'ffi';
 import * as ffi from 'ffi';
-import { weakDefine, filterKeys, entries, className, getMethodNames } from 'util';
-import { Console } from 'console';
-
-function bitsToNames(flags, map = (name, flag) => name) {
-  return function* (value) {
-    for(let [name, flag] of entries(flags)) if(value & flag && (value & flag) == flag) yield map(name, flag);
-  };
-}
-
 function foreign(name, ret, ...args) {
   let fp = dlsym(RTLD_DEFAULT, name);
-  console.log(`function '${name}' address: 0x${toHex(fp)}`);
   define(name, fp, null, ret, ...args);
   return (...args) => call(name, ...args);
 }
@@ -26,19 +23,19 @@ let strdup = foreign('strdup', 'void *', 'string');
 let dlopen_ = foreign('dlopen', 'void *', 'string', 'int');
 let dlsym_ = foreign('dlsym', 'void *', 'string');
 let snprintf = foreign('snprintf', 'int', 'buffer', 'size_t', 'string', 'void *');
-let mmap = foreign('mmap', 'buffer', 'pointer', 'size_t', 'int', 'int', 'int', 'size_t');
+let mmap = foreign('mmap', 'ulong', 'pointer', 'size_t', 'int', 'int', 'int', 'size_t');
 let munmap = foreign('munmap', 'void', 'ulong', 'ulong');
 let fork = foreign('fork', 'int');
 let strcpy = foreign('strcpy', 'pointer', 'pointer', 'pointer');
-let strncpy = foreign('strncpy', 'pointer', 'pointer', 'pointer', 'size_t');
-let strlcpy = foreign('strlcpy', 'pointer', 'pointer', 'pointer', 'size_t');
 let setjmp = foreign('setjmp', 'int', 'pointer');
 let longjmp = foreign('longjmp', 'int', 'pointer', 'int');
 let printf = foreign('printf', 'int', 'string', 'pointer', 'pointer');
 
-weakDefine(ArrayBuffer.prototype, {
+Util.define(ArrayBuffer.prototype, {
   toPointer(hint = 'string') {
-    let ret = toPointer(this);
+    let out = new ArrayBuffer(100);
+    sprintf(out, '%p', this);
+    let ret = ArrayBufToString(out);
     switch (hint) {
       case 'bigint':
         ret = BigInt(ret);
@@ -121,15 +118,11 @@ class Registers extends ArrayBuffer {
   }
 }
 
-function main(...args) {
-  globalThis.console = new Console({
-    inspectOptions: {
-      //breakLength: 120,
-      maxStringLength: 200,
-      multiline: 1,
-      alignMap: true,
-      numberBase: 16
-    }
+async function main(...args) {
+    //breakLength: 120,
+    maxStringLength: 200,
+    multiline: 1,
+    alignMap: true
   });
   printf('%p %s\n', 0xdeadbeef00000000, '0xdeadbeef');
 
@@ -137,23 +130,23 @@ function main(...args) {
 
   for(let [name, value] of Object.entries(ffi)) console.log(`ffi.${name}:`, value);
   console.log(`ffi:`, ffi);
-  const flagNames = bitsToNames(filterKeys(fcntl, /^O_/));
+  const flagNames = Util.bitsToNames(Util.filterKeys(fcntl, /^O_/));
   let outBuf = new ArrayBuffer(256);
   let flags;
   let fd = 1;
   let newState = false;
   console.log('strdup:', strdup('BLAH').toString(16));
-  console.log('dlsym_(RTLD_DEFAULT, "strdup"):', dlsym(RTLD_DEFAULT, 'strdup')?.toString(16));
+  console.log('dlsym_(RTLD_DEFAULT, "strdup"):', dlsym(RTLD_DEFAULT, 'strdup').toString(16));
   console.log('snprintf(outBuf, outBuf.byteLength, "%p", -1):', snprintf(outBuf, outBuf.byteLength, '%p', 0x7fffffffffffffff));
   console.log('outBuf:', ArrayBufToString(outBuf));
-  console.log('os.isatty(1):', os.isatty(1));
+  console.log('Util.isatty(1):', await Util.isatty(1));
   console.log('F_GETFL:', toHex((flags = fcntl(fd, F_GETFL, 0))));
 
   if(newState) flags |= O_NONBLOCK;
   else flags &= ~O_NONBLOCK;
 
   console.log('fcntl:', [...flagNames(flags)]);
-  console.log('ttyGetWinSize:', os.ttyGetWinSize(1));
+  console.log('ttyGetWinSize:', await Util.ttyGetWinSize(1));
 
   console.log('F_SETFL:', fcntl(fd, F_SETFL, flags));
   console.log('F_GETFL:', toHex(fcntl(fd, F_GETFL, 0)));
@@ -177,51 +170,41 @@ function main(...args) {
   console.log('u8.buffer.toPointer().toString():', u8.buffer.toPointer().toString());
   // const ptr = u8.buffer.toPointer();
   const ptr = ffi.toPointer(u8.buffer);
-
-  console.log('console.options.numberBase', console.options.numberBase);
-  console.log('ptr:', +ptr);
-  console.log('100 + +ptr:', 100 + +ptr);
+  console.log('ptr:', ptr);
   console.log('toString:', ffi.toString(ptr));
 
   console.log('timeval:', t.slice());
   console.log('select:', toHex(select(4, rfds, wfds, efds, t)));
   console.log('toHex:', toHex(1, 8));
+  console.log('toHex:', [...Util.partition(toHex(1, 8), 2)]);
   console.log('BigUint64Array.BYTES_PER_ELEMENT:', BigUint64Array.BYTES_PER_ELEMENT1);
   let out = new ArrayBuffer(100);
   console.log('sprintf:', sprintf(out, '%p', rfds));
   console.log('out:', MakeArray(out, 1).toString());
   console.log('rfds.toPointer():', rfds.toPointer());
-  console.log('BigInt methods:', getMethodNames(BigInt));
+  console.log('BigInt methods:', Util.getMethodNames(BigInt));
   console.log('BigInt toString(16):', BigInt(1337).toString(16));
 
   const MAP_ANONYMOUS = 0x20;
 
   let base_addr = 0x7f0000000000 - 1024;
 
-  let mmapped = mmap(null, 8192, 0x7, 0x02 | MAP_ANONYMOUS, -1, 0);
-  console.log('mmapped:', mmapped.toString(16));
-
-  let buf = new ArrayBuffer(8192);
-  let area = toPointer(buf);
-  console.log('area:', area);
-
+  let area = mmap((0x2000000 || 0x7f0000000000) - 8192, 8192, 0x7, 0x02 | MAP_ANONYMOUS, -1, 0);
+  console.log('area:', area.toString(16));
   let fp = dlsym(RTLD_DEFAULT, 'strchr');
   console.log('fp:', fp.toString(16));
-  strcpy(buf, '\x48\x31\x70\x73');
-  //strlcpy(area, '\x48\x31\xc0\xc3', 4);
-
+  strcpy(area, '\x48\x31\xc0\xc3');
   //  strcpy(area+0, '\x48\x31\xc0\x48\xff\xc0\xc3');
-  console.log('buf:', buf);
 
-  let returnRAX = +area + 100;
-  strcpy(returnRAX, '\x48\x31\xc0\x48\xff\xc0\xc3');
-  let returnADDR = +area + 200;
-  strcpy(returnADDR, '\x48\x8b\x04\x24\xc3');
-  let writeREGS = +area + 300;
-  strcpy(writeREGS, '\xf3\x0f\x1e\xfa\x48\x89\x07\x48\x89\x5f\x08\x48\x89\x4f\x10\x48\x89\x57\x18\x48\x89\x77\x20\x48\x89\x7f\x28\x48\x89\x6f\x30\x48\x89\x67\x38\x48\x31\xc0\x48\xff\xc0\xc3');
+  let returnRAX = area + 100;
+  strcpy(area + 100, '\x48\x31\xc0\x48\xff\xc0\xc3');
+  let returnADDR = area + 200;
+  strcpy(area + 200, '\x48\x8b\x04\x24\xc3');
+  let writeREGS = area + 300;
+  strcpy(area + 300, '\xf3\x0f\x1e\xfa\x48\x89\x07\x48\x89\x5f\x08\x48\x89\x4f\x10\x48\x89\x57\x18\x48\x89\x77\x20\x48\x89\x7f\x28\x48\x89\x6f\x30\x48\x89\x67\x38\x48\x31\xc0\x48\xff\xc0\xc3');
   console.log('writeREGS:', writeREGS.toString(16));
   let ret;
-  printf('area: %s\n', StringToHex(+area + 0));
+  printf('area: %s\n', StringToHex(area + 0));
 
   printf('returnRAX: %p\n', +returnRAX);
   printf('returnADDR: %s\n', StringToHex(returnADDR));
@@ -251,6 +234,8 @@ function main(...args) {
 main(...scriptArgs.slice(1));
 
 function toHex(n, b = 2) {
+  console.log('toHex:', n);
+
   let s = (+n).toString(16);
   return '0'.repeat(Math.ceil(s.length / b) * b - s.length) + s;
 }
@@ -288,7 +273,7 @@ function MakeArray(buf, numBytes) {
         return new Uint8Array(buf);
     }
   } catch(error) {
-    console.error(`MakeArray(${className(buf)}[${buf.byteLength}], ${numBytes}): ${error.message}`);
+    console.error(`MakeArray(${Util.className(buf)}[${buf.byteLength}], ${numBytes}): ${error.message}`);
   }
 }
 

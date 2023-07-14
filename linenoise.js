@@ -1,10 +1,16 @@
-import { dlopen, dlsym, RTLD_NOW, define, call, toString, toPointer } from 'ffi';
+import { call } from 'ffi';
+import { define } from 'ffi';
+import { dlopen } from 'ffi';
+import { dlsym } from 'ffi';
+import { RTLD_NOW } from 'ffi';
+import { toString } from 'ffi';
 
 const liblinenoise = dlopen('/usr/local/lib/x86_64-linux-gnu/liblinenoise.so', RTLD_NOW);
 console.log('liblinenoise', liblinenoise);
 
 /* void linenoiseSetCompletionCallback(linenoiseCompletionCallback* fn)  */
 define('linenoiseSetCompletionCallback', dlsym(liblinenoise, 'linenoiseSetCompletionCallback'), null, 'void', 'void *');
+
 export function linenoiseSetCompletionCallback(fn) {
   return call('linenoiseSetCompletionCallback', fn);
 }

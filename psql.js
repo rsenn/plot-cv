@@ -1,4 +1,8 @@
-import { dlopen, define, dlerror, dlclose, dlsym, call, errno, RTLD_NOW } from 'ffi';
+import { call } from 'ffi';
+import { define } from 'ffi';
+import { dlopen } from 'ffi';
+import { dlsym } from 'ffi';
+import { RTLD_NOW } from 'ffi';
 
 const libpq = dlopen('libpq.so', RTLD_NOW);
 
@@ -10,6 +14,7 @@ const libpq = dlopen('libpq.so', RTLD_NOW);
  * @return   {Number}
  */
 define('PQconnectStart', dlsym(libpq, 'PQconnectStart'), null, 'void *', 'char *');
+
 export function PQconnectStart(conninfo) {
   return call('PQconnectStart', conninfo);
 }

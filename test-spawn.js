@@ -1,11 +1,13 @@
-import { Spawn } from './io-helpers.js';
-import { keys, quote, toString } from 'util';
-import { readAll, readSync, readAllSync } from 'fs';
-import { Console } from 'console';
+import { readAll } from 'fs';
+import { readAllSync } from 'fs';
 import { read } from 'os';
+import { keys } from 'util';
+import { quote } from 'util';
+import { toString } from 'util';
+import { Spawn } from './os-helpers.js';
 import { ReadFile } from './test-readfile.js';
+import { Console } from 'console';
 import { _get_osfhandle } from 'misc';
-
 globalThis.console = new Console({ inspectOptions: { colors: true, compact: false } });
 
 function ReadProcess(...args) {

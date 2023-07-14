@@ -1,10 +1,10 @@
 import ClipperLib from './lib/clipper-lib.js';
-import { Point, PointList } from './lib/geom.js';
-import { SVG } from './lib/dom.js';
-import { parse } from './lib/svg/path-parser.js';
 import Shape from './lib/clipper.js';
+import { SVG } from './lib/dom.js';
+import { Point } from './lib/geom.js';
+import { PointList } from './lib/geom.js';
+import { parse } from './lib/svg/path-parser.js';
 import { Console } from 'console';
-
 globalThis.console = new Console({
   inspectOptions: {
     maxStringLength: 200,
@@ -21,6 +21,7 @@ const d =
 const d2 = 'M6.13 26.94L16.33 4.5l4.887 25.657 13.16-26.689 5.545 1.948 14.276 4.896-18.561 8.397-7.08 15.744 30.796-4.765 8.73-18.562-1.895-3.904.087-.066';
 
 const data = new PointList(SVG.parsePath(d).commands.filter(({ args }) => args[0] !== undefined && args[2] !== undefined));
+
 const data2 = new PointList(parse(d2).filter(({ x, y }) => x !== undefined && y !== undefined));
 
 function testOffset() {
@@ -102,5 +103,6 @@ function testShape() {
 }
 
 testOffset();
+
 testClipper();
 testShape();

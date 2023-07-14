@@ -1,5 +1,4 @@
 import linenoise from './linenoise.js';
-
 function main(...args) {
   linenoise.HistoryLoad('history.txt'); /* Load the history at startup */
   let running = true;

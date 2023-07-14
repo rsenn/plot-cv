@@ -1,10 +1,15 @@
-import { read, write } from 'xml';
-import { WriteFile, WriteFd, WriteClose, WriteAny, WriteJSON, WriteXML } from './io-helpers.js';
-import { Rect, Size, Point, Line, Align, BBox } from './lib/geom.js';
-import { getUnit, getValue, unitConvToMM, unitConvFactor, unitConvFunction, unitConv } from './measure-unit.js';
-import { SvgPath } from './lib/svg/path.js';
+import { WriteFile } from './io-helpers.js';
+import { Align } from './lib/geom.js';
+import { BBox } from './lib/geom.js';
+import { Line } from './lib/geom.js';
+import { Point } from './lib/geom.js';
+import { Rect } from './lib/geom.js';
+import { Size } from './lib/geom.js';
 import { getOpt } from './lib/misc.js';
-import { Arc, ArcTo } from './lib/geom/arc.js';
+import { SvgPath } from './lib/svg/path.js';
+import { unitConv } from './measure-unit.js';
+import { unitConvToMM } from './measure-unit.js';
+import { write } from 'xml';
 
 const px = n => unitConvToMM(`${n}px`, 'mm').toFixed(6);
 const pt = (n, to = 'mm') => unitConvToMM(`${n}pt`, 'mm').toFixed(6);

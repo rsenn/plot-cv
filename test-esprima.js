@@ -1,8 +1,8 @@
-import { parseModule } from 'esprima';
-import { Console } from 'console';
-import { ReadFile, WriteFile } from './io-helpers.js';
 import * as path from 'path';
-
+import { ReadFile } from './io-helpers.js';
+import { WriteFile } from './io-helpers.js';
+import { Console } from 'console';
+import { parseModule } from 'esprima';
 function main(...args) {
   globalThis.console = new Console({
     stdout: process.stdout,

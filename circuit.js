@@ -1,4 +1,6 @@
-import { fopen, gets, closeSync } from 'fs';
+import { closeSync } from 'fs';
+import { fopen } from 'fs';
+import { gets } from 'fs';
 import { define } from 'util';
 
 export class Comment {

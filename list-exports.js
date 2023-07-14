@@ -1,12 +1,20 @@
-import { ReadFile, WriteFile } from './io-helpers.js';
-import * as std from 'std';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Lexer, Token } from 'lexer';
-import { Console } from 'console';
+import { ReadFile } from './io-helpers.js';
+import { WriteFile } from './io-helpers.js';
+import { camelize } from './lib/misc.js';
+import { curry } from './lib/misc.js';
+import { define } from './lib/misc.js';
+import { escape } from './lib/misc.js';
+import { extendArray } from './lib/misc.js';
+import { split } from './lib/misc.js';
+import { toString } from './lib/misc.js';
+import { unique } from './lib/misc.js';
 import JSLexer from './quickjs/qjs-modules/lib/lexer/ecmascript.js';
-import { escape, toString, define, curry, unique, split, extendArray, camelize } from './lib/misc.js';
-
+import { Console } from 'console';
+import { Lexer } from 'lexer';
+import { Token } from 'lexer';
+import * as std from 'std';
 let buffers = {},
   modules = {};
 let T;
@@ -19,6 +27,7 @@ extendArray(Array.prototype);
 const AddUnique = (arr, item) => (arr.indexOf(item) == -1 ? arr.push(item) : null);
 
 const IntToDWord = ival => (isNaN(ival) === false && ival < 0 ? ival + 4294967296 : ival);
+
 const IntToBinary = i => (i == -1 || typeof i != 'number' ? i : '0b' + IntToDWord(i).toString(2));
 
 //const code = ["const str = stack.toString().replace(/\\n\\s*at /g, '\\n');", "/^(.*)\\s\\((.*):([0-9]*):([0-9]*)\\)$/.exec(line);" ];

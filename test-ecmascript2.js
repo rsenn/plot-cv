@@ -1,19 +1,26 @@
-import { ReadFile, WriteFile } from './io-helpers.js';
-import { ECMAScriptParser } from './lib/ecmascript/parser.js';
-import { PathReplacer } from './lib/ecmascript.js';
-import Printer from './lib/ecmascript/printer.js';
-import { estree, ESNode, Program, ModuleDeclaration, ModuleSpecifier, ImportDeclaration, ImportSpecifier, ImportDefaultSpecifier, ImportNamespaceSpecifier, Super, Expression, FunctionLiteral, Pattern, Identifier, Literal, RegExpLiteral, TemplateLiteral, BigIntLiteral, TaggedTemplateExpression, TemplateElement, ThisExpression, UnaryExpression, UpdateExpression, BinaryExpression, AssignmentExpression, LogicalExpression, MemberExpression, ConditionalExpression, CallExpression, DecoratorExpression, NewExpression, SequenceExpression, Statement, EmptyStatement, DebuggerStatement, LabeledStatement, BlockStatement, FunctionBody, StatementList, ExpressionStatement, Directive, ReturnStatement, ContinueStatement, BreakStatement, IfStatement, SwitchStatement, SwitchCase, WhileStatement, DoWhileStatement, ForStatement, ForInStatement, ForOfStatement, WithStatement, TryStatement, CatchClause, ThrowStatement, Declaration, ClassDeclaration, ClassBody, MethodDefinition, MetaProperty, YieldExpression, FunctionArgument, FunctionDeclaration, ArrowFunctionExpression, VariableDeclaration, VariableDeclarator, ObjectExpression, Property, ArrayExpression, JSXLiteral, AssignmentProperty, ObjectPattern, ArrayPattern, RestElement, AssignmentPattern, AwaitExpression, SpreadElement, ExportNamedDeclaration, ExportSpecifier, AnonymousDefaultExportedFunctionDeclaration, AnonymousDefaultExportedClassDeclaration, ExportDefaultDeclaration, ExportAllDeclaration } from './lib/ecmascript/estree.js';
-import Tree from './lib/tree.js';
 import fs from 'fs';
+import { ReadFile } from './io-helpers.js';
+import { WriteFile } from './io-helpers.js';
 import * as deep from './lib/deep.js';
-import { Console } from 'console';
+import { PathReplacer } from './lib/ecmascript.js';
+import { CallExpression } from './lib/ecmascript/estree.js';
+import { Declaration } from './lib/ecmascript/estree.js';
+import { Expression } from './lib/ecmascript/estree.js';
+import { ImportDeclaration } from './lib/ecmascript/estree.js';
+import { Literal } from './lib/ecmascript/estree.js';
+import { Program } from './lib/ecmascript/estree.js';
+import { TemplateLiteral } from './lib/ecmascript/estree.js';
+import { ECMAScriptParser } from './lib/ecmascript/parser.js';
+import Printer from './lib/ecmascript/printer.js';
 import { Stack } from './lib/stack.js';
-
+import Tree from './lib/tree.js';
+import { Console } from 'console';
 let lexer, parser;
 
 Error.stackTraceLimit = 100;
 
 const testfn = () => true;
+
 const testtmpl = `this is\na test`;
 
 const source = `this.define('DecimalDigit', /[0-9]/);`;

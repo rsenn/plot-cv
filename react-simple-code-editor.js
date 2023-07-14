@@ -1,3 +1,4 @@
+import * as React from './lib/dom/preactComponent.js';
 function _extends() {
   _extends =
     Object.assign ||
@@ -18,7 +19,8 @@ function _extends() {
 /*       */
 
 /* globalThis global */
-import * as React from './lib/dom/preactComponent.js'; // Tell Babel to transform JSX into h() calls: /** @jsx h */ const KEYCODE_ENTER = 13;
+ // Tell Babel to transform JSX into h() calls: /** @jsx h */ const KEYCODE_ENTER = 13;
+
 const KEYCODE_TAB = 9;
 const KEYCODE_BACKSPACE = 8;
 const KEYCODE_Y = 89;
@@ -64,6 +66,7 @@ const cssText =
 }
 
 `;
+
 export default class Editor extends React.Component {
   static defaultProps = {
     tabSize: 2,

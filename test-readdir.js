@@ -1,7 +1,7 @@
-import ObjectInspect from './lib/objectInspect.js';
-import { DirIterator, RecursiveDirIterator, ReadDirRecursive } from './dir-helpers.js';
+import { DirIterator } from './dir-helpers.js';
+import { ReadDirRecursive } from './dir-helpers.js';
+import { RecursiveDirIterator } from './dir-helpers.js';
 import extendGenerator from './quickjs/qjs-modules/lib/extendGenerator.js';
-
 let tmpdir;
 let buffer, buffer2;
 let handle;
