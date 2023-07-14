@@ -2,7 +2,7 @@ import { DrawCircle, DrawImage, GLFW, Mat2Image } from './draw-utils.js';
 import { HSLA } from './lib/color.js';
 import Console from 'console';
 import { className } from 'util';
-import * as glfw from 'glfw'
+import * as glfw from 'glfw';
 import { poll, RESIZABLE, SAMPLES, CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_FORWARD_COMPAT, OPENGL_PROFILE, OPENGL_CORE_PROFILE, Position, Scale, Window } from 'glfw';
 import * as ImGui from 'imgui';
 import * as nvg from 'nanovg';
@@ -219,7 +219,7 @@ function main(...args) {
 
     ImGui.Text('Adjust values for this processing step:');
 
-   /* ImGui.DragFloat('Value', val => (val === undefined ? floatValue : (floatValue = val)), 0.0, 1.0, '%.3f');
+    /* ImGui.DragFloat('Value', val => (val === undefined ? floatValue : (floatValue = val)), 0.0, 1.0, '%.3f');
     ImGui.SliderFloat('Value', val => (val === undefined ? floatValue : (floatValue = val)), 0.0, 1.0, '%.3f');
     ImGui.SliderInt('Alpha', val => (val === undefined ? Math.floor(alphaValue) : (alphaValue = Math.floor(val))), 0, 255);
 */
@@ -246,8 +246,8 @@ function main(...args) {
 try {
   main(...scriptArgs.slice(1));
 } catch(error) {
-  console.log(`Exception (${className(error)}): `,error);
-  console.log( 'FAIL: ' + error.message + '\n' + error.stack);
+  console.log(`Exception (${className(error)}): `, error);
+  console.log('FAIL: ' + error.message + '\n' + error.stack);
   //os.kill(process.pid, os.SIGUSR1);
   std.exit(1);
 }
