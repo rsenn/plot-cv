@@ -2,7 +2,7 @@
 import * as fs from 'fs';
 import { client, getSessions, LLL_INFO, LLL_USER, LLL_WARN, logLevels, createServer, setLog } from 'net';
 import * as os from 'os';
-import { atexit, daemon,  getOpt, randStr } from 'util';
+import { atexit, daemon, getOpt, randStr } from 'util';
 import { ReadFile, ReadJSON, WriteJSON } from './io-helpers.js';
 import * as path from './lib/path.js';
 import { Console } from './quickjs/qjs-modules/lib/console.js';

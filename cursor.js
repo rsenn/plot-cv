@@ -1,6 +1,5 @@
 import { h, render, useState, Fragment, Portal, ReactComponent } from './lib/dom/preactComponent.js';
 
-
 const cursorPng = 'static/ruler/cursor.png';
 
 const Cursor = ({ horizontal }) =>

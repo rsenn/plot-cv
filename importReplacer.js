@@ -2,7 +2,7 @@ import { memoize, unique, filter } from './lib/misc.js';
 import { readFileSync } from 'fs';
 import * as path from 'path';
 
-  export const importReplacer = {
+export const importReplacer = {
   replacementMap: memoize(() =>
     Object.entries(JSON.parse(readFileSync('package.json', 'utf-8'))._moduleAliases)
       .filter(([k, v]) => !/[.\/]/.test(v))

@@ -103,8 +103,8 @@ const {
   Tree
 } = { ...dom, ...geom };
 //import rpc from './quickjs/qjs-net/js/rpc.js';
- 
- const elementDefaultAttributes = {
+
+const elementDefaultAttributes = {
   stroke: 'red',
   fill: 'none',
   'stroke-linecap': 'round',
@@ -1000,7 +1000,7 @@ async function LoadDocument(project, parentElem) {
     });
     let style = { width: '100%', height: '100%', position: 'relative' };
     Component = project.renderer.render(doc, null, {});
- 
+
     let usedLayers = [...doc.layers.list]; /*.filter(layer => layer.elements.size > 0)*/
 
     Timer.once(250).then(() =>
@@ -1123,7 +1123,7 @@ async function LoadDocument(project, parentElem) {
     })(defaultTransform);
   }
 
- /*  tryCatch(async () => {
+  /*  tryCatch(async () => {
     let { name, data, doc, svg, bbox } = project;
     let bounds = doc.getBounds();
     let rect = bounds.toRect(Rect.prototype);
@@ -1142,16 +1142,15 @@ async function LoadDocument(project, parentElem) {
     AdjustZoom();
     project.status = SaveSVG();
   }, putError);*/
- 
 
-   let viewBox = new Rect(svgElement.getAttribute('viewBox').split(/\s+/g));
+  let viewBox = new Rect(svgElement.getAttribute('viewBox').split(/\s+/g));
   let bgRects = [...svgElement.querySelector('#bg').children];
 
   const setRect = rect => {
     svgElement.setAttribute('viewBox', rect + '');
     ['x', 'y', 'width', 'height'].forEach(k => bgRects.forEach(elem => elem.setAttribute(k, rect[k])));
   };
- 
+
   let r = (globalThis.viewBox = {
     /* prettier-ignore */ get x() { return viewBox.x; },
     /* prettier-ignore */ set x(value) { viewBox.x = value; setRect(viewBox); },

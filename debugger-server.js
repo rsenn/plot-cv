@@ -1,8 +1,8 @@
 import { existsSync, reader, readerSync, readSync, writeSync } from 'fs';
 import { createServer, getSessions, LLL_INFO, LLL_NOTICE, LLL_USER, LLL_WARN, logLevels, setLog } from 'net';
-import * as os from 'os';
+import { kill, setReadHandler, SIGTERM, sleep, ttySetRaw, Worker } from 'os';
 import { clearInterval, setInterval, setTimeout } from 'timers';
-import { atexit, bindMethods, btoa, decorate, define, filterKeys, getOpt, isObject, lazyProperties, memoize, mod, once, propertyLookup, quote, toString, tryCatch, types } from 'util';
+import { atexit, bindMethods, btoa, define, keys, filterKeys, getOpt, isObject, lazyProperties, memoize, mod, once, propertyLookup, quote, toString, tryCatch, types } from 'util';
 import { List, Table } from './cli-helpers.js';
 import { DebuggerDispatcher, FindFunctions, GetFunctionName, TrivialSyntaxHighlighter } from './debugger.js';
 import { DebuggerProtocol } from './debuggerprotocol.js';
@@ -10,7 +10,7 @@ import { ReadFile, ReadJSON, WriteJSON } from './io-helpers.js';
 import { consume, map } from './lib/async/helpers.js';
 import { absolute, basename, extname, relative } from './lib/path.js';
 import { Repeater } from './lib/repeater/repeater.js';
-import { Spawn } from './os-helpers.js';
+import { Spawn, WNOHANG } from './os-helpers.js';
 import { F_GETFL, F_SETFL, fcntl, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
 import { REPL } from './quickjs/qjs-modules/lib/repl.js';
 import { Console } from 'console';
@@ -18,7 +18,19 @@ import { Location } from 'location';
 import process from 'process';
 import extendArray from 'extendArray';
 import { AF_INET, AsyncSocket, IPPROTO_TCP, SOCK_STREAM, SockAddr } from 'sockets';
-import * as std from 'std';
+import { err as stderr } from 'std';
+import { codecs, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, isThenable, hasHandler, callHandler, parseURL, GetProperties, GetKeys, getPropertyDescriptors, weakDefine, setHandlersFunction, getPrototypeName, MakeCommandFunction, MakeSendFunction, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/js/rpc.js';
+
+function decorate(decorators, obj, ...args) {
+  if(!Array.isArray(decorators)) decorators = [decorators];
+  for(let decorator of decorators)
+    for(let prop of keys(obj))
+      if(typeof obj[prop] == 'function') {
+        let newfn = decorator(obj[prop], obj, prop, ...args);
+        if(obj[prop] !== newfn) obj[prop] = newfn;
+      }
+  return obj;
+}
 
 extendArray(Array.prototype);
 
@@ -29,8 +41,38 @@ const children = new Set();
 atexit(() => {
   for(let pid of children) {
     console.log('atexit killing child', pid);
-    os.kill(pid, os.SIGTERM);
+    kill(pid, SIGTERM);
   }
+});
+
+Object.assign(globalThis, {
+  codecs,
+  RPCApi,
+  RPCProxy,
+  RPCObject,
+  RPCFactory,
+  Connection,
+  RPCServer,
+  RPCClient,
+  RPCSocket,
+  isThenable,
+  hasHandler,
+  callHandler,
+  parseURL,
+  GetProperties,
+  GetKeys,
+  getPropertyDescriptors,
+  weakDefine,
+  setHandlersFunction,
+
+  getPrototypeName,
+  MakeCommandFunction,
+  MakeSendFunction,
+  SerializeValue,
+  DeserializeSymbols,
+  DeserializeValue,
+  RPCConnect,
+  RPCListen
 });
 
 const signalName = n =>
@@ -70,12 +112,10 @@ const signalName = n =>
     'SYS'
   ][n];
 
-function checkChildExited(pid, status) {
-  const terminated = pid > 0;
-  const termsig = status & 0x7f;
-  const exitcode = (status >>> 8) & 0xff;
+function checkChildExited(child) {
+  const { exited, termsig, signaled, exitcode } = child;
 
-  return terminated ? (termsig ? `signalled ${signalName(termsig)}` : `exitcode ${exitcode}`) : null;
+  return exited ? (signaled ? `signalled ${signalName(termsig)}` : `exitcode ${exitcode}`) : null;
 }
 
 function GetLoc(node) {
@@ -86,7 +126,6 @@ function GetLoc(node) {
   }
 }
 
- 
 async function LoadAST(source) {
   if(!existsSync(source)) return null;
   const child = Spawn('meriyah', ['-l', source], { block: false, stdio: ['inherit', 'pipe', 'inherit'] });
@@ -182,7 +221,9 @@ export function ConnectDebugger(address, skipToMain = true, callback) {
     //console.log('sockets', sockets);
   }
 
-  const dbg = {
+  const dbg = this ?? {};
+
+  define(dbg, {
     sock,
     addr,
     async process(callback) {
@@ -191,10 +232,12 @@ export function ConnectDebugger(address, skipToMain = true, callback) {
       try {
         while((ret = await sock.recv(lenBuf, 0, 9)) > 0) {
           let len = parseInt(toString(lenBuf, 0, ret), 16);
+
           let dataBuf = new ArrayBuffer(len);
           let offset = 0;
           while(offset < len) {
             ret = await sock.recv(dataBuf, offset, len - offset);
+
             if(ret <= 0) {
               sock.close();
               break;
@@ -205,9 +248,10 @@ export function ConnectDebugger(address, skipToMain = true, callback) {
           let s = toString(dataBuf);
           let obj = JSON.parse(s);
 
-          //console.log('process():', console.config({ depth: 2, compact: 2 }), obj);
-
-          callback(obj);
+          const funcName = '\x1b[38;5;208mPROCESS\x1b[0m';
+          console.log(funcName + ' \x1b[38;5;196mbefore callback\x1b[0m');
+          let result = callback(obj);
+          await result;
         }
       } catch(error) {
         console.log('Socket error:', error.message + '\n' + error.stack);
@@ -216,10 +260,14 @@ export function ConnectDebugger(address, skipToMain = true, callback) {
         return ret;
       }
     },
-    sendMessage: msg => sock.send(msg.length.toString(16).padStart(8, '0') + '\n' + msg)
-  };
+    async sendMessage(msg) {
+      if(typeof msg != 'string') msg = JSON.stringify(msg);
+      const ret = await sock.send(msg.length.toString(16).padStart(8, '0') + '\n' + msg);
+      if(process.env.DEBUG) console.log('\x1b[38;5;33mSEND\x1b[0m[' + sock.fd + '] (' + ret + ') ' + msg);
+    }
+  });
 
-  console.log('ConnectDebugger', dbg);
+  console.log('ConnectDebugger', console.config({ depth: 1, compact: 0 }), dbg);
 
   LaunchDebugger(dbg, skipToMain);
 
@@ -227,20 +275,25 @@ export function ConnectDebugger(address, skipToMain = true, callback) {
 }
 
 function LaunchDebugger(dbg, skipToMain = true) {
+  console.log('LaunchDebugger', console.config({ depth: 1, compact: 0 }), { dbg, skipToMain });
   if(skipToMain) {
-    dbg.onstopped = once(async () => {
+    dbg.onstopped = once(async (...args) => {
+      let st = await dispatch.stackTrace();
+
+      script ??= st[0].filename;
+
       let fns = await files[script].match(/main$/gi);
       console.log('matched /main$/gi', fns /*.map(({ name }) => name)*/);
 
       dbg.onstopped = null;
       let resp;
-      console.log('breakpoints()', { script, fns });
+      console.log('breakpoints()', console.config({ compact: 0 }), { script, fns });
       resp = await dispatch.breakpoints(script, fns);
-      console.log('breakpoints() response:', resp);
+      console.log('breakpoints() response:', console.config({ compact: 0 }), resp);
 
       setTimeout(async () => {
         resp = await dispatch.continue();
-        console.log('continue() response:', resp);
+        console.log('continue() response:', console.config({ compact: 0 }), resp);
       }, 100);
     });
   }
@@ -398,15 +451,16 @@ function NewDebugger(args, skipToMain = false, address) {
 
   globalThis.script = args[0];
 
-  os.sleep(500);
+  sleep(500);
 
-  const dbg = ConnectDebugger(address, skipToMain);
+  const dbg = this ?? {};
 
   define(dbg, {
     child,
     args,
-    kill: () => (children.delete(child.pid), os.kill(child.pid, os.SIGTERM))
+    kill: () => (children.delete(child.pid), kill(child.pid, SIGTERM))
   });
+  ConnectDebugger.call(dbg, address, skipToMain);
 
   //  consume(dbg, dbg.onmessage);
 
@@ -424,7 +478,7 @@ function URLWorker(script) {
   const dataURL = s => `data:application/javascript;charset=utf-8;base64,` + btoa(s).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
 
   const url = dataURL(script);
-  const w = new os.Worker(url);
+  const w = new Worker(url);
 
   return define(new Repeater((push, stop) => (w.onmessage = push)), {
     postMessage: msg => w.postMessage(msg)
@@ -436,7 +490,7 @@ function main(...args) {
 
   const config = ReadJSON(`.${base}-config`) ?? {};
 
-  globalThis.console = new Console(std.err, {
+  globalThis.console = new Console(stderr, {
     inspectOptions: { depth: Infinity, compact: 1, maxArrayLength: Infinity, customInspect: true }
   });
 
@@ -493,8 +547,8 @@ function main(...args) {
     //console.log('createWS', { url, callbacks, listen });
 
     setLog(
-      quiet ? 0 : LLL_USER | (((debug ? LLL_INFO : LLL_WARN) << 1) - 1),
-      quiet || !params.debug
+      quiet ? 0 : LLL_USER | (((debug > 1 ? LLL_INFO : LLL_WARN) << 1) - 1),
+      quiet || params.debug <= 1
         ? () => {}
         : (level, str) => {
             if(/BIND_PROTOCOL|DROP_PROTOCOL|CHECK_ACCESS_RIGHTS|ADD_HEADERS/.test(str)) return;
@@ -568,7 +622,7 @@ function main(...args) {
             sendMessage: {
               value: function sendMessage(msg) {
                 let ret = this.send(JSON.stringify(msg));
-                console.log(`ws.sendMessage(`, msg, `) = ${ret}`);
+                console.log(`ws.sendMessage(`, console.config({ compact: 0 }), msg, `) = ${ret}`);
                 return ret;
               },
               enumerable: false
@@ -636,6 +690,7 @@ function main(...args) {
               case 'start': {
                 console.log('ws', ws);
                 child = ws.child = StartDebugger(args, connect, address);
+
                 const { stdout, stderr } = child;
                 for(let fd of [stdout, stderr]) {
                   let flags = fcntl(fd, F_GETFL);
@@ -645,16 +700,6 @@ function main(...args) {
 
                 const forward = (fd, name) =>
                   consume(reader(fd), buf => {
-                    /*
-                for(let i = 1; i <= 2; i++) {
-                  let fd = child.stdio[i];
-                  console.log('os.setReadHandler', fd);
-
-                  os.setReadHandler(fd, () => {
-                    let buf = new ArrayBuffer(1024);
-                    let r = os.read(fd, buf, 0, buf.byteLength);
-
-                    if(r > 0) {*/
                     let data = toString(buf.slice(0, r));
                     //console.log(`read(${fd}, buf) = ${r} (${quote(data, "'")})`);
 
@@ -663,22 +708,19 @@ function main(...args) {
                       channel: name,
                       data
                     });
-                    /* }
                   });
-                }*/
-                  });
-                /* forward(stdout, 'stdout');
-                forward(stderr, 'stderr');*/
+                forward(stdout, 'stdout');
+                forward(stderr, 'stderr');
                 define(globalThis, { stdout, stderr, reader });
 
-                os.sleep(1000);
+                sleep(1000);
 
                 let tid, exited;
 
                 tid = setInterval(() => {
-                  let [pid, status] = child.wait();
+                  let pid = child.wait(WNOHANG);
 
-                  if((exited = checkChildExited(pid, status))) {
+                  if((exited = checkChildExited(child))) {
                     ws.sendMessage({
                       type: 'error',
                       command: 'start',
@@ -688,9 +730,9 @@ function main(...args) {
                   }
                 }, 1000);
 
-                let [pid, status] = child.wait();
+                let pid = child.wait(WNOHANG);
 
-                if((exited = checkChildExited(pid, status))) {
+                if((exited = checkChildExited(child))) {
                   ws.sendMessage({
                     type: 'error',
                     command: 'start',
@@ -714,10 +756,10 @@ function main(...args) {
               }
               case 'connect': {
                 dbg = ws.dbg = ConnectDebugger(address, (dbg, sock) => {
-                  console.log('wait() =', child.wait());
+                  console.log('wait(WNOHANG) =', child.wait(WNOHANG));
                   console.log('child', child);
                 });
-                console.log('connect commant', { ws, dbg });
+                console.log('connect command', { ws, dbg });
                 sockets.add(dbg);
 
                 const cwd = process.cwd();
@@ -808,11 +850,6 @@ function main(...args) {
           /*let p = new DebuggerProtocol();
         protocol.set(ws, p);*/
         },
-        onFd(fd, rd, wr) {
-          //console.log('onFd', { fd, rd, wr });
-          os.setReadHandler(fd, rd);
-          os.setWriteHandler(fd, wr);
-        },
         ...(url && url.host ? url : {})
       })
     );
@@ -823,9 +860,9 @@ function main(...args) {
   delete globalThis.DEBUG;
 
   let inputBuf = new ArrayBuffer(10);
-  os.ttySetRaw(0);
+  ttySetRaw(0);
 
-  os.setReadHandler(0, () => {
+  setReadHandler(0, () => {
     let r = readSync(0, inputBuf, 0, inputBuf.byteLength);
 
     if(r > 0) {
@@ -946,13 +983,7 @@ function main(...args) {
       }
       return r;
     },
-    repl: StartREPL() /*,
-    daemon() {
-      repl.stop();
-      std.puts('\ndetaching...');
-      daemon(1, 0);
-      std.puts(' PID ' + getpid() + '\n');
-    }*/
+    repl: StartREPL()
   });
 
   function quit(why) {

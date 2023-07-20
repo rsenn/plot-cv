@@ -1,18 +1,11 @@
 import { spawn } from 'child_process';
 import * as fs from 'fs';
-import { close } from 'os';
-import { exec } from 'os';
-import { pipe } from 'os';
-import { read } from 'os';
-import { waitpid } from 'os';
-import { Worker } from 'os';
-import { btoa } from './lib/misc.js';
-import { define } from './lib/misc.js';
-import { toString, properties } from './lib/misc.js';
+import { close, exec, pipe, waitpid, Worker } from 'os';
+import { btoa, define, properties } from './lib/misc.js';
 import { Repeater } from './lib/repeater/repeater.js';
-import { ReadFile } from './readfile.js';
-import { fdopen } from 'std';
-import { popen } from 'std';
+import { fdopen, popen } from 'std';
+export { WNOHANG } from 'child_process';
+
 /*export function ExecTool(cmd, ...args) {
   let child = Spawn(cmd, args, { stdio: [0, 'pipe', 2] });
   let [stdin, stdout, stderr] = child.stdio;

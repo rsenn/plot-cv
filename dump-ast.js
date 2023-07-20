@@ -3,10 +3,10 @@ import { spawn } from 'child_process';
 import deep from './lib/deep.js';
 import { ReadAll } from './lib/stream/utils.js';
 import { ImmutablePath } from './lib/json.js';
-import { memoize,define } from './lib/misc.js';
+import { memoize, define } from './lib/misc.js';
 import * as path from './lib/path.js';
 
-let  documents = [];
+let documents = [];
 
 function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');
@@ -319,7 +319,6 @@ const typeRe =
 async function main(...args) {
   const cols = await getEnv('COLUMNS');
   // console.log('cols:', cols, process.env.COLUMNS);
-
 
   if(args.length == 0) args.unshift('/home/roman/Sources/c-utils/genmakefile.c');
 

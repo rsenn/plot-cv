@@ -1,4 +1,4 @@
-import { CurrentFile, DailyPhase, DateToUnix, PhaseFile, Time, TimeToStr, quarterDay,  FilenameToTime, NextFile } from './adsb-common.js';
+import { CurrentFile, DailyPhase, DateToUnix, PhaseFile, Time, TimeToStr, quarterDay, FilenameToTime, NextFile } from './adsb-common.js';
 import { memoize } from './lib/misc.js';
 import PlainDraggable from './lib/plain-draggable.js';
 import { ZoomSlider } from './openlayers/src/ol/control.js';
@@ -25,7 +25,7 @@ import Icon from './openlayers/src/ol/style/Icon.js';
 import { composeCssTransform } from './openlayers/src/ol/transform.js';
 import View from './openlayers/src/ol/View.js';
 import extendArray from './quickjs/qjs-modules/lib/extendArray.js';
- 
+
 extendArray(Array.prototype);
 
 let data = (globalThis.data = []);

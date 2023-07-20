@@ -108,15 +108,15 @@ export class DebuggerDispatcher {
     let ret;
 
     try {
-      let v = conn.process(msg => {
-        if(process.env.DEBUG) console.log('\x1b[38;5;220mRECEIVE\x1b[0m ', console.config({ compact: -1, depth: 10 }), msg);
+      let v = conn.process(async msg => {
+        if(process.env.DEBUG) console.log('\x1b[38;5;220mRECEIVE\x1b[0m', console.config({ compact: 0 }), msg);
 
         const { type, event, request_seq, body } = msg;
 
         switch (type) {
           case 'response':
             let fn = this.#responses[request_seq] ?? this.#callback;
-            if(typeof fn == 'function') fn.call(this, msg);
+            if(typeof fn == 'function') await fn.call(this, msg);
             break;
           case 'event':
             const prop = 'on' + event.type.slice(0, event.type.indexOf('Event')).toLowerCase();
@@ -125,14 +125,16 @@ export class DebuggerDispatcher {
               if(!receiver[prop]) continue;
               if(receiver[prop]) {
                 const callback = receiver[prop];
-                if(process.env.DEBUG) console.log('\x1b[38;5;56mEVENT\x1b[0m ', { prop, event });
-                if(callback.call(receiver, event) === false) if (receiver[prop] === callback) delete receiver[prop];
+                if(process.env.DEBUG) console.log('\x1b[38;5;56mEVENT\x1b[0m  ', console.config({ compact: 0 }), { prop, event });
+                //if((await callback.call(receiver, event)) === false) if(receiver[prop] === callback) delete receiver[prop];
+                callback.call(receiver, event);
+                delete receiver[prop];
               }
             }
             break;
           default:
             //console.log('DebuggerDispatcher', { msg });
-            if(conn.onmessage) conn.onmessage(msg);
+            if(conn.onmessage) await conn.onmessage(msg);
             break;
         }
       });
@@ -148,26 +150,24 @@ export class DebuggerDispatcher {
       console.log('process(handler) function returned:', ret);
     }
 
-    define(this, {
-      sendMessage: async msg => {
-        const ret = await conn.sendMessage((msg = JSON.stringify(msg)));
-        if(process.env.DEBUG) console.log('\x1b[38;5;33mSEND\x1b[0m (' + ret + ') ' + msg);
-        return ret;
-      }
-    });
+    define(this, { sendMessage: conn.sendMessage });
   }
 
-  stepIn() {
-    return this.sendRequest('stepIn').then(resp => this.waitRun());
+  async stepIn() {
+    await this.sendRequest('stepIn');
+    return await this.waitRun();
   }
-  stepOut() {
-    return this.sendRequest('stepOut').then(resp => this.waitRun());
+  async stepOut() {
+    await this.sendRequest('stepOut');
+    return await this.waitRun();
   }
-  next() {
-    return this.sendRequest('next').then(resp => this.waitRun());
+  async next() {
+    await this.sendRequest('next');
+    return await this.waitRun();
   }
-  continue() {
-    return this.sendRequest('continue').then(resp => this.waitRun());
+  async continue() {
+    await this.sendRequest('continue');
+    return await this.waitRun();
   }
 
   async waitRun() {

@@ -32,7 +32,7 @@ import { weakDefine } from './lib/misc.js';
 import * as path from './lib/path.js';
 import { Pointer } from './lib/pointer.js';
 import { AcquireReader } from './lib/stream/utils.js';
- 
+
 import { Spawn } from './os-helpers.js';
 import { countSubstring } from './string-helpers.js';
 

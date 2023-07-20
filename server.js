@@ -508,15 +508,14 @@ async function main() {
         } else {
           //console.log('JS replace: ' + file);
         }
- 
+
         let s = ReadFile(file);
-         res.type('application/javascript; charset=UTF-8');
+        res.type('application/javascript; charset=UTF-8');
         res.send(importReplacer.replace(s, file));
         return;
       }
 
       files.add(file);
- 
     }
 
     next();

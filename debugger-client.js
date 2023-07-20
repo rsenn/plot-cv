@@ -9,7 +9,7 @@ import { useFetch, useTrkl } from './lib/hooks.js';
 import { JSLexer } from './lib/jslexer.js';
 import { define, memoize, rand } from './lib/misc.js';
 import { trkl } from './lib/trkl.js';
- 
+
 let cwd = '.';
 let responses = {};
 let currentSource = trkl(null);
@@ -26,9 +26,7 @@ currentLine.id = 'currentLine';
 currentSource.subscribe(source => console.log('currentSource set to', source));
 currentLine.subscribe(line => console.log('currentLine set to', line));
 currentLine.subscribe(line => {
-  const numLines = Math.floor(
-    Element.find('main').offsetHeight / Element.find('.source > pre').offsetHeight
-  );
+  const numLines = Math.floor(Element.find('main').offsetHeight / Element.find('.source > pre').offsetHeight);
   let pos = Math.max(0, line - (numLines >>> 1));
   window.location.hash = `#line-${pos}`;
 });
@@ -73,14 +71,7 @@ const SourceLine = ({ lineno, text, active, children }) => {
         class: classNames('text', active && 'active')
         //innerHTML: `${lineno} ` + text
       },
-      toChildArray([
-        h(
-          'span',
-          { class: classNames('lineno', active && 'active', ['even', 'odd'][lineno % 2]) },
-          [`${lineno} `]
-        ),
-        ...children
-      ])
+      toChildArray([h('span', { class: classNames('lineno', active && 'active', ['even', 'odd'][lineno % 2]) }, [`${lineno} `]), ...children])
     )
   ]);
 };
@@ -149,8 +140,7 @@ function Connect(address) {
 }
 
 function Initiate(command, address, connect = false, args) {
-  address ??= `${url.searchParams.get('address') ?? '127.0.0.1'}:${(globalThis.port ??=
-    url.searchParams.get('port') ?? (Math.floor(rand()) % 900) + 9000)}`;
+  address ??= `${url.searchParams.get('address') ?? '127.0.0.1'}:${(globalThis.port ??= url.searchParams.get('port') ?? (Math.floor(rand()) % 900) + 9000)}`;
   console.log('Initiate', { command, address, connect, args });
   return ws.send(JSON.stringify({ command, connect, address, args }));
 }
@@ -175,10 +165,7 @@ function* TokenizeJS(data, filename) {
   lex.setInput(data, filename);
 
   let { tokens } = lex;
-  let colors = Object.entries(tokenColors).reduce(
-    (acc, [type, c]) => ({ ...acc, [tokens.indexOf(type) + 1]: c.hex() }),
-    {}
-  );
+  let colors = Object.entries(tokenColors).reduce((acc, [type, c]) => ({ ...acc, [tokens.indexOf(type) + 1]: c.hex() }), {});
   let prev = {};
   let out = [];
   for(let { id, lexeme, line } of lex) {

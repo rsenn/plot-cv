@@ -1,4 +1,3 @@
- 
 import { AstDump } from './clang-ast.js';
 import { CompleteLocation } from './clang-ast.js';
 import { CompleteRange } from './clang-ast.js';
@@ -65,7 +64,6 @@ import * as Terminal from './terminal.js';
 import { Console } from 'console';
 import { REPL } from 'repl';
 //import PortableSpawn from './lib/spawn.js';
-
 
 extendArray(Array.prototype);
 

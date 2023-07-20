@@ -4,7 +4,7 @@ import { ImagePipeline } from './imagePipeline.js';
 import { LoadHistory, ReadBJSON, ReadFile, ReadJSON, WriteBJSON, WriteFile, WriteJSON } from './io-helpers.js';
 import { ImageInfo } from './lib/image-info.js';
 import { lazyInitializer } from './lib/lazyInitializer.js';
-import { define, difference, escape,  fnmatch, getFunctionArguments, getOpt, glob, GLOB_TILDE, lazyProperties, memoize, quote, toArrayBuffer, toString, union, wordexp } from './lib/misc.js';
+import { define, difference, escape, fnmatch, getFunctionArguments, getOpt, glob, GLOB_TILDE, lazyProperties, memoize, quote, toArrayBuffer, toString, union, wordexp } from './lib/misc.js';
 import inspect from './lib/objectInspect.js';
 import * as path from './lib/path.js';
 import { Pointer } from './lib/pointer.js';
@@ -15,8 +15,6 @@ import { Console } from 'console';
 import { REPL } from 'repl';
 import * as Terminal from 'terminal';
 import extendArray from 'extendArray';
-
-
 
 let cmdhist,
   defaultWin = lazyInitializer(() => new Window(path.basename(scriptArgs[0], '.js')));
