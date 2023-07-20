@@ -19,7 +19,7 @@ import process from 'process';
 import extendArray from 'extendArray';
 import { AF_INET, AsyncSocket, IPPROTO_TCP, SOCK_STREAM, SockAddr } from 'sockets';
 import { err as stderr } from 'std';
-import { codecs, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, isThenable, hasHandler, callHandler, parseURL, GetProperties, GetKeys, getPropertyDescriptors, weakDefine, setHandlersFunction, getPrototypeName, MakeCommandFunction, MakeSendFunction, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/js/rpc.js';
+import { codecs, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, RPCConnect, RPCListen } from './quickjs/qjs-net/js/rpc.js';
 
 function decorate(decorators, obj, ...args) {
   if(!Array.isArray(decorators)) decorators = [decorators];
@@ -55,22 +55,7 @@ Object.assign(globalThis, {
   RPCServer,
   RPCClient,
   RPCSocket,
-  isThenable,
-  hasHandler,
-  callHandler,
-  parseURL,
-  GetProperties,
-  GetKeys,
-  getPropertyDescriptors,
-  weakDefine,
-  setHandlersFunction,
 
-  getPrototypeName,
-  MakeCommandFunction,
-  MakeSendFunction,
-  SerializeValue,
-  DeserializeSymbols,
-  DeserializeValue,
   RPCConnect,
   RPCListen
 });
