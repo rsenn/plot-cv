@@ -1,98 +1,23 @@
-import { distinct } from './lib/async/events.js';
-import { once } from './lib/async/events.js';
-import { streamify } from './lib/async/events.js';
-import { subscribe } from './lib/async/events.js';
-import { throttle } from './lib/async/events.js';
+import { distinct, once, streamify, subscribe, throttle } from './lib/async/events.js';
 import { timer } from './lib/async/helpers.js';
-import { CreateWebSocket } from './lib/async/websocket.js';
-import { ReconnectingWebSocket } from './lib/async/websocket.js';
-import { StreamReadIterator } from './lib/async/websocket.js';
-import { WebSocketIterator } from './lib/async/websocket.js';
-import { WebSocketURL } from './lib/async/websocket.js';
-import { HSLA } from './lib/color.js';
-import { RGBA } from './lib/color.js';
+import { CreateWebSocket, ReconnectingWebSocket, StreamReadIterator, WebSocketIterator, WebSocketURL } from './lib/async/websocket.js';
+import { HSLA, RGBA } from './lib/color.js';
 import { LinkedList } from './lib/container/linkedList.js';
-import { CANVAS } from './lib/crosskit.js';
-import { crosskit } from './lib/crosskit.js';
-import { Element } from './lib/dom.js';
-import { isElement } from './lib/dom.js';
-import { SVG } from './lib/dom.js';
-import { Component } from './lib/dom/preactComponent.js';
-import { createRef } from './lib/dom/preactComponent.js';
-import { Fragment } from './lib/dom/preactComponent.js';
-import { h } from './lib/dom/preactComponent.js';
-import { html } from './lib/dom/preactComponent.js';
-import { render } from './lib/dom/preactComponent.js';
-import { toChildArray } from './lib/dom/preactComponent.js';
-import { useLayoutEffect } from './lib/dom/preactComponent.js';
-import { useRef } from './lib/dom/preactComponent.js';
-import { useState } from './lib/dom/preactComponent.js';
-import React from './lib/dom/preactComponent.js';
-import { Intersection } from './lib/geom.js';
-import { isRect } from './lib/geom.js';
-import { Line } from './lib/geom.js';
-import { Matrix } from './lib/geom.js';
-import { Point } from './lib/geom.js';
-import { Rect } from './lib/geom.js';
-import { Size } from './lib/geom.js';
-import { TransformationList } from './lib/geom.js';
-import { Vector } from './lib/geom.js';
+import { CANVAS, crosskit } from './lib/crosskit.js';
+import { Element, isElement, SVG } from './lib/dom.js';
+import { Component, createRef, Fragment, h, html, render, toChildArray, useLayoutEffect, useRef, useState, default as React } from './lib/dom/preactComponent.js';
+import { Intersection, isRect, Line, Matrix, Point, Rect, Size, TransformationList, Vector } from './lib/geom.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
 import { List } from './lib/list.js';
-import { chain } from './lib/misc.js';
-import { chainRight } from './lib/misc.js';
-import { define } from './lib/misc.js';
-import { getConstructorChain } from './lib/misc.js';
-import { getPrototypeChain } from './lib/misc.js';
-import { getset } from './lib/misc.js';
-import { gettersetter } from './lib/misc.js';
-import { isCFunction } from './lib/misc.js';
-import { isFunction } from './lib/misc.js';
-import { isJSFunction } from './lib/misc.js';
-import { isObject } from './lib/misc.js';
-import { isUndefined } from './lib/misc.js';
-import { keys } from './lib/misc.js';
-import { memoize } from './lib/misc.js';
-import { properties } from './lib/misc.js';
-import { propertyLookup } from './lib/misc.js';
-import { randInt } from './lib/misc.js';
-import { randStr } from './lib/misc.js';
-import { tryCatch } from './lib/misc.js';
-import { tryFunction } from './lib/misc.js';
-import { unique } from './lib/misc.js';
-import { waitFor } from './lib/misc.js';
-import { AcquireReader } from './lib/stream/utils.js';
-import { AcquireWriter } from './lib/stream/utils.js';
-import { ArrayWriter } from './lib/stream/utils.js';
-import { AsyncRead } from './lib/stream/utils.js';
-import { AsyncWrite } from './lib/stream/utils.js';
-import { ByteReader } from './lib/stream/utils.js';
-import { ChunkReader } from './lib/stream/utils.js';
-import { CreateTransformStream } from './lib/stream/utils.js';
-import { CreateWritableStream } from './lib/stream/utils.js';
-import { DebugTransformStream } from './lib/stream/utils.js';
-import { isStream } from './lib/stream/utils.js';
-import { LineBufferStream } from './lib/stream/utils.js';
-import { LineReader } from './lib/stream/utils.js';
-import { LogSink } from './lib/stream/utils.js';
-import { PipeTo } from './lib/stream/utils.js';
-import { PipeToRepeater } from './lib/stream/utils.js';
-import { ReadAll } from './lib/stream/utils.js';
-import { Reader } from './lib/stream/utils.js';
-import { ReadFromIterator } from './lib/stream/utils.js';
-import { readStream } from './lib/stream/utils.js';
-import { RepeaterSink } from './lib/stream/utils.js';
-import { RepeaterSource } from './lib/stream/utils.js';
-import { StringReader } from './lib/stream/utils.js';
-import { TextTransformStream } from './lib/stream/utils.js';
-import { WritableRepeater } from './lib/stream/utils.js';
-import { WriteIterator } from './lib/stream/utils.js';
-import { WriteToRepeater } from './lib/stream/utils.js';
+import { chain, chainRight, define, getConstructorChain, getPrototypeChain, getset, gettersetter, isCFunction, isFunction, isJSFunction, isObject, isUndefined, keys, memoize, properties, propertyLookup, randInt, randStr, tryCatch, tryFunction, unique } from './lib/misc.js';
+import { AcquireReader, AcquireWriter, ArrayWriter, AsyncRead, AsyncWrite, ByteReader, ChunkReader, CreateTransformStream, CreateWritableStream, DebugTransformStream, isStream, LineBufferStream, LineReader, LogSink, PipeTo, PipeToRepeater, ReadAll, Reader, ReadFromIterator, readStream, RepeaterSink, RepeaterSource, StringReader, TextTransformStream, WritableRepeater, WriteIterator, WriteToRepeater } from './lib/stream/utils.js';
 import trkl from './lib/trkl.js';
 import miscfixed6x13 from './static/json/miscfixed6x13.js';
 import { wasmBrowserInstantiate } from './wasm-helpers.js';
+
 //import { fire } from './fire/build/fire-debug.js';
 //import lscache from './lib/lscache.js';
+
 let lsgs = (globalThis.lsgs = getset([key => localStorage.getItem(key), (key, value) => localStorage.setItem(key, value)]));
 
 const lstore = (globalThis.lstore = propertyLookup(
@@ -521,7 +446,6 @@ function main() {
   const { context } = crosskit;
   const image = context.createImageData(width, height);
 
-  const { now, waitFor, animationFrame } = Util;
   const fps = 50;
   const matrix = new Matrix().translate(160, 100).scale(0.5);
 
@@ -552,6 +476,20 @@ function main() {
     ReplayTrail,
     Blaze
   });*/
+
+  const animationFrame = (minDelay = 0) => {
+    if(minDelay <= 0) return new Promise(resolve => requestAnimationFrame(resolve));
+    const start = performance.now();
+
+    return new Promise(resolve => {
+      requestAnimationFrame(animationFrame);
+
+      function animationFrame(t) {
+        if(t - start >= minDelay) resolve(t);
+        requestAnimationFrame(animationFrame);
+      }
+    });
+  };
 
   async function Loop() {
     const delay = 1000 / fps;
@@ -1072,7 +1010,7 @@ function syncHeight() {
   htmlElement.style.setProperty('--window-inner-height', `${window.innerHeight}px`);
 }
 
-define(globalThis, { crosskit, RGBA, HSLA, Util, Matrix, TransformationList });
+define(globalThis, { crosskit, RGBA, HSLA, Matrix, TransformationList });
 define(globalThis, { WebSocketIterator, WebSocketURL, CreateWebSocket, NewWS, ReconnectingWebSocket });
 define(globalThis, { define, isUndefined, properties, keys });
 define(globalThis, { once, streamify, throttle, distinct, subscribe });
