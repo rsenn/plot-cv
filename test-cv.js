@@ -1,14 +1,6 @@
-import { className } from './lib/misc.js';
-import { tryCatch } from './lib/misc.js';
+import { className, tryCatch } from './lib/misc.js';
 import inspect from './lib/objectInspect.js';
-import * as path from './lib/path.js';
 import Console from 'console';
-import { CLAHE } from 'opencv';
-import { Line } from 'opencv';
-import { Mat } from 'opencv';
-import { Point } from 'opencv';
-import { Rect } from 'opencv';
-import { Size } from 'opencv';
 import * as cv from 'opencv';
 /*function saveMat(name, mat) {
   let ext = mat.channels == 1 ? 'pgm' : 'ppm';

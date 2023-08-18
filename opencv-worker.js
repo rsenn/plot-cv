@@ -1,7 +1,6 @@
 import { Worker } from 'os';
 import { Console } from 'console';
-import { fdopen, open } from 'std';
-import {toPointer} from 'util';
+import { toPointer } from 'util';
 import process from 'process';
 
 const log = (...args) => console.log('\x1b[38;5;45mOpenCV \x1b[38;5;129mWORKER\x1b[0m ', ...args);

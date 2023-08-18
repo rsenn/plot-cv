@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 import * as os from 'os';
-import { define } from './lib/misc.js';
-import { predicate } from './lib/misc.js';
+import { define, predicate } from './lib/misc.js';
 import * as path from './lib/path.js';
 
 export function* DirIterator(...args) {

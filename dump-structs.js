@@ -1,7 +1,5 @@
 import filesystem from 'fs';
-import { AstDump } from './clang-ast.js';
-import { GetLoc } from './clang-ast.js';
-import { Type } from './clang-ast.js';
+import { AstDump, GetLoc, Type } from './clang-ast.js';
 import deep from './lib/deep.js';
 import * as path from './lib/path.js';
 import PortableSpawn from './lib/spawn.js';

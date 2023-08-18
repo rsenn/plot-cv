@@ -1,5 +1,6 @@
-import * as cv from 'opencv';
 #!/usr/bin/env qjsm
+import * as cv from 'opencv';
+
 function main() {
   let image = new cv.Mat();
   let cam = new cv.RaspiCam();

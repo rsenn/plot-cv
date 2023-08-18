@@ -1,5 +1,6 @@
 import * as el from './editline.js';
 import * as ffi from 'ffi';
+
 function hex(num) {
   return '0x' + ('0000000' + num.toString(16)).slice(-16);
 }

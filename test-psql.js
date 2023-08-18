@@ -1,7 +1,4 @@
-import { PQconnectStart } from './psql.js';
-import { PQerrorMessage } from './psql.js';
-import { PQexec } from './psql.js';
-import { PQgetResult } from './psql.js';
+import { PQconnectStart, PQerrorMessage, PQexec, PQgetResult } from './psql.js';
 function main(...args) {
   let pq = PQconnectStart('User ID=roman;Password=r4eHuJ;Host=localhost;Port=5432;Database=roman;Pooling=true;Min Pool Size=0;Max Pool Size=100;Connection Lifetime=0;');
   console.log('pq', pq);

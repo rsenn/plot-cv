@@ -2,10 +2,9 @@ import { Alea } from './lib/alea.js';
 import Autoplacer from './lib/autoplacer/autoplacer.js';
 import { BBox } from './lib/geom/bbox.js';
 import { Rect } from './lib/geom/rect.js';
+
 let rg = new Alea(1337);
-
 let bb = new BBox();
-
 let rects = [];
 
 for(let i = 0; i < 10; i++) {

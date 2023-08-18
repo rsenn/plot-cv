@@ -1,6 +1,5 @@
 import { toPointer } from 'util';
-import { CV_8UC4 } from 'opencv';
-import { Mat } from 'opencv';
+import { CV_8UC4, Mat } from 'opencv';
 let buf = new SharedArrayBuffer(640 * 480 * 4);
 
 console.log('toPointer(buf)', toPointer(buf));

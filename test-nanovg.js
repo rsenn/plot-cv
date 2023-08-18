@@ -3,7 +3,6 @@ import { HSLA } from './lib/color.js';
 import Console from 'console';
 import { className } from 'util';
 import * as glfw from 'glfw';
-import { poll, RESIZABLE, SAMPLES, CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_FORWARD_COMPAT, OPENGL_PROFILE, OPENGL_CORE_PROFILE, Position, Scale, Window } from 'glfw';
 import * as ImGui from 'imgui';
 import * as nvg from 'nanovg';
 import { imread, copyTo, log, CV_8UC4, COLOR_BGR2BGRA, LINE_AA, cvtColor, drawLine, Mat, Point, Rect } from 'opencv';

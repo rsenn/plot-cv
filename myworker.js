@@ -1,6 +1,4 @@
 import * as os from 'os';
-import { NumericParam } from './param.js';
-import { ParamNavigator } from './param.js';
 import { Console } from 'console';
 import * as cv from 'opencv';
 import * as std from 'std';

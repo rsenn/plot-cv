@@ -1,29 +1,11 @@
 import { Layer as HTMLLayer } from './lib/dom/layer.js';
-import { Fragment } from './lib/dom/preactComponent.js';
-import { h } from './lib/dom/preactComponent.js';
-import { toChildArray } from './lib/dom/preactComponent.js';
-import { ArrayFacade } from './lib/misc.js';
-import { define } from './lib/misc.js';
-import { isInstanceOf } from './lib/misc.js';
-import { Feature } from './lib/ol.js';
-import { LineString } from './lib/ol.js';
-import { Link } from './lib/ol.js';
-import { OLMap } from './lib/ol.js';
-import { Overlay } from './lib/ol.js';
-import { Point } from './lib/ol.js';
-import { TileLayer } from './lib/ol.js';
-import { transform } from './lib/ol.js';
-import { VectorLayer } from './lib/ol.js';
-import { VectorSource } from './lib/ol.js';
-import { View } from './lib/ol.js';
-import { XYZ } from './lib/ol.js';
-import { ZoomSlider } from './lib/ol.js';
+import { Fragment, h, toChildArray } from './lib/dom/preactComponent.js';
+import { ArrayFacade, isInstanceOf } from './lib/misc.js';
+import { Feature, LineString, Link, OLMap, Overlay, Point, TileLayer, transform, VectorLayer, VectorSource, View, XYZ, ZoomSlider } from './lib/ol.js';
 import { ObjectWrapper } from './object-helpers.js';
-import { Zoom } from './openlayers/src/ol/control.js';
 import { add } from './openlayers/src/ol/coordinate.js';
-import { distance } from './openlayers/src/ol/coordinate.js';
 import { parseGPSLocation } from './string-helpers.js';
-import LayerSwitcher /* , { BaseLayerOptions, GroupLayerOptions }*/ from './lib/ol-layerswitcher.js';
+import LayerSwitcher from './lib/ol-layerswitcher.js';
 
 export function TransformCoordinates(...args) {
   if(args.length == 2) return transform(args, 'EPSG:4326', 'EPSG:3857');

@@ -1,7 +1,5 @@
 import deep from './lib/deep.js';
-import { ECMAScriptInterpreter } from './lib/ecmascript.js';
-import { ECMAScriptParser } from './lib/ecmascript.js';
-import { PathReplacer } from './lib/ecmascript.js';
+import { ECMAScriptParser, PathReplacer } from './lib/ecmascript.js';
 import { CallExpression } from './lib/ecmascript/estree.js';
 import Printer from './lib/ecmascript/printer.js';
 

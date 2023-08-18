@@ -1,13 +1,9 @@
 import { ReadFile } from './io-helpers.js';
 import deep from './lib/deep.js';
-import { ImmutablePath } from './lib/json.js';
-import { PathMapper } from './lib/json.js';
-import { toXML } from './lib/json.js';
-import { TreeObserver } from './lib/json.js';
+import { ImmutablePath, PathMapper, toXML, TreeObserver } from './lib/json.js';
 import tXml from './lib/tXml.js';
 import { XMLIterator } from './lib/xml/util.js';
-import { ImmutableXPath } from './lib/xml/xpath.js';
-import { parseXPath } from './lib/xml/xpath.js';
+import { ImmutableXPath, parseXPath } from './lib/xml/xpath.js';
 //import { ImmutableXPath, parseXPath, XMLIterator } from './lib/xml.js';
 
 const printNode = node => {

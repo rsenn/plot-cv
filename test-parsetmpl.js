@@ -1,9 +1,6 @@
 import deep from './lib/deep.js';
-import { ECMAScriptParser } from './lib/ecmascript.js';
-import { PathReplacer } from './lib/ecmascript.js';
-import { ESNode } from './lib/ecmascript/estree.js';
-import { Literal } from './lib/ecmascript/estree.js';
-import { TemplateLiteral } from './lib/ecmascript/estree.js';
+import { ECMAScriptParser, PathReplacer } from './lib/ecmascript.js';
+import { ESNode, Literal, TemplateLiteral } from './lib/ecmascript/estree.js';
 import Printer from './lib/ecmascript/printer.js';
 import { Path } from './lib/json.js';
 

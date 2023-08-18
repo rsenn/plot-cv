@@ -1,21 +1,10 @@
-import { ReadFile } from './io-helpers.js';
-import { WriteFile } from './io-helpers.js';
+import { ReadFile, WriteFile } from './io-helpers.js';
 import deep from './lib/deep.js';
-import { ECMAScriptParser } from './lib/ecmascript.js';
-import { PathReplacer } from './lib/ecmascript.js';
-import { CallExpression } from './lib/ecmascript/estree.js';
-import { Declaration } from './lib/ecmascript/estree.js';
-import { ESNode } from './lib/ecmascript/estree.js';
-import { Expression } from './lib/ecmascript/estree.js';
-import { Identifier } from './lib/ecmascript/estree.js';
-import { ImportDeclaration } from './lib/ecmascript/estree.js';
-import { Literal } from './lib/ecmascript/estree.js';
-import { Program } from './lib/ecmascript/estree.js';
-import { Statement } from './lib/ecmascript/estree.js';
-import { TemplateLiteral } from './lib/ecmascript/estree.js';
+import { ECMAScriptParser, PathReplacer } from './lib/ecmascript.js';
+import { CallExpression, ESNode, Identifier, ImportDeclaration, TemplateLiteral } from './lib/ecmascript/estree.js';
 import Printer from './lib/ecmascript/printer.js';
-import { Path } from './lib/json.js';
 import Tree from './lib/tree.js';
+
 let fs;
 
 const testfn = () => true;

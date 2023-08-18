@@ -1,6 +1,4 @@
-import { define } from 'util';
-import { mod } from 'util';
-import { roundTo } from 'util';
+import { define, mod, roundTo } from 'util';
 import { EventEmitter } from './quickjs/qjs-modules/lib/events.js';
 import * as cv from 'opencv';
 

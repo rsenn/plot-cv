@@ -1,10 +1,5 @@
 import FFT from './lib/dsp/fft.js';
 import * as dsp from './lib/dsp/util.js';
-import { dlopen } from 'ffi';
-import { dlsym } from 'ffi';
-import { RTLD_DEFAULT } from 'ffi';
-import { RTLD_NOW } from 'ffi';
-import { toPointer } from 'ffi';
 import * as ffi from 'ffi';
 import * as std from 'std';
 

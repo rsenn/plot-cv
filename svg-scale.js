@@ -2,12 +2,10 @@ import filesystem from 'fs';
 import { Alea } from './lib/alea.js';
 import deep from './lib/deep.js';
 import { CSS } from './lib/dom.js';
-import { Rect } from './lib/geom.js';
-import { Size } from './lib/geom.js';
+import { Rect, Size } from './lib/geom.js';
 import * as path from './lib/path.js';
 import { parse as parsePath } from './lib/svg/path-parser.js';
-import { toXML } from './lib/xml.js';
-import { tXml } from './lib/xml.js';
+import { toXML, tXml } from './lib/xml.js';
 let prng = new Alea(Date.now());
 function readXML(filename) {
   //console.log('readXML', filename);

@@ -1,8 +1,6 @@
 import filesystem from 'fs';
 import Alea from './lib/alea.js';
 import deep from './lib/deep.js';
-import { Path } from './lib/json.js';
-import inspect from './lib/objectInspect.js';
 import * as path from './lib/path.js';
 import Tree from './lib/tree.js';
 import tXml from './lib/tXml.js';

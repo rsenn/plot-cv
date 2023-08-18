@@ -1,15 +1,6 @@
 import * as path from 'path';
-import { IfDebug } from './io-helpers.js';
-import { ReadFile } from './io-helpers.js';
-import { WriteFile } from './io-helpers.js';
-import { WriteJSON } from './io-helpers.js';
-import { ECMAScriptParser } from './lib/ecmascript.js';
-import { ESNode } from './lib/ecmascript.js';
-import { Identifier } from './lib/ecmascript.js';
-import { ImportDeclaration } from './lib/ecmascript.js';
-import { ImportSpecifier } from './lib/ecmascript.js';
-import { Literal } from './lib/ecmascript.js';
-import { Printer } from './lib/ecmascript.js';
+import { IfDebug, ReadFile, WriteJSON } from './io-helpers.js';
+import { ECMAScriptParser, Identifier, ImportDeclaration, ImportSpecifier, Literal, Printer } from './lib/ecmascript.js';
 import { Console } from 'console';
 import deep from 'deep';
 #!/usr/bin/env qjsm

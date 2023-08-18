@@ -1,8 +1,4 @@
-import { Line } from './lib/geom.js';
-import { Point } from './lib/geom.js';
-import { PointList } from './lib/geom.js';
-import { Rect } from './lib/geom.js';
-import { Vector } from './lib/geom.js';
+import { Point, PointList, Rect } from './lib/geom.js';
 import { className } from './lib/misc.js';
 import inspect from 'inspect';
 let points = new PointList(

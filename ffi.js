@@ -1,17 +1,4 @@
-import * as os from 'os';
-import { call } from 'ffi';
-import { debug } from 'ffi';
-import { define } from 'ffi';
-import { dlclose } from 'ffi';
-import { dlerror } from 'ffi';
-import { dlopen } from 'ffi';
-import { dlsym } from 'ffi';
-import { errno } from 'ffi';
-import { JSContext } from 'ffi';
-import { RTLD_DEFAULT } from 'ffi';
-import { RTLD_NOW } from 'ffi';
-import { toArrayBuffer } from 'ffi';
-import { toString } from 'ffi';
+import { call, debug, define, dlclose, dlerror, dlopen, dlsym, errno, JSContext, RTLD_DEFAULT, RTLD_NOW, toArrayBuffer, toString } from 'ffi';
 /* test.js
  *
  * Test harness for JavaScript ffi

@@ -1,15 +1,5 @@
-import { EnumParam } from './param.js';
-import { NumericParam } from './param.js';
-import { ParamNavigator } from './param.js';
-import { Pipeline } from './qjs-opencv/js/cvPipeline.js';
-import { Processor } from './qjs-opencv/js/cvPipeline.js';
-import { CLAHE } from 'opencv';
-import { Contour } from 'opencv';
-import { Line } from 'opencv';
-import { Mat } from 'opencv';
-import { Point } from 'opencv';
-import { Rect } from 'opencv';
-import { Size } from 'opencv';
+import { EnumParam, NumericParam } from './param.js';
+import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
 import * as cv from 'opencv';
 
 export function ImagePipeline(/*input,*/ config) {

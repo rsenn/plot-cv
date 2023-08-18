@@ -1,9 +1,6 @@
 import { ReadFile } from './io-helpers.js';
 import deep from './lib/deep.js';
-import { abbreviate } from './lib/misc.js';
-import { define } from './lib/misc.js';
-import { isObject } from './lib/misc.js';
-import { weakMapper } from './lib/misc.js';
+import { abbreviate, define, isObject, weakMapper } from './lib/misc.js';
 import tXml from './lib/tXml.js';
 class Node {
   constructor(raw, path) {

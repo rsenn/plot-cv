@@ -1,10 +1,5 @@
 import { WriteFile } from './io-helpers.js';
-import { SVG } from './lib/dom.js';
-import { Line } from './lib/geom.js';
-import { LineList } from './lib/geom.js';
-import { MakePolygon } from './lib/geom.js';
-import { Point } from './lib/geom.js';
-import { Polygon } from './lib/geom.js';
+import { Line, LineList, MakePolygon, Point } from './lib/geom.js';
 import SvgPath from './lib/svg/path.js';
 import { Console } from 'console';
 import * as xml from 'xml';

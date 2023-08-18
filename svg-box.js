@@ -1,14 +1,8 @@
 import { WriteFile } from './io-helpers.js';
-import { Align } from './lib/geom.js';
-import { BBox } from './lib/geom.js';
-import { Line } from './lib/geom.js';
-import { Point } from './lib/geom.js';
-import { Rect } from './lib/geom.js';
-import { Size } from './lib/geom.js';
+import { BBox, Line, Rect, Size } from './lib/geom.js';
 import { getOpt } from './lib/misc.js';
 import { SvgPath } from './lib/svg/path.js';
-import { unitConv } from './measure-unit.js';
-import { unitConvToMM } from './measure-unit.js';
+import { unitConv, unitConvToMM } from './measure-unit.js';
 import { write } from 'xml';
 
 const px = n => unitConvToMM(`${n}px`, 'mm').toFixed(6);

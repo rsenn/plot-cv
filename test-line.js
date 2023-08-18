@@ -1,7 +1,5 @@
-import { Line } from './lib/geom.js';
-import { LineList } from './lib/geom.js';
-import { PointList } from './lib/geom.js';
-import { Rect } from './lib/geom.js';
+import { LineList, PointList, Rect } from './lib/geom.js';
+
 let rect = new Rect(19, 13, 193, 127);
 
 let pl = rect.toPoints(points => new PointList(points));

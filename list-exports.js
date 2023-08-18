@@ -1,19 +1,8 @@
-import * as fs from 'fs';
 import * as path from 'path';
-import { ReadFile } from './io-helpers.js';
-import { WriteFile } from './io-helpers.js';
-import { camelize } from './lib/misc.js';
-import { curry } from './lib/misc.js';
-import { define } from './lib/misc.js';
-import { escape } from './lib/misc.js';
-import { extendArray } from './lib/misc.js';
-import { split } from './lib/misc.js';
-import { toString } from './lib/misc.js';
-import { unique } from './lib/misc.js';
+import { ReadFile, WriteFile } from './io-helpers.js';
+import { camelize, curry, define, escape, extendArray, split, toString, unique } from './lib/misc.js';
 import JSLexer from './quickjs/qjs-modules/lib/lexer/ecmascript.js';
 import { Console } from 'console';
-import { Lexer } from 'lexer';
-import { Token } from 'lexer';
 import * as std from 'std';
 let buffers = {},
   modules = {};

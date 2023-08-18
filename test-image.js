@@ -2,37 +2,13 @@ import { SaveSVG } from './image-helpers.js';
 import { ImagePipeline } from './imagePipeline.js';
 import { WriteJSON } from './io-helpers.js';
 import { HSLA } from './lib/color.js';
-import { memoize } from './lib/misc.js';
 import SvgPath from './lib/svg/path.js';
-import { ParamNavigator } from './param.js';
-import { Mouse } from './qjs-opencv/js/cvHighGUI.js';
-import { MouseEvents } from './qjs-opencv/js/cvHighGUI.js';
-import { MouseFlags } from './qjs-opencv/js/cvHighGUI.js';
-import { Screen } from './qjs-opencv/js/cvHighGUI.js';
-import { Window } from './qjs-opencv/js/cvHighGUI.js';
-import { Pipeline } from './qjs-opencv/js/cvPipeline.js';
-import { Processor } from './qjs-opencv/js/cvPipeline.js';
-import { BitsToNames } from './qjs-opencv/js/cvUtils.js';
-import { FindKey } from './qjs-opencv/js/cvUtils.js';
-import { GetOpt } from './qjs-opencv/js/cvUtils.js';
-import { Range } from './qjs-opencv/js/cvUtils.js';
-import { WeakMapper } from './qjs-opencv/js/cvUtils.js';
+import { Mouse, MouseFlags, Screen, Window } from './qjs-opencv/js/cvHighGUI.js';
+import { BitsToNames, GetOpt, Range } from './qjs-opencv/js/cvUtils.js';
 import { VideoSource } from './qjs-opencv/js/cvVideo.js';
 import Console from 'console';
-import { CLAHE } from 'opencv';
-import { Contour } from 'opencv';
-import { Line } from 'opencv';
-import { Mat } from 'opencv';
-import { Point } from 'opencv';
-import { Rect } from 'opencv';
-import { Size } from 'opencv';
 import * as cv from 'opencv';
 import * as std from 'std';
-import * as xml from 'xml';
-/*let rainbow;
-let zoom = 1;
-let debug = false;
-let basename = memoize(() => process.argv[1].replace(/\.js$/, ''));*/
 
 let simplifyMethods = {
   NTH_POINT: c => c.simplifyNthPoint(2),

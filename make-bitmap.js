@@ -1,6 +1,5 @@
 import { LoadConfig } from './config.js';
-import { NumericParam } from './param.js';
-import { ParamNavigator } from './param.js';
+import { NumericParam, ParamNavigator } from './param.js';
 import { Window } from './qjs-opencv/js/cvHighGUI.js';
 import { Pipeline } from './qjs-opencv/js/cvPipeline.js';
 import Console from 'console';

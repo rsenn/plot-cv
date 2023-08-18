@@ -1,7 +1,6 @@
 import lune from 'lune';
 import MoonPhase from 'moonphase-js';
 import SolarCalc from 'solar-calc';
-import SunCalc from 'suncalc2';
 import the_moon from 'the-moon';
 
 const m = new MoonPhase(new Date(2018, 9, 23));

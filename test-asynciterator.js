@@ -1,5 +1,4 @@
-import { eq } from './lib/tinytest.js';
-import { tests } from './lib/tinytest.js';
+import { eq, tests } from './lib/tinytest.js';
 import('console').then( ({ Console }) => (globalThis.console = new Console({ inspectOptions: { compact: 2 } })) );
 
 tests({

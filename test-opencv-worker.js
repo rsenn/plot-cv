@@ -1,7 +1,6 @@
 import { Worker } from 'os';
 import { Console } from 'console';
 import { className, toPointer } from 'util';
-import *  as cv from 'opencv';
 
 
 const log = (...args) => console.log('\x1b[38;5;220mParent \x1b[38;5;34mTHREAD\x1b[0m ', ...args);

@@ -1,15 +1,7 @@
 import * as fs from 'fs';
-import * as os from 'os';
-import { escape } from 'util';
-import { toString } from 'util';
+import { escape, toString } from 'util';
 import { Console } from 'console';
-import inspect from 'inspect';
-import { AF_INET } from 'sockets';
-import { AsyncSocket } from 'sockets';
-import { IPPROTO_TCP } from 'sockets';
-import { SOCK_STREAM } from 'sockets';
-import { SockAddr } from 'sockets';
-import { Socket } from 'sockets';
+import { AF_INET, AsyncSocket, IPPROTO_TCP, SOCK_STREAM, SockAddr } from 'sockets';
 globalThis.fs = fs;
 
 async function main(...args) {

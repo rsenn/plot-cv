@@ -1,11 +1,8 @@
-import { num2color } from './eagle-commands.js';
-import { scientific } from './eagle-commands.js';
+import { num2color, scientific } from './eagle-commands.js';
 import { ReadFile } from './io-helpers.js';
 import { HSLA } from './lib/color.js';
-import { RGBA } from './lib/color.js';
 import { EagleDocument } from './lib/eagle.js';
-import { PartScales } from './lib/eda/colorCoding.js';
-import { ValueToNumber } from './lib/eda/colorCoding.js';
+import { PartScales, ValueToNumber } from './lib/eda/colorCoding.js';
 import { UnitForName } from './lib/eda/units.js';
 import { toXML } from './lib/json.js';
 import { unique } from './lib/misc.js';
