@@ -1,8 +1,4 @@
-import { call } from 'ffi';
-import { define } from 'ffi';
-import { dlopen } from 'ffi';
-import { dlsym } from 'ffi';
-import { RTLD_NOW } from 'ffi';
+import { call, define, dlopen, dlsym, RTLD_NOW } from 'ffi';
 
 const libsqlite3 = dlopen('libsqlite3.so.0', RTLD_NOW);
 

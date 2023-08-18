@@ -1,6 +1,4 @@
-import { ECMAScriptParser } from './lib/ecmascript.js';
-import { Environment } from './lib/ecmascript.js';
-import { Printer } from './lib/ecmascript.js';
+import { ECMAScriptParser, Environment, Printer } from './lib/ecmascript.js';
 import trkl from './lib/trkl.js';
 
 const code = `

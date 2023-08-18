@@ -1,13 +1,6 @@
-import { client } from 'net';
-import { createServer } from 'net';
-import { fetch } from 'net';
-import { LLL_ALL } from 'net';
-import { LLL_USER } from 'net';
-import { setLog } from 'net';
+import { client, createServer, fetch, LLL_ALL, LLL_USER, setLog } from 'net';
 import * as os from 'os';
-import { escape } from './lib/misc.js';
-import { quote } from './lib/misc.js';
-import { toString } from './lib/misc.js';
+import { quote, toString } from './lib/misc.js';
 import { Console } from 'console';
 setLog(LLL_USER, (level, message) => console.log('LWS', message));
 

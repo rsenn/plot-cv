@@ -1,8 +1,5 @@
-import { Matrix } from './lib/dom.js';
-import { Point } from './lib/dom.js';
-import { SVG } from './lib/dom.js';
-import { makeAbsolute } from './lib/svg/path-parser.js';
-import { parseSVG } from './lib/svg/path-parser.js';
+import { Matrix, Point } from './lib/dom.js';
+import { makeAbsolute, parseSVG } from './lib/svg/path-parser.js';
 import require from 'require';
 
 const SvgPath = require('./lib/svg/path.js');

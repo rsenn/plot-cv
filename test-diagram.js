@@ -1,31 +1,9 @@
-import { randInt } from 'util';
-import { range } from 'util';
-import { srand } from 'util';
-import { AxisPoints } from './diagram.js';
-import { AxisRange } from './diagram.js';
-import { ClientArea } from './diagram.js';
-import { ClientMatrix } from './diagram.js';
-import { DrawAxis } from './diagram.js';
-import { GetRect } from './diagram.js';
-import { Origin } from './diagram.js';
-import { X } from './diagram.js';
-import { Y } from './diagram.js';
+import { randInt, range, srand } from 'util';
+import { AxisPoints, AxisRange, ClientArea, ClientMatrix, DrawAxis, GetRect, Origin, X, Y } from './diagram.js';
 import { TextStyle } from './qjs-opencv/js/cvHighGUI.js';
 import { Console } from 'console';
-import { Contour } from 'opencv';
-import { CV_64FC2 } from 'opencv';
-import { CV_8UC3 } from 'opencv';
-import { Draw } from 'opencv';
-import { FILLED } from 'opencv';
-import { imshow } from 'opencv';
-import { imwrite } from 'opencv';
-import { LINE_8 } from 'opencv';
-import { LINE_AA } from 'opencv';
-import { Mat } from 'opencv';
-import { Point } from 'opencv';
-import { Rect } from 'opencv';
-import { transform } from 'opencv';
-import { waitKey } from 'opencv';
+import { Contour, CV_64FC2, CV_8UC3, Draw, FILLED, imshow, imwrite, LINE_AA, Mat, Point, Rect, transform, waitKey } from 'opencv';
+
 function main(...args) {
   globalThis.console = new Console({
     inspectOptions: { maxArrayLength: 100, colors: true, depth: Infinity, compact: 1, customInspect: true }

@@ -1,8 +1,4 @@
-import { client } from 'net';
-import { createServer } from 'net';
-import { LLL_NOTICE } from 'net';
-import { LLL_USER } from 'net';
-import { setLog } from 'net';
+import { client, createServer, LLL_NOTICE, LLL_USER, setLog } from 'net';
 import * as os from 'os';
 import { Console } from 'console';
 import * as std from 'std';

@@ -1,6 +1,5 @@
 import Alea from './lib/alea.js';
-import { HSLA } from './lib/color.js';
-import { RGBA } from './lib/color.js';
+import { HSLA, RGBA } from './lib/color.js';
 import KolorWheel from './lib/KolorWheel.js';
 import { unique } from './lib/misc.js';
 

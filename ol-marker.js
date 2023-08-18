@@ -2,8 +2,7 @@ import { Point } from './openlayers/src/ol/geom.js';
 import { Feature } from './openlayers/src/ol/index.js';
 import { fromLonLat } from './openlayers/src/ol/proj.js';
 import { Vector } from './openlayers/src/ol/source.js';
-import { Icon } from './openlayers/src/ol/style.js';
-import { Style } from './openlayers/src/ol/style.js';
+import { Icon, Style } from './openlayers/src/ol/style.js';
 function CreateMarker(coord) {
   const [lon, lat] = coord;
   /*

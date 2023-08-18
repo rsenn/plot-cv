@@ -1,20 +1,13 @@
 import fs from 'fs';
-import { ReadFile } from './io-helpers.js';
-import { WriteFile } from './io-helpers.js';
-import * as deep from './lib/deep.js';
+import { ReadFile, WriteFile } from './io-helpers.js';
 import { PathReplacer } from './lib/ecmascript.js';
-import { CallExpression } from './lib/ecmascript/estree.js';
-import { Declaration } from './lib/ecmascript/estree.js';
-import { Expression } from './lib/ecmascript/estree.js';
-import { ImportDeclaration } from './lib/ecmascript/estree.js';
-import { Literal } from './lib/ecmascript/estree.js';
-import { Program } from './lib/ecmascript/estree.js';
-import { TemplateLiteral } from './lib/ecmascript/estree.js';
+import { CallExpression, ImportDeclaration, TemplateLiteral } from './lib/ecmascript/estree.js';
 import { ECMAScriptParser } from './lib/ecmascript/parser.js';
 import Printer from './lib/ecmascript/printer.js';
 import { Stack } from './lib/stack.js';
 import Tree from './lib/tree.js';
 import { Console } from 'console';
+
 let lexer, parser;
 
 Error.stackTraceLimit = 100;

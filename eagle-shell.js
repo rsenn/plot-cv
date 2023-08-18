@@ -10,7 +10,7 @@ import { BinaryTree, BoxHash, BucketMap, BucketStore, ComponentMap, CompositeMap
 import * as deep from './lib/deep.js';
 import { forwardRef, Fragment, h, React, ReactComponent, render, toChildArray } from './lib/dom/preactComponent.js';
 import { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, setDebug, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, EagleRef, EagleNode, makeEagleElement, DereferenceError, EagleNodeList, useTrkl, EagleDocument, EagleReference, makeEagleNode, Renderer, EagleProject, EagleElement, EagleElementProxy, EagleNodeMap, ImmutablePath } from './lib/eagle.js';
-import { PrimitiveComponents, ElementNameToComponent, ElementToComponent, RenderElement, polarToCartesian, Background, Board, PinSizes } from './lib/eagle/components.js';
+import { ElementNameToComponent, ElementToComponent, PinSizes } from './lib/eagle/components.js';
 import CircuitJS from './lib/eda/circuitjs.js';
 import { GetColorBands, GetFactor, GetMultipliers } from './lib/eda/colorCoding.js';
 import { GetExponent, GetMantissa, NumberToValue, ValueToNumber } from './lib/eda/values.js';

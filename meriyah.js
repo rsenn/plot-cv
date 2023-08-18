@@ -1,7 +1,5 @@
-import { createWriteStream } from 'fs';
-import { readFileSync } from 'fs';
-import { getOpt } from 'util';
-import { showHelp } from 'util';
+import { createWriteStream, readFileSync } from 'fs';
+import { getOpt, showHelp } from 'util';
 import { parseScript } from './lib/meriyah.js';
 import process from 'process';
 #!/usr/bin/env qjsm

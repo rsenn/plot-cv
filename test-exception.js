@@ -1,5 +1,3 @@
-
-
 let filesystem;
 let globalThis;
 

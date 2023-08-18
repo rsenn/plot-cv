@@ -1,5 +1,4 @@
-import { iterate } from 'deep';
-import { RETURN_VALUE_PATH } from 'deep';
+import { iterate, RETURN_VALUE_PATH } from 'deep';
 
 export function* JSON_Iterator(obj, pred = (v, k) => true) {
   let prev = { depth: 0, path: [], type: valueType(obj) };

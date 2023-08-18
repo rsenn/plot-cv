@@ -1,5 +1,4 @@
-import { setReadHandler } from 'os';
-import { Worker } from 'os';
+import { setReadHandler, Worker } from 'os';
 import { Console } from 'console';
 /* os.Worker API test */
 let worker;

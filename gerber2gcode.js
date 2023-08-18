@@ -2,14 +2,11 @@ import { spawn } from 'child_process';
 import fs from 'fs';
 import * as path from 'path';
 import { getOpt } from 'util';
-import { ReadFile } from './io-helpers.js';
-import { WriteFile } from './io-helpers.js';
+import { ReadFile, WriteFile } from './io-helpers.js';
 import { PointList } from './lib/geom/pointList.js';
 import GerberParser from './lib/gerber/parser.js';
 import { parse as parsePath } from './lib/svg/path-parser.js';
-import { Attr } from './quickjs/qjs-modules/lib/dom.js';
-import { Parser } from './quickjs/qjs-modules/lib/dom.js';
-import { Serializer } from './quickjs/qjs-modules/lib/dom.js';
+import { Parser, Serializer } from './quickjs/qjs-modules/lib/dom.js';
 import { Console } from 'console';
 #!/usr/bin/env qjsm
 let extToSide = { GTL: 'front', GBL: 'back', GKO: 'outline', TXT: 'drill' };

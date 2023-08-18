@@ -1,8 +1,4 @@
-import { readAll } from 'fs';
 import { readAllSync } from 'fs';
-import { read } from 'os';
-import { keys } from 'util';
-import { quote } from 'util';
 import { toString } from 'util';
 import { Spawn } from './os-helpers.js';
 import { ReadFile } from './test-readfile.js';

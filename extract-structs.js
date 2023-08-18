@@ -1,9 +1,6 @@
 import CLexer from './lib/clexer.js';
-import { escape } from './lib/misc.js';
-import { extendArray } from './lib/misc.js';
+import { escape, extendArray } from './lib/misc.js';
 import { Console } from 'console';
-import inspect from 'inspect';
-import { Lexer } from 'lexer';
 import * as std from 'std';
 #!/usr/bin/env qjsm
 extendArray();

@@ -1,14 +1,13 @@
 import * as os from 'os';
 import { DebuggerProtocol } from './debuggerprotocol.js';
 import { define } from './lib/misc.js';
-import { FD_CLR } from './quickjs/qjs-ffi/lib/fd_set.js';
-import { fd_set } from './quickjs/qjs-ffi/lib/fd_set.js';
-import { FD_SET } from './quickjs/qjs-ffi/lib/fd_set.js';
+import { FD_CLR, fd_set, FD_SET } from './quickjs/qjs-ffi/lib/fd_set.js';
 import timeval from './quickjs/qjs-ffi/lib/timeval.js';
 import { Console } from 'console';
 import { errno } from 'ffi';
 import * as std from 'std';
-import { Socket, EAGAIN, AF_INET, SOCK_STREAM, /*ndelay, */ SockAddr, select } from './quickjs/qjs-ffi/lib/socket.js';
+import { Socket, AF_INET, SOCK_STREAM, SockAddr, select } from './quickjs/qjs-ffi/lib/socket.js';
+
 define(Array.prototype, {
   contains(item) {
     return this.indexOf(item) != -1;

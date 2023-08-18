@@ -1,5 +1,3 @@
-import { ColorMap } from './lib/draw/colorMap.js';
-import toSource from './lib/tosource.js';
 import tXml from './lib/tXml.js';
 import { XMLIterator } from './lib/xml/util.js';
 import inspect from 'inspect';

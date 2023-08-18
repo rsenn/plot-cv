@@ -1,6 +1,4 @@
-import { ReadFile } from './io-helpers.js';
-import { WriteFile } from './io-helpers.js';
-import Cowbird from './lib/parse/cowbird.js';
+import { ReadFile, WriteFile } from './io-helpers.js';
 import { Grammar } from './lib/parse/grammar.js';
 import * as path from './lib/path.js';
 import { Console } from 'console';

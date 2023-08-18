@@ -1,9 +1,6 @@
 import { SVG } from './lib/dom.js';
 import { EagleDocument } from './lib/eagle.js';
-import { BBox } from './lib/geom.js';
-import { Line } from './lib/geom.js';
-import { Point } from './lib/geom.js';
-import { PointList } from './lib/geom.js';
+import { Line, Point, PointList } from './lib/geom.js';
 import Voronoi from './lib/geom/voronoi.js';
 import { toXML } from './lib/json.js';
 async function testVoronoi(filename) {

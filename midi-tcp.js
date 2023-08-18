@@ -1,10 +1,6 @@
-import { client } from 'net';
-import { LLL_DEBUG } from 'net';
-import { LLL_WARN } from 'net';
-import { setLog } from 'net';
+import { client, LLL_DEBUG, LLL_WARN, setLog } from 'net';
 import * as os from 'os';
-import { MIDIEvent } from './lib/midi.js';
-import { MIDIStream } from './lib/midi.js';
+import { MIDIEvent, MIDIStream } from './lib/midi.js';
 import { quote } from './lib/misc.js';
 import { Console } from 'console';
 import * as std from 'std';

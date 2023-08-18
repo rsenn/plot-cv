@@ -1,15 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { DirIterator } from './dir-helpers.js';
 import { RecursiveDirIterator } from './dir-helpers.js';
-import { ArgumentType } from './lib/compileCommand.js';
-import { CompileCommand } from './lib/compileCommand.js';
-import { MakeCommand } from './lib/compileCommand.js';
-import { MakeCommands } from './lib/compileCommand.js';
-import { arraysInCommon } from './lib/misc.js';
-import { define } from './lib/misc.js';
-import { mapFunction } from './lib/misc.js';
-import { types } from './lib/misc.js';
+import { ArgumentType, CompileCommand, MakeCommand, MakeCommands } from './lib/compileCommand.js';
+import { arraysInCommon, define, mapFunction, types } from './lib/misc.js';
 import { Console } from 'console';
 import process from 'process';
 

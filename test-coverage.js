@@ -1,4 +1,5 @@
 import { readFileSync } from 'fs';
+
 function readFile(path) {
   let ret;
   try {

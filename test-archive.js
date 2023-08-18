@@ -1,4 +1,5 @@
 import { Archive } from 'archive';
+
 function main(...args) {
   console.log('Archive.version', Archive.version);
 

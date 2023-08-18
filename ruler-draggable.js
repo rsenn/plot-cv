@@ -1,14 +1,7 @@
 import Cursor from './cursor.js';
 import { classNames } from './lib/classNames.js';
-import { forwardRef } from './lib/dom/preactComponent.js';
-import { h } from './lib/dom/preactComponent.js';
-import { useEffect } from './lib/dom/preactComponent.js';
-import { useImperativeHandle } from './lib/dom/preactComponent.js';
-import { useMemo } from './lib/dom/preactComponent.js';
-import { useRef } from './lib/dom/preactComponent.js';
-import { useState } from './lib/dom/preactComponent.js';
+import { forwardRef, h, useEffect, useMemo, useRef, useState } from './lib/dom/preactComponent.js';
 import { useDebounce } from './lib/hooks/useDebounce.js';
-import PropTypes from './lib/prop-types.js';
 
 const rulerImgVertical = 'static/ruler/rulerVertical.svg';
 const rulerImg = 'static/ruler/rulerHorizontal.svg';

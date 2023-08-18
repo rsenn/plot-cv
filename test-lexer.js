@@ -1,5 +1,4 @@
 import { ReadFile } from './io-helpers.js';
-import { h } from './lib/dom/preactComponent.js';
 import Lexer from './lib/ecmascript/lexer.js';
 
 const testfn = () => true;

@@ -1,9 +1,3 @@
-import { Contour } from 'opencv';
-import { Line } from 'opencv';
-import { Mat } from 'opencv';
-import { Point } from 'opencv';
-import { Size } from 'opencv';
-import { UMat } from 'opencv';
 import * as cv from 'opencv';
 let filesystem;
 

@@ -2,15 +2,13 @@ import filesystem from 'fs';
 import Alea from './lib/alea.js';
 import deep from './lib/deep.js';
 import { SVG } from './lib/dom/svg.js';
-import { Matrix } from './lib/geom.js';
-import { Point } from './lib/geom.js';
-import { Size } from './lib/geom.js';
-import { TransformationList } from './lib/geom.js';
+import { Matrix, Point, Size, TransformationList } from './lib/geom.js';
 import { Path } from './lib/json.js';
 import * as path from './lib/path.js';
 import Tree from './lib/tree.js';
 import tXml from './lib/tXml.js';
 import { toXML } from './lib/xml.js';
+
 let prng = new Alea().seed(Date.now());
 
 function readXML(filename) {

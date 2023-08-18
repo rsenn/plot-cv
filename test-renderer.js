@@ -1,10 +1,8 @@
 import * as filesystem from 'fs';
 import { ColoredText } from './lib/color/coloredText.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
-import { EagleDocument } from './lib/eagle.js';
-import { Renderer } from './lib/eagle.js';
+import { EagleDocument, Renderer } from './lib/eagle.js';
 import renderToString from './lib/preact-render-to-string.js';
-import { Component } from './lib/preact.js';
 import { render } from './lib/preact.js';
 Util.colorCtor = ColoredText;
 

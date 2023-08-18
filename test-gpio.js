@@ -1,5 +1,6 @@
 import { Console } from 'console';
 import { GPIO } from 'gpio';
+
 function main(...args) {
   globalThis.console = new Console({
     colors: true,

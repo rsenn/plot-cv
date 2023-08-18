@@ -1,13 +1,9 @@
 import { promises as fsPromises } from 'fs';
 import http from 'http';
 import https from 'https';
-import fetch from 'isomorphic-fetch';
 import net from 'net';
 import url from 'url';
-import deep from './lib/deep.js';
 import { Repeater } from './lib/repeater/repeater.js';
-import { AcquireReader } from './lib/stream.js';
-import { AcquireWriter } from './lib/stream.js';
 import ProxyList from './node_modules/free-proxy/index.js';
 import ProxyLists from './node_modules/proxy-lists/index.js';
 import proxynova from './node_modules/proxynova/index.js';

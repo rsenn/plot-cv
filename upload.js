@@ -1,25 +1,13 @@
-import { createElement } from './dom-helpers.js';
-import { isElement } from './dom-helpers.js';
+import { createElement, isElement } from './dom-helpers.js';
 import * as dom from './lib/dom.js';
-import { Component } from './lib/dom/preactComponent.js';
-import { createRef } from './lib/dom/preactComponent.js';
-import { h } from './lib/dom/preactComponent.js';
-import { html } from './lib/dom/preactComponent.js';
-import { render } from './lib/dom/preactComponent.js';
-import React from './lib/dom/preactComponent.js';
+import { createRef, h, render, default as React } from './lib/dom/preactComponent.js';
 import * as geom from './lib/geom.js';
 import * as transformation from './lib/geom/transformation.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
-import { define } from './lib/misc.js';
 import { randStr } from './lib/misc.js';
 import trkl from './lib/trkl.js';
-import { Card } from './lib/upload.js';
-import { DragArea } from './lib/upload.js';
-import { DropArea } from './lib/upload.js';
-import { List } from './lib/upload.js';
-import { RUG } from './lib/upload.js';
-import { parseDegMinSec } from './string-helpers.js';
-import { parseGPSLocation } from './string-helpers.js';
+import { Card, DragArea, DropArea, List, RUG } from './lib/upload.js';
+import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
 
 const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 

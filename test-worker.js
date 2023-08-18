@@ -3,7 +3,6 @@ import { assert } from './lib/misc.js';
 import { PromiseWorker } from './promise-worker.js';
 import { WorkerScript } from './workerScript.js';
 import { Console } from 'console';
-import * as std from 'std';
 /* os.Worker API test */
 var worker;
 var counter;

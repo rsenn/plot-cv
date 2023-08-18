@@ -1,11 +1,5 @@
 import * as deep from './lib/deep.js';
-
-import { ansiStyles } from './lib/misc.js';
-
-import { define } from './lib/misc.js';
-import { error } from './lib/misc.js';
-import { isFunction } from './lib/misc.js';
-
+import { ansiStyles, define, error, isFunction } from './lib/misc.js';
 import { Pointer } from './lib/pointer.js';
 globalThis.process ??= { env: {} };
 

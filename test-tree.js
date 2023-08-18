@@ -1,5 +1,4 @@
 import Tree from './lib/tree.js';
-import { Util } from './lib/util.js';
 
 const treeObj = {
   a: 1,

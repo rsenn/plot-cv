@@ -1,5 +1,4 @@
-import { popenAndRead } from './popen.so';
-import { stringToArrayBuffer } from './popen.so';
+import { popenAndRead, stringToArrayBuffer } from './popen.so';
 import * as std from 'std';
 
 const input = std.in.getline();

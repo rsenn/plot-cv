@@ -1,7 +1,4 @@
-import { define } from './lib/misc.js';
-import { escape } from './lib/misc.js';
-
-import { toString } from './lib/misc.js';
+import { define, escape, toString } from './lib/misc.js';
 import * as path from './lib/path.js';
 /*import { ReadFile } from './io-helpers.js';*/
 const cfg = (obj = {}) => console.config({ compact: false, breakLength: Infinity, ...obj });

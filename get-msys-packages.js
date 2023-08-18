@@ -1,9 +1,7 @@
-import filesystem from 'fs';
-import fs from 'fs';
+import { default as filesystem, default as fs } from 'fs';
 import { execStream } from './childProcess.js';
 import * as path from './lib/path.js';
-import { LineBufferStream } from './lib/stream/utils.js';
-import { RepeaterSink } from './lib/stream/utils.js';
+import { LineBufferStream, RepeaterSink } from './lib/stream/utils.js';
 //prettier-ignore
 
 function alt_main(...args) {

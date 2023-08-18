@@ -1,6 +1,5 @@
 import * as path from 'path';
-import { ReadFile } from './io-helpers.js';
-import { WriteFile } from './io-helpers.js';
+import { ReadFile, WriteFile } from './io-helpers.js';
 import { Console } from 'console';
 import { parseScript } from 'meriyah';
 function main(...args) {
