@@ -2,9 +2,11 @@
 import { Console } from 'console';
 import * as path from 'path';
 import { exec, spawn } from 'child_process';
-import { getOpt } from 'util';
+import { getOpt, ucfirst } from 'util';
+import { mkdir, chdir } from 'os';
 
-let optionsArray = [{ front: true }, { back: true }, { side: 'outline' }, { drill: true }];
+let outputTypes = { Top: { front: true }, Bottom: { back: true }, Measures: { side: 'outline' }, Drills: { drill: true } };
+let outputList = ['Top', 'Bottom', 'Measures', 'Drills'].map(n => outputTypes[n]);
 
 export function EagleToGerber(boardFile, opts = {}) {
   console.log('convertToGerber', { boardFile, opts });
@@ -33,19 +35,15 @@ export function EagleToGerber(boardFile, opts = {}) {
 }
 
 export function ExecTool(cmd, ...args) {
-  let child = spawn(cmd, args, { stdio: [0, 'pipe', 2] });
-  let [stdin, stdout, stderr] = child.stdio;
-  let r;
-  let b = new ArrayBuffer(1024);
-  r = child.wait();
+  const child = spawn(cmd, args, { stdio: [0, 'pipe', 2] });
+  const [stdin, stdout, stderr] = child.stdio;
+  const b = new ArrayBuffer(1024);
+  let r = child.wait();
   // console.log('ExecTool', { args, chil ELECTRA® Shape-Based PCB Autorouter v6.56 |d });
 
   r = os.read(stdout, b, 0, 1024);
-  let data = b.slice(0, r);
-  let str = toString(data);
-  console.log('str', str);
-  return str;
-  return parseInt(str);
+  const data = b.slice(0, r);
+  return toString(data);
 }
 
 function main(...args) {
@@ -54,31 +52,48 @@ function main(...args) {
     depth: Infinity
   });
 
-  let { outdir, ...params } = getOpt(
+  const params = getOpt(
     {
+      layers: [true, null, 'L'],
       outdir: [true, null, 'd'],
       '@': 'files'
     },
     args
   );
-  let files = params['@'];
+
+  if(params.layers)
+    outputList = params.layers
+      .split(/\W+/g)
+      .map(n => ucfirst(n))
+      .map(n => outputTypes[n]);
+
+  if(!params.outdir) params.outdir = '/tmp';
+
+  if(params.outdir) mkdir(params.outdir, 0o775);
 
   if(args.length == 0) args = ['/dev/stdin'];
 
-  for(let arg of files) {
+  for(let arg of params['@']) {
     let files = [];
-    for(let options of optionsArray) {
-      let cmd = EagleToGerber(arg, { ...options, outdir });
+
+    for(let options of outputList) {
+      if(params.outdir) options.outdir = params.outdir;
+
+      let cmd = EagleToGerber(arg, options);
       let outputFile = cmd[cmd.indexOf('-o') + 1];
       files.push(outputFile);
 
       //  console.log(`Generating '${outputFile}'`);
       console.log(`Command: ${cmd.join(' ')}`);
 
-      let result = ExecTool(...cmd);
-      console.log(`Result:`, result);
+      ExecTool(...cmd);
     }
+
     console.log(`Generated files:\n${files.join('\n')}`);
+
+    chdir(params.outdir);
+
+    ExecTool('zip', '-9', '-r', '-m', `../${arg}.zip`, '.');
   }
 }
 
