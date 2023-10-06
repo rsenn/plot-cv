@@ -1,7 +1,19 @@
 import * as path from 'path';
 import { ExecTool } from './os-helpers.js';
-
+import { Directory } from 'directory';
 export { ExecTool } from './os-helpers.js';
+
+export function GerberFiles(dir) {
+  let d = new Directory(dir, Directory.NAME, Directory.TYPE_REG);
+  let ret = {};
+  for(let entry of d) {
+    let ext = path.extname(entry).slice(1);
+    console.log('GerberFiles', { entry, ext });
+    let name = { GTL: 'front', GBL: 'back', TXT: 'drill', GTK: 'outline' }[ext];
+    if(name) ret[name] = path.join(dir, entry);
+  }
+  return ret;
+}
 
 export function EagleToGerber(boardFile, opts = {}) {
   console.log('convertToGerber', { boardFile, opts });
@@ -51,9 +63,7 @@ export function GerberToGcode(gerberFile, allOpts = {}) {
     'cut-feed': 200,
     'cut-speed': 10000,
     'cut-infeed': '1mm',
-
-    'output-dir': './tmp/',
-    ...opts
+        ...opts
   };
 
   if(opts.front == undefined && opts.back == undefined && opts.drill == undefined) opts.back = gerberFile;
@@ -67,7 +77,7 @@ export function GerberToGcode(gerberFile, allOpts = {}) {
 
   if(opts.voronoi && !opts.vectorial) opts.vectorial = 1;
 
-  console.debug(`gerberToGcode`, opts);
+//  console.debug(`gerberToGcode`, opts);
   function makePath(ext, side, base = basename) {
     return path.join(opts['output-dir'], `${base}_${side}.${ext}`);
   }
