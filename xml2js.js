@@ -1,3 +1,4 @@
+#!/usr/bin/env qjsm
 import filesystem from 'fs';
 import Alea from './lib/alea.js';
 import deep from './lib/deep.js';
@@ -5,7 +6,7 @@ import * as path from './lib/path.js';
 import Tree from './lib/tree.js';
 import tXml from './lib/tXml.js';
 import { toXML } from './lib/xml.js';
-#!/usr/bin/env qjsm
+
 let prng = new Alea().seed(Date.now());
 
 function readXML(filename) {
