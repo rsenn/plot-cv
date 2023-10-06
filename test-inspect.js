@@ -2,18 +2,19 @@ import { range } from './lib/misc.js';
 import { Console } from 'console';
 
 function main(...args) {
-  
-  globalThis.console = new Console({ inspectOptions: {
-    colors: true,
-    showHidden: false,
-    customInspect: true,
-    showProxy: false,
-    getters: false,
-    depth: Infinity,
-    maxStringLength: 200,
-    compact: false,
-    hideKeys: ['loc', 'range', Symbol.for('nodejs.util.inspect.custom')]
-  }});
+  globalThis.console = new Console({
+    inspectOptions: {
+      colors: true,
+      showHidden: false,
+      customInspect: true,
+      showProxy: false,
+      getters: false,
+      depth: Infinity,
+      maxStringLength: 200,
+      compact: false,
+      hideKeys: ['loc', 'range', Symbol.for('nodejs.util.inspect.custom')]
+    }
+  });
 
   const dumpObj = (obj, depth, options) =>
     '{' +

@@ -1,6 +1,6 @@
 import { Repeater } from './lib/repeater/repeater.js';
 import { eq, tests } from './lib/tinytest.js';
-import('console').then( ({ Console }) => (globalThis.console = new Console({ inspectOptions: { compact: 2 } })) );
+import('console').then(({ Console }) => (globalThis.console = new Console({ inspectOptions: { compact: 2 } })));
 
 tests({
   async 'next() value'() {
@@ -95,12 +95,12 @@ tests({
     eq((await gen.next('value#1')).value, 0);
     eq((await gen.next('value#2')).value, 1);
 
-      let r =await gen.throw(new Error('value#3'));
-      eq(r.done, false);
-      eq(r.value, Infinity);
+    let r = await gen.throw(new Error('value#3'));
+    eq(r.done, false);
+    eq(r.value, Infinity);
 
-    r =await gen.next();
-      eq(r.done, true);
-      eq(r.value, undefined);
+    r = await gen.next();
+    eq(r.done, true);
+    eq(r.value, undefined);
   }
 });

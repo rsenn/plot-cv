@@ -187,7 +187,6 @@ function* Gradient(start, end, steps = 10) {
 
 // for gradient
 async function main(...args) {
-
   const palette = GeneratePalette(5);
   console.log('palette:', palette);
   //console.log('keyList.length:', keyList.length);

@@ -2,9 +2,7 @@ import { Worker } from 'os';
 import { Console } from 'console';
 import { className, toPointer } from 'util';
 
-
 const log = (...args) => console.log('\x1b[38;5;220mParent \x1b[38;5;34mTHREAD\x1b[0m ', ...args);
-
 
 /* os.Worker API test */
 function assert(actual, expected, message) {
@@ -34,8 +32,8 @@ function TestOpenCVWorker() {
   worker.onmessage = function(e) {
     var ev = e.data;
 
-      log('worker.onmessage', e);
- 
+    log('worker.onmessage', e);
+
     switch (ev.type) {
       case 'num':
         assert(ev.num, counter);
@@ -45,7 +43,7 @@ function TestOpenCVWorker() {
           let sab = new SharedArrayBuffer(10);
           let buf = new Uint8Array(sab);
 
-  log(`SAB address:`, toPointer(sab));
+          log(`SAB address:`, toPointer(sab));
 
           worker.postMessage({ type: 'sab', buf: buf });
         }

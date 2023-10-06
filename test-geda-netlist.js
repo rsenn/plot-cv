@@ -13,7 +13,6 @@ function WriteFile(name, data) {
 }
 
 async function main(...args) {
-
   let xy = new Point();
   let size = new Size(128, 128);
   let maxWidth = 1360;

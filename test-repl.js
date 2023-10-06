@@ -24,7 +24,6 @@ async function CommandLine() {
 }
 
 async function main(...args) {
-
   await CommandLine();
 }
 
