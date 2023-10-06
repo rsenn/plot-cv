@@ -1,14 +1,13 @@
-import { spawn } from 'child_process';
 import * as path from 'path';
+import { Console } from 'console';
 import { exec, spawn } from 'child_process';
-import { getOpt, ucfirst } from 'util';
-import { mkdir, chdir } from 'os';
+import { getOpt, ucfirst,randStr } from 'util';
+import { mkdir, chdir, remove,getcwd } from 'os';
 
 let outputTypes = { Top: { front: true }, Bottom: { back: true }, Measures: { side: 'outline' }, Drills: { drill: true } };
 let outputList = ['Top', 'Bottom', 'Measures', 'Drills'].map(n => outputTypes[n]);
 
 export function EagleToGerber(boardFile, opts = {}) {
-  console.log('convertToGerber', { boardFile, opts });
   let {
     layers = opts.side == 'outline' ? ['Measures'] : opts.drill ? ['Drills', 'Holes'] : [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'],
     format = opts.drill ? 'EXCELLON' : 'GERBER_RS274X',
@@ -33,8 +32,24 @@ export function EagleToGerber(boardFile, opts = {}) {
   return [bin].concat(args);
 }
 
-export function ExecTool(cmd, ...args) {
-  const child = spawn(cmd, args, { stdio: [0, 'pipe', 2] });
+export function ZipFolder(archive,folder) {
+     let zipCmd =
+     //['7za', 'a', '-mx=5', '-sdel', archive, '.'];
+      ['zip', '-9', '-r', '-m', archive, '.'];
+
+    console.log(`Zip command: ${zipCmd.join(' ')}`);
+
+const [old,status]=getcwd();
+    chdir(folder);
+    remove(archive);
+    const ret=ExecTool(zipCmd, {cwd:folder});
+chdir(old);
+remove(folder);
+    return ret;
+  }
+
+export function ExecTool([cmd, ...args], opts = {}) {
+  const child = spawn(cmd, args, { stdio: [0, 'pipe', 2], ...opts });
   const [stdin, stdout, stderr] = child.stdio;
   const b = new ArrayBuffer(1024);
   let r = child.wait();
@@ -66,14 +81,15 @@ function main(...args) {
       .map(n => ucfirst(n))
       .map(n => outputTypes[n]);
 
-  if(!params.outdir) params.outdir = '/tmp';
+  if(!params.outdir) params.outdir = '/tmp/'+randStr(10);
 
-  if(params.outdir) mkdir(params.outdir, 0o775);
 
   if(args.length == 0) args = ['/dev/stdin'];
 
   for(let arg of params['@']) {
     let files = [];
+
+  if(params.outdir) mkdir(params.outdir, 0o775);
 
     for(let options of outputList) {
       if(params.outdir) options.outdir = params.outdir;
@@ -85,14 +101,18 @@ function main(...args) {
       //  console.log(`Generating '${outputFile}'`);
       console.log(`Command: ${cmd.join(' ')}`);
 
-      ExecTool(...cmd);
+      ExecTool(cmd);
     }
 
     console.log(`Generated files:\n${files.join('\n')}`);
 
-    chdir(params.outdir);
+    //chdir(params.outdir);
+    //
+    const archive=path.join(path.dirname(params.outdir), path.basename(arg, path.extname(arg)) + '.zip');
+    ZipFolder(archive, params.outdir);
 
-    ExecTool('zip', '-9', '-r', '-m', `../${arg}.zip`, '.');
+remove(params.outdir);
+params.outdir = '/tmp/'+randStr(10);
   }
 }
 
