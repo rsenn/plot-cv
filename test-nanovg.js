@@ -1,16 +1,14 @@
-import * as glfw from 'glfw';
-import { context, poll, Position, Window, CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_PROFILE, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, RESIZABLE, SAMPLES } from 'glfw';
-import { glClear, glClearColor, glViewport, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT } from './gl.js';
+import { DrawCircle, DrawImage, GLFW, Mat2Image } from './draw-utils.js';
 import { HSLA } from './lib/color.js';
-import { Mat, Point, Size, Rect, imread } from 'opencv';
-import * as cv from 'opencv';
-import * as nvg from 'nanovg';
 import Console from 'console';
-import { GLFW, Mat2Image, DrawImage, DrawCircle } from './draw-utils.js';
+import { className } from 'util';
+import * as glfw from 'glfw';
 import * as ImGui from 'imgui';
+import * as nvg from 'nanovg';
+import { imread, copyTo, log, CV_8UC4, COLOR_BGR2BGRA, LINE_AA, cvtColor, drawLine, Mat, Point, Rect } from 'opencv';
 
 function Clear(color = nvg.RGB(0, 0, 0)) {
-  const { size } = context.current;
+  const { size } = glfw.context.current;
 
   nvg.Save();
   nvg.BeginPath();
@@ -105,18 +103,18 @@ function main(...args) {
 
   //console.log(`width: ${width}, height: ${height}, x: ${x}, y: ${y}`);
 
-  let mat = new Mat(new Size(width, height), cv.CV_8UC4);
+  let mat = new Mat(height, width, CV_8UC4);
 
   mat.setTo([11, 22, 33, 255]);
 
-  let image2 = cv.imread('Architektur.png');
+  let image2 = imread('Architektur.png');
 
-  cv.cvtColor(image2, image2, cv.COLOR_BGR2BGRA);
+  cvtColor(image2, image2, COLOR_BGR2BGRA);
 
   image2.copyTo(mat(new Rect(image2.size)));
 
-  cv.drawLine(mat, new Point(10, 10), new Point(size.width - 10, size.height - 10), [255, 255, 0, 255], 4, cv.LINE_AA);
-  cv.drawLine(mat, new Point(size.width - 10, 10), new Point(10, size.height - 10), [255, 0, 0, 255], 4, cv.LINE_AA);
+  drawLine(mat, new Point(10, 10), new Point(size.width - 10, size.height - 10), [255, 255, 0, 255], 4, LINE_AA);
+  drawLine(mat, new Point(size.width - 10, 10), new Point(10, size.height - 10), [255, 0, 0, 255], 4, LINE_AA);
 
   let { buffer } = mat;
 
@@ -220,10 +218,10 @@ function main(...args) {
 
     ImGui.Text('Adjust values for this processing step:');
 
-    ImGui.DragFloat('Value', val => (val === undefined ? floatValue : (floatValue = val)), 0.0, 1.0, '%.3f');
+    /* ImGui.DragFloat('Value', val => (val === undefined ? floatValue : (floatValue = val)), 0.0, 1.0, '%.3f');
     ImGui.SliderFloat('Value', val => (val === undefined ? floatValue : (floatValue = val)), 0.0, 1.0, '%.3f');
     ImGui.SliderInt('Alpha', val => (val === undefined ? Math.floor(alphaValue) : (alphaValue = Math.floor(val))), 0, 255);
-
+*/
     ImGui.End();
 
     ImGui.Render();
@@ -247,6 +245,8 @@ function main(...args) {
 try {
   main(...scriptArgs.slice(1));
 } catch(error) {
-  console.log(error ? 'FAIL: ' + error.message + '\n' + error.stack : 'FAIL: ' + error);
+  console.log(`Exception (${className(error)}): `, error);
+  console.log('FAIL: ' + error.message + '\n' + error.stack);
+  //os.kill(process.pid, os.SIGUSR1);
   std.exit(1);
 }

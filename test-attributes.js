@@ -1,9 +1,6 @@
-import inspect from 'inspect';
-import { XMLIterator } from './lib/xml/util.js';
 import tXml from './lib/tXml.js';
-import toSource from './lib/tosource.js';
-import { ColorMap } from './lib/draw/colorMap.js';
-
+import { XMLIterator } from './lib/xml/util.js';
+import inspect from 'inspect';
 //prettier-ignore
 
 function readXML(filename) {
@@ -13,9 +10,11 @@ function readXML(filename) {
   //console.log('xml:', xml);
   return xml;
 }
+
 //TODO: Test with tmScheme (XML) and ColorMap
 
 const push_back = (arr, ...items) => [...(arr || []), ...items];
+
 const push_front = (arr, ...items) => [...items, ...(arr || [])];
 
 async function main(...args) {
@@ -51,7 +50,6 @@ async function main(...args) {
   let envMap = new Map(envEntries);
   //console.log('Environment:', Util.toSource(envEntries, { quote: '"'}).replaceAll('\n', "\\n"));
   console.log('Environment:', inspect(envMap));
-
 
   console.log('OK');
   let colors, keys;
@@ -95,5 +93,6 @@ async function main(...args) {
 
   console.log('numeric: ' + printSet([...numeric.values()].sort()));
 }
+
 main(...scriptArgs.slice(1));
 //Util.callMain(main);

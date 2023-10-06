@@ -1,8 +1,5 @@
-import React, { Fragment, h, render, Component } from './lib/dom/preactComponent.js';
+import { h, render } from './lib/dom/preactComponent.js';
 import extendArray from './quickjs/qjs-modules/lib/extendArray.js';
-import useAsyncIterator from './lib/hooks/useAsyncIterator.js';
-import useAsyncGenerator from './lib/hooks/useAsyncGenerator.js';
-
 extendArray();
 
 const Table = props =>
@@ -142,6 +139,7 @@ function GetRow(element) {
     { element }
   );
 }
+
 function GetField(row, field) {
   let columns = [...row.children];
 

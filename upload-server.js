@@ -1,33 +1,33 @@
 import * as std from 'std';
 import * as os from 'os';
-import * as deep from './lib/deep.js';
+import * as deep from 'deep';
 import * as xml from 'xml';
 import * as path from 'path';
 import { Console } from 'console';
-import { Directory, BOTH, TYPE_DIR, TYPE_LNK, TYPE_REG, TYPE_MASK } from 'directory';
-import REPL from './quickjs/qjs-modules/lib/repl.js';
-import inspect from './lib/objectInspect.js';
-import * as Terminal from './terminal.js';
+import { Directory, BOTH, TYPE_DIR, TYPE_LNK, TYPE_REG } from 'directory';
+import { REPL } from 'repl';
+import inspect from 'inspect';
+import * as Terminal from 'terminal';
 import * as fs from 'fs';
-import { link, unlink, error, fnmatch, FNM_EXTMATCH } from 'misc';
-import { toString, define, toUnixTime, getOpt, randStr, isObject, isNumeric, isArrayBuffer, glob, GLOB_BRACE, waitFor } from 'util';
-import net, { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, FormParser, Hash, Response, Socket } from 'net';
+import { unlink, error, fnmatch } from 'misc';
+import { keys, toString, define, toUnixTime, getOpt, randStr, isObject, isArrayBuffer, glob, GLOB_BRACE, waitFor } from 'util';
+import { createServer, setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, FormParser, Hash, Response, Socket } from 'net';
 import { parseDate, dateToObject } from './date-helpers.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
-import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
-import { h, html, render, Component, useState, useLayoutEffect, useRef } from './lib/preact.mjs';
+import { ReadFile, ReadJSON, WriteFile, WriteJSON, ReadBJSON, WriteBJSON } from './io-helpers.js';
+import { ExecTool } from './os-helpers.js';
+import { h } from './lib/preact.mjs';
 import renderToString from './lib/preact-render-to-string.js';
-import { exec, spawn } from 'child_process';
-import { Execute } from './os-helpers.js';
+import { spawn } from 'child_process';
 import trkl from './lib/trkl.js';
-import { take } from './lib/iterator/helpers.js';
-import { extendArray, extendGenerator, extendAsyncGenerator } from 'util';
+import extendArray from 'extendArray';
+import extendGenerator from 'extendGenerator';
+import extendAsyncGenerator from 'extendAsyncGenerator';
 import { RecursiveDirIterator } from './dir-helpers.js';
 
 extendArray();
 extendGenerator();
 extendGenerator(Object.getPrototypeOf(new Map().keys()));
-extendGenerator(Object.getPrototypeOf(new Directory('.')));
+//extendGenerator(Object.getPrototypeOf(new Directory('.')));
 extendAsyncGenerator();
 
 globalThis.fs = fs;
@@ -53,21 +53,6 @@ async function AsyncCollect(iter) {
   return ret;
 }
 
-function ExecTool(cmd, ...args) {
-  let child = spawn(cmd, args, { stdio: [0, 'pipe', 2] });
-  let [stdin, stdout, stderr] = child.stdio;
-  let r;
-  let b = new ArrayBuffer(1024);
-  r = child.wait();
-  // console.log('ExecTool', { args, child });
-
-  r = os.read(stdout, b, 0, 1024);
-  let data = b.slice(0, r);
-  let str = toString(data);
-
-  return str;
-}
-
 function GetMime(file) {
   let output = ExecTool('file', '-i', file);
   output = output.replace(/[\r\n]*$/g, '');
@@ -77,7 +62,7 @@ function GetMime(file) {
 }
 
 function Matcher(pattern, t = arg => arg) {
-  return (...args) => pattern == t(...args) || 0 == fnmatch(pattern, t(...args), FNM_EXTMATCH);
+  return (...args) => pattern == t(...args) || 0 == fnmatch(pattern, t(...args), 0);
 }
 
 function KeyOrValueMatcher(pattern) {
@@ -108,7 +93,7 @@ const allowedDirs = (globalThis.allowedDirs = new Map(
 ));
 
 function GetDir(dir) {
-  let a = path.toArray(dir);
+  let a = dir.split(new RegExp(path.sep + '+', 'g'));
   let i = a.findIndex(n => /[*{}]/.test(n));
   return i != -1 ? path.slice(dir, 0, i) : dir;
 }
@@ -118,10 +103,11 @@ function DirName(name) {
 
   p = path.slice(
     p,
-    path.toArray(p).findIndex(it => it != '..')
+    p.split(new RegExp(path.sep + '+', 'g')).findIndex(it => it != '..')
   );
   return p;
 }
+
 function DateStr(date) {
   let str = date.toISOString();
   let ti = str.indexOf('T');
@@ -238,11 +224,8 @@ const FileTable = ({ files, ...props }) => {
 
 function ReadExiv2(file) {
   console.log('ReadExiv2', file);
-  let [rdf, stdout] = os.pipe();
-  os.exec(['exiv2', '-e', 'X-', 'ex', file], { stdout });
-  os.close(stdout);
-  let xmpdat = fs.readAllSync(rdf);
-  fs.closeSync(rdf);
+  let xmpdat = ExecTool('exiv2', '-e', 'X-', 'ex', file);
+
   // console.log('xmpdat', xmpdat);
   let xmp = xml.read(xmpdat);
   // console.log('xmp', xmp);
@@ -261,7 +244,7 @@ function ReadExiv2(file) {
 function ReadExiftool(file) {
   console.log('ReadExiftool', file);
 
-  let [ret, out] = Execute('exiftool', '-S', '-ee', file);
+  let out = ExecTool('exiftool', '-S', '-ee', file);
 
   let a = out.split(/\r?\n/g).filter(l => l != '');
 
@@ -274,11 +257,10 @@ function ReadExiftool(file) {
 
 function HeifConvert(src, dst, quality = 100) {
   console.log('HeifConvert', src, dst);
-  let args = ['heif-convert', '-q', quality + '', src, dst];
-  let [ret, out] = Execute(...args);
+  let child = spawn('heif-convert', ['-q', quality + '', src, dst], { block: false, stdio: ['inherit', 'inherit', 'inherit'] });
 
-  console.log('HeifConvert', { args, ret, out });
-  return [ret, out];
+  console.log('HeifConvert', child);
+  child.wait();
 }
 
 function MagickResize(src, dst, rotate = 0, width, height) {
@@ -288,11 +270,10 @@ function MagickResize(src, dst, rotate = 0, width, height) {
     dst,
     rotate
   });
-  let args = ['convert', src, '-resize', width + 'x' + height, ...(rotate ? ['-rotate', '-' + rotate] : []), dst];
-  let [ret, out] = Execute(...args);
+  let child = spawn('convert', [src, '-resize', width + 'x' + height, ...(rotate ? ['-rotate', '-' + rotate] : []), dst], { block: false });
 
-  console.log('MagickResize', { args, ret, out });
-  return [ret, out];
+  console.log('MagickResize', { child });
+  child.wait();
 }
 
 function main(...args) {
@@ -357,7 +338,7 @@ function main(...args) {
   ];
 
   let { log } = console;
-  repl.show = arg => std.puts((typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options)) + '\n');
+  repl.show = arg => (typeof arg == 'string' ? arg : inspect(arg, globalThis.console.options) + '\n');
 
   repl.cleanup = () => {
     repl.readlineRemovePrompt();
@@ -409,9 +390,9 @@ function main(...args) {
     globalThis.out = s => logFile.puts(s + '\n');
 
     logLevel = (params.debug ? LLL_USER : 0) | (((params.debug ? LLL_INFO : LLL_WARN) << 1) - 1);
-    console.log('createWS', { logLevel }, net.createServer);
+    console.log('createWS', { logLevel }, createServer);
 
-    return net.createServer({
+    return createServer({
       block: false,
       tls: params.tls,
       sslCert,
@@ -505,7 +486,7 @@ function main(...args) {
 
           if(file) {
             file = path.absolute(file);
-            file = path.collapse(file);
+            file = path.normalize(file);
             console.log(
               `allowedDirs:`,
               allowedDirs //.map(dir => path.normalize(dir))
@@ -584,10 +565,15 @@ function main(...args) {
           yield JSON.stringify(result, ...(+pretty ? [null, 2] : []));
         },
         async function* files(req, resp) {
-          console.log('*files query =', req.url.query);
-          const { filter = '*', root, type = TYPE_DIR | TYPE_REG | TYPE_LNK, limit = '0' } = req.url.query;
+          const { url, method, body } = req;
+          console.log('*files', { body });
+          console.log('*files query =', url.query);
+          const { filter = '*', root, type = TYPE_DIR | TYPE_REG | TYPE_LNK, limit = '0' } = url.query ?? {};
+
           console.log('*files', { root, filter, type });
+
           const [offset = 0, size = Infinity] = limit.split(',').map(n => +n);
+
           console.log('*files', { offset, size });
           let i = 0;
           let f = Matcher(filter);
@@ -597,7 +583,10 @@ function main(...args) {
             for(let [key, value] of allowedDirs.entries().filter(KeyOrValueMatcher(root))) {
               let dir = new Directory(value, BOTH, +type);
               yield key + ':\r\n';
-              for(let [name, type] of dir.filter(([name, type]) => f(name))) yield name + (+type == TYPE_DIR ? '/' : '') + '\r\n';
+
+              console.log('dir', dir, keys(dir, 0, 2), dir + '');
+
+              for(let [name, type] of dir) if(f(name)) yield name + (+type == TYPE_DIR ? '/' : '') + '\r\n';
             }
           }
           console.log('*files', { i, f });
@@ -608,7 +597,7 @@ function main(...args) {
           define(globalThis, { filesRequest: { req, resp, body, query } });
           console.log('*files', { req, resp, body, query });
           const data = query ?? {};
-          resp.type = 'application/json';
+          // XXX: resp.type = 'application/json';
           let { dirs = defaultDirs, filter = '[^.].*' ?? '.(brd|sch|G[A-Z][A-Z])$', verbose = false, objects = true, key = 'mtime', limit = null, flat = false } = data ?? {};
           let results = [];
           for(let dir of dirs) {
@@ -687,7 +676,10 @@ function main(...args) {
               else results.push({ dir, names });
             }
           }
-          yield JSON.stringify(...[results, ...(verbose ? [null, 2] : [])]);
+          const s = JSON.stringify(...[results, ...(verbose ? [null, 2] : [])]);
+          console.log('files2 reply length:', s.length);
+          console.log('files2 reply:', s.slice(-100));
+          yield s;
         }
       ],
       ...url,
@@ -741,7 +733,7 @@ function main(...args) {
         define(globalThis, { req, resp });
 
         const { method, headers } = req;
-        if(resp.headers) resp.headers['Server'] = 'upload-server';
+        if(resp && resp.headers) resp.headers['Server'] = 'upload-server';
         //resp.headers = { Server: 'upload-server' };
         //console.log('onRequest resp.headers', resp.headers, resp.headers['Server']);
         //
@@ -810,7 +802,7 @@ function main(...args) {
                 }
                 if(sha1) {
                   let f = x => 'uploads/' + sha1 + x;
-                  let ret = link(this.temp, f(ext));
+                  let ret = os.rename(this.temp, (this.temp = f(ext)));
                   let { errno } = error();
                   let json = f('.json');
                   if(fs.existsSync(json) && (cache = ReadJSON(json))) {
@@ -889,63 +881,61 @@ function main(...args) {
 
         if(!req.headers || typeof req.headers != 'object') console.log('No headers', req);
 
-        const { body, url } = resp;
+        const { body, url } = resp ?? {};
         const { referer } = req.headers;
 
-        let file = url.path.slice(1);
-        const dir = path.dirname(file); //file.replace(/\/[^\/]*$/g, '');
+        if(url) {
+          let file = url.path.slice(1);
+          const dir = path.dirname(file); //file.replace(/\/[^\/]*$/g, '');
 
-        if(file.endsWith('.txt') || file.endsWith('.html') || file.endsWith('.css')) {
-          resp.body = ReadFile(file);
-        } else if(file.endsWith('.js')) {
-          let file1 = file;
-          if(/qjs-modules\/lib/.test(file) && !/(dom|util)\.js/.test(file)) {
-            let file2 = file.replace(/.*qjs-modules\//g, '');
-            if(fs.existsSync(file2)) {
-              file = file2;
-            }
-          } else if(!fs.existsSync(file)) {
-            for(let dir of ['quickjs/qjs-modules', 'quickjs/qjs-modules/lib', '.', 'lib']) {
-              let file2 = dir + '/' + file;
-              console.log('inexistent file', file, file2, fs.existsSync(file2), referer);
+          if(file.endsWith('.txt') || file.endsWith('.html') || file.endsWith('.css')) {
+            resp.body = ReadFile(file);
+          } else if(file.endsWith('.js')) {
+            let file1 = file;
+            if(/qjs-modules\/lib/.test(file) && !/(dom|util)\.js/.test(file)) {
+              let file2 = file.replace(/.*qjs-modules\//g, '');
               if(fs.existsSync(file2)) {
                 file = file2;
-                break;
+              }
+            } else if(!fs.existsSync(file)) {
+              for(let dir of ['quickjs/qjs-modules', 'quickjs/qjs-modules/lib', '.', 'lib']) {
+                let file2 = dir + '/' + file;
+                console.log('inexistent file', file, file2, fs.existsSync(file2), referer);
+                if(fs.existsSync(file2)) {
+                  file = file2;
+                  break;
+                }
               }
             }
-          }
 
-          if(file1 != file) {
-            //  console.log('\x1b[38;5;214monRequest\x1b[0m', file1, '->', file);
-            resp.status = 302;
-            resp.headers = { ['Location']: '/' + file };
-            return resp;
-          }
-          //console.log('\x1b[38;5;33monRequest\x1b[0m', file1, file);
-
-          //
-          let body = ReadFile(file);
-
-          const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
-
-          resp.body = body.replaceAll(re, (match, p1, p0, p2, p3, offset) => {
-            if(!/[\/\.]/.test(p2)) {
-              let fname = `${p2}.js`;
-              let rel = path.relative(fname, dir);
-              //console.log('onRequest', { match, fname }, rel);
-
-              // if(!fs.existsSync(  rel)) return ``;
-
-              match = [p1, rel, p3].join('');
-
-              //console.log('args', { match, p1, p2, p3, offset });
+            if(file1 != file) {
+              //  console.log('\x1b[38;5;214monRequest\x1b[0m', file1, '->', file);
+              resp.status = 302;
+              resp.headers = { ['Location']: '/' + file };
+              return resp;
             }
-            return match;
-          });
-        }
-        {
-          let { body } = resp;
-          //console.log('\x1b[38;5;212monRequest(2)\x1b[0m', { body });
+            //console.log('\x1b[38;5;33monRequest\x1b[0m', file1, file);
+
+            //
+            let body = ReadFile(file);
+
+            const re = /^(\s*(im|ex)port[^\n]*from ['"])([^./'"]*)(['"]\s*;[\t ]*\n?)/gm;
+
+            resp.body = body.replaceAll(re, (match, p1, p0, p2, p3, offset) => {
+              if(!/[\/\.]/.test(p2)) {
+                let fname = `${p2}.js`;
+                let rel = path.relative(fname, dir);
+                //console.log('onRequest', { match, fname }, rel);
+
+                // if(!fs.existsSync(  rel)) return ``;
+
+                match = [p1, rel, p3].join('');
+
+                //console.log('args', { match, p1, p2, p3, offset });
+              }
+              return match;
+            });
+          }
         }
 
         return resp;
@@ -990,7 +980,6 @@ function main(...args) {
     Hash,
     FormParser,
     ExecTool,
-    Execute,
     extendGenerator,
     extendArray,
     extendAsyncGenerator,
@@ -1009,7 +998,18 @@ function main(...args) {
     HeifConvert,
     MagickResize,
     Directory,
-    net: { setLog, LLL_USER, LLL_NOTICE, LLL_WARN, LLL_INFO, FormParser, Hash, Response, Socket, ...net }
+    net: {
+      createServer,
+      setLog,
+      LLL_USER,
+      LLL_NOTICE,
+      LLL_WARN,
+      LLL_INFO,
+      FormParser,
+      Hash,
+      Response,
+      Socket
+    }
   });
 
   delete globalThis.DEBUG;
@@ -1036,7 +1036,7 @@ function main(...args) {
     repl.cleanup(why);
   }
 
-  repl.runSync();
+  repl.run();
 }
 
 try {

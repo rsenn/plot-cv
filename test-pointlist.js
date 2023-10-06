@@ -1,7 +1,6 @@
-import inspect from 'inspect';
-import { Point, Rect, PointList, Line, Vector } from './lib/geom.js';
+import { Point, PointList, Rect } from './lib/geom.js';
 import { className } from './lib/misc.js';
-
+import inspect from 'inspect';
 let points = new PointList(
   [
     new Point(536, 478),

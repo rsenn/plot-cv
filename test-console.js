@@ -1,6 +1,4 @@
-
 async function main(...args) {
-
   console.log(`console`, inspect(console, { customInspect: true, showHidden: true, compact: false }));
 
   let c = console;
@@ -53,6 +51,7 @@ async function main(...args) {
 
   return 'done';
 }
+
 main(...scriptArgs.slice(1));
 /*
 console.log('TEST\n');

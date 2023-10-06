@@ -1,3 +1,4 @@
+import { call, debug, define, dlclose, dlerror, dlopen, dlsym, errno, JSContext, RTLD_DEFAULT, RTLD_NOW, toArrayBuffer, toString } from 'ffi';
 /* test.js
  *
  * Test harness for JavaScript ffi
@@ -19,11 +20,6 @@
  *   This will stop in gdb on the first debug(); call.
  *
  */
-
-import * as std from 'std';
-import * as os from 'os';
-import { debug, dlopen, dlerror, dlclose, dlsym, define, call, toString, toArrayBuffer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_NODELETE, RTLD_NOLOAD, RTLD_DEEPBIND, RTLD_DEFAULT, RTLD_NEXT } from 'ffi';
-
 async function main(...args) {
 
   var h;

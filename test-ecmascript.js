@@ -1,11 +1,11 @@
+import fs from 'fs';
 import { ReadFile, WriteFile } from './io-helpers.js';
-import { ECMAScriptParser, PathReplacer } from './lib/ecmascript.js';
-import Printer from './lib/ecmascript/printer.js';
-import { ESNode, ImportDeclaration, Identifier, TemplateLiteral, CallExpression } from './lib/ecmascript/estree.js';
 import deep from './lib/deep.js';
+import { ECMAScriptParser, PathReplacer } from './lib/ecmascript.js';
+import { CallExpression, ESNode, Identifier, ImportDeclaration, TemplateLiteral } from './lib/ecmascript/estree.js';
+import Printer from './lib/ecmascript/printer.js';
 import Tree from './lib/tree.js';
 import { Console } from 'console';
-import fs from 'fs';
 
 const testfn = () => true;
 const testtmpl = `this is\na test`;

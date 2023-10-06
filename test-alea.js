@@ -1,5 +1,5 @@
 import Alea from './lib/alea.js';
-import {repeat}from './lib/misc.js';
+import { repeat } from './lib/misc.js';
 
 let rng = new Alea(1337);
 

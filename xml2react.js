@@ -1,7 +1,7 @@
 #!/usr/bin/env qjsm
-import { read as readXML } from 'xml';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
+import { ReadFd, ReadFile } from './io-helpers.js';
 import { Console } from 'console';
+import { read as readXML } from 'xml';
 
 function* injectSeparator(iter, sep = ', ', pad = ' ') {
   let i = 0;
@@ -60,7 +60,8 @@ function* xml2h(xml, depth = 0) {
 function main(...args) {
   globalThis.console = new Console({
     colors: true,
-    depth: Infinity
+    maxStringLength: 100,
+    depth: 2
   });
 
   if(args.length == 0) args = ['/dev/stdin'];
@@ -70,7 +71,7 @@ function main(...args) {
 
     let data = arg == '/dev/stdin' ? ReadFd(0) : ReadFile(arg);
 
-    console.log('data', data);
+    console.log('data', { data });
 
     let xml = readXML(data);
 

@@ -1,17 +1,15 @@
-import { Point, Size, Rect, Mat, UMat, Line, CLAHE, TickMeter, Draw, Contour } from 'opencv';
-import * as cv from 'opencv';
+import { HSLA } from './lib/color.js';
+import { getMethodNames, mod, range, weakMapper } from './lib/misc.js';
+import { NumericParam, ParamNavigator } from './param.js';
+import { DrawText, Window } from './qjs-opencv/js/cvHighGUI.js';
+import { Pipeline } from './qjs-opencv/js/cvPipeline.js';
 import Console from 'console';
-import * as path from 'path';
-import { RGBA, HSLA } from './lib/color.js';
-import { NumericParam, EnumParam, ParamNavigator } from './param.js';
-import { memoize, range, getMethodNames, weakMapper, mod } from './lib/misc.js';
-import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
-import { Window, MouseFlags, MouseEvents, Mouse, TextStyle, DrawText } from './qjs-opencv/js/cvHighGUI.js';
-import * as nvg from 'nanovg';
 import * as glfw from 'glfw';
-import { Repeater } from './lib/repeater/repeater.js';
+import * as nvg from 'nanovg';
+import * as cv from 'opencv';
+import * as std from 'std';
+let basename = scriptArgs[0].replace(/\.js$/, '');
 
-let basename = __filename.replace(/\.js$/, '');
 const RAD2DEG = 180 / Math.PI;
 
 function GLFW(...args) {
@@ -349,8 +347,9 @@ async function main(...args) {
           prec = [],
           nfa = [];
         let lsd = new cv.LineSegmentDetector();
-        src = this.outputOf('Skeletonization');
+        src = this.outputOf('Grayscale');
         lsd.detect(src, lines, width, prec, nfa);
+        console.log('LineSegmentDetector', console.config({ maxArrayLength: Infinity }), { width, prec, nfa });
 
         //        cv.lineSegmentDetector(this.outputOf("Skeletonization"), lines, width, prec, nfa);
         /* let intersectionMatrix = [];
@@ -527,7 +526,9 @@ async function main(...args) {
           return `  ${idx + paramIndexes[0] == paramNav.index ? '\x1b[1;31m' : ''}${name.padEnd(13)}\x1b[0m   \x1b[1;36m${+paramNav.get(name)}\x1b[0m\n`;
         })
         .join('');
+
     DrawText(statusMat(textRect), text, textColor, fontFace, fontSize);
+
     DrawText(statusMat(helpRect), '< prev, > next, + increment, - decrement, DEL reset', textColor, fontFace, fontSize);
   }
   function Scale(mat, f = 1) {
@@ -665,6 +666,7 @@ async function main(...args) {
   SaveConfig({ frameShow, paramIndex: paramNav.index, ...params });
   console.log('EXIT');
 }
+
 try {
   main(...scriptArgs.slice(1));
 } catch(error) {

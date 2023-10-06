@@ -1,7 +1,6 @@
 import { ReadFile, WriteFile } from './io-helpers.js';
-import fs from 'fs';
 import { memoize } from './lib/misc.js';
-
+import process from 'process';
 let basename = memoize(() => process.argv[1].replace(/\.js$/, ''));
 
 export function SaveConfig(configObj) {
@@ -13,7 +12,7 @@ export function SaveConfig(configObj) {
 }
 
 export function LoadConfig(name = process.argv[1].replace(/\.js$/, '.config.json')) {
-  let str = ReadFile(name, 'utf-8');
+  let str = ReadFile(name, false);
   let configObj = JSON.parse(str ?? '{}');
 
   configObj = Object.fromEntries(

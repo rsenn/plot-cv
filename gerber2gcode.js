@@ -1,15 +1,14 @@
-#!/usr/bin/env qjsm
-import { Console } from 'console';
-import * as path from 'path';
+import { spawn } from 'child_process';
 import fs from 'fs';
-import { exec, spawn } from 'child_process';
+import * as path from 'path';
 import { getOpt } from 'util';
-import { Entities, nodeTypes, Prototypes, Factory, Parser, Serializer, Interface, Node, NodeList, NamedNodeMap, Element, Document, Attr, Text, Comment, TokenList, GetType } from './quickjs/qjs-modules/lib/dom.js';
-import { PointList, ImmutablePointList } from './lib/geom/pointList.js';
-import { SyntaxError, parse as parsePath, parseSVG, makeAbsolute } from './lib/svg/path-parser.js';
-import { IfDebug, LogIfDebug, ReadFd, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
+import { ReadFile, WriteFile } from './io-helpers.js';
+import { PointList } from './lib/geom/pointList.js';
 import GerberParser from './lib/gerber/parser.js';
-
+import { parse as parsePath } from './lib/svg/path-parser.js';
+import { Parser, Serializer } from './quickjs/qjs-modules/lib/dom.js';
+import { Console } from 'console';
+#!/usr/bin/env qjsm
 let extToSide = { GTL: 'front', GBL: 'back', GKO: 'outline', TXT: 'drill' };
 let extToOptions = { GTL: { front: true }, GBL: { back: true }, GKO: { side: 'outline' }, TXT: { drill: true } };
 

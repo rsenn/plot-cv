@@ -1,14 +1,12 @@
-import * as std from 'std';
 import * as os from 'os';
-import * as deep from './lib/deep.js';
-import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './quickjs/qjs-ffi/lib/fcntl.js';
-import { errno } from 'ffi';
-import { Socket, socket, EAGAIN, AF_INET, SOCK_STREAM, /*ndelay, */ SockAddr, select } from './quickjs/qjs-ffi/lib/socket.js';
-import { fd_set, FD_SET, FD_CLR, FD_ISSET, FD_ZERO } from './quickjs/qjs-ffi/lib/fd_set.js';
+import { DebuggerProtocol } from './debuggerprotocol.js';
+import { define } from './lib/misc.js';
+import { FD_CLR, fd_set, FD_SET } from './quickjs/qjs-ffi/lib/fd_set.js';
 import timeval from './quickjs/qjs-ffi/lib/timeval.js';
 import { Console } from 'console';
-import { define, toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
-import { DebuggerProtocol } from './debuggerprotocol.js';
+import { errno } from 'ffi';
+import * as std from 'std';
+import { Socket, AF_INET, SOCK_STREAM, SockAddr, select } from './quickjs/qjs-ffi/lib/socket.js';
 
 define(Array.prototype, {
   contains(item) {
@@ -130,6 +128,7 @@ function toHex(n, b = 2) {
   let s = (+n).toString(16);
   return '0'.repeat(Math.ceil(s.length / b) * b - s.length) + s;
 }
+
 function MakeArray(buf, numBytes) {
   switch (numBytes) {
     case 8:

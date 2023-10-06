@@ -159,9 +159,11 @@ function XAudioJSResampleRefill() {
     XAudioJSAudioBufferSize = 0;
   }
 }
+
 function XAudioJSResampledSamplesLeft() {
   return (XAudioJSResampleBufferStart <= XAudioJSResampleBufferEnd ? 0 : XAudioJSResampleBufferSize) + XAudioJSResampleBufferEnd - XAudioJSResampleBufferStart;
 }
+
 function XAudioJSGetBufferSamples() {
   return XAudioJSAudioContextSampleBuffer.subarray(0, XAudioJSAudioBufferSize);
 }

@@ -1,7 +1,4 @@
-import * as std from 'std';
-import * as os from 'os';
-import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './quickjs/qjs-ffi/lib/fcntl.js';
-import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toArrayBuffer, toPointer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_NODELETE, RTLD_NOLOAD, RTLD_DEEPBIND, RTLD_DEFAULT, RTLD_NEXT } from 'ffi';
+import { F_GETFL, F_SETFL, fcntl, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
 import * as ffi from 'ffi';
 
 function foreign(name, ret, ...args) {
@@ -233,6 +230,7 @@ function toHex(n, b = 2) {
   let s = (+n).toString(16);
   return '0'.repeat(Math.ceil(s.length / b) * b - s.length) + s;
 }
+
 function StringToHex(str, bytes = 1) {
   if(typeof str != 'string') str = toString(str);
   let buf = StringToArrayBuffer(str, bytes);

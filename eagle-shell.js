@@ -1,49 +1,47 @@
 #!/usr/bin/env qjsm
-import { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, EagleNodeList, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, EagleDocument, EagleReference, EagleRef, makeEagleNode, EagleNode, Renderer, EagleProject, EagleElement, makeEagleElement, EagleElementProxy, EagleNodeMap, ImmutablePath, DereferenceError } from './lib/eagle.js';
-import { abbreviate, getMethods } from './lib/misc.js';
-import * as deep from './lib/deep.js';
-import * as path from './lib/path.js';
-import { EventEmitter, EventTarget, eventify } from './lib/events.js';
-import require from 'require';
-import { LineList, Point, Circle, Rect, Size, Line, TransformationList, Rotation, Translation, Scaling, Matrix, BBox } from './lib/geom.js';
-import { Console } from 'console';
-import REPL from './quickjs/qjs-modules/lib/repl.js';
-import { BinaryTree, BucketStore, BucketMap, ComponentMap, CompositeMap, Deque, Enum, HashList, Multimap, Shash, SortedMap, HashMultimap, MultiBiMap, MultiKeyMap, DenseSpatialHash2D, SpatialHash2D, HashMap, SpatialH, SpatialHash, SpatialHashMap, BoxHash } from './lib/container.js';
-import * as fs from 'fs';
-import { Pointer } from './lib/pointer.js';
-import { read as fromXML, write as writeXML } from 'xml';
-import inspect from 'inspect';
-import { IfDebug, LogIfDebug, ReadFd, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
-import { GetExponent, GetMantissa, ValueToNumber, NumberToValue } from './lib/eda/values.js';
-import { GetMultipliers, GetFactor, GetColorBands, PartScales, digit2color } from './lib/eda/colorCoding.js';
-import { UnitForName } from './lib/eda/units.js';
-import CircuitJS from './lib/eda/circuitjs.js';
-import { className, define, extendArray, getOpt, glob, GLOB_BRACE, intersect, isObject, memoize, range, unique, lazyProperties, entries, isJSFunction, weakDefine } from 'util';
-import { HSLA, isHSLA, ImmutableHSLA, RGBA, isRGBA, ImmutableRGBA, ColoredText } from './lib/color.js';
-import { scientific, num2color, GetParts, GetInstances, GetPositions, GetElements } from './eagle-commands.js';
-import { Edge, Graph, Node } from './lib/geom/graph.js';
-import { MutableXPath as XPath, parseXPath, ImmutableXPath } from './lib/xml/xpath.js';
-import { Predicate } from 'predicate';
 import child_process from 'child_process';
-import { readFileSync } from 'fs';
-import { ReactComponent, Fragment, render, h, forwardRef, React, toChildArray } from './lib/dom/preactComponent.js';
+import * as fs from 'fs';
+import { className, define, entries, getOpt, glob, GLOB_BRACE, intersect, difference, isObject, lazyProperties, memoize, range, unique, weakDefine } from 'util';
 import { Table } from './cli-helpers.js';
+import { DirIterator, ReadDirRecursive, RecursiveDirIterator } from './dir-helpers.js';
+import { GetElements, GetInstances, GetParts, GetPositions, num2color, scientific } from './eagle-commands.js';
+import { CopyToClipboard, FdReader, Filter, FilterImages, IfDebug, LoadHistory, LogCall, LogIfDebug, ReadBJSON, ReadFd, ReadFile, ReadJSON, ReadXML, SortFiles, StatFiles, WriteBJSON, WriteFile, WriteJSON, WriteXML } from './io-helpers.js';
+import { BinaryTree, BoxHash, BucketMap, BucketStore, ComponentMap, CompositeMap, DenseSpatialHash2D, Deque, Enum, HashList, HashMap, HashMultimap, MultiBiMap, MultiKeyMap, Multimap, Shash, SortedMap, SpatialH, SpatialHash, SpatialHash2D, SpatialHashMap } from './lib/container.js';
+import * as deep from './lib/deep.js';
+import { forwardRef, Fragment, h, React, ReactComponent, render, toChildArray } from './lib/dom/preactComponent.js';
+import { EagleSVGRenderer, SchematicRenderer, BoardRenderer, LibraryRenderer, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, setDebug, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, EagleRef, EagleNode, makeEagleElement, DereferenceError, EagleNodeList, useTrkl, EagleDocument, EagleReference, makeEagleNode, Renderer, EagleProject, EagleElement, EagleElementProxy, EagleNodeMap, ImmutablePath } from './lib/eagle.js';
+import { ElementNameToComponent, ElementToComponent, PinSizes } from './lib/eagle/components.js';
+import CircuitJS from './lib/eda/circuitjs.js';
+import { GetColorBands, GetFactor, GetMultipliers } from './lib/eda/colorCoding.js';
+import { GetExponent, GetMantissa, NumberToValue, ValueToNumber } from './lib/eda/values.js';
+import { EventEmitter, eventify, EventTarget } from './lib/events.js';
+import { BBox, Circle, Line, LineList, Matrix, Point, Rect, Rotation, Scaling, Size, TransformationList, Translation } from './lib/geom.js';
+import { Edge, Graph, Node } from './lib/geom/graph.js';
+import * as path from './lib/path.js';
+import { Pointer } from './lib/pointer.js';
 import renderToString from './lib/preact-render-to-string.js';
-import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
+import { ImmutableXPath, MutableXPath as XPath, parseXPath } from './lib/xml/xpath.js';
+import { ExecTool, Spawn } from './os-helpers.js';
 import { EagleToGerber, GerberToGcode } from './pcb-conversion.js';
-import { ExecTool } from './os-helpers.js';
-import * as components from './lib/eagle/components.js';
-import { DirIterator, RecursiveDirIterator, ReadDirRecursive } from './dir-helpers.js';
+import { Console } from 'console';
+import inspect from 'inspect';
+import { Predicate } from 'predicate';
+import { REPL } from 'repl';
+import { read as fromXML, write as writeXML } from 'xml';
+import extendArray from 'extendArray';
 
 let cmdhist;
 
 extendArray();
 
-function GetGlobalFunctions() {
-  return entries(globalThis)
-    .filter(([k, v]) => isJSFunction(v))
-    .map(([k]) => k);
-}
+const GetGlobalFunctions = (() => {
+  const a = Object.getOwnPropertyNames(globalThis);
+  return () => {
+    const b = Object.getOwnPropertyNames(globalThis);
+
+    return difference(a, b)[1];
+  };
+})();
 
 function toXML(obj) {
   deep.forEach(obj, a => Array.isArray(a.children) && a.children.length == 0 && delete a.children);
@@ -151,8 +149,8 @@ function render(doc, filename) {
 }
 
 function CollectParts(doc = project.schematic) {
-  return [...doc.parts]
-    .map(e => e.raw.attributes)
+  return [...doc.parts.raw]
+    .map(e => e.attributes)
     .filter(attr => !(attr.value === undefined && attr.device === '') || /^IC/.test(attr.name))
     .map(({ name, deviceset, device, value }) => ({
       name,
@@ -163,8 +161,8 @@ function CollectParts(doc = project.schematic) {
 }
 
 function CollectElements(doc = project.board) {
-  return doc.elements
-    .map(e => e.raw.attributes)
+  return doc.elements.raw
+    .map(e => e.attributes)
     .map(({ name, library, package: pkg, value }) => ({
       name,
       library,
@@ -174,9 +172,9 @@ function CollectElements(doc = project.board) {
 }
 
 function CollectPartsElements(proj = project) {
-  return project.board.elements
-    .map(e => [e, project.schematic.parts[e.name]])
-    .map(a => a.map(e => e.raw.attributes))
+  return proj.board.elements.raw
+    .map(e => [e, proj.schematic.parts[e.name]?.raw])
+    .map(a => a.map(e => e?.attributes ?? {}))
     .map(([{ x, y, ...element }, part]) => weakDefine(element, part));
 }
 
@@ -216,7 +214,7 @@ function main(...args) {
 
   let debugLog = fs.openSync('debug.log', 'a');
 
-  const base = path.basename(__filename, path.extname(__filename));
+  const base = path.basename(scriptArgs[0], path.extname(scriptArgs[0]));
   const histfile = `.${base}-history`;
 
   let params = getOpt(
@@ -228,7 +226,7 @@ function main(...args) {
     args
   );
 
-  Object.assign(globalThis, { components, Console, GetGlobalFunctions, className });
+  Object.assign(globalThis, { Console, GetGlobalFunctions, className });
 
   Object.assign(globalThis, {
     child_process,
@@ -292,7 +290,6 @@ function main(...args) {
     LoadHistory,
     ReadJSON,
     ReadXML,
-    MapFile,
     WriteFile,
     WriteJSON,
     WriteXML,
@@ -307,10 +304,8 @@ function main(...args) {
     StatFiles,
     FdReader,
     CopyToClipboard,
-    ReadCallback,
     LogCall,
     Spawn,
-    FetchURL,
     CopyToClipboard,
     CircuitJS,
     PutRowsColumns,
@@ -443,7 +438,6 @@ function main(...args) {
     fixValue,
     fixValues,
     coordMap,
-    Util,
     LineList,
     Point,
     Circle,
@@ -493,7 +487,6 @@ function main(...args) {
   });
 
   Object.assign(globalThis, {
-    PrimitiveComponents,
     ElementNameToComponent,
     ElementToComponent,
     EagleToGerber,
@@ -518,14 +511,8 @@ function main(...args) {
 
   let repl = (globalThis.repl = new REPL(`\x1b[38;5;165m${prefix} \x1b[38;5;39m${suffix}\x1b[0m`, false));
 
-  for(let file of params['@']) {
-    repl.printStatus(`Loading '${file}'...`);
-    newProject(file);
-  }
-
   repl.history = LoadHistory(cmdhist);
   repl.loadSaveOptions();
-  repl.printStatus(`Loaded ${repl.history.length} history entries)`);
 
   let log = console.log;
 
@@ -556,9 +543,9 @@ function main(...args) {
   repl.show = value => {
     if(isObject(value)) {
       let insp = value.inspect ?? value[Symbol.inspect];
-      if(typeof insp == 'function') return insp.call(value);
+      if(typeof insp == 'function') return insp.call(value, 0, repl.inspectOptions);
     }
-    return inspect(value, { customInspect: false, protoChain: true, getters: true });
+    return inspect(value, { customInspect: false, /*protoChain: true,*/ getters: true, ...repl.inspectOptions });
   };
   // repl.historySet(JSON.parse(std.loadFile(histfile) || '[]'));
 
@@ -578,7 +565,12 @@ function main(...args) {
     Terminate(0);
   });
 
-  repl.runSync();
+  repl.run();
+
+  for(let file of params['@']) {
+    repl.printStatus(`Loading '${file}'...`);
+    newProject(file);
+  }
 }
 
 function Terminate(exitCode) {
@@ -1088,6 +1080,7 @@ const FileFunction = (fn, rfn = ReadFile, wfn = WriteFile, namefn = n => n, ...a
 };
 
 const SVGFileSetBackground = FileFunction(SetSVGBackground, ReadXML, WriteXML, n => AppendToFilename(n, '.with-background'), false);
+
 const SVGResave = FileFunction(
   data => data,
   ReadXML,

@@ -1,8 +1,7 @@
-import * as cv from 'opencv';
-import Console from 'console';
 import * as path from 'path';
 import { range } from 'util';
-import { RGBA, HSLA } from './lib/color.js';
+import Console from 'console';
+import * as cv from 'opencv';
 
 function Grayscale(src, dst) {
   let channels = [];
@@ -146,6 +145,7 @@ function main(...args) {
 
   console.log('EXIT');
 }
+
 try {
   main(...scriptArgs.slice(1));
 } catch(error) {

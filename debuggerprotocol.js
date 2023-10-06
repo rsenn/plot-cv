@@ -1,8 +1,6 @@
-/*import { ReadFile } from './io-helpers.js';*/
-import * as deep from './lib/deep.js';
+import { define, escape, toString } from './lib/misc.js';
 import * as path from './lib/path.js';
-import { toString, define, escape, quote } from './lib/misc.js';
-
+/*import { ReadFile } from './io-helpers.js';*/
 const cfg = (obj = {}) => console.config({ compact: false, breakLength: Infinity, ...obj });
 
 export class DebuggerProtocol {
@@ -225,6 +223,7 @@ function toHex(n, b = 2) {
   let s = (+n).toString(16);
   return '0'.repeat(Math.ceil(s.length / b) * b - s.length) + s;
 }
+
 function MakeArray(buf, numBytes) {
   switch (numBytes) {
     case 8:

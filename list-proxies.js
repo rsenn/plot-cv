@@ -1,17 +1,12 @@
+import { promises as fsPromises } from 'fs';
+import http from 'http';
+import https from 'https';
+import net from 'net';
+import url from 'url';
+import { Repeater } from './lib/repeater/repeater.js';
 import ProxyList from './node_modules/free-proxy/index.js';
 import ProxyLists from './node_modules/proxy-lists/index.js';
 import proxynova from './node_modules/proxynova/index.js';
-import { Repeater } from './lib/repeater/repeater.js';
-import url from 'url';
-import net from 'net';
-import http from 'http';
-import https from 'https';
-import querystring from 'querystring';
-import fetch from 'isomorphic-fetch';
-import deep from './lib/deep.js';
-import { promises as fsPromises } from 'fs';
-import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater } from './lib/stream.js';
-
 function TCPSocket(host, port) {
   const defaultTimeout = 30000;
   const tcp = new net.Socket();
@@ -105,6 +100,7 @@ function Proxy(obj) {
   //console.log('new proxy:', p);
   return p;
 }
+
 Proxy.prototype.defaultTimeout = 30000;
 Proxy.prototype.valueOf = function() {
   return this.time;
@@ -277,6 +273,7 @@ async function main(...args) {
     //proxies.sort((a, b) => a.time - b.time);
   })();
 }
+
 main(...scriptArgs.slice(1));
 
 async function writeResults(results, format = 'txt', outputName = 'proxies') {

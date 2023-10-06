@@ -1,13 +1,5 @@
-import { Console } from 'console';
-import { btoa } from './lib/misc.js';
 import * as os from 'os';
-import * as fs from 'fs';
-import * as util from './lib/misc.js';
-import * as path from './lib/path.js';
-import * as deep from './lib/deep.js';
-import { Socket, IPPROTO_TCP } from './quickjs/qjs-ffi/lib/socket.js';
-import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
-
+import { Console } from 'console';
 var worker;
 var counter;
 

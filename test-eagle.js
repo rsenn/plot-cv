@@ -1,10 +1,9 @@
-import { EagleDocument, EagleProject } from './lib/eagle.js';
-import { LineList, Rect } from './lib/geom.js';
-import { toXML } from './lib/json.js';
 import deep from './lib/deep.js';
+import { EagleDocument, EagleProject } from './lib/eagle.js';
 import { Graph } from './lib/fd-graph.js';
+import { LineList, Rect } from './lib/geom.js';
 import ptr from './lib/json-ptr.js';
-import LogJS from './lib/log.js';
+import { toXML } from './lib/json.js';
 
 let filesystem = fs;
 
@@ -264,6 +263,7 @@ async function testEagle(filename) {
 
   return proj;
 }
+
 async function main(...args) {
   if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3');
   for(let arg of args) {

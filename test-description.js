@@ -1,15 +1,15 @@
-import { ColoredText } from './lib/color/coloredText.js';
-import { matchAll } from './lib/misc.js'
+import { readFileSync } from 'fs';
+import { matchAll } from './lib/misc.js';
+
 //prettier-ignore
 let filesystem ;
 
 async function main(...args) {
-
   let file;
   let str;
   try {
     for(file of args) {
-      str = filesystem.readFileSync(file);
+      str = readFileSync(file, 'utf-8');
 
       function getDesc(str) {
         let r = [...matchAll('<(/)?(board|schematic|library)[ >]', str)]
@@ -35,4 +35,5 @@ async function main(...args) {
     console.log('err:', err);
   }
 }
+
 main(...scriptArgs.slice(1));

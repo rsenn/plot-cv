@@ -1,13 +1,14 @@
-import * as path from './lib/path.js';
+import * as fs from 'fs';
+import { ReadFile, WriteBJSON } from './io-helpers.js';
 import * as deep from './lib/deep.js';
+import { assert, bits, className, define, entries, errors, filter, isArray, isFunction, isObject, isString, keys, lazyProperties, matchAll, memoize, predicate, range, repeat, split, toString, types, unique, values, weakDefine } from './lib/misc.js';
+import * as path from './lib/path.js';
 import { Pointer } from './lib/pointer.js';
-import { AcquireReader } from './lib/stream/utils.js';
-import { errors, types, isObject, isAsync, inspectSymbol, toString, btoa, atob, assert, escape, quote, memoize, chain, chainRight, chainArray, getset, modifier, getter, setter, gettersetter, hasFn, remover, getOrCreate, hasGetSet, mapObject, once, atexit, waitFor, define, defineGetter, defineGetterSetter, defineGettersSetters, prototypeIterator, keys, entries, values, getMethodNames, getMethods, properties, weakDefine, getPrototypeChain, getConstructorChain, hasPrototype, filter, filterKeys, curry, clamp, split, matchAll, bindProperties, immutableClass, instrument, hash, catchable, isNumeric, isIndex, numericIndex, histogram, propertyLookupHandlers, propertyLookup, abbreviate, tryFunction, tryCatch, mapAdapter, mapFunction, mapWrapper, weakMapper, wrapGenerator, wrapGeneratorMethods, unique, getFunctionArguments, stripAnsi, padAnsi, padStartAnsi, padEndAnsi, randInt, randFloat, randStr, toBigInt, roundDigits, roundTo, lazyProperty, lazyProperties, getOpt, isoDate, toUnixTime, unixTime, fromUnixTime, range, repeater, repeat, chunkArray, ucfirst, lcfirst, camelize, decamelize, shorten, arraysInCommon, arrayFacade, mod, pushUnique, inserter, intersect, symmetricDifference, partitionArray, difference, intersection, union, partition, format, formatWithOptions, functionName, className, isArrowFunction, predicate, isArray, bits, dupArrayBuffer, getTypeName, isArrayBuffer, isBigDecimal, isBigFloat, isBigInt, isBool, isJSFunction, isCFunction, isConstructor, isEmptyString, isError, isException, isExtensible, isFunction, isHTMLDDA, isInstanceOf, isInteger, isJobPending, isLiveObject, isNull, isNumber, isUndefined, isString, isUninitialized, isSymbol, isUncatchableError, isRegisteredClass, rand, randi, randf, srand, toArrayBuffer } from './lib/misc.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
+import { Spawn } from './os-helpers.js';
+import { countSubstring } from './string-helpers.js';
+
 export let SIZEOF_POINTER = 8;
 export let SIZEOF_INT = 4;
-import * as fs from 'fs';
-import { countSubstring, findAllIndexes } from './string-helpers.js';
 
 function FileTime(filename) {
   let st = fs.statSync(filename);
@@ -18,6 +19,7 @@ function Newer(file, ...other) {
   //console.log('Newer', { file, other });
   return other.every(other => FileTime(file) > FileTime(other));
 }
+
 function Older(file, other) {
   return FileTime(file) < FileTime(other);
 }
@@ -398,6 +400,7 @@ export class Type extends Node {
     return name;
   }*/
 }
+
   getPointer(ast) {
     const target = this.pointer;
 
@@ -465,6 +468,7 @@ export class Type extends Node {
     for(const type of [str, desugared])
       if(["void", "sint8", "sint16", "sint32", "sint64", "uint8", "uint16", "uint32", "uint64", "float", "double", "schar", "uchar", "sshort", "ushort", "sint", "uint", "slong", "ulong", "longdouble", "pointer", "int", "long", "short", "char", "size_t", "unsigned char", "unsigned int", "unsigned long", "void *", "char *", "string"].indexOf(type) != -1)
         return type;
+
 const { size,unsigned } = this;
 
     if(size == SIZEOF_POINTER && !this.isPointer())
@@ -917,7 +921,12 @@ export class Range {
     return inspect(
       {
         file: begin.file ?? end.file,
-        begin: new Location({ ...begin.toObject(), file: undefined, line: undefined, col: undefined }),
+        begin: new Location({
+          ...begin.toObject(),
+          file: undefined,
+          line: undefined,
+          col: undefined
+        }),
         end: new Location({ ...end.toObject(), file: undefined, line: undefined, col: undefined }),
         [Symbol.toStringTag]: 'Range'
       },
@@ -956,7 +965,12 @@ export class Location {
     let data = ReadFile(file, 'utf-8').slice(0, offset);
     let lastLine = data.slice(data.lastIndexOf('\n') + 1);
 
-    return new this({ line: countSubstring(data, '\n') + 1, col: lastLine.length + 1, file, offset });
+    return new this({
+      line: countSubstring(data, '\n') + 1,
+      col: lastLine.length + 1,
+      file,
+      offset
+    });
   }
 
   static from(loc) {
@@ -1097,51 +1111,43 @@ export function TypeFactory(node, ast, cache = true) {
   return obj;
 }
 
-export async function SpawnCompiler(compiler, input, output, args = []) {
-  //console.log(`SpawnCompiler`, { compiler, input, output, args });
+export async function SpawnCompiler(compiler, input, outfile, args = []) {
+  //console.log(`SpawnCompiler`, { compiler, input, outfile, args });
+
   let base = path.basename(input, path.extname(input));
 
   args.push(input);
 
   if(args.indexOf('-ast-dump=json') != -1) {
     args.unshift(compiler ?? 'clang');
-    args = ['sh', '-c', 'exec ' + args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (output ? ` 1>${output}` : '')];
+    args = ['sh', '-c', 'exec ' + args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (outfile ? ` 1>${outfile}` : '')];
   } else {
-    if(output) {
-      args.unshift(output);
+    if(outfile) {
+      args.unshift(outfile);
       args.unshift('-o');
     }
     args.unshift(compiler ?? 'clang');
   }
 
-  console.log('SpawnCompiler', args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (output ? ` 1>${output}` : ''));
+  console.log('SpawnCompiler', args.map(p => (p.indexOf(' ') != -1 ? `'${p}'` : p)).join(' ') + (outfile ? ` 1>${outfile}` : ''));
 
   let child = Spawn(args.shift(), args, {
     block: false,
-    stdio: ['inherit', output ? 'inherit' : 'pipe', 'pipe']
+    stdio: ['inherit', outfile ? 'inherit' : 'pipe', 'pipe']
   });
 
   let json = '',
-    errors = '';
+    errors = '',
+    output = '';
   let done = false;
 
-  if(true) {
-    let fd = child.stdio[2];
-    await PipeReader(child.stdio[2], data => (errors += data ?? ''));
+  if(child.stdout) for(let chunk of fs.readerSync(child.stdout)) output += toString(chunk);
 
-    if(child.stdio[1] != 'inherit') {
-      output = '';
-      await PipeReader(child.stdio[1], data => (output += data ?? ''));
-    }
-  } else {
-    AcquireReader(child.stderr, async reader => {
-      let r;
-      while((r = await reader.read())) {
-        if(!r.done) errors += r.value.toString();
-      }
-    });
-  }
-  let [status, exitcode] = await child.wait();
+  for(let chunk of fs.readerSync(child.stderr)) errors += toString(chunk);
+
+  let pid = await child.wait();
+
+  let { exitcode, termsig, exited, signaled, stopped, continued } = child;
 
   done = true;
   let errorLines = errors.split(/\n/g).filter(line => line.trim() != '');
@@ -1174,7 +1180,6 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
       os.setReadHandler(fd, null);
       data = null;
     }
-    //console.log('ReadPipe', { fd, r, data });
     callback(data);
   }
   function ReadOutput(fd) {
@@ -1182,7 +1187,6 @@ export async function SpawnCompiler(compiler, input, output, args = []) {
     let r = os.read(fd, buf, 0, buf.byteLength);
     if(r > 0) {
       output += fs.bufferToString(buf.slice(0, r));
-      //console.log('r:', r, 'output:', output.length);
     } else {
       os.setReadHandler(fd, null);
     }
@@ -1198,13 +1202,10 @@ export async function SourceDependencies(...args) {
 
   let [compiler, source, flags = []] = args;
 
-  //console.log('SourceDependencies', { compiler, source, flags });
-
   let r = await SpawnCompiler(compiler, source, null, ['-MM', '-I.', ...flags]);
   let { output, result, errors } = (globalThis.response = r);
   output = output.replace(/\s*\\\n\s*/g, ' ');
   let [object, sources] = output.split(/:\s+/);
-  //console.log('SourceDependencies', { sources });
 
   sources = (sources ?? '').trim().split(/ /g);
   let [compilation_unit, ...includes] = sources;
@@ -1225,28 +1226,27 @@ export async function AstDump(compiler, source, args, force) {
 
   if(existsAndNotEmpty) newer = Newer(output, ...sources);
 
-  //console.log('AstDump', { output, source, sources,force, existsAndNotEmpty, newer });
-  console.log('AstDump', { output });
+  //console.log('AstDump', console.config({compact: true }), { output });
 
   if(!force && existsAndNotEmpty && newer) {
     console.log(`Loading cached '${output}'...`);
   } else {
-    console.log(`Compiling '${source}' to '${output}'...`);
+    //console.log(`Compiling '${source}' to '${output}'...`);
 
     try {
       if(fs.existsSync(output)) fs.unlinkSync(output);
     } catch(e) {}
 
-    console.log(`Compiling...`, { source, compiler });
+    console.log(`Compiling...`, console.config({ compact: true }), { source, compiler });
 
     let { exitcode, errors, ...result } = await SpawnCompiler(compiler, source, output, ['-Xclang', '-ast-dump=json', '-fsyntax-only', '-I.', ...args]);
-    console.log(`Compiling '${source}'...`, { output, exitcode, ...result });
+
+    //console.log(`Compiling '${source}'...`, console.config({compact: true }), { output, exitcode, ...result });
   }
   r = { file: output };
 
-  console.log('AstDump', { ...r });
+  //console.log('AstDump', console.config({compact: true }), { ...r });
 
-  //r.size = (await fs.stat(r.file)).size;
   r = lazyProperties(r, {
     size() {
       return fs.stat(output)?.size;
@@ -1254,7 +1254,7 @@ export async function AstDump(compiler, source, args, force) {
     json() {
       console.log(`r.json`, this.file);
 
-      let json = ReadFile(this.file, 'utf-8');
+      let json = fs.readFileSync(this.file, 'utf-8');
       return json;
     },
     data() {
@@ -2539,12 +2539,15 @@ export function GetFields(node) {
       .concat([deep.get(node, ptr).name])
   );
 }
+
 export function GetParams(node) {
   return (node?.inner ?? []).filter(child => child.kind.startsWith('Parm'));
 }
+
 export function PathRemoveLoc(path) {
   let idx = path.findIndex(p => p == 'loc' || p == 'range');
   if(idx != -1) path = path.slice(0, idx);
   return path;
 }
+
 //export default AstDump;

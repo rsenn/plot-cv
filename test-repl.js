@@ -1,6 +1,5 @@
 import REPL from './repl.js';
 import * as Terminal from './terminal.js';
-
 let repl;
 
 async function CommandLine() {
@@ -25,7 +24,6 @@ async function CommandLine() {
 }
 
 async function main(...args) {
-
   await CommandLine();
 }
 

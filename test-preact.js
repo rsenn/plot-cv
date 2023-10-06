@@ -1,4 +1,4 @@
-import { forwardRef, h, Fragment, React, default as preactComponent, ReactComponent, Portal, toChildArray, isComponent } from './lib/dom/preactComponent.js';
+import { h } from './lib/preact.module.js';
 import { renderToString } from './lib/renderToString.js';
 
 const TestComponent = props => h('div', { id: 'test' }, ['test']);

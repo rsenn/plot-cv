@@ -1,4 +1,4 @@
-import { dlopen, define, dlerror, dlclose, dlsym, call, errno, RTLD_NOW } from 'ffi';
+import { call, define, dlopen, dlsym, RTLD_NOW } from 'ffi';
 
 const libarchive = dlopen('libarchive.so.13', RTLD_NOW);
 
@@ -8,6 +8,7 @@ const libarchive = dlopen('libarchive.so.13', RTLD_NOW);
  * @return   {Number}
  */
 define('archive_version_number', dlsym(libarchive, 'archive_version_number'), null, 'int');
+
 export function archive_version_number() {
   return call('archive_version_number');
 }

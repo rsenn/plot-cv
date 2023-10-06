@@ -1,14 +1,12 @@
-import { Pointer } from './lib/pointer.js';
-import { getMethodNames } from './lib/misc.js';
-import * as deep from './lib/deep.js';
+import { getMethodNames } from 'util';
 import { Console } from 'console';
-
+import * as deep from 'deep.dll';
+import { Pointer } from 'pointer.dll';
 function main(...args) {
   globalThis.console = new Console({
     stdout: process.stdout,
     inspectOptions: {
       compact: 1,
-      colors: true,
       depth: Infinity,
       maxArrayLength: 100,
       breakLength: 10000

@@ -1,8 +1,7 @@
-import { Message } from './message.js';
 import { Alea } from './lib/alea.js';
-import { TimeoutError } from './lib/repeater/timers.js';
-import { weakMapper, define, isObject, once, randStr, tryCatch } from './lib/misc.js';
+import { define, once, randStr, tryCatch, weakMapper } from './lib/misc.js';
 import * as Timers from './lib/repeater/timers.js';
+import { Message } from './message.js';
 
 const prng = new Alea();
 prng.seed(Date.now());

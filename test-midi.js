@@ -1,11 +1,11 @@
+import { client, LLL_DEBUG, LLL_WARN, setLog } from 'net';
 import * as os from 'os';
-import * as std from 'std';
-import { client, setLog, LLL_DEBUG, LLL_WARN } from 'net';
+import { MIDIEvent, MIDIStream } from './lib/midi.js';
+import { quote } from './lib/misc.js';
 import { Console } from 'console';
-import { MIDIStream, MIDIEvent } from './lib/midi.js';
-import { quote, toString } from './lib/misc.js';
-
+import * as std from 'std';
 /*const MIDI_NOTE_OFF = 0x80;
+
 const MIDI_NOTE_ON = 0x90;
 const MIDI_POLYPHONIC_KEY_PRESSURE = 0xA0;
 const MIDI_CONTROL_CHANGE = 0xB0;

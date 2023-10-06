@@ -1,5 +1,4 @@
-import { choice, seq, token, char, regex, option, any, many, eof, ignore, concat, invert } from '../parse/fn.js';
-
+import { any, char, choice, eof, ignore, invert, many, option, regex, seq, token } from '../parse/fn.js';
 function wrap(parser, name) {
   return (str, pos) => {
     let r = parser(str, pos);
@@ -7,6 +6,7 @@ function wrap(parser, name) {
     return r;
   };
 }
+
 function primaryExpression(...args) {
   return wrap(
     choice(

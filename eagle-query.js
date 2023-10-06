@@ -1,19 +1,18 @@
-import { ReadFile, WriteFile } from './io-helpers.js';
-import { unique } from './lib/misc.js';
-import { EagleDocument } from './lib/eagle.js';
-import { toXML } from './lib/json.js';
-import fs from 'fs';
-import { Console } from 'console';
-import { digit2color, GetColorBands, ValueToNumber, NumberToValue, PartScales } from './lib/eda/colorCoding.js';
-import { UnitForName } from './lib/eda/units.js';
 import { num2color, scientific } from './eagle-commands.js';
-import { RGBA, HSLA } from './lib/color.js';
-
+import { ReadFile } from './io-helpers.js';
+import { HSLA } from './lib/color.js';
+import { EagleDocument } from './lib/eagle.js';
+import { PartScales, ValueToNumber } from './lib/eda/colorCoding.js';
+import { UnitForName } from './lib/eda/units.js';
+import { toXML } from './lib/json.js';
+import { unique } from './lib/misc.js';
+import { Console } from 'console';
 let documents = [];
 
 function xmlize(obj, depth = 2) {
   return obj.toXML ? obj.toXML().replace(/>\s*</g, '>\n    <') : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
+
 const SubstChars = str => str.replace(/\xCE\xBC/g, '\u00B5').replace(/\xCE\xA9/g, '\u2126');
 
 async function main(...args) {

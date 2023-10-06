@@ -1,14 +1,12 @@
 import { ReadFile, WriteFile } from './io-helpers.js';
-import { ECMAScriptParser, Lexer, PathReplacer } from './lib/ecmascript.js';
-import Printer from './lib/ecmascript/printer.js';
-import { estree, ESNode, Program, ModuleDeclaration, ModuleSpecifier, ImportDeclaration, ImportSpecifier, ImportDefaultSpecifier, ImportNamespaceSpecifier, Super, Expression, FunctionLiteral, Pattern, Identifier, Literal, RegExpLiteral, TemplateLiteral, BigIntLiteral, TaggedTemplateExpression, TemplateElement, ThisExpression, UnaryExpression, UpdateExpression, BinaryExpression, AssignmentExpression, LogicalExpression, MemberExpression, ConditionalExpression, CallExpression, DecoratorExpression, NewExpression, SequenceExpression, Statement, EmptyStatement, DebuggerStatement, LabeledStatement, BlockStatement, FunctionBody, StatementList, ExpressionStatement, Directive, ReturnStatement, ContinueStatement, BreakStatement, IfStatement, SwitchStatement, SwitchCase, WhileStatement, DoWhileStatement, ForStatement, ForInStatement, ForOfStatement, WithStatement, TryStatement, CatchClause, ThrowStatement, Declaration, ClassDeclaration, ClassBody, MethodDefinition, MetaProperty, YieldExpression, FunctionArgument, FunctionDeclaration, ArrowFunctionExpression, VariableDeclaration, VariableDeclarator, ObjectExpression, Property, ArrayExpression, JSXLiteral, AssignmentProperty, ObjectPattern, ArrayPattern, RestElement, AssignmentPattern, AwaitExpression, SpreadElement, ExportNamedDeclaration, ExportSpecifier, AnonymousDefaultExportedFunctionDeclaration, AnonymousDefaultExportedClassDeclaration, ExportDefaultDeclaration, ExportAllDeclaration } from './lib/ecmascript/estree.js';
-import Util from './lib/util.js';
 import deep from './lib/deep.js';
-import { Path } from './lib/json.js';
-import { SortedMap } from './lib/container/sortedMap.js';
-import { ImmutablePath } from './lib/json.js';
+import { ECMAScriptParser, PathReplacer } from './lib/ecmascript.js';
+import { CallExpression, ESNode, Identifier, ImportDeclaration, TemplateLiteral } from './lib/ecmascript/estree.js';
+import Printer from './lib/ecmascript/printer.js';
 import Tree from './lib/tree.js';
+
 let fs;
+
 const testfn = () => true;
 const testtmpl = `this is\na test`;
 const source = `console.log(...cols.map((col, i) => (col + '').replaceAll('\n', '\\n').padEnd(colSizes[i])));`;
@@ -22,10 +20,12 @@ function WriteFile(name, data) {
     console.log(`Wrote${name}${data.length}bytes`);
   }
 }
+
 function printAst(ast, comments, printer = globalThis.printer) {
   let output = printer.print(ast);
   return output;
 }
+
 let files = {};
 async function main(...args) {
   let params = getOpt(
@@ -97,6 +97,7 @@ async function main(...args) {
   let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
   exit(Number(files.length == 0));
 }
+
 function processFile(file, params) {
   let data, b, ret;
   const { debug } = params;
@@ -161,6 +162,7 @@ function processFile(file, params) {
   }
   const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral);
 }
+
 function finish(err) {
   let fail = !!err;
   if(fail) {
@@ -183,6 +185,7 @@ function finish(err) {
   console.log('finish: ' + (fail ? 'error' : 'success'));
   return !fail;
 }
+
 main(...process.argv.slice(1))
   .then(() => console.log('SUCCESS'))
   .catch(error => {

@@ -1,10 +1,7 @@
 import WebSocket from 'ws';
 import WebSocketAsync from './lib/net/websocket-async.js';
-
 import { Message } from './message.js';
-
 async function main() {
-
   console.log('WebSocket:', WebSocket, Util.isConstructor(WebSocket));
 
   const url = 'ws://127.0.0.1:3000/ws';

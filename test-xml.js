@@ -1,20 +1,16 @@
-import inspect from 'inspect';
-import { define, isObject, memoize, unique } from './lib/misc.js';
+import Alea from './lib/alea.js';
+import { HSLA, RGBA } from './lib/color.js';
+import distanceChecker from './lib/color/distanceChecker.js';
 import * as deep from './lib/deep.js';
+import { ColorMap } from './lib/draw/colorMap.js';
+import { Iterator, IteratorForwarder } from './lib/iterator.js';
+import { Path, toXML } from './lib/json.js';
+import KolorWheel from './lib/KolorWheel.js';
+import { isObject } from './lib/misc.js';
 import * as path from './lib/path.js';
 import tXml from './lib/tXml.js';
 import { XPath } from './lib/xml.js';
-
-import { RGBA, HSLA } from './lib/color.js';
-import { Iterator, IteratorForwarder } from './lib/iterator.js';
-import toSource from './lib/tosource.js';
-import { toXML, Path } from './lib/json.js';
-import { ColorMap } from './lib/draw/colorMap.js';
-import Alea from './lib/alea.js';
-import * as jsondiff from './lib/json/diff.js';
-import KolorWheel from './lib/KolorWheel.js';
-import distanceChecker from './lib/color/distanceChecker.js';
-
+import inspect from 'inspect';
 let prng = new Alea().seed(Date.now());
 
 function readXML(filename) {
@@ -24,9 +20,11 @@ function readXML(filename) {
   //console.log('xml:', xml);
   return xml;
 }
+
 //TODO: Test with tmScheme (XML) and ColorMap
 
 const push_back = (arr, ...items) => [...(arr || []), ...items];
+
 const push_front = (arr, ...items) => [...items, ...(arr || [])];
 
 const GeneratePalette = (counts = { h: 3, s: 3, l: 5 }, deltas = { h: 360, s: 100, l: 30 }, prng) => {
@@ -471,4 +469,5 @@ async function main(...args) {
     throw err;
   }
 }
+
 main(...scriptArgs.slice(1));

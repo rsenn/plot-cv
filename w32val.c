@@ -13,5 +13,8 @@ main() {
   printf("PAGE_WRITECOPY = %i\n", PAGE_WRITECOPY);
   printf("NULL = %i\n", NULL);
   printf("FILE_MAP_COPY = %i\n", FILE_MAP_COPY);
+  printf("sizeof(WCHAR) = %zu\n", sizeof(WCHAR));
+  printf("sizeof(TCHAR) = %zu\n", sizeof(TCHAR));
+  printf("sizeof(wchar_t) = %zu\n", sizeof(wchar_t));
   return 0;
 }

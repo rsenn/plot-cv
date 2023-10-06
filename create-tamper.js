@@ -1,13 +1,11 @@
-import inspect from 'inspect';
 #!/usr/bin/env qjsm
-import { define, isObject, memoize, unique } from './lib/misc.js';
-import { ECMAScriptParser, Printer, PathReplacer } from './lib/ecmascript.js';
-import { ObjectPattern, ObjectExpression, ImportDeclaration, ExportNamedDeclaration, VariableDeclaration, estree, ESNode, Literal } from './lib/ecmascript.js';
-import { ImmutablePath } from './lib/json.js';
-import deep from './lib/deep.js';
 import filesystem from 'fs';
-import * as path from './lib/path.js';
 import { SortedMap } from './lib/container/sortedMap.js';
+import deep from './lib/deep.js';
+import { ECMAScriptParser, ESNode, ExportNamedDeclaration, ImportDeclaration, Literal, ObjectExpression, ObjectPattern, PathReplacer, Printer, VariableDeclaration } from './lib/ecmascript.js';
+import { ImmutablePath } from './lib/json.js';
+import { define, isObject, memoize, unique } from './lib/misc.js';
+import * as path from './lib/path.js';
 
 const code = `export const Progress = ({ className, percent, ...props }) => html\`<\x24{Overlay} className=\x24{classNames('progress', 'center', className)} text=\x24{percent + '%'} style=\x24{{
   position: 'relative',
@@ -33,6 +31,7 @@ let packageFiles;
 let importFiles;
 let moduleList = new SortedMap();
 let exportMap = new Map();
+
 const removeModulesDir = PrefixRemover([/node_modules\//g, /^\.\//g]);
 
 class ES6Module {
@@ -74,6 +73,7 @@ class ES6ImportExport {
     return this.toSource();
   }
 }
+
 console.log('main');
 main(...scriptArgs.slice(1));
 
@@ -101,20 +101,12 @@ function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments))
 }
 
 async function main(...args) {
-
   cwd = process.cwd();
 
   // cwd = process.cwd() || fs.realpath('.');
   console.log('cwd=', cwd);
 
-  if(args.length == 0)
-    args = [
-      /*'lib/geom/align.js', 'lib/geom/bbox.js','lib/geom/line.js'*/ 'lib/geom/point.js',
-      'lib/geom/size.js',
-      'lib/geom/trbl.js',
-      'lib/geom/rect.js',
-      'lib/dom/element.js'
-    ];
+  if(args.length == 0) args = [/*'lib/geom/align.js', 'lib/geom/bbox.js','lib/geom/line.js'*/ 'lib/geom/point.js', 'lib/geom/size.js', 'lib/geom/trbl.js', 'lib/geom/rect.js', 'lib/dom/element.js'];
   let r = [];
   let processed = [];
   console.log('args=', args);
@@ -286,9 +278,7 @@ async function main(...args) {
       let remove = imports.map((imp, idx) => [idx, imp.node]).filter((imp, idx) => !/^lib/.test(imp.fromPath));
       log(
         `remove =`,
-        remove
-          .reduce((acc, [i, imp]) => [...acc, imp /*(imp.fromPath),imp.toSource()*/], [])
-          .map(imp => className(imp))
+        remove.reduce((acc, [i, imp]) => [...acc, imp /*(imp.fromPath),imp.toSource()*/], []).map(imp => className(imp))
       );
 
       removeStatements(remove.map(([idx, node]) => [imports[idx].path, node]));
@@ -302,9 +292,7 @@ async function main(...args) {
         recurseFiles.map(imp => imp.fromPath)
       );
       recurseFiles.forEach(imp => processFile(imp.fromPath));
-      let exports = [...flat.entries()].filter(
-        ([key, value]) => value instanceof ExportNamedDeclaration || value.exported === true
-      );
+      let exports = [...flat.entries()].filter(([key, value]) => value instanceof ExportNamedDeclaration || value.exported === true);
 
       for(let [path, node] of exports) {
         log(`export ${path}`, node);
@@ -312,10 +300,7 @@ async function main(...args) {
       }
 
       exports = exports.map(([p, stmt]) =>
-        (isObject(stmt.declarations) && isObject(stmt.declarations.id) && isObject(stmt.declarations.id.value)) ==
-        (isObject(stmt.what) && isObject(stmt.what.value))
-          ? stmt.declarations
-          : stmt
+        (isObject(stmt.declarations) && isObject(stmt.declarations.id) && isObject(stmt.declarations.id.value)) == (isObject(stmt.what) && isObject(stmt.what.value)) ? stmt.declarations : stmt
       );
       exports = exports.map(decl =>
         decl instanceof ObjectPattern
@@ -432,12 +417,7 @@ function searchModuleInPath(name, _from) {
   if(moduleAliases.has(name)) return moduleAliases.get(name);
 
   let names = makeNames(name);
-  let indexes = [
-    ...makeNames(name + '/dist/' + name),
-    ...makeNames(name + '/build/' + name),
-    ...makeNames(name + '/' + name),
-    ...makeNames(name + '/index')
-  ];
+  let indexes = [...makeNames(name + '/dist/' + name), ...makeNames(name + '/build/' + name), ...makeNames(name + '/' + name), ...makeNames(name + '/index')];
 
   for(let dir of [thisdir, ...searchPath]) {
     let searchFor = dir.endsWith('node_modules') ? [name] : names;

@@ -1,7 +1,6 @@
-import * as cv from 'opencv';
+import { tryCatch } from './lib/misc.js';
 import Console from 'console';
-import * as path from 'path';
-import {tryCatch}from './lib/misc.js';
+import * as cv from 'opencv';
 
 let basename = process.argv[1].replace(/\.js$/, '');
 
@@ -98,7 +97,7 @@ console.log("instances",instances);*/
 
     cv.cvtColor(img, gray, cv.COLOR_BGR2GRAY);
     cv.cvtColor(gray, img, cv.COLOR_GRAY2BGR);
-      console.log('img', img);
+    console.log('img', img);
 
     cv.drawKeypoints(img, keypoints2, img, [255, 120, 0], cv.DRAW_RICH_KEYPOINTS);
 
@@ -111,6 +110,7 @@ console.log("instances",instances);*/
 
   console.log('EXIT');
 }
+
 try {
   main(...scriptArgs.slice(1));
 } catch(error) {

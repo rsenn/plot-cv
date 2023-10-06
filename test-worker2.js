@@ -1,8 +1,6 @@
-/* os.Worker API test */
-import { Worker, setReadHandler } from 'os';
+import { setReadHandler, Worker } from 'os';
 import { Console } from 'console';
-import { assert } from 'util';
-
+/* os.Worker API test */
 let worker;
 
 function TestWorker() {

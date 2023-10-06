@@ -1,10 +1,11 @@
-import { Point, Size, Rect, Line, TickMeter, Mat, Draw, CV_64FC1, LINE_AA, LINE_8, CV_RGB } from 'opencv';
-import { range, mod } from 'util';
+import { mod, range } from 'util';
+import { CV_64FC1, CV_RGB, Draw, Line, LINE_8, LINE_AA, Mat, Point, Rect } from 'opencv';
 
 export const X = Symbol.for('x');
 export const Y = Symbol.for('y');
 
 const PERP = { [X]: Y, [Y]: X };
+
 const COORD = { [X]: 'x', [Y]: 'y' };
 const SIZE = { [X]: 'width', [Y]: 'height' };
 

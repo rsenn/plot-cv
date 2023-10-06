@@ -1,12 +1,7 @@
-import inspect from 'inspect';
 import gedaNetlistGrammar from './grammar-geda-netlist.js';
+import { Point, Size } from './lib/geom.js';
 import * as path from './lib/path.js';
-import { Point, Size, Rect, BBox } from './lib/geom.js';
-import deep from './lib/deep.js';
-import tXml from './lib/tXml.js';
-import { XPath } from './lib/xml.js';
-import { toXML } from './lib/json.js';
-
+import inspect from 'inspect';
 
 function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');
@@ -18,7 +13,6 @@ function WriteFile(name, data) {
 }
 
 async function main(...args) {
-
   let xy = new Point();
   let size = new Size(128, 128);
   let maxWidth = 1360;

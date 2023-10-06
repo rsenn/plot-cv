@@ -1,6 +1,5 @@
-import Stream from 'stream';
-import Timers from './lib/repeater/timers.js';
 import { spawn } from 'child_process';
+import Stream from 'stream';
 
 export function execStream(cmd, args, options = { stdio: 'pipe' }) {
   var AB = new Stream.Duplex({

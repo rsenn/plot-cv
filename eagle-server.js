@@ -1,17 +1,15 @@
-import * as std from 'std';
-import * as os from 'os';
+#!/usr/bin/env qjsm
 import * as fs from 'fs';
-import { setInterval } from 'timers';
-import * as deep from './lib/deep.js';
+import { client, getSessions, LLL_INFO, LLL_USER, LLL_WARN, logLevels, createServer, setLog } from 'net';
+import * as os from 'os';
+import { atexit, daemon, getOpt, randStr } from 'util';
+import { ReadFile, ReadJSON, WriteJSON } from './io-helpers.js';
 import * as path from './lib/path.js';
-import { randStr, watch, IN_MODIFY, memoize, daemon, atexit, getpid, toArrayBuffer, toString, escape, quote, define, extendArray, getOpt, glob, fnmatch } from 'util';
 import { Console } from './quickjs/qjs-modules/lib/console.js';
-import REPL from './quickjs/qjs-modules/lib/repl.js';
-import inspect from './lib/objectInspect.js';
-import * as Terminal from './terminal.js';
-import { setLog, logLevels, getSessions, LLL_USER, LLL_INFO, LLL_NOTICE, LLL_WARN, client, server } from 'net';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
+import { REPL } from './quickjs/qjs-modules/lib/repl.js';
 import { VirtFS } from './virtfs.js';
+import extendArray from 'extendArray';
+import * as std from 'std';
 
 extendArray(Array.prototype);
 
@@ -176,7 +174,7 @@ function main(...args) {
 
     let options;
     let child, dbg;
-    let netfn = [client, server][+listen];
+    let netfn = [client, createServer][+listen];
     console.log('createWS', { url, netfn });
     return netfn(
       url,

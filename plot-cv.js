@@ -1,8 +1,7 @@
-import inspect from 'inspect';
 import * as net from 'net';
-import { Contour } from 'opencv';
-import { Mat } from 'opencv';
 import PortableConsole from './lib/consoleSetup.js';
+import { Contour } from 'opencv';
+
 const { client, server, fetch } = net;
 
 PortableConsole(console => console.log('net: ', { client, server, fetch }));

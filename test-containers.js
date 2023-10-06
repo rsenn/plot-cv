@@ -1,9 +1,8 @@
+import HashMultimap from './lib/container/Hash-Multimap.js';
 import MultiBiMap from './lib/container/multibimap.js';
 import MultiKeyMap from './lib/container/multikeymap.js';
-import HashMultimap from './lib/container/Hash-Multimap.js';
 
 async function main(...args) {
-
   let multiKey = new MultiKeyMap();
   multiKey.set(['A', 'B', 'C'], 123);
   console.log('multiKey', [...multiKey]);

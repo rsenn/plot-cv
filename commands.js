@@ -1,19 +1,12 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
-import dom from './lib/dom.js';
-import geom from './lib/geom.js';
-import { BBox, Rect, Point, Polyline, Line, PointList, isPoint } from './lib/geom.js';
-import * as path from './lib/path.js';
-import { parseGcode } from './lib/gcode.js';
-import React, { Component } from './lib/dom/preactComponent.js';
-import components from './components.js';
-import Voronoi from './lib/geom/voronoi.js';
-import { makeEagleNode } from './lib/eagle.js';
-import { trkl } from './lib/trkl.js';
 import Alea from './lib/alea.js';
+import { Element, SVG, default as dom } from './lib/dom.js';
+import { FetchCached, NormalizeResponse, ResponseData } from './lib/fetch.js';
+import { parseGcode } from './lib/gcode.js';
+import { BBox, isPoint, Point, Polyline, default as geom } from './lib/geom.js';
+import { GithubListContents, GithubListRepositories, GithubRepositories, ListGithubRepoServer } from './lib/github.js';
 import KolorWheel from './lib/KolorWheel.js';
-import { SVG, Element } from './lib/dom.js';
-import github, { GithubListRepositories, GithubRepositories, GithubListContents, ListGithubRepoServer } from './lib/github.js';
-import { NormalizeResponse, ResponseData, FetchCached, FetchURL } from './lib/fetch.js';
+import { isObject, lazyProperty } from './lib/misc.js';
+import { trkl } from './lib/trkl.js';
 
 const prng = new Alea(1598127218);
 
@@ -62,7 +55,7 @@ export async function ListProjects(opts = {}) {
     }
   }
 
-  //console.log('ListProjects', { response });
+  console.log('ListProjects', { response });
   return response;
 }
 
@@ -96,7 +89,7 @@ export async function BoardToGerber(proj, opts = { fetch: true }) {
   let params = { ...opts, board: proj.name, raw: false },
     response,
     result;
-  response = await FetchURL(`/gerber/${opts.side ? '?side=' + opts.side : ''}`, {
+  response = await FetchURL(`gerber/${opts.side ? '?side=' + opts.side : ''}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(params)
@@ -137,7 +130,7 @@ export async function GerberToGcode(project, allOpts = {}) {
   let response,
     result = (project.gcode[side] = {});
   if(typeof side == 'string') request[side] = 1;
-  response = await FetchURL(`/gcode${side ? '?side=' + side : ''}`, {
+  response = await FetchURL(`gcode${side ? '?side=' + side : ''}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(request)
@@ -340,8 +333,29 @@ export async function GetCache(match = /.*/, key = 'fetch') {
   return entries;
 }
 
+export async function FetchURL(url, allOpts = {}) {
+  let { nocache = false, ...opts } = allOpts;
+  let result;
+  let ret;
+  if(opts.method && opts.method.toUpperCase() == 'POST') nocache = true;
+  let { fetch } = globalThis;
+  if(/tmp\//.test(url)) {
+    url = url.replace(/.*tmp\//g, '/tmp/');
+  } else if(/^\//.test(url)) {
+  } else if(/:\/\//.test(url)) {
+  } else if(!/[\?&=]/.test(url)) {
+    url = '/static/' + url;
+  }
+  try {
+    if(!ret) ret = result = await fetch(url, opts);
+  } catch(error) {
+    console.log('FetchURL ERROR:', error.message + '\n' + error.stack);
+    throw error;
+  }
+  return ret;
+}
+
 export default {
-  FetchURL,
   ListProjects,
   FindLayer,
   GetLayer,

@@ -1,8 +1,8 @@
+import { readFileSync } from 'fs';
 import Alea from './lib/alea.js';
 import cparse from './lib/cparse.js';
 import cpp from './lib/cpp.js';
 import * as path from './lib/path.js';
-import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 
 let filesystem,
   childProcess,
@@ -25,6 +25,7 @@ const sources = [
   'quickjs/quickjs-libc.c',
   'quickjs/repl.c'
 ];
+
 const includeDirs = ['/opt/diet/include', '.'];
 
 const FindIncludeFunc = source => {
@@ -70,27 +71,25 @@ function StripPP(code) {
     .join('\n');
 }
 
-async function main(...args) {
-  await PortableChildProcess(cp => (childProcess = cp));
-
+function main(...args) {
   const file = 'quickjs/hello.c' || getSource();
 
   console.log('Source file:', file);
   //const output = filesystem.open('out.e', 'w');
   // console.log('out fd:', filesystem.fileno(output));
   let cmd = ['/usr/lib/gcc/x86_64-linux-gnu/10/cc1', '-E', ...includeDirs.map(dir => `-I${dir}`), file /*, '-o', 'out.e'*/];
+
   console.log('cmd:', cmd.join(' '));
-  let proc = childProcess(cmd[0], cmd.slice(1), {
+
+  /*  let proc = childProcess(cmd[0], cmd.slice(1), {
     block: false,
     stdio: [null, 'pipe', 'pipe']
   });
 
-  //filesystem.close(output);
-
-  console.log('out:', proc.stdout);
+  console.log('out:', proc.stdout);*/
 
   //const src =   ReadAll(proc.stdout);
-  const src = filesystem.readFileSync(file);
+  const src = readFileSync(file, 'utf-8');
 
   const findInclude = FindIncludeFunc(file);
   let code;
@@ -144,6 +143,3 @@ async function main(...args) {
 }
 
 main(...scriptArgs.slice(1));
-  console.log('STACK:', e.stack);
-  console.log('ERROR:', e, '\n', [...e.stack][2].functionName);
-});

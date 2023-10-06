@@ -1,7 +1,5 @@
-import ObjectInspect from './lib/objectInspect.js';
-import { DirIterator, RecursiveDirIterator, ReadDirRecursive } from './dir-helpers.js';
+import { DirIterator, ReadDirRecursive, RecursiveDirIterator } from './dir-helpers.js';
 import extendGenerator from './quickjs/qjs-modules/lib/extendGenerator.js';
-
 let tmpdir;
 let buffer, buffer2;
 let handle;
@@ -13,6 +11,7 @@ extendGenerator();
 function* Filter(gen, regEx = /.*/) {
   for(let item of gen) if(regEx.test(item)) yield item;
 }
+
 Object.assign(globalThis, { DirIterator, RecursiveDirIterator, ReadDirRecursive });
 
 function main(...args) {

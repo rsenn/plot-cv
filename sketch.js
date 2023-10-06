@@ -12,6 +12,7 @@ function draw() {
     nextPoint();
   }
 }
+
 function drawPoint() {
   stroke(255);
   strokeWeight(2);
@@ -20,6 +21,7 @@ function drawPoint() {
 
   point(px, py);
 }
+
 function nextPoint() {
   let nextX;
   let nextY;

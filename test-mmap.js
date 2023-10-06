@@ -1,9 +1,8 @@
+import { spawn } from 'child_process';
 import * as os from 'os';
-import { exec, spawn } from 'child_process';
+import { dupArrayBuffer, memcpy, searchArrayBuffer, toPointer, toString } from './lib/misc.js';
 import { Console } from 'console';
-import { mmap, munmap, mprotect, PROT_READ, PROT_WRITE, MAP_PRIVATE, msync, MS_SYNC } from 'mmap';
-import { searchArrayBuffer, dupArrayBuffer, memcpy, toString, toPointer, format } from './lib/misc.js';
-
+import { MAP_PRIVATE, mmap, mprotect, munmap, PROT_READ, PROT_WRITE } from 'mmap';
 function PrintSlice(arr, start, end, linelen) {
   let i, j;
   let offset = start % linelen;

@@ -1,11 +1,9 @@
-import { EagleDocument, Renderer } from './lib/eagle.js';
-import { ReactComponent } from './lib/dom/preactComponent.js';
-import { render, Component } from './lib/preact.js';
+import * as filesystem from 'fs';
 import { ColoredText } from './lib/color/coloredText.js';
-import { RGBA } from './lib/color.js';
+import { ReactComponent } from './lib/dom/preactComponent.js';
+import { EagleDocument, Renderer } from './lib/eagle.js';
 import renderToString from './lib/preact-render-to-string.js';
-
-
+import { render } from './lib/preact.js';
 Util.colorCtor = ColoredText;
 
 function WriteFile(name, data) {
@@ -49,7 +47,6 @@ async function testRenderBoard(file) {
 }
 
 async function main(...args) {
-
   if(Util.platform == 'quickjs')
     await import('os').then(({ setTimeout, setInterval, clearInterval, clearTimeout }) => {
       Object.assign(globalThis, {

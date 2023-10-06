@@ -1,33 +1,25 @@
-import filesystem from 'fs';
-import { EagleDocument, EagleProject } from './lib/eagle.js';
-import { LineList, Rect } from './lib/geom.js';
-import { toXML, ImmutablePath } from './lib/json.js';
+import fs from 'fs';
+import { spawn } from 'child_process';
 import deep from './lib/deep.js';
+import { ReadAll } from './lib/stream/utils.js';
+import { ImmutablePath } from './lib/json.js';
+import { memoize, define } from './lib/misc.js';
 import * as path from './lib/path.js';
-import { Graph } from './lib/fd-graph.js';
-import ptr from './lib/json-ptr.js';
-import LogJS from './lib/log.js';
-import tXml from './lib/tXml.js';
-import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
-import { Reader, ReadAll } from './lib/stream/utils.js';
-import { Repeater } from './lib/repeater/repeater.js';
 
-let filesystem,
-  childProcess,
-  documents = [];
+let documents = [];
 
 function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
-  filesystem.writeFile(name, data + '\n');
+  fs.writeFileSync(name, data + '\n');
 
   console.log(`Wrote ${name}: ${data.length} bytes`);
 }
 
 class Location {
   static primary = null;
-  static contents = memoize(file => filesystem.readFileSync(file).toString());
+  static contents = memoize(file => fs.readFileSync(file).toString());
 
   constructor(file, begin, end) {
     let data = Location.contents(file);
@@ -45,8 +37,8 @@ class Location {
         .substring(0, obj.offset)
         .split(/\n/g).length;
     if(!('file' in ret)) ret.file = Location.primary;
-    ret.file = path.relative(filesystem.getcwd(), ret.file);
-    if('includedFrom' in ret) ret.includedFrom = path.relative(filesystem.getcwd(), ret.includedFrom);
+    ret.file = path.relative(process.cwd(), ret.file);
+    if('includedFrom' in ret) ret.includedFrom = path.relative(process.cwd(), ret.includedFrom);
 
     return ret;
   }
@@ -79,7 +71,7 @@ class Location {
 
     let ret = [];
     /* console.log('file:', file);
-    console.log('filesystem.getcwd():', filesystem.getcwd());*/
+    console.log('process.cwd():', process.cwd());*/
     if(typeof file == 'string') ret.unshift(file);
     if(line && col) ret = ret.concat([line, col]);
     else ret.push(offset);
@@ -180,6 +172,7 @@ function GetOwned(ast, key) {
 function GetHeight(key) {
   return key.filter(prop => prop == 'inner').length;
 }
+
 function GetDepth(node) {
   let maxLen = 0;
   for(let [v, k] of deep.iterate(node, v => isObject(v))) {
@@ -192,16 +185,20 @@ function GetDepth(node) {
 function GetKey([k, v]) {
   return k;
 }
+
 function GetValue([k, v]) {
   return v;
 }
+
 function GetValueKey([v, k]) {
   return [k, v];
 }
+
 function RelativeTo(to, k) {
   if(k.startsWith(to)) return k.slice(to.length);
   return k;
 }
+
 function GetNodeProps([k, v]) {
   let props = [...getMemberNames(v)].map(n => [n, v[n]]).filter(([n, v]) => !isObject(v) && v != '');
 
@@ -276,23 +273,23 @@ define(Array.prototype, {
 
 async function DumpAst(source) {
   let outfile = path.basename(source) + '.ast.json';
-  let stat = { in: filesystem.stat(source), out: filesystem.stat(outfile) };
+  let stat = { in: fs.stat(source), out: fs.stat(outfile) };
   let data;
 
   if(stat.in.mtimeMs > stat.out.mtimeMs) {
     console.log(`Generating '${outfile}' ...`);
 
-    let stderr = filesystem.open('ast.err', 'w+');
-    let proc = childProcess('clang', ['-Xclang', '-ast-dump=json', '-fsyntax-only', source], {
+    let stderr = fs.open('ast.err', 'w+');
+    let proc = spawn('clang', ['-Xclang', '-ast-dump=json', '-fsyntax-only', source], {
       block: false,
       stdio: [null, 'pipe', stderr]
     });
     data = await ReadAll(proc.stdout);
-    filesystem.close(stderr);
+    fs.close(stderr);
     WriteFile(outfile, data);
   } else {
     console.log(`Reading '${outfile}' ...`);
-    data = filesystem.readFileSync(outfile);
+    data = fs.readFileSync(outfile);
   }
   return JSON.parse(data);
 }
@@ -315,13 +312,13 @@ function processCallExpr(loc, func, ...args) {
   //console.log('ranges:', ranges);
   //console.log('parts:', parts);
 }
+
 const typeRe =
   /^(array|buffer|build_type_t|config_t|dirs_t|dir_t|exts_t|fd_t|HMAP_DB|int64|intptr_t|lang_type|machine_type|MAP_NODE_T|MAP_PAIR_T|MAP_T|os_type|range|rdir_t|set_iterator_t|set_t|sighandler_t_ref|sigset_t|sourcedir|sourcefile|ssize_t|stralloc|strarray|strlist|system_type|target|tools_t|TUPLE|uint32|uint64)$/;
 
 async function main(...args) {
   const cols = await getEnv('COLUMNS');
   // console.log('cols:', cols, process.env.COLUMNS);
-  await PortableChildProcess(cp => (childProcess = cp));
 
   if(args.length == 0) args.unshift('/home/roman/Sources/c-utils/genmakefile.c');
 

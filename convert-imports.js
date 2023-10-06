@@ -1,10 +1,9 @@
-#!/usr/bin/env qjsm
-import { ECMAScriptParser, Printer, PathReplacer, ImportDeclaration, ImportSpecifier, Identifier, Literal, ExportDefaultDeclaration, ESNode } from './lib/ecmascript.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON } from './io-helpers.js';
-import deep from 'deep';
 import * as path from 'path';
+import { IfDebug, ReadFile, WriteJSON } from './io-helpers.js';
+import { ECMAScriptParser, Identifier, ImportDeclaration, ImportSpecifier, Literal, Printer } from './lib/ecmascript.js';
 import { Console } from 'console';
-
+import deep from 'deep';
+#!/usr/bin/env qjsm
 Object.assign(ReadImport.prototype, { [Symbol.toStringTag]: 'Import' });
 
 function main(...args) {

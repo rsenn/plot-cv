@@ -1,9 +1,5 @@
-import { client, server, fetch } from 'net.so';
-import { CAP_V4L, Contour, Point, PointIterator, VideoCapture, Mat } from 'opencv.so';
-import { PointList } from './lib/geom.js';
+import { fetch } from 'net.so';
 import { Alea } from './lib/alea.js';
-import * as os from 'os';
-
 let prng = new Alea(Date.now());
 
 function main(...args) {

@@ -1,12 +1,9 @@
-import { ReadFile, WriteFile } from './io-helpers.js';
-import * as std from 'std';
-import * as fs from 'fs';
 import * as path from 'path';
-import { Lexer, Token } from 'lexer';
-import { Console } from 'console';
+import { ReadFile, WriteFile } from './io-helpers.js';
+import { camelize, curry, define, escape, extendArray, split, toString, unique } from './lib/misc.js';
 import JSLexer from './quickjs/qjs-modules/lib/lexer/ecmascript.js';
-import { escape, toString, define, curry, unique, split, extendArray, camelize } from './lib/misc.js';
-
+import { Console } from 'console';
+import * as std from 'std';
 let buffers = {},
   modules = {};
 let T;
@@ -19,6 +16,7 @@ extendArray(Array.prototype);
 const AddUnique = (arr, item) => (arr.indexOf(item) == -1 ? arr.push(item) : null);
 
 const IntToDWord = ival => (isNaN(ival) === false && ival < 0 ? ival + 4294967296 : ival);
+
 const IntToBinary = i => (i == -1 || typeof i != 'number' ? i : '0b' + IntToDWord(i).toString(2));
 
 //const code = ["const str = stack.toString().replace(/\\n\\s*at /g, '\\n');", "/^(.*)\\s\\((.*):([0-9]*):([0-9]*)\\)$/.exec(line);" ];
@@ -66,11 +64,13 @@ function DumpLexer(lex) {
 
   return 'Lexer ' + inspect({ start, pos, size });
 }
+
 function DumpToken(tok) {
   const { length, offset, chars, loc } = tok;
 
   return `★ Token ${inspect({ chars, offset, length, loc }, { depth: 1 })}`;
 }
+
 const What = {
   IMPORT: 0,
   EXPORT: 1
@@ -433,7 +433,7 @@ function main(...args) {
     let dir = path.dirname(source);
 
     fileImports.forEach(imp => {
-      let p = path.collapse(path.join(dir, imp.file));
+      let p = path.normalize(path.join(dir, imp.file));
       //log('p', p);
 
       AddUnique(files, p);

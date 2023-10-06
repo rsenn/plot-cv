@@ -1,14 +1,10 @@
-import { fetch, client, setLog, logLevels, LLL_USER, URL } from 'net';
-import * as std from 'std';
+import { client, LLL_USER, logLevels, setLog, URL } from 'net';
 import * as os from 'os';
+import { escape } from 'util';
+import { Node, Parser } from './quickjs/qjs-modules/lib/dom.js';
 import Console from 'console';
-import { toArrayBuffer, define, extendArray, escape, quote } from 'util';
-import inspect from 'inspect';
-import { read as readXML, write as writeXML } from 'xml';
-import { nodeTypes, Parser, Node, NodeList, NamedNodeMap, Element, Document, Attr, Text, TokenList } from './quickjs/qjs-modules/lib/dom.js';
-import { get, set, unset, select, find, iterate, RETURN_PATH, RETURN_VALUE_PATH, RETURN_PATH_VALUE } from 'deep';
-
-import { Repeater } from './lib/repeater/repeater.js';
+import { get, select, RETURN_PATH_VALUE } from 'deep';
+import extendArray from 'extendArray';
 
 extendArray(Array.prototype);
 
@@ -24,6 +20,7 @@ function CreateDocument(xml, filename) {
   let doc = parser.parseFromString(xml, filename, { tolerant: true });
   return doc;
 }
+
 let clients = new Set();
 
 function* Search(query, fn) {
@@ -100,6 +97,7 @@ function ProcessDocument(resp) {
   console.log('elements', console.config({ maxArrayLength: Number.MAX_SAFE_INTEGER }), elements);
   return elements;
 }
+
 /*
 async function* SearchQuery(arg) {
   let ita = [...Search(arg)];

@@ -1,7 +1,5 @@
-import { ReadFile, WriteFile } from './io-helpers.js';
-import fs from 'fs';
+import { WriteFile } from './io-helpers.js';
 import { Console } from 'console';
-
 function main() {
   globalThis.console = new Console(process.stdout, {
     inspectOptions: {

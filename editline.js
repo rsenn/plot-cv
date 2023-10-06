@@ -1,8 +1,9 @@
-import { dlopen, dlsym, RTLD_NOW, define, call } from 'ffi';
+import { call, define, dlopen, dlsym, RTLD_NOW } from 'ffi';
 
 const libeditline = dlopen('/usr/local/lib/libeditline.so.1', RTLD_NOW);
 
 export const el_hist_size = dlsym('el_hist_size', libeditline);
+
 export const el_no_echo = dlsym('el_no_echo', libeditline);
 export const el_no_hist = dlsym('el_no_hist', libeditline);
 export const prompt_len = dlsym('prompt_len', libeditline);

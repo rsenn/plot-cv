@@ -1,5 +1,5 @@
-import * as path from './lib/path.js';
 import filesystem from 'fs';
+import * as path from './lib/path.js';
 import { Console } from 'console';
 
 const WriteBJSON = (filename, obj) =>

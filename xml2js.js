@@ -1,14 +1,11 @@
 #!/usr/bin/env qjsm
 import filesystem from 'fs';
+import Alea from './lib/alea.js';
 import deep from './lib/deep.js';
 import * as path from './lib/path.js';
+import Tree from './lib/tree.js';
 import tXml from './lib/tXml.js';
 import { toXML } from './lib/xml.js';
-import Tree from './lib/tree.js';
-import { Path } from './lib/json.js';
-import Alea from './lib/alea.js';
-import * as diff from './lib/json/diff.js';
-import inspect from './lib/objectInspect.js';
 
 let prng = new Alea().seed(Date.now());
 
@@ -19,6 +16,7 @@ function readXML(filename) {
   //console.log('xml:', xml);
   return xml;
 }
+
 function WriteFile(name, data) {
   console.log('WriteFile', { name });
   if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
@@ -37,6 +35,7 @@ function WriteFile(name, data) {
 }
 
 const push_back = (arr, ...items) => [...(arr || []), ...items];
+
 const push_front = (arr, ...items) => [...items, ...(arr || [])];
 const tail = arr => arr[arr.length - 1];
 
@@ -172,4 +171,5 @@ async function main(...args) {
     throw err;
   }
 }
+
 main(...scriptArgs.slice(1));

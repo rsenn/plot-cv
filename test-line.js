@@ -1,4 +1,4 @@
-import { Rect, PointList, LineList, Line } from './lib/geom.js';
+import { LineList, PointList, Rect } from './lib/geom.js';
 
 let rect = new Rect(19, 13, 193, 127);
 

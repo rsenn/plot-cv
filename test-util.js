@@ -1,11 +1,8 @@
 import { Util } from './lib/util.js';
-import { sleep } from 'os';
-
 /*console.log(Util.escape(read('/proc/self/cmdline')));
 console.log(Util.escape(read('/etc/hosts')));*/
 //console.log(globalThis.options());
 async function main(...args) {
-
   function test(arg) {
     console.log('function test', { arg });
     return -1;
@@ -15,7 +12,7 @@ async function main(...args) {
 
   trace('testarg');
 
-   console.log('Util.getPlatform():', Util.getPlatform());
+  console.log('Util.getPlatform():', Util.getPlatform());
   console.log('scriptArgs:', scriptArgs);
   console.log('process.argv:', process.argv);
   console.log('Util.scriptName():', Util.scriptName());
@@ -29,7 +26,7 @@ async function main(...args) {
   console.log('Util.isAsync(Util.now):', Util.isAsync(Util.now));
   console.log('now:', now);
   //console.log('Util.now():', await now());
-  
+
   let obj = JSON.parse('{"a":1,"b":2}');
 
   console.log('obj:', obj);
@@ -51,7 +48,7 @@ async function main(...args) {
 }
 
 try {
-await main(...scriptArgs.slice(1)).catch(error => console.log('ERROR',error ? error.message+'\n'+error.stack : error));
-}catch(error) {
-  console.log('ERROR', error ? error.message+'\n'+error.stack : error);
+  await main(...scriptArgs.slice(1)).catch(error => console.log('ERROR', error ? error.message + '\n' + error.stack : error));
+} catch(error) {
+  console.log('ERROR', error ? error.message + '\n' + error.stack : error);
 }

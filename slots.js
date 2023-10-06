@@ -1,4 +1,4 @@
-import { h, render, Component } from './lib/dom/preactComponent.js';
+import { Component, h, render } from './lib/dom/preactComponent.js';
 
 export class SlotContent {
   apply(slot, content, fireChange) {

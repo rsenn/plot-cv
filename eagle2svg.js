@@ -1,18 +1,14 @@
 #!/usr/bin/env qjsm
-import * as util from './lib/misc.js';
-import * as deep from './lib/deep.js';
 import * as path from './lib/path.js';
-import * as fs from 'fs';
+import { readFileSync } from 'fs';
 import { log, EagleDocument, Renderer, EagleProject } from './lib/eagle.js';
-import require from 'require';
 import { Console } from 'console';
 import { read as fromXML, write as toXML } from './lib/xml.js';
 import { WriteFile } from './io-helpers.js';
 import { getOpt } from 'util';
-import { readFileSync } from 'fs';
-import { ReactComponent, render } from './lib/dom/preactComponent.js';
 import renderToString from './lib/preact-render-to-string.js';
-import { RGBA, isRGBA, ImmutableRGBA, default as rgba } from './lib/color/rgba.js';
+import { render } from './lib/preact.mjs';
+import { append } from './lib/preact/append.js';
 
 let debugFlag = false;
 
@@ -22,7 +18,7 @@ function render(doc, filename) {
     render(doc.board);
     return;
   }
-  let renderer = new Renderer(doc, ReactComponent.append, debugFlag);
+  let renderer = new Renderer(doc, append, debugFlag);
 
   /* renderer.setPalette([
     [0xff, 0xff, 0xff],
@@ -64,7 +60,7 @@ function render(doc, filename) {
 
 function main(...args) {
   globalThis.console = new Console({
-    inspectOptions: { maxArrayLength: 100, colors: true, depth: 2, compact: 0, customInspect: true }
+    inspectOptions: { maxArrayLength: 100, colors: true, depth: 2, compact: false, customInspect: true }
   });
 
   let params = getOpt(

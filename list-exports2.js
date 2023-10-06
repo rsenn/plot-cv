@@ -1,13 +1,12 @@
-import { ECMAScriptParser, Printer, PathReplacer, ImportDeclaration, ImportSpecifier, Identifier, Literal, ExportDefaultDeclaration } from './lib/ecmascript.js';
-import Tree from './lib/tree.js';
 import * as fs from 'fs';
 import * as path from 'path';
-import deep from './lib/deep.js';
-import { Stack } from './lib/stack.js';
 import { WriteFile } from './io-helpers.js';
-import { Console } from 'console';
+import deep from './lib/deep.js';
+import { ECMAScriptParser, ExportDefaultDeclaration, Identifier, ImportDeclaration, ImportSpecifier, Literal, PathReplacer, Printer } from './lib/ecmascript.js';
 import { inspect } from './lib/misc.js';
-
+import { Stack } from './lib/stack.js';
+import Tree from './lib/tree.js';
+import { Console } from 'console';
 let lexer, parser, childProcess;
 
 globalThis.fs = fs;

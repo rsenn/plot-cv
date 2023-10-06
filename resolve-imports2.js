@@ -1,24 +1,21 @@
+import fs from 'fs';
 import { ReadFile, WriteFile } from './io-helpers.js';
-import inspect from 'inspect';
-import { define, isObject, memoize, unique } from './lib/misc.js';
-import { ECMAScriptParser } from './lib/ecmascript.js';
-import { Lexer, PathReplacer, Location } from './lib/ecmascript.js';
+import deep from './lib/deep.js';
+import { ECMAScriptParser, PathReplacer } from './lib/ecmascript.js';
+import { ArrayPattern, AssignmentExpression, CallExpression, ESNode, ExportDefaultDeclaration, ExportNamedDeclaration, ExpressionStatement, Identifier, ImportDeclaration, Literal, MemberExpression, ModuleSpecifier, ObjectPattern, VariableDeclaration, VariableDeclarator } from './lib/ecmascript/estree.js';
 import Printer from './lib/ecmascript/printer.js';
 import { Token } from './lib/ecmascript/token.js';
-import estree, { ImportSpecifier, VariableDeclaration, VariableDeclarator, ModuleSpecifier, ImportDeclaration, ExportNamedDeclaration, ExportDefaultDeclaration, ExportAllDeclaration, Identifier, MemberExpression, ESNode, CallExpression, ObjectPattern, ArrayPattern, Literal, AssignmentExpression, ExpressionStatement, ClassDeclaration, AssignmentProperty } from './lib/ecmascript/estree.js';
-import Util from './lib/util.js';
+import { Path } from './lib/json.js';
+import { define, isObject, memoize, unique } from './lib/misc.js';
 import * as path from './lib/path.js';
-import { ImmutablePath, Path } from './lib/json.js';
-import deep from './lib/deep.js';
-import Tree from './lib/tree.js';
-import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 import { Repeater } from './lib/repeater/repeater.js';
-import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater, Reader, ReadAll } from './lib/stream/utils.js';
-import fs from 'fs';
+import { RepeaterSink } from './lib/stream/utils.js';
+import Tree from './lib/tree.js';
 import { Console } from 'console';
-
+import inspect from 'inspect';
 let childProcess, search, files;
 let node2path, flat, value, list;
+
 const removeModulesDir = PrefixRemover([/node_modules[/]/g, /^\.\//g]);
 let name;
 let parser, printer;
@@ -166,6 +163,7 @@ class ES6Module {
     return lines.join('\n');
   }
 }
+
 const IMPORT = 1;
 const EXPORT = 2;
 
@@ -385,6 +383,7 @@ const getExport = ([p, n]) => [n instanceof ExportNamedDeclaration ? p : p.slice
 function PrintCode(node) {
   return PrintObject(node, node => PrintAst(node));
 }
+
 function PrintObject(node, t = (n, p) => n) {
   return Object.entries(node)
     .map(([prop, value]) => [prop, ': ', t(value, prop)])
@@ -1420,6 +1419,7 @@ function GetFromBase(path, node) {
 function GetLiteral(node) {
   return (deep.find(node, n => n instanceof Literal) || {}).value;
 }
+
 function IsBuiltinModule(name) {
   return /^(std|os|ffi|net|_http_agent|_http_client|_http_common|_http_incoming|_http_outgoing|_http_server|_stream_duplex|_stream_passthrough|_stream_readable|_stream_transform|_stream_wrap|_tls_common|_tls_wrap|assert|async_hooks|buffer|child_process|cluster|console|constants|crypto|dgram|dns|domain|events|fs|http|http2|https|inspector|module|net|os|path|perf_hooks|process|punycode|querystring|readline|repl|stream|string_decoder|timers|tls|trace_events|tty|url|util|v8|vm|worker_threads|zlib)$/.test(
     name

@@ -1,6 +1,6 @@
 import child_process from 'child_process';
+import { bufferToString, closeSync, readSync } from 'fs';
 import { Repeater } from './lib/repeater/repeater.js';
-
 let childProcess;
 
 function waitRead(file) {
@@ -22,6 +22,7 @@ function waitRead(file) {
     });
   }
 }
+
 function waitExit(proc) {
   if(typeof proc == 'object' && proc != null && 'once' in proc) {
     return new Promise((resolve, reject) => {
@@ -38,14 +39,14 @@ function FdReader(fd, bufferSize = 1024) {
     let ret;
     do {
       let r = await waitRead(fd);
-      ret = typeof fd == 'number' ? filesystem.readSync(fd, buf) : fd.read(buf);
+      ret = typeof fd == 'number' ? readSync(fd, buf) : fd.read(buf);
       if(ret > 0) {
         let data = buf.slice(0, ret);
-        await push(filesystem.bufferToString(data));
+        await push(bufferToString(data));
       }
     } while(ret == bufferSize);
     stop();
-    typeof fd == 'number' ? filesystem.closeSync(fd) : fd.destroy();
+    typeof fd == 'number' ? closeSync(fd) : fd.destroy();
   });
 }
 
@@ -77,4 +78,5 @@ async function main(...args) {
   console.log('childProcess.errno:', proc.errno);
   console.log('childProcess.errstr:', proc.errstr);
 }
+
 main().catch(err => console.log('error:', err.message, err.stack));

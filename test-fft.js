@@ -1,8 +1,7 @@
-import { dlopen, dlsym, RTLD_NOW, RTLD_DEFAULT, toPointer } from 'ffi';
+import FFT from './lib/dsp/fft.js';
+import * as dsp from './lib/dsp/util.js';
 import * as ffi from 'ffi';
 import * as std from 'std';
-import * as dsp from './lib/dsp/util.js';
-import FFT from './lib/dsp/fft.js';
 
 export function define(so, name, rtype, ...args) {
   if(so == null || so == undefined) so = ffi.RTLD_DEFAULT;
@@ -21,6 +20,7 @@ export function define(so, name, rtype, ...args) {
 }
 
 const SFM_READ = 0x10;
+
 const SFM_WRITE = 0x20;
 const SFM_RDWR = 0x30;
 

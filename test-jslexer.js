@@ -1,8 +1,6 @@
+import { ReadFile } from './io-helpers.js';
 import Lexer from './lib/jslexer.js';
-import { Console } from 'console';
 import { escape } from './lib/misc.js';
-import { h, Component } from './lib/dom/preactComponent.js';
-import { ReadFile, WriteFile } from './io-helpers.js';
 
 const testfn = () => true;
 const testtmpl = `this is
@@ -40,6 +38,7 @@ function main(arg) {
     console.log('ERROR:', err.message, err.stack);
   }
 }
+
 try {
   main(...getArgs().slice(1));
 } catch(error) {

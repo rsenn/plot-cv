@@ -1,7 +1,7 @@
-import { parseModule } from 'esprima';
-import { Console } from 'console';
-import { ReadFile, WriteFile } from './io-helpers.js';
 import * as path from 'path';
+import { ReadFile, WriteFile } from './io-helpers.js';
+import { Console } from 'console';
+import { parseModule } from 'esprima';
 
 function main(...args) {
   globalThis.console = new Console({
@@ -19,7 +19,7 @@ function main(...args) {
     let error;
     let ast;
     try {
-      let code =ReadFile(arg, 'utf8');
+      let code = ReadFile(arg, 'utf8');
       ast = parseModule(code, {
         module: true,
         next: true,
@@ -52,6 +52,7 @@ function main(...args) {
     }
   }
 }
+
 let error;
 try {
   main(...process.argv.slice(1));

@@ -1,14 +1,7 @@
 import { ReadFile, WriteFile } from './io-helpers.js';
-import { Lexer } from './lib/parse/lexer.js';
 import { Grammar } from './lib/parse/grammar.js';
-import { Parser } from './lib/parse/parser.js';
-import Ebnf2Parser from './lib/parse/ebnf2.js';
-import { Console } from 'console';
-import * as fs from 'fs';
 import * as path from './lib/path.js';
-import Cowbird from './lib/parse/cowbird.js';
-import deep from './lib/deep.js';
-
+import { Console } from 'console';
 function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;

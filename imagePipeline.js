@@ -1,17 +1,6 @@
-import { Point, Size, Contour, Rect, Line, TickMeter, Mat, CLAHE, Draw } from 'opencv';
-import * as cv from 'opencv';
-import { VideoSource } from './qjs-opencv/js/cvVideo.js';
-import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './qjs-opencv/js/cvHighGUI.js';
-import { HSLA } from './lib/color.js';
-import { NumericParam, EnumParam, ParamNavigator } from './param.js';
-import fs from 'fs';
-import { format } from './lib/misc.js';
-import * as xml from 'xml';
-import Console from 'console';
+import { EnumParam, NumericParam } from './param.js';
 import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
-import SvgPath from './lib/svg/path.js';
-import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Define, Once, GetOpt, RoundTo, Range } from './qjs-opencv/js/cvUtils.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON } from './io-helpers.js';
+import * as cv from 'opencv';
 
 export function ImagePipeline(/*input,*/ config) {
   let contours = [],

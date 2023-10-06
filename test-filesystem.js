@@ -1,6 +1,4 @@
-import inspect from 'inspect';
-
-import TinyTest, { run, assert, assertEquals } from './lib/tinyTest.js';
+import { assert, assertEquals, run, default as TinyTest } from './lib/tinyTest.js';
 
 let tmpdir;
 let buffer, buffer2;

@@ -1,15 +1,32 @@
-import { ReadFile, WriteFile } from './io-helpers.js';
-#!/usr/bin/env qjsm
-import * as os from 'os';
-import * as std from 'std';
 import * as fs from 'fs';
-import inspect from 'inspect';
+import * as os from 'os';
 import * as path from 'path';
-import { Lexer, Token } from 'lexer';
+import { camelize } from 'util';
+import { curry } from 'util';
+import { define } from 'util';
+import { escape } from 'util';
+import { extendArray } from 'util';
+import { getOpt } from 'util';
+import { getset } from 'util';
+import { getTypeName } from 'util';
+import { isObject } from 'util';
+import { memoize } from 'util';
+import { quote } from 'util';
+import { randInt } from 'util';
+import { split } from 'util';
+import { toArrayBuffer } from 'util';
+import { toString } from 'util';
+import { types } from 'util';
+import { unique } from 'util';
+import { ReadFile } from './io-helpers.js';
+import { WriteFile } from './io-helpers.js';
 import { Console } from 'console';
+import inspect from 'inspect';
+import { Lexer } from 'lexer';
+import { Token } from 'lexer';
 import ECMAScriptLexer from 'lib/lexer/ecmascript.js';
-import { getset, memoize, randInt, getTypeName, getTypeStr, isObject, shorten, toString, toArrayBuffer, define, curry, unique, split, extendArray, camelize, types, getOpt, quote, escape } from 'util';
-
+import * as std from 'std';
+#!/usr/bin/env qjsm
 ('use strict');
 ('use math');
 
@@ -50,6 +67,7 @@ function ReadJSON(filename) {
   let data = ReadFile(filename, 'utf-8');
   return data ? JSON.parse(data) : null;
 }
+
 const ReadPackageJSON = memoize(() => ReadJSON('package.json') ?? { _moduleAliases: {} });
 
 function ResolveAlias(filename) {
@@ -81,6 +99,7 @@ const FileBannerComment = (filename, i) => {
 extendArray(Array.prototype);
 
 const IsBuiltin = moduleName => /^[^\/.]+$/.test(moduleName);
+
 const compact = (n, more = {}) => console.config({ compact: n, maxArrayLength: 100, ...more });
 const AddUnique = (arr, item) => (arr.indexOf(item) == -1 ? arr.push(item) : null);
 const IntToDWord = ival => (isNaN(ival) === false && ival < 0 ? ival + 4294967296 : ival);
@@ -183,6 +202,7 @@ function ImpExpType(seq) {
   if(seq.some(tok => IsKeyword('import', tok))) return What.IMPORT;
   if(seq.some(tok => IsKeyword('export', tok))) return What.EXPORT;
 }
+
 function ImportType(seq) {
   if(IsKeyword(['import', 'export'], seq[0])) seq.shift();
   if(IsPunctuator('*', seq[0])) {
@@ -334,7 +354,7 @@ function ResolveImports(source, log = () => {}, recursive, depth = 0) {
 
   const PathAdjust = s => {
     let j = path.join(dir, s);
-    j = path.collapse(j);
+    j = path.normalize(j);
     j = path.normalize(j);
     if(path.isRelative(j)) j = './' + j;
     return ModuleLoader(j);
@@ -357,8 +377,8 @@ function ResolveImports(source, log = () => {}, recursive, depth = 0) {
     if(!token) break;
 
     const { length, seq } = token;
-    /*  if(debug > 1) console.log('token', token);
-    if(debug >= 1) console.log('lexer.mode', lexer.mode);
+     if(debug > 1) console.log('token', token);
+   /*  if(debug >= 1) console.log('lexer.mode', lexer.mode);
 */
     if(n == 0 && token.lexeme == '}' && lexer.stateDepth > 0) {
       lexer.popState();
@@ -1076,6 +1096,7 @@ class FileMap extends Array {
     return s;
   }
 }
+
 FileMap.prototype[Symbol.toStringTag] = 'FileMap';
 FileMap.prototype[Symbol.inspect] = function(depth, opts) {
   let arr = [...this].map(([range, buf], i) => {

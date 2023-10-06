@@ -1,26 +1,24 @@
 #!/usr/bin/env qjsm
-import { Console } from 'console';
 import { kill, SIGUSR1 } from 'os';
-import { getOpt, showHelp, isObject, mapWrapper, startInteractive, define, roundTo } from 'util';
 import { basename, extname } from 'path';
-import { Entities, nodeTypes, Prototypes, Factory, Parser, Serializer, Interface, Node, NodeList, NamedNodeMap, Element, Document, Attr, Text, Comment, TokenList, CSSStyleDeclaration, GetType } from './quickjs/qjs-modules/lib/dom.js';
-import { BBox, isBBox } from './lib/geom/bbox.js';
-import { Size, isSize } from './lib/geom/size.js';
-import { Rect } from './lib/geom/rect.js';
-import { TreeIterator } from 'tree_walker';
+import { define, getOpt, isObject, mapWrapper, roundTo, showHelp, startInteractive } from 'util';
+import { iterateTree } from './dom-helpers.js';
 import { WriteFile } from './io-helpers.js';
-import { Matrix, isMatrix, ImmutableMatrix } from './lib/geom/matrix.js';
-import { Transformation, ImmutableTransformation, Rotation, ImmutableRotation, Translation, ImmutableTranslation, Scaling, ImmutableScaling, MatrixTransformation, ImmutableMatrixTransformation, TransformationList, ImmutableTransformationList } from './lib/geom/transformation.js';
+import { BBox, isBBox } from './lib/geom/bbox.js';
+import { Matrix } from './lib/geom/matrix.js';
 import { Point } from './lib/geom/point.js';
-import { RGBA } from './lib/color/rgba.js';
 import { PointList } from './lib/geom/pointList.js';
+import { Rect } from './lib/geom/rect.js';
+import { isSize, Size } from './lib/geom/size.js';
+import { MatrixTransformation, Rotation, Scaling, Transformation, TransformationList, Translation } from './lib/geom/transformation.js';
+import { parseSVG } from './lib/svg/path-parser.js';
 import { SvgPath } from './lib/svg/path.js';
-import extendGenerator from 'extendGenerator';
-import extendArray from 'extendArray';
-import { read as readXML, write as writeXML } from 'xml';
+import { unitConv, unitConvFactor, unitConvFunction, unitConvToMM } from './measure-unit.js';
+import { Attr, Comment, CSSStyleDeclaration, Document, Element, Entities, Factory, GetType, Interface, NamedNodeMap, Node, NodeList, nodeTypes, Parser, Prototypes, Serializer, Text, TokenList } from './quickjs/qjs-modules/lib/dom.js';
 import * as deep from 'deep';
-import { SyntaxError, parseSVG, makeAbsolute } from './lib/svg/path-parser.js';
-import { iterateTree} from './dom-helpers.js';
+import extendArray from 'extendArray';
+import extendGenerator from 'extendGenerator';
+import { TreeIterator } from 'tree_walker';
 
 extendGenerator();
 extendArray();
@@ -445,8 +443,7 @@ function* ProcessPath(d) {
   }
 }
 
-/* prettier-ignore */
-const ToMillimeter = {
+/*const ToMillimeter = {
   pt: 3l / 8.5l,
   pc: 25.4l/6l,
   in: 25.4l,
@@ -459,25 +456,24 @@ const ToMillimeter = {
 function getUnit(str, defaultUnit) {
   const m = /[a-z]+/g.exec(str);
   return m ? m[0] : defaultUnit;
-  }
+}
 function getValue(str) {
   const m = /[a-z]+/g.exec(str);
-  return m  ? str.slice(0, m.index) : str;
-  }
+  return m ? str.slice(0, m.index) : str;
+}
 
 function unitConvToMM(value, defaultUnit = 'px') {
-value=  value + '';
-const unit =getUnit(value, defaultUnit);
-value =getValue(value);
+  value = value + '';
+  const unit = getUnit(value, defaultUnit);
+  value = getValue(value);
 
   console.log('unixConvToMM', { unit, value });
 
-  if(unit in ToMillimeter) return value * ToMillimeter[unit];
+  if (unit in ToMillimeter) return value * ToMillimeter[unit];
 
   throw new Error(`No such unit '${unit}'`);
 }
 
-/* prettier-ignore */
 const MillimeterTo = {
   pt: 8.5l / 3l,
   pc: 6l/25.4l,
@@ -488,13 +484,9 @@ const MillimeterTo = {
   mm: 1l,
   m: 0.001l
 };
-
-
 for(let k of Object.keys(ToMillimeter))
-
   if(ToMillimeter[k] * MillimeterTo[k] != 1l)
     throw new Error(`Invalid unit conv factor for '${k} (${k} -> mm = ${ToMillimeter[k]}) mm -> ${k} = ${MillimeterTo[k]}`)
-
 
 function unitConvFactor(from, to) {
   return ToMillimeter[from] * MillimeterTo[to];
@@ -506,7 +498,7 @@ function unitConvFunction(toUnit = 'mm', fromUnit = 'px') {
 
 function unitConv(unit) {
   return value => MillimeterTo[unit] * unitConvToMM(value);
-}
+}*/
 
 function getViewBox(svgElem = svg) {
   if(svgElem.hasAttribute('viewBox')) {
@@ -556,7 +548,6 @@ function main(...args) {
     unitConv,
     unitConvFunction,
     unitConvFactor,
-    MillimeterTo,
     getViewBox,
     getWidthHeight,
     getTransformationMatrix,

@@ -1,5 +1,4 @@
 import Tree from './lib/tree.js';
-import { Util } from './lib/util.js';
 
 const treeObj = {
   a: 1,
@@ -24,7 +23,6 @@ const treeObj = {
 };
 
 async function main(...args) {
-
   let tree = new Tree(treeObj);
 
   console.log('tree:', tree);

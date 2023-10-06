@@ -1,15 +1,4 @@
-import { Rect } from 'opencv';
-import { Point } from 'opencv';
-import { Size } from 'opencv';
-import { Mat } from 'opencv';
-import { PointIterator } from 'opencv';
-import { Contour } from 'opencv';
-import { Line } from 'opencv';
-import { Draw, drawLine, drawCircle } from 'opencv';
-
-import inspect from './lib/objectInspect.js';
-
-let filesystem;
+import { Contour, Draw, drawCircle, drawLine, Line, Mat, Point, Rect, Size } from 'opencv';
 
 async function main(...args) {
   //import { Contour } from "contour";
@@ -19,7 +8,7 @@ async function main(...args) {
   console.log('static:', { circle, contour, line, polygon, rect });
   console.log('test:', { Point, Size, Rect, Mat, Contour, Line, Draw });
 
-  const ctors = [Point, Size, Rect, Mat, Contour, Line];
+  const ctors = [Point, Size, Rect, /*Mat,*/ Contour, Line];
 
   let objs = [];
 
@@ -53,4 +42,5 @@ async function main(...args) {
   let i = 0;
   for(let p of ct1.concat(ct2)) console.log(`p[${i++}]:`, p);
 }
+
 main(...scriptArgs.slice(1));

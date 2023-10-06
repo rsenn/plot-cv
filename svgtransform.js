@@ -1,15 +1,13 @@
 import filesystem from 'fs';
+import Alea from './lib/alea.js';
 import deep from './lib/deep.js';
+import { SVG } from './lib/dom/svg.js';
+import { Matrix, Point, Size, TransformationList } from './lib/geom.js';
+import { Path } from './lib/json.js';
 import * as path from './lib/path.js';
+import Tree from './lib/tree.js';
 import tXml from './lib/tXml.js';
 import { toXML } from './lib/xml.js';
-import Tree from './lib/tree.js';
-import { Path } from './lib/json.js';
-import Alea from './lib/alea.js';
-import * as diff from './lib/json/diff.js';
-import inspect from './lib/objectInspect.js';
-import { TransformationList, Point, Size, Matrix } from './lib/geom.js';
-import { SVG } from './lib/dom/svg.js';
 
 let prng = new Alea().seed(Date.now());
 
@@ -19,6 +17,7 @@ function readXML(filename) {
 
   return xml;
 }
+
 function WriteFile(name, data) {
   console.log('WriteFile', { name });
   if(!data.endsWith('\n')) data += '\n';
@@ -36,6 +35,7 @@ function WriteFile(name, data) {
 }
 
 const push_back = (arr, ...items) => [...(arr || []), ...items];
+
 const push_front = (arr, ...items) => [...items, ...(arr || [])];
 const tail = (arr, n = 0) => arr[arr.length - 1 - n];
 
@@ -219,4 +219,5 @@ async function main(...args) {
     throw err;
   }
 }
+
 main(...scriptArgs.slice(1));

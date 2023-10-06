@@ -1,22 +1,56 @@
-import { Console } from 'console';
-import { toString } from './lib/misc.js';
-import { Worker, close, exec, pipe, setReadHandler, sleep } from 'os';
-//import child_process from './lib/childProcess.js';
-import { assert, define, toString as ArrayBufferToString, btoa, keys, error } from './lib/misc.js';
-import { DebuggerProtocol } from './debuggerprotocol.js';
-import { readAll } from 'fs';
-import { Spawn, WriteFile } from './io-helpers.js';
-import { URLWorker } from './os-helpers.js';
-import { Location, ECMAScriptDefines, ECMAScriptRules, ECMAScriptLexer, Lexer } from './quickjs/qjs-modules/lib/lexer/ecmascript.js';
-import { consume as consumeSync } from './lib/iterator/helpers.js';
-import { consume } from './lib/async/helpers.js';
+import * as deep from './lib/deep.js';
+import { ansiStyles, define, error, isFunction } from './lib/misc.js';
+import { Pointer } from './lib/pointer.js';
+globalThis.process ??= { env: {} };
 
 var worker;
 var counter;
 let sockets = (globalThis.sockets ??= new Set());
 let listeners = (globalThis.listeners = {});
 
-export function ECMAScriptSyntaxHighlighter(input, filename) {
+const { redBright, greenBright, cyanBright, yellowBright, magentaBright } = ansiStyles;
+
+const syntaxPalette = [{ open: '\x1b[0m' }, redBright, greenBright, yellowBright, cyanBright, magentaBright].map(c => c.open);
+
+export function TrivialTokenizer(input) {
+  const re =
+    /(\n|\t| )|(\b(?:arguments|as|async|await|break|case|catch|class|const|constructor|continue|debugger|default|delete|do|else|enum|eval|export|extends|false|finally|for|from|function|get|identifier|if|implements|import|in|instanceof|interface|let|meta|new|null|number|of|package|private|protected|public|return|set|static|string|super|switch|target|this|throw|true|try|typeof|var|void|while|with|yield)\b)|(\/\*(?:[^*]\/|[^\/])*\*\/|\/\/[^\n]*\n)|([A-Za-z_][A-Za-z_0-9]*)|("(?:\\"|[^"\n])*"|'(?:\\'|[^'\n])*'|[^\sA-Za-z_'"])/g;
+  let match,
+    prev,
+    ret = [];
+
+  while((match = re.exec(input))) {
+    let tokenType = match.findIndex((m, i) => i > 0 && m !== undefined);
+    const { index } = match;
+    let str = match[tokenType] ?? match[0];
+
+    ret.push([[undefined, 'whitespace', 'keyword', 'comment', 'identifier', 'string'][tokenType], str]);
+    prev = tokenType;
+  }
+  return ret;
+}
+
+export function TrivialSyntaxHighlighter(input) {
+  const re =
+    /(\n|\t| )|(\b(?:arguments|as|async|await|break|case|catch|class|const|constructor|continue|debugger|default|delete|do|else|enum|eval|export|extends|false|finally|for|from|function|get|identifier|if|implements|import|in|instanceof|interface|let|meta|new|null|number|of|package|private|protected|public|return|set|static|string|super|switch|target|this|throw|true|try|typeof|var|void|while|with|yield)\b)|(\/\*(?:[^*]\/|[^\/])*\*\/|\/\/[^\n]*\n)|([A-Za-z_][A-Za-z_0-9]*)|("(?:\\"|[^"\n])*"|'(?:\\'|[^'\n])*'|[^\sA-Za-z_'"])/g;
+  let match,
+    prev,
+    s = '';
+
+  while((match = re.exec(input))) {
+    let tokenType = match.findIndex((m, i) => i > 0 && m !== undefined);
+    const { index } = match;
+    let str = match[tokenType] ?? match[0];
+
+    if(tokenType == 1 || tokenType != prev) if (syntaxPalette[tokenType - 1]) str = syntaxPalette[tokenType - 1] + str;
+
+    s += str;
+    prev = tokenType;
+  }
+  return s;
+}
+
+/*export function ECMAScriptSyntaxHighlighter(input, filename) {
   const lexer = new ECMAScriptLexer(input, filename);
   let prev = 0,
     s = '';
@@ -53,71 +87,81 @@ export function ECMAScriptSyntaxHighlighter(input, filename) {
   if(prev) s += '\x1b[0m';
   return s;
 }
-
+*/
 export class DebuggerDispatcher {
   #seq = 0;
   #responses = {};
+  #callback = null;
   #promise = null;
   onclose = () => console.log('CLOSED');
   onerror = ({ errno, message }) => console.log('ERROR', { errno, message });
 
   constructor(conn) {
-    // const orig = sock.onmessage;
-
     console.log('DebuggerDispatcher', { conn });
-    const copts = console.config({ maxStringLength: Infinity, maxArrayLength: Infinity, compact: 100 });
 
-    conn
-      .process(msg => {
-        if(process.env.DEBUG) console.log('\x1b[38;5;220mRECEIVE\x1b[0m ', copts, msg);
+    let ret;
+
+    try {
+      let v = conn.process(async msg => {
+        if(process.env.DEBUG) console.log('\x1b[38;5;220mRECEIVE\x1b[0m', console.config({ compact: 0 }), msg);
 
         const { type, event, request_seq, body } = msg;
 
         switch (type) {
           case 'response':
-            this.#responses[request_seq](msg);
+            let fn = this.#responses[request_seq] ?? this.#callback;
+            if(typeof fn == 'function') await fn.call(this, msg);
             break;
           case 'event':
-            const name = event.type.slice(0, event.type.indexOf('Event')).toLowerCase();
+            const prop = 'on' + event.type.slice(0, event.type.indexOf('Event')).toLowerCase();
 
-            for(let obj of [this, conn]) {
-              const handler = obj['on' + name];
-
-              if(handler) {
-                if(handler.call(obj, event) === false) {
-                  if(obj['on' + name] === handler) delete obj['on' + name];
-                }
-                break;
+            for(let receiver of [this, conn]) {
+              if(!receiver[prop]) continue;
+              if(receiver[prop]) {
+                const callback = receiver[prop];
+                if(process.env.DEBUG) console.log('\x1b[38;5;56mEVENT\x1b[0m  ', console.config({ compact: 0 }), { prop, event });
+                //if((await callback.call(receiver, event)) === false) if(receiver[prop] === callback) delete receiver[prop];
+                callback.call(receiver, event);
+                delete receiver[prop];
               }
             }
             break;
           default:
             //console.log('DebuggerDispatcher', { msg });
-            if(sock.onmessage) sock.onmessage(msg);
+            if(conn.onmessage) await conn.onmessage(msg);
             break;
         }
-      })
-      .then(ret => {
-        if(ret == 0) this.onclose && this.onclose();
-        if(ret < 0) this.onerror && this.onerror(error());
       });
+      console.log('process(handler) returned:', v);
 
-    define(this, {
-      sendMessage: msg => (process.env.DEBUG && console.log('\x1b[38;5;33mSEND\x1b[0m    ', copts, msg), conn.sendMessage((msg = JSON.stringify(msg))))
-    });
+      isFunction(v.then) && v.then(r => (ret = r));
+    } catch(err) {
+      console.log('process(handler) threw:', err.message + '\n' + err.stack);
+      ret = -1;
+    } finally {
+      if(ret == 0) isFunction(this.onclose) && this.onclose();
+      if(ret < 0) isFunction(this.onerror) && this.onerror(error());
+      console.log('process(handler) function returned:', ret);
+    }
+
+    define(this, { sendMessage: conn.sendMessage });
   }
 
-  stepIn() {
-    return this.sendRequest('stepIn').then(resp => this.waitRun());
+  async stepIn() {
+    await this.sendRequest('stepIn');
+    return await this.waitRun();
   }
-  stepOut() {
-    return this.sendRequest('stepOut').then(resp => this.waitRun());
+  async stepOut() {
+    await this.sendRequest('stepOut');
+    return await this.waitRun();
   }
-  next() {
-    return this.sendRequest('next').then(resp => this.waitRun());
+  async next() {
+    await this.sendRequest('next');
+    return await this.waitRun();
   }
-  continue() {
-    return this.sendRequest('continue').then(resp => this.waitRun());
+  async continue() {
+    await this.sendRequest('continue');
+    return await this.waitRun();
   }
 
   async waitRun() {
@@ -177,10 +221,10 @@ export class DebuggerDispatcher {
     });
   }
 
-  sendRequest(command, args = {}) {
+  async sendRequest(command, args = {}) {
     const request_seq = ++this.#seq;
 
-    this.sendMessage({ type: 'request', request: { request_seq, command, args } });
+    await this.sendMessage({ type: 'request', request: { request_seq, command, args } });
 
     return new Promise(
       (resolve, reject) =>
@@ -195,17 +239,15 @@ export class DebuggerDispatcher {
 Object.assign(DebuggerDispatcher.prototype, { [Symbol.toStringTag]: 'DebuggerDispatcher' });
 Object.setPrototypeOf(DebuggerDispatcher.prototype, null);
 
-function TestWorker() {
+/*function TestWorker() {
   globalThis.console = new Console({
     colors: true,
     compact: 1,
     prefix: '\x1b[38;5;220mPARENT\x1b[0m'
   });
-  console.log('scriptArgs', scriptArgs);
   worker = new Worker('./ws-worker.js');
   counter = 0;
   worker.onmessage = WorkerMessage;
-  console.log('TestWorker', worker.onmessage);
   setReadHandler(0, () => {
     let line = process.stdin.getline();
     worker.postMessage({ line });
@@ -214,7 +256,6 @@ function TestWorker() {
 
 let sock, connection;
 function WorkerMessage(e) {
-  console.log('WorkerMessage', e);
   var ev = e.data;
   const { message, id } = ev;
   switch (ev.type) {
@@ -261,69 +302,7 @@ function WorkerMessage(e) {
 
 function send(id, body) {
   worker.postMessage({ type: 'send', id, body });
-}
-
-export async function LoadAST(source) {
-  const script = `import * as std from 'std';
-import { Worker } from 'os';
-import { existsSync, readerSync } from 'fs';
-import { Spawn } from './io-helpers.js';
-import inspect from 'inspect';
-import { Console } from 'console';
-import { toString, gettid } from 'util';
-
-globalThis.console = new Console({ inspectOptions: { compact: 2, customInspect: true, maxArrayLength: 200, prefix: '\\x1b[2K\\x1b[G\\x1b[1;33mWORKER\\x1b[0m ' } });
-
-const worker = Worker.parent;
-
-worker.onmessage = async ({ data }) => {
-  const { type, source } = data;
-
-  switch(type) {
-    case 'gettid': {
-      worker.postMessage({ tid: gettid() });
-      break;
-    }
-    case 'quit': {
-      worker.onmessage = null;
-      console.log('quitting thread ('+gettid()+')...');
-      break;
-    }
-    default: {
-      const ast = await loadAST(source);
-      worker.postMessage({ ast });
-      break;
-    } 
-  }
-};
-
-async function loadAST(source) {
-  if(!existsSync(source)) return null;
-  const { stdout, wait } = Spawn('meriyah', [source], { block: false, stdio: ['inherit', 'pipe', 'inherit'] });
-  
-  let s = '';
-  for(let chunk of readerSync(stdout))
-    s += toString(chunk);
-
-  const [pid, status] = wait();
-  const { length } = s;
-  //console.log('loadAST', { source, length, status });
-  
-  return JSON.parse(s);
-}`;
-
-  WriteFile('load-ast.js', script);
-
-  let worker = new URLWorker(script);
-  worker.postMessage({ source });
-  const { value, done } = await worker.next();
-
-  worker.postMessage({ type: 'quit' });
-
-  console.log('worker.next()', console.config({ maxStringLength: 10 }), { value, done });
-  const { data } = value;
-  return ({ string: JSON.parse }[typeof data.ast] ?? (a => a))(data.ast);
-}
+}*/
 
 export function* GetArguments(node) {
   for(let param of node.params) {
@@ -343,16 +322,61 @@ export function* GetArguments(node) {
   }
 }
 
-export function* FindFunctions(ast) {
-  for(let [v, p] of deep.iterate(ast, v => /^Func/.test(v.type))) {
-    let name;
+export function GetFunctionName(ast, p) {
+  try {
+    let ptr = new Pointer(p);
+    let h = ptr.hier().filter(p => (n => !Array.isArray(n))(deep.get(ast, p)));
+    // console.log('h',h);
+    //
+    let start = 1 + h.slice(0, -1).findLastIndex(ptr => (n => /Func/.test(n.type))(deep.get(ast, ptr)));
+    h = h.slice(start);
 
-    try {
+    //
+    return h
+      .map(p => (n => n.id ?? n.key ?? n)(deep.get(ast, p)))
+      .map(s => (s && s.name) || s)
+      .filter(s => typeof s == 'string')
+      .join('.');
+  } catch(e) {}
+  let name;
+  try {
+    if(p.last == 'value') name = deep.get(ast, p.slice(0, -1).concat(['key', 'name']));
+  } catch(e) {}
+  let parent = deep.get(ast, p.slice(0, -1));
+
+  if(parent.type == 'Property') {
+    if(parent.key.type == 'Literal') {
+      name ??= parent.key.value;
+    }
+  }
+  name ??= v.id?.name;
+  return name;
+}
+
+export function* FindFunctions(ast) {
+  FindFunctions.paths ??= new WeakMap();
+
+  for(let [v, p] of deep.iterate(ast, v => /^(Arrow|)Func/.test(v.type))) {
+    let name = GetFunctionName(ast, p);
+    let parent = deep.get(ast, p.slice(0, -1));
+
+    /*    try {
       if(p.last == 'value') name = deep.get(ast, p.slice(0, -1).concat(['key', 'name']));
     } catch(e) {}
 
-    name ??= v.id?.name;
+    if(parent.type == 'Property') {
+      if(parent.key.type == 'Literal') {
+        name ??= parent.key.value;
+      }
+    }*/
 
-    if(name) yield [name, v.loc.start, [...GetArguments(v)], v.start];
+    if(v.async) name = 'async ' + name;
+
+    if(v.loc.start) {
+      let { line, column } = v.loc.start;
+      ++column;
+
+      /*if(name)*/ yield [name, { line, column }, [...GetArguments(v)], v.expression, p];
+    }
   }
 }

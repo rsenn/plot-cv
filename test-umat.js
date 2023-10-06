@@ -1,17 +1,4 @@
-import { Point } from 'opencv';
-import { Size } from 'opencv';
-import { Rect } from 'opencv';
-import { Mat } from 'opencv';
-import { UMat } from 'opencv';
 import * as cv from 'opencv';
-import { Line } from 'opencv';
-import { Contour } from 'opencv';
-import { SliceIterator } from 'opencv';
-import * as draw from 'opencv';
-import RGBA from './lib/color/rgba.js';
-import { NumericParam, EnumParam, ParamNavigator } from './param.js';
-import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
-
 let filesystem;
 
 async function main(...args) {

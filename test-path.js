@@ -1,7 +1,6 @@
-import { Console } from 'console';
-import * as path from './lib/path.js';
 import { getMethodNames } from './lib/misc.js';
-
+import * as path from './lib/path.js';
+import { Console } from 'console';
 let filesystem;
 
 function main(...args) {
@@ -11,8 +10,7 @@ function main(...args) {
   console.log('main(', ...args, ')');
   //console.log('main', args);
   console.log('path', Object.getOwnPropertyNames(path));
-  console.log('path', 
-    getMethodNames(path));
+  console.log('path', getMethodNames(path));
 
   let filename = process.argv[1];
   let cwd = path.absolute('.');

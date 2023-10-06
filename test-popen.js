@@ -1,5 +1,5 @@
+import { popenAndRead, stringToArrayBuffer } from './popen.so';
 import * as std from 'std';
-import { stringToArrayBuffer, popenAndRead } from './popen.so';
 
 const input = std.in.getline();
 const command = input.replace(/^['"`]?(.*)['"`]?$/, '$1');

@@ -6,6 +6,7 @@
 function isObject(any) {
   return any !== null && typeof any === 'object';
 }
+
 /**
  * @param {*} any
  * @returns {Boolean}
@@ -28,6 +29,7 @@ function isArrayLike(any) {
     }
   }
 }
+
 /**
  * @param {*} any
  * @returns {Boolean}
@@ -35,6 +37,7 @@ function isArrayLike(any) {
 function isNumber(any) {
   return typeof any === 'number';
 }
+
 /**
  * @param {Object|Array} object
  * @returns {Array<String>}

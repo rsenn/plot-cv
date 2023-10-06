@@ -1,11 +1,9 @@
 import filesystem from 'fs';
-import PortableSpawn from './lib/spawn.js';
-import { AcquireReader } from './lib/stream/utils.js';
-import * as path from './lib/path.js';
+import { AstDump, GetLoc, Type } from './clang-ast.js';
 import deep from './lib/deep.js';
+import * as path from './lib/path.js';
+import PortableSpawn from './lib/spawn.js';
 import Tree from './lib/tree.js';
-import { Type, AstDump, GetLoc } from './clang-ast.js';
-
 //prettier-ignore
 let filesystem, spawn;
 
@@ -363,6 +361,7 @@ async function main(...args) {
               prototypeOutput.push(`export function ${name}(${paramNames.join(', ')}) {
   ${ret == 'void' ? '' : 'return '}call('${name}'${paramNames.map(n => `, ${n}`).join('')});
 }
+
 `);
             }
           }
@@ -583,6 +582,7 @@ function ByteLength2TypedArray(byteLength) {
       return 'Uint8Array';
   }
 }
+
 function ByteLength2Value(byteLength) {
   switch (byteLength) {
     case 8:

@@ -1,21 +1,22 @@
-import { crosskit, CANVAS } from './lib/crosskit.js';
-import { RGBA, HSLA } from './lib/color.js';
+import { distinct, once, streamify, subscribe, throttle } from './lib/async/events.js';
 import { timer } from './lib/async/helpers.js';
-import { WebSocketIterator, WebSocketURL, CreateWebSocket, ReconnectingWebSocket, StreamReadIterator } from './lib/async/websocket.js';
-import { once, streamify, throttle, distinct, subscribe } from './lib/async/events.js';
-import { propertyLookup, tryCatch, tryFunction, chain, chainRight, getset, gettersetter, lazyProperties, memoize, define, isUndefined, properties, keys, unique, randStr, randInt, waitFor, isFunction, getPrototypeChain, getConstructorChain, isCFunction, isJSFunction, isObject } from './lib/misc.js';
-import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater, Reader, ReadAll } from './lib/stream/utils.js';
-import { Intersection, Matrix, isRect, Rect, Size, Point, Line, TransformationList, Vector } from './lib/geom.js';
-import { Element, isElement, SVG } from './lib/dom.js';
-import React, { h, html, render, Fragment, Component, createRef, useState, useLayoutEffect, useRef, toChildArray } from './lib/dom/preactComponent.js';
-import miscfixed6x13 from './static/json/miscfixed6x13.js';
-import { List } from './lib/list.js';
-//import { fire } from './fire/build/fire-debug.js';
+import { CreateWebSocket, ReconnectingWebSocket, StreamReadIterator, WebSocketIterator, WebSocketURL } from './lib/async/websocket.js';
+import { HSLA, RGBA } from './lib/color.js';
 import { LinkedList } from './lib/container/linkedList.js';
-import { wasmBrowserInstantiate } from './wasm-helpers.js';
-//import lscache from './lib/lscache.js';
+import { CANVAS, crosskit } from './lib/crosskit.js';
+import { Element, isElement, SVG } from './lib/dom.js';
+import { Component, createRef, Fragment, h, html, render, toChildArray, useLayoutEffect, useRef, useState, default as React } from './lib/dom/preactComponent.js';
+import { Intersection, isRect, Line, Matrix, Point, Rect, Size, TransformationList, Vector } from './lib/geom.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
+import { List } from './lib/list.js';
+import { chain, chainRight, define, getConstructorChain, getPrototypeChain, getset, gettersetter, isCFunction, isFunction, isJSFunction, isObject, isUndefined, keys, memoize, properties, propertyLookup, randInt, randStr, tryCatch, tryFunction, unique } from './lib/misc.js';
+import { AcquireReader, AcquireWriter, ArrayWriter, AsyncRead, AsyncWrite, ByteReader, ChunkReader, CreateTransformStream, CreateWritableStream, DebugTransformStream, isStream, LineBufferStream, LineReader, LogSink, PipeTo, PipeToRepeater, ReadAll, Reader, ReadFromIterator, readStream, RepeaterSink, RepeaterSource, StringReader, TextTransformStream, WritableRepeater, WriteIterator, WriteToRepeater } from './lib/stream/utils.js';
 import trkl from './lib/trkl.js';
+import miscfixed6x13 from './static/json/miscfixed6x13.js';
+import { wasmBrowserInstantiate } from './wasm-helpers.js';
+
+//import { fire } from './fire/build/fire-debug.js';
+//import lscache from './lib/lscache.js';
 
 let lsgs = (globalThis.lsgs = getset([key => localStorage.getItem(key), (key, value) => localStorage.setItem(key, value)]));
 
@@ -174,6 +175,7 @@ function getTransformationList(e) {
   let css = Element.getCSS(e);
   if(css.transform) return new TransformationList(css.transform);
 }
+
 function DecomposeTransformList(elem) {
   let list = getTransformationList(elem);
 
@@ -324,6 +326,7 @@ function MouseToTouch(event) {
 
   return event;
 }
+
 async function* CatchIterator(it) {
   try {
     for await(let item of it) yield item;
@@ -443,7 +446,6 @@ function main() {
   const { context } = crosskit;
   const image = context.createImageData(width, height);
 
-  const { now, waitFor, animationFrame } = Util;
   const fps = 50;
   const matrix = new Matrix().translate(160, 100).scale(0.5);
 
@@ -474,6 +476,20 @@ function main() {
     ReplayTrail,
     Blaze
   });*/
+
+  const animationFrame = (minDelay = 0) => {
+    if(minDelay <= 0) return new Promise(resolve => requestAnimationFrame(resolve));
+    const start = performance.now();
+
+    return new Promise(resolve => {
+      requestAnimationFrame(animationFrame);
+
+      function animationFrame(t) {
+        if(t - start >= minDelay) resolve(t);
+        requestAnimationFrame(animationFrame);
+      }
+    });
+  };
 
   async function Loop() {
     const delay = 1000 / fps;
@@ -626,7 +642,7 @@ function main() {
 
   Object.assign(globalThis, { RandomByte });
 
-  globalThis.ws = (globalThis.rws ??= NewWS({
+  NewWS({
     onOpen() {
       console.log('WS connected!');
       /* if(!globalThis.cid) 
@@ -636,7 +652,7 @@ function main() {
 
       SendWS({ type: 'rects', cid, rects: GetRects() });
     }
-  })).ws;
+  });
 
   let str = '';
   let xpos = 0;
@@ -878,16 +894,25 @@ function ReplayTrail(trail, time = performance.now() + 20) {
 
 function NewWS(handlers) {
   let url = WebSocketURL('/ws', { mirror: currentFile });
-  let ws = new ReconnectingWebSocket(url, 'lws-mirror-protocol', handlers ?? {});
+  let rws = new ReconnectingWebSocket(url, 'lws-mirror-protocol', handlers ?? {});
+
+  define(globalThis, {
+    get ws() {
+      return rws.socket;
+    }
+  });
 
   (async function() {
     let chunks = '',
       data;
-    for await(let chunk of ws) {
+    for await(let chunk of rws) {
       chunks += chunk;
 
       if(/}\s*$/.test(chunks)) {
-        if(!(data = globalThis.received = ParseJSON(chunks))) continue;
+        if(!(data = ParseJSON(chunks))) {
+          chunks = chunks.slice(chunks.indexOf('{'));
+          continue;
+        }
 
         if(data.type != 'event') if (!data.cid || globalThis.cid != data.cid) console.log('WS receive:', data);
 
@@ -912,6 +937,10 @@ function NewWS(handlers) {
             SendWS({ type: 'result', ...(exception ? { error: exception.message } : { result }) });
             break;
           }
+          default: {
+            console.log('WS received:', data);
+            break;
+          }
         }
 
         chunks = '';
@@ -919,12 +948,13 @@ function NewWS(handlers) {
     }
   })();
 
-  return (globalThis.ws = ws);
+  return rws;
 }
 
 function MakeUUID(rng = Math.random) {
   return [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 }
+
 function MakeClientID(rng = Math.random) {
   return [4, 4, 4, 4].map(n => randStr(n, ['ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz', '.-$'][randInt(0, 3)]), rng).join('');
 }
@@ -980,7 +1010,7 @@ function syncHeight() {
   htmlElement.style.setProperty('--window-inner-height', `${window.innerHeight}px`);
 }
 
-define(globalThis, { crosskit, RGBA, HSLA, Util, Matrix, TransformationList });
+define(globalThis, { crosskit, RGBA, HSLA, Matrix, TransformationList });
 define(globalThis, { WebSocketIterator, WebSocketURL, CreateWebSocket, NewWS, ReconnectingWebSocket });
 define(globalThis, { define, isUndefined, properties, keys });
 define(globalThis, { once, streamify, throttle, distinct, subscribe });

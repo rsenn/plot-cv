@@ -1,8 +1,7 @@
-import tXml from './lib/tXml.js';
+import { ReadFile } from './io-helpers.js';
 import deep from './lib/deep.js';
-import { ReadFile, WriteFile } from './io-helpers.js';
 import { abbreviate, define, isObject, weakMapper } from './lib/misc.js';
-
+import tXml from './lib/tXml.js';
 class Node {
   constructor(raw, path) {
     define(this, { raw, path });
@@ -10,6 +9,7 @@ class Node {
     this.path = path;
   }
 }
+
 class NodeList {
   constructor(raw, path) {
     this.raw = raw;

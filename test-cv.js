@@ -1,21 +1,7 @@
-import { Point } from 'opencv';
-import { Size } from 'opencv';
-import { Rect } from 'opencv';
-import { Mat } from 'opencv';
-import { UMat } from 'opencv';
-import * as cv from 'opencv';
-import { Line } from 'opencv';
-import { CLAHE } from 'opencv';
-import * as draw from 'opencv';
+import { className, tryCatch } from './lib/misc.js';
 import inspect from './lib/objectInspect.js';
-import * as path from './lib/path.js';
-import fs from './lib/filesystem.js';
-import RGBA from './lib/color/rgba.js';
 import Console from 'console';
-import { NumericParam, EnumParam, ParamNavigator } from './param.js';
-import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
-import { tryCatch,className } from './lib/misc.js';
-
+import * as cv from 'opencv';
 /*function saveMat(name, mat) {
   let ext = mat.channels == 1 ? 'pgm' : 'ppm';
   let p = mat.channels == 1 ? 'P2' : 'P3';

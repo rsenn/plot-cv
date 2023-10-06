@@ -1,12 +1,9 @@
-import { Point, PointList, Line, BBox } from './lib/geom.js';
 import { SVG } from './lib/dom.js';
-import { toXML } from './lib/json.js';
-import Voronoi from './lib/geom/voronoi.js';
 import { EagleDocument } from './lib/eagle.js';
-
-
+import { Line, Point, PointList } from './lib/geom.js';
+import Voronoi from './lib/geom/voronoi.js';
+import { toXML } from './lib/json.js';
 async function testVoronoi(filename) {
-
   //console.log('Loading document: ' + filename);
   let doc = new EagleDocument(filesystem.readFileSync(filename), null, filename);
 
@@ -123,6 +120,7 @@ async function testVoronoi(filename) {
   filesystem.writeFile('output.svg', svgFile);
   //console.log('svg:', svgFile);
 }
+
 (() => {
   let args = scriptArgs;
   if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd');

@@ -1,12 +1,8 @@
-/* Worker code for test_worker.js */
-import * as std from 'std';
 import * as os from 'os';
-import * as cv from 'opencv';
-import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { Console } from 'console';
-import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
-import { TickMeter } from 'opencv';
-
+import * as cv from 'opencv';
+import * as std from 'std';
+/* Worker code for test_worker.js */
 var parent = os.Worker.parent;
 
 var configFile = 'test-opencv.config.json';

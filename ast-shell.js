@@ -1,20 +1,20 @@
-import { DirIterator, RecursiveDirIterator, ReadDirRecursive } from './dir-helpers.js';
-import filesystem from 'fs';
-//import PortableSpawn from './lib/spawn.js';
-import Util from './lib/util.js';
-import * as path from './lib/path.js';
+import { AstDump, CompleteLocation, CompleteRange, EnumDecl, FindType, FunctionDecl, GetFields, GetLoc, GetParams, GetType, GetTypeNode, GetTypeStr, Hier, isNode, List, Location, Node, NodeName, NodePrinter, NodeType, PathOf, PathRemoveLoc, PrintAst, Range, RawLocation, RawRange, RecordDecl, SIZEOF_POINTER, SourceDependencies, SpawnCompiler, Type, TypedefDecl, TypeFactory, VarDecl } from './clang-ast.js';
+import { DirIterator, RecursiveDirIterator } from './dir-helpers.js';
+import { LoadHistory, ReadFile, ReadJSON, WriteFile, WriteJSON } from './io-helpers.js';
 import * as deep from './lib/deep.js';
-import { Console } from 'console';
-import REPL from './quickjs/qjs-modules/lib/repl.js';
-import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, VarDecl, FunctionDecl, Location, Range, TypeFactory, SpawnCompiler, AstDump, FindType, Hier, PathOf, NodeType, NodeName, GetLoc, CompleteLocation, RawLocation, CompleteRange, RawRange, GetType, GetTypeStr, NodePrinter, isNode, SourceDependencies, GetTypeNode, GetFields, PathRemoveLoc, PrintAst, GetParams, List } from './clang-ast.js';
-import Tree from './lib/tree.js';
-import { Pointer } from './lib/pointer.js';
-import * as Terminal from './terminal.js';
 import * as ECMAScript from './lib/ecmascript.js';
-import { ECMAScriptParser } from './lib/ecmascript.js';
 import * as fs from './lib/filesystem.js';
-import { isObject, extendArray, toString, toArrayBuffer, weakMapper, getOpt, define, lazyProperty, bindMethods, defineGetter, memoize, pushUnique } from './lib/misc.js';
-import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, Shell, Spawn } from './io-helpers.js';
+import { define, defineGetter, getOpt, isObject, lazyProperty, memoize, pushUnique, toArrayBuffer, toString, weakMapper } from './lib/misc.js';
+import { extendArray } from 'extendArray';
+import * as path from './lib/path.js';
+import { Pointer } from './lib/pointer.js';
+import Tree from './lib/tree.js';
+import Util from './lib/util.js';
+import { Shell, Spawn } from './os-helpers.js';
+import * as Terminal from './terminal.js';
+import { Console } from 'console';
+import { REPL } from 'repl';
+//import PortableSpawn from './lib/spawn.js';
 
 extendArray(Array.prototype);
 
@@ -394,6 +394,7 @@ byte_firstnot(const void* p, size_t len, unsigned char v) {
     if(*x != v) break;
   return x - (const unsigned char*)p;
 }
+
 size_t
 byte_lastnot(const void* p, size_t len, unsigned char v) {
   const unsigned char* x;
@@ -401,6 +402,7 @@ byte_lastnot(const void* p, size_t len, unsigned char v) {
     if(*x != v) break;
   return x - (const unsigned char*)p;
 }
+
 size_t
 bit_firstnot(unsigned char v, unsigned char b) {
   int i;
@@ -408,6 +410,7 @@ bit_firstnot(unsigned char v, unsigned char b) {
     if((v & 1) == !b) break;
   return i;
 }
+
 size_t
 bit_lastnot(unsigned char v, unsigned char b) {
   int i;
@@ -415,22 +418,26 @@ bit_lastnot(unsigned char v, unsigned char b) {
     if(!!(v & (1 << i)) == !b) break;
   return i >= 0 ? i : 8;
 }
+
 size_t
 firstnot(const void* p, size_t len, unsigned char v) {
  const char* x = p;
  size_t i = byte_firstnot(p, len, v);
  return i * 8 + bit_firstnot(x[i], v);
 }
+
 size_t
 lastnot(const void* p, size_t len, unsigned char v) {
  const unsigned char* x = p;
  size_t i = byte_lastnot(p, len, v);
  return i * 8 + bit_lastnot(x[i], v);
 }
+
 size_t
 bitsize(const void* p, size_t len) {
  return lastnot(p, len, 0xff) + 1 - firstnot(p, len, 0xff);
 }
+
 `;
 
   for(let include of includes) yield `#include "${include}"`;
@@ -914,6 +921,7 @@ function GetImports(ast = $.data) {
   }
   return r;
 }
+
 function GetIdentifiers(nodes, key = null) {
   const r = [];
   for(let node of nodes) {

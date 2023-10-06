@@ -1,10 +1,9 @@
-import * as cv from 'opencv';
+import { LoadConfig } from './config.js';
+import { NumericParam, ParamNavigator } from './param.js';
+import { Window } from './qjs-opencv/js/cvHighGUI.js';
+import { Pipeline } from './qjs-opencv/js/cvPipeline.js';
 import Console from 'console';
-import { NumericParam, EnumParam, ParamNavigator } from './param.js';
-import { SaveConfig, LoadConfig } from './config.js';
-import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './qjs-opencv/js/cvHighGUI.js';
-import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
-
+import * as cv from 'opencv';
 function main(...args) {
   globalThis.console = new Console({
     colors: true,

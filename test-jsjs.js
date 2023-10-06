@@ -1,9 +1,7 @@
-import { ECMAScriptParser, ECMAScriptInterpreter } from './lib/ecmascript.js';
-import Lexer, { PathReplacer } from './lib/ecmascript.js';
-import Printer from './lib/ecmascript/printer.js';
-import { CallExpression } from './lib/ecmascript/estree.js';
 import deep from './lib/deep.js';
-
+import { ECMAScriptParser, PathReplacer } from './lib/ecmascript.js';
+import { CallExpression } from './lib/ecmascript/estree.js';
+import Printer from './lib/ecmascript/printer.js';
 
 const code = "Point.toSource = (point, { space = ' ', padding = ' ', separator = ',' }) => `{${padding}x:${space}${point.x}${separator}y:${space}${point.y}${padding}}`;";
 
@@ -65,6 +63,7 @@ async function main(...args) {
   let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
   process.exit(Number(files.length == 0));
 }
+
 function finish(err) {
   let fail = !!err;
   if(fail) {

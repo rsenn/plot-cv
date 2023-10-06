@@ -1,22 +1,15 @@
-import * as std from 'std';
-import * as os from 'os';
-import { setInterval } from 'timers';
-import * as deep from './lib/deep.js';
-import * as path from './lib/path.js';
-import { watch, IN_MODIFY, memoize, daemon, atexit, getpid, toArrayBuffer, toString, escape, quote, define, extendArray, getOpt, glob } from 'util';
-import { Console } from './quickjs/qjs-modules/lib/console.js';
-import REPL from './quickjs/qjs-modules/lib/repl.js';
-import inspect from './lib/objectInspect.js';
-import * as Terminal from './terminal.js';
 import * as fs from 'fs';
-import { setLog, logLevels, getSessions, LLL_USER, LLL_INFO, LLL_NOTICE, LLL_WARN, client, server } from 'net';
-import { DebuggerProtocol } from './debuggerprotocol.js';
-import { StartDebugger, ConnectDebugger } from './debugger.js';
-import { fcntl, F_GETFL, F_SETFL, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, Filter, FilterImages, SortFiles, StatFiles, ReadFd, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
-import { quarterDay, Time, TimeToStr, FilenameToTime, NextFile, DailyPhase, PhaseFile, DateToUnix, CurrentFile } from './adsb-common.js';
-import { GetTimes, TimesForPhase, ReadRange, StateFiles, StatePhases, GetStates, GetNearestTime, GetStateArray, GetStateIndex, DumpState, GetStateByTime, IsRange, GetRange, ResolveRange } from './adsb-store.js';
-import { LogWrap, VfnAdapter, VfnDecorator, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, GetProperties, GetKeys, MakeListCommand, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/js/rpc.js';
+import { client, LLL_INFO, LLL_USER, LLL_WARN, logLevels, createServer, setLog, getSessions } from 'net';
+import * as os from 'os';
+import { atexit, daemon, getOpt, IN_MODIFY, watch } from 'util';
+import { CurrentFile, FilenameToTime } from './adsb-common.js';
+import { DumpState, GetNearestTime, GetRange, GetStateArray, GetStateByTime, GetStateIndex, GetStates, GetTimes, IsRange, ReadRange, ResolveRange, StateFiles, StatePhases, TimesForPhase } from './adsb-store.js';
+import { ReadJSON, WriteJSON } from './io-helpers.js';
+import * as path from './lib/path.js';
+import { Console } from './quickjs/qjs-modules/lib/console.js';
+import { REPL } from './quickjs/qjs-modules/lib/repl.js';
+import * as std from 'std';
+import extendArray from 'extendArray';
 
 extendArray(Array.prototype);
 
@@ -189,7 +182,7 @@ function main(...args) {
 
     let options;
     let child, dbg;
-    let netfn = [client, server][+listen];
+    let netfn = [client, createServer][+listen];
     console.log('createWS', { url, netfn });
     return netfn(
       url,

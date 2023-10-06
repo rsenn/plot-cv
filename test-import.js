@@ -1,6 +1,4 @@
-import * as path from './lib/path.js';
 import * as bjson from 'bjson';
-
 
 function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');
@@ -12,7 +10,6 @@ function WriteFile(name, data) {
 }
 
 async function main(...args) {
-
   console.log('bjson:', bjson);
   let ffi = await import('ffi');
   console.log('ffi:', ffi);

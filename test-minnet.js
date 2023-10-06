@@ -1,6 +1,10 @@
-import { client, server, fetch, setLog, LLL_ALL } from 'net';
-import { concat, escape, quote, toString, toArrayBuffer } from './lib/misc.js';
+import { client, createServer, fetch, LLL_ALL, LLL_USER, setLog } from 'net';
+import * as os from 'os';
+import { quote, toString } from './lib/misc.js';
 import { Console } from 'console';
+setLog(LLL_USER, (level, message) => console.log('LWS', message));
+
+const console = new Console({ inspectOptions: { compact: 0, customInspect: true } });
 
 const print = (...args) => console.log(...args);
 
@@ -8,10 +12,10 @@ function CreateServer() {
   print('SERVER');
 
   setLog(LLL_ALL, (level, ...args) =>
-    console.log((['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8), ...args)
+    console.log((level ?? ['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8), ...args)
   );
 
-  server({
+  createServer({
     port: 3300,
     mounts: [
       ['/', '.', 'index.html'],
@@ -33,6 +37,10 @@ function CreateServer() {
     },
     onPong: (socket, data) => {
       print('Pong: ', data);
+    },
+    onFd(fd, rd, wr) {
+      os.setReadHandler(fd, rd);
+      os.setWriteHandler(fd, wr);
     }
   });
 }
@@ -82,7 +90,7 @@ function CreateClient() {
       std.exit(0);
     },
     onFd(fd, rd, wr) {
-      //console.log('onFd', fd, rd, wr);
+      console.log('onFd', fd, rd, wr);
       os.setReadHandler(fd, rd);
       os.setWriteHandler(fd, wr);
     }
@@ -107,8 +115,9 @@ function getJSON() {
 }
 
 function main(...args) {
-  globalThis.console = new Console({ inspectOptions: { compact: 0, customInspect: true } });
   let ws;
+
+  args[0] ??= 's';
 
   switch (args[0]) {
     case 's':
