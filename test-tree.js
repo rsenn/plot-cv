@@ -23,7 +23,6 @@ const treeObj = {
 };
 
 async function main(...args) {
-
   let tree = new Tree(treeObj);
 
   console.log('tree:', tree);

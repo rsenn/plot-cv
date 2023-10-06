@@ -18,7 +18,6 @@ Object.defineProperty(Point.prototype, 'distance', {
 });
 
 async function main(...args) {
-
   function testPointVector() {
     let pv = new Contour();
     let poly = new Contour();

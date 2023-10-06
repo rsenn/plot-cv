@@ -93,7 +93,7 @@ const allowedDirs = (globalThis.allowedDirs = new Map(
 ));
 
 function GetDir(dir) {
-  let a = dir.split(new RegExp(path.sep+'+', 'g'));
+  let a = dir.split(new RegExp(path.sep + '+', 'g'));
   let i = a.findIndex(n => /[*{}]/.test(n));
   return i != -1 ? path.slice(dir, 0, i) : dir;
 }
@@ -103,7 +103,7 @@ function DirName(name) {
 
   p = path.slice(
     p,
-    p.split(new RegExp(path.sep+'+', 'g')).findIndex(it => it != '..')
+    p.split(new RegExp(path.sep + '+', 'g')).findIndex(it => it != '..')
   );
   return p;
 }
