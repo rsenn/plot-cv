@@ -31,18 +31,27 @@ extendGenerator(Object.getPrototypeOf(new Map().keys()));
 extendAsyncGenerator();
 
 globalThis.fs = fs;
-globalThis.logFilter = /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|WRITABLE)/;
+globalThis.logFilter =
+  /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|WRITABLE)/;
 
 trkl.property(globalThis, 'logLevel').subscribe(value =>
   setLog(value, (level, message) => {
-    if(/__lws|serve_(resolved|generator|promise|response)|XXbl(\([123]\).*writable|x\([/]\).*WRITEABLE)|lws_/.test(message)) return;
+    if(
+      /__lws|serve_(resolved|generator|promise|response)|XXbl(\([123]\).*writable|x\([/]\).*WRITEABLE)|lws_/.test(
+        message
+      )
+    )
+      return;
     if(level == LLL_INFO && !/proxy/.test(message)) return;
     if(logFilter.test(message)) return;
 
     //if(params.debug || level <= LLL_WARN)
     out(
-      (['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8) +
-        message.replace(/\n/g, '\\n').replace(/\r/g, '\\r')
+      (
+        ['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][
+          Math.log2(level)
+        ] ?? level + ''
+      ).padEnd(8) + message.replace(/\n/g, '\\n').replace(/\r/g, '\\r')
     );
   })
 );
@@ -257,7 +266,10 @@ function ReadExiftool(file) {
 
 function HeifConvert(src, dst, quality = 100) {
   console.log('HeifConvert', src, dst);
-  let child = spawn('heif-convert', ['-q', quality + '', src, dst], { block: false, stdio: ['inherit', 'inherit', 'inherit'] });
+  let child = spawn('heif-convert', ['-q', quality + '', src, dst], {
+    block: false,
+    stdio: ['inherit', 'inherit', 'inherit']
+  });
 
   console.log('HeifConvert', child);
   child.wait();
@@ -270,7 +282,11 @@ function MagickResize(src, dst, rotate = 0, width, height) {
     dst,
     rotate
   });
-  let child = spawn('convert', [src, '-resize', width + 'x' + height, ...(rotate ? ['-rotate', '-' + rotate] : []), dst], { block: false });
+  let child = spawn(
+    'convert',
+    [src, '-resize', width + 'x' + height, ...(rotate ? ['-rotate', '-' + rotate] : []), dst],
+    { block: false }
+  );
 
   console.log('MagickResize', { child });
   child.wait();
@@ -309,7 +325,12 @@ function main(...args) {
   );
   if(params['no-tls'] === true) params.tls = false;
 
-  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key' } = params;
+  const {
+    address = '0.0.0.0',
+    port = 8999,
+    'ssl-cert': sslCert = 'localhost.crt',
+    'ssl-private-key': sslPrivateKey = 'localhost.key'
+  } = params;
   const listen = params.connect && !params.listen ? false : true;
   const is_server = !params.client || params.server;
 
@@ -547,8 +568,7 @@ function main(...args) {
           }
         },
         function* uploads(req, resp) {
-          if(resp && resp?.type)
-          resp.type = 'application/json';
+          if(resp && resp?.type) resp.type = 'application/json';
 
           console.log('uploads', req, resp);
           const { limit = '0,100', pretty = 0 } = req.url.query ?? {};
@@ -600,7 +620,15 @@ function main(...args) {
           console.log('*files', { req, resp, body, query });
           const data = query ?? {};
           // XXX: resp.type = 'application/json';
-          let { dirs = defaultDirs, filter = '[^.].*' ?? '.(brd|sch|G[A-Z][A-Z])$', verbose = false, objects = true, key = 'mtime', limit = null, flat = false } = data ?? {};
+          let {
+            dirs = defaultDirs,
+            filter = '[^.].*' ?? '.(brd|sch|G[A-Z][A-Z])$',
+            verbose = false,
+            objects = true,
+            key = 'mtime',
+            limit = null,
+            flat = false
+          } = data ?? {};
           let results = [];
           for(let dir of dirs) {
             let st,
@@ -747,7 +775,11 @@ function main(...args) {
         if((req.url.path ?? '').endsWith('files')) {
           return;
           //resp.type = 'application/json';
-        } else if(req.method != 'GET' && (req.headers['content-type'] == 'application/x-www-form-urlencoded' || (req.headers['content-type'] ?? '').startsWith('multipart/form-data'))) {
+        } else if(
+          req.method != 'GET' &&
+          (req.headers['content-type'] == 'application/x-www-form-urlencoded' ||
+            (req.headers['content-type'] ?? '').startsWith('multipart/form-data'))
+        ) {
           let fp,
             hash,
             tmpnam,
