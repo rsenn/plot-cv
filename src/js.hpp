@@ -80,7 +80,8 @@ struct jsatom {
   }
 
 private:
-  jsatom(JSAtom a) : _a(a) {}
+  jsatom(JSAtom a)
+      : _a(a) {}
 
   static jsatom
   create(JSAtom a) {
@@ -102,7 +103,8 @@ struct jsrt {
   bool create(JSContext* ctx = 0);
 
   jsrt() {}
-  jsrt(JSContext* c) : ctx(JS_DupContext(c)) {}
+  jsrt(JSContext* c)
+      : ctx(JS_DupContext(c)) {}
   ~jsrt();
 
   value
@@ -675,7 +677,8 @@ inline jsrt::value
 vector_to_js(jsrt& js, const T& v, size_t n, const std::function<jsrt::value(const typename T::value_type&)>& fn) {
   using std::placeholders::_1;
   jsrt::value ret = js.create_array(n);
-  for(uint32_t i = 0; i < n; i++) js.set_property(ret, i, fn(v[i]));
+  for(uint32_t i = 0; i < n; i++)
+    js.set_property(ret, i, fn(v[i]));
   return ret;
 }
 
@@ -701,7 +704,8 @@ template<class P>
 inline jsrt::value
 pointer_to_js(jsrt& js, const P* v, size_t n, const std::function<jsrt::value(const P&)>& fn) {
   jsrt::value ret = js.create_array(n);
-  for(uint32_t i = 0; i < n; i++) js.set_property(ret, i, fn(v[i]));
+  for(uint32_t i = 0; i < n; i++)
+    js.set_property(ret, i, fn(v[i]));
   return ret;
 }
 
@@ -718,7 +722,8 @@ inline jsrt::value
 vector_to_js(jsrt& js, const std::vector<P>& v, jsrt::value (*fn)(const P&)) {
   uint32_t i, n = v.size();
   jsrt::value ret = js.create_array(n);
-  for(i = 0; i < n; i++) js.set_property(ret, i, fn(v[i]));
+  for(i = 0; i < n; i++)
+    js.set_property(ret, i, fn(v[i]));
   return ret;
 }
 
@@ -903,9 +908,18 @@ protected:
 private:
   friend class jsrt;
 
-  jsiter(std::function<JSValue(uint32_t)> index, size_t len, size_t pos) : i(index), n(len), p(pos) {}
-  jsiter(jsrt& js, const JSValue& arr, size_t len) : i(js.index(arr)), n(len), p(0) {}
-  jsiter(jsrt& js, const JSValue& arr, size_t len, size_t pos) : i(js.index(arr)), n(len), p(pos) {}
+  jsiter(std::function<JSValue(uint32_t)> index, size_t len, size_t pos)
+      : i(index)
+      , n(len)
+      , p(pos) {}
+  jsiter(jsrt& js, const JSValue& arr, size_t len)
+      : i(js.index(arr))
+      , n(len)
+      , p(0) {}
+  jsiter(jsrt& js, const JSValue& arr, size_t len, size_t pos)
+      : i(js.index(arr))
+      , n(len)
+      , p(pos) {}
 };
 
 inline int32_t

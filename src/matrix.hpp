@@ -17,13 +17,31 @@ public:
 
   static const int typeId = std::is_same<T, double>::value ? CV_64F : CV_32F;
 
-  Matrix() : cv::Mat(cv::Mat::zeros(dim, dim, typeId)) { init({1, 0, 0}, {0, 1, 0}, {0, 0, 1}); }
-  Matrix(int xx, int xy, int yx, int yy, int tx, int ty) : base_type(dim, dim, typeId) { init(xx, xy, yx, yy, tx, ty); }
-  Matrix(const base_type& m) : base_type(dim, dim, typeId) { init(m); }
-  Matrix(const typed_type& m) : base_type(dim, dim, typeId) { init(m); }
-  template<class OtherT> Matrix(const OtherT& m) : base_type(dim, dim, typeId) { init(m); }
+  Matrix()
+      : cv::Mat(cv::Mat::zeros(dim, dim, typeId)) {
+    init({1, 0, 0}, {0, 1, 0}, {0, 0, 1});
+  }
+  Matrix(int xx, int xy, int yx, int yy, int tx, int ty)
+      : base_type(dim, dim, typeId) {
+    init(xx, xy, yx, yy, tx, ty);
+  }
+  Matrix(const base_type& m)
+      : base_type(dim, dim, typeId) {
+    init(m);
+  }
+  Matrix(const typed_type& m)
+      : base_type(dim, dim, typeId) {
+    init(m);
+  }
+  template<class OtherT>
+  Matrix(const OtherT& m)
+      : base_type(dim, dim, typeId) {
+    init(m);
+  }
 
-  template<class R = std::array<T, dim>> Matrix(R row0, R row1, R row2 = {0, 0, 1}) : base_type(dim, dim, typeId) {
+  template<class R = std::array<T, dim>>
+  Matrix(R row0, R row1, R row2 = {0, 0, 1})
+      : base_type(dim, dim, typeId) {
     init(row0, row1, row2);
   }
   /**
@@ -260,7 +278,8 @@ Matrix<T>::multiplicate(const Matrix<T>& matrix2) {
     std::array<T, dim>& out = product[x];
     for(int y = 0; y < dim; ++y) {
       T sum = 0;
-      for(int z = 0; z < dim; ++z) sum += matrix1[x][z] * matrix2[z][y];
+      for(int z = 0; z < dim; ++z)
+        sum += matrix1[x][z] * matrix2[z][y];
       out[y] = sum;
     }
   }
@@ -278,7 +297,8 @@ Matrix<T>::product(const Matrix<T>& other) const {
     std::array<T, dim>& row = ret[i];
     for(j = 0; j < dim; j++) {
       product = 0;
-      for(k = 0; k < dim; k++) product += row[k] * other.get(k, j);
+      for(k = 0; k < dim; k++)
+        product += row[k] * other.get(k, j);
       row[j] = product;
     }
   }

@@ -130,11 +130,15 @@ main(int argc, char** argv) {
 
 #ifdef PRINT_EXTRA
   printf("mask: ");
-  for(int i = 0; i < mask_len; i++) { putchar(mask[i]); }
+  for(int i = 0; i < mask_len; i++) {
+    putchar(mask[i]);
+  }
   putchar('\n');
 
   printf("pattern bytes: ");
-  for(int i = 0; i < pat_len; i++) { printf("\\x%02x", pat_buf[i]); }
+  for(int i = 0; i < pat_len; i++) {
+    printf("\\x%02x", pat_buf[i]);
+  }
   putchar('\n');
 #endif
 
@@ -144,7 +148,9 @@ main(int argc, char** argv) {
   } else {
     printf("found at addr: 0x%lx\n", addr);
     printf("matched bytes: ");
-    for(int i = addr; i < addr + pat_len; i++) { printf("\\x%02x", file_buf[i]); }
+    for(int i = addr; i < addr + pat_len; i++) {
+      printf("\\x%02x", file_buf[i]);
+    }
     putchar('\n');
   }
 

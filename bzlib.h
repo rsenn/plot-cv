@@ -123,25 +123,18 @@ BZ_EXTERN BZFILE* BZ_API(BZ2_bzWriteOpen)(int* bzerror, FILE* f, int blockSize10
 
 BZ_EXTERN void BZ_API(BZ2_bzWrite)(int* bzerror, BZFILE* b, void* buf, int len);
 
-BZ_EXTERN void
-    BZ_API(BZ2_bzWriteClose)(int* bzerror, BZFILE* b, int abandon, unsigned int* nbytes_in, unsigned int* nbytes_out);
+BZ_EXTERN void BZ_API(BZ2_bzWriteClose)(int* bzerror, BZFILE* b, int abandon, unsigned int* nbytes_in, unsigned int* nbytes_out);
 
-BZ_EXTERN void BZ_API(BZ2_bzWriteClose64)(int* bzerror,
-                                          BZFILE* b,
-                                          int abandon,
-                                          unsigned int* nbytes_in_lo32,
-                                          unsigned int* nbytes_in_hi32,
-                                          unsigned int* nbytes_out_lo32,
-                                          unsigned int* nbytes_out_hi32);
+BZ_EXTERN void BZ_API(BZ2_bzWriteClose64)(
+    int* bzerror, BZFILE* b, int abandon, unsigned int* nbytes_in_lo32, unsigned int* nbytes_in_hi32, unsigned int* nbytes_out_lo32, unsigned int* nbytes_out_hi32);
 #endif
 
 /*-- Utility functions --*/
 
-BZ_EXTERN int BZ_API(BZ2_bzBuffToBuffCompress)(
-    char* dest, unsigned int* destLen, char* source, unsigned int sourceLen, int blockSize100k, int verbosity, int workFactor);
+BZ_EXTERN int
+    BZ_API(BZ2_bzBuffToBuffCompress)(char* dest, unsigned int* destLen, char* source, unsigned int sourceLen, int blockSize100k, int verbosity, int workFactor);
 
-BZ_EXTERN int BZ_API(BZ2_bzBuffToBuffDecompress)(
-    char* dest, unsigned int* destLen, char* source, unsigned int sourceLen, int small, int verbosity);
+BZ_EXTERN int BZ_API(BZ2_bzBuffToBuffDecompress)(char* dest, unsigned int* destLen, char* source, unsigned int sourceLen, int small, int verbosity);
 
 /*--
    Code contributed by Yoshioka Tsuneo (tsuneo@rr.iij4u.or.jp)

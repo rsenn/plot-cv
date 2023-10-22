@@ -5,12 +5,21 @@ import { getOpt, ucfirst, randStr } from 'util';
 import { mkdir, chdir, remove, getcwd } from 'os';
 import { GerberToGcode } from './pcb-conversion.js';
 
-let outputTypes = { Top: { front: true }, Bottom: { back: true }, Measures: { side: 'outline' }, Drills: { drill: true } };
+let outputTypes = {
+  Top: { front: true },
+  Bottom: { back: true },
+  Measures: { side: 'outline' },
+  Drills: { drill: true }
+};
 let outputList = ['Top', 'Bottom', 'Measures', 'Drills'].map(n => outputTypes[n]);
 
 export function EagleToGerber(boardFile, opts = {}) {
   let {
-    layers = opts.side == 'outline' ? ['Measures'] : opts.drill ? ['Drills', 'Holes'] : [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'],
+    layers = opts.side == 'outline'
+      ? ['Measures']
+      : opts.drill
+      ? ['Drills', 'Holes']
+      : [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'],
     format = opts.drill ? 'EXCELLON' : 'GERBER_RS274X',
     data,
     fetch = false,
@@ -20,8 +29,10 @@ export function EagleToGerber(boardFile, opts = {}) {
   } = opts;
   const base = path.basename(boardFile, '.brd');
   const formatToExt = (layers, format) => {
-    if(opts.drill || format.startsWith('EXCELLON') || layers.indexOf('Drills') != -1 || layers.indexOf('Holes') != -1) return 'TXT';
-    if(layers.indexOf('Bottom') != -1 || format.startsWith('GERBER')) return opts.side == 'outline' ? 'GKO' : front ? 'GTL' : 'GBL';
+    if(opts.drill || format.startsWith('EXCELLON') || layers.indexOf('Drills') != -1 || layers.indexOf('Holes') != -1)
+      return 'TXT';
+    if(layers.indexOf('Bottom') != -1 || format.startsWith('GERBER'))
+      return opts.side == 'outline' ? 'GKO' : front ? 'GTL' : 'GBL';
 
     return 'rs274x';
   };

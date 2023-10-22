@@ -131,8 +131,7 @@ make_filename(const string& name, int count, const string& ext, const string& di
 #endif
   );
 
-  filename << dir << "/" << name << "-" << buf << "." << std::setfill('0') << std::setw(3) << msecs << "-" << std::setfill('0')
-           << std::setw(pad) << count << "." << ext;
+  filename << dir << "/" << name << "-" << buf << "." << std::setfill('0') << std::setw(3) << msecs << "-" << std::setfill('0') << std::setw(pad) << count << "." << ext;
   return filename.str();
 }
 
@@ -144,9 +143,7 @@ make_filename(const string& name, int count, const string& ext, const string& di
  * @param[in]  color_fn     The color function
  */
 void
-svg_draw_polyline(svg::Document& doc,
-                  const point_vector<float>& contour_arg,
-                  std::function<svg::Color(const point_vector<float>&)> color_fn) {
+svg_draw_polyline(svg::Document& doc, const point_vector<float>& contour_arg, std::function<svg::Color(const point_vector<float>&)> color_fn) {
   svg::Polyline polyline(svg::Stroke(1, color_fn(contour_arg)));
 
   for(size_t i = 0; i < contour_arg.size(); i++) {
@@ -226,7 +223,9 @@ brightness_and_contrast_auto(const image_type& src, image_type& dst, float clipH
     // calculate cumulative distribution from the histogram
     std::vector<float> accumulator(histSize);
     accumulator[0] = hist.at<float>(0);
-    for(int i = 1; i < histSize; i++) { accumulator[i] = accumulator[i - 1] + hist.at<float>(i); }
+    for(int i = 1; i < histSize; i++) {
+      accumulator[i] = accumulator[i - 1] + hist.at<float>(i);
+    }
 
     // locate points that cuts at required value
     float max = accumulator.back();
@@ -234,11 +233,13 @@ brightness_and_contrast_auto(const image_type& src, image_type& dst, float clipH
     clipHistPercent /= 2.0;           // left and right wings
     // locate left cut
     minGray = 0;
-    while(accumulator[minGray] < clipHistPercent) minGray++;
+    while(accumulator[minGray] < clipHistPercent)
+      minGray++;
 
     // locate right cut
     maxGray = histSize - 1;
-    while(accumulator[maxGray] >= (max - clipHistPercent)) maxGray--;
+    while(accumulator[maxGray] >= (max - clipHistPercent))
+      maxGray--;
   }
 
   // current range
@@ -299,9 +300,7 @@ template<class InputIterator>
 point_vector<int>
 to_point_vec(InputIterator start, InputIterator end) {
   point_vector<int> ret;
-  std::for_each(start, end, [&ret](const typename InputIterator::value_type& pt) {
-    ret.push_back(point_type<int>(pt.x, pt.y));
-  });
+  std::for_each(start, end, [&ret](const typename InputIterator::value_type& pt) { ret.push_back(point_type<int>(pt.x, pt.y)); });
   return ret;
 }
 
@@ -355,9 +354,7 @@ find_rectangles(const contour_vector<int>& contours, contour_vector<int>& square
 
 template<class T>
 static void
-draw_polylines(image_type& image,
-               const typename contour_list<T>::type& polylines,
-               const color_type& color = color_type(0, 255, 0)) {
+draw_polylines(image_type& image, const typename contour_list<T>::type& polylines, const color_type& color = color_type(0, 255, 0)) {
 
   cv::polylines(image, polylines, true, color, 2, cv::LINE_AA);
 }
@@ -365,7 +362,8 @@ draw_polylines(image_type& image,
 void
 invert_color(image_type& img) {
   for(int i = 0; i < img.rows; i++)
-    for(int j = 0; j < img.cols; j++) img.at<uchar>(i, j) = 255 - img.at<uchar>(i, j);
+    for(int j = 0; j < img.cols; j++)
+      img.at<uchar>(i, j) = 255 - img.at<uchar>(i, j);
 }
 
 /*
@@ -418,16 +416,9 @@ hough_lines(image_type& img, const std::function<void(int, int, int, int)>& fn) 
 
 template<class InputIterator>
 void
-draw_lines(image_type& target,
-           InputIterator start,
-           InputIterator end,
-           const cv::Scalar& color,
-           int thickness = 1,
-           int lineType = cv::LINE_8) {
+draw_lines(image_type& target, InputIterator start, InputIterator end, const cv::Scalar& color, int thickness = 1, int lineType = cv::LINE_8) {
 
-  std::for_each(start, end, [target, color, thickness, lineType](const Line<int>& line) {
-    cv::line(target, line.a, line.b, color, thickness, lineType);
-  });
+  std::for_each(start, end, [target, color, thickness, lineType](const Line<int>& line) { cv::line(target, line.a, line.b, color, thickness, lineType); });
 }
 
 void
@@ -444,20 +435,12 @@ draw_lines(image_type& target,
 }
 
 void
-draw_lines(image_type& target,
-           const std::vector<Line<int>>& lines,
-           const cv::Scalar& color,
-           int thickness = 1,
-           int lineType = cv::LINE_8) {
+draw_lines(image_type& target, const std::vector<Line<int>>& lines, const cv::Scalar& color, int thickness = 1, int lineType = cv::LINE_8) {
   draw_lines(target, lines.cbegin(), lines.cend(), color, thickness, lineType);
 }
 
 void
-draw_lines(image_type& target,
-           const std::vector<cv::Vec4i>& lines,
-           const cv::Scalar& color,
-           int thickness = 1,
-           int lineType = cv::LINE_8) {
+draw_lines(image_type& target, const std::vector<cv::Vec4i>& lines, const cv::Scalar& color, int thickness = 1, int lineType = cv::LINE_8) {
   return draw_lines(target, lines.cbegin(), lines.cend(), color, thickness, lineType);
 }
 
@@ -497,7 +480,9 @@ contour_detect(const image_type& input, image_type& drawing) {
     }
   }
   std::vector<std::vector<point_type<int>>> contoursDraw(contoursCleaned.size());
-  for(int i = 0; i < contoursArea.size(); i++) { cv::approxPolyDP(cv::Mat(contoursArea[i]), contoursDraw[i], 40, true); }
+  for(int i = 0; i < contoursArea.size(); i++) {
+    cv::approxPolyDP(cv::Mat(contoursArea[i]), contoursDraw[i], 40, true);
+  }
   //  Mat drawing = cv::Mat::zeros(mat.size(), CV_8UC3);
   cv::drawContours(drawing, contoursDraw, -1, cv::Scalar(0, 255, 0), 1);
 }
@@ -593,8 +578,11 @@ get_alpha_channel(image_type m) {
 
 void
 image_info(image_type img) {
-  std::cerr << "image cols=" << img.cols << " rows=" << img.rows << " channels=" << img.channels()
-            << " depth=" << (img.depth() == CV_8U ? "CV_8U" : img.depth() == CV_32F ? "CV_32F" : "CV_??") << std::endl;
+  std::cerr << "image cols=" << img.cols << " rows=" << img.rows << " channels=" << img.channels() << " depth="
+            << (img.depth() == CV_8U    ? "CV_8U"
+                : img.depth() == CV_32F ? "CV_32F"
+                                        : "CV_??")
+            << std::endl;
 }
 
 JSValue
@@ -605,8 +593,7 @@ vec4i_to_js(const cv::Vec4i& v) {
 template<>
 JSValue
 points_to_js<point_type<int>>(const std::vector<point_type<int>>& v) {
-  std::function<JSValue(const point_type<int>&)> fn(
-      [](const point_type<int>& point) -> JSValue { return js.create_point(point.x, point.y); });
+  std::function<JSValue(const point_type<int>&)> fn([](const point_type<int>& point) -> JSValue { return js.create_point(point.x, point.y); });
   return vector_to_js(js, v, fn);
 }
 
@@ -614,7 +601,9 @@ jsrt::value
 contours_to_array(JSContext* ctx, const contour_vector<int>& contours) {
   JSValue ret = JS_NewArray(ctx);
   uint32_t i, n = contours.size();
-  for(i = 0; i < n; i++) { JS_SetPropertyUint32(ctx, ret, i, js_contour_new(ctx, contours[i])); }
+  for(i = 0; i < n; i++) {
+    JS_SetPropertyUint32(ctx, ret, i, js_contour_new(ctx, contours[i]));
+  }
   return ret;
 }
 
@@ -650,8 +639,7 @@ process_raster(std::function<void(std::string, cv::Mat*)> display_image, int sho
   cv::morphologyEx(imgCanny,
                    imgMorphology,
                    config.morphology_operator ? cv::MORPH_DILATE : cv::MORPH_CLOSE,
-                   cv::getStructuringElement(cv::MORPH_ELLIPSE,
-                                             cv::Size(config.morphology_kernel_size + 1, config.morphology_kernel_size + 1)));
+                   cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(config.morphology_kernel_size + 1, config.morphology_kernel_size + 1)));
 
   cv::cvtColor(imgBlurred, imgBlurred, cv::COLOR_GRAY2BGR);
   /*
@@ -660,9 +648,7 @@ process_raster(std::function<void(std::string, cv::Mat*)> display_image, int sho
      houghLines.push_back(Line<int>(x1, y1, x2, y2));
    });*/
 
-  corner_harris_detection(imgGrayscale, [&](const point_type<int>& pt) {
-    cv::circle(imgCanny, pt, 10, cv::Scalar(0, 255, 0, 255), 2, cv::LINE_8);
-  });
+  corner_harris_detection(imgGrayscale, [&](const point_type<int>& pt) { cv::circle(imgCanny, pt, 10, cv::Scalar(0, 255, 0, 255), 2, cv::LINE_8); });
 
   if(show_diagnostics)
     image_info(imgMorphology);
@@ -686,10 +672,8 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
   std::vector<cv::Vec4i> hier;
   //  apply_clahe(imgOriginal, imgOriginal);XY
   (morphology_enable > 1) ? imgMorphology.copyTo(imgRaw) : imgCanny.copyTo(imgRaw);
-  std::vector<point_vector<int>> contours =
-      get_contours((morphology_enable > 1) ? imgMorphology : imgCanny, hier, CV_RETR_TREE);
-  std::vector<point_vector<int>> external =
-      get_contours(morphology_enable > 1 ? imgMorphology : imgCanny, hier, CV_RETR_EXTERNAL);
+  std::vector<point_vector<int>> contours = get_contours((morphology_enable > 1) ? imgMorphology : imgCanny, hier, CV_RETR_TREE);
+  std::vector<point_vector<int>> external = get_contours(morphology_enable > 1 ? imgMorphology : imgCanny, hier, CV_RETR_EXTERNAL);
   draw_all_contours(imgGrayscale, external, 1);
 
   // imgMorphology.convertTo(imgMorphology, CV_32SC1);
@@ -835,46 +819,29 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
         auto it = min_element(distances.begin(), distances.end());
         int min = *it;
 
-        std::transform(adjacent.begin(), adjacent.end(), back_inserter(adjacent_lines), [&](int index) -> Line<float>* {
-          return &lines[index];
-        });
+        std::transform(adjacent.begin(), adjacent.end(), back_inserter(adjacent_lines), [&](int index) -> Line<float>* { return &lines[index]; });
 
-        std::vector<int> parallel = filter_lines(lines.begin(), lines.end(), [&line](Line<float>& l2, size_t) {
-          return fabs((line.angle() - l2.angle()) * 180 / M_PI) < 3;
-        });
+        std::vector<int> parallel =
+            filter_lines(lines.begin(), lines.end(), [&line](Line<float>& l2, size_t) { return fabs((line.angle() - l2.angle()) * 180 / M_PI) < 3; });
         /*
                   logfile << "adjacent " << adjacent << std::endl;
                   logfile << "parallel " << parallel << std::endl;
         */
         distances.clear();
-        std::transform(adjacent_lines.begin(),
-                       adjacent_lines.end(),
-                       back_inserter(distances),
-                       [&line](Line<float>* l2) -> float { return line.minDistance(*l2); });
-        std::transform(adjacent_lines.begin(),
-                       adjacent_lines.end(),
-                       back_inserter(line_ends),
-                       [&line](Line<float>* l2) -> LineEnd<float> {
-                         LineEnd<float> end;
-                         line.nearestEnd(*l2, end);
-                         return end;
-                       });
+        std::transform(adjacent_lines.begin(), adjacent_lines.end(), back_inserter(distances), [&line](Line<float>* l2) -> float { return line.minDistance(*l2); });
+        std::transform(adjacent_lines.begin(), adjacent_lines.end(), back_inserter(line_ends), [&line](Line<float>* l2) -> LineEnd<float> {
+          LineEnd<float> end;
+          line.nearestEnd(*l2, end);
+          return end;
+        });
         angleoffs.clear();
-        std::transform(adjacent_lines.begin(),
-                       adjacent_lines.end(),
-                       back_inserter(angleoffs),
-                       [&line](Line<float>* l2) -> float { return line.angleDiff(*l2); });
+        std::transform(adjacent_lines.begin(), adjacent_lines.end(), back_inserter(angleoffs), [&line](Line<float>* l2) -> float { return line.angleDiff(*l2); });
         std::vector<int> angleoffs_i;
 
-        std::transform(angleoffs.begin(), angleoffs.end(), back_inserter(angleoffs_i), [](const float ang) -> int {
-          return int(ang * 180 / M_PI) % 180;
-        });
+        std::transform(angleoffs.begin(), angleoffs.end(), back_inserter(angleoffs_i), [](const float ang) -> int { return int(ang * 180 / M_PI) % 180; });
 
         point_vector<int> centers;
-        std::transform(adjacent_lines.begin(),
-                       adjacent_lines.end(),
-                       back_inserter(centers),
-                       [](Line<float>* line) -> point_type<int> { return line->center(); });
+        std::transform(adjacent_lines.begin(), adjacent_lines.end(), back_inserter(centers), [](Line<float>* line) -> point_type<int> { return line->center(); });
 
         Matrix<double> rot = Matrix<double>::rotation(-line.angle());
 
@@ -972,14 +939,8 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
   }
 
   {
-    point_vector<float> src = {point_type<float>(50, 50),
-                               point_type<float>(100, 50),
-                               point_type<float>(100, 100),
-                               point_type<float>(50, 100)};
-    point_vector<float> dst = {point_type<float>(100, 0),
-                               point_type<float>(150, 0),
-                               point_type<float>(150, 50),
-                               point_type<float>(100, 50)};
+    point_vector<float> src = {point_type<float>(50, 50), point_type<float>(100, 50), point_type<float>(100, 100), point_type<float>(50, 100)};
+    point_vector<float> dst = {point_type<float>(100, 0), point_type<float>(150, 0), point_type<float>(150, 50), point_type<float>(100, 50)};
     image_type perspective = cv::getPerspectiveTransform(src, dst);
     logfile << "perspective:" << perspective << std::endl;
   }

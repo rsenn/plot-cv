@@ -23,7 +23,9 @@ processDoc(xmlTextReaderPtr readerPtr) {
   const xmlChar* URL;
 
   ret = xmlTextReaderRead(readerPtr);
-  while(ret == 1) { ret = xmlTextReaderRead(readerPtr); }
+  while(ret == 1) {
+    ret = xmlTextReaderRead(readerPtr);
+  }
 
   /*
    * One can obtain the document pointer to get interesting

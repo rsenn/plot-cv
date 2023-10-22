@@ -19,7 +19,11 @@ export function EagleToGerber(boardFile, opts = {}) {
   console.log('convertToGerber', { boardFile, opts });
 
   let {
-    layers = opts.side == 'outline' ? ['Measures'] : opts.drill ? ['Drills', 'Holes'] : [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'],
+    layers = opts.side == 'outline'
+      ? ['Measures']
+      : opts.drill
+      ? ['Drills', 'Holes']
+      : [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'],
     format = opts.drill ? 'EXCELLON' : 'GERBER_RS274X',
     data,
     fetch = false,
@@ -31,8 +35,10 @@ export function EagleToGerber(boardFile, opts = {}) {
   const base = path.basename(boardFile, '.brd');
 
   const formatToExt = (layers, format) => {
-    if(opts.drill || format.startsWith('EXCELLON') || layers.indexOf('Drills') != -1 || layers.indexOf('Holes') != -1) return 'TXT';
-    if(layers.indexOf('Bottom') != -1 || format.startsWith('GERBER')) return opts.side == 'outline' ? 'GKO' : front ? 'GTL' : 'GBL';
+    if(opts.drill || format.startsWith('EXCELLON') || layers.indexOf('Drills') != -1 || layers.indexOf('Holes') != -1)
+      return 'TXT';
+    if(layers.indexOf('Bottom') != -1 || format.startsWith('GERBER'))
+      return opts.side == 'outline' ? 'GKO' : front ? 'GTL' : 'GBL';
 
     return 'rs274x';
   };
@@ -63,7 +69,7 @@ export function GerberToGcode(gerberFile, allOpts = {}) {
     'cut-feed': 200,
     'cut-speed': 10000,
     'cut-infeed': '1mm',
-        ...opts
+    ...opts
   };
 
   if(opts.front == undefined && opts.back == undefined && opts.drill == undefined) opts.back = gerberFile;
@@ -77,7 +83,7 @@ export function GerberToGcode(gerberFile, allOpts = {}) {
 
   if(opts.voronoi && !opts.vectorial) opts.vectorial = 1;
 
-//  console.debug(`gerberToGcode`, opts);
+  //  console.debug(`gerberToGcode`, opts);
   function makePath(ext, side, base = basename) {
     return path.join(opts['output-dir'], `${base}_${side}.${ext}`);
   }

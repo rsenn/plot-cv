@@ -209,7 +209,8 @@ main(void) {
     printf("Could not allocate record array.\n");
     goto done;
   }
-  for(i = 0; i < numSamples; i++) data.recordedSamples[i] = 0;
+  for(i = 0; i < numSamples; i++)
+    data.recordedSamples[i] = 0;
 
   err = Pa_Initialize();
   if(err != paNoError)
@@ -322,7 +323,8 @@ main(void) {
     printf("Waiting for playback to finish.\n");
     fflush(stdout);
 
-    while((err = Pa_IsStreamActive(stream)) == 1) Pa_Sleep(100);
+    while((err = Pa_IsStreamActive(stream)) == 1)
+      Pa_Sleep(100);
     if(err < 0)
       goto done;
 

@@ -71,9 +71,7 @@ extern "C" image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, img
 void image_info(image_type img);
 std::vector<point_vector<int>> get_contours(image_type src, std::vector<cv::Vec4i>& hierarchy, int flag = CV_RETR_TREE);
 
-void svg_draw_polyline(svg::Document& doc,
-                       const point_vector<float>& contour_arg,
-                       std::function<svg::Color(const point_vector<float>&)> color_fn);
+void svg_draw_polyline(svg::Document& doc, const point_vector<float>& contour_arg, std::function<svg::Color(const point_vector<float>&)> color_fn);
 
 struct config_values {
   int morphology_kernel_size;
@@ -173,9 +171,7 @@ out_points(O& os, const point_vector<int>& pl) {
 template<class Container>
 inline void
 draw_all_lines(
-    image_type& out, const Container& lines, const std::function<int(int, size_t)>& hue = [](int index, size_t len) -> int {
-      return (index * 360 * 10 / len) % 360;
-    }) {
+    image_type& out, const Container& lines, const std::function<int(int, size_t)>& hue = [](int index, size_t len) -> int { return (index * 360 * 10 / len) % 360; }) {
   for(typename Container::const_iterator it = lines.begin(); it != lines.end(); it++) {
     size_t i = std::distance(lines.begin(), it);
     const color_type color = hsv_to_rgb(hue(i, lines.size()), 1.0, 1.0);
@@ -198,13 +194,10 @@ svg_export_file(const std::vector<std::vector<cv::Point_<T>>>& contours, std::st
   svg::Document doc(output_file, svg::Layout(dimensions, svg::Layout::TopLeft));
   svg::LineChart chart(5.0);
   std::vector<double> areas;
-  std::transform(contours.begin(),
-                 contours.end(),
-                 std::back_inserter(areas),
-                 [](const std::vector<cv::Point_<T>>& contour) -> double {
-                   point_vector<float> vec = contour;
-                   return cv::contourArea(vec);
-                 });
+  std::transform(contours.begin(), contours.end(), std::back_inserter(areas), [](const std::vector<cv::Point_<T>>& contour) -> double {
+    point_vector<float> vec = contour;
+    return cv::contourArea(vec);
+  });
   const auto& it = std::max_element(areas.begin(), areas.end());
   double max_area = 0;
   if(it != areas.end()) {

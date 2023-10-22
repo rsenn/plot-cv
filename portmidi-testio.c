@@ -71,7 +71,9 @@ main_test_input(unsigned int somethingStupid) {
   Pm_SetFilter(midi, PM_FILT_ACTIVE | PM_FILT_CLOCK | PM_FILT_SYSEX);
   /* empty the buffer after setting filter, just in case anything
      got through */
-  while(Pm_Poll(midi)) { Pm_Read(midi, buffer, 1); }
+  while(Pm_Poll(midi)) {
+    Pm_Read(midi, buffer, 1);
+  }
   /* now start paying attention to messages */
   i = 0; /* count messages as they arrive */
   while(i < num) {
@@ -126,8 +128,7 @@ main_test_output(int isochronous_test) {
      when latency is zero, we will pass in a NULL timer pointer
      for that case. If PortMidi tries to access the time_proc,
      we will crash, so this test will tell us something. */
-  Pm_OpenOutput(
-      &midi, i, DRIVER_INFO, OUTPUT_BUFFER_SIZE, (latency == 0 ? NULL : TIME_PROC), (latency == 0 ? NULL : TIME_INFO), latency);
+  Pm_OpenOutput(&midi, i, DRIVER_INFO, OUTPUT_BUFFER_SIZE, (latency == 0 ? NULL : TIME_PROC), (latency == 0 ? NULL : TIME_INFO), latency);
   printf("Midi Output opened with %ld ms latency.\n", (long)latency);
 
   /* output note on/off w/latency offset; hold until user prompts */
@@ -166,7 +167,9 @@ main_test_output(int isochronous_test) {
       // sleep for a random time up to 100ms to add jitter to
       // the times at which we send messages. PortMidi timing
       // should remove the jitter if latency > 100
-      while(Pt_Time() < next_time) { Pt_Sleep(rand() % 100); }
+      while(Pt_Time() < next_time) {
+        Pt_Sleep(rand() % 100);
+      }
     }
     printf("Done sending 80 notes at 4 notes per second.\n");
   } else {
@@ -207,7 +210,8 @@ main_test_output(int isochronous_test) {
     Pm_Write(midi, buffer, chord_size);
 
     off_time = timestamp + 1000 + chord_size * 1000;
-    while(Pt_Time() < off_time) Pt_Sleep(10); /* wait */
+    while(Pt_Time() < off_time)
+      Pt_Sleep(10); /* wait */
     for(i = 0; i < chord_size; i++) {
       buffer[i].timestamp = timestamp + 1000 * i;
       buffer[i].message = Pm_Message(0x90, chord[i], 0);
@@ -247,7 +251,9 @@ main_test_both() {
   Pm_SetFilter(midi, PM_FILT_ACTIVE | PM_FILT_CLOCK);
   /* empty the buffer after setting filter, just in case anything
      got through */
-  while(Pm_Poll(midi)) { Pm_Read(midi, buffer, 1); }
+  while(Pm_Poll(midi)) {
+    Pm_Read(midi, buffer, 1);
+  }
   i = 0;
   while(i < num) {
     status = Pm_Poll(midi);
@@ -347,7 +353,8 @@ main_test_stream() {
   }
   Pm_Write(midi, buffer, 8);
 
-  while(Pt_Time() < now + 2500) Pt_Sleep(10);
+  while(Pt_Time() < now + 2500)
+    Pt_Sleep(10);
   /* now we are 500 ms behind schedule, but since the latency
      is 500, the delay should not be audible */
   now += 2000;

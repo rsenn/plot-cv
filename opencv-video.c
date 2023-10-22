@@ -103,16 +103,8 @@ main(int argc, char* argv[]) {
   printf("-----------------------------");
 
   struct SwsContext* img_convert_ctx;
-  img_convert_ctx = sws_getContext(pCodecCtx->width,
-                                   pCodecCtx->height,
-                                   pCodecCtx->pix_fmt,
-                                   pCodecCtx->width,
-                                   pCodecCtx->height,
-                                   AV_PIX_FMT_BGR24,
-                                   SWS_BICUBIC,
-                                   NULL,
-                                   NULL,
-                                   NULL);
+  img_convert_ctx =
+      sws_getContext(pCodecCtx->width, pCodecCtx->height, pCodecCtx->pix_fmt, pCodecCtx->width, pCodecCtx->height, AV_PIX_FMT_BGR24, SWS_BICUBIC, NULL, NULL, NULL);
 
   // opencv
   cv::Mat pCvMat;
@@ -142,13 +134,7 @@ main(int argc, char* argv[]) {
           return -1;
         }
         // YUV to RGB
-        sws_scale(img_convert_ctx,
-                  (const uint8_t* const*)videoFrame->data,
-                  videoFrame->linesize,
-                  0,
-                  pCodecCtx->height,
-                  pFrameBGR->data,
-                  pFrameBGR->linesize);
+        sws_scale(img_convert_ctx, (const uint8_t* const*)videoFrame->data, videoFrame->linesize, 0, pCodecCtx->height, pFrameBGR->data, pFrameBGR->linesize);
 
         memcpy(pCvMat.data, out_buffer, size);
 

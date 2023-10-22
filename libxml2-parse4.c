@@ -75,7 +75,9 @@ example4Func(const char* filename) {
    * at a time is not realistic but allows to verify testing on small
    * documents.
    */
-  while((res = readPacket(chars, 4)) > 0) { xmlParseChunk(ctxt, chars, res, 0); }
+  while((res = readPacket(chars, 4)) > 0) {
+    xmlParseChunk(ctxt, chars, res, 0);
+  }
 
   /*
    * there is no more input, indicate the parsing is finished.
