@@ -547,7 +547,9 @@ function main(...args) {
           }
         },
         function* uploads(req, resp) {
+          if(resp && resp?.type)
           resp.type = 'application/json';
+
           console.log('uploads', req, resp);
           const { limit = '0,100', pretty = 0 } = req.url.query ?? {};
           let [start, end] = limit.split(/,/g).map(s => +s);
