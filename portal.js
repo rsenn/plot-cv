@@ -1,4 +1,5 @@
 import { Component, h, render } from './lib/dom/preactComponent.js';
+
 /** Redirect rendering of descendants into the given CSS selector.
  *  @example
  *    <Portal into="body">

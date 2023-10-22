@@ -4,6 +4,7 @@ import * as path from './lib/path.js';
 import Console from 'console';
 import * as cv from 'opencv';
 import * as std from 'std';
+
 function main(...args) {
   //std.print("TEST PRINT\n");
   globalThis.console = new Console({

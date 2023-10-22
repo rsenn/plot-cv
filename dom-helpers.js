@@ -57,13 +57,11 @@ export function iterateTree(root, whatToShow = -1, filter /* = { acceptNode: () 
         parent = this.parents.pop();
         if(parent !== node) console.log('parent =', this.parent, 'node =', node);
       }
-
     },
     [Symbol.iterator]() {
       return;
       this;
     }
-
   };
   return ret;
 }

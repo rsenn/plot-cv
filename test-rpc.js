@@ -16,6 +16,7 @@ import { Console } from 'console';
 import { toString } from 'misc';
 import require from 'require';
 import * as std from 'std';
+
 globalThis.fs = fs;
 
 function main(...args) {

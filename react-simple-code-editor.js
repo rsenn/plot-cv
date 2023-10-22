@@ -1,4 +1,5 @@
 import * as React from './lib/dom/preactComponent.js';
+
 function _extends() {
   _extends =
     Object.assign ||

@@ -1,4 +1,5 @@
 import { Element } from './lib/dom/element.js';
+
 (function () {
   'use strict';
 

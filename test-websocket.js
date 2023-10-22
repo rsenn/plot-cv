@@ -1,6 +1,7 @@
 import WebSocket from 'ws';
 import WebSocketAsync from './lib/net/websocket-async.js';
 import { Message } from './message.js';
+
 async function main() {
   console.log('WebSocket:', WebSocket, Util.isConstructor(WebSocket));
 

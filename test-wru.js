@@ -1,4 +1,5 @@
 import wru from './lib/wru.js';
+
 wru.test([
   {
     name: 'basic',

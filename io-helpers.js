@@ -1,6 +1,7 @@
 import { spawn } from 'child_process';
 import { closeSync, readFileSync, statSync, writeFileSync, readSync } from 'fs';
 import { define, error, toString } from './lib/misc.js';
+
 let xml;
 
 //import('xml') .then(m => (xml = m)) .catch(() => {});

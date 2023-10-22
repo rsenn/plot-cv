@@ -3,6 +3,7 @@ import * as path from './lib/path.js';
 import tXml from './lib/tXml.js';
 import * as zlib from './quickjs/qjs-ffi/examples/zlib.js';
 import * as ffi from 'ffi';
+
 let prng = new Alea().seed(Date.now());
 
 /*class Uint64 {

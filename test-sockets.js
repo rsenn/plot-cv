@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import { escape, toString } from 'util';
 import { Console } from 'console';
 import { AF_INET, AsyncSocket, IPPROTO_TCP, SOCK_STREAM, SockAddr } from 'sockets';
+
 globalThis.fs = fs;
 
 async function main(...args) {

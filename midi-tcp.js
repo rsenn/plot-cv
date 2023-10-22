@@ -4,26 +4,8 @@ import { MIDIEvent, MIDIStream } from './lib/midi.js';
 import { quote } from './lib/misc.js';
 import { Console } from 'console';
 import * as std from 'std';
-/*const MIDI_NOTE_OFF = 0x80;
 
-const MIDI_NOTE_ON = 0x90;
-const MIDI_POLYPHONIC_KEY_PRESSURE = 0xA0;
-const MIDI_CONTROL_CHANGE = 0xB0;
-const MIDI_PROGRAM_CHANGE = 0xC0;
-const MIDI_CHANNEL_PRESSURE = 0xD0;
-const MIDI_PITCH_BEND = 0xE0;
-const MIDI_SYSEX = 0xf0;
-const MIDI_SONG_POSITION = 0xf2;
-const MIDI_SONG_SELECT = 0xf3;
-const MIDI_TUNE_REQUEST = 0xf6;
-const MIDI_EOX = 0xf7;
-const MIDI_TIMING_CLOCK = 0xf8;
-const MIDI_START = 0xfa;
-const MIDI_CONTINUE = 0xfb;
-const MIDI_STOP = 0xfc;
-const MIDI_ACTIVE_SENSING = 0xfe;
-const MIDI_RESET = 0xff
-*/
+/*const MIDI_NOTE_OFF = 0x80;
 /* MIDIMessageLength -- how many bytes in a message? */
 function MIDIMessageLength(byte) {
   byte &= 0xff;

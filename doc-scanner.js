@@ -1,6 +1,7 @@
 import { HSLA } from './lib/color/hsla.js';
 import { Console } from 'console';
 import { approxPolyDP, arcLength, Canny, CHAIN_APPROX_SIMPLE, COLOR_BGR2GRAY, COLOR_GRAY2BGR, Contour, contourArea, cvtColor, dilate, drawCircle, drawContours, FILLED, findContours, FONT_HERSHEY_PLAIN, GaussianBlur, getPerspectiveTransform, getStructuringElement, imread, imshow, imwrite, Mat, MORPH_RECT, Point, putText, Rect, RETR_EXTERNAL, Size, waitKey, warpPerspective } from 'opencv';
+
 let imgOriginal,
   imgGray = new Mat(),
   imgCanny = new Mat(),

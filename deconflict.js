@@ -1,4 +1,5 @@
 import { ReadFile, WriteFile } from './io-helpers.js';
+
 function deconflict(s) {
   const re = /<<<<<<< ([^\r\n]*)\r?\n|=======\r?\n|>>>>>>> ([^\r\n]*)\r?\n/gm;
 

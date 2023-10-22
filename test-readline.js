@@ -1,5 +1,6 @@
 import * as rl from './readline.js';
 import { Console } from 'console';
+
 function hex(num) {
   return '0x' + ('0000000' + num.toString(16)).slice(-16);
 }

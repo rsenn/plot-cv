@@ -15,6 +15,7 @@ import Console from 'console';
 import * as cv from 'opencv';
 import process from 'process';
 import * as std from 'std';
+
 let rainbow;
 let zoom = 1;
 let debug = false;

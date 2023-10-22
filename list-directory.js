@@ -3,6 +3,7 @@ import { Element } from './lib/dom/element.js';
 import { Fragment, h, options, render } from './lib/dom/preactComponent.js';
 import * as path from './lib/path.js';
 import { callHandler, Connection, DefaultConstructor, define, DeserializeSymbols, DeserializeValue, EventLogger, GetKeys, GetProperties, getPropertyDescriptors, getPrototypeName, hasHandler, isThenable, LogWrap, MakeListCommand, Mapper, MessageReceiver, MessageTransceiver, MessageTransmitter, objectCommand, parseURL, RPCApi, RPCClient, RPCConnect, RPCFactory, RPCListen, RPCObject, RPCProxy, RPCServer, RPCSocket, SerializeValue, setHandlers, statusResponse, VfnAdapter, VfnDecorator } from './quickjs/qjs-net/js/rpc.js';
+
 Object.assign(globalThis, {
   callHandler,
   Connection,

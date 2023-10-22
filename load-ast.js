@@ -3,6 +3,7 @@ import { Worker } from 'os';
 import { gettid, toString } from 'util';
 import { Spawn } from './os-helpers.js';
 import { Console } from 'console';
+
 globalThis.console = new Console({
   inspectOptions: {
     compact: 2,

@@ -2,6 +2,7 @@ import * as path from 'path';
 import { ReadFile, WriteFile } from './io-helpers.js';
 import { Console } from 'console';
 import { parseScript } from 'meriyah';
+
 function main(...args) {
   globalThis.console = new Console({
     stdout: process.stdout,

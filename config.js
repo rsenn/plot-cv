@@ -1,6 +1,7 @@
 import { ReadFile, WriteFile } from './io-helpers.js';
 import { memoize } from './lib/misc.js';
 import process from 'process';
+
 let basename = memoize(() => process.argv[1].replace(/\.js$/, ''));
 
 export function SaveConfig(configObj) {

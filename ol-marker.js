@@ -3,6 +3,7 @@ import { Feature } from './openlayers/src/ol/index.js';
 import { fromLonLat } from './openlayers/src/ol/proj.js';
 import { Vector } from './openlayers/src/ol/source.js';
 import { Icon, Style } from './openlayers/src/ol/style.js';
+
 function CreateMarker(coord) {
   const [lon, lat] = coord;
   /*

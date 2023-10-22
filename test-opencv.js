@@ -8,6 +8,7 @@ import * as glfw from 'glfw';
 import * as nvg from 'nanovg';
 import * as cv from 'opencv';
 import * as std from 'std';
+
 let basename = scriptArgs[0].replace(/\.js$/, '');
 
 const RAD2DEG = 180 / Math.PI;

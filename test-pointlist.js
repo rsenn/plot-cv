@@ -1,8 +1,8 @@
 import { Point, PointList, Rect } from './lib/geom.js';
 import { className } from './lib/misc.js';
 import inspect from 'inspect';
-let points = new PointList(
-  [
+
+let points = new PointList(  [
     new Point(536, 478),
     new Point(516, 673),
     new Point(492, 606),
@@ -31,6 +31,7 @@ let points = new PointList(
   ],
   Uint32Array
 );
+
 console.log('points:', points);
 
 console.log('points:', className(points));

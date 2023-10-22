@@ -1,4 +1,5 @@
 import { call, debug, define, dlclose, dlerror, dlopen, dlsym, errno, JSContext, RTLD_DEFAULT, RTLD_NOW, toArrayBuffer, toString } from 'ffi';
+
 /* test.js
  *
  * Test harness for JavaScript ffi

@@ -1,7 +1,5 @@
 import { Util } from './lib/util.js';
-/*console.log(Util.escape(read('/proc/self/cmdline')));
-console.log(Util.escape(read('/etc/hosts')));*/
-//console.log(globalThis.options());
+
 async function main(...args) {
   function test(arg) {
     console.log('function test', { arg });

@@ -13,6 +13,7 @@ import { RepeaterSink } from './lib/stream/utils.js';
 import Tree from './lib/tree.js';
 import { Console } from 'console';
 import inspect from 'inspect';
+
 let childProcess, search, files;
 let node2path, flat, value, list;
 

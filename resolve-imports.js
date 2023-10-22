@@ -1,32 +1,15 @@
+#!/usr/bin/env qjsm
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { camelize } from 'util';
-import { curry } from 'util';
-import { define } from 'util';
-import { escape } from 'util';
-import { extendArray } from 'util';
-import { getOpt } from 'util';
-import { getset } from 'util';
-import { getTypeName } from 'util';
-import { isObject } from 'util';
-import { memoize } from 'util';
-import { quote } from 'util';
-import { randInt } from 'util';
-import { split } from 'util';
-import { toArrayBuffer } from 'util';
-import { toString } from 'util';
-import { types } from 'util';
-import { unique } from 'util';
-import { ReadFile } from './io-helpers.js';
-import { WriteFile } from './io-helpers.js';
+import { camelize, curry, define, escape, extendArray, getOpt, getset, getTypeName, isObject, memoize, quote, randInt, split, toArrayBuffer, toString, types, unique } from 'util';
+import { ReadFile, WriteFile } from './io-helpers.js';
 import { Console } from 'console';
 import inspect from 'inspect';
-import { Lexer } from 'lexer';
-import { Token } from 'lexer';
+import { Lexer, Token } from 'lexer';
 import ECMAScriptLexer from 'lib/lexer/ecmascript.js';
 import * as std from 'std';
-#!/usr/bin/env qjsm
+
 ('use strict');
 ('use math');
 

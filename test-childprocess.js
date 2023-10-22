@@ -1,6 +1,7 @@
 import child_process from 'child_process';
 import { bufferToString, closeSync, readSync } from 'fs';
 import { Repeater } from './lib/repeater/repeater.js';
+
 let childProcess;
 
 function waitRead(file) {

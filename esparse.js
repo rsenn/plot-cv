@@ -6,6 +6,7 @@ import { CallExpression, ImportDeclaration } from './lib/ecmascript/estree.js';
 import { ECMAScriptParser } from './lib/ecmascript/parser.js';
 import Tree from './lib/tree.js';
 import { Console } from 'console';
+
 function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;

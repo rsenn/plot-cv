@@ -11,6 +11,7 @@ import * as path from './lib/path.js';
 import tXml from './lib/tXml.js';
 import { XPath } from './lib/xml.js';
 import inspect from 'inspect';
+
 let prng = new Alea().seed(Date.now());
 
 function readXML(filename) {

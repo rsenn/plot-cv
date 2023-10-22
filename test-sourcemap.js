@@ -1,5 +1,6 @@
-import { SourceMap } from './lib/sourceMap.js';
 //prettier-ignore
+import { SourceMap } from './lib/sourceMap.js';
+
 let filesystem;
 
 async function main(...args) {

@@ -1,4 +1,5 @@
 import * as cv from 'opencv';
+
 let filesystem;
 
 async function main(...args) {

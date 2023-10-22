@@ -1,4 +1,5 @@
 import { any, char, choice, invert, many, option, regex, seq, token } from './lib/parse/fn.js';
+
 function wrap(parser, name) {
   return (str, pos) => {
     console.log(`${name}(#${str.length}, ${pos})`);

@@ -1,5 +1,4 @@
-let filesystem;
-let globalThis;
+let filesystem, globalThis;
 
 main(...scriptArgs.slice(1));
   let { message, stack } = error;

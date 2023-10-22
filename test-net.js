@@ -1,5 +1,6 @@
 import { fetch } from 'net.so';
 import { Alea } from './lib/alea.js';
+
 let prng = new Alea(Date.now());
 
 function main(...args) {

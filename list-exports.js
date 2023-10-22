@@ -4,6 +4,7 @@ import { camelize, curry, define, escape, extendArray, split, toString, unique }
 import JSLexer from './quickjs/qjs-modules/lib/lexer/ecmascript.js';
 import { Console } from 'console';
 import * as std from 'std';
+
 let buffers = {},
   modules = {};
 let T;
