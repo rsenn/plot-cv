@@ -31,27 +31,18 @@ extendGenerator(Object.getPrototypeOf(new Map().keys()));
 extendAsyncGenerator();
 
 globalThis.fs = fs;
-globalThis.logFilter =
-  /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|WRITABLE)/;
+globalThis.logFilter = /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|WRITABLE)/;
 
 trkl.property(globalThis, 'logLevel').subscribe(value =>
   setLog(value, (level, message) => {
-    if(
-      /__lws|serve_(resolved|generator|promise|response)|XXbl(\([123]\).*writable|x\([/]\).*WRITEABLE)|lws_/.test(
-        message
-      )
-    )
-      return;
+    if(/__lws|serve_(resolved|generator|promise|response)|XXbl(\([123]\).*writable|x\([/]\).*WRITEABLE)|lws_/.test(message)) return;
     if(level == LLL_INFO && !/proxy/.test(message)) return;
     if(logFilter.test(message)) return;
 
     //if(params.debug || level <= LLL_WARN)
     out(
-      (
-        ['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][
-          Math.log2(level)
-        ] ?? level + ''
-      ).padEnd(8) + message.replace(/\n/g, '\\n').replace(/\r/g, '\\r')
+      (['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8) +
+        message.replace(/\n/g, '\\n').replace(/\r/g, '\\r')
     );
   })
 );
@@ -282,11 +273,7 @@ function MagickResize(src, dst, rotate = 0, width, height) {
     dst,
     rotate
   });
-  let child = spawn(
-    'convert',
-    [src, '-resize', width + 'x' + height, ...(rotate ? ['-rotate', '-' + rotate] : []), dst],
-    { block: false }
-  );
+  let child = spawn('convert', [src, '-resize', width + 'x' + height, ...(rotate ? ['-rotate', '-' + rotate] : []), dst], { block: false });
 
   console.log('MagickResize', { child });
   child.wait();
@@ -325,12 +312,7 @@ function main(...args) {
   );
   if(params['no-tls'] === true) params.tls = false;
 
-  const {
-    address = '0.0.0.0',
-    port = 8999,
-    'ssl-cert': sslCert = 'localhost.crt',
-    'ssl-private-key': sslPrivateKey = 'localhost.key'
-  } = params;
+  const { address = '0.0.0.0', port = 8999, 'ssl-cert': sslCert = 'localhost.crt', 'ssl-private-key': sslPrivateKey = 'localhost.key' } = params;
   const listen = params.connect && !params.listen ? false : true;
   const is_server = !params.client || params.server;
 
@@ -620,15 +602,7 @@ function main(...args) {
           console.log('*files', { req, resp, body, query });
           const data = query ?? {};
           // XXX: resp.type = 'application/json';
-          let {
-            dirs = defaultDirs,
-            filter = '[^.].*' ?? '.(brd|sch|G[A-Z][A-Z])$',
-            verbose = false,
-            objects = true,
-            key = 'mtime',
-            limit = null,
-            flat = false
-          } = data ?? {};
+          let { dirs = defaultDirs, filter = '[^.].*' ?? '.(brd|sch|G[A-Z][A-Z])$', verbose = false, objects = true, key = 'mtime', limit = null, flat = false } = data ?? {};
           let results = [];
           for(let dir of dirs) {
             let st,
@@ -716,16 +690,17 @@ function main(...args) {
 
       ...callbacks,
       onConnect(ws, req) {
-        console.log('onConnect\x1b');
-        const { peer, address, port, protocol } = ws;
+        const { peer, address, port, protocol, tls } = ws;
 
-        console.log('\x1b[38;5;33monConnect\x1b[0m', { address, port, protocol });
+        console.log('\x1b[38;5;33monConnect\x1b[0m', { address, port, protocol, tls });
+        define(ws, {
+          sendCommand(data) {
+            if(!isArrayBuffer(data) /*&& isObject(data)*/) data = JSON.stringify(data);
 
-        ws.sendCommand = function(data) {
-          if(!isArrayBuffer(data) /*&& isObject(data)*/) data = JSON.stringify(data);
+            return this.send(data);
+          }
+        });
 
-          return this.send(data);
-        };
         if(!ws.uuid) {
           let data = (ws.uuid = MakeUUID());
 
@@ -775,11 +750,7 @@ function main(...args) {
         if((req.url.path ?? '').endsWith('files')) {
           return;
           //resp.type = 'application/json';
-        } else if(
-          req.method != 'GET' &&
-          (req.headers['content-type'] == 'application/x-www-form-urlencoded' ||
-            (req.headers['content-type'] ?? '').startsWith('multipart/form-data'))
-        ) {
+        } else if(req.method != 'GET' && (req.headers['content-type'] == 'application/x-www-form-urlencoded' || (req.headers['content-type'] ?? '').startsWith('multipart/form-data'))) {
           let fp,
             hash,
             tmpnam,
@@ -975,7 +946,7 @@ function main(...args) {
         return resp;
       },
       onMessage(ws, data) {
-        console.log('onMessage', ws, data);
+        console.log('onMessage', { data, ws });
         return callbacks.onMessage(ws, data);
       },
       ...(url && url.host ? url : {})
