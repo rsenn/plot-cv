@@ -393,7 +393,8 @@ function main(...args) {
     Contactref2Circuit,
     Signal2Circuit,
     Element2Circuit,
-    SortFiles
+    SortFiles,
+    InitBoard
   });
 
   Object.assign(globalThis, {
@@ -420,7 +421,7 @@ function main(...args) {
 
       let a = [];
       let step = rect.height / (n - 1);
-      let slope=step /*/ 2*/;
+      let slope = step; /*/ 2*/
 
       for(let i = 0; i < n; i++) {
         let y = i * step + rect.y1;
@@ -995,6 +996,23 @@ function SaveLibraries() {
 
   return xml;
   //console.log('libraries', libraries);
+}
+
+function InitBoard(doc = project.board) {
+  let commands = [...doc.elements].map(([name, e]) => {
+    const p = new Point(e).div(25.4).round(0.005);
+
+    let s = `MOVE '${name}' (${[...p].join(' ')});`;
+
+    const { rot } = e;
+
+if(rot !== undefined)
+    s += ` ROTATE =${rot} '${name}';`;
+
+    return s;
+  });
+
+  return commands.join('\n');
 }
 
 async function testEagle(filename) {
