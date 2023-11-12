@@ -344,6 +344,7 @@ function main(...args) {
     toXML,
     writeXML
   });
+
   Object.assign(globalThis, {
     GetExponent,
     GetMantissa,
@@ -363,6 +364,7 @@ function main(...args) {
     GetElements,
     GetSheets
   });
+
   Object.assign(globalThis, {
     define,
     isObject,
@@ -392,6 +394,42 @@ function main(...args) {
     Signal2Circuit,
     Element2Circuit,
     SortFiles
+  });
+
+  Object.assign(globalThis, {
+    wire(...args) {
+      let l = new Line(...args.splice(0, 4)).roundTo(0.00254);
+
+      let [layer, width, curve] = args;
+      let obj = { ...l.toObject() };
+
+      if(typeof layer != 'undefined') obj.layer = layer;
+      if(typeof width != 'undefined') obj.width = width;
+
+      if(typeof curve != 'undefined') obj.curve = curve;
+
+      return { tagName: 'wire', attributes: obj };
+    },
+    coil({ rect, n, diameter, width }) {
+      if(rect !== undefined) rect = new Rect(rect);
+      else {
+        rect = new Rect(0, 0, diameter + 2 * width, width * n);
+      }
+
+      rect = rect.align(new Point(0, 0));
+
+      let a = [];
+      let step = rect.height / (n - 1);
+      let slope=step /*/ 2*/;
+
+      for(let i = 0; i < n; i++) {
+        let y = i * step + rect.y1;
+
+        a.push(wire(rect.x1, y - slope / 2, rect.x2, y + slope / 2, 21, width / 2));
+      }
+
+      return a;
+    }
   });
 
   Object.assign(globalThis, {

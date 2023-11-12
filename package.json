@@ -37,6 +37,7 @@
     "node_modules/events/events.js": "events",
     "lib/xml/xpath.js": "quickjs/qjs-modules/lib/xpath.js",
     "lib/preact.js": "lib/preact.esm.js",
+    "lib/preact.mjs": "lib/preact.module.js",
     "xlib/preact.mjs": "lib/preact.module.js"
   },
   "author": "Roman Senn <roman.l.senn@gmail.com>",
