@@ -1006,8 +1006,7 @@ function InitBoard(doc = project.board) {
 
     const { rot } = e;
 
-if(rot !== undefined)
-    s += ` ROTATE =${rot} '${name}';`;
+    if(rot !== undefined) s += ` ROTATE =${rot} '${name}';`;
 
     return s;
   });
