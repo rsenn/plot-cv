@@ -2,7 +2,8 @@ import { promises as fsPromises } from 'fs';
 import http from 'http';
 import https from 'https';
 import net from 'net';
-import url from 'url';
+import url from 'url'; 
+import Util from './lib/util.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import ProxyList from './node_modules/free-proxy/index.js';
 import ProxyLists from './node_modules/proxy-lists/index.js';
@@ -275,7 +276,7 @@ async function main(...args) {
   })();
 }
 
-main(...scriptArgs.slice(1));
+main(...process.argv.slice(1));
 
 async function writeResults(results, format = 'txt', outputName = 'proxies') {
   let filename = outputName + '.' + format;
