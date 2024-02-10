@@ -394,7 +394,8 @@ function main(...args) {
     Signal2Circuit,
     Element2Circuit,
     SortFiles,
-    InitBoard
+    InitBoard,
+    MakeGraph
   });
 
   Object.assign(globalThis, {
@@ -1357,6 +1358,23 @@ function Eagle2CircuitJS(doc = project.schematic, scale = 50, sheet = 0) {
     console.log(`instance '${name}'`, console.config({ depth: 0 }), instance);
   }
   return circ;
+}
+
+function MakeGraph(board = project.board) {
+  let g = new Graph();
+  let nodes = {};
+
+  for(let [name, element] of project.board.elements) {
+    let n = (nodes[name] = new Node(new Point(element)));
+
+    g.addNode(n);
+  }
+
+  for(let [name,signal] of project.board.signals) {
+  	 
+  }
+
+  return g;
 }
 
 //callMain(main, true);
