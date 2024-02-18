@@ -23,12 +23,25 @@ import extendArray from 'extendArray';
 import extendGenerator from 'extendGenerator';
 import extendAsyncGenerator from 'extendAsyncGenerator';
 import { RecursiveDirIterator } from './dir-helpers.js';
+import { MessageReceiver, MessageTransmitter, MessageTransceiver, codecs, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPC_PARSE_ERROR, RPC_INVALID_REQUEST, RPC_METHOD_NOT_FOUND, RPC_INVALID_PARAMS, RPC_INTERNAL_ERROR, RPC_SERVER_ERROR_BASE, FactoryEndpoint, RPCServer, RPCClient, FactoryClient, RPCSocket, GetProperties, GetKeys, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/js/rpc.js';
 
 extendArray();
 extendGenerator();
 extendGenerator(Object.getPrototypeOf(new Map().keys()));
 //extendGenerator(Object.getPrototypeOf(new Directory('.')));
 extendAsyncGenerator();
+
+class Match {
+  constructor(pattern) {
+    this.pattern = pattern;
+  }
+
+  apply() {
+    return glob(this.pattern).map(name => {
+      return [name, ReadFile(name)];
+    });
+  }
+}
 
 globalThis.fs = fs;
 globalThis.logFilter = /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|WRITABLE)/;
@@ -428,7 +441,7 @@ function main(...args) {
         ['.sh', 'text/x-shellscript']
       ],
       mounts: [
-        ['/', '.', 'upload.html'],
+        ['/', '.', 'directory.html'],
         ['/get', './uploads', ''],
         ['/warmcat', 'https://warmcat.com/', 'index.html'],
         ['/distrelec', 'https://www.distrelec.ch/', 'login'],
@@ -716,37 +729,18 @@ function main(...args) {
 
         return callbacks.onClose(ws, reason);
       },
-      /*      onRead(data) {
-           const req = this;
-          console.log('onRead', { req, data });
-        },*/
-      /* onPost(data) {
-         const req = this;
-          try {
-            req.json = JSON.parse(data);
-          } catch(error) {
-            console.log('onPost', { req, data, error });
-          }
-        },*/
+
       onRequest(req, resp) {
         console.log('onRequest', console.config({ compact: 0 }), req, resp);
-
-        /*    console.log('\x1b[38;5;220monRequest(1)\x1b[0m', `req =`, console.config(repl.inspectOptions), req);
-        console.log('\x1b[38;5;220monRequest(1)\x1b[0m', `resp =`, console.config(repl.inspectOptions), resp);*/
-        //        console.log('\x1b[38;5;220monRequest(1)\x1b[0m', console.config(repl.inspectOptions), { req, resp });
 
         define(globalThis, { req, resp });
 
         const { method, headers } = req;
         if(resp && resp.headers) resp.headers['Server'] = 'upload-server';
-        //resp.headers = { Server: 'upload-server' };
-        //console.log('onRequest resp.headers', resp.headers, resp.headers['Server']);
+
         //
         if(globalThis.onRequest) globalThis.onRequest(req, resp);
 
-        /* if((req.url.path ?? '').endsWith('.js')) 
-      console.log('onRequest', req.url.path);
-*/
         if((req.url.path ?? '').endsWith('files')) {
           return;
           //resp.type = 'application/json';
@@ -965,7 +959,47 @@ function main(...args) {
     }
   });
 
+  globalThis.serv = new RPCServer(
+    FactoryEndpoint(
+      {
+        Directory,
+        Match
+      },
+      params.verbose
+    ),
+    params.verbose
+  );
+
   Object.assign(globalThis, {
+    rpc: {
+      MessageReceiver,
+      MessageTransmitter,
+      MessageTransceiver,
+      codecs,
+      RPCApi,
+      RPCProxy,
+      RPCObject,
+      RPCFactory,
+      Connection,
+      RPC_PARSE_ERROR,
+      RPC_INVALID_REQUEST,
+      RPC_METHOD_NOT_FOUND,
+      RPC_INVALID_PARAMS,
+      RPC_INTERNAL_ERROR,
+      RPC_SERVER_ERROR_BASE,
+      FactoryEndpoint,
+      RPCServer,
+      RPCClient,
+      FactoryClient,
+      RPCSocket,
+      GetProperties,
+      GetKeys,
+      SerializeValue,
+      DeserializeSymbols,
+      DeserializeValue,
+      RPCConnect,
+      RPCListen
+    },
     repl,
     quit,
     exit: quit,
@@ -1028,7 +1062,20 @@ function main(...args) {
         os.setWriteHandler(fd, wr);
       },
       onClose(ws, reason) {},
-      onMessage(ws, data) {}
+      async onMessage(ws, data) {
+        const msg = JSON.parse(data);
+
+        switch (msg.type) {
+          case 'uuid':
+            break;
+          default:
+            try {
+              const result = await serv.processMessage(msg);
+              ws.send(JSON.stringify(result));
+            } catch(e) {}
+            break;
+        }
+      }
     },
     true
   );

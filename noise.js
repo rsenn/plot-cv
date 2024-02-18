@@ -1,3 +1,6 @@
+import PinkNoiseNode from './pinkNoise.js';
+  
+
 var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 // Create an empty three-second stereo buffer at the sample rate of the AudioContext

@@ -1370,8 +1370,7 @@ function MakeGraph(board = project.board) {
     g.addNode(n);
   }
 
-  for(let [name,signal] of project.board.signals) {
-  	 
+  for(let [name, signal] of project.board.signals) {
   }
 
   return g;
