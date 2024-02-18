@@ -33,7 +33,7 @@ Object.assign(globalThis, {
   FileAction,
   parseGPSLocation,
   parseDegMinSec,
-  ListFiles
+  ListFiles,CreateWS
 });
 
 export function prioritySort(arr, predicates = []) {
@@ -262,8 +262,12 @@ function UploadDone(upload) {
   }
 }
 
-function CreateWS() {
-  let ws = (globalThis.ws ??= new WebSocket(document.location.href.replace(/\/[^/]*$/, '/uploads').replace(/^http/, 'ws')));
+function CreateWS(endpoint='uploads') {
+  const u = new URL(window.location.href);
+  u.protocol = /https/.test(u.protocol) ? 'wss:' : 'ws:';
+  u.pathname = '/'+ endpoint;
+
+   let ws =  globalThis.ws  = new WebSocket(u+'');
   console.log('CreateWS', ws);
   let tid;
   const restart = (delay = 10) => {
