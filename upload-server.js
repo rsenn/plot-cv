@@ -4,7 +4,7 @@ import * as deep from 'deep';
 import * as xml from 'xml';
 import * as path from 'path';
 import { Console } from 'console';
-import { Directory, BOTH, TYPE_DIR, TYPE_LNK, TYPE_REG } from 'directory';
+import { Directory, NAME, BOTH, TYPE_DIR, TYPE_MASK, TYPE_LNK, TYPE_REG } from 'directory';
 import { REPL } from 'repl';
 import inspect from 'inspect';
 import * as Terminal from 'terminal';
@@ -24,6 +24,10 @@ import extendGenerator from 'extendGenerator';
 import extendAsyncGenerator from 'extendAsyncGenerator';
 import { RecursiveDirIterator } from './dir-helpers.js';
 import { MessageReceiver, MessageTransmitter, MessageTransceiver, codecs, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPC_PARSE_ERROR, RPC_INVALID_REQUEST, RPC_METHOD_NOT_FOUND, RPC_INVALID_PARAMS, RPC_INTERNAL_ERROR, RPC_SERVER_ERROR_BASE, FactoryEndpoint, RPCServer, RPCClient, FactoryClient, RPCSocket, GetProperties, GetKeys, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/js/rpc.js';
+import { PromiseWorker } from './promise-worker.js';
+
+const DEBUG = false;
+const isin = (other, p) => path.slice(other, 0, path.length(p)) == p;
 
 extendArray();
 extendGenerator();
@@ -43,12 +47,14 @@ class Match {
   }
 }
 
+globalThis.worker = new PromiseWorker(new os.Worker('./upload-worker.js'));
+
 globalThis.fs = fs;
 globalThis.logFilter = /(ws_set_timeout: on immortal stream|Unhandled|PROXY-|VHOST_CERT_AGING|BIND|EVENT_WAIT|WRITABLE)/;
 
 trkl.property(globalThis, 'logLevel').subscribe(value =>
   setLog(value, (level, message) => {
-    if(/__lws|serve_(resolved|generator|promise|response)|XXbl(\([123]\).*writable|x\([/]\).*WRITEABLE)|lws_/.test(message)) return;
+    if(/__lws|serve_(resolved|xgenerator|promise|response)|XXbl(\([123]\).*writable|x\([/]\).*WRITEABLE)|lws_/.test(message)) return;
     if(level == LLL_INFO && !/proxy/.test(message)) return;
     if(logFilter.test(message)) return;
 
@@ -189,7 +195,7 @@ const HTMLTableRow = ({ columns, ...props }) => h('tr', props, columns);
 const HTMLTableColumn = ({ columns, children, tag = 'td', ...props }) => h(tag, props, children);
 
 const FileLink = ({ file, ...props }) => {
-  return h('a', { href: 'file/uploads/' + file }, [file]);
+  return h('a', { href: 'uploads/' + file }, [file]);
 };
 const FileObject = ({ file, stat = {}, ...props }) => {
   stat ??= fs.lstatSync('uploads/' + file);
@@ -286,7 +292,7 @@ function MagickResize(src, dst, rotate = 0, width, height) {
     dst,
     rotate
   });
-  let child = spawn('convert', [src, '-resize', width + 'x' + height, ...(rotate ? ['-rotate', '-' + rotate] : []), dst], { block: false });
+  let child = spawn('convert', [src, '-resize', width + 'x' + height, ...(rotate ? ['-rotate', '-' + rotate] : []), dst], { block: false, stdio: ['inherit', 'inherit', 'inherit'] });
 
   console.log('MagickResize', { child });
   child.wait();
@@ -386,7 +392,7 @@ function main(...args) {
     } ?? std.open('upload-server.log', 'w+');
 
   let connections = new Set();
-  let by_uuid = {};
+  let by_uuid = (globalThis.by_uuid = {});
 
   function ParseBody(gen) {
     let prom,
@@ -483,6 +489,7 @@ function main(...args) {
         function* file(req, resp) {
           let { body, headers, json, url } = req;
           let { query } = url;
+          console.log('*file', { req, resp });
 
           if(typeof body == 'string')
             query = {
@@ -508,8 +515,7 @@ function main(...args) {
               allowedDirs //.map(dir => path.normalize(dir))
             );
 
-            //console.log(`allowed:`, allowedDirs/*.map(dir => path.isin(file, dir))*/);
-            let allowed = [...allowedDirs].some(([dir]) => path.isin(file, path.normalize(dir)));
+            let allowed = [...allowedDirs.values()].map(path.absolute).some(dir => isin(file, dir));
 
             if(!allowed) {
               console.log(`Not allowed: '${file}'`);
@@ -520,27 +526,55 @@ function main(...args) {
           switch (action) {
             case 'load':
               let mime = GetMime(file);
-              resp.type = mime;
-              resp.headers = { 'content-type': mime };
+
               let data = ReadFile(file, true);
+
               console.log(`*file.load`, { data, mime });
+
               yield data;
-              resp.body = data;
-              //yield
+
+              /*              if(resp) {
+                resp.type = mime;
+                resp.headers = { 'content-type': mime };
+                resp.body = data;
+              } else {
+                yield new Response(data, { type: mime, headers: { 'content-type': mime } });
+              }*/
+
               break;
+
             case 'save':
               WriteFile(file, contents);
               yield 'done!\r\n';
               break;
+
             case 'list':
-              let files = fs.readdirSync('uploads').filter(f => !/^\.$/.test(f));
+              const { dir = 'uploads', mask = TYPE_MASK, filter = '*' } = query ?? {};
+              const d = path.absolute(dir);
+              const allowed = path.isRelative(dir) && [...allowedDirs.values()].map(path.absolute).some(x => isin(d, x));
+
+              if(!allowed) {
+                console.log('NOT ALLOWED');
+
+                if(resp) resp.status = 403;
+
+                yield 'ERROR\r\n';
+
+                //yield globalThis.resp = new Response('ERROR', { status: 403 });
+                break;
+              }
+
+              const it = new Directory(dir, BOTH, +mask);
+
+              for(let [file, type] of it) if(0 == path.fnmatch(filter, file)) yield `${file}${type == TYPE_DIR ? '/' : ''}\n`;
+
+              break;
+
               let component = h(
                 HTMLPage,
                 {
                   title: 'File list',
-                  style: `body, * {
-  font-family: MiscFixedSC613,Fixed,"Courier New";
-}`,
+                  style: `body, * { font-family: MiscFixedSC613,Fixed,"Courier New"; }`,
                   scripts: ['filelist.js']
                 },
                 [
@@ -562,7 +596,7 @@ function main(...args) {
               throw new Error(`No such command: '${action}'`);
           }
         },
-        function* uploads(req, resp) {
+        /* function* uploads(req, resp) {
           if(resp && resp?.type) resp.type = 'application/json';
 
           console.log('uploads', req, resp);
@@ -580,7 +614,7 @@ function main(...args) {
 
           console.log('uploads', console.config({ depth: 1, compact: 2, maxArrayLength: 10 }), result);
           yield JSON.stringify(result, ...(+pretty ? [null, 2] : []));
-        },
+        },*/
         async function* files(req, resp) {
           const { url, method, body } = req;
           console.log('*files', { body });
@@ -731,12 +765,17 @@ function main(...args) {
       },
 
       onRequest(req, resp) {
-        console.log('onRequest', console.config({ compact: 0 }), req, resp);
+        if(DEBUG) console.log('onRequest', console.config({ compact: 0 }), req, resp);
+        const ws = this;
 
-        define(globalThis, { req, resp });
+        const { address } = ws;
+
+        define(globalThis, { req, resp, address });
 
         const { method, headers } = req;
         if(resp && resp.headers) resp.headers['Server'] = 'upload-server';
+
+        if(DEBUG) console.log('onRequest', { headers: Object.fromEntries(headers.entries()) });
 
         //
         if(globalThis.onRequest) globalThis.onRequest(req, resp);
@@ -744,16 +783,19 @@ function main(...args) {
         if((req.url.path ?? '').endsWith('files')) {
           return;
           //resp.type = 'application/json';
-        } else if(req.method != 'GET' && (req.headers['content-type'] == 'application/x-www-form-urlencoded' || (req.headers['content-type'] ?? '').startsWith('multipart/form-data'))) {
+        } else if(req.method != 'GET' && (req.headers.get('content-type') == 'application/x-www-form-urlencoded' || (req.headers.get('content-type') ?? '').startsWith('multipart/form-data'))) {
           let fp,
             hash,
             tmpnam,
             ext,
             progress = 0;
-          console.log(req.method, headers);
           if(req.url.path.endsWith('upload')) resp.status = 200;
-          resp.type = 'text/raw';
 
+          resp.headers['content-type'] = 'text/raw';
+
+          console.log(req.method, headers);
+
+          const ws = (globalThis.ws = this);
           fp = new FormParser(ws, ['files', 'uuid'], {
             chunkSize: 8192 /** 256*/,
             onOpen(name, filename) {
@@ -804,10 +846,17 @@ function main(...args) {
                   let ret = os.rename(this.temp, (this.temp = f(ext)));
                   let { errno } = error();
                   let json = f('.json');
+
                   if(fs.existsSync(json) && (cache = ReadJSON(json))) {
                     exif = cache.exif;
                   } else {
-                    if(!/(png|svg|gif|tga)$/i.test(ext)) {
+                    worker.postMessage({ command: 'PostUpload', args: [sha1, this.filename, this.temp, address] }).then(result => {
+                      console.log('PostUpload', { ws, result });
+                      if(connections[0]) connections[0].sendCommand({ type: 'upload', ...result });
+                    });
+                    return;
+
+                    /* if(!/(png|svg|gif|tga)$/i.test(ext)) {
                       try {
                         exif = ReadExiftool(f(ext));
                       } catch(e) {
@@ -816,6 +865,7 @@ function main(...args) {
                         } catch(e) {}
                       }
                     }
+
                     let obj = {
                       filename: this.filename,
                       storage: f(ext),
@@ -823,10 +873,12 @@ function main(...args) {
                       address,
                       exif
                     };
-                    if(!/jpe?g$/.test(ext)) {
+
+                    if(/\.hei[fc]$/gi.test(ext)) {
                       HeifConvert(f(ext), f('.jpg'));
                       if(fs.existsSync(f('.jpg'))) obj.jpg = f('.jpg');
                     }
+
                     let width = '',
                       height = '256';
 
@@ -837,41 +889,41 @@ function main(...args) {
                         width = 256;
                         height = width / aspect;
                       } else {
-                        /* height = 256;
-                          width = height * aspect;*/
+                         height = 256;
+                          width = height * aspect;
                       }
                     }
 
                     MagickResize(obj.jpg ?? f(ext), f('.thumb.jpg'), obj.exif?.Rotation ?? 0, width, height);
 
                     if(fs.existsSync(f('.thumb.jpg'))) obj.thumbnail = f('.thumb.jpg');
+
                     WriteJSON(json, obj);
-                    // console.log(`by_uuid`, by_uuid);
+ 
                     console.log(`uuid`, ws.uuid ?? this.uuid);
-                    cache = obj;
+                    cache = obj;*/
                   }
+
                   if(ret == 0 || errno == 17) {
                     unlink(this.temp);
                     this.temp = null;
                   }
                 }
+
                 const { filename } = this;
                 let ws2 = by_uuid[ws.uuid ?? this.uuid];
-                if(ws2)
-                  ws2.sendCommand({
-                    type: 'upload',
-                    ...(cache ?? {}),
-                    filename,
-                    exif
-                  });
-                //  console.log(`onClose[2](${name}, ${file})`);
+
+                if(ws2) ws2.sendCommand({ type: 'upload', ...(cache ?? {}), filename, exif });
+
+                //console.log(`onClose[2](${name}, ${file})`);
               } catch(e) {
                 console.log(`onClose ERROR:`, e.message);
               }
             },
             onFinalize() {
               console.log(`onFinalize() form parser`, this.uuid);
-              resp.body = `done: ${progress} bytes read\r\n`;
+              resp.write(`done: ${progress} bytes read\r\n`);
+              resp.finish();
             }
           });
         }
@@ -885,7 +937,7 @@ function main(...args) {
 
         if(url) {
           let file = url.path.slice(1);
-          const dir = path.dirname(file); //file.replace(/\/[^\/]*$/g, '');
+          const dir = path.dirname(file);
 
           if(file.endsWith('.txt') || file.endsWith('.html') || file.endsWith('.css')) {
             resp.body = ReadFile(file);

@@ -14,6 +14,7 @@ import { ImageSequence, VideoSource } from './qjs-opencv/js/cvVideo.js';
 import { Console } from 'console';
 import { REPL } from 'repl';
 import * as Terminal from 'terminal';
+import * as cv from 'opencv';
 import extendArray from 'extendArray';
 
 let cmdhist,
@@ -127,7 +128,7 @@ function main(...args) {
     args
   );
 
-  //Object.assign(globalThis, cv);
+  Object.assign(globalThis, { cv });
 
   Object.assign(globalThis, {
     quit(arg) {

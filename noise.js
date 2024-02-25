@@ -19,8 +19,7 @@ form.onsubmit = () => false;
 
 // Get an AudioBufferSourceNode.  This is the AudioNode to use when we want to play an AudioBuffer
 //var source = audioCtx.createBufferSource();
- 
- 
+
 function NewPinkNoise() {
   globalThis.noise = new PinkNoiseNode(audioCtx);
 
