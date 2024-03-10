@@ -1,9 +1,9 @@
-import Util from './lib/util.js';
+import { readFileSync } from 'fs';
 
 function readFile(path) {
   let ret;
   try {
-    ret = filesystem.readFile(path).toString();
+    ret = readFileSync(path, 'utf-8');
   } catch(err) {}
   return ret;
 }
@@ -47,15 +47,16 @@ function lineColumn(pos, text) {
 }
 
 function processFile(arg, re) {
-  let str = filesystem.readFile(arg).toString();
+  let str = readFileSync(arg, 'utf-8');
   let json = JSON.parse(str);
+
   //console.log('json:', json);
+
   re = typeof re == 'string' ? new RegExp(re) : /.*/;
+
   //if(!(json instanceof Array)) return 1;
 
-  let scripts = json
-    .map(({ url, ...item }) => [url.replace(/.*:\/\/[^/]*\//g, ''), item])
-    .filter(([file]) => re.test(file));
+  let scripts = json.map(({ url, ...item }) => [url.replace(/.*:\/\/[^/]*\//g, ''), item]).filter(([file]) => re.test(file));
 
   for(let [file, obj] of scripts) {
     let { ranges, text } = obj;
@@ -84,4 +85,4 @@ function main(args) {
   return 0;
 }
 
-Util.exit(main(Util.getArgs()));
+process.exit(main(scriptArgs.slice(1)));

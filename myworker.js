@@ -1,12 +1,8 @@
-/* Worker code for test_worker.js */
-import * as std from 'std';
 import * as os from 'os';
-import * as cv from 'opencv';
-import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import { Console } from 'console';
-import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
-import { TickMeter } from 'opencv';
-
+import * as cv from 'opencv';
+import * as std from 'std';
+/* Worker code for test_worker.js */
 var parent = os.Worker.parent;
 
 var configFile = 'test-opencv.config.json';
@@ -65,7 +61,6 @@ function worker_main() {
       kernel_size: new NumericParam(config.kernel_size ?? 1, 0, 10),
       k: new NumericParam(config.k ?? 24, 0, 100),
       thres1: new NumericParam(config.thres1 ?? 10, 0, 300),
-      thres2: new NumericParam(config.thres2 ?? 20, 0, 300),
       thres2: new NumericParam(config.thres2 ?? 20, 0, 300),
       rho: new NumericParam(config.rho ?? 1, 1, 100),
       theta: new NumericParam(config.theta ?? 180, 1, 360),

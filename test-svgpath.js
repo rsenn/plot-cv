@@ -1,7 +1,8 @@
+import { Matrix, Point } from './lib/dom.js';
+import { makeAbsolute, parseSVG } from './lib/svg/path-parser.js';
+import require from 'require';
+
 const SvgPath = require('./lib/svg/path.js');
-const { Point, Matrix, SVG, Line, PointList, Polygon } = require('./lib/dom.cjs');
-const { parseSVG, makeAbsolute } = require('./lib/svg/path-parser.js');
-const { Console } = require('console');
 const PointAtLength = require('point-at-length');
 
 let args = [...process.argv].slice(2);
@@ -23,8 +24,8 @@ newPath.rel();
 
 let t = new Matrix();
 
-t.init_translate(translate[0], translate[1]);
-//console.log(`t:` + t.init_translate, translate);
+t.initTranslate(translate[0], translate[1]);
+//console.log(`t:` + t.initTranslate, translate);
 
 for(let i = 0; i < path.length; i++) {
   const c = path[i];
@@ -53,7 +54,7 @@ for(let i = 0; i < path.length; i++) {
   let points = [new Point(x, y), new Point(x1, y1), new Point(x2, y2)];
   //console.log(`path[${i}]:`, c);
 
-  if(!relative) points = points.map(p => (p.x !== undefined ? t.transform_point({ x: p.x, y: p.y }) : p));
+  if(!relative) points = points.map(p => (p.x !== undefined ? t.transformPoint({ x: p.x, y: p.y }) : p));
 
   if(command == 'A') points[0] = new Point(x, y);
 
@@ -100,6 +101,7 @@ for(let i = 0; i < path.length; i++) {
     }
   }
 }
+
 const data = newPath.str().trim();
 
 //console.log(`<path d="${data}" />`);

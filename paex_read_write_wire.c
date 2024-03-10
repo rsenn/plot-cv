@@ -122,8 +122,7 @@ main(void) {
   printf("     LL: %g s\n", outputInfo->defaultLowOutputLatency);
   printf("     HL: %g s\n", outputInfo->defaultHighOutputLatency);
 
-  numChannels =
-      inputInfo->maxInputChannels < outputInfo->maxOutputChannels ? inputInfo->maxInputChannels : outputInfo->maxOutputChannels;
+  numChannels = inputInfo->maxInputChannels < outputInfo->maxOutputChannels ? inputInfo->maxInputChannels : outputInfo->maxOutputChannels;
   printf("Num channels = %d.\n", numChannels);
 
   inputParameters.channelCount = numChannels;

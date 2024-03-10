@@ -1,3 +1,28 @@
+.progress {
+  height: 1em;
+  font-weight:  bold;
+}
+.progress.center {
+  padding: 0;
+  overflow: hidden;
+  border:  1px solid red;
+}
+.progress-bar.fill {
+  background-color:  rgba(110, 97, 255, 0.3);
+}
+.progress {
+  color: black;
+  text-shadow:  white 1px 1px;
+}
+.progress {
+  color: black;
+  text-shadow:  white 1px 1px;
+}
+.progress.center {
+  position: relative;
+  top: -20px;
+  transform: translate(0, -20px);
+}
 body, h4 {
     font-family: Helvetica;
 }

@@ -10,6 +10,7 @@ function Resampler(fromSampleRate, toSampleRate, channels, outputBufferSize, noR
   this.noReturn = !!noReturn;
   this.initialize();
 }
+
 Resampler.prototype.initialize = function() {
   //Perform some checks:
   if(this.fromSampleRate > 0 && this.toSampleRate > 0 && this.channels > 0) {
@@ -63,8 +64,10 @@ Resampler.prototype.compileLinearInterpolationFunction = function() {
     ) {
       secondWeight = weight % 1;
       firstWeight = 1 - secondWeight;
-      outputBuffer[outputOffset++] = buffer[sourceOffset] * firstWeight + buffer[sourceOffset + 2] * secondWeight;
-      outputBuffer[outputOffset++] = buffer[sourceOffset + 1] * firstWeight + buffer[sourceOffset + 3] * secondWeight;
+      outputBuffer[outputOffset++] =
+        buffer[sourceOffset] * firstWeight + buffer[sourceOffset + 2] * secondWeight;
+      outputBuffer[outputOffset++] =
+        buffer[sourceOffset + 1] * firstWeight + buffer[sourceOffset + 3] * secondWeight;
       weight += ratioWeight;
       sourceOffset = weight << 1;
     }

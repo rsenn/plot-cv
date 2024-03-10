@@ -1,6 +1,4 @@
 import Tree from './lib/tree.js';
-import { Util } from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 
 const treeObj = {
   a: 1,
@@ -25,8 +23,6 @@ const treeObj = {
 };
 
 async function main(...args) {
-  await ConsoleSetup({ colors: true, depth: 6, breakLength: 80 });
-
   let tree = new Tree(treeObj);
 
   console.log('tree:', tree);
@@ -61,4 +57,4 @@ async function main(...args) {
   console.log('treeObj:', treeObj);
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

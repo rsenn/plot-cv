@@ -1,11 +1,11 @@
+import { client, LLL_DEBUG, LLL_WARN, setLog } from 'net';
 import * as os from 'os';
-import * as std from 'std';
-import { client, setLog, LLL_DEBUG, LLL_WARN } from 'net';
+import { MIDIEvent, MIDIStream } from './lib/midi.js';
+import { quote } from './lib/misc.js';
 import { Console } from 'console';
-import { MIDIStream, MIDIEvent } from './lib/midi.js';
-import { quote, toString } from './lib/misc.js';
-
+import * as std from 'std';
 /*const MIDI_NOTE_OFF = 0x80;
+
 const MIDI_NOTE_ON = 0x90;
 const MIDI_POLYPHONIC_KEY_PRESSURE = 0xA0;
 const MIDI_CONTROL_CHANGE = 0xB0;
@@ -87,8 +87,8 @@ function TCPClient(url) {
     onClose(ws, reason) {
       console.log('onClose', { ws, reason });
     },
-    onHttp(req, resp) {
-      console.log('onHttp', { req, resp });
+    onRequest(req, resp) {
+      console.log('onRequest', { req, resp });
     },
     onFd(fd, rd, wr) {
       //console.log('onFd', fd, rd, wr);
@@ -121,14 +121,10 @@ function main(...args) {
   const debug = false;
 
   setLog(((debug ? LLL_DEBUG : LLL_WARN) << 1) - 1, (level, msg) => {
-    let p =
-      ['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][
-        level && Math.log2(level)
-      ] ?? level + '';
+    let p = ['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][level && Math.log2(level)] ?? level + '';
     msg = msg.replace(/\n/g, '\\n').replace(/\r/g, '\\r');
 
-    if(!/POLL/.test(msg) && /MINNET/.test(p))
-      if(debug && /(client|http|read|write)/i.test(msg)) console.log(p.padEnd(8), msg);
+    if(!/POLL/.test(msg) && /MINNET/.test(p)) if (debug && /(client|http|read|write)/i.test(msg)) console.log(p.padEnd(8), msg);
   });
 
   let url = args[0] ?? 'tcp://127.0.0.1:6999';

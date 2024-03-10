@@ -1,18 +1,9 @@
-import ConsoleSetup from './lib/consoleSetup.js';
-import { Contour } from 'opencv';
-import * as cv from 'opencv';
-import { Rect } from 'opencv';
-import { Point } from 'opencv';
-import { Size } from 'opencv';
-import { Mat } from 'opencv';
-import { PointIterator } from 'opencv';
-
 import { HSLA } from './lib/color/hsla.js';
+import { RGBA } from './lib/color/rgba.js';
 import { Line } from './lib/geom/line.js';
 import { Matrix } from './lib/geom/matrix.js';
 import { PointList } from './lib/geom/pointList.js';
-import { RGBA } from './lib/color/rgba.js';
-import inspect from './lib/objectInspect.js';
+import * as cv from 'opencv';
 
 const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA, Matrix };
 
@@ -27,15 +18,6 @@ Object.defineProperty(Point.prototype, 'distance', {
 });
 
 async function main(...args) {
-  await ConsoleSetup({
-    breakLength: 120,
-    maxStringLength: 200,
-    multiline: 1,
-    alignMap: true,
-    colors: true,
-    compact: 2
-  });
-
   function testPointVector() {
     let pv = new Contour();
     let poly = new Contour();
@@ -324,17 +306,10 @@ async function main(...args) {
   /*console.log("Point.prototype: ", Point.prototype);
 //console.log("Point.prototype.constructor: ", Point.prototype.constructor);
 */
-  let points = [
-    new Point(0, 0),
-    new Point(50, 0),
-    new Point(100, 0),
-    new Point(100, 50),
-    new Point(100, 100),
-    new Point(100, 200)
-  ];
+  let points = [new Point(0, 0), new Point(50, 0), new Point(100, 0), new Point(100, 50), new Point(100, 100), new Point(100, 200)];
   //console.log('points[0]: ', points[0]);
   //console.log('points[last]: ', points[points.length - 1]);
   //console.log('points: ', points.map(p => `{x:${p.x},y:${p.y}}`).join(', '));
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

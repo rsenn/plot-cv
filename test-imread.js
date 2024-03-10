@@ -1,9 +1,7 @@
-import * as cv from 'opencv';
-import Console from 'console';
 import * as path from 'path';
 import { range } from 'util';
-import Util from './lib/util.js';
-import { RGBA, HSLA } from './lib/color.js';
+import Console from 'console';
+import * as cv from 'opencv';
 
 function Grayscale(src, dst) {
   let channels = [];
@@ -62,9 +60,7 @@ function main(...args) {
   });
   let ctor_names = Object.getOwnPropertyNames(cv).filter(name => typeof cv[name] == 'function');
 
-  let features2d_names = ctor_names.filter(
-    name => cv[name].prototype && cv[name].prototype[Symbol.toStringTag] == 'Feature2D'
-  );
+  let features2d_names = ctor_names.filter(name => cv[name].prototype && cv[name].prototype[Symbol.toStringTag] == 'Feature2D');
 
   console.log('cv', features2d_names);
 
@@ -122,7 +118,6 @@ function main(...args) {
   cv.Canny(gray, canny, 0, 90, 3);
   cv.findContours(canny, (contours = []), (hier = new cv.Mat()), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
 
-
   console.log('contours.length', contours.length);
 
   cv.cvtColor(gray, img, cv.COLOR_GRAY2BGR);
@@ -137,7 +132,6 @@ function main(...args) {
     c[4] = rects[id] = r;
     const { tl, br } = r;
 
-
     cv.rectangle(img, tl, br, [255, 0, 255, 255], 1, cv.LINE_AA);
   }*/
 
@@ -151,6 +145,7 @@ function main(...args) {
 
   console.log('EXIT');
 }
+
 try {
   main(...scriptArgs.slice(1));
 } catch(error) {

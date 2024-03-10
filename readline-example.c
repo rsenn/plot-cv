@@ -142,10 +142,12 @@ char* line;
 
   /* Isolate the command word. */
   i = 0;
-  while(line[i] && whitespace(line[i])) i++;
+  while(line[i] && whitespace(line[i]))
+    i++;
   word = line + i;
 
-  while(line[i] && !whitespace(line[i])) i++;
+  while(line[i] && !whitespace(line[i]))
+    i++;
 
   if(line[i])
     line[i++] = '\0';
@@ -158,7 +160,8 @@ char* line;
   }
 
   /* Get argument to command, if any. */
-  while(whitespace(line[i])) i++;
+  while(whitespace(line[i]))
+    i++;
 
   word = line + i;
 
@@ -196,7 +199,8 @@ char* string;
     return (s);
 
   t = s + strlen(s) - 1;
-  while(t > s && whitespace(*t)) t--;
+  while(t > s && whitespace(*t))
+    t--;
   *++t = '\0';
 
   return s;
@@ -335,12 +339,7 @@ char* arg;
 
   printf("Statistics for `%s':\n", arg);
 
-  printf("%s has %d link%s, and is %d byte%s in length.\n",
-         arg,
-         finfo.st_nlink,
-         (finfo.st_nlink == 1) ? "" : "s",
-         finfo.st_size,
-         (finfo.st_size == 1) ? "" : "s");
+  printf("%s has %d link%s, and is %d byte%s in length.\n", arg, finfo.st_nlink, (finfo.st_nlink == 1) ? "" : "s", finfo.st_size, (finfo.st_size == 1) ? "" : "s");
   printf("Inode Last Change at: %s", ctime(&finfo.st_ctime));
   printf("      Last access at: %s", ctime(&finfo.st_atime));
   printf("    Last modified at: %s", ctime(&finfo.st_mtime));

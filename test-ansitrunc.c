@@ -8,6 +8,7 @@ static inline int
 is_escape_char(char c) {
   return is_control_char(c) || c == '\\' || c == '\'';
 }
+
 static size_t
 ansi_skip(const char* str, size_t len) {
   size_t pos = 0;

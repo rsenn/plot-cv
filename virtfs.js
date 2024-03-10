@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import { ReadFile } from './io-helpers.js';
 import * as path from './lib/path.js';
 
 const mapVFSForProxy = new WeakMap();
@@ -18,8 +19,7 @@ export class VirtFS {
 
         let obj = vfs;
 
-        if(prop in VirtFS.prototype && typeof VirtFS.prototype[prop] == 'function')
-          return VirtFS.prototype[prop].bind(vfs);
+        if(prop in VirtFS.prototype && typeof VirtFS.prototype[prop] == 'function') return VirtFS.prototype[prop].bind(vfs);
         if(!(prop in VirtFS.prototype) && typeof fs[prop] == 'function') return fs[prop];
 
         return Reflect.get(target, prop, receiver);
@@ -92,7 +92,7 @@ export class VirtFS {
       ...this.reduce((acc, dir) => {
         let f = path.concat(dir, pathname);
         let x = fs.readdirSync(f) ?? [];
-        for(let y of x) acc.add(fn(y, path.collapse(path.concat(f, y))));
+        for(let y of x) acc.add(fn(y, path.normalize(path.concat(f, y))));
         return acc;
       }, new Set())
     ];
@@ -102,7 +102,7 @@ export class VirtFS {
     return this.search(pathname, found => fs.chdir(found));
   }
   readFileSync(pathname, ...args) {
-    return this.search(pathname, found => fs.readFileSync(found, ...args));
+    return this.search(pathname, found => ReadFile(found, ...args));
   }
   fopen(pathname, ...args) {
     return this.search(pathname, found => fs.fopen(found, ...args));

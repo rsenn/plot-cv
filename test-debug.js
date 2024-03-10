@@ -1,4 +1,4 @@
-import { SocketDebugClient, LogLevel } from './node-debugprotocol-client/dist/index.js';
+import { LogLevel, SocketDebugClient } from './node-debugprotocol-client/dist/index.js';
 
 async function main(...args) {
   // create a client instance

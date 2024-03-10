@@ -1,4 +1,4 @@
-import { choice, seq, token, char, regex, option, any, many, eof, ignore, concat, invert } from './lib/parse/fn.js';
+import { any, choice, eof, ignore, regex, seq, token } from './lib/parse/fn.js';
 
 function wrap(parser, name) {
   return (str, pos) => {
@@ -8,6 +8,7 @@ function wrap(parser, name) {
     return r;
   };
 }
+
 function geda_netlist(...args) {
   return wrap(seq(components, nets, eof()), 'geda_netlist')(...args);
 }

@@ -1,11 +1,8 @@
-import { LogWrap, VfnAdapter, VfnDecorator, Mapper, DefaultConstructor, EventLogger, MessageReceiver, MessageTransmitter, MessageTransceiver, RPCApi, RPCProxy, RPCObject, RPCFactory, Connection, RPCServer, RPCClient, RPCSocket, isThenable, hasHandler, callHandler, parseURL, GetProperties, GetKeys, getPropertyDescriptors, define, setHandlers, statusResponse, objectCommand, MakeListCommand, getPrototypeName, SerializeValue, DeserializeSymbols, DeserializeValue, RPCConnect, RPCListen } from './quickjs/qjs-net/rpc.js';
-import { h, options, html, render, Component, createContext, createRef, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue, forwardRef, Fragment, React, ReactComponent, Portal, toChildArray } from './lib/dom/preactComponent.js';
-import Util from './lib/util.js';
-import { once, streamify, filter, map, throttle, distinct, subscribe } from './lib/async.js';
+import { filter, map, streamify } from './lib/async.js';
 import { Element } from './lib/dom/element.js';
-import iterify from './lib/async/iterify.js';
-import trkl from './lib/trkl.js';
-import path from './lib/path.js';
+import { Fragment, h, options, render } from './lib/dom/preactComponent.js';
+import * as path from './lib/path.js';
+import { callHandler, Connection, DefaultConstructor, define, DeserializeSymbols, DeserializeValue, EventLogger, GetKeys, GetProperties, getPropertyDescriptors, getPrototypeName, hasHandler, isThenable, LogWrap, MakeListCommand, Mapper, MessageReceiver, MessageTransceiver, MessageTransmitter, objectCommand, parseURL, RPCApi, RPCClient, RPCConnect, RPCFactory, RPCListen, RPCObject, RPCProxy, RPCServer, RPCSocket, SerializeValue, setHandlers, statusResponse, VfnAdapter, VfnDecorator } from './quickjs/qjs-net/js/rpc.js';
 
 Object.assign(globalThis, {
   callHandler,
@@ -87,6 +84,7 @@ function Table2Array(table = 'table') {
   }
   return rows;
 }
+
 function Row2Obj(row) {
   let columns = [...row.children];
   let obj = {};
@@ -111,6 +109,7 @@ function HumanSize(n) {
   if(n >= 1e3) return Round(n / 1e3) + 'K';
   return n;
 }
+
 const input = {
   mode(s, obj, name) {
     return h('td', { class: `mode item`, 'data-value': s }, [
@@ -125,11 +124,7 @@ const input = {
     ]);
   },
   name(s, obj, name) {
-    return h(
-      'td',
-      { class: `name item` },
-      h('a', { href: path.normalize(s), onClick }, [s.replace(/\/*$/, '').replace(/.*\//g, '')])
-    );
+    return h('td', { class: `name item` }, h('a', { href: path.normalize(s), onClick }, [s.replace(/\/*$/, '').replace(/.*\//g, '')]));
   },
   size(s, obj, name) {
     return h('td', { class: `size item`, 'data-value': s }, (obj.name ?? '').endsWith('/') ? [] : [HumanSize(+s)]);
@@ -145,9 +140,7 @@ function Item(obj) {
   return h(
     Fragment,
     {},
-    columns.map(name =>
-      h(name, { class: `item ${name}` }, [input[name] ? input[name](obj[name], obj, name) : obj[name]])
-    )
+    columns.map(name => h(name, { class: `item ${name}` }, [input[name] ? input[name](obj[name], obj, name) : obj[name]]))
   );
 }
 
@@ -185,9 +178,7 @@ function TableHeader() {
   return h(
     'tr',
     { class: 'head' },
-    columns.map((name, i) =>
-      h('th', { class: `${name} header` }, [h('a', { href: `#?sort=${name}`, onClick }, [titles[i]])])
-    )
+    columns.map((name, i) => h('th', { class: `${name} header` }, [h('a', { href: `#?sort=${name}`, onClick }, [titles[i]])]))
   );
 }
 

@@ -1,27 +1,9 @@
-import { Console } from 'console';
-import { client, server, fetch } from 'net';
-import { Contour } from 'opencv';
-import * as cv from 'opencv';
-import { Point } from 'opencv';
-import { PointIterator } from 'opencv';
-import { VideoCapture } from 'opencv';
-import { Mat } from 'opencv';
-import { PointList } from './lib/geom.js';
+import { fetch } from 'net.so';
 import { Alea } from './lib/alea.js';
-import * as os from 'os';
 
 let prng = new Alea(Date.now());
 
 function main(...args) {
-  globalThis.console = new Console({
-    inspectOptions: {
-      colors: true,
-      depth: Infinity,
-      compact: 1,
-      customInspect: true
-    }
-  });
-
   /*  function connect() {
     print('CLIENT');
     net.client({
@@ -47,7 +29,7 @@ function main(...args) {
 
   let raw = new Mat();
   let cap = new VideoCapture();
-  cap.open(0, cv.CAP_V4L2);
+  cap.open(0, CAP_V4L2);
 
   cap.read(raw);
   const width = raw.cols;

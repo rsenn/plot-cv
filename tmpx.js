@@ -1,4 +1,5 @@
 s = new RPCSocket('ws://127.0.0.1:9000', RPCClient);
+
 s.connect().then(() =>
   setTimeout(async () => {
     cli = RPCClient.last;

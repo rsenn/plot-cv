@@ -1,5 +1,6 @@
-import { Worker } from 'os';
 import * as fs from 'fs';
+import { Worker } from 'os';
+import { WriteFile } from './io-helpers.js';
 
 export class WorkerScript {
   #worker = null;
@@ -8,7 +9,7 @@ export class WorkerScript {
   constructor(script) {
     let file = 'tmp-worker.js';
 
-    if(!(fs.writeFileSync(file, script) > 0)) throw new Error(`Error writing '${file}'`);
+    WriteFile(file, script);
 
     let worker = (this.#worker = new Worker(file));
     this.#cleanup = () => {

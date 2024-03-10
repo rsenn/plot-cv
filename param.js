@@ -1,33 +1,34 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
-import Util from './lib/util.js';
+import { define, mod, roundTo } from 'util';
+import { EventEmitter } from './quickjs/qjs-modules/lib/events.js';
 import * as cv from 'opencv';
-import { EventEmitter, eventify } from './quickjs/qjs-modules/lib/events.js';
 
 const MinMax = (min, max) => value => Math.max(min, Math.min(max, value));
 
 export class Param extends EventEmitter {
   valueOf() {
-    if(typeof this.callback == 'function') this.callback.call(this, this);
+    if(typeof this.callback == "function") this.callback.call(this, this);
 
     return this.get();
   }
 
-  [Symbol.toStringTag]() {
+  /*[Symbol.toStringTag]() {
     return this.toString();
-  }
+  }*/
 
   toString() {
-    return '' + this.valueOf();
+    return "" + this.valueOf();
   }
 
   createTrackbar(name, win) {
-    cv.createTrackbar(name, win + '', this.value, this.max, value => {
+    cv.createTrackbar(name, win + "", this.value, this.max, value => {
       let old = this.get();
       this.set(value);
-      if(value != old) this.emit('change', value, old);
+      if(value != old) this.emit("change", value, old);
     });
   }
 }
+
+define(Param.prototype, { get [Symbol.toStringTag]() { return this.toString(); } });
 
 export class NumericParam extends Param {
   constructor(value = 0, min = 0, max = 1, step = 1) {
@@ -44,7 +45,7 @@ export class NumericParam extends Param {
 
   set(value) {
     const { clamp, min, step } = this;
-    let newValue = this.clamp(min + Util.roundTo(value - min, step, null, 'floor'));
+    let newValue = this.clamp(min + roundTo(value - min, step, null, "floor"));
     //console.log(`Param.set oldValue=${this.value} new=${newValue}`);
     this.value = newValue;
   }
@@ -56,7 +57,7 @@ export class NumericParam extends Param {
 
   /* prettier-ignore */ set alpha(a) {
     const { min, max, step, clamp } = this;
-    this.value = this.clamp(min + Util.roundTo((max - min) * a, step, null, 'floor'));
+    this.value = this.clamp(min + roundTo((max - min) * a, step, null, 'floor'));
   }
 
   /* prettier-ignore */ get range() {
@@ -104,7 +105,7 @@ export class EnumParam extends NumericParam {
 
   set(newVal) {
     let i;
-    if(typeof newVal == 'number') i = newVal;
+    if(typeof newVal == "number") i = newVal;
     else if((i = this.values.indexOf(newVal)) == -1) throw new Error(`No such value '${newVal}' in [${this.values}]`);
     super.set(i);
   }
@@ -113,9 +114,8 @@ export class EnumParam extends NumericParam {
 export function ParamNavigator(map, index = 0) {
   if(!new.target) return new ParamNavigator(map);
 
-  if(!(map instanceof Map)) map = Util.toMap(map);
-
-  const mod = Util.mod(map.size);
+  console.log("ParamNavigator", map);
+  if(!(map instanceof Map)) map = new Map(Object.entries(map));
 
   // console.log('map:', map);
 
@@ -123,11 +123,11 @@ export function ParamNavigator(map, index = 0) {
     map,
     index,
     next() {
-      this.index = mod(this.index + 1);
+      this.index = mod(this.index + 1, map.size);
       // console.log('ParamNavigator index =', this.index);
     },
     prev() {
-      this.index = mod(this.index - 1);
+      this.index = mod(this.index - 1, map.size);
       // console.log('ParamNavigator index =', this.index);
     },
     setCallback(fn, thisObj) {
@@ -139,6 +139,7 @@ export function ParamNavigator(map, index = 0) {
     }
   });
 }
+
 define(ParamNavigator.prototype, {
   nameOf(param) {
     for(let [name, value] of this.map) if(value === param) return name;

@@ -1,18 +1,20 @@
-import PortableSpawn from './lib/spawn.js';
-import Util from './lib/util.js';
-import path from './lib/path.js';
+import { AstDump, CompleteLocation, CompleteRange, EnumDecl, FindType, FunctionDecl, GetFields, GetLoc, GetParams, GetType, GetTypeNode, GetTypeStr, Hier, isNode, List, Location, Node, NodeName, NodePrinter, NodeType, PathOf, PathRemoveLoc, PrintAst, Range, RawLocation, RawRange, RecordDecl, SIZEOF_POINTER, SourceDependencies, SpawnCompiler, Type, TypedefDecl, TypeFactory, VarDecl } from './clang-ast.js';
+import { DirIterator, RecursiveDirIterator } from './dir-helpers.js';
+import { LoadHistory, ReadFile, ReadJSON, WriteFile, WriteJSON } from './io-helpers.js';
 import * as deep from './lib/deep.js';
-import { Console } from 'console';
-import REPL from './quickjs/qjs-modules/lib/repl.js';
-import { SIZEOF_POINTER, Node, Type, RecordDecl, EnumDecl, TypedefDecl, VarDecl, FunctionDecl, Location, TypeFactory, SpawnCompiler, AstDump, FindType, Hier, PathOf, NodeType, NodeName, GetLoc, GetType, GetTypeStr, NodePrinter, isNode, SourceDependencies, GetTypeNode, GetFields, PathRemoveLoc, PrintAst, GetParams, List } from './clang-ast.js';
-import Tree from './lib/tree.js';
-import { Pointer } from './lib/pointer.js';
-import * as Terminal from './terminal.js';
 import * as ECMAScript from './lib/ecmascript.js';
-import { ECMAScriptParser } from './lib/ecmascript.js';
 import * as fs from './lib/filesystem.js';
-import { isObject, extendArray, toString, toArrayBuffer } from './lib/misc.js';
-import { ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
+import { define, defineGetter, getOpt, isObject, lazyProperty, memoize, pushUnique, toArrayBuffer, toString, weakMapper } from './lib/misc.js';
+import { extendArray } from 'extendArray';
+import * as path from './lib/path.js';
+import { Pointer } from './lib/pointer.js';
+import Tree from './lib/tree.js';
+import Util from './lib/util.js';
+import { Shell, Spawn } from './os-helpers.js';
+import * as Terminal from './terminal.js';
+import { Console } from 'console';
+import { REPL } from 'repl';
+//import PortableSpawn from './lib/spawn.js';
 
 extendArray(Array.prototype);
 
@@ -69,7 +71,7 @@ async function ImportModule(modulePath, ...args) {
     done = true;
     module = Object.create(
       null,
-      Util.getMemberNames(module, Infinity, 0).reduce(
+      getMemberNames(module, Infinity, 0).reduce(
         (acc, item) => ({
           ...acc,
           [item]: { value: module[item], enumerable: true }
@@ -104,25 +106,40 @@ function CommandLine() {
 
   repl.importModule = ImportModule;
   repl.history = LoadHistory(cmdhist);
-  repl.directives = {
-    c(...args) {
-      Compile(...args);
-      return false;
-    },
-    l(...args) {
-      ProcessFile(...args);
-      return false;
-    }
-  };
+  Object.assign(repl.directives, {
+    c: [
+      (...args) => {
+        Compile(...args);
+        return false;
+      },
+      'compile source'
+    ],
+    l: [
+      (...args) => {
+        ProcessFile(...args);
+        return false;
+      },
+      'load source file'
+    ],
+    i: [
+      (module, ...args) => {
+        console.log('args', args);
+        try {
+          return require(module);
+        } catch(e) {}
+        import(module).then(m => (globalThis[module] = m));
+      },
+      'import module'
+    ]
+  });
+  repl.inspectOptions = console.options;
   repl.show = value => {
     let first, str;
-    if(isObject(value) && (first = value.first ?? value[0]) && isObject(first) && ('id' in first || 'kind' in first))
-      str = Table(value);
+    if(isObject(value) && (first = value.first ?? value[0]) && isObject(first) && ('id' in first || 'kind' in first)) str = Table(value);
     else if(typeof value == 'string') str = value;
     else
       str = inspect(value, {
-        ...console.options,
-        ...cfg.inspectOptions,
+        ...(cfg?.inspectOptions ?? {}),
         ...repl.inspectOptions,
         hideKeys: ['loc', 'range']
       });
@@ -140,8 +157,7 @@ function CommandLine() {
     let s = '';
     for(let arg of args) {
       if(s) s += ' ';
-      if(typeof arg != 'strping' || arg.indexOf('\x1b') == -1)
-        s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
+      if(typeof arg != 'strping' || arg.indexOf('\x1b') == -1) s += inspect(arg, { depth: Infinity, depth: 6, compact: false });
       else s += arg;
     }
     fs.writeSync(debugLog, s + '\n');
@@ -151,7 +167,7 @@ function CommandLine() {
   repl.addCleanupHandler(() => {
     Terminal.mousetrackingDisable();
     let hist = repl.history.filter((item, i, a) => a.lastIndexOf(item) == i);
-    fs.writeFileSync(
+    WriteFile(
       cmdhist,
       hist
         .filter(entry => (entry + '').trim() != '')
@@ -166,9 +182,9 @@ function CommandLine() {
     std.exit(0);
   });
 
-  Util.atexit(() => repl.cleanup());
+  //atexit(() => repl.cleanup());
 
-  repl = Util.traceProxy(repl);
+  repl = traceProxy(repl);
 
   if(params.exec) repl.evalAndPrint(params.exec);
   else repl.run(false);
@@ -188,13 +204,12 @@ function LocationString(loc) {
   if(typeof loc == 'object' && loc != null) {
     let file = loc.file ?? (loc.includedFrom && loc.includedFrom.file);
     //if(file) file = path.relative(file, process.cwd());
-    if(typeof loc.line == 'number')
-      return `${file ? file + ':' : ''}${loc.line}${typeof loc.col == 'number' ? ':' + loc.col : ''}`;
+    if(typeof loc.line == 'number') return `${file ? file + ':' : ''}${loc.line}${typeof loc.col == 'number' ? ':' + loc.col : ''}`;
     return `${file ? file : ''}@${loc.offset}`;
   }
 }
 
-const TypeMap = Util.weakMapper(node => new Type(node));
+const TypeMap = weakMapper(node => new Type(node));
 
 function Structs(nodes) {
   return nodes
@@ -203,30 +218,26 @@ function Structs(nodes) {
       //deep.find(node, n => typeof n.line == 'number'),
       new Location(GetLoc(node)),
       ((node.tagUsed ? node.tagUsed + ' ' : '') + (node.name ?? '')).trim(),
-      new Map(
-        node.inner.map((field, i) =>
-          /Attr/.test(field.kind)
-            ? [Symbol(field.kind), field.id]
-            : [field.name || i, (field.type && TypeFactory(field.type)) || field.kind]
-        )
-      )
+      new Map(node.inner.map((field, i) => (/Attr/.test(field.kind) ? [Symbol(field.kind), field.id] : [field.name || i, (field.type && TypeFactory(field.type)) || field.kind])))
     ]);
   /*.map(node => types(node))*/
 }
 
 function Table(list, pred = (n, l) => true) {
   let entries = [...list].map((n, i) => (n ? [i, LocationString(GetLoc(n)), n] : undefined)).filter(e => e);
-  let keys = ['id', 'kind', 'name'].filter(k => !!k);
+  let typeKey = 'kind' in list[0] ? 'kind' : 'type';
+  let keys = ['id', typeKey, 'name'].filter(k => !!k);
   let items = entries.filter(([i, l, n]) => pred(n, l));
   const first = items[0][2];
-  if(/Function/.test(first.kind)) {
+  if(/Function/.test(first[typeKey])) {
     keys = [
       ...keys,
       function returnType(n) {
-        if(n.type) {
+        if(n.type && typeof n.type == 'object') {
           const { qualType } = n.type;
           return qualType.replace(/\s*\(.*$/g, '');
         }
+        if(n[typeKey]) return n[typeKey];
       },
       function numArgs(n) {
         let params = GetParams(n);
@@ -240,13 +251,7 @@ function Table(list, pred = (n, l) => true) {
   }
   keys = ['n', ...keys, 'location'];
   const names = keys.map(k => (typeof k == 'function' ? k.name : k));
-  let rows = items.map(([i, l, n]) =>
-    Object.fromEntries([
-      ['n', i],
-      ...keys.slice(1, -1).map((k, j) => [names[j + 1], typeof k == 'string' ? n[k] : k(n) ?? '']),
-      ['location', l]
-    ])
-  );
+  let rows = items.map(([i, l, n]) => Object.fromEntries([['n', i], ...keys.slice(1, -1).map((k, j) => [names[j + 1], (typeof k == 'string' ? n[k] : k(n)) ?? '']), ['location', l]]));
   let sizes = {};
   for(let row of rows) {
     for(let [j, i] of names.entries()) {
@@ -257,7 +262,17 @@ function Table(list, pred = (n, l) => true) {
   let width = names.reduce((acc, name) => (acc ? acc + 3 + sizes[name] : sizes[name]), 0);
   if(width > repl.termWidth) sizes['Params'] -= width - repl.termWidth;
 
-  const trunc = names.map((name, i) => Util.padTrunc((i == 0 ? -1 : 1) * sizes[name]));
+  function padTrunc(len, pad = ' ') {
+    let m = 'pad' + (len >= 0 ? 'End' : 'Start');
+    len = Math.abs(len);
+
+    return s => {
+      s = s + '';
+      return s.length > len ? s.slice(0, len) : s[m](len, pad);
+    };
+  }
+
+  const trunc = names.map((name, i) => padTrunc((i == 0 ? -1 : 1) * sizes[name]));
   const pad = (cols, pad, sep) => {
     if(!Array.isArray(cols)) cols = names.map((key, i) => cols[key]);
     return cols
@@ -280,12 +295,14 @@ function Table(list, pred = (n, l) => true) {
   );
 }
 
-function PrintRange(range) {
+function PrintRange(range, file) {
   if('range' in range) range = range.range;
 
   const { begin, end } = range;
 
-  let data = fs.readFileSync(begin.file, 'utf-8');
+  file ??= begin.file ?? $.source;
+
+  let data = ReadFile(file, 'utf-8');
   return data ? data.slice(begin.offset, end.offset + (end.tokLen | 0)) : null;
 }
 
@@ -302,20 +319,38 @@ function OverlapRange(r1, r2) {
   return false;
 }
 
+function ParentNode(node, ast = $.data) {
+  let p = PathOf(node, ast);
+
+  return p.up(2).deref(ast);
+}
+
+function NextSibling(node, ast = $.data) {
+  let p = PathOf(node, ast);
+  p[p.length - 1] += 1;
+
+  return p.deref(ast);
+}
+
+function PreviousSibling(node, ast = $.data) {
+  let p = PathOf(node, ast);
+  p[p.length - 1] += 1;
+  return p.deref(ast);
+}
+
+function FirstChild(node, ast = $.data) {
+  return PathOf(node, ast).down('inner', 0).deref(ast);
+}
+
+function LastChild(node, ast = $.data) {
+  let a = PathOf(node, ast).down('inner').deref(ast);
+  return a[a.length - 1];
+}
+
 function Terminate(exitCode) {
   console.log('Terminate', exitCode);
 
-  Util.exit(exitCode);
-}
-
-function Shell(cmd) {
-  let f = std.popen(cmd, 'r');
-  let s = '';
-  while(!f.eof() && !f.error()) {
-    s += f.readAsString();
-  }
-  f.close();
-  return s;
+  exit(exitCode);
 }
 
 function ParseStructs(text) {
@@ -359,6 +394,7 @@ byte_firstnot(const void* p, size_t len, unsigned char v) {
     if(*x != v) break;
   return x - (const unsigned char*)p;
 }
+
 size_t
 byte_lastnot(const void* p, size_t len, unsigned char v) {
   const unsigned char* x;
@@ -366,6 +402,7 @@ byte_lastnot(const void* p, size_t len, unsigned char v) {
     if(*x != v) break;
   return x - (const unsigned char*)p;
 }
+
 size_t
 bit_firstnot(unsigned char v, unsigned char b) {
   int i;
@@ -373,6 +410,7 @@ bit_firstnot(unsigned char v, unsigned char b) {
     if((v & 1) == !b) break;
   return i;
 }
+
 size_t
 bit_lastnot(unsigned char v, unsigned char b) {
   int i;
@@ -380,22 +418,26 @@ bit_lastnot(unsigned char v, unsigned char b) {
     if(!!(v & (1 << i)) == !b) break;
   return i >= 0 ? i : 8;
 }
+
 size_t
 firstnot(const void* p, size_t len, unsigned char v) {
  const char* x = p;
  size_t i = byte_firstnot(p, len, v);
  return i * 8 + bit_firstnot(x[i], v);
 }
+
 size_t
 lastnot(const void* p, size_t len, unsigned char v) {
  const unsigned char* x = p;
  size_t i = byte_lastnot(p, len, v);
  return i * 8 + bit_lastnot(x[i], v);
 }
+
 size_t
 bitsize(const void* p, size_t len) {
  return lastnot(p, len, 0xff) + 1 - firstnot(p, len, 0xff);
 }
+
 `;
 
   for(let include of includes) yield `#include "${include}"`;
@@ -471,7 +513,7 @@ function InspectStruct(decl, includes, compiler = 'clang') {
 
     result.unshift([name, '-', +size]);
 
-    Util.define(result, {
+    define(result, {
       toString(sep = ' ') {
         return this.map(line => line.join(sep).replace('.', ' ')).join('\n');
       }
@@ -533,17 +575,7 @@ function* GenerateStructClass(decl, ffiPrefix = '') {
   yield '';
 
   yield `  toString() {\n    const { ${fields.join(', ')} } = this;\n    return \`${name} {${[...members]
-    .map(
-      ([field, member]) =>
-        '\\n\\t.' +
-        field +
-        ' = ' +
-        (member.isPointer() ? '0x' : '') +
-        '${' +
-        field +
-        (member.isPointer() ? '.toString(16)' : '') +
-        '}'
-    )
+    .map(([field, member]) => '\\n\\t.' + field + ' = ' + (member.isPointer() ? '0x' : '') + '${' + field + (member.isPointer() ? '.toString(16)' : '') + '}')
     .join(',')}\\n}\`;\n  }`;
   yield '}';
 }
@@ -618,7 +650,7 @@ export class FFI_Function {
     const { prefix, name, returnType, parameters } = this;
     fp ??= (name, lib) => `${prefix}dlsym(${lib ?? 'RTLD_DEFAULT'}, '${name}')`;
     let code = `'${name}', ${fp(name, lib)}, null, '${returnType}'`;
-    console.log('function', Util.colorText(name, 1, 33), 'returnType:', Util.colorText(returnType, 1, 31));
+    console.log('function', colorText(name, 1, 33), 'returnType:', colorText(returnType, 1, 31));
     let paramIndex = 0;
     for(let [paramName, type] of parameters) {
       ++paramIndex;
@@ -709,16 +741,15 @@ function FdReader(fd, bufferSize = 1024) {
 }
 
 export async function CommandRead(args) {
-  let child = spawn(args, {
+  let child = Spawn(args, {
     block: false,
     stdio: ['inherit', 'pipe', 'inherit']
   });
   let output = '';
   let done = false;
   let buf = new ArrayBuffer(1024);
-  if(Util.platform == 'quickjs') {
+  if(platform == 'quickjs') {
     let { fd } = child.stdout;
-    //return await (async function() {
     for(;;) {
       1;
       let r;
@@ -727,9 +758,7 @@ export async function CommandRead(args) {
       if(r > 0 && r < buf.byteLength) break;
     }
     let result = await child.wait();
-    //console.log('child.wait():', result);
     return output.trimEnd();
-    //})();
   } else {
     AcquireReader(child.stdout, async reader => {
       let r;
@@ -742,7 +771,6 @@ export async function CommandRead(args) {
     let buf = new ArrayBuffer(1024);
     let r = os.read(fd, buf, 0, buf.byteLength);
     output += fs.bufferToString(buf.slice(0, r));
-    //if(r > 0) console.log('r:', r, 'output:', output.slice(-100));
     return r;
   }
 }
@@ -753,18 +781,16 @@ export async function LibraryExports(file) {
   let output = await CommandRead(['/opt/diet/bin/objdump', '-T', file]);
   output = output.replace(/.*DYNAMIC SYMBOL TABLE:\s/m, '');
   let lines = output.split(/\n/g).filter(line => /\sBase\s/.test(line));
-  let columns = Util.colIndexes(lines[0]);
+  let columns = colIndexes(lines[0]);
 
-  let entries = lines.map(line => Util.colSplit(line, columns).map(column => column.trimEnd()));
+  let entries = lines.map(line => colSplit(line, columns).map(column => column.trimEnd()));
   entries.sort((a, b) => a[0].localeCompare(b[0]));
 
   return entries.map(entry => entry[entry.length - 1].trimStart());
 }
 
 function SaveLibraries() {
-  const layers = Object.values(
-    [...project.schematic.layers, ...project.board.layers].reduce((acc, [n, e]) => ({ ...acc, [n]: e.raw }), {})
-  );
+  const layers = Object.values([...project.schematic.layers, ...project.board.layers].reduce((acc, [n, e]) => ({ ...acc, [n]: e.raw }), {}));
 }
 
 function ProcessFile(file, debug = true) {
@@ -790,13 +816,13 @@ function ParseECMAScript(file, params = {}) {
   const { debug } = params;
   if(file == '-') file = '/dev/stdin';
   if(file && fs.existsSync(file)) {
-    data = fs.readFileSync(file, 'utf8');
+    data = ReadFile(file, 'utf8');
     console.log('opened:', file);
   } else {
     file = 'stdin';
     data = source;
   }
-  console.log('OK, data: ', Util.abbreviate(Util.escape(data)));
+  console.log('OK, data: ', abbreviate(escape(data)));
   if(debug) ECMAScriptParser.instrumentate();
   console.log('ECMAScriptParser:', ECMAScriptParser);
 
@@ -814,10 +840,7 @@ function ParseECMAScript(file, params = {}) {
 
     if(err !== null) {
       console.log('parseProgram ERROR message:', err?.message);
-      console.log(
-        'parseProgram ERROR stack:\n  ' +
-          new Stack(err?.stack, (fr, i) => fr.functionName != 'esfactory' && i < 5).toString().replace(/\n/g, '\n  ')
-      );
+      console.log('parseProgram ERROR stack:\n  ' + new Stack(err?.stack, (fr, i) => fr.functionName != 'esfactory' && i < 5).toString().replace(/\n/g, '\n  '));
 
       throw err;
     } else {
@@ -832,7 +855,7 @@ function ParseECMAScript(file, params = {}) {
 
 /*function ParseECMAScript(file, debug = false) {
   console.log(`Parsing '${file}'...`);
-  let data = fs.readFileSync(file, 'utf-8');
+  let data = ReadFile(file, 'utf-8');
   let ast, error;
   let parser;
   console.log('data', data);
@@ -898,15 +921,11 @@ function GetImports(ast = $.data) {
   }
   return r;
 }
+
 function GetIdentifiers(nodes, key = null) {
   const r = [];
   for(let node of nodes) {
-    for(let n of deep.select(
-      node,
-      (n, k) => (n.type ?? n.kind) == 'Identifier' && (key === null || k == key),
-      deep.RETURN_VALUE
-    ))
-      r.push(n.name);
+    for(let n of deep.select(node, (n, k) => (n.type ?? n.kind) == 'Identifier' && (key === null || k == key), deep.RETURN_VALUE)) r.push(n.name);
   }
   return r;
 }
@@ -915,9 +934,7 @@ function MemberNames(members, flags = 0) {
   let ret = [];
   if(members.members) members = members.members;
   if(!Array.isArray(members)) {
-    for(let ptr of deep
-      .select(members, n => n.kind.endsWith('Decl') && n.name, deep.RETURN_PATH)
-      .map(path => new Pointer(path))) {
+    for(let ptr of deep.select(members, n => n.kind.endsWith('Decl') && n.name, deep.RETURN_PATH).map(path => new Pointer(path))) {
       let ptrs = ptr.chain(2);
       console.log('ptrs:', ptrs);
       let names = ptrs.map(p => deep.get(members, [...p, 'name'], deep.NO_THROW));
@@ -927,13 +944,7 @@ function MemberNames(members, flags = 0) {
       ret.push(names.filter(name => name).join('.'));
     }
   } else {
-    const memberNamePointers = deep
-      .select(
-        members,
-        n => Array.isArray(n) && n.length == 2 && typeof n[0] == 'string' && n[1] !== null,
-        deep.RETURN_VALUE_PATH
-      )
-      .map(([node, ptr]) => ptr);
+    const memberNamePointers = deep.select(members, n => Array.isArray(n) && n.length == 2 && typeof n[0] == 'string' && n[1] !== null, deep.RETURN_VALUE_PATH).map(([node, ptr]) => ptr);
     //  console.log('memberNamePointers', memberNamePointers);
 
     for(let ptr of memberNamePointers.map(path => new Pointer(path))) {
@@ -943,7 +954,7 @@ function MemberNames(members, flags = 0) {
     }
   }
   if(flags & MemberNames.UPPER) {
-    ret = ret.map(name => Util.decamelize(name, '_').toUpperCase());
+    ret = ret.map(name => decamelize(name, '_').toUpperCase());
   }
   return ret;
 }
@@ -1016,7 +1027,8 @@ async function ASTShell(...args) {
     hideKeys: ['loc', 'range']
   };
   globalThis.console = new Console({ stdout: process.stdout, inspectOptions });
-  await PortableSpawn(fn => (spawn = fn));
+
+  //await PortableSpawn(fn => (spawn = fn));
 
   /*  await import('bjson').then(module => {
     const { read, write } = module;
@@ -1034,26 +1046,25 @@ async function ASTShell(...args) {
 
   globalThis.files = files = {};
 
-  const platform = Util.getPlatform();
+  /*  const platform = getPlatform();
   if(platform == 'quickjs') await import('std').then(module => (globalThis.std = module));
 
   if(platform == 'node') await import('./lib/misc.js').then(module => (globalThis.inspect = module.inspect));
 
-  (await Util.getPlatform()) == 'quickjs'
-    ? import('deep.so').then(module => (globalThis.deep = module))
-    : import('./lib/deep.js').then(module => (globalThis.deep = module['default']));
-
-  base = path.basename(Util.getArgv()[1], '.js').replace(/\.[a-z]*$/, '');
+  (await getPlatform()) == 'quickjs' ? import('deep.so').then(module => (globalThis.deep = module)) : import('./lib/deep.js').then(module => (globalThis.deep = module['default']));
+*/
+  base = path.basename(args[0], '.js').replace(/\.[a-z]*$/, '');
   cmdhist = `.${base}-cmdhistory`;
   config = `.${base}-config`;
 
-  params = globalThis.params = Util.getOpt(
+  params = globalThis.params = getOpt(
     {
       include: [true, (a, p) => (p || []).concat([a]), 'I'],
       define: [true, (a, p) => (p || []).concat([a]), 'D'],
       libs: [true, (a, p) => (p || []).concat([a]), 'l'],
       debug: [false, null, 'x'],
       force: [false, null, 'f'],
+      target: [true, null, 't'],
       exec: [true, null, 'e'],
       'system-includes': [false, null, 's'],
       'no-remove-empty': [false, null, 'E'],
@@ -1071,18 +1082,28 @@ async function ASTShell(...args) {
   libs = params.libs || [];
   sources = params['@'] || [];
 
-  Util.define(globalThis, {
+  define(globalThis, {
     defs,
     includes,
     libs,
     /* prettier-ignore */ get flags() {
-      return [...includes.filter(v => typeof v == 'string').map(v => `-I${v}`), ...defs.map(d => `-D${d}`), ...libs.map(l => `-l${l}`)];
+      return [ ...(params.target? [`--target=${params.target}`] : []),  ...includes.filter(v => typeof v == 'string').map(v => `-I${v}`), ...defs.map(d => `-D${d}`), ...libs.map(l => `-l${l}`)];
     }
   });
 
   async function Compile(file, ...args) {
-    //console.log('args', args);
-    let r = await AstDump(params.compiler, file, [...globalThis.flags, ...args], params.force);
+    console.log('Compiling', { file, args });
+    let r;
+
+    /* if(params.target)
+      args.unshift(`--target=${params.target}`);*/
+
+    try {
+      r = await AstDump(params.compiler, file, [...globalThis.flags, ...args], params.force);
+    } catch(e) {
+      console.log('Compile ERROR:', e.message + '\n' + e.stack);
+      return e;
+    }
     r.source = file;
 
     globalThis.files[file] = r;
@@ -1102,72 +1123,52 @@ async function ASTShell(...args) {
         : node => node.name == name_or_id && pred(node);
     }
 
-    Util.bindMethods(r, {
-      select(name_or_id, pred = n => true) {
-        return this.data.inner.filter(nameOrIdPred(name_or_id, pred));
-      },
-      getByIdOrName(name_or_id, pred = n => true) {
-        let node = this.data.inner.findLast(nameOrIdPred(name_or_id, pred));
+    r,
+      {
+        select(name_or_id, pred = n => true) {
+          return this.data.inner.filter(nameOrIdPred(name_or_id, pred));
+        },
+        getByIdOrName(name_or_id, pred = n => true) {
+          let node = this.data.inner.findLast(nameOrIdPred(name_or_id, pred));
 
-        node ??= this.classes.findLast(nameOrIdPred(name_or_id, pred));
-        node ??= deep.find(this.data, nameOrIdPred(name_or_id, pred), deep.RETURN_VALUE);
-        return node;
-      },
-      getType(name_or_id) {
-        let result =
-          this.getByIdOrName(name_or_id, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind)) ??
-          GetType(name_or_id, this.data);
+          node ??= this.classes.findLast(nameOrIdPred(name_or_id, pred));
+          node ??= deep.find(this.data, nameOrIdPred(name_or_id, pred), deep.RETURN_VALUE);
+          return node;
+        },
+        getType(name_or_id) {
+          let result = this.getByIdOrName(name_or_id, n => !/(FunctionDecl)/.test(n.kind) && /Decl/.test(n.kind)) ?? GetType(name_or_id, this.data);
 
-        if(result) {
-          let type = TypeFactory(result, this.data);
-          if(type) result = type;
-        }
-        return result;
-      },
-
-      getFunction(name_or_id) {
-        let result = isNode(name_or_id)
-          ? name_or_id
-          : this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
-
-        if(result) return new FunctionDecl(result, this.data);
-      },
-      getVariable(name_or_id) {
-        let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(VarDecl)/.test(n.kind));
-
-        if(result) return new VarDecl(result, this.data);
-      },
-      getLoc(node) {
-        let loc;
-        if(isObject(node)) {
-          if('loc' in node) loc = node.loc;
-          else {
-            if('ast' in node) node = node.ast;
-            if('loc' in node) loc = node.loc;
+          if(result) {
+            let type = TypeFactory(result, this.data);
+            if(type) result = type;
           }
-        }
+          return result;
+        },
 
-        if(loc) {
-          if(!(loc instanceof Location)) loc = new Location(loc);
+        getFunction(name_or_id) {
+          let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(FunctionDecl)/.test(n.kind));
+
+          if(result) return new FunctionDecl(result, this.data);
+        },
+        getVariable(name_or_id) {
+          let result = isNode(name_or_id) ? name_or_id : this.getByIdOrName(name_or_id, n => /(VarDecl)/.test(n.kind));
+
+          if(result) return new VarDecl(result, this.data);
+        },
+        getLoc(node) {
+          return CompleteLocation(node);
         }
-        return loc;
-      }
-    });
-    Util.defineGetter(
+      };
+    defineGetter(
       r,
       'tree',
-      Util.memoize(() => new Tree(r.data))
+      memoize(() => new Tree(r.data))
     );
-    return Util.define(r, {
+    return define(r, {
       pathOf(needle, maxDepth = 10) {
         if('ast' in needle) needle = needle.ast;
 
-        for(let [node, path] of deep.iterate(
-          r.data,
-          n => typeof n == 'object' && n != null,
-          deep.RETURN_VALUE_PATH,
-          maxDepth
-        )) {
+        for(let [node, path] of deep.iterate(r.data, n => typeof n == 'object' && n != null, deep.RETURN_VALUE_PATH, maxDepth)) {
           //console.log("pathOf",console.config({depth:1}),{node,path});
           if(node === needle) return new Pointer(path);
         }
@@ -1184,16 +1185,18 @@ async function ASTShell(...args) {
     NodeType,
     NodeName,
     GetLoc,
+    RawLocation,
+    CompleteLocation,
+    RawRange,
+    CompleteRange,
     GetTypeStr,
-    ReadFile,
-    MapFile,
-    ReadJSON,
-    ReadBJSON,
-    WriteFile,
-    WriteJSON,
-    WriteBJSON,
     PrintRange,
     OverlapRange,
+    ParentNode,
+    NextSibling,
+    PreviousSibling,
+    FirstChild,
+    LastChild,
     GenerateInspectStruct,
     GenerateStructClass,
     InspectStruct,
@@ -1252,6 +1255,7 @@ async function ASTShell(...args) {
     PathOf,
     FunctionDecl,
     Location,
+    Range,
     TypeFactory,
     SpawnCompiler,
     AstDump,
@@ -1274,11 +1278,11 @@ async function ASTShell(...args) {
     Namespaces,
     UnsetLoc
   });
-  globalThis.util = Util;
+  //globalThis.Util = Util;
   globalThis.F = arg => $.getFunction(arg);
   globalThis.T = arg => $.getType(arg);
 
-  Util.lazyProperty(globalThis, 'P', () => {
+  lazyProperty(globalThis, 'P', () => {
     let printer = NodePrinter($.data);
 
     return node => {
@@ -1287,17 +1291,11 @@ async function ASTShell(...args) {
       return printer.print(node);
     };
   });
+  console.log('Loading history');
 
   const unithist = `.${base}-unithistory`;
   let items = [];
   let hist = ReadJSON(unithist) || [];
-
-  const pushUnique = (arr, item) => {
-    if(Util.findIndex(arr, elem => deep.equals(elem, item)) === -1) {
-      arr.push(item);
-      return true;
-    }
-  };
 
   console.log('Loading sources:' + sources.map(s => ' ' + s).join(','));
 
@@ -1329,10 +1327,7 @@ try {
   error = e;
 } finally {
   if(error) {
-    console.log(
-      'FAIL: ' + error.message,
-      '\n  ' + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  ')
-    );
+    console.log('FAIL: ' + error.message, '\n  ' + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  '));
     console.log('FAIL');
     std.exit(1);
   }

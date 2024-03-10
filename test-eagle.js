@@ -1,14 +1,9 @@
-import { EagleDocument, EagleProject } from './lib/eagle.js';
-import PortableFileSystem from './lib/filesystem.js';
-import { LineList, Rect } from './lib/geom.js';
-import { toXML } from './lib/json.js';
-import Util from './lib/util.js';
 import deep from './lib/deep.js';
+import { EagleDocument, EagleProject } from './lib/eagle.js';
 import { Graph } from './lib/fd-graph.js';
+import { LineList, Rect } from './lib/geom.js';
 import ptr from './lib/json-ptr.js';
-import LogJS from './lib/log.js';
-import ConsoleSetup from './lib/consoleSetup.js';
-import fs from 'fs';
+import { toXML } from './lib/json.js';
 
 let filesystem = fs;
 
@@ -179,13 +174,7 @@ async function testEagle(filename) {
 
   const packages = {
     board: (board && board.elements && [...board.elements].map(([name, e]) => e.package)) || [],
-    schematic:
-      (schematic &&
-        schematic.sheets &&
-        [...schematic.sheets]
-          .map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined))
-          .flat()) ||
-      []
+    schematic: (schematic && schematic.sheets && [...schematic.sheets].map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)).flat()) || []
   };
   let parts = (schematic && schematic.parts) || [];
   let sheets = (schematic && schematic.sheets) || [];
@@ -268,16 +257,14 @@ async function testEagle(filename) {
   let desc = documents.map(doc => [doc.filename, doc.find('description')]);
   console.log('desc', desc);
 
-  desc = desc
-    .map(([file, e]) => [file, e && e.xpath()])
-    .map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
+  desc = desc.map(([file, e]) => [file, e && e.xpath()]).map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
   desc = new Map(desc);
   console.log('descriptions', [...Util.map(desc, ([k, v]) => [k, v])]);
 
   return proj;
 }
+
 async function main(...args) {
-  //  await ConsoleSetup({ breakLength: 120, depth: 10 });
   if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3');
   for(let arg of args) {
     //arg = arg.replace(/\.(brd|sch|lbr)$/i, '');
@@ -285,9 +272,9 @@ async function main(...args) {
       let project = await testEagle(arg);
     } catch(err) {
       console.log('Err:', err.message, typeof err.stack == 'string' ? err.stack : [...err.stack].map(f => f + ''));
-      Util.exit(1);
+      process.exit(1);
     }
   }
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

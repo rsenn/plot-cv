@@ -25,10 +25,18 @@ class Attribute {
   std::string value;
 
 public:
-  Attribute(std::string name, std::string value) : name(name), value(value) {}
-  Attribute(std::string name, double value) : name(name), value(to_string(value)) {}
-  Attribute(std::string name, int32_t value) : name(name), value(std::to_string(value)) {}
-  Attribute(std::string name, bool value) : name(name), value(value ? "true" : "false") {}
+  Attribute(std::string name, std::string value)
+      : name(name)
+      , value(value) {}
+  Attribute(std::string name, double value)
+      : name(name)
+      , value(to_string(value)) {}
+  Attribute(std::string name, int32_t value)
+      : name(name)
+      , value(std::to_string(value)) {}
+  Attribute(std::string name, bool value)
+      : name(name)
+      , value(value ? "true" : "false") {}
 
   std::string
   Name() const {
@@ -149,8 +157,11 @@ protected:
   }
 
 public:
-  Base(const std::string& tag) : tag(tag) {}
-  Base(const std::string& tag, const std::vector<Attribute>& attributes) : tag(tag), attributes(attributes) {}
+  Base(const std::string& tag)
+      : tag(tag) {}
+  Base(const std::string& tag, const std::vector<Attribute>& attributes)
+      : tag(tag)
+      , attributes(attributes) {}
 
   virtual ~Base() {}
 
@@ -165,9 +176,7 @@ public:
 
   Base&
   AddAttribute(const Attribute& attribute) {
-    auto ii = std::find_if(attributes.begin(), attributes.end(), [attribute](const auto& a) {
-      return a.Name().compare(attribute.Name()) == 0;
-    });
+    auto ii = std::find_if(attributes.begin(), attributes.end(), [attribute](const auto& a) { return a.Name().compare(attribute.Name()) == 0; });
     if(ii != attributes.end()) {
       ii->Value(attribute.Value());
     } else {
@@ -213,7 +222,9 @@ public:
 
     stream << ' ' << Extras();
 
-    for(const auto& attribute : attributes) { stream << ' ' << attribute; }
+    for(const auto& attribute : attributes) {
+      stream << ' ' << attribute;
+    }
     stream << "/>";
 
     return stream.str();
@@ -227,9 +238,12 @@ public:
 
 class Rect : public Base {
 public:
-  Rect() : Base("rect") {}
-  Rect(double x, double y, double w, double h) : Base("rect", {{"x", x}, {"y", y}, {"width", w}, {"height", h}}) {}
-  Rect(double w, double h) : Base("rect", {{"width", w}, {"height", h}}) {}
+  Rect()
+      : Base("rect") {}
+  Rect(double x, double y, double w, double h)
+      : Base("rect", {{"x", x}, {"y", y}, {"width", w}, {"height", h}}) {}
+  Rect(double w, double h)
+      : Base("rect", {{"width", w}, {"height", h}}) {}
 };
 
 class Point {
@@ -238,7 +252,9 @@ class Point {
 
 public:
   Point() {}
-  Point(double x, double y) : x(x), y(y) {}
+  Point(double x, double y)
+      : x(x)
+      , y(y) {}
 
   std::string
   ToText() const {
@@ -261,14 +277,19 @@ protected:
   Extras() const override {
     std::ostringstream stream;
 
-    for(const auto& p : points) { stream << p << " "; }
+    for(const auto& p : points) {
+      stream << p << " ";
+    }
 
     return Attribute("points", stream.str()).ToText();
   }
 
 public:
-  PolyBase(std::string tag) : Base(tag) {}
-  PolyBase(std::string tag, const std::vector<Point>& points) : Base(tag), points(points) {}
+  PolyBase(std::string tag)
+      : Base(tag) {}
+  PolyBase(std::string tag, const std::vector<Point>& points)
+      : Base(tag)
+      , points(points) {}
   virtual ~PolyBase() override {}
 
   PolyBase&
@@ -286,21 +307,26 @@ public:
 
 class Polyline : public PolyBase {
 public:
-  Polyline() : PolyBase("polyline") {}
-  Polyline(const std::vector<Point>& points) : PolyBase("polyline", points) {}
+  Polyline()
+      : PolyBase("polyline") {}
+  Polyline(const std::vector<Point>& points)
+      : PolyBase("polyline", points) {}
   virtual ~Polyline() override {}
 };
 
 class Polygon : public PolyBase {
 public:
-  Polygon() : PolyBase("polygon") {}
-  Polygon(const std::vector<Point>& points) : PolyBase("polygon", points) {}
+  Polygon()
+      : PolyBase("polygon") {}
+  Polygon(const std::vector<Point>& points)
+      : PolyBase("polygon", points) {}
   virtual ~Polygon() override {}
 };
 
 class Line : public Base {
 public:
-  Line() : Base("line") {}
+  Line()
+      : Base("line") {}
   Line(double from_x, double from_y, double to_x, double to_y)
       : Base("line", {{"x1", from_x}, {"y1", from_y}, {"x2", to_x}, {"y2", to_y}}) {}
   virtual ~Line() override {}
@@ -308,7 +334,8 @@ public:
 
 class Circle : public Base {
 public:
-  Circle() : Base("circle") {}
+  Circle()
+      : Base("circle") {}
   Circle(double center_x, double center_y, double radius)
       : Base("circle", {{"cx", center_x}, {"cy", center_y}, {"r", radius}}) {}
   virtual ~Circle() override {}
@@ -316,7 +343,8 @@ public:
 
 class Ellipse : public Base {
 public:
-  Ellipse() : Base("ellipse") {}
+  Ellipse()
+      : Base("ellipse") {}
   Ellipse(double center_x, double center_y, double radius_x, double radius_y)
       : Base("ellipse", {{"cx", center_x}, {"cy", center_y}, {"rx", radius_x}, {"ry", radius_y}}) {}
   virtual ~Ellipse() override {}
@@ -324,8 +352,10 @@ public:
 
 class Use : public Base {
 public:
-  Use() : Base("use") {}
-  Use(std::string reference_id) : Base("use", {{"xlink:href", '#' + reference_id}}) {}
+  Use()
+      : Base("use") {}
+  Use(std::string reference_id)
+      : Base("use", {{"xlink:href", '#' + reference_id}}) {}
   virtual ~Use() override {}
 };
 
@@ -339,7 +369,9 @@ protected:
     std::ostringstream stream;
     stream << "<" << Tag();
 
-    for(const auto& attribute : Attributes()) { stream << ' ' << attribute; }
+    for(const auto& attribute : Attributes()) {
+      stream << ' ' << attribute;
+    }
     stream << ">";
 
     return stream.str();
@@ -354,8 +386,10 @@ protected:
   }
 
 public:
-  GroupBase(std::string group_tag) : Base(group_tag) {}
-  GroupBase(std::string group_tag, const std::vector<Attribute>& attributes) : Base(group_tag, attributes) {}
+  GroupBase(std::string group_tag)
+      : Base(group_tag) {}
+  GroupBase(std::string group_tag, const std::vector<Attribute>& attributes)
+      : Base(group_tag, attributes) {}
   virtual ~GroupBase() override {}
 
   template<typename T>
@@ -370,7 +404,9 @@ public:
     std::ostringstream stream;
     stream << StartTag() << '\n';
 
-    for(const auto& object : objects) { stream << "  " << *object << '\n'; }
+    for(const auto& object : objects) {
+      stream << "  " << *object << '\n';
+    }
 
     stream << EndTag();
 
@@ -387,7 +423,9 @@ class Text : public GroupBase {
   std::string text;
 
 public:
-  Text(double x, double y, const std::string& text) : GroupBase("text", {{"x", x}, {"y", y}}), text(text) {}
+  Text(double x, double y, const std::string& text)
+      : GroupBase("text", {{"x", x}, {"y", y}})
+      , text(text) {}
   virtual ~Text() override {}
 
   virtual std::string
@@ -403,7 +441,8 @@ public:
 
 class Group : public GroupBase {
 public:
-  Group() : GroupBase("g") {}
+  Group()
+      : GroupBase("g") {}
   virtual ~Group() override {}
 
   friend std::ostream&
@@ -414,8 +453,10 @@ public:
 
 class Layer : public GroupBase {
 public:
-  Layer() : GroupBase("g", {{"inkscape:groupmode", std::string("layer")}}) {}
-  Layer(const std::string& name) : GroupBase("g", {{"inkscape:label", name}, {"inkscape:groupmode", std::string("layer")}}) {}
+  Layer()
+      : GroupBase("g", {{"inkscape:groupmode", std::string("layer")}}) {}
+  Layer(const std::string& name)
+      : GroupBase("g", {{"inkscape:label", name}, {"inkscape:groupmode", std::string("layer")}}) {}
   virtual ~Layer() override {}
 
   friend std::ostream&

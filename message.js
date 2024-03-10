@@ -1,4 +1,3 @@
-import Util from './lib/util.js';
 
 export class Message {
   static SENDER_ID = 0x2609;
@@ -7,10 +6,7 @@ export class Message {
 
   constructor(...args) {
     if(args.length == 1) {
-      Object.assign(
-        this,
-        typeof args[0] == 'string' ? Message.decode(args[0]) : Util.filterOutMembers(args[0], v => v == undefined)
-      );
+      Object.assign(this, typeof args[0] == 'string' ? Message.decode(args[0]) : Util.filterOutMembers(args[0], v => v == undefined));
     } else {
       const [body, origin, recipient, type] = args;
       if(origin !== undefined) this.origin = origin;
@@ -84,9 +80,7 @@ export class Message {
 
     const prepend = plain ? str => (r = str + (r != '' ? ' ' : '') + r) : str => (r = str + r);
 
-    const insertField = plain
-      ? (str, code) => prepend((code == Message.SENDER_ID ? ':' : '') + str)
-      : (str, code) => prepend((r = String.fromCodePoint(code) + str + String.fromCodePoint(code)));
+    const insertField = plain ? (str, code) => prepend((code == Message.SENDER_ID ? ':' : '') + str) : (str, code) => prepend((r = String.fromCodePoint(code) + str + String.fromCodePoint(code)));
 
     if(recipient) r = insertField(recipient, Message.RECIPIENT_ID);
     r = insertField(type || 'x', Message.TYPE_ID);
@@ -128,4 +122,5 @@ function encodeBody(body) {
 
   return ':' + JSON.stringify(body);
 }
+
 export default Message;

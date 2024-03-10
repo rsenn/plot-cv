@@ -78,7 +78,9 @@ main(void) {
   printf("PortAudio Test: output sine wave NON-INTERLEAVED. SR = %d, BufSize = %d\n", SAMPLE_RATE, FRAMES_PER_BUFFER);
 
   /* initialise sinusoidal wavetable */
-  for(i = 0; i < TABLE_SIZE; i++) { sine[i] = (float)sin(((double)i / (double)TABLE_SIZE) * M_PI * 2.); }
+  for(i = 0; i < TABLE_SIZE; i++) {
+    sine[i] = (float)sin(((double)i / (double)TABLE_SIZE) * M_PI * 2.);
+  }
 
   err = Pa_Initialize();
   if(err != paNoError)

@@ -1,16 +1,12 @@
-import { OLMap, View, TileLayer, Layer, Point, Overlay, XYZ, OSM, Feature, Projection, VectorLayer, VectorSource, MultiPoint, Polygon, LineString, Geolocation, GeoJSON, composeCssTransform, Icon, Fill, fromLonLat, ZoomSlider, addCoordinateTransforms, getVectorContext, transform, Style, Stroke, CircleStyle, RegularShape, addProjection, LayerGroup } from './lib/ol.js';
-import LayerSwitcher /* , { BaseLayerOptions, GroupLayerOptions }*/ from './lib/ol-layerswitcher.js';
-import { assert, lazyProperties, define, isObject, memoize, unique, arrayFacade } from './lib/misc.js';
-import { Element } from './lib/dom.js';
-import { add, closestOnCircle, closestOnSegment, createStringXY, degreesToStringHDMS, format, equals, rotate, scale, squaredDistance, distance, squaredDistanceToSegment, toStringHDMS, toStringXY, wrapX, getWorldsAway } from './openlayers/src/ol/coordinate.js';
-
-import { toLonLat, equivalent, getTransformFromProjections, getTransform, transformExtent, transformWithProjections, setUserProjection, clearUserProjection, getUserProjection, useGeographic, toUserCoordinate, fromUserCoordinate, toUserExtent, fromUserExtent, toUserResolution, fromUserResolution, createSafeCoordinateTransform, addCommon } from './openlayers/src/ol/proj.js';
-
-import { TransformCoordinates, Coordinate, Pin, Markers, OpenlayersMap, Popup, ParseCoordinates } from './ol-helpers.js';
-import { ObjectWrapper, BiDirMap } from './object-helpers.js';
 import { Layer as HTMLLayer } from './lib/dom/layer.js';
-import { h, forwardRef, Fragment, React, ReactComponent, Portal, toChildArray } from './lib/dom/preactComponent.js';
-import { parseDegMinSec, parseGPSLocation, parseDMS } from './string-helpers.js';
+import { forwardRef, Fragment, h, Portal, React, ReactComponent, toChildArray } from './lib/dom/preactComponent.js';
+import { assert, define, isObject, lazyProperties, memoize, unique } from './lib/misc.js';
+import { addCoordinateTransforms, addProjection, CircleStyle, composeCssTransform, Feature, Fill, fromLonLat, GeoJSON, Geolocation, getVectorContext, Icon, Layer, LayerGroup, LineString, MultiPoint, OLMap, OSM, Overlay, Point, Polygon, Projection, RegularShape, Stroke, Style, TileLayer, transform, VectorLayer, VectorSource, View, XYZ, ZoomSlider } from './lib/ol.js';
+import { BiDirMap, ObjectWrapper } from './object-helpers.js';
+import { Coordinate, Markers, OpenlayersMap, ParseCoordinates, Pin, Popup, TransformCoordinates } from './ol-helpers.js';
+import { add, scale, toStringHDMS, wrapX } from './openlayers/src/ol/coordinate.js';
+import { toLonLat } from './openlayers/src/ol/proj.js';
+import { parseDMS } from './string-helpers.js';
 
 let data = (globalThis.data = []);
 let center = (globalThis.center = transform([7.454281, 46.96453], 'EPSG:4326', 'EPSG:3857'));
@@ -69,6 +65,7 @@ const cities = {
     }
   }
 }
+
 */
 function SetFenceColor(color) {
   vector.setStyle(new Style({ stroke: new Stroke({ color, width: 3, lineDash: [2, 4] }) }));

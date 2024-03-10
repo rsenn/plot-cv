@@ -1,15 +1,11 @@
-import React, { h, useState, useMemo, useEffect, useRef, forwardRef, useImperativeHandle } from './lib/dom/preactComponent.js';
-import PropTypes from './lib/prop-types.js';
-import { useDebounce } from './lib/hooks/useDebounce.js';
 import Cursor from './cursor.js';
-import Util from './lib/util.js';
 import { classNames } from './lib/classNames.js';
+import { forwardRef, h, useEffect, useMemo, useRef, useState } from './lib/dom/preactComponent.js';
+import { useDebounce } from './lib/hooks/useDebounce.js';
 
 const rulerImgVertical = 'static/ruler/rulerVertical.svg';
 const rulerImg = 'static/ruler/rulerHorizontal.svg';
 const Ruler = forwardRef((props, ref) => {
-  //console.log("Ruler props =", props);
-  console.log('Ruler props = ', props);
   const {
     frictionCoefficient = 0.93,
     multiplicatorLength = 20,
@@ -27,7 +23,6 @@ const Ruler = forwardRef((props, ref) => {
     disabledCursorDrag = false,
     handlers
   } = props;
-  console.log('Ruler forwarded ref = ', ref);
   const FRICTION_COEFF = Math.min(0.99, Math.max(0.01, frictionCoefficient));
   const MULTIPLICATOR_LENGTH = multiplicatorLength;
   const totalWidth = longLength * MULTIPLICATOR_LENGTH;
@@ -151,9 +146,7 @@ const Ruler = forwardRef((props, ref) => {
   };
   const onTouchCursor = e => {
     const client = horizontal ? e.touches[0].pageX : e.touches[0].pageY;
-    const offset = horizontal
-      ? inputEl.current.offsetLeft + cursorLength.current / 2
-      : inputEl.current.offsetTop + cursorLength.current / 2;
+    const offset = horizontal ? inputEl.current.offsetLeft + cursorLength.current / 2 : inputEl.current.offsetTop + cursorLength.current / 2;
     draggerJS.current = Math.min(100, Math.max(0, (100 * (client - offset)) / longLength));
     inertiaJS.current = Math.min(totalWidth, Math.max(0, (totalWidth * (client - offset)) / longLength));
     timeJS.current = 150;
@@ -163,9 +156,7 @@ const Ruler = forwardRef((props, ref) => {
     if(!isDragging.current || disabledCursorDrag) return;
     const client = horizontal ? e.clientX : e.clientY;
     if(client === 0) return;
-    const offset = horizontal
-      ? inputEl.current.offsetLeft + cursorLength.current / 2
-      : inputEl.current.offsetTop + cursorLength.current / 2;
+    const offset = horizontal ? inputEl.current.offsetLeft + cursorLength.current / 2 : inputEl.current.offsetTop + cursorLength.current / 2;
     draggerJS.current = Math.min(100, Math.max(0, (100 * (client - offset)) / longLength));
     inertiaJS.current = Math.min(totalWidth, Math.max(0, (totalWidth * (client - offset)) / longLength));
     timeJS.current = 150;
@@ -350,6 +341,7 @@ const Ruler = forwardRef((props, ref) => {
       </div>
     );*/
 });
+
 export default Ruler;
 /*
 Ruler.propTypes = {

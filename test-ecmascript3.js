@@ -1,16 +1,12 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
-import { ECMAScriptParser, Lexer, PathReplacer } from './lib/ecmascript.js';
-import Printer from './lib/ecmascript/printer.js';
-import { estree, ESNode, Program, ModuleDeclaration, ModuleSpecifier, ImportDeclaration, ImportSpecifier, ImportDefaultSpecifier, ImportNamespaceSpecifier, Super, Expression, FunctionLiteral, Pattern, Identifier, Literal, RegExpLiteral, TemplateLiteral, BigIntLiteral, TaggedTemplateExpression, TemplateElement, ThisExpression, UnaryExpression, UpdateExpression, BinaryExpression, AssignmentExpression, LogicalExpression, MemberExpression, ConditionalExpression, CallExpression, DecoratorExpression, NewExpression, SequenceExpression, Statement, EmptyStatement, DebuggerStatement, LabeledStatement, BlockStatement, FunctionBody, StatementList, ExpressionStatement, Directive, ReturnStatement, ContinueStatement, BreakStatement, IfStatement, SwitchStatement, SwitchCase, WhileStatement, DoWhileStatement, ForStatement, ForInStatement, ForOfStatement, WithStatement, TryStatement, CatchClause, ThrowStatement, Declaration, ClassDeclaration, ClassBody, MethodDefinition, MetaProperty, YieldExpression, FunctionArgument, FunctionDeclaration, ArrowFunctionExpression, VariableDeclaration, VariableDeclarator, ObjectExpression, Property, ArrayExpression, JSXLiteral, AssignmentProperty, ObjectPattern, ArrayPattern, RestElement, AssignmentPattern, AwaitExpression, SpreadElement, ExportNamedDeclaration, ExportSpecifier, AnonymousDefaultExportedFunctionDeclaration, AnonymousDefaultExportedClassDeclaration, ExportDefaultDeclaration, ExportAllDeclaration } from './lib/ecmascript/estree.js';
-import Util from './lib/util.js';
+import { ReadFile, WriteFile } from './io-helpers.js';
 import deep from './lib/deep.js';
-import { Path } from './lib/json.js';
-import { SortedMap } from './lib/container/sortedMap.js';
-import PortableFileSystem from './lib/fs.js';
-import { ImmutablePath } from './lib/json.js';
+import { ECMAScriptParser, PathReplacer } from './lib/ecmascript.js';
+import { CallExpression, ESNode, Identifier, ImportDeclaration, TemplateLiteral } from './lib/ecmascript/estree.js';
+import Printer from './lib/ecmascript/printer.js';
 import Tree from './lib/tree.js';
-import { ConsoleSetup } from './lib/consoleSetup.js';
+
 let fs;
+
 const testfn = () => true;
 const testtmpl = `this is\na test`;
 const source = `console.log(...cols.map((col, i) => (col + '').replaceAll('\n', '\\n').padEnd(colSizes[i])));`;
@@ -24,29 +20,24 @@ function WriteFile(name, data) {
     console.log(`Wrote${name}${data.length}bytes`);
   }
 }
+
 function printAst(ast, comments, printer = globalThis.printer) {
   let output = printer.print(ast);
   return output;
 }
+
 let files = {};
 async function main(...args) {
-  await ConsoleSetup({
-    colors: true,
-    depth: 8,
-    compact: 1,
-    customInspect: false
-  });
-  await PortableFileSystem(fs => (fs = fs));
-  let params = Util.getOpt(
+  let params = getOpt(
     {
       ['output-ast']: [true, null, 'a'],
       ['output-js']: [true, null, 'o'],
       help: [
         false,
         (v, r, o) => {
-          console.log(`Usage:${Util.getArgs()[0]}[OPTIONS]\n`);
+          console.log(`Usage:${getArgs()[0]}[OPTIONS]\n`);
           console.log(o.map(([name, [arg, fn, ch]]) => `  -${(name + ', -' + ch).padEnd(20)}`).join('\n'));
-          Util.exit(0);
+          exit(0);
         },
         'h'
       ],
@@ -55,20 +46,20 @@ async function main(...args) {
     },
     args
   );
-  console.log(`Platform:${Util.getPlatform()}`);
-  if(Util.getPlatform() == 'quickjs') {
+  console.log(`Platform:${getPlatform()}`);
+  if(getPlatform() == 'quickjs') {
     await import('os').then(os => {
       console.log('os:', os);
       os.signal(os.SIGINT, () => {
         console.log(`Got SIGINT. ${os.SIGINT}`);
-        Util.putStack();
-        Util.exit(1);
+        putStack();
+        exit(1);
       });
       console.log(`SIGINT ${os.SIGINT} handler installed`);
     });
   }
-  Util.defineGettersSetters(globalThis, {
-    printer: Util.once(
+  defineGettersSetters(globalThis, {
+    printer: once(
       () =>
         new Printer({
           colors: false,
@@ -81,7 +72,7 @@ async function main(...args) {
   if(params['@'].length == 0) params['@'].push(null);
   for(let file of params['@']) {
     let error;
-    const processing = Util.instrument(() => processFile(file, params));
+    const processing = instrument(() => processFile(file, params));
     let start = await time(),
       end;
     let times = [];
@@ -95,28 +86,29 @@ async function main(...args) {
       }
     }
     end = await time();
-    times.push(await Util.now());
+    times.push(await now());
     files[file] = finish(error);
     if(error) {
-      Util.putError(error);
+      putError(error);
       break;
     }
     console.log('files:', files);
   }
   let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
-  Util.exit(Number(files.length == 0));
+  exit(Number(files.length == 0));
 }
+
 function processFile(file, params) {
   let data, b, ret;
   const { debug } = params;
   if(file == '-') file = '/dev/stdin';
   if(file && fs.exists(file)) {
-    data = fs.readFileSync(file);
+    data = ReadFile(file);
   } else {
     file = 'stdin';
     data = source;
   }
-  console.log('OK, data: ', Util.abbreviate(Util.escape(data)));
+  console.log('OK, data: ', abbreviate(escape(data)));
   let ast, error;
   globalThis.parser = null;
   globalThis.parser = new ECMAScriptParser(data ? data.toString() : data, file, debug);
@@ -152,28 +144,25 @@ function processFile(file, params) {
   const output_file = params['output-js'] ?? file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
   let tree = new Tree(ast);
   let flat = tree.flat(null, ([path, node]) => {
-    return !Util.isPrimitive(node);
+    return !isPrimitive(node);
   });
   WriteFile(params['output-ast'] ?? file + '.ast.json', JSON.stringify(ast, null, 2));
   const code = printAst(ast, parser.comments, printer);
   WriteFile(output_file, code);
   function getImports() {
     const imports = [...flat].filter(([path, node]) => isRequire(node) || isImport(node));
-    const importStatements = imports
-      .map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path))
-      .map(path => [path, deep.get(ast, path)]);
+    const importStatements = imports.map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path)).map(path => [path, deep.get(ast, path)]);
     console.log('imports:', new Map(imports.map(([path, node]) => [ESNode.assoc(node).position, node])));
     console.log('importStatements:', importStatements);
     const importedFiles = imports.map(([pos, node]) => Identifier.string(node.source || node.arguments[0]));
     console.log('importedFiles:', importedFiles);
-    let importIdentifiers = importStatements
-      .map(([p, n]) => [p, n.identifiers ? n.identifiers : n])
-      .map(([p, n]) => [p, n.declarations ? n.declarations : n]);
+    let importIdentifiers = importStatements.map(([p, n]) => [p, n.identifiers ? n.identifiers : n]).map(([p, n]) => [p, n.declarations ? n.declarations : n]);
     console.log('importIdentifiers:', importIdentifiers);
     console.log('importIdentifiers:', unique(importIdentifiers.flat()).join(', '));
   }
   const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral);
 }
+
 function finish(err) {
   let fail = !!err;
   if(fail) {
@@ -184,7 +173,7 @@ function finish(err) {
   }
   if(err) {
     console.log(parser.lexer.currentLine());
-    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
+    console.log(className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
   }
   let lexer = parser.lexer;
   let t = [];
@@ -196,9 +185,10 @@ function finish(err) {
   console.log('finish: ' + (fail ? 'error' : 'success'));
   return !fail;
 }
-main(...Util.getArgv().slice(1))
+
+main(...process.argv.slice(1))
   .then(() => console.log('SUCCESS'))
   .catch(error => {
     console.log(`FAIL:${error.message}${error.stack}`);
-    Util.exit(1);
+    exit(1);
   });

@@ -9,7 +9,6 @@
 // @grant        none
 // ==/UserScript==
 //
-//
 let g = {};
 globalThis.discogs = g;
 
@@ -149,17 +148,10 @@ call = val => (isNaN(+val) ? val : +val);
 toNumber = val => (isNaN(+val) ? val : +val);
 toString = s => s + '';
 
-getSet = (element, a = 'value') =>
-  Array.isArray(element)
-    ? element.map(e => getSet(e, a))
-    : value => (value !== undefined ? element.setAttribute(a, value) : element.getAttribute(a));
-recurse = (arr, fn, path = [], root) =>
-  Array.isArray(arr)
-    ? arr.map((item, key) => recurse(item, fn, path.concat([key]), root ?? arr))
-    : fn(arr, path, root ?? arr);
+getSet = (element, a = 'value') => (Array.isArray(element) ? element.map(e => getSet(e, a)) : value => (value !== undefined ? element.setAttribute(a, value) : element.getAttribute(a)));
+recurse = (arr, fn, path = [], root) => (Array.isArray(arr) ? arr.map((item, key) => recurse(item, fn, path.concat([key]), root ?? arr)) : fn(arr, path, root ?? arr));
 
-getOptions = (element, t = a => a) =>
-  [...getElement(element ?? find('select')).children].filter(e => /^option/i.test(e.tagName)).map(t);
+getOptions = (element, t = a => a) => [...getElement(element ?? find('select')).children].filter(e => /^option/i.test(e.tagName)).map(t);
 makeExpr = (s, f = 'gi') => (typeof s == 'string' ? new RegExp(s, f) : s);
 makeExprFn =
   fn =>
@@ -259,7 +251,6 @@ defineGetter = (name, fn) =>
     [name]: { get: fn, configurable: true }
   });
 defineGetter('rows', getRows);
-defineGetter('y', () => getSet(rows));
 defineGetter('y', () => getSet(rows));
 defineTo(globalThis, 'values', getValues, setValues);
 

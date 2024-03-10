@@ -1,4 +1,5 @@
 let p;
+
 class ce2 {}
 class ce {}
 

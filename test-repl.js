@@ -1,6 +1,4 @@
 import REPL from './repl.js';
-import ConsoleSetup from './lib/consoleSetup.js';
-import PortableFileSystem from './lib/filesystem.js';
 import * as Terminal from './terminal.js';
 
 let repl;
@@ -27,10 +25,7 @@ async function CommandLine() {
 }
 
 async function main(...args) {
-  await ConsoleSetup({ breakLength: 80, depth: Infinity });
-  await PortableFileSystem();
-
   await CommandLine();
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

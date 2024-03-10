@@ -76,11 +76,7 @@ struct _Data {
 };
 #pragma pack(pop)
 /* -------------------------------------------------------------------------- */
-double getOneLayerN_withRoundWire(double Dk,
-                                  double dw,
-                                  double p,
-                                  double I,
-                                  double* lw,
+double getOneLayerN_withRoundWire(double Dk, double dw, double p, double I, double* lw,
                                   unsigned int accuracy); // get Number of turns for One-layer coil with round wire
 double getOneLayerN_withRectWire(double Dk,
                                  double w,
@@ -90,32 +86,17 @@ double getOneLayerN_withRectWire(double Dk,
                                  double* lw,
                                  unsigned int accuracy); // get Number of turns for One-layer coil with round wire
 double getOneLayerN_Poligonal(double I, double D, double dw, double h, double n, _CoilResult* result, unsigned int accuracy);
-void getMultiLayerN(double I,
-                    double D,
-                    double dw,
-                    double k,
-                    double lk,
-                    double gap,
-                    long Ng,
+void getMultiLayerN(double I, double D, double dw, double k, double lk, double gap, long Ng,
                     _CoilResult* result); // get Number of turns for Multi-layer coil
 void getMultiLayerN_rectFormer(double Ind, double a, double b, double l, double dw, double k, _CoilResult* result);
 void getMultilayerN_Foil(double Dk, double w, double t, double ins, double I, _CoilResult* result);
-void getFerriteN(double L,
-                 double Do,
-                 double Di,
-                 double h,
-                 double dw,
-                 double mu,
+void getFerriteN(double L, double Do, double Di, double h, double dw, double mu,
                  _CoilResult* result); // get Number of turns for Ferrite toroid coil
 void getPCB_N(double I, double D, double d, double ratio, _CoilResult* result);
 void getSpiralPCB_N(double d1, double d2, double R, double I, _CoilResult* result);
 void getSpiralN(double I, double Di, double dw, double s, _CoilResult* result);
 
-double getOneLayerI_withRoundWire(double Dk,
-                                  double dw,
-                                  double p,
-                                  double N,
-                                  double* lw,
+double getOneLayerI_withRoundWire(double Dk, double dw, double p, double N, double* lw,
                                   unsigned int accuracy); // get Inductance for One-layer coil with round wire
 double getOneLayerI_withRectWire(double Dk,
                                  double w,
@@ -125,15 +106,8 @@ double getOneLayerI_withRectWire(double Dk,
                                  double* lw,
                                  unsigned int accuracy); // get Inductance for One-layer coil with round wire
 void getOneLayerI_Poligonal(double Dk, double dw, double h, double N, double n, _CoilResult* result, unsigned int accuracy);
-void getMultiLayerI_byN(
-    double D, double lk, double dw, double k, double N, _CoilResult* result); // get Inductance for Multi-layer coil
-void getMultiLayerI(double D,
-                    double lk,
-                    double dw,
-                    double k,
-                    double c,
-                    double gap,
-                    long Ng,
+void getMultiLayerI_byN(double D, double lk, double dw, double k, double N, _CoilResult* result); // get Inductance for Multi-layer coil
+void getMultiLayerI(double D, double lk, double dw, double k, double c, double gap, long Ng,
                     _CoilResult* result); // get Inductance for Multi-layer coil
 void getMultiLayerI_fromResistance(double D, double lk, double c, double k, double Rm, _CoilResult* result);
 void getMultiLayerI_rectFormer(double a, double b, double l, double c, double dw, double k, _CoilResult* result);
@@ -160,58 +134,12 @@ double findRectangleLoop_a(double Ind, double dw);
 double findSheildedInductance(double I, double D, double Ds, double l, double Hs);
 double findAirCoreRoundToroid_I(double N, double D1, double D2, double dw);
 double findAirCoreRoundToroid_N(double Ind, double D1, double D2, double dw);
-double findPotCore_I(double N,
-                     double D1,
-                     double D2,
-                     double D3,
-                     double D4,
-                     double h1,
-                     double h2,
-                     double g,
-                     double b,
-                     double mu,
-                     _CoilResult* result);
-long findPotCore_N(double Ind,
-                   double D1,
-                   double D2,
-                   double D3,
-                   double D4,
-                   double h1,
-                   double h2,
-                   double g,
-                   double b,
-                   double mu,
-                   _CoilResult* result);
-double findECore_I(double N,
-                   double A,
-                   double B,
-                   double C,
-                   double D,
-                   double E,
-                   double F,
-                   double g,
-                   double b,
-                   double mu,
-                   bool isEI,
-                   bool isRound,
-                   _CoilResult* result);
-long findECore_N(double Ind,
-                 double A,
-                 double B,
-                 double C,
-                 double D,
-                 double E,
-                 double F,
-                 double g,
-                 double b,
-                 double mu,
-                 bool isEI,
-                 bool isRound,
-                 _CoilResult* result);
-double
-findUCore_I(double N, double A, double B, double C, double D, double E, double F, double s, double mu, _CoilResult* result);
-long
-findUCore_N(double Ind, double A, double B, double C, double D, double E, double F, double s, double mu, _CoilResult* result);
+double findPotCore_I(double N, double D1, double D2, double D3, double D4, double h1, double h2, double g, double b, double mu, _CoilResult* result);
+long findPotCore_N(double Ind, double D1, double D2, double D3, double D4, double h1, double h2, double g, double b, double mu, _CoilResult* result);
+double findECore_I(double N, double A, double B, double C, double D, double E, double F, double g, double b, double mu, bool isEI, bool isRound, _CoilResult* result);
+long findECore_N(double Ind, double A, double B, double C, double D, double E, double F, double g, double b, double mu, bool isEI, bool isRound, _CoilResult* result);
+double findUCore_I(double N, double A, double B, double C, double D, double E, double F, double s, double mu, _CoilResult* result);
+long findUCore_N(double Ind, double A, double B, double C, double D, double E, double F, double s, double mu, _CoilResult* result);
 
 double CalcLC0(double L, double C);
 double CalcLC1(double C, double f);

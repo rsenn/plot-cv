@@ -1,4 +1,4 @@
-import fs from 'fs';
+import { WriteFile } from './io-helpers.js';
 import { Console } from 'console';
 
 function main() {
@@ -28,8 +28,8 @@ function main() {
     }
   }
   console.log('a', a);
-  fs.writeFileSync('output.txt', s);
-  // fs.writeFileSync('output.txt', a.buffer);
+  WriteFile('output.txt', s);
+  // WriteFile('output.txt', a.buffer);
 }
 
 main();

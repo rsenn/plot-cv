@@ -1,27 +1,22 @@
 #!/usr/bin/env qjsm
-import PortableFileSystem from './lib/filesystem.js';
-import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
+import filesystem from 'fs';
+import Alea from './lib/alea.js';
 import deep from './lib/deep.js';
-import path from './lib/path.js';
+import * as path from './lib/path.js';
+import Tree from './lib/tree.js';
 import tXml from './lib/tXml.js';
 import { toXML } from './lib/xml.js';
-import Tree from './lib/tree.js';
-import { Path } from './lib/json.js';
-import Alea from './lib/alea.js';
-import * as diff from './lib/json/diff.js';
-import inspect from './lib/objectInspect.js';
 
-let filesystem;
 let prng = new Alea().seed(Date.now());
 
 function readXML(filename) {
   //console.log('readXML', filename);
-  let data = filesystem.readFile(filename);
+  let data = filesystem.readFileSync(filename);
   let xml = tXml(data);
   //console.log('xml:', xml);
   return xml;
 }
+
 function WriteFile(name, data) {
   console.log('WriteFile', { name });
   if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
@@ -40,13 +35,11 @@ function WriteFile(name, data) {
 }
 
 const push_back = (arr, ...items) => [...(arr || []), ...items];
+
 const push_front = (arr, ...items) => [...items, ...(arr || [])];
 const tail = arr => arr[arr.length - 1];
 
 async function main(...args) {
-  await ConsoleSetup({ depth: 20, colors: true, breakLength: 80 });
-  filesystem = await PortableFileSystem();
-
   let params = Util.getOpt(
     {
       output: [true, null, 'o'],
@@ -59,11 +52,11 @@ async function main(...args) {
       'no-remove-empty': [false, null, 'E'],
       '@': 'input,output,xml'
     },
-    Util.getArgs().slice(1)
+    scriptArgs.slice(1)
   );
   console.log('main', args, params);
   if(params['@'].length == 0 && !params.input) {
-    console.log(`Usage: ${Util.getArgs()[0]} <...files>`);
+    console.log(`Usage: ${scriptArgs[0]} <...files>`);
     return 1;
   }
 
@@ -174,8 +167,9 @@ async function main(...args) {
     WriteFile(xmlfile, toXML(xmlData));
   } catch(err) {
     let st = Util.stack(err.stack);
-    // console.log(err.message, '\n', st.toString()); //st.map(f =>  Util.inspect(f)));
+    // console.log(err.message, '\n', st.toString()); //st.map(f =>  inspect(f)));
     throw err;
   }
 }
-Util.callMain(main, true);
+
+main(...scriptArgs.slice(1));

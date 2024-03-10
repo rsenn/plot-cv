@@ -1,5 +1,5 @@
-import gql from './lib/nanographql.js';
 import fetch from 'isomorphic-fetch';
+import gql from './lib/nanographql.js';
 import { Console } from 'console';
 
 let query = gql`

@@ -1,19 +1,19 @@
-import React, { Fragment, h, render, Component } from './lib/dom/preactComponent.js';
+import { streamify, subscribe } from './lib/async/events.js';
+import { getLocalStorage, logStoreAdapter, makeAutoStoreHandler, makeDummyStorage, makeLocalStorage, makeLocalStore } from './lib/autoStore.js';
+import { HSLA, RGBA } from './lib/color.js';
+import { Element } from './lib/dom/element.js';
+import { Fragment, h, render } from './lib/dom/preactComponent.js';
+import { SVG } from './lib/dom/svg.js';
 import { SVG as SVGComponent } from './lib/eagle/components/svg.js';
+import { Align, Point, PointList, Rect, Size } from './lib/geom.js';
+import { Arc, ArcTo } from './lib/geom/arc.js';
 import { BBox } from './lib/geom/bbox.js';
-import trkl from './lib/trkl.js';
 import { Matrix } from './lib/geom/matrix.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
-import { Align, Point, Rect, PointList, Size } from './lib/geom.js';
-import { Element } from './lib/dom/element.js';
-import { SVG } from './lib/dom/svg.js';
-import { HSLA, RGBA } from './lib/color.js';
-import { streamify, map, subscribe } from './lib/async/events.js';
-import { Arc, ArcTo } from './lib/geom/arc.js';
-import { unique, define, range } from './lib/misc.js';
 import { KolorWheel } from './lib/KolorWheel.js';
 import Cache from './lib/lscache.js';
-import { makeLocalStorage, logStoreAdapter, makeLocalStore, makeDummyStorage, getLocalStorage, makeAutoStoreHandler } from './lib/autoStore.js';
+import { define, range, unique } from './lib/misc.js';
+import trkl from './lib/trkl.js';
 
 let ref = (globalThis.ref = trkl(null));
 let svgElem;
@@ -177,7 +177,7 @@ function GetElementSignal(elem) {
 }
 
 function GetElementsBySignal(signalName) {
-  return Element.findAll(`*[data-signal=${signalName.replace(/([\$])/g, '\\$1')}]`);
+  return Element.findAll('*[data-signal=' + signalName.replace(/(\$)/g, '\\$1') + ']');
 }
 
 function SortElementsByPosition(elements) {
@@ -220,11 +220,7 @@ function FindPoint(pos) {
 
 function MouseEvents(element) {
   const isTouch = 'ontouchstart' in element;
-  return streamify(
-    isTouch ? ['touchmove', 'touchend'] : ['mousemove', 'mouseup'],
-    element,
-    isTouch ? e => !e.type.endsWith('end') : e => !e.type.endsWith('up')
-  );
+  return streamify(isTouch ? ['touchmove', 'touchend'] : ['mousemove', 'mouseup'], element, isTouch ? e => !e.type.endsWith('end') : e => !e.type.endsWith('up'));
 }
 
 async function* TouchEvents(element) {
@@ -249,13 +245,11 @@ async function* TouchEvents(element) {
 }
 
 function GetSignalNames() {
-  return unique(Element.findAll(`*[data-signal]`).map(e => e.getAttribute('data-signal'))).sort((a, b) =>
-    a == 'GND' ? -1 : a == 'VCC' ? (b != 'GND' ? -1 : 1) : 1 ?? a.localeCompare(b)
-  );
+  return unique(Element.findAll(`*[data-signal]`).map(e => e.getAttribute('data-signal'))).sort((a, b) => (a == 'GND' ? -1 : a == 'VCC' ? (b != 'GND' ? -1 : 1) : 1 ?? a.localeCompare(b)));
 }
 
 function GetSignalColor(signalName) {
-  for(let elem of Element.findAll(`*[data-signal=${signalName.replace(/([\$])/g, '\\$1')}]`)) {
+  for(let elem of Element.findAll('*[data-signal=' + signalName.replace(/(\$)/g, '\\$1') + ']')) {
     let stroke = elem.getAttribute('stroke');
     if(stroke) return stroke;
   }
@@ -290,7 +284,7 @@ function RenderPalette(props) {
 }
 
 function ColorSignal(signalName, color) {
-  for(let elem of Element.findAll(`*[data-signal=${signalName.replace(/([\$])/g, '\\$1')}]`)) {
+  for(let elem of Element.findAll('*[data-signal=' + signalName.replace(/(\$)/g, '\\$1') + ']')) {
     //console.log('ColorSignal', elem);
     elem.setAttribute('stroke', color);
   }
@@ -322,9 +316,7 @@ async function LoadSVG(filename) {
     //console.log('wheel', { x, y, zoomFactor });
 
     Element.setCSS(elem, {
-      transform: `translate(${-x}px, ${-y}px) scale(${zoomFactor}, ${zoomFactor}) translate(${x / zoomFactor}px, ${
-        y / zoomFactor
-      }px) `
+      transform: `translate(${-x}px, ${-y}px) scale(${zoomFactor}, ${zoomFactor}) translate(${x / zoomFactor}px, ${y / zoomFactor}px) `
     });
   }
 
@@ -370,7 +362,6 @@ function MakePalette(num) {
 #a138ff
 #b6b6b6`.split('\n');
   let result = [];
-  signalColors.shift();
   signalColors.shift();
   signalColors.pop();
 
@@ -453,7 +444,7 @@ window.addEventListener('load', async e => {
 
       let xy,
         pt,
-        pos = new Point(...svgCTM.transform_xy(x, y));
+        pos = new Point(...svgCTM.transformXY(x, y));
 
       if(target.tagName != 'svg') {
         Object.assign(globalThis, { target });
@@ -469,7 +460,7 @@ window.addEventListener('load', async e => {
       async function MovePoint() {
         for await(let ev of TouchEvents(svgElem)) {
           let { clientX, clientY } = ev;
-          let tpos = new Point(...svgCTM.transform_xy(clientX, clientY));
+          let tpos = new Point(...svgCTM.transformXY(clientX, clientY));
 
           let diff = tpos.diff(pos);
 

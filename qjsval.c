@@ -1,45 +1,80 @@
+#define CONFIG_VERSION "2021-03-27"
+#define CONFIG_BIGNUM 1
+
 #include <quickjs/quickjs-config.h>
-#include <quickjs/quickjs.h>
+
+#include <stdio.h>
+#include "quickjs/libbf.h"
+#include "quickjs/quickjs.h"
+#include "quickjs/cutils.c"
 #include "quickjs/qjs-modules/quickjs-internal.h"
 
 int
-main() {
-  printf("\nJSContext %zu\n", sizeof(JSContext));
-  printf(".loaded_modules %zu %zu\n", offsetof(JSContext, loaded_modules), sizeof(((JSContext*)0)->loaded_modules));
-  printf(".user_opaque %zu %zu\n", offsetof(JSContext, user_opaque), sizeof(((JSContext*)0)->user_opaque));
+main(int argc, char* argv[]) {
+  printf("sizeof(JSModuleDef) = %d\n", sizeof(JSModuleDef));
+  printf("sizeof(JSObject) = %d\n", sizeof(JSObject));
 
-  printf("\nJSModuleDef %zu\n", sizeof(JSModuleDef));
-  printf(".header.ref_count %zu %zu\n", offsetof(JSModuleDef, header.ref_count), sizeof(((JSModuleDef*)0)->header.ref_count));
-  printf(".module_name %zu %zu\n", offsetof(JSModuleDef, module_name), sizeof(((JSModuleDef*)0)->module_name));
-  printf(".link %zu %zu\n", offsetof(JSModuleDef, link), sizeof(((JSModuleDef*)0)->link));
-  printf(".req_module_entries %zu %zu\n",
-         offsetof(JSModuleDef, req_module_entries),
-         sizeof(((JSModuleDef*)0)->req_module_entries));
-  printf(".req_module_entries_count %zu %zu\n",
-         offsetof(JSModuleDef, req_module_entries_count),
-         sizeof(((JSModuleDef*)0)->req_module_entries_count));
-  printf(".req_module_entries_size %zu %zu\n",
-         offsetof(JSModuleDef, req_module_entries_size),
-         sizeof(((JSModuleDef*)0)->req_module_entries_size));
+  printf("JS_CLASS_OBJECT = %d\n", JS_CLASS_OBJECT);
+  printf("JS_CLASS_ARRAY = %d\n", JS_CLASS_ARRAY);
+  printf("JS_CLASS_ERROR = %d\n", JS_CLASS_ERROR);
+  printf("JS_CLASS_NUMBER = %d\n", JS_CLASS_NUMBER);
+  printf("JS_CLASS_STRING = %d\n", JS_CLASS_STRING);
+  printf("JS_CLASS_BOOLEAN = %d\n", JS_CLASS_BOOLEAN);
+  printf("JS_CLASS_SYMBOL = %d\n", JS_CLASS_SYMBOL);
+  printf("JS_CLASS_ARGUMENTS = %d\n", JS_CLASS_ARGUMENTS);
+  printf("JS_CLASS_MAPPED_ARGUMENTS = %d\n", JS_CLASS_MAPPED_ARGUMENTS);
+  printf("JS_CLASS_DATE = %d\n", JS_CLASS_DATE);
+  printf("JS_CLASS_MODULE_NS = %d\n", JS_CLASS_MODULE_NS);
+  printf("JS_CLASS_C_FUNCTION = %d\n", JS_CLASS_C_FUNCTION);
+  printf("JS_CLASS_BYTECODE_FUNCTION = %d\n", JS_CLASS_BYTECODE_FUNCTION);
+  printf("JS_CLASS_BOUND_FUNCTION = %d\n", JS_CLASS_BOUND_FUNCTION);
+  printf("JS_CLASS_C_FUNCTION_DATA = %d\n", JS_CLASS_C_FUNCTION_DATA);
+  printf("JS_CLASS_GENERATOR_FUNCTION = %d\n", JS_CLASS_GENERATOR_FUNCTION);
+  printf("JS_CLASS_FOR_IN_ITERATOR = %d\n", JS_CLASS_FOR_IN_ITERATOR);
+  printf("JS_CLASS_REGEXP = %d\n", JS_CLASS_REGEXP);
+  printf("JS_CLASS_ARRAY_BUFFER = %d\n", JS_CLASS_ARRAY_BUFFER);
+  printf("JS_CLASS_SHARED_ARRAY_BUFFER = %d\n", JS_CLASS_SHARED_ARRAY_BUFFER);
+  printf("JS_CLASS_UINT8C_ARRAY = %d\n", JS_CLASS_UINT8C_ARRAY);
+  printf("JS_CLASS_INT8_ARRAY = %d\n", JS_CLASS_INT8_ARRAY);
+  printf("JS_CLASS_UINT8_ARRAY = %d\n", JS_CLASS_UINT8_ARRAY);
+  printf("JS_CLASS_INT16_ARRAY = %d\n", JS_CLASS_INT16_ARRAY);
+  printf("JS_CLASS_UINT16_ARRAY = %d\n", JS_CLASS_UINT16_ARRAY);
+  printf("JS_CLASS_INT32_ARRAY = %d\n", JS_CLASS_INT32_ARRAY);
+  printf("JS_CLASS_UINT32_ARRAY = %d\n", JS_CLASS_UINT32_ARRAY);
+  printf("JS_CLASS_BIG_INT64_ARRAY = %d\n", JS_CLASS_BIG_INT64_ARRAY);
+  printf("JS_CLASS_BIG_UINT64_ARRAY = %d\n", JS_CLASS_BIG_UINT64_ARRAY);
+  printf("JS_CLASS_FLOAT32_ARRAY = %d\n", JS_CLASS_FLOAT32_ARRAY);
+  printf("JS_CLASS_FLOAT64_ARRAY = %d\n", JS_CLASS_FLOAT64_ARRAY);
+  printf("JS_CLASS_DATAVIEW = %d\n", JS_CLASS_DATAVIEW);
+  printf("JS_CLASS_BIG_INT = %d\n", JS_CLASS_BIG_INT);
+  printf("JS_CLASS_BIG_FLOAT = %d\n", JS_CLASS_BIG_FLOAT);
+  printf("JS_CLASS_FLOAT_ENV = %d\n", JS_CLASS_FLOAT_ENV);
+  printf("JS_CLASS_BIG_DECIMAL = %d\n", JS_CLASS_BIG_DECIMAL);
+  printf("JS_CLASS_OPERATOR_SET = %d\n", JS_CLASS_OPERATOR_SET);
+  printf("JS_CLASS_MAP = %d\n", JS_CLASS_MAP);
+  printf("JS_CLASS_SET = %d\n", JS_CLASS_SET);
+  printf("JS_CLASS_WEAKMAP = %d\n", JS_CLASS_WEAKMAP);
+  printf("JS_CLASS_WEAKSET = %d\n", JS_CLASS_WEAKSET);
+  printf("JS_CLASS_MAP_ITERATOR = %d\n", JS_CLASS_MAP_ITERATOR);
+  printf("JS_CLASS_SET_ITERATOR = %d\n", JS_CLASS_SET_ITERATOR);
+  printf("JS_CLASS_ARRAY_ITERATOR = %d\n", JS_CLASS_ARRAY_ITERATOR);
+  printf("JS_CLASS_STRING_ITERATOR = %d\n", JS_CLASS_STRING_ITERATOR);
+  printf("JS_CLASS_REGEXP_STRING_ITERATOR = %d\n", JS_CLASS_REGEXP_STRING_ITERATOR);
+  printf("JS_CLASS_GENERATOR = %d\n", JS_CLASS_GENERATOR);
+  printf("JS_CLASS_PROXY = %d\n", JS_CLASS_PROXY);
+  printf("JS_CLASS_PROMISE = %d\n", JS_CLASS_PROMISE);
+  printf("JS_CLASS_PROMISE_RESOLVE_FUNCTION = %d\n", JS_CLASS_PROMISE_RESOLVE_FUNCTION);
+  printf("JS_CLASS_PROMISE_REJECT_FUNCTION = %d\n", JS_CLASS_PROMISE_REJECT_FUNCTION);
+  printf("JS_CLASS_ASYNC_FUNCTION = %d\n", JS_CLASS_ASYNC_FUNCTION);
+  printf("JS_CLASS_ASYNC_FUNCTION_RESOLVE = %d\n", JS_CLASS_ASYNC_FUNCTION_RESOLVE);
+  printf("JS_CLASS_ASYNC_FUNCTION_REJECT = %d\n", JS_CLASS_ASYNC_FUNCTION_REJECT);
+  printf("JS_CLASS_ASYNC_FROM_SYNC_ITERATOR = %d\n", JS_CLASS_ASYNC_FROM_SYNC_ITERATOR);
+  printf("JS_CLASS_ASYNC_GENERATOR_FUNCTION = %d\n", JS_CLASS_ASYNC_GENERATOR_FUNCTION);
+  printf("JS_CLASS_ASYNC_GENERATOR = %d\n", JS_CLASS_ASYNC_GENERATOR);
+  int divi = -9, quot = 10, result;
 
-  printf(".export_entries %zu %zu\n", offsetof(JSModuleDef, export_entries), sizeof(((JSModuleDef*)0)->export_entries));
-  printf(".export_entries_count %zu %zu\n",
-         offsetof(JSModuleDef, export_entries_count),
-         sizeof(((JSModuleDef*)0)->export_entries_count));
-  printf(".export_entries_size %zu %zu\n",
-         offsetof(JSModuleDef, export_entries_size),
-         sizeof(((JSModuleDef*)0)->export_entries_size));
+  result = ((divi % quot) + quot) % quot;
+  printf("%d %% %d = %d\n", divi, quot, result);
 
-  printf(".module_ns %zu %zu\n", offsetof(JSModuleDef, module_ns), sizeof(((JSModuleDef*)0)->module_ns));
-
-  printf("\nJSExportEntry %zu\n", sizeof(JSExportEntry));
-  printf(".u %zu %zu\n", offsetof(JSExportEntry, u), sizeof(((JSExportEntry*)0)->u));
-  printf(".u.local.var_ref %zu %zu\n", offsetof(JSExportEntry, u.local.var_ref), sizeof(((JSExportEntry*)0)->u.local.var_ref));
-  printf(".local_name %zu %zu\n", offsetof(JSExportEntry, local_name), sizeof(((JSExportEntry*)0)->local_name));
-  printf(".export_name %zu %zu\n", offsetof(JSExportEntry, export_name), sizeof(((JSExportEntry*)0)->export_name));
-
-  printf("\nJSVarRef %zu\n", sizeof(JSVarRef));
-  printf(".pvalue %zu %zu\n", offsetof(JSVarRef, pvalue), sizeof(((JSVarRef*)0)->pvalue));
-  printf(".value %zu %zu\n", offsetof(JSVarRef, value), sizeof(((JSVarRef*)0)->value));
   return 0;
 }

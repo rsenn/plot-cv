@@ -161,7 +161,8 @@ register_namespaces(xmlXPathContextPtr xpathCtx, const xmlChar* nsList) {
   next = nsListDup;
   while(next != NULL) {
     /* skip spaces */
-    while((*next) == ' ') next++;
+    while((*next) == ' ')
+      next++;
     if((*next) == '\0')
       break;
 

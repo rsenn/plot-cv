@@ -1,6 +1,4 @@
 import * as rl from './readline.js';
-import Util from './lib/util.js';
-import * as ffi from 'ffi';
 import { Console } from 'console';
 
 function hex(num) {

@@ -1,14 +1,8 @@
-import ConsoleSetup from './lib/consoleSetup.js';
-import PortableFileSystem from './lib/filesystem.js';
-import Util from './lib/util.js';
+import HashMultimap from './lib/container/Hash-Multimap.js';
 import MultiBiMap from './lib/container/multibimap.js';
 import MultiKeyMap from './lib/container/multikeymap.js';
-import HashMultimap from './lib/container/Hash-Multimap.js';
 
 async function main(...args) {
-  await ConsoleSetup({ depth: 20, colors: true, breakLength: 80 });
-  await PortableFileSystem();
-
   let multiKey = new MultiKeyMap();
   multiKey.set(['A', 'B', 'C'], 123);
   console.log('multiKey', [...multiKey]);
@@ -26,4 +20,4 @@ async function main(...args) {
   console.log('hashMulti', [...hashMulti]);
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

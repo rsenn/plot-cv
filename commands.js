@@ -1,20 +1,12 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
-import dom from './lib/dom.js';
-import geom from './lib/geom.js';
-import { BBox, Rect, Point, Polyline, Line, PointList, isPoint } from './lib/geom.js';
-import Util from './lib/util.js';
-import path from './lib/path.js';
-import { parseGcode } from './lib/gcode.js';
-import React, { Component } from './lib/dom/preactComponent.js';
-import components from './components.js';
-import Voronoi from './lib/geom/voronoi.js';
-import { makeEagleNode } from './lib/eagle.js';
-import { trkl } from './lib/trkl.js';
 import Alea from './lib/alea.js';
+import { Element, SVG, default as dom } from './lib/dom.js';
+import { FetchCached, NormalizeResponse, ResponseData } from './lib/fetch.js';
+import { parseGcode } from './lib/gcode.js';
+import { BBox, isPoint, Point, Polyline, default as geom } from './lib/geom.js';
+import { GithubListContents, GithubListRepositories, GithubRepositories, ListGithubRepoServer } from './lib/github.js';
 import KolorWheel from './lib/KolorWheel.js';
-import { SVG, Element } from './lib/dom.js';
-import github, { GithubListRepositories, GithubRepositories, GithubListContents, ListGithubRepoServer } from './lib/github.js';
-import { NormalizeResponse, ResponseData, FetchCached, FetchURL } from './lib/fetch.js';
+import { isObject, lazyProperty } from './lib/misc.js';
+import { trkl } from './lib/trkl.js';
 
 const prng = new Alea(1598127218);
 
@@ -63,7 +55,7 @@ export async function ListProjects(opts = {}) {
     }
   }
 
-  //console.log('ListProjects', { response });
+  console.log('ListProjects', { response });
   return response;
 }
 
@@ -79,9 +71,7 @@ export const AddLayer = (layer, project = window.project) => {
   let layers = window.layers;
   let i = Math.max(...layers.map(l => l.i)) + 1;
 
-  let dom = create
-    ? create(project, { ...props, 'data-layer': `${i} ${name}` })
-    : SVG.create('g', { i, stroke: color, ...props }, project.svgElement);
+  let dom = create ? create(project, { ...props, 'data-layer': `${i} ${name}` }) : SVG.create('g', { i, stroke: color, ...props }, project.svgElement);
   let visible = trkl(true);
 
   visible.subscribe(value => {
@@ -99,7 +89,7 @@ export async function BoardToGerber(proj, opts = { fetch: true }) {
   let params = { ...opts, board: proj.name, raw: false },
     response,
     result;
-  response = await FetchURL(`/gerber/${opts.side ? '?side=' + opts.side : ''}`, {
+  response = await FetchURL(`gerber/${opts.side ? '?side=' + opts.side : ''}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(params)
@@ -120,7 +110,7 @@ export async function BoardToGerber(proj, opts = { fetch: true }) {
     if(response) result.data = response;
   }
 
-  //console.debug('BoardToGerber result =', Util.filterOutKeys(result, ['headers', 'code']));
+  //console.debug('BoardToGerber result =', filterOutKeys(result, ['headers', 'code']));
   return result;
 }
 
@@ -140,7 +130,7 @@ export async function GerberToGcode(project, allOpts = {}) {
   let response,
     result = (project.gcode[side] = {});
   if(typeof side == 'string') request[side] = 1;
-  response = await FetchURL(`/gcode${side ? '?side=' + side : ''}`, {
+  response = await FetchURL(`gcode${side ? '?side=' + side : ''}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(request)
@@ -165,7 +155,7 @@ export async function GerberToGcode(project, allOpts = {}) {
 
   //  console.debug('GerberToGcode result =', result);
   if(!result.data)
-    Util.lazyProperty(result, 'data', async () => {
+    lazyProperty(result, 'data', async () => {
       let response = await FetchCached('static/' + response.file).then(ResponseData);
       return response;
     });
@@ -176,7 +166,7 @@ export const GcodeToPolylines = (data, opts = {}) => {
   const { fill = false, color, side } = opts;
   //console.debug('GcodeToPolylines', { data, opts });
 
-  let gc = [...Util.filter(parseGcode(data), g => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args)];
+  let gc = [...filter(parseGcode(data), g => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args)];
   let polylines = [];
   let polyline = null;
   let bb = new BBox();
@@ -213,10 +203,7 @@ export const GcodeToPolylines = (data, opts = {}) => {
       class: `gcode ${side} side`,
       color,
       'stroke-width': 0.15,
-      transform:
-        ` translate(-0.3175,0) ` +
-        (side == 'front' ? 'scale(-1,-1)' : 'scale(1,-1)') +
-        ` translate(${0},${-bb.y2})  translate(0,0)`
+      transform: ` translate(-0.3175,0) ` + (side == 'front' ? 'scale(-1,-1)' : 'scale(1,-1)') + ` translate(${0},${-bb.y2})  translate(0,0)`
     },
     project
   ).dom;
@@ -227,15 +214,10 @@ export const GcodeToPolylines = (data, opts = {}) => {
     //console.log('polylines(2):', polylines);
     polylines = polylines.map(pl => geom.simplify(pl, 0.02, true));
     //console.log('polylines(3):', polylines);
-    polylines = polylines.map(pl => Util.chunkArray(pl, 2).map(pt => new Point(...pt)));
+    polylines = polylines.map(pl => chunkArray(pl, 2).map(pt => new Point(...pt)));
     //console.log('polylines(4):', polylines);
     polylines = polylines.map(pl => new Polyline([]).push(...pl));
-    let inside = new Map(
-      polylines.map((polyline2, i) => [
-        polyline2,
-        polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2))
-      ])
-    );
+    let inside = new Map(polylines.map((polyline2, i) => [polyline2, polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2))]));
     let insideOf = polylines.map((polyline, i) => [
       i,
       polylines
@@ -262,9 +244,7 @@ export const GcodeToPolylines = (data, opts = {}) => {
   }
   let ids = polylines.map((pl, i) => i).filter(i => !remove.has(i));
   let polys = [
-    ...ids.map(i =>
-      polylines[i].toSVG((...args) => args, { ...props(polylines[i], i), id: `polyline-${i}` }, grp, 0.01)
-    ),
+    ...ids.map(i => polylines[i].toSVG((...args) => args, { ...props(polylines[i], i), id: `polyline-${i}` }, grp, 0.01)),
     ...paths
       .map(([i, d]) => ({
         ...props(polyline, i),
@@ -282,27 +262,24 @@ export const GcodeToPolylines = (data, opts = {}) => {
 
 export function GeneratePalette(numColors) {
   let ret = [];
-  let base = new HSLA(Util.randInt(0, 360, prng), 100, 50).toRGBA();
-  let offsets = Util.range(1, numColors).reduce(
-    (acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360],
-    []
-  );
+  let base = new HSLA(randInt(0, 360, prng), 100, 50).toRGBA();
+  let offsets = range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + randInt(20, 80)) % 360], []);
   offsets = offsets.sort((a, b) => a - b);
-  //offsets = Util.shuffle(offsets, prng);
-  //Util.log('offsets:', offsets);
+  //offsets = shuffle(offsets, prng);
+  //log('offsets:', offsets);
 
   new KolorWheel(base.hex()).rel(offsets, 0, 0).each(function () {
     const hex = this.getHex();
     const rgba = new RGBA(hex);
     const hsla = rgba.toHSLA();
-    //Util.log(hex, rgba.toString(), hsla.toString());
+    //log(hex, rgba.toString(), hsla.toString());
     ret.push(hsla);
   });
   return ret;
 }
 
 export async function ClearCache(match = /.*/) {
-  let pred = Util.predicate(match);
+  let pred = predicate(match);
   let cache = await caches.open('fetch');
   for(let request of await cache.keys()) {
     if(pred(request.url)) {
@@ -313,9 +290,9 @@ export async function ClearCache(match = /.*/) {
 }
 
 export async function ListCache(match = /.*/) {
-  let pred = Util.predicate(match);
+  let pred = predicate(match);
   let cache = await caches.open('fetch');
-  let baseUrl = Util.makeURL({ location: '/' });
+  let baseUrl = makeURL({ location: '/' });
   let result = [];
 
   for await(let request of await cache.keys()) {
@@ -332,19 +309,19 @@ export async function ShowCache(match = /.*/) {
 }
 
 export async function GetCache(match = /.*/, key = 'fetch') {
-  let pred = Util.predicate(match);
+  let pred = predicate(match);
   let cache = await caches.open(key);
-  let baseUrl = Util.makeURL({ location: '/' });
+  let baseUrl = makeURL({ location: '/' });
   let entries = [];
 
   for(let request of await cache.keys()) {
     let response = await cache.match(request);
     let time = Date.parse(response.headers.get('date')) / 1000;
-    let headers = new Map(Util.map(response.headers.keys(), k => [k, response.headers.get(k)]));
+    let headers = new Map(map(response.headers.keys(), k => [k, response.headers.get(k)]));
     delete response.headers;
-    let methods = Util.bindMethods(Util.getMethods(response), response);
+    let methods = bindMethods(getMethods(response), response);
 
-    response = Object.assign(Util.getMembers(response), {
+    response = Object.assign(getMembers(response), {
       headers,
       time,
       ...methods
@@ -356,8 +333,29 @@ export async function GetCache(match = /.*/, key = 'fetch') {
   return entries;
 }
 
+export async function FetchURL(url, allOpts = {}) {
+  let { nocache = false, ...opts } = allOpts;
+  let result;
+  let ret;
+  if(opts.method && opts.method.toUpperCase() == 'POST') nocache = true;
+  let { fetch } = globalThis;
+  if(/tmp\//.test(url)) {
+    url = url.replace(/.*tmp\//g, '/tmp/');
+  } else if(/^\//.test(url)) {
+  } else if(/:\/\//.test(url)) {
+  } else if(!/[\?&=]/.test(url)) {
+    url = '/static/' + url;
+  }
+  try {
+    if(!ret) ret = result = await fetch(url, opts);
+  } catch(error) {
+    console.log('FetchURL ERROR:', error.message + '\n' + error.stack);
+    throw error;
+  }
+  return ret;
+}
+
 export default {
-  FetchURL,
   ListProjects,
   FindLayer,
   GetLayer,

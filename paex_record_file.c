@@ -114,11 +114,12 @@ threadFunctionWriteToRawFile(void* ptr) {
       ring_buffer_size_t sizes[2] = {0};
 
       /* By using PaUtil_GetRingBufferReadRegions, we can read directly from the ring buffer */
-      ring_buffer_size_t elementsRead =
-          PaUtil_GetRingBufferReadRegions(&pData->ringBuffer, elementsInBuffer, ptr + 0, sizes + 0, ptr + 1, sizes + 1);
+      ring_buffer_size_t elementsRead = PaUtil_GetRingBufferReadRegions(&pData->ringBuffer, elementsInBuffer, ptr + 0, sizes + 0, ptr + 1, sizes + 1);
       if(elementsRead > 0) {
         int i;
-        for(i = 0; i < 2 && ptr[i] != NULL; ++i) { fwrite(ptr[i], pData->ringBuffer.elementSizeBytes, sizes[i], pData->file); }
+        for(i = 0; i < 2 && ptr[i] != NULL; ++i) {
+          fwrite(ptr[i], pData->ringBuffer.elementSizeBytes, sizes[i], pData->file);
+        }
         PaUtil_AdvanceRingBufferReadIndex(&pData->ringBuffer, elementsRead);
       }
 
@@ -198,7 +199,9 @@ startThread(paTestData* pData, ThreadFunctionType fn) {
 #endif
 
   /* Wait for thread to startup */
-  while(pData->threadSyncFlag) { Pa_Sleep(10); }
+  while(pData->threadSyncFlag) {
+    Pa_Sleep(10);
+  }
 
   return paNoError;
 }
@@ -207,7 +210,9 @@ static int
 stopThread(paTestData* pData) {
   pData->threadSyncFlag = 1;
   /* Wait for thread to stop */
-  while(pData->threadSyncFlag) { Pa_Sleep(10); }
+  while(pData->threadSyncFlag) {
+    Pa_Sleep(10);
+  }
 #ifdef _WIN32
   CloseHandle(pData->threadHandle);
   pData->threadHandle = 0;

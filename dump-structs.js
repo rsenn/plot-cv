@@ -1,13 +1,9 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
-import PortableFileSystem from './lib/filesystem.js';
-import ConsoleSetup from './lib/consoleSetup.js';
-import PortableSpawn from './lib/spawn.js';
-import { AcquireReader } from './lib/stream/utils.js';
-import Util from './lib/util.js';
-import path from './lib/path.js';
+import filesystem from 'fs';
+import { AstDump, GetLoc, Type } from './clang-ast.js';
 import deep from './lib/deep.js';
+import * as path from './lib/path.js';
+import PortableSpawn from './lib/spawn.js';
 import Tree from './lib/tree.js';
-import { Type, AstDump, GetLoc } from './clang-ast.js';
 
 //prettier-ignore
 let filesystem, spawn;
@@ -33,11 +29,9 @@ define(Array.prototype, {
 
 async function main(...args) {
   console.log('dump-structs', ...args);
-  await ConsoleSetup({ breakLength: 120, depth: 10 });
-  await PortableFileSystem(fs => (filesystem = fs));
   await PortableSpawn(fn => console.log('PortableSpawn', (globalThis.spawn = spawn = fn)));
 
-  let params = Util.getOpt(
+  let params = getOpt(
     {
       output: [true, null, 'o'],
       xml: [true, null, 'X'],
@@ -74,14 +68,7 @@ async function main(...args) {
       })
     );
 
-    args = args.concat([
-      '-D_WIN32=1',
-      '-DWINAPI=',
-      '-D__declspec(x)=',
-      '-include',
-      '/usr/x86_64-w64-mingw32/include/wtypesbase.h',
-      '-I/usr/x86_64-w64-mingw32/include'
-    ]);
+    args = args.concat(['-D_WIN32=1', '-DWINAPI=', '-D__declspec(x)=', '-include', '/usr/x86_64-w64-mingw32/include/wtypesbase.h', '-I/usr/x86_64-w64-mingw32/include']);
   }
   console.log('args', { defs, includes });
   args = args.concat(defs.map(d => `-D${d}`));
@@ -101,7 +88,7 @@ async function main(...args) {
 
       if(times[1] >= times[0]) {
         console.log('Reading cached AST from:', outfile);
-        json = filesystem.readFile(outfile);
+        json = filesystem.readFileSync(outfile);
         ast = JSON.parse(json);
       } else {
         json = await AstDump(file, args);
@@ -111,11 +98,7 @@ async function main(...args) {
       }
 
       let tree = new Tree(ast);
-      let flat = /*tree.flat();*/ deep.flatten(
-        ast,
-        new Map(),
-        (v, p) => ['inner', 'loc', 'range'].indexOf(p[p.length - 1]) == -1 && isObject(v) /*&& 'kind' in v*/
-      );
+      let flat = /*tree.flat();*/ deep.flatten(ast, new Map(), (v, p) => ['inner', 'loc', 'range'].indexOf(p[p.length - 1]) == -1 && isObject(v) /*&& 'kind' in v*/);
       let entries = [...flat];
       let locations = [];
       let l = Object.setPrototypeOf({}, { toString() {} });
@@ -144,7 +127,7 @@ async function main(...args) {
           idmap[n.id] = entry;
           id2path[n.id] = p;
         }
-        //Util.removeKeys(entries[locations.length][1], ['loc','range']);
+        //removeKeys(entries[locations.length][1], ['loc','range']);
         entry[2] = l;
         locations.push(l);
       }
@@ -159,11 +142,9 @@ async function main(...args) {
           const NoSystemIncludes = ([p, n, l]) => !/^\/usr/.test(l.file + '');
           let mainNodes = params['system-includes'] ? entries : entries.filter(NoSystemIncludes);
 
-          let typedefs = [...Util.filter(mainNodes, ([path, decl]) => decl.kind == 'TypedefDecl')];
+          let typedefs = [...filter(mainNodes, ([path, decl]) => decl.kind == 'TypedefDecl')];
 
-          Type.declarations = new Map(
-            [...entries].filter(([p, n]) => isObject(n) && /Decl/.test(n.kind) && n.name).map(([p, n]) => [n.name, n])
-          );
+          Type.declarations = new Map([...entries].filter(([p, n]) => isObject(n) && /Decl/.test(n.kind) && n.name).map(([p, n]) => [n.name, n]));
 
           //console.log('Type.declarations:', [...Type.declarations.keys()]);
           //typedefs = NoSystemIncludes(typedefs);
@@ -178,7 +159,7 @@ async function main(...args) {
 
           let nodes = new Map(mainNodes.filter(([p, n]) => 'kind' in n));
           let nodeTypes = [...nodes].map(([p, n]) => n.kind);
-          let hist = Util.histogram(nodeTypes, new Map());
+          let hist = histogram(nodeTypes, new Map());
           console.log('histogram:', new Map([...hist].sort((a, b) => a[1] - b[1])));
 
           let offsetNodes = mainNodes.filter(([p, n]) => 'offset' in n);
@@ -186,10 +167,8 @@ async function main(...args) {
           let namedNodes = mainNodes.filter(([p, n]) => 'name' in n);
 
           let loc_name = (
-            namedNodes
-              .filter(([p, n]) => /Decl/.test(n.kind + '') && Util.isNumeric(p[p.length - 1]))
-              .map(([p]) => p) ||
-            Util.intersect(
+            namedNodes.filter(([p, n]) => /Decl/.test(n.kind + '') && isNumeric(p[p.length - 1])).map(([p]) => p) ||
+            intersect(
               typedefs.map(([p]) => p),
               namedNodes.map(([p]) => p)
             )
@@ -231,11 +210,7 @@ async function main(...args) {
               .map(decl =>
                 decl
                   .slice(2)
-                  .map((field, i) =>
-                    (Util.abbreviate(field, [Infinity, Infinity, 20, Infinity, Infinity, Infinity][i]) + '').padEnd(
-                      [6, 25, 20, 20, 40, 0][i]
-                    )
-                  )
+                  .map((field, i) => (abbreviate(field, [Infinity, Infinity, 20, Infinity, Infinity, Infinity][i]) + '').padEnd([6, 25, 20, 20, 40, 0][i]))
                   .join(' ')
               )
               .join('\n')
@@ -276,8 +251,7 @@ async function main(...args) {
             return name;
           };
           let findId = id => [...tree.filter((node, path) => isObject(node) && node.id == id)][0];
-          let findIdKind = (id, kind) =>
-            [...tree.filter((node, path) => isObject(node) && node.id == id && node.kind == kind)][0];
+          let findIdKind = (id, kind) => [...tree.filter((node, path) => isObject(node) && node.id == id && node.kind == kind)][0];
           let findNode = (id, kind, exclude) =>
             deep
               .select(
@@ -292,11 +266,7 @@ async function main(...args) {
                 },
                 []
               )
-              .map(({ path, value }) => [
-                path,
-                value.inner && value.inner.filter(n => /Field/.test(n.kind)).length,
-                value
-              ])
+              .map(({ path, value }) => [path, value.inner && value.inner.filter(n => /Field/.test(n.kind)).length, value])
               .filter(([p, len, n]) => len > 0)
               .map(([p, , n]) => n)[0];
           let fieldDecls = node => {
@@ -305,13 +275,7 @@ async function main(...args) {
                 node.inner
                   .filter(n => /Field/.test(n.kind) || n.name)
                   .map(n => [n.name, nodeType(n)])
-                  .reduce(
-                    ([offset, arr], [name, type]) => [
-                      offset + type.size,
-                      arr.concat([[name, type, offset, type.size]])
-                    ],
-                    [0, []]
-                  )[1]
+                  .reduce(([offset, arr], [name, type]) => [offset + type.size, arr.concat([[name, type, offset, type.size]])], [0, []])[1]
                   .map(([name, type, offset, size]) => [name, [type, offset, size]])
               );
               return decls;
@@ -368,22 +332,7 @@ async function main(...args) {
                   }
                 }
                 type = new Type(type);
-                return [
-                  name,
-                  [
-                    type,
-                    inner &&
-                      new Map(
-                        inner.reduce(
-                          ([offset, entries], [key, type]) => [
-                            offset + type.size,
-                            entries.concat([[key, [type, offset]]])
-                          ],
-                          [0, []]
-                        )[1]
-                      )
-                  ]
-                ];
+                return [name, [type, inner && new Map(inner.reduce(([offset, entries], [key, type]) => [offset + type.size, entries.concat([[key, [type, offset]]])], [0, []])[1])]];
               })
           );
           let prototypeOutput = [],
@@ -391,7 +340,7 @@ async function main(...args) {
           let libraries = new Map();
 
           function DefinePrototype(name, retType, params) {
-            let ret = Util.tryCatch(
+            let ret = tryCatch(
               () => retType.ffi,
               t => t,
               null
@@ -407,16 +356,13 @@ async function main(...args) {
               varname = name => `dlsym(${libraries.get(lib)}, '${name}')`;
             }
             if(ret) {
-              prototypeOutput.push(
-                `\ndefine('${name}', ${varname(name)}, null, '${ret}'${[...(params || [])]
-                  .map(([name, [param, offset]]) => ", '" + param.ffi + "'")
-                  .join('')});`
-              );
+              prototypeOutput.push(`\ndefine('${name}', ${varname(name)}, null, '${ret}'${[...(params || [])].map(([name, [param, offset]]) => ", '" + param.ffi + "'").join('')});`);
               let paramNames = [...(params || [])].map(([name], i) => name || `arg${i}`);
               paramNames = paramNames.map(name => (/^__/.test(name) ? name.replace(/^__/, '') : name));
               prototypeOutput.push(`export function ${name}(${paramNames.join(', ')}) {
   ${ret == 'void' ? '' : 'return '}call('${name}'${paramNames.map(n => `, ${n}`).join('')});
 }
+
 `);
             }
           }
@@ -437,9 +383,7 @@ async function main(...args) {
             structOutput.push(code.join('\n'));
           }
 
-          prototypeOutput = prototypeOutput
-            .filter(record => typeof record == 'string' && record.trim() != '')
-            .map(r => r.trimStart());
+          prototypeOutput = prototypeOutput.filter(record => typeof record == 'string' && record.trim() != '').map(r => r.trimStart());
 
           if(prototypeOutput.length) writeOutput(params.prototypeOutput ?? MakeFilename('functions'), prototypeOutput);
           if(structOutput.length) writeOutput(params.structOutput ?? MakeFilename('structs'), structOutput);
@@ -448,47 +392,30 @@ async function main(...args) {
 
           let records = [...tree.filter(node => node.kind == 'RecordDecl')];
 
-          let getIds = (id, exclude) =>
-            [...tree.filter((node, path) => node == id && !path.startsWith(exclude))].map(([p, n]) => p /*.join('.')*/);
+          let getIds = (id, exclude) => [...tree.filter((node, path) => node == id && !path.startsWith(exclude))].map(([p, n]) => p /*.join('.')*/);
 
           let recordNodes = records
             .map(([p, n]) => [
               p.join('.'),
               nodeName(n) || n.id,
-              Util.if(n, p => [Util.className(p), p.kind, nodeName(p)]),
-              Util.if(tree.parentNode(tree.parentNode(tree.parentNode(n))), p => [
-                Util.className(p),
-                p.kind,
-                nodeName(p)
-              ]),
+              if(n, p => [className(p), p.kind, nodeName(p)]),
+              if(tree.parentNode(tree.parentNode(tree.parentNode(n))), p => [className(p), p.kind, nodeName(p)]),
               [n, ...tree.anchestors(n)]
                 .filter(n => !(n instanceof Array) && n.kind != 'TranslationUnitDecl')
-                .reduce(
-                  (a, n) => [
-                    ...a,
-                    ...(typeof n.tagUsed == 'string' && n.tagUsed != '' ? [n.tagUsed] : []),
-                    ...(typeof n.name == 'string' ? [n.name] : [])
-                  ],
-                  []
-                ),
+                .reduce((a, n) => [...a, ...(typeof n.tagUsed == 'string' && n.tagUsed != '' ? [n.tagUsed] : []), ...(typeof n.name == 'string' ? [n.name] : [])], []),
 
-              [...tree.anchestors(n, [...p])]
-                .filter(([p, n]) => typeof n.kind == 'string' && (/[^t]Decl/.test(n.kind) || n.name))
-                .map(([p, n]) => [p.join('.'), n.kind, n.name, n.tagUsed]),
+              [...tree.anchestors(n, [...p])].filter(([p, n]) => typeof n.kind == 'string' && (/[^t]Decl/.test(n.kind) || n.name)).map(([p, n]) => [p.join('.'), n.kind, n.name, n.tagUsed]),
               // getIds(n.id, p.slice(0, 2)),
               nodeType(n),
               n.inner &&
                 new Map(
                   n.inner
-                    .reduce(
-                      (a, field) => (/Comment/.test(field.kind) ? a : [...a, [nodeName(field), nodeType(field)]]),
-                      []
-                    )
+                    .reduce((a, field) => (/Comment/.test(field.kind) ? a : [...a, [nodeName(field), nodeType(field)]]), [])
                     .map(([name, type]) => [
                       name,
                       [
                         type,
-                        Util.tryCatch(
+                        tryCatch(
                           () => type && type.size,
                           s => s
                         )
@@ -509,9 +436,7 @@ async function main(...args) {
                       type,
                       byteLength,
                       offset,
-                      `set ${name}(v) { new ${ByteLength2TypedArray(
-                        byteLength
-                      )}(this, ${offset})[0] = ${ByteLength2Value(byteLength)}; }`,
+                      `set ${name}(v) { new ${ByteLength2TypedArray(byteLength)}(this, ${offset})[0] = ${ByteLength2Value(byteLength)}; }`,
                       `get ${name}() { return new ${ByteLength2TypedArray(byteLength)}(this, ${offset})[0]; }`
                     ]
                   ]
@@ -530,9 +455,7 @@ async function main(...args) {
 
           let getId = (id, exclude) => [...tree.filter((node, path) => node.id == id && node != exclude)];
 
-          let recordTypes = [
-            ...tree.filter((node, path) => typeof node.id == 'string' && recordIds.indexOf(node.id) != -1)
-          ].map(([p, n]) => [p, getId(n.id, n).map(([p, n]) => p /*.join('.')*/), n]);
+          let recordTypes = [...tree.filter((node, path) => typeof node.id == 'string' && recordIds.indexOf(node.id) != -1)].map(([p, n]) => [p, getId(n.id, n).map(([p, n]) => p /*.join('.')*/), n]);
 
           console.log('number of nodes:', nodes.size);
           console.log('nodes with offset:', offsetNodes.length);
@@ -540,7 +463,7 @@ async function main(...args) {
           console.log('nodes with offset and no file:', offsetNodes.filter(([p, n]) => !('file' in n)).length);
           console.log('nodes with name:', namedNodes.length);
           function BasePathIndex(path) {
-            return path.findIndex(k => !(k == 'inner' || Util.isNumeric(k)));
+            return path.findIndex(k => !(k == 'inner' || isNumeric(k)));
           }
 
           function FindBackwards(node, pred = ([p, n]) => false) {
@@ -562,10 +485,7 @@ async function main(...args) {
             return type;
           }
           function MakeFilename(className) {
-            return path.join(
-              params['output-dir'] ?? 'tmp',
-              path.basename(file || Util.scriptName(), /\.[^.\/]*$/) + `.${className}.js`
-            );
+            return path.join(params['output-dir'] ?? 'tmp', path.basename(file || scriptName(), /\.[^.\/]*$/) + `.${className}.js`);
           }
           //let node = deep.get(ast, p);
           //  path.set(n, p);
@@ -583,7 +503,7 @@ async function main(...args) {
   }
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));
 
 function WriteFile(name, data, verbose = true) {
   if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
@@ -612,8 +532,7 @@ function* GenerateInspectStruct(type, members, includes) {
   yield `${type} svar;`;
   yield `int main() {`;
   yield `  printf("${type} - %u\\n", sizeof(svar));`;
-  for(let member of members)
-    yield `  printf(".${member} %u %u\\n", (char*)&svar.${member} - (char*)&svar, sizeof(svar.${member}));`;
+  for(let member of members) yield `  printf(".${member} %u %u\\n", (char*)&svar.${member} - (char*)&svar, sizeof(svar.${member}));`;
   yield `  return 0;`;
   yield `}`;
 }
@@ -642,17 +561,12 @@ function* GenerateStructClass(name, [size, map]) {
     fields.push(name);
   }
   yield '';
-  yield `  toString() {\n    const { ${fields.join(', ')} } = this;\n    return \`struct ${name} {${fields
-    .map(field => '\\n\\t.' + field + ' = ${' + field + '}')
-    .join(',')}\\n}\`;\n  }`;
+  yield `  toString() {\n    const { ${fields.join(', ')} } = this;\n    return \`struct ${name} {${fields.map(field => '\\n\\t.' + field + ' = ${' + field + '}').join(',')}\\n}\`;\n  }`;
   yield '}';
 }
 
 function GenerateGetSet(name, offset, size) {
-  return [
-    `set ${name}(v) { new ${ByteLength2TypedArray(size)}(this, ${offset})[0] = ${ByteLength2Value(size)}; }`,
-    `get ${name}() { return new ${ByteLength2TypedArray(size)}(this, ${offset})[0]; }`
-  ];
+  return [`set ${name}(v) { new ${ByteLength2TypedArray(size)}(this, ${offset})[0] = ${ByteLength2Value(size)}; }`, `get ${name}() { return new ${ByteLength2TypedArray(size)}(this, ${offset})[0]; }`];
 }
 
 function ByteLength2TypedArray(byteLength) {
@@ -669,6 +583,7 @@ function ByteLength2TypedArray(byteLength) {
       return 'Uint8Array';
   }
 }
+
 function ByteLength2Value(byteLength) {
   switch (byteLength) {
     case 8:

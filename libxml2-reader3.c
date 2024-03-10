@@ -46,7 +46,9 @@ extractFile(const char* filename, const xmlChar* pattern) {
      * Parse and traverse the tree, collecting the nodes in the process
      */
     ret = xmlTextReaderRead(reader);
-    while(ret == 1) { ret = xmlTextReaderRead(reader); }
+    while(ret == 1) {
+      ret = xmlTextReaderRead(reader);
+    }
     if(ret != 0) {
       fprintf(stderr, "%s : failed to parse\n", filename);
       xmlFreeTextReader(reader);

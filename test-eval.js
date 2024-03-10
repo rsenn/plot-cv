@@ -1,7 +1,5 @@
-import { Environment, ECMAScriptParser, Printer } from './lib/ecmascript.js';
-import Util from './lib/util.js';
+import { ECMAScriptParser, Environment, Printer } from './lib/ecmascript.js';
 import trkl from './lib/trkl.js';
-import PortableFileSystem from './lib/filesystem.js';
 
 const code = `
  let testObj = {};
@@ -11,19 +9,16 @@ let testValues = [1, 2, 3, 4, 5];
 trkl.bind(testObj, 'prop1', value => (value === undefined ? testValues[0] : (testValues[0] = value)));
 
 console.log('testObj.prop1', testObj.prop1);
+
 testObj.prop1 = 'a';
 console.log('testObj.prop1', testObj.prop1);
 console.log('testValues', testValues);
  `;
-
-let filesystem;
-
 async function main(...args) {
-  filesystem = await PortableFileSystem();
 
   let file = 'test-trkl.js';
 
-  let data = /* code ||*/ filesystem.readFile(file).toString();
+  let data = /* code ||*/ filesystem.readFileSync(file).toString();
 
   let parser = new ECMAScriptParser(data, code ? args[0].replace(/.*\//g, '') : file, true);
   let ast = parser.parseProgram();
@@ -36,11 +31,7 @@ async function main(...args) {
       Symbol: { species: Symbol.for('species') },
       console: {
         log(...args) {
-          console.debug(
-            'console.log(',
-            ...args.map(arg => `'${arg}'`).reduce((acc, arg) => (acc ? [...acc, ',', arg] : [arg]), null),
-            ')'
-          );
+          console.debug('console.log(', ...args.map(arg => `'${arg}'`).reduce((acc, arg) => (acc ? [...acc, ',', arg] : [arg]), null), ')');
         }
       },
       trkl
@@ -60,4 +51,4 @@ async function main(...args) {
   console.log(`wrote '${outputFile}'`, await filesystem.writeFile('output.es', output));
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

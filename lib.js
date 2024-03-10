@@ -31,6 +31,7 @@ export function Point(arg) {
     return p;
   }
 }
+
 Point.prototype.move = function(x, y) {
   this.x += x;
   this.y += y;
@@ -157,7 +158,7 @@ Point.prototype.inside = function(rect) {
   return this.x >= rect.x && this.x < rect.x + rect.width && this.y >= rect.y && this.y < rect.y + rect.height;
 };
 Point.prototype.transform = function(m) {
-  Matrix.prototype.transform_point.call(m, this);
+  Matrix.prototype.transformPoint.call(m, this);
   return this;
 };
 Point.prototype.normalize = function(minmax) {
@@ -166,10 +167,7 @@ Point.prototype.normalize = function(minmax) {
     y: (this.y - minmax.y1) / (minmax.y2 - minmax.y1)
   });
 };
-export const isPoint = o =>
-  o &&
-  ((o.x !== undefined && o.y !== undefined) ||
-    ((o.left !== undefined || o.right !== undefined) && (o.top !== undefined || o.bottom !== undefined)));
+export const isPoint = o => o && ((o.x !== undefined && o.y !== undefined) || ((o.left !== undefined || o.right !== undefined) && (o.top !== undefined || o.bottom !== undefined)));
 Point.isPoint = isPoint;
 
 export function Size(arg) {
@@ -215,6 +213,7 @@ export function Size(arg) {
   if(isNaN(obj.height)) obj.height = undefined;
   if(!(obj instanceof Size)) return obj;
 }
+
 Size.convertUnits = (size, w = 'window' in global ? window : null) => {
   if(w === null) return size;
   const view = {
@@ -243,10 +242,8 @@ Size.prototype.aspect = function() {
 Size.toCSS = function(arg) {
   const size = arg && arg.width !== undefined ? arg : this;
   let ret = {};
-  if(size.width !== undefined)
-    ret.width = size.width + (size.units && 'width' in size.units ? size.units.width : 'px');
-  if(size.height !== undefined)
-    ret.height = size.height + (size.units && 'height' in size.units ? size.units.height : 'px');
+  if(size.width !== undefined) ret.width = size.width + (size.units && 'width' in size.units ? size.units.width : 'px');
+  if(size.height !== undefined) ret.height = size.height + (size.units && 'height' in size.units ? size.units.height : 'px');
   return ret;
 };
 Size.prototype.toCSS = Size.toCSS;
@@ -302,6 +299,7 @@ export function Line(x1, y1, x2, y2) {
   if(!isLine(obj)) console.log('ERROR: is not a line: ', [...arguments]);
   if(!(this instanceof Line)) return obj;
 }
+
 export const isLine = obj => ['x1', 'y1', 'x2', 'y2'].every(prop => obj[prop] !== undefined);
 Line.isLine = isLine;
 Line.intersect = (a, b) => {
@@ -477,6 +475,7 @@ export function Rect(arg) {
     return ret;
   }
 }
+
 Rect.prototype.clone = function() {
   return new Rect(this.x, this.y, this.width, this.height);
 };
@@ -496,6 +495,7 @@ if(Rect.prototype.isSquare === undefined) {
     return Math.abs(this.width - this.height) < 1;
   };
 }
+
 Rect.prototype.constructor = Rect;
 Rect.prototype.area = function() {
   return this.width * this.height;
@@ -605,6 +605,7 @@ function PointList(points) {
     return ret;
   }
 }
+
 PointList.prototype = new Array();
 PointList.prototype.push = function() {
   const args = [...arguments];
@@ -622,11 +623,7 @@ PointList.prototype.splice = function() {
   let args = [...arguments];
   const start = args.shift();
   const remove = args.shift();
-  return Array.prototype.splice.apply(this, [
-    start,
-    remove,
-    ...args.map(arg => (arg instanceof Point ? arg : new Point(arg)))
-  ]);
+  return Array.prototype.splice.apply(this, [start, remove, ...args.map(arg => (arg instanceof Point ? arg : new Point(arg)))]);
 };
 PointList.splice = (plist, start, remove, points) => {
   let args = [...arguments];
@@ -634,11 +631,7 @@ PointList.splice = (plist, start, remove, points) => {
   return PointList.prototype.splice.apply(plist, args);
 };
 PointList.prototype.removeSegment = function(index) {
-  let indexes = [
-    PointList.prototype.getLineIndex.call(this, index - 1),
-    PointList.prototype.getLineIndex.call(this, index),
-    PointList.prototype.getLineIndex.call(this, index + 1)
-  ];
+  let indexes = [PointList.prototype.getLineIndex.call(this, index - 1), PointList.prototype.getLineIndex.call(this, index), PointList.prototype.getLineIndex.call(this, index + 1)];
   let lines = indexes.map(i => PointList.prototype.getLine.call(this, i));
   let point = Line.intersect(lines[0], lines[2]);
   if(point) {

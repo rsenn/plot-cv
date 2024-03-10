@@ -1,9 +1,6 @@
-import Util from './lib/util.js';
-//import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 import child_process from 'child_process';
-import ConsoleSetup from './lib/consoleSetup.js';
+import { bufferToString, closeSync, readSync } from 'fs';
 import { Repeater } from './lib/repeater/repeater.js';
-import filesystem from 'fs';
 
 let childProcess;
 
@@ -26,6 +23,7 @@ function waitRead(file) {
     });
   }
 }
+
 function waitExit(proc) {
   if(typeof proc == 'object' && proc != null && 'once' in proc) {
     return new Promise((resolve, reject) => {
@@ -42,21 +40,19 @@ function FdReader(fd, bufferSize = 1024) {
     let ret;
     do {
       let r = await waitRead(fd);
-      ret = typeof fd == 'number' ? filesystem.readSync(fd, buf) : fd.read(buf);
+      ret = typeof fd == 'number' ? readSync(fd, buf) : fd.read(buf);
       if(ret > 0) {
         let data = buf.slice(0, ret);
-        await push(filesystem.bufferToString(data));
+        await push(bufferToString(data));
       }
     } while(ret == bufferSize);
     stop();
-    typeof fd == 'number' ? filesystem.closeSync(fd) : fd.destroy();
+    typeof fd == 'number' ? closeSync(fd) : fd.destroy();
   });
 }
 
 async function main(...args) {
-  await ConsoleSetup({ inspectOptions: { colors: true, depth: 0 } });
   // await PortableChildProcess(p => (childProcess = p));
-  //filesystem  = await PortableFileSystem();
 
   let proc = child_process.spawn('ls', ['-la'], {
     block: false,
@@ -83,4 +79,5 @@ async function main(...args) {
   console.log('childProcess.errno:', proc.errno);
   console.log('childProcess.errstr:', proc.errstr);
 }
+
 main().catch(err => console.log('error:', err.message, err.stack));

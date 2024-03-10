@@ -1,13 +1,19 @@
-#!/usr/bin/env qjsm
-import { Console } from 'console';
 import * as path from 'path';
+import { Console } from 'console';
 import { exec, spawn } from 'child_process';
-import { getOpt } from 'util';
+import { getOpt, ucfirst, randStr } from 'util';
+import { mkdir, chdir, remove, getcwd } from 'os';
+import { GerberToGcode } from './pcb-conversion.js';
 
-let optionsArray = [{ front: true }, { back: true }, { side: 'outline' }, { drill: true }];
+let outputTypes = {
+  Top: { front: true },
+  Bottom: { back: true },
+  Measures: { side: 'outline' },
+  Drills: { drill: true }
+};
+let outputList = ['Top', 'Bottom', 'Measures', 'Drills'].map(n => outputTypes[n]);
 
 export function EagleToGerber(boardFile, opts = {}) {
-  console.log('convertToGerber', { boardFile, opts });
   let {
     layers = opts.side == 'outline'
       ? ['Measures']
@@ -38,20 +44,31 @@ export function EagleToGerber(boardFile, opts = {}) {
   return [bin].concat(args);
 }
 
-export function ExecTool(cmd, ...args) {
-  let child = spawn(cmd, args, { stdio: [0, 'pipe', 2] });
-  let [stdin, stdout, stderr] = child.stdio;
-  let r;
-  let b = new ArrayBuffer(1024);
-  r = child.wait();
+export function ZipFolder(archive, folder, move = false) {
+  let zipCmd =
+    //['7za', 'a', '-mx=5', '-sdel', archive, '.'];
+    ['zip', '-9', '-r', ...(move ? ['-m'] : []), archive, '.'];
+
+  console.log(`Zip command: ${zipCmd.join(' ')}`);
+
+  const [old, status] = getcwd();
+  chdir(folder);
+  remove(archive);
+  const ret = ExecTool(zipCmd, { cwd: folder });
+  chdir(old);
+  return ret;
+}
+
+export function ExecTool([cmd, ...args], opts = {}) {
+  const child = spawn(cmd, args, { stdio: [0, 'pipe', 2], ...opts });
+  const [stdin, stdout, stderr] = child.stdio;
+  const b = new ArrayBuffer(1024);
+  let r = child.wait();
   // console.log('ExecTool', { args, chil ELECTRA® Shape-Based PCB Autorouter v6.56 |d });
 
   r = os.read(stdout, b, 0, 1024);
-  let data = b.slice(0, r);
-  let str = toString(data);
-  console.log('str', str);
-  return str;
-  return parseInt(str);
+  const data = b.slice(0, r);
+  return toString(data);
 }
 
 function main(...args) {
@@ -60,31 +77,53 @@ function main(...args) {
     depth: Infinity
   });
 
-  let { outdir, ...params } = getOpt(
+  const params = getOpt(
     {
+      layers: [true, null, 'L'],
       outdir: [true, null, 'd'],
+      'no-delete': [false, null, 'D'],
       '@': 'files'
     },
     args
   );
-  let files = params['@'];
+
+  if(params.layers)
+    outputList = params.layers
+      .split(/\W+/g)
+      .map(n => ucfirst(n))
+      .map(n => outputTypes[n]);
+
+  if(!params.outdir) params.outdir = '/tmp/' + randStr(10);
 
   if(args.length == 0) args = ['/dev/stdin'];
 
-  for(let arg of files) {
+  for(let arg of params['@']) {
     let files = [];
-    for(let options of optionsArray) {
-      let cmd = EagleToGerber(arg, { ...options, outdir });
+
+    if(params.outdir) mkdir(params.outdir, 0o775);
+
+    for(let options of outputList) {
+      if(params.outdir) options.outdir = params.outdir;
+
+      let cmd = EagleToGerber(arg, options);
       let outputFile = cmd[cmd.indexOf('-o') + 1];
       files.push(outputFile);
 
       //  console.log(`Generating '${outputFile}'`);
       console.log(`Command: ${cmd.join(' ')}`);
 
-      let result = ExecTool(...cmd);
-      console.log(`Result:`, result);
+      ExecTool(cmd);
     }
+
     console.log(`Generated files:\n${files.join('\n')}`);
+
+    //chdir(params.outdir);
+    //
+    const archive = path.join(path.dirname(params.outdir), path.basename(arg, path.extname(arg)) + '.zip');
+    ZipFolder(archive, params.outdir, !params['no-delete']);
+
+    if(!params['no-delete']) remove(params.outdir);
+    params.outdir = '/tmp/' + randStr(10);
   }
 }
 

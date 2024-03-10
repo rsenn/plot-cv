@@ -102,7 +102,9 @@ main(int argc, char* argv[]) {
     }
   }
 
-  for(i = 0; i < TABLE_SIZE; i++) { data.sine[i] = 0.2 * (float)sin(((double)i / (double)TABLE_SIZE) * M_PI * 2.); }
+  for(i = 0; i < TABLE_SIZE; i++) {
+    data.sine[i] = 0.2 * (float)sin(((double)i / (double)TABLE_SIZE) * M_PI * 2.);
+  }
   data.left_phase = data.right_phase = 0;
 
   /* open a client connection to the JACK server */

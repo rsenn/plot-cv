@@ -1,10 +1,9 @@
-import * as std from 'std';
-import * as fs from 'fs';
 import * as path from 'path';
-import { Lexer, Token } from 'lexer';
-import { Console } from 'console';
+import { ReadFile, WriteFile } from './io-helpers.js';
+import { camelize, curry, define, escape, extendArray, split, toString, unique } from './lib/misc.js';
 import JSLexer from './quickjs/qjs-modules/lib/lexer/ecmascript.js';
-import { escape, toString, define, curry, unique, split, extendArray, camelize } from './lib/misc.js';
+import { Console } from 'console';
+import * as std from 'std';
 
 let buffers = {},
   modules = {};
@@ -18,6 +17,7 @@ extendArray(Array.prototype);
 const AddUnique = (arr, item) => (arr.indexOf(item) == -1 ? arr.push(item) : null);
 
 const IntToDWord = ival => (isNaN(ival) === false && ival < 0 ? ival + 4294967296 : ival);
+
 const IntToBinary = i => (i == -1 || typeof i != 'number' ? i : '0b' + IntToDWord(i).toString(2));
 
 //const code = ["const str = stack.toString().replace(/\\n\\s*at /g, '\\n');", "/^(.*)\\s\\((.*):([0-9]*):([0-9]*)\\)$/.exec(line);" ];
@@ -36,7 +36,7 @@ const bufferRef = new WeakMap();
 function BufferFile(file) {
   //console.log('BufferFile', file);
   if(buffers[file]) return buffers[file];
-  let b = (buffers[file] = fs.readFileSync(file, { flag: 'r' }));
+  let b = (buffers[file] = ReadFile(file, { flag: 'r' }));
   //console.log('bufferRef', bufferRef, bufferRef.set, b);
   if(typeof b == 'object' && b !== null) bufferRef.set(b, file);
   return b;
@@ -65,11 +65,13 @@ function DumpLexer(lex) {
 
   return 'Lexer ' + inspect({ start, pos, size });
 }
+
 function DumpToken(tok) {
   const { length, offset, chars, loc } = tok;
 
   return `★ Token ${inspect({ chars, offset, length, loc }, { depth: 1 })}`;
 }
+
 const What = {
   IMPORT: 0,
   EXPORT: 1
@@ -273,9 +275,7 @@ function main(...args) {
       ? (tok, prefix) => {
           const range = tok.charRange;
           const cols = [prefix, `tok[${tok.byteLength}]`, tok.id, tok.type, tok.lexeme, tok.lexeme.length, tok.loc];
-          std.puts(
-            cols.reduce((acc, col, i) => acc + (col + '').replaceAll('\n', '\\n').padEnd(colSizes[i]), '') + '\n'
-          );
+          std.puts(cols.reduce((acc, col, i) => acc + (col + '').replaceAll('\n', '\\n').padEnd(colSizes[i]), '') + '\n');
         }
       : () => {};
 
@@ -301,8 +301,7 @@ function main(...args) {
           case '}':
           case ']':
           case ')': {
-            if(stack.last != table[tok.lexeme])
-              throw new Error(`top '${stack.last}' != '${tok.lexeme}' [ ${stack.map(s => `'${s}'`).join(', ')} ]`);
+            if(stack.last != table[tok.lexeme]) throw new Error(`top '${stack.last}' != '${tok.lexeme}' [ ${stack.map(s => `'${s}'`).join(', ')} ]`);
 
             stack.pop();
             break;
@@ -435,7 +434,7 @@ function main(...args) {
     let dir = path.dirname(source);
 
     fileImports.forEach(imp => {
-      let p = path.collapse(path.join(dir, imp.file));
+      let p = path.normalize(path.join(dir, imp.file));
       //log('p', p);
 
       AddUnique(files, p);

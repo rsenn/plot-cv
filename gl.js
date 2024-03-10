@@ -1,4 +1,4 @@
-import { dlopen, dlsym, RTLD_NOW, define, call } from 'ffi';
+import { call, define, dlopen, dlsym, RTLD_NOW } from 'ffi';
 
 export const GL_VERSION_1_1 = 1;
 export const GL_VERSION_1_2 = 1;

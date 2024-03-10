@@ -1,13 +1,8 @@
-import PortableFileSystem from './lib/filesystem.js';
-import ConsoleSetup from './lib/consoleSetup.js';
+import { default as filesystem, default as fs } from 'fs';
 import { execStream } from './childProcess.js';
-import { AsyncWrite, AsyncRead, AcquireReader, AcquireWriter, PipeToRepeater, LineReader, WritableRepeater, WriteIterator, ReadFromIterator, TextTransformStream, PipeTo, CreateTransformStream, isStream, CreateWritableStream, LineBufferStream, RepeaterSink, RepeaterSource } from './lib/stream/utils.js';
-import Util from './lib/util.js';
-import path from './lib/path.js';
-import fs from 'fs';
-
+import * as path from './lib/path.js';
+import { LineBufferStream, RepeaterSink } from './lib/stream/utils.js';
 //prettier-ignore
-let filesystem;
 
 function alt_main(...args) {
   throw new Error('blah');
@@ -29,17 +24,17 @@ function concat(...args) {
     )
     .flat();
 }
+
 const URLS = [
   'https://repo.msys2.org/mingw/i686/mingw32.db',
   'https://repo.msys2.org/mingw/x86_64/mingw64.db',
   'https://repo.msys2.org/msys/i686/msys.db',
   'https://repo.msys2.org/msys/x86_64/msys.db'
 ];
+
 const BASE_URL = 'https://repo.msys2.org';
 async function main(...args) {
   console.log('main(', ...args, ')');
-  await ConsoleSetup({ breakLength: 80 });
-  await PortableFileSystem(fs => (filesystem = fs));
 
   let ret;
   let a,
@@ -49,7 +44,7 @@ async function main(...args) {
   console.log('args:', args);
   while(args.length > 0) {
     a = [
-      ...Util.filter(
+      ...filter(
         urls.map(url => url.replace(BASE_URL + '/', '')),
         new RegExp(args[0])
       )
@@ -76,7 +71,9 @@ async function main(...args) {
   WriteFile('packages.list', packages.join('\n'));
 
   let locations = packages.map(url => url.replace('https://repo.msys2.org/', ''));
-  let names = locations.map(url => url.replace(/(.*)(-[^-.]+)(\.pkg\..*)/g, '$1|$2|$3').split(/\|/g));
+  let names = locations.map(url =>
+    url.replace(/(.*)(-[^-.]+)(\.pkg\..*)/g, '$1|$2|$3').split(/\|/g)
+  );
   console.log('names.length:', names.length);
 
   console.log('names:', names.slice(-10, -1));
@@ -90,18 +87,25 @@ async function main(...args) {
     }
 
     let re = new RegExp(arg.startsWith('/') ? name + '-' + (ver || 'r?[0-9]') : arg, 'gi');
-    let matches = [...Util.filter(names, item => re.test(item[0]))];
+    let matches = [...filter(names, item => re.test(item[0]))];
     let pkgs = matches.map(loc => 'https://repo.msys2.org/' + loc.join(''));
     /*console.log("re:", re+'');
 console.log("matches:", matches);*/
     if(pkgs.length == 0 || packages.length == pkgs.length) {
       console.log('re =', re, ' pkgs.length =', pkgs.length, ' pacakges.length =', packages.length);
-      pkgs = Util.filter(
+      pkgs = filter(
         packages,
         (re = new RegExp(arg.startsWith('/') ? name + '-[a-z]+-' + (ver || 'r?[0-9]') : arg, 'gi'))
       );
       if(pkgs.length == 0 || packages.length == pkgs.length) {
-        console.log('re =', re, ' pkgs.length =', pkgs.length, ' pacakges.length =', packages.length);
+        console.log(
+          're =',
+          re,
+          ' pkgs.length =',
+          pkgs.length,
+          ' pacakges.length =',
+          packages.length
+        );
         console.error(`Number of packages ${pkgs.length} when matching ${re}`);
         continue;
         throw new Error(`Number of packages ${pkgs.length} when matching ${re}`);
@@ -118,7 +122,9 @@ console.log("matches:", matches);*/
       Util.pushUnique(files, pkg);
     }
   }
-  let dirs = Util.unique(files.map(file => path.dirname(file))).map(dir => Util.parseURL(dir).location);
+  let dirs = Util.unique(files.map(file => path.dirname(file))).map(
+    dir => Util.parseURL(dir).location
+  );
   //  console.debug("dirs:", dirs);
 
   let host = dirs[0]
@@ -133,7 +139,9 @@ console.log("matches:", matches);*/
   for(let file of files) {
     let parts = file.split('/');
     let [system, arch] = parts.slice(-3, -1);
-    let [os, kernel, rootDir] = system.startsWith('mingw') ? ['w64', 'mingw32', '/sysroot/mingw'] : ['pc', 'msys', ''];
+    let [os, kernel, rootDir] = system.startsWith('mingw')
+      ? ['w64', 'mingw32', '/sysroot/mingw']
+      : ['pc', 'msys', ''];
     let extractDest = `/usr/${arch}-${os}-${kernel}${rootDir}`;
     let compressProgram = file.endsWith('xz') ? 'xz' : 'zstd';
     // let line =  `CMD="curl -s '${file}' | tar --use-compress-program=${compressProgram} -C ${extractDest} --strip-components=1 -xv 2>/dev/null"; eval "$CMD" || { R=$?; echo "ERROR: $CMD" ; exit $R; }\n`;
@@ -157,7 +165,9 @@ async function processUrl(url, map) {
   let expired = stat.mtime + 5 * 60 * 1000 < new Date();
 
   console.log('expired:', expired);
-  let stream = expired ? execStream('sh', ['-c', `curl -s ${url}  | zcat | tee ${base}`]) : fs.createReadStream(base);
+  let stream = expired
+    ? execStream('sh', ['-c', `curl -s ${url}  | zcat | tee ${base}`])
+    : fs.createReadStream(base);
 
   let transform = await LineBufferStream();
 
@@ -206,7 +216,7 @@ async function processUrl(url, map) {
   }
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));
 
 function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');

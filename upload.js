@@ -1,16 +1,16 @@
-import React, { h, html, render, Fragment, Component, createRef, useState, useLayoutEffect, useRef, toChildArray } from './lib/dom/preactComponent.js';
-import { randStr, assert, lazyProperties, define, isObject, memoize, unique } from './lib/misc.js';
-import { isElement, createElement } from './dom-helpers.js';
-import { DragArea, DropArea, Card, List, RUG } from './lib/upload.js';
+import { createElement, isElement } from './dom-helpers.js';
 import * as dom from './lib/dom.js';
+import { createRef, h, render, default as React, Fragment } from './lib/dom/preactComponent.js';
 import * as geom from './lib/geom.js';
 import * as transformation from './lib/geom/transformation.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
+import { randStr } from './lib/misc.js';
 import trkl from './lib/trkl.js';
+import { Card, DragArea, DropArea, List, RUG } from './lib/upload.js';
 import { parseDegMinSec, parseGPSLocation } from './string-helpers.js';
-//import { ParseCoordinates, TransformCoordinates, Coordinate, Pin, Markers, OpenlayersMap } from './ol-helpers.js';
-import { Layer as HTMLLayer } from './lib/dom/layer.js';
+import { Progress } from './components.js';
 
+const DEBUG = true;
 const MakeUUID = (rng = Math.random) => [8, 4, 4, 4, 12].map(n => randStr(n, '0123456789abcdef'), rng).join('-');
 
 let uuid, input, drop;
@@ -18,6 +18,39 @@ let uuid, input, drop;
 let fileList = (globalThis.fileList = trkl([])),
   progress = 0,
   uploads = (globalThis.uploads = []);
+
+const LineReader = () => {
+  let buffer = '';
+  return new TransformStream({
+    transform(chunk, controller) {
+      buffer += chunk;
+      const parts = buffer.split('\n');
+      parts.slice(0, -1).forEach(part => controller.enqueue(part));
+      buffer = parts[parts.length - 1];
+    },
+    flush(controller) {
+      if(buffer) controller.enqueue(buffer);
+    }
+  });
+};
+
+async function* ReadIterator(stream) {
+  let rd = await stream.getReader(),
+    x;
+
+  while((x = await rd.read())) {
+    if(x.done) break;
+    yield x.value;
+  }
+
+  rd.releaseLock();
+}
+
+const ListJSON = async (dir = 'uploads') => {
+  let resp = await fetch(`file?action=list&dir=${dir}&filter=*.json`);
+
+  return resp.body.pipeThrough(new TextDecoderStream()).pipeThrough(LineReader());
+};
 
 Object.assign(globalThis, { isElement, createElement, React, dom, geom, transformation });
 Object.assign(globalThis, {
@@ -35,7 +68,11 @@ Object.assign(globalThis, {
   FileAction,
   parseGPSLocation,
   parseDegMinSec,
-  ListFiles
+  ListFiles,
+  CreateWS,
+  ListJSON,
+  LineReader,
+  ReadIterator
 });
 
 export function prioritySort(arr, predicates = []) {
@@ -88,6 +125,7 @@ const PropertyList = ({ data, filter, ...props }) => {
 const FileItem = ({ file, ref, ...props }) => {
   const { name, lastModified, size, type } = file;
   let upload = useTrkl(file.upload);
+
   ref ??= trkl();
   /*  ref.subscribe(v => {
     console.log('ref', v);
@@ -107,11 +145,7 @@ const FileItem = ({ file, ref, ...props }) => {
     }),
     /*,
      */ h('img', upload?.thumbnail ? { src: `file?action=load&file=${upload.thumbnail}` } : {}),
-    upload?.exif?.GPSPosition
-      ? h(Table, { class: 'gps' }, [
-          ...parseGPSLocation(upload.exif.GPSPosition).map((coord, i) => [i ? 'longitude' : 'latitude', coord])
-        ])
-      : null
+    upload?.exif?.GPSPosition ? h(Table, { class: 'gps' }, [...parseGPSLocation(upload.exif.GPSPosition).map((coord, i) => [i ? 'longitude' : 'latitude', coord])]) : null
   ]);
 };
 
@@ -131,8 +165,10 @@ window.addEventListener('load', e => {
   drop = document.querySelector('#drop-area');
   let preact = document.querySelector('#preact');
 
+  globalThis.progress = trkl(0);
+
   try {
-    render(h(FileList, { files: fileList, ref: (globalThis.listElem = createRef()) }, []), preact);
+    render(h(Fragment, {}, [h(Progress, { percent: globalThis.progress }, []), h('br'), h(FileList, { files: fileList, ref: (globalThis.listElem = createRef()) }, [])]), preact);
   } catch(e) {
     console.log('Render ERROR:', e.message);
   }
@@ -164,7 +200,9 @@ window.addEventListener('load', e => {
           console.log('UploadFiles ERROR:', err);
         })
         .then(resp => {
-          console.log('UploadFiles response:', resp);
+          globalThis.resp = resp;
+
+          if(DEBUG) console.log('UploadFiles response:', resp);
         });
       return false;
     });
@@ -203,27 +241,42 @@ function FileAction(cmd, file, contents) {
 
 function UploadFiles(files) {
   let input = document.querySelector('#file');
-  console.log('UploadFiles', files);
-  files ??= input.files;
+  let total = 0;
+  for(let file of input.files) {
+    //console.log('UploadFiles', { file });
+    if(typeof file.size == 'number' && Number.isFinite(file.size)) total += file.size;
+  }
+
+  Object.assign(globalThis, { total, files });
+
+  console.log('UploadFiles', { files, total });
 
   if(files.length > 0) return UploadFile(files);
 }
 
 async function ListFiles() {
-  let resp = await fetch('uploads').then(r => r.json());
-  return resp
-    .map(upload => ({ name: upload.filename, upload }))
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .filter(r => r.upload?.exif?.GPSPosition)
-    .map(file => {
-      let pos;
-      if(file.upload?.exif?.GPSPosition) {
-        pos = parseGPSLocation(file.upload?.exif?.GPSPosition);
-      }
-      if(Array.isArray(pos) && !(pos[0] == 0 && pos[1] == 0)) file.position = new Coordinate(...pos);
-      return file;
-    })
-    .filter(file => 'position' in file);
+  let resp = await fetch('uploads?limit=0,10&pretty=1').then(r => r.json());
+
+  //console.log('resp', resp);
+
+  return (
+    resp
+      .map(upload => ({ name: upload.filename, ...upload }))
+      .sort((a, b) => a.name.localeCompare(b.name))
+      // .filter(r => r.upload?.exif?.GPSPosition)
+      .map(file => {
+        let pos;
+        if(file.upload?.exif?.GPSPosition) {
+          pos = parseGPSLocation(file.upload?.exif?.GPSPosition);
+        }
+        if(Array.isArray(pos) && !(pos[0] == 0 && pos[1] == 0))
+          try {
+            file.position = new Coordinate(...pos);
+          } catch(e) {}
+        return file;
+      })
+    //.filter(file => 'position' in file)
+  );
 }
 
 // upload JPEG files
@@ -239,31 +292,30 @@ function UploadFile(files) {
 
   fileList([...files].map(f => ((f.upload = trkl(null)), f)));
 
-  return fetch('upload' /*+'.html' */, { method: 'POST', body: formData }).catch(err => {
-    console.log('POST done!');
-  }) /*.then(response => {
-    console.log('response', response);
-    return response.text();
-  })*/;
+  return fetch('upload' /*+'.html' */, { method: 'POST', body: formData })
+    .catch(err => {
+      console.log('POST failed!');
+    })
+    .then(async response => {
+      console.log('POST done:', await response.text());
+    });
 }
 
 function UploadDone(upload) {
-  let list = fileList();
-  let found = list.findIndex(({ name }) => name == upload.filename);
+  const list = fileList();
+  const found = list.findIndex(({ name }) => name == upload.filename);
 
   uploads.push(upload);
 
-  if(found != -1) {
-    list[found].upload(upload);
-
-    // fileList([...list]);
-  }
+  if(found != -1) list[found].upload(upload);
 }
 
-function CreateWS() {
-  let ws = (globalThis.ws ??= new WebSocket(
-    document.location.href.replace(/\/[^/]*$/, '/uploads').replace(/^http/, 'ws')
-  ));
+function CreateWS(endpoint = 'uploads') {
+  const u = new URL(window.location.href);
+  u.protocol = /https/.test(u.protocol) ? 'wss:' : 'ws:';
+  u.pathname = '/' + endpoint;
+
+  let ws = (globalThis.ws = new WebSocket(u + ''));
   console.log('CreateWS', ws);
   let tid;
   const restart = (delay = 10) => {
@@ -286,18 +338,25 @@ function CreateWS() {
             drop.style.filter = '';
             drop.style.opacity = '';
           }
+          globalThis.uuid = uuid;
           console.log('UUID', uuid);
           break;
         case 'progress':
-          const { done, total } = command;
-          console.log('PROGRESS', command);
-          progress = done;
+          const { done } = command;
+
+          let percent = (done * 100) / total;
+
+          if(DEBUG > 1) console.log('PROGRESS', `${percent.toFixed(2)}%`, `${done}/${total}`, command.filename);
+
+          globalThis.progress(percent.toFixed(1));
           break;
         case 'upload':
           const { address, thumbnail, uploaded, filename, exif, storage } = command;
           let upload = { address, thumbnail, uploaded, filename, exif, storage };
-          console.log('UPLOAD', upload);
-          UploadDone(upload);
+
+          if(DEBUG) console.log('UPLOAD', upload);
+
+          setTimeout(() => UploadDone(upload), 50);
           break;
         default:
           console.log('UNHANDLED', command);
@@ -307,16 +366,16 @@ function CreateWS() {
     }
   };
   ws.onopen = e => {
-    //  console.log('onopen', e);
+    //console.log('onopen', e);
   };
   ws.onclose = e => {
     globalThis.ws = null;
-    //   console.log('onclose', e);
+    //console.log('onclose', e);
     restart();
   };
   ws.onerror = e => {
     globalThis.ws = null;
-    //  console.log('onerror', e);
+    //console.log('onerror', e);
     restart();
   };
 }

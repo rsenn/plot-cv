@@ -1,16 +1,14 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
-import { h, Fragment, html, render, Component, useState, useEffect, useRef, useCallback, Portal, ReactComponent, toChildArray /*, cloneElement*/ } from './lib/dom/preactComponent.js';
-//import { isValidElement } from './lib/compat.mjs';
-
-import { trkl } from './lib/trkl.js';
-import { Element } from './lib/dom.js';
-import path from './lib/path.js';
-import { useTrkl } from './lib/hooks/useTrkl.js';
 import { classNames } from './lib/classNames.js';
-import { useActive, useClickout, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useRecognizers, useDrag, usePinch, useWheel, useMove, useScroll, useGesture, useHover, useMousePosition, usePanZoom, useToggleButtonGroupState } from './lib/hooks.js';
-import deepDiff from './lib/deep-diff.js';
+import { Element } from './lib/dom.js';
+import { useDimensions, useElement, useEvent, usePanZoom } from './lib/hooks.js';
+import { useTrkl } from './lib/hooks/useTrkl.js';
+import { isObject, roundTo, tryCatch } from './lib/misc.js';
+import * as path from './lib/path.js';
 import { useValue } from './lib/repeater/react-hooks.js';
+import { trkl } from './lib/trkl.js';
 import RulerDraggable from './ruler-draggable.js';
+import { wordWrap } from './string-helpers.js';
+import { h, Fragment, html, useState, useEffect, useRef, useCallback, Portal, ReactComponent, toChildArray } from './lib/dom/preactComponent.js';
 
 export const Ruler = ({ handleChange, style = {}, class: className }) => {
   const refRuler = useRef();
@@ -24,7 +22,9 @@ export const Ruler = ({ handleChange, style = {}, class: className }) => {
 
   handlers.subscribe(value => {
     if(!commands && isObject(value)) commands = value;
-    /*console.log('trkl handlers value =', value);
+    // ========================================================================== //
+    //     /*console.log('trkl handlers value =', value);P
+
     //console.log('commands =', commands);*/
   });
 
@@ -58,7 +58,7 @@ export const Ruler = ({ handleChange, style = {}, class: className }) => {
       },
       ['Up']
     ),
-    h('div', {}, [Util.roundTo(value, 0.001, 3)]),
+    h('div', {}, [roundTo(value, 0.001, 3)]),
     h(
       RulerDraggable,
       {
@@ -102,20 +102,7 @@ export const MouseEvents = h => ({
   onMouseUp: h
 });
 
-export const Overlay = ({
-  className = 'overlay',
-  title,
-  tooltip,
-  active = true,
-  enable = trkl(true),
-  visible = trkl(true),
-  toggle,
-  state,
-  onPush,
-  text,
-  children,
-  ...props
-}) => {
+export const Overlay = ({ className = 'overlay', title, tooltip, active = true, enable = trkl(true), visible = trkl(true), toggle, state, onPush, text, children, ...props }) => {
   const [pushed, setPushed] = typeof state == 'function' ? [useTrkl(state), state] : useState(false);
   const enabled = useTrkl(enable);
   const events = enabled
@@ -281,8 +268,7 @@ export const FloatingPanel = ({ children, className, onSize, onHide, style = {},
     const tmpSize = onSize();
     noUpdate = true;
     // if(tmpSize.width != width || tmpSize.height != height)
-    if(isObject(tmpSize) && (tmpSize.width === undefined || tmpSize.height === undefined))
-      if(width !== undefined && height !== undefined) onSize({ width, height });
+    if(isObject(tmpSize) && (tmpSize.width === undefined || tmpSize.height === undefined)) if (width !== undefined && height !== undefined) onSize({ width, height });
     noUpdate = false;
   }
   const hasOnHide = typeof onHide == 'function' && typeof onHide.subscribe == 'function';
@@ -336,35 +322,57 @@ export const Item = ({ className = 'item', title, tooltip, label, icon, children
   return h(Overlay, { className, ...props }, h(Label, { text: icon }, label));
 };
 
-export const Icon = ({ className = 'icon', caption, image, ...props }) =>
-  h(Container, { className, ...props }, h('img', { src: image }));
+export const Icon = ({ className = 'icon', caption, image, ...props }) => h(Container, { className, ...props }, h('img', { src: image }));
 
-export const Progress = ({ className, percent, ...props }) =>
-  h(
+export const Progress = ({ className, percent, ...props }) => {
+  let p;
+
+  if(!{ string: true, number: true }[typeof percent]) p = useTrkl(percent);
+  else p = percent;
+
+  return h(
     Overlay,
     {
       className: classNames('progress', 'center', className),
-      text: percent + '%',
+      text: p + '%',
       style: {
         position: 'relative',
-        width: '100%',
-        height: '1.5em',
+        height: '1em',
         border: '1px solid black',
+        padding: 0,
         textAlign: 'center',
-        zIndex: '99'
+        zIndex: '99',
+        overflow: 'hidden'
       }
     },
-    h('div', {
-      className: classNames('progress-bar', 'fill'),
-      style: {
-        width: percent + '%',
-        position: 'absolute',
-        left: '0px',
-        top: '0px',
-        zIndex: '98'
-      }
-    })
+    h(Fragment, {}, [
+      h('div', {
+        className: classNames('progress-bar', 'fill'),
+        style: {
+          width: p + '%',
+          position: 'absolute',
+          background: 'hsla(210, 100%,50%,0.5)',
+          zIndex: '98'
+        },
+        innerHTML: '&nbsp;'
+      }),
+      h(
+        'div',
+        {
+          className: classNames('progress-bar', 'number'),
+          style: {
+            position: 'absolute',
+            width: '100%',
+
+            zIndex: '98',
+            textShadow: 'white 1px 1px 2px'
+          }
+        },
+        [p + '%']
+      )
+    ])
   );
+};
 
 /*export const BrowseIcon = (props) => html`<svg xmlns="http://www.w3.org/2000/svg" height="40" width="40" viewBox="131 -131 731.429 731.429">
   <path d="M240.714 39.414v390.6h432.4l79.6-244.1h-435.6l-48.8 145.7 33.1-170.2h378v-48.8h-243.4l-47.2-73.2z" fill="#fff"/>
@@ -511,9 +519,9 @@ export const File = ({ label, name, description, i, key, className = 'file', onP
   }
   label = label.replace(/([^\s])-([^\s])/g, '$1 $2');
   //if(icon) label = label.replace(/\.[^.]*$/, '');
-  label = h(Label, { text: Util.wordWrap(label, 50, '\n') });
+  label = h(Label, { text: wordWrap(label, 50, '\n') });
   if(description) {
-    let s = Util.multiParagraphWordWrap(Util.stripXML(Util.decodeHTMLEntities(description)), 60, '\n');
+    let s = multiParagraphWordWrap(stripXML(decodeHTMLEntities(description)), 60, '\n');
     let d = s.split(/\n/g).slice(0, 1);
     label = h('div', {}, [
       label,
@@ -535,18 +543,7 @@ export const File = ({ label, name, description, i, key, className = 'file', onP
   );
 };
 
-export const Chooser = ({
-  className = 'list',
-  itemClass = 'item',
-  tooltip = () => '',
-  itemComponent = Overlay,
-  itemFilter,
-  items,
-  sortCompare,
-  onChange = () => {},
-  onPush = () => {},
-  ...props
-}) => {
+export const Chooser = ({ className = 'list', itemClass = 'item', tooltip = () => '', itemComponent = Overlay, itemFilter, items, sortCompare, onChange = () => {}, onPush = () => {}, ...props }) => {
   const [active, setActive] = useState(-1);
   const [filter, setFilter] = useState('*');
   const [list, setList] = /*useState(items);*/ trkl.is(items) ? useState(items()) : [items];
@@ -566,10 +563,7 @@ export const Chooser = ({
     setFilter(itemFilter());
     itemFilter.subscribe(value => setFilter(value));
   }
-  const list2re = list =>
-    list
-      .map(part => Util.tryCatch(() => new RegExp(part.trim().replace(/\./g, '\\.').replace(/\*/g, '.*'), 'i')))
-      .filter(r => r !== null);
+  const list2re = list => list.map(part => tryCatch(() => new RegExp(part.trim().replace(/\./g, '\\.').replace(/\*/g, '.*'), 'i'))).filter(r => r !== null);
   const bar = html``;
   const preFilter = filter
     .replace(/\|/g, ' | ')
@@ -600,10 +594,7 @@ export const Chooser = ({
       return h(itemComponent, {
         key: i,
         i,
-        className:
-          typeof itemClass == 'function'
-            ? itemClass(value)
-            : classNames(itemClass || className + '-item', (name + '').replace(/.*\./, '')),
+        className: typeof itemClass == 'function' ? itemClass(value) : classNames(itemClass || className + '-item', (name + '').replace(/.*\./, '')),
         active: i == active,
         onPush: pushHandler(i),
         label: name.replace(new RegExp('.*/'), ''),
@@ -628,15 +619,14 @@ export const Chooser = ({
 const ToolTipFn = ({ name, data, ...item }) => {
   let tooltip = `name\t${name.replace(new RegExp('.*/', 'g'), '')}`;
 
-  for(let field of ['type', 'size', 'sha', 'path'])
-    if(item[field] !== undefined) tooltip += `\n${field}\t${item[field]}`;
+  for(let field of ['type', 'size', 'sha', 'path']) if(item[field] !== undefined) tooltip += `\n${field}\t${item[field]}`;
   if(typeof data == 'object' && data != null) {
     //console.log('data',data);
     data = Object.entries(data)
       .filter(([name, value]) => !isNaN(value) && value != null)
       .map(([name, value]) => `${name}: ${value}`)
       .join('\n');
-  } else data = Util.abbreviate(data);
+  } else data = abbreviate(data);
   if(data) tooltip += `\ndata\t${data}`;
   return tooltip;
 };
@@ -655,6 +645,7 @@ export const FileList = ({
   sortKey,
   sortOrder,
   makeSortCompare,
+  children,
   ...props
 }) => {
   const [active, setActive] = useState(true);
@@ -671,6 +662,7 @@ export const FileList = ({
   const className = classNames('sidebar', active ? 'active' : 'inactive');
 
   return h(tag, { className }, [
+    ...children,
     h(Conditional, {
       component: EditBox,
       type: 'form',
@@ -701,8 +693,7 @@ export const FileList = ({
   ]);
 };
 
-export const Panel = ({ className, children, ...props }) =>
-  h(Container, { className: classNames('panel', className), ...props }, children);
+export const Panel = ({ className, children, ...props }) => h(Container, { className: classNames('panel', className), ...props }, children);
 
 export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className }, children) =>
   enable
@@ -787,11 +778,7 @@ export const SizedAspectRatioBox = ({
       h(
         AspectRatioBox,
         {
-          outsideClassName: classNames(
-            'aspect-ratio-box-outside',
-            className && className + '-outside',
-            outsideClassName
-          ),
+          outsideClassName: classNames('aspect-ratio-box-outside', className && className + '-outside', outsideClassName),
           outsideProps,
           insideClassName: insideClassName || className,
           onClick,
@@ -802,16 +789,7 @@ export const SizedAspectRatioBox = ({
     ]
   );
 
-export const TransformedElement = ({
-  type = 'div',
-  id,
-  aspect,
-  listener,
-  style = { position: 'relative' },
-  className,
-  children = [],
-  ...props
-}) => {
+export const TransformedElement = ({ type = 'div', id, aspect, listener, style = { position: 'relative' }, className, children = [], ...props }) => {
   /*  const [transform, setTransform] = useState(new TransformationList());
   //console.debug('TransformedElement:', { aspect });
   //
@@ -838,19 +816,7 @@ export const TransformedElement = ({
   );
 };
 
-export const Slider = ({
-  min = 0,
-  max = 100,
-  value: initialValue = 0,
-  step = 1,
-  name = 'slider',
-  orient = 'horizontal',
-  label,
-  onChange = value => {},
-  style = {},
-  length,
-  ...props
-}) => {
+export const Slider = ({ min = 0, max = 100, value: initialValue = 0, step = 1, name = 'slider', orient = 'horizontal', label, onChange = value => {}, style = {}, length, ...props }) => {
   const [value, setValue] = useState(initialValue);
   const onInput = e => {
     const { target } = e;

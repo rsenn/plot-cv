@@ -1,8 +1,6 @@
-import PortableFileSystem from './lib/filesystem.js';
-import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
-import path from './lib/path.js';
+import filesystem from 'fs';
 import PortableChildProcess from './lib/childProcess.js';
+import * as path from './lib/path.js';
 
 let filesystem,
   childProcess,
@@ -22,7 +20,7 @@ Util.define(Array.prototype, {
 });
 
 function DummyPreproc(source) {
-  let data = filesystem.readFile(source);
+  let data = filesystem.readFileSync(source);
 
   let lines = data.split(/\n/g).map((line, i) => [i + 1, line]);
   let pp = lines.filter(([no, str]) => /^\s*#/.test(str));
@@ -36,10 +34,7 @@ function DummyPreproc(source) {
 
 async function DumpDeps(sources, includeDirs = []) {
   //let stderr = filesystem.open('deps.err', 'w+');$
-  let includes = includeDirs.reduce(
-    (acc, dir) => (/^\/opt/.test(dir) ? [...acc, '-isystem', dir] : [...acc, `-I${dir}`]),
-    []
-  );
+  let includes = includeDirs.reduce((acc, dir) => (/^\/opt/.test(dir) ? [...acc, '-isystem', dir] : [...acc, `-I${dir}`]), []);
   let argv = ['-MM', ...includes, '-c', ...sources];
   console.log('argv:', argv.join(' '));
   let proc = childProcess('g++', argv, {
@@ -70,8 +65,6 @@ async function DumpDeps(sources, includeDirs = []) {
 }
 
 async function main(...sources) {
-  await ConsoleSetup({ colors: true, depth: 8, breakLength: 138 });
-  await PortableFileSystem(fs => (filesystem = fs));
   await PortableChildProcess(cp => (childProcess = cp));
 
   const env = await Util.env;
@@ -96,4 +89,4 @@ async function main(...sources) {
   }
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

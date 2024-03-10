@@ -1,8 +1,9 @@
-import { dlopen, dlsym, RTLD_NOW, define, call } from 'ffi';
+import { call, define, dlopen, dlsym, RTLD_NOW } from 'ffi';
 
 const libeditline = dlopen('/usr/local/lib/libeditline.so.1', RTLD_NOW);
 
 export const el_hist_size = dlsym('el_hist_size', libeditline);
+
 export const el_no_echo = dlsym('el_no_echo', libeditline);
 export const el_no_hist = dlsym('el_no_hist', libeditline);
 export const prompt_len = dlsym('prompt_len', libeditline);
@@ -96,14 +97,7 @@ function rl_completion_matches(token, generator) {
 }
 
 /* char* rl_filename_completion_function(const char* text, int state)  */
-define(
-  'rl_filename_completion_function',
-  dlsym('rl_filename_completion_function', libeditline),
-  null,
-  'char *',
-  'void *',
-  'int'
-);
+define('rl_filename_completion_function', dlsym('rl_filename_completion_function', libeditline), null, 'char *', 'void *', 'int');
 function rl_filename_completion_function(text, state) {
   return call('rl_filename_completion_function', text, state);
 }
@@ -205,14 +199,7 @@ function rl_set_list_possib_func(func) {
 }
 
 /* void rl_callback_handler_install(const char* prompt, rl_vcpfunc_t* lhandler)  */
-define(
-  'rl_callback_handler_install',
-  dlsym('rl_callback_handler_install', libeditline),
-  null,
-  'void',
-  'void *',
-  'void *'
-);
+define('rl_callback_handler_install', dlsym('rl_callback_handler_install', libeditline), null, 'void', 'void *', 'void *');
 function rl_callback_handler_install(prompt, lhandler) {
   return call('rl_callback_handler_install', prompt, lhandler);
 }

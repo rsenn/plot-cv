@@ -1,27 +1,14 @@
-import * as std from 'std';
-import { Point, Size, Contour, Rect, Line, TickMeter, Mat, CLAHE, Draw } from 'opencv';
-import * as cv from 'opencv';
-import { HSLA } from './lib/color.js';
-import { NumericParam, EnumParam, ParamNavigator } from './param.js';
-import fs from 'fs';
-import { format, once, memoize } from './lib/misc.js';
-import * as xml from 'xml';
-import Console from 'console';
-import SvgPath from './lib/svg/path.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
-import { MakeSVG, SaveSVG } from './image-helpers.js';
-import { Profiler } from './time-helpers.js';
-import { SaveConfig, LoadConfig } from './config.js';
-import { VideoSource, ImageSequence } from './qjs-opencv/js/cvVideo.js';
-import { Window, Screen, MouseFlags, MouseEvents, Mouse, TextStyle } from './qjs-opencv/js/cvHighGUI.js';
-import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
-import { WeakMapper, Modulo, WeakAssign, BindMethods, BitsToNames, FindKey, Define, Once, GetOpt, RoundTo, Range } from './qjs-opencv/js/cvUtils.js';
+import { SaveSVG } from './image-helpers.js';
 import { ImagePipeline } from './imagePipeline.js';
-
-/*let rainbow;
-let zoom = 1;
-let debug = false;
-let basename = memoize(() => process.argv[1].replace(/\.js$/, ''));*/
+import { WriteJSON } from './io-helpers.js';
+import { HSLA } from './lib/color.js';
+import SvgPath from './lib/svg/path.js';
+import { Mouse, MouseFlags, Screen, Window } from './qjs-opencv/js/cvHighGUI.js';
+import { BitsToNames, GetOpt, Range } from './qjs-opencv/js/cvUtils.js';
+import { VideoSource } from './qjs-opencv/js/cvVideo.js';
+import Console from 'console';
+import * as cv from 'opencv';
+import * as std from 'std';
 
 let simplifyMethods = {
   NTH_POINT: c => c.simplifyNthPoint(2),
@@ -106,15 +93,19 @@ function* getParents(hier, id) {
     id = hier.parent(id);
   }
 }
+
 function getContourDepth(hier, id) {
   return [...getParents(hier, id)].length;
 }
+
 function findRoot(hier) {
   return hier.findIndex(h => h[cv.HIER_PREV] == -1 && h[cv.HIER_PARENT] == -1);
 }
+
 function* getToplevel(hier) {
   for(let [i, h] of hier.entries()) if(h[cv.HIER_PARENT] == -1) yield i;
 }
+
 function* walkContours(hier, id) {
   id = id || findRoot(hier);
   let h;
@@ -157,8 +148,8 @@ function main(...args) {
       help: [
         false,
         () => {
-          console.log(`Usage: ${Util.getArgv()[0]} [OPTIONS] <video|device>`);
-          Util.exit(0);
+          console.log(`Usage: ${getArgv()[0]} [OPTIONS] <video|device>`);
+          exit(0);
         },
         'h'
       ],
@@ -284,8 +275,8 @@ function main(...args) {
         viewBox
       }
     };
-    WriteJSON('contours-' + framePos + '.json', doc);
-    SaveSVG('contours-' + framePos + '.svg', doc);
+    WriteJSON('contours.json', doc);
+    SaveSVG('contours.svg', doc);
   }
 
   function saveLines(lines, size) {

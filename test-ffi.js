@@ -1,10 +1,5 @@
-import * as std from 'std';
-import * as os from 'os';
-import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './quickjs/qjs-ffi/lib/fcntl.js';
-import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toArrayBuffer, toPointer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_NODELETE, RTLD_NOLOAD, RTLD_DEEPBIND, RTLD_DEFAULT, RTLD_NEXT } from 'ffi';
+import { F_GETFL, F_SETFL, fcntl, O_NONBLOCK } from './quickjs/qjs-ffi/lib/fcntl.js';
 import * as ffi from 'ffi';
-import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 
 function foreign(name, ret, ...args) {
   let fp = dlsym(RTLD_DEFAULT, name);
@@ -115,7 +110,6 @@ class Registers extends ArrayBuffer {
 }
 
 async function main(...args) {
-  await ConsoleSetup({
     //breakLength: 120,
     maxStringLength: 200,
     multiline: 1,
@@ -134,10 +128,7 @@ async function main(...args) {
   let newState = false;
   console.log('strdup:', strdup('BLAH').toString(16));
   console.log('dlsym_(RTLD_DEFAULT, "strdup"):', dlsym(RTLD_DEFAULT, 'strdup').toString(16));
-  console.log(
-    'snprintf(outBuf, outBuf.byteLength, "%p", -1):',
-    snprintf(outBuf, outBuf.byteLength, '%p', 0x7fffffffffffffff)
-  );
+  console.log('snprintf(outBuf, outBuf.byteLength, "%p", -1):', snprintf(outBuf, outBuf.byteLength, '%p', 0x7fffffffffffffff));
   console.log('outBuf:', ArrayBufToString(outBuf));
   console.log('Util.isatty(1):', await Util.isatty(1));
   console.log('F_GETFL:', toHex((flags = fcntl(fd, F_GETFL, 0))));
@@ -182,7 +173,6 @@ async function main(...args) {
   console.log('sprintf:', sprintf(out, '%p', rfds));
   console.log('out:', MakeArray(out, 1).toString());
   console.log('rfds.toPointer():', rfds.toPointer());
-  console.log('rfds.toPointer():', rfds.toPointer());
   console.log('BigInt methods:', Util.getMethodNames(BigInt));
   console.log('BigInt toString(16):', BigInt(1337).toString(16));
 
@@ -202,10 +192,7 @@ async function main(...args) {
   let returnADDR = area + 200;
   strcpy(area + 200, '\x48\x8b\x04\x24\xc3');
   let writeREGS = area + 300;
-  strcpy(
-    area + 300,
-    '\xf3\x0f\x1e\xfa\x48\x89\x07\x48\x89\x5f\x08\x48\x89\x4f\x10\x48\x89\x57\x18\x48\x89\x77\x20\x48\x89\x7f\x28\x48\x89\x6f\x30\x48\x89\x67\x38\x48\x31\xc0\x48\xff\xc0\xc3'
-  );
+  strcpy(area + 300, '\xf3\x0f\x1e\xfa\x48\x89\x07\x48\x89\x5f\x08\x48\x89\x4f\x10\x48\x89\x57\x18\x48\x89\x77\x20\x48\x89\x7f\x28\x48\x89\x6f\x30\x48\x89\x67\x38\x48\x31\xc0\x48\xff\xc0\xc3');
   console.log('writeREGS:', writeREGS.toString(16));
   let ret;
   printf('area: %s\n', StringToHex(area + 0));
@@ -235,7 +222,7 @@ async function main(...args) {
   // longjmp(jb, 1337);
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));
 
 function toHex(n, b = 2) {
   console.log('toHex:', n);
@@ -243,6 +230,7 @@ function toHex(n, b = 2) {
   let s = (+n).toString(16);
   return '0'.repeat(Math.ceil(s.length / b) * b - s.length) + s;
 }
+
 function StringToHex(str, bytes = 1) {
   if(typeof str != 'string') str = toString(str);
   let buf = StringToArrayBuffer(str, bytes);
@@ -282,10 +270,7 @@ function MakeArray(buf, numBytes) {
 
 function ArrayBufToHex(buf, numBytes = 8) {
   let arr = MakeArray(buf, numBytes);
-  return arr.reduce(
-    (s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
-    ''
-  );
+  return arr.reduce((s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)), '');
 }
 
 function timeval(sec = 0, usec = 0) {

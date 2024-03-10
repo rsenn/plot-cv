@@ -1,10 +1,5 @@
-import Util from './lib/util.js';
-import PortableFileSystem, { SEEK_SET, SEEK_END } from './lib/filesystem.js';
-import ConsoleSetup from './lib/consoleSetup.js';
+import { assert, assertEquals, run, default as TinyTest } from './lib/tinyTest.js';
 
-import TinyTest, { run, assert, assertEquals } from './lib/tinyTest.js';
-
-let filesystem;
 let tmpdir;
 let buffer, buffer2;
 let handle;
@@ -60,12 +55,12 @@ const tests = {
     assertEquals(filesystem.close(handle), 0);
   },
   'filesystem.readFile': () => {
-    assertEquals(filesystem.readFile(tmpdir + '/rdwr'), data);
+    assertEquals(filesystem.readFileSync(tmpdir + '/rdwr'), data);
   },
   'filesystem.writeFile': () => {
     let name = tmpdir + '/wrf';
     let ret = filesystem.writeFile(name, data);
-    let d = filesystem.readFile(name, null);
+    let d = filesystem.readFileSync(name, null);
 
     assertEquals(filesystem.bufferToString(d), data);
   },
@@ -99,7 +94,7 @@ const tests = {
     let st;
     assert(filesystem.stat(tmpdir).isDirectory());
     st = filesystem.stat(tmpdir + '/file');
-    // console.log("st:", Util.inspect(st));
+    // console.log("st:", inspect(st));
     assert(st.isFile());
   },
   'filesystem.lstat': () => {
@@ -144,8 +139,6 @@ const tests = {
 };
 
 async function main(...args) {
-  await ConsoleSetup({ colors: true, depth: Infinity });
-  await PortableFileSystem(fs => (filesystem = fs));
   //  globalThis.console = {};
 
   console.log('Console:', Object.getPrototypeOf(console));
@@ -157,10 +150,10 @@ async function main(...args) {
       ['a', 1],
       ['b', 2]
     ]),
-    { u: undefined, n: null, args: Util.getArgs(), filesystem }
+    { u: undefined, n: null, args: scriptArgs, filesystem }
   );
   tmpdir = `/tmp/${Util.randStr(10)}`;
-  TinyTest.run(Util.filter(tests, t => t));
+  TinyTest.run(filter(tests, t => t));
   return;
   console.log(
     Util.getMethodNames(filesystem)
@@ -169,4 +162,4 @@ async function main(...args) {
   );
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

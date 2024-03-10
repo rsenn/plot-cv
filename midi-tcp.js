@@ -1,29 +1,11 @@
+import { client, LLL_DEBUG, LLL_WARN, setLog } from 'net';
 import * as os from 'os';
-import * as std from 'std';
-import { client, setLog, LLL_DEBUG, LLL_WARN } from 'net';
+import { MIDIEvent, MIDIStream } from './lib/midi.js';
+import { quote } from './lib/misc.js';
 import { Console } from 'console';
-import { MIDIStream, MIDIEvent } from './lib/midi.js';
-import { quote, toString } from './lib/misc.js';
+import * as std from 'std';
 
 /*const MIDI_NOTE_OFF = 0x80;
-const MIDI_NOTE_ON = 0x90;
-const MIDI_POLYPHONIC_KEY_PRESSURE = 0xA0;
-const MIDI_CONTROL_CHANGE = 0xB0;
-const MIDI_PROGRAM_CHANGE = 0xC0;
-const MIDI_CHANNEL_PRESSURE = 0xD0;
-const MIDI_PITCH_BEND = 0xE0;
-const MIDI_SYSEX = 0xf0;
-const MIDI_SONG_POSITION = 0xf2;
-const MIDI_SONG_SELECT = 0xf3;
-const MIDI_TUNE_REQUEST = 0xf6;
-const MIDI_EOX = 0xf7;
-const MIDI_TIMING_CLOCK = 0xf8;
-const MIDI_START = 0xfa;
-const MIDI_CONTINUE = 0xfb;
-const MIDI_STOP = 0xfc;
-const MIDI_ACTIVE_SENSING = 0xfe;
-const MIDI_RESET = 0xff
-*/
 /* MIDIMessageLength -- how many bytes in a message? */
 function MIDIMessageLength(byte) {
   byte &= 0xff;
@@ -80,14 +62,10 @@ export function TCPClient(url, handler = event => {}) {
   const debug = false;
 
   setLog(((debug ? LLL_DEBUG : LLL_WARN) << 1) - 1, (level, msg) => {
-    let p =
-      ['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][
-        level && Math.log2(level)
-      ] ?? level + '';
+    let p = ['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][level && Math.log2(level)] ?? level + '';
     msg = msg.replace(/\n/g, '\\n').replace(/\r/g, '\\r');
 
-    if(!/POLL/.test(msg) && /MINNET/.test(p))
-      if(debug && /(client|http|read|write)/i.test(msg)) console.log(p.padEnd(8), msg);
+    if(!/POLL/.test(msg) && /MINNET/.test(p)) if (debug && /(client|http|read|write)/i.test(msg)) console.log(p.padEnd(8), msg);
   });
 
   let recvBuf = [];
@@ -101,8 +79,8 @@ export function TCPClient(url, handler = event => {}) {
     onClose(ws, reason) {
       console.log('onClose', { ws, reason });
     },
-    onHttp(req, resp) {
-      console.log('onHttp', { req, resp });
+    onRequest(req, resp) {
+      console.log('onRequest', { req, resp });
     },
     onFd(fd, rd, wr) {
       //console.log('onFd', fd, rd, wr);

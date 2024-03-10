@@ -1,13 +1,5 @@
-import { Console } from 'console';
-import { btoa } from './lib/misc.js';
 import * as os from 'os';
-import * as fs from 'fs';
-import * as util from './lib/misc.js';
-import Util from './lib/util.js';
-import * as path from './lib/path.js';
-import * as deep from './lib/deep.js';
-import { Socket, IPPROTO_TCP } from './quickjs/qjs-ffi/lib/socket.js';
-import { toString as ArrayBufferToString, toArrayBuffer as StringToArrayBuffer } from './lib/misc.js';
+import { Console } from 'console';
 
 var worker;
 var counter;
@@ -19,7 +11,7 @@ function main(script, ...args) {
     prefix: '\x1b[38;5;220mPARENT\x1b[0m'
   });
 
-  let params = Util.getOpt({ host: [true, null, 'h'], port: [true, null, 'p'] }, args);
+  let params = getOpt({ host: [true, null, 'h'], port: [true, null, 'p'] }, args);
 
   console.log('params', params);
 

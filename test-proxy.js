@@ -1,11 +1,7 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
-import ConsoleSetup from './lib/consoleSetup.js';
-import PortableFileSystem from './lib/filesystem.js';
-import tXml from './lib/tXml.js';
+import { ReadFile } from './io-helpers.js';
 import deep from './lib/deep.js';
-import Util from './lib/util.js';
-
-let filesystem;
+import { abbreviate, define, isObject, weakMapper } from './lib/misc.js';
+import tXml from './lib/tXml.js';
 
 class Node {
   constructor(raw, path) {
@@ -14,6 +10,7 @@ class Node {
     this.path = path;
   }
 }
+
 class NodeList {
   constructor(raw, path) {
     this.raw = raw;
@@ -23,7 +20,7 @@ class NodeList {
 
 const proxyObject = (root, handler) => {
   const ptr = path => path.reduce((a, i) => a[i], root);
-  const nodes = Util.weakMapper(
+  const nodes = weakMapper(
     (value, path) =>
       new Proxy(handler && handler.construct ? handler.construct(value, path) : value, {
         get(target, key) {
@@ -51,7 +48,7 @@ const proxyObject = (root, handler) => {
 
   function node(path) {
     let value = ptr(path);
-    //console.log("node:",{path,value});
+    console.log('node:', { path, value });
 
     let proxy = nodes(value, path);
 
@@ -61,42 +58,34 @@ const proxyObject = (root, handler) => {
   return new node([]);
 };
 
-async function main() {
-  //  await ConsoleSetup({ breakLength: 120, depth: 10 });
-  await PortableFileSystem(console.log);
-
-  let str = filesystem.readFile('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
+function main() {
+  let str = ReadFile('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd');
 
   let xml = tXml(str);
-  //console.log('xml:', Util.abbreviate(xml));
+  console.log('xml:', abbreviate(xml));
 
   let p = proxyObject(xml[0], {
     construct(value, path) {
-      //console.log('construct', { value, path });
+      console.log('construct', { value, path });
       return 'tagName' in value ? new Node(value, path) : new NodeList(value, path);
     }
   });
-  //console.log('obj', p);
-  //console.log('tagName', p.tagName);
-  //console.log('children[0]', p.children[0]);
-  //console.log('children[0].tagName', p.children[0].tagName);
-  //console.log('keys(children[0])', Object.keys(p.children[0]));
+  console.log('obj', p);
+  console.log('tagName', p.tagName);
+  console.log('children[0]', p.children[0]);
+  console.log('children[0].tagName', p.children[0].tagName);
+  console.log('keys(children[0])', Object.keys(p.children[0]));
 
-  let result = deep.select(
-    p,
-    (
-      o //console.log('o:', o);
-    ) => isObject(o) && o.attributes !== undefined && o.name !== undefined
-  );
-  //console.log('result:', result);
+  let result = deep.select(p, o => isObject(o) && o.attributes !== undefined && o.name !== undefined);
+  console.log('result:', result);
 
   for(let { path, value } of result) {
     const {
       tagName: type,
       attributes: { name }
     } = value;
-    //console.log('found:', { type, name });
+    console.log('found:', { type, name });
   }
 }
 
-main(Util.getArgs());
+main(...scriptArgs.slice(1));

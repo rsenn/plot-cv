@@ -1,14 +1,14 @@
 #!/usr/bin/env qjsm
-import { Console } from 'console';
-import path from 'path';
+import { spawn } from 'child_process';
 import fs from 'fs';
-import { exec, spawn } from 'child_process';
+import * as path from 'path';
 import { getOpt } from 'util';
-import { Entities, nodeTypes, Prototypes, Factory, Parser, Serializer, Interface, Node, NodeList, NamedNodeMap, Element, Document, Attr, Text, Comment, TokenList, GetType } from './quickjs/qjs-modules/lib/dom.js';
-import { PointList, ImmutablePointList } from './lib/geom/pointList.js';
-import { SyntaxError, parse as parsePath, parseSVG, makeAbsolute } from './lib/svg/path-parser.js';
-import { IfDebug, LogIfDebug, ReadFd, ReadFile, LoadHistory, ReadJSON, ReadXML, MapFile, WriteFile, WriteJSON, WriteXML, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles, FdReader, CopyToClipboard, ReadCallback, LogCall, Spawn, FetchURL } from './io-helpers.js';
+import { ReadFile, WriteFile } from './io-helpers.js';
+import { PointList } from './lib/geom/pointList.js';
 import GerberParser from './lib/gerber/parser.js';
+import { parse as parsePath } from './lib/svg/path-parser.js';
+import { Parser, Serializer } from './quickjs/qjs-modules/lib/dom.js';
+import { Console } from 'console';
 
 let extToSide = { GTL: 'front', GBL: 'back', GKO: 'outline', TXT: 'drill' };
 let extToOptions = { GTL: { front: true }, GBL: { back: true }, GKO: { side: 'outline' }, TXT: { drill: true } };
@@ -21,10 +21,8 @@ function ReadSVG(file) {
 }
 
 function ReadGerber(file) {
-  let p = file.endsWith('TXT')
-    ? new GerberParser(5, undefined, 'drill')
-    : new GerberParser(undefined, undefined, 'gerber');
-  return p.parseSync(fs.readFileSync('tmp/Mind-Synchronizing-Generator-PinHdrPot-Cinch.GBL', 'utf-8'));
+  let p = file.endsWith('TXT') ? new GerberParser(5, undefined, 'drill') : new GerberParser(undefined, undefined, 'gerber');
+  return p.parseSync(ReadFile('tmp/Mind-Synchronizing-Generator-PinHdrPot-Cinch.GBL', 'utf-8'));
 }
 
 function* Style2Entries(element) {

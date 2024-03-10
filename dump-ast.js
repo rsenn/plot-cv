@@ -1,36 +1,25 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
-import { EagleDocument, EagleProject } from './lib/eagle.js';
-import PortableFileSystem from './lib/filesystem.js';
-import { LineList, Rect } from './lib/geom.js';
-import { toXML, ImmutablePath } from './lib/json.js';
-import Util from './lib/util.js';
+import fs from 'fs';
+import { spawn } from 'child_process';
 import deep from './lib/deep.js';
-import path from './lib/path.js';
-import { Graph } from './lib/fd-graph.js';
-import ptr from './lib/json-ptr.js';
-import LogJS from './lib/log.js';
-import ConsoleSetup from './lib/consoleSetup.js';
-import tXml from './lib/tXml.js';
-import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
-import { Reader, ReadAll } from './lib/stream/utils.js';
-import { Repeater } from './lib/repeater/repeater.js';
+import { ReadAll } from './lib/stream/utils.js';
+import { ImmutablePath } from './lib/json.js';
+import { memoize, define } from './lib/misc.js';
+import * as path from './lib/path.js';
 
-let filesystem,
-  childProcess,
-  documents = [];
+let documents = [];
 
 function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
-  filesystem.writeFile(name, data + '\n');
+  fs.writeFileSync(name, data + '\n');
 
   console.log(`Wrote ${name}: ${data.length} bytes`);
 }
 
 class Location {
   static primary = null;
-  static contents = memoize(file => filesystem.readFile(file).toString());
+  static contents = memoize(file => fs.readFileSync(file).toString());
 
   constructor(file, begin, end) {
     let data = Location.contents(file);
@@ -48,8 +37,8 @@ class Location {
         .substring(0, obj.offset)
         .split(/\n/g).length;
     if(!('file' in ret)) ret.file = Location.primary;
-    ret.file = path.relative(filesystem.getcwd(), ret.file);
-    if('includedFrom' in ret) ret.includedFrom = path.relative(filesystem.getcwd(), ret.includedFrom);
+    ret.file = path.relative(process.cwd(), ret.file);
+    if('includedFrom' in ret) ret.includedFrom = path.relative(process.cwd(), ret.includedFrom);
 
     return ret;
   }
@@ -82,7 +71,7 @@ class Location {
 
     let ret = [];
     /* console.log('file:', file);
-    console.log('filesystem.getcwd():', filesystem.getcwd());*/
+    console.log('process.cwd():', process.cwd());*/
     if(typeof file == 'string') ret.unshift(file);
     if(line && col) ret = ret.concat([line, col]);
     else ret.push(offset);
@@ -128,16 +117,11 @@ function* GetRanges(tree) {
 }
 
 function* GetLocations(tree) {
-  for(let [node, path] of deep.iterate(tree, v => isObject(v) && typeof v.offset == 'number'))
-    yield [path.join('.'), node];
+  for(let [node, path] of deep.iterate(tree, v => isObject(v) && typeof v.offset == 'number')) yield [path.join('.'), node];
 }
 
 function* GetNodes(tree, pred = n => true) {
-  for(let [node, path] of deep.iterate(
-    tree,
-    (v, p) => isObject(v) && typeof v.kind == 'string' && v.kind != 'TranslationUnitDecl' && pred(v, p)
-  ))
-    yield [path.join('.'), node];
+  for(let [node, path] of deep.iterate(tree, (v, p) => isObject(v) && typeof v.kind == 'string' && v.kind != 'TranslationUnitDecl' && pred(v, p))) yield [path.join('.'), node];
 }
 
 function GetLocation(node) {
@@ -147,7 +131,7 @@ function GetLocation(node) {
   }
   if(loc.begin) loc = loc.begin;
   if(loc.expansionLoc) loc = loc.expansionLoc;
-  if(Util.isEmpty(loc)) return null;
+  if(isEmpty(loc)) return null;
   return loc;
 }
 
@@ -188,6 +172,7 @@ function GetOwned(ast, key) {
 function GetHeight(key) {
   return key.filter(prop => prop == 'inner').length;
 }
+
 function GetDepth(node) {
   let maxLen = 0;
   for(let [v, k] of deep.iterate(node, v => isObject(v))) {
@@ -200,18 +185,22 @@ function GetDepth(node) {
 function GetKey([k, v]) {
   return k;
 }
+
 function GetValue([k, v]) {
   return v;
 }
+
 function GetValueKey([v, k]) {
   return [k, v];
 }
+
 function RelativeTo(to, k) {
   if(k.startsWith(to)) return k.slice(to.length);
   return k;
 }
+
 function GetNodeProps([k, v]) {
-  let props = [...Util.getMemberNames(v)].map(n => [n, v[n]]).filter(([n, v]) => !isObject(v) && v != '');
+  let props = [...getMemberNames(v)].map(n => [n, v[n]]).filter(([n, v]) => !isObject(v) && v != '');
 
   if(props.filter(([prop, value]) => prop != 'kind').length) return Object.fromEntries(props);
 }
@@ -235,10 +224,7 @@ function GetNodeChildren(ast, [k, v]) {
   let children = [...deep.iterate(v, (v, p) => isObject(v))].map(GetValueKey);
   children = children.filter(([key, child]) => typeof child.kind == 'string' && child.kind != '');
 
-  return children.reduce(
-    (acc, [key, child]) => [...acc, new ImmutablePath(key), GetNodeProps([key, child]) || child],
-    []
-  );
+  return children.reduce((acc, [key, child]) => [...acc, new ImmutablePath(key), GetNodeProps([key, child]) || child], []);
 }
 
 function GetNameOrId(ast, [key, node], pred = id => id != '') {
@@ -249,9 +235,7 @@ function GetNameOrId(ast, [key, node], pred = id => id != '') {
     let value = deep.get(n, prop);
     if(typeof value == 'string' && pred(value)) return [[...k, ...prop], value];
   }
-  let names = [...deep.iterate(n, (v, p) => p[p.length - 1] == 'name' && typeof v == 'string' && v != '', [...k])].map(
-    GetValueKey
-  );
+  let names = [...deep.iterate(n, (v, p) => p[p.length - 1] == 'name' && typeof v == 'string' && v != '', [...k])].map(GetValueKey);
 
   let ids = [...deep.iterate(n, (v, p) => p[p.length - 1] == 'id' && v, [...k])].map(GetValueKey);
 
@@ -267,10 +251,7 @@ function GetTypeStr(node) {
 }
 
 function GetRecord(node) {
-  if(isObject(node) && Array.isArray(node.inner))
-    return new Map(
-      node.inner.map(field => [field.name, ContainsDecls(field) ? GetRecord(field) : GetTypeStr(field) || field])
-    );
+  if(isObject(node) && Array.isArray(node.inner)) return new Map(node.inner.map(field => [field.name, ContainsDecls(field) ? GetRecord(field) : GetTypeStr(field) || field]));
 }
 
 define(Array.prototype, {
@@ -292,23 +273,23 @@ define(Array.prototype, {
 
 async function DumpAst(source) {
   let outfile = path.basename(source) + '.ast.json';
-  let stat = { in: filesystem.stat(source), out: filesystem.stat(outfile) };
+  let stat = { in: fs.stat(source), out: fs.stat(outfile) };
   let data;
 
   if(stat.in.mtimeMs > stat.out.mtimeMs) {
     console.log(`Generating '${outfile}' ...`);
 
-    let stderr = filesystem.open('ast.err', 'w+');
-    let proc = childProcess('clang', ['-Xclang', '-ast-dump=json', '-fsyntax-only', source], {
+    let stderr = fs.open('ast.err', 'w+');
+    let proc = spawn('clang', ['-Xclang', '-ast-dump=json', '-fsyntax-only', source], {
       block: false,
       stdio: [null, 'pipe', stderr]
     });
     data = await ReadAll(proc.stdout);
-    filesystem.close(stderr);
+    fs.close(stderr);
     WriteFile(outfile, data);
   } else {
     console.log(`Reading '${outfile}' ...`);
-    data = filesystem.readFile(outfile);
+    data = fs.readFileSync(outfile);
   }
   return JSON.parse(data);
 }
@@ -318,7 +299,7 @@ function processCallExpr(loc, func, ...args) {
   if(fmtIndex == -1) return;
   const fmtStr = args[fmtIndex];
   const fmtArgs = args.slice(fmtIndex + 1);
-  let matches = [...Util.matchAll(/(%([-#0 +'I]?)([0-9.]*)[diouxXeEfFgGaAcspnm%](hh|h|l|ll|q|L|j|z|Z|t|))/g, fmtStr)];
+  let matches = [...matchAll(/(%([-#0 +'I]?)([0-9.]*)[diouxXeEfFgGaAcspnm%](hh|h|l|ll|q|L|j|z|Z|t|))/g, fmtStr)];
   let ranges = [];
   let last = 0;
   for(let match of matches) {
@@ -331,19 +312,13 @@ function processCallExpr(loc, func, ...args) {
   //console.log('ranges:', ranges);
   //console.log('parts:', parts);
 }
+
 const typeRe =
   /^(array|buffer|build_type_t|config_t|dirs_t|dir_t|exts_t|fd_t|HMAP_DB|int64|intptr_t|lang_type|machine_type|MAP_NODE_T|MAP_PAIR_T|MAP_T|os_type|range|rdir_t|set_iterator_t|set_t|sighandler_t_ref|sigset_t|sourcedir|sourcefile|ssize_t|stralloc|strarray|strlist|system_type|target|tools_t|TUPLE|uint32|uint64)$/;
 
 async function main(...args) {
-  const cols = await Util.getEnv('COLUMNS');
+  const cols = await getEnv('COLUMNS');
   // console.log('cols:', cols, process.env.COLUMNS);
-  await ConsoleSetup({
-    colors: true,
-    depth: 10,
-    breakLength: 138
-  });
-  await PortableFileSystem(fs => (filesystem = fs));
-  await PortableChildProcess(cp => (childProcess = cp));
 
   if(args.length == 0) args.unshift('/home/roman/Sources/c-utils/genmakefile.c');
 
@@ -364,9 +339,7 @@ async function main(...args) {
     const re =
       /^(__fbufsize|__flbf|__fpending|__fpurge|__freadable|__freading|__fwritable|clearerr|clearerr_unlocked|fclose|fdopen|feof|feof_unlocked|ferror|ferror_unlocked|fflush|fflush_unlocked|fgetc|fgetc_unlocked|fgetpos|fgets|fgets_unlocked|fileno|fileno_unlocked|fopen|fprintf|fputc|fputc_unlocked|fputs|fputs_unlocked|fread|fread_unlocked|freopen|fscanf|fseek|fseeko|fsetpos|ftell|ftello|fwrite|fwrite_unlocked|printf|putchar|puts|scanf|setvbuf|tmpfile|ungetc|vfprintf|vfscanf|vprintf|vscanf)$/;
     let allf = [...flat].filter(([k, v]) => isObject(v) && v.kind == 'CallExpr');
-    let allst = [...flat].filter(
-      ([k, v]) => isObject(v) && IsStruct(v) && typeRe.test(GetProperty(ast, k, v => v.name))
-    );
+    let allst = [...flat].filter(([k, v]) => isObject(v) && IsStruct(v) && typeRe.test(GetProperty(ast, k, v => v.name)));
     let incfrom = [...flat].filter(([k, v]) => k[k.length - 1] == 'includedFrom');
 
     incfrom.forEach(([k, v]) => deep.set(ast, k, v.file));
@@ -401,10 +374,8 @@ async function main(...args) {
     );
 
     console.log('ids:', ids);
-    await ConsoleSetup({ colors: true, depth: 4, maxArrayLength: Infinity });
     console.log('idLists:', idLists);
 
-    //
     //
     generateFlat();
 
@@ -460,9 +431,7 @@ async function main(...args) {
 
     console.log(
       'types:',
-      types
-        .filter(([k, v]) => IsStruct(v))
-        .map(([k, v]) => [k, GetProperty(ast, k, v => v.name) || v.id, IsStruct(v) ? GetRecord(v) : v, locMap.get(v)])
+      types.filter(([k, v]) => IsStruct(v)).map(([k, v]) => [k, GetProperty(ast, k, v => v.name) || v.id, IsStruct(v) ? GetRecord(v) : v, locMap.get(v)])
     );
     //    console.log('types keys:', typeKeys);
     /* console.log('type fields: ',
@@ -471,19 +440,10 @@ async function main(...args) {
     );*/
 
     let fmtfns = [...flat].filter(([k, v]) => typeof v == 'string' && re.test(v)).map(([k, v]) => k.slice(0, -1));
-    await ConsoleSetup({
-      colors: true,
-      depth: 4,
-      breakLength: 138
-    });
     //console.log('allf:', allf.map(([k, v]) =>   NodeToString(v, 'expansionLoc')));
     console.log(
       'allst:',
-      allst.map(([k, v]) => [
-        v.name,
-        k.join('.'),
-        deep.get(ast, k.slice(0, 4))
-      ]) /*.filter(([loc,st]) => loc.file.startsWith(process.cwd))*/
+      allst.map(([k, v]) => [v.name, k.join('.'), deep.get(ast, k.slice(0, 4))]) /*.filter(([loc,st]) => loc.file.startsWith(process.cwd))*/
     );
     let fmtc = fmtfns
       .map(k => {
@@ -495,7 +455,7 @@ async function main(...args) {
         return null;
       })
       .filter(k => !!k)
-      .map(k => [k, Util.clone(deep.get(ast, k))]);
+      .map(k => [k, clone(deep.get(ast, k))]);
     for(let [key, value] of fmtc) {
       const loc = value.range.begin.spellingLoc || value.range.begin;
       const call = NodeToString(value, 'spellingLoc');
@@ -509,13 +469,8 @@ async function main(...args) {
       processCallExpr(loc, ...inner);
       //    console.log('inner:',  inner);
     }
-    await ConsoleSetup({
-      colors: true,
-      depth: 6,
-      breakLength: 138
-    });
     //console.log('ranges:', [...GetNodes(ast, (n, k) => n.kind != 'TranslationUnitDecl' && GetLocation(n) && !GetLocation(n).includedFrom && [undefined, null, arg].contains(GetLocation(n).file))]);
   }
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

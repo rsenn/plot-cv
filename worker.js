@@ -1,8 +1,6 @@
-import * as std from 'std';
-import * as os from 'os';
 import * as fs from 'fs';
+import * as os from 'os';
 import { Console } from 'console';
-import { ProcessPool } from './process-pool.js';
 
 var parent = os.Worker.parent;
 

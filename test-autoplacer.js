@@ -1,13 +1,10 @@
+import { Alea } from './lib/alea.js';
 import Autoplacer from './lib/autoplacer/autoplacer.js';
 import { BBox } from './lib/geom/bbox.js';
-import { TRBL } from './lib/geom/trbl.js';
 import { Rect } from './lib/geom/rect.js';
-import { Alea } from './lib/alea.js';
 
 let rg = new Alea(1337);
-
 let bb = new BBox();
-
 let rects = [];
 
 for(let i = 0; i < 10; i++) {
@@ -17,7 +14,7 @@ for(let i = 0; i < 10; i++) {
 }
 
 let bl = rects.map(rect => {
-  const { left, top } = new TRBL(...rect.points());
+  const [left, top] = [...rect];
   const { width, height } = rect;
   //console.log({ left, top });
   return [left, top, width, height];
@@ -29,8 +26,8 @@ let bl = rects.map(rect => {
 
 let ap = new Autoplacer({ bodies: bl });
 
-//console.log('ap.next():', ap.next());
+console.log('ap.next():', ap.next());
 
 ap.next();
 
-//console.log('ap:', ap.bodies_);
+console.log('ap:', ap.bodies_);

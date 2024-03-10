@@ -1,8 +1,7 @@
-import * as std from 'std';
-import * as os from 'os';
-import { memoize, glob } from 'util';
 import * as fs from 'fs';
-import { quarterDay, localeStr, Time, TimeToStr, FilenameToTime, DateToUnix, NextFile, CurrentFile, DailyPhase, PhaseFile } from './adsb-common.js';
+import { glob, memoize } from 'util';
+import { CurrentFile, DateToUnix, FilenameToTime, NextFile, PhaseFile, TimeToStr } from './adsb-common.js';
+import * as std from 'std';
 
 export function TimesForPhase(file) {
   file ??= CurrentFile();
@@ -41,10 +40,7 @@ export function ReadRange(file, offset, size) {
 
 export function StateFiles() {
   const d = '[[:digit:]]';
-  return glob([d.repeat(4), '-', d.repeat(2), '-', d.repeat(2), '-', d, '.txt'].join('')).map(file => [
-    file,
-    fs.sizeSync(file)
-  ]);
+  return glob([d.repeat(4), '-', d.repeat(2), '-', d.repeat(2), '-', d, '.txt'].join('')).map(file => [file, fs.sizeSync(file)]);
 }
 
 export function StatePhases() {
@@ -126,6 +122,7 @@ export function GetStateByTime(t) {
 export function IsRange(str) {
   return /^\d+-\d+$/.test(str);
 }
+
 export function GetRange(str) {
   let matches = [...str.matchAll(/\d+/g)].map(([m]) => +m);
   return matches.slice(0, 2);

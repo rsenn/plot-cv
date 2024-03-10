@@ -3,7 +3,6 @@
 
 int
 main() {
-
   printf("EPERM = %i\n", EPERM);
   printf("ENOENT = %i\n", ENOENT);
   printf("ESRCH = %i\n", ESRCH);
@@ -15,6 +14,7 @@ main() {
   printf("EBADF = %i\n", EBADF);
   printf("ECHILD = %i\n", ECHILD);
   printf("EAGAIN = %i\n", EAGAIN);
+  printf("EWOULDBLOCK = %i\n", EWOULDBLOCK);
   printf("ENOMEM = %i\n", ENOMEM);
   printf("EACCES = %i\n", EACCES);
   printf("EFAULT = %i\n", EFAULT);
@@ -49,6 +49,7 @@ main() {
   printf("EBADMSG = %i\n", EBADMSG);
   printf("EOVERFLOW = %i\n", EOVERFLOW);
   printf("EILSEQ = %i\n", EILSEQ);
+  printf("ERESTART = %i\n", ERESTART);
   printf("ENOTSOCK = %i\n", ENOTSOCK);
   printf("EDESTADDRREQ = %i\n", EDESTADDRREQ);
   printf("EMSGSIZE = %i\n", EMSGSIZE);
@@ -75,7 +76,6 @@ main() {
   printf("ECANCELED = %i\n", ECANCELED);
   printf("EOWNERDEAD = %i\n", EOWNERDEAD);
   printf("ENOTRECOVERABLE = %i\n", ENOTRECOVERABLE);
-  printf("EWOULDBLOCK = %i\n", EWOULDBLOCK);
 
   return 0;
 }

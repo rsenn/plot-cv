@@ -1,8 +1,7 @@
-import { Message } from './message.js';
-import Util from './lib/util.js';
 import { Alea } from './lib/alea.js';
-import { TimeoutError } from './lib/repeater/timers.js';
+import { define, once, randStr, tryCatch, weakMapper } from './lib/misc.js';
 import * as Timers from './lib/repeater/timers.js';
+import { Message } from './message.js';
 
 const prng = new Alea();
 prng.seed(Date.now());
@@ -56,7 +55,7 @@ function sendTo(sock, msg, ...args) {
   const { writable } = this || { writable: true };
   // console.debug(`[${sock.id}] sendTo '${msg.replace(/\n/g, '\\n')}'`);
 
-  return Util.tryCatch(
+  return tryCatch(
     async () => {
       if(writable) await sock.ws.send(msg);
       else throw new Error(`${sock.id} not writable`);
@@ -73,22 +72,18 @@ function sendMany(except, msg, ...args) {
     msg = new Message(msg, ...args);
     msg = msg.data;
   }
-  return Promise.all(
-    sockets
-      .filter(sock => !(sock == except || sock.id == except || sock.ws == except))
-      .map(sock => sendTo.call(this, sock, msg))
-  );
+  return Promise.all(sockets.filter(sock => !(sock == except || sock.id == except || sock.ws == except)).map(sock => sendTo.call(this, sock, msg)));
 }
 
 export class Socket {
-  static map = Util.weakMapper((ws, info, client) => new Socket(ws, info, client));
+  static map = weakMapper((ws, info, client) => new Socket(ws, info, client));
   handlers = new Map();
 
   constructor(ws, info, props) {
     Object.assign(this, { info });
-    Util.define(this, { ws, ...props });
+    define(this, { ws, ...props });
 
-    this.id = Util.randStr(10, '0123456789abcdef', prng);
+    this.id = randStr(10, '0123456789abcdef', prng);
   }
 
   on(event, fn) {
@@ -119,7 +114,6 @@ export class Socket {
     } else if(msg.type == 'PING') {
       return await send(msg.body, null, msg.origin, 'PONG');
     } else if(msg.type == 'QUIT') {
-      //console.debug("QUIT", Util.getMethodNames(this.ws._socket), Util.getMemberNames(this.connection).filter(m => Util.isObject(this.connection[m])));
       return await this.closeConnection(msg.body);
     }
 
@@ -143,7 +137,7 @@ export class Socket {
   /*  async flush() {
     return await this.send.flush(this);
   }*/
-  static timeoutCycler = Util.once(async () => {
+  static timeoutCycler = once(async () => {
     let timer = Timers.interval(1000);
     for await(let t of timer) {
       let now = Date.now();

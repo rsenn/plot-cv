@@ -180,7 +180,9 @@ Polygon_<double>::delete_loop() {
     if(cut2 < cut1) {
       cut2 += L;
     }
-    for(int k = cut1; k <= cut2; k++) { new_points.push_back(regular_points[k % L]); }
+    for(int k = cut1; k <= cut2; k++) {
+      new_points.push_back(regular_points[k % L]);
+    }
     return new_points;
   } else {
     return regular_points;

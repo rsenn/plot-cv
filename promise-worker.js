@@ -4,7 +4,8 @@ var messageIds = 0;
 
 function onMessage(self, e) {
   var message = e.data;
-  //console.log('onMessage', message);
+  console.log('onMessage', message);
+
   if(!Array.isArray(message) || message.length < 2) {
     // Ignore - this message is not for us.
     return;
@@ -12,7 +13,8 @@ function onMessage(self, e) {
   var messageId = message[0];
   var error = message[1];
   var result = message[2];
-  //console.log('onMessage', {messageId,error,result});
+
+  console.log('onMessage', { messageId, error, result });
 
   var callback = self._callbacks[messageId];
 

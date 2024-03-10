@@ -31,6 +31,7 @@
 #include <fnmatch.h>
 //#include <dns.h>
 #include "quickjs/qjs-net/libwebsockets/include/libwebsockets.h"
+#include <mariadb/mysql.h>
 
 static inline int
 escape_char_pred(int c) {
@@ -142,8 +143,11 @@ main() {
   // printf("sizeof(struct sockaddr_un) = %zu\n", sizeof(struct sockaddr_un));
   char map[256];
 
-  for(size_t i = 0; i < 256; i++) map[i] = escape_char_pred(i);
-  for(size_t i = 0; i < 256; i++) { printf("%s0x%02x", i > 0 ? ", " : "", map[i]); }
+  for(size_t i = 0; i < 256; i++)
+    map[i] = escape_char_pred(i);
+  for(size_t i = 0; i < 256; i++) {
+    printf("%s0x%02x", i > 0 ? ", " : "", map[i]);
+  }
   // printf("PATH_MAX = 0o%o\n", PATH_MAX);
   // printf("LWS_PRE = 0o%o\n", LWS_PRE);
   // printf("NSIG = 0o%o\n", NSIG);
@@ -358,37 +362,37 @@ main() {
   // printf("SIG_SETMASK = 0o%o\n", SIG_SETMASK);
   printf("PTRACE_SYSCALL = 0o%o\n", PTRACE_SYSCALL);
   // printf("sizeof(__int128) = %zu\n", sizeof(__int128));
-  printf("SIGHUP = 0o%o\n", SIGHUP);
-  printf("SIGINT = 0o%o\n", SIGINT);
-  printf("SIGQUIT = 0o%o\n", SIGQUIT);
-  printf("SIGILL = 0o%o\n", SIGILL);
-  printf("SIGTRAP = 0o%o\n", SIGTRAP);
-  printf("SIGABRT = 0o%o\n", SIGABRT);
-  printf("SIGBUS = 0o%o\n", SIGBUS);
-  printf("SIGFPE = 0o%o\n", SIGFPE);
-  printf("SIGKILL = 0o%o\n", SIGKILL);
-  printf("SIGUSR1 = 0o%o\n", SIGUSR1);
-  printf("SIGSEGV = 0o%o\n", SIGSEGV);
-  printf("SIGUSR2 = 0o%o\n", SIGUSR2);
-  printf("SIGPIPE = 0o%o\n", SIGPIPE);
-  printf("SIGALRM = 0o%o\n", SIGALRM);
-  printf("SIGTERM = 0o%o\n", SIGTERM);
-  printf("SIGSTKFLT = 0o%o\n", SIGSTKFLT);
-  printf("SIGCHLD = 0o%o\n", SIGCHLD);
-  printf("SIGCONT = 0o%o\n", SIGCONT);
-  printf("SIGSTOP = 0o%o\n", SIGSTOP);
-  printf("SIGTSTP = 0o%o\n", SIGTSTP);
-  printf("SIGTTIN = 0o%o\n", SIGTTIN);
-  printf("SIGTTOU = 0o%o\n", SIGTTOU);
-  printf("SIGURG = 0o%o\n", SIGURG);
-  printf("SIGXCPU = 0o%o\n", SIGXCPU);
-  printf("SIGXFSZ = 0o%o\n", SIGXFSZ);
-  printf("SIGVTALRM = 0o%o\n", SIGVTALRM);
-  printf("SIGPROF = 0o%o\n", SIGPROF);
-  printf("SIGWINCH = 0o%o\n", SIGWINCH);
-  printf("SIGIO = 0o%o\n", SIGIO);
-  printf("SIGPWR = 0o%o\n", SIGPWR);
-  printf("SIGSYS = 0o%o\n", SIGSYS);
+  printf("SIGHUP = %d\n", SIGHUP);
+  printf("SIGINT = %d\n", SIGINT);
+  printf("SIGQUIT = %d\n", SIGQUIT);
+  printf("SIGILL = %d\n", SIGILL);
+  printf("SIGTRAP = %d\n", SIGTRAP);
+  printf("SIGABRT = %d\n", SIGABRT);
+  printf("SIGBUS = %d\n", SIGBUS);
+  printf("SIGFPE = %d\n", SIGFPE);
+  printf("SIGKILL = %d\n", SIGKILL);
+  printf("SIGUSR1 = %d\n", SIGUSR1);
+  printf("SIGSEGV = %d\n", SIGSEGV);
+  printf("SIGUSR2 = %d\n", SIGUSR2);
+  printf("SIGPIPE = %d\n", SIGPIPE);
+  printf("SIGALRM = %d\n", SIGALRM);
+  printf("SIGTERM = %d\n", SIGTERM);
+  printf("SIGSTKFLT = %d\n", SIGSTKFLT);
+  printf("SIGCHLD = %d\n", SIGCHLD);
+  printf("SIGCONT = %d\n", SIGCONT);
+  printf("SIGSTOP = %d\n", SIGSTOP);
+  printf("SIGTSTP = %d\n", SIGTSTP);
+  printf("SIGTTIN = %d\n", SIGTTIN);
+  printf("SIGTTOU = %d\n", SIGTTOU);
+  printf("SIGURG = %d\n", SIGURG);
+  printf("SIGXCPU = %d\n", SIGXCPU);
+  printf("SIGXFSZ = %d\n", SIGXFSZ);
+  printf("SIGVTALRM = %d\n", SIGVTALRM);
+  printf("SIGPROF = %d\n", SIGPROF);
+  printf("SIGWINCH = %d\n", SIGWINCH);
+  printf("SIGIO = %d\n", SIGIO);
+  printf("SIGPWR = %d\n", SIGPWR);
+  printf("SIGSYS = %d\n", SIGSYS);
   printf("#define IN_ACCESS 0x%x\n", IN_ACCESS);
   printf("#define IN_MODIFY 0x%x\n", IN_MODIFY);
   printf("#define IN_ATTRIB 0x%x\n", IN_ATTRIB);
@@ -629,6 +633,55 @@ main() {
   printf("%s = %d\n", "FNM_FILE_NAME", FNM_FILE_NAME);
   printf("%s = %d\n", "FNM_LEADING_DIR", FNM_LEADING_DIR);
   printf("%s = %d\n", "FNM_CASEFOLD", FNM_CASEFOLD);
+
+  printf("MYSQL_TYPE_DECIMAL = %d\n", MYSQL_TYPE_DECIMAL);
+  printf("MYSQL_TYPE_TINY = %d\n", MYSQL_TYPE_TINY);
+  printf("MYSQL_TYPE_SHORT = %d\n", MYSQL_TYPE_SHORT);
+  printf("MYSQL_TYPE_LONG = %d\n", MYSQL_TYPE_LONG);
+  printf("MYSQL_TYPE_FLOAT = %d\n", MYSQL_TYPE_FLOAT);
+  printf("MYSQL_TYPE_DOUBLE = %d\n", MYSQL_TYPE_DOUBLE);
+  printf("MYSQL_TYPE_NULL = %d\n", MYSQL_TYPE_NULL);
+  printf("MYSQL_TYPE_TIMESTAMP = %d\n", MYSQL_TYPE_TIMESTAMP);
+  printf("MYSQL_TYPE_LONGLONG = %d\n", MYSQL_TYPE_LONGLONG);
+  printf("MYSQL_TYPE_INT24 = %d\n", MYSQL_TYPE_INT24);
+  printf("MYSQL_TYPE_DATE = %d\n", MYSQL_TYPE_DATE);
+  printf("MYSQL_TYPE_TIME = %d\n", MYSQL_TYPE_TIME);
+  printf("MYSQL_TYPE_DATETIME = %d\n", MYSQL_TYPE_DATETIME);
+  printf("MYSQL_TYPE_YEAR = %d\n", MYSQL_TYPE_YEAR);
+  printf("MYSQL_TYPE_NEWDATE = %d\n", MYSQL_TYPE_NEWDATE);
+  printf("MYSQL_TYPE_VARCHAR = %d\n", MYSQL_TYPE_VARCHAR);
+  printf("MYSQL_TYPE_BIT = %d\n", MYSQL_TYPE_BIT);
+  printf("MYSQL_TYPE_TIMESTAMP2 = %d\n", MYSQL_TYPE_TIMESTAMP2);
+  printf("MYSQL_TYPE_DATETIME2 = %d\n", MYSQL_TYPE_DATETIME2);
+  printf("MYSQL_TYPE_TIME2 = %d\n", MYSQL_TYPE_TIME2);
+  // printf("MYSQL_TYPE_BLOB_COMPRESSED = %d\n", MYSQL_TYPE_BLOB_COMPRESSED);
+  // printf("MYSQL_TYPE_VARCHAR_COMPRESSED = %d\n", MYSQL_TYPE_VARCHAR_COMPRESSED);
+  printf("MYSQL_TYPE_NEWDECIMAL = %d\n", MYSQL_TYPE_NEWDECIMAL);
+  printf("MYSQL_TYPE_ENUM = %d\n", MYSQL_TYPE_ENUM);
+  printf("MYSQL_TYPE_SET = %d\n", MYSQL_TYPE_SET);
+  printf("MYSQL_TYPE_TINY_BLOB = %d\n", MYSQL_TYPE_TINY_BLOB);
+  printf("MYSQL_TYPE_MEDIUM_BLOB = %d\n", MYSQL_TYPE_MEDIUM_BLOB);
+  printf("MYSQL_TYPE_LONG_BLOB = %d\n", MYSQL_TYPE_LONG_BLOB);
+  printf("MYSQL_TYPE_BLOB = %d\n", MYSQL_TYPE_BLOB);
+  printf("MYSQL_TYPE_VAR_STRING = %d\n", MYSQL_TYPE_VAR_STRING);
+  printf("MYSQL_TYPE_STRING = %d\n", MYSQL_TYPE_STRING);
+  printf("MYSQL_TYPE_GEOMETRY = %d\n", MYSQL_TYPE_GEOMETRY);
+  printf("%s",
+         "import REPL from 'repl';\n"
+         "import fs from 'fs';\n"
+         "const history = '%s/.%s_history';\n"
+         "globalThis.repl = new REPL((__filename ?? '%s').replace(/.*\\//g, '').replace(/\\.js$/g, ''), false);\n"
+         "repl.loadSaveOptions();\n"
+         "repl.historyLoad(null, fs);\n"
+         "repl.directives = { i: [\n"
+         "  (name => import(name).then(m => {\n"
+         "    let id = name.slice(name.lastIndexOf('/') + 1).replace(/\\.[^\\/.]+$/g, '');\n"
+         "    globalThis[id] = m;\n"
+         "  }).catch(() => repl.printStatus(`ERROR: module '${name}' not found\\n`))),\n"
+         " 'import a module'\n"
+         "] };\n"
+         "repl.show = console.log;\n"
+         "repl.runSync();\n");
 
   return 0;
 }

@@ -1,26 +1,115 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Fire</title>
+    <title>Interactive Fire</title>
     <link rel="shortcut icon" type="image/x-icon" sizes="16x16 32x32 128x128" href="static/fire.ico" />
     <style type="text/css">
-      body {
-        height: 0px;
-        background: rgba(128, 128, 128);
+      body,
+      html {
+        padding: 0;
+        margin: 0;
+      }
+      html,
+      body,
+      #page {
         overflow: hidden;
       }
-      canvas {
+      body {
+        background: rgba(0, 0, 0, 0.9);
+      }
+      body {
+        width: 100%;
+        height: 100%;
+        position: relative;
+      }
+      canvas,
+      #canvas,
+      .overlay,
+      svg {
+        user-select: none;
+      }
+      .overlay,
+      svg {
+        pointer-events: none;
+      }
+
+      .center {
+        display: flex;
+        justify-content: center;
+      }
+      .overlay {
+        z-index: 99999999;
+      }
+
+      #crosshair {
         position: fixed;
-        bottom: 0;
-        width: calc(100% - 16px);
-        height: auto;
-        max-height: calc(100vh - 16px);
+      }
+
+      .overlay {
+        position: absolute;
+      }
+
+      canvas {
+        cursor: crosshair;
+      }
+
+      canvas.pressed {
+        cursor: grab;
+      }
+
+      html.is-locked,
+      html.is-locked body {
+        /* want to fix the height to the window height */
+        height: calc(var(--window-inner-height) - 1px);
+
+        /* want to block all overflowing content */
+        overflow: hidden;
+
+        /* want to exclude padding from the height */
+        box-sizing: border-box;
+      }
+
+      @media (orientation: portrait) {
+        canvas {
+          height: 100vmin;
+          width: auto;
+          transform: rotate(90deg);
+        }
+        .center {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+      @media (orientation: landscape) {
+        canvas {
+          height: auto;
+          max-height: 100vh;
+          width: 100vw;
+        }
+
+        .center {
+          flex-direction: row;
+          align-items: flex-end;
+        }
+      }
+
+      #crosshair {
+        opacity: 0;
+        pointer-events: none;
+        user-select: none;
       }
     </style>
     <script type="module" src="./fire.js"></script>
-    <script src="./fire.js"></script>
+    <!--  <script type="module" src="./fire/build/fire-debug.js"></script>  -->
   </head>
-  <body>
-    <div></div>
+  <body class="center">
+    <div id="canvas"></div>
+    <svg id="crosshair" width="25" height="25" version="1.1">
+      <defs></defs>
+      <g transform="translate(-127 -127)">
+        <!-- <path d="M137 127h5v9h-5zm-10 10h9v5h-9zm16 0h9v5h-9zm-6 6h5v9h-5z" style="fill-rule: evenodd" /> -->
+        <path d="M138 128h3v7h-3zm-10 10h7v3h-7zm16 0h7v3h-7zm-6 6h3v7h-3z" style="fill: #11e5f480; fill-rule: evenodd" />
+      </g>
+    </svg>
   </body>
 </html>

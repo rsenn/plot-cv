@@ -1,33 +1,27 @@
-import OLMap from './openlayers/src/ol/Map.js';
-import View from './openlayers/src/ol/View.js';
-import TileLayer from './openlayers/src/ol/layer/Tile.js';
-import Layer from './openlayers/src/ol/layer/Layer.js';
-import Point from './openlayers/src/ol/geom/Point.js';
-import Overlay from './openlayers/src/ol/Overlay.js';
-import XYZ from './openlayers/src/ol/source/XYZ.js';
-import OSM from './openlayers/src/ol/source/OSM.js';
-import Feature from './openlayers/src/ol/Feature.js';
-import Projection from './openlayers/src/ol/proj/Projection.js';
-import VectorLayer from './openlayers/src/ol/layer/Vector.js';
-import VectorSource from './openlayers/src/ol/source/Vector.js';
-import MultiPoint from './openlayers/src/ol/geom/MultiPoint.js';
-import Polygon from './openlayers/src/ol/geom/Polygon.js';
-import LineString from './openlayers/src/ol/geom/LineString.js';
-import Geolocation from './openlayers/src/ol/Geolocation.js';
-import GeoJSON from './openlayers/src/ol/format/GeoJSON.js';
-import { composeCssTransform } from './openlayers/src/ol/transform.js';
-import Icon from './openlayers/src/ol/style/Icon.js';
-import { Fill, RegularShape, Stroke, Style, Circle as CircleStyle, Text as TextStyle } from './openlayers/src/ol/style.js';
-import { fromLonLat } from './openlayers/src/ol/proj.js';
-import { ZoomSlider } from './openlayers/src/ol/control.js';
-import { addCoordinateTransforms, addProjection, transform } from './openlayers/src/ol/proj.js';
-import { getVectorContext } from './openlayers/src/ol/render.js';
-import PlainDraggable from './lib/plain-draggable.js';
-import AnimSequence from './lib/anim-sequence.js';
-import extendArray from './quickjs/qjs-modules/lib/extendArray.js';
-
-import { quarterDay, Time, TimeToStr, FilenameToTime, NextFile, DailyPhase, PhaseFile, DateToUnix, CurrentFile } from './adsb-common.js';
+import { CurrentFile, DailyPhase, DateToUnix, PhaseFile, Time, TimeToStr } from './adsb-common.js';
 import { memoize } from './lib/misc.js';
+import PlainDraggable from './lib/plain-draggable.js';
+import { ZoomSlider } from './openlayers/src/ol/control.js';
+import Feature from './openlayers/src/ol/Feature.js';
+import Geolocation from './openlayers/src/ol/Geolocation.js';
+import LineString from './openlayers/src/ol/geom/LineString.js';
+import MultiPoint from './openlayers/src/ol/geom/MultiPoint.js';
+import Point from './openlayers/src/ol/geom/Point.js';
+import Layer from './openlayers/src/ol/layer/Layer.js';
+import TileLayer from './openlayers/src/ol/layer/Tile.js';
+import VectorLayer from './openlayers/src/ol/layer/Vector.js';
+import OLMap from './openlayers/src/ol/Map.js';
+import Overlay from './openlayers/src/ol/Overlay.js';
+import { addCoordinateTransforms, addProjection, fromLonLat, transform } from './openlayers/src/ol/proj.js';
+import Projection from './openlayers/src/ol/proj/Projection.js';
+import OSM from './openlayers/src/ol/source/OSM.js';
+import VectorSource from './openlayers/src/ol/source/Vector.js';
+import XYZ from './openlayers/src/ol/source/XYZ.js';
+import { Circle as CircleStyle, Fill, RegularShape, Stroke, Style, Text as TextStyle } from './openlayers/src/ol/style.js';
+import Icon from './openlayers/src/ol/style/Icon.js';
+import { composeCssTransform } from './openlayers/src/ol/transform.js';
+import View from './openlayers/src/ol/View.js';
+import extendArray from './quickjs/qjs-modules/lib/extendArray.js';
 
 extendArray(Array.prototype);
 
@@ -209,11 +203,7 @@ function Connection(port, onConnect = () => {}) {
 
           console.log('arr', arr);
 
-          data.splice(
-            0,
-            data.length,
-            ...arr.map(([time, states]) => ({ time, states /*: states.map(StateToObject)*/ }))
-          );
+          data.splice(0, data.length, ...arr.map(([time, states]) => ({ time, states /*: states.map(StateToObject)*/ })));
           if(arr[0]) InsertSorted(states, ...arr);
 
           console.log('data.length', data.length);
@@ -304,6 +294,7 @@ function FlyTo(location, done = () => {}) {
     callback
   );
 }
+
 /*
 onClick('fly-to-bern', function() {
   FlyTo(bern, function() {});
@@ -586,15 +577,7 @@ xhr.send();*/
         const scale = svgResolution / frameState.viewState.resolution;
         const center = frameState.viewState.center;
         const size = frameState.size;
-        const cssTransform = composeCssTransform(
-          size[0] / 2,
-          size[1] / 2,
-          scale,
-          scale,
-          frameState.viewState.rotation,
-          -center[0] / svgResolution - width / 2,
-          center[1] / svgResolution - height / 2
-        );
+        const cssTransform = composeCssTransform(size[0] / 2, size[1] / 2, scale, scale, frameState.viewState.rotation, -center[0] / svgResolution - width / 2, center[1] / svgResolution - height / 2);
         svgContainer.style.transform = cssTransform;
         svgContainer.style.opacity = this.getOpacity();
         return svgContainer;
@@ -680,6 +663,7 @@ Object.assign(globalThis, {
 
 let planes = (globalThis.planes = []);
 let d = Date.parse('2022-04-19T14:59:00Z');
+
 const keys = [
   'icao24',
   'callsign',
@@ -818,24 +802,8 @@ class Aircraft extends Feature {
 
   static fromState(state) {
     let obj = StateToObject(state);
-    const {
-      icao24,
-      callsign,
-      origin_country,
-      time_position,
-      last_contact,
-      longitude,
-      latitude,
-      baro_altitude,
-      on_ground,
-      velocity,
-      true_track,
-      vertical_rate,
-      sensors,
-      geo_altitude,
-      squawk,
-      spi
-    } = obj;
+    const { icao24, callsign, origin_country, time_position, last_contact, longitude, latitude, baro_altitude, on_ground, velocity, true_track, vertical_rate, sensors, geo_altitude, squawk, spi } =
+      obj;
 
     let aircraft;
 

@@ -1,10 +1,9 @@
 #!/usr/bin/env qjsm
-import { ECMAScriptParser, Printer, PathReplacer, ImportDeclaration, ImportSpecifier, Identifier, Literal, ExportDefaultDeclaration, ESNode } from './lib/ecmascript.js';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, ReadBJSON, WriteFile, WriteJSON, WriteBJSON, DirIterator, RecursiveDirIterator } from './io-helpers.js';
-import deep from 'deep';
-import path from 'path';
-import Util from './lib/util.js';
+import * as path from 'path';
+import { IfDebug, ReadFile, WriteJSON } from './io-helpers.js';
+import { ECMAScriptParser, Identifier, ImportDeclaration, ImportSpecifier, Literal, Printer } from './lib/ecmascript.js';
 import { Console } from 'console';
+import deep from 'deep';
 
 Object.assign(ReadImport.prototype, { [Symbol.toStringTag]: 'Import' });
 
@@ -19,9 +18,9 @@ function main(...args) {
       help: [
         false,
         (v, r, o) => {
-          console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
+          console.log(`Usage: ${scriptArgs[0]} [OPTIONS]\n`);
           console.log(o.map(([name, [arg, fn, ch]]) => `  --${(name + ', -' + ch).padEnd(20)}`).join('\n'));
-          Util.exit(0);
+          process.exit(0);
         },
         'h'
       ],
@@ -73,9 +72,7 @@ function main(...args) {
 
       switch (target) {
         case 'import': {
-          let node = new ImportDeclaration(
-            names.map(([local, imported]) => new ImportSpecifier(new Identifier(imported), new Identifier(local)))
-          );
+          let node = new ImportDeclaration(names.map(([local, imported]) => new ImportSpecifier(new Identifier(imported), new Identifier(local))));
           let x = deep.get(ast, path);
           let y = deep.get(ast, path.slice(0, -1));
           let z = deep.get(ast, path.slice(0, -2));

@@ -1,21 +1,17 @@
-import PortableFileSystem from './lib/filesystem.js';
-import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
-import deep from './lib/deep.js';
-import path from './lib/path.js';
-import { Size, Rect } from './lib/geom.js';
-import { XPath, tXml, toXML } from './lib/xml.js';
-import { CSS } from './lib/dom.js';
+import filesystem from 'fs';
 import { Alea } from './lib/alea.js';
+import deep from './lib/deep.js';
+import { CSS } from './lib/dom.js';
+import { Rect, Size } from './lib/geom.js';
+import * as path from './lib/path.js';
 import { parse as parsePath } from './lib/svg/path-parser.js';
+import { toXML, tXml } from './lib/xml.js';
 
 let prng = new Alea(Date.now());
 
-let filesystem;
-
 function readXML(filename) {
   //console.log('readXML', filename);
-  let data = filesystem.readFile(filename);
+  let data = filesystem.readFileSync(filename);
   let xml = tXml(data);
   //console.log('xml:', xml);
   return xml;
@@ -24,10 +20,7 @@ function readXML(filename) {
 function writeXML(filename, xml) {
   let str = toXML(xml) + '\n';
   let tempFileName = filename + '.' + prng.uint32();
-  let ret =
-    filesystem.writeFile(tempFileName, str) > 0 &&
-    filesystem.unlink(filename) == 0 &&
-    filesystem.rename(tempFileName, filename) == 0;
+  let ret = filesystem.writeFile(tempFileName, str) > 0 && filesystem.unlink(filename) == 0 && filesystem.rename(tempFileName, filename) == 0;
   if(ret) console.log(`Wrote '${filename}'.`);
   return ret;
 }
@@ -124,7 +117,7 @@ function scaleSVG(file, size) {
     }
 
     if(attributes) {
-      attributes = Util.filter(attributes, (value, key) => key.indexOf(':') == -1);
+      attributes = filter(attributes, (value, key) => key.indexOf(':') == -1);
 
       if('style' in attributes) {
         let style = parseStyle(attributes.style);
@@ -202,8 +195,6 @@ function scaleSVG(file, size) {
 }
 
 async function main(...args) {
-  await ConsoleSetup({ depth: 10 });
-  filesystem = await PortableFileSystem();
 
   let size, arg;
 
@@ -220,4 +211,4 @@ async function main(...args) {
   console.log('props:', props.join(', '));
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

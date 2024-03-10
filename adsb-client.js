@@ -1,13 +1,9 @@
-import { client, fetch, setLog, logLevels, LLL_DEBUG, LLL_USER } from 'net';
-import * as std from 'std';
+import { fetch, LLL_USER, logLevels, setLog } from 'net';
 import * as os from 'os';
+import { concat, define, memoize, toArrayBuffer, toString, waitFor } from 'util';
 import Console from 'console';
-import { TextDecoder, TextEncoder } from 'textcode';
-import { waitFor, memoize, toArrayBuffer, define, concat, toString } from 'util';
-import { IfDebug, LogIfDebug, LoadHistory, ReadXML, MapFile, WriteFile, WriteJSON, ReadBJSON, WriteBJSON, DirIterator, RecursiveDirIterator, Filter, FilterImages, StatFiles, FdReader, CopyToClipboard, LogCall, FetchURL } from './io-helpers.js';
-import { ReadableStream, WritableStream } from 'stream';
-import { FileSystemReadableFileStream, FileSystemWritableFileStream } from './quickjs/qjs-modules/lib/streams.js';
 import inspect from 'inspect';
+import * as std from 'std';
 
 const PutsFunction = outFn => str => {
   let b = toArrayBuffer(str);

@@ -1,8 +1,7 @@
-import { parseModule } from 'esprima';
-import Util from './lib/util.js';
-import { Console } from 'console';
-import fs from 'fs';
 import * as path from 'path';
+import { ReadFile, WriteFile } from './io-helpers.js';
+import { Console } from 'console';
+import { parseModule } from 'esprima';
 
 function main(...args) {
   globalThis.console = new Console({
@@ -20,7 +19,7 @@ function main(...args) {
     let error;
     let ast;
     try {
-      let code = fs.readFileSync(arg, 'utf8');
+      let code = ReadFile(arg, 'utf8');
       ast = parseModule(code, {
         module: true,
         next: true,
@@ -47,22 +46,23 @@ function main(...args) {
     if(!error) {
       let outputFile = path.basename(arg, path.extname(arg)) + '.ast.json';
       console.log(`Parsing '${arg}' succeeded, writing AST to '${outputFile}'`);
-      fs.writeFileSync(outputFile, JSON.stringify(ast, null, 2));
+      WriteFile(outputFile, JSON.stringify(ast, null, 2));
     } else {
       throw error;
     }
   }
 }
+
 let error;
 try {
-  main(...Util.getArgv().slice(1));
+  main(...process.argv.slice(1));
 } catch(e) {
   error = e;
 } finally {
   if(error) {
     console.log(`FAIL: ${error.message}\n${error.stack}`);
     console.log('FAIL');
-    Util.exit(1);
+    process.exit(1);
   } else {
     console.log('SUCCESS');
   }

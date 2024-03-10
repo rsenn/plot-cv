@@ -1,20 +1,19 @@
-//import 'module-alias/register.js';
-import { ECMAScriptParser } from './lib/ecmascript/parser.js';
-import { PathReplacer } from './lib/ecmascript.js';
-import Printer from './lib/ecmascript/printer.js';
-import { estree, ESNode, Program, ModuleDeclaration, ModuleSpecifier, ImportDeclaration, ImportSpecifier, ImportDefaultSpecifier, ImportNamespaceSpecifier, Super, Expression, FunctionLiteral, Pattern, Identifier, Literal, RegExpLiteral, TemplateLiteral, BigIntLiteral, TaggedTemplateExpression, TemplateElement, ThisExpression, UnaryExpression, UpdateExpression, BinaryExpression, AssignmentExpression, LogicalExpression, MemberExpression, ConditionalExpression, CallExpression, DecoratorExpression, NewExpression, SequenceExpression, Statement, EmptyStatement, DebuggerStatement, LabeledStatement, BlockStatement, FunctionBody, StatementList, ExpressionStatement, Directive, ReturnStatement, ContinueStatement, BreakStatement, IfStatement, SwitchStatement, SwitchCase, WhileStatement, DoWhileStatement, ForStatement, ForInStatement, ForOfStatement, WithStatement, TryStatement, CatchClause, ThrowStatement, Declaration, ClassDeclaration, ClassBody, MethodDefinition, MetaProperty, YieldExpression, FunctionArgument, FunctionDeclaration, ArrowFunctionExpression, VariableDeclaration, VariableDeclarator, ObjectExpression, Property, ArrayExpression, JSXLiteral, AssignmentProperty, ObjectPattern, ArrayPattern, RestElement, AssignmentPattern, AwaitExpression, SpreadElement, ExportNamedDeclaration, ExportSpecifier, AnonymousDefaultExportedFunctionDeclaration, AnonymousDefaultExportedClassDeclaration, ExportDefaultDeclaration, ExportAllDeclaration } from './lib/ecmascript/estree.js';
-import Util from './lib/util.js';
-import Tree from './lib/tree.js';
 import fs from 'fs';
-import * as deep from './lib/deep.js';
-import { Console } from 'console';
+import { ReadFile, WriteFile } from './io-helpers.js';
+import { PathReplacer } from './lib/ecmascript.js';
+import { CallExpression, ImportDeclaration, TemplateLiteral } from './lib/ecmascript/estree.js';
+import { ECMAScriptParser } from './lib/ecmascript/parser.js';
+import Printer from './lib/ecmascript/printer.js';
 import { Stack } from './lib/stack.js';
+import Tree from './lib/tree.js';
+import { Console } from 'console';
 
 let lexer, parser;
 
 Error.stackTraceLimit = 100;
 
 const testfn = () => true;
+
 const testtmpl = `this is\na test`;
 
 const source = `this.define('DecimalDigit', /[0-9]/);`;
@@ -49,7 +48,7 @@ function WriteFile(name, data) {
   data = data.trim();
 
   if(data != '') {
-    fs.writeFileSync(name, data + '\n');
+    WriteFile(name, data + '\n');
     console.log(`Wrote ${name}: ${data.length} bytes`);
   }
 }
@@ -80,9 +79,9 @@ function main(...argv) {
       help: [
         false,
         (v, r, o) => {
-          console.log(`Usage: ${Util.getArgs()[0]} [OPTIONS]\n`);
+          console.log(`Usage: ${scriptArgs[0]} [OPTIONS]\n`);
           console.log(o.map(([name, [arg, fn, ch]]) => ('  --' + name + ', -' + ch).padEnd(20)).join('\n'));
-          Util.exit(0);
+          process.exit(0);
         },
         'h'
       ],
@@ -111,7 +110,7 @@ function main(...argv) {
 
   const time = () => Date.now() / 1000;
 
-  if(params['@'].length == 0) params['@'].push(Util.getArgv()[1]);
+  if(params['@'].length == 0) params['@'].push(process.argv[1]);
 
   for(let file of params['@']) {
     let error;
@@ -124,9 +123,7 @@ function main(...argv) {
     } catch(error) {
       if(error) {
         console.log('ERROR:', error?.message);
-        console.log(
-          'STACK:\n  ' + new Stack(error?.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  ')
-        );
+        console.log('STACK:\n  ' + new Stack(error?.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  '));
       } else {
         console.log('ERROR:', error);
       }
@@ -138,14 +135,14 @@ function main(...argv) {
 
     if(error) {
       Util.putError(error);
-      //Util.exit(1);
+      //process.exit(1);
       break;
     }
 
     console.log('files:', files);
   }
   let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
-  Util.exit(Number(files.length == 0));
+  process.exit(Number(files.length == 0));
 }
 
 function ParseECMAScript(file, params) {
@@ -153,7 +150,7 @@ function ParseECMAScript(file, params) {
   const { debug } = params;
   if(file == '-') file = '/dev/stdin';
   if(file && fs.existsSync(file)) {
-    data = fs.readFileSync(file, 'utf8');
+    data = ReadFile(file, 'utf8');
     console.log('opened:', file);
   } else {
     file = 'stdin';
@@ -185,10 +182,7 @@ function ParseECMAScript(file, params) {
 
     if(err !== null) {
       console.log('parseProgram ERROR message:', err?.message);
-      console.log(
-        'parseProgram ERROR stack:\n  ' +
-          new Stack(err?.stack, (fr, i) => fr.functionName != 'esfactory' && i < 5).toString().replace(/\n/g, '\n  ')
-      );
+      console.log('parseProgram ERROR stack:\n  ' + new Stack(err?.stack, (fr, i) => fr.functionName != 'esfactory' && i < 5).toString().replace(/\n/g, '\n  '));
       //console.log('parseProgram parser.stack\n', parser.stack .map(entry => [entry, parser.constructor.stackMap.get(entry)]) .map(([entry, frame]) => [entry.position + '', frame ? frame + '' : entry.methodName]));
       throw err;
     } else {
@@ -216,10 +210,7 @@ function ParseECMAScript(file, params) {
 function processFile(file, params) {
   let ast = ParseECMAScript(file, params);
 
-  WriteFile(
-    params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json',
-    JSON.stringify(ast /*.toJSON()*/, null, 2)
-  );
+  WriteFile(params['output-ast'] ?? file.replace(/.*\//g, '') + '.ast.json', JSON.stringify(ast /*.toJSON()*/, null, 2));
 
   let node2path = new WeakMap();
   let nodeKeys = [];
@@ -228,10 +219,7 @@ function processFile(file, params) {
   const isImport = node => node instanceof ImportDeclaration;
 
   let commentMap = new Map(
-    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
-      pos * 10 - 1,
-      { comment, pos, len, node }
-    ]),
+    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node }]),
     (a, b) => a - b
   );
 
@@ -249,7 +237,6 @@ function processFile(file, params) {
 
   WriteFile(output_file, code);
 
-  //  await ConsoleSetup({ depth: Infinity });
   const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral);
 
   //console.log('templates:', templates);
@@ -288,12 +275,9 @@ try {
   error = e;
 } finally {
   if(error) {
-    console.log(
-      'FAIL: ' + error.message,
-      '\n  ' + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  ')
-    );
+    console.log('FAIL: ' + error.message, '\n  ' + new Stack(error.stack, fr => fr.functionName != 'esfactory').toString().replace(/\n/g, '\n  '));
     console.log('FAIL');
-    Util.exit(1);
+    process.exit(1);
   } else {
     console.log('SUCCESS');
   }

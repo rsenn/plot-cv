@@ -1,30 +1,48 @@
-var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+import PinkNoiseNode from './pinkNoise.js';
+globalThis.PinkNoiseNode = PinkNoiseNode;
+
+var audioCtx = (globalThis.audioCtx = new (window.AudioContext || window.webkitAudioContext)());
 
 // Create an empty three-second stereo buffer at the sample rate of the AudioContext
 var buf = audioCtx.createBuffer(2, audioCtx.sampleRate * 3, audioCtx.sampleRate);
 
-// Fill the buffer with white noise;
-// just random values between -1.0 and 1.0
+// Fill the buffer with white noise; just random values between -1.0 and 1.0
 for(var channel = 0; channel < buf.numberOfChannels; channel++) {
-  // This gives us the actual array that contains the data
   var nowBuffering = buf.getChannelData(channel);
-  for(var i = 0; i < buf.length; i++) {
-    // Math.random() is in [0; 1.0]
-    // audio needs to be in [-1.0; 1.0]
-    nowBuffering[i] = Math.random() * 2 - 1;
-  }
+  for(var i = 0; i < buf.length; i++) nowBuffering[i] = Math.random() * 2 - 1;
 }
 
-// Get an AudioBufferSourceNode.
-// This is the AudioNode to use when we want to play an AudioBuffer
-var source = audioCtx.createBufferSource();
+let b = (globalThis.b = document.querySelector('button'));
+let form = document.querySelector('form');
 
-// set the buffer in the AudioBufferSourceNode
-source.buffer = buf;
+form.onsubmit = () => false;
 
-// connect the AudioBufferSourceNode to the
-// destination so we can hear the sound
-source.connect(audioCtx.destination);
+// Get an AudioBufferSourceNode.  This is the AudioNode to use when we want to play an AudioBuffer
+//var source = audioCtx.createBufferSource();
 
-// start the source playing
-source.start();
+function NewPinkNoise() {
+  globalThis.noise = new PinkNoiseNode(audioCtx);
+
+  noise.connect(audioCtx.destination);
+  noise.loop = false;
+  noise.loopEnd = 4;
+}
+
+NewPinkNoise();
+
+let runs = false;
+
+b.addEventListener('click', () => {
+  if(!b.disabled) {
+    noise.start();
+    runs = true;
+    b.disabled = true;
+    noise.onended = () => {
+      b.disabled = false;
+      runs = false;
+      NewPinkNoise();
+    };
+  } else {
+    runs = false;
+  }
+});

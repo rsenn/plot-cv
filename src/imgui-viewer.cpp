@@ -127,9 +127,7 @@ ImageViewer::imshow(std::string frame_name, cv::Mat* frame) {
   if(frame->empty())
     return;
 
-  if(std::any_of(frame_names.cbegin(), frame_names.cend(), [&frame_name](std::string str) -> bool {
-       return frame_name == str;
-     }))
+  if(std::any_of(frame_names.cbegin(), frame_names.cend(), [&frame_name](std::string str) -> bool { return frame_name == str; }))
     return;
 
   frame_names.push_back(frame_name);
@@ -206,7 +204,9 @@ ImageViewer::show() {
   render();
 
   // clear resources
-  for(int i = 0; i < frames.size(); i++) { delete my_textures[i]; }
+  for(int i = 0; i < frames.size(); i++) {
+    delete my_textures[i];
+  }
 
   frame_names.clear();
   frames.clear();
@@ -221,8 +221,7 @@ ImageViewer::handleEvent() {
     ImGui_ImplSDL2_ProcessEvent(&event);
     if(event.type == SDL_QUIT)
       done = true;
-    if(event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE &&
-       event.window.windowID == SDL_GetWindowID(window))
+    if(event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
       done = true;
   }
   return done;

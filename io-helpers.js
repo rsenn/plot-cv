@@ -1,23 +1,13 @@
-import * as fs from 'fs';
-import Util from './lib/util.js';
-import * as path from './lib/path.js';
-import { types, toString, quote, escape } from './lib/misc.js';
-import child_process from 'child_process';
-
-let bjson;
-
-import('bjson') .then(m => (bjson = m)) .catch(() => {});
-
-let mmap;
-
-import('mmap') .then(m => (mmap = m)) .catch(() => {});
+import { spawn } from 'child_process';
+import { closeSync, readFileSync, statSync, writeFileSync, readSync } from 'fs';
+import { define, error, toString } from './lib/misc.js';
 
 let xml;
 
-import('xml') .then(m => (xml = m)) .catch(() => {});
+//import('xml') .then(m => (xml = m)) .catch(() => {});
 
 export function IfDebug(token) {
-  const { DEBUG = '' } = globalThis.process ? globalThis.process.env : {}; //std.getenviron();
+  const { DEBUG = '' } = globalThis.process ? globalThis.process.env : {}; //getenviron();
 
   const tokList = DEBUG.split(/[^A-Za-z0-9_]+/g);
 
@@ -34,28 +24,54 @@ const debug = LogIfDebug('io-helpers', (...args) => console.log(...args));
 
 export function ReadFd(fd, binary) {
   let ab = new ArrayBuffer(1024);
-  let out = '';
+  let s = '';
+
   for(;;) {
-    let ret = fs.readSync(fd, ab, 0, 1024);
+    let ret = readSync(fd, ab, 0, ab.byteLength);
 
     if(ret <= 0) break;
 
-    out += toString(ab.slice(0, ret));
+    s += toString(ab.slice(0, ret));
 
     debug(`Read #${fd}: ${ret} bytes`);
   }
-  return out;
+
+  return s;
+}
+
+export function IsStdio(obj) {
+  return Object.getPrototypeOf(obj) === Object.getPrototypeOf(stdout);
+}
+
+export function ReadClose(file, binary) {
+  if(IsStdio(file)) {
+    if(!binary) return file.readAsString();
+
+    return (function* () {
+      while(!file.eof()) {
+        let ab = new ArrayBuffer(typeof binary == 'number' ? binary : 1024);
+        let r = file.read(ab, 0, ab.byteLength);
+
+        if(r == 0) break;
+        if(r < 0 || file.error()) throw new Error(`Error reading file`);
+
+        yield ab.slice(0, r);
+      }
+    })();
+  }
+  throw new Error(`Unkown type of file: ${obj}`);
 }
 
 export function ReadFile(name, binary) {
-  let ret = fs.readFileSync(name, binary ? null : 'utf-8');
+  return readFileSync(name, binary ? null : 'utf-8');
+}
 
-  debug(`Read ${name}: ${ret?.byteLength} bytes`);
-  return ret;
+export function ReadAny(obj, binary) {
+  return { number: ReadFd, string: ReadFile, object: ReadClose }[typeof obj](obj, binary);
 }
 
 export function LoadHistory(filename) {
-  let contents = fs.readFileSync(filename, 'utf-8');
+  let contents = ReadFile(filename, false);
   let data;
 
   const parse = () => {
@@ -74,139 +90,77 @@ export function LoadHistory(filename) {
 }
 
 export function ReadJSON(filename) {
-  let data = fs.readFileSync(filename, 'utf-8');
+  let data = ReadAny(filename, false);
 
   if(data) debug(`ReadJSON: ${data.length} bytes read from '${filename}'`);
   return data ? JSON.parse(data) : null;
 }
 
-export function ReadXML(filename, ...args) {
-  let data = fs.readFileSync(filename, null);
+export async function ReadXML(filename, ...args) {
+  const { read } = await import('xml');
+  let data = ReadAny(filename, false);
 
   if(data) debug(`ReadXML: ${data.length} bytes read from '${filename}'`);
-  return data ? xml.read(data, filename, ...args) : null;
+  return data ? read(data, filename, ...args) : null;
 }
 
-export function MapFile(filename) {
-  let fd = os.open(filename, os.O_RDONLY);
-  let { size } = os.stat(filename)[0];
-  debug(`MapFile`, { filename, fd, size });
-  let data = mmap.mmap(0, size + 10, mmap.PROT_READ, mmap.MAP_PRIVATE, fd, 0);
-  os.close(fd);
-  return data;
+export async function WriteXML(name, data, ...args) {
+  const { write } = await import('xml');
+  return WriteAny(name, write(data, ...args));
 }
 
-export function WriteFile(name, data, verbose = true) {
-  if(Util.isGenerator(data)) {
-    let fd = fs.openSync(name, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, 0o644);
-    let r = 0;
-    for(let item of data) {
-      r += fs.writeSync(fd, toArrayBuffer(item + ''));
-    }
-    fs.closeSync(fd);
-    let stat = fs.statSync(name);
-    return stat?.size;
+export function WriteFile(file, data) {
+  return writeFileSync(file, data);
+  /*let f = fopen(file, 'w+');
+  let r = typeof data == 'string' ? f.puts(data) : f.write(data, 0, data.byteLength);
+
+  if(f.error()) throw new Error(`Error writing file '${file}': ${strerror(error().errno)}`);
+  f.close();*/
+
+  //console.log('Wrote "' + file + '": ' + data.length + ' bytes' + ` (${r})`);
+  return r;
+}
+
+export function WriteFd(fd, data, offset, length) {
+  if(typeof data == 'string') data = toArrayBuffer(data);
+
+  return writeSync(fd, data, offset ?? 0, length ?? data.byteLength);
+}
+
+export function WriteClose(file, data, offset, length) {
+  if(IsStdio(file)) {
+    let r;
+    r = typeof data == 'string' ? file.puts(data) : file.write(data, offset ?? 0, length ?? data.byteLength);
+
+    if(r <= 0 || file.error()) throw new Error(`Error writing file`);
+
+    file.close();
+    return r;
   }
-  if(fs.existsSync(name)) fs.unlinkSync(name);
-
-  if(Util.isIterator(data)) data = [...data];
-  if(Array.isArray(data)) data = data.join('\n');
-
-  if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
-  let ret = fs.writeFileSync(name, data);
-
-  if(verbose) debug(`Wrote ${name}: ${ret} bytes`);
-  return ret;
+  throw new Error(`Unkown type of file: ${obj}`);
 }
 
-export function WriteJSON(name, data, compact = true) {
-  return WriteFile(name, JSON.stringify(data, ...(compact ? [] : [null, 2])));
+export function WriteAny(obj, ...args) {
+  return { number: WriteFd, string: WriteFile, object: WriteClose }[typeof obj](obj, ...args);
 }
 
-export function WriteXML(name, data, ...args) {
-  return WriteFile(name, xml.write(data, ...args));
+export function WriteJSON(name, data, ...args) {
+  const [compact] = args;
+  if(typeof compact == 'boolean') args = compact ? [] : [null, 2];
+
+  return WriteAny(name, JSON.stringify(data, ...args));
 }
 
-export function ReadBJSON(filename) {
-  let fd = os.open(filename, os.O_RDONLY);
-  let { size } = os.stat(filename)[0];
-  debug(`ReadBJSON`, { filename, fd, size });
-  let data = mmap.mmap(0, size + 10, mmap.PROT_READ, mmap.MAP_PRIVATE, fd, 0);
-  debug(`ReadBJSON`, { data });
-  let ret = bjson.read(data, 0, size);
-
-  mmap.munmap(data);
-  os.close(fd);
-  return ret;
+export async function ReadBJSON(filename) {
+  const { read } = await import('bjson');
+  let data = readFileSync(filename);
+  const { byteLength: size } = data;
+  return read(data, 0, size);
 }
 
-export function WriteBJSON(name, data) {
-  let buf = bjson.write(data);
-  let size = buf.byteLength;
-  let fd = os.open(name, os.O_WRONLY | os.O_CREAT | os.O_TRUNC);
-
-  let ret = os.write(fd, buf, 0, size);
-  debug('WriteBJSON', { name, fd, size, ret });
-  os.close(fd);
-
-  return ret;
-}
-
-export function* DirIterator(...args) {
-  let pred = typeof args[0] != 'string' ? Util.predicate(args.shift()) : () => true;
-  for(let dir of args) {
-    dir = dir.replace(/~/g, std.getenv('HOME'));
-    let entries = os.readdir(dir)[0] ?? [];
-    for(let entry of entries.sort()) {
-      let file = path.join(dir, entry);
-      let lst = os.lstat(file)[0];
-      let st = os.stat(file)[0];
-      let is_dir = (st?.mode & os.S_IFMT) == os.S_IFDIR;
-      let is_symlink = (lst?.mode & os.S_IFMT) == os.S_IFLNK;
-
-      if(is_dir) file += '/';
-      if(!pred(entry, file, is_dir, is_symlink)) continue;
-      yield file;
-    }
-  }
-}
-
-export function* RecursiveDirIterator(dir, pred = (entry, file, dir, depth) => true, depth = 0) {
-  let re;
-  if(typeof pred != 'function') {
-    if(!pred) pred = '.*';
-    if(typeof pred == 'string') pred = new RegExp(pred, 'gi');
-    re = pred;
-    pred = (entry, file, dir, depth) => re.test(entry) || re.test(file);
-  }
-  if(!dir.endsWith('/')) dir += '/';
-  dir = dir.replace(/~/g, std.getenv('HOME'));
-  for(let file of fs.readdirSync(dir)) {
-    if(['.', '..'].indexOf(file) != -1) continue;
-    let entry = `${dir}${file}`;
-    let isDir = false;
-    let st = fs.statSync(entry);
-    isDir = st && st.isDirectory();
-    if(isDir) entry += '/';
-    let show = pred(entry, file, dir, depth);
-    if(show) {
-      yield entry;
-    }
-    if(isDir) yield* RecursiveDirIterator(entry, pred, depth + 1);
-  }
-}
-
-export function* ReadDirRecursive(dir, maxDepth = Infinity) {
-  dir = dir.replace(/~/g, globalThis.process.env['HOME'] ?? std.getenv('HOME'));
-  for(let file of fs.readdirSync(dir)) {
-    if(['.', '..'].indexOf(file) != -1) continue;
-    let entry = `${dir}/${file}`;
-    let isDir = false;
-    let st = fs.statSync(entry);
-    isDir = st && st.isDirectory();
-    yield isDir ? entry + '/' : entry;
-    if(maxDepth > 0 && isDir) yield* ReadDirRecursive(entry, maxDepth - 1);
-  }
+export async function WriteBJSON(name, value) {
+  const { write } = await import('bjson');
+  return writeFileSync(name, write(value));
 }
 
 export function* Filter(gen, regEx = /.*/) {
@@ -223,7 +177,7 @@ export function SortFiles(arr, field = 'ctime') {
 
 export function* StatFiles(gen) {
   for(let file of gen) {
-    let stat = fs.statSync(file);
+    let [stat, err] = statSync(file);
     let obj = define(
       { file, stat },
       {
@@ -252,73 +206,37 @@ export function* StatFiles(gen) {
   }
 }
 
-/*export function ReadFd(fd, bufferSize) {
-  function* FdRead() {
-    let ret,
-      buf = new ArrayBuffer(bufferSize);
-    do {
-      if((ret = fs.readSync(fd, buf, 0, buf.byteLength)) > 0) yield ret == buf.byteLength ? buf : buf.slice(0, ret);
-    } while(ret > 0);
-  }
-  return [...FdRead()].reduce((acc, buf) => (acc += toString(buf)), '');
-}*/
-/*
-export function FdReader(fd, bufferSize = 1024) {
-  let buf = new ArrayBuffer(bufferSize);
-  return new Repeater(async (push, stop) => {
-    let ret;
-    do {
-      let r = await waitRead(fd);
-      ret = typeof fd == 'number' ? fs.readSync(fd, buf) : fd.read(buf);
-      if(ret > 0) {
-        let data = buf.slice(0, ret);
-        await push(fs.bufferToString(data));
-      }
-    } while(ret == bufferSize);
-    stop();
-    typeof fd == 'number' ? fs.closeSync(fd) : fd.destroy();
-  });
-}*/
 export async function* FdReader(fd, bufferSize = 1024) {
   let buf = new ArrayBuffer(bufferSize);
   let ret;
   do {
     let r = await waitRead(fd);
     console.log('r', r);
-    ret = typeof fd == 'number' ? await fs.read(fd, buf) : await fd.read(buf);
+    ret = typeof fd == 'number' ? readSync(fd, buf, 0, bufferSize) : fd.read(buf, 0, bufferSize);
     if(ret > 0) {
       let data = buf.slice(0, ret);
-      yield fs.bufferToString(data);
+      yield toString(data);
     }
   } while(ret == bufferSize);
-  typeof fd == 'number' ? await fs.close(fd) : fd.destroy();
+  typeof fd == 'number' ? closeSync(fd) : fd.close();
   return;
 }
 
 export function CopyToClipboard(text) {
-  const { env } = process;
-  let child = child_process.spawn('xclip', ['-in', '-verbose'], { env, stdio: ['pipe', 'inherit', 'inherit'] });
-  let [pipe] = child.stdio;
+  return import('child_process').then(child_process => {
+    const { env } = process;
 
-  let written = fs.writeSync(pipe, text, 0, text.length);
-  fs.closeSync(pipe);
-  let status = child.wait();
-  console.log('child', child);
-  return { written, status };
-}
+    let child = spawn('xclip', ['-in', '-verbose'], {
+      env,
+      stdio: ['pipe', 'inherit', 'inherit']
+    });
+    let [pipe] = child.stdio;
 
-export function ReadCallback(fd, fn = data => {}) {
-  let buf = new ArrayBuffer(1024);
-  os.setReadHandler(fd, () => {
-    let r = fs.readSync(fd, buf, 0, 1024);
-    if(r <= 0) {
-      fs.closeSync(fd);
-      os.setReadHandler(fd, null);
-      return;
-    }
-    let data = buf.slice(0, r);
-    data = toString(data);
-    fn(data);
+    let written = writeSync(pipe, text, 0, text.length);
+    closeSync(pipe);
+    let status = child.wait();
+    console.log('child', child);
+    return { written, status };
   });
 }
 
@@ -327,108 +245,7 @@ export function LogCall(fn, thisObj) {
   return function(...args) {
     let result;
     result = fn.apply(thisObj ?? this, args);
-    console.log(
-      'Function ' + name + '(',
-      ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })),
-      ') =',
-      result
-    );
+    console.log('Function ' + name + '(', ...args.map(arg => inspect(arg, { colors: false, maxStringLength: 20 })), ') =', result);
     return result;
   };
-}
-
-export function Spawn(file, args, options = {}) {
-  let { block = true, usePath = true, cwd, stdio = ['inherit', 'inherit', 'inherit'], env, uid, gid } = options;
-  let parent = [...stdio];
-
-  for(let i = 0; i < 3; i++) {
-    if(stdio[i] == 'pipe') {
-      let [r, w] = os.pipe();
-      stdio[i] = i == 0 ? r : w;
-      parent[i] = i == 0 ? w : r;
-    } else if(stdio[i] == 'inherit') {
-      stdio[i] = i;
-    }
-  }
-
-  const [stdin, stdout, stderr] = stdio;
-  let pid = os.exec([file, ...args], { block, usePath, cwd, stdin, stdout, stderr, env, uid, gid });
-  for(let i = 0; i < 3; i++) {
-    if(typeof stdio[i] == 'number' && stdio[i] != i) os.close(stdio[i]);
-  }
-
-  return {
-    pid,
-    stdio: parent,
-    wait() {
-      let [ret, status] = os.waitpid(this.pid, os.WNOHANG);
-      return ret;
-    }
-  };
-}
-
-// 'https://www.discogs.com/sell/order/8369022-364'
-
-export function FetchURL(url, options = {}) {
-  let {
-    headers,
-    proxy,
-    cookies = 'cookies.txt',
-    range,
-    body,
-    version = '1.1',
-    tlsv,
-    'user-agent': userAgent
-  } = options;
-
-  let args = Object.entries(headers ?? {})
-    .reduce((acc, [k, v]) => acc.concat(['-H', `${k}: ${v}`]), [])
-    .concat(Array.isArray(url) ? url : [url]);
-
-  args.push('--compressed');
-  args.unshift('-L', '-k');
-
-  if(body) args.unshift('-d', body);
-  if(version) args.unshift('--http' + version);
-  if(tlsv) args.unshift('--tlsv' + tlsv);
-  if(userAgent) args.unshift('-A', userAgent);
-  if(range) args.unshift('-r', range);
-  if(cookies) args.unshift('-c', cookies);
-  if(proxy) args.unshift('-x', proxy);
-
-  //args.unshift('-v');
-  //args.unshift('-sS');
-  args.unshift('--tcp-fastopen', '--tcp-nodelay');
-
-  console.log('FetchURL', console.config({ maxArrayLength: Infinity, compact: false }), { args });
-
-  let child = /* child_process.spawn*/ Spawn('curl', args, { block: false, stdio: ['inherit', 'pipe', 'pipe'] });
-
-  let [, out, err] = child.stdio;
-
-  console.log('child', { out, err });
-
-  let output = '',
-    errors = '';
-
-  ReadCallback(out, data => {
-    output += data;
-    // console.log('data',data.length);
-  });
-  ReadCallback(err, data => {
-    errors += data;
-    std.err.puts(data);
-    std.err.flush();
-  });
-  let flags = child_process.WNOHANG;
-  console.log('flags', flags);
-  child.wait(flags);
-
-  let status;
-
-  status = child.wait();
-
-  console.log('FetchURL', { /* output: escape(output), errors,*/ status });
-
-  return output;
 }

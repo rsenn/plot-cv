@@ -1,7 +1,7 @@
 #!/bin/sh
 
 for ARG; do 
-  svgo --indent=2 --pretty \
+  svgo --indent=2 --enable=removeComments,removeDesc,removeEditorsNSData,removeMetadata,convertStyleToAttrs --pretty \
     -i "$ARG" -o "${ARG##*/}"
 
   sed -i 's,xlink:,,g' "${ARG##*/}" 

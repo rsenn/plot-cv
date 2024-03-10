@@ -1,15 +1,7 @@
-import { define, isObject, memoize, unique } from './lib/misc.js';
-import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
-import PortableFileSystem from './lib/filesystem.js';
-import path from './lib/path.js';
-import * as bjson from 'bjson';
-import parse from './lib/xml/parse.js';
-import Tree from './lib/tree.js';
 import { toXML } from './lib/json/util.js';
-
-let filesystem;
-
+import * as path from './lib/path.js';
+import Tree from './lib/tree.js';
+import parse from './lib/xml/parse.js';
 function WriteFile(name, data) {
   if(Array.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
@@ -36,13 +28,7 @@ class PList extends Array {
     this.push(...args);
   }
   [Symbol.for('nodejs.util.inspect.custom')](options) {
-    return (
-      '\x1b[1;31mPList\x1b[0m [\n  ' +
-      this.map(item =>
-        (item.inspect ? item.inspect(options) : console.inspect(item, options)).replace(/\n/g, '\n    ')
-      ).join(',\n  ') +
-      '\n'
-    );
+    return '\x1b[1;31mPList\x1b[0m [\n  ' + this.map(item => (item.inspect ? item.inspect(options) : console.inspect(item, options)).replace(/\n/g, '\n    ')).join(',\n  ') + '\n';
   }
 }
 
@@ -70,17 +56,8 @@ class Dict extends Array {
   [Symbol.for('nodejs.util.inspect.custom')](options) {
     return `\x1b[1;31mDict\x1b[0m {\n  ${this.map(([key, value]) => {
       let s = key + ' => ';
-      if(value instanceof Array)
-        s +=
-          '[\n    ' +
-          value
-            .map(item =>
-              (item.inspect ? item.inspect(options) : console.inspect(item, options)).replace(/\n/g, '\n    ')
-            )
-            .join(',\n    ') +
-          '\n  ]';
-      else
-        s += `${(value.inspect ? value.inspect(options) : console.inspect(value, options)).replace(/\n/g, '\n    ')}`;
+      if(value instanceof Array) s += '[\n    ' + value.map(item => (item.inspect ? item.inspect(options) : console.inspect(item, options)).replace(/\n/g, '\n    ')).join(',\n    ') + '\n  ]';
+      else s += `${(value.inspect ? value.inspect(options) : console.inspect(value, options)).replace(/\n/g, '\n    ')}`;
       return s;
     }).join(',\n  ')}\n}`;
   }
@@ -125,7 +102,7 @@ function Element2Object(element, key) {
 }
 
 function Object2Element(object, path = []) {
-  let type = Util.typeOf(object);
+  let type = typeOf(object);
   //console.log('Object2Element', { type,  path });
   switch (type) {
     case 'Comment': {
@@ -154,7 +131,7 @@ function Object2Element(object, path = []) {
       //console.log('Object2Element Dict', object.length);
       for(let i = 0; i < object.length; i++) {
         const entry = object[i];
-        const entryType = Util.typeOf(entry);
+        const entryType = typeOf(entry);
         //console.log('Object2Element Dict', { entryType, entry });
         if(entryType == 'Pair' || (entry instanceof Array && entry.length == 2)) {
           const [key, value] = entry;
@@ -174,13 +151,11 @@ function Object2Element(object, path = []) {
 }
 
 async function main(...args) {
-  await PortableFileSystem(fs => (filesystem = fs));
-  await ConsoleSetup({ depth: 4 });
 
   for(let file of args) {
     let base = path.basename(file, /\.[^.]*$/);
 
-    let data = filesystem.readFile(file);
+    let data = filesystem.readFileSync(file);
     console.log('data:', data);
     let xml = parse(data);
 
@@ -211,9 +186,7 @@ async function main(...args) {
     let scopes = [];
 
     if(/\.tmLanguage$/.test(file)) {
-      scopes.push(
-        ...[...pairs.values()].filter(pair => pair.key == 'name' && /\./.test(pair.value)).map(pair => pair.value)
-      );
+      scopes.push(...[...pairs.values()].filter(pair => pair.key == 'name' && /\./.test(pair.value)).map(pair => pair.value));
       //console.log('scopes:', scopes);
     } else {
       let a = [...pairs.values()].filter(pair => pair.key == 'scope' && /\./.test(pair.value)).map(pair => pair.value);
@@ -246,4 +219,4 @@ async function main(...args) {
   return;
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

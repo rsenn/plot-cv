@@ -165,6 +165,8 @@ function test_operators() {
   var b = new Vec2(110, 105);
   var r;
 
+  console.log(`a = `, a);
+  console.log(`b = `, b);
   console.log(`a * 2 + 3 * b = `, (r = a * 2 + 3 * b));
   console.log(`b - a = `, b - a);
   console.log(`b ^ a = `, b ^ a);

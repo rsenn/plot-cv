@@ -38,11 +38,7 @@ async function DiscogsHelpers(g = globalThis) {
   };
 
   const makeOverlay = once(src => {
-    overlay = Element.create(
-      'div',
-      { position: 'fixed', width: '100vw', height: '100vh', pointerEvents: 'none', zIndex: 1000000000000 },
-      document.body
-    );
+    overlay = Element.create('div', { position: 'fixed', width: '100vw', height: '100vh', pointerEvents: 'none', zIndex: 1000000000000 }, document.body);
     overlay = Element.create('div', {}, overlay);
 
     Element.setCSS(overlay, {
@@ -77,16 +73,11 @@ async function DiscogsHelpers(g = globalThis) {
     return e;
   };
 
-  const scaleIFrame = f =>
-    Element.setCSS(iframe, { width: Math.floor(w * f) + 'px', height: Math.floor(h * f) + 'px' });
+  const scaleIFrame = f => Element.setCSS(iframe, { width: Math.floor(w * f) + 'px', height: Math.floor(h * f) + 'px' });
 
   const makeIFrame = once(src => {
     iframe = Element.create('iframe', { src }, makeOverlay());
-    Element.setCSS(
-      iframe,
-      { width: '100vw', height: '100vh', boxShadow: '2px 2px 10px', userSelect: 'none' },
-      makeOverlay()
-    );
+    Element.setCSS(iframe, { width: '100vw', height: '100vh', boxShadow: '2px 2px 10px', userSelect: 'none' }, makeOverlay());
     scaleIFrame(0.25);
     return iframe;
   });
@@ -112,8 +103,7 @@ async function DiscogsHelpers(g = globalThis) {
   const ordersGetIds = () => [...ordersGetList()].map(r => r.id.replace(/order/, '')).filter(id => /[0-9]-/.test(id));
   const ordersGetURLs = () => ordersGetIds().map(id => 'https://www.discogs.com/sell/order/' + id);
 
-  const orderId = elem =>
-    typeof elem == 'string' ? elem.replace(/.*\//g, '') : elem.getAttribute('id').replace(/order/, '');
+  const orderId = elem => (typeof elem == 'string' ? elem.replace(/.*\//g, '') : elem.getAttribute('id').replace(/order/, ''));
   const toURL = item => item.url;
   const toText = async resp => await (await resp).text();
 
@@ -161,11 +151,7 @@ async function DiscogsHelpers(g = globalThis) {
   };
 
   const hasText = obj => (obj.children ?? []).some(child => typeof child == 'text');
-  const getTextChildren = obj =>
-    (obj.children ?? []).reduce(
-      (acc, child) => acc.concat(typeof child == 'string' ? [child] : [getTextChildren(child)]),
-      []
-    );
+  const getTextChildren = obj => (obj.children ?? []).reduce((acc, child) => acc.concat(typeof child == 'string' ? [child] : [getTextChildren(child)]), []);
   const getTextArray = obj => ('innerText' in obj ? obj.innerText.split(/\n/g) : getTextChildren(obj).flat());
   const getTextFlat = obj => getTextArray(obj).join('\n');
 
@@ -184,8 +170,7 @@ async function DiscogsHelpers(g = globalThis) {
   const messageGetObj = doc => Element.toObject(messageGetThread(doc));
   const messageGetList = (doc, reducer = getTextArray) => messageGetItems(doc).map(getTextArray);
 
-  const showElement = (e, state) =>
-    e.style.setProperty('display', state === true ? 'block' : state === false ? 'none' : state);
+  const showElement = (e, state) => e.style.setProperty('display', state === true ? 'block' : state === false ? 'none' : state);
 
   const hideElement = e => e.style.setProperty('display', 'none');
   const styleElement = (e, styles) => Element.css(e, styles);

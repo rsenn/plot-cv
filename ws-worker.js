@@ -1,7 +1,7 @@
-import { client, server, fetch, setLog, LLL_USER, LLL_NOTICE } from 'net';
-import * as std from 'std';
+import { client, createServer, LLL_NOTICE, LLL_USER, setLog } from 'net';
 import * as os from 'os';
 import { Console } from 'console';
+import * as std from 'std';
 
 var parent = os.Worker?.parent;
 
@@ -43,14 +43,7 @@ class WSClient {
   }
 }
 
-function CreateServer({
-  host = '127.0.0.1',
-  port = 9900,
-  sslCert = 'localhost.crt',
-  sslPrivateKey = 'localhost.key',
-  index = 'index.html',
-  ...options
-}) {
+function CreateServer({ host = '127.0.0.1', port = 9900, sslCert = 'localhost.crt', sslPrivateKey = 'localhost.key', index = 'index.html', ...options }) {
   print(`Listening on http://${host}:${port}`);
   if(sslCert) print(`SSL certificate file: ${sslCert}`);
   if(sslPrivateKey) print(`SSL certificate file: ${sslPrivateKey}`);
@@ -58,20 +51,13 @@ function CreateServer({
   let logfile = std.open('httpd.log', 'w+');
 
   setLog(LLL_USER | ((LLL_NOTICE << 1) - 1), (level, ...args) => {
-    let output = [
-      (
-        ['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][
-          Math.log2(level)
-        ] ?? level + ''
-      ).padEnd(8),
-      ...args
-    ];
+    let output = [(['ERR', 'WARN', 'NOTICE', 'INFO', 'DEBUG', 'PARSER', 'HEADER', 'EXT', 'CLIENT', 'LATENCY', 'MINNET', 'THREAD'][Math.log2(level)] ?? level + '').padEnd(8), ...args];
 
     logfile.puts(output.join(' ') + '\n');
     logfile.flush();
   });
 
-  server({
+  createServer({
     host,
     port,
     sslCert,
@@ -102,8 +88,8 @@ function CreateServer({
       let client = WSClient.get(ws.fd);
       log(`Server.onPong client#${client.id} (${ws.fd})` + (data ? ' Data: ' + data : ''));
     },
-    onHttp(ws, data) {
-      log(`Server.onHttp ws`, ws, data ? ' Data: ' + data : '');
+    onRequest(ws, data) {
+      log(`Server.onRequest ws`, ws, data ? ' Data: ' + data : '');
     },
     onBody(ws) {
       log(`Server.onBody ws`, ws);

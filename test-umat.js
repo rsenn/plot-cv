@@ -1,28 +1,8 @@
-import { Point } from 'opencv';
-import { Size } from 'opencv';
-import { Rect } from 'opencv';
-import { Mat } from 'opencv';
-import { UMat } from 'opencv';
 import * as cv from 'opencv';
-import { Line } from 'opencv';
-import { Contour } from 'opencv';
-import { SliceIterator } from 'opencv';
-import * as draw from 'opencv';
-import RGBA from './lib/color/rgba.js';
-import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
-import { NumericParam, EnumParam, ParamNavigator } from './param.js';
-import { Pipeline, Processor } from './qjs-opencv/js/cvPipeline.js';
 
 let filesystem;
 
 async function main(...args) {
-  await ConsoleSetup({
-    maxStringLength: 200,
-    maxArrayLength: 10,
-    breakLength: 100,
-    compact: 1
-  });
   let types = [
     ['CV_8U', cv.CV_8U],
     ['CV_8UC3', cv.CV_8UC3],
@@ -39,9 +19,7 @@ async function main(...args) {
     console.log(k, v, '0x' + v.toString(16), '0b' + v.toString(2), v >> 1, 1 << ((v >> 1) + 3), 1 << (v >> 1));
   }
 
-  let input = cv.imread(
-    args[0] ?? '../an-tronics/images/fm/Two-Transistor-Regenerative-Receiver-Schematic-Circuit-Diagram.jpg'
-  );
+  let input = cv.imread(args[0] ?? '../an-tronics/images/fm/Two-Transistor-Regenerative-Receiver-Schematic-Circuit-Diagram.jpg');
   console.log('input.type', '0x' + input.type.toString(16));
   console.log('input.depth', '0x' + input.depth.toString(16));
   console.log('input.channels', '0x' + input.channels.toString(16));
@@ -53,8 +31,8 @@ async function main(...args) {
   let { width, height } = size;
   let mat = new Mat(input.size, cv.CV_8UC3);
   let thresh = 100;
-  const RandomPoint = () => new Point(Util.randInt(0, width - 1), Util.randInt(0, height - 1));
-  const RandomColor = () => [Util.randInt(0, 255), Util.randInt(0, 255), Util.randInt(0, 255), 255];
+  const RandomPoint = () => new Point(randInt(0, width - 1), randInt(0, height - 1));
+  const RandomColor = () => [randInt(0, 255), randInt(0, 255), randInt(0, 255), 255];
 
   let gray = new Mat();
   cv.cvtColor(input, gray, cv.COLOR_BGR2GRAY);
@@ -113,10 +91,10 @@ async function main(...args) {
     /*    console.log('line.angle:', (line.angle * 180) / Math.PI);
     console.log('line.length:', line.length);*/
 
-    Util.pushUnique(ygrid[GetY(y1)], line);
-    Util.pushUnique(xgrid[GetY(x1)], line);
-    Util.pushUnique(ygrid[GetY(y2)], line);
-    Util.pushUnique(xgrid[GetY(x2)], line);
+    pushUnique(ygrid[GetY(y1)], line);
+    pushUnique(xgrid[GetY(x1)], line);
+    pushUnique(ygrid[GetY(y2)], line);
+    pushUnique(xgrid[GetY(x2)], line);
   }
   ygrid = ygrid.map((lines, row) => [row * 5, lines]).filter(([row, lines]) => lines.length > 1);
 
@@ -142,11 +120,7 @@ async function main(...args) {
       lpoly.length,
       lpoly.map(({ x1, y1, x2, y2 }) => `${x1},${y1}|${x2},${y2}`)
     );
-    console.log(
-      'lpoly angles',
-      lpoly.length,
-      (angles = lpoly.map(l => Math.floor((l.angle * 180) / Math.PI)).map(a => a % 90))
-    );
+    console.log('lpoly angles', lpoly.length, (angles = lpoly.map(l => Math.floor((l.angle * 180) / Math.PI)).map(a => a % 90)));
     console.log(
       'lpoly slopes',
       lpoly.length,
@@ -200,4 +174,4 @@ async function main(...args) {
   }
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

@@ -1,5 +1,3 @@
-import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
 
 class MyObj {
   a = 1;
@@ -13,7 +11,6 @@ class MyObj {
 }
 
 async function main(...args) {
-  await ConsoleSetup({ depth: 10 });
 
   console.log('inspect:', globalThis.ObjectInspect);
   console.log('MyObj:', { test: [1, 2, 3, new MyObj()] });
@@ -24,4 +21,4 @@ async function main(...args) {
   /*console.log('test:', 1);*/
 }
 
-Util.callMain(main, true);
+main(...scriptArgs.slice(1));

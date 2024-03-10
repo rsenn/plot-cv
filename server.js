@@ -1,32 +1,85 @@
-import express from 'express';
-import * as path from 'path';
-import * as util from 'util';
-import Util from './lib/util.js';
 import bodyParser from 'body-parser';
-import expressWs from 'express-ws';
-import { Alea } from './lib/alea.js';
+import { execFileSync } from 'child_process';
 import crypto from 'crypto';
+import expressWs from 'express-ws';
+import express from 'express';
+import * as fs from 'fs';
+import fsPromises from 'fs/promises';
 import fetch from 'isomorphic-fetch';
 import { exec } from 'promisify-child-process';
-import * as fs from 'fs';
-import { promises as fsPromises } from 'fs';
-import { IfDebug, LogIfDebug, ReadFile, LoadHistory, ReadJSON, MapFile, WriteFile, WriteJSON, DirIterator, RecursiveDirIterator, ReadDirRecursive, Filter, FilterImages, SortFiles, StatFiles } from './io-helpers.js';
 import { Console } from 'console';
+import * as path from 'path';
 import SerialPort from 'serialport';
-import SerialStream from '@serialport/stream';
-//import SerialBinding from '@serialport/bindings';
-import Socket from './webSocket.js';
 import WebSocket from 'ws';
-import PortableFileSystem from './lib/filesystem.js';
-import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
+import { ReadDirRecursive } from './dir-helpers.js';
+import importReplacer from './importReplacer.js';
+import { ReadFile } from './io-helpers.js';
+import { Alea } from './lib/alea.js';
+import PortableChildProcess from './lib/childProcess.js';
+import { abbreviate, escape, filter, filterKeys, getMethods, isObject, matchAll, randStr, toUnixTime, tryCatch, tryFunction, unique, unixTime, weakDefine, weakMapper } from './lib/misc.js';
 import { Repeater } from './lib/repeater/repeater.js';
-import { Message } from './message.js';
+import Socket from './webSocket.js';
+import SerialStream from '@serialport/stream';
+//import inspect from 'inspect';
+
+const rotateLeft = n => x => (x << n) | ((x >> (32 - n)) & ~((-1 >> n) << n));
+
+const moduleAliases = {
+  'xlib/preact.mjs': 'lib/preact.module.js'
+};
+
+function GetMimeType(file) {
+  try {
+    let str = execFileSync('file', ['-i', file], { encoding: 'utf-8' });
+    return str.replace(/.*:\s+/, '').trimEnd();
+  } catch(error) {}
+  return null;
+}
+
+function hashString(string, bits = 32, mask = 0xffffffff) {
+  let ret = 0;
+  let bitc = 0;
+  let rot = rotateLeft(7);
+  for(let i = 0; i < string.length; i++) {
+    const code = string.charCodeAt(i);
+    ret *= 186;
+    ret ^= code;
+    bitc += 8;
+    ret = rot(ret) & mask;
+  }
+  return ret & 0x7fffffff;
+}
+
+function decodeHTMLEntities(text) {
+  let entities = {
+    amp: '&',
+    apos: "'",
+    '#x27': "'",
+    '#x2F': '/',
+    '#39': "'",
+    '#47': '/',
+    lt: '<',
+    gt: '>',
+    nbsp: ' ',
+    quot: '"'
+  };
+  return text.replace(new RegExp('&([^;]+);', 'gm'), (match, entity) => entities[entity] || match);
+}
+
+async function MimeType(path) {
+  const child = exec(`file -i '${path}' 2>/dev/null`, {});
+  let output = '';
+  child.stdout.on('data', data => (output += data));
+
+  await child;
+  return output.replace(new RegExp(path + '[:\\s]+', 'gy'), '').trimEnd();
+}
 
 //SerialStream.Binding = SerialBinding;
-let names = [],
+let dirmap,
+  names = [],
   dirs = {};
-
-let filesystem, childProcess;
+let childProcess;
 const port = process.env.PORT || 3000;
 
 const files = new Set();
@@ -35,7 +88,7 @@ const hash = crypto.createHash('sha1');
 const prng = new Alea();
 prng.seed(Date.now());
 console.log('random:', prng.uint32());
-console.log('randStr:', Util.randStr(8, null, prng));
+console.log('randStr:', randStr(8, null, prng));
 
 let app = express();
 expressWs(app, null, { perMessageDeflate: false });
@@ -43,6 +96,31 @@ const p = path.join(path.dirname(process.argv[1]), '.');
 
 let mountDirs = ['data', '../an-tronics/eagle', '../insider/eagle', '../lc-meter/eagle', '../pictest/eagle'];
 let tmpDir = './tmp';
+
+function GetDirMap(dirs = mountDirs, pred = '.*\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$') {
+  if(typeof pred != 'function') {
+    if(typeof pred == 'string') {
+      const expr = pred;
+      console.log('expr', expr);
+      pred = new RegExp(expr, 'i');
+    }
+    if(typeof pred == 'object' && pred !== null && pred instanceof RegExp) {
+      const re = pred;
+      console.log('re', re);
+      pred = ent => re.test(ent);
+    }
+  }
+  console.log('pred', pred + '');
+  return dirs.reduce((acc, dir) => {
+    for(let entry of ReadDirRecursive(dir, 0)) {
+      if(entry.endsWith('/')) continue;
+      if(!pred(entry)) continue;
+      let relative = entry.startsWith(dir + '/') ? entry.slice(dir.length + 1) : entry;
+      acc[relative] = dir;
+    }
+    return acc;
+  }, {});
+}
 
 async function waitChild(proc) {
   const { pid, stdout, stderr, wait } = proc;
@@ -57,7 +135,7 @@ async function runMount(dirsIterator) {
     console.log(`runMount`, dirs);
     console.debug(`Mount ${dirs} to tmp/`);
 
-    let proc = childProcess('./mount-tmp.sh', ['-f', ...Util.unique(dirs || [])], {
+    let proc = childProcess('./mount-tmp.sh', ['-f', ...unique(dirs || [])], {
       env: { OPTS: 'auto_unmount,atomic_o_trunc,big_writes,kernel_cache' }
     });
     async function readData(output, callback = d => {}) {
@@ -78,9 +156,7 @@ async function runMount(dirsIterator) {
       }
     }
     readData(proc.stdout);
-    readData(proc.stderr, data =>
-      console.log('stderr data:', Util.abbreviate(Util.escape(data), Util.getEnv('COLUMNS') || 120))
-    );
+    readData(proc.stderr, data => console.log('stderr data:', abbreviate(escape(data), process.env['COLUMNS'] || 120)));
     let exitCode = await waitChild(proc);
     console.log('exitCode:', exitCode);
     return exitCode;
@@ -109,8 +185,9 @@ async function main() {
     inspectOptions: {
       breakLength: 120,
       maxStringLength: Infinity,
-      maxArrayLength: 30,
-      compact: 2
+      maxArrayLength: Infinity,
+      compact: 2,
+      depth: 1
     }
   });
   await PortableChildProcess(cp => (childProcess = cp));
@@ -124,7 +201,7 @@ async function main() {
   ).then(exitCode => {
     console.log('runMount', { exitCode });
     if(exitCode == 127) {
-      Util.exit(127);
+      process.exit(127);
     }
     return exitCode;
   });*/
@@ -164,11 +241,7 @@ async function main() {
   const convertToGerber = async (boardFile, opts = {}) => {
     console.log('convertToGerber', { boardFile, opts });
     let {
-      layers = opts.side == 'outline'
-        ? ['Measures']
-        : opts.drill
-        ? ['Drills', 'Holes']
-        : [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'],
+      layers = opts.side == 'outline' ? ['Measures'] : opts.drill ? ['Drills', 'Holes'] : [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'],
       format = opts.drill ? 'EXCELLON' : 'GERBER_RS274X',
       data,
       fetch = false,
@@ -177,15 +250,8 @@ async function main() {
     } = opts;
     const base = path.basename(boardFile, '.brd');
     const formatToExt = (layers, format) => {
-      if(
-        opts.drill ||
-        format.startsWith('EXCELLON') ||
-        layers.indexOf('Drills') != -1 ||
-        layers.indexOf('Holes') != -1
-      )
-        return 'TXT';
-      if(layers.indexOf('Bottom') != -1 || format.startsWith('GERBER'))
-        return opts.side == 'outline' ? 'GKO' : front ? 'GTL' : 'GBL';
+      if(opts.drill || format.startsWith('EXCELLON') || layers.indexOf('Drills') != -1 || layers.indexOf('Holes') != -1) return 'TXT';
+      if(layers.indexOf('Bottom') != -1 || format.startsWith('GERBER')) return opts.side == 'outline' ? 'GKO' : front ? 'GTL' : 'GBL';
 
       return 'rs274x';
     };
@@ -225,7 +291,10 @@ async function main() {
     } catch(error) {
       result = { error };
     }
-    console.log('Response /gerber', Util.filterOutKeys(result, /(output|data)/));
+    console.log(
+      'Response /gerber',
+      filterKeys(result, k => !/(output|data)/.test(k))
+    );
 
     if(/get/i.test(req.method) || raw) {
       const { file } = result;
@@ -279,7 +348,7 @@ async function main() {
       .filter(([k, v]) => typeof v == 'string' || typeof v == 'number' || (typeof v == 'boolean' && v === true))
       .map(([k, v]) => `--${k}${typeof v != 'boolean' && v != '' ? '=' + v : ''}`);
     console.log('Request /gcode', { gerberFile, fetch, raw });
-    //console.warn(`gerberToGcode`, Util.abbreviate(gerberFile), { gcodeFile, opts });
+    //console.warn(`gerberToGcode`, abbreviate(gerberFile), { gcodeFile, opts });
 
     let wait;
     try {
@@ -294,7 +363,7 @@ async function main() {
       wait = await child.catch(error => ({ code: -1, error }));
 
       const { stdout, stderr, code, signal } = wait;
-      if(output) output = Util.abbreviate(output.replace(/\s*\r*\n/g, '\n'), 200);
+      if(output) output = abbreviate(output.replace(/\s*\r*\n/g, '\n'), 200);
       console.log('Response /gcode', { stdout, output, sides });
 
       //   if(code !== 0) throw new Error(output);
@@ -302,8 +371,7 @@ async function main() {
       const gcodeFile = makePath('ngc', sides[0]);
       const svgFile = makePath('svg', sides[0], 'processed');
 
-      for(let [file, to] of sides.map(side => [makePath('svg', side, 'processed'), makePath('svg', side)]))
-        if(fs.existsSync(file)) fs.renameSync(file, to);
+      for(let [file, to] of sides.map(side => [makePath('svg', side, 'processed'), makePath('svg', side)])) if(fs.existsSync(file)) fs.renameSync(file, to);
 
       let files = sides.map(side => [side, makePath('ngc', side)]).filter(([side, file]) => fs.existsSync(file));
       console.log('Response /gcode', { files });
@@ -317,10 +385,13 @@ async function main() {
         return SendRaw(res, file, result.data);
       }
       result.files = Object.fromEntries(files);
-      console.log('Response /gcode', Util.filterOutKeys(result, /(Xoutput|data)/));
+      console.log(
+        'Response /gcode',
+        filterKeys(result, k => !/(Xoutput|data)/.test(k))
+      );
       return result;
     } catch(error) {
-      Util.putError(error);
+      console.log('gerberToGcode ERROR:', error.message + '\n' + error.stack);
     }
   };
 
@@ -342,7 +413,7 @@ async function main() {
 
   const GithubListContents = async (owner, repo, dir, filter) => {
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/${dir}`;
-    console.log(`GITHUB list`, { owner, repo, dir, filter });
+    console.log(`GITHUB list`, { url, owner, repo, dir, filter });
     let response = await fetch(url);
     let result = JSON.parse(await response.text());
     console.log('result', result);
@@ -378,7 +449,7 @@ async function main() {
         return res.redirect('/' + overridePath);
       }
     }
-    if(/lib\/preact.js/.test(req.url)) req.url = '/lib/preact.mjs';
+    //if(/lib\/preact.js/.test(req.url)) req.url = '/lib/preact.mjs';
 
     if(!/lib\//.test(req.url)) {
       const { path, url, method, headers, query, body } = req;
@@ -386,15 +457,8 @@ async function main() {
         console.log(
           'Static request:',
           { path, url, method, headers, query, body } /* Object.keys(req), */,
-          ...Util.if(
-            Util.filterOutKeys(
-              req.headers,
-              /(^sec|^accept|^cache|^dnt|-length|^host$|^if-|^connect|^user-agent|-type$|^origin$|^referer$)/
-            ),
-            () => [],
-            value => ['headers: ', value],
-            Util.isEmpty
-          )
+
+          filterKeys(req.headers, k => !/(^sec|^accept|^cache|^dnt|-length|^host$|^if-|^connect|^user-agent|-type$|^origin$|^referer$)/.test(k))
         );
     }
 
@@ -428,24 +492,32 @@ async function main() {
     logfile ??= fs.openSync('server.log', 'a+', 0o644);
     let str;
     let now = new Date();
-    str = `${now.toISOString().slice(0, 10).replace(/-/g, '')} ${now.toTimeString().slice(0, 8)} ${req.method.padEnd(
-      4
-    )} ${file}\n`;
+    str = `${now.toISOString().slice(0, 10).replace(/-/g, '')} ${now.toTimeString().slice(0, 8)} ${req.method.padEnd(4)} ${file}\n`;
 
     let written = fs.writeSync(logfile, str, 0, str.length);
+    let exists = fs.existsSync(file);
+    let isJS = /\.(|m)js$/.test(file);
 
-    console.log('Request: /' + file);
+    //if(!(exists && isJS)) console.log('Request: /' + file);
 
-    if(fs.existsSync(file)) {
-      const re = /[^\n]*'util'[^\n]*/g;
-      /*let m,
-        data = fs.readFileSync(file, 'utf-8');
-      if((m = re.exec(data))) {
-        console.log('The file ' + file + ` was requested. (${data.length})`, `match @ ${m.index}: ${m[0]}`);
-      }*/
+    if(exists) {
+      if(isJS) {
+        if(file in moduleAliases) {
+          //console.log('JS \x1b[1;31malias\x1b[0m: ' + file + ' -> ' + moduleAliases[file]);
+          file = moduleAliases[file];
+        } else {
+          //console.log('JS replace: ' + file);
+        }
+
+        let s = ReadFile(file);
+        res.type('application/javascript; charset=UTF-8');
+        res.send(importReplacer.replace(s, file));
+        return;
+      }
 
       files.add(file);
     }
+
     next();
   });
   app.use('/static', express.static(path.join(p, 'static')));
@@ -457,6 +529,42 @@ async function main() {
   app.use('/lib', express.static(path.join(p, 'lib')));
   app.use('/tmp', express.static(path.join(p, 'tmp')));
 
+  app.use('/file', async (req, res) => {
+    const { query } = req;
+    const { action, file } = query ?? {};
+
+    console.log('FILE', { action, file });
+
+    dirmap ??= GetDirMap(mountDirs);
+
+    /*  console.log('dirs:', unique(Object.values(dirmap)));
+    console.log('names:', unique(Object.keys(dirmap)).filter(n => /\//.test(n)));*/
+
+    let dir = dirmap[file];
+
+    if(!dir) return res.status(400).send('No such file');
+
+    let p = path.join(dir, file);
+
+    if(!fs.existsSync(p)) return res.status(404).send('No such file');
+
+    let mime = GetMimeType(p);
+
+    //console.log('FILE', { p, mime });
+
+    switch (action) {
+      case 'load': {
+        if(mime) res.type(mime);
+        res.sendFile(path.resolve(p));
+        break;
+      }
+      default: {
+        res.status(404).send('No such action!');
+        break;
+      }
+    }
+  });
+
   app.use('/', express.static(p));
 
   function FindFile(relative) {
@@ -465,9 +573,27 @@ async function main() {
       const exists = fs.existsSync(file);
       //console.log('FILE', file,exists);
 
-      if(exists) return mnt;
+      if(exists) return file;
     }
   }
+
+  app.get('/file', async (req, res) => {
+    const { action, file } = req.query;
+
+    let p = FindFile(file);
+    p = path.resolve(p);
+
+    let mime = await MimeType(p);
+    console.log('DATA', { action, file, p, mime });
+
+    switch (action) {
+      case 'load': {
+        res.type(mime);
+        res.sendFile(p);
+        break;
+      }
+    }
+  });
 
   app.get(/^\/?(data|tmp|vfs)\//, async (req, res) => {
     const file = req.url.replace(/^\/?(data|tmp|vfs)\//, '');
@@ -487,7 +613,8 @@ async function main() {
       }
     })
   );
-  app.get(/\/[^\/]*\.js$/, async (req, res) => res.sendFile(path.join(p, req.path)));
+
+  //app.get(/\/[^\/]*\.js$/, async (req, res) => res.sendFile(path.join(p, req.path)));
 
   //app.get('/components.js', async (req, res) => res.sendFile(path.join(p, 'components.js')));
 
@@ -509,7 +636,7 @@ async function main() {
   async function getDescription(file) {
     // console.log('getDescription()', { file});
     let str = await fsPromises.readFile(GetVFSPath(file)).then(r => r.toString());
-    let r = [...Util.matchAll('<(/)?(board|schematic|library)[ >]', str)]
+    let r = [...matchAll('<(/)?(board|schematic|library)[ >]', str)]
       .map(m => m.index)
       .sort((a, b) => a - b)
       .slice(0, 2);
@@ -520,70 +647,59 @@ async function main() {
       .map(re => re.exec(chunk))
       .map(m => m && m.index);
     let d = chunk.substring(...indexes);
-    if(d.startsWith('<description')) return Util.decodeHTMLEntities(d.substring(a[0].length));
+    if(d.startsWith('<description')) return decodeHTMLEntities(d.substring(a[0].length));
     return '';
   }
 
-  const descMap = Util.weakMapper(getDescription, new Map());
+  const descMap = weakMapper(getDescription, new Map());
 
   async function GetFilesList(dir = './tmp', opts = {}) {
-    let { filter = '.*\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$', descriptions = false, names } = opts;
-    const re = new RegExp(filter, 'i');
-    const f = ent => re.test(ent);
+    let { filter = '.*\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$', descriptions = false, names, limit = '' } = opts;
 
-    console.log('GetFilesList()', { filter, descriptions }, ...(names ? [names.length] : []));
+    dirmap = GetDirMap(mountDirs, filter);
+    names = Object.keys(dirmap);
 
-    let dirmap = {};
-
-    //    if(!names) names = [...(await fsPromises.readdir(dir))].filter(f);
-    dirmap = mountDirs.reduce((acc, dir) => {
-      console.log('ReadDirRecursive', dir);
-      for(let entry of ReadDirRecursive(dir)) {
-        if(entry.endsWith('/')) continue;
-        if(!f(entry)) continue;
-        let relative = entry.startsWith(dir + '/') ? entry.slice(dir.length + 1) : entry;
-        acc[relative] = dir;
-        dirs[relative] = dir;
+    if(limit !== '') {
+      limit = (limit + '').split(/[^0-9]+/g);
+      if(limit.length > 0) {
+        if(limit.length == 1) limit.unshift(0);
+        limit = limit.map(n => +n);
+        const [start, count] = limit;
+        names = names.slice(start, start + count);
       }
-      return acc;
-    }, {});
+    }
 
-    //   console.log('dirmap', dirmap);
-    if(!names) names = Object.keys(dirmap);
-    console.log('names', names.length);
     return Promise.all(
-      names
-        //.map(entry => dirs[entry] +'/'+entry)
-        .reduce((acc, file) => {
-          let dir = dirs[file];
-          let abs = dir + '/' + file;
-          let description = descriptions ? descMap(file) : descMap.get(file);
-          //   console.log('descMap:', util.inspect(descMap, { depth: 1 }));
-          let obj = {
-            name: file,
-            //file,
-            dir: dirs[file]
-          };
-          if(typeof description == 'string') obj.description = description;
-          acc.push(
-            fsPromises
-              .stat(abs)
-              .then(({ ctime, mtime, mode, size }) =>
-                Object.assign(obj, {
-                  mtime: Util.toUnixTime(mtime),
-                  time: Util.toUnixTime(ctime),
-                  mode: `0${(mode & 0x09ff).toString(8)}`,
-                  size
-                })
-              )
-              .catch(err => {})
-          );
-          return acc;
-        }, [])
+      names.reduce((acc, file) => {
+        let dir = dirmap[file];
+        let abs = dir + '/' + file;
+        let description = descriptions ? descMap(file) : descMap.get(file);
+        let obj = {
+          name: file,
+          dir: dirs[file]
+        };
+        if(typeof description == 'string') obj.description = description;
+        acc.push(
+          fsPromises
+            .stat(abs)
+            .then(({ ctime, mtime, mode, size }) =>
+              Object.assign(obj, {
+                mtime: toUnixTime(mtime),
+                time: toUnixTime(ctime),
+                mode: `0${(mode & 0x09ff).toString(8)}`,
+                size
+              })
+            )
+            .catch(err => {})
+        );
+        return acc;
+      }, [])
     ).then(a => a.filter(i => i != null));
   }
 
   function FilesURLs(list) {
+    if(list.length == 0) return null;
+
     const base_url = list[0].replace(/\/[^\/]*$/, '');
     const files = list.map(url => url.replace(/.*\//g, ''));
     return { base_url, files };
@@ -620,7 +736,7 @@ async function main() {
       duplex.write(data);
     });
 
-    console.debug('websocket:', Util.getMethods(ws, Infinity, 0));
+    console.debug('websocket:', getMethods(ws, Infinity, 0));
   });
 
   app.post(/\/serial/, async (req, res) => {
@@ -628,8 +744,8 @@ async function main() {
     const { port } = body;
   });
   const configFile = 'config.json';
-  const safeStat = Util.tryFunction(
-    f => filesystem.stat(f),
+  const safeStat = tryFunction(
+    f => fs.stat(f),
     st => st,
     () => {}
   );
@@ -638,67 +754,66 @@ async function main() {
     let str = '',
       data = {},
       time = 0;
-    Util.tryCatch(
-      () => filesystem.readFile(configFile),
+    tryCatch(
+      () => fs.readFileSync(configFile),
       c => {
         str = c;
         let stat = safeStat(configFile);
         console.log('stat:', stat);
-        if(Util.isObject(stat.mtime)) time = stat.mtime.getTime();
+        if(isObject(stat.mtime)) time = stat.mtime.getTime();
       },
       () => (str = '{}')
     );
-    let config = Util.tryCatch(
+    let config = tryCatch(
       () => JSON.parse(str),
       o => o,
       () => ({})
     );
     console.log('config:', config);
 
-    res.json({ config, time, hash: Util.hashString(str) });
+    res.json({ config, time, hash: hashString(str) });
   });
+
   app.post(/\/config/, async (req, res) => {
     const { body } = req;
     let text = body.toString();
     console.log('text:', text);
-    let ret = filesystem.writeFile(configFile, text);
+    let ret = fs.writeFile(configFile, text);
     console.log('ret:', ret);
     let stat = safeStat(configFile);
     res.json({
       size: ret,
       time: stat.mtime.getTime(),
-      hash: Util.hashString(text)
+      hash: hashString(text)
     });
   });
 
   app.get(/\/github/, async (req, res) => {
-    Util.tryCatch(
+    tryCatch(
       async () => {
         const { body } = req;
-        const url = Util.parseURL(req.url);
-        const { location, query } = url;
+        console.log('req', Object.keys(req));
+        console.log('req.url', req.url);
+        const location = req.url + '';
+        const { query } = req;
         let args = location.split(/\//g).filter(p => !/(^github$|^$)/.test(p));
-        let options = { ...query, ...body };
+        let options = { /*...query,*/ ...body };
 
         if(args.length > 0) {
           const [owner, repo, dir, filter] = args;
-          Util.weakAssign(options, { owner, repo, dir, filter });
+          weakDefine(options, { owner, repo, dir, filter });
         }
 
         console.log(`GET ${location}`, { args, query, options });
 
         let result;
         const { owner, repo, dir, filter, tab, after } = options;
+        console.log('github', { owner, repo, dir });
 
-        if(owner && repo && dir)
-          result = await GithubListContents(owner, repo, dir, filter && new RegExp(filter, 'g'));
+        if(owner && repo && dir) result = await GithubListContents(owner, repo, dir, filter && new RegExp(filter, 'g'));
         /*if(owner && (tab || after))*/ else {
-          let proxyUrl = Util.makeURL({
-            ...url,
-            protocol: 'https',
-            host: 'github.com',
-            location: ['', ...args].join('/')
-          });
+          let proxyUrl = `https://github.com${['', ...args].join('/')}`;
+
           console.log(`PROXY ${proxyUrl}`);
 
           let response = await fetch(proxyUrl);
@@ -714,7 +829,7 @@ async function main() {
         res.json(FilesURLs(result.map(file => file.download_url)));
       },
       () => {},
-      Util.putError
+      error => console.log('Exception:', error.message + '\n' + error.stack)
     );
   });
 
@@ -735,8 +850,8 @@ async function main() {
   app.get(/^\/files/, async (req, res) => res.json({ files: await GetFilesList() }));
   app.post(/^\/(files|list)(.html|)/, async (req, res) => {
     const { body } = req;
-    let { filter = '.*', descriptions, names } = body;
-    let opts = { filter };
+    let { filter, descriptions, names, limit } = body;
+    let opts = { filter, limit };
     if(descriptions) opts.descriptions = descriptions;
 
     if(names !== undefined) {
@@ -745,35 +860,31 @@ async function main() {
       opts.names = names;
     }
     let files = await GetFilesList('tmp', opts);
-    console.log(
-      'POST files',
-      util.inspect(files, { breakLength: Infinity, colors: true, maxArrayLength: 10, compact: 1 })
-    );
-    res.json({
-      files
-    });
+
+    //console.log('POST files', inspect(files, { breakLength: Infinity, colors: true, maxArrayLength: 10, compact: 1 }));
+    res.json(files);
   });
 
   app.get('/index.html', async (req, res) => {
     let data = await fsPromises.readFile(path.join(p, 'index.html'));
-    res.send(data.toString().replace(/<TS>/g, Util.unixTime() + ''));
+    res.send(data.toString().replace(/<TS>/g, unixTime() + ''));
   });
   app.get('/contours', RequestContours);
   app.post('/contours', RequestContours);
 
   app.post('/save', async (req, res, next) => {
     //   const filename = (req.headers['content-disposition']||'').replace(new RegExp('.*"([^"]*)".*','g'), '$1') || 'output.svg';
-    /*    const filename = path.join(process.cwd(), 'tmp', 'upload-' + Util.toUnixTime(Date.now()) + '.txt');
+    /*    const filename = path.join(process.cwd(), 'tmp', 'upload-' + toUnixTime(Date.now()) + '.txt');
     let output = fs.createWriteStream(filename, { autoClose: true, emitClose: true });
     let s = req.pipe(output);
-    console.log('s', Util.className(s));
+    console.log('s', className(s));
     let data;
-    s.on('close', () => Util.waitFor(1000).then(() => end()));
+    s.on('close', () => waitFor(1000).then(() => end()));
 
-    //  req.on('end', () => Util.waitFor(500).then(() => end()));
+    //  req.on('end', () => waitFor(500).then(() => end()));
 
     function end() {
-      data = fs.readFileSync(filename).toString();
+      data = ReadFile(filename).toString();
       console.log('req end', { data });
       res.end(data + '\n\nUpload complete');
       next();
@@ -782,12 +893,11 @@ async function main() {
 
     const { body } = req;
     console.log('req.headers:', req.headers);
-    console.log('body:', Util.abbreviate(body), Util.className(body), Util.inspect(body));
-    console.log('save body:', typeof body == 'string' ? Util.abbreviate(body, 100) : body);
+    //console.log('body:', abbreviate(body), className(body), inspect(body));
+    console.log('save body:', typeof body == 'string' ? abbreviate(body, 100) : body);
     let st,
       err,
-      filename =
-        (req.headers['content-disposition'] || '').replace(new RegExp('.*"([^"]*)".*', 'g'), '$1') || 'output.svg';
+      filename = (req.headers['content-disposition'] || '').replace(new RegExp('.*"([^"]*)".*', 'g'), '$1') || 'output.svg';
     filename = 'tmp/' + filename.replace(/^tmp\//, '');
     await fsPromises
       .writeFile(filename, body, { mode: 0x0180, flag: 'w' })
@@ -815,10 +925,11 @@ async function main() {
     console.log(`Ready at http://127.0.0.1:${port}`);
   });
 }
+
 /*
 try {
   await main();
 } catch(err) {
   Util.putError(err);
 }*/
-Util.callMain(main, true);
+main(...process.argv.slice(1));

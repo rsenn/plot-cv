@@ -1,9 +1,69 @@
-import * as cv from 'opencv';
+import { spawn, WNOHANG } from 'child_process';
 import * as path from 'path';
-import Console from 'console';
 import { glob } from 'util';
 import { LoadConfig } from './config.js';
-import { FetchURL, ReadFile, ReadXML, WriteJSON } from './io-helpers.js';
+import { FetchURL, ReadFile, WriteJSON } from './io-helpers.js';
+import Console from 'console';
+
+function ReadCallback(fd, fn = data => {}) {
+  let buf = new ArrayBuffer(1024);
+  setReadHandler(fd, () => {
+    let r = read(fd, buf, 0, 1024);
+    if(r <= 0) {
+      close(fd);
+      setReadHandler(fd, null);
+      return;
+    }
+    let data = buf.slice(0, r);
+    data = toString(data);
+    fn(data);
+  });
+}
+
+function FetchURL(url, options = {}) {
+  let { headers, proxy, cookies = 'cookies.txt', range, body, version = '1.1', tlsv, 'user-agent': userAgent } = options;
+
+  let args = Object.entries(headers ?? {})
+    .reduce((acc, [k, v]) => acc.concat(['-H', `${k}: ${v}`]), [])
+    .concat(Array.isArray(url) ? url : [url]);
+
+  args.push('--compressed');
+  args.unshift('-L', '-k');
+
+  if(body) args.unshift('-d', body);
+  if(version) args.unshift('--http' + version);
+  if(tlsv) args.unshift('--tlsv' + tlsv);
+  if(userAgent) args.unshift('-A', userAgent);
+  if(range) args.unshift('-r', range);
+  if(cookies) args.unshift('-c', cookies);
+  if(proxy) args.unshift('-x', proxy);
+
+  args.unshift('--tcp-fastopen', '--tcp-nodelay');
+
+  console.log('FetchURL', console.config({ maxArrayLength: Infinity, compact: false }), { args });
+
+  let child = spawn('curl', args, {
+    block: false,
+    stdio: ['inherit', 'pipe', 'pipe']
+  });
+
+  let [, out, err] = child.stdio;
+
+  console.log('child', { out, err });
+  let output = '',
+    errors = '';
+
+  ReadCallback(out, data => (output += data));
+  ReadCallback(err, data => ((errors += data), err.puts(data), err.flush()));
+
+  child.wait(WNOHANG);
+  let status;
+
+  status = child.wait();
+  console.log('FetchURL', { status });
+
+  return output;
+}
 
 async function main(...args) {
   globalThis.console = new Console({
@@ -86,19 +146,13 @@ async function main(...args) {
         what: what.join('\n'),
 
         [Symbol.inspect](depth, options) {
-          return (
-            '\n\t ' + [date, ago, who, what.join(' ')].reduce((line, field, i) => line + field.padEnd(columns[i]), '')
-          );
+          return '\n\t ' + [date, ago, who, what.join(' ')].reduce((line, field, i) => line + field.padEnd(columns[i]), '');
         }
       };
 
       return [date, ago, who, what.join('\n')].reduce((line, field, i) => line + field.padEnd(columns[i]), '');
     });
-    console.log(
-      `${parts.length} Nachrichten`,
-      console.config({ maxArrayLength: 2, compact: false, stringBreakNewline: true }),
-      parts
-    );
+    console.log(`${parts.length} Nachrichten`, console.config({ maxArrayLength: 2, compact: false, stringBreakNewline: true }), parts);
 
     WriteJSON(file + '.json', parts);
 
@@ -124,10 +178,8 @@ async function dl(orderId) {
       'sec-ch-ua-mobile': '?0',
       'sec-ch-ua-platform': '"Linux"',
       'upgrade-insecure-requests': '1',
-      'user-agent':
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.74 Safari/537.36',
-      accept:
-        'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+      'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.74 Safari/537.36',
+      accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
       'sec-fetch-site': 'same-origin',
       'sec-fetch-mode': 'navigate',
       'sec-fetch-user': '?1',

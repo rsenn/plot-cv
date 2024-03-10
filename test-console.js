@@ -1,12 +1,4 @@
-import Util from './lib/util.js';
-import ConsoleSetup from './lib/consoleSetup.js';
-
 async function main(...args) {
-  await ConsoleSetup({
-    breakLength: 120,
-    maxStringLength: 200
-  });
-
   console.log(`console`, inspect(console, { customInspect: true, showHidden: true, compact: false }));
 
   let c = console;
@@ -17,7 +9,7 @@ async function main(...args) {
   console.log('console.log', console.log);
 
   if(1) {
-    let args = Util.getArgs();
+    let args = scriptArgs;
     let path = args[0];
     let fn = function(...args) {
       return args;
@@ -59,7 +51,8 @@ async function main(...args) {
 
   return 'done';
 }
-Util.callMain(main, true);
+
+main(...scriptArgs.slice(1));
 /*
 console.log('TEST\n');
 print('TEST\n');

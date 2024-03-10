@@ -1,6 +1,7 @@
 const code = `function add(a, b) {
   return a + b;
 }
+
 `;
 
 class App extends React.Component {

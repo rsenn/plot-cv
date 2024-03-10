@@ -1,8 +1,8 @@
-import { AxisPoints, AxisRange, DrawAxis, Origin, GetRect, X, Y, Flip, DrawRect, ClientRect, ClientArea, ClientMatrix } from './diagram.js';
-import { Console } from 'console';
-import { Point, Rect, Mat, Draw, Contour, transform, CV_8UC3, CV_64FC1, CV_64FC2, FILLED, LINE_AA, LINE_8, imshow, imwrite, waitKey } from 'opencv';
+import { randInt, range, srand } from 'util';
+import { AxisPoints, AxisRange, ClientArea, ClientMatrix, DrawAxis, GetRect, Origin, X, Y } from './diagram.js';
 import { TextStyle } from './qjs-opencv/js/cvHighGUI.js';
-import { range, srand, randInt } from 'util';
+import { Console } from 'console';
+import { Contour, CV_64FC2, CV_8UC3, Draw, FILLED, imshow, imwrite, LINE_AA, Mat, Point, Rect, transform, waitKey } from 'opencv';
 
 function main(...args) {
   globalThis.console = new Console({

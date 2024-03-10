@@ -1,3 +1,22 @@
+export function* findAllIndexes(haystack, needle) {
+  let { length: n } = needle;
+  for(let i, j = 0; (i = haystack.indexOf(needle, j)) != -1; j = i + n) yield i;
+}
+
+export function* findAllIndexesReverse(haystack, needle) {
+  let { length: n } = needle;
+  for(let i, j; (i = haystack.lastIndexOf(needle, j)) != -1; j = i - n) yield i;
+}
+
+export function countSubstring(haystack, needle) {
+  let ret = 0,
+    { length: n } = needle;
+
+  for(let i, j = 0; (i = haystack.indexOf(needle, j)) != -1; j = i + n) ++ret;
+
+  return ret;
+}
+
 export function parseDegMinSec(s) {
   let matches = [...s.matchAll(/([0-9.]*)\s*([^\s0-9]+)/g)].map(([m, ...rest]) => rest);
   let r;
@@ -32,8 +51,7 @@ export function parseDMS(dmsString) {
 
   // Inspired by https://gist.github.com/JeffJacobson/2955437
   // See https://regex101.com/r/kS2zR1/3
-  var dmsRe =
-    /([NSEW])?\s?(-)?(\d+(?:\.\d+)?)[°º:d\s]?\s?(?:(\d+(?:\.\d+)?)['’‘′:]?\s?(?:(\d{1,2}(?:\.\d+)?)(?:"|″|’’|'')?)?)?\s?([NSEW])?/i;
+  var dmsRe = /([NSEW])?\s?(-)?(\d+(?:\.\d+)?)[°º:d\s]?\s?(?:(\d+(?:\.\d+)?)['’‘′:]?\s?(?:(\d{1,2}(?:\.\d+)?)(?:"|″|’’|'')?)?)?\s?([NSEW])?/i;
 
   var result = {};
 
@@ -120,3 +138,33 @@ function decDegFromMatch(m) {
 function inRange(value, a, b) {
   return value >= a && value <= b;
 }
+
+export function wordWrap(str, width, delimiter)  {
+  // use this on single lines of text only
+  if(str.length > width) {
+    let p = width;
+    for(; p > 0 && str[p] != ' '; p--) {}
+    if(p > 0) {
+      let left = str.substring(0, p);
+      let right = str.substring(p + 1);
+      return left + delimiter + wordWrap(right, width, delimiter);
+    }
+  }
+  return str;
+}
+
+export function decodeHTMLEntities(text) {
+  let entities = {
+    amp: '&',
+    apos: "'",
+    '#x27': "'",
+    '#x2F': '/',
+    '#39': "'",
+    '#47': '/',
+    lt: '<',
+    gt: '>',
+    nbsp: ' ',
+    quot: '"'
+  };
+  return text.replace(new RegExp('&([^;]+);', 'gm'), (match, entity) => entities[entity] || match);
+};

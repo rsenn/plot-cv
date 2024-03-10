@@ -1,3 +1,5 @@
+import { ReadFile, WriteFile } from './io-helpers.js';
+
 function deconflict(s) {
   const re = /<<<<<<< ([^\r\n]*)\r?\n|=======\r?\n|>>>>>>> ([^\r\n]*)\r?\n/gm;
 
@@ -31,10 +33,11 @@ function deconflict(s) {
   return out.map((s, i) => [tags[i], s]);
   return tags.reduce((acc, tag, i) => ({ ...acc, [tag]: out[i] }), {});
 }
+
 function deconflictFile(file) {
-  let s = fs.readFileSync(file, 'utf-8');
+  let s = ReadFile(file, 'utf-8');
   let [[name1, a], [name2, b]] = deconflict(s);
 
-  fs.writeFileSync(file + '.1', a);
-  fs.writeFileSync(file + '.2', b);
+  WriteFile(file + '.1', a);
+  WriteFile(file + '.2', b);
 }
