@@ -165,3 +165,12 @@ export function DrawCircle([x, y], radius, strokeWidth = 5, stroke = [255, 255, 
   nvg.Fill();
   nvg.Stroke();
 }
+
+export function DrawLine(p1, p2, strokeWidth = 5, stroke = [255, 255, 255]) {
+  nvg.BeginPath();
+  nvg.StrokeColor(nvg.RGB(...stroke));
+  nvg.StrokeWidth(strokeWidth);
+  nvg.MoveTo(p1.x, p1.y);
+  nvg.LineTo(p2.x, p2.y);
+  nvg.Stroke();
+}
