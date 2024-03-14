@@ -180,7 +180,6 @@ dissect_number(char format, unsigned int num) {
 
         /* start to print only when leading zeroes are skipped */
         if(i <= start) {
-          // printf(" %u x %10u (2 ^ %u)\n", d, 1 << i, i);
           printf(" %u x %10u (0b", d, 1 << i);
           print_number('b', 1 << i, len);
           printf(" = 2 ^ %u)\n", i);
@@ -196,7 +195,6 @@ dissect_number(char format, unsigned int num) {
 
         /* start to print only when leading zeroes are skipped */
         if(start || (start = d ? i : 0))
-          // printf(" %o x %10u (0o%011o)\n", d, 1 << (i * 3), 1 << (i * 3));
           printf(" %o x %10u (0o%011o = 3 ^ %u)\n",
                  d,
                  1 << (i * 3),
@@ -213,8 +211,6 @@ dissect_number(char format, unsigned int num) {
 
         /* start to print only when leading zeroes are skipped */
         if(start || (start = d ? i : 0))
-          // printf(" %X: %2u x %10u (0x%08X)\n", d, d, 1 << (i * 4), 1 << (i *
-          // 4));
           printf(" %X: %2u x %10u (16 ^ %u)\n", d, d, 1 << (i * 4), i);
       }
 
