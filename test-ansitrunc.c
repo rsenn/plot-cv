@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#define is_alphanumeric_char(c) ((c) >= 'A' && (c) <= 'Z') || ((c) >= 'a' && (c) <= 'z')
-#define is_control_char(c) ((c) == '\b' || (c) == '\f' || (c) == '\n' || (c) == '\r' || (c) == '\t' || (c) == '\v')
+#define is_alphanumeric_char(c) \
+  ((c) >= 'A' && (c) <= 'Z') || ((c) >= 'a' && (c) <= 'z')
+#define is_control_char(c) \
+  ((c) == '\b' || (c) == '\f' || (c) == '\n' || (c) == '\r' || (c) == '\t' || \
+   (c) == '\v')
 
 static inline int
 is_escape_char(char c) {
