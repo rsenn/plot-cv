@@ -9,7 +9,7 @@
 int input_number(unsigned int *);
 int print_binary(unsigned int);
 
-/* Example of input a number and output it in different numeral systems */
+/* Example of inputting a number and then output it in different numeral systems */
 
 int
 main() {
@@ -48,19 +48,25 @@ input_number(unsigned int* num) {
   char buffer[16], fmt[] = {'%', 'd'};
   int i;
 
+  /* Get a line of text */
   if(!fgets(buffer, sizeof(buffer), stdin))
     return 0;
 
+/* Iterate through the characters of a line */
   for(i = 0; i < sizeof(buffer); i++) {
     const char c = buffer[i];
 
     if(isdigit(c)) {
+      /* If a digit other than zero is entered, then the number begins */
       if(c != '0')
         break;
+
+      /* Leading zero means octal at first */
       fmt[1] = 'o';
       continue;
     }
 
+    /* Alphanumeric character (letter) is format designator */
     if(isalpha(c)) {
       fmt[1] = c;
       i++;
@@ -68,6 +74,7 @@ input_number(unsigned int* num) {
     }
   }
 
+  /* if the format is binary, we must scan it ourselves */
   if(tolower(fmt[1]) == 'b') {
     *num = 0;
 
@@ -85,6 +92,7 @@ input_number(unsigned int* num) {
     return fmt[1];
   }
 
+  /* other formats scanned by library function */
   return sscanf(&buffer[i], fmt, num) ? fmt[1] : 0;
 }
 
@@ -93,7 +101,9 @@ int
 print_binary(unsigned int num) {
   int start = 0;
 
+/* loop through the bits */
   for(int i = 31; i >= 0; i--)
+    /* start to print only when leading zeroes are skipped */
     if(start || (start = (num >> i) & 1))
       putc(((num >> i) & 1) + '0', stdout);
 }
