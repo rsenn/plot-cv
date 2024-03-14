@@ -46,7 +46,7 @@ main() {
 /* Read in a number, followed by pressing ENTER */
 int
 input_number(unsigned int* num) {
-  char buffer[16], fmt[] = {'%', 'd'};
+  char buffer[1024], fmt[] = {'%', 'd'};
   int i;
 
   /* Get a line of text */
