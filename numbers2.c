@@ -16,8 +16,7 @@ void print_number(char, unsigned int, char);
 const char* format_name(char);
 int format_base(char);
 
-/* Example of inputting a number and then output it in different numeral systems
- */
+/* Example of inputting a number and then output it in different numeral systems */
 
 int
 main() {
@@ -195,11 +194,7 @@ dissect_number(char format, unsigned int num) {
 
         /* start to print only when leading zeroes are skipped */
         if(start || (start = d ? i : 0))
-          printf(" %o x %10u (0o%011o = 3 ^ %u)\n",
-                 d,
-                 1 << (i * 3),
-                 1 << (i * 3),
-                 i);
+          printf(" %o x %10u (0o%011o = 3 ^ %u)\n", d, 1 << (i * 3), 1 << (i * 3), i);
       }
 
       break;

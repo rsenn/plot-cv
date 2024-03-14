@@ -30,10 +30,9 @@ main() {
      For example 0x47 (Decimal: 71) is the character 'G' and 041 (Decimal 65) is
      'A'. End of string, indicated by a nul-character */
   const char hex[] = {
-      0x47, 0x72, 0x61, 0x74, 0x69, 0x74, 0x75, 0x64, 0x65, 0x20, 0x74,
-      0x75, 0x72, 0x6e, 0x73, 0x20, 0x77, 0x68, 0x61, 0x74, 0x20, 0x77,
-      0x65, 0x20, 0x68, 0x61, 0x76, 0x65, 0x20, 0x69, 0x6e, 0x74, 0x6f,
-      0x20, 0x65, 0x6e, 0x6f, 0x75, 0x67, 0x68, 0x00,
+      0x47, 0x72, 0x61, 0x74, 0x69, 0x74, 0x75, 0x64, 0x65, 0x20, 0x74, 0x75, 0x72, 0x6e,
+      0x73, 0x20, 0x77, 0x68, 0x61, 0x74, 0x20, 0x77, 0x65, 0x20, 0x68, 0x61, 0x76, 0x65,
+      0x20, 0x69, 0x6e, 0x74, 0x6f, 0x20, 0x65, 0x6e, 0x6f, 0x75, 0x67, 0x68, 0x00,
   };
 
   /* But this way we interpret the array of numbers as a string and print it
@@ -66,8 +65,7 @@ main() {
 
     /* If the digit is not 0, output its value */
     if(digit)
-      printf(RED "%2X" NC
-                 " = %3u × %10u (Hex: 0x%08X, Shift left: %2u) = %10u\n",
+      printf(RED "%2X" NC " = %3u × %10u (Hex: 0x%08X, Shift left: %2u) = %10u\n",
              digit,
              digit,
              1 << shift,
@@ -83,10 +81,8 @@ main() {
   assert(total_sum == number);
 
   /* Print it out in hexadecimal, pad it to 8 digits */
-  printf(
-      "--------------------------------------------------------------------\n");
-  printf("                                               Total sum: " YELLOW
-         "%10u" NC "\n\n",
+  printf("--------------------------------------------------------------------\n");
+  printf("                                               Total sum: " YELLOW "%10u" NC "\n\n",
          total_sum);
 
   for(char i = 1; i <= 4; i++) {

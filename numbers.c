@@ -9,8 +9,7 @@
 int input_number(unsigned int*);
 int print_binary(unsigned int);
 
-/* Example of inputting a number and then output it in different numeral systems
- */
+/* Example of inputting a number and then output it in different numeral systems */
 
 int
 main() {
