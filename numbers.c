@@ -6,10 +6,11 @@
 #define NC "\x1b[0m"
 
 /* Forward declaration of helper functions */
-int input_number(unsigned int *);
+int input_number(unsigned int*);
 int print_binary(unsigned int);
 
-/* Example of inputting a number and then output it in different numeral systems */
+/* Example of inputting a number and then output it in different numeral systems
+ */
 
 int
 main() {
@@ -52,7 +53,7 @@ input_number(unsigned int* num) {
   if(!fgets(buffer, sizeof(buffer), stdin))
     return 0;
 
-/* Iterate through the characters of a line */
+  /* Iterate through the characters of a line */
   for(i = 0; i < sizeof(buffer); i++) {
     const char c = buffer[i];
 
@@ -101,7 +102,7 @@ int
 print_binary(unsigned int num) {
   int start = 0;
 
-/* loop through the bits */
+  /* loop through the bits */
   for(int i = 31; i >= 0; i--)
     /* start to print only when leading zeroes are skipped */
     if(start || (start = (num >> i) & 1))
