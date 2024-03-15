@@ -992,7 +992,7 @@ function main(...args) {
         return resp;
       },
       onMessage(ws, data) {
-        console.log('onMessage', { data, ws });
+        console.log(`onMessage [${ws.uuid}]: ${data}`);
         return callbacks.onMessage(ws, data);
       },
       ...(url && url.host ? url : {})
@@ -1120,9 +1120,12 @@ function main(...args) {
         switch (msg.type) {
           case 'uuid':
             break;
+
           default:
             try {
               const result = await serv.processMessage(msg);
+              result.type = msg.type;
+              console.log('send', result);
               ws.send(JSON.stringify(result));
             } catch(e) {}
             break;
@@ -1147,7 +1150,7 @@ try {
   main(...scriptArgs.slice(1));
 } catch(error) {
   console.log(`FAIL: ${error?.message ?? error}\n${error?.stack}`);
-  1;
+
   std.exit(1);
 } finally {
 }
