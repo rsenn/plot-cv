@@ -449,6 +449,7 @@ function main(...args) {
     Signal2Circuit,
     Element2Circuit,
     SortFiles,
+    BoardFromSchematic,
     InitBoard,
     MakeGraph,
     DrawGraph,
@@ -1056,6 +1057,19 @@ function SaveLibraries() {
 
   return xml;
   //console.log('libraries', libraries);
+}
+
+function BoardFromSchematic(doc = project.schematic, f = 1) {
+  let a = [];
+  
+  for(let e of [...doc.sheets[0].instances.list]) {
+    const { part, x, y } = e;
+    const p = new Point(x, y).mul(f * 0.03937).round(0.1);
+
+    a.push(`MOVE '${part.name}' (${[...p].join(' ')});`);
+  }
+
+  return a.join('\n');
 }
 
 function InitBoard(doc = project.board) {
