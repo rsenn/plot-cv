@@ -1,0 +1,114 @@
+<html>
+  <head>
+    <title>webakeit</title>
+    <link href="static/fonts/LibreCaslonText-Regular.css" rel="stylesheet" />
+    <style type="text/css">
+      @media all and (orientation: portrait) {
+        /* Styles */
+        #header {
+          font-size: 2em;
+          font-weight: bold;
+        }
+      }
+      img.bywidth {
+        max-width: 15em;
+      }
+      img.landscape {
+        max-height: 15em;
+      }
+      #header {
+        display: flex;
+        font-family: 'Arial Black';
+        /*color:  white;*/
+      }
+      #header > div {
+        padding: 1em;
+        /* margin: 0 1px 1px 0;*/
+        user-select: none;
+        font-size: 2em;
+        background: hsla(200, 100%, 50%, 0.5);
+          /*text-shadow: 2px 2px 2px #fff;*/
+        color: black;
+      }
+      #header > div:hover {
+        text-decoration: underline;
+        cursor: link;
+      }
+      #header > div:nth-child(1) {
+        margin-left: 2px;
+        /*border-left: 1px dotted black;*/
+      }
+      #header > div:nth-child(1) {
+        background-color: #ce13bb;
+      }
+      #header > div:nth-child(2) {
+        background-color: #f2ba3f;
+      }
+      #header > div:nth-child(3) {
+        background-color: #bd262f;
+      }
+      #header > div:nth-child(4) {
+        background-color: #133ace;
+      }
+
+      div.home > div:nth-child(2) {
+        background: url(static/img/globi-bg.jpg) no-repeat;
+       /* background-size: 100% auto;
+max-width: 50em;*/
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        background: #1f778d;
+        /*background:  hsl(260, 100%, 50%);*/
+      }
+      .blog {
+        background: white;
+        max-width: 50em;
+        padding: 1em;
+        margin: 2em;
+        font-family: 'Libre Caslon Text';
+        font-weight: normal;
+        font-style: normal;
+        /* margin-top: 50em;*/
+        display: none;
+      }
+    </style>
+    <script type="module" src="./webakeit.js"></script>
+  </head>
+  <body>
+    <div data-name="home" class="home">
+      <div id="header">
+        <div data-name="home">Menu</div>
+        <div data-name="blog">Blog<br />News</div>
+        <div data-name="haus">Das Haus</div>
+        <div data-name="spenden">Werde<br />Spender</div>
+      </div>
+      <div>&nbsp;</div>
+    </div>
+    <div data-name="blog" class="blog">
+      <p>Das Ofenhaus von 1771</p>
+
+      <img src="static/img/ofenhaus3.jpg" class="bywidth" />
+      <img src="static/img/ofenhaus4.jpg" class="bywidth" />
+      <img src="static/img/steine2.jpg" class="bywidth" /><br />
+      <img src="static/img/ofenhaus1.jpg" class="bywidth" />
+      <img src="static/img/ofenhaus2.jpg" class="bywidth" />
+
+      <img src="static/img/steine1.jpg" class="bywidth" />
+      <p>Die Steine des zerlegten alten Ofens ausserhalb des H&auml;uschens...</p>
+
+      <img src="static/img/innenraum1.jpg" class="bywidth" />
+      <p>Die wertvollsten und gr&ouml;ssten Steine unter dem sch&uuml;tzenden Holzdach...</p>
+
+      <img src="static/img/innenraum2.jpg" class="landscape" />
+      <p>
+        ...dort wo jetzt die Leiter steht bis hinten an die Bretterwand, wird der alte Ofen mit den Massen 4x3m wiederaufgebaut. Die offenen W&auml;nde werden nach dem Wiederaufbau des Ofens wieder
+        mit den gelagerten, alten Holz'l&auml;den' verschlossen!
+      </p>
+
+      <p>heute Nacht gab es nochmals Schnee und der hat die sch&ouml;nen Fr&uuml;hlingsblumen versteckt</p>
+      <img src="static/img/fr&uuml;hling-schnee.jpg" class="landscape" />
+    </div>
+  </body>
+</html>
