@@ -1,0 +1,100 @@
+@media all and (orientation: portrait) {
+  /* Styles */
+  #header {
+    font-size: 2em;
+    font-weight: bold;
+  }
+}
+img.bywidth {
+  max-width: 15em;
+}
+img.landscape {
+  max-height: 15em;
+}
+
+img.bywidth, img.landscape {
+  cursor:  pointer;
+}
+#header {
+  display: flex;
+  font-family: 'Arial Black';
+}
+#header > div {
+  padding: 1em;
+  user-select: none;
+  font-size: 2em;
+  background: hsla(200, 100%, 50%, 0.5);
+  color: black;
+}
+#header > div:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+#header > div:nth-child(1) {
+  margin-left: 2px;
+  /*border-left: 1px dotted black;*/
+}
+#header > div:nth-child(1) {
+  background-color: #ce13bb;
+}
+#header > div:nth-child(2) {
+  background-color: #f2ba3f;
+}
+#header > div:nth-child(3) {
+  background-color: #bd262f;
+}
+#header > div:nth-child(4) {
+  background-color: #133ace;
+}
+div.home {
+  display:  flex;
+  flex-direction: column;
+    height: 100vh; 
+
+}
+div.home > div:nth-child(2) {
+  background: url(../img/globi-bg.jpg) no-repeat;
+    flex: 1 1 auto;
+/* background-size: 100% auto;
+max-width: 50em;*/
+}
+body {
+  margin: 0;
+  background: #1f778d;
+   width:  100vw;
+  height:  100vh; /*background:  hsl(260, 100%, 50%);*/
+}
+.blog {
+  background: white;
+  max-width: 50em;
+  padding: 1em;
+  font-family: 'Libre Caslon Text';
+  font-weight: normal;
+  font-style: normal;
+  /* margin-top: 50em;*/
+  display: none;
+}
+.blog {
+  position:  relative;
+  left:  0;
+  top:  0;
+}
+img.close {
+  position:  absolute;
+  top:  1.5em;
+  right:  1.5em;
+  cursor:  pointer;
+}
+
+.overlay {
+  position:  absolute;
+  top:  0;
+  left:  0;
+  width:  100vw;
+  height:  100vh;
+  background:  white;
+
+  display:  flex;
+  align-items:  center;
+  justify-content:  center;
+}

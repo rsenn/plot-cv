@@ -1,41 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="74.448921mm"
-   height="70.31292mm"
-   viewBox="0 0 74.448921 70.31292"
+   width="11.167338mm"
+   height="10.54695mm"
+   viewBox="0 0 11.167338 10.54695"
    version="1.1"
-   id="svg1804"
-   inkscape:version="0.92.4 5da689c313, 2019-01-14"
-   sodipodi:docname="schliessen.svg">
+   id="svg1804">
   <defs
      id="defs1798" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="0.7907995"
-     inkscape:cx="-87.684773"
-     inkscape:cy="225.14761"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="989"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1" />
   <metadata
      id="metadata1801">
     <rdf:RDF>
@@ -49,15 +25,11 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Ebene 1"
-     inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-48.89127,-121.55061)">
+     transform="matrix(1.5,0,0,1.5,-123.58993,-229.78713)">
     <path
-       style="fill:#000000;stroke:none;stroke-width:0.35922837px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 106.60544,189.21067 86.764638,169.36986 64.27099,191.86353 48.89127,179.11802 72.702028,155.30725 51.53121,134.13642 l 17.1134,-11.72865 18.478449,18.47845 19.335611,-19.33561 12.06605,16.05918 -17.33905,17.33904 22.15452,22.15452 z"
-       id="path1198-2-1"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccccccccccccc" />
+       style="fill:#000000;stroke:none;stroke-width:0.03592284px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 88.164701,159.95743 -1.98408,-1.98408 -2.249365,2.24937 -1.537972,-1.27455 2.381076,-2.38108 -2.117082,-2.11709 1.71134,-1.17286 1.847845,1.84784 1.933561,-1.93356 1.206605,1.60592 -1.733905,1.73391 2.215452,2.21545 z"
+       id="path1198-2-1" />
   </g>
 </svg>
