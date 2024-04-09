@@ -18,20 +18,25 @@ img.bywidth, img.landscape {
 #header {
   display: flex;
   font-family: 'Arial Black';
+ 
+  justify-content:  stretch;
 }
 #header > div {
+      flex-grow: 1;
   padding: 1em;
   user-select: none;
   font-size: 2em;
   background: hsla(200, 100%, 50%, 0.5);
   color: black;
+  text-align:  center;
+
 }
 #header > div:hover {
   text-decoration: underline;
   cursor: pointer;
 }
 #header > div:nth-child(1) {
-  margin-left: 2px;
+ 
   /*border-left: 1px dotted black;*/
 }
 #header > div:nth-child(1) {
@@ -54,7 +59,8 @@ div.home {
 }
 div.home > div:nth-child(2) {
   background: url(../img/globi-bg.jpg) no-repeat;
-    flex: 1 1 auto;
+     background-size: 100% auto;
+ flex: 1 1 auto;
 /* background-size: 100% auto;
 max-width: 50em;*/
 }
@@ -65,7 +71,7 @@ body {
   height:  100vh; /*background:  hsl(260, 100%, 50%);*/
 }
 .blog {
-  background: white;
+  background: #aba652;
   max-width: 50em;
   padding: 1em;
   font-family: 'Libre Caslon Text';
@@ -87,6 +93,7 @@ img.close {
 }
 
 .overlay {
+  background: #aba652;
   position:  absolute;
   top:  0;
   left:  0;
