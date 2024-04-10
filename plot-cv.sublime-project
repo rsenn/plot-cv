@@ -55,11 +55,8 @@
   "folders": [
     {
       "file_exclude_patterns": [
-        "*.png",
-        "*.jpg",
-        "*.json",
-        "*.svg",
-        "*.pdf",
+         "*.json",
+         "*.pdf",
         "*.log.*",
         "*.ast.json*",
         "*.xz",

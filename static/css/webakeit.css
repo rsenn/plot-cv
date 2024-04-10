@@ -93,8 +93,8 @@ img.close {
 }
 
 .overlay {
-  background: #aba652;
-  position:  absolute;
+   background: #aba652;
+ position:  absolute;
   top:  0;
   left:  0;
   width:  100vw;
