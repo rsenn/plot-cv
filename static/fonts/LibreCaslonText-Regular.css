@@ -1,0 +1,13 @@
+@font-face {
+    font-family: 'Libre Caslon Text';
+    src: url('LibreCaslonText-Regular.eot');
+    src: url('LibreCaslonText-Regular.eot?#iefix') format('embedded-opentype'),
+        url('LibreCaslonText-Regular.woff2') format('woff2'),
+        url('LibreCaslonText-Regular.woff') format('woff'),
+        url('LibreCaslonText-Regular.ttf') format('truetype'),
+        url('LibreCaslonText-Regular.svg#LibreCaslonText-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+

@@ -16,7 +16,7 @@ import { GetColorBands, GetFactor, GetMultipliers } from './lib/eda/colorCoding.
 import { GetExponent, GetMantissa, NumberToValue, ValueToNumber } from './lib/eda/values.js';
 import { EventEmitter, eventify, EventTarget } from './lib/events.js';
 import { BBox, Circle, Line, LineList, Matrix, Point, Rect, Rotation, Scaling, Size, TransformationList, Translation } from './lib/geom.js';
-import { Edge, Graph, Node } from './lib/geom/graph.js';
+import { Edge, Graph, Node } from './lib/fd-graph.js';
 import * as path from './lib/path.js';
 import { Pointer } from './lib/pointer.js';
 import renderToString from './lib/preact-render-to-string.js';
@@ -29,10 +29,65 @@ import { Predicate } from 'predicate';
 import { REPL } from 'repl';
 import { read as fromXML, write as writeXML } from 'xml';
 import extendArray from 'extendArray';
+import * as glfw from 'glfw';
+import * as nanovg from 'nanovg';
+import { DrawCircle, DrawLine } from './draw-utils.js';
 
 let cmdhist;
 
 extendArray();
+
+function Window(width = 1280, height = 900) {
+  for(let [prop, value] of [
+    [glfw.CONTEXT_VERSION_MAJOR, 3],
+    [glfw.CONTEXT_VERSION_MINOR, 2],
+    [glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE],
+    [glfw.OPENGL_FORWARD_COMPAT, true],
+    [glfw.RESIZABLE, true],
+    [glfw.SAMPLES, 4]
+  ])
+    glfw.Window.hint(prop, value);
+
+  let window = (glfw.context.current = new glfw.Window(width, height, 'eagle-shell'));
+
+  nanovg.CreateGL3(nanovg.STENCIL_STROKES | nanovg.ANTIALIAS | nanovg.DEBUG);
+  nanovg.CreateFont('Century Gothic', '/home/roman/.fonts/gothic.ttf');
+
+  define(window, {
+    clear(color = nanovg.RGB(0, 0, 0)) {
+      const { size } = this;
+      nanovg.Save();
+      nanovg.BeginPath();
+      nanovg.Rect(0, 0, ...size);
+      nanovg.FillColor(color);
+      nanovg.Fill();
+      nanovg.Restore();
+    },
+    begin() {
+      const { width, height } = this.size;
+      nanovg.BeginFrame(width, height, 1);
+    },
+    end() {
+      nanovg.EndFrame();
+      window.swapBuffers();
+      glfw.poll();
+    },
+    handleMouseButton(button, action, mods) {
+      repl.printStatus('handleMouseButton', { button, action, mods });
+    },
+    handleCursorPos(x, y) {
+      repl.printStatus('handleCursorPos', { x, y });
+    },
+    handleCursorEnter(cur) {
+      repl.printStatus('handleCursorEnter', { cur });
+    }
+  });
+
+  window.handleCharMods = (char, mods) => {
+    console.log(`handleCharMods`, { char, mods });
+  };
+  return window;
+}
 
 const GetGlobalFunctions = (() => {
   const a = Object.getOwnPropertyNames(globalThis);
@@ -394,7 +449,13 @@ function main(...args) {
     Signal2Circuit,
     Element2Circuit,
     SortFiles,
-    InitBoard
+    BoardFromSchematic,
+    InitBoard,
+    MakeGraph,
+    DrawGraph,
+    Window,
+    DrawCircle,
+    DrawLine
   });
 
   Object.assign(globalThis, {
@@ -998,6 +1059,19 @@ function SaveLibraries() {
   //console.log('libraries', libraries);
 }
 
+function BoardFromSchematic(doc = project.schematic, f = 1) {
+  let a = [];
+  
+  for(let e of [...doc.sheets[0].instances.list]) {
+    const { part, x, y } = e;
+    const p = new Point(x, y).mul(f * 0.03937).round(0.1);
+
+    a.push(`MOVE '${part.name}' (${[...p].join(' ')});`);
+  }
+
+  return a.join('\n');
+}
+
 function InitBoard(doc = project.board) {
   let commands = [...doc.elements].map(([name, e]) => {
     const p = new Point(e).div(25.4).round(0.005);
@@ -1357,6 +1431,76 @@ function Eagle2CircuitJS(doc = project.schematic, scale = 50, sheet = 0) {
     console.log(`instance '${name}'`, console.config({ depth: 0 }), instance);
   }
   return circ;
+}
+
+function MakeGraph(board = project.board, ignore = /^(GND|[-+][0-9]+V)$/) {
+  let g = new Graph({
+    size: new Size(900, 900),
+    spacing: 30,
+    timestep: 50,
+    charge: 100,
+    mass: 200,
+    damping: 0.000005,
+    gravitate_to_origin: false
+  });
+  let nodes = {};
+  let nodeSignals = {};
+  let signalNodes = {};
+
+  for(let [name, element] of project.board.elements) {
+    let n = (nodes[name] = g.addNode(name));
+
+    nodeSignals[name] = [];
+  }
+
+  for(let [name, signal] of project.board.signals) {
+    if(ignore && ignore.test(name)) continue;
+
+    signalNodes[name] = [];
+    for(let ref of signal.contactrefs) {
+      nodeSignals[ref.element.name].push(name);
+      signalNodes[name].push(ref.element.name);
+    }
+  }
+
+  for(let node in nodeSignals) {
+    for(let signal of nodeSignals[node]) {
+      for(let node2 of signalNodes[signal]) {
+        if(node != node2) {
+          let r = g.addEdge(nodes[node], nodes[node2]);
+
+          console.log('r', r);
+        }
+      }
+    }
+  }
+
+  console.log('MakeGraph', { nodeSignals, signalNodes });
+
+  return g;
+}
+
+function DrawGraph(g, w) {
+  const { size } = w;
+
+  nanovg.Save();
+  nanovg.Translate(size.width / 2, size.height / 2);
+
+  for(let edge of g.edges) {
+    DrawLine(edge.a, edge.b, 1, [255, 255, 0]);
+  }
+
+  nanovg.TextAlign(nanovg.ALIGN_CENTER | nanovg.ALIGN_MIDDLE);
+  nanovg.FontSize(12);
+
+  for(let node of g.nodes) {
+    DrawCircle([node.x, node.y], 20, 2, [255, 0, 0], [0, 0, 0, 255]);
+
+    nanovg.FillColor(nanovg.RGB(255, 255, 255));
+    nanovg.Text(node.x, node.y, node.label);
+  }
+
+  nanovg.Restore();
 }
 
 //callMain(main, true);

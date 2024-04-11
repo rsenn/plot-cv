@@ -324,32 +324,55 @@ export const Item = ({ className = 'item', title, tooltip, label, icon, children
 
 export const Icon = ({ className = 'icon', caption, image, ...props }) => h(Container, { className, ...props }, h('img', { src: image }));
 
-export const Progress = ({ className, percent, ...props }) =>
-  h(
+export const Progress = ({ className, percent, ...props }) => {
+  let p;
+
+  if(!{ string: true, number: true }[typeof percent]) p = useTrkl(percent);
+  else p = percent;
+
+  return h(
     Overlay,
     {
       className: classNames('progress', 'center', className),
-      text: percent + '%',
+      text: p + '%',
       style: {
         position: 'relative',
-        width: '100%',
-        height: '1.5em',
+        height: '1em',
         border: '1px solid black',
+        padding: 0,
         textAlign: 'center',
-        zIndex: '99'
+        zIndex: '99',
+        overflow: 'hidden'
       }
     },
-    h('div', {
-      className: classNames('progress-bar', 'fill'),
-      style: {
-        width: percent + '%',
-        position: 'absolute',
-        left: '0px',
-        top: '0px',
-        zIndex: '98'
-      }
-    })
+    h(Fragment, {}, [
+      h('div', {
+        className: classNames('progress-bar', 'fill'),
+        style: {
+          width: p + '%',
+          position: 'absolute',
+          background: 'hsla(210, 100%,50%,0.5)',
+          zIndex: '98'
+        },
+        innerHTML: '&nbsp;'
+      }),
+      h(
+        'div',
+        {
+          className: classNames('progress-bar', 'number'),
+          style: {
+            position: 'absolute',
+            width: '100%',
+
+            zIndex: '98',
+            textShadow: 'white 1px 1px 2px'
+          }
+        },
+        [p + '%']
+      )
+    ])
   );
+};
 
 /*export const BrowseIcon = (props) => html`<svg xmlns="http://www.w3.org/2000/svg" height="40" width="40" viewBox="131 -131 731.429 731.429">
   <path d="M240.714 39.414v390.6h432.4l79.6-244.1h-435.6l-48.8 145.7 33.1-170.2h378v-48.8h-243.4l-47.2-73.2z" fill="#fff"/>

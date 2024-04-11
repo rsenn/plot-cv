@@ -2,7 +2,7 @@ import { promises as fsPromises } from 'fs';
 import http from 'http';
 import https from 'https';
 import net from 'net';
-import url from 'url'; 
+import url from 'url';
 import Util from './lib/util.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import ProxyList from './node_modules/free-proxy/index.js';

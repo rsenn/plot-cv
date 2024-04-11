@@ -4,18 +4,18 @@ import Console from 'console';
 import { className } from 'util';
 import * as glfw from 'glfw';
 import * as ImGui from 'imgui';
-import * as nvg from 'nanovg';
+import * as nanovg from 'nanovg';
 import { imread, copyTo, log, CV_8UC4, COLOR_BGR2BGRA, LINE_AA, cvtColor, drawLine, Mat, Point, Rect } from 'opencv';
 
-function Clear(color = nvg.RGB(0, 0, 0)) {
+function Clear(color = nanovg.RGB(0, 0, 0)) {
   const { size } = glfw.context.current;
 
-  nvg.Save();
-  nvg.BeginPath();
-  nvg.Rect(0, 0, ...size);
-  nvg.FillColor(color);
-  nvg.Fill();
-  nvg.Restore();
+  nanovg.Save();
+  nanovg.BeginPath();
+  nanovg.Rect(0, 0, ...size);
+  nanovg.FillColor(color);
+  nanovg.Fill();
+  nanovg.Restore();
 }
 
 function main(...args) {
@@ -36,22 +36,22 @@ function main(...args) {
 
   if(true) {
     for(let [prop, value] of [
-      [CONTEXT_VERSION_MAJOR, 3],
-      [CONTEXT_VERSION_MINOR, 2],
-      [OPENGL_PROFILE, OPENGL_CORE_PROFILE],
-      [OPENGL_FORWARD_COMPAT, true],
-      [RESIZABLE, true],
-      [SAMPLES, 4]
+      [glfw.CONTEXT_VERSION_MAJOR, 3],
+      [glfw.CONTEXT_VERSION_MINOR, 2],
+      [glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE],
+      [glfw.OPENGL_FORWARD_COMPAT, true],
+      [glfw.RESIZABLE, true],
+      [glfw.SAMPLES, 4]
     ])
-      Window.hint(prop, value);
+      glfw.Window.hint(prop, value);
 
-    window = glfw.context.current = new Window(1280, 900, 'ImGui test');
+    window = glfw.context.current = new glfw.Window(1280, 900, 'ImGui test');
 
     context = {
       begin() {},
       end() {
         window.swapBuffers();
-        poll();
+        glfw.poll();
       }
     };
 
@@ -93,7 +93,7 @@ function main(...args) {
   position = window.position;
   size = window.size;
 
-  nvg.CreateGL3(nvg.STENCIL_STROKES | nvg.ANTIALIAS | nvg.DEBUG);
+  nanovg.CreateGL3(nanovg.STENCIL_STROKES | nanovg.ANTIALIAS | nanovg.DEBUG);
 
   ImGui.Init(ImGui.ImplGlfw, ImGui.ImplOpenGL3);
   ImGui.CreateContext(window);
@@ -120,12 +120,12 @@ function main(...args) {
 
   let pixels;
   let imgId = Mat2Image(mat);
-  let img2Id = nvg.CreateImage('Muehleberg.png', 0);
+  let img2Id = nanovg.CreateImage('Muehleberg.png', 0);
 
   console.log(``, { imgId, img2Id });
 
-  let img2Sz = nvg.ImageSize(img2Id);
-  let imgSz = nvg.ImageSize(imgId);
+  let img2Sz = nanovg.ImageSize(img2Id);
+  let imgSz = nanovg.ImageSize(imgId);
 
   const timer = {
     ticks(rate = 1000) {
@@ -153,61 +153,61 @@ function main(...args) {
 
     context.begin(color);
 
-    nvg.BeginFrame(width, height, 1);
+    nanovg.BeginFrame(width, height, 1);
 
-    Clear(nvg.RGB(...color));
+    Clear(nanovg.RGB(...color));
 
     let m;
-    nvg.CurrentTransform((m = []));
+    nanovg.CurrentTransform((m = []));
 
     let p, a;
-    p = nvg.TransformIdentity();
+    p = nanovg.TransformIdentity();
 
-    //   nvg.Scale(2,1);
+    //   nanovg.Scale(2,1);
 
-    nvg.TransformMultiply(
+    nanovg.TransformMultiply(
       p,
-      nvg.TransformTranslate(0, 100),
-      nvg.TransformRotate(((timer.ticks(200) % 360) * Math.PI) / 180),
-      nvg.TransformRotate(nvg.DegToRad(45)),
-      nvg.TransformScale(2, 0.5),
-      nvg.TransformRotate(nvg.DegToRad(-45))
+      nanovg.TransformTranslate(0, 100),
+      nanovg.TransformRotate(((timer.ticks(200) % 360) * Math.PI) / 180),
+      nanovg.TransformRotate(nanovg.DegToRad(45)),
+      nanovg.TransformScale(2, 0.5),
+      nanovg.TransformRotate(nanovg.DegToRad(-45))
     );
     //console.log('Transform', p);
 
-    nvg.TransformPoint((a = []), p, 0, 0);
+    nanovg.TransformPoint((a = []), p, 0, 0);
 
-    // let pattern = nvg.ImagePattern(0, 0, ...img2Sz, 0, img2Id, 1);
+    // let pattern = nanovg.ImagePattern(0, 0, ...img2Sz, 0, img2Id, 1);
 
-    let center = new Position(size.width / 2, size.height / 2);
-    let imgSz_2 = new Position(img2Sz.width * -0.5, img2Sz.height * -0.5);
+    let center = new glfw.Position(size.width / 2, size.height / 2);
+    let imgSz_2 = new glfw.Position(img2Sz.width * -0.5, img2Sz.height * -0.5);
 
-    nvg.Save();
+    nanovg.Save();
 
-    nvg.Translate(...center);
-    nvg.Scale(0.5, 0.5);
-    nvg.Translate(...imgSz_2);
+    nanovg.Translate(...center);
+    nanovg.Scale(0.5, 0.5);
+    nanovg.Translate(...imgSz_2);
 
     let phi = ((timer.ticks(60) % 360) / 180) * Math.PI;
     let vec = [Math.cos(phi), Math.sin(phi)].map(n => n * 100);
 
     DrawImage(imgId, vec);
-    //  nvg.Translate(imgSz_2.width * -1, imgSz_2.height * -1);
-    nvg.Restore();
-    nvg.Save();
+    //  nanovg.Translate(imgSz_2.width * -1, imgSz_2.height * -1);
+    nanovg.Restore();
+    nanovg.Save();
 
-    nvg.Translate(size.width / 4, size.height / 4);
-    /*   nvg.Scale(2,1);
-    nvg.Rotate(((timer.ticks(180) % 360) * Math.PI) / 180);
-  nvg.Scale(0.5,1);
+    nanovg.Translate(size.width / 4, size.height / 4);
+    /*   nanovg.Scale(2,1);
+    nanovg.Rotate(((timer.ticks(180) % 360) * Math.PI) / 180);
+  nanovg.Scale(0.5,1);
  */
     DrawCircle(a, 40, 2, [0, 0, 0], [255, 255, 0, 192]);
 
-    nvg.Restore();
+    nanovg.Restore();
 
     DrawCircle(center, 100);
 
-    nvg.EndFrame();
+    nanovg.EndFrame();
 
     ImGui.NewFrame();
 
