@@ -7,7 +7,7 @@ const stack = (globalThis.stack = ['home']);
 let layers = {};
 let scrollTop = 0;
 
-window.addEventListener('load', () => {
+/*window.addEventListener('load', () => {
   layers = globalThis.layers = QA('body > div')
     .slice(0)
     .reduce((o, e) => {
@@ -18,12 +18,12 @@ window.addEventListener('load', () => {
 
   QA('div#header > div').forEach(e => {
     const name = e.getAttribute('data-name');
-
-    e.addEventListener('click', e => {
-      if(name in layers) SelectPage(name);
-    });
+    if(name)
+      e.addEventListener('click', e => {
+        if(name in layers) SelectPage(name);
+      });
   });
-});
+});*/
 
 function SelectPage(name) {
   OM(layers, (id, layer) => layer.style.setProperty('display', id == name ? (id == 'home' ? 'flex' : 'block') : 'none'));
@@ -44,7 +44,7 @@ function PopPage() {
 function HidePage() {
   let name = stack[stack.length - 1];
 
-  scrollTop = document.body.scrollTop;
+  scrollTop = window.scrollY ?? document.body.scrollTop;
   layers[name].style.setProperty('display', 'none');
 }
 
@@ -52,7 +52,8 @@ function ShowPage() {
   let name = stack[stack.length - 1];
 
   layers[name].style.setProperty('display', 'block');
-  document.body.scrollTop = scrollTop;
+  //document.body.scrollTop = scrollTop;
+  window.scrollTo(0, scrollTop);
 }
 
 function CreateElement(tag, attributes = {}, parent = document.body) {
@@ -68,7 +69,7 @@ function CreateElement(tag, attributes = {}, parent = document.body) {
 function ShowPhoto(element) {
   const { width, height, src } = element;
 
-  HidePage();
+  // HidePage();
 
   let overlay = CreateElement('div', { class: 'overlay' });
 
