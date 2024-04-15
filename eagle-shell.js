@@ -1059,12 +1059,12 @@ function SaveLibraries() {
   //console.log('libraries', libraries);
 }
 
-function BoardFromSchematic(doc = project.schematic, f = 1) {
+function BoardFromSchematic(doc = project.schematic, f = 1, r=0.5) {
   let a = [];
   
   for(let e of [...doc.sheets[0].instances.list]) {
     const { part, x, y } = e;
-    const p = new Point(x, y).mul(f * 0.03937).round(0.1);
+    let p = new Point(x, y).mul(f * 0.03937).round(r);
 
     a.push(`MOVE '${part.name}' (${[...p].join(' ')});`);
   }
