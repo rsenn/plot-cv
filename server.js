@@ -104,13 +104,16 @@ function GetDirMap(dirs = mountDirs, pred = '.*\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$
       console.log('expr', expr);
       pred = new RegExp(expr, 'i');
     }
+    
     if(typeof pred == 'object' && pred !== null && pred instanceof RegExp) {
       const re = pred;
       console.log('re', re);
       pred = ent => re.test(ent);
     }
   }
+
   console.log('pred', pred + '');
+
   return dirs.reduce((acc, dir) => {
     for(let entry of ReadDirRecursive(dir, 0)) {
       if(entry.endsWith('/')) continue;
